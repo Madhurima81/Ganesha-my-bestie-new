@@ -323,7 +323,7 @@
   width: clamp(60px, 9vw, 110px);
   height: clamp(60px, 9vw, 110px);
   transform: translate(-50%, -50%) scale(var(--animal-scale, 1));
-  transition: opacity 1100ms ease-in-out, transform 700ms ease-out, filter 700ms ease-out;
+  transition: opacity 1100ms ease-in-out, transform 700ms ease-out, filter 700ms ease-out, left 700ms ease-out, top 700ms ease-out;
   animation: eyes-popup-breath 3s ease-in-out infinite;
   pointer-events: auto;
   cursor: pointer;

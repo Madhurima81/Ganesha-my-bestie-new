@@ -414,17 +414,6 @@ function SymbolFlipCard({ name, associationText, image, flipped, imageFallback }
             pointerEvents: flipped ? 'none' : 'auto'
           }}
         >
-          <div style={titleStyle}>{name}</div>
-          <div style={textStyle}>{associationText}</div>
-        </div>
-        <div
-          style={{
-            ...faceStyle,
-            opacity: flipped ? 1 : 0,
-            transform: flipped ? 'rotateY(0deg) scale(1)' : 'rotateY(90deg) scale(0.98)',
-            pointerEvents: flipped ? 'auto' : 'none'
-          }}
-        >
           {currentImage ? (
             <img
               src={currentImage}
@@ -439,6 +428,17 @@ function SymbolFlipCard({ name, associationText, image, flipped, imageFallback }
               }}
             />
           ) : null}
+        </div>
+        <div
+          style={{
+            ...faceStyle,
+            opacity: flipped ? 1 : 0,
+            transform: flipped ? 'rotateY(0deg) scale(1)' : 'rotateY(90deg) scale(0.98)',
+            pointerEvents: flipped ? 'auto' : 'none'
+          }}
+        >
+          <div style={titleStyle}>{name}</div>
+          <div style={textStyle}>{associationText}</div>
         </div>
       </div>
     </div>
@@ -787,20 +787,20 @@ const SacredAssemblyContent = ({
 
     if (cardPhase === 'appear') {
       playChime();
-      const t = safeSetTimeout(() => setCardPhase('flipped'), 2200);
-      return () => clearTimeout(t);
-    }
-
-    if (cardPhase === 'flipped') {
-      // No VO here � card is mid-flip, child can't read it yet
-      playSparkle();
-      const t = safeSetTimeout(() => setCardPhase('side'), 1100);
+      const t = safeSetTimeout(() => setCardPhase('side'), 2200);
       return () => clearTimeout(t);
     }
 
     if (cardPhase === 'side') {
-      // No VO here � card is still sliding. VO fires in 'play' once card has landed.
+      // No VO here � card is mid-flip, child can't read it yet
       playUiTap();
+      const t = safeSetTimeout(() => setCardPhase('flipped'), 1150);
+      return () => clearTimeout(t);
+    }
+
+    if (cardPhase === 'flipped') {
+      // No VO here � card is still sliding. VO fires in 'play' once card has landed.
+      playSparkle();
       const t = safeSetTimeout(() => setCardPhase('play'), 600);
       return () => clearTimeout(t);
     }
@@ -1679,10 +1679,13 @@ const SacredAssemblyContent = ({
           {sceneState?.currentAssociationSymbol && cardPhase !== 'hidden' && (() => {
             const isFlippedCard =
               cardPhase === 'flipped' ||
-              cardPhase === 'side' ||
               cardPhase === 'play' ||
               cardPhase === 'feedback';
-            const isSideCard = cardPhase === 'side' || cardPhase === 'play' || cardPhase === 'feedback';
+            const isSideCard =
+              cardPhase === 'side' ||
+              cardPhase === 'flipped' ||
+              cardPhase === 'play' ||
+              cardPhase === 'feedback';
             return (
               <div
                 style={{

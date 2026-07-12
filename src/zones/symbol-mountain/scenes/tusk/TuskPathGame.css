@@ -212,6 +212,19 @@
   100% { transform: translate(-50%, -50%) scale(var(--animal-scale, 1)); }
 }
 
+/* Helper animal glides to the obstacle and works */
+.tusk-path-animal.helping {
+  transition: left 800ms ease-out, top 800ms ease-out, transform 300ms ease-out;
+  filter: drop-shadow(0 0 12px #FFD700);
+  z-index: 11;
+  animation: tusk-animal-work 900ms ease-in-out infinite;
+}
+
+@keyframes tusk-animal-work {
+  0%, 100% { transform: translate(-50%, -50%) scale(var(--animal-scale, 1)) rotate(0); }
+  50%      { transform: translate(calc(-50% + 8px), -50%) scale(calc(var(--animal-scale, 1) * 1.05)) rotate(3deg); }
+}
+
 /* â”€â”€â”€ Obstacles â”€â”€â”€ */
 
 .tusk-path-obstacle {
@@ -228,6 +241,12 @@
 .tusk-path-obstacle.active {
   width: clamp(320px, 44vw, 520px);
   height: clamp(320px, 44vw, 520px);
+}
+
+/* Obstacle becomes the work surface once helper is latched */
+.tusk-path-obstacle.active.workable {
+  cursor: grab;
+  touch-action: none;
 }
 
 /* Cleared evidence = smaller, slightly dimmed, sits in path */

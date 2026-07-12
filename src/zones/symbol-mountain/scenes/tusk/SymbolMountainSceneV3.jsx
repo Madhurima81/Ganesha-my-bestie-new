@@ -63,7 +63,6 @@ import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal
 // Images
 import mountainBackground from '../tusk/assets/images/trail-bg.png';
 import ganeshaCharacter from './assets/images/ganesha-character.webp';
-import ganeshaCompleteImg from '../tusk/assets/images/ganesha-complete.png';
 
 // Symbol Icons
 import symbolEyesColored from '../../shared/images/icons/symbol-eyes-new.webp';
@@ -78,6 +77,7 @@ import symbolTrunkColored from '../../shared/images/icons/symbol-trunk-new.webp'
 
 // Shared countdown duration â€” must match across useResumeCountdown + usePauseAwareTimeout
 const RESUME_DELAY_MS = 3000;
+const GANESHA_REVEAL_IMAGE = '/images/ganesha-sit.svg';
 
 // Mini gesture icons (same pattern as Pond / Modak)
 const MINI_THUMBS_UP_ICON = '/images/hand-thumbsup.svg';
@@ -91,10 +91,10 @@ const VOICE_LINES = {
   eyesSetup: 'You looked carefully... and found them all.',
   earsSetup: 'You listened closely... and got it right.',
   tuskSetup: 'You kept going... and cleared the way.',
-  tusk: 'Keep going... clear the path to reveal my tusk.',
+  tusk: 'My tusk is hidden beyond this blocked path. Let us clear the way together.',
   idleEyes: 'Look closely... you can find them.',
   idleEars: 'Listen carefully... then choose the match.',
-  idleTusk: 'Tap each obstacle until the path is clear.',
+  idleTusk: 'Choose the friend who can help, then clear the obstacle.',
   complete: 'You saw clearly. You listened well. You finished strong. All yours.'
 };
 
@@ -853,18 +853,7 @@ const SymbolMountainSceneContent = ({
                   characterImg={ganeshaCharacter}
                   showButton={true}
                 />
-                {showIdleGestureHint && sceneState.phase === PHASES.TUSK_GAME && !sceneState.ganeshaComplete && (
-                  <div className="symbol-tusk-drag-pointer-overlay" aria-hidden="true">
-                    <img
-                      className="symbol-tusk-drag-pointer-hand"
-                      src="/images/ganesha-point.webp"
-                      alt=""
-                    />
-                  </div>
-                )}
               )}
-
-
               {/* EYES GAME - Pop-up discovery */}
               {sceneState.showEyesTelescopeGame && !sceneState.discoveredSymbols?.eyes && (
                 <EyesPopUpGame
@@ -932,12 +921,12 @@ const SymbolMountainSceneContent = ({
                   key={`tusk-${tuskTestRunKey}`}
                   isActive={sceneState.showTuskAssemblyGame}
                   isAudioOn={isAudioOn}
-                  animalPositions={sceneState.animalSpots}
+                  animalPositions={sceneState.tuskAnimalPositions}
                   obstaclePosition={sceneState.tuskObstaclePosition}
                   onAnimalPositionsChange={(positions) => {
                     sceneActions.updateState({
-                      animalSpots: {
-                        ...(sceneState.animalSpots || {}),
+                      tuskAnimalPositions: {
+                        ...(sceneState.tuskAnimalPositions || {}),
                         ...(positions || {})
                       }
                     });
@@ -962,7 +951,7 @@ const SymbolMountainSceneContent = ({
                       left: '50%',
                       top: '53%',
                       transform: 'translate(-50%, -50%)',
-                      width: '120px',
+                      width: 'clamp(80px, 12vw, 160px)',
                       zIndex: 14,
                       pointerEvents: 'none',
                       opacity: tuskTransforming ? 1 : 0
@@ -979,7 +968,7 @@ const SymbolMountainSceneContent = ({
                     />
                   )}
                   <img
-                    src={ganeshaCompleteImg}
+                    src={GANESHA_REVEAL_IMAGE}
                     alt="Ganesha"
                     className={`${ganeshaRevealing ? 'ganesha-reveal' : ''} ${sceneState.ganeshaComplete && !ganeshaRevealing ? 'ganesha-glow' : ''}`}
                     onAnimationEnd={() => {
@@ -990,8 +979,8 @@ const SymbolMountainSceneContent = ({
                       left: '50%',
                       top: '50%',
                       transform: 'translate(-50%, -50%)',
-                      width: '52%',
-                      maxWidth: '520px',
+                      width: '44%',
+                      maxWidth: '460px',
                       zIndex: 15,
                       pointerEvents: 'none',
                       opacity: ganeshaRevealing || (!tuskTransforming && sceneState.ganeshaComplete) ? 1 : 0
@@ -1099,7 +1088,7 @@ const SymbolMountainSceneContent = ({
             {showMandala && (
               <InnerMandala
                 childName={profileName}
-                petalStates={{
+                symbolPetalStates={{
                   1: 'awakened',
                   2: 'awakened',
                   3: 'awakened',
@@ -1108,16 +1097,6 @@ const SymbolMountainSceneContent = ({
                   6: 'awakened',
                   7: 'awakened',
                   8: 'awakened'
-                }}
-                symbolIcons={{
-                  1: symbolMooshikaColored,
-                  2: symbolModakColored,
-                  3: symbolBellyColored,
-                  4: symbolLotusColored,
-                  5: symbolTrunkColored,
-                  6: symbolEarColored,
-                  7: symbolEyesColored,
-                  8: symbolTuskColored
                 }}
                 highlightPetals={[8]}
                 message="That power is growing inside you"

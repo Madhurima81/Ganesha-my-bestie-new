@@ -2295,12 +2295,7 @@ const NewModakSceneMVPContent = ({
             {showMandala && (
               <InnerMandala
                 childName={activeProfile?.name || 'Friend'}
-                petalStates={{ 1: 'awakened', 2: 'awakened', 3: 'awakened' }}
-                symbolIcons={{
-                  1: symbolMooshikaColored,
-                  2: symbolModakColored,
-                  3: symbolBellyColored,
-                }}
+                symbolPetalStates={{ 1: 'awakened', 2: 'awakened', 3: 'awakened' }}
                 highlightPetals={[1, 2, 3]}
                 message="That power is growing inside you"
                 onClose={() => {

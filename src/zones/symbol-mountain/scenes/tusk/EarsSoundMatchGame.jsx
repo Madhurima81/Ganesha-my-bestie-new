@@ -81,7 +81,7 @@ const IDLE_HINT_VO_BY_ANIMAL = {
   elephant: VO_PATHS.hintElephant,
   cow: VO_PATHS.hintCow
 };
-const POSITION_STORAGE_KEY = 'symbol_mountain_eyes_animal_positions_v2';
+const POSITION_STORAGE_KEY = 'symbol_mountain_eyes_animal_positions_v3';
 
 // Debug position editor — only with ?debug in the URL, never for children in prod.
 const SHOW_EARS_DEBUG =
@@ -402,10 +402,12 @@ const EarsSoundMatchGame = ({
     }
   }, [waitingForTap, matched, currentTargetId, currentTarget, playGameAudio, stopClueSpeech]);
 
-  const activeAnimalPositions = ANIMALS.map((animal) => ({
-    id: animal.id,
-    ...(editableAnimalPositions[animal.id] || defaultPositionMap[animal.id] || {})
-  }));
+  const activeAnimalPositions = ANIMALS
+    .map((animal) => ({
+      id: animal.id,
+      ...(editableAnimalPositions[animal.id] || defaultPositionMap[animal.id] || {})
+    }))
+    .sort((a, b) => (a.y ?? 0) - (b.y ?? 0));
 
   if (hideElements || !isActive) return null;
 
@@ -497,7 +499,12 @@ const EarsSoundMatchGame = ({
           <div
             key={animal.id}
             className={`ears-sound-animal ${isMatched ? 'matched' : ''} ${isWrong ? 'wrong' : ''} ${waitingForTap && !isMatched ? 'tappable' : ''} ${isHinted ? 'idle-hint' : ''} ${debugMode && selectedAnimalId === animal.id ? 'debug-selected' : ''} ${debugMode ? 'debug-draggable' : ''}`}
-            style={{ left: `${pos.x}%`, top: `${pos.y}%`, '--animal-scale': ANIMAL_SIZES[animal.id] || 1 }}
+            style={{
+              left: `${pos.x}%`,
+              top: `${pos.y}%`,
+              zIndex: Math.round(pos.y ?? 0) + 10,
+              '--animal-scale': ANIMAL_SIZES[animal.id] || 1
+            }}
             onClick={(e) => handleAnimalTap(animal.id, e)}
             onPointerDown={(e) => {
               if (!debugMode) return;

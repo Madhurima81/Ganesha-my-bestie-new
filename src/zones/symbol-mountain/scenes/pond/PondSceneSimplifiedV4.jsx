@@ -1833,19 +1833,12 @@ const PondSceneContent = ({
             {showMandala && (
               <InnerMandala
                 childName={profileName}
-                petalStates={{
+                symbolPetalStates={{
                   1: 'awakened',
                   2: 'awakened',
                   3: 'awakened',
                   4: 'awakened',
                   5: 'awakened'
-                }}
-                symbolIcons={{
-                  1: symbolMooshikaColored,
-                  2: symbolModakColored,
-                  3: symbolBellyColored,
-                  4: symbolLotusColored,
-                  5: symbolTrunkColored
                 }}
                 highlightPetals={[5]}
                 message="That power is growing inside you"

@@ -86,7 +86,7 @@ const SHOW_SPOT_DEBUG =
   typeof window !== 'undefined' &&
   new URLSearchParams(window.location.search).has('debug');
 const SPOT_STORAGE_KEY = 'symbol_mountain_eyes_hide_options_v5';
-const ANIMAL_POSITION_STORAGE_KEY = 'symbol_mountain_eyes_animal_positions_v2';
+const ANIMAL_POSITION_STORAGE_KEY = 'symbol_mountain_eyes_animal_positions_v3';
 const DEBUG_MODE_STORAGE_KEY = 'symbol_mountain_eyes_debug_mode_v2';
 const DEBUG_DEPTHS = ['behind-middle', 'behind-front', 'between-middle-front'];
 const DEBUG_ASSIGNMENT_COLORS = {
@@ -106,6 +106,11 @@ const shuffle = (arr) => {
     [copy[i], copy[j]] = [copy[j], copy[i]];
   }
   return copy;
+};
+
+const randomItem = (arr) => {
+  if (!Array.isArray(arr) || arr.length === 0) return null;
+  return arr[Math.floor(Math.random() * arr.length)] || null;
 };
 
 const getZoneBucket = (spot) => {
@@ -180,38 +185,33 @@ const cloneHideOptions = (hideOptionsByAnimal) => Object.fromEntries(
   })
 );
 
+const PENALTY_TOLERANCE = 15; // combos within this of the best are all acceptable
+
 const assignAnimalsToSpots = (hideOptionsByAnimal) => {
   const poolsByAnimal = ANIMALS.map((animal) => ({
     animal,
     pool: shuffle((hideOptionsByAnimal?.[animal.id]?.length ? hideOptionsByAnimal[animal.id] : ANIMAL_HIDE_OPTIONS[animal.id]) || [])
   }));
 
-  let bestAssignments = null;
-  let bestPenalty = Number.POSITIVE_INFINITY;
+  const candidates = []; // { assignments, penalty }
 
   const search = (index, chosen) => {
     if (index >= poolsByAnimal.length) {
-      const penalty = scoreAssignmentSet(chosen);
-      if (penalty < bestPenalty) {
-        bestPenalty = penalty;
-        bestAssignments = chosen;
-      }
+      candidates.push({ assignments: chosen, penalty: scoreAssignmentSet(chosen) });
       return;
     }
-
     const { animal, pool } = poolsByAnimal[index];
     for (const spot of pool) {
-      const nextChosen = [...chosen, { animal, spot }];
-      const partialPenalty = scoreAssignmentSet(nextChosen);
-      if (partialPenalty > bestPenalty) continue;
-      search(index + 1, nextChosen);
-      if (bestPenalty === 0) return;
+      search(index + 1, [...chosen, { animal, spot }]);
     }
   };
 
   search(0, []);
+  if (!candidates.length) return [];
 
-  return (bestAssignments || []).filter(Boolean);
+  const best = Math.min(...candidates.map((c) => c.penalty));
+  const acceptable = candidates.filter((c) => c.penalty <= best + PENALTY_TOLERANCE);
+  return randomItem(acceptable).assignments;
 };
 
 const syncAssignmentsWithOptions = (currentAssignments, hideOptionsByAnimal) => {
@@ -342,6 +342,18 @@ const EyesPopUpGame = ({
     playGameAudio(VO_PATHS.intro, VO_TEXTS.intro);
   }, [isActive, introShown, playGameAudio]);
 
+  // Each active session should get a fresh randomized assignment set.
+  useEffect(() => {
+    if (!isActive) return;
+    setAssignments(assignAnimalsToSpots(editableHideOptions));
+    setDiscovered(new Set());
+    setVisibleAnimal(null);
+    setShowIdleHint(null);
+    setShowZoneHint(null);
+    setShowFullReveal(null);
+    lastTapTimeRef.current = Date.now();
+  }, [isActive, editableHideOptions]);
+
   // Pop cycle: pick an undiscovered animal, show it, hide it, repeat
   useEffect(() => {
     if (!isActive) return;
@@ -380,16 +392,17 @@ const EyesPopUpGame = ({
       const idleMs = Date.now() - lastTapTimeRef.current;
       const undiscovered = assignments.filter(a => !discovered.has(a.animal.id));
       if (undiscovered.length > 0) {
+        const hintedTarget = randomItem(undiscovered) || undiscovered[0];
         if (idleMs >= IDLE_FULL_REVEAL_MS) {
-          setShowFullReveal(undiscovered[0].animal.id);
+          setShowFullReveal(hintedTarget?.animal?.id || null);
           setShowZoneHint(null);
           setShowIdleHint(null);
         } else if (idleMs >= IDLE_ZONE_HINT_MS) {
-          setShowZoneHint(undiscovered[0].spot.zone || null);
+          setShowZoneHint(hintedTarget?.spot?.zone || null);
           setShowFullReveal(null);
           setShowIdleHint(null);
         } else if (idleMs >= IDLE_HINT_MS) {
-          setShowIdleHint(undiscovered[0].animal.id);
+          setShowIdleHint(hintedTarget?.animal?.id || null);
           setShowZoneHint(null);
           setShowFullReveal(null);
         }
@@ -413,14 +426,17 @@ const EyesPopUpGame = ({
   useEffect(() => {
     if (discovered.size === 4 && onGameComplete) {
       const completionTimer = setTimeout(() => {
+        // Report the fixed resting spot each animal snapped to on discovery
+        // (see the render below) — not the random hide spot it came from —
+        // so downstream scenes (Ears) that read this via sceneState.animalSpots
+        // show the same hand-placed positions instead of wherever it happened
+        // to be hiding this session.
         const assignedSpots = assignments.reduce((acc, item) => {
-          const fallbackX = item.spot.x + (item.spot.revealOffsetX || 0);
-          const fallbackY = item.spot.y + (item.spot.revealOffsetY || 0);
-          const tunedPos = editableAnimalPositions[item.animal.id];
+          const fixedPos = editableAnimalPositions[item.animal.id] || ANIMAL_POSITIONS[item.animal.id];
           acc[item.animal.id] = {
-            x: tunedPos?.x ?? fallbackX,
-            y: tunedPos?.y ?? fallbackY,
-            depth: item.spot.depth || 'between-middle-front'
+            x: fixedPos.x,
+            y: fixedPos.y,
+            depth: fixedPos.depth || 'between-middle-front'
           };
           return acc;
         }, {});
@@ -818,10 +834,14 @@ const EyesPopUpGame = ({
         const isDiscovered = discovered.has(animal.id);
         const isVisible = visibleAnimal === animal.id;
         const isHinting = showIdleHint === animal.id;
-        const tunedPos = editableAnimalPositions[animal.id];
-        const finalX = isDiscovered ? (tunedPos?.x ?? (spot.x + (spot.revealOffsetX || 0))) : spot.x;
-        const finalY = isDiscovered ? (tunedPos?.y ?? (spot.y + (spot.revealOffsetY || 0))) : spot.y;
-        const scale = spot.scale || ANIMAL_SIZES[animal.id] || 1;
+        // Hide spots are randomized per session, but once found the animal snaps
+        // to its fixed, hand-placed resting spot (shared with animalPositions.js)
+        // instead of staying wherever it happened to be hiding — a random hide
+        // spot can put it on top of a bush/rock that looks wrong once revealed.
+        const fixedPos = editableAnimalPositions[animal.id] || ANIMAL_POSITIONS[animal.id];
+        const finalX = isDiscovered ? fixedPos.x : spot.x;
+        const finalY = isDiscovered ? fixedPos.y : spot.y;
+        const scale = isDiscovered ? (ANIMAL_SIZES[animal.id] || 1) : (spot.scale || ANIMAL_SIZES[animal.id] || 1);
 
         const opacity = (isDiscovered || showFullReveal === animal.id || showIdleHint === animal.id)
           ? SHOW_OPACITY
@@ -859,5 +879,3 @@ const EyesPopUpGame = ({
 };
 
 export default EyesPopUpGame;
-
-
