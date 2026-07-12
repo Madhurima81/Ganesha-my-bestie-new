@@ -1466,7 +1466,7 @@ const handleComplete = () => {
           }
         >
           <SparkleAnimation
-            type={sparkleState.type === 'all' ? 'magic' : 'magic'}
+            type="star"
             count={sparkleState.type === 'all' ? 42 : 14}
             color={sparkleState.type === 'all' ? 'rgba(255, 214, 102, 0.92)' : 'rgba(255, 210, 92, 0.98)'}
             size={sparkleState.type === 'all' ? 12 : 10}
@@ -1658,13 +1658,13 @@ const handleComplete = () => {
           />
 
           {/* India Map Container */}
-          <div style={{
-            position: 'relative',
-            width: 'min(90vw, 536px)',
-            aspectRatio: '536 / 583',
-            margin: 'clamp(24px, 6vh, 90px) auto 0',
-            overflow: 'visible',
-          }}>
+          <div
+            className="mis-india-map-wrap"
+            style={{
+              margin: 'clamp(24px, 6vh, 90px) auto 0',
+              overflow: 'visible',
+            }}
+          >
             {/* Map */}
             <img
               src={indiaMapImage}
@@ -1758,7 +1758,7 @@ const handleComplete = () => {
               >
                 <SparkleAnimation
                   key={`phase1-spot-sparkle-${phase1SpotSparkle.key}`}
-                  type="magic"
+                  type="star"
                   count={18}
                   color="rgba(0, 229, 255, 0.9)"
                   size={8}
@@ -1780,8 +1780,8 @@ const handleComplete = () => {
                     top: loc ? `${loc.y}%` : '50%',
                     left: loc ? `${loc.x}%` : '50%',
                     transform: 'translate(-50%, -50%)',
-                    width: '71px',
-                    height: '71px',
+                    width: 'clamp(56px, 6vw + 32px, 96px)',
+                    height: 'clamp(56px, 6vw + 32px, 96px)',
                     zIndex: 5,
                     animation: 'popIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)',
                     filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.3))',
@@ -1894,7 +1894,7 @@ const handleComplete = () => {
                 pointerEvents: 'none',
                 animation: 'popIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)',
               }}>
-                <img src={babyGaneshaImg} alt="Ganesha" style={{ width: '200px', height: 'auto' }} />
+                <img src={babyGaneshaImg} alt="Ganesha" style={{ width: 'clamp(160px, 24vw, 280px)', height: 'auto' }} />
               </div>
             )}
 
@@ -1905,8 +1905,8 @@ const handleComplete = () => {
               onPositionChange={(newPos) => handleMglassMove(newPos)}
               bounds={{ top: 0, left: 0, right: 100, bottom: 100 }}
               style={{
-                width: '95px',
-                height: '95px',
+                width: 'clamp(72px, 9vw + 48px, 130px)',
+                height: 'clamp(72px, 9vw + 48px, 130px)',
                 zIndex: 20,
                 cursor: 'grab',
                 animation: ganeshaHomeIdleLevel >= 1 ? 'idleWobble 0.5s ease-in-out infinite' : 'none',

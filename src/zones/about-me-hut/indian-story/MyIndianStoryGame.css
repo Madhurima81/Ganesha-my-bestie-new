@@ -169,6 +169,8 @@
 /* -- TAP TO DISCOVER SPOTS -- */
 .mis-spot {
   position: absolute;
+  width: clamp(72px, 8vw, 96px);
+  height: clamp(72px, 8vw, 96px);
   min-width: 72px;
   min-height: 72px;
   display: flex;
@@ -303,22 +305,9 @@
 }
 .mis-reaction-bubble.kailash-reaction span { font-size: 28px; }
 
-/* -- MAP AREA -- */
-.mis-map-container {
-  display: flex;
-  justify-content: center;
-}
-.mis-india-map {
-  position: relative;
-  width: 240px;
-  height: 260px;
-}
-.mis-india-svg {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  inset: 0;
-}
+/* -- MAP AREA --
+   Live map stage is .mis-india-map-wrap (scaling, aspect-ratio locked).
+   Dead selectors .mis-map-container / .mis-india-map / .mis-india-svg removed. */
 
 /* -- REGIONS GRID -- */
 .mis-regions-grid {
@@ -1045,8 +1034,6 @@
   .mis-regions-grid { grid-template-columns: 1fr; }
   .mis-lang-grid { grid-template-columns: 1fr 1fr; }
   .mis-fest-grid { grid-template-columns: 1fr 1fr; }
-  .mis-india-map { width: 200px; height: 220px; }
-  [id="magnifying-glass"] { width: 120px !important; height: 120px !important; }
 }
 
 @media (max-width: 600px) {
@@ -1055,7 +1042,6 @@
 
 @media (min-width: 600px) {
   .mis-wrapper { padding: 24px 24px 80px; }
-  .mis-india-map { width: 280px; height: 300px; }
   .mis-bubble { font-size: 15px; }
   .mis-mute-btn { width: 70px; height: 70px; font-size: 28px; }
 }
@@ -1177,6 +1163,10 @@
 @media (max-height: 700px) and (orientation: landscape) {
   .mis-wrapper {
     padding-bottom: 28px;
+  }
+
+  .mis-india-map-wrap {
+    width: min(68vw, 520px, calc(50vh * 536 / 583));
   }
 
   .mis-guess-grid {
