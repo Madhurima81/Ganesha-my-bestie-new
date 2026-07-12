@@ -28,11 +28,42 @@ const DETAIL_VO = {
   tusk: 'Pick one small thing you can finish today.',
 };
 
+const PETAL_TO_SCENE = {
+  mooshika: 'Share the Modaks',
+  modak: 'Share the Modaks',
+  belly: 'Share the Modaks',
+  lotus: 'The Golden Lotus',
+  trunk: 'The Golden Lotus',
+  eye: "Ganesha's Symbols",
+  eyes: "Ganesha's Symbols",
+  ear: "Ganesha's Symbols",
+  ears: "Ganesha's Symbols",
+  tusk: "Ganesha's Symbols",
+  'vakratunda-chant': 'Your Journey Begins!',
+  'mahakaya-chant': 'Your Journey Begins!',
+  'suryakoti-chant': 'Bring Back the Light!',
+  'samaprabha-chant': 'Bring Back the Light!',
+  'nirvighnam-chant': 'The River Needs You!',
+  'kurumedeva-chant': 'The River Needs You!',
+  'sarvakaryeshu-chant': 'River Memories!',
+  'sarvada-chant': 'River Memories!',
+};
+
 const normalizeSymbolId = (item) => {
   const raw = (item?.id || item?.name || '').toString().toLowerCase().trim();
   if (raw === 'ears') return 'ear';
   if (raw === 'eyes') return 'eye';
   return raw;
+};
+
+const getPetalSceneKey = (item, type) => {
+  if (type === 'symbols') return normalizeSymbolId(item);
+  return (item?.id || item?.name || '').toString().toLowerCase().trim();
+};
+
+const unlockHintFor = (item, type) => {
+  const sceneName = PETAL_TO_SCENE[getPetalSceneKey(item, type)] || 'the scene';
+  return `Complete "${sceneName}" to unlock this!`;
 };
 
 const isGlobalAudioEnabled = () => {
@@ -67,6 +98,8 @@ const getDisplayName = (name) => {
 const DetailCard = ({
   item,
   type,
+  locked = false,
+  unlockHint = '',
   isBreathingCueActive,
   onCardTap,
   onClose,
@@ -92,37 +125,43 @@ const DetailCard = ({
       ) : null}
 
       <div className={`symbol-content ${cardClassName.includes('open') || cardClassName.includes('instant') ? 'open' : ''}`}>
-        <div className={`pp-detail-image-wrapper ${isBreathingCueActive ? 'breathe' : ''}`}>
+        <div className={`pp-detail-image-wrapper ${isBreathingCueActive ? 'breathe' : ''} ${locked ? 'pp-locked' : ''}`}>
           <img src={item.image} alt={getDisplayName(item.name)} className="pp-detail-image" />
         </div>
 
         <h2 className="pp-detail-title">{getDisplayName(item.name)}</h2>
 
-        {type === 'symbols' && item.affirmation ? (
-          <p className="pp-detail-affirmation">"{item.affirmation}"</p>
-        ) : null}
+        {locked ? (
+          <p className="pp-detail-unlock-hint">{unlockHint}</p>
+        ) : (
+          <>
+            {type === 'symbols' && item.affirmation ? (
+              <p className="pp-detail-affirmation">"{item.affirmation}"</p>
+            ) : null}
 
-        {type === 'symbols' && item.ganeshaLines?.length ? (
-          <div className="pp-detail-ganesha-lines">
-            {item.ganeshaLines.map((line, idx) => (
-              <p key={`${item.id}-line-${idx}`} className="pp-detail-ganesha-line">{line}</p>
-            ))}
-          </div>
-        ) : null}
+            {type === 'symbols' && item.ganeshaLines?.length ? (
+              <div className="pp-detail-ganesha-lines">
+                {item.ganeshaLines.map((line, idx) => (
+                  <p key={`${item.id}-line-${idx}`} className="pp-detail-ganesha-line">{line}</p>
+                ))}
+              </div>
+            ) : null}
 
-        {type === 'symbols' && item.invitation ? (
-          <div className="pp-detail-invitation">{item.invitation}</div>
-        ) : null}
+            {type === 'symbols' && item.invitation ? (
+              <div className="pp-detail-invitation">{item.invitation}</div>
+            ) : null}
 
-        <p className="pp-detail-desc">
-          {type === 'symbols'
-            ? (item.gift || item.description || 'You have discovered this sacred item! Keep exploring to learn more.')
-            : (item.description || 'You have discovered this sacred item! Keep exploring to learn more.')}
-        </p>
+            <p className="pp-detail-desc">
+              {type === 'symbols'
+                ? (item.gift || item.description || 'You have discovered this sacred item! Keep exploring to learn more.')
+                : (item.description || 'You have discovered this sacred item! Keep exploring to learn more.')}
+            </p>
+          </>
+        )}
       </div>
 
       <div className="pp-detail-actions">
-        {item.audio ? (
+        {!locked && item.audio ? (
           <button
             className="pp-btn-audio"
             onClick={(e) => {
@@ -279,6 +318,7 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
     setAudioError('');
     setLockedHint('');
     setLockedTileId('');
+    const isCompleted = checkIsCompleted(item);
 
     if (type === 'symbols') {
       const symbolId = normalizeSymbolId(item);
@@ -304,6 +344,10 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
         const openTimer = setTimeout(() => setDetailOpen(true), 0);
         voTimersRef.current.push(openTimer);
 
+        if (!isCompleted) {
+          return;
+        }
+
         if (quickVo && isGlobalAudioEnabled()) {
           speakLine(quickVo, () => {
             if (!speechEnabledRef.current) return;
@@ -328,8 +372,12 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
   };
 
   useEffect(() => {
-    if (!isOpen || !directItemId || type !== 'symbols' || selectedItem || directOpenedRef.current) return;
-    const directItem = (items || []).find((item) => normalizeSymbolId(item) === normalizeSymbolId({ id: directItemId }));
+    if (!isOpen || !directItemId || selectedItem || directOpenedRef.current) return;
+    const directItem = (items || []).find((item) =>
+      type === 'symbols'
+        ? normalizeSymbolId(item) === normalizeSymbolId({ id: directItemId })
+        : item.id === directItemId
+    );
     if (!directItem) return;
     directOpenedRef.current = true;
     openDetail(directItem);
@@ -401,10 +449,13 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
 
   if (directItemId) {
     if (!selectedItem) return null;
+    const directLocked = !checkIsCompleted(selectedItem);
     return (
       <DetailCard
         item={selectedItem}
         type={type}
+        locked={directLocked}
+        unlockHint={unlockHintFor(selectedItem, type)}
         isBreathingCueActive={isBreathingCueActive}
         onCardTap={handleDetailCardTap}
         onClose={closeDetail}
@@ -480,6 +531,8 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
         <DetailCard
           item={selectedItem}
           type={type}
+          locked={!checkIsCompleted(selectedItem)}
+          unlockHint={unlockHintFor(selectedItem, type)}
           isBreathingCueActive={isBreathingCueActive}
           onCardTap={handleDetailCardTap}
           onClose={closeDetail}

@@ -15,6 +15,7 @@ import './ParentDashboard.css'
 import CalmOverlay   from './CalmOverlay'
 import PinScreen     from '../dashboard/PinScreen'
 import WeeklyCard    from '../dashboard/WeeklyCard'
+import PrivacyPolicy from '../onboarding/PrivacyPolicy'
 import CulturalProgressExtractor from '../../services/CulturalProgressExtractor'
 import GameStateManager          from '../../services/GameStateManager'
 import {
@@ -273,6 +274,7 @@ export default function ParentDashboard({ onBack }) {
   // ── Analytics tab state ───────────────────────────────────────
   const [showWeeklyCard, setShowWeeklyCard] = useState(false)
   const [extraUnlocked,  setExtraUnlocked]  = useState(isExtraTimeUnlocked())
+  const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false)
 
   // ── Load profile + symbol data on mount ──────────────────────
   useEffect(() => {
@@ -354,12 +356,57 @@ export default function ParentDashboard({ onBack }) {
     setExtraUnlocked(true)
   }
 
+  const handleDeleteAllData = () => {
+    const confirmed = window.confirm(
+      'Delete all saved child profiles, progress, parent consent, and dashboard data from this device?'
+    )
+
+    if (!confirmed) return
+
+    try {
+      const profilesStore = GameStateManager.getProfiles?.()
+      const profileIds = Object.keys(profilesStore?.profiles || {})
+
+      profileIds.forEach((profileId) => {
+        localStorage.removeItem(`${profileId}_gameProgress`)
+      })
+
+      Object.keys(localStorage).forEach((key) => {
+        if (
+          key.startsWith('temp_session_') ||
+          key.startsWith('replay_session_') ||
+          key.endsWith('_state') ||
+          key === 'gameProfiles' ||
+          key === 'activeProfileId' ||
+          key === 'parentConsent' ||
+          key === 'childName' ||
+          key === 'childBirthday' ||
+          key === 'gmb_parent_pin' ||
+          key === 'gmb_pin_set' ||
+          key.startsWith('gmb_') ||
+          key.startsWith('parent_')
+        ) {
+          localStorage.removeItem(key)
+        }
+      })
+
+      window.location.reload()
+    } catch (error) {
+      console.error('Failed to delete local data:', error)
+      window.alert('Something went wrong while deleting local data.')
+    }
+  }
+
   const sym  = selectedSymbol || currentSymbol || GETTING_STARTED
   const name = childName || 'Your child'
 
   // ── PIN gate ──────────────────────────────────────────────────
   if (!unlocked) {
     return <PinScreen onSuccess={() => setUnlocked(true)} />
+  }
+
+  if (showPrivacyPolicy) {
+    return <PrivacyPolicy onBack={() => setShowPrivacyPolicy(false)} />
   }
 
   // ── Tabs config ───────────────────────────────────────────────
@@ -1107,6 +1154,19 @@ export default function ParentDashboard({ onBack }) {
                 }
               }}
               actionLabel="Clear"
+              danger
+            />
+            <SettingRow
+              label="Privacy Policy"
+              sublabel="Review what this local-only version stores on this device"
+              action={() => setShowPrivacyPolicy(true)}
+              actionLabel="Open"
+            />
+            <SettingRow
+              label="Delete all data"
+              sublabel="Remove profiles, progress, consent, and parent dashboard data from this device"
+              action={handleDeleteAllData}
+              actionLabel="Delete"
               danger
             />
           </AnalyticsWrap>

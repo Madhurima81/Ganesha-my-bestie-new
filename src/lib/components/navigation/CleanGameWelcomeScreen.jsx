@@ -421,12 +421,15 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
       const items = allChants.map(c => ({
         id: c.id, name: c.displayName, image: c.image, description: "Tap to listen to the sacred chant 🎵", audio: c.audio
       }));
+
+      const directChantId = options?.directChantId;
       
       setPopupData({
         title: 'Sanskrit Chants',
         items: items,
         completedItems: (culturalProgress.chantedShlokas || []).map(c => c.chantId), 
-        type: 'chants'
+        type: 'chants',
+        directItemId: directChantId || null
       });
     }
     
@@ -574,7 +577,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
     return states;
   };
 
-  const getOuterPetalStatesFromKeys = (symbolKeys) => {
+  const getMiddlePetalStatesFromKeys = (symbolKeys) => {
     const states = { 1: 'dormant', 2: 'dormant', 3: 'dormant', 4: 'dormant', 5: 'dormant', 6: 'dormant', 7: 'dormant', 8: 'dormant' };
     const map = { mooshika: 1, modak: 2, belly: 3, lotus: 4, trunk: 5, ear: 6, eyes: 7, tusk: 8 };
     (symbolKeys || []).forEach((key) => {
@@ -599,39 +602,34 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
     8: 'tusk',
   };
 
+  const petalToChant = {
+    1: 'vakratunda-chant',
+    2: 'mahakaya-chant',
+    3: 'suryakoti-chant',
+    4: 'samaprabha-chant',
+    5: 'nirvighnam-chant',
+    6: 'kurumedeva-chant',
+    7: 'sarvakaryeshu-chant',
+    8: 'sarvada-chant',
+  };
+
   const handleMandalaPetalTap = (ring, petalId) => {
     if (ring === 'outer') {
+      const chantId = petalToChant[petalId];
+      if (chantId) {
+        handleProgressBoxClick('chants', { directChantId: chantId });
+      } else {
+        handleProgressBoxClick('chants');
+      }
+    }
+    else if (ring === 'middle') {
       const symbolId = petalToSymbol[petalId];
-      if (symbolId && completedSymbolKeys.includes(symbolId)) {
+      if (symbolId) {
         handleProgressBoxClick('symbols', { directSymbolId: symbolId });
       } else {
         handleProgressBoxClick('symbols');
       }
     }
-    else if (ring === 'middle') handleProgressBoxClick('meanings');
-    else handleProgressBoxClick('chants');
-  };
-
-  const symbolIconsByPetal = {
-    1: symbolCardContent.mooshika?.icon || symbolCardContent.mooshika?.image,
-    2: symbolCardContent.modak?.icon || symbolCardContent.modak?.image,
-    3: symbolCardContent.belly?.icon || symbolCardContent.belly?.image,
-    4: symbolCardContent.lotus?.icon || symbolCardContent.lotus?.image,
-    5: symbolCardContent.trunk?.icon || symbolCardContent.trunk?.image,
-    6: symbolCardContent.ear?.icon || symbolCardContent.ear?.image,
-    7: symbolCardContent.eyes?.icon || symbolCardContent.eyes?.image,
-    8: symbolCardContent.tusk?.icon || symbolCardContent.tusk?.image,
-  };
-
-  const symbolIconsTinted = {
-    1: '/images/icons/symbol-mooshika-tint.png',
-    2: '/images/icons/symbol-modak-tint.png',
-    3: '/images/icons/symbol-belly-tint.png',
-    4: '/images/icons/symbol-lotus-tint.png',
-    5: '/images/icons/symbol-trunk-tint.png',
-    6: '/images/icons/symbol-ear-tint.png',
-    7: '/images/icons/symbol-eye-tint.png',
-    8: '/images/icons/symbol-tusk-tint.png',
   };
 
   const welcomeMsg = currentProfile ? getWelcomeMessage() : null;
@@ -686,10 +684,8 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
               showAsOverlay={false}
               allowTapToSkip={false}
               message=""
-              petalStates={getOuterPetalStatesFromKeys(completedSymbolKeys)}
-              middlePetalStates={buildPetalStates(culturalProgress.meanings, 'activated')}
-              innerPetalStates={buildPetalStates(culturalProgress.chants, 'activated')}
-              symbolIcons={symbolIconsTinted}
+              shlokaPetalStates={buildPetalStates(culturalProgress.chants, 'activated')}
+              symbolPetalStates={getMiddlePetalStatesFromKeys(completedSymbolKeys)}
               onPetalClick={handleMandalaPetalTap}
               avatar={
                 <img
