@@ -173,6 +173,30 @@ export const VOICE_SCRIPTS = {
       welcome: {
         text: "Let's see who needs help. Look carefully."
       },
+      scene13_puzzle: {
+        text: "The piece wouldn't fit."
+      },
+      scene13_puzzle_after: {
+        text: "So she twisted it a new way!"
+      },
+      scene13_sports: {
+        text: "He wanted to give up."
+      },
+      scene13_sports_after: {
+        text: "But he stayed strong and kept trying!"
+      },
+      scene13_bike: {
+        text: "Both wanted the bike."
+      },
+      scene13_bike_after: {
+        text: "So they took fair turns!"
+      },
+      scene13_grandma: {
+        text: "Grandma's bags were heavy."
+      },
+      scene13_grandma_after: {
+        text: "So he ran to help!"
+      },
       scene13SarvaHint: {
         text: "Which power would help here? Tap a power. Nice choice. The problem is solved. Let's help another friend."
       },

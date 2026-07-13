@@ -23,6 +23,7 @@ export default function useRepeatedHintCycle({
   const [hintLevel, setHintLevel] = useState(0);
   const [pulseTick, setPulseTick] = useState(0);
   const timersRef = useRef([]);
+  const hasScheduledRef = useRef(false);
 
   const clearTimers = useCallback(() => {
     timersRef.current.forEach((id) => window.clearTimeout(id));
@@ -31,10 +32,13 @@ export default function useRepeatedHintCycle({
 
   const schedule = useCallback(() => {
     clearTimers();
+    hasScheduledRef.current = false;
     setHintLevel(0);
     setPulseTick(0);
 
     if (!enabled || !stageKey) return;
+    if (typeof document !== 'undefined' && document.hidden) return;
+    hasScheduledRef.current = true;
 
     const start = window.setTimeout(() => {
       setHintLevel(1);
@@ -81,6 +85,25 @@ export default function useRepeatedHintCycle({
     schedule();
     return clearTimers;
   }, [clearTimers, schedule, stageKey]);
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return undefined;
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        clearTimers();
+        hasScheduledRef.current = false;
+        return;
+      }
+
+      if (enabled && stageKey && !hasScheduledRef.current) {
+        schedule();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [clearTimers, enabled, schedule, stageKey]);
 
   useEffect(() => () => clearTimers(), [clearTimers]);
 
