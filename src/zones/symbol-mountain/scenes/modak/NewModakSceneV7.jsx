@@ -610,6 +610,7 @@ const NewModakSceneMVPContent = ({
   const phase1IdleVoPlayedRef = useRef(false);
   const modakIdleVoPlayedRef = useRef(false);
   const feedIdleVoPlayedRef = useRef(false);
+  const feedInFlightRef = useRef(false);
   const lastIdleInteractionAtRef = useRef(Date.now());
   const IDLE_HINT_L1_MS = 10000;
   const IDLE_HINT_L2_MS = 18000;
@@ -1082,6 +1083,7 @@ const NewModakSceneMVPContent = ({
     if (!idleHintsEnabled) return;
     setShowIdleGestureHint(false);
     setIdleHintLevel(0);
+    feedIdleVoPlayedRef.current = false;
     lastIdleInteractionAtRef.current = Date.now();
   }, [hintResetKey, idleHintsEnabled]);
 
@@ -1542,6 +1544,11 @@ const NewModakSceneMVPContent = ({
 
     if (!sceneState.rockVisible || sceneState.rockFeedCount >= 3) return;
     if (!data || data.type !== 'basket-modak') return;
+    if (feedInFlightRef.current) return;
+    feedInFlightRef.current = true;
+    safeSetTimeout(() => {
+      feedInFlightRef.current = false;
+    }, 400);
 
     const modakIndex = data.index;
     recordInteraction();
