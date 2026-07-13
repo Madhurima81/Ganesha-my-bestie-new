@@ -1025,6 +1025,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
   const prevGaneshaPosRef = useRef(null);
   const walkTimerRef = useRef(null);
   const parentHoldTimerRef = useRef(null);
+  const parentHoldTriggeredRef = useRef(false);
   const isMuted = !isAudioOn;
 
   useEffect(() => {
@@ -1177,13 +1178,19 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
 
   const triggerParentCorner = (e) => {
     e?.stopPropagation?.();
+    if (parentHoldTriggeredRef.current) {
+      parentHoldTriggeredRef.current = false;
+      return;
+    }
     onParentCorner?.();
   };
 
   const startParentHold = (e) => {
     e.stopPropagation();
+    parentHoldTriggeredRef.current = false;
     if (parentHoldTimerRef.current) clearTimeout(parentHoldTimerRef.current);
     parentHoldTimerRef.current = setTimeout(() => {
+      parentHoldTriggeredRef.current = true;
       setMapDebugMode((prev) => !prev);
       parentHoldTimerRef.current = null;
     }, 900);
@@ -1922,11 +1929,11 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
             <span className="profile-pill-name">{toTitleCase(activeProfile.name || '')}</span>
             <span
               className="parent-icon"
-              title="Parent Corner (hold)"
-              aria-label="Open Parent Corner (hold)"
+              title="Open Parent Corner"
+              aria-label="Open Parent Corner"
               role="button"
               tabIndex={0}
-              onClick={(e) => e.stopPropagation()}
+              onClick={triggerParentCorner}
               onPointerDown={startParentHold}
               onPointerUp={endParentHold}
               onPointerLeave={endParentHold}
