@@ -35,8 +35,7 @@
   animation: modalFadeIn 0.4s ease-out;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 .game-modal-overlay::before {
@@ -61,13 +60,13 @@
   position: relative;
   width: 95%;
   max-width: 1700px;
-  min-height: min(80dvh, 900px);
+  min-height: min(74dvh, 820px);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 26px;
   padding: 0 60px;
-  transform: translateY(-20px);
+  transform: translateY(-42px);
 }
 
 /* Character (Left Side) */
@@ -103,11 +102,11 @@
   flex: 0 0 45%;
   max-width: 560px;
   min-height: auto;
-  max-height: min(70dvh, 560px);
+  max-height: min(66dvh, 520px);
   background: url('../../../assets/cards/openingmodal.svg') no-repeat center / 100% 100%;
   filter: drop-shadow(0 10px 24px rgba(40, 20, 80, 0.12));
   aspect-ratio: 210 / 189;
-  padding: clamp(56px, 7.5%, 76px) clamp(40px, 6%, 64px) clamp(60px, 8%, 80px);
+  padding: clamp(52px, 7%, 70px) clamp(40px, 6%, 64px) clamp(52px, 7%, 68px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -154,7 +153,7 @@
   display: flex;
   justify-content: center;
   gap: 28px;
-  margin: 26px 0 38px;
+  margin: 22px 0 28px;
   width: 100%;
   flex-wrap: wrap;
   position: relative;
@@ -246,7 +245,7 @@
 .profile-cta-btn-unified.opening-modal-cta {
   min-height: 52px;
   padding: 14px 30px;
-  margin-top: 4px;
+  margin-top: 0;
 }
 
 .profile-cta-btn-unified.opening-modal-cta .profile-cta-btn-text {
@@ -345,9 +344,10 @@
   .game-modal-content {
     flex-direction: column;
     height: auto;
-    min-height: 80dvh;
+    min-height: 74dvh;
     padding: 20px;
     gap: 0;
+    transform: translateY(-18px);
   }
 
   .game-modal-character {
@@ -363,7 +363,7 @@
   }
 
   .game-modal-card {
-    padding: 64px 36px 58px;
+    padding: 58px 36px 50px;
     width: 100%;
     z-index: 1;
     flex: 0 0 auto;
