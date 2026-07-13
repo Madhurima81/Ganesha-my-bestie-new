@@ -176,8 +176,6 @@ const VakratundaGroveSimplified = ({
           stars: 0,
           completed: false,
           progress: { percentage: 0, starsEarned: 0, completed: false },
-          vakratundaGameState: null,
-          mahakayaGameState: null,
         }}
       >
         {({ sceneState, sceneActions, isReload }) => (
@@ -243,6 +241,7 @@ const VakratundaGroveContent = ({
 
   const [savedRecordings, setSavedRecordings] = useState({});
   const [showAppDiscovery, setShowAppDiscovery] = useState(false);
+  const hasRestoredRef = useRef(false);
   const activeProfile = GameStateManager.getActiveProfile();
   const profileName = activeProfile?.name || 'explorer';
   const isFinalCelebrationActive =
@@ -485,6 +484,32 @@ const VakratundaGroveContent = ({
     };
   };
 
+  const persistCompletion = useCallback(() => {
+    const profileId = localStorage.getItem('activeProfileId');
+    if (!profileId) return;
+
+    try {
+      GameStateManager.saveGameState(zoneId, sceneId, {
+        completed: true,
+        stars: 5,
+        phase: PHASES.COMPLETE,
+        words: sceneState.learnedWords || {},
+        syllables: sceneState.learnedSyllables || {},
+        apps: sceneState.unlockedApps || {},
+        chantedVerses: sceneState.chantedVerses || {},
+        timestamp: Date.now()
+      });
+      ProgressManager.updateSceneCompletion(profileId, zoneId, sceneId, {
+        completed: true,
+        stars: 5,
+      });
+      localStorage.removeItem(`temp_session_${profileId}_${zoneId}_${sceneId}`);
+      SimpleSceneManager.clearCurrentScene();
+    } catch (error) {
+      console.error('Error saving game state:', error);
+    }
+  }, [sceneId, sceneState.chantedVerses, sceneState.learnedSyllables, sceneState.learnedWords, sceneState.unlockedApps, zoneId]);
+
   // Run game-phase advancement after user taps card and it finishes flying
   // Rule: never update unlockedApps before ~950ms after onComplete —
   // updating it causes AppSidebar to re-render which strips the bloom
@@ -526,15 +551,39 @@ const VakratundaGroveContent = ({
     }
   };
 
+  useEffect(() => {
+    if (hasRestoredRef.current || !sceneState) return;
+    hasRestoredRef.current = true;
+
+    const restoreReveal = (word) => {
+      safeSetTimeout(() => {
+        const discoveryData = getDiscoveryContent(zoneId, sceneId, word);
+        playChime();
+        setShowSparkle(null);
+        setRevealConfig({
+          symbolId: word,
+          symbolImage: powerConfig[word].image,
+          symbolName: discoveryData?.title || powerConfig[word].name,
+          affirmation: discoveryData?.affirmation || powerConfig[word].affirmation,
+          sidebarTarget: getSidebarTarget(word)
+        });
+      }, 1200);
+    };
+
+    if ([PHASES.VAKRATUNDA_COMPLETE, PHASES.VAKRATUNDA_POWER].includes(sceneState.phase)) {
+      restoreReveal('vakratunda');
+      return;
+    }
+
+    if ([PHASES.MAHAKAYA_COMPLETE, PHASES.MAHAKAYA_POWER].includes(sceneState.phase)) {
+      restoreReveal('mahakaya');
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   // -- Home button: stop everything ? go to main map ----------------------
   const handleHomeToMainMap = () => {
     stopAllVoice();
     stopIdleTimer();
-    const activeProfileId = localStorage.getItem('activeProfileId');
-    if (activeProfileId) {
-      localStorage.removeItem(`temp_session_${activeProfileId}_${zoneId}_${sceneId}`);
-    }
-    SimpleSceneManager.clearCurrentScene();
     onNavigate?.('direct-to-map');
   };
 
@@ -605,15 +654,6 @@ const VakratundaGroveContent = ({
 
   // On Continue (isReload=true): clear saved mini-game states so games restart fresh
   // instead of resuming a potentially frozen mid-game state
-  useEffect(() => {
-    if (isReload) {
-      sceneActions.updateState({
-        vakratundaGameState: null,
-        mahakayaGameState: null,
-      });
-    }
-  }, []); // intentionally runs only on mount
-
   // Memory game completion
   const handlePhaseComplete = (word) => {
     console.log(`${word} learned!`);
@@ -698,7 +738,6 @@ const VakratundaGroveContent = ({
       // Go straight to Mahakaya Game
       sceneActions.updateState({
         phase: PHASES.MAHAKAYA_GAME,
-        mahakayaGameState: null // Ensure Mahakaya always starts from first syllable
       });
     } else {
       console.log('?? Showing App Discovery screen');
@@ -720,12 +759,22 @@ const VakratundaGroveContent = ({
     sceneActions.updateState({
       phase: PHASES.COMPLETE,
       stars: 5,
-      completed: true,
-      progress: { percentage: 100, starsEarned: 5, completed: true }
+      progress: { percentage: 100, starsEarned: 5, completed: false }
     });
 
     setShowSparkle('final-fireworks');
   };
+
+  useEffect(() => {
+    if (
+      sceneState.phase === PHASES.COMPLETE &&
+      !showSparkle &&
+      !showMandala &&
+      !showSceneCompletion
+    ) {
+      setShowMandala(true);
+    }
+  }, [sceneState.phase, showMandala, showSparkle, showSceneCompletion]);
 
   const handleElephantMicroWin = useCallback(() => {
     triggerMiniGesture('thumbsup', 'item', 1200);
@@ -742,7 +791,6 @@ const VakratundaGroveContent = ({
       // Reset vakratunda game state and go back to game phase
       sceneActions.updateState({
         phase: PHASES.VAKRATUNDA_GAME,
-        vakratundaGameState: null, // Clear saved state to start fresh
         learnedWords: { ...sceneState.learnedWords, vakratunda: false }
       });
     } else if (currentWord === 'mahakaya') {
@@ -750,7 +798,6 @@ const VakratundaGroveContent = ({
       // Reset mahakaya game state and go back to game phase
       sceneActions.updateState({
         phase: PHASES.MAHAKAYA_GAME,
-        mahakayaGameState: null, // Clear saved state to start fresh
         learnedWords: { ...sceneState.learnedWords, mahakaya: false }
       });
     }
@@ -759,14 +806,6 @@ const VakratundaGroveContent = ({
   };
 
   // Unified State Saver
-  const handleSaveComponentState = (componentType, componentState) => {
-    const updatedState = {
-      ...(componentType === 'vakratundaGame' && { vakratundaGameState: componentState }),
-      ...(componentType === 'mahakayaGame' && { mahakayaGameState: componentState })
-    };
-    sceneActions.updateState(updatedState);
-  };
-
   if (!sceneState) return <div className="loading">Loading...</div>;
 
   return (
@@ -779,7 +818,7 @@ const VakratundaGroveContent = ({
           <VOReplayButton onReplay={replayCurrentVoice} disabled={!isAudioOn} />
           <ResumeCountdown value={countdownValue} />
           <div className="river-background" style={{ backgroundImage: `url(${riverBackground})` }}>
-            {!showSceneCompletion && (
+            <div style={{ display: showSceneCompletion ? 'none' : 'contents' }}>
             <>
 
             <div className="vakratunda-scene-banyan">
@@ -1048,31 +1087,6 @@ const VakratundaGroveContent = ({
                   duration={3500}
                   onComplete={() => {
                     setShowSparkle(null);
-
-                    // Save completion data
-                    const profileId = localStorage.getItem('activeProfileId');
-                    if (profileId) {
-                      try {
-                        GameStateManager.saveGameState(zoneId, sceneId, {
-                          completed: true,
-                          stars: 5,
-                          phase: PHASES.COMPLETE,
-                          words: sceneState.learnedWords || {},
-                          syllables: sceneState.learnedSyllables || {},
-                          apps: sceneState.unlockedApps || {},
-                          chantedVerses: sceneState.chantedVerses || {},
-                          timestamp: Date.now()
-                        });
-                        ProgressManager.updateSceneCompletion(profileId, zoneId, sceneId, {
-                          completed: true,
-                          stars: 5,
-                        });
-                        localStorage.removeItem(`temp_session_${profileId}_${zoneId}_${sceneId}`);
-                        SimpleSceneManager.clearCurrentScene();
-                      } catch (error) {
-                        console.error('Error saving game state:', error);
-                      }
-                    }
                     setShowMandala(true);
                   }}
                 />
@@ -1088,13 +1102,15 @@ const VakratundaGroveContent = ({
                 highlightPetals={[2]}
                 message="These meanings are growing inside you"
                 onClose={() => {
+                  sceneActions.updateState({ completed: true });
+                  persistCompletion();
                   setShowMandala(false);
                   setShowSceneCompletion(true);
                 }}
               />
             )}
             </>
-            )}
+            </div>
             <SceneCompletionCelebration
               show={showSceneCompletion && !showMandala}
               zoneId={zoneId}
