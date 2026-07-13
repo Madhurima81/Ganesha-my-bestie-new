@@ -1,16 +1,28 @@
 /* ============================================================
-   HomeButton — lavender circle style matching profile chip
+   HomeButton - lavender circle style matching profile chip
    ============================================================ */
 
-.home-button {
+.home-button-wrapper {
   position: fixed;
   z-index: 9999;
+}
 
-  /* Tap target: 52–64 px */
-  width:  clamp(52px, 5.5vw, 68px);
+.home-button-wrapper--top-left {
+  top: clamp(12px, 1.5vw, 24px);
+  left: clamp(12px, 1.5vw, 24px);
+}
+
+.home-button-wrapper--top-right {
+  top: clamp(12px, 1.5vw, 24px);
+  right: clamp(12px, 1.5vw, 24px);
+}
+
+.home-button {
+  /* Tap target: 52-64 px */
+  width: clamp(52px, 5.5vw, 68px);
   height: clamp(52px, 5.5vw, 68px);
 
-  /* Lavender circle — same as profile chip */
+  /* Lavender circle - same as profile chip */
   border-radius: 50%;
   border: 2px solid rgba(160, 120, 220, 0.4);
   background: rgba(255, 255, 255, 0.92);
@@ -32,23 +44,11 @@
   transition: transform 0.16s ease-out, box-shadow 0.16s ease-out, filter 0.16s ease-out;
 }
 
-/* ---- Positions ---- */
-.home-button--top-left {
-  top:  clamp(12px, 1.5vw, 24px);
-  left: clamp(12px, 1.5vw, 24px);
-}
-.home-button--top-right {
-  top:   clamp(12px, 1.5vw, 24px);
-  right: clamp(12px, 1.5vw, 24px);
-}
-
-/* ---- Hover ---- */
 .home-button:hover {
   transform: scale(1.06);
   box-shadow: 0 4px 12px rgba(140, 120, 180, 0.22);
 }
 
-/* ---- Press ---- */
 .home-button:active {
   transform: scale(0.95);
   box-shadow: 0 1px 4px rgba(140, 120, 180, 0.12);
@@ -74,37 +74,76 @@
   }
 }
 
-/* ---- ARMED state: first tap, waiting for confirm ---- */
-.home-button--armed {
-  box-shadow:
-    0 3px 8px rgba(140, 120, 180, 0.18),
-    0 0 0 4px rgba(160, 120, 220, 0.55);
-  animation: homeButtonPulse 1.2s ease-in-out infinite;
-}
-
-@keyframes homeButtonPulse {
-  0%, 100% {
-    box-shadow:
-      0 3px 8px rgba(140, 120, 180, 0.18),
-      0 0 0 4px rgba(160, 120, 220, 0.55);
-  }
-  50% {
-    box-shadow:
-      0 3px 10px rgba(140, 120, 180, 0.22),
-      0 0 0 7px rgba(160, 120, 220, 0.25);
-  }
-}
-
-/* ---- Icon: ~36–44 px inside the bubble ---- */
 .home-button__icon {
-  width:  clamp(36px, 3.8vw, 48px);
+  width: clamp(36px, 3.8vw, 48px);
   height: clamp(36px, 3.8vw, 48px);
   display: block;
   pointer-events: none;
 }
 
-/* iPad sizing: keep nav controls compact (52-60px range) */
+.home-tooltip {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  background: #6b4fa0;
+  color: #fff;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: clamp(12px, 1.6vmin, 15px);
+  padding: 6px 14px;
+  border-radius: 999px;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(107, 79, 160, 0.35);
+  pointer-events: none;
+  z-index: 50;
+  animation: tooltipPop 0.25s ease-out, tooltipWiggle 0.5s ease-in-out 0.25s;
+}
+
+.home-tooltip::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: 16px;
+  width: 10px;
+  height: 10px;
+  background: #6b4fa0;
+  transform: rotate(45deg);
+}
+
+@keyframes tooltipPop {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes tooltipWiggle {
+  0%, 100% {
+    transform: rotate(0);
+  }
+  25% {
+    transform: rotate(-2deg);
+  }
+  75% {
+    transform: rotate(2deg);
+  }
+}
+
 @media (min-width: 768px) and (max-width: 1366px) {
+  .home-button-wrapper--top-left {
+    top: 10px;
+    left: 10px;
+  }
+
+  .home-button-wrapper--top-right {
+    top: 10px;
+    right: 10px;
+  }
+
   .home-button {
     width: 36px;
     height: 36px;
@@ -115,10 +154,4 @@
     width: 24px;
     height: 24px;
   }
-
-  .home-button--top-left {
-    top: 10px;
-    left: 10px;
-  }
 }
-

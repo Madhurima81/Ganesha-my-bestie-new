@@ -1,53 +1,75 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './HomeButton.css';
 
 /**
- * HomeButton — 2-tap-to-confirm pattern (Sago Mini style).
- * Tap 1: arms the button (ring animates in, ~2s window).
+ * HomeButton - 2-tap-to-confirm pattern.
+ * Tap 1: arms the button and shows a tooltip for a short confirm window.
  * Tap 2: actually navigates home.
- * Prevents accidental exits without needing a pause/resume modal.
  */
 const HomeButton = ({
   onNavigate,
   onPrepareNavigate,
   position = 'top-left',
   transitionMs = 130,
-  armWindowMs = 2000
+  armWindowMs = 2500
 }) => {
   const [isPressing, setIsPressing] = useState(false);
   const [isArmed, setIsArmed] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
   const disarmTimer = useRef(null);
+  const pressTimer = useRef(null);
 
-  // Cleanup timer on unmount
+  const clearDisarmTimer = () => {
+    if (disarmTimer.current) {
+      clearTimeout(disarmTimer.current);
+      disarmTimer.current = null;
+    }
+  };
+
+  const clearPressTimer = () => {
+    if (pressTimer.current) {
+      clearTimeout(pressTimer.current);
+      pressTimer.current = null;
+    }
+  };
+
+  const resetArmedState = () => {
+    clearDisarmTimer();
+    setIsArmed(false);
+    setShowTooltip(false);
+  };
+
   useEffect(() => {
     return () => {
-      if (disarmTimer.current) clearTimeout(disarmTimer.current);
+      clearDisarmTimer();
+      clearPressTimer();
     };
   }, []);
 
   const handleHome = () => {
     if (isNavigating) return;
 
-    // First tap → arm the button
     if (!isArmed) {
+      clearDisarmTimer();
       setIsArmed(true);
+      setShowTooltip(true);
       setIsPressing(true);
 
-      // Brief squash feedback
-      setTimeout(() => setIsPressing(false), transitionMs + 120);
+      clearPressTimer();
+      pressTimer.current = setTimeout(() => {
+        setIsPressing(false);
+        pressTimer.current = null;
+      }, transitionMs + 120);
 
-      // Auto-disarm after 2s if no second tap
       disarmTimer.current = setTimeout(() => {
-        setIsArmed(false);
+        resetArmedState();
       }, armWindowMs);
 
       return;
     }
 
-    // Second tap → actually navigate
-    if (disarmTimer.current) clearTimeout(disarmTimer.current);
-
+    resetArmedState();
     setIsNavigating(true);
     setIsPressing(true);
     onPrepareNavigate?.('zones');
@@ -58,23 +80,30 @@ const HomeButton = ({
 
     setTimeout(() => {
       setIsPressing(false);
-      setIsArmed(false);
       setIsNavigating(false);
     }, transitionMs + 120);
   };
 
   return (
-    <button
-      className={`home-button home-button--${position} ${isPressing ? 'home-button--pressing' : ''} ${isArmed ? 'home-button--armed' : ''}`}
-      onClick={handleHome}
-      aria-label={isArmed ? 'Tap again to go home' : 'Go back to zone'}
-    >
-      <img
-        src="/images/icons/icon-home.svg"
-        alt=""
-        className="home-button__icon"
-      />
-    </button>
+    <div className={`home-button-wrapper home-button-wrapper--${position}`}>
+      <button
+        className={`home-button ${isPressing ? 'home-button--pressing' : ''}`}
+        onClick={handleHome}
+        aria-label={isArmed ? 'Tap again to go home' : 'Go back to zone'}
+      >
+        <img
+          src="/images/icons/icon-home.svg"
+          alt=""
+          className="home-button__icon"
+        />
+      </button>
+
+      {showTooltip && (
+        <div className="home-tooltip" aria-hidden="true">
+          Tap again to go home
+        </div>
+      )}
+    </div>
   );
 };
 

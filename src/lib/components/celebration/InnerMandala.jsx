@@ -27,6 +27,28 @@ const MIDDLE_PETALS = [
   { id: 8, d: 'm 6.5668825,7.8167606 c 0,0 0.1046815,-0.7257047 -0.3077671,-1.2199369 C 5.8466668,6.1025915 5.0979431,6.2561412 5.0979431,6.2561412 c 0,0 -0.091946,0.7729945 0.2888916,1.1996939 0.3808372,0.4266994 1.1800478,0.3609255 1.1800478,0.3609255 z' },
 ];
 
+const OUTER_PETAL_SPARKLES = {
+  1: [{ x: '31%', y: '23%' }, { x: '36%', y: '18%' }, { x: '28%', y: '29%' }],
+  2: [{ x: '48%', y: '15%' }, { x: '55%', y: '14%' }, { x: '42%', y: '18%' }],
+  3: [{ x: '67%', y: '22%' }, { x: '73%', y: '27%' }, { x: '61%', y: '18%' }],
+  4: [{ x: '78%', y: '40%' }, { x: '82%', y: '46%' }, { x: '75%', y: '33%' }],
+  5: [{ x: '67%', y: '66%' }, { x: '73%', y: '72%' }, { x: '61%', y: '61%' }],
+  6: [{ x: '47%', y: '77%' }, { x: '54%', y: '81%' }, { x: '40%', y: '74%' }],
+  7: [{ x: '28%', y: '66%' }, { x: '22%', y: '72%' }, { x: '33%', y: '61%' }],
+  8: [{ x: '18%', y: '40%' }, { x: '14%', y: '47%' }, { x: '21%', y: '34%' }],
+};
+
+const OUTER_PETAL_TOKEN_POSITIONS = {
+  1: { x: '41%', y: '35%' },
+  2: { x: '50%', y: '31%' },
+  3: { x: '59%', y: '35%' },
+  4: { x: '63%', y: '43%' },
+  5: { x: '59%', y: '52%' },
+  6: { x: '50%', y: '56%' },
+  7: { x: '41%', y: '52%' },
+  8: { x: '37%', y: '43%' },
+};
+
 const isActive = (state) =>
   ['awakened', 'energized', 'bloomed', 'activated', 'glowing'].includes(state);
 
@@ -46,10 +68,19 @@ export default function InnerMandala({
   allowTapToSkip = true,
   onPetalClick,
   avatar = null,
+  justEarnedPetal = null,
+  justEarnedPetals = null,
+  earnedSymbols = [],
 }) {
   const [mounted, setMounted] = useState(false);
+  const [earnedShownIds, setEarnedShownIds] = useState([]);
   const closedRef = useRef(false);
   const interactive = typeof onPetalClick === 'function';
+  const earnedPetals = Array.isArray(justEarnedPetals)
+    ? justEarnedPetals
+    : justEarnedPetal
+      ? [justEarnedPetal]
+      : [];
 
   const handleDismiss = useCallback(() => {
     if (!onClose || closedRef.current) return;
@@ -83,10 +114,23 @@ export default function InnerMandala({
   }, []);
 
   useEffect(() => {
-    try {
-      playCardRevealChime(0.42);
-    } catch {}
-  }, []);
+    if (!earnedPetals.length) return undefined;
+    setEarnedShownIds([]);
+    const timers = [];
+
+    earnedPetals.forEach((earnedPetal, index) => {
+      const t = setTimeout(() => {
+        setEarnedShownIds((prev) => {
+          const key = `${earnedPetal.ring}-${earnedPetal.id}`;
+          return prev.includes(key) ? prev : [...prev, key];
+        });
+        try { playCardRevealChime(index === 0 ? 0.42 : 0.34); } catch {}
+      }, 1500 + (index * 950));
+      timers.push(t);
+    });
+
+    return () => timers.forEach(clearTimeout);
+  }, [earnedPetals.length, JSON.stringify(earnedPetals)]);
 
   useEffect(() => {
     if (!showAsOverlay || !onClose || interactive) return undefined;
@@ -95,6 +139,9 @@ export default function InnerMandala({
   }, [autoCloseMs, handleDismiss, interactive, onClose, showAsOverlay]);
 
   const currentZoneSet = new Set(highlightPetals);
+  const earnedPetalKeySet = new Set(
+    earnedPetals.map((earnedPetal) => `${earnedPetal?.ring}-${earnedPetal?.id}`)
+  );
 
   return (
     <div
@@ -111,14 +158,20 @@ export default function InnerMandala({
           <g id="outer-petals" transform="matrix(1.7729952,0,0,1.7729952,-4.660599,-6.79381)">
             {OUTER_PETALS.map((petal) => {
               const active = isActive(shlokaPetalStates[petal.id]);
-              const isCurrentZone = currentZoneSet.has(petal.id);
-              const stateClass = isCurrentZone ? 'current-zone' : active ? 'completed' : 'locked';
+              const justEarnedKey = `outer-${petal.id}`;
+              const isJustEarnedTarget = earnedPetalKeySet.has(justEarnedKey);
+              const justEarned =
+                earnedShownIds.includes(justEarnedKey) &&
+                isJustEarnedTarget;
+              const isCurrentZone = currentZoneSet.has(petal.id) && !isJustEarnedTarget;
+              const activeFinal = active || justEarned;
+              const stateClass = isCurrentZone ? 'current-zone' : activeFinal ? 'completed' : 'locked';
               return (
                 <path
                   key={`outer-${petal.id}`}
                   id={`outer-petal-${petal.id}`}
                   d={petal.d}
-                  className={`mandala-petal outer-petal outer-petal-${petal.id} ${stateClass}`}
+                  className={`mandala-petal outer-petal outer-petal-${petal.id} ${stateClass} ${justEarned ? 'just-earned' : ''}`}
                   onClick={interactive ? handlePetalTap('outer', petal.id) : undefined}
                 />
               );
@@ -133,15 +186,21 @@ export default function InnerMandala({
 
           {/* MIDDLE ring: 8 symbols */}
           <g id="middle-petals" transform="matrix(1.5998576,0,0,1.5998576,-3.4813658,-5.4485889)">
-            {MIDDLE_PETALS.map((petal) => (
-              <path
-                key={`middle-${petal.id}`}
-                id={`middle-petal-${petal.id}`}
-                d={petal.d}
-                className={`mandala-petal middle-petal middle-petal-${petal.id} ${isActive(symbolPetalStates[petal.id]) ? 'activated' : 'locked'}`}
-                onClick={interactive ? handlePetalTap('middle', petal.id) : undefined}
-              />
-            ))}
+            {MIDDLE_PETALS.map((petal) => {
+              const justEarnedKey = `middle-${petal.id}`;
+              const justEarnedM =
+                earnedShownIds.includes(justEarnedKey) &&
+                earnedPetals.some((earnedPetal) => earnedPetal?.ring === 'middle' && earnedPetal.id === petal.id);
+              return (
+                <path
+                  key={`middle-${petal.id}`}
+                  id={`middle-petal-${petal.id}`}
+                  d={petal.d}
+                  className={`mandala-petal middle-petal middle-petal-${petal.id} ${(isActive(symbolPetalStates[petal.id]) || justEarnedM) ? 'activated' : 'locked'} ${justEarnedM ? 'just-earned' : ''}`}
+                  onClick={interactive ? handlePetalTap('middle', petal.id) : undefined}
+                />
+              );
+            })}
           </g>
 
           {/* Center rings + avatar circle */}
@@ -151,6 +210,47 @@ export default function InnerMandala({
             <circle className="avatar-circle" cx="7.3145399" cy="7.22227" r="0.81771392" />
           </g>
         </svg>
+
+        <div className="mandala-token-layer" aria-hidden="true">
+          {earnedSymbols.map((symbol, index) => {
+            const petalId = symbol?.petalId;
+            const position = OUTER_PETAL_TOKEN_POSITIONS[petalId];
+            if (!symbol?.image || !position) return null;
+            return (
+              <img
+                key={`${symbol.id || `symbol-${index}`}-${petalId}`}
+                src={symbol.image}
+                alt=""
+                className="mandala-earned-symbol"
+                style={{
+                  '--target-x': position.x,
+                  '--target-y': position.y,
+                  animationDelay: `${0.95 + (index * 0.95)}s`,
+                }}
+              />
+            );
+          })}
+        </div>
+
+        <div className="mandala-sparkle-layer" aria-hidden="true">
+          {earnedShownIds
+            .filter((key) => key.startsWith('outer-'))
+            .flatMap((key, revealIndex) => {
+              const petalId = Number(key.replace('outer-', ''));
+              const sparkles = OUTER_PETAL_SPARKLES[petalId] || [];
+              return sparkles.map((sparkle, sparkleIndex) => (
+                <span
+                  key={`${key}-sparkle-${sparkleIndex}`}
+                  className="mandala-sparkle"
+                  style={{
+                    left: sparkle.x,
+                    top: sparkle.y,
+                    animationDelay: `${(revealIndex * 0.35) + (sparkleIndex * 0.18)}s`,
+                  }}
+                />
+              ));
+            })}
+        </div>
 
         {avatar && <div className="mandala-avatar-slot">{avatar}</div>}
 
