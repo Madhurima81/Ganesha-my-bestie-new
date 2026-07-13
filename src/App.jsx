@@ -347,6 +347,7 @@ const dareOpenTimerRef = useRef(null);
 const [kindnessCheckEntry, setKindnessCheckEntry] = useState(null);
 const [showIntroStory, setShowIntroStory] = useState(false);
 const [introStoryReturnView, setIntroStoryReturnView] = useState('map');
+const [showProfileWelcomeModal, setShowProfileWelcomeModal] = useState(false);
 const showEngineTest = typeof window !== 'undefined' && window.location.search.includes('engine-test');
 
 useEffect(() => {
@@ -785,6 +786,14 @@ const initializeApp = async () => {
     const root = document.getElementById('root');
     if (root) root.style.cssText = '';
   };
+
+  const openProfileWelcomeModal = () => {
+    setShowProfileWelcomeModal(true);
+  };
+
+  const closeProfileWelcomeModal = () => {
+    setShowProfileWelcomeModal(false);
+  };
   
   // Handle main welcome "New Adventure" click
   const handleStartAdventure = () => {
@@ -1047,10 +1056,14 @@ const getNextScene = (zoneId, currentSceneId) => {
     
     switch (destination) {
       case 'home':
-        SimpleSceneManager.clearCurrentScene();
-        setCurrentZone(null);
-        setCurrentScene(null);
-        setCurrentView('profile-welcome');
+        if (currentView === 'map' || currentView === 'zone-welcome') {
+          openProfileWelcomeModal();
+        } else {
+          SimpleSceneManager.clearCurrentScene();
+          setCurrentZone(null);
+          setCurrentScene(null);
+          setCurrentView('profile-welcome');
+        }
         break;
       case 'parent-dashboard':
         setCurrentView('parent-dashboard');
@@ -1069,8 +1082,12 @@ const getNextScene = (zoneId, currentSceneId) => {
         setCurrentView('zone-welcome');
         break;
       case 'profile':
+        if (currentView === 'map' || currentView === 'zone-welcome') {
+          openProfileWelcomeModal();
+        } else {
               SimpleSceneManager.clearCurrentScene(); // ✅ ADD THIS LINE
-        setCurrentView('profile-welcome');
+          setCurrentView('profile-welcome');
+        }
         break;
         case 'scene-complete-continue':
   // ✅ FINAL VERSION: Use helper function for scene progression
@@ -1330,6 +1347,7 @@ chants: result?.chants || result?.chantedVerses || {},
             onContinue={handleContinue}
             onNewGame={handleNewGame}
             onParentCorner={() => setCurrentView('parent-dashboard')}
+            displayMode="fullscreen"
           />
         </div>
       )}
@@ -1397,8 +1415,8 @@ chants: result?.chants || result?.chantedVerses || {},
         <div className="view-transition" style={{ position: 'relative' }}>
           <CleanMapZone
             onZoneSelect={handleZoneSelect}
-            onBackToWelcome={() => setCurrentView('profile-welcome')}
-            onGoToProfiles={() => setCurrentView('profile-welcome')}
+            onBackToWelcome={openProfileWelcomeModal}
+            onGoToProfiles={openProfileWelcomeModal}
             onParentCorner={() => setCurrentView('parent-dashboard')}
             onTWGOpen={() => setCurrentView('twg')}
             currentZone={currentZone}
@@ -1561,6 +1579,25 @@ chants: result?.chants || result?.chantedVerses || {},
           onNavigate={handleNavigate}
         />
           </div>
+      )}
+
+      {showProfileWelcomeModal && (
+        <CleanGameWelcomeScreen
+          onContinue={(zone, scene) => {
+            closeProfileWelcomeModal();
+            handleContinue(zone, scene);
+          }}
+          onNewGame={() => {
+            closeProfileWelcomeModal();
+            handleNewGame();
+          }}
+          onParentCorner={() => {
+            closeProfileWelcomeModal();
+            setCurrentView('parent-dashboard');
+          }}
+          onClose={closeProfileWelcomeModal}
+          displayMode="modal"
+        />
       )}
       
       {/* 🎯 DYNAMIC SCENE RENDERING: Replaces all hardcoded scene logic */}
