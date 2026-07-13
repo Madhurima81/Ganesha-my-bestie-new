@@ -30,6 +30,7 @@ import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal
 import HomeButton from '../../../../lib/components/ui/HomeButton';
 import AudioToggle from '../../../../lib/components/ui/AudioToggle/AudioToggle';
 import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
+import { SCENE_TO_OUTER_PETAL_ID } from '../../../../lib/components/navigation/ProgressPopup';
 import VOReplayButton from '../../../../lib/components/feedback/VOReplayButton';
 import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
 import useResumeCountdown from '../../../../lib/hooks/useResumeCountdown';
@@ -73,6 +74,25 @@ import flowerMa from './assets/images/mahakaya/ma-flower.webp';
 // ========================================
 // 1. LOCAL UI COMPONENTS
 // ========================================
+
+const sceneOuterPetalId = SCENE_TO_OUTER_PETAL_ID['Your Journey Begins!'];
+const sceneOuterPetalIds = [sceneOuterPetalId - 1, sceneOuterPetalId];
+const debugFireworksBtnStyle = {
+  position: 'fixed',
+  top: '18px',
+  right: '18px',
+  zIndex: 1200,
+  padding: '8px 12px',
+  borderRadius: '999px',
+  border: '1px solid rgba(255,255,255,0.45)',
+  background: 'rgba(34, 24, 68, 0.82)',
+  color: '#fff7d6',
+  fontSize: '12px',
+  fontWeight: 800,
+  letterSpacing: '0.02em',
+  cursor: 'pointer',
+  boxShadow: '0 10px 24px rgba(0,0,0,0.22)',
+};
 
 const VOGatedButton = ({ visible, onClick, children, className = '', style = {} }) => {
   if (!visible) return null;
@@ -241,7 +261,6 @@ const VakratundaGroveContent = ({
 
   const [savedRecordings, setSavedRecordings] = useState({});
   const [showAppDiscovery, setShowAppDiscovery] = useState(false);
-  const hasRestoredRef = useRef(false);
   const activeProfile = GameStateManager.getActiveProfile();
   const profileName = activeProfile?.name || 'explorer';
   const isFinalCelebrationActive =
@@ -250,6 +269,13 @@ const VakratundaGroveContent = ({
     showSceneCompletion ||
     showAppDiscovery ||
     sceneState.phase === PHASES.COMPLETE;
+  const shouldShowOpeningModal =
+    sceneState.phase === PHASES.INITIAL &&
+    !sceneState.welcomeShown &&
+    !showSceneCompletion &&
+    !showMandala &&
+    !showAppDiscovery &&
+    showSparkle !== 'final-fireworks';
 
   const isCelebrationOrOverlayActive =
     isFinalCelebrationActive ||
@@ -459,7 +485,7 @@ const VakratundaGroveContent = ({
     if (!sceneState?.phase) {
       sceneActions.updateState({ phase: PHASES.INITIAL });
     }
-  }, [sceneActions, sceneState?.phase]);
+  }, [sceneState?.phase]);
 
   useEffect(() => {
     return () => clearAllTimeouts();
@@ -552,8 +578,7 @@ const VakratundaGroveContent = ({
   };
 
   useEffect(() => {
-    if (hasRestoredRef.current || !sceneState) return;
-    hasRestoredRef.current = true;
+    if (!sceneState || revealConfig) return;
 
     const restoreReveal = (word) => {
       safeSetTimeout(() => {
@@ -578,7 +603,7 @@ const VakratundaGroveContent = ({
     if ([PHASES.MAHAKAYA_COMPLETE, PHASES.MAHAKAYA_POWER].includes(sceneState.phase)) {
       restoreReveal('mahakaya');
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [sceneState?.phase]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // -- Home button: stop everything ? go to main map ----------------------
   const handleHomeToMainMap = () => {
@@ -765,6 +790,16 @@ const VakratundaGroveContent = ({
     setShowSparkle('final-fireworks');
   };
 
+  const handleDebugFireworks = () => {
+    stopAllVoice();
+    setShowAppDiscovery(false);
+    setRevealConfig(null);
+    setShowPowerOverlay(false);
+    setShowMandala(false);
+    setShowSceneCompletion(false);
+    setShowSparkle('final-fireworks');
+  };
+
   useEffect(() => {
     if (
       sceneState.phase === PHASES.COMPLETE &&
@@ -814,6 +849,9 @@ const VakratundaGroveContent = ({
         <div className="vakratunda-simplified-container">
           <HomeButton onNavigate={onNavigate} />
           <ZoneBadgeButton zoneId="shloka-river" onBack={() => onNavigate?.('zone-welcome')} />
+          <button type="button" style={debugFireworksBtnStyle} onClick={handleDebugFireworks}>
+            Debug Fireworks
+          </button>
           <AudioToggle isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
           <VOReplayButton onReplay={replayCurrentVoice} disabled={!isAudioOn} />
           <ResumeCountdown value={countdownValue} />
@@ -863,21 +901,23 @@ const VakratundaGroveContent = ({
             -- End PauseMenu -- */}
 
             {/* 3. OPENING MODAL (Using Zone Theme Colors) */}
-            <OpeningModal
-              zoneId={zoneId}
-              sceneId={sceneId}
-              isOpen={!sceneState.welcomeShown}
-              onStart={() => {
-                playUiTap();
-                stopAllVoice();
-                sceneActions.updateState({
-                  welcomeShown: true,
-                  phase: PHASES.VAKRATUNDA_GAME
-                });
-              }}
-              characterImg={ganeshaHeadphones}
-              showButton={openingButtonVisible}
-            />
+            {shouldShowOpeningModal && (
+              <OpeningModal
+                zoneId={zoneId}
+                sceneId={sceneId}
+                isOpen
+                onStart={() => {
+                  playUiTap();
+                  stopAllVoice();
+                  sceneActions.updateState({
+                    welcomeShown: true,
+                    phase: PHASES.VAKRATUNDA_GAME
+                  });
+                }}
+                characterImg={ganeshaHeadphones}
+                showButton={openingButtonVisible}
+              />
+            )}
 
             {/* VAKRATUNDA RESCUE GAME — BendReeds → word build → chant */}
             <VakratundaRescueGame
@@ -1096,11 +1136,15 @@ const VakratundaGroveContent = ({
               <InnerMandala
                 childName={profileName}
                 shlokaPetalStates={{
-                  1: 'activated',
-                  2: 'activated'
                 }}
-                highlightPetals={[2]}
+                justEarnedPetals={sceneOuterPetalIds.map((id) => ({ ring: 'outer', id }))}
+                earnedSymbols={[
+                  { id: 'vakratunda', petalId: 1, image: symbolVakratunda },
+                  { id: 'mahakaya', petalId: 2, image: symbolMahakaya },
+                ]}
+                highlightPetals={sceneOuterPetalIds}
                 message="These meanings are growing inside you"
+                autoCloseMs={7200}
                 onClose={() => {
                   sceneActions.updateState({ completed: true });
                   persistCompletion();

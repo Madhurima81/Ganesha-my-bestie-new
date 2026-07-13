@@ -102,6 +102,19 @@
   }
 }
 
+.vak-slot.vak-wrong-pulse .vak-slot-ring {
+  animation: vakWrongShake 0.7s ease-in-out;
+  border-color: #ef9f27;
+}
+
+@keyframes vakWrongShake {
+  0%, 100% { transform: translateX(0) scale(1); }
+  20% { transform: translateX(-4px) scale(1.08); }
+  40% { transform: translateX(4px) scale(1.08); }
+  60% { transform: translateX(-3px) scale(1.04); }
+  80% { transform: translateX(3px) scale(1.04); }
+}
+
 .vak-frog {
   transition: left 0.65s cubic-bezier(0.4, 0, 0.2, 1), top 0.65s cubic-bezier(0.4, 0, 0.2, 1);
 }

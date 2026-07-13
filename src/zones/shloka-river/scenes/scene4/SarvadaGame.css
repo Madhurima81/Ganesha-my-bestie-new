@@ -1,11 +1,26 @@
-/* SarvadaGame.css — River boat journey, memory bubbles, SARVADA reveal */
+/* SarvadaGame.css - River boat journey, memory bubbles, SARVADA reveal */
 
 .sarvada-game {
   position: absolute;
   inset: 0;
   overflow: hidden;
-  background: #1a3a5c; /* fallback — never visible during normal crossfade */
+  background: #1a3a5c;
 }
+
+.sarvada-game::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 30%, rgba(255,220,100,0.6), transparent 60%);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 50;
+}
+
+.sarvada-game.flash::after {
+  animation: sarvadaFlash 0.6s ease-out forwards;
+}
+
 .sarvada-game.is-hidden {
   pointer-events: none;
 }
@@ -18,7 +33,6 @@
   opacity: 0;
 }
 
-/* ── Background — two layers during crossfade, transition is set inline ─── */
 .sarvada-bg {
   position: absolute;
   inset: 0;
@@ -26,7 +40,10 @@
   background-position: center;
 }
 
-/* ── Syllable row ───────────────────────────────────────────────────────── */
+.sarvada-bg.zoom-in {
+  animation: sarvadaZoom 1.5s ease-out forwards;
+}
+
 .sarvada-syl-wrap {
   position: absolute;
   top: 0;
@@ -35,7 +52,6 @@
   z-index: 30;
 }
 
-/* ── Time label ─────────────────────────────────────────────────────────── */
 .sarvada-time-label {
   position: absolute;
   top: 12%;
@@ -50,7 +66,6 @@
   animation: sarvadaFadeIn 0.5s ease;
 }
 
-/* ── Boat ───────────────────────────────────────────────────────────────── */
 .sarvada-boat {
   position: absolute;
   bottom: 6%;
@@ -71,10 +86,9 @@
 
 @keyframes sarvadaBob {
   0%, 100% { transform: translateX(-50%) translateY(0px) rotate(-0.5deg); }
-  50%       { transform: translateX(-50%) translateY(-7px) rotate(0.5deg); }
+  50% { transform: translateX(-50%) translateY(-7px) rotate(0.5deg); }
 }
 
-/* ── Memory bubble ──────────────────────────────────────────────────────── */
 .sarvada-bubble {
   position: absolute;
   top: 22%;
@@ -101,6 +115,20 @@
   transform: translateX(-50%) scale(0);
   opacity: 0;
   transition: transform 0.3s ease-in, opacity 0.3s ease-in;
+}
+
+.sarvada-ring-burst {
+  position: absolute;
+  top: 22%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  transform: translate(-50%, -50%);
+  border: 3px solid rgba(255,220,100,0.8);
+  border-radius: 50%;
+  z-index: 45;
+  pointer-events: none;
+  animation: sarvadaRing 0.8s ease-out forwards;
 }
 
 .sarvada-bubble img {
@@ -137,8 +165,8 @@
 }
 
 @keyframes sarvadaBubblePulse {
-  0%, 100% { transform: translateX(-50%) scale(1);    filter: brightness(1); }
-  50%       { transform: translateX(-50%) scale(1.08); filter: brightness(1.12); }
+  0%, 100% { transform: translateX(-50%) scale(1); filter: brightness(1); }
+  50% { transform: translateX(-50%) scale(1.08); filter: brightness(1.12); }
 }
 
 @keyframes sarvadaHintPulse {
@@ -169,7 +197,6 @@
   }
 }
 
-/* ── Memory flash ───────────────────────────────────────────────────────── */
 .sarvada-memory {
   position: absolute;
   top: 14%;
@@ -216,7 +243,7 @@
 
 @keyframes sarvadaMemoryIn {
   from { opacity: 0; transform: translateX(-50%) scale(0.88); }
-  to   { opacity: 1; transform: translateX(-50%) scale(1); }
+  to { opacity: 1; transform: translateX(-50%) scale(1); }
 }
 
 @keyframes sarvadaGaneshaPop {
@@ -230,7 +257,6 @@
   }
 }
 
-/* ── SARVADA reveal ─────────────────────────────────────────────────────── */
 .sarvada-reveal {
   position: absolute;
   top: 50%;
@@ -283,26 +309,40 @@
 
 @keyframes sarvadaSylFloat {
   from { opacity: 0; transform: translateY(12px) scale(0.8); }
-  to   { opacity: 1; transform: translateY(0)    scale(1); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 @keyframes sarvadaWordBloom {
   from { opacity: 0; transform: scale(0.6); }
-  to   { opacity: 1; transform: scale(1); }
+  to { opacity: 1; transform: scale(1); }
 }
 
-/* ── Shared keyframes ───────────────────────────────────────────────────── */
+@keyframes sarvadaFlash {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes sarvadaRing {
+  0% { width: 40px; height: 40px; opacity: 1; }
+  100% { width: 300px; height: 300px; opacity: 0; }
+}
+
+@keyframes sarvadaZoom {
+  from { transform: scale(1); }
+  to { transform: scale(1.06); }
+}
+
 @keyframes sarvadaFadeIn {
   from { opacity: 0; transform: translateX(-50%) translateY(6px); }
-  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
-/* ── Reduced motion ─────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   .sarvada-boat,
   .sarvada-bubble.pulsing {
     animation: none;
   }
+
   .sarvada-bubble,
   .sarvada-memory-img,
   .sarvada-bg {

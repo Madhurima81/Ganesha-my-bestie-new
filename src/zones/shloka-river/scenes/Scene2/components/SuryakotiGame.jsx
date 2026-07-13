@@ -22,6 +22,7 @@ const HOP_PATH = [
 ];
 
 const SYLLABLES = ['Su', 'rya', 'ko', 'ti'];
+const AUDIO = { syllables: ['su', 'ya', 'ko', 'ti'] };
 const SUN_CX = 0.65;
 const SUN_CY = 0.18;
 const SUN_R = 0.17;
@@ -39,7 +40,7 @@ export default function SuryakotiGame({
   voiceGuidance = {},
   isPaused = false,
 }) {
-  const { playVoice: playSceneLine, playWord, stopVoice } = voiceGuidance;
+  const { playVoice: playSceneLine, playWord, playSyllable, stopVoice } = voiceGuidance;
   const [phase, setPhase] = useState('play');
   const [litCount, setLitCount] = useState(0);
   const [bunnyPos, setBunnyPos] = useState(POS.bunny);
@@ -57,12 +58,19 @@ export default function SuryakotiGame({
   const successVoDoneRef = useRef(false);
   const hopDoneRef = useRef(false);
   const completionScheduledRef = useRef(false);
+  const voFallbackRef = useRef(null);
+  const fadeOverlayRef = useRef(null);
   const onGameCompleteRef = useRef(onGameComplete);
   const onPhaseCompleteRef = useRef(onPhaseComplete);
+  const isPausedRef = useRef(isPaused);
 
   useEffect(() => {
     phaseRef.current = phase;
   }, [phase]);
+
+  useEffect(() => {
+    isPausedRef.current = isPaused;
+  }, [isPaused]);
 
   useEffect(() => {
     onGameCompleteRef.current = onGameComplete;
@@ -73,7 +81,7 @@ export default function SuryakotiGame({
     hintLevel,
     markInteraction,
   } = useRepeatedHintCycle({
-    enabled: isActive,
+    enabled: isActive && !isPaused && phase === 'play',
     stageKey: phase === 'play' ? 'play' : phase,
     initialDelay: 8000,
     pulseCountBeforeEscalation: 3,
@@ -136,41 +144,8 @@ export default function SuryakotiGame({
     const szy = cv.height * SUN_CY;
     const szr = cv.width * SUN_R;
 
-    // Draw glowing ring to show scratch target
-    ctx.globalCompositeOperation = 'source-over';
-
-    // Outer soft glow
-    ctx.beginPath();
-    ctx.arc(szx, szy, szr + 6, 0, Math.PI * 2);
-    ctx.strokeStyle = 'rgba(255, 220, 100, 0.12)';
-    ctx.lineWidth = 12;
-    ctx.stroke();
-
-    // Main ring
-    ctx.beginPath();
-    ctx.arc(szx, szy, szr, 0, Math.PI * 2);
-    ctx.strokeStyle = 'rgba(255, 220, 100, 0.35)';
-    ctx.lineWidth = 3;
-    ctx.stroke();
-
-    // Inner shimmer
-    ctx.beginPath();
-    ctx.arc(szx, szy, szr - 4, 0, Math.PI * 2);
-    ctx.strokeStyle = 'rgba(255, 220, 100, 0.15)';
-    ctx.lineWidth = 6;
-    ctx.stroke();
-
-    // Slightly lighten inside to distinguish from background
-    const innerGlow = ctx.createRadialGradient(szx, szy, 0, szx, szy, szr);
-    innerGlow.addColorStop(0, 'rgba(255, 220, 100, 0.08)');
-    innerGlow.addColorStop(0.7, 'rgba(255, 220, 100, 0.04)');
-    innerGlow.addColorStop(1, 'rgba(255, 220, 100, 0)');
-    ctx.fillStyle = innerGlow;
-    ctx.beginPath();
-    ctx.arc(szx, szy, szr, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.globalCompositeOperation = 'destination-out';
+    // Scratch-target ring cue is the animated .surya-scratch-ring overlay
+    // (see render) — not painted here to avoid a duplicate static ring.
 
     let total = 0;
     let done = 0;
@@ -238,9 +213,11 @@ export default function SuryakotiGame({
       ctx.fillRect(0, 0, cv.width, cv.height);
       if (opacity <= 0) {
         window.clearInterval(fade);
+        fadeOverlayRef.current = null;
         cv.style.pointerEvents = 'none';
       }
     }, 30);
+    fadeOverlayRef.current = fade;
   }, []);
 
   const mark = useCallback((x, y) => {
@@ -341,38 +318,59 @@ export default function SuryakotiGame({
         completeAfterSuccess();
       });
       // iOS Safari can silently drop utterance onend/onerror — don't let completion hang on VO
-      const voFallback = window.setTimeout(() => {
+      voFallbackRef.current = window.setTimeout(() => {
         if (!successVoDoneRef.current) {
           successVoDoneRef.current = true;
           completeAfterSuccess();
         }
       }, 8000);
-      timers.push(voFallback);
     } else {
       successVoDoneRef.current = true;
     }
 
+    const hopAfter = (ms, fn) => {
+      const runWhenReady = () => {
+        if (isPausedRef.current) {
+          const retryId = window.setTimeout(runWhenReady, 150);
+          timers.push(retryId);
+          return;
+        }
+        fn();
+      };
+      const id = window.setTimeout(runWhenReady, ms);
+      timers.push(id);
+    };
+
     HOP_PATH.forEach((waypoint, index) => {
-      const hopTimer = window.setTimeout(() => {
+      hopAfter(index * 500, () => {
         setBunnyHopping(true);
         setBunnyPos(waypoint);
-        const settleTimer = window.setTimeout(() => {
+        hopAfter(350, () => {
           setBunnyHopping(false);
           if (index === HOP_PATH.length - 1) {
             hopDoneRef.current = true;
             setPhase('done');
             completeAfterSuccess();
           }
-        }, 350);
-        timers.push(settleTimer);
-      }, index * 500);
-      timers.push(hopTimer);
+        });
+      });
     });
 
     return () => {
       timers.forEach((timerId) => window.clearTimeout(timerId));
     };
   }, [completeAfterSuccess, phase, playSceneLine, stopVoice]);
+
+  useEffect(() => () => {
+    if (voFallbackRef.current) {
+      window.clearTimeout(voFallbackRef.current);
+      voFallbackRef.current = null;
+    }
+    if (fadeOverlayRef.current) {
+      window.clearInterval(fadeOverlayRef.current);
+      fadeOverlayRef.current = null;
+    }
+  }, []);
 
   if (!isActive) return null;
 
@@ -388,8 +386,11 @@ export default function SuryakotiGame({
         <SyllableHighlight
           syllables={SYLLABLES}
           litCount={litCount}
-          audioSyllables={SYLLABLES}
-          onSyllableLit={() => {}}
+          audioSyllables={AUDIO.syllables}
+          onSyllableLit={(syllable) => {
+            stopVoice?.();
+            playSyllable?.(syllable);
+          }}
         />
 
         {phase === 'play' && (

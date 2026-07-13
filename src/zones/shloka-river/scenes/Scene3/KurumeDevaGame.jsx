@@ -31,7 +31,7 @@ import beaverBabyImg from './assets/images/Kurumedeva/beaver-baby.png';
 
 import { KURUMEDEVA_LAYOUT } from './scene3LayoutConfig';
 
-const SYLLABLES = ['Ku', 'ru', 'me', 'de', 'va'];
+const SYLLABLES = ['Ku', 'ru', 'me', 'deva'];
 const BRIDGE_TARGET = {
   l: KURUMEDEVA_LAYOUT.bridge.l,
   t: KURUMEDEVA_LAYOUT.bridge.t,
@@ -40,7 +40,6 @@ const BRIDGE_TARGET = {
 const FRIENDS = [
   {
     ...KURUMEDEVA_LAYOUT.friends[0],
-    l: 32,
     label: 'Turtle',
     brings: 'log',
     carryImg: turtleCarryImg,
@@ -67,8 +66,6 @@ const FRIENDS = [
   },
   {
     ...KURUMEDEVA_LAYOUT.friends[2],
-    l: 38,
-    t: 62.8,
     label: 'Squirrel',
     brings: 'pegs',
     carryImg: squirrelCarryImg,
@@ -95,9 +92,15 @@ const FRIENDS = [
   },
 ];
 
+const AUDIO = { syllables: ['ku', 'ru', 'me', 'deva'] };
 const BEAVER_PATH = KURUMEDEVA_LAYOUT.beaverPath;
 const TURTLE_RIVER_SHIFT = 0;
-const TURTLE_TAP_X = 37;
+const WAIT_SPOTS = [
+  { l: 18, t: 62 },
+  { l: 24, t: 68 },
+  { l: 14, t: 70 },
+  { l: 20, t: 74 },
+];
 
 export default function KurumedevaGame({
   isActive = false,
@@ -107,10 +110,8 @@ export default function KurumedevaGame({
   onGameComplete = () => {},
   voiceGuidance = {},
   isPaused = false,
-  savedGameState = null,
-  onSaveGameState = null,
 }) {
-  const { playVoice: playSceneLine, stopVoice: stopSceneVoice } = voiceGuidance;
+  const { playVoice: playSceneLine, playSyllable, stopVoice: stopSceneVoice } = voiceGuidance;
   const [friendStep, setFriendStep] = useState(0);
   const [bridgeStep, setBridgeStep] = useState(0);
   const [phase, setPhase] = useState('play');
@@ -126,14 +127,16 @@ export default function KurumedevaGame({
   const successVoDoneRef = useRef(false);
   const crossingDoneRef = useRef(false);
   const completionScheduledRef = useRef(false);
+  const voFallbackRef = useRef(null);
   const phaseRef = useRef('play');
   const onPhaseCompleteRef = useRef(onPhaseComplete);
   const onGameCompleteRef = useRef(onGameComplete);
+  const isPausedRef = useRef(isPaused);
   const {
     hintLevel,
     markInteraction,
   } = useRepeatedHintCycle({
-    enabled: isActive,
+    enabled: isActive && !isPaused && phase === 'play',
     stageKey: phase === 'play' ? `friend-${friendStep}` : phase,
     initialDelay: 8000,
     pulseCountBeforeEscalation: 3,
@@ -147,38 +150,22 @@ export default function KurumedevaGame({
     onGameCompleteRef.current = onGameComplete;
   }, [onPhaseComplete, onGameComplete]);
 
-  useEffect(() => {
-    if (!isActive || !savedGameState) return;
-    setFriendStep(savedGameState.friendStep || 0);
-    setBridgeStep(savedGameState.bridgeStep || 0);
-    setPhase(savedGameState.phase || 'play');
-    setBeaverPos(savedGameState.beaverPos || BEAVER_PATH[0]);
-    setLitCount(savedGameState.litCount || 0);
-    setTappedId(savedGameState.tappedId || null);
-    setFriendImgStates(savedGameState.friendImgStates || FRIENDS.map(() => 'carry'));
-    setObjectPhases(savedGameState.objectPhases || FRIENDS.map(() => 'idle'));
-    setFriendPositions(savedGameState.friendPositions || FRIENDS.map((friend) => ({ l: friend.l, t: friend.t })));
-  }, [isActive, savedGameState]);
-
-  useEffect(() => {
-    if (!isActive || !onSaveGameState) return;
-    onSaveGameState({
-      friendStep,
-      bridgeStep,
-      phase,
-      beaverPos,
-      litCount,
-      tappedId,
-      friendImgStates,
-      objectPhases,
-      friendPositions,
-    });
-  }, [isActive, onSaveGameState, friendStep, bridgeStep, phase, beaverPos, litCount, tappedId, friendImgStates, objectPhases, friendPositions]);
-
   phaseRef.current = phase;
 
+  useEffect(() => {
+    isPausedRef.current = isPaused;
+  }, [isPaused]);
+
   const safeAfter = useCallback((ms, fn) => {
-    const id = window.setTimeout(fn, ms);
+    const runWhenReady = () => {
+      if (isPausedRef.current) {
+        const retryId = window.setTimeout(runWhenReady, 150);
+        timersRef.current.push(retryId);
+        return;
+      }
+      fn();
+    };
+    const id = window.setTimeout(runWhenReady, ms);
     timersRef.current.push(id);
     return id;
   }, []);
@@ -223,10 +210,10 @@ export default function KurumedevaGame({
 
   useEffect(() => () => clearTimers(), [clearTimers]);
 
-  const moveFriendOffScreen = useCallback((friendIndex) => {
+  const moveFriendToWait = useCallback((friendIndex) => {
     setFriendPositions((prev) => {
       const next = [...prev];
-      next[friendIndex] = { l: -20, t: prev[friendIndex].t };
+      next[friendIndex] = WAIT_SPOTS[friendIndex];
       return next;
     });
   }, []);
@@ -269,7 +256,7 @@ export default function KurumedevaGame({
     });
 
     safeAfter(1220, () => {
-      moveFriendOffScreen(friendIndex);
+      moveFriendToWait(friendIndex);
     });
 
     safeAfter(1550, () => {
@@ -280,11 +267,11 @@ export default function KurumedevaGame({
         safeAfter(420, () => {
           setPhase('crossing');
           phaseRef.current = 'crossing';
-          setLitCount(5);
+          setLitCount(4);
         });
       }
     });
-  }, [friendStep, friendImgStates, isPaused, markInteraction, moveFriendOffScreen, onMicroWin, safeAfter, stopSceneVoice]);
+  }, [friendStep, friendImgStates, isPaused, markInteraction, moveFriendToWait, onMicroWin, safeAfter, stopSceneVoice]);
 
   const completeAfterSuccess = useCallback(() => {
     if (!successVoDoneRef.current || !crossingDoneRef.current || completionScheduledRef.current) return;
@@ -305,12 +292,12 @@ export default function KurumedevaGame({
         completeAfterSuccess();
       });
       // iOS Safari can silently drop utterance onend/onerror — don't let completion hang on VO
-      safeAfter(8000, () => {
+      voFallbackRef.current = window.setTimeout(() => {
         if (!successVoDoneRef.current) {
           successVoDoneRef.current = true;
           completeAfterSuccess();
         }
-      });
+      }, 8000);
     } else {
       successVoDoneRef.current = true;
     }
@@ -319,7 +306,16 @@ export default function KurumedevaGame({
       safeAfter(index * 520, () => {
         setBeaverPos(pos);
         if (index === BEAVER_PATH.length - 1) {
-          safeAfter(600, () => {
+          FRIENDS.forEach((friend, friendIndex) => {
+            safeAfter(700 + friendIndex * 400, () => {
+              setFriendPositions((prev) => {
+                const next = [...prev];
+                next[friendIndex] = friend.doneSpot;
+                return next;
+              });
+            });
+          });
+          safeAfter(700 + FRIENDS.length * 400 + 600, () => {
             crossingDoneRef.current = true;
             setPhase('done');
             completeAfterSuccess();
@@ -328,6 +324,13 @@ export default function KurumedevaGame({
       });
     });
   }, [completeAfterSuccess, phase, playSceneLine, safeAfter]);
+
+  useEffect(() => () => {
+    if (voFallbackRef.current) {
+      window.clearTimeout(voFallbackRef.current);
+      voFallbackRef.current = null;
+    }
+  }, []);
 
   if (!isActive) return null;
 
@@ -341,8 +344,11 @@ export default function KurumedevaGame({
         <SyllableHighlight
           syllables={SYLLABLES}
           litCount={litCount}
-          audioSyllables={SYLLABLES}
-          onSyllableLit={() => {}}
+          audioSyllables={AUDIO.syllables}
+          onSyllableLit={(syllable) => {
+            stopSceneVoice?.();
+            playSyllable?.(syllable);
+          }}
         />
 
         {phase === 'play' && currentFriend && (
@@ -461,8 +467,8 @@ export default function KurumedevaGame({
         })}
         <GestureDemo
           type="tap"
-          from={{ x: TURTLE_TAP_X, y: FRIENDS[0].t + 5 }}
-          to={{ x: TURTLE_TAP_X, y: FRIENDS[0].t + 5 }}
+          from={{ x: FRIENDS[0].l, y: FRIENDS[0].t }}
+          to={{ x: FRIENDS[0].l, y: FRIENDS[0].t }}
           active={phase === 'play' && friendStep === 0}
           idleDelay={3000}
         />

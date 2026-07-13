@@ -93,6 +93,7 @@ export default function MahakayaRescueGame({
 
   const pRef = useRef(0);
   const lockedRef = useRef(0);
+  const maxLockedRef = useRef(0);
   const draggingRef = useRef(null);
   const ropeStageRef = useRef('detached');
   const phaseRef = useRef('intro');
@@ -105,7 +106,7 @@ export default function MahakayaRescueGame({
     hintLevel,
     markInteraction,
   } = useRepeatedHintCycle({
-    enabled: isActive,
+    enabled: isActive && !isPaused && phase === 'play',
     stageKey: ropeStage === 'detached' ? 'detached' : 'attached',
     initialDelay: ropeStage === 'detached' ? 8000 : 7000,
     pulseCountBeforeEscalation: 3,
@@ -146,6 +147,7 @@ export default function MahakayaRescueGame({
     pRef.current = 0;
     setLocked(0);
     lockedRef.current = 0;
+    maxLockedRef.current = 0;
     setDragging(null);
     draggingRef.current = null;
     completionStartedRef.current = false;
@@ -252,7 +254,10 @@ export default function MahakayaRescueGame({
       if (sl > lockedRef.current) {
         lockedRef.current = sl;
         setLocked(sl);
-        onMicroWin?.();
+        if (sl > maxLockedRef.current && sl <= TOTAL) {
+          maxLockedRef.current = sl;
+          onMicroWin?.();
+        }
       }
       if (np >= 1) {
         completionStartedRef.current = true;

@@ -56,6 +56,7 @@ export default function VakratundaRescueGame({
   const [familyBounce, setFamilyBounce] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [dragPoint, setDragPoint] = useState(null);
+  const [wrongDropPulse, setWrongDropPulse] = useState(false);
 
   const stageRef = useRef(null);
   const timers = useRef([]);
@@ -65,7 +66,7 @@ export default function VakratundaRescueGame({
     hintLevel,
     markInteraction,
   } = useRepeatedHintCycle({
-    enabled: isActive,
+    enabled: isActive && !isPaused && (phase === 'choose' || phase === 'build'),
     stageKey: !selectedMaterial ? 'choose' : 'build',
     initialDelay: selectedMaterial ? 7000 : 8500,
     pulseCountBeforeEscalation: 3,
@@ -87,6 +88,11 @@ export default function VakratundaRescueGame({
 
   useEffect(() => {
     isPausedRef.current = isPaused;
+    if (isPaused) {
+      setDragging(false);
+      setDragPoint(null);
+      return;
+    }
   }, [isPaused]);
 
   const after = useCallback((ms, fn) => {
@@ -166,7 +172,7 @@ export default function VakratundaRescueGame({
     // `after` is intentionally stable and pause-aware via ref; re-running this
     // effect on recorder open would wipe in-progress play.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isActive, onStageChange]);
+  }, [isActive]);
 
   useEffect(() => {
     if (!dragging) return;
@@ -178,7 +184,11 @@ export default function VakratundaRescueGame({
     };
 
     const handleUp = (event) => {
-      if (isPaused) return;
+      if (isPaused) {
+        setDragging(false);
+        setDragPoint(null);
+        return;
+      }
       const point = getPoint(event.clientX, event.clientY);
       if (!point || !selectedMaterial) {
         setDragging(false);
@@ -205,6 +215,15 @@ export default function VakratundaRescueGame({
         if (nextFilled.every(Boolean)) {
           startHopping();
         }
+      } else {
+        const nearWrongSlot = POS.slots.some((s, i) => (
+          i !== nextEmptyIndex && !filled[i] && Math.hypot(point.x - s.l, point.y - s.t) < 13
+        ));
+        if (nearWrongSlot) {
+          setWrongDropPulse(true);
+          playSceneLine?.('scene10_vak_blocked');
+          window.setTimeout(() => setWrongDropPulse(false), 700);
+        }
       }
 
       setDragging(false);
@@ -220,7 +239,7 @@ export default function VakratundaRescueGame({
       window.removeEventListener('pointerup', handleUp);
       window.removeEventListener('pointercancel', handleUp);
     };
-  }, [dragging, filled, getPoint, isPaused, nextEmptyIndex, onMicroWin, playSyllable, selectedMaterial, startHopping, stopVoice]);
+  }, [dragging, filled, getPoint, isPaused, nextEmptyIndex, onMicroWin, playSceneLine, playSyllable, selectedMaterial, startHopping, stopVoice]);
 
   useEffect(() => {
     vakHintVoiceRef.current = { stage: hintStage, level: 0 };
@@ -281,10 +300,12 @@ export default function VakratundaRescueGame({
             top: `${t + offset.dy}%`,
             width: `${w}%`,
             zIndex: 6 + index,
-            pointerEvents: clickable && isTop ? 'auto' : 'none',
-            cursor: clickable && isTop ? 'pointer' : 'default'
+            opacity: phase === 'choose' ? 1 : 0.45,
+            transition: 'opacity 0.6s ease',
+            pointerEvents: phase === 'choose' && clickable && isTop ? 'auto' : 'none',
+            cursor: phase === 'choose' && clickable && isTop ? 'pointer' : 'default'
           }}
-          onClick={clickable && isTop ? () => {
+          onClick={phase === 'choose' && clickable && isTop ? () => {
             if (isPaused) return;
             markInteraction();
             setSelectedMaterial(materialKey);
@@ -360,7 +381,7 @@ export default function VakratundaRescueGame({
         <img src={frogFamily} alt="" />
       </div>
 
-      {phase === 'choose' && Object.keys(MATERIALS).map((materialKey) => (
+      {(selectedMaterial ? [selectedMaterial] : Object.keys(MATERIALS)).map((materialKey) => (
         <React.Fragment key={materialKey}>
           {renderPileStack(materialKey, true)}
         </React.Fragment>
@@ -370,7 +391,7 @@ export default function VakratundaRescueGame({
         filled[idx] ? null : (
           <div
             key={`slot-${idx}`}
-            className={`vak-layer vak-slot ${idx === nextEmptyIndex ? 'is-next' : ''}`}
+            className={`vak-layer vak-slot ${idx === nextEmptyIndex ? 'is-next' : ''} ${idx === nextEmptyIndex && wrongDropPulse ? 'vak-wrong-pulse' : ''}`}
             style={{ ...lyr(slot), zIndex: 5 }}
           >
             <span className="vak-slot-ring" />
@@ -389,43 +410,6 @@ export default function VakratundaRescueGame({
           </div>
         ) : null
       ))}
-
-      {/* Inline drag demo replaced by GestureDemo
-      {phase === 'build' && placedCount === 0 && !dragging && selectedMaterial && cueStart && (
-        <>
-          <svg
-            className={`vak-demo-path ${hintLevel >= 2 ? 'vak-hint-glow' : ''}`}
-            viewBox="0 0 100 100"
-            preserveAspectRatio="none"
-            aria-hidden="true"
-          >
-            <path
-              d={`M ${cueStart.l} ${cueStart.t} Q ${cueStart.l + 9} ${cueStart.t - 7} ${POS.slots[0].l - 2} ${POS.slots[0].t - 1}`}
-            />
-          </svg>
-          <div
-            className={`vak-demo-piece ${hintLevel >= 1 ? 'vak-hint-pulse' : ''} ${hintLevel >= 2 ? 'vak-hint-glow' : ''}`}
-            key={`vak-demo-piece-${pulseTick}`}
-            style={{
-              left: `${cueStart.l}%`,
-              top: `${cueStart.t}%`,
-              width: `${pieceWidth}%`,
-              '--vak-cue-dx': `${POS.slots[0].l - cueStart.l}%`,
-              '--vak-cue-dy': `${POS.slots[0].t - cueStart.t}%`,
-            }}
-          >
-            <img src={activeMaterial.asset} alt="" />
-          </div>
-          <div
-            className={`vak-demo-arrow ${hintLevel >= 1 ? 'vak-hint-pulse' : ''} ${hintLevel >= 3 ? 'vak-hint-glow' : ''}`}
-            style={{ left: `${POS.slots[0].l}%`, top: `${POS.slots[0].t - 8}%` }}
-            aria-hidden="true"
-          >
-            ↓
-          </div>
-        </>
-      )}
-      */}
 
       {phase === 'build' && renderBuildStack()}
 
@@ -448,6 +432,7 @@ export default function VakratundaRescueGame({
       )}
 
       <div
+        key={`frog-${hopIndex}`}
         className={`vak-layer vak-frog ${phase === 'hopping' || phase === 'reunion' ? 'is-hopping' : ''} ${hopIndex < 0 ? 'is-breathing' : ''}`}
         style={{
           left: `${frogPos.l}%`,

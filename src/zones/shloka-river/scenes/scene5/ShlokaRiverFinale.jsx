@@ -227,6 +227,8 @@ const ShlokaRiverFinaleContent = ({
   const fullShlokaAudioRef = useRef(null);
   const fullShlokaPlaybackTokenRef = useRef(0);
   const recapSequenceStartedRef = useRef(false);
+  const resumeHandledRef = useRef(false);
+  const dragMovedRef = useRef(false);
   const hintTimersRef = useRef([]);
 
   const phase = sceneState.phase || PHASES.INITIAL;
@@ -250,14 +252,15 @@ const ShlokaRiverFinaleContent = ({
 
   useEffect(() => {
     setCurrentPhase?.(phase);
-    return () => {
-      clearAllTimeouts();
-      clearHintTimers();
-      fullShlokaPlaybackTokenRef.current += 1;
-      fullShlokaAudioRef.current?.pause();
-      fullShlokaAudioRef.current = null;
-    };
-  }, [phase, setCurrentPhase, clearAllTimeouts, clearHintTimers]);
+  }, [phase, setCurrentPhase]);
+
+  useEffect(() => () => {
+    clearAllTimeouts();
+    clearHintTimers();
+    fullShlokaPlaybackTokenRef.current += 1;
+    fullShlokaAudioRef.current?.pause();
+    fullShlokaAudioRef.current = null;
+  }, [clearAllTimeouts, clearHintTimers]);
 
   const stopAllVoice = useCallback(() => {
     fullShlokaPlaybackTokenRef.current += 1;
@@ -309,6 +312,7 @@ const ShlokaRiverFinaleContent = ({
   useEffect(() => {
     if (phase !== PHASES.INITIAL) return;
     recapSequenceStartedRef.current = false;
+    resumeHandledRef.current = false;
     setOpeningButtonVisible(!isAudioOn);
     setScrambledWords(shuffle(SHLOKA_WORDS));
     setSlots(Array(8).fill(null));
@@ -397,14 +401,16 @@ const ShlokaRiverFinaleContent = ({
 
   useEffect(() => {
     if (phase === PHASES.SUCCESS) {
+      const isResume = !allComplete && correctSlots.size !== SHLOKA_WORDS.length;
       fillCompletedBoard();
       setAllComplete(true);
       setStartSailing(false);
       setRecapIndex(-1);
 
-      if (correctSlots.size === SHLOKA_WORDS.length) {
+      if (!isResume || resumeHandledRef.current) {
         return undefined;
       }
+      resumeHandledRef.current = true;
 
       const resumeRecap = safeSetTimeout(() => {
         setStartSailing(true);
@@ -424,7 +430,7 @@ const ShlokaRiverFinaleContent = ({
     }
 
     return undefined;
-  }, [correctSlots.size, fillCompletedBoard, phase, safeSetTimeout, sceneActions]);
+  }, [correctSlots.size, allComplete, fillCompletedBoard, phase, safeSetTimeout, sceneActions]);
 
   const placeWord = useCallback((wordData, slotIdx) => {
     const isCorrect = SHLOKA_WORDS[slotIdx].id === wordData.id;
@@ -472,6 +478,7 @@ const ShlokaRiverFinaleContent = ({
   const handleTrayPointerDown = (e, wordData) => {
     if (phase !== PHASES.ARRANGE || usedWords.has(wordData.id)) return;
     e.preventDefault();
+    dragMovedRef.current = false;
     markInteraction();
     setDraggingWord(wordData);
     const rect = stageRef.current?.getBoundingClientRect();
@@ -490,6 +497,7 @@ const ShlokaRiverFinaleContent = ({
       x: ((e.clientX - rect.left) / rect.width) * 100,
       y: ((e.clientY - rect.top) / rect.height) * 100,
     });
+    dragMovedRef.current = true;
   };
 
   const handlePointerUp = (e) => {
@@ -518,6 +526,10 @@ const ShlokaRiverFinaleContent = ({
   };
 
   const handleWordChipTap = (wordData) => {
+    if (dragMovedRef.current) {
+      dragMovedRef.current = false;
+      return;
+    }
     if (phase !== PHASES.ARRANGE || usedWords.has(wordData.id)) return;
     placeWord(wordData, activeSlotIndex);
   };
@@ -841,7 +853,7 @@ const ShlokaRiverFinaleContent = ({
               stopAllVoice();
               resetScene();
             }}
-            currentProgress={{ stars: correctCount, completed: sceneState.completed ? 1 : 0, total: 1 }}
+            currentProgress={{ stars: sceneState.stars || 0, completed: sceneState.completed ? 1 : 0, total: 1 }}
             isAudioOn={isAudioOn}
             onAudioToggle={handleAudioToggle}
           />

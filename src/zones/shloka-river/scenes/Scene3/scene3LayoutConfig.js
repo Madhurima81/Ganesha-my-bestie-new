@@ -43,7 +43,7 @@ export const KURUMEDEVA_LAYOUT = {
   friends: [
     { id: 'turtle', label: 'Turtle', brings: 'logs', l: 32, t: 62, w: 10, flip: false },
     { id: 'bird', label: 'Bird', brings: 'vines', l: 24.3, t: 54.7, w: 10, flip: false },
-    { id: 'squirrel', label: 'Squirrel', brings: 'pegs', l: 34, t: 63.8, w: 10, flip: false },
+    { id: 'squirrel', label: 'Squirrel', brings: 'pegs', l: 38, t: 62.8, w: 10, flip: false },
     { id: 'bunny', label: 'Bunny', brings: 'planks', l: 33.1, t: 57.3, w: 10, flip: false },
   ],
   beaverPath: [

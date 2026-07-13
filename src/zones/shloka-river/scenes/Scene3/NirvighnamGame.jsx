@@ -14,6 +14,7 @@ import reedImg from './assets/images/Nirvighnam/reed.png';
 import { NIRVIGHNAM_LAYOUT } from './scene3LayoutConfig';
 
 const SYLLABLES = ['Nir', 'vigh', 'nam'];
+const AUDIO = { syllables: ['nir', 'vigh', 'nam'] };
 
 const TURTLE_START = NIRVIGHNAM_LAYOUT.turtleStart;
 const NEST_POS = NIRVIGHNAM_LAYOUT.nest;
@@ -24,9 +25,15 @@ const OBSTACLES = [
   { ...NIRVIGHNAM_LAYOUT.obstacles[2], img: reedImg },
 ];
 
+// One "ground" drop spot per obstacle, just below its starting position —
+// drag the obstacle there (any direction of travel) to clear it.
+const DROP_ZONES = Object.fromEntries(
+  OBSTACLES.map((obs) => [obs.id, { l: obs.l, t: obs.t + 14 }])
+);
+
 const SWIM_PATH = NIRVIGHNAM_LAYOUT.swimPath;
 
-const DRAG_THRESHOLD = 0.12; // 12% of container width/height to clear
+const DROP_RADIUS = 12; // % distance to snap into the drop zone
 
 export default function NirvighnamGame({
   isActive = false,
@@ -36,10 +43,8 @@ export default function NirvighnamGame({
   onGameComplete = () => {},
   voiceGuidance = {},
   isPaused = false,
-  savedGameState = null,
-  onSaveGameState = null,
 }) {
-  const { playVoice: playSceneLine, stopVoice: stopSceneVoice } = voiceGuidance;
+  const { playVoice: playSceneLine, playSyllable, stopVoice: stopSceneVoice } = voiceGuidance;
   const [phase, setPhase] = useState('play');
   const [cleared, setCleared] = useState([]); // array of cleared obstacle ids
   const [litCount, setLitCount] = useState(0);
@@ -52,19 +57,21 @@ export default function NirvighnamGame({
 
   const stageRef = useRef(null);
   const dragStartRef = useRef(null); // { clientX, clientY, obstacleId }
+  const dragOffsetRef = useRef({ x: 0, y: 0 });
   const phaseRef = useRef('play');
   const doneAnnouncedRef = useRef(false);
   const successVoDoneRef = useRef(false);
   const swimDoneRef = useRef(false);
   const completionScheduledRef = useRef(false);
   const previousClearedCountRef = useRef(0);
+  const voFallbackRef = useRef(null);
   const onPhaseCompleteRef = useRef(onPhaseComplete);
   const onGameCompleteRef = useRef(onGameComplete);
   const {
     hintLevel,
     markInteraction,
   } = useRepeatedHintCycle({
-    enabled: isActive,
+    enabled: isActive && !isPaused && phase === 'play',
     stageKey: phase === 'play' ? `clear-${cleared.length}` : phase,
     initialDelay: 8000,
     pulseCountBeforeEscalation: 3,
@@ -79,26 +86,6 @@ export default function NirvighnamGame({
     onGameCompleteRef.current = onGameComplete;
   }, [onPhaseComplete, onGameComplete]);
 
-  useEffect(() => {
-    if (!isActive || !savedGameState) return;
-    setPhase(savedGameState.phase || 'play');
-    setCleared(savedGameState.cleared || []);
-    setLitCount(savedGameState.litCount || 0);
-    setTurtlePos(savedGameState.turtlePos || TURTLE_START);
-    setIsSwimming(!!savedGameState.isSwimming);
-  }, [isActive, savedGameState]);
-
-  useEffect(() => {
-    if (!isActive || !onSaveGameState) return;
-    onSaveGameState({
-      phase,
-      cleared,
-      litCount,
-      turtlePos,
-      isSwimming,
-    });
-  }, [isActive, onSaveGameState, phase, cleared, litCount, turtlePos, isSwimming]);
-
   // Reset on deactivate
   useEffect(() => {
     if (!isActive) {
@@ -109,6 +96,7 @@ export default function NirvighnamGame({
       setIsSwimming(false);
       setDragging(null);
       setDragOffset({ x: 0, y: 0 });
+      dragOffsetRef.current = { x: 0, y: 0 };
       phaseRef.current = 'play';
       doneAnnouncedRef.current = false;
       successVoDoneRef.current = false;
@@ -163,6 +151,7 @@ export default function NirvighnamGame({
     };
     setDragging(obstacleId);
     setDragOffset({ x: 0, y: 0 });
+    dragOffsetRef.current = { x: 0, y: 0 };
   }, [cleared, isPaused, markInteraction, stopSceneVoice]);
 
   // Move drag
@@ -175,6 +164,7 @@ export default function NirvighnamGame({
       if (!rect) return;
       const dx = ((e.clientX - dragStartRef.current.clientX) / rect.width) * 100;
       const dy = ((e.clientY - dragStartRef.current.clientY) / rect.height) * 100;
+      dragOffsetRef.current = { x: dx, y: dy };
       setDragOffset({ x: dx, y: dy });
     };
 
@@ -183,20 +173,24 @@ export default function NirvighnamGame({
       const rect = getStageRect();
       if (!rect) { setDragging(null); return; }
 
-      const dx = Math.abs(dragOffset.x) / 100;
-      const dy = Math.abs(dragOffset.y) / 100;
-      const dist = Math.sqrt(dx * dx + dy * dy);
+      const obstacleId = dragStartRef.current.obstacleId;
+      const obstacle = OBSTACLES.find((o) => o.id === obstacleId);
+      const latestOffset = dragOffsetRef.current;
+      const currentL = obstacle.l + latestOffset.x;
+      const currentT = obstacle.t + latestOffset.y;
+      const zone = DROP_ZONES[obstacleId];
+      const distToZone = Math.hypot(currentL - zone.l, currentT - zone.t);
 
-      if (dist > DRAG_THRESHOLD) {
-        const obstacleId = dragStartRef.current.obstacleId;
-        const dir = dragOffset.x < 0 ? 'left' : 'right';
-        setCleared(prev => [...prev, { id: obstacleId, dir }]);
+      if (distToZone < DROP_RADIUS) {
+        setCleared(prev => [...prev, { id: obstacleId }]);
       } else {
         setDragOffset({ x: 0, y: 0 });
+        dragOffsetRef.current = { x: 0, y: 0 };
       }
 
       setDragging(null);
       setDragOffset({ x: 0, y: 0 });
+      dragOffsetRef.current = { x: 0, y: 0 };
       dragStartRef.current = null;
     };
 
@@ -209,7 +203,7 @@ export default function NirvighnamGame({
       window.removeEventListener('pointerup', handleUp);
       window.removeEventListener('pointercancel', handleUp);
     };
-  }, [dragging, dragOffset, getStageRect, isActive, onMicroWin]);
+  }, [dragging, getStageRect, isActive, onMicroWin]);
 
   // Turtle hop sequence
   const completeAfterSuccess = useCallback(() => {
@@ -234,13 +228,12 @@ export default function NirvighnamGame({
         completeAfterSuccess();
       });
       // iOS Safari can silently drop utterance onend/onerror — don't let completion hang on VO
-      const voFallback = window.setTimeout(() => {
+      voFallbackRef.current = window.setTimeout(() => {
         if (!successVoDoneRef.current) {
           successVoDoneRef.current = true;
           completeAfterSuccess();
         }
       }, 8000);
-      timers.push(voFallback);
     } else {
       successVoDoneRef.current = true;
     }
@@ -261,10 +254,19 @@ export default function NirvighnamGame({
       timers.push(hopTimer);
     });
 
-    return () => timers.forEach(t => window.clearTimeout(t));
-  }, [phase]);
+    return () => timers.forEach((t) => window.clearTimeout(t));
+  }, [completeAfterSuccess, phase, playSceneLine]);
+
+  useEffect(() => () => {
+    if (voFallbackRef.current) {
+      window.clearTimeout(voFallbackRef.current);
+      voFallbackRef.current = null;
+    }
+  }, []);
 
   if (!isActive) return null;
+
+  const nextObstacleId = OBSTACLES.find((obs) => !cleared.some((entry) => entry.id === obs.id))?.id;
 
   const activeObstacles = OBSTACLES.filter(o => !cleared.some(c => c.id === o.id));
   const isDone = phase === 'done';
@@ -276,8 +278,11 @@ export default function NirvighnamGame({
         <SyllableHighlight
           syllables={SYLLABLES}
           litCount={litCount}
-          audioSyllables={SYLLABLES}
-          onSyllableLit={() => {}}
+          audioSyllables={AUDIO.syllables}
+          onSyllableLit={(syllable) => {
+            stopSceneVoice?.();
+            playSyllable?.(syllable);
+          }}
         />
 
         {phase === 'play' && (
@@ -326,21 +331,35 @@ export default function NirvighnamGame({
           />
         </div>
 
+        {/* Drop zones — one ground spot per obstacle */}
+        {OBSTACLES.map((obs) => {
+          if (cleared.some((c) => c.id === obs.id)) return null;
+          const zone = DROP_ZONES[obs.id];
+          const isNext = obs.id === nextObstacleId;
+          return (
+            <div
+              key={`zone-${obs.id}`}
+              className={`nirv-drop-zone ${isNext && hintLevel >= 1 ? 'pulse' : ''} ${isNext && hintLevel >= 2 ? 'hint-glow' : ''}`}
+              style={{ left: `${zone.l}%`, top: `${zone.t}%`, width: `${obs.w}%` }}
+            />
+          );
+        })}
+
         {/* Obstacles */}
         {OBSTACLES.map((obs) => {
-          const clearData = cleared.find(c => c.id === obs.id);
-          const isCleared = !!clearData;
+          const isCleared = cleared.some(c => c.id === obs.id);
           const isBeingDragged = dragging === obs.id;
+          const zone = DROP_ZONES[obs.id];
           const offsetX = isBeingDragged ? dragOffset.x : 0;
           const offsetY = isBeingDragged ? dragOffset.y : 0;
 
           return (
             <div
               key={obs.id}
-              className={`nirv-layer nirv-obstacle ${isCleared ? `is-cleared-${clearData.dir}` : ''} ${isBeingDragged ? 'is-dragging' : ''} ${phase === 'play' && !isCleared ? 'is-tappable' : ''} ${phase === 'play' && !isCleared && obs.id === OBSTACLES[cleared.length]?.id && hintLevel >= 1 ? 'pulse' : ''} ${phase === 'play' && !isCleared && obs.id === OBSTACLES[cleared.length]?.id && hintLevel >= 2 ? 'hint-glow' : ''}`}
+              className={`nirv-layer nirv-obstacle ${isCleared ? 'is-cleared' : ''} ${isBeingDragged ? 'is-dragging' : ''} ${phase === 'play' && !isCleared ? 'is-tappable' : ''} ${phase === 'play' && !isCleared && obs.id === nextObstacleId && hintLevel >= 1 ? 'pulse' : ''} ${phase === 'play' && !isCleared && obs.id === nextObstacleId && hintLevel >= 2 ? 'hint-glow' : ''}`}
               style={{
-                left: `${obs.l + offsetX}%`,
-                top: `${obs.t + offsetY}%`,
+                left: `${isCleared ? zone.l : obs.l + offsetX}%`,
+                top: `${isCleared ? zone.t : obs.t + offsetY}%`,
                 width: `${obs.w}%`,
                 zIndex: isBeingDragged ? 30 : 10,
                 scale: obs.flip ? '-1 1' : '1 1',
@@ -367,8 +386,8 @@ export default function NirvighnamGame({
 
         <GestureDemo
           type="drag"
-          from={{ x: OBSTACLES[0].l + OBSTACLES[0].w / 2, y: OBSTACLES[0].t + 5 }}
-          to={{ x: OBSTACLES[0].l - 18, y: OBSTACLES[0].t + 2 }}
+          from={{ x: OBSTACLES[0].l, y: OBSTACLES[0].t }}
+          to={{ x: DROP_ZONES[OBSTACLES[0].id].l, y: DROP_ZONES[OBSTACLES[0].id].t }}
           active={phase === 'play' && cleared.length === 0}
           idleDelay={3000}
         />

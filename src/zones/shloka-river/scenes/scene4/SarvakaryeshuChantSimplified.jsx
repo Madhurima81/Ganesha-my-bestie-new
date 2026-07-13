@@ -22,6 +22,7 @@ import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal
 import HomeButton from '../../../../lib/components/ui/HomeButton';
 import AudioToggle from '../../../../lib/components/ui/AudioToggle/AudioToggle';
 import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
+import { SCENE_TO_OUTER_PETAL_ID } from '../../../../lib/components/navigation/ProgressPopup';
 import VOReplayButton from '../../../../lib/components/feedback/VOReplayButton';
 import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
 import useResumeCountdown from '../../../../lib/hooks/useResumeCountdown';
@@ -51,6 +52,24 @@ import symbolSarvakaryeshu from '../../../meaning cave/assets/images/symbols/sar
 import symbolSarvada from '../../../meaning cave/assets/images/symbols/sarvada-symbol.png';
 
 const RESUME_DELAY_MS = 3000;
+const sceneOuterPetalId = SCENE_TO_OUTER_PETAL_ID['River Memories!'];
+const sceneOuterPetalIds = [sceneOuterPetalId - 1, sceneOuterPetalId];
+const debugFireworksBtnStyle = {
+  position: 'fixed',
+  top: '18px',
+  right: '18px',
+  zIndex: 1200,
+  padding: '8px 12px',
+  borderRadius: '999px',
+  border: '1px solid rgba(255,255,255,0.45)',
+  background: 'rgba(34, 24, 68, 0.82)',
+  color: '#fff7d6',
+  fontSize: '12px',
+  fontWeight: 800,
+  letterSpacing: '0.02em',
+  cursor: 'pointer',
+  boxShadow: '0 10px 24px rgba(0,0,0,0.22)',
+};
 
 const PHASES = {
   INITIAL: 'initial',
@@ -132,8 +151,6 @@ const SarvakaryeshuChantSimplified = ({
         stars: 0,
         completed: false,
         progress: { percentage: 0, starsEarned: 0, completed: false },
-        sarvakaryeshuGameState: null,
-        sarvadaGameState: null,
       }}
     >
       {({ sceneState, sceneActions, isReload }) => (
@@ -175,9 +192,6 @@ const SarvakaryeshuChantContent = ({
   const [savedRecordings, setSavedRecordings] = useState({});
   const [showAppDiscovery, setShowAppDiscovery] = useState(false);
   const [isRecorderOpen, setIsRecorderOpen] = useState(false);
-  const sarvakaryeshuGameStateRef = useRef(null);
-  const sarvadaGameStateRef = useRef(null);
-
   const { isAudioOn, toggleAudio } = useAudioPreference();
   const audioEnabledRef = useRef(isAudioOn);
   audioEnabledRef.current = isAudioOn;
@@ -191,6 +205,13 @@ const SarvakaryeshuChantContent = ({
     showSceneCompletion ||
     showAppDiscovery ||
     sceneState.phase === PHASES.COMPLETE;
+  const shouldShowOpeningModal =
+    sceneState.phase === PHASES.INITIAL &&
+    !sceneState.welcomeShown &&
+    !showSceneCompletion &&
+    !showMandala &&
+    !showAppDiscovery &&
+    showSparkle !== 'final-fireworks';
 
   const {
     stopVoice,
@@ -274,17 +295,11 @@ const SarvakaryeshuChantContent = ({
       return;
     }
     if (sceneState.phase === PHASES.SARVAKARYESHU_GAME) {
-      const cardVoKey = sarvakaryeshuGameStateRef.current?.cardIndex != null
-        ? ['scene13_puzzle', 'scene13_sports', 'scene13_bike', 'scene13_grandma'][sarvakaryeshuGameStateRef.current.cardIndex]
-        : 'scene13_puzzle';
-      playGuidanceVoice(cardVoKey || 'scene13_puzzle');
+      playGuidanceVoice('scene13_puzzle');
       return;
     }
     if (sceneState.phase === PHASES.SARVADA_GAME) {
-      const bubbleVoKey = sarvadaGameStateRef.current?.phaseIndex != null
-        ? ['scene14_morning', 'scene14_afternoon', 'scene14_night'][sarvadaGameStateRef.current.phaseIndex]
-        : 'scene14_morning';
-      playGuidanceVoice(bubbleVoKey || 'scene14_morning');
+      playGuidanceVoice('scene14_morning');
       return;
     }
     if (showSceneCompletion) playGuidanceVoice('sceneComplete');
@@ -324,6 +339,32 @@ const SarvakaryeshuChantContent = ({
     };
   };
 
+  const persistCompletion = useCallback(() => {
+    const profileId = localStorage.getItem('activeProfileId');
+    if (!profileId) return;
+
+    try {
+      GameStateManager.saveGameState(zoneId, sceneId, {
+        completed: true,
+        stars: 5,
+        phase: PHASES.COMPLETE,
+        words: sceneState.learnedWords || {},
+        syllables: sceneState.learnedSyllables || {},
+        apps: sceneState.unlockedApps || {},
+        chantedVerses: sceneState.chantedVerses || {},
+        timestamp: Date.now(),
+      });
+      ProgressManager.updateSceneCompletion(profileId, zoneId, sceneId, {
+        completed: true,
+        stars: 5,
+      });
+      localStorage.removeItem(`temp_session_${profileId}_${zoneId}_${sceneId}`);
+      SimpleSceneManager.clearCurrentScene();
+    } catch (error) {
+      console.error('Error saving:', error);
+    }
+  }, [sceneId, sceneState.chantedVerses, sceneState.learnedSyllables, sceneState.learnedWords, sceneState.unlockedApps, zoneId]);
+
   const handleRevealComplete = (symbolId) => {
     setRevealConfig(null);
     const appsNow = sceneState.unlockedApps;
@@ -333,7 +374,6 @@ const SarvakaryeshuChantContent = ({
         sceneActions.updateState({
           unlockedApps: { ...appsNow, sarvakaryeshu: true },
           phase: PHASES.SARVADA_GAME,
-          sarvadaGameState: null,
         });
       }, 950);
     } else {
@@ -375,8 +415,44 @@ const SarvakaryeshuChantContent = ({
   }, [sceneState.phase, setCurrentPhase, startIdleTimer]);
 
   useEffect(() => {
-    if (isReload) sceneActions.updateState({ sarvakaryeshuGameState: null, sarvadaGameState: null });
-  }, [isReload, sceneActions]);
+    if (
+      sceneState.phase === PHASES.COMPLETE &&
+      !showSparkle &&
+      !showMandala &&
+      !showSceneCompletion
+    ) {
+      setShowMandala(true);
+    }
+  }, [sceneState.phase, showMandala, showSparkle, showSceneCompletion]);
+
+  // ── Reload: restore SymbolAutoReveal if resumed mid-reveal ─────────────────
+  useEffect(() => {
+    if (!sceneState || revealConfig) return;
+
+    const restoreReveal = (word) => {
+      window.setTimeout(() => {
+        const discoveryData = getDiscoveryContent(zoneId, sceneId, word);
+        playChime();
+        setShowSparkle(null);
+        setRevealConfig({
+          symbolId: word,
+          symbolImage: powerConfig[word].image,
+          symbolName: discoveryData?.title || powerConfig[word].name,
+          affirmation: discoveryData?.affirmation || powerConfig[word].affirmation,
+          sidebarTarget: getSidebarTarget(word)
+        });
+      }, 1200);
+    };
+
+    if ([PHASES.SARVAKARYESHU_COMPLETE, PHASES.SARVAKARYESHU_POWER].includes(sceneState.phase)) {
+      restoreReveal('sarvakaryeshu');
+      return;
+    }
+
+    if ([PHASES.SARVADA_COMPLETE, PHASES.SARVADA_POWER].includes(sceneState.phase)) {
+      restoreReveal('sarvada');
+    }
+  }, [sceneState?.phase]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handlePhaseComplete = useCallback((word) => {
     triggerMiniGesture('blessing', 'center', 2500);
@@ -448,8 +524,19 @@ const SarvakaryeshuChantContent = ({
       completed: true,
       progress: { percentage: 100, starsEarned: 5, completed: true },
     });
+    persistCompletion();
     setShowSparkle('final-fireworks');
   };
+
+  const handleDebugFireworks = useCallback(() => {
+    stopAllVoice();
+    setShowAppDiscovery(false);
+    setRevealConfig(null);
+    setShowPowerOverlay(false);
+    setShowMandala(false);
+    setShowSceneCompletion(false);
+    setShowSparkle('final-fireworks');
+  }, [stopAllVoice]);
 
   if (!sceneState) return <div className="loading">Loading...</div>;
 
@@ -459,6 +546,9 @@ const SarvakaryeshuChantContent = ({
         <div className="sarva-scene-container">
           <HomeButton onNavigate={onNavigate} />
           <ZoneBadgeButton zoneId="shloka-river" onBack={() => onNavigate?.('zone-welcome')} />
+          <button type="button" style={debugFireworksBtnStyle} onClick={handleDebugFireworks}>
+            Debug Fireworks
+          </button>
           <AudioToggle isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
           <VOReplayButton onReplay={replayCurrentVoice} disabled={!isAudioOn} />
           <ResumeCountdown value={countdownValue} />
@@ -474,11 +564,6 @@ const SarvakaryeshuChantContent = ({
                   onGameComplete={() => {}}
                   isPaused={isRecorderOpen}
                   voiceGuidance={{ playVoice: playGuidanceVoice, stopVoice: stopAllVoice }}
-                  savedGameState={sceneState.sarvakaryeshuGameState}
-                  onSaveGameState={(gameState) => {
-                    sarvakaryeshuGameStateRef.current = gameState;
-                    sceneActions.updateState({ sarvakaryeshuGameState: gameState });
-                  }}
                 />
 
                 <SarvadaGame
@@ -489,11 +574,6 @@ const SarvakaryeshuChantContent = ({
                   onGameComplete={() => {}}
                   isPaused={isRecorderOpen}
                   voiceGuidance={{ playVoice: playGuidanceVoice, stopVoice: stopAllVoice }}
-                  savedGameState={sceneState.sarvadaGameState}
-                  onSaveGameState={(gameState) => {
-                    sarvadaGameStateRef.current = gameState;
-                    sceneActions.updateState({ sarvadaGameState: gameState });
-                  }}
                 />
 
                 {showTapSparkles && (
@@ -566,29 +646,6 @@ const SarvakaryeshuChantContent = ({
                       duration={3500}
                       onComplete={() => {
                         setShowSparkle(null);
-                        const profileId = localStorage.getItem('activeProfileId');
-                        if (profileId) {
-                          try {
-                            GameStateManager.saveGameState(zoneId, sceneId, {
-                              completed: true,
-                              stars: 5,
-                              phase: PHASES.COMPLETE,
-                              words: sceneState.learnedWords || {},
-                              syllables: sceneState.learnedSyllables || {},
-                              apps: sceneState.unlockedApps || {},
-                              chantedVerses: sceneState.chantedVerses || {},
-                              timestamp: Date.now(),
-                            });
-                            ProgressManager.updateSceneCompletion(profileId, zoneId, sceneId, {
-                              completed: true,
-                              stars: 5,
-                            });
-                            localStorage.removeItem(`temp_session_${profileId}_${zoneId}_${sceneId}`);
-                            SimpleSceneManager.clearCurrentScene();
-                          } catch (error) {
-                            console.error('Error saving:', error);
-                          }
-                        }
                         setShowMandala(true);
                       }}
                     />
@@ -598,9 +655,15 @@ const SarvakaryeshuChantContent = ({
                 {showMandala && (
                   <InnerMandala
                     childName={profileName}
-                    shlokaPetalStates={{ 1: 'activated', 2: 'activated', 3: 'activated', 4: 'activated', 5: 'activated', 6: 'activated', 7: 'activated', 8: 'activated' }}
-                    highlightPetals={[7]}
+                    shlokaPetalStates={{ 1: 'activated', 2: 'activated', 3: 'activated', 4: 'activated', 5: 'activated', 6: 'activated' }}
+                    justEarnedPetals={sceneOuterPetalIds.map((id) => ({ ring: 'outer', id }))}
+                    earnedSymbols={[
+                      { id: 'sarvakaryeshu', petalId: 7, image: symbolSarvakaryeshu },
+                      { id: 'sarvada', petalId: 8, image: symbolSarvada },
+                    ]}
+                    highlightPetals={sceneOuterPetalIds}
                     message="These meanings are growing inside you"
+                    autoCloseMs={7200}
                     onClose={() => {
                       setShowMandala(false);
                       setShowSceneCompletion(true);
@@ -610,21 +673,23 @@ const SarvakaryeshuChantContent = ({
               </>
             )}
 
-            <OpeningModal
-              zoneId={zoneId}
-              sceneId={sceneId}
-              isOpen={!sceneState.welcomeShown}
-              onStart={() => {
-                playUiTap();
-                stopAllVoice();
-                sceneActions.updateState({
-                  welcomeShown: true,
-                  phase: PHASES.SARVAKARYESHU_GAME,
-                });
-              }}
-              characterImg={ganeshaHeadphones}
-              showButton={openingButtonVisible}
-            />
+            {shouldShowOpeningModal && (
+              <OpeningModal
+                zoneId={zoneId}
+                sceneId={sceneId}
+                isOpen
+                onStart={() => {
+                  playUiTap();
+                  stopAllVoice();
+                  sceneActions.updateState({
+                    welcomeShown: true,
+                    phase: PHASES.SARVAKARYESHU_GAME,
+                  });
+                }}
+                characterImg={ganeshaHeadphones}
+                showButton={openingButtonVisible}
+              />
+            )}
 
             <SceneCompletionCelebration
               show={showSceneCompletion && !showMandala}

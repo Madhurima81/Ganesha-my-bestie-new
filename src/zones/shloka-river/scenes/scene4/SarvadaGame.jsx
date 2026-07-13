@@ -62,8 +62,6 @@ export default function SarvadaGame({
   onGameComplete = () => {},
   isPaused = false,
   voiceGuidance = {},
-  savedGameState = null,
-  onSaveGameState = null,
 }) {
   const { playVoice: playSceneLine, stopVoice: stopSceneVoice } = voiceGuidance;
   const [phaseIndex, setPhaseIndex] = useState(0);
@@ -74,6 +72,7 @@ export default function SarvadaGame({
   const [gamePhase, setGamePhase] = useState('intro');
   const [prevBgSrc, setPrevBgSrc] = useState(null);
   const [prevBgOpacity, setPrevBgOpacity] = useState(1);
+  const [flash, setFlash] = useState(false);
 
   const timersRef = useRef([]);
   const doneCalledRef = useRef(false);
@@ -99,32 +98,6 @@ export default function SarvadaGame({
     timersRef.current = [];
   }, []);
 
-  useEffect(() => {
-    if (!isActive || !savedGameState) return;
-    setPhaseIndex(savedGameState.phaseIndex || 0);
-    setBubbleState(savedGameState.bubbleState || 'idle');
-    setShowMemory(!!savedGameState.showMemory);
-    setLitCount(savedGameState.litCount || 0);
-    setRevealedSyls(savedGameState.revealedSyls || []);
-    setGamePhase(savedGameState.gamePhase || 'intro');
-    setPrevBgSrc(savedGameState.prevBgSrc || null);
-    setPrevBgOpacity(savedGameState.prevBgOpacity ?? 1);
-  }, [isActive, savedGameState]);
-
-  useEffect(() => {
-    if (!isActive || !onSaveGameState) return;
-    onSaveGameState({
-      phaseIndex,
-      bubbleState,
-      showMemory,
-      litCount,
-      revealedSyls,
-      gamePhase,
-      prevBgSrc,
-      prevBgOpacity,
-    });
-  }, [isActive, onSaveGameState, phaseIndex, bubbleState, showMemory, litCount, revealedSyls, gamePhase, prevBgSrc, prevBgOpacity]);
-
   const startPhase = useCallback(() => {
     safeAfter(300, () => {
       setBubbleState('pulsing');
@@ -142,6 +115,7 @@ export default function SarvadaGame({
       setGamePhase('intro');
       setPrevBgSrc(null);
       setPrevBgOpacity(1);
+      setFlash(false);
       doneCalledRef.current = false;
       return;
     }
@@ -172,9 +146,11 @@ export default function SarvadaGame({
     safeAfter(300, () => {
       setShowMemory(true);
       setBubbleState('memory');
-      safeAfter(1500, () => {
-        setBubbleState('bursting');
-        setShowMemory(false);
+        safeAfter(1500, () => {
+          setBubbleState('bursting');
+          setFlash(true);
+          safeAfter(650, () => setFlash(false));
+          setShowMemory(false);
 
         const cfg = PHASES_CONFIG[phaseIndex];
         setLitCount(cfg.litCount);
@@ -241,10 +217,10 @@ export default function SarvadaGame({
   const isPlaying = gamePhase === 'playing' || gamePhase === 'transition';
   const showSarvada = gamePhase === 'sarvada' || gamePhase === 'done';
   return (
-    <div className={`sarvada-game${hideElements ? ' is-hidden' : ''}`}>
+    <div className={`sarvada-game${hideElements ? ' is-hidden' : ''}${flash ? ' flash' : ''}`}>
       {/* Incoming bg — always fully visible */}
       <div
-        className="sarvada-bg"
+        className={`sarvada-bg${gamePhase === 'transition' ? ' zoom-in' : ''}`}
         style={{ backgroundImage: `url(${cfg.bg})`, opacity: 1, zIndex: 0 }}
       />
       {/* Outgoing bg — only present during crossfade, fades out on top */}
@@ -269,7 +245,7 @@ export default function SarvadaGame({
         />
       </div>
 
-      {isPlaying && bubbleState !== 'done' && !showMemory && (
+      {isPlaying && !showMemory && (
         <div
           className={`sarvada-bubble ${bubbleState}`}
           onPointerDown={handleBubbleTap}
@@ -278,6 +254,8 @@ export default function SarvadaGame({
           <img src={cfg.bubble} alt="memory bubble" draggable={false} />
         </div>
       )}
+
+      {bubbleState === 'bursting' && <div className="sarvada-ring-burst" />}
 
       {showMemory && (
         <div className="sarvada-memory" key={`memory-${phaseIndex}`}>

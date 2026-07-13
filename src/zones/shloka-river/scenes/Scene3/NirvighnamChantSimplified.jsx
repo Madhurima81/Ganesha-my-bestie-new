@@ -25,6 +25,7 @@ import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal
 import HomeButton from '../../../../lib/components/ui/HomeButton';
 import AudioToggle from '../../../../lib/components/ui/AudioToggle/AudioToggle';
 import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
+import { SCENE_TO_OUTER_PETAL_ID } from '../../../../lib/components/navigation/ProgressPopup';
 import VOReplayButton from '../../../../lib/components/feedback/VOReplayButton';
 import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
 import useResumeCountdown from '../../../../lib/hooks/useResumeCountdown';
@@ -77,6 +78,24 @@ const VOGatedButton = ({ visible, onClick, children, className = '', style = {} 
 };
 
 const RESUME_DELAY_MS = 3000;
+const sceneOuterPetalId = SCENE_TO_OUTER_PETAL_ID['The River Needs You!'];
+const sceneOuterPetalIds = [sceneOuterPetalId - 1, sceneOuterPetalId];
+const debugFireworksBtnStyle = {
+  position: 'fixed',
+  top: '18px',
+  right: '18px',
+  zIndex: 1200,
+  padding: '8px 12px',
+  borderRadius: '999px',
+  border: '1px solid rgba(255,255,255,0.45)',
+  background: 'rgba(34, 24, 68, 0.82)',
+  color: '#fff7d6',
+  fontSize: '12px',
+  fontWeight: 800,
+  letterSpacing: '0.02em',
+  cursor: 'pointer',
+  boxShadow: '0 10px 24px rgba(0,0,0,0.22)',
+};
 
 const PHASES = {
   INITIAL:              'initial',
@@ -86,6 +105,7 @@ const PHASES = {
   KURUMEDEVA_GAME:      'kurumedeva_game',
   KURUMEDEVA_COMPLETE:  'kurumedeva_complete',
   KURUMEDEVA_POWER:     'kurumedeva_power',
+  SCENE_COMPLETE:       'complete',
   COMPLETE:             'complete'
 };
 
@@ -148,8 +168,6 @@ const NirvighnamChantSimplified = ({
         stars:     0,
         completed: false,
         progress:  { percentage: 0, starsEarned: 0, completed: false },
-        nirvighnamGameState:  null,
-        kurumedevaGameState:  null,
       }}
     >
       {({ sceneState, sceneActions, isReload }) => (
@@ -198,6 +216,13 @@ const NirvighnamChantContent = ({
   const isFinalCelebrationActive =
     showSparkle === 'final-fireworks' || showMandala || showSceneCompletion ||
     showAppDiscovery || sceneState.phase === PHASES.COMPLETE;
+  const shouldShowOpeningModal =
+    sceneState.phase === PHASES.INITIAL &&
+    !sceneState.welcomeShown &&
+    !showSceneCompletion &&
+    !showMandala &&
+    !showAppDiscovery &&
+    showSparkle !== 'final-fireworks';
 
   const isCelebrationOrOverlayActive =
     isFinalCelebrationActive || !!revealConfig || showPowerOverlay || showCenteredWord;
@@ -205,7 +230,7 @@ const NirvighnamChantContent = ({
   // ── Voice guidance ─────────────────────────────────────────────────────────
   const {
     stopVoice, setVoiceVolume, playSfx, setCurrentPhase, startIdleTimer, stopIdleTimer,
-    playWord: playWordAudio, isPlaying: isVOPlaying,
+    playWord: playWordAudio, playSyllable, isPlaying: isVOPlaying,
   } = useVoiceGuidance(zoneId, sceneId, {
     enableMusic: false, voiceVolume: 1, sfxVolume: 0.7,
     idleTimeout: 999999, resumeDelay: RESUME_DELAY_MS,
@@ -308,6 +333,30 @@ const NirvighnamChantContent = ({
   };
 
   // ── Reveal complete → advance phase ───────────────────────────────────────
+  const persistCompletion = useCallback(() => {
+    const profileId = localStorage.getItem('activeProfileId');
+    if (!profileId) return;
+
+    try {
+      GameStateManager.saveGameState(zoneId, sceneId, {
+        completed: true, stars: 5, phase: PHASES.COMPLETE,
+        words: sceneState.learnedWords || {},
+        syllables: sceneState.learnedSyllables || {},
+        apps: sceneState.unlockedApps || {},
+        chantedVerses: sceneState.chantedVerses || {},
+        timestamp: Date.now()
+      });
+      ProgressManager.updateSceneCompletion(profileId, zoneId, sceneId, {
+        completed: true,
+        stars: 5,
+      });
+      localStorage.removeItem(`temp_session_${profileId}_${zoneId}_${sceneId}`);
+      SimpleSceneManager.clearCurrentScene();
+    } catch (e) {
+      console.error('Error saving game state:', e);
+    }
+  }, [sceneId, sceneState.chantedVerses, sceneState.learnedSyllables, sceneState.learnedWords, sceneState.unlockedApps, zoneId]);
+
   const handleRevealComplete = (symbolId) => {
     setRevealConfig(null);
     const appsNow = sceneState.unlockedApps;
@@ -317,7 +366,6 @@ const NirvighnamChantContent = ({
         sceneActions.updateState({
           unlockedApps: { ...appsNow, nirvighnam: true },
           phase: PHASES.KURUMEDEVA_GAME,
-          kurumedevaGameState: null,
         });
       }, 950);
       revealTimeoutsRef.current.push(timer);
@@ -398,8 +446,44 @@ const NirvighnamChantContent = ({
 
   // ── Reload: clear mini-game states ────────────────────────────────────────
   useEffect(() => {
-    if (isReload) sceneActions.updateState({ nirvighnamGameState: null, kurumedevaGameState: null });
-  }, []);
+    if (
+      sceneState.phase === PHASES.SCENE_COMPLETE &&
+      !showSparkle &&
+      !showMandala &&
+      !showSceneCompletion
+    ) {
+      setShowMandala(true);
+    }
+  }, [sceneState.phase, showMandala, showSparkle, showSceneCompletion]);
+
+  // ── Reload: restore SymbolAutoReveal if resumed mid-reveal ─────────────────
+  useEffect(() => {
+    if (!sceneState || revealConfig) return;
+
+    const restoreReveal = (word) => {
+      safeSetTimeout(() => {
+        const discoveryData = getDiscoveryContent(zoneId, sceneId, word);
+        playChime();
+        setShowSparkle(null);
+        setRevealConfig({
+          symbolId: word,
+          symbolImage: powerConfig[word].image,
+          symbolName: discoveryData?.title || powerConfig[word].name,
+          affirmation: discoveryData?.affirmation || powerConfig[word].affirmation,
+          sidebarTarget: getSidebarTarget(word)
+        });
+      }, 1200);
+    };
+
+    if ([PHASES.NIRVIGHNAM_COMPLETE, PHASES.NIRVIGHNAM_POWER].includes(sceneState.phase)) {
+      restoreReveal('nirvighnam');
+      return;
+    }
+
+    if ([PHASES.KURUMEDEVA_COMPLETE, PHASES.KURUMEDEVA_POWER].includes(sceneState.phase)) {
+      restoreReveal('kurumedeva');
+    }
+  }, [sceneState?.phase]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Phase complete handler ─────────────────────────────────────────────────
   const handlePhaseComplete = useCallback((word) => {
@@ -453,15 +537,20 @@ const NirvighnamChantContent = ({
       phase: PHASES.COMPLETE, stars: 5, completed: true,
       progress: { percentage: 100, starsEarned: 5, completed: true },
     });
+    persistCompletion();
     setShowSparkle('final-fireworks');
   };
 
-  const handleSaveComponentState = (type, state) => {
-    sceneActions.updateState({
-      ...(type === 'nirvighnamGame'  && { nirvighnamGameState: state }),
-      ...(type === 'kurumedevaGame'  && { kurumedevaGameState: state }),
-    });
-  };
+  const handleDebugFireworks = useCallback(() => {
+    stopAllVoice();
+    setShowAppDiscovery(false);
+    setRevealConfig(null);
+    setShowCenteredWord(false);
+    setShowPowerOverlay(false);
+    setShowMandala(false);
+    setShowSceneCompletion(false);
+    setShowSparkle('final-fireworks');
+  }, [stopAllVoice]);
 
   if (!sceneState) return <div className="loading">Loading...</div>;
 
@@ -471,6 +560,9 @@ const NirvighnamChantContent = ({
         <div className="nirv-scene-container">
           <HomeButton onNavigate={onNavigate} />
           <ZoneBadgeButton zoneId="shloka-river" onBack={() => onNavigate?.('zone-welcome')} />
+          <button type="button" style={debugFireworksBtnStyle} onClick={handleDebugFireworks}>
+            Debug Fireworks
+          </button>
           <AudioToggle isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
           <VOReplayButton onReplay={replayCurrentVoice} disabled={!isAudioOn} />
           <ResumeCountdown value={countdownValue} />
@@ -485,10 +577,15 @@ const NirvighnamChantContent = ({
                 onMicroWin={handleMicroWin}
                 onPhaseComplete={() => window.setTimeout(() => handlePhaseComplete('nirvighnam'), 0)}
                 onGameComplete={() => {}}
-                voiceGuidance={{ playVoice: playGuidanceVoice, stopVoice: stopAllVoice }}
+                voiceGuidance={{
+                  playVoice: playGuidanceVoice,
+                  playSyllable: (syllable, onEnded) => {
+                    stopAllVoice();
+                    playSyllable('nirvighnam', syllable, onEnded);
+                  },
+                  stopVoice: stopAllVoice,
+                }}
                 isPaused={isRecorderOpen}
-                savedGameState={sceneState.nirvighnamGameState}
-                onSaveGameState={(gameState) => handleSaveComponentState('nirvighnamGame', gameState)}
               />
 
               {/* ── KURUMEDEVA GAME — tap friends ── */}
@@ -498,10 +595,15 @@ const NirvighnamChantContent = ({
                 onMicroWin={handleMicroWin}
                 onPhaseComplete={() => window.setTimeout(() => handlePhaseComplete('kurumedeva'), 0)}
                 onGameComplete={() => {}}
-                voiceGuidance={{ playVoice: playGuidanceVoice, stopVoice: stopAllVoice }}
+                voiceGuidance={{
+                  playVoice: playGuidanceVoice,
+                  playSyllable: (syllable, onEnded) => {
+                    stopAllVoice();
+                    playSyllable('kurumedeva', syllable, onEnded);
+                  },
+                  stopVoice: stopAllVoice,
+                }}
                 isPaused={isRecorderOpen}
-                savedGameState={sceneState.kurumedevaGameState}
-                onSaveGameState={(gameState) => handleSaveComponentState('kurumedevaGame', gameState)}
               />
 
               {showTapSparkles && (
@@ -569,25 +671,6 @@ const NirvighnamChantContent = ({
                     duration={3500}
                     onComplete={() => {
                       setShowSparkle(null);
-                      const profileId = localStorage.getItem('activeProfileId');
-                      if (profileId) {
-                        try {
-                          GameStateManager.saveGameState(zoneId, sceneId, {
-                            completed: true, stars: 5, phase: PHASES.COMPLETE,
-                            words: sceneState.learnedWords || {},
-                            syllables: sceneState.learnedSyllables || {},
-                            apps: sceneState.unlockedApps || {},
-                            chantedVerses: sceneState.chantedVerses || {},
-                            timestamp: Date.now()
-                          });
-                          ProgressManager.updateSceneCompletion(profileId, zoneId, sceneId, {
-                            completed: true,
-                            stars: 5,
-                          });
-                          localStorage.removeItem(`temp_session_${profileId}_${zoneId}_${sceneId}`);
-                          SimpleSceneManager.clearCurrentScene();
-                        } catch (e) { console.error('Error saving game state:', e); }
-                      }
                       setShowMandala(true);
                     }}
                   />
@@ -597,9 +680,15 @@ const NirvighnamChantContent = ({
               {showMandala && (
                 <InnerMandala
                   childName={profileName}
-                  shlokaPetalStates={{ 1: 'activated', 2: 'activated', 3: 'activated', 4: 'activated', 5: 'activated', 6: 'activated' }}
-                  highlightPetals={[5]}
+                  shlokaPetalStates={{ 1: 'activated', 2: 'activated', 3: 'activated', 4: 'activated' }}
+                  justEarnedPetals={sceneOuterPetalIds.map((id) => ({ ring: 'outer', id }))}
+                  earnedSymbols={[
+                    { id: 'nirvighnam', petalId: 5, image: symbolNirvighnam },
+                    { id: 'kurumedeva', petalId: 6, image: symbolKurumedeva },
+                  ]}
+                  highlightPetals={sceneOuterPetalIds}
                   message="These meanings are growing inside you"
+                  autoCloseMs={7200}
                   onClose={() => { setShowMandala(false); setShowSceneCompletion(true); }}
                 />
               )}
@@ -607,18 +696,20 @@ const NirvighnamChantContent = ({
             )}
 
             {/* ── OPENING MODAL ── */}
-            <OpeningModal
-              zoneId={zoneId}
-              sceneId={sceneId}
-              isOpen={!sceneState.welcomeShown}
-              onStart={() => {
-                playUiTap();
-                stopAllVoice();
-                sceneActions.updateState({ welcomeShown: true, phase: PHASES.NIRVIGHNAM_GAME });
-              }}
-              characterImg={ganeshaHeadphones}
-              showButton={openingButtonVisible}
-            />
+            {shouldShowOpeningModal && (
+              <OpeningModal
+                zoneId={zoneId}
+                sceneId={sceneId}
+                isOpen
+                onStart={() => {
+                  playUiTap();
+                  stopAllVoice();
+                  sceneActions.updateState({ welcomeShown: true, phase: PHASES.NIRVIGHNAM_GAME });
+                }}
+                characterImg={ganeshaHeadphones}
+                showButton={openingButtonVisible}
+              />
+            )}
 
             <SceneCompletionCelebration
               show={showSceneCompletion && !showMandala}

@@ -11,6 +11,7 @@ import birdFlyImg from '../assets/images/Samaprabha/bird-fly.png';
 import birdHappyImg from '../assets/images/Samaprabha/bird-happy.png';
 
 const SYLLABLES = ['Sa', 'ma', 'pra', 'bha'];
+const AUDIO = { syllables: ['sa', 'ma', 'pra', 'bha'] };
 
 const STOPS = [
   { balance: 0.92, litCount: 0 },
@@ -142,7 +143,7 @@ function SunHandle({ balance, isDragging, isBalanced, className = '' }) {
   );
 }
 
-function SnapDots({ currentStop, onTap, enabled, hintLevel = 0 }) {
+function SnapDots({ currentStop, enabled, hintLevel = 0 }) {
   return (
     <div className="sama-snap-dots" aria-hidden="true">
       {STOPS.map((s, i) => {
@@ -154,8 +155,7 @@ function SnapDots({ currentStop, onTap, enabled, hintLevel = 0 }) {
           <div
             key={i}
             className={`sama-snap-dot${isLit ? ' is-lit' : ''}${isCurrent ? ' is-current' : ''}${isNext ? ' is-next' : ''}${isHint ? ' is-hint' : ''}`}
-            style={{ left: `${sunLeftPct(s.balance)}%` }}
-            onClick={isNext ? () => onTap(i) : undefined}
+            style={{ left: `${sunLeftPct(s.balance)}%`, pointerEvents: 'none' }}
           />
         );
       })}
@@ -173,18 +173,20 @@ export default function SamaprabhaGame({
   voiceGuidance = {},
   isPaused = false,
 }) {
-  const { playVoice: playSceneLine, stopVoice } = voiceGuidance;
+  const { playVoice: playSceneLine, playSyllable, stopVoice } = voiceGuidance;
   const containerRef = useRef(null);
   const timersRef = useRef([]);
   const doneCalledRef = useRef(false);
   const isPausedRef = useRef(isPaused);
   const currentStopRef = useRef(0);
   const firstInteractionSentRef = useRef(false);
+  const dragRef = useRef(false);
   isPausedRef.current = isPaused;
 
   const [currentStop, setCurrentStop] = useState(0);
   const [phase, setPhase] = useState('play');
   const [birdState, setBirdState] = useState('cold');
+  const [dragging, setDraggingState] = useState(false);
   const onGameCompleteRef = useRef(onGameComplete);
   const onPhaseCompleteRef = useRef(onPhaseComplete);
 
@@ -268,9 +270,34 @@ export default function SamaprabhaGame({
     }
   }, [markInteraction, onFirstInteraction, onMicroWin, phase, safeAfter]);
 
-  // Tap-based — no drag handlers needed
+  const onHandleDown = useCallback((e) => {
+    if (isPausedRef.current || phase !== 'play') return;
+    e.preventDefault();
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+    dragRef.current = true;
+    setDraggingState(true);
+    if (!firstInteractionSentRef.current) {
+      firstInteractionSentRef.current = true;
+      onFirstInteraction?.();
+    }
+  }, [onFirstInteraction, phase]);
 
-  // No drag event listeners needed — using tap on dots
+  const onHandleMove = useCallback((e) => {
+    if (!dragRef.current || isPausedRef.current) return;
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const xPct = ((e.clientX - rect.left) / rect.width) * 100;
+    const bal = clamp((xPct - TRACK_START) / (TRACK_END - TRACK_START), 0.5, 0.92);
+    const next = currentStopRef.current + 1;
+    if (next < STOPS.length && bal <= STOPS[next].balance) {
+      advanceToStop(next);
+    }
+  }, [advanceToStop]);
+
+  const onHandleUp = useCallback(() => {
+    dragRef.current = false;
+    setDraggingState(false);
+  }, []);
 
   // Reset on deactivate
   useEffect(() => {
@@ -289,7 +316,10 @@ export default function SamaprabhaGame({
 
   useEffect(() => {
     if (phase !== 'done') return undefined;
+    let finished = false;
     const finish = () => {
+      if (finished) return;
+      finished = true;
       onGameCompleteRef.current?.();
       onPhaseCompleteRef.current?.();
     };
@@ -300,7 +330,11 @@ export default function SamaprabhaGame({
     }
 
     const timerId = window.setTimeout(() => {
-      playSceneLine('scene11_sama_done', finish);
+      const fallback = window.setTimeout(finish, 4000);
+      playSceneLine('scene11_sama_done', () => {
+        window.clearTimeout(fallback);
+        finish();
+      });
     }, 150);
 
     return () => {
@@ -318,6 +352,9 @@ export default function SamaprabhaGame({
         className="sama-stage"
         style={{ backgroundImage: `url(${sharedSceneBg})` }}
         onContextMenu={(e) => e.preventDefault()}
+        onPointerMove={onHandleMove}
+        onPointerUp={onHandleUp}
+        onPointerCancel={onHandleUp}
       >
         <div className="sama-skywash" />
         <div
@@ -330,8 +367,11 @@ export default function SamaprabhaGame({
         <SyllableHighlight
           syllables={SYLLABLES}
           litCount={litCount}
-          audioSyllables={SYLLABLES}
-          onSyllableLit={() => {}}
+          audioSyllables={AUDIO.syllables}
+          onSyllableLit={(syllable) => {
+            stopVoice?.();
+            playSyllable?.(syllable);
+          }}
         />
 
         {phase === 'done' && (
@@ -360,16 +400,27 @@ export default function SamaprabhaGame({
           </svg>
         </div>
 
-        <SnapDots currentStop={currentStop} onTap={advanceToStop} enabled={phase === 'play'} hintLevel={hintLevel} />
+        <SnapDots currentStop={currentStop} enabled={phase === 'play'} hintLevel={hintLevel} />
 
         <Bird side="left" brightness={leftBrightness} birdState={birdState} />
         <Bird side="right" brightness={rightBrightness} birdState={birdState} />
 
-        <SunHandle balance={balance} isDragging={false} isBalanced={phase === 'done'} />
+        <SunHandle
+          balance={balance}
+          isDragging={dragging}
+          isBalanced={phase === 'done'}
+        />
+
+        <div
+          className={`sama-handle-hit${phase !== 'play' ? ' is-disabled' : ''}`}
+          style={{ left: `${sunLeftPct(balance)}%`, top: `${SUN_TOP_PCT}%` }}
+          onPointerDown={onHandleDown}
+        />
 
         <GestureDemo
-          type="tap"
-          from={{ x: sunLeftPct(STOPS[1].balance), y: SUN_TOP_PCT }}
+          type="drag"
+          from={{ x: sunLeftPct(STOPS[0].balance), y: SUN_TOP_PCT }}
+          to={{ x: sunLeftPct(STOPS[1].balance), y: SUN_TOP_PCT }}
           active={phase === 'play' && currentStop === 0}
           idleDelay={3000}
         />
