@@ -20,7 +20,13 @@ const ZONE_SCENES = [
   { zone: 'about-me-hut', scenes: ['family-tree', 'favorite-food', 'dreams-wishes', 'my-indian-story'] },
 ];
 
-const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
+const CleanGameWelcomeScreen = ({
+  onContinue,
+  onNewGame,
+  onParentCorner,
+  onClose,
+  displayMode = 'fullscreen',
+}) => {
   const [profiles, setProfiles] = useState({});
   const [currentProfile, setCurrentProfile] = useState(null);
   const [showProfileSelector, setShowProfileSelector] = useState(false);
@@ -633,6 +639,8 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
   };
 
   const welcomeMsg = currentProfile ? getWelcomeMessage() : null;
+  const isModal = displayMode === 'modal';
+  const modalTitle = 'Your Journey';
   
   // Show profile selector
   if (showProfileSelector) {
@@ -646,7 +654,7 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
   
   if (!currentProfile) {
     return (
-      <div className="clean-welcome-overlay page-transition">
+      <div className={`clean-welcome-overlay page-transition ${isModal ? 'clean-welcome-overlay--modal' : 'clean-welcome-overlay--fullscreen'}`}>
         <div className="clean-welcome-content clean-welcome-card loading-welcome-card">
           <ScreenHeader title="Loading Profile..." glowColor="purple" />
           <PrimaryBtn
@@ -662,18 +670,32 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
   }
   
   return (
-    <div className="clean-welcome-overlay page-transition">
-      <button
-        className="welcome-sound-toggle"
-        onClick={toggleAudio}
-        aria-label={audioOn ? 'Turn sound off' : 'Turn sound on'}
-      >
-        {audioOn ? '🔊' : '🔇'}
-      </button>
-      <div className="clean-welcome-content clean-welcome-card">
+    <div className={`clean-welcome-overlay page-transition ${isModal ? 'clean-welcome-overlay--modal' : 'clean-welcome-overlay--fullscreen'}`}>
+      {!isModal && (
+        <button
+          className="welcome-sound-toggle"
+          onClick={toggleAudio}
+          aria-label={audioOn ? 'Turn sound off' : 'Turn sound on'}
+        >
+          {audioOn ? '🔊' : '🔇'}
+        </button>
+      )}
+      {isModal && (
+        <button
+          className="welcome-close-btn"
+          onClick={() => {
+            playUiTap(0.22);
+            onClose?.();
+          }}
+          aria-label="Close welcome popup"
+        >
+          ×
+        </button>
+      )}
+      <div className={`clean-welcome-content clean-welcome-card ${isModal ? 'clean-welcome-content--modal compact' : ''}`}>
         <span className="welcome-card-lotus" aria-hidden="true" />
         <ScreenHeader
-          title={welcomeMsg.title}
+          title={isModal ? modalTitle : welcomeMsg.title}
           glowColor="purple"
         />
        
@@ -700,43 +722,50 @@ const CleanGameWelcomeScreen = ({ onContinue, onNewGame, onParentCorner }) => {
         </div>
 
         {/* ACTION BUTTONS */}
-        <div className="welcome-actions welcome-buttons-row profile-actions">
-          {hasProgress ? (
-            <>
-              <PrimaryBtn
-                label={welcomeMsg.buttonText.main}
-                onClick={handleContinue}
-                size="md"
-                fullWidth
-                className="continue-journey-btn welcome-action-btn"
-              />
-              <button className="secondary-btn explore-map-btn welcome-action-btn" onClick={handleNewGame}>
-                Home
-              </button>
-            </>
-          ) : (
-            <>
-              <PrimaryBtn
-                label="Start Adventure"
-                onClick={handleStartAdventure}
-                size="md"
-                fullWidth
-                className="continue-journey-btn welcome-action-btn"
-              />
-            </>
-          )}
-
-        </div>
-        <button className="bottom-switch-explorer switch-explorer-link" onClick={handleBackToProfiles}>
-          Not {currentProfile.name}? Switch Explorer
-        </button>
-        {hasProgress && (
-          <button
-            className="bottom-switch-explorer switch-explorer-link start-over-link"
-            onClick={() => { playUiTap(0.22); setShowNewGameConfirm(true); }}
-          >
-            Start Over
+        {isModal ? (
+          <button className="bottom-switch-explorer switch-explorer-link popup-switch-link" onClick={handleBackToProfiles}>
+            Not {currentProfile.name}? Switch Explorer
           </button>
+        ) : (
+          <>
+            <div className="welcome-actions welcome-buttons-row profile-actions">
+              {hasProgress ? (
+                <>
+                  <PrimaryBtn
+                    label={welcomeMsg.buttonText.main}
+                    onClick={handleContinue}
+                    size="md"
+                    fullWidth
+                    className="continue-journey-btn welcome-action-btn"
+                  />
+                  <button className="secondary-btn explore-map-btn welcome-action-btn" onClick={handleNewGame}>
+                    Home
+                  </button>
+                </>
+              ) : (
+                <>
+                  <PrimaryBtn
+                    label="Start Adventure"
+                    onClick={handleStartAdventure}
+                    size="md"
+                    fullWidth
+                    className="continue-journey-btn welcome-action-btn"
+                  />
+                </>
+              )}
+            </div>
+            <button className="bottom-switch-explorer switch-explorer-link" onClick={handleBackToProfiles}>
+              Not {currentProfile.name}? Switch Explorer
+            </button>
+            {hasProgress && (
+              <button
+                className="bottom-switch-explorer switch-explorer-link start-over-link"
+                onClick={() => { playUiTap(0.22); setShowNewGameConfirm(true); }}
+              >
+                Start Over
+              </button>
+            )}
+          </>
         )}
       </div>
       

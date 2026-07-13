@@ -28,7 +28,7 @@ const DETAIL_VO = {
   tusk: 'Pick one small thing you can finish today.',
 };
 
-const PETAL_TO_SCENE = {
+export const PETAL_TO_SCENE = {
   mooshika: 'Share the Modaks',
   modak: 'Share the Modaks',
   belly: 'Share the Modaks',
@@ -48,6 +48,25 @@ const PETAL_TO_SCENE = {
   'sarvakaryeshu-chant': 'River Memories!',
   'sarvada-chant': 'River Memories!',
 };
+
+const SHLOKA_OUTER_PETAL_ORDER = [
+  'vakratunda-chant',
+  'mahakaya-chant',
+  'suryakoti-chant',
+  'samaprabha-chant',
+  'nirvighnam-chant',
+  'kurumedeva-chant',
+  'sarvakaryeshu-chant',
+  'sarvada-chant',
+];
+
+export const SCENE_TO_OUTER_PETAL_ID = Object.entries(PETAL_TO_SCENE).reduce((acc, [petalKey, sceneName]) => {
+  const index = SHLOKA_OUTER_PETAL_ORDER.indexOf(petalKey);
+  if (index !== -1) {
+    acc[sceneName] = index + 1;
+  }
+  return acc;
+}, {});
 
 const normalizeSymbolId = (item) => {
   const raw = (item?.id || item?.name || '').toString().toLowerCase().trim();

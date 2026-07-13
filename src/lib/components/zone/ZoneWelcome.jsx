@@ -584,13 +584,13 @@ if (tempData) {
     tempState.stars === 8
   );
       } else if (scene.id === 'vakratunda-grove') {
-        // Complete if: both words learned, mahakaya_power phase (both games done,
-        // in final reveal — SceneManager stops saving after this), or explicitly complete
+        // Vakratunda is complete only when explicitly completed/completion phase/screen.
+        // mahakaya_power is a pre-completion stage (final symbol reveal), so keep Continue —
+        // matches modak/pond/symbol pattern.
         isCompleteInTemp = (
           tempState.completed === true ||
           tempState.phase === 'complete' ||
-          tempState.phase === 'mahakaya_power' ||
-          (tempState.learnedWords?.vakratunda === true && tempState.learnedWords?.mahakaya === true)
+          tempState.showingCompletionScreen === true
         );
       } else if (scene.id === 'family-tree') {
         // Complete if: sideBySide phase reached (both trees shown) OR completion screen showing

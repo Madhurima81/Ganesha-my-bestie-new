@@ -36,33 +36,6 @@ import {
   clearPin,
 } from '../../utils/dashboardData'
 
-const SOUND_PREF_KEYS = {
-  ambience: 'gmb_parent_sound_ambience',
-  voice: 'gmb_parent_sound_voice',
-  sfx: 'gmb_parent_sound_sfx',
-}
-
-const DEFAULT_SOUND_SETTINGS = {
-  ambience: 0.35,
-  voice: 1,
-  sfx: 0.75,
-}
-
-const clamp01 = (value) => Math.max(0, Math.min(1, value))
-
-const readSoundSettings = () => {
-  if (typeof window === 'undefined') return DEFAULT_SOUND_SETTINGS
-
-  const next = { ...DEFAULT_SOUND_SETTINGS }
-  Object.entries(SOUND_PREF_KEYS).forEach(([key, storageKey]) => {
-    const raw = localStorage.getItem(storageKey)
-    if (raw == null) return
-    const parsed = Number(raw)
-    if (!Number.isNaN(parsed)) next[key] = clamp01(parsed)
-  })
-  return next
-}
-
 // ─── Symbol content (unchanged from v1) ────────────────────────
 
 const SYMBOL_DATA = {
@@ -302,7 +275,6 @@ export default function ParentDashboard({ onBack }) {
   const [showWeeklyCard, setShowWeeklyCard] = useState(false)
   const [extraUnlocked,  setExtraUnlocked]  = useState(isExtraTimeUnlocked())
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false)
-  const [soundSettings, setSoundSettings] = useState(readSoundSettings)
 
   // ── Load profile + symbol data on mount ──────────────────────
   useEffect(() => {
@@ -382,15 +354,6 @@ export default function ParentDashboard({ onBack }) {
   const handleUnlockTime = () => {
     unlockExtraTime()
     setExtraUnlocked(true)
-  }
-
-  const handleSoundSettingChange = (key, value) => {
-    const clamped = clamp01(value)
-    setSoundSettings((prev) => {
-      const next = { ...prev, [key]: clamped }
-      localStorage.setItem(SOUND_PREF_KEYS[key], String(clamped))
-      return next
-    })
   }
 
   const handleDeleteAllData = () => {
@@ -507,7 +470,7 @@ export default function ParentDashboard({ onBack }) {
         gap: '0.1rem',
         position: 'sticky', top: 62, zIndex: 40,
       }}>
-        {tabs.filter(t => ['guidance', 'settings'].includes(t.id)).map(t => (
+        {tabs.map(t => (
           <button
             key={t.id}
             onClick={() => setActiveTab(t.id)}
@@ -545,43 +508,6 @@ export default function ParentDashboard({ onBack }) {
                 Simple ways to support {name} during the day
               </p>
             </header>
-
-            <section style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: '0.7rem',
-            }}>
-              <SummaryCard emoji="ðŸ˜" label="TWG sessions"
-                value={weekSessions.length} sublabel="this week"
-                color={CV.saffron} />
-              <SummaryCard emoji="ðŸ’›" label="Kind acts"
-                value={thisWeekActs.length} sublabel="this week"
-                color={CV.green} />
-              <SummaryCard emoji="ðŸŽ¯" label="Dare streak"
-                value={`${dareStreak} day${dareStreak !== 1 ? 's' : ''}`}
-                sublabel={dareStreak >= 7 ? 'great going' : 'keep going'}
-                color={CV.deepOrange} />
-              <SummaryCard emoji="ðŸ¬" label="Gratitude jar"
-                value={`${gratitudeJar.count}/7`} sublabel="modaks"
-                color={CV.purple} />
-            </section>
-
-            <div style={{
-              background: '#FFF7E8',
-              border: `1.5px solid ${CV.gold}`,
-              borderRadius: 14,
-              padding: '0.85rem 1rem',
-            }}>
-              <p style={{
-                margin: 0,
-                fontFamily: 'Nunito, sans-serif',
-                fontSize: '0.86rem',
-                color: CV.brown,
-                lineHeight: 1.55,
-              }}>
-                Daily dare: {dareStreak} day streak, {thisWeekActs.length} kind act{thisWeekActs.length !== 1 ? 's' : ''} this week, and {gratitudeJar.count}/7 gratitude modaks.
-              </p>
-            </div>
 
             {/* Symbol strip */}
             <section className="pd-symbol-strip">
@@ -1204,52 +1130,6 @@ export default function ParentDashboard({ onBack }) {
           <AnalyticsWrap>
             <SectionHead>Dashboard settings</SectionHead>
 
-            <div style={{
-              background: 'white',
-              border: '2px solid rgba(255,215,0,0.4)',
-              borderRadius: 16,
-              padding: '1rem',
-              marginBottom: '0.8rem',
-            }}>
-              <p style={{
-                fontFamily: 'Baloo 2, cursive',
-                fontSize: '0.95rem',
-                color: CV.brown,
-                margin: '0 0 0.2rem',
-                fontWeight: 700,
-              }}>
-                Sound
-              </p>
-              <p style={{
-                fontFamily: 'Nunito, sans-serif',
-                fontSize: '0.8rem',
-                color: CV.softBrown,
-                margin: '0 0 0.9rem',
-                lineHeight: 1.5,
-              }}>
-                Separate settings for ambience sound, voice, and SFX.
-              </p>
-
-              <SoundSettingRow
-                label="Ambience sound"
-                value={soundSettings.ambience}
-                onChange={(value) => handleSoundSettingChange('ambience', value)}
-                accent={CV.purple}
-              />
-              <SoundSettingRow
-                label="Voice"
-                value={soundSettings.voice}
-                onChange={(value) => handleSoundSettingChange('voice', value)}
-                accent={CV.deepOrange}
-              />
-              <SoundSettingRow
-                label="SFX"
-                value={soundSettings.sfx}
-                onChange={(value) => handleSoundSettingChange('sfx', value)}
-                accent={CV.green}
-              />
-            </div>
-
             <SettingRow
               label="Daily TWG sessions"
               sublabel="How many 5-min sessions per day"
@@ -1469,50 +1349,6 @@ function SettingRow({ label, sublabel, value, action, actionLabel, danger }) {
           {value}
         </span>
       )}
-    </div>
-  )
-}
-
-function SoundSettingRow({ label, value, onChange, accent }) {
-  const percent = Math.round(clamp01(value) * 100)
-
-  return (
-    <div style={{ marginBottom: '0.9rem' }}>
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: '0.4rem',
-      }}>
-        <span style={{
-          fontFamily: 'Baloo 2, cursive',
-          fontSize: '0.88rem',
-          color: CV.brown,
-          fontWeight: 700,
-        }}>
-          {label}
-        </span>
-        <span style={{
-          fontFamily: 'Nunito, sans-serif',
-          fontSize: '0.78rem',
-          color: CV.softBrown,
-          fontWeight: 700,
-        }}>
-          {percent}%
-        </span>
-      </div>
-      <input
-        type="range"
-        min="0"
-        max="100"
-        value={percent}
-        onChange={(e) => onChange(Number(e.target.value) / 100)}
-        style={{
-          width: '100%',
-          accentColor: accent,
-          cursor: 'pointer',
-        }}
-      />
     </div>
   )
 }
