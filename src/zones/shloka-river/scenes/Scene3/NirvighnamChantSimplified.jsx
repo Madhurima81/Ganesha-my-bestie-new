@@ -45,7 +45,7 @@ import KurumedevaGame from './components/KurumeDevaGame';
 
 // Assets
 import ganeshaHeadphones from './assets/images/ganesha_with_headphones.webp';
-import nirvighnamBg from './assets/images/Nirvighnam/bg.png';
+import nirvighnamBg from './assets/images/nirvighnam/bg.png';
 import mooshikaCoach from './assets/images/mooshika-coach.webp';
 
 // Symbol icons — TODO: replace with actual nirvighnam/kurumedeva symbols

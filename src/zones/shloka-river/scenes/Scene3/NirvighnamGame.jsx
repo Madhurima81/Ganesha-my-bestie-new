@@ -5,12 +5,12 @@ import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
 import './NirvighnamGame.css';
 
 import sharedSceneBg from './assets/images/saurakoti-bg.png';
-import turtleSadImg from './assets/images/Nirvighnam/nir-turtle-sad.png';
-import turtleHappyImg from './assets/images/Nirvighnam/nir-turtle-happy.png';
-import nestImg from './assets/images/Nirvighnam/nest.png';
-import stoneImg from './assets/images/Nirvighnam/stone.png';
-import branchImg from './assets/images/Nirvighnam/branch.png';
-import reedImg from './assets/images/Nirvighnam/reed.png';
+import turtleSadImg from './assets/images/nirvighnam/nir-turtle-sad.png';
+import turtleHappyImg from './assets/images/nirvighnam/nir-turtle-happy.png';
+import nestImg from './assets/images/nirvighnam/nest.png';
+import stoneImg from './assets/images/nirvighnam/stone.png';
+import branchImg from './assets/images/nirvighnam/branch.png';
+import reedImg from './assets/images/nirvighnam/reed.png';
 import { NIRVIGHNAM_LAYOUT } from './scene3LayoutConfig';
 
 const SYLLABLES = ['Nir', 'vigh', 'nam'];

@@ -671,7 +671,7 @@ const getPermanentCompletedCount = () => {
   const MVP_FIRST_SCENE_ONLY = false;
 
   // Progressive unlock: first scene is open; next scenes open via completion/auto-unlock.
-  const checkSceneUnlocked = (scene) => {
+  function checkSceneUnlocked(scene) {
     if (!zoneData || !zoneData.scenes) return false;
 
     // ✅ MVP LOCK: Only the first scene is unlocked in MVP mode
@@ -731,7 +731,7 @@ const getPermanentCompletedCount = () => {
     }
     
     return isUnlocked;
-  };
+  }
 
   // ✅ DISNEY: Helper function for highlighting next available scene
   const getNextUnlockedScene = () => {

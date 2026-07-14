@@ -4,7 +4,7 @@ import useRepeatedHintCycle from '../../../../lib/hooks/useRepeatedHintCycle';
 import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
 import './KurumedevaGame.css';
 
-import bgImg from './assets/images/Nirvighnam/bg.png';
+import bgImg from './assets/images/nirvighnam/bg.png';
 
 import turtleCarryImg from './assets/images/Kurumedeva/turtle.png';
 import birdCarryImg from './assets/images/Kurumedeva/bird.png';
