@@ -607,10 +607,13 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   .btn-text-back { margin-top: 5px; font-size: 14px; }
 
   .clean-profiles-grid {
-    display: flex; flex-direction: row;
-    justify-content: center; gap: 15px; width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    justify-content: center;
+    gap: 15px;
+    width: min(560px, 100%);
   }
-  .clean-profile-card { width: 110px; height: 130px; padding: 5px; border-radius: 14px; }
+  .clean-profile-card { min-height: 130px; padding: 8px; border-radius: 14px; }
   .clean-animal-avatar-container { width: 70px; height: 70px; }
   .clean-add-icon { width: 70px; height: 70px; font-size: 28px; }
   .clean-profile-name, .clean-add-text { font-size: 12px; }
