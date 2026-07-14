@@ -47,7 +47,6 @@
 .parent-gate-kicker,
 .parent-gate-stage h1,
 .parent-gate-primary,
-.parent-gate-key,
 .parent-gate-answer {
   font-family: 'Baloo 2', cursive;
 }
@@ -152,33 +151,11 @@
   color: rgba(93, 46, 15, 0.78);
 }
 
-.parent-gate-pad {
-  width: min(300px, 100%);
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-}
-
-.parent-gate-key,
 .parent-gate-primary,
 .parent-gate-link {
   min-height: 52px;
   border-radius: 18px;
   cursor: pointer;
-}
-
-.parent-gate-key {
-  border: none;
-  background: white;
-  color: #5d2e0f;
-  font-size: 1.5rem;
-  font-weight: 800;
-  box-shadow: 0 10px 22px rgba(93, 46, 15, 0.1);
-  touch-action: manipulation;
-}
-
-.parent-gate-key.delete {
-  font-size: 1rem;
 }
 
 .parent-gate-primary {
@@ -326,18 +303,9 @@
     font-size: 1.45rem;
   }
 
-  .parent-gate-pad {
-    gap: 10px;
-  }
-
-  .parent-gate-key,
   .parent-gate-primary,
   .parent-gate-link {
     min-height: 56px;
-  }
-
-  .parent-gate-key {
-    font-size: 1.3rem;
   }
 
   .parent-gate-actions {
@@ -403,24 +371,10 @@
     font-size: 1.3rem;
   }
 
-  .parent-gate-pad {
-    width: min(272px, 100%);
-    gap: 6px;
-  }
-
-  .parent-gate-key,
   .parent-gate-primary,
   .parent-gate-link {
     min-height: 46px;
     border-radius: 14px;
-  }
-
-  .parent-gate-key {
-    font-size: 1.15rem;
-  }
-
-  .parent-gate-key.delete {
-    font-size: 0.92rem;
   }
 
   .parent-gate-primary {

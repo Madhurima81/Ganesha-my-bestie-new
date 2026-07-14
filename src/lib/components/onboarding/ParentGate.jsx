@@ -37,6 +37,12 @@ const ParentGate = ({ onComplete, onBackToWelcome }) => {
     }
   }, [onComplete]);
 
+  useEffect(() => {
+    if (stage === 'math') {
+      answerInputRef.current?.focus();
+    }
+  }, [stage]);
+
   const mathPrompt = useMemo(
     () => `${question.left} ${question.operator} ${question.right}`,
     [question]
@@ -46,15 +52,6 @@ const ParentGate = ({ onComplete, onBackToWelcome }) => {
     setAnswer('');
     setFeedback(message);
     setQuestion(randomQuestion());
-  };
-
-  const handleDigit = (digit) => {
-    setAnswer((current) => {
-      if (digit === 'del') return current.slice(0, -1);
-      if (digit === '-' && current.length === 0) return '-';
-      if (current.length >= 4) return current;
-      return `${current}${digit}`;
-    });
   };
 
   const handleAnswerChange = (event) => {
@@ -151,22 +148,6 @@ const ParentGate = ({ onComplete, onBackToWelcome }) => {
             {feedback ? (
               <p className="parent-gate-feedback">{feedback}</p>
             ) : null}
-
-            <div className="parent-gate-pad">
-              {['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'del'].map((key) => (
-                <button
-                  key={key}
-                  type="button"
-                  className={`parent-gate-key ${key === 'del' ? 'delete' : ''}`}
-                  onClick={() => {
-                    handleDigit(key);
-                    answerInputRef.current?.focus();
-                  }}
-                >
-                  {key === 'del' ? 'Delete' : key}
-                </button>
-              ))}
-            </div>
 
             <button
               type="button"
