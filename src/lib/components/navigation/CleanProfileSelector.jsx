@@ -303,11 +303,6 @@ const CleanProfileSelector = ({
             <div className="scroll-card">
               <div className="scroll-card-inner">
                 <span className="create-card-lotus" aria-hidden="true" />
-                {(currentStep > 1 || !forceCreate) && (
-                  <button type="button" className="back-btn" onClick={goBackInCreateFlow}>
-                    {currentStep > 1 ? 'Back' : 'Cancel'}
-                  </button>
-                )}
                 <div className="create-step-content">
                   {currentStep === 1 && (
                     <>
@@ -392,6 +387,12 @@ const CleanProfileSelector = ({
                   fullWidth={currentStep === 3}
                   className={currentStep < 3 ? 'arrow-btn' : 'final-cta-btn'}
                 />
+
+                {(currentStep > 1 || !forceCreate) && (
+                  <button type="button" className="back-btn" onClick={goBackInCreateFlow}>
+                    {currentStep > 1 ? 'Back' : 'Cancel'}
+                  </button>
+                )}
 
               </div>
             </div>
