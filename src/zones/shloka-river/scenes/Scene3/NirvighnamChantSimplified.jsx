@@ -40,8 +40,8 @@ import OpeningModal from '../../../shared/components/OpeningModal';
 import { getCompletionModal, getDiscoveryContent } from '../../../../lib/config/content';
 
 // Game components
-import NirvighnamGame from './NirvighnamGame';
-import KurumedevaGame from './KurumedevaGame';
+import NirvighnamGame from './components/NirvighnamGame';
+import KurumedevaGame from './components/KurumeDevaGame';
 
 // Assets
 import ganeshaHeadphones from './assets/images/ganesha_with_headphones.webp';
