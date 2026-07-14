@@ -211,6 +211,63 @@ const speakZoneLine = (text) => {
 };
 
 // 🎉 Zone completion confetti effect
+  const MVP_FIRST_SCENE_ONLY = false;
+
+  function checkSceneUnlocked(scene) {
+    if (!zoneData || !zoneData.scenes) return false;
+
+    if (MVP_FIRST_SCENE_ONLY && scene.order !== 1) {
+      dlog(`MVP: Scene ${scene.id} locked (only scene 1 available)`);
+      return false;
+    }
+
+    if (scene.unlocked === true) {
+      dlog(`ZONE CONFIG: Scene ${scene.id} explicitly unlocked in ZoneConfig`);
+      return true;
+    }
+
+    if (scene.order === 1) {
+      dlog(`DISNEY: Scene ${scene.id} unlocked (first scene)`);
+      return true;
+    }
+
+    const gameProgress = GameStateManager.getGameProgress();
+    const explicitUnlock = gameProgress.zones?.[zoneData.id]?.scenes?.[scene.id]?.unlocked;
+
+    if (explicitUnlock === true) {
+      dlog(`DISNEY: Scene ${scene.id} explicitly unlocked by auto-unlock system`);
+      return true;
+    }
+
+    const previousScene = zoneData.scenes.find(s => s.order === scene.order - 1);
+    if (!previousScene) {
+      dlog(`DISNEY: Scene ${scene.id} locked (no previous scene found)`);
+      return false;
+    }
+
+    const previousProgress = sceneProgress[previousScene.id];
+    const previousCompleted = previousProgress && previousProgress.completed;
+    const isUnlocked = explicitUnlock === true || previousCompleted;
+
+    dlog(`DISNEY: Comprehensive unlock check for ${scene.id}:`, {
+      'Scene Order': scene.order,
+      'Previous Scene': previousScene.id,
+      'Previous Completed': previousCompleted,
+      'Explicit Unlock Flag': explicitUnlock,
+      'Auto-Unlock Path': explicitUnlock === true ? 'UNLOCKED' : 'Not set',
+      'Previous Completion Path': previousCompleted ? 'UNLOCKED' : 'Not completed',
+      'Final Decision': isUnlocked ? 'UNLOCKED' : 'LOCKED'
+    });
+
+    if (isUnlocked) {
+      dlog(`DISNEY: Scene ${scene.id} unlocked via ${explicitUnlock ? 'auto-unlock system' : 'previous completion'}`);
+    } else {
+      dlog(`DISNEY: Scene ${scene.id} locked - waiting for previous scene completion or auto-unlock`);
+    }
+
+    return isUnlocked;
+  }
+
 useEffect(() => {
   const completedCount = (zoneData?.scenes || []).filter(
     (scene) => sceneStatuses[scene.id].status === 'completed'
@@ -668,72 +725,6 @@ const getPermanentCompletedCount = () => {
   };
 
   // ✅ MVP: Only scene 1 is playable in each zone — scenes 2+ are "Coming Soon"
-  const MVP_FIRST_SCENE_ONLY = false;
-
-  // Progressive unlock: first scene is open; next scenes open via completion/auto-unlock.
-  function checkSceneUnlocked(scene) {
-    if (!zoneData || !zoneData.scenes) return false;
-
-    // ✅ MVP LOCK: Only the first scene is unlocked in MVP mode
-    if (MVP_FIRST_SCENE_ONLY && scene.order !== 1) {
-      dlog(`🌙 MVP: Scene ${scene.id} locked (MVP — only scene 1 available)`);
-      return false;
-    }
-
-    // ✅ NEW: Check if scene has explicit unlocked flag in ZoneConfig (for zones like About Me Hut & Festival Square)
-    if (scene.unlocked === true) {
-      dlog(`🔓 ZONE CONFIG: Scene ${scene.id} explicitly unlocked in ZoneConfig`);
-      return true;
-    }
-
-    // ✅ DISNEY PATH 1: First scene is always unlocked
-    if (scene.order === 1) {
-      dlog(`🔓 DISNEY: Scene ${scene.id} unlocked (first scene)`);
-      return true;
-    }
-    
-    // ✅ DISNEY PATH 2: Check explicit unlock flag from auto-unlock system
-    const gameProgress = GameStateManager.getGameProgress();
-    const explicitUnlock = gameProgress.zones?.[zoneData.id]?.scenes?.[scene.id]?.unlocked;
-    
-    if (explicitUnlock === true) {
-      dlog(`🔓 DISNEY: Scene ${scene.id} explicitly unlocked by auto-unlock system`);
-      return true;
-    }
-    
-    // ✅ DISNEY PATH 3: Check if previous scene is completed (fallback)
-    const previousScene = zoneData.scenes.find(s => s.order === scene.order - 1);
-    if (!previousScene) {
-      dlog(`🔒 DISNEY: Scene ${scene.id} locked (no previous scene found)`);
-      return false;
-    }
-    
-    const previousProgress = sceneProgress[previousScene.id];
-    const previousCompleted = previousProgress && previousProgress.completed;
-    
-    // ✅ DISNEY ENHANCED DEBUG: Show all unlock paths
-    dlog(`🔍 DISNEY: Comprehensive unlock check for ${scene.id}:`, {
-      'Scene Order': scene.order,
-      'Previous Scene': previousScene.id,
-      'Previous Completed': previousCompleted,
-      'Explicit Unlock Flag': explicitUnlock,
-      'Auto-Unlock Path': explicitUnlock === true ? '✅ UNLOCKED' : '❌ Not set',
-      'Previous Completion Path': previousCompleted ? '✅ UNLOCKED' : '❌ Not completed',
-      'Final Decision': explicitUnlock === true || previousCompleted ? '🔓 UNLOCKED' : '🔒 LOCKED'
-    });
-    
-    const isUnlocked = explicitUnlock === true || previousCompleted;
-    
-    if (isUnlocked) {
-      dlog(`🔓 DISNEY: Scene ${scene.id} unlocked via ${explicitUnlock ? 'auto-unlock system' : 'previous completion'}`);
-    } else {
-      dlog(`🔒 DISNEY: Scene ${scene.id} locked - waiting for previous scene completion or auto-unlock`);
-    }
-    
-    return isUnlocked;
-  }
-
-  // ✅ DISNEY: Helper function for highlighting next available scene
   const getNextUnlockedScene = () => {
     if (!zoneData || !zoneData.scenes) return null;
     
@@ -1219,3 +1210,4 @@ const handleReplayIntroStory = () => {
 
 
 export default ZoneWelcome;
+

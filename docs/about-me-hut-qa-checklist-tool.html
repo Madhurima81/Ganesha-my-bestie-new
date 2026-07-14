@@ -313,19 +313,204 @@
   </div>
 
   <script>
-    const markdown = String.raw`# About Me Hut QA Checklist - July 2026
+    const markdown = buildJourneyMarkdown();
 
-Scenes covered:
-- FamilyTreeGame
-- DreamsWishesGame / ObstacleRemoverGame
-- FavoriteFoodGame
-- MyIndianStoryGame
+    function buildJourneyMarkdown() {
+      return String.raw`# Fresh Run QA Checklist - July 2026
 
-Use this as a manual verification sheet after the July 2026 bug sweep fixes.
+Use this checklist in real play order: app launch -> startup gates -> profile flow -> map -> zone checks -> bug-fix regressions.
 
----
+## 1. App Launch + Loading
 
-## 1. FamilyTreeGame
+### Cold Start
+- [ ] Launch the app from a fully closed state on a fresh profile/device.
+- [ ] Confirm the loading screen appears cleanly with no broken layout, blank flash, or stuck spinner.
+- [ ] Confirm loading completes into the main welcome flow instead of hanging on the loading screen.
+- [ ] Confirm no console errors appear during initial app startup.
+
+### Audio Unlock Readiness
+- [ ] Confirm startup does not auto-play overlapping voice or SFX before the first user gesture.
+- [ ] Confirm audio can still be unlocked normally once the user interacts.
+
+## 2. Main Screen + Tap Gate
+
+### Main Welcome
+- [ ] Confirm the main welcome screen appears correctly after loading.
+- [ ] Tap the main CTA to continue.
+- [ ] Confirm the flow advances cleanly into the next startup gate/screen.
+
+### Tap Gate
+- [ ] On the tap-to-continue gate, tap once.
+- [ ] Confirm the gate unlocks on the first tap and does not require repeated taps.
+- [ ] Try tapping rapidly after unlock.
+- [ ] Confirm the gate does not double-fire or create duplicated audio/speech behavior.
+
+## 3. Parent Gate
+
+### Math Step
+- [ ] Reach the parent gate before profile creation.
+- [ ] Enter a wrong answer once.
+- [ ] Confirm the gate stays stable and shows the retry feedback.
+- [ ] Enter wrong answers until the limit is hit.
+- [ ] Confirm the flow returns safely instead of breaking or trapping the user.
+- [ ] Re-enter and submit the correct answer.
+- [ ] Confirm the consent step opens normally.
+
+### Consent Step
+- [ ] Confirm Continue stays disabled until the consent checkbox is checked.
+- [ ] Open the Privacy Policy and return.
+- [ ] Confirm the consent screen restores correctly after returning.
+- [ ] Continue with the checkbox enabled.
+- [ ] Confirm parent consent is accepted and the app proceeds into profile creation/onboarding.
+
+## 4. Create Profile + Intro Story
+
+### Profile Chooser Screen
+- [ ] Reach the Who's Playing? screen after the parent gate.
+- [ ] Confirm the screen shows four profile slots in a 2x2 grid.
+- [ ] Confirm each empty slot shows the Add Friend label and plus button clearly.
+- [ ] Confirm the background artwork, title, and layout appear cleanly with no overlap, crop, or missing assets.
+- [ ] Tap the help ? button.
+- [ ] Confirm the help flow opens correctly and closes cleanly back to the same profile chooser screen.
+- [ ] Tap the top-right action button.
+- [ ] Confirm it behaves correctly for this screen and does not navigate to a broken or blank state.
+
+### Profile Creation Step By Step
+- [ ] Tap one empty Add Friend slot.
+- [ ] Confirm the create-profile flow opens immediately from that selected slot.
+- [ ] Enter the child's name.
+- [ ] Confirm the typed name appears correctly with no input glitch or blocked keyboard behavior.
+- [ ] Continue to the next creation step.
+- [ ] Select the child's avatar / profile visual if that step appears in your build.
+- [ ] Confirm the selected option stays highlighted correctly when chosen.
+- [ ] Continue to the next step.
+- [ ] Select age or any remaining required setup fields if shown in your build.
+- [ ] Confirm Continue / Create only enables when required inputs are complete.
+- [ ] Finish profile creation.
+- [ ] Confirm the new child profile is created successfully and becomes the active profile.
+- [ ] Confirm the created profile appears in the previously empty slot on the Who's Playing? screen with the correct saved details.
+- [ ] Re-open the newly created profile from the chooser.
+- [ ] Confirm the app moves into the Ganesha intro story instead of skipping unexpectedly or stalling.
+
+### Profile Screen Regression Checks
+- [ ] Return to the Who's Playing? screen after creating one profile.
+- [ ] Confirm the remaining empty slots still show Add Friend correctly.
+- [ ] Confirm the created slot is still tappable and loads the correct child.
+- [ ] Create a second profile if needed for smoke testing.
+- [ ] Confirm selecting one profile does not overwrite or switch details from another slot.
+- [ ] Confirm no console errors appear while opening, creating, selecting, or returning from the profile chooser screen.
+
+### GaneshaIntroStory - Double-Tap Loop
+- [ ] On slide 1, tap once, then immediately tap again before the 2.8s window elapses.
+- [ ] Confirm the second tap is ignored: no VO restart, no timer reset, no loop.
+- [ ] Confirm the story advances to slide 2 exactly once.
+
+### GaneshaIntroStory - VO Timing
+- [ ] With audio on, tap Tap to begin.
+- [ ] Confirm the opening VO line plays to completion before slide advance.
+- [ ] With audio explicitly disabled, repeat the step.
+- [ ] Confirm the first slide advances faster and does not wait the full spoken timing.
+
+### GaneshaIntroStory - Skip + Regression
+- [ ] Start VO on any slide, then tap Skip mid-sentence.
+- [ ] Confirm speech stops immediately when the story closes.
+- [ ] Run through all slides normally once.
+- [ ] Confirm each slide VO plays once, the end screen appears, and completion exits correctly.
+- [ ] Confirm no speechSynthesis console errors appear during slide changes, Skip, or close.
+
+## 5. First Map Arrival
+
+### Fresh Map Load
+- [ ] After onboarding, arrive on the map for the first time.
+- [ ] Confirm the map loads cleanly with no blank state or broken zone art.
+- [ ] Confirm this first-time map state is treated as a brand-new journey, with Symbol Mountain as the starting zone.
+- [ ] Confirm Symbol Mountain is visibly active/unlocked on first arrival.
+- [ ] Confirm Shloka River and Mooshika's Hut remain locked on first arrival.
+- [ ] Confirm gmb_map_props / gmb_map_overlays / gmb_map_zone_art are NOT written just from fresh mounting on a brand-new profile.
+- [ ] Confirm the map ambient audio loads the .mp3 file, not .wav.
+- [ ] Confirm no [VO]-prefixed console logs appear during normal map idle/tap behavior.
+
+### First-Time Map VO + Prompting
+- [ ] On first arrival, wait for the opening map VO.
+- [ ] Confirm the first spoken line invites the child to start at Symbol Mountain.
+- [ ] Confirm that first-load intro VO plays once for the session and does not keep replaying on the same arrival.
+- [ ] Do not tap anything for about 7 seconds.
+- [ ] Confirm the idle nudge plays, telling the child to tap Symbol Mountain when ready.
+- [ ] Confirm the idle nudge does not stack repeatedly or overlap itself immediately.
+
+### Profile + Navigation Basics
+- [ ] Confirm the active profile name/avatar display correctly on the map.
+- [ ] Confirm the profile chip is visible and stable on the map screen.
+- [ ] Tap around the map and confirm zone interaction feels normal with no dead taps.
+- [ ] Tap a locked zone on first arrival.
+- [ ] Confirm locked-zone behavior is friendly and non-breaking, with no accidental navigation into a locked zone.
+- [ ] Confirm no new console errors appear during first map load and first zone entry.
+
+## 6. Symbol Mountain First Run -> Modak
+
+### Entry + Unlock Path
+- [ ] From the fresh profile map, enter Symbol Mountain through the normal first-run path.
+- [ ] Confirm the very first Symbol Mountain tap takes the user straight into Modak, not into a zone welcome screen.
+- [ ] Confirm the route into the first playable scene is correct.
+- [ ] Complete exactly 1 Symbol Mountain scene.
+- [ ] Return to the map and confirm Shloka River is unlocked and its progress dots are visible immediately.
+- [ ] Confirm the map no longer looks like the untouched first-load state after returning from scene 1.
+
+### Return To Map After Scene 1
+- [ ] After completing scene 1 and returning, confirm Symbol Mountain now shows 1 completed progress dot.
+- [ ] Confirm Shloka River is newly unlocked after exactly 1 completed Symbol Mountain scene.
+- [ ] Confirm Shloka River progress dots are now visible immediately on the map.
+- [ ] Confirm the unlock animation/chime runs for Shloka River without freezing the map.
+- [ ] Confirm the Shloka River unlock VO plays after the unlock moment.
+- [ ] Confirm returning to the map after scene 1 does not replay the original first-time Symbol Mountain intro VO.
+- [ ] Tap Shloka River after it unlocks.
+- [ ] Confirm it now opens normally instead of behaving like a locked zone.
+
+### Modak Completion Alignment
+- [ ] Complete Modak fully through the actual completion screen, not just rock_transformed.
+- [ ] Return to the map.
+- [ ] Confirm the Modak dot fills and Shloka River unlock state is correct.
+- [ ] Reopen the Modak card from the map state after completion.
+- [ ] Confirm it shows Play Again, not Continue.
+- [ ] Leave Modak mid-way at the rock_transformed stage on another run and return to the map.
+- [ ] Confirm the map does NOT mark it complete or unlock River early.
+
+### NewModakSceneV7 Checks
+- [ ] Reach game 3 and feed one modak normally.
+- [ ] Confirm the basket loses 1 modak, belly grows once, and feed count advances once.
+- [ ] Feed the second modak at a normal pace.
+- [ ] Confirm the basket loses 1 more modak, belly grows again, and no progress is missed.
+- [ ] Try two very fast back-to-back drops.
+- [ ] Confirm only one is accepted if they land too close together, with no desync.
+- [ ] Wait about half a second, then drop again.
+- [ ] Confirm feeding works again after the short lock window.
+- [ ] After feeding modak 1 and modak 2, stop and wait for idle hints.
+- [ ] Confirm the visual hints restart and the feed voice hint can play again each time.
+- [ ] Feed all 3 modaks.
+- [ ] Confirm dragging stops, extra drops are blocked, and transformation still starts correctly.
+- [ ] Reload during game 3 before finishing.
+- [ ] Confirm game 3 restores, instruction voice replays, idle restarts, and the original drag gesture does not wrongly reappear.
+- [ ] Pause during game 3, then resume.
+- [ ] Confirm feeding still works and no stuck drag/feed state appears.
+- [ ] Try dropping after rockFeedCount is 3.
+- [ ] Confirm no more feeding happens after completion threshold.
+
+## 7. Shloka River Entry + ZoneWelcome
+
+### ZoneWelcome State
+- [ ] Enter Shloka River after unlocking it from the fresh run.
+- [ ] Confirm the zone welcome screen opens correctly.
+- [ ] Confirm scene statuses and progress dots match the actual map progress.
+- [ ] Confirm zone names with embedded newlines are spoken naturally with spaces, not broken line-by-line.
+
+### ZoneWelcome Confetti + Logging
+- [ ] Complete the final scene in a zone and confirm confetti plays once and fully clears from the DOM.
+- [ ] Re-enter the same completed zone on the same profile.
+- [ ] Confirm confetti does NOT replay.
+- [ ] In production, confirm ZoneWelcome does not spam scene-status console logs.
+- [ ] In dev, confirm useful debug logging is still gated rather than globally removed.
+
+## 8. About Me Hut - FamilyTreeGame
 
 ### Core Flow
 - [ ] Place all 4 Ganesha family members.
@@ -335,28 +520,22 @@ Use this as a manual verification sheet after the July 2026 bug sweep fixes.
 - [ ] Confirm Continue becomes tappable after sparkles end.
 - [ ] Confirm Continue stays tappable and does not soft-lock.
 
-### Placement Feedback
+### Placement + Child Flow
 - [ ] Confirm the just-placed glow is visible before it clears.
 - [ ] Confirm wrong-choice cards shake but stay tappable.
 - [ ] Confirm rapid wrong-then-correct taps do not break flow.
-
-### Child Tree Flow
 - [ ] Confirm pressing Enter on empty name input does nothing.
 - [ ] Confirm deleting child-family entries below 2 hides Done.
 
-### Reload / Recovery
+### Recovery + Audio
 - [ ] Reload during transition -> childInput.
 - [ ] Confirm the bottom tray appears after reload.
-- [ ] Reload in transition.
-- [ ] Confirm recovery is correct.
-- [ ] Reload in sideBySide.
-- [ ] Confirm recovery is correct there too.
-
-### Audio
+- [ ] Reload in transition and in sideBySide.
+- [ ] Confirm recovery is correct in both places.
 - [ ] Turn audio off before Tree Done.
 - [ ] Confirm the scene still advances normally.
 
-## 2. DreamsWishesGame / ObstacleRemoverGame
+## 9. About Me Hut - DreamsWishesGame / ObstacleRemoverGame
 
 ### Drawing Flow
 - [ ] Enter the drawing flow.
@@ -368,333 +547,145 @@ Use this as a manual verification sheet after the July 2026 bug sweep fixes.
 - [ ] Save a drawing.
 - [ ] Confirm flow continues into the dream reveal sequence.
 
-### Trunk Reveal Flow
+### Trunk Reveal + Recovery
 - [ ] Reach the trunk-tap phase.
 - [ ] Tap Ganesha's trunk 3 times to reveal the dream.
 - [ ] After reveal, spam extra taps on the trunk/helper.
 - [ ] Confirm extra taps do not restart or postpone the transition.
 - [ ] Confirm the comparison card still appears on time after reveal.
-
-### Reload / Recovery
 - [ ] Hide and return to the tab during dream phases.
 - [ ] Confirm there is no dead end or VO pileup.
-- [ ] Reload during wish1-complete.
-- [ ] Confirm rollback recovery works.
-- [ ] Reload during wish2-complete.
-- [ ] Confirm rollback recovery works.
-- [ ] Reload during wish3-complete.
-- [ ] Confirm rollback recovery works.
-
-### Replay
+- [ ] Reload during wish1-complete, wish2-complete, and wish3-complete.
+- [ ] Confirm rollback recovery works in all three.
 - [ ] Trigger completion replay/reset.
 - [ ] Confirm the whole scene resets cleanly.
 
-## 3. FavoriteFoodGame
+## 10. About Me Hut - FavoriteFoodGame
 
-### Ganesha Choice Recovery
+### Recovery + Inputs
 - [ ] Reload a Ganesha choice phase with missing/empty randomized arrays.
-- [ ] Confirm choice cards still populate.
-- [ ] Confirm the scene does not come back blank.
+- [ ] Confirm choice cards still populate and the scene does not come back blank.
+- [ ] Open food text input and save while VO is active.
+- [ ] Confirm current VO stops before success feedback plays.
+- [ ] Open activity text input and save while VO is active.
+- [ ] Confirm current VO stops before success feedback plays.
 
-### Text Input Saves
-- [ ] Open food text input.
-- [ ] Save a value while VO is active.
-- [ ] Confirm the current VO stops before success feedback plays.
-- [ ] Open activity text input.
-- [ ] Save a value while VO is active.
-- [ ] Confirm the current VO stops before success feedback plays.
-
-### Modal / Flow Safety
+### Flow Safety + Replay
 - [ ] Confirm cancel from drawing returns to the live choice screen.
 - [ ] Confirm cancel from typing returns to the live choice screen.
 - [ ] Reload mid-advance.
 - [ ] Confirm the scene rolls back to the correct question and replays VO.
-- [ ] Hide and return to the tab during child completion flow.
+- [ ] Hide and return during child completion flow.
 - [ ] Confirm recovery does not double-advance.
-
-### Tap Guards
 - [ ] Confirm all Ganesha choice screens block double-taps correctly.
 - [ ] Confirm all child choice screens block double-taps correctly.
-
-### Replay
 - [ ] Trigger completion replay/reset.
 - [ ] Confirm modals, child data, and flow state reset cleanly.
-
-### Layout Follow-Up
 - [ ] iPad / portrait CSS pass: review CHILD_ACTIVITY_POSITIONS for overflow risk.
 
-## 4. MyIndianStoryGame
+## 11. About Me Hut - MyIndianStoryGame
 
-### Origin Card Reload
+### Origin + Language Flow
 - [ ] Reach Origin Card and make selections.
 - [ ] Reload on the same phase.
 - [ ] Confirm region, languages, and festivals restore correctly.
 - [ ] Reload from a later phase.
 - [ ] Confirm restore still works there too.
-
-### Language Guess Flow
 - [ ] Tap a wrong language guess.
 - [ ] Confirm the wrong card is not permanently disabled.
 - [ ] Tap the correct language.
 - [ ] Confirm normal success flow and advance.
 
-### Festival Guess Sanity Check
+### Festival + Navigation + Resume
 - [ ] Confirm festival guess behavior still feels consistent with the intended non-elimination pattern.
-
-### Navigation
 - [ ] From completion, tap Home.
 - [ ] Confirm it navigates to home.
-
-### Tab Hide / Return
-- [ ] Hide and return to the tab during Ganesha Home.
-- [ ] Confirm idle hints reset cleanly.
-- [ ] Hide and return to the tab during language guess.
-- [ ] Confirm idle hints reset cleanly.
-- [ ] Hide and return to the tab during festival guess.
-- [ ] Confirm idle hints reset cleanly.
-
-### Cleanup / Regression
+- [ ] Hide and return during Ganesha Home, language guess, and festival guess.
+- [ ] Confirm idle hints reset cleanly each time.
 - [ ] Confirm no regression from removing dead languagePlayNudgeIntervalRef.
-
-### Product Decision Follow-Up
 - [ ] Decide whether hidden kailash content should remain cut or be restored.
 
-## 5. Cross-Scene Sweep
+## 12. Shloka River Extended Scene Checks
 
-### Safety Patterns
+### Scene 1 - Vakratunda Grove
+- [ ] Zone map shows Continue, not Play Again, when leaving mid-scene.
+- [ ] Tap Home mid-second-symbol-reveal and return via Continue.
+- [ ] Confirm the reveal card reappears and the scene is not blank/frozen.
+- [ ] Complete a word and confirm fireworks -> mandala -> completion modal sequencing.
+- [ ] Pause mid Mahakaya rope-pull.
+- [ ] Confirm the log freezes and resumes from the same spot.
+- [ ] Confirm intro VO does not restart after recorder open/close.
+- [ ] Confirm wrong-slot frog-crossing gives the blocked response and future-slot drops bounce back.
+
+### Scenes 2 to 4
+- [ ] Suryakoti: scratch reveal syllables sound correctly and progress survives resize/rotate.
+- [ ] Samaprabha: drag handle responds correctly and muted completion still advances by fallback timer.
+- [ ] Nirvighnam: obstacle drops clear correctly, partial drags snap back, and syllable audio plays.
+- [ ] Kurumedeva: all 4 friends register forgiving taps and bridge pieces land correctly.
+- [ ] Sarvakaryeshu: before -> story -> after -> tappable ordering is correct.
+- [ ] Confirm the bike before/after images are correct.
+- [ ] Confirm muted / missing VO fallback still advances.
+- [ ] Confirm Sarvada general smoke flow still completes without pause/audio regressions.
+
+### Finale + Regression
+- [ ] Confirm all Shloka scenes use Continue while incomplete and Play Again only after true completion.
+- [ ] Nirvighnam hint pulse: confirm no jump/snap when hints kick in.
+- [ ] Finale hint timing: wrong taps do NOT reset hint timers; correct placement does.
+- [ ] Confirm first-word auto-prompt and next-word prompting both still work.
+- [ ] Confirm placed-word echo audio and next prompt do not step on each other.
+- [ ] Confirm the old floating tap-hand demo no longer appears.
+- [ ] Confirm pointer cancel works when dragging off-screen/interrupted.
+- [ ] Reload on SUCCESS overlay and mid-RECAP.
+- [ ] Confirm resume lands in a valid later state instead of hanging.
+- [ ] Confirm mid-game audio does not cut out early and true unmount still stops recap audio.
+- [ ] Confirm nav stars reflect sceneState.stars/completed before and after finish.
+- [ ] Full run once with audio ON and once with audio OFF.
+- [ ] Confirm SUCCESS -> RECAP -> FINALE -> COMPLETE still transitions correctly.
+
+## 13. Symbol Mountain Extended Checks
+
+### Pond
+- [ ] Drag the water drop, background the app/tab, return after countdown, then move your finger without pressing.
+- [ ] Confirm there is no ghost drag and the drop resets to the start.
+- [ ] Trigger a system cancel on iPad and confirm drag cancels cleanly.
+- [ ] Drag off-path or release partway.
+- [ ] Confirm the drop fades and resets once.
+- [ ] Complete the full petal path and confirm normal success still works.
+- [ ] Reload during drag-ready, trunk-active, and bloom/celebration states.
+- [ ] Confirm there is no stuck drag, no console issue, and resume is sensible.
+
+### Tusk / Eyes / Sacred Assembly
+- [ ] Tusk: background during elephant hold and confirm it does not auto-complete on resume.
+- [ ] Tusk: scrub interruption and off-obstacle release do not create ghost scrub.
+- [ ] Tusk: full completion still preserves layers, VO, finale, and idle behavior.
+- [ ] Eyes: first idle hint picks one animal and does not hop every second.
+- [ ] Eyes: later hints stay on target until discovered, then move to a new undiscovered target.
+- [ ] Eyes: no instant strongest hint after tab return, and normal discovery flow still works.
+- [ ] Symbol Mountain fireworks: completion is persisted immediately and reload before completion UI still comes back completed.
+- [ ] Sacred Assembly: live VO gating, premature next-card prevention, immediate completion persistence, reload recovery, and tab-away recovery all behave correctly.
+- [ ] Confirm no ghost gestures, no instant idle-blast after return, and no console errors during pause/resume or mid-celebration reload.
+
+## 14. Cross-Scene Final Sweep
+
+### General Safety
 - [ ] Every cancel/close path returns to a live interactive screen.
 - [ ] Reload on the same phase restores state, not just later phases.
 - [ ] Success triggers become non-repeatable immediately.
 - [ ] Effects do not cancel their own timers through dependency churn.
 - [ ] Duplicate timers in one handler do not race unintentionally.
 
-### Hidden Tab / Resume
+### Hidden Tab / Replay / Audio-Off
 - [ ] Hidden-tab return does not stack resume VO over idle VO.
-
-### Replay / Reset
 - [ ] Completion replay fully resets transient state and modals.
-
-### Audio-Off Paths
 - [ ] Audio-off paths still advance without waiting on VO callbacks.
+- [ ] Confirm no new console errors were introduced anywhere in the fresh-run path.`;
+    }
 
-## 6. Symbol Mountain Addendum
-
-### Pond
-- [ ] Drag the water drop, background the app/tab, return after countdown, then move your finger without pressing.
-- [ ] Confirm there is no ghost drag and the drop stays reset at the start.
-- [ ] Drag the water drop and trigger a system cancel on iPad.
-- [ ] Confirm the drag cancels cleanly.
-- [ ] Drag off-path.
-- [ ] Confirm the drop fades and resets once.
-- [ ] Drag partway and release.
-- [ ] Confirm the drop fades and resets once.
-- [ ] Complete the full petal path to the golden lotus.
-- [ ] Confirm the normal success flow still works.
-- [ ] Reload during drag-ready state, trunk-active state, and bloom/celebration state.
-- [ ] Confirm there is no stuck drag, no console issue, and resume is sensible.
-
-### Tusk Mini-Game
-- [ ] Start elephant hold, background the app for 3 to 5 seconds, return, and keep holding.
-- [ ] Confirm the obstacle does not auto-complete on resume.
-- [ ] Start elephant hold, then release normally before completion.
-- [ ] Confirm hold resets cleanly.
-- [ ] Start scrubbing a non-elephant obstacle, then trigger a system gesture or interruption.
-- [ ] Confirm scrub stops immediately.
-- [ ] Start scrubbing, release outside the obstacle, then move back over it without pressing.
-- [ ] Confirm there is no ghost scrub.
-- [ ] Complete a full tusk sequence.
-- [ ] Confirm all layers, VO, and finale still work.
-- [ ] Background and return during idle.
-- [ ] Confirm there is no instant strong idle hint or VO.
-
-### Eyes Mini-Game
-- [ ] Wait for the first idle hint.
-- [ ] Confirm one specific animal is hinted.
-- [ ] Keep waiting through later idle thresholds.
-- [ ] Confirm the hint stays on the same animal and does not hop every second.
-- [ ] Discover the hinted animal, then wait again.
-- [ ] Confirm a new undiscovered target is chosen later.
-- [ ] Background the app for 10 to 30 seconds and return.
-- [ ] Confirm there is no instant strongest hint on resume.
-- [ ] Complete the round normally.
-- [ ] Confirm there is no regression in discovery flow.
-
-### Symbol Mountain Scene
-- [ ] Finish tusk and trigger final fireworks.
-- [ ] Confirm completion state is written immediately.
-- [ ] Reload during fireworks before completion UI.
-- [ ] Confirm the scene still comes back completed.
-- [ ] Tab away during fireworks and return.
-- [ ] Confirm voice stops on hide and the completion flow does not break.
-- [ ] Let fireworks finish normally.
-- [ ] Confirm mandala / completion still appears.
-
-### Sacred Assembly
-- [ ] Place a correct symbol while Ganesha is speaking.
-- [ ] Confirm the next round waits correctly for live VO, then advances.
-- [ ] Place several symbols in a row.
-- [ ] Confirm there is no premature next-card start and no stuck wait.
-- [ ] Place the 8th symbol and trigger final celebration.
-- [ ] Confirm completion is persisted immediately.
-- [ ] Reload during fireworks / orbs.
-- [ ] Confirm the completion flow recovers and does not hang.
-- [ ] Tab away mid-celebration and return.
-- [ ] Confirm there is no stuck celebration gate.
-- [ ] Let full celebration finish normally.
-- [ ] Confirm the completion UI still appears.
-
-### Global Sanity
-- [ ] Confirm there are no ghost gestures after pause/cancel.
-- [ ] Confirm there is no instant idle hint blast immediately after tab return.
-- [ ] Confirm there are no console errors during pause/resume, reload mid-celebration, or completion.
-
-## 7. Modak Addendum
-
-### NewModakSceneV7
-- [ ] Reach game 3 and feed one modak normally.
-- [ ] Confirm the basket loses 1 modak, Ganesha's belly grows once, and feed count advances once.
-- [ ] Feed the second modak at a normal pace.
-- [ ] Confirm the basket loses 1 more modak, belly grows again, and no progress is missed.
-- [ ] Try two very fast back-to-back drops.
-- [ ] Confirm only one drop is accepted if they land too close together, with no desync where a modak disappears without belly growth.
-- [ ] Wait about half a second, then drop again.
-- [ ] Confirm the next drop works normally once the short lock window has passed.
-- [ ] After feeding modak 1, stop interacting and wait for idle hints.
-- [ ] Confirm visual hints restart and the feed voice hint can play again.
-- [ ] After feeding modak 2, stop interacting and wait again.
-- [ ] Confirm visual hints restart again and the feed voice hint can play again.
-- [ ] Feed all 3 modaks.
-- [ ] Confirm dragging stops, no extra drops are accepted, and the transformation flow still starts correctly.
-- [ ] Reload during game 3 before finishing.
-- [ ] Confirm game 3 restores, feed instruction voice replays, and the idle timer restarts.
-- [ ] Confirm also that the original drag gesture currently does not reappear on reload.
-- [ ] Pause during game 3, then resume.
-- [ ] Confirm feeding still works, hints/timers remain stable, and no stuck drag/feed state appears.
-- [ ] Try dropping after the completion threshold is reached.
-- [ ] Confirm no more feeding happens once rockFeedCount is 3.
-
-## 8. Shloka River Addendum
-
-### Scene 1 - Vakratunda Grove
-- [ ] Zone map (Shloka River welcome screen) shows Continue, not Play Again, when leaving mid-scene (e.g. during the Mahakaya symbol reveal).
-- [ ] Tap Home mid-second-symbol-reveal, return via Continue - confirm the reveal card reappears (not a blank/frozen scene).
-- [ ] Complete a word - confirm fireworks play fully, then the mandala appears (not simultaneously with fireworks), then the completion modal after tapping through the mandala.
-- [ ] Pause (open recorder / background tab) mid Mahakaya rope-pull - confirm the log freezes in place, does not sink, and resumes from the same spot.
-- [ ] Recorder open/close during either mini-game - confirm the intro VO sequence does not restart.
-- [ ] Vakratunda frog-crossing: drop a piece on a wrong (non-next) slot - confirm the correct-next ring shakes and plays the blocked VO line, instead of silently snapping back.
-- [ ] Vakratunda frog-crossing: confirm pieces can only be placed in syllable order (va->kra->tun->da) - a piece dropped on a future slot bounces back.
-- [ ] Home button mid-scene - confirm progress is preserved (does not clear temp session / force replay).
-
-### Scene 2 - Suryakoti Bank + Samaprabha
-- [ ] Scratch the sun reveal - confirm syllables (su-ya-ko-ti) sound out as they light up.
-- [ ] Mid-scratch, resize/rotate the viewport - confirm cleared progress is preserved (does not reset to 0%).
-- [ ] Pause mid-bunny-hop sequence - confirm the hop holds instead of continuing in the background.
-- [ ] Confirm only one scratch-target ring cue is visible (no duplicate static + animated ring).
-- [ ] Samaprabha: drag the sun handle - confirm it actually responds to pointerdown/drag (not frozen) and snaps per stop with syllable audio (sa-ma-pra-bha).
-- [ ] Samaprabha: mute audio, reach the done state - confirm completion still fires via the fallback timer (~4s) instead of hanging.
-- [ ] Complete both games - confirm fireworks -> mandala -> completion modal sequencing (mandala waits for fireworks, matches Scene 1).
-
-### Scene 3 - Nirvighnam + Kurumedeva
-- [ ] Nirvighnam: drag each of the 3 obstacles (stone, branch, reed) to its ground drop-zone - confirm it clears regardless of drag angle, and confirm the drop-zone rings sit clearly on the grass bank, not overlapping the obstacle's own resting spot.
-- [ ] Nirvighnam: drag an obstacle partway and release without reaching a drop zone - confirm it springs back to its original position (no permanent shift).
-- [ ] Nirvighnam: confirm the stone's on-load position matches its configured spot with no debug panel / element-highlight open (rule out visual artifact vs. real state bug).
-- [ ] Nirvighnam: confirm nir-vigh-nam syllable audio plays as obstacles clear.
-- [ ] Kurumedeva: tap each of the 4 friends (turtle, bird, squirrel, bunny) - confirm ku-ru-me-deva syllable audio plays per tap.
-- [ ] Kurumedeva: confirm the tap hitbox is forgiving - taps near (not just dead-center on) each friend should still register.
-- [ ] Kurumedeva: pause mid-friend-tap sequence - confirm timers hold instead of continuing in the background.
-- [ ] Kurumedeva: confirm all 4 friends' bridge pieces land in the correct visual spot (post scene3LayoutConfig position cleanup for turtle/squirrel).
-
-### Scene 4 - Sarvakaryeshu + Sarvada
-- [ ] Each of the 4 situation cards (puzzle, sports, bike, grandma) - confirm the before-image and question show first, the story auto-narrates, then the after-image reveals, then options become tappable (not tappable before the story finishes).
-- [ ] Confirm the bike card shows the correct before/after images (was previously swapped).
-- [ ] Mute audio / with VO files still missing - confirm the before->after->pickable sequence still advances via the fallback timers instead of hanging.
-- [ ] Pick correctly - confirm the flying-power animation + extended golden glow (1200ms) plays, then the situation advances.
-- [ ] Sarvada game - not yet audited; general smoke test (completion, pause, audio) recommended.
-
-### Shloka River Cross-Scene
-- [ ] Confirm every scene shows Continue (not Play Again) on the zone map while genuinely incomplete, and Play Again only once actually completed.
-- [ ] Confirm Home mid-reveal/mid-game across all 4 scenes preserves resume (no forced replay, no blank scene on return).
-
-### Nirvighnam - Hint Pulse Jump Fix
-- [ ] Enter the scene, don't touch anything for ~8s - confirm the next stone/branch/reed pulses smoothly with no visible jump/snap in size or position when the hint kicks in.
-- [ ] Try a failed/partial drag first (pick up an obstacle, drop it wrong), then wait for the hint - confirm still no jump now that the idle breathing animation and hint pulse don't overlap.
-- [ ] Let it run to level 2/3 hints (glow) - same check, no snap.
-
-### ShlokaRiverFinale (shloka assembly + recap)
-
-### Hint timing
-- [ ] Tap a few wrong boats in a row - hint clock should NOT reset; the level-1/2/3 hints should still arrive on schedule (10s/20s/35s) despite the wrong taps.
-- [ ] Place a correct boat - hint clock should reset for the next slot.
-
-### Word-audio prompting
-- [ ] Start the game - first word's audio (Vakratunda) should auto-play ~1.8s after start, before you touch anything.
-- [ ] Place each correct word - confirm the next word's audio plays automatically (~420ms after placement), so you're matching by sound, not reading labels.
-- [ ] Placed-word echo audio (existing behavior) should still play immediately on correct placement - check both echo and next-prompt aren't stepping on each other.
-
-### GestureDemo removal
-- [ ] Sit idle 3s+ on the tray with 0 correct so far - confirm no floating tap-hand demo appears anymore (it was pointing at the wrong boat before).
-
-### Pointer handling
-- [ ] Drag a boat and drag your finger/cursor off the edge of the screen/container before releasing - confirm the drag still cancels cleanly (was onPointerLeave, now onPointerCancel - test both mouse-out and an actual OS-level pointer cancel if possible, e.g. an incoming touch interruption).
-
-### Reload / resume (already-present logic - verify it still works)
-- [ ] Get all 8 correct - right as the SUCCESS overlay shows, reload the page - should resume into RECAP after ~3s, not strand on the overlay.
-- [ ] Reload mid-RECAP - should resume RECAP from a valid boat, not blank.
-
-### Audio teardown (the actual regression risk)
-- [ ] Play through a good chunk of the game (place several words, trigger a couple of hint cycles) and confirm voice/SFX keep working throughout - audio should not cut out partway through before reaching SUCCESS.
-- [ ] Actually unmount the scene (nav home / zones / back button) mid-recap while playFullShloka audio is playing - confirm audio actually stops.
-
-### Nav stars (already present)
-- [ ] Check TocaBocaNav's progress indicator reflects sceneState.stars/completed correctly before and after finishing the scene.
-
-### Regression sweep
-- [ ] Full run-through once with audio ON and once with audio OFF (muted) - confirm SUCCESS->RECAP->FINALE->COMPLETE all still transition.
-
-## 9. Map + ZoneWelcome Addendum
-
-### Launch Blocker - Completion Alignment
-- [ ] Fresh profile -> complete Modak fully (through the completion screen, not just rock_transformed) -> return to map.
-- [ ] Confirm the Modak dot fills and Shloka River unlocks on the map.
-- [ ] Reopen the Modak card from Shloka River's zone-welcome-equivalent map state - confirm it shows Play Again, not Continue.
-- [ ] Leave Modak mid-way at the rock_transformed stage (belly card reveal, not full completion) -> return to map - confirm the map does NOT mark it complete or unlock River yet.
-
-### Map Editor Props Merge
-- [ ] With a saved gmb_map_props snapshot already in localStorage, ship a code change to MAP_PROPS (or simulate by editing a prop's left/top in code) - confirm the map picks up the new code default rather than being stuck on the stale saved value.
-
-### Persistence Effects - No Write on Fresh Mount
-- [ ] Load the map fresh on a device/profile that has never opened the map editor - confirm gmb_map_props / gmb_map_overlays / gmb_map_zone_art are NOT written to localStorage just from mounting.
-- [ ] Open the map editor (dev mode) and make an edit - confirm persistence now does write after that edit.
-
-### Map Editor Prod Gating
-- [ ] In a production build, hold the parent-corner icon for 900ms+ - confirm the map editor does NOT open (no-op).
-- [ ] In a dev build, hold the parent-corner icon for 900ms+ - confirm the map editor still opens normally.
-- [ ] Confirm MapEditorFull is not present in the production bundle (lazy-loaded, dev-only).
-
-### Ambient Audio + Console Logging
-- [ ] Confirm the map's ambient audio loads the .mp3 file (not .wav) - check network tab or file size.
-- [ ] Confirm no [VO]-prefixed console logs appear during normal map play (unlock chimes, zone taps, idle nudges).
-
-### Shloka River Dots Threshold
-- [ ] Complete exactly 1 Symbol Mountain scene -> open the map - confirm Shloka River is unlocked AND its progress dots are visible (not just unlocked with no dots until scene 2).
-
-### ZoneWelcome Confetti
-- [ ] Complete the final scene in a zone - confirm confetti plays once and fully clears from the DOM (inspect after ~2s - no leftover invisible confetti nodes).
-- [ ] Re-enter the same completed zone on the same profile - confirm confetti does NOT replay (once-per-profile-per-zone).
-
-### ZoneWelcome Console Logging
-- [ ] In a production build, confirm ZoneWelcome does not spam scene-status console logs on every render/state change.
-- [ ] In a dev build, confirm the debug logs still appear (gated correctly, not fully deleted where still useful).
-
-### ZoneWelcome Multi-line Zone Names VO
-- [ ] Enter a zone whose name has an embedded newline (e.g. "Shloka\nRiver") - confirm the welcome VO line reads naturally with all newlines replaced by spaces, not just the first one.
-- [ ] Complete that same zone - confirm the completion VO line also reads correctly with all newlines replaced.
-
-### Regression Sweep
-- [ ] Fresh profile end-to-end: complete Modak -> map shows correct state -> enter Shloka River zone welcome -> confirm scene statuses, dots, and confetti all behave consistently with the map.
-- [ ] Confirm no new console errors introduced by the lazy MapEditorFull import or the React.Suspense wrapper.`;
-
-    const STORAGE_KEY = "about-me-hut-qa-checklist-tool-v1";
+    const STORAGE_KEY = "about-me-hut-qa-checklist-tool-v2";
+    const LEGACY_STORAGE_KEYS = [
+      "about-me-hut-qa-checklist-tool-v1",
+      "about-me-hut-qa-checklist-tool-v2"
+    ];
     const state = loadState();
     const data = parseChecklist(markdown);
     const allItems = data.sections.flatMap((section) =>
@@ -919,7 +910,21 @@ Use this as a manual verification sheet after the July 2026 bug sweep fixes.
 
     function loadState() {
       try {
-        return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{"items":{}}');
+        const currentRaw = localStorage.getItem(STORAGE_KEY);
+        if (currentRaw) {
+          return JSON.parse(currentRaw);
+        }
+
+        for (const key of LEGACY_STORAGE_KEYS) {
+          if (key === STORAGE_KEY) continue;
+          const legacyRaw = localStorage.getItem(key);
+          if (!legacyRaw) continue;
+          const parsed = JSON.parse(legacyRaw);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+          return parsed;
+        }
+
+        return { items: {} };
       } catch (error) {
         return { items: {} };
       }
