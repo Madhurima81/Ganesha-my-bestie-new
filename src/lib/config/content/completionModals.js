@@ -5,7 +5,7 @@ export const COMPLETION_MODALS = {
   'symbol-mountain': {
     modak: {
       title: 'You Shared the Modaks!',
-      subtitle: 'You found Mooshika and shared the sweet modaks. Wonderful work, little friend.'
+      subtitle: 'You found Mooshika and shared the modaks.'
     },
     pond: {
       title: 'The Lotus Has Bloomed',

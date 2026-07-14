@@ -9,7 +9,7 @@ export const OPENING_MODALS = {
   'symbol-mountain': {
     'modak': {
       title: "Share the Modaks",
-      description: "Mooshika is hiding nearby. Find him and share the sweet modaks.",
+      description: "Find Mooshika nearby and share the modaks.",
       icons: ['mooshika', 'modak', 'belly'],
       buttonText: "Let's Begin",
       character: 'ganesha-happy'
