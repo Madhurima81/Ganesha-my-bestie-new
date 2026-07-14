@@ -24,6 +24,7 @@ const ParentGate = ({ onComplete, onBackToWelcome }) => {
   const [parentEmail, setParentEmail] = useState('');
   const [isChecked, setIsChecked] = useState(false);
   const answerInputRef = useRef(null);
+  const emailInputRef = useRef(null);
 
   useEffect(() => {
     try {
@@ -193,11 +194,20 @@ const ParentGate = ({ onComplete, onBackToWelcome }) => {
             <label className="parent-gate-field">
               <span>Parent email - for updates &amp; account recovery</span>
               <input
+                ref={emailInputRef}
                 type="email"
                 value={parentEmail}
                 onChange={(event) => setParentEmail(event.target.value)}
                 placeholder="you@example.com"
                 autoComplete="email"
+                inputMode="email"
+                enterKeyHint="done"
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter') {
+                    event.preventDefault();
+                    event.currentTarget.blur();
+                  }
+                }}
               />
             </label>
 
@@ -214,22 +224,30 @@ const ParentGate = ({ onComplete, onBackToWelcome }) => {
               </span>
             </label>
 
-            <button
-              type="button"
-              className="parent-gate-link"
-              onClick={() => setStage('privacy')}
-            >
-              Read Privacy Policy
-            </button>
+            <div className="parent-gate-actions">
+              <button
+                type="button"
+                className="parent-gate-link"
+                onClick={() => {
+                  emailInputRef.current?.blur();
+                  setStage('privacy');
+                }}
+              >
+                Read Privacy Policy
+              </button>
 
-            <button
-              type="button"
-              className="parent-gate-primary"
-              onClick={handleConsentContinue}
-              disabled={!isChecked}
-            >
-              Continue
-            </button>
+              <button
+                type="button"
+                className="parent-gate-primary"
+                onClick={() => {
+                  emailInputRef.current?.blur();
+                  handleConsentContinue();
+                }}
+                disabled={!isChecked}
+              >
+                Continue
+              </button>
+            </div>
           </div>
         )}
       </div>
