@@ -10,7 +10,6 @@ const GaneshaIntroStory = ({ profileId, childName, onComplete }) => {
   const tapPuffTimerRef = useRef(null);
   const introAdvanceTimerRef = useRef(null);
   const hasSpeechGestureRef = useRef(false);
-  const spokenSlideRef = useRef(-1);
 
   const slides = useMemo(
     () => [
@@ -58,6 +57,7 @@ const GaneshaIntroStory = ({ profileId, childName, onComplete }) => {
   );
 
   const finishStory = () => {
+    window.speechSynthesis?.cancel?.();
     if (profileId) {
       localStorage.setItem(`ganeshaStoryShown_${profileId}`, 'true');
     }
@@ -81,7 +81,6 @@ const GaneshaIntroStory = ({ profileId, childName, onComplete }) => {
     if (audioEnabled === 'false') return false;
     if (!window.speechSynthesis || typeof window.SpeechSynthesisUtterance === 'undefined') return false;
     if (!hasSpeechGestureRef.current) return false;
-    if (spokenSlideRef.current === slideIndex) return false;
 
     const slide = slides[slideIndex];
     if (!slide) return false;
@@ -97,7 +96,6 @@ const GaneshaIntroStory = ({ profileId, childName, onComplete }) => {
     utterance.rate = 0.9;
     utterance.pitch = 1;
     utterance.volume = 1;
-    spokenSlideRef.current = slideIndex;
     window.speechSynthesis.cancel();
     window.speechSynthesis.resume?.();
     window.speechSynthesis.speak(utterance);
@@ -107,7 +105,6 @@ const GaneshaIntroStory = ({ profileId, childName, onComplete }) => {
   useEffect(() => {
     const slide = slides[currentSlide];
     if (!slide) return;
-    spokenSlideRef.current = -1;
     speechTimerRef.current = setTimeout(() => {
       speakSlide(currentSlide);
     }, 120);
@@ -146,12 +143,13 @@ const GaneshaIntroStory = ({ profileId, childName, onComplete }) => {
   const handleNext = (showPuff = false) => {
     unlockSpeechFromGesture();
     if (currentSlide === 0) {
+      if (introAdvanceTimerRef.current) return;
       speakSlide(0);
-      if (introAdvanceTimerRef.current) clearTimeout(introAdvanceTimerRef.current);
+      const audioEnabled = localStorage.getItem('ganesha_audio_enabled');
       introAdvanceTimerRef.current = setTimeout(() => {
         setCurrentSlide(1);
         introAdvanceTimerRef.current = null;
-      }, 1100);
+      }, audioEnabled === 'false' ? 1100 : 2800);
       return;
     }
     if (showPuff) {
