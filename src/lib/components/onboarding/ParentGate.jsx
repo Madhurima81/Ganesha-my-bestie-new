@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import PrivacyPolicy from './PrivacyPolicy';
 import './ParentGate.css';
 
@@ -23,6 +23,7 @@ const ParentGate = ({ onComplete, onBackToWelcome }) => {
   const [feedback, setFeedback] = useState('');
   const [parentEmail, setParentEmail] = useState('');
   const [isChecked, setIsChecked] = useState(false);
+  const answerInputRef = useRef(null);
 
   useEffect(() => {
     try {
@@ -53,6 +54,14 @@ const ParentGate = ({ onComplete, onBackToWelcome }) => {
       if (current.length >= 4) return current;
       return `${current}${digit}`;
     });
+  };
+
+  const handleAnswerChange = (event) => {
+    const nextValue = event.target.value.replace(/[^\d-]/g, '');
+    const normalizedValue = nextValue.startsWith('-')
+      ? `-${nextValue.slice(1).replace(/-/g, '')}`
+      : nextValue.replace(/-/g, '');
+    setAnswer(normalizedValue.slice(0, 4));
   };
 
   const submitMathAnswer = () => {
@@ -115,9 +124,28 @@ const ParentGate = ({ onComplete, onBackToWelcome }) => {
               <strong>{mathPrompt}?</strong>
             </div>
 
-            <div className="parent-gate-answer" aria-live="polite">
-              {answer || 'Enter answer'}
-            </div>
+            <label className="parent-gate-answer" aria-live="polite">
+              <input
+                ref={answerInputRef}
+                type="text"
+                inputMode="numeric"
+                autoComplete="off"
+                autoCorrect="off"
+                autoCapitalize="off"
+                spellCheck={false}
+                enterKeyHint="done"
+                value={answer}
+                onChange={handleAnswerChange}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter') {
+                    event.preventDefault();
+                    submitMathAnswer();
+                  }
+                }}
+                placeholder="Enter answer"
+                aria-label={`Enter answer for ${mathPrompt}`}
+              />
+            </label>
 
             {feedback ? (
               <p className="parent-gate-feedback">{feedback}</p>
@@ -133,7 +161,10 @@ const ParentGate = ({ onComplete, onBackToWelcome }) => {
                   key={key}
                   type="button"
                   className={`parent-gate-key ${key === 'del' ? 'delete' : ''}`}
-                  onClick={() => handleDigit(key)}
+                  onClick={() => {
+                    handleDigit(key);
+                    answerInputRef.current?.focus();
+                  }}
                 >
                   {key === 'del' ? 'Delete' : key}
                 </button>

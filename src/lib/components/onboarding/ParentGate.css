@@ -8,6 +8,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow-y: auto;
 }
 
 .parent-gate-card {
@@ -117,16 +118,37 @@
 .parent-gate-answer {
   min-height: 64px;
   min-width: min(280px, 100%);
-  padding: 12px 18px;
+  padding: 0 18px;
   border-radius: 18px;
   background: white;
   border: 2px solid rgba(255, 153, 51, 0.22);
-  color: #5d2e0f;
-  font-size: 1.7rem;
-  font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.parent-gate-answer:focus-within {
+  border-color: rgba(255, 122, 26, 0.72);
+  box-shadow: 0 0 0 4px rgba(255, 153, 51, 0.14);
+}
+
+.parent-gate-answer input {
+  width: 100%;
+  min-height: 60px;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #5d2e0f;
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.7rem;
+  font-weight: 800;
+  text-align: center;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.parent-gate-answer input::placeholder {
+  color: rgba(93, 46, 15, 0.78);
 }
 
 .parent-gate-pad {
@@ -151,6 +173,7 @@
   font-size: 1.5rem;
   font-weight: 800;
   box-shadow: 0 10px 22px rgba(93, 46, 15, 0.1);
+  touch-action: manipulation;
 }
 
 .parent-gate-key.delete {
@@ -165,6 +188,7 @@
   font-size: 1.2rem;
   font-weight: 800;
   box-shadow: 0 14px 26px rgba(255, 122, 26, 0.28);
+  touch-action: manipulation;
 }
 
 .parent-gate-primary:disabled {
@@ -239,11 +263,64 @@
 @media (max-width: 640px) {
   .parent-gate-screen {
     padding: 12px;
+    align-items: flex-start;
   }
 
   .parent-gate-card {
-    min-height: calc(var(--app-height, 100vh) - 24px);
-    padding: 18px;
+    min-height: unset;
+    padding: 16px;
     border-radius: 24px;
+    gap: 14px;
+  }
+
+  .parent-gate-ganesha img {
+    width: min(110px, 28vw);
+  }
+
+  .parent-gate-stage {
+    gap: 10px;
+  }
+
+  .parent-gate-stage h1 {
+    font-size: clamp(1.7rem, 7vw, 2.2rem);
+  }
+
+  .parent-gate-copy,
+  .parent-gate-subtle,
+  .parent-gate-feedback {
+    font-size: 0.94rem;
+    line-height: 1.45;
+  }
+
+  .parent-gate-math-box {
+    min-width: min(220px, 100%);
+    padding: 14px 18px;
+  }
+
+  .parent-gate-math-box strong {
+    font-size: clamp(1.8rem, 8vw, 2.4rem);
+  }
+
+  .parent-gate-answer {
+    min-height: 58px;
+  }
+
+  .parent-gate-answer input {
+    min-height: 54px;
+    font-size: 1.45rem;
+  }
+
+  .parent-gate-pad {
+    gap: 10px;
+  }
+
+  .parent-gate-key,
+  .parent-gate-primary,
+  .parent-gate-link {
+    min-height: 56px;
+  }
+
+  .parent-gate-key {
+    font-size: 1.3rem;
   }
 }
