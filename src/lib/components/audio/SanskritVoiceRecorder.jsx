@@ -15,7 +15,10 @@ const SanskritVoiceRecorder = ({
   show = true,
   title = 'Practice Chanting',
   allowSkip = true,
-  maxRecordingTime = 20
+  maxRecordingTime = 20,
+  savedRecordings = {},
+  onSaveRecording,
+  onDeleteRecording
 }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [recordedAudio, setRecordedAudio] = useState(null);
@@ -225,6 +228,11 @@ const SanskritVoiceRecorder = ({
 
   const handleComplete = () => {
     safeClick(() => {
+      if (hasRecorded && recordedAudio) {
+        onSaveRecording?.(word, { url: recordedAudio, duration: recordingTime });
+        // Saved URL now belongs to savedRecordings — don't revoke it on unmount.
+        recordedAudioRef.current = null;
+      }
       onComplete?.({
         recordingUrl: recordedAudio,
         duration: recordingTime,
@@ -285,7 +293,7 @@ const SanskritVoiceRecorder = ({
                 <>
                   <button
                     className="rec2-listen svr-btn"
-                    onClick={() => {
+                    onClick={() => safeClick(() => {
                       if (isPlaying) {
                         audioRef.current.pause();
                         setIsPlaying(false);
@@ -293,7 +301,7 @@ const SanskritVoiceRecorder = ({
                         audioRef.current.play();
                         setIsPlaying(true);
                       }
-                    }}
+                    })}
                   >
                     {isPlaying ? 'Pause' : 'Listen to Your Voice'}
                   </button>
@@ -312,7 +320,8 @@ const SanskritVoiceRecorder = ({
                   <button
                     key={i}
                     className="svr-btn svr-syllable-btn"
-                    onClick={() => playAudioSafe(`/audio/syllables/${word}-${s}.mp3`)}
+                    onClick={() => safeClick(() => playAudioSafe(`/audio/syllables/${word}-${s}.mp3`))}
+                    disabled={locked}
                   >
                     {s.toUpperCase()}
                   </button>
@@ -321,7 +330,8 @@ const SanskritVoiceRecorder = ({
 
               <button
                 className="svr-btn svr-word-btn"
-                onClick={handleHearCompleteWord}
+                onClick={() => safeClick(handleHearCompleteWord)}
+                disabled={locked}
               >
                 Hear Complete Word
               </button>
@@ -354,6 +364,24 @@ const SanskritVoiceRecorder = ({
               </div>
             )}
           </>
+        )}
+
+        {savedRecordings[word] && !isRecording && (
+          <div className="svr-saved-row">
+            <button
+              className="svr-btn"
+              onClick={() => safeClick(() => playAudioSafe(savedRecordings[word].url))}
+            >
+              My Last Chant
+            </button>
+            <button
+              className="svr-btn svr-delete"
+              aria-label="Delete recording"
+              onClick={() => safeClick(() => onDeleteRecording?.(word))}
+            >
+              🗑️
+            </button>
+          </div>
         )}
 
         {allowSkip && (
