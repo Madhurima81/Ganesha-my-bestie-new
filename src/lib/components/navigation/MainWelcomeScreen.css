@@ -282,3 +282,24 @@
   .adventure-button-container .profile-cta-btn-unified { font-size: 18px; padding: 10px 44px; }
   .adventure-button-container { margin-bottom: 20px; }
 }
+
+/* iPad/tablet landscape: avoid oversized poster/video before playback starts */
+@media (orientation: landscape) and (max-height: 900px) and (min-width: 900px) {
+  .welcome-title-container {
+    top: 4%;
+  }
+
+  .welcome-ganesha-video {
+    object-fit: contain;
+    object-position: center 58%;
+    transform: scale(0.92);
+  }
+
+  .welcome-content-overlay {
+    padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .adventure-button-container {
+    margin-bottom: 12px;
+  }
+}
