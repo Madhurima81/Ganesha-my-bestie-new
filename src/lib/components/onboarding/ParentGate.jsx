@@ -114,7 +114,7 @@ const ParentGate = ({ onComplete, onBackToWelcome }) => {
         </div>
 
         {stage === 'math' && (
-          <div className="parent-gate-stage">
+          <div className="parent-gate-stage parent-gate-stage--math">
             <p className="parent-gate-kicker">Grown-ups only!</p>
             <h1>Time to get a grown-up!</h1>
             <p className="parent-gate-copy">
@@ -164,7 +164,7 @@ const ParentGate = ({ onComplete, onBackToWelcome }) => {
         )}
 
         {stage === 'consent' && (
-          <div className="parent-gate-stage">
+          <div className="parent-gate-stage parent-gate-stage--consent">
             <p className="parent-gate-kicker">Parent consent</p>
             <h1>Before your child begins</h1>
             <p className="parent-gate-copy">
