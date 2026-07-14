@@ -120,14 +120,11 @@ const ZoneWelcome = ({
     pose === 'celebration' ? GANESHA_POSE_ASSETS.celebrate : GANESHA_POSE_ASSETS.standPoint;
   const [sceneProgress, setSceneProgress] = useState({});
   const [isLoading, setIsLoading] = useState(true);
-  const [culturalData, setCulturalData] = useState(null); // ← ADD THIS LINE
   const [isHomeExiting, setIsHomeExiting] = useState(false);
   const [profileChipPulse, setProfileChipPulse] = useState(false);
-  // Tracks which scene whispers the child has heard — drives re-render to hide Ganesha
-  const [heardWhispers, setHeardWhispers] = useState({});
   const [confetti, setConfetti] = useState([]);
 
-  console.log('🏔️ ZoneWelcome rendered for zone:', zoneData?.name);
+  const dlog = import.meta.env.DEV ? console.log : () => {};
 
   // Add this near the top of ZoneWelcome component:
   const [highlightedScene, setHighlightedScene] = useState(null);
@@ -138,7 +135,7 @@ const ZoneWelcome = ({
     if (zoneData?.id) {
       const entryTime = Date.now();
       sessionStorage.setItem(`zone_entry_${zoneData.id}`, entryTime.toString());
-      console.log(`📍 Zone entry tracked: ${zoneData.id} at ${entryTime}`);
+      dlog(`📍 Zone entry tracked: ${zoneData.id} at ${entryTime}`);
     }
   }, [zoneData?.id]);
 
@@ -213,29 +210,10 @@ const speakZoneLine = (text) => {
   window.speechSynthesis.speak(u);
 };
 
-// ✨ DISNEY PATTERN: Load cultural progress data
-useEffect(() => {
-  const loadCulturalData = () => {
-    try {
-      const data = CulturalProgressExtractor.getCulturalProgressData();
-      setCulturalData(data);
-      console.log('🎒 Cultural data loaded for zone:', data);
-    } catch (error) {
-      console.error('Error loading cultural data:', error);
-      setCulturalData(null);
-    }
-  };
-
-  // Load initially and when scene progress changes
-  if (Object.keys(sceneProgress).length > 0) {
-    loadCulturalData();
-  }
-}, [sceneProgress, zoneData?.id]); // Reload when scenes update
-
 // 🎉 Zone completion confetti effect
 useEffect(() => {
   const completedCount = (zoneData?.scenes || []).filter(
-    (scene) => getSceneStatus(scene).status === 'completed'
+    (scene) => sceneStatuses[scene.id].status === 'completed'
   ).length;
   const isZoneComplete = completedCount >= (zoneData?.scenes?.length || 0) && (zoneData?.scenes?.length || 0) > 0;
 
@@ -250,30 +228,12 @@ useEffect(() => {
       delay: Math.random() * 0.2
     }));
     setConfetti(newConfetti);
-    // Clear confetti after animation ends
+  }
+  if (confetti.length > 0) {
     const timer = setTimeout(() => setConfetti([]), 1500);
     return () => clearTimeout(timer);
   }
-}, [sceneProgress, zoneData?.scenes]);
-
-// Debug useEffect to check scene statuses
-useEffect(() => {
-  if (!zoneData?.scenes || !sceneProgress || Object.keys(sceneProgress).length === 0) return;
-  
-  console.log('🔍 SCENE STATUS DEBUG - Each Scene:');
-  zoneData.scenes.forEach(scene => {
-    const progress = sceneProgress[scene.id];
-    const status = getSceneStatus(scene);
-    
-    console.log(`${scene.id}:`, {
-      'Status': status.status,
-      'Stars': status.stars,
-      'Raw Progress': progress,
-      'Completed Flag': progress?.completed,
-      'Progress Percentage': progress?.progress?.percentage
-    });
-  });
-}, [sceneProgress, zoneData]); // Triggers when sceneProgress updates
+}, [sceneProgress, zoneData?.scenes, confetti.length]);
 
 // ✅ FIXED: Check BOTH permanent AND temporary storage
 const loadSceneProgress = () => {
@@ -281,13 +241,13 @@ const loadSceneProgress = () => {
   
   try {
     const activeProfileId = localStorage.getItem('activeProfileId');
-    console.log('🔍 COMBINED: Loading progress for profile:', activeProfileId);
+    dlog('🔍 COMBINED: Loading progress for profile:', activeProfileId);
     
     // ✅ Get permanent completion data from GameStateManager
     const gameProgress = GameStateManager.getGameProgress();
     const zoneProgress = gameProgress.zones?.[zoneData.id] || { scenes: {} };
     
-    console.log('📊 PERMANENT: Zone progress loaded:', zoneProgress);
+    dlog('📊 PERMANENT: Zone progress loaded:', zoneProgress);
     
     const progressData = {};
     let completedScenes = 0;
@@ -324,7 +284,7 @@ const loadSceneProgress = () => {
           );
           progressPercentage = tempState.progress?.percentage || 0;
           tempStars = tempState.stars || 0;
-          console.log(`🔍 TEMP CHECK: ${scene.id} has progress:`, hasInProgressData, 'percentage:', progressPercentage, 'tempStars:', tempStars);
+          dlog(`🔍 TEMP CHECK: ${scene.id} has progress:`, hasInProgressData, 'percentage:', progressPercentage, 'tempStars:', tempStars);
         } catch (e) {
           console.error('Error parsing temp data:', e);
         }
@@ -346,10 +306,10 @@ const loadSceneProgress = () => {
     });
     
     setSceneProgress(progressData);
-    console.log('🔍 COMBINED PROGRESS DATA:', progressData);
+    dlog('🔍 COMBINED PROGRESS DATA:', progressData);
 
     // ✅ ENHANCED DEBUG with combined data
-    console.log('📊 COMBINED: Final progress totals:', {
+    dlog('📊 COMBINED: Final progress totals:', {
       'Completed Scenes': completedScenes,
       'Total Scenes': zoneData.scenes.length,
       'Total Stars': totalStars,
@@ -357,7 +317,7 @@ const loadSceneProgress = () => {
     });
     
   } catch (error) {
-    console.log('Error loading scene progress:', error);
+    dlog('Error loading scene progress:', error);
     // Initialize with empty progress
     const emptyProgress = {};
     zoneData.scenes.forEach(scene => {
@@ -370,24 +330,6 @@ const loadSceneProgress = () => {
     });
     setSceneProgress(emptyProgress);
   }
-};
-
-// ✅ NEW: Get relevant cards for current zone
-const getRelevantCards = () => {
-  const zoneId = zoneData?.id || 'symbol-mountain';
-  const contentTypes = ZONE_CONTENT_TYPES[zoneId] || ['symbols'];
-  
-  const cards = [];
-  
-  // Add content-specific cards
-  contentTypes.forEach(type => {
-    cards.push(type);
-  });
-  
-  // Always add universal cards
-  cards.push('level', 'progress');
-  
-  return cards;
 };
 
 const getZoneStats = () => {
@@ -425,67 +367,6 @@ const getZoneStats = () => {
   }
 
   return { symbols, stories, chants, meanings, completed, total: zoneData.scenes.length };
-};
-
-// ✅ NEW: Render individual card
-const renderStatCard = (cardType, stats) => {
-  switch (cardType) {
-    case 'symbols':
-      return (
-        <div key="symbols" className="stat-card symbols">
-          <div className="stat-icon">🕉️</div>
-          <div className="stat-number">{stats.symbols}</div>
-          <div className="stat-label">Symbols</div>
-        </div>
-      );
-      
-    case 'stories':
-      return (
-        <div key="stories" className="stat-card stories">
-          <div className="stat-icon">📜</div>
-          <div className="stat-number">{stats.stories}</div>
-          <div className="stat-label">Stories</div>
-        </div>
-      );
-      
-    case 'chants':
-      return (
-        <div key="chants" className="stat-card chants">
-          <div className="stat-icon">🎵</div>
-          <div className="stat-number">{stats.chants}</div>
-          <div className="stat-label">Chants</div>
-        </div>
-      );
-      
-    case 'meanings': // ✅ ADD: For Cave of Secrets Sanskrit words
-      return (
-        <div key="meanings" className="stat-card meanings">
-          <div className="stat-icon">📖</div>
-          <div className="stat-number">{stats.meanings}</div>
-          <div className="stat-label">Meanings</div>
-        </div>
-      );
-      
-    case 'level':
-      return (
-        <div key="level" className="stat-card level">
-          <div className="stat-icon">🔍</div>
-          <div className="stat-text">Wisdom Seeker</div>
-        </div>
-      );
-      
-    case 'progress':
-      return (
-        <div key="progress" className="stat-card progress">
-          <div className="stat-icon">🎒</div>
-          <div className="stat-number">{stats.completed}/{stats.total}</div>
-          <div className="stat-label">Adventures</div>
-        </div>
-      );
-      
-    default:
-      return null;
-  }
 };
 
 const getSceneStatus = (scene) => {
@@ -542,7 +423,7 @@ if (tempData) {
     
     // Completion celebration was showing — treat as completed, show Replay only
     if (tempState.showingCompletionScreen === true) {
-      console.log(`🎬 COMPLETION SCREEN: ${scene.id} → treating as completed, show Replay only`);
+      dlog(`🎬 COMPLETION SCREEN: ${scene.id} → treating as completed, show Replay only`);
       return { status: 'completed', stars: tempState.stars || progress?.stars || 0, hasReplaySession };
     }
       
@@ -629,7 +510,7 @@ if (tempData) {
       }
       
       if (isCompleteInTemp) {
-        console.log(`🎯 TEMP COMPLETED: ${scene.id} temp session shows completion`);
+        dlog(`🎯 TEMP COMPLETED: ${scene.id} temp session shows completion`);
         return { status: 'completed', stars: tempState.stars || progress.stars || 0, hasReplaySession };
       }
       
@@ -667,11 +548,11 @@ if (tempData) {
 );
       
       if (hasPartialProgress) {
-        console.log(`🎮 TEMP PROGRESS: ${scene.id} has partial progress`);
+        dlog(`🎮 TEMP PROGRESS: ${scene.id} has partial progress`);
         return { status: 'in-progress', stars: tempState.stars || 0, hasReplaySession };
       }
       
-      console.log(`🔄 TEMP EMPTY: ${scene.id} has empty temp session`);
+      dlog(`🔄 TEMP EMPTY: ${scene.id} has empty temp session`);
       
     } catch (e) {
       console.error('Error parsing temp data:', e);
@@ -680,7 +561,7 @@ if (tempData) {
   
   // ✅ Fall back to permanent data
   if (progress.completed === true) {
-    console.log(`💾 PERMANENT: ${scene.id} is permanently completed`);
+    dlog(`💾 PERMANENT: ${scene.id} is permanently completed`);
     return { status: 'completed', stars: progress.stars || 0, hasReplaySession };
   }
   
@@ -725,6 +606,11 @@ if (tempData) {
   return { status: 'available', stars: 0, hasReplaySession };
 };
 
+const sceneStatuses = React.useMemo(
+  () => Object.fromEntries((zoneData?.scenes || []).map(s => [s.id, getSceneStatus(s)])),
+  [sceneProgress, zoneData?.id]
+);
+
 // ⭐ PROGRESS DOTS — reads ONLY from permanent storage (GameStateManager).
 // Completely separate from getSceneStatus so replay sessions never affect dot count.
 // Same pattern as CulturalProgressExtractor for symbol count.
@@ -740,38 +626,6 @@ const getPermanentCompletedCount = () => {
   }
 };
 
-  // ── Scene Whisper heard-tracking ──────────────────────────────────────────
-  // Persisted per profile + zone + scene in localStorage.
-  // Ganesha appears next to a scene ONLY the first time it unlocks.
-  // Once the child taps (or dismisses), it is gone forever for that scene.
-
-  const _whisperKey = (sceneId) => {
-    const pid = localStorage.getItem('activeProfileId') || 'default';
-    return `gsw_heard_${pid}_${zoneData?.id}_${sceneId}`;
-  };
-
-  const hasHeardWhisper = (sceneId) => {
-    if (heardWhispers[sceneId]) return true;
-    try { return localStorage.getItem(_whisperKey(sceneId)) === '1'; } catch { return false; }
-  };
-
-  const markWhisperHeard = (sceneId) => {
-    try { localStorage.setItem(_whisperKey(sceneId), '1'); } catch {}
-    setHeardWhispers(prev => ({ ...prev, [sceneId]: true }));
-  };
-
-  // Show invite-whisper only when:
-  //   1. At least one scene is still locked (progressive unlock is active)
-  //   2. This scene just became 'available' (freshly unlocked, not started)
-  //   3. Child hasn't heard this whisper yet
-  const shouldShowInviteWhisper = (scene, status) => {
-    if (!zoneData?.scenes) return false;
-    const anyLocked = zoneData.scenes.some(s => getSceneStatus(s).status === 'locked');
-    if (!anyLocked) return false;                   // all unlocked → no whispers
-    if (status.status !== 'available') return false; // only on fresh unlocks
-    return !hasHeardWhisper(scene.id);
-  };
-
   const getCardAccentColor = () => {
     const theme = getZoneTheme(zoneData?.id);
     return theme?.accentColor || '#9b7be8';
@@ -780,12 +634,12 @@ const getPermanentCompletedCount = () => {
   const getZoneWelcomeGaneshaState = () => {
     if (!zoneData?.scenes?.length) return null;
 
-    const sceneStatuses = zoneData.scenes.map((scene) => ({
+    const statusEntries = zoneData.scenes.map((scene) => ({
       scene,
-      status: getSceneStatus(scene).status
+      status: sceneStatuses[scene.id].status
     }));
 
-    const completedCount = sceneStatuses.filter((entry) => entry.status === 'completed').length;
+    const completedCount = statusEntries.filter((entry) => entry.status === 'completed').length;
     const allDone = completedCount === zoneData.scenes.length;
 
     if (allDone) {
@@ -796,7 +650,7 @@ const getPermanentCompletedCount = () => {
       return { pose: 'celebration', activeSceneId: lastScene?.id, size: 66 };
     }
 
-    const nextActive = sceneStatuses.find(
+    const nextActive = statusEntries.find(
       (entry) => entry.status === 'available' || entry.status === 'in-progress'
     );
 
@@ -822,19 +676,19 @@ const getPermanentCompletedCount = () => {
 
     // ✅ MVP LOCK: Only the first scene is unlocked in MVP mode
     if (MVP_FIRST_SCENE_ONLY && scene.order !== 1) {
-      console.log(`🌙 MVP: Scene ${scene.id} locked (MVP — only scene 1 available)`);
+      dlog(`🌙 MVP: Scene ${scene.id} locked (MVP — only scene 1 available)`);
       return false;
     }
 
     // ✅ NEW: Check if scene has explicit unlocked flag in ZoneConfig (for zones like About Me Hut & Festival Square)
     if (scene.unlocked === true) {
-      console.log(`🔓 ZONE CONFIG: Scene ${scene.id} explicitly unlocked in ZoneConfig`);
+      dlog(`🔓 ZONE CONFIG: Scene ${scene.id} explicitly unlocked in ZoneConfig`);
       return true;
     }
 
     // ✅ DISNEY PATH 1: First scene is always unlocked
     if (scene.order === 1) {
-      console.log(`🔓 DISNEY: Scene ${scene.id} unlocked (first scene)`);
+      dlog(`🔓 DISNEY: Scene ${scene.id} unlocked (first scene)`);
       return true;
     }
     
@@ -843,14 +697,14 @@ const getPermanentCompletedCount = () => {
     const explicitUnlock = gameProgress.zones?.[zoneData.id]?.scenes?.[scene.id]?.unlocked;
     
     if (explicitUnlock === true) {
-      console.log(`🔓 DISNEY: Scene ${scene.id} explicitly unlocked by auto-unlock system`);
+      dlog(`🔓 DISNEY: Scene ${scene.id} explicitly unlocked by auto-unlock system`);
       return true;
     }
     
     // ✅ DISNEY PATH 3: Check if previous scene is completed (fallback)
     const previousScene = zoneData.scenes.find(s => s.order === scene.order - 1);
     if (!previousScene) {
-      console.log(`🔒 DISNEY: Scene ${scene.id} locked (no previous scene found)`);
+      dlog(`🔒 DISNEY: Scene ${scene.id} locked (no previous scene found)`);
       return false;
     }
     
@@ -858,7 +712,7 @@ const getPermanentCompletedCount = () => {
     const previousCompleted = previousProgress && previousProgress.completed;
     
     // ✅ DISNEY ENHANCED DEBUG: Show all unlock paths
-    console.log(`🔍 DISNEY: Comprehensive unlock check for ${scene.id}:`, {
+    dlog(`🔍 DISNEY: Comprehensive unlock check for ${scene.id}:`, {
       'Scene Order': scene.order,
       'Previous Scene': previousScene.id,
       'Previous Completed': previousCompleted,
@@ -871,9 +725,9 @@ const getPermanentCompletedCount = () => {
     const isUnlocked = explicitUnlock === true || previousCompleted;
     
     if (isUnlocked) {
-      console.log(`🔓 DISNEY: Scene ${scene.id} unlocked via ${explicitUnlock ? 'auto-unlock system' : 'previous completion'}`);
+      dlog(`🔓 DISNEY: Scene ${scene.id} unlocked via ${explicitUnlock ? 'auto-unlock system' : 'previous completion'}`);
     } else {
-      console.log(`🔒 DISNEY: Scene ${scene.id} locked - waiting for previous scene completion or auto-unlock`);
+      dlog(`🔒 DISNEY: Scene ${scene.id} locked - waiting for previous scene completion or auto-unlock`);
     }
     
     return isUnlocked;
@@ -898,37 +752,33 @@ const getPermanentCompletedCount = () => {
 
 const handleSceneClick = (scene, action = 'default') => {
 
-  const status = getSceneStatus(scene);
+  const status = sceneStatuses[scene.id];
   
   if (status.status === 'locked') {
-    console.log('🔒 DISNEY: Scene locked, showing feedback:', scene.name);
+    dlog('🔒 DISNEY: Scene locked, showing feedback:', scene.name);
     return;
   }
   
-  console.log('🎯 DISNEY: Scene clicked:', scene.id, 'Action:', action);
+  dlog('🎯 DISNEY: Scene clicked:', scene.id, 'Action:', action);
 
-  if (zoneWelcomeGaneshaState?.activeSceneId === scene.id) {
-    markWhisperHeard(scene.id);
-  }
-  
   // Handle specific actions from buttons
   switch (action) {
     case 'continue':
-      console.log('↶ CONTINUE: Loading scene with progress');
+      dlog('↶ CONTINUE: Loading scene with progress');
       if (onSceneSelect) {
         onSceneSelect(scene.id, { mode: 'continue' });
       }
       break;
       
     case 'replay':
-      console.log('🎮 REPLAY: Loading scene fresh (clear progress)');
+      dlog('🎮 REPLAY: Loading scene fresh (clear progress)');
       if (onSceneSelect) {
         onSceneSelect(scene.id, { mode: 'replay' });
       }
       break;
       
     case 'start':
-      console.log('🚀 START: Loading scene for first time');
+      dlog('🚀 START: Loading scene for first time');
       if (onSceneSelect) {
         onSceneSelect(scene.id, { mode: 'start' });
       }
@@ -938,23 +788,23 @@ const handleSceneClick = (scene, action = 'default') => {
       // Legacy fallback for scenes clicked without specific action
       if (status.status === 'completed') {
         if (status.hasReplaySession) {
-          console.log('↪ DEFAULT: Completed scene with replay session - continuing replay');
+          dlog('↪ DEFAULT: Completed scene with replay session - continuing replay');
           if (onSceneSelect) {
             onSceneSelect(scene.id, { mode: 'continue' });
           }
           return;
         }
-        console.log('🎮 DEFAULT: Completed scene - starting replay');
+        dlog('🎮 DEFAULT: Completed scene - starting replay');
         if (onSceneSelect) {
           onSceneSelect(scene.id, { mode: 'replay' });
         }
       } else if (status.status === 'in-progress') {
-        console.log('↶ DEFAULT: In-progress scene - continuing');
+        dlog('↶ DEFAULT: In-progress scene - continuing');
         if (onSceneSelect) {
           onSceneSelect(scene.id, { mode: 'continue' });
         }
       } else {
-        console.log('🚀 DEFAULT: New scene - starting fresh');
+        dlog('🚀 DEFAULT: New scene - starting fresh');
         if (onSceneSelect) {
           onSceneSelect(scene.id, { mode: 'start' });
         }
@@ -987,18 +837,18 @@ const handleReplayIntroStory = () => {
     const timer = setTimeout(() => {
       // Calculate zone completion inside effect to avoid temporal dead zone
       const zoneCompletedCount = (zoneData?.scenes || []).filter(
-        (scene) => getSceneStatus(scene).status === 'completed'
+        (scene) => sceneStatuses[scene.id].status === 'completed'
       ).length;
       const isZoneComplete = zoneCompletedCount >= (zoneData?.scenes?.length || 0) && (zoneData?.scenes?.length || 0) > 0;
 
       if (isZoneComplete && !hasHeardZoneVo('complete')) {
-        speakZoneLine(`You finished ${zoneData.name.replace('\n', ' ')}! I'm so proud of you.`);
+        speakZoneLine(`You finished ${zoneData.name.replaceAll('\n', ' ')}! I'm so proud of you.`);
         markZoneVoHeard('complete');
         return;
       }
 
       if (!hasHeardZoneVo('welcome')) {
-        speakZoneLine(`Welcome to ${zoneData.name.replace('\n', ' ')}! Tap a card to begin.`);
+        speakZoneLine(`Welcome to ${zoneData.name.replaceAll('\n', ' ')}! Tap a card to begin.`);
         markZoneVoHeard('welcome');
       }
     }, 600);
@@ -1022,10 +872,10 @@ const handleReplayIntroStory = () => {
   const zoneWelcomeGaneshaState = getZoneWelcomeGaneshaState();
   const zoneLifeConfig = ZONE_LIFE_CONFIG[zoneData.id] || null;
   const zoneCompletedCount = (zoneData?.scenes || []).filter(
-    (scene) => getSceneStatus(scene).status === 'completed'
+    (scene) => sceneStatuses[scene.id].status === 'completed'
   ).length;
   const isZoneComplete = zoneCompletedCount >= (zoneData?.scenes?.length || 0) && (zoneData?.scenes?.length || 0) > 0;
-  const recommendedScene = zoneData?.scenes?.find((scene) => getSceneStatus(scene).status === 'available') || null;
+  const recommendedScene = zoneData?.scenes?.find((scene) => sceneStatuses[scene.id].status === 'available') || null;
 
   return (
     <div
@@ -1106,7 +956,7 @@ const handleReplayIntroStory = () => {
         )}
         <div className="scenes-horizontal-container">
           {zoneData.scenes.map((scene, index) => {
-            const status = getSceneStatus(scene);
+            const status = sceneStatuses[scene.id];
             const isNextScene = recommendedScene && recommendedScene.id === scene.id;
             const creature = zoneLifeConfig?.creature;
             // Ganesha: any available (unlocked, never played) card — zones unlock sequentially so only one exists at a time

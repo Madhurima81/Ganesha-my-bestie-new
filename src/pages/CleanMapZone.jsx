@@ -4,8 +4,11 @@ import './CleanMapZone.css';
 import GameStateManager from '../lib/services/GameStateManager';
 import { GANESHA_POSE_ASSETS } from '../lib/config/ganeshaUsageSystem';
 // import ZonePreviewModal from './components/ZonePreviewModal'; // commented out — no preview modal
-import MapEditorFull from './MapEditorFull';
 import useAudioPreference from '../lib/hooks/useAudioPreference';
+
+const MapEditorFull = import.meta.env.DEV
+  ? React.lazy(() => import('./MapEditorFull'))
+  : null;
 
 const ZONES_DATA = [
   {
@@ -351,7 +354,9 @@ const loadSavedProps = () => {
   try {
     const raw = localStorage.getItem(MAP_PROPS_STORAGE_KEY);
     if (!raw) return MAP_PROPS;
-    return JSON.parse(raw);
+    const saved = JSON.parse(raw);
+    const savedById = Object.fromEntries(saved.map(p => [p.id, p]));
+    return MAP_PROPS.map(p => savedById[p.id] ? { ...p, ...savedById[p.id] } : p);
   } catch {
     return MAP_PROPS;
   }
@@ -1026,9 +1031,11 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
   const walkTimerRef = useRef(null);
   const parentHoldTimerRef = useRef(null);
   const parentHoldTriggeredRef = useRef(false);
+  const editorTouchedRef = useRef(false);
   const isMuted = !isAudioOn;
 
   useEffect(() => {
+    if (!editorTouchedRef.current) return;
     try {
       localStorage.setItem(MAP_PROPS_STORAGE_KEY, JSON.stringify(propItems));
     } catch {
@@ -1037,6 +1044,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
   }, [propItems]);
 
   useEffect(() => {
+    if (!editorTouchedRef.current) return;
     try {
       localStorage.setItem(MAP_OVERLAY_STORAGE_KEY, JSON.stringify(overlayItems));
     } catch {
@@ -1045,6 +1053,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
   }, [overlayItems]);
 
   useEffect(() => {
+    if (!editorTouchedRef.current) return;
     try {
       localStorage.setItem(MAP_ZONE_ART_STORAGE_KEY, JSON.stringify(zoneArtItems));
     } catch {
@@ -1087,24 +1096,11 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
 
 
   const speakMapVoEvents = (events = []) => {
-    if (!Array.isArray(events) || events.length === 0) {
-      console.log('[VO] No events to speak');
-      return;
-    }
-    if (typeof window === 'undefined') {
-      console.log('[VO] Window undefined');
-      return;
-    }
-    if (isMuted) {
-      console.log('[VO] Muted, skipping VO');
-      return;
-    }
-    if (!window.speechSynthesis || typeof window.SpeechSynthesisUtterance === 'undefined') {
-      console.log('[VO] Speech synthesis not supported');
-      return;
-    }
+    if (!Array.isArray(events) || events.length === 0) return;
+    if (typeof window === 'undefined') return;
+    if (isMuted) return;
+    if (!window.speechSynthesis || typeof window.SpeechSynthesisUtterance === 'undefined') return;
 
-    console.log('[VO] Speaking events:', events);
     // Clear any queued lines from previous transition bursts.
     voiceTimersRef.current.forEach(clearTimeout);
     voiceTimersRef.current = [];
@@ -1114,14 +1110,13 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
       if (!text) return;
       const timerId = setTimeout(() => {
         try {
-          console.log(`[VO] Speaking (delay ${delay}ms): "${text}"`);
           const utterance = new window.SpeechSynthesisUtterance(text);
           utterance.rate = 1.02;
           utterance.pitch = 1;
           utterance.volume = 0.55;
           window.speechSynthesis.speak(utterance);
         } catch (e) {
-          console.error('[VO] Error speaking:', e);
+          // best effort only
         }
       }, delay);
       voiceTimersRef.current.push(timerId);
@@ -1187,6 +1182,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
 
   const startParentHold = (e) => {
     e.stopPropagation();
+    if (!import.meta.env.DEV) return;
     parentHoldTriggeredRef.current = false;
     if (parentHoldTimerRef.current) clearTimeout(parentHoldTimerRef.current);
     parentHoldTimerRef.current = setTimeout(() => {
@@ -1402,13 +1398,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
                 const isCompleteInTemp = (
                   tempState.completed === true ||
                   tempState.phase === 'complete' ||
-                  tempState.showingCompletionScreen === true ||
-                  tempState.phase === 'rock_transformed' ||
-                  // modak-specific: all 3 symbols collected
-                  (sceneId === 'modak' &&
-                    tempState.discoveredSymbols?.mooshika === true &&
-                    tempState.discoveredSymbols?.modak === true &&
-                    tempState.discoveredSymbols?.belly === true)
+                  tempState.showingCompletionScreen === true
                 );
                 if (isCompleteInTemp) {
                   completedScenes++;
@@ -1453,7 +1443,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
     // Progressive unlock for first-time users
     return {
       'symbol-mountain':  true,
-      'shloka-river':     smCompleted >= 2,
+      'shloka-river':     smCompleted >= 1,
       'about-me-hut':     isZoneComplete(zoneProgress, ZONE_IDS.SYMBOL),
       'cave-of-secrets':  isZoneComplete(zoneProgress, ZONE_IDS.RIVER),
       'festival-square':  isZoneComplete(zoneProgress, ZONE_IDS.CAVE),
@@ -1578,7 +1568,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
       {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
       <audio
         ref={ambientRef}
-        src="/audio/ambient/map%20ambient%20sound.wav"
+        src="/audio/ambient/map%20ambient%20sound.mp3"
         loop
         preload="metadata"
       />
@@ -1991,19 +1981,21 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         </button>
       )}
 
-      {mapDebugMode && (
-        <MapEditorFull
-          onClose={() => setMapDebugMode(false)}
-          propItems={propItems}
-          onPropItemsChange={setPropItems}
-          overlayItems={overlayItems}
-          onOverlayItemsChange={setOverlayItems}
-          overlayDefaults={MAP_OVERLAY_DEFAULTS}
-          zoneArtItems={zoneArtItems}
-          onZoneArtItemsChange={setZoneArtItems}
-          zoneArtDefaults={MAP_ZONE_ART_DEFAULTS}
-        />
-      )}
+      {import.meta.env.DEV && mapDebugMode && MapEditorFull && (() => { editorTouchedRef.current = true; return (
+        <React.Suspense fallback={null}>
+          <MapEditorFull
+            onClose={() => setMapDebugMode(false)}
+            propItems={propItems}
+            onPropItemsChange={setPropItems}
+            overlayItems={overlayItems}
+            onOverlayItemsChange={setOverlayItems}
+            overlayDefaults={MAP_OVERLAY_DEFAULTS}
+            zoneArtItems={zoneArtItems}
+            onZoneArtItemsChange={setZoneArtItems}
+            zoneArtDefaults={MAP_ZONE_ART_DEFAULTS}
+          />
+        </React.Suspense>
+      ); })()}
 
     </div>
   );
