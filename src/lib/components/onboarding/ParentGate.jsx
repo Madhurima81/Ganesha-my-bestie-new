@@ -150,11 +150,7 @@ const ParentGate = ({ onComplete, onBackToWelcome }) => {
 
             {feedback ? (
               <p className="parent-gate-feedback">{feedback}</p>
-            ) : (
-              <p className="parent-gate-subtle">
-                Friendly check only. After 3 misses, we return to the welcome screen.
-              </p>
-            )}
+            ) : null}
 
             <div className="parent-gate-pad">
               {['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'del'].map((key) => (
