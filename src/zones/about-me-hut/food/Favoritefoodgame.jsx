@@ -671,7 +671,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   };
 
   useEffect(() => {
-    if (!isReload && sceneState.randomFoods.length === 0) {
+    if (sceneState.randomFoods.length === 0) {
       sceneActions.updateState({
         randomFoods: shuffleArray(foods),
         randomFriends: shuffleArray(friends),
@@ -2197,6 +2197,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           onAutoSave={(text) => sceneActions.updateState({ draftData: text })} // Auto-save on type
 
           onSave={(text) => {
+            interruptCurrentVoice();
             playChime();
             setShowTextInput(false);
             setTextInputMode(null);
@@ -2237,6 +2238,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           onAutoSave={(text) => sceneActions.updateState({ draftData: text })} // Auto-save on type
 
           onSave={(text) => {
+            interruptCurrentVoice();
             playChime();
             setShowTextInput(false);
             setTextInputMode(null);

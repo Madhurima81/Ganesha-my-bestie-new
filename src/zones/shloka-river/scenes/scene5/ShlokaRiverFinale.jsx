@@ -21,7 +21,6 @@ import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButt
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
 import ZoneCompletionFireworks from '../../../../lib/components/feedback/ZoneCompletionFireworks';
 import RotatingOrbsEffect from '../../../../lib/components/feedback/RotatingOrbsEffect';
-import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
 import OpeningModal from '../../../shared/components/OpeningModal';
 
 import { getCompletionModal } from '../../../../lib/config/content';
@@ -260,7 +259,7 @@ const ShlokaRiverFinaleContent = ({
     fullShlokaPlaybackTokenRef.current += 1;
     fullShlokaAudioRef.current?.pause();
     fullShlokaAudioRef.current = null;
-  }, [clearAllTimeouts, clearHintTimers]);
+  }, []);
 
   const stopAllVoice = useCallback(() => {
     fullShlokaPlaybackTokenRef.current += 1;
@@ -377,6 +376,7 @@ const ShlokaRiverFinaleContent = ({
   const handleStartGame = () => {
     sceneActions.updateState({ phase: PHASES.ARRANGE, welcomeShown: true });
     playVoice?.('arrangeStart', undefined, { replayOnReturn: false });
+    safeSetTimeout(() => playWordAudio?.(SHLOKA_WORDS[0].id), 1800);
   };
 
   const triggerSuccessFlow = useCallback(() => {
@@ -434,7 +434,6 @@ const ShlokaRiverFinaleContent = ({
 
   const placeWord = useCallback((wordData, slotIdx) => {
     const isCorrect = SHLOKA_WORDS[slotIdx].id === wordData.id;
-    markInteraction();
 
     if (!isCorrect) {
       setWrongSlots((prev) => new Set(prev).add(slotIdx));
@@ -448,6 +447,8 @@ const ShlokaRiverFinaleContent = ({
       }, 600);
       return;
     }
+
+    markInteraction();
 
     setSlots((prev) => {
       const next = [...prev];
@@ -472,6 +473,7 @@ const ShlokaRiverFinaleContent = ({
     safeSetTimeout(() => {
       setActiveSlotIndex(slotIdx + 1);
       setHintLevel(0);
+      playWordAudio?.(SHLOKA_WORDS[slotIdx + 1].id);
     }, 420);
   }, [markInteraction, playWordAudio, safeSetTimeout, triggerSuccessFlow]);
 
@@ -619,7 +621,7 @@ const ShlokaRiverFinaleContent = ({
           style={{ backgroundImage: `url(${riverBg})` }}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
-          onPointerLeave={handlePointerUp}
+          onPointerCancel={handlePointerUp}
         >
           <HomeButton onNavigate={onNavigate} />
           <ZoneBadgeButton zoneId="shloka-river" onBack={() => onNavigate?.('zone-welcome')} />
@@ -826,14 +828,6 @@ const ShlokaRiverFinaleContent = ({
               resetScene();
             }}
             onContinue={() => onNavigate?.('scene-complete-continue')}
-          />
-
-          <GestureDemo
-            type="tap"
-            from={{ x: 15, y: 82 }}
-            to={{ x: 15, y: 82 }}
-            active={phase === PHASES.ARRANGE && correctCount === 0 && !draggingWord}
-            idleDelay={3000}
           />
 
           <TocaBocaNav

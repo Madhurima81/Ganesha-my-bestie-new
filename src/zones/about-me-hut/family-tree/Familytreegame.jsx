@@ -641,10 +641,10 @@ const FamilyTreeGameContent = ({
  cancelTimer(resumePopupTimeoutRef);
 
  // Always clear transient modal/overlay states on reload never restore mid-modal
- sceneActions.updateState({
- showChoiceModal: false,
- selectedCircle: null,
- currentChoices: [],
+sceneActions.updateState({
+showChoiceModal: false,
+selectedCircle: null,
+currentChoices: [],
  wrongChoice: null,
  disabledChoices: [],
  correctChoiceId: null,
@@ -653,10 +653,11 @@ const FamilyTreeGameContent = ({
  flippedMember: null,
  showNameModal: false,
  currentFamilyType: null,
- callName: '',
- justPlacedId: null,
- showTreeSparkles: false,
- });
+callName: '',
+justPlacedId: null,
+showTreeSparkles: false,
+...(gamePhase === 'childInput' ? { showBottomTray: true } : {})
+});
 
  // 1. INTRO - Don't show popup
  if (gamePhase === 'intro') {
@@ -912,26 +913,20 @@ const FamilyTreeGameContent = ({
  const ALL_PLACED_SPARKLE_DELAY_MS = 5000;
  const ALL_PLACED_SPARKLE_MS = 2500;
 
- allPlacedSequenceTimerRef.current = scheduleTimeout(() => {
- console.log(" allPlaced timeout FIRED, calling speakHint");
- sceneActions.updateState({ showTreeSparkles: true });
- allPlacedSparkleTimerRef.current = scheduleTimeout(() => {
- sceneActions.updateState({ showTreeSparkles: false });
- }, ALL_PLACED_SPARKLE_MS);
- allPlacedSequenceTimerRef.current = null;
- }, ALL_PLACED_SPARKLE_DELAY_MS);
-
- return () => {
- cancelTimer(allPlacedSequenceTimerRef);
- cancelTimer(allPlacedSparkleTimerRef);
- };
- }, [
- sceneState.gamePhase,
- sceneState.placedGaneshaMembers.length,
- sceneState.showFunFactModal,
- sceneState.isSequencePlaying,
- sceneState.showTreeSparkles,
- ]);
+allPlacedSequenceTimerRef.current = scheduleTimeout(() => {
+console.log(" allPlaced timeout FIRED, calling speakHint");
+sceneActions.updateState({ showTreeSparkles: true });
+allPlacedSparkleTimerRef.current = scheduleTimeout(() => {
+sceneActions.updateState({ showTreeSparkles: false });
+}, ALL_PLACED_SPARKLE_MS);
+allPlacedSequenceTimerRef.current = null;
+}, ALL_PLACED_SPARKLE_DELAY_MS);
+}, [
+sceneState.gamePhase,
+sceneState.placedGaneshaMembers.length,
+sceneState.showFunFactModal,
+sceneState.isSequencePlaying,
+]);
 
  // ========================================
  // GANESHA PHASE: Play tapCircle hint 3.5s after phase begins
@@ -1241,12 +1236,12 @@ const FamilyTreeGameContent = ({
  isSequencePlaying: false // Unlock taps visible placement animation is done
  });
  }, placementRevealDelayMs);
- scheduleTimeout(() => {
- playChime();
- sceneActions.updateState({
- justPlacedId: null
- });
- }, placementRevealDelayMs);
+scheduleTimeout(() => {
+playChime();
+sceneActions.updateState({
+justPlacedId: null
+});
+}, placementRevealDelayMs + 1200);
 
  // FAILSAFE: Reset isSequencePlaying after fun fact modal opens to prevent click-blocking
  scheduleTimeout(() => {
@@ -1305,16 +1300,18 @@ const FamilyTreeGameContent = ({
  playChime();
  sceneActions.updateState({ showTreeSparkles: false, showCelebration: null });
 
- if (!isAudioOn) {
- sceneActions.updateState({ gamePhase: 'transition' });
- return;
- }
+if (!isAudioOn) {
+sceneActions.updateState({ gamePhase: 'transition' });
+return;
+}
 
- const proceedToTransition = () => {
- if (sceneState.gamePhase === 'transition') return;
- ganeshaTreeDoneClickedRef.current = false;
- sceneActions.updateState({ gamePhase: 'transition' });
- };
+const advancedRef = { current: false };
+const proceedToTransition = () => {
+if (advancedRef.current) return;
+advancedRef.current = true;
+ganeshaTreeDoneClickedRef.current = false;
+sceneActions.updateState({ gamePhase: 'transition' });
+};
 
  const advanceFailsafe = scheduleTimeout(proceedToTransition, 6000);
  const cancelAdvanceFailsafe = () => {
@@ -1611,20 +1608,6 @@ const FamilyTreeGameContent = ({
  </div>
  )}
 
- {/* Fun fact modal commented out (using flip card overlay instead) */}
- {sceneState.showFunFactModal && (
- <div className="modal-overlay modal-overlay-fade">
- <div className="fun-fact-modal fun-fact-modal-slide" data-from={sceneState.selectedCircle}>
- <button className="modal-close-btn" onClick={handleCloseFunFact}>×</button>
- <div className="modal-deity-image">
- <img src={sceneState.showFunFactModal.image} alt={sceneState.showFunFactModal.name} />
- </div>
- <h3 className="modal-title">{sceneState.showFunFactModal.introTitle}</h3>
- <p className="modal-fact-text">{sceneState.showFunFactModal.introText}</p>
- <button className="modal-cool-btn" onClick={handleCloseFunFact}>Cool!</button>
- </div>
- </div>
- )}
 
  {sceneState.placedGaneshaMembers.length === ganeshaFamily.length &&!sceneState.showFunFactModal &&!sceneState.isSequencePlaying && (
  <button

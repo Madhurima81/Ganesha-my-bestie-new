@@ -356,7 +356,6 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   const festivalSelectionIdleHintTimerRef = useRef(null);
   const festivalSelectionIdleHintVoiceRef = useRef(false);
   const languagePlayNudgeTimeoutRef = useRef(null);
-  const languagePlayNudgeIntervalRef = useRef(null);
   const phase1ReturnHintTimerCancelRef = useRef(null);
   const phaseEnteredAtRef = useRef(Date.now());
   const entryVoPlayedForPhaseRef = useRef(null);
@@ -368,7 +367,28 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     onHide: () => {
       stop();
     },
-    onShow: () => {},
+    onShow: () => {
+      setGaneshaHomeIdleLevel(0);
+      ganeshaHomeIdleVoiceRef.current = false;
+      if (ganeshaHomeIdleTimerRef.current) {
+        clearTimeout(ganeshaHomeIdleTimerRef.current);
+        ganeshaHomeIdleTimerRef.current = null;
+      }
+
+      setLangGuessIdleLevel(0);
+      langGuessIdleVoiceRef.current = false;
+      if (langGuessIdleTimerRef.current) {
+        clearTimeout(langGuessIdleTimerRef.current);
+        langGuessIdleTimerRef.current = null;
+      }
+
+      setFestGuessIdleLevel(0);
+      festGuessIdleVoiceRef.current = false;
+      if (festGuessIdleTimerRef.current) {
+        clearTimeout(festGuessIdleTimerRef.current);
+        festGuessIdleTimerRef.current = null;
+      }
+    },
     resumeDelay: RESUME_DELAY_MS
   });
 
@@ -385,7 +405,6 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
       if (childHomeIdleTimerRef.current) clearTimeout(childHomeIdleTimerRef.current);
       if (childHomePostSelectTimerRef.current) clearTimeout(childHomePostSelectTimerRef.current);
       if (languagePlayNudgeTimeoutRef.current) clearTimeout(languagePlayNudgeTimeoutRef.current);
-      if (languagePlayNudgeIntervalRef.current) clearInterval(languagePlayNudgeIntervalRef.current);
       if (phase1ReturnHintTimerCancelRef.current) {
         phase1ReturnHintTimerCancelRef.current();
         phase1ReturnHintTimerCancelRef.current = null;
@@ -791,7 +810,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
       };
       const currentOrder = stepOrder[phase] ?? 0;
       const savedOrder = stepOrder[savedStep] ?? 0;
-      const shouldRestoreSavedStep = phase === STEPS.OPENING || savedOrder > currentOrder;
+      const shouldRestoreSavedStep = phase === STEPS.OPENING || savedOrder >= currentOrder;
       if (!shouldRestoreSavedStep) return;
 
       const restoredRegion = saved?.region ?? null;
@@ -1587,7 +1606,6 @@ const handleComplete = () => {
             if (languageSelectionIdleHintTimerRef.current) clearTimeout(languageSelectionIdleHintTimerRef.current);
             if (festivalSelectionIdleHintTimerRef.current) clearTimeout(festivalSelectionIdleHintTimerRef.current);
             if (languagePlayNudgeTimeoutRef.current) clearTimeout(languagePlayNudgeTimeoutRef.current);
-            if (languagePlayNudgeIntervalRef.current) clearInterval(languagePlayNudgeIntervalRef.current);
             if (phase1ReturnHintTimerCancelRef.current) phase1ReturnHintTimerCancelRef.current();
             if (miniGestureTimerRef.current) clearTimeout(miniGestureTimerRef.current);
             if (sparkleCancelRef.current) clearTimeout(sparkleCancelRef.current);
@@ -1643,7 +1661,7 @@ const handleComplete = () => {
             else if (onBack) onBack();
           }}
           onHome={() => {
-            if (onNavigate) onNavigate('map');
+            if (onNavigate) onNavigate('home');
           }}
         />
         );
@@ -2180,14 +2198,14 @@ const handleComplete = () => {
                   if (langGuessIdleTimerRef.current) clearTimeout(langGuessIdleTimerRef.current);
                   handleLanguageGuess(lang);
                 }}
-                disabled={wrongLangGuesses.has(lang.id) || langGuessPhase === 'correct'}
+                disabled={langGuessPhase === 'correct'}
                 style={{
                   width: '100%',
                   minHeight: 'clamp(160px, 22vh, 280px)',
                   padding: 'clamp(14px, 2vw, 28px)',
                   border: 'none',
                   backgroundColor: '#F8F1E2',
-                  cursor: (wrongLangGuesses.has(lang.id) || langGuessPhase === 'correct') ? 'not-allowed' : 'pointer',
+                  cursor: langGuessPhase === 'correct' ? 'not-allowed' : 'pointer',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',

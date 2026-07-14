@@ -126,6 +126,7 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate, zoneId = 'about-me-h
           parkStates: [false, false, false], // Track individual park items (Grass, Butterfly, Slide)
 
           trunkTaps: 0,
+          dreamRevealed: false,
           storyDiscoveries: [],
 
           // --- CHILD DATA ---
@@ -647,7 +648,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     // Drawing modal was open — resume drawing phase with preserved draft
     if (currentModal === 'drawing') {
       phaseVoiceRef.current.dreamDrawing = true;
-      sceneActions.updateState({ gamePhase: 'dream-drawing' });
+      sceneActions.updateState({ gamePhase: 'dream-drawing', currentModal: 'drawing' });
       setShowDrawingPad(true);
       safeSetTimeout(() => { speakLine(VOICE_LINES.dreamDrawing, { moment: 'coregulation' }); }, 500);
       return;
@@ -722,6 +723,8 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     // Dream phases
     if (gamePhase === 'dream-drawing') {
       phaseVoiceRef.current.dreamDrawing = true;
+      setShowDrawingPad(true);
+      sceneActions.updateState({ currentModal: 'drawing' });
       safeSetTimeout(() => { speakLine(VOICE_LINES.dreamDrawing, { moment: 'coregulation' }); }, 500);
       return;
     }
@@ -776,7 +779,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
         });
       }, 4500);
     }
-    else if (sceneState.dreamRevealed) {
+    else if (sceneState.dreamRevealed && (gamePhase === 'dream-clouded' || gamePhase === 'dream-clearing')) {
       // Magical moment: sparkles + glow up; Ganesha bounces at 900ms; VO fires from its own effect;
       // auto-advance to comparison card after the VO + pause.
       const bounceTimer = safeSetTimeout(() => { setGaneshaReactKey(k => k + 1); }, 900);
@@ -1563,7 +1566,9 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   };
 
   const handleTrunkTap = () => {
+    if (sceneState.dreamRevealed || sceneState.trunkTaps >= 3) return;
     markInteraction();
+    interruptCurrentVoice();
     playUiTap();
     triggerMiniGesture('center', 1500);
     const newTaps = sceneState.trunkTaps + 1;
@@ -1601,7 +1606,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     markInteraction();
     playUiTap();
     setShowDrawingPad(false);
-    sceneActions.updateState({ currentModal: null, draftData: null });
+    sceneActions.updateState({ currentModal: null, draftData: null, gamePhase: 'all-wishes-complete' });
   };
 
   return (
@@ -2105,10 +2110,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
             onAutoSave={(data) => sceneActions.updateState({ draftData: data })} // Save as they draw
 
             onSave={handleDreamDrawingSave}
-            onCancel={() => {
-              setShowDrawingPad(false);
-              handleDrawingCancel();
-            }}
+            onCancel={handleDrawingCancel}
           />
         </div>
       )}

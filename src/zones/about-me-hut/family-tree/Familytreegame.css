@@ -4260,6 +4260,13 @@
    ======================================== */
 
 /* Container that holds sparkles */
+.tree-sparkle-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 300;
+}
+
 /* Individual sparkle */
 .tree-sparkle {
   position: absolute;

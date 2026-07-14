@@ -8,7 +8,6 @@ import afternoonBg from './assets/images/sarvada/afternoon.png';
 import nightBg from './assets/images/sarvada/night.png';
 
 import boatImg from './assets/images/sarvada/boat.png';
-import ganeshaImg from './assets/images/ganesha-hi-stand.png';
 
 import puzzleBubbleImg from './assets/images/sarvada/puzzle-bubble.png';
 import sportsBubbleImg from './assets/images/sarvada/sports-bubble.png';
@@ -31,6 +30,7 @@ const PHASES_CONFIG = [
     syllable: 'SAR',
     litCount: 1,
     timeColor: '#FFE066',
+    ganeshaSpot: { l: 89, t: 56, w: 14 },
   },
   {
     id: 'afternoon',
@@ -41,6 +41,7 @@ const PHASES_CONFIG = [
     syllable: 'VA',
     litCount: 2,
     timeColor: '#FFB347',
+    ganeshaSpot: { l: 50, t: 22, w: 14 },
   },
   {
     id: 'night',
@@ -51,6 +52,7 @@ const PHASES_CONFIG = [
     syllable: 'DA',
     litCount: 3,
     timeColor: '#B39DDB',
+    ganeshaSpot: { l: 60, t: 17, w: 14 },
   },
 ];
 
@@ -63,7 +65,7 @@ export default function SarvadaGame({
   isPaused = false,
   voiceGuidance = {},
 }) {
-  const { playVoice: playSceneLine, stopVoice: stopSceneVoice } = voiceGuidance;
+  const { playVoice: playSceneLine, stopVoice: stopSceneVoice, playWord } = voiceGuidance;
   const [phaseIndex, setPhaseIndex] = useState(0);
   const [bubbleState, setBubbleState] = useState('idle');
   const [showMemory, setShowMemory] = useState(false);
@@ -73,13 +75,15 @@ export default function SarvadaGame({
   const [prevBgSrc, setPrevBgSrc] = useState(null);
   const [prevBgOpacity, setPrevBgOpacity] = useState(1);
   const [flash, setFlash] = useState(false);
+  const [findMode, setFindMode] = useState(false);
+  const [ganeshaFound, setGaneshaFound] = useState(false);
 
   const timersRef = useRef([]);
   const doneCalledRef = useRef(false);
 
-  const { markInteraction } = useRepeatedHintCycle({
+  const { hintLevel, markInteraction } = useRepeatedHintCycle({
     enabled: isActive && !isPaused && gamePhase !== 'done' && gamePhase !== 'sarvada',
-    stageKey: isActive ? `bubble-${phaseIndex}` : null,
+    stageKey: isActive ? (findMode ? `find-${phaseIndex}` : `bubble-${phaseIndex}`) : null,
     initialDelay: 7000,
     pulseCountBeforeEscalation: 3,
     pulseInterval: 1400,
@@ -116,6 +120,8 @@ export default function SarvadaGame({
       setPrevBgSrc(null);
       setPrevBgOpacity(1);
       setFlash(false);
+      setFindMode(false);
+      setGaneshaFound(false);
       doneCalledRef.current = false;
       return;
     }
@@ -146,55 +152,9 @@ export default function SarvadaGame({
     safeAfter(300, () => {
       setShowMemory(true);
       setBubbleState('memory');
-        safeAfter(1500, () => {
-          setBubbleState('bursting');
-          setFlash(true);
-          safeAfter(650, () => setFlash(false));
-          setShowMemory(false);
-
-        const cfg = PHASES_CONFIG[phaseIndex];
-        setLitCount(cfg.litCount);
-        window.setTimeout(() => onMicroWin?.(), 0);
-        setRevealedSyls((prev) => [...prev, cfg.syllable]);
-
-        const nextIndex = phaseIndex + 1;
-
-        if (nextIndex >= PHASES_CONFIG.length) {
-          safeAfter(1000, () => {
-            setGamePhase('sarvada');
-            safeAfter(2200, () => {
-              if (doneCalledRef.current) return;
-              doneCalledRef.current = true;
-              setGamePhase('done');
-              safeAfter(600, () => {
-                window.setTimeout(() => {
-                  onGameComplete?.();
-                  onPhaseComplete?.();
-                }, 0);
-              });
-            });
-          });
-        } else {
-          safeAfter(600, () => {
-            // Crossfade: capture outgoing bg, instantly switch to incoming bg behind it
-            const outgoingSrc = PHASES_CONFIG[phaseIndex].bg;
-            setPrevBgSrc(outgoingSrc);
-            setPrevBgOpacity(1);
-            setPhaseIndex(nextIndex);
-            setGamePhase('transition');
-            setBubbleState('idle');
-            // Next frame: fade out the outgoing layer
-            safeAfter(16, () => setPrevBgOpacity(0));
-            // After fade, clean up and start next bubble
-            safeAfter(500, () => {
-              setPrevBgSrc(null);
-              setPrevBgOpacity(1);
-              setGamePhase('playing');
-              startPhase();
-              playSceneLine?.(PHASE_VO_KEYS[nextIndex]);
-            });
-          });
-        }
+      safeAfter(800, () => {
+        setFindMode(true);
+        playSceneLine?.('scene14_find_ganesha');
       });
     });
   }, [
@@ -207,8 +167,82 @@ export default function SarvadaGame({
     phaseIndex,
     playSceneLine,
     safeAfter,
-    startPhase,
     stopSceneVoice,
+  ]);
+
+  const handleGaneshaFound = useCallback(() => {
+    if (!findMode || ganeshaFound || isPaused) return;
+
+    const cfg = PHASES_CONFIG[phaseIndex];
+
+    setGaneshaFound(true);
+    markInteraction();
+    playSceneLine?.(`scene14_found_${cfg.id}`);
+    setLitCount(cfg.litCount);
+    window.setTimeout(() => onMicroWin?.(), 0);
+    setRevealedSyls((prev) => [...prev, cfg.syllable]);
+
+    safeAfter(1600, () => {
+      setBubbleState('bursting');
+      setFlash(true);
+      safeAfter(650, () => setFlash(false));
+      setShowMemory(false);
+      setFindMode(false);
+      setGaneshaFound(false);
+
+      const nextIndex = phaseIndex + 1;
+
+      if (nextIndex >= PHASES_CONFIG.length) {
+        safeAfter(1000, () => {
+          setGamePhase('sarvada');
+          playWord?.('sarvada');
+          safeAfter(2200, () => {
+            playSceneLine?.('scene14_meaning');
+          });
+          safeAfter(3200, () => {
+            if (doneCalledRef.current) return;
+            doneCalledRef.current = true;
+            setGamePhase('done');
+            safeAfter(600, () => {
+              window.setTimeout(() => {
+                onGameComplete?.();
+                onPhaseComplete?.();
+              }, 0);
+            });
+          });
+        });
+      } else {
+        safeAfter(600, () => {
+          const outgoingSrc = PHASES_CONFIG[phaseIndex].bg;
+          setPrevBgSrc(outgoingSrc);
+          setPrevBgOpacity(1);
+          setPhaseIndex(nextIndex);
+          setGamePhase('transition');
+          setBubbleState('idle');
+          safeAfter(16, () => setPrevBgOpacity(0));
+          safeAfter(500, () => {
+            setPrevBgSrc(null);
+            setPrevBgOpacity(1);
+            setGamePhase('playing');
+            startPhase();
+            playSceneLine?.(PHASE_VO_KEYS[nextIndex]);
+          });
+        });
+      }
+    });
+  }, [
+    findMode,
+    ganeshaFound,
+    isPaused,
+    markInteraction,
+    onGameComplete,
+    onMicroWin,
+    onPhaseComplete,
+    phaseIndex,
+    playSceneLine,
+    playWord,
+    safeAfter,
+    startPhase,
   ]);
 
   if (!isActive) return null;
@@ -266,7 +300,30 @@ export default function SarvadaGame({
               alt="memory"
               draggable={false}
             />
-            <img className="sarvada-ganesha-peek" src={ganeshaImg} alt="" draggable={false} />
+            {findMode && (
+              <>
+                <button
+                  className={`sarvada-ganesha-target${ganeshaFound ? ' is-found' : ''}`}
+                  style={{
+                    left: `${cfg.ganeshaSpot.l}%`,
+                    top: `${cfg.ganeshaSpot.t}%`,
+                    width: `${cfg.ganeshaSpot.w}%`,
+                  }}
+                  onPointerDown={handleGaneshaFound}
+                  aria-label="Find Ganesha"
+                />
+                {hintLevel >= 2 && !ganeshaFound && (
+                  <div
+                    className={`sarvada-ganesha-ring${hintLevel >= 3 ? ' hint-glow' : ''}`}
+                    style={{
+                      left: `${cfg.ganeshaSpot.l}%`,
+                      top: `${cfg.ganeshaSpot.t}%`,
+                      width: `${cfg.ganeshaSpot.w}%`,
+                    }}
+                  />
+                )}
+              </>
+            )}
           </div>
         </div>
       )}
