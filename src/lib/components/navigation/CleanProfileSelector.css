@@ -1316,36 +1316,40 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   100% { transform: scale(1.08); }
 }
 
-/* Back / Cancel mini-pill under primary button */
+/* Back / Cancel small top-right control */
 .scroll-card-inner .back-btn {
-  position: static;
+  position: absolute;
+  top: 28px;
+  right: 28px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 112px;
-  height: 46px;
-  margin: 12px auto 0;
+  min-width: 74px;
+  height: 36px;
+  padding: 0 14px;
+  margin: 0;
   border-radius: 999px;
   border: none;
   font-family: 'Baloo 2', cursive;
   background: linear-gradient(180deg, #d7c6f7 0%, #c7b1f0 100%);
   color: #ffffff;
-  font-size: clamp(16px, 1.3vw, 20px);
+  font-size: clamp(14px, 1vw, 16px);
   font-weight: 700;
   cursor: pointer;
   box-shadow:
-    0 5px 0 #a68fd8,
-    0 10px 18px rgba(155, 125, 216, 0.22),
+    0 4px 0 #a68fd8,
+    0 8px 14px rgba(155, 125, 216, 0.18),
     inset 0 2px 4px rgba(255, 255, 255, 0.34);
   transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+  z-index: 3;
 }
 
 .scroll-card-inner .back-btn:hover {
   filter: brightness(1.02);
   transform: translateY(-1px);
   box-shadow:
-    0 6px 0 #a68fd8,
-    0 12px 20px rgba(155, 125, 216, 0.26),
+    0 5px 0 #a68fd8,
+    0 10px 16px rgba(155, 125, 216, 0.22),
     inset 0 2px 4px rgba(255, 255, 255, 0.38);
 }
 
@@ -1353,7 +1357,7 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   transform: translateY(3px);
   box-shadow:
     0 2px 0 #a68fd8,
-    0 4px 8px rgba(155, 125, 216, 0.18),
+    0 3px 6px rgba(155, 125, 216, 0.16),
     inset 0 2px 4px rgba(255, 255, 255, 0.28);
 }
 
