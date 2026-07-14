@@ -348,3 +348,87 @@
     margin-top: 4px;
   }
 }
+
+@media (min-width: 641px) and (max-width: 900px) and (max-height: 1200px) {
+  .parent-gate-screen {
+    padding: 10px;
+  }
+
+  .parent-gate-card {
+    padding: 12px 18px;
+    gap: 8px;
+    border-radius: 24px;
+  }
+
+  .parent-gate-ganesha img {
+    width: min(72px, 16vw);
+  }
+
+  .parent-gate-stage {
+    gap: 8px;
+  }
+
+  .parent-gate-kicker {
+    font-size: 0.9rem;
+  }
+
+  .parent-gate-stage h1 {
+    font-size: clamp(1.35rem, 3vw, 1.8rem);
+  }
+
+  .parent-gate-copy,
+  .parent-gate-feedback {
+    font-size: 0.92rem;
+    line-height: 1.35;
+    max-width: 520px;
+  }
+
+  .parent-gate-math-box {
+    min-width: 180px;
+    padding: 8px 16px;
+    border-radius: 20px;
+  }
+
+  .parent-gate-math-box strong {
+    font-size: clamp(1.45rem, 3.8vw, 2rem);
+  }
+
+  .parent-gate-answer {
+    min-height: 48px;
+    min-width: min(250px, 100%);
+  }
+
+  .parent-gate-answer input {
+    min-height: 48px;
+    font-size: 1.3rem;
+  }
+
+  .parent-gate-pad {
+    width: min(272px, 100%);
+    gap: 6px;
+  }
+
+  .parent-gate-key,
+  .parent-gate-primary,
+  .parent-gate-link {
+    min-height: 46px;
+    border-radius: 14px;
+  }
+
+  .parent-gate-key {
+    font-size: 1.15rem;
+  }
+
+  .parent-gate-key.delete {
+    font-size: 0.92rem;
+  }
+
+  .parent-gate-primary {
+    width: min(272px, 100%);
+    font-size: 1.05rem;
+  }
+
+  .parent-gate-actions {
+    gap: 8px;
+  }
+}
