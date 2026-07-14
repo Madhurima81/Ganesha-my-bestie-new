@@ -43,6 +43,10 @@ const ParentGate = ({ onComplete, onBackToWelcome }) => {
     }
   }, [stage]);
 
+  useEffect(() => {
+    document.querySelector('.parent-gate-screen')?.scrollTo(0, 0);
+  }, [stage]);
+
   const mathPrompt = useMemo(
     () => `${question.left} ${question.operator} ${question.right}`,
     [question]
@@ -164,12 +168,11 @@ const ParentGate = ({ onComplete, onBackToWelcome }) => {
             <p className="parent-gate-kicker">Parent consent</p>
             <h1>Before your child begins</h1>
             <p className="parent-gate-copy">
-              This local-only version stores a child&apos;s first name, age, avatar
-              choice, and game progress on this device.
+              A quick parent step before your child starts playing.
             </p>
 
             <label className="parent-gate-field">
-              <span>Parent email - for updates &amp; account recovery</span>
+              <span>Parent email (optional - for updates)</span>
               <input
                 ref={emailInputRef}
                 type="email"
