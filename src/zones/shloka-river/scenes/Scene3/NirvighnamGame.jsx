@@ -25,10 +25,10 @@ const OBSTACLES = [
   { ...NIRVIGHNAM_LAYOUT.obstacles[2], img: reedImg },
 ];
 
-// One "ground" drop spot per obstacle, just below its starting position —
+// One "ground" drop spot per obstacle, up on the grass bank above the river —
 // drag the obstacle there (any direction of travel) to clear it.
 const DROP_ZONES = Object.fromEntries(
-  OBSTACLES.map((obs) => [obs.id, { l: obs.l, t: obs.t + 14 }])
+  OBSTACLES.map((obs) => [obs.id, { l: obs.l, t: obs.t - 22 }])
 );
 
 const SWIM_PATH = NIRVIGHNAM_LAYOUT.swimPath;
@@ -356,7 +356,7 @@ export default function NirvighnamGame({
           return (
             <div
               key={obs.id}
-              className={`nirv-layer nirv-obstacle ${isCleared ? 'is-cleared' : ''} ${isBeingDragged ? 'is-dragging' : ''} ${phase === 'play' && !isCleared ? 'is-tappable' : ''} ${phase === 'play' && !isCleared && obs.id === nextObstacleId && hintLevel >= 1 ? 'pulse' : ''} ${phase === 'play' && !isCleared && obs.id === nextObstacleId && hintLevel >= 2 ? 'hint-glow' : ''}`}
+              className={`nirv-layer nirv-obstacle ${isCleared ? 'is-cleared' : ''} ${isBeingDragged ? 'is-dragging' : ''} ${phase === 'play' && !isCleared && !(obs.id === nextObstacleId && hintLevel >= 1) ? 'is-tappable' : ''} ${phase === 'play' && !isCleared && obs.id === nextObstacleId && hintLevel >= 1 ? 'pulse' : ''} ${phase === 'play' && !isCleared && obs.id === nextObstacleId && hintLevel >= 2 ? 'hint-glow' : ''}`}
               style={{
                 left: `${isCleared ? zone.l : obs.l + offsetX}%`,
                 top: `${isCleared ? zone.t : obs.t + offsetY}%`,

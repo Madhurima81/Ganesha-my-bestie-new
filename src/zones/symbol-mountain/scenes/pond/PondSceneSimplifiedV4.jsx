@@ -249,7 +249,6 @@ const PondSceneSimplifiedV5 = ({
           elephantVisible: false,
           elephantTransformed: false,
           trunkActive: false,
-          waterDrops: [],
           phase: 'initial',
           currentFocus: 'lotus',
           discoveredSymbols: {
@@ -338,6 +337,7 @@ const PondSceneContent = ({
   const [dropFading, setDropFading] = useState(false);
   const [dropMagicPhase, setDropMagicPhase] = useState(null);
   const dragContainerRef = useRef(null);
+  const dragActiveRef = useRef(false);
   const petalAdvanceLockUntilRef = useRef(0);
   const dropCompletedRef = useRef(false);
   // ================================================================
@@ -392,8 +392,6 @@ const PondSceneContent = ({
 
   const progressiveHintRef = useRef(null);
   const reloadHandledRef = useRef(false);
-  const activeDropsRef = useRef(new Set());
-  const MAX_WATER_DROPS = 15;
 
   const lastAnnouncedPromptRef = useRef(null);
   const resumePromptPlayedRef = useRef(false);
@@ -445,10 +443,24 @@ const PondSceneContent = ({
     const replayKey = getPromptKeyForPhase();
     if (replayKey) speakPondPrompt(replayKey);
   }, [getPromptKeyForPhase, speakPondPrompt]);
+  function cancelActiveDrag() {
+    if (!dragActiveRef.current) return;
+    setDragActive(false);
+    setDropFading(true);
+    dropCompletedRef.current = false;
+    safeSetTimeout(() => {
+      setCurrentPetal(-1);
+      setDropPosition({ x: DROP_START_POINT.x, y: DROP_START_POINT.y });
+      setDropFading(false);
+      setDropMagicPhase(null);
+      petalAdvanceLockUntilRef.current = 0;
+    }, DROP_FADE_MS);
+  }
 
-  const onPauseHide = useCallback(() => {
+  function onPauseHide() {
     stopSpokenVoice();
-  }, [stopSpokenVoice]);
+    cancelActiveDrag();
+  }
   const onPauseShow = useCallback(() => {
     const replayKey = getPromptKeyForPhase();
     if (replayKey) {
@@ -467,10 +479,13 @@ const PondSceneContent = ({
   const { countdownValue } = useResumeCountdown(RESUME_DELAY_MS / 1000);
 
   useEffect(() => {
+    dragActiveRef.current = dragActive;
+  }, [dragActive]);
+
+  useEffect(() => {
     return () => {
       clearAllTimeouts();
       stopSpokenVoice();
-      activeDropsRef.current.clear();
       reloadHandledRef.current = false;
     };
   }, [clearAllTimeouts, stopSpokenVoice]);
@@ -750,49 +765,6 @@ const PondSceneContent = ({
   ]);
 
   // Completion message intentionally disabled for Pond (remove orange popup).
-
-  // Water Drop Creation
-  const createWaterDrop = () => {
-    if (!sceneActions || !sceneState) return;
-    if (activeDropsRef.current.size >= MAX_WATER_DROPS) return;
-
-    const id = Date.now() + Math.random();
-    activeDropsRef.current.add(id);
-
-    const size = Math.floor(Math.random() * 4) + 2;
-    const speedFactor = Math.random() * 0.4 + 0.8;
-    const trunkRight = 25;
-    const trunkBottom = 52;
-    const deltaX = (trunkRight + 35);
-    const deltaY = (trunkBottom - 55);
-    const spreadX = Math.random() * 8 - 4;
-    const spreadY = Math.random() * 6 - 3;
-    const arcHeight = Math.random() * 12 + 8;
-
-    const newDrop = {
-      id,
-      size,
-      speedFactor,
-      startRight: trunkRight + spreadX,
-      startBottom: trunkBottom + spreadY,
-      deltaX: deltaX + spreadX,
-      deltaY: deltaY + spreadY,
-      arcHeight: arcHeight,
-      duration: speedFactor * 1.5,
-      rotation: Math.random() * 360,
-      opacity: Math.random() * 0.3 + 0.7
-    };
-
-    const currentDrops = [...(sceneState.waterDrops || [])];
-    sceneActions.updateState({ waterDrops: [...currentDrops, newDrop] });
-
-    safeSetTimeout(() => {
-      activeDropsRef.current.delete(id);
-      sceneActions.updateState({
-        waterDrops: (sceneState.waterDrops || []).filter(drop => drop.id !== id)
-      });
-    }, newDrop.duration * 1000 + 500);
-  };
 
   const getNextDiscoveryText = (currentSymbol) => {
     const nextActions = { lotus: '🐘 Discover Trunk', trunk: '✨ End Scene' };
@@ -1331,16 +1303,7 @@ const PondSceneContent = ({
     const minDist = Math.min(...allPoints.map(p => pctDistance(pct, p)));
     if (minDist > PETAL_SNAP_RADIUS_PCT * 2.5) {
       // Drop went off-path
-      setDragActive(false);
-      setDropFading(true);
-      dropCompletedRef.current = false;
-      setTimeout(() => {
-        setCurrentPetal(-1);
-        setDropPosition({ x: DROP_START_POINT.x, y: DROP_START_POINT.y });
-        setDropFading(false);
-        setDropMagicPhase(null);
-        petalAdvanceLockUntilRef.current = 0;
-      }, DROP_FADE_MS);
+      cancelActiveDrag();
     }
   };
 
@@ -1353,15 +1316,7 @@ const PondSceneContent = ({
       completeDragToLotus();
     } else {
       // Released mid-path — gently fade and reset
-      setDropFading(true);
-      dropCompletedRef.current = false;
-      setTimeout(() => {
-        setCurrentPetal(-1);
-        setDropPosition({ x: DROP_START_POINT.x, y: DROP_START_POINT.y });
-        setDropFading(false);
-        setDropMagicPhase(null);
-        petalAdvanceLockUntilRef.current = 0;
-      }, DROP_FADE_MS);
+      cancelActiveDrag();
     }
   };
   // ==============================================================================
@@ -1478,6 +1433,7 @@ const PondSceneContent = ({
               style={{ backgroundImage: `url(${pondGameBg})` }}
               onPointerMove={dragActive ? handleDropPointerMove : undefined}
               onPointerUp={dragActive ? handleDropPointerUp : undefined}
+              onPointerCancel={dragActive ? handleDropPointerUp : undefined}
               onPointerLeave={dragActive ? handleDropPointerUp : undefined}
               onContextMenu={(e) => e.preventDefault()}
             >

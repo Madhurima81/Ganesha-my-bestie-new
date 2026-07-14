@@ -253,6 +253,28 @@ const PLACEMENT_SETTLE_MS = 1200;              // NEW � "look at what you did"
 // Body part drop zone configurations � import from shared config
 const BODY_PART_ZONES = GANESHA_ZONES;
 
+const persistSacredAssemblyCompletion = () => {
+  const profileId = localStorage.getItem('activeProfileId');
+  if (!profileId) return;
+
+  GameStateManager.saveGameState('symbol-mountain', 'final-scene', {
+    completed: true,
+    stars: 8,
+    symbols: { all: true },
+    phase: 'complete',
+    timestamp: Date.now()
+  });
+
+  ProgressManager.updateSceneCompletion(profileId, 'symbol-mountain', 'final-scene', {
+    completed: true,
+    stars: 8,
+    symbols: { all: true }
+  });
+
+  localStorage.removeItem(`temp_session_${profileId}_symbol-mountain_final-scene`);
+  SimpleSceneManager.clearCurrentScene();
+};
+
 // Keep glow/sparkle anchors in sync with real drop zones so highlights never drift.
 const getPx = (value, fallback) => {
   if (typeof value !== 'string') return fallback;
@@ -547,6 +569,7 @@ const SacredAssemblyContent = ({
     stop: stopGaneshaVoice,
     isSpeaking: isGaneshaSpeaking
   } = useGaneshaVoice();
+  const isGaneshaSpeakingRef = useRef(false);
   const {
     playSparkle,
     setGlobalVolume
@@ -626,6 +649,9 @@ const SacredAssemblyContent = ({
   const onboardingPlayedRef = useRef(sceneState?.onboardingPlayed || false);
   const onboardingPlayedAtRef = useRef(0);
   const idleNudgePlayedRef = useRef(false);
+  useEffect(() => {
+    isGaneshaSpeakingRef.current = isGaneshaSpeaking;
+  }, [isGaneshaSpeaking]);
   const cardVoPlayedForRoundRef = useRef(-1); // tracks which round's card VO has already played
   const finalVoPlayedRef = useRef(false);
   const openingModalVoPlayedRef = useRef(false);
@@ -980,50 +1006,6 @@ const SacredAssemblyContent = ({
     return () => clearTimeout(t);
   }, [isAudioOn, isPageVisible, playSceneVoice, sceneState?.welcomeShown]);
 
-  const playSound = (type) => {
-    // Simple sound effects (you can replace URLs later)
-    const sounds = {
-      pop: 'https://assets.mixkit.co/sfx/preview/mixkit-positive-interface-click-1112.mp3',
-      success: 'https://assets.mixkit.co/sfx/preview/mixkit-magical-coin-win-193.mp3',
-      wrong: 'https://assets.mixkit.co/sfx/preview/mixkit-cartoon-negative-sound-2273.mp3'
-    };
-    try {
-      const audio = new Audio(sounds[type]);
-      audio.volume = 0.5;
-      audio.play().catch(() => {});
-    } catch {}
-  };
-
-  const handleSymbolClick = (symbol) => {
-    if (!sceneState || !sceneActions) return;
-
-    if (sceneState.placedSymbols?.[symbol.id]) {
-      setShowSparkle(`symbol-placed-${symbol.id}`);
-      safeSetTimeout(() => setShowSparkle(null), 1500);
-      return;
-    }
-
-    // Progressive hint disabled in this scene.
-
-    const currentSelected = sceneState.selectedSymbol;
-
-    if (currentSelected === symbol.id) {
-      sceneActions.updateState({
-        selectedSymbol: null,
-        highlightedZone: null
-      });
-    } else {
-      const matchingZone = BODY_PART_ZONES.find(zone =>
-        zone.acceptTypes.includes(symbol.id)
-      );
-
-      sceneActions.updateState({
-        selectedSymbol: symbol.id,
-        highlightedZone: matchingZone?.id || null
-      });
-    }
-  };
-
   // NEW: Initialize random symbol queue when game starts
   // REPLACE LINES 409-430 in SacredAssemblySceneV8.jsx with this:
 
@@ -1306,7 +1288,7 @@ const SacredAssemblyContent = ({
 
         const waitForVoiceThenStart = (waitedMs = 0) => {
           // VO finished OR max wait hit ? add grace pause, THEN next card
-          if (!isGaneshaSpeaking || waitedMs >= VO_WAIT_MAX_MS) {
+          if (!isGaneshaSpeakingRef.current || waitedMs >= VO_WAIT_MAX_MS) {
             safeSetTimeout(() => {
               startNextRound(nextRound);
             }, POST_VO_GRACE_MS);  // 800ms of silence � the breathing space
@@ -1367,6 +1349,7 @@ const SacredAssemblyContent = ({
       setShowSparkle('final-fireworks');
       // Reloaded mid-celebration: the VO chain is not replayed, so open the gate.
       setSceneCompleteVOFinished(true);
+      setFireworksFinished(true);
       safeSetTimeout(() => {
         setShowZoneCompletion(true);
       }, 500);
@@ -1482,6 +1465,7 @@ const SacredAssemblyContent = ({
         completed: true
       }
     });
+    persistSacredAssemblyCompletion();
 
     setIsOrbsRunning(true);
     setShowSparkle('final-fireworks');
@@ -1909,26 +1893,6 @@ const SacredAssemblyContent = ({
                       showingZoneCompletion: false,
                       celebrationActive: false
                     });
-
-                    const profileId = localStorage.getItem('activeProfileId');
-                    if (profileId) {
-                      GameStateManager.saveGameState('symbol-mountain', 'final-scene', {
-                        completed: true,
-                        stars: 8,
-                        symbols: { all: true },
-                        phase: 'complete',
-                        timestamp: Date.now()
-                      });
-
-                      ProgressManager.updateSceneCompletion(profileId, 'symbol-mountain', 'final-scene', {
-                        completed: true,
-                        stars: 8,
-                        symbols: { all: true }
-                      });
-
-                      localStorage.removeItem(`temp_session_${profileId}_symbol-mountain_final-scene`);
-                      SimpleSceneManager.clearCurrentScene();
-                    }
 
                     // Signal orbs finished; the completion modal opens once the
                     // finale VO has also finished (gating effect below).

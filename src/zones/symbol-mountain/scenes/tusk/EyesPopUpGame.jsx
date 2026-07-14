@@ -304,6 +304,7 @@ const EyesPopUpGame = ({
   const cycleTimerRef = useRef(null);
   const idleTimerRef = useRef(null);
   const lastTapTimeRef = useRef(Date.now());
+  const hintedTargetRef = useRef(null);
   const dragTargetRef = useRef(null);
   const activeAudioRef = useRef(null);
   const shimmerTimerRef = useRef(null);
@@ -351,6 +352,7 @@ const EyesPopUpGame = ({
     setShowIdleHint(null);
     setShowZoneHint(null);
     setShowFullReveal(null);
+    hintedTargetRef.current = null;
     lastTapTimeRef.current = Date.now();
   }, [isActive, editableHideOptions]);
 
@@ -392,7 +394,10 @@ const EyesPopUpGame = ({
       const idleMs = Date.now() - lastTapTimeRef.current;
       const undiscovered = assignments.filter(a => !discovered.has(a.animal.id));
       if (undiscovered.length > 0) {
-        const hintedTarget = randomItem(undiscovered) || undiscovered[0];
+        if (!hintedTargetRef.current || discovered.has(hintedTargetRef.current.animal.id)) {
+          hintedTargetRef.current = randomItem(undiscovered) || undiscovered[0];
+        }
+        const hintedTarget = hintedTargetRef.current;
         if (idleMs >= IDLE_FULL_REVEAL_MS) {
           setShowFullReveal(hintedTarget?.animal?.id || null);
           setShowZoneHint(null);
@@ -420,7 +425,22 @@ const EyesPopUpGame = ({
     setShowIdleHint(null);
     setShowZoneHint(null);
     setShowFullReveal(null);
+    hintedTargetRef.current = null;
   }, [visibleAnimal, discovered]);
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) return;
+      lastTapTimeRef.current = Date.now();
+      hintedTargetRef.current = null;
+      setShowIdleHint(null);
+      setShowZoneHint(null);
+      setShowFullReveal(null);
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, []);
 
   // Win condition
   useEffect(() => {
@@ -516,6 +536,7 @@ const EyesPopUpGame = ({
     setShowIdleHint(null);
     setShowZoneHint(null);
     setShowFullReveal(null);
+    hintedTargetRef.current = null;
     lastTapTimeRef.current = Date.now();
   }, [isActive, editableHideOptions, debugMode]);
 

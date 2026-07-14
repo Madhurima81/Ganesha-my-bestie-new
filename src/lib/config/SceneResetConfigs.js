@@ -90,7 +90,6 @@ export const SCENE_RESET_CONFIGS = {
     trunkActive: false,
     
     // Water and visual effects
-    waterDrops: [],
     celebrationStars: 0,
     
     // Phase progression

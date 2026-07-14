@@ -307,7 +307,7 @@ const SymbolMountainSceneContent = ({
   // callback never captures a stale sceneState/phase from the mount render.
   const onTabReturnImplRef = useRef(null);
   const { safeSetTimeout, clearAll: clearAllTimeouts } = usePauseAwareTimeout({
-    onHide: () => {},
+    onHide: () => stopSpokenVoice(),
     onShow: () => onTabReturnImplRef.current?.(),
     resumeDelay: RESUME_DELAY_MS,
   });
@@ -804,13 +804,22 @@ const SymbolMountainSceneContent = ({
       }, 950);
     } else if (symbolId === 'tusk') {
       safeSetTimeout(() => {
+        const profileId = localStorage.getItem('activeProfileId');
         sceneActions.updateState({
           discoveredSymbols: { ...sceneState.discoveredSymbols, tusk: true },
           phase: PHASES.ALL_COMPLETE,
-          completed: false,
+          completed: true,
           stars: 9,
-          progress: { percentage: 100, starsEarned: 9, completed: false }
+          progress: { percentage: 100, starsEarned: 9, completed: true }
         });
+        if (profileId) {
+          GameStateManager.saveGameState('symbol-mountain', 'symbol', {
+            completed: true, stars: 9, symbols: { eyes: true, ears: true, tusk: true },
+            phase: 'complete', unlocked: true, timestamp: Date.now()
+          });
+          localStorage.removeItem(`temp_session_${profileId}_symbol-mountain_symbol`);
+          SimpleSceneManager.clearCurrentScene();
+        }
         setShowSparkle('final-fireworks');
       }, 950);
     }
@@ -1070,15 +1079,6 @@ const SymbolMountainSceneContent = ({
                   duration={3500}
                   onComplete={() => {
                     setShowSparkle(null);
-                    const profileId = localStorage.getItem('activeProfileId');
-                    if (profileId) {
-                      GameStateManager.saveGameState('symbol-mountain', 'symbol', {
-                        completed: true, stars: 9, symbols: { eyes: true, ears: true, tusk: true },
-                        phase: 'complete', unlocked: true, timestamp: Date.now()
-                      });
-                      localStorage.removeItem(`temp_session_${profileId}_symbol-mountain_symbol`);
-                      SimpleSceneManager.clearCurrentScene();
-                    }
                     setShowMandala(true);
                   }}
                 />

@@ -178,6 +178,8 @@ const TuskPathGame = ({
   const scrubbingRef = useRef(false);
   const holdRafRef = useRef(null);
   const holdStartRef = useRef(0);
+  const holdAccumRef = useRef(0);
+  const lastHoldFrameRef = useRef(0);
   const stagePromptedRef = useRef(-1);
   const keepPushingTimerRef = useRef(null);
   // CRITICAL: these defaulted to true, which shipped the game in editor mode —
@@ -463,14 +465,19 @@ const TuskPathGame = ({
       // Press-and-hold push
       setIsHolding(true);
       holdStartRef.current = Date.now();
+      holdAccumRef.current = 0;
+      lastHoldFrameRef.current = performance.now();
       if (keepPushingTimerRef.current) clearTimeout(keepPushingTimerRef.current);
       keepPushingTimerRef.current = setTimeout(() => {
         if (holdStartRef.current && !peeling) {
           playGameVoice(VO_PATHS.keepPushing, VO_TEXTS.keepPushing);
         }
       }, 900);
-      const tick = () => {
-        const p = Math.min(1, (Date.now() - holdStartRef.current) / ELEPHANT_HOLD_MS);
+      const tick = (now) => {
+        const deltaMs = Math.min(now - lastHoldFrameRef.current, 100);
+        holdAccumRef.current += Math.max(0, deltaMs);
+        lastHoldFrameRef.current = now;
+        const p = Math.min(1, holdAccumRef.current / ELEPHANT_HOLD_MS);
         setWorkProgress(p);
         setFeedbackKey((v) => v + 1); // keeps shake alive
         if (p >= 1) { clearCurrentLayer(); return; }
@@ -493,11 +500,29 @@ const TuskPathGame = ({
     if (isElephantLayer) {
       if (holdRafRef.current) cancelAnimationFrame(holdRafRef.current);
       if (keepPushingTimerRef.current) clearTimeout(keepPushingTimerRef.current);
+      holdStartRef.current = 0;
+      holdAccumRef.current = 0;
+      lastHoldFrameRef.current = 0;
       setIsHolding(false);
       setWorkProgress(0);
     }
     // scrub progress persists — no reset, unlike swipes
   }, [isElephantLayer]);
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        handleObstacleUp();
+        return;
+      }
+      lastTapRef.current = Date.now();
+      setShowIdleHint(false);
+      idleHintPlayedRef.current = false;
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [handleObstacleUp]);
 
   const beginDrag = useCallback((event, target) => {
     if (!debugMode) return;
@@ -671,9 +696,13 @@ const TuskPathGame = ({
         onPointerDown={debugMode ? (event) => {
           setSelectedEditorItem('obstacle');
           beginDrag(event, { type: 'obstacle' });
-        } : handleObstacleDown}
+        } : (event) => {
+          event.currentTarget.setPointerCapture?.(event.pointerId);
+          handleObstacleDown(event);
+        }}
         onPointerMove={debugMode ? undefined : handleObstacleMove}
         onPointerUp={debugMode ? undefined : handleObstacleUp}
+        onPointerCancel={debugMode ? undefined : handleObstacleUp}
       >
         <img
           src={helperAnimal && !isElephantLayer && !peeling
