@@ -281,7 +281,16 @@ const CleanProfileSelector = ({
   const emptySlots = Math.max(0, 4 - profileArray.length);
 
   return (
-    <div className="clean-profile-selector">
+    <div className="clean-profile-overlay">
+      <div className="clean-forest-background">
+        <div className="profile-bg-overlay" />
+        <div className="profile-vignette" />
+        <div className="profile-dust" aria-hidden="true">
+          <span />
+          <span />
+          <span />
+        </div>
+      </div>
       <div className="clean-profile-container">
         {showCreateProfile && (
           <div className="clean-modal-overlay scroll-overlay">
