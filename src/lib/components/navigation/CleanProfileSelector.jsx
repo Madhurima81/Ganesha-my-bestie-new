@@ -390,7 +390,7 @@ const CleanProfileSelector = ({
 
                 {(currentStep > 1 || !forceCreate) && (
                   <button type="button" className="back-btn" onClick={goBackInCreateFlow}>
-                    {currentStep > 1 ? 'Back' : 'Cancel'}
+                    {currentStep > 1 ? '← Back' : '← Cancel'}
                   </button>
                 )}
 

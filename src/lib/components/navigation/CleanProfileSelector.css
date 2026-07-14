@@ -1319,26 +1319,26 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 /* Back / Cancel small top-right control */
 .scroll-card-inner .back-btn {
   position: absolute;
-  top: 28px;
-  right: 28px;
+  top: 36px;
+  right: 18px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 74px;
-  height: 36px;
-  padding: 0 14px;
+  min-width: 68px;
+  height: 32px;
+  padding: 0 12px;
   margin: 0;
   border-radius: 999px;
   border: none;
   font-family: 'Baloo 2', cursive;
   background: linear-gradient(180deg, #d7c6f7 0%, #c7b1f0 100%);
   color: #ffffff;
-  font-size: clamp(14px, 1vw, 16px);
+  font-size: clamp(13px, 0.9vw, 15px);
   font-weight: 700;
   cursor: pointer;
   box-shadow:
-    0 4px 0 #a68fd8,
-    0 8px 14px rgba(155, 125, 216, 0.18),
+    0 3px 0 #a68fd8,
+    0 7px 12px rgba(155, 125, 216, 0.16),
     inset 0 2px 4px rgba(255, 255, 255, 0.34);
   transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
   z-index: 3;
@@ -1348,8 +1348,8 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   filter: brightness(1.02);
   transform: translateY(-1px);
   box-shadow:
-    0 5px 0 #a68fd8,
-    0 10px 16px rgba(155, 125, 216, 0.22),
+    0 4px 0 #a68fd8,
+    0 8px 14px rgba(155, 125, 216, 0.18),
     inset 0 2px 4px rgba(255, 255, 255, 0.38);
 }
 
