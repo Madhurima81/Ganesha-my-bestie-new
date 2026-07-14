@@ -159,7 +159,12 @@
 .kuru-friend {
   position: absolute;
   transform: translate(-50%, -50%);
-  width: clamp(60px, 10vw, 110px);
+  /* Width is set inline per-friend (scaled up from the visual size for touch
+     forgiveness — see KURU_HIT_SCALE in KurumedevaGame.jsx). The image is
+     sized back down below so it keeps its original on-screen footprint. */
+  display: flex;
+  align-items: center;
+  justify-content: center;
   z-index: 20;
   touch-action: manipulation;
   transition:
@@ -170,7 +175,9 @@
 }
 
 .kuru-friend img {
-  width: 100%;
+  /* 1 / KURU_HIT_SCALE (1.6) — keeps the visible sprite at its original size
+     inside the enlarged hit area. */
+  width: 62.5%;
   display: block;
   -webkit-user-drag: none;
   pointer-events: none;

@@ -188,7 +188,17 @@ const SuryakotiBankContent = ({
   const [revealConfig, setRevealConfig] = useState(null);
   const [showTapSparkles, setShowTapSparkles] = useState(false);
   const [openingButtonVisible, setOpeningButtonVisible] = useState(false);
-  const [savedRecordings] = useState({});
+  const [savedRecordings, setSavedRecordings] = useState({});
+  const handleSaveRecording = useCallback((wordId, data) => {
+    setSavedRecordings((prev) => ({ ...prev, [wordId]: data }));
+  }, []);
+  const handleDeleteRecording = useCallback((wordId) => {
+    setSavedRecordings((prev) => {
+      const next = { ...prev };
+      delete next[wordId];
+      return next;
+    });
+  }, []);
   const [isRecorderOpen, setIsRecorderOpen] = useState(false);
 
   const { isAudioOn, toggleAudio } = useAudioPreference();
@@ -713,6 +723,8 @@ const SuryakotiBankContent = ({
                     <AppSidebar
                       unlockedApps={sidebarUnlockedApps}
                       savedRecordings={savedRecordings}
+                      onSaveRecording={handleSaveRecording}
+                      onDeleteRecording={handleDeleteRecording}
                       isReload={isReload}
                       onPopupOpen={() => {
                         stopAllVoice();

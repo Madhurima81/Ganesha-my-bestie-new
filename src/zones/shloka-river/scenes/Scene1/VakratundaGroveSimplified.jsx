@@ -260,6 +260,16 @@ const VakratundaGroveContent = ({
   const [openingButtonVisible, setOpeningButtonVisible] = useState(false);
 
   const [savedRecordings, setSavedRecordings] = useState({});
+  const handleSaveRecording = useCallback((wordId, data) => {
+    setSavedRecordings((prev) => ({ ...prev, [wordId]: data }));
+  }, []);
+  const handleDeleteRecording = useCallback((wordId) => {
+    setSavedRecordings((prev) => {
+      const next = { ...prev };
+      delete next[wordId];
+      return next;
+    });
+  }, []);
   const [showAppDiscovery, setShowAppDiscovery] = useState(false);
   const activeProfile = GameStateManager.getActiveProfile();
   const profileName = activeProfile?.name || 'explorer';
@@ -1083,6 +1093,8 @@ const VakratundaGroveContent = ({
                 <AppSidebar
                   unlockedApps={sceneState.unlockedApps || {}}
                   savedRecordings={savedRecordings}
+                  onSaveRecording={handleSaveRecording}
+                  onDeleteRecording={handleDeleteRecording}
                   isReload={isReload}
                   onPopupOpen={() => {
                     console.log("?? Recorder Opening - Pausing Game");

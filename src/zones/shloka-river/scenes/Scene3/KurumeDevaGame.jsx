@@ -95,6 +95,9 @@ const FRIENDS = [
 const AUDIO = { syllables: ['ku', 'ru', 'me', 'deva'] };
 const BEAVER_PATH = KURUMEDEVA_LAYOUT.beaverPath;
 const TURTLE_RIVER_SHIFT = 0;
+// Friend tap hitbox is enlarged vs. the visible sprite for touch forgiveness —
+// KurumedevaGame.css compensates by sizing the <img> at 1/KURU_HIT_SCALE (62.5%).
+const KURU_HIT_SCALE = 1.6;
 const WAIT_SPOTS = [
   { l: 18, t: 62 },
   { l: 24, t: 68 },
@@ -452,7 +455,7 @@ export default function KurumedevaGame({
               style={{
                 left: `${pos.l + (index === 0 ? TURTLE_RIVER_SHIFT : 0)}%`,
                 top: `${pos.t}%`,
-                width: `${friend.w}%`,
+                width: `${friend.w * KURU_HIT_SCALE}%`,
                 scale: friend.flip ? '-1 1' : '1 1',
               }}
               onPointerDown={() => handleFriendTap(index)}

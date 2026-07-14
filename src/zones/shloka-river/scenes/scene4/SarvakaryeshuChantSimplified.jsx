@@ -190,6 +190,16 @@ const SarvakaryeshuChantContent = ({
   const [showTapSparkles, setShowTapSparkles] = useState(false);
   const [openingButtonVisible, setOpeningButtonVisible] = useState(false);
   const [savedRecordings, setSavedRecordings] = useState({});
+  const handleSaveRecording = useCallback((wordId, data) => {
+    setSavedRecordings((prev) => ({ ...prev, [wordId]: data }));
+  }, []);
+  const handleDeleteRecording = useCallback((wordId) => {
+    setSavedRecordings((prev) => {
+      const next = { ...prev };
+      delete next[wordId];
+      return next;
+    });
+  }, []);
   const [showAppDiscovery, setShowAppDiscovery] = useState(false);
   const [isRecorderOpen, setIsRecorderOpen] = useState(false);
   const { isAudioOn, toggleAudio } = useAudioPreference();
@@ -614,6 +624,8 @@ const SarvakaryeshuChantContent = ({
                     <AppSidebar
                       unlockedApps={sceneState.unlockedApps || {}}
                       savedRecordings={savedRecordings}
+                      onSaveRecording={handleSaveRecording}
+                      onDeleteRecording={handleDeleteRecording}
                       isReload={isReload}
                       onPopupOpen={() => {
                         stopAllVoice();

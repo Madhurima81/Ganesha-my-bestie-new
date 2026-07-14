@@ -32,6 +32,7 @@ const AppSidebar = ({
   className = '',
   savedRecordings = {},
   onSaveRecording,
+  onDeleteRecording,
   onPopupOpen,
   onPopupClose,
   zoneId = 'shloka-river',
@@ -178,6 +179,7 @@ const AppSidebar = ({
             appColor={appInfo[selectedApp].power.color}
             savedRecordings={savedRecordings}
             onSaveRecording={onSaveRecording}
+            onDeleteRecording={onDeleteRecording}
             allowSkip={true}
             onSkip={closePopup}
             stopAudio={() => {
