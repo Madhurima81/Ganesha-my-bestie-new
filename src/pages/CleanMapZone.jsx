@@ -311,7 +311,7 @@ const ZONE_CREATURES = {
 
 // Lock position per lockable zone — placed on the map directly over the zone label
 const ZONE_LOCK_POS = {
-  'shloka-river': { left: '68%', top: '46%' },
+  'shloka-river': { left: '72%', top: '43%' },
   'about-me-hut': { left: '31%', top: '61%' },
 };
 
@@ -1787,7 +1787,15 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
               )}
               {zone.name.replace(/\n/g, ' ')}
               {isFirstTimeSymbol && (
-                <div className="first-time-hint">Tap to start</div>
+                <div className="first-time-tap-gesture" aria-hidden="true">
+                  <span className="first-time-tap-ring first-time-tap-ring--one" />
+                  <span className="first-time-tap-ring first-time-tap-ring--two" />
+                  <img
+                    className="first-time-tap-icon"
+                    src="/images/hand-fist.svg"
+                    alt=""
+                  />
+                </div>
               )}
 
               {state === 'locked' && zone.unlockNote && (

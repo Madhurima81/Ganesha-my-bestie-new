@@ -1245,7 +1245,7 @@
    Gentle breathing scale + brightness lift to draw the eye.
 ———————————————————————————————————————————————————————— */
 .zone.zone-state-first-time {
-  animation: none;
+  animation: firstTimeBreathing 2.4s ease-in-out infinite;
 }
 
 @keyframes firstTimeBreathing {
@@ -1266,20 +1266,50 @@
   100% { transform: translateX(0); }
 }
 
-.first-time-hint {
-  display: block;
-  margin-top: 6px;
-  font-family: 'Baloo 2', cursive;
-  font-weight: 600;
-  font-size: 14px;
-  color: rgba(120, 100, 220, 0.85);
-  animation: floatHint 2s ease-in-out infinite;
-  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.35);
+.first-time-tap-gesture {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  margin: 8px auto 0;
+  display: grid;
+  place-items: center;
+  filter: drop-shadow(0 4px 10px rgba(120, 100, 220, 0.18));
 }
 
-@keyframes floatHint {
-  0%, 100% { transform: translateY(0); opacity: 0.7; }
-  50% { transform: translateY(-4px); opacity: 1; }
+.first-time-tap-icon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  opacity: 0.92;
+  animation: firstTimeTapBob 1.8s ease-in-out infinite;
+}
+
+.first-time-tap-ring {
+  position: absolute;
+  inset: 8px;
+  border-radius: 999px;
+  border: 2px solid rgba(140, 120, 220, 0.48);
+  animation: firstTimeTapRipple 1.8s ease-out infinite;
+}
+
+.first-time-tap-ring--two {
+  animation-delay: 0.9s;
+}
+
+@keyframes firstTimeTapBob {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-3px) scale(1.05); }
+}
+
+@keyframes firstTimeTapRipple {
+  0% {
+    transform: scale(0.72);
+    opacity: 0.72;
+  }
+  100% {
+    transform: scale(1.22);
+    opacity: 0;
+  }
 }
 
 /* Primary CTA: Symbol Mountain only */
@@ -1287,6 +1317,10 @@
 .symbol-mountain-door.zone.zone-state-in-progress {
   animation: softPulse 2.8s ease-in-out infinite;
   position: relative;
+}
+
+.symbol-mountain-door.zone.zone-state-first-time {
+  animation: firstTimeBreathing 2.4s ease-in-out infinite;
 }
 
 .symbol-mountain-door.zone.zone-state-active::after,
@@ -1303,9 +1337,38 @@
   pointer-events: none;
 }
 
+.symbol-mountain-door.zone.zone-state-first-time::after {
+  content: "";
+  position: absolute;
+  inset: -12px;
+  border-radius: 24px;
+  background: radial-gradient(
+    rgba(255, 201, 89, 0.34),
+    rgba(180, 128, 255, 0.18) 42%,
+    transparent 74%
+  );
+  box-shadow:
+    0 0 22px rgba(255, 201, 89, 0.22),
+    0 0 42px rgba(180, 128, 255, 0.16);
+  opacity: 0.95;
+  pointer-events: none;
+  animation: firstTimeZoneAura 2.4s ease-in-out infinite;
+}
+
 @keyframes softPulse {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.015); }
+}
+
+@keyframes firstTimeZoneAura {
+  0%, 100% {
+    transform: scale(0.98);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.04);
+    opacity: 1;
+  }
 }
 
 
@@ -1350,6 +1413,17 @@
 .zone-state-active .zone-glow {
   animation-duration: 3.4s;
   opacity: 0.55;
+}
+
+.zone-state-first-time .zone-glow {
+  animation-duration: 2s;
+  opacity: 0.98;
+  background: radial-gradient(
+    circle,
+    rgba(255, 184, 56, 0.52) 0%,
+    rgba(194, 149, 255, 0.26) 44%,
+    transparent 72%
+  );
 }
 
 /* In-progress gets full saffron pulse */
