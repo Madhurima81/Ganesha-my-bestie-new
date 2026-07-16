@@ -651,6 +651,21 @@ const NewModakSceneMVPContent = ({
     };
   }, []);
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+
+    const feedImage = new window.Image();
+    feedImage.src = GANESHA_SIT_FEED_IMAGE;
+
+    if (typeof feedImage.decode === 'function') {
+      feedImage.decode().catch(() => {
+        // Ignore decode failures; the browser cache warm-up is still useful.
+      });
+    }
+
+    return undefined;
+  }, []);
+
   // ========================================
   // TIMER / FLOW STATE
   // ========================================
