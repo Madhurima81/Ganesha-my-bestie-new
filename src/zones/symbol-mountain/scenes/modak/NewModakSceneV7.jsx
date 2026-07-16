@@ -145,17 +145,16 @@ const PHASES = {
 };
 const MINI_THUMBS_UP_ICON = '/images/hand-thumbsup.svg';
 const MODAK_POSITION_SLOTS = [
-  { top: '36.7%', left: '32.6%' },
+  { top: '32.1%', left: '32.8%' },
   { top: '35.6%', left: '66.2%' },
-  { top: '38.9%', left: '58.8%' },
+  { top: '27.4%', left: '64.3%' },
   { top: '45%', left: '16.5%' },
   { top: '44.4%', left: '11.3%' },
-  { top: '38.5%', left: '72.9%' },
-  { top: '43.7%', left: '83.3%' },
-  { top: '41.2%', left: '40.4%' }
+  { top: '34.2%', left: '73.2%' },
+  { top: '41.6%', left: '83.5%' },
+  { top: '34.3%', left: '39.1%' }
 ];
 const MODAK_SLOT_POSITIONS_KEY = 'debugModakSlotPositions';
-const MODAK_DEBUG_UI_ENABLED = false;
 const getModakDebugFlags = () => {
   if (typeof window === 'undefined') {
     return { showSlotCenters: false, showAllSlotsPreview: false };
@@ -173,6 +172,7 @@ const getModakDebugFlags = () => {
 };
 
 const MODAK_DEBUG_FLAGS = getModakDebugFlags();
+const MODAK_DEBUG_UI_ENABLED = false;
 const SHOW_MODAK_SLOT_DEBUG = MODAK_DEBUG_FLAGS.showSlotCenters;
 const SHOW_ALL_MODAK_SLOTS_PREVIEW = MODAK_DEBUG_FLAGS.showAllSlotsPreview;
 const GANESHA_SIT_FEED_IMAGE = '/images/ganesha-poses/sit-modak.webp';
@@ -1413,8 +1413,9 @@ const NewModakSceneMVPContent = ({
       // }, 4800);
 
     } else {
-      // Wrong mound - Scene 22 style: shake only (no wrong SFX, no fade/lock)
+      // Wrong mound - soft feedback only: gentle wrong SFX + shake/puff.
       stopVoice();
+      playSoftWrong();
       if (wrongMoundPuffTimerRef.current) {
         clearTimeout(wrongMoundPuffTimerRef.current);
         wrongMoundPuffTimerRef.current = null;
@@ -2171,11 +2172,11 @@ const NewModakSceneMVPContent = ({
 
                   {(showSparkle === 'rock-feeding' || showSparkle === 'belly-transform') && (
                     <SparkleAnimation
-                      type={showSparkle === 'belly-transform' ? 'glitter' : 'magic'}
-                      count={25}
-                      color={showSparkle === 'belly-transform' ? 'gold' : '#ff6347'}
-                      size={12}
-                      duration={2000}
+                      type={showSparkle === 'belly-transform' ? 'glitter' : 'star'}
+                      count={showSparkle === 'belly-transform' ? 25 : 12}
+                      color="#FFD700"
+                      size={showSparkle === 'belly-transform' ? 12 : 7}
+                      duration={showSparkle === 'belly-transform' ? 2000 : 1500}
                       fadeOut={true}
                       area="full"
                     />

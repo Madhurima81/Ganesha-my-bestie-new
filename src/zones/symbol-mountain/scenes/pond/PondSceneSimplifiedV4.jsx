@@ -671,6 +671,28 @@ const PondSceneContent = ({
       return;
     }
 
+    // 2b. REPAIR GOLDEN / ELEPHANT PHASE FLAGS
+    // Older saves or interrupted transitions can leave the phase ahead of the
+    // visibility flags, which makes the scene look empty even though progress
+    // has advanced correctly.
+    if (sceneState.phase === PHASES.GOLDEN_VISIBLE && !sceneState.goldenLotusVisible) {
+      sceneActions.updateState({
+        goldenLotusVisible: true,
+        phase: PHASES.GOLDEN_VISIBLE
+      });
+      return;
+    }
+
+    if (sceneState.phase === PHASES.ELEPHANT_VISIBLE && !sceneState.elephantVisible) {
+      sceneActions.updateState({
+        goldenLotusVisible: true,
+        elephantVisible: true,
+        phase: PHASES.ELEPHANT_VISIBLE,
+        currentFocus: 'elephant'
+      });
+      return;
+    }
+
     // 3. RESTORE TRUNK CARD FLIP
     // Only restore trunk card after successful water trace (GOLDEN_BLOOM).
     // ELEPHANT_TRANSFORMED is now the active drag phase and should not auto-flip.
@@ -1307,9 +1329,32 @@ const PondSceneContent = ({
     }
   };
 
-  const handleDropPointerUp = () => {
+  const handleDropPointerUp = (e) => {
     if (!dragActive) return;
     setDragActive(false);
+
+    const pct = e ? getPctFromEvent(e) : dropPosition;
+    const nextIdx = currentPetal + 1;
+
+    // If the finger lifts right after reaching a petal, React state may not
+    // have committed the snap yet. Re-check the release point so the first
+    // step doesn't falsely reset back to trunk.
+    if (
+      pct &&
+      nextIdx < PETAL_STEPPING_STONES.length &&
+      pctDistance(pct, PETAL_STEPPING_STONES[nextIdx]) < PETAL_SNAP_RADIUS_PCT
+    ) {
+      setCurrentPetal(nextIdx);
+      setDropPosition({
+        x: PETAL_STEPPING_STONES[nextIdx].x,
+        y: PETAL_STEPPING_STONES[nextIdx].y
+      });
+
+      if (nextIdx === PETAL_STEPPING_STONES.length - 1) {
+        completeDragToLotus();
+      }
+      return;
+    }
 
     // Fallback completion path (for release exactly at end step)
     if (currentPetal === PETAL_STEPPING_STONES.length - 1) {
@@ -1364,10 +1409,15 @@ const PondSceneContent = ({
     return lotusStates[index] === 0 ? lotusClosed : lotusBloomed;
   };
 
-  const renderCounter = () => {
-    const lotusStates = sceneState?.lotusStates || [0, 0, 0];
-    const bloomCount = lotusStates.filter(state => state === 1).length;
+  const lotusStates = sceneState?.lotusStates || [0, 0, 0];
+  const bloomCount = lotusStates.filter(state => state === 1).length;
+  const showLotusHoldDemo =
+    sceneState?.welcomeShown &&
+    sceneState?.phase === PHASES.INITIAL &&
+    bloomCount === 0 &&
+    !holdTimersRef.current.some(Boolean);
 
+  const renderCounter = () => {
     return (
       <div className="lotus-counter">
         <div className="counter-icon">
@@ -1486,6 +1536,27 @@ const PondSceneContent = ({
                       className="pond-lotus-hold-target"
                       style={{ cursor: isBloomed ? 'default' : 'pointer' }}
                     >
+                      {index === 0 && showLotusHoldDemo && (
+                        <svg
+                          viewBox="0 0 100 100"
+                          className="pond-hold-ring pond-hold-ring--demo"
+                          aria-hidden="true"
+                        >
+                          <circle
+                            cx="50"
+                            cy="50"
+                            r="46"
+                            fill="none"
+                            stroke="#FFD86B"
+                            strokeWidth="3"
+                            strokeLinecap="round"
+                            strokeDasharray={`${2 * Math.PI * 46}`}
+                            strokeDashoffset={`${2 * Math.PI * 46}`}
+                            transform="rotate(-90 50 50)"
+                          />
+                        </svg>
+                      )}
+
                       {/* Glow ring — fills as hold progresses (no progress bar UI) */}
                       {!isBloomed && progress > 0 && (
                         <svg
@@ -1758,6 +1829,15 @@ const PondSceneContent = ({
                   aria-hidden="true"
                 >
                   <img className="modak-mini-gesture-icon" src={miniGesture.icon} alt="" />
+                </div>
+              )}
+
+              {showLotusHoldDemo && (
+                <div
+                  className="ganesha-gesture-cue modak-mini-ganesha-cue modak-mini-ganesha-cue--lotus modak-mini-ganesha-cue--idle pond-hold-demo-cue"
+                  aria-hidden="true"
+                >
+                  <img className="modak-mini-gesture-icon" src={MINI_THUMBS_UP_ICON} alt="" />
                 </div>
               )}
                 </>

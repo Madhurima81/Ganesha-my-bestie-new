@@ -14,6 +14,7 @@
   --modak-game-rock-gray: #696969;
   --modak-game-belly-cosmic: #ff6347;
   --modak-game-ganesha-divine: #ff8c00;
+  --modak-size: clamp(72px, 6.5vw, 110px);
 }
 
 /* ===========================
@@ -687,8 +688,8 @@
    =========================== */
 .modak-game-modak {
   position: absolute;
-  width: 110px;
-  height: 110px;
+  width: var(--modak-size);
+  height: var(--modak-size);
   cursor: pointer;
   transition: all 0.3s ease;
   z-index: 12;
@@ -978,9 +979,9 @@ div[class*="modak-game-modak-collected"].modak-game-hint-glow {
   top: 38%;
   width: clamp(220px, 18vw, 320px);
   height: clamp(190px, 15vw, 270px);
-  --basket-modak-size: clamp(68px, 5.8vw, 104px);
-  --basket-modak-top: 44%;
-  --basket-modak-top-mid: 38%;
+  --basket-modak-size: calc(var(--modak-size) * 0.85);
+  --basket-modak-top: 30%;
+  --basket-modak-top-mid: 23%;
   --basket-modak-left-1: 28%;
   --basket-modak-left-2: 44%;
   --basket-modak-left-3: 60%;
@@ -1048,8 +1049,8 @@ div[class*="modak-game-modak-collected"].modak-game-hint-glow {
    =========================== */
 /* Targets collected items to prevent them from shrinking */
 div[class*="modak-game-modak-collected"] {
-  width: 110px !important;
-  height: 110px !important;
+  width: var(--basket-modak-size) !important;
+  height: var(--basket-modak-size) !important;
   position: absolute;
   z-index: 9;
 }
@@ -1186,7 +1187,7 @@ div[class*="modak-game-modak-collected"]:active {
     height: 140px;
     left: 8%;
     top: 45%;
-    --basket-modak-size: 48px;
+    --basket-modak-size: calc(var(--modak-size) * 0.85);
   }
 
   .modak-game-rock-container { width: 120px; left: 65%; top: 24%; }
@@ -1215,7 +1216,7 @@ div[class*="modak-game-modak-collected"]:active {
     width: 220px;
     height: 188px;
     top: 30%;
-    --basket-modak-size: 56px;
+    --basket-modak-size: calc(var(--modak-size) * 0.85);
   }
   
   .modak-game-rock-container { width: 140px; top: 18%; }
@@ -1253,7 +1254,7 @@ div[class*="modak-game-modak-collected"]:active {
     left: 8%;
     top: 38%;
     overflow: visible;
-    --basket-modak-size: 86px;
+    --basket-modak-size: calc(var(--modak-size) * 0.85);
   }
 
   /* 3. SCALE THE BASKET IMAGE ONLY (Visual Pop) */
@@ -1295,7 +1296,7 @@ div[class*="modak-game-modak-collected"]:active {
     height: 265px;
     top: 50%;
     left: 8%;
-    --basket-modak-size: 98px;
+    --basket-modak-size: calc(var(--modak-size) * 0.85);
   }
 
   /* Ground Modaks */
@@ -1337,7 +1338,7 @@ div[class*="modak-game-modak-collected"]:active {
     height: 305px;
     top: 58%;
     left: 8%;
-    --basket-modak-size: 118px;
+    --basket-modak-size: calc(var(--modak-size) * 0.85);
   }
 
   /* Items */
@@ -1371,7 +1372,7 @@ div[class*="modak-game-modak-collected"]:active {
     height: 235px;
     top: 58%;
     left: 13%;
-    --basket-modak-size: 78px;
+    --basket-modak-size: calc(var(--modak-size) * 0.85);
   }
   .modak-game-modak { width: 165px; height: 165px; }
 
@@ -1399,13 +1400,13 @@ div[class*="modak-game-modak-collected"]:active {
     top: 58%;
     left: 14%;
     overflow: visible;
-    --basket-modak-size: 82px;
+    --basket-modak-size: calc(var(--modak-size) * 0.85);
   }
   /* 3. GIANT GROUND ITEMS */
   .modak-game-mud-mound { width: 150px; height: 110px; }
   .modak-slot-anchor .modak-game-modak-field {
-    width: 130px !important;
-    height: 130px !important;
+    width: var(--modak-size) !important;
+    height: var(--modak-size) !important;
   }
   .modak-slot-anchor .modak-game-modak-field img {
     transform: scale(1);
@@ -1419,12 +1420,6 @@ div[class*="modak-game-modak-collected"]:active {
   /* 5. COUNTER */
   .modak-game-counter { width: 320px; height: 65px; font-size: 24px; }
 }
-
-/* === 7. LAPTOPS/CHROMEBOOKS (Standard) === */
-@media (min-width: 1366px) and (max-height: 900px) {
-  .modak-game-container { max-width: 1600px; margin: 0 auto; }
-}
-
 
 /* ===========================
    FIX: DISCOVERY OVERLAY TWEAKS
@@ -1589,8 +1584,8 @@ div[class*="discovery"] img {
       Without this, .modak-game-modak (115/140/165px) overrides
       --basket-modak-size and modaks render outside the bowl. */
 .modak-game-basket-container .modak-game-modak[class*="-collected-"] {
-  width: 110px !important;
-  height: 110px !important;
+  width: var(--basket-modak-size) !important;
+  height: var(--basket-modak-size) !important;
 }
 
 /* 3. SMOOTHER ROCK GROWTH — transition the container, not just the breathing scale */
@@ -1610,7 +1605,7 @@ div[class*="discovery"] img {
     height: 235px;
     top: 52%;
     left: 6%;
-    --basket-modak-size: 94px;
+    --basket-modak-size: calc(var(--modak-size) * 0.85);
   }
 
   .modak-game-rock-container {
@@ -1619,7 +1614,7 @@ div[class*="discovery"] img {
     left: 60%;
   }
 
-  .modak-game-modak { width: 110px; height: 110px; }
+  .modak-game-modak { width: var(--modak-size); height: var(--modak-size); }
   .modak-game-mud-mound { width: 135px !important; height: auto; }
 }
 
@@ -1643,8 +1638,8 @@ div[class*="discovery"] img {
   .modak-game-mound-5 { top: 65%; left: 70%; }
 
   .modak-game-modak {
-    width: 80px !important;
-    height: 80px !important;
+    width: var(--modak-size) !important;
+    height: var(--modak-size) !important;
   }
 
   .modak-game-mooshika-container {
@@ -1669,7 +1664,7 @@ div[class*="discovery"] img {
     left: 58% !important;
   }
 
-  .modak-game-modak { width: 120px; height: 120px; }
+  .modak-game-modak { width: var(--modak-size); height: var(--modak-size); }
   .modak-game-mud-mound { width: 140px !important; height: auto; }
 
   .modak-game-mound-1 { top: 48%; left: 24%; }
@@ -1686,7 +1681,7 @@ div[class*="discovery"] img {
     left: 9% !important;
     width: 340px !important;
     height: 230px !important;
-    --basket-modak-size: 88px !important;
+    --basket-modak-size: calc(var(--modak-size) * 0.85) !important;
     --basket-modak-top: 13% !important;
     --basket-modak-top-mid: 8% !important;
     --basket-modak-left-1: 30% !important;
@@ -1697,11 +1692,11 @@ div[class*="discovery"] img {
 
 /* Final lock: keep modaks same size in all phases and all breakpoints */
 .modak-game-modak {
-  width: 110px !important;
-  height: 110px !important;
+  width: var(--modak-size) !important;
+  height: var(--modak-size) !important;
 }
 
 div[class*="modak-game-modak-collected"] {
-  width: 110px !important;
-  height: 110px !important;
+  width: var(--basket-modak-size) !important;
+  height: var(--basket-modak-size) !important;
 }
