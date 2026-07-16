@@ -5,7 +5,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useSafeClick } from './hooks/useSafeClick';
 import UniversalPauseButton from './UniversalPauseButton';
 import PauseModal from './PauseModal';
-import SparkleAnimation from '../../../lib/components/animation/SparkleAnimation';
 import './SharedGameUI.css';
 import SyllableVoiceChallenge from './SyllableVoiceChallenge';
 
@@ -1276,17 +1275,15 @@ const AutoPlayModeV2 = ({
         <div style={{ position: 'absolute', bottom: '-36px', left: '50%', transform: 'translateX(-50%) scale(' + (centralElementGlowing ? 1.08 : 1) + ')', transition: 'all 0.2s ease-out', background: isFullyBloomed ? 'linear-gradient(180deg, #FFF7CC, #FFE082)' : 'rgba(255,255,255,0.9)', color: '#7A5C00', padding: '5px 11px', borderRadius: '16px', fontSize: 'clamp(11px, 1.2vw, 15px)', fontWeight: 700, letterSpacing: '0.6px', whiteSpace: 'nowrap', border: '2px solid rgba(255,215,0,0.6)', boxShadow: isFullyBloomed ? '0 4px 14px rgba(255,215,0,0.35)' : '0 2px 6px rgba(0,0,0,0.12)', textTransform: 'capitalize' }}>
           {currentSequence.join('')}
         </div>
+        {isFullyBloomed && ( <div style={{ position: 'absolute', top: '-10px', right: '-10px', fontSize: '24px', animation: 'sparkle 1s ease-in-out infinite' }}>✨</div> )}
         {showLotusSparkles && (
-          <div style={{ position: 'absolute', inset: '-12%', pointerEvents: 'none' }}>
-            <SparkleAnimation
-              type="magic"
-              count={12}
-              color="#FFD54F"
-              size={8}
-              duration={900}
-              area="full"
-            />
-          </div>
+          <>
+            <div style={{ position: 'absolute', top: '-18px', left: '50%', fontSize: '20px', animation: 'sparkleBurst1 1.2s ease-out forwards', pointerEvents: 'none' }}>✨</div>
+            <div style={{ position: 'absolute', top: '10%', right: '-16px', fontSize: '18px', animation: 'sparkleBurst2 1s ease-out forwards', pointerEvents: 'none' }}>✨</div>
+            <div style={{ position: 'absolute', bottom: '-12px', left: '20%', fontSize: '16px', animation: 'sparkleBurst3 1.1s ease-out forwards', pointerEvents: 'none' }}>✨</div>
+            <div style={{ position: 'absolute', top: '20%', left: '-14px', fontSize: '18px', animation: 'sparkleBurst4 0.9s ease-out forwards', pointerEvents: 'none' }}>✨</div>
+            <div style={{ position: 'absolute', bottom: '10%', right: '-10px', fontSize: '14px', animation: 'sparkleBurst5 1.3s ease-out forwards', pointerEvents: 'none' }}>✨</div>
+          </>
         )}
       </div>
     );
