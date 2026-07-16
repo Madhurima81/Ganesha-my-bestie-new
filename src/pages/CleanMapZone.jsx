@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import './CleanMapZone.css';
 import GameStateManager from '../lib/services/GameStateManager';
 import { GANESHA_POSE_ASSETS } from '../lib/config/ganeshaUsageSystem';
+import GaneshaGestureCue from '../lib/components/gesture/GaneshaGestureCue';
 // import ZonePreviewModal from './components/ZonePreviewModal'; // commented out — no preview modal
 import useAudioPreference from '../lib/hooks/useAudioPreference';
 
@@ -1787,15 +1788,11 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
               )}
               {zone.name.replace(/\n/g, ' ')}
               {isFirstTimeSymbol && (
-                <div className="first-time-tap-gesture" aria-hidden="true">
-                  <span className="first-time-tap-ring first-time-tap-ring--one" />
-                  <span className="first-time-tap-ring first-time-tap-ring--two" />
-                  <img
-                    className="first-time-tap-icon"
-                    src="/images/hand-fist.svg"
-                    alt=""
-                  />
-                </div>
+                <GaneshaGestureCue
+                  gestureType="fist"
+                  position="map-symbol"
+                  size={72}
+                />
               )}
 
               {state === 'locked' && zone.unlockNote && (

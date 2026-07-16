@@ -451,17 +451,17 @@
    ===================================================================== */
 
 .shloka-mountain {
-  top: 10%;
-  left: 10%;
-  width: 28%;
-  height: 30%;
+  top: 17%;
+  left: 3.8%;
+  width: 38.5%;
+  height: 40.5%;
 }
 
 .cave-secrets {
-  top: 22%;
-  left: 30%;
-  width: 26%;
-  height: 24%;
+  top: 41%;
+  left: 73%;
+  width: 28%;
+  height: 26%;
 }
 
 .shloka-river {
@@ -472,24 +472,24 @@
 }
 
 .festival-square {
-  bottom: 14%;
-  right: 10%;
-  width: 28%;
-  height: 28%;
+  top: 44.1%;
+  left: 70.7%;
+  width: 30%;
+  height: 30%;
 }
 
 .about-hut {
-  bottom: 14%;
-  left: 3%;
-  width: 30%;
-  height: 34%;
+  top: 54.1%;
+  left: 22.6%;
+  width: 27%;
+  height: 31%;
 }
 
 .tusk-treehouse {
-  bottom: 30%;
-  left: 34%;
-  width: 24%;
-  height: 24%;
+  top: 70%;
+  left: 65%;
+  width: 22%;
+  height: 26%;
 }
 
 /* =========================
@@ -996,12 +996,6 @@
 
 /* Mobile Landscape */
 @media (max-width: 1024px) and (orientation: landscape) {
-  .shloka-mountain-label { font-size: 13px; }
-  .cave-label            { font-size: 11px; }
-  .river-label           { font-size: 12px; }
-  .festival-label        { font-size: 11px; }
-  .hut-label             { font-size: 11px; }
-  .treehouse-label       { font-size: 11px; }
   .fun-zone-gate         { width: 110px; }
   .map-back-button       { font-size: 12px; padding: 6px 14px; }
 }
@@ -1266,49 +1260,24 @@
   100% { transform: translateX(0); }
 }
 
-.first-time-tap-gesture {
-  position: relative;
-  width: 48px;
-  height: 48px;
-  margin: 8px auto 0;
-  display: grid;
-  place-items: center;
-  filter: drop-shadow(0 4px 10px rgba(120, 100, 220, 0.18));
+.ganesha-gesture-cue--map-symbol {
+  left: 29%;
+  top: 22%;
+  animation: mapGestureFloat 1.8s ease-in-out infinite !important;
 }
 
-.first-time-tap-icon {
-  width: 28px;
-  height: 28px;
-  object-fit: contain;
-  opacity: 0.92;
-  animation: firstTimeTapBob 1.8s ease-in-out infinite;
+.ganesha-gesture-cue--map-symbol .ganesha-gesture-cue__icon {
+  filter: drop-shadow(0 8px 18px rgba(82, 45, 0, 0.18));
 }
 
-.first-time-tap-ring {
-  position: absolute;
-  inset: 8px;
-  border-radius: 999px;
-  border: 2px solid rgba(140, 120, 220, 0.48);
-  animation: firstTimeTapRipple 1.8s ease-out infinite;
-}
-
-.first-time-tap-ring--two {
-  animation-delay: 0.9s;
-}
-
-@keyframes firstTimeTapBob {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-3px) scale(1.05); }
-}
-
-@keyframes firstTimeTapRipple {
-  0% {
-    transform: scale(0.72);
-    opacity: 0.72;
+@keyframes mapGestureFloat {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+    opacity: 0.88;
   }
-  100% {
-    transform: scale(1.22);
-    opacity: 0;
+  50% {
+    transform: translateY(-6px) scale(1.04);
+    opacity: 1;
   }
 }
 
@@ -1316,7 +1285,6 @@
 .symbol-mountain-door.zone.zone-state-active,
 .symbol-mountain-door.zone.zone-state-in-progress {
   animation: softPulse 2.8s ease-in-out infinite;
-  position: relative;
 }
 
 .symbol-mountain-door.zone.zone-state-first-time {
@@ -1391,22 +1359,9 @@
   animation: zoneGlowPulse 2.6s ease-in-out infinite;
 }
 
-.zone-glow--hut {
-  transform: translateX(16%);
-}
-
 @keyframes zoneGlowPulse {
   0%, 100% { opacity: 0.7; transform: scale(1);    }
   50%       { opacity: 1;   transform: scale(1.08); }
-}
-
-.zone-glow--hut {
-  animation-name: zoneGlowPulseHut;
-}
-
-@keyframes zoneGlowPulseHut {
-  0%, 100% { opacity: 0.7; transform: translateX(16%) scale(1); }
-  50% { opacity: 1; transform: translateX(16%) scale(1.08); }
 }
 
 /* Active (not first-time) gets a softer, slower glow */
@@ -1443,7 +1398,7 @@
 .zone-building-sign {
   position: absolute;
   transform: translate(-50%, -100%);
-  width: 160px;
+  width: clamp(90px, 10vw, 160px);
   pointer-events: none;
   z-index: 12;
   animation: buildingBob 3s ease-in-out infinite;
