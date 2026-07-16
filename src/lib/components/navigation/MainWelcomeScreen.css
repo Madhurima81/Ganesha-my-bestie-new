@@ -290,9 +290,9 @@
   }
 
   .welcome-ganesha-video {
-    object-fit: contain;
+    object-fit: cover;
     object-position: center 58%;
-    transform: scale(0.92);
+    transform: none;
   }
 
   .welcome-content-overlay {

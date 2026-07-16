@@ -33,6 +33,13 @@ const MooshikaRideTransition = ({ avatarId = 'monkey', profileName, onComplete }
       // non-blocking
     }
 
+    const finishTransition = () => {
+      if (!completedRef.current) {
+        completedRef.current = true;
+        onComplete && onComplete();
+      }
+    };
+
     const voTimer = setTimeout(() => {
       if (canSpeak) {
         window.speechSynthesis.cancel();
@@ -42,6 +49,12 @@ const MooshikaRideTransition = ({ avatarId = 'monkey', profileName, onComplete }
         u.rate = 1.02;
         u.pitch = 1.05;
         u.volume = 0.9;
+        u.onend = () => {
+          setTimeout(finishTransition, 180);
+        };
+        u.onerror = () => {
+          setTimeout(finishTransition, 180);
+        };
         window.speechSynthesis.speak(u);
       }
     }, 500);
@@ -51,17 +64,16 @@ const MooshikaRideTransition = ({ avatarId = 'monkey', profileName, onComplete }
     }, 3000);
 
     const doneTimer = setTimeout(() => {
-      if (!completedRef.current) {
-        completedRef.current = true;
-        onComplete && onComplete();
-      }
-    }, 3500);
+      finishTransition();
+    }, canSpeak ? 5200 : 3500);
 
     return () => {
       clearTimeout(voTimer);
       clearTimeout(landingTimer);
       clearTimeout(doneTimer);
-      window.speechSynthesis?.cancel();
+      if (!completedRef.current) {
+        window.speechSynthesis?.cancel();
+      }
     };
   }, [profileName, onComplete]);
 

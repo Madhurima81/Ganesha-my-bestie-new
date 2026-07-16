@@ -56,7 +56,7 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
     }
 
     const onFirstInteraction = () => {
-      if (audio.paused) fadeIn();
+      if (isAudioOn && audio.paused) fadeIn();
       document.removeEventListener('pointerdown', onFirstInteraction);
     };
     document.addEventListener('pointerdown', onFirstInteraction);
@@ -116,7 +116,7 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
         <div className="ganesha-wrap">
           <video
             className="welcome-ganesha-video"
-            poster="/images/ganesha-hi-stand.webp"
+            poster="/images/ganesha-welcome-poster.webp"
             autoPlay
             loop
             muted
@@ -148,7 +148,7 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
 
       <audio
         ref={ambientRef}
-        src="/audio/ambient/map%20ambient%20sound.wav"
+        src="/audio/music/bg-ambient.mp3"
         loop
         preload="metadata"
         style={{ display: 'none' }}

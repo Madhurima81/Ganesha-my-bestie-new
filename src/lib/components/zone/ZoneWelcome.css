@@ -488,25 +488,25 @@
 /* zone-1 — BOTTOM CENTER (Modak — active/unlocked) */
 .zone-1 {
   left: 50%;
-  top: 82%;
+  top: 76%;
 }
 
 /* zone-2 — MIDDLE LEFT (Sacred Pond) */
 .zone-2 {
   left: 26%;
-  top: 60%;
+  top: 52%;
 }
 
 /* zone-3 — MIDDLE RIGHT (Sacred Tusk) */
 .zone-3 {
   left: 74%;
-  top: 60%;
+  top: 52%;
 }
 
 /* zone-4 — TOP CENTER (Sacred Assembly) */
 .zone-4 {
   left: 50%;
-  top: 33%;
+  top: 30%;
 }
 
 /* 5-card fallback */
@@ -538,19 +538,19 @@
 .cave-of-secrets .zone-1,
 .shloka-river .zone-1 {
   left: 22%;
-  top: 80%;
+  top: 76%;
 }
 
 .cave-of-secrets .zone-2,
 .shloka-river .zone-2 {
   left: 50%;
-  top: 80%;
+  top: 76%;
 }
 
 .cave-of-secrets .zone-3,
 .shloka-river .zone-3 {
   left: 78%;
-  top: 80%;
+  top: 76%;
 }
 
 /* TOP ROW — 2 cards */
@@ -572,8 +572,8 @@
 
 .zone-scene-card {
   position: absolute;
-  width: clamp(210px, 19.5vw, 360px);
-  min-height: clamp(240px, 22vw, 410px);
+  width: clamp(180px, min(19.5vw, 26vh), 320px);
+  min-height: clamp(190px, min(22vw, 32vh), 360px);
   padding: 6px;
   display: flex;
   flex-direction: column;
@@ -663,7 +663,7 @@
 }
 
 .scene-emoji {
-  font-size: clamp(40px, 4.6vw, 72px);
+  font-size: clamp(40px, min(4.6vw, 6vh), 72px);
   margin: 0;
   transition: transform 0.3s ease;
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.08));
@@ -679,8 +679,8 @@
 
 /* Scene Icon Image Styles */
 .scene-icon-img {
-  width: clamp(54px, 6.8vw, 96px);
-  height: clamp(54px, 6.8vw, 96px);
+  width: clamp(48px, min(6.8vw, 9vh), 96px);
+  height: clamp(48px, min(6.8vw, 9vh), 96px);
   object-fit: contain;
   margin: 0;
   transition: transform 0.3s ease;
@@ -739,7 +739,7 @@
 
 .scene-name {
   font-family: 'Baloo 2', system-ui, sans-serif;
-  font-size: clamp(14px, 1.5vw, 20px);
+  font-size: clamp(14px, min(1.5vw, 2vh), 20px);
   font-weight: 800;
   color: #3E2723;
   margin: 0;
@@ -1844,5 +1844,4 @@ button[style*="position: fixed"][style*="background: purple"] {
   0%, 100% { opacity: 0.6; transform: scale(1); }
   50% { opacity: 1; transform: scale(1.2); }
 }
-
 
