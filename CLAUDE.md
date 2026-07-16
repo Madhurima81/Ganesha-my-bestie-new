@@ -22,6 +22,8 @@ A children's cultural education PWA for NRI families. Teaches Hindu culture, San
 - **Audio:** Hybrid — pre-recorded MP3s for Sanskrit, Web Audio API for SFX/music, Web Speech API for narration
 - **Storage:** localStorage for progress persistence
 
+When sizing scene visuals, never add fixed-px `!important` size overrides; extend the element's existing `clamp(...)` or shared size token instead.
+
 ---
 
 ## Fonts — NO EXCEPTIONS
