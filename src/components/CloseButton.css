@@ -1,0 +1,20 @@
+.gmb-close-btn {
+  position: absolute;
+  top: clamp(8px, 2vw, 14px);
+  right: clamp(8px, 2vw, 14px);
+  width: clamp(44px, 6vw, 52px);
+  height: clamp(44px, 6vw, 52px);
+  border-radius: 50%;
+  border: none;
+  background: #fff;
+  color: #2a6f6f;
+  font-family: 'Baloo 2', cursive;
+  font-size: clamp(20px, 3vw, 24px);
+  box-shadow: 0 2px 6px rgba(0,0,0,.2);
+  cursor: pointer;
+  z-index: 10;
+}
+
+.gmb-close-btn:active {
+  transform: scale(.92);
+}

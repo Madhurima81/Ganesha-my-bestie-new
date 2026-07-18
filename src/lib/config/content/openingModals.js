@@ -145,7 +145,11 @@ export const OPENING_MODALS = {
     'game1': {
       title: "Festival Beats",
       description: "The music is waiting. Play and feel the rhythm come alive.",
-      icons: ['listen-icon', 'play-icon', 'create-icon'],
+      icons: [
+        '/images/festival-square/icons/listen-icon.png',
+        '/images/festival-square/icons/play-icon.png',
+        '/images/festival-square/icons/create-icon.png'
+      ],
       iconLabels: ['Listen', 'Play', 'Create'],
       buttonText: "Let's Explore",
       character: 'ganesha-musician'
@@ -154,7 +158,11 @@ export const OPENING_MODALS = {
     'game2': {
       title: "Sparkly Rangoli",
       description: "Colors rest on the floor. Create something bright and beautiful.",
-      icons: ['learn-icon', 'draw-icon', 'design-icon'],
+      icons: [
+        '/images/festival-square/icons/learn-icon.png',
+        '/images/festival-square/icons/draw-icon.png',
+        '/images/festival-square/icons/design-icon.png'
+      ],
       iconLabels: ['Learn', 'Draw', 'Design'],
       buttonText: "Let's Explore",
       character: 'ganesha-artist'
@@ -163,7 +171,11 @@ export const OPENING_MODALS = {
     'game3': {
       title: "Modak Party",
       description: "Sweet ingredients are ready. Mix and see what you can make.",
-      icons: ['recipe-icon', 'cook-icon', 'serve-icon'],
+      icons: [
+        '/images/festival-square/icons/recipe-icon.png',
+        '/images/festival-square/icons/cook-icon.png',
+        '/images/festival-square/icons/serve-icon.png'
+      ],
       iconLabels: ['Recipe', 'Cook', 'Serve'],
       buttonText: "Let's Explore",
       character: 'ganesha-chef'
@@ -172,7 +184,11 @@ export const OPENING_MODALS = {
     'game4': {
       title: "Mandap Magic",
       description: "The space is yours. Decorate it in your own way.",
-      icons: ['mandap-learn-icon', 'mandap-build-icon', 'mandap-decorate-icon'],
+      icons: [
+        '/images/festival-square/icons/mandap-coconut-icon.png',
+        '/images/festival-square/icons/mandap-diya-icon.png',
+        '/images/festival-square/icons/mandap-flower-icon.png'
+      ],
       iconLabels: ['Learn', 'Build', 'Decorate'],
       buttonText: "Let's Explore",
       character: 'ganesha-happy-sitting'
@@ -186,7 +202,11 @@ export const OPENING_MODALS = {
 'my-indian-story': {
   title: "My Indian Story",
   description: "Let's explore my Indian story and yours!",
-  icons: ['story-home', 'story-language', 'story-festival'],
+  icons: [
+    '/images/about-me-hut/house-icon.webp',
+    '/images/about-me-hut/language-icon.webp',
+    '/images/about-me-hut/festival-icon.webp'
+  ],
   iconLabels: ['Home', 'Language', 'Festival'],
   buttonText: "Let's Explore",
   character: 'baby-ganesha-sit'
@@ -194,7 +214,11 @@ export const OPENING_MODALS = {
     'family-tree': {
       title: "Our families",
       description: "Let's meet my family and yours!",
-      icons: ['home', 'heart', 'family'],
+      icons: [
+        '/images/about-me-hut/house-icon.webp',
+        '/images/about-me-hut/heart-icon.webp',
+        '/images/about-me-hut/family-icon.webp'
+      ],
       iconLabels: ['Home', 'Heart', 'Family'],
       buttonText: "Let's Explore",
       character: 'baby-ganesha-sit'
@@ -203,7 +227,11 @@ export const OPENING_MODALS = {
     'favorite-food': {
       title: "Our Favorite Things",
       description: "Let's find my favorite things and yours!",
-      icons: ['food', 'color', 'activity'],
+      icons: [
+        '/images/about-me-hut/food-icon.webp',
+        '/images/about-me-hut/color-icon.webp',
+        '/images/about-me-hut/sports-icon.webp'
+      ],
       iconLabels: ['Food', 'Color', 'Activity'],
       buttonText: "Let's Explore",
       character: 'baby-ganesha-sit'
@@ -212,7 +240,11 @@ export const OPENING_MODALS = {
     'dreams-wishes': {
       title: "Dream Together",
       description: "Let's help and dream together!",
-      icons: ['wish-heart', 'wish-star', 'wish-world'],
+      icons: [
+        '/images/about-me-hut/heart-icon.webp',
+        '/images/about-me-hut/shootingstar-icon.webp',
+        '/images/about-me-hut/world-icon.webp'
+      ],
       iconLabels: ['Heart', 'Star', 'World'],
       buttonText: "Let's Start",
       character: 'baby-ganesha-sit'

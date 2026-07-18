@@ -265,6 +265,23 @@
   box-shadow: 0 0 0 10px rgba(255, 213, 79, 0.18), 0 0 26px rgba(255, 213, 79, 0.45);
 }
 
+.sarvada-ganesha-pop {
+  position: absolute;
+  width: clamp(70px, 14vw, 120px);
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  pointer-events: none;
+  filter: drop-shadow(0 0 20px rgba(255, 213, 79, 0.9));
+  animation: ganeshaPopOut 2s ease-out forwards;
+}
+
+@keyframes ganeshaPopOut {
+  0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.3); }
+  25%  { opacity: 1; transform: translate(-50%, -60%) scale(1.15); }
+  45%  { transform: translate(-50%, -65%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -110%) scale(0.85); }
+}
+
 @keyframes sarvadaMemoryIn {
   from { opacity: 0; transform: translateX(-50%) scale(0.88); }
   to { opacity: 1; transform: translateX(-50%) scale(1); }

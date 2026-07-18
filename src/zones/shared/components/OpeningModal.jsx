@@ -334,12 +334,12 @@ const OpeningModal = ({
                 <div className="game-modal-icon-item" key={`${iconKey}-${index}`}>
                   <div className="game-modal-icon-circle">
                     {typeof iconValue === 'string' && iconValue.length < 4 ? (
-                      <span style={{ fontSize: '48px' }}>{iconValue}</span>
+                      <span>{iconValue}</span>
                     ) : typeof iconValue === 'string' &&
                       (iconValue.startsWith('http') || iconValue.startsWith('/')) ? (
                       <img src={iconValue} alt={label} />
                     ) : (
-                      <span style={{ fontSize: '48px' }}>{FALLBACK_SPARKLE}</span>
+                      <span>{FALLBACK_SPARKLE}</span>
                     )}
                   </div>
                   <span className="game-modal-icon-label">{label}</span>

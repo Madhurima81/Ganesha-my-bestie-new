@@ -8,6 +8,7 @@ import afternoonBg from './assets/images/sarvada/afternoon.png';
 import nightBg from './assets/images/sarvada/night.png';
 
 import boatImg from './assets/images/sarvada/boat.png';
+import ganeshaPopImg from '/images/ganesha-hi-stand.png';
 
 import puzzleBubbleImg from './assets/images/sarvada/puzzle-bubble.png';
 import sportsBubbleImg from './assets/images/sarvada/sports-bubble.png';
@@ -77,6 +78,7 @@ export default function SarvadaGame({
   const [flash, setFlash] = useState(false);
   const [findMode, setFindMode] = useState(false);
   const [ganeshaFound, setGaneshaFound] = useState(false);
+  const [popOut, setPopOut] = useState(false);
 
   const timersRef = useRef([]);
   const doneCalledRef = useRef(false);
@@ -122,6 +124,7 @@ export default function SarvadaGame({
       setFlash(false);
       setFindMode(false);
       setGaneshaFound(false);
+      setPopOut(false);
       doneCalledRef.current = false;
       return;
     }
@@ -176,13 +179,15 @@ export default function SarvadaGame({
     const cfg = PHASES_CONFIG[phaseIndex];
 
     setGaneshaFound(true);
+    setPopOut(true);
     markInteraction();
     playSceneLine?.(`scene14_found_${cfg.id}`);
     setLitCount(cfg.litCount);
     window.setTimeout(() => onMicroWin?.(), 0);
     setRevealedSyls((prev) => [...prev, cfg.syllable]);
 
-    safeAfter(1600, () => {
+    safeAfter(2200, () => {
+      setPopOut(false);
       setBubbleState('bursting');
       setFlash(true);
       safeAfter(650, () => setFlash(false));
@@ -312,6 +317,14 @@ export default function SarvadaGame({
                   onPointerDown={handleGaneshaFound}
                   aria-label="Find Ganesha"
                 />
+                {popOut && (
+                  <img
+                    className="sarvada-ganesha-pop"
+                    src={ganeshaPopImg}
+                    alt=""
+                    style={{ left: `${cfg.ganeshaSpot.l}%`, top: `${cfg.ganeshaSpot.t}%` }}
+                  />
+                )}
                 {hintLevel >= 2 && !ganeshaFound && (
                   <div
                     className={`sarvada-ganesha-ring${hintLevel >= 3 ? ' hint-glow' : ''}`}

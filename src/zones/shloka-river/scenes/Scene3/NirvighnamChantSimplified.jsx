@@ -40,8 +40,8 @@ import OpeningModal from '../../../shared/components/OpeningModal';
 import { getCompletionModal, getDiscoveryContent } from '../../../../lib/config/content';
 
 // Game components
-import NirvighnamGame from './components/NirvighnamGame';
-import KurumedevaGame from './components/KurumeDevaGame';
+import NirvighnamGame from './NirvighnamGame';
+import KurumedevaGame from './KurumedevaGame';
 
 // Assets
 import ganeshaHeadphones from './assets/images/ganesha_with_headphones.webp';
@@ -589,6 +589,7 @@ const NirvighnamChantContent = ({
                 onGameComplete={() => {}}
                 voiceGuidance={{
                   playVoice: playGuidanceVoice,
+                  playWord: playWordAudio,
                   playSyllable: (syllable, onEnded) => {
                     stopAllVoice();
                     playSyllable('nirvighnam', syllable, onEnded);
@@ -607,6 +608,7 @@ const NirvighnamChantContent = ({
                 onGameComplete={() => {}}
                 voiceGuidance={{
                   playVoice: playGuidanceVoice,
+                  playWord: playWordAudio,
                   playSyllable: (syllable, onEnded) => {
                     stopAllVoice();
                     playSyllable('kurumedeva', syllable, onEnded);

@@ -1,6 +1,7 @@
 // zones/shloka-river/shared/AppPracticeModal.jsx
 import React from 'react';
 import './AppPracticeModal.css';
+import CloseButton from '../../../components/CloseButton';
 
 const AppPracticeModal = ({
   show,
@@ -35,13 +36,8 @@ const AppPracticeModal = ({
   return (
     <div className="practice-modal-overlay" onClick={onClose}>
       <div className="practice-modal" onClick={(e) => e.stopPropagation()}>
-        
-        {/* Close Button */}
-        <button className="practice-close-btn" onClick={onClose}>
-          ✕
-        </button>
+        <CloseButton onClose={onClose} />
 
-        {/* Header */}
         <div className="practice-header">
           <img src={appImage} alt={word} className="practice-app-icon" />
           <h2 className="practice-title">Practice {word.toUpperCase()}</h2>
@@ -50,7 +46,6 @@ const AppPracticeModal = ({
           </p>
         </div>
 
-        {/* Syllable Buttons */}
         <div className="practice-syllables">
           <p className="practice-label">Tap each sound:</p>
           <div className="syllable-buttons-grid">
@@ -68,7 +63,6 @@ const AppPracticeModal = ({
           </div>
         </div>
 
-        {/* Full Word Button */}
         <div className="practice-full-word">
           <p className="practice-label">Chant the full word:</p>
           <button
@@ -81,17 +75,16 @@ const AppPracticeModal = ({
           </button>
         </div>
 
-        {/* Recording Section */}
         <div className="practice-recording">
           <p className="practice-label">Record yourself chanting:</p>
-          
+
           {savedRecordingsCount > 0 && (
             <div className="recordings-badge">
               You have {savedRecordingsCount} recording{savedRecordingsCount > 1 ? 's' : ''} saved ✨
             </div>
           )}
-          
-          <button 
+
+          <button
             className="open-recorder-btn"
             onClick={onOpenRecorder}
             style={{ backgroundColor: appColor }}
@@ -102,7 +95,6 @@ const AppPracticeModal = ({
             </span>
           </button>
         </div>
-
       </div>
     </div>
   );

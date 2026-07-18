@@ -313,6 +313,7 @@ export default function SuryakotiGame({
 
     if (playSceneLine) {
       stopVoice?.();
+      playWord?.('suryakoti');
       playSceneLine('scene11_surya_success', () => {
         successVoDoneRef.current = true;
         completeAfterSuccess();
@@ -359,7 +360,7 @@ export default function SuryakotiGame({
     return () => {
       timers.forEach((timerId) => window.clearTimeout(timerId));
     };
-  }, [completeAfterSuccess, phase, playSceneLine, stopVoice]);
+  }, [completeAfterSuccess, phase, playSceneLine, playWord, stopVoice]);
 
   useEffect(() => () => {
     if (voFallbackRef.current) {

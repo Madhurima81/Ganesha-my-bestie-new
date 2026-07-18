@@ -703,8 +703,61 @@ export const getAudioPath = (zoneId, sceneId, key) => {
 };
 
 // Get syllable audio path (for memory games)
-// Syllables are in word-specific folders: /audio/voiceover/{word}/{syllable}.mp3
+// Some Shloka River syllables have curated prerecorded files in /audio/syllables.
+const PRERECORDED_SYLLABLE_PATHS = {
+  vakratunda: {
+    va: '/audio/syllables/vakratunda-va.mp3',
+    kra: '/audio/syllables/vakratunda-kra.mp3',
+    tun: '/audio/syllables/vakratunda-tun.mp3',
+    da: '/audio/syllables/vakratunda-da.mp3'
+  },
+  mahakaya: {
+    ma: '/audio/syllables/mahakaya-ma.mp3',
+    ha: '/audio/syllables/mahakaya-ha.mp3',
+    ka: '/audio/syllables/mahakaya-ka.mp3',
+    ya: '/audio/syllables/mahakaya-ya.mp3'
+  },
+  suryakoti: {
+    sur: '/audio/syllables/suryakoti-sur.mp3',
+    ya: '/audio/syllables/suryakoti-ya.mp3',
+    ko: '/audio/syllables/suryakoti-ko.mp3',
+    ti: '/audio/syllables/suryakoti-ti.mp3'
+  },
+  samaprabha: {
+    sa: '/audio/syllables/samaprabha-sa.mp3',
+    ma: '/audio/syllables/samaprabha-ma.mp3',
+    pra: '/audio/syllables/samaprabha-pra.mp3',
+    bha: '/audio/syllables/samaprabha-bha.mp3'
+  },
+  nirvighnam: {
+    nir: '/audio/syllables/nirvighnam-nir.mp3',
+    vigh: '/audio/syllables/nirvighnam-vigh.mp3',
+    nam: '/audio/syllables/nirvighnam-nam.mp3'
+  },
+  kurumedeva: {
+    kuru: '/audio/syllables/kurume -kuru.mp3',
+    me: '/audio/syllables/kurume-me.mp3',
+    de: '/audio/syllables/deva-de.mp3',
+    va: '/audio/syllables/deva-va.mp3'
+  },
+  sarvakaryeshu: {
+    sar: '/audio/syllables/sarvakaryeshu-sar.mp3',
+    va: '/audio/syllables/sarvakaryeshu-va.mp3',
+    kar: '/audio/syllables/sarvakaryeshu-kar.mp3',
+    rye: '/audio/syllables/sarvakaryeshu-rye.mp3',
+    yeshu: '/audio/syllables/sarvakaryeshu-shu.mp3',
+    shu: '/audio/syllables/sarvakaryeshu-shu.mp3'
+  },
+  sarvada: {
+    sar: '/audio/syllables/sarvada-sar.mp3',
+    va: '/audio/syllables/sarvada-va.mp3',
+    da: '/audio/syllables/sarvada-da.mp3'
+  }
+};
+
 export const getSyllablePath = (word, syllable) => {
+  const prerecordedPath = PRERECORDED_SYLLABLE_PATHS[word]?.[syllable];
+  if (prerecordedPath) return prerecordedPath;
   return `/audio/voiceover/${word}/${syllable}.mp3`;
 };
 

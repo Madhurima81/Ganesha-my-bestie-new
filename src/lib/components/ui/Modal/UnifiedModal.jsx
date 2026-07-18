@@ -5,6 +5,7 @@
 import React from 'react';
 import './UnifiedModal.css';
 import UnifiedButtonV2 from '../Button/UnifiedButtonV2';
+import CloseButton from '../../../../components/CloseButton';
 
 const UnifiedModal = ({
   isOpen,
@@ -81,18 +82,8 @@ const UnifiedModal = ({
       aria-labelledby="unified-modal-title"
     >
       <div className={modalClasses} {...props}>
-        {/* Close Button (X) */}
-        {showCloseButton && onClose && (
-          <button
-            className="unified-modal__close-btn"
-            onClick={onClose}
-            aria-label="Close modal"
-          >
-            ✕
-          </button>
-        )}
+        {showCloseButton && onClose && <CloseButton onClose={onClose} />}
 
-        {/* Icon/Image */}
         {iconImage && (
           <div className="unified-modal__icon-container">
             <img
@@ -104,19 +95,16 @@ const UnifiedModal = ({
           </div>
         )}
 
-        {/* Title */}
         {title && (
           <h2 id="unified-modal-title" className="unified-modal__title">
             {title}
           </h2>
         )}
 
-        {/* Content */}
         <div className="unified-modal__content">
           {children}
         </div>
 
-        {/* Action Buttons */}
         <div className="unified-modal__actions">
           {cancelText && (
             <UnifiedButtonV2

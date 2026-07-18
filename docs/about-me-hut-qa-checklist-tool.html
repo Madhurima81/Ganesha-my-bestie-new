@@ -89,6 +89,26 @@
       margin-bottom: 20px;
     }
 
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .tab-button {
+      padding: 12px 18px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.78);
+      box-shadow: var(--shadow);
+    }
+
+    .tab-button.active {
+      background: linear-gradient(180deg, #fff3e2 0%, #f4d5b0 100%);
+      border-color: var(--accent-2);
+    }
+
     .field,
     button,
     select {
@@ -294,6 +314,11 @@
       </p>
     </section>
 
+    <section class="tabs">
+      <button id="journeyTab" class="tab-button active" type="button">Full QA Flow</button>
+      <button id="smokeTab" class="tab-button" type="button">13 Scene Smoke Test</button>
+    </section>
+
     <section class="toolbar">
       <input id="searchInput" class="field" type="search" placeholder="Search a check, phase, or scene" />
       <select id="sectionFilter" aria-label="Filter by section"></select>
@@ -313,7 +338,31 @@
   </div>
 
   <script>
-    const markdown = buildJourneyMarkdown();
+    const DATASET_CONFIG = {
+      journey: {
+        storageKey: "about-me-hut-qa-checklist-tool-v2",
+        title: "About Me Hut Checklist",
+        subtitle: "Read each check aloud, mark it as done or not done, and leave notes as you go. Everything saves in your browser automatically, so you can stop and continue later.",
+        markdown: buildJourneyMarkdown(),
+        legacyStorageKeys: [
+          "about-me-hut-qa-checklist-tool-v1",
+          "about-me-hut-qa-checklist-tool-v2"
+        ]
+      },
+      smoke: {
+        storageKey: "gmb-smoke-test-13-scenes-v1",
+        title: "GMB 13 Scene Smoke Test",
+        subtitle: "Quick pass-fail sweep for the 13 active scenes. Use this as a separate tab so smoke testing stays lightweight and fast.",
+        markdown: buildSmokeMarkdown(),
+        legacyStorageKeys: []
+      }
+    };
+
+    let activeDatasetKey = "journey";
+    let activeConfig = DATASET_CONFIG[activeDatasetKey];
+    let state = loadState(activeConfig);
+    let data = parseChecklist(activeConfig.markdown);
+    let allItems = flattenItems(data);
 
     function buildJourneyMarkdown() {
       return String.raw`# Fresh Run QA Checklist - July 2026
@@ -681,16 +730,186 @@ Use this checklist in real play order: app launch -> startup gates -> profile fl
 - [ ] Confirm no new console errors were introduced anywhere in the fresh-run path.`;
     }
 
-    const STORAGE_KEY = "about-me-hut-qa-checklist-tool-v2";
-    const LEGACY_STORAGE_KEYS = [
-      "about-me-hut-qa-checklist-tool-v1",
-      "about-me-hut-qa-checklist-tool-v2"
-    ];
-    const state = loadState();
-    const data = parseChecklist(markdown);
-    const allItems = data.sections.flatMap((section) =>
-      section.groups.flatMap((group) => group.items.map((item) => ({ ...item, sectionTitle: section.title, groupTitle: group.title })))
-    );
+    function buildSmokeMarkdown() {
+      return String.raw`# GMB Smoke Test - 13 Active Scenes
+
+Use this per scene after Tier 1 + Tier 2 fixes are done. Pass = scene ships. Anything new goes to TASKS.md and is not fixed in the middle of the sweep.
+
+## 1. Symbol Mountain
+
+### Modak
+- [ ] Loads without console error.
+- [ ] Playable.
+- [ ] Completes successfully.
+- [ ] Celebration fires.
+- [ ] Progress saves after full app close and reopen.
+- [ ] Pause / resume works.
+- [ ] Audio + mute works.
+- [ ] Correct fonts.
+- [ ] Back button works.
+- [ ] Zero console errors.
+
+### Pond
+- [ ] Loads without console error.
+- [ ] Playable.
+- [ ] Completes successfully.
+- [ ] Celebration fires.
+- [ ] Progress saves after full app close and reopen.
+- [ ] Pause / resume works.
+- [ ] Audio + mute works.
+- [ ] Correct fonts.
+- [ ] Back button works.
+- [ ] Zero console errors.
+
+### Symbol
+- [ ] Loads without console error.
+- [ ] Playable.
+- [ ] Completes successfully.
+- [ ] Celebration fires.
+- [ ] Progress saves after full app close and reopen.
+- [ ] Pause / resume works.
+- [ ] Audio + mute works.
+- [ ] Correct fonts.
+- [ ] Back button works.
+- [ ] Zero console errors.
+
+### Final Scene
+- [ ] Loads without console error.
+- [ ] Playable.
+- [ ] Completes successfully.
+- [ ] Celebration fires.
+- [ ] Progress saves after full app close and reopen.
+- [ ] Pause / resume works.
+- [ ] Audio + mute works.
+- [ ] Correct fonts.
+- [ ] Back button works.
+- [ ] Zero console errors.
+
+## 2. Shloka River
+
+### Vakratunda Grove
+- [ ] Loads without console error.
+- [ ] Playable.
+- [ ] Completes successfully.
+- [ ] Celebration fires.
+- [ ] Progress saves after full app close and reopen.
+- [ ] Pause / resume works.
+- [ ] Audio + mute works.
+- [ ] Correct fonts.
+- [ ] Back button works.
+- [ ] Zero console errors.
+
+### Suryakoti Bank
+- [ ] Loads without console error.
+- [ ] Playable.
+- [ ] Completes successfully.
+- [ ] Celebration fires.
+- [ ] Progress saves after full app close and reopen.
+- [ ] Pause / resume works.
+- [ ] Audio + mute works.
+- [ ] Correct fonts.
+- [ ] Back button works.
+- [ ] Zero console errors.
+
+### Nirvighnam Chant
+- [ ] Loads without console error.
+- [ ] Playable.
+- [ ] Completes successfully.
+- [ ] Celebration fires.
+- [ ] Progress saves after full app close and reopen.
+- [ ] Pause / resume works.
+- [ ] Audio + mute works.
+- [ ] Correct fonts.
+- [ ] Back button works.
+- [ ] Zero console errors.
+
+### Sarvakaryeshu Chant
+- [ ] Loads without console error.
+- [ ] Playable.
+- [ ] Completes successfully.
+- [ ] Celebration fires.
+- [ ] Progress saves after full app close and reopen.
+- [ ] Pause / resume works.
+- [ ] Audio + mute works.
+- [ ] Correct fonts.
+- [ ] Back button works.
+- [ ] Zero console errors.
+
+### Shloka River Finale
+- [ ] Loads without console error.
+- [ ] Playable.
+- [ ] Completes successfully.
+- [ ] Celebration fires.
+- [ ] Progress saves after full app close and reopen.
+- [ ] Pause / resume works.
+- [ ] Audio + mute works.
+- [ ] Correct fonts.
+- [ ] Back button works.
+- [ ] Zero console errors.
+
+## 3. About Me Hut
+
+### Family Tree
+- [ ] Loads without console error.
+- [ ] Playable.
+- [ ] Completes successfully.
+- [ ] Celebration fires.
+- [ ] Progress saves after full app close and reopen.
+- [ ] Pause / resume works.
+- [ ] Audio + mute works.
+- [ ] Correct fonts.
+- [ ] Back button works.
+- [ ] Zero console errors.
+
+### Favorite Food
+- [ ] Loads without console error.
+- [ ] Playable.
+- [ ] Completes successfully.
+- [ ] Celebration fires.
+- [ ] Progress saves after full app close and reopen.
+- [ ] Pause / resume works.
+- [ ] Audio + mute works.
+- [ ] Correct fonts.
+- [ ] Back button works.
+- [ ] Zero console errors.
+
+### Dreams and Wishes
+- [ ] Loads without console error.
+- [ ] Playable.
+- [ ] Completes successfully.
+- [ ] Celebration fires.
+- [ ] Progress saves after full app close and reopen.
+- [ ] Pause / resume works.
+- [ ] Audio + mute works.
+- [ ] Correct fonts.
+- [ ] Back button works.
+- [ ] Zero console errors.
+
+### My Indian Story
+- [ ] Loads without console error.
+- [ ] Playable.
+- [ ] Completes successfully.
+- [ ] Celebration fires.
+- [ ] Progress saves after full app close and reopen.
+- [ ] Pause / resume works.
+- [ ] Audio + mute works.
+- [ ] Correct fonts.
+- [ ] Back button works.
+- [ ] Zero console errors.
+
+## 4. Smoke Test Rules
+
+### Verdict
+- [ ] 0 to 1 fails = PASS.
+- [ ] 2 or more fails = FAIL and log to TASKS.md.
+- [ ] Any crash or black screen = BLOCKER and re-test after fix.
+
+### What Not To Do
+- [ ] Do not pixel-polish during smoke testing.
+- [ ] Do not compare devices during smoke testing.
+- [ ] Do not fix issues mid-run; log and move on.
+- [ ] Do not re-run scenes that already passed unless code changed.`;
+    }
 
     const sectionsEl = document.getElementById("sections");
     const sectionFilterEl = document.getElementById("sectionFilter");
@@ -698,7 +917,13 @@ Use this checklist in real play order: app launch -> startup gates -> profile fl
     const searchInputEl = document.getElementById("searchInput");
     const summaryEl = document.getElementById("summary");
     const clearAllButtonEl = document.getElementById("clearAllButton");
+    const journeyTabEl = document.getElementById("journeyTab");
+    const smokeTabEl = document.getElementById("smokeTab");
+    const heroTitleEl = document.querySelector(".hero h1");
+    const heroSubtitleEl = document.querySelector(".hero .subtext");
 
+    journeyTabEl.addEventListener("click", () => switchDataset("journey"));
+    smokeTabEl.addEventListener("click", () => switchDataset("smoke"));
     populateSectionFilter();
     render();
 
@@ -708,10 +933,33 @@ Use this checklist in real play order: app launch -> startup gates -> profile fl
     clearAllButtonEl.addEventListener("click", () => {
       const ok = window.confirm("Clear all saved checklist statuses and comments for this page?");
       if (!ok) return;
-      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(activeConfig.storageKey);
       state.items = {};
       render();
     });
+
+    function switchDataset(datasetKey) {
+      if (datasetKey === activeDatasetKey) return;
+      activeDatasetKey = datasetKey;
+      activeConfig = DATASET_CONFIG[datasetKey];
+      state = loadState(activeConfig);
+      data = parseChecklist(activeConfig.markdown);
+      allItems = flattenItems(data);
+      heroTitleEl.textContent = activeConfig.title;
+      heroSubtitleEl.textContent = activeConfig.subtitle;
+      journeyTabEl.classList.toggle("active", datasetKey === "journey");
+      smokeTabEl.classList.toggle("active", datasetKey === "smoke");
+      searchInputEl.value = "";
+      statusFilterEl.value = "all";
+      populateSectionFilter();
+      render();
+    }
+
+    function flattenItems(parsedData) {
+      return parsedData.sections.flatMap((section) =>
+        section.groups.flatMap((group) => group.items.map((item) => ({ ...item, sectionTitle: section.title, groupTitle: group.title })))
+      );
+    }
 
     function populateSectionFilter() {
       const options = ['<option value="all">All sections</option>']
@@ -908,19 +1156,19 @@ Use this checklist in real play order: app launch -> startup gates -> profile fl
       return { sections };
     }
 
-    function loadState() {
+    function loadState(config) {
       try {
-        const currentRaw = localStorage.getItem(STORAGE_KEY);
+        const currentRaw = localStorage.getItem(config.storageKey);
         if (currentRaw) {
           return JSON.parse(currentRaw);
         }
 
-        for (const key of LEGACY_STORAGE_KEYS) {
-          if (key === STORAGE_KEY) continue;
+        for (const key of config.legacyStorageKeys) {
+          if (key === config.storageKey) continue;
           const legacyRaw = localStorage.getItem(key);
           if (!legacyRaw) continue;
           const parsed = JSON.parse(legacyRaw);
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+          localStorage.setItem(config.storageKey, JSON.stringify(parsed));
           return parsed;
         }
 
@@ -931,7 +1179,7 @@ Use this checklist in real play order: app launch -> startup gates -> profile fl
     }
 
     function saveState() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      localStorage.setItem(activeConfig.storageKey, JSON.stringify(state));
     }
 
     function getItemState(itemId) {

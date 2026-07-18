@@ -147,6 +147,7 @@ export default function VakratundaRescueGame({
       setHopIndex(POS.slots.length);
       setFamilyBounce(true);
       playSfx?.('frogReunion');
+      playWord?.('vakratunda');
       playSceneLine?.('scene10_vak_crossed');
       after(600, () => setFamilyBounce(false));
     });

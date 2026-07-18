@@ -6,6 +6,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './ModakScene.css';
 import '../../../../lib/styles/zone-themes.css';
 import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
+import SceneStage from '../../../../components/SceneStage';
 
 // Unified Components (keep buttons/modals, remove header)
 import UnifiedButtonV2 from '../../../../lib/components/ui/Button/UnifiedButtonV2';
@@ -1437,10 +1438,11 @@ const NewModakSceneMVPContent = ({
       }
       if (event?.currentTarget && typeof event.clientX === 'number' && typeof event.clientY === 'number') {
         const rect = event.currentTarget.getBoundingClientRect();
+        const scale = rect.width / event.currentTarget.offsetWidth || 1;
         setWrongMoundPuff({
           moundIndex,
-          x: event.clientX - rect.left,
-          y: event.clientY - rect.top,
+          x: (event.clientX - rect.left) / scale,
+          y: (event.clientY - rect.top) / scale,
           key: Date.now()
         });
       } else {
@@ -1831,13 +1833,14 @@ const NewModakSceneMVPContent = ({
 
       <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
         <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
-          <div className="modak-game-container">
-            {showPersistentEndOverlay && !revealConfig && (
-              <div className="modak-game-end-overlay" />
-            )}
-            <div ref={backgroundRef} className="modak-game-background" style={{ backgroundImage: `url(${forestBackground})` }}>
-              {!isCompletionView && !isFinalTransitionView && (
-                <>
+          <SceneStage designWidth={1280} designHeight={800}>
+            <div className="modak-game-container">
+              {showPersistentEndOverlay && !revealConfig && (
+                <div className="modak-game-end-overlay" />
+              )}
+              <div ref={backgroundRef} className="modak-game-background" style={{ backgroundImage: `url(${forestBackground})` }}>
+                {!isCompletionView && !isFinalTransitionView && (
+                  <>
 
               {/* --- OPENING MODAL --- */}
               {sceneState.phase === PHASES.MOOSHIKA_SEARCH && !sceneState.welcomeShown && (
@@ -2417,18 +2420,19 @@ const NewModakSceneMVPContent = ({
             )}
 
             {/* SIDE RAIL - hide during final fireworks and celebration popup */}
-            {!isCompletionView && !isFinalTransitionView && sceneState.welcomeShown && !isFinalCelebrationActive && (
-              <SymbolSidebar
-                // animatingSymbol={animatingSymbol}  // superseded by SymbolAutoReveal
-                discoveredSymbols={sceneState.discoveredSymbols || {}}
-                onSymbolClick={(symbolId) => {
-                  console.log(`Sidebar symbol clicked: ${symbolId}`);
-                }}
-                onPopupOpen={handleSymbolPopupOpen}
-                onPopupClose={handleSymbolPopupClose}
-              />
-            )}
-          </div>
+              {!isCompletionView && !isFinalTransitionView && sceneState.welcomeShown && !isFinalCelebrationActive && (
+                <SymbolSidebar
+                  // animatingSymbol={animatingSymbol}  // superseded by SymbolAutoReveal
+                  discoveredSymbols={sceneState.discoveredSymbols || {}}
+                  onSymbolClick={(symbolId) => {
+                    console.log(`Sidebar symbol clicked: ${symbolId}`);
+                  }}
+                  onPopupOpen={handleSymbolPopupOpen}
+                  onPopupClose={handleSymbolPopupClose}
+                />
+              )}
+            </div>
+          </SceneStage>
         </MessageManager>
       </InteractionManager>
 

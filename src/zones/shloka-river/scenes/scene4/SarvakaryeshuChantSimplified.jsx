@@ -573,7 +573,7 @@ const SarvakaryeshuChantContent = ({
                   onPhaseComplete={() => window.setTimeout(() => handlePhaseComplete('sarvakaryeshu'), 0)}
                   onGameComplete={() => {}}
                   isPaused={isRecorderOpen}
-                  voiceGuidance={{ playVoice: playGuidanceVoice, stopVoice: stopAllVoice }}
+                  voiceGuidance={{ playVoice: playGuidanceVoice, playWord: playWordAudio, stopVoice: stopAllVoice }}
                 />
 
                 <SarvadaGame
@@ -583,7 +583,7 @@ const SarvakaryeshuChantContent = ({
                   onPhaseComplete={() => window.setTimeout(() => handlePhaseComplete('sarvada'), 0)}
                   onGameComplete={() => {}}
                   isPaused={isRecorderOpen}
-                  voiceGuidance={{ playVoice: playGuidanceVoice, stopVoice: stopAllVoice }}
+                  voiceGuidance={{ playVoice: playGuidanceVoice, playWord: playWordAudio, stopVoice: stopAllVoice }}
                 />
 
                 {showTapSparkles && (

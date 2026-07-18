@@ -97,7 +97,7 @@ export default function SarvakaryeshuGame({
   isPaused = false,
   voiceGuidance = {},
 }) {
-  const { playVoice: playSceneLine, stopVoice: stopSceneVoice } = voiceGuidance;
+  const { playVoice: playSceneLine, playWord, stopVoice: stopSceneVoice } = voiceGuidance;
   const [cardIndex, setCardIndex] = useState(0);
   const [picked, setPicked] = useState(null);
   const [isCorrect, setIsCorrect] = useState(null);
@@ -119,7 +119,7 @@ export default function SarvakaryeshuGame({
   phaseRef.current = phase;
 
   const { hintLevel, pulseTick, markInteraction } = useRepeatedHintCycle({
-    enabled: isActive && !isPaused && phase === 'play',
+    enabled: isActive && !isPaused && phase === 'play' && canPick,
     stageKey: isActive ? `card-${cardIndex}` : null,
     initialDelay: 8500,
     pulseCountBeforeEscalation: 3,
@@ -272,6 +272,7 @@ export default function SarvakaryeshuGame({
     if (nextIndex >= SITUATIONS.length) {
       safeAfter(3100, () => {
         setLitCount(SITUATIONS.length);
+        playWord?.('sarvakaryeshu');
         safeAfter(600, () => {
           if (doneCalledRef.current) return;
           doneCalledRef.current = true;
@@ -299,7 +300,7 @@ export default function SarvakaryeshuGame({
       setImageHit(false);
       resolvingRef.current = false;
     });
-  }, [canPick, cardIndex, isPaused, markInteraction, onGameComplete, onMicroWin, onPhaseComplete, playSceneLine, safeAfter, stopSceneVoice]);
+  }, [canPick, cardIndex, isPaused, markInteraction, onGameComplete, onMicroWin, onPhaseComplete, playSceneLine, playWord, safeAfter, stopSceneVoice]);
 
   if (!isActive) return null;
 
@@ -337,33 +338,35 @@ export default function SarvakaryeshuGame({
             {situation.question && (
               <p className="sarva-question">{situation.question}</p>
             )}
-            <div className="sarva-options">
-              {situation.options.map((powerId) => {
-                const power = POWER_ICONS[powerId];
-                const isRight = picked === powerId && isCorrect;
-                const isSelected = picked === powerId;
-                const isWrong = picked === powerId && picked !== null && !isCorrect;
-                const isGuided = guidedPowerId === powerId;
-                const isHintPulse = isGuided && hintLevel === 1;
-                const isHintGlow = isGuided && hintLevel >= 2;
+            {canPick && (
+              <div className="sarva-options">
+                {situation.options.map((powerId) => {
+                  const power = POWER_ICONS[powerId];
+                  const isRight = picked === powerId && isCorrect;
+                  const isSelected = picked === powerId;
+                  const isWrong = picked === powerId && picked !== null && !isCorrect;
+                  const isGuided = guidedPowerId === powerId;
+                  const isHintPulse = isGuided && hintLevel === 1;
+                  const isHintGlow = isGuided && hintLevel >= 2;
 
-                return (
-                  <button
-                    key={powerId}
-                    ref={(node) => { optionRefs.current[powerId] = node; }}
-                    className={`sarva-option${isRight ? ' is-right' : ''}${isWrong ? ' is-wrong' : ''}${isSelected ? ' is-selected' : ''}${isGuided ? ' is-guided' : ''}${isHintPulse ? ` pulse pulse-${pulseTick}` : ''}${isHintGlow ? ' hint-glow' : ''}${isCorrect && picked && !isRight ? ' is-dimmed' : ''}${!canPick ? ' is-dimmed' : ''}`}
-                    style={{ '--power-color': power.color }}
-                    onPointerDown={() => handlePick(powerId)}
-                    aria-label={power.label}
-                  >
-                    <div className="sarva-option-circle">
-                      <img src={power.img} alt={power.label} draggable={false} />
-                    </div>
-                    <span className="sarva-option-label">{power.label}</span>
-                  </button>
-                );
-              })}
-            </div>
+                  return (
+                    <button
+                      key={powerId}
+                      ref={(node) => { optionRefs.current[powerId] = node; }}
+                      className={`sarva-option${isRight ? ' is-right' : ''}${isWrong ? ' is-wrong' : ''}${isSelected ? ' is-selected' : ''}${isGuided ? ' is-guided' : ''}${isHintPulse ? ` pulse pulse-${pulseTick}` : ''}${isHintGlow ? ' hint-glow' : ''}${isCorrect && picked && !isRight ? ' is-dimmed' : ''}`}
+                      style={{ '--power-color': power.color }}
+                      onPointerDown={() => handlePick(powerId)}
+                      aria-label={power.label}
+                    >
+                      <div className="sarva-option-circle">
+                        <img src={power.img} alt={power.label} draggable={false} />
+                      </div>
+                      <span className="sarva-option-label">{power.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
 
             {guidanceMessage && !isCorrect && (
               <p className="sarva-feedback is-visible is-gentle">{guidanceMessage}</p>

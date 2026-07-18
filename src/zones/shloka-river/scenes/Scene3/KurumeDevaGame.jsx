@@ -114,7 +114,7 @@ export default function KurumedevaGame({
   voiceGuidance = {},
   isPaused = false,
 }) {
-  const { playVoice: playSceneLine, playSyllable, stopVoice: stopSceneVoice } = voiceGuidance;
+  const { playVoice: playSceneLine, playSyllable, playWord, stopVoice: stopSceneVoice } = voiceGuidance;
   const [friendStep, setFriendStep] = useState(0);
   const [bridgeStep, setBridgeStep] = useState(0);
   const [phase, setPhase] = useState('play');
@@ -290,6 +290,7 @@ export default function KurumedevaGame({
     doneCalledRef.current = true;
 
     if (playSceneLine) {
+      playWord?.('kurumedeva');
       playSceneLine('kuru_done', () => {
         successVoDoneRef.current = true;
         completeAfterSuccess();
@@ -326,7 +327,7 @@ export default function KurumedevaGame({
         }
       });
     });
-  }, [completeAfterSuccess, phase, playSceneLine, safeAfter]);
+  }, [completeAfterSuccess, phase, playSceneLine, playWord, safeAfter]);
 
   useEffect(() => () => {
     if (voFallbackRef.current) {

@@ -85,7 +85,7 @@
 }
 
 .pond-bg-overlay--front {
-  z-index: 19;
+  z-index: 13;
 }
 
 /* ============================================
@@ -1816,49 +1816,6 @@
   height: 124%;
   pointer-events: none;
   z-index: 1;
-}
-
-.pond-hold-ring--demo circle {
-  opacity: 0.9;
-  filter: drop-shadow(0 0 8px rgba(255, 216, 107, 0.55));
-  animation: pondHoldRingDemoFill 2.2s ease-in-out infinite;
-}
-
-.pond-hold-demo-cue {
-  animation: pondHoldDemoCue 2.2s ease-in-out infinite;
-}
-
-@keyframes pondHoldRingDemoFill {
-  0% {
-    stroke-dashoffset: 289;
-    opacity: 0.25;
-  }
-  20% {
-    opacity: 0.95;
-  }
-  70% {
-    stroke-dashoffset: 0;
-    opacity: 1;
-  }
-  100% {
-    stroke-dashoffset: 289;
-    opacity: 0.2;
-  }
-}
-
-@keyframes pondHoldDemoCue {
-  0%, 100% {
-    opacity: 0.2;
-    transform: translateY(-6px) scale(0.96);
-  }
-  25% {
-    opacity: 1;
-    transform: translateY(0) scale(1.04);
-  }
-  70% {
-    opacity: 1;
-    transform: translateY(1px) scale(1);
-  }
 }
 
 .pond-lotus-image {

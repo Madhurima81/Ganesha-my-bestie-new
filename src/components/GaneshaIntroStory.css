@@ -239,6 +239,87 @@
   }
 }
 
+.storyCaption {
+  position: absolute;
+  bottom: 26px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: min(78vw, 720px);
+  padding: 10px 22px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.78);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  font-family: "Nunito", sans-serif;
+  font-size: clamp(15px, min(1.7vw, 2.4vh), 24px);
+  font-weight: 700;
+  color: #5a4494;
+  text-align: center;
+  line-height: 1.35;
+  margin: 0;
+  animation: fadeUp 400ms ease;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.storyBackArrow {
+  position: absolute;
+  left: 28px;
+  bottom: 26px;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border: none;
+  cursor: pointer;
+  transition: transform 180ms ease, background 180ms ease;
+}
+
+.storyBackArrow::before {
+  content: "";
+  width: 16px;
+  height: 16px;
+  border-top: 4px solid #8f63ff;
+  border-left: 4px solid #8f63ff;
+  transform: rotate(-45deg) translateX(2px);
+  border-radius: 2px;
+}
+
+.storyBackArrow:hover {
+  transform: scale(1.06);
+  background: #f6efff;
+}
+
+.storyBackArrow:active {
+  transform: scale(0.96);
+  background: #f6efff;
+}
+
+.storyReplayVo {
+  position: absolute;
+  right: 28px;
+  bottom: 104px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.88);
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.10);
+  transition: transform 180ms ease;
+}
+
+.storyReplayVo:active {
+  transform: scale(0.94);
+}
+
 @media (max-width: 700px) {
   .gis-stage {
     width: 100vw;
@@ -269,6 +350,10 @@
     font-size: 14px;
     padding: 8px 14px;
   }
+
+  .storyCaption   { bottom: 84px; max-width: 86vw; font-size: 15px; padding: 8px 18px; }
+  .storyBackArrow { left: 16px; bottom: 18px; width: 60px; height: 60px; }
+  .storyReplayVo  { right: 16px; bottom: 92px; width: 48px; height: 48px; font-size: 20px; }
 }
 
 @keyframes gisFadeIn {

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import Button from '../Button/Button';
 import './Modal.css';
+import CloseButton from '../../../../components/CloseButton';
 
 /**
  * Unified Modal Component - Uses Zone-Current Colors
@@ -39,7 +40,6 @@ const Modal = ({
 }) => {
   const modalRef = useRef(null);
 
-  // Handle escape key
   useEffect(() => {
     const handleEscape = (e) => {
       if (e.key === 'Escape' && isOpen && onClose) {
@@ -49,7 +49,7 @@ const Modal = ({
 
     if (isOpen) {
       document.addEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'hidden'; // Prevent background scroll
+      document.body.style.overflow = 'hidden';
     }
 
     return () => {
@@ -58,14 +58,12 @@ const Modal = ({
     };
   }, [isOpen, onClose]);
 
-  // Handle overlay click
   const handleOverlayClick = (e) => {
     if (closeOnOverlayClick && e.target === e.currentTarget && onClose) {
       onClose();
     }
   };
 
-  // Handle confirm
   const handleConfirm = () => {
     if (onConfirm) {
       onConfirm();
@@ -74,7 +72,6 @@ const Modal = ({
     }
   };
 
-  // Handle cancel
   const handleCancel = () => {
     if (onCancel) {
       onCancel();
@@ -100,30 +97,18 @@ const Modal = ({
       aria-labelledby="modal-title"
     >
       <div ref={modalRef} className={modalClasses} {...rest}>
-        {/* Close Button (X) */}
-        {showCloseButton && onClose && (
-          <button
-            className="unified-modal__close-btn"
-            onClick={onClose}
-            aria-label="Close modal"
-          >
-            ✕
-          </button>
-        )}
+        {showCloseButton && onClose && <CloseButton onClose={onClose} />}
 
-        {/* Title */}
         {title && (
           <h2 id="modal-title" className="unified-modal__title">
             {title}
           </h2>
         )}
 
-        {/* Content */}
         <div className="unified-modal__content">
           {children}
         </div>
 
-        {/* Action Buttons */}
         <div className="unified-modal__actions">
           {cancelText && (
             <Button

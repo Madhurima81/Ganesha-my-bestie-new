@@ -173,7 +173,7 @@ export default function SamaprabhaGame({
   voiceGuidance = {},
   isPaused = false,
 }) {
-  const { playVoice: playSceneLine, playSyllable, stopVoice } = voiceGuidance;
+  const { playVoice: playSceneLine, playSyllable, playWord, stopVoice } = voiceGuidance;
   const containerRef = useRef(null);
   const timersRef = useRef([]);
   const doneCalledRef = useRef(false);
@@ -331,6 +331,7 @@ export default function SamaprabhaGame({
 
     const timerId = window.setTimeout(() => {
       const fallback = window.setTimeout(finish, 4000);
+      playWord?.('samaprabha');
       playSceneLine('scene11_sama_done', () => {
         window.clearTimeout(fallback);
         finish();
@@ -341,7 +342,7 @@ export default function SamaprabhaGame({
       window.clearTimeout(timerId);
       stopVoice?.();
     };
-  }, [phase, playSceneLine, stopVoice]);
+  }, [phase, playSceneLine, playWord, stopVoice]);
 
   if (!isActive) return null;
 

@@ -82,7 +82,7 @@ export default function MahakayaRescueGame({
   voiceGuidance = {},
   isPaused = false,
 }) {
-  const { playVoice: playSceneLine, playSfx, playSyllable, stopVoice } = voiceGuidance;
+  const { playVoice: playSceneLine, playSfx, playSyllable, playWord, stopVoice } = voiceGuidance;
 
   const [phase, setPhase] = useState('intro');
   const [ropeStage, setRopeStage] = useState('detached');
@@ -265,6 +265,7 @@ export default function MahakayaRescueGame({
         setRopeStage('done');
         draggingRef.current = null;
         setDragging(null);
+        playWord?.('mahakaya');
         after(400, () => { playSceneLine?.('scene10_maha_success'); });
         after(1200, () => {
           setPhase('free');

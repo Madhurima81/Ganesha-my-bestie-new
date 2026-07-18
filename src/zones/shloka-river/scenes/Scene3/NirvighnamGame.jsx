@@ -44,7 +44,7 @@ export default function NirvighnamGame({
   voiceGuidance = {},
   isPaused = false,
 }) {
-  const { playVoice: playSceneLine, playSyllable, stopVoice: stopSceneVoice } = voiceGuidance;
+  const { playVoice: playSceneLine, playSyllable, playWord, stopVoice: stopSceneVoice } = voiceGuidance;
   const [phase, setPhase] = useState('play');
   const [cleared, setCleared] = useState([]); // array of cleared obstacle ids
   const [litCount, setLitCount] = useState(0);
@@ -223,6 +223,7 @@ export default function NirvighnamGame({
     setIsSwimming(true);
 
     if (playSceneLine) {
+      playWord?.('nirvighnam');
       playSceneLine('nirv_done', () => {
         successVoDoneRef.current = true;
         completeAfterSuccess();
@@ -255,7 +256,7 @@ export default function NirvighnamGame({
     });
 
     return () => timers.forEach((t) => window.clearTimeout(t));
-  }, [completeAfterSuccess, phase, playSceneLine]);
+  }, [completeAfterSuccess, phase, playSceneLine, playWord]);
 
   useEffect(() => () => {
     if (voFallbackRef.current) {

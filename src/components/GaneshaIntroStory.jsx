@@ -165,6 +165,19 @@ const GaneshaIntroStory = ({ profileId, childName, onComplete }) => {
     setCurrentSlide((prev) => prev + 1);
   };
 
+  const handleReplayVo = (e) => {
+    e.stopPropagation();
+    unlockSpeechFromGesture();
+    speakSlide(currentSlide);
+  };
+
+  const handleBack = (e) => {
+    e.stopPropagation();
+    if (currentSlide <= 1) return;
+    window.speechSynthesis?.cancel?.();
+    setCurrentSlide((prev) => prev - 1);
+  };
+
   const slide = slides[currentSlide];
 
   return (
@@ -200,6 +213,9 @@ const GaneshaIntroStory = ({ profileId, childName, onComplete }) => {
             >
               <img key={currentSlide} src={slide.image} alt={slide.title} className="gis-image storyScene active" />
             </button>
+            {!slide.minimal && slide.vo && (
+              <p className="storyCaption" key={`cap-${currentSlide}`}>{slide.vo}</p>
+            )}
 
             <div className="gis-bottom">
               {slide.minimal ? (
@@ -225,6 +241,12 @@ const GaneshaIntroStory = ({ profileId, childName, onComplete }) => {
             ) : (
               !slide.endScreen && (
                 <>
+                  {currentSlide > 1 && (
+                    <button type="button" className="storyBackArrow" onClick={handleBack} aria-label="Previous page" />
+                  )}
+                  <button type="button" className="storyReplayVo" onClick={handleReplayVo} aria-label="Hear this page again">
+                    🔊
+                  </button>
                   <button type="button" className="storyNextArrow" onClick={() => handleNext(true)} aria-label="Next slide" />
                   {showTapPuff ? <span key={tapPuffKey} className="storyTapPuff" aria-hidden="true" /> : null}
                 </>
@@ -238,4 +260,3 @@ const GaneshaIntroStory = ({ profileId, childName, onComplete }) => {
 };
 
 export default GaneshaIntroStory;
-

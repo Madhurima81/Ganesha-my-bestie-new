@@ -21,23 +21,25 @@
    MAIN CONTAINER STYLES
    =========================== */
 .modak-game-container {
-  width: 100vw !important;
-  height: var(--app-height, 100vh) !important;
+  position: absolute;
+  inset: 0;
+  width: auto !important;
+  height: auto !important;
   margin: 0 !important;
   padding: 0 !important;
   overflow: hidden !important;
-  position: relative;
 }
 
 .modak-game-background {
-  width: 100% !important;
-  height: var(--app-height, 100vh) !important;
-  background-size: cover !important;
+  position: absolute;
+  inset: 0;
+  width: auto !important;
+  height: auto !important;
+  background-size: 100% 100% !important;
   background-position: center !important;
   background-repeat: no-repeat !important;
   margin: 0 !important;
   padding: 0 !important;
-  position: relative;
   overflow: hidden;
 }
 
