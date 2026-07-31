@@ -6,6 +6,7 @@ import { useGaneshaVoice } from '../../hooks/useGaneshaVoice';
 import { saveTodayKindnessEntry } from '../../services/KindnessJournal';
 import micIcon from '../../../zones/shloka-river/core/assets/images/mic-icon.png';
 import './DailyDarePopup.css';
+import CloseButton from '../../../components/CloseButton';
 
 export default function DailyDarePopup({ onClose }) {
   const { speak, stop } = useGaneshaVoice();
@@ -214,18 +215,7 @@ export default function DailyDarePopup({ onClose }) {
   return (
     <div className="dare-root dare-root--map" role="dialog" aria-modal="true">
       <div className={`dare-panel ${isClosing ? 'dare-panel--closing' : ''}`}>
-        <button
-          className="dare-close"
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            onClose();
-          }}
-          aria-label="Close"
-          type="button"
-        >
-          ✕
-        </button>
+        <CloseButton onClose={onClose} />
 
         {phase === 'gratitude' && (
           <>

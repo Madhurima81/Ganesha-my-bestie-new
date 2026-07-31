@@ -23,6 +23,7 @@ import DoorwayChoiceScreen   from './DoorwayChoiceScreen'
 import GuidedExperienceScene from './GuidedExperienceScene'
 import CompletionScreen      from './CompletionScreen'
 import { useGaneshaEngine }  from '../../hooks/useGaneshaEngine'
+import CloseButton           from '../../../components/CloseButton'
 import './TalkToGanesha.css'
 
 // ─────────────────────────────────────────────────────────
@@ -432,7 +433,7 @@ export default function TalkToGanesha({
 
       <div className="ttg-panel">
 
-        <button className="ttg-close" onClick={onClose} aria-label="Close">✕</button>
+        <CloseButton onClose={onClose} />
 
         {/* Header — unchanged */}
         <div className="ttg-header">
