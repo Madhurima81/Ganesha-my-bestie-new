@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import CloseButton from '../../../components/CloseButton';
 
 const DailyMomentsClock = () => {
   const [selectedTime, setSelectedTime] = useState(null);
@@ -8,175 +9,148 @@ const DailyMomentsClock = () => {
   const [currentMessage, setCurrentMessage] = useState(null);
   const [animate, setAnimate] = useState(false);
   const [hintActive, setHintActive] = useState(true);
-  
+
   const clockRef = useRef(null);
-  const clockCenterX = 150; // Center X of SVG viewBox
-  const clockCenterY = 150; // Center Y of SVG viewBox
-  
-  // Available time moments and their associations with the shloka
+  const clockCenterX = 150;
+  const clockCenterY = 150;
+
   const timeMoments = [
     {
       id: 'morning',
-      hourAngle: 90, // 6:00 AM
+      hourAngle: 90,
       minuteAngle: 0,
       time: '6:00 AM',
       title: 'Morning Wake-Up',
       message: 'Starting your day with the Vakratunda shloka helps you have a peaceful, happy day! Ganesha removes obstacles before they even appear.',
-      icon: '🌅',
-      color: '#FFD166' // yellow/orange for sunrise
+      icon: '🌄',
+      color: '#FFD166'
     },
     {
       id: 'school',
-      hourAngle: 135, // 9:00 AM
+      hourAngle: 135,
       minuteAngle: 0,
       time: '9:00 AM',
       title: 'Before School',
       message: 'Saying the shloka before school helps you learn better and stay focused in class. Ganesha is the lord of wisdom and knowledge!',
       icon: '🏫',
-      color: '#06D6A0' // teal for school
+      color: '#06D6A0'
     },
     {
       id: 'lunchtime',
-      hourAngle: 180, // 12:00 PM
+      hourAngle: 180,
       minuteAngle: 0,
       time: '12:00 PM',
       title: 'Lunchtime',
       message: 'Saying the shloka before eating shows gratitude for your food. Ganesha loves modaks - he understands how important food is!',
       icon: '🍱',
-      color: '#EF476F' // red for food
+      color: '#EF476F'
     },
     {
       id: 'homework',
-      hourAngle: 225, // 3:00 PM
+      hourAngle: 225,
       minuteAngle: 0,
       time: '3:00 PM',
       title: 'Homework Time',
       message: 'When homework feels difficult, the shloka helps clear your mind and solve problems more easily. Ganesha brings wisdom!',
       icon: '📚',
-      color: '#118AB2' // blue for focus
+      color: '#118AB2'
     },
     {
       id: 'playtime',
-      hourAngle: 270, // 6:00 PM
+      hourAngle: 270,
       minuteAngle: 0,
       time: '6:00 PM',
       title: 'Playtime',
       message: 'Even during fun activities, saying the shloka helps you be kind and fair to friends. Ganesha brings harmony to your play!',
       icon: '🎮',
-      color: '#8338EC' // purple for fun
+      color: '#8338EC'
     },
     {
       id: 'bedtime',
-      hourAngle: 315, // 9:00 PM
+      hourAngle: 315,
       minuteAngle: 0,
       time: '9:00 PM',
       title: 'Bedtime',
       message: 'The shloka helps calm your mind before sleep and keeps nightmares away. Ganesha watches over you while you rest!',
       icon: '🌙',
-      color: '#073B4C' // dark blue for night
+      color: '#073B4C'
     }
   ];
-  
-  // Calculate angle from center of clock
+
   const calculateAngle = (x, y) => {
     if (!clockRef.current) return 0;
-    
+
     const rect = clockRef.current.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
-    
-    // Calculate angle in radians, then convert to degrees
+
     let angle = Math.atan2(y - centerY, x - centerX) * (180 / Math.PI);
-    
-    // Adjust angle to start from 12 o'clock position (270 degrees in standard coordinate system)
     angle = (angle + 270) % 360;
-    
+
     return angle;
   };
-  
-  // Find the closest time moment to a given angle
+
   const findClosestTimeMoment = (angle) => {
-    // Normalize angle to 0-360 range
     const normalizedAngle = (angle + 360) % 360;
-    
-    // Find closest time moment
+
     let closestMoment = timeMoments[0];
     let smallestDifference = 360;
-    
-    timeMoments.forEach(moment => {
-      // Calculate the absolute difference between angles
+
+    timeMoments.forEach((moment) => {
       let difference = Math.abs(normalizedAngle - moment.hourAngle);
-      // Take the smaller arc (e.g., 350° and 10° are 20° apart, not 340°)
       if (difference > 180) difference = 360 - difference;
-      
+
       if (difference < smallestDifference) {
         smallestDifference = difference;
         closestMoment = moment;
       }
     });
-    
+
     return closestMoment;
   };
-  
-  // Handle mouse/touch down on clock
+
   const handleMouseDown = (e) => {
     setDragging(true);
     setHintActive(false);
-    
-    // Get coordinates, handling both mouse and touch events
+
     const clientX = e.clientX || e.touches[0].clientX;
     const clientY = e.clientY || e.touches[0].clientY;
-    
+
     const angle = calculateAngle(clientX, clientY);
     updateClockHands(angle);
   };
-  
-  // Handle mouse/touch move while dragging
+
   const handleMouseMove = (e) => {
     if (!dragging) return;
-    
-    // Get coordinates, handling both mouse and touch events
+
     const clientX = e.clientX || e.touches[0].clientX;
     const clientY = e.clientY || e.touches[0].clientY;
-    
+
     const angle = calculateAngle(clientX, clientY);
     updateClockHands(angle);
   };
-  
-  // Handle mouse/touch release
+
   const handleMouseUp = () => {
     if (!dragging) return;
     setDragging(false);
-    
-    // Find the closest time moment to current angle
+
     const closestMoment = findClosestTimeMoment(hourHandAngle);
-    
-    // Snap to that time moment
     setHourHandAngle(closestMoment.hourAngle);
     setMinuteHandAngle(closestMoment.minuteAngle);
-    
-    // Show the message for this time
     showMessage(closestMoment);
   };
-  
-  // Update clock hands based on angle
+
   const updateClockHands = (angle) => {
     setHourHandAngle(angle);
-    // For simplicity, minute hand just follows hour hand in this demo
-    setMinuteHandAngle(angle * 12); // Minute hand moves 12x faster
+    setMinuteHandAngle(angle * 12);
   };
-  
-  // Show message for a time moment
+
   const showMessage = (moment) => {
-    // If selecting the same moment, just toggle animation
     if (selectedTime && selectedTime.id === moment.id) {
       setAnimate(false);
       setTimeout(() => setAnimate(true), 50);
     } else {
-      // Hide current message first if there is one
       setAnimate(false);
-      
-      // Then show new message after a brief delay
       setTimeout(() => {
         setSelectedTime(moment);
         setCurrentMessage(moment);
@@ -184,8 +158,7 @@ const DailyMomentsClock = () => {
       }, 300);
     }
   };
-  
-  // Handle clicking directly on a time marker
+
   const handleTimeMarkerClick = (moment) => {
     setHourHandAngle(moment.hourAngle);
     setMinuteHandAngle(moment.minuteAngle);
@@ -193,28 +166,26 @@ const DailyMomentsClock = () => {
     setHintActive(false);
   };
 
-  // Close the message panel
   const handleClose = () => {
     setAnimate(false);
     setTimeout(() => setCurrentMessage(null), 300);
   };
-  
-  // Set up event listeners for document to handle mouse/touch up outside component
+
   useEffect(() => {
     const handleGlobalMouseUp = () => {
       if (dragging) {
         handleMouseUp();
       }
     };
-    
+
     document.addEventListener('mouseup', handleGlobalMouseUp);
     document.addEventListener('touchend', handleGlobalMouseUp);
-    
+
     return () => {
       document.removeEventListener('mouseup', handleGlobalMouseUp);
       document.removeEventListener('touchend', handleGlobalMouseUp);
     };
-  }, [dragging]);
+  }, [dragging, hourHandAngle, selectedTime]);
 
   return (
     <div className="daily-moments-container" style={{
@@ -233,9 +204,9 @@ const DailyMomentsClock = () => {
         fontSize: 'clamp(1.5rem, 5vw, 2rem)',
         marginBottom: '15px'
       }}>
-        When to Say Ganesha's Shloka?
+        When to Say Ganesha&apos;s Shloka?
       </h2>
-      
+
       <p style={{
         textAlign: 'center',
         fontSize: 'clamp(0.9rem, 2vw, 1.1rem)',
@@ -244,8 +215,7 @@ const DailyMomentsClock = () => {
       }}>
         Move the clock hands to see special times to say the shloka!
       </p>
-      
-      {/* Main clock container */}
+
       <div style={{
         display: 'flex',
         flexDirection: 'column',
@@ -253,7 +223,6 @@ const DailyMomentsClock = () => {
         marginBottom: '20px',
         position: 'relative',
       }}>
-        {/* Hint arrow when component first loads */}
         {hintActive && (
           <div style={{
             position: 'absolute',
@@ -275,9 +244,8 @@ const DailyMomentsClock = () => {
             </div>
           </div>
         )}
-        
-        {/* SVG Clock */}
-        <svg 
+
+        <svg
           ref={clockRef}
           viewBox="0 0 300 300"
           width="280"
@@ -288,25 +256,23 @@ const DailyMomentsClock = () => {
           onTouchMove={handleMouseMove}
           style={{ cursor: 'pointer', userSelect: 'none', touchAction: 'none' }}
         >
-          {/* Clock face */}
           <circle cx={clockCenterX} cy={clockCenterY} r="140" fill="#f0f0f0" stroke="#333" strokeWidth="3" />
           <circle cx={clockCenterX} cy={clockCenterY} r="5" fill="#333" />
-          
-          {/* Hour markers */}
+
           {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((angle, index) => {
             const isMainHour = index % 3 === 0;
             const radians = angle * Math.PI / 180;
             const markerLength = isMainHour ? 15 : 10;
             const outerRadius = 130;
             const innerRadius = outerRadius - markerLength;
-            
+
             const x1 = clockCenterX + innerRadius * Math.cos(radians);
             const y1 = clockCenterY + innerRadius * Math.sin(radians);
             const x2 = clockCenterX + outerRadius * Math.cos(radians);
             const y2 = clockCenterY + outerRadius * Math.sin(radians);
-            
+
             return (
-              <line 
+              <line
                 key={`marker-${angle}`}
                 x1={x1}
                 y1={y1}
@@ -317,14 +283,13 @@ const DailyMomentsClock = () => {
               />
             );
           })}
-          
-          {/* Hour numbers */}
+
           {[12, 3, 6, 9].map((hour, index) => {
             const angle = index * 90 * Math.PI / 180;
             const radius = 110;
             const x = clockCenterX + radius * Math.cos(angle);
             const y = clockCenterY + radius * Math.sin(angle);
-            
+
             return (
               <text
                 key={`hour-${hour}`}
@@ -340,21 +305,20 @@ const DailyMomentsClock = () => {
               </text>
             );
           })}
-          
-          {/* Time moment markers with icons */}
+
           {timeMoments.map((moment, index) => {
             const radians = moment.hourAngle * Math.PI / 180;
             const radius = 90;
             const x = clockCenterX + radius * Math.cos(radians);
             const y = clockCenterY + radius * Math.sin(radians);
-            
+
             return (
-              <g 
+              <g
                 key={`moment-${index}`}
                 onClick={() => handleTimeMarkerClick(moment)}
                 style={{ cursor: 'pointer' }}
               >
-                <circle 
+                <circle
                   cx={x}
                   cy={y}
                   r="20"
@@ -380,8 +344,7 @@ const DailyMomentsClock = () => {
               </g>
             );
           })}
-          
-          {/* Hour hand */}
+
           <line
             x1={clockCenterX}
             y1={clockCenterY}
@@ -392,8 +355,7 @@ const DailyMomentsClock = () => {
             strokeLinecap="round"
             style={{ transition: dragging ? 'none' : 'all 0.3s ease' }}
           />
-          
-          {/* Minute hand */}
+
           <line
             x1={clockCenterX}
             y1={clockCenterY}
@@ -404,13 +366,11 @@ const DailyMomentsClock = () => {
             strokeLinecap="round"
             style={{ transition: dragging ? 'none' : 'all 0.3s ease' }}
           />
-          
-          {/* Center cap */}
+
           <circle cx={clockCenterX} cy={clockCenterY} r="8" fill="#333" />
         </svg>
       </div>
-      
-      {/* Message panel */}
+
       {currentMessage && (
         <div style={{
           backgroundColor: 'white',
@@ -424,29 +384,15 @@ const DailyMomentsClock = () => {
           transform: animate ? 'translateY(0)' : 'translateY(20px)',
           transition: 'opacity 0.3s ease, transform 0.3s ease',
         }}>
-          <button 
-            onClick={handleClose}
-            style={{
-              position: 'absolute',
-              top: '10px',
-              right: '10px',
-              background: 'none',
-              border: 'none',
-              fontSize: '20px',
-              cursor: 'pointer',
-              color: '#aaa',
-            }}
-          >
-            ✕
-          </button>
-          
+          <CloseButton onClose={handleClose} />
+
           <div style={{
             display: 'flex',
             alignItems: 'center',
             marginBottom: '15px',
           }}>
-            <span style={{ 
-              fontSize: '40px', 
+            <span style={{
+              fontSize: '40px',
               marginRight: '15px',
               backgroundColor: currentMessage.color,
               borderRadius: '50%',
@@ -460,14 +406,14 @@ const DailyMomentsClock = () => {
               {currentMessage.icon}
             </span>
             <div>
-              <h3 style={{ 
+              <h3 style={{
                 margin: '0 0 5px 0',
                 fontSize: 'clamp(1.1rem, 3vw, 1.4rem)',
-                color: currentMessage.color 
+                color: currentMessage.color
               }}>
                 {currentMessage.title}
               </h3>
-              <p style={{ 
+              <p style={{
                 margin: '0',
                 fontSize: 'clamp(0.8rem, 2vw, 0.9rem)',
                 fontStyle: 'italic',
@@ -477,7 +423,7 @@ const DailyMomentsClock = () => {
               </p>
             </div>
           </div>
-          
+
           <p style={{
             margin: '0 0 15px 0',
             fontSize: 'clamp(0.9rem, 2vw, 1.1rem)',
@@ -486,7 +432,7 @@ const DailyMomentsClock = () => {
           }}>
             {currentMessage.message}
           </p>
-          
+
           <div style={{
             backgroundColor: '#F8F9FA',
             borderRadius: '10px',
@@ -504,8 +450,7 @@ const DailyMomentsClock = () => {
           </div>
         </div>
       )}
-      
-      {/* Add some animations */}
+
       <style jsx>{`
         @keyframes bounce {
           0%, 100% { transform: translateY(0); }
