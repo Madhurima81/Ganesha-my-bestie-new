@@ -1,6 +1,6 @@
-// ZonePreviewModal.jsx — Sacred Portal design, scoped classes, closing animation
 import React, { useState } from 'react';
 import './ZonePreviewModal.css';
+import CloseButton from '../../components/CloseButton';
 import ProfilePillBtn from '../../lib/components/shared/ProfilePillBtn';
 import { getProfilePillBtnStyle } from '../../lib/config/ZoneThemes';
 import GaneshaCharacter from '../../lib/components/character/GaneshaCharacter';
@@ -86,7 +86,6 @@ const ZonePreviewModal = ({ zone, onClose, onStartZone }) => {
 
   const content = zoneContent[zone.id] || zoneContent['symbol-mountain'];
 
-  // Return button — gentle close
   const handleClose = () => {
     setClosing(true);
     setTimeout(() => {
@@ -95,7 +94,6 @@ const ZonePreviewModal = ({ zone, onClose, onStartZone }) => {
     }, 600);
   };
 
-  // Primary action button — expansion into zone
   const handlePlay = () => {
     setOpening(true);
     setTimeout(() => {
@@ -119,10 +117,8 @@ const ZonePreviewModal = ({ zone, onClose, onStartZone }) => {
           '--zone-modal-shadow': content.shadowColor,
         }}
       >
-        {/* Close button */}
-        <span className="portal-close-btn" onClick={handleClose}>×</span>
+        <CloseButton onClose={handleClose} />
 
-        {/* Mascot */}
         <GaneshaCharacter
           className="portal-mascot portal-ganesha"
           expression="happy"
@@ -130,11 +126,9 @@ const ZonePreviewModal = ({ zone, onClose, onStartZone }) => {
           aria-label="Ganesha"
         />
 
-        {/* Title */}
         <h2 className="portal-title">{zone.name}</h2>
         <p className="portal-subtitle">{content.tagline}</p>
 
-        {/* Features */}
         <div
           className="portal-features"
           style={{ background: content.featuresBg }}
@@ -147,7 +141,6 @@ const ZonePreviewModal = ({ zone, onClose, onStartZone }) => {
           ))}
         </div>
 
-        {/* Buttons */}
         <div className="portal-actions">
           <ProfilePillBtn
             label={content.primaryAction}
