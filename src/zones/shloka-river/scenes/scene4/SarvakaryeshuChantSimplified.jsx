@@ -670,12 +670,12 @@ const SarvakaryeshuChantContent = ({
                     shlokaPetalStates={{ 1: 'activated', 2: 'activated', 3: 'activated', 4: 'activated', 5: 'activated', 6: 'activated' }}
                     justEarnedPetals={sceneOuterPetalIds.map((id) => ({ ring: 'outer', id }))}
                     earnedSymbols={[
-                      { id: 'sarvakaryeshu', petalId: 7, image: symbolSarvakaryeshu },
-                      { id: 'sarvada', petalId: 8, image: symbolSarvada },
+                      { id: 'sarvakaryeshu', petalId: 7, ring: 'middle', image: symbolSarvakaryeshu },
+                      { id: 'sarvada', petalId: 8, ring: 'middle', image: symbolSarvada },
                     ]}
                     highlightPetals={sceneOuterPetalIds}
                     message="These meanings are growing inside you"
-                    autoCloseMs={7200}
+                    autoCloseMs={3000 + (2 * 950) + 2600}
                     onClose={() => {
                       setShowMandala(false);
                       setShowSceneCompletion(true);

@@ -1151,12 +1151,12 @@ const VakratundaGroveContent = ({
                 }}
                 justEarnedPetals={sceneOuterPetalIds.map((id) => ({ ring: 'outer', id }))}
                 earnedSymbols={[
-                  { id: 'vakratunda', petalId: 1, image: symbolVakratunda },
-                  { id: 'mahakaya', petalId: 2, image: symbolMahakaya },
+                  { id: 'vakratunda', petalId: 1, ring: 'middle', image: symbolVakratunda },
+                  { id: 'mahakaya', petalId: 2, ring: 'middle', image: symbolMahakaya },
                 ]}
                 highlightPetals={sceneOuterPetalIds}
                 message="These meanings are growing inside you"
-                autoCloseMs={7200}
+                autoCloseMs={3000 + (2 * 950) + 2600}
                 onClose={() => {
                   sceneActions.updateState({ completed: true });
                   persistCompletion();

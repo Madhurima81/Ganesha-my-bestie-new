@@ -777,12 +777,12 @@ const SuryakotiBankContent = ({
                     }}
                     justEarnedPetals={sceneOuterPetalIds.map((id) => ({ ring: 'outer', id }))}
                     earnedSymbols={[
-                      { id: 'suryakoti', petalId: 3, image: symbolSuryakoti },
-                      { id: 'samaprabha', petalId: 4, image: symbolSamaprabha },
+                      { id: 'suryakoti', petalId: 3, ring: 'middle', image: symbolSuryakoti },
+                      { id: 'samaprabha', petalId: 4, ring: 'middle', image: symbolSamaprabha },
                     ]}
                     highlightPetals={sceneOuterPetalIds}
                     message="These meanings are growing inside you"
-                    autoCloseMs={7200}
+                    autoCloseMs={3000 + (2 * 950) + 2600}
                     onClose={() => {
                       setShowMandala(false);
                       setShowSceneCompletion(true);

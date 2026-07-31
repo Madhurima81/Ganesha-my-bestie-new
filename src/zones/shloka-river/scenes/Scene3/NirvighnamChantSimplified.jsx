@@ -697,12 +697,12 @@ const NirvighnamChantContent = ({
                   shlokaPetalStates={{ 1: 'activated', 2: 'activated', 3: 'activated', 4: 'activated' }}
                   justEarnedPetals={sceneOuterPetalIds.map((id) => ({ ring: 'outer', id }))}
                   earnedSymbols={[
-                    { id: 'nirvighnam', petalId: 5, image: symbolNirvighnam },
-                    { id: 'kurumedeva', petalId: 6, image: symbolKurumedeva },
+                    { id: 'nirvighnam', petalId: 5, ring: 'middle', image: symbolNirvighnam },
+                    { id: 'kurumedeva', petalId: 6, ring: 'middle', image: symbolKurumedeva },
                   ]}
                   highlightPetals={sceneOuterPetalIds}
                   message="These meanings are growing inside you"
-                  autoCloseMs={7200}
+                  autoCloseMs={3000 + (2 * 950) + 2600}
                   onClose={() => { setShowMandala(false); setShowSceneCompletion(true); }}
                 />
               )}
