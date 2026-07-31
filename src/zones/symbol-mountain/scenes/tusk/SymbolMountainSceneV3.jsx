@@ -1094,11 +1094,18 @@ const SymbolMountainSceneContent = ({
                   3: 'awakened',
                   4: 'awakened',
                   5: 'awakened',
-                  6: 'awakened',
-                  7: 'awakened',
-                  8: 'awakened'
                 }}
-                highlightPetals={[8]}
+                justEarnedPetals={[
+                  { ring: 'middle', id: 6 },
+                  { ring: 'middle', id: 7 },
+                  { ring: 'middle', id: 8 },
+                ]}
+                earnedSymbols={[
+                  { id: 'eyes', petalId: 6, ring: 'middle', image: symbolEyesColored },
+                  { id: 'ears', petalId: 7, ring: 'middle', image: symbolEarColored },
+                  { id: 'tusk', petalId: 8, ring: 'middle', image: symbolTuskColored },
+                ]}
+                autoCloseMs={3000 + (3 * 950) + 2600}
                 message="That power is growing inside you"
                 onClose={() => {
                   setShowMandala(false);

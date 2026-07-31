@@ -1793,10 +1793,16 @@ const PondSceneContent = ({
                   1: 'awakened',
                   2: 'awakened',
                   3: 'awakened',
-                  4: 'awakened',
-                  5: 'awakened'
                 }}
-                highlightPetals={[5]}
+                justEarnedPetals={[
+                  { ring: 'middle', id: 4 },
+                  { ring: 'middle', id: 5 },
+                ]}
+                earnedSymbols={[
+                  { id: 'lotus', petalId: 4, ring: 'middle', image: symbolLotusColored },
+                  { id: 'trunk', petalId: 5, ring: 'middle', image: symbolTrunkColored },
+                ]}
+                autoCloseMs={3000 + (2 * 950) + 2600}
                 message="That power is growing inside you"
                 onClose={() => {
                   setShowMandala(false);
