@@ -201,8 +201,8 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   ];
 
   const colors = [
-    { id: 'red', name: 'Red', image: redImg, correct: false },
-    { id: 'orange', name: 'Orange', image: orangeImg, correct: true },
+    { id: 'red', name: 'Red', image: redImg, correct: true },
+    { id: 'orange', name: 'Orange', image: orangeImg, correct: false },
     { id: 'yellow', name: 'Yellow', image: yellowImg, correct: false },
     { id: 'green', name: 'Green', image: greenImg, correct: false }
   ];
@@ -439,7 +439,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     const color = colors.find(c => c.id === colorId);
     if (color.correct) {
       sceneActions.updateState({
-        storyDiscoveries: [...sceneState.storyDiscoveries, { image: orangeImg, name: 'Orange' }],
+        storyDiscoveries: [...sceneState.storyDiscoveries, { image: redImg, name: 'Red' }],
         gamePhase: 'color-correct'
       });
       setFeedbackMessage("");
@@ -675,14 +675,14 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             <img src={babyGaneshaSit} alt="Happy Ganesha" className="ganesha-celebrate" />
           </div>
           <div className="correct-food">
-            <img src={orangeImg} alt="Orange" className="food-in-hand pop-in" style={{ width: '180px', height: '180px' }} />
+            <img src={redImg} alt="Red" className="food-in-hand pop-in" style={{ width: '180px', height: '180px' }} />
           </div>
           <div className="celebration-sparkles">
             {Array.from({ length: 15 }).map((_, i) => (
               <div key={i} className="sparkle" style={{ left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%` }}>✨</div>
             ))}
           </div>
-          <div className="success-message">Yes! Orange is my favorite color! 🧡</div>
+          <div className="success-message">Yes! Red is my favorite color! ❤️</div>
         </div>
       )}
 
@@ -1054,8 +1054,8 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 </div>
                 <div className="friend-item">
                   <span className="friend-item-label">Color</span>
-                  <img src={orangeImg} alt="Orange" className="friend-item-img" />
-                  <span className="friend-item-text">Orange</span>
+                  <img src={redImg} alt="Red" className="friend-item-img" />
+                  <span className="friend-item-text">Red</span>
                 </div>
                 <div className="friend-item">
                   <span className="friend-item-label">Activity</span>

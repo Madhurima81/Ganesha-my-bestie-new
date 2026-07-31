@@ -185,7 +185,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
     // Ganesha Section - Color
     colorQuestion: "Tap my favorite color.",
-    colorCorrect: "Yes! Yellow is my favorite!",
+    colorCorrect: "Yes! Red is my favorite!",
 
     // Ganesha Section - Activity
     activityQuestion: "Tap my favorite activity.",
@@ -221,7 +221,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
     // Idle Hints (Ganesha Section)
     foodHint: "Look for the sweet I love.",
-    colorHint: "Look for the color of the sun.",
+    colorHint: "Look for the bright red color.",
     activityHint: "I love moving to music.",
     friendHint: "My tiny friend runs very fast."
   };
@@ -597,9 +597,9 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   ];
 
   const colors = [
-    { id: 'red', name: 'Red', image: redImg, correct: false },
+    { id: 'red', name: 'Red', image: redImg, correct: true },
     { id: 'orange', name: 'Orange', image: orangeImg, correct: false },
-    { id: 'yellow', name: 'Yellow', image: yellowImg, correct: true },
+    { id: 'yellow', name: 'Yellow', image: yellowImg, correct: false },
     { id: 'green', name: 'Green', image: greenImg, correct: false }
   ];
 
@@ -1366,7 +1366,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       playSparkle();
       triggerMiniGesture('color', 1500);
       triggerSparkleFx('all', 1700);
-      triggerDiscoveryFly({ image: yellowImg, name: 'Yellow' }, { durationMs: GANESHA_CORRECT_ADVANCE_DELAY_MS });
+      triggerDiscoveryFly({ image: redImg, name: 'Red' }, { durationMs: GANESHA_CORRECT_ADVANCE_DELAY_MS });
       sceneActions.updateState({
         correctChoiceId: colorId,
         gamePhase: 'color-correct'
@@ -1374,7 +1374,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       safeSetTimeout(() => {
         const currentState = latestSceneStateRef.current || sceneState;
         sceneActions.updateState({
-          storyDiscoveries: appendUniqueDiscovery(currentState.storyDiscoveries, { image: yellowImg, name: 'Yellow' })
+          storyDiscoveries: appendUniqueDiscovery(currentState.storyDiscoveries, { image: redImg, name: 'Red' })
         });
       }, DISCOVERY_CENTER_REACH_MS);
     } else {
@@ -1763,7 +1763,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             <img src={babyGaneshaSit} alt="Happy Ganesha" className="ganesha-celebrate" />
           </div>
           <div className="correct-food">
-            <img src={yellowImg} alt="Yellow" className="food-in-hand pop-in" style={{ width: '180px', height: '180px' }} />
+            <img src={redImg} alt="Red" className="food-in-hand pop-in" style={{ width: '180px', height: '180px' }} />
           </div>
           {/* <div className="success-message">Yes! Orange is my favorite color! 🧡</div> */}
         </div>
@@ -2286,7 +2286,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             ),
             items: [
               { id: 'g-food', label: 'FOOD', imageSrc: modakImg, imageAlt: 'Modak', text: 'Modak' },
-              { id: 'g-color', label: 'COLOR', imageSrc: yellowImg, imageAlt: 'Yellow', text: 'Yellow' },
+              { id: 'g-color', label: 'COLOR', imageSrc: redImg, imageAlt: 'Red', text: 'Red' },
               { id: 'g-activity', label: 'ACTIVITY', imageSrc: kidActSingImg, imageAlt: 'Dancing', text: 'Dancing' },
               { id: 'g-friend', label: 'FRIEND', imageSrc: mouseImg, imageAlt: 'Mooshika', text: 'Mooshika' },
             ]
