@@ -218,7 +218,7 @@ const SceneCompletionCelebration = ({
                         <div className="trophy-symbol-glow">
                           {symbolImages[symbol] ?
                             <img src={symbolImages[symbol]} alt={symbol} className="trophy-symbol-img" /> :
-                            <span style={{ fontSize: '64px' }}>⭐</span>
+                            <span>⭐</span>
                           }
                         </div>
                         {symbolData[symbol] && (
@@ -245,7 +245,7 @@ const SceneCompletionCelebration = ({
                         <div className="trophy-symbol-glow">
                           {appImages[appId] ?
                             <img src={appImages[appId]} alt={appId} className="trophy-symbol-img" /> :
-                            <span style={{ fontSize: '64px' }}>🎵</span>
+                            <span>🎵</span>
                           }
                         </div>
                         <p className="trophy-symbol-name">

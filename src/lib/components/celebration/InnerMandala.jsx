@@ -49,6 +49,21 @@ const OUTER_PETAL_TOKEN_POSITIONS = {
   8: { x: '37%', y: '43%' },
 };
 
+const MIDDLE_PETAL_TOKEN_POSITIONS = {
+  1: { x: '48.7%', y: '46.5%' },
+  2: { x: '50.3%', y: '46.6%' },
+  3: { x: '51.5%', y: '47.8%' },
+  4: { x: '51.4%', y: '49.5%' },
+  5: { x: '50.2%', y: '50.6%' },
+  6: { x: '48.5%', y: '50.6%' },
+  7: { x: '47.3%', y: '49.3%' },
+  8: { x: '47.4%', y: '47.6%' },
+};
+
+const SYMBOL_STAGGER_MS = 950;
+const SYMBOL_CENTER_DELAY_MS = 950;
+const SYMBOL_TRAVEL_MS = 1900;
+
 const isActive = (state) =>
   ['awakened', 'energized', 'bloomed', 'activated', 'glowing'].includes(state);
 
@@ -125,7 +140,7 @@ export default function InnerMandala({
           return prev.includes(key) ? prev : [...prev, key];
         });
         try { playCardRevealChime(index === 0 ? 0.42 : 0.34); } catch {}
-      }, 1500 + (index * 950));
+      }, SYMBOL_CENTER_DELAY_MS + SYMBOL_TRAVEL_MS + (index * SYMBOL_STAGGER_MS));
       timers.push(t);
     });
 
@@ -214,7 +229,9 @@ export default function InnerMandala({
         <div className="mandala-token-layer" aria-hidden="true">
           {earnedSymbols.map((symbol, index) => {
             const petalId = symbol?.petalId;
-            const position = OUTER_PETAL_TOKEN_POSITIONS[petalId];
+            const position = symbol.ring === 'middle'
+              ? MIDDLE_PETAL_TOKEN_POSITIONS[petalId]
+              : OUTER_PETAL_TOKEN_POSITIONS[petalId];
             if (!symbol?.image || !position) return null;
             return (
               <img
@@ -225,7 +242,7 @@ export default function InnerMandala({
                 style={{
                   '--target-x': position.x,
                   '--target-y': position.y,
-                  animationDelay: `${0.95 + (index * 0.95)}s`,
+                  animationDelay: `${(SYMBOL_CENTER_DELAY_MS + (index * SYMBOL_STAGGER_MS)) / 1000}s`,
                 }}
               />
             );

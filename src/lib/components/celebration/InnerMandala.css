@@ -212,7 +212,7 @@
   filter:
     drop-shadow(0 10px 16px rgba(32, 20, 55, 0.28))
     drop-shadow(0 0 12px rgba(255, 228, 151, 0.4));
-  animation: symbolToPetal 1.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: symbolJourney 2.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .mandala-sparkle-layer {
@@ -330,22 +330,37 @@
   }
 }
 
-@keyframes symbolToPetal {
+@keyframes symbolJourney {
   0% {
     left: 50%;
     top: 50%;
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0.42);
+    transform: translate(-50%, -50%) scale(0.15);
   }
-  18% {
+  22% {
+    left: 50%;
+    top: 50%;
     opacity: 1;
-    transform: translate(-50%, -54%) scale(0.9);
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+  30% {
+    transform: translate(-50%, -50%) scale(0.95);
+  }
+  72% {
+    left: var(--target-x);
+    top: var(--target-y);
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.75);
+    filter:
+      drop-shadow(0 10px 16px rgba(32, 20, 55, 0.28))
+      drop-shadow(0 0 12px rgba(255, 228, 151, 0.4));
   }
   100% {
     left: var(--target-x);
     top: var(--target-y);
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(0.68);
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.3);
+    filter: blur(4px);
   }
 }
 
@@ -385,7 +400,7 @@
     animation: none;
     left: var(--target-x);
     top: var(--target-y);
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(0.68);
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.3);
   }
 }

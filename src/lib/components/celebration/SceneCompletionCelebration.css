@@ -59,8 +59,7 @@
   position: relative;
   flex: 0 0 52%;
   max-width: 660px;
-  min-height: auto;
-  max-height: min(82dvh, 760px);
+  min-height: clamp(400px, 56dvh, 620px);
   background: url('../../../assets/cards/openingmodal.svg') no-repeat center / 100% 100%;
   color: var(--cs-card-text, #5D2E0F);
   border-radius: 0;
@@ -72,10 +71,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   text-align: center;
   z-index: 2005;
   animation: modalFadeIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.45s both;
-  overflow: hidden;
 }
 
 .celebration-card::after,
@@ -454,6 +453,18 @@
     brightness(1.05);
   animation:
     discoveredPulse 3.5s ease-in-out infinite;
+}
+
+.trophy-symbol-glow img,
+.trophy-symbol-glow span {
+  width: 86%;
+  height: 86%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  object-fit: contain;
+  font-size: clamp(30px, 3.2vw, 42px);
+  line-height: 1;
 }
 
 .game-complete-icon img {
