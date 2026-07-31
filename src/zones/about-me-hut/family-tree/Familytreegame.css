@@ -5197,7 +5197,7 @@
 
   /* 1. Comparison phase — allow scrolling and keep Continue in safe zone */
   .side-by-side-screen {
-    overflow-y: auto;
+    overflow: hidden;
     justify-content: flex-start;
     padding: clamp(10px, 1.8vh, 20px) 20px clamp(14px, 2.5vh, 24px);
   }
@@ -5207,28 +5207,36 @@
   }
   .side-by-side-screen .reveal-subtitle {
     font-size: clamp(1rem, 2vh, 1.4rem);
-    margin: 0 0 clamp(10px, 2vh, 18px) 0;
+    margin: 0 0 clamp(6px, 1.2vh, 12px) 0;
   }
   .two-trees-container {
+    flex: 1;
+    min-height: 0;
+    align-items: center;
     gap: clamp(18px, 2.5vw, 32px);
     margin-bottom: clamp(10px, 1.8vh, 16px);
   }
   .tree-column {
     padding: clamp(16px, 2.2vh, 26px);
     min-width: 400px;
+    min-height: 0 !important;
     gap: 8px;
   }
   .tree-heading {
     font-size: clamp(1.4rem, 2.8vh, 2rem);
     margin: 2px 0;
   }
-  .side-by-side-screen .continue-btn-simple {
+  .tree-visual {
+    height: clamp(240px, 38vh, 380px) !important;
+  }
+  .side-by-side-screen .action-buttons {
+    flex-shrink: 0;
+    margin-top: clamp(6px, 1.2vh, 14px);
+  }
+  .side-by-side-screen .family-tree-end-game-btn {
     margin: clamp(8px, 1.8vh, 16px) auto 0;
     padding: clamp(10px, 1.6vh, 14px) clamp(32px, 5.5vw, 44px);
     font-size: clamp(1.2rem, 2.4vh, 1.6rem);
-    flex-shrink: 0;
-    position: sticky;
-    bottom: max(8px, env(safe-area-inset-bottom));
   }
 
   /* 2. All-placed phase — keep absolute Continue button in safe zone */

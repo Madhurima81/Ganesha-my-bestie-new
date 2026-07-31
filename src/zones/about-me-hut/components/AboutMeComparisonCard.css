@@ -3,7 +3,7 @@
   inset: 0;
   z-index: 50;
   overflow: hidden;
-  padding: 20px 20px 14px;
+  padding: clamp(8px, 1.5vh, 20px) 20px clamp(8px, 1.5vh, 14px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -33,13 +33,16 @@
 .aboutme-comparison-grid {
   width: 100%;
   max-width: 1100px;
-  margin-bottom: 14px;
+  margin-bottom: clamp(6px, 1.2vh, 14px);
   display: flex;
   justify-content: center;
   align-items: stretch;
+  align-content: center;
   gap: 16px;
   flex-wrap: wrap;
-  transform: translateY(-20px);
+  flex: 1;
+  min-height: 0;
+  transform: none;
 }
 
 .aboutme-comparison-column {
@@ -82,7 +85,7 @@
 }
 
 .aboutme-comparison-item {
-  min-height: 100px;
+  min-height: clamp(64px, 10vh, 100px);
   border-radius: 12px;
   background: rgba(255, 252, 242, 0.98);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -112,16 +115,16 @@
 }
 
 .aboutme-comparison-item-media {
-  width: 48px;
-  height: 48px;
+  width: clamp(32px, 5vh, 48px);
+  height: clamp(32px, 5vh, 48px);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .aboutme-comparison-item-img {
-  width: 48px;
-  height: 48px;
+  width: clamp(32px, 5vh, 48px);
+  height: clamp(32px, 5vh, 48px);
   object-fit: contain;
 }
 
@@ -151,8 +154,7 @@
 }
 
 .aboutme-comparison-continue-btn {
-  margin-top: 4px;
-  margin-bottom: 8px;
+  margin: clamp(4px, 1vh, 12px) 0 clamp(4px, 1vh, 8px);
   border: none;
   border-radius: 22px;
   padding: 12px 38px;
@@ -170,6 +172,8 @@
     transform 0.2s ease,
     box-shadow 0.3s ease,
     filter 0.3s ease;
+  position: static;
+  flex-shrink: 0;
 }
 
 .aboutme-comparison-continue-btn:hover {
@@ -193,7 +197,7 @@
 .aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-column {
   min-width: 380px;
   max-width: 520px;
-  padding: 24px;
+  padding: clamp(12px, 2vh, 24px);
 }
 
 .aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-items-grid {
@@ -201,17 +205,17 @@
 }
 
 .aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-item {
-  min-height: 140px;
+  min-height: clamp(72px, 13vh, 140px);
 }
 
 .aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-item-media {
-  width: 70px;
-  height: 70px;
+  width: clamp(40px, 6.5vh, 70px);
+  height: clamp(40px, 6.5vh, 70px);
 }
 
 .aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-item-img {
-  width: 70px;
-  height: 70px;
+  width: clamp(40px, 6.5vh, 70px);
+  height: clamp(40px, 6.5vh, 70px);
 }
 
 .aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-title {
@@ -241,7 +245,7 @@
 @media (orientation: portrait) and (max-width: 1024px) {
   .aboutme-comparison-overlay {
     padding: 14px 16px 10px;
-    overflow-y: auto;
+    overflow: hidden;
   }
   .aboutme-comparison-grid {
     transform: none;
@@ -264,7 +268,7 @@
 
 /* Indian Story final compare: slightly lower cards + slightly taller cards/boxes */
 .aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-grid {
-  transform: translateY(70px);
+  transform: none;
 }
 
 .aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-column {
@@ -272,14 +276,14 @@
 }
 
 .aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-item {
-  min-height: 112px;
+  min-height: clamp(72px, 11vh, 112px);
   padding: 10px 8px 12px;
 }
 
 .aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-item-media,
 .aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-item-img {
-  width: 52px;
-  height: 52px;
+  width: clamp(32px, 5vh, 52px);
+  height: clamp(32px, 5vh, 52px);
 }
 
 @keyframes aboutmeFamilyContinuePulse {
@@ -308,7 +312,7 @@
 
 @media (max-width: 980px) {
   .aboutme-comparison-overlay {
-    overflow-y: auto;
+    overflow: hidden;
     padding-bottom: 22px;
   }
 
@@ -357,7 +361,7 @@
 @media (orientation: landscape) and (max-height: 1024px) {
 
   .aboutme-comparison-overlay {
-    overflow-y: auto;
+    overflow: hidden;
     padding: clamp(10px, 1.8vh, 18px) 20px clamp(12px, 2vh, 20px);
   }
 
@@ -404,8 +408,6 @@
   /* Continue — pin to bottom, always visible */
   .aboutme-comparison-continue-btn,
   .aboutme-comparison-overlay.aboutme-comparison--family-size .aboutme-comparison-continue-btn {
-    position: sticky;
-    bottom: 6px;
     margin-top: clamp(6px, 1.2vh, 12px);
     margin-bottom: 4px;
     padding: clamp(10px, 1.5vh, 14px) clamp(30px, 5vw, 42px);

@@ -1798,9 +1798,10 @@ const handleComplete = () => {
                     top: loc ? `${loc.y}%` : '50%',
                     left: loc ? `${loc.x}%` : '50%',
                     transform: 'translate(-50%, -50%)',
-                    width: 'clamp(56px, 6vw + 32px, 96px)',
-                    height: 'clamp(56px, 6vw + 32px, 96px)',
+                    width: 'clamp(42px, 4vw + 24px, 68px)',
+                    height: 'clamp(42px, 4vw + 24px, 68px)',
                     zIndex: 5,
+                    pointerEvents: 'none',
                     animation: 'popIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)',
                     filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.3))',
                   }}
@@ -1968,7 +1969,7 @@ const handleComplete = () => {
               }}
             />
 
-            {INDIA_REGIONS.filter(r => r.id !== 'kailash' && r.id !== 'other').map((region) => {
+            {INDIA_REGIONS.filter(r => r.id !== 'kailash').map((region) => {
               const isSelected = selectedRegion?.id === region.id;
               const shortLabel = region.label.replace(' India', '');
               return (
@@ -1986,7 +1987,7 @@ const handleComplete = () => {
                   }}
                   aria-label={region.label}
                 >
-                  <img src={region.icon} alt="" className="mis-region-pin-icon" />
+                  <img src={region.icon || otherLangIcon} alt="" className="mis-region-pin-icon" />
                   <div className="mis-region-pin-label">{shortLabel}</div>
                 </button>
               );
