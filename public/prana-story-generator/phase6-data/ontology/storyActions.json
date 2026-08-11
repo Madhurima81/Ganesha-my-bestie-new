@@ -1,0 +1,71 @@
+[
+  {
+    "id": "ACTION_SEARCH"
+  },
+  {
+    "id": "ACTION_EXPLORE"
+  },
+  {
+    "id": "ACTION_HELP"
+  },
+  {
+    "id": "ACTION_RESCUE"
+  },
+  {
+    "id": "ACTION_PROTECT"
+  },
+  {
+    "id": "ACTION_BUILD"
+  },
+  {
+    "id": "ACTION_CREATE"
+  },
+  {
+    "id": "ACTION_DELIVER"
+  },
+  {
+    "id": "ACTION_SOLVE"
+  },
+  {
+    "id": "ACTION_LEARN"
+  },
+  {
+    "id": "ACTION_TEACH"
+  },
+  {
+    "id": "ACTION_SHARE"
+  },
+  {
+    "id": "ACTION_CARE_FOR"
+  },
+  {
+    "id": "ACTION_RESTORE"
+  },
+  {
+    "id": "ACTION_ORGANIZE"
+  },
+  {
+    "id": "ACTION_COMMUNICATE"
+  },
+  {
+    "id": "ACTION_GUIDE"
+  },
+  {
+    "id": "ACTION_PERFORM"
+  },
+  {
+    "id": "ACTION_CELEBRATE"
+  },
+  {
+    "id": "ACTION_PRACTICE"
+  },
+  {
+    "id": "ACTION_REPAIR"
+  },
+  {
+    "id": "ACTION_DISCOVER"
+  },
+  {
+    "id": "ACTION_OBSERVE"
+  }
+]

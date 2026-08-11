@@ -1,0 +1,1311 @@
+[
+  {
+    "id": "WORLD001",
+    "name": "Whispering Forest",
+    "hard": {
+      "world_types": [
+        "WT_NATURE"
+      ],
+      "attributes": [
+        "WA_MYSTERIOUS",
+        "WA_HIDDEN"
+      ],
+      "functions": [
+        "WF_EXPLORATION",
+        "WF_RESCUE"
+      ]
+    },
+    "soft_suggested": {
+      "emotional_tone": "Curious",
+      "best_adventure_archetypes_raw": [
+        "Rescue Mission",
+        "Mystery to Solve",
+        "Treasure Hunt",
+        "Friendship Repair",
+        "Discovery Journey",
+        "Team Adventure",
+        "Great Journey"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "derived from single source field (bestAdventureArchetypes) plus name inference"
+    }
+  },
+  {
+    "id": "WORLD002",
+    "name": "Ancient Banyan Grove",
+    "hard": {
+      "world_types": [
+        "WT_NATURE",
+        "WT_ANCIENT"
+      ],
+      "attributes": [
+        "WA_SPIRITUAL",
+        "WA_WISDOM",
+        "WA_PEACEFUL"
+      ],
+      "functions": [
+        "WF_LEARNING"
+      ]
+    },
+    "soft_suggested": {
+      "emotional_tone": "Calm",
+      "best_adventure_archetypes_raw": [
+        "Wisdom Challenge",
+        "Mentor Journey",
+        "Discovery Journey",
+        "Ancient Secret",
+        "Great Journey",
+        "Choice & Consequence"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "derived from single source field (bestAdventureArchetypes) plus name inference"
+    }
+  },
+  {
+    "id": "WORLD003",
+    "name": "Whispering Meadow",
+    "hard": {
+      "world_types": [
+        "WT_NATURE"
+      ],
+      "attributes": [
+        "WA_PEACEFUL",
+        "WA_SOCIAL"
+      ],
+      "functions": [
+        "WF_EXPLORATION",
+        "WF_COMMUNITY"
+      ]
+    },
+    "soft_suggested": {
+      "emotional_tone": "Peaceful",
+      "best_adventure_archetypes_raw": [
+        "Friendship Repair",
+        "Gift of Giving",
+        "New Friend",
+        "Discovery Journey",
+        "Helping Hand",
+        "Nature's Balance"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "derived from single source field (bestAdventureArchetypes) plus name inference"
+    }
+  },
+  {
+    "id": "WORLD004",
+    "name": "Crystal River Valley",
+    "hard": {
+      "world_types": [
+        "WT_WATER",
+        "WT_NATURE"
+      ],
+      "attributes": [
+        "WA_PEACEFUL",
+        "WA_CHANGING"
+      ],
+      "functions": [
+        "WF_EXPLORATION",
+        "WF_RESCUE"
+      ]
+    },
+    "soft_suggested": {
+      "emotional_tone": "Wonder",
+      "best_adventure_archetypes_raw": [
+        "Rescue Mission",
+        "Great Journey",
+        "Nature's Balance",
+        "Discovery Journey",
+        "Time Adventure",
+        "Team Adventure"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "derived from single source field (bestAdventureArchetypes) plus name inference"
+    }
+  },
+  {
+    "id": "WORLD005",
+    "name": "Hidden Waterfall",
+    "hard": {
+      "world_types": [
+        "WT_WATER",
+        "WT_NATURE"
+      ],
+      "attributes": [
+        "WA_HIDDEN",
+        "WA_MYSTERIOUS"
+      ],
+      "functions": [
+        "WF_EXPLORATION",
+        "WF_MYSTERY",
+        "WF_RESCUE"
+      ]
+    },
+    "soft_suggested": {
+      "emotional_tone": "Curious",
+      "best_adventure_archetypes_raw": [
+        "Secret Discovery",
+        "Treasure Hunt",
+        "Rescue Mission",
+        "Discovery Journey",
+        "Great Journey",
+        "Ancient Secret"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "derived from single source field (bestAdventureArchetypes) plus name inference"
+    }
+  },
+  {
+    "id": "WORLD006",
+    "name": "Sunny Orchard",
+    "hard": {
+      "world_types": [
+        "WT_NATURE"
+      ],
+      "attributes": [
+        "WA_ABUNDANT",
+        "WA_SOCIAL"
+      ],
+      "functions": [
+        "WF_COMMUNITY",
+        "WF_CELEBRATION"
+      ]
+    },
+    "soft_suggested": {
+      "emotional_tone": "Joyful",
+      "best_adventure_archetypes_raw": [
+        "Gift of Giving",
+        "Helping Hand",
+        "Community Project",
+        "Celebration Preparation",
+        "Friendship Repair",
+        "Nature's Balance"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "derived from single source field (bestAdventureArchetypes) plus name inference"
+    }
+  },
+  {
+    "id": "WORLD007",
+    "name": "Flower Garden",
+    "hard": {
+      "world_types": [
+        "WT_NATURE"
+      ],
+      "attributes": [
+        "WA_PEACEFUL",
+        "WA_ABUNDANT"
+      ],
+      "functions": [
+        "WF_EXPLORATION",
+        "WF_COMMUNITY"
+      ]
+    },
+    "soft_suggested": {
+      "emotional_tone": "Peaceful",
+      "best_adventure_archetypes_raw": [
+        "Nature's Balance",
+        "Gift of Giving",
+        "Helping Hand",
+        "Discovery Journey",
+        "Friendship Repair",
+        "New Friend"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "derived from single source field (bestAdventureArchetypes) plus name inference"
+    }
+  },
+  {
+    "id": "WORLD008",
+    "name": "Bamboo Forest",
+    "hard": {
+      "world_types": [
+        "WT_NATURE"
+      ],
+      "attributes": [
+        "WA_CHANGING",
+        "WA_SOCIAL"
+      ],
+      "functions": [
+        "WF_BUILDING",
+        "WF_EXPLORATION"
+      ]
+    },
+    "soft_suggested": {
+      "emotional_tone": "Determined",
+      "best_adventure_archetypes_raw": [
+        "Great Journey",
+        "Discovery Journey",
+        "Build & Repair",
+        "Nature's Balance",
+        "Team Adventure",
+        "Rescue Mission"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "derived from single source field (bestAdventureArchetypes) plus name inference"
+    }
+  },
+  {
+    "id": "WORLD009",
+    "name": "Misty Mountains",
+    "hard": {
+      "world_types": [
+        "WT_NATURE",
+        "WT_WILDERNESS"
+      ],
+      "attributes": [
+        "WA_DANGEROUS",
+        "WA_MYSTERIOUS"
+      ],
+      "functions": [
+        "WF_SURVIVAL",
+        "WF_RESCUE",
+        "WF_EXPLORATION"
+      ]
+    },
+    "soft_suggested": {
+      "emotional_tone": "Tense",
+      "best_adventure_archetypes_raw": [
+        "Great Journey",
+        "Survival Adventure",
+        "Rescue Mission",
+        "Time Adventure",
+        "Discovery Journey",
+        "Hero's Trial"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "derived from single source field (bestAdventureArchetypes) plus name inference"
+    }
+  },
+  {
+    "id": "WORLD010",
+    "name": "Golden Grasslands",
+    "hard": {
+      "world_types": [
+        "WT_NATURE"
+      ],
+      "attributes": [
+        "WA_ABUNDANT",
+        "WA_SOCIAL"
+      ],
+      "functions": [
+        "WF_COMMUNITY",
+        "WF_EXPLORATION"
+      ]
+    },
+    "soft_suggested": {
+      "emotional_tone": "Free",
+      "best_adventure_archetypes_raw": [
+        "Great Journey",
+        "Community Project",
+        "Team Adventure",
+        "Nature's Balance",
+        "Discovery Journey",
+        "Helping Hand"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "derived from single source field (bestAdventureArchetypes) plus name inference"
+    }
+  },
+  {
+    "id": "WORLD012",
+    "name": "Lotus Pond",
+    "hard": {
+      "world_types": [
+        "WT_WATER",
+        "WT_NATURE"
+      ],
+      "attributes": [
+        "WA_PEACEFUL",
+        "WA_SPIRITUAL"
+      ],
+      "functions": [
+        "WF_EXPLORATION",
+        "WF_COMMUNITY"
+      ]
+    },
+    "soft_suggested": {
+      "emotional_tone": "Calm",
+      "best_adventure_archetypes_raw": [
+        "Discovery Journey",
+        "Gift of Giving",
+        "Nature's Balance",
+        "New Friend",
+        "Helping Hand",
+        "Mystery to Solve"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "derived from single source field (bestAdventureArchetypes) plus name inference"
+    }
+  },
+  {
+    "id": "WORLD013",
+    "name": "Turtle Bay",
+    "hard": {
+      "world_types": [
+        "WT_WATER"
+      ],
+      "attributes": [
+        "WA_PEACEFUL",
+        "WA_SOCIAL"
+      ],
+      "functions": [
+        "WF_RESCUE",
+        "WF_COMMUNITY"
+      ]
+    },
+    "soft_suggested": {
+      "emotional_tone": "Calm",
+      "best_adventure_archetypes_raw": [
+        "Rescue Mission",
+        "Great Journey",
+        "Nature's Balance",
+        "Helping Hand",
+        "Team Adventure",
+        "Gift of Giving"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "derived from single source field (bestAdventureArchetypes) plus name inference"
+    }
+  },
+  {
+    "id": "WORLD014",
+    "name": "Mangrove Marsh",
+    "hard": {
+      "world_types": [
+        "WT_WATER",
+        "WT_NATURE"
+      ],
+      "attributes": [
+        "WA_MYSTERIOUS",
+        "WA_DANGEROUS"
+      ],
+      "functions": [
+        "WF_EXPLORATION",
+        "WF_MYSTERY",
+        "WF_SURVIVAL"
+      ]
+    },
+    "soft_suggested": {
+      "emotional_tone": "Tense",
+      "best_adventure_archetypes_raw": [
+        "Discovery Journey",
+        "Mystery to Solve",
+        "Nature's Balance",
+        "Rescue Mission",
+        "Great Journey",
+        "Survival Adventure"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "derived from single source field (bestAdventureArchetypes) plus name inference"
+    }
+  },
+  {
+    "id": "WORLD015",
+    "name": "Waterfall Caves",
+    "hard": {
+      "world_types": [
+        "WT_UNDERGROUND",
+        "WT_WATER"
+      ],
+      "attributes": [
+        "WA_HIDDEN",
+        "WA_MYSTERIOUS",
+        "WA_ANCIENT"
+      ],
+      "functions": [
+        "WF_MYSTERY",
+        "WF_EXPLORATION",
+        "WF_RESCUE"
+      ]
+    },
+    "soft_suggested": {
+      "emotional_tone": "Curious",
+      "best_adventure_archetypes_raw": [
+        "Ancient Secret",
+        "Treasure Hunt",
+        "Rescue Mission",
+        "Discovery Journey",
+        "Mystery to Solve",
+        "Great Journey"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "derived from single source field (bestAdventureArchetypes) plus name inference"
+    }
+  },
+  {
+    "id": "WORLD017",
+    "name": "Woodland Village",
+    "hard": {
+      "world_types": [
+        "WT_COMMUNITY"
+      ],
+      "attributes": [
+        "WA_SOCIAL"
+      ],
+      "functions": [
+        "WF_COMMUNITY",
+        "WF_BUILDING",
+        "WF_CELEBRATION"
+      ]
+    },
+    "soft_suggested": {
+      "emotional_tone": "Warm",
+      "best_adventure_archetypes_raw": [
+        "Community Project",
+        "Helping Hand",
+        "Gift of Giving",
+        "Build Together",
+        "Friendship Repair",
+        "Celebration Preparation"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "derived from single source field (bestAdventureArchetypes) plus name inference"
+    }
+  },
+  {
+    "id": "WORLD018",
+    "name": "Treehouse Village",
+    "hard": {
+      "world_types": [
+        "WT_COMMUNITY"
+      ],
+      "attributes": [
+        "WA_SOCIAL",
+        "WA_CREATIVE"
+      ],
+      "functions": [
+        "WF_BUILDING",
+        "WF_COMMUNITY"
+      ]
+    },
+    "soft_suggested": {
+      "emotional_tone": "Playful",
+      "best_adventure_archetypes_raw": [
+        "Team Adventure",
+        "Build Together",
+        "Community Project",
+        "Discovery Journey",
+        "Helping Hand",
+        "Performance Story"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "derived from single source field (bestAdventureArchetypes) plus name inference"
+    }
+  },
+  {
+    "id": "WORLD019",
+    "name": "Riverside Village",
+    "hard": {
+      "world_types": [
+        "WT_COMMUNITY",
+        "WT_WATER"
+      ],
+      "attributes": [
+        "WA_SOCIAL"
+      ],
+      "functions": [
+        "WF_COMMUNITY",
+        "WF_CELEBRATION"
+      ]
+    },
+    "soft_suggested": {
+      "emotional_tone": "Warm",
+      "best_adventure_archetypes_raw": [
+        "Community Project",
+        "Festival Adventure",
+        "Helping Hand",
+        "Nature's Balance",
+        "Gift of Giving",
+        "Performance Story"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "derived from single source field (bestAdventureArchetypes) plus name inference"
+    }
+  },
+  {
+    "id": "WORLD020",
+    "name": "Hilltop Village",
+    "hard": {
+      "world_types": [
+        "WT_COMMUNITY"
+      ],
+      "attributes": [
+        "WA_SOCIAL"
+      ],
+      "functions": [
+        "WF_COMMUNITY",
+        "WF_BUILDING"
+      ]
+    },
+    "soft_suggested": {
+      "emotional_tone": "Warm",
+      "best_adventure_archetypes_raw": [
+        "Community Project",
+        "Helping Hand",
+        "Build Together",
+        "Promise Keeper",
+        "Celebration Preparation",
+        "Performance Story"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "derived from single source field (bestAdventureArchetypes) plus name inference"
+    }
+  },
+  {
+    "id": "WORLD021",
+    "name": "Celebration Village",
+    "hard": {
+      "world_types": [
+        "WT_COMMUNITY"
+      ],
+      "attributes": [
+        "WA_SOCIAL",
+        "WA_PLAYFUL"
+      ],
+      "functions": [
+        "WF_CELEBRATION",
+        "WF_COMMUNITY"
+      ]
+    },
+    "soft_suggested": {
+      "emotional_tone": "Joyful",
+      "best_adventure_archetypes_raw": [
+        "Festival Adventure",
+        "Performance Story",
+        "Helping Hand",
+        "Community Project",
+        "Mystery to Solve",
+        "Gift of Giving"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "derived from single source field (bestAdventureArchetypes) plus name inference"
+    }
+  },
+  {
+    "id": "WORLD023",
+    "name": "Magic Garden",
+    "hard": {
+      "world_types": [
+        "WT_FANTASY",
+        "WT_NATURE"
+      ],
+      "attributes": [
+        "WA_MAGICAL",
+        "WA_ABUNDANT"
+      ],
+      "functions": [
+        "WF_EXPLORATION",
+        "WF_MAGIC"
+      ]
+    },
+    "soft_suggested": {
+      "emotional_tone": "Wonder",
+      "best_adventure_archetypes_raw": [
+        "Magical Discovery",
+        "Nature's Balance",
+        "Gift of Giving",
+        "Discovery Journey",
+        "Helping Hand",
+        "New Friend"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "derived from single source field (bestAdventureArchetypes) plus name inference"
+    }
+  },
+  {
+    "id": "WORLD024",
+    "name": "Rainbow Kingdom",
+    "hard": {
+      "world_types": [
+        "WT_FANTASY",
+        "WT_CELESTIAL"
+      ],
+      "attributes": [
+        "WA_MAGICAL",
+        "WA_PLAYFUL",
+        "WA_ABUNDANT"
+      ],
+      "functions": [
+        "WF_CELEBRATION",
+        "WF_MAGIC"
+      ]
+    },
+    "soft_suggested": {
+      "emotional_tone": "Joyful",
+      "best_adventure_archetypes_raw": [
+        "Great Journey",
+        "Festival Adventure",
+        "Gift of Giving",
+        "Community Project",
+        "Magical Quest",
+        "Performance Story"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "derived from single source field (bestAdventureArchetypes) plus name inference"
+    }
+  },
+  {
+    "id": "WORLD025",
+    "name": "Cloud Kingdom",
+    "hard": {
+      "world_types": [
+        "WT_FANTASY",
+        "WT_CELESTIAL"
+      ],
+      "attributes": [
+        "WA_MAGICAL",
+        "WA_ISOLATED"
+      ],
+      "functions": [
+        "WF_RESCUE",
+        "WF_MAGIC",
+        "WF_EXPLORATION"
+      ]
+    },
+    "soft_suggested": {
+      "emotional_tone": "Wonder",
+      "best_adventure_archetypes_raw": [
+        "Great Journey",
+        "Rescue Mission",
+        "Magical Quest",
+        "Discovery Journey",
+        "Time Adventure",
+        "Team Adventure"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "derived from single source field (bestAdventureArchetypes) plus name inference"
+    }
+  },
+  {
+    "id": "WORLD026",
+    "name": "Moonlight Valley",
+    "hard": {
+      "world_types": [
+        "WT_FANTASY",
+        "WT_CELESTIAL"
+      ],
+      "attributes": [
+        "WA_MYSTERIOUS",
+        "WA_SPIRITUAL"
+      ],
+      "functions": [
+        "WF_MYSTERY",
+        "WF_LEARNING"
+      ]
+    },
+    "soft_suggested": {
+      "emotional_tone": "Reflective",
+      "best_adventure_archetypes_raw": [
+        "Ancient Secret",
+        "Mystery to Solve",
+        "Dream Adventure",
+        "Discovery Journey",
+        "Wisdom Challenge",
+        "Magical Discovery"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "derived from single source field (bestAdventureArchetypes) plus name inference"
+    }
+  },
+  {
+    "id": "WORLD027",
+    "name": "Star Forest",
+    "hard": {
+      "world_types": [
+        "WT_NATURE",
+        "WT_CELESTIAL"
+      ],
+      "attributes": [
+        "WA_MAGICAL",
+        "WA_ANCIENT"
+      ],
+      "functions": [
+        "WF_EXPLORATION",
+        "WF_MAGIC"
+      ]
+    },
+    "soft_suggested": {
+      "emotional_tone": "Wonder",
+      "best_adventure_archetypes_raw": [
+        "Great Journey",
+        "Ancient Secret",
+        "Discovery Journey",
+        "Wish or Blessing",
+        "Magical Quest",
+        "Treasure Hunt"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "derived from single source field (bestAdventureArchetypes) plus name inference"
+    }
+  },
+  {
+    "id": "WORLD028",
+    "name": "Crystal Caverns",
+    "hard": {
+      "world_types": [
+        "WT_UNDERGROUND"
+      ],
+      "attributes": [
+        "WA_HIDDEN",
+        "WA_ANCIENT"
+      ],
+      "functions": [
+        "WF_MYSTERY",
+        "WF_RESCUE",
+        "WF_EXPLORATION"
+      ]
+    },
+    "soft_suggested": {
+      "emotional_tone": "Tense",
+      "best_adventure_archetypes_raw": [
+        "Treasure Hunt",
+        "Ancient Secret",
+        "Mystery to Solve",
+        "Rescue Mission",
+        "Discovery Journey",
+        "Magical Discovery"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "derived from single source field (bestAdventureArchetypes) plus name inference"
+    }
+  },
+  {
+    "id": "WORLD029",
+    "name": "Temple Courtyard",
+    "hard": {
+      "world_types": [
+        "WT_ANCIENT",
+        "WT_COMMUNITY"
+      ],
+      "attributes": [
+        "WA_SPIRITUAL",
+        "WA_SAFE",
+        "WA_WISDOM"
+      ],
+      "functions": [
+        "WF_LEARNING",
+        "WF_MYSTERY"
+      ]
+    },
+    "soft_suggested": {
+      "emotional_tone": "Reflective",
+      "best_adventure_archetypes_raw": [
+        "Ancient Secret",
+        "Treasure Hunt",
+        "Wisdom Challenge",
+        "Mystery to Solve",
+        "Discovery Journey"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "derived from single source field (bestAdventureArchetypes) plus name inference"
+    }
+  },
+  {
+    "id": "WORLD030",
+    "name": "Wishing Woods",
+    "hard": {
+      "world_types": [
+        "WT_FANTASY",
+        "WT_NATURE"
+      ],
+      "attributes": [
+        "WA_MAGICAL",
+        "WA_MYSTERIOUS"
+      ],
+      "functions": [
+        "WF_MAGIC",
+        "WF_EXPLORATION"
+      ]
+    },
+    "soft_suggested": {
+      "emotional_tone": "Wonder",
+      "best_adventure_archetypes_raw": [
+        "Wish or Blessing",
+        "Magical Discovery",
+        "Choice & Consequence",
+        "Discovery Journey",
+        "Gift of Giving",
+        "Dream Adventure"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "derived from single source field (bestAdventureArchetypes) plus name inference"
+    }
+  },
+  {
+    "id": "WORLD032",
+    "name": "Secret Library",
+    "hard": {
+      "world_types": [
+        "WT_LEARNING"
+      ],
+      "attributes": [
+        "WA_HIDDEN",
+        "WA_WISDOM",
+        "WA_PEACEFUL"
+      ],
+      "functions": [
+        "WF_LEARNING",
+        "WF_MYSTERY"
+      ]
+    },
+    "soft_suggested": {
+      "emotional_tone": "Curious",
+      "best_adventure_archetypes_raw": [
+        "Discovery Journey",
+        "Ancient Secret",
+        "Wisdom Challenge",
+        "Learning Quest",
+        "Mentor Journey",
+        "Mystery to Solve"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "derived from single source field (bestAdventureArchetypes) plus name inference"
+    }
+  },
+  {
+    "id": "WORLD033",
+    "name": "Forgotten Ruins",
+    "hard": {
+      "world_types": [
+        "WT_ANCIENT"
+      ],
+      "attributes": [
+        "WA_ANCIENT",
+        "WA_HIDDEN",
+        "WA_MYSTERIOUS"
+      ],
+      "functions": [
+        "WF_MYSTERY",
+        "WF_EXPLORATION"
+      ]
+    },
+    "soft_suggested": {
+      "emotional_tone": "Tense",
+      "best_adventure_archetypes_raw": [
+        "Ancient Secret",
+        "Treasure Hunt",
+        "Discovery Journey",
+        "Great Journey",
+        "Mystery to Solve",
+        "Survival Adventure"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "derived from single source field (bestAdventureArchetypes) plus name inference"
+    }
+  },
+  {
+    "id": "WORLD034",
+    "name": "Hidden Cave Network",
+    "hard": {
+      "world_types": [
+        "WT_UNDERGROUND"
+      ],
+      "attributes": [
+        "WA_HIDDEN",
+        "WA_MYSTERIOUS"
+      ],
+      "functions": [
+        "WF_MYSTERY",
+        "WF_RESCUE",
+        "WF_EXPLORATION"
+      ]
+    },
+    "soft_suggested": {
+      "emotional_tone": "Tense",
+      "best_adventure_archetypes_raw": [
+        "Treasure Hunt",
+        "Rescue Mission",
+        "Mystery to Solve",
+        "Discovery Journey",
+        "Great Journey",
+        "Time Adventure"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "derived from single source field (bestAdventureArchetypes) plus name inference"
+    }
+  },
+  {
+    "id": "WORLD035",
+    "name": "Lost Island",
+    "hard": {
+      "world_types": [
+        "WT_NATURE",
+        "WT_WILDERNESS"
+      ],
+      "attributes": [
+        "WA_ISOLATED",
+        "WA_DANGEROUS"
+      ],
+      "functions": [
+        "WF_SURVIVAL",
+        "WF_RESCUE",
+        "WF_EXPLORATION"
+      ]
+    },
+    "soft_suggested": {
+      "emotional_tone": "Tense",
+      "best_adventure_archetypes_raw": [
+        "Great Journey",
+        "Survival Adventure",
+        "Rescue Mission",
+        "Discovery Journey",
+        "Nature's Balance",
+        "Team Adventure"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "derived from single source field (bestAdventureArchetypes) plus name inference"
+    }
+  },
+  {
+    "id": "WORLD036",
+    "name": "Treasure Cliffs",
+    "hard": {
+      "world_types": [
+        "WT_NATURE",
+        "WT_WILDERNESS"
+      ],
+      "attributes": [
+        "WA_DANGEROUS"
+      ],
+      "functions": [
+        "WF_EXPLORATION",
+        "WF_RESCUE"
+      ]
+    },
+    "soft_suggested": {
+      "emotional_tone": "Tense",
+      "best_adventure_archetypes_raw": [
+        "Treasure Hunt",
+        "Great Journey",
+        "Rescue Mission",
+        "Time Adventure",
+        "Discovery Journey",
+        "Hero's Trial"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "derived from single source field (bestAdventureArchetypes) plus name inference"
+    }
+  },
+  {
+    "id": "WORLD038",
+    "name": "Great Caravan Trail",
+    "hard": {
+      "world_types": [
+        "WT_TRAVEL"
+      ],
+      "attributes": [
+        "WA_SOCIAL",
+        "WA_CHANGING"
+      ],
+      "functions": [
+        "WF_EXPLORATION",
+        "WF_COMMUNITY"
+      ]
+    },
+    "soft_suggested": {
+      "emotional_tone": "Determined",
+      "best_adventure_archetypes_raw": [
+        "Great Journey",
+        "Escort Mission",
+        "Delivery Quest",
+        "Team Adventure",
+        "Community Project",
+        "Time Adventure"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "derived from single source field (bestAdventureArchetypes) plus name inference"
+    }
+  },
+  {
+    "id": "WORLD039",
+    "name": "Desert Oasis",
+    "hard": {
+      "world_types": [
+        "WT_WILDERNESS"
+      ],
+      "attributes": [
+        "WA_SURVIVAL",
+        "WA_ABUNDANT"
+      ],
+      "functions": [
+        "WF_SURVIVAL",
+        "WF_EXPLORATION"
+      ]
+    },
+    "soft_suggested": {
+      "emotional_tone": "Hopeful",
+      "best_adventure_archetypes_raw": [
+        "Survival Adventure",
+        "Great Journey",
+        "Rescue Mission",
+        "Discovery Journey",
+        "Nature's Balance",
+        "Time Adventure"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "derived from single source field (bestAdventureArchetypes) plus name inference"
+    }
+  },
+  {
+    "id": "WORLD040",
+    "name": "Snowy Highlands",
+    "hard": {
+      "world_types": [
+        "WT_WILDERNESS"
+      ],
+      "attributes": [
+        "WA_DANGEROUS",
+        "WA_SURVIVAL"
+      ],
+      "functions": [
+        "WF_SURVIVAL",
+        "WF_RESCUE"
+      ]
+    },
+    "soft_suggested": {
+      "emotional_tone": "Tense",
+      "best_adventure_archetypes_raw": [
+        "Survival Adventure",
+        "Rescue Mission",
+        "Great Journey",
+        "Hero's Trial",
+        "Time Adventure",
+        "Build & Repair"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "derived from single source field (bestAdventureArchetypes) plus name inference"
+    }
+  },
+  {
+    "id": "WORLD041",
+    "name": "Volcano Valley",
+    "hard": {
+      "world_types": [
+        "WT_WILDERNESS"
+      ],
+      "attributes": [
+        "WA_DANGEROUS",
+        "WA_SURVIVAL"
+      ],
+      "functions": [
+        "WF_SURVIVAL",
+        "WF_RESCUE"
+      ]
+    },
+    "soft_suggested": {
+      "emotional_tone": "Tense",
+      "best_adventure_archetypes_raw": [
+        "Rescue Mission",
+        "Survival Adventure",
+        "Hero's Trial",
+        "Time Adventure",
+        "Build & Repair",
+        "Great Journey"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "derived from single source field (bestAdventureArchetypes) plus name inference"
+    }
+  },
+  {
+    "id": "WORLD042",
+    "name": "Sky Islands",
+    "hard": {
+      "world_types": [
+        "WT_CELESTIAL",
+        "WT_FANTASY"
+      ],
+      "attributes": [
+        "WA_MAGICAL",
+        "WA_ISOLATED"
+      ],
+      "functions": [
+        "WF_MAGIC",
+        "WF_EXPLORATION",
+        "WF_RESCUE"
+      ]
+    },
+    "soft_suggested": {
+      "emotional_tone": "Wonder",
+      "best_adventure_archetypes_raw": [
+        "Great Journey",
+        "Discovery Journey",
+        "Magical Quest",
+        "Rescue Mission",
+        "Time Adventure",
+        "Team Adventure"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "derived from single source field (bestAdventureArchetypes) plus name inference"
+    }
+  },
+  {
+    "id": "WORLD044",
+    "name": "Dream World",
+    "hard": {
+      "world_types": [
+        "WT_DREAM"
+      ],
+      "attributes": [
+        "WA_MAGICAL",
+        "WA_CHANGING"
+      ],
+      "functions": [
+        "WF_MAGIC",
+        "WF_LEARNING"
+      ]
+    },
+    "soft_suggested": {
+      "emotional_tone": "Wonder",
+      "best_adventure_archetypes_raw": [
+        "Dream Adventure",
+        "Wisdom Challenge",
+        "Choice & Consequence",
+        "Ancient Secret",
+        "Discovery Journey",
+        "Mentor Journey"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "derived from single source field (bestAdventureArchetypes) plus name inference"
+    }
+  },
+  {
+    "id": "WORLD045",
+    "name": "Toy Kingdom",
+    "hard": {
+      "world_types": [
+        "WT_FANTASY"
+      ],
+      "attributes": [
+        "WA_PLAYFUL",
+        "WA_CREATIVE"
+      ],
+      "functions": [
+        "WF_BUILDING",
+        "WF_COMMUNITY"
+      ]
+    },
+    "soft_suggested": {
+      "emotional_tone": "Playful",
+      "best_adventure_archetypes_raw": [
+        "Creative Quest",
+        "Build & Repair",
+        "Helping Hand",
+        "Friendship Repair",
+        "Community Project",
+        "Magical Discovery"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "derived from single source field (bestAdventureArchetypes) plus name inference"
+    }
+  },
+  {
+    "id": "WORLD046",
+    "name": "Story House",
+    "hard": {
+      "world_types": [
+        "WT_LEARNING"
+      ],
+      "attributes": [
+        "WA_WISDOM",
+        "WA_HIDDEN"
+      ],
+      "functions": [
+        "WF_LEARNING",
+        "WF_MYSTERY"
+      ]
+    },
+    "soft_suggested": {
+      "emotional_tone": "Curious",
+      "best_adventure_archetypes_raw": [
+        "Ancient Secret",
+        "Discovery Journey",
+        "Mentor Journey",
+        "Learning Quest",
+        "Wisdom Challenge",
+        "Teaching Adventure"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "derived from single source field (bestAdventureArchetypes) plus name inference"
+    }
+  }
+]

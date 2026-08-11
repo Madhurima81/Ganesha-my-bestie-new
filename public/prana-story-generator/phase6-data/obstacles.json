@@ -1,0 +1,1644 @@
+[
+  {
+    "id": "OBST001",
+    "name": "Broken Bridge",
+    "description": "The bridge cannot be crossed.",
+    "hard": {
+      "obstacle_domain": "OD_PHYSICAL",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_BLOCKED_PATH"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Exploring & Nature"
+      ],
+      "best_story_actions_raw": [
+        "Explore",
+        "Rescue"
+      ],
+      "best_story_worlds_raw": [
+        "Crystal River Valley"
+      ]
+    },
+    "escalation_type": "Progressive",
+    "difficulty": "Medium",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST002",
+    "name": "Fallen Tree",
+    "description": "A tree blocks the path.",
+    "hard": {
+      "obstacle_domain": "OD_PHYSICAL",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_BLOCKED_PATH"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Exploring & Nature"
+      ],
+      "best_story_actions_raw": [
+        "Explore",
+        "Help"
+      ],
+      "best_story_worlds_raw": [
+        "Whispering Forest"
+      ]
+    },
+    "escalation_type": "Immediate",
+    "difficulty": "Easy",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST003",
+    "name": "Flooded Path",
+    "description": "Water covers the trail.",
+    "hard": {
+      "obstacle_domain": "OD_PHYSICAL",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_BLOCKED_PATH"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Exploring & Nature"
+      ],
+      "best_story_actions_raw": [
+        "Explore"
+      ],
+      "best_story_worlds_raw": [
+        "Crystal River Valley"
+      ]
+    },
+    "escalation_type": "Progressive",
+    "difficulty": "Medium",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST004",
+    "name": "Thick Fog",
+    "description": "It's difficult to see the way.",
+    "hard": {
+      "obstacle_domain": "OD_PHYSICAL",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_ENVIRONMENTAL"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Exploring & Nature"
+      ],
+      "best_story_actions_raw": [
+        "Search"
+      ],
+      "best_story_worlds_raw": [
+        "Whispering Forest"
+      ]
+    },
+    "escalation_type": "Progressive",
+    "difficulty": "Medium",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST005",
+    "name": "Storm",
+    "description": "Bad weather interrupts the mission.",
+    "hard": {
+      "obstacle_domain": "OD_PHYSICAL",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_ENVIRONMENTAL"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Exploring & Nature"
+      ],
+      "best_story_actions_raw": [
+        "Rescue",
+        "Deliver"
+      ],
+      "best_story_worlds_raw": [
+        "Whispering Forest"
+      ]
+    },
+    "escalation_type": "Progressive",
+    "difficulty": "Hard",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST006",
+    "name": "Strong Wind",
+    "description": "Wind makes travelling difficult.",
+    "hard": {
+      "obstacle_domain": "OD_PHYSICAL",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_ENVIRONMENTAL"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Exploring & Nature"
+      ],
+      "best_story_actions_raw": [
+        "Deliver"
+      ],
+      "best_story_worlds_raw": [
+        "Misty Mountains"
+      ]
+    },
+    "escalation_type": "Progressive",
+    "difficulty": "Medium",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST007",
+    "name": "Darkness",
+    "description": "The hero cannot see clearly.",
+    "hard": {
+      "obstacle_domain": "OD_PHYSICAL",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_FEAR"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Exploring & Nature"
+      ],
+      "best_story_actions_raw": [
+        "Search"
+      ],
+      "best_story_worlds_raw": [
+        "Hidden Cave Network"
+      ]
+    },
+    "escalation_type": "Emotional",
+    "difficulty": "Easy",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST008",
+    "name": "Rocky Climb",
+    "description": "The path is steep and difficult.",
+    "hard": {
+      "obstacle_domain": "OD_PHYSICAL",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_BLOCKED_PATH"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Exploring & Nature"
+      ],
+      "best_story_actions_raw": [
+        "Explore"
+      ],
+      "best_story_worlds_raw": [
+        "Misty Mountains"
+      ]
+    },
+    "escalation_type": "Progressive",
+    "difficulty": "Medium",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST009",
+    "name": "Deep River",
+    "description": "The river blocks the journey.",
+    "hard": {
+      "obstacle_domain": "OD_PHYSICAL",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_BLOCKED_PATH"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Exploring & Nature"
+      ],
+      "best_story_actions_raw": [
+        "Rescue",
+        "Explore"
+      ],
+      "best_story_worlds_raw": [
+        "Crystal River Valley"
+      ]
+    },
+    "escalation_type": "Progressive",
+    "difficulty": "Hard",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST010",
+    "name": "Slippery Trail",
+    "description": "The ground is difficult to walk on.",
+    "hard": {
+      "obstacle_domain": "OD_PHYSICAL",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_BLOCKED_PATH"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Exploring & Nature"
+      ],
+      "best_story_actions_raw": [
+        "Explore"
+      ],
+      "best_story_worlds_raw": [
+        "Whispering Forest"
+      ]
+    },
+    "escalation_type": "Progressive",
+    "difficulty": "Easy",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST011",
+    "name": "Lost Map",
+    "description": "The directions are missing.",
+    "hard": {
+      "obstacle_domain": "OD_PHYSICAL",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_UNKNOWN_RULES"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Learning & Problem Solving"
+      ],
+      "best_story_actions_raw": [
+        "Search"
+      ],
+      "best_story_worlds_raw": [
+        "Whispering Forest"
+      ]
+    },
+    "escalation_type": "Mystery",
+    "difficulty": "Medium",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST012",
+    "name": "Broken Cart",
+    "description": "Transport cannot continue.",
+    "hard": {
+      "obstacle_domain": "OD_PHYSICAL",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_PHYSICAL_FAILURE"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Responsibility"
+      ],
+      "best_story_actions_raw": [
+        "Deliver"
+      ],
+      "best_story_worlds_raw": [
+        "Woodland Village"
+      ]
+    },
+    "escalation_type": "Progressive",
+    "difficulty": "Medium",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST013",
+    "name": "Closed Gate",
+    "description": "The destination is blocked.",
+    "hard": {
+      "obstacle_domain": "OD_PHYSICAL",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_BLOCKED_PATH"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "School & Community"
+      ],
+      "best_story_actions_raw": [
+        "Deliver"
+      ],
+      "best_story_worlds_raw": [
+        "Woodland Village"
+      ]
+    },
+    "escalation_type": "Immediate",
+    "difficulty": "Easy",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST014",
+    "name": "Maze",
+    "description": "The hero cannot find the exit.",
+    "hard": {
+      "obstacle_domain": "OD_PHYSICAL",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_UNKNOWN_RULES"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Learning & Problem Solving"
+      ],
+      "best_story_actions_raw": [
+        "Search"
+      ],
+      "best_story_worlds_raw": [
+        "Hidden Cave Network"
+      ]
+    },
+    "escalation_type": "Mystery",
+    "difficulty": "Medium",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST015",
+    "name": "Steep Hill",
+    "description": "The climb requires persistence.",
+    "hard": {
+      "obstacle_domain": "OD_PHYSICAL",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_BLOCKED_PATH"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Exploring & Nature"
+      ],
+      "best_story_actions_raw": [
+        "Explore"
+      ],
+      "best_story_worlds_raw": [
+        "Misty Mountains"
+      ]
+    },
+    "escalation_type": "Progressive",
+    "difficulty": "Medium",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST016",
+    "name": "Heavy Rain",
+    "description": "Rain slows the journey.",
+    "hard": {
+      "obstacle_domain": "OD_NATURE",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_ENVIRONMENTAL"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Exploring & Nature"
+      ],
+      "best_story_actions_raw": [
+        "Explore"
+      ],
+      "best_story_worlds_raw": [
+        "Whispering Forest"
+      ]
+    },
+    "escalation_type": "Progressive",
+    "difficulty": "Medium",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST017",
+    "name": "Drought",
+    "description": "Water is scarce.",
+    "hard": {
+      "obstacle_domain": "OD_NATURE",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_RESOURCE_LIMIT"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Exploring & Nature"
+      ],
+      "best_story_actions_raw": [
+        "Help"
+      ],
+      "best_story_worlds_raw": [
+        "Whispering Meadow"
+      ]
+    },
+    "escalation_type": "Progressive",
+    "difficulty": "Medium",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST018",
+    "name": "Snow",
+    "description": "Snow makes movement difficult.",
+    "hard": {
+      "obstacle_domain": "OD_NATURE",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_ENVIRONMENTAL"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Exploring & Nature"
+      ],
+      "best_story_actions_raw": [
+        "Explore"
+      ],
+      "best_story_worlds_raw": [
+        "Misty Mountains"
+      ]
+    },
+    "escalation_type": "Progressive",
+    "difficulty": "Medium",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST019",
+    "name": "Sandstorm",
+    "description": "Wind and sand reduce visibility.",
+    "hard": {
+      "obstacle_domain": "OD_NATURE",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_ENVIRONMENTAL"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Exploring & Nature"
+      ],
+      "best_story_actions_raw": [
+        "Search"
+      ],
+      "best_story_worlds_raw": [
+        "Desert Oasis"
+      ]
+    },
+    "escalation_type": "Progressive",
+    "difficulty": "Hard",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST020",
+    "name": "Rising Tide",
+    "description": "Water levels keep increasing.",
+    "hard": {
+      "obstacle_domain": "OD_NATURE",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_ENVIRONMENTAL"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Exploring & Nature"
+      ],
+      "best_story_actions_raw": [
+        "Rescue"
+      ],
+      "best_story_worlds_raw": [
+        "Crystal River Valley"
+      ]
+    },
+    "escalation_type": "Time Pressure",
+    "difficulty": "Hard",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST021",
+    "name": "Wild Vines",
+    "description": "Plants block the path.",
+    "hard": {
+      "obstacle_domain": "OD_NATURE",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_BLOCKED_PATH"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Exploring & Nature"
+      ],
+      "best_story_actions_raw": [
+        "Explore"
+      ],
+      "best_story_worlds_raw": [
+        "Whispering Forest"
+      ]
+    },
+    "escalation_type": "Immediate",
+    "difficulty": "Easy",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST022",
+    "name": "Bees",
+    "description": "Bees guard the area.",
+    "hard": {
+      "obstacle_domain": "OD_NATURE",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_EXTERNAL_FORCE"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Exploring & Nature"
+      ],
+      "best_story_actions_raw": [
+        "Search"
+      ],
+      "best_story_worlds_raw": [
+        "Whispering Meadow"
+      ]
+    },
+    "escalation_type": "Immediate",
+    "difficulty": "Easy",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST023",
+    "name": "Thorn Bushes",
+    "description": "Sharp plants slow progress.",
+    "hard": {
+      "obstacle_domain": "OD_NATURE",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_BLOCKED_PATH"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Exploring & Nature"
+      ],
+      "best_story_actions_raw": [
+        "Explore"
+      ],
+      "best_story_worlds_raw": [
+        "Whispering Forest"
+      ]
+    },
+    "escalation_type": "Progressive",
+    "difficulty": "Easy",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST024",
+    "name": "Fast Current",
+    "description": "Water moves too quickly.",
+    "hard": {
+      "obstacle_domain": "OD_NATURE",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_ENVIRONMENTAL"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Exploring & Nature"
+      ],
+      "best_story_actions_raw": [
+        "Rescue"
+      ],
+      "best_story_worlds_raw": [
+        "Crystal River Valley"
+      ]
+    },
+    "escalation_type": "Progressive",
+    "difficulty": "Hard",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST025",
+    "name": "Dense Forest",
+    "description": "The forest is confusing to navigate.",
+    "hard": {
+      "obstacle_domain": "OD_NATURE",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_BLOCKED_PATH"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Exploring & Nature"
+      ],
+      "best_story_actions_raw": [
+        "Explore"
+      ],
+      "best_story_worlds_raw": [
+        "Whispering Forest"
+      ]
+    },
+    "escalation_type": "Mystery",
+    "difficulty": "Medium",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST026",
+    "name": "Friends Disagree",
+    "description": "Friends cannot agree.",
+    "hard": {
+      "obstacle_domain": "OD_SOCIAL",
+      "obstacle_type": "OT_SOCIAL",
+      "obstacle_function": "OBSTACLE_MISUNDERSTANDING"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Friendship & Sharing"
+      ],
+      "best_story_actions_raw": [
+        "Communicate"
+      ],
+      "best_story_worlds_raw": [
+        "Any Story World"
+      ]
+    },
+    "escalation_type": "Emotional",
+    "difficulty": "Easy",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST027",
+    "name": "Someone Refuses to Help",
+    "description": "Support is unavailable.",
+    "hard": {
+      "obstacle_domain": "OD_SOCIAL",
+      "obstacle_type": "OT_SOCIAL",
+      "obstacle_function": "OBSTACLE_RESISTANCE"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Helping & Caring"
+      ],
+      "best_story_actions_raw": [
+        "Help"
+      ],
+      "best_story_worlds_raw": [
+        "Any Story World"
+      ]
+    },
+    "escalation_type": "Progressive",
+    "difficulty": "Medium",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST028",
+    "name": "Someone Lies",
+    "description": "False information causes problems.",
+    "hard": {
+      "obstacle_domain": "OD_SOCIAL",
+      "obstacle_type": "OT_SOCIAL",
+      "obstacle_function": "OBSTACLE_BROKEN_TRUST"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Communication"
+      ],
+      "best_story_actions_raw": [
+        "Search"
+      ],
+      "best_story_worlds_raw": [
+        "Woodland Village"
+      ]
+    },
+    "escalation_type": "Mystery",
+    "difficulty": "Medium",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST029",
+    "name": "Rival Team",
+    "description": "Another group competes.",
+    "hard": {
+      "obstacle_domain": "OD_SOCIAL",
+      "obstacle_type": "OT_SOCIAL",
+      "obstacle_function": "OBSTACLE_EXTERNAL_FORCE"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Playing & Games"
+      ],
+      "best_story_actions_raw": [
+        "Perform"
+      ],
+      "best_story_worlds_raw": [
+        "Whispering Meadow"
+      ]
+    },
+    "escalation_type": "Progressive",
+    "difficulty": "Medium",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST030",
+    "name": "Misunderstanding",
+    "description": "Characters misinterpret each other.",
+    "hard": {
+      "obstacle_domain": "OD_SOCIAL",
+      "obstacle_type": "OT_SOCIAL",
+      "obstacle_function": "OBSTACLE_MISUNDERSTANDING"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Communication"
+      ],
+      "best_story_actions_raw": [
+        "Communicate"
+      ],
+      "best_story_worlds_raw": [
+        "Any Story World"
+      ]
+    },
+    "escalation_type": "Emotional",
+    "difficulty": "Easy",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST031",
+    "name": "Broken Promise",
+    "description": "Trust has been damaged.",
+    "hard": {
+      "obstacle_domain": "OD_SOCIAL",
+      "obstacle_type": "OT_SOCIAL",
+      "obstacle_function": "OBSTACLE_BROKEN_TRUST"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Friendship & Sharing"
+      ],
+      "best_story_actions_raw": [
+        "Help"
+      ],
+      "best_story_worlds_raw": [
+        "Woodland Village"
+      ]
+    },
+    "escalation_type": "Emotional",
+    "difficulty": "Medium",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST032",
+    "name": "Nobody Believes the Hero",
+    "description": "Others doubt the hero.",
+    "hard": {
+      "obstacle_domain": "OD_SOCIAL",
+      "obstacle_type": "OT_SOCIAL",
+      "obstacle_function": "OBSTACLE_MISUNDERSTANDING"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "School & Community"
+      ],
+      "best_story_actions_raw": [
+        "Communicate"
+      ],
+      "best_story_worlds_raw": [
+        "Any Story World"
+      ]
+    },
+    "escalation_type": "Emotional",
+    "difficulty": "Medium",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST033",
+    "name": "Someone Quits",
+    "description": "A teammate gives up.",
+    "hard": {
+      "obstacle_domain": "OD_SOCIAL",
+      "obstacle_type": "OT_SOCIAL",
+      "obstacle_function": "OBSTACLE_RESISTANCE"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Helping & Caring"
+      ],
+      "best_story_actions_raw": [
+        "Help"
+      ],
+      "best_story_worlds_raw": [
+        "Any Story World"
+      ]
+    },
+    "escalation_type": "Emotional",
+    "difficulty": "Easy",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST034",
+    "name": "Pride",
+    "description": "Someone refuses help.",
+    "hard": {
+      "obstacle_domain": "OD_SOCIAL",
+      "obstacle_type": "OT_SOCIAL",
+      "obstacle_function": "OBSTACLE_INTERNAL_RESISTANCE"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Communication"
+      ],
+      "best_story_actions_raw": [
+        "Communicate"
+      ],
+      "best_story_worlds_raw": [
+        "Any Story World"
+      ]
+    },
+    "escalation_type": "Emotional",
+    "difficulty": "Medium",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST035",
+    "name": "Poor Communication",
+    "description": "Important information is missed.",
+    "hard": {
+      "obstacle_domain": "OD_SOCIAL",
+      "obstacle_type": "OT_SOCIAL",
+      "obstacle_function": "OBSTACLE_COMMUNICATION_BARRIER"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Communication"
+      ],
+      "best_story_actions_raw": [
+        "Communicate"
+      ],
+      "best_story_worlds_raw": [
+        "Any Story World"
+      ]
+    },
+    "escalation_type": "Progressive",
+    "difficulty": "Easy",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST036",
+    "name": "Fear",
+    "description": "Fear prevents action.",
+    "hard": {
+      "obstacle_domain": "OD_EMOTIONAL",
+      "obstacle_type": "OT_INTERNAL",
+      "obstacle_function": "OBSTACLE_FEAR"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Self-Care"
+      ],
+      "best_story_actions_raw": [
+        "Practice"
+      ],
+      "best_story_worlds_raw": [
+        "Any Story World"
+      ]
+    },
+    "escalation_type": "Emotional",
+    "difficulty": "Medium",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST037",
+    "name": "Self-Doubt",
+    "description": "The hero questions themselves.",
+    "hard": {
+      "obstacle_domain": "OD_EMOTIONAL",
+      "obstacle_type": "OT_INTERNAL",
+      "obstacle_function": "OBSTACLE_INTERNAL_RESISTANCE"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Self-Care"
+      ],
+      "best_story_actions_raw": [
+        "Learn"
+      ],
+      "best_story_worlds_raw": [
+        "Any Story World"
+      ]
+    },
+    "escalation_type": "Emotional",
+    "difficulty": "Medium",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST038",
+    "name": "Anger",
+    "description": "Anger clouds judgement.",
+    "hard": {
+      "obstacle_domain": "OD_EMOTIONAL",
+      "obstacle_type": "OT_INTERNAL",
+      "obstacle_function": "OBSTACLE_INTERNAL_RESISTANCE"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Communication"
+      ],
+      "best_story_actions_raw": [
+        "Practice"
+      ],
+      "best_story_worlds_raw": [
+        "Any Story World"
+      ]
+    },
+    "escalation_type": "Emotional",
+    "difficulty": "Medium",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST039",
+    "name": "Jealousy",
+    "description": "Comparison causes conflict.",
+    "hard": {
+      "obstacle_domain": "OD_EMOTIONAL",
+      "obstacle_type": "OT_INTERNAL",
+      "obstacle_function": "OBSTACLE_INTERNAL_RESISTANCE"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Friendship & Sharing"
+      ],
+      "best_story_actions_raw": [
+        "Share"
+      ],
+      "best_story_worlds_raw": [
+        "Any Story World"
+      ]
+    },
+    "escalation_type": "Emotional",
+    "difficulty": "Medium",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST040",
+    "name": "Impatience",
+    "description": "The hero rushes.",
+    "hard": {
+      "obstacle_domain": "OD_EMOTIONAL",
+      "obstacle_type": "OT_INTERNAL",
+      "obstacle_function": "OBSTACLE_INTERNAL_RESISTANCE"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Self-Care"
+      ],
+      "best_story_actions_raw": [
+        "Practice"
+      ],
+      "best_story_worlds_raw": [
+        "Any Story World"
+      ]
+    },
+    "escalation_type": "Progressive",
+    "difficulty": "Easy",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST041",
+    "name": "Embarrassment",
+    "description": "Fear of being judged.",
+    "hard": {
+      "obstacle_domain": "OD_EMOTIONAL",
+      "obstacle_type": "OT_INTERNAL",
+      "obstacle_function": "OBSTACLE_INTERNAL_RESISTANCE"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "School & Community"
+      ],
+      "best_story_actions_raw": [
+        "Perform"
+      ],
+      "best_story_worlds_raw": [
+        "Any Story World"
+      ]
+    },
+    "escalation_type": "Emotional",
+    "difficulty": "Medium",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST042",
+    "name": "Loneliness",
+    "description": "Feeling left out.",
+    "hard": {
+      "obstacle_domain": "OD_EMOTIONAL",
+      "obstacle_type": "OT_INTERNAL",
+      "obstacle_function": "OBSTACLE_SEPARATION"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Friendship & Sharing"
+      ],
+      "best_story_actions_raw": [
+        "Share"
+      ],
+      "best_story_worlds_raw": [
+        "Any Story World"
+      ]
+    },
+    "escalation_type": "Emotional",
+    "difficulty": "Medium",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST043",
+    "name": "Guilt",
+    "description": "Regret makes progress difficult.",
+    "hard": {
+      "obstacle_domain": "OD_EMOTIONAL",
+      "obstacle_type": "OT_INTERNAL",
+      "obstacle_function": "OBSTACLE_INTERNAL_RESISTANCE"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Responsibility"
+      ],
+      "best_story_actions_raw": [
+        "Communicate"
+      ],
+      "best_story_worlds_raw": [
+        "Any Story World"
+      ]
+    },
+    "escalation_type": "Emotional",
+    "difficulty": "Medium",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST044",
+    "name": "Worry",
+    "description": "Constant worrying blocks action.",
+    "hard": {
+      "obstacle_domain": "OD_EMOTIONAL",
+      "obstacle_type": "OT_INTERNAL",
+      "obstacle_function": "OBSTACLE_INTERNAL_RESISTANCE"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Self-Care"
+      ],
+      "best_story_actions_raw": [
+        "Practice"
+      ],
+      "best_story_worlds_raw": [
+        "Any Story World"
+      ]
+    },
+    "escalation_type": "Emotional",
+    "difficulty": "Easy",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST045",
+    "name": "Perfectionism",
+    "description": "Fear of making mistakes.",
+    "hard": {
+      "obstacle_domain": "OD_EMOTIONAL",
+      "obstacle_type": "OT_INTERNAL",
+      "obstacle_function": "OBSTACLE_INTERNAL_RESISTANCE"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Learning & Problem Solving"
+      ],
+      "best_story_actions_raw": [
+        "Practice"
+      ],
+      "best_story_worlds_raw": [
+        "Any Story World"
+      ]
+    },
+    "escalation_type": "Progressive",
+    "difficulty": "Medium",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST046",
+    "name": "Hidden Clue",
+    "description": "An important clue is difficult to find.",
+    "hard": {
+      "obstacle_domain": "OD_PUZZLE",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_UNKNOWN_RULES"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Learning & Problem Solving"
+      ],
+      "best_story_actions_raw": [
+        "Search"
+      ],
+      "best_story_worlds_raw": [
+        "Whispering Forest"
+      ]
+    },
+    "escalation_type": "Mystery",
+    "difficulty": "Easy",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST047",
+    "name": "Secret Code",
+    "description": "A coded message must be solved.",
+    "hard": {
+      "obstacle_domain": "OD_PUZZLE",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_UNKNOWN_RULES"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Learning & Problem Solving"
+      ],
+      "best_story_actions_raw": [
+        "Solve"
+      ],
+      "best_story_worlds_raw": [
+        "Story House"
+      ]
+    },
+    "escalation_type": "Mystery",
+    "difficulty": "Medium",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST048",
+    "name": "Locked Door",
+    "description": "The hero must find a way inside.",
+    "hard": {
+      "obstacle_domain": "OD_PUZZLE",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_BLOCKED_PATH"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Exploring & Nature"
+      ],
+      "best_story_actions_raw": [
+        "Search"
+      ],
+      "best_story_worlds_raw": [
+        "Hidden Cave Network"
+      ]
+    },
+    "escalation_type": "Progressive",
+    "difficulty": "Medium",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST049",
+    "name": "Missing Key",
+    "description": "The key is lost.",
+    "hard": {
+      "obstacle_domain": "OD_PUZZLE",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_SKILL_GAP"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Responsibility"
+      ],
+      "best_story_actions_raw": [
+        "Search"
+      ],
+      "best_story_worlds_raw": [
+        "Woodland Village"
+      ]
+    },
+    "escalation_type": "Mystery",
+    "difficulty": "Easy",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST050",
+    "name": "Wrong Clue",
+    "description": "A clue leads in the wrong direction.",
+    "hard": {
+      "obstacle_domain": "OD_PUZZLE",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_UNKNOWN_RULES"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Learning & Problem Solving"
+      ],
+      "best_story_actions_raw": [
+        "Search"
+      ],
+      "best_story_worlds_raw": [
+        "Whispering Forest"
+      ]
+    },
+    "escalation_type": "Progressive",
+    "difficulty": "Medium",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST051",
+    "name": "Riddle",
+    "description": "A riddle blocks progress.",
+    "hard": {
+      "obstacle_domain": "OD_PUZZLE",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_UNKNOWN_RULES"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Learning & Problem Solving"
+      ],
+      "best_story_actions_raw": [
+        "Solve"
+      ],
+      "best_story_worlds_raw": [
+        "Ancient Banyan Grove"
+      ]
+    },
+    "escalation_type": "Mystery",
+    "difficulty": "Medium",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST052",
+    "name": "Strange Footprints",
+    "description": "Tracks must be followed correctly.",
+    "hard": {
+      "obstacle_domain": "OD_PUZZLE",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_UNKNOWN_RULES"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Exploring & Nature"
+      ],
+      "best_story_actions_raw": [
+        "Search"
+      ],
+      "best_story_worlds_raw": [
+        "Whispering Forest"
+      ]
+    },
+    "escalation_type": "Mystery",
+    "difficulty": "Easy",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST053",
+    "name": "Ancient Symbol",
+    "description": "A symbol must be understood.",
+    "hard": {
+      "obstacle_domain": "OD_PUZZLE",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_UNKNOWN_RULES"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Learning & Problem Solving"
+      ],
+      "best_story_actions_raw": [
+        "Search"
+      ],
+      "best_story_worlds_raw": [
+        "Temple Courtyard"
+      ]
+    },
+    "escalation_type": "Mystery",
+    "difficulty": "Medium",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST054",
+    "name": "Invisible Path",
+    "description": "The correct route is hidden.",
+    "hard": {
+      "obstacle_domain": "OD_PUZZLE",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_UNKNOWN_RULES"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Exploring & Nature"
+      ],
+      "best_story_actions_raw": [
+        "Explore"
+      ],
+      "best_story_worlds_raw": [
+        "Whispering Forest"
+      ]
+    },
+    "escalation_type": "Progressive",
+    "difficulty": "Medium",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST055",
+    "name": "Pattern to Solve",
+    "description": "A sequence must be recognised.",
+    "hard": {
+      "obstacle_domain": "OD_PUZZLE",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_SKILL_GAP"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Learning & Problem Solving"
+      ],
+      "best_story_actions_raw": [
+        "Solve"
+      ],
+      "best_story_worlds_raw": [
+        "Story House"
+      ]
+    },
+    "escalation_type": "Mystery",
+    "difficulty": "Medium",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST056",
+    "name": "Before Sunset",
+    "description": "Finish before the sun sets.",
+    "hard": {
+      "obstacle_domain": "OD_TIME",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_TIME_PRESSURE"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Exploring & Nature"
+      ],
+      "best_story_actions_raw": [
+        "Explore"
+      ],
+      "best_story_worlds_raw": [
+        "Whispering Forest"
+      ]
+    },
+    "escalation_type": "Time Pressure",
+    "difficulty": "Medium",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST057",
+    "name": "Before the Rain Arrives",
+    "description": "Complete the mission before rain starts.",
+    "hard": {
+      "obstacle_domain": "OD_TIME",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_TIME_PRESSURE"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Helping & Caring"
+      ],
+      "best_story_actions_raw": [
+        "Build"
+      ],
+      "best_story_worlds_raw": [
+        "Woodland Village"
+      ]
+    },
+    "escalation_type": "Time Pressure",
+    "difficulty": "Medium",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST058",
+    "name": "Festival Begins Soon",
+    "description": "Prepare everything before the celebration.",
+    "hard": {
+      "obstacle_domain": "OD_TIME",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_TIME_PRESSURE"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Celebrations & Traditions"
+      ],
+      "best_story_actions_raw": [
+        "Organize"
+      ],
+      "best_story_worlds_raw": [
+        "Woodland Village"
+      ]
+    },
+    "escalation_type": "Time Pressure",
+    "difficulty": "Easy",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST059",
+    "name": "River is Rising",
+    "description": "Cross before the river becomes dangerous.",
+    "hard": {
+      "obstacle_domain": "OD_TIME",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_TIME_PRESSURE"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Exploring & Nature"
+      ],
+      "best_story_actions_raw": [
+        "Rescue"
+      ],
+      "best_story_worlds_raw": [
+        "Crystal River Valley"
+      ]
+    },
+    "escalation_type": "Time Pressure",
+    "difficulty": "Hard",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST060",
+    "name": "Moon Will Disappear",
+    "description": "Finish before moonlight is gone.",
+    "hard": {
+      "obstacle_domain": "OD_TIME",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_TIME_PRESSURE"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Exploring & Nature"
+      ],
+      "best_story_actions_raw": [
+        "Search"
+      ],
+      "best_story_worlds_raw": [
+        "Whispering Forest"
+      ]
+    },
+    "escalation_type": "Time Pressure",
+    "difficulty": "Medium",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST061",
+    "name": "Guests Are Arriving",
+    "description": "Everything must be ready in time.",
+    "hard": {
+      "obstacle_domain": "OD_TIME",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_TIME_PRESSURE"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Family & Daily Life"
+      ],
+      "best_story_actions_raw": [
+        "Organize"
+      ],
+      "best_story_worlds_raw": [
+        "Woodland Village"
+      ]
+    },
+    "escalation_type": "Time Pressure",
+    "difficulty": "Easy",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST062",
+    "name": "Supplies Are Running Out",
+    "description": "Resources are almost finished.",
+    "hard": {
+      "obstacle_domain": "OD_TIME",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_RESOURCE_LIMIT"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Responsibility"
+      ],
+      "best_story_actions_raw": [
+        "Deliver"
+      ],
+      "best_story_worlds_raw": [
+        "Woodland Village"
+      ]
+    },
+    "escalation_type": "Progressive",
+    "difficulty": "Medium",
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "OBST063",
+    "name": "Daylight is Fading",
+    "description": "Darkness is approaching quickly.",
+    "hard": {
+      "obstacle_domain": "OD_TIME",
+      "obstacle_type": "OT_EXTERNAL",
+      "obstacle_function": "OBSTACLE_TIME_PRESSURE"
+    },
+    "soft_suggested": {
+      "best_life_domains_raw": [
+        "Exploring & Nature"
+      ],
+      "best_story_actions_raw": [
+        "Explore"
+      ],
+      "best_story_worlds_raw": [
+        "Whispering Forest"
+      ]
+    },
+    "escalation_type": "Time Pressure",
+    "difficulty": "Medium",
+    "_meta": {
+      "confidence": "audited"
+    }
+  }
+]

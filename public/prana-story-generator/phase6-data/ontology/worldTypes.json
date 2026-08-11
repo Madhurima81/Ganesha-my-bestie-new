@@ -1,0 +1,6 @@
+[
+  {"id": "WT_NATURE"}, {"id": "WT_COMMUNITY"}, {"id": "WT_FANTASY"}, {"id": "WT_WILDERNESS"},
+  {"id": "WT_ANCIENT"}, {"id": "WT_LEARNING"}, {"id": "WT_DREAM"}, {"id": "WT_CELESTIAL"},
+  {"id": "WT_WATER"}, {"id": "WT_UNDERGROUND"},
+  {"id": "WT_TRAVEL", "status": "Experimental", "evidence": "n=1", "used_by": ["Great Caravan Trail"], "graduation_note": "Promote to standard status if a second travel-route world (River Journey, Mountain Pass, Ancient Road, Pilgrim Route, etc.) appears.", "added_phase": "5A.3a"}
+]

@@ -1,0 +1,555 @@
+[
+  {
+    "id": "CHAR001",
+    "name": "Chinu (Squirrel)",
+    "core_personality": "Curious, energetic learner",
+    "primary_story_role_text": "Explorer",
+    "hard": {
+      "role_id": "ROLE_EXPLORER",
+      "trait_id": "TRAIT_EXPLORER"
+    },
+    "soft_suggested": {
+      "best_need_ids": [
+        "NEED_CURIOSITY",
+        "NEED_CONFIDENCE",
+        "NEED_ADAPTABILITY"
+      ],
+      "best_ganesha_symbols": [
+        "GAN_SYM_BIG_EARS",
+        "GAN_SYM_CURVED_TRUNK",
+        "GAN_SYM_MOUSE"
+      ],
+      "best_mission_types": [
+        "MISSION_DISCOVER",
+        "MISSION_SEARCH",
+        "MISSION_EXPLORE"
+      ],
+      "best_logic_families": [
+        "LOGIC_TRIAL_AND_ERROR"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "CHAR002",
+    "name": "Arin (Rabbit)",
+    "core_personality": "Gentle, cautious",
+    "primary_story_role_text": "Courage Learner",
+    "hard": {
+      "role_id": "ROLE_LEARNER",
+      "trait_id": "TRAIT_CAUTIOUS"
+    },
+    "soft_suggested": {
+      "best_need_ids": [
+        "NEED_COURAGE",
+        "NEED_CONFIDENCE",
+        "NEED_SAFETY"
+      ],
+      "best_ganesha_symbols": [
+        "GAN_SYM_BROKEN_TUSK",
+        "GAN_SYM_BIG_BELLY",
+        "GAN_SYM_LOTUS"
+      ],
+      "best_mission_types": [
+        "MISSION_MASTERY"
+      ],
+      "best_logic_families": [
+        "LOGIC_SAFETY_LOOP"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "CHAR003",
+    "name": "Bodhi (Elephant)",
+    "core_personality": "Wise, calm",
+    "primary_story_role_text": "Mentor / Protector",
+    "hard": {
+      "role_id": "ROLE_MENTOR",
+      "trait_id": "TRAIT_PROTECTIVE"
+    },
+    "soft_suggested": {
+      "best_need_ids": [
+        "NEED_BELONGING",
+        "NEED_COMPASSION",
+        "NEED_SAFETY",
+        "NEED_FORGIVENESS"
+      ],
+      "best_ganesha_symbols": [
+        "GAN_SYM_BIG_BELLY",
+        "GAN_SYM_CURVED_TRUNK"
+      ],
+      "best_mission_types": [
+        "MISSION_PROTECT",
+        "MISSION_RECONCILE"
+      ],
+      "best_logic_families": [
+        "LOGIC_CIRCULAR_RETURN"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "CHAR004",
+    "name": "Tara (Turtle)",
+    "core_personality": "Patient, steady",
+    "primary_story_role_text": "Patient Thinker",
+    "hard": {
+      "role_id": "ROLE_THINKER",
+      "trait_id": "TRAIT_PATIENT"
+    },
+    "soft_suggested": {
+      "best_need_ids": [
+        "NEED_PATIENCE",
+        "NEED_COMPETENCE",
+        "NEED_IDENTITY",
+        "NEED_INTEGRITY",
+        "NEED_ADAPTABILITY"
+      ],
+      "best_ganesha_symbols": [
+        "GAN_SYM_LOTUS",
+        "GAN_SYM_BIG_BELLY"
+      ],
+      "best_mission_types": [
+        "MISSION_MASTERY",
+        "MISSION_GATHER",
+        "MISSION_SEARCH"
+      ],
+      "best_logic_families": [
+        "LOGIC_RITUAL_ESCALATION"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "CHAR005",
+    "name": "Kavi (Monkey)",
+    "core_personality": "Funny, impulsive",
+    "primary_story_role_text": "Comic Catalyst",
+    "hard": {
+      "role_id": "ROLE_PERFORMER",
+      "trait_id": "TRAIT_IMPULSIVE"
+    },
+    "soft_suggested": {
+      "best_need_ids": [
+        "NEED_SELF_REGULATION",
+        "NEED_RESPONSIBILITY"
+      ],
+      "best_ganesha_symbols": [
+        "GAN_SYM_MOUSE",
+        "GAN_SYM_CURVED_TRUNK"
+      ],
+      "best_mission_types": [
+        "MISSION_TRANSFORM"
+      ],
+      "best_logic_families": [
+        "LOGIC_RUNAWAY_CHAIN"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "CHAR006",
+    "name": "Mira (Deer)",
+    "core_personality": "Gentle, observant",
+    "primary_story_role_text": "Empathy Builder",
+    "hard": {
+      "role_id": "ROLE_HELPER",
+      "trait_id": "TRAIT_EMPATHETIC"
+    },
+    "soft_suggested": {
+      "best_need_ids": [
+        "NEED_COMPASSION",
+        "NEED_BELONGING",
+        "NEED_FORGIVENESS"
+      ],
+      "best_ganesha_symbols": [
+        "GAN_SYM_EYES",
+        "GAN_SYM_LOTUS"
+      ],
+      "best_mission_types": [
+        "MISSION_RECONCILE",
+        "MISSION_SUPPORT"
+      ],
+      "best_logic_families": [
+        "LOGIC_PERSPECTIVE_SHIFT"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "CHAR007",
+    "name": "Nayan (Fox)",
+    "core_personality": "Clever, resourceful",
+    "primary_story_role_text": "Puzzle Solver",
+    "hard": {
+      "role_id": "ROLE_SOLVER",
+      "trait_id": "TRAIT_RESOURCEFUL"
+    },
+    "soft_suggested": {
+      "best_need_ids": [
+        "NEED_COMPETENCE",
+        "NEED_CONFIDENCE"
+      ],
+      "best_ganesha_symbols": [
+        "GAN_SYM_EYES",
+        "GAN_SYM_BROKEN_TUSK"
+      ],
+      "best_mission_types": [
+        "MISSION_DISCOVER",
+        "MISSION_ASSERT"
+      ],
+      "best_logic_families": [
+        "LOGIC_TRICKSTER"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "CHAR008",
+    "name": "Ved (Owl)",
+    "core_personality": "Wise, reflective",
+    "primary_story_role_text": "Wise Guide / Detective",
+    "hard": {
+      "role_id": "ROLE_MENTOR",
+      "trait_id": "TRAIT_OBSERVER"
+    },
+    "soft_suggested": {
+      "best_need_ids": [
+        "NEED_CURIOSITY",
+        "NEED_IDENTITY",
+        "NEED_INTEGRITY"
+      ],
+      "best_ganesha_symbols": [
+        "GAN_SYM_EYES",
+        "GAN_SYM_BIG_EARS"
+      ],
+      "best_mission_types": [
+        "MISSION_DISCOVER"
+      ],
+      "best_logic_families": [
+        "LOGIC_TRIAL_AND_ERROR",
+        "LOGIC_CUMULATIVE_BUILD"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "CHAR009",
+    "name": "Veer (Bear)",
+    "core_personality": "Strong, kind",
+    "primary_story_role_text": "Gentle Guardian",
+    "hard": {
+      "role_id": "ROLE_GUARDIAN",
+      "trait_id": "TRAIT_PROTECTIVE"
+    },
+    "soft_suggested": {
+      "best_need_ids": [
+        "NEED_COURAGE",
+        "NEED_RESPONSIBILITY",
+        "NEED_COMPASSION"
+      ],
+      "best_ganesha_symbols": [
+        "GAN_SYM_BIG_BELLY",
+        "GAN_SYM_BROKEN_TUSK"
+      ],
+      "best_mission_types": [
+        "MISSION_PROTECT"
+      ],
+      "best_logic_families": [
+        "LOGIC_SAFETY_LOOP"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "CHAR010",
+    "name": "Anu (Mouse)",
+    "core_personality": "Tiny but courageous",
+    "primary_story_role_text": "Underdog Hero",
+    "hard": {
+      "role_id": "ROLE_UNDERDOG",
+      "trait_id": "TRAIT_DETERMINED"
+    },
+    "soft_suggested": {
+      "best_need_ids": [
+        "NEED_COURAGE",
+        "NEED_IDENTITY",
+        "NEED_CONFIDENCE"
+      ],
+      "best_ganesha_symbols": [
+        "GAN_SYM_MOUSE",
+        "GAN_SYM_BROKEN_TUSK"
+      ],
+      "best_mission_types": [
+        "MISSION_ASSERT",
+        "MISSION_RESCUE"
+      ],
+      "best_logic_families": [
+        "LOGIC_TRICKSTER"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "CHAR011",
+    "name": "Mayur (Peacock)",
+    "core_personality": "Joyful, expressive",
+    "primary_story_role_text": "Performer",
+    "hard": {
+      "role_id": "ROLE_PERFORMER",
+      "trait_id": "TRAIT_PLAYFUL"
+    },
+    "soft_suggested": {
+      "best_need_ids": [
+        "NEED_EXPRESSION",
+        "NEED_CONFIDENCE"
+      ],
+      "best_ganesha_symbols": [
+        "GAN_SYM_LOTUS"
+      ],
+      "best_mission_types": [
+        "MISSION_CELEBRATE"
+      ],
+      "best_logic_families": [
+        "LOGIC_RITUAL_ESCALATION"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "CHAR012",
+    "name": "Vani (Parrot)",
+    "core_personality": "Talkative, cheerful",
+    "primary_story_role_text": "Messenger",
+    "hard": {
+      "role_id": "ROLE_MESSENGER",
+      "trait_id": "TRAIT_PLAYFUL"
+    },
+    "soft_suggested": {
+      "best_need_ids": [
+        "NEED_RESPECT",
+        "NEED_BELONGING"
+      ],
+      "best_ganesha_symbols": [
+        "GAN_SYM_BIG_EARS"
+      ],
+      "best_mission_types": [
+        "MISSION_DELIVER",
+        "MISSION_RECONCILE"
+      ],
+      "best_logic_families": [
+        "LOGIC_ROLE_REVERSAL"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "CHAR013",
+    "name": "Mitra (Dog)",
+    "core_personality": "Loyal, dependable",
+    "primary_story_role_text": "Loyal Companion",
+    "hard": {
+      "role_id": "ROLE_HELPER",
+      "trait_id": "TRAIT_HELPER"
+    },
+    "soft_suggested": {
+      "best_need_ids": [
+        "NEED_TRUST",
+        "NEED_BELONGING"
+      ],
+      "best_ganesha_symbols": [
+        "GAN_SYM_BIG_BELLY"
+      ],
+      "best_mission_types": [
+        "MISSION_RESCUE",
+        "MISSION_PROTECT"
+      ],
+      "best_logic_families": [
+        "LOGIC_CIRCULAR_RETURN"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "CHAR014",
+    "name": "Gauri (Cow)",
+    "core_personality": "Caring, nurturing",
+    "primary_story_role_text": "Nurturer",
+    "hard": {
+      "role_id": "ROLE_GUARDIAN",
+      "trait_id": "TRAIT_GENEROUS"
+    },
+    "soft_suggested": {
+      "best_need_ids": [
+        "NEED_COMPASSION",
+        "NEED_CONTENTMENT"
+      ],
+      "best_ganesha_symbols": [
+        "GAN_SYM_MODAK",
+        "GAN_SYM_BIG_BELLY"
+      ],
+      "best_mission_types": [
+        "MISSION_CELEBRATE",
+        "MISSION_DELIVER"
+      ],
+      "best_logic_families": [
+        "LOGIC_RESOURCE_DEPRECIATION"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "CHAR015",
+    "name": "Simha (Lion)",
+    "core_personality": "Brave, confident",
+    "primary_story_role_text": "Leader",
+    "hard": {
+      "role_id": "ROLE_LEADER",
+      "trait_id": "TRAIT_DETERMINED"
+    },
+    "soft_suggested": {
+      "best_need_ids": [
+        "NEED_COURAGE",
+        "NEED_RESPONSIBILITY",
+        "NEED_INTEGRITY"
+      ],
+      "best_ganesha_symbols": [
+        "GAN_SYM_BROKEN_TUSK"
+      ],
+      "best_mission_types": [
+        "MISSION_PROTECT",
+        "MISSION_ASSERT"
+      ],
+      "best_logic_families": [
+        "LOGIC_THRESHOLD_CROSSING"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "CHAR016",
+    "name": "Neel (Young Elephant Calf)",
+    "core_personality": "Curious, playful, eager to learn",
+    "primary_story_role_text": "Young Learner",
+    "hard": {
+      "role_id": "ROLE_LEARNER",
+      "trait_id": "TRAIT_PLAYFUL"
+    },
+    "soft_suggested": {
+      "best_need_ids": [
+        "NEED_CURIOSITY",
+        "NEED_CONFIDENCE",
+        "NEED_COURAGE",
+        "NEED_ADAPTABILITY"
+      ],
+      "best_ganesha_symbols": [
+        "GAN_SYM_CURVED_TRUNK",
+        "GAN_SYM_BIG_EARS",
+        "GAN_SYM_MODAK"
+      ],
+      "best_mission_types": [
+        "MISSION_MASTERY",
+        "MISSION_DISCOVER",
+        "MISSION_EXPLORE"
+      ],
+      "best_logic_families": [
+        "LOGIC_TRIAL_AND_ERROR"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "CHAR017",
+    "name": "Pihu (Red Panda)",
+    "core_personality": "Imaginative, artistic",
+    "primary_story_role_text": "Creator / Inventor",
+    "hard": {
+      "role_id": "ROLE_CREATOR",
+      "trait_id": "TRAIT_DREAMER"
+    },
+    "soft_suggested": {
+      "best_need_ids": [
+        "NEED_EXPRESSION",
+        "NEED_COMPETENCE"
+      ],
+      "best_ganesha_symbols": [
+        "GAN_SYM_LOTUS",
+        "GAN_SYM_MOUSE"
+      ],
+      "best_mission_types": [
+        "MISSION_BUILD",
+        "MISSION_TRANSFORM"
+      ],
+      "best_logic_families": [
+        "LOGIC_INVERSION"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "CHAR018",
+    "name": "Kabir (Mountain Goat)",
+    "core_personality": "Determined, adventurous",
+    "primary_story_role_text": "Adventurer",
+    "hard": {
+      "role_id": "ROLE_EXPLORER",
+      "trait_id": "TRAIT_DETERMINED"
+    },
+    "soft_suggested": {
+      "best_need_ids": [
+        "NEED_COMPETENCE",
+        "NEED_COURAGE",
+        "NEED_AUTONOMY"
+      ],
+      "best_ganesha_symbols": [
+        "GAN_SYM_BROKEN_TUSK",
+        "GAN_SYM_LOTUS"
+      ],
+      "best_mission_types": [
+        "MISSION_MASTERY",
+        "MISSION_DISCOVER"
+      ],
+      "best_logic_families": [
+        "LOGIC_THRESHOLD_CROSSING"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  }
+]

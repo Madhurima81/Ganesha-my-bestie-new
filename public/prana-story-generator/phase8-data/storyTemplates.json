@@ -1,0 +1,1780 @@
+[
+  {
+    "templateId": "T01",
+    "name": "Cumulative Trail",
+    "storyMechanic": "Each new encounter adds itself onto a repeating, growing sequence of everything found/met so far, until the pattern breaks and the accumulated trail itself becomes the discovery.",
+    "bestForNeeds": [
+      "NEED_CURIOSITY",
+      "NEED_PATIENCE"
+    ],
+    "bestForSituations": [],
+    "bestForLogicFamilies": [
+      "LOGIC_CUMULATIVE_BUILD"
+    ],
+    "requiredBeats": [
+      "SETUP",
+      "ENCOUNTER_1",
+      "ENCOUNTER_2",
+      "ENCOUNTER_3",
+      "PATTERN_BREAK",
+      "DISCOVERY",
+      "RESOLUTION"
+    ],
+    "sceneStructure": [
+      "Setup: hero, situation, and goal are introduced together.",
+      "Encounter 1: hero meets/finds the first piece; the refrain is spoken.",
+      "Encounter 2: hero meets a second piece, and the refrain repeats while restating everything found so far, in order.",
+      "Encounter 3: hero meets a third piece; the cumulative restatement grows again.",
+      "Pattern break: the expected next repetition does not simply add another item â€” something unexpected interrupts the chain.",
+      "Discovery: the accumulated trail, seen all together, reveals the true belief.",
+      "Resolution: the goal is reached because of what the whole trail added up to, not any single piece."
+    ],
+    "repetitionPattern": {
+      "phrase/source": "a short refrain restating the growing list of everything discovered so far (\"And what could this be?\")",
+      "occurrenceCount": 3,
+      "occurrenceStages": [
+        "ENCOUNTER_1",
+        "ENCOUNTER_2",
+        "ENCOUNTER_3"
+      ],
+      "variationRule": "each occurrence must literally re-list every prior item plus the new one, in the same original order, drawn from the Blueprint's resolved storyActions/obstacle/world details â€” never a shortened or reworded restatement",
+      "finalVariation": "at the pattern break, the refrain is interrupted mid-list rather than completed, signalling the accumulation is about to mean something rather than simply grow"
+    },
+    "escalationPattern": "Escalation is additive, not increasingly difficult â€” each encounter makes the list longer and the refrain longer to say, building anticipation through length and rhythm.",
+    "turningPoint": "Placed at the pattern break, immediately after encounter 3, when the hero notices the accumulated trail forms a shape or meaning rather than being a random list.",
+    "resolutionPattern": "The resolution is caused by seeing the whole trail at once (all prior encounters together), not by any single encounter being 'the answer'.",
+    "requiredBlueprintSlots": [
+      "situation",
+      "character",
+      "need",
+      "belief.falseBelief",
+      "belief.trueBelief",
+      "mission",
+      "storyActions",
+      "symbol"
+    ],
+    "optionalBlueprintSlots": [
+      "world",
+      "obstacle"
+    ],
+    "symbolIntegrationPoint": "Symbol is the very first item added to the trail, so it is present in every repetition of the refrain and is what the discovery beat resolves around.",
+    "illustrationOpportunities": [
+      "A widening trail/row of the discovered items across the page",
+      "The moment of the pattern break â€” hero's surprised expression",
+      "A full-trail spread showing everything found so far in one image",
+      "Resolution showing the completed trail leading to the goal"
+    ],
+    "pageRhythmGuidance": "Each encounter gets its own page so the refrain lands on a clean page turn; the pattern-break page should be visually distinct (less text, more white space) to signal the rhythm has changed.",
+    "exampleSkeleton": [
+      "[HERO] + [SITUATION] + [GOAL]",
+      "[ENCOUNTER_1] + [REFRAIN]",
+      "[ENCOUNTER_2] + [REFRAIN incl. 1+2]",
+      "[ENCOUNTER_3] + [REFRAIN incl. 1+2+3]",
+      "[PATTERN_BREAK]",
+      "[DISCOVERY]",
+      "[TRUE_BELIEF]",
+      "[RESOLUTION]",
+      "[SYMBOL]"
+    ]
+  },
+  {
+    "templateId": "T02",
+    "name": "Refrain & Change",
+    "storyMechanic": "A single spoken phrase returns three times across the story, unchanged in wording at first, but its meaning shifts as the hero's situation changes â€” until the final repetition evolves in wording to show the belief has changed.",
+    "bestForNeeds": [
+      "NEED_CONFIDENCE",
+      "NEED_ADAPTABILITY"
+    ],
+    "bestForSituations": [],
+    "bestForLogicFamilies": [
+      "LOGIC_RITUAL_ESCALATION"
+    ],
+    "requiredBeats": [
+      "PROBLEM",
+      "REFRAIN_1",
+      "ATTEMPT",
+      "REFRAIN_2",
+      "SETBACK",
+      "PAUSE",
+      "REFRAIN_CHANGED",
+      "NEW_ACTION"
+    ],
+    "sceneStructure": [
+      "Problem: hero names the false belief for the first time, framed as the refrain.",
+      "Refrain 1 (unchanged): hero repeats the exact same line after a first attempt fails.",
+      "Attempt: hero tries again, differently than before.",
+      "Refrain 2 (unchanged): the exact same line returns after a setback, now carrying more weight.",
+      "Setback: the hardest version of the obstacle appears.",
+      "Pause: hero stops instead of repeating the pattern a third time as-is.",
+      "Refrain changed: the same phrase returns, but the wording has evolved to reflect the true belief.",
+      "New action: hero acts from the changed refrain and succeeds."
+    ],
+    "sceneStructureNote": "Unlike T03 (Three Tries), the emphasis is on the LANGUAGE returning and evolving, not on the actions being different from each other.",
+    "repetitionPattern": {
+      "phrase/source": "the hero's own spoken false-belief line, restated near-verbatim from the Blueprint's belief.falseBelief",
+      "occurrenceCount": 3,
+      "occurrenceStages": [
+        "PROBLEM",
+        "REFRAIN_1",
+        "REFRAIN_2"
+      ],
+      "variationRule": "the first three occurrences must be identical or near-identical in wording â€” only the surrounding scene changes, not the line itself",
+      "finalVariation": "the fourth and final occurrence (REFRAIN_CHANGED) rewrites the line using the Blueprint's belief.trueBelief, keeping the same sentence shape so the change is audible (e.g. 'I can't do this yet' becomes 'Maybe I can try differently')"
+    },
+    "escalationPattern": "Each time the refrain repeats, the emotional stakes around it rise, while the words themselves stay flat â€” the tension is between unchanging language and a worsening situation.",
+    "turningPoint": "The pause beat, placed after the second setback and before the refrain changes â€” the hero must consciously stop repeating the old line rather than simply trying harder.",
+    "resolutionPattern": "Resolution is proven by the refrain itself changing, not by a separate narration of growth â€” the transformed sentence IS the evidence of change.",
+    "requiredBlueprintSlots": [
+      "situation",
+      "character",
+      "need",
+      "belief.falseBelief",
+      "belief.trueBelief",
+      "mission",
+      "symbol"
+    ],
+    "optionalBlueprintSlots": [
+      "world",
+      "obstacle",
+      "storyConflict"
+    ],
+    "symbolIntegrationPoint": "Symbol appears quietly beside the hero every time the refrain is spoken, and is the visual cue for the reader that the refrain is about to return.",
+    "illustrationOpportunities": [
+      "Hero speaking the refrain the first time, small and unsure",
+      "Hero speaking it again, same posture, worn down",
+      "The pause â€” hero still, symbol close by",
+      "Hero speaking the changed refrain, open posture, symbol integrated"
+    ],
+    "pageRhythmGuidance": "Keep each refrain moment on its own short page/line so the repetition is visually and vocally obvious when read aloud; the changed refrain deserves a full page to itself.",
+    "exampleSkeleton": [
+      "[HERO] + [SITUATION] + [PROBLEM]",
+      "[REFRAIN: false belief]",
+      "[ATTEMPT]",
+      "[REFRAIN: false belief]",
+      "[SETBACK]",
+      "[PAUSE]",
+      "[REFRAIN: true belief, same shape]",
+      "[NEW_ACTION]",
+      "[RESOLUTION]",
+      "[SYMBOL]"
+    ]
+  },
+  {
+    "templateId": "T03",
+    "name": "Three Tries",
+    "storyMechanic": "Three increasingly intelligent attempts at the same goal, where the third attempt succeeds only because the hero has changed how they think, not because they tried harder.",
+    "bestForNeeds": [
+      "NEED_COMPETENCE",
+      "NEED_CONFIDENCE",
+      "NEED_PATIENCE",
+      "NEED_SELF_REGULATION"
+    ],
+    "bestForSituations": [],
+    "bestForLogicFamilies": [
+      "LOGIC_TRIAL_AND_ERROR"
+    ],
+    "requiredBeats": [
+      "SETUP",
+      "ATTEMPT_1",
+      "CONSEQUENCE_1",
+      "ATTEMPT_2",
+      "CONSEQUENCE_2",
+      "TURNING_POINT",
+      "ATTEMPT_3",
+      "RESOLUTION"
+    ],
+    "sceneStructure": [
+      "Setup: hero, situation, and goal are introduced together.",
+      "Attempt 1: hero tries the most obvious approach.",
+      "Consequence 1: it does not work; pressure rises.",
+      "Attempt 2: hero tries a different approach, not a repeat of attempt 1.",
+      "Consequence 2: it still does not work; the old belief feels confirmed.",
+      "Turning point: hero pauses and the true belief surfaces.",
+      "Attempt 3: hero acts from the true belief, not from trying harder.",
+      "Resolution: the goal is reached because the hero changed, and the symbol is present."
+    ],
+    "repetitionPattern": {
+      "phrase/source": "the hero's own restated goal (e.g. \"I just need to ___\")",
+      "occurrenceCount": 3,
+      "occurrenceStages": [
+        "ATTEMPT_1",
+        "ATTEMPT_2",
+        "ATTEMPT_3"
+      ],
+      "variationRule": "Each of ATTEMPT_1, ATTEMPT_2, ATTEMPT_3 must use a genuinely different action verb/approach from the other two AND from any pre-story attempt(s) named in OPENING STATE.situation — a reworded, slower, or more careful repeat of a method OPENING STATE already shows failing does not count as a new attempt, even if it is ATTEMPT_1's first appearance in the EVENT CHAIN itself.",
+      "finalVariation": "the third occurrence drops the effort-based framing and is reframed around the true belief instead of the goal alone"
+    },
+    "escalationPattern": "Each failed attempt raises stakes or feeling, not just difficulty â€” consequence 2 must land harder emotionally than consequence 1.",
+    "turningPoint": "Placed after the second consequence and before the third attempt; the hero pauses instead of trying a fourth variation of the same strategy, and the true belief is what unlocks the third attempt.",
+    "resolutionPattern": "Success in the resolution is explicitly caused by the internal shift (true belief), with the goal/mission completed as the visible proof, not the cause.",
+    "requiredBlueprintSlots": [
+      "situation",
+      "character",
+      "need",
+      "belief.falseBelief",
+      "belief.trueBelief",
+      "mission",
+      "storyActions",
+      "symbol"
+    ],
+    "optionalBlueprintSlots": [
+      "world",
+      "obstacle",
+      "storyConflict"
+    ],
+    "symbolIntegrationPoint": "Symbol is glimpsed but not understood during Attempt 1/2, then recognized and drawn on during the Turning Point and Attempt 3.",
+    "illustrationOpportunities": [
+      "Attempt 1 in motion â€” hero mid-action, confident",
+      "Consequence 2 â€” hero's frustration/discouragement, symbol visible in the background unnoticed",
+      "Turning point â€” hero pausing, quiet, symbol now in focus",
+      "Resolution â€” hero succeeding, symbol clearly integrated into the scene"
+    ],
+    "pageRhythmGuidance": "Give Attempt 1 and Attempt 2 roughly equal page weight so the pattern reads clearly; give the turning point its own quiet page/beat; let Attempt 3 + Resolution breathe over 1-2 pages rather than compressing them.",
+    "exampleSkeleton": [
+      "[HERO] + [SITUATION] + [GOAL]",
+      "[ATTEMPT_1]",
+      "[CONSEQUENCE_1]",
+      "[ATTEMPT_2]",
+      "[CONSEQUENCE_2]",
+      "[TURNING_POINT]",
+      "[TRUE_BELIEF]",
+      "[ATTEMPT_3]",
+      "[NEW_CHOICE]",
+      "[RESOLUTION]",
+      "[SYMBOL]"
+    ]
+  },
+  {
+    "templateId": "T04",
+    "name": "Question Chain",
+    "storyMechanic": "Every answer the hero finds creates a new, deeper question, so the story moves forward through curiosity rather than obstacles â€” the chain of questions itself is the plot.",
+    "bestForNeeds": [
+      "NEED_CURIOSITY",
+      "NEED_INTEGRITY"
+    ],
+    "bestForSituations": [],
+    "bestForLogicFamilies": [
+      "LOGIC_RUNAWAY_CHAIN"
+    ],
+    "requiredBeats": [
+      "OPENING_QUESTION",
+      "CLUE_1",
+      "QUESTION_2",
+      "CLUE_2",
+      "QUESTION_3",
+      "CLUE_3",
+      "REVELATION",
+      "RESOLUTION"
+    ],
+    "sceneStructure": [
+      "Opening question: hero asks the first question, tied directly to the false belief.",
+      "Clue 1: hero finds a partial answer that only raises a new question.",
+      "Question 2: the new question is spoken aloud, more specific than the first.",
+      "Clue 2: another partial answer, again raising a sharper question.",
+      "Question 3: the question is now close to the heart of the true belief.",
+      "Clue 3: the final clue directly unlocks the revelation.",
+      "Revelation: all three questions resolve at once into the true belief.",
+      "Resolution: hero acts on the revelation to complete the mission."
+    ],
+    "repetitionPattern": {
+      "phrase/source": "a short spoken question stem (e.g. \"But why...?\")",
+      "occurrenceCount": 3,
+      "occurrenceStages": [
+        "OPENING_QUESTION",
+        "QUESTION_2",
+        "QUESTION_3"
+      ],
+      "variationRule": "each question must be strictly narrower/deeper than the one before it, tracing a single throughline toward the true belief rather than three unrelated questions",
+      "finalVariation": "the third question is answered not by a new clue but by the hero already knowing â€” the answer comes from within, signalling readiness for the revelation"
+    },
+    "escalationPattern": "Escalation is intellectual/emotional specificity, not physical difficulty â€” each clue narrows the mystery rather than raising the danger.",
+    "turningPoint": "The revelation beat, where the three clues suddenly connect and the true belief becomes obvious in hindsight.",
+    "resolutionPattern": "Resolution is an 'aha' â€” the mission is completed as a direct, almost immediate consequence of finally understanding, not through further struggle.",
+    "requiredBlueprintSlots": [
+      "situation",
+      "character",
+      "need",
+      "belief.falseBelief",
+      "belief.trueBelief",
+      "mission",
+      "symbol"
+    ],
+    "optionalBlueprintSlots": [
+      "world",
+      "obstacle",
+      "storyConflict"
+    ],
+    "symbolIntegrationPoint": "Symbol is the answer to the final clue â€” it is what the third question was quietly pointing toward all along.",
+    "illustrationOpportunities": [
+      "Hero asking the opening question, puzzled expression",
+      "Each clue as a small discovered detail",
+      "The revelation moment â€” three clues visually connecting",
+      "Resolution with the symbol clearly shown as the answer"
+    ],
+    "pageRhythmGuidance": "Keep each question short and end its page on the question itself (a natural page-turn hook); let the revelation page be visually calm and spacious to let the 'aha' land.",
+    "exampleSkeleton": [
+      "[HERO] + [SITUATION]",
+      "[OPENING_QUESTION]",
+      "[CLUE_1]",
+      "[QUESTION_2]",
+      "[CLUE_2]",
+      "[QUESTION_3]",
+      "[CLUE_3]",
+      "[REVELATION] + [TRUE_BELIEF]",
+      "[RESOLUTION]",
+      "[SYMBOL]"
+    ]
+  },
+  {
+    "templateId": "T05",
+    "name": "Circle Back",
+    "storyMechanic": "The opening and ending scenes deliberately mirror the same situation, but the hero's reaction has transformed â€” showing change through repetition of circumstance rather than narration.",
+    "bestForNeeds": [
+      "NEED_IDENTITY",
+      "NEED_HOPE"
+    ],
+    "bestForSituations": [],
+    "bestForLogicFamilies": [
+      "LOGIC_CIRCULAR_RETURN"
+    ],
+    "requiredBeats": [
+      "MIRROR_OPENING",
+      "OLD_REACTION",
+      "MIDDLE_JOURNEY",
+      "INSIGHT",
+      "MIRROR_ENDING",
+      "NEW_REACTION"
+    ],
+    "sceneStructure": [
+      "Mirror opening: hero encounters X for the first time.",
+      "Old reaction: hero responds to X using the false belief.",
+      "Middle journey: hero has 2-3 experiences that challenge the false belief.",
+      "Insight: hero begins to understand the true belief, away from X.",
+      "Mirror ending: hero encounters a situation deliberately similar to X again.",
+      "New reaction: hero responds this time using the true belief â€” described using language that echoes the old reaction's scene for direct comparison."
+    ],
+    "repetitionPattern": null,
+    "repetitionNote": "T05 is not phrase-repetition driven â€” its repetition is structural (the same TYPE of scene occurring twice), not a spoken refrain. Do not force a verbal refrain into this template.",
+    "escalationPattern": "The middle journey escalates emotionally as each of the 2-3 experiences chips further away at the false belief, building toward the insight.",
+    "turningPoint": "The insight beat, positioned as far as possible from both mirrored scenes, so the contrast between old and new reaction is maximized.",
+    "resolutionPattern": "Resolution is the mirror ending itself â€” the reader should be able to directly compare the opening and closing scene and see the transformation without being told about it.",
+    "requiredBlueprintSlots": [
+      "situation",
+      "character",
+      "need",
+      "belief.falseBelief",
+      "belief.trueBelief",
+      "mission",
+      "symbol"
+    ],
+    "optionalBlueprintSlots": [
+      "world",
+      "obstacle"
+    ],
+    "symbolIntegrationPoint": "Symbol is present but unnoticed in the mirror opening, and is what the hero consciously uses/acknowledges in the mirror ending.",
+    "illustrationOpportunities": [
+      "Mirror opening scene, composed to be visually near-identical to the ending",
+      "A middle-journey highlight showing the insight forming",
+      "Mirror ending scene, same composition/framing as the opening but different body language",
+      "A small side-by-side or echoed visual motif connecting both scenes"
+    ],
+    "pageRhythmGuidance": "Compose the opening and ending pages with matching layout/framing so young readers can feel the echo visually, even before understanding it narratively.",
+    "exampleSkeleton": [
+      "[HERO] + [SITUATION: X, first time]",
+      "[OLD_REACTION]",
+      "[MIDDLE_JOURNEY x2-3]",
+      "[INSIGHT] + [TRUE_BELIEF]",
+      "[SITUATION: X, mirrored]",
+      "[NEW_REACTION]",
+      "[SYMBOL]"
+    ]
+  },
+  {
+    "templateId": "T06",
+    "name": "Hidden Clue",
+    "storyMechanic": "Two or three apparently insignificant details are planted early in the story; later, one of them turns out to be exactly what the hero needs, and the payoff is only satisfying if it traces back to something genuinely shown before.",
+    "bestForNeeds": [
+      "NEED_PATIENCE"
+    ],
+    "bestForSituations": [],
+    "bestForLogicFamilies": [
+      "LOGIC_CATALYST_VISIT"
+    ],
+    "requiredBeats": [
+      "PLANT_1",
+      "PLANT_2",
+      "RISING_PROBLEM",
+      "RECALL",
+      "PAYOFF",
+      "RESOLUTION"
+    ],
+    "sceneStructure": [
+      "Plant 1: an ordinary-seeming detail is shown, without being explained as important.",
+      "Plant 2: a second small detail is shown, also unexplained.",
+      "Rising problem: hero faces the real obstacle, seemingly unrelated to the plants.",
+      "Recall: hero suddenly remembers one of the planted details ('Wait... I've seen that before').",
+      "Payoff: the planted detail directly solves or reframes the problem.",
+      "Resolution: hero succeeds using the recalled clue, and the true belief is spoken."
+    ],
+    "repetitionPattern": null,
+    "repetitionNote": "T06 relies on a single well-placed recall, not repeated phrasing â€” planting the same detail more than twice would dilute the payoff.",
+    "escalationPattern": "Tension escalates through the rising problem alone; the plants themselves stay quiet and low-key so they don't telegraph their own importance.",
+    "turningPoint": "The recall beat â€” must be traceable, in the actual text, back to Plant 1 or Plant 2, never to information introduced for the first time at the payoff.",
+    "resolutionPattern": "Resolution is proof of attention rewarded: patience and noticing, not force, are what solve the problem.",
+    "requiredBlueprintSlots": [
+      "situation",
+      "character",
+      "need",
+      "belief.falseBelief",
+      "belief.trueBelief",
+      "mission",
+      "obstacle",
+      "symbol"
+    ],
+    "optionalBlueprintSlots": [
+      "world",
+      "storyConflict"
+    ],
+    "symbolIntegrationPoint": "The symbol IS one of the two planted details â€” introduced quietly early, recalled explicitly at the payoff.",
+    "illustrationOpportunities": [
+      "Plant 1 shown in the background of an otherwise ordinary scene",
+      "Plant 2 shown similarly, easy to miss on first read",
+      "The recall moment â€” hero's eyes widening in realization",
+      "Payoff scene showing the planted detail now in active use"
+    ],
+    "pageRhythmGuidance": "The two plants should sit on otherwise low-tension pages so they don't stand out; give the recall page a visual echo of the plant's original illustration so readers can flip back and connect it themselves.",
+    "exampleSkeleton": [
+      "[HERO] + [SITUATION]",
+      "[PLANT_1]",
+      "[PLANT_2]",
+      "[RISING_PROBLEM]",
+      "[RECALL]",
+      "[PAYOFF]",
+      "[TRUE_BELIEF]",
+      "[RESOLUTION]",
+      "[SYMBOL]"
+    ]
+  },
+  {
+    "templateId": "T07",
+    "name": "Three Guides",
+    "storyMechanic": "Hero meets three different characters who each respond to the same problem in a different way (action, emotion/perspective, unexpected insight); the hero must choose their own path rather than simply copying any one guide.",
+    "bestForNeeds": [
+      "NEED_COMPASSION",
+      "NEED_RESPECT"
+    ],
+    "bestForSituations": [],
+    "bestForLogicFamilies": [
+      "LOGIC_PARALLEL_JOURNEY"
+    ],
+    "requiredBeats": [
+      "SETUP",
+      "GUIDE_1_ACTION",
+      "GUIDE_2_EMOTION",
+      "GUIDE_3_INSIGHT",
+      "HERO_CHOICE",
+      "RESOLUTION"
+    ],
+    "sceneStructure": [
+      "Setup: hero states the problem, carrying the false belief.",
+      "Guide 1: offers an action-based response to the same problem.",
+      "Guide 2: offers an emotional/perspective-based response, different in kind from Guide 1.",
+      "Guide 3: offers an unexpected insight that reframes the problem itself.",
+      "Hero choice: hero synthesizes something of their own from all three, rather than adopting one guide's answer wholesale.",
+      "Resolution: hero's own chosen path succeeds, and the true belief is spoken in the hero's own words."
+    ],
+    "repetitionPattern": {
+      "phrase/source": "the hero asking each guide the same underlying question, reworded to fit the guide",
+      "occurrenceCount": 3,
+      "occurrenceStages": [
+        "GUIDE_1_ACTION",
+        "GUIDE_2_EMOTION",
+        "GUIDE_3_INSIGHT"
+      ],
+      "variationRule": "each guide's response must differ in KIND (action vs. feeling vs. insight), never three variations of the same type of advice",
+      "finalVariation": "there is no repeated final line â€” instead the hero's own choice beat replaces a fourth repetition, showing synthesis rather than imitation"
+    },
+    "escalationPattern": "Escalation is in depth of understanding, not danger â€” each guide brings the hero closer to the true belief without any guide stating it outright.",
+    "turningPoint": "The hero-choice beat, immediately after Guide 3, where the hero must actively decide rather than default to the most recent guide's advice.",
+    "resolutionPattern": "Resolution must show the hero's own synthesis, not a direct copy of any single guide's suggestion â€” this is what proves growth rather than obedience.",
+    "requiredBlueprintSlots": [
+      "situation",
+      "character",
+      "need",
+      "belief.falseBelief",
+      "belief.trueBelief",
+      "mission",
+      "symbol"
+    ],
+    "optionalBlueprintSlots": [
+      "world",
+      "obstacle",
+      "storyConflict"
+    ],
+    "symbolIntegrationPoint": "Symbol is associated with Guide 3 (the insight guide) and is what the hero carries forward into their own choice.",
+    "illustrationOpportunities": [
+      "Three distinct guide characters, visually differentiated by role",
+      "Hero listening to each guide in turn",
+      "Hero pausing alone before the choice, all three guides' influence visible symbolically",
+      "Resolution showing the hero's own path, echoing but not copying any single guide"
+    ],
+    "pageRhythmGuidance": "Give each guide one clean page/spread of roughly equal weight to keep the three-way structure visually balanced; the hero-choice page should stand alone with more white space.",
+    "exampleSkeleton": [
+      "[HERO] + [SITUATION] + [PROBLEM]",
+      "[GUIDE_1: action]",
+      "[GUIDE_2: emotion/perspective]",
+      "[GUIDE_3: insight]",
+      "[HERO_CHOICE]",
+      "[TRUE_BELIEF]",
+      "[RESOLUTION]",
+      "[SYMBOL]"
+    ]
+  },
+  {
+    "templateId": "T08",
+    "name": "The Repeating Mistake",
+    "storyMechanic": "The same mistake happens two or three times, but each repetition increases the hero's awareness of the pattern, until the hero notices, pauses, and consciously changes instead of repeating it a final time.",
+    "bestForNeeds": [
+      "NEED_SELF_REGULATION",
+      "NEED_IDENTITY"
+    ],
+    "bestForSituations": [
+      "SIT004",
+      "SIT063",
+      "SIT072",
+      "SIT096",
+      "SIT155"
+    ],
+    "bestForLogicFamilies": [
+      "LOGIC_RITUAL_ESCALATION"
+    ],
+    "requiredBeats": [
+      "MISTAKE_1",
+      "IGNORE",
+      "MISTAKE_2",
+      "NOTICE",
+      "MISTAKE_3_AVOIDED",
+      "PAUSE",
+      "UNDERSTAND",
+      "CHANGE"
+    ],
+    "sceneStructure": [
+      "Mistake 1: hero makes the mistake for the first time, driven by the false belief.",
+      "Ignore: hero brushes past the consequence without reflecting.",
+      "Mistake 2: the same mistake happens again, in a new but recognizable situation.",
+      "Notice: hero, or someone nearby, points out the pattern for the first time.",
+      "Mistake 3 (avoided): the same trigger appears a third time, but this time the hero catches themselves before repeating it.",
+      "Pause: hero stops mid-pattern, using the pause craft technique.",
+      "Understand: the true belief surfaces as the reason the old pattern kept happening.",
+      "Change: hero acts differently, breaking the pattern for good."
+    ],
+    "repetitionPattern": {
+      "phrase/source": "the recognizable trigger situation that sets off the mistake",
+      "occurrenceCount": 3,
+      "occurrenceStages": [
+        "MISTAKE_1",
+        "MISTAKE_2",
+        "MISTAKE_3_AVOIDED"
+      ],
+      "variationRule": "the trigger must be recognizably the SAME kind of situation each time (same shape of provocation), while the surrounding context varies, so the pattern is legible to a young reader",
+      "finalVariation": "the third occurrence of the trigger does not produce the mistake â€” it produces the pause instead, which is the whole point of the template"
+    },
+    "escalationPattern": "Escalation is in the hero's growing self-awareness, not in the mistake's severity â€” mistake 2 should already carry a flicker of recognition that mistake 1 did not.",
+    "turningPoint": "The pause beat, placed at the third trigger, is the entire turning point of the template â€” it must visibly interrupt the expected third mistake.",
+    "resolutionPattern": "Resolution is defined by the pattern being broken on-page, in front of the reader, not merely described afterward.",
+    "requiredBlueprintSlots": [
+      "situation",
+      "character",
+      "need",
+      "belief.falseBelief",
+      "belief.trueBelief",
+      "mission",
+      "symbol"
+    ],
+    "optionalBlueprintSlots": [
+      "world",
+      "obstacle",
+      "storyConflict"
+    ],
+    "symbolIntegrationPoint": "Symbol appears at each mistake as a quiet, ignorable presence, and becomes the thing the hero consciously turns to during the pause.",
+    "illustrationOpportunities": [
+      "Mistake 1, played lightly, almost comic",
+      "Mistake 2, with a visible flicker of the hero noticing",
+      "The pause â€” hero physically stopping mid-motion, symbol prominent",
+      "Change beat showing the pattern visibly broken"
+    ],
+    "pageRhythmGuidance": "Use similar page composition for all three trigger moments so the repetition is visually obvious, then break the composition deliberately on the pause page.",
+    "exampleSkeleton": [
+      "[HERO] + [SITUATION]",
+      "[MISTAKE_1]",
+      "[IGNORE]",
+      "[MISTAKE_2]",
+      "[NOTICE]",
+      "[TRIGGER_3]",
+      "[PAUSE]",
+      "[TRUE_BELIEF]",
+      "[CHANGE]",
+      "[RESOLUTION]",
+      "[SYMBOL]"
+    ]
+  },
+  {
+    "templateId": "T09",
+    "name": "Smallest Strength",
+    "storyMechanic": "Everyone (including the hero) expects the solution to require a big, obvious action; instead, the actual solution requires a quiet quality the hero already has (patience, listening, kindness), which is revealed to be powerful precisely because it was underestimated.",
+    "bestForNeeds": [
+      "NEED_CONFIDENCE"
+    ],
+    "bestForSituations": [],
+    "bestForLogicFamilies": [
+      "LOGIC_INVERSION"
+    ],
+    "requiredBeats": [
+      "BIG_EXPECTATION",
+      "BIG_ATTEMPT_FAILS",
+      "QUIET_QUALITY_NOTICED",
+      "QUIET_ACTION",
+      "RESOLUTION"
+    ],
+    "sceneStructure": [
+      "Big expectation: hero (or others) assumes the problem needs a big, loud, obvious action.",
+      "Big attempt fails: hero (or another character) tries the big action and it does not work.",
+      "Quiet quality noticed: hero notices a small, quiet quality in themselves that seemed unrelated to solving anything.",
+      "Quiet action: hero uses that quiet quality directly on the problem.",
+      "Resolution: the quiet action succeeds where the big attempt could not, and the true belief reframes strength itself."
+    ],
+    "repetitionPattern": null,
+    "repetitionNote": "T09 is a single-inversion template â€” it works through contrast (big vs. small), not repeated structure. Do not add a three-part repetition here.",
+    "escalationPattern": "Escalation is expectation-based: the story keeps implying the quiet quality is irrelevant, right up until it becomes the entire solution.",
+    "turningPoint": "The 'quiet quality noticed' beat â€” the moment the hero (or the story) stops dismissing the small strength and starts trusting it.",
+    "resolutionPattern": "Resolution must explicitly show the quiet quality succeeding where the big/loud attempt failed, so the inversion is legible, not just implied.",
+    "requiredBlueprintSlots": [
+      "situation",
+      "character",
+      "need",
+      "belief.falseBelief",
+      "belief.trueBelief",
+      "mission",
+      "symbol"
+    ],
+    "optionalBlueprintSlots": [
+      "world",
+      "obstacle",
+      "storyConflict"
+    ],
+    "symbolIntegrationPoint": "Symbol is closely tied to the quiet quality itself â€” introduced alongside it, so the symbol and the strength are recognized together.",
+    "illustrationOpportunities": [
+      "The big attempt, visually large/loud/dramatic",
+      "The failed big attempt, deflated",
+      "A small, quiet moment where the hero's real strength is visible",
+      "Resolution showing the quiet strength working, framed gently rather than dramatically"
+    ],
+    "pageRhythmGuidance": "Give the big attempt bold, busy page composition, then shift to quiet, spacious, minimal composition for the quiet action and resolution â€” the page design itself should embody the inversion.",
+    "exampleSkeleton": [
+      "[HERO] + [SITUATION]",
+      "[BIG_EXPECTATION]",
+      "[BIG_ATTEMPT_FAILS]",
+      "[QUIET_QUALITY_NOTICED]",
+      "[TRUE_BELIEF]",
+      "[QUIET_ACTION]",
+      "[RESOLUTION]",
+      "[SYMBOL]"
+    ]
+  },
+  {
+    "templateId": "T10",
+    "name": "Before / After Words",
+    "storyMechanic": "A repeated internal phrase changes its wording three times across the story, tracking the belief shift directly through language rather than through plot events.",
+    "bestForNeeds": [
+      "NEED_SELF_REGULATION",
+      "NEED_CONFIDENCE"
+    ],
+    "bestForSituations": [],
+    "bestForLogicFamilies": [
+      "LOGIC_PERSPECTIVE_SHIFT"
+    ],
+    "requiredBeats": [
+      "PHRASE_BEGINNING",
+      "MIDDLE_EVENT",
+      "PHRASE_MIDDLE",
+      "TURNING_EVENT",
+      "PHRASE_ENDING",
+      "RESOLUTION"
+    ],
+    "sceneStructure": [
+      "Phrase (beginning): hero states the internal phrase in its false-belief form ('I have to ___').",
+      "Middle event: hero faces the situation and struggles under the false-belief framing.",
+      "Phrase (middle): the phrase returns, softened into a tentative, exploratory form ('Maybe I could ___').",
+      "Turning event: something small shifts the hero's understanding.",
+      "Phrase (ending): the phrase returns a third time, now stated as the true belief ('I can ___').",
+      "Resolution: hero acts fully from the final phrase and succeeds."
+    ],
+    "repetitionPattern": {
+      "phrase/source": "a single internal sentence stem, unique to the Blueprint's belief, that keeps the same grammatical shape across all three uses",
+      "occurrenceCount": 3,
+      "occurrenceStages": [
+        "PHRASE_BEGINNING",
+        "PHRASE_MIDDLE",
+        "PHRASE_ENDING"
+      ],
+      "variationRule": "each occurrence must keep the same sentence shape/subject so the three lines can sit side by side and clearly read as one evolving sentence, not three different thoughts",
+      "finalVariation": "the third occurrence must be the Blueprint's belief.trueBelief itself (or a direct paraphrase preserving its meaning), not merely a more confident version of the false belief"
+    },
+    "escalationPattern": "Escalation is entirely internal/linguistic â€” the external plot stays modest so the phrase's evolution stays the clear focus of the story.",
+    "turningPoint": "The turning event, placed between the middle and ending phrase, is intentionally small and ordinary â€” the point of this template is that a small event is enough once language starts shifting.",
+    "resolutionPattern": "Resolution is proven by the hero speaking/thinking the final version of the phrase and then acting on it in the same beat.",
+    "requiredBlueprintSlots": [
+      "situation",
+      "character",
+      "need",
+      "belief.falseBelief",
+      "belief.trueBelief",
+      "mission",
+      "symbol"
+    ],
+    "optionalBlueprintSlots": [
+      "world",
+      "obstacle"
+    ],
+    "symbolIntegrationPoint": "Symbol appears every time the phrase is spoken, functioning as a visual anchor tying all three versions of the line together.",
+    "illustrationOpportunities": [
+      "The phrase (beginning) shown as a thought bubble or quiet caption",
+      "The phrase (middle), body language slightly more open",
+      "The turning event, small and ordinary",
+      "The phrase (ending) shown large/central, symbol clearly present"
+    ],
+    "pageRhythmGuidance": "Set all three phrase moments in the same spot on the page (e.g. bottom caption) across their three pages, so the reader can flip back and see the sentence literally evolving in place.",
+    "exampleSkeleton": [
+      "[HERO] + [SITUATION]",
+      "[PHRASE: false belief form]",
+      "[MIDDLE_EVENT]",
+      "[PHRASE: tentative form]",
+      "[TURNING_EVENT]",
+      "[PHRASE: true belief form]",
+      "[RESOLUTION]",
+      "[SYMBOL]"
+    ]
+  },
+  {
+    "templateId": "T11",
+    "name": "The Countdown",
+    "storyMechanic": "A limited number of attempts or amount of time (3-2-1) creates escalating urgency, but the turning point is the hero learning WHEN to pause rather than simply moving faster.",
+    "bestForNeeds": [
+      "NEED_COURAGE",
+      "NEED_SELF_REGULATION"
+    ],
+    "bestForSituations": [],
+    "bestForLogicFamilies": [
+      "LOGIC_RESOURCE_DEPRECIATION"
+    ],
+    "requiredBeats": [
+      "COUNTDOWN_3",
+      "COUNTDOWN_2",
+      "PRESSURE_PEAK",
+      "PAUSE_CHOICE",
+      "COUNTDOWN_1",
+      "RESOLUTION"
+    ],
+    "sceneStructure": [
+      "Countdown 3: the limited resource (time/tries) is established at its highest number.",
+      "Countdown 2: hero rushes, the false belief driving hurried action, resource drops.",
+      "Pressure peak: with the resource nearly gone, panic-driven urgency is at its highest.",
+      "Pause choice: hero must choose to spend part of the remaining resource on stopping, not acting â€” this is the risk at the heart of the template.",
+      "Countdown 1: with the resource almost exhausted, hero acts once, wisely, from the true belief.",
+      "Resolution: success comes from the wisely-timed final action, not from speed."
+    ],
+    "repetitionPattern": {
+      "phrase/source": "the countdown marker itself, spoken or shown as the resource decreases (\"3... 2... 1\")",
+      "occurrenceCount": 3,
+      "occurrenceStages": [
+        "COUNTDOWN_3",
+        "COUNTDOWN_2",
+        "COUNTDOWN_1"
+      ],
+      "variationRule": "each countdown number must be paired with a distinct emotional state (confident, panicked, deliberately calm) so the numbers alone chart the hero's internal arc",
+      "finalVariation": "the final count (1) is delivered slowly/quietly rather than urgently, deliberately breaking the accelerating rhythm the first two counts built"
+    },
+    "escalationPattern": "Escalation is literal and numeric â€” the resource visibly depreciates, and urgency should be felt to genuinely rise from 3 to 2.",
+    "turningPoint": "The pause-choice beat, where the hero must choose to 'spend' scarce resource on pausing â€” the risk of this choice not paying off must feel real.",
+    "resolutionPattern": "Resolution must make clear that the pause was what made the final action work, not that the hero simply got lucky with the last attempt.",
+    "requiredBlueprintSlots": [
+      "situation",
+      "character",
+      "need",
+      "belief.falseBelief",
+      "belief.trueBelief",
+      "mission",
+      "symbol"
+    ],
+    "optionalBlueprintSlots": [
+      "world",
+      "obstacle",
+      "storyConflict"
+    ],
+    "symbolIntegrationPoint": "Symbol appears at countdown 3, ignored under pressure at countdown 2, and is what the hero consciously turns to during the pause choice.",
+    "illustrationOpportunities": [
+      "A visual countdown marker (e.g. objects, a fading light) shown decreasing across the three beats",
+      "Pressure peak â€” hero visibly rushed and overwhelmed",
+      "The pause choice â€” a still, quiet page against the ticking urgency",
+      "Resolution at countdown 1, calm and deliberate"
+    ],
+    "pageRhythmGuidance": "Speed up pacing (shorter text, more urgent line breaks) from countdown 3 to the pressure peak, then deliberately slow the pacing down for the pause and final count to mirror the hero's internal shift.",
+    "exampleSkeleton": [
+      "[HERO] + [SITUATION] + [COUNTDOWN: 3]",
+      "[COUNTDOWN: 2]",
+      "[PRESSURE_PEAK]",
+      "[PAUSE_CHOICE]",
+      "[TRUE_BELIEF]",
+      "[COUNTDOWN: 1]",
+      "[RESOLUTION]",
+      "[SYMBOL]"
+    ]
+  },
+  {
+    "templateId": "T12",
+    "name": "The Almost-Right Path",
+    "storyMechanic": "The hero encounters several solutions that each look reasonable, but only the option requiring the true belief is actually complete â€” the story is about judgment, not right-vs-wrong.",
+    "bestForNeeds": [
+      "NEED_INTEGRITY",
+      "NEED_RESPONSIBILITY"
+    ],
+    "bestForSituations": [],
+    "bestForLogicFamilies": [
+      "LOGIC_TRICKSTER"
+    ],
+    "requiredBeats": [
+      "SETUP",
+      "CHOICE_A_PLAUSIBLE",
+      "CHOICE_B_BETTER_BUT_FLAWED",
+      "REFLECTION",
+      "CHOICE_C_TRUE",
+      "RESOLUTION"
+    ],
+    "sceneStructure": [
+      "Setup: hero faces a decision with more than one apparent solution.",
+      "Choice A: a plausible but incomplete option is tried or seriously considered, and shown to fall short.",
+      "Choice B: a better option is tried, but it creates a new problem of its own.",
+      "Reflection: hero pauses to think about what both A and B were missing.",
+      "Choice C: the option that requires understanding the true belief is found and taken.",
+      "Resolution: Choice C works fully, and the difference between it and A/B is made clear."
+    ],
+    "repetitionPattern": null,
+    "repetitionNote": "T12 is a judgment/comparison template, not a repetition template â€” its power comes from the three choices being visibly different in kind, not from repeated language.",
+    "escalationPattern": "Escalation is in the sophistication of the wrong answers â€” Choice A is obviously incomplete, Choice B is genuinely tempting and nearly right, raising the difficulty of choosing correctly.",
+    "turningPoint": "The reflection beat between Choice B and Choice C â€” the hero must articulate (even briefly) what both prior choices were missing before Choice C can be found.",
+    "resolutionPattern": "Resolution must show why Choice C succeeds where A and B could not, directly connected to the true belief, not just narrated as 'the right one'.",
+    "requiredBlueprintSlots": [
+      "situation",
+      "character",
+      "need",
+      "belief.falseBelief",
+      "belief.trueBelief",
+      "mission",
+      "symbol"
+    ],
+    "optionalBlueprintSlots": [
+      "world",
+      "obstacle",
+      "storyConflict"
+    ],
+    "symbolIntegrationPoint": "Symbol is associated only with Choice C, absent or unnoticed near Choices A and B, marking it visually as the different kind of option.",
+    "illustrationOpportunities": [
+      "Choice A shown as tempting but subtly incomplete",
+      "Choice B shown as appealing but visibly creating a new problem",
+      "The reflection beat, hero weighing both",
+      "Choice C / resolution, symbol clearly present and integrated"
+    ],
+    "pageRhythmGuidance": "Give Choices A and B similar, comparable page treatment so a young reader can weigh them against each other; give Choice C a visually distinct page to mark it as different in kind, not just 'third in a row'.",
+    "exampleSkeleton": [
+      "[HERO] + [SITUATION] + [DECISION]",
+      "[CHOICE_A: plausible]",
+      "[CHOICE_B: better but flawed]",
+      "[REFLECTION]",
+      "[TRUE_BELIEF]",
+      "[CHOICE_C: true]",
+      "[RESOLUTION]",
+      "[SYMBOL]"
+    ]
+  },
+  {
+    "templateId": "T13",
+    "name": "Lost â†’ Notice â†’ Found",
+    "storyMechanic": "The hero loses something important, and while searching for it notices something else entirely (a clue, another's need, a symbol, something about themselves); the original object is eventually found, but the deeper discovery is the real resolution.",
+    "bestForNeeds": [
+      "NEED_STABILITY",
+      "NEED_PATIENCE"
+    ],
+    "bestForSituations": [],
+    "bestForLogicFamilies": [
+      "LOGIC_THRESHOLD_CROSSING"
+    ],
+    "requiredBeats": [
+      "LOSS",
+      "SEARCH_BEGINS",
+      "NOTICE_SOMETHING_ELSE",
+      "DEEPER_DISCOVERY",
+      "OBJECT_FOUND",
+      "RESOLUTION"
+    ],
+    "sceneStructure": [
+      "Loss: hero loses something important, framed through the false belief (the object feels essential to being okay).",
+      "Search begins: hero starts searching, focused entirely on the object.",
+      "Notice something else: mid-search, hero notices something unrelated â€” a clue, another character's need, or the symbol.",
+      "Deeper discovery: following that notice leads to something more meaningful than the object itself.",
+      "Object found: the original object is found, often almost incidentally, once the hero is no longer searching so anxiously.",
+      "Resolution: hero realizes the deeper discovery, not the object, is what actually mattered â€” the true belief is spoken."
+    ],
+    "repetitionPattern": null,
+    "repetitionNote": "T13 is a single-turn discovery template â€” it should not be padded with multiple 'notice' beats; one genuine, well-placed notice is stronger than several.",
+    "escalationPattern": "Escalation is anxiety-based during the search, then quietly de-escalates once the deeper discovery begins â€” the emotional shape is tension releasing, not building further.",
+    "turningPoint": "The 'notice something else' beat â€” this must interrupt the search itself, pulling hero attention away from the object toward something more meaningful.",
+    "resolutionPattern": "Resolution must explicitly rank the deeper discovery above the found object â€” the object's return is satisfying but secondary.",
+    "requiredBlueprintSlots": [
+      "situation",
+      "character",
+      "need",
+      "belief.falseBelief",
+      "belief.trueBelief",
+      "mission",
+      "symbol"
+    ],
+    "optionalBlueprintSlots": [
+      "world",
+      "obstacle"
+    ],
+    "symbolIntegrationPoint": "Symbol is frequently what the hero notices mid-search â€” the deeper discovery and the symbol are often the same beat.",
+    "illustrationOpportunities": [
+      "The loss â€” hero's dismay at realizing something is missing",
+      "The search, hero visibly focused only on looking",
+      "The notice â€” hero's attention caught by something else entirely",
+      "Resolution showing both the found object and the deeper discovery together"
+    ],
+    "pageRhythmGuidance": "Keep the search pages visually busy/scanning (lots of small details) to mirror the hero's anxious looking, then shift to a single calm focal image for the notice and deeper-discovery beats.",
+    "exampleSkeleton": [
+      "[HERO] + [SITUATION] + [LOSS]",
+      "[SEARCH_BEGINS]",
+      "[NOTICE_SOMETHING_ELSE]",
+      "[DEEPER_DISCOVERY]",
+      "[TRUE_BELIEF]",
+      "[OBJECT_FOUND]",
+      "[RESOLUTION]",
+      "[SYMBOL]"
+    ]
+  },
+  {
+    "templateId": "T14",
+    "name": "Pass It On",
+    "storyMechanic": "The hero receives help early in the story; later, another character faces a similar problem, and the hero remembers the help they received and passes it forward â€” beginning as a receiver, ending as a giver.",
+    "bestForNeeds": [
+      "NEED_COMPASSION",
+      "NEED_CONNECTION",
+      "NEED_BELONGING"
+    ],
+    "bestForSituations": [],
+    "bestForLogicFamilies": [
+      "LOGIC_ROLE_REVERSAL"
+    ],
+    "requiredBeats": [
+      "HERO_RECEIVES",
+      "LEARNING",
+      "OTHER_STRUGGLES",
+      "RECALL_HELP",
+      "HERO_GIVES",
+      "RESOLUTION"
+    ],
+    "sceneStructure": [
+      "Hero receives: hero, struggling under the false belief, is helped by someone else.",
+      "Learning: hero reflects, even briefly, on what that help felt like.",
+      "Other struggles: later, a different character faces a recognizably similar struggle to the hero's original one.",
+      "Recall help: hero remembers the help they received and recognizes the parallel.",
+      "Hero gives: hero offers that same kind of help to the other character.",
+      "Resolution: hero's own understanding is completed by having given, not just received, and the true belief is spoken."
+    ],
+    "repetitionPattern": null,
+    "repetitionNote": "T14's repetition is structural (receiving mirrored by giving), not verbal â€” avoid inserting a spoken refrain; the mirrored ACT is the device.",
+    "escalationPattern": "Escalation is relational, not physical â€” the story builds through widening the hero's circle of care from self to other.",
+    "turningPoint": "The recall-help beat, where the hero consciously connects the other character's struggle to their own earlier experience.",
+    "resolutionPattern": "Resolution requires the hero to actively give help (an action), not merely feel sympathy â€” sympathy alone is not sufficient for this template.",
+    "requiredBlueprintSlots": [
+      "situation",
+      "character",
+      "need",
+      "belief.falseBelief",
+      "belief.trueBelief",
+      "mission",
+      "symbol"
+    ],
+    "optionalBlueprintSlots": [
+      "world",
+      "obstacle",
+      "storyConflict"
+    ],
+    "symbolIntegrationPoint": "Symbol is present when the hero receives help, and reappears when the hero gives help, visually linking the two mirrored acts.",
+    "illustrationOpportunities": [
+      "Hero receiving help, shown small/vulnerable",
+      "The other character's struggle, deliberately echoing the hero's earlier scene",
+      "Hero's recall moment, recognition visible on their face",
+      "Hero giving help, mirrored composition to the receiving scene"
+    ],
+    "pageRhythmGuidance": "Compose the receiving scene and the giving scene with matching framing (like T05's mirror, but with hero swapping roles) so the parallel is visually unmistakable.",
+    "exampleSkeleton": [
+      "[HERO] + [SITUATION]",
+      "[HERO_RECEIVES]",
+      "[LEARNING]",
+      "[OTHER_STRUGGLES: mirrored situation]",
+      "[RECALL_HELP]",
+      "[TRUE_BELIEF]",
+      "[HERO_GIVES]",
+      "[RESOLUTION]",
+      "[SYMBOL]"
+    ]
+  },
+  {
+    "templateId": "T15",
+    "name": "The Unexpected Helper",
+    "storyMechanic": "The hero assumes someone or something cannot possibly help; that assumption must be actively overcome before the supposedly unlikely helper contributes the missing piece the hero needed all along.",
+    "bestForNeeds": [
+      "NEED_COMPASSION",
+      "NEED_TRUST"
+    ],
+    "bestForSituations": [],
+    "bestForLogicFamilies": [
+      "LOGIC_INVERSION"
+    ],
+    "requiredBeats": [
+      "PROBLEM",
+      "ASSUMPTION",
+      "DISMISSAL",
+      "SECOND_LOOK",
+      "UNEXPECTED_CONTRIBUTION",
+      "RESOLUTION"
+    ],
+    "sceneStructure": [
+      "Problem: hero faces the obstacle and needs help.",
+      "Assumption: hero identifies who/what seems capable of helping, and dismisses another character or thing as unable to help â€” this is the false belief made concrete.",
+      "Dismissal: hero tries without the dismissed helper, and it is not enough.",
+      "Second look: hero is prompted (by circumstance or by the dismissed character themselves) to reconsider.",
+      "Unexpected contribution: the dismissed character/thing contributes exactly the missing piece, in a way true to their own nature.",
+      "Resolution: hero succeeds because of the unexpected helper, and openly acknowledges the assumption was wrong."
+    ],
+    "repetitionPattern": null,
+    "repetitionNote": "T15 is a single-inversion template like T09, built on one clear assumption-then-reversal, not repeated structure.",
+    "escalationPattern": "Escalation is in how firmly the assumption is held â€” the dismissal should feel reasonable/understandable to a young reader, not silly, so the reversal has real weight.",
+    "turningPoint": "The second-look beat, where the hero is willing to reconsider the dismissed character even without proof yet that they can help.",
+    "resolutionPattern": "Resolution must make the unexpected helper's contribution feel true to who they are, not a random lucky ability â€” the story should honor that character's own nature.",
+    "requiredBlueprintSlots": [
+      "situation",
+      "character",
+      "need",
+      "belief.falseBelief",
+      "belief.trueBelief",
+      "mission",
+      "symbol"
+    ],
+    "optionalBlueprintSlots": [
+      "world",
+      "obstacle",
+      "storyConflict"
+    ],
+    "symbolIntegrationPoint": "Symbol belongs to the unexpected helper, not the hero, until the resolution, when it is shared or passed to the hero as part of the contribution.",
+    "illustrationOpportunities": [
+      "The dismissed character/thing, shown in an ordinary, easy-to-overlook way",
+      "The hero trying and failing without them",
+      "The second look â€” a quieter, closer view of the dismissed character",
+      "Resolution showing the unexpected helper's contribution clearly working"
+    ],
+    "pageRhythmGuidance": "Keep the dismissed character visually present but small/background in the early pages, then bring them into full, central focus for the unexpected-contribution page.",
+    "exampleSkeleton": [
+      "[HERO] + [SITUATION] + [PROBLEM]",
+      "[ASSUMPTION]",
+      "[DISMISSAL]",
+      "[SECOND_LOOK]",
+      "[TRUE_BELIEF]",
+      "[UNEXPECTED_CONTRIBUTION]",
+      "[RESOLUTION]",
+      "[SYMBOL]"
+    ]
+  },
+  {
+    "templateId": "T16",
+    "name": "Two Ways to See It",
+    "storyMechanic": "The same event is shown once through the hero's first interpretation (the false belief) and again through a second, more accurate interpretation reached by gathering real evidence â€” the story never simply preaches the correct answer.",
+    "bestForNeeds": [
+      "NEED_RESPECT",
+      "NEED_COMPASSION"
+    ],
+    "bestForSituations": [
+      "SIT040",
+      "SIT064",
+      "SIT067",
+      "SIT077",
+      "SIT128",
+      "SIT060",
+      "SIT132"
+    ],
+    "bestForLogicFamilies": [
+      "LOGIC_PERSPECTIVE_SHIFT"
+    ],
+    "requiredBeats": [
+      "EVENT",
+      "INTERPRETATION_1",
+      "EVIDENCE_GATHERING",
+      "INTERPRETATION_2",
+      "RESOLUTION"
+    ],
+    "sceneStructure": [
+      "Event: something happens involving another character, ambiguous enough to support more than one reading.",
+      "Interpretation 1: hero reads the event through the false belief, and reacts accordingly. This interpretation is supported by concrete, specific evidence (evidenceCited field).",
+      "Evidence gathering: hero, prompted by consequence or curiosity, actively investigates (observation, test, or experience). The hero must personally discover the contradiction; evidence cannot be handed to the hero by another character. The contradiction discovered must be material — substantial enough to genuinely threaten Interpretation 1, not trivial or incidental.",
+      "Interpretation 2: new evidence reframes the same event through the true belief. Evidence supporting this interpretation must be comparable in weight/specificity to Interpretation 1 (weight-parity rule).",
+      "Resolution: hero acts on interpretation 2, and the story shows (rather than states) why it is the more accurate reading."
+    ],
+    "repetitionPattern": null,
+    "repetitionNote": "T16's device is the SAME event retold, not a repeated phrase â€” the event itself should be described or shown twice, once per interpretation, so the contrast is direct.",
+    "escalationPattern": "Escalation is emotional, not plot-based â€” interpretation 1 should carry real hurt/anger so the reader understands why the hero jumped to it.",
+    "turningPoint": "The evidence-gathering beat â€” hero must take an active step (asking, observing, waiting) rather than the truth simply being handed to them.",
+    "resolutionPattern": "Resolution should briefly restate the event a final time from interpretation 2's view, so the reader directly feels how differently it now reads.",
+    "requiredBlueprintSlots": [
+      "situation",
+      "character",
+      "need",
+      "belief.falseBelief",
+      "belief.trueBelief",
+      "mission",
+      "symbol"
+    ],
+    "optionalBlueprintSlots": [
+      "world",
+      "storyConflict"
+    ],
+    "symbolIntegrationPoint": "Symbol appears during evidence-gathering, functioning as the prompt or reminder that pushes the hero to look closer instead of assuming.",
+    "illustrationOpportunities": [
+      "The event itself, composed ambiguously",
+      "Interpretation 1, shown through a visually 'clouded' or tinted version of the same scene",
+      "Evidence gathering, hero actively observing/asking",
+      "Interpretation 2, the same scene now shown clearly"
+    ],
+    "pageRhythmGuidance": "If possible, illustrate the event scene twice with matching composition but different color/mood treatment for interpretation 1 vs. interpretation 2, to make the perspective shift visible as well as narrative.",
+    "exampleSkeleton": [
+      "[HERO] + [SITUATION] + [EVENT]",
+      "[INTERPRETATION_1: false belief]",
+      "[EVIDENCE_GATHERING]",
+      "[TRUE_BELIEF]",
+      "[INTERPRETATION_2]",
+      "[RESOLUTION]",
+      "[SYMBOL]"
+    ],
+    "T16_structuralConstraints": {
+      "INTERPRETATION_1": {
+        "evidenceCited": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Concrete, specific fact(s) that make the false-belief reading genuinely plausible in the moment, not a strawman. Must be grounded in OPENING STATE/EVENT content, not merely asserted anxiety."
+        }
+      },
+      "INTERPRETATION_2": {
+        "evidenceCited": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Concrete fact(s) supporting the true-belief reading.",
+          "weightParityRule": "INTERPRETATION_2.evidenceCited must be at least as numerous/specific as INTERPRETATION_1.evidenceCited"
+        }
+      },
+      "EVIDENCE_GATHERING": {
+        "evidenceSource": {
+          "type": "enum",
+          "validValues": [
+            "HERO_DIRECT_OBSERVATION",
+            "HERO_DIRECT_TEST",
+            "HERO_DIRECT_EXPERIENCE"
+          ],
+          "invalidValues": [
+            "OTHER_CHARACTER_STATEMENT",
+            "OTHER_CHARACTER_EXPLANATION"
+          ],
+          "description": "Hero must discover evidence directly, not receive it handed from another character"
+        },
+        "contradictionMoment": {
+          "type": "string",
+          "required": true,
+          "description": "Names the SPECIFIC observable event where hero encounters something that doesn't match INTERPRETATION_1",
+          "materialityRule": "Must be substantial enough to plausibly cause reconsideration of INTERPRETATION_1, not trivially small or incidental. Checkable test: could a reasonable reader see this as a real reason to reconsider INTERPRETATION_1?"
+        },
+        "reassessmentIsHeroOwned": {
+          "type": "boolean",
+          "requiredValue": true,
+          "description": "Hero's reassessment must come from their own contradictionMoment, not a statement from another character"
+        }
+      }
+    }
+  },
+  {
+    "templateId": "T17",
+    "name": "The Secret Mission",
+    "storyMechanic": "The hero receives a small mission that unfolds through clue-obstacle-clue-obstacle beats, and the mission turns out to mean something more emotionally significant than the hero expected when they set out.",
+    "bestForNeeds": [
+      "NEED_COURAGE",
+      "NEED_CURIOSITY"
+    ],
+    "bestForSituations": [],
+    "bestForLogicFamilies": [
+      "LOGIC_CATALYST_VISIT"
+    ],
+    "requiredBeats": [
+      "MISSION_GIVEN",
+      "CLUE_1",
+      "OBSTACLE_1",
+      "CLUE_2",
+      "OBSTACLE_2",
+      "REVELATION",
+      "RESOLUTION"
+    ],
+    "sceneStructure": [
+      "Mission given: hero receives a small, seemingly simple mission.",
+      "Clue 1: hero finds the first clue toward completing it.",
+      "Obstacle 1: something gets in the way, tied to the false belief.",
+      "Clue 2: hero finds a second clue, which begins to hint the mission means more than expected.",
+      "Obstacle 2: a harder obstacle, testing the hero's commitment now that stakes feel higher.",
+      "Revelation: the mission's true, more meaningful purpose becomes clear.",
+      "Resolution: hero completes the mission understanding its real significance, true belief spoken."
+    ],
+    "repetitionPattern": null,
+    "repetitionNote": "T17 alternates clue/obstacle beats rather than repeating a phrase â€” its rhythm device is the ALTERNATION itself, not a refrain.",
+    "escalationPattern": "Escalation is both practical (Obstacle 2 harder than Obstacle 1) and emotional (the mission's stakes grow from small errand to something that matters).",
+    "turningPoint": "The revelation beat, placed after Obstacle 2, where the small mission is reframed as meaningful.",
+    "resolutionPattern": "Resolution must complete the ORIGINAL small mission, now understood in its full meaning â€” the mission itself should not change, only its significance.",
+    "requiredBlueprintSlots": [
+      "situation",
+      "character",
+      "need",
+      "belief.falseBelief",
+      "belief.trueBelief",
+      "mission",
+      "obstacle",
+      "symbol"
+    ],
+    "optionalBlueprintSlots": [
+      "world",
+      "storyConflict"
+    ],
+    "symbolIntegrationPoint": "Symbol is embedded in Clue 2, which is the moment the mission's deeper meaning starts to surface.",
+    "illustrationOpportunities": [
+      "Hero receiving the mission, framed as small/ordinary",
+      "Clue 1 and Obstacle 1 as a matched pair of spreads",
+      "Clue 2, with the symbol subtly present",
+      "Revelation and resolution, showing the mission completed with new emotional weight"
+    ],
+    "pageRhythmGuidance": "Alternate clue and obstacle pages in a steady, readable rhythm; let the revelation page slow down and breathe more than the clue/obstacle pairs before it.",
+    "exampleSkeleton": [
+      "[HERO] + [SITUATION] + [MISSION_GIVEN]",
+      "[CLUE_1]",
+      "[OBSTACLE_1]",
+      "[CLUE_2]",
+      "[OBSTACLE_2]",
+      "[REVELATION] + [TRUE_BELIEF]",
+      "[RESOLUTION]",
+      "[SYMBOL]"
+    ]
+  },
+  {
+    "templateId": "T18",
+    "name": "The Growing Problem",
+    "storyMechanic": "A tiny problem is ignored, then grows larger and larger through repeated escalation, until the hero pauses instead of continuing to react, and identifies the real, smaller problem underneath the now-overwhelming one.",
+    "bestForNeeds": [
+      "NEED_SELF_REGULATION"
+    ],
+    "bestForSituations": [
+      "SIT008",
+      "SIT101",
+      "SIT108",
+      "SIT112"
+    ],
+    "bestForLogicFamilies": [
+      "LOGIC_RUNAWAY_CHAIN"
+    ],
+    "requiredBeats": [
+      "TINY_PROBLEM",
+      "IGNORED",
+      "GROWS_1",
+      "GROWS_2",
+      "OVERWHELMING",
+      "PAUSE",
+      "REAL_PROBLEM",
+      "RESOLUTION"
+    ],
+    "sceneStructure": [
+      "Tiny problem: a small, easy-to-dismiss problem appears.",
+      "Ignored: hero (driven by the false belief) ignores or reacts carelessly to it.",
+      "Grows 1: the problem grows larger as a direct consequence of being ignored.",
+      "Grows 2: it grows again, now visibly harder to ignore, feeding on the hero's reactions.",
+      "Overwhelming: the problem reaches its largest, most overwhelming size.",
+      "Pause: hero stops reacting entirely â€” the pause craft technique.",
+      "Real problem: underneath the now-huge problem, hero identifies the small, real, original issue.",
+      "Resolution: hero addresses the real (small) problem directly, and the overwhelming version dissolves."
+    ],
+    "repetitionPattern": {
+      "phrase/source": "a short description of the growing problem's size/shape, restated with the same sentence structure each time it grows",
+      "occurrenceCount": 3,
+      "occurrenceStages": [
+        "TINY_PROBLEM",
+        "GROWS_1",
+        "GROWS_2"
+      ],
+      "variationRule": "each restatement must use the same sentence pattern with an intensified word/image (e.g. 'a small cloud' â†’ 'a big cloud' â†’ 'a cloud that filled the whole sky'), so the growth is felt rhythmically",
+      "finalVariation": "at the pause beat, the growth pattern is explicitly broken â€” the next line does not describe the problem getting even bigger, it describes the hero stopping"
+    },
+    "escalationPattern": "This IS the escalation template â€” the growing problem should visibly double or intensify at each stage, feeding specifically on being ignored/reacted-to rather than addressed.",
+    "turningPoint": "The pause beat, placed at the problem's largest point â€” the hero must stop reacting entirely before the real, smaller problem can be seen.",
+    "resolutionPattern": "Resolution requires showing that the real problem was small all along â€” the 'growth' was created by avoidance, not by the problem's true size.",
+    "requiredBlueprintSlots": [
+      "situation",
+      "character",
+      "need",
+      "belief.falseBelief",
+      "belief.trueBelief",
+      "mission",
+      "symbol"
+    ],
+    "optionalBlueprintSlots": [
+      "world",
+      "obstacle",
+      "storyConflict"
+    ],
+    "symbolIntegrationPoint": "Symbol appears at the tiny-problem stage, buried/obscured as the problem grows, and is rediscovered at the pause, guiding the hero to the real problem.",
+    "illustrationOpportunities": [
+      "The tiny problem, visually small in the corner of the page",
+      "The problem growing, taking up increasing page space each time",
+      "The overwhelming version, filling the entire spread",
+      "The pause and real-problem reveal, back to a small, clear, contained image"
+    ],
+    "pageRhythmGuidance": "Let the illustrated 'size' of the problem physically grow across the page spreads (small to page-filling) so the escalation is felt visually, then cut sharply back to a small, calm image at the pause.",
+    "exampleSkeleton": [
+      "[HERO] + [SITUATION] + [TINY_PROBLEM]",
+      "[IGNORED]",
+      "[GROWS_1]",
+      "[GROWS_2]",
+      "[OVERWHELMING]",
+      "[PAUSE]",
+      "[TRUE_BELIEF]",
+      "[REAL_PROBLEM]",
+      "[RESOLUTION]",
+      "[SYMBOL]"
+    ]
+  },
+  {
+    "templateId": "T19",
+    "name": "Choice at the Crossroads",
+    "storyMechanic": "The hero reaches a single, genuine choice between two options, each representing a different belief; choosing the harder, true-belief option must carry a real consequence, or the transformation will feel unearned.",
+    "bestForNeeds": [
+      "NEED_RESPONSIBILITY",
+      "NEED_INTEGRITY"
+    ],
+    "bestForSituations": [],
+    "bestForLogicFamilies": [
+      "LOGIC_THRESHOLD_CROSSING"
+    ],
+    "requiredBeats": [
+      "APPROACH_CROSSROADS",
+      "OPTION_OLD_BELIEF",
+      "OPTION_NEW_BELIEF",
+      "CHOICE",
+      "CONSEQUENCE",
+      "RESOLUTION"
+    ],
+    "sceneStructure": [
+      "Approach crossroads: hero arrives at a moment where two paths are both genuinely available.",
+      "Option (old belief): the tempting, easier option is shown, clearly connected to the false belief.",
+      "Option (new belief): the harder option is shown, clearly connected to the true belief, without being obviously 'the right answer' yet.",
+      "Choice: hero chooses, deliberately and visibly, rather than drifting into a decision.",
+      "Consequence: the choice has a real, specific consequence â€” not simply praise for choosing well.",
+      "Resolution: the consequence resolves in a way that affirms the true belief, completing the mission."
+    ],
+    "repetitionPattern": null,
+    "repetitionNote": "T19 is a single-decision template â€” its power depends on there being ONE real crossroads, not several diluted mini-choices.",
+    "escalationPattern": "Escalation is in how genuinely tempting the old-belief option is made to feel â€” if it is not a real temptation, the choice beat has no weight.",
+    "turningPoint": "The choice beat itself is the turning point â€” everything before builds toward it, everything after is consequence.",
+    "resolutionPattern": "Resolution must follow logically and specifically from the exact choice made, so the story teaches that choices have real consequences, not just good feelings.",
+    "requiredBlueprintSlots": [
+      "situation",
+      "character",
+      "need",
+      "belief.falseBelief",
+      "belief.trueBelief",
+      "mission",
+      "storyConflict",
+      "symbol"
+    ],
+    "optionalBlueprintSlots": [
+      "world",
+      "obstacle"
+    ],
+    "symbolIntegrationPoint": "Symbol is positioned physically nearer the new-belief option at the crossroads, present as a quiet influence on the choice without making the decision for the hero.",
+    "illustrationOpportunities": [
+      "The crossroads itself, two paths visually distinct",
+      "Close-up on the hero's face weighing the choice",
+      "The moment of choosing, decisive body language",
+      "The consequence and resolution, following directly from the chosen path"
+    ],
+    "pageRhythmGuidance": "Give the two options a true side-by-side spread if possible, so the reader feels the choice as simultaneous and real rather than sequential and obvious.",
+    "exampleSkeleton": [
+      "[HERO] + [SITUATION] + [APPROACH_CROSSROADS]",
+      "[OPTION: false belief]",
+      "[OPTION: true belief]",
+      "[CHOICE]",
+      "[CONSEQUENCE]",
+      "[RESOLUTION]",
+      "[SYMBOL]"
+    ]
+  },
+  {
+    "templateId": "T20",
+    "name": "Return With Something New",
+    "storyMechanic": "The hero leaves familiar surroundings, is changed by a journey of challenge and discovery, and returns to the same starting place â€” the final scene deliberately echoes the opening, but the hero now behaves differently within it.",
+    "bestForNeeds": [
+      "NEED_COMPETENCE",
+      "NEED_CONFIDENCE"
+    ],
+    "bestForSituations": [],
+    "bestForLogicFamilies": [
+      "LOGIC_CIRCULAR_RETURN"
+    ],
+    "requiredBeats": [
+      "DEPARTURE",
+      "CHALLENGE",
+      "DISCOVERY",
+      "TRANSFORMATION",
+      "RETURN",
+      "ECHO_ENDING"
+    ],
+    "sceneStructure": [
+      "Departure: hero leaves the familiar place, carrying the false belief with them.",
+      "Challenge: hero faces a real difficulty away from home, distinct from the original situation.",
+      "Discovery: hero finds something (a skill, an idea, a symbol) they did not have before.",
+      "Transformation: hero internalizes the discovery as the true belief.",
+      "Return: hero comes back to the original, familiar place.",
+      "Echo ending: the final scene deliberately mirrors the departure scene's setting and framing, but the hero now acts from the true belief within it."
+    ],
+    "repetitionPattern": null,
+    "repetitionNote": "T20's repetition is structural (departure scene echoed by ending scene), like T05, but spans a full journey rather than a single mirrored moment â€” do not compress it into T05's tighter shape.",
+    "escalationPattern": "Escalation runs across the whole outward journey (challenge growing harder, discovery deepening into transformation) before resolving back at home.",
+    "turningPoint": "The transformation beat, placed just before the return, so the hero comes home already changed rather than being changed by arriving home.",
+    "resolutionPattern": "Resolution is the echo ending itself â€” the same place as the opening, now inhabited differently, proving mastery/resilience gained through the journey.",
+    "requiredBlueprintSlots": [
+      "situation",
+      "character",
+      "need",
+      "belief.falseBelief",
+      "belief.trueBelief",
+      "mission",
+      "world",
+      "symbol"
+    ],
+    "optionalBlueprintSlots": [
+      "obstacle",
+      "storyConflict"
+    ],
+    "symbolIntegrationPoint": "Symbol is found or given during the discovery beat away from home, and is visibly carried by the hero in the echo ending, marking what changed.",
+    "illustrationOpportunities": [
+      "Departure scene, composed to be mirrored later",
+      "The challenge, set in an unfamiliar world/setting",
+      "The discovery moment, symbol prominently introduced",
+      "Echo ending, same composition as departure, hero and symbol now integrated"
+    ],
+    "pageRhythmGuidance": "Use matching panel/page composition for departure and echo-ending, exactly as in T05, but let the middle journey breathe over more pages since this template covers a full outward-and-back arc.",
+    "exampleSkeleton": [
+      "[HERO] + [SITUATION] + [DEPARTURE]",
+      "[CHALLENGE]",
+      "[DISCOVERY]",
+      "[TRANSFORMATION] + [TRUE_BELIEF]",
+      "[RETURN]",
+      "[ECHO_ENDING]",
+      "[SYMBOL]"
+    ]
+  },
+  {
+    "templateId": "T21",
+    "name": "The Disrupted Plan",
+    "storyMechanic": "A hero's explicit plan is disrupted twice, in different ways; attempts to restore it fail, and an adapted plan emerges instead.",
+    "bestForNeeds": [
+      "NEED_ADAPTABILITY",
+      "NEED_RESILIENCE"
+    ],
+    "bestForSituations": [
+      "SIT006",
+      "SIT111",
+      "SIT118",
+      "SIT120",
+      "SIT164",
+      "SIT157"
+    ],
+    "bestForLogicFamilies": [
+      "LOGIC_THRESHOLD_CROSSING"
+    ],
+    "requiredBeats": [
+      "EXPECTATION",
+      "DISRUPTION_1",
+      "REACTION",
+      "DISRUPTION_2",
+      "RESTORE_ATTEMPT",
+      "RESTORE_FAILS",
+      "ADAPTATION_RESOLUTION"
+    ],
+    "sceneStructure": [
+      "Expectation: the explicit, stated plan (F05's OPENING STATE.plan, verbatim).",
+      "Disruption 1: first external, plan-breaking event; establishes a KIND of disruption (see disruptionCategory).",
+      "Reaction: hero's first coping response, in service of keeping the plan alive.",
+      "Disruption 2: second external, plan-breaking event; MUST differ in KIND from DISRUPTION_1 (different disruptionCategory value).",
+      "Restore attempt: a genuine, real attempt to keep/recover the original plan (not a token gesture); often co-acted with supporting character if present.",
+      "Restore fails: the attempt genuinely fails; the original plan is confirmed unsurvivable as designed.",
+      "Adaptation/Resolution: a materially different, adapted plan emerges and is shown resolving, never narrated as a moral."
+    ],
+    "repetitionPattern": null,
+    "repetitionNote": "T21's device is the disruption CATEGORY difference, not phrase repetition — DISRUPTION_1 and DISRUPTION_2 must be mechanically verified as different category values.",
+    "escalationPattern": "Escalation is cumulative — first disruption is manageable alone; second disruption combines with first to overwhelm the original plan.",
+    "turningPoint": "The restore-attempt failure, where the hero realizes the original plan is not recoverable.",
+    "resolutionPattern": "Resolution shows the adapted plan in action, materially different from the original, and working where the original plan failed.",
+    "requiredBlueprintSlots": [
+      "situation",
+      "hero",
+      "plan",
+      "DISRUPTION_1.disruptionCategory",
+      "DISRUPTION_1.action",
+      "DISRUPTION_1.newInformationOrShift",
+      "REACTION.action",
+      "DISRUPTION_2.disruptionCategory",
+      "DISRUPTION_2.action",
+      "DISRUPTION_2.newInformationOrShift",
+      "RESTORE_ATTEMPT.action",
+      "RESTORE_FAILS.action",
+      "resolution"
+    ],
+    "optionalBlueprintSlots": [
+      "world",
+      "supportingCharacter"
+    ],
+    "symbolIntegrationPoint": "Symbol appears at the ADAPTATION beat — it is what the hero carries forward into the new plan.",
+    "illustrationOpportunities": [
+      "The original plan, stated clearly",
+      "First disruption breaking the plan",
+      "Hero's reaction, trying to push through",
+      "Second disruption arriving, combining with the first",
+      "The restore attempt, genuine effort",
+      "Moment of failure, plan's unsuitability confirmed",
+      "Adaptation emerging, new plan shown working"
+    ],
+    "pageRhythmGuidance": "Let the two disruptions breathe on separate pages; the restore-attempt and restore-fails should read as a paired effort-and-failure sequence; give the adaptation page room to show the new plan working distinctly.",
+    "exampleSkeleton": [
+      "[HERO] + [SITUATION] + [EXPECTATION]",
+      "[DISRUPTION_1: category X]",
+      "[REACTION]",
+      "[DISRUPTION_2: category Y, Y≠X]",
+      "[RESTORE_ATTEMPT]",
+      "[RESTORE_FAILS]",
+      "[ADAPTATION/RESOLUTION]",
+      "[SYMBOL]"
+    ],
+    "T21_structuralConstraints": {
+      "disruptionCategory": {
+        "type": "enum",
+        "validValues": [
+          "SENSORY",
+          "SOCIAL",
+          "LOGISTICAL",
+          "EMOTIONAL_INTERNAL",
+          "PHYSICAL_SAFETY"
+        ],
+        "description": "Five mutually distinguishable disruption shapes grounded in real childExperience data. DISRUPTION_1 and DISRUPTION_2 must have DIFFERENT category values (category-level difference, not same-category with different surface description)."
+      }
+    }
+  },
+  {
+    "templateId": "T22",
+    "name": "The Reframe Trail",
+    "storyMechanic": "A chain of re-interpretations where each discovery leads the hero to understand what the previous discovery now means — three escalating reframings until accumulated discoveries reveal something invisible from any single one of them.",
+    "bestForNeeds": [
+      "NEED_CURIOSITY",
+      "NEED_PATIENCE"
+    ],
+    "bestForSituations": [
+      "SIT045",
+      "SIT083",
+      "SIT139",
+      "SIT148",
+      "SIT154",
+      "SIT141"
+    ],
+    "bestForLogicFamilies": [
+      "LOGIC_CUMULATIVE_BUILD"
+    ],
+    "requiredBeats": [
+      "NOTICE",
+      "INVESTIGATE",
+      "DISCOVER",
+      "CONNECTED_DISCOVERY",
+      "NEW_CHOICE",
+      "RESOLUTION"
+    ],
+    "sceneStructure": [
+      "Notice: hero's attention shifts from 'not my concern' to 'look closer.' Establishes the ordinary, easy-to-walk-past starting point.",
+      "Investigate: hero takes one small active step (crouches, looks again, asks) and finds there's more here than the first glance showed. First reinterpretation: the initial beat wasn't isolated.",
+      "Discover: a specific, escalating piece of information arrives (a pattern, an identity, a location). Second reinterpretation: accumulated NOTICE+INVESTIGATE point toward something concrete, not just 'more of the same.'",
+      "Connected discovery: NOTICE/INVESTIGATE/DISCOVER, taken together, are shown to add up to something invisible from any single one of them (an effect, a person, a scale). Third and final reinterpretation. This is the template's turning point.",
+      "New choice: hero acts differently than they would have at NOTICE — the discovery is now acted on, not just understood.",
+      "Resolution: what's concretely different now, shown not summarized. Must stay about the object/mystery/situation, not about a newly-identified person's feelings or relationships."
+    ],
+    "repetitionPattern": {
+      "phrase/source": "Implicit in the reinterpretation device: each slot after NOTICE is defined by what the previous slot is now understood to mean",
+      "occurrenceCount": 3,
+      "occurrenceStages": [
+        "INVESTIGATE",
+        "DISCOVER",
+        "CONNECTED_DISCOVERY"
+      ],
+      "variationRule": "Each slot must state 'NOTICE wasn't isolated' (INVESTIGATE) / 'this is bigger than INVESTIGATE suggested' (DISCOVER) / 'all three together mean something none meant alone' (CONNECTED_DISCOVERY) — reinterpretation, not just additional facts",
+      "finalVariation": "CONNECTED_DISCOVERY is the turning point where all three together reveal the invisible meaning"
+    },
+    "escalationPattern": "Escalation is specificity — from 'something here to notice' to 'a pattern' to 'what the pattern means together.'",
+    "turningPoint": "Placed at CONNECTED_DISCOVERY — the hard turning-point slot where all three accumulated discoveries mean something none meant alone.",
+    "resolutionPattern": "The payoff is about what was discovered (the object/mystery/situation). If a person is discovered, state the bare fact they're now identifiable/findable, but never characterize that person's feelings, interiority, or relationship to the hero — those belong only in a single-sentence factual reaction in RESOLUTION, if at all.",
+    "requiredBlueprintSlots": [
+      "situation",
+      "hero",
+      "heroWant",
+      "NOTICE.action",
+      "NOTICE.newInformationOrShift",
+      "INVESTIGATE.action",
+      "INVESTIGATE.newInformationOrShift",
+      "DISCOVER.action",
+      "DISCOVER.newInformationOrShift",
+      "CONNECTED_DISCOVERY.action",
+      "CONNECTED_DISCOVERY.newInformationOrShift",
+      "newChoiceAction",
+      "resolution"
+    ],
+    "optionalBlueprintSlots": [
+      "world",
+      "supportingCharacter"
+    ],
+    "symbolIntegrationPoint": "Symbol appears subtly at DISCOVER or CONNECTED_DISCOVERY, pointing toward the reinterpretation.",
+    "illustrationOpportunities": [
+      "NOTICE: the overlooked starting point",
+      "INVESTIGATE: something more is revealed",
+      "DISCOVER: specificity emerges",
+      "CONNECTED_DISCOVERY: all three together create new meaning",
+      "NEW_CHOICE: hero acts on the discovery",
+      "RESOLUTION: the concrete difference, shown"
+    ],
+    "pageRhythmGuidance": "Each slot should build momentum toward CONNECTED_DISCOVERY; give that turning-point page space to breathe; NEW_CHOICE and RESOLUTION can breathe together or on separate pages.",
+    "exampleSkeleton": [
+      "[HERO] + [SITUATION] + [NOTICE]",
+      "[INVESTIGATE: reinterpretation 1]",
+      "[DISCOVER: reinterpretation 2]",
+      "[CONNECTED_DISCOVERY: reinterpretation 3]",
+      "[NEW_CHOICE]",
+      "[RESOLUTION]"
+    ],
+    "T22_structuralConstraints": {
+      "CONNECTED_DISCOVERY": {
+        "reinterpretationFocus": {
+          "type": "enum",
+          "requiredValue": "object",
+          "description": "Reinterpretation must state what the accumulated discoveries NOW REVEAL about the OBJECT/SITUATION/PATTERN. Grammatical subject must be object/pattern, not a person's experience. Checkable test: does the reinterpretation have object/pattern as grammatical subject, or does it have a person's inner experience as subject? Only the former passes."
+        },
+        "resolutionPatternNote": "If the discovery leads to identifying a specific person, state the bare fact they're now identifiable/findable, but any warmth, relational framing, or emotional interiority about that person belongs only in RESOLUTION as a single-sentence factual reaction. If that person is given interiority or relational weight here, the story has drifted into F04."
+      }
+    }
+  },
+  {
+    "templateId": "T23",
+    "name": "The Assumption Bridge",
+    "storyMechanic": "Hero acts on an assumption about another character's want or state; the other character's real response doesn't match what was assumed, and the other character themselves reveal what's actually true — building a bridge across the gap between assumption and reality.",
+    "bestForNeeds": [
+      "NEED_COMPASSION",
+      "NEED_RESPECT"
+    ],
+    "bestForSituations": [
+      "SIT042",
+      "SIT086",
+      "SIT089",
+      "SIT123",
+      "SIT158",
+      "SIT133"
+    ],
+    "bestForLogicFamilies": [
+      "LOGIC_PERSPECTIVE_SHIFT"
+    ],
+    "requiredBeats": [
+      "ENCOUNTER",
+      "INITIAL_RESPONSE",
+      "REVEAL",
+      "DEEPER_NOTICE",
+      "CHANGED_RESPONSE",
+      "RESOLUTION"
+    ],
+    "sceneStructure": [
+      "Encounter: hero acts on an assumption about the other character (from OPENING STATE.assumption, when present) — this is the hero closing distance, not just observing it.",
+      "Initial response: the other character's real response doesn't match what the hero's assumption predicted. ACTOR MUST BE THE SUPPORTING CHARACTER, never the hero.",
+      "Reveal: the other character's own action or admission corrects the hero's understanding. This is the one non-negotiable structural rule: the correction must come from the other character, never from the hero figuring it out alone. ACTOR MUST BE THE SUPPORTING CHARACTER. (EXCEPTION: sanctioned passive-character substitution, see notes below.)",
+      "Deeper notice: hero integrates what REVEAL just supplied and understands what the other character actually needs/feels/means, distinct from what was assumed.",
+      "Changed response: hero acts differently, concretely, based on DEEPER_NOTICE — never narrated as 'hero learned that...'",
+      "Resolution: shown through both characters together (talking normally, sitting together, relationally demonstrated), not through the hero's internal realization alone."
+    ],
+    "repetitionPattern": null,
+    "repetitionNote": "T23 is a single-encounter template — its power depends on one clear assumption-reveal-recalibration arc, not multiple encounters.",
+    "escalationPattern": "Escalation is in how genuinely plausible the hero's assumption is — it must feel like a real possibility in the moment, not a strawman.",
+    "turningPoint": "REVEAL is the hard turning-point-triggering slot; DEEPER_NOTICE carries the actual turning-point statement (hero's understanding turns here).",
+    "resolutionPattern": "Resolution is relational — shown through both hero and supporting character together, not hero-only internal realization.",
+    "requiredBlueprintSlots": [
+      "situation",
+      "hero",
+      "heroWant",
+      "supportingCharacter.want",
+      "ENCOUNTER.action",
+      "INITIAL_RESPONSE.action",
+      "INITIAL_RESPONSE.newInformationOrShift",
+      "REVEAL.action",
+      "REVEAL.newInformationOrShift",
+      "DEEPER_NOTICE.action",
+      "CHANGED_RESPONSE.action",
+      "resolution"
+    ],
+    "optionalBlueprintSlots": [
+      "assumption",
+      "world"
+    ],
+    "symbolIntegrationPoint": "Symbol appears during REVEAL or DEEPER_NOTICE, present as a quiet influence on the corrected understanding.",
+    "illustrationOpportunities": [
+      "ENCOUNTER: hero approaching with assumed expectation",
+      "INITIAL_RESPONSE: supporting character's real response, not matching assumption",
+      "REVEAL: supporting character's own admission or action",
+      "DEEPER_NOTICE: hero's realization, visually shown",
+      "CHANGED_RESPONSE: hero acting differently",
+      "RESOLUTION: both characters together, relationally"
+    ],
+    "pageRhythmGuidance": "Give ENCOUNTER and INITIAL_RESPONSE matched weight so the assumption-and-contradiction feels clean; let REVEAL breathe; give RESOLUTION space to show both characters present.",
+    "exampleSkeleton": [
+      "[HERO] + [SITUATION] + [ASSUMPTION]",
+      "[ENCOUNTER]",
+      "[INITIAL_RESPONSE]",
+      "[REVEAL]",
+      "[DEEPER_NOTICE]",
+      "[CHANGED_RESPONSE]",
+      "[RESOLUTION: both characters]"
+    ],
+    "T23_structuralConstraints": {
+      "hardActorRule": {
+        "INITIAL_RESPONSE": "actor must be the supporting character, never the hero",
+        "REVEAL": "actor must be the supporting character, never the hero — the other character's own action/admission is what corrects the assumption"
+      },
+      "sanctionedPassiveSubstitutionException": {
+        "description": "When assumption's grammatical subject is a non-agentic/passive supporting character, REVEAL may be carried by a DIFFERENT, agentic supporting character ONLY when BOTH conditions are true AND both are declared at CAST stage (before event planning, not improvised later):",
+        "condition_a_CAUSATION": "The passive character genuinely CAUSES the situation (their existence/presence/action is the actual originating cause of the hero's assumption, not merely 'present while it happens')",
+        "condition_b_DECLARED_AGENTIC_PROXY": "An explicitly identified agentic supporting character's CAST entry states they correct the assumption ON THE PASSIVE CHARACTER'S BEHALF (not generically 'carries the reveal' — must name the passive character and the on-behalf-of relationship)",
+        "consequence": "If plan does not declare both (a) and (b) at the CAST step, this exception does not apply and T23 is not eligible for that plan. Exception must never be read as 'any convenient supporting character may stand in' — it is narrow, requires both conditions, and requires CAST-level declaration before event planning."
+      },
+      "RESOLUTION": {
+        "actorPairing": "Required: HERO + supporting character. Must show both characters present and relationally demonstrated, not hero-only internal realization."
+      }
+    }
+  }
+]

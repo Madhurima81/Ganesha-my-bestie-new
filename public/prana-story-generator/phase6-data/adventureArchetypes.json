@@ -1,0 +1,1861 @@
+[
+  {
+    "id": "ARCHETYPE_RESCUE_MISSION",
+    "name": "Rescue Mission",
+    "description": "Save someone or something from danger.",
+    "hard": {
+      "complexity": "Moderate"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_RESCUE"
+      ],
+      "best_logic_families": [
+        "LOGIC_SAFETY_LOOP"
+      ],
+      "typical_ending_types": [
+        "END_SAFE_SANCTUARY"
+      ],
+      "typical_world_types": [
+        "WT_NATURE",
+        "WT_WILDERNESS"
+      ],
+      "typical_obstacle_domains": [
+        "OD_TIME",
+        "OD_PHYSICAL"
+      ],
+      "typical_story_actions": [
+        "ACTION_RESCUE",
+        "ACTION_SEARCH"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_GUARDIAN_ADVENTURE",
+    "name": "Guardian Adventure",
+    "description": "Protect a person, place or treasure.",
+    "hard": {
+      "complexity": "Moderate"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_PROTECT"
+      ],
+      "best_logic_families": [
+        "LOGIC_SAFETY_LOOP"
+      ],
+      "typical_ending_types": [
+        "END_SAFE_SANCTUARY"
+      ],
+      "typical_world_types": [
+        "WT_NATURE",
+        "WT_ANCIENT"
+      ],
+      "typical_obstacle_domains": [
+        "OD_PHYSICAL",
+        "OD_NATURE"
+      ],
+      "typical_story_actions": [
+        "ACTION_PROTECT"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_ESCAPE_ADVENTURE",
+    "name": "Escape Adventure",
+    "description": "Escape safely from danger or confinement.",
+    "hard": {
+      "complexity": "Complex"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_ESCAPE"
+      ],
+      "best_logic_families": [
+        "LOGIC_THRESHOLD_CROSSING"
+      ],
+      "typical_ending_types": [
+        "END_SAFE_SANCTUARY"
+      ],
+      "typical_world_types": [
+        "WT_WILDERNESS"
+      ],
+      "typical_obstacle_domains": [
+        "OD_PHYSICAL",
+        "OD_TIME"
+      ],
+      "typical_story_actions": [
+        "ACTION_RESCUE"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_SURVIVAL_ADVENTURE",
+    "name": "Survival Adventure",
+    "description": "Overcome nature or environmental challenges.",
+    "hard": {
+      "complexity": "Complex"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_PROTECT",
+        "MISSION_RESCUE"
+      ],
+      "best_logic_families": [
+        "LOGIC_SAFETY_LOOP"
+      ],
+      "typical_ending_types": [
+        "END_SAFE_SANCTUARY"
+      ],
+      "typical_world_types": [
+        "WT_WILDERNESS"
+      ],
+      "typical_obstacle_domains": [
+        "OD_NATURE",
+        "OD_PHYSICAL"
+      ],
+      "typical_story_actions": [
+        "ACTION_PROTECT",
+        "ACTION_BUILD"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_DELIVERY_QUEST",
+    "name": "Delivery Quest",
+    "description": "Deliver something important safely.",
+    "hard": {
+      "complexity": "Simple"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_DELIVER"
+      ],
+      "best_logic_families": [
+        "LOGIC_THRESHOLD_CROSSING"
+      ],
+      "typical_ending_types": [
+        "END_SHARED_CELEBRATION"
+      ],
+      "typical_world_types": [
+        "WT_COMMUNITY",
+        "WT_NATURE"
+      ],
+      "typical_obstacle_domains": [
+        "OD_TIME",
+        "OD_PHYSICAL"
+      ],
+      "typical_story_actions": [
+        "ACTION_DELIVER"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_MYSTERY_TO_SOLVE",
+    "name": "Mystery to Solve",
+    "description": "Solve an unexplained mystery.",
+    "hard": {
+      "complexity": "Moderate"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_SOLVE"
+      ],
+      "best_logic_families": [
+        "LOGIC_TRIAL_AND_ERROR"
+      ],
+      "typical_ending_types": [
+        "END_OPEN_WONDER"
+      ],
+      "typical_world_types": [
+        "WT_UNDERGROUND",
+        "WT_ANCIENT"
+      ],
+      "typical_obstacle_domains": [
+        "OD_PUZZLE"
+      ],
+      "typical_story_actions": [
+        "ACTION_SOLVE",
+        "ACTION_EXPLORE"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_DETECTIVE_STORY",
+    "name": "Detective Story",
+    "description": "Investigate clues to uncover the truth.",
+    "hard": {
+      "complexity": "Moderate"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_SOLVE"
+      ],
+      "best_logic_families": [
+        "LOGIC_TRIAL_AND_ERROR"
+      ],
+      "typical_ending_types": [
+        "END_OPEN_WONDER"
+      ],
+      "typical_world_types": [
+        "WT_UNDERGROUND",
+        "WT_ANCIENT"
+      ],
+      "typical_obstacle_domains": [
+        "OD_PUZZLE"
+      ],
+      "typical_story_actions": [
+        "ACTION_SOLVE",
+        "ACTION_EXPLORE"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_TREASURE_HUNT",
+    "name": "Treasure Hunt",
+    "description": "Find something valuable by following clues.",
+    "hard": {
+      "complexity": "Moderate"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_DISCOVER"
+      ],
+      "best_logic_families": [
+        "LOGIC_TRIAL_AND_ERROR"
+      ],
+      "typical_ending_types": [
+        "END_EXPANDED_HORIZON"
+      ],
+      "typical_world_types": [
+        "WT_UNDERGROUND",
+        "WT_ANCIENT"
+      ],
+      "typical_obstacle_domains": [
+        "OD_PUZZLE"
+      ],
+      "typical_story_actions": [
+        "ACTION_SEARCH",
+        "ACTION_EXPLORE"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_SECRET_DISCOVERY",
+    "name": "Secret Discovery",
+    "description": "Discover a hidden truth or place.",
+    "hard": {
+      "complexity": "Moderate"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_DISCOVER"
+      ],
+      "best_logic_families": [
+        "LOGIC_TRIAL_AND_ERROR"
+      ],
+      "typical_ending_types": [
+        "END_EXPANDED_HORIZON"
+      ],
+      "typical_world_types": [
+        "WT_UNDERGROUND",
+        "WT_ANCIENT"
+      ],
+      "typical_obstacle_domains": [
+        "OD_PUZZLE"
+      ],
+      "typical_story_actions": [
+        "ACTION_SEARCH",
+        "ACTION_EXPLORE"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_HIDDEN_WORLD",
+    "name": "Hidden World",
+    "description": "Discover a world unknown to the hero.",
+    "hard": {
+      "complexity": "Moderate"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_DISCOVER"
+      ],
+      "best_logic_families": [
+        "LOGIC_TRIAL_AND_ERROR"
+      ],
+      "typical_ending_types": [
+        "END_EXPANDED_HORIZON"
+      ],
+      "typical_world_types": [
+        "WT_UNDERGROUND",
+        "WT_ANCIENT"
+      ],
+      "typical_obstacle_domains": [
+        "OD_PUZZLE"
+      ],
+      "typical_story_actions": [
+        "ACTION_SEARCH",
+        "ACTION_EXPLORE"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_GREAT_JOURNEY",
+    "name": "Great Journey",
+    "description": "Travel to an important destination.",
+    "hard": {
+      "complexity": "Complex"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_RETURN",
+        "MISSION_EXPLORE"
+      ],
+      "best_logic_families": [
+        "LOGIC_THRESHOLD_CROSSING"
+      ],
+      "typical_ending_types": [
+        "END_CIRCULAR_RETURN"
+      ],
+      "typical_world_types": [
+        "WT_NATURE",
+        "WT_WILDERNESS"
+      ],
+      "typical_obstacle_domains": [
+        "OD_PHYSICAL",
+        "OD_NATURE"
+      ],
+      "typical_story_actions": [
+        "ACTION_EXPLORE"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_EXPEDITION",
+    "name": "Expedition",
+    "description": "Explore an unknown place together.",
+    "hard": {
+      "complexity": "Complex"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_RETURN",
+        "MISSION_EXPLORE"
+      ],
+      "best_logic_families": [
+        "LOGIC_THRESHOLD_CROSSING"
+      ],
+      "typical_ending_types": [
+        "END_CIRCULAR_RETURN"
+      ],
+      "typical_world_types": [
+        "WT_NATURE",
+        "WT_WILDERNESS"
+      ],
+      "typical_obstacle_domains": [
+        "OD_PHYSICAL",
+        "OD_NATURE"
+      ],
+      "typical_story_actions": [
+        "ACTION_EXPLORE"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_FIND_THE_WAY_HOME",
+    "name": "Find the Way Home",
+    "description": "Return safely after becoming lost.",
+    "hard": {
+      "complexity": "Complex"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_RETURN",
+        "MISSION_EXPLORE"
+      ],
+      "best_logic_families": [
+        "LOGIC_THRESHOLD_CROSSING"
+      ],
+      "typical_ending_types": [
+        "END_CIRCULAR_RETURN"
+      ],
+      "typical_world_types": [
+        "WT_NATURE",
+        "WT_WILDERNESS"
+      ],
+      "typical_obstacle_domains": [
+        "OD_PHYSICAL",
+        "OD_NATURE"
+      ],
+      "typical_story_actions": [
+        "ACTION_EXPLORE"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_ESCORT_MISSION",
+    "name": "Escort Mission",
+    "description": "Safely accompany someone or something.",
+    "hard": {
+      "complexity": "Moderate"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_RESCUE"
+      ],
+      "best_logic_families": [
+        "LOGIC_SAFETY_LOOP"
+      ],
+      "typical_ending_types": [
+        "END_SAFE_SANCTUARY"
+      ],
+      "typical_world_types": [
+        "WT_NATURE",
+        "WT_WILDERNESS"
+      ],
+      "typical_obstacle_domains": [
+        "OD_TIME",
+        "OD_PHYSICAL"
+      ],
+      "typical_story_actions": [
+        "ACTION_RESCUE",
+        "ACTION_SEARCH"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_RACE_AGAINST_TIME",
+    "name": "Race Against Time",
+    "description": "Complete the mission before time runs out.",
+    "hard": {
+      "complexity": "Moderate"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_RESCUE"
+      ],
+      "best_logic_families": [
+        "LOGIC_SAFETY_LOOP"
+      ],
+      "typical_ending_types": [
+        "END_SAFE_SANCTUARY"
+      ],
+      "typical_world_types": [
+        "WT_NATURE",
+        "WT_WILDERNESS"
+      ],
+      "typical_obstacle_domains": [
+        "OD_TIME",
+        "OD_PHYSICAL"
+      ],
+      "typical_story_actions": [
+        "ACTION_RESCUE",
+        "ACTION_SEARCH"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_FRIENDSHIP_REPAIR",
+    "name": "Friendship Repair",
+    "description": "Heal a damaged friendship.",
+    "hard": {
+      "complexity": "Moderate"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_RECONCILE"
+      ],
+      "best_logic_families": [
+        "LOGIC_PERSPECTIVE_SHIFT"
+      ],
+      "typical_ending_types": [
+        "END_RECONCILED_BOND"
+      ],
+      "typical_world_types": [
+        "WT_COMMUNITY"
+      ],
+      "typical_obstacle_domains": [
+        "OD_SOCIAL",
+        "OD_EMOTIONAL"
+      ],
+      "typical_story_actions": [
+        "ACTION_COMMUNICATE",
+        "ACTION_SHARE"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_NEW_FRIEND",
+    "name": "New Friend",
+    "description": "Build a friendship with someone new.",
+    "hard": {
+      "complexity": "Simple"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_RECONCILE"
+      ],
+      "best_logic_families": [
+        "LOGIC_PERSPECTIVE_SHIFT"
+      ],
+      "typical_ending_types": [
+        "END_SHARED_CELEBRATION"
+      ],
+      "typical_world_types": [
+        "WT_COMMUNITY",
+        "WT_COMMUNITY"
+      ],
+      "typical_obstacle_domains": [
+        "OD_SOCIAL"
+      ],
+      "typical_story_actions": [
+        "ACTION_COMMUNICATE"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_SECOND_CHANCE",
+    "name": "Second Chance",
+    "description": "Make things right after a mistake.",
+    "hard": {
+      "complexity": "Moderate"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_RECONCILE"
+      ],
+      "best_logic_families": [
+        "LOGIC_PERSPECTIVE_SHIFT"
+      ],
+      "typical_ending_types": [
+        "END_RECONCILED_BOND"
+      ],
+      "typical_world_types": [
+        "WT_COMMUNITY"
+      ],
+      "typical_obstacle_domains": [
+        "OD_SOCIAL",
+        "OD_EMOTIONAL"
+      ],
+      "typical_story_actions": [
+        "ACTION_COMMUNICATE",
+        "ACTION_SHARE"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_HELPING_HAND",
+    "name": "Helping Hand",
+    "description": "Help someone succeed without taking over.",
+    "hard": {
+      "complexity": "Simple"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_SUPPORT"
+      ],
+      "best_logic_families": [
+        "LOGIC_PERSPECTIVE_SHIFT"
+      ],
+      "typical_ending_types": [
+        "END_SHARED_CELEBRATION"
+      ],
+      "typical_world_types": [
+        "WT_COMMUNITY"
+      ],
+      "typical_obstacle_domains": [
+        "OD_SOCIAL"
+      ],
+      "typical_story_actions": [
+        "ACTION_HELP"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_JOURNEY_TOGETHER",
+    "name": "Journey Together",
+    "description": "Work together to reach a shared goal.",
+    "hard": {
+      "complexity": "Complex"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_RETURN",
+        "MISSION_EXPLORE"
+      ],
+      "best_logic_families": [
+        "LOGIC_THRESHOLD_CROSSING"
+      ],
+      "typical_ending_types": [
+        "END_CIRCULAR_RETURN"
+      ],
+      "typical_world_types": [
+        "WT_NATURE",
+        "WT_WILDERNESS"
+      ],
+      "typical_obstacle_domains": [
+        "OD_PHYSICAL",
+        "OD_NATURE"
+      ],
+      "typical_story_actions": [
+        "ACTION_EXPLORE"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_TEAM_ADVENTURE",
+    "name": "Team Adventure",
+    "description": "A group works together to achieve a common goal.",
+    "hard": {
+      "complexity": "Moderate"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_BUILD"
+      ],
+      "best_logic_families": [
+        "LOGIC_CUMULATIVE_BUILD"
+      ],
+      "typical_ending_types": [
+        "END_SHARED_CELEBRATION"
+      ],
+      "typical_world_types": [
+        "WT_COMMUNITY"
+      ],
+      "typical_obstacle_domains": [
+        "OD_SOCIAL",
+        "OD_PHYSICAL"
+      ],
+      "typical_story_actions": [
+        "ACTION_BUILD",
+        "ACTION_ORGANIZE"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_COMMUNITY_PROJECT",
+    "name": "Community Project",
+    "description": "Characters improve something for everyone.",
+    "hard": {
+      "complexity": "Moderate"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_BUILD",
+        "MISSION_CELEBRATE"
+      ],
+      "best_logic_families": [
+        "LOGIC_CUMULATIVE_BUILD"
+      ],
+      "typical_ending_types": [
+        "END_TRANSFORMED_COMMUNITY"
+      ],
+      "typical_world_types": [
+        "WT_COMMUNITY"
+      ],
+      "typical_obstacle_domains": [
+        "OD_SOCIAL"
+      ],
+      "typical_story_actions": [
+        "ACTION_ORGANIZE",
+        "ACTION_BUILD"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_LEADERSHIP_CHALLENGE",
+    "name": "Leadership Challenge",
+    "description": "A character learns to guide others.",
+    "hard": {
+      "complexity": "Complex"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_ASSERT"
+      ],
+      "best_logic_families": [
+        "LOGIC_ROLE_REVERSAL"
+      ],
+      "typical_ending_types": [
+        "END_NEW_BALANCE"
+      ],
+      "typical_world_types": [
+        "WT_COMMUNITY"
+      ],
+      "typical_obstacle_domains": [
+        "OD_SOCIAL"
+      ],
+      "typical_story_actions": [
+        "ACTION_GUIDE",
+        "ACTION_ORGANIZE"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_SHARED_MISSION",
+    "name": "Shared Mission",
+    "description": "Two or more heroes complete one objective together.",
+    "hard": {
+      "complexity": "Moderate"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_BUILD"
+      ],
+      "best_logic_families": [
+        "LOGIC_CUMULATIVE_BUILD"
+      ],
+      "typical_ending_types": [
+        "END_SHARED_CELEBRATION"
+      ],
+      "typical_world_types": [
+        "WT_COMMUNITY"
+      ],
+      "typical_obstacle_domains": [
+        "OD_SOCIAL",
+        "OD_PHYSICAL"
+      ],
+      "typical_story_actions": [
+        "ACTION_BUILD",
+        "ACTION_ORGANIZE"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_BUILD_TOGETHER",
+    "name": "Build Together",
+    "description": "Characters create or repair something as a team.",
+    "hard": {
+      "complexity": "Moderate"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_BUILD"
+      ],
+      "best_logic_families": [
+        "LOGIC_CUMULATIVE_BUILD"
+      ],
+      "typical_ending_types": [
+        "END_SHARED_CELEBRATION"
+      ],
+      "typical_world_types": [
+        "WT_COMMUNITY"
+      ],
+      "typical_obstacle_domains": [
+        "OD_SOCIAL",
+        "OD_PHYSICAL"
+      ],
+      "typical_story_actions": [
+        "ACTION_BUILD",
+        "ACTION_ORGANIZE"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_HERO_S_TRIAL",
+    "name": "Hero's Trial",
+    "description": "The hero faces a difficult personal test.",
+    "hard": {
+      "complexity": "Complex"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_MASTERY"
+      ],
+      "best_logic_families": [
+        "LOGIC_TRIAL_AND_ERROR"
+      ],
+      "typical_ending_types": [
+        "END_QUIET_MASTERY"
+      ],
+      "typical_world_types": [
+        "WT_WILDERNESS",
+        "WT_ANCIENT"
+      ],
+      "typical_obstacle_domains": [
+        "OD_PHYSICAL",
+        "OD_EMOTIONAL"
+      ],
+      "typical_story_actions": [
+        "ACTION_PRACTICE"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_FINAL_CHALLENGE",
+    "name": "Final Challenge",
+    "description": "One last obstacle before success.",
+    "hard": {
+      "complexity": "Complex"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_MASTERY"
+      ],
+      "best_logic_families": [
+        "LOGIC_TRIAL_AND_ERROR"
+      ],
+      "typical_ending_types": [
+        "END_QUIET_MASTERY"
+      ],
+      "typical_world_types": [
+        "WT_WILDERNESS",
+        "WT_ANCIENT"
+      ],
+      "typical_obstacle_domains": [
+        "OD_PHYSICAL",
+        "OD_EMOTIONAL"
+      ],
+      "typical_story_actions": [
+        "ACTION_PRACTICE"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_TRAINING_JOURNEY",
+    "name": "Training Journey",
+    "description": "Growth happens through practice and persistence.",
+    "hard": {
+      "complexity": "Complex"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_MASTERY"
+      ],
+      "best_logic_families": [
+        "LOGIC_TRIAL_AND_ERROR"
+      ],
+      "typical_ending_types": [
+        "END_QUIET_MASTERY"
+      ],
+      "typical_world_types": [
+        "WT_WILDERNESS",
+        "WT_ANCIENT"
+      ],
+      "typical_obstacle_domains": [
+        "OD_PHYSICAL",
+        "OD_EMOTIONAL"
+      ],
+      "typical_story_actions": [
+        "ACTION_PRACTICE"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_PROBLEM_SOLVER",
+    "name": "Problem Solver",
+    "description": "The hero overcomes a practical challenge using thinking and creativity.",
+    "hard": {
+      "complexity": "Moderate"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_SOLVE"
+      ],
+      "best_logic_families": [
+        "LOGIC_TRIAL_AND_ERROR"
+      ],
+      "typical_ending_types": [
+        "END_QUIET_MASTERY"
+      ],
+      "typical_world_types": [
+        "WT_LEARNING"
+      ],
+      "typical_obstacle_domains": [
+        "OD_PUZZLE"
+      ],
+      "typical_story_actions": [
+        "ACTION_SOLVE"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_RESPONSIBILITY_QUEST",
+    "name": "Responsibility Quest",
+    "description": "The hero earns trust by doing the right thing.",
+    "hard": {
+      "complexity": "Moderate"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_PROTECT",
+        "MISSION_NURTURE"
+      ],
+      "best_logic_families": [
+        "LOGIC_TRIAL_AND_ERROR"
+      ],
+      "typical_ending_types": [
+        "END_QUIET_MASTERY"
+      ],
+      "typical_world_types": [
+        "WT_COMMUNITY",
+        "WT_NATURE"
+      ],
+      "typical_obstacle_domains": [
+        "OD_EMOTIONAL"
+      ],
+      "typical_story_actions": [
+        "ACTION_CARE_FOR"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_INVENTION_STORY",
+    "name": "Invention Story",
+    "description": "Invent or improve something to solve a practical problem.",
+    "hard": {
+      "complexity": "Moderate"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_BUILD"
+      ],
+      "best_logic_families": [
+        "LOGIC_INVERSION"
+      ],
+      "typical_ending_types": [
+        "END_QUIET_MASTERY"
+      ],
+      "typical_world_types": [
+        "WT_LEARNING"
+      ],
+      "typical_obstacle_domains": [
+        "OD_PHYSICAL",
+        "OD_PUZZLE"
+      ],
+      "typical_story_actions": [
+        "ACTION_CREATE",
+        "ACTION_BUILD"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_RESTORATION_STORY",
+    "name": "Restoration Story",
+    "description": "Repair something that has been damaged or lost.",
+    "hard": {
+      "complexity": "Moderate"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_RESTORE",
+        "MISSION_REPAIR"
+      ],
+      "best_logic_families": [
+        "LOGIC_TRIAL_AND_ERROR"
+      ],
+      "typical_ending_types": [
+        "END_TRANSFORMED_COMMUNITY"
+      ],
+      "typical_world_types": [
+        "WT_NATURE",
+        "WT_COMMUNITY"
+      ],
+      "typical_obstacle_domains": [
+        "OD_PHYSICAL",
+        "OD_NATURE"
+      ],
+      "typical_story_actions": [
+        "ACTION_RESTORE"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_CREATIVE_QUEST",
+    "name": "Creative Quest",
+    "description": "Use imagination, art or creativity to complete a meaningful mission.",
+    "hard": {
+      "complexity": "Moderate"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_BUILD"
+      ],
+      "best_logic_families": [
+        "LOGIC_INVERSION"
+      ],
+      "typical_ending_types": [
+        "END_QUIET_MASTERY"
+      ],
+      "typical_world_types": [
+        "WT_LEARNING"
+      ],
+      "typical_obstacle_domains": [
+        "OD_PHYSICAL",
+        "OD_PUZZLE"
+      ],
+      "typical_story_actions": [
+        "ACTION_CREATE",
+        "ACTION_BUILD"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_BUILD_REPAIR",
+    "name": "Build & Repair",
+    "description": "Build, repair or restore something that helps others.",
+    "hard": {
+      "complexity": "Moderate"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_RESTORE",
+        "MISSION_REPAIR"
+      ],
+      "best_logic_families": [
+        "LOGIC_TRIAL_AND_ERROR"
+      ],
+      "typical_ending_types": [
+        "END_TRANSFORMED_COMMUNITY"
+      ],
+      "typical_world_types": [
+        "WT_NATURE",
+        "WT_COMMUNITY"
+      ],
+      "typical_obstacle_domains": [
+        "OD_PHYSICAL",
+        "OD_NATURE"
+      ],
+      "typical_story_actions": [
+        "ACTION_RESTORE"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_TRANSFORMATION_STORY",
+    "name": "Transformation Story",
+    "description": "The hero changes through experience and wisdom.",
+    "hard": {
+      "complexity": "Complex"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_TRANSFORM"
+      ],
+      "best_logic_families": [
+        "LOGIC_INVERSION"
+      ],
+      "typical_ending_types": [
+        "END_TRANSFORMED_COMMUNITY"
+      ],
+      "typical_world_types": [
+        "WT_FANTASY",
+        "WT_NATURE"
+      ],
+      "typical_obstacle_domains": [
+        "OD_EMOTIONAL"
+      ],
+      "typical_story_actions": [
+        "ACTION_CREATE"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_MENTOR_JOURNEY",
+    "name": "Mentor Journey",
+    "description": "Learn through guidance from a wise mentor while solving a real challenge.",
+    "hard": {
+      "complexity": "Moderate"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_SUPPORT"
+      ],
+      "best_logic_families": [
+        "LOGIC_PERSPECTIVE_SHIFT"
+      ],
+      "typical_ending_types": [
+        "END_QUIET_MASTERY"
+      ],
+      "typical_world_types": [
+        "WT_ANCIENT",
+        "WT_LEARNING"
+      ],
+      "typical_obstacle_domains": [
+        "OD_EMOTIONAL"
+      ],
+      "typical_story_actions": [
+        "ACTION_GUIDE",
+        "ACTION_TEACH"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_LEARNING_QUEST",
+    "name": "Learning Quest",
+    "description": "Complete a series of learning challenges to achieve an important goal.",
+    "hard": {
+      "complexity": "Moderate"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_MASTERY",
+        "MISSION_DISCOVER"
+      ],
+      "best_logic_families": [
+        "LOGIC_TRIAL_AND_ERROR"
+      ],
+      "typical_ending_types": [
+        "END_EXPANDED_HORIZON"
+      ],
+      "typical_world_types": [
+        "WT_LEARNING",
+        "WT_NATURE"
+      ],
+      "typical_obstacle_domains": [
+        "OD_PUZZLE"
+      ],
+      "typical_story_actions": [
+        "ACTION_LEARN"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_DISCOVERY_JOURNEY",
+    "name": "Discovery Journey",
+    "description": "Explore unknown places to uncover knowledge, history or hidden truths.",
+    "hard": {
+      "complexity": "Moderate"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_MASTERY",
+        "MISSION_DISCOVER"
+      ],
+      "best_logic_families": [
+        "LOGIC_TRIAL_AND_ERROR"
+      ],
+      "typical_ending_types": [
+        "END_EXPANDED_HORIZON"
+      ],
+      "typical_world_types": [
+        "WT_LEARNING",
+        "WT_NATURE"
+      ],
+      "typical_obstacle_domains": [
+        "OD_PUZZLE"
+      ],
+      "typical_story_actions": [
+        "ACTION_LEARN"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_WISDOM_CHALLENGE",
+    "name": "Wisdom Challenge",
+    "description": "Face situations that require wise choices rather than clever solutions.",
+    "hard": {
+      "complexity": "Complex"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_MASTERY"
+      ],
+      "best_logic_families": [
+        "LOGIC_PERSPECTIVE_SHIFT"
+      ],
+      "typical_ending_types": [
+        "END_QUIET_REFLECTION"
+      ],
+      "typical_world_types": [
+        "WT_ANCIENT"
+      ],
+      "typical_obstacle_domains": [
+        "OD_PUZZLE",
+        "OD_EMOTIONAL"
+      ],
+      "typical_story_actions": [
+        "ACTION_LEARN"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_TEACHING_ADVENTURE",
+    "name": "Teaching Adventure",
+    "description": "Help another character learn an important skill or lesson through shared experiences.",
+    "hard": {
+      "complexity": "Simple"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_SUPPORT"
+      ],
+      "best_logic_families": [
+        "LOGIC_PERSPECTIVE_SHIFT"
+      ],
+      "typical_ending_types": [
+        "END_PASSING_FORWARD"
+      ],
+      "typical_world_types": [
+        "WT_LEARNING",
+        "WT_COMMUNITY"
+      ],
+      "typical_obstacle_domains": [
+        "OD_SOCIAL"
+      ],
+      "typical_story_actions": [
+        "ACTION_TEACH"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_FESTIVAL_ADVENTURE",
+    "name": "Festival Adventure",
+    "description": "Solve challenges during a festival or celebration.",
+    "hard": {
+      "complexity": "Simple"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_CELEBRATE"
+      ],
+      "best_logic_families": [
+        "LOGIC_RITUAL_ESCALATION"
+      ],
+      "typical_ending_types": [
+        "END_SHARED_CELEBRATION"
+      ],
+      "typical_world_types": [
+        "WT_COMMUNITY"
+      ],
+      "typical_obstacle_domains": [
+        "OD_TIME",
+        "OD_SOCIAL"
+      ],
+      "typical_story_actions": [
+        "ACTION_ORGANIZE",
+        "ACTION_PERFORM"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_CELEBRATION_PREPARATION",
+    "name": "Celebration Preparation",
+    "description": "Prepare everything before an important event.",
+    "hard": {
+      "complexity": "Simple"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_CELEBRATE"
+      ],
+      "best_logic_families": [
+        "LOGIC_RITUAL_ESCALATION"
+      ],
+      "typical_ending_types": [
+        "END_SHARED_CELEBRATION"
+      ],
+      "typical_world_types": [
+        "WT_COMMUNITY"
+      ],
+      "typical_obstacle_domains": [
+        "OD_TIME",
+        "OD_SOCIAL"
+      ],
+      "typical_story_actions": [
+        "ACTION_ORGANIZE",
+        "ACTION_PERFORM"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_PERFORMANCE_STORY",
+    "name": "Performance Story",
+    "description": "Prepare for and present a performance.",
+    "hard": {
+      "complexity": "Simple"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_CELEBRATE"
+      ],
+      "best_logic_families": [
+        "LOGIC_RITUAL_ESCALATION"
+      ],
+      "typical_ending_types": [
+        "END_SHARED_CELEBRATION"
+      ],
+      "typical_world_types": [
+        "WT_COMMUNITY"
+      ],
+      "typical_obstacle_domains": [
+        "OD_TIME",
+        "OD_SOCIAL"
+      ],
+      "typical_story_actions": [
+        "ACTION_ORGANIZE",
+        "ACTION_PERFORM"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_HERITAGE_JOURNEY",
+    "name": "Heritage Journey",
+    "description": "Discover traditions, history and cultural wisdom.",
+    "hard": {
+      "complexity": "Complex"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_RETURN",
+        "MISSION_EXPLORE"
+      ],
+      "best_logic_families": [
+        "LOGIC_THRESHOLD_CROSSING"
+      ],
+      "typical_ending_types": [
+        "END_CIRCULAR_RETURN"
+      ],
+      "typical_world_types": [
+        "WT_NATURE",
+        "WT_WILDERNESS"
+      ],
+      "typical_obstacle_domains": [
+        "OD_PHYSICAL",
+        "OD_NATURE"
+      ],
+      "typical_story_actions": [
+        "ACTION_EXPLORE"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_GIFT_OF_GIVING",
+    "name": "Gift of Giving",
+    "description": "Learn the joy of giving without expecting anything back.",
+    "hard": {
+      "complexity": "Simple"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_DELIVER",
+        "MISSION_CELEBRATE"
+      ],
+      "best_logic_families": [
+        "LOGIC_RESOURCE_DEPRECIATION"
+      ],
+      "typical_ending_types": [
+        "END_PASSING_FORWARD"
+      ],
+      "typical_world_types": [
+        "WT_COMMUNITY",
+        "WT_NATURE"
+      ],
+      "typical_obstacle_domains": [
+        "OD_SOCIAL"
+      ],
+      "typical_story_actions": [
+        "ACTION_SHARE"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_MAGICAL_DISCOVERY",
+    "name": "Magical Discovery",
+    "description": "Discover a place, object or event that feels magical and inspiring.",
+    "hard": {
+      "complexity": "Moderate"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_DISCOVER"
+      ],
+      "best_logic_families": [
+        "LOGIC_CATALYST_VISIT"
+      ],
+      "typical_ending_types": [
+        "END_OPEN_WONDER"
+      ],
+      "typical_world_types": [
+        "WT_FANTASY"
+      ],
+      "typical_obstacle_domains": [
+        "OD_PUZZLE"
+      ],
+      "typical_story_actions": [
+        "ACTION_EXPLORE"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_MAGICAL_QUEST",
+    "name": "Magical Quest",
+    "description": "Complete an adventure filled with wonder and imagination.",
+    "hard": {
+      "complexity": "Moderate"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_DISCOVER"
+      ],
+      "best_logic_families": [
+        "LOGIC_CATALYST_VISIT"
+      ],
+      "typical_ending_types": [
+        "END_OPEN_WONDER"
+      ],
+      "typical_world_types": [
+        "WT_FANTASY"
+      ],
+      "typical_obstacle_domains": [
+        "OD_PUZZLE"
+      ],
+      "typical_story_actions": [
+        "ACTION_EXPLORE"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_NATURE_S_BALANCE",
+    "name": "Nature's Balance",
+    "description": "Restore harmony between nature and its living beings.",
+    "hard": {
+      "complexity": "Moderate"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_RESTORE",
+        "MISSION_NURTURE"
+      ],
+      "best_logic_families": [
+        "LOGIC_CIRCULAR_RETURN"
+      ],
+      "typical_ending_types": [
+        "END_RENEWED_ROUTINE"
+      ],
+      "typical_world_types": [
+        "WT_NATURE"
+      ],
+      "typical_obstacle_domains": [
+        "OD_NATURE"
+      ],
+      "typical_story_actions": [
+        "ACTION_CARE_FOR",
+        "ACTION_RESTORE"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_ANCIENT_SECRET",
+    "name": "Ancient Secret",
+    "description": "Uncover an old mystery carrying timeless wisdom.",
+    "hard": {
+      "complexity": "Moderate"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_DISCOVER"
+      ],
+      "best_logic_families": [
+        "LOGIC_TRIAL_AND_ERROR"
+      ],
+      "typical_ending_types": [
+        "END_EXPANDED_HORIZON"
+      ],
+      "typical_world_types": [
+        "WT_UNDERGROUND",
+        "WT_ANCIENT"
+      ],
+      "typical_obstacle_domains": [
+        "OD_PUZZLE"
+      ],
+      "typical_story_actions": [
+        "ACTION_SEARCH",
+        "ACTION_EXPLORE"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_WISH_OR_BLESSING",
+    "name": "Wish or Blessing",
+    "description": "A heartfelt wish inspires positive action and change.",
+    "hard": {
+      "complexity": "Moderate"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_DISCOVER"
+      ],
+      "best_logic_families": [
+        "LOGIC_CATALYST_VISIT"
+      ],
+      "typical_ending_types": [
+        "END_OPEN_WONDER"
+      ],
+      "typical_world_types": [
+        "WT_FANTASY"
+      ],
+      "typical_obstacle_domains": [
+        "OD_PUZZLE"
+      ],
+      "typical_story_actions": [
+        "ACTION_EXPLORE"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_DREAM_ADVENTURE",
+    "name": "Dream Adventure",
+    "description": "A dream reveals insight that helps solve a real-life problem.",
+    "hard": {
+      "complexity": "Complex"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_EXPLORE"
+      ],
+      "best_logic_families": [
+        "LOGIC_THRESHOLD_CROSSING"
+      ],
+      "typical_ending_types": [
+        "END_OPEN_WONDER"
+      ],
+      "typical_world_types": [
+        "WT_DREAM",
+        "WT_CELESTIAL"
+      ],
+      "typical_obstacle_domains": [
+        "OD_PUZZLE"
+      ],
+      "typical_story_actions": [
+        "ACTION_EXPLORE"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_TIME_ADVENTURE",
+    "name": "Time Adventure",
+    "description": "Complete a mission before time runs out.",
+    "hard": {
+      "complexity": "Complex"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_EXPLORE"
+      ],
+      "best_logic_families": [
+        "LOGIC_THRESHOLD_CROSSING"
+      ],
+      "typical_ending_types": [
+        "END_OPEN_WONDER"
+      ],
+      "typical_world_types": [
+        "WT_DREAM",
+        "WT_CELESTIAL"
+      ],
+      "typical_obstacle_domains": [
+        "OD_PUZZLE"
+      ],
+      "typical_story_actions": [
+        "ACTION_EXPLORE"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_CHOICE_CONSEQUENCE",
+    "name": "Choice & Consequence",
+    "description": "A difficult choice shapes the outcome of the story.",
+    "hard": {
+      "complexity": "Moderate"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_RECONCILE"
+      ],
+      "best_logic_families": [
+        "LOGIC_PERSPECTIVE_SHIFT"
+      ],
+      "typical_ending_types": [
+        "END_NEW_BALANCE"
+      ],
+      "typical_world_types": [
+        "WT_COMMUNITY"
+      ],
+      "typical_obstacle_domains": [
+        "OD_EMOTIONAL"
+      ],
+      "typical_story_actions": [
+        "ACTION_COMMUNICATE"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_PROMISE_KEEPER",
+    "name": "Promise Keeper",
+    "description": "Honour an important promise through action.",
+    "hard": {
+      "complexity": "Moderate"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_RECONCILE"
+      ],
+      "best_logic_families": [
+        "LOGIC_RUNAWAY_CHAIN"
+      ],
+      "typical_ending_types": [
+        "END_RECONCILED_BOND"
+      ],
+      "typical_world_types": [
+        "WT_COMMUNITY"
+      ],
+      "typical_obstacle_domains": [
+        "OD_SOCIAL",
+        "OD_TIME"
+      ],
+      "typical_story_actions": [
+        "ACTION_COMMUNICATE"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  },
+  {
+    "id": "ARCHETYPE_UNEXPECTED_SURPRISE",
+    "name": "Unexpected Surprise",
+    "description": "An unexpected event changes the direction of the adventure.",
+    "hard": {
+      "complexity": "Simple"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_CELEBRATE"
+      ],
+      "best_logic_families": [
+        "LOGIC_CATALYST_VISIT"
+      ],
+      "typical_ending_types": [
+        "END_GENTLE_RELEASE"
+      ],
+      "typical_world_types": [
+        "WT_COMMUNITY",
+        "WT_FANTASY"
+      ],
+      "typical_obstacle_domains": [
+        "OD_SOCIAL"
+      ],
+      "typical_story_actions": [
+        "ACTION_ORGANIZE"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic",
+      "note": "Source library's own bestStoryStructures/bestEmotionalArcs fields use generic placeholder labels that don't match the real 100/24-item libraries; tags here derived from archetype name/description instead."
+    }
+  }
+]

@@ -1,0 +1,10 @@
+[
+  {"id": "OBSTACLE_SEPARATION"}, {"id": "OBSTACLE_FEAR"}, {"id": "OBSTACLE_BLOCKED_PATH"},
+  {"id": "OBSTACLE_MISUNDERSTANDING"}, {"id": "OBSTACLE_BROKEN_TRUST"}, {"id": "OBSTACLE_TEMPTATION"},
+  {"id": "OBSTACLE_DISTRACTION"}, {"id": "OBSTACLE_PHYSICAL_FAILURE"}, {"id": "OBSTACLE_ENVIRONMENTAL"},
+  {"id": "OBSTACLE_RESOURCE_LIMIT"}, {"id": "OBSTACLE_UNKNOWN_RULES"}, {"id": "OBSTACLE_EXTERNAL_FORCE"},
+  {"id": "OBSTACLE_SKILL_GAP"}, {"id": "OBSTACLE_RESISTANCE", "resolved_note": "Original ontology referenced 'Creates Need: NEED_PERSISTENCE', which was never a defined Core Need. Removed rather than invented — Persistence is a behavior/trait (TRAIT_PERSISTENT), not a Need. Resolves instead to NEED_COMPETENCE, NEED_AUTONOMY, or NEED_CONFIDENCE depending on story context."},
+  {"id": "OBSTACLE_MISMATCH"}, {"id": "OBSTACLE_COMMUNICATION_BARRIER"}, {"id": "OBSTACLE_LOSS"},
+  {"id": "OBSTACLE_INTERNAL_RESISTANCE", "renamed_from": "OBSTACLE_INTERNAL_DOUBT", "note": "Broadened to cover Self-Doubt, Anger, Jealousy, Impatience, Embarrassment, Guilt, Worry, Perfectionism as one shared function. Fear stays separate (see OBSTACLE_FEAR) because it's actively referenced by LOGIC_SAFETY_LOOP's selection criteria."},
+  {"id": "OBSTACLE_TIME_PRESSURE", "added_phase": "5A.3b", "note": "7 of 8 Time-domain obstacles were previously misfiled under OBSTACLE_DISTRACTION, a mechanically different concept (attention-pulled-away vs. deadline-approaching)."}
+]

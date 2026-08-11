@@ -1,0 +1,1125 @@
+[
+  {
+    "id": "BELIEF_MUST_REACT_TO_UNFAIRNESS",
+    "false_belief": "I have to react or get even when things feel unfair.",
+    "true_belief": "I can pause, respond honestly, and choose calm actions even when something feels unfair.",
+    "related_needs": [
+      "NEED_SELF_REGULATION",
+      "NEED_JUSTICE"
+    ],
+    "typical_emotions": [
+      "EMOTION_ANGER",
+      "EMOTION_CALM"
+    ],
+    "situation_ids": [
+      1,
+      7,
+      11,
+      18
+    ]
+  },
+  {
+    "id": "BELIEF_NEED_IMMEDIATE_GRATIFICATION",
+    "false_belief": "Everything has to happen right now, or waiting ruins the fun.",
+    "true_belief": "I can handle waiting and disappointment, and anticipation can make good things sweeter.",
+    "related_needs": [
+      "NEED_PATIENCE",
+      "NEED_SELF_REGULATION"
+    ],
+    "typical_emotions": [
+      "EMOTION_FRUSTRATION",
+      "EMOTION_ANTICIPATION"
+    ],
+    "situation_ids": [
+      2,
+      8,
+      108,
+      112
+    ]
+  },
+  {
+    "id": "BELIEF_REJECTION_MEANS_NOT_CARED_FOR",
+    "false_belief": "If people say no, leave, or forget, it means they don't care about me.",
+    "true_belief": "I can trust the people who love me even through mistakes, distance, or disagreement.",
+    "related_needs": [
+      "NEED_TRUST",
+      "NEED_RESPECT"
+    ],
+    "typical_emotions": [
+      "EMOTION_LONELINESS",
+      "EMOTION_SECURITY"
+    ],
+    "situation_ids": [
+      3,
+      17,
+      24,
+      33,
+      46,
+      78,
+      107,
+      116,
+      117
+    ]
+  },
+  {
+    "id": "BELIEF_OTHERS_SUCCESS_DIMINISHES_ME",
+    "false_belief": "Someone else's success or praise means I am less important.",
+    "true_belief": "I can celebrate others while my own worth and journey stay intact.",
+    "related_needs": [
+      "NEED_IDENTITY",
+      "NEED_CONTENTMENT"
+    ],
+    "typical_emotions": [
+      "EMOTION_JEALOUSY",
+      "EMOTION_ACCEPTANCE"
+    ],
+    "situation_ids": [
+      4,
+      71,
+      81,
+      84,
+      155
+    ]
+  },
+  {
+    "id": "BELIEF_SPEED_EQUALS_ABILITY",
+    "false_belief": "If I can't do it quickly or easily, I'm not smart or capable.",
+    "true_belief": "Everyone learns and improves at their own pace through practice.",
+    "related_needs": [
+      "NEED_COMPETENCE",
+      "NEED_CONFIDENCE"
+    ],
+    "typical_emotions": [
+      "EMOTION_FRUSTRATION",
+      "EMOTION_CONFIDENCE"
+    ],
+    "situation_ids": [
+      5,
+      20,
+      67,
+      73,
+      113
+    ]
+  },
+  {
+    "id": "BELIEF_PLANS_MUST_GO_MY_WAY",
+    "false_belief": "Plans and things must happen exactly the way I expect.",
+    "true_belief": "I can adapt when plans change and still find or create joy.",
+    "related_needs": [
+      "NEED_ADAPTABILITY"
+    ],
+    "typical_emotions": [
+      "EMOTION_FRUSTRATION",
+      "EMOTION_FREEDOM"
+    ],
+    "situation_ids": [
+      6,
+      54,
+      102,
+      120,
+      124,
+      168
+    ]
+  },
+  {
+    "id": "BELIEF_ONE_MISTAKE_DEFINES_ME",
+    "false_belief": "One mistake means I'm not capable, not good, or a bad person/friend.",
+    "true_belief": "Mistakes are part of learning and growing, and I can take responsibility and keep going.",
+    "related_needs": [
+      "NEED_COMPETENCE",
+      "NEED_INTEGRITY"
+    ],
+    "typical_emotions": [
+      "EMOTION_EMBARRASSMENT",
+      "EMOTION_CONFIDENCE"
+    ],
+    "situation_ids": [
+      40,
+      60,
+      61,
+      70,
+      76,
+      80,
+      139,
+      159,
+      161
+    ]
+  },
+  {
+    "id": "BELIEF_DISCOMFORT_IS_UNBEARABLE",
+    "false_belief": "I can't cope or be okay when my body or surroundings feel uncomfortable.",
+    "true_belief": "I can care for myself, ask for help, and know uncomfortable moments will pass.",
+    "related_needs": [
+      "NEED_SAFETY",
+      "NEED_SELF_REGULATION"
+    ],
+    "typical_emotions": [
+      "EMOTION_FRUSTRATION",
+      "EMOTION_CALM"
+    ],
+    "situation_ids": [
+      9,
+      19,
+      99,
+      103,
+      111
+    ]
+  },
+  {
+    "id": "BELIEF_BLAME_MEANS_DISTRUST",
+    "false_belief": "Being blamed for something means nobody believes me.",
+    "true_belief": "I can respond honestly and calmly even when something feels unfair.",
+    "related_needs": [
+      "NEED_JUSTICE",
+      "NEED_TRUST"
+    ],
+    "typical_emotions": [
+      "EMOTION_FRUSTRATION",
+      "EMOTION_CALM"
+    ],
+    "situation_ids": [
+      10
+    ]
+  },
+  {
+    "id": "BELIEF_MUST_CONTROL_EVERYTHING",
+    "false_belief": "I should always get to decide, choose, or go first.",
+    "true_belief": "I can cooperate and take turns even when I don't get my way.",
+    "related_needs": [
+      "NEED_AUTONOMY",
+      "NEED_PATIENCE"
+    ],
+    "typical_emotions": [
+      "EMOTION_FRUSTRATION",
+      "EMOTION_ACCEPTANCE"
+    ],
+    "situation_ids": [
+      12,
+      106,
+      136
+    ]
+  },
+  {
+    "id": "BELIEF_SETBACK_IS_PERMANENT",
+    "false_belief": "One setback, loss, or failure ruins everything and can't be undone.",
+    "true_belief": "I can rebuild, recover, and begin again after setbacks.",
+    "related_needs": [
+      "NEED_COMPETENCE",
+      "NEED_HOPE"
+    ],
+    "typical_emotions": [
+      "EMOTION_FRUSTRATION",
+      "EMOTION_HOPE"
+    ],
+    "situation_ids": [
+      14,
+      16,
+      49,
+      53
+    ]
+  },
+  {
+    "id": "BELIEF_FEAR_MEANS_STOP",
+    "false_belief": "Feeling afraid means I should stop or avoid the unfamiliar thing entirely.",
+    "true_belief": "Courage is taking one small brave step even while afraid.",
+    "related_needs": [
+      "NEED_COURAGE"
+    ],
+    "typical_emotions": [
+      "EMOTION_FEAR",
+      "EMOTION_DETERMINATION"
+    ],
+    "situation_ids": [
+      21,
+      23,
+      38
+    ]
+  },
+  {
+    "id": "BELIEF_UNEXPECTED_MEANS_UNSAFE",
+    "false_belief": "Loud, sudden, or unknown things mean I'm not safe.",
+    "true_belief": "I can find safety, calm, and support even when things feel uncertain.",
+    "related_needs": [
+      "NEED_SAFETY"
+    ],
+    "typical_emotions": [
+      "EMOTION_FEAR",
+      "EMOTION_SECURITY"
+    ],
+    "situation_ids": [
+      22,
+      29,
+      30,
+      31,
+      34,
+      131,
+      142
+    ]
+  },
+  {
+    "id": "BELIEF_NERVOUS_MEANS_CANT",
+    "false_belief": "If I feel nervous, I can't do the thing or I'll be remembered forever for messing up.",
+    "true_belief": "Confidence grows each time I try, and courage means continuing despite nerves.",
+    "related_needs": [
+      "NEED_CONFIDENCE"
+    ],
+    "typical_emotions": [
+      "EMOTION_FEAR",
+      "EMOTION_CONFIDENCE"
+    ],
+    "situation_ids": [
+      25,
+      75
+    ]
+  },
+  {
+    "id": "BELIEF_RESULT_DEFINES_WORTH",
+    "false_belief": "My results, score, or performance decide whether I'm good enough.",
+    "true_belief": "My effort and learning matter more than any single result.",
+    "related_needs": [
+      "NEED_CONFIDENCE"
+    ],
+    "typical_emotions": [
+      "EMOTION_SELF_DOUBT",
+      "EMOTION_CONFIDENCE"
+    ],
+    "situation_ids": [
+      26,
+      57,
+      128
+    ]
+  },
+  {
+    "id": "BELIEF_PAIN_IS_UNMANAGEABLE",
+    "false_belief": "If something hurts, I can't handle it.",
+    "true_belief": "I am stronger than I think, even during difficult moments.",
+    "related_needs": [
+      "NEED_COURAGE"
+    ],
+    "typical_emotions": [
+      "EMOTION_FEAR",
+      "EMOTION_DETERMINATION"
+    ],
+    "situation_ids": [
+      27,
+      126
+    ]
+  },
+  {
+    "id": "BELIEF_NEW_PEOPLE_UNSAFE",
+    "false_belief": "New or unfamiliar people won't understand, help, or accept me.",
+    "true_belief": "Trust grows one step at a time, with new people too.",
+    "related_needs": [
+      "NEED_TRUST"
+    ],
+    "typical_emotions": [
+      "EMOTION_WORRY",
+      "EMOTION_SECURITY"
+    ],
+    "situation_ids": [
+      28,
+      119,
+      125
+    ]
+  },
+  {
+    "id": "BELIEF_ENDINGS_ARE_PERMANENT_LOSS",
+    "false_belief": "When something good ends or is lost, it's ruined or gone forever.",
+    "true_belief": "Endings bring new beginnings, and people help rebuild after hard things.",
+    "related_needs": [
+      "NEED_HOPE"
+    ],
+    "typical_emotions": [
+      "EMOTION_SADNESS",
+      "EMOTION_HOPE"
+    ],
+    "situation_ids": [
+      32,
+      44,
+      58,
+      121,
+      130
+    ]
+  },
+  {
+    "id": "BELIEF_ONE_ACTION_CANT_MATTER",
+    "false_belief": "My small actions don't make a difference, so there's no point.",
+    "true_belief": "Small caring actions can genuinely help create a better future.",
+    "related_needs": [
+      "NEED_PURPOSE",
+      "NEED_COMPASSION"
+    ],
+    "typical_emotions": [
+      "EMOTION_SADNESS",
+      "EMOTION_HOPE"
+    ],
+    "situation_ids": [
+      41,
+      134,
+      143
+    ]
+  },
+  {
+    "id": "BELIEF_EXCLUSION_MEANS_UNWORTHY",
+    "false_belief": "Being left out, ignored, or unfollowed means I don't matter or nobody likes me.",
+    "true_belief": "One moment of being left out doesn't decide my worth or my friendships.",
+    "related_needs": [
+      "NEED_BELONGING"
+    ],
+    "typical_emotions": [
+      "EMOTION_LONELINESS",
+      "EMOTION_BELONGING"
+    ],
+    "situation_ids": [
+      36,
+      42,
+      47,
+      48,
+      56,
+      72,
+      79,
+      82,
+      150,
+      151,
+      153
+    ]
+  },
+  {
+    "id": "BELIEF_NEW_PLACE_MEANS_NO_FIT",
+    "false_belief": "I won't fit in or be accepted in this new place.",
+    "true_belief": "I can make genuine connections while being myself, even somewhere new.",
+    "related_needs": [
+      "NEED_BELONGING"
+    ],
+    "typical_emotions": [
+      "EMOTION_WORRY",
+      "EMOTION_BELONGING"
+    ],
+    "situation_ids": [
+      37,
+      114,
+      115,
+      118
+    ]
+  },
+  {
+    "id": "BELIEF_LOVE_ENDS_WITH_LOSS",
+    "false_belief": "Love disappears or life will never feel happy again when someone is gone.",
+    "true_belief": "Love stays with us through memories, and life can hold joy again.",
+    "related_needs": [
+      "NEED_COMPASSION",
+      "NEED_HOPE"
+    ],
+    "typical_emotions": [
+      "EMOTION_SADNESS",
+      "EMOTION_ACCEPTANCE"
+    ],
+    "situation_ids": [
+      43
+    ]
+  },
+  {
+    "id": "BELIEF_OBJECT_NEEDED_FOR_OKAY",
+    "false_belief": "I can't be okay without this special object.",
+    "true_belief": "The comfort I feel lives inside me too, not only in the object.",
+    "related_needs": [
+      "NEED_SAFETY"
+    ],
+    "typical_emotions": [
+      "EMOTION_SADNESS",
+      "EMOTION_CALM"
+    ],
+    "situation_ids": [
+      45
+    ]
+  },
+  {
+    "id": "BELIEF_GROWING_MEANS_LOSING_SELF",
+    "false_belief": "Growing up or changing means losing who I used to be.",
+    "true_belief": "Growing changes me, but I'm still me inside.",
+    "related_needs": [
+      "NEED_IDENTITY"
+    ],
+    "typical_emotions": [
+      "EMOTION_LONGING",
+      "EMOTION_ACCEPTANCE"
+    ],
+    "situation_ids": [
+      59,
+      122
+    ]
+  },
+  {
+    "id": "BELIEF_DISTANCE_WEAKENS_LOVE",
+    "false_belief": "Distance or less time together means love becomes smaller.",
+    "true_belief": "Love stays strong even when people are far away or busy.",
+    "related_needs": [
+      "NEED_TRUST"
+    ],
+    "typical_emotions": [
+      "EMOTION_LONGING",
+      "EMOTION_SECURITY"
+    ],
+    "situation_ids": [
+      50
+    ]
+  },
+  {
+    "id": "BELIEF_SEPARATION_ENDS_RELATIONSHIP",
+    "false_belief": "If a friend leaves, moves, or spends time elsewhere, the friendship is over.",
+    "true_belief": "Real friendships can continue and grow across distance and change.",
+    "related_needs": [
+      "NEED_BELONGING"
+    ],
+    "typical_emotions": [
+      "EMOTION_SADNESS",
+      "EMOTION_BELONGING"
+    ],
+    "situation_ids": [
+      51,
+      123,
+      145,
+      156
+    ]
+  },
+  {
+    "id": "BELIEF_CHANGE_DESTROYS_EVERYTHING",
+    "false_belief": "A big change means everything familiar is gone or ruined forever.",
+    "true_belief": "Home and stability are built through love and can grow again after change.",
+    "related_needs": [
+      "NEED_STABILITY"
+    ],
+    "typical_emotions": [
+      "EMOTION_SADNESS",
+      "EMOTION_SECURITY"
+    ],
+    "situation_ids": [
+      52,
+      116,
+      131
+    ]
+  },
+  {
+    "id": "BELIEF_APPEARANCE_DEFINES_VALUE",
+    "false_belief": "My appearance, size, or looks decide my value or lovability.",
+    "true_belief": "My worth comes from who I am, not how I look.",
+    "related_needs": [
+      "NEED_IDENTITY"
+    ],
+    "typical_emotions": [
+      "EMOTION_EMBARRASSMENT",
+      "EMOTION_CONFIDENCE"
+    ],
+    "situation_ids": [
+      63,
+      64,
+      65,
+      66,
+      93,
+      96
+    ]
+  },
+  {
+    "id": "BELIEF_POSSESSIONS_BRING_HAPPINESS",
+    "false_belief": "Having more things, nicer things, or others' experiences would make me happier.",
+    "true_belief": "Gratitude for what I have brings more lasting joy than comparison.",
+    "related_needs": [
+      "NEED_CONTENTMENT"
+    ],
+    "typical_emotions": [
+      "EMOTION_JEALOUSY",
+      "EMOTION_SATISFACTION"
+    ],
+    "situation_ids": [
+      69,
+      83,
+      87,
+      91,
+      92,
+      94,
+      106,
+      127,
+      163
+    ]
+  },
+  {
+    "id": "BELIEF_MUST_BE_LIKE_OTHERS",
+    "false_belief": "I have to be like someone else to be valued or accepted.",
+    "true_belief": "My unique strengths and identity make me valuable as I am.",
+    "related_needs": [
+      "NEED_IDENTITY"
+    ],
+    "typical_emotions": [
+      "EMOTION_JEALOUSY",
+      "EMOTION_CONFIDENCE"
+    ],
+    "situation_ids": [
+      77
+    ]
+  },
+  {
+    "id": "BELIEF_UNCHOSEN_MEANS_UNWORTHY",
+    "false_belief": "Not being chosen or favored means I'm not good enough or less important.",
+    "true_belief": "My worth isn't decided by awards, roles, or someone else's favor.",
+    "related_needs": [
+      "NEED_IDENTITY",
+      "NEED_JUSTICE"
+    ],
+    "typical_emotions": [
+      "EMOTION_SADNESS",
+      "EMOTION_ACCEPTANCE"
+    ],
+    "situation_ids": [
+      57,
+      90
+    ]
+  },
+  {
+    "id": "BELIEF_TALENT_IS_FIXED",
+    "false_belief": "Talent is something you either have or don't have.",
+    "true_belief": "Practice helps me improve my own abilities over time.",
+    "related_needs": [
+      "NEED_COMPETENCE"
+    ],
+    "typical_emotions": [
+      "EMOTION_JEALOUSY",
+      "EMOTION_DETERMINATION"
+    ],
+    "situation_ids": [
+      88
+    ]
+  },
+  {
+    "id": "BELIEF_LESS_ATTENTION_MEANS_REPLACED",
+    "false_belief": "Someone new getting attention means I've been replaced.",
+    "true_belief": "Love grows to include new people; it isn't divided up.",
+    "related_needs": [
+      "NEED_BELONGING"
+    ],
+    "typical_emotions": [
+      "EMOTION_JEALOUSY",
+      "EMOTION_BELONGING"
+    ],
+    "situation_ids": [
+      89
+    ]
+  },
+  {
+    "id": "BELIEF_DIFFERENT_RULES_ARE_UNFAIR",
+    "false_belief": "If another family's rules are different or looser, my parents are being unfair.",
+    "true_belief": "Every family makes choices based on its own needs and reasons.",
+    "related_needs": [
+      "NEED_JUSTICE"
+    ],
+    "typical_emotions": [
+      "EMOTION_FRUSTRATION",
+      "EMOTION_ACCEPTANCE"
+    ],
+    "situation_ids": [
+      95
+    ]
+  },
+  {
+    "id": "BELIEF_MUST_FOLLOW_EVERY_IMPULSE",
+    "false_belief": "I have to follow every exciting feeling or urge right away.",
+    "true_belief": "I can enjoy excitement and still guide my attention and calm my body.",
+    "related_needs": [
+      "NEED_SELF_REGULATION"
+    ],
+    "typical_emotions": [
+      "EMOTION_DETERMINATION",
+      "EMOTION_CALM"
+    ],
+    "situation_ids": [
+      97,
+      98,
+      105,
+      109,
+      136
+    ]
+  },
+  {
+    "id": "BELIEF_TIREDNESS_REMOVES_CONTROL",
+    "false_belief": "Being tired means I have no control over my behavior.",
+    "true_belief": "I can notice my feelings and still choose kind actions, even tired.",
+    "related_needs": [
+      "NEED_SELF_REGULATION"
+    ],
+    "typical_emotions": [
+      "EMOTION_FRUSTRATION",
+      "EMOTION_CALM"
+    ],
+    "situation_ids": [
+      104,
+      110
+    ]
+  },
+  {
+    "id": "BELIEF_MUST_ALWAYS_KEEP_GOING",
+    "false_belief": "I should always keep going and do everything perfectly without rest.",
+    "true_belief": "Rest is part of learning and growing, and I can do my best while caring for my energy.",
+    "related_needs": [
+      "NEED_STABILITY",
+      "NEED_SELF_REGULATION"
+    ],
+    "typical_emotions": [
+      "EMOTION_FRUSTRATION",
+      "EMOTION_CALM"
+    ],
+    "situation_ids": [
+      100,
+      103
+    ]
+  },
+  {
+    "id": "BELIEF_WAITING_IS_WORTHLESS",
+    "false_belief": "Waiting is pointless, unbearable, or ruins the fun.",
+    "true_belief": "I can use waiting time calmly and wisely, and anticipation can be sweet.",
+    "related_needs": [
+      "NEED_PATIENCE"
+    ],
+    "typical_emotions": [
+      "EMOTION_FRUSTRATION",
+      "EMOTION_ANTICIPATION"
+    ],
+    "situation_ids": [
+      101,
+      112
+    ]
+  },
+  {
+    "id": "BELIEF_MUST_BE_PERFECT_TO_BE_LOVED",
+    "false_belief": "I have to be good, perfect, or no trouble at all to be loved.",
+    "true_belief": "I am loved even while I'm learning, growing, and making mistakes.",
+    "related_needs": [
+      "NEED_BELONGING"
+    ],
+    "typical_emotions": [
+      "EMOTION_EMBARRASSMENT",
+      "EMOTION_ACCEPTANCE"
+    ],
+    "situation_ids": [
+      78,
+      107
+    ]
+  },
+  {
+    "id": "BELIEF_ATTENTION_MUST_BE_INSTANT",
+    "false_belief": "If I have to wait to share something, what I want to say isn't important.",
+    "true_belief": "My thoughts matter, and I can wait for the right moment to share them.",
+    "related_needs": [
+      "NEED_PATIENCE",
+      "NEED_RESPECT"
+    ],
+    "typical_emotions": [
+      "EMOTION_FRUSTRATION",
+      "EMOTION_CALM"
+    ],
+    "situation_ids": [
+      86
+    ]
+  },
+  {
+    "id": "BELIEF_HIDING_TRUTH_PROTECTS",
+    "false_belief": "Hiding the truth or a mistake will protect me.",
+    "true_belief": "Honesty brings trust, even after mistakes, and hiding just adds weight.",
+    "related_needs": [
+      "NEED_INTEGRITY"
+    ],
+    "typical_emotions": [
+      "EMOTION_FRUSTRATION",
+      "EMOTION_ACCEPTANCE"
+    ],
+    "situation_ids": [
+      132,
+      139
+    ]
+  },
+  {
+    "id": "BELIEF_BELONGING_REQUIRES_COMPLIANCE",
+    "false_belief": "I must follow the group, break rules, or hide who I am to belong.",
+    "true_belief": "Doing what's right and honoring my identity matters more than fitting in.",
+    "related_needs": [
+      "NEED_INTEGRITY",
+      "NEED_IDENTITY"
+    ],
+    "typical_emotions": [
+      "EMOTION_CONFUSION",
+      "EMOTION_CONFIDENCE"
+    ],
+    "situation_ids": [
+      133,
+      147
+    ]
+  },
+  {
+    "id": "BELIEF_UNFAIRNESS_IS_PERMANENT",
+    "false_belief": "The world or a situation is only unfair, and bad behavior always wins.",
+    "true_belief": "Fairness grows through understanding, courage, and responsible action.",
+    "related_needs": [
+      "NEED_JUSTICE"
+    ],
+    "typical_emotions": [
+      "EMOTION_FRUSTRATION",
+      "EMOTION_HOPE"
+    ],
+    "situation_ids": [
+      135,
+      149
+    ]
+  },
+  {
+    "id": "BELIEF_RULES_ARE_OPTIONAL",
+    "false_belief": "Rules only matter when they're convenient, or cheating is fine if it helps me succeed.",
+    "true_belief": "I can choose integrity regardless of what others do, and honest effort matters more.",
+    "related_needs": [
+      "NEED_INTEGRITY"
+    ],
+    "typical_emotions": [
+      "EMOTION_CONFUSION",
+      "EMOTION_CONFIDENCE"
+    ],
+    "situation_ids": [
+      137,
+      141
+    ]
+  },
+  {
+    "id": "BELIEF_SECRETS_MUST_ALWAYS_BE_KEPT",
+    "false_belief": "Keeping every secret, even an unsafe one, makes me a good friend.",
+    "true_belief": "Safe adults should know secrets that could protect someone.",
+    "related_needs": [
+      "NEED_RESPONSIBILITY"
+    ],
+    "typical_emotions": [
+      "EMOTION_WORRY",
+      "EMOTION_CONFIDENCE"
+    ],
+    "situation_ids": [
+      138
+    ]
+  },
+  {
+    "id": "BELIEF_TRUST_IS_ALWAYS_DEFAULT",
+    "false_belief": "Everyone I meet online or elsewhere can automatically be trusted.",
+    "true_belief": "I protect myself by making safe choices and asking trusted adults.",
+    "related_needs": [
+      "NEED_SAFETY"
+    ],
+    "typical_emotions": [
+      "EMOTION_CONFUSION",
+      "EMOTION_SECURITY"
+    ],
+    "situation_ids": [
+      142
+    ]
+  },
+  {
+    "id": "BELIEF_NOT_MY_PROBLEM",
+    "false_belief": "Someone else's struggle, fear, or need isn't my place to help with.",
+    "true_belief": "Kindness and small encouragement can make a real difference for someone else.",
+    "related_needs": [
+      "NEED_COMPASSION"
+    ],
+    "typical_emotions": [
+      "EMOTION_CONFUSION",
+      "EMOTION_GRATITUDE"
+    ],
+    "situation_ids": [
+      144,
+      165
+    ]
+  },
+  {
+    "id": "BELIEF_MUST_PROVE_SELF_TO_ALL",
+    "false_belief": "I have to prove myself to everyone, especially against rumors.",
+    "true_belief": "Truth and character matter more than what others say about me.",
+    "related_needs": [
+      "NEED_INTEGRITY"
+    ],
+    "typical_emotions": [
+      "EMOTION_ANGER",
+      "EMOTION_CONFIDENCE"
+    ],
+    "situation_ids": [
+      157
+    ]
+  },
+  {
+    "id": "BELIEF_HOLDING_GRUDGE_PROTECTS",
+    "false_belief": "Holding on to hurt keeps me safe from being hurt again.",
+    "true_belief": "Forgiveness helps relationships heal and grow, in my own time.",
+    "related_needs": [
+      "NEED_FORGIVENESS"
+    ],
+    "typical_emotions": [
+      "EMOTION_ANGER",
+      "EMOTION_ACCEPTANCE"
+    ],
+    "situation_ids": [
+      158
+    ]
+  },
+  {
+    "id": "BELIEF_MUST_CHOOSE_SIDES",
+    "false_belief": "I have to choose one friend over another.",
+    "true_belief": "I can be kind and fair to everyone without ranking who I care about.",
+    "related_needs": [
+      "NEED_JUSTICE"
+    ],
+    "typical_emotions": [
+      "EMOTION_FRUSTRATION",
+      "EMOTION_CALM"
+    ],
+    "situation_ids": [
+      160
+    ]
+  },
+  {
+    "id": "BELIEF_MUST_CONTROL_OTHERS",
+    "false_belief": "I have to control others for things to go well.",
+    "true_belief": "Cooperation grows through patience and honest communication.",
+    "related_needs": [
+      "NEED_RESPECT"
+    ],
+    "typical_emotions": [
+      "EMOTION_FRUSTRATION",
+      "EMOTION_CALM"
+    ],
+    "situation_ids": [
+      162
+    ]
+  },
+  {
+    "id": "BELIEF_EXCLUSIVITY_PROTECTS_FUN",
+    "false_belief": "Including more people, younger or new, will spoil the fun or take up needed room.",
+    "true_belief": "Everyone deserves a chance to belong, and including others can add to the fun.",
+    "related_needs": [
+      "NEED_BELONGING"
+    ],
+    "typical_emotions": [
+      "EMOTION_FRUSTRATION",
+      "EMOTION_BELONGING"
+    ],
+    "situation_ids": [
+      146,
+      152,
+      164
+    ]
+  },
+  {
+    "id": "BELIEF_LOUDEST_DESERVES_ATTENTION",
+    "false_belief": "The loudest or most insistent person should be heard first.",
+    "true_belief": "Listening is an important way to show respect for everyone.",
+    "related_needs": [
+      "NEED_RESPECT"
+    ],
+    "typical_emotions": [
+      "EMOTION_FRUSTRATION",
+      "EMOTION_CALM"
+    ],
+    "situation_ids": [
+      167
+    ]
+  },
+  {
+    "id": "BELIEF_MISUNDERSTOOD_MEANS_FLAWED",
+    "false_belief": "If people don't understand me, something is wrong with me.",
+    "true_belief": "I can express myself patiently and still be myself.",
+    "related_needs": [
+      "NEED_IDENTITY",
+      "NEED_RESPECT"
+    ],
+    "typical_emotions": [
+      "EMOTION_FRUSTRATION",
+      "EMOTION_ACCEPTANCE"
+    ],
+    "situation_ids": [
+      13
+    ]
+  },
+  {
+    "id": "BELIEF_TRAPPED_MEANS_LOSS_OF_CALM",
+    "false_belief": "I can't stay calm when I feel physically trapped or confined.",
+    "true_belief": "I can find peaceful ways to handle uncomfortable, confined moments.",
+    "related_needs": [
+      "NEED_SELF_REGULATION"
+    ],
+    "typical_emotions": [
+      "EMOTION_FRUSTRATION",
+      "EMOTION_CALM"
+    ],
+    "situation_ids": [
+      15
+    ]
+  },
+  {
+    "id": "BELIEF_SCARY_THOUGHTS_ARE_FACTS",
+    "false_belief": "I have to believe every scary thought that crosses my mind.",
+    "true_belief": "Thoughts are not always facts, and I can return to the present moment.",
+    "related_needs": [
+      "NEED_STABILITY"
+    ],
+    "typical_emotions": [
+      "EMOTION_WORRY",
+      "EMOTION_CALM"
+    ],
+    "situation_ids": [
+      35
+    ]
+  },
+  {
+    "id": "BELIEF_ONE_FAILURE_MEANS_STOP_TRYING",
+    "false_belief": "If I fall or fail once at something physical, I shouldn't try again.",
+    "true_belief": "Trying again helps me grow stronger and more confident.",
+    "related_needs": [
+      "NEED_CONFIDENCE"
+    ],
+    "typical_emotions": [
+      "EMOTION_FEAR",
+      "EMOTION_DETERMINATION"
+    ],
+    "situation_ids": [
+      39
+    ]
+  },
+  {
+    "id": "BELIEF_OTHERS_PAIN_NOT_MY_CONCERN",
+    "false_belief": "Someone or something else's pain has nothing to do with me.",
+    "true_belief": "Caring actions can comfort others and genuinely make a difference.",
+    "related_needs": [
+      "NEED_COMPASSION"
+    ],
+    "typical_emotions": [
+      "EMOTION_CONFUSION",
+      "EMOTION_GRATITUDE"
+    ],
+    "situation_ids": [
+      55,
+      140
+    ]
+  },
+  {
+    "id": "BELIEF_SMALL_SLIP_LOSES_LIKING",
+    "false_belief": "If I forget a name or make a small social slip, people won't like me.",
+    "true_belief": "Everyone makes small mistakes, and kindness repairs them.",
+    "related_needs": [
+      "NEED_RESPECT"
+    ],
+    "typical_emotions": [
+      "EMOTION_EMBARRASSMENT",
+      "EMOTION_ACCEPTANCE"
+    ],
+    "situation_ids": [
+      62
+    ]
+  },
+  {
+    "id": "BELIEF_LOW_SKILL_MEANS_UNBELONGING",
+    "false_belief": "Being picked last or called clumsy means I'm not good enough to belong.",
+    "true_belief": "Skills improve with practice and effort, and belonging isn't earned by skill.",
+    "related_needs": [
+      "NEED_CONFIDENCE",
+      "NEED_BELONGING"
+    ],
+    "typical_emotions": [
+      "EMOTION_EMBARRASSMENT",
+      "EMOTION_CONFIDENCE"
+    ],
+    "situation_ids": [
+      68
+    ]
+  },
+  {
+    "id": "BELIEF_PUBLIC_MISTAKE_LOWERS_WORTH",
+    "false_belief": "A mistake made publicly, in front of others, makes me less worthy.",
+    "true_belief": "One embarrassing moment doesn't change my worth.",
+    "related_needs": [
+      "NEED_IDENTITY"
+    ],
+    "typical_emotions": [
+      "EMOTION_EMBARRASSMENT",
+      "EMOTION_ACCEPTANCE"
+    ],
+    "situation_ids": [
+      74
+    ]
+  },
+  {
+    "id": "BELIEF_FAIR_MEANS_EQUAL_EVERY_TIME",
+    "false_belief": "Fair means I should get an identical turn or outcome every single time.",
+    "true_belief": "Fairness includes patience and considering everyone's needs, not identical outcomes.",
+    "related_needs": [
+      "NEED_JUSTICE",
+      "NEED_PATIENCE"
+    ],
+    "typical_emotions": [
+      "EMOTION_FRUSTRATION",
+      "EMOTION_ACCEPTANCE"
+    ],
+    "situation_ids": [
+      85
+    ]
+  },
+  {
+    "id": "BELIEF_AWAY_FROM_HOME_IS_UNSAFE",
+    "false_belief": "I can't feel safe anywhere except home.",
+    "true_belief": "I can feel safe in new places when I'm with trusted people.",
+    "related_needs": [
+      "NEED_SAFETY"
+    ],
+    "typical_emotions": [
+      "EMOTION_WORRY",
+      "EMOTION_SECURITY"
+    ],
+    "situation_ids": [
+      129
+    ]
+  },
+  {
+    "id": "BELIEF_FOUND_ITEM_BELONGS_TO_FINDER",
+    "false_belief": "If I found something, it automatically belongs to me.",
+    "true_belief": "Doing the right thing matters more than keeping something unclaimed.",
+    "related_needs": [
+      "NEED_INTEGRITY"
+    ],
+    "typical_emotions": [
+      "EMOTION_CONFUSION",
+      "EMOTION_CONFIDENCE"
+    ],
+    "situation_ids": [
+      148
+    ]
+  },
+  {
+    "id": "BELIEF_BEING_COPIED_MEANS_LOSING_SPECIALNESS",
+    "false_belief": "If someone copies my work or idea, I've lost what made me special.",
+    "true_belief": "My ideas and creativity remain valuable even if others draw from them.",
+    "related_needs": [
+      "NEED_RESPECT",
+      "NEED_EXPRESSION"
+    ],
+    "typical_emotions": [
+      "EMOTION_FRUSTRATION",
+      "EMOTION_CONFIDENCE"
+    ],
+    "situation_ids": [
+      154
+    ]
+  },
+  {
+    "id": "BELIEF_SOMEONE_ELSE_WILL_HELP",
+    "false_belief": "Someone else will notice and help the person who's alone or struggling, so I don't need to.",
+    "true_belief": "Small acts of kindness from me can make someone feel welcome.",
+    "related_needs": [
+      "NEED_COMPASSION"
+    ],
+    "typical_emotions": [
+      "EMOTION_CONFUSION",
+      "EMOTION_GRATITUDE"
+    ],
+    "situation_ids": [
+      166
+    ]
+  }
+]
