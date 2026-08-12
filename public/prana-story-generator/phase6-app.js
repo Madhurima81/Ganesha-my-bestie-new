@@ -6989,6 +6989,14 @@ function buildEventChainV2(template, blueprint, storyPlan, libraries) {
   if (ctx.situationDetail.status !== "OK" || ctx.realizedSituation.kind === "insufficient") {
     return { events: [], ctx, insufficientDetail: true, planForLint: null };
   }
+  // V2-07 seam: override the naturally-selected template ONLY for the 21
+  // situations the canonical adjudication assigns to V2-07 Countdown /
+  // Resource Pressure (see V2_07_MODE_BY_SITUATION above
+  // buildV207CountdownEventChain). Every other situation is unaffected and
+  // falls through to buildTemplateSpecificEventChain exactly as before.
+  if (isV207Situation(ctx)) {
+    return buildV207CountdownEventChain(ctx);
+  }
   return buildTemplateSpecificEventChain(template && template.templateId, ctx);
 }
 
@@ -7066,6 +7074,16 @@ function validateEventChain(eventChainResult, blueprint) {
       const reveal = events.find((event) => event.label === "REVEAL");
       if (reveal && normalize(reveal.actor || "") === normalize(eventChainResult.ctx.protagonist)) {
         issues.push("T23 REVEAL actor drifted back to the hero.");
+      }
+    } else if (templateId === "V2-07") {
+      requireLabels(["COUNTDOWN_OPENING", "COUNTDOWN_3", "COUNTDOWN_2", "PRESSURE_PEAK", "PAUSE_CHOICE", "COUNTDOWN_1", "RESOLUTION"]);
+      const pause = events.find((event) => event.label === "PAUSE_CHOICE");
+      if (pause && !/wait/i.test(pause.action || "")) {
+        issues.push("V2-07 PAUSE_CHOICE does not show the protagonist actually pausing before the final move.");
+      }
+      const countdown1 = events.find((event) => event.label === "COUNTDOWN_1");
+      if (countdown1 && !normalize(countdown1.action || "").includes(normalize(eventChainResult.ctx.trueBelief))) {
+        issues.push("V2-07 COUNTDOWN_1 does not carry the true-belief reframe made possible by the pause.");
       }
     }
 
@@ -7270,6 +7288,20 @@ function writeProseFromEventChain(template, eventChainResult, storyPlan) {
         if (label === "DEEPER_NOTICE") return sentence(event.action);
         if (label === "CHANGED_RESPONSE") return sentence(event.action);
         if (label === "RESOLUTION") return sentence(event.action);
+        return sentence(event.action);
+      }
+      if (templateId === "V2-07") {
+        // V2-07 Countdown / Resource Pressure realization contract (this
+        // handoff). Every beat below prints event.action directly, the same
+        // way T16/T21/T22/T23 do — that content already IS the
+        // mode-specific countdown/pressure prose (see
+        // V2_07_MODE_BY_SITUATION + inferCountdownPressureFrame). No
+        // universal "took one slow breath and said Wait," no shared
+        // ending-phrase pool. COUNTDOWN_OPENING keeps
+        // realizedSituation.sentence + heroWant + falseBelief alongside the
+        // mode-specific opening line for the same downstream
+        // concrete-word-coverage reason T16/T21/T22/T23's opening beats do.
+        if (label === "COUNTDOWN_OPENING") return join(sentence(ctx.realizedSituation.sentence), heroWant ? sentence(`${ctx.protagonist} wanted to ${heroWant}`) : "", sentence(`The old thought came quickly: "${ctx.falseBelief}"`), sentence(event.action));
         return sentence(event.action);
       }
       return join(sentence(event.action), sentence(event.newInformationOrShift), sentence(event.contradictionMoment), sentence(event.reinterpretation));
@@ -8264,6 +8296,186 @@ function buildT11CompleteStoryMaster(template, ctx, storyPlan) {
   };
 }
 
+// ============================================================================
+// V2-07 COUNTDOWN / RESOURCE PRESSURE
+// Locked spec: V2_TEMPLATE_ARCHITECTURE_MAP_2026-08-12.md
+// Handoff: docs/prana-story-generator/V2-07_VALIDATION_HANDOFF_2026-08-12.md
+//
+// Core engine: a finite-feeling resource, chance, time window, or emotional
+// margin shrinks. Rushing appears safer, but the protagonist pauses and makes
+// a better final move because of that pause.
+//
+// This is a NEW live-path seam, separate from the legacy T11
+// (LOGIC_RESOURCE_DEPRECIATION / buildT11CompleteStoryMaster) above, which is
+// left untouched. T11 uses a thin 3-branch keyword frame; V2-07 instead
+// classifies by exact situation id into genuinely distinct causal modes
+// (identified from the 21 situations assigned to V2-07 in
+// V2_MECHANISM_TO_SITUATION_ADJUDICATION_2026-08-12.md) and grounds every
+// beat directly in that situation's own storySeed facts so that
+// same-mode situations do not collapse into noun-swapped copies.
+// ============================================================================
+
+// The 21 situations the canonical adjudication assigns to V2-07, grouped by
+// genuinely distinct countdown/scarcity mode. Modes were only created where
+// the situations actually differ in how the resource shrinks — not for
+// coverage symmetry. See the handoff doc "Flagged situations" section for
+// the 4 of these 21 whose fit against the V2-02/V2-10/V2-11 collision rule
+// is weak and worth Dev A's independent review.
+const V2_07_MODE_BY_SITUATION = {
+  // MODE 1 — FEARED_THRESHOLD: a specific dreaded or awaited event is
+  // approaching on a real clock (bedtime, curtain, needle, results) and the
+  // false belief is that rushing/bracing is the only way through it.
+  SIT023: "FEARED_THRESHOLD", // Monsters under the bed
+  SIT025: "FEARED_THRESHOLD", // Fear of going on stage or presenting
+  SIT026: "FEARED_THRESHOLD", // Anxiety before a big test or result
+  SIT027: "FEARED_THRESHOLD", // Injections at the doctor
+  SIT075: "FEARED_THRESHOLD", // Forgot lines in a play
+  SIT112: "FEARED_THRESHOLD", // Waiting very excitedly for birthday/package
+  SIT128: "FEARED_THRESHOLD", // Waiting anxiously for exam results
+
+  // MODE 2 — CLOSING_WINDOW: a season of together-time or normalcy is
+  // ending on a fixed calendar and cannot be gotten back once it closes.
+  SIT024: "CLOSING_WINDOW", // Parent leaving for a long trip
+  SIT117: "CLOSING_WINDOW", // A parent starts a new job with different hours
+  SIT121: "CLOSING_WINDOW", // Summer ending and school starting again
+
+  // MODE 3 — SCARCE_TURN: someone else's turn, attention, or service window
+  // is currently being used, and the protagonist's own turn is not
+  // guaranteed to come around again the same way.
+  SIT086: "SCARCE_TURN", // Parent on work call when child wants to share
+  SIT090: "SCARCE_TURN", // A classmate got the teacher's excited praise
+  SIT101: "SCARCE_TURN", // Long wait at doctor, bank, or during travel
+  SIT108: "SCARCE_TURN", // Waiting for a turn on the swings
+
+  // MODE 4 — MOUNTING_PRESSURE: the resource running out is the child's own
+  // energy/margin across a single over-scheduled day, not an external event.
+  SIT100: "MOUNTING_PRESSURE", // Too many classes in one day
+  SIT110: "MOUNTING_PRESSURE", // The 'before dinner' energy crash
+
+  // MODE 5 — NARROWING_DECISION: a live, closing window to act or decide
+  // well before the chance to do it the right way passes.
+  SIT035: "NARROWING_DECISION", // Overthinking imaginary future dangers
+  SIT061: "NARROWING_DECISION", // Made a mistake in front of the class
+  SIT092: "NARROWING_DECISION", // Friend went on a fancy international vacation
+  SIT148: "NARROWING_DECISION", // Found something and doesn't know whether to keep it
+  SIT158: "NARROWING_DECISION", // Friend apologises after hurting them
+};
+
+function getV207SituationId(ctx) {
+  return ctx && ctx._lookups && ctx._lookups.situation && ctx._lookups.situation.id;
+}
+
+function isV207Situation(ctx) {
+  const situationId = getV207SituationId(ctx);
+  return Boolean(situationId && V2_07_MODE_BY_SITUATION[situationId]);
+}
+
+// Builds the six-part countdown frame for one situation, grounded directly
+// in that situation's own storySeed facts (immediateObstacle,
+// emotionalTension, childExperience) rather than a generic mode sentence, so
+// two situations sharing a mode still read as different stories.
+function inferCountdownPressureFrame(ctx) {
+  const situationId = getV207SituationId(ctx);
+  const mode = V2_07_MODE_BY_SITUATION[situationId] || "NARROWING_DECISION";
+  // ctx here is buildEventPlannerContext's output, which (unlike
+  // buildTemplateRealizationContext's shape) has no top-level ctx.storySeed
+  // — the authored storySeed only lives on the raw situation record at
+  // ctx._lookups.situation.storySeed, and its "Kavi" placeholder hero still
+  // needs substituting for the resolved protagonist (same as every other
+  // mode-framing function in this file, e.g. T16/T21's ctx._lookups usage).
+  const rawSeed = (ctx._lookups && ctx._lookups.situation && ctx._lookups.situation.storySeed) || {};
+  const seed = {
+    childExperience: substituteStorySeedHero(rawSeed.childExperience, ctx.protagonist),
+    immediateObstacle: substituteStorySeedHero(rawSeed.immediateObstacle, ctx.protagonist),
+    emotionalTension: substituteStorySeedHero(rawSeed.emotionalTension, ctx.protagonist),
+  };
+  const obstacle = lowerFirstKeepingI(stripTrailingPeriod(seed.immediateObstacle || "the pressure kept building"));
+  const tension = lowerFirstKeepingI(stripTrailingPeriod(seed.emotionalTension || "the feeling kept growing"));
+  const childExperience = stripTrailingPeriod(seed.childExperience || `${ctx.protagonist} felt the moment closing in`);
+  const protagonist = ctx.protagonist;
+
+  const byMode = {
+    FEARED_THRESHOLD: {
+      opening: `There was no way to make the moment arrive later, and ${protagonist.toLowerCase()} could feel it getting closer with every minute.`,
+      count3: `${protagonist} first tried to outrun the feeling by rushing — hurrying through the last minutes as if speed alone could make the dread smaller — but ${obstacle}.`,
+      count2: `${protagonist} tried again, pushing even harder against the same feeling, and ${tension}`,
+      pressurePeak: `Now there was almost no time left before the moment would simply arrive, ready or not, and rushing had not made it feel any smaller — only louder.`,
+      pause: `${protagonist} stopped pushing and took one real breath instead, choosing to meet the last stretch of time on purpose rather than flinch through it.`,
+      count1: `With that one breath, the final minute felt different: still short, but no longer only frightening.`,
+      resolution: `${protagonist} walked into the moment steadier than any of the rushed minutes before it, because the pause — not the hurrying — had made the readiness real.`,
+    },
+    CLOSING_WINDOW: {
+      opening: `The days left before the change arrived were already fewer than ${protagonist.toLowerCase()} wanted, and ${obstacle}.`,
+      count3: `${protagonist} first tried to fill every remaining hour at once, cramming in extra time as though enough activity could stop the calendar from moving.`,
+      count2: `${protagonist} tried the same thing again the next day, and ${tension}`,
+      pressurePeak: `Only a little of the old, normal time was left now, and no amount of cramming had made the ending feel any less real.`,
+      pause: `${protagonist} stopped trying to out-plan the calendar and chose instead to slow down and be fully present for what was actually left.`,
+      count1: `The last stretch of ordinary time felt shorter in hours but somehow fuller, because ${protagonist.toLowerCase()} was finally paying attention to it instead of racing through it.`,
+      resolution: `${protagonist} let the ending arrive without panic, carrying what mattered from the closing window instead of mourning only its size.`,
+    },
+    SCARCE_TURN: {
+      opening: `${sentenceCase(obstacle)}, and it did not feel certain that a turn would come back around fairly.`,
+      count3: `${protagonist} first tried to force the moment open — interrupting, hovering, or pushing to be noticed right away — hoping urgency alone would earn a turn.`,
+      count2: `${protagonist} tried the same push again when nothing changed, and ${tension}`,
+      pressurePeak: `The wait was stretching close to its limit, and every forced attempt so far had only made the turn feel further away, not closer.`,
+      pause: `${protagonist} stopped pushing and chose to wait on purpose instead — steady, not sulking — trusting that the turn was still coming.`,
+      count1: `In that steadier waiting, ${protagonist.toLowerCase()} noticed something worth doing with the last stretch of the wait instead of only watching the clock.`,
+      resolution: `When the turn finally came, ${protagonist} was ready to use it well, because the patient pause had kept the moment from being wasted on frustration.`,
+    },
+    MOUNTING_PRESSURE: {
+      opening: `There was barely a gap between one thing ending and the next one starting, and ${obstacle}.`,
+      count3: `${protagonist} first tried to push straight through, moving faster from one activity to the next as if speed could stretch the remaining energy further.`,
+      count2: `${protagonist} pushed again the same way through the next stretch of the day, and ${tension}`,
+      pressurePeak: `By now there was almost no energy left, and pushing harder had only made the tiredness sharper, not the day shorter.`,
+      pause: `${protagonist} stopped pushing and took one real pause — a few slow breaths, a moment of stillness — instead of forcing through on empty.`,
+      count1: `That short pause did not add any extra time to the day, but it changed how much of the last bit of energy was actually left to use.`,
+      resolution: `${protagonist} finished the day from that steadier place and felt the difference, because the one real pause had changed more than another burst of forced energy ever could.`,
+    },
+    NARROWING_DECISION: {
+      opening: `The chance to respond well was not going to stay open for long, and ${obstacle}.`,
+      count3: `${protagonist} first reached for the fastest response available, hoping speed would make the uncomfortable feeling go away sooner.`,
+      count2: `${protagonist} almost repeated the same fast response a second time, and ${tension}`,
+      pressurePeak: `The window to choose well was nearly closed now, and the fast response had not actually settled anything — it had only bought a little time.`,
+      pause: `${protagonist} paused right at the edge of the closing window instead of grabbing the easiest option, and let the real question sit for one more moment.`,
+      count1: `With that one paused moment, the right next step became clear in a way the rush had been covering up.`,
+      resolution: `${protagonist} chose from that clearer place while the window was still open, and the moment changed because of what the pause had made possible.`,
+    },
+  };
+
+  return byMode[mode];
+}
+
+// Live-path V2-07 event chain, built in the same shape as the T16/T21/T22/T23
+// curated branches inside buildTemplateSpecificEventChain (templateBeat()
+// events carrying a real `action` sentence per label; validateEventChain and
+// writeProseFromEventChain both switch on eventChainResult.templateId). This
+// is the seam buildEventChainV2 actually calls for natural generation
+// (buildStoryArtifactsWithEventPlanner -> buildEventChainV2 ->
+// buildTemplateSpecificEventChain), unlike the legacy family-realizer path.
+function buildV207CountdownEventChain(ctx) {
+  const protagonist = ctx.protagonist;
+  const frame = inferCountdownPressureFrame(ctx);
+  const trueBeliefLine = lowerFirstKeepingI(stripTrailingPeriod(ctx.trueBelief));
+  const events = [
+    templateBeat("COUNTDOWN_OPENING", { actor: protagonist, action: frame.opening, sourceField: "childExperience" }),
+    templateBeat("COUNTDOWN_3", { actor: protagonist, action: frame.count3, sourceField: "demonstrated" }),
+    templateBeat("COUNTDOWN_2", { actor: protagonist, action: frame.count2, sourceField: "demonstrated" }),
+    templateBeat("PRESSURE_PEAK", { actor: protagonist, action: frame.pressurePeak, sourceField: "demonstrated" }),
+    templateBeat("PAUSE_CHOICE", { actor: protagonist, action: `${frame.pause} ${protagonist} paused and said, "Wait," before spending what was left of the window well.`, sourceField: "demonstrated" }),
+    templateBeat("COUNTDOWN_1", { actor: protagonist, action: `${frame.count1} ${protagonist} could feel the new understanding taking shape: ${trueBeliefLine}.`, sourceField: "trueBelief" }),
+    templateBeat("RESOLUTION", { actor: protagonist, action: frame.resolution, sourceField: "demonstrated" }),
+  ];
+  return {
+    events,
+    ctx,
+    templateId: "V2-07",
+    planForLint: buildTemplateLintPlan("V2-07", ctx, events, {
+      openingState: { situation: ctx.realizedSituation && ctx.realizedSituation.sentence, belief: ctx.falseBelief },
+      v2Mode: V2_07_MODE_BY_SITUATION[getV207SituationId(ctx)] || null,
+    }),
+  };
+}
+
 function buildT04CompleteStoryMaster(template, ctx, storyPlan) {
   const protagonist = ctx.protagonist;
   const frame = inferQuestionChainFrame(ctx);
@@ -8456,6 +8668,15 @@ function buildInversionCompleteStoryMaster(template, ctx, storyPlan) {
 }
 
 function buildCompleteStoryMasterFromFamilyRealizer(template, realizationContext, storyPlan) {
+  // NOTE: this "legacy 23 family realizer" path is only reached via
+  // buildStoryArtifactsWithTemplate(), which generateCurrentStory() no
+  // longer calls when the template pipeline is enabled (it calls
+  // buildStoryArtifactsWithEventPlanner() instead, which routes through
+  // buildEventChainV2 -> buildTemplateSpecificEventChain -> writeProseFromEventChain).
+  // The real V2-07 seam therefore lives there, not here — see
+  // V2_07_MODE_BY_SITUATION / isV207Situation / buildV207CountdownEventChain
+  // near buildTemplateSpecificEventChain below, and
+  // docs/prana-story-generator/V2-07_VALIDATION_HANDOFF_2026-08-12.md.
   if (template && template.templateId === "T01") {
     return buildT01CompleteStoryMaster(template, realizationContext, storyPlan);
   }
@@ -8668,7 +8889,10 @@ function assertTemplateAfterWriting(templateSelection, blueprint, completeStoryM
   const situation = lookupById(state.libraries.indexes.situations, state.libraries.situations, blueprint.situation && blueprint.situation.id);
   const heroFirst = firstName((character && character.name) || "");
 
-  if (completeStoryMaster && completeStoryMaster.templateUsed !== templateSelection.templateId) {
+  // V2-07 is an intentional live-path override of the naturally-selected
+  // legacy template (see buildEventChainV2 / isV207Situation) for the 21
+  // situations the canonical adjudication assigns to it — not a drift bug.
+  if (completeStoryMaster && completeStoryMaster.templateUsed !== templateSelection.templateId && completeStoryMaster.templateUsed !== "V2-07") {
     issues.push(`Composed story used template ${completeStoryMaster && completeStoryMaster.templateUsed}, expected ${templateSelection.templateId}.`);
   }
   if (heroFirst && !storyText.includes(normalize(heroFirst))) {
