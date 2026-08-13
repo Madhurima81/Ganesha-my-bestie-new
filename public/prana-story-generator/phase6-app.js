@@ -7076,14 +7076,15 @@ function validateEventChain(eventChainResult, blueprint) {
         issues.push("T23 REVEAL actor drifted back to the hero.");
       }
     } else if (templateId === "V2-07") {
-      requireLabels(["COUNTDOWN_OPENING", "COUNTDOWN_3", "COUNTDOWN_2", "PRESSURE_PEAK", "PAUSE_CHOICE", "COUNTDOWN_1", "RESOLUTION"]);
-      const pause = events.find((event) => event.label === "PAUSE_CHOICE");
-      if (pause && !/wait/i.test(pause.action || "")) {
-        issues.push("V2-07 PAUSE_CHOICE does not show the protagonist actually pausing before the final move.");
+      requireLabels(["OLD_PATTERN_ESTABLISHED", "PATTERN_COST", "INTERRUPTION", "DIFFERENT_CHOICE", "CONSEQUENCE"]);
+      const interruption = events.find((event) => event.label === "INTERRUPTION");
+      const differentChoice = events.find((event) => event.label === "DIFFERENT_CHOICE");
+      const consequence = events.find((event) => event.label === "CONSEQUENCE");
+      if (interruption && differentChoice && normalize(interruption.action || "") === normalize(differentChoice.action || "")) {
+        issues.push("V2-07 INTERRUPTION collapsed into DIFFERENT_CHOICE instead of creating a distinct turning action.");
       }
-      const countdown1 = events.find((event) => event.label === "COUNTDOWN_1");
-      if (countdown1 && !normalize(countdown1.action || "").includes(normalize(eventChainResult.ctx.trueBelief))) {
-        issues.push("V2-07 COUNTDOWN_1 does not carry the true-belief reframe made possible by the pause.");
+      if (differentChoice && consequence && normalize(differentChoice.action || "") === normalize(consequence.action || "")) {
+        issues.push("V2-07 CONSEQUENCE is restating the changed action instead of showing what it changes.");
       }
     }
 
@@ -7301,7 +7302,7 @@ function writeProseFromEventChain(template, eventChainResult, storyPlan) {
         // realizedSituation.sentence + heroWant + falseBelief alongside the
         // mode-specific opening line for the same downstream
         // concrete-word-coverage reason T16/T21/T22/T23's opening beats do.
-        if (label === "COUNTDOWN_OPENING") return join(sentence(ctx.realizedSituation.sentence), heroWant ? sentence(`${ctx.protagonist} wanted to ${heroWant}`) : "", sentence(`The old thought came quickly: "${ctx.falseBelief}"`), sentence(event.action));
+        if (label === "OLD_PATTERN_ESTABLISHED") return join(sentence(ctx.realizedSituation.sentence), heroWant ? sentence(`${ctx.protagonist} wanted to ${heroWant}`) : "", sentence(`At first ${ctx.protagonist} was still acting as if ${ctx.falseBelief}`), sentence(event.action));
         return sentence(event.action);
       }
       return join(sentence(event.action), sentence(event.newInformationOrShift), sentence(event.contradictionMoment), sentence(event.reinterpretation));
@@ -8452,7 +8453,7 @@ function inferCountdownPressureFrame(ctx) {
 // is the seam buildEventChainV2 actually calls for natural generation
 // (buildStoryArtifactsWithEventPlanner -> buildEventChainV2 ->
 // buildTemplateSpecificEventChain), unlike the legacy family-realizer path.
-function buildV207CountdownEventChain(ctx) {
+function buildV207CountdownEventChainLegacy(ctx) {
   const protagonist = ctx.protagonist;
   const frame = inferCountdownPressureFrame(ctx);
   const trueBeliefLine = lowerFirstKeepingI(stripTrailingPeriod(ctx.trueBelief));
@@ -8472,6 +8473,260 @@ function buildV207CountdownEventChain(ctx) {
     planForLint: buildTemplateLintPlan("V2-07", ctx, events, {
       openingState: { situation: ctx.realizedSituation && ctx.realizedSituation.sentence, belief: ctx.falseBelief },
       v2Mode: V2_07_MODE_BY_SITUATION[getV207SituationId(ctx)] || null,
+    }),
+  };
+}
+
+function getV207StorySeed(ctx) {
+  const rawSeed = (ctx._lookups && ctx._lookups.situation && ctx._lookups.situation.storySeed) || {};
+  return {
+    childExperience: substituteStorySeedHero(rawSeed.childExperience, ctx.protagonist),
+    immediateObstacle: substituteStorySeedHero(rawSeed.immediateObstacle, ctx.protagonist),
+    emotionalTension: substituteStorySeedHero(rawSeed.emotionalTension, ctx.protagonist),
+    immediateWant: substituteStorySeedHero(rawSeed.immediateWant, ctx.protagonist),
+  };
+}
+
+function inferV207Realization(ctx) {
+  const situationId = getV207SituationId(ctx);
+  const mode = V2_07_MODE_BY_SITUATION[situationId] || "NARROWING_DECISION";
+  const seed = getV207StorySeed(ctx);
+  const obstacle = lowerFirstKeepingI(stripTrailingPeriod(seed.immediateObstacle || "the pressure kept building"));
+  const tension = lowerFirstKeepingI(stripTrailingPeriod(seed.emotionalTension || "the feeling kept growing"));
+  const childExperience = `${sentenceCase(stripTrailingPeriod(seed.childExperience || `${ctx.protagonist} felt the moment closing in`))}.`;
+  const want = lowerFirstKeepingI(stripTrailingPeriod(seed.immediateWant || ""));
+  const protagonist = ctx.protagonist;
+
+  const defaultByMode = {
+    FEARED_THRESHOLD: {
+      oldPattern: `${childExperience} ${protagonist} kept trying to get past the feeling quickly, as though rushing toward ${want || "the moment"} would make it hurt less.`,
+      patternCost: `But ${obstacle}, and ${tension}. The moment kept coming anyway.`,
+      interruption: `${protagonist} stopped trying to outrun the moment and chose one steadier thing to do before it arrived.`,
+      differentChoice: `${protagonist} used that steadier moment to meet what was coming on purpose instead of bracing blindly.`,
+      consequence: `When the moment finally arrived, ${protagonist} could take the next step with more steadiness than any of the rushing had created.`,
+    },
+    CLOSING_WINDOW: {
+      oldPattern: `${childExperience} ${protagonist} tried to squeeze everything possible into the little time left, as though more activity could hold the change back.`,
+      patternCost: `But ${obstacle}, and ${tension}. Racing through the remaining time only made it feel smaller.`,
+      interruption: `${protagonist} stopped trying to beat the calendar and paid attention to what could still be shared before the change came.`,
+      differentChoice: `${protagonist} chose one real piece of time to be fully in instead of scattering the feeling across every hour.`,
+      consequence: `The ending still came, but ${protagonist} carried an actual memory of the time that was left instead of only panic about how little of it remained.`,
+    },
+    SCARCE_TURN: {
+      oldPattern: `${childExperience} ${protagonist} kept leaning toward the turn, the attention, or the opening as if pressing harder might make it come sooner.`,
+      patternCost: `But ${obstacle}, and ${tension}. The pressure made the waiting feel longer, not shorter.`,
+      interruption: `${protagonist} stopped trying to pull the turn closer and shifted into a more deliberate kind of waiting.`,
+      differentChoice: `${protagonist} used the wait differently instead of feeding the unfair feeling with every passing minute.`,
+      consequence: `By the time the opening came, ${protagonist} could use it more well because the waiting had not swallowed the whole moment.`,
+    },
+    MOUNTING_PRESSURE: {
+      oldPattern: `${childExperience} ${protagonist} kept pushing through the day as if speed alone could stretch the little energy left.`,
+      patternCost: `But ${obstacle}, and ${tension}. The day did not get shorter; ${protagonist.toLowerCase()} only got thinner and sharper inside it.`,
+      interruption: `${protagonist} stopped forcing the next step for a moment and gave the body a real reset before continuing.`,
+      differentChoice: `${protagonist} re-entered the day more deliberately instead of throwing the last bit of energy at whatever came next.`,
+      consequence: `${protagonist} could finish the next part of the day with more steadiness because the reset changed how the remaining energy was used.`,
+    },
+    NARROWING_DECISION: {
+      oldPattern: `${childExperience} ${protagonist} reached for the fastest answer first, hoping speed would make the uncomfortable choice easier.`,
+      patternCost: `But ${obstacle}, and ${tension}. The rushed answer did not resolve the real question.`,
+      interruption: `${protagonist} held back from the quickest response long enough to face what mattered in the choice.`,
+      differentChoice: `${protagonist} chose the next move from that clearer place instead of from the first sharp feeling.`,
+      consequence: `Because the choice came from clarity instead of hurry, the moment opened into a better next step.`,
+    },
+  };
+
+  const overrides = {
+    SIT023: {
+      oldPattern: `${childExperience} ${protagonist} kept checking the shadow from farther and farther away, pulling the blanket closer and trying to get to sleep without really facing what was under the bed.`,
+      patternCost: `But ${obstacle}, and ${tension}. The room got more frightening the longer ${protagonist.toLowerCase()} tried to escape it quickly.`,
+      interruption: `${protagonist} turned back toward the bed and chose to check the shadow properly instead of feeding it from across the room.`,
+      differentChoice: `${protagonist} looked under the bed on purpose and let the ordinary shape be seen for what it was. "It's just my sweater," ${protagonist} said out loud.`,
+      consequence: `Once the shadow was faced instead of fed, ${protagonist} settled into bed with the fear no longer running the whole room.`,
+    },
+    SIT024: {
+      oldPattern: `${childExperience} ${protagonist} kept following the packing, asking about the leaving again, and trying to pull the parent back into every minute that was left.`,
+      patternCost: `But ${obstacle}. ${tension}. All the grabbing made goodbye feel closer and less gentle.`,
+      interruption: `${protagonist} stopped trying to stop the trip and turned toward one real goodbye they could still share before the parent left.`,
+      differentChoice: `${protagonist} spent the last bit of time being with the parent instead of arguing with the leaving itself. "Tell me about the trip when you're back," ${protagonist} said.`,
+      consequence: `The trip still began, but ${protagonist} held a steadier goodbye instead of only the panic of not being able to stop it.`,
+    },
+    SIT025: {
+      oldPattern: `${childExperience} ${protagonist} kept trying to push the nervousness down quickly and rush toward being ready all at once.`,
+      patternCost: `But ${obstacle}, and ${tension}. The stage kept getting closer while the hurry made the body feel less ready, not more.`,
+      interruption: `${protagonist} stopped wrestling with the nervous feeling and gave attention to the very next thing the performance required.`,
+      differentChoice: `${protagonist} walked onstage carrying the nerves with more steadiness instead of waiting for them to disappear first. "I'm ready enough," ${protagonist} told the wings.`,
+      consequence: `The performance began because ${protagonist} found the moment that was actually there instead of losing it to a fight with readiness.`,
+    },
+    SIT026: {
+      oldPattern: `${childExperience} ${protagonist} kept running through possible results, trying to solve the waiting by predicting it faster.`,
+      patternCost: `But ${obstacle}. ${tension}. Each imagined answer only created room for another worry.`,
+      interruption: `${protagonist} stopped chasing the result through guesses and turned back to what could still be lived before the answer came.`,
+      differentChoice: `${protagonist} let the waiting stay unfinished instead of filling every empty minute with another prediction. "I don't have to know yet," ${protagonist} said.`,
+      consequence: `The result was still unknown, but ${protagonist} kept the days before it arriving from belonging entirely to fear.`,
+    },
+    SIT027: {
+      oldPattern: `${childExperience} ${protagonist} kept bracing early and trying to get past the injection in the mind before it had even happened.`,
+      patternCost: `But ${obstacle}. ${tension}. All that early bracing made the coming moment feel bigger.`,
+      interruption: `${protagonist} stopped fighting the future version of the injection and came back to the one small step that was actually next.`,
+      differentChoice: `${protagonist} stayed with the appointment as it happened instead of spending the whole wait inside the pain that had not arrived yet. "Just this one moment," ${protagonist} said quietly.`,
+      consequence: `When the injection came, ${protagonist} moved through it one real moment at a time instead of through a giant imagined version of it.`,
+    },
+    SIT035: {
+      oldPattern: `${childExperience} ${protagonist} kept trying to solve each danger in advance, then immediately found another danger behind it.`,
+      patternCost: `But ${obstacle}. ${tension}. The future got more crowded every time ${protagonist.toLowerCase()} tried to clear it all at once.`,
+      interruption: `${protagonist} stopped answering the imagined chain and came back to what the upcoming event actually required now.`,
+      differentChoice: `${protagonist} prepared for the real event in front of them instead of negotiating with every invented version of it. "Just this one, for now," ${protagonist} decided.`,
+      consequence: `The event was still ahead, but it changed — it no longer had to arrive carrying every imaginary disaster with it.`,
+    },
+    SIT061: {
+      oldPattern: `${childExperience} ${protagonist} first wanted to erase the mistake quickly by hiding inside silence or blurting anything that might cover it.`,
+      patternCost: `But ${obstacle}. ${tension}. The scramble only made the wrong answer feel more central.`,
+      interruption: `${protagonist} stopped trying to make the mistake disappear and stayed with the moment long enough to answer honestly from where it really was.`,
+      differentChoice: `${protagonist} let the class see the mistake as a mistake instead of treating it like proof that everything had collapsed. "I got that one wrong," ${protagonist} said plainly.`,
+      consequence: `Because the moment was met honestly, the class moved forward again without the mistake having to define ${protagonist.toLowerCase()} for the rest of the day.`,
+    },
+    SIT075: {
+      oldPattern: `${childExperience} ${protagonist} kept reaching for the missing words faster and faster, as though speed might drag them back.`,
+      patternCost: `But ${obstacle}. ${tension}. The rush made the blank feel even louder.`,
+      interruption: `${protagonist} stopped yanking at the missing line and held steady inside the pause that was already happening.`,
+      differentChoice: `${protagonist} re-entered the performance from the next usable moment instead of fighting the blank as if it had to vanish first. "I'll pick it back up from here," ${protagonist} said to the room.`,
+      consequence: `The performance kept moving because ${protagonist} found a way back into it instead of staying trapped inside the lost line.`,
+    },
+    SIT086: {
+      oldPattern: `${childExperience} ${protagonist} kept hovering near the call, holding the news tighter and tighter as if urgency alone should make a listening space open.`,
+      patternCost: `But ${obstacle}. ${tension}. The waiting began to feel like being pushed outside the moment.`,
+      interruption: `${protagonist} stopped trying to break into the call and chose a steadier way to hold the news until the parent could really receive it.`,
+      differentChoice: `${protagonist} waited for an actual listening moment instead of spending the whole call in protest against it. "I have something to tell you," ${protagonist} said once the call ended.`,
+      consequence: `When the parent was free, the news landed as something shared, and that changed how the whole interruption had felt.`,
+    },
+    SIT090: {
+      oldPattern: `${childExperience} ${protagonist} kept tracking the teacher's excitement and the classmate's moment, as if staying close to that spotlight might somehow pull it back.`,
+      patternCost: `But ${obstacle}. ${tension}. The more ${protagonist.toLowerCase()} watched the praise move away, the smaller their own contribution began to feel.`,
+      interruption: `${protagonist} stopped measuring the moment by the teacher's tone alone and stepped back from chasing that exact reaction.`,
+      differentChoice: `${protagonist} stayed with what had actually been contributed in class instead of treating someone else's louder praise as the whole story. "I did that part well too," ${protagonist} reminded themselves.`,
+      consequence: `The class kept moving, and that changed how small the comparison had made ${protagonist.toLowerCase()} feel.`,
+    },
+    SIT092: {
+      oldPattern: `${childExperience} ${protagonist} kept rushing to compare the friend's stories against every ordinary part of life at home, as if a quick new excitement had to be found immediately.`,
+      patternCost: `But ${obstacle}. ${tension}. The harder ${protagonist.toLowerCase()} chased a matching adventure, the duller everything nearby began to look.`,
+      interruption: `${protagonist} stopped trying to manufacture an instant equal and stepped back from the comparison long enough to notice what was actually available in their own world.`,
+      differentChoice: `${protagonist} turned toward a real experience in their own life instead of grading the day against the friend's holiday. "This is mine to enjoy," ${protagonist} said.`,
+      consequence: `The friend's trip stayed special, and something still changed — it no longer emptied ${protagonist.toLowerCase()}'s own life of interest.`,
+    },
+    SIT100: {
+      oldPattern: `${childExperience} ${protagonist} kept hurrying from one class to the next as if refusing to slow down might keep the overwhelm from catching up.`,
+      patternCost: `But ${obstacle}. ${tension}. The day filled up even more because nothing inside it had room to settle.`,
+      interruption: `${protagonist} stopped treating the next class like a race and made a small space between one demand and the next.`,
+      differentChoice: `${protagonist} entered the next activity with a little more pacing instead of carrying the whole crowded day in one breathless bundle.`,
+      consequence: `The schedule stayed full, but that small space helped ${protagonist.toLowerCase()} get through the next part without feeling swallowed by all of it at once.`,
+    },
+    SIT101: {
+      oldPattern: `${childExperience} ${protagonist} kept checking the line, the door, or the clock as if monitoring the wait harder might make the next step begin.`,
+      patternCost: `But ${obstacle}. ${tension}. Every check made the delay feel bigger and more personal.`,
+      interruption: `${protagonist} stopped feeding the line with constant checking and accepted that the turn would start when it actually started.`,
+      differentChoice: `${protagonist} used the waiting time differently instead of measuring every minute against impatience. "My turn will come," ${protagonist} said.`,
+      consequence: `The wait still lasted as long as it lasted, but it helped that ${protagonist.toLowerCase()} had stopped letting it consume the whole trip from the inside.`,
+    },
+    SIT108: {
+      oldPattern: `${childExperience} ${protagonist} kept edging closer to the swing and tracking every extra minute as if staring at the turn could pull it forward.`,
+      patternCost: `But ${obstacle}. ${tension}. The swing felt less like play and more like a test of unfairness.`,
+      interruption: `${protagonist} stopped trying to drag the turn closer with frustration and let the waiting become part of the playground instead of a battle against it.`,
+      differentChoice: `${protagonist} stayed engaged with the moment while the other child finished instead of giving every second to the unfair feeling. "My turn is still coming," ${protagonist} said.`,
+      consequence: `When the swing opened up, ${protagonist} found themselves more ready for play than for a continuation of the waiting fight.`,
+    },
+    SIT110: {
+      oldPattern: `${childExperience} ${protagonist} kept reacting to each small frustration as if force could hurry dinner closer or make the hungry-tired feeling disappear.`,
+      patternCost: `But ${obstacle}. ${tension}. The end of the day got rougher the more ${protagonist.toLowerCase()} fought it on empty.`,
+      interruption: `${protagonist} stopped throwing the last bit of energy at every irritation and gave the body one simpler next step to hold onto until dinner.`,
+      differentChoice: `${protagonist} moved through the last stretch more carefully instead of escalating each annoyance into a bigger crash. "Almost dinner," ${protagonist} said to no one in particular.`,
+      consequence: `Dinner still needed time, but that steadier pace helped keep it from becoming the hardest part of the evening.`,
+    },
+    SIT112: {
+      oldPattern: `${childExperience} ${protagonist} kept trying to live at the end of the wait already, checking and imagining the special moment as if excitement could pull it closer.`,
+      patternCost: `But ${obstacle}. ${tension}. The day stretched into one long ache for the thing that had not arrived yet.`,
+      interruption: `${protagonist} stopped leaning over tomorrow and came back to the part of today that could still be lived before the special moment came.`,
+      differentChoice: `${protagonist} let the excitement stay bright without demanding that time obey it. "It's coming, and today still counts," ${protagonist} said.`,
+      consequence: `The special day still took the same amount of time to arrive, but ${protagonist.toLowerCase()} held more than restless longing while it did.`,
+    },
+    SIT117: {
+      oldPattern: `${childExperience} ${protagonist} kept mentally grabbing at the old routine and trying to save every familiar part of it before it changed.`,
+      patternCost: `But ${obstacle}. ${tension}. The coming change started to feel like proof that the time together itself was shrinking away.`,
+      interruption: `${protagonist} stopped trying to freeze the old schedule and turned toward what could still be made real inside the new one.`,
+      differentChoice: `${protagonist} looked for one actual way of being together in the changed hours instead of measuring only what would be lost.`,
+      consequence: `The routine still shifted, but that search helped ${protagonist.toLowerCase()} meet it carrying a concrete thread of togetherness instead of only the fear of being left behind.`,
+    },
+    SIT121: {
+      oldPattern: `${childExperience} ${protagonist} kept trying to squeeze every last drop out of the holiday as if that could keep the carefree feeling from ending.`,
+      patternCost: `But ${obstacle}. ${tension}. The last days of summer began disappearing into panic about the end of them.`,
+      interruption: `${protagonist} stopped treating the ending like an emergency and gave attention to one part of summer that could still be enjoyed before school returned.`,
+      differentChoice: `${protagonist} used the final days by being in them instead of spending them mainly arguing with the calendar.`,
+      consequence: `School still came back, but that changed nothing about the summer ${protagonist.toLowerCase()} had actually lived instead of only guarded.`,
+    },
+    SIT128: {
+      oldPattern: `${childExperience} ${protagonist} kept mentally opening the result before it was released, trying to get certainty early by rehearsing every possibility.`,
+      patternCost: `But ${obstacle}. ${tension}. The unknown number kept growing into a verdict long before it existed.`,
+      interruption: `${protagonist} stopped trying to force the result into the present and came back to the day that still had to be lived before it arrived.`,
+      differentChoice: `${protagonist} let the outcome remain unfinished instead of turning every waiting hour into an early judgement. "I'll know when I know," ${protagonist} said.`,
+      consequence: `When the result finally came, it changed less than the days of rehearsing being measured by it every minute had.`,
+    },
+    SIT148: {
+      oldPattern: `${childExperience} ${protagonist} kept testing quick reasons to keep the object, hoping a fast answer would settle the temptation before the harder question could catch up.`,
+      patternCost: `But ${obstacle}. ${tension}. The easier answer kept feeling less settled the more ${protagonist.toLowerCase()} imagined the owner.`,
+      interruption: `${protagonist} stopped grabbing for the first convenient answer and stayed with the fact that the object belonged to someone else.`,
+      differentChoice: `${protagonist} chose the next step from that fact instead of from the rush of finding something desirable. "This isn't mine to keep," ${protagonist} said.`,
+      consequence: `Because the decision was not made in the first hot moment of temptation, ${protagonist} moved toward repair instead of secret possession.`,
+    },
+    SIT158: {
+      oldPattern: `${childExperience} ${protagonist} kept reaching for the quickest ending to the discomfort, whether that meant accepting too fast or holding the hurt shut too tightly.`,
+      patternCost: `But ${obstacle}. ${tension}. A rushed answer would have protected the moment only on the surface.`,
+      interruption: `${protagonist} stopped treating repair like something that had to be finished immediately and stayed with what still hurt.`,
+      differentChoice: `${protagonist} answered the apology from that honest place instead of from the pressure to end the awkwardness fast. "I'm still a little sad, but thank you for saying that," ${protagonist} said to the friend.`,
+      consequence: `The friendship started to repair in a truer way because the next step was chosen for what it meant, not just for how quickly it could close the moment.`,
+    },
+  };
+
+  return {
+    mode,
+    stageOrder: ["OLD_PATTERN_ESTABLISHED", "PATTERN_COST", "INTERRUPTION", "DIFFERENT_CHOICE", "CONSEQUENCE"],
+    ...(defaultByMode[mode] || defaultByMode.NARROWING_DECISION),
+    ...(overrides[situationId] || {}),
+  };
+}
+
+function buildV207CountdownEventChain(ctx) {
+  const protagonist = ctx.protagonist;
+  const realization = inferV207Realization(ctx);
+  const interruptionSignal = /\b(stopped|paused|stood still|went quiet|held it still|sat with|took (a|one) (slow )?breath|a beat before|for a second)\b/i.test(realization.interruption)
+    ? realization.interruption
+    : `${realization.interruption} For a second, ${protagonist} went quiet enough to choose on purpose.`;
+  // Realization V2 fix: quoteByMode/closureByMode used to append one fixed
+  // dialogue line and one fixed closing line per MODE (not per situation),
+  // so every situation sharing a mode ended on byte-identical dialogue and
+  // closure text (e.g. all 7 FEARED_THRESHOLD situations closed with "felt
+  // safer in the room now"). That is exactly the mechanism-stamp scaffold
+  // the methodology forbids. realization.differentChoice and
+  // realization.consequence are already situation-specific (see the
+  // `overrides` map in inferV207Realization, keyed by situationId, not
+  // mode) — some already carry their own natural quote — so DIFFERENT_CHOICE
+  // and CONSEQUENCE now print that situation-specific text directly with no
+  // appended shared pool.
+  const differentChoiceAction = realization.differentChoice;
+  const consequenceAction = realization.consequence;
+  const events = [
+    templateBeat("OLD_PATTERN_ESTABLISHED", { actor: protagonist, action: realization.oldPattern, sourceField: "childExperience" }),
+    templateBeat("PATTERN_COST", { actor: protagonist, action: realization.patternCost, sourceField: "emotionalTension" }),
+    templateBeat("INTERRUPTION", { actor: protagonist, action: interruptionSignal, sourceField: "demonstrated" }),
+    templateBeat("DIFFERENT_CHOICE", { actor: protagonist, action: differentChoiceAction, sourceField: "demonstrated" }),
+    templateBeat("CONSEQUENCE", { actor: protagonist, action: consequenceAction, sourceField: "demonstrated" }),
+  ];
+  return {
+    events,
+    ctx,
+    templateId: "V2-07",
+    planForLint: buildTemplateLintPlan("V2-07", ctx, events, {
+      openingState: { situation: ctx.realizedSituation && ctx.realizedSituation.sentence },
+      v2Mode: realization.mode || null,
+      stageOrder: realization.stageOrder || null,
     }),
   };
 }
