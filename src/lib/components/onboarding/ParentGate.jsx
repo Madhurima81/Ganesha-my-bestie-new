@@ -1,24 +1,14 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PrivacyPolicy from './PrivacyPolicy';
 import './ParentGate.css';
 
 const CONSENT_KEY = 'parentConsent';
-
-function randomQuestion() {
-  const prompts = [
-    { left: 7, right: 4, operator: 'x', answer: 28 },
-    { left: 8, right: 3, operator: 'x', answer: 24 },
-    { left: 9, right: 5, operator: '-', answer: 4 },
-    { left: 6, right: 7, operator: '+', answer: 13 },
-  ];
-
-  return prompts[Math.floor(Math.random() * prompts.length)];
-}
+const MIN_ADULT_AGE = 18;
+const CURRENT_YEAR = new Date().getFullYear();
 
 const ParentGate = ({ onComplete, onBackToWelcome }) => {
-  const [stage, setStage] = useState('math');
-  const [question, setQuestion] = useState(() => randomQuestion());
-  const [answer, setAnswer] = useState('');
+  const [stage, setStage] = useState('age');
+  const [birthYear, setBirthYear] = useState('');
   const [attempts, setAttempts] = useState(0);
   const [feedback, setFeedback] = useState('');
   const [parentEmail, setParentEmail] = useState('');
@@ -38,7 +28,7 @@ const ParentGate = ({ onComplete, onBackToWelcome }) => {
   }, [onComplete]);
 
   useEffect(() => {
-    if (stage === 'math') {
+    if (stage === 'age') {
       answerInputRef.current?.focus();
     }
   }, [stage]);
@@ -47,48 +37,36 @@ const ParentGate = ({ onComplete, onBackToWelcome }) => {
     document.querySelector('.parent-gate-screen')?.scrollTo(0, 0);
   }, [stage]);
 
-  const mathPrompt = useMemo(
-    () => `${question.left} ${question.operator} ${question.right}`,
-    [question]
-  );
-
-  const resetQuestion = (message) => {
-    setAnswer('');
-    setFeedback(message);
-    setQuestion(randomQuestion());
+  const handleBirthYearChange = (event) => {
+    const nextValue = event.target.value.replace(/\D/g, '');
+    setBirthYear(nextValue.slice(0, 4));
   };
 
-  const handleAnswerChange = (event) => {
-    const nextValue = event.target.value.replace(/[^\d-]/g, '');
-    const normalizedValue = nextValue.startsWith('-')
-      ? `-${nextValue.slice(1).replace(/-/g, '')}`
-      : nextValue.replace(/-/g, '');
-    setAnswer(normalizedValue.slice(0, 4));
-  };
+  const submitBirthYear = () => {
+    const year = parseInt(birthYear, 10);
+    const nextAttempts = attempts + 1;
 
-  const submitMathAnswer = () => {
-    const numericAnswer = parseInt(answer, 10);
-    if (Number.isNaN(numericAnswer)) {
+    if (
+      Number.isNaN(year) ||
+      year < 1900 ||
+      year > CURRENT_YEAR ||
+      CURRENT_YEAR - year < MIN_ADULT_AGE
+    ) {
+      setAttempts(nextAttempts);
+
+      if (nextAttempts >= 3) {
+        onBackToWelcome();
+        return;
+      }
+
+      setBirthYear('');
       setFeedback('Ask a grown-up to help!');
       return;
     }
 
-    if (numericAnswer === question.answer) {
-      setFeedback('');
-      setAnswer('');
-      setStage('consent');
-      return;
-    }
-
-    const nextAttempts = attempts + 1;
-    setAttempts(nextAttempts);
-
-    if (nextAttempts >= 3) {
-      onBackToWelcome();
-      return;
-    }
-
-    resetQuestion('Ask a grown-up to help!');
+    setFeedback('');
+    setBirthYear('');
+    setStage('consent');
   };
 
   const handleConsentContinue = () => {
@@ -109,24 +87,16 @@ const ParentGate = ({ onComplete, onBackToWelcome }) => {
   return (
     <div className="parent-gate-screen">
       <div className="parent-gate-card">
-        <div className="parent-gate-ganesha" aria-hidden="true">
-          <img src="/images/ganesha-hi-stand.webp" alt="" />
-        </div>
-
-        {stage === 'math' && (
-          <div className="parent-gate-stage parent-gate-stage--math">
+        {stage === 'age' && (
+          <div className="parent-gate-stage parent-gate-stage--age">
             <p className="parent-gate-kicker">Grown-ups only!</p>
             <h1>Time to get a grown-up!</h1>
             <p className="parent-gate-copy">
               Ganesha needs a quick grown-up check before a child profile is created.
             </p>
 
-            <div className="parent-gate-math-box">
-              <span className="parent-gate-math-label">What is</span>
-              <strong>{mathPrompt}?</strong>
-            </div>
-
-            <label className="parent-gate-answer" aria-live="polite">
+            <label className="parent-gate-field parent-gate-field--center">
+              <span>What year were you born?</span>
               <input
                 ref={answerInputRef}
                 type="text"
@@ -136,16 +106,16 @@ const ParentGate = ({ onComplete, onBackToWelcome }) => {
                 autoCapitalize="off"
                 spellCheck={false}
                 enterKeyHint="done"
-                value={answer}
-                onChange={handleAnswerChange}
+                value={birthYear}
+                onChange={handleBirthYearChange}
                 onKeyDown={(event) => {
                   if (event.key === 'Enter') {
                     event.preventDefault();
-                    submitMathAnswer();
+                    submitBirthYear();
                   }
                 }}
-                placeholder="Enter answer"
-                aria-label={`Enter answer for ${mathPrompt}`}
+                placeholder="e.g. 1990"
+                aria-label="Enter your birth year"
               />
             </label>
 
@@ -156,9 +126,9 @@ const ParentGate = ({ onComplete, onBackToWelcome }) => {
             <button
               type="button"
               className="parent-gate-primary"
-              onClick={submitMathAnswer}
+              onClick={submitBirthYear}
             >
-              Check answer
+              Continue
             </button>
           </div>
         )}
@@ -204,21 +174,21 @@ const ParentGate = ({ onComplete, onBackToWelcome }) => {
               </span>
             </label>
 
-            <div className="parent-gate-actions">
+            <div className="parent-gate-actions parent-gate-actions--row">
               <button
                 type="button"
-                className="parent-gate-link"
+                className="parent-gate-link parent-gate-link--text"
                 onClick={() => {
                   emailInputRef.current?.blur();
                   setStage('privacy');
                 }}
               >
-                Read Privacy Policy
+                Privacy Policy
               </button>
 
               <button
                 type="button"
-                className="parent-gate-primary"
+                className="parent-gate-primary parent-gate-primary--auto"
                 onClick={() => {
                   emailInputRef.current?.blur();
                   handleConsentContinue();
