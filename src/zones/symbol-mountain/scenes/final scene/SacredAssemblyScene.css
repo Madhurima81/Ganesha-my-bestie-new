@@ -1324,7 +1324,7 @@
 }
 
 .association-text {
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', cursive;
   font-size: 22px;
   color: white;
   margin: 20px 0;
@@ -1413,7 +1413,7 @@
 }
 
 .try-again-text {
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', cursive;
   font-size: 24px;
   color: #FF6B6B;
   margin-top: 10px;
@@ -1797,7 +1797,7 @@
 }
 
 .success-message {
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', cursive;
   font-size: 48px;
   color: #8A2BE2;
   font-weight: bold;
@@ -1808,7 +1808,7 @@
 }
 
 .plus-one {
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', cursive;
   font-size: 36px;
   color: #FFD700;
   font-weight: bold;
@@ -2029,7 +2029,7 @@
 }
 
 .success-message {
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', cursive;
   font-size: 64px;
   color: #8A2BE2;
   font-weight: bold;
@@ -2041,7 +2041,7 @@
 }
 
 .plus-one {
-  font-family: 'Baloo', cursive;
+  font-family: 'Baloo 2', cursive;
   font-size: 48px;
   color: #FFD700;
   font-weight: bold;

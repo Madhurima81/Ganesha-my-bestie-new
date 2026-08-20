@@ -915,38 +915,39 @@ const handleReplayIntroStory = () => {
       {/* Zone Welcome Whisper removed per request */}
 
       {/* Scene Icons Grid */}
-      <div className="zone-scenes-container cards-wrapper" data-zone={zoneData.id}>
-        {zoneLifeConfig && (
-          <div className="zone-ambient-layer" aria-hidden="true">
-            {zoneLifeConfig.cloud && (
-              <div
-                className="zone-cloud"
-                style={{
-                  left: zoneLifeConfig.cloud.left,
-                  top: zoneLifeConfig.cloud.top,
-                  '--cloud-scale': zoneLifeConfig.cloud.scale || 1,
-                  animationDuration: zoneLifeConfig.cloud.duration,
-                }}
-              />
-            )}
-            {zoneLifeConfig.ambient.map((item, index) => (
-              <div
-                key={`${zoneData.id}-ambient-${index}`}
-                className={`zone-ambient-item ${item.className}`}
-                style={{
-                  left: item.left,
-                  top: item.top,
-                  width: item.size,
-                  height: item.size,
-                  animationDuration: item.duration,
-                  animationDelay: item.delay,
-                }}
-              />
-            ))}
-          </div>
-        )}
-        <div className="scenes-horizontal-container">
-          {zoneData.scenes.map((scene, index) => {
+      <div className="zone-scenes-container" data-zone={zoneData.id}>
+        <div className="cards-wrapper">
+          {zoneLifeConfig && (
+            <div className="zone-ambient-layer" aria-hidden="true">
+              {zoneLifeConfig.cloud && (
+                <div
+                  className="zone-cloud"
+                  style={{
+                    left: zoneLifeConfig.cloud.left,
+                    top: zoneLifeConfig.cloud.top,
+                    '--cloud-scale': zoneLifeConfig.cloud.scale || 1,
+                    animationDuration: zoneLifeConfig.cloud.duration,
+                  }}
+                />
+              )}
+              {zoneLifeConfig.ambient.map((item, index) => (
+                <div
+                  key={`${zoneData.id}-ambient-${index}`}
+                  className={`zone-ambient-item ${item.className}`}
+                  style={{
+                    left: item.left,
+                    top: item.top,
+                    width: item.size,
+                    height: item.size,
+                    animationDuration: item.duration,
+                    animationDelay: item.delay,
+                  }}
+                />
+              ))}
+            </div>
+          )}
+          <div className="scenes-horizontal-container">
+            {zoneData.scenes.map((scene, index) => {
             const status = sceneStatuses[scene.id];
             const isNextScene = recommendedScene && recommendedScene.id === scene.id;
             const creature = zoneLifeConfig?.creature;
@@ -1112,52 +1113,53 @@ const handleReplayIntroStory = () => {
                 </div>
               </div>
             );
-          })}
+            })}
 
-          {/* "Meet Ganesha Again" replay-story card removed from the scene grid —
-              it collided with the zone-5 fallback position and overlapped the
-              Family Tree card. To be re-added elsewhere on this scene later.
-          {zoneData.id === 'about-me-hut' && (
-            <div
-              key="about-me-replay-story"
-              className="zone-scene-card scene-card zone-card zone-5 available unlocked-scene"
-              style={{
-                cursor: 'pointer',
-                '--zone-color': getCardAccentColor()
-              }}
-              onClick={handleReplayIntroStory}
-            >
-              <div className="scene-order-indicator">★</div>
-              <div className="zone-inner">
-                <div className="scene-icon-area">
-                  <div className="icon-circle">
-                    <img
-                      src="/intro-story/story1-img4.webp"
-                      alt="Meet Ganesha Again"
-                      className="scene-icon-img"
+            {/* "Meet Ganesha Again" replay-story card removed from the scene grid —
+                it collided with the zone-5 fallback position and overlapped the
+                Family Tree card. To be re-added elsewhere on this scene later.
+            {zoneData.id === 'about-me-hut' && (
+              <div
+                key="about-me-replay-story"
+                className="zone-scene-card scene-card zone-card zone-5 available unlocked-scene"
+                style={{
+                  cursor: 'pointer',
+                  '--zone-color': getCardAccentColor()
+                }}
+                onClick={handleReplayIntroStory}
+              >
+                <div className="scene-order-indicator">★</div>
+                <div className="zone-inner">
+                  <div className="scene-icon-area">
+                    <div className="icon-circle">
+                      <img
+                        src="/intro-story/story1-img4.webp"
+                        alt="Meet Ganesha Again"
+                        className="scene-icon-img"
+                      />
+                    </div>
+                  </div>
+                  <div className="scene-name-area">
+                    <div className="scene-name">Meet Ganesha Again</div>
+                  </div>
+                  <div className="scene-action-integrated">
+                    <ProfilePillBtn
+                      className="zone-welcome-cta available"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleReplayIntroStory();
+                      }}
+                      label="Replay Story"
+                      size="sm"
+                      fullWidth={true}
+                      style={getProfilePillBtnStyle(zoneData.id)}
                     />
                   </div>
                 </div>
-                <div className="scene-name-area">
-                  <div className="scene-name">Meet Ganesha Again</div>
-                </div>
-                <div className="scene-action-integrated">
-                  <ProfilePillBtn
-                    className="zone-welcome-cta available"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleReplayIntroStory();
-                    }}
-                    label="Replay Story"
-                    size="sm"
-                    fullWidth={true}
-                    style={getProfilePillBtnStyle(zoneData.id)}
-                  />
-                </div>
               </div>
-            </div>
-          )}
-          */}
+            )}
+            */}
+          </div>
         </div>
       </div>
 

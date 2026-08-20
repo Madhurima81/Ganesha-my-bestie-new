@@ -22,6 +22,7 @@ import useResumeCountdown from '../../../lib/hooks/useResumeCountdown';
 import ResumeCountdown from '../../../lib/components/feedback/ResumeCountdown';
 import usePauseAwareTimeout from '../../../lib/hooks/usePauseAwareTimeout';
 import GameStateManager from '../../../lib/services/GameStateManager';
+import ProgressManager from '../../../lib/services/ProgressManager';
 import useKeyboardAwareModal from '../../../lib/hooks/useKeyboardAwareModal';
 
 // Content Configs
@@ -1965,7 +1966,14 @@ justifyContent: 'center',
  </div>
 
  <div className="action-buttons">
- <button className="family-tree-end-game-btn" onClick={() => { playTwinkle(); sceneActions.updateState({ showingCompletionScreen: true, completed: true, stars: 3 }); }}>
+ <button className="family-tree-end-game-btn" onClick={() => {
+   playTwinkle();
+   sceneActions.updateState({ showingCompletionScreen: true, completed: true, stars: 3 });
+   const profileId = GameStateManager.getCurrentProfile()?.id;
+   if (profileId) {
+     ProgressManager.updateSceneCompletion(profileId, 'about-me-hut', 'family-tree', { completed: true, stars: 3 });
+   }
+ }}>
  Continue
  </button>
  </div>

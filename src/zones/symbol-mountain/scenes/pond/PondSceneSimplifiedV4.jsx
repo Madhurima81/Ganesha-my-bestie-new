@@ -48,6 +48,7 @@ import CulturalProgressExtractor from '../../../../lib/services/CulturalProgress
 import SparkleAnimation from '../../../../lib/components/animation/SparkleAnimation';
 import FireworksCompletion from '../../../../lib/components/feedback/FireworksCompletion';
 import CalmGoldenFireworks from '../../../../lib/components/feedback/CalmGoldenFireworks';
+import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
 import SymbolSidebar from '../../shared/components/SymbolSidebar';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
 import InnerMandala from '../../../../lib/components/celebration/InnerMandala';
@@ -1619,6 +1620,21 @@ const PondSceneContent = ({
               {/* V5 PHASE 3 — DRAG WATER ALONG CURVE */}
               {sceneState.elephantTransformed && !sceneState.goldenLotusBloom && dropPosition && (
                 <>
+                  <GestureDemo
+                    type="drag"
+                    from={{ x: DROP_START_POINT.x, y: DROP_START_POINT.y }}
+                    to={{ x: PETAL_STEPPING_STONES[0].x, y: PETAL_STEPPING_STONES[0].y }}
+                    active={
+                      sceneState.elephantTransformed &&
+                      !sceneState.goldenLotusBloom &&
+                      currentPetal === -1 &&
+                      !dragActive &&
+                      !dropMagicPhase
+                    }
+                    idleDelay={1800}
+                    zIndex={28}
+                  />
+
                   {/* Petal stepping stones */}
                   {PETAL_STEPPING_STONES.map((p, idx) => {
                     const reached = idx <= currentPetal;

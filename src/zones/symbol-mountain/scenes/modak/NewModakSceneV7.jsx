@@ -6,7 +6,6 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './ModakScene.css';
 import '../../../../lib/styles/zone-themes.css';
 import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
-import SceneStage from '../../../../components/SceneStage';
 
 // Unified Components (keep buttons/modals, remove header)
 import UnifiedButtonV2 from '../../../../lib/components/ui/Button/UnifiedButtonV2';
@@ -22,7 +21,6 @@ import SimpleSceneManager from '../../../../lib/services/SimpleSceneManager';
 import CulturalCelebrationModal from '../../../../lib/components/progress/CulturalCelebrationModal';
 import CulturalProgressExtractor from '../../../../lib/services/CulturalProgressExtractor';
 import { KidsDraggable, KidsDropZone } from '../../../../lib/components/interactive/KidsDraggable';
-import FreeDraggableItem from '../../../../lib/components/interactive/FreeDraggableItem';
 
 // Analytics
 import { Analytics } from '../../../../lib/services/analytics';
@@ -73,14 +71,20 @@ import { useGaneshaVoice } from '../../../../lib/hooks/useGaneshaVoice';
 
 // Images
 //import forestBackground from './assets/images/forest-background.webp';
-import forestBackground from './assets/images/latestmodakbg.png';
-import foregroundOverlay from './assets/images/modaktree.png';
+import forestBackground from './assets/images/newmodakbg.png';
+// import foregroundOverlay from './assets/images/modaktree.png';
 import modak1 from './assets/images/modak-new.webp';
 import modak2 from './assets/images/modak-new.webp';
 import modak3 from './assets/images/modak-new.webp';
 import basket from './assets/images/modak-plate.webp';
-import mooshika from './assets/images/mooshika-new.webp';
-import mudMound from './assets/images/mound.svg';
+import mooshikaActive from './assets/images/mushika-active-game2.png';
+import mooshikaCalm from './assets/images/mushika-calm-game2.png';
+import journeyFeather from './assets/images/journey-feather.png';
+import journeyBerry from './assets/images/journey-berry.png';
+import journeyAcorn from './assets/images/journey-acorn.png';
+import offeringFlower from './assets/images/offering-flower-game2.png';
+import offeringDurva from './assets/images/offering-durva-game2.png';
+import offeringGarland from './assets/images/offering-garland-game2.png';
 import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-new.webp';
 import symbolModakColored from '../../shared/images/icons/symbol-modak-new.webp';
 import symbolBellyColored from '../../shared/images/icons/symbol-belly-new.webp';
@@ -90,7 +94,7 @@ import modakBefore from './assets/images/modak-before.webp';
 import modakAfter from './assets/images/modak-after.webp';
 import bellyBefore from './assets/images/belly-before.webp';
 import bellyAfter from './assets/images/belly-after.webp';
-import ganeshaCharacter from './assets/images/ganesha-character.webp';
+import ganeshaFeeding from './assets/images/ganesha-game3-new.png';
 
 // ========================================
 // VO-GATED BUTTON COMPONENT
@@ -144,6 +148,22 @@ const PHASES = {
   ROCK_TRANSFORMED: 'rock_transformed',
   COMPLETE: 'complete'
 };
+
+const MODAK_DISTRACTIONS = [
+  { id: 'feather', image: journeyFeather, top: '54%', left: '24%' },
+  { id: 'acorn', image: journeyAcorn, top: '43%', left: '72%' },
+  { id: 'berry', image: journeyBerry, top: '72%', left: '58%' }
+];
+const MUSHIKA_CLEARING_POSITION = { top: '58%', left: '35%' };
+const MUSHIKA_OFFERING_START_POSITION = { top: '64%', left: '18%' };
+const MODAK_OFFERINGS = [
+  { id: 'flower', image: offeringFlower, top: '38%', left: '28%', label: 'Red flower' },
+  { id: 'durva', image: offeringDurva, top: '70%', left: '48%', label: 'Durva grass' },
+  { id: 'garland', image: offeringGarland, top: '42%', left: '74%', label: 'Garland' }
+];
+const MUSHIKA_DART_INTERVAL_MS = 1100;
+const MUSHIKA_HOLD_MS = 1600;
+const MUSHIKA_CALM_BEAT_MS = 1200;
 const MINI_THUMBS_UP_ICON = '/images/hand-thumbsup.svg';
 const MODAK_POSITION_SLOTS = [
   { top: '32.1%', left: '32.8%' },
@@ -158,7 +178,7 @@ const MODAK_POSITION_SLOTS = [
 const MODAK_SLOT_POSITIONS_KEY = 'debugModakSlotPositions';
 const getModakDebugFlags = () => {
   if (typeof window === 'undefined') {
-    return { showSlotCenters: false, showAllSlotsPreview: false };
+    return { showSlotCenters: false, showAllSlotsPreview: false, showDebugUi: false };
   }
 
   const params = new URLSearchParams(window.location.search);
@@ -168,15 +188,20 @@ const getModakDebugFlags = () => {
   const showAllSlotsPreview =
     params.has('debugModakSlots') ||
     window.localStorage.getItem('debugModakSlots') === '1';
+  const showDebugUi =
+    params.has('debugModak') ||
+    showSlotCenters ||
+    showAllSlotsPreview ||
+    window.localStorage.getItem('debugModakUI') === '1';
 
-  return { showSlotCenters, showAllSlotsPreview };
+  return { showSlotCenters, showAllSlotsPreview, showDebugUi };
 };
 
 const MODAK_DEBUG_FLAGS = getModakDebugFlags();
-const MODAK_DEBUG_UI_ENABLED = false;
+const MODAK_DEBUG_UI_ENABLED = MODAK_DEBUG_FLAGS.showDebugUi;
 const SHOW_MODAK_SLOT_DEBUG = MODAK_DEBUG_FLAGS.showSlotCenters;
 const SHOW_ALL_MODAK_SLOTS_PREVIEW = MODAK_DEBUG_FLAGS.showAllSlotsPreview;
-const GANESHA_SIT_FEED_IMAGE = '/images/ganesha-poses/sit-modak.webp';
+const GANESHA_SIT_FEED_IMAGE = ganeshaFeeding;
 
 const pickRandomModakSlots = () => {
   const indices = MODAK_POSITION_SLOTS.map((_, i) => i);
@@ -210,13 +235,13 @@ const getFeedingGaneshaScale = (feedCount, transformed) => {
 
 const MODAK_WEB_SPEECH_VO = {
   welcome: "Mooshika is nearby. Let's find the sweet modaks.",
-  findMooshika: 'Mooshika is hiding. Tap the mounds to find him.',
-  findMooshikaIdle: "Tap the little hills. He's in one!",
-  mooshikaFound: 'There he is... my little friend.',
+  findMooshika: 'Mooshika is darting around. Press and hold him gently to help him settle.',
+  findMooshikaIdle: 'Hold Mooshika gently when he pauses near an object.',
+  mooshikaFound: 'There he is... calm and ready to walk with us.',
   focusPower: 'You looked closely... and found him. Say it with me... I can focus.',
-  collectStart: 'Look... sweet modaks. Tap them to collect.',
-  collectIdleHint: 'Look near the trees. Tap the modaks.',
-  sharingPower: 'You found them... one by one. That feels good. Say it with me... I am full of joy.',
+  collectStart: 'Mushika is ready to gather three offerings for Ganesha. Drag her to each one.',
+  collectIdleHint: 'Guide Mushika to each offering for Ganesha.',
+  sharingPower: 'Mushika finished with care. That peaceful feeling is sweet. Say it with me... I feel peaceful inside.',
   feedGanesha: "Lets enjoy the sweet modaks. Drag them to me",
   feedIdleHint: 'Drag a modak to me.',
   gratitudePower: 'You gave... and it felt good. Say it with me... I feel good inside.',
@@ -313,7 +338,10 @@ const NewModakSceneMVP = ({
           correctMound: Math.floor(Math.random() * 5) + 1,
           mooshikaVisible: false,
           mooshikaFound: false,
-          mooshikaPosition: { top: '45%', left: '25%' },
+          mooshikaPosition: { top: MODAK_DISTRACTIONS[0].top, left: MODAK_DISTRACTIONS[0].left },
+          activeDistractionId: MODAK_DISTRACTIONS[0].id,
+          mushikaHolding: false,
+          holdProgress: 0,
           moundsVanished: false,
           moundsVanishing: false,
 
@@ -569,6 +597,7 @@ const NewModakSceneMVPContent = ({
   const [showCulturalCelebration, setShowCulturalCelebration] = useState(false);
   const [showMooshikaSpeech, setShowMooshikaSpeech] = useState(false);
   const [mooshikaSpeechMessage, setMooshikaSpeechMessage] = useState('');
+  const showOpeningModal = sceneState.phase === PHASES.MOOSHIKA_SEARCH && !sceneState.welcomeShown;
 
   const [debugSlotsPreview, setDebugSlotsPreview] = useState(SHOW_ALL_MODAK_SLOTS_PREVIEW);
   const [debugSlotCenters, setDebugSlotCenters] = useState(SHOW_MODAK_SLOT_DEBUG);
@@ -594,6 +623,12 @@ const NewModakSceneMVPContent = ({
   const [wrongMoundPuff, setWrongMoundPuff] = useState(null);
   const wrongMoundShakeTimerRef = useRef(null);
   const wrongMoundPuffTimerRef = useRef(null);
+  const mushikaDartTimerRef = useRef(null);
+  const mushikaHoldStartRef = useRef(null);
+  const mushikaHoldRafRef = useRef(null);
+  const mushikaDartIndexRef = useRef(0);
+  const offeringCollectLockRef = useRef(false);
+  const [isOfferingDragActive, setIsOfferingDragActive] = useState(false);
   const idleHintsEnabled = true;
   const miniGestureTimerRef = useRef(null);
   const [miniGesture, setMiniGesture] = useState({
@@ -622,6 +657,127 @@ const NewModakSceneMVPContent = ({
     setShowIdleGestureHint(false);
   }, []);
 
+  const clearMushikaDartTimer = useCallback(() => {
+    if (mushikaDartTimerRef.current) {
+      clearTimeout(mushikaDartTimerRef.current);
+      mushikaDartTimerRef.current = null;
+    }
+  }, []);
+
+  const clearMushikaHoldLoop = useCallback(() => {
+    if (mushikaHoldRafRef.current) {
+      cancelAnimationFrame(mushikaHoldRafRef.current);
+      mushikaHoldRafRef.current = null;
+    }
+  }, []);
+
+  const scheduleNextMushikaDart = useCallback(() => {
+    if (!sceneState?.welcomeShown || sceneState?.phase !== PHASES.MOOSHIKA_SEARCH || sceneState?.mushikaHolding) {
+      return;
+    }
+
+    let nextIndex = Math.floor(Math.random() * MODAK_DISTRACTIONS.length);
+    if (MODAK_DISTRACTIONS.length > 1 && nextIndex === mushikaDartIndexRef.current) {
+      nextIndex = (nextIndex + 1 + Math.floor(Math.random() * (MODAK_DISTRACTIONS.length - 1))) % MODAK_DISTRACTIONS.length;
+    }
+    mushikaDartIndexRef.current = nextIndex;
+    const target = MODAK_DISTRACTIONS[nextIndex];
+    sceneActions.updateState({
+      mooshikaVisible: true,
+      mooshikaPosition: { top: target.top, left: target.left },
+      activeDistractionId: target.id
+    });
+
+    clearMushikaDartTimer();
+    mushikaDartTimerRef.current = setTimeout(() => {
+      scheduleNextMushikaDart();
+    }, MUSHIKA_DART_INTERVAL_MS);
+  }, [clearMushikaDartTimer, sceneActions, sceneState?.mushikaHolding, sceneState?.phase, sceneState?.welcomeShown]);
+
+  const completeMushikaSettle = useCallback(() => {
+    clearMushikaDartTimer();
+    clearMushikaHoldLoop();
+    mushikaHoldStartRef.current = null;
+    stopVoice();
+    if (idleHintsEnabled) stopIdleTimer();
+    playDiscovery();
+    setMiniGesture(prev => ({
+      show: true,
+      target: 'mound',
+      durationMs: 1500,
+      key: prev.key + 1
+    }));
+    if (miniGestureTimerRef.current) {
+      clearTimeout(miniGestureTimerRef.current);
+    }
+    miniGestureTimerRef.current = setTimeout(() => {
+      setMiniGesture(prev => ({ ...prev, show: false }));
+      miniGestureTimerRef.current = null;
+    }, 1500);
+    playVoice('mooshikaFound');
+    setShowSparkle('mooshika-calm');
+
+    sceneActions.updateState({
+      mooshikaVisible: true,
+      mooshikaFound: true,
+      mushikaHolding: false,
+      holdProgress: 1,
+      activeDistractionId: null,
+      phase: PHASES.MOOSHIKA_FOUND,
+      mooshikaPosition: MUSHIKA_CLEARING_POSITION,
+      moundsVanished: true,
+      moundsVanishing: false
+    });
+
+    safeSetTimeout(() => {
+      const el = document.getElementById('sidebar-mooshika');
+      const sidebarTarget = el
+        ? (() => {
+            const rect = el.getBoundingClientRect();
+            return {
+              x: (rect.left + rect.width / 2) - (window.innerWidth / 2),
+              y: (rect.top + rect.height / 2) - (window.innerHeight / 2)
+            };
+          })()
+        : { x: 220, y: 0 };
+
+      playRevealBloom();
+      setRevealConfig({
+        symbolId: 'mooshika',
+        symbolImage: symbolMooshikaColored,
+        symbolName: 'Mooshika',
+        affirmation: 'I can focus.',
+        sidebarTarget
+      });
+    }, MUSHIKA_CALM_BEAT_MS);
+  }, [clearMushikaDartTimer, clearMushikaHoldLoop, idleHintsEnabled, playDiscovery, playRevealBloom, playVoice, safeSetTimeout, sceneActions, stopIdleTimer, stopVoice]);
+
+  const tickMushikaHold = useCallback(() => {
+    if (!mushikaHoldStartRef.current) return;
+    const elapsed = performance.now() - mushikaHoldStartRef.current;
+    const progress = Math.min(elapsed / MUSHIKA_HOLD_MS, 1);
+    sceneActions.updateState({ holdProgress: progress });
+
+    if (progress >= 1) {
+      completeMushikaSettle();
+      return;
+    }
+
+    mushikaHoldRafRef.current = requestAnimationFrame(tickMushikaHold);
+  }, [completeMushikaSettle, sceneActions]);
+
+  useEffect(() => {
+    if (showOpeningModal) {
+      document.body.classList.add('modak-opening-active');
+      return () => {
+        document.body.classList.remove('modak-opening-active');
+      };
+    }
+
+    document.body.classList.remove('modak-opening-active');
+    return undefined;
+  }, [showOpeningModal]);
+
   const triggerMiniGesture = useCallback((target = 'center', durationMs = 1500) => {
     if (miniGestureTimerRef.current) {
       clearTimeout(miniGestureTimerRef.current);
@@ -649,8 +805,22 @@ const NewModakSceneMVPContent = ({
         clearTimeout(wrongMoundPuffTimerRef.current);
         wrongMoundPuffTimerRef.current = null;
       }
+      clearMushikaDartTimer();
+      clearMushikaHoldLoop();
     };
-  }, []);
+  }, [clearMushikaDartTimer, clearMushikaHoldLoop]);
+
+  useEffect(() => {
+    if (sceneState?.welcomeShown && sceneState?.phase === PHASES.MOOSHIKA_SEARCH && !sceneState?.mushikaHolding) {
+      if (!mushikaDartTimerRef.current) {
+        scheduleNextMushikaDart();
+      }
+      return undefined;
+    }
+
+    clearMushikaDartTimer();
+    return undefined;
+  }, [clearMushikaDartTimer, scheduleNextMushikaDart, sceneState?.mushikaHolding, sceneState?.phase, sceneState?.welcomeShown]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return undefined;
@@ -1302,6 +1472,9 @@ const NewModakSceneMVPContent = ({
             phase: PHASES.MODAKS_UNLOCKED,
             modaksUnlocked: true,
             basketVisible: true,
+            mooshikaVisible: true,
+            mooshikaPosition: MUSHIKA_OFFERING_START_POSITION,
+            activeDistractionId: null,
             discoveredSymbols: { ...sceneState.discoveredSymbols, mooshika: true }
           });
           safeSetTimeout(() => setShowSparkle(null), 2000);
@@ -1352,145 +1525,63 @@ const NewModakSceneMVPContent = ({
     }
   };
 
-  const handleMoundClick = (moundIndex, event) => {
+  const handleMushikaHoldStart = (event) => {
+    event.preventDefault?.();
     recordInteraction();
-    setWrongMoundIndex(null);
     setShowIdleGestureHint(false);
-    // Re-arm idle ladder from this interaction point.
     setHintResetKey(k => k + 1);
 
-    if (!sceneState || !sceneActions) return;
-    if (sceneState.phase !== PHASES.MOOSHIKA_SEARCH) return;
+    if (!sceneState || sceneState.phase !== PHASES.MOOSHIKA_SEARCH) return;
 
-    const moundStates = [...(sceneState.moundStates || [0, 0, 0, 0, 0])];
+    clearMushikaDartTimer();
+    clearMushikaHoldLoop();
+    stopVoice();
+    if (idleHintsEnabled) stopIdleTimer();
 
-    if (moundIndex === sceneState.correctMound) {
-      playUiTap();
-      moundStates[moundIndex - 1] = 1;
-      // 1. STOP THE SEARCH VOICE IMMEDIATELY
-      stopVoice(); // Cut any playing VO so it doesn't overlap with success sound
-      if (idleHintsEnabled) stopIdleTimer();
-      stopMusic(); // Optional: Dip music volume if you have that capability, or stop it
-
-      // 2. PLAY SUCCESS VOICE (The "Yay" moment)
-      playDiscovery();
-      triggerMiniGesture('mound', 1500);
-      playVoice('mooshikaFound');
-      setShowSparkle('mooshika-found');
-
-      const moundPositions = { 1: { top: '45%', left: '25%' }, 2: { top: '55%', left: '75%' }, 3: { top: '60%', left: '30%' }, 4: { top: '60%', left: '50%' }, 5: { top: '60%', left: '60%' } };
-
-      sceneActions.updateState({
-        mooshikaVisible: true,
-        mooshikaFound: true,
-        mooshikaPosition: moundPositions[moundIndex],
-        moundStates,
-        phase: PHASES.MOOSHIKA_FOUND,
-        moundsVanishing: true
-      });
-      // Lock final mound state after fade so reloads in later phases do not briefly re-render mounds.
-      safeSetTimeout(() => {
-        sceneActions.updateState({
-          moundsVanishing: false,
-          moundsVanished: true
-        });
-      }, 900);
-
-      // AUTO-PARK VISUALS � safeSetTimeout so Mooshika doesn't move while tab is hidden
-      safeSetTimeout(() => {
-        sceneActions.updateState({
-          mooshikaPosition: { top: '48%', left: '45%' }
-        });
-        // Tiny speech bubble for visual flavor
-        safeSetTimeout(() => {
-          //setMooshikaSpeechMessage("I'll wait here! Find the Modaks!");
-          setShowMooshikaSpeech(true);
-          safeSetTimeout(() => setShowMooshikaSpeech(false), 3000);
-        }, 500);
-      }, 1500);
-
-      // 3. Show SymbolAutoReveal for mooshika at 4800ms
-      safeSetTimeout(() => {
-        playRevealBloom();
-        setRevealConfig({
-          symbolId: 'mooshika',
-          symbolImage: symbolMooshikaColored,
-          symbolName: 'Mooshika',
-          affirmation: 'I can focus.',
-          sidebarTarget: getSidebarTarget('mooshika')
-        });
-      }, 4800);
-      // -- Old useSymbolCollection trigger (superseded) --
-      // safeSetTimeout(() => {
-      //   const el = document.querySelector('.modak-game-mooshika-container');
-      //   const startRect = el ? el.getBoundingClientRect() : { top: window.innerHeight*0.48, left: window.innerWidth*0.45, width: 60, height: 60 };
-      //   setCurrentOverlaySymbol('mooshika');
-      //   handleCollect('mooshika', startRect, symbolMooshikaColored);
-      // }, 4800);
-
-    } else {
-      // Wrong mound - soft feedback only: gentle wrong SFX + shake/puff.
-      stopVoice();
-      playSoftWrong();
-      if (wrongMoundPuffTimerRef.current) {
-        clearTimeout(wrongMoundPuffTimerRef.current);
-        wrongMoundPuffTimerRef.current = null;
-      }
-      if (event?.currentTarget && typeof event.clientX === 'number' && typeof event.clientY === 'number') {
-        const rect = event.currentTarget.getBoundingClientRect();
-        const scale = rect.width / event.currentTarget.offsetWidth || 1;
-        setWrongMoundPuff({
-          moundIndex,
-          x: (event.clientX - rect.left) / scale,
-          y: (event.clientY - rect.top) / scale,
-          key: Date.now()
-        });
-      } else {
-        setWrongMoundPuff({
-          moundIndex,
-          x: 35,
-          y: 25,
-          key: Date.now()
-        });
-      }
-      wrongMoundPuffTimerRef.current = setTimeout(() => {
-        setWrongMoundPuff(null);
-        wrongMoundPuffTimerRef.current = null;
-      }, 720);
-      if (wrongMoundShakeTimerRef.current) {
-        clearTimeout(wrongMoundShakeTimerRef.current);
-        wrongMoundShakeTimerRef.current = null;
-      }
-      setWrongMoundIndex(moundIndex);
-      wrongMoundShakeTimerRef.current = setTimeout(() => {
-        setWrongMoundIndex(null);
-        wrongMoundShakeTimerRef.current = null;
-      }, 350);
-      safeSetTimeout(() => setShowSparkle(null), 1000);
-      // Clear hint visuals immediately � glow + gesture stop on any interaction
-      setShowIdleGestureHint(false);
-    }
+    mushikaHoldStartRef.current = performance.now();
+    sceneActions.updateState({
+      mooshikaVisible: true,
+      mushikaHolding: true,
+      holdProgress: 0
+    });
+    mushikaHoldRafRef.current = requestAnimationFrame(tickMushikaHold);
   };
 
-  const handleModakClick = (modakIndex) => {
+  const handleMushikaHoldEnd = () => {
+    if (!sceneState || sceneState.phase !== PHASES.MOOSHIKA_SEARCH || !sceneState.mushikaHolding) return;
+
+    clearMushikaHoldLoop();
+    mushikaHoldStartRef.current = null;
+    sceneActions.updateState({
+      mushikaHolding: false,
+      holdProgress: 0
+    });
+    scheduleNextMushikaDart();
+  };
+
+  const handleOfferingCollect = useCallback((offeringIndex) => {
+    if (!sceneState?.modaksUnlocked) return;
+    if (sceneState.modakStates[offeringIndex] === 1) return;
+    if (offeringCollectLockRef.current) return;
+    offeringCollectLockRef.current = true;
+    safeSetTimeout(() => {
+      offeringCollectLockRef.current = false;
+    }, 220);
+
     recordInteraction();
-    stopVoice(); // Cut any playing VO (idle hint / collect instruction) before tap SFX
+    stopVoice();
     playUiTap();
-    // Clear hint visuals immediately on every modak tap
     setShowIdleGestureHint(false);
     setHintResetKey(k => k + 1);
 
-    if (!sceneState.modaksUnlocked) return;
-    if (sceneState.modakStates[modakIndex] === 1) return;
-
     const modakStates = [...sceneState.modakStates];
-    modakStates[modakIndex] = 1;
+    modakStates[offeringIndex] = 1;
 
     const collectedModaks = [...(sceneState.collectedModaks || [])];
-    collectedModaks.push(modakIndex);
+    collectedModaks.push(offeringIndex);
 
     playPlace();
-    setShowSparkle(`modak-${modakIndex}`);
+    setShowSparkle(`offering-${offeringIndex}`);
     safeSetTimeout(() => setShowSparkle(null), 1000);
 
     const collectedCount = collectedModaks.length;
@@ -1505,8 +1596,7 @@ const NewModakSceneMVPContent = ({
       if (idleHintsEnabled) stopIdleTimer();
 
       playDiscovery();
-      // Show celebration sparkles immediately
-      setShowSparkle('modaks-complete');
+      setShowSparkle('offerings-complete');
 
       sceneActions.updateState({
         modakStates,
@@ -1516,36 +1606,27 @@ const NewModakSceneMVPContent = ({
       });
 
       safeSetTimeout(() => {
-        playDiscovery();
         sceneActions.updateState({
           basketFull: true,
           phase: PHASES.ALL_COLLECTED
         });
-      }, 1000);
+      }, 700);
 
-      // Clear sparkle before overlay
       safeSetTimeout(() => {
-        setShowSparkle(null);
-      }, 4000);
+        setShowSparkle('modak-satisfaction');
+      }, 1100);
 
-      // Show SymbolAutoReveal for modak at 4300ms
       safeSetTimeout(() => {
         playRevealBloom();
+        setShowSparkle(null);
         setRevealConfig({
           symbolId: 'modak',
           symbolImage: symbolModakColored,
           symbolName: 'Modak',
-          affirmation: 'I am full of joy.',
+          affirmation: 'I feel peaceful inside.',
           sidebarTarget: getSidebarTarget('modak')
         });
-      }, 4300);
-      // -- Old useSymbolCollection trigger (superseded) --
-      // safeSetTimeout(() => {
-      //   const el = document.querySelector('.modak-game-basket-container');
-      //   const startRect = el ? el.getBoundingClientRect() : { top: window.innerHeight*0.45, left: window.innerWidth*0.15, width: 80, height: 80 };
-      //   setCurrentOverlaySymbol('modak');
-      //   handleCollect('modak', startRect, symbolModakColored);
-      // }, 4300);
+      }, 3200);
     } else {
       sceneActions.updateState({
         modakStates,
@@ -1554,7 +1635,49 @@ const NewModakSceneMVPContent = ({
         progress: { percentage: 30 + (10 * collectedCount) }
       });
     }
-  };
+  }, [
+    idleHintsEnabled,
+    recordInteraction,
+    safeSetTimeout,
+    sceneActions,
+    sceneState,
+    stopIdleTimer,
+    stopVoice,
+    triggerMiniGesture
+  ]);
+
+  const handleOfferingDragStart = useCallback(() => {
+    if (!sceneState) return;
+    const isOfferingPhase =
+      sceneState.phase === PHASES.MODAKS_UNLOCKED ||
+      sceneState.phase === PHASES.SOME_COLLECTED ||
+      sceneState.phase === PHASES.ALL_COLLECTED;
+    if (!isOfferingPhase) return;
+
+    setIsOfferingDragActive(true);
+    recordInteraction();
+    setShowIdleGestureHint(false);
+    setHintResetKey(k => k + 1);
+  }, [recordInteraction, sceneState]);
+
+  const handleOfferingDragEnd = useCallback(() => {
+    setIsOfferingDragActive(false);
+  }, []);
+
+  const handleOfferingDrop = useCallback(({ data }) => {
+    const offeringIndex = data?.offeringIndex;
+    if (typeof offeringIndex !== 'number') return;
+    const offering = MODAK_OFFERINGS[offeringIndex];
+    if (!offering) return;
+
+    sceneActions.updateState({
+      mooshikaPosition: {
+        top: offering.top,
+        left: offering.left
+      }
+    });
+    handleOfferingCollect(offeringIndex);
+  }, [handleOfferingCollect, sceneActions]);
 
   // Handle drop on rock/belly - DropZone callback
   const handleRockFeed = ({ id, data }) => {
@@ -1640,13 +1763,20 @@ const NewModakSceneMVPContent = ({
   const resetScene = () => {
     if (idleHintsEnabled) stopIdleTimer();
     setShowIdleGestureHint(false);
+    clearMushikaDartTimer();
+    clearMushikaHoldLoop();
+    mushikaHoldStartRef.current = null;
+    mushikaDartIndexRef.current = 0;
 
     sceneActions.updateState({
       moundStates: [0, 0, 0, 0, 0],
       correctMound: Math.floor(Math.random() * 5) + 1,
       mooshikaVisible: false,
       mooshikaFound: false,
-      mooshikaPosition: { top: '45%', left: '25%' },
+      mooshikaPosition: { top: MODAK_DISTRACTIONS[0].top, left: MODAK_DISTRACTIONS[0].left },
+      activeDistractionId: MODAK_DISTRACTIONS[0].id,
+      mushikaHolding: false,
+      holdProgress: 0,
       moundsVanished: false,
       moundsVanishing: false,
       modakStates: [0, 0, 0],
@@ -1690,11 +1820,144 @@ const NewModakSceneMVPContent = ({
   const isCompletionView = showSceneCompletion || sceneState.showingCompletionScreen;
   const isFinalFireworksView = showSparkle === 'final-fireworks';
   const isFinalTransitionView = isFinalFireworksView || showMandala;
+  const jumpToDebugGame = useCallback((gameNumber) => {
+    if (!sceneActions) return;
+
+    stopVoice();
+    if (idleHintsEnabled) stopIdleTimer();
+    clearMushikaDartTimer();
+    clearMushikaHoldLoop();
+    mushikaHoldStartRef.current = null;
+    mushikaDartIndexRef.current = 0;
+    hasShownDragHintRef.current = gameNumber >= 3;
+
+    setShowIdleGestureHint(false);
+    setHintResetKey(k => k + 1);
+    setShowSparkle(null);
+    setShowMooshikaSpeech(false);
+    setShowSceneCompletion(false);
+    setShowMandala(false);
+    setFireworksFinished(false);
+    setSceneCompleteVOFinished(false);
+    setRevealConfig(null);
+
+    const sharedState = {
+      correctMound: Math.floor(Math.random() * 5) + 1,
+      modakSlotIndices: Array.isArray(sceneState?.modakSlotIndices) && sceneState.modakSlotIndices.length === 3
+        ? sceneState.modakSlotIndices
+        : pickRandomModakSlots(),
+      currentPopup: null,
+      showingCompletionScreen: false,
+      stars: 0,
+      completed: false,
+      progress: {
+        percentage: gameNumber === 1 ? 0 : gameNumber === 2 ? 30 : 65,
+        starsEarned: 0,
+        completed: false
+      }
+    };
+
+    if (gameNumber === 1) {
+      sceneActions.updateState({
+        ...sharedState,
+        moundStates: [0, 0, 0, 0, 0],
+        mooshikaVisible: true,
+        mooshikaFound: false,
+        mooshikaPosition: { top: MODAK_DISTRACTIONS[0].top, left: MODAK_DISTRACTIONS[0].left },
+        activeDistractionId: MODAK_DISTRACTIONS[0].id,
+        mushikaHolding: false,
+        holdProgress: 0,
+        moundsVanished: false,
+        moundsVanishing: false,
+        modakStates: [0, 0, 0],
+        modaksUnlocked: false,
+        basketVisible: false,
+        basketFull: false,
+        basketReady: false,
+        collectedModaks: [],
+        rockVisible: false,
+        rockFeedCount: 0,
+        rockTransformed: false,
+        rockBellySize: 0,
+        phase: PHASES.MOOSHIKA_SEARCH,
+        currentFocus: 'mooshika',
+        discoveredSymbols: {},
+        welcomeShown: true
+      });
+      return;
+    }
+
+    if (gameNumber === 2) {
+      sceneActions.updateState({
+        ...sharedState,
+        moundStates: [0, 0, 0, 0, 0],
+        mooshikaVisible: true,
+        mooshikaFound: true,
+        mooshikaPosition: MUSHIKA_CLEARING_POSITION,
+        activeDistractionId: null,
+        mushikaHolding: false,
+        holdProgress: 0,
+        moundsVanished: true,
+        moundsVanishing: false,
+        modakStates: [0, 0, 0],
+        modaksUnlocked: true,
+        basketVisible: true,
+        basketFull: false,
+        basketReady: false,
+        collectedModaks: [],
+        rockVisible: false,
+        rockFeedCount: 0,
+        rockTransformed: false,
+        rockBellySize: 0,
+        phase: PHASES.MODAKS_UNLOCKED,
+        currentFocus: 'modak',
+        discoveredSymbols: { mooshika: true },
+        welcomeShown: true
+      });
+      return;
+    }
+
+    sceneActions.updateState({
+      ...sharedState,
+      moundStates: [0, 0, 0, 0, 0],
+      mooshikaVisible: true,
+      mooshikaFound: true,
+      mooshikaPosition: MUSHIKA_CLEARING_POSITION,
+      activeDistractionId: null,
+      mushikaHolding: false,
+      holdProgress: 0,
+      moundsVanished: true,
+      moundsVanishing: false,
+      modakStates: [1, 1, 1],
+      modaksUnlocked: true,
+      basketVisible: true,
+      basketFull: true,
+      basketReady: true,
+      collectedModaks: [0, 1, 2],
+      rockVisible: true,
+      rockFeedCount: 0,
+      rockTransformed: false,
+      rockBellySize: 0,
+      phase: PHASES.ROCK_VISIBLE,
+      currentFocus: 'belly',
+      discoveredSymbols: { mooshika: true, modak: true },
+      welcomeShown: true
+    });
+  }, [
+    clearMushikaDartTimer,
+    clearMushikaHoldLoop,
+    idleHintsEnabled,
+    sceneActions,
+    sceneState?.modakSlotIndices,
+    stopIdleTimer,
+    stopVoice
+  ]);
   const toggleModakDebugSlots = useCallback(() => {
     const next = !debugSlotsPreview;
     setDebugSlotsPreview(next);
     setDebugSlotCenters(next);
     if (typeof window !== 'undefined') {
+      window.localStorage.setItem('debugModakUI', '1');
       window.localStorage.setItem('debugModakSlots', next ? '1' : '0');
       window.localStorage.setItem('debugModakSlotCenters', next ? '1' : '0');
     }
@@ -1828,12 +2091,77 @@ const NewModakSceneMVPContent = ({
           Reset Slots
         </button>
       )}
+      {!isFinalTransitionView && MODAK_DEBUG_UI_ENABLED && (
+        <button
+          type="button"
+          onClick={() => jumpToDebugGame(1)}
+          style={{
+            position: 'fixed',
+            top: '114px',
+            right: '74px',
+            zIndex: 1200,
+            border: '1px solid #7c3aed',
+            background: '#ffffff',
+            color: '#7c3aed',
+            borderRadius: '999px',
+            padding: '8px 12px',
+            fontWeight: 700,
+            fontSize: '12px',
+            cursor: 'pointer'
+          }}
+        >
+          Debug Game 1
+        </button>
+      )}
+      {!isFinalTransitionView && MODAK_DEBUG_UI_ENABLED && (
+        <button
+          type="button"
+          onClick={() => jumpToDebugGame(2)}
+          style={{
+            position: 'fixed',
+            top: '148px',
+            right: '74px',
+            zIndex: 1200,
+            border: '1px solid #7c3aed',
+            background: '#ffffff',
+            color: '#7c3aed',
+            borderRadius: '999px',
+            padding: '8px 12px',
+            fontWeight: 700,
+            fontSize: '12px',
+            cursor: 'pointer'
+          }}
+        >
+          Debug Game 2
+        </button>
+      )}
+      {!isFinalTransitionView && MODAK_DEBUG_UI_ENABLED && (
+        <button
+          type="button"
+          onClick={() => jumpToDebugGame(3)}
+          style={{
+            position: 'fixed',
+            top: '182px',
+            right: '74px',
+            zIndex: 1200,
+            border: '1px solid #7c3aed',
+            background: '#ffffff',
+            color: '#7c3aed',
+            borderRadius: '999px',
+            padding: '8px 12px',
+            fontWeight: 700,
+            fontSize: '12px',
+            cursor: 'pointer'
+          }}
+        >
+          Debug Game 3
+        </button>
+      )}
       {/* Flying Symbol Clone (useSymbolCollection) � superseded by SymbolAutoReveal */}
       {/* {flyingSymbol && <img className="flying-symbol" src={flyingSymbol.src} alt="" style={flightStyle} />} */}
 
       <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
         <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
-          <SceneStage designWidth={1280} designHeight={800}>
             <div className="modak-game-container">
               {showPersistentEndOverlay && !revealConfig && (
                 <div className="modak-game-end-overlay" />
@@ -1841,7 +2169,6 @@ const NewModakSceneMVPContent = ({
               <div ref={backgroundRef} className="modak-game-background" style={{ backgroundImage: `url(${forestBackground})` }}>
                 {!isCompletionView && !isFinalTransitionView && (
                   <>
-
               {/* --- OPENING MODAL --- */}
               {sceneState.phase === PHASES.MOOSHIKA_SEARCH && !sceneState.welcomeShown && (
                 <OpeningModal
@@ -1849,137 +2176,96 @@ const NewModakSceneMVPContent = ({
                   sceneId={sceneId}
                   onStart={() => {
                     playUiTap();
-                    sceneActions.updateState({ welcomeShown: true });
+                    mushikaDartIndexRef.current = 0;
+                    sceneActions.updateState({
+                      welcomeShown: true,
+                      mooshikaVisible: true,
+                      mooshikaPosition: { top: MODAK_DISTRACTIONS[0].top, left: MODAK_DISTRACTIONS[0].left },
+                      activeDistractionId: MODAK_DISTRACTIONS[0].id,
+                      mushikaHolding: false,
+                      holdProgress: 0
+                    });
                   }}
-                  characterImg={ganeshaCharacter}
+                  characterImg={ganeshaFeeding}
                   showButton={true}
                 />
               )}
 
-              {/* MUD MOUNDS */}
+              {/* MUSHIKA + DISTRACTIONS */}
               {sceneState.welcomeShown &&
                 [PHASES.MOOSHIKA_SEARCH, PHASES.MOOSHIKA_FOUND].includes(sceneState.phase) &&
-                !sceneState.moundsVanished &&
-                [1, 2, 3, 4, 5].map((index) => (
-                <div
-                  className={`modak-game-mud-mound modak-game-mound-${index}
-                    ${sceneState.moundsVanishing ? 'fade-out' : ''}
-                    ${wrongMoundIndex === index ? 'wrong-shake' : ''}
-                    ${sceneState.phase === PHASES.MOOSHIKA_SEARCH
-                      ? (idleHintLevel === 1
-                        ? 'hint'
-                        : idleHintLevel === 2
-                          ? 'hint-strong'
-                          : idleHintLevel >= 3
-                            ? 'hint-final'
-                            : '')
-                      : ''}`}
-                  key={`mound-${index}`}
-                >
+                <>
+                  {MODAK_DISTRACTIONS.map((item) => {
+                    const isActive = sceneState.activeDistractionId === item.id && sceneState.phase === PHASES.MOOSHIKA_SEARCH && !sceneState.mushikaHolding;
+                    const isFaded = sceneState.mushikaHolding || sceneState.phase === PHASES.MOOSHIKA_FOUND;
+                    return (
+                      <img
+                        key={item.id}
+                        src={item.image}
+                        alt={item.id}
+                        className={`modak-game-distraction modak-game-distraction--${item.id} ${isActive ? 'active' : ''} ${isFaded ? 'fading' : ''}`}
+                        style={{ top: item.top, left: item.left }}
+                      />
+                    );
+                  })}
 
-                  <ClickableElement
-                    id={`mound-${index}`}
-                    onClick={(event) => handleMoundClick(index, event)}
-                    completed={(sceneState.moundStates || [])[index - 1] === 1}
-                    zone="mound-zone"
-                  >
-                    <img
-                      src={mudMound}
-                      alt={`Mud Mound ${index}`}
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        opacity: (sceneState.moundStates || [])[index - 1] === 1 ? 0.7 : 1
-                      }}
-                    />
-                  </ClickableElement>
-                  {wrongMoundPuff?.moundIndex === index && (
-                    <div
-                      className="mound-dirt-puff"
-                      style={{ left: `${wrongMoundPuff.x}px`, top: `${wrongMoundPuff.y}px` }}
-                      key={wrongMoundPuff.key}
+                  {sceneState.mooshikaVisible && (
+                    <button
+                      type="button"
+                      className={`modak-game-mushika-search ${sceneState.phase === PHASES.MOOSHIKA_FOUND ? 'walking' : 'darting'} ${sceneState.mushikaHolding ? 'holding' : ''}`}
+                      style={sceneState.mooshikaPosition || { top: MODAK_DISTRACTIONS[0].top, left: MODAK_DISTRACTIONS[0].left }}
+                      onPointerDown={handleMushikaHoldStart}
+                      onPointerUp={handleMushikaHoldEnd}
+                      onPointerLeave={handleMushikaHoldEnd}
+                      onPointerCancel={handleMushikaHoldEnd}
+                      onTouchStart={handleMushikaHoldStart}
+                      onTouchEnd={handleMushikaHoldEnd}
                     >
-                      <div className="mound-dirt-particle" />
-                      <div className="mound-dirt-particle" />
-                      <div className="mound-dirt-particle" />
-                    </div>
+                      {sceneState.mushikaHolding && (
+                        <span
+                          className="modak-game-hold-ring"
+                          style={{ clipPath: `inset(${(1 - (sceneState.holdProgress || 0)) * 100}% 0 0 0)` }}
+                          aria-hidden="true"
+                        />
+                      )}
+                      <img
+                        src={sceneState.phase === PHASES.MOOSHIKA_FOUND ? mooshikaCalm : mooshikaActive}
+                        alt="Mooshika"
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          pointerEvents: 'none',
+                          userSelect: 'none'
+                        }}
+                      />
+
+                      {showSparkle === 'mooshika-calm' && (
+                        <>
+                          <span className="modak-game-mushika-calm-aura" aria-hidden="true" />
+                          <SparkleAnimation
+                            type="magic"
+                            count={14}
+                            color="#ffd76b"
+                            size={10}
+                            duration={1200}
+                            fadeOut={true}
+                            area="full"
+                          />
+                        </>
+                      )}
+                    </button>
                   )}
-                  {showSparkle === `mound-${index}` && (
-                    <SparkleAnimation
-                      type="firefly"
-                      count={10}
-                      color="#8B4513"
-                      size={8}
-                      duration={1000}
-                      fadeOut={true}
-                      area="full"
-                    />
-                  )}
-                </div>
-              ))}
+                </>
+              }
 
-              {/* MOOSHIKA - FREE DRAGGABLE */}
-              {sceneState.mooshikaVisible && (
-                <FreeDraggableItem
-                  id="mooshika-companion"
-                  position={sceneState.mooshikaPosition || { top: '45%', left: '25%' }}
-                  onPositionChange={(newPosition) => {
-                    sceneActions.updateState({
-                      mooshikaPosition: newPosition
-                    });
-                  }}
-                  onDragStart={() => {
-                    setShowMooshikaSpeech(false);
-                  }}
-                  onDragEnd={() => {
-                    safeSetTimeout(() => {
-                      setMooshikaSpeechMessage("Wheee! I love exploring!");
-                      setShowMooshikaSpeech(true);
-
-                      safeSetTimeout(() => {
-                        setShowMooshikaSpeech(false);
-                      }, 3000);
-                    }, 500);
-                  }}
-                  className="modak-game-mooshika-container breathing"
-                  bounds={{ top: 5, left: 5, right: 90, bottom: 90 }}
-                >
-                  <img
-                    src={mooshika}
-                    alt="Mooshika - Drag me around!"
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      pointerEvents: 'none',
-                      userSelect: 'none'
-                    }}
-                  />
-
-                  {showSparkle === 'mooshika-found' && (
-                    <SparkleAnimation
-                      type="magic"
-                      count={20}
-                      color="#ff69b4"
-                      size={12}
-                      duration={2000}
-                      fadeOut={true}
-                      area="full"
-                    />
-                  )}
-
-                </FreeDraggableItem>
-              )}
-
-              {/* MODAKS APPEARING SPARKLES */}
+              {/* OFFERINGS APPEARING SPARKLES */}
               {showSparkle === 'modaks-appearing' && (
                 <>
-                  {[0, 1, 2].map((slotRenderIndex) => {
-                    const slotIndex = sceneState.modakSlotIndices?.[slotRenderIndex] ?? slotRenderIndex;
-                    const slot = slotPositions[slotIndex] || slotPositions[slotRenderIndex];
+                  {MODAK_OFFERINGS.map((item) => {
                     return (
                       <div
-                        key={`modak-appear-sparkle-${slotRenderIndex}`}
-                        style={{ position: 'absolute', top: slot.top, left: slot.left, transform: 'translate(-50%, -50%)', width: '80px', height: '80px', zIndex: 11 }}
+                        key={`offering-appear-sparkle-${item.id}`}
+                        style={{ position: 'absolute', top: item.top, left: item.left, transform: 'translate(-50%, -50%)', width: '80px', height: '80px', zIndex: 11 }}
                       >
                         <SparkleAnimation type="magic" count={15} color="#ffd700" size={10} duration={2000} fadeOut={true} area="full" />
                       </div>
@@ -2024,8 +2310,8 @@ const NewModakSceneMVPContent = ({
                 </div>
               ))}
 
-              {/* MODAKS COMPLETE CELEBRATION SPARKLES */}
-              {showSparkle === 'modaks-complete' && (
+              {/* OFFERINGS COMPLETE CELEBRATION SPARKLES */}
+              {showSparkle === 'offerings-complete' && (
                 <>
                   <div style={{ position: 'absolute', top: '30%', left: '50%', transform: 'translateX(-50%)', width: '200px', height: '200px', zIndex: 20 }}>
                     <SparkleAnimation type="glitter" count={30} color="#ffd700" size={14} duration={3500} fadeOut={true} area="full" />
@@ -2039,11 +2325,9 @@ const NewModakSceneMVPContent = ({
                 </>
               )}
 
-              {/* MODAKS */}
-              {sceneState.modaksUnlocked && [0, 1, 2].map((index) => {
+              {/* OFFERINGS */}
+              {sceneState.modaksUnlocked && MODAK_OFFERINGS.map((item, index) => {
                 if (sceneState.modakStates[index] === 1) return null;
-                const slotIndex = sceneState.modakSlotIndices?.[index] ?? index;
-                const slot = slotPositions[slotIndex] || slotPositions[index];
                 const isModakHintPhase =
                   sceneState.phase === PHASES.MODAKS_UNLOCKED ||
                   sceneState.phase === PHASES.SOME_COLLECTED;
@@ -2058,30 +2342,32 @@ const NewModakSceneMVPContent = ({
                   : '';
 
                 return (
-                  <div
-                    className="modak-slot-anchor"
-                    key={`modak-${index}`}
-                    style={{ top: slot.top, left: slot.left }}
+                  <KidsDropZone
+                    id={`offering-zone-${item.id}`}
+                    key={`offering-${item.id}`}
+                    accepts="mushika-offering"
+                    onDrop={({ id, data }) => handleOfferingDrop({ id, data: { ...data, offeringIndex: index } })}
+                    style={{
+                      position: 'absolute',
+                      top: item.top,
+                      left: item.left,
+                      transform: 'translate(-50%, -50%)',
+                      width: 'clamp(100px, 9vw, 150px)',
+                      height: 'clamp(100px, 9vw, 150px)',
+                      zIndex: 12
+                    }}
                   >
                     <div
-                      className={`modak-game-modak modak-game-modak-field modak-game-modak-field-${index + 1}
+                      className={`modak-game-modak modak-game-offering modak-game-modak-field modak-game-modak-field-${index + 1}
                         ${modakHintClass}`}
                     >
-                      <ClickableElement
-                        id={`modak-${index}`}
-                        onClick={() => handleModakClick(index)}
-                        completed={false}
-                        zone="modak-zone"
-                        disableTransformFeedback={true}
-                      >
-                        <img
-                          src={getModakImage(index)}
-                          alt={`Modak ${index + 1}`}
-                          style={{ width: '100%', height: '100%', cursor: 'pointer' }}
-                        />
-                      </ClickableElement>
+                      <img
+                        src={item.image}
+                        alt={item.label}
+                        style={{ width: '100%', height: '100%', pointerEvents: 'none' }}
+                      />
 
-                      {showSparkle === `modak-${index}` && (
+                      {showSparkle === `offering-${index}` && (
                         <SparkleAnimation
                           type="star"
                           count={15}
@@ -2093,9 +2379,63 @@ const NewModakSceneMVPContent = ({
                         />
                       )}
                     </div>
-                  </div>
+                  </KidsDropZone>
                 );
               })}
+
+              {sceneState.modaksUnlocked && !sceneState.rockVisible && sceneState.mooshikaVisible && (
+                <KidsDraggable
+                  id="mushika-offering"
+                  data={{ type: 'mushika-offering' }}
+                  dragScale={1.08}
+                  dragFilter="drop-shadow(0 10px 18px rgba(97, 63, 20, 0.22))"
+                  dragBorderRadius="28px"
+                  style={{
+                    position: 'absolute',
+                    width: 'clamp(118px, 10.5vw, 172px)',
+                    height: 'clamp(118px, 10.5vw, 172px)',
+                    left: (sceneState.mooshikaPosition || MUSHIKA_OFFERING_START_POSITION).left,
+                    top: (sceneState.mooshikaPosition || MUSHIKA_OFFERING_START_POSITION).top,
+                    transform: `translate(-50%, -50%)${isOfferingDragActive ? ' scale(1.04)' : ''}`,
+                    zIndex: 15,
+                    touchAction: 'none'
+                  }}
+                  onDragStart={handleOfferingDragStart}
+                  onDragEnd={handleOfferingDragEnd}
+                >
+                  <img
+                    src={mooshikaCalm}
+                    alt="Mooshika with basket"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      pointerEvents: 'none',
+                      userSelect: 'none'
+                    }}
+                  />
+                  <div className="modak-game-mushika-basket-pack" aria-hidden="true">
+                    {MODAK_OFFERINGS.map((offering, idx) => (
+                      <div key={`pack-${offering.id}`} className="modak-game-mushika-pack-slot">
+                        {sceneState.modakStates[idx] === 1 ? (
+                          <img src={offering.image} alt="" />
+                        ) : (
+                          <span className="modak-game-mushika-pack-dot" />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </KidsDraggable>
+              )}
+
+              {showSparkle === 'modak-satisfaction' && (
+                <div
+                  className="modak-game-modak-satisfaction"
+                  style={sceneState.mooshikaPosition || MUSHIKA_OFFERING_START_POSITION}
+                >
+                  <div className="modak-game-modak-satisfaction-glow" />
+                  <img src={symbolModakColored} alt="Golden Modak" className="modak-game-modak-satisfaction-icon" />
+                </div>
+              )}
 
               {/* BASKET */}
               {sceneState.basketVisible && (
@@ -2106,6 +2446,13 @@ const NewModakSceneMVPContent = ({
                     className="modak-game-plate-bg"
                   />
                   <div className="modak-game-basket-main">
+                    {!sceneState.rockVisible && MODAK_OFFERINGS.map((offering, index) => (
+                      <div
+                        key={`basket-slot-${offering.id}`}
+                        className={`modak-game-basket-slot modak-game-modak-collected-${index + 1}`}
+                        aria-hidden="true"
+                      />
+                    ))}
                     {sceneState.collectedModaks?.map((modakIndex, displayIndex) => {
                       const canDrag = sceneState.rockVisible && sceneState.rockFeedCount < 3;
                       const isRockHintPhase =
@@ -2143,8 +2490,8 @@ const NewModakSceneMVPContent = ({
                             onDragStart={() => recordInteraction()}
                           >
                             <img
-                              src={getModakImage(modakIndex)}
-                              alt={`Collected Modak ${modakIndex + 1}`}
+                              src={sceneState.rockVisible ? getModakImage(modakIndex) : (MODAK_OFFERINGS[modakIndex]?.image || getModakImage(modakIndex))}
+                              alt={sceneState.rockVisible ? `Collected Modak ${modakIndex + 1}` : (MODAK_OFFERINGS[modakIndex]?.label || `Collected Offering ${modakIndex + 1}`)}
                               style={{
                                 width: '100%',
                                 height: '100%',
@@ -2263,12 +2610,12 @@ const NewModakSceneMVPContent = ({
               )}
 
                   {/* Foreground occlusion layer (trees + bushes) shown throughout scene */}
-                  <img
+                  {/* <img
                     src={foregroundOverlay}
                     alt=""
                     className="modak-game-foreground-overlay"
                     aria-hidden="true"
-                  />
+                  /> */}
                 </>
               )}
 
@@ -2442,7 +2789,6 @@ const NewModakSceneMVPContent = ({
                 />
               )}
             </div>
-          </SceneStage>
         </MessageManager>
       </InteractionManager>
 

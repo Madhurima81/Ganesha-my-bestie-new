@@ -7,6 +7,7 @@ import StoryProgressHeader from '../components/StoryProgressHeader';
 // Navigation Components
 import SceneManager from "../../../lib/components/scenes/SceneManager";
 import GameStateManager from "../../../lib/services/GameStateManager";
+import ProgressManager from "../../../lib/services/ProgressManager";
 
 // Content Configs
 import { getOpeningModal, getCompletionModal } from '../../../lib/config/content';
@@ -2348,6 +2349,13 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
             onContinue={() => {
               playUiTap();
               hardStopSceneAudio();
+              const profileId = GameStateManager.getCurrentProfile()?.id;
+              if (profileId) {
+                ProgressManager.updateSceneCompletion(profileId, 'about-me-hut', 'dreams-wishes', {
+                  completed: true,
+                  stars: sceneState.stars || 3
+                });
+              }
               if (onNavigate) onNavigate('my-indian-story');
               else if (onComplete) onComplete();
             }}

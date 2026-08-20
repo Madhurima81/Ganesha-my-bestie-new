@@ -3891,6 +3891,39 @@ function buildCompressedStory(finalStory, storyBlueprint, eventChainResult) {
     text = `${situationLead}, and the old thought said ${falseBelief}. `
       + `${sentenceCase(t16Middle)}. `
       + `${sentenceCase(t16Closing)}.`;
+  } else if (templateId === "T18") {
+    // T18 compression (2026-08-12, v2 rework): the generic fallback below
+    // ("paused, chose to look again, understood... chose a different
+    // response") is T03's own try/fail/pause/retry shape in miniature —
+    // reusing it here silently collapsed T18's compression back to being
+    // identical to T03's regardless of mode, even after the manuscript
+    // beats themselves were made mechanism-distinct. Compression now names
+    // the actual escalation-by-reaction and the actual smaller real problem
+    // the mode revealed, mirroring the T16/T21/T22/T23 pattern.
+    const t18Mode = detectT18RealizationMode(ctx);
+    const t18Escalation = {
+      EXTERNAL_TIMELINE_PRESSURE: `arguing for more time only turned the ending into a fight`,
+      WAITING_FOR_TURN_OR_EVENT: `checking the clock over and over only made the wait feel longer`,
+      PHYSICAL_RESTLESSNESS: `holding still harder only made the energy back up further`,
+      TAKEN_OR_DAMAGED: `grabbing back only turned it into a bigger fight`,
+      SCATTERED_ATTENTION: `forcing the focus only made the mind wander further`,
+      CASCADING_IRRITABILITY: `snapping at the small things only piled them higher`,
+      TEMPTATION_TRADEOFF: `treating it as a choice only made both things feel impossible`,
+      DEFAULT: `reacting right away only made the feeling bigger`,
+    }[t18Mode];
+    const t18RealProblem = {
+      EXTERNAL_TIMELINE_PRESSURE: `there had never been a proper goodbye to the game`,
+      WAITING_FOR_TURN_OR_EVENT: `there had been nothing to hold ${hero}'s attention`,
+      PHYSICAL_RESTLESSNESS: `there had been no small outlet for the energy`,
+      TAKEN_OR_DAMAGED: `it was only ever about wanting the toy back`,
+      SCATTERED_ATTENTION: `it was only ever one unread line, not a broken focus`,
+      CASCADING_IRRITABILITY: `${hero} was just hungry and tired underneath it all`,
+      TEMPTATION_TRADEOFF: `the order was backwards, not the choice itself`,
+      DEFAULT: `the real problem was smaller than it felt`,
+    }[t18Mode];
+    text = `${situationLead}, and the old thought said ${falseBelief}. `
+      + `${sentenceCase(t18Escalation)}, until it turned out ${t18RealProblem}. `
+      + `${hero} solved that smaller real problem instead of the original trigger, and it actually worked.`;
   } else {
     text = `${situationLead}. ${hero} wanted to ${want}, but the old thought said ${falseBelief}. `
       + `After a quiet "Wait," ${hero} chose to look again and understood that ${trueBelief}. `
@@ -3945,6 +3978,31 @@ function buildCompressedStory(finalStory, storyBlueprint, eventChainResult) {
       text = `${sentenceCase(obstacleFact)}, and the old thought said ${falseBelief}. `
         + `${sentenceCase(t16Middle)}. `
         + `${sentenceCase(t16Closing)}.`;
+    } else if (templateId === "T18") {
+      const t18ModeFallback = detectT18RealizationMode(ctx);
+      const t18EscalationFallback = {
+        EXTERNAL_TIMELINE_PRESSURE: `arguing for more time only turned the ending into a fight`,
+        WAITING_FOR_TURN_OR_EVENT: `checking the clock over and over only made the wait feel longer`,
+        PHYSICAL_RESTLESSNESS: `holding still harder only made the energy back up further`,
+        TAKEN_OR_DAMAGED: `grabbing back only turned it into a bigger fight`,
+        SCATTERED_ATTENTION: `forcing the focus only made the mind wander further`,
+        CASCADING_IRRITABILITY: `snapping at the small things only piled them higher`,
+        TEMPTATION_TRADEOFF: `treating it as a choice only made both things feel impossible`,
+        DEFAULT: `reacting right away only made the feeling bigger`,
+      }[t18ModeFallback];
+      const t18RealProblemFallback = {
+        EXTERNAL_TIMELINE_PRESSURE: `there had never been a proper goodbye to the game`,
+        WAITING_FOR_TURN_OR_EVENT: `there had been nothing to hold ${hero}'s attention`,
+        PHYSICAL_RESTLESSNESS: `there had been no small outlet for the energy`,
+        TAKEN_OR_DAMAGED: `it was only ever about wanting the toy back`,
+        SCATTERED_ATTENTION: `it was only ever one unread line, not a broken focus`,
+        CASCADING_IRRITABILITY: `${hero} was just hungry and tired underneath it all`,
+        TEMPTATION_TRADEOFF: `the order was backwards, not the choice itself`,
+        DEFAULT: `the real problem was smaller than it felt`,
+      }[t18ModeFallback];
+      text = `${sentenceCase(obstacleFact)}, and the old thought said ${falseBelief}. `
+        + `${sentenceCase(t18EscalationFallback)}, until it turned out ${t18RealProblemFallback}. `
+        + `${hero} solved that smaller real problem instead of the original trigger.`;
     } else {
       text = `${sentenceCase(obstacleFact)}, and ${hero} believed ${falseBelief}. `
         + `${hero} paused, chose to look again, and understood that ${trueBelief}. `
@@ -6575,6 +6633,861 @@ function concreteSceneFacts(ctx) {
   };
 }
 
+// Templates with a real, mode-detected Realization Contract (own
+// mechanism-specific event chain + prose, not the shared generic
+// try/fail/try/fail/pause/succeed fallback). Used by validateEventChain and
+// writeProseFromEventChain below to route to per-template handling instead
+// of relying on the old `templateId !== "T03"` string check, which broke
+// once the fallback's mislabel (see the comment on the generic fallback's
+// return below) was fixed to report each template's own real id.
+const TEMPLATES_WITH_REALIZATION_CONTRACT = new Set(["T03", "T04", "T05", "T09", "T14", "T15", "T16", "T18", "T19", "T21", "T22", "T23"]);
+
+// T03 Realization Contract (added 2026-08-12, per
+// docs/prana-kids/REALIZATION_QUALITY_GAP_REPORT_2026-08-12.md — T03 pilot).
+// T03's beat shape (SETUP / ATTEMPT_1 / ATTEMPT_2 / TURNING_POINT /
+// ATTEMPT_3 / RESOLUTION) previously ran through the shared generic
+// fallback (below), which used the same six fixed sentences ("But it did
+// not work.", "That did not work either.", "This time it worked - not by
+// trying harder, but by trying differently.", "Everything felt calmer,
+// warmer, and freer than before.", etc.) for every situation regardless of
+// what actually went wrong. ctx.actionPhrases[0..2] were already
+// situation-specific (drawn from the situation's own action library) — the
+// genericness lived entirely in the connective/consequence tissue around
+// them, plus a decorative "motif object" with no causal link to the
+// obstacle.
+//
+// This contract keys off the situation's own obstacle_domain (the same
+// taxonomy field obstacleConsequenceText already reads, at
+// ctx.obstacle.hard.obstacle_domain — not a new detector, reusing existing
+// authored data) so *why* the first two attempts fail, what the turning
+// point actually realizes, and what changes on the third attempt are
+// different in kind, not just noun-swapped, across a physical obstacle
+// (won't move/won't budge), a social obstacle (someone isn't responding),
+// an emotional obstacle (a feeling that won't go away), a puzzle obstacle
+// (confusion), a time obstacle (running out of time) and a nature/
+// circumstance obstacle (the outside world not cooperating). The decorative
+// motif object is dropped from the RESOLUTION beat's mechanism (it added
+// nothing causal); ctx.mechanism.motif is still available if a scene wants
+// a small sensory anchor but no longer carries the "reminder of what
+// changed" claim, which every story made identically regardless of domain.
+function detectT03RealizationMode(ctx) {
+  const domainId = ctx.obstacle && ctx.obstacle.hard && ctx.obstacle.hard.obstacle_domain;
+  if (domainId && T03_MODE_FRAMING[domainId]) return domainId;
+  return "DEFAULT";
+}
+
+const T03_MODE_FRAMING = {
+  OD_PHYSICAL: {
+    attempt1Fail: (p, actionTail) => `${p} pushed harder, but ${actionTail || "it still would not give way"}.`,
+    attempt2Fail: (p, actionTail) => `${p} tried a different grip, and still ${actionTail || "it refused to move"}.`,
+    turningPoint: (p, trueBelief) => `${p} paused, and just looked at it for a second — really looked, instead of forcing — and realized ${lowerFirstKeepingI(stripTrailingPeriod(trueBelief))}.`,
+    attempt3Action: (p) => `tried again, this time working with it instead of against it`,
+    attempt3Success: () => `and this time it gave way — not because of more force, but because of a better angle`,
+    resolutionAction: (p) => `${p} set it down, finally where it belonged`,
+    resolutionClose: () => `steadier hands, and nothing left to wrestle with`,
+  },
+  OD_SOCIAL: {
+    attempt1Fail: (p, actionTail, ref) => `${p} said it again, louder, and ${ref ? capitalizeWord(ref) : "no one"} ${actionTail || "still did not seem to notice"}.`,
+    attempt2Fail: (p, actionTail, ref) => `${p} tried explaining it a different way, and ${ref ? capitalizeWord(ref) : "no one"} ${actionTail || "still had not changed a thing"}.`,
+    turningPoint: (p, trueBelief) => `${p} paused instead of trying to be heard over everything else, and waited for a real chance to talk, realizing ${lowerFirstKeepingI(stripTrailingPeriod(trueBelief))}.`,
+    attempt3Action: (p) => `spoke up again — quieter this time, and straight to the point`,
+    attempt3Success: () => `and this time the words actually landed`,
+    resolutionAction: (p) => `${p} let out a breath, heard at last`,
+    resolutionClose: () => `nothing left unsaid, and no need to raise a voice over it again`,
+  },
+  OD_EMOTIONAL: {
+    attempt1Fail: (p, actionTail) => `${p} tried to shake the feeling off, and ${actionTail || "it was still there, just as big as before"}.`,
+    attempt2Fail: (p, actionTail) => `${p} tried to keep busy instead, and ${actionTail || "the feeling had not gone anywhere at all"}.`,
+    turningPoint: (p, trueBelief) => `${p} paused instead of pushing the feeling away, and just let it be there for a moment, realizing ${lowerFirstKeepingI(stripTrailingPeriod(trueBelief))}.`,
+    attempt3Action: (p) => `sat with it a little longer, breathing instead of fighting it`,
+    attempt3Success: () => `and this time it actually started to ease, on its own`,
+    resolutionAction: (p) => `${p} noticed the tightness had loosened`,
+    resolutionClose: () => `lighter, without needing the feeling to disappear completely first`,
+  },
+  OD_PUZZLE: {
+    attempt1Fail: (p, actionTail) => `${p} guessed quickly, and ${actionTail || "it still did not make any sense"}.`,
+    attempt2Fail: (p, actionTail) => `${p} guessed again, faster this time, and ${actionTail || "it was every bit as confusing as before"}.`,
+    turningPoint: (p, trueBelief) => `${p} paused instead of guessing again, and slowed down to look at it piece by piece, realizing ${lowerFirstKeepingI(stripTrailingPeriod(trueBelief))}.`,
+    attempt3Action: (p) => `went through it once more, one step at a time instead of all at once`,
+    attempt3Success: () => `and this time the pieces actually clicked into place`,
+    resolutionAction: (p) => `${p} looked it over once more, and it finally made sense`,
+    resolutionClose: () => `no more guessing, just understanding`,
+  },
+  OD_TIME: {
+    attempt1Fail: (p, actionTail) => `${p} rushed through it, and ${actionTail || "there still was not enough time"}.`,
+    attempt2Fail: (p, actionTail) => `${p} rushed even faster, and ${actionTail || "there was even less time now"}.`,
+    turningPoint: (p, trueBelief) => `${p} paused instead of racing the clock, and took one steady breath, realizing ${lowerFirstKeepingI(stripTrailingPeriod(trueBelief))}.`,
+    attempt3Action: (p) => `started again at a steadier pace, one part at a time`,
+    attempt3Success: () => `and this time there was enough time after all`,
+    resolutionAction: (p) => `${p} finished with a moment to spare`,
+    resolutionClose: () => `unhurried, for the first time all day`,
+  },
+  OD_NATURE: {
+    attempt1Fail: (p, actionTail) => `${p} tried to push through it anyway, and ${actionTail || "the world outside still would not cooperate"}.`,
+    attempt2Fail: (p, actionTail) => `${p} waited it out and tried again, and ${actionTail || "it only seemed to get harder"}.`,
+    turningPoint: (p, trueBelief) => `${p} paused instead of fighting the circumstances, and looked for a way to work around them, realizing ${lowerFirstKeepingI(stripTrailingPeriod(trueBelief))}.`,
+    attempt3Action: (p) => `tried a different way, one that worked with things as they actually were`,
+    attempt3Success: () => `and this time it actually worked out`,
+    resolutionAction: (p) => `${p} stood back and let things settle`,
+    resolutionClose: () => `calmer, having stopped fighting what could not be changed`,
+  },
+  DEFAULT: {
+    attempt1Fail: (p, actionTail) => `${p} tried the first thing that came to mind, and ${actionTail || "it did not get any easier"}.`,
+    attempt2Fail: (p, actionTail) => `${p} tried again a different way, and ${actionTail || "it still had not gotten any easier"}.`,
+    turningPoint: (p, trueBelief) => `${p} paused and thought about it properly instead of just trying harder, realizing ${lowerFirstKeepingI(stripTrailingPeriod(trueBelief))}.`,
+    attempt3Action: (p) => `tried once more, differently this time`,
+    attempt3Success: () => `and this time it actually worked`,
+    resolutionAction: (p) => `${p} finished it, glad it was actually done`,
+    resolutionClose: () => `steadier than before, and done with trying to prove anything`,
+  },
+};
+
+// T18 Realization Contract (added 2026-08-12, per
+// docs/prana-kids/T18_REALIZATION_PILOT_2026-08-12.md, following the T03
+// pilot's own recommendation: T16's text-signal detection is more
+// discriminating than keying off one taxonomy field, so T18 pattern-matches
+// the situation's own narrativeSummarySentences + storySeedContextText
+// (same fields detectT16RealizationMode reads) instead of a single upstream
+// bucket. T18 previously fell through to the shared generic fallback below,
+// producing the same six fixed sentences ("But it did not work.", etc.) for
+// all 16 T18 situations regardless of what the child was actually
+// regulating. Reading all 16 T18 situations' authored text (self-regulation
+// situations, NEED_SELF_REGULATION) surfaced 7 genuinely distinct
+// mechanisms, not one shared "obstacle" shape:
+//   - EXTERNAL_TIMELINE_PRESSURE: an outside schedule/authority ends an
+//     activity or forces a hurry regardless of the hero's own readiness
+//     (SIT002 screen time, SIT008 hurried to leave, SIT109 switching to
+//     homework)
+//   - WAITING_FOR_TURN_OR_EVENT: nothing to do but watch a clock/turn/
+//     calendar while a wait plays out (SIT101, SIT108, SIT112)
+//   - PHYSICAL_RESTLESSNESS: the body wants to move or release energy but
+//     must stay still or wind down (SIT015, SIT097)
+//   - TAKEN_OR_DAMAGED: a possession is taken, broken, or the hero is
+//     pushed — an injustice with an immediate urge to grab back/retaliate
+//     (SIT001, SIT007, SIT011)
+//   - SCATTERED_ATTENTION: focus keeps slipping because of a competing
+//     stimulus or attention fatigue, not an external obstacle at all
+//     (SIT098, SIT105)
+//   - CASCADING_IRRITABILITY: hunger/tiredness makes ordinary small things
+//     land as a "final straw" (SIT104, SIT110)
+//   - TEMPTATION_TRADEOFF: no external enforcement at all — the pull is
+//     between a tempting want and a known responsibility (SIT136 only;
+//     precedented by T16's own single-situation SOCIAL_PERCEPTION mode)
+// Beats keep the same structural shape the shared fallback already used
+// (SETUP/ATTEMPT_1/ATTEMPT_2/TURNING_POINT/ATTEMPT_3/RESOLUTION — validated
+// generically for all non-T16/T21/T22/T23 contract templates, see
+// validateEventChain) because that shape already fits T18's actual
+// escalate-then-pause mechanic; what changes is the content of each beat,
+// keyed off the mode instead of six fixed sentences.
+function detectT18RealizationMode(ctx) {
+  const situation = ctx._lookups && ctx._lookups.situation;
+  const text = `${(ctx.narrativeSummarySentences || []).join(" ")} ${buildStorySeedContextText(situation)}`.toLowerCase();
+  const ranked = [];
+  const push = (mode, score) => {
+    if (score > 0) ranked.push({ mode, score });
+  };
+
+  push("EXTERNAL_TIMELINE_PRESSURE", /\b(screen time|time to stop|time'?s up|we'?re leaving|put that away|has to end|homework time)\b/.test(text) ? 5 : 0);
+  push("WAITING_FOR_TURN_OR_EVENT", /\b(checks? the (clock|window|calendar)|glowing on the screen|keeps swinging|one turn|has to wait|longest day|move faster)\b/.test(text) ? 5 : 0);
+  push("PHYSICAL_RESTLESSNESS", /\b(sit(ting)? still|shifts|bouncing|still full of energy|cannot (freely )?move|restless)\b/.test(text) ? 5 : 0);
+  push("TAKEN_OR_DAMAGED", /\b(walks? away with|crashes? apart|push(es|ed)?|gives? .* a (hard )?push|shout)\b/.test(text) ? 5 : 0);
+  push("SCATTERED_ATTENTION", /\b(focus|concentrat|attention|scattered|same line)\b/.test(text) ? 5 : 0);
+  push("CASCADING_IRRITABILITY", /\b(tired|hungry|stomach growls|final straw|small things|cranky|irritat)\b/.test(text) ? 5 : 0);
+  push("TEMPTATION_TRADEOFF", /\b(go play|opportunity to play|friends calling|schoolwork|responsibility in front)\b/.test(text) ? 5 : 0);
+
+  if (!ranked.length) {
+    return "DEFAULT";
+  }
+
+  ranked.sort((a, b) => b.score - a.score);
+  return ranked[0].mode;
+}
+
+// 2026-08-12 rework v2 (per Dev A/Dev B redirect after forced SIT101/T03 vs
+// SIT101/T18 comparison showed a MECHANISM collision, not just a prose one:
+// the first rework (v1, still visible in git history) varied wording inside
+// T03's own try/fail/pause/retry beat shape, so the underlying causal
+// skeleton — obstacle resists two attempts, a realization changes the
+// approach, the retried attempt succeeds — was identical to T03's, just
+// reworded. Swapping SIT101 between T03 and T18 still produced "the same
+// story wearing different clothes."
+//
+// T18 now has a mechanism T03 structurally cannot produce: there is no
+// external obstacle being defeated at all. Every mode below supplies 7
+// fragments consumed by the new 8-beat TINY_PROBLEM/IGNORED/GROWS_1/
+// GROWS_2/OVERWHELMING/PAUSE/REAL_PROBLEM/RESOLUTION shape (see the T18
+// branch of buildTemplateSpecificEventChain): ignored/grows1/grows2/
+// overwhelming trace the hero's OWN escalating reactions inflating a small
+// trigger — each beat's growth is caused by the previous beat's reaction,
+// never by anything resisting from outside — pause breaks the loop, and
+// realProblem must name a problem that is smaller than and DIFFERENT IN
+// KIND from the inflated one (a missing goodbye, a missing outlet, a
+// missing attention-anchor, an unmet physical need, a backwards order —
+// never just "the original trigger, but now with a calmer attitude," which
+// would collapse straight back into T03's try-differently shape). resolution
+// must address that specific smaller real problem, not the original
+// trigger. See docs/prana-kids/T18_REALIZATION_PILOT_2026-08-12.md for the
+// SIT101 T03-vs-T18 adversarial comparison this rework was written to pass.
+const T18_MODE_FRAMING = {
+  // SIT002, SIT008, SIT109 — activity ends on an outside schedule. The
+  // hero's own arguing (not the ending) is what inflates the moment; the
+  // real problem is the missing clean stopping point, not the ending itself.
+  EXTERNAL_TIMELINE_PRESSURE: {
+    ignored: (p) => `${p} didn't let the ending just happen — started arguing for more time instead.`,
+    grows1: (p) => `The arguing turned one quiet ending into a whole negotiation, and now it felt like a fight instead of a stop.`,
+    grows2: (p) => `${p} argued harder, certain that would help, and the countdown itself began to feel like a punishment.`,
+    overwhelming: (p) => `By now the ending felt unbearable — bigger and more unfair than any five minutes could ever explain.`,
+    pause: (p) => `${p} stopped arguing, just for a second.`,
+    realProblem: (p, trueBelief) => `The real problem was never the ending — it was that there had been no proper goodbye to the game at all. ${sentenceCase(lowerFirstKeepingI(stripTrailingPeriod(trueBelief)))}.`,
+    resolution: (p) => `${p} gave the game one last look, a two-second goodbye, and walked off — the ending finally feeling like an ending instead of a loss.`,
+  },
+  // SIT101, SIT108, SIT112 — a wait plays out. The checking (not the wait
+  // itself) is what inflates it; the real problem is nothing to anchor
+  // attention to, not the length of the wait.
+  WAITING_FOR_TURN_OR_EVENT: {
+    ignored: (p) => `${p} didn't settle into the wait — started checking the clock instead.`,
+    grows1: (p) => `Each check made the same unmoved number feel slower, like time itself had started dragging its feet.`,
+    grows2: (p) => `${p} checked again, even closer this time, and the wait began to feel like it had swallowed the whole day.`,
+    overwhelming: (p) => `Soon it wasn't the wait that felt unbearable at all — it was the checking, over and over, that had taken everything over.`,
+    pause: (p) => `${p} stopped checking, just for a second.`,
+    realProblem: (p, trueBelief) => `The real problem was never how long the wait was — it was that there had been nothing else to hold ${p}'s attention. ${sentenceCase(lowerFirstKeepingI(stripTrailingPeriod(trueBelief)))}.`,
+    resolution: (p) => `${p} found one small thing to notice instead of the clock, and smiled when the wait ended before ${p} had even finished noticing it.`,
+  },
+  // SIT015, SIT097 — the body wants to move. Suppressing it (not the
+  // stillness itself) is what inflates the pressure; the real problem is a
+  // missing small outlet, not too much energy.
+  PHYSICAL_RESTLESSNESS: {
+    ignored: (p) => `${p} didn't sit with the wriggle — shifted instead, trying to make it go away.`,
+    grows1: (p) => `The shifting only woke the energy up more, like it had been waiting for permission to move.`,
+    grows2: (p) => `${p} clamped down, holding every muscle still on purpose, and the energy backed up with nowhere at all to go.`,
+    overwhelming: (p) => `Soon the stillness itself felt impossible — like the whole body might burst from holding so much in.`,
+    pause: (p) => `${p} stood still, on purpose this time, just for a second.`,
+    realProblem: (p, trueBelief) => `The real problem was never too much energy — it was that there had been no small, allowed way to let any of it out. ${sentenceCase(lowerFirstKeepingI(stripTrailingPeriod(trueBelief)))}.`,
+    resolution: (p) => `${p} found one tiny, quiet outlet, just enough, and smiled as the last of the wriggle finally spent itself.`,
+  },
+  // SIT001, SIT007, SIT011 — an object is taken/broken or the hero is
+  // pushed. Grabbing back (not the loss itself) is what inflates it into a
+  // fight; the real problem is just the specific, smaller original want.
+  TAKEN_OR_DAMAGED: {
+    ignored: (p) => `${p} didn't stop to think — grabbed for it right away.`,
+    grows1: (p, actionTail, ref) => `The grabbing turned "my toy" into a tug-of-war, because now it was a fight about winning, not about the toy at all.`,
+    grows2: (p) => `${p} shoved back, just once, and the fight grew bigger than the thing that had started it.`,
+    overwhelming: (p) => `By now the anger filled everything — bigger than any one toy could ever be worth.`,
+    pause: (p) => `${p} took one breath, fists still tight, before reaching again.`,
+    realProblem: (p, trueBelief) => `The real problem was never the fight — it was just wanting the toy back. ${sentenceCase(lowerFirstKeepingI(stripTrailingPeriod(trueBelief)))}.`,
+    resolution: (p) => `${p} asked for it back, plainly, and held it again a moment later — the fight already forgotten, the actual want finally met.`,
+  },
+  // SIT098, SIT105 — focus keeps slipping. Forcing concentration (not the
+  // distraction itself) is what inflates it; the real problem is one
+  // specific unread line, not a broken ability to focus at all.
+  SCATTERED_ATTENTION: {
+    ignored: (p) => `${p} didn't notice the wandering — pushed straight through instead.`,
+    grows1: (p) => `Pushing through only made the mind notice its own drifting even more, like watching yourself trip.`,
+    grows2: (p) => `${p} squeezed both eyes shut and forced it harder, and three more lines went by, still unread.`,
+    overwhelming: (p) => `Soon it felt like focusing was impossible altogether — not just this page, but everything.`,
+    pause: (p) => `${p} paused and sat with the wandering for a second, instead of fighting it.`,
+    realProblem: (p, trueBelief) => `The real problem was never a broken ability to focus — it was just one line, sitting there, not yet actually read. ${sentenceCase(lowerFirstKeepingI(stripTrailingPeriod(trueBelief)))}.`,
+    resolution: (p) => `${p} read that one line, just that one, and it finally landed — clearer than the whole page had felt a moment before.`,
+  },
+  // SIT104, SIT110 — hunger/tiredness makes ordinary friction land as a
+  // final straw. Snapping (not the sock/toast) is what inflates the day;
+  // the real problem is an unmet physical need, unrelated to either object.
+  CASCADING_IRRITABILITY: {
+    ignored: (p) => `${p} didn't notice why the sock felt wrong — snapped at it instead.`,
+    grows1: (p) => `Snapping at the sock made the very next ordinary thing feel like an insult too.`,
+    grows2: (p) => `${p} snapped at that one as well, so the whole morning started stacking up like one long unfairness.`,
+    overwhelming: (p) => `By now everything felt like the worst day ever — the sock, the toast, all of it, much bigger than any of them actually were.`,
+    pause: (p) => `${p} stopped, just for a second, before the next small thing could land.`,
+    realProblem: (p, trueBelief) => `None of it was really about the sock or the toast — ${p} was just hungry and tired underneath it all. ${sentenceCase(lowerFirstKeepingI(stripTrailingPeriod(trueBelief)))}.`,
+    resolution: (p) => `${p} said the actual, unglamorous truth out loud — hungry, tired — and felt the sock and the toast shrink back down to the small things they had always been.`,
+  },
+  // SIT136 — a temptation and a responsibility collide. Treating it as a
+  // choice (not the temptation itself) is what inflates it into a
+  // dilemma; the real problem is a backwards order, not a decision at all.
+  TEMPTATION_TRADEOFF: {
+    ignored: (p) => `${p} didn't decide anything yet — just glanced toward the window instead.`,
+    grows1: (p) => `The glance made the pull stronger, like looking had given it permission to grow.`,
+    grows2: (p) => `${p} tried to ignore it and push through the workbook anyway, and now neither the work nor the fun outside felt like it was really happening.`,
+    overwhelming: (p) => `Soon it felt like an impossible choice — as if picking one meant losing the other completely.`,
+    pause: (p) => `${p} paused, a beat before picking either one.`,
+    realProblem: (p, trueBelief) => `It was never really a choice between the two at all — it was just that the order was backwards. ${sentenceCase(lowerFirstKeepingI(stripTrailingPeriod(trueBelief)))}.`,
+    resolution: (p) => `${p} finished the page first, on purpose, and walked outside afterward owing nothing to anyone — both things finally possible, just in the right order.`,
+  },
+  DEFAULT: {
+    ignored: (p) => `${p} reacted right away, without stopping to look at what was actually wrong.`,
+    grows1: (p) => `Reacting made the feeling bigger, not smaller.`,
+    grows2: (p) => `${p} reacted again the same way, and it grew again.`,
+    overwhelming: (p) => `Soon the feeling filled everything, far bigger than whatever had started it.`,
+    pause: (p) => `${p} paused.`,
+    realProblem: (p, trueBelief) => `The real problem was smaller than it felt — it just needed to actually be looked at. ${sentenceCase(lowerFirstKeepingI(stripTrailingPeriod(trueBelief)))}.`,
+    resolution: (p) => `${p} let the feeling settle, steadier than before, having finally looked at what was actually there.`,
+  },
+};
+
+// T14 Realization Contract (added 2026-08-12, per
+// docs/prana-kids/T14_REALIZATION_PILOT_2026-08-12.md). T14's core
+// mechanism is fixed (see docs) and is NOT the try/fail/try/succeed shape
+// T03/T18 use: hero receives meaningful help -> recognizes what that help
+// did -> encounters someone with a related struggle -> remembers the
+// earlier help -> actively gives similar help -> the relational change
+// proves the belief. T14 previously fell through the shared generic
+// try/fail fallback (below), which does not carry a receive/remember/give
+// shape at all, so it printed the same six fixed try/fail sentences for
+// every T14 situation regardless of what the hero was actually going
+// through — the same defect T03/T18 had, but structurally worse for T14
+// because the fallback's shape doesn't match T14's mechanism to begin
+// with.
+//
+// Reading all 16 T14 situations' authored storySeed/narrativeSummary text
+// (dumped via phase8-tools/dumpT14Situations.mjs) surfaced 5 genuinely
+// distinct struggle domains a T14 situation actually falls into — not one
+// shared "obstacle" shape, and not forced parity with T18's 7:
+//   - EXCLUSION_LONGING_TO_BELONG: hero is left out, replaced, or watching
+//     a group/game/conversation already underway without them (SIT048,
+//     SIT056, SIT082, SIT146, SIT150, SIT152)
+//   - SHAME_AFTER_CORRECTION: hero is reprimanded/corrected (privately or
+//     publicly) or pressured not to make a mistake, and reads the
+//     correction as a threat to being loved (SIT046, SIT074, SIT107)
+//   - SELF_IMAGE_COMPARISON: hero notices a physical feature/change and
+//     starts comparing it to someone else's or worrying how it will be
+//     seen (SIT065, SIT093, SIT122)
+//   - LOSING_A_CONNECTION: hero is losing a familiar person or place to
+//     distance/a move (SIT051, SIT114, SIT115)
+//   - MISUNDERSTOOD_OR_UNHEARD: hero's own words keep landing wrong and
+//     they start doubting how they communicate (SIT013 only; precedented
+//     by T18's own single-situation TEMPTATION_TRADEOFF mode)
+// 5 modes for 16 situations sits inside the "mirror T16/T18's granularity"
+// guidance (T16 has 6, T18 has 7, T21 has 5, T23 has 4).
+//
+// Each mode supplies: who plausibly gives the hero real help for THIS
+// struggle (drawn from ctx.coreReference, a person-noun already extracted
+// from the situation's own text — never invented), what that help
+// concretely did, what related-but-not-identical struggle the hero later
+// notices in someone else (same domain, different specifics, so it echoes
+// without being a verbatim repeat), and the specific observable action the
+// hero takes to give the same kind of help back. The RESOLUTION beat
+// always carries ctx.trueBelief so the realization is legible, and the
+// HERO_GIVES beat always contains an explicit "remembering"/"just like"
+// connective back to RECEIVE_HELP so the causal chain reads in prose, not
+// just in code structure.
+function detectT14RealizationMode(ctx) {
+  const situation = ctx._lookups && ctx._lookups.situation;
+  const text = `${(ctx.narrativeSummarySentences || []).join(" ")} ${buildStorySeedContextText(situation)}`.toLowerCase();
+  const score = (pattern) => {
+    const matches = text.match(pattern);
+    return matches ? matches.length : 0;
+  };
+  const ranked = [
+    { mode: "EXCLUSION_LONGING_TO_BELONG", score: score(/\b(invited|left out|isn'?t part of|not part of|already playing|already underway|group chat|standing alone|nobody|replaced|someone else)\b/g) },
+    { mode: "SHAME_AFTER_CORRECTION", score: score(/\b(reprimand\w*|sharp voice|correct(ed|ion)?|mistake|be good|a test|ashamed|angrily|angry)\b/g) },
+    { mode: "SELF_IMAGE_COMPARISON", score: score(/\b(pimple|spot|mirror|hair|physical change|notices something different|appearance|texture)\b/g) },
+    { mode: "LOSING_A_CONNECTION", score: score(/\b(mov(ing|ed|e)|moving boxes|suitcase|leaving behind|another city|another country|packed)\b/g) },
+    { mode: "MISUNDERSTOOD_OR_UNHEARD", score: score(/\b(misunderstand\w*|not what .* meant|landing differently|understand what they mean)\b/g) },
+  ];
+  ranked.sort((a, b) => b.score - a.score);
+  if (!ranked[0].score) return "DEFAULT";
+  return ranked[0].mode;
+}
+
+const T14_MODE_FRAMING = {
+  EXCLUSION_LONGING_TO_BELONG: {
+    receiveHelp: (p, helper) => `So ${helper || "someone nearby"} noticed ${p} standing at the edge of things and made room, waving ${p} in without making a fuss about it.`,
+    recognizeHelp: (p) => `${p} paused for a second and realized that one small wave-in was what had actually made the difference — not being the loudest, just being let in.`,
+    encounterStruggle: (p) => `Later, ${p} spotted another child standing off to the side, watching everyone else already deep in something, clearly wondering whether there was room for one more.`,
+    heroGives: (p, trueBelief) => `Remembering how much that one small wave-in had meant, ${p} walked over and made room for the other child too, realizing ${lowerFirstKeepingI(stripTrailingPeriod(trueBelief))}.`,
+    resolutionAction: (p) => `${p} smiled and settled in beside the other child, now part of the game too`,
+    resolutionClose: () => `glad to have passed the same room along`,
+  },
+  SHAME_AFTER_CORRECTION: {
+    receiveHelp: (p, helper) => `So ${helper || "someone close by"} sat with ${p} afterward and said, gently, that the mistake was small and ${p} was still loved just the same.`,
+    recognizeHelp: (p) => `${p} stopped and let the words settle, and realized that one gentle sentence had done what all the worrying could not — it had made the shame let go.`,
+    encounterStruggle: (p) => `Later, ${p} saw another child freeze after being corrected, shoulders curling in, looking as if the mistake had turned into something much bigger than it was.`,
+    heroGives: (p, trueBelief) => `Remembering the gentle sentence that had once loosened ${p}'s own shame, ${p} crouched down and said the mistake was small and it did not change anything, realizing ${lowerFirstKeepingI(stripTrailingPeriod(trueBelief))}.`,
+    resolutionAction: (p) => `${p} felt the other child's shoulders come back down and smiled`,
+    resolutionClose: () => `steadier, having handed on the same gentleness`,
+  },
+  SELF_IMAGE_COMPARISON: {
+    receiveHelp: (p, helper) => `So ${helper || "someone kind"} caught ${p} frowning at the mirror and pointed out, plainly, something true and good about how ${p} actually looked.`,
+    recognizeHelp: (p) => `${p} paused in front of the mirror and realized that being seen kindly, on purpose, had done more than any amount of staring ever could.`,
+    encounterStruggle: (p) => `Later, ${p} noticed another child tugging at their own hair, or checking their reflection twice, clearly comparing themselves to somebody else close by.`,
+    heroGives: (p, trueBelief) => `Remembering how it had felt to be seen kindly, ${p} said something true and good about the other child out loud, realizing ${lowerFirstKeepingI(stripTrailingPeriod(trueBelief))}.`,
+    resolutionAction: (p) => `${p} found the other child standing a little taller, and smiled`,
+    resolutionClose: () => `lighter, having passed the same kindness on`,
+  },
+  LOSING_A_CONNECTION: {
+    receiveHelp: (p, helper) => `So ${helper || "someone who understood"} helped ${p} find a way to stay connected across the distance — a plan to write, call, or visit that made the goodbye feel less final.`,
+    recognizeHelp: (p) => `${p} sat with the feeling for a moment and realized the connection had not actually broken — it had just found a new, different shape.`,
+    encounterStruggle: (p) => `Later, ${p} met another child who was about to lose someone or something familiar too, looking as if the distance already felt final.`,
+    heroGives: (p, trueBelief) => `Remembering the plan that had made ${p}'s own goodbye feel less final, ${p} helped the other child find a way to stay connected too, realizing ${lowerFirstKeepingI(stripTrailingPeriod(trueBelief))}.`,
+    resolutionAction: (p) => `${p} felt the other child settle, the goodbye already feeling smaller`,
+    resolutionClose: () => `settled, having handed on the same steady plan`,
+  },
+  MISUNDERSTOOD_OR_UNHEARD: {
+    receiveHelp: (p, helper) => `So ${helper || "someone patient"} asked ${p} to try explaining it again, slowly, and this time actually listened until it made sense.`,
+    recognizeHelp: (p) => `${p} paused before trying again and realized that being listened to slowly, without rushing, was what had finally let the words land.`,
+    encounterStruggle: (p) => `Later, ${p} noticed another child trying to explain something, getting more frustrated each time the words came out wrong.`,
+    heroGives: (p, trueBelief) => `Remembering how it had felt to finally be heard, ${p} asked the other child to try again, slowly, and listened all the way through, realizing ${lowerFirstKeepingI(stripTrailingPeriod(trueBelief))}.`,
+    resolutionAction: (p) => `${p} found the other child's words finally landing, and smiled`,
+    resolutionClose: () => `glad to have listened all the way through`,
+  },
+  DEFAULT: {
+    receiveHelp: (p, helper) => `So ${helper || "someone close by"} noticed ${p} struggling and stepped in with real, concrete help, not just words.`,
+    recognizeHelp: (p) => `${p} paused and realized that the help had actually changed how the moment felt, not just how it looked.`,
+    encounterStruggle: (p) => `Later, ${p} noticed someone else quietly struggling with something not so different from what ${p} had just been through.`,
+    heroGives: (p, trueBelief) => `Remembering the help that had made the difference, ${p} stepped in and offered the same kind of help, realizing ${lowerFirstKeepingI(stripTrailingPeriod(trueBelief))}.`,
+    resolutionAction: (p) => `${p} felt the other child settle, helped in turn`,
+    resolutionClose: () => `glad the same help had reached someone else too`,
+  },
+};
+
+// T15 Realization Contract (added 2026-08-12, per
+// docs/prana-kids/T15_REALIZATION_PILOT_2026-08-12.md). T15's fixed
+// mechanism (from phase8-data/storyTemplates.json's own requiredBeats) is
+// PROBLEM -> ASSUMPTION -> DISMISSAL -> SECOND_LOOK ->
+// UNEXPECTED_CONTRIBUTION -> RESOLUTION: the hero assumes someone/something
+// cannot possibly help, dismisses them, tries without them (not enough), is
+// prompted to take a second look, and the dismissed helper contributes the
+// missing piece in a way true to their own nature. Like T14, none of the 15
+// live T15 situations literally narrate an "assumed-incapable helper" scene
+// in their storySeed text — that receive/dismiss/help shape is a
+// template-authored device fixed by the template's own contract, not
+// extractable from the situation text directly. What the situation text
+// DOES supply is the underlying anxiety/trust domain, which determines who
+// gets dismissed and what kind of contribution genuinely fits. Reading all
+// 15 T15 situations surfaced 7 genuinely distinct domains (mirroring T18's
+// own granularity of 7, not forced parity with T14's 5) — 2 singleton modes
+// (SENSORY_OVERWHELM, DIGITAL_BOUNDARY_SAFETY) are precedented by T18's own
+// single-situation TEMPTATION_TRADEOFF mode.
+function detectT15RealizationMode(ctx) {
+  const situation = ctx._lookups && ctx._lookups.situation;
+  const text = `${(ctx.narrativeSummarySentences || []).join(" ")} ${buildStorySeedContextText(situation)}`.toLowerCase();
+  const score = (pattern) => {
+    const matches = text.match(pattern);
+    return matches ? matches.length : 0;
+  };
+  const ranked = [
+    { mode: "TRUST_THE_UNFAMILIAR", score: score(/\b(stranger|unfamiliar|never met|new nanny|new helper|hasn'?t met|doesn'?t know this person|new (person|voice|pair of shoes)|new face)\b/g) },
+    { mode: "SEPARATION_FEAR", score: score(/\b(parent\w* (will |has to |had to )?leav\w*|trip|travel\w*|suitcase|goodbye|away|sick|unwell|ill|divorc\w*|separat\w*|no longer live together|empty chair)\b/g) },
+    { mode: "UNCERTAIN_FROM_OVERHEARD", score: score(/\b(overhear\w*|overheard|money problem\w*|big change|didn'?t hear|part of the information|voices drift)\b/g) },
+    { mode: "LOSING_THE_FAMILIAR", score: score(/\b(new teacher|leaving.*classroom|moving|mov(ed|ing) house|new bedroom|new home|none of the little things|familiar bedroom)\b/g) },
+    { mode: "BROKEN_PROMISE_TRUST", score: score(/\b(promise\w*|forgot\w*|forgotten)\b/g) },
+    { mode: "DIGITAL_BOUNDARY_SAFETY", score: score(/\b(password|online|login|level up|digital platform)\b/g) },
+    { mode: "SENSORY_OVERWHELM", score: score(/\b(noisy|crowd\w*|overcrowded|overwhelm\w*|volume button|trolley|music plays|every side)\b/g) },
+  ];
+  ranked.sort((a, b) => b.score - a.score);
+  if (!ranked[0].score) return "DEFAULT";
+  return ranked[0].mode;
+}
+
+// Each mode supplies: what the hero is trying to solve (problem, grounded in
+// SETUP separately), who/what the hero assumes cannot possibly help and
+// dismisses (drawn from ctx.coreReference — a person-noun already extracted
+// from the situation's own text — never an invented character), what
+// happens when the hero tries without them, what prompts the second look,
+// and the specific, in-character contribution the dismissed helper makes.
+// RESOLUTION always carries ctx.trueBelief so the realization is legible.
+const T15_MODE_FRAMING = {
+  TRUST_THE_UNFAMILIAR: {
+    assumption: (p, dismissed) => `${p} was sure that only someone already known and trusted could make this feel safe — surely ${dismissed || "this unfamiliar person"} could not be that, not yet.`,
+    dismissal: (p) => `So ${p} stayed quiet and careful, waiting for the moment to pass on its own — but the unease did not pass; it just sat there, unanswered. ${p} paused, unsure what else to try.`,
+    secondLook: (p, dismissed) => `Then ${p} noticed ${dismissed || "the unfamiliar person"} slow down, ask a small, ordinary question, and wait without rushing for an answer.`,
+    contribution: (p, dismissed) => `${dismissed || "The unfamiliar person"} did not try to fix the unease at all — just stayed steady and patient until ${p} was ready, which turned out to be exactly the missing piece.`,
+    resolutionAction: (p) => `${p} felt more at ease, a little more sure of the new person than before`,
+    resolutionClose: () => `glad to have let someone new show who they really were`,
+  },
+  SEPARATION_FEAR: {
+    assumption: (p, dismissed) => `${p} was sure that only the parent's own presence could make the worry go away — surely ${dismissed || "anyone else close by"} could not do that instead.`,
+    dismissal: (p) => `So ${p} tried to hold onto the worry alone, turning it over and over — but the worry only grew heavier, not lighter. ${p} stopped, unsure what else to do.`,
+    secondLook: (p, dismissed) => `Then ${dismissed || "someone else close by"} sat down next to ${p} without being asked, in no hurry to leave.`,
+    contribution: (p, dismissed) => `${dismissed || "That person"} could not bring the parent back sooner, but stayed close and said the honest, steady thing ${p} actually needed to hear — and that was the missing piece.`,
+    resolutionAction: (p) => `${p} breathed out, the worry smaller than before`,
+    resolutionClose: () => `steadier, having let someone else's steadiness in`,
+  },
+  UNCERTAIN_FROM_OVERHEARD: {
+    assumption: (p, dismissed) => `${p} was sure that only overhearing the rest of the grown-up conversation could settle the guessing — surely asking ${dismissed || "someone directly"} would not really work.`,
+    dismissal: (p) => `So ${p} kept quietly guessing, filling the gaps with worse and worse possibilities — but the guessing only made the fear bigger. ${p} sat with the not-knowing for a moment.`,
+    secondLook: (p, dismissed) => `Then ${dismissed || "someone nearby"} noticed ${p}'s worried face and asked what was wrong.`,
+    contribution: (p, dismissed) => `${dismissed || "That grown-up"} answered plainly, in words sized for ${p} to actually understand, which turned out to be exactly the missing piece the guessing never could supply.`,
+    resolutionAction: (p) => `${p} nodded, the guessing finally replaced by something true`,
+    resolutionClose: () => `steadier, having asked instead of only guessing`,
+  },
+  LOSING_THE_FAMILIAR: {
+    assumption: (p, dismissed) => `${p} was sure that only the familiar person or place staying exactly the same could make this feel okay — surely ${dismissed || "anything new"} could not replace what was being lost.`,
+    dismissal: (p) => `So ${p} held onto the old, familiar version and refused to notice anything new — but that did not stop the change from being real. ${p} stood still for a second, unsure what to do next.`,
+    secondLook: (p, dismissed) => `Then ${p} decided to take a second, closer look at ${dismissed || "the new person or place"}, instead of only comparing it to what was gone.`,
+    contribution: (p, dismissed) => `${dismissed || "The new person or place"} turned out to carry its own small, real kindness, not a copy of the old one but something true in its own right — the missing piece ${p} had not been looking for.`,
+    resolutionAction: (p) => `${p} let the new thing be itself instead of a lesser copy of the old`,
+    resolutionClose: () => `settled, having made room for something new to be good on its own terms`,
+  },
+  BROKEN_PROMISE_TRUST: {
+    assumption: (p, dismissed) => `${p} was sure that once a promise was broken, only getting the exact original thing back could fix it — surely ${dismissed || "an honest word instead"} could not really undo the disappointment.`,
+    dismissal: (p) => `So ${p} stayed upset and said nothing, waiting for things to somehow go back to how they were — but staying quiet did not fix anything. ${p} paused before deciding what to do next.`,
+    secondLook: (p, dismissed) => `Then ${dismissed || "the other person"} came back, looked ${p} in the eye, and said plainly what had actually gone wrong.`,
+    contribution: (p, dismissed) => `${dismissed || "That honest word"} did not undo what had happened, but it turned out to matter more than the original promise itself — the missing piece that made trust possible again.`,
+    resolutionAction: (p) => `${p} felt the tightness in their chest loosen, the friendship steadier than it had been a moment ago`,
+    resolutionClose: () => `glad to have let an honest word count for something`,
+  },
+  DIGITAL_BOUNDARY_SAFETY: {
+    assumption: (p, dismissed) => `${p} was sure that telling ${dismissed || "a grown-up"} about the strange message would only end the game and bring trouble — surely handling it alone was the safer choice.`,
+    dismissal: (p) => `So ${p} hesitated, fingers hovering over the keyboard, trying to decide alone — but the uneasy feeling did not go away. ${p} stopped and sat with the uneasy feeling for a second.`,
+    secondLook: (p, dismissed) => `Then ${p} remembered ${dismissed || "a grown-up"} had said before, calmly, that strange requests were always worth mentioning.`,
+    contribution: (p, dismissed) => `${dismissed || "The grown-up"} did not get upset at all — just helped ${p} block the message and stay safe, which turned out to be exactly the missing piece.`,
+    resolutionAction: (p) => `${p} felt calmer once the message was closed`,
+    resolutionClose: () => `glad to have asked instead of deciding alone`,
+  },
+  SENSORY_OVERWHELM: {
+    assumption: (p, dismissed) => `${p} was sure that only leaving the noisy place completely could make the overwhelmed feeling stop — surely ${dismissed || "a small trick from someone else"} could not be enough.`,
+    dismissal: (p) => `So ${p} pushed forward through the noise anyway, trying to just get through it — but the tightness in ${p}'s chest only grew. ${p} stood still for a beat before trying anything else.`,
+    secondLook: (p, dismissed) => `Then ${dismissed || "someone close by"} crouched down and offered one small, simple idea — a quiet corner, a few slow breaths, a hand to hold.`,
+    contribution: (p, dismissed) => `${dismissed || "That small idea"} was so simple it had seemed impossible to matter, but it helped exactly where nothing else had.`,
+    resolutionAction: (p) => `${p} felt the tightness ease, the noise still there but no longer too much`,
+    resolutionClose: () => `steadier, having let one small idea actually help`,
+  },
+  DEFAULT: {
+    assumption: (p, dismissed) => `${p} was sure that ${dismissed || "the one obvious answer"} was the only thing that could really help — surely nothing else could make a difference.`,
+    dismissal: (p) => `So ${p} tried to manage it alone — but that was not enough on its own. ${p} paused, uncertain what else there was to try.`,
+    secondLook: (p, dismissed) => `Then ${p} decided to take a second, closer look at ${dismissed || "someone close by"}, easy to overlook until now.`,
+    contribution: (p, dismissed) => `${dismissed || "That overlooked helper"} contributed exactly the missing piece, in a way true to who they were.`,
+    resolutionAction: (p) => `${p} felt the problem settle, solved in a way ${p} had not expected`,
+    resolutionClose: () => `glad to have looked again before deciding no one else could help`,
+  },
+};
+
+// T04 Realization Contract (added 2026-08-12, per
+// docs/prana-kids/T04_REALIZATION_PILOT_2026-08-12.md). T04's fixed
+// mechanism (from phase8-data/storyTemplates.json's own requiredBeats) is
+// OPENING_QUESTION -> CLUE_1 -> QUESTION_2 -> CLUE_2 -> QUESTION_3 ->
+// CLUE_3 -> REVELATION -> RESOLUTION: the hero asks a question tied
+// directly to the false belief, gets a partial answer that only raises a
+// sharper question, repeats that narrowing twice more, and the third
+// question is answered from within (not by a new external clue) — the
+// three clues then connect at once into the true belief
+// (storyTemplates.json's own repetitionPattern.finalVariation and
+// escalationPattern: "intellectual/emotional specificity, not physical
+// difficulty"). This is a genuinely different beat shape from every other
+// contract template — not a try/fail arc (T03/T18), not a receive/give arc
+// (T14), not a dismiss/second-look arc (T15) — so it is not reused from any
+// of them.
+//
+// Only 1 of the 156 active situations in situations.json naturally selects
+// T04 (SIT137, "Tempted to look at friend's paper during a test" —
+// confirmed via phase8-tools/dumpT04Situations2.cjs, mirroring
+// dumpT15Situations.mjs). Per the task brief's single-mechanism allowance,
+// no multi-mode text-signal detector was built: there is only one real
+// situation's worth of evidence, so inventing several modes for symmetry
+// with T14/T15/T18 would not be modes grounded in real T04 data, it would
+// be invented variety. detectT04RealizationMode() below always returns
+// "DEFAULT" and exists only to keep this template's wiring symmetric with
+// every other contract template's call sites (validateEventChain,
+// writeProseFromEventChain) — it does no real text-signal scoring because
+// there is nothing yet to score between. The single DEFAULT mode's framing
+// functions are written generically off ctx.falseBelief/ctx.trueBelief/
+// ctx.coreReference (the situation's own extracted person-noun) rather than
+// hardcoded to SIT137's cheating-specific details, so if upstream selector
+// coverage ever routes a second, different T04 situation here (see
+// upstream-limitation finding in the pilot doc), the prose still grounds
+// itself in that situation's own belief/reference text instead of leaking
+// SIT137-specific nouns.
+function detectT04RealizationMode(ctx) {
+  return "DEFAULT";
+}
+
+// Each stage supplies: the question asked (narrower each time), the partial
+// clue/answer it gets (or, for the third, the internal readiness that
+// substitutes for an external clue), and the closing revelation/resolution.
+// coreReference (ctx.coreReference) is the situation's own extracted
+// person-noun, used mid-sentence exactly like T14/T15's dismissed-helper
+// convention — never an invented character. REVELATION always carries
+// ctx.trueBelief so the realization is legible and the structural
+// contract's true-belief check (validateEventChain) has something to find.
+// Every stage below takes a `facts` object (tensionFact, wantClause,
+// obstacleFact, symbolLabel — all pulled from the situation's own
+// storySeed/realizedSituation fields via concreteSceneFacts(ctx) and
+// existing ctx fields, never invented) so that two different T04 situations
+// under the single DEFAULT mode produce genuinely different
+// CLUE_1/QUESTION_2/CLUE_2/QUESTION_3/CLUE_3/RESOLUTION text, not the same
+// fixed sentence with only the protagonist's name swapped in. This was a
+// real bug found during this pilot's own regression testing (forcing T04
+// onto SIT005/SIT001/SIT046/SIT028 — see the pilot doc §ed. read): an
+// earlier draft of this table had every mid-chain beat as a fixed sentence
+// varying only by protagonist/coreReference substitution, which is exactly
+// the T03-fallback failure this whole initiative exists to remove. Fixed by
+// working ctx.obstacleClause / concreteSceneFacts(ctx).tensionFact /
+// ctx.realizedSituation.want / ctx.symbolLabel into the mid-chain beats.
+//
+// GROUNDING FIX (2026-08-12, follow-up): QUESTION_3 previously read
+// `facts.missionPhrase` — ctx.missionPhrase (buildEventPlannerContext,
+// naturalMissionPhrase()) is the ABSTRACT Mission Type resolved through
+// Character/Archetype compatibility (see buildStorySelectionDecisionLog's
+// mission.reason: "Concrete Mission selected after resolving abstract
+// Mission Type... "), entirely independent of the situation's own conflict.
+// For SIT137 this silently substituted whatever abstract mission got
+// selected (e.g. "keep an important secret", "overcome a personal fear")
+// into what must stay a story about whether looking at a friend's paper is
+// actually earning the answer — an unrelated-abstraction leak, not a
+// SIT137-specific bug (any T04 situation would inherit its selector's
+// mission text here regardless of fit). Fixed by dropping
+// facts.missionPhrase entirely and grounding QUESTION_3 in
+// facts.wantClause (ctx.realizedSituation.want — the situation's own
+// immediateWant, already used by CLUE_1) instead, so the third question
+// stays on the situation's actual want/obstacle instead of an unrelated
+// mission label.
+const T04_MODE_FRAMING = {
+  DEFAULT: {
+    openingQuestion: (p, falseBelief) => `${p} stopped, caught on the question the moment had just raised: if "${falseBelief}" were true, would this really be as simple as it first seemed?`,
+    // facts.obstacleFact/tensionFact are already correctly cased by
+    // concreteSceneFacts()'s own lowerFirstUnlessProperNoun (proper nouns
+    // like the protagonist's name stay capitalized mid-sentence) — do not
+    // re-lowercase them here, only stitch them in as-is.
+    clue1: (p, dismissed, facts) => `Looking toward ${dismissed || "the easy way out"} answered nothing on its own — ${facts.obstacleFact ? `${facts.obstacleFact} was still there either way` : "the trouble was still there either way"}, and it only made ${p} wonder something sharper: would taking the shortcut actually make ${facts.wantClause ? `getting to "${facts.wantClause}"` : "the trouble"} go away, or just hide it for a moment?`,
+    // Narrated, not quoted — the dismissed/coreReference text inserted here
+    // varies in length per situation, and a quoted dialogue line carrying
+    // it can run past QA-013's 60-char limit (found during regression on
+    // SIT137, whose "their friend" phrasing pushed a quoted version over
+    // the limit); narration has no such length gate.
+    question2: (p, dismissed, facts) => `So ${p} paused and asked the sharper question silently — if it came from ${dismissed || "somewhere else"} and not from ${p}, would it actually be ${p}'s own?`,
+    clue2: (p, dismissed, facts) => `The answer came as a feeling more than a fact — ${facts.tensionFact ? facts.tensionFact : `a tight, uneasy knot in ${p}'s chest`} that did not loosen no matter how ${p} looked at it, as if some part of ${p} already knew.`,
+    // Narrated, not quoted — the earlier QUESTION_2 quote stays under
+    // QA-013's 60-char dialogue-line limit, but this final, most-specific
+    // question runs longer in full sentence form, so it is folded into
+    // narration instead of spoken dialogue, same fix T08/T15/T16 already
+    // applied to their own long belief/question sentences.
+    question3: (p, dismissed, facts) => `That left one question closer to the heart of it than either question before — not what would work, but whether ${p} would have actually earned ${facts.wantClause ? `"${facts.wantClause}"` : "it"}, or only borrowed the look of it.`,
+    clue3: (p, dismissed, facts) => `This time no new clue arrived from outside${facts.symbolLabel ? `, not even a quiet hint of ${lowerFirstKeepingI(facts.symbolLabel)}` : ""}. ${p} already knew, quietly and completely, without needing anyone or anything else to say it first.`,
+    revelation: (p, trueBelief) => `All three questions folded into one another at once, and ${p} understood: ${lowerFirstKeepingI(stripTrailingPeriod(trueBelief))}.`,
+    resolutionAction: (p, dismissed, facts) => `${p} turned back to ${facts.wantClause ? lowerFirstKeepingI(facts.wantClause) : "the moment at hand"} and kept going, steady now instead of torn`,
+    resolutionClose: () => `not because the hard question had gone away, but because it was finally, fully answered`,
+  },
+};
+
+// T09 Realization Contract (added 2026-08-12, per
+// docs/prana-kids/T09_REALIZATION_PILOT_2026-08-12.md, following the T04
+// pilot's method — the closest precedent because T04 also had few natural
+// situations). T09's fixed mechanism (phase8-data/storyTemplates.json's own
+// requiredBeats) is BIG_EXPECTATION -> BIG_ATTEMPT_FAILS ->
+// QUIET_QUALITY_NOTICED -> QUIET_ACTION -> RESOLUTION: everyone (including
+// the hero) expects the fix to require a big, obvious action; the real fix
+// is a quiet quality the hero already has, which succeeds specifically
+// where the big/loud attempt failed (storyTemplates.json's own
+// resolutionPattern). repetitionNote is explicit that this is a
+// single-inversion contrast structure, not a three-part try/fail/try
+// repetition like T03/T18 — so the beat shape below is NOT reused from
+// either of those templates.
+//
+// Only 4 of the 168 active situations in situations.json naturally select
+// T09 (SIT009 hangry, SIT019 scratchy clothes, SIT029 lost in a crowd,
+// SIT030 saw a scary video — confirmed via
+// phase8-tools/dumpT09Situations.cjs). All 4 are NEED_SAFETY family, but
+// reading their actual storySeed/narrativeSummary text (not just the
+// taxonomy) shows the underlying mechanism is genuinely NOT identical
+// across all 4:
+// - SIT009 + SIT019 both escalate from an ignorable physical discomfort
+//   (hunger/tiredness, scratchy clothing) into "ordinary things feel
+//   unbearable" — the quiet quality that fixes this is noticing and caring
+//   for the body's own signal, not any external fix. One genuine mode:
+//   BODY_DISCOMFORT.
+// - SIT029 is separation panic in a crowd — the quiet quality is staying
+//   still and recalling a taught safety plan, not body-awareness at all.
+//   A genuinely different mode: SEPARATION_SAFETY.
+// - SIT030 is an intrusive scary memory from a video, with no separation
+//   and no crowd — the quiet quality is recognizing imagination-vs-reality
+//   and seeking comfort from a trusted adult. A third genuinely different
+//   mode: INTRUSIVE_FEAR.
+// This is 3 real modes grounded in real differences in the actual text
+// (not invented for symmetry with T14/T15/T18) — collapsing all 4 into one
+// mode would force SIT029/SIT030's genuinely different "big attempt" and
+// "quiet quality" content through SIT009/SIT019's body-awareness framing,
+// which would be wrong for those two situations, not just generic.
+//
+// detectT09RealizationMode uses most-specific-match text-signal scoring
+// over narrativeSummarySentences + storySeedContextText (falseBeliefText/
+// needId as supporting evidence only, never the sole signal — all 4
+// situations share NEED_SAFETY so taxonomy alone cannot distinguish them).
+// SEPARATION_SAFETY and INTRUSIVE_FEAR each have narrow, specific
+// vocabulary (crowd/parent-loss language; video/scary-image-replay
+// language) so they are checked first and only need one hit; BODY_DISCOMFORT
+// is the broader "physical discomfort escalation" bucket and is the
+// fallback default (mirrors T15's own lesson about not letting a broad
+// regex steal a more-specific mode's situations — checked last, after the
+// two narrow modes have had first chance to match).
+function detectT09RealizationMode(ctx) {
+  // BUG (found during SIT029 editorial re-review, 2026-08-12): this used to
+  // read ctx.storySeedContextText, a field that is never assigned anywhere
+  // in the pipeline (buildEventPlannerContext never sets it) — it was always
+  // "", so detection silently ran on only narrativeSummarySentences (2
+  // scene-setting sentences) + falseBelief, neither of which happens to
+  // contain SIT029's own separation vocabulary ("mall", "crowd", "familiar
+  // hand"). That vocabulary lives in the situation's own storySeed
+  // (immediateObstacle/emotionalTension/context), the same fields
+  // concreteSceneFacts(ctx) already reads for obstacleFact/tensionFact — so
+  // SIT029 silently fell through to the BODY_DISCOMFORT default and every
+  // downstream beat used BODY_DISCOMFORT's framing. Reading directly from
+  // ctx._lookups.situation.storySeed (grounded, already-authored data, not
+  // invented) fixes detection without touching the 3 mode-framing tables.
+  const seed = ctx._lookups && ctx._lookups.situation && ctx._lookups.situation.storySeed;
+  const text = [
+    ...(ctx.narrativeSummarySentences || []),
+    seed && seed.immediateObstacle,
+    seed && seed.emotionalTension,
+    seed && Array.isArray(seed.context) ? seed.context.join(" ") : "",
+    ctx.falseBelief || "",
+  ].filter(Boolean).join(" ").toLowerCase();
+
+  const separationSignal = /\b(crowd|mall|lost|separated|parent'?s? hand|couldn'?t see (my|their) (mom|dad|parent)|familiar hand)\b/;
+  const intrusiveFearSignal = /\b(video|scary (picture|image|video)|replay|kept seeing it|frightening (video|image)|closes? their eyes)\b/;
+  const bodyDiscomfortSignal = /\b(hungry|hangry|tired|scratchy|itchy|clothing|shirt|uncomfortable|cranky|body)\b/;
+
+  if (separationSignal.test(text)) return "SEPARATION_SAFETY";
+  if (intrusiveFearSignal.test(text)) return "INTRUSIVE_FEAR";
+  if (bodyDiscomfortSignal.test(text)) return "BODY_DISCOMFORT";
+  // No mode-specific vocabulary matched (e.g. a forced test case unrelated
+  // to any of the 3 real T09 mechanisms) — BODY_DISCOMFORT is the broadest
+  // real mode and the safest generic fallback, same role T04's single
+  // DEFAULT mode plays for T04.
+  return "BODY_DISCOMFORT";
+}
+
+// Each mode supplies all 5 beats. `facts` (obstacleFact, tensionFact,
+// wantClause — pulled from concreteSceneFacts(ctx) and
+// ctx.realizedSituation.want, never invented) is threaded into every beat
+// so two situations under the same mode (SIT009/SIT019, both
+// BODY_DISCOMFORT) still produce genuinely different BIG_ATTEMPT_FAILS/
+// QUIET_QUALITY_NOTICED/QUIET_ACTION text, not a fixed sentence varying
+// only by protagonist name — the exact T03-fallback failure the T04 pilot
+// caught in itself (see T04_GROUNDING_FIX_2026-08-12.md). BIG_ATTEMPT_FAILS
+// must show a genuinely big/loud/obvious action failing, per T09's own
+// contract; RESOLUTION must explicitly contrast the quiet action succeeding
+// where the big attempt failed and land ctx.trueBelief, per
+// storyTemplates.json's resolutionPattern.
+const T09_MODE_FRAMING = {
+  BODY_DISCOMFORT: {
+    bigExpectation: (p, facts, falseBelief) => `Everyone around ${p}, and ${p} too, believed "${falseBelief}" — so the fix had to be something big and obvious — snapping back louder, arguing harder, pushing through the annoyance by sheer stubbornness — because surely a problem this loud needed a big enough reaction to match it.`,
+    bigAttemptFails: (p, facts) => `So ${p} tried exactly that — raising a voice, tugging and huffing and complaining at full volume — but it did nothing to fix the real trouble: ${facts.obstacleFact || "the discomfort underneath it all"}, still there, unchanged, no matter how big the reaction got.`,
+    quietQualityNoticed: (p, facts) => `Then, in the middle of all that noise, ${p} noticed something small and quiet instead — ${facts.tensionFact ? `${facts.tensionFact}, and underneath it` : `that the real trouble was not the small thing in front of ${p} at all — underneath it`} was a tired, uncomfortable body asking to be listened to.`,
+    quietAction: (p, facts) => `So ${p} stopped pushing and did the quiet thing instead — paused, took a slow breath, and gave the body what it had been asking for all along${facts.wantClause ? `, so ${p} could finally ${facts.wantClause}` : ""}, without any fuss or fighting at all.`,
+    resolution: (p, trueBelief, facts) => `That is what worked — not the loud reaction, which had changed nothing, but the quiet act of caring for the body underneath it, and ${p} understood: ${lowerFirstKeepingI(stripTrailingPeriod(trueBelief))}.`,
+  },
+  SEPARATION_SAFETY: {
+    bigExpectation: (p, facts, falseBelief) => `Everyone around ${p}, and ${p} too, believed "${falseBelief}" — so the fix had to be something big and frantic — running, shouting, pushing through the crowd as fast as possible — because surely finding a lost parent again needed a big enough search to match the fear.`,
+    bigAttemptFails: (p, facts) => `So ${p} tried exactly that — darting one way and then another, calling out into the noise — but it did nothing to fix the real trouble: ${facts.obstacleFact || "there were still people everywhere and the familiar hand was still gone"}, and running only made the crowd feel bigger and more confusing.`,
+    quietQualityNoticed: (p, facts) => `Then, in the middle of all that running, ${p} noticed something small and quiet instead — ${facts.tensionFact ? facts.tensionFact : "that panic was making it harder, not easier, to remember what to actually do"} — and a quiet memory surfaced: the plan they had been taught for exactly this moment.`,
+    quietAction: (p, facts) => `So ${p} stopped running and did the quiet thing instead — paused, stood still in one spot, looked for a grown-up who could help, and waited calmly${facts.wantClause ? ` to ${facts.wantClause}` : ""}, instead of chasing after every stranger in the crowd.`,
+    resolution: (p, trueBelief, facts) => `That is what worked — not the frantic running, which had changed nothing, but standing still and staying calm, and ${p} understood: ${lowerFirstKeepingI(stripTrailingPeriod(trueBelief))}.`,
+  },
+  INTRUSIVE_FEAR: {
+    bigExpectation: (p, facts, falseBelief) => `Everyone around ${p}, and ${p} too, believed "${falseBelief}" — so the fix had to be something big and forceful — trying hard to never think about it again, staying busy every second, pushing the memory away by sheer effort — because surely a scary picture this loud in the mind needed a big enough push to make it stop.`,
+    bigAttemptFails: (p, facts) => `So ${p} tried exactly that — staying busy, refusing to think about it, trying to force the memory shut — but it did nothing to fix the real trouble: ${facts.obstacleFact || "the picture kept coming back the moment things went quiet"}, returning again every time ${p} closed their eyes.`,
+    quietQualityNoticed: (p, facts) => `Then, in the middle of all that pushing, ${p} noticed something small and quiet instead — ${facts.tensionFact ? facts.tensionFact : "that the scary picture was only a memory, not something happening right now"} — and that noticing was quieter than any of the pushing had been.`,
+    quietAction: (p, facts) => `So ${p} stopped pushing the memory away and did the quiet thing instead — found a trusted grown-up and said out loud what had been replaying inside, letting the words carry some of the fear out with them${facts.wantClause ? ` until ${p} could ${facts.wantClause}` : ""}.`,
+    resolution: (p, trueBelief, facts) => `That is what worked — not forcing the memory away, which had changed nothing, but naming it quietly out loud to someone who could help, and ${p} understood: ${lowerFirstKeepingI(stripTrailingPeriod(trueBelief))}.`,
+  },
+};
+
+// T05 ("Circle Back" / Circular Return) Realization Contract, pilot
+// 2026-08-12. Built from the real natural-selector coverage: only 4 of the
+// active situations (SIT036, SIT057, SIT066, SIT084 — see
+// docs/prana-kids/T05_REALIZATION_PILOT_2026-08-12.md §1) naturally route to
+// T05, and they genuinely split into 3 distinct mirror-return mechanisms —
+// not invented for symmetry with T09's 3 modes, but the actual shape the
+// data supports: (1) a public-exposure fear (SIT036 — being seen/judged
+// while performing or answering), (2) a not-chosen comparison (SIT057,
+// SIT084 — someone else is selected/recognised instead of the hero), and
+// (3) a visible-difference shame (SIT066 — a physical difference read as
+// something wrong). Detection reads narrativeSummarySentences plus the real
+// storySeed fields (immediateObstacle/emotionalTension/context), never the
+// dead ctx.storySeedContextText field (Lesson 2), and uses most-specific
+// signal-count scoring rather than first-match order (Lesson 3).
+function detectT05RealizationMode(ctx) {
+  const seed = ctx._lookups && ctx._lookups.situation && ctx._lookups.situation.storySeed;
+  const text = [
+    ...(ctx.narrativeSummarySentences || []),
+    seed && seed.childExperience,
+    seed && seed.immediateObstacle,
+    seed && seed.emotionalTension,
+    seed && Array.isArray(seed.context) ? seed.context.join(" ") : "",
+    ctx.falseBelief || "",
+  ].filter(Boolean).join(" ").toLowerCase();
+
+  const publicExposureSignal = /\b(laugh(ed|ing|s)?|perform(s|ing)?|answer(s|ing)?|hand (stays|stayed) (down|firmly)|front of (the )?class|raise[ds]? (a |their )?hand|stage|spoken?|say it|everyone (watching|laughing))\b/g;
+  const notChosenSignal = /\b(chosen|choose|not chosen|award|winner|selected|selection|recognit\w*|applause|prize|student of the month|another (child|classmate)|special (class )?role)\b/g;
+  const visibleDifferenceSignal = /\b(tall(er|est)?|short(er|est)?|height|class line|line-?up|line up|stand out|different (from|to)|appearance|much (shorter|taller)|fit(s)? neatly)\b/g;
+
+  const countMatches = (regex) => (text.match(regex) || []).length;
+  const scores = {
+    PUBLIC_EXPOSURE: countMatches(publicExposureSignal),
+    NOT_CHOSEN_COMPARISON: countMatches(notChosenSignal),
+    VISIBLE_DIFFERENCE: countMatches(visibleDifferenceSignal),
+  };
+  const best = Object.keys(scores).reduce((a, b) => (scores[b] > scores[a] ? b : a), "NOT_CHOSEN_COMPARISON");
+  // NOT_CHOSEN_COMPARISON is the broadest of the 3 real modes (2 of the 4
+  // natural situations) and the safest fallback when a forced/unnatural
+  // stress-test situation matches none of the 3 signal sets, mirroring T09's
+  // BODY_DISCOMFORT/T04's DEFAULT fallback precedent.
+  return scores[best] > 0 ? best : "NOT_CHOSEN_COMPARISON";
+}
+
+// Each mode supplies all 6 T05 beats. `facts` (obstacleFact, tensionFact,
+// wantClause — pulled from concreteSceneFacts(ctx)/ctx.realizedSituation,
+// never invented) is threaded into MIDDLE_JOURNEY/INSIGHT/MIRROR_ENDING/
+// NEW_REACTION so SIT057 and SIT084 (both NOT_CHOSEN_COMPARISON) still read
+// as genuinely different stories, not the same sentence with a swapped
+// name/noun (the T04-pilot fixed-sentence bug this pattern exists to avoid).
+// OLD_REACTION and NEW_REACTION deliberately echo matched vocabulary
+// ("hand stayed down" / "hand went up", "stopped clapping" / "clapped, and
+// meant it", "shrank" / "stood") so the mirror contrast is legible without
+// naming the belief twice.
+const T05_MODE_FRAMING = {
+  PUBLIC_EXPOSURE: {
+    oldReaction: (p, facts, falseBelief) => `The old thought came quickly: "${falseBelief}" So ${p} paused, and then let ${p}'s hand stay firmly down, letting the moment pass rather than risk being seen getting it wrong.`,
+    middleJourney: (p, facts) => `In the days after, ${p} watched someone else answer, perform, or be seen and get it a little wrong too — and the sky did not fall; ${facts.tensionFact || "the fear had always been louder in the imagining than anything that actually happened"}. Slowly, ${p} noticed that ${facts.obstacleFact || "not knowing exactly what people would think"} had never once actually stopped anyone else from trying.`,
+    insight: (p, trueBelief) => `Away from the classroom, in a quiet moment, ${p} sat with the thought and began to understand something different: ${lowerFirstKeepingI(stripTrailingPeriod(trueBelief))}.`,
+    mirrorEnding: (p, facts) => `Then the same kind of moment came around again — a question was asked, and ${p} was called on to answer in front of everyone, ${facts.obstacleFact || "with no way to know for certain how it would be received"}.`,
+    newReaction: (p, trueBelief, facts) => `This time the same hand that had stayed down went up. ${p} still felt the flutter, but chose to answer anyway${facts.wantClause ? `, so ${p} could finally ${facts.wantClause}` : ""}, and stayed with their own voice — because ${lowerFirstKeepingI(stripTrailingPeriod(trueBelief))}.`,
+  },
+  NOT_CHOSEN_COMPARISON: {
+    oldReaction: (p, facts, falseBelief) => `The old thought came quickly: "${falseBelief}" So ${p} paused, looked at what the chosen person had, and quietly stopped believing their own effort had counted for anything.`,
+    middleJourney: (p, facts) => `Over the next few days, ${p} kept working at the same thing anyway, even with no name called and no prize to show for it — and ${facts.tensionFact || "the trying itself started to feel like it belonged to someone worth being proud of"}. ${p} began to notice that ${facts.obstacleFact || "someone else being chosen this time"} had not actually taken away anything ${p} had built.`,
+    insight: (p, trueBelief) => `Away from the classroom, in a quiet moment, ${p} sat with the thought and began to understand something different: ${lowerFirstKeepingI(stripTrailingPeriod(trueBelief))}.`,
+    mirrorEnding: (p, facts) => `Then a similar moment came around again — another name was announced, and ${facts.obstacleFact || "another chance " + p + " had hoped for went to someone else, the decision already made"}.`,
+    newReaction: (p, trueBelief, facts) => `This time ${p} decided to clap anyway, and meant it${facts.wantClause ? `, still holding on to wanting to ${facts.wantClause}` : ""}. The old flinch did not come; instead ${p} felt their own worth stand steady, separate from ${facts.obstacleFact ? "who got picked this time" : "who got picked"} — because ${lowerFirstKeepingI(stripTrailingPeriod(trueBelief))}.`,
+  },
+  VISIBLE_DIFFERENCE: {
+    oldReaction: (p, facts, falseBelief) => `The old thought came quickly: "${falseBelief}" So ${p} paused, shrank a little, tucked the difference away as best as it could be tucked, and read being noticed as proof that something was wrong.`,
+    middleJourney: (p, facts) => `In the days after, ${p} kept showing up looking exactly the way ${p} looked, and ${facts.tensionFact || `nothing about being noticed ever actually cost ${p} anything real`}. ${p} began to notice that ${facts.obstacleFact || "the difference that felt so loud"} was mostly loud inside ${p}'s own head, not in how anyone else actually treated ${p}.`,
+    insight: (p, trueBelief) => `Away from the line, in a quiet moment, ${p} sat with the thought and began to understand something different: ${lowerFirstKeepingI(stripTrailingPeriod(trueBelief))}.`,
+    mirrorEnding: (p, facts) => `Then a similar moment came around again — ${p} stood somewhere visible, ${facts.obstacleFact || "clearly different from everyone nearby"}, with nowhere to hide it.`,
+    newReaction: (p, trueBelief, facts) => `This time ${p} did not shrink. ${p} stood still, held their place calmly${facts.wantClause ? `, still hoping to ${facts.wantClause}` : ""}, and let being seen be just that — because ${lowerFirstKeepingI(stripTrailingPeriod(trueBelief))}.`,
+  },
+};
+
+// T19 ("Choice at the Crossroads" / Threshold Crossing) Realization
+// Contract, pilot 2026-08-12. Natural selector coverage is confirmed at
+// exactly 2 active situations (SIT133 "Tempted to steal something", SIT137
+// "Tempted to look at friend's paper during a test" — see
+// docs/prana-kids/T19_REALIZATION_PILOT_2026-08-12.md §1). Both are the
+// SAME genuine mechanism: a live in-the-moment temptation toward a
+// dishonest/rule-breaking shortcut, weighed against the harder honest path,
+// with a real consequence tied to whichever is chosen. The only thing that
+// differs between them (peer-dare social pressure vs. solitary academic
+// opportunity) is exactly the kind of situation-specific fact the T05
+// NOT_CHOSEN_COMPARISON precedent threads through `facts`
+// (obstacleFact/tensionFact/wantClause) rather than requiring a second
+// mode — so, per that precedent and the small-pilot guidance not to force
+// mode proliferation for its own sake, this is ONE mode
+// (THRESHOLD_INTEGRITY_CHOICE), not two, and no
+// detectT19RealizationMode/mode-selection logic is built (matches T04's
+// precedent for a single-mode pilot).
+const T19_MODE_FRAMING = {
+  THRESHOLD_INTEGRITY_CHOICE: {
+    approachCrossroads: (p, facts, ctx) => `${sentenceCase(stripTrailingPeriod(ctx.realizedSituation.sentence))}. ${p} wanted to ${ctx.realizedSituation.want}, but ${sentenceCase(stripTrailingPeriod(facts.obstacleFact))} — and right there, two different paths opened up.`,
+    optionOldBelief: (p, facts, falseBelief) => `The old thought came quickly, tempting and easy: "${falseBelief}" Nobody was watching closely enough to stop ${p}, and ${facts.tensionFact ? facts.tensionFact : "the pull to take the easy way was real, not imagined"}.`,
+    optionNewBelief: (p, facts) => `The other path was harder and slower: saying no, walking away from the shortcut, and living with ${facts.wantClause ? `not getting to ${facts.wantClause} the easy way` : "the obstacle staying exactly as hard as it already was"} — with no guarantee it would feel good right away.`,
+    choice: (p, trueBelief) => `${p} stood still for a second, looked at both paths clearly, and then chose — not by accident, not because someone else decided for ${p}, but on purpose: ${lowerFirstKeepingI(stripTrailingPeriod(trueBelief))}.`,
+    consequence: (p, facts) => `The choice had a real cost right away — the hard part of it, ${facts.obstacleFact || "the exact trouble that had made the crossroads difficult in the first place"}, did not simply disappear, and for a moment ${p} wondered if the easy path would have been simpler after all.`,
+    resolution: (p, trueBelief, facts) => `But afterward, ${p} could look back at that exact moment without flinching — nothing to hide, nothing to untangle later — and ${facts.wantClause ? `${p} found a steadier way to ${facts.wantClause}` : "the ground under that choice stayed solid"}, because ${lowerFirstKeepingI(stripTrailingPeriod(trueBelief))}.`,
+  },
+};
+
 function buildTemplateSpecificEventChain(templateId, ctx) {
   const p = ctx.protagonist;
   const m = ctx.mechanism;
@@ -6798,6 +7711,641 @@ function buildTemplateSpecificEventChain(templateId, ctx) {
     };
   }
 
+  if (templateId === "T03") {
+    // T03 Realization Contract (see T03_MODE_FRAMING above for the full
+    // rationale). SETUP keeps the same want/notice framing the fallback
+    // used (it was never the genericness problem — ctx.actionPhrases and
+    // the SETUP want line are already situation-specific); ATTEMPT_1/
+    // ATTEMPT_2/TURNING_POINT/ATTEMPT_3/RESOLUTION now come from
+    // T03_MODE_FRAMING, keyed off the situation's own obstacle_domain,
+    // instead of the six fixed sentences every T03 story previously shared
+    // verbatim.
+    const t03Mode = detectT03RealizationMode(ctx);
+    const t03Framing = T03_MODE_FRAMING[t03Mode];
+    const groundedObstacleFact = concreteSceneFacts(ctx).obstacleFact;
+    const attempt1Tail = obstacleConsequenceText(ctx, "first");
+    const attempt2Tail = obstacleConsequenceText(ctx, "second");
+
+    const events = [
+      templateBeat("SETUP", {
+        eventId: "E01",
+        purpose: "setup",
+        actor: p,
+        action: `${sentenceCase(stripTrailingPeriod(ctx.realizedSituation.sentence))}. ${p} wanted to ${ctx.realizedSituation.want}. ${sentenceCase(stripTrailingPeriod(groundedObstacleFact))}. While wondering what to do, ${p} ${m.noticeVerb} a ${m.motif} nearby. The old thought came quickly: "${ctx.falseBelief}"`,
+        sourceField: "childExperience+immediateWant+immediateObstacle",
+      }),
+      templateBeat("ATTEMPT_1", {
+        eventId: "E02",
+        purpose: "attempt_1",
+        actor: p,
+        action: `So ${p} ${ctx.actionPhrases[0]}. ${t03Framing.attempt1Fail(p, attempt1Tail, ctx.coreReference)}`,
+        sourceField: "demonstrated",
+      }),
+      templateBeat("ATTEMPT_2", {
+        eventId: "E03",
+        purpose: "attempt_2",
+        actor: p,
+        action: `Along the way, ${p} ${m.noticeVerb} the ${m.motif} again. ${p} ${ctx.actionPhrases[1]} instead. ${t03Framing.attempt2Fail(p, attempt2Tail, ctx.coreReference)}`,
+        sourceField: "demonstrated",
+      }),
+      templateBeat("TURNING_POINT", {
+        eventId: "E04",
+        purpose: "turning_point",
+        actor: p,
+        action: t03Framing.turningPoint(p, ctx.trueBelief),
+        sourceField: "trueBelief",
+      }),
+      templateBeat("ATTEMPT_3", {
+        eventId: "E05",
+        purpose: "attempt_3",
+        actor: p,
+        action: `This time, ${p} ${ctx.actionPhrases[2]} — ${p} ${t03Framing.attempt3Action(p)}, ${t03Framing.attempt3Success(p)}.`,
+        sourceField: "demonstrated",
+      }),
+      templateBeat("RESOLUTION", {
+        eventId: "E06",
+        purpose: "resolution",
+        actor: p,
+        action: `${t03Framing.resolutionAction(p)} — ${t03Framing.resolutionClose(p)}.`,
+        sourceField: "demonstrated",
+      }),
+    ];
+    return {
+      events,
+      ctx,
+      templateId: "T03",
+      planForLint: buildTemplateLintPlan("T03", ctx, events, {
+        openingState: { situation: ctx.realizedSituation && ctx.realizedSituation.sentence },
+      }),
+    };
+  }
+
+  if (templateId === "T18") {
+    // T18 Realization Contract v2 (2026-08-12, second rework — see
+    // T18_MODE_FRAMING above). The first rework only varied wording inside
+    // T03's own SETUP/ATTEMPT_1/ATTEMPT_2/TURNING_POINT/ATTEMPT_3/RESOLUTION
+    // beat shape, which meant a forced SIT101/T03 vs SIT101/T18 comparison
+    // still produced the same causal skeleton (obstacle resists -> retry
+    // differently -> succeed) with different flavor text — a mechanism
+    // collision, not just a prose one. T18 now uses its OWN 8-beat shape
+    // (TINY_PROBLEM/IGNORED/GROWS_1/GROWS_2/OVERWHELMING/PAUSE/REAL_PROBLEM/
+    // RESOLUTION — already declared in storyTemplates.json's T18 entry, just
+    // never wired to this generation path until now) with a causal
+    // mechanism T03 cannot produce: there is no external obstacle to defeat
+    // at all. The trigger is small (TINY_PROBLEM). The hero's own reactions
+    // to it — not any resistance from the world — are what inflate it
+    // (IGNORED -> GROWS_1 -> GROWS_2 -> OVERWHELMING: each beat's escalation
+    // is caused by the beat before it, self-feeding, no obstacle pushing
+    // back). PAUSE breaks the loop. REAL_PROBLEM does not just relabel the
+    // original trigger with a nicer attitude (that would still be "try
+    // differently") — it names a genuinely smaller/different problem that
+    // was hiding underneath the inflated one (a missing goodbye, a missing
+    // outlet, a missing attention-anchor, an underlying hunger, a
+    // backwards order). RESOLUTION addresses that specific smaller real
+    // problem, not the original trigger.
+    const t18Mode = detectT18RealizationMode(ctx);
+    const t18Framing = T18_MODE_FRAMING[t18Mode];
+    const groundedObstacleFactT18 = concreteSceneFacts(ctx).obstacleFact;
+
+    const events = [
+      templateBeat("TINY_PROBLEM", {
+        eventId: "E01",
+        purpose: "tiny_problem",
+        actor: p,
+        action: `${sentenceCase(stripTrailingPeriod(ctx.realizedSituation.sentence))}. ${p} wanted to ${ctx.realizedSituation.want}. ${sentenceCase(stripTrailingPeriod(groundedObstacleFactT18))}. The old thought came quickly: "${ctx.falseBelief}" It was small, at first.`,
+        sourceField: "childExperience+immediateWant+immediateObstacle",
+      }),
+      templateBeat("IGNORED", {
+        eventId: "E02",
+        purpose: "reaction_1",
+        actor: p,
+        action: t18Framing.ignored(p),
+        sourceField: "demonstrated",
+      }),
+      templateBeat("GROWS_1", {
+        eventId: "E03",
+        purpose: "escalation_1",
+        actor: p,
+        action: t18Framing.grows1(p),
+        sourceField: "demonstrated",
+      }),
+      templateBeat("GROWS_2", {
+        eventId: "E04",
+        purpose: "reaction_2",
+        actor: p,
+        action: t18Framing.grows2(p),
+        sourceField: "demonstrated",
+      }),
+      templateBeat("OVERWHELMING", {
+        eventId: "E05",
+        purpose: "escalation_2",
+        actor: p,
+        action: t18Framing.overwhelming(p),
+        sourceField: "demonstrated",
+      }),
+      templateBeat("PAUSE", {
+        eventId: "E06",
+        purpose: "pause",
+        actor: p,
+        action: t18Framing.pause(p),
+        sourceField: "demonstrated",
+      }),
+      templateBeat("REAL_PROBLEM", {
+        eventId: "E07",
+        purpose: "real_problem",
+        actor: p,
+        action: t18Framing.realProblem(p, ctx.trueBelief),
+        sourceField: "trueBelief",
+      }),
+      templateBeat("RESOLUTION", {
+        eventId: "E08",
+        purpose: "resolution",
+        actor: p,
+        action: t18Framing.resolution(p, ctx.actionPhrases[2]),
+        sourceField: "demonstrated",
+      }),
+    ];
+    return {
+      events,
+      ctx,
+      templateId: "T18",
+      planForLint: buildTemplateLintPlan("T18", ctx, events, {
+        openingState: { situation: ctx.realizedSituation && ctx.realizedSituation.sentence },
+      }),
+    };
+  }
+
+  if (templateId === "T14") {
+    // T14 Realization Contract (see T14_MODE_FRAMING above for the full
+    // rationale/mechanism list). Beat shape is T14's own — not the T03/T18
+    // try/fail shape — because T14's fixed mechanism is receive help ->
+    // recognize it -> encounter a related struggle -> remember -> give
+    // help -> resolution. SETUP stays grounded in the situation's own
+    // words (realizedSituation.sentence + immediateWant/immediateObstacle),
+    // same pattern every other contract template's opening beat uses, for
+    // the same downstream concrete-word-coverage reason.
+    const t14Mode = detectT14RealizationMode(ctx);
+    const t14Framing = T14_MODE_FRAMING[t14Mode];
+    const groundedObstacleFactT14 = concreteSceneFacts(ctx).obstacleFact;
+    // Lowercase raw form — every T14_MODE_FRAMING.receiveHelp() sentence
+    // places this mid-sentence after "So ", never at the sentence start, so
+    // capitalizing here (as T03/T18 do for their own sentence-initial
+    // ctx.coreReference use) would wrongly capitalize a mid-sentence word.
+    const t14Helper = ctx.coreReference || null;
+
+    const events = [
+      templateBeat("SETUP", {
+        eventId: "E01",
+        purpose: "setup",
+        actor: p,
+        action: `${sentenceCase(stripTrailingPeriod(ctx.realizedSituation.sentence))}. ${p} wanted to ${ctx.realizedSituation.want}. ${sentenceCase(stripTrailingPeriod(groundedObstacleFactT14))}. The old thought came quickly: "${ctx.falseBelief}"`,
+        sourceField: "childExperience+immediateWant+immediateObstacle",
+      }),
+      templateBeat("RECEIVE_HELP", {
+        eventId: "E02",
+        purpose: "receive_help",
+        actor: p,
+        action: t14Framing.receiveHelp(p, t14Helper),
+        sourceField: "demonstrated",
+      }),
+      templateBeat("RECOGNIZE_HELP", {
+        eventId: "E03",
+        purpose: "recognize_help",
+        actor: p,
+        action: t14Framing.recognizeHelp(p),
+        sourceField: "demonstrated",
+      }),
+      templateBeat("ENCOUNTER_STRUGGLE", {
+        eventId: "E04",
+        purpose: "encounter_struggle",
+        actor: p,
+        action: t14Framing.encounterStruggle(p),
+        sourceField: "demonstrated",
+      }),
+      templateBeat("HERO_GIVES", {
+        eventId: "E05",
+        purpose: "hero_gives",
+        actor: p,
+        action: t14Framing.heroGives(p, ctx.trueBelief),
+        sourceField: "trueBelief",
+      }),
+      templateBeat("RESOLUTION", {
+        eventId: "E06",
+        purpose: "resolution",
+        actor: p,
+        action: `${t14Framing.resolutionAction(p)} — ${t14Framing.resolutionClose(p)}.`,
+        sourceField: "demonstrated",
+      }),
+    ];
+    return {
+      events,
+      ctx,
+      templateId: "T14",
+      planForLint: buildTemplateLintPlan("T14", ctx, events, {
+        openingState: { situation: ctx.realizedSituation && ctx.realizedSituation.sentence },
+      }),
+    };
+  }
+
+  if (templateId === "T15") {
+    // T15 Realization Contract (see T15_MODE_FRAMING above for the full
+    // rationale/mode list). Beat shape is T15's own fixed
+    // requiredBeats (phase8-data/storyTemplates.json): PROBLEM / ASSUMPTION
+    // / DISMISSAL / SECOND_LOOK / UNEXPECTED_CONTRIBUTION / RESOLUTION —
+    // not the T03/T18 try/fail shape, and not T14's receive/give shape,
+    // because T15's fixed mechanism is a single dismiss-then-reversal
+    // (mirroring T09's single-inversion shape, per T15's own
+    // repetitionNote). PROBLEM stays grounded in the situation's own words
+    // (realizedSituation.sentence + immediateWant/immediateObstacle), same
+    // pattern every other contract template's opening beat uses.
+    const t15Mode = detectT15RealizationMode(ctx);
+    const t15Framing = T15_MODE_FRAMING[t15Mode];
+    const groundedObstacleFactT15 = concreteSceneFacts(ctx).obstacleFact;
+    // Lowercase raw form — every T15_MODE_FRAMING sentence places the
+    // dismissed helper mid-sentence, never at the sentence start, so
+    // capitalizing here would wrongly capitalize a mid-sentence word.
+    const t15Dismissed = ctx.coreReference || null;
+
+    const events = [
+      templateBeat("PROBLEM", {
+        eventId: "E01",
+        purpose: "problem",
+        actor: p,
+        action: `${sentenceCase(stripTrailingPeriod(ctx.realizedSituation.sentence))}. ${p} wanted to ${ctx.realizedSituation.want}. ${sentenceCase(stripTrailingPeriod(groundedObstacleFactT15))}. The old thought came quickly: "${ctx.falseBelief}"`,
+        sourceField: "childExperience+immediateWant+immediateObstacle",
+      }),
+      templateBeat("ASSUMPTION", {
+        eventId: "E02",
+        purpose: "assumption",
+        actor: p,
+        action: t15Framing.assumption(p, t15Dismissed),
+        sourceField: "demonstrated",
+      }),
+      templateBeat("DISMISSAL", {
+        eventId: "E03",
+        purpose: "dismissal",
+        actor: p,
+        action: t15Framing.dismissal(p),
+        sourceField: "demonstrated",
+      }),
+      templateBeat("SECOND_LOOK", {
+        eventId: "E04",
+        purpose: "second_look",
+        actor: p,
+        action: t15Framing.secondLook(p, t15Dismissed),
+        sourceField: "demonstrated",
+      }),
+      templateBeat("UNEXPECTED_CONTRIBUTION", {
+        eventId: "E05",
+        purpose: "unexpected_contribution",
+        actor: p,
+        // trueBelief is woven into the sentence as narration, never as a
+        // standalone quoted "X understood: [belief]" announcement — same
+        // convention T16/T18/T14 use, and necessary here because some
+        // trueBelief strings run long enough to fail QA-013's 60-char
+        // quoted-dialogue-line check if quoted verbatim.
+        action: `${t15Framing.contribution(p, t15Dismissed)} ${p} realized ${lowerFirstKeepingI(stripTrailingPeriod(ctx.trueBelief))}.`,
+        sourceField: "trueBelief",
+      }),
+      templateBeat("RESOLUTION", {
+        eventId: "E06",
+        purpose: "resolution",
+        actor: p,
+        action: `${t15Framing.resolutionAction(p)} — ${t15Framing.resolutionClose(p)}.`,
+        sourceField: "demonstrated",
+      }),
+    ];
+    return {
+      events,
+      ctx,
+      templateId: "T15",
+      planForLint: buildTemplateLintPlan("T15", ctx, events, {
+        openingState: { situation: ctx.realizedSituation && ctx.realizedSituation.sentence },
+      }),
+    };
+  }
+
+  if (templateId === "T04") {
+    // T04 Realization Contract (see T04_MODE_FRAMING above for the full
+    // rationale). Beat shape is T04's own fixed requiredBeats
+    // (phase8-data/storyTemplates.json): OPENING_QUESTION / CLUE_1 /
+    // QUESTION_2 / CLUE_2 / QUESTION_3 / CLUE_3 / REVELATION / RESOLUTION —
+    // an 8-beat question-and-clue chain, not any prior template's beat
+    // shape. OPENING_QUESTION stays grounded in the situation's own words
+    // (realizedSituation.sentence + immediateWant/immediateObstacle), same
+    // pattern every other contract template's opening beat uses, so the
+    // downstream concrete-word coverage check (childExperience/
+    // immediateObstacle) still has real situation text to find.
+    const t04Mode = detectT04RealizationMode(ctx);
+    const t04Framing = T04_MODE_FRAMING[t04Mode];
+    const groundedObstacleFactT04 = concreteSceneFacts(ctx).obstacleFact;
+    const t04Dismissed = ctx.coreReference || null;
+    // Grounding facts pulled from the situation's own fields (never
+    // invented) so the mid-chain beats vary genuinely by situation instead
+    // of being fixed sentences that only swap the protagonist's name — see
+    // the comment above T04_MODE_FRAMING for why this was added.
+    const t04Facts = {
+      obstacleFact: groundedObstacleFactT04,
+      tensionFact: concreteSceneFacts(ctx).tensionFact,
+      wantClause: stripTrailingPeriod((ctx.realizedSituation && ctx.realizedSituation.want) || ""),
+      // missionPhrase intentionally dropped (grounding fix, 2026-08-12) —
+      // ctx.missionPhrase is the abstract Mission Type resolved through
+      // Character/Archetype compatibility, unrelated to this situation's
+      // actual conflict. QUESTION_3 now uses wantClause instead. See the
+      // comment above T04_MODE_FRAMING for the full rationale.
+      symbolLabel: ctx.symbolLabel || "",
+    };
+
+    const events = [
+      templateBeat("OPENING_QUESTION", {
+        eventId: "E01",
+        purpose: "opening_question",
+        actor: p,
+        action: `${sentenceCase(stripTrailingPeriod(ctx.realizedSituation.sentence))}. ${p} wanted to ${ctx.realizedSituation.want}. ${sentenceCase(stripTrailingPeriod(groundedObstacleFactT04))}. ${t04Framing.openingQuestion(p, ctx.falseBelief)}`,
+        sourceField: "childExperience+immediateWant+immediateObstacle",
+      }),
+      templateBeat("CLUE_1", {
+        eventId: "E02",
+        purpose: "clue_1",
+        actor: p,
+        action: t04Framing.clue1(p, t04Dismissed, t04Facts),
+        sourceField: "demonstrated",
+      }),
+      templateBeat("QUESTION_2", {
+        eventId: "E03",
+        purpose: "question_2",
+        actor: p,
+        action: t04Framing.question2(p, t04Dismissed, t04Facts),
+        sourceField: "demonstrated",
+      }),
+      templateBeat("CLUE_2", {
+        eventId: "E04",
+        purpose: "clue_2",
+        actor: p,
+        action: t04Framing.clue2(p, t04Dismissed, t04Facts),
+        sourceField: "demonstrated",
+      }),
+      templateBeat("QUESTION_3", {
+        eventId: "E05",
+        purpose: "question_3",
+        actor: p,
+        action: t04Framing.question3(p, t04Dismissed, t04Facts),
+        sourceField: "demonstrated",
+      }),
+      templateBeat("CLUE_3", {
+        eventId: "E06",
+        purpose: "clue_3",
+        actor: p,
+        action: t04Framing.clue3(p, t04Dismissed, t04Facts),
+        sourceField: "demonstrated",
+      }),
+      templateBeat("REVELATION", {
+        eventId: "E07",
+        purpose: "revelation",
+        actor: p,
+        action: t04Framing.revelation(p, ctx.trueBelief),
+        sourceField: "trueBelief",
+      }),
+      templateBeat("RESOLUTION", {
+        eventId: "E08",
+        purpose: "resolution",
+        actor: p,
+        action: `${t04Framing.resolutionAction(p, t04Dismissed, t04Facts)} — ${t04Framing.resolutionClose(p)}.`,
+        sourceField: "demonstrated",
+      }),
+    ];
+    return {
+      events,
+      ctx,
+      templateId: "T04",
+      planForLint: buildTemplateLintPlan("T04", ctx, events, {
+        openingState: { situation: ctx.realizedSituation && ctx.realizedSituation.sentence },
+      }),
+    };
+  }
+
+  if (templateId === "T09") {
+    // T09 Realization Contract (see T09_MODE_FRAMING above for the full
+    // rationale). Beat shape is T09's own fixed requiredBeats
+    // (phase8-data/storyTemplates.json): BIG_EXPECTATION / BIG_ATTEMPT_FAILS /
+    // QUIET_QUALITY_NOTICED / QUIET_ACTION / RESOLUTION — a single-inversion
+    // contrast structure (per the template's own repetitionNote), not the
+    // try/fail/try repetition shape T03/T18 use, so it is not reused from
+    // either of them. BIG_EXPECTATION stays grounded in the situation's own
+    // words (realizedSituation.sentence + immediateWant/immediateObstacle),
+    // same pattern every other contract template's opening beat uses.
+    const t09Mode = detectT09RealizationMode(ctx);
+    const t09Framing = T09_MODE_FRAMING[t09Mode];
+    const groundedObstacleFactT09 = concreteSceneFacts(ctx).obstacleFact;
+    const t09Facts = {
+      obstacleFact: groundedObstacleFactT09,
+      tensionFact: concreteSceneFacts(ctx).tensionFact,
+      wantClause: stripTrailingPeriod((ctx.realizedSituation && ctx.realizedSituation.want) || ""),
+    };
+
+    const events = [
+      templateBeat("BIG_EXPECTATION", {
+        eventId: "E01",
+        purpose: "big_expectation",
+        actor: p,
+        action: `${sentenceCase(stripTrailingPeriod(ctx.realizedSituation.sentence))}. ${p} wanted to ${ctx.realizedSituation.want}. ${sentenceCase(stripTrailingPeriod(groundedObstacleFactT09))}. ${t09Framing.bigExpectation(p, t09Facts, ctx.falseBelief)}`,
+        sourceField: "childExperience+immediateWant+immediateObstacle",
+      }),
+      templateBeat("BIG_ATTEMPT_FAILS", {
+        eventId: "E02",
+        purpose: "big_attempt_fails",
+        actor: p,
+        action: t09Framing.bigAttemptFails(p, t09Facts),
+        sourceField: "demonstrated",
+      }),
+      templateBeat("QUIET_QUALITY_NOTICED", {
+        eventId: "E03",
+        purpose: "quiet_quality_noticed",
+        actor: p,
+        action: t09Framing.quietQualityNoticed(p, t09Facts),
+        sourceField: "demonstrated",
+      }),
+      templateBeat("QUIET_ACTION", {
+        eventId: "E04",
+        purpose: "quiet_action",
+        actor: p,
+        action: t09Framing.quietAction(p, t09Facts),
+        sourceField: "demonstrated",
+      }),
+      templateBeat("RESOLUTION", {
+        eventId: "E05",
+        purpose: "resolution",
+        actor: p,
+        action: t09Framing.resolution(p, ctx.trueBelief, t09Facts),
+        sourceField: "trueBelief",
+      }),
+    ];
+    return {
+      events,
+      ctx,
+      templateId: "T09",
+      planForLint: buildTemplateLintPlan("T09", ctx, events, {
+        openingState: { situation: ctx.realizedSituation && ctx.realizedSituation.sentence },
+      }),
+    };
+  }
+
+  if (templateId === "T05") {
+    // T05 Realization Contract (see T05_MODE_FRAMING above for the full
+    // rationale). Beat shape is T05's own fixed requiredBeats
+    // (phase8-data/storyTemplates.json): MIRROR_OPENING / OLD_REACTION /
+    // MIDDLE_JOURNEY / INSIGHT / MIRROR_ENDING / NEW_REACTION — a mirrored
+    // return-to-the-same-scene structure (per repetitionNote, "structural,
+    // not phrase-repetition"), genuinely different from every other contract
+    // template's beat shape. MIRROR_OPENING stays grounded in the
+    // situation's own words (realizedSituation.sentence + immediateWant/
+    // immediateObstacle), same pattern every other contract template's
+    // opening beat uses. MIRROR_ENDING deliberately echoes MIRROR_OPENING's
+    // obstacleFact so the two scenes are recognisably the same TYPE of
+    // moment, and NEW_REACTION deliberately echoes OLD_REACTION's own
+    // vocabulary ("hand stayed down" -> "hand went up", etc.) so the
+    // contrast is legible without naming the belief twice.
+    const t05Mode = detectT05RealizationMode(ctx);
+    const t05Framing = T05_MODE_FRAMING[t05Mode];
+    const groundedObstacleFactT05 = concreteSceneFacts(ctx).obstacleFact;
+    const t05Facts = {
+      obstacleFact: groundedObstacleFactT05,
+      tensionFact: concreteSceneFacts(ctx).tensionFact,
+      wantClause: stripTrailingPeriod((ctx.realizedSituation && ctx.realizedSituation.want) || ""),
+    };
+
+    const events = [
+      templateBeat("MIRROR_OPENING", {
+        eventId: "E01",
+        purpose: "mirror_opening",
+        actor: p,
+        action: `${sentenceCase(stripTrailingPeriod(ctx.realizedSituation.sentence))}. ${p} wanted to ${ctx.realizedSituation.want}, but ${sentenceCase(stripTrailingPeriod(groundedObstacleFactT05))}.`,
+        sourceField: "childExperience+immediateWant+immediateObstacle",
+      }),
+      templateBeat("OLD_REACTION", {
+        eventId: "E02",
+        purpose: "old_reaction",
+        actor: p,
+        action: t05Framing.oldReaction(p, t05Facts, ctx.falseBelief),
+        sourceField: "falseBelief",
+      }),
+      templateBeat("MIDDLE_JOURNEY", {
+        eventId: "E03",
+        purpose: "middle_journey",
+        actor: p,
+        action: t05Framing.middleJourney(p, t05Facts),
+        sourceField: "demonstrated",
+      }),
+      templateBeat("INSIGHT", {
+        eventId: "E04",
+        purpose: "insight",
+        actor: p,
+        action: t05Framing.insight(p, ctx.trueBelief),
+        sourceField: "trueBelief",
+      }),
+      templateBeat("MIRROR_ENDING", {
+        eventId: "E05",
+        purpose: "mirror_ending",
+        actor: p,
+        action: t05Framing.mirrorEnding(p, t05Facts),
+        sourceField: "demonstrated",
+      }),
+      templateBeat("NEW_REACTION", {
+        eventId: "E06",
+        purpose: "resolution",
+        actor: p,
+        action: t05Framing.newReaction(p, ctx.trueBelief, t05Facts),
+        sourceField: "trueBelief",
+      }),
+    ];
+    return {
+      events,
+      ctx,
+      templateId: "T05",
+      planForLint: buildTemplateLintPlan("T05", ctx, events, {
+        openingState: { situation: ctx.realizedSituation && ctx.realizedSituation.sentence },
+      }),
+    };
+  }
+
+  if (templateId === "T19") {
+    // T19 Realization Contract (see T19_MODE_FRAMING above for the
+    // single-mode rationale). Beat shape is T19's own fixed requiredBeats
+    // (phase8-data/storyTemplates.json): APPROACH_CROSSROADS /
+    // OPTION_OLD_BELIEF / OPTION_NEW_BELIEF / CHOICE / CONSEQUENCE /
+    // RESOLUTION. APPROACH_CROSSROADS stays grounded in the situation's own
+    // words (realizedSituation.sentence + immediateWant/immediateObstacle),
+    // same pattern every other contract template's opening beat uses.
+    // CHOICE is written as explicitly deliberate ("not by accident, not
+    // because someone else decided") per the hard requirement that the
+    // choice be conscious, not accidental/externally forced. CONSEQUENCE is
+    // tied directly to facts.obstacleFact (the same obstacle named in the
+    // opening), not a generic "and it worked out," and RESOLUTION
+    // demonstrates the effect of the choice (a steadier way to get the
+    // original want, nothing to hide) rather than simply praising it.
+    const t19Mode = "THRESHOLD_INTEGRITY_CHOICE";
+    const t19Framing = T19_MODE_FRAMING[t19Mode];
+    const groundedObstacleFactT19 = concreteSceneFacts(ctx).obstacleFact;
+    const t19Facts = {
+      obstacleFact: groundedObstacleFactT19,
+      tensionFact: concreteSceneFacts(ctx).tensionFact,
+      wantClause: stripTrailingPeriod((ctx.realizedSituation && ctx.realizedSituation.want) || ""),
+    };
+
+    const events = [
+      templateBeat("APPROACH_CROSSROADS", {
+        eventId: "E01",
+        purpose: "approach_crossroads",
+        actor: p,
+        action: t19Framing.approachCrossroads(p, t19Facts, ctx),
+        sourceField: "childExperience+immediateWant+immediateObstacle",
+      }),
+      templateBeat("OPTION_OLD_BELIEF", {
+        eventId: "E02",
+        purpose: "option_old_belief",
+        actor: p,
+        action: t19Framing.optionOldBelief(p, t19Facts, ctx.falseBelief),
+        sourceField: "falseBelief",
+      }),
+      templateBeat("OPTION_NEW_BELIEF", {
+        eventId: "E03",
+        purpose: "option_new_belief",
+        actor: p,
+        action: t19Framing.optionNewBelief(p, t19Facts),
+        sourceField: "demonstrated",
+      }),
+      templateBeat("CHOICE", {
+        eventId: "E04",
+        purpose: "choice",
+        actor: p,
+        action: t19Framing.choice(p, ctx.trueBelief),
+        sourceField: "trueBelief",
+      }),
+      templateBeat("CONSEQUENCE", {
+        eventId: "E05",
+        purpose: "consequence",
+        actor: p,
+        action: t19Framing.consequence(p, t19Facts),
+        sourceField: "demonstrated",
+      }),
+      templateBeat("RESOLUTION", {
+        eventId: "E06",
+        purpose: "resolution",
+        actor: p,
+        action: t19Framing.resolution(p, ctx.trueBelief, t19Facts),
+        sourceField: "trueBelief",
+      }),
+    ];
+    return {
+      events,
+      ctx,
+      templateId: "T19",
+      planForLint: buildTemplateLintPlan("T19", ctx, events, {
+        openingState: { situation: ctx.realizedSituation && ctx.realizedSituation.sentence },
+      }),
+    };
+  }
+
   // T11/SIT021 fix (2026-08-11), extended to T09/T14 (2026-08-11, same
   // defect confirmed on SIT029/SIT114/SIT146): the shared generic
   // fallback's SETUP beat never referenced storySeed.immediateObstacle at
@@ -6894,8 +8442,16 @@ function buildTemplateSpecificEventChain(templateId, ctx) {
   return {
     events,
     ctx,
-    templateId: "T03",
-    planForLint: buildTemplateLintPlan("T03", ctx, events, {
+    // Was hardcoded to "T03" regardless of which template actually
+    // requested this fallback chain (T02/T04/T05/T08/T09/T11/T12/T14/T15/
+    // T18 all fell through here and were silently relabeled "T03" — the
+    // mislabel documented in REALIZATION_QUALITY_GAP_REPORT_2026-08-12.md
+    // §2/§5/§6 step 1). T03 now has its own real contract above and never
+    // reaches this block, so this path is exclusively the remaining
+    // not-yet-fixed templates; preserving the actual requested id lets
+    // downstream QA/dumps distinguish them instead of merging into one.
+    templateId,
+    planForLint: buildTemplateLintPlan(templateId, ctx, events, {
       openingState: { situation: ctx.realizedSituation && ctx.realizedSituation.sentence },
     }),
   };
@@ -7023,7 +8579,7 @@ function validateEventChain(eventChainResult, blueprint) {
     issues.push("Event Planner produced no events.");
   }
 
-  if (templateId && templateId !== "T03") {
+  if (templateId && TEMPLATES_WITH_REALIZATION_CONTRACT.has(templateId)) {
     events.forEach((event, index) => {
       const eventName = event.label || `event_${index + 1}`;
       if (!event.actor) {
@@ -7066,6 +8622,49 @@ function validateEventChain(eventChainResult, blueprint) {
       const reveal = events.find((event) => event.label === "REVEAL");
       if (reveal && normalize(reveal.actor || "") === normalize(eventChainResult.ctx.protagonist)) {
         issues.push("T23 REVEAL actor drifted back to the hero.");
+      }
+    } else if (templateId === "T14") {
+      requireLabels(["SETUP", "RECEIVE_HELP", "RECOGNIZE_HELP", "ENCOUNTER_STRUGGLE", "HERO_GIVES", "RESOLUTION"]);
+      const heroGives = events.find((event) => event.label === "HERO_GIVES");
+      if (heroGives && !/\b(remember\w*|just like|the same way)\b/i.test(heroGives.action || "")) {
+        issues.push("T14 HERO_GIVES does not legibly connect back to the earlier received help (missing a remembering/just-like connective).");
+      }
+      if (heroGives && !normalize(heroGives.action || "").includes(normalize(eventChainResult.ctx.trueBelief))) {
+        issues.push("T14 HERO_GIVES does not carry the true-belief realization.");
+      }
+    } else if (templateId === "T15") {
+      requireLabels(["PROBLEM", "ASSUMPTION", "DISMISSAL", "SECOND_LOOK", "UNEXPECTED_CONTRIBUTION", "RESOLUTION"]);
+      const contribution = events.find((event) => event.label === "UNEXPECTED_CONTRIBUTION");
+      if (contribution && !normalize(contribution.action || "").includes(normalize(eventChainResult.ctx.trueBelief))) {
+        issues.push("T15 UNEXPECTED_CONTRIBUTION does not carry the true-belief realization.");
+      }
+    } else if (templateId === "T04") {
+      requireLabels(["OPENING_QUESTION", "CLUE_1", "QUESTION_2", "CLUE_2", "QUESTION_3", "CLUE_3", "REVELATION", "RESOLUTION"]);
+      const revelation = events.find((event) => event.label === "REVELATION");
+      if (revelation && !normalize(revelation.action || "").includes(normalize(eventChainResult.ctx.trueBelief))) {
+        issues.push("T04 REVELATION does not carry the true-belief realization.");
+      }
+    } else if (templateId === "T09") {
+      requireLabels(["BIG_EXPECTATION", "BIG_ATTEMPT_FAILS", "QUIET_QUALITY_NOTICED", "QUIET_ACTION", "RESOLUTION"]);
+      const t09Resolution = events.find((event) => event.label === "RESOLUTION");
+      if (t09Resolution && !normalize(t09Resolution.action || "").includes(normalize(eventChainResult.ctx.trueBelief))) {
+        issues.push("T09 RESOLUTION does not carry the true-belief realization.");
+      }
+    } else if (templateId === "T05") {
+      requireLabels(["MIRROR_OPENING", "OLD_REACTION", "MIDDLE_JOURNEY", "INSIGHT", "MIRROR_ENDING", "NEW_REACTION"]);
+      const t05NewReaction = events.find((event) => event.label === "NEW_REACTION");
+      if (t05NewReaction && !normalize(t05NewReaction.action || "").includes(normalize(eventChainResult.ctx.trueBelief))) {
+        issues.push("T05 NEW_REACTION does not carry the true-belief realization.");
+      }
+    } else if (templateId === "T19") {
+      requireLabels(["APPROACH_CROSSROADS", "OPTION_OLD_BELIEF", "OPTION_NEW_BELIEF", "CHOICE", "CONSEQUENCE", "RESOLUTION"]);
+      const t19Choice = events.find((event) => event.label === "CHOICE");
+      if (t19Choice && !normalize(t19Choice.action || "").includes(normalize(eventChainResult.ctx.trueBelief))) {
+        issues.push("T19 CHOICE does not carry the true-belief realization.");
+      }
+      const t19Resolution = events.find((event) => event.label === "RESOLUTION");
+      if (t19Resolution && !normalize(t19Resolution.action || "").includes(normalize(eventChainResult.ctx.trueBelief))) {
+        issues.push("T19 RESOLUTION does not carry the true-belief realization.");
       }
     }
 
@@ -7157,7 +8756,16 @@ function writeProseFromEventChain(template, eventChainResult, storyPlan) {
   const { events, ctx } = eventChainResult;
   const templateId = eventChainResult.templateId || template && template.templateId;
 
-  if (templateId && templateId !== "T03") {
+  if (templateId === "T11") {
+    const realizationContext = buildTemplateRealizationContext(template, storyPlan, ctx);
+    return buildResourceDepreciationCompleteStoryMaster(template, realizationContext, storyPlan);
+  }
+  if (templateId === "T12") {
+    const realizationContext = buildTemplateRealizationContext(template, storyPlan, ctx);
+    return buildTricksterCompleteStoryMaster(template, realizationContext, storyPlan);
+  }
+
+  if (templateId && TEMPLATES_WITH_REALIZATION_CONTRACT.has(templateId)) {
     const sentence = (text) => {
       const trimmed = String(text || "").trim().replace(/[.!?]+$/, "");
       return trimmed ? `${trimmed.charAt(0).toUpperCase()}${trimmed.slice(1)}.` : "";
@@ -7270,6 +8878,94 @@ function writeProseFromEventChain(template, eventChainResult, storyPlan) {
         if (label === "DEEPER_NOTICE") return sentence(event.action);
         if (label === "CHANGED_RESPONSE") return sentence(event.action);
         if (label === "RESOLUTION") return sentence(event.action);
+        return sentence(event.action);
+      }
+      if (templateId === "T03") {
+        // T03 Realization Contract (added 2026-08-12). Every beat below
+        // prints event.action directly — that content already IS the
+        // mode-specific attempt/failure/turning-point/resolution text (see
+        // T03_MODE_FRAMING), grounded in the situation's own
+        // obstacle_domain rather than the six sentences every T03 story
+        // previously shared verbatim. Same principle as the T16/T21/T22/
+        // T23 rewrites: no universal filler sentence bolted on afterward.
+        return sentence(event.action);
+      }
+      if (templateId === "T18") {
+        // T18 Realization Contract (added 2026-08-12). Every beat below
+        // prints event.action directly — that content already IS the
+        // mode-specific escalation/pause/resolution text (see
+        // T18_MODE_FRAMING), grounded in a text-signal detector over the
+        // situation's own narrativeSummarySentences/storySeedContextText
+        // (T16's approach) rather than the six sentences every T18 story
+        // previously shared verbatim via the generic fallback.
+        return sentence(event.action);
+      }
+      if (templateId === "T14") {
+        // T14 Realization Contract (added 2026-08-12). Every beat below
+        // prints event.action directly — that content already IS the
+        // mode-specific receive/recognize/encounter/give/resolution text
+        // (see T14_MODE_FRAMING), grounded in a text-signal detector over
+        // the situation's own narrativeSummarySentences/storySeedContextText
+        // (T16/T18's approach), not the six generic try/fail sentences the
+        // shared fallback used to print for every T14 story regardless of
+        // situation.
+        return sentence(event.action);
+      }
+      if (templateId === "T15") {
+        // T15 Realization Contract (added 2026-08-12). Every beat below
+        // prints event.action directly — that content already IS the
+        // mode-specific assumption/dismissal/second-look/contribution text
+        // (see T15_MODE_FRAMING), grounded in a text-signal detector over
+        // the situation's own narrativeSummarySentences/storySeedContextText
+        // (T14/T16/T18's approach), not the six generic try/fail sentences
+        // the shared fallback used to print for every T15 story regardless
+        // of situation.
+        return sentence(event.action);
+      }
+      if (templateId === "T04") {
+        // T04 Realization Contract (added 2026-08-12). Every beat below
+        // prints event.action directly — that content already IS the
+        // single-mode question/clue/revelation text (see T04_MODE_FRAMING).
+        // T04's own beat shape (an 8-beat question-chain) has no beat that
+        // plays the same "restate belief/obstacle" role T16/T21/T22/T23's
+        // opening beats need, because OPENING_QUESTION's event.action
+        // already folds in realizedSituation.sentence + the obstacle fact +
+        // the false-belief-grounded question (built in
+        // buildTemplateSpecificEventChain), so no extra wrapping is added
+        // here.
+        return sentence(event.action);
+      }
+      if (templateId === "T09") {
+        // T09 Realization Contract (added 2026-08-12). Every beat below
+        // prints event.action directly — that content already IS the
+        // mode-specific big-expectation/big-attempt-fails/quiet-quality/
+        // quiet-action/resolution text (see T09_MODE_FRAMING), grounded in
+        // a text-signal detector over the situation's own
+        // narrativeSummarySentences/storySeedContextText, not the six
+        // generic try/fail sentences the shared fallback used to print for
+        // every T09 story regardless of situation.
+        return sentence(event.action);
+      }
+      if (templateId === "T05") {
+        // T05 Realization Contract (added 2026-08-12). Every beat below
+        // prints event.action directly — that content already IS the
+        // mode-specific mirror-opening/old-reaction/middle-journey/insight/
+        // mirror-ending/new-reaction text (see T05_MODE_FRAMING), grounded
+        // in a text-signal detector (most-specific-match scoring) over the
+        // situation's own narrativeSummarySentences/storySeed fields, not a
+        // single generic keyword-bucketed frame reused verbatim across
+        // situations (the prior buildT05CompleteStoryMaster/
+        // inferCircularReturnFrame fallback this replaces).
+        return sentence(event.action);
+      }
+      if (templateId === "T19") {
+        // T19 Realization Contract (added 2026-08-12). Every beat below
+        // prints event.action directly — that content already IS the
+        // mode-specific approach-crossroads/option-old-belief/
+        // option-new-belief/choice/consequence/resolution text (see
+        // T19_MODE_FRAMING), grounded in the situation's own storySeed
+        // facts via concreteSceneFacts/realizedSituation, not the shared
+        // generic try/fail/try/fail/pause/succeed fallback.
         return sentence(event.action);
       }
       return join(sentence(event.action), sentence(event.newInformationOrShift), sentence(event.contradictionMoment), sentence(event.reinterpretation));
@@ -7688,57 +9384,74 @@ function inferCircularReturnFrame(ctx) {
 
 function inferTricksterFrame(ctx) {
   const source = `${ctx.situationTitle} ${ctx.storySeed && ctx.storySeed.childExperience} ${ctx.storySeed && ctx.storySeed.immediateObstacle} ${ctx.storySeed && ctx.storySeed.emotionalTension} ${ctx.trueBelief}`;
+  const title = String(ctx.situationTitle || "").toLowerCase();
   if (keywordMatch(source, /secret|unsafe|adult|protect someone/)) {
     return {
       choiceA: `${ctx.protagonist} first thought the safest option was to keep the promise exactly as it had been given and say nothing.`,
+      choiceATail: `That protected the promise on the surface, but it left the unsafe weight exactly where it already was.`,
       choiceB: `${ctx.protagonist} then considered helping only indirectly, hoping the problem might change without ${ctx.protagonist.toLowerCase()} having to tell a trusted adult.`,
+      choiceBTail: `It sounded kinder than breaking the promise, but it still left the real burden with a child instead of an adult who could protect someone.`,
       reflection: `${ctx.protagonist} paused and realized that both choices were missing the same thing: neither one actually protected the person who might be unsafe.`,
       choiceC: `${ctx.protagonist} decided to tell a safe adult the serious part of the secret, even though that felt harder than staying silent.`,
       resolution: `${ctx.protagonist} acted from protection instead of automatic secrecy, and the burden stopped being one a child had to carry alone.`,
+      reflectionLine: `"Wait," ${ctx.protagonist} told themselves. "A promise cannot come before safety."`,
+      choiceCLead: `${ctx.protagonist} could feel the truer path taking shape once protection mattered more than the promise itself`,
+      resolutionTail: `${ctx.protagonist} could feel the secret become lighter once it was finally in adult hands where it belonged.`,
     };
   }
-  if (keywordMatch(source, /hid|broken|mistake|trust|rebuild/)) {
+  if (/team game|team|field|whistle|missed pass/.test(title) || keywordMatch(source, /team game|final whistle|missed pass|team losing|deserve to be on the team/)) {
     return {
-      choiceA: `${ctx.protagonist} first tried the simplest option: keep the mistake hidden and hope it disappeared on its own.`,
-      choiceB: `${ctx.protagonist} then considered giving only part of the truth, enough to soften the trouble without fully taking responsibility.`,
-      reflection: `${ctx.protagonist} paused and realized that both choices were missing honesty, which was the one thing the broken trust actually needed.`,
-      choiceC: `${ctx.protagonist} decided to tell the full truth, apologise, and help repair what could still be repaired.`,
-      resolution: `${ctx.protagonist} chose responsibility over hiding, so the problem could finally be faced instead of merely delayed.`,
+      choiceA: `${ctx.protagonist} first wanted to disappear from the team moment entirely, as if standing off by themselves might make the lost point belong to nobody.`,
+      choiceATail: `That would have protected ${ctx.protagonist.toLowerCase()} from the first wave of embarrassment, but it would have left the team alone with the same ending.`,
+      choiceB: `${ctx.protagonist} then considered saying something small and flat like "bad luck," hoping to blur the mistake into the game without really owning it.`,
+      choiceBTail: `It sounded less harsh than full blame, but it still treated responsibility as something to dodge instead of something to grow through.`,
+      reflection: `${ctx.protagonist} paused and realized that both choices were missing accountable teamwork: neither one faced the mistake honestly while still staying connected to the team.`,
+      choiceC: `${ctx.protagonist} decided to own the missed move honestly, stay with the team through the disappointment, and learn the next step instead of turning the mistake into a permanent identity.`,
+      resolution: `${ctx.protagonist} treated the mistake as part of teamwork and learning, so the loss stopped being the whole story about who ${ctx.protagonist.toLowerCase()} was.`,
+      reflectionLine: `"Wait," ${ctx.protagonist} told themselves. "Owning one mistake is not the same as becoming the mistake."`,
+      choiceCLead: `${ctx.protagonist} could feel the truer path taking shape once responsibility and belonging stopped competing with each other`,
+      resolutionTail: `${ctx.protagonist} could feel the field loosen around them once the game became something to learn from instead of a verdict to wear forever.`,
     };
   }
   if (keywordMatch(source, /litter|world|responsible actions/)) {
     return {
       choiceA: `${ctx.protagonist} first thought the easiest option was to walk on, since one wrapper seemed too small to matter.`,
+      choiceATail: `That would have kept the moment simple for ${ctx.protagonist.toLowerCase()}, but the wrapper would still have been sitting in the shared place asking the same question.`,
       choiceB: `${ctx.protagonist} then considered feeling upset about it without actually doing anything, which sounded better but still left the wrapper where it was.`,
+      choiceBTail: `It looked more caring than walking away, but it still asked somebody else to carry the responsibility.`,
       reflection: `${ctx.protagonist} paused and realized that both choices were missing action; neither one cared for the shared place in any real way.`,
       choiceC: `${ctx.protagonist} decided to do the small responsible thing that was actually available: pick it up, bin it, or speak up safely.`,
       resolution: `${ctx.protagonist} proved that one small responsible action could change the moment after all.`,
-    };
-  }
-  if (keywordMatch(source, /rumour|gossip|truth|character/)) {
-    return {
-      choiceA: `${ctx.protagonist} first wanted to chase every whisper and prove the rumour wrong to each person one by one.`,
-      choiceB: `${ctx.protagonist} then considered firing back with more gossip, which might have felt stronger for a moment but would have spread the same kind of harm.`,
-      reflection: `${ctx.protagonist} paused and realized that both choices were still letting the rumour control the shape of their character.`,
-      choiceC: `${ctx.protagonist} decided to stay grounded in what was true, speak clearly where it mattered, and let character carry more weight than noise.`,
-      resolution: `${ctx.protagonist} chose truth over performance, so the response stayed cleaner than the rumour itself.`,
+      reflectionLine: `"Wait," ${ctx.protagonist} told themselves. "If I can help this place, I should."`,
+      choiceCLead: `${ctx.protagonist} could feel the truer path taking shape once care became something done, not just something felt`,
+      resolutionTail: `${ctx.protagonist} could feel the shared place matter more clearly once care had turned into a real action.`,
     };
   }
   if (keywordMatch(source, /friend|apologise|repair|mistake/)) {
     return {
       choiceA: `${ctx.protagonist} first wanted to pretend the hurt had not landed, hoping the moment might pass on its own.`,
+      choiceATail: `That would have protected ${ctx.protagonist.toLowerCase()} from the awkwardness for a moment, but the friend's hurt would still have been sitting there untouched.`,
       choiceB: `${ctx.protagonist} then considered a quick apology that would make the discomfort end for ${ctx.protagonist.toLowerCase()} without really making space for the friend.`,
+      choiceBTail: `It sounded kinder than pretending, but it still treated apology as a way to end the discomfort instead of repair the relationship.`,
       reflection: `${ctx.protagonist} paused and realized that both choices were missing repair, not just relief.`,
       choiceC: `${ctx.protagonist} decided to apologise honestly, listen to the hurt, and ask what would help make things right.`,
       resolution: `${ctx.protagonist} treated the friendship as something to repair, not just something to escape from feeling bad about.`,
+      reflectionLine: `"Wait," ${ctx.protagonist} told themselves. "Feeling sorry is not the same as helping it heal."`,
+      choiceCLead: `${ctx.protagonist} could feel the truer path taking shape once making space for the friend's hurt mattered more than ending the awkwardness fast`,
+      resolutionTail: `${ctx.protagonist} felt the friendship steady, the guilty tightness ease, and a real sense of relief arrive once repair became more important than self-protection.`,
     };
   }
   return {
     choiceA: `${ctx.protagonist} first chose the option that looked easiest.`,
+    choiceATail: `It looked simple, but it did not really change what mattered.`,
     choiceB: `${ctx.protagonist} then moved to an option that looked better, but still missed something important.`,
+    choiceBTail: `It sounded wiser than the first path, but it still left the deepest part of the problem untouched.`,
     reflection: `${ctx.protagonist} paused and realized that both earlier choices were missing the same essential piece.`,
     choiceC: `${ctx.protagonist} decided on the option that actually matched the truer understanding.`,
     resolution: `${ctx.protagonist} could finally move forward because the third choice solved what the first two had both missed.`,
+    reflectionLine: `"Wait," ${ctx.protagonist} told themselves, before choosing again.`,
+    choiceCLead: `${ctx.protagonist} could feel the truer path taking shape`,
+    resolutionTail: `${ctx.protagonist} could feel the whole moment settle once the third choice finally matched what mattered.`,
   };
 }
 
@@ -7786,7 +9499,47 @@ function inferRoleReversalFrame(ctx) {
 
 function inferResourceDepreciationFrame(ctx) {
   const source = `${ctx.situationTitle} ${ctx.storySeed && ctx.storySeed.childExperience} ${ctx.storySeed && ctx.storySeed.immediateObstacle} ${ctx.storySeed && ctx.storySeed.emotionalTension} ${ctx.trueBelief}`;
+  const title = String(ctx.situationTitle || "").toLowerCase();
+  if (keywordMatch(source, /darkness|dark room|shadow|shadows|room suddenly feels strange|monster|bed/)) {
+    if (/monster|under the bed|shadow under the bed/.test(title)) {
+      return {
+        opening: `${ctx.protagonist} could feel one shadow under the bed growing into something much bigger once imagination started filling in what could not actually be seen.`,
+        count3: `${ctx.protagonist} first stayed far from the bed, letting the hidden space underneath it decide what kind of danger must be waiting there.`,
+        count2: `${ctx.protagonist} then kept adding more fearful pictures in their head, and each new imagined detail made the shadow feel more real than the room around it.`,
+        count1: `${ctx.protagonist} was almost ready to let the imagined monster choose the whole night and take away the chance to find out what was actually there.`,
+        pause: `${ctx.protagonist} paused anyway, let the bed become just a bed again for one moment, and chose to face the shadow instead of the whole imagined creature at once.`,
+        finalAction: `${ctx.protagonist} then chose one small brave move toward the bed, because the only way to answer the fear was to meet the real shadow instead of feeding the invented monster.`,
+        resolution: `${ctx.protagonist} could feel the shadow shrink back into an ordinary shape once the brave look answered it better than imagination had.`,
+        pauseLine: `"Wait," ${ctx.protagonist} told themselves. "I haven't checked what it really is yet."`,
+        ending: `${ctx.protagonist} felt sleep come closer once the under-bed fear lost its monster shape.`,
+      };
+    }
+    return {
+      opening: `${ctx.protagonist} could feel the familiar room suddenly seem strange and scary once the darkness started changing what each shape felt like.`,
+      count3: `${ctx.protagonist} first froze at the edge of the dark room, letting the strange-looking shadows decide what the whole room must mean.`,
+      count2: `${ctx.protagonist} then kept feeding the scary feeling in their head, and because of that the same familiar room felt less and less familiar by the second.`,
+      count1: `${ctx.protagonist} was almost ready to let the darkness choose for them and turn one crossing into something much bigger than it really was.`,
+      pause: `${ctx.protagonist} paused anyway, let the room be the same room again for a moment, and chose one next step instead of answering every shadow at once.`,
+      finalAction: `${ctx.protagonist} then chose one small brave step into the dark room, because the way through was to cross the real room in front of them rather than obey the whole scary picture in their mind.`,
+      resolution: `${ctx.protagonist} could feel the room become more familiar again once the next step answered the darkness better than the fear had.`,
+      pauseLine: `"Wait," ${ctx.protagonist} told themselves. "It's still the same room."`,
+      ending: `${ctx.protagonist} felt their body loosen and could finally breathe easier as the dark room stopped acting like a stranger.`,
+    };
+  }
   if (keywordMatch(source, /doctor|injection|pain|procedure|treatment|surgery|medical/)) {
+    if (/injection|doctor/.test(title)) {
+      return {
+        opening: `${ctx.protagonist} could feel the doctor visit narrowing around the coming injection, because the moment of pain had not happened yet but was already taking up too much space.`,
+        count3: `${ctx.protagonist} first tried to escape the injection in their mind, wishing the shot could somehow be skipped before it even began.`,
+        count2: `${ctx.protagonist} then tightened against the coming pinch, but bracing early only made the waiting chair feel longer and sharper.`,
+        count1: `${ctx.protagonist} was almost ready to let the expected pain decide the whole appointment before the shot had even happened.`,
+        pause: `${ctx.protagonist} paused anyway, listened for what was happening in the room right now, and chose to meet only the next small part of the doctor visit.`,
+        finalAction: `${ctx.protagonist} then stayed present for the shot one brave beat at a time, because handling the real pinch was smaller than fighting the whole imagined appointment at once.`,
+        resolution: `${ctx.protagonist} could feel the injection moment pass more cleanly once the fear stopped stretching it bigger than it was.`,
+        pauseLine: `"Wait," ${ctx.protagonist} told themselves. "I only have to get through the shot, not the whole future."`,
+        ending: `${ctx.protagonist} felt the doctor's room loosen around them once the waiting fear finally let go.`,
+      };
+    }
     return {
       opening: `${ctx.protagonist} could feel the moment narrowing, because the feared thing was getting closer whether or not ${ctx.protagonist.toLowerCase()} was ready.`,
       count3: `${ctx.protagonist} first tried to escape it in their mind, wishing the whole moment could simply be skipped.`,
@@ -7795,17 +9548,113 @@ function inferResourceDepreciationFrame(ctx) {
       pause: `${ctx.protagonist} paused anyway, listened for what was actually happening now, and chose to meet only this one moment instead of the whole imagined future.`,
       finalAction: `${ctx.protagonist} then held on, stayed present, and took the difficult moment one brave step at a time.`,
       resolution: `${ctx.protagonist} could feel that staying with the real moment worked better than fighting a hundred imagined ones at once.`,
+      pauseLine: `"Wait," ${ctx.protagonist} told themselves. "I only have to face this part now."`,
+      ending: `${ctx.protagonist} felt the tight waiting inside them ease, because the future had shrunk back down to one manageable moment.`,
     };
   }
-  if (keywordMatch(source, /dark|shadow|bed|monster|dog/)) {
+  if (keywordMatch(source, /too many options|several appealing options|choose one|best choice/)) {
+    return {
+      opening: `${ctx.protagonist} could feel the pile of good options starting to crowd the decision instead of helping it.`,
+      count3: `${ctx.protagonist} first tried to keep every toy or treat equally alive in their mind, afraid that choosing one would mean losing all the others.`,
+      count2: `${ctx.protagonist} then compared the options again and again, but more comparing only made the best choice feel harder to see.`,
+      count1: `${ctx.protagonist} was almost ready to let the number of choices ruin the chance to enjoy any choice at all.`,
+      pause: `${ctx.protagonist} paused, stopped trying to keep every option open, and looked for the one choice that actually fit this moment best.`,
+      finalAction: `${ctx.protagonist} then chose one toy or treat on purpose, because a wise choice could bring more peace than trying to hold on to everything.`,
+      resolution: `${ctx.protagonist} felt the decision settle once one real choice replaced the scramble to keep every possibility.`,
+      pauseLine: `"Wait," ${ctx.protagonist} told themselves. "One good choice is enough."`,
+      ending: `${ctx.protagonist} smiled once the choice finally belonged to this moment instead of all the others.`,
+    };
+  }
+  if (keywordMatch(source, /followers|follower count|social-media|popular/)) {
+    return {
+      opening: `${ctx.protagonist} could feel one number on the screen trying to explain too much about who mattered.`,
+      count3: `${ctx.protagonist} first stared at the two follower counts again, as if the gap itself might tell the whole truth about friendship and value.`,
+      count2: `${ctx.protagonist} then felt the comparison tighten further, because the friend's bigger number kept trying to turn into a verdict about ${ctx.protagonist.toLowerCase()}.`,
+      count1: `${ctx.protagonist} was almost ready to let the number decide the whole mood of the moment and make the friendship feel smaller than it really was.`,
+      pause: `${ctx.protagonist} paused, stopped refreshing the count, and looked for one truer sign of being cared for that existed off the screen too.`,
+      finalAction: `${ctx.protagonist} then chose to step back from the number and stay with the real friendship in front of them, because a count could not measure the whole of being valued.`,
+      resolution: `${ctx.protagonist} felt lighter once the follower count stopped being treated like the final answer about how much people valued them.`,
+    };
+  }
+  if (keywordMatch(source, /vacation|holiday|souvenir|photographs|international/)) {
+    return {
+      opening: `${ctx.protagonist} could feel the friend's exciting stories making ordinary parts of their own life suddenly seem too small.`,
+      count3: `${ctx.protagonist} first followed every photograph and souvenir so closely that their own holiday began shrinking in comparison.`,
+      count2: `${ctx.protagonist} then kept measuring their own life against the huge buildings, snow, and faraway places, and the comparison made ordinary memories feel duller than they had felt before.`,
+      count1: `${ctx.protagonist} was almost ready to believe someone else's adventure had to reduce the worth of their own in order to count as special.`,
+      pause: `${ctx.protagonist} paused on the envy, let the friend's stories stay exciting, and made room to remember that two different holidays could both matter.`,
+      finalAction: `${ctx.protagonist} then chose to stay in the conversation without demanding that their own life match it, because one person's excitement did not have to erase another's.`,
+      resolution: `${ctx.protagonist} left the conversation steadier, able to hold the friend's joy and their own different life in the same moment.`,
+    };
+  }
+  if (keywordMatch(source, /lunchbox|lunch break|food looks|food smells|next seat/)) {
+    return {
+      opening: `${ctx.protagonist} could feel one smell from the next seat turning their own lunch into a disappointment it had not been a minute earlier.`,
+      count3: `${ctx.protagonist} first looked back and forth between the two lunchboxes, letting the comparison change how their own food looked.`,
+      count2: `${ctx.protagonist} then kept chasing the smell and the picture of the other meal, and because of that their own next bite already felt less appealing than it had before.`,
+      count1: `${ctx.protagonist} was almost ready to lose the whole lunch to comparison, even though the food they actually had was still right there.`,
+      pause: `${ctx.protagonist} paused, stopped chasing the smell from the next seat, and returned attention to the lunch already open in front of them.`,
+      finalAction: `${ctx.protagonist} then chose the next bite from their own lunch on purpose, so the meal in front of them could become their real meal again.`,
+      resolution: `${ctx.protagonist} got their lunch back by stopping the comparison, and the meal felt lighter again once it was allowed to be their own.`,
+    };
+  }
+  if (keywordMatch(source, /birthday|present|presents|package|party|gifts/)) {
+    return {
+      opening: `${ctx.protagonist} could feel each new cheer at the party making the wanting louder, because every package seemed to ask whose joy this was allowed to be.`,
+      count3: `${ctx.protagonist} first imagined what it would feel like if the next bright package had their own name on it instead.`,
+      count2: `${ctx.protagonist} then cheered with everyone else while still comparing each present to what they did not have, and the party started feeling more like a fairness test than a celebration.`,
+      count1: `${ctx.protagonist} was almost ready to let the wanting pull them all the way out of the birthday child's moment.`,
+      pause: `${ctx.protagonist} paused before the next present opened and made room for one true thing that was still good at the party even without owning the gifts.`,
+      finalAction: `${ctx.protagonist} then chose to join the celebration as it really was, so they could stay inside the joy of the party without needing the present to belong to them.`,
+      resolution: `${ctx.protagonist} got to stay inside the party's happiness once wanting stopped trying to turn every gift into a test of fairness.`,
+    };
+  }
+  if (keywordMatch(source, /pet they always wanted|close friend has finally got the pet|friend gets a pet|\bpet\b/)) {
+    return {
+      opening: `${ctx.protagonist} could feel the friend's good news pulling jealousy close, because the wished-for pet made the gap between lives feel personal.`,
+      count3: `${ctx.protagonist} first stayed fixed on the pet itself, measuring what the friend had against what they still wished for.`,
+      count2: `${ctx.protagonist} then let the comparison keep growing, and the more the dream pet filled the moment, the harder it became to share the friend's excitement honestly.`,
+      count1: `${ctx.protagonist} was almost ready to let the missing pet decide that the friendship's happy moment could not also hold their own goodness.`,
+      pause: `${ctx.protagonist} paused, noticed the jealousy without obeying it, and made room for one true thing in their own life that still deserved appreciation too.`,
+      finalAction: `${ctx.protagonist} then chose to share in the friend's excitement anyway, because someone else's joy did not have to cancel their own life.`,
+      resolution: `${ctx.protagonist} felt the envy loosen once the friend's new pet stopped being treated like proof that life was unfair.`,
+      pauseLine: `"Wait," ${ctx.protagonist} told themselves. "Their joy is not taking mine away."`,
+      ending: `${ctx.protagonist} smiled when the friendship finally felt bigger than the comparison again.`,
+    };
+  }
+  if (keywordMatch(source, /bullied|teased|treated cruelly|step in|speaking up/)) {
+    return {
+      opening: `${ctx.protagonist} could feel the moment closing fast, because the teasing was happening now and silence would become its own choice very soon.`,
+      count3: `${ctx.protagonist} first stayed still, hoping the cruel moment might end on its own before they had to decide anything.`,
+      count2: `${ctx.protagonist} then rushed through fearful possibilities in their head, but each silent second made the need to protect the other child feel sharper.`,
+      count1: `${ctx.protagonist} was almost ready to let fear make the final choice and leave the other child alone inside the teasing.`,
+      pause: `${ctx.protagonist} paused, stopped rehearsing every worst outcome, and made room for one small brave action that could protect someone right now.`,
+      finalAction: `${ctx.protagonist} then chose the smallest real step that interrupted the cruelty, because a brave action in time mattered more than a perfect plan too late.`,
+      resolution: `${ctx.protagonist} could feel the moment change once courage turned into protection instead of staying trapped inside worry.`,
+      pauseLine: `"Wait," ${ctx.protagonist} told themselves. "Someone needs help now."`,
+      ending: `${ctx.protagonist} could feel relief arrive with the courage instead of after it.`,
+    };
+  }
+  if (keywordMatch(source, /careful right now|spend less money|\btreats?\b|\boutings?\b|usual friday treat|not this week/)) {
+    return {
+      opening: `${ctx.protagonist} could feel one small "no" growing heavy because the usual treat had started to stand for something bigger about the family.`,
+      count3: `${ctx.protagonist} first held on to the usual Friday treat itself, because losing that familiar yes felt like losing the whole shape of the day.`,
+      count2: `${ctx.protagonist} then pushed against the change inside, but the disappointment only grew sharper because the family limit still stayed real.`,
+      count1: `${ctx.protagonist} was almost ready to let that one missing treat decide that the whole moment was unfair, even though the bigger reason had already been gently named.`,
+      pause: `${ctx.protagonist} paused, stopped arguing with the missing treat, and listened again to the careful-for-now reason underneath the answer.`,
+      finalAction: `${ctx.protagonist} then chose to accept the changed family plan and stay with the people in front of them, because a temporary limit did not mean love had disappeared.`,
+      resolution: `${ctx.protagonist} understood the family's temporary limit more gently once the missing treat stopped being used as proof that something deeper was wrong.`,
+    };
+  }
+  if (keywordMatch(source, /dark|shadow|bed|monster|dogs?/)) {
     return {
       opening: `${ctx.protagonist} could feel that every second spent feeding the fear made the next step seem bigger.`,
       count3: `${ctx.protagonist} first reacted the fast way, tightening up and bracing as if stopping completely might somehow make the fear go away.`,
       count2: `${ctx.protagonist} then tried to rush the decision in their head, but the fear only spread into more corners of the moment.`,
       count1: `${ctx.protagonist} was almost ready to let the fear make the choice for them, because the last safe-feeling chance seemed to be slipping away.`,
       pause: `${ctx.protagonist} paused anyway, took one steadier breath, and let the next move become small enough to choose on purpose.`,
-      finalAction: `${ctx.protagonist} then took one small brave step instead of one panicked one.`,
-      resolution: `${ctx.protagonist} could feel that the brave step worked because the pause had given it shape.`,
+      finalAction: `${ctx.protagonist} then chose one small brave step instead of one panicked one, because responding to the real moment was safer than obeying the whole fear at once.`,
+      resolution: `${ctx.protagonist} could feel that the brave step worked because the pause had helped them answer the real dog or dark moment in front of them, not the imagined one.`,
     };
   }
   return {
@@ -8176,15 +10025,14 @@ function buildT12CompleteStoryMaster(template, ctx, storyPlan) {
     : `${protagonist} was facing ${lowerFirst(ctx.situationTitle)}`;
   const wantClause = stripTrailingPeriod((ctx.realizedSituation && ctx.realizedSituation.want) || "");
   const obstacle = lowerFirstKeepingI(stripTrailingPeriod((ctx.storySeed && ctx.storySeed.immediateObstacle) || "the problem still needed a real answer"));
-  const tension = lowerFirstKeepingI(stripTrailingPeriod((ctx.storySeed && ctx.storySeed.emotionalTension) || "the choice felt heavier by the minute"));
   const cleanTrueBelief = stripTrailingPeriod(ctx.trueBelief);
   const beatTexts = [
     { beatId: "SETUP", kind: "OPENING", text: `${setupSentence}. ${protagonist} wanted to ${wantClause || ctx.missionPhrase}, but ${obstacle}. The old thought came quickly: "${ctx.falseBelief}"` },
-    { beatId: "CHOICE_A_PLAUSIBLE", kind: "STEP", text: `${frame.choiceA} It made sense at first, but ${tension}.` },
-    { beatId: "CHOICE_B_BETTER_BUT_FLAWED", kind: "STEP", text: `${frame.choiceB} It sounded wiser than the first choice, but it still would not fully solve what mattered.` },
-    { beatId: "REFLECTION", kind: "PAUSE", text: `${frame.reflection} "Wait," ${protagonist} told themselves, before choosing again.` },
-    { beatId: "CHOICE_C_TRUE", kind: "INSIGHT", text: `${frame.choiceC} ${protagonist} could feel the truer path taking shape: ${lowerFirstKeepingI(cleanTrueBelief)}.` },
-    { beatId: "RESOLUTION", kind: "RESOLUTION", text: `${frame.resolution} ${protagonist} acted from that understanding, and the moment changed because of it.` },
+    { beatId: "CHOICE_A_PLAUSIBLE", kind: "STEP", text: `${frame.choiceA} ${frame.choiceATail || "It made sense at first, but the deeper problem stayed right where it was."}` },
+    { beatId: "CHOICE_B_BETTER_BUT_FLAWED", kind: "STEP", text: `${frame.choiceB} ${frame.choiceBTail || "It sounded wiser than the first choice, but it still would not fully solve what mattered."}` },
+    { beatId: "REFLECTION", kind: "PAUSE", text: `${frame.reflection} ${frame.reflectionLine || `"Wait," ${protagonist} told themselves, before choosing again.`}` },
+    { beatId: "CHOICE_C_TRUE", kind: "INSIGHT", text: `${frame.choiceC} ${frame.choiceCLead || `${protagonist} could feel the truer path taking shape`}: ${lowerFirstKeepingI(cleanTrueBelief)}.` },
+    { beatId: "RESOLUTION", kind: "RESOLUTION", text: `${frame.resolution} ${frame.resolutionTail || `${protagonist} acted from that understanding, and the moment changed because of it.`}` },
   ];
 
   const sceneIds = (storyPlan.scenePlan || []).map((scene) => scene.id);
@@ -8246,9 +10094,9 @@ function buildT11CompleteStoryMaster(template, ctx, storyPlan) {
     { beatId: "COUNTDOWN_3", kind: "STEP", text: `${frame.count3} ${tension}.` },
     { beatId: "COUNTDOWN_2", kind: "STEP", text: `${frame.count2}` },
     { beatId: "COUNTDOWN_1", kind: "STEP", text: `${frame.count1}` },
-    { beatId: "PAUSE_CHOICE", kind: "PAUSE", text: `${frame.pause} "Wait," ${protagonist} told themselves, before spending the last bit of courage well.` },
+    { beatId: "PAUSE_CHOICE", kind: "PAUSE", text: `${frame.pause} ${frame.pauseLine || `"Wait," ${protagonist} told themselves, before spending the last bit of courage well.`}` },
     { beatId: "FINAL_ACTION", kind: "STEP", text: `${frame.finalAction} ${protagonist} acted from the new understanding that ${trueBeliefLine}, instead of from the first alarm.` },
-    { beatId: "RESOLUTION", kind: "RESOLUTION", text: `${frame.resolution} ${protagonist} smiled and could feel the ending settle more calmly now.` },
+    { beatId: "RESOLUTION", kind: "RESOLUTION", text: `${frame.resolution} ${frame.ending || `${protagonist} smiled and could feel the ending settle more calmly now.`}` },
   ];
 
   const sceneIds = (storyPlan.scenePlan || []).map((scene) => scene.id);

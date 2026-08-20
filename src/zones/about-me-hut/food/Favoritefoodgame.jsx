@@ -11,6 +11,7 @@ import SparkleAnimation from '../../../lib/components/animation/SparkleAnimation
 import SceneManager from "../../../lib/components/scenes/SceneManager";
 import AboutMeComparisonCard from '../components/AboutMeComparisonCard';
 import GameStateManager from '../../../lib/services/GameStateManager';
+import ProgressManager from '../../../lib/services/ProgressManager';
 
 // Content Configs
 import { getOpeningModal, getCompletionModal } from '../../../lib/config/content';
@@ -2392,6 +2393,13 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             playChime();
             hardStopSceneAudio();
             sceneActions.updateState({ completed: true, showingCompletionScreen: true });
+            const profileId = GameStateManager.getCurrentProfile()?.id;
+            if (profileId) {
+              ProgressManager.updateSceneCompletion(profileId, 'about-me-hut', 'favorite-food', {
+                completed: true,
+                stars: sceneState.stars || 2
+              });
+            }
           }}
           continueLabel="Continue"
         />

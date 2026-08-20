@@ -1,5 +1,6 @@
 import React from 'react';
 import SparkleAnimation from '../../../../lib/components/animation/SparkleAnimation';
+import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
 import { KidsDraggable, KidsDropZone } from '../../../../lib/components/interactive/KidsDraggable';
 
 // Plates are CSS circles drawn directly on the scene.
@@ -58,6 +59,26 @@ const Wish2PlateDropGame = ({
 
       {/* Stage */}
       <div style={{ position: 'absolute', inset: 0 }}>
+        <GestureDemo
+          type="drag"
+          from={{
+            x: Number.parseFloat(pointerStart.left) || 18,
+            y: Number.parseFloat(pointerStart.top) || 62,
+          }}
+          to={{
+            x: Number.parseFloat(pointerTarget.left) || 50,
+            y: Number.parseFloat(pointerTarget.top) || 62,
+          }}
+          active={
+            (sceneState.wish2Taps || 0) === 0 &&
+            activeFoodPool.length > 0 &&
+            firstUnfilledBowlIndex !== null &&
+            firstUnfilledBowlIndex !== undefined
+          }
+          idleDelay={1800}
+          zIndex={24}
+        />
+
         {showWish2DragPointer && (
           <div className="wish2-drag-pointer-overlay" aria-hidden="true">
             <img

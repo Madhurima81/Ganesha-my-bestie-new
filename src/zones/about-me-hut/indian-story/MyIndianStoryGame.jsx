@@ -28,6 +28,7 @@ import storyFestivalIcon from './assets/images/festival-icon.webp';
 // ─── PHASE 1: NEW IMPORTS ─────────────────────────────────────────
 import FreeDraggableItem from '../../../lib/components/interactive/FreeDraggableItem';
 import SparkleAnimation from '../../../lib/components/animation/SparkleAnimation';
+import GestureDemo from '../../../lib/components/feedback/GestureDemo';
 import indiaMapImage from './assets/images/ganeshaplace/india-map.webp';
 import mglass from './assets/images/ganeshaplace/mglass.webp';
 import mumbaiIcon from './assets/images/ganeshaplace/mumbai.webp';
@@ -208,6 +209,15 @@ const HEART_POSITIONS = [
   { top: '75%', left: '70%' },
   { top: '50%', left: '50%' },
 ];
+
+const parsePercent = (value, fallback = 0) => {
+  if (typeof value === 'number') return value;
+  if (typeof value === 'string') {
+    const parsed = Number.parseFloat(value);
+    return Number.isFinite(parsed) ? parsed : fallback;
+  }
+  return fallback;
+};
 
 const GANESHA_SPOTS = [
   { name: 'Varanasi Ghats', icon: varansiIcon, fact: 'In Varanasi, my name echoes across the ghats every morning! ✨' },
@@ -1916,6 +1926,25 @@ const handleComplete = () => {
                 <img src={babyGaneshaImg} alt="Ganesha" style={{ width: 'clamp(160px, 24vw, 280px)', height: 'auto' }} />
               </div>
             )}
+
+            <GestureDemo
+              type="drag"
+              from={{
+                x: parsePercent(mglassPosition.left, 20),
+                y: parsePercent(mglassPosition.top, 30),
+              }}
+              to={{
+                x: PHASE1_LOCATIONS[discoveredLocations.length]?.x ?? PHASE1_LOCATIONS[0].x,
+                y: PHASE1_LOCATIONS[discoveredLocations.length]?.y ?? PHASE1_LOCATIONS[0].y,
+              }}
+              active={
+                phase === STEPS.GANESHA_HOME &&
+                discoveredLocations.length < PHASE1_LOCATIONS.length &&
+                !showCelebration
+              }
+              idleDelay={1800}
+              zIndex={19}
+            />
 
             {/* Draggable Magnifying Glass using FreeDraggableItem */}
             <FreeDraggableItem

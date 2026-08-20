@@ -24,6 +24,79 @@ const CASES = [
   { situationId: "SIT101", templateId: "T03", form: "F01", castTarget: "3+", objectFocus: false, obstacleMode: "ambient", architecture: "no-belief" },
   { situationId: "SIT113", templateId: "T03", form: "F01", castTarget: "solo", objectFocus: false, obstacleMode: "explicit", architecture: "no-belief" },
 
+  // T18 Realization Contract cases (added 2026-08-12, per
+  // docs/prana-kids/T18_REALIZATION_PILOT_2026-08-12.md), one per detected
+  // mode: SIT001 (TAKEN_OR_DAMAGED), SIT101 (WAITING_FOR_TURN_OR_EVENT),
+  // SIT015 (PHYSICAL_RESTLESSNESS), SIT105 (SCATTERED_ATTENTION), SIT136
+  // (TEMPTATION_TRADEOFF).
+  { situationId: "SIT001", templateId: "T18", form: "F01", castTarget: "2", objectFocus: false, obstacleMode: "explicit", architecture: "no-belief" },
+  { situationId: "SIT101", templateId: "T18", form: "F01", castTarget: "3+", objectFocus: false, obstacleMode: "ambient", architecture: "no-belief" },
+  { situationId: "SIT015", templateId: "T18", form: "F01", castTarget: "solo", objectFocus: false, obstacleMode: "ambient", architecture: "no-belief" },
+  { situationId: "SIT105", templateId: "T18", form: "F01", castTarget: "solo", objectFocus: false, obstacleMode: "ambient", architecture: "no-belief" },
+  { situationId: "SIT136", templateId: "T18", form: "F01", castTarget: "solo", objectFocus: false, obstacleMode: "ambient", architecture: "no-belief" },
+
+  // T14 Realization Contract cases (added 2026-08-12, per
+  // docs/prana-kids/T14_REALIZATION_PILOT_2026-08-12.md), one per detected
+  // mode: SIT048 (EXCLUSION_LONGING_TO_BELONG), SIT046
+  // (SHAME_AFTER_CORRECTION), SIT065 (SELF_IMAGE_COMPARISON), SIT051
+  // (LOSING_A_CONNECTION), SIT013 (MISUNDERSTOOD_OR_UNHEARD).
+  { situationId: "SIT048", templateId: "T14", form: "F01", castTarget: "3+", objectFocus: false, obstacleMode: "ambient", architecture: "no-belief" },
+  { situationId: "SIT046", templateId: "T14", form: "F01", castTarget: "2", objectFocus: false, obstacleMode: "explicit", architecture: "no-belief" },
+  { situationId: "SIT065", templateId: "T14", form: "F01", castTarget: "solo", objectFocus: false, obstacleMode: "ambient", architecture: "no-belief" },
+  { situationId: "SIT051", templateId: "T14", form: "F01", castTarget: "2", objectFocus: false, obstacleMode: "ambient", architecture: "no-belief" },
+  { situationId: "SIT013", templateId: "T14", form: "F01", castTarget: "2", objectFocus: false, obstacleMode: "explicit", architecture: "no-belief" },
+
+  // T15 Realization Contract (2026-08-12) pilot cases — one per detected
+  // mode: SIT028 (TRUST_THE_UNFAMILIAR), SIT024 (SEPARATION_FEAR), SIT034
+  // (UNCERTAIN_FROM_OVERHEARD), SIT119 (LOSING_THE_FAMILIAR), SIT156
+  // (BROKEN_PROMISE_TRUST), SIT142 (DIGITAL_BOUNDARY_SAFETY), SIT099
+  // (SENSORY_OVERWHELM).
+  { situationId: "SIT028", templateId: "T15", form: "F01", castTarget: "2", objectFocus: false, obstacleMode: "explicit", architecture: "no-belief" },
+  { situationId: "SIT024", templateId: "T15", form: "F01", castTarget: "2", objectFocus: false, obstacleMode: "explicit", architecture: "no-belief" },
+  { situationId: "SIT034", templateId: "T15", form: "F01", castTarget: "2", objectFocus: false, obstacleMode: "ambient", architecture: "no-belief" },
+  { situationId: "SIT119", templateId: "T15", form: "F01", castTarget: "2", objectFocus: false, obstacleMode: "explicit", architecture: "no-belief" },
+  { situationId: "SIT156", templateId: "T15", form: "F01", castTarget: "2", objectFocus: false, obstacleMode: "explicit", architecture: "no-belief" },
+  { situationId: "SIT142", templateId: "T15", form: "F01", castTarget: "2", objectFocus: false, obstacleMode: "explicit", architecture: "no-belief" },
+  { situationId: "SIT099", templateId: "T15", form: "F01", castTarget: "solo", objectFocus: false, obstacleMode: "ambient", architecture: "no-belief" },
+
+  // T04 Realization Contract (added 2026-08-12, per
+  // docs/prana-kids/T04_REALIZATION_PILOT_2026-08-12.md). Only 1 of the
+  // 156 active situations naturally selects T04 (SIT137, "Tempted to look
+  // at friend's paper during a test" — confirmed via
+  // phase8-tools/dumpT04Situations2.cjs), so there is only one real case
+  // here, not a curated 5-7 like T14/T15/T18 — see the pilot doc's
+  // upstream-limitation finding.
+  { situationId: "SIT137", templateId: "T04", form: "F01", castTarget: "solo", objectFocus: false, obstacleMode: "explicit", architecture: "no-belief" },
+  // T09 Realization Contract (added 2026-08-12, per
+  // docs/prana-kids/T09_REALIZATION_PILOT_2026-08-12.md). Only 4 of the 168
+  // active situations naturally select T09 (confirmed via
+  // phase8-tools/dumpT09Situations.cjs) — 3 genuine modes: BODY_DISCOMFORT
+  // (SIT009, SIT019), SEPARATION_SAFETY (SIT029), INTRUSIVE_FEAR (SIT030).
+  { situationId: "SIT009", templateId: "T09", form: "F01", castTarget: "solo", objectFocus: false, obstacleMode: "explicit", architecture: "no-belief" },
+  { situationId: "SIT019", templateId: "T09", form: "F01", castTarget: "solo", objectFocus: false, obstacleMode: "explicit", architecture: "no-belief" },
+  { situationId: "SIT029", templateId: "T09", form: "F01", castTarget: "solo", objectFocus: false, obstacleMode: "explicit", architecture: "no-belief" },
+  { situationId: "SIT030", templateId: "T09", form: "F01", castTarget: "solo", objectFocus: false, obstacleMode: "explicit", architecture: "no-belief" },
+
+  // T05 Realization Contract (added 2026-08-12, per
+  // docs/prana-kids/T05_REALIZATION_PILOT_2026-08-12.md). Only 4 of the 156
+  // active situations naturally select T05 (confirmed via
+  // phase8-tools/dumpT05Situations.cjs) — 3 genuine modes: PUBLIC_EXPOSURE
+  // (SIT036), NOT_CHOSEN_COMPARISON (SIT057, SIT084), VISIBLE_DIFFERENCE
+  // (SIT066).
+  { situationId: "SIT036", templateId: "T05", form: "F01", castTarget: "3+", objectFocus: false, obstacleMode: "ambient", architecture: "no-belief" },
+  { situationId: "SIT057", templateId: "T05", form: "F01", castTarget: "3+", objectFocus: false, obstacleMode: "explicit", architecture: "no-belief" },
+  { situationId: "SIT066", templateId: "T05", form: "F01", castTarget: "3+", objectFocus: false, obstacleMode: "ambient", architecture: "no-belief" },
+  { situationId: "SIT084", templateId: "T05", form: "F01", castTarget: "3+", objectFocus: false, obstacleMode: "explicit", architecture: "no-belief" },
+
+  // T19 Realization Contract (added 2026-08-12, per
+  // docs/prana-kids/T19_REALIZATION_PILOT_2026-08-12.md). Only 2 of the
+  // active situations naturally select T19 — 1 genuine mode
+  // (THRESHOLD_INTEGRITY_CHOICE): SIT133 (tempted to steal, peer-dare
+  // pressure), SIT137 (tempted to look at a friend's test paper, solitary
+  // opportunity).
+  { situationId: "SIT133", templateId: "T19", form: "F01", castTarget: "2", objectFocus: false, obstacleMode: "explicit", architecture: "no-belief" },
+  { situationId: "SIT137", templateId: "T19", form: "F01", castTarget: "solo", objectFocus: false, obstacleMode: "explicit", architecture: "no-belief" },
+
   { situationId: "SIT045", templateId: "T22", form: "F02", castTarget: "2", objectFocus: true, obstacleMode: "explicit", architecture: "no-belief" },
   { situationId: "SIT083", templateId: "T22", form: "F02", castTarget: "2", objectFocus: true, obstacleMode: "ambient", architecture: "no-belief" },
   { situationId: "SIT139", templateId: "T22", form: "F02", castTarget: "2", objectFocus: true, obstacleMode: "explicit", architecture: "no-belief" },
@@ -53,6 +126,28 @@ const CASES = [
   { situationId: "SIT133", templateId: "T23", form: "F04", castTarget: "2", objectFocus: false, obstacleMode: "ambient", architecture: "assumption" },
   { situationId: "SIT141", templateId: "T22", form: "F02", castTarget: "2", objectFocus: true, obstacleMode: "explicit", architecture: "no-belief" },
   { situationId: "SIT157", templateId: "T21", form: "F05", castTarget: "2", objectFocus: false, obstacleMode: "ambient", architecture: "no-belief" },
+
+  // T02/T08/T12 ACTIVE/VALIDATION sign-off cases (added 2026-08-12, per
+  // docs/prana-kids/FINAL_LEGACY_TEMPLATE_STATUS_2026-08-12.md). These three
+  // templates had zero dedicated content-quality audit coverage in this
+  // file. All natural situations for each are included below (the full
+  // natural sets per tmp_full_corpus_production_readiness.json), run through
+  // the existing scoring criteria only — no new checks were added.
+  { situationId: "SIT054", templateId: "T02", form: "F01", castTarget: "solo", objectFocus: false, obstacleMode: "explicit", architecture: "no-belief" },
+  { situationId: "SIT102", templateId: "T02", form: "F01", castTarget: "solo", objectFocus: false, obstacleMode: "explicit", architecture: "no-belief" },
+  { situationId: "SIT124", templateId: "T02", form: "F01", castTarget: "solo", objectFocus: false, obstacleMode: "explicit", architecture: "no-belief" },
+  { situationId: "SIT168", templateId: "T02", form: "F01", castTarget: "3+", objectFocus: false, obstacleMode: "explicit", architecture: "no-belief" },
+
+  { situationId: "SIT004", templateId: "T08", form: "F01", castTarget: "2", objectFocus: false, obstacleMode: "ambient", architecture: "no-belief" },
+  { situationId: "SIT063", templateId: "T08", form: "F01", castTarget: "3+", objectFocus: false, obstacleMode: "ambient", architecture: "no-belief" },
+  { situationId: "SIT072", templateId: "T08", form: "F01", castTarget: "2", objectFocus: false, obstacleMode: "ambient", architecture: "no-belief" },
+  { situationId: "SIT096", templateId: "T08", form: "F01", castTarget: "2", objectFocus: false, obstacleMode: "explicit", architecture: "no-belief" },
+  { situationId: "SIT155", templateId: "T08", form: "F01", castTarget: "3+", objectFocus: false, obstacleMode: "explicit", architecture: "no-belief" },
+
+  { situationId: "SIT138", templateId: "T12", form: "F01", castTarget: "2", objectFocus: false, obstacleMode: "explicit", architecture: "no-belief" },
+  { situationId: "SIT143", templateId: "T12", form: "F01", castTarget: "2", objectFocus: false, obstacleMode: "explicit", architecture: "no-belief" },
+  { situationId: "SIT159", templateId: "T12", form: "F01", castTarget: "2", objectFocus: false, obstacleMode: "explicit", architecture: "no-belief" },
+  { situationId: "SIT161", templateId: "T12", form: "F01", castTarget: "2", objectFocus: false, obstacleMode: "explicit", architecture: "no-belief" },
 ];
 
 const CONTENT_TYPES = {
@@ -87,6 +182,62 @@ function countWords(text) {
 function overlapCount(a, b) {
   const set = new Set(words(b));
   return words(a).filter((word) => set.has(word)).length;
+}
+
+// Cross-story verbatim sentence reuse check (added 2026-08-12, per
+// docs/prana-kids/REALIZATION_QUALITY_GAP_REPORT_2026-08-12.md §5 step 6 /
+// §6 step 6). The gap the report identified: the denylist above
+// (structuralNarrationPattern) only bans specific *phrases* from the old
+// T16/T21/T22/T23 failures — it has no check for whether two different
+// situations produced the exact same sentence, which is the actual, still-
+// live failure mode for the 11 templates that fall through to the shared
+// generic fallback (six identical sentences in 103/139 corpus stories,
+// regardless of situation). This scans every story's prose for exact-string
+// sentence matches across *different* situationIds and flags reuse.
+// Trivial connective sentences (very short, or containing no situation-
+// specific content) are excluded via MIN_SENTENCE_WORDS so the check does
+// not fire on incidental short lines that are expected to repeat (e.g. a
+// bare "Yes." in dialogue).
+const MIN_SENTENCE_WORDS = 6;
+function splitSentences(text) {
+  return String(text || "")
+    .split(/(?<=[.!?])\s+/)
+    .map((sentence) => sentence.trim())
+    .filter((sentence) => sentence && countWords(sentence) >= MIN_SENTENCE_WORDS);
+}
+
+// Templates that already have a real, mode-detected Realization Contract
+// (own mechanism-specific event chain + prose) as of this check's addition —
+// mirrors TEMPLATES_WITH_REALIZATION_CONTRACT in phase6-app.js. Verbatim
+// reuse across situations is a genuine regression (blocking) for these
+// templates. Any other template present in a future CASES list (e.g. once
+// T18/T14/etc. get their own contracts) is still measured and reported, but
+// only as a WARNING until it's confirmed fixed — matching the report's
+// explicit instruction not to newly fail the build on templates that are
+// still known to share the generic fallback's boilerplate.
+const CONTRACT_TEMPLATES_FOR_REUSE_CHECK = new Set(["T03", "T04", "T05", "T09", "T14", "T15", "T16", "T18", "T19", "T21", "T22", "T23"]);
+
+function computeCrossStoryVerbatimReuse(results) {
+  const sentenceOwners = new Map(); // sentence -> Set(situationId)
+  for (const result of results) {
+    const storyText = (result && result.storyText) || "";
+    const situationId = result && result.situation && result.situation.id;
+    if (!situationId) continue;
+    const seen = new Set(splitSentences(storyText));
+    for (const sentence of seen) {
+      if (!sentenceOwners.has(sentence)) sentenceOwners.set(sentence, new Set());
+      sentenceOwners.get(sentence).add(situationId);
+    }
+  }
+  const reusedSentences = [...sentenceOwners.entries()]
+    .filter(([, situationIds]) => situationIds.size >= 2)
+    .map(([sentence, situationIds]) => ({ sentence, situationIds: [...situationIds], count: situationIds.size }))
+    .sort((a, b) => b.count - a.count);
+  return reusedSentences;
+}
+
+function reuseHitsForSituation(reusedSentences, situationId) {
+  return reusedSentences.filter((entry) => entry.situationIds.includes(situationId));
 }
 
 function sendFile(res, filePath) {
@@ -328,6 +479,80 @@ function scoreCriteria(result) {
     criteria.C6 = /\bthe same wave as any other day\b|\bjust as glad to hear it now\b|\bwere not opposites\b|\bstopped on its own\b/.test(textNorm)
       ? grade("PASS", "Self-reinterpretation mechanic is clearly visible.")
       : grade("WARNING", "Self-reinterpretation structure passes, but the mechanism-specific beat may read formulaically.");
+  } else if (result.templateId === "T18") {
+    // T18 Realization Contract (2026-08-12): the escalation/pause mechanic
+    // is now one of 7 genuinely different self-regulation mechanisms (see
+    // T18_MODE_FRAMING) — matches any of their distinct "paused instead of"
+    // signals rather than one shared phrase.
+    criteria.C6 = /\bpaused instead of\b/.test(textNorm) && /\bthis time\b/.test(textNorm)
+      ? grade("PASS", "Escalate-then-pause mechanic is visible on the page.")
+      : grade("WARNING", "Escalate-then-pause structure passes validation but reads flatter than the intended mechanic.");
+  } else if (result.templateId === "T14") {
+    // T14 Realization Contract (2026-08-12): the receive/remember/give
+    // mechanic is now one of 5 genuinely different struggle domains (see
+    // T14_MODE_FRAMING) — C6 checks the two structural signals that must be
+    // present regardless of mode: an explicit remembering connective back
+    // to the earlier received help, and the hero visibly giving help.
+    const remembersEarlierHelp = /\b(remembering|just like|the same way)\b/i.test(textNorm);
+    const heroGivesVisible = /\b(walked over|made room|crouched down|said something true|helped .* find|asked the other child|stepped in|offered)\b/i.test(textNorm);
+    criteria.C6 = remembersEarlierHelp && heroGivesVisible
+      ? grade("PASS", "Receive-remember-give mechanic is clearly visible.")
+      : grade("WARNING", "Receive-remember-give structure passes, but the give-back beat may read thin in prose.");
+  } else if (result.templateId === "T15") {
+    // T15 Realization Contract (2026-08-12): the assumption/dismissal/
+    // second-look/unexpected-contribution mechanic is one of 7 genuinely
+    // different anxiety/trust domains (see T15_MODE_FRAMING) — no single
+    // shared formula phrase across modes by design, same reasoning T14/T22's
+    // C6 documents. Checks the two structural signals that must be present
+    // regardless of mode: an explicit "second look" reconsideration signal,
+    // and the dismissed helper's contribution becoming visible.
+    const secondLookVisible = /\b(then|second (,|\s)?closer look|remembered|noticed)\b/i.test(textNorm);
+    const contributionVisible = /\b(missing piece|turned out to|contributed|helped|stayed|offered|answered)\b/i.test(textNorm);
+    criteria.C6 = secondLookVisible && contributionVisible
+      ? grade("PASS", "Assumption-then-reversal mechanic is clearly visible.")
+      : grade("WARNING", "Assumption-then-reversal structure passes, but the second-look/contribution beat may read thin in prose.");
+  } else if (result.templateId === "T04") {
+    // T04 Realization Contract (2026-08-12): only 1 real situation, so a
+    // single mode (see T04_MODE_FRAMING) — checks the two structural
+    // signals that must be present regardless of which situation reaches
+    // this path: a visible narrowing question chain, and the revelation
+    // landing as an explicit understanding.
+    const questionChainVisible = /\b(wonder|question|asked)\b/i.test(textNorm);
+    const revelationVisible = /\b(understood|folded into|already knew)\b/i.test(textNorm);
+    criteria.C6 = questionChainVisible && revelationVisible
+      ? grade("PASS", "Question-chain-then-revelation mechanic is clearly visible.")
+      : grade("WARNING", "Question-chain structure passes, but the revelation beat may read thin in prose.");
+  } else if (result.templateId === "T09") {
+    // T09 Realization Contract (2026-08-12): 3 genuine modes (see
+    // T09_MODE_FRAMING) — checks the two structural signals that must be
+    // present regardless of mode: a visible big/loud attempt that fails,
+    // and a quiet quality that is explicitly what actually works.
+    const bigAttemptVisible = /\b(big|loud|louder|forceful|frantic|running|shouting|pushing|forcing)\b/i.test(textNorm);
+    const quietQualityVisible = /\b(quiet|stopped|paused|calm|calmly|noticed|still)\b/i.test(textNorm);
+    criteria.C6 = bigAttemptVisible && quietQualityVisible
+      ? grade("PASS", "Big-attempt-fails-then-quiet-quality mechanic is clearly visible.")
+      : grade("WARNING", "Big-attempt-then-quiet-quality structure passes, but the inversion may read thin in prose.");
+  } else if (result.templateId === "T05") {
+    // T05 Realization Contract (2026-08-12): 3 genuine modes (see
+    // T05_MODE_FRAMING) — checks the two structural signals that must be
+    // present regardless of mode: the mirror-ending explicitly signals a
+    // return to a similar moment ("again"/"same kind of"), and the new
+    // reaction explicitly signals a changed response ("this time").
+    const mirrorReturnVisible = /\b(again|came around again|same kind of|similar moment)\b/i.test(textNorm);
+    const changedResponseVisible = /\bthis time\b/i.test(textNorm);
+    criteria.C6 = mirrorReturnVisible && changedResponseVisible
+      ? grade("PASS", "Mirror-return-then-changed-response mechanic is clearly visible.")
+      : grade("WARNING", "Mirror-return structure passes, but the contrast between old and new reaction may read thin in prose.");
+  } else if (result.templateId === "T19") {
+    // T19 Realization Contract (2026-08-12): single mode
+    // (THRESHOLD_INTEGRITY_CHOICE) — checks the two structural signals that
+    // must be present: two genuinely available paths at a crossroads, and a
+    // deliberate (not accidental) choice between them.
+    const crossroadsVisible = /\b(two different paths|one path|the other path)\b/i.test(textNorm);
+    const deliberateChoiceVisible = /\b(chose|choice|decided|on purpose)\b/i.test(textNorm);
+    criteria.C6 = crossroadsVisible && deliberateChoiceVisible
+      ? grade("PASS", "Crossroads-then-deliberate-choice mechanic is clearly visible.")
+      : grade("WARNING", "Crossroads structure passes, but the choice moment may read thin in prose.");
   } else {
     criteria.C6 = grade("WARNING", "Template mechanic visibility is not explicitly scored for this template.");
   }
@@ -362,7 +587,14 @@ function scoreCriteria(result) {
   // the consequence of that turn, not the turn itself.
   const TURNING_LABEL_BY_TEMPLATE = {
     T03: "TURNING_POINT",
+    T04: "REVELATION",
+    T05: "INSIGHT",
+    T09: "QUIET_QUALITY_NOTICED",
+    T18: "TURNING_POINT",
+    T14: "HERO_GIVES",
+    T15: "UNEXPECTED_CONTRIBUTION",
     T16: "INTERPRETATION_2",
+    T19: "CHOICE",
     T21: "RESTORE_FAILS",
     T22: "CONNECTED_DISCOVERY",
     T23: "DEEPER_NOTICE",
@@ -529,6 +761,28 @@ async function main() {
         criteria,
         overall: overallStatus(criteria),
       });
+    }
+
+    // Cross-story verbatim sentence reuse (C13) — computed after every case
+    // has run, since it is inherently a cross-story comparison. See
+    // computeCrossStoryVerbatimReuse's comment above for why this exists
+    // and CONTRACT_TEMPLATES_FOR_REUSE_CHECK for the blocking/report-only
+    // gating.
+    const reusedSentences = computeCrossStoryVerbatimReuse(audits.map((audit) => audit.result));
+    for (const audit of audits) {
+      const situationId = audit.result && audit.result.situation && audit.result.situation.id;
+      const hits = reuseHitsForSituation(reusedSentences, situationId);
+      const isContractTemplate = CONTRACT_TEMPLATES_FOR_REUSE_CHECK.has(audit.result && audit.result.templateId);
+      if (!hits.length) {
+        audit.criteria.C13 = { status: "PASS", note: "No sentence in this story is reused verbatim in another situation's story." };
+      } else {
+        const example = hits[0];
+        const note = `Sentence reused verbatim across ${example.count} situations (${example.situationIds.join(", ")}): "${example.sentence}"`;
+        audit.criteria.C13 = isContractTemplate
+          ? { status: "FAIL", note }
+          : { status: "WARNING", note: `${note} (non-blocking: ${audit.result.templateId} does not have a Realization Contract yet)` };
+      }
+      audit.overall = overallStatus(audit.criteria);
     }
 
     const report = buildMarkdownReport(audits);

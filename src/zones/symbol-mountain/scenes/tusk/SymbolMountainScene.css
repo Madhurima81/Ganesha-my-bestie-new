@@ -454,29 +454,6 @@
 }
 
 /* ================================
-   RHYTHM GAME STYLES
-   ================================ */
-.rhythm-sequence-display {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  z-index: 40;
-  font-family: 'Comic Sans MS', cursive;
-}
-
-.rhythm-sequence-display > div:first-child {
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 10px;
-}
-
-.rhythm-sequence-display > div:last-child {
-  font-size: 12px;
-  color: #666;
-  margin-top: 8px;
-}
-
-/* ================================
    ASSEMBLY GAME STYLES
    ================================ */
 .ganesha-outline {
@@ -697,11 +674,6 @@
   .musical-note {
     font-size: 32px;
   }
-  
-  .rhythm-sequence-display {
-    padding: 12px 20px;
-    font-size: 14px;
-  }
 }
 
 @media (max-width: 480px) {
@@ -723,12 +695,7 @@
   .musical-note {
     font-size: 28px;
   }
-  
-  .rhythm-sequence-display {
-    padding: 10px 15px;
-    font-size: 12px;
-  }
-  
+
   .discovered-instrument {
     max-width: 60px;
     max-height: 60px;
@@ -751,10 +718,6 @@
   
   .instruments-found-counter {
     top: 50px;
-  }
-  
-  .rhythm-sequence-display {
-    top: 100px;
   }
 }
 
@@ -781,8 +744,7 @@
     border: 2px solid currentColor;
   }
   
-  .instruments-found-counter,
-  .rhythm-sequence-display {
+  .instruments-found-counter {
     border: 2px solid #333;
   }
   
@@ -958,101 +920,6 @@
 }
 
 /* ================================
-   RHYTHM SEQUENCE DISPLAY ENHANCEMENTS
-   ================================ */
-
-/* Enhanced rhythm display styling */
-.rhythm-sequence-display {
-  font-family: 'Comic Sans MS', cursive;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 2px solid rgba(255, 215, 0, 0.3);
-}
-
-/* Sequence item indicators */
-.rhythm-sequence-display .sequence-item {
-  transition: all 0.3s ease;
-}
-
-.rhythm-sequence-display .sequence-item.correct {
-  border-color: #4caf50;
-  box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
-}
-
-.rhythm-sequence-display .sequence-item.wrong {
-  border-color: #f44336;
-  box-shadow: 0 0 10px rgba(244, 67, 54, 0.5);
-  animation: sequenceWrong 0.3s ease;
-}
-
-.rhythm-sequence-display .sequence-item.pending {
-  border-color: #333;
-  opacity: 0.6;
-}
-
-/* Sequence wrong animation */
-@keyframes sequenceWrong {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(0.9); }
-}
-
-/* ================================
-   PHASE-SPECIFIC STYLING
-   ================================ */
-
-/* Playing phase - pulse effect on display */
-.rhythm-sequence-display.phase-playing {
-  animation: displayPulse 2s ease-in-out infinite;
-}
-
-/* Input phase - ready glow */
-.rhythm-sequence-display.phase-inputting {
-  border-color: #4caf50;
-  box-shadow: 0 0 20px rgba(76, 175, 80, 0.3);
-}
-
-/* Wrong phase - error state */
-.rhythm-sequence-display.phase-wrong {
-  border-color: #f44336;
-  box-shadow: 0 0 20px rgba(244, 67, 54, 0.3);
-  animation: displayShake 0.5s ease;
-}
-
-/* Correct phase - success state */
-.rhythm-sequence-display.phase-correct {
-  border-color: #4caf50;
-  box-shadow: 0 0 25px rgba(76, 175, 80, 0.5);
-  animation: displaySuccess 0.8s ease;
-}
-
-/* ================================
-   PHASE ANIMATIONS
-   ================================ */
-
-@keyframes displayPulse {
-  0%, 100% { 
-    border-color: rgba(255, 215, 0, 0.3);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  }
-  50% { 
-    border-color: rgba(255, 215, 0, 0.6);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2), 0 0 20px rgba(255, 215, 0, 0.3);
-  }
-}
-
-@keyframes displayShake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-3px); }
-  75% { transform: translateX(3px); }
-}
-
-@keyframes displaySuccess {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-}
-
-/* ================================
    INSTRUMENT AVAILABILITY STATES
    ================================ */
 
@@ -1103,33 +970,10 @@
    ================================ */
 
 @media (max-width: 768px) {
-  .rhythm-sequence-display {
-    padding: 12px 20px;
-    top: 100px;
-  }
-  
-  .rhythm-sequence-display .sequence-item {
-    width: 30px;
-    height: 30px;
-  }
-  
   .discovered-instrument.correct-click,
   .discovered-instrument.wrong-click,
   .discovered-instrument.rhythm-playing {
     animation-duration: 0.4s;
-  }
-}
-
-@media (max-width: 480px) {
-  .rhythm-sequence-display {
-    padding: 10px 15px;
-    top: 80px;
-    font-size: 14px;
-  }
-  
-  .rhythm-sequence-display .sequence-item {
-    width: 25px;
-    height: 25px;
   }
 }
 
@@ -1603,7 +1447,6 @@
 .tusk-outline { z-index: 15; }
 .floating-tusk { z-index: 35; }
 .complete-ganesha { z-index: 40; }
-.rhythm-sequence-display { z-index: 40; }
 .instruments-found-counter { z-index: 50; }
 .interactive-hint, .hint-bubble { z-index: 90; }
 .scene-navigation-bar { z-index: 100; }
