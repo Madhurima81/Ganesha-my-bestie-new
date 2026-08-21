@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
+import { UpdateManager } from './lib/components/offline/UpdateManager.jsx'
 
 // AppV1/V2/V3 removed — dead code whose static imports pulled old scene
 // versions (and NewModakSceneV7) into the main bundle.
@@ -34,6 +35,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     {isExpressionPreview
       ? <React.Suspense fallback={null}><GaneshaExpressionTest /></React.Suspense>
-      : <App/>}
+      : <UpdateManager><App/></UpdateManager>}
   </React.StrictMode>,
 )
