@@ -64,3 +64,9 @@ src/**/*_backup*.tsx
 # Generated local quarantine reports
 docs/reports/image-quarantine-report-*.csv
 .claude/worktrees/
+
+# Local Claude Code settings (machine-specific, not shared)
+.claude/settings.local.json
+
+# Stray full-repo worktree copies at repo root
+_worktree_main_assets/
