@@ -1345,12 +1345,13 @@ div[class*="modak-game-modak-collected"] {
 }
 
 .modak-game-emotion-orb {
-  width: clamp(52px, 4.8vw, 72px);
-  height: clamp(52px, 4.8vw, 72px);
+  width: clamp(72px, 6.4vw, 104px);
+  height: clamp(72px, 6.4vw, 104px);
   display: block;
   user-select: none;
   cursor: grab;
   animation: modak-game-gentleFloat 1800ms ease-in-out infinite alternate;
+  filter: drop-shadow(0 8px 14px rgba(110, 71, 27, 0.18));
 }
 
 @keyframes modak-game-gentleFloat {
@@ -1365,9 +1366,9 @@ div[class*="modak-game-modak-collected"] {
 
 .modak-game-belly-ganesha-area {
   position: absolute;
-  right: 4%;
-  bottom: 9%;
-  width: 40%;
+  right: 15%;
+  bottom: 40%;
+  width: 34%;
   aspect-ratio: 1;
   display: grid;
   place-items: center;
@@ -1379,6 +1380,8 @@ div[class*="modak-game-modak-collected"] {
   height: auto;
   position: relative;
   z-index: 2;
+  transform: scale(0.92);
+  transform-origin: center bottom;
 }
 
 @keyframes modak-game-ganeshaEnter {
@@ -1476,22 +1479,22 @@ div[class*="modak-game-modak-collected"] {
 
 .modak-game-inside-happy {
   left: 5%;
-  top: 8%;
+  top: 18%;
 }
 
 .modak-game-inside-worried {
   right: 5%;
-  top: 8%;
+  top: 18%;
 }
 
 .modak-game-inside-angry {
   left: 5%;
-  bottom: 5%;
+  bottom: 1%;
 }
 
 .modak-game-inside-sad {
   right: 5%;
-  bottom: 5%;
+  bottom: 1%;
 }
 
 .modak-game-belly-zone.belly-complete .modak-game-belly-glow {
@@ -1959,7 +1962,6 @@ div[class*="discovery"] img {
 
 .modak-drag-hint-hand {
   position: absolute;
-  /* Start over the basket modak area */
   left: 18%;
   top: 59%;
   width: clamp(64px, 8vw, 108px);
@@ -1971,13 +1973,56 @@ div[class*="discovery"] img {
   transform-origin: center bottom;
 }
 
-/* Moves from basket toward Ganesha belly (feed target) */
+/* Fallback path. Phase-specific demos below override this animation. */
 @keyframes modak-drag-hint-move {
   0%   { opacity: 0;   left: 18%; top: 59%; transform: rotate(10deg) scale(1); }
   14%  { opacity: 1;   left: 18%; top: 59%; transform: rotate(10deg) scale(1.15); }
-  72%  { opacity: 0.95; left: 62%; top: 52%; transform: rotate(14deg) scale(0.9); }
-  88%  { opacity: 0.55; left: 64%; top: 54%; transform: rotate(14deg) scale(0.85); }
-  100% { opacity: 0;   left: 65%; top: 55%; transform: rotate(14deg) scale(0.8); }
+  72%  { opacity: 0.95; left: 64%; top: 44%; transform: rotate(14deg) scale(0.9); }
+  88%  { opacity: 0.55; left: 65%; top: 45%; transform: rotate(14deg) scale(0.85); }
+  100% { opacity: 0;   left: 65%; top: 45%; transform: rotate(14deg) scale(0.8); }
+}
+
+.modak-gesture-demo--hold-mooshika .modak-drag-hint-hand {
+  left: var(--hint-left, 24%);
+  top: var(--hint-top, 54%);
+  animation-name: modak-hold-mooshika-demo;
+}
+
+@keyframes modak-hold-mooshika-demo {
+  0%   { opacity: 0;   left: var(--hint-left, 24%); top: var(--hint-top, 54%); transform: rotate(8deg) scale(0.95); }
+  14%  { opacity: 1;   left: var(--hint-left, 24%); top: var(--hint-top, 54%); transform: rotate(8deg) scale(1.1); }
+  34%  { opacity: 1;   left: var(--hint-left, 24%); top: var(--hint-top, 54%); transform: rotate(8deg) scale(0.86); }
+  68%  { opacity: 1;   left: var(--hint-left, 24%); top: var(--hint-top, 54%); transform: rotate(8deg) scale(0.86); }
+  84%  { opacity: 0.55; left: var(--hint-left, 24%); top: var(--hint-top, 54%); transform: rotate(8deg) scale(1.02); }
+  100% { opacity: 0;   left: var(--hint-left, 24%); top: var(--hint-top, 54%); transform: rotate(8deg) scale(0.95); }
+}
+
+.modak-gesture-demo--mooshika-offering .modak-drag-hint-hand {
+  left: var(--hint-start-left, 18%);
+  top: var(--hint-start-top, 64%);
+  animation-name: modak-mooshika-offering-demo;
+}
+
+@keyframes modak-mooshika-offering-demo {
+  0%   { opacity: 0;   left: var(--hint-start-left, 18%); top: var(--hint-start-top, 64%); transform: rotate(10deg) scale(0.98); }
+  14%  { opacity: 1;   left: var(--hint-start-left, 18%); top: var(--hint-start-top, 64%); transform: rotate(10deg) scale(1.12); }
+  70%  { opacity: 0.95; left: var(--hint-end-left, 28%); top: var(--hint-end-top, 38%); transform: rotate(12deg) scale(0.92); }
+  88%  { opacity: 0.55; left: var(--hint-end-left, 28%); top: var(--hint-end-top, 38%); transform: rotate(12deg) scale(0.86); }
+  100% { opacity: 0;   left: var(--hint-end-left, 28%); top: var(--hint-end-top, 38%); transform: rotate(12deg) scale(0.8); }
+}
+
+.modak-gesture-demo--emotion-belly .modak-drag-hint-hand {
+  left: 24%;
+  top: 55%;
+  animation-name: modak-emotion-belly-demo;
+}
+
+@keyframes modak-emotion-belly-demo {
+  0%   { opacity: 0;   left: 24%; top: 55%; transform: rotate(10deg) scale(0.98); }
+  14%  { opacity: 1;   left: 24%; top: 55%; transform: rotate(10deg) scale(1.12); }
+  70%  { opacity: 0.95; left: 68%; top: 51%; transform: rotate(14deg) scale(0.9); }
+  88%  { opacity: 0.55; left: 68%; top: 51%; transform: rotate(14deg) scale(0.84); }
+  100% { opacity: 0;   left: 68%; top: 51%; transform: rotate(14deg) scale(0.78); }
 }
 
 /* Mobile: basket and rock are closer together */
@@ -1986,10 +2031,12 @@ div[class*="discovery"] img {
   @keyframes modak-drag-hint-move {
     0%   { opacity: 0;   left: 16%; top: 61%; transform: rotate(10deg) scale(1); }
     14%  { opacity: 1;   left: 16%; top: 61%; transform: rotate(10deg) scale(1.15); }
-    72%  { opacity: 0.95; left: 58%; top: 53%; transform: rotate(14deg) scale(0.9); }
-    88%  { opacity: 0.55; left: 60%; top: 55%; transform: rotate(14deg) scale(0.85); }
-    100% { opacity: 0;   left: 61%; top: 56%; transform: rotate(14deg) scale(0.8); }
+    72%  { opacity: 0.95; left: 60%; top: 48%; transform: rotate(14deg) scale(0.9); }
+    88%  { opacity: 0.55; left: 61%; top: 49%; transform: rotate(14deg) scale(0.85); }
+    100% { opacity: 0;   left: 61%; top: 49%; transform: rotate(14deg) scale(0.8); }
   }
+
+  .modak-gesture-demo--emotion-belly .modak-drag-hint-hand { left: 24%; top: 58%; }
 }
 
 /* ===========================
@@ -2045,8 +2092,8 @@ div[class*="discovery"] img {
 }
 
 .modak-mini-ganesha-cue--rock {
-  left: 69%;
-  top: 40%;
+  left: 68%;
+  top: 51%;
 }
 
 .modak-mini-ganesha-cue--center {
@@ -2072,7 +2119,7 @@ div[class*="discovery"] img {
   .modak-tap-hint-hand.on-modak { left: 32%; top: 52%; }
   .modak-mini-ganesha-cue--mound { left: 22%; top: 45%; }
   .modak-mini-ganesha-cue--modak { left: 30%; top: 49%; }
-  .modak-mini-ganesha-cue--rock { left: 66%; top: 43%; }
+  .modak-mini-ganesha-cue--rock { left: 68%; top: 51%; }
   .modak-mini-ganesha-cue--center { top: 34%; }
 }
 

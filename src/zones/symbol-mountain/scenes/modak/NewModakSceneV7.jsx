@@ -166,10 +166,10 @@ const MODAK_OFFERINGS = [
   { id: 'garland', image: offeringGarland, top: '42%', left: '74%', label: 'Garland' }
 ];
 const BELLY_EMOTIONS = [
-  { id: 'happy', image: emotionHappy, label: 'Happy', orbClass: 'modak-game-emotion-happy', insideClass: 'modak-game-inside-happy', left: '4%', top: '10%' },
-  { id: 'worried', image: emotionWorried, label: 'Worried', orbClass: 'modak-game-emotion-worried', insideClass: 'modak-game-inside-worried', right: '2%', top: '12%' },
-  { id: 'angry', image: emotionAngry, label: 'Angry', orbClass: 'modak-game-emotion-angry', insideClass: 'modak-game-inside-angry', left: '4%', bottom: '6%' },
-  { id: 'sad', image: emotionSad, label: 'Sad', orbClass: 'modak-game-emotion-sad', insideClass: 'modak-game-inside-sad', right: '4%', bottom: '8%' }
+  { id: 'happy', image: emotionHappy, label: 'Happy', orbClass: 'modak-game-emotion-happy', insideClass: 'modak-game-inside-happy', left: '8%', top: '12%' },
+  { id: 'worried', image: emotionWorried, label: 'Worried', orbClass: 'modak-game-emotion-worried', insideClass: 'modak-game-inside-worried', right: '6%', top: '16%' },
+  { id: 'angry', image: emotionAngry, label: 'Angry', orbClass: 'modak-game-emotion-angry', insideClass: 'modak-game-inside-angry', left: '4%', bottom: '10%' },
+  { id: 'sad', image: emotionSad, label: 'Sad', orbClass: 'modak-game-emotion-sad', insideClass: 'modak-game-inside-sad', right: '8%', bottom: '14%' }
 ];
 const MUSHIKA_DART_INTERVAL_MS = 1100;
 const MUSHIKA_HOLD_MS = 1600;
@@ -628,7 +628,6 @@ const NewModakSceneMVPContent = ({
   const [fireworksFinished, setFireworksFinished] = useState(false);
 
   // Drag tutorial hint � shown once when rock first appears
-  const [showDragHint, setShowDragHint] = useState(false);
   const hasShownDragHintRef = useRef(false);
   const [showIdleGestureHint, setShowIdleGestureHint] = useState(false);
   const [wrongMoundIndex, setWrongMoundIndex] = useState(null);
@@ -1131,7 +1130,7 @@ const NewModakSceneMVPContent = ({
           symbolId: 'modak',
           symbolImage: symbolModakColored,
           symbolName: 'Modak',
-          affirmation: 'I feel peaceful inside.',
+          affirmation: 'I feel happy inside.',
           sidebarTarget: getSidebarTarget('modak')
         });
       }, 1200);
@@ -1179,7 +1178,7 @@ const NewModakSceneMVPContent = ({
           symbolId: 'belly',
           symbolImage: symbolBellyColored,
           symbolName: 'Big Belly',
-          affirmation: 'There is room for every feeling.',
+          affirmation: 'I have room for every feeling.',
           sidebarTarget: getSidebarTarget('belly')
         });
       }, 1200);
@@ -1200,7 +1199,7 @@ const NewModakSceneMVPContent = ({
           symbolId: 'belly',
           symbolImage: symbolBellyColored,
           symbolName: 'Big Belly',
-          affirmation: 'There is room for every feeling.',
+          affirmation: 'I have room for every feeling.',
           sidebarTarget: getSidebarTarget('belly')
         });
       }, 300);
@@ -1631,7 +1630,7 @@ const NewModakSceneMVPContent = ({
           symbolId: 'modak',
           symbolImage: symbolModakColored,
           symbolName: 'Modak',
-          affirmation: 'I feel peaceful inside.',
+          affirmation: 'I feel happy inside.',
           sidebarTarget: getSidebarTarget('modak')
         });
       }, 4700);
@@ -1726,7 +1725,7 @@ const NewModakSceneMVPContent = ({
         symbolId: 'belly',
         symbolImage: symbolBellyColored,
         symbolName: 'Big Belly',
-        affirmation: 'There is room for every feeling.',
+        affirmation: 'I have room for every feeling.',
         sidebarTarget: getSidebarTarget('belly')
       });
     }, 1800);
@@ -1804,7 +1803,7 @@ const NewModakSceneMVPContent = ({
             symbolId: 'belly',
             symbolImage: symbolBellyColored,
             symbolName: 'Big Belly',
-            affirmation: 'I feel good inside.',
+            affirmation: 'I have room for every feeling.',
             sidebarTarget: bellySidebarTarget
           });
         }, 950);
@@ -1883,6 +1882,17 @@ const NewModakSceneMVPContent = ({
   const isCompletionView = showSceneCompletion || sceneState.showingCompletionScreen;
   const isFinalFireworksView = showSparkle === 'final-fireworks';
   const isFinalTransitionView = isFinalFireworksView || showMandala;
+  const isMooshikaSearchPhase = sceneState.phase === PHASES.MOOSHIKA_SEARCH && sceneState.welcomeShown && !sceneState.mooshikaFound;
+  const isOfferingPhase =
+    sceneState.modaksUnlocked &&
+    !sceneState.rockVisible &&
+    (sceneState.phase === PHASES.MODAKS_UNLOCKED || sceneState.phase === PHASES.SOME_COLLECTED);
+  const isBellyDragPhase =
+    sceneState.rockVisible &&
+    (sceneState.phase === PHASES.ROCK_VISIBLE || sceneState.phase === PHASES.ROCK_FEEDING);
+  const nextOfferingHintTarget =
+    MODAK_OFFERINGS.find((_, index) => sceneState.modakStates?.[index] !== 1) ||
+    MODAK_OFFERINGS[0];
   const jumpToDebugGame = useCallback((gameNumber) => {
     if (!sceneActions) return;
 
@@ -2569,7 +2579,7 @@ const NewModakSceneMVPContent = ({
                       style={{
                         position: 'absolute',
                         left: '50%',
-                        top: '63%',
+                        top: '72%',
                         width: '31%',
                         aspectRatio: '1.12',
                         transform: 'translate(-50%, -50%)',
@@ -2643,33 +2653,39 @@ const NewModakSceneMVPContent = ({
                 </div>
               )}
 
-              {/* DRAG TUTORIAL HINT � ghost hand, shown once on first rock reveal */}
-              {showDragHint && (
-                <div className="modak-drag-hint-overlay" aria-hidden="true">
+              {/* Phase-specific gesture demos for the three games. */}
+              {showIdleGestureHint && isMooshikaSearchPhase && (
+                <div
+                  className="modak-drag-hint-overlay modak-gesture-demo modak-gesture-demo--hold-mooshika"
+                  style={{
+                    '--hint-left': (sceneState.mooshikaPosition || MODAK_DISTRACTIONS[0]).left,
+                    '--hint-top': (sceneState.mooshikaPosition || MODAK_DISTRACTIONS[0]).top
+                  }}
+                  aria-hidden="true"
+                >
                   <img className="modak-drag-hint-hand" src="/images/ganesha-point.webp" alt="" />
                 </div>
               )}
 
-              {/* IDLE GESTURE HINT � shown from 2nd idle hint cycle; gesture type matches current phase */}
-              {showIdleGestureHint && (
-                sceneState.rockVisible ? (
-                  // ROCK_VISIBLE: drag gesture (basket ? rock)
-                  <div className="modak-drag-hint-overlay" aria-hidden="true">
-                    <img className="modak-drag-hint-hand" src="/images/ganesha-point.webp" alt="" />
-                  </div>
-                ) : sceneState.modaksUnlocked ? (
-                  // MODAKS_UNLOCKED: no pointer emoji in freeze copy
-                  null
-                ) : sceneState.phase === PHASES.MOOSHIKA_SEARCH ? (
-                  // MOOSHIKA_SEARCH: mini thumbs-up cue over a mound
-                  <div
-                    key={`idle-mound-${hintResetKey}-${sceneState.phase}`}
-                    className="ganesha-gesture-cue modak-mini-ganesha-cue modak-mini-ganesha-cue--mound modak-mini-ganesha-cue--idle"
-                    aria-hidden="true"
-                  >
-                    <img className="modak-mini-gesture-icon" src={MINI_THUMBS_UP_ICON} alt="" />
-                  </div>
-                ) : null
+              {showIdleGestureHint && isOfferingPhase && (
+                <div
+                  className="modak-drag-hint-overlay modak-gesture-demo modak-gesture-demo--mooshika-offering"
+                  style={{
+                    '--hint-start-left': (sceneState.mooshikaPosition || MUSHIKA_OFFERING_START_POSITION).left,
+                    '--hint-start-top': (sceneState.mooshikaPosition || MUSHIKA_OFFERING_START_POSITION).top,
+                    '--hint-end-left': nextOfferingHintTarget.left,
+                    '--hint-end-top': nextOfferingHintTarget.top
+                  }}
+                  aria-hidden="true"
+                >
+                  <img className="modak-drag-hint-hand" src="/images/ganesha-point.webp" alt="" />
+                </div>
+              )}
+
+              {showIdleGestureHint && isBellyDragPhase && (
+                <div className="modak-drag-hint-overlay modak-gesture-demo modak-gesture-demo--emotion-belly" aria-hidden="true">
+                  <img className="modak-drag-hint-hand" src="/images/ganesha-point.webp" alt="" />
+                </div>
               )}
 
 
