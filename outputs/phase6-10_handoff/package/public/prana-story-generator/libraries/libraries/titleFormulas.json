@@ -1,0 +1,752 @@
+[
+  {
+    "id": 1,
+    "slug": "character-adventure",
+    "name": "Character + Adventure",
+    "pattern": "Hero + Adventure",
+    "description": "Focuses on the hero's journey.",
+    "whyItWorks": "Personal connection.",
+    "bestStoryTypes": [
+      "Adventure"
+    ],
+    "bestStoryStructures": [
+      "Journey Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Great Journey"
+    ],
+    "bestEmotionalArcs": [
+      "Courage"
+    ],
+    "bestAge": "5–8",
+    "exampleTitles": [
+      "Chinu's Big Adventure"
+    ],
+    "notes": "Most versatile"
+  },
+  {
+    "id": 2,
+    "slug": "character-object",
+    "name": "Character + Object",
+    "pattern": "Hero + Important Object",
+    "description": "Highlights a key object.",
+    "whyItWorks": "Sparks curiosity.",
+    "bestStoryTypes": [
+      "Discovery"
+    ],
+    "bestStoryStructures": [
+      "Mystery Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Treasure Hunt"
+    ],
+    "bestEmotionalArcs": [
+      "Curiosity"
+    ],
+    "bestAge": "5–8",
+    "exampleTitles": [
+      "Mira and the Golden Feather"
+    ],
+    "notes": "Quest stories"
+  },
+  {
+    "id": 3,
+    "slug": "character-place",
+    "name": "Character + Place",
+    "pattern": "Hero + Place",
+    "description": "Emphasises the world.",
+    "whyItWorks": "Strong setting.",
+    "bestStoryTypes": [
+      "Exploration"
+    ],
+    "bestStoryStructures": [
+      "Expedition"
+    ],
+    "bestAdventureArchetypes": [
+      "Hidden World"
+    ],
+    "bestEmotionalArcs": [
+      "Wonder"
+    ],
+    "bestAge": "5–8",
+    "exampleTitles": [
+      "Kabir at Crystal Falls"
+    ],
+    "notes": "World-focused"
+  },
+  {
+    "id": 4,
+    "slug": "character-problem",
+    "name": "Character + Problem",
+    "pattern": "Hero + Challenge",
+    "description": "Presents the central conflict.",
+    "whyItWorks": "Immediate engagement.",
+    "bestStoryTypes": [
+      "Growth"
+    ],
+    "bestStoryStructures": [
+      "Transformation Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Hero's Trial"
+    ],
+    "bestEmotionalArcs": [
+      "Self-Doubt"
+    ],
+    "bestAge": "5–9",
+    "exampleTitles": [
+      "Neel's Impossible Climb"
+    ],
+    "notes": "Strong emotional hook"
+  },
+  {
+    "id": 5,
+    "slug": "character-friend",
+    "name": "Character + Friend",
+    "pattern": "Hero + Friend",
+    "description": "Relationship-focused.",
+    "whyItWorks": "Warm and relatable.",
+    "bestStoryTypes": [
+      "Friendship"
+    ],
+    "bestStoryStructures": [
+      "Friendship Story"
+    ],
+    "bestAdventureArchetypes": [
+      "New Friend"
+    ],
+    "bestEmotionalArcs": [
+      "Belonging"
+    ],
+    "bestAge": "4–8",
+    "exampleTitles": [
+      "Chinu and a New Friend"
+    ],
+    "notes": "Younger readers"
+  },
+  {
+    "id": 6,
+    "slug": "character-promise",
+    "name": "Character + Promise",
+    "pattern": "Hero + Promise",
+    "description": "Highlights responsibility.",
+    "whyItWorks": "Creates investment.",
+    "bestStoryTypes": [
+      "Community"
+    ],
+    "bestStoryStructures": [
+      "Promise Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Promise Keeper"
+    ],
+    "bestEmotionalArcs": [
+      "Responsibility"
+    ],
+    "bestAge": "5–9",
+    "exampleTitles": [
+      "Veer's Promise"
+    ],
+    "notes": "Emotional stories"
+  },
+  {
+    "id": 7,
+    "slug": "character-festival",
+    "name": "Character + Festival",
+    "pattern": "Hero + Celebration",
+    "description": "Festival-centred.",
+    "whyItWorks": "Bright and memorable.",
+    "bestStoryTypes": [
+      "Celebration"
+    ],
+    "bestStoryStructures": [
+      "Celebration Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Festival Adventure"
+    ],
+    "bestEmotionalArcs": [
+      "Joy"
+    ],
+    "bestAge": "5–8",
+    "exampleTitles": [
+      "Mayur's Festival Surprise"
+    ],
+    "notes": "Cultural stories"
+  },
+  {
+    "id": 8,
+    "slug": "character-discovery",
+    "name": "Character + Discovery",
+    "pattern": "Hero + Discovery",
+    "description": "Something important is found.",
+    "whyItWorks": "Creates curiosity.",
+    "bestStoryTypes": [
+      "Mystery"
+    ],
+    "bestStoryStructures": [
+      "Discovery Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Secret Discovery"
+    ],
+    "bestEmotionalArcs": [
+      "Wonder"
+    ],
+    "bestAge": "5–8",
+    "exampleTitles": [
+      "Arin Finds a Secret Path"
+    ],
+    "notes": "Great for page turns"
+  },
+  {
+    "id": 9,
+    "slug": "the-secret-of",
+    "name": "The Secret of...",
+    "pattern": "The Secret of + Place/Object",
+    "description": "Mystery-driven.",
+    "whyItWorks": "Curiosity gap.",
+    "bestStoryTypes": [
+      "Mystery"
+    ],
+    "bestStoryStructures": [
+      "Mystery Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Ancient Secret"
+    ],
+    "bestEmotionalArcs": [
+      "Curiosity"
+    ],
+    "bestAge": "5–10",
+    "exampleTitles": [
+      "The Secret of Whispering Woods"
+    ],
+    "notes": "Classic picture-book style"
+  },
+  {
+    "id": 10,
+    "slug": "the-lost",
+    "name": "The Lost...",
+    "pattern": "The Lost + Object",
+    "description": "Missing object/person.",
+    "whyItWorks": "Clear goal.",
+    "bestStoryTypes": [
+      "Rescue"
+    ],
+    "bestStoryStructures": [
+      "Rescue Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Rescue Mission"
+    ],
+    "bestEmotionalArcs": [
+      "Concern"
+    ],
+    "bestAge": "5–9",
+    "exampleTitles": [
+      "The Lost Lantern"
+    ],
+    "notes": "Strong hook"
+  },
+  {
+    "id": 11,
+    "slug": "the-little",
+    "name": "The Little...",
+    "pattern": "The Little + Character/Object",
+    "description": "Highlights something small but important.",
+    "whyItWorks": "Appeals to children.",
+    "bestStoryTypes": [
+      "Growth"
+    ],
+    "bestStoryStructures": [
+      "Transformation Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Helping Hand"
+    ],
+    "bestEmotionalArcs": [
+      "Hope"
+    ],
+    "bestAge": "4–7",
+    "exampleTitles": [
+      "The Little Seed"
+    ],
+    "notes": "Gentle stories"
+  },
+  {
+    "id": 12,
+    "slug": "the-hidden",
+    "name": "The Hidden...",
+    "pattern": "The Hidden + Place",
+    "description": "Discovery focus.",
+    "whyItWorks": "Encourages exploration.",
+    "bestStoryTypes": [
+      "Discovery"
+    ],
+    "bestStoryStructures": [
+      "Discovery Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Hidden World"
+    ],
+    "bestEmotionalArcs": [
+      "Wonder"
+    ],
+    "bestAge": "5–9",
+    "exampleTitles": [
+      "The Hidden Garden"
+    ],
+    "notes": "Adventure stories"
+  },
+  {
+    "id": 13,
+    "slug": "the-last",
+    "name": "The Last...",
+    "pattern": "The Last + Item",
+    "description": "Scarcity creates tension.",
+    "whyItWorks": "Immediate stakes.",
+    "bestStoryTypes": [
+      "Adventure"
+    ],
+    "bestStoryStructures": [
+      "Hero Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Race Against Time"
+    ],
+    "bestEmotionalArcs": [
+      "Determination"
+    ],
+    "bestAge": "6–10",
+    "exampleTitles": [
+      "The Last Lotus"
+    ],
+    "notes": "High stakes"
+  },
+  {
+    "id": 14,
+    "slug": "the-gift-of",
+    "name": "The Gift of...",
+    "pattern": "The Gift of + Value/Object",
+    "description": "Emotional focus.",
+    "whyItWorks": "Warm and memorable.",
+    "bestStoryTypes": [
+      "Friendship"
+    ],
+    "bestStoryStructures": [
+      "Relationship Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Gift of Giving"
+    ],
+    "bestEmotionalArcs": [
+      "Gratitude"
+    ],
+    "bestAge": "5–9",
+    "exampleTitles": [
+      "The Gift of Kindness"
+    ],
+    "notes": "Values stories"
+  },
+  {
+    "id": 15,
+    "slug": "the-song-of",
+    "name": "The Song of...",
+    "pattern": "The Song of + Nature",
+    "description": "Nature-centred.",
+    "whyItWorks": "Poetic and calming.",
+    "bestStoryTypes": [
+      "Nature"
+    ],
+    "bestStoryStructures": [
+      "Nature Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Nature's Balance"
+    ],
+    "bestEmotionalArcs": [
+      "Wonder"
+    ],
+    "bestAge": "5–9",
+    "exampleTitles": [
+      "The Song of the River"
+    ],
+    "notes": "Beautiful read-aloud titles"
+  },
+  {
+    "id": 16,
+    "slug": "how-saved",
+    "name": "How ___ Saved...",
+    "pattern": "How + Hero + Saved...",
+    "description": "Hero immediately feels active.",
+    "whyItWorks": "Action-driven.",
+    "bestStoryTypes": [
+      "Rescue"
+    ],
+    "bestStoryStructures": [
+      "Rescue Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Rescue Mission"
+    ],
+    "bestEmotionalArcs": [
+      "Courage"
+    ],
+    "bestAge": "5–9",
+    "exampleTitles": [
+      "How Chinu Saved the Nest"
+    ],
+    "notes": "Strong verbs"
+  },
+  {
+    "id": 17,
+    "slug": "the-day-we",
+    "name": "The Day We...",
+    "pattern": "The Day We + Action",
+    "description": "Shared adventure.",
+    "whyItWorks": "Inclusive.",
+    "bestStoryTypes": [
+      "Team"
+    ],
+    "bestStoryStructures": [
+      "Community Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Team Adventure"
+    ],
+    "bestEmotionalArcs": [
+      "Belonging"
+    ],
+    "bestAge": "5–9",
+    "exampleTitles": [
+      "The Day We Built a Bridge"
+    ],
+    "notes": "Great for teamwork"
+  },
+  {
+    "id": 18,
+    "slug": "racing-to",
+    "name": "Racing to...",
+    "pattern": "Racing to + Goal",
+    "description": "Urgency.",
+    "whyItWorks": "High energy.",
+    "bestStoryTypes": [
+      "Adventure"
+    ],
+    "bestStoryStructures": [
+      "Time Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Race Against Time"
+    ],
+    "bestEmotionalArcs": [
+      "Determination"
+    ],
+    "bestAge": "5–10",
+    "exampleTitles": [
+      "Racing to the Festival"
+    ],
+    "notes": "Fast-paced"
+  },
+  {
+    "id": 19,
+    "slug": "building",
+    "name": "Building...",
+    "pattern": "Building + Object",
+    "description": "Creative mission.",
+    "whyItWorks": "Clear purpose.",
+    "bestStoryTypes": [
+      "Creation"
+    ],
+    "bestStoryStructures": [
+      "Builder Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Build Together"
+    ],
+    "bestEmotionalArcs": [
+      "Achievement"
+    ],
+    "bestAge": "5–8",
+    "exampleTitles": [
+      "Building the Treehouse"
+    ],
+    "notes": "Maker stories"
+  },
+  {
+    "id": 20,
+    "slug": "searching-for",
+    "name": "Searching for...",
+    "pattern": "Searching for + Object",
+    "description": "Discovery mission.",
+    "whyItWorks": "Immediate curiosity.",
+    "bestStoryTypes": [
+      "Mystery"
+    ],
+    "bestStoryStructures": [
+      "Discovery Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Secret Discovery"
+    ],
+    "bestEmotionalArcs": [
+      "Curiosity"
+    ],
+    "bestAge": "5–9",
+    "exampleTitles": [
+      "Searching for the Blue Feather"
+    ],
+    "notes": "Excellent for quests"
+  },
+  {
+    "id": 21,
+    "slug": "the-brave",
+    "name": "The Brave...",
+    "pattern": "The Brave + Character",
+    "description": "Courage-focused.",
+    "whyItWorks": "Aspirational.",
+    "bestStoryTypes": [
+      "Growth"
+    ],
+    "bestStoryStructures": [
+      "Hero Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Hero's Trial"
+    ],
+    "bestEmotionalArcs": [
+      "Courage"
+    ],
+    "bestAge": "5–8",
+    "exampleTitles": [
+      "The Brave Little Rabbit"
+    ],
+    "notes": "Popular style"
+  },
+  {
+    "id": 22,
+    "slug": "the-kind",
+    "name": "The Kind...",
+    "pattern": "The Kind + Character",
+    "description": "Kindness-focused.",
+    "whyItWorks": "Warm emotional appeal.",
+    "bestStoryTypes": [
+      "Friendship"
+    ],
+    "bestStoryStructures": [
+      "Helping Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Helping Hand"
+    ],
+    "bestEmotionalArcs": [
+      "Compassion"
+    ],
+    "bestAge": "4–8",
+    "exampleTitles": [
+      "The Kind Squirrel"
+    ],
+    "notes": "Gentle stories"
+  },
+  {
+    "id": 23,
+    "slug": "the-quiet",
+    "name": "The Quiet...",
+    "pattern": "The Quiet + Character/Object",
+    "description": "Reflection-focused.",
+    "whyItWorks": "Creates intrigue.",
+    "bestStoryTypes": [
+      "Emotional"
+    ],
+    "bestStoryStructures": [
+      "Transformation Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Dream Adventure"
+    ],
+    "bestEmotionalArcs": [
+      "Peace"
+    ],
+    "bestAge": "5–9",
+    "exampleTitles": [
+      "The Quiet River"
+    ],
+    "notes": "Calm stories"
+  },
+  {
+    "id": 24,
+    "slug": "the-patient",
+    "name": "The Patient...",
+    "pattern": "The Patient + Character",
+    "description": "Patience-focused.",
+    "whyItWorks": "Growth mindset.",
+    "bestStoryTypes": [
+      "Growth"
+    ],
+    "bestStoryStructures": [
+      "Training Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Training Journey"
+    ],
+    "bestEmotionalArcs": [
+      "Perseverance"
+    ],
+    "bestAge": "5–9",
+    "exampleTitles": [
+      "The Patient Turtle"
+    ],
+    "notes": "Self-regulation"
+  },
+  {
+    "id": 25,
+    "slug": "learning-to",
+    "name": "Learning to...",
+    "pattern": "Learning to + Action",
+    "description": "Highlights growth.",
+    "whyItWorks": "Transformation is clear.",
+    "bestStoryTypes": [
+      "Coming of Age"
+    ],
+    "bestStoryStructures": [
+      "Transformation Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Coming of Age"
+    ],
+    "bestEmotionalArcs": [
+      "Growth"
+    ],
+    "bestAge": "5–10",
+    "exampleTitles": [
+      "Learning to Listen"
+    ],
+    "notes": "Emotional stories"
+  },
+  {
+    "id": 26,
+    "slug": "when-the-forest",
+    "name": "When the Forest...",
+    "pattern": "When the + Nature Element",
+    "description": "Nature begins the story.",
+    "whyItWorks": "Builds wonder.",
+    "bestStoryTypes": [
+      "Nature"
+    ],
+    "bestStoryStructures": [
+      "Discovery Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Nature's Balance"
+    ],
+    "bestEmotionalArcs": [
+      "Wonder"
+    ],
+    "bestAge": "5–9",
+    "exampleTitles": [
+      "When the Forest Whispered"
+    ],
+    "notes": "Strong Prana Kids feel"
+  },
+  {
+    "id": 27,
+    "slug": "the-whispering",
+    "name": "The Whispering...",
+    "pattern": "The Whispering + Place",
+    "description": "Mysterious location.",
+    "whyItWorks": "Sparks curiosity.",
+    "bestStoryTypes": [
+      "Mystery"
+    ],
+    "bestStoryStructures": [
+      "Hidden World Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Hidden World"
+    ],
+    "bestEmotionalArcs": [
+      "Curiosity"
+    ],
+    "bestAge": "5–9",
+    "exampleTitles": [
+      "The Whispering Cave"
+    ],
+    "notes": "World-building"
+  },
+  {
+    "id": 28,
+    "slug": "the-wisdom-of",
+    "name": "The Wisdom of...",
+    "pattern": "The Wisdom of + Symbol",
+    "description": "Centres the story on a wisdom element.",
+    "whyItWorks": "Fits the Prana Kids philosophy.",
+    "bestStoryTypes": [
+      "Wisdom"
+    ],
+    "bestStoryStructures": [
+      "Transformation Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Heritage Journey"
+    ],
+    "bestEmotionalArcs": [
+      "Understanding"
+    ],
+    "bestAge": "6–10",
+    "exampleTitles": [
+      "The Wisdom of the Lotus"
+    ],
+    "notes": "Symbol-driven"
+  },
+  {
+    "id": 29,
+    "slug": "following-the",
+    "name": "Following the...",
+    "pattern": "Following the + Clue/Trail",
+    "description": "Suggests exploration and purpose.",
+    "whyItWorks": "Encourages adventure.",
+    "bestStoryTypes": [
+      "Quest"
+    ],
+    "bestStoryStructures": [
+      "Journey Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Expedition"
+    ],
+    "bestEmotionalArcs": [
+      "Curiosity"
+    ],
+    "bestAge": "5–9",
+    "exampleTitles": [
+      "Following the Fireflies"
+    ],
+    "notes": "Excellent for nature stories"
+  },
+  {
+    "id": 30,
+    "slug": "one-small-step",
+    "name": "One Small Step...",
+    "pattern": "One Small Step + Goal",
+    "description": "Emphasises gradual growth.",
+    "whyItWorks": "Reinforces perseverance.",
+    "bestStoryTypes": [
+      "Growth"
+    ],
+    "bestStoryStructures": [
+      "Training Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Training Journey"
+    ],
+    "bestEmotionalArcs": [
+      "Self-Doubt → Confidence"
+    ],
+    "bestAge": "5–10",
+    "exampleTitles": [
+      "One Small Step to the Summit"
+    ],
+    "notes": "Perfect for Prana Kids' growth philosophy"
+  }
+]

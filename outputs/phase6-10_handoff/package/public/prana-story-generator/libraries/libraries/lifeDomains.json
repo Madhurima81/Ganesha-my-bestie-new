@@ -1,0 +1,145 @@
+[
+  {
+    "id": 1,
+    "slug": "friendship-sharing",
+    "name": "Friendship & Sharing",
+    "description": "Building friendships, kindness and cooperation.",
+    "storyFocus": "Sharing, inclusion, teamwork, resolving conflicts",
+    "exampleMissions": [
+      "Help a Lonely Friend",
+      "Share the Harvest"
+    ]
+  },
+  {
+    "id": 2,
+    "slug": "family-daily-life",
+    "name": "Family & Daily Life",
+    "description": "Everyday family experiences and responsibilities.",
+    "storyFocus": "Home, siblings, routines, caring",
+    "exampleMissions": [
+      "Return a Borrowed Item",
+      "Care for an Elder"
+    ]
+  },
+  {
+    "id": 3,
+    "slug": "school-community",
+    "name": "School & Community",
+    "description": "Learning to be part of a group and contribute.",
+    "storyFocus": "School, neighbourhood, teamwork, leadership",
+    "exampleMissions": [
+      "Help the Community",
+      "Clean a Shared Space"
+    ]
+  },
+  {
+    "id": 4,
+    "slug": "learning-problem-solving",
+    "name": "Learning & Problem Solving",
+    "description": "Curiosity, thinking and discovering solutions.",
+    "storyFocus": "Mysteries, puzzles, learning skills",
+    "exampleMissions": [
+      "Solve a Puzzle",
+      "Find the Last Clue"
+    ]
+  },
+  {
+    "id": 5,
+    "slug": "playing-games",
+    "name": "Playing & Games",
+    "description": "Play, imagination and friendly competition.",
+    "storyFocus": "Games, adventures, sports, pretend play",
+    "exampleMissions": [
+      "Treasure Hunt",
+      "Friendly Challenge"
+    ]
+  },
+  {
+    "id": 6,
+    "slug": "helping-caring",
+    "name": "Helping & Caring",
+    "description": "Compassion and helping people, animals and nature.",
+    "storyFocus": "Service, empathy, kindness",
+    "exampleMissions": [
+      "Rescue a Trapped Animal",
+      "Deliver Medicine"
+    ]
+  },
+  {
+    "id": 7,
+    "slug": "exploring-nature",
+    "name": "Exploring & Nature",
+    "description": "Discovering the natural world.",
+    "storyFocus": "Forests, rivers, mountains, exploration",
+    "exampleMissions": [
+      "Explore a Hidden Cave",
+      "Find a Rare Flower"
+    ]
+  },
+  {
+    "id": 8,
+    "slug": "building-creating",
+    "name": "Building & Creating",
+    "description": "Making, repairing and inventing.",
+    "storyFocus": "Construction, crafts, creativity",
+    "exampleMissions": [
+      "Build a Bridge",
+      "Repair a Nest"
+    ]
+  },
+  {
+    "id": 9,
+    "slug": "art-music-creativity",
+    "name": "Art, Music & Creativity",
+    "description": "Expressing ideas through creativity.",
+    "storyFocus": "Music, dance, painting, storytelling",
+    "exampleMissions": [
+      "Plan a Performance",
+      "Create Something Together"
+    ]
+  },
+  {
+    "id": 10,
+    "slug": "communication",
+    "name": "Communication",
+    "description": "Listening, speaking and understanding others.",
+    "storyFocus": "Honest conversations, misunderstandings, teamwork",
+    "exampleMissions": [
+      "Deliver an Important Message",
+      "Settle a Disagreement"
+    ]
+  },
+  {
+    "id": 11,
+    "slug": "responsibility",
+    "name": "Responsibility",
+    "description": "Keeping promises and doing the right thing.",
+    "storyFocus": "Honesty, duties, caring for belongings",
+    "exampleMissions": [
+      "Return Something Precious",
+      "Protect the Harvest"
+    ]
+  },
+  {
+    "id": 12,
+    "slug": "celebrations-traditions",
+    "name": "Celebrations & Traditions",
+    "description": "Festivals, customs and joyful community moments.",
+    "storyFocus": "Festivals, gratitude, family traditions",
+    "exampleMissions": [
+      "Prepare a Festival",
+      "Decorate a Village"
+    ]
+  },
+  {
+    "id": 13,
+    "slug": "self-care",
+    "name": "Self-Care",
+    "description": "Understanding and managing oneself.",
+    "storyFocus": "Feelings, courage, confidence, resilience",
+    "exampleMissions": [
+      "Face a Fear",
+      "Learn a New Skill"
+    ]
+  }
+]

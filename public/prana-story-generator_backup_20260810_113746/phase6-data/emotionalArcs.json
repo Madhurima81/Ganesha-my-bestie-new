@@ -1,0 +1,730 @@
+[
+  {
+    "id": "ARC001",
+    "name": "1. Radical Self-Acceptance",
+    "journey_raw": [
+      "Hopeful Longing",
+      "Curious Determination",
+      "Accidental Panic",
+      "Relieved Wonder",
+      "Deep Belonging"
+    ],
+    "hard": {
+      "emotion_sequence": [
+        "EMOTION_HOPE",
+        "EMOTION_CURIOSITY",
+        "EMOTION_DETERMINATION",
+        "EMOTION_PANIC",
+        "EMOTION_WONDER",
+        "EMOTION_BELONGING"
+      ]
+    },
+    "soft_suggested": {
+      "recommended_need_ids": [
+        "NEED_IDENTITY",
+        "NEED_CONFIDENCE"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "source_data_inconsistency": null
+    }
+  },
+  {
+    "id": "ARC002",
+    "name": "2. Circle of Safety",
+    "journey_raw": [
+      "Surprise",
+      "Hope",
+      "Worry",
+      "Comfort",
+      "Relief",
+      "Security"
+    ],
+    "hard": {
+      "emotion_sequence": [
+        "EMOTION_ANTICIPATION",
+        "EMOTION_HOPE",
+        "EMOTION_WORRY",
+        "EMOTION_CALM",
+        "EMOTION_RELIEF",
+        "EMOTION_SECURITY"
+      ]
+    },
+    "soft_suggested": {
+      "recommended_need_ids": [
+        "NEED_SAFETY",
+        "NEED_TRUST"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "source_data_inconsistency": null
+    }
+  },
+  {
+    "id": "ARC003",
+    "name": "3. Empathetic Witness",
+    "journey_raw": [
+      "Devastation",
+      "Frustration",
+      "Isolation",
+      "Calm Safety",
+      "Healing"
+    ],
+    "hard": {
+      "emotion_sequence": [
+        "EMOTION_SADNESS",
+        "EMOTION_FRUSTRATION",
+        "EMOTION_LONELINESS",
+        "EMOTION_CALM",
+        "EMOTION_ACCEPTANCE"
+      ]
+    },
+    "soft_suggested": {
+      "recommended_need_ids": [
+        "NEED_COMPASSION",
+        "NEED_CONTENTMENT"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "source_data_inconsistency": null
+    }
+  },
+  {
+    "id": "ARC004",
+    "name": "4. Sensory Discovery",
+    "journey_raw": [
+      "Wonder",
+      "Freedom",
+      "Curiosity",
+      "Gentle Satisfaction",
+      "Warm Nostalgia"
+    ],
+    "hard": {
+      "emotion_sequence": [
+        "EMOTION_WONDER",
+        "EMOTION_FREEDOM",
+        "EMOTION_CURIOSITY",
+        "EMOTION_SATISFACTION",
+        "EMOTION_CALM"
+      ]
+    },
+    "soft_suggested": {
+      "recommended_need_ids": [
+        "NEED_CURIOSITY"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "source_data_inconsistency": null
+    }
+  },
+  {
+    "id": "ARC005",
+    "name": "5. Triumphant Teamwork",
+    "journey_raw": [
+      "Belonging",
+      "Shock",
+      "Leadership",
+      "Hope",
+      "Shared Triumph"
+    ],
+    "hard": {
+      "emotion_sequence": [
+        "EMOTION_BELONGING",
+        "EMOTION_PANIC",
+        "EMOTION_DETERMINATION",
+        "EMOTION_HOPE",
+        "EMOTION_JOY"
+      ]
+    },
+    "soft_suggested": {
+      "recommended_need_ids": [
+        "NEED_BELONGING",
+        "NEED_COMPETENCE"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "source_data_inconsistency": null
+    }
+  },
+  {
+    "id": "ARC006",
+    "name": "6. Mindful De-escalation",
+    "journey_raw": [
+      "Safe",
+      "Curious",
+      "Relaxed",
+      "Peaceful Rest"
+    ],
+    "hard": {
+      "emotion_sequence": [
+        "EMOTION_SECURITY",
+        "EMOTION_CURIOSITY",
+        "EMOTION_CALM",
+        "EMOTION_CALM"
+      ]
+    },
+    "soft_suggested": {
+      "recommended_need_ids": [
+        "NEED_SELF_REGULATION",
+        "NEED_STABILITY"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "source_data_inconsistency": null
+    }
+  },
+  {
+    "id": "ARC007",
+    "name": "7. Rhythmic Growth",
+    "journey_raw": [
+      "Wonder",
+      "Excitement",
+      "Overwhelm",
+      "Relief",
+      "Patience",
+      "Joy"
+    ],
+    "hard": {
+      "emotion_sequence": [
+        "EMOTION_WONDER",
+        "EMOTION_JOY",
+        "EMOTION_FRUSTRATION",
+        "EMOTION_RELIEF",
+        "NEED_PATIENCE",
+        "EMOTION_JOY"
+      ]
+    },
+    "soft_suggested": {
+      "recommended_need_ids": [
+        "NEED_COMPETENCE",
+        "NEED_PATIENCE"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "source_data_inconsistency": [
+        "NEED_PATIENCE"
+      ]
+    }
+  },
+  {
+    "id": "ARC008",
+    "name": "8. Underdog's Wit",
+    "journey_raw": [
+      "Cautious Curiosity",
+      "Calm Confidence",
+      "Shock",
+      "Creative Thinking",
+      "Triumph"
+    ],
+    "hard": {
+      "emotion_sequence": [
+        "EMOTION_CURIOSITY",
+        "EMOTION_CALM",
+        "EMOTION_CONFUSION",
+        "EMOTION_DETERMINATION",
+        "EMOTION_PRIDE"
+      ]
+    },
+    "soft_suggested": {
+      "recommended_need_ids": [
+        "NEED_COURAGE",
+        "NEED_CONFIDENCE"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "source_data_inconsistency": null
+    }
+  },
+  {
+    "id": "ARC009",
+    "name": "9. Empowered Boundary",
+    "journey_raw": [
+      "Responsibility",
+      "Temptation",
+      "Pressure",
+      "Confidence",
+      "Pride"
+    ],
+    "hard": {
+      "emotion_sequence": [
+        "NEED_RESPONSIBILITY",
+        "EMOTION_WORRY",
+        "EMOTION_FRUSTRATION",
+        "EMOTION_CONFIDENCE",
+        "EMOTION_PRIDE"
+      ]
+    },
+    "soft_suggested": {
+      "recommended_need_ids": [
+        "NEED_SELF_REGULATION",
+        "NEED_INTEGRITY"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "source_data_inconsistency": [
+        "NEED_RESPONSIBILITY"
+      ]
+    }
+  },
+  {
+    "id": "ARC010",
+    "name": "10. Generous Heart",
+    "journey_raw": [
+      "Pride",
+      "Loneliness",
+      "Hesitation",
+      "Giving",
+      "Joy"
+    ],
+    "hard": {
+      "emotion_sequence": [
+        "EMOTION_PRIDE",
+        "EMOTION_LONELINESS",
+        "EMOTION_CONFUSION",
+        "EMOTION_SATISFACTION",
+        "EMOTION_JOY"
+      ]
+    },
+    "soft_suggested": {
+      "recommended_need_ids": [
+        "NEED_COMPASSION",
+        "NEED_CONTENTMENT"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "source_data_inconsistency": null
+    }
+  },
+  {
+    "id": "ARC011",
+    "name": "11. Emotional Harbor",
+    "journey_raw": [
+      "Defiance",
+      "Emotional Release",
+      "Loneliness",
+      "Reflection",
+      "Love"
+    ],
+    "hard": {
+      "emotion_sequence": [
+        "EMOTION_ANGER",
+        "EMOTION_ANGER",
+        "EMOTION_LONELINESS",
+        "EMOTION_CALM",
+        "EMOTION_BELONGING"
+      ]
+    },
+    "soft_suggested": {
+      "recommended_need_ids": [
+        "NEED_SELF_REGULATION",
+        "NEED_BELONGING"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "source_data_inconsistency": null
+    }
+  },
+  {
+    "id": "ARC012",
+    "name": "12. Validated Grump",
+    "journey_raw": [
+      "Resentment",
+      "Frustration",
+      "Overwhelm",
+      "Despair",
+      "Acceptance"
+    ],
+    "hard": {
+      "emotion_sequence": [
+        "EMOTION_ANGER",
+        "EMOTION_FRUSTRATION",
+        "EMOTION_FRUSTRATION",
+        "EMOTION_SADNESS",
+        "EMOTION_ACCEPTANCE"
+      ]
+    },
+    "soft_suggested": {
+      "recommended_need_ids": [
+        "NEED_SELF_REGULATION",
+        "NEED_RESPECT"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "source_data_inconsistency": null
+    }
+  },
+  {
+    "id": "ARC013",
+    "name": "13. Creative Empowerment",
+    "journey_raw": [
+      "Uncertainty",
+      "Curiosity",
+      "Experimentation",
+      "Discovery",
+      "Pride"
+    ],
+    "hard": {
+      "emotion_sequence": [
+        "EMOTION_CONFUSION",
+        "EMOTION_CURIOSITY",
+        "EMOTION_CURIOSITY",
+        "EMOTION_CURIOSITY",
+        "EMOTION_PRIDE"
+      ]
+    },
+    "soft_suggested": {
+      "recommended_need_ids": [
+        "NEED_COMPETENCE",
+        "NEED_EXPRESSION"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "source_data_inconsistency": null
+    }
+  },
+  {
+    "id": "ARC014",
+    "name": "14. Identity Reframing",
+    "journey_raw": [
+      "Self-Doubt",
+      "Comparison",
+      "Discovery",
+      "Acceptance",
+      "Confidence"
+    ],
+    "hard": {
+      "emotion_sequence": [
+        "EMOTION_SELF_DOUBT",
+        "EMOTION_JEALOUSY",
+        "EMOTION_CURIOSITY",
+        "EMOTION_ACCEPTANCE",
+        "EMOTION_CONFIDENCE"
+      ]
+    },
+    "soft_suggested": {
+      "recommended_need_ids": [
+        "NEED_IDENTITY",
+        "NEED_CONFIDENCE"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "source_data_inconsistency": null
+    }
+  },
+  {
+    "id": "ARC015",
+    "name": "15. Resourceful Improviser",
+    "journey_raw": [
+      "Loss",
+      "Frustration",
+      "Curiosity",
+      "New Possibility",
+      "Success"
+    ],
+    "hard": {
+      "emotion_sequence": [
+        "EMOTION_SADNESS",
+        "EMOTION_FRUSTRATION",
+        "EMOTION_CURIOSITY",
+        "EMOTION_HOPE",
+        "EMOTION_SATISFACTION"
+      ]
+    },
+    "soft_suggested": {
+      "recommended_need_ids": [
+        "NEED_COMPETENCE",
+        "NEED_ADAPTABILITY"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "source_data_inconsistency": null
+    }
+  },
+  {
+    "id": "ARC016",
+    "name": "16. Surprise Guest",
+    "journey_raw": [
+      "Routine",
+      "Surprise",
+      "Confusion",
+      "Adaptation",
+      "Joy"
+    ],
+    "hard": {
+      "emotion_sequence": [
+        "NEED_STABILITY",
+        "EMOTION_CONFUSION",
+        "EMOTION_CONFUSION",
+        "NEED_ADAPTABILITY",
+        "EMOTION_JOY"
+      ]
+    },
+    "soft_suggested": {
+      "recommended_need_ids": [
+        "NEED_ADAPTABILITY",
+        "NEED_BELONGING"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "source_data_inconsistency": [
+        "NEED_STABILITY",
+        "NEED_ADAPTABILITY"
+      ]
+    }
+  },
+  {
+    "id": "ARC017",
+    "name": "17. Infinite Measure",
+    "journey_raw": [
+      "Love",
+      "Wonder",
+      "Bigger Comparison",
+      "Awe",
+      "Security"
+    ],
+    "hard": {
+      "emotion_sequence": [
+        "EMOTION_BELONGING",
+        "EMOTION_WONDER",
+        "EMOTION_WONDER",
+        "EMOTION_AWE",
+        "EMOTION_SECURITY"
+      ]
+    },
+    "soft_suggested": {
+      "recommended_need_ids": [
+        "NEED_BELONGING",
+        "NEED_TRUST"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "source_data_inconsistency": null
+    }
+  },
+  {
+    "id": "ARC018",
+    "name": "18. Runaway Logic",
+    "journey_raw": [
+      "Small Choice",
+      "Bigger Consequence",
+      "Escalation",
+      "Funny Chaos",
+      "Resolution"
+    ],
+    "hard": {
+      "emotion_sequence": [
+        "EMOTION_DETERMINATION",
+        "EMOTION_ANTICIPATION",
+        "EMOTION_FRUSTRATION",
+        "EMOTION_AMUSEMENT",
+        "EMOTION_SATISFACTION"
+      ]
+    },
+    "soft_suggested": {
+      "recommended_need_ids": [
+        "NEED_SELF_REGULATION"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "source_data_inconsistency": null
+    }
+  },
+  {
+    "id": "ARC019",
+    "name": "19. Comic Pivot",
+    "journey_raw": [
+      "Obsession",
+      "Frustration",
+      "Bigger Obsession",
+      "Sudden Shift",
+      "Laughter"
+    ],
+    "hard": {
+      "emotion_sequence": [
+        "EMOTION_DETERMINATION",
+        "EMOTION_FRUSTRATION",
+        "EMOTION_DETERMINATION",
+        "EMOTION_CONFUSION",
+        "EMOTION_AMUSEMENT"
+      ]
+    },
+    "soft_suggested": {
+      "recommended_need_ids": [
+        "NEED_SELF_REGULATION",
+        "NEED_CONTENTMENT"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "source_data_inconsistency": null
+    }
+  },
+  {
+    "id": "ARC020",
+    "name": "20. Curious Insecurity",
+    "journey_raw": [
+      "Curiosity",
+      "Self-Doubt",
+      "Exploration",
+      "Understanding",
+      "Belonging"
+    ],
+    "hard": {
+      "emotion_sequence": [
+        "EMOTION_CURIOSITY",
+        "EMOTION_SELF_DOUBT",
+        "EMOTION_CURIOSITY",
+        "EMOTION_CONFIDENCE",
+        "EMOTION_BELONGING"
+      ]
+    },
+    "soft_suggested": {
+      "recommended_need_ids": [
+        "NEED_IDENTITY",
+        "NEED_CURIOSITY"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "source_data_inconsistency": null
+    }
+  },
+  {
+    "id": "ARC021",
+    "name": "21. Courageous Breath",
+    "journey_raw": [
+      "Nervousness",
+      "Pause",
+      "Calm Breathing",
+      "First Step",
+      "Confidence"
+    ],
+    "hard": {
+      "emotion_sequence": [
+        "EMOTION_FEAR",
+        "EMOTION_CALM",
+        "EMOTION_CALM",
+        "EMOTION_DETERMINATION",
+        "EMOTION_CONFIDENCE"
+      ]
+    },
+    "soft_suggested": {
+      "recommended_need_ids": [
+        "NEED_COURAGE",
+        "NEED_SELF_REGULATION"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "source_data_inconsistency": null
+    }
+  },
+  {
+    "id": "ARC022",
+    "name": "22. Appreciated Helper",
+    "journey_raw": [
+      "Happy Helping",
+      "Feeling Invisible",
+      "Recognition",
+      "Gratitude",
+      "Joy"
+    ],
+    "hard": {
+      "emotion_sequence": [
+        "EMOTION_JOY",
+        "EMOTION_LONELINESS",
+        "EMOTION_PRIDE",
+        "EMOTION_GRATITUDE",
+        "EMOTION_JOY"
+      ]
+    },
+    "soft_suggested": {
+      "recommended_need_ids": [
+        "NEED_RESPECT",
+        "NEED_COMPASSION"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "source_data_inconsistency": null
+    }
+  },
+  {
+    "id": "ARC023",
+    "name": "23. Melodramatic Threat",
+    "journey_raw": [
+      "Frustration",
+      "Big Declaration",
+      "Reflection",
+      "Comfort",
+      "Calm"
+    ],
+    "hard": {
+      "emotion_sequence": [
+        "EMOTION_FRUSTRATION",
+        "EMOTION_DETERMINATION",
+        "EMOTION_CALM",
+        "EMOTION_SATISFACTION",
+        "EMOTION_CALM"
+      ]
+    },
+    "soft_suggested": {
+      "recommended_need_ids": [
+        "NEED_SELF_REGULATION",
+        "NEED_CONTENTMENT"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "source_data_inconsistency": null
+    }
+  },
+  {
+    "id": "ARC024",
+    "name": "24. Silent Awe",
+    "journey_raw": [
+      "Curiosity",
+      "Wonder",
+      "Stillness",
+      "Gratitude",
+      "Peace"
+    ],
+    "hard": {
+      "emotion_sequence": [
+        "EMOTION_CURIOSITY",
+        "EMOTION_WONDER",
+        "EMOTION_CALM",
+        "EMOTION_GRATITUDE",
+        "EMOTION_CALM"
+      ]
+    },
+    "soft_suggested": {
+      "recommended_need_ids": [
+        "NEED_CURIOSITY",
+        "NEED_CONTENTMENT"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "source_data_inconsistency": null
+    }
+  }
+]

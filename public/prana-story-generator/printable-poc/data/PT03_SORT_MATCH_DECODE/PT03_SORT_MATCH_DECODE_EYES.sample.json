@@ -1,0 +1,82 @@
+{
+  "template_id": "PT03_SORT_MATCH_DECODE",
+  "theme_id": "GT02",
+  "belief": "I look carefully before I decide what is true.",
+  "title": "True Clue Detective Sort",
+  "subtitle": "See clearly like Ganesha and sort the details that truly help you decide.",
+  "assets": {
+    "MAIN_ART": "eyes_symbol"
+  },
+  "content": {
+    "instruction": "Read each clue card. Sort it into TRUE CLUE if it proves something, or DISTRACTING DETAIL if it only grabs attention.",
+    "category_left_title": "TRUE CLUE",
+    "category_left_hint": "Details that really prove something",
+    "category_right_title": "DISTRACTING DETAIL",
+    "category_right_hint": "Details that look loud but do not prove it",
+    "items": [
+      {
+        "id": "EYE-01",
+        "label": "Wet footprints lead from the juice box.",
+        "answer": "LEFT"
+      },
+      {
+        "id": "EYE-02",
+        "label": "The curtain is bright blue.",
+        "answer": "RIGHT"
+      },
+      {
+        "id": "EYE-03",
+        "label": "The open window is beside the spill.",
+        "answer": "LEFT"
+      },
+      {
+        "id": "EYE-04",
+        "label": "The cat is sleeping in the corner.",
+        "answer": "RIGHT"
+      },
+      {
+        "id": "EYE-05",
+        "label": "A straw lies next to the puddle.",
+        "answer": "LEFT"
+      },
+      {
+        "id": "EYE-06",
+        "label": "Someone drew stars on the wall.",
+        "answer": "RIGHT"
+      },
+      {
+        "id": "EYE-07",
+        "label": "The napkin is soaked where the spill began.",
+        "answer": "LEFT"
+      },
+      {
+        "id": "EYE-08",
+        "label": "A toy dinosaur is on the shelf.",
+        "answer": "RIGHT"
+      }
+    ],
+    "footer": "Point to the strongest TRUE CLUE before you make your guess."
+  },
+  "generation": {
+    "mode": "sorting",
+    "answer_rule": "Only details that help you decide what is true belong in TRUE CLUE."
+  },
+  "answer_key": {
+    "LEFT": [
+      "EYE-01",
+      "EYE-03",
+      "EYE-05",
+      "EYE-07"
+    ],
+    "RIGHT": [
+      "EYE-02",
+      "EYE-04",
+      "EYE-06",
+      "EYE-08"
+    ]
+  },
+  "wisdom": {
+    "statement": "I look carefully before I decide what is true.",
+    "today": "Before you guess today, look for one clue that really proves it."
+  }
+}

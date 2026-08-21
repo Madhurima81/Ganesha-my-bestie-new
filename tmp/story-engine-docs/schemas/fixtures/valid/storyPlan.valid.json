@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "1.0",
+  "status": "VALIDATED",
+  "blueprintReference": { "id": "STORY_001" },
+  "storyFlow": {
+    "sequence": [
+      { "id": "FLOW_SETUP", "purpose": "Establish protagonist and situation", "beats": ["BEAT_SETUP"] },
+      { "id": "FLOW_CLIMAX", "purpose": "Protagonist demonstrates growth", "beats": ["BEAT_CLIMAX"] }
+    ],
+    "centralDramaticQuestion": "Will Anu find the courage to try again?",
+    "resolution": "Anu learns that trying again, one step at a time, builds real confidence."
+  },
+  "scenePlan": [
+    { "id": "SCENE_001", "purpose": "Introduce the problem", "beats": ["BEAT_SETUP"], "characterFocus": "CHAR_ANU" }
+  ],
+  "pagePlan": [
+    { "page": 1, "objective": "Introduce hero and problem", "pageTurnGoal": "CURIOSITY", "wordBudget": { "target": 55 } }
+  ],
+  "emotionPlan": [
+    { "id": "EMOTION_001", "page": 1, "function": "Establish curiosity", "intensity": 0.3 }
+  ],
+  "symbolPlan": [
+    { "symbolId": "SYMBOL_LANTERN", "function": "Represents growing confidence", "introduction": "BEAT_SETUP", "payoff": "BEAT_CLIMAX" }
+  ],
+  "craftPlan": [
+    { "techniqueId": "CRAFT_REPETITION", "purpose": "Reinforce the protagonist's repeated attempts" }
+  ],
+  "directorValidation": { "status": "PASS", "blockingFailures": 0, "warnings": 0, "rulesPassed": 16 }
+}

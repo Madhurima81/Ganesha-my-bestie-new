@@ -1,0 +1,718 @@
+{
+  "baseUrl": "http://127.0.0.1:5174/",
+  "testedAt": "2026-08-17T14:29:01.978Z",
+  "totals": {
+    "total": 13,
+    "passed": 12,
+    "warned": 0,
+    "failed": 1
+  },
+  "results": [
+    {
+      "zone": "symbol-mountain",
+      "scene": "modak",
+      "status": "fail",
+      "failureReason": "TimeoutError: locator.waitFor: Timeout 35000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Continue Adventure', exact: true }) to be visible\u001b[22m\n",
+      "errors": [],
+      "warnings": [],
+      "relevantLogs": [
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: loading"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: null Current scene: null"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: loading"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: null Current scene: null"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: loading"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: null Current scene: null"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: loading"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: null Current scene: null"
+        },
+        {
+          "type": "log",
+          "text": "⏱️ Load time: 25087 ms"
+        },
+        {
+          "type": "log",
+          "text": "✅ App initialization complete"
+        },
+        {
+          "type": "log",
+          "text": "⏱️ Load time: 25088 ms"
+        },
+        {
+          "type": "log",
+          "text": "✅ App initialization complete"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: profile-welcome"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: null Current scene: null"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: profile-welcome"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: null Current scene: null"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: profile-welcome"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: null Current scene: null"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: profile-welcome"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: null Current scene: null"
+        }
+      ],
+      "bodyText": "",
+      "buttonTexts": [],
+      "rootSnippet": "",
+      "screenshotPath": "C:\\Users\\Madhurima Agarwal\\ganesha-my-bestie\\tmp\\scene-smoke\\symbol-mountain__modak.png"
+    },
+    {
+      "zone": "symbol-mountain",
+      "scene": "pond",
+      "status": "pass",
+      "failureReason": null,
+      "loadingCleared": true,
+      "errors": [],
+      "warnings": [],
+      "relevantLogs": [
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: symbol-mountain Current scene: pond"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: symbol-mountain Current scene: pond"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: symbol-mountain Current scene: pond"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: symbol-mountain Current scene: pond"
+        }
+      ],
+      "bodyText": "",
+      "buttonTexts": [],
+      "rootSnippet": "<div class=\"game-layout-wrapper\" style=\"position: relative; width: 100%; height: var(--app-height, 100vh); overflow: hidden;\"><div class=\"pond-scene-container\"><div class=\"home-button-wrapper home-button-wrapper--top-left\"><button class=\"home-button \" aria-label=\"Go back to zone\"><img alt=\"\" class=\"home-button__icon\" src=\"/images/icons/icon-home.svg\"></button></div><div class=\"pond-background\" style=\"background-image: url(&quot;/src/zones/symbol-mountain/scenes/pond/assets/images/pondbg.png&quot;);\"><div class=\"pond-bg-overlay pond-bg-overlay--mid\" aria-hidden=\"true\" style=\"background-image: url(&quot;/src/zones/symbol-mountain/scenes/pond/assets/images/pond-tree.png&quot;);\"></div><div class=\"lotus lotus-1 \"><div id=\"lotus-0\" role=\"button\" aria-label=\"Hold to bloom lotus 1\" data-element=\"lotus-1\" class=\"pond-lotus-hold-target\" style=\"cursor: pointer;\"><img alt=\"Lotus 1\" class=\"pond-lotus-image\" draggable=\"false\" src=\"/src/zones/symbol-mountain/scenes/pond/assets/images/lotus-closed-new.webp\" style=\"transform: scale(1);\"></div></div><div class=\"lotus lotus-2 \"><div id=\"lotus-1\" role=\"button\" aria-label=\"Hold to bloom lotus 2\" data-element=\"lotus-2\" class=\"pond-lotus-hold-target\" style=\"cursor: pointer;\"><img alt=\"Lotus 2\" class=\"pond-lotus-image\" draggable=\"false\" src=\"/src/zones/symbol-mountain/scenes/pond/assets/images/lotus-closed-new.webp\" style=\"transform: scale(1);\"><div aria-hidden=\"true\" class=\"pond-fish-overlay\"><img alt=\"\" class=\"pond-fish-image\" draggable=\"false\" src=\"/src/zones/symbol-mountain/scenes/pond/assets/images/fish-new.webp\"></div></div></div><div class=\"lotus lotus-3 \"><div id=\"lotus-2\" role=\"button\" aria-label=\"Hold to bloom lotus 3\" data-element=\"lotus-3\" class=\"pond-lotus-hold-target\" style=\"cursor: pointer;\"><img alt=\"Lotus 3\" class=\"pond-lotus-image\" draggable=\"false\" src=\"/src/zones/symbol-mountain/scenes/pond/assets/images/lotus-closed-new.webp\" style=\"transform: scale(1);\"><div aria-hidden=\"true\" class=\"pond-ripple-overlay\"><div class=\"pond-soft-ripple pond-soft-ripple--1\"></div><div class=\"pond-soft-ripple pond-soft-ripple--2\"></div></div></div></div></div></div><button title=\"Symbol Mountain\" aria-label=\"Back to Symbol Mountain\" style=\"position: fixed; top: 10px; left: calc(54px); z-index: 20000; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(10px); border-radius: 50%; border: 2px solid rgba(160, 120, 220, 0.4); box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 8px; cursor: pointer; font-size: 26px; line-height: 1; overflow: hidden; padding: 0px;\"><img alt=\"Symbol Mountain\" src=\"/images/zone-badge/icon-symbolmtn.png\" style=\"width: 100%; height: 100%; object-fit: cover; border-radius: 50%;\"></button><button class=\"audio-toggle audio-toggle--bottom-right audio-toggle--off\" aria-label=\"Turn on sound\" title=\"Unmute\"><img alt=\"\" class=\"audio-toggle__icon\" src=\"/images/icons/icon-sound-off.svg\"></button></div>",
+      "screenshotPath": "C:\\Users\\Madhurima Agarwal\\ganesha-my-bestie\\tmp\\scene-smoke\\symbol-mountain__pond.png"
+    },
+    {
+      "zone": "symbol-mountain",
+      "scene": "symbol",
+      "status": "pass",
+      "failureReason": null,
+      "loadingCleared": true,
+      "errors": [],
+      "warnings": [],
+      "relevantLogs": [
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: symbol-mountain Current scene: symbol"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: symbol-mountain Current scene: symbol"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: symbol-mountain Current scene: symbol"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: symbol-mountain Current scene: symbol"
+        }
+      ],
+      "bodyText": "Ganesha's Symbols\n\nLook, listen, and find what awakens the tusk.\n\nEyes\nEars\nTusk\nLet's Explore",
+      "buttonTexts": [
+        "Let's Explore"
+      ],
+      "rootSnippet": "<div style=\"position: relative; width: 100%; height: var(--app-height, 100vh); overflow: hidden;\"><div class=\"symbol-mountain-scene-v2-container\"><div class=\"home-button-wrapper home-button-wrapper--top-left\"><button class=\"home-button \" aria-label=\"Go back to zone\"><img alt=\"\" class=\"home-button__icon\" src=\"/images/icons/icon-home.svg\"></button></div><button title=\"Symbol Mountain\" aria-label=\"Back to Symbol Mountain\" style=\"position: fixed; top: 10px; left: calc(54px); z-index: 20000; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(10px); border-radius: 50%; border: 2px solid rgba(160, 120, 220, 0.4); box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 8px; cursor: pointer; font-size: 26px; line-height: 1; overflow: hidden; padding: 0px;\"><img alt=\"Symbol Mountain\" src=\"/images/zone-badge/icon-symbolmtn.png\" style=\"width: 100%; height: 100%; object-fit: cover; border-radius: 50%;\"></button><button class=\"audio-toggle audio-toggle--bottom-right audio-toggle--off\" aria-label=\"Turn on sound\" title=\"Unmute\"><img alt=\"\" class=\"audio-toggle__icon\" src=\"/images/icons/icon-sound-off.svg\"></button><div class=\"mountain-background  \" style=\"background-image: url(&quot;/src/zones/symbol-mountain/scenes/tusk/assets/images/trail-bg.png&quot;);\"><div class=\"game-modal-overlay\" style=\"--modal-card-bg: #FFF3C8; --modal-text-primary: #6B5416; --modal-btn-bg: linear-gradient(180deg, #c89b5d 0%, #a9783f 100%); --modal-btn-shadow: rgba(244, 196, 48, 0.3); --modal-btn-border: transparent; --modal-btn-bg-hover: linear-gradient(180deg, #c89b5d 0%, #a9783f 100%); --modal-btn-text: #FFFFFF; --modal-scene-bg: none;\"><div class=\"game-modal-content\"><div class=\"game-modal-character\"><img class=\"game-modal-ganesha\" alt=\"Ganesha\" src=\"/images/ganesha-poses/stand-point.webp\" style=\"width: min(520px, 100%); height: auto; aspect-ratio: 1 / 1; flex-shrink: 1;\"></div><div class=\"game-modal-card\"><span class=\"game-modal-lotus-top\" aria-hidden=\"true\"></span><h1 class=\"game-modal-title\">Ganesha's Symbols</h1><p class=\"game-modal-subtitle\">Look, listen, and find what awakens the tusk.</p><div class=\"game-modal-icons\"><div class=\"game-modal-icon-item\"><div class=\"game-modal-icon-circle\"><img alt=\"Eyes\" src=\"/images/icons/symbol-eyes-new.png\"></div><span class=\"game-modal-icon-label\">Eyes</span></div><div class=\"game-modal-icon-item\"><div class=\"game-modal-icon-circle\"><img alt=\"Ears\" src=\"/images/icons/symbol-ears-new.png\"></div><span class=\"game-modal-icon-label\">Ears</span></div><div class=\"game-modal-icon-item\"><div class=\"game-modal-icon-circle\"><img alt=\"Tusk\" src=\"/images/icons/broken-tusk-symbol.png\"></div><span class=\"game-modal-icon-label\">Tusk</span></div></div><button type=\"button\" class=\"profile-cta-btn-unified profile-cta-btn-lg  reveal opening-modal-cta\" style=\"--profile-btn-top: #FFDA5A; --profile-btn-base: #F4C430; --profile-btn-shadow: #B8920A; --profile-btn-glow: rgba(244, 196, 48",
+      "screenshotPath": "C:\\Users\\Madhurima Agarwal\\ganesha-my-bestie\\tmp\\scene-smoke\\symbol-mountain__symbol.png"
+    },
+    {
+      "zone": "symbol-mountain",
+      "scene": "final-scene",
+      "status": "pass",
+      "failureReason": null,
+      "loadingCleared": true,
+      "errors": [],
+      "warnings": [],
+      "relevantLogs": [
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: symbol-mountain Current scene: final-scene"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: symbol-mountain Current scene: final-scene"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: symbol-mountain Current scene: final-scene"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: symbol-mountain Current scene: final-scene"
+        }
+      ],
+      "bodyText": "All Symbols Together\n\nEvery symbol is ready. Let's bring them together.\n\neyes\ntrunk\nlotus\nLet's Begin\nDEV Phase\nShow Hint Debug",
+      "buttonTexts": [
+        "Let's Begin",
+        "DEV Phase",
+        "Show Hint Debug"
+      ],
+      "rootSnippet": "<div class=\"sacred-assembly-container\"><div class=\"home-button-wrapper home-button-wrapper--top-left\"><button class=\"home-button \" aria-label=\"Go back to zone\"><img alt=\"\" class=\"home-button__icon\" src=\"/images/icons/icon-home.svg\"></button></div><button title=\"Symbol Mountain\" aria-label=\"Back to Symbol Mountain\" style=\"position: fixed; top: 10px; left: calc(54px); z-index: 20000; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(10px); border-radius: 50%; border: 2px solid rgba(160, 120, 220, 0.4); box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 8px; cursor: pointer; font-size: 26px; line-height: 1; overflow: hidden; padding: 0px;\"><img alt=\"Symbol Mountain\" src=\"/images/zone-badge/icon-symbolmtn.png\" style=\"width: 100%; height: 100%; object-fit: cover; border-radius: 50%;\"></button><button class=\"audio-toggle audio-toggle--bottom-right audio-toggle--off\" aria-label=\"Turn on sound\" title=\"Unmute\"><img alt=\"\" class=\"audio-toggle__icon\" src=\"/images/icons/icon-sound-off.svg\"></button><div class=\"game-modal-overlay\" style=\"--modal-card-bg: #FFF3C8; --modal-text-primary: #6B5416; --modal-btn-bg: linear-gradient(180deg, #c89b5d 0%, #a9783f 100%); --modal-btn-shadow: rgba(244, 196, 48, 0.3); --modal-btn-border: transparent; --modal-btn-bg-hover: linear-gradient(180deg, #c89b5d 0%, #a9783f 100%); --modal-btn-text: #FFFFFF; --modal-scene-bg: none;\"><div class=\"game-modal-content\"><div class=\"game-modal-character\"><img class=\"game-modal-ganesha\" alt=\"Ganesha\" src=\"/images/ganesha-poses/stand-point.webp\" style=\"width: min(520px, 100%); height: auto; aspect-ratio: 1 / 1; flex-shrink: 1;\"></div><div class=\"game-modal-card\"><span class=\"game-modal-lotus-top\" aria-hidden=\"true\"></span><h1 class=\"game-modal-title\">All Symbols Together</h1><p class=\"game-modal-subtitle\">Every symbol is ready. Let's bring them together.</p><div class=\"game-modal-icons\"><div class=\"game-modal-icon-item\"><div class=\"game-modal-icon-circle\"><img alt=\"eyes\" src=\"/images/icons/symbol-eyes-new.png\"></div><span class=\"game-modal-icon-label\">eyes</span></div><div class=\"game-modal-icon-item\"><div class=\"game-modal-icon-circle\"><img alt=\"trunk\" src=\"/images/icons/symbol-trunk-new.png\"></div><span class=\"game-modal-icon-label\">trunk</span></div><div class=\"game-modal-icon-item\"><div class=\"game-modal-icon-circle\"><img alt=\"lotus\" src=\"/images/icons/symbol-lotus-new.png\"></div><span class=\"game-modal-icon-label\">lotus</span></div></div><button type=\"button\" class=\"profile-cta-btn-unified profile-cta-btn-lg  reveal opening-modal-cta\" style=\"--profile-btn-top: #FFDA5A; --profile-btn-base: #F4C430; --profile-btn-shadow: #B8920A; --profile-btn-glow: rgba(244, 196, 48, 0.28);\"><span class=\"profile-cta-btn-text\">Let's Begin</span></button></div></div></div><div class=\"sacred-background\" style=\"background-image: url(&quot;/src/zones/symbol-mountain/scenes/final%20scene/assets/images/final_symbol_background.",
+      "screenshotPath": "C:\\Users\\Madhurima Agarwal\\ganesha-my-bestie\\tmp\\scene-smoke\\symbol-mountain__final-scene.png"
+    },
+    {
+      "zone": "shloka-river",
+      "scene": "vakratunda-grove",
+      "status": "pass",
+      "failureReason": null,
+      "loadingCleared": true,
+      "errors": [],
+      "warnings": [],
+      "relevantLogs": [
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: shloka-river Current scene: vakratunda-grove"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: shloka-river Current scene: vakratunda-grove"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: shloka-river Current scene: vakratunda-grove"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: shloka-river Current scene: vakratunda-grove"
+        }
+      ],
+      "bodyText": "Debug Fireworks",
+      "buttonTexts": [
+        "Debug Fireworks"
+      ],
+      "rootSnippet": "<div class=\"vakratunda-simplified-container\"><div class=\"home-button-wrapper home-button-wrapper--top-left\"><button class=\"home-button \" aria-label=\"Go back to zone\"><img alt=\"\" class=\"home-button__icon\" src=\"/images/icons/icon-home.svg\"></button></div><button title=\"Shloka River\" aria-label=\"Back to Shloka River\" style=\"position: fixed; top: 10px; left: calc(54px); z-index: 20000; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(10px); border-radius: 50%; border: 2px solid rgba(160, 120, 220, 0.4); box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 8px; cursor: pointer; font-size: 26px; line-height: 1; overflow: hidden; padding: 0px;\"><img alt=\"Shloka River\" src=\"/images/zone-badge/icon-shlokariver.png\" style=\"width: 100%; height: 100%; object-fit: cover; border-radius: 50%;\"></button><button type=\"button\" style=\"position: fixed; top: 18px; right: 18px; z-index: 1200; padding: 8px 12px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.45); background: rgba(34, 24, 68, 0.82); color: rgb(255, 247, 214); font-size: 12px; font-weight: 800; letter-spacing: 0.02em; cursor: pointer; box-shadow: rgba(0, 0, 0, 0.22) 0px 10px 24px;\">Debug Fireworks</button><button class=\"audio-toggle audio-toggle--bottom-right audio-toggle--off\" aria-label=\"Turn on sound\" title=\"Unmute\"><img alt=\"\" class=\"audio-toggle__icon\" src=\"/images/icons/icon-sound-off.svg\"></button><div class=\"river-background\" style=\"background-image: url(&quot;/src/zones/shloka-river/scenes/Scene1/assets/images/riverbg-new.png&quot;);\"><div style=\"display: contents;\"><div class=\"vakratunda-scene-banyan\"><img alt=\"\" src=\"/src/zones/shloka-river/scenes/Scene1/assets/images/banyan-full-from-download.webp\"></div><div class=\"ganesha-sidebar \" style=\"--zone-accent-color: #4A9B87; --zone-glow-color: rgba(74, 155, 135, 0.3);\"><div id=\"sidebar-vakratunda\" class=\"ganesha-icon symbol-locked\" title=\"Locked\" style=\"background-image: url(&quot;/src/zones/symbol-mountain/shared/images/icons/symbol-trunk-new.png&quot;); cursor: not-allowed;\"></div><div id=\"sidebar-mahakaya\" class=\"ganesha-icon symbol-locked\" title=\"Locked\" style=\"background-image: url(&quot;/src/zones/meaning%20cave/assets/images/symbols/mahakaya-symbol.png&quot;); cursor: not-allowed;\"></div><div id=\"sidebar-suryakoti\" class=\"ganesha-icon symbol-locked\" title=\"Locked\" style=\"background-image: url(&quot;/src/zones/meaning%20cave/assets/images/symbols/suryakoti-symbol.png&quot;); cursor: not-allowed;\"></div><div id=\"sidebar-samaprabha\" class=\"ganesha-icon symbol-locked\" title=\"Locked\" style=\"background-image: url(&quot;/src/zones/meaning%20cave/assets/images/symbols/samaprabha-symbol.png&quot;); cursor: not-allowed;\"></div><div id=\"sidebar-nirvighnam\" class=\"ganesha-icon symbol-locked\" title=\"Locked\" style=\"background-image: url(&quot;/src/zones/meaning%20cave/assets/images/symbols/nirvighnam-symbol.png&quot;); cursor: not-allowed;\"></div><div id=",
+      "screenshotPath": "C:\\Users\\Madhurima Agarwal\\ganesha-my-bestie\\tmp\\scene-smoke\\shloka-river__vakratunda-grove.png"
+    },
+    {
+      "zone": "shloka-river",
+      "scene": "suryakoti-bank",
+      "status": "pass",
+      "failureReason": null,
+      "loadingCleared": true,
+      "errors": [],
+      "warnings": [],
+      "relevantLogs": [
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: shloka-river Current scene: suryakoti-bank"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: shloka-river Current scene: suryakoti-bank"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: shloka-river Current scene: suryakoti-bank"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: shloka-river Current scene: suryakoti-bank"
+        }
+      ],
+      "bodyText": "Debug Fireworks\n✓\nGreat job!",
+      "buttonTexts": [
+        "Debug Fireworks"
+      ],
+      "rootSnippet": "<div class=\"suryakoti-simplified-container\"><div class=\"home-button-wrapper home-button-wrapper--top-left\"><button class=\"home-button \" aria-label=\"Go back to zone\"><img alt=\"\" class=\"home-button__icon\" src=\"/images/icons/icon-home.svg\"></button></div><button title=\"Shloka River\" aria-label=\"Back to Shloka River\" style=\"position: fixed; top: 10px; left: calc(54px); z-index: 20000; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(10px); border-radius: 50%; border: 2px solid rgba(160, 120, 220, 0.4); box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 8px; cursor: pointer; font-size: 26px; line-height: 1; overflow: hidden; padding: 0px;\"><img alt=\"Shloka River\" src=\"/images/zone-badge/icon-shlokariver.png\" style=\"width: 100%; height: 100%; object-fit: cover; border-radius: 50%;\"></button><button type=\"button\" style=\"position: fixed; top: 18px; right: 18px; z-index: 1200; padding: 8px 12px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.45); background: rgba(34, 24, 68, 0.82); color: rgb(255, 247, 214); font-size: 12px; font-weight: 800; letter-spacing: 0.02em; cursor: pointer; box-shadow: rgba(0, 0, 0, 0.22) 0px 10px 24px;\">Debug Fireworks</button><button class=\"audio-toggle audio-toggle--bottom-right audio-toggle--off\" aria-label=\"Turn on sound\" title=\"Unmute\"><img alt=\"\" class=\"audio-toggle__icon\" src=\"/images/icons/icon-sound-off.svg\"></button><div class=\"suryakoti-river-background\" style=\"background-image: url(&quot;/src/zones/shloka-river/scenes/Scene2/assets/images/saurakoti-bg.png&quot;);\"><div class=\"ganesha-sidebar \" style=\"--zone-accent-color: #4A9B87; --zone-glow-color: rgba(74, 155, 135, 0.3);\"><div id=\"sidebar-vakratunda\" class=\"ganesha-icon animating\" title=\"Vakratunda\" style=\"background-image: url(&quot;/src/zones/symbol-mountain/shared/images/icons/symbol-trunk-new.png&quot;); cursor: pointer;\"><div class=\"glow-indicator\"></div></div><div id=\"sidebar-mahakaya\" class=\"ganesha-icon symbol-unlocked\" title=\"Mahakaya\" style=\"background-image: url(&quot;/src/zones/meaning%20cave/assets/images/symbols/mahakaya-symbol.png&quot;); cursor: pointer;\"><div class=\"glow-indicator\"></div></div><div id=\"sidebar-suryakoti\" class=\"ganesha-icon symbol-locked\" title=\"Locked\" style=\"background-image: url(&quot;/src/zones/meaning%20cave/assets/images/symbols/suryakoti-symbol.png&quot;); cursor: not-allowed;\"></div><div id=\"sidebar-samaprabha\" class=\"ganesha-icon symbol-locked\" title=\"Locked\" style=\"background-image: url(&quot;/src/zones/meaning%20cave/assets/images/symbols/samaprabha-symbol.png&quot;); cursor: not-allowed;\"></div><div id=\"sidebar-nirvighnam\" class=\"ganesha-icon symbol-locked\" title=\"Locked\" style=\"background-image: url(&quot;/src/zones/meaning%20cave/assets/images/symbols/nirvighnam-symbol.png&quot;); cursor: not-allowed;\"></div><div id=\"sidebar-kurumedeva\" class=\"ganesha-icon symbol-locked\" title=\"Locked\" style=\"background-image: url(&q",
+      "screenshotPath": "C:\\Users\\Madhurima Agarwal\\ganesha-my-bestie\\tmp\\scene-smoke\\shloka-river__suryakoti-bank.png"
+    },
+    {
+      "zone": "shloka-river",
+      "scene": "nirvighnam-chant",
+      "status": "pass",
+      "failureReason": null,
+      "loadingCleared": true,
+      "errors": [],
+      "warnings": [],
+      "relevantLogs": [
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: shloka-river Current scene: nirvighnam-chant"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: shloka-river Current scene: nirvighnam-chant"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: shloka-river Current scene: nirvighnam-chant"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: shloka-river Current scene: nirvighnam-chant"
+        }
+      ],
+      "bodyText": "Debug Fireworks\n✓\nGreat job!",
+      "buttonTexts": [
+        "Debug Fireworks"
+      ],
+      "rootSnippet": "<div class=\"nirv-scene-container\"><div class=\"home-button-wrapper home-button-wrapper--top-left\"><button class=\"home-button \" aria-label=\"Go back to zone\"><img alt=\"\" class=\"home-button__icon\" src=\"/images/icons/icon-home.svg\"></button></div><button title=\"Shloka River\" aria-label=\"Back to Shloka River\" style=\"position: fixed; top: 10px; left: calc(54px); z-index: 20000; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(10px); border-radius: 50%; border: 2px solid rgba(160, 120, 220, 0.4); box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 8px; cursor: pointer; font-size: 26px; line-height: 1; overflow: hidden; padding: 0px;\"><img alt=\"Shloka River\" src=\"/images/zone-badge/icon-shlokariver.png\" style=\"width: 100%; height: 100%; object-fit: cover; border-radius: 50%;\"></button><button type=\"button\" style=\"position: fixed; top: 18px; right: 18px; z-index: 1200; padding: 8px 12px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.45); background: rgba(34, 24, 68, 0.82); color: rgb(255, 247, 214); font-size: 12px; font-weight: 800; letter-spacing: 0.02em; cursor: pointer; box-shadow: rgba(0, 0, 0, 0.22) 0px 10px 24px;\">Debug Fireworks</button><button class=\"audio-toggle audio-toggle--bottom-right audio-toggle--off\" aria-label=\"Turn on sound\" title=\"Unmute\"><img alt=\"\" class=\"audio-toggle__icon\" src=\"/images/icons/icon-sound-off.svg\"></button><div class=\"nirv-scene-background\" style=\"background-image: url(&quot;/src/zones/shloka-river/scenes/Scene3/assets/images/nirvighnam/bg.png&quot;);\"><div class=\"ganesha-sidebar \" style=\"--zone-accent-color: #4A9B87; --zone-glow-color: rgba(74, 155, 135, 0.3);\"><div id=\"sidebar-vakratunda\" class=\"ganesha-icon animating\" title=\"Vakratunda\" style=\"background-image: url(&quot;/src/zones/symbol-mountain/shared/images/icons/symbol-trunk-new.png&quot;); cursor: pointer;\"><div class=\"glow-indicator\"></div></div><div id=\"sidebar-mahakaya\" class=\"ganesha-icon symbol-unlocked\" title=\"Mahakaya\" style=\"background-image: url(&quot;/src/zones/meaning%20cave/assets/images/symbols/mahakaya-symbol.png&quot;); cursor: pointer;\"><div class=\"glow-indicator\"></div></div><div id=\"sidebar-suryakoti\" class=\"ganesha-icon symbol-unlocked\" title=\"Suryakoti\" style=\"background-image: url(&quot;/src/zones/meaning%20cave/assets/images/symbols/suryakoti-symbol.png&quot;); cursor: pointer;\"><div class=\"glow-indicator\"></div></div><div id=\"sidebar-samaprabha\" class=\"ganesha-icon symbol-unlocked\" title=\"Samaprabha\" style=\"background-image: url(&quot;/src/zones/meaning%20cave/assets/images/symbols/samaprabha-symbol.png&quot;); cursor: pointer;\"><div class=\"glow-indicator\"></div></div><div id=\"sidebar-nirvighnam\" class=\"ganesha-icon symbol-locked\" title=\"Locked\" style=\"background-image: url(&quot;/src/zones/meaning%20cave/assets/images/symbols/nirvighnam-symbol.png&quot;); cursor: not-allowed;\"></div><div id=\"sidebar-kurumedeva\" class=\"ganesha-icon symb",
+      "screenshotPath": "C:\\Users\\Madhurima Agarwal\\ganesha-my-bestie\\tmp\\scene-smoke\\shloka-river__nirvighnam-chant.png"
+    },
+    {
+      "zone": "shloka-river",
+      "scene": "sarvakaryeshu-chant",
+      "status": "pass",
+      "failureReason": null,
+      "loadingCleared": true,
+      "errors": [],
+      "warnings": [],
+      "relevantLogs": [
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: shloka-river Current scene: sarvakaryeshu-chant"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: shloka-river Current scene: sarvakaryeshu-chant"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: shloka-river Current scene: sarvakaryeshu-chant"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: shloka-river Current scene: sarvakaryeshu-chant"
+        }
+      ],
+      "bodyText": "Debug Fireworks\n✓\nGreat job!",
+      "buttonTexts": [
+        "Debug Fireworks"
+      ],
+      "rootSnippet": "<div class=\"sarva-scene-container\"><div class=\"home-button-wrapper home-button-wrapper--top-left\"><button class=\"home-button \" aria-label=\"Go back to zone\"><img alt=\"\" class=\"home-button__icon\" src=\"/images/icons/icon-home.svg\"></button></div><button title=\"Shloka River\" aria-label=\"Back to Shloka River\" style=\"position: fixed; top: 10px; left: calc(54px); z-index: 20000; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(10px); border-radius: 50%; border: 2px solid rgba(160, 120, 220, 0.4); box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 8px; cursor: pointer; font-size: 26px; line-height: 1; overflow: hidden; padding: 0px;\"><img alt=\"Shloka River\" src=\"/images/zone-badge/icon-shlokariver.png\" style=\"width: 100%; height: 100%; object-fit: cover; border-radius: 50%;\"></button><button type=\"button\" style=\"position: fixed; top: 18px; right: 18px; z-index: 1200; padding: 8px 12px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.45); background: rgba(34, 24, 68, 0.82); color: rgb(255, 247, 214); font-size: 12px; font-weight: 800; letter-spacing: 0.02em; cursor: pointer; box-shadow: rgba(0, 0, 0, 0.22) 0px 10px 24px;\">Debug Fireworks</button><button class=\"audio-toggle audio-toggle--bottom-right audio-toggle--off\" aria-label=\"Turn on sound\" title=\"Unmute\"><img alt=\"\" class=\"audio-toggle__icon\" src=\"/images/icons/icon-sound-off.svg\"></button><div class=\"sarva-scene-background\" style=\"background-image: url(&quot;/src/zones/shloka-river/scenes/scene4/assets/images/sarvada/night.png&quot;);\"><div class=\"ganesha-sidebar \" style=\"--zone-accent-color: #4A9B87; --zone-glow-color: rgba(74, 155, 135, 0.3);\"><div id=\"sidebar-vakratunda\" class=\"ganesha-icon animating\" title=\"Vakratunda\" style=\"background-image: url(&quot;/src/zones/symbol-mountain/shared/images/icons/symbol-trunk-new.png&quot;); cursor: pointer;\"><div class=\"glow-indicator\"></div></div><div id=\"sidebar-mahakaya\" class=\"ganesha-icon symbol-unlocked\" title=\"Mahakaya\" style=\"background-image: url(&quot;/src/zones/meaning%20cave/assets/images/symbols/mahakaya-symbol.png&quot;); cursor: pointer;\"><div class=\"glow-indicator\"></div></div><div id=\"sidebar-suryakoti\" class=\"ganesha-icon symbol-unlocked\" title=\"Suryakoti\" style=\"background-image: url(&quot;/src/zones/meaning%20cave/assets/images/symbols/suryakoti-symbol.png&quot;); cursor: pointer;\"><div class=\"glow-indicator\"></div></div><div id=\"sidebar-samaprabha\" class=\"ganesha-icon symbol-unlocked\" title=\"Samaprabha\" style=\"background-image: url(&quot;/src/zones/meaning%20cave/assets/images/symbols/samaprabha-symbol.png&quot;); cursor: pointer;\"><div class=\"glow-indicator\"></div></div><div id=\"sidebar-nirvighnam\" class=\"ganesha-icon symbol-unlocked\" title=\"Nirvighnam\" style=\"background-image: url(&quot;/src/zones/meaning%20cave/assets/images/symbols/nirvighnam-symbol.png&quot;); cursor: pointer;\"><div class=\"glow-indicator\"></div></div><div id=\"sideba",
+      "screenshotPath": "C:\\Users\\Madhurima Agarwal\\ganesha-my-bestie\\tmp\\scene-smoke\\shloka-river__sarvakaryeshu-chant.png"
+    },
+    {
+      "zone": "shloka-river",
+      "scene": "shloka-river-finale",
+      "status": "pass",
+      "failureReason": null,
+      "loadingCleared": true,
+      "errors": [],
+      "warnings": [],
+      "relevantLogs": [
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: shloka-river Current scene: shloka-river-finale"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: shloka-river Current scene: shloka-river-finale"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: shloka-river Current scene: shloka-river-finale"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: shloka-river Current scene: shloka-river-finale"
+        }
+      ],
+      "bodyText": "Symbol Mountain\n\nDISCOVER & LEARN\n\n🔄\nPlay Again\n❓\nHow to Play\n🏠\nMap\n🔇\nOff\n🐘\nParents (Hold)\n( Tap outside to close )",
+      "buttonTexts": [
+        "🔄Play Again",
+        "❓How to Play",
+        "🏠Map",
+        "🔇Off",
+        "🐘Parents (Hold)"
+      ],
+      "rootSnippet": "<div class=\"srf-container\" style=\"background-image: url(&quot;/src/zones/shloka-river/scenes/scene5/assets/images/river-finale-bg.png&quot;);\"><div class=\"home-button-wrapper home-button-wrapper--top-left\"><button class=\"home-button \" aria-label=\"Go back to zone\"><img alt=\"\" class=\"home-button__icon\" src=\"/images/icons/icon-home.svg\"></button></div><button title=\"Shloka River\" aria-label=\"Back to Shloka River\" style=\"position: fixed; top: 10px; left: calc(54px); z-index: 20000; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(10px); border-radius: 50%; border: 2px solid rgba(160, 120, 220, 0.4); box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 8px; cursor: pointer; font-size: 26px; line-height: 1; overflow: hidden; padding: 0px;\"><img alt=\"Shloka River\" src=\"/images/zone-badge/icon-shlokariver.png\" style=\"width: 100%; height: 100%; object-fit: cover; border-radius: 50%;\"></button><button class=\"audio-toggle audio-toggle--bottom-right audio-toggle--off\" aria-label=\"Turn on sound\" title=\"Unmute\"><img alt=\"\" class=\"audio-toggle__icon\" src=\"/images/icons/icon-sound-off.svg\"></button><div class=\"side-menu \" data-zone=\"symbol-mountain\"><div class=\"menu-zone-header\"><h2 class=\"menu-zone-title\">Symbol Mountain</h2><p class=\"menu-zone-subtitle\">Discover &amp; Learn</p></div><div style=\"display: flex; flex-direction: column; gap: 15px;\"><button class=\"nav-btn-primary\"><span style=\"font-size: 24px;\">🔄</span>Play Again</button><button class=\"nav-btn-secondary\" style=\"flex-direction: row; justify-content: flex-start; gap: 15px; padding-left: 24px;\"><span style=\"font-size: 24px;\">❓</span>How to Play</button><div class=\"menu-settings-row\"><button class=\"nav-btn-secondary\"><span style=\"font-size: 24px;\">🏠</span><span>Map</span></button><button class=\"nav-btn-secondary\"><span style=\"font-size: 24px;\">🔇</span><span>Off</span></button></div><div style=\"margin-top: 10px;\"><button class=\"nav-btn-muted \"><div class=\"long-press-indicator\"></div><span style=\"font-size: 24px; z-index: 2;\">🐘</span><span style=\"z-index: 2;\">Parents (Hold)</span></button></div></div><div class=\"menu-footer-hint\">( Tap outside to close )</div></div></div>",
+      "screenshotPath": "C:\\Users\\Madhurima Agarwal\\ganesha-my-bestie\\tmp\\scene-smoke\\shloka-river__shloka-river-finale.png"
+    },
+    {
+      "zone": "festival-square",
+      "scene": "game1",
+      "status": "pass",
+      "failureReason": null,
+      "loadingCleared": true,
+      "errors": [],
+      "warnings": [],
+      "relevantLogs": [
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: festival-square Current scene: game1"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: festival-square Current scene: game1"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: festival-square Current scene: game1"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: festival-square Current scene: game1"
+        }
+      ],
+      "bodyText": "Festival Beats\n\nThe music is waiting. Play and feel the rhythm come alive.\n\nListen\nPlay\nCreate\nLet's Explore\nSymbol Mountain\n\nDISCOVER & LEARN\n\n🔄\nPlay Again\n❓\nHow to Play\n🏠\nMap\n🔇\nOff\n🐘\nParents (Hold)\n( Tap outside to close )",
+      "buttonTexts": [
+        "Let's Explore",
+        "🔄Play Again",
+        "❓How to Play",
+        "🏠Map",
+        "🔇Off",
+        "🐘Parents (Hold)"
+      ],
+      "rootSnippet": "<div class=\"festival-piano-game\"></div><div class=\"game-modal-overlay\" style=\"--modal-card-bg: #FFE8CE; --modal-text-primary: #8B4513; --modal-btn-bg: linear-gradient(180deg, #f2b85d 0%, #e08b4f 100%); --modal-btn-shadow: rgba(230, 126, 34, 0.3); --modal-btn-border: transparent; --modal-btn-bg-hover: linear-gradient(180deg, #f2b85d 0%, #e08b4f 100%); --modal-btn-text: #FFFFFF; --modal-scene-bg: none;\"><div class=\"game-modal-content\"><div class=\"game-modal-character\"><img class=\"game-modal-ganesha\" alt=\"Ganesha\" src=\"/images/ganesha-poses/stand-point.webp\" style=\"width: min(520px, 100%); height: auto; aspect-ratio: 1 / 1; flex-shrink: 1;\"></div><div class=\"game-modal-card\"><span class=\"game-modal-lotus-top\" aria-hidden=\"true\"></span><h1 class=\"game-modal-title\">Festival Beats</h1><p class=\"game-modal-subtitle\">The music is waiting. Play and feel the rhythm come alive.</p><div class=\"game-modal-icons\"><div class=\"game-modal-icon-item\"><div class=\"game-modal-icon-circle\"><img alt=\"Listen\" src=\"/images/festival-square/icons/listen-icon.png\"></div><span class=\"game-modal-icon-label\">Listen</span></div><div class=\"game-modal-icon-item\"><div class=\"game-modal-icon-circle\"><img alt=\"Play\" src=\"/images/festival-square/icons/play-icon.png\"></div><span class=\"game-modal-icon-label\">Play</span></div><div class=\"game-modal-icon-item\"><div class=\"game-modal-icon-circle\"><img alt=\"Create\" src=\"/images/festival-square/icons/create-icon.png\"></div><span class=\"game-modal-icon-label\">Create</span></div></div><button type=\"button\" class=\"profile-cta-btn-unified profile-cta-btn-lg  reveal opening-modal-cta\" style=\"--profile-btn-top: #F4962A; --profile-btn-base: #E67E22; --profile-btn-shadow: #A84E00; --profile-btn-glow: rgba(230, 126, 34, 0.28);\"><span class=\"profile-cta-btn-text\">Let's Explore</span></button></div></div></div><div class=\"side-menu \" data-zone=\"symbol-mountain\"><div class=\"menu-zone-header\"><h2 class=\"menu-zone-title\">Symbol Mountain</h2><p class=\"menu-zone-subtitle\">Discover &amp; Learn</p></div><div style=\"display: flex; flex-direction: column; gap: 15px;\"><button class=\"nav-btn-primary\"><span style=\"font-size: 24px;\">🔄</span>Play Again</button><button class=\"nav-btn-secondary\" style=\"flex-direction: row; justify-content: flex-start; gap: 15px; padding-left: 24px;\"><span style=\"font-size: 24px;\">❓</span>How to Play</button><div class=\"menu-settings-row\"><button class=\"nav-btn-secondary\"><span style=\"font-size: 24px;\">🏠</span><span>Map</span></button><button class=\"nav-btn-secondary\"><span style=\"font-size: 24px;\">🔇</span><span>Off</span></button></div><div style=\"margin-top: 10px;\"><button class=\"nav-btn-muted \"><div class=\"long-press-indicator\"></div><span style=\"font-size: 24px; z-index: 2;\">🐘</span><span style=\"z-index: 2;\">Parents (Hold)</span></button></div></div><div class=\"menu-footer-hint\">( Tap outside to close )</div></div>",
+      "screenshotPath": "C:\\Users\\Madhurima Agarwal\\ganesha-my-bestie\\tmp\\scene-smoke\\festival-square__game1.png"
+    },
+    {
+      "zone": "festival-square",
+      "scene": "game2",
+      "status": "pass",
+      "failureReason": null,
+      "loadingCleared": true,
+      "errors": [],
+      "warnings": [],
+      "relevantLogs": [
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: festival-square Current scene: game2"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: festival-square Current scene: game2"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: festival-square Current scene: game2"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: festival-square Current scene: game2"
+        }
+      ],
+      "bodyText": "Sparkly Rangoli\n\nColors rest on the floor. Create something bright and beautiful.\n\nLearn\nDraw\nDesign\nLet's Explore\nSymbol Mountain\n\nDISCOVER & LEARN\n\n🔄\nPlay Again\n❓\nHow to Play\n🏠\nMap\n🔇\nOff\n🐘\nParents (Hold)\n( Tap outside to close )",
+      "buttonTexts": [
+        "Let's Explore",
+        "🔄Play Again",
+        "❓How to Play",
+        "🏠Map",
+        "🔇Off",
+        "🐘Parents (Hold)"
+      ],
+      "rootSnippet": "<div class=\"festival-rangoli-container\"><div class=\"rangoli-background\"></div><div class=\"home-button-wrapper home-button-wrapper--top-left\"><button class=\"home-button \" aria-label=\"Go back to zone\"><img alt=\"\" class=\"home-button__icon\" src=\"/images/icons/icon-home.svg\"></button></div><button title=\"Festival Square\" aria-label=\"Back to Festival Square\" style=\"position: fixed; top: 10px; left: calc(54px); z-index: 20000; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(10px); border-radius: 50%; border: 2px solid rgba(160, 120, 220, 0.4); box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 8px; cursor: pointer; font-size: 26px; line-height: 1; overflow: hidden; padding: 0px;\"><img alt=\"Festival Square\" src=\"/images/festival-square-map-icon.png\" style=\"width: 100%; height: 100%; object-fit: cover; border-radius: 50%;\"></button><button class=\"audio-toggle audio-toggle--bottom-right audio-toggle--off\" aria-label=\"Turn on sound\" title=\"Unmute\"><img alt=\"\" class=\"audio-toggle__icon\" src=\"/images/icons/icon-sound-off.svg\"></button><div class=\"game-modal-overlay\" style=\"--modal-card-bg: #FFE8CE; --modal-text-primary: #8B4513; --modal-btn-bg: linear-gradient(180deg, #f2b85d 0%, #e08b4f 100%); --modal-btn-shadow: rgba(230, 126, 34, 0.3); --modal-btn-border: transparent; --modal-btn-bg-hover: linear-gradient(180deg, #f2b85d 0%, #e08b4f 100%); --modal-btn-text: #FFFFFF; --modal-scene-bg: none;\"><div class=\"game-modal-content\"><div class=\"game-modal-character\"><img class=\"game-modal-ganesha\" alt=\"Ganesha\" src=\"/images/ganesha-poses/stand-point.webp\" style=\"width: min(520px, 100%); height: auto; aspect-ratio: 1 / 1; flex-shrink: 1;\"></div><div class=\"game-modal-card\"><span class=\"game-modal-lotus-top\" aria-hidden=\"true\"></span><h1 class=\"game-modal-title\">Sparkly Rangoli</h1><p class=\"game-modal-subtitle\">Colors rest on the floor. Create something bright and beautiful.</p><div class=\"game-modal-icons\"><div class=\"game-modal-icon-item\"><div class=\"game-modal-icon-circle\"><img alt=\"Learn\" src=\"/images/festival-square/icons/learn-icon.png\"></div><span class=\"game-modal-icon-label\">Learn</span></div><div class=\"game-modal-icon-item\"><div class=\"game-modal-icon-circle\"><img alt=\"Draw\" src=\"/images/festival-square/icons/draw-icon.png\"></div><span class=\"game-modal-icon-label\">Draw</span></div><div class=\"game-modal-icon-item\"><div class=\"game-modal-icon-circle\"><img alt=\"Design\" src=\"/images/festival-square/icons/design-icon.png\"></div><span class=\"game-modal-icon-label\">Design</span></div></div><button type=\"button\" class=\"profile-cta-btn-unified profile-cta-btn-lg  reveal opening-modal-cta\" style=\"--profile-btn-top: #F4962A; --profile-btn-base: #E67E22; --profile-btn-shadow: #A84E00; --profile-btn-glow: rgba(230, 126, 34, 0.28);\"><span class=\"profile-cta-btn-text\">Let's Explore</span></button></div></div></div><div class=\"side-menu \" data-zone=\"symbol-mountain\"><div class=\"menu-",
+      "screenshotPath": "C:\\Users\\Madhurima Agarwal\\ganesha-my-bestie\\tmp\\scene-smoke\\festival-square__game2.png"
+    },
+    {
+      "zone": "festival-square",
+      "scene": "game3",
+      "status": "pass",
+      "failureReason": null,
+      "loadingCleared": true,
+      "errors": [],
+      "warnings": [],
+      "relevantLogs": [
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: festival-square Current scene: game3"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: festival-square Current scene: game3"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: festival-square Current scene: game3"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: festival-square Current scene: game3"
+        }
+      ],
+      "bodyText": "1\n2\n3\n4\n5\nModak Party\n\nSweet ingredients are ready. Mix and see what you can make.\n\nRecipe\nCook\nServe\nLet's Explore\n🔄\nStart Over\nSymbol Mountain\n\nDISCOVER & LEARN\n\n🔄\nPlay Again\n❓\nHow to Play\n🏠\nMap\n🔇\nOff\n🐘\nParents (Hold)\n( Tap outside to close )",
+      "buttonTexts": [
+        "Let's Explore",
+        "🔄Play Again",
+        "❓How to Play",
+        "🏠Map",
+        "🔇Off",
+        "🐘Parents (Hold)"
+      ],
+      "rootSnippet": "<div class=\"modak-cooking-container\"><div class=\"cooking-background\" style=\"background-image: url(&quot;/src/zones/festival-square/game3-cooking/assets/images/cooking-bg.png&quot;);\"></div><div class=\"home-button-wrapper home-button-wrapper--top-left\"><button class=\"home-button \" aria-label=\"Go back to zone\"><img alt=\"\" class=\"home-button__icon\" src=\"/images/icons/icon-home.svg\"></button></div><button title=\"Festival Square\" aria-label=\"Back to Festival Square\" style=\"position: fixed; top: 10px; left: calc(54px); z-index: 20000; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(10px); border-radius: 50%; border: 2px solid rgba(160, 120, 220, 0.4); box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 8px; cursor: pointer; font-size: 26px; line-height: 1; overflow: hidden; padding: 0px;\"><img alt=\"Festival Square\" src=\"/images/festival-square-map-icon.png\" style=\"width: 100%; height: 100%; object-fit: cover; border-radius: 50%;\"></button><button class=\"audio-toggle audio-toggle--bottom-right audio-toggle--off\" aria-label=\"Turn on sound\" title=\"Unmute\"><img alt=\"\" class=\"audio-toggle__icon\" src=\"/images/icons/icon-sound-off.svg\"></button><div class=\"progress-board\"><div class=\"steps-container\"><div class=\"step-icon  \"><img alt=\"Mix Filling\" src=\"/src/zones/festival-square/game3-cooking/assets/images/step-icon-mix.png\"><div class=\"step-number\">1</div></div><div class=\"step-icon  \"><img alt=\"Make Dough\" src=\"/src/zones/festival-square/game3-cooking/assets/images/step-icon-dough.png\"><div class=\"step-number\">2</div></div><div class=\"step-icon  \"><img alt=\"Shape Dough\" src=\"/src/zones/festival-square/game3-cooking/assets/images/step-icon-shape.png\"><div class=\"step-number\">3</div></div><div class=\"step-icon  \"><img alt=\"Fill &amp; Close\" src=\"/src/zones/festival-square/game3-cooking/assets/images/step-icon-fill.png\"><div class=\"step-number\">4</div></div><div class=\"step-icon  \"><img alt=\"Steam Cook\" src=\"/src/zones/festival-square/game3-cooking/assets/images/step-icon-steam.png\"><div class=\"step-number\">5</div></div></div></div><div class=\"game-modal-overlay\" style=\"--modal-card-bg: #FFE8CE; --modal-text-primary: #8B4513; --modal-btn-bg: linear-gradient(180deg, #f2b85d 0%, #e08b4f 100%); --modal-btn-shadow: rgba(230, 126, 34, 0.3); --modal-btn-border: transparent; --modal-btn-bg-hover: linear-gradient(180deg, #f2b85d 0%, #e08b4f 100%); --modal-btn-text: #FFFFFF; --modal-scene-bg: none;\"><div class=\"game-modal-content\"><div class=\"game-modal-character\"><img class=\"game-modal-ganesha\" alt=\"Ganesha\" src=\"/images/ganesha-poses/stand-point.webp\" style=\"width: min(520px, 100%); height: auto; aspect-ratio: 1 / 1; flex-shrink: 1;\"></div><div class=\"game-modal-card\"><span class=\"game-modal-lotus-top\" aria-hidden=\"true\"></span><h1 class=\"game-modal-title\">Modak Party</h1><p class=\"game-modal-subtitle\">Sweet ingredients are ready. Mix and see what you can make.</p><div class=\"game",
+      "screenshotPath": "C:\\Users\\Madhurima Agarwal\\ganesha-my-bestie\\tmp\\scene-smoke\\festival-square__game3.png"
+    },
+    {
+      "zone": "festival-square",
+      "scene": "game4",
+      "status": "pass",
+      "failureReason": null,
+      "loadingCleared": true,
+      "errors": [],
+      "warnings": [],
+      "relevantLogs": [
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: festival-square Current scene: game4"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: festival-square Current scene: game4"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: festival-square Current scene: game4"
+        },
+        {
+          "type": "log",
+          "text": "🌟 Clean App rendering - current view: scene"
+        },
+        {
+          "type": "log",
+          "text": "🎯 Current zone: festival-square Current scene: game4"
+        }
+      ],
+      "bodyText": "Mandap Magic\n\nThe space is yours. Decorate it in your own way.\n\nLearn\nBuild\nDecorate\nLet's Explore\nSymbol Mountain\n\nDISCOVER & LEARN\n\n🔄\nPlay Again\n❓\nHow to Play\n🏠\nMap\n🔇\nOff\n🐘\nParents (Hold)\n( Tap outside to close )",
+      "buttonTexts": [
+        "Let's Explore",
+        "🔄Play Again",
+        "❓How to Play",
+        "🏠Map",
+        "🔇Off",
+        "🐘Parents (Hold)"
+      ],
+      "rootSnippet": "<div class=\"game-modal-overlay\" style=\"--modal-card-bg: #FFE8CE; --modal-text-primary: #8B4513; --modal-btn-bg: linear-gradient(180deg, #f2b85d 0%, #e08b4f 100%); --modal-btn-shadow: rgba(230, 126, 34, 0.3); --modal-btn-border: transparent; --modal-btn-bg-hover: linear-gradient(180deg, #f2b85d 0%, #e08b4f 100%); --modal-btn-text: #FFFFFF; --modal-scene-bg: none;\"><div class=\"game-modal-content\"><div class=\"game-modal-character\"><img class=\"game-modal-ganesha\" alt=\"Ganesha\" src=\"/images/ganesha-poses/stand-point.webp\" style=\"width: min(520px, 100%); height: auto; aspect-ratio: 1 / 1; flex-shrink: 1;\"></div><div class=\"game-modal-card\"><span class=\"game-modal-lotus-top\" aria-hidden=\"true\"></span><h1 class=\"game-modal-title\">Mandap Magic</h1><p class=\"game-modal-subtitle\">The space is yours. Decorate it in your own way.</p><div class=\"game-modal-icons\"><div class=\"game-modal-icon-item\"><div class=\"game-modal-icon-circle\"><img alt=\"Learn\" src=\"/images/festival-square/icons/mandap-coconut-icon.png\"></div><span class=\"game-modal-icon-label\">Learn</span></div><div class=\"game-modal-icon-item\"><div class=\"game-modal-icon-circle\"><img alt=\"Build\" src=\"/images/festival-square/icons/mandap-diya-icon.png\"></div><span class=\"game-modal-icon-label\">Build</span></div><div class=\"game-modal-icon-item\"><div class=\"game-modal-icon-circle\"><img alt=\"Decorate\" src=\"/images/festival-square/icons/mandap-flower-icon.png\"></div><span class=\"game-modal-icon-label\">Decorate</span></div></div><button type=\"button\" class=\"profile-cta-btn-unified profile-cta-btn-lg  reveal opening-modal-cta\" style=\"--profile-btn-top: #F4962A; --profile-btn-base: #E67E22; --profile-btn-shadow: #A84E00; --profile-btn-glow: rgba(230, 126, 34, 0.28);\"><span class=\"profile-cta-btn-text\">Let's Explore</span></button></div></div></div><div class=\"side-menu \" data-zone=\"symbol-mountain\"><div class=\"menu-zone-header\"><h2 class=\"menu-zone-title\">Symbol Mountain</h2><p class=\"menu-zone-subtitle\">Discover &amp; Learn</p></div><div style=\"display: flex; flex-direction: column; gap: 15px;\"><button class=\"nav-btn-primary\"><span style=\"font-size: 24px;\">🔄</span>Play Again</button><button class=\"nav-btn-secondary\" style=\"flex-direction: row; justify-content: flex-start; gap: 15px; padding-left: 24px;\"><span style=\"font-size: 24px;\">❓</span>How to Play</button><div class=\"menu-settings-row\"><button class=\"nav-btn-secondary\"><span style=\"font-size: 24px;\">🏠</span><span>Map</span></button><button class=\"nav-btn-secondary\"><span style=\"font-size: 24px;\">🔇</span><span>Off</span></button></div><div style=\"margin-top: 10px;\"><button class=\"nav-btn-muted \"><div class=\"long-press-indicator\"></div><span style=\"font-size: 24px; z-index: 2;\">🐘</span><span style=\"z-index: 2;\">Parents (Hold)</span></button></div></div><div class=\"menu-footer-hint\">( Tap outside to close )</div></div>",
+      "screenshotPath": "C:\\Users\\Madhurima Agarwal\\ganesha-my-bestie\\tmp\\scene-smoke\\festival-square__game4.png"
+    }
+  ]
+}

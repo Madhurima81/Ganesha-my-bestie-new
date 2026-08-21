@@ -1,0 +1,402 @@
+{
+  "1": {
+    "missionTypeId": "MISSION_RESCUE",
+    "rationale": "Direct rescue objective."
+  },
+  "2": {
+    "missionTypeId": "MISSION_RESCUE",
+    "rationale": "Direct rescue objective."
+  },
+  "3": {
+    "missionTypeId": "MISSION_RESCUE",
+    "rationale": "Direct rescue objective."
+  },
+  "4": {
+    "missionTypeId": "MISSION_RESCUE",
+    "rationale": "Direct rescue objective."
+  },
+  "5": {
+    "missionTypeId": "MISSION_RESCUE",
+    "rationale": "Direct rescue objective."
+  },
+  "9": {
+    "missionTypeId": "MISSION_RESCUE",
+    "rationale": "Direct rescue objective."
+  },
+  "10": {
+    "missionTypeId": "MISSION_RESCUE",
+    "rationale": "Direct rescue objective."
+  },
+  "6": {
+    "missionTypeId": "MISSION_SUPPORT",
+    "rationale": "Mission goal is to bring help to support the rescue effort."
+  },
+  "7": {
+    "missionTypeId": "MISSION_SEARCH",
+    "rationale": "Mission goal is to locate a safe route."
+  },
+  "8": {
+    "missionTypeId": "MISSION_ESCAPE",
+    "rationale": "Mission goal is to lead others out of danger to safety."
+  },
+  "11": {
+    "missionTypeId": "MISSION_SEARCH",
+    "rationale": "Mission goal is to find a missing place, path, or clue."
+  },
+  "12": {
+    "missionTypeId": "MISSION_SEARCH",
+    "rationale": "Mission goal is to find a missing place, path, or clue."
+  },
+  "14": {
+    "missionTypeId": "MISSION_SEARCH",
+    "rationale": "Mission goal is to find a missing place, path, or clue."
+  },
+  "15": {
+    "missionTypeId": "MISSION_SEARCH",
+    "rationale": "Mission goal is to find a missing place, path, or clue."
+  },
+  "18": {
+    "missionTypeId": "MISSION_SEARCH",
+    "rationale": "Mission goal is to find a missing place, path, or clue."
+  },
+  "13": {
+    "missionTypeId": "MISSION_GATHER",
+    "rationale": "Mission goal centers on locating and collecting a rare flower."
+  },
+  "16": {
+    "missionTypeId": "MISSION_DISCOVER",
+    "rationale": "Mission goal is discovery or revealed understanding."
+  },
+  "17": {
+    "missionTypeId": "MISSION_DISCOVER",
+    "rationale": "Mission goal is discovery or revealed understanding."
+  },
+  "19": {
+    "missionTypeId": "MISSION_DISCOVER",
+    "rationale": "Mission goal is discovery or revealed understanding."
+  },
+  "20": {
+    "missionTypeId": "MISSION_DISCOVER",
+    "rationale": "Mission goal is discovery or revealed understanding."
+  },
+  "21": {
+    "missionTypeId": "MISSION_DELIVER",
+    "rationale": "Mission goal is to carry something or fulfill a delivery commitment."
+  },
+  "22": {
+    "missionTypeId": "MISSION_DELIVER",
+    "rationale": "Mission goal is to carry something or fulfill a delivery commitment."
+  },
+  "23": {
+    "missionTypeId": "MISSION_DELIVER",
+    "rationale": "Mission goal is to carry something or fulfill a delivery commitment."
+  },
+  "25": {
+    "missionTypeId": "MISSION_DELIVER",
+    "rationale": "Mission goal is to carry something or fulfill a delivery commitment."
+  },
+  "26": {
+    "missionTypeId": "MISSION_DELIVER",
+    "rationale": "Mission goal is to carry something or fulfill a delivery commitment."
+  },
+  "27": {
+    "missionTypeId": "MISSION_DELIVER",
+    "rationale": "Mission goal is to carry something or fulfill a delivery commitment."
+  },
+  "28": {
+    "missionTypeId": "MISSION_DELIVER",
+    "rationale": "Mission goal is to carry something or fulfill a delivery commitment."
+  },
+  "30": {
+    "missionTypeId": "MISSION_DELIVER",
+    "rationale": "Mission goal is to carry something or fulfill a delivery commitment."
+  },
+  "24": {
+    "missionTypeId": "MISSION_RETURN",
+    "rationale": "Mission goal is to return something to its rightful place or owner."
+  },
+  "29": {
+    "missionTypeId": "MISSION_RETURN",
+    "rationale": "Mission goal is to return something to its rightful place or owner."
+  },
+  "31": {
+    "missionTypeId": "MISSION_BUILD",
+    "rationale": "Mission goal is to build, rebuild, or create."
+  },
+  "34": {
+    "missionTypeId": "MISSION_BUILD",
+    "rationale": "Mission goal is to build, rebuild, or create."
+  },
+  "37": {
+    "missionTypeId": "MISSION_BUILD",
+    "rationale": "Mission goal is to build, rebuild, or create."
+  },
+  "38": {
+    "missionTypeId": "MISSION_BUILD",
+    "rationale": "Mission goal is to build, rebuild, or create."
+  },
+  "39": {
+    "missionTypeId": "MISSION_BUILD",
+    "rationale": "Mission goal is to build, rebuild, or create."
+  },
+  "32": {
+    "missionTypeId": "MISSION_REPAIR",
+    "rationale": "Mission goal is to fix something already existing."
+  },
+  "33": {
+    "missionTypeId": "MISSION_REPAIR",
+    "rationale": "Mission goal is to fix something already existing."
+  },
+  "36": {
+    "missionTypeId": "MISSION_REPAIR",
+    "rationale": "Mission goal is to fix something already existing."
+  },
+  "40": {
+    "missionTypeId": "MISSION_REPAIR",
+    "rationale": "Mission goal is to fix something already existing."
+  },
+  "35": {
+    "missionTypeId": "MISSION_RESTORE",
+    "rationale": "Mission goal is to restore a damaged or diminished place."
+  },
+  "41": {
+    "missionTypeId": "MISSION_PROTECT",
+    "rationale": "Mission goal is protection or guarding against harm."
+  },
+  "42": {
+    "missionTypeId": "MISSION_PROTECT",
+    "rationale": "Mission goal is protection or guarding against harm."
+  },
+  "43": {
+    "missionTypeId": "MISSION_PROTECT",
+    "rationale": "Mission goal is protection or guarding against harm."
+  },
+  "44": {
+    "missionTypeId": "MISSION_PROTECT",
+    "rationale": "Mission goal is protection or guarding against harm."
+  },
+  "45": {
+    "missionTypeId": "MISSION_PROTECT",
+    "rationale": "Mission goal is protection or guarding against harm."
+  },
+  "46": {
+    "missionTypeId": "MISSION_PROTECT",
+    "rationale": "Mission goal is protection or guarding against harm."
+  },
+  "47": {
+    "missionTypeId": "MISSION_PROTECT",
+    "rationale": "Mission goal is protection or guarding against harm."
+  },
+  "48": {
+    "missionTypeId": "MISSION_PROTECT",
+    "rationale": "Mission goal is protection or guarding against harm."
+  },
+  "49": {
+    "missionTypeId": "MISSION_PROTECT",
+    "rationale": "Mission goal is protection or guarding against harm."
+  },
+  "50": {
+    "missionTypeId": "MISSION_PROTECT",
+    "rationale": "Mission goal is protection or guarding against harm."
+  },
+  "51": {
+    "missionTypeId": "MISSION_MASTERY",
+    "rationale": "Mission goal is learning, training, or practicing toward mastery."
+  },
+  "54": {
+    "missionTypeId": "MISSION_MASTERY",
+    "rationale": "Mission goal is learning, training, or practicing toward mastery."
+  },
+  "56": {
+    "missionTypeId": "MISSION_MASTERY",
+    "rationale": "Mission goal is learning, training, or practicing toward mastery."
+  },
+  "60": {
+    "missionTypeId": "MISSION_MASTERY",
+    "rationale": "Mission goal is learning, training, or practicing toward mastery."
+  },
+  "52": {
+    "missionTypeId": "MISSION_SOLVE",
+    "rationale": "Mission goal is to solve or understand a puzzle-like problem."
+  },
+  "53": {
+    "missionTypeId": "MISSION_SOLVE",
+    "rationale": "Mission goal is to solve or understand a puzzle-like problem."
+  },
+  "55": {
+    "missionTypeId": "MISSION_SUPPORT",
+    "rationale": "Mission goal is to help someone else learn or grow."
+  },
+  "57": {
+    "missionTypeId": "MISSION_TRANSFORM",
+    "rationale": "Mission goal is an internal change through confronting fear."
+  },
+  "58": {
+    "missionTypeId": "MISSION_RECONCILE",
+    "rationale": "Mission goal is to repair trust in a relationship."
+  },
+  "59": {
+    "missionTypeId": "MISSION_DISCOVER",
+    "rationale": "Mission goal is discovery of a hidden talent."
+  },
+  "61": {
+    "missionTypeId": "MISSION_SUPPORT",
+    "rationale": "Mission goal is direct help or support."
+  },
+  "62": {
+    "missionTypeId": "MISSION_SUPPORT",
+    "rationale": "Mission goal is direct help or support."
+  },
+  "63": {
+    "missionTypeId": "MISSION_SUPPORT",
+    "rationale": "Mission goal is direct help or support."
+  },
+  "64": {
+    "missionTypeId": "MISSION_SUPPORT",
+    "rationale": "Mission goal is direct help or support."
+  },
+  "66": {
+    "missionTypeId": "MISSION_SUPPORT",
+    "rationale": "Mission goal is direct help or support."
+  },
+  "69": {
+    "missionTypeId": "MISSION_SUPPORT",
+    "rationale": "Mission goal is direct help or support."
+  },
+  "65": {
+    "missionTypeId": "MISSION_RESTORE",
+    "rationale": "Mission goal is to recover or restore a place or system."
+  },
+  "68": {
+    "missionTypeId": "MISSION_RESTORE",
+    "rationale": "Mission goal is to recover or restore a place or system."
+  },
+  "67": {
+    "missionTypeId": "MISSION_RECONCILE",
+    "rationale": "Mission goal is to settle disagreement and repair relationship harmony."
+  },
+  "70": {
+    "missionTypeId": "MISSION_NURTURE",
+    "rationale": "Mission goal is ongoing care for a living being."
+  },
+  "71": {
+    "missionTypeId": "MISSION_CELEBRATE",
+    "rationale": "Mission goal is to prepare, host, or honor a celebration."
+  },
+  "72": {
+    "missionTypeId": "MISSION_CELEBRATE",
+    "rationale": "Mission goal is to prepare, host, or honor a celebration."
+  },
+  "73": {
+    "missionTypeId": "MISSION_CELEBRATE",
+    "rationale": "Mission goal is to prepare, host, or honor a celebration."
+  },
+  "74": {
+    "missionTypeId": "MISSION_CELEBRATE",
+    "rationale": "Mission goal is to prepare, host, or honor a celebration."
+  },
+  "75": {
+    "missionTypeId": "MISSION_CELEBRATE",
+    "rationale": "Mission goal is to prepare, host, or honor a celebration."
+  },
+  "76": {
+    "missionTypeId": "MISSION_CELEBRATE",
+    "rationale": "Mission goal is to prepare, host, or honor a celebration."
+  },
+  "77": {
+    "missionTypeId": "MISSION_CELEBRATE",
+    "rationale": "Mission goal is to prepare, host, or honor a celebration."
+  },
+  "78": {
+    "missionTypeId": "MISSION_CELEBRATE",
+    "rationale": "Mission goal is to prepare, host, or honor a celebration."
+  },
+  "79": {
+    "missionTypeId": "MISSION_CELEBRATE",
+    "rationale": "Mission goal is to prepare, host, or honor a celebration."
+  },
+  "80": {
+    "missionTypeId": "MISSION_CELEBRATE",
+    "rationale": "Mission goal is to prepare, host, or honor a celebration."
+  },
+  "81": {
+    "missionTypeId": "MISSION_EXPLORE",
+    "rationale": "Mission goal is exploration of a place."
+  },
+  "82": {
+    "missionTypeId": "MISSION_EXPLORE",
+    "rationale": "Mission goal is exploration of a place."
+  },
+  "83": {
+    "missionTypeId": "MISSION_EXPLORE",
+    "rationale": "Mission goal is exploration of a place."
+  },
+  "84": {
+    "missionTypeId": "MISSION_EXPLORE",
+    "rationale": "Mission goal is exploration of a place."
+  },
+  "85": {
+    "missionTypeId": "MISSION_EXPLORE",
+    "rationale": "Mission goal is exploration of a place."
+  },
+  "86": {
+    "missionTypeId": "MISSION_EXPLORE",
+    "rationale": "Mission goal is exploration of a place."
+  },
+  "87": {
+    "missionTypeId": "MISSION_EXPLORE",
+    "rationale": "Mission goal is exploration of a place."
+  },
+  "88": {
+    "missionTypeId": "MISSION_EXPLORE",
+    "rationale": "Mission goal is exploration of a place."
+  },
+  "89": {
+    "missionTypeId": "MISSION_EXPLORE",
+    "rationale": "Mission goal is exploration of a place."
+  },
+  "90": {
+    "missionTypeId": "MISSION_EXPLORE",
+    "rationale": "Mission goal is exploration of a place."
+  },
+  "91": {
+    "missionTypeId": "MISSION_NURTURE",
+    "rationale": "Mission goal is care that helps a living being recover or grow."
+  },
+  "92": {
+    "missionTypeId": "MISSION_NURTURE",
+    "rationale": "Mission goal is care that helps a living being recover or grow."
+  },
+  "96": {
+    "missionTypeId": "MISSION_NURTURE",
+    "rationale": "Mission goal is care that helps a living being recover or grow."
+  },
+  "99": {
+    "missionTypeId": "MISSION_NURTURE",
+    "rationale": "Mission goal is care that helps a living being recover or grow."
+  },
+  "93": {
+    "missionTypeId": "MISSION_RESTORE",
+    "rationale": "Mission goal is to restore a damaged place, habitat, or system."
+  },
+  "94": {
+    "missionTypeId": "MISSION_RESTORE",
+    "rationale": "Mission goal is to restore a damaged place, habitat, or system."
+  },
+  "97": {
+    "missionTypeId": "MISSION_RESTORE",
+    "rationale": "Mission goal is to restore a damaged place, habitat, or system."
+  },
+  "98": {
+    "missionTypeId": "MISSION_RESTORE",
+    "rationale": "Mission goal is to restore a damaged place, habitat, or system."
+  },
+  "100": {
+    "missionTypeId": "MISSION_RESTORE",
+    "rationale": "Mission goal is to restore a damaged place, habitat, or system."
+  },
+  "95": {
+    "missionTypeId": "MISSION_RECONCILE",
+    "rationale": "Mission goal is to repair a relationship."
+  }
+}

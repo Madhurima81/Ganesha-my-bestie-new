@@ -1,0 +1,226 @@
+[
+  {
+    "id": "SIT001",
+    "title": "Toy not shared or taken away",
+    "storySeed": {
+      "childExperience": "Kavi is playing with a favourite toy when another child picks it up and walks away with it.",
+      "immediateWant": "Get the toy back.",
+      "immediateObstacle": "The other child is already playing with it and doesn't realize Kavi was using it.",
+      "emotionalTension": "It feels unfair, and Kavi wants to grab it back immediately.",
+      "context": [
+        "shared play area"
+      ],
+      "narrativeSummary": "Kavi is happily playing when another child picks up the toy and walks away. Kavi wants it back right now, and every part of Kavi says, 'That's mine!'"
+    }
+  },
+  {
+    "id": "SIT002",
+    "title": "Screen time cut off suddenly",
+    "storySeed": {
+      "childExperience": "Kavi is in the middle of an exciting game when a parent says screen time is over.",
+      "immediateWant": "Keep playing until the game is finished.",
+      "immediateObstacle": "The agreed screen-time limit has ended.",
+      "emotionalTension": "The ending feels sudden and unfair because Kavi is having fun.",
+      "context": [
+        "home"
+      ],
+      "narrativeSummary": "Kavi is deep into a game when the screen suddenly goes dark. Kavi isn't ready to stop—not even close."
+    }
+  },
+  {
+    "id": "SIT007",
+    "title": "Someone breaks their Lego or drawing",
+    "storySeed": {
+      "childExperience": "Another child accidentally breaks Kavi's Lego creation while playing nearby.",
+      "immediateWant": "Save or rebuild the creation.",
+      "immediateObstacle": "The creation has fallen apart and cannot simply be put back as it was.",
+      "emotionalTension": "Kavi feels angry because something made with care has been destroyed.",
+      "context": [
+        "shared building/play space"
+      ],
+      "narrativeSummary": "Kavi has just finished building something special when it crashes apart. For one hot second, all Kavi wants to do is shout."
+    }
+  },
+  {
+    "id": "SIT008",
+    "title": "Being hurried to put shoes on or leave",
+    "storySeed": {
+      "childExperience": "Kavi is getting ready to leave but hasn't finished putting on shoes and gathering their things.",
+      "immediateWant": "Finish getting ready at their own pace.",
+      "immediateObstacle": "The family needs to leave now.",
+      "emotionalTension": "Being hurried makes everything feel harder.",
+      "context": [
+        "home, before school or an outing"
+      ],
+      "narrativeSummary": "Kavi is still searching for one shoe when someone calls, 'We're leaving!' Suddenly everything has to happen at once."
+    }
+  },
+  {
+    "id": "SIT011",
+    "title": "Being pushed during a disagreement",
+    "storySeed": {
+      "childExperience": "Another child pushes Kavi during a disagreement over a game.",
+      "immediateWant": "Stay safe and make the unfairness stop.",
+      "immediateObstacle": "Kavi is hurt and angry, and pushing back could make the situation worse.",
+      "emotionalTension": "Kavi feels hurt, angry and ready to retaliate.",
+      "context": [
+        "playground"
+      ],
+      "narrativeSummary": "The game stops when another child gives Kavi a hard push. Kavi's eyes sting, fists tighten, and one thought arrives immediately: Push back."
+    }
+  },
+  {
+    "id": "SIT015",
+    "title": "Forced to sit still too long (car, flight)",
+    "storySeed": {
+      "childExperience": "Kavi is travelling in a car or plane and has been sitting for a long time.",
+      "immediateWant": "Move, stretch or find something to do.",
+      "immediateObstacle": "They cannot freely move around yet.",
+      "emotionalTension": "Restlessness builds until even small things become irritating.",
+      "context": [
+        "long car ride or flight"
+      ],
+      "narrativeSummary": "Kavi shifts once. Then twice. Then for the tenth time. The journey suddenly feels much longer than it did at the beginning."
+    }
+  },
+  {
+    "id": "SIT097",
+    "title": "Post-party or festival hyperactivity",
+    "storySeed": {
+      "childExperience": "Kavi comes home from an exciting party still full of energy when everyone else is ready to settle down.",
+      "immediateWant": "Keep playing, talking, and reliving the fun.",
+      "immediateObstacle": "The party is over and it is time to slow down.",
+      "emotionalTension": "Kavi's body is still racing even though the day has ended.",
+      "context": [
+        "home after a birthday party or celebration"
+      ],
+      "narrativeSummary": "The party is over. The shoes are off. The lights are low. But Kavi is still bouncing from one exciting memory to the next."
+    }
+  },
+  {
+    "id": "SIT098",
+    "title": "Zoning out after too much YouTube or gaming",
+    "storySeed": {
+      "childExperience": "After spending a long time gaming or watching videos, Kavi sits down to do something else but struggles to focus.",
+      "immediateWant": "Concentrate on the next activity.",
+      "immediateObstacle": "Kavi's attention feels scattered and their mind feels tired.",
+      "emotionalTension": "Kavi cannot understand why something enjoyable has suddenly made everything else feel difficult.",
+      "context": [
+        "home after extended screen use"
+      ],
+      "narrativeSummary": "Kavi puts the tablet away and opens a book. The first page is right there. Kavi reads the same line once. Then twice. Then a third time."
+    }
+  },
+  {
+    "id": "SIT101",
+    "title": "Long wait at doctor, bank, or during travel",
+    "storySeed": {
+      "childExperience": "Kavi has been waiting for a long time at a doctor's office, airport, station, or other place where the next step has not started yet.",
+      "immediateWant": "Make the waiting end.",
+      "immediateObstacle": "Kavi's turn, appointment, or journey has not begun.",
+      "emotionalTension": "The longer Kavi waits, the harder it becomes to stay patient and occupied.",
+      "context": [
+        "waiting room, airport, station, or during travel"
+      ],
+      "narrativeSummary": "Kavi checks the clock again. The same number is still glowing on the screen. Kavi sighs and looks around for something—anything—to make the waiting feel shorter."
+    }
+  },
+  {
+    "id": "SIT104",
+    "title": "Cranky after a late night or bad sleep",
+    "storySeed": {
+      "childExperience": "After sleeping badly, Kavi wakes up tired and becomes irritated by small things that normally would not bother them.",
+      "immediateWant": "Get through the day without losing their temper.",
+      "immediateObstacle": "Kavi is already tired before the day properly begins.",
+      "emotionalTension": "Ordinary frustrations suddenly feel much bigger than they should.",
+      "context": [
+        "morning before school"
+      ],
+      "narrativeSummary": "Kavi's sock feels wrong. The toast breaks. Then someone asks a perfectly ordinary question—and somehow that is the final straw."
+    }
+  },
+  {
+    "id": "SIT105",
+    "title": "Trying to do homework while TV is on",
+    "storySeed": {
+      "childExperience": "Kavi is doing homework while an exciting programme is playing nearby.",
+      "immediateWant": "Finish the homework without missing the show.",
+      "immediateObstacle": "The sounds and action from the TV keep pulling Kavi's attention away.",
+      "emotionalTension": "Kavi keeps trying to focus, but every interesting moment makes concentrating harder.",
+      "context": [
+        "home during homework time"
+      ],
+      "narrativeSummary": "Kavi writes one answer. From the next room comes a burst of laughter. Kavi's pencil stops in the middle of the next sentence."
+    }
+  },
+  {
+    "id": "SIT108",
+    "title": "Waiting for a turn on the swings",
+    "storySeed": {
+      "childExperience": "Kavi reaches the playground ready to use the swing, but another child is already having a turn.",
+      "immediateWant": "Get on the swing.",
+      "immediateObstacle": "Kavi has to wait.",
+      "emotionalTension": "Each extra minute makes the waiting feel more unfair.",
+      "context": [
+        "playground"
+      ],
+      "narrativeSummary": "Kavi stands beside the empty swing next to the one in use. The other child keeps swinging. Higher. Higher. Kavi wonders how long one turn can possibly be."
+    }
+  },
+  {
+    "id": "SIT109",
+    "title": "Switching from a fun activity to homework",
+    "storySeed": {
+      "childExperience": "Kavi is absorbed in a favourite activity when a parent suddenly says it is time to stop and start homework.",
+      "immediateWant": "Keep playing.",
+      "immediateObstacle": "The activity has to end before Kavi is ready.",
+      "emotionalTension": "Stopping feels especially hard because Kavi is deeply involved in what they are doing.",
+      "context": [
+        "home during playtime"
+      ],
+      "narrativeSummary": "Kavi is one move away from winning when Mama calls from the doorway. 'Time to put that away.' Kavi stares at the game."
+    }
+  },
+  {
+    "id": "SIT110",
+    "title": "The 'before dinner' energy crash",
+    "storySeed": {
+      "childExperience": "Near dinner time, Kavi is hungry and tired after a long day and becomes increasingly irritable while waiting for food.",
+      "immediateWant": "Feel better immediately.",
+      "immediateObstacle": "Dinner is not ready yet.",
+      "emotionalTension": "Hunger and tiredness make ordinary frustrations feel much bigger.",
+      "context": [
+        "home before dinner"
+      ],
+      "narrativeSummary": "Kavi's stomach growls. The kitchen smells wonderful, but dinner isn't ready. Suddenly even waiting feels impossible."
+    }
+  },
+  {
+    "id": "SIT112",
+    "title": "Waiting very excitedly for birthday or special package",
+    "storySeed": {
+      "childExperience": "Kavi is eagerly waiting for something special that is due to arrive or happen on a particular day.",
+      "immediateWant": "Make the special moment arrive sooner.",
+      "immediateObstacle": "Kavi cannot make time move faster.",
+      "emotionalTension": "Excitement makes every hour of waiting feel unusually long.",
+      "context": [
+        "home before a birthday or expected delivery"
+      ],
+      "narrativeSummary": "Kavi checks the window. Nothing. Checks the calendar. Still tomorrow. Somehow one ordinary day has become the longest day ever."
+    }
+  },
+  {
+    "id": "SIT136",
+    "title": "Wants to play but knows they should study",
+    "storySeed": {
+      "childExperience": "Kavi has homework still to finish when an exciting opportunity to play appears.",
+      "immediateWant": "Go play now.",
+      "immediateObstacle": "The schoolwork needs to be completed first.",
+      "emotionalTension": "The fun waiting nearby feels much more urgent than the responsibility in front of Kavi.",
+      "context": [
+        "home after school"
+      ],
+      "narrativeSummary": "The workbook is open on the table. Outside, Kavi can hear friends calling. Kavi looks from the unfinished page to the window."
+    }
+  }
+]

@@ -1,0 +1,22 @@
+{
+  "generated_at": "2026-08-11T07:17:04.802Z",
+  "template_id": "PT02_KINDNESS_BAND",
+  "variants": [
+    {
+      "variant_id": "mooshika",
+      "final_result": "APPROVED",
+      "errors": []
+    },
+    {
+      "variant_id": "ears",
+      "final_result": "APPROVED",
+      "errors": []
+    },
+    {
+      "variant_id": "lotus",
+      "final_result": "APPROVED",
+      "errors": []
+    }
+  ],
+  "final_result": "APPROVED"
+}

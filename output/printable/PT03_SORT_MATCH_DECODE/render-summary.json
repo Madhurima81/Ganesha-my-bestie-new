@@ -1,0 +1,19 @@
+{
+  "generated_at": "2026-08-11T14:09:23.304Z",
+  "template_id": "PT03_SORT_MATCH_DECODE",
+  "variants": [
+    {
+      "name": "ears-sample",
+      "final_result": "APPROVED",
+      "errors": [],
+      "input_json": "public\\prana-story-generator\\printable-poc\\data\\PT03_SORT_MATCH_DECODE\\PT03_SORT_MATCH_DECODE_EARS.sample.json"
+    },
+    {
+      "name": "eyes-sample",
+      "final_result": "APPROVED",
+      "errors": [],
+      "input_json": "public\\prana-story-generator\\printable-poc\\data\\PT03_SORT_MATCH_DECODE\\PT03_SORT_MATCH_DECODE_EYES.sample.json"
+    }
+  ],
+  "final_result": "APPROVED"
+}

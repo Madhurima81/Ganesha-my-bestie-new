@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2048" height="2048" viewBox="0 0 2048 2048">
+  <defs>
+    <linearGradient id="bg5" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffd891"/>
+      <stop offset="100%" stop-color="#86d6b3"/>
+    </linearGradient>
+  </defs>
+  <rect width="2048" height="2048" fill="url(#bg5)"/>
+  <circle cx="1024" cy="780" r="560" fill="#fff9dd" opacity="0.44"/>
+  <rect x="170" y="1400" width="1708" height="300" rx="50" fill="#fff9ef" opacity="0.9"/>
+  <circle cx="860" cy="930" r="140" fill="#f6a05b"/>
+  <circle cx="1180" cy="930" r="130" fill="#8bd1b0"/>
+  <path d="M530 1170 C820 860, 1230 860, 1510 1170" fill="none" stroke="#7c6345" stroke-width="42" stroke-linecap="round"/>
+  <text x="1024" y="305" text-anchor="middle" font-family="Arial, sans-serif" font-size="120" fill="#705220">Page 5 Illustration Asset</text>
+  <text x="1024" y="1510" text-anchor="middle" font-family="Arial, sans-serif" font-size="74" fill="#705220">Resolution, sharing, and symbol payoff in the garden</text>
+</svg>

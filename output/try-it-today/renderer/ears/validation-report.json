@@ -1,0 +1,705 @@
+{
+  "per_record": [
+    {
+      "activity_id": "TIT-EAR-001",
+      "rules": [
+        {
+          "rule": "theme_belief_activity_consistency",
+          "passed": true
+        },
+        {
+          "rule": "required_fields",
+          "passed": true,
+          "details": []
+        },
+        {
+          "rule": "no_duplicate_activity_ids",
+          "passed": true
+        },
+        {
+          "rule": "printable_template_exists",
+          "passed": true
+        },
+        {
+          "rule": "safety_rules",
+          "passed": true
+        },
+        {
+          "rule": "no_unnecessary_printable",
+          "passed": true
+        },
+        {
+          "rule": "no_story_dependency",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "activity_id": "TIT-EAR-002",
+      "rules": [
+        {
+          "rule": "theme_belief_activity_consistency",
+          "passed": true
+        },
+        {
+          "rule": "required_fields",
+          "passed": true,
+          "details": []
+        },
+        {
+          "rule": "no_duplicate_activity_ids",
+          "passed": true
+        },
+        {
+          "rule": "printable_template_exists",
+          "passed": true
+        },
+        {
+          "rule": "safety_rules",
+          "passed": true
+        },
+        {
+          "rule": "no_unnecessary_printable",
+          "passed": true
+        },
+        {
+          "rule": "no_story_dependency",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "activity_id": "TIT-EAR-003",
+      "rules": [
+        {
+          "rule": "theme_belief_activity_consistency",
+          "passed": true
+        },
+        {
+          "rule": "required_fields",
+          "passed": true,
+          "details": []
+        },
+        {
+          "rule": "no_duplicate_activity_ids",
+          "passed": true
+        },
+        {
+          "rule": "printable_template_exists",
+          "passed": true
+        },
+        {
+          "rule": "safety_rules",
+          "passed": true
+        },
+        {
+          "rule": "no_unnecessary_printable",
+          "passed": true
+        },
+        {
+          "rule": "no_story_dependency",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "activity_id": "TIT-EAR-004",
+      "rules": [
+        {
+          "rule": "theme_belief_activity_consistency",
+          "passed": true
+        },
+        {
+          "rule": "required_fields",
+          "passed": true,
+          "details": []
+        },
+        {
+          "rule": "no_duplicate_activity_ids",
+          "passed": true
+        },
+        {
+          "rule": "printable_template_exists",
+          "passed": true
+        },
+        {
+          "rule": "safety_rules",
+          "passed": true
+        },
+        {
+          "rule": "no_unnecessary_printable",
+          "passed": true
+        },
+        {
+          "rule": "no_story_dependency",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "activity_id": "TIT-EAR-005",
+      "rules": [
+        {
+          "rule": "theme_belief_activity_consistency",
+          "passed": true
+        },
+        {
+          "rule": "required_fields",
+          "passed": true,
+          "details": []
+        },
+        {
+          "rule": "no_duplicate_activity_ids",
+          "passed": true
+        },
+        {
+          "rule": "printable_template_exists",
+          "passed": true
+        },
+        {
+          "rule": "safety_rules",
+          "passed": true
+        },
+        {
+          "rule": "no_unnecessary_printable",
+          "passed": true
+        },
+        {
+          "rule": "no_story_dependency",
+          "passed": true
+        }
+      ]
+    }
+  ],
+  "batch": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "duplicateMechanicDetected": false,
+    "duplicateMechanicFamilies": [],
+    "perActivity": [
+      {
+        "activity_id": "TIT-EAR-001",
+        "title": "Winnowing Breath",
+        "family": "calm",
+        "printable_required": false,
+        "printable_template_id": null,
+        "rules": [
+          {
+            "rule": "theme_integrity",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "belief_integrity",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "distinct_activity_family",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "duplicate_mechanic_check",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "distinct_emotional_payoff",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "duration_range",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "step_count",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "reflection_present",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "no_clinical_claims",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "no_breath_holds",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "no_forced_disclosure",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "printable_template_valid",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "printable_content_present_when_required",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "printable_decision_consistency",
+            "passed": true,
+            "severity": "warning",
+            "details": "pass"
+          },
+          {
+            "rule": "parent_setup_lightweight",
+            "passed": true,
+            "severity": "warning",
+            "details": "pass"
+          }
+        ],
+        "approved": true
+      },
+      {
+        "activity_id": "TIT-EAR-002",
+        "title": "Keep or Let Go Cards",
+        "family": "play",
+        "printable_required": true,
+        "printable_template_id": "PT02",
+        "rules": [
+          {
+            "rule": "theme_integrity",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "belief_integrity",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "distinct_activity_family",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "duplicate_mechanic_check",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "distinct_emotional_payoff",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "duration_range",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "step_count",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "reflection_present",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "no_clinical_claims",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "no_breath_holds",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "no_forced_disclosure",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "printable_template_valid",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "printable_content_present_when_required",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "printable_decision_consistency",
+            "passed": true,
+            "severity": "warning",
+            "details": "pass"
+          },
+          {
+            "rule": "parent_setup_lightweight",
+            "passed": true,
+            "severity": "warning",
+            "details": "pass"
+          }
+        ],
+        "approved": true
+      },
+      {
+        "activity_id": "TIT-EAR-003",
+        "title": "Helpful or Noisy?",
+        "family": "notice",
+        "printable_required": false,
+        "printable_template_id": null,
+        "rules": [
+          {
+            "rule": "theme_integrity",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "belief_integrity",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "distinct_activity_family",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "duplicate_mechanic_check",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "distinct_emotional_payoff",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "duration_range",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "step_count",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "reflection_present",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "no_clinical_claims",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "no_breath_holds",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "no_forced_disclosure",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "printable_template_valid",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "printable_content_present_when_required",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "printable_decision_consistency",
+            "passed": true,
+            "severity": "warning",
+            "details": "pass"
+          },
+          {
+            "rule": "parent_setup_lightweight",
+            "passed": true,
+            "severity": "warning",
+            "details": "pass"
+          }
+        ],
+        "approved": true
+      },
+      {
+        "activity_id": "TIT-EAR-004",
+        "title": "Keep the Helpful Part",
+        "family": "talk",
+        "printable_required": false,
+        "printable_template_id": null,
+        "rules": [
+          {
+            "rule": "theme_integrity",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "belief_integrity",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "distinct_activity_family",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "duplicate_mechanic_check",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "distinct_emotional_payoff",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "duration_range",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "step_count",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "reflection_present",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "no_clinical_claims",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "no_breath_holds",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "no_forced_disclosure",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "printable_template_valid",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "printable_content_present_when_required",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "printable_decision_consistency",
+            "passed": true,
+            "severity": "warning",
+            "details": "pass"
+          },
+          {
+            "rule": "parent_setup_lightweight",
+            "passed": true,
+            "severity": "warning",
+            "details": "pass"
+          }
+        ],
+        "approved": true
+      },
+      {
+        "activity_id": "TIT-EAR-005",
+        "title": "Noise Catcher Crown",
+        "family": "make",
+        "printable_required": false,
+        "printable_template_id": null,
+        "rules": [
+          {
+            "rule": "theme_integrity",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "belief_integrity",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "distinct_activity_family",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "duplicate_mechanic_check",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "distinct_emotional_payoff",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "duration_range",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "step_count",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "reflection_present",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "no_clinical_claims",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "no_breath_holds",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "no_forced_disclosure",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "printable_template_valid",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "printable_content_present_when_required",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "printable_decision_consistency",
+            "passed": true,
+            "severity": "warning",
+            "details": "pass"
+          },
+          {
+            "rule": "parent_setup_lightweight",
+            "passed": true,
+            "severity": "warning",
+            "details": "pass"
+          }
+        ],
+        "approved": true
+      }
+    ],
+    "batchRules": [
+      {
+        "rule": "non_empty_batch",
+        "passed": true,
+        "severity": "error",
+        "details": "pass"
+      },
+      {
+        "rule": "all_required_families_unique",
+        "passed": true,
+        "severity": "error",
+        "details": "pass"
+      },
+      {
+        "rule": "duplicate_mechanic_detection",
+        "passed": true,
+        "severity": "error",
+        "details": "pass"
+      }
+    ],
+    "finalDecision": "APPROVED"
+  },
+  "final_result": "APPROVED"
+}

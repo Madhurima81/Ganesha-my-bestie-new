@@ -1,0 +1,517 @@
+[
+  {
+    "id": 1,
+    "slug": "the-vulnerable-wanderer",
+    "name": "The Vulnerable Wanderer",
+    "description": "Introduce the hero facing a relatable emotional challenge before the adventure begins.",
+    "howItWorks": "Starts with emotion before action so children immediately identify with the hero.",
+    "whyItWorks": "Empathy is created before curiosity, making readers care about what happens next.",
+    "bestStoryStructures": [
+      "Transformation Story",
+      "Journey Story",
+      "Character Growth Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Great Journey",
+      "Hero's Trial",
+      "Coming of Age"
+    ],
+    "bestEmotionalArcs": [
+      "Fear → Courage",
+      "Self-Doubt → Confidence",
+      "Loneliness → Belonging"
+    ],
+    "bestStoryTypes": [
+      "Emotional Growth",
+      "Friendship",
+      "Journey"
+    ],
+    "bestAge": "5–8",
+    "openingFormula": "Child struggling → Small glimpse of world → Something unexpected appears",
+    "openingEmotion": "Empathy",
+    "illustrationGoal": "Show the hero small within a rich environment, with body language revealing the emotional state.",
+    "pageTurnHook": "\"Then something unexpected caught their attention...\"",
+    "writingTips": "Keep the challenge small and relatable. Show emotion through actions instead of explaining it."
+  },
+  {
+    "id": 2,
+    "slug": "the-tiny-mystery",
+    "name": "The Tiny Mystery",
+    "description": "Begin with a small unexplained event that sparks curiosity.",
+    "howItWorks": "Gives the child an immediate question to solve.",
+    "whyItWorks": "Curiosity keeps pages turning naturally.",
+    "bestStoryStructures": [
+      "Mystery Story",
+      "Discovery Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Mystery to Solve",
+      "Secret Discovery",
+      "Treasure Hunt"
+    ],
+    "bestEmotionalArcs": [
+      "Curiosity → Discovery",
+      "Wonder → Understanding"
+    ],
+    "bestStoryTypes": [
+      "Mystery",
+      "Discovery",
+      "Adventure"
+    ],
+    "bestAge": "5–10",
+    "openingFormula": "Normal world → Strange detail appears → Hero decides to investigate",
+    "openingEmotion": "Curiosity",
+    "illustrationGoal": "Highlight one unusual object or event while keeping the rest of the scene ordinary.",
+    "pageTurnHook": "\"But why was it there?\"",
+    "writingTips": "Mystery should be small enough for children to understand but intriguing enough to continue reading."
+  },
+  {
+    "id": 3,
+    "slug": "the-unexpected-interruption",
+    "name": "The Unexpected Interruption",
+    "description": "The hero's ordinary day is suddenly interrupted by an unexpected event.",
+    "howItWorks": "Quickly shifts from normal life into adventure.",
+    "whyItWorks": "Creates momentum immediately without long setup.",
+    "bestStoryStructures": [
+      "Adventure Story",
+      "Rescue Story",
+      "Quest Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Rescue Mission",
+      "Great Journey",
+      "Race Against Time"
+    ],
+    "bestEmotionalArcs": [
+      "Surprise → Courage",
+      "Calm → Determination"
+    ],
+    "bestStoryTypes": [
+      "Adventure",
+      "Rescue",
+      "Quest"
+    ],
+    "bestAge": "5–10",
+    "openingFormula": "Normal day → Unexpected interruption → Hero reacts",
+    "openingEmotion": "Surprise",
+    "illustrationGoal": "Contrast peaceful routine with sudden movement or change.",
+    "pageTurnHook": "\"Before anyone could understand what happened...\"",
+    "writingTips": "Keep the interruption simple and easy to understand. The hero should react immediately."
+  },
+  {
+    "id": 4,
+    "slug": "the-everyday-wonder",
+    "name": "The Everyday Wonder",
+    "description": "Begin in an ordinary place where something beautiful or unusual is quietly discovered.",
+    "howItWorks": "Invites children to notice wonder in familiar surroundings.",
+    "whyItWorks": "Builds curiosity through observation instead of action.",
+    "bestStoryStructures": [
+      "Discovery Story",
+      "Nature Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Hidden World",
+      "Nature's Balance",
+      "Secret Discovery"
+    ],
+    "bestEmotionalArcs": [
+      "Wonder → Gratitude",
+      "Curiosity → Discovery"
+    ],
+    "bestStoryTypes": [
+      "Nature",
+      "Discovery"
+    ],
+    "bestAge": "5–8",
+    "openingFormula": "Ordinary place → Tiny beautiful detail → Hero notices something different",
+    "openingEmotion": "Wonder",
+    "illustrationGoal": "Rich environmental illustration with one subtle magical or surprising detail.",
+    "pageTurnHook": "\"But today, something looked different...\"",
+    "writingTips": "Let the illustration do much of the storytelling. Keep text gentle and minimal."
+  },
+  {
+    "id": 5,
+    "slug": "the-emotional-spark",
+    "name": "The Emotional Spark",
+    "description": "Open with a strong feeling or emotional problem the hero is experiencing.",
+    "howItWorks": "Emotion becomes the story's starting point rather than the plot.",
+    "whyItWorks": "Children recognise the feeling immediately.",
+    "bestStoryStructures": [
+      "Transformation Story",
+      "Character Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Coming of Age",
+      "Hero's Trial"
+    ],
+    "bestEmotionalArcs": [
+      "Any emotional arc"
+    ],
+    "bestStoryTypes": [
+      "Emotional Growth",
+      "Friendship"
+    ],
+    "bestAge": "5–10",
+    "openingFormula": "Strong emotion → Small situation showing it → Something changes",
+    "openingEmotion": "Empathy",
+    "illustrationGoal": "Close-up of facial expression and body language.",
+    "pageTurnHook": "\"Then something happened that changed everything...\"",
+    "writingTips": "Show emotion through behaviour rather than naming it."
+  },
+  {
+    "id": 6,
+    "slug": "the-invitation",
+    "name": "The Invitation",
+    "description": "Someone invites the hero to help, join or explore something new.",
+    "howItWorks": "Gives the story a clear purpose from the beginning.",
+    "whyItWorks": "Children quickly understand the mission.",
+    "bestStoryStructures": [
+      "Journey Story",
+      "Quest Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Great Journey",
+      "Community Project",
+      "Expedition"
+    ],
+    "bestEmotionalArcs": [
+      "Curiosity → Confidence",
+      "Fear → Courage"
+    ],
+    "bestStoryTypes": [
+      "Journey",
+      "Quest",
+      "Community"
+    ],
+    "bestAge": "6–10",
+    "openingFormula": "Invitation arrives → Hero hesitates → Accepts the invitation",
+    "openingEmotion": "Curiosity",
+    "illustrationGoal": "Show two characters interacting with excitement or curiosity.",
+    "pageTurnHook": "\"Should I go?\"",
+    "writingTips": "The invitation should feel exciting but believable."
+  },
+  {
+    "id": 7,
+    "slug": "the-missing-something",
+    "name": "The Missing Something",
+    "description": "An important object, person or idea has disappeared.",
+    "howItWorks": "Instantly creates a clear goal.",
+    "whyItWorks": "Children immediately understand what needs to be solved.",
+    "bestStoryStructures": [
+      "Mystery Story",
+      "Rescue Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Rescue Mission",
+      "Mystery to Solve",
+      "Treasure Hunt"
+    ],
+    "bestEmotionalArcs": [
+      "Concern → Hope",
+      "Curiosity → Discovery"
+    ],
+    "bestStoryTypes": [
+      "Mystery",
+      "Rescue"
+    ],
+    "bestAge": "5–10",
+    "openingFormula": "Something important is missing → Hero discovers it → Search begins",
+    "openingEmotion": "Concern",
+    "illustrationGoal": "Empty space where something should be.",
+    "pageTurnHook": "\"Where did it go?\"",
+    "writingTips": "Make the missing item emotionally meaningful."
+  },
+  {
+    "id": 8,
+    "slug": "the-promise",
+    "name": "The Promise",
+    "description": "The hero makes—or receives—a meaningful promise.",
+    "howItWorks": "Establishes responsibility and emotional stakes.",
+    "whyItWorks": "Readers want to know whether the promise will be kept.",
+    "bestStoryStructures": [
+      "Relationship Story",
+      "Community Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Promise Keeper",
+      "Community Project"
+    ],
+    "bestEmotionalArcs": [
+      "Trust → Responsibility",
+      "Fear → Integrity"
+    ],
+    "bestStoryTypes": [
+      "Relationships",
+      "Family",
+      "Community"
+    ],
+    "bestAge": "6–10",
+    "openingFormula": "Promise made → Responsibility accepted → Challenge begins",
+    "openingEmotion": "Trust",
+    "illustrationGoal": "Warm interaction between characters that shows the relationship.",
+    "pageTurnHook": "\"Could the promise really be kept?\"",
+    "writingTips": "Keep the promise simple and emotionally important."
+  },
+  {
+    "id": 9,
+    "slug": "the-race-against-time",
+    "name": "The Race Against Time",
+    "description": "The hero must complete something before a deadline.",
+    "howItWorks": "Introduces urgency from the very first page.",
+    "whyItWorks": "Creates immediate tension and momentum.",
+    "bestStoryStructures": [
+      "Adventure Story",
+      "Rescue Story",
+      "Mission Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Race Against Time",
+      "Rescue Mission",
+      "Festival Adventure"
+    ],
+    "bestEmotionalArcs": [
+      "Anxiety → Determination",
+      "Worry → Confidence"
+    ],
+    "bestStoryTypes": [
+      "Adventure",
+      "Rescue",
+      "Festival"
+    ],
+    "bestAge": "6–10",
+    "openingFormula": "Deadline introduced → Stakes explained → Hero decides to act",
+    "openingEmotion": "Urgency",
+    "illustrationGoal": "Show a visible countdown (setting sun, approaching storm, festival preparations, etc.).",
+    "pageTurnHook": "\"Would they make it in time?\"",
+    "writingTips": "Make the deadline easy for children to understand and emotionally meaningful."
+  },
+  {
+    "id": 10,
+    "slug": "the-impossible-task",
+    "name": "The Impossible Task",
+    "description": "The hero is asked to do something that feels far beyond their ability.",
+    "howItWorks": "Establishes the transformation arc immediately.",
+    "whyItWorks": "Children instantly root for an underdog.",
+    "bestStoryStructures": [
+      "Hero's Trial Story",
+      "Transformation Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Hero's Trial",
+      "Training Journey",
+      "Coming of Age"
+    ],
+    "bestEmotionalArcs": [
+      "Self-Doubt → Confidence",
+      "Fear → Courage"
+    ],
+    "bestStoryTypes": [
+      "Growth",
+      "Hero Journey"
+    ],
+    "bestAge": "6–10",
+    "openingFormula": "Impossible challenge → Hero doubts themselves → First small attempt",
+    "openingEmotion": "Self-Doubt",
+    "illustrationGoal": "Show the huge challenge compared to the small hero.",
+    "pageTurnHook": "\"How could anyone do that?\"",
+    "writingTips": "Make the task appear impossible—but secretly achievable through growth."
+  },
+  {
+    "id": 12,
+    "slug": "",
+    "name": "#",
+    "description": "Opening Type",
+    "howItWorks": "Primary Strength",
+    "whyItWorks": null,
+    "bestStoryStructures": [],
+    "bestAdventureArchetypes": [],
+    "bestEmotionalArcs": [],
+    "bestStoryTypes": [],
+    "bestAge": null,
+    "openingFormula": null,
+    "openingEmotion": null,
+    "illustrationGoal": null,
+    "pageTurnHook": null,
+    "writingTips": null
+  },
+  {
+    "id": 13,
+    "slug": "1",
+    "name": "1",
+    "description": "The Vulnerable Wanderer",
+    "howItWorks": "Emotional empathy",
+    "whyItWorks": null,
+    "bestStoryStructures": [],
+    "bestAdventureArchetypes": [],
+    "bestEmotionalArcs": [],
+    "bestStoryTypes": [],
+    "bestAge": null,
+    "openingFormula": null,
+    "openingEmotion": null,
+    "illustrationGoal": null,
+    "pageTurnHook": null,
+    "writingTips": null
+  },
+  {
+    "id": 14,
+    "slug": "2",
+    "name": "2",
+    "description": "The Tiny Mystery",
+    "howItWorks": "Curiosity",
+    "whyItWorks": null,
+    "bestStoryStructures": [],
+    "bestAdventureArchetypes": [],
+    "bestEmotionalArcs": [],
+    "bestStoryTypes": [],
+    "bestAge": null,
+    "openingFormula": null,
+    "openingEmotion": null,
+    "illustrationGoal": null,
+    "pageTurnHook": null,
+    "writingTips": null
+  },
+  {
+    "id": 15,
+    "slug": "3",
+    "name": "3",
+    "description": "The Unexpected Interruption",
+    "howItWorks": "Fast action",
+    "whyItWorks": null,
+    "bestStoryStructures": [],
+    "bestAdventureArchetypes": [],
+    "bestEmotionalArcs": [],
+    "bestStoryTypes": [],
+    "bestAge": null,
+    "openingFormula": null,
+    "openingEmotion": null,
+    "illustrationGoal": null,
+    "pageTurnHook": null,
+    "writingTips": null
+  },
+  {
+    "id": 16,
+    "slug": "4",
+    "name": "4",
+    "description": "The Everyday Wonder",
+    "howItWorks": "Discovery",
+    "whyItWorks": null,
+    "bestStoryStructures": [],
+    "bestAdventureArchetypes": [],
+    "bestEmotionalArcs": [],
+    "bestStoryTypes": [],
+    "bestAge": null,
+    "openingFormula": null,
+    "openingEmotion": null,
+    "illustrationGoal": null,
+    "pageTurnHook": null,
+    "writingTips": null
+  },
+  {
+    "id": 17,
+    "slug": "5",
+    "name": "5",
+    "description": "The Emotional Spark",
+    "howItWorks": "Emotional connection",
+    "whyItWorks": null,
+    "bestStoryStructures": [],
+    "bestAdventureArchetypes": [],
+    "bestEmotionalArcs": [],
+    "bestStoryTypes": [],
+    "bestAge": null,
+    "openingFormula": null,
+    "openingEmotion": null,
+    "illustrationGoal": null,
+    "pageTurnHook": null,
+    "writingTips": null
+  },
+  {
+    "id": 18,
+    "slug": "6",
+    "name": "6",
+    "description": "The Invitation",
+    "howItWorks": "Purpose",
+    "whyItWorks": null,
+    "bestStoryStructures": [],
+    "bestAdventureArchetypes": [],
+    "bestEmotionalArcs": [],
+    "bestStoryTypes": [],
+    "bestAge": null,
+    "openingFormula": null,
+    "openingEmotion": null,
+    "illustrationGoal": null,
+    "pageTurnHook": null,
+    "writingTips": null
+  },
+  {
+    "id": 19,
+    "slug": "7",
+    "name": "7",
+    "description": "The Missing Something",
+    "howItWorks": "Clear goal",
+    "whyItWorks": null,
+    "bestStoryStructures": [],
+    "bestAdventureArchetypes": [],
+    "bestEmotionalArcs": [],
+    "bestStoryTypes": [],
+    "bestAge": null,
+    "openingFormula": null,
+    "openingEmotion": null,
+    "illustrationGoal": null,
+    "pageTurnHook": null,
+    "writingTips": null
+  },
+  {
+    "id": 20,
+    "slug": "8",
+    "name": "8",
+    "description": "The Promise",
+    "howItWorks": "Responsibility",
+    "whyItWorks": null,
+    "bestStoryStructures": [],
+    "bestAdventureArchetypes": [],
+    "bestEmotionalArcs": [],
+    "bestStoryTypes": [],
+    "bestAge": null,
+    "openingFormula": null,
+    "openingEmotion": null,
+    "illustrationGoal": null,
+    "pageTurnHook": null,
+    "writingTips": null
+  },
+  {
+    "id": 21,
+    "slug": "9",
+    "name": "9",
+    "description": "The Race Against Time",
+    "howItWorks": "Urgency",
+    "whyItWorks": null,
+    "bestStoryStructures": [],
+    "bestAdventureArchetypes": [],
+    "bestEmotionalArcs": [],
+    "bestStoryTypes": [],
+    "bestAge": null,
+    "openingFormula": null,
+    "openingEmotion": null,
+    "illustrationGoal": null,
+    "pageTurnHook": null,
+    "writingTips": null
+  },
+  {
+    "id": 22,
+    "slug": "10",
+    "name": "10",
+    "description": "The Impossible Task",
+    "howItWorks": "Transformation",
+    "whyItWorks": null,
+    "bestStoryStructures": [],
+    "bestAdventureArchetypes": [],
+    "bestEmotionalArcs": [],
+    "bestStoryTypes": [],
+    "bestAge": null,
+    "openingFormula": null,
+    "openingEmotion": null,
+    "illustrationGoal": null,
+    "pageTurnHook": null,
+    "writingTips": null
+  }
+]

@@ -1,0 +1,165 @@
+{
+  "events": [
+    {
+      "label": "SETUP",
+      "action": "After spending a long time gaming or watching videos, Kavi sits down to do something else but struggles to focus. Kavi wanted to concentrate on the next activity. Kavi's attention feels scattered and their mind feels tired. While wondering what to do, Kavi noticed a round smooth stone nearby. The old thought came quickly: \"My attention controls me.\""
+    },
+    {
+      "label": "ATTEMPT_1",
+      "action": "So Kavi tried to study exactly how it worked. Kavi tried to push through it, and the feeling was still there, just as big as before."
+    },
+    {
+      "label": "ATTEMPT_2",
+      "action": "Along the way, Kavi noticed the round smooth stone again. Kavi tried again, a different way instead. Kavi tried to focus even harder, and the feeling had not gone anywhere at all."
+    },
+    {
+      "label": "TURNING_POINT",
+      "action": "Kavi paused instead of forcing focus, and noticed what was actually pulling at their attention, realizing I can guide my attention back to what matters."
+    },
+    {
+      "label": "ATTEMPT_3",
+      "action": "This time, Kavi took a step back and looked at it fresh — Kavi took one slow breath, then looked back at just the one thing in front of them, and this time it actually came into focus."
+    },
+    {
+      "label": "RESOLUTION",
+      "action": "Kavi settled back into the thought and kept going — clearer, with the noise finally out of the way."
+    }
+  ],
+  "pages": [
+    "After spending a long time gaming or watching videos, Kavi sits down to do something else but struggles to focus. Kavi wanted to concentrate on the next activity. Kavi's attention feels scattered and their mind feels tired. While wondering what to do, Kavi noticed a round smooth stone nearby. The old thought came quickly: \"My attention controls me.\". So Kavi tried to study exactly how it worked. ",
+    "Kavi tried to push through it, and the feeling was still there, just as big as before. Along the way, Kavi noticed the round smooth stone again. Kavi tried again, a different way instead. Kavi tried to focus even harder, and the feeling had not gone anywhere at all. Kavi paused instead of forcing focus, and noticed what was actually pulling at their attention, realizing I can guide my attention back to what matters.\n",
+    "This time, Kavi took a step back and looked at it fresh — Kavi took one slow breath, then looked back at just the one thing in front of them, and this time it actually came into focus.\n",
+    "Kavi settled back into the thought and kept going ",
+    "— clearer, with the noise finally out of the way."
+  ],
+  "storyText": "After spending a long time gaming or watching videos, Kavi sits down to do something else but struggles to focus. Kavi wanted to concentrate on the next activity. Kavi's attention feels scattered and their mind feels tired. While wondering what to do, Kavi noticed a round smooth stone nearby. The old thought came quickly: \"My attention controls me.\". So Kavi tried to study exactly how it worked. Kavi tried to push through it, and the feeling was still there, just as big as before. Along the way, Kavi noticed the round smooth stone again. Kavi tried again, a different way instead. Kavi tried to focus even harder, and the feeling had not gone anywhere at all. Kavi paused instead of forcing focus, and noticed what was actually pulling at their attention, realizing I can guide my attention back to what matters.\n\nThis time, Kavi took a step back and looked at it fresh — Kavi took one slow breath, then looked back at just the one thing in front of them, and this time it actually came into focus.\n\nKavi settled back into the thought and kept going — clearer, with the noise finally out of the way.",
+  "storyQAReport": {
+    "status": "FAIL",
+    "rulesPassed": 15,
+    "rulesFailed": 1,
+    "warnings": [],
+    "errors": [
+      {
+        "ruleId": "QA-007",
+        "status": "FAIL",
+        "severity": "blocking",
+        "evidence": "Emotional arc moves from upset pressure toward lighter release.",
+        "responsibleModule": "8A"
+      }
+    ],
+    "results": [
+      {
+        "ruleId": "QA-001",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "Page count and page order still match the locked Story Plan.",
+        "responsibleModule": "8B"
+      },
+      {
+        "ruleId": "QA-002",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "Protagonist takes meaningful action rather than being carried by the plot.",
+        "responsibleModule": "8A"
+      },
+      {
+        "ruleId": "QA-003",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "Cause and effect remain visible from conflict to turning point.",
+        "responsibleModule": "8A"
+      },
+      {
+        "ruleId": "QA-004",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "Mission resolves through the protagonist's final choice.",
+        "responsibleModule": "8A"
+      },
+      {
+        "ruleId": "QA-005",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "Core need is addressed through the protagonist's growth outcome.",
+        "responsibleModule": "8A"
+      },
+      {
+        "ruleId": "QA-006",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "False belief and true belief are both present in the actual story.",
+        "responsibleModule": "8A"
+      },
+      {
+        "ruleId": "QA-007",
+        "status": "FAIL",
+        "severity": "blocking",
+        "evidence": "Emotional arc moves from upset pressure toward lighter release.",
+        "responsibleModule": "8A"
+      },
+      {
+        "ruleId": "QA-008",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "Symbol/mission pairing is resolved in the Blueprint (not required to be spoken aloud in every story).",
+        "responsibleModule": "8A"
+      },
+      {
+        "ruleId": "QA-009",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "Craft requirements show up through a reflective pause in the actual manuscript (any concrete form, not one fixed phrase).",
+        "responsibleModule": "8B"
+      },
+      {
+        "ruleId": "QA-010",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "Every page still carries coherent transition guidance.",
+        "responsibleModule": "8B"
+      },
+      {
+        "ruleId": "QA-011",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "No internal engine placeholders or CR codes remain in the prose.",
+        "responsibleModule": "8E"
+      },
+      {
+        "ruleId": "QA-012",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "No obvious prose corruption or doubled punctuation remains.",
+        "responsibleModule": "8E"
+      },
+      {
+        "ruleId": "QA-013",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "Dialogue remains concise and read-aloud friendly.",
+        "responsibleModule": "8D"
+      },
+      {
+        "ruleId": "QA-014",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "Ending provides both emotional and narrative closure.",
+        "responsibleModule": "8A"
+      },
+      {
+        "ruleId": "QA-015",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "No placeholder prose or unplanned artifact text remains.",
+        "responsibleModule": "8E"
+      },
+      {
+        "ruleId": "QA-016",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "Page pacing still protects dramatic and emotional high points rather than flattening them.",
+        "responsibleModule": "8B"
+      }
+    ]
+  }
+}

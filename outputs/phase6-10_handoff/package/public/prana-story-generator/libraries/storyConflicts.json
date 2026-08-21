@@ -1,0 +1,132 @@
+[
+  {
+    "id": 1,
+    "slug": "rescue-conflict",
+    "name": "Rescue Conflict",
+    "description": "Someone needs saving before it's too late.",
+    "generatedFrom": "Rescue Mission + Physical Obstacle",
+    "bestStoryStructures": [
+      "Rescue Story"
+    ],
+    "bestEmotionalArcs": [
+      "Fear → Courage"
+    ]
+  },
+  {
+    "id": 2,
+    "slug": "journey-conflict",
+    "name": "Journey Conflict",
+    "description": "The destination seems impossible to reach.",
+    "generatedFrom": "Great Journey + Nature Obstacle",
+    "bestStoryStructures": [
+      "Journey Story"
+    ],
+    "bestEmotionalArcs": [
+      "Doubt → Confidence"
+    ]
+  },
+  {
+    "id": 3,
+    "slug": "trust-conflict",
+    "name": "Trust Conflict",
+    "description": "Others don't believe the hero.",
+    "generatedFrom": "Social Obstacle",
+    "bestStoryStructures": [
+      "Relationship Story"
+    ],
+    "bestEmotionalArcs": [
+      "Self-Doubt → Confidence"
+    ]
+  },
+  {
+    "id": 4,
+    "slug": "friendship-conflict",
+    "name": "Friendship Conflict",
+    "description": "Friends are drifting apart or arguing.",
+    "generatedFrom": "Friendship Mission + Social Obstacle",
+    "bestStoryStructures": [
+      "Friendship Story"
+    ],
+    "bestEmotionalArcs": [
+      "Hurt → Belonging"
+    ]
+  },
+  {
+    "id": 5,
+    "slug": "responsibility-conflict",
+    "name": "Responsibility Conflict",
+    "description": "The hero must fulfil an important duty.",
+    "generatedFrom": "Responsibility Mission",
+    "bestStoryStructures": [
+      "Responsibility Story"
+    ],
+    "bestEmotionalArcs": [
+      "Hesitation → Pride"
+    ]
+  },
+  {
+    "id": 6,
+    "slug": "nature-conflict",
+    "name": "Nature Conflict",
+    "description": "Nature itself blocks the mission.",
+    "generatedFrom": "Nature Obstacle",
+    "bestStoryStructures": [
+      "Survival Story"
+    ],
+    "bestEmotionalArcs": [
+      "Fear → Resilience"
+    ]
+  },
+  {
+    "id": 7,
+    "slug": "puzzle-conflict",
+    "name": "Puzzle Conflict",
+    "description": "Progress depends on solving a mystery or riddle.",
+    "generatedFrom": "Puzzle Obstacle",
+    "bestStoryStructures": [
+      "Mystery Story"
+    ],
+    "bestEmotionalArcs": [
+      "Confusion → Clarity"
+    ]
+  },
+  {
+    "id": 8,
+    "slug": "time-conflict",
+    "name": "Time Conflict",
+    "description": "The mission must finish before time runs out.",
+    "generatedFrom": "Time Obstacle",
+    "bestStoryStructures": [
+      "Race Against Time"
+    ],
+    "bestEmotionalArcs": [
+      "Anxiety → Determination"
+    ]
+  },
+  {
+    "id": 9,
+    "slug": "community-conflict",
+    "name": "Community Conflict",
+    "description": "The group cannot work together.",
+    "generatedFrom": "Community Mission + Social Obstacle",
+    "bestStoryStructures": [
+      "Community Story"
+    ],
+    "bestEmotionalArcs": [
+      "Frustration → Cooperation"
+    ]
+  },
+  {
+    "id": 10,
+    "slug": "inner-conflict",
+    "name": "Inner Conflict",
+    "description": "The hero's own false belief is the biggest obstacle.",
+    "generatedFrom": "Core Need",
+    "bestStoryStructures": [
+      "Transformation Story"
+    ],
+    "bestEmotionalArcs": [
+      "False Belief → True Belief"
+    ]
+  }
+]

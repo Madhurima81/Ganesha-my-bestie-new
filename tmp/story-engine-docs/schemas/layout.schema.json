@@ -1,0 +1,340 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "layout.schema.json",
+  "title": "Book Layout",
+  "description": "Canonical production layout artifact produced by Phase 9C. It defines the placement and presentation of final story text and illustration assets. 9C consumes the final paginated manuscript and illustration assets directly; both are referenced explicitly rather than implied.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "status",
+    "storyReference",
+    "finalStoryReference",
+    "illustrationAssetReferences",
+    "format",
+    "pages",
+    "layoutValidation"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "1.0"
+    },
+
+    "status": {
+      "type": "string",
+      "enum": [
+        "VALIDATED",
+        "PRODUCTION_READY"
+      ]
+    },
+
+    "storyReference": {
+      "$ref": "#/$defs/reference"
+    },
+
+    "finalStoryReference": {
+      "$ref": "#/$defs/reference",
+      "description": "References the LOCKED Final Story / final paginated manuscript (Phase 8 output) that this layout was built from. 9C does not rewrite story text; it only places it."
+    },
+
+    "illustrationAssetReferences": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/reference"
+      },
+      "description": "References the generated illustration assets (produced from the Prompt Pack) that this layout places. 9C does not regenerate illustrations."
+    },
+
+    "format": {
+      "$ref": "#/$defs/format"
+    },
+
+    "pages": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/page"
+      }
+    },
+
+    "layoutValidation": {
+      "$ref": "#/$defs/validation"
+    }
+  },
+
+  "$defs": {
+
+    "reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+
+    "format": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "width",
+        "height",
+        "orientation"
+      ],
+      "properties": {
+        "width": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+
+        "height": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+
+        "unit": {
+          "type": "string"
+        },
+
+        "orientation": {
+          "type": "string",
+          "enum": [
+            "portrait",
+            "landscape",
+            "square"
+          ]
+        },
+
+        "bleed": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+
+    "page": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "page",
+        "text",
+        "illustration"
+      ],
+      "properties": {
+        "page": {
+          "type": "integer",
+          "minimum": 1
+        },
+
+        "text": {
+          "$ref": "#/$defs/textBlock"
+        },
+
+        "illustration": {
+          "$ref": "#/$defs/illustrationBlock"
+        },
+
+        "pageTurn": {
+          "$ref": "#/$defs/pageTurn"
+        },
+
+        "background": {
+          "$ref": "#/$defs/asset"
+        },
+
+        "overlays": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/asset"
+          }
+        }
+      }
+    },
+
+    "textBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "content",
+        "position"
+      ],
+      "properties": {
+        "content": {
+          "type": "string"
+        },
+
+        "position": {
+          "$ref": "#/$defs/position"
+        },
+
+        "width": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+
+        "height": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+
+        "font": {
+          "type": "string"
+        },
+
+        "fontSize": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+
+        "alignment": {
+          "type": "string",
+          "enum": [
+            "left",
+            "center",
+            "right"
+          ]
+        }
+      }
+    },
+
+    "illustrationBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "assetId",
+        "position"
+      ],
+      "properties": {
+        "assetId": {
+          "type": "string"
+        },
+
+        "position": {
+          "$ref": "#/$defs/position"
+        },
+
+        "width": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+
+        "height": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+
+        "fit": {
+          "type": "string",
+          "enum": [
+            "contain",
+            "cover",
+            "crop",
+            "original"
+          ]
+        },
+
+        "layer": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+
+    "position": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "x",
+        "y"
+      ],
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+
+        "y": {
+          "type": "number"
+        }
+      }
+    },
+
+    "pageTurn": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "purpose": {
+          "type": "string"
+        },
+
+        "preserved": {
+          "type": "boolean"
+        }
+      }
+    },
+
+    "asset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "assetId"
+      ],
+      "properties": {
+        "assetId": {
+          "type": "string"
+        },
+
+        "position": {
+          "$ref": "#/$defs/position"
+        },
+
+        "width": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+
+        "height": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      }
+    },
+
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "blockingFailures"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "PASS"
+          ]
+        },
+
+        "blockingFailures": {
+          "type": "integer",
+          "const": 0
+        },
+
+        "warnings": {
+          "type": "integer",
+          "minimum": 0
+        },
+
+        "rulesPassed": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}

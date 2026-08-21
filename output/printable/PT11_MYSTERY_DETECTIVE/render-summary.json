@@ -1,0 +1,17 @@
+{
+  "generated_at": "2026-08-11T14:10:08.225Z",
+  "template_id": "PT11_MYSTERY_DETECTIVE",
+  "variants": [
+    {
+      "name": "ears-sample",
+      "final_result": "APPROVED",
+      "errors": []
+    },
+    {
+      "name": "eyes-sample",
+      "final_result": "APPROVED",
+      "errors": []
+    }
+  ],
+  "final_result": "APPROVED"
+}

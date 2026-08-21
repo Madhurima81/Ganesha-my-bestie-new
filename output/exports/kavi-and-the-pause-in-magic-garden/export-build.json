@@ -1,0 +1,37 @@
+{
+  "outputRoot": "C:\\Users\\Madhurima Agarwal\\ganesha-my-bestie\\output\\exports\\kavi-and-the-pause-in-magic-garden",
+  "slug": "kavi-and-the-pause-in-magic-garden",
+  "storyPackagePath": "C:\\Users\\Madhurima Agarwal\\ganesha-my-bestie\\output\\exports\\kavi-and-the-pause-in-magic-garden\\story-package.json",
+  "assetManifestPath": "C:\\Users\\Madhurima Agarwal\\ganesha-my-bestie\\output\\exports\\kavi-and-the-pause-in-magic-garden\\asset-manifest.json",
+  "exportMetadataPath": "C:\\Users\\Madhurima Agarwal\\ganesha-my-bestie\\output\\exports\\kavi-and-the-pause-in-magic-garden\\export-metadata.json",
+  "exportReportPath": "C:\\Users\\Madhurima Agarwal\\ganesha-my-bestie\\output\\exports\\kavi-and-the-pause-in-magic-garden\\export-report.json",
+  "digitalIndexPath": "C:\\Users\\Madhurima Agarwal\\ganesha-my-bestie\\output\\exports\\kavi-and-the-pause-in-magic-garden\\digital-story\\index.html",
+  "digitalManifestPath": "C:\\Users\\Madhurima Agarwal\\ganesha-my-bestie\\output\\exports\\kavi-and-the-pause-in-magic-garden\\digital-story\\manifest.webmanifest",
+  "copiedAssets": [
+    {
+      "assetId": "ASSET_PAGE_1",
+      "svgPath": "C:\\Users\\Madhurima Agarwal\\ganesha-my-bestie\\output\\exports\\kavi-and-the-pause-in-magic-garden\\assets\\asset-page-1.svg",
+      "pngPath": "C:\\Users\\Madhurima Agarwal\\ganesha-my-bestie\\output\\exports\\kavi-and-the-pause-in-magic-garden\\assets\\asset-page-1.png"
+    },
+    {
+      "assetId": "ASSET_PAGE_2",
+      "svgPath": "C:\\Users\\Madhurima Agarwal\\ganesha-my-bestie\\output\\exports\\kavi-and-the-pause-in-magic-garden\\assets\\asset-page-2.svg",
+      "pngPath": "C:\\Users\\Madhurima Agarwal\\ganesha-my-bestie\\output\\exports\\kavi-and-the-pause-in-magic-garden\\assets\\asset-page-2.png"
+    },
+    {
+      "assetId": "ASSET_PAGE_3",
+      "svgPath": "C:\\Users\\Madhurima Agarwal\\ganesha-my-bestie\\output\\exports\\kavi-and-the-pause-in-magic-garden\\assets\\asset-page-3.svg",
+      "pngPath": "C:\\Users\\Madhurima Agarwal\\ganesha-my-bestie\\output\\exports\\kavi-and-the-pause-in-magic-garden\\assets\\asset-page-3.png"
+    },
+    {
+      "assetId": "ASSET_PAGE_4",
+      "svgPath": "C:\\Users\\Madhurima Agarwal\\ganesha-my-bestie\\output\\exports\\kavi-and-the-pause-in-magic-garden\\assets\\asset-page-4.svg",
+      "pngPath": "C:\\Users\\Madhurima Agarwal\\ganesha-my-bestie\\output\\exports\\kavi-and-the-pause-in-magic-garden\\assets\\asset-page-4.png"
+    },
+    {
+      "assetId": "ASSET_PAGE_5",
+      "svgPath": "C:\\Users\\Madhurima Agarwal\\ganesha-my-bestie\\output\\exports\\kavi-and-the-pause-in-magic-garden\\assets\\asset-page-5.svg",
+      "pngPath": "C:\\Users\\Madhurima Agarwal\\ganesha-my-bestie\\output\\exports\\kavi-and-the-pause-in-magic-garden\\assets\\asset-page-5.png"
+    }
+  ]
+}

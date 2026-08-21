@@ -1,0 +1,229 @@
+[
+  {
+    "id": "SIT013",
+    "title": "Adult doesn't understand what they mean",
+    "storySeed": {
+      "childExperience": "Kavi explains something important to a parent, but the parent misunderstands.",
+      "immediateWant": "Be understood.",
+      "immediateObstacle": "Kavi's explanation isn't getting through.",
+      "emotionalTension": "Kavi starts wondering whether something is wrong with the way they communicate.",
+      "context": [
+        "home"
+      ],
+      "narrativeSummary": "'That's not what I meant!' Kavi tries again. But somehow the words keep landing differently from what Kavi intended."
+    }
+  },
+  {
+    "id": "SIT046",
+    "title": "Harshly reprimanded by a parent",
+    "storySeed": {
+      "childExperience": "Kavi makes a mistake and a parent reacts angrily.",
+      "immediateWant": "Feel loved and safe again.",
+      "immediateObstacle": "The parent's anger makes Kavi feel ashamed.",
+      "emotionalTension": "Kavi begins to confuse being corrected with being unloved.",
+      "context": [
+        "home after a mistake"
+      ],
+      "narrativeSummary": "Kavi hears the sharp voice and looks down at the floor. The mistake was small, but the feeling in Kavi's chest is enormous."
+    }
+  },
+  {
+    "id": "SIT048",
+    "title": "Not invited to a birthday party",
+    "storySeed": {
+      "childExperience": "Kavi discovers that several classmates are going to a birthday party and Kavi wasn't invited.",
+      "immediateWant": "Understand why and feel included.",
+      "immediateObstacle": "The party invitation has already been decided.",
+      "emotionalTension": "Kavi starts turning one missing invitation into a judgment about their worth.",
+      "context": [
+        "school or a conversation among classmates"
+      ],
+      "narrativeSummary": "Kavi hears everyone talking about Saturday's birthday party. Then comes the realization: everyone is going—except Kavi."
+    }
+  },
+  {
+    "id": "SIT051",
+    "title": "Close friend moved to another city",
+    "storySeed": {
+      "childExperience": "Kavi's closest friend moves to another city.",
+      "immediateWant": "Keep the friendship alive.",
+      "immediateObstacle": "They can no longer meet and play every day.",
+      "emotionalTension": "Kavi fears distance means the friendship is ending.",
+      "context": [
+        "final day together or first days after the move"
+      ],
+      "narrativeSummary": "The moving boxes are packed. Kavi's friend is leaving, and suddenly the walk to school will have one missing person in it."
+    }
+  },
+  {
+    "id": "SIT056",
+    "title": "Excluded from a group chat",
+    "storySeed": {
+      "childExperience": "Kavi discovers that classmates have a group chat that Kavi isn't part of.",
+      "immediateWant": "Feel included and understand what happened.",
+      "immediateObstacle": "Kavi cannot force an invitation.",
+      "emotionalTension": "Seeing the conversation happening without them makes Kavi feel unimportant.",
+      "context": [
+        "school-age friendship and messaging"
+      ],
+      "narrativeSummary": "Kavi's friends are laughing about messages on their phones. Kavi looks at the screen and realizes there is a conversation happening that Kavi isn't part of."
+    }
+  },
+  {
+    "id": "SIT065",
+    "title": "Getting acne or pimples (older kids)",
+    "storySeed": {
+      "childExperience": "Kavi notices a new pimple before going to school.",
+      "immediateWant": "Hide it or stop worrying about how others will see them.",
+      "immediateObstacle": "Kavi cannot instantly change their skin.",
+      "emotionalTension": "One tiny spot suddenly feels like the biggest thing everyone will notice.",
+      "context": [
+        "morning before school"
+      ],
+      "narrativeSummary": "Kavi leans toward the mirror. There it is—a tiny new spot that somehow feels enormous."
+    }
+  },
+  {
+    "id": "SIT074",
+    "title": "Reprimanded in front of friends or guests",
+    "storySeed": {
+      "childExperience": "A parent or teacher corrects Kavi sharply while friends or guests are watching.",
+      "immediateWant": "Disappear from everyone's attention.",
+      "immediateObstacle": "The embarrassing moment is happening publicly.",
+      "emotionalTension": "Kavi feels that being corrected has made them smaller in everyone's eyes.",
+      "context": [
+        "home with guests or school"
+      ],
+      "narrativeSummary": "Kavi makes a small mistake. The correction comes quickly—and so does the uncomfortable feeling of everyone watching."
+    }
+  },
+  {
+    "id": "SIT082",
+    "title": "Best friend is playing with someone else",
+    "storySeed": {
+      "childExperience": "Kavi arrives at the playground expecting to play with their best friend, but finds the friend already deep in a game with another child.",
+      "immediateWant": "Join the game and get their friend's attention.",
+      "immediateObstacle": "The game is already underway and Kavi doesn't know whether there is room for them.",
+      "emotionalTension": "Kavi starts wondering whether their friend would rather play with someone else.",
+      "context": [
+        "school playground"
+      ],
+      "narrativeSummary": "Kavi spots their best friend near the climbing frame. They hurry over—then slow down when they see who is already playing beside them.",
+      "note": "Distinct engine from SIT042 (missing connection/disappointment) — this is replacement/exclusion/jealousy."
+    }
+  },
+  {
+    "id": "SIT093",
+    "title": "Wishing they had someone else's hair",
+    "storySeed": {
+      "childExperience": "Kavi notices a friend's hair and wishes their own hair looked the same.",
+      "immediateWant": "Look like the friend.",
+      "immediateObstacle": "Kavi's own hair has a different texture, shape, or appearance.",
+      "emotionalTension": "Kavi starts seeing their own appearance through comparison instead of accepting it as their own.",
+      "context": [
+        "getting ready for school or seeing classmates"
+      ],
+      "narrativeSummary": "Kavi watches the friend's hair bounce as they walk. Later, Kavi looks in the mirror and tries to make their own hair do the same thing."
+    }
+  },
+  {
+    "id": "SIT107",
+    "title": "Pressure to always 'be good' and behave",
+    "storySeed": {
+      "childExperience": "Before an important family or school event, Kavi is told repeatedly not to make a mistake.",
+      "immediateWant": "Get through the event without making a mistake.",
+      "immediateObstacle": "Kavi cannot control every impulse, feeling, or small accident.",
+      "emotionalTension": "Trying so hard to behave makes Kavi increasingly worried about doing anything wrong.",
+      "context": [
+        "family gathering, school event, or formal occasion"
+      ],
+      "narrativeSummary": "'Remember to be good,' Mama whispers before they walk in. Kavi nods. Suddenly even sitting still feels like a test.",
+      "note": "REVISED per locked decision — converted from a vague ongoing parenting dynamic into a specific pre-event scene."
+    }
+  },
+  {
+    "id": "SIT114",
+    "title": "Moving to a new home or city",
+    "storySeed": {
+      "childExperience": "Kavi is preparing to leave a familiar home and move to a new place.",
+      "immediateWant": "Hold on to the familiar parts of home.",
+      "immediateObstacle": "The move means leaving behind familiar rooms, places, routines, or people.",
+      "emotionalTension": "Kavi feels excited about what is coming but sad about what is being left behind.",
+      "context": [
+        "days before or during a family move"
+      ],
+      "narrativeSummary": "Kavi walks through the nearly empty bedroom one last time. The walls are the same, but without the furniture the room already feels different."
+    }
+  },
+  {
+    "id": "SIT115",
+    "title": "Moving abroad (very relevant for NRI families)",
+    "storySeed": {
+      "childExperience": "Kavi learns that the family is moving to another country, far from the places and people Kavi knows.",
+      "immediateWant": "Hold on to home and familiar connections.",
+      "immediateObstacle": "The distance means many familiar things will change.",
+      "emotionalTension": "Excitement about a new country sits beside worry about leaving life behind.",
+      "context": [
+        "preparing for an international move"
+      ],
+      "narrativeSummary": "The suitcase lies open on the floor. Kavi folds a favourite shirt inside and wonders how far away 'home' can travel."
+    }
+  },
+  {
+    "id": "SIT122",
+    "title": "Noticing a new change in their body",
+    "storySeed": {
+      "childExperience": "Kavi notices a new physical change in their body that they did not expect.",
+      "immediateWant": "Understand what is happening and know that they are okay.",
+      "immediateObstacle": "The change is unfamiliar and Kavi does not yet understand it.",
+      "emotionalTension": "Something happening inside Kavi's own body suddenly feels strange and unsettling.",
+      "context": [
+        "at home, e.g. brushing teeth, getting dressed, bedtime"
+      ],
+      "narrativeSummary": "Kavi notices something different and pauses. It wasn't there before. Kavi looks again, wondering what is happening.",
+      "note": "Original bundle (tooth loss + growing pains + puberty) deliberately un-bundled. Needs age-routing at generation time — do not treat puberty as generic 5-12 content."
+    }
+  },
+  {
+    "id": "SIT146",
+    "title": "Feels guilty for not including someone in play",
+    "storySeed": {
+      "childExperience": "Kavi realises that another child was left out while Kavi and the others were playing.",
+      "immediateWant": "Make the other child feel included.",
+      "immediateObstacle": "The game is already underway and Kavi is unsure how to bring the child in without disrupting it.",
+      "emotionalTension": "Kavi feels guilty because they noticed the exclusion but did not act sooner.",
+      "context": [
+        "school or playground"
+      ],
+      "narrativeSummary": "Kavi looks across the playground and notices the child standing alone. A moment ago Kavi hadn't thought much about it. Now Kavi can't stop noticing."
+    }
+  },
+  {
+    "id": "SIT150",
+    "title": "Best friend makes a new best friend",
+    "storySeed": {
+      "childExperience": "Kavi's closest friend starts spending much of their time with a new friend.",
+      "immediateWant": "Keep the friendship feeling special.",
+      "immediateObstacle": "Kavi cannot control who else their friend chooses to spend time with.",
+      "emotionalTension": "Kavi begins interpreting the new friendship as evidence that they are being replaced.",
+      "context": [
+        "school or playground"
+      ],
+      "narrativeSummary": "Kavi used to know exactly where to find their best friend at recess. Lately, someone else is always standing there first."
+    }
+  },
+  {
+    "id": "SIT152",
+    "title": "Accidentally left out of a game",
+    "storySeed": {
+      "childExperience": "Kavi arrives while other children are already playing and realises they have not been included.",
+      "immediateWant": "Join the game.",
+      "immediateObstacle": "The game is already underway and nobody has invited Kavi in.",
+      "emotionalTension": "Kavi is unsure whether to ask to join or walk away before anyone can reject them.",
+      "context": [
+        "playground or school game"
+      ],
+      "narrativeSummary": "Kavi walks toward the group, then slows down. Everyone is already playing. Nobody looks up."
+    }
+  }
+]

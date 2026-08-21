@@ -1,0 +1,110 @@
+{
+  "sourceWorkbook": "C:\\Users\\Madhurima Agarwal\\Downloads\\Prana_Kids_Full_Library_v12.xlsx",
+  "libraries": [
+    {
+      "name": "childhoodSituations",
+      "file": "childhoodSituations.json",
+      "count": 168
+    },
+    {
+      "name": "wisdomElements",
+      "file": "wisdomElements.json",
+      "count": 12
+    },
+    {
+      "name": "mainCharacters",
+      "file": "mainCharacters.json",
+      "count": 18
+    },
+    {
+      "name": "lifeDomains",
+      "file": "lifeDomains.json",
+      "count": 13
+    },
+    {
+      "name": "storyActions",
+      "file": "storyActions.json",
+      "count": 20
+    },
+    {
+      "name": "adventureArchetypes",
+      "file": "adventureArchetypes.json",
+      "count": 55
+    },
+    {
+      "name": "adventureTriggers",
+      "file": "adventureTriggers.json",
+      "count": 440
+    },
+    {
+      "name": "storyWorlds",
+      "file": "storyWorlds.json",
+      "count": 40
+    },
+    {
+      "name": "storyWorldPacks",
+      "file": "storyWorldPacks.json",
+      "count": 40
+    },
+    {
+      "name": "missions",
+      "file": "missions.json",
+      "count": 100
+    },
+    {
+      "name": "obstacles",
+      "file": "obstacles.json",
+      "count": 63
+    },
+    {
+      "name": "storyStructures",
+      "file": "storyStructures.json",
+      "count": 100
+    },
+    {
+      "name": "emotionalArcs",
+      "file": "emotionalArcs.json",
+      "count": 60
+    },
+    {
+      "name": "openings",
+      "file": "openings.json",
+      "count": 21
+    },
+    {
+      "name": "endings",
+      "file": "endings.json",
+      "count": 21
+    },
+    {
+      "name": "replayHooks",
+      "file": "replayHooks.json",
+      "count": 30
+    },
+    {
+      "name": "readAloudDevices",
+      "file": "readAloudDevices.json",
+      "count": 30
+    },
+    {
+      "name": "titleFormulas",
+      "file": "titleFormulas.json",
+      "count": 30
+    },
+    {
+      "name": "storyConflicts",
+      "file": "storyConflicts.json",
+      "count": 10
+    },
+    {
+      "name": "escalations",
+      "file": "escalations.json",
+      "count": 12
+    },
+    {
+      "name": "storyQualityScorecard",
+      "file": "storyQualityScorecard.json",
+      "count": 13
+    }
+  ]
+}

@@ -1,0 +1,663 @@
+[
+  {
+    "id": 1,
+    "slug": "repeated-phrase",
+    "name": "Repeated Phrase",
+    "category": "Rhythm",
+    "description": "Repeat a memorable line with growing meaning.",
+    "howItWorks": "Builds anticipation.",
+    "whyItWorks": "Children join in.",
+    "bestStoryStage": "Throughout",
+    "bestStoryStructures": [
+      "Journey Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Great Journey"
+    ],
+    "bestEmotionalArcs": [
+      "Confidence"
+    ],
+    "bestAge": "4–8",
+    "example": "\"Not yet... not yet...\"",
+    "notes": "Use 2–4 times."
+  },
+  {
+    "id": 2,
+    "slug": "rule-of-three",
+    "name": "Rule of Three",
+    "category": "Rhythm",
+    "description": "Repeat an action three times with variation.",
+    "howItWorks": "Creates satisfying rhythm.",
+    "whyItWorks": "Easy to remember.",
+    "bestStoryStage": "Middle",
+    "bestStoryStructures": [
+      "Adventure Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Hero's Trial"
+    ],
+    "bestEmotionalArcs": [
+      "Determination"
+    ],
+    "bestAge": "5–8",
+    "example": "Three attempts",
+    "notes": "Third time succeeds."
+  },
+  {
+    "id": 3,
+    "slug": "predictable-pattern",
+    "name": "Predictable Pattern",
+    "category": "Rhythm",
+    "description": "Repeat a sentence structure.",
+    "howItWorks": "Children predict what comes next.",
+    "whyItWorks": "Encourages participation.",
+    "bestStoryStage": "Throughout",
+    "bestStoryStructures": [
+      "Community Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Team Adventure"
+    ],
+    "bestEmotionalArcs": [
+      "Joy"
+    ],
+    "bestAge": "4–7",
+    "example": "—",
+    "notes": "Simple wording."
+  },
+  {
+    "id": 4,
+    "slug": "echo-line",
+    "name": "Echo Line",
+    "category": "Rhythm",
+    "description": "A line returns later with new meaning.",
+    "howItWorks": "Reinforces growth.",
+    "whyItWorks": "Emotional payoff.",
+    "bestStoryStage": "Ending",
+    "bestStoryStructures": [
+      "Transformation Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Transformation Story"
+    ],
+    "bestEmotionalArcs": [
+      "Growth"
+    ],
+    "bestAge": "5–10",
+    "example": "—",
+    "notes": "Best near ending."
+  },
+  {
+    "id": 5,
+    "slug": "call-and-response",
+    "name": "Call and Response",
+    "category": "Participation",
+    "description": "Narrator asks; children answer.",
+    "howItWorks": "Makes reading interactive.",
+    "whyItWorks": "High engagement.",
+    "bestStoryStage": "Throughout",
+    "bestStoryStructures": [
+      "Friendship Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Community Project"
+    ],
+    "bestEmotionalArcs": [
+      "Joy"
+    ],
+    "bestAge": "4–7",
+    "example": "\"Who's there?\"",
+    "notes": "Don't overuse."
+  },
+  {
+    "id": 6,
+    "slug": "cumulative-build",
+    "name": "Cumulative Build",
+    "category": "Rhythm",
+    "description": "Each page adds one new element.",
+    "howItWorks": "Builds excitement.",
+    "whyItWorks": "Great memory aid.",
+    "bestStoryStage": "Middle",
+    "bestStoryStructures": [
+      "Journey Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Expedition"
+    ],
+    "bestEmotionalArcs": [
+      "Curiosity"
+    ],
+    "bestAge": "4–8",
+    "example": "—",
+    "notes": "Perfect for quests."
+  },
+  {
+    "id": 7,
+    "slug": "repeated-action",
+    "name": "Repeated Action",
+    "category": "Rhythm",
+    "description": "Hero repeats an action while improving.",
+    "howItWorks": "Shows growth naturally.",
+    "whyItWorks": "Reinforces learning.",
+    "bestStoryStage": "Middle",
+    "bestStoryStructures": [
+      "Training Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Training Journey"
+    ],
+    "bestEmotionalArcs": [
+      "Confidence"
+    ],
+    "bestAge": "5–9",
+    "example": "—",
+    "notes": "Each attempt improves."
+  },
+  {
+    "id": 8,
+    "slug": "gentle-refrain",
+    "name": "Gentle Refrain",
+    "category": "Rhythm",
+    "description": "Soft recurring sentence throughout story.",
+    "howItWorks": "Creates emotional anchor.",
+    "whyItWorks": "Comforting.",
+    "bestStoryStage": "Throughout",
+    "bestStoryStructures": [
+      "Emotional Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Transformation Story"
+    ],
+    "bestEmotionalArcs": [
+      "Belonging"
+    ],
+    "bestAge": "4–8",
+    "example": "—",
+    "notes": "Ideal bedtime stories."
+  },
+  {
+    "id": 9,
+    "slug": "sound-words-onomatopoeia",
+    "name": "Sound Words (Onomatopoeia)",
+    "category": "Sound",
+    "description": "Use sounds like Splash! Crunch! Whoosh!",
+    "howItWorks": "Makes scenes vivid.",
+    "whyItWorks": "Children love repeating sounds.",
+    "bestStoryStage": "Action Scenes",
+    "bestStoryStructures": [
+      "Adventure Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Rescue Mission",
+      "Great Journey"
+    ],
+    "bestEmotionalArcs": [
+      "Excitement"
+    ],
+    "bestAge": "4–8",
+    "example": "\"Splash!\"",
+    "notes": "Don't overload."
+  },
+  {
+    "id": 10,
+    "slug": "alliteration",
+    "name": "Alliteration",
+    "category": "Language",
+    "description": "Repeat the same starting sound.",
+    "howItWorks": "Creates musical rhythm.",
+    "whyItWorks": "Easy to remember.",
+    "bestStoryStage": "Throughout",
+    "bestStoryStructures": [
+      "Any"
+    ],
+    "bestAdventureArchetypes": [
+      "Any"
+    ],
+    "bestEmotionalArcs": [
+      "Joy"
+    ],
+    "bestAge": "4–8",
+    "example": "\"Busy buzzing bees\"",
+    "notes": "Keep natural."
+  },
+  {
+    "id": 11,
+    "slug": "rhyme-burst",
+    "name": "Rhyme Burst",
+    "category": "Language",
+    "description": "Short rhyming phrase.",
+    "howItWorks": "Adds playful rhythm.",
+    "whyItWorks": "Encourages participation.",
+    "bestStoryStage": "Key Moments",
+    "bestStoryStructures": [
+      "Celebration Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Festival Adventure"
+    ],
+    "bestEmotionalArcs": [
+      "Joy"
+    ],
+    "bestAge": "4–7",
+    "example": "—",
+    "notes": "Use sparingly."
+  },
+  {
+    "id": 12,
+    "slug": "musical-sentence",
+    "name": "Musical Sentence",
+    "category": "Rhythm",
+    "description": "Long flowing sentence with natural cadence.",
+    "howItWorks": "Pleasant to read aloud.",
+    "whyItWorks": "Keeps listener engaged.",
+    "bestStoryStage": "Descriptive Scenes",
+    "bestStoryStructures": [
+      "Nature Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Nature's Balance"
+    ],
+    "bestEmotionalArcs": [
+      "Wonder"
+    ],
+    "bestAge": "5–9",
+    "example": "—",
+    "notes": "Avoid becoming too long."
+  },
+  {
+    "id": 13,
+    "slug": "whisper-moment",
+    "name": "Whisper Moment",
+    "category": "Voice",
+    "description": "Sentence naturally invites a whisper.",
+    "howItWorks": "Creates suspense.",
+    "whyItWorks": "Children lean in.",
+    "bestStoryStage": "Mystery",
+    "bestStoryStructures": [
+      "Mystery Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Ancient Secret"
+    ],
+    "bestEmotionalArcs": [
+      "Curiosity"
+    ],
+    "bestAge": "5–9",
+    "example": "\"Very quietly...\"",
+    "notes": "Great before page turn."
+  },
+  {
+    "id": 14,
+    "slug": "loud-moment",
+    "name": "Loud Moment",
+    "category": "Voice",
+    "description": "Big exciting sentence.",
+    "howItWorks": "Releases energy.",
+    "whyItWorks": "Fun for group reading.",
+    "bestStoryStage": "Climax",
+    "bestStoryStructures": [
+      "Hero Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Hero's Trial"
+    ],
+    "bestEmotionalArcs": [
+      "Excitement"
+    ],
+    "bestAge": "4–8",
+    "example": "\"Run!\"",
+    "notes": "Use only once or twice."
+  },
+  {
+    "id": 15,
+    "slug": "character-catchphrase",
+    "name": "Character Catchphrase",
+    "category": "Character",
+    "description": "A character repeats a favourite line.",
+    "howItWorks": "Builds familiarity.",
+    "whyItWorks": "Children anticipate it.",
+    "bestStoryStage": "Throughout",
+    "bestStoryStructures": [
+      "Character Story"
+    ],
+    "bestAdventureArchetypes": [
+      "New Friend"
+    ],
+    "bestEmotionalArcs": [
+      "Belonging"
+    ],
+    "bestAge": "4–8",
+    "example": "—",
+    "notes": "Signature character trait."
+  },
+  {
+    "id": 16,
+    "slug": "prediction-pause",
+    "name": "Prediction Pause",
+    "category": "Participation",
+    "description": "Pause before revealing what happens.",
+    "howItWorks": "Invites guessing.",
+    "whyItWorks": "Keeps children engaged.",
+    "bestStoryStage": "Before Page Turn",
+    "bestStoryStructures": [
+      "Mystery Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Mystery to Solve"
+    ],
+    "bestEmotionalArcs": [
+      "Curiosity"
+    ],
+    "bestAge": "5–9",
+    "example": "\"What do you think?\"",
+    "notes": "Short pause only."
+  },
+  {
+    "id": 17,
+    "slug": "count-together",
+    "name": "Count Together",
+    "category": "Participation",
+    "description": "Count objects or actions together.",
+    "howItWorks": "Interactive reading.",
+    "whyItWorks": "Builds participation.",
+    "bestStoryStage": "Throughout",
+    "bestStoryStructures": [
+      "Journey Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Expedition"
+    ],
+    "bestEmotionalArcs": [
+      "Excitement"
+    ],
+    "bestAge": "4–7",
+    "example": "Count steps",
+    "notes": "Great for younger readers."
+  },
+  {
+    "id": 18,
+    "slug": "point-and-find",
+    "name": "Point-and-Find",
+    "category": "Participation",
+    "description": "Ask readers to spot something.",
+    "howItWorks": "Encourages observation.",
+    "whyItWorks": "Supports replay.",
+    "bestStoryStage": "Throughout",
+    "bestStoryStructures": [
+      "Discovery Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Secret Discovery"
+    ],
+    "bestEmotionalArcs": [
+      "Curiosity"
+    ],
+    "bestAge": "4–8",
+    "example": "Find the Mouse",
+    "notes": "Excellent with illustrations."
+  },
+  {
+    "id": 19,
+    "slug": "character-voice",
+    "name": "Character Voice",
+    "category": "Participation",
+    "description": "Give each character a distinct voice.",
+    "howItWorks": "Makes dialogue memorable.",
+    "whyItWorks": "Builds personality.",
+    "bestStoryStage": "Dialogue",
+    "bestStoryStructures": [
+      "Friendship Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Team Adventure"
+    ],
+    "bestEmotionalArcs": [
+      "Joy"
+    ],
+    "bestAge": "4–9",
+    "example": "—",
+    "notes": "Keep voices consistent."
+  },
+  {
+    "id": 20,
+    "slug": "audience-question",
+    "name": "Audience Question",
+    "category": "Participation",
+    "description": "Ask a direct question.",
+    "howItWorks": "Invites thinking.",
+    "whyItWorks": "Builds emotional connection.",
+    "bestStoryStage": "Reflection",
+    "bestStoryStructures": [
+      "Emotional Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Transformation Story"
+    ],
+    "bestEmotionalArcs": [
+      "Reflection"
+    ],
+    "bestAge": "5–10",
+    "example": "\"What would you do?\"",
+    "notes": "Natural, not preachy."
+  },
+  {
+    "id": 21,
+    "slug": "slow-pause",
+    "name": "Slow Pause",
+    "category": "Emotion",
+    "description": "Short pause after an emotional sentence.",
+    "howItWorks": "Gives emotions space.",
+    "whyItWorks": "Helps children process feelings.",
+    "bestStoryStage": "Emotional Low",
+    "bestStoryStructures": [
+      "Transformation Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Transformation Story"
+    ],
+    "bestEmotionalArcs": [
+      "Sadness → Hope"
+    ],
+    "bestAge": "5–10",
+    "example": "—",
+    "notes": "Don't overuse."
+  },
+  {
+    "id": 22,
+    "slug": "silent-spread",
+    "name": "Silent Spread",
+    "category": "Emotion",
+    "description": "Let the illustration tell the story.",
+    "howItWorks": "Creates reflection.",
+    "whyItWorks": "Powerful emotional impact.",
+    "bestStoryStage": "Turning Point",
+    "bestStoryStructures": [
+      "Emotional Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Coming of Age"
+    ],
+    "bestEmotionalArcs": [
+      "Reflection"
+    ],
+    "bestAge": "5–10",
+    "example": "—",
+    "notes": "Very few words."
+  },
+  {
+    "id": 23,
+    "slug": "emotional-contrast",
+    "name": "Emotional Contrast",
+    "category": "Emotion",
+    "description": "Shift quickly between two emotions.",
+    "howItWorks": "Makes feelings memorable.",
+    "whyItWorks": "Mirrors real life.",
+    "bestStoryStage": "Climax",
+    "bestStoryStructures": [
+      "Hero Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Hero's Trial"
+    ],
+    "bestEmotionalArcs": [
+      "Fear → Courage"
+    ],
+    "bestAge": "5–10",
+    "example": "—",
+    "notes": "Clear transitions."
+  },
+  {
+    "id": 24,
+    "slug": "voice-shift",
+    "name": "Voice Shift",
+    "category": "Emotion",
+    "description": "Change narration tone with the story.",
+    "howItWorks": "Reinforces mood.",
+    "whyItWorks": "Keeps attention.",
+    "bestStoryStage": "Throughout",
+    "bestStoryStructures": [
+      "Any"
+    ],
+    "bestAdventureArchetypes": [
+      "Any"
+    ],
+    "bestEmotionalArcs": [
+      "Any"
+    ],
+    "bestAge": "4–10",
+    "example": "—",
+    "notes": "Smooth transitions."
+  },
+  {
+    "id": 25,
+    "slug": "heartbeat-moment",
+    "name": "Heartbeat Moment",
+    "category": "Emotion",
+    "description": "One short sentence before the climax.",
+    "howItWorks": "Builds tension.",
+    "whyItWorks": "Powerful page turn.",
+    "bestStoryStage": "Climax",
+    "bestStoryStructures": [
+      "Adventure Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Race Against Time"
+    ],
+    "bestEmotionalArcs": [
+      "Anxiety"
+    ],
+    "bestAge": "5–10",
+    "example": "\"Everything stopped.\"",
+    "notes": "Keep very short."
+  },
+  {
+    "id": 26,
+    "slug": "page-turn-sentence",
+    "name": "Page-Turn Sentence",
+    "category": "Flow",
+    "description": "End with a sentence that demands the next page.",
+    "howItWorks": "Creates momentum.",
+    "whyItWorks": "Essential for picture books.",
+    "bestStoryStage": "Every Spread",
+    "bestStoryStructures": [
+      "Any"
+    ],
+    "bestAdventureArchetypes": [
+      "Any"
+    ],
+    "bestEmotionalArcs": [
+      "Any"
+    ],
+    "bestAge": "4–10",
+    "example": "\"But then...\"",
+    "notes": "Most important device."
+  },
+  {
+    "id": 27,
+    "slug": "cliffhanger-line",
+    "name": "Cliffhanger Line",
+    "category": "Flow",
+    "description": "Pause before revealing the answer.",
+    "howItWorks": "Builds suspense.",
+    "whyItWorks": "Keeps children listening.",
+    "bestStoryStage": "Mid Story",
+    "bestStoryStructures": [
+      "Mystery Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Mystery to Solve"
+    ],
+    "bestEmotionalArcs": [
+      "Curiosity"
+    ],
+    "bestAge": "5–10",
+    "example": "—",
+    "notes": "Best before discoveries."
+  },
+  {
+    "id": 28,
+    "slug": "visual-pause",
+    "name": "Visual Pause",
+    "category": "Flow",
+    "description": "Allow the illustration to finish the moment.",
+    "howItWorks": "Balances text and art.",
+    "whyItWorks": "Improves pacing.",
+    "bestStoryStage": "Throughout",
+    "bestStoryStructures": [
+      "Any"
+    ],
+    "bestAdventureArchetypes": [
+      "Any"
+    ],
+    "bestEmotionalArcs": [
+      "Wonder"
+    ],
+    "bestAge": "4–10",
+    "example": "—",
+    "notes": "Don't explain the picture."
+  },
+  {
+    "id": 29,
+    "slug": "illustration-echo",
+    "name": "Illustration Echo",
+    "category": "Flow",
+    "description": "Text hints at something visible but doesn't describe it fully.",
+    "howItWorks": "Encourages observation.",
+    "whyItWorks": "Supports rereading.",
+    "bestStoryStage": "Throughout",
+    "bestStoryStructures": [
+      "Discovery Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Secret Discovery"
+    ],
+    "bestEmotionalArcs": [
+      "Curiosity"
+    ],
+    "bestAge": "5–10",
+    "example": "—",
+    "notes": "Trust the illustrator."
+  },
+  {
+    "id": 30,
+    "slug": "closing-whisper",
+    "name": "Closing Whisper",
+    "category": "Flow",
+    "description": "End with a soft, memorable sentence.",
+    "howItWorks": "Leaves emotional resonance.",
+    "whyItWorks": "Ideal bedtime ending.",
+    "bestStoryStage": "Final Page",
+    "bestStoryStructures": [
+      "Transformation Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Transformation Story"
+    ],
+    "bestEmotionalArcs": [
+      "Peace"
+    ],
+    "bestAge": "4–10",
+    "example": "\"And the forest smiled.\"",
+    "notes": "Short and gentle."
+  }
+]

@@ -1,0 +1,9 @@
+[
+  {"id": "MISSION_SEARCH"}, {"id": "MISSION_REPAIR"}, {"id": "MISSION_PROTECT"}, {"id": "MISSION_DISCOVER"},
+  {"id": "MISSION_RESCUE"}, {"id": "MISSION_BUILD"}, {"id": "MISSION_CELEBRATE"}, {"id": "MISSION_RETURN"},
+  {"id": "MISSION_DELIVER"}, {"id": "MISSION_ESCAPE"}, {"id": "MISSION_GATHER"}, {"id": "MISSION_MASTERY"},
+  {"id": "MISSION_RECONCILE"}, {"id": "MISSION_TRANSFORM"}, {"id": "MISSION_ADAPT"}, {"id": "MISSION_ASSERT"},
+  {"id": "MISSION_RESTORE", "added_phase": "5A.1"}, {"id": "MISSION_SUPPORT", "added_phase": "5A.1"},
+  {"id": "MISSION_EXPLORE", "added_phase": "5A.3c"}, {"id": "MISSION_SOLVE", "added_phase": "5A.3c"},
+  {"id": "MISSION_NURTURE", "added_phase": "5A.3c"}
+]

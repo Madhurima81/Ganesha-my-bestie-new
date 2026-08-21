@@ -1,0 +1,52 @@
+{
+  "template_id": "PT04_CRAFT",
+  "theme_id": "GT01",
+  "belief": "I keep the words that help me grow.",
+  "title": "Helpful Words Listening Badge",
+  "subtitle": "Make a badge that reminds you to sift helpful words from noise.",
+  "assets": {
+    "MAIN_ART": "ears_symbol",
+    "DECORATIONS": [
+      "star",
+      "heart",
+      "star"
+    ]
+  },
+  "content": {
+    "craft_variant": "badge",
+    "craft_label": "Listening Badge",
+    "materials": [
+      "paper or cardstock",
+      "colours",
+      "scissors",
+      "tape or a safety pin with adult help"
+    ],
+    "steps": [
+      "Colour the badge and circle the helpful sentence.",
+      "Cut out the badge on the solid cut line.",
+      "Cross out the noisy words you want to let go.",
+      "Wear or display the badge where you will see it."
+    ],
+    "take_it_today": "When you hear mixed messages, point to your badge and keep the helpful part.",
+    "footer": "Keep what helps."
+  },
+  "generation": {
+    "variant": "badge",
+    "geometry": {
+      "badge_text": "I KEEP HELPFUL WORDS",
+      "options": [
+        "Try again.",
+        "You can learn.",
+        "Quit now.",
+        "That was silly."
+      ],
+      "cut_lines": true,
+      "fold_lines": true
+    }
+  },
+  "answer_key": {},
+  "wisdom": {
+    "statement": "Ganesha's ears teach us to keep helpful words and let noisy words fall away.",
+    "today": "Choose one helpful sentence to repeat to yourself when noise appears."
+  }
+}

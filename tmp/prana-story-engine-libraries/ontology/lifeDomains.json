@@ -1,0 +1,15 @@
+[
+  {"id": "LIFE_DOMAIN_FRIENDSHIP", "name": "Friendship & Sharing"},
+  {"id": "LIFE_DOMAIN_FAMILY", "name": "Family & Daily Life"},
+  {"id": "LIFE_DOMAIN_SCHOOL", "name": "School & Community"},
+  {"id": "LIFE_DOMAIN_LEARNING", "name": "Learning & Problem Solving"},
+  {"id": "LIFE_DOMAIN_PLAY", "name": "Playing & Games"},
+  {"id": "LIFE_DOMAIN_CARING", "name": "Helping & Caring"},
+  {"id": "LIFE_DOMAIN_NATURE", "name": "Exploring & Nature"},
+  {"id": "LIFE_DOMAIN_BUILDING", "name": "Building & Creating"},
+  {"id": "LIFE_DOMAIN_CREATIVITY", "name": "Art, Music & Creativity"},
+  {"id": "LIFE_DOMAIN_COMMUNICATION", "name": "Communication"},
+  {"id": "LIFE_DOMAIN_RESPONSIBILITY", "name": "Responsibility"},
+  {"id": "LIFE_DOMAIN_CELEBRATIONS", "name": "Celebrations & Traditions"},
+  {"id": "LIFE_DOMAIN_SELF_CARE", "name": "Self-Care"}
+]

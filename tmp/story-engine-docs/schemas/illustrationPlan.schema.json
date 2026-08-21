@@ -1,0 +1,335 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "illustrationPlan.schema.json",
+  "title": "Illustration Plan",
+  "description": "Canonical illustration planning artifact produced by Phase 9A from the locked final story and story-direction artifacts. Produced alongside the Illustration Bible, which it explicitly references for visual-continuity requirements.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "status",
+    "storyReference",
+    "illustrationBibleReference",
+    "visualStrategy",
+    "characterPlan",
+    "worldPlan",
+    "scenePlan",
+    "pageIllustrations",
+    "illustrationValidation"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "1.0"
+    },
+
+    "status": {
+      "type": "string",
+      "enum": [
+        "VALIDATED"
+      ]
+    },
+
+    "storyReference": {
+      "$ref": "#/$defs/reference"
+    },
+
+    "illustrationBibleReference": {
+      "$ref": "#/$defs/reference",
+      "description": "References the Illustration Bible produced alongside this plan by 9A. Character, world and symbol continuity requirements are defined there, not duplicated here."
+    },
+
+    "visualStrategy": {
+      "$ref": "#/$defs/visualStrategy"
+    },
+
+    "characterPlan": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/character"
+      }
+    },
+
+    "worldPlan": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/world"
+      }
+    },
+
+    "scenePlan": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/scene"
+      }
+    },
+
+    "pageIllustrations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/pageIllustration"
+      }
+    },
+
+    "illustrationValidation": {
+      "$ref": "#/$defs/validation"
+    }
+  },
+
+  "$defs": {
+
+    "reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+
+    "visualStrategy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "style",
+        "visualContinuity",
+        "ageAppropriateness"
+      ],
+      "properties": {
+        "style": {
+          "type": "string"
+        },
+
+        "visualContinuity": {
+          "type": "string"
+        },
+
+        "ageAppropriateness": {
+          "type": "string"
+        },
+
+        "palette": {
+          "type": "string"
+        },
+
+        "compositionPrinciples": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+
+    "character": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "characterId",
+        "visualIdentity"
+      ],
+      "properties": {
+        "characterId": {
+          "type": "string"
+        },
+
+        "visualIdentity": {
+          "type": "string"
+        },
+
+        "appearanceRules": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+
+        "expressionRules": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+
+        "continuityRules": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+
+    "world": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "worldId",
+        "visualIdentity"
+      ],
+      "properties": {
+        "worldId": {
+          "type": "string"
+        },
+
+        "visualIdentity": {
+          "type": "string"
+        },
+
+        "environmentRules": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+
+        "continuityRules": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+
+    "scene": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sceneId",
+        "purpose"
+      ],
+      "properties": {
+        "sceneId": {
+          "type": "string"
+        },
+
+        "purpose": {
+          "type": "string"
+        },
+
+        "visualMood": {
+          "type": "string"
+        },
+
+        "characterFocus": {
+          "type": "string"
+        },
+
+        "worldFocus": {
+          "type": "string"
+        }
+      }
+    },
+
+    "pageIllustration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "page",
+        "sceneId",
+        "purpose",
+        "composition"
+      ],
+      "properties": {
+        "page": {
+          "type": "integer",
+          "minimum": 1
+        },
+
+        "sceneId": {
+          "type": "string"
+        },
+
+        "purpose": {
+          "type": "string"
+        },
+
+        "composition": {
+          "type": "string"
+        },
+
+        "characters": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+
+        "environment": {
+          "type": "string"
+        },
+
+        "emotion": {
+          "type": "string"
+        },
+
+        "action": {
+          "type": "string"
+        },
+
+        "symbol": {
+          "type": "string"
+        },
+
+        "camera": {
+          "type": "string"
+        },
+
+        "continuityRequirements": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+
+        "negativeConstraints": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "blockingFailures",
+        "warnings"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "PASS"
+          ]
+        },
+
+        "blockingFailures": {
+          "type": "integer",
+          "const": 0
+        },
+
+        "warnings": {
+          "type": "integer",
+          "minimum": 0
+        },
+
+        "rulesPassed": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}

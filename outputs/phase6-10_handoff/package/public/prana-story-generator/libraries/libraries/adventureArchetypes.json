@@ -1,0 +1,1297 @@
+[
+  {
+    "id": 1,
+    "slug": "rescue-mission",
+    "name": "Rescue Mission",
+    "description": "Save someone or something from danger.",
+    "bestAdventureTriggers": [
+      "Someone Missing",
+      "Danger Appears",
+      "Call for Help"
+    ],
+    "bestStoryStructures": [
+      "Rescue Story",
+      "Quest Story"
+    ],
+    "bestEmotionalArcs": [
+      "Fear → Courage",
+      "Anxiety → Confidence"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "River",
+      "Mountain",
+      "Village"
+    ],
+    "notes": "High urgency"
+  },
+  {
+    "id": 2,
+    "slug": "guardian-adventure",
+    "name": "Guardian Adventure",
+    "description": "Protect a person, place or treasure.",
+    "bestAdventureTriggers": [
+      "Something Valuable at Risk",
+      "Nature in Danger",
+      "Threat Appears"
+    ],
+    "bestStoryStructures": [
+      "Protection Story",
+      "Hero Story"
+    ],
+    "bestEmotionalArcs": [
+      "Responsibility → Confidence",
+      "Worry → Calm"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "Temple",
+      "Village",
+      "Garden"
+    ],
+    "notes": "Focus on protection rather than rescue"
+  },
+  {
+    "id": 3,
+    "slug": "escape-adventure",
+    "name": "Escape Adventure",
+    "description": "Escape safely from danger or confinement.",
+    "bestAdventureTriggers": [
+      "Trapped",
+      "Unexpected Danger",
+      "Wrong Turn"
+    ],
+    "bestStoryStructures": [
+      "Escape Story",
+      "Survival Story"
+    ],
+    "bestEmotionalArcs": [
+      "Panic → Calm",
+      "Fear → Relief"
+    ],
+    "bestStoryWorlds": [
+      "Cave",
+      "Forest",
+      "Mountain"
+    ],
+    "notes": "Fast-paced"
+  },
+  {
+    "id": 4,
+    "slug": "survival-adventure",
+    "name": "Survival Adventure",
+    "description": "Overcome nature or environmental challenges.",
+    "bestAdventureTriggers": [
+      "Storm",
+      "Flood",
+      "Lost",
+      "Harsh Weather"
+    ],
+    "bestStoryStructures": [
+      "Survival Story",
+      "Journey Story"
+    ],
+    "bestEmotionalArcs": [
+      "Self-Doubt → Resilience",
+      "Fear → Confidence"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "Mountain",
+      "Desert",
+      "Snow"
+    ],
+    "notes": "Nature is the main challenge"
+  },
+  {
+    "id": 5,
+    "slug": "delivery-quest",
+    "name": "Delivery Quest",
+    "description": "Deliver something important safely.",
+    "bestAdventureTriggers": [
+      "Important Delivery",
+      "Promise Made",
+      "Urgent Request"
+    ],
+    "bestStoryStructures": [
+      "Delivery Story",
+      "Journey Story"
+    ],
+    "bestEmotionalArcs": [
+      "Responsibility → Pride",
+      "Hesitation → Commitment"
+    ],
+    "bestStoryWorlds": [
+      "Village",
+      "Forest",
+      "River",
+      "School"
+    ],
+    "notes": "Time pressure works well"
+  },
+  {
+    "id": 7,
+    "slug": "mystery-to-solve",
+    "name": "Mystery to Solve",
+    "description": "Solve an unexplained mystery.",
+    "bestAdventureTriggers": [
+      "Strange Clue",
+      "Missing Object",
+      "Odd Event"
+    ],
+    "bestStoryStructures": [
+      "Mystery Story"
+    ],
+    "bestEmotionalArcs": [
+      "Curiosity → Confidence",
+      "Confusion → Clarity"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "Village",
+      "Story House"
+    ],
+    "notes": "Clue-driven"
+  },
+  {
+    "id": 8,
+    "slug": "detective-story",
+    "name": "Detective Story",
+    "description": "Investigate clues to uncover the truth.",
+    "bestAdventureTriggers": [
+      "Conflicting Clues",
+      "Suspicious Behaviour",
+      "Missing Item"
+    ],
+    "bestStoryStructures": [
+      "Investigation Story",
+      "Mystery Story"
+    ],
+    "bestEmotionalArcs": [
+      "Doubt → Understanding",
+      "Curiosity → Insight"
+    ],
+    "bestStoryWorlds": [
+      "Village",
+      "School",
+      "Forest"
+    ],
+    "notes": "Observation is key"
+  },
+  {
+    "id": 9,
+    "slug": "treasure-hunt",
+    "name": "Treasure Hunt",
+    "description": "Find something valuable by following clues.",
+    "bestAdventureTriggers": [
+      "Hidden Map",
+      "Ancient Clue",
+      "Secret Message"
+    ],
+    "bestStoryStructures": [
+      "Treasure Hunt Story",
+      "Quest Story"
+    ],
+    "bestEmotionalArcs": [
+      "Excitement → Achievement",
+      "Curiosity → Joy"
+    ],
+    "bestStoryWorlds": [
+      "Cave",
+      "Forest",
+      "Mountain",
+      "Beach"
+    ],
+    "notes": "Treasure can be wisdom, not just an object"
+  },
+  {
+    "id": 10,
+    "slug": "secret-discovery",
+    "name": "Secret Discovery",
+    "description": "Discover a hidden truth or place.",
+    "bestAdventureTriggers": [
+      "Hidden Door",
+      "Forgotten Path",
+      "Secret Message"
+    ],
+    "bestStoryStructures": [
+      "Discovery Story"
+    ],
+    "bestEmotionalArcs": [
+      "Wonder → Understanding",
+      "Curiosity → Awe"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "Garden",
+      "Story House"
+    ],
+    "notes": "Focus on revelation"
+  },
+  {
+    "id": 11,
+    "slug": "hidden-world",
+    "name": "Hidden World",
+    "description": "Discover a world unknown to the hero.",
+    "bestAdventureTriggers": [
+      "Secret Entrance",
+      "Unexpected Discovery",
+      "Magical Gateway"
+    ],
+    "bestStoryStructures": [
+      "Discovery Story",
+      "Exploration Story"
+    ],
+    "bestEmotionalArcs": [
+      "Curiosity → Wonder",
+      "Uncertainty → Belonging"
+    ],
+    "bestStoryWorlds": [
+      "Cave",
+      "Forest",
+      "Ancient Garden",
+      "Sky World"
+    ],
+    "notes": "Strong sense of exploration"
+  },
+  {
+    "id": 13,
+    "slug": "great-journey",
+    "name": "Great Journey",
+    "description": "Travel to an important destination.",
+    "bestAdventureTriggers": [
+      "Invitation",
+      "Important Mission",
+      "Call to Adventure"
+    ],
+    "bestStoryStructures": [
+      "Journey Story"
+    ],
+    "bestEmotionalArcs": [
+      "Uncertainty → Confidence",
+      "Doubt → Growth"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "Mountain",
+      "River",
+      "Desert"
+    ],
+    "notes": "Classic travel adventure"
+  },
+  {
+    "id": 14,
+    "slug": "expedition",
+    "name": "Expedition",
+    "description": "Explore an unknown place together.",
+    "bestAdventureTriggers": [
+      "New Discovery",
+      "Explorer's Map",
+      "Curious Rumour"
+    ],
+    "bestStoryStructures": [
+      "Exploration Story"
+    ],
+    "bestEmotionalArcs": [
+      "Curiosity → Wonder"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "Cave",
+      "Snow",
+      "Desert"
+    ],
+    "notes": "Focus on exploration"
+  },
+  {
+    "id": 15,
+    "slug": "find-the-way-home",
+    "name": "Find the Way Home",
+    "description": "Return safely after becoming lost.",
+    "bestAdventureTriggers": [
+      "Lost",
+      "Wrong Turn",
+      "Storm"
+    ],
+    "bestStoryStructures": [
+      "Return Home Story",
+      "Journey Story"
+    ],
+    "bestEmotionalArcs": [
+      "Fear → Relief",
+      "Confusion → Confidence"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "Mountain",
+      "River"
+    ],
+    "notes": "Home becomes the emotional goal"
+  },
+  {
+    "id": 16,
+    "slug": "escort-mission",
+    "name": "Escort Mission",
+    "description": "Safely accompany someone or something.",
+    "bestAdventureTriggers": [
+      "Someone Needs Guidance",
+      "Important Delivery",
+      "Rescue Request"
+    ],
+    "bestStoryStructures": [
+      "Escort Story",
+      "Journey Story"
+    ],
+    "bestEmotionalArcs": [
+      "Responsibility → Pride"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "Village",
+      "River"
+    ],
+    "notes": "Protection through companionship"
+  },
+  {
+    "id": 17,
+    "slug": "race-against-time",
+    "name": "Race Against Time",
+    "description": "Complete the mission before time runs out.",
+    "bestAdventureTriggers": [
+      "Before Sunset",
+      "Festival Begins",
+      "Rising Water"
+    ],
+    "bestStoryStructures": [
+      "Time Challenge Story"
+    ],
+    "bestEmotionalArcs": [
+      "Anxiety → Determination"
+    ],
+    "bestStoryWorlds": [
+      "Any",
+      "especially Forest",
+      "Village",
+      "River"
+    ],
+    "notes": "Strong pacing and urgency"
+  },
+  {
+    "id": 19,
+    "slug": "friendship-repair",
+    "name": "Friendship Repair",
+    "description": "Heal a damaged friendship.",
+    "bestAdventureTriggers": [
+      "Misunderstanding",
+      "Broken Promise",
+      "Hurt Feelings"
+    ],
+    "bestStoryStructures": [
+      "Relationship Story"
+    ],
+    "bestEmotionalArcs": [
+      "Hurt → Forgiveness",
+      "Loneliness → Belonging"
+    ],
+    "bestStoryWorlds": [
+      "Village",
+      "Meadow",
+      "School"
+    ],
+    "notes": "Emotion-driven"
+  },
+  {
+    "id": 20,
+    "slug": "new-friend",
+    "name": "New Friend",
+    "description": "Build a friendship with someone new.",
+    "bestAdventureTriggers": [
+      "New Arrival",
+      "Lonely Character",
+      "Shared Problem"
+    ],
+    "bestStoryStructures": [
+      "Friendship Story"
+    ],
+    "bestEmotionalArcs": [
+      "Shyness → Connection"
+    ],
+    "bestStoryWorlds": [
+      "Village",
+      "School",
+      "Forest"
+    ],
+    "notes": "Ideal for younger readers"
+  },
+  {
+    "id": 21,
+    "slug": "second-chance",
+    "name": "Second Chance",
+    "description": "Make things right after a mistake.",
+    "bestAdventureTriggers": [
+      "Mistake Made",
+      "Failure",
+      "Lost Opportunity"
+    ],
+    "bestStoryStructures": [
+      "Redemption Story"
+    ],
+    "bestEmotionalArcs": [
+      "Guilt → Self-Forgiveness"
+    ],
+    "bestStoryWorlds": [
+      "Any Story World"
+    ],
+    "notes": "Growth through action"
+  },
+  {
+    "id": 22,
+    "slug": "helping-hand",
+    "name": "Helping Hand",
+    "description": "Help someone succeed without taking over.",
+    "bestAdventureTriggers": [
+      "Someone Struggling",
+      "Request for Help"
+    ],
+    "bestStoryStructures": [
+      "Helper Story"
+    ],
+    "bestEmotionalArcs": [
+      "Empathy → Joy"
+    ],
+    "bestStoryWorlds": [
+      "Village",
+      "Forest",
+      "Garden"
+    ],
+    "notes": "Fits the Prana Kids philosophy well"
+  },
+  {
+    "id": 23,
+    "slug": "journey-together",
+    "name": "Journey Together",
+    "description": "Work together to reach a shared goal.",
+    "bestAdventureTriggers": [
+      "Shared Mission",
+      "Group Challenge",
+      "Invitation"
+    ],
+    "bestStoryStructures": [
+      "Team Journey Story"
+    ],
+    "bestEmotionalArcs": [
+      "Independence → Cooperation"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "River",
+      "Mountain",
+      "Village"
+    ],
+    "notes": "Teamwork is central"
+  },
+  {
+    "id": 25,
+    "slug": "team-adventure",
+    "name": "Team Adventure",
+    "description": "A group works together to achieve a common goal.",
+    "bestAdventureTriggers": [
+      "Group Challenge",
+      "Call for Help",
+      "Community Need"
+    ],
+    "bestStoryStructures": [
+      "Team Story"
+    ],
+    "bestEmotionalArcs": [
+      "Independence → Cooperation"
+    ],
+    "bestStoryWorlds": [
+      "Village",
+      "Forest",
+      "School",
+      "River"
+    ],
+    "notes": "Every character contributes"
+  },
+  {
+    "id": 26,
+    "slug": "community-project",
+    "name": "Community Project",
+    "description": "Characters improve something for everyone.",
+    "bestAdventureTriggers": [
+      "Community Problem",
+      "Festival Preparation",
+      "Shared Need"
+    ],
+    "bestStoryStructures": [
+      "Community Story"
+    ],
+    "bestEmotionalArcs": [
+      "Responsibility → Pride"
+    ],
+    "bestStoryWorlds": [
+      "Village",
+      "Garden",
+      "School"
+    ],
+    "notes": "Focus on service"
+  },
+  {
+    "id": 27,
+    "slug": "leadership-challenge",
+    "name": "Leadership Challenge",
+    "description": "A character learns to guide others.",
+    "bestAdventureTriggers": [
+      "Leader Needed",
+      "Difficult Decision",
+      "Group Conflict"
+    ],
+    "bestStoryStructures": [
+      "Leadership Story"
+    ],
+    "bestEmotionalArcs": [
+      "Self-Doubt → Confidence"
+    ],
+    "bestStoryWorlds": [
+      "Village",
+      "Mountain",
+      "Forest"
+    ],
+    "notes": "Leadership through kindness"
+  },
+  {
+    "id": 28,
+    "slug": "shared-mission",
+    "name": "Shared Mission",
+    "description": "Two or more heroes complete one objective together.",
+    "bestAdventureTriggers": [
+      "Common Goal",
+      "Invitation",
+      "Urgent Task"
+    ],
+    "bestStoryStructures": [
+      "Partnership Story"
+    ],
+    "bestEmotionalArcs": [
+      "Individual Thinking → Teamwork"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "River",
+      "Village"
+    ],
+    "notes": "Equal contribution"
+  },
+  {
+    "id": 29,
+    "slug": "build-together",
+    "name": "Build Together",
+    "description": "Characters create or repair something as a team.",
+    "bestAdventureTriggers": [
+      "Broken Structure",
+      "Need for Shelter",
+      "Community Request"
+    ],
+    "bestStoryStructures": [
+      "Builder Story"
+    ],
+    "bestEmotionalArcs": [
+      "Frustration → Achievement"
+    ],
+    "bestStoryWorlds": [
+      "Village",
+      "River",
+      "Forest"
+    ],
+    "notes": "Cooperation is central"
+  },
+  {
+    "id": 31,
+    "slug": "hero-s-trial",
+    "name": "Hero's Trial",
+    "description": "The hero faces a difficult personal test.",
+    "bestAdventureTriggers": [
+      "Challenge Issued",
+      "Important Opportunity",
+      "Personal Goal"
+    ],
+    "bestStoryStructures": [
+      "Trial Story"
+    ],
+    "bestEmotionalArcs": [
+      "Fear → Courage"
+    ],
+    "bestStoryWorlds": [
+      "Mountain",
+      "Forest",
+      "Cave"
+    ],
+    "notes": "Internal growth is the real victory"
+  },
+  {
+    "id": 32,
+    "slug": "final-challenge",
+    "name": "Final Challenge",
+    "description": "One last obstacle before success.",
+    "bestAdventureTriggers": [
+      "Mission Nearly Complete",
+      "Final Barrier"
+    ],
+    "bestStoryStructures": [
+      "Climax Story"
+    ],
+    "bestEmotionalArcs": [
+      "Determination → Triumph"
+    ],
+    "bestStoryWorlds": [
+      "Any Story World"
+    ],
+    "notes": "Used near the story climax"
+  },
+  {
+    "id": 33,
+    "slug": "training-journey",
+    "name": "Training Journey",
+    "description": "Growth happens through practice and persistence.",
+    "bestAdventureTriggers": [
+      "Mentor Appears",
+      "Need for New Skill",
+      "Personal Goal"
+    ],
+    "bestStoryStructures": [
+      "Training Story"
+    ],
+    "bestEmotionalArcs": [
+      "Inexperience → Confidence"
+    ],
+    "bestStoryWorlds": [
+      "Mountain",
+      "Banyan Grove",
+      "School"
+    ],
+    "notes": "Progress through repetition"
+  },
+  {
+    "id": 34,
+    "slug": "problem-solver",
+    "name": "Problem Solver",
+    "description": "The hero overcomes a practical challenge using thinking and creativity.",
+    "bestAdventureTriggers": [
+      "Problem Appears",
+      "Broken Object",
+      "Missing Solution"
+    ],
+    "bestStoryStructures": [
+      "Problem-Solving Story"
+    ],
+    "bestEmotionalArcs": [
+      "Confusion → Clarity"
+    ],
+    "bestStoryWorlds": [
+      "Village",
+      "Story House",
+      "Forest"
+    ],
+    "notes": "Emphasises reasoning"
+  },
+  {
+    "id": 35,
+    "slug": "responsibility-quest",
+    "name": "Responsibility Quest",
+    "description": "The hero earns trust by doing the right thing.",
+    "bestAdventureTriggers": [
+      "Promise Made",
+      "Important Duty",
+      "Mistake to Correct"
+    ],
+    "bestStoryStructures": [
+      "Responsibility Story"
+    ],
+    "bestEmotionalArcs": [
+      "Carelessness → Responsibility"
+    ],
+    "bestStoryWorlds": [
+      "Village",
+      "Home",
+      "School"
+    ],
+    "notes": "Strong moral growth without preaching"
+  },
+  {
+    "id": 37,
+    "slug": "invention-story",
+    "name": "Invention Story",
+    "description": "Invent or improve something to solve a practical problem.",
+    "bestAdventureTriggers": [
+      "Problem to Solve",
+      "Broken Tool",
+      "Community Need"
+    ],
+    "bestStoryStructures": [
+      "Innovation Story"
+    ],
+    "bestEmotionalArcs": [
+      "Frustration → Confidence"
+    ],
+    "bestStoryWorlds": [
+      "Workshop",
+      "Village",
+      "School",
+      "Maker's Corner"
+    ],
+    "notes": "Focus on experimentation and learning from failure."
+  },
+  {
+    "id": 38,
+    "slug": "restoration-story",
+    "name": "Restoration Story",
+    "description": "Repair something that has been damaged or lost.",
+    "bestAdventureTriggers": [
+      "Damage Discovered",
+      "Community Need"
+    ],
+    "bestStoryStructures": [
+      "Restoration Story"
+    ],
+    "bestEmotionalArcs": [
+      "Loss → Hope"
+    ],
+    "bestStoryWorlds": [
+      "Village",
+      "Garden",
+      "Forest"
+    ],
+    "notes": "Physical and emotional restoration"
+  },
+  {
+    "id": 39,
+    "slug": "creative-quest",
+    "name": "Creative Quest",
+    "description": "Use imagination, art or creativity to complete a meaningful mission.",
+    "bestAdventureTriggers": [
+      "Art Contest",
+      "Empty Space",
+      "Special Request"
+    ],
+    "bestStoryStructures": [
+      "Creation Story"
+    ],
+    "bestEmotionalArcs": [
+      "Self-Doubt → Confidence"
+    ],
+    "bestStoryWorlds": [
+      "Art Studio",
+      "Celebration Village",
+      "School",
+      "Garden"
+    ],
+    "notes": "Creativity becomes the solution, not magic."
+  },
+  {
+    "id": 40,
+    "slug": "build-repair",
+    "name": "Build & Repair",
+    "description": "Build, repair or restore something that helps others.",
+    "bestAdventureTriggers": [
+      "Broken Bridge",
+      "Damaged Home",
+      "Community Request"
+    ],
+    "bestStoryStructures": [
+      "Restoration Story"
+    ],
+    "bestEmotionalArcs": [
+      "Helplessness → Achievement"
+    ],
+    "bestStoryWorlds": [
+      "Village",
+      "Forest",
+      "River",
+      "Workshop"
+    ],
+    "notes": "Strong teamwork stories with visible progress."
+  },
+  {
+    "id": 41,
+    "slug": "transformation-story",
+    "name": "Transformation Story",
+    "description": "The hero changes through experience and wisdom.",
+    "bestAdventureTriggers": [
+      "Personal Challenge",
+      "Mistake",
+      "Inner Conflict"
+    ],
+    "bestStoryStructures": [
+      "Transformation Story"
+    ],
+    "bestEmotionalArcs": [
+      "False Belief → True Belief"
+    ],
+    "bestStoryWorlds": [
+      "Any Story World"
+    ],
+    "notes": "Ideal for Prana Kids' philosophy"
+  },
+  {
+    "id": 43,
+    "slug": "mentor-journey",
+    "name": "Mentor Journey",
+    "description": "Learn through guidance from a wise mentor while solving a real challenge.",
+    "bestAdventureTriggers": [
+      "Mentor's Invitation",
+      "Wisdom Challenge",
+      "Special Training"
+    ],
+    "bestStoryStructures": [
+      "Mentor Story"
+    ],
+    "bestEmotionalArcs": [
+      "Confusion → Understanding"
+    ],
+    "bestStoryWorlds": [
+      "Temple",
+      "Story House",
+      "Forest",
+      "Mountain"
+    ],
+    "notes": "Mentor guides through questions and examples rather than giving answers."
+  },
+  {
+    "id": 44,
+    "slug": "learning-quest",
+    "name": "Learning Quest",
+    "description": "Complete a series of learning challenges to achieve an important goal.",
+    "bestAdventureTriggers": [
+      "New Skill Needed",
+      "Challenge Accepted",
+      "Important Mission"
+    ],
+    "bestStoryStructures": [
+      "Training Story"
+    ],
+    "bestEmotionalArcs": [
+      "Self-Doubt → Competence"
+    ],
+    "bestStoryWorlds": [
+      "School",
+      "Forest",
+      "Workshop",
+      "Temple"
+    ],
+    "notes": "Progress should happen through practice and persistence."
+  },
+  {
+    "id": 45,
+    "slug": "discovery-journey",
+    "name": "Discovery Journey",
+    "description": "Explore unknown places to uncover knowledge, history or hidden truths.",
+    "bestAdventureTriggers": [
+      "Hidden Map",
+      "Strange Clue",
+      "Forgotten Path"
+    ],
+    "bestStoryStructures": [
+      "Journey Story"
+    ],
+    "bestEmotionalArcs": [
+      "Curiosity → Wonder"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "Cave",
+      "Desert",
+      "Snow World",
+      "Story House"
+    ],
+    "notes": "Emphasize exploration over danger."
+  },
+  {
+    "id": 46,
+    "slug": "wisdom-challenge",
+    "name": "Wisdom Challenge",
+    "description": "Face situations that require wise choices rather than clever solutions.",
+    "bestAdventureTriggers": [
+      "Moral Dilemma",
+      "Difficult Decision",
+      "Ancient Wisdom"
+    ],
+    "bestStoryStructures": [
+      "Transformation Story"
+    ],
+    "bestEmotionalArcs": [
+      "Confusion → Wisdom"
+    ],
+    "bestStoryWorlds": [
+      "Temple",
+      "Village",
+      "Story House"
+    ],
+    "notes": "Perfect for Ganesha symbolism and value-based stories."
+  },
+  {
+    "id": 47,
+    "slug": "teaching-adventure",
+    "name": "Teaching Adventure",
+    "description": "Help another character learn an important skill or lesson through shared experiences.",
+    "bestAdventureTriggers": [
+      "Someone Needs Help",
+      "Younger Friend",
+      "Community Request"
+    ],
+    "bestStoryStructures": [
+      "Relationship Story"
+    ],
+    "bestEmotionalArcs": [
+      "Responsibility → Compassion"
+    ],
+    "bestStoryWorlds": [
+      "Village",
+      "School",
+      "Forest",
+      "Celebration Village"
+    ],
+    "notes": "The hero also learns while teaching; avoid preachy lessons."
+  },
+  {
+    "id": 49,
+    "slug": "festival-adventure",
+    "name": "Festival Adventure",
+    "description": "Solve challenges during a festival or celebration.",
+    "bestAdventureTriggers": [
+      "Festival Begins",
+      "Community Celebration",
+      "Special Invitation"
+    ],
+    "bestStoryStructures": [
+      "Celebration Story"
+    ],
+    "bestEmotionalArcs": [
+      "Excitement → Belonging"
+    ],
+    "bestStoryWorlds": [
+      "Village",
+      "Temple",
+      "Celebration Village"
+    ],
+    "notes": "Ideal for Ganesh Chaturthi stories"
+  },
+  {
+    "id": 50,
+    "slug": "celebration-preparation",
+    "name": "Celebration Preparation",
+    "description": "Prepare everything before an important event.",
+    "bestAdventureTriggers": [
+      "Guests Arriving",
+      "Festival Tomorrow",
+      "Community Request"
+    ],
+    "bestStoryStructures": [
+      "Community Story"
+    ],
+    "bestEmotionalArcs": [
+      "Worry → Joy"
+    ],
+    "bestStoryWorlds": [
+      "Village",
+      "Home",
+      "School"
+    ],
+    "notes": "Teamwork-focused"
+  },
+  {
+    "id": 51,
+    "slug": "performance-story",
+    "name": "Performance Story",
+    "description": "Prepare for and present a performance.",
+    "bestAdventureTriggers": [
+      "Talent Show",
+      "Festival Performance",
+      "Community Event"
+    ],
+    "bestStoryStructures": [
+      "Performance Story"
+    ],
+    "bestEmotionalArcs": [
+      "Stage Fright → Confidence"
+    ],
+    "bestStoryWorlds": [
+      "School",
+      "Village",
+      "Celebration Village"
+    ],
+    "notes": "Great for self-confidence"
+  },
+  {
+    "id": 52,
+    "slug": "heritage-journey",
+    "name": "Heritage Journey",
+    "description": "Discover traditions, history and cultural wisdom.",
+    "bestAdventureTriggers": [
+      "Family Story",
+      "Ancient Object",
+      "Festival Tradition"
+    ],
+    "bestStoryStructures": [
+      "Discovery Story"
+    ],
+    "bestEmotionalArcs": [
+      "Curiosity → Pride"
+    ],
+    "bestStoryWorlds": [
+      "Temple",
+      "Story House",
+      "Village"
+    ],
+    "notes": "Strong Prana Kids fit"
+  },
+  {
+    "id": 53,
+    "slug": "gift-of-giving",
+    "name": "Gift of Giving",
+    "description": "Learn the joy of giving without expecting anything back.",
+    "bestAdventureTriggers": [
+      "Someone in Need",
+      "Celebration",
+      "Opportunity to Share"
+    ],
+    "bestStoryStructures": [
+      "Relationship Story"
+    ],
+    "bestEmotionalArcs": [
+      "Self-Focus → Generosity"
+    ],
+    "bestStoryWorlds": [
+      "Village",
+      "Meadow",
+      "Festival"
+    ],
+    "notes": "Excellent with Modak wisdom"
+  },
+  {
+    "id": 55,
+    "slug": "magical-discovery",
+    "name": "Magical Discovery",
+    "description": "Discover a place, object or event that feels magical and inspiring.",
+    "bestAdventureTriggers": [
+      "Hidden Place",
+      "Mysterious Light",
+      "Unexpected Discovery"
+    ],
+    "bestStoryStructures": [
+      "Discovery Story"
+    ],
+    "bestEmotionalArcs": [
+      "Wonder → Gratitude"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "Cave",
+      "Garden"
+    ],
+    "notes": "Wonder, not magic solving problems"
+  },
+  {
+    "id": 56,
+    "slug": "magical-quest",
+    "name": "Magical Quest",
+    "description": "Complete an adventure filled with wonder and imagination.",
+    "bestAdventureTriggers": [
+      "Ancient Map",
+      "Wise Invitation",
+      "Special Mission"
+    ],
+    "bestStoryStructures": [
+      "Quest Story"
+    ],
+    "bestEmotionalArcs": [
+      "Doubt → Wonder"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "Mountain",
+      "Story House"
+    ],
+    "notes": "Wisdom—not magic—solves the problem"
+  },
+  {
+    "id": 57,
+    "slug": "nature-s-balance",
+    "name": "Nature's Balance",
+    "description": "Restore harmony between nature and its living beings.",
+    "bestAdventureTriggers": [
+      "Nature Disturbed",
+      "Animal Needs Help",
+      "Weather Changes"
+    ],
+    "bestStoryStructures": [
+      "Restoration Story"
+    ],
+    "bestEmotionalArcs": [
+      "Carelessness → Stewardship"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "River",
+      "Garden"
+    ],
+    "notes": "Environmental stories"
+  },
+  {
+    "id": 58,
+    "slug": "ancient-secret",
+    "name": "Ancient Secret",
+    "description": "Uncover an old mystery carrying timeless wisdom.",
+    "bestAdventureTriggers": [
+      "Ancient Symbol",
+      "Forgotten Path",
+      "Hidden Message"
+    ],
+    "bestStoryStructures": [
+      "Mystery Story"
+    ],
+    "bestEmotionalArcs": [
+      "Curiosity → Understanding"
+    ],
+    "bestStoryWorlds": [
+      "Temple",
+      "Cave",
+      "Story House"
+    ],
+    "notes": "Excellent for Ganesha symbolism"
+  },
+  {
+    "id": 59,
+    "slug": "wish-or-blessing",
+    "name": "Wish or Blessing",
+    "description": "A heartfelt wish inspires positive action and change.",
+    "bestAdventureTriggers": [
+      "Wish Made",
+      "Blessing Received",
+      "Hope Needed"
+    ],
+    "bestStoryStructures": [
+      "Transformation Story"
+    ],
+    "bestEmotionalArcs": [
+      "Hopelessness → Hope"
+    ],
+    "bestStoryWorlds": [
+      "Temple",
+      "Village",
+      "Garden"
+    ],
+    "notes": "The wish inspires effort—it never grants success directly"
+  },
+  {
+    "id": 61,
+    "slug": "dream-adventure",
+    "name": "Dream Adventure",
+    "description": "A dream reveals insight that helps solve a real-life problem.",
+    "bestAdventureTriggers": [
+      "Meaningful Dream",
+      "Restful Sleep",
+      "Night Reflection"
+    ],
+    "bestStoryStructures": [
+      "Dream Story"
+    ],
+    "bestEmotionalArcs": [
+      "Confusion → Clarity"
+    ],
+    "bestStoryWorlds": [
+      "Dream World",
+      "Forest",
+      "Story House"
+    ],
+    "notes": "Dream provides insight only"
+  },
+  {
+    "id": 62,
+    "slug": "time-adventure",
+    "name": "Time Adventure",
+    "description": "Complete a mission before time runs out.",
+    "bestAdventureTriggers": [
+      "Before Sunset",
+      "Rising River",
+      "Festival Starts Soon"
+    ],
+    "bestStoryStructures": [
+      "Time Challenge Story"
+    ],
+    "bestEmotionalArcs": [
+      "Anxiety → Determination"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "River",
+      "Village"
+    ],
+    "notes": "High pacing"
+  },
+  {
+    "id": 63,
+    "slug": "choice-consequence",
+    "name": "Choice & Consequence",
+    "description": "A difficult choice shapes the outcome of the story.",
+    "bestAdventureTriggers": [
+      "Two Paths",
+      "Moral Dilemma",
+      "Temptation"
+    ],
+    "bestStoryStructures": [
+      "Choice Story"
+    ],
+    "bestEmotionalArcs": [
+      "Confusion → Wisdom"
+    ],
+    "bestStoryWorlds": [
+      "Any Story World"
+    ],
+    "notes": "Decisions drive the story"
+  },
+  {
+    "id": 64,
+    "slug": "promise-keeper",
+    "name": "Promise Keeper",
+    "description": "Honour an important promise through action.",
+    "bestAdventureTriggers": [
+      "Promise Made",
+      "Trust Given",
+      "Important Responsibility"
+    ],
+    "bestStoryStructures": [
+      "Promise Story"
+    ],
+    "bestEmotionalArcs": [
+      "Responsibility → Integrity"
+    ],
+    "bestStoryWorlds": [
+      "Village",
+      "Forest",
+      "Home"
+    ],
+    "notes": "Builds trust and reliability"
+  },
+  {
+    "id": 65,
+    "slug": "unexpected-surprise",
+    "name": "Unexpected Surprise",
+    "description": "An unexpected event changes the direction of the adventure.",
+    "bestAdventureTriggers": [
+      "Surprise Visitor",
+      "Hidden Discovery",
+      "Sudden Change"
+    ],
+    "bestStoryStructures": [
+      "Twist Story"
+    ],
+    "bestEmotionalArcs": [
+      "Expectation → Delight"
+    ],
+    "bestStoryWorlds": [
+      "Any Story World"
+    ],
+    "notes": "Best used as a mid-story twist or ending reveal"
+  }
+]

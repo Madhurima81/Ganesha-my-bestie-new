@@ -1,0 +1,85 @@
+[
+  {
+    "id": "CR-EMO-001",
+    "name": "Emotional Reflection and Reframing",
+    "purpose": "Supports beats built around emotional safety, inner realization, reframing, sacrifice, recovery, and closure.",
+    "guidance": "Use when the beat must help the child feel, name, and metabolize an internal shift before the story moves on.",
+    "provenance": {
+      "status": "authored_authoritative",
+      "authoredOn": "2026-08-08",
+      "basis": [
+        "Beat and escalation CR-code usage in beats.json and escalations.json",
+        "Legacy Phase4D technique cues recovered from Prana_Kids_Story_Builder_v5_emotion_library.html"
+      ]
+    },
+    "usedByIds": [
+      "B_SAN_01",
+      "B_REFLECT_01",
+      "B_MIRROR_01",
+      "B_REFRAME_01",
+      "B_SAC_01",
+      "B_RESET_01",
+      "B_DEESC_01",
+      "B_RET_01",
+      "B_ANC_01",
+      "B_VISITOR_02"
+    ]
+  },
+  {
+    "id": "CR-SUS-001",
+    "name": "Suspense and Reveal Control",
+    "purpose": "Supports threshold, threat, catalyst, discovery, and peak-chaos beats that depend on anticipation and controlled revelation.",
+    "guidance": "Use when the scene should heighten uncertainty, withhold part of the picture, or pace revelation for tension.",
+    "provenance": {
+      "status": "authored_authoritative",
+      "authoredOn": "2026-08-08",
+      "basis": [
+        "Beat and escalation CR-code usage in beats.json and escalations.json",
+        "Legacy suspense-oriented technique cues recovered from Prana_Kids_Story_Builder_v5_emotion_library.html"
+      ]
+    },
+    "usedByIds": [
+      "B_THR_01",
+      "B_THREAT_01",
+      "B_DIS_01",
+      "B_PEAK_01",
+      "B_VISITOR_01"
+    ]
+  },
+  {
+    "id": "CR-RHY-001",
+    "name": "Rhythmic Escalation Patterning",
+    "purpose": "Supports patterned routine, repetition, and rising cadence in looping or escalating sequences.",
+    "guidance": "Use when the beat gains force through rhythmic recurrence, patterned buildup, or accumulating cause-and-effect.",
+    "provenance": {
+      "status": "authored_authoritative",
+      "authoredOn": "2026-08-08",
+      "basis": [
+        "Beat and escalation CR-code usage in beats.json and escalations.json",
+        "Legacy pacing and domino-chain technique cues recovered from Prana_Kids_Story_Builder_v5_emotion_library.html"
+      ]
+    },
+    "usedByIds": [
+      "B_ROU_01",
+      "B_ESC_01"
+    ]
+  },
+  {
+    "id": "CR-VIS-001",
+    "name": "Visual Action Legibility",
+    "purpose": "Supports invention, testing, and physically staged beats where the child must clearly track what is being tried and why.",
+    "guidance": "Use when the scene's clarity depends on visual staging, readable action, and concrete cause-and-effect on the page.",
+    "provenance": {
+      "status": "authored_authoritative",
+      "authoredOn": "2026-08-08",
+      "basis": [
+        "Beat and escalation CR-code usage in beats.json and escalations.json",
+        "Legacy visual and quiet-beat technique cues recovered from Prana_Kids_Story_Builder_v5_emotion_library.html"
+      ]
+    },
+    "usedByIds": [
+      "B_INV_01",
+      "B_TEST_01"
+    ]
+  }
+]

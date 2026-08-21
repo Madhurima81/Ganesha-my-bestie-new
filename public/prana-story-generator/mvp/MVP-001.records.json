@@ -1,0 +1,272 @@
+{
+  "run": {
+    "run_id": "MVP-001",
+    "stage": "stage_1_source_supported_only",
+    "goal": "Prove one fully supported vertical slice end to end while canonicalizing unsupported slices honestly.",
+    "wisdom_ids": [
+      "SYM-GAN-008",
+      "SYM-HAN-002",
+      "BG-006"
+    ],
+    "outputs": [
+      "story",
+      "try_it_today",
+      "printable",
+      "escape"
+    ]
+  },
+  "wisdom_records": [
+    {
+      "wisdom_id": "SYM-GAN-008",
+      "tradition": "Ganesha",
+      "symbol": "Large Ears",
+      "belief": "I keep the words that help me grow; I let unhelpful noise go.",
+      "authentic_anchor": "Like a winnowing basket, Ganesha's ears sift useful grain from chaff.",
+      "source_document": "Teachings for kids from 5 sources - july 2026 - doodles, insta.docx",
+      "source_reference": "Teaching 1: The Power of Deep Listening (The Large Ears) - Core Teaching Philosophy",
+      "source_verified": true,
+      "content_status": "SOURCE_VERIFIED"
+    },
+    {
+      "wisdom_id": "SYM-HAN-002",
+      "tradition": "Hanuman",
+      "symbol": "Sanjeevani Mountain",
+      "belief": "Keep trying when helping someone matters.",
+      "authentic_anchor": "Devotion and determination in service of saving life.",
+      "source_document": "weekly story plan - posting on social media.docx",
+      "source_reference": "Research Symbol Library -> Hanuman Symbols -> SYM-HAN-002: Sanjeevani Mountain",
+      "source_verified": true,
+      "content_status": "NEEDS_SOURCE_CONTENT",
+      "source_gap": "The supplied bundle verifies the symbol id, but the child-facing supporting passage for the Sanjeevani teaching still needs to be extracted from research before story output is treated as source-complete."
+    },
+    {
+      "wisdom_id": "BG-006",
+      "tradition": "Bhagavad Gita",
+      "symbol": "Requested slice: 2.47",
+      "belief": "Focus on action and effort without attachment to reward.",
+      "authentic_anchor": "Do the work without clinging to the result.",
+      "source_document": "Gita etc posting content- july _26.docx",
+      "source_reference": "Requested BG-006 / 2.47 not found in supplied bundle. Verified alternate source present in bundle: Gita 2.10.",
+      "source_verified": false,
+      "content_status": "NEEDS_SOURCE_CONTENT",
+      "alternate_verified_source_reference": "Gita 2.10 appears in the supplied bundle, but it is not silently substituted for the requested 2.47 slice."
+    }
+  ],
+  "practice_records": [
+    {
+      "practice_id": "PRAC-GAN-EARS-001",
+      "wisdom_id": "SYM-GAN-008",
+      "practice_name": "Hear -> Select -> Sort",
+      "practice_belief": "Keep the helpful words; let the noisy words go.",
+      "mechanic": "Listen to mixed words, sort them into KEEP or LET GO, then choose one helpful phrase to remember.",
+      "source_document": "Teachings for kids from 5 sources - july 2026 - doodles, insta.docx",
+      "source_reference": "Teaching 1: The Power of Deep Listening (The Large Ears)",
+      "source_verified": true,
+      "content_status": "SOURCE_VERIFIED"
+    },
+    {
+      "practice_id": "PRAC-HAN-SANJEEVANI-001",
+      "wisdom_id": "SYM-HAN-002",
+      "practice_name": "Keep Trying to Help",
+      "practice_belief": "Keep going when helping someone matters.",
+      "mechanic": "To be confirmed after source extraction.",
+      "source_document": "weekly story plan - posting on social media.docx",
+      "source_reference": "SYM-HAN-002 symbol listing only",
+      "source_verified": true,
+      "content_status": "NEEDS_SOURCE_CONTENT"
+    },
+    {
+      "practice_id": "PRAC-GITA-BG006-001",
+      "wisdom_id": "BG-006",
+      "practice_name": "Act Fully, Release the Reward",
+      "practice_belief": "Do your part with care, without grabbing for the outcome.",
+      "mechanic": "To be confirmed once the requested 2.47 source is available.",
+      "source_document": "Gita etc posting content- july _26.docx",
+      "source_reference": "Requested 2.47 slice absent from supplied bundle",
+      "source_verified": false,
+      "content_status": "NEEDS_SOURCE_CONTENT"
+    }
+  ],
+  "experience_records": [
+    {
+      "experience_id": "EXP-GAN-EARS-STORY-001",
+      "wisdom_id": "SYM-GAN-008",
+      "practice_id": "PRAC-GAN-EARS-001",
+      "experience_type": "story",
+      "title": "Kavi and the Words to Keep",
+      "source_document": "Teachings for kids from 5 sources - july 2026 - doodles, insta.docx",
+      "source_reference": "Teaching 1: The Power of Deep Listening (The Large Ears)",
+      "source_verified": true,
+      "content_status": "SOURCE_DERIVED",
+      "story_payload": {
+        "cover_title": "Kavi and the Words to Keep",
+        "cover_subtitle": "A story about listening for what truly helps you grow.",
+        "pages": [
+          "Kavi Monkey was building a leaf kite when two voices flew toward him at once. One friend shouted, 'You will never make it!' Another said, 'Try another way.'",
+          "Kavi's mind felt full of noise. The mean words stuck fast, and he almost crumpled his kite before it could fly.",
+          "Bodhi Elephant gently tapped his own big ears. 'Listen like Ganesha,' he said. 'A winnowing basket keeps the good grain and lets the dust blow away.'",
+          "Kavi listened again. He let 'You will never make it' drift off like dry chaff. He held on to 'Try another way' and 'Keep practicing.'",
+          "Kavi changed the kite string, lifted the frame, and the leaf kite caught the wind. This time he smiled, because he knew which words were worth keeping.",
+          "Reflection: Which words help you grow, and which ones can you let go like dust?"
+        ],
+        "symbol_line": "Large Ears -> sift helpful words from noise.",
+        "mantra": "I keep the words that help me grow."
+      }
+    },
+    {
+      "experience_id": "EXP-GAN-EARS-TRYIT-001",
+      "wisdom_id": "SYM-GAN-008",
+      "practice_id": "PRAC-GAN-EARS-001",
+      "experience_type": "try_it_today",
+      "title": "Keep or Let Go Sort",
+      "source_document": "Teachings for kids from 5 sources - july 2026 - doodles, insta.docx",
+      "source_reference": "Teaching 1: The Power of Deep Listening (The Large Ears)",
+      "source_verified": true,
+      "content_status": "SOURCE_DERIVED",
+      "activity_payload": {
+        "activity_id": "MVP-EARS-001",
+        "theme_id": "SYM-GAN-008",
+        "symbol": "Large Ears",
+        "meaning": "Listen like a winnowing basket and sift useful words from noise.",
+        "belief": "I keep the words that help me grow.",
+        "title": "Keep or Let Go Sort",
+        "family": "play",
+        "primary_skill": "discernment",
+        "hook": "Can you listen like Ganesha and sort the words that help you grow?",
+        "duration_minutes": 6,
+        "players": "solo_or_pair",
+        "materials": [
+          "printed page or scrap paper"
+        ],
+        "steps": [
+          "Read each word or sentence one at a time.",
+          "Put helpful growth words into KEEP and noisy hurtful words into LET GO.",
+          "Choose one KEEP card to say out loud at the end."
+        ],
+        "reflection": "Which helpful words do you want your ears to remember today?",
+        "affirmation": "I keep the words that help me grow.",
+        "real_life_transfer": "Later today, pause and keep the sentence that truly helps.",
+        "core_mechanic": "hear-select-sort",
+        "emotional_payoff": "clear inner filtering",
+        "printable": {
+          "template_id": "PT03_SORT_MATCH_DECODE"
+        }
+      }
+    },
+    {
+      "experience_id": "EXP-GAN-EARS-PRINTABLE-001",
+      "wisdom_id": "SYM-GAN-008",
+      "practice_id": "PRAC-GAN-EARS-001",
+      "experience_type": "printable",
+      "title": "Keep or Let Go Sort Printable",
+      "source_document": "Teachings for kids from 5 sources - july 2026 - doodles, insta.docx",
+      "source_reference": "Teaching 1: The Power of Deep Listening (The Large Ears)",
+      "source_verified": true,
+      "content_status": "SOURCE_DERIVED",
+      "printable_payload": {
+        "template_id": "PT03_SORT_MATCH_DECODE",
+        "theme_id": "SYM-GAN-008",
+        "belief": "I keep the words that help me grow.",
+        "title": "Keep or Let Go Sort",
+        "subtitle": "Listen like Ganesha and sift helpful words from noisy words.",
+        "assets": {
+          "MAIN_ART": "ears_symbol"
+        },
+        "content": {
+          "instruction": "Read each card. Draw a line to KEEP if the words help you grow, or to LET GO if they are only noise.",
+          "category_left_title": "KEEP",
+          "category_left_hint": "Helpful words to hold onto",
+          "category_right_title": "LET GO",
+          "category_right_hint": "Noisy words to release",
+          "items": [
+            {
+              "id": "EAR-01",
+              "label": "Try another way.",
+              "answer": "LEFT"
+            },
+            {
+              "id": "EAR-02",
+              "label": "You cannot do it.",
+              "answer": "RIGHT"
+            },
+            {
+              "id": "EAR-03",
+              "label": "Mistakes help us learn.",
+              "answer": "LEFT"
+            },
+            {
+              "id": "EAR-04",
+              "label": "That is stupid.",
+              "answer": "RIGHT"
+            },
+            {
+              "id": "EAR-05",
+              "label": "Keep practicing.",
+              "answer": "LEFT"
+            },
+            {
+              "id": "EAR-06",
+              "label": "Quit now.",
+              "answer": "RIGHT"
+            },
+            {
+              "id": "EAR-07",
+              "label": "I do not understand yet.",
+              "answer": "LEFT"
+            },
+            {
+              "id": "EAR-08",
+              "label": "Nobody likes your ideas.",
+              "answer": "RIGHT"
+            }
+          ],
+          "footer": "Circle one KEEP card you want to remember today."
+        },
+        "generation": {
+          "mode": "sorting",
+          "answer_rule": "Helpful growth words belong in KEEP."
+        },
+        "answer_key": {
+          "LEFT": [
+            "EAR-01",
+            "EAR-03",
+            "EAR-05",
+            "EAR-07"
+          ],
+          "RIGHT": [
+            "EAR-02",
+            "EAR-04",
+            "EAR-06",
+            "EAR-08"
+          ]
+        },
+        "wisdom": {
+          "statement": "I keep the words that help me grow.",
+          "today": "When you hear mixed messages today, pause and keep the sentence that truly helps."
+        }
+      }
+    },
+    {
+      "experience_id": "EXP-HAN-SANJEEVANI-STORY-001",
+      "wisdom_id": "SYM-HAN-002",
+      "practice_id": "PRAC-HAN-SANJEEVANI-001",
+      "experience_type": "story",
+      "title": "Hanuman / Sanjeevani child story placeholder",
+      "source_document": "weekly story plan - posting on social media.docx",
+      "source_reference": "SYM-HAN-002 symbol listing only",
+      "source_verified": true,
+      "content_status": "NEEDS_SOURCE_CONTENT"
+    },
+    {
+      "experience_id": "EXP-GITA-BG006-STORY-001",
+      "wisdom_id": "BG-006",
+      "practice_id": "PRAC-GITA-BG006-001",
+      "experience_type": "story",
+      "title": "Gita 2.47 child story placeholder",
+      "source_document": "Gita etc posting content- july _26.docx",
+      "source_reference": "Requested 2.47 slice absent from supplied bundle",
+      "source_verified": false,
+      "content_status": "NEEDS_SOURCE_CONTENT"
+    }
+  ]
+}

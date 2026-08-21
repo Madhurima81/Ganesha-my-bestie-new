@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "1.0",
+  "status": "VALIDATED",
+  "storyReference": { "id": "STORY_001" },
+  "globalPrompt": "Warm watercolor children's storybook illustration",
+  "pagePrompts": [
+    { "page": 1, "sceneId": "SCENE_001", "prompt": "" }
+  ],
+  "continuityInstructions": [],
+  "validation": { "status": "PASS", "blockingFailures": 0, "warnings": 0 }
+}

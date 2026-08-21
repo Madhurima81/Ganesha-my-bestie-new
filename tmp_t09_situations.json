@@ -1,0 +1,58 @@
+[
+  {
+    "id": "SIT036",
+    "title": "Fear of being laughed at by class",
+    "storySeed": {
+      "childExperience": "Kavi has to answer, perform or show something in front of the class.",
+      "immediateWant": "Avoid being laughed at.",
+      "immediateObstacle": "Kavi cannot control what classmates might think or say.",
+      "emotionalTension": "Imagining everyone's laughter feels worse than the actual task.",
+      "context": [
+        "classroom"
+      ],
+      "narrativeSummary": "Kavi knows the answer. Kavi even knows how to say it. But the thought of everyone laughing makes Kavi's hand stay firmly down."
+    }
+  },
+  {
+    "id": "SIT057",
+    "title": "Not chosen for a special school role",
+    "storySeed": {
+      "childExperience": "Kavi hoped to be chosen for a special class role but another child was selected.",
+      "immediateWant": "Be chosen or feel that the effort still mattered.",
+      "immediateObstacle": "The decision has already been made.",
+      "emotionalTension": "Kavi starts turning 'not chosen this time' into 'not good enough.'",
+      "context": [
+        "school"
+      ],
+      "narrativeSummary": "Kavi had imagined standing at the front of the class. Then the teacher says someone else's name."
+    }
+  },
+  {
+    "id": "SIT066",
+    "title": "Being shortest or tallest in the class line",
+    "storySeed": {
+      "childExperience": "Kavi notices they are much shorter or taller than the other children while lining up.",
+      "immediateWant": "Avoid feeling different.",
+      "immediateObstacle": "Their height is visible and cannot be changed.",
+      "emotionalTension": "Kavi interprets standing out as being less important.",
+      "context": [
+        "school line-up"
+      ],
+      "narrativeSummary": "Kavi joins the class line and looks around. Somehow everyone seems to fit neatly together—except Kavi."
+    }
+  },
+  {
+    "id": "SIT084",
+    "title": "Classmate won Student of the Month",
+    "storySeed": {
+      "childExperience": "Kavi has been working hard at school and hopes to be recognised, but another classmate receives the award.",
+      "immediateWant": "Feel proud of their own effort even though they were not chosen.",
+      "immediateObstacle": "The recognition has gone to someone else.",
+      "emotionalTension": "Kavi starts turning one missed award into a judgement about their ability.",
+      "context": [
+        "school assembly or classroom"
+      ],
+      "narrativeSummary": "The teacher announces the winner. Applause fills the room, and Kavi claps too—but the smile feels harder to find than expected."
+    }
+  }
+]

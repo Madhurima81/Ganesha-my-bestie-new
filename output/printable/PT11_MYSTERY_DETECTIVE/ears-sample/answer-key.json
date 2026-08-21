@@ -1,0 +1,11 @@
+{
+  "keep_words": [
+    "TRY",
+    "KIND",
+    "LEARN"
+  ],
+  "let_go_words": [
+    "NOISE"
+  ],
+  "secret_word": "KIND"
+}

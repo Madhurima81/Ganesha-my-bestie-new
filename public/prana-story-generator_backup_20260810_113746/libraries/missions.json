@@ -1,0 +1,2660 @@
+[
+  {
+    "id": 1,
+    "slug": "rescue-a-lost-friend",
+    "name": "Rescue a Lost Friend",
+    "missionGroup": "Find and safely bring back a missing friend.",
+    "description": "Friendship & Sharing, Exploring & Nature",
+    "bestLifeDomains": [
+      "Search",
+      "Help"
+    ],
+    "bestStoryActions": [
+      "Forest",
+      "Meadow",
+      "Cave"
+    ],
+    "bestStoryWorlds": [
+      "Rescue Mission",
+      "Great Journey"
+    ],
+    "bestAdventureArchetypes": [
+      "Belonging",
+      "Courage"
+    ],
+    "bestCoreNeeds": [
+      "Easy"
+    ],
+    "difficulty": "Classic friendship story",
+    "notes": null
+  },
+  {
+    "id": 2,
+    "slug": "rescue-a-trapped-animal",
+    "name": "Rescue a Trapped Animal",
+    "missionGroup": "Free an animal that cannot escape.",
+    "description": "Helping & Caring, Exploring & Nature",
+    "bestLifeDomains": [
+      "Rescue",
+      "Help"
+    ],
+    "bestStoryActions": [
+      "Forest",
+      "River",
+      "Mountain"
+    ],
+    "bestStoryWorlds": [
+      "Rescue Mission"
+    ],
+    "bestAdventureArchetypes": [
+      "Compassion",
+      "Responsibility"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Nature-focused",
+    "notes": null
+  },
+  {
+    "id": 3,
+    "slug": "rescue-a-baby-creature",
+    "name": "Rescue a Baby Creature",
+    "missionGroup": "Help a baby animal reunite with its family.",
+    "description": "Helping & Caring, Family & Daily Life",
+    "bestLifeDomains": [
+      "Rescue",
+      "Care For"
+    ],
+    "bestStoryActions": [
+      "Forest",
+      "Meadow",
+      "Pond"
+    ],
+    "bestStoryWorlds": [
+      "Rescue Mission"
+    ],
+    "bestAdventureArchetypes": [
+      "Empathy",
+      "Nurturing"
+    ],
+    "bestCoreNeeds": [
+      "Easy"
+    ],
+    "difficulty": "Good for younger readers",
+    "notes": null
+  },
+  {
+    "id": 4,
+    "slug": "rescue-an-elder",
+    "name": "Rescue an Elder",
+    "missionGroup": "Help an older character reach safety.",
+    "description": "Helping & Caring, School & Community",
+    "bestLifeDomains": [
+      "Help",
+      "Guide"
+    ],
+    "bestStoryActions": [
+      "Village",
+      "Forest"
+    ],
+    "bestStoryWorlds": [
+      "Rescue Mission",
+      "Community Project"
+    ],
+    "bestAdventureArchetypes": [
+      "Respect",
+      "Responsibility"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Encourages kindness",
+    "notes": null
+  },
+  {
+    "id": 5,
+    "slug": "rescue-someone-before-sunset",
+    "name": "Rescue Someone Before Sunset",
+    "missionGroup": "Complete the rescue before time runs out.",
+    "description": "Helping & Caring, Exploring & Nature",
+    "bestLifeDomains": [
+      "Rescue",
+      "Search"
+    ],
+    "bestStoryActions": [
+      "Forest",
+      "River"
+    ],
+    "bestStoryWorlds": [
+      "Rescue Mission",
+      "Race Against Time"
+    ],
+    "bestAdventureArchetypes": [
+      "Courage",
+      "Perseverance"
+    ],
+    "bestCoreNeeds": [
+      "Hard"
+    ],
+    "difficulty": "Time-pressure story",
+    "notes": null
+  },
+  {
+    "id": 6,
+    "slug": "bring-help",
+    "name": "Bring Help",
+    "missionGroup": "Find someone who can solve the problem.",
+    "description": "Helping & Caring, School & Community",
+    "bestLifeDomains": [
+      "Help",
+      "Deliver"
+    ],
+    "bestStoryActions": [
+      "Village",
+      "Forest"
+    ],
+    "bestStoryWorlds": [
+      "Helping Hand"
+    ],
+    "bestAdventureArchetypes": [
+      "Responsibility",
+      "Courage"
+    ],
+    "bestCoreNeeds": [
+      "Easy"
+    ],
+    "difficulty": "Teamwork works well",
+    "notes": null
+  },
+  {
+    "id": 7,
+    "slug": "find-a-safe-route",
+    "name": "Find a Safe Route",
+    "missionGroup": "Discover a safe path for everyone.",
+    "description": "Exploring & Nature, Responsibility",
+    "bestLifeDomains": [
+      "Explore",
+      "Solve"
+    ],
+    "bestStoryActions": [
+      "Forest",
+      "Mountain",
+      "River"
+    ],
+    "bestStoryWorlds": [
+      "Great Journey"
+    ],
+    "bestAdventureArchetypes": [
+      "Leadership",
+      "Confidence"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Good for problem solving",
+    "notes": null
+  },
+  {
+    "id": 8,
+    "slug": "lead-everyone-to-safety",
+    "name": "Lead Everyone to Safety",
+    "missionGroup": "Guide a group safely through danger.",
+    "description": "School & Community, Helping & Caring",
+    "bestLifeDomains": [
+      "Guide",
+      "Protect"
+    ],
+    "bestStoryActions": [
+      "Forest",
+      "River",
+      "Village"
+    ],
+    "bestStoryWorlds": [
+      "Great Journey",
+      "Rescue Mission"
+    ],
+    "bestAdventureArchetypes": [
+      "Leadership",
+      "Responsibility"
+    ],
+    "bestCoreNeeds": [
+      "Hard"
+    ],
+    "difficulty": "Best with group stories",
+    "notes": null
+  },
+  {
+    "id": 9,
+    "slug": "rescue-a-special-object",
+    "name": "Rescue a Special Object",
+    "missionGroup": "Recover something important before it is lost forever.",
+    "description": "Responsibility, Family & Daily Life",
+    "bestLifeDomains": [
+      "Search",
+      "Rescue"
+    ],
+    "bestStoryActions": [
+      "Forest",
+      "Village"
+    ],
+    "bestStoryWorlds": [
+      "Treasure Hunt"
+    ],
+    "bestAdventureArchetypes": [
+      "Responsibility",
+      "Perseverance"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Can connect to festivals",
+    "notes": null
+  },
+  {
+    "id": 10,
+    "slug": "rescue-a-family-of-animals",
+    "name": "Rescue a Family of Animals",
+    "missionGroup": "Help an entire animal family escape danger.",
+    "description": "Helping & Caring, Exploring & Nature",
+    "bestLifeDomains": [
+      "Rescue",
+      "Protect"
+    ],
+    "bestStoryActions": [
+      "Forest",
+      "Meadow"
+    ],
+    "bestStoryWorlds": [
+      "Rescue Mission"
+    ],
+    "bestAdventureArchetypes": [
+      "Compassion",
+      "Teamwork"
+    ],
+    "bestCoreNeeds": [
+      "Hard"
+    ],
+    "difficulty": "Good for multiple supporting characters",
+    "notes": null
+  },
+  {
+    "id": 11,
+    "slug": "find-a-missing-object",
+    "name": "Find a Missing Object",
+    "missionGroup": "Locate an important lost object.",
+    "description": "Responsibility, Family & Daily Life, Learning & Problem Solving",
+    "bestLifeDomains": [
+      "Search",
+      "Discover"
+    ],
+    "bestStoryActions": [
+      "Forest",
+      "Village",
+      "Home"
+    ],
+    "bestStoryWorlds": [
+      "Treasure Hunt",
+      "Mystery to Solve"
+    ],
+    "bestAdventureArchetypes": [
+      "Responsibility",
+      "Confidence"
+    ],
+    "bestCoreNeeds": [
+      "Easy"
+    ],
+    "difficulty": "Classic search story",
+    "notes": null
+  },
+  {
+    "id": 12,
+    "slug": "find-a-hidden-place",
+    "name": "Find a Hidden Place",
+    "missionGroup": "Discover a secret location.",
+    "description": "Exploring & Nature, Playing & Games",
+    "bestLifeDomains": [
+      "Explore",
+      "Discover"
+    ],
+    "bestStoryActions": [
+      "Forest",
+      "Cave",
+      "Mountain"
+    ],
+    "bestStoryWorlds": [
+      "Secret Discovery",
+      "Hidden World"
+    ],
+    "bestAdventureArchetypes": [
+      "Curiosity",
+      "Confidence"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Great for exploration",
+    "notes": null
+  },
+  {
+    "id": 13,
+    "slug": "find-a-rare-flower",
+    "name": "Find a Rare Flower",
+    "missionGroup": "Search for a special flower needed for a purpose.",
+    "description": "Exploring & Nature, Helping & Caring",
+    "bestLifeDomains": [
+      "Search",
+      "Explore"
+    ],
+    "bestStoryActions": [
+      "Meadow",
+      "Forest",
+      "Mountain"
+    ],
+    "bestStoryWorlds": [
+      "Treasure Hunt"
+    ],
+    "bestAdventureArchetypes": [
+      "Perseverance",
+      "Appreciation"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Nature-focused",
+    "notes": null
+  },
+  {
+    "id": 14,
+    "slug": "find-the-last-clue",
+    "name": "Find the Last Clue",
+    "missionGroup": "Locate the final clue to solve a mystery.",
+    "description": "Learning & Problem Solving",
+    "bestLifeDomains": [
+      "Search",
+      "Solve"
+    ],
+    "bestStoryActions": [
+      "Forest",
+      "Village",
+      "Cave"
+    ],
+    "bestStoryWorlds": [
+      "Mystery to Solve"
+    ],
+    "bestAdventureArchetypes": [
+      "Curiosity",
+      "Problem Solving"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Works well with puzzles",
+    "notes": null
+  },
+  {
+    "id": 15,
+    "slug": "find-the-right-path",
+    "name": "Find the Right Path",
+    "missionGroup": "Discover the correct route when lost.",
+    "description": "Exploring & Nature, Responsibility",
+    "bestLifeDomains": [
+      "Explore",
+      "Solve"
+    ],
+    "bestStoryActions": [
+      "Forest",
+      "River",
+      "Mountain"
+    ],
+    "bestStoryWorlds": [
+      "Great Journey"
+    ],
+    "bestAdventureArchetypes": [
+      "Confidence",
+      "Adaptability"
+    ],
+    "bestCoreNeeds": [
+      "Easy"
+    ],
+    "difficulty": "Encourages flexibility",
+    "notes": null
+  },
+  {
+    "id": 16,
+    "slug": "find-the-truth",
+    "name": "Find the Truth",
+    "missionGroup": "Discover what really happened.",
+    "description": "Communication, Friendship & Sharing",
+    "bestLifeDomains": [
+      "Observe",
+      "Communicate"
+    ],
+    "bestStoryActions": [
+      "Village",
+      "School",
+      "Forest"
+    ],
+    "bestStoryWorlds": [
+      "Mystery to Solve"
+    ],
+    "bestAdventureArchetypes": [
+      "Honesty",
+      "Empathy"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Good for misunderstandings",
+    "notes": null
+  },
+  {
+    "id": 17,
+    "slug": "find-a-forgotten-story",
+    "name": "Find a Forgotten Story",
+    "missionGroup": "Uncover an old tale or memory.",
+    "description": "Learning & Problem Solving, Celebrations & Traditions",
+    "bestLifeDomains": [
+      "Explore",
+      "Learn"
+    ],
+    "bestStoryActions": [
+      "Banyan Tree",
+      "Story House",
+      "Village"
+    ],
+    "bestStoryWorlds": [
+      "Heritage Journey"
+    ],
+    "bestAdventureArchetypes": [
+      "Curiosity",
+      "Identity"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Connects well with wisdom",
+    "notes": null
+  },
+  {
+    "id": 18,
+    "slug": "find-the-secret-entrance",
+    "name": "Find the Secret Entrance",
+    "missionGroup": "Discover a hidden way into a special place.",
+    "description": "Exploring & Nature",
+    "bestLifeDomains": [
+      "Search",
+      "Explore"
+    ],
+    "bestStoryActions": [
+      "Cave",
+      "Forest",
+      "Mountain"
+    ],
+    "bestStoryWorlds": [
+      "Hidden World"
+    ],
+    "bestAdventureArchetypes": [
+      "Courage",
+      "Curiosity"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Adventure-driven",
+    "notes": null
+  },
+  {
+    "id": 19,
+    "slug": "discover-a-hidden-treasure",
+    "name": "Discover a Hidden Treasure",
+    "missionGroup": "Find something valuable through effort.",
+    "description": "Exploring & Nature, Playing & Games",
+    "bestLifeDomains": [
+      "Search",
+      "Discover"
+    ],
+    "bestStoryActions": [
+      "Forest",
+      "Cave",
+      "River"
+    ],
+    "bestStoryWorlds": [
+      "Treasure Hunt"
+    ],
+    "bestAdventureArchetypes": [
+      "Perseverance",
+      "Gratitude"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Treasure need not be material",
+    "notes": null
+  },
+  {
+    "id": 20,
+    "slug": "discover-an-old-map",
+    "name": "Discover an Old Map",
+    "missionGroup": "Find a forgotten map leading to a new adventure.",
+    "description": "Learning & Problem Solving, Exploring & Nature",
+    "bestLifeDomains": [
+      "Discover",
+      "Explore"
+    ],
+    "bestStoryActions": [
+      "Story House",
+      "Forest",
+      "Village"
+    ],
+    "bestStoryWorlds": [
+      "Discovery Journey",
+      "Great Journey"
+    ],
+    "bestAdventureArchetypes": [
+      "Curiosity",
+      "Confidence"
+    ],
+    "bestCoreNeeds": [
+      "Easy"
+    ],
+    "difficulty": "Excellent story starter",
+    "notes": null
+  },
+  {
+    "id": 21,
+    "slug": "deliver-medicine",
+    "name": "Deliver Medicine",
+    "missionGroup": "Take important medicine safely to someone in need.",
+    "description": "Helping & Caring, Responsibility",
+    "bestLifeDomains": [
+      "Deliver",
+      "Help"
+    ],
+    "bestStoryActions": [
+      "Village",
+      "Forest"
+    ],
+    "bestStoryWorlds": [
+      "Delivery Quest",
+      "Great Journey"
+    ],
+    "bestAdventureArchetypes": [
+      "Responsibility",
+      "Compassion"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Time pressure works well",
+    "notes": null
+  },
+  {
+    "id": 22,
+    "slug": "deliver-an-invitation",
+    "name": "Deliver an Invitation",
+    "missionGroup": "Personally invite someone to a special event.",
+    "description": "Celebrations & Traditions, Family & Daily Life",
+    "bestLifeDomains": [
+      "Deliver",
+      "Communicate"
+    ],
+    "bestStoryActions": [
+      "Village",
+      "Meadow"
+    ],
+    "bestStoryWorlds": [
+      "Delivery Quest"
+    ],
+    "bestAdventureArchetypes": [
+      "Belonging",
+      "Confidence"
+    ],
+    "bestCoreNeeds": [
+      "Easy"
+    ],
+    "difficulty": "Great festival story",
+    "notes": null
+  },
+  {
+    "id": 23,
+    "slug": "deliver-an-important-message",
+    "name": "Deliver an Important Message",
+    "missionGroup": "Carry an urgent message to the right person.",
+    "description": "Communication, Responsibility",
+    "bestLifeDomains": [
+      "Deliver",
+      "Communicate"
+    ],
+    "bestStoryActions": [
+      "Forest",
+      "Village"
+    ],
+    "bestStoryWorlds": [
+      "Delivery Quest",
+      "Great Journey"
+    ],
+    "bestAdventureArchetypes": [
+      "Responsibility",
+      "Courage"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Can involve misunderstandings",
+    "notes": null
+  },
+  {
+    "id": 24,
+    "slug": "return-a-borrowed-item",
+    "name": "Return a Borrowed Item",
+    "missionGroup": "Return something that belongs to someone else.",
+    "description": "Responsibility, Friendship & Sharing",
+    "bestLifeDomains": [
+      "Deliver"
+    ],
+    "bestStoryActions": [
+      "Village",
+      "Home"
+    ],
+    "bestStoryWorlds": [
+      "Responsibility Quest"
+    ],
+    "bestAdventureArchetypes": [
+      "Honesty",
+      "Responsibility"
+    ],
+    "bestCoreNeeds": [
+      "Easy"
+    ],
+    "difficulty": "Encourages integrity",
+    "notes": null
+  },
+  {
+    "id": 25,
+    "slug": "deliver-food",
+    "name": "Deliver Food",
+    "missionGroup": "Take food safely to someone waiting.",
+    "description": "Helping & Caring, Family & Daily Life",
+    "bestLifeDomains": [
+      "Deliver",
+      "Help"
+    ],
+    "bestStoryActions": [
+      "Village",
+      "Forest"
+    ],
+    "bestStoryWorlds": [
+      "Delivery Quest"
+    ],
+    "bestAdventureArchetypes": [
+      "Kindness",
+      "Generosity"
+    ],
+    "bestCoreNeeds": [
+      "Easy"
+    ],
+    "difficulty": "Good community story",
+    "notes": null
+  },
+  {
+    "id": 26,
+    "slug": "deliver-a-gift",
+    "name": "Deliver a Gift",
+    "missionGroup": "Deliver a thoughtful gift to brighten someone's day.",
+    "description": "Friendship & Sharing, Celebrations & Traditions",
+    "bestLifeDomains": [
+      "Deliver",
+      "Share"
+    ],
+    "bestStoryActions": [
+      "Village",
+      "Meadow"
+    ],
+    "bestStoryWorlds": [
+      "Delivery Quest",
+      "Gift of Giving"
+    ],
+    "bestAdventureArchetypes": [
+      "Gratitude",
+      "Generosity"
+    ],
+    "bestCoreNeeds": [
+      "Easy"
+    ],
+    "difficulty": "Works well with Modak stories",
+    "notes": null
+  },
+  {
+    "id": 27,
+    "slug": "deliver-a-sacred-object",
+    "name": "Deliver a Sacred Object",
+    "missionGroup": "Safely carry an important sacred object to its destination.",
+    "description": "Celebrations & Traditions, Responsibility",
+    "bestLifeDomains": [
+      "Deliver",
+      "Protect"
+    ],
+    "bestStoryActions": [
+      "Temple",
+      "Village",
+      "Forest"
+    ],
+    "bestStoryWorlds": [
+      "Delivery Quest"
+    ],
+    "bestAdventureArchetypes": [
+      "Respect",
+      "Responsibility"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Can connect with Ganesha celebrations",
+    "notes": null
+  },
+  {
+    "id": 28,
+    "slug": "keep-a-promise",
+    "name": "Keep a Promise",
+    "missionGroup": "Fulfil an important promise made to someone.",
+    "description": "Friendship & Sharing, Responsibility",
+    "bestLifeDomains": [
+      "Deliver",
+      "Help"
+    ],
+    "bestStoryActions": [
+      "Any Story World"
+    ],
+    "bestStoryWorlds": [
+      "Promise Keeper"
+    ],
+    "bestAdventureArchetypes": [
+      "Trust",
+      "Integrity"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Emotional mission",
+    "notes": null
+  },
+  {
+    "id": 29,
+    "slug": "return-something-precious",
+    "name": "Return Something Precious",
+    "missionGroup": "Return a valuable item to its rightful owner.",
+    "description": "Responsibility, Helping & Caring",
+    "bestLifeDomains": [
+      "Search",
+      "Deliver"
+    ],
+    "bestStoryActions": [
+      "Forest",
+      "Village"
+    ],
+    "bestStoryWorlds": [
+      "Delivery Quest"
+    ],
+    "bestAdventureArchetypes": [
+      "Honesty",
+      "Empathy"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Encourages selflessness",
+    "notes": null
+  },
+  {
+    "id": 30,
+    "slug": "deliver-supplies-before-sunset",
+    "name": "Deliver Supplies Before Sunset",
+    "missionGroup": "Reach the destination before time runs out.",
+    "description": "Responsibility, Helping & Caring",
+    "bestLifeDomains": [
+      "Deliver",
+      "Journey"
+    ],
+    "bestStoryActions": [
+      "Forest",
+      "River",
+      "Mountain"
+    ],
+    "bestStoryWorlds": [
+      "Delivery Quest",
+      "Race Against Time"
+    ],
+    "bestAdventureArchetypes": [
+      "Perseverance",
+      "Courage"
+    ],
+    "bestCoreNeeds": [
+      "Hard"
+    ],
+    "difficulty": "Excellent for escalating tension",
+    "notes": null
+  },
+  {
+    "id": 31,
+    "slug": "build-a-bridge",
+    "name": "Build a Bridge",
+    "missionGroup": "Build a bridge so everyone can cross safely.",
+    "description": "Building & Creating, Helping & Caring",
+    "bestLifeDomains": [
+      "Build"
+    ],
+    "bestStoryActions": [
+      "River",
+      "Forest"
+    ],
+    "bestStoryWorlds": [
+      "Build Together",
+      "Community Project"
+    ],
+    "bestAdventureArchetypes": [
+      "Cooperation",
+      "Confidence"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Teamwork mission",
+    "notes": null
+  },
+  {
+    "id": 32,
+    "slug": "repair-a-cart",
+    "name": "Repair a Cart",
+    "missionGroup": "Fix a broken cart needed for the journey.",
+    "description": "Responsibility, Building & Creating",
+    "bestLifeDomains": [
+      "Repair",
+      "Build"
+    ],
+    "bestStoryActions": [
+      "Village",
+      "Forest"
+    ],
+    "bestStoryWorlds": [
+      "Build & Repair"
+    ],
+    "bestAdventureArchetypes": [
+      "Perseverance",
+      "Responsibility"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Problem-solving",
+    "notes": null
+  },
+  {
+    "id": 33,
+    "slug": "fix-a-broken-nest",
+    "name": "Fix a Broken Nest",
+    "missionGroup": "Repair an animal's damaged home.",
+    "description": "Helping & Caring, Exploring & Nature",
+    "bestLifeDomains": [
+      "Repair",
+      "Help"
+    ],
+    "bestStoryActions": [
+      "Forest",
+      "Meadow"
+    ],
+    "bestStoryWorlds": [
+      "Restoration Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Compassion",
+      "Responsibility"
+    ],
+    "bestCoreNeeds": [
+      "Easy"
+    ],
+    "difficulty": "Great for younger children",
+    "notes": null
+  },
+  {
+    "id": 34,
+    "slug": "build-a-shelter",
+    "name": "Build a Shelter",
+    "missionGroup": "Create a safe shelter before bad weather arrives.",
+    "description": "Helping & Caring, Building & Creating",
+    "bestLifeDomains": [
+      "Build"
+    ],
+    "bestStoryActions": [
+      "Forest",
+      "Mountain"
+    ],
+    "bestStoryWorlds": [
+      "Survival Adventure",
+      "Build & Repair"
+    ],
+    "bestAdventureArchetypes": [
+      "Responsibility",
+      "Courage"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Nature-based",
+    "notes": null
+  },
+  {
+    "id": 35,
+    "slug": "restore-a-garden",
+    "name": "Restore a Garden",
+    "missionGroup": "Bring a neglected garden back to life.",
+    "description": "Exploring & Nature, Helping & Caring",
+    "bestLifeDomains": [
+      "Restore",
+      "Care For"
+    ],
+    "bestStoryActions": [
+      "Garden",
+      "Village"
+    ],
+    "bestStoryWorlds": [
+      "Restoration Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Patience",
+      "Hope"
+    ],
+    "bestCoreNeeds": [
+      "Easy"
+    ],
+    "difficulty": "Nature theme",
+    "notes": null
+  },
+  {
+    "id": 36,
+    "slug": "repair-a-pathway",
+    "name": "Repair a Pathway",
+    "missionGroup": "Make a dangerous path safe again.",
+    "description": "Responsibility, School & Community",
+    "bestLifeDomains": [
+      "Repair"
+    ],
+    "bestStoryActions": [
+      "Forest",
+      "Mountain"
+    ],
+    "bestStoryWorlds": [
+      "Build & Repair"
+    ],
+    "bestAdventureArchetypes": [
+      "Responsibility",
+      "Teamwork"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Community benefit",
+    "notes": null
+  },
+  {
+    "id": 37,
+    "slug": "rebuild-a-playground",
+    "name": "Rebuild a Playground",
+    "missionGroup": "Work together to rebuild a place for everyone.",
+    "description": "Building & Creating, Friendship & Sharing",
+    "bestLifeDomains": [
+      "Build"
+    ],
+    "bestStoryActions": [
+      "Village"
+    ],
+    "bestStoryWorlds": [
+      "Build Together",
+      "Community Project"
+    ],
+    "bestAdventureArchetypes": [
+      "Cooperation",
+      "Belonging"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Group activity",
+    "notes": null
+  },
+  {
+    "id": 38,
+    "slug": "create-something-together",
+    "name": "Create Something Together",
+    "missionGroup": "Make something useful as a team.",
+    "description": "Building & Creating, Art, Music & Creativity",
+    "bestLifeDomains": [
+      "Create",
+      "Build"
+    ],
+    "bestStoryActions": [
+      "Any"
+    ],
+    "bestStoryWorlds": [
+      "Creative Quest"
+    ],
+    "bestAdventureArchetypes": [
+      "Teamwork",
+      "Creativity"
+    ],
+    "bestCoreNeeds": [
+      "Easy"
+    ],
+    "difficulty": "Flexible mission",
+    "notes": null
+  },
+  {
+    "id": 39,
+    "slug": "build-a-raft",
+    "name": "Build a Raft",
+    "missionGroup": "Construct a raft to continue the journey.",
+    "description": "Exploring & Nature, Building & Creating",
+    "bestLifeDomains": [
+      "Build"
+    ],
+    "bestStoryActions": [
+      "River"
+    ],
+    "bestStoryWorlds": [
+      "Build & Repair",
+      "Great Journey"
+    ],
+    "bestAdventureArchetypes": [
+      "Confidence",
+      "Problem Solving"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Adventure story",
+    "notes": null
+  },
+  {
+    "id": 40,
+    "slug": "repair-festival-decorations",
+    "name": "Repair Festival Decorations",
+    "missionGroup": "Fix decorations before the celebration begins.",
+    "description": "Celebrations & Traditions, Building & Creating",
+    "bestLifeDomains": [
+      "Repair",
+      "Create"
+    ],
+    "bestStoryActions": [
+      "Village"
+    ],
+    "bestStoryWorlds": [
+      "Build & Repair",
+      "Festival Adventure"
+    ],
+    "bestAdventureArchetypes": [
+      "Responsibility",
+      "Pride"
+    ],
+    "bestCoreNeeds": [
+      "Easy"
+    ],
+    "difficulty": "Festival setting",
+    "notes": null
+  },
+  {
+    "id": 41,
+    "slug": "protect-a-young-animal",
+    "name": "Protect a Young Animal",
+    "missionGroup": "Keep a young animal safe from danger.",
+    "description": "Helping & Caring, Exploring & Nature",
+    "bestLifeDomains": [
+      "Protect",
+      "Help"
+    ],
+    "bestStoryActions": [
+      "Forest",
+      "Meadow"
+    ],
+    "bestStoryWorlds": [
+      "Guardian Adventure"
+    ],
+    "bestAdventureArchetypes": [
+      "Compassion",
+      "Responsibility"
+    ],
+    "bestCoreNeeds": [
+      "Easy"
+    ],
+    "difficulty": "Nature-based",
+    "notes": null
+  },
+  {
+    "id": 42,
+    "slug": "protect-a-sacred-tree",
+    "name": "Protect a Sacred Tree",
+    "missionGroup": "Care for a tree important to everyone.",
+    "description": "Exploring & Nature, Responsibility",
+    "bestLifeDomains": [
+      "Protect"
+    ],
+    "bestStoryActions": [
+      "Forest"
+    ],
+    "bestStoryWorlds": [
+      "Guardian Adventure"
+    ],
+    "bestAdventureArchetypes": [
+      "Respect",
+      "Responsibility"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Environmental story",
+    "notes": null
+  },
+  {
+    "id": 43,
+    "slug": "protect-the-harvest",
+    "name": "Protect the Harvest",
+    "missionGroup": "Save food that the community depends on.",
+    "description": "School & Community, Responsibility",
+    "bestLifeDomains": [
+      "Protect",
+      "Organize"
+    ],
+    "bestStoryActions": [
+      "Farm",
+      "Village"
+    ],
+    "bestStoryWorlds": [
+      "Guardian Adventure",
+      "Community Project"
+    ],
+    "bestAdventureArchetypes": [
+      "Responsibility",
+      "Gratitude"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Seasonal story",
+    "notes": null
+  },
+  {
+    "id": 44,
+    "slug": "protect-a-celebration",
+    "name": "Protect a Celebration",
+    "missionGroup": "Ensure an important celebration happens safely.",
+    "description": "Celebrations & Traditions",
+    "bestLifeDomains": [
+      "Protect",
+      "Organize"
+    ],
+    "bestStoryActions": [
+      "Village"
+    ],
+    "bestStoryWorlds": [
+      "Guardian Adventure",
+      "Festival Adventure"
+    ],
+    "bestAdventureArchetypes": [
+      "Belonging",
+      "Responsibility"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Festival stories",
+    "notes": null
+  },
+  {
+    "id": 45,
+    "slug": "protect-a-secret",
+    "name": "Protect a Secret",
+    "missionGroup": "Keep an important secret until the right time.",
+    "description": "Friendship & Sharing, Communication",
+    "bestLifeDomains": [
+      "Protect"
+    ],
+    "bestStoryActions": [
+      "Any"
+    ],
+    "bestStoryWorlds": [
+      "Guardian Adventure"
+    ],
+    "bestAdventureArchetypes": [
+      "Trust",
+      "Integrity"
+    ],
+    "bestCoreNeeds": [
+      "Easy"
+    ],
+    "difficulty": "Emotional story",
+    "notes": null
+  },
+  {
+    "id": 46,
+    "slug": "guard-an-important-object",
+    "name": "Guard an Important Object",
+    "missionGroup": "Keep a valuable object safe.",
+    "description": "Responsibility",
+    "bestLifeDomains": [
+      "Protect"
+    ],
+    "bestStoryActions": [
+      "Temple",
+      "Village"
+    ],
+    "bestStoryWorlds": [
+      "Guardian Adventure"
+    ],
+    "bestAdventureArchetypes": [
+      "Responsibility"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Can use sacred objects",
+    "notes": null
+  },
+  {
+    "id": 47,
+    "slug": "keep-everyone-safe",
+    "name": "Keep Everyone Safe",
+    "missionGroup": "Help a group avoid danger.",
+    "description": "Helping & Caring, School & Community",
+    "bestLifeDomains": [
+      "Protect",
+      "Guide"
+    ],
+    "bestStoryActions": [
+      "Forest",
+      "River"
+    ],
+    "bestStoryWorlds": [
+      "Guardian Adventure"
+    ],
+    "bestAdventureArchetypes": [
+      "Leadership",
+      "Courage"
+    ],
+    "bestCoreNeeds": [
+      "Hard"
+    ],
+    "difficulty": "Group story",
+    "notes": null
+  },
+  {
+    "id": 48,
+    "slug": "protect-a-friendship",
+    "name": "Protect a Friendship",
+    "missionGroup": "Prevent a friendship from falling apart.",
+    "description": "Friendship & Sharing",
+    "bestLifeDomains": [
+      "Communicate",
+      "Help"
+    ],
+    "bestStoryActions": [
+      "Any"
+    ],
+    "bestStoryWorlds": [
+      "Friendship Repair"
+    ],
+    "bestAdventureArchetypes": [
+      "Belonging",
+      "Empathy"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Emotional conflict",
+    "notes": null
+  },
+  {
+    "id": 49,
+    "slug": "protect-a-home",
+    "name": "Protect a Home",
+    "missionGroup": "Keep someone's home safe from harm.",
+    "description": "Family & Daily Life, Helping & Caring",
+    "bestLifeDomains": [
+      "Protect",
+      "Repair"
+    ],
+    "bestStoryActions": [
+      "Village",
+      "Forest"
+    ],
+    "bestStoryWorlds": [
+      "Guardian Adventure"
+    ],
+    "bestAdventureArchetypes": [
+      "Safety",
+      "Responsibility"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Home-centered",
+    "notes": null
+  },
+  {
+    "id": 50,
+    "slug": "protect-nature",
+    "name": "Protect Nature",
+    "missionGroup": "Care for the environment and its creatures.",
+    "description": "Exploring & Nature, Responsibility",
+    "bestLifeDomains": [
+      "Protect",
+      "Care For"
+    ],
+    "bestStoryActions": [
+      "Forest",
+      "River",
+      "Garden"
+    ],
+    "bestStoryWorlds": [
+      "Guardian Adventure",
+      "Nature's Balance"
+    ],
+    "bestAdventureArchetypes": [
+      "Stewardship",
+      "Gratitude"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Nature conservation",
+    "notes": null
+  },
+  {
+    "id": 51,
+    "slug": "learn-a-new-skill",
+    "name": "Learn a New Skill",
+    "missionGroup": "Master a skill through practice.",
+    "description": "Learning & Problem Solving",
+    "bestLifeDomains": [
+      "Learn"
+    ],
+    "bestStoryActions": [
+      "School",
+      "Village"
+    ],
+    "bestStoryWorlds": [
+      "Learning Quest"
+    ],
+    "bestAdventureArchetypes": [
+      "Confidence",
+      "Perseverance"
+    ],
+    "bestCoreNeeds": [
+      "Easy"
+    ],
+    "difficulty": "Everyday learning",
+    "notes": null
+  },
+  {
+    "id": 52,
+    "slug": "solve-a-puzzle",
+    "name": "Solve a Puzzle",
+    "missionGroup": "Solve a puzzle to move forward.",
+    "description": "Learning & Problem Solving",
+    "bestLifeDomains": [
+      "Solve"
+    ],
+    "bestStoryActions": [
+      "Cave",
+      "Forest"
+    ],
+    "bestStoryWorlds": [
+      "Mystery to Solve"
+    ],
+    "bestAdventureArchetypes": [
+      "Curiosity",
+      "Problem Solving"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Good for clue stories",
+    "notes": null
+  },
+  {
+    "id": 53,
+    "slug": "understand-a-mystery",
+    "name": "Understand a Mystery",
+    "missionGroup": "Discover why something unusual happened.",
+    "description": "Learning & Problem Solving",
+    "bestLifeDomains": [
+      "Discover",
+      "Observe"
+    ],
+    "bestStoryActions": [
+      "Forest",
+      "Village"
+    ],
+    "bestStoryWorlds": [
+      "Mystery to Solve"
+    ],
+    "bestAdventureArchetypes": [
+      "Curiosity",
+      "Wisdom"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Observation skills",
+    "notes": null
+  },
+  {
+    "id": 54,
+    "slug": "learn-from-a-mentor",
+    "name": "Learn from a Mentor",
+    "missionGroup": "Gain wisdom from a guide.",
+    "description": "Learning & Problem Solving",
+    "bestLifeDomains": [
+      "Learn"
+    ],
+    "bestStoryActions": [
+      "Banyan Tree",
+      "Story House"
+    ],
+    "bestStoryWorlds": [
+      "Mentor Journey"
+    ],
+    "bestAdventureArchetypes": [
+      "Humility",
+      "Growth"
+    ],
+    "bestCoreNeeds": [
+      "Easy"
+    ],
+    "difficulty": "Bodhi or Ved stories",
+    "notes": null
+  },
+  {
+    "id": 55,
+    "slug": "teach-someone-else",
+    "name": "Teach Someone Else",
+    "missionGroup": "Help another character learn a skill.",
+    "description": "Helping & Caring, Learning & Problem Solving",
+    "bestLifeDomains": [
+      "Teach",
+      "Help"
+    ],
+    "bestStoryActions": [
+      "Village",
+      "School"
+    ],
+    "bestStoryWorlds": [
+      "Teaching Adventure"
+    ],
+    "bestAdventureArchetypes": [
+      "Responsibility",
+      "Empathy"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Reinforces learning",
+    "notes": null
+  },
+  {
+    "id": 56,
+    "slug": "complete-training",
+    "name": "Complete Training",
+    "missionGroup": "Finish a period of practice successfully.",
+    "description": "Learning & Problem Solving",
+    "bestLifeDomains": [
+      "Practice"
+    ],
+    "bestStoryActions": [
+      "Mountain",
+      "Forest"
+    ],
+    "bestStoryWorlds": [
+      "Training Journey"
+    ],
+    "bestAdventureArchetypes": [
+      "Perseverance",
+      "Discipline"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Character growth",
+    "notes": null
+  },
+  {
+    "id": 57,
+    "slug": "face-a-fear",
+    "name": "Face a Fear",
+    "missionGroup": "Overcome a personal fear.",
+    "description": "Self-Care, Learning & Problem Solving",
+    "bestLifeDomains": [
+      "Try",
+      "Learn"
+    ],
+    "bestStoryActions": [
+      "Any"
+    ],
+    "bestStoryWorlds": [
+      "Hero's Trial"
+    ],
+    "bestAdventureArchetypes": [
+      "Courage",
+      "Confidence"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Strong emotional arc",
+    "notes": null
+  },
+  {
+    "id": 58,
+    "slug": "earn-someone-s-trust",
+    "name": "Earn Someone's Trust",
+    "missionGroup": "Show through actions that you can be trusted.",
+    "description": "Friendship & Sharing, Responsibility",
+    "bestLifeDomains": [
+      "Help",
+      "Keep Promise"
+    ],
+    "bestStoryActions": [
+      "Village",
+      "Forest"
+    ],
+    "bestStoryWorlds": [
+      "Friendship Repair"
+    ],
+    "bestAdventureArchetypes": [
+      "Trust",
+      "Integrity"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Relationship-focused",
+    "notes": null
+  },
+  {
+    "id": 59,
+    "slug": "discover-a-hidden-talent",
+    "name": "Discover a Hidden Talent",
+    "missionGroup": "Realize a unique strength.",
+    "description": "Art, Music & Creativity, Learning & Problem Solving",
+    "bestLifeDomains": [
+      "Explore",
+      "Create"
+    ],
+    "bestStoryActions": [
+      "Any"
+    ],
+    "bestStoryWorlds": [
+      "Discovery Journey"
+    ],
+    "bestAdventureArchetypes": [
+      "Self-Worth",
+      "Confidence"
+    ],
+    "bestCoreNeeds": [
+      "Easy"
+    ],
+    "difficulty": "Identity stories",
+    "notes": null
+  },
+  {
+    "id": 60,
+    "slug": "practice-until-successful",
+    "name": "Practice Until Successful",
+    "missionGroup": "Keep trying until improvement happens.",
+    "description": "Learning & Problem Solving, Self-Care",
+    "bestLifeDomains": [
+      "Practice"
+    ],
+    "bestStoryActions": [
+      "Any"
+    ],
+    "bestStoryWorlds": [
+      "Training Journey"
+    ],
+    "bestAdventureArchetypes": [
+      "Perseverance",
+      "Confidence"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Excellent with Growth Edge",
+    "notes": null
+  },
+  {
+    "id": 61,
+    "slug": "help-someone-finish-a-task",
+    "name": "Help Someone Finish a Task",
+    "missionGroup": "Assist someone in completing an important task.",
+    "description": "Helping & Caring, Friendship & Sharing",
+    "bestLifeDomains": [
+      "Help"
+    ],
+    "bestStoryActions": [
+      "Village",
+      "Forest"
+    ],
+    "bestStoryWorlds": [
+      "Helping Hand"
+    ],
+    "bestAdventureArchetypes": [
+      "Cooperation",
+      "Kindness"
+    ],
+    "bestCoreNeeds": [
+      "Easy"
+    ],
+    "difficulty": "Great teamwork story",
+    "notes": null
+  },
+  {
+    "id": 62,
+    "slug": "help-a-lonely-friend",
+    "name": "Help a Lonely Friend",
+    "missionGroup": "Include and support someone feeling left out.",
+    "description": "Friendship & Sharing",
+    "bestLifeDomains": [
+      "Help",
+      "Communicate"
+    ],
+    "bestStoryActions": [
+      "Meadow",
+      "School",
+      "Village"
+    ],
+    "bestStoryWorlds": [
+      "New Friend"
+    ],
+    "bestAdventureArchetypes": [
+      "Belonging",
+      "Empathy"
+    ],
+    "bestCoreNeeds": [
+      "Easy"
+    ],
+    "difficulty": "Emotional story",
+    "notes": null
+  },
+  {
+    "id": 63,
+    "slug": "help-the-community",
+    "name": "Help the Community",
+    "missionGroup": "Work together to solve a community problem.",
+    "description": "School & Community, Helping & Caring",
+    "bestLifeDomains": [
+      "Help",
+      "Organize"
+    ],
+    "bestStoryActions": [
+      "Village"
+    ],
+    "bestStoryWorlds": [
+      "Community Project"
+    ],
+    "bestAdventureArchetypes": [
+      "Responsibility",
+      "Cooperation"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Group effort",
+    "notes": null
+  },
+  {
+    "id": 64,
+    "slug": "help-prepare-a-celebration",
+    "name": "Help Prepare a Celebration",
+    "missionGroup": "Get everything ready before the celebration begins.",
+    "description": "Celebrations & Traditions",
+    "bestLifeDomains": [
+      "Help",
+      "Organize"
+    ],
+    "bestStoryActions": [
+      "Village"
+    ],
+    "bestStoryWorlds": [
+      "Celebration Preparation"
+    ],
+    "bestAdventureArchetypes": [
+      "Responsibility",
+      "Belonging"
+    ],
+    "bestCoreNeeds": [
+      "Easy"
+    ],
+    "difficulty": "Festival stories",
+    "notes": null
+  },
+  {
+    "id": 65,
+    "slug": "help-nature-recover",
+    "name": "Help Nature Recover",
+    "missionGroup": "Restore balance after nature is damaged.",
+    "description": "Exploring & Nature",
+    "bestLifeDomains": [
+      "Care For",
+      "Restore"
+    ],
+    "bestStoryActions": [
+      "Forest",
+      "River",
+      "Garden"
+    ],
+    "bestStoryWorlds": [
+      "Nature's Balance"
+    ],
+    "bestAdventureArchetypes": [
+      "Responsibility",
+      "Gratitude"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Environmental focus",
+    "notes": null
+  },
+  {
+    "id": 66,
+    "slug": "help-someone-believe-in-themselves",
+    "name": "Help Someone Believe in Themselves",
+    "missionGroup": "Encourage another character to try again.",
+    "description": "Helping & Caring, Friendship & Sharing",
+    "bestLifeDomains": [
+      "Encourage",
+      "Help"
+    ],
+    "bestStoryActions": [
+      "Any"
+    ],
+    "bestStoryWorlds": [
+      "Helping Hand"
+    ],
+    "bestAdventureArchetypes": [
+      "Confidence",
+      "Self-Worth"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Strong emotional growth",
+    "notes": null
+  },
+  {
+    "id": 67,
+    "slug": "help-settle-a-disagreement",
+    "name": "Help Settle a Disagreement",
+    "missionGroup": "Bring peace between two characters.",
+    "description": "Communication, Friendship & Sharing",
+    "bestLifeDomains": [
+      "Communicate"
+    ],
+    "bestStoryActions": [
+      "Village",
+      "Meadow"
+    ],
+    "bestStoryWorlds": [
+      "Friendship Repair"
+    ],
+    "bestAdventureArchetypes": [
+      "Empathy",
+      "Understanding"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Listening stories",
+    "notes": null
+  },
+  {
+    "id": 68,
+    "slug": "help-clean-a-place",
+    "name": "Help Clean a Place",
+    "missionGroup": "Work together to clean and restore a place.",
+    "description": "Responsibility, School & Community",
+    "bestLifeDomains": [
+      "Organize",
+      "Care For"
+    ],
+    "bestStoryActions": [
+      "School",
+      "Village",
+      "Forest"
+    ],
+    "bestStoryWorlds": [
+      "Community Project"
+    ],
+    "bestAdventureArchetypes": [
+      "Responsibility"
+    ],
+    "bestCoreNeeds": [
+      "Easy"
+    ],
+    "difficulty": "Service learning",
+    "notes": null
+  },
+  {
+    "id": 69,
+    "slug": "help-organize-an-event",
+    "name": "Help Organize an Event",
+    "missionGroup": "Make sure an important event runs smoothly.",
+    "description": "Celebrations & Traditions, School & Community",
+    "bestLifeDomains": [
+      "Organize"
+    ],
+    "bestStoryActions": [
+      "Village",
+      "School"
+    ],
+    "bestStoryWorlds": [
+      "Celebration Preparation"
+    ],
+    "bestAdventureArchetypes": [
+      "Responsibility",
+      "Teamwork"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Group coordination",
+    "notes": null
+  },
+  {
+    "id": 70,
+    "slug": "help-care-for-an-animal",
+    "name": "Help Care for an Animal",
+    "missionGroup": "Look after an animal until it is safe again.",
+    "description": "Helping & Caring, Exploring & Nature",
+    "bestLifeDomains": [
+      "Care For"
+    ],
+    "bestStoryActions": [
+      "Forest",
+      "Meadow"
+    ],
+    "bestStoryWorlds": [
+      "Helping Hand"
+    ],
+    "bestAdventureArchetypes": [
+      "Compassion",
+      "Responsibility"
+    ],
+    "bestCoreNeeds": [
+      "Easy"
+    ],
+    "difficulty": "Younger audience",
+    "notes": null
+  },
+  {
+    "id": 71,
+    "slug": "prepare-a-festival",
+    "name": "Prepare a Festival",
+    "missionGroup": "Get everything ready for a joyful celebration.",
+    "description": "Celebrations & Traditions",
+    "bestLifeDomains": [
+      "Organize",
+      "Create"
+    ],
+    "bestStoryActions": [
+      "Village"
+    ],
+    "bestStoryWorlds": [
+      "Festival Adventure"
+    ],
+    "bestAdventureArchetypes": [
+      "Belonging",
+      "Responsibility"
+    ],
+    "bestCoreNeeds": [
+      "Easy"
+    ],
+    "difficulty": "Ganesh Chaturthi friendly",
+    "notes": null
+  },
+  {
+    "id": 72,
+    "slug": "organize-a-surprise",
+    "name": "Organize a Surprise",
+    "missionGroup": "Plan a surprise for someone special.",
+    "description": "Friendship & Sharing",
+    "bestLifeDomains": [
+      "Organize"
+    ],
+    "bestStoryActions": [
+      "Village",
+      "Home"
+    ],
+    "bestStoryWorlds": [
+      "Unexpected Surprise"
+    ],
+    "bestAdventureArchetypes": [
+      "Kindness",
+      "Generosity"
+    ],
+    "bestCoreNeeds": [
+      "Easy"
+    ],
+    "difficulty": "Happy ending",
+    "notes": null
+  },
+  {
+    "id": 73,
+    "slug": "decorate-a-village",
+    "name": "Decorate a Village",
+    "missionGroup": "Work together to decorate for an event.",
+    "description": "Celebrations & Traditions, School & Community",
+    "bestLifeDomains": [
+      "Create",
+      "Organize"
+    ],
+    "bestStoryActions": [
+      "Village"
+    ],
+    "bestStoryWorlds": [
+      "Celebration Preparation"
+    ],
+    "bestAdventureArchetypes": [
+      "Cooperation"
+    ],
+    "bestCoreNeeds": [
+      "Easy"
+    ],
+    "difficulty": "Creative mission",
+    "notes": null
+  },
+  {
+    "id": 74,
+    "slug": "welcome-guests",
+    "name": "Welcome Guests",
+    "missionGroup": "Make visitors feel included and comfortable.",
+    "description": "Family & Daily Life, Celebrations & Traditions",
+    "bestLifeDomains": [
+      "Help",
+      "Welcome"
+    ],
+    "bestStoryActions": [
+      "Village"
+    ],
+    "bestStoryWorlds": [
+      "Celebration Preparation"
+    ],
+    "bestAdventureArchetypes": [
+      "Belonging",
+      "Kindness"
+    ],
+    "bestCoreNeeds": [
+      "Easy"
+    ],
+    "difficulty": "Social skills",
+    "notes": null
+  },
+  {
+    "id": 75,
+    "slug": "plan-a-performance",
+    "name": "Plan a Performance",
+    "missionGroup": "Prepare a dance, play or music performance.",
+    "description": "Art, Music & Creativity",
+    "bestLifeDomains": [
+      "Perform",
+      "Practice"
+    ],
+    "bestStoryActions": [
+      "Village",
+      "School"
+    ],
+    "bestStoryWorlds": [
+      "Performance Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Confidence",
+      "Creativity"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Great for stage fright stories",
+    "notes": null
+  },
+  {
+    "id": 76,
+    "slug": "celebrate-a-milestone",
+    "name": "Celebrate a Milestone",
+    "missionGroup": "Mark an important achievement together.",
+    "description": "Family & Daily Life",
+    "bestLifeDomains": [
+      "Celebrate"
+    ],
+    "bestStoryActions": [
+      "Village"
+    ],
+    "bestStoryWorlds": [
+      "Festival Adventure"
+    ],
+    "bestAdventureArchetypes": [
+      "Gratitude",
+      "Self-Worth"
+    ],
+    "bestCoreNeeds": [
+      "Easy"
+    ],
+    "difficulty": "Emotional ending",
+    "notes": null
+  },
+  {
+    "id": 77,
+    "slug": "thank-the-helpers",
+    "name": "Thank the Helpers",
+    "missionGroup": "Show appreciation to those who helped.",
+    "description": "Helping & Caring",
+    "bestLifeDomains": [
+      "Thank",
+      "Share"
+    ],
+    "bestStoryActions": [
+      "Any"
+    ],
+    "bestStoryWorlds": [
+      "Gift of Giving"
+    ],
+    "bestAdventureArchetypes": [
+      "Gratitude",
+      "Kindness"
+    ],
+    "bestCoreNeeds": [
+      "Easy"
+    ],
+    "difficulty": "Works with Modak",
+    "notes": null
+  },
+  {
+    "id": 78,
+    "slug": "share-the-harvest",
+    "name": "Share the Harvest",
+    "missionGroup": "Share food and joy with the community.",
+    "description": "Celebrations & Traditions, Helping & Caring",
+    "bestLifeDomains": [
+      "Share"
+    ],
+    "bestStoryActions": [
+      "Village",
+      "Farm"
+    ],
+    "bestStoryWorlds": [
+      "Gift of Giving"
+    ],
+    "bestAdventureArchetypes": [
+      "Generosity",
+      "Gratitude"
+    ],
+    "bestCoreNeeds": [
+      "Easy"
+    ],
+    "difficulty": "Community values",
+    "notes": null
+  },
+  {
+    "id": 79,
+    "slug": "celebrate-a-friendship",
+    "name": "Celebrate a Friendship",
+    "missionGroup": "Honour a special friendship.",
+    "description": "Friendship & Sharing",
+    "bestLifeDomains": [
+      "Celebrate"
+    ],
+    "bestStoryActions": [
+      "Meadow",
+      "Village"
+    ],
+    "bestStoryWorlds": [
+      "Journey Together"
+    ],
+    "bestAdventureArchetypes": [
+      "Belonging"
+    ],
+    "bestCoreNeeds": [
+      "Easy"
+    ],
+    "difficulty": "Heartwarming story",
+    "notes": null
+  },
+  {
+    "id": 80,
+    "slug": "prepare-a-community-feast",
+    "name": "Prepare a Community Feast",
+    "missionGroup": "Work together to prepare food for everyone.",
+    "description": "Celebrations & Traditions",
+    "bestLifeDomains": [
+      "Cook",
+      "Organize",
+      "Share"
+    ],
+    "bestStoryActions": [
+      "Village"
+    ],
+    "bestStoryWorlds": [
+      "Celebration Preparation"
+    ],
+    "bestAdventureArchetypes": [
+      "Cooperation",
+      "Generosity"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Team effort",
+    "notes": null
+  },
+  {
+    "id": 81,
+    "slug": "explore-a-mysterious-forest",
+    "name": "Explore a Mysterious Forest",
+    "missionGroup": "Discover what lies inside an unknown forest.",
+    "description": "Exploring & Nature",
+    "bestLifeDomains": [
+      "Explore"
+    ],
+    "bestStoryActions": [
+      "Forest"
+    ],
+    "bestStoryWorlds": [
+      "Expedition"
+    ],
+    "bestAdventureArchetypes": [
+      "Curiosity",
+      "Courage"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Classic adventure",
+    "notes": null
+  },
+  {
+    "id": 82,
+    "slug": "explore-a-hidden-cave",
+    "name": "Explore a Hidden Cave",
+    "missionGroup": "Carefully investigate a secret cave.",
+    "description": "Exploring & Nature",
+    "bestLifeDomains": [
+      "Explore"
+    ],
+    "bestStoryActions": [
+      "Cave"
+    ],
+    "bestStoryWorlds": [
+      "Hidden World"
+    ],
+    "bestAdventureArchetypes": [
+      "Confidence",
+      "Curiosity"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Mystery potential",
+    "notes": null
+  },
+  {
+    "id": 83,
+    "slug": "explore-a-forgotten-trail",
+    "name": "Explore a Forgotten Trail",
+    "missionGroup": "Rediscover an old pathway.",
+    "description": "Exploring & Nature",
+    "bestLifeDomains": [
+      "Explore"
+    ],
+    "bestStoryActions": [
+      "Forest",
+      "Mountain"
+    ],
+    "bestStoryWorlds": [
+      "Expedition"
+    ],
+    "bestAdventureArchetypes": [
+      "Perseverance"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Great with maps",
+    "notes": null
+  },
+  {
+    "id": 84,
+    "slug": "explore-a-mountain-path",
+    "name": "Explore a Mountain Path",
+    "missionGroup": "Reach a destination high in the mountains.",
+    "description": "Exploring & Nature",
+    "bestLifeDomains": [
+      "Explore",
+      "Climb"
+    ],
+    "bestStoryActions": [
+      "Mountain"
+    ],
+    "bestStoryWorlds": [
+      "Great Journey"
+    ],
+    "bestAdventureArchetypes": [
+      "Confidence"
+    ],
+    "bestCoreNeeds": [
+      "Hard"
+    ],
+    "difficulty": "Physical challenge",
+    "notes": null
+  },
+  {
+    "id": 85,
+    "slug": "explore-a-new-island",
+    "name": "Explore a New Island",
+    "missionGroup": "Discover an unfamiliar place.",
+    "description": "Exploring & Nature",
+    "bestLifeDomains": [
+      "Explore"
+    ],
+    "bestStoryActions": [
+      "Island",
+      "River"
+    ],
+    "bestStoryWorlds": [
+      "Expedition"
+    ],
+    "bestAdventureArchetypes": [
+      "Curiosity"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Discovery story",
+    "notes": null
+  },
+  {
+    "id": 86,
+    "slug": "explore-an-ancient-garden",
+    "name": "Explore an Ancient Garden",
+    "missionGroup": "Search a forgotten garden for hidden wonders.",
+    "description": "Exploring & Nature",
+    "bestLifeDomains": [
+      "Explore",
+      "Observe"
+    ],
+    "bestStoryActions": [
+      "Garden"
+    ],
+    "bestStoryWorlds": [
+      "Secret Discovery"
+    ],
+    "bestAdventureArchetypes": [
+      "Appreciation"
+    ],
+    "bestCoreNeeds": [
+      "Easy"
+    ],
+    "difficulty": "Peaceful exploration",
+    "notes": null
+  },
+  {
+    "id": 87,
+    "slug": "explore-a-secret-meadow",
+    "name": "Explore a Secret Meadow",
+    "missionGroup": "Find a magical hidden meadow.",
+    "description": "Exploring & Nature",
+    "bestLifeDomains": [
+      "Explore"
+    ],
+    "bestStoryActions": [
+      "Meadow"
+    ],
+    "bestStoryWorlds": [
+      "Secret Discovery"
+    ],
+    "bestAdventureArchetypes": [
+      "Wonder"
+    ],
+    "bestCoreNeeds": [
+      "Easy"
+    ],
+    "difficulty": "Gentle adventure",
+    "notes": null
+  },
+  {
+    "id": 88,
+    "slug": "explore-the-riverside",
+    "name": "Explore the Riverside",
+    "missionGroup": "Discover what the river has to teach.",
+    "description": "Exploring & Nature",
+    "bestLifeDomains": [
+      "Explore"
+    ],
+    "bestStoryActions": [
+      "River"
+    ],
+    "bestStoryWorlds": [
+      "Expedition"
+    ],
+    "bestAdventureArchetypes": [
+      "Curiosity"
+    ],
+    "bestCoreNeeds": [
+      "Easy"
+    ],
+    "difficulty": "Nature stories",
+    "notes": null
+  },
+  {
+    "id": 89,
+    "slug": "explore-after-a-storm",
+    "name": "Explore After a Storm",
+    "missionGroup": "Discover what has changed after bad weather.",
+    "description": "Exploring & Nature",
+    "bestLifeDomains": [
+      "Explore",
+      "Help"
+    ],
+    "bestStoryActions": [
+      "Forest",
+      "River"
+    ],
+    "bestStoryWorlds": [
+      "Nature's Balance"
+    ],
+    "bestAdventureArchetypes": [
+      "Adaptability"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Recovery theme",
+    "notes": null
+  },
+  {
+    "id": 90,
+    "slug": "explore-an-unvisited-place",
+    "name": "Explore an Unvisited Place",
+    "missionGroup": "Be the first to safely explore somewhere new.",
+    "description": "Exploring & Nature",
+    "bestLifeDomains": [
+      "Explore"
+    ],
+    "bestStoryActions": [
+      "Any"
+    ],
+    "bestStoryWorlds": [
+      "Discovery Journey"
+    ],
+    "bestAdventureArchetypes": [
+      "Courage",
+      "Curiosity"
+    ],
+    "bestCoreNeeds": [
+      "Hard"
+    ],
+    "difficulty": "Open-ended adventure",
+    "notes": null
+  },
+  {
+    "id": 91,
+    "slug": "care-for-an-injured-animal",
+    "name": "Care for an Injured Animal",
+    "missionGroup": "Help an injured animal recover.",
+    "description": "Helping & Caring",
+    "bestLifeDomains": [
+      "Care For"
+    ],
+    "bestStoryActions": [
+      "Forest",
+      "Meadow"
+    ],
+    "bestStoryWorlds": [
+      "Helping Hand"
+    ],
+    "bestAdventureArchetypes": [
+      "Compassion"
+    ],
+    "bestCoreNeeds": [
+      "Easy"
+    ],
+    "difficulty": "Gentle emotional story",
+    "notes": null
+  },
+  {
+    "id": 92,
+    "slug": "care-for-a-young-plant",
+    "name": "Care for a Young Plant",
+    "missionGroup": "Help a plant grow strong and healthy.",
+    "description": "Exploring & Nature, Self-Care",
+    "bestLifeDomains": [
+      "Care For"
+    ],
+    "bestStoryActions": [
+      "Garden"
+    ],
+    "bestStoryWorlds": [
+      "Nature's Balance"
+    ],
+    "bestAdventureArchetypes": [
+      "Patience",
+      "Responsibility"
+    ],
+    "bestCoreNeeds": [
+      "Easy"
+    ],
+    "difficulty": "Nature metaphor",
+    "notes": null
+  },
+  {
+    "id": 93,
+    "slug": "restore-a-polluted-pond",
+    "name": "Restore a Polluted Pond",
+    "missionGroup": "Clean and restore a damaged pond.",
+    "description": "Exploring & Nature",
+    "bestLifeDomains": [
+      "Restore"
+    ],
+    "bestStoryActions": [
+      "Pond"
+    ],
+    "bestStoryWorlds": [
+      "Nature's Balance",
+      "Restoration Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Responsibility"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Environmental story",
+    "notes": null
+  },
+  {
+    "id": 94,
+    "slug": "restore-a-damaged-home",
+    "name": "Restore a Damaged Home",
+    "missionGroup": "Help rebuild a home after damage.",
+    "description": "Family & Daily Life",
+    "bestLifeDomains": [
+      "Repair",
+      "Build"
+    ],
+    "bestStoryActions": [
+      "Village"
+    ],
+    "bestStoryWorlds": [
+      "Restoration Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Safety",
+      "Belonging"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Community effort",
+    "notes": null
+  },
+  {
+    "id": 95,
+    "slug": "restore-a-friendship",
+    "name": "Restore a Friendship",
+    "missionGroup": "Heal a friendship after conflict.",
+    "description": "Friendship & Sharing",
+    "bestLifeDomains": [
+      "Communicate"
+    ],
+    "bestStoryActions": [
+      "Any"
+    ],
+    "bestStoryWorlds": [
+      "Friendship Repair"
+    ],
+    "bestAdventureArchetypes": [
+      "Forgiveness",
+      "Empathy"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Emotional arc",
+    "notes": null
+  },
+  {
+    "id": 96,
+    "slug": "care-for-an-elder",
+    "name": "Care for an Elder",
+    "missionGroup": "Support an older character with kindness.",
+    "description": "Helping & Caring, Family & Daily Life",
+    "bestLifeDomains": [
+      "Help",
+      "Care For"
+    ],
+    "bestStoryActions": [
+      "Village"
+    ],
+    "bestStoryWorlds": [
+      "Helping Hand"
+    ],
+    "bestAdventureArchetypes": [
+      "Respect",
+      "Compassion"
+    ],
+    "bestCoreNeeds": [
+      "Easy"
+    ],
+    "difficulty": "Nurturing story",
+    "notes": null
+  },
+  {
+    "id": 97,
+    "slug": "care-for-a-community-space",
+    "name": "Care for a Community Space",
+    "missionGroup": "Improve a place everyone shares.",
+    "description": "School & Community",
+    "bestLifeDomains": [
+      "Organize",
+      "Restore"
+    ],
+    "bestStoryActions": [
+      "School",
+      "Village"
+    ],
+    "bestStoryWorlds": [
+      "Community Project"
+    ],
+    "bestAdventureArchetypes": [
+      "Responsibility"
+    ],
+    "bestCoreNeeds": [
+      "Easy"
+    ],
+    "difficulty": "Shared ownership",
+    "notes": null
+  },
+  {
+    "id": 98,
+    "slug": "restore-balance-to-nature",
+    "name": "Restore Balance to Nature",
+    "missionGroup": "Help nature recover from disruption.",
+    "description": "Exploring & Nature",
+    "bestLifeDomains": [
+      "Restore"
+    ],
+    "bestStoryActions": [
+      "Forest",
+      "River"
+    ],
+    "bestStoryWorlds": [
+      "Nature's Balance"
+    ],
+    "bestAdventureArchetypes": [
+      "Stewardship"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Conservation theme",
+    "notes": null
+  },
+  {
+    "id": 99,
+    "slug": "help-a-tree-grow-again",
+    "name": "Help a Tree Grow Again",
+    "missionGroup": "Nurse a damaged tree back to health.",
+    "description": "Exploring & Nature",
+    "bestLifeDomains": [
+      "Care For"
+    ],
+    "bestStoryActions": [
+      "Forest"
+    ],
+    "bestStoryWorlds": [
+      "Nature's Balance"
+    ],
+    "bestAdventureArchetypes": [
+      "Hope",
+      "Patience"
+    ],
+    "bestCoreNeeds": [
+      "Easy"
+    ],
+    "difficulty": "Symbolic growth",
+    "notes": null
+  },
+  {
+    "id": 100,
+    "slug": "bring-life-back-to-a-forgotten-place",
+    "name": "Bring Life Back to a Forgotten Place",
+    "missionGroup": "Transform an abandoned place into something beautiful.",
+    "description": "Building & Creating, Exploring & Nature",
+    "bestLifeDomains": [
+      "Restore",
+      "Create"
+    ],
+    "bestStoryActions": [
+      "Garden",
+      "Village"
+    ],
+    "bestStoryWorlds": [
+      "Restoration Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Hope",
+      "Creativity"
+    ],
+    "bestCoreNeeds": [
+      "Medium"
+    ],
+    "difficulty": "Strong visual transformation",
+    "notes": null
+  }
+]

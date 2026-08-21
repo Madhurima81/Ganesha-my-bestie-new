@@ -1,0 +1,5194 @@
+[
+  {
+    "id": 1,
+    "slug": "rescue-a-lost-friend",
+    "name": "Rescue a Lost Friend",
+    "missionGroup": "Rescue",
+    "description": "Find and safely bring back a missing friend.",
+    "bestLifeDomains": [
+      "Friendship & Sharing",
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Search",
+      "Help"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "Meadow",
+      "Cave"
+    ],
+    "bestAdventureArchetypes": [
+      "Rescue",
+      "Journey"
+    ],
+    "bestCoreNeeds": [
+      "Belonging",
+      "Courage"
+    ],
+    "difficulty": "Easy",
+    "notes": "Classic friendship story",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_FRIENDSHIP",
+      "LIFE_DOMAIN_NATURE"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_SEARCH",
+      "ACTION_HELP"
+    ],
+    "bestSettingIds": [
+      "SETTING_FOREST",
+      "SETTING_MEADOW",
+      "SETTING_CAVE"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_RESCUE_MISSION",
+      null
+    ],
+    "bestCoreNeedIds": [
+      "NEED_BELONGING",
+      "NEED_COURAGE"
+    ],
+    "unresolvedArchetype": [
+      "Journey"
+    ]
+  },
+  {
+    "id": 2,
+    "slug": "rescue-a-trapped-animal",
+    "name": "Rescue a Trapped Animal",
+    "missionGroup": "Rescue",
+    "description": "Free an animal that cannot escape.",
+    "bestLifeDomains": [
+      "Helping & Caring",
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Rescue",
+      "Help"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "River",
+      "Mountain"
+    ],
+    "bestAdventureArchetypes": [
+      "Rescue"
+    ],
+    "bestCoreNeeds": [
+      "Compassion",
+      "Responsibility"
+    ],
+    "difficulty": "Medium",
+    "notes": "Nature-focused",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_CARING",
+      "LIFE_DOMAIN_NATURE"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_RESCUE",
+      "ACTION_HELP"
+    ],
+    "bestSettingIds": [
+      "SETTING_FOREST",
+      "SETTING_RIVER",
+      "SETTING_MOUNTAIN"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_RESCUE_MISSION"
+    ],
+    "bestCoreNeedIds": [
+      "NEED_COMPASSION",
+      "NEED_RESPONSIBILITY"
+    ]
+  },
+  {
+    "id": 3,
+    "slug": "rescue-a-baby-creature",
+    "name": "Rescue a Baby Creature",
+    "missionGroup": "Rescue",
+    "description": "Help a baby animal reunite with its family.",
+    "bestLifeDomains": [
+      "Helping & Caring",
+      "Family & Daily Life"
+    ],
+    "bestStoryActions": [
+      "Rescue",
+      "Care For"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "Meadow",
+      "Pond"
+    ],
+    "bestAdventureArchetypes": [
+      "Rescue"
+    ],
+    "bestCoreNeeds": [
+      "Empathy",
+      "Nurturing"
+    ],
+    "difficulty": "Easy",
+    "notes": "Good for younger readers",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_CARING",
+      "LIFE_DOMAIN_FAMILY"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_RESCUE",
+      "ACTION_CARE_FOR"
+    ],
+    "bestSettingIds": [
+      "SETTING_FOREST",
+      "SETTING_MEADOW",
+      "SETTING_POND"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_RESCUE_MISSION"
+    ],
+    "bestCoreNeedIds": [
+      null,
+      null
+    ]
+  },
+  {
+    "id": 4,
+    "slug": "rescue-an-elder",
+    "name": "Rescue an Elder",
+    "missionGroup": "Rescue",
+    "description": "Help an older character reach safety.",
+    "bestLifeDomains": [
+      "Helping & Caring",
+      "Community"
+    ],
+    "bestStoryActions": [
+      "Help",
+      "Guide"
+    ],
+    "bestStoryWorlds": [
+      "Village",
+      "Forest"
+    ],
+    "bestAdventureArchetypes": [
+      "Rescue",
+      "Community"
+    ],
+    "bestCoreNeeds": [
+      "Respect",
+      "Responsibility"
+    ],
+    "difficulty": "Medium",
+    "notes": "Encourages kindness",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_CARING",
+      "LIFE_DOMAIN_SCHOOL"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_HELP",
+      "ACTION_GUIDE"
+    ],
+    "bestSettingIds": [
+      "SETTING_VILLAGE",
+      "SETTING_FOREST"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_RESCUE_MISSION",
+      "ARCHETYPE_COMMUNITY_PROJECT"
+    ],
+    "bestCoreNeedIds": [
+      "NEED_RESPECT",
+      "NEED_RESPONSIBILITY"
+    ]
+  },
+  {
+    "id": 5,
+    "slug": "rescue-someone-before-sunset",
+    "name": "Rescue Someone Before Sunset",
+    "missionGroup": "Rescue",
+    "description": "Complete the rescue before time runs out.",
+    "bestLifeDomains": [
+      "Helping & Caring",
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Rescue",
+      "Search"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "River"
+    ],
+    "bestAdventureArchetypes": [
+      "Rescue",
+      "Time Challenge"
+    ],
+    "bestCoreNeeds": [
+      "Courage",
+      "Perseverance"
+    ],
+    "difficulty": "Hard",
+    "notes": "Time-pressure story",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_CARING",
+      "LIFE_DOMAIN_NATURE"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_RESCUE",
+      "ACTION_SEARCH"
+    ],
+    "bestSettingIds": [
+      "SETTING_FOREST",
+      "SETTING_RIVER"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_RESCUE_MISSION",
+      null
+    ],
+    "bestCoreNeedIds": [
+      "NEED_COURAGE",
+      null
+    ],
+    "unresolvedArchetype": [
+      "Time Challenge"
+    ]
+  },
+  {
+    "id": 6,
+    "slug": "bring-help",
+    "name": "Bring Help",
+    "missionGroup": "Rescue",
+    "description": "Find someone who can solve the problem.",
+    "bestLifeDomains": [
+      "Helping & Caring",
+      "Community"
+    ],
+    "bestStoryActions": [
+      "Help",
+      "Deliver"
+    ],
+    "bestStoryWorlds": [
+      "Village",
+      "Forest"
+    ],
+    "bestAdventureArchetypes": [
+      "Helper"
+    ],
+    "bestCoreNeeds": [
+      "Responsibility",
+      "Courage"
+    ],
+    "difficulty": "Easy",
+    "notes": "Teamwork works well",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_CARING",
+      "LIFE_DOMAIN_SCHOOL"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_HELP",
+      "ACTION_DELIVER"
+    ],
+    "bestSettingIds": [
+      "SETTING_VILLAGE",
+      "SETTING_FOREST"
+    ],
+    "bestAdventureArchetypeIds": [
+      null
+    ],
+    "bestCoreNeedIds": [
+      "NEED_RESPONSIBILITY",
+      "NEED_COURAGE"
+    ],
+    "unresolvedArchetype": [
+      "Helper"
+    ]
+  },
+  {
+    "id": 7,
+    "slug": "find-a-safe-route",
+    "name": "Find a Safe Route",
+    "missionGroup": "Rescue",
+    "description": "Discover a safe path for everyone.",
+    "bestLifeDomains": [
+      "Exploring & Nature",
+      "Responsibility"
+    ],
+    "bestStoryActions": [
+      "Explore",
+      "Solve"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "Mountain",
+      "River"
+    ],
+    "bestAdventureArchetypes": [
+      "Journey"
+    ],
+    "bestCoreNeeds": [
+      "Leadership",
+      "Confidence"
+    ],
+    "difficulty": "Medium",
+    "notes": "Good for problem solving",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_NATURE",
+      "LIFE_DOMAIN_RESPONSIBILITY"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_EXPLORE",
+      "ACTION_SOLVE"
+    ],
+    "bestSettingIds": [
+      "SETTING_FOREST",
+      "SETTING_MOUNTAIN",
+      "SETTING_RIVER"
+    ],
+    "bestAdventureArchetypeIds": [
+      null
+    ],
+    "bestCoreNeedIds": [
+      null,
+      "NEED_CONFIDENCE"
+    ],
+    "unresolvedArchetype": [
+      "Journey"
+    ]
+  },
+  {
+    "id": 8,
+    "slug": "lead-everyone-to-safety",
+    "name": "Lead Everyone to Safety",
+    "missionGroup": "Rescue",
+    "description": "Guide a group safely through danger.",
+    "bestLifeDomains": [
+      "Community",
+      "Helping & Caring"
+    ],
+    "bestStoryActions": [
+      "Guide",
+      "Protect"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "River",
+      "Village"
+    ],
+    "bestAdventureArchetypes": [
+      "Journey",
+      "Rescue"
+    ],
+    "bestCoreNeeds": [
+      "Leadership",
+      "Responsibility"
+    ],
+    "difficulty": "Hard",
+    "notes": "Best with group stories",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_SCHOOL",
+      "LIFE_DOMAIN_CARING"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_GUIDE",
+      "ACTION_PROTECT"
+    ],
+    "bestSettingIds": [
+      "SETTING_FOREST",
+      "SETTING_RIVER",
+      "SETTING_VILLAGE"
+    ],
+    "bestAdventureArchetypeIds": [
+      null,
+      "ARCHETYPE_RESCUE_MISSION"
+    ],
+    "bestCoreNeedIds": [
+      null,
+      "NEED_RESPONSIBILITY"
+    ],
+    "unresolvedArchetype": [
+      "Journey"
+    ]
+  },
+  {
+    "id": 9,
+    "slug": "rescue-a-special-object",
+    "name": "Rescue a Special Object",
+    "missionGroup": "Rescue",
+    "description": "Recover something important before it is lost forever.",
+    "bestLifeDomains": [
+      "Responsibility",
+      "Family & Daily Life"
+    ],
+    "bestStoryActions": [
+      "Search",
+      "Rescue"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "Village"
+    ],
+    "bestAdventureArchetypes": [
+      "Quest"
+    ],
+    "bestCoreNeeds": [
+      "Responsibility",
+      "Perseverance"
+    ],
+    "difficulty": "Medium",
+    "notes": "Can connect to festivals",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_RESPONSIBILITY",
+      "LIFE_DOMAIN_FAMILY"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_SEARCH",
+      "ACTION_RESCUE"
+    ],
+    "bestSettingIds": [
+      "SETTING_FOREST",
+      "SETTING_VILLAGE"
+    ],
+    "bestAdventureArchetypeIds": [
+      null
+    ],
+    "bestCoreNeedIds": [
+      "NEED_RESPONSIBILITY",
+      null
+    ],
+    "unresolvedArchetype": [
+      "Quest"
+    ]
+  },
+  {
+    "id": 10,
+    "slug": "rescue-a-family-of-animals",
+    "name": "Rescue a Family of Animals",
+    "missionGroup": "Rescue",
+    "description": "Help an entire animal family escape danger.",
+    "bestLifeDomains": [
+      "Helping & Caring",
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Rescue",
+      "Protect"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "Meadow"
+    ],
+    "bestAdventureArchetypes": [
+      "Rescue"
+    ],
+    "bestCoreNeeds": [
+      "Compassion",
+      "Teamwork"
+    ],
+    "difficulty": "Hard",
+    "notes": "Good for multiple supporting characters",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_CARING",
+      "LIFE_DOMAIN_NATURE"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_RESCUE",
+      "ACTION_PROTECT"
+    ],
+    "bestSettingIds": [
+      "SETTING_FOREST",
+      "SETTING_MEADOW"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_RESCUE_MISSION"
+    ],
+    "bestCoreNeedIds": [
+      "NEED_COMPASSION",
+      null
+    ]
+  },
+  {
+    "id": 11,
+    "slug": "find-a-missing-object",
+    "name": "Find a Missing Object",
+    "missionGroup": "Find & Discover",
+    "description": "Locate an important lost object.",
+    "bestLifeDomains": [
+      "Responsibility",
+      "Family & Daily Life",
+      "Learning & Problem Solving"
+    ],
+    "bestStoryActions": [
+      "Search",
+      "Discover"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "Village",
+      "Home"
+    ],
+    "bestAdventureArchetypes": [
+      "Quest",
+      "Mystery"
+    ],
+    "bestCoreNeeds": [
+      "Responsibility",
+      "Confidence"
+    ],
+    "difficulty": "Easy",
+    "notes": "Classic search story",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_RESPONSIBILITY",
+      "LIFE_DOMAIN_FAMILY",
+      "LIFE_DOMAIN_LEARNING"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_SEARCH",
+      "ACTION_DISCOVER"
+    ],
+    "bestSettingIds": [
+      "SETTING_FOREST",
+      "SETTING_VILLAGE",
+      "SETTING_HOME"
+    ],
+    "bestAdventureArchetypeIds": [
+      null,
+      "ARCHETYPE_MYSTERY_TO_SOLVE"
+    ],
+    "bestCoreNeedIds": [
+      "NEED_RESPONSIBILITY",
+      "NEED_CONFIDENCE"
+    ],
+    "unresolvedArchetype": [
+      "Quest"
+    ]
+  },
+  {
+    "id": 12,
+    "slug": "find-a-hidden-place",
+    "name": "Find a Hidden Place",
+    "missionGroup": "Find & Discover",
+    "description": "Discover a secret location.",
+    "bestLifeDomains": [
+      "Exploring & Nature",
+      "Playing & Games"
+    ],
+    "bestStoryActions": [
+      "Explore",
+      "Discover"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "Cave",
+      "Mountain"
+    ],
+    "bestAdventureArchetypes": [
+      "Discovery",
+      "Adventure"
+    ],
+    "bestCoreNeeds": [
+      "Curiosity",
+      "Confidence"
+    ],
+    "difficulty": "Medium",
+    "notes": "Great for exploration",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_NATURE",
+      "LIFE_DOMAIN_PLAY"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_EXPLORE",
+      "ACTION_DISCOVER"
+    ],
+    "bestSettingIds": [
+      "SETTING_FOREST",
+      "SETTING_CAVE",
+      "SETTING_MOUNTAIN"
+    ],
+    "bestAdventureArchetypeIds": [
+      null,
+      null
+    ],
+    "bestCoreNeedIds": [
+      "NEED_CURIOSITY",
+      "NEED_CONFIDENCE"
+    ],
+    "unresolvedArchetype": [
+      "Discovery",
+      "Adventure"
+    ]
+  },
+  {
+    "id": 13,
+    "slug": "find-a-rare-flower",
+    "name": "Find a Rare Flower",
+    "missionGroup": "Find & Discover",
+    "description": "Search for a special flower needed for a purpose.",
+    "bestLifeDomains": [
+      "Exploring & Nature",
+      "Helping & Caring"
+    ],
+    "bestStoryActions": [
+      "Search",
+      "Explore"
+    ],
+    "bestStoryWorlds": [
+      "Meadow",
+      "Forest",
+      "Mountain"
+    ],
+    "bestAdventureArchetypes": [
+      "Quest"
+    ],
+    "bestCoreNeeds": [
+      "Perseverance",
+      "Appreciation"
+    ],
+    "difficulty": "Medium",
+    "notes": "Nature-focused",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_NATURE",
+      "LIFE_DOMAIN_CARING"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_SEARCH",
+      "ACTION_EXPLORE"
+    ],
+    "bestSettingIds": [
+      "SETTING_MEADOW",
+      "SETTING_FOREST",
+      "SETTING_MOUNTAIN"
+    ],
+    "bestAdventureArchetypeIds": [
+      null
+    ],
+    "bestCoreNeedIds": [
+      null,
+      null
+    ],
+    "unresolvedArchetype": [
+      "Quest"
+    ]
+  },
+  {
+    "id": 14,
+    "slug": "find-the-last-clue",
+    "name": "Find the Last Clue",
+    "missionGroup": "Find & Discover",
+    "description": "Locate the final clue to solve a mystery.",
+    "bestLifeDomains": [
+      "Learning & Problem Solving"
+    ],
+    "bestStoryActions": [
+      "Search",
+      "Solve"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "Village",
+      "Cave"
+    ],
+    "bestAdventureArchetypes": [
+      "Mystery"
+    ],
+    "bestCoreNeeds": [
+      "Curiosity",
+      "Problem Solving"
+    ],
+    "difficulty": "Medium",
+    "notes": "Works well with puzzles",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_LEARNING"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_SEARCH",
+      "ACTION_SOLVE"
+    ],
+    "bestSettingIds": [
+      "SETTING_FOREST",
+      "SETTING_VILLAGE",
+      "SETTING_CAVE"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_MYSTERY_TO_SOLVE"
+    ],
+    "bestCoreNeedIds": [
+      "NEED_CURIOSITY",
+      null
+    ]
+  },
+  {
+    "id": 15,
+    "slug": "find-the-right-path",
+    "name": "Find the Right Path",
+    "missionGroup": "Find & Discover",
+    "description": "Discover the correct route when lost.",
+    "bestLifeDomains": [
+      "Exploring & Nature",
+      "Responsibility"
+    ],
+    "bestStoryActions": [
+      "Explore",
+      "Solve"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "River",
+      "Mountain"
+    ],
+    "bestAdventureArchetypes": [
+      "Journey"
+    ],
+    "bestCoreNeeds": [
+      "Confidence",
+      "Adaptability"
+    ],
+    "difficulty": "Easy",
+    "notes": "Encourages flexibility",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_NATURE",
+      "LIFE_DOMAIN_RESPONSIBILITY"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_EXPLORE",
+      "ACTION_SOLVE"
+    ],
+    "bestSettingIds": [
+      "SETTING_FOREST",
+      "SETTING_RIVER",
+      "SETTING_MOUNTAIN"
+    ],
+    "bestAdventureArchetypeIds": [
+      null
+    ],
+    "bestCoreNeedIds": [
+      "NEED_CONFIDENCE",
+      "NEED_ADAPTABILITY"
+    ],
+    "unresolvedArchetype": [
+      "Journey"
+    ]
+  },
+  {
+    "id": 16,
+    "slug": "find-the-truth",
+    "name": "Find the Truth",
+    "missionGroup": "Find & Discover",
+    "description": "Discover what really happened.",
+    "bestLifeDomains": [
+      "Communication",
+      "Friendship & Sharing"
+    ],
+    "bestStoryActions": [
+      "Observe",
+      "Communicate"
+    ],
+    "bestStoryWorlds": [
+      "Village",
+      "School",
+      "Forest"
+    ],
+    "bestAdventureArchetypes": [
+      "Mystery"
+    ],
+    "bestCoreNeeds": [
+      "Honesty",
+      "Empathy"
+    ],
+    "difficulty": "Medium",
+    "notes": "Good for misunderstandings",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_COMMUNICATION",
+      "LIFE_DOMAIN_FRIENDSHIP"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_OBSERVE",
+      "ACTION_COMMUNICATE"
+    ],
+    "bestSettingIds": [
+      "SETTING_VILLAGE",
+      "SETTING_SCHOOL",
+      "SETTING_FOREST"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_MYSTERY_TO_SOLVE"
+    ],
+    "bestCoreNeedIds": [
+      null,
+      null
+    ]
+  },
+  {
+    "id": 17,
+    "slug": "find-a-forgotten-story",
+    "name": "Find a Forgotten Story",
+    "missionGroup": "Find & Discover",
+    "description": "Uncover an old tale or memory.",
+    "bestLifeDomains": [
+      "Learning & Problem Solving",
+      "Celebrations & Traditions"
+    ],
+    "bestStoryActions": [
+      "Explore",
+      "Learn"
+    ],
+    "bestStoryWorlds": [
+      "Banyan Tree",
+      "Story House",
+      "Village"
+    ],
+    "bestAdventureArchetypes": [
+      "Discovery"
+    ],
+    "bestCoreNeeds": [
+      "Curiosity",
+      "Identity"
+    ],
+    "difficulty": "Medium",
+    "notes": "Connects well with wisdom",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_LEARNING",
+      "LIFE_DOMAIN_CELEBRATIONS"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_EXPLORE",
+      "ACTION_LEARN"
+    ],
+    "bestSettingIds": [
+      "SETTING_BANYAN_TREE",
+      "SETTING_STORY_HOUSE",
+      "SETTING_VILLAGE"
+    ],
+    "bestAdventureArchetypeIds": [
+      null
+    ],
+    "bestCoreNeedIds": [
+      "NEED_CURIOSITY",
+      "NEED_IDENTITY"
+    ],
+    "unresolvedArchetype": [
+      "Discovery"
+    ]
+  },
+  {
+    "id": 18,
+    "slug": "find-the-secret-entrance",
+    "name": "Find the Secret Entrance",
+    "missionGroup": "Find & Discover",
+    "description": "Discover a hidden way into a special place.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Search",
+      "Explore"
+    ],
+    "bestStoryWorlds": [
+      "Cave",
+      "Forest",
+      "Mountain"
+    ],
+    "bestAdventureArchetypes": [
+      "Adventure"
+    ],
+    "bestCoreNeeds": [
+      "Courage",
+      "Curiosity"
+    ],
+    "difficulty": "Medium",
+    "notes": "Adventure-driven",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_NATURE"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_SEARCH",
+      "ACTION_EXPLORE"
+    ],
+    "bestSettingIds": [
+      "SETTING_CAVE",
+      "SETTING_FOREST",
+      "SETTING_MOUNTAIN"
+    ],
+    "bestAdventureArchetypeIds": [
+      null
+    ],
+    "bestCoreNeedIds": [
+      "NEED_COURAGE",
+      "NEED_CURIOSITY"
+    ],
+    "unresolvedArchetype": [
+      "Adventure"
+    ]
+  },
+  {
+    "id": 19,
+    "slug": "discover-a-hidden-treasure",
+    "name": "Discover a Hidden Treasure",
+    "missionGroup": "Find & Discover",
+    "description": "Find something valuable through effort.",
+    "bestLifeDomains": [
+      "Exploring & Nature",
+      "Playing & Games"
+    ],
+    "bestStoryActions": [
+      "Search",
+      "Discover"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "Cave",
+      "River"
+    ],
+    "bestAdventureArchetypes": [
+      "Treasure Hunt"
+    ],
+    "bestCoreNeeds": [
+      "Perseverance",
+      "Gratitude"
+    ],
+    "difficulty": "Medium",
+    "notes": "Treasure need not be material",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_NATURE",
+      "LIFE_DOMAIN_PLAY"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_SEARCH",
+      "ACTION_DISCOVER"
+    ],
+    "bestSettingIds": [
+      "SETTING_FOREST",
+      "SETTING_CAVE",
+      "SETTING_RIVER"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_TREASURE_HUNT"
+    ],
+    "bestCoreNeedIds": [
+      null,
+      null
+    ]
+  },
+  {
+    "id": 20,
+    "slug": "discover-an-old-map",
+    "name": "Discover an Old Map",
+    "missionGroup": "Find & Discover",
+    "description": "Find a forgotten map leading to a new adventure.",
+    "bestLifeDomains": [
+      "Learning & Problem Solving",
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Discover",
+      "Explore"
+    ],
+    "bestStoryWorlds": [
+      "Story House",
+      "Forest",
+      "Village"
+    ],
+    "bestAdventureArchetypes": [
+      "Discovery",
+      "Journey"
+    ],
+    "bestCoreNeeds": [
+      "Curiosity",
+      "Confidence"
+    ],
+    "difficulty": "Easy",
+    "notes": "Excellent story starter",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_LEARNING",
+      "LIFE_DOMAIN_NATURE"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_DISCOVER",
+      "ACTION_EXPLORE"
+    ],
+    "bestSettingIds": [
+      "SETTING_STORY_HOUSE",
+      "SETTING_FOREST",
+      "SETTING_VILLAGE"
+    ],
+    "bestAdventureArchetypeIds": [
+      null,
+      null
+    ],
+    "bestCoreNeedIds": [
+      "NEED_CURIOSITY",
+      "NEED_CONFIDENCE"
+    ],
+    "unresolvedArchetype": [
+      "Discovery",
+      "Journey"
+    ]
+  },
+  {
+    "id": 21,
+    "slug": "deliver-medicine",
+    "name": "Deliver Medicine",
+    "missionGroup": "Deliver",
+    "description": "Take important medicine safely to someone in need.",
+    "bestLifeDomains": [
+      "Helping & Caring",
+      "Responsibility"
+    ],
+    "bestStoryActions": [
+      "Deliver",
+      "Help"
+    ],
+    "bestStoryWorlds": [
+      "Village",
+      "Forest"
+    ],
+    "bestAdventureArchetypes": [
+      "Delivery",
+      "Journey"
+    ],
+    "bestCoreNeeds": [
+      "Responsibility",
+      "Compassion"
+    ],
+    "difficulty": "Medium",
+    "notes": "Time pressure works well",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_CARING",
+      "LIFE_DOMAIN_RESPONSIBILITY"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_DELIVER",
+      "ACTION_HELP"
+    ],
+    "bestSettingIds": [
+      "SETTING_VILLAGE",
+      "SETTING_FOREST"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_DELIVERY_QUEST",
+      null
+    ],
+    "bestCoreNeedIds": [
+      "NEED_RESPONSIBILITY",
+      "NEED_COMPASSION"
+    ],
+    "unresolvedArchetype": [
+      "Journey"
+    ]
+  },
+  {
+    "id": 22,
+    "slug": "deliver-an-invitation",
+    "name": "Deliver an Invitation",
+    "missionGroup": "Deliver",
+    "description": "Personally invite someone to a special event.",
+    "bestLifeDomains": [
+      "Celebrations & Traditions",
+      "Family & Daily Life"
+    ],
+    "bestStoryActions": [
+      "Deliver",
+      "Communicate"
+    ],
+    "bestStoryWorlds": [
+      "Village",
+      "Meadow"
+    ],
+    "bestAdventureArchetypes": [
+      "Delivery"
+    ],
+    "bestCoreNeeds": [
+      "Belonging",
+      "Confidence"
+    ],
+    "difficulty": "Easy",
+    "notes": "Great festival story",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_CELEBRATIONS",
+      "LIFE_DOMAIN_FAMILY"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_DELIVER",
+      "ACTION_COMMUNICATE"
+    ],
+    "bestSettingIds": [
+      "SETTING_VILLAGE",
+      "SETTING_MEADOW"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_DELIVERY_QUEST"
+    ],
+    "bestCoreNeedIds": [
+      "NEED_BELONGING",
+      "NEED_CONFIDENCE"
+    ]
+  },
+  {
+    "id": 23,
+    "slug": "deliver-an-important-message",
+    "name": "Deliver an Important Message",
+    "missionGroup": "Deliver",
+    "description": "Carry an urgent message to the right person.",
+    "bestLifeDomains": [
+      "Communication",
+      "Responsibility"
+    ],
+    "bestStoryActions": [
+      "Deliver",
+      "Communicate"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "Village"
+    ],
+    "bestAdventureArchetypes": [
+      "Delivery",
+      "Journey"
+    ],
+    "bestCoreNeeds": [
+      "Responsibility",
+      "Courage"
+    ],
+    "difficulty": "Medium",
+    "notes": "Can involve misunderstandings",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_COMMUNICATION",
+      "LIFE_DOMAIN_RESPONSIBILITY"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_DELIVER",
+      "ACTION_COMMUNICATE"
+    ],
+    "bestSettingIds": [
+      "SETTING_FOREST",
+      "SETTING_VILLAGE"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_DELIVERY_QUEST",
+      null
+    ],
+    "bestCoreNeedIds": [
+      "NEED_RESPONSIBILITY",
+      "NEED_COURAGE"
+    ],
+    "unresolvedArchetype": [
+      "Journey"
+    ]
+  },
+  {
+    "id": 24,
+    "slug": "return-a-borrowed-item",
+    "name": "Return a Borrowed Item",
+    "missionGroup": "Deliver",
+    "description": "Return something that belongs to someone else.",
+    "bestLifeDomains": [
+      "Responsibility",
+      "Friendship & Sharing"
+    ],
+    "bestStoryActions": [
+      "Deliver"
+    ],
+    "bestStoryWorlds": [
+      "Village",
+      "Home"
+    ],
+    "bestAdventureArchetypes": [
+      "Responsibility"
+    ],
+    "bestCoreNeeds": [
+      "Honesty",
+      "Responsibility"
+    ],
+    "difficulty": "Easy",
+    "notes": "Encourages integrity",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_RESPONSIBILITY",
+      "LIFE_DOMAIN_FRIENDSHIP"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_DELIVER"
+    ],
+    "bestSettingIds": [
+      "SETTING_VILLAGE",
+      "SETTING_HOME"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_RESPONSIBILITY_QUEST"
+    ],
+    "bestCoreNeedIds": [
+      null,
+      "NEED_RESPONSIBILITY"
+    ]
+  },
+  {
+    "id": 25,
+    "slug": "deliver-food",
+    "name": "Deliver Food",
+    "missionGroup": "Deliver",
+    "description": "Take food safely to someone waiting.",
+    "bestLifeDomains": [
+      "Helping & Caring",
+      "Family & Daily Life"
+    ],
+    "bestStoryActions": [
+      "Deliver",
+      "Help"
+    ],
+    "bestStoryWorlds": [
+      "Village",
+      "Forest"
+    ],
+    "bestAdventureArchetypes": [
+      "Delivery"
+    ],
+    "bestCoreNeeds": [
+      "Kindness",
+      "Generosity"
+    ],
+    "difficulty": "Easy",
+    "notes": "Good community story",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_CARING",
+      "LIFE_DOMAIN_FAMILY"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_DELIVER",
+      "ACTION_HELP"
+    ],
+    "bestSettingIds": [
+      "SETTING_VILLAGE",
+      "SETTING_FOREST"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_DELIVERY_QUEST"
+    ],
+    "bestCoreNeedIds": [
+      null,
+      null
+    ]
+  },
+  {
+    "id": 26,
+    "slug": "deliver-a-gift",
+    "name": "Deliver a Gift",
+    "missionGroup": "Deliver",
+    "description": "Deliver a thoughtful gift to brighten someone's day.",
+    "bestLifeDomains": [
+      "Friendship & Sharing",
+      "Celebrations & Traditions"
+    ],
+    "bestStoryActions": [
+      "Deliver",
+      "Share"
+    ],
+    "bestStoryWorlds": [
+      "Village",
+      "Meadow"
+    ],
+    "bestAdventureArchetypes": [
+      "Delivery"
+    ],
+    "bestCoreNeeds": [
+      "Gratitude",
+      "Generosity"
+    ],
+    "difficulty": "Easy",
+    "notes": "Works well with Modak stories",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_FRIENDSHIP",
+      "LIFE_DOMAIN_CELEBRATIONS"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_DELIVER",
+      "ACTION_SHARE"
+    ],
+    "bestSettingIds": [
+      "SETTING_VILLAGE",
+      "SETTING_MEADOW"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_DELIVERY_QUEST"
+    ],
+    "bestCoreNeedIds": [
+      null,
+      null
+    ]
+  },
+  {
+    "id": 27,
+    "slug": "deliver-a-sacred-object",
+    "name": "Deliver a Sacred Object",
+    "missionGroup": "Deliver",
+    "description": "Safely carry an important sacred object to its destination.",
+    "bestLifeDomains": [
+      "Celebrations & Traditions",
+      "Responsibility"
+    ],
+    "bestStoryActions": [
+      "Deliver",
+      "Protect"
+    ],
+    "bestStoryWorlds": [
+      "Temple",
+      "Village",
+      "Forest"
+    ],
+    "bestAdventureArchetypes": [
+      "Quest",
+      "Delivery"
+    ],
+    "bestCoreNeeds": [
+      "Respect",
+      "Responsibility"
+    ],
+    "difficulty": "Medium",
+    "notes": "Can connect with Ganesha celebrations",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_CELEBRATIONS",
+      "LIFE_DOMAIN_RESPONSIBILITY"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_DELIVER",
+      "ACTION_PROTECT"
+    ],
+    "bestSettingIds": [
+      "SETTING_TEMPLE",
+      "SETTING_VILLAGE",
+      "SETTING_FOREST"
+    ],
+    "bestAdventureArchetypeIds": [
+      null,
+      "ARCHETYPE_DELIVERY_QUEST"
+    ],
+    "bestCoreNeedIds": [
+      "NEED_RESPECT",
+      "NEED_RESPONSIBILITY"
+    ],
+    "unresolvedArchetype": [
+      "Quest"
+    ]
+  },
+  {
+    "id": 28,
+    "slug": "keep-a-promise",
+    "name": "Keep a Promise",
+    "missionGroup": "Deliver",
+    "description": "Fulfil an important promise made to someone.",
+    "bestLifeDomains": [
+      "Friendship & Sharing",
+      "Responsibility"
+    ],
+    "bestStoryActions": [
+      "Deliver",
+      "Help"
+    ],
+    "bestStoryWorlds": [
+      "Any Story World"
+    ],
+    "bestAdventureArchetypes": [
+      "Responsibility"
+    ],
+    "bestCoreNeeds": [
+      "Trust",
+      "Integrity"
+    ],
+    "difficulty": "Medium",
+    "notes": "Emotional mission",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_FRIENDSHIP",
+      "LIFE_DOMAIN_RESPONSIBILITY"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_DELIVER",
+      "ACTION_HELP"
+    ],
+    "bestSettingIds": [
+      null
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_RESPONSIBILITY_QUEST"
+    ],
+    "bestCoreNeedIds": [
+      "NEED_TRUST",
+      "NEED_INTEGRITY"
+    ]
+  },
+  {
+    "id": 29,
+    "slug": "return-something-precious",
+    "name": "Return Something Precious",
+    "missionGroup": "Deliver",
+    "description": "Return a valuable item to its rightful owner.",
+    "bestLifeDomains": [
+      "Responsibility",
+      "Helping & Caring"
+    ],
+    "bestStoryActions": [
+      "Search",
+      "Deliver"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "Village"
+    ],
+    "bestAdventureArchetypes": [
+      "Quest"
+    ],
+    "bestCoreNeeds": [
+      "Honesty",
+      "Empathy"
+    ],
+    "difficulty": "Medium",
+    "notes": "Encourages selflessness",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_RESPONSIBILITY",
+      "LIFE_DOMAIN_CARING"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_SEARCH",
+      "ACTION_DELIVER"
+    ],
+    "bestSettingIds": [
+      "SETTING_FOREST",
+      "SETTING_VILLAGE"
+    ],
+    "bestAdventureArchetypeIds": [
+      null
+    ],
+    "bestCoreNeedIds": [
+      null,
+      null
+    ],
+    "unresolvedArchetype": [
+      "Quest"
+    ]
+  },
+  {
+    "id": 30,
+    "slug": "deliver-supplies-before-sunset",
+    "name": "Deliver Supplies Before Sunset",
+    "missionGroup": "Deliver",
+    "description": "Reach the destination before time runs out.",
+    "bestLifeDomains": [
+      "Responsibility",
+      "Helping & Caring"
+    ],
+    "bestStoryActions": [
+      "Deliver",
+      "Journey"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "River",
+      "Mountain"
+    ],
+    "bestAdventureArchetypes": [
+      "Journey",
+      "Time Challenge"
+    ],
+    "bestCoreNeeds": [
+      "Perseverance",
+      "Courage"
+    ],
+    "difficulty": "Hard",
+    "notes": "Excellent for escalating tension",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_RESPONSIBILITY",
+      "LIFE_DOMAIN_CARING"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_DELIVER",
+      null
+    ],
+    "bestSettingIds": [
+      "SETTING_FOREST",
+      "SETTING_RIVER",
+      "SETTING_MOUNTAIN"
+    ],
+    "bestAdventureArchetypeIds": [
+      null,
+      null
+    ],
+    "bestCoreNeedIds": [
+      null,
+      "NEED_COURAGE"
+    ],
+    "unresolvedArchetype": [
+      "Journey",
+      "Time Challenge"
+    ]
+  },
+  {
+    "id": 31,
+    "slug": "build-a-bridge",
+    "name": "Build a Bridge",
+    "missionGroup": "Build & Repair",
+    "description": "Build a bridge so everyone can cross safely.",
+    "bestLifeDomains": [
+      "Building & Creating",
+      "Helping & Caring"
+    ],
+    "bestStoryActions": [
+      "Build"
+    ],
+    "bestStoryWorlds": [
+      "River",
+      "Forest"
+    ],
+    "bestAdventureArchetypes": [
+      "Builder",
+      "Community"
+    ],
+    "bestCoreNeeds": [
+      "Cooperation",
+      "Confidence"
+    ],
+    "difficulty": "Medium",
+    "notes": "Teamwork mission",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_BUILDING",
+      "LIFE_DOMAIN_CARING"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_BUILD"
+    ],
+    "bestSettingIds": [
+      "SETTING_RIVER",
+      "SETTING_FOREST"
+    ],
+    "bestAdventureArchetypeIds": [
+      null,
+      "ARCHETYPE_COMMUNITY_PROJECT"
+    ],
+    "bestCoreNeedIds": [
+      null,
+      "NEED_CONFIDENCE"
+    ],
+    "unresolvedArchetype": [
+      "Builder"
+    ]
+  },
+  {
+    "id": 32,
+    "slug": "repair-a-cart",
+    "name": "Repair a Cart",
+    "missionGroup": "Build & Repair",
+    "description": "Fix a broken cart needed for the journey.",
+    "bestLifeDomains": [
+      "Responsibility",
+      "Building & Creating"
+    ],
+    "bestStoryActions": [
+      "Repair",
+      "Build"
+    ],
+    "bestStoryWorlds": [
+      "Village",
+      "Forest"
+    ],
+    "bestAdventureArchetypes": [
+      "Builder"
+    ],
+    "bestCoreNeeds": [
+      "Perseverance",
+      "Responsibility"
+    ],
+    "difficulty": "Medium",
+    "notes": "Problem-solving",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_RESPONSIBILITY",
+      "LIFE_DOMAIN_BUILDING"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_REPAIR",
+      "ACTION_BUILD"
+    ],
+    "bestSettingIds": [
+      "SETTING_VILLAGE",
+      "SETTING_FOREST"
+    ],
+    "bestAdventureArchetypeIds": [
+      null
+    ],
+    "bestCoreNeedIds": [
+      null,
+      "NEED_RESPONSIBILITY"
+    ],
+    "unresolvedArchetype": [
+      "Builder"
+    ]
+  },
+  {
+    "id": 33,
+    "slug": "fix-a-broken-nest",
+    "name": "Fix a Broken Nest",
+    "missionGroup": "Build & Repair",
+    "description": "Repair an animal's damaged home.",
+    "bestLifeDomains": [
+      "Helping & Caring",
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Repair",
+      "Help"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "Meadow"
+    ],
+    "bestAdventureArchetypes": [
+      "Builder"
+    ],
+    "bestCoreNeeds": [
+      "Compassion",
+      "Responsibility"
+    ],
+    "difficulty": "Easy",
+    "notes": "Great for younger children",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_CARING",
+      "LIFE_DOMAIN_NATURE"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_REPAIR",
+      "ACTION_HELP"
+    ],
+    "bestSettingIds": [
+      "SETTING_FOREST",
+      "SETTING_MEADOW"
+    ],
+    "bestAdventureArchetypeIds": [
+      null
+    ],
+    "bestCoreNeedIds": [
+      "NEED_COMPASSION",
+      "NEED_RESPONSIBILITY"
+    ],
+    "unresolvedArchetype": [
+      "Builder"
+    ]
+  },
+  {
+    "id": 34,
+    "slug": "build-a-shelter",
+    "name": "Build a Shelter",
+    "missionGroup": "Build & Repair",
+    "description": "Create a safe shelter before bad weather arrives.",
+    "bestLifeDomains": [
+      "Helping & Caring",
+      "Building & Creating"
+    ],
+    "bestStoryActions": [
+      "Build"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "Mountain"
+    ],
+    "bestAdventureArchetypes": [
+      "Survival",
+      "Builder"
+    ],
+    "bestCoreNeeds": [
+      "Responsibility",
+      "Courage"
+    ],
+    "difficulty": "Medium",
+    "notes": "Nature-based",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_CARING",
+      "LIFE_DOMAIN_BUILDING"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_BUILD"
+    ],
+    "bestSettingIds": [
+      "SETTING_FOREST",
+      "SETTING_MOUNTAIN"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_SURVIVAL_ADVENTURE",
+      null
+    ],
+    "bestCoreNeedIds": [
+      "NEED_RESPONSIBILITY",
+      "NEED_COURAGE"
+    ],
+    "unresolvedArchetype": [
+      "Builder"
+    ]
+  },
+  {
+    "id": 35,
+    "slug": "restore-a-garden",
+    "name": "Restore a Garden",
+    "missionGroup": "Build & Repair",
+    "description": "Bring a neglected garden back to life.",
+    "bestLifeDomains": [
+      "Exploring & Nature",
+      "Helping & Caring"
+    ],
+    "bestStoryActions": [
+      "Restore",
+      "Care For"
+    ],
+    "bestStoryWorlds": [
+      "Garden",
+      "Village"
+    ],
+    "bestAdventureArchetypes": [
+      "Restoration"
+    ],
+    "bestCoreNeeds": [
+      "Patience",
+      "Hope"
+    ],
+    "difficulty": "Easy",
+    "notes": "Nature theme",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_NATURE",
+      "LIFE_DOMAIN_CARING"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_RESTORE",
+      "ACTION_CARE_FOR"
+    ],
+    "bestSettingIds": [
+      "SETTING_GARDEN",
+      "SETTING_VILLAGE"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_RESTORATION_STORY"
+    ],
+    "bestCoreNeedIds": [
+      "NEED_PATIENCE",
+      "NEED_HOPE"
+    ]
+  },
+  {
+    "id": 36,
+    "slug": "repair-a-pathway",
+    "name": "Repair a Pathway",
+    "missionGroup": "Build & Repair",
+    "description": "Make a dangerous path safe again.",
+    "bestLifeDomains": [
+      "Responsibility",
+      "Community"
+    ],
+    "bestStoryActions": [
+      "Repair"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "Mountain"
+    ],
+    "bestAdventureArchetypes": [
+      "Builder"
+    ],
+    "bestCoreNeeds": [
+      "Responsibility",
+      "Teamwork"
+    ],
+    "difficulty": "Medium",
+    "notes": "Community benefit",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_RESPONSIBILITY",
+      "LIFE_DOMAIN_SCHOOL"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_REPAIR"
+    ],
+    "bestSettingIds": [
+      "SETTING_FOREST",
+      "SETTING_MOUNTAIN"
+    ],
+    "bestAdventureArchetypeIds": [
+      null
+    ],
+    "bestCoreNeedIds": [
+      "NEED_RESPONSIBILITY",
+      null
+    ],
+    "unresolvedArchetype": [
+      "Builder"
+    ]
+  },
+  {
+    "id": 37,
+    "slug": "rebuild-a-playground",
+    "name": "Rebuild a Playground",
+    "missionGroup": "Build & Repair",
+    "description": "Work together to rebuild a place for everyone.",
+    "bestLifeDomains": [
+      "Building & Creating",
+      "Friendship & Sharing"
+    ],
+    "bestStoryActions": [
+      "Build"
+    ],
+    "bestStoryWorlds": [
+      "Village"
+    ],
+    "bestAdventureArchetypes": [
+      "Community"
+    ],
+    "bestCoreNeeds": [
+      "Cooperation",
+      "Belonging"
+    ],
+    "difficulty": "Medium",
+    "notes": "Group activity",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_BUILDING",
+      "LIFE_DOMAIN_FRIENDSHIP"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_BUILD"
+    ],
+    "bestSettingIds": [
+      "SETTING_VILLAGE"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_COMMUNITY_PROJECT"
+    ],
+    "bestCoreNeedIds": [
+      null,
+      "NEED_BELONGING"
+    ]
+  },
+  {
+    "id": 38,
+    "slug": "create-something-together",
+    "name": "Create Something Together",
+    "missionGroup": "Build & Repair",
+    "description": "Make something useful as a team.",
+    "bestLifeDomains": [
+      "Building & Creating",
+      "Art, Music & Creativity"
+    ],
+    "bestStoryActions": [
+      "Create",
+      "Build"
+    ],
+    "bestStoryWorlds": [
+      "Any"
+    ],
+    "bestAdventureArchetypes": [
+      "Collaboration"
+    ],
+    "bestCoreNeeds": [
+      "Teamwork",
+      "Creativity"
+    ],
+    "difficulty": "Easy",
+    "notes": "Flexible mission",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_BUILDING",
+      "LIFE_DOMAIN_CREATIVITY"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_CREATE",
+      "ACTION_BUILD"
+    ],
+    "bestSettingIds": [
+      null
+    ],
+    "bestAdventureArchetypeIds": [
+      null
+    ],
+    "bestCoreNeedIds": [
+      null,
+      null
+    ],
+    "unresolvedArchetype": [
+      "Collaboration"
+    ]
+  },
+  {
+    "id": 39,
+    "slug": "build-a-raft",
+    "name": "Build a Raft",
+    "missionGroup": "Build & Repair",
+    "description": "Construct a raft to continue the journey.",
+    "bestLifeDomains": [
+      "Exploring & Nature",
+      "Building & Creating"
+    ],
+    "bestStoryActions": [
+      "Build"
+    ],
+    "bestStoryWorlds": [
+      "River"
+    ],
+    "bestAdventureArchetypes": [
+      "Journey"
+    ],
+    "bestCoreNeeds": [
+      "Confidence",
+      "Problem Solving"
+    ],
+    "difficulty": "Medium",
+    "notes": "Adventure story",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_NATURE",
+      "LIFE_DOMAIN_BUILDING"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_BUILD"
+    ],
+    "bestSettingIds": [
+      "SETTING_RIVER"
+    ],
+    "bestAdventureArchetypeIds": [
+      null
+    ],
+    "bestCoreNeedIds": [
+      "NEED_CONFIDENCE",
+      null
+    ],
+    "unresolvedArchetype": [
+      "Journey"
+    ]
+  },
+  {
+    "id": 40,
+    "slug": "repair-festival-decorations",
+    "name": "Repair Festival Decorations",
+    "missionGroup": "Build & Repair",
+    "description": "Fix decorations before the celebration begins.",
+    "bestLifeDomains": [
+      "Celebrations & Traditions",
+      "Building & Creating"
+    ],
+    "bestStoryActions": [
+      "Repair",
+      "Create"
+    ],
+    "bestStoryWorlds": [
+      "Village"
+    ],
+    "bestAdventureArchetypes": [
+      "Community"
+    ],
+    "bestCoreNeeds": [
+      "Responsibility",
+      "Pride"
+    ],
+    "difficulty": "Easy",
+    "notes": "Festival setting",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_CELEBRATIONS",
+      "LIFE_DOMAIN_BUILDING"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_REPAIR",
+      "ACTION_CREATE"
+    ],
+    "bestSettingIds": [
+      "SETTING_VILLAGE"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_COMMUNITY_PROJECT"
+    ],
+    "bestCoreNeedIds": [
+      "NEED_RESPONSIBILITY",
+      null
+    ]
+  },
+  {
+    "id": 41,
+    "slug": "protect-a-young-animal",
+    "name": "Protect a Young Animal",
+    "missionGroup": "Protect",
+    "description": "Keep a young animal safe from danger.",
+    "bestLifeDomains": [
+      "Helping & Caring",
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Protect",
+      "Help"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "Meadow"
+    ],
+    "bestAdventureArchetypes": [
+      "Guardian"
+    ],
+    "bestCoreNeeds": [
+      "Compassion",
+      "Responsibility"
+    ],
+    "difficulty": "Easy",
+    "notes": "Nature-based",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_CARING",
+      "LIFE_DOMAIN_NATURE"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_PROTECT",
+      "ACTION_HELP"
+    ],
+    "bestSettingIds": [
+      "SETTING_FOREST",
+      "SETTING_MEADOW"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_GUARDIAN_ADVENTURE"
+    ],
+    "bestCoreNeedIds": [
+      "NEED_COMPASSION",
+      "NEED_RESPONSIBILITY"
+    ]
+  },
+  {
+    "id": 42,
+    "slug": "protect-a-sacred-tree",
+    "name": "Protect a Sacred Tree",
+    "missionGroup": "Protect",
+    "description": "Care for a tree important to everyone.",
+    "bestLifeDomains": [
+      "Exploring & Nature",
+      "Responsibility"
+    ],
+    "bestStoryActions": [
+      "Protect"
+    ],
+    "bestStoryWorlds": [
+      "Forest"
+    ],
+    "bestAdventureArchetypes": [
+      "Guardian"
+    ],
+    "bestCoreNeeds": [
+      "Respect",
+      "Responsibility"
+    ],
+    "difficulty": "Medium",
+    "notes": "Environmental story",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_NATURE",
+      "LIFE_DOMAIN_RESPONSIBILITY"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_PROTECT"
+    ],
+    "bestSettingIds": [
+      "SETTING_FOREST"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_GUARDIAN_ADVENTURE"
+    ],
+    "bestCoreNeedIds": [
+      "NEED_RESPECT",
+      "NEED_RESPONSIBILITY"
+    ]
+  },
+  {
+    "id": 43,
+    "slug": "protect-the-harvest",
+    "name": "Protect the Harvest",
+    "missionGroup": "Protect",
+    "description": "Save food that the community depends on.",
+    "bestLifeDomains": [
+      "Community",
+      "Responsibility"
+    ],
+    "bestStoryActions": [
+      "Protect",
+      "Organize"
+    ],
+    "bestStoryWorlds": [
+      "Farm",
+      "Village"
+    ],
+    "bestAdventureArchetypes": [
+      "Community"
+    ],
+    "bestCoreNeeds": [
+      "Responsibility",
+      "Gratitude"
+    ],
+    "difficulty": "Medium",
+    "notes": "Seasonal story",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_SCHOOL",
+      "LIFE_DOMAIN_RESPONSIBILITY"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_PROTECT",
+      "ACTION_ORGANIZE"
+    ],
+    "bestSettingIds": [
+      "SETTING_FARM",
+      "SETTING_VILLAGE"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_COMMUNITY_PROJECT"
+    ],
+    "bestCoreNeedIds": [
+      "NEED_RESPONSIBILITY",
+      null
+    ]
+  },
+  {
+    "id": 44,
+    "slug": "protect-a-celebration",
+    "name": "Protect a Celebration",
+    "missionGroup": "Protect",
+    "description": "Ensure an important celebration happens safely.",
+    "bestLifeDomains": [
+      "Celebrations & Traditions"
+    ],
+    "bestStoryActions": [
+      "Protect",
+      "Organize"
+    ],
+    "bestStoryWorlds": [
+      "Village"
+    ],
+    "bestAdventureArchetypes": [
+      "Community"
+    ],
+    "bestCoreNeeds": [
+      "Belonging",
+      "Responsibility"
+    ],
+    "difficulty": "Medium",
+    "notes": "Festival stories",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_CELEBRATIONS"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_PROTECT",
+      "ACTION_ORGANIZE"
+    ],
+    "bestSettingIds": [
+      "SETTING_VILLAGE"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_COMMUNITY_PROJECT"
+    ],
+    "bestCoreNeedIds": [
+      "NEED_BELONGING",
+      "NEED_RESPONSIBILITY"
+    ]
+  },
+  {
+    "id": 45,
+    "slug": "protect-a-secret",
+    "name": "Protect a Secret",
+    "missionGroup": "Protect",
+    "description": "Keep an important secret until the right time.",
+    "bestLifeDomains": [
+      "Friendship & Sharing",
+      "Communication"
+    ],
+    "bestStoryActions": [
+      "Protect"
+    ],
+    "bestStoryWorlds": [
+      "Any"
+    ],
+    "bestAdventureArchetypes": [
+      "Trust"
+    ],
+    "bestCoreNeeds": [
+      "Trust",
+      "Integrity"
+    ],
+    "difficulty": "Easy",
+    "notes": "Emotional story",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_FRIENDSHIP",
+      "LIFE_DOMAIN_COMMUNICATION"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_PROTECT"
+    ],
+    "bestSettingIds": [
+      null
+    ],
+    "bestAdventureArchetypeIds": [
+      null
+    ],
+    "bestCoreNeedIds": [
+      "NEED_TRUST",
+      "NEED_INTEGRITY"
+    ],
+    "unresolvedArchetype": [
+      "Trust"
+    ]
+  },
+  {
+    "id": 46,
+    "slug": "guard-an-important-object",
+    "name": "Guard an Important Object",
+    "missionGroup": "Protect",
+    "description": "Keep a valuable object safe.",
+    "bestLifeDomains": [
+      "Responsibility"
+    ],
+    "bestStoryActions": [
+      "Protect"
+    ],
+    "bestStoryWorlds": [
+      "Temple",
+      "Village"
+    ],
+    "bestAdventureArchetypes": [
+      "Guardian"
+    ],
+    "bestCoreNeeds": [
+      "Responsibility"
+    ],
+    "difficulty": "Medium",
+    "notes": "Can use sacred objects",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_RESPONSIBILITY"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_PROTECT"
+    ],
+    "bestSettingIds": [
+      "SETTING_TEMPLE",
+      "SETTING_VILLAGE"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_GUARDIAN_ADVENTURE"
+    ],
+    "bestCoreNeedIds": [
+      "NEED_RESPONSIBILITY"
+    ]
+  },
+  {
+    "id": 47,
+    "slug": "keep-everyone-safe",
+    "name": "Keep Everyone Safe",
+    "missionGroup": "Protect",
+    "description": "Help a group avoid danger.",
+    "bestLifeDomains": [
+      "Helping & Caring",
+      "Community"
+    ],
+    "bestStoryActions": [
+      "Protect",
+      "Guide"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "River"
+    ],
+    "bestAdventureArchetypes": [
+      "Guardian"
+    ],
+    "bestCoreNeeds": [
+      "Leadership",
+      "Courage"
+    ],
+    "difficulty": "Hard",
+    "notes": "Group story",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_CARING",
+      "LIFE_DOMAIN_SCHOOL"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_PROTECT",
+      "ACTION_GUIDE"
+    ],
+    "bestSettingIds": [
+      "SETTING_FOREST",
+      "SETTING_RIVER"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_GUARDIAN_ADVENTURE"
+    ],
+    "bestCoreNeedIds": [
+      null,
+      "NEED_COURAGE"
+    ]
+  },
+  {
+    "id": 48,
+    "slug": "protect-a-friendship",
+    "name": "Protect a Friendship",
+    "missionGroup": "Protect",
+    "description": "Prevent a friendship from falling apart.",
+    "bestLifeDomains": [
+      "Friendship & Sharing"
+    ],
+    "bestStoryActions": [
+      "Communicate",
+      "Help"
+    ],
+    "bestStoryWorlds": [
+      "Any"
+    ],
+    "bestAdventureArchetypes": [
+      "Relationship"
+    ],
+    "bestCoreNeeds": [
+      "Belonging",
+      "Empathy"
+    ],
+    "difficulty": "Medium",
+    "notes": "Emotional conflict",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_FRIENDSHIP"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_COMMUNICATE",
+      "ACTION_HELP"
+    ],
+    "bestSettingIds": [
+      null
+    ],
+    "bestAdventureArchetypeIds": [
+      null
+    ],
+    "bestCoreNeedIds": [
+      "NEED_BELONGING",
+      null
+    ],
+    "unresolvedArchetype": [
+      "Relationship"
+    ]
+  },
+  {
+    "id": 49,
+    "slug": "protect-a-home",
+    "name": "Protect a Home",
+    "missionGroup": "Protect",
+    "description": "Keep someone's home safe from harm.",
+    "bestLifeDomains": [
+      "Family & Daily Life",
+      "Helping & Caring"
+    ],
+    "bestStoryActions": [
+      "Protect",
+      "Repair"
+    ],
+    "bestStoryWorlds": [
+      "Village",
+      "Forest"
+    ],
+    "bestAdventureArchetypes": [
+      "Guardian"
+    ],
+    "bestCoreNeeds": [
+      "Safety",
+      "Responsibility"
+    ],
+    "difficulty": "Medium",
+    "notes": "Home-centered",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_FAMILY",
+      "LIFE_DOMAIN_CARING"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_PROTECT",
+      "ACTION_REPAIR"
+    ],
+    "bestSettingIds": [
+      "SETTING_VILLAGE",
+      "SETTING_FOREST"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_GUARDIAN_ADVENTURE"
+    ],
+    "bestCoreNeedIds": [
+      "NEED_SAFETY",
+      "NEED_RESPONSIBILITY"
+    ]
+  },
+  {
+    "id": 50,
+    "slug": "protect-nature",
+    "name": "Protect Nature",
+    "missionGroup": "Protect",
+    "description": "Care for the environment and its creatures.",
+    "bestLifeDomains": [
+      "Exploring & Nature",
+      "Responsibility"
+    ],
+    "bestStoryActions": [
+      "Protect",
+      "Care For"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "River",
+      "Garden"
+    ],
+    "bestAdventureArchetypes": [
+      "Guardian"
+    ],
+    "bestCoreNeeds": [
+      "Stewardship",
+      "Gratitude"
+    ],
+    "difficulty": "Medium",
+    "notes": "Nature conservation",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_NATURE",
+      "LIFE_DOMAIN_RESPONSIBILITY"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_PROTECT",
+      "ACTION_CARE_FOR"
+    ],
+    "bestSettingIds": [
+      "SETTING_FOREST",
+      "SETTING_RIVER",
+      "SETTING_GARDEN"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_GUARDIAN_ADVENTURE"
+    ],
+    "bestCoreNeedIds": [
+      null,
+      null
+    ]
+  },
+  {
+    "id": 51,
+    "slug": "learn-a-new-skill",
+    "name": "Learn a New Skill",
+    "missionGroup": "Learn & Grow",
+    "description": "Master a skill through practice.",
+    "bestLifeDomains": [
+      "Learning & Problem Solving"
+    ],
+    "bestStoryActions": [
+      "Learn"
+    ],
+    "bestStoryWorlds": [
+      "School",
+      "Village"
+    ],
+    "bestAdventureArchetypes": [
+      "Growth"
+    ],
+    "bestCoreNeeds": [
+      "Confidence",
+      "Perseverance"
+    ],
+    "difficulty": "Easy",
+    "notes": "Everyday learning",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_LEARNING"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_LEARN"
+    ],
+    "bestSettingIds": [
+      "SETTING_SCHOOL",
+      "SETTING_VILLAGE"
+    ],
+    "bestAdventureArchetypeIds": [
+      null
+    ],
+    "bestCoreNeedIds": [
+      "NEED_CONFIDENCE",
+      null
+    ],
+    "unresolvedArchetype": [
+      "Growth"
+    ]
+  },
+  {
+    "id": 52,
+    "slug": "solve-a-puzzle",
+    "name": "Solve a Puzzle",
+    "missionGroup": "Learn & Grow",
+    "description": "Solve a puzzle to move forward.",
+    "bestLifeDomains": [
+      "Learning & Problem Solving"
+    ],
+    "bestStoryActions": [
+      "Solve"
+    ],
+    "bestStoryWorlds": [
+      "Cave",
+      "Forest"
+    ],
+    "bestAdventureArchetypes": [
+      "Mystery"
+    ],
+    "bestCoreNeeds": [
+      "Curiosity",
+      "Problem Solving"
+    ],
+    "difficulty": "Medium",
+    "notes": "Good for clue stories",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_LEARNING"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_SOLVE"
+    ],
+    "bestSettingIds": [
+      "SETTING_CAVE",
+      "SETTING_FOREST"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_MYSTERY_TO_SOLVE"
+    ],
+    "bestCoreNeedIds": [
+      "NEED_CURIOSITY",
+      null
+    ]
+  },
+  {
+    "id": 53,
+    "slug": "understand-a-mystery",
+    "name": "Understand a Mystery",
+    "missionGroup": "Learn & Grow",
+    "description": "Discover why something unusual happened.",
+    "bestLifeDomains": [
+      "Learning & Problem Solving"
+    ],
+    "bestStoryActions": [
+      "Discover",
+      "Observe"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "Village"
+    ],
+    "bestAdventureArchetypes": [
+      "Mystery"
+    ],
+    "bestCoreNeeds": [
+      "Curiosity",
+      "Wisdom"
+    ],
+    "difficulty": "Medium",
+    "notes": "Observation skills",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_LEARNING"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_DISCOVER",
+      "ACTION_OBSERVE"
+    ],
+    "bestSettingIds": [
+      "SETTING_FOREST",
+      "SETTING_VILLAGE"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_MYSTERY_TO_SOLVE"
+    ],
+    "bestCoreNeedIds": [
+      "NEED_CURIOSITY",
+      null
+    ]
+  },
+  {
+    "id": 54,
+    "slug": "learn-from-a-mentor",
+    "name": "Learn from a Mentor",
+    "missionGroup": "Learn & Grow",
+    "description": "Gain wisdom from a guide.",
+    "bestLifeDomains": [
+      "Learning & Problem Solving"
+    ],
+    "bestStoryActions": [
+      "Learn"
+    ],
+    "bestStoryWorlds": [
+      "Banyan Tree",
+      "Story House"
+    ],
+    "bestAdventureArchetypes": [
+      "Mentor"
+    ],
+    "bestCoreNeeds": [
+      "Humility",
+      "Growth"
+    ],
+    "difficulty": "Easy",
+    "notes": "Bodhi or Ved stories",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_LEARNING"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_LEARN"
+    ],
+    "bestSettingIds": [
+      "SETTING_BANYAN_TREE",
+      "SETTING_STORY_HOUSE"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_MENTOR_JOURNEY"
+    ],
+    "bestCoreNeedIds": [
+      null,
+      null
+    ]
+  },
+  {
+    "id": 55,
+    "slug": "teach-someone-else",
+    "name": "Teach Someone Else",
+    "missionGroup": "Learn & Grow",
+    "description": "Help another character learn a skill.",
+    "bestLifeDomains": [
+      "Helping & Caring",
+      "Learning & Problem Solving"
+    ],
+    "bestStoryActions": [
+      "Teach",
+      "Help"
+    ],
+    "bestStoryWorlds": [
+      "Village",
+      "School"
+    ],
+    "bestAdventureArchetypes": [
+      "Mentor"
+    ],
+    "bestCoreNeeds": [
+      "Responsibility",
+      "Empathy"
+    ],
+    "difficulty": "Medium",
+    "notes": "Reinforces learning",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_CARING",
+      "LIFE_DOMAIN_LEARNING"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_TEACH",
+      "ACTION_HELP"
+    ],
+    "bestSettingIds": [
+      "SETTING_VILLAGE",
+      "SETTING_SCHOOL"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_MENTOR_JOURNEY"
+    ],
+    "bestCoreNeedIds": [
+      "NEED_RESPONSIBILITY",
+      null
+    ]
+  },
+  {
+    "id": 56,
+    "slug": "complete-training",
+    "name": "Complete Training",
+    "missionGroup": "Learn & Grow",
+    "description": "Finish a period of practice successfully.",
+    "bestLifeDomains": [
+      "Learning & Problem Solving"
+    ],
+    "bestStoryActions": [
+      "Practice"
+    ],
+    "bestStoryWorlds": [
+      "Mountain",
+      "Forest"
+    ],
+    "bestAdventureArchetypes": [
+      "Training"
+    ],
+    "bestCoreNeeds": [
+      "Perseverance",
+      "Discipline"
+    ],
+    "difficulty": "Medium",
+    "notes": "Character growth",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_LEARNING"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_PRACTICE"
+    ],
+    "bestSettingIds": [
+      "SETTING_MOUNTAIN",
+      "SETTING_FOREST"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_TRAINING_JOURNEY"
+    ],
+    "bestCoreNeedIds": [
+      null,
+      null
+    ]
+  },
+  {
+    "id": 57,
+    "slug": "face-a-fear",
+    "name": "Face a Fear",
+    "missionGroup": "Learn & Grow",
+    "description": "Overcome a personal fear.",
+    "bestLifeDomains": [
+      "Self-Care",
+      "Learning & Problem Solving"
+    ],
+    "bestStoryActions": [
+      "Try",
+      "Learn"
+    ],
+    "bestStoryWorlds": [
+      "Any"
+    ],
+    "bestAdventureArchetypes": [
+      "Inner Journey"
+    ],
+    "bestCoreNeeds": [
+      "Courage",
+      "Confidence"
+    ],
+    "difficulty": "Medium",
+    "notes": "Strong emotional arc",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_SELF_CARE",
+      "LIFE_DOMAIN_LEARNING"
+    ],
+    "bestStoryActionIds": [
+      null,
+      "ACTION_LEARN"
+    ],
+    "bestSettingIds": [
+      null
+    ],
+    "bestAdventureArchetypeIds": [
+      null
+    ],
+    "bestCoreNeedIds": [
+      "NEED_COURAGE",
+      "NEED_CONFIDENCE"
+    ],
+    "unresolvedArchetype": [
+      "Inner Journey"
+    ]
+  },
+  {
+    "id": 58,
+    "slug": "earn-someone-s-trust",
+    "name": "Earn Someone's Trust",
+    "missionGroup": "Learn & Grow",
+    "description": "Show through actions that you can be trusted.",
+    "bestLifeDomains": [
+      "Friendship & Sharing",
+      "Responsibility"
+    ],
+    "bestStoryActions": [
+      "Help",
+      "Keep Promise"
+    ],
+    "bestStoryWorlds": [
+      "Village",
+      "Forest"
+    ],
+    "bestAdventureArchetypes": [
+      "Relationship"
+    ],
+    "bestCoreNeeds": [
+      "Trust",
+      "Integrity"
+    ],
+    "difficulty": "Medium",
+    "notes": "Relationship-focused",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_FRIENDSHIP",
+      "LIFE_DOMAIN_RESPONSIBILITY"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_HELP",
+      null
+    ],
+    "bestSettingIds": [
+      "SETTING_VILLAGE",
+      "SETTING_FOREST"
+    ],
+    "bestAdventureArchetypeIds": [
+      null
+    ],
+    "bestCoreNeedIds": [
+      "NEED_TRUST",
+      "NEED_INTEGRITY"
+    ],
+    "unresolvedArchetype": [
+      "Relationship"
+    ]
+  },
+  {
+    "id": 59,
+    "slug": "discover-a-hidden-talent",
+    "name": "Discover a Hidden Talent",
+    "missionGroup": "Learn & Grow",
+    "description": "Realize a unique strength.",
+    "bestLifeDomains": [
+      "Art, Music & Creativity",
+      "Learning & Problem Solving"
+    ],
+    "bestStoryActions": [
+      "Explore",
+      "Create"
+    ],
+    "bestStoryWorlds": [
+      "Any"
+    ],
+    "bestAdventureArchetypes": [
+      "Discovery"
+    ],
+    "bestCoreNeeds": [
+      "Self-Worth",
+      "Confidence"
+    ],
+    "difficulty": "Easy",
+    "notes": "Identity stories",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_CREATIVITY",
+      "LIFE_DOMAIN_LEARNING"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_EXPLORE",
+      "ACTION_CREATE"
+    ],
+    "bestSettingIds": [
+      null
+    ],
+    "bestAdventureArchetypeIds": [
+      null
+    ],
+    "bestCoreNeedIds": [
+      null,
+      "NEED_CONFIDENCE"
+    ],
+    "unresolvedArchetype": [
+      "Discovery"
+    ]
+  },
+  {
+    "id": 60,
+    "slug": "practice-until-successful",
+    "name": "Practice Until Successful",
+    "missionGroup": "Learn & Grow",
+    "description": "Keep trying until improvement happens.",
+    "bestLifeDomains": [
+      "Learning & Problem Solving",
+      "Self-Care"
+    ],
+    "bestStoryActions": [
+      "Practice"
+    ],
+    "bestStoryWorlds": [
+      "Any"
+    ],
+    "bestAdventureArchetypes": [
+      "Growth"
+    ],
+    "bestCoreNeeds": [
+      "Perseverance",
+      "Confidence"
+    ],
+    "difficulty": "Medium",
+    "notes": "Excellent with Growth Edge",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_LEARNING",
+      "LIFE_DOMAIN_SELF_CARE"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_PRACTICE"
+    ],
+    "bestSettingIds": [
+      null
+    ],
+    "bestAdventureArchetypeIds": [
+      null
+    ],
+    "bestCoreNeedIds": [
+      null,
+      "NEED_CONFIDENCE"
+    ],
+    "unresolvedArchetype": [
+      "Growth"
+    ]
+  },
+  {
+    "id": 61,
+    "slug": "help-someone-finish-a-task",
+    "name": "Help Someone Finish a Task",
+    "missionGroup": "Help",
+    "description": "Assist someone in completing an important task.",
+    "bestLifeDomains": [
+      "Helping & Caring",
+      "Friendship & Sharing"
+    ],
+    "bestStoryActions": [
+      "Help"
+    ],
+    "bestStoryWorlds": [
+      "Village",
+      "Forest"
+    ],
+    "bestAdventureArchetypes": [
+      "Helper"
+    ],
+    "bestCoreNeeds": [
+      "Cooperation",
+      "Kindness"
+    ],
+    "difficulty": "Easy",
+    "notes": "Great teamwork story",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_CARING",
+      "LIFE_DOMAIN_FRIENDSHIP"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_HELP"
+    ],
+    "bestSettingIds": [
+      "SETTING_VILLAGE",
+      "SETTING_FOREST"
+    ],
+    "bestAdventureArchetypeIds": [
+      null
+    ],
+    "bestCoreNeedIds": [
+      null,
+      null
+    ],
+    "unresolvedArchetype": [
+      "Helper"
+    ]
+  },
+  {
+    "id": 62,
+    "slug": "help-a-lonely-friend",
+    "name": "Help a Lonely Friend",
+    "missionGroup": "Help",
+    "description": "Include and support someone feeling left out.",
+    "bestLifeDomains": [
+      "Friendship & Sharing"
+    ],
+    "bestStoryActions": [
+      "Help",
+      "Communicate"
+    ],
+    "bestStoryWorlds": [
+      "Meadow",
+      "School",
+      "Village"
+    ],
+    "bestAdventureArchetypes": [
+      "Friendship"
+    ],
+    "bestCoreNeeds": [
+      "Belonging",
+      "Empathy"
+    ],
+    "difficulty": "Easy",
+    "notes": "Emotional story",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_FRIENDSHIP"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_HELP",
+      "ACTION_COMMUNICATE"
+    ],
+    "bestSettingIds": [
+      "SETTING_MEADOW",
+      "SETTING_SCHOOL",
+      "SETTING_VILLAGE"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_FRIENDSHIP_REPAIR"
+    ],
+    "bestCoreNeedIds": [
+      "NEED_BELONGING",
+      null
+    ]
+  },
+  {
+    "id": 63,
+    "slug": "help-the-community",
+    "name": "Help the Community",
+    "missionGroup": "Help",
+    "description": "Work together to solve a community problem.",
+    "bestLifeDomains": [
+      "School & Community",
+      "Helping & Caring"
+    ],
+    "bestStoryActions": [
+      "Help",
+      "Organize"
+    ],
+    "bestStoryWorlds": [
+      "Village"
+    ],
+    "bestAdventureArchetypes": [
+      "Community"
+    ],
+    "bestCoreNeeds": [
+      "Responsibility",
+      "Cooperation"
+    ],
+    "difficulty": "Medium",
+    "notes": "Group effort",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_SCHOOL",
+      "LIFE_DOMAIN_CARING"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_HELP",
+      "ACTION_ORGANIZE"
+    ],
+    "bestSettingIds": [
+      "SETTING_VILLAGE"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_COMMUNITY_PROJECT"
+    ],
+    "bestCoreNeedIds": [
+      "NEED_RESPONSIBILITY",
+      null
+    ]
+  },
+  {
+    "id": 64,
+    "slug": "help-prepare-a-celebration",
+    "name": "Help Prepare a Celebration",
+    "missionGroup": "Help",
+    "description": "Get everything ready before the celebration begins.",
+    "bestLifeDomains": [
+      "Celebrations & Traditions"
+    ],
+    "bestStoryActions": [
+      "Help",
+      "Organize"
+    ],
+    "bestStoryWorlds": [
+      "Village"
+    ],
+    "bestAdventureArchetypes": [
+      "Community"
+    ],
+    "bestCoreNeeds": [
+      "Responsibility",
+      "Belonging"
+    ],
+    "difficulty": "Easy",
+    "notes": "Festival stories",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_CELEBRATIONS"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_HELP",
+      "ACTION_ORGANIZE"
+    ],
+    "bestSettingIds": [
+      "SETTING_VILLAGE"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_COMMUNITY_PROJECT"
+    ],
+    "bestCoreNeedIds": [
+      "NEED_RESPONSIBILITY",
+      "NEED_BELONGING"
+    ]
+  },
+  {
+    "id": 65,
+    "slug": "help-nature-recover",
+    "name": "Help Nature Recover",
+    "missionGroup": "Help",
+    "description": "Restore balance after nature is damaged.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Care For",
+      "Restore"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "River",
+      "Garden"
+    ],
+    "bestAdventureArchetypes": [
+      "Restoration"
+    ],
+    "bestCoreNeeds": [
+      "Responsibility",
+      "Gratitude"
+    ],
+    "difficulty": "Medium",
+    "notes": "Environmental focus",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_NATURE"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_CARE_FOR",
+      "ACTION_RESTORE"
+    ],
+    "bestSettingIds": [
+      "SETTING_FOREST",
+      "SETTING_RIVER",
+      "SETTING_GARDEN"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_RESTORATION_STORY"
+    ],
+    "bestCoreNeedIds": [
+      "NEED_RESPONSIBILITY",
+      null
+    ]
+  },
+  {
+    "id": 66,
+    "slug": "help-someone-believe-in-themselves",
+    "name": "Help Someone Believe in Themselves",
+    "missionGroup": "Help",
+    "description": "Encourage another character to try again.",
+    "bestLifeDomains": [
+      "Helping & Caring",
+      "Friendship & Sharing"
+    ],
+    "bestStoryActions": [
+      "Encourage",
+      "Help"
+    ],
+    "bestStoryWorlds": [
+      "Any"
+    ],
+    "bestAdventureArchetypes": [
+      "Mentor"
+    ],
+    "bestCoreNeeds": [
+      "Confidence",
+      "Self-Worth"
+    ],
+    "difficulty": "Medium",
+    "notes": "Strong emotional growth",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_CARING",
+      "LIFE_DOMAIN_FRIENDSHIP"
+    ],
+    "bestStoryActionIds": [
+      null,
+      "ACTION_HELP"
+    ],
+    "bestSettingIds": [
+      null
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_MENTOR_JOURNEY"
+    ],
+    "bestCoreNeedIds": [
+      "NEED_CONFIDENCE",
+      null
+    ]
+  },
+  {
+    "id": 67,
+    "slug": "help-settle-a-disagreement",
+    "name": "Help Settle a Disagreement",
+    "missionGroup": "Help",
+    "description": "Bring peace between two characters.",
+    "bestLifeDomains": [
+      "Communication",
+      "Friendship & Sharing"
+    ],
+    "bestStoryActions": [
+      "Communicate"
+    ],
+    "bestStoryWorlds": [
+      "Village",
+      "Meadow"
+    ],
+    "bestAdventureArchetypes": [
+      "Relationship"
+    ],
+    "bestCoreNeeds": [
+      "Empathy",
+      "Understanding"
+    ],
+    "difficulty": "Medium",
+    "notes": "Listening stories",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_COMMUNICATION",
+      "LIFE_DOMAIN_FRIENDSHIP"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_COMMUNICATE"
+    ],
+    "bestSettingIds": [
+      "SETTING_VILLAGE",
+      "SETTING_MEADOW"
+    ],
+    "bestAdventureArchetypeIds": [
+      null
+    ],
+    "bestCoreNeedIds": [
+      null,
+      null
+    ],
+    "unresolvedArchetype": [
+      "Relationship"
+    ]
+  },
+  {
+    "id": 68,
+    "slug": "help-clean-a-place",
+    "name": "Help Clean a Place",
+    "missionGroup": "Help",
+    "description": "Work together to clean and restore a place.",
+    "bestLifeDomains": [
+      "Responsibility",
+      "School & Community"
+    ],
+    "bestStoryActions": [
+      "Organize",
+      "Care For"
+    ],
+    "bestStoryWorlds": [
+      "School",
+      "Village",
+      "Forest"
+    ],
+    "bestAdventureArchetypes": [
+      "Community"
+    ],
+    "bestCoreNeeds": [
+      "Responsibility"
+    ],
+    "difficulty": "Easy",
+    "notes": "Service learning",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_RESPONSIBILITY",
+      "LIFE_DOMAIN_SCHOOL"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_ORGANIZE",
+      "ACTION_CARE_FOR"
+    ],
+    "bestSettingIds": [
+      "SETTING_SCHOOL",
+      "SETTING_VILLAGE",
+      "SETTING_FOREST"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_COMMUNITY_PROJECT"
+    ],
+    "bestCoreNeedIds": [
+      "NEED_RESPONSIBILITY"
+    ]
+  },
+  {
+    "id": 69,
+    "slug": "help-organize-an-event",
+    "name": "Help Organize an Event",
+    "missionGroup": "Help",
+    "description": "Make sure an important event runs smoothly.",
+    "bestLifeDomains": [
+      "Celebrations & Traditions",
+      "School & Community"
+    ],
+    "bestStoryActions": [
+      "Organize"
+    ],
+    "bestStoryWorlds": [
+      "Village",
+      "School"
+    ],
+    "bestAdventureArchetypes": [
+      "Community"
+    ],
+    "bestCoreNeeds": [
+      "Responsibility",
+      "Teamwork"
+    ],
+    "difficulty": "Medium",
+    "notes": "Group coordination",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_CELEBRATIONS",
+      "LIFE_DOMAIN_SCHOOL"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_ORGANIZE"
+    ],
+    "bestSettingIds": [
+      "SETTING_VILLAGE",
+      "SETTING_SCHOOL"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_COMMUNITY_PROJECT"
+    ],
+    "bestCoreNeedIds": [
+      "NEED_RESPONSIBILITY",
+      null
+    ]
+  },
+  {
+    "id": 70,
+    "slug": "help-care-for-an-animal",
+    "name": "Help Care for an Animal",
+    "missionGroup": "Help",
+    "description": "Look after an animal until it is safe again.",
+    "bestLifeDomains": [
+      "Helping & Caring",
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Care For"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "Meadow"
+    ],
+    "bestAdventureArchetypes": [
+      "Caregiver"
+    ],
+    "bestCoreNeeds": [
+      "Compassion",
+      "Responsibility"
+    ],
+    "difficulty": "Easy",
+    "notes": "Younger audience",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_CARING",
+      "LIFE_DOMAIN_NATURE"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_CARE_FOR"
+    ],
+    "bestSettingIds": [
+      "SETTING_FOREST",
+      "SETTING_MEADOW"
+    ],
+    "bestAdventureArchetypeIds": [
+      null
+    ],
+    "bestCoreNeedIds": [
+      "NEED_COMPASSION",
+      "NEED_RESPONSIBILITY"
+    ],
+    "unresolvedArchetype": [
+      "Caregiver"
+    ]
+  },
+  {
+    "id": 71,
+    "slug": "prepare-a-festival",
+    "name": "Prepare a Festival",
+    "missionGroup": "Celebrate",
+    "description": "Get everything ready for a joyful celebration.",
+    "bestLifeDomains": [
+      "Celebrations & Traditions"
+    ],
+    "bestStoryActions": [
+      "Organize",
+      "Create"
+    ],
+    "bestStoryWorlds": [
+      "Village"
+    ],
+    "bestAdventureArchetypes": [
+      "Community"
+    ],
+    "bestCoreNeeds": [
+      "Belonging",
+      "Responsibility"
+    ],
+    "difficulty": "Easy",
+    "notes": "Ganesh Chaturthi friendly",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_CELEBRATIONS"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_ORGANIZE",
+      "ACTION_CREATE"
+    ],
+    "bestSettingIds": [
+      "SETTING_VILLAGE"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_COMMUNITY_PROJECT"
+    ],
+    "bestCoreNeedIds": [
+      "NEED_BELONGING",
+      "NEED_RESPONSIBILITY"
+    ]
+  },
+  {
+    "id": 72,
+    "slug": "organize-a-surprise",
+    "name": "Organize a Surprise",
+    "missionGroup": "Celebrate",
+    "description": "Plan a surprise for someone special.",
+    "bestLifeDomains": [
+      "Friendship & Sharing"
+    ],
+    "bestStoryActions": [
+      "Organize"
+    ],
+    "bestStoryWorlds": [
+      "Village",
+      "Home"
+    ],
+    "bestAdventureArchetypes": [
+      "Celebration"
+    ],
+    "bestCoreNeeds": [
+      "Kindness",
+      "Generosity"
+    ],
+    "difficulty": "Easy",
+    "notes": "Happy ending",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_FRIENDSHIP"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_ORGANIZE"
+    ],
+    "bestSettingIds": [
+      "SETTING_VILLAGE",
+      "SETTING_HOME"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_CELEBRATION_PREPARATION"
+    ],
+    "bestCoreNeedIds": [
+      null,
+      null
+    ]
+  },
+  {
+    "id": 73,
+    "slug": "decorate-a-village",
+    "name": "Decorate a Village",
+    "missionGroup": "Celebrate",
+    "description": "Work together to decorate for an event.",
+    "bestLifeDomains": [
+      "Celebrations & Traditions",
+      "Community"
+    ],
+    "bestStoryActions": [
+      "Create",
+      "Organize"
+    ],
+    "bestStoryWorlds": [
+      "Village"
+    ],
+    "bestAdventureArchetypes": [
+      "Community"
+    ],
+    "bestCoreNeeds": [
+      "Cooperation"
+    ],
+    "difficulty": "Easy",
+    "notes": "Creative mission",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_CELEBRATIONS",
+      "LIFE_DOMAIN_SCHOOL"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_CREATE",
+      "ACTION_ORGANIZE"
+    ],
+    "bestSettingIds": [
+      "SETTING_VILLAGE"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_COMMUNITY_PROJECT"
+    ],
+    "bestCoreNeedIds": [
+      null
+    ]
+  },
+  {
+    "id": 74,
+    "slug": "welcome-guests",
+    "name": "Welcome Guests",
+    "missionGroup": "Celebrate",
+    "description": "Make visitors feel included and comfortable.",
+    "bestLifeDomains": [
+      "Family & Daily Life",
+      "Celebrations & Traditions"
+    ],
+    "bestStoryActions": [
+      "Help",
+      "Welcome"
+    ],
+    "bestStoryWorlds": [
+      "Village"
+    ],
+    "bestAdventureArchetypes": [
+      "Hospitality"
+    ],
+    "bestCoreNeeds": [
+      "Belonging",
+      "Kindness"
+    ],
+    "difficulty": "Easy",
+    "notes": "Social skills",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_FAMILY",
+      "LIFE_DOMAIN_CELEBRATIONS"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_HELP",
+      null
+    ],
+    "bestSettingIds": [
+      "SETTING_VILLAGE"
+    ],
+    "bestAdventureArchetypeIds": [
+      null
+    ],
+    "bestCoreNeedIds": [
+      "NEED_BELONGING",
+      null
+    ],
+    "unresolvedArchetype": [
+      "Hospitality"
+    ]
+  },
+  {
+    "id": 75,
+    "slug": "plan-a-performance",
+    "name": "Plan a Performance",
+    "missionGroup": "Celebrate",
+    "description": "Prepare a dance, play or music performance.",
+    "bestLifeDomains": [
+      "Art, Music & Creativity"
+    ],
+    "bestStoryActions": [
+      "Perform",
+      "Practice"
+    ],
+    "bestStoryWorlds": [
+      "Village",
+      "School"
+    ],
+    "bestAdventureArchetypes": [
+      "Performance"
+    ],
+    "bestCoreNeeds": [
+      "Confidence",
+      "Creativity"
+    ],
+    "difficulty": "Medium",
+    "notes": "Great for stage fright stories",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_CREATIVITY"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_PERFORM",
+      "ACTION_PRACTICE"
+    ],
+    "bestSettingIds": [
+      "SETTING_VILLAGE",
+      "SETTING_SCHOOL"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_PERFORMANCE_STORY"
+    ],
+    "bestCoreNeedIds": [
+      "NEED_CONFIDENCE",
+      null
+    ]
+  },
+  {
+    "id": 76,
+    "slug": "celebrate-a-milestone",
+    "name": "Celebrate a Milestone",
+    "missionGroup": "Celebrate",
+    "description": "Mark an important achievement together.",
+    "bestLifeDomains": [
+      "Family & Daily Life"
+    ],
+    "bestStoryActions": [
+      "Celebrate"
+    ],
+    "bestStoryWorlds": [
+      "Village"
+    ],
+    "bestAdventureArchetypes": [
+      "Celebration"
+    ],
+    "bestCoreNeeds": [
+      "Gratitude",
+      "Self-Worth"
+    ],
+    "difficulty": "Easy",
+    "notes": "Emotional ending",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_FAMILY"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_CELEBRATE"
+    ],
+    "bestSettingIds": [
+      "SETTING_VILLAGE"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_CELEBRATION_PREPARATION"
+    ],
+    "bestCoreNeedIds": [
+      null,
+      null
+    ]
+  },
+  {
+    "id": 77,
+    "slug": "thank-the-helpers",
+    "name": "Thank the Helpers",
+    "missionGroup": "Celebrate",
+    "description": "Show appreciation to those who helped.",
+    "bestLifeDomains": [
+      "Helping & Caring"
+    ],
+    "bestStoryActions": [
+      "Thank",
+      "Share"
+    ],
+    "bestStoryWorlds": [
+      "Any"
+    ],
+    "bestAdventureArchetypes": [
+      "Gratitude"
+    ],
+    "bestCoreNeeds": [
+      "Gratitude",
+      "Kindness"
+    ],
+    "difficulty": "Easy",
+    "notes": "Works with Modak",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_CARING"
+    ],
+    "bestStoryActionIds": [
+      null,
+      "ACTION_SHARE"
+    ],
+    "bestSettingIds": [
+      null
+    ],
+    "bestAdventureArchetypeIds": [
+      null
+    ],
+    "bestCoreNeedIds": [
+      null,
+      null
+    ],
+    "unresolvedArchetype": [
+      "Gratitude"
+    ]
+  },
+  {
+    "id": 78,
+    "slug": "share-the-harvest",
+    "name": "Share the Harvest",
+    "missionGroup": "Celebrate",
+    "description": "Share food and joy with the community.",
+    "bestLifeDomains": [
+      "Celebrations & Traditions",
+      "Helping & Caring"
+    ],
+    "bestStoryActions": [
+      "Share"
+    ],
+    "bestStoryWorlds": [
+      "Village",
+      "Farm"
+    ],
+    "bestAdventureArchetypes": [
+      "Community"
+    ],
+    "bestCoreNeeds": [
+      "Generosity",
+      "Gratitude"
+    ],
+    "difficulty": "Easy",
+    "notes": "Community values",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_CELEBRATIONS",
+      "LIFE_DOMAIN_CARING"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_SHARE"
+    ],
+    "bestSettingIds": [
+      "SETTING_VILLAGE",
+      "SETTING_FARM"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_COMMUNITY_PROJECT"
+    ],
+    "bestCoreNeedIds": [
+      null,
+      null
+    ]
+  },
+  {
+    "id": 79,
+    "slug": "celebrate-a-friendship",
+    "name": "Celebrate a Friendship",
+    "missionGroup": "Celebrate",
+    "description": "Honour a special friendship.",
+    "bestLifeDomains": [
+      "Friendship & Sharing"
+    ],
+    "bestStoryActions": [
+      "Celebrate"
+    ],
+    "bestStoryWorlds": [
+      "Meadow",
+      "Village"
+    ],
+    "bestAdventureArchetypes": [
+      "Relationship"
+    ],
+    "bestCoreNeeds": [
+      "Belonging"
+    ],
+    "difficulty": "Easy",
+    "notes": "Heartwarming story",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_FRIENDSHIP"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_CELEBRATE"
+    ],
+    "bestSettingIds": [
+      "SETTING_MEADOW",
+      "SETTING_VILLAGE"
+    ],
+    "bestAdventureArchetypeIds": [
+      null
+    ],
+    "bestCoreNeedIds": [
+      "NEED_BELONGING"
+    ],
+    "unresolvedArchetype": [
+      "Relationship"
+    ]
+  },
+  {
+    "id": 80,
+    "slug": "prepare-a-community-feast",
+    "name": "Prepare a Community Feast",
+    "missionGroup": "Celebrate",
+    "description": "Work together to prepare food for everyone.",
+    "bestLifeDomains": [
+      "Celebrations & Traditions"
+    ],
+    "bestStoryActions": [
+      "Cook",
+      "Organize",
+      "Share"
+    ],
+    "bestStoryWorlds": [
+      "Village"
+    ],
+    "bestAdventureArchetypes": [
+      "Community"
+    ],
+    "bestCoreNeeds": [
+      "Cooperation",
+      "Generosity"
+    ],
+    "difficulty": "Medium",
+    "notes": "Team effort",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_CELEBRATIONS"
+    ],
+    "bestStoryActionIds": [
+      null,
+      "ACTION_ORGANIZE",
+      "ACTION_SHARE"
+    ],
+    "bestSettingIds": [
+      "SETTING_VILLAGE"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_COMMUNITY_PROJECT"
+    ],
+    "bestCoreNeedIds": [
+      null,
+      null
+    ]
+  },
+  {
+    "id": 81,
+    "slug": "explore-a-mysterious-forest",
+    "name": "Explore a Mysterious Forest",
+    "missionGroup": "Explore",
+    "description": "Discover what lies inside an unknown forest.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Explore"
+    ],
+    "bestStoryWorlds": [
+      "Forest"
+    ],
+    "bestAdventureArchetypes": [
+      "Discovery"
+    ],
+    "bestCoreNeeds": [
+      "Curiosity",
+      "Courage"
+    ],
+    "difficulty": "Medium",
+    "notes": "Classic adventure",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_NATURE"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_EXPLORE"
+    ],
+    "bestSettingIds": [
+      "SETTING_FOREST"
+    ],
+    "bestAdventureArchetypeIds": [
+      null
+    ],
+    "bestCoreNeedIds": [
+      "NEED_CURIOSITY",
+      "NEED_COURAGE"
+    ],
+    "unresolvedArchetype": [
+      "Discovery"
+    ]
+  },
+  {
+    "id": 82,
+    "slug": "explore-a-hidden-cave",
+    "name": "Explore a Hidden Cave",
+    "missionGroup": "Explore",
+    "description": "Carefully investigate a secret cave.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Explore"
+    ],
+    "bestStoryWorlds": [
+      "Cave"
+    ],
+    "bestAdventureArchetypes": [
+      "Adventure"
+    ],
+    "bestCoreNeeds": [
+      "Confidence",
+      "Curiosity"
+    ],
+    "difficulty": "Medium",
+    "notes": "Mystery potential",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_NATURE"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_EXPLORE"
+    ],
+    "bestSettingIds": [
+      "SETTING_CAVE"
+    ],
+    "bestAdventureArchetypeIds": [
+      null
+    ],
+    "bestCoreNeedIds": [
+      "NEED_CONFIDENCE",
+      "NEED_CURIOSITY"
+    ],
+    "unresolvedArchetype": [
+      "Adventure"
+    ]
+  },
+  {
+    "id": 83,
+    "slug": "explore-a-forgotten-trail",
+    "name": "Explore a Forgotten Trail",
+    "missionGroup": "Explore",
+    "description": "Rediscover an old pathway.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Explore"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "Mountain"
+    ],
+    "bestAdventureArchetypes": [
+      "Journey"
+    ],
+    "bestCoreNeeds": [
+      "Perseverance"
+    ],
+    "difficulty": "Medium",
+    "notes": "Great with maps",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_NATURE"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_EXPLORE"
+    ],
+    "bestSettingIds": [
+      "SETTING_FOREST",
+      "SETTING_MOUNTAIN"
+    ],
+    "bestAdventureArchetypeIds": [
+      null
+    ],
+    "bestCoreNeedIds": [
+      null
+    ],
+    "unresolvedArchetype": [
+      "Journey"
+    ]
+  },
+  {
+    "id": 84,
+    "slug": "explore-a-mountain-path",
+    "name": "Explore a Mountain Path",
+    "missionGroup": "Explore",
+    "description": "Reach a destination high in the mountains.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Explore",
+      "Climb"
+    ],
+    "bestStoryWorlds": [
+      "Mountain"
+    ],
+    "bestAdventureArchetypes": [
+      "Journey"
+    ],
+    "bestCoreNeeds": [
+      "Confidence"
+    ],
+    "difficulty": "Hard",
+    "notes": "Physical challenge",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_NATURE"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_EXPLORE",
+      null
+    ],
+    "bestSettingIds": [
+      "SETTING_MOUNTAIN"
+    ],
+    "bestAdventureArchetypeIds": [
+      null
+    ],
+    "bestCoreNeedIds": [
+      "NEED_CONFIDENCE"
+    ],
+    "unresolvedArchetype": [
+      "Journey"
+    ]
+  },
+  {
+    "id": 85,
+    "slug": "explore-a-new-island",
+    "name": "Explore a New Island",
+    "missionGroup": "Explore",
+    "description": "Discover an unfamiliar place.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Explore"
+    ],
+    "bestStoryWorlds": [
+      "Island",
+      "River"
+    ],
+    "bestAdventureArchetypes": [
+      "Adventure"
+    ],
+    "bestCoreNeeds": [
+      "Curiosity"
+    ],
+    "difficulty": "Medium",
+    "notes": "Discovery story",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_NATURE"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_EXPLORE"
+    ],
+    "bestSettingIds": [
+      "SETTING_ISLAND",
+      "SETTING_RIVER"
+    ],
+    "bestAdventureArchetypeIds": [
+      null
+    ],
+    "bestCoreNeedIds": [
+      "NEED_CURIOSITY"
+    ],
+    "unresolvedArchetype": [
+      "Adventure"
+    ]
+  },
+  {
+    "id": 86,
+    "slug": "explore-an-ancient-garden",
+    "name": "Explore an Ancient Garden",
+    "missionGroup": "Explore",
+    "description": "Search a forgotten garden for hidden wonders.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Explore",
+      "Observe"
+    ],
+    "bestStoryWorlds": [
+      "Garden"
+    ],
+    "bestAdventureArchetypes": [
+      "Discovery"
+    ],
+    "bestCoreNeeds": [
+      "Appreciation"
+    ],
+    "difficulty": "Easy",
+    "notes": "Peaceful exploration",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_NATURE"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_EXPLORE",
+      "ACTION_OBSERVE"
+    ],
+    "bestSettingIds": [
+      "SETTING_GARDEN"
+    ],
+    "bestAdventureArchetypeIds": [
+      null
+    ],
+    "bestCoreNeedIds": [
+      null
+    ],
+    "unresolvedArchetype": [
+      "Discovery"
+    ]
+  },
+  {
+    "id": 87,
+    "slug": "explore-a-secret-meadow",
+    "name": "Explore a Secret Meadow",
+    "missionGroup": "Explore",
+    "description": "Find a magical hidden meadow.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Explore"
+    ],
+    "bestStoryWorlds": [
+      "Meadow"
+    ],
+    "bestAdventureArchetypes": [
+      "Discovery"
+    ],
+    "bestCoreNeeds": [
+      "Wonder"
+    ],
+    "difficulty": "Easy",
+    "notes": "Gentle adventure",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_NATURE"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_EXPLORE"
+    ],
+    "bestSettingIds": [
+      "SETTING_MEADOW"
+    ],
+    "bestAdventureArchetypeIds": [
+      null
+    ],
+    "bestCoreNeedIds": [
+      null
+    ],
+    "unresolvedArchetype": [
+      "Discovery"
+    ]
+  },
+  {
+    "id": 88,
+    "slug": "explore-the-riverside",
+    "name": "Explore the Riverside",
+    "missionGroup": "Explore",
+    "description": "Discover what the river has to teach.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Explore"
+    ],
+    "bestStoryWorlds": [
+      "River"
+    ],
+    "bestAdventureArchetypes": [
+      "Journey"
+    ],
+    "bestCoreNeeds": [
+      "Curiosity"
+    ],
+    "difficulty": "Easy",
+    "notes": "Nature stories",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_NATURE"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_EXPLORE"
+    ],
+    "bestSettingIds": [
+      "SETTING_RIVER"
+    ],
+    "bestAdventureArchetypeIds": [
+      null
+    ],
+    "bestCoreNeedIds": [
+      "NEED_CURIOSITY"
+    ],
+    "unresolvedArchetype": [
+      "Journey"
+    ]
+  },
+  {
+    "id": 89,
+    "slug": "explore-after-a-storm",
+    "name": "Explore After a Storm",
+    "missionGroup": "Explore",
+    "description": "Discover what has changed after bad weather.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Explore",
+      "Help"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "River"
+    ],
+    "bestAdventureArchetypes": [
+      "Restoration"
+    ],
+    "bestCoreNeeds": [
+      "Adaptability"
+    ],
+    "difficulty": "Medium",
+    "notes": "Recovery theme",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_NATURE"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_EXPLORE",
+      "ACTION_HELP"
+    ],
+    "bestSettingIds": [
+      "SETTING_FOREST",
+      "SETTING_RIVER"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_RESTORATION_STORY"
+    ],
+    "bestCoreNeedIds": [
+      "NEED_ADAPTABILITY"
+    ]
+  },
+  {
+    "id": 90,
+    "slug": "explore-an-unvisited-place",
+    "name": "Explore an Unvisited Place",
+    "missionGroup": "Explore",
+    "description": "Be the first to safely explore somewhere new.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Explore"
+    ],
+    "bestStoryWorlds": [
+      "Any"
+    ],
+    "bestAdventureArchetypes": [
+      "Discovery"
+    ],
+    "bestCoreNeeds": [
+      "Courage",
+      "Curiosity"
+    ],
+    "difficulty": "Hard",
+    "notes": "Open-ended adventure",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_NATURE"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_EXPLORE"
+    ],
+    "bestSettingIds": [
+      null
+    ],
+    "bestAdventureArchetypeIds": [
+      null
+    ],
+    "bestCoreNeedIds": [
+      "NEED_COURAGE",
+      "NEED_CURIOSITY"
+    ],
+    "unresolvedArchetype": [
+      "Discovery"
+    ]
+  },
+  {
+    "id": 91,
+    "slug": "care-for-an-injured-animal",
+    "name": "Care for an Injured Animal",
+    "missionGroup": "Care & Restore",
+    "description": "Help an injured animal recover.",
+    "bestLifeDomains": [
+      "Helping & Caring"
+    ],
+    "bestStoryActions": [
+      "Care For"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "Meadow"
+    ],
+    "bestAdventureArchetypes": [
+      "Caregiver"
+    ],
+    "bestCoreNeeds": [
+      "Compassion"
+    ],
+    "difficulty": "Easy",
+    "notes": "Gentle emotional story",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_CARING"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_CARE_FOR"
+    ],
+    "bestSettingIds": [
+      "SETTING_FOREST",
+      "SETTING_MEADOW"
+    ],
+    "bestAdventureArchetypeIds": [
+      null
+    ],
+    "bestCoreNeedIds": [
+      "NEED_COMPASSION"
+    ],
+    "unresolvedArchetype": [
+      "Caregiver"
+    ]
+  },
+  {
+    "id": 92,
+    "slug": "care-for-a-young-plant",
+    "name": "Care for a Young Plant",
+    "missionGroup": "Care & Restore",
+    "description": "Help a plant grow strong and healthy.",
+    "bestLifeDomains": [
+      "Exploring & Nature",
+      "Self-Care"
+    ],
+    "bestStoryActions": [
+      "Care For"
+    ],
+    "bestStoryWorlds": [
+      "Garden"
+    ],
+    "bestAdventureArchetypes": [
+      "Growth"
+    ],
+    "bestCoreNeeds": [
+      "Patience",
+      "Responsibility"
+    ],
+    "difficulty": "Easy",
+    "notes": "Nature metaphor",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_NATURE",
+      "LIFE_DOMAIN_SELF_CARE"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_CARE_FOR"
+    ],
+    "bestSettingIds": [
+      "SETTING_GARDEN"
+    ],
+    "bestAdventureArchetypeIds": [
+      null
+    ],
+    "bestCoreNeedIds": [
+      "NEED_PATIENCE",
+      "NEED_RESPONSIBILITY"
+    ],
+    "unresolvedArchetype": [
+      "Growth"
+    ]
+  },
+  {
+    "id": 93,
+    "slug": "restore-a-polluted-pond",
+    "name": "Restore a Polluted Pond",
+    "missionGroup": "Care & Restore",
+    "description": "Clean and restore a damaged pond.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Restore"
+    ],
+    "bestStoryWorlds": [
+      "Pond"
+    ],
+    "bestAdventureArchetypes": [
+      "Restoration"
+    ],
+    "bestCoreNeeds": [
+      "Responsibility"
+    ],
+    "difficulty": "Medium",
+    "notes": "Environmental story",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_NATURE"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_RESTORE"
+    ],
+    "bestSettingIds": [
+      "SETTING_POND"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_RESTORATION_STORY"
+    ],
+    "bestCoreNeedIds": [
+      "NEED_RESPONSIBILITY"
+    ]
+  },
+  {
+    "id": 94,
+    "slug": "restore-a-damaged-home",
+    "name": "Restore a Damaged Home",
+    "missionGroup": "Care & Restore",
+    "description": "Help rebuild a home after damage.",
+    "bestLifeDomains": [
+      "Family & Daily Life"
+    ],
+    "bestStoryActions": [
+      "Repair",
+      "Build"
+    ],
+    "bestStoryWorlds": [
+      "Village"
+    ],
+    "bestAdventureArchetypes": [
+      "Builder"
+    ],
+    "bestCoreNeeds": [
+      "Safety",
+      "Belonging"
+    ],
+    "difficulty": "Medium",
+    "notes": "Community effort",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_FAMILY"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_REPAIR",
+      "ACTION_BUILD"
+    ],
+    "bestSettingIds": [
+      "SETTING_VILLAGE"
+    ],
+    "bestAdventureArchetypeIds": [
+      null
+    ],
+    "bestCoreNeedIds": [
+      "NEED_SAFETY",
+      "NEED_BELONGING"
+    ],
+    "unresolvedArchetype": [
+      "Builder"
+    ]
+  },
+  {
+    "id": 95,
+    "slug": "restore-a-friendship",
+    "name": "Restore a Friendship",
+    "missionGroup": "Care & Restore",
+    "description": "Heal a friendship after conflict.",
+    "bestLifeDomains": [
+      "Friendship & Sharing"
+    ],
+    "bestStoryActions": [
+      "Communicate"
+    ],
+    "bestStoryWorlds": [
+      "Any"
+    ],
+    "bestAdventureArchetypes": [
+      "Relationship"
+    ],
+    "bestCoreNeeds": [
+      "Forgiveness",
+      "Empathy"
+    ],
+    "difficulty": "Medium",
+    "notes": "Emotional arc",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_FRIENDSHIP"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_COMMUNICATE"
+    ],
+    "bestSettingIds": [
+      null
+    ],
+    "bestAdventureArchetypeIds": [
+      null
+    ],
+    "bestCoreNeedIds": [
+      "NEED_FORGIVENESS",
+      null
+    ],
+    "unresolvedArchetype": [
+      "Relationship"
+    ]
+  },
+  {
+    "id": 96,
+    "slug": "care-for-an-elder",
+    "name": "Care for an Elder",
+    "missionGroup": "Care & Restore",
+    "description": "Support an older character with kindness.",
+    "bestLifeDomains": [
+      "Helping & Caring",
+      "Family & Daily Life"
+    ],
+    "bestStoryActions": [
+      "Help",
+      "Care For"
+    ],
+    "bestStoryWorlds": [
+      "Village"
+    ],
+    "bestAdventureArchetypes": [
+      "Caregiver"
+    ],
+    "bestCoreNeeds": [
+      "Respect",
+      "Compassion"
+    ],
+    "difficulty": "Easy",
+    "notes": "Nurturing story",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_CARING",
+      "LIFE_DOMAIN_FAMILY"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_HELP",
+      "ACTION_CARE_FOR"
+    ],
+    "bestSettingIds": [
+      "SETTING_VILLAGE"
+    ],
+    "bestAdventureArchetypeIds": [
+      null
+    ],
+    "bestCoreNeedIds": [
+      "NEED_RESPECT",
+      "NEED_COMPASSION"
+    ],
+    "unresolvedArchetype": [
+      "Caregiver"
+    ]
+  },
+  {
+    "id": 97,
+    "slug": "care-for-a-community-space",
+    "name": "Care for a Community Space",
+    "missionGroup": "Care & Restore",
+    "description": "Improve a place everyone shares.",
+    "bestLifeDomains": [
+      "School & Community"
+    ],
+    "bestStoryActions": [
+      "Organize",
+      "Restore"
+    ],
+    "bestStoryWorlds": [
+      "School",
+      "Village"
+    ],
+    "bestAdventureArchetypes": [
+      "Community"
+    ],
+    "bestCoreNeeds": [
+      "Responsibility"
+    ],
+    "difficulty": "Easy",
+    "notes": "Shared ownership",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_SCHOOL"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_ORGANIZE",
+      "ACTION_RESTORE"
+    ],
+    "bestSettingIds": [
+      "SETTING_SCHOOL",
+      "SETTING_VILLAGE"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_COMMUNITY_PROJECT"
+    ],
+    "bestCoreNeedIds": [
+      "NEED_RESPONSIBILITY"
+    ]
+  },
+  {
+    "id": 98,
+    "slug": "restore-balance-to-nature",
+    "name": "Restore Balance to Nature",
+    "missionGroup": "Care & Restore",
+    "description": "Help nature recover from disruption.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Restore"
+    ],
+    "bestStoryWorlds": [
+      "Forest",
+      "River"
+    ],
+    "bestAdventureArchetypes": [
+      "Restoration"
+    ],
+    "bestCoreNeeds": [
+      "Stewardship"
+    ],
+    "difficulty": "Medium",
+    "notes": "Conservation theme",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_NATURE"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_RESTORE"
+    ],
+    "bestSettingIds": [
+      "SETTING_FOREST",
+      "SETTING_RIVER"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_RESTORATION_STORY"
+    ],
+    "bestCoreNeedIds": [
+      null
+    ]
+  },
+  {
+    "id": 99,
+    "slug": "help-a-tree-grow-again",
+    "name": "Help a Tree Grow Again",
+    "missionGroup": "Care & Restore",
+    "description": "Nurse a damaged tree back to health.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Care For"
+    ],
+    "bestStoryWorlds": [
+      "Forest"
+    ],
+    "bestAdventureArchetypes": [
+      "Growth"
+    ],
+    "bestCoreNeeds": [
+      "Hope",
+      "Patience"
+    ],
+    "difficulty": "Easy",
+    "notes": "Symbolic growth",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_NATURE"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_CARE_FOR"
+    ],
+    "bestSettingIds": [
+      "SETTING_FOREST"
+    ],
+    "bestAdventureArchetypeIds": [
+      null
+    ],
+    "bestCoreNeedIds": [
+      "NEED_HOPE",
+      "NEED_PATIENCE"
+    ],
+    "unresolvedArchetype": [
+      "Growth"
+    ]
+  },
+  {
+    "id": 100,
+    "slug": "bring-life-back-to-a-forgotten-place",
+    "name": "Bring Life Back to a Forgotten Place",
+    "missionGroup": "Care & Restore",
+    "description": "Transform an abandoned place into something beautiful.",
+    "bestLifeDomains": [
+      "Building & Creating",
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Restore",
+      "Create"
+    ],
+    "bestStoryWorlds": [
+      "Garden",
+      "Village"
+    ],
+    "bestAdventureArchetypes": [
+      "Restoration"
+    ],
+    "bestCoreNeeds": [
+      "Hope",
+      "Creativity"
+    ],
+    "difficulty": "Medium",
+    "notes": "Strong visual transformation",
+    "_meta": {
+      "confidence": "audited",
+      "source": "user-provided clean table, replaces corrupted export",
+      "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped \u2014 flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+    },
+    "bestLifeDomainIds": [
+      "LIFE_DOMAIN_BUILDING",
+      "LIFE_DOMAIN_NATURE"
+    ],
+    "bestStoryActionIds": [
+      "ACTION_RESTORE",
+      "ACTION_CREATE"
+    ],
+    "bestSettingIds": [
+      "SETTING_GARDEN",
+      "SETTING_VILLAGE"
+    ],
+    "bestAdventureArchetypeIds": [
+      "ARCHETYPE_RESTORATION_STORY"
+    ],
+    "bestCoreNeedIds": [
+      "NEED_HOPE",
+      null
+    ]
+  }
+]

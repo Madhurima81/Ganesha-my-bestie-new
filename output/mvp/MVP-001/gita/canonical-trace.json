@@ -1,0 +1,36 @@
+{
+  "wisdom": {
+    "wisdom_id": "BG-006",
+    "tradition": "Bhagavad Gita",
+    "symbol": "Requested slice: 2.47",
+    "belief": "Focus on action and effort without attachment to reward.",
+    "authentic_anchor": "Do the work without clinging to the result.",
+    "source_document": "Gita etc posting content- july _26.docx",
+    "source_reference": "Requested BG-006 / 2.47 not found in supplied bundle. Verified alternate source present in bundle: Gita 2.10.",
+    "source_verified": false,
+    "content_status": "NEEDS_SOURCE_CONTENT",
+    "alternate_verified_source_reference": "Gita 2.10 appears in the supplied bundle, but it is not silently substituted for the requested 2.47 slice."
+  },
+  "practice": {
+    "practice_id": "PRAC-GITA-BG006-001",
+    "wisdom_id": "BG-006",
+    "practice_name": "Act Fully, Release the Reward",
+    "practice_belief": "Do your part with care, without grabbing for the outcome.",
+    "mechanic": "To be confirmed once the requested 2.47 source is available.",
+    "source_document": "Gita etc posting content- july _26.docx",
+    "source_reference": "Requested 2.47 slice absent from supplied bundle",
+    "source_verified": false,
+    "content_status": "NEEDS_SOURCE_CONTENT"
+  },
+  "story": {
+    "experience_id": "EXP-GITA-BG006-STORY-001",
+    "wisdom_id": "BG-006",
+    "practice_id": "PRAC-GITA-BG006-001",
+    "experience_type": "story",
+    "title": "Gita 2.47 child story placeholder",
+    "source_document": "Gita etc posting content- july _26.docx",
+    "source_reference": "Requested 2.47 slice absent from supplied bundle",
+    "source_verified": false,
+    "content_status": "NEEDS_SOURCE_CONTENT"
+  }
+}

@@ -1,0 +1,86 @@
+[
+  {
+    "id": 1,
+    "slug": "obstacle-gets-harder",
+    "name": "Obstacle Gets Harder",
+    "description": "The existing obstacle becomes more difficult.",
+    "commonUse": "Any story"
+  },
+  {
+    "id": 2,
+    "slug": "new-obstacle-appears",
+    "name": "New Obstacle Appears",
+    "description": "A second challenge blocks progress.",
+    "commonUse": "Adventure"
+  },
+  {
+    "id": 3,
+    "slug": "time-runs-short",
+    "name": "Time Runs Short",
+    "description": "Less time remains to finish the mission.",
+    "commonUse": "Time stories"
+  },
+  {
+    "id": 4,
+    "slug": "wrong-choice",
+    "name": "Wrong Choice",
+    "description": "The hero's mistake makes things worse.",
+    "commonUse": "Growth stories"
+  },
+  {
+    "id": 5,
+    "slug": "someone-gives-up",
+    "name": "Someone Gives Up",
+    "description": "A companion loses hope.",
+    "commonUse": "Team stories"
+  },
+  {
+    "id": 6,
+    "slug": "nature-changes",
+    "name": "Nature Changes",
+    "description": "Weather or environment suddenly changes.",
+    "commonUse": "Nature stories"
+  },
+  {
+    "id": 7,
+    "slug": "important-clue-lost",
+    "name": "Important Clue Lost",
+    "description": "A clue disappears or becomes unusable.",
+    "commonUse": "Mystery stories"
+  },
+  {
+    "id": 8,
+    "slug": "plan-fails",
+    "name": "Plan Fails",
+    "description": "The first solution doesn't work.",
+    "commonUse": "Problem-solving"
+  },
+  {
+    "id": 9,
+    "slug": "mission-seems-impossible",
+    "name": "Mission Seems Impossible",
+    "description": "The hero reaches the emotional low.",
+    "commonUse": "Almost every story"
+  },
+  {
+    "id": 10,
+    "slug": "difficult-choice",
+    "name": "Difficult Choice",
+    "description": "Two good options force a meaningful decision.",
+    "commonUse": "Moral stories"
+  },
+  {
+    "id": 11,
+    "slug": "unexpected-twist",
+    "name": "Unexpected Twist",
+    "description": "A surprising revelation changes the situation.",
+    "commonUse": "Mystery/Discovery"
+  },
+  {
+    "id": 12,
+    "slug": "rival-interferes",
+    "name": "Rival Interferes",
+    "description": "Another character unintentionally or intentionally complicates the mission.",
+    "commonUse": "Competition stories"
+  }
+]

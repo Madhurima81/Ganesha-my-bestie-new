@@ -1,0 +1,267 @@
+[
+  {
+    "id": "CONFLICT_RESCUE_CONFLICT",
+    "name": "Rescue Conflict",
+    "description": "Someone needs saving before it's too late.",
+    "hard": {
+      "conflict_intensity": "High"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_RESCUE"
+      ],
+      "best_obstacle_domains": [
+        "OD_PHYSICAL"
+      ],
+      "best_logic_families": [
+        "LOGIC_SAFETY_LOOP"
+      ],
+      "typical_ending_types": [
+        "END_SAFE_SANCTUARY"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "generatedFrom field in source confirms this is a computed Mission+Obstacle bridge, not primary data."
+    }
+  },
+  {
+    "id": "CONFLICT_JOURNEY_CONFLICT",
+    "name": "Journey Conflict",
+    "description": "The destination seems impossible to reach.",
+    "hard": {
+      "conflict_intensity": "Moderate"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_EXPLORE",
+        "MISSION_RETURN"
+      ],
+      "best_obstacle_domains": [
+        "OD_NATURE"
+      ],
+      "best_logic_families": [
+        "LOGIC_THRESHOLD_CROSSING"
+      ],
+      "typical_ending_types": [
+        "END_EXPANDED_HORIZON"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "generatedFrom field in source confirms this is a computed Mission+Obstacle bridge, not primary data."
+    }
+  },
+  {
+    "id": "CONFLICT_TRUST_CONFLICT",
+    "name": "Trust Conflict",
+    "description": "Others don't believe the hero.",
+    "hard": {
+      "conflict_intensity": "Moderate"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_RECONCILE"
+      ],
+      "best_obstacle_domains": [
+        "OD_SOCIAL"
+      ],
+      "best_logic_families": [
+        "LOGIC_PERSPECTIVE_SHIFT"
+      ],
+      "typical_ending_types": [
+        "END_RECONCILED_BOND"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "generatedFrom field in source confirms this is a computed Mission+Obstacle bridge, not primary data."
+    }
+  },
+  {
+    "id": "CONFLICT_FRIENDSHIP_CONFLICT",
+    "name": "Friendship Conflict",
+    "description": "Friends are drifting apart or arguing.",
+    "hard": {
+      "conflict_intensity": "Moderate"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_RECONCILE"
+      ],
+      "best_obstacle_domains": [
+        "OD_SOCIAL"
+      ],
+      "best_logic_families": [
+        "LOGIC_PERSPECTIVE_SHIFT"
+      ],
+      "typical_ending_types": [
+        "END_RECONCILED_BOND"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "generatedFrom field in source confirms this is a computed Mission+Obstacle bridge, not primary data."
+    }
+  },
+  {
+    "id": "CONFLICT_RESPONSIBILITY_CONFLICT",
+    "name": "Responsibility Conflict",
+    "description": "The hero must fulfil an important duty.",
+    "hard": {
+      "conflict_intensity": "Moderate"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_PROTECT",
+        "MISSION_NURTURE"
+      ],
+      "best_obstacle_domains": [
+        "OD_EMOTIONAL"
+      ],
+      "best_logic_families": [
+        "LOGIC_TRIAL_AND_ERROR"
+      ],
+      "typical_ending_types": [
+        "END_QUIET_MASTERY"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "generatedFrom field in source confirms this is a computed Mission+Obstacle bridge, not primary data."
+    }
+  },
+  {
+    "id": "CONFLICT_NATURE_CONFLICT",
+    "name": "Nature Conflict",
+    "description": "Nature itself blocks the mission.",
+    "hard": {
+      "conflict_intensity": "High"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_PROTECT",
+        "MISSION_RESCUE"
+      ],
+      "best_obstacle_domains": [
+        "OD_NATURE"
+      ],
+      "best_logic_families": [
+        "LOGIC_SAFETY_LOOP"
+      ],
+      "typical_ending_types": [
+        "END_SAFE_SANCTUARY"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "generatedFrom field in source confirms this is a computed Mission+Obstacle bridge, not primary data."
+    }
+  },
+  {
+    "id": "CONFLICT_PUZZLE_CONFLICT",
+    "name": "Puzzle Conflict",
+    "description": "Progress depends on solving a mystery or riddle.",
+    "hard": {
+      "conflict_intensity": "Moderate"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_SOLVE"
+      ],
+      "best_obstacle_domains": [
+        "OD_PUZZLE"
+      ],
+      "best_logic_families": [
+        "LOGIC_TRIAL_AND_ERROR"
+      ],
+      "typical_ending_types": [
+        "END_OPEN_WONDER"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "generatedFrom field in source confirms this is a computed Mission+Obstacle bridge, not primary data."
+    }
+  },
+  {
+    "id": "CONFLICT_TIME_CONFLICT",
+    "name": "Time Conflict",
+    "description": "The mission must finish before time runs out.",
+    "hard": {
+      "conflict_intensity": "High"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_RESCUE",
+        "MISSION_DELIVER"
+      ],
+      "best_obstacle_domains": [
+        "OD_TIME"
+      ],
+      "best_logic_families": [
+        "LOGIC_RUNAWAY_CHAIN"
+      ],
+      "typical_ending_types": [
+        "END_SHARED_CELEBRATION"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "generatedFrom field in source confirms this is a computed Mission+Obstacle bridge, not primary data."
+    }
+  },
+  {
+    "id": "CONFLICT_COMMUNITY_CONFLICT",
+    "name": "Community Conflict",
+    "description": "The group cannot work together.",
+    "hard": {
+      "conflict_intensity": "Moderate"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_BUILD",
+        "MISSION_CELEBRATE"
+      ],
+      "best_obstacle_domains": [
+        "OD_SOCIAL"
+      ],
+      "best_logic_families": [
+        "LOGIC_CUMULATIVE_BUILD"
+      ],
+      "typical_ending_types": [
+        "END_TRANSFORMED_COMMUNITY"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "generatedFrom field in source confirms this is a computed Mission+Obstacle bridge, not primary data."
+    }
+  },
+  {
+    "id": "CONFLICT_INNER_CONFLICT",
+    "name": "Inner Conflict",
+    "description": "The hero's own false belief is the biggest obstacle.",
+    "hard": {
+      "conflict_intensity": "High"
+    },
+    "soft_suggested": {
+      "best_mission_types": [
+        "MISSION_MASTERY"
+      ],
+      "best_obstacle_domains": [
+        "OD_EMOTIONAL"
+      ],
+      "best_logic_families": [
+        "LOGIC_PERSPECTIVE_SHIFT"
+      ],
+      "typical_ending_types": [
+        "END_QUIET_MASTERY"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "generatedFrom field in source confirms this is a computed Mission+Obstacle bridge, not primary data."
+    }
+  }
+]

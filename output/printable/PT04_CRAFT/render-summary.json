@@ -1,0 +1,25 @@
+{
+  "generated_at": "2026-08-11T15:46:12.085Z",
+  "template_id": "PT04_CRAFT",
+  "variants": [
+    {
+      "name": "mooshika-band",
+      "final_result": "APPROVED",
+      "errors": [],
+      "input_json": "public\\prana-story-generator\\printable-poc\\data\\PT04_CRAFT\\PT04_CRAFT_MOOSHIKA_BAND.sample.json"
+    },
+    {
+      "name": "lotus-wheel",
+      "final_result": "APPROVED",
+      "errors": [],
+      "input_json": "public\\prana-story-generator\\printable-poc\\data\\PT04_CRAFT\\PT04_CRAFT_LOTUS_WHEEL.sample.json"
+    },
+    {
+      "name": "ears-badge",
+      "final_result": "APPROVED",
+      "errors": [],
+      "input_json": "public\\prana-story-generator\\printable-poc\\data\\PT04_CRAFT\\PT04_CRAFT_EARS_BADGE.sample.json"
+    }
+  ],
+  "final_result": "APPROVED"
+}

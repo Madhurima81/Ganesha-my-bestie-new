@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Prana Kids Story Builder</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F7F5FB; --card:#FFFFFF; --ink:#2E2740; --sub:#7A7290;
+  --lav:#7C6BAE; --lav-deep:#5C4C8C; --lav-pale:#EFEAF9; --lav-line:#E2DBF3;
+  --gold:#C9A65E; --gold-soft:#F1E7D2;
+  --border:#E7E2F1; --shadow:0 6px 24px rgba(76,60,120,.08);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;line-height:1.5;
+  background-image:radial-gradient(circle at 20% 0%, #FBF9FD 0%, var(--bg) 55%);}
+h1,h2,h3,.brand{font-family:'Playfair Display',serif}
+.wrap{max-width:980px;margin:0 auto;padding:28px 20px 80px}
+header.top{text-align:center;margin-bottom:22px}
+header.top .brand{font-size:32px;font-weight:700;color:var(--lav-deep);letter-spacing:.2px}
+header.top p{color:var(--sub);margin-top:6px;font-size:14.5px}
+.steps{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:18px 0 28px}
+.step-pill{padding:7px 15px;border-radius:999px;background:#fff;border:1.5px solid var(--border);font-weight:700;font-size:12.5px;color:var(--sub);cursor:pointer;transition:.15s;letter-spacing:.2px}
+.step-pill.active{background:var(--lav-deep);border-color:var(--lav-deep);color:#fff;box-shadow:0 3px 10px rgba(92,76,140,.25)}
+.step-pill.done{background:var(--lav-pale);border-color:var(--lav-line);color:var(--lav-deep)}
+.card{background:var(--card);border-radius:18px;padding:28px 28px 22px;box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:20px}
+.card h2{margin:0 0 4px;font-size:21px;font-weight:600;color:var(--lav-deep)}
+.card .sub{color:var(--sub);margin:0 0 18px;font-size:13.5px}
+label{display:block;font-weight:700;font-size:12.5px;margin:14px 0 6px;color:var(--ink);letter-spacing:.15px;text-transform:uppercase;opacity:.75}
+select,input[type=text]{width:100%;padding:11px 13px;border-radius:10px;border:1.5px solid var(--border);font-family:'Inter',sans-serif;font-size:14.5px;background:#FCFBFE;color:var(--ink)}
+select:focus,input:focus{outline:none;border-color:var(--lav)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+@media(max-width:640px){.row,.row3{grid-template-columns:1fr}}
+.autofill{background:var(--lav-pale);border:1px solid var(--lav-line);border-radius:12px;padding:14px 16px;margin-top:16px;font-size:13.5px}
+.autofill b{color:var(--lav-deep);font-weight:700}
+.autofill .af-row{margin:3px 0}
+.symbol-card{display:flex;gap:12px;align-items:flex-start;background:var(--gold-soft);border:1px solid #E6D6AE;border-radius:12px;padding:14px;margin-top:14px}
+.symbol-card .emj{font-size:28px}
+.symbol-card .say{font-style:italic;color:#8A6E2E;margin-top:4px}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+button{font-family:'Inter',sans-serif;font-weight:700;border:none;border-radius:10px;padding:12px 22px;cursor:pointer;font-size:14px;transition:.15s;letter-spacing:.1px}
+button.primary{background:var(--lav-deep);color:#fff}
+button.primary:hover{background:#4A3D74}
+button.ghost{background:#fff;color:var(--lav-deep);border:1.5px solid var(--lav)}
+button.ghost:hover{background:var(--lav-pale)}
+button.small{padding:8px 14px;font-size:12.5px;border-radius:9px}
+button:disabled{opacity:.4;cursor:not-allowed}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.chip{padding:7px 14px;border-radius:999px;border:1.5px solid var(--border);background:#fff;font-size:13px;font-weight:700;cursor:pointer;color:var(--sub)}
+.chip.on{background:var(--lav-deep);border-color:var(--lav-deep);color:#fff}
+.hint{font-size:12px;color:var(--sub);margin-top:6px;font-weight:400;text-transform:none}
+textarea.prompt{width:100%;min-height:520px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;line-height:1.55;padding:16px;border-radius:12px;border:1.5px solid var(--border);background:#FCFBFE;color:var(--ink)}
+.copybar{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.copied{color:var(--lav-deep);font-weight:800;font-size:13px;opacity:0;transition:.2s}
+.copied.show{opacity:1}
+.searchbox{position:relative}
+.sug{position:absolute;z-index:5;left:0;right:0;top:calc(100% + 4px);background:#fff;border:1.5px solid var(--border);border-radius:12px;max-height:260px;overflow:auto;box-shadow:var(--shadow);display:none}
+.sug.show{display:block}
+.sug .sug-item{padding:10px 14px;font-size:13.5px;cursor:pointer;border-bottom:1px solid var(--border)}
+.sug .sug-item:hover{background:var(--lav-pale)}
+.sug .sug-item small{display:block;color:var(--sub);font-size:11.5px;margin-top:2px}
+.badge{display:inline-block;font-size:10.5px;font-weight:800;padding:2px 9px;border-radius:999px;background:var(--gold-soft);color:#8A6E2E;margin-left:6px;text-transform:none;letter-spacing:.2px}
+.footer-note{text-align:center;color:var(--sub);font-size:12px;margin-top:26px;line-height:1.6}
+
+/* dual entry mode */
+.entry-note{font-size:12px;color:var(--sub);margin:0 0 10px;font-weight:400;text-transform:none}
+.symbol-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:8px}
+@media(max-width:640px){.symbol-grid{grid-template-columns:repeat(2,1fr)}}
+.symbol-pick{background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:14px 10px;text-align:center;cursor:pointer;transition:.15s}
+.symbol-pick:hover{border-color:var(--lav)}
+.symbol-pick.on{background:var(--lav-pale);border-color:var(--lav-deep)}
+.symbol-pick .emj{font-size:26px;display:block;margin-bottom:6px}
+.symbol-pick .nm{font-size:12.5px;font-weight:700;color:var(--ink)}
+.sit-list{max-height:320px;overflow:auto;border:1.5px solid var(--border);border-radius:12px;margin-top:4px}
+.sit-list .sit-item{padding:11px 14px;font-size:13.5px;cursor:pointer;border-bottom:1px solid var(--border);color:var(--ink)}
+.sit-list .sit-item:last-child{border-bottom:none}
+.sit-list .sit-item:hover{background:var(--lav-pale)}
+.sit-list .sit-item small{display:block;color:var(--sub);font-size:11.5px;margin-top:2px}
+
+/* header + settings */
+.top-bar{display:flex;justify-content:flex-end;max-width:980px;margin:0 auto}
+.gear-btn{background:none;border:1.5px solid var(--border);border-radius:10px;padding:8px 12px;font-size:13px;color:var(--sub);cursor:pointer}
+.gear-btn:hover{background:var(--lav-pale);color:var(--lav-deep)}
+.settings-panel{max-width:980px;margin:8px auto 0;background:#fff;border:1.5px solid var(--lav-line);border-radius:14px;padding:18px 20px;box-shadow:var(--shadow)}
+.settings-panel p{font-size:12.5px;color:var(--sub);margin:6px 0 12px}
+.settings-panel a{color:var(--lav-deep)}
+
+/* recipe */
+.recipe{display:grid;grid-template-columns:1fr;gap:0;border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:6px}
+.recipe-row{display:grid;grid-template-columns:170px 1fr;gap:14px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border)}
+.recipe-row:last-child{border-bottom:none}
+.recipe-row:nth-child(odd){background:#FCFBFE}
+.recipe-row .rlabel{font-size:12px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.15px}
+.recipe-row select{margin:0}
+@media(max-width:640px){.recipe-row{grid-template-columns:1fr}}
+
+/* story dashboard — book jacket style */
+.glance-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--gold);margin-top:6px}
+.story-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--lav-deep);margin:6px 0 18px;line-height:1.25}
+.blurb-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--sub);margin-bottom:8px}
+.blurb{font-family:'Playfair Display',serif;font-size:17px;line-height:1.7;color:var(--ink);background:var(--lav-pale);border:1px solid var(--lav-line);border-radius:14px;padding:22px 24px;white-space:pre-line}
+.blurb .takeaway{display:block;margin-top:14px;font-style:italic;color:var(--lav-deep);font-size:15.5px}
+.sec-h{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.3px;color:var(--sub);margin:24px 0 8px}
+.journey{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;padding:16px;background:#fff;border:1px solid var(--border);border-radius:12px}
+.journey .jstep{text-align:center;font-size:12.5px;font-weight:700;color:var(--sub)}
+.journey .jstep .jemoji{font-size:26px;display:block}
+.journey .jarrow{color:var(--lav-line);font-size:18px;margin:0 2px}
+.scenes-list{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px 16px 16px 38px;margin:0}
+.scenes-list li{font-size:14px;line-height:2;color:var(--ink)}
+.scenes-list li::marker{color:var(--gold);font-weight:800}
+.why-list{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px 16px 16px 32px;margin:0;list-style:none}
+.why-list li{font-size:14px;line-height:1.9;color:var(--ink);position:relative;padding-left:6px}
+.why-list li::before{content:'✧';color:var(--gold);position:absolute;left:-20px}
+details.framework{margin-top:20px;border:1px solid var(--border);border-radius:12px;background:#FCFBFE;padding:4px 16px}
+details.framework summary{cursor:pointer;padding:12px 0;font-weight:700;color:var(--lav-deep);font-size:14px;list-style:none}
+details.framework summary::-webkit-details-marker{display:none}
+details.framework summary:before{content:'▸ ';color:var(--gold)}
+details.framework[open] summary:before{content:'▾ '}
+details.framework .fw-body{padding:4px 0 18px}
+.fw-section{margin-top:14px}
+.fw-section h4{margin:0 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.2px;color:var(--sub)}
+.spinner-box{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;gap:14px}
+.spinner{width:34px;height:34px;border:3px solid var(--lav-line);border-top-color:var(--lav-deep);border-radius:50%;animation:spin 0.9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner-box p{color:var(--sub);font-size:13.5px}
+.error-box{background:#FCEDEC;border:1px solid #F0C6C2;color:#9A3B32;border-radius:12px;padding:16px 18px;font-size:13.5px;margin-top:10px}
+.error-box b{display:block;margin-bottom:4px}
+.full-story{font-size:14.5px;line-height:1.7;white-space:pre-wrap}
+.full-story h3{font-family:'Playfair Display',serif;color:var(--lav-deep);margin:20px 0 6px}
+</style>
+</head>
+<body>
+<div class="top-bar"><button class="gear-btn" id="gearBtn" type="button">⚙️ Settings</button></div>
+<div class="settings-panel" id="settingsPanel" style="display:none">
+  <label style="margin-top:0">Claude API Key</label>
+  <input type="text" id="apiKeyInput" placeholder="sk-ant-...">
+  <p>Stored only in this browser (localStorage), never sent anywhere except api.anthropic.com. Get a key at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>. Needed to generate the story pitch, slides, and full text — the situation/recipe steps work without it.</p>
+  <label>Model</label>
+  <input type="text" id="modelInput" placeholder="claude-sonnet-5">
+  <p>Default is claude-sonnet-5. If you get a "model not found" error, check <a href="https://docs.claude.com/en/docs/about-claude/models" target="_blank">docs.claude.com</a> for the current model ID.</p>
+  <div class="btnrow" style="margin-top:6px">
+    <button class="primary small" id="saveSettingsBtn" type="button">Save</button>
+    <button class="ghost small" id="clearSettingsBtn" type="button">Clear key</button>
+  </div>
+</div>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">Prana Kids Story Builder</div>
+    <p>Pick a situation. We recommend everything else. You see the story, not the framework.</p>
+  </header>
+
+  <div class="steps" id="stepPills"></div>
+
+  <!-- STEP 1 -->
+  <div class="card step" id="step1">
+    <h2>Step 1 — Story Seed</h2>
+    <p class="sub">Pick a real childhood moment. Core need, emotion shift and Ganesha symbol auto-fill.</p>
+    <label style="margin-top:0">How would you like to start today?</label>
+    <div class="chips" id="entryChips">
+      <div class="chip on" data-mode="situation">🟢 Situation</div>
+      <div class="chip" data-mode="symbol">🔵 Symbol</div>
+      <div class="chip" data-mode="surprise">🟣 Surprise Me</div>
+    </div>
+    <p class="entry-note" id="entryNote">Recommended: describe the real moment you're dealing with, and we'll suggest 3–5 symbols that fit it.</p>
+
+    <div id="situationMode">
+      <label>Situation <span class="badge" id="sitCount"></span></label>
+      <div class="searchbox">
+        <input type="text" id="sitSearch" placeholder="Type to search 149 situations, or filter by category below…" autocomplete="off">
+        <div class="sug" id="sitSug"></div>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <div>
+          <label>Filter by category</label>
+          <select id="catFilter"></select>
+        </div>
+        <div>
+          <label>&nbsp;</label>
+          <button class="ghost" id="randomBtn" type="button" style="width:100%">🎲 Random Situation</button>
+        </div>
+      </div>
+      <div style="margin-top:12px">
+        <button class="ghost small" id="customToggle" type="button">✏️ Don't see it? Write your own situation</button>
+      </div>
+    </div>
+
+    <div id="symbolMode" style="display:none">
+      <label style="margin-top:0">Choose a Ganesha symbol <span class="badge" id="symCount"></span></label>
+      <div class="symbol-grid" id="symbolGrid"></div>
+      <div id="symbolSituations" style="display:none;margin-top:16px">
+        <label>Situations that teach this symbol <span class="badge" id="symSitCount"></span></label>
+        <div class="sit-list" id="symSitList"></div>
+      </div>
+    </div>
+    <div class="autofill" id="customPanel" style="display:none;margin-top:14px">
+      <label style="margin-top:0">Your situation</label>
+      <input type="text" id="customText" placeholder="e.g. Refusing to share the last swing at the park with a younger cousin.">
+      <div class="row" style="margin-top:12px">
+        <div><label>Category</label><input type="text" id="customCat" placeholder="e.g. Sharing"></div>
+        <div><label>Core Need</label><input type="text" id="customNeed" placeholder="e.g. Fairness"></div>
+      </div>
+      <div class="row" style="margin-top:0">
+        <div><label>Emotion Shift</label><input type="text" id="customShift" placeholder="e.g. Jealousy → Security"></div>
+        <div><label>Ganesha Symbol</label><select id="customSym"></select></div>
+      </div>
+      <div class="btnrow" style="margin-top:16px">
+        <button class="primary small" id="customUseBtn" type="button">Use this situation</button>
+      </div>
+    </div>
+    <div class="autofill" id="seedAutofill" style="display:none">
+      <div class="af-row"><b>Category:</b> <span id="af-cat"></span></div>
+      <div class="af-row"><b>Core Need:</b> <span id="af-need"></span></div>
+      <div class="af-row"><b>Emotion Shift:</b> <span id="af-shift"></span></div>
+      <div class="af-row"><b>Suggested Ganesha Symbol:</b> <span id="af-sym"></span></div>
+    </div>
+    <div class="symbol-card" id="symbolCard" style="display:none">
+      <div class="emj" id="sym-emoji"></div>
+      <div>
+        <div><b id="sym-name"></b></div>
+        <div id="sym-meaning" style="font-size:13.5px;margin-top:2px"></div>
+        <div class="say" id="sym-say"></div>
+      </div>
+    </div>
+    <div class="btnrow"><button class="primary" onclick="goToRecipe()" id="next1" disabled>Next → Your Recipe</button></div>
+  </div>
+
+  <!-- STEP 2: RECIPE -->
+  <div class="card step" id="step2" style="display:none">
+    <h2>Step 2 — Your Story Recipe</h2>
+    <p class="sub">Auto-picked from your libraries based on the situation. Tweak anything, or just go — everything technical is hidden from here on.</p>
+    <div class="recipe">
+      <div class="recipe-row"><div class="rlabel">Main Character</div><select id="mainChar"></select></div>
+      <div class="recipe-row"><div class="rlabel">Supporting Character</div><select id="suppChar"></select></div>
+      <div class="recipe-row"><div class="rlabel">Setting</div><select id="setting"></select></div>
+      <div class="recipe-row"><div class="rlabel">Season &amp; Time</div>
+        <div class="row" style="gap:10px">
+          <select id="season"><option>Spring</option><option>Summer</option><option>Monsoon</option><option selected>Autumn</option><option>Winter</option></select>
+          <select id="timeOfDay"><option selected>Morning</option><option>Afternoon</option><option>Dusk</option><option>Night</option></select>
+        </div>
+      </div>
+      <div class="recipe-row"><div class="rlabel">Story Shape</div><select id="structureSelect"></select></div>
+      <div class="recipe-row"><div class="rlabel">Emotional Arc</div><select id="arcSelect"></select></div>
+      <div class="recipe-row"><div class="rlabel">Story Type</div><input type="text" id="storyType"></div>
+      <div class="recipe-row"><div class="rlabel">Opening</div><select id="openingSelect"></select></div>
+      <div class="recipe-row"><div class="rlabel">Ending</div><select id="endingSelect"></select></div>
+    </div>
+    <div class="btnrow">
+      <button class="ghost" onclick="goTo(1)">← Back</button>
+      <button class="primary" onclick="goToStory()">🪄 Generate Story</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: STORY DASHBOARD -->
+  <div class="card step" id="step3" style="display:none">
+    <h2 id="storyHeading">Step 3 — Your Story</h2>
+    <p class="sub">Reads like a book jacket, not an outline. Open "Story Framework" below only if you want the technical detail.</p>
+    <div id="storyLoading" class="spinner-box" style="display:none">
+      <div class="spinner"></div>
+      <p>Writing the story pitch…</p>
+    </div>
+    <div id="storyError" style="display:none"></div>
+    <div id="storyResult" style="display:none">
+      <div class="glance-label">Story at a Glance</div>
+      <h3 class="story-title" id="storyTitle"></h3>
+      <div class="blurb-label">What's this story about?</div>
+      <div class="blurb" id="storyBlurb"></div>
+
+      <h4 class="sec-h">The Journey</h4>
+      <div class="journey" id="journeyRow"></div>
+
+      <h4 class="sec-h">Story in 7 Scenes</h4>
+      <ol class="scenes-list" id="scenesList"></ol>
+
+      <h4 class="sec-h">Why Children Love It</h4>
+      <ul class="why-list" id="whyList"></ul>
+
+      <details class="framework">
+        <summary>Story Framework (Advanced)</summary>
+        <div class="fw-body" id="frameworkBody"></div>
+      </details>
+    </div>
+    <div class="btnrow">
+      <button class="ghost" onclick="goTo(2)">← Back to Recipe</button>
+      <button class="ghost" onclick="generateStory()">🔄 Regenerate Story</button>
+      <button class="primary" onclick="goToFullStory()" id="writeFullBtn" disabled>✍️ Write Full Story →</button>
+    </div>
+  </div>
+
+  <!-- STEP 4: FULL STORY -->
+  <div class="card step" id="step4" style="display:none">
+    <h2>Step 4 — Full Story</h2>
+    <p class="sub">The complete 7-slide story with dialogue, illustration bible, read-aloud notes, and quality scorecard.</p>
+    <div id="fullLoading" class="spinner-box" style="display:none">
+      <div class="spinner"></div>
+      <p>Writing the full story…</p>
+    </div>
+    <div id="fullError" style="display:none"></div>
+    <div id="fullResult" style="display:none">
+      <div class="copybar">
+        <button class="primary small" onclick="copyFullStory()">📋 Copy</button>
+        <span class="copied" id="copiedMsg2">Copied!</span>
+        <button class="ghost small" onclick="downloadFullStory()">⬇️ Download .md</button>
+      </div>
+      <div class="full-story" id="fullStoryOut"></div>
+    </div>
+    <div class="btnrow">
+      <button class="ghost" onclick="goTo(3)">← Back to Story</button>
+      <button class="ghost" onclick="generateFullStory()">🔄 Rewrite</button>
+    </div>
+  </div>
+
+  <p class="footer-note">Prana Kids Story Builder — situation picking and the story recipe run fully offline; the story pitch and full write-up call the Claude API with your key. Every field is sourced from your locked master libraries (Symbols, Skeletons, Structures, Emotional Arcs, Storytelling Techniques, Replay Hooks, Read-Aloud, Openings, Endings, Title Formulas, Assets, Situation Bank, Quality Scorecard).</p>
+</div>
+
+<script>
+const DATA = {"situations": [{"t": "Toy not shared or taken away", "cat": "Anger & Frustration", "trigger": "Resource", "age": "5-7", "need": "Self-control", "shift": "Anger → Peace", "sym": "Trunk", "pri": 3}, {"t": "Screen time cut off suddenly", "cat": "Anger & Frustration", "trigger": "Autonomy", "age": "5-10", "need": "Self-control", "shift": "Anger → Peace", "sym": "Trunk", "pri": 3}, {"t": "Told 'no' without explanation", "cat": "Anger & Frustration", "trigger": "Denied", "age": "5-12", "need": "Self-control", "shift": "Anger → Peace", "sym": "Trunk", "pri": 2}, {"t": "Sibling gets bigger portion or more attention", "cat": "Anger & Frustration", "trigger": "Inequity", "age": "5-10", "need": "Self-control", "shift": "Anger → Peace", "sym": "Modak", "pri": 3}, {"t": "Can't finish homework or a craft", "cat": "Anger & Frustration", "trigger": "Skill gap", "age": "5-10", "need": "Self-control", "shift": "Anger → Peace", "sym": "Tusk", "pri": 2}, {"t": "Playdate or plan suddenly cancelled", "cat": "Anger & Frustration", "trigger": "Disruption", "age": "5-12", "need": "Self-control", "shift": "Anger → Peace", "sym": "Belly", "pri": 2}, {"t": "Someone breaks their Lego or drawing", "cat": "Anger & Frustration", "trigger": "Creation", "age": "5-9", "need": "Self-control", "shift": "Anger → Peace", "sym": "Tusk", "pri": 2}, {"t": "Being hurried to put shoes on or leave", "cat": "Anger & Frustration", "trigger": "Rushed", "age": "5-8", "need": "Self-control", "shift": "Anger → Peace", "sym": "Trunk", "pri": 2}, {"t": "Feeling hungry or extremely tired (hangry)", "cat": "Anger & Frustration", "trigger": "Physical", "age": "5-12", "need": "Self-control", "shift": "Anger → Peace", "sym": "Belly", "pri": 2}, {"t": "Blamed for something they didn't do", "cat": "Anger & Frustration", "trigger": "Injustice", "age": "5-12", "need": "Self-control", "shift": "Anger → Peace", "sym": "Ears", "pri": 3}, {"t": "Being teased or physically pushed", "cat": "Anger & Frustration", "trigger": "Bullying", "age": "5-12", "need": "Self-control", "shift": "Anger → Peace", "sym": "Trunk", "pri": 2}, {"t": "No say in what to wear or eat", "cat": "Anger & Frustration", "trigger": "Control", "age": "6-12", "need": "Self-control", "shift": "Anger → Peace", "sym": "Trunk", "pri": 2}, {"t": "Adult doesn't understand what they mean", "cat": "Anger & Frustration", "trigger": "Misunderstood", "age": "5-12", "need": "Self-control", "shift": "Anger → Peace", "sym": "Ears", "pri": 2}, {"t": "Game crashes or internet lags during a win", "cat": "Anger & Frustration", "trigger": "Tech fail", "age": "7-12", "need": "Self-control", "shift": "Anger → Peace", "sym": "Tusk", "pri": 2}, {"t": "Forced to sit still too long (car, flight)", "cat": "Anger & Frustration", "trigger": "Constraint", "age": "5-10", "need": "Self-control", "shift": "Anger → Peace", "sym": "Belly", "pri": 2}, {"t": "Game save file corrupted or deleted", "cat": "Anger & Frustration", "trigger": "Progress lost", "age": "7-12", "need": "Self-control", "shift": "Anger → Peace", "sym": "Tusk", "pri": 2}, {"t": "A treat or promise was forgotten", "cat": "Anger & Frustration", "trigger": "Unmet promise", "age": "5-10", "need": "Self-control", "shift": "Anger → Peace", "sym": "Modak", "pri": 2}, {"t": "Sibling tells on them unfairly", "cat": "Anger & Frustration", "trigger": "Tattled on", "age": "5-10", "need": "Self-control", "shift": "Anger → Peace", "sym": "Ears", "pri": 2}, {"t": "Scratchy clothes or irritating noise", "cat": "Anger & Frustration", "trigger": "Sensory", "age": "5-10", "need": "Self-control", "shift": "Anger → Peace", "sym": "Belly", "pri": 2}, {"t": "Repeatedly failing a level or concept", "cat": "Anger & Frustration", "trigger": "Homework", "age": "7-12", "need": "Self-control", "shift": "Anger → Peace", "sym": "Tusk", "pri": 2}, {"t": "Darkness or shadows in the room", "cat": "Fear & Insecurity", "trigger": "Dark", "age": "5-8", "need": "Courage", "shift": "Fear → Courage", "sym": "Mooshika", "pri": 3}, {"t": "Thunder, fireworks, or loud sirens", "cat": "Fear & Insecurity", "trigger": "Sound", "age": "5-9", "need": "Courage", "shift": "Fear → Courage", "sym": "Belly", "pri": 3}, {"t": "Monsters under the bed or scary stories", "cat": "Fear & Insecurity", "trigger": "Imagination", "age": "5-8", "need": "Courage", "shift": "Fear → Courage", "sym": "Mooshika", "pri": 3}, {"t": "Parent leaving for work or a long trip", "cat": "Fear & Insecurity", "trigger": "Separation", "age": "5-9", "need": "Courage", "shift": "Fear → Courage", "sym": "Belly", "pri": 3}, {"t": "Fear of going on stage or presenting", "cat": "Fear & Insecurity", "trigger": "Performance", "age": "6-12", "need": "Courage", "shift": "Fear → Courage", "sym": "Mooshika", "pri": 3}, {"t": "Anxiety before a big test or result", "cat": "Fear & Insecurity", "trigger": "Exams", "age": "7-12", "need": "Courage", "shift": "Fear → Courage", "sym": "Eyes", "pri": 2}, {"t": "Injections, doctors, or dentist visits", "cat": "Fear & Insecurity", "trigger": "Medical", "age": "5-12", "need": "Courage", "shift": "Fear → Courage", "sym": "Mooshika", "pri": 2}, {"t": "New teacher or unfamiliar adult", "cat": "Fear & Insecurity", "trigger": "Strangers", "age": "5-8", "need": "Courage", "shift": "Fear → Courage", "sym": "Mooshika", "pri": 2}, {"t": "Fear of getting lost in a mall or crowd", "cat": "Fear & Insecurity", "trigger": "Lost", "age": "5-9", "need": "Courage", "shift": "Fear → Courage", "sym": "Belly", "pri": 2}, {"t": "Accidentally saw a scary or violent video", "cat": "Fear & Insecurity", "trigger": "Digital trauma", "age": "6-12", "need": "Courage", "shift": "Fear → Courage", "sym": "Belly", "pri": 2}, {"t": "Heard about war or violence on news", "cat": "Fear & Insecurity", "trigger": "World news", "age": "7-12", "need": "Courage", "shift": "Fear → Courage", "sym": "Belly", "pri": 1}, {"t": "Saw news about floods, fires, earthquakes", "cat": "Fear & Insecurity", "trigger": "Disaster", "age": "7-12", "need": "Courage", "shift": "Fear → Courage", "sym": "Belly", "pri": 1}, {"t": "Fear that a parent might get sick", "cat": "Fear & Insecurity", "trigger": "Family safety", "age": "6-12", "need": "Courage", "shift": "Fear → Courage", "sym": "Belly", "pri": 2}, {"t": "Overheard adults talking about money problems", "cat": "Fear & Insecurity", "trigger": "Money worry", "age": "7-12", "need": "Courage", "shift": "Fear → Courage", "sym": "Belly", "pri": 1}, {"t": "Overthinking imaginary future dangers", "cat": "Fear & Insecurity", "trigger": "Future", "age": "8-12", "need": "Courage", "shift": "Fear → Courage", "sym": "Eyes", "pri": 2}, {"t": "Fear of being laughed at by class", "cat": "Fear & Insecurity", "trigger": "Social risk", "age": "6-12", "need": "Courage", "shift": "Fear → Courage", "sym": "Mooshika", "pri": 2}, {"t": "First day at a new school", "cat": "Fear & Insecurity", "trigger": "New school", "age": "5-10", "need": "Courage", "shift": "Fear → Courage", "sym": "Mooshika", "pri": 3}, {"t": "Fear of dogs, spiders, or insects", "cat": "Fear & Insecurity", "trigger": "Animal", "age": "5-10", "need": "Courage", "shift": "Fear → Courage", "sym": "Mooshika", "pri": 2}, {"t": "Fear of falling or getting hurt at park", "cat": "Fear & Insecurity", "trigger": "Physical harm", "age": "5-8", "need": "Courage", "shift": "Fear → Courage", "sym": "Mooshika", "pri": 2}, {"t": "Fear of getting in trouble with teacher", "cat": "Fear & Insecurity", "trigger": "Punishment", "age": "5-10", "need": "Courage", "shift": "Fear → Courage", "sym": "Mooshika", "pri": 2}, {"t": "Anxiety about the earth breaking (climate change)", "cat": "Fear & Insecurity", "trigger": "Climate", "age": "9-12", "need": "Courage", "shift": "Fear → Courage", "sym": "Lotus", "pri": 1}, {"t": "Friend is not playing with them today", "cat": "Sadness & Grief", "trigger": "Friendship", "age": "5-10", "need": "Comfort", "shift": "Sadness → Hope", "sym": "Lotus", "pri": 3}, {"t": "Death of a pet", "cat": "Sadness & Grief", "trigger": "Pet loss", "age": "5-12", "need": "Comfort", "shift": "Sadness → Hope", "sym": "Tusk", "pri": 3}, {"t": "Death of a relative or family member", "cat": "Sadness & Grief", "trigger": "Bereavement", "age": "5-12", "need": "Comfort", "shift": "Sadness → Hope", "sym": "Tusk", "pri": 3}, {"t": "Lost a favourite toy or comfort blanket", "cat": "Sadness & Grief", "trigger": "Object lost", "age": "5-8", "need": "Comfort", "shift": "Sadness → Hope", "sym": "Tusk", "pri": 3}, {"t": "Harshly reprimanded by a parent", "cat": "Sadness & Grief", "trigger": "Scolded", "age": "5-12", "need": "Comfort", "shift": "Sadness → Hope", "sym": "Belly", "pri": 3}, {"t": "Feeling invisible to a busy parent", "cat": "Sadness & Grief", "trigger": "Ignored", "age": "5-12", "need": "Comfort", "shift": "Sadness → Hope", "sym": "Ears", "pri": 2}, {"t": "Not invited to a birthday party", "cat": "Sadness & Grief", "trigger": "Excluded", "age": "5-12", "need": "Comfort", "shift": "Sadness → Hope", "sym": "Lotus", "pri": 3}, {"t": "A fall or scrape — the shock of pain", "cat": "Sadness & Grief", "trigger": "Hurt", "age": "5-8", "need": "Comfort", "shift": "Sadness → Hope", "sym": "Belly", "pri": 2}, {"t": "Missing a parent who travels often", "cat": "Sadness & Grief", "trigger": "Longing", "age": "5-12", "need": "Comfort", "shift": "Sadness → Hope", "sym": "Belly", "pri": 2}, {"t": "Close friend moved to another city", "cat": "Sadness & Grief", "trigger": "Friend moved", "age": "6-12", "need": "Comfort", "shift": "Sadness → Hope", "sym": "Lotus", "pri": 2}, {"t": "Moving house and leaving familiar bedroom", "cat": "Sadness & Grief", "trigger": "New home", "age": "5-12", "need": "Comfort", "shift": "Sadness → Hope", "sym": "Lotus", "pri": 2}, {"t": "Long illness, lockdown recovery, school break", "cat": "Sadness & Grief", "trigger": "Disrupted routine", "age": "5-12", "need": "Comfort", "shift": "Sadness → Hope", "sym": "Belly", "pri": 2}, {"t": "Highly anticipated movie or event cancelled", "cat": "Sadness & Grief", "trigger": "Cancelled", "age": "5-12", "need": "Comfort", "shift": "Sadness → Hope", "sym": "Tusk", "pri": 2}, {"t": "Seeing another child or animal cry or suffer", "cat": "Sadness & Grief", "trigger": "Empathy", "age": "5-12", "need": "Comfort", "shift": "Sadness → Hope", "sym": "Eyes", "pri": 2}, {"t": "Excluded from a group chat", "cat": "Sadness & Grief", "trigger": "Digital left out", "age": "9-12", "need": "Comfort", "shift": "Sadness → Hope", "sym": "Lotus", "pri": 2}, {"t": "Not chosen for a special school role", "cat": "Sadness & Grief", "trigger": "Overlooked", "age": "6-12", "need": "Comfort", "shift": "Sadness → Hope", "sym": "Tusk", "pri": 2}, {"t": "Last day of summer vacation / school year end", "cat": "Sadness & Grief", "trigger": "Endings", "age": "5-12", "need": "Comfort", "shift": "Sadness → Hope", "sym": "Lotus", "pri": 2}, {"t": "Looking at photos when they were 'little'", "cat": "Sadness & Grief", "trigger": "Nostalgia", "age": "8-12", "need": "Comfort", "shift": "Sadness → Hope", "sym": "Belly", "pri": 2}, {"t": "Intentions were good but they got in trouble anyway", "cat": "Sadness & Grief", "trigger": "Misjudged", "age": "6-12", "need": "Comfort", "shift": "Sadness → Hope", "sym": "Ears", "pri": 2}, {"t": "Made a mistake in front of the class", "cat": "Shame & Low Self-Esteem", "trigger": "Public mistake", "age": "5-12", "need": "Self-worth", "shift": "Shame → Confidence", "sym": "Tusk", "pri": 3}, {"t": "Forgot someone's name or a social cue", "cat": "Shame & Low Self-Esteem", "trigger": "Social blunder", "age": "7-12", "need": "Self-worth", "shift": "Shame → Confidence", "sym": "Tusk", "pri": 2}, {"t": "Called 'fat' or 'chubby' by a peer", "cat": "Shame & Low Self-Esteem", "trigger": "Weight", "age": "6-12", "need": "Self-worth", "shift": "Shame → Confidence", "sym": "Belly", "pri": 3}, {"t": "New glasses and feeling 'nerdy' or 'ugly'", "cat": "Shame & Low Self-Esteem", "trigger": "Appearance", "age": "6-12", "need": "Self-worth", "shift": "Shame → Confidence", "sym": "Eyes", "pri": 2}, {"t": "Getting acne or pimples (older kids)", "cat": "Shame & Low Self-Esteem", "trigger": "Skin", "age": "10-12", "need": "Self-worth", "shift": "Shame → Confidence", "sym": "Lotus", "pri": 1}, {"t": "Being shortest or tallest in the class line", "cat": "Shame & Low Self-Esteem", "trigger": "Height", "age": "7-12", "need": "Self-worth", "shift": "Shame → Confidence", "sym": "Lotus", "pri": 2}, {"t": "Being 'slower' at reading or math than others", "cat": "Shame & Low Self-Esteem", "trigger": "Academic", "age": "6-12", "need": "Self-worth", "shift": "Shame → Confidence", "sym": "Tusk", "pri": 2}, {"t": "Picked last for a team or called 'clumsy'", "cat": "Shame & Low Self-Esteem", "trigger": "Sports", "age": "6-12", "need": "Self-worth", "shift": "Shame → Confidence", "sym": "Tusk", "pri": 2}, {"t": "Their clothes aren't as 'cool' as others'", "cat": "Shame & Low Self-Esteem", "trigger": "Clothes", "age": "7-12", "need": "Self-worth", "shift": "Shame → Confidence", "sym": "Lotus", "pri": 2}, {"t": "Thinking 'I can't do anything right'", "cat": "Shame & Low Self-Esteem", "trigger": "Self-talk", "age": "7-12", "need": "Self-worth", "shift": "Shame → Confidence", "sym": "Ears", "pri": 2}, {"t": "Sibling praised while they were ignored", "cat": "Shame & Low Self-Esteem", "trigger": "Praise gap", "age": "5-12", "need": "Self-worth", "shift": "Shame → Confidence", "sym": "Modak", "pri": 2}, {"t": "Project or video gets no likes or views", "cat": "Shame & Low Self-Esteem", "trigger": "Digital", "age": "9-12", "need": "Self-worth", "shift": "Shame → Confidence", "sym": "Lotus", "pri": 1}, {"t": "Drawing doesn't look how they imagined", "cat": "Shame & Low Self-Esteem", "trigger": "Perfectionism", "age": "5-12", "need": "Self-worth", "shift": "Shame → Confidence", "sym": "Tusk", "pri": 2}, {"t": "Reprimanded in front of friends or guests", "cat": "Shame & Low Self-Esteem", "trigger": "Scolded publicly", "age": "5-12", "need": "Self-worth", "shift": "Shame → Confidence", "sym": "Belly", "pri": 2}, {"t": "Stuttered or forgot lines in a play", "cat": "Shame & Low Self-Esteem", "trigger": "Speech", "age": "5-12", "need": "Self-worth", "shift": "Shame → Confidence", "sym": "Mooshika", "pri": 2}, {"t": "Told their work is 'messy' or unreadable", "cat": "Shame & Low Self-Esteem", "trigger": "Handwriting", "age": "5-10", "need": "Self-worth", "shift": "Shame → Confidence", "sym": "Tusk", "pri": 2}, {"t": "Why can't you be more like [cousin/friend]?", "cat": "Shame & Low Self-Esteem", "trigger": "Comparison", "age": "5-12", "need": "Self-worth", "shift": "Shame → Confidence", "sym": "Ears", "pri": 3}, {"t": "Feeling like a burden to parents", "cat": "Shame & Low Self-Esteem", "trigger": "Burden feeling", "age": "9-12", "need": "Self-worth", "shift": "Shame → Confidence", "sym": "Lotus", "pri": 2}, {"t": "Feeling like they're not seen or valued", "cat": "Shame & Low Self-Esteem", "trigger": "Invisible", "age": "7-12", "need": "Self-worth", "shift": "Shame → Confidence", "sym": "Eyes", "pri": 2}, {"t": "Secretly thinking 'I am just a bad kid'", "cat": "Shame & Low Self-Esteem", "trigger": "Internal", "age": "7-12", "need": "Self-worth", "shift": "Shame → Confidence", "sym": "Lotus", "pri": 2}, {"t": "Parent praises sibling's work but not theirs", "cat": "Jealousy & Envy", "trigger": "Sibling praise", "age": "5-10", "need": "Contentment", "shift": "Envy → Contentment", "sym": "Ears", "pri": 3}, {"t": "Best friend is playing with someone else", "cat": "Jealousy & Envy", "trigger": "Best friend", "age": "5-10", "need": "Contentment", "shift": "Envy → Contentment", "sym": "Belly", "pri": 3}, {"t": "Friend got the newest toy, phone or iPad", "cat": "Jealousy & Envy", "trigger": "Material", "age": "7-12", "need": "Contentment", "shift": "Envy → Contentment", "sym": "Modak", "pri": 3}, {"t": "Classmate won Student of the Month", "cat": "Jealousy & Envy", "trigger": "Achievement", "age": "6-12", "need": "Contentment", "shift": "Envy → Contentment", "sym": "Modak", "pri": 2}, {"t": "Someone else always gets to go first", "cat": "Jealousy & Envy", "trigger": "Privilege", "age": "5-10", "need": "Contentment", "shift": "Envy → Contentment", "sym": "Trunk", "pri": 2}, {"t": "Parent on work call when child wants to share something", "cat": "Jealousy & Envy", "trigger": "Attention", "age": "5-10", "need": "Contentment", "shift": "Envy → Contentment", "sym": "Belly", "pri": 2}, {"t": "At a party but wanting the birthday gifts", "cat": "Jealousy & Envy", "trigger": "Party envy", "age": "5-9", "need": "Contentment", "shift": "Envy → Contentment", "sym": "Modak", "pri": 2}, {"t": "Friend is naturally better at football or dance", "cat": "Jealousy & Envy", "trigger": "Skill", "age": "6-12", "need": "Contentment", "shift": "Envy → Contentment", "sym": "Tusk", "pri": 2}, {"t": "New sibling gets all the attention and new things", "cat": "Jealousy & Envy", "trigger": "New baby", "age": "5-10", "need": "Contentment", "shift": "Envy → Contentment", "sym": "Belly", "pri": 3}, {"t": "Another kid always gets teacher's favour", "cat": "Jealousy & Envy", "trigger": "Teacher's pet", "age": "6-12", "need": "Contentment", "shift": "Envy → Contentment", "sym": "Ears", "pri": 2}, {"t": "Friend has more followers or game skins", "cat": "Jealousy & Envy", "trigger": "Digital status", "age": "9-12", "need": "Contentment", "shift": "Envy → Contentment", "sym": "Modak", "pri": 1}, {"t": "Friend went on a fancy international vacation", "cat": "Jealousy & Envy", "trigger": "Holiday", "age": "7-12", "need": "Contentment", "shift": "Envy → Contentment", "sym": "Modak", "pri": 2}, {"t": "Wishing they had someone else's hair or height", "cat": "Jealousy & Envy", "trigger": "Appearance", "age": "8-12", "need": "Contentment", "shift": "Envy → Contentment", "sym": "Lotus", "pri": 2}, {"t": "Wanting what's in a friend's lunchbox", "cat": "Jealousy & Envy", "trigger": "Food", "age": "5-9", "need": "Contentment", "shift": "Envy → Contentment", "sym": "Modak", "pri": 2}, {"t": "Friend has a later bedtime or more freedom", "cat": "Jealousy & Envy", "trigger": "Freedom", "age": "7-12", "need": "Contentment", "shift": "Envy → Contentment", "sym": "Trunk", "pri": 2}, {"t": "Always wearing older sibling's old clothes", "cat": "Jealousy & Envy", "trigger": "Hand-me-downs", "age": "6-12", "need": "Contentment", "shift": "Envy → Contentment", "sym": "Lotus", "pri": 2}, {"t": "Post-party or festival hyperactivity", "cat": "Regulation & Energy Overload", "trigger": "Sugar rush", "age": "5-9", "need": "Calm", "shift": "Overwhelm → Calm", "sym": "Belly", "pri": 3}, {"t": "Zoning out after too much YouTube or gaming", "cat": "Regulation & Energy Overload", "trigger": "Screen fatigue", "age": "6-12", "need": "Calm", "shift": "Overwhelm → Calm", "sym": "Eyes", "pri": 3}, {"t": "Noisy, overcrowded mall or festival environment", "cat": "Regulation & Energy Overload", "trigger": "Crowd", "age": "5-12", "need": "Calm", "shift": "Overwhelm → Calm", "sym": "Belly", "pri": 2}, {"t": "Too many classes — tuition, sport, music all in one day", "cat": "Regulation & Energy Overload", "trigger": "Overscheduled", "age": "7-12", "need": "Calm", "shift": "Overwhelm → Calm", "sym": "Belly", "pri": 2}, {"t": "Long wait at doctor, bank, or during travel", "cat": "Regulation & Energy Overload", "trigger": "Boredom", "age": "5-12", "need": "Calm", "shift": "Overwhelm → Calm", "sym": "Eyes", "pri": 2}, {"t": "Stuck indoors on a rainy day with nothing to do", "cat": "Regulation & Energy Overload", "trigger": "Restless", "age": "5-10", "need": "Calm", "shift": "Overwhelm → Calm", "sym": "Belly", "pri": 2}, {"t": "End of a long school week — brain feels full", "cat": "Regulation & Energy Overload", "trigger": "Mental fatigue", "age": "6-12", "need": "Calm", "shift": "Overwhelm → Calm", "sym": "Belly", "pri": 2}, {"t": "Cranky after a late night or bad sleep", "cat": "Regulation & Energy Overload", "trigger": "Sleep-deprived", "age": "5-12", "need": "Calm", "shift": "Overwhelm → Calm", "sym": "Belly", "pri": 3}, {"t": "Trying to do homework while TV is on", "cat": "Regulation & Energy Overload", "trigger": "Distraction", "age": "6-12", "need": "Calm", "shift": "Overwhelm → Calm", "sym": "Eyes", "pri": 2}, {"t": "Too many options for a toy or treat", "cat": "Regulation & Energy Overload", "trigger": "Choice overload", "age": "5-10", "need": "Calm", "shift": "Overwhelm → Calm", "sym": "Eyes", "pri": 2}, {"t": "Pressure to always 'be good' and behave", "cat": "Regulation & Energy Overload", "trigger": "Expectation", "age": "5-12", "need": "Calm", "shift": "Overwhelm → Calm", "sym": "Trunk", "pri": 2}, {"t": "Waiting for a turn on the swings", "cat": "Regulation & Energy Overload", "trigger": "Wait time", "age": "5-8", "need": "Calm", "shift": "Overwhelm → Calm", "sym": "Mooshika", "pri": 2}, {"t": "Switching from fun activity to chores or homework", "cat": "Regulation & Energy Overload", "trigger": "Transition", "age": "5-12", "need": "Calm", "shift": "Overwhelm → Calm", "sym": "Trunk", "pri": 3}, {"t": "The 'before dinner' energy crash", "cat": "Regulation & Energy Overload", "trigger": "Hunger crash", "age": "5-10", "need": "Calm", "shift": "Overwhelm → Calm", "sym": "Belly", "pri": 2}, {"t": "Uncomfortable uniform, flickering lights, strong smells", "cat": "Regulation & Energy Overload", "trigger": "Sensory", "age": "5-12", "need": "Calm", "shift": "Overwhelm → Calm", "sym": "Belly", "pri": 2}, {"t": "Waiting very excitedly for birthday or special package", "cat": "Regulation & Energy Overload", "trigger": "Anticipation", "age": "5-10", "need": "Calm", "shift": "Overwhelm → Calm", "sym": "Modak", "pri": 2}, {"t": "Trying to learn a very hard new concept or language", "cat": "Regulation & Energy Overload", "trigger": "Cognitive load", "age": "7-12", "need": "Calm", "shift": "Overwhelm → Calm", "sym": "Eyes", "pri": 2}, {"t": "Moving to a new home or city", "cat": "Change & Uncertainty", "trigger": "New house", "age": "5-12", "need": "Security", "shift": "Uncertainty → Trust", "sym": "Lotus", "pri": 3}, {"t": "Moving abroad (very relevant for NRI families)", "cat": "Change & Uncertainty", "trigger": "New country", "age": "5-12", "need": "Security", "shift": "Uncertainty → Trust", "sym": "Lotus", "pri": 3}, {"t": "Parents separating or getting a divorce", "cat": "Change & Uncertainty", "trigger": "Parents", "age": "5-12", "need": "Security", "shift": "Uncertainty → Trust", "sym": "Belly", "pri": 3}, {"t": "A parent starts a new job with different hours", "cat": "Change & Uncertainty", "trigger": "Parent job", "age": "5-12", "need": "Security", "shift": "Uncertainty → Trust", "sym": "Lotus", "pri": 2}, {"t": "Starting at a completely new school", "cat": "Change & Uncertainty", "trigger": "New school", "age": "5-12", "need": "Security", "shift": "Uncertainty → Trust", "sym": "Lotus", "pri": 3}, {"t": "Favourite teacher changes mid-year", "cat": "Change & Uncertainty", "trigger": "New teacher", "age": "5-10", "need": "Security", "shift": "Uncertainty → Trust", "sym": "Tusk", "pri": 2}, {"t": "Sudden cancellation of a normal routine event", "cat": "Change & Uncertainty", "trigger": "Cancellation", "age": "5-12", "need": "Security", "shift": "Uncertainty → Trust", "sym": "Tusk", "pri": 2}, {"t": "Summer ending and school starting again", "cat": "Change & Uncertainty", "trigger": "Season shift", "age": "5-12", "need": "Security", "shift": "Uncertainty → Trust", "sym": "Lotus", "pri": 2}, {"t": "Growing pains, first tooth loss, puberty signs", "cat": "Change & Uncertainty", "trigger": "Body change", "age": "6-12", "need": "Security", "shift": "Uncertainty → Trust", "sym": "Trunk", "pri": 2}, {"t": "Friend suddenly acting different or 'cooler'", "cat": "Change & Uncertainty", "trigger": "Friend change", "age": "7-12", "need": "Security", "shift": "Uncertainty → Trust", "sym": "Ears", "pri": 2}, {"t": "Game or app changes interface completely", "cat": "Change & Uncertainty", "trigger": "App update", "age": "7-12", "need": "Security", "shift": "Uncertainty → Trust", "sym": "Eyes", "pri": 1}, {"t": "New nanny or household helper joins family", "cat": "Change & Uncertainty", "trigger": "New helper", "age": "5-9", "need": "Security", "shift": "Uncertainty → Trust", "sym": "Mooshika", "pri": 2}, {"t": "News of an upcoming surgery or treatment", "cat": "Change & Uncertainty", "trigger": "Medical", "age": "5-12", "need": "Security", "shift": "Uncertainty → Trust", "sym": "Belly", "pri": 2}, {"t": "Family having to cut back on treats or outings", "cat": "Change & Uncertainty", "trigger": "Money cut", "age": "7-12", "need": "Security", "shift": "Uncertainty → Trust", "sym": "Modak", "pri": 2}, {"t": "Waiting anxiously for exam results", "cat": "Change & Uncertainty", "trigger": "Results wait", "age": "8-12", "need": "Security", "shift": "Uncertainty → Trust", "sym": "Eyes", "pri": 2}, {"t": "First time staying overnight away from home", "cat": "Change & Uncertainty", "trigger": "Overnight", "age": "5-9", "need": "Security", "shift": "Uncertainty → Trust", "sym": "Mooshika", "pri": 2}, {"t": "Stopping a favourite hobby or activity", "cat": "Change & Uncertainty", "trigger": "Hobby change", "age": "6-12", "need": "Security", "shift": "Uncertainty → Trust", "sym": "Tusk", "pri": 2}, {"t": "Overheard adults talk about 'a big change coming'", "cat": "Change & Uncertainty", "trigger": "Big change rumour", "age": "7-12", "need": "Security", "shift": "Uncertainty → Trust", "sym": "Ears", "pri": 1}, {"t": "Told a lie to a parent and feels a 'heavy' stomach", "cat": "Moral & Values Confusion", "trigger": "Lying", "age": "5-12", "need": "Integrity", "shift": "Confusion → Clarity", "sym": "Belly", "pri": 3}, {"t": "Friends asked them to steal or break a rule", "cat": "Moral & Values Confusion", "trigger": "Peer pressure", "age": "7-12", "need": "Integrity", "shift": "Confusion → Clarity", "sym": "Ears", "pri": 3}, {"t": "Watched someone get bullied and did nothing", "cat": "Moral & Values Confusion", "trigger": "Bystander", "age": "7-12", "need": "Integrity", "shift": "Confusion → Clarity", "sym": "Trunk", "pri": 2}, {"t": "A mean kid got praised or rewarded", "cat": "Moral & Values Confusion", "trigger": "Unfair reward", "age": "6-12", "need": "Integrity", "shift": "Confusion → Clarity", "sym": "Ears", "pri": 2}, {"t": "Wants to play but knows they should study", "cat": "Moral & Values Confusion", "trigger": "Priority clash", "age": "7-12", "need": "Integrity", "shift": "Confusion → Clarity", "sym": "Eyes", "pri": 2}, {"t": "Tempted to look at friend's paper during a test", "cat": "Moral & Values Confusion", "trigger": "Cheating", "age": "7-12", "need": "Integrity", "shift": "Confusion → Clarity", "sym": "Ears", "pri": 2}, {"t": "Told a 'bad' secret they feel should be shared", "cat": "Moral & Values Confusion", "trigger": "Bad secret", "age": "6-12", "need": "Integrity", "shift": "Confusion → Clarity", "sym": "Ears", "pri": 2}, {"t": "Broke something by mistake and hid it", "cat": "Moral & Values Confusion", "trigger": "Accident", "age": "5-12", "need": "Integrity", "shift": "Confusion → Clarity", "sym": "Tusk", "pri": 3}, {"t": "Realised some kids don't have food or shoes", "cat": "Moral & Values Confusion", "trigger": "Inequality", "age": "7-12", "need": "Integrity", "shift": "Confusion → Clarity", "sym": "Modak", "pri": 2}, {"t": "Saw a parent or teacher break a rule they enforce", "cat": "Moral & Values Confusion", "trigger": "Adult rule-break", "age": "8-12", "need": "Integrity", "shift": "Confusion → Clarity", "sym": "Eyes", "pri": 1}, {"t": "Someone online asked for their personal password", "cat": "Moral & Values Confusion", "trigger": "Digital safety", "age": "8-12", "need": "Integrity", "shift": "Confusion → Clarity", "sym": "Ears", "pri": 1}, {"t": "Saw someone litter and felt upset but said nothing", "cat": "Moral & Values Confusion", "trigger": "Environment", "age": "6-12", "need": "Integrity", "shift": "Confusion → Clarity", "sym": "Trunk", "pri": 2}, {"t": "Saw a stray animal being treated badly", "cat": "Moral & Values Confusion", "trigger": "Animal welfare", "age": "5-12", "need": "Integrity", "shift": "Confusion → Clarity", "sym": "Trunk", "pri": 2}, {"t": "Failed to keep a promise they made to a friend", "cat": "Moral & Values Confusion", "trigger": "Broken promise", "age": "7-12", "need": "Integrity", "shift": "Confusion → Clarity", "sym": "Tusk", "pri": 2}, {"t": "Feels guilty for not including someone in play", "cat": "Moral & Values Confusion", "trigger": "Exclusion guilt", "age": "6-12", "need": "Integrity", "shift": "Confusion → Clarity", "sym": "Ears", "pri": 2}, {"t": "Friend said something mean about their culture or family", "cat": "Moral & Values Confusion", "trigger": "Culture clash", "age": "7-12", "need": "Integrity", "shift": "Confusion → Clarity", "sym": "Lotus", "pri": 2}, {"t": "Found something and doesn't know whether to keep it", "cat": "Moral & Values Confusion", "trigger": "Found object", "age": "6-12", "need": "Integrity", "shift": "Confusion → Clarity", "sym": "Eyes", "pri": 2}, {"t": "Overheard talk about politics, protests, or injustice", "cat": "Moral & Values Confusion", "trigger": "Adult topics", "age": "8-12", "need": "Integrity", "shift": "Confusion → Clarity", "sym": "Eyes", "pri": 1}], "symbols": [{"name": "Ears", "emoji": "👂", "meaning": "Ears sift helpful words from noisy distractions — like grain from dust.", "breathe": "3 slow breaths, \"in\" for good words, \"out\" for noise.", "say": "I keep the words that help me grow.", "layers": ["Notice different sounds", "Separate helpful words from hurtful/noisy words", "Listen before reacting", "Become someone who seeks wisdom from good people"]}, {"name": "Eyes", "emoji": "👀", "meaning": "Eyes see danger and see dreams — awareness and focus, together.", "breathe": "Close eyes, picture one goal clearly for 10 seconds.", "say": "I see what matters most.", "layers": ["Notice details others miss", "Focus on one thing despite distractions", "See different perspectives", "Develop inner vision — notice thoughts, feelings and goals"]}, {"name": "Trunk", "emoji": "🐘", "meaning": "Strong enough to move a tree, gentle enough to pick up a needle.", "breathe": "Long \"Om\" hum, swaying side to side like a trunk.", "say": "I match my strength to the moment.", "layers": ["Match your strength to the situation", "Flexible — know when to bend and when to stand firm", "Use your words with kindness and strength", "Inner balance: power guided by compassion"]}, {"name": "Tusk (Broken Tusk)", "emoji": "🦷", "meaning": "Ganesha broke his own tusk because truth mattered more than looking whole.", "breathe": "Picture a \"broken\" moment that still helped you.", "say": "I don't have to be perfect to be useful.", "layers": ["Progress over perfection", "Courage to do what's right even if it's hard", "Sacrifice comfort for something meaningful", "Knowledge and truth matter more than appearances"]}, {"name": "Mooshika (Mouse)", "emoji": "🐭", "meaning": "Even a small, restless mind can carry big dreams when guided well.", "breathe": "One tiny helpful task today, no reward needed.", "say": "Small steps still move me forward.", "layers": ["Patience beats rushing", "Calm a restless mind", "Control impulses instead of letting them control you", "Even small people can achieve great things with discipline"]}, {"name": "Modak", "emoji": "🍡", "meaning": "Joy grows bigger the more it's shared.", "breathe": "Give one thing away — a toy, a turn, a smile.", "say": "Sharing makes my joy grow bigger.", "layers": ["Learning is rewarding", "Share happiness with others", "Effort brings sweet results", "The deepest joy comes from wisdom, not treats or possessions"]}, {"name": "Belly", "emoji": "🤍", "meaning": "Ganesha's belly holds both the yummy wins and the yucky surprises, without losing peace.", "breathe": "Hand on belly, 5 slow rises and falls.", "say": "I can hold my big feelings without losing my peace.", "layers": ["Breathe instead of exploding", "Accept both happy and sad moments", "Build resilience after setbacks", "Stay peaceful through life's ups and downs"]}, {"name": "Lotus", "emoji": "🪷", "meaning": "A lotus rises clean and bright out of muddy water.", "breathe": "Picture a hard day turning into something beautiful.", "say": "Hard days help me grow toward the light.", "layers": ["Difficulties help us learn", "Stay true to yourself even in hard places", "Rise above negativity without becoming bitter", "Inner purity despite the outside world"]}], "structures": [{"name": "The Rule of Three (Escalating Encounters)", "desc": "A small hero faces three increasingly difficult challenges using the same clever idea until a surprise twist requires a new approach.", "flow": "Goal → Encounter 1 → Encounter 2 → Encounter 3 (Twist) → Clever Reversal → Peaceful Return", "why": "Creates a satisfying, predictable pattern that lets children feel smarter than the obstacles.", "situations": "Feeling small, intimidated by new places, facing big problems.", "symbol": "Large Ears", "length": "7 slides", "avoid": "Solving problems through luck or magic.", "book": "The Gruffalo"}, {"name": "The Inner Journey (Emotional Catharsis)", "desc": "A child uses imagination as a safe harbor to process overwhelming feelings like anger or disappointment.", "flow": "Overwhelming Emotion → Symbolic World Appears → Creative Exploration → Realization of Need → Reassured Return", "why": "Validates raw emotions without scolding, offering a safe space for regulation.", "situations": "Tantrums, feeling misunderstood, intense disappointment.", "symbol": "Large Belly", "length": "7 slides", "avoid": "Moralizing or scolding the anger.", "book": "Where the Wild Things Are"}, {"name": "Sequential Growth (Natural Progression)", "desc": "A character moves through logical stages of growth, experiencing a minor setback from over-reaching before returning to balance.", "flow": "Simple Need → Sequential Progress → Natural Setback → Restorative Choice → Quiet Growth → Transformation", "why": "Mirrors real-life biological cycles, teaching cause-and-effect through experience.", "situations": "Wanting to grow up too fast, overindulgence, learning patience.", "symbol": "Curved Trunk", "length": "7 slides", "avoid": "Preachy morals about greed; skipping the resting phase.", "book": "The Very Hungry Caterpillar"}, {"name": "The De-escalating Ritual (Cataloging)", "desc": "A character winds down by naming and bidding farewell to the familiar objects in their world.", "flow": "Entering Sanctuary → Cataloging Environment → Visual Dimming → Expanding Scope → Surrender to Rest", "why": "Functions as an audio lullaby, anchoring overstimulated minds through sensory naming.", "situations": "Bedtime resistance, anxiety before sleep.", "symbol": "Large Belly", "length": "7 slides", "avoid": "High stakes or loud climaxes.", "book": "Goodnight Moon"}, {"name": "Playful Measurement (Spatial Comparison)", "desc": "A dialogue-based game where a child tries to measure an unmeasurable feeling using physical reaches and leaps.", "flow": "Closeness → Playful Challenge → Physical Comparison → Nature Vistas → Ultimate Reassurance", "why": "Turns abstract concepts into tangible actions children can physically imitate.", "situations": "Seeking reassurance of love, wondering if kindness runs out.", "symbol": "Large Ears", "length": "7 slides", "avoid": "Competition where one \"wins.\"", "book": "Guess How Much I Love You"}, {"name": "The Communal Wait (Separation Anxiety)", "desc": "Young characters wait together for a trusted guide's return, comforting each other through different emotional reactions.", "flow": "Caregiver Absence → Different Coping Styles → Mutual Comfort → Natural Return → Restored Security", "why": "Validates different levels of maturity and proves love remains even when out of sight.", "situations": "Starting school, parents leaving for errands.", "symbol": "Steady Feet", "length": "6-7 slides", "avoid": "Dramatic, high-peril rescues.", "book": "Owl Babies"}, {"name": "The Interactive Prohibition (Boundary Testing)", "desc": "A guide gives the reader a single rule, and a playful character tries to negotiate their way into breaking it.", "flow": "The Rule → The Temptation → Escalating Pleas → Boundary Holds → Unexpected Redirection", "why": "Empowers the child to be the rule-enforcer and provides a safe outlet for negotiation tactics.", "situations": "Testing boundaries, impulse control.", "symbol": "The Bell", "length": "5-7 slides", "avoid": "Punishing the character for the tantrum.", "book": "Don't Let the Pigeon Drive the Bus!"}, {"name": "Runaway Cause-and-Effect (The Loop)", "desc": "A tiny act triggers an unstoppable, logically consistent chain reaction that loops back to the start.", "flow": "Trigger → Escalating Demands → Runaway Activity → Wind Down → Circular Return", "why": "Rewards prediction as children guess the next logical consequence.", "situations": "Being absorbed in \"one more thing,\" seeing how small choices grow.", "symbol": "The Seed", "length": "7 slides", "avoid": "Random events; consequences that are too scary.", "book": "If You Give a Mouse a Cookie"}, {"name": "Solo Sensory Exploration (Nature Wonder)", "desc": "A child discovers a magical transformation in nature and explores it quietly through all five senses.", "flow": "Waking to Wonder → Solo Exploration → Sensory Discoveries → Nature Lesson → Reflective Peace", "why": "Honors a child's capacity for independent discovery and teaches impermanence gently.", "situations": "First rain/snow, blooming flower, solitary garden play.", "symbol": "The Lotus", "length": "7 slides", "avoid": "High-stakes conflict or villains.", "book": "The Snowy Day"}, {"name": "The Flaw as a Quest (Unconditional Belonging)", "desc": "A character believes they must \"fix\" an imperfection to be loved, only to find they were already perfect to the right person.", "flow": "Internal Longing → Perceived Flaw → Self-Led Quest → Accidental Setback → Reassuring Acceptance", "why": "Touches deep vulnerabilities about being unwanted or imperfect and resolves them safely.", "situations": "Feeling different, self-consciousness, needing reassurance after a mistake.", "symbol": "Curved Trunk", "length": "7 slides", "avoid": "Magically fixing the flaw at the end.", "book": "Corduroy"}, {"name": "Cumulative Misfortune (Validation)", "desc": "A character endures a cascade of minor, relatable disasters, finding peace only when their frustration is finally acknowledged.", "flow": "Bad Start → Piling Disappointments → Melodrama → Validation → Soft Acceptance", "why": "Gives kids permission to have a bad day and validates grumpy feelings without rushing to cheer them up.", "situations": "Nothing going right, bad moods, sibling rivalry.", "symbol": "The Lotus", "length": "6-7 slides", "avoid": "Forced cheerfulness or lectures.", "book": "Alexander and the Terrible, Horrible, No Good, Very Bad Day"}, {"name": "Absurd Domestic Invasion (Surreal Surprise)", "desc": "A wild, impossible element enters a quiet home routine and behaves with impeccable manners while creating delightful chaos.", "flow": "Domestic Routine → Surprising Visitor → Escalating Feast/Chaos → Polite Farewell → Joyful Adaptation", "why": "Blends complete safety with rule-breaking.", "situations": "Rainy days, unexpected guests, boring afternoons turned magical.", "symbol": "The Cloud", "length": "6 slides", "avoid": "Frightening the character or the reader.", "book": "The Tiger Who Came to Tea"}, {"name": "Active World-Building (Agency)", "desc": "A character uses a creative tool to draw their own path and solve problems independently.", "flow": "Decision → Drawing the Path → Wandering → Obstacle → Creative Escape → Return to Bed", "why": "Celebrates the power of a child's mind to shape their reality and solve their own dilemmas.", "situations": "Imaginative play, solving puzzles, feeling in control.", "symbol": "The Brush", "length": "7 slides", "avoid": "Over-explaining how the tool works.", "book": "Harold and the Purple Crayon"}, {"name": "Call-and-Response Chain (Rhythmic Participation)", "desc": "A rhythmic, musical sequence where one character asks a question and the answer introduces the next friend.", "flow": "Question 1 → Response 1 (Introduction 2) → Question 2 → Group Gathering → Finale", "why": "Gives toddlers a sense of mastery through prediction and pattern.", "situations": "Learning names, colors, forest friends in a group setting.", "symbol": "The Lotus", "length": "5-6 slides", "avoid": "Breaking the rhythm mid-book.", "book": "Brown Bear, Brown Bear, What Do You See?"}, {"name": "The Portable Anchor (Separation Ritual)", "desc": "A character receives a tangible physical ritual from a guide that helps them carry love/courage into a new place.", "flow": "Anxiety → Separation Breaking Point → Secret Ritual → Demonstration → Bravery in the Field", "why": "Translates abstract emotions into a repeatable physical action a child can use independently.", "situations": "First day of school, sleepovers, trying something scary.", "symbol": "The Trunk (breath)", "length": "7 slides", "avoid": "The mentor solving the situation for the child.", "book": "The Kissing Hand"}, {"name": "Cumulative Hospitality (Teamwork)", "desc": "A kind hero continuously makes room for new friends on their journey until the group must unite to overcome a threat.", "flow": "Journey Begins → Sequential Pickups → Peril → Collective Rescue → Upgraded Shared Space", "why": "Rewards radical inclusivity; early kindness becomes the reason the hero succeeds later.", "situations": "Making new friends, sharing toys, learning to include others.", "symbol": "Banyan Tree", "length": "7 slides", "avoid": "Leaving out the different character at the end.", "book": "Room on the Broom"}, {"name": "Identity Reframing (Empathetic Shift)", "desc": "A character who feels different or stared at uses imagination to realize that everyone is a unique wonder.", "flow": "Vulnerability → External Rejection → Imaginative Escape → Perspective Shift → Universal Inclusion", "why": "Puts the reader inside the emotional experience of being an outsider, fostering empathy.", "situations": "Witnessing teasing, feeling left out, noticing differences.", "symbol": "Inner Lamp", "length": "7 slides", "avoid": "Making the message feel like a lecture.", "book": "We're All Wonders"}, {"name": "The Power of Presence (Silent Witness)", "desc": "After a disaster, a character rejects loud advice and \"fixing\" until a quiet guide simply sits beside them and listens.", "flow": "Disaster → Noisy Advice → Emotional Explosion → Silent Arrival → Listening → Recovery", "why": "Teaches that being heard heals faster than being fixed.", "situations": "Broken toys, losing a game, feeling overwhelmed by advice.", "symbol": "Large Ears", "length": "7 slides", "avoid": "The mentor solving the problem for the child.", "book": "The Rabbit Listened"}, {"name": "Expressing Needs (Perspective Check)", "desc": "Everyday helpers express their grievances through messages, forcing the protagonist to see things from their point of view.", "flow": "Discovery → Humorous Grievances → Artistic Dilemma → Creative Compromise → Resolution", "why": "Turns inanimate objects into dramatic characters, teaching children to articulate unappreciated feelings.", "situations": "Feeling overworked/ignored, learning conflict resolution.", "symbol": "The Goad/Axe", "length": "7 slides", "avoid": "Losing the humor to the lesson.", "book": "The Day the Crayons Quit"}, {"name": "Creative Denial (Imaginative Transformation)", "desc": "An adult asks a literal question about a mundane object, and the child defiantly transforms it into a magical adventure.", "flow": "Adult Question → Defensive Denial → Immersive Transformation → Escalating Scale → Sovereignty", "why": "Validates the child's inner world as superior to rigid adult logic.", "situations": "Playing with \"trash\" (sticks, boxes, leaves), creative world-building.", "symbol": "The Lotus", "length": "6 slides", "avoid": "Explaining the imagination instead of showing it.", "book": "Not a Box"}], "emotionalArcs": [{"name": "The Underdog's Wit", "flow": "Cautious Curiosity → Calm Confidence → Shock → Calm Problem-Solving → Triumph", "desc": "A small character uses their mind to succeed, faces a sudden twist, and finds a smarter way to win.", "why": "Empowers the small child by rewarding intelligence over physical force.", "situations": "Feeling small or intimidated.", "structure": "The Rule of Three", "symbol": "Large Ears", "book": "The Gruffalo"}, {"name": "The Emotional Harbor", "flow": "Defiance → Playful Release → Overwhelmed → Lonely → Comforted & Loved", "desc": "Intense frustration leads to a wild imaginative escape, followed by the realization that power is empty without connection.", "why": "Validates raw anger without judgment while providing a safe return to unconditional love.", "situations": "Tantrums, feeling misunderstood.", "structure": "The Inner Journey", "symbol": "Large Belly", "book": "Where the Wild Things Are"}, {"name": "The Rhythmic Growth", "flow": "Quiet Wonder → Eager Drive → Overwhelmed Discomfort → Relief → Peaceful Patience → Joyful Triumph", "desc": "A character experiences a natural cycle of growth, overreaches, finds balance through rest, and transforms.", "why": "Mirrors biological growth and teaches that mistakes are part of the process.", "situations": "Wanting to grow up too fast, learning patience.", "structure": "Sequential Growth", "symbol": "Curved Trunk", "book": "The Very Hungry Caterpillar"}, {"name": "The Mindful De-escalation", "flow": "Safe and Settled → Curious Contentment → Gentle Letting Go → Complete Peace", "desc": "A character anchors themselves by naming familiar things, gradually lowering energy until they surrender to rest.", "why": "Functions as a biological signal for sleep by grounding overstimulated minds.", "situations": "Bedtime resistance, overstimulation.", "structure": "The De-escalating Ritual", "symbol": "Large Belly", "book": "Goodnight Moon"}, {"name": "The Circle of Safety (Trust)", "flow": "Surprise/Confusion → Hopeful Logic → Growing Worry → Mutual Comfort → Overwhelming Relief → Security", "desc": "Characters face a temporary absence of a caregiver and comfort each other until the inevitable, peaceful return.", "why": "Validates separation anxiety while proving love remains even when out of sight.", "situations": "First day of school, parents leaving for errands.", "structure": "The Communal Wait", "symbol": "Steady Feet", "book": "Owl Babies"}, {"name": "The Empowered Boundary", "flow": "Empowered Importance → Skeptical Amusement → High-Pressure Delight → Triumphant Authority", "desc": "A child is given a rule to protect and finds joy in holding that boundary against a persuasive character.", "why": "Flips the power dynamic, letting the child be the rule-enforcer in a safe, comic setting.", "situations": "Testing boundaries, impulse control.", "structure": "The Interactive Prohibition", "symbol": "The Bell", "book": "Don't Let the Pigeon Drive the Bus!"}, {"name": "Sensory Discovery", "flow": "Breathless Wonder → Joyful Freedom → Curious Experimentation → Satisfied Exhaustion → Warm Nostalgia", "desc": "A character explores a transformed natural world solo, experiencing textures and sounds before accepting impermanence.", "why": "Honors independent, mindful observation of nature.", "situations": "First rain/snow, solitary garden play.", "structure": "Solo Sensory Exploration", "symbol": "The Lotus", "book": "The Snowy Day"}, {"name": "Radical Self-Acceptance", "flow": "Hopeful Longing → Curious Determination → Accidental Panic → Relieved Wonder → Deep Belonging", "desc": "A character believes they are broken or different and tries to fix themselves, only to find they are loved as they are.", "why": "Resolves the core fear of being unwanted by grounding worth in relationship, not perfection.", "situations": "Self-consciousness about flaws, feeling not enough.", "structure": "The Flaw as a Quest", "symbol": "Curved Trunk", "book": "Corduroy"}, {"name": "The Validated Grump", "flow": "Gloomy Resentment → Grumpy Defiance → Overwhelmed Frustration → Melodramatic Despair → Soft Acceptance", "desc": "A character endures a cascade of minor disasters and finds peace only when their frustration is acknowledged.", "why": "Gives permission to have a bad day without forced cheerfulness.", "situations": "Bad days, nothing going right.", "structure": "Cumulative Misfortune", "symbol": "The Lotus", "book": "Alexander and the Terrible, Horrible, No Good, Very Bad Day"}, {"name": "Triumphant Teamwork", "flow": "Joyful Belonging → Shock/Grief/Peril → Purposeful Leadership → Empowered Triumph", "desc": "An individual or small group faces a threat and succeeds by combining unique strengths into a unified force.", "why": "Proves cooperation creates strength individuals don't have alone.", "situations": "Making friends, facing big problems.", "structure": "Cumulative Hospitality", "symbol": "Banyan Tree", "book": "Swimmy / Room on the Broom"}, {"name": "The Empathetic Witness", "flow": "Devastation → Frustrated Overwhelm → Lonely Isolation → Calming Safety → Ready to Heal", "desc": "After a disaster, a character rejects loud advice until a quiet guide simply sits beside them and listens.", "why": "Teaches that being heard heals faster than being fixed.", "situations": "Broken toys, losing a game, overwhelmed by advice.", "structure": "The Power of Presence", "symbol": "Large Ears", "book": "The Rabbit Listened"}, {"name": "The Generous Heart", "flow": "Arrogant Vanity → Lonely Rejection → Reluctant Hesitation → Generous Giving → Warm Happiness", "desc": "A character with a unique gift discovers that joy is multiplied, not diminished, when shared with others.", "why": "Provides a visual metaphor for sharing and validates the difficulty of parting with treasures.", "situations": "Learning to share, overcoming selfishness.", "structure": "Journey Transformation", "symbol": "The Modak", "book": "The Rainbow Fish"}, {"name": "The Runaway Logic", "flow": "Generous Amusement → Growing Bewilderment → Exhausted Acceptance → Playful Resignation", "desc": "A tiny action triggers an unstoppable chain of events that eventually loops back to the start.", "why": "Rewards prediction and matches toddler logic for cause and effect.", "situations": "Understanding consequences, latching onto sequential requests.", "structure": "Runaway Cause-and-Effect", "symbol": "The Seed", "book": "If You Give a Mouse a Cookie"}, {"name": "The Surprise Guest", "flow": "Peaceful Calm → Delighted Surprise → Astonished Amusement → Cozy Relief → Adventurous Excitement", "desc": "A wild visitor enters a quiet scene and creates polite chaos that turns into a celebration.", "why": "Blends domestic safety with rule-breaking; models calm adaptation to the impossible.", "situations": "Changes in plans, unexpected guests, wanting to break rules safely.", "structure": "Absurd Domestic Invasion", "symbol": "Cloud", "book": "The Tiger Who Came to Tea"}, {"name": "Creative Empowerment", "flow": "Quiet Curiosity → Creative Empowerment → Adventurous Thrill → Playful Surprise → Deep Sleepy Comfort", "desc": "A character uses a creative tool to build their own adventure and solve their own problems.", "why": "Celebrates childhood agency, showing that imagination can shape reality and solve dilemmas.", "situations": "Solving puzzles, imaginative play, bedtime routines.", "structure": "Active World-Building", "symbol": "Ganesha's Brush", "book": "Harold and the Purple Crayon"}, {"name": "The Courageous Breath", "flow": "Nervous Dread → Deep Sadness → Curious Wonder → Courageous Comfort → Loving Joy", "desc": "A character receives a physical gesture or ritual to carry courage/love into a scary new place.", "why": "Translates abstract support into a concrete, repeatable physical action children can use independently.", "situations": "First day of school, trying new things, separation anxiety.", "structure": "The Portable Anchor", "symbol": "Trunk", "book": "The Kissing Hand"}, {"name": "Identity Reframing", "flow": "Vulnerable Isolation → Rejection → Imaginative Freedom → Empathetic Clarity → Joyful Belonging", "desc": "A character feels limited by their appearance/identity until a mentor helps them look at the world differently.", "why": "Reframes perceived flaws into a universal celebration of uniqueness and shared humanity.", "situations": "Feeling different, being stared at, witnessing teasing.", "structure": "Identity Reframing", "symbol": "Inner Lamp", "book": "We're All Wonders"}, {"name": "The Appreciated Helper", "flow": "Shocked Confusion → Hilarious Indignation → Creative Empathy → Joyful Expression", "desc": "Overworked or unnoticed helpers speak up about their feelings, leading to creative compromise and appreciation.", "why": "Teaches children how to articulate feelings and consider others' perspectives through humor.", "situations": "Feeling unappreciated, learning compromise, expressing needs when overwhelmed.", "structure": "Expressing Needs", "symbol": "Axe/Tools", "book": "The Day the Crayons Quit"}], "storytellingTechniques": [{"name": "Dramatic Irony (The Secret)", "desc": "The reader knows a secret the main character hasn't figured out yet.", "why": "Children love feeling one step ahead — it turns them into active participants.", "use": "Funny danger or teasing/tricking.", "stage": "Middle through climax", "avoid": "Explaining the secret in the text."}, {"name": "Pacing by Subtraction (The Quiet Beat)", "desc": "Removing words to let the pictures show a big emotion or beautiful moment.", "why": "Provides a breathing beat that honors a child's ability to read visual emotions.", "use": "Peak wonder, deep sadness, wild celebration.", "stage": "Emotional realization / climax aftermath", "avoid": "Placing the silent spread too early."}, {"name": "Perspective Reframing (The Wise Twist)", "desc": "A character is unhappy until a mentor helps them see the situation in a beautiful new way.", "why": "Models cognitive flexibility and provides a satisfying lightbulb moment.", "use": "When a character feels different, bored, or inadequate.", "stage": "Turning point (slide 4-5)", "avoid": "Preachy lectures; fixing the problem for the character."}, {"name": "Runaway Cause-and-Effect (The Domino Chain)", "desc": "One tiny action triggers an unstoppable chain of events that loops back to the start.", "why": "Rewards prediction and lets children feel one step ahead of the chaos.", "use": "Teaching consequence and logic through humor.", "stage": "Middle sequence", "avoid": "Random events; scary consequences."}, {"name": "Sensory Soundscapes (Onomatopoeia)", "desc": "Using words that sound like the things they describe to make a scene tactile.", "why": "Makes the story immersive, interactive, and anchors sensory engagement.", "use": "Nature walks, eating scenes, physical movement.", "stage": "Exploration / sensory beats", "avoid": "Too many different sounds."}], "top20Techniques": ["Perspective Reframing", "The Mentor Mirror", "Pacing by Subtraction", "Sensory Sound-Effects", "Independent Solo Exploration", "Nature as Emotional Mirror", "Poignant Natural Lesson", "Dramatic Irony", "Circular Ending", "Sensory Naming (Cataloging)", "Everyday Wonder", "The Portable Anchor", "Rule of Three", "Visual Expansion", "Active World-Building", "Contrast of Scale", "Cause and Consequence", "Inclusive Finale", "Child Logic", "Visual Symbol"], "replayHooks": [{"name": "Rhythmic Refrain", "why": "Provides a familiar phrase children quickly memorize and joyfully repeat.", "age": "5-6"}, {"name": "Onomatopoeia (Sound Words)", "why": "Makes scenes feel real through sounds like drip, rustle, crunch, splash.", "age": "5-8"}, {"name": "Cataloging (Sensory Naming)", "why": "Creates calm by naming familiar objects one after another.", "age": "5-6"}, {"name": "Search & Find (Visual Anchor)", "why": "Rewards children for discovering a hidden recurring object or character.", "age": "5-7"}, {"name": "Predictive Guessing", "why": "Lets children anticipate what happens next by recognizing patterns.", "age": "6-8"}, {"name": "Physical Mimicry", "why": "Encourages children to copy movements such as stretching, hopping, or breathing.", "age": "5-7"}, {"name": "Circular Ending", "why": "Ends where the story began, creating satisfying closure and inviting another read.", "age": "5-8"}, {"name": "Visual Scale Expansion", "why": "Illustrations become larger as emotions or excitement grow.", "age": "5-8"}, {"name": "Page-Turn Cliffhanger", "why": "Places the biggest reveal immediately after turning the page.", "age": "5-8"}, {"name": "Dramatic Irony (The Secret)", "why": "The child knows something the main character doesn't, creating anticipation and delight.", "age": "6-8"}], "readAloudRules": ["Sentences 8-12 words whenever possible.", "Paragraphs 1-3 short lines.", "~50/50 balance between narration and dialogue.", "One memorable repeated phrase per story.", "Include 2-4 natural sound words.", "End every spread with a reason to turn the page.", "25-75 words per spread.", "One idea per sentence.", "Prefer strong active verbs over extra adjectives.", "Never write text that simply describes what the illustration already shows."], "readAloudToolbox": ["Short conversational sentences", "Natural dialogue", "One memorable repeated phrase", "Sound words", "One page-turn surprise", "One quiet pause", "One funny moment", "One prediction moment", "Strong ending line", "Read-aloud rhythm", "Emotional contrast", "Wonder ending"], "openings": [{"name": "The Vulnerable Wanderer", "desc": "A small, relatable character enters a vast or uncertain space with a simple, quiet goal.", "why": "Children instinctively sympathize with an underdog in a big world.", "use": "Establishing bravery or curiosity in a large setting.", "book": "The Gruffalo"}, {"name": "The Natural Sanctuary", "desc": "Establishes a peaceful, safe, rhythmic environment before action begins.", "why": "Signals safety and predictability, essential for bedtime or mindfulness stories.", "use": "Wind-down stories.", "book": "Goodnight Moon"}, {"name": "The Validated Outburst", "desc": "Starts with the character already experiencing a big emotion like anger or defiance.", "why": "Children feel seen when a book starts with a feeling they've actually had.", "use": "Exploring emotional regulation or resilience.", "book": "Where the Wild Things Are"}, {"name": "The Routine Disruption", "desc": "Shows a character in an ordinary routine that is suddenly interrupted by something impossible.", "why": "Establishes normal so the abnormal has maximum impact.", "use": "Humorous stories or unexpected visits.", "book": "The Tiger Who Came to Tea"}, {"name": "The Task Assignment (The Guardrail)", "desc": "Ganesha or a guide gives the reader a specific job to do while they are gone.", "why": "Turns the book into a game and makes the child the authority in the story.", "use": "Interactive humor or self-control lessons.", "book": "Don't Let the Pigeon Drive the Bus!"}], "top10Openings": ["The Sensory Morning", "The Internal Longing", "The Fourth-Wall Assignment", "The Nature Transformation", "The Routine Interruption", "The Milestone Anxiety", "The Rhythmic Inquiry", "The Intimate Bond", "The Dramatic Loss", "The Defining Flaw"], "endings": [{"name": "The Circular Return (The Safe Anchor)", "desc": "The story ends exactly where it began, but the character is now wiser or more peaceful.", "why": "Provides profound psychological security; home is always waiting.", "image": "Peace — a visual mirror of the first slide.", "book": "The Gruffalo"}, {"name": "The Absolute Reassurance (The Warm Hug)", "desc": "A final statement of unconditional love or safety that resolves all previous anxiety.", "why": "Anchors the character's worth in relationship rather than achievement.", "image": "Warmth — a hug, glowing light, cozy food.", "book": "Owl Babies / The Kissing Hand"}, {"name": "The Triumphant Metamorphosis (The Unfolding)", "desc": "A visual and internal transformation where the character reveals their full potential.", "why": "Validates that slow progress leads to grand results.", "image": "Wonder — vibrant colors and expanded scale.", "book": "The Very Hungry Caterpillar"}, {"name": "The Comic Pivot (The Next Big Thing)", "desc": "After the main problem is solved, the character immediately spots a new, bigger curiosity.", "why": "Children find it hilarious because it mirrors their own fleeting obsessions.", "image": "Laughter — character looking off-page at a new tease.", "book": "Don't Let the Pigeon Drive the Bus!"}], "top10Endings": ["Perspective Shift", "Circular Return", "Triumphant Metamorphosis", "Absolute Reassurance", "Quiet Satisfaction", "Shared Success", "Inclusive Finale", "Generational Pay-it-Forward", "Empathetic Reality Check", "The Comic Pivot"], "titleFormulas": [{"name": "The Mystery Formula", "pattern": "The [Mystery Name/Object]", "example": "The Whispering Wisp"}, {"name": "The Prohibition Formula", "pattern": "Don't [Action] the [Subject]", "example": "Don't Wake the Sleeping Sunbird!"}, {"name": "Character Trait Formula", "pattern": "The [Adjective] [Character]", "example": "The Curious Copper Moth"}, {"name": "Character + Magical Object", "pattern": "[Character] and the [Object]", "example": "Ganesha and the Silver Seed"}, {"name": "The Day Formula", "pattern": "The Day the [Subject] [Action]", "example": "The Day the Banyan Spoke Up"}, {"name": "Conditional Formula", "pattern": "If You [Action] a [Character]", "example": "If You Whisper to the Waterfall"}, {"name": "Limitation Formula", "pattern": "[Character] Can't [Action]", "example": "Elephants Can't Fly High"}, {"name": "Imagination Formula", "pattern": "Not a [Object]", "example": "Not a Falling Leaf"}, {"name": "Journey Formula", "pattern": "[Journey] to [Place]", "example": "Journey to the Lotus Pond"}, {"name": "Secret Formula", "pattern": "Secret of [Place/Object]", "example": "Secret of the Hollow Tree"}], "characters": [{"name": "Chinu (Squirrel)", "trait": "Curious, energetic learner", "symbols": "Ears, Trunk, Mouse", "situations": "Trying new things, mistakes, mysteries"}, {"name": "Arin (Rabbit)", "trait": "Gentle, cautious", "symbols": "Tusk, Belly, Lotus", "situations": "Fear of trying, anxiety, new experiences"}, {"name": "Bodhi (Elephant)", "trait": "Wise, calm", "symbols": "Belly, Trunk", "situations": "Big feelings, sharing, helping others"}, {"name": "Tara (Turtle)", "trait": "Patient, steady", "symbols": "Lotus, Belly", "situations": "Waiting, persistence, slow progress"}, {"name": "Kavi (Monkey)", "trait": "Funny, impulsive", "symbols": "Mouse, Trunk", "situations": "Distraction, excitement, impulse control"}, {"name": "Mira (Deer)", "trait": "Gentle, observant", "symbols": "Eyes, Lotus", "situations": "Shyness, kindness, empathy"}, {"name": "Nayan (Fox)", "trait": "Clever, resourceful", "symbols": "Eyes, Tusk", "situations": "Solving problems, thinking differently"}, {"name": "Ved (Owl)", "trait": "Wise, reflective", "symbols": "Eyes, Ears", "situations": "Confusion, curiosity"}, {"name": "Veer (Bear)", "trait": "Strong, kind", "symbols": "Belly, Tusk", "situations": "Helping others, confidence"}, {"name": "Anu (Mouse)", "trait": "Tiny but courageous", "symbols": "Mouse, Tusk", "situations": "Feeling small, overcoming fear"}, {"name": "Mayur (Peacock)", "trait": "Joyful, expressive", "symbols": "Lotus", "situations": "Confidence, celebration"}, {"name": "Vani (Parrot)", "trait": "Talkative, cheerful", "symbols": "Ears", "situations": "Listening, communication"}, {"name": "Mitra (Dog)", "trait": "Loyal, dependable", "symbols": "Belly", "situations": "Friendship, trust"}, {"name": "Gauri (Cow)", "trait": "Caring, nurturing", "symbols": "Modak, Belly", "situations": "Sharing, gratitude"}, {"name": "Simha (Lion)", "trait": "Brave, confident", "symbols": "Tusk", "situations": "Leadership, courage"}], "settings": [{"name": "Banyan Tree", "use": "Wisdom / meeting place", "emotion": "Calm, curiosity"}, {"name": "Hollow Tree", "use": "Secret / safe hiding place", "emotion": "Mystery"}, {"name": "Meadow", "use": "Play / celebration", "emotion": "Joy"}, {"name": "Forest Path", "use": "Journey / choice", "emotion": "Curiosity"}, {"name": "Hill", "use": "Challenge / achievement", "emotion": "Determination"}, {"name": "River", "use": "Change / reflection", "emotion": "Calm, courage"}, {"name": "Pond", "use": "Observation / quiet discovery", "emotion": "Wonder"}, {"name": "Stream", "use": "Small adventure / play", "emotion": "Happiness"}, {"name": "Cave", "use": "Mystery / fear", "emotion": "Curiosity, bravery"}, {"name": "Clearing", "use": "Gathering / celebration", "emotion": "Connection"}], "natureElements": [{"name": "Wind", "use": "Carries clues"}, {"name": "Leaves", "use": "Hidden messages"}, {"name": "Echo", "use": "Puzzle"}, {"name": "Water Ripples", "use": "Reveal truth"}, {"name": "Fireflies", "use": "Guide"}, {"name": "Seeds", "use": "Growth"}, {"name": "Feather", "use": "Clue"}, {"name": "Shadows", "use": "Mystery"}, {"name": "Rain", "use": "Fresh beginning"}, {"name": "Rainbow", "use": "Celebration"}], "props": [{"name": "Leaf", "use": "Clue, message, map"}, {"name": "Feather", "use": "Clue, reward, keepsake"}, {"name": "Lantern", "use": "Hope, guide, search"}, {"name": "Rope", "use": "Rescue, bridge, obstacle"}, {"name": "Basket", "use": "Collection, sharing"}, {"name": "Modak", "use": "Reward, temptation, celebration"}, {"name": "Bell", "use": "Signal, attention"}, {"name": "Scroll", "use": "Puzzle, instruction"}, {"name": "Map", "use": "Adventure, treasure hunt"}, {"name": "Water Pot", "use": "Helping, kindness"}], "qualityScorecard": [{"cat": "Story Seed", "max": 5}, {"cat": "Opening Hook", "max": 10}, {"cat": "Story Structure", "max": 10}, {"cat": "Emotional Journey", "max": 10}, {"cat": "Ganesha Wisdom", "max": 10}, {"cat": "Storytelling Craft", "max": 10}, {"cat": "Replay Value", "max": 10}, {"cat": "Read-Aloud Quality", "max": 10}, {"cat": "Illustration Potential", "max": 10}, {"cat": "Ending", "max": 10}, {"cat": "Toolkit Integration", "max": 5}, {"cat": "Originality", "max": 5}, {"cat": "Age Appropriateness", "max": 5}, {"cat": "Prana Kids Identity", "max": 5}, {"cat": "Overall Magic Test", "max": 5}]};
+
+let state = {sit:null, structure:null};
+const $ = id => document.getElementById(id);
+
+function fill(select, items, labelFn, valueFn){
+  select.innerHTML = items.map((it,i)=>`<option value="${i}">${labelFn(it)}</option>`).join('');
+}
+
+// ---------- STEP 1 ----------
+const cats = [...new Set(DATA.situations.map(s=>s.cat))].sort();
+$('catFilter').innerHTML = '<option value="">All categories</option>' + cats.map(c=>`<option>${c}</option>`).join('');
+$('sitCount').textContent = DATA.situations.length + ' situations';
+
+function renderSuggestions(list){
+  const box = $('sitSug');
+  if(!list.length){ box.classList.remove('show'); return; }
+  box.innerHTML = list.slice(0,40).map((s,i)=>{
+    const idx = DATA.situations.indexOf(s);
+    return `<div class="sug-item" data-idx="${idx}">${s.t}<small>${s.cat} · ${s.need} · ${s.shift}</small></div>`;
+  }).join('');
+  box.classList.add('show');
+  box.querySelectorAll('.sug-item').forEach(el=>{
+    el.onclick = ()=>selectSituation(parseInt(el.dataset.idx));
+  });
+}
+
+$('sitSearch').addEventListener('input', e=>{
+  const q = e.target.value.toLowerCase();
+  const cat = $('catFilter').value;
+  let list = DATA.situations.filter(s => (!cat || s.cat===cat) && (!q || s.t.toLowerCase().includes(q) || s.need.toLowerCase().includes(q) || s.cat.toLowerCase().includes(q)));
+  renderSuggestions(list);
+});
+$('sitSearch').addEventListener('focus', e=>{ e.target.dispatchEvent(new Event('input')); });
+document.addEventListener('click', e=>{ if(!e.target.closest('.searchbox')) $('sitSug').classList.remove('show'); });
+$('catFilter').addEventListener('change', ()=>{ $('sitSearch').dispatchEvent(new Event('input')); });
+
+$('randomBtn').addEventListener('click', ()=>{
+  const cat = $('catFilter').value;
+  let pool = DATA.situations.filter(s=>!cat || s.cat===cat);
+  const s = pool[Math.floor(Math.random()*pool.length)];
+  selectSituation(DATA.situations.indexOf(s));
+});
+
+function selectSituation(idx){
+  applySituation(DATA.situations[idx]);
+  $('customPanel').style.display = 'none';
+}
+
+function applySituation(s){
+  state.sit = s;
+  $('sitSearch').value = s.t;
+  $('sitSug').classList.remove('show');
+  $('seedAutofill').style.display = 'block';
+  $('af-cat').textContent = s.cat;
+  $('af-need').textContent = s.need;
+  $('af-shift').textContent = s.shift;
+  $('af-sym').textContent = s.sym;
+  const sym = DATA.symbols.find(x=>x.name.toLowerCase().includes(s.sym.toLowerCase()) || s.sym.toLowerCase().includes(x.name.split(' ')[0].toLowerCase()));
+  if(sym){
+    $('symbolCard').style.display='flex';
+    $('sym-emoji').textContent = sym.emoji;
+    $('sym-name').textContent = sym.name;
+    $('sym-meaning').textContent = sym.meaning;
+    $('sym-say').textContent = '"' + sym.say + '"';
+  } else {
+    $('symbolCard').style.display='none';
+  }
+  $('next1').disabled = false;
+}
+
+// ---------- DUAL ENTRY MODE ----------
+function situationsForSymbol(symObj){
+  return DATA.situations.filter(s => findSymbolObj(s.sym) === symObj);
+}
+
+$('symCount').textContent = DATA.symbols.length + ' symbols';
+$('symbolGrid').innerHTML = DATA.symbols.map((sym,i)=>
+  `<div class="symbol-pick" data-idx="${i}"><span class="emj">${sym.emoji}</span><span class="nm">${sym.name}</span></div>`
+).join('');
+$('symbolGrid').querySelectorAll('.symbol-pick').forEach(el=>{
+  el.addEventListener('click', ()=>{
+    $('symbolGrid').querySelectorAll('.symbol-pick').forEach(x=>x.classList.remove('on'));
+    el.classList.add('on');
+    const sym = DATA.symbols[parseInt(el.dataset.idx)];
+    const matches = situationsForSymbol(sym).sort((a,b)=>b.pri-a.pri);
+    $('symSitCount').textContent = matches.length + ' situations';
+    $('symSitList').innerHTML = matches.map(s=>{
+      const idx = DATA.situations.indexOf(s);
+      return `<div class="sit-item" data-idx="${idx}">${s.t}<small>${s.cat} · ${s.need} · ${s.shift}</small></div>`;
+    }).join('') || '<div class="sit-item">No situations tagged with this symbol yet.</div>';
+    $('symSitList').querySelectorAll('.sit-item[data-idx]').forEach(item=>{
+      item.addEventListener('click', ()=> selectSituation(parseInt(item.dataset.idx)));
+    });
+    $('symbolSituations').style.display = 'block';
+  });
+});
+
+const entryNotes = {
+  situation: "Recommended: describe the real moment you're dealing with, and we'll suggest 3–5 symbols that fit it.",
+  symbol: "Pick a symbol first — good for building a themed series or teaching one lesson deliberately.",
+  surprise: "We'll pick a random situation for you. Great for brainstorming."
+};
+$('entryChips').querySelectorAll('.chip').forEach(chip=>{
+  chip.addEventListener('click', ()=>{
+    $('entryChips').querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));
+    chip.classList.add('on');
+    const mode = chip.dataset.mode;
+    $('entryNote').textContent = entryNotes[mode];
+    $('situationMode').style.display = mode === 'situation' ? 'block' : 'none';
+    $('symbolMode').style.display = mode === 'symbol' ? 'block' : 'none';
+    if(mode === 'surprise'){
+      const s = DATA.situations[Math.floor(Math.random()*DATA.situations.length)];
+      selectSituation(DATA.situations.indexOf(s));
+    }
+  });
+});
+
+// ---------- custom situation ----------
+const allSymbolNames = [...new Set([...DATA.symbols.map(x=>x.name.split(' ')[0]), ...DATA.situations.map(s=>s.sym)])].sort();
+$('customSym').innerHTML = allSymbolNames.map(n=>`<option>${n}</option>`).join('');
+
+$('customToggle').addEventListener('click', ()=>{
+  const panel = $('customPanel');
+  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+});
+$('customUseBtn').addEventListener('click', ()=>{
+  const t = $('customText').value.trim();
+  if(!t){ $('customText').focus(); return; }
+  const s = {
+    t,
+    cat: $('customCat').value.trim() || 'Custom',
+    need: $('customNeed').value.trim() || '(add a core need)',
+    shift: $('customShift').value.trim() || '(add an emotion shift, e.g. Frustration → Confidence)',
+    sym: $('customSym').value,
+    pri: 3, custom: true
+  };
+  applySituation(s);
+});
+
+// ---------- SETTINGS ----------
+$('apiKeyInput').value = localStorage.getItem('pk_api_key') || '';
+$('modelInput').value = localStorage.getItem('pk_model') || 'claude-sonnet-5';
+$('gearBtn').addEventListener('click', ()=>{
+  const p = $('settingsPanel');
+  p.style.display = p.style.display==='none' ? 'block' : 'none';
+});
+$('saveSettingsBtn').addEventListener('click', ()=>{
+  localStorage.setItem('pk_api_key', $('apiKeyInput').value.trim());
+  localStorage.setItem('pk_model', $('modelInput').value.trim() || 'claude-sonnet-5');
+  $('settingsPanel').style.display = 'none';
+});
+$('clearSettingsBtn').addEventListener('click', ()=>{
+  localStorage.removeItem('pk_api_key');
+  $('apiKeyInput').value = '';
+});
+
+async function callClaude(prompt, maxTokens){
+  const apiKey = localStorage.getItem('pk_api_key');
+  const model = localStorage.getItem('pk_model') || 'claude-sonnet-5';
+  if(!apiKey) throw new Error('NO_KEY');
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({ model, max_tokens: maxTokens, messages: [{role:'user', content: prompt}] })
+  });
+  if(!res.ok){
+    const txt = await res.text();
+    throw new Error('API error ' + res.status + ': ' + txt.slice(0,400));
+  }
+  const data = await res.json();
+  return (data.content || []).map(c=>c.text||'').join('');
+}
+
+// ---------- helpers ----------
+function findSymbolObj(symStr){
+  return DATA.symbols.find(x=>x.name.toLowerCase().includes(symStr.toLowerCase()) || symStr.toLowerCase().includes(x.name.split(' ')[0].toLowerCase()));
+}
+function hashIndex(str, mod){
+  let h = 0;
+  for(let i=0;i<str.length;i++) h = (h*31 + str.charCodeAt(i)) >>> 0;
+  return mod > 0 ? h % mod : 0;
+}
+function scoreText(hay, needles){
+  hay = (hay||'').toLowerCase();
+  let sc = 0;
+  needles.forEach(n=>{ if(n && hay.includes(n.toLowerCase())) sc += 1; });
+  return sc;
+}
+function matchArcIndex(st){
+  const stKey = st.name.toLowerCase().split('(')[0].trim();
+  let idx = DATA.emotionalArcs.findIndex(a => a.structure && (
+      stKey.includes(a.structure.toLowerCase()) || a.structure.toLowerCase().includes(stKey)
+  ));
+  if(idx === -1) idx = DATA.emotionalArcs.findIndex(a => a.symbol && st.symbol && a.symbol.toLowerCase().split(' ').pop() === st.symbol.toLowerCase().split(' ').pop());
+  return idx;
+}
+
+// ---------- STEP 2: recipe selects ----------
+fill($('structureSelect'), DATA.structures, s=>s.name);
+fill($('arcSelect'), DATA.emotionalArcs, a=>a.name);
+fill($('mainChar'), DATA.characters, c=>c.name + ' — ' + c.trait);
+fill($('suppChar'), DATA.characters, c=>c.name + ' — ' + c.trait);
+fill($('setting'), DATA.settings, s=>s.name + ' (' + s.use + ')');
+fill($('openingSelect'), DATA.openings, o=>o.name);
+fill($('endingSelect'), DATA.endings, e=>e.name);
+
+$('structureSelect').addEventListener('change', ()=>{
+  const st = DATA.structures[$('structureSelect').value];
+  const idx = matchArcIndex(st);
+  $('arcSelect').value = idx === -1 ? 0 : idx;
+});
+
+// ---------- RECOMMENDATION ENGINE ----------
+const STORY_TYPE_MAP = {
+  Emotions:'Emotional Learning', Friendship:'Friendship', Family:'Family Story',
+  School:'Confidence-Building', Nature:'Nature Adventure', Play:'Wonder & Imagination'
+};
+function recommend(sit){
+  const needles = [sit.need, sit.cat, ...sit.shift.split('→').map(x=>x.trim())];
+  const startEmotion = sit.shift.split('→')[0] ? sit.shift.split('→')[0].trim() : '';
+  const endEmotion = sit.shift.split('→')[1] ? sit.shift.split('→')[1].trim() : '';
+
+  // structure
+  let structureIdx = -1, bestScore = 0;
+  DATA.structures.forEach((st,i)=>{
+    let sc = scoreText(st.situations + ' ' + st.desc + ' ' + st.why, needles) * 2;
+    if(st.symbol && sit.sym && st.symbol.toLowerCase().includes(sit.sym.toLowerCase().split(' ').pop())) sc += 3;
+    if(sc > bestScore){ bestScore = sc; structureIdx = i; }
+  });
+  if(structureIdx === -1) structureIdx = hashIndex(sit.t, DATA.structures.length);
+  const structure = DATA.structures[structureIdx];
+
+  // arc
+  let arcIdx = matchArcIndex(structure);
+  if(arcIdx === -1) arcIdx = hashIndex(sit.t + '::arc', DATA.emotionalArcs.length);
+  const arc = DATA.emotionalArcs[arcIdx];
+
+  // characters
+  function bestCharIdx(exclude){
+    let idx = -1, sc0 = 0;
+    DATA.characters.forEach((c,i)=>{
+      if(i === exclude) return;
+      let sc = scoreText(c.situations, needles) * 2;
+      if(c.symbols && sit.sym && c.symbols.toLowerCase().includes(sit.sym.toLowerCase().split(' ').pop())) sc += 1;
+      if(sc > sc0){ sc0 = sc; idx = i; }
+    });
+    if(idx === -1) idx = hashIndex(sit.t + '::char' + exclude, DATA.characters.length);
+    return idx;
+  }
+  const mainCharIdx = bestCharIdx(-1);
+  let suppCharIdx = bestCharIdx(mainCharIdx);
+  if(suppCharIdx === mainCharIdx) suppCharIdx = (mainCharIdx + 1) % DATA.characters.length;
+
+  // setting
+  let settingIdx = -1, sc1 = 0;
+  DATA.settings.forEach((s,i)=>{
+    let sc = scoreText(s.use + ' ' + s.emotion, needles) * 2;
+    if(sc > sc1){ sc1 = sc; settingIdx = i; }
+  });
+  if(settingIdx === -1) settingIdx = hashIndex(sit.t + '::setting', DATA.settings.length);
+
+  // opening / ending
+  let openingIdx = -1, sc2 = 0;
+  DATA.openings.forEach((o,i)=>{
+    let sc = scoreText(o.desc + ' ' + o.why + ' ' + o.use, [startEmotion, sit.cat]);
+    if(sc > sc2){ sc2 = sc; openingIdx = i; }
+  });
+  if(openingIdx === -1) openingIdx = hashIndex(sit.t + '::open', DATA.openings.length);
+
+  let endingIdx = -1, sc3 = 0;
+  DATA.endings.forEach((e,i)=>{
+    let sc = scoreText(e.desc + ' ' + e.why + ' ' + e.image, [endEmotion, sit.need]);
+    if(sc > sc3){ sc3 = sc; endingIdx = i; }
+  });
+  if(endingIdx === -1) endingIdx = hashIndex(sit.t + '::end', DATA.endings.length);
+
+  const storyType = STORY_TYPE_MAP[sit.cat] || 'Wisdom Adventure';
+
+  // techniques (always picked from the 5 fully-detailed ones)
+  const techNames = DATA.storytellingTechniques.map(t=>t.name);
+  const idxOf = n => techNames.findIndex(x=>x.startsWith(n));
+  let techs;
+  if(/Runaway|Surprise/i.test(structure.name + arc.name)) techs = [idxOf('Dramatic Irony'), idxOf('Runaway Cause')];
+  else if(/Sensory|Nature/i.test(structure.name + storyType)) techs = [idxOf('Sensory Soundscapes'), idxOf('Pacing by Subtraction')];
+  else techs = [idxOf('Perspective Reframing'), idxOf('Pacing by Subtraction')];
+  techs = techs.filter(i=>i>=0);
+
+  // replay hooks — editorial default for ages 6-8
+  const hookNames = DATA.replayHooks.map(h=>h.name);
+  const hookOf = n => hookNames.findIndex(x=>x.startsWith(n));
+  const hooks = [hookOf('Predictive Guessing'), hookOf('Dramatic Irony'), hookOf('Page-Turn Cliffhanger')].filter(i=>i>=0);
+
+  // read-aloud defaults
+  const raWanted = ['Natural dialogue','One memorable repeated phrase','One quiet pause','Strong ending line'];
+  const ras = raWanted.map(w=>DATA.readAloudToolbox.indexOf(w)).filter(i=>i>=0);
+
+  const titleFIdx = DATA.titleFormulas.findIndex(t=>t.name.includes('Magical Object'));
+
+  return {
+    structureIdx, arcIdx, mainCharIdx, suppCharIdx, settingIdx, openingIdx, endingIdx,
+    storyType, season:'Autumn', tod:'Morning', pov:'Third Person',
+    voice:'Warm Conversational Wonder',
+    age:'6-8',
+    techs, hooks, ras, titleFIdx: titleFIdx>=0?titleFIdx:3, humor:''
+  };
+}
+
+function applyRecommendation(sit){
+  const r = recommend(sit);
+  $('structureSelect').value = r.structureIdx;
+  $('arcSelect').value = r.arcIdx;
+  $('mainChar').value = r.mainCharIdx;
+  $('suppChar').value = r.suppCharIdx;
+  $('setting').value = r.settingIdx;
+  $('openingSelect').value = r.openingIdx;
+  $('endingSelect').value = r.endingIdx;
+  $('storyType').value = r.storyType;
+  $('season').value = r.season;
+  $('timeOfDay').value = r.tod;
+  state.rec = r;
+}
+
+// ---------- gather current recipe from UI + recommendation ----------
+function gatherState(){
+  const sit = state.sit;
+  const structure = DATA.structures[$('structureSelect').value];
+  const arc = DATA.emotionalArcs[$('arcSelect').value];
+  const mainChar = DATA.characters[$('mainChar').value];
+  const suppChar = DATA.characters[$('suppChar').value];
+  const setting = DATA.settings[$('setting').value];
+  const opening = DATA.openings[$('openingSelect').value];
+  const ending = DATA.endings[$('endingSelect').value];
+  const storyType = $('storyType').value || 'Wisdom Adventure';
+  const season = $('season').value, tod = $('timeOfDay').value;
+  const r = state.rec || {};
+  const techs = (r.techs||[]).map(i=>DATA.storytellingTechniques[i]).filter(Boolean);
+  const hooks = (r.hooks||[]).map(i=>DATA.replayHooks[i]).filter(Boolean);
+  const ras = (r.ras||[]).map(i=>DATA.readAloudToolbox[i]).filter(Boolean);
+  const titleF = DATA.titleFormulas[r.titleFIdx!=null?r.titleFIdx:3];
+  return {
+    sit, structure, arc, mainChar, suppChar, setting, opening, ending,
+    storyType, season, tod, age: r.age||'6-8', pov: r.pov||'Third Person',
+    voice: r.voice||'Warm Conversational Wonder', humor: r.humor||'',
+    techs, hooks, ras, titleF
+  };
+}
+
+// ---------- STORY DASHBOARD (API call 1) ----------
+function buildOutlinePrompt(rec){
+  const s = rec.sit, sym = findSymbolObj(s.sym);
+  return `You are helping write a children's picture book for "Prana Kids" (ages 5-8), where Ganesha appears as a gentle guide who asks questions and NEVER solves the problem for the child — the child must discover the wisdom themselves, through nature and experience, never lecturing. Original characters only (no copyrighted characters).
+
+Based on this story recipe, write a book-jacket-style pitch — the kind of copy you'd read on the back cover of a picture book, not a story outline. Respond with ONLY valid JSON (no markdown fences, no commentary), matching exactly this shape:
+{"title":"...", "blurb":"...", "takeaway":"...", "emotionalJourney":[{"emoji":"","label":""},{"emoji":"","label":""},{"emoji":"","label":""},{"emoji":"","label":""},{"emoji":"","label":""},{"emoji":"","label":""}], "scenes":["...","...","...","...","...","...","..."], "whyChildrenLoveIt":["...","...","...","...","..."]}
+
+Rules:
+- title: a real picture-book title using the "${rec.titleF.name}" formula (${rec.titleF.pattern}).
+- blurb: 5-7 SHORT lines separated by \\n, back-cover style — punchy, concrete, one beat per line (like: "Little Squirrel spends all morning making something special." / "Just when it's finished..." / "Whoosh!" / "Everything is lost." / "Everyone tells him what he should do." / "Only Ganesha does something different."). No jargon, no character-arc language.
+- takeaway: ONE short italic-worthy closing line capturing the emotional truth of the story (e.g. "Sometimes being listened to is the first step to healing.").
+- emotionalJourney: exactly 6 steps, single emoji + one word each, tracing the character's feelings start to finish.
+- scenes: exactly 7 items, each a short 3-6 word phrase (not a full sentence) naming what happens in that scene, e.g. "Wind blows it away".
+- whyChildrenLoveIt: exactly 5 short phrases (3-6 words each) a parent would recognize, e.g. "Relatable problem", "Hidden butterfly to find".
+
+Story recipe:
+- Situation: ${s.t}
+- Core Need: ${s.need}
+- Emotion Shift: ${s.shift}
+- Ganesha Symbol: ${s.sym}${sym ? ' — ' + sym.meaning : ''}
+- Story Shape: ${rec.structure.name} (${rec.structure.flow})
+- Emotional Arc: ${rec.arc.name} (${rec.arc.flow})
+- Story Type: ${rec.storyType}
+- Main Character: ${rec.mainChar.name} (${rec.mainChar.trait})
+- Supporting Character: ${rec.suppChar.name} (${rec.suppChar.trait})
+- Setting: ${rec.setting.name}, ${rec.season}, ${rec.tod}
+- Opening Style: ${rec.opening.name}
+- Ending Style: ${rec.ending.name}`;
+}
+
+function renderFramework(rec){
+  const sym = findSymbolObj(rec.sit.sym);
+  $('frameworkBody').innerHTML = `
+    <div class="fw-section"><h4>Seed</h4>
+      <div class="autofill"><div class="af-row"><b>Situation:</b> ${rec.sit.t}</div>
+      <div class="af-row"><b>Category:</b> ${rec.sit.cat}</div>
+      <div class="af-row"><b>Core Need:</b> ${rec.sit.need}</div>
+      <div class="af-row"><b>Emotion Shift:</b> ${rec.sit.shift}</div>
+      <div class="af-row"><b>Ganesha Symbol:</b> ${rec.sit.sym}${sym ? ' — ' + sym.meaning : ''}</div></div>
+    </div>
+    <div class="fw-section"><h4>Structure &amp; Emotional Arc</h4>
+      <div class="autofill"><div class="af-row"><b>Story Structure:</b> ${rec.structure.name} — ${rec.structure.why}</div>
+      <div class="af-row"><b>Story Skeleton (core pattern):</b> ${rec.structure.flow}</div>
+      <div class="af-row"><b>Emotional Arc:</b> ${rec.arc.name} — ${rec.arc.flow}</div>
+      <div class="af-row"><b>Story Type:</b> ${rec.storyType} · <b>Age:</b> ${rec.age} · <b>POV:</b> ${rec.pov}</div>
+      <div class="af-row"><b>Voice:</b> ${rec.voice}</div></div>
+    </div>
+    <div class="fw-section"><h4>World</h4>
+      <div class="autofill"><div class="af-row"><b>Main:</b> ${rec.mainChar.name} (${rec.mainChar.trait})</div>
+      <div class="af-row"><b>Supporting:</b> ${rec.suppChar.name} (${rec.suppChar.trait})</div>
+      <div class="af-row"><b>Setting:</b> ${rec.setting.name} — ${rec.setting.use}, ${rec.season}, ${rec.tod}</div></div>
+    </div>
+    <div class="fw-section"><h4>Opening &amp; Ending</h4>
+      <div class="autofill"><div class="af-row"><b>Opening:</b> ${rec.opening.name} — ${rec.opening.desc}</div>
+      <div class="af-row"><b>Ending:</b> ${rec.ending.name} — ${rec.ending.desc}</div></div>
+    </div>
+    <div class="fw-section"><h4>Read-Aloud &amp; Replay Hooks</h4>
+      <div class="autofill">
+      <div class="af-row"><b>Storytelling Techniques:</b> ${rec.techs.map(t=>t.name).join(', ')}</div>
+      <div class="af-row"><b>Replay Hooks:</b> ${rec.hooks.map(h=>h.name).join(', ')}</div>
+      <div class="af-row"><b>Read-Aloud:</b> ${rec.ras.join(', ')}</div>
+      <div class="af-row"><b>Title Formula:</b> ${rec.titleF.name} (${rec.titleF.pattern})</div></div>
+    </div>
+    <div class="fw-section"><h4>Illustration Notes &amp; Quality Score</h4>
+      <div class="hint" style="margin-top:0">Generated in Step 4 (Full Story) — the illustration bible and 100-point quality scorecard appear there once the full story is written.</div>
+    </div>
+    <div class="btnrow"><button class="ghost small" onclick="copyRawPrompt()">📋 Copy raw Story Engine prompt (Steps 1-13)</button></div>
+  `;
+}
+
+async function generateStory(){
+  const rec = gatherState();
+  state.currentRecipe = rec;
+  $('storyResult').style.display = 'none';
+  $('storyError').style.display = 'none';
+  $('storyLoading').style.display = 'flex';
+  $('writeFullBtn').disabled = true;
+  try{
+    if(!localStorage.getItem('pk_api_key')) throw new Error('NO_KEY');
+    const raw = await callClaude(buildOutlinePrompt(rec), 1400);
+    const jsonText = raw.replace(/```json|```/g, '').trim();
+    const outline = JSON.parse(jsonText.slice(jsonText.indexOf('{'), jsonText.lastIndexOf('}')+1));
+    state.outline = outline;
+    $('storyTitle').textContent = outline.title;
+    $('storyBlurb').innerHTML = outline.blurb.split('\n').map(l=>l.trim()).filter(Boolean).join('<br>') +
+      (outline.takeaway ? `<span class="takeaway">${outline.takeaway}</span>` : '');
+    $('journeyRow').innerHTML = outline.emotionalJourney.map((j,i)=>
+      `<div class="jstep"><span class="jemoji">${j.emoji}</span>${j.label}</div>` + (i < outline.emotionalJourney.length-1 ? '<div class="jarrow">→</div>' : '')
+    ).join('');
+    $('scenesList').innerHTML = outline.scenes.map(sc=>`<li>${sc}</li>`).join('');
+    $('whyList').innerHTML = outline.whyChildrenLoveIt.map(w=>`<li>${w}</li>`).join('');
+    renderFramework(rec);
+    $('storyResult').style.display = 'block';
+    $('writeFullBtn').disabled = false;
+  } catch(err){
+    renderError('storyError', err);
+  } finally {
+    $('storyLoading').style.display = 'none';
+  }
+}
+
+function renderError(boxId, err){
+  const box = $(boxId);
+  box.style.display = 'block';
+  if(err.message === 'NO_KEY'){
+    box.innerHTML = `<div class="error-box"><b>No API key set.</b> Click ⚙️ Settings at the top of the page, paste your Anthropic API key, and try again.</div>`;
+  } else {
+    box.innerHTML = `<div class="error-box"><b>Something went wrong.</b> ${err.message}</div>`;
+  }
+}
+
+function copyRawPrompt(){
+  const text = buildFullPrompt(state.currentRecipe, state.outline);
+  navigator.clipboard.writeText(text);
+}
+
+// ---------- FULL STORY (API call 2) ----------
+function buildFullPrompt(rec, outline){
+  const s = rec.sit;
+  const sym = findSymbolObj(s.sym);
+  const outlineBlock = outline ? `
+STEP 0 — APPROVED STORY DASHBOARD (write consistently with this; do not contradict it)
+Title: ${outline.title}
+Blurb: ${outline.blurb.replace(/\n/g, ' ')}
+Emotional Truth: ${outline.takeaway || ''}
+Emotional Journey: ${outline.emotionalJourney.map(j=>j.label).join(' → ')}
+Scenes: ${outline.scenes.map((sc,i)=>(i+1)+'. '+sc).join(' | ')}
+` : '';
+
+  return `PRANA KIDS STORY ENGINE — MASTER STORY FRAMEWORK
+Follow this exact production sequence. Use Ganesha as a gentle guide who asks questions and never solves the problem for the child — the child (via the main character) must discover the wisdom themselves, through nature and experience, never through lecturing. Fonts in the final Express/HTML output are Baloo 2 for headings and Nunito for body text.
+${outlineBlock}
+STEP 1 — STORY SEED
+Situation: ${s.t}
+Category: ${s.cat}
+Core Need: ${s.need}
+Emotion Shift: ${s.shift}
+Ganesha Symbol: ${s.sym}
+Why this symbol fits: ${sym ? sym.meaning : '(see symbol library)'}
+
+STEP 2 — STORY BLUEPRINT
+Story Structure: ${rec.structure.name}
+Core Pattern: ${rec.structure.flow}
+Emotional Arc: ${rec.arc.name} — ${rec.arc.flow}
+Story Type: ${rec.storyType}
+Target Age: ${rec.age}
+POV: ${rec.pov}
+Narrative Voice: ${rec.voice}
+Story Goal: Help a ${rec.age} year old move from ${s.shift}.
+Avoid: ${rec.structure.avoid}
+
+STEP 3 — WORLD BUILDING
+Main Character: ${rec.mainChar.name} (${rec.mainChar.trait})
+Supporting Character: ${rec.suppChar.name} (${rec.suppChar.trait})
+Setting: ${rec.setting.name} — ${rec.setting.use}
+Season: ${rec.season}
+Time of Day: ${rec.tod}
+Ganesha Symbol Integration: weave ${s.sym} naturally into the discovery beat (slide 4-5), never as decoration.
+
+STEP 4 — STORY MECHANICS
+Storytelling Techniques: ${rec.techs.map(t=>t.name).join(', ')}
+Replay Hooks: ${rec.hooks.map(h=>h.name).join(', ')}
+Read-Aloud Techniques: ${rec.ras.join(', ')}
+Humor Style: ${rec.humor || 'light, age-appropriate, optional'}
+Opening Technique: ${rec.opening.name} — ${rec.opening.desc}
+Ending Technique: ${rec.ending.name} — ${rec.ending.desc}
+
+STEP 5 — OPENING
+Opening Type: ${rec.opening.name}
+Why it works: ${rec.opening.why}
+Write a first line and opening illustration goal. Golden rule: the first page earns the second page — start with curiosity, emotion, or action, never explanation.
+
+STEP 6 — STORY BEAT SHEET (plan before writing)
+Slide 1: Setup — introduce ${rec.mainChar.name} in ${rec.setting.name}, situation begins.
+Slide 2: Journey begins.
+Slide 3: First challenge / obstacle appears.
+Slide 4: Ganesha guides through a question or the ${s.sym} symbol — never solves the problem.
+Slide 5: ${rec.mainChar.name} discovers the solution (the "Aha").
+Slide 6: ${rec.mainChar.name} applies the wisdom independently.
+Slide 7: Emotional resolution.
+
+STEP 7 — WRITE THE STORY
+Write exactly 7 slides. For each slide include: Slide Goal, Illustration Goal, Story Text (8-12 word sentences, 25-75 words per spread), Dialogue (if needed), and a Page-Turn Hook.
+
+STEP 8 — ENDING
+Ending Type: ${rec.ending.name}
+Write a Final Line, the Emotional Resolution it delivers, and a Replay Trigger (per the Ending Library: ${rec.ending.image}).
+
+STEP 9 — TITLE
+Title Formula: ${rec.titleF.name} (${rec.titleF.pattern})
+${outline && outline.title ? `Approved title from the dashboard: "${outline.title}" — keep this unless it genuinely no longer fits; otherwise generate 5-10 candidates and justify the final pick.` : 'Generate 5-10 candidate titles using this formula, then select and justify the final title.'}
+
+STEP 10 — ILLUSTRATION BIBLE
+For every slide specify: Scene, Camera Angle, Composition, Character Expressions, Character Poses, Foreground, Midground, Background, Lighting, Colour Palette, Ganesha Symbol Placement, Hidden Replay Detail, Mood.
+
+STEP 11 — READ-ALOUD POLISH
+Check against: 8-12 word sentences, 1-3 line paragraphs, ~50/50 dialogue/narration balance, one repeated phrase, 2-4 sound words, one quiet pause, strong page-turn rhythm, rich but concrete vocabulary. Never describe what the illustration already shows.
+
+STEP 12 — QUALITY SCORECARD (must score 90+/100 before publication)
+${DATA.qualityScorecard.map(q=>`${q.cat}: __/${q.max}`).join('\n')}
+TOTAL: __/100 (95-100 Outstanding · 90-94 Excellent · 85-89 Revise · <85 Rewrite)
+
+STEP 13 — FINAL PRODUCTION ASSETS
+Produce: Story Outline, Story Beat Sheet, Final 7-Slide Story, Illustration Bible, Illustration Prompts (slide-by-slide), Read-Aloud Notes, Hidden Replay Details, optional Parent Note, optional Activity, and the Final Quality Scorecard.
+
+Write out the full response now, formatted with clear markdown headers per section.`;
+}
+
+function mdToHtml(text){
+  return text
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/^### (.*)$/gm, '<h4>$1</h4>')
+    .replace(/^## (.*)$/gm, '<h3>$1</h3>')
+    .replace(/^# (.*)$/gm, '<h3>$1</h3>')
+    .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+    .replace(/^- (.*)$/gm, '• $1');
+}
+
+async function generateFullStory(){
+  const rec = state.currentRecipe || gatherState();
+  $('fullResult').style.display = 'none';
+  $('fullError').style.display = 'none';
+  $('fullLoading').style.display = 'flex';
+  try{
+    if(!localStorage.getItem('pk_api_key')) throw new Error('NO_KEY');
+    const raw = await callClaude(buildFullPrompt(rec, state.outline), 8000);
+    state.fullStoryText = raw;
+    $('fullStoryOut').innerHTML = mdToHtml(raw);
+    $('fullResult').style.display = 'block';
+  } catch(err){
+    renderError('fullError', err);
+  } finally {
+    $('fullLoading').style.display = 'none';
+  }
+}
+
+function copyFullStory(){
+  navigator.clipboard.writeText(state.fullStoryText || '');
+  const msg = $('copiedMsg2');
+  msg.classList.add('show');
+  setTimeout(()=>msg.classList.remove('show'), 1500);
+}
+function downloadFullStory(){
+  const blob = new Blob([state.fullStoryText || ''], {type:'text/markdown'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'prana-kids-story.md';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ---------- NAV ----------
+const stepNames = ['Seed','Recipe','Story','Full Story'];
+function renderPills(current){
+  $('stepPills').innerHTML = stepNames.map((n,i)=>{
+    const num = i+1;
+    let cls = 'step-pill';
+    if(num===current) cls += ' active'; else if(num<current) cls += ' done';
+    return `<div class="${cls}" onclick="goTo(${num})">${num}. ${n}</div>`;
+  }).join('');
+}
+function goTo(n){
+  document.querySelectorAll('.step').forEach(s=>s.style.display='none');
+  $('step'+n).style.display='block';
+  renderPills(n);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function goToRecipe(){
+  applyRecommendation(state.sit);
+  goTo(2);
+}
+function goToStory(){
+  goTo(3);
+  generateStory();
+}
+function goToFullStory(){
+  goTo(4);
+  generateFullStory();
+}
+// ---------- UX OVERRIDES: goal step, promise, guided arc ----------
+(function(){
+  const originalRenderPills = renderPills;
+  const originalGoTo = goTo;
+  document.getElementById('next1').textContent = 'Next -> Story Goal';
+  document.querySelector('#step2 h2').textContent = 'Step 3 - Your Story Recipe';
+  document.querySelector('#step3 h2').textContent = 'Step 4 - Your Story';
+  document.querySelector('#step4 h2').textContent = 'Step 5 - Full Story';
+  document.querySelector('#step2 .ghost').textContent = '<- Back';
+  document.querySelector('#step3 .ghost').textContent = '<- Back to Recipe';
+  document.querySelector('#step4 .ghost').textContent = '<- Back to Story';
+  document.querySelector('.footer-note').textContent = 'Prana Kids Story Builder - this version now frames the flow as Situation -> Story Goal -> Recipe -> Story -> Full Story, with guided arc selection and a Story Promise checkpoint before the full write-up.';
+
+  function deriveStoryGoal(sit){
+    const map = {
+      'Self-control': 'Learn to calm down before reacting.',
+      'Courage': 'Discover that asking for courage can start with one small step.',
+      'Comfort': 'Feel safe enough for sadness to soften into hope.',
+      'Self-worth': "Understand that mistakes don't reduce your worth.",
+      'Contentment': 'Learn to notice enough instead of comparing.',
+      'Patience': 'Learn to wait patiently.',
+      'Fairness': 'Learn to pause and choose what is fair.'
+    };
+    return map[sit.need] || `Learn the wisdom inside ${sit.need.toLowerCase()}.`;
+  }
+
+  function deriveGoalWhy(sit){
+    return `${sit.shift} becomes easier when the story keeps returning to ${sit.need.toLowerCase()}.`;
+  }
+
+  function buildStoryPromise(rec){
+    const hero = rec.mainChar.name.split(' ')[0];
+    return `${hero} faces ${rec.sit.t.toLowerCase()} and discovers how Ganesha's ${rec.sit.sym.toLowerCase()} can help ${rec.storyGoal.toLowerCase()}`;
+  }
+
+  function buildLocalOutline(rec){
+    const startEmotion = rec.sit.shift.split('â†’')[0]?.trim() || 'Worry';
+    const endEmotion = rec.sit.shift.split('â†’')[1]?.trim() || rec.sit.need;
+    const hero = rec.mainChar.name.split(' ')[0];
+    return {
+      title: `${hero} and the ${rec.sit.sym}`,
+      blurb: [
+        `${hero} faces ${rec.sit.t.toLowerCase()}.`,
+        `The feeling grows bigger before it gets better.`,
+        `A quiet moment with Ganesha changes what ${hero.toLowerCase()} notices.`,
+        `${rec.storyGoal}`,
+        `${hero} tries one small action alone.`,
+        `That is when ${endEmotion.toLowerCase()} begins to feel possible.`
+      ].join('\n'),
+      takeaway: rec.storyGoal,
+      emotionalJourney: [
+        {emoji:'😟',label:startEmotion},
+        {emoji:'😣',label:'Struggle'},
+        {emoji:'🤔',label:'Pause'},
+        {emoji:'✨',label:'Insight'},
+        {emoji:'💪',label:'Practice'},
+        {emoji:'🌈',label:endEmotion}
+      ],
+      scenes: [
+        'Everyday moment shifts',
+        'Big feeling rises',
+        'Quiet pause begins',
+        `Ganesha reveals ${rec.sit.sym}`,
+        'A new choice appears',
+        'Child acts bravely',
+        'Peace returns gently'
+      ],
+      whyChildrenLoveIt: [
+        'Real childhood problem',
+        'Clear emotional goal',
+        'Gentle Ganesha wisdom',
+        'Action child can copy',
+        'Warm hopeful ending'
+      ]
+    };
+  }
+
+  function buildLocalFullStory(rec){
+    const hero = rec.mainChar.name.split(' ')[0];
+    const friend = rec.suppChar.name.split(' ')[0];
+    return `## Story Promise
+${buildStoryPromise(rec)}
+
+## Story Goal
+${rec.storyGoal}
+
+## Final 7-Slide Story
+
+### Slide 1
+Slide Goal: Show the ordinary moment and the problem.
+Illustration Goal: ${hero} in ${rec.setting.name} during ${rec.tod.toLowerCase()}.
+Story Text: ${hero} was trying to enjoy a simple day when ${rec.sit.t.toLowerCase()} changed everything. The feeling arrived fast and loud.
+Dialogue: "${friend}, this feels awful," said ${hero}.
+Page-Turn Hook: The feeling kept growing.
+
+### Slide 2
+Slide Goal: Let the struggle become visible.
+Illustration Goal: Show motion and emotional overwhelm.
+Story Text: ${hero} tried to fix the moment right away. But rushing only made the heart beat faster.
+Dialogue: "${hero} took a breath, but it was still hard."
+Page-Turn Hook: Then the world suddenly felt quieter.
+
+### Slide 3
+Slide Goal: Create a pause.
+Illustration Goal: Move into a calmer pocket of the setting.
+Story Text: Near the edge of ${rec.setting.name.toLowerCase()}, wind and light made room for a pause. That tiny pause changed what ${hero.toLowerCase()} could notice.
+Dialogue: "Maybe I need to slow down," whispered ${hero}.
+Page-Turn Hook: Ganesha was waiting there.
+
+### Slide 4
+Slide Goal: Introduce the symbol as guidance.
+Illustration Goal: Make ${rec.sit.sym} the visual anchor.
+Story Text: Ganesha did not solve the problem. He only pointed to the ${rec.sit.sym.toLowerCase()} and asked what it might teach today.
+Dialogue: "What does this help you remember?" asked Ganesha.
+Page-Turn Hook: ${hero} looked again.
+
+### Slide 5
+Slide Goal: Deliver the aha.
+Illustration Goal: Show recognition and soft confidence.
+Story Text: ${hero} understood that ${rec.storyGoal.toLowerCase()} It did not need a huge miracle. It needed one small choice.
+Dialogue: "I can try that," said ${hero}.
+Page-Turn Hook: Now it was time to act.
+
+### Slide 6
+Slide Goal: Let the child act independently.
+Illustration Goal: Show the wisdom being practiced.
+Story Text: ${hero} tried the new choice alone. ${friend} stayed nearby, but the brave part belonged to ${hero.toLowerCase()}.
+Dialogue: "I am ready now," said ${hero}.
+Page-Turn Hook: Something inside had changed.
+
+### Slide 7
+Slide Goal: Land the emotional resolution.
+Illustration Goal: Echo the opening with calmer body language.
+Story Text: The problem was not magic, but ${hero} was steadier now. The next hard moment no longer felt impossible.
+Dialogue: "${rec.storyGoal}"
+Page-Turn Hook: The wisdom could be used again tomorrow.
+
+## Illustration Bible
+- Keep Ganesha gentle and non-intrusive.
+- Use ${rec.sit.sym} as the visual symbol of the turning point.
+- Mirror the opening composition in the final scene.
+
+## Read-Aloud Notes
+- Emphasize the pause in Slide 3.
+- Repeat the story-goal line softly in Slide 7.
+- Keep the rhythm warm and simple for ages ${rec.age}.
+`;
+  }
+
+  function renderGoalStep(sit){
+    let goalStep = document.getElementById('stepGoal');
+    if(!goalStep){
+      goalStep = document.createElement('div');
+      goalStep.className = 'card step';
+      goalStep.id = 'stepGoal';
+      goalStep.style.display = 'none';
+      goalStep.innerHTML = `
+        <h2>Step 2 â€” Story Goal</h2>
+        <p class="sub">This is the locked emotional north star. Everything downstream should support it.</p>
+        <div class="autofill">
+          <div class="af-row"><b>Situation:</b> <span id="goalSituation"></span></div>
+          <div class="af-row"><b>Core Need:</b> <span id="goalNeed"></span></div>
+          <div class="af-row"><b>Story Goal:</b> <span id="goalText"></span></div>
+          <div class="af-row"><b>Why this matters:</b> <span id="goalWhy"></span></div>
+        </div>
+        <div class="btnrow">
+          <button class="ghost" type="button" id="goalBackBtn">â† Back</button>
+          <button class="primary" type="button" id="goalNextBtn">Next â†’ Your Recipe</button>
+        </div>
+      `;
+      document.getElementById('step2').before(goalStep);
+      document.getElementById('goalBackBtn').onclick = ()=>goTo(1);
+      document.getElementById('goalNextBtn').onclick = ()=>goToRecipe();
+    }
+    document.getElementById('goalSituation').textContent = sit.t;
+    document.getElementById('goalNeed').textContent = sit.need;
+    document.getElementById('goalText').textContent = deriveStoryGoal(sit);
+    document.getElementById('goalWhy').textContent = deriveGoalWhy(sit);
+    state.storyGoal = deriveStoryGoal(sit);
+  }
+
+  function ensureStoryPromiseUI(){
+    if(!document.getElementById('storyPromise')){
+      const target = document.getElementById('storyResult');
+      const heading = document.createElement('h4');
+      heading.className = 'sec-h';
+      heading.textContent = 'Story Promise';
+      const box = document.createElement('div');
+      box.className = 'autofill';
+      box.innerHTML = '<span id="storyPromise"></span>';
+      target.prepend(box);
+      target.prepend(heading);
+    }
+  }
+
+  function ensureAdvancedArcUI(){
+    const arcSelect = document.getElementById('arcSelect');
+    if(document.getElementById('arcOverride')) return;
+    arcSelect.disabled = true;
+    arcSelect.insertAdjacentHTML('afterend', '<div class="hint" id="arcHint">Recommended automatically from the story shape.</div><label class="hint" style="display:block;margin-top:8px"><input type="checkbox" id="arcOverride" style="width:auto;margin-right:8px"> Advanced: override emotional arc</label>');
+    document.getElementById('arcOverride').addEventListener('change', (e)=>{
+      arcSelect.disabled = !e.target.checked;
+      if(!e.target.checked) syncRecommendedArc();
+    });
+  }
+
+  function syncRecommendedArc(){
+    const st = DATA.structures[document.getElementById('structureSelect').value];
+    const idx = matchArcIndex(st);
+    document.getElementById('arcSelect').value = idx === -1 ? 0 : idx;
+    const arc = DATA.emotionalArcs[document.getElementById('arcSelect').value];
+    const hint = document.getElementById('arcHint');
+    if(hint) hint.textContent = `Recommended automatically from the story shape: ${arc.name}.`;
+  }
+
+  renderPills = function(current){
+    const names = ['Seed','Goal','Recipe','Story','Full Story'];
+    document.getElementById('stepPills').innerHTML = names.map((n,i)=>{
+      const num = i + 1;
+      let cls = 'step-pill';
+      if(num===current) cls += ' active'; else if(num<current) cls += ' done';
+      return `<div class="${cls}" onclick="goTo(${num})">${num}. ${n}</div>`;
+    }).join('');
+  };
+
+  goTo = function(n){
+    document.querySelectorAll('.step').forEach(s=>s.style.display='none');
+    const map = {1:'step1',2:'stepGoal',3:'step2',4:'step3',5:'step4'};
+    document.getElementById(map[n]).style.display = 'block';
+    renderPills(n);
+    window.scrollTo({top:0,behavior:'smooth'});
+  };
+
+  goToGoal = function(){
+    renderGoalStep(state.sit);
+    goTo(2);
+  };
+
+  goToRecipe = function(){
+    applyRecommendation(state.sit);
+    ensureAdvancedArcUI();
+    syncRecommendedArc();
+    goTo(3);
+  };
+
+  goToStory = function(){
+    goTo(4);
+    generateStory();
+  };
+
+  goToFullStory = function(){
+    goTo(5);
+    generateFullStory();
+  };
+
+  const originalApplyRecommendation = applyRecommendation;
+  applyRecommendation = function(sit){
+    originalApplyRecommendation(sit);
+    state.storyGoal = deriveStoryGoal(sit);
+    const arcOverride = document.getElementById('arcOverride');
+    if(arcOverride) arcOverride.checked = false;
+    const arcSelect = document.getElementById('arcSelect');
+    if(arcSelect) arcSelect.disabled = true;
+    syncRecommendedArc();
+  };
+
+  document.getElementById('structureSelect').addEventListener('change', ()=>{
+    const arcOverride = document.getElementById('arcOverride');
+    if(!arcOverride || !arcOverride.checked) syncRecommendedArc();
+  });
+
+  generateStory = async function(){
+    const rec = gatherState();
+    rec.storyGoal = state.storyGoal || deriveStoryGoal(rec.sit);
+    state.currentRecipe = rec;
+    ensureStoryPromiseUI();
+    document.getElementById('storyResult').style.display = 'none';
+    document.getElementById('storyError').style.display = 'none';
+    document.getElementById('storyLoading').style.display = 'flex';
+    document.getElementById('writeFullBtn').disabled = true;
+    try{
+      const outline = buildLocalOutline(rec);
+      state.outline = outline;
+      state.storyPromise = buildStoryPromise(rec);
+      document.getElementById('storyPromise').textContent = state.storyPromise;
+      document.getElementById('storyTitle').textContent = outline.title;
+      document.getElementById('storyBlurb').innerHTML = outline.blurb.split('\n').map(l=>l.trim()).filter(Boolean).join('<br>') +
+        (outline.takeaway ? `<span class="takeaway">${outline.takeaway}</span>` : '');
+      document.getElementById('journeyRow').innerHTML = outline.emotionalJourney.map((j,i)=>
+        `<div class="jstep"><span class="jemoji">${j.emoji}</span>${j.label}</div>` + (i < outline.emotionalJourney.length-1 ? '<div class="jarrow">â†’</div>' : '')
+      ).join('');
+      document.getElementById('scenesList').innerHTML = outline.scenes.map(sc=>`<li>${sc}</li>`).join('');
+      document.getElementById('whyList').innerHTML = outline.whyChildrenLoveIt.map(w=>`<li>${w}</li>`).join('');
+      renderFramework(rec);
+      document.getElementById('storyResult').style.display = 'block';
+      document.getElementById('writeFullBtn').disabled = false;
+    } catch(err){
+      renderError('storyError', err);
+    } finally {
+      document.getElementById('storyLoading').style.display = 'none';
+    }
+  };
+
+  generateFullStory = async function(){
+    const rec = state.currentRecipe || gatherState();
+    rec.storyGoal = rec.storyGoal || state.storyGoal || deriveStoryGoal(rec.sit);
+    document.getElementById('fullResult').style.display = 'none';
+    document.getElementById('fullError').style.display = 'none';
+    document.getElementById('fullLoading').style.display = 'flex';
+    try{
+      const raw = buildLocalFullStory(rec);
+      state.fullStoryText = raw;
+      document.getElementById('fullStoryOut').innerHTML = mdToHtml(raw);
+      document.getElementById('fullResult').style.display = 'block';
+    } catch(err){
+      renderError('fullError', err);
+    } finally {
+      document.getElementById('fullLoading').style.display = 'none';
+    }
+  };
+
+  const originalRenderFramework = renderFramework;
+  renderFramework = function(rec){
+    rec.storyGoal = rec.storyGoal || state.storyGoal || deriveStoryGoal(rec.sit);
+    originalRenderFramework(rec);
+    const firstAutofill = document.querySelector('#frameworkBody .autofill');
+    if(firstAutofill && !document.getElementById('frameworkGoal')){
+      const goalLine = document.createElement('div');
+      goalLine.className = 'af-row';
+      goalLine.id = 'frameworkGoal';
+      goalLine.innerHTML = `<b>Story Goal:</b> ${rec.storyGoal}`;
+      firstAutofill.appendChild(goalLine);
+    }
+  };
+
+  document.getElementById('step2').id = 'step2_old_recipe';
+  document.getElementById('step3').id = 'step3_old_story';
+  document.getElementById('step4').id = 'step4_old_full';
+  document.getElementById('step2_old_recipe').id = 'step2';
+  document.getElementById('step3_old_story').id = 'step3';
+  document.getElementById('step4_old_full').id = 'step4';
+})();
+renderPills(1);
+</script>
+</body>
+</html>

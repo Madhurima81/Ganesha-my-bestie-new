@@ -1,0 +1,82 @@
+{
+  "template_id": "PT03_SORT_MATCH_DECODE",
+  "theme_id": "SYM-GAN-008",
+  "belief": "I keep the words that help me grow.",
+  "title": "Keep or Let Go Sort",
+  "subtitle": "Listen like Ganesha and sift helpful words from noisy words.",
+  "assets": {
+    "MAIN_ART": "ears_symbol"
+  },
+  "content": {
+    "instruction": "Read each card. Draw a line to KEEP if the words help you grow, or to LET GO if they are only noise.",
+    "category_left_title": "KEEP",
+    "category_left_hint": "Helpful words to hold onto",
+    "category_right_title": "LET GO",
+    "category_right_hint": "Noisy words to release",
+    "items": [
+      {
+        "id": "EAR-01",
+        "label": "Try another way.",
+        "answer": "LEFT"
+      },
+      {
+        "id": "EAR-02",
+        "label": "You cannot do it.",
+        "answer": "RIGHT"
+      },
+      {
+        "id": "EAR-03",
+        "label": "Mistakes help us learn.",
+        "answer": "LEFT"
+      },
+      {
+        "id": "EAR-04",
+        "label": "That is stupid.",
+        "answer": "RIGHT"
+      },
+      {
+        "id": "EAR-05",
+        "label": "Keep practicing.",
+        "answer": "LEFT"
+      },
+      {
+        "id": "EAR-06",
+        "label": "Quit now.",
+        "answer": "RIGHT"
+      },
+      {
+        "id": "EAR-07",
+        "label": "I do not understand yet.",
+        "answer": "LEFT"
+      },
+      {
+        "id": "EAR-08",
+        "label": "Nobody likes your ideas.",
+        "answer": "RIGHT"
+      }
+    ],
+    "footer": "Circle one KEEP card you want to remember today."
+  },
+  "generation": {
+    "mode": "sorting",
+    "answer_rule": "Helpful growth words belong in KEEP."
+  },
+  "answer_key": {
+    "LEFT": [
+      "EAR-01",
+      "EAR-03",
+      "EAR-05",
+      "EAR-07"
+    ],
+    "RIGHT": [
+      "EAR-02",
+      "EAR-04",
+      "EAR-06",
+      "EAR-08"
+    ]
+  },
+  "wisdom": {
+    "statement": "I keep the words that help me grow.",
+    "today": "When you hear mixed messages today, pause and keep the sentence that truly helps."
+  }
+}

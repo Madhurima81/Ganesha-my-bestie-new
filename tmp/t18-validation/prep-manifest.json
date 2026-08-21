@@ -1,0 +1,93 @@
+{
+  "status": "PREPARED_NOT_RUN",
+  "preparedOn": "2026-08-12",
+  "waitCondition": "Run only after Dev B explicitly reports that the T18 implementation and 5-case pilot are complete.",
+  "doNotDoYet": [
+    "run the T18 quality verdict",
+    "declare T18 PASS/FAIL",
+    "modify T18 prose/code",
+    "modify selector, taxonomy, QA thresholds, or frozen templates"
+  ],
+  "t18": {
+    "templateId": "T18",
+    "name": "The Growing Problem",
+    "curatedSituations": [
+      "SIT008",
+      "SIT101",
+      "SIT108",
+      "SIT112"
+    ],
+    "pilotSituations": [
+      "SIT008",
+      "SIT086",
+      "SIT101",
+      "SIT108",
+      "SIT112"
+    ],
+    "logicFamilies": [
+      "LOGIC_RUNAWAY_CHAIN"
+    ],
+    "needs": [
+      "SELF_REGULATION"
+    ]
+  },
+  "baselines": {
+    "sourceDate": "2026-08-12",
+    "genericFallbackUsage": {
+      "status": "prepared",
+      "baselineValue": "103/139 stories (74%) reused the generic fallback sentence set",
+      "source": "docs/prana-kids/REALIZATION_QUALITY_GAP_REPORT_2026-08-12.md"
+    },
+    "sentenceReuse": {
+      "status": "prepared",
+      "baselineValue": "Six identical sentences repeated across 103/139 stories",
+      "source": "docs/prana-kids/REALIZATION_QUALITY_GAP_REPORT_2026-08-12.md"
+    },
+    "situationGrounding": {
+      "status": "prepared",
+      "measurementPlan": "Use runCorpusQualityAudit.js criterion C1 plus blind-read notes tagged 'Situation recognizability'.",
+      "source": "public/prana-story-generator/phase8-tools/runCorpusQualityAudit.js"
+    },
+    "mechanismVisibility": {
+      "status": "prepared",
+      "measurementPlan": "Use runCorpusQualityAudit.js criterion C6 plus blind-read notes tagged 'Template mechanic invisibility'.",
+      "source": "public/prana-story-generator/phase8-tools/runCorpusQualityAudit.js"
+    }
+  },
+  "commands": [
+    {
+      "id": "selector_reachability",
+      "description": "Selector/reachability + frozen-template regression",
+      "command": "node public/prana-story-generator/phase8-tools/runSelectorReachabilityRegression.js"
+    },
+    {
+      "id": "production_readiness",
+      "description": "139/139 production-readiness regression",
+      "command": "node public/prana-story-generator/phase8-tools/runFullCorpusProductionReadiness.js"
+    },
+    {
+      "id": "corpus_quality",
+      "description": "Cross-story verbatim reuse + corpus quality metrics",
+      "command": "node public/prana-story-generator/phase8-tools/runCorpusQualityAudit.js"
+    },
+    {
+      "id": "blind_pack",
+      "description": "Blind-read review pack generation",
+      "command": "node public/prana-story-generator/phase8-tools/buildBlindEditorialReviewPack.js"
+    }
+  ],
+  "expectedOutputs": [
+    "tmp_selector_reachability_report.md",
+    "tmp_full_corpus_production_readiness.md",
+    "tmp_full_corpus_production_readiness.json",
+    "tmp_story_quality_report.md",
+    "tmp_editorial_review_pack.md",
+    "tmp_editorial_review_answer_key.md",
+    "tmp_editorial_review_summary.md"
+  ],
+  "notes": {
+    "contractPresent": true,
+    "gapReportPresent": true,
+    "dryRunStatus": "Script smoke-check blocked by local EPERM while Node resolved the path in this environment; prep artifacts were written directly instead."
+  }
+}

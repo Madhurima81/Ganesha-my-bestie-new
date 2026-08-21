@@ -1,0 +1,185 @@
+[
+  {
+    "id": "END001",
+    "name": "The Circular Return",
+    "description": "The story ends where it began, but the hero has changed.",
+    "hard": {
+      "ending_type": "END_CIRCULAR_RETURN"
+    },
+    "soft_suggested": {
+      "typical_emotional_resolution": [
+        "EMOTION_CALM"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "source JSON has 21 total entries but 11 (id 11-21) are broken stub/index rows, excluded here",
+      "flag": "END_PASSING_FORWARD used for both 'The Ripple Effect' and 'The Passing Forward' - possible duplicate Ending Type, deferred per earlier lock"
+    }
+  },
+  {
+    "id": "END002",
+    "name": "The Quiet Internal Victory",
+    "description": "The biggest success is emotional rather than external.",
+    "hard": {
+      "ending_type": "END_QUIET_MASTERY"
+    },
+    "soft_suggested": {
+      "typical_emotional_resolution": [
+        "EMOTION_CONFIDENCE",
+        "EMOTION_ACCEPTANCE"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "source JSON has 21 total entries but 11 (id 11-21) are broken stub/index rows, excluded here",
+      "flag": "END_PASSING_FORWARD used for both 'The Ripple Effect' and 'The Passing Forward' - possible duplicate Ending Type, deferred per earlier lock"
+    }
+  },
+  {
+    "id": "END003",
+    "name": "The Ripple Effect",
+    "description": "The hero's change positively influences others.",
+    "hard": {
+      "ending_type": "END_PASSING_FORWARD"
+    },
+    "soft_suggested": {
+      "typical_emotional_resolution": [
+        "EMOTION_BELONGING"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "source JSON has 21 total entries but 11 (id 11-21) are broken stub/index rows, excluded here",
+      "flag": "END_PASSING_FORWARD used for both 'The Ripple Effect' and 'The Passing Forward' - possible duplicate Ending Type, deferred per earlier lock"
+    }
+  },
+  {
+    "id": "END004",
+    "name": "The Gentle Surprise",
+    "description": "A small unexpected reveal adds delight without changing the story.",
+    "hard": {
+      "ending_type": "END_HUMOROUS_TWIST"
+    },
+    "soft_suggested": {
+      "typical_emotional_resolution": [
+        "EMOTION_JOY"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "source JSON has 21 total entries but 11 (id 11-21) are broken stub/index rows, excluded here",
+      "flag": "END_PASSING_FORWARD used for both 'The Ripple Effect' and 'The Passing Forward' - possible duplicate Ending Type, deferred per earlier lock"
+    }
+  },
+  {
+    "id": "END005",
+    "name": "The New Beginning",
+    "description": "The adventure ends by opening a hopeful next chapter.",
+    "hard": {
+      "ending_type": "END_EXPANDED_HORIZON"
+    },
+    "soft_suggested": {
+      "typical_emotional_resolution": [
+        "EMOTION_HOPE"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "source JSON has 21 total entries but 11 (id 11-21) are broken stub/index rows, excluded here",
+      "flag": "END_PASSING_FORWARD used for both 'The Ripple Effect' and 'The Passing Forward' - possible duplicate Ending Type, deferred per earlier lock"
+    }
+  },
+  {
+    "id": "END006",
+    "name": "The Shared Celebration",
+    "description": "Friends, family or the community celebrate together.",
+    "hard": {
+      "ending_type": "END_SHARED_CELEBRATION"
+    },
+    "soft_suggested": {
+      "typical_emotional_resolution": [
+        "EMOTION_JOY",
+        "EMOTION_BELONGING"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "source JSON has 21 total entries but 11 (id 11-21) are broken stub/index rows, excluded here",
+      "flag": "END_PASSING_FORWARD used for both 'The Ripple Effect' and 'The Passing Forward' - possible duplicate Ending Type, deferred per earlier lock"
+    }
+  },
+  {
+    "id": "END007",
+    "name": "The Passing Forward",
+    "description": "The hero shares the wisdom, kindness or courage they discovered with someone else.",
+    "hard": {
+      "ending_type": "END_PASSING_FORWARD"
+    },
+    "soft_suggested": {
+      "typical_emotional_resolution": [
+        "EMOTION_GRATITUDE"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "source JSON has 21 total entries but 11 (id 11-21) are broken stub/index rows, excluded here",
+      "flag": "END_PASSING_FORWARD used for both 'The Ripple Effect' and 'The Passing Forward' - possible duplicate Ending Type, deferred per earlier lock"
+    }
+  },
+  {
+    "id": "END008",
+    "name": "Nature Responds",
+    "description": "Nature quietly reflects the hero's emotional transformation.",
+    "hard": {
+      "ending_type": "END_TRANSFORMED_COMMUNITY"
+    },
+    "soft_suggested": {
+      "typical_emotional_resolution": [
+        "EMOTION_CALM"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "source JSON has 21 total entries but 11 (id 11-21) are broken stub/index rows, excluded here",
+      "flag": "END_PASSING_FORWARD used for both 'The Ripple Effect' and 'The Passing Forward' - possible duplicate Ending Type, deferred per earlier lock"
+    }
+  },
+  {
+    "id": "END009",
+    "name": "The Callback",
+    "description": "The ending echoes a moment, line or image from the opening, but with new emotional meaning.",
+    "hard": {
+      "ending_type": "END_RECONCILED_BOND"
+    },
+    "soft_suggested": {
+      "typical_emotional_resolution": [
+        "EMOTION_SATISFACTION"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "source JSON has 21 total entries but 11 (id 11-21) are broken stub/index rows, excluded here",
+      "flag": "END_PASSING_FORWARD used for both 'The Ripple Effect' and 'The Passing Forward' - possible duplicate Ending Type, deferred per earlier lock"
+    }
+  },
+  {
+    "id": "END010",
+    "name": "The Open Door",
+    "description": "The main story feels complete while gently hinting that more adventures are possible.",
+    "hard": {
+      "ending_type": "END_OPEN_WONDER"
+    },
+    "soft_suggested": {
+      "typical_emotional_resolution": [
+        "EMOTION_WONDER",
+        "EMOTION_ANTICIPATION"
+      ]
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "source JSON has 21 total entries but 11 (id 11-21) are broken stub/index rows, excluded here",
+      "flag": "END_PASSING_FORWARD used for both 'The Ripple Effect' and 'The Passing Forward' - possible duplicate Ending Type, deferred per earlier lock"
+    }
+  }
+]

@@ -1,0 +1,1266 @@
+[
+  {
+    "id": 1,
+    "slug": "broken-bridge",
+    "name": "Broken Bridge",
+    "obstacleGroup": "Physical",
+    "type": "External",
+    "description": "The bridge cannot be crossed.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Explore",
+      "Rescue"
+    ],
+    "bestStoryWorlds": [
+      "Crystal River Valley"
+    ],
+    "escalationType": "Progressive",
+    "difficulty": "Medium",
+    "notes": "Requires creative solution"
+  },
+  {
+    "id": 2,
+    "slug": "fallen-tree",
+    "name": "Fallen Tree",
+    "obstacleGroup": "Physical",
+    "type": "External",
+    "description": "A tree blocks the path.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Explore",
+      "Help"
+    ],
+    "bestStoryWorlds": [
+      "Whispering Forest"
+    ],
+    "escalationType": "Immediate",
+    "difficulty": "Easy",
+    "notes": null
+  },
+  {
+    "id": 3,
+    "slug": "flooded-path",
+    "name": "Flooded Path",
+    "obstacleGroup": "Physical",
+    "type": "External",
+    "description": "Water covers the trail.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Explore"
+    ],
+    "bestStoryWorlds": [
+      "Crystal River Valley"
+    ],
+    "escalationType": "Progressive",
+    "difficulty": "Medium",
+    "notes": null
+  },
+  {
+    "id": 4,
+    "slug": "thick-fog",
+    "name": "Thick Fog",
+    "obstacleGroup": "Physical",
+    "type": "External",
+    "description": "It's difficult to see the way.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Search"
+    ],
+    "bestStoryWorlds": [
+      "Whispering Forest"
+    ],
+    "escalationType": "Progressive",
+    "difficulty": "Medium",
+    "notes": null
+  },
+  {
+    "id": 5,
+    "slug": "storm",
+    "name": "Storm",
+    "obstacleGroup": "Physical",
+    "type": "External",
+    "description": "Bad weather interrupts the mission.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Rescue",
+      "Deliver"
+    ],
+    "bestStoryWorlds": [
+      "Whispering Forest"
+    ],
+    "escalationType": "Progressive",
+    "difficulty": "Hard",
+    "notes": null
+  },
+  {
+    "id": 6,
+    "slug": "strong-wind",
+    "name": "Strong Wind",
+    "obstacleGroup": "Physical",
+    "type": "External",
+    "description": "Wind makes travelling difficult.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Deliver"
+    ],
+    "bestStoryWorlds": [
+      "Misty Mountains"
+    ],
+    "escalationType": "Progressive",
+    "difficulty": "Medium",
+    "notes": null
+  },
+  {
+    "id": 7,
+    "slug": "darkness",
+    "name": "Darkness",
+    "obstacleGroup": "Physical",
+    "type": "External",
+    "description": "The hero cannot see clearly.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Search"
+    ],
+    "bestStoryWorlds": [
+      "Hidden Cave Network"
+    ],
+    "escalationType": "Emotional",
+    "difficulty": "Easy",
+    "notes": null
+  },
+  {
+    "id": 8,
+    "slug": "rocky-climb",
+    "name": "Rocky Climb",
+    "obstacleGroup": "Physical",
+    "type": "External",
+    "description": "The path is steep and difficult.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Explore"
+    ],
+    "bestStoryWorlds": [
+      "Misty Mountains"
+    ],
+    "escalationType": "Progressive",
+    "difficulty": "Medium",
+    "notes": null
+  },
+  {
+    "id": 9,
+    "slug": "deep-river",
+    "name": "Deep River",
+    "obstacleGroup": "Physical",
+    "type": "External",
+    "description": "The river blocks the journey.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Rescue",
+      "Explore"
+    ],
+    "bestStoryWorlds": [
+      "Crystal River Valley"
+    ],
+    "escalationType": "Progressive",
+    "difficulty": "Hard",
+    "notes": null
+  },
+  {
+    "id": 10,
+    "slug": "slippery-trail",
+    "name": "Slippery Trail",
+    "obstacleGroup": "Physical",
+    "type": "External",
+    "description": "The ground is difficult to walk on.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Explore"
+    ],
+    "bestStoryWorlds": [
+      "Whispering Forest"
+    ],
+    "escalationType": "Progressive",
+    "difficulty": "Easy",
+    "notes": null
+  },
+  {
+    "id": 11,
+    "slug": "lost-map",
+    "name": "Lost Map",
+    "obstacleGroup": "Physical",
+    "type": "External",
+    "description": "The directions are missing.",
+    "bestLifeDomains": [
+      "Learning & Problem Solving"
+    ],
+    "bestStoryActions": [
+      "Search"
+    ],
+    "bestStoryWorlds": [
+      "Whispering Forest"
+    ],
+    "escalationType": "Mystery",
+    "difficulty": "Medium",
+    "notes": null
+  },
+  {
+    "id": 12,
+    "slug": "broken-cart",
+    "name": "Broken Cart",
+    "obstacleGroup": "Physical",
+    "type": "External",
+    "description": "Transport cannot continue.",
+    "bestLifeDomains": [
+      "Responsibility"
+    ],
+    "bestStoryActions": [
+      "Deliver"
+    ],
+    "bestStoryWorlds": [
+      "Woodland Village"
+    ],
+    "escalationType": "Progressive",
+    "difficulty": "Medium",
+    "notes": null
+  },
+  {
+    "id": 13,
+    "slug": "closed-gate",
+    "name": "Closed Gate",
+    "obstacleGroup": "Physical",
+    "type": "External",
+    "description": "The destination is blocked.",
+    "bestLifeDomains": [
+      "School & Community"
+    ],
+    "bestStoryActions": [
+      "Deliver"
+    ],
+    "bestStoryWorlds": [
+      "Woodland Village"
+    ],
+    "escalationType": "Immediate",
+    "difficulty": "Easy",
+    "notes": null
+  },
+  {
+    "id": 14,
+    "slug": "maze",
+    "name": "Maze",
+    "obstacleGroup": "Physical",
+    "type": "External",
+    "description": "The hero cannot find the exit.",
+    "bestLifeDomains": [
+      "Learning & Problem Solving"
+    ],
+    "bestStoryActions": [
+      "Search"
+    ],
+    "bestStoryWorlds": [
+      "Hidden Cave Network"
+    ],
+    "escalationType": "Mystery",
+    "difficulty": "Medium",
+    "notes": null
+  },
+  {
+    "id": 15,
+    "slug": "steep-hill",
+    "name": "Steep Hill",
+    "obstacleGroup": "Physical",
+    "type": "External",
+    "description": "The climb requires persistence.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Explore"
+    ],
+    "bestStoryWorlds": [
+      "Misty Mountains"
+    ],
+    "escalationType": "Progressive",
+    "difficulty": "Medium",
+    "notes": null
+  },
+  {
+    "id": 16,
+    "slug": "heavy-rain",
+    "name": "Heavy Rain",
+    "obstacleGroup": "Nature",
+    "type": "External",
+    "description": "Rain slows the journey.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Explore"
+    ],
+    "bestStoryWorlds": [
+      "Whispering Forest"
+    ],
+    "escalationType": "Progressive",
+    "difficulty": "Medium",
+    "notes": null
+  },
+  {
+    "id": 17,
+    "slug": "drought",
+    "name": "Drought",
+    "obstacleGroup": "Nature",
+    "type": "External",
+    "description": "Water is scarce.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Help"
+    ],
+    "bestStoryWorlds": [
+      "Whispering Meadow"
+    ],
+    "escalationType": "Progressive",
+    "difficulty": "Medium",
+    "notes": null
+  },
+  {
+    "id": 18,
+    "slug": "snow",
+    "name": "Snow",
+    "obstacleGroup": "Nature",
+    "type": "External",
+    "description": "Snow makes movement difficult.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Explore"
+    ],
+    "bestStoryWorlds": [
+      "Misty Mountains"
+    ],
+    "escalationType": "Progressive",
+    "difficulty": "Medium",
+    "notes": null
+  },
+  {
+    "id": 19,
+    "slug": "sandstorm",
+    "name": "Sandstorm",
+    "obstacleGroup": "Nature",
+    "type": "External",
+    "description": "Wind and sand reduce visibility.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Search"
+    ],
+    "bestStoryWorlds": [
+      "Desert Oasis"
+    ],
+    "escalationType": "Progressive",
+    "difficulty": "Hard",
+    "notes": null
+  },
+  {
+    "id": 20,
+    "slug": "rising-tide",
+    "name": "Rising Tide",
+    "obstacleGroup": "Nature",
+    "type": "External",
+    "description": "Water levels keep increasing.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Rescue"
+    ],
+    "bestStoryWorlds": [
+      "Crystal River Valley"
+    ],
+    "escalationType": "Time Pressure",
+    "difficulty": "Hard",
+    "notes": null
+  },
+  {
+    "id": 21,
+    "slug": "wild-vines",
+    "name": "Wild Vines",
+    "obstacleGroup": "Nature",
+    "type": "External",
+    "description": "Plants block the path.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Explore"
+    ],
+    "bestStoryWorlds": [
+      "Whispering Forest"
+    ],
+    "escalationType": "Immediate",
+    "difficulty": "Easy",
+    "notes": null
+  },
+  {
+    "id": 22,
+    "slug": "bees",
+    "name": "Bees",
+    "obstacleGroup": "Nature",
+    "type": "External",
+    "description": "Bees guard the area.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Search"
+    ],
+    "bestStoryWorlds": [
+      "Whispering Meadow"
+    ],
+    "escalationType": "Immediate",
+    "difficulty": "Easy",
+    "notes": null
+  },
+  {
+    "id": 23,
+    "slug": "thorn-bushes",
+    "name": "Thorn Bushes",
+    "obstacleGroup": "Nature",
+    "type": "External",
+    "description": "Sharp plants slow progress.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Explore"
+    ],
+    "bestStoryWorlds": [
+      "Whispering Forest"
+    ],
+    "escalationType": "Progressive",
+    "difficulty": "Easy",
+    "notes": null
+  },
+  {
+    "id": 24,
+    "slug": "fast-current",
+    "name": "Fast Current",
+    "obstacleGroup": "Nature",
+    "type": "External",
+    "description": "Water moves too quickly.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Rescue"
+    ],
+    "bestStoryWorlds": [
+      "Crystal River Valley"
+    ],
+    "escalationType": "Progressive",
+    "difficulty": "Hard",
+    "notes": null
+  },
+  {
+    "id": 25,
+    "slug": "dense-forest",
+    "name": "Dense Forest",
+    "obstacleGroup": "Nature",
+    "type": "External",
+    "description": "The forest is confusing to navigate.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Explore"
+    ],
+    "bestStoryWorlds": [
+      "Whispering Forest"
+    ],
+    "escalationType": "Mystery",
+    "difficulty": "Medium",
+    "notes": null
+  },
+  {
+    "id": 26,
+    "slug": "friends-disagree",
+    "name": "Friends Disagree",
+    "obstacleGroup": "Social",
+    "type": "Social",
+    "description": "Friends cannot agree.",
+    "bestLifeDomains": [
+      "Friendship & Sharing"
+    ],
+    "bestStoryActions": [
+      "Communicate"
+    ],
+    "bestStoryWorlds": [
+      "Any Story World"
+    ],
+    "escalationType": "Emotional",
+    "difficulty": "Easy",
+    "notes": null
+  },
+  {
+    "id": 27,
+    "slug": "someone-refuses-to-help",
+    "name": "Someone Refuses to Help",
+    "obstacleGroup": "Social",
+    "type": "Social",
+    "description": "Support is unavailable.",
+    "bestLifeDomains": [
+      "Helping & Caring"
+    ],
+    "bestStoryActions": [
+      "Help"
+    ],
+    "bestStoryWorlds": [
+      "Any Story World"
+    ],
+    "escalationType": "Progressive",
+    "difficulty": "Medium",
+    "notes": null
+  },
+  {
+    "id": 28,
+    "slug": "someone-lies",
+    "name": "Someone Lies",
+    "obstacleGroup": "Social",
+    "type": "Social",
+    "description": "False information causes problems.",
+    "bestLifeDomains": [
+      "Communication"
+    ],
+    "bestStoryActions": [
+      "Search"
+    ],
+    "bestStoryWorlds": [
+      "Woodland Village"
+    ],
+    "escalationType": "Mystery",
+    "difficulty": "Medium",
+    "notes": null
+  },
+  {
+    "id": 29,
+    "slug": "rival-team",
+    "name": "Rival Team",
+    "obstacleGroup": "Social",
+    "type": "Social",
+    "description": "Another group competes.",
+    "bestLifeDomains": [
+      "Playing & Games"
+    ],
+    "bestStoryActions": [
+      "Perform"
+    ],
+    "bestStoryWorlds": [
+      "Whispering Meadow"
+    ],
+    "escalationType": "Progressive",
+    "difficulty": "Medium",
+    "notes": null
+  },
+  {
+    "id": 30,
+    "slug": "misunderstanding",
+    "name": "Misunderstanding",
+    "obstacleGroup": "Social",
+    "type": "Social",
+    "description": "Characters misinterpret each other.",
+    "bestLifeDomains": [
+      "Communication"
+    ],
+    "bestStoryActions": [
+      "Communicate"
+    ],
+    "bestStoryWorlds": [
+      "Any Story World"
+    ],
+    "escalationType": "Emotional",
+    "difficulty": "Easy",
+    "notes": null
+  },
+  {
+    "id": 31,
+    "slug": "broken-promise",
+    "name": "Broken Promise",
+    "obstacleGroup": "Social",
+    "type": "Social",
+    "description": "Trust has been damaged.",
+    "bestLifeDomains": [
+      "Friendship & Sharing"
+    ],
+    "bestStoryActions": [
+      "Help"
+    ],
+    "bestStoryWorlds": [
+      "Woodland Village"
+    ],
+    "escalationType": "Emotional",
+    "difficulty": "Medium",
+    "notes": null
+  },
+  {
+    "id": 32,
+    "slug": "nobody-believes-the-hero",
+    "name": "Nobody Believes the Hero",
+    "obstacleGroup": "Social",
+    "type": "Social",
+    "description": "Others doubt the hero.",
+    "bestLifeDomains": [
+      "School & Community"
+    ],
+    "bestStoryActions": [
+      "Communicate"
+    ],
+    "bestStoryWorlds": [
+      "Any Story World"
+    ],
+    "escalationType": "Emotional",
+    "difficulty": "Medium",
+    "notes": null
+  },
+  {
+    "id": 33,
+    "slug": "someone-quits",
+    "name": "Someone Quits",
+    "obstacleGroup": "Social",
+    "type": "Social",
+    "description": "A teammate gives up.",
+    "bestLifeDomains": [
+      "Helping & Caring"
+    ],
+    "bestStoryActions": [
+      "Help"
+    ],
+    "bestStoryWorlds": [
+      "Any Story World"
+    ],
+    "escalationType": "Emotional",
+    "difficulty": "Easy",
+    "notes": null
+  },
+  {
+    "id": 34,
+    "slug": "pride",
+    "name": "Pride",
+    "obstacleGroup": "Social",
+    "type": "Social",
+    "description": "Someone refuses help.",
+    "bestLifeDomains": [
+      "Communication"
+    ],
+    "bestStoryActions": [
+      "Communicate"
+    ],
+    "bestStoryWorlds": [
+      "Any Story World"
+    ],
+    "escalationType": "Emotional",
+    "difficulty": "Medium",
+    "notes": null
+  },
+  {
+    "id": 35,
+    "slug": "poor-communication",
+    "name": "Poor Communication",
+    "obstacleGroup": "Social",
+    "type": "Social",
+    "description": "Important information is missed.",
+    "bestLifeDomains": [
+      "Communication"
+    ],
+    "bestStoryActions": [
+      "Communicate"
+    ],
+    "bestStoryWorlds": [
+      "Any Story World"
+    ],
+    "escalationType": "Progressive",
+    "difficulty": "Easy",
+    "notes": null
+  },
+  {
+    "id": 36,
+    "slug": "fear",
+    "name": "Fear",
+    "obstacleGroup": "Emotional",
+    "type": "Internal",
+    "description": "Fear prevents action.",
+    "bestLifeDomains": [
+      "Self-Care"
+    ],
+    "bestStoryActions": [
+      "Practice"
+    ],
+    "bestStoryWorlds": [
+      "Any Story World"
+    ],
+    "escalationType": "Emotional",
+    "difficulty": "Medium",
+    "notes": null
+  },
+  {
+    "id": 37,
+    "slug": "self-doubt",
+    "name": "Self-Doubt",
+    "obstacleGroup": "Emotional",
+    "type": "Internal",
+    "description": "The hero questions themselves.",
+    "bestLifeDomains": [
+      "Self-Care"
+    ],
+    "bestStoryActions": [
+      "Learn"
+    ],
+    "bestStoryWorlds": [
+      "Any Story World"
+    ],
+    "escalationType": "Emotional",
+    "difficulty": "Medium",
+    "notes": null
+  },
+  {
+    "id": 38,
+    "slug": "anger",
+    "name": "Anger",
+    "obstacleGroup": "Emotional",
+    "type": "Internal",
+    "description": "Anger clouds judgement.",
+    "bestLifeDomains": [
+      "Communication"
+    ],
+    "bestStoryActions": [
+      "Practice"
+    ],
+    "bestStoryWorlds": [
+      "Any Story World"
+    ],
+    "escalationType": "Emotional",
+    "difficulty": "Medium",
+    "notes": null
+  },
+  {
+    "id": 39,
+    "slug": "jealousy",
+    "name": "Jealousy",
+    "obstacleGroup": "Emotional",
+    "type": "Internal",
+    "description": "Comparison causes conflict.",
+    "bestLifeDomains": [
+      "Friendship & Sharing"
+    ],
+    "bestStoryActions": [
+      "Share"
+    ],
+    "bestStoryWorlds": [
+      "Any Story World"
+    ],
+    "escalationType": "Emotional",
+    "difficulty": "Medium",
+    "notes": null
+  },
+  {
+    "id": 40,
+    "slug": "impatience",
+    "name": "Impatience",
+    "obstacleGroup": "Emotional",
+    "type": "Internal",
+    "description": "The hero rushes.",
+    "bestLifeDomains": [
+      "Self-Care"
+    ],
+    "bestStoryActions": [
+      "Practice"
+    ],
+    "bestStoryWorlds": [
+      "Any Story World"
+    ],
+    "escalationType": "Progressive",
+    "difficulty": "Easy",
+    "notes": null
+  },
+  {
+    "id": 41,
+    "slug": "embarrassment",
+    "name": "Embarrassment",
+    "obstacleGroup": "Emotional",
+    "type": "Internal",
+    "description": "Fear of being judged.",
+    "bestLifeDomains": [
+      "School & Community"
+    ],
+    "bestStoryActions": [
+      "Perform"
+    ],
+    "bestStoryWorlds": [
+      "Any Story World"
+    ],
+    "escalationType": "Emotional",
+    "difficulty": "Medium",
+    "notes": null
+  },
+  {
+    "id": 42,
+    "slug": "loneliness",
+    "name": "Loneliness",
+    "obstacleGroup": "Emotional",
+    "type": "Internal",
+    "description": "Feeling left out.",
+    "bestLifeDomains": [
+      "Friendship & Sharing"
+    ],
+    "bestStoryActions": [
+      "Share"
+    ],
+    "bestStoryWorlds": [
+      "Any Story World"
+    ],
+    "escalationType": "Emotional",
+    "difficulty": "Medium",
+    "notes": null
+  },
+  {
+    "id": 43,
+    "slug": "guilt",
+    "name": "Guilt",
+    "obstacleGroup": "Emotional",
+    "type": "Internal",
+    "description": "Regret makes progress difficult.",
+    "bestLifeDomains": [
+      "Responsibility"
+    ],
+    "bestStoryActions": [
+      "Communicate"
+    ],
+    "bestStoryWorlds": [
+      "Any Story World"
+    ],
+    "escalationType": "Emotional",
+    "difficulty": "Medium",
+    "notes": null
+  },
+  {
+    "id": 44,
+    "slug": "worry",
+    "name": "Worry",
+    "obstacleGroup": "Emotional",
+    "type": "Internal",
+    "description": "Constant worrying blocks action.",
+    "bestLifeDomains": [
+      "Self-Care"
+    ],
+    "bestStoryActions": [
+      "Practice"
+    ],
+    "bestStoryWorlds": [
+      "Any Story World"
+    ],
+    "escalationType": "Emotional",
+    "difficulty": "Easy",
+    "notes": null
+  },
+  {
+    "id": 45,
+    "slug": "perfectionism",
+    "name": "Perfectionism",
+    "obstacleGroup": "Emotional",
+    "type": "Internal",
+    "description": "Fear of making mistakes.",
+    "bestLifeDomains": [
+      "Learning & Problem Solving"
+    ],
+    "bestStoryActions": [
+      "Practice"
+    ],
+    "bestStoryWorlds": [
+      "Any Story World"
+    ],
+    "escalationType": "Progressive",
+    "difficulty": "Medium",
+    "notes": null
+  },
+  {
+    "id": 46,
+    "slug": "hidden-clue",
+    "name": "Hidden Clue",
+    "obstacleGroup": "Puzzle",
+    "type": "External",
+    "description": "An important clue is difficult to find.",
+    "bestLifeDomains": [
+      "Learning & Problem Solving"
+    ],
+    "bestStoryActions": [
+      "Search"
+    ],
+    "bestStoryWorlds": [
+      "Whispering Forest"
+    ],
+    "escalationType": "Mystery",
+    "difficulty": "Easy",
+    "notes": null
+  },
+  {
+    "id": 47,
+    "slug": "secret-code",
+    "name": "Secret Code",
+    "obstacleGroup": "Puzzle",
+    "type": "External",
+    "description": "A coded message must be solved.",
+    "bestLifeDomains": [
+      "Learning & Problem Solving"
+    ],
+    "bestStoryActions": [
+      "Solve"
+    ],
+    "bestStoryWorlds": [
+      "Story House"
+    ],
+    "escalationType": "Mystery",
+    "difficulty": "Medium",
+    "notes": null
+  },
+  {
+    "id": 48,
+    "slug": "locked-door",
+    "name": "Locked Door",
+    "obstacleGroup": "Puzzle",
+    "type": "External",
+    "description": "The hero must find a way inside.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Search"
+    ],
+    "bestStoryWorlds": [
+      "Hidden Cave Network"
+    ],
+    "escalationType": "Progressive",
+    "difficulty": "Medium",
+    "notes": null
+  },
+  {
+    "id": 49,
+    "slug": "missing-key",
+    "name": "Missing Key",
+    "obstacleGroup": "Puzzle",
+    "type": "External",
+    "description": "The key is lost.",
+    "bestLifeDomains": [
+      "Responsibility"
+    ],
+    "bestStoryActions": [
+      "Search"
+    ],
+    "bestStoryWorlds": [
+      "Woodland Village"
+    ],
+    "escalationType": "Mystery",
+    "difficulty": "Easy",
+    "notes": null
+  },
+  {
+    "id": 50,
+    "slug": "wrong-clue",
+    "name": "Wrong Clue",
+    "obstacleGroup": "Puzzle",
+    "type": "External",
+    "description": "A clue leads in the wrong direction.",
+    "bestLifeDomains": [
+      "Learning & Problem Solving"
+    ],
+    "bestStoryActions": [
+      "Search"
+    ],
+    "bestStoryWorlds": [
+      "Whispering Forest"
+    ],
+    "escalationType": "Progressive",
+    "difficulty": "Medium",
+    "notes": null
+  },
+  {
+    "id": 51,
+    "slug": "riddle",
+    "name": "Riddle",
+    "obstacleGroup": "Puzzle",
+    "type": "External",
+    "description": "A riddle blocks progress.",
+    "bestLifeDomains": [
+      "Learning & Problem Solving"
+    ],
+    "bestStoryActions": [
+      "Solve"
+    ],
+    "bestStoryWorlds": [
+      "Ancient Banyan Grove"
+    ],
+    "escalationType": "Mystery",
+    "difficulty": "Medium",
+    "notes": null
+  },
+  {
+    "id": 52,
+    "slug": "strange-footprints",
+    "name": "Strange Footprints",
+    "obstacleGroup": "Puzzle",
+    "type": "External",
+    "description": "Tracks must be followed correctly.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Search"
+    ],
+    "bestStoryWorlds": [
+      "Whispering Forest"
+    ],
+    "escalationType": "Mystery",
+    "difficulty": "Easy",
+    "notes": null
+  },
+  {
+    "id": 53,
+    "slug": "ancient-symbol",
+    "name": "Ancient Symbol",
+    "obstacleGroup": "Puzzle",
+    "type": "External",
+    "description": "A symbol must be understood.",
+    "bestLifeDomains": [
+      "Learning & Problem Solving"
+    ],
+    "bestStoryActions": [
+      "Search"
+    ],
+    "bestStoryWorlds": [
+      "Temple Courtyard"
+    ],
+    "escalationType": "Mystery",
+    "difficulty": "Medium",
+    "notes": null
+  },
+  {
+    "id": 54,
+    "slug": "invisible-path",
+    "name": "Invisible Path",
+    "obstacleGroup": "Puzzle",
+    "type": "External",
+    "description": "The correct route is hidden.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Explore"
+    ],
+    "bestStoryWorlds": [
+      "Whispering Forest"
+    ],
+    "escalationType": "Progressive",
+    "difficulty": "Medium",
+    "notes": null
+  },
+  {
+    "id": 55,
+    "slug": "pattern-to-solve",
+    "name": "Pattern to Solve",
+    "obstacleGroup": "Puzzle",
+    "type": "External",
+    "description": "A sequence must be recognised.",
+    "bestLifeDomains": [
+      "Learning & Problem Solving"
+    ],
+    "bestStoryActions": [
+      "Solve"
+    ],
+    "bestStoryWorlds": [
+      "Story House"
+    ],
+    "escalationType": "Mystery",
+    "difficulty": "Medium",
+    "notes": null
+  },
+  {
+    "id": 56,
+    "slug": "before-sunset",
+    "name": "Before Sunset",
+    "obstacleGroup": "Time",
+    "type": "External",
+    "description": "Finish before the sun sets.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Explore"
+    ],
+    "bestStoryWorlds": [
+      "Whispering Forest"
+    ],
+    "escalationType": "Time Pressure",
+    "difficulty": "Medium",
+    "notes": null
+  },
+  {
+    "id": 57,
+    "slug": "before-the-rain-arrives",
+    "name": "Before the Rain Arrives",
+    "obstacleGroup": "Time",
+    "type": "External",
+    "description": "Complete the mission before rain starts.",
+    "bestLifeDomains": [
+      "Helping & Caring"
+    ],
+    "bestStoryActions": [
+      "Build"
+    ],
+    "bestStoryWorlds": [
+      "Woodland Village"
+    ],
+    "escalationType": "Time Pressure",
+    "difficulty": "Medium",
+    "notes": null
+  },
+  {
+    "id": 58,
+    "slug": "festival-begins-soon",
+    "name": "Festival Begins Soon",
+    "obstacleGroup": "Time",
+    "type": "External",
+    "description": "Prepare everything before the celebration.",
+    "bestLifeDomains": [
+      "Celebrations & Traditions"
+    ],
+    "bestStoryActions": [
+      "Organize"
+    ],
+    "bestStoryWorlds": [
+      "Woodland Village"
+    ],
+    "escalationType": "Time Pressure",
+    "difficulty": "Easy",
+    "notes": null
+  },
+  {
+    "id": 59,
+    "slug": "river-is-rising",
+    "name": "River is Rising",
+    "obstacleGroup": "Time",
+    "type": "External",
+    "description": "Cross before the river becomes dangerous.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Rescue"
+    ],
+    "bestStoryWorlds": [
+      "Crystal River Valley"
+    ],
+    "escalationType": "Time Pressure",
+    "difficulty": "Hard",
+    "notes": null
+  },
+  {
+    "id": 60,
+    "slug": "moon-will-disappear",
+    "name": "Moon Will Disappear",
+    "obstacleGroup": "Time",
+    "type": "External",
+    "description": "Finish before moonlight is gone.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Search"
+    ],
+    "bestStoryWorlds": [
+      "Whispering Forest"
+    ],
+    "escalationType": "Time Pressure",
+    "difficulty": "Medium",
+    "notes": null
+  },
+  {
+    "id": 61,
+    "slug": "guests-are-arriving",
+    "name": "Guests Are Arriving",
+    "obstacleGroup": "Time",
+    "type": "External",
+    "description": "Everything must be ready in time.",
+    "bestLifeDomains": [
+      "Family & Daily Life"
+    ],
+    "bestStoryActions": [
+      "Organize"
+    ],
+    "bestStoryWorlds": [
+      "Woodland Village"
+    ],
+    "escalationType": "Time Pressure",
+    "difficulty": "Easy",
+    "notes": null
+  },
+  {
+    "id": 62,
+    "slug": "supplies-are-running-out",
+    "name": "Supplies Are Running Out",
+    "obstacleGroup": "Time",
+    "type": "External",
+    "description": "Resources are almost finished.",
+    "bestLifeDomains": [
+      "Responsibility"
+    ],
+    "bestStoryActions": [
+      "Deliver"
+    ],
+    "bestStoryWorlds": [
+      "Woodland Village"
+    ],
+    "escalationType": "Progressive",
+    "difficulty": "Medium",
+    "notes": null
+  },
+  {
+    "id": 63,
+    "slug": "daylight-is-fading",
+    "name": "Daylight is Fading",
+    "obstacleGroup": "Time",
+    "type": "External",
+    "description": "Darkness is approaching quickly.",
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestStoryActions": [
+      "Explore"
+    ],
+    "bestStoryWorlds": [
+      "Whispering Forest"
+    ],
+    "escalationType": "Time Pressure",
+    "difficulty": "Medium",
+    "notes": null
+  }
+]

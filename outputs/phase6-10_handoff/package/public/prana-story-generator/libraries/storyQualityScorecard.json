@@ -1,0 +1,190 @@
+[
+  {
+    "name": "Story Seed",
+    "maxScore": 5,
+    "checks": [
+      "Childhood Situation feels authentic",
+      "Core Need is clear",
+      "False Belief drives the story",
+      "Appropriate for target age",
+      "Story has emotional potential"
+    ]
+  },
+  {
+    "name": "Story Engine",
+    "maxScore": 10,
+    "checks": [
+      "Life Domain fits naturally",
+      "Story Action drives the plot",
+      "Adventure Archetype matches the mission",
+      "Mission feels meaningful",
+      "Obstacle creates challenge",
+      "Story World supports the adventure",
+      "Character Goal is clear",
+      "Escalation increases naturally",
+      "Conflict feels believable",
+      "Everything maps correctly through the engine"
+    ]
+  },
+  {
+    "name": "Story Structure",
+    "maxScore": 10,
+    "checks": [
+      "Strong opening",
+      "Every slide moves the story",
+      "Good pacing",
+      "Midpoint changes the story",
+      "Emotional Low feels earned",
+      "Climax is satisfying",
+      "Ending resolves naturally",
+      "No unnecessary scenes",
+      "Clear page turns",
+      "Story feels complete"
+    ]
+  },
+  {
+    "name": "Emotional Journey",
+    "maxScore": 10,
+    "checks": [
+      "Primary emotion is clear",
+      "Emotional arc is believable",
+      "Body language supports emotion",
+      "Behaviour feels authentic",
+      "Dialogue reflects emotion",
+      "Inner thoughts are consistent",
+      "Emotional growth feels earned",
+      "Emotion is shown, not told",
+      "Resolution satisfies",
+      "Child can relate emotionally"
+    ]
+  },
+  {
+    "name": "Wisdom Layer",
+    "maxScore": 10,
+    "checks": [
+      "Wisdom Element fits naturally",
+      "Teaching Method is appropriate",
+      "Wisdom comes through experience",
+      "Mentor guides but doesn't solve",
+      "Symbol appears naturally",
+      "New Choice shows transformation",
+      "Story Expression feels organic",
+      "No preaching",
+      "Wisdom is memorable",
+      "Prana Kids philosophy is maintained"
+    ]
+  },
+  {
+    "name": "Storytelling Craft",
+    "maxScore": 10,
+    "checks": [
+      "Opening Hook is strong",
+      "Storytelling Techniques are effective",
+      "Technique Combination works well",
+      "Curiosity keeps increasing",
+      "Page-turns are compelling",
+      "Replay Hooks are included",
+      "Read-Aloud Devices improve rhythm",
+      "Title suits the story",
+      "Ending is memorable",
+      "Overall storytelling feels polished"
+    ]
+  },
+  {
+    "name": "Character & World",
+    "maxScore": 10,
+    "checks": [
+      "Hero is relatable",
+      "Supporting characters matter",
+      "Character relationships feel real",
+      "Story World feels alive",
+      "Nature participates in the story",
+      "Props are used meaningfully",
+      "Setting changes with the story",
+      "World mechanics are consistent",
+      "Illustrations have visual variety",
+      "World is memorable"
+    ]
+  },
+  {
+    "name": "Replay & Read-Aloud",
+    "maxScore": 10,
+    "checks": [
+      "Repeated phrase included",
+      "Hidden visual detail",
+      "Prediction/Search moment",
+      "Callback included",
+      "Rhythm reads aloud naturally",
+      "Sentence length is appropriate",
+      "Dialogue sounds natural",
+      "Sound words used effectively",
+      "Child will ask for another reading",
+      "Parent will enjoy rereading"
+    ]
+  },
+  {
+    "name": "Illustration Potential",
+    "maxScore": 10,
+    "checks": [
+      "Every spread is visually distinct",
+      "Emotional expressions are clear",
+      "Nature supports storytelling",
+      "Dynamic compositions",
+      "Visual page-turn moments",
+      "Colour progression supports mood",
+      "Hidden replay details included",
+      "Character acting is expressive",
+      "Background tells part of the story",
+      "Final spread is memorable"
+    ]
+  },
+  {
+    "name": "Prana Kids Identity",
+    "maxScore": 10,
+    "checks": [
+      "Wonder over preaching",
+      "Emotional wisdom through experience",
+      "Nature is a character",
+      "Child solves the problem",
+      "Curiosity is encouraged",
+      "Kindness is demonstrated",
+      "Courage grows naturally",
+      "Hopeful emotional tone",
+      "Original Prana Kids feel",
+      "Story feels timeless"
+    ]
+  },
+  {
+    "name": "Originality",
+    "maxScore": 5,
+    "checks": [
+      "Fresh premise",
+      "Fresh emotional angle",
+      "Fresh visual idea",
+      "Doesn't feel derivative",
+      "Memorable concept"
+    ]
+  },
+  {
+    "name": "Age Appropriateness",
+    "maxScore": 5,
+    "checks": [
+      "Vocabulary suitable",
+      "Emotional depth appropriate",
+      "Attention span respected",
+      "Concepts understandable",
+      "Reading experience enjoyable"
+    ]
+  },
+  {
+    "name": "Overall Magic Test",
+    "maxScore": 5,
+    "checks": [
+      "Would a child ask to hear it again tonight?",
+      "Would a parent enjoy reading it repeatedly?",
+      "Is there one unforgettable illustration?",
+      "Is there one unforgettable line?",
+      "Does it unmistakably feel like Prana Kids?"
+    ]
+  }
+]

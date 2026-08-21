@@ -1,0 +1,86 @@
+[
+  {
+    "variant_id": "mooshika",
+    "template_id": "PT02_KINDNESS_BAND",
+    "data": {
+      "TITLE": "My Tiny Helper Band",
+      "SUBTITLE": "Make this for someone you care about.",
+      "INSTRUCTION_1": "Colour your band",
+      "INSTRUCTION_1B": "Choose warm helper colours.",
+      "INSTRUCTION_2": "Write your name",
+      "INSTRUCTION_2B": "Or write who you want to help.",
+      "INSTRUCTION_3": "Cut along the dotted line",
+      "INSTRUCTION_3B": "",
+      "INSTRUCTION_4": "Join the ends and wear it",
+      "INSTRUCTION_4B": "Ask an adult if needed.",
+      "BAND_DECOR_TOP": {
+        "asset_ids": ["heart", "star", "heart"]
+      },
+      "BAND_TEXT": "I CAN BE A TINY HELPER",
+      "BAND_DECOR_BOTTOM": {
+        "asset_ids": ["star", "heart", "star"]
+      },
+      "CHARACTER_MAIN": "mooshika_happy",
+      "WISDOM_TEXT": "Small steps can make a big difference.",
+      "CLUE_TEXT": "Try one kind action today, even if it feels tiny.",
+      "FOOTER_PROMPT": "Who could you help today?",
+      "FOOTER_SMALL": "Wear your band as a reminder."
+    }
+  },
+  {
+    "variant_id": "ears",
+    "template_id": "PT02_KINDNESS_BAND",
+    "data": {
+      "TITLE": "My Helpful Words Band",
+      "SUBTITLE": "Wear this when you want to keep the words that help you grow.",
+      "INSTRUCTION_1": "Colour your band",
+      "INSTRUCTION_1B": "Choose calm listening colours.",
+      "INSTRUCTION_2": "Write a keep-word",
+      "INSTRUCTION_2B": "Pick one keep-sentence.",
+      "INSTRUCTION_3": "Cut along the dotted line",
+      "INSTRUCTION_3B": "",
+      "INSTRUCTION_4": "Join the ends and wear it",
+      "INSTRUCTION_4B": "Helpful words stay. Noise goes.",
+      "BAND_DECOR_TOP": {
+        "asset_ids": ["heart", "ears_symbol", "heart"]
+      },
+      "BAND_TEXT": "KEEP HELPFUL WORDS",
+      "BAND_DECOR_BOTTOM": {
+        "asset_ids": ["ears_symbol", "star", "ears_symbol"]
+      },
+      "CHARACTER_MAIN": "ears_symbol",
+      "WISDOM_TEXT": "Listen like a winnowing basket and keep the words that help you grow.",
+      "CLUE_TEXT": "Ask: Does this help me grow, or is it only noise?",
+      "FOOTER_PROMPT": "Which words will you keep today?",
+      "FOOTER_SMALL": "Let the noisy words fall away."
+    }
+  },
+  {
+    "variant_id": "lotus",
+    "template_id": "PT02_KINDNESS_BAND",
+    "data": {
+      "TITLE": "My Growing Heart Band",
+      "SUBTITLE": "Make this when you want to grow with gratitude through muddy days.",
+      "INSTRUCTION_1": "Colour your band",
+      "INSTRUCTION_1B": "Use gentle bright colours.",
+      "INSTRUCTION_2": "Add one thankful word",
+      "INSTRUCTION_2B": "Write one glad word.",
+      "INSTRUCTION_3": "Cut along the dotted line",
+      "INSTRUCTION_3B": "",
+      "INSTRUCTION_4": "Join the ends and wear it",
+      "INSTRUCTION_4B": "Growing takes time.",
+      "BAND_DECOR_TOP": {
+        "asset_ids": ["lotus_small", "heart", "lotus_small"]
+      },
+      "BAND_TEXT": "I GROW WITH GRATITUDE",
+      "BAND_DECOR_BOTTOM": {
+        "asset_ids": ["heart", "lotus_small", "heart"]
+      },
+      "CHARACTER_MAIN": "lotus_symbol",
+      "WISDOM_TEXT": "A lotus grows beautifully even through muddy water.",
+      "CLUE_TEXT": "Notice one small sign that you are growing today.",
+      "FOOTER_PROMPT": "What are you grateful for today?",
+      "FOOTER_SMALL": "Wear your band and remember your growing heart."
+    }
+  }
+]

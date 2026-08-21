@@ -1,0 +1,212 @@
+[
+  {
+    "id": "SIT001",
+    "templateId": "T18",
+    "beatTexts": [
+      {
+        "beatId": "SETUP",
+        "text": "Kavi is playing with a favourite toy when another child picks it up and walks away with it. Kavi wanted to get the toy back. The other child is already playing with it and doesn't realize Kavi was using it. While wondering what to do, Kavi noticed a round smooth stone nearby. The old thought came quickly: \"I have to react when things feel unfair.\""
+      },
+      {
+        "beatId": "ATTEMPT_1",
+        "text": "So Kavi tried to study exactly how it worked. Kavi grabbed for it, and the other child only held on tighter."
+      },
+      {
+        "beatId": "ATTEMPT_2",
+        "text": "Along the way, Kavi noticed the round smooth stone again. Kavi tried again, a different way instead. Kavi shoved back, just once — and it landed as one more push in a fight that was only getting bigger."
+      },
+      {
+        "beatId": "TURNING_POINT",
+        "text": "\"Wait,\" Kavi thought, fists still tight. Grabbing again would only start the same fight over. I can pause and choose my response."
+      },
+      {
+        "beatId": "ATTEMPT_3",
+        "text": "So Kavi took a step back and looked at it fresh, hands open instead of reaching — and this time the other child actually handed it back."
+      },
+      {
+        "beatId": "RESOLUTION",
+        "text": "Kavi held it again, fists finally loose, the fight already forgotten."
+      }
+    ]
+  },
+  {
+    "id": "SIT002",
+    "templateId": "T18",
+    "beatTexts": [
+      {
+        "beatId": "SETUP",
+        "text": "Kavi is in the middle of an exciting game when a parent says screen time is over. Kavi wanted to keep playing until the game is finished. The agreed screen-time limit has ended. While wondering what to do, Kavi noticed a round smooth stone nearby. The old thought came quickly: \"I have to get what I want immediately.\""
+      },
+      {
+        "beatId": "ATTEMPT_1",
+        "text": "So Kavi tried to study exactly how it worked. \"Just five more minutes,\" Kavi tried — but the clock did not take requests."
+      },
+      {
+        "beatId": "ATTEMPT_2",
+        "text": "Along the way, Kavi noticed the round smooth stone again. Kavi tried again, a different way instead. Kavi slowed everything down on purpose, hoping no one would notice. Someone noticed."
+      },
+      {
+        "beatId": "TURNING_POINT",
+        "text": "The arguing was the part that made it hard — not the ending itself. I can handle disappointment and make wise choices."
+      },
+      {
+        "beatId": "ATTEMPT_3",
+        "text": "So Kavi took a step back and looked at it fresh without a single argument this time, and the stopping took exactly as long as it needed to — no longer."
+      },
+      {
+        "beatId": "RESOLUTION",
+        "text": "Kavi put things away already moving on to the next thing, the ending behind them and nothing dragged along with it."
+      }
+    ]
+  },
+  {
+    "id": "SIT015",
+    "templateId": "T18",
+    "beatTexts": [
+      {
+        "beatId": "SETUP",
+        "text": "Kavi is travelling in a car or plane and has been sitting for a long time. Kavi wanted to move, stretch or find something to do. They cannot freely move around yet. While wondering what to do, Kavi noticed a round smooth stone nearby. The old thought came quickly: \"I can't stay calm when I feel trapped.\""
+      },
+      {
+        "beatId": "ATTEMPT_1",
+        "text": "So Kavi tried to study exactly how it worked. Kavi shifted again. The wriggle underneath didn't shrink — it grew."
+      },
+      {
+        "beatId": "ATTEMPT_2",
+        "text": "Along the way, Kavi noticed the round smooth stone again. Kavi tried again, a different way instead. Kavi clamped down and tried to hold every muscle still, and the energy just backed up with nowhere to go."
+      },
+      {
+        "beatId": "TURNING_POINT",
+        "text": "Holding still harder was exactly what kept making it worse. I can find peaceful ways to handle uncomfortable moments."
+      },
+      {
+        "beatId": "ATTEMPT_3",
+        "text": "So Kavi took a step back and looked at it fresh — a small, quiet outlet instead of none at all — and the wriggle finally had somewhere to go."
+      },
+      {
+        "beatId": "RESOLUTION",
+        "text": "Kavi's hands went still in their lap, the last of the energy already spent."
+      }
+    ]
+  },
+  {
+    "id": "SIT098",
+    "templateId": "T18",
+    "beatTexts": [
+      {
+        "beatId": "SETUP",
+        "text": "After spending a long time gaming or watching videos, Kavi sits down to do something else but struggles to focus. Kavi wanted to concentrate on the next activity. Kavi's attention feels scattered and their mind feels tired. While wondering what to do, Kavi noticed a round smooth stone nearby. The old thought came quickly: \"My attention controls me.\""
+      },
+      {
+        "beatId": "ATTEMPT_1",
+        "text": "So Kavi tried to study exactly how it worked. Kavi read the same line again. It still would not stay in Kavi's head."
+      },
+      {
+        "beatId": "ATTEMPT_2",
+        "text": "Along the way, Kavi noticed the round smooth stone again. Kavi tried again, a different way instead. Kavi squeezed both eyes shut and tried to force it in — and came back to find three more lines had gone by unread."
+      },
+      {
+        "beatId": "TURNING_POINT",
+        "text": "Forcing it wasn't the problem's opposite — it was the same mistake, just louder. I can guide my attention back to what matters."
+      },
+      {
+        "beatId": "ATTEMPT_3",
+        "text": "So Kavi took a step back and looked at it fresh, shrinking the whole world down to just the one line in front of them — and that line finally made sense."
+      },
+      {
+        "beatId": "RESOLUTION",
+        "text": "Kavi turned the page, the next one already easier than the last."
+      }
+    ]
+  },
+  {
+    "id": "SIT101",
+    "templateId": "T18",
+    "beatTexts": [
+      {
+        "beatId": "SETUP",
+        "text": "Tara has been waiting for a long time at a doctor's office, airport, station, or other place where the next step has not started yet. Tara wanted to make the waiting end. Tara's turn, appointment, or journey has not begun. While wondering what to do, Tara noticed a small paper star nearby. The old thought came quickly: \"Waiting is pointless and unbearable.\""
+      },
+      {
+        "beatId": "ATTEMPT_1",
+        "text": "So Tara tried the same thing again, a little harder. Tara checked again. Nothing had moved."
+      },
+      {
+        "beatId": "ATTEMPT_2",
+        "text": "Along the way, Tara noticed the small paper star again. Tara tried again, a different way instead. Tara watched even closer this time, certain that would help. It made every second feel longer, not shorter."
+      },
+      {
+        "beatId": "TURNING_POINT",
+        "text": "Watching it hadn't sped up a single minute — it had only made the minutes louder. I can use waiting time calmly and wisely."
+      },
+      {
+        "beatId": "ATTEMPT_3",
+        "text": "So Tara took a step back and looked at it fresh, and looked up a while later to find the wait had somehow gone and finished itself."
+      },
+      {
+        "beatId": "RESOLUTION",
+        "text": "Tara hadn't even seen the moment arrive — only that, this time, it had."
+      }
+    ]
+  },
+  {
+    "id": "SIT104",
+    "templateId": "T18",
+    "beatTexts": [
+      {
+        "beatId": "SETUP",
+        "text": "After sleeping badly, Kavi wakes up tired and becomes irritated by small things that normally would not bother them. Kavi wanted to get through the day without losing their temper. Kavi is already tired before the day properly begins. While wondering what to do, Kavi noticed a round smooth stone nearby. The old thought came quickly: \"Being tired gives me no control over my behaviour.\""
+      },
+      {
+        "beatId": "ATTEMPT_1",
+        "text": "So Kavi tried to study exactly how it worked. Kavi snapped at the sock. The sock did not care, and neither did the feeling underneath it, which was still there."
+      },
+      {
+        "beatId": "ATTEMPT_2",
+        "text": "Along the way, Kavi noticed the round smooth stone again. Kavi tried again, a different way instead. Kavi snapped at the next small thing too — and it landed just as hollow as the first one had."
+      },
+      {
+        "beatId": "TURNING_POINT",
+        "text": "It was never really about the sock. I can notice my feelings and choose kind actions."
+      },
+      {
+        "beatId": "ATTEMPT_3",
+        "text": "So instead of snapping again, Kavi took a step back and looked at it fresh — said the actual, unglamorous truth of it out loud."
+      },
+      {
+        "beatId": "RESOLUTION",
+        "text": "Kavi felt the sock, and the toast, and all of it shrink back down to the small things they had always actually been."
+      }
+    ]
+  },
+  {
+    "id": "SIT136",
+    "templateId": "T18",
+    "beatTexts": [
+      {
+        "beatId": "SETUP",
+        "text": "Kavi has homework still to finish when an exciting opportunity to play appears. Kavi wanted to go play now. The schoolwork needs to be completed first. While wondering what to do, Kavi noticed a round smooth stone nearby. The old thought came quickly: \"I should always do what feels fun now.\""
+      },
+      {
+        "beatId": "ATTEMPT_1",
+        "text": "So Kavi tried to study exactly how it worked. Kavi glanced toward the window, and the pull toward it got a little stronger for having been looked at."
+      },
+      {
+        "beatId": "ATTEMPT_2",
+        "text": "Along the way, Kavi noticed the round smooth stone again. Kavi tried again, a different way instead. Kavi tried to stare only at the workbook and think about nothing else — and every sentence came out with half a mind still outside."
+      },
+      {
+        "beatId": "TURNING_POINT",
+        "text": "Both couldn't happen at once, not really — but they didn't have to happen never, either. Choosing responsibility today helps me tomorrow."
+      },
+      {
+        "beatId": "ATTEMPT_3",
+        "text": "So Kavi took a step back and looked at it fresh — finished the page first, on purpose, so the playing after it would not have anything hanging over it."
+      },
+      {
+        "beatId": "RESOLUTION",
+        "text": "Kavi closed the workbook and walked outside owing nothing to anyone, least of all the game."
+      }
+    ]
+  }
+]

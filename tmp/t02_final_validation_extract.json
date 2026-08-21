@@ -1,0 +1,232 @@
+[
+  {
+    "label": "stress",
+    "situationId": "SIT006",
+    "forcedTemplateId": "T02",
+    "actualTemplateId": "T02",
+    "title": "Chinu and the Refrain & Change in Playdate or plan suddenly cancelled",
+    "storyText": "Chinu is ready for a playdate when they learn the friend cannot come. Chinu wanted to have the playtime that was planned. While wondering what to do, Chinu noticed a half-open door nearby. The old thought came quickly: \"Plans must happen my way.\". So Chinu searched everywhere for another way. But it did not work. It did not work - it still did not make any sense. Along the way, Chinu noticed the half-open door again. Chinu tried to find a clue that had been missed instead.\n\nThat did not work either. That did not work either - it was every bit as confusing as before. Chinu stopped, took one slow breath, said, \"Wait,\" and instead of trying again right away, spent a moment looking through the doorway. In that pause, Chinu understood something new — I can adapt and still enjoy life. That was the moment Chinu began to understand a little more about threshold. This time, Chinu tried again, a different way. This time it worked - not by trying harder, but by trying differently. Chinu smiled at last. This time it was actually done, and it was right. The half-open door stayed close by, a small reminder of what had changed. No longer needing to prove anything - just glad it was done. Everything felt calmer, warmer, and freer than before.",
+    "compressedStory": "Chinu is ready for a playdate when they learn the friend cannot come. Chinu wanted to have the playtime that was planned, but the old thought said Plans must happen my way. After a quiet \"Wait,\" Chinu chose to look again and understood that I can adapt and still enjoy life. Chinu chose a different next step, and the problem eased into a warmer, freer ending.",
+    "compressedStoryWordCount": 66,
+    "storyQA": "PASS",
+    "productionQA": "PRODUCTION_READY",
+    "eventLabels": [
+      "SETUP",
+      "ATTEMPT_1",
+      "ATTEMPT_2",
+      "TURNING_POINT",
+      "ATTEMPT_3",
+      "RESOLUTION"
+    ],
+    "eventActions": [
+      {
+        "label": "SETUP",
+        "action": ""
+      },
+      {
+        "label": "ATTEMPT_1",
+        "action": "searched everywhere for another way"
+      },
+      {
+        "label": "ATTEMPT_2",
+        "action": "tried to find a clue that had been missed"
+      },
+      {
+        "label": "TURNING_POINT",
+        "action": "stopped, took one slow breath, said, \"Wait,\" and instead of trying again right away, spent a moment looking through the doorway"
+      },
+      {
+        "label": "ATTEMPT_3",
+        "action": "tried again, a different way"
+      },
+      {
+        "label": "RESOLUTION",
+        "action": "this time it was actually done, and it was right"
+      }
+    ]
+  },
+  {
+    "label": "natural",
+    "situationId": "SIT054",
+    "forcedTemplateId": "T02",
+    "actualTemplateId": "T02",
+    "title": "Chinu and the Refrain & Change in Highly anticipated movie or event cancelled",
+    "storyText": "Chinu has been excited about a special outing or event, but it is cancelled. Chinu wanted to have the planned experience happen. While wondering what to do, Chinu noticed a half-open door nearby. The old thought came quickly: \"If plans change, everything is ruined.\". So Chinu tried a completely different direction. But it did not work. It did not work - it still did not make any sense. Along the way, Chinu noticed the half-open door again. Chinu tried to make something new to solve it instead.\n\nThat did not work either. That did not work either - it was every bit as confusing as before. Chinu stopped, took one slow breath, said, \"Wait,\" and instead of trying again right away, spent a moment looking through the doorway. In that pause, Chinu understood something new — new opportunities can grow from unexpected changes. That was the moment Chinu began to understand a little more about threshold. This time, Chinu tried again, a different way. This time it worked - not by trying harder, but by trying differently. Chinu smiled at last. This time it was actually done, and it was right. The half-open door stayed close by, a small reminder of what had changed. No longer needing to prove anything - just glad it was done. Everything felt calmer, warmer, and freer than before.",
+    "compressedStory": "Chinu has been excited about a special outing or event, but it is cancelled. Chinu wanted to have the planned experience happen, but the old thought said If plans change, everything is ruined. After a quiet \"Wait,\" Chinu chose to look again and understood that New opportunities can grow from unexpected changes. Chinu chose a different next step, and the problem eased into a warmer, freer ending.",
+    "compressedStoryWordCount": 67,
+    "storyQA": "PASS",
+    "productionQA": "PRODUCTION_READY",
+    "eventLabels": [
+      "SETUP",
+      "ATTEMPT_1",
+      "ATTEMPT_2",
+      "TURNING_POINT",
+      "ATTEMPT_3",
+      "RESOLUTION"
+    ],
+    "eventActions": [
+      {
+        "label": "SETUP",
+        "action": ""
+      },
+      {
+        "label": "ATTEMPT_1",
+        "action": "tried a completely different direction"
+      },
+      {
+        "label": "ATTEMPT_2",
+        "action": "tried to make something new to solve it"
+      },
+      {
+        "label": "TURNING_POINT",
+        "action": "stopped, took one slow breath, said, \"Wait,\" and instead of trying again right away, spent a moment looking through the doorway"
+      },
+      {
+        "label": "ATTEMPT_3",
+        "action": "tried again, a different way"
+      },
+      {
+        "label": "RESOLUTION",
+        "action": "this time it was actually done, and it was right"
+      }
+    ]
+  },
+  {
+    "label": "natural",
+    "situationId": "SIT102",
+    "forcedTemplateId": "T02",
+    "actualTemplateId": "T02",
+    "title": "Chinu and the Refrain & Change in Stuck indoors on a rainy day with nothing to do",
+    "storyText": "Heavy rain keeps Chinu indoors, and the activities that usually make a rainy day fun have already lost their appeal. Chinu wanted to find something interesting to do. While wondering what to do, Chinu noticed a half-open door nearby. The old thought came quickly: \"Fun only happens when things go as planned.\". So Chinu searched everywhere for another way. But it did not work. It did not work - it still did not make any sense. Along the way, Chinu noticed the half-open door again. Chinu tried to find a clue that had been missed instead.\n\nThat did not work either. That did not work either - it was every bit as confusing as before. Chinu stopped, took one slow breath, said, \"Wait,\" and instead of trying again right away, spent a moment looking through the doorway. In that pause, Chinu understood something new — I can create joy wherever I am. That was the moment Chinu began to understand a little more about threshold. This time, Chinu tried again, a different way. This time it worked - not by trying harder, but by trying differently. Chinu smiled at last. This time it was actually done, and it was right. The half-open door stayed close by, a small reminder of what had changed. No longer needing to prove anything - just glad it was done. Everything felt calmer, warmer, and freer than before.",
+    "compressedStory": "Chinu cannot go outside and has run out of ideas, and Chinu believed Fun only happens when things go as planned. Chinu paused, chose to look again, and understood that I can create joy wherever I am. Chinu chose a different response, and the ending felt warmer and freer than before.",
+    "compressedStoryWordCount": 51,
+    "storyQA": "PASS",
+    "productionQA": "PRODUCTION_READY",
+    "eventLabels": [
+      "SETUP",
+      "ATTEMPT_1",
+      "ATTEMPT_2",
+      "TURNING_POINT",
+      "ATTEMPT_3",
+      "RESOLUTION"
+    ],
+    "eventActions": [
+      {
+        "label": "SETUP",
+        "action": ""
+      },
+      {
+        "label": "ATTEMPT_1",
+        "action": "searched everywhere for another way"
+      },
+      {
+        "label": "ATTEMPT_2",
+        "action": "tried to find a clue that had been missed"
+      },
+      {
+        "label": "TURNING_POINT",
+        "action": "stopped, took one slow breath, said, \"Wait,\" and instead of trying again right away, spent a moment looking through the doorway"
+      },
+      {
+        "label": "ATTEMPT_3",
+        "action": "tried again, a different way"
+      },
+      {
+        "label": "RESOLUTION",
+        "action": "this time it was actually done, and it was right"
+      }
+    ]
+  },
+  {
+    "label": "natural",
+    "situationId": "SIT124",
+    "forcedTemplateId": "T02",
+    "actualTemplateId": "T02",
+    "title": "Chinu and the Refrain & Change in Game or app changes interface completely",
+    "storyText": "Chinu opens a favourite game or app and discovers that its layout has completely changed after an update. Chinu wanted to find the familiar controls and start playing. While wondering what to do, Chinu noticed a half-open door nearby. The old thought came quickly: \"I don't like change, so I can't enjoy it.\". So Chinu tried a completely different direction. But it did not work. It did not work - it still did not make any sense. Along the way, Chinu noticed the half-open door again. Chinu tried to study exactly how it worked instead.\n\nThat did not work either. That did not work either - it was every bit as confusing as before. Chinu stopped, took one slow breath, said, \"Wait,\" and instead of trying again right away, spent a moment looking through the doorway. In that pause, Chinu understood something new — I can learn new ways of doing things. That was the moment Chinu began to understand a little more about threshold. This time, Chinu tried again, a different way. This time it worked - not by trying harder, but by trying differently. Chinu smiled at last. This time it was actually done, and it was right. The half-open door stayed close by, a small reminder of what had changed. No longer needing to prove anything - just glad it was done. Everything felt calmer, warmer, and freer than before.",
+    "compressedStory": "The buttons, menus, and paths Chinu knows are no longer where they used to be, and Chinu believed I don't like change, so I can't enjoy it. Chinu paused, chose to look again, and understood that I can learn new ways of doing things. Chinu chose a different response, and the ending felt warmer and freer than before.",
+    "compressedStoryWordCount": 58,
+    "storyQA": "PASS",
+    "productionQA": "PRODUCTION_READY",
+    "eventLabels": [
+      "SETUP",
+      "ATTEMPT_1",
+      "ATTEMPT_2",
+      "TURNING_POINT",
+      "ATTEMPT_3",
+      "RESOLUTION"
+    ],
+    "eventActions": [
+      {
+        "label": "SETUP",
+        "action": ""
+      },
+      {
+        "label": "ATTEMPT_1",
+        "action": "tried a completely different direction"
+      },
+      {
+        "label": "ATTEMPT_2",
+        "action": "tried to study exactly how it worked"
+      },
+      {
+        "label": "TURNING_POINT",
+        "action": "stopped, took one slow breath, said, \"Wait,\" and instead of trying again right away, spent a moment looking through the doorway"
+      },
+      {
+        "label": "ATTEMPT_3",
+        "action": "tried again, a different way"
+      },
+      {
+        "label": "RESOLUTION",
+        "action": "this time it was actually done, and it was right"
+      }
+    ]
+  },
+  {
+    "label": "natural",
+    "situationId": "SIT168",
+    "forcedTemplateId": "T02",
+    "actualTemplateId": "T02",
+    "title": "Chinu and the Refrain & Change in Group project where everyone has different ideas",
+    "storyText": "Chinu and several classmates are working on a group project, but each child has a different idea about what the finished project should look like. Chinu wanted to create something the whole group can be proud of. While wondering what to do, Chinu noticed a half-open door nearby. The old thought came quickly: \"My idea has to be chosen.\". So Chinu tried a completely different direction. But it did not work. It did not work - it still did not make any sense. Along the way, Chinu noticed the half-open door again. Chinu tried to study exactly how it worked instead.\n\nThat did not work either. That did not work either - it was every bit as confusing as before. Chinu stopped, took one slow breath, said, \"Wait,\" and instead of trying again right away, spent a moment looking through the doorway. In that pause, Chinu understood something new — great ideas grow when people work together. That was the moment Chinu began to understand a little more about threshold. This time, Chinu tried again, a different way. This time it worked - not by trying harder, but by trying differently. Chinu smiled at last. This time it was actually done, and it was right. The half-open door stayed close by, a small reminder of what had changed. No longer needing to prove anything - just glad it was done. Everything felt calmer, warmer, and freer than before.",
+    "compressedStory": "The group cannot agree on which idea to follow, and Chinu believed My idea has to be chosen. Chinu paused, chose to look again, and understood that Great ideas grow when people work together. Chinu chose a different response, and the ending felt warmer and freer than before. The change was clear in what happened next.",
+    "compressedStoryWordCount": 56,
+    "storyQA": "PASS",
+    "productionQA": "PRODUCTION_READY",
+    "eventLabels": [
+      "SETUP",
+      "ATTEMPT_1",
+      "ATTEMPT_2",
+      "TURNING_POINT",
+      "ATTEMPT_3",
+      "RESOLUTION"
+    ],
+    "eventActions": [
+      {
+        "label": "SETUP",
+        "action": ""
+      },
+      {
+        "label": "ATTEMPT_1",
+        "action": "tried a completely different direction"
+      },
+      {
+        "label": "ATTEMPT_2",
+        "action": "tried to study exactly how it worked"
+      },
+      {
+        "label": "TURNING_POINT",
+        "action": "stopped, took one slow breath, said, \"Wait,\" and instead of trying again right away, spent a moment looking through the doorway"
+      },
+      {
+        "label": "ATTEMPT_3",
+        "action": "tried again, a different way"
+      },
+      {
+        "label": "RESOLUTION",
+        "action": "this time it was actually done, and it was right"
+      }
+    ]
+  }
+]

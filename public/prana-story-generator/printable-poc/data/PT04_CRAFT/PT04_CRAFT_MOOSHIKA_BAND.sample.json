@@ -1,0 +1,47 @@
+{
+  "template_id": "PT04_CRAFT",
+  "theme_id": "GT00",
+  "belief": "Small steady steps can help someone every day.",
+  "title": "Mooshika Tiny Helper Band",
+  "subtitle": "Wear a reminder that small steps can become kind action.",
+  "assets": {
+    "MAIN_ART": "mooshika_happy",
+    "DECORATIONS": [
+      "heart",
+      "star",
+      "heart"
+    ]
+  },
+  "content": {
+    "craft_variant": "band",
+    "craft_label": "Tiny Helper Band",
+    "materials": [
+      "paper strip or cardstock",
+      "crayons or pencils",
+      "scissors",
+      "tape or glue"
+    ],
+    "steps": [
+      "Colour the helper band and the little step symbols.",
+      "Cut along the outer cut line.",
+      "Write one tiny helpful action you will do today.",
+      "Wrap the band around your wrist and tape the ends."
+    ],
+    "take_it_today": "Wear it until you do one tiny helpful action for someone.",
+    "footer": "Tiny steps count."
+  },
+  "generation": {
+    "variant": "band",
+    "geometry": {
+      "band_text": "I CAN TAKE TINY HELPER STEPS",
+      "steps": 4,
+      "cut_lines": true,
+      "fold_lines": false
+    }
+  },
+  "answer_key": {},
+  "wisdom": {
+    "statement": "Mooshika reminds us that small steady steps can make a big difference.",
+    "today": "Choose one tiny helpful action and do it before the day ends."
+  }
+}

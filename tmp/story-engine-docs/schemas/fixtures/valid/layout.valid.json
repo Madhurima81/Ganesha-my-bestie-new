@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "1.0",
+  "status": "PRODUCTION_READY",
+  "storyReference": { "id": "STORY_001" },
+  "finalStoryReference": { "id": "FINALSTORY_001" },
+  "illustrationAssetReferences": [ { "id": "ASSET_PAGE_1" } ],
+  "format": { "width": 8.5, "height": 8.5, "unit": "in", "orientation": "square", "bleed": 0.125 },
+  "pages": [
+    {
+      "page": 1,
+      "text": { "content": "Anu stood at the edge of the valley.", "position": { "x": 0.5, "y": 7.0 }, "alignment": "center" },
+      "illustration": { "assetId": "ASSET_PAGE_1", "position": { "x": 0, "y": 0 }, "fit": "cover", "layer": 0 }
+    }
+  ],
+  "layoutValidation": { "status": "PASS", "blockingFailures": 0, "warnings": 0, "rulesPassed": 10 }
+}

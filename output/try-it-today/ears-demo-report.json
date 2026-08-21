@@ -1,0 +1,896 @@
+{
+  "generated_at": "2026-08-10T12:48:41.644Z",
+  "milestone": "Try It Today MVP content pipeline",
+  "provider": "demo_fixture",
+  "fallback_error": null,
+  "input": {
+    "theme_id": "GT01",
+    "symbol": "Ears",
+    "meaning": "Listen Like a Winnowing Basket - sift helpful words from noisy distractions.",
+    "belief": "I keep the words that help me grow.",
+    "activity_count": 5
+  },
+  "prompt_payload": {
+    "theme_id": "GT01",
+    "symbol": "Ears",
+    "meaning": "Listen Like a Winnowing Basket - sift helpful words from noisy distractions.",
+    "belief": "I keep the words that help me grow.",
+    "activity_count": 5,
+    "required_variety_modes": [
+      "calm",
+      "play",
+      "notice",
+      "talk",
+      "make"
+    ],
+    "printable_template_ids": [
+      "PT01",
+      "PT02",
+      "PT03",
+      "PT04",
+      "PT05",
+      "PT06",
+      "PT07",
+      "PT08",
+      "PT09",
+      "PT10"
+    ],
+    "critical_rules": [
+      "Do not invent or rewrite the locked symbol meaning.",
+      "Do not invent or rewrite the locked belief.",
+      "Return distinct experiences, not superficial variations.",
+      "Use a printable only when removing it makes the activity meaningfully worse."
+    ]
+  },
+  "llm_request": null,
+  "llm_raw_response": null,
+  "activity_records": [
+    {
+      "activity_id": "TIT-EAR-001",
+      "status": "draft",
+      "theme": {
+        "id": "GT01",
+        "symbol": "Ears",
+        "meaning": "Listen Like a Winnowing Basket - sift helpful words from noisy distractions.",
+        "belief": "I keep the words that help me grow."
+      },
+      "activity": {
+        "title": "Winnowing Breath",
+        "family": "calm",
+        "primary_skill": "attention",
+        "hook": "Can you breathe in the words that help and let the noisy ones float away?",
+        "duration_minutes": 3,
+        "players": "solo",
+        "materials": [],
+        "steps": [
+          "Sit comfortably and think of one helpful sentence someone said to you.",
+          "Breathe in as you whisper that helpful sentence to yourself.",
+          "Breathe out and imagine noisy unhelpful words blowing away like husks in the wind."
+        ],
+        "reflection": "Which words felt worth keeping today?",
+        "affirmation": "I keep the words that help me grow.",
+        "real_life_transfer": "Later today, pause for one breath before deciding which words to keep.",
+        "core_mechanic": "mindful filtering",
+        "emotional_payoff": "inner clarity"
+      },
+      "printable": {
+        "required": false,
+        "template_id": null,
+        "content_spec": null
+      },
+      "quality": {
+        "theme_integrity": "pass",
+        "belief_integrity": "pass",
+        "child_appeal": "pass",
+        "sel_quality": "pass",
+        "safety": "pass",
+        "parent_ux": "pass",
+        "duplication": "pass"
+      },
+      "source": "demo_llm_fixture"
+    },
+    {
+      "activity_id": "TIT-EAR-002",
+      "status": "draft",
+      "theme": {
+        "id": "GT01",
+        "symbol": "Ears",
+        "meaning": "Listen Like a Winnowing Basket - sift helpful words from noisy distractions.",
+        "belief": "I keep the words that help me grow."
+      },
+      "activity": {
+        "title": "Keep or Let Go Cards",
+        "family": "play",
+        "primary_skill": "discernment",
+        "hook": "Can you beat the noise and sort the words that help you grow?",
+        "duration_minutes": 6,
+        "players": "solo_or_pair",
+        "materials": [
+          "printed cards or scrap paper"
+        ],
+        "steps": [
+          "Place two labels in front of you: KEEP and LET GO.",
+          "Read or hear one word card at a time.",
+          "Put helpful growth words in KEEP and noisy put-down words in LET GO.",
+          "Pick one KEEP card to say out loud at the end."
+        ],
+        "reflection": "Which card would you like to remember the next time someone speaks to you?",
+        "affirmation": "I keep the words that help me grow.",
+        "real_life_transfer": "The next time you hear mixed messages, look for one sentence that truly helps you grow.",
+        "core_mechanic": "fast sorting game",
+        "emotional_payoff": "lighthearted mastery"
+      },
+      "printable": {
+        "required": true,
+        "template_id": "PT02",
+        "title": "Helpful Words / Noise",
+        "content_spec": {
+          "cards": [
+            "Try another way.",
+            "You can't do it.",
+            "I don't understand yet.",
+            "That's stupid.",
+            "Keep practicing.",
+            "Mistakes help us learn."
+          ],
+          "keep_label": "KEEP",
+          "let_go_label": "LET GO"
+        },
+        "child_action": "Sort each card into KEEP or LET GO."
+      },
+      "quality": {
+        "theme_integrity": "pass",
+        "belief_integrity": "pass",
+        "child_appeal": "pass",
+        "sel_quality": "pass",
+        "safety": "pass",
+        "parent_ux": "pass",
+        "duplication": "pass"
+      },
+      "source": "demo_llm_fixture"
+    },
+    {
+      "activity_id": "TIT-EAR-003",
+      "status": "draft",
+      "theme": {
+        "id": "GT01",
+        "symbol": "Ears",
+        "meaning": "Listen Like a Winnowing Basket - sift helpful words from noisy distractions.",
+        "belief": "I keep the words that help me grow."
+      },
+      "activity": {
+        "title": "Sound Detective",
+        "family": "notice",
+        "primary_skill": "sensory awareness",
+        "hook": "Can your ears find three sounds that help you notice the world more carefully?",
+        "duration_minutes": 4,
+        "players": "solo",
+        "materials": [],
+        "steps": [
+          "Stand or sit quietly and listen for one far-away sound.",
+          "Next, listen for one nearby sound.",
+          "Finally, listen for one sound inside your own body, like a breath or tiny rustle.",
+          "Name the sound that helped you focus the most."
+        ],
+        "reflection": "Which sound helped you listen most carefully?",
+        "affirmation": "I keep the words that help me grow.",
+        "real_life_transfer": "When a room feels noisy later, find one sound to anchor your attention first.",
+        "core_mechanic": "real-world sound hunt",
+        "emotional_payoff": "curious noticing"
+      },
+      "printable": {
+        "required": false,
+        "template_id": null,
+        "content_spec": null
+      },
+      "quality": {
+        "theme_integrity": "pass",
+        "belief_integrity": "pass",
+        "child_appeal": "pass",
+        "sel_quality": "pass",
+        "safety": "pass",
+        "parent_ux": "pass",
+        "duplication": "pass"
+      },
+      "source": "demo_llm_fixture"
+    },
+    {
+      "activity_id": "TIT-EAR-004",
+      "status": "draft",
+      "theme": {
+        "id": "GT01",
+        "symbol": "Ears",
+        "meaning": "Listen Like a Winnowing Basket - sift helpful words from noisy distractions.",
+        "belief": "I keep the words that help me grow."
+      },
+      "activity": {
+        "title": "Listening Pebble Turn-Taking",
+        "family": "talk",
+        "primary_skill": "communication",
+        "hook": "Can you listen so carefully that your partner feels completely heard?",
+        "duration_minutes": 7,
+        "players": "pair_or_family",
+        "materials": [
+          "a pebble or small soft object"
+        ],
+        "steps": [
+          "One person holds the pebble and shares one small idea, story, or plan.",
+          "The listener may not interrupt and only listens until the pebble is passed over.",
+          "Before speaking, the listener repeats one helpful thing they heard.",
+          "Switch turns and try again."
+        ],
+        "reflection": "What changed when you listened for the helpful part first?",
+        "affirmation": "I keep the words that help me grow.",
+        "real_life_transfer": "At home today, try repeating one helpful sentence before answering back.",
+        "core_mechanic": "turn-taking conversation",
+        "emotional_payoff": "feeling heard"
+      },
+      "printable": {
+        "required": false,
+        "template_id": null,
+        "content_spec": null
+      },
+      "quality": {
+        "theme_integrity": "pass",
+        "belief_integrity": "pass",
+        "child_appeal": "pass",
+        "sel_quality": "pass",
+        "safety": "pass",
+        "parent_ux": "pass",
+        "duplication": "pass"
+      },
+      "source": "demo_llm_fixture"
+    },
+    {
+      "activity_id": "TIT-EAR-005",
+      "status": "draft",
+      "theme": {
+        "id": "GT01",
+        "symbol": "Ears",
+        "meaning": "Listen Like a Winnowing Basket - sift helpful words from noisy distractions.",
+        "belief": "I keep the words that help me grow."
+      },
+      "activity": {
+        "title": "Pocket Reminder Ears",
+        "family": "make",
+        "primary_skill": "creative expression",
+        "hook": "Can you make a tiny ears reminder that helps you keep good words close?",
+        "duration_minutes": 8,
+        "players": "solo_or_pair",
+        "materials": [
+          "paper",
+          "crayons or pencil",
+          "scissors optional"
+        ],
+        "steps": [
+          "Draw a small pair of ears on paper.",
+          "Inside the ears, write or draw one helpful sentence you want to keep.",
+          "Decorate the card so it feels easy to notice later.",
+          "Place it in a pocket, pencil box, or near your bed."
+        ],
+        "reflection": "What helpful words do you want your ears to remember most?",
+        "affirmation": "I keep the words that help me grow.",
+        "real_life_transfer": "Look at your reminder the next time noisy words try to stick to you.",
+        "core_mechanic": "hands-on creation",
+        "emotional_payoff": "creative ownership"
+      },
+      "printable": {
+        "required": true,
+        "template_id": "PT06",
+        "title": "My Helpful Words Ears Card",
+        "content_spec": {
+          "prompt": "Write or draw one helpful sentence inside the ears.",
+          "art_direction": "Simple ears outline with space for one sentence and colouring."
+        },
+        "child_action": "Write one helpful sentence inside the ears and keep the card nearby."
+      },
+      "quality": {
+        "theme_integrity": "pass",
+        "belief_integrity": "pass",
+        "child_appeal": "pass",
+        "sel_quality": "pass",
+        "safety": "pass",
+        "parent_ux": "pass",
+        "duplication": "pass"
+      },
+      "source": "demo_llm_fixture"
+    }
+  ],
+  "validation": {
+    "final_result": "APPROVED",
+    "batch_valid": true,
+    "duplicate_mechanic_detected": false,
+    "duplicate_mechanic_families": [],
+    "batch_rules": [
+      {
+        "rule": "non_empty_batch",
+        "passed": true,
+        "severity": "error",
+        "details": "pass"
+      },
+      {
+        "rule": "all_required_families_unique",
+        "passed": true,
+        "severity": "error",
+        "details": "pass"
+      },
+      {
+        "rule": "duplicate_mechanic_detection",
+        "passed": true,
+        "severity": "error",
+        "details": "pass"
+      }
+    ],
+    "per_activity": [
+      {
+        "activity_id": "TIT-EAR-001",
+        "title": "Winnowing Breath",
+        "family": "calm",
+        "printable_required": false,
+        "printable_template_id": null,
+        "rules": [
+          {
+            "rule": "theme_integrity",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "belief_integrity",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "distinct_activity_family",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "duplicate_mechanic_check",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "distinct_emotional_payoff",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "duration_range",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "step_count",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "reflection_present",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "no_clinical_claims",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "no_breath_holds",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "no_forced_disclosure",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "printable_template_valid",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "printable_content_present_when_required",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "printable_decision_consistency",
+            "passed": true,
+            "severity": "warning",
+            "details": "pass"
+          },
+          {
+            "rule": "parent_setup_lightweight",
+            "passed": true,
+            "severity": "warning",
+            "details": "pass"
+          }
+        ],
+        "approved": true
+      },
+      {
+        "activity_id": "TIT-EAR-002",
+        "title": "Keep or Let Go Cards",
+        "family": "play",
+        "printable_required": true,
+        "printable_template_id": "PT02",
+        "rules": [
+          {
+            "rule": "theme_integrity",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "belief_integrity",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "distinct_activity_family",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "duplicate_mechanic_check",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "distinct_emotional_payoff",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "duration_range",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "step_count",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "reflection_present",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "no_clinical_claims",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "no_breath_holds",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "no_forced_disclosure",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "printable_template_valid",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "printable_content_present_when_required",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "printable_decision_consistency",
+            "passed": true,
+            "severity": "warning",
+            "details": "pass"
+          },
+          {
+            "rule": "parent_setup_lightweight",
+            "passed": true,
+            "severity": "warning",
+            "details": "pass"
+          }
+        ],
+        "approved": true
+      },
+      {
+        "activity_id": "TIT-EAR-003",
+        "title": "Sound Detective",
+        "family": "notice",
+        "printable_required": false,
+        "printable_template_id": null,
+        "rules": [
+          {
+            "rule": "theme_integrity",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "belief_integrity",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "distinct_activity_family",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "duplicate_mechanic_check",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "distinct_emotional_payoff",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "duration_range",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "step_count",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "reflection_present",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "no_clinical_claims",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "no_breath_holds",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "no_forced_disclosure",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "printable_template_valid",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "printable_content_present_when_required",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "printable_decision_consistency",
+            "passed": true,
+            "severity": "warning",
+            "details": "pass"
+          },
+          {
+            "rule": "parent_setup_lightweight",
+            "passed": true,
+            "severity": "warning",
+            "details": "pass"
+          }
+        ],
+        "approved": true
+      },
+      {
+        "activity_id": "TIT-EAR-004",
+        "title": "Listening Pebble Turn-Taking",
+        "family": "talk",
+        "printable_required": false,
+        "printable_template_id": null,
+        "rules": [
+          {
+            "rule": "theme_integrity",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "belief_integrity",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "distinct_activity_family",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "duplicate_mechanic_check",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "distinct_emotional_payoff",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "duration_range",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "step_count",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "reflection_present",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "no_clinical_claims",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "no_breath_holds",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "no_forced_disclosure",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "printable_template_valid",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "printable_content_present_when_required",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "printable_decision_consistency",
+            "passed": true,
+            "severity": "warning",
+            "details": "pass"
+          },
+          {
+            "rule": "parent_setup_lightweight",
+            "passed": true,
+            "severity": "warning",
+            "details": "pass"
+          }
+        ],
+        "approved": true
+      },
+      {
+        "activity_id": "TIT-EAR-005",
+        "title": "Pocket Reminder Ears",
+        "family": "make",
+        "printable_required": true,
+        "printable_template_id": "PT06",
+        "rules": [
+          {
+            "rule": "theme_integrity",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "belief_integrity",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "distinct_activity_family",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "duplicate_mechanic_check",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "distinct_emotional_payoff",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "duration_range",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "step_count",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "reflection_present",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "no_clinical_claims",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "no_breath_holds",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "no_forced_disclosure",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "printable_template_valid",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "printable_content_present_when_required",
+            "passed": true,
+            "severity": "error",
+            "details": "pass"
+          },
+          {
+            "rule": "printable_decision_consistency",
+            "passed": true,
+            "severity": "warning",
+            "details": "pass"
+          },
+          {
+            "rule": "parent_setup_lightweight",
+            "passed": true,
+            "severity": "warning",
+            "details": "pass"
+          }
+        ],
+        "approved": true
+      }
+    ],
+    "errors": [],
+    "warnings": []
+  },
+  "printable_decisions": [
+    {
+      "activity_id": "TIT-EAR-001",
+      "title": "Winnowing Breath",
+      "required": false,
+      "template_id": null
+    },
+    {
+      "activity_id": "TIT-EAR-002",
+      "title": "Keep or Let Go Cards",
+      "required": true,
+      "template_id": "PT02"
+    },
+    {
+      "activity_id": "TIT-EAR-003",
+      "title": "Sound Detective",
+      "required": false,
+      "template_id": null
+    },
+    {
+      "activity_id": "TIT-EAR-004",
+      "title": "Listening Pebble Turn-Taking",
+      "required": false,
+      "template_id": null
+    },
+    {
+      "activity_id": "TIT-EAR-005",
+      "title": "Pocket Reminder Ears",
+      "required": true,
+      "template_id": "PT06"
+    }
+  ],
+  "printable_render_jobs": [
+    {
+      "template_id": "PT02",
+      "renderer_family": "cut-cards",
+      "activity_id": "TIT-EAR-002",
+      "theme_id": "GT01",
+      "title": "Helpful Words / Noise",
+      "content_spec": {
+        "cards": [
+          "Try another way.",
+          "You can't do it.",
+          "I don't understand yet.",
+          "That's stupid.",
+          "Keep practicing.",
+          "Mistakes help us learn."
+        ],
+        "keep_label": "KEEP",
+        "let_go_label": "LET GO"
+      },
+      "child_action": "Sort each card into KEEP or LET GO."
+    },
+    {
+      "template_id": "PT06",
+      "renderer_family": "prompt-page",
+      "activity_id": "TIT-EAR-005",
+      "theme_id": "GT01",
+      "title": "My Helpful Words Ears Card",
+      "content_spec": {
+        "prompt": "Write or draw one helpful sentence inside the ears.",
+        "art_direction": "Simple ears outline with space for one sentence and colouring."
+      },
+      "child_action": "Write one helpful sentence inside the ears and keep the card nearby."
+    }
+  ],
+  "fixture_comparison": null
+}

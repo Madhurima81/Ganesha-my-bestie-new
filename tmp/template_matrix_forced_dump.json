@@ -1,0 +1,122 @@
+[
+  {
+    "situationId": "SIT021",
+    "templateId": "T11",
+    "title": "Darkness or shadows in the room",
+    "matrixRun": {
+      "templateId": "T11",
+      "situationId": "SIT021",
+      "characterId": "CHAR002",
+      "preAssertion": "PASS",
+      "preAssertionIssues": [],
+      "postAssertion": "PASS",
+      "postAssertionIssues": [],
+      "completeStoryValidation": "PASS",
+      "storyQA": "PASS",
+      "storyQAErrors": [],
+      "productionQA": "PRODUCTION_READY",
+      "title": "Arin and the The Countdown in Darkness or shadows in the room",
+      "storyText": "Arin needs to cross a dark room to get something. Arin wanted to reach the other side and get the object, but the familiar room suddenly feels strange and scary in the darkness. The old thought came quickly: \"Fear means I should stop.\" Arin could feel that every second spent feeding the fear made the next step seem bigger. Arin first reacted the fast way, tightening up and bracing as if stopping completely might somehow make the fear go away. Arin wants to stop because the fear feels like a warning. Arin then tried to rush the decision in their head, but the fear only spread into more corners of the moment. Arin was almost ready to let the fear make the choice for them, because the last safe-feeling chance seemed to be slipping away. Arin paused anyway, took one steadier breath, and let the next move become small enough to choose on purpose. \"Wait,\" Arin told themselves, before spending the last bit of courage well.\n\nArin then took one small brave step instead of one panicked one. Arin acted from the new understanding that courage is taking one small brave step, instead of from the first alarm.\n\nArin could feel that the brave step worked because the pause had given it shape. Arin smiled and could feel the ending settle more calmly now."
+    }
+  },
+  {
+    "situationId": "SIT023",
+    "templateId": "T11",
+    "title": "Monsters under the bed",
+    "matrixRun": {
+      "templateId": "T11",
+      "situationId": "SIT023",
+      "characterId": "CHAR002",
+      "preAssertion": "PASS",
+      "preAssertionIssues": [],
+      "postAssertion": "PASS",
+      "postAssertionIssues": [],
+      "completeStoryValidation": "PASS",
+      "storyQA": "PASS",
+      "storyQAErrors": [],
+      "productionQA": "PRODUCTION_READY",
+      "title": "Arin and the The Countdown in Monsters under the bed",
+      "storyText": "Arin sees a shadow under the bed and imagines a monster hiding there. Arin wanted to find out whether the monster is real and feel safe enough to sleep, but arin's imagination keeps turning ordinary shadows into frightening shapes. The old thought came quickly: \"My imagination can control me.\" Arin could feel that every second spent feeding the fear made the next step seem bigger. Arin first reacted the fast way, tightening up and bracing as if stopping completely might somehow make the fear go away. The more Arin imagines, the more real the fear feels. Arin then tried to rush the decision in their head, but the fear only spread into more corners of the moment. Arin was almost ready to let the fear make the choice for them, because the last safe-feeling chance seemed to be slipping away. Arin paused anyway, took one steadier breath, and let the next move become small enough to choose on purpose. \"Wait,\" Arin told themselves, before spending the last bit of courage well.\n\nArin then took one small brave step instead of one panicked one. Arin acted from the new understanding that I can be braver than my fears, instead of from the first alarm.\n\nArin could feel that the brave step worked because the pause had given it shape. Arin smiled and could feel the ending settle more calmly now."
+    }
+  },
+  {
+    "situationId": "SIT027",
+    "templateId": "T11",
+    "title": "Injections at the doctor",
+    "matrixRun": {
+      "templateId": "T11",
+      "situationId": "SIT027",
+      "characterId": "CHAR002",
+      "preAssertion": "PASS",
+      "preAssertionIssues": [],
+      "postAssertion": "PASS",
+      "postAssertionIssues": [],
+      "completeStoryValidation": "PASS",
+      "storyQA": "PASS",
+      "storyQAErrors": [],
+      "productionQA": "PRODUCTION_READY",
+      "title": "Arin and the The Countdown in Injections at the doctor",
+      "storyText": "Arin is at the doctor's office and knows an injection is coming. Arin wanted to avoid the injection or make it hurt less, but the appointment cannot simply be skipped. The old thought came quickly: \"If something hurts, I can't handle it.\" Arin could feel the moment narrowing, because the feared thing was getting closer whether or not arin was ready. Arin first tried to escape it in their mind, wishing the whole moment could simply be skipped. Arin is afraid of pain that hasn't even happened yet.\n\nArin then tried to tense against what was coming, but that only made the waiting feel sharper. Arin was almost ready to let fear decide everything about the final moment. Arin paused anyway, listened for what was actually happening now, and chose to meet only this one moment instead of the whole imagined future. \"Wait,\" Arin told themselves, before spending the last bit of courage well.\n\nArin then held on, stayed present, and took the difficult moment one brave step at a time. Arin acted from the new understanding that I am stronger than I think, even during difficult moments, instead of from the first alarm.\n\nArin could feel that staying with the real moment worked better than fighting a hundred imagined ones at once. Arin smiled and could feel the ending settle more calmly now."
+    }
+  },
+  {
+    "situationId": "SIT038",
+    "templateId": "T11",
+    "title": "Fear of dogs",
+    "matrixRun": {
+      "templateId": "T11",
+      "situationId": "SIT038",
+      "characterId": "CHAR002",
+      "preAssertion": "PASS",
+      "preAssertionIssues": [],
+      "postAssertion": "PASS",
+      "postAssertionIssues": [],
+      "completeStoryValidation": "PASS",
+      "storyQA": "PASS",
+      "storyQAErrors": [],
+      "productionQA": "PRODUCTION_READY",
+      "title": "Arin and the The Countdown in Fear of dogs",
+      "storyText": "Arin is walking outside when a dog approaches. Arin wanted to stay safe without panicking, but the dog is unfamiliar and Arin is afraid of what it might do. The old thought came quickly: \"Fear means I should avoid everything unfamiliar.\" Arin could feel that every second spent feeding the fear made the next step seem bigger. Arin first reacted the fast way, tightening up and bracing as if stopping completely might somehow make the fear go away. Fear says, Run! even though running may not be the safest choice. Arin then tried to rush the decision in their head, but the fear only spread into more corners of the moment. Arin was almost ready to let the fear make the choice for them, because the last safe-feeling chance seemed to be slipping away. Arin paused anyway, took one steadier breath, and let the next move become small enough to choose on purpose. \"Wait,\" Arin told themselves, before spending the last bit of courage well.\n\nArin then took one small brave step instead of one panicked one. Arin acted from the new understanding that I can learn, stay safe and become braver step by step, instead of from the first alarm.\n\nArin could feel that the brave step worked because the pause had given it shape. Arin smiled and could feel the ending settle more calmly now."
+    }
+  },
+  {
+    "situationId": "SIT126",
+    "templateId": "T11",
+    "title": "News of an upcoming surgery or treatment",
+    "matrixRun": {
+      "templateId": "T11",
+      "situationId": "SIT126",
+      "characterId": "CHAR002",
+      "preAssertion": "PASS",
+      "preAssertionIssues": [],
+      "postAssertion": "PASS",
+      "postAssertionIssues": [],
+      "completeStoryValidation": "PASS",
+      "storyQA": "PASS",
+      "storyQAErrors": [],
+      "productionQA": "PRODUCTION_READY",
+      "title": "Arin and the The Countdown in News of an upcoming surgery or treatment",
+      "storyText": "Arin learns that they or someone close to them will need a medical procedure soon. Arin wanted to understand what will happen and feel safe, but the procedure has not happened yet, and much of it is unfamiliar. The old thought came quickly: \"I won't be able to handle what's coming.\" Arin could feel the moment narrowing, because the feared thing was getting closer whether or not arin was ready. Arin first tried to escape it in their mind, wishing the whole moment could simply be skipped. Arin's imagination starts filling in the parts they do not understand. Arin then tried to tense against what was coming, but that only made the waiting feel sharper. Arin was almost ready to let fear decide everything about the final moment. Arin paused anyway, listened for what was actually happening now, and chose to meet only this one moment instead of the whole imagined future. \"Wait,\" Arin told themselves, before spending the last bit of courage well.\n\nArin then held on, stayed present, and took the difficult moment one brave step at a time. Arin acted from the new understanding that I can face difficult moments one brave step at a time, instead of from the first alarm.\n\nArin could feel that staying with the real moment worked better than fighting a hundred imagined ones at once. Arin smiled and could feel the ending settle more calmly now."
+    }
+  },
+  {
+    "situationId": "SIT134",
+    "templateId": "T11",
+    "title": "Watched someone get bullied and did nothing",
+    "matrixRun": {
+      "templateId": "T11",
+      "situationId": "SIT134",
+      "characterId": "CHAR002",
+      "preAssertion": "PASS",
+      "preAssertionIssues": [],
+      "postAssertion": "PASS",
+      "postAssertionIssues": [],
+      "completeStoryValidation": "PASS",
+      "storyQA": "PASS",
+      "storyQAErrors": [],
+      "productionQA": "PRODUCTION_READY",
+      "title": "Arin and the The Countdown in Watched someone get bullied and did nothing",
+      "storyText": "Arin sees another child being teased or treated cruelly and does not know whether or how to step in. Arin wanted to make the situation stop or help the child, but arin feels unsure, afraid, or too small to handle the situation alone. The old thought came quickly: \"Speaking up won't make a difference.\" Arin could feel the margin shrinking around the problem. Arin first reacted quickly, hoping speed alone would solve it. Arin wants to help but worries about becoming the next target. Arin then pushed again, but the pressure only grew.\n\nArin was almost ready to let urgency make the final choice. Arin paused anyway and chose one steadier beat before acting. \"Wait,\" Arin told themselves, before spending the last bit of courage well. Arin then made the final move with more care than panic. Arin acted from the new understanding that small acts of courage can protect others, instead of from the first alarm. Arin could feel that the pause had changed the final move for the better. Arin smiled and could feel the ending settle more calmly now."
+    }
+  }
+]

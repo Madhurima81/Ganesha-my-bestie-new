@@ -1,0 +1,139 @@
+{
+  "template_id": "PT11_MYSTERY_DETECTIVE",
+  "version": "1.0",
+  "format": "A4",
+  "orientation": "portrait",
+  "render_contract": "vector_svg_to_pdf",
+  "data_contract": {
+    "required_top_level": [
+      "template_id",
+      "theme_id",
+      "belief",
+      "title",
+      "subtitle",
+      "assets",
+      "content",
+      "generation",
+      "answer_key",
+      "wisdom"
+    ],
+    "required_content_fields": [
+      "hook",
+      "mission",
+      "scene_instruction",
+      "hidden_words",
+      "sort_prompt",
+      "clues",
+      "footer"
+    ],
+    "required_asset_fields": [
+      "SCENE_ART"
+    ],
+    "required_generation_fields": [
+      "mode",
+      "answer_rule"
+    ],
+    "required_wisdom_fields": [
+      "statement"
+    ]
+  },
+  "slots": {
+    "TITLE": {
+      "type": "text",
+      "required": true,
+      "max_chars": 38
+    },
+    "HOOK": {
+      "type": "text",
+      "required": true,
+      "max_chars": 85
+    },
+    "MISSION": {
+      "type": "text",
+      "required": true,
+      "max_chars": 180
+    },
+    "SCENE_INSTRUCTION": {
+      "type": "text",
+      "required": true,
+      "max_chars": 80
+    },
+    "SCENE_ART": {
+      "type": "asset_group",
+      "required": true
+    },
+    "CHARACTER_LABEL": {
+      "type": "text",
+      "required": false,
+      "max_chars": 30
+    },
+    "HIDDEN_WORD_1": {
+      "type": "text",
+      "required": true,
+      "max_chars": 18
+    },
+    "HIDDEN_WORD_2": {
+      "type": "text",
+      "required": true,
+      "max_chars": 18
+    },
+    "HIDDEN_WORD_3": {
+      "type": "text",
+      "required": true,
+      "max_chars": 18
+    },
+    "HIDDEN_WORD_4": {
+      "type": "text",
+      "required": true,
+      "max_chars": 18
+    },
+    "SORT_PROMPT": {
+      "type": "text",
+      "required": true,
+      "max_chars": 100
+    },
+    "CLUE_1": {
+      "type": "text",
+      "required": true,
+      "max_chars": 95
+    },
+    "CLUE_2": {
+      "type": "text",
+      "required": true,
+      "max_chars": 95
+    },
+    "CLUE_3": {
+      "type": "text",
+      "required": true,
+      "max_chars": 95
+    },
+    "ANSWER": {
+      "type": "text",
+      "required": true,
+      "max_chars": 20
+    },
+    "WISDOM": {
+      "type": "text",
+      "required": true,
+      "max_chars": 110
+    },
+    "TODAY": {
+      "type": "text",
+      "required": false,
+      "max_chars": 110
+    },
+    "FOOTER": {
+      "type": "text",
+      "required": true,
+      "max_chars": 100
+    }
+  },
+  "asset_slots": [
+    "SCENE_ART"
+  ],
+  "print_rules": {
+    "paper": "A4",
+    "scale": "100%",
+    "vector_text_required": true
+  }
+}

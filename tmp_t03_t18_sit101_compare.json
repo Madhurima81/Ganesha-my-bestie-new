@@ -1,0 +1,92 @@
+{
+  "T03": {
+    "templateId": "T03",
+    "beatIds": [
+      "SETUP",
+      "ATTEMPT_1",
+      "ATTEMPT_2",
+      "TURNING_POINT",
+      "ATTEMPT_3",
+      "RESOLUTION"
+    ],
+    "beatTexts": [
+      {
+        "beatId": "SETUP",
+        "text": "Tara has been waiting for a long time at a doctor's office, airport, station, or other place where the next step has not started yet. Tara wanted to make the waiting end. Tara's turn, appointment, or journey has not begun. While wondering what to do, Tara noticed a small paper star nearby. The old thought came quickly: \"Waiting is pointless and unbearable.\""
+      },
+      {
+        "beatId": "ATTEMPT_1",
+        "text": "So Tara tried the same thing again, a little harder. Tara pushed harder, but it still would not budge."
+      },
+      {
+        "beatId": "ATTEMPT_2",
+        "text": "Along the way, Tara noticed the small paper star again. Tara tried again, a different way instead. Tara tried a different grip, and still it refused to move, no matter what."
+      },
+      {
+        "beatId": "TURNING_POINT",
+        "text": "Tara paused, and just looked at it for a second — really looked, instead of forcing — and realized I can use waiting time calmly and wisely."
+      },
+      {
+        "beatId": "ATTEMPT_3",
+        "text": "This time, Tara took a step back and looked at it fresh — Tara tried again, this time working with it instead of against it, and this time it gave way — not because of more force, but because of a better angle."
+      },
+      {
+        "beatId": "RESOLUTION",
+        "text": "Tara set it down, finally where it belonged — steadier hands, and nothing left to wrestle with."
+      }
+    ],
+    "compression": "Tara's turn, appointment, or journey has not begun, and Tara believed Waiting is pointless and unbearable. Tara paused, chose to look again, and understood that I can use waiting time calmly and wisely. Tara chose a different response, and the ending felt warmer and freer than before. The change was clear in what happened next.",
+    "storyQAStatus": "PASS",
+    "completeStoryValidationStatus": "PASS"
+  },
+  "T18": {
+    "templateId": "T18",
+    "beatIds": [
+      "TINY_PROBLEM",
+      "IGNORED",
+      "GROWS_1",
+      "GROWS_2",
+      "OVERWHELMING",
+      "PAUSE",
+      "REAL_PROBLEM",
+      "RESOLUTION"
+    ],
+    "beatTexts": [
+      {
+        "beatId": "TINY_PROBLEM",
+        "text": "Tara has been waiting for a long time at a doctor's office, airport, station, or other place where the next step has not started yet. Tara wanted to make the waiting end. Tara's turn, appointment, or journey has not begun. The old thought came quickly: \"Waiting is pointless and unbearable.\" It was small, at first."
+      },
+      {
+        "beatId": "IGNORED",
+        "text": "Tara didn't settle into the wait — started checking the clock instead."
+      },
+      {
+        "beatId": "GROWS_1",
+        "text": "Each check made the same unmoved number feel slower, like time itself had started dragging its feet."
+      },
+      {
+        "beatId": "GROWS_2",
+        "text": "Tara checked again, even closer this time, and the wait began to feel like it had swallowed the whole day."
+      },
+      {
+        "beatId": "OVERWHELMING",
+        "text": "Soon it wasn't the wait that felt unbearable at all — it was the checking, over and over, that had taken everything over."
+      },
+      {
+        "beatId": "PAUSE",
+        "text": "Tara stopped checking, just for a second."
+      },
+      {
+        "beatId": "REAL_PROBLEM",
+        "text": "The real problem was never how long the wait was — it was that there had been nothing else to hold Tara's attention. I can use waiting time calmly and wisely."
+      },
+      {
+        "beatId": "RESOLUTION",
+        "text": "Tara found one small thing to notice instead of the clock, and smiled when the wait ended before Tara had even finished noticing it."
+      }
+    ],
+    "compression": "Tara's turn, appointment, or journey has not begun, and the old thought said Waiting is pointless and unbearable. Checking the clock over and over only made the wait feel longer, until it turned out there had been nothing to hold Tara's attention. Tara solved that smaller real problem instead of the original trigger.",
+    "storyQAStatus": "PASS",
+    "completeStoryValidationStatus": "PASS"
+  }
+}

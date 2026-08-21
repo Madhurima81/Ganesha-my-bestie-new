@@ -1,0 +1,111 @@
+{
+  "template_id": "PT03_SORT_MATCH_DECODE",
+  "version": "1.0",
+  "format": "A4",
+  "orientation": "portrait",
+  "render_contract": "vector_svg_to_pdf",
+  "content_modes": [
+    "sorting",
+    "matching",
+    "sequence",
+    "odd-one-out",
+    "symbol-code",
+    "secret-message"
+  ],
+  "slots": {
+    "TITLE": {
+      "type": "text",
+      "required": true,
+      "max_chars": 38
+    },
+    "SUBTITLE": {
+      "type": "text",
+      "required": true,
+      "max_chars": 90
+    },
+    "INSTRUCTION": {
+      "type": "text",
+      "required": true,
+      "max_chars": 120
+    },
+    "MAIN_ART": {
+      "type": "asset",
+      "required": true
+    },
+    "CATEGORY_LEFT_TITLE": {
+      "type": "text",
+      "required": true,
+      "max_chars": 22
+    },
+    "CATEGORY_LEFT_HINT": {
+      "type": "text",
+      "required": false,
+      "max_chars": 60
+    },
+    "CATEGORY_RIGHT_TITLE": {
+      "type": "text",
+      "required": true,
+      "max_chars": 22
+    },
+    "CATEGORY_RIGHT_HINT": {
+      "type": "text",
+      "required": false,
+      "max_chars": 60
+    },
+    "ITEMS_GRID": {
+      "type": "vector_group",
+      "required": true
+    },
+    "WISDOM": {
+      "type": "text",
+      "required": true,
+      "max_chars": 105
+    },
+    "TODAY": {
+      "type": "text",
+      "required": false,
+      "max_chars": 105
+    },
+    "FOOTER": {
+      "type": "text",
+      "required": true,
+      "max_chars": 110
+    }
+  },
+  "data_contract": {
+    "required_top_level": [
+      "template_id",
+      "theme_id",
+      "belief",
+      "title",
+      "subtitle",
+      "assets",
+      "content",
+      "generation",
+      "answer_key",
+      "wisdom"
+    ],
+    "required_content_fields": [
+      "instruction",
+      "category_left_title",
+      "category_right_title",
+      "items",
+      "footer"
+    ],
+    "items": {
+      "min": 8,
+      "max": 8,
+      "required_fields": [
+        "id",
+        "label",
+        "answer"
+      ]
+    }
+  },
+  "print_rules": {
+    "paper": "A4",
+    "scale": "100%",
+    "safe_margin_mm": 12,
+    "vector_text_required": true
+  }
+}

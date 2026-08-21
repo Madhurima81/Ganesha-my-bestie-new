@@ -1,0 +1,524 @@
+[
+  {
+    "id": 1,
+    "slug": "the-circular-return",
+    "name": "The Circular Return",
+    "description": "The story ends where it began, but the hero has changed.",
+    "howItWorks": "Mirrors the opening to highlight growth.",
+    "whyItWorks": "Children enjoy recognizing familiar scenes with new meaning.",
+    "bestStoryStructures": [
+      "Circular Story",
+      "Transformation Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Coming of Age",
+      "Great Journey"
+    ],
+    "bestEmotionalArcs": [
+      "Self-Doubt → Confidence",
+      "Fear → Courage",
+      "Loneliness → Belonging"
+    ],
+    "bestStoryTypes": [
+      "Emotional Growth",
+      "Journey"
+    ],
+    "bestAge": "5–10",
+    "endingFormula": "Return to opening → Show changed behaviour → Quiet emotional close",
+    "emotionalResolution": "Growth and peace",
+    "finalLineStyle": "Reflective",
+    "replayTrigger": "Opening scene echoes with new meaning",
+    "illustrationGoal": "Same location as the opening, but brighter and more alive",
+    "writingTips": "Let actions reveal the change instead of explaining it."
+  },
+  {
+    "id": 2,
+    "slug": "the-quiet-internal-victory",
+    "name": "The Quiet Internal Victory",
+    "description": "The biggest success is emotional rather than external.",
+    "howItWorks": "The mission matters, but the hero's inner change matters more.",
+    "whyItWorks": "Leaves a lasting emotional impact.",
+    "bestStoryStructures": [
+      "Transformation Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Hero's Trial",
+      "Coming of Age"
+    ],
+    "bestEmotionalArcs": [
+      "Shame → Confidence",
+      "Fear → Courage"
+    ],
+    "bestStoryTypes": [
+      "Emotional Growth"
+    ],
+    "bestAge": "5–10",
+    "endingFormula": "Mission completed → Hero thinks differently → Peaceful ending",
+    "emotionalResolution": "Confidence, acceptance",
+    "finalLineStyle": "Gentle and reflective",
+    "replayTrigger": "Small visual callback to the emotional journey",
+    "illustrationGoal": "Calm close-up of the hero showing confidence",
+    "writingTips": "Show the emotional change through behaviour and expression."
+  },
+  {
+    "id": 3,
+    "slug": "the-ripple-effect",
+    "name": "The Ripple Effect",
+    "description": "The hero's change positively influences others.",
+    "howItWorks": "Shows that personal growth spreads outward.",
+    "whyItWorks": "Reinforces kindness and community naturally.",
+    "bestStoryStructures": [
+      "Community Story",
+      "Transformation Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Community Project",
+      "Helping Hand"
+    ],
+    "bestEmotionalArcs": [
+      "Self-Focus → Compassion",
+      "Fear → Belonging"
+    ],
+    "bestStoryTypes": [
+      "Community",
+      "Friendship"
+    ],
+    "bestAge": "5–10",
+    "endingFormula": "Hero changes → Others respond → Community benefits",
+    "emotionalResolution": "Belonging",
+    "finalLineStyle": "Warm and hopeful",
+    "replayTrigger": "Background characters now behave differently",
+    "illustrationGoal": "Show the whole community flourishing",
+    "writingTips": "Keep the focus on influence, not praise."
+  },
+  {
+    "id": 4,
+    "slug": "the-gentle-surprise",
+    "name": "The Gentle Surprise",
+    "description": "A small unexpected reveal adds delight without changing the story.",
+    "howItWorks": "Rewards attentive readers.",
+    "whyItWorks": "Creates an \"Aha!\" moment and encourages rereading.",
+    "bestStoryStructures": [
+      "Mystery Story",
+      "Discovery Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Secret Discovery",
+      "Treasure Hunt"
+    ],
+    "bestEmotionalArcs": [
+      "Curiosity → Wonder"
+    ],
+    "bestStoryTypes": [
+      "Mystery",
+      "Discovery"
+    ],
+    "bestAge": "5–10",
+    "endingFormula": "Problem solved → Small hidden reveal → Smile",
+    "emotionalResolution": "Delight",
+    "finalLineStyle": "Quiet surprise",
+    "replayTrigger": "Hidden clue that makes earlier pages more meaningful",
+    "illustrationGoal": "Focus on one surprising visual detail",
+    "writingTips": "Keep the surprise small and believable."
+  },
+  {
+    "id": 5,
+    "slug": "the-new-beginning",
+    "name": "The New Beginning",
+    "description": "The adventure ends by opening a hopeful next chapter.",
+    "howItWorks": "Gives closure while suggesting future possibilities.",
+    "whyItWorks": "Makes the story world feel alive beyond the final page.",
+    "bestStoryStructures": [
+      "Journey Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Great Journey",
+      "Expedition"
+    ],
+    "bestEmotionalArcs": [
+      "Hope → Confidence"
+    ],
+    "bestStoryTypes": [
+      "Adventure",
+      "Journey"
+    ],
+    "bestAge": "5–10",
+    "endingFormula": "Mission complete → New opportunity appears → Hopeful close",
+    "emotionalResolution": "Optimism",
+    "finalLineStyle": "Hopeful",
+    "replayTrigger": "Small hint of the next adventure",
+    "illustrationGoal": "Hero looking toward a new horizon",
+    "writingTips": "End one story completely before hinting at another."
+  },
+  {
+    "id": 6,
+    "slug": "the-shared-celebration",
+    "name": "The Shared Celebration",
+    "description": "Friends, family or the community celebrate together.",
+    "howItWorks": "Rewards the journey with shared joy.",
+    "whyItWorks": "Creates a satisfying emotional release.",
+    "bestStoryStructures": [
+      "Celebration Story",
+      "Community Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Festival Adventure",
+      "Community Project"
+    ],
+    "bestEmotionalArcs": [
+      "Gratitude → Joy",
+      "Loneliness → Belonging"
+    ],
+    "bestStoryTypes": [
+      "Celebration",
+      "Community"
+    ],
+    "bestAge": "5–10",
+    "endingFormula": "Mission complete → Everyone gathers → Celebration",
+    "emotionalResolution": "Joy and belonging",
+    "finalLineStyle": "Joyful",
+    "replayTrigger": "Background details reward rereading",
+    "illustrationGoal": "Rich festive spread full of life",
+    "writingTips": "Keep the celebration connected to the emotional journey."
+  },
+  {
+    "id": 7,
+    "slug": "the-passing-forward",
+    "name": "The Passing Forward",
+    "description": "The hero shares the wisdom, kindness or courage they discovered with someone else.",
+    "howItWorks": "The transformation is completed by helping another character.",
+    "whyItWorks": "Shows that true growth naturally spreads to others.",
+    "bestStoryStructures": [
+      "Transformation Story",
+      "Community Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Helping Hand",
+      "Community Project",
+      "Coming of Age"
+    ],
+    "bestEmotionalArcs": [
+      "Self-Doubt → Confidence",
+      "Fear → Courage",
+      "Self-Focus → Compassion"
+    ],
+    "bestStoryTypes": [
+      "Emotional Growth",
+      "Friendship",
+      "Community"
+    ],
+    "bestAge": "5–10",
+    "endingFormula": "Hero transforms → Helps another → Wisdom continues",
+    "emotionalResolution": "Generosity and responsibility",
+    "finalLineStyle": "Warm and inspiring",
+    "replayTrigger": "A younger or struggling character now begins their own journey.",
+    "illustrationGoal": "Hero helping another in a scene similar to the one where they once needed help.",
+    "writingTips": "Show the wisdom through actions, not speeches."
+  },
+  {
+    "id": 8,
+    "slug": "nature-responds",
+    "name": "Nature Responds",
+    "description": "Nature quietly reflects the hero's emotional transformation.",
+    "howItWorks": "The environment changes to mirror the emotional resolution.",
+    "whyItWorks": "Creates a memorable visual ending without explaining the lesson.",
+    "bestStoryStructures": [
+      "Nature Story",
+      "Transformation Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Nature's Balance",
+      "Great Journey"
+    ],
+    "bestEmotionalArcs": [
+      "Fear → Peace",
+      "Sadness → Hope",
+      "Loneliness → Belonging"
+    ],
+    "bestStoryTypes": [
+      "Nature",
+      "Emotional Growth"
+    ],
+    "bestAge": "5–10",
+    "endingFormula": "Hero changes → Nature responds → Quiet final image",
+    "emotionalResolution": "Peace and harmony",
+    "finalLineStyle": "Gentle and poetic",
+    "replayTrigger": "Readers notice nature behaving differently on a reread.",
+    "illustrationGoal": "Blooming flowers, returning birds, sunlight breaking through clouds, calm river.",
+    "writingTips": "Keep the change subtle and symbolic."
+  },
+  {
+    "id": 9,
+    "slug": "the-callback",
+    "name": "The Callback",
+    "description": "The ending echoes a moment, line or image from the opening, but with new emotional meaning.",
+    "howItWorks": "Creates symmetry and highlights the hero's transformation.",
+    "whyItWorks": "Children enjoy recognising familiar moments with a deeper understanding.",
+    "bestStoryStructures": [
+      "Circular Story",
+      "Transformation Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Coming of Age",
+      "Hero's Trial"
+    ],
+    "bestEmotionalArcs": [
+      "Fear → Courage",
+      "Self-Doubt → Confidence",
+      "Loneliness → Belonging"
+    ],
+    "bestStoryTypes": [
+      "Emotional Growth",
+      "Journey"
+    ],
+    "bestAge": "5–10",
+    "endingFormula": "Repeat opening moment → Hero responds differently → Quiet close",
+    "emotionalResolution": "Growth and satisfaction",
+    "finalLineStyle": "Reflective",
+    "replayTrigger": "Children notice how the opening and ending mirror each other.",
+    "illustrationGoal": "Nearly identical composition to the opening illustration, but with changed body language and surroundings.",
+    "writingTips": "Use visual storytelling more than dialogue."
+  },
+  {
+    "id": 10,
+    "slug": "the-open-door",
+    "name": "The Open Door",
+    "description": "The main story feels complete while gently hinting that more adventures are possible.",
+    "howItWorks": "Provides closure while expanding the world.",
+    "whyItWorks": "Encourages imagination and series potential.",
+    "bestStoryStructures": [
+      "Journey Story",
+      "Discovery Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Great Journey",
+      "Hidden World",
+      "Expedition"
+    ],
+    "bestEmotionalArcs": [
+      "Curiosity → Wonder",
+      "Hope → Confidence"
+    ],
+    "bestStoryTypes": [
+      "Adventure",
+      "Discovery",
+      "Series"
+    ],
+    "bestAge": "5–10",
+    "endingFormula": "Mission complete → Small mystery remains → Hopeful final image",
+    "emotionalResolution": "Wonder and anticipation",
+    "finalLineStyle": "Hopeful",
+    "replayTrigger": "A tiny unexplored path, unopened letter, distant light, new map or new friend appears.",
+    "illustrationGoal": "Hero looking toward a new horizon or discovering one last tiny clue.",
+    "writingTips": "The current emotional journey must feel complete before teasing the future."
+  },
+  {
+    "id": 12,
+    "slug": "",
+    "name": "#",
+    "description": "Ending Type",
+    "howItWorks": "Primary Strength",
+    "whyItWorks": null,
+    "bestStoryStructures": [],
+    "bestAdventureArchetypes": [],
+    "bestEmotionalArcs": [],
+    "bestStoryTypes": [],
+    "bestAge": null,
+    "endingFormula": null,
+    "emotionalResolution": null,
+    "finalLineStyle": null,
+    "replayTrigger": null,
+    "illustrationGoal": null,
+    "writingTips": null
+  },
+  {
+    "id": 13,
+    "slug": "1",
+    "name": "1",
+    "description": "The Circular Return",
+    "howItWorks": "Transformation",
+    "whyItWorks": null,
+    "bestStoryStructures": [],
+    "bestAdventureArchetypes": [],
+    "bestEmotionalArcs": [],
+    "bestStoryTypes": [],
+    "bestAge": null,
+    "endingFormula": null,
+    "emotionalResolution": null,
+    "finalLineStyle": null,
+    "replayTrigger": null,
+    "illustrationGoal": null,
+    "writingTips": null
+  },
+  {
+    "id": 14,
+    "slug": "2",
+    "name": "2",
+    "description": "The Quiet Internal Victory",
+    "howItWorks": "Emotional Growth",
+    "whyItWorks": null,
+    "bestStoryStructures": [],
+    "bestAdventureArchetypes": [],
+    "bestEmotionalArcs": [],
+    "bestStoryTypes": [],
+    "bestAge": null,
+    "endingFormula": null,
+    "emotionalResolution": null,
+    "finalLineStyle": null,
+    "replayTrigger": null,
+    "illustrationGoal": null,
+    "writingTips": null
+  },
+  {
+    "id": 15,
+    "slug": "3",
+    "name": "3",
+    "description": "The Ripple Effect",
+    "howItWorks": "Community Impact",
+    "whyItWorks": null,
+    "bestStoryStructures": [],
+    "bestAdventureArchetypes": [],
+    "bestEmotionalArcs": [],
+    "bestStoryTypes": [],
+    "bestAge": null,
+    "endingFormula": null,
+    "emotionalResolution": null,
+    "finalLineStyle": null,
+    "replayTrigger": null,
+    "illustrationGoal": null,
+    "writingTips": null
+  },
+  {
+    "id": 16,
+    "slug": "4",
+    "name": "4",
+    "description": "The Gentle Surprise",
+    "howItWorks": "Replay Value",
+    "whyItWorks": null,
+    "bestStoryStructures": [],
+    "bestAdventureArchetypes": [],
+    "bestEmotionalArcs": [],
+    "bestStoryTypes": [],
+    "bestAge": null,
+    "endingFormula": null,
+    "emotionalResolution": null,
+    "finalLineStyle": null,
+    "replayTrigger": null,
+    "illustrationGoal": null,
+    "writingTips": null
+  },
+  {
+    "id": 17,
+    "slug": "5",
+    "name": "5",
+    "description": "The New Beginning",
+    "howItWorks": "Hope",
+    "whyItWorks": null,
+    "bestStoryStructures": [],
+    "bestAdventureArchetypes": [],
+    "bestEmotionalArcs": [],
+    "bestStoryTypes": [],
+    "bestAge": null,
+    "endingFormula": null,
+    "emotionalResolution": null,
+    "finalLineStyle": null,
+    "replayTrigger": null,
+    "illustrationGoal": null,
+    "writingTips": null
+  },
+  {
+    "id": 18,
+    "slug": "6",
+    "name": "6",
+    "description": "The Shared Celebration",
+    "howItWorks": "Joy & Belonging",
+    "whyItWorks": null,
+    "bestStoryStructures": [],
+    "bestAdventureArchetypes": [],
+    "bestEmotionalArcs": [],
+    "bestStoryTypes": [],
+    "bestAge": null,
+    "endingFormula": null,
+    "emotionalResolution": null,
+    "finalLineStyle": null,
+    "replayTrigger": null,
+    "illustrationGoal": null,
+    "writingTips": null
+  },
+  {
+    "id": 19,
+    "slug": "7",
+    "name": "7",
+    "description": "The Passing Forward",
+    "howItWorks": "Wisdom Through Action",
+    "whyItWorks": null,
+    "bestStoryStructures": [],
+    "bestAdventureArchetypes": [],
+    "bestEmotionalArcs": [],
+    "bestStoryTypes": [],
+    "bestAge": null,
+    "endingFormula": null,
+    "emotionalResolution": null,
+    "finalLineStyle": null,
+    "replayTrigger": null,
+    "illustrationGoal": null,
+    "writingTips": null
+  },
+  {
+    "id": 20,
+    "slug": "8",
+    "name": "8",
+    "description": "Nature Responds",
+    "howItWorks": "Symbolic Resolution",
+    "whyItWorks": null,
+    "bestStoryStructures": [],
+    "bestAdventureArchetypes": [],
+    "bestEmotionalArcs": [],
+    "bestStoryTypes": [],
+    "bestAge": null,
+    "endingFormula": null,
+    "emotionalResolution": null,
+    "finalLineStyle": null,
+    "replayTrigger": null,
+    "illustrationGoal": null,
+    "writingTips": null
+  },
+  {
+    "id": 21,
+    "slug": "9",
+    "name": "9",
+    "description": "The Callback",
+    "howItWorks": "Emotional Symmetry",
+    "whyItWorks": null,
+    "bestStoryStructures": [],
+    "bestAdventureArchetypes": [],
+    "bestEmotionalArcs": [],
+    "bestStoryTypes": [],
+    "bestAge": null,
+    "endingFormula": null,
+    "emotionalResolution": null,
+    "finalLineStyle": null,
+    "replayTrigger": null,
+    "illustrationGoal": null,
+    "writingTips": null
+  },
+  {
+    "id": 22,
+    "slug": "10",
+    "name": "10",
+    "description": "The Open Door",
+    "howItWorks": "Wonder & Future Adventure",
+    "whyItWorks": null,
+    "bestStoryStructures": [],
+    "bestAdventureArchetypes": [],
+    "bestEmotionalArcs": [],
+    "bestStoryTypes": [],
+    "bestAge": null,
+    "endingFormula": null,
+    "emotionalResolution": null,
+    "finalLineStyle": null,
+    "replayTrigger": null,
+    "illustrationGoal": null,
+    "writingTips": null
+  }
+]

@@ -1,0 +1,117 @@
+{
+  "id": "FINALSTORY_BLUEPRINT_SIT001_CHAR005_STRUCT007",
+  "status": "LOCKED",
+  "blueprintReference": {
+    "id": "BLUEPRINT_SIT001_CHAR005_STRUCT007"
+  },
+  "storyPlanReference": {
+    "id": "BLUEPRINT_SIT001_CHAR005_STRUCT007"
+  },
+  "pages": [
+    {
+      "page": 1,
+      "text": "Kavi scampered through the Magic Garden with a brand-new spinning toy tucked under one arm. When another child grabbed it first, hot feelings rushed up so fast that Kavi wanted to snatch it back and shout right away. ",
+      "narration": "Kavi scampered through the Magic Garden with a brand-new spinning toy tucked under one arm. When another child grabbed it first, hot feelings rushed up so fast that Kavi wanted to snatch it back and shout right away. ",
+      "dialogue": [],
+      "pageTurnObjective": "Curiosity about the central problem",
+      "sourceSections": [
+        "SCENE_001"
+      ]
+    },
+    {
+      "page": 2,
+      "text": "The unfair moment felt as sharp as a thorn, and Kavi forgot every calm thought except, \"I have to react when things feel unfair.\" Near the path sat a round, sheltering shape that reminded Kavi of shelter, but in that first flash of anger Kavi was too upset to notice what it meant.\nKavi charged after the toy, then stopped when the bamboo path bent and the other child stumbled near a wobbly bridge of roots. If Kavi kept rushing, both children could get hurt and the toy might tumble into the stream below. Heart thumping, Kavi remembered the mission to face a fear and realized that this inner conflict was not only about the toy, but also about what happened inside. ",
+      "narration": "The unfair moment felt as sharp as a thorn, and Kavi forgot every calm thought except, \"I have to react when things feel unfair.\" Near the path sat a round, sheltering shape that reminded Kavi of shelter, but in that first flash of anger Kavi was too upset to notice what it meant.\nKavi charged after the toy, then stopped when the bamboo path bent and the other child stumbled near a wobbly bridge of roots. If Kavi kept rushing, both children could get hurt and the toy might tumble into the stream below. Heart thumping, Kavi remembered the mission to face a fear and realized that this inner conflict was not only about the toy, but also about what happened inside. ",
+      "dialogue": [
+        {
+          "utteranceId": "DIA_001",
+          "character": "CHAR005",
+          "characterName": "Kavi",
+          "text": "I have to react when things feel unfair.",
+          "delivery": "Keep the line concise, childlike, and emotionally direct.",
+          "attribution": "Kavi says",
+          "voiceConsistency": "Funny, impulsive",
+          "punctuationStatus": "COMPLETE",
+          "emotionalPurpose": "Escalate or refine the emotional journey through move from concern into committed effort.."
+        }
+      ],
+      "pageTurnObjective": "Commitment to the mission",
+      "sourceSections": [
+        "SCENE_001",
+        "SCENE_002"
+      ]
+    },
+    {
+      "page": 3,
+      "text": "Kavi pressed both hands to that big belly feeling, took one slow breath, then another, and finally said, \"Wait. Let's fix this safely.\" The pause changed the whole moment.\n",
+      "narration": "Kavi pressed both hands to that big belly feeling, took one slow breath, then another, and finally said, \"Wait. Let's fix this safely.\" The pause changed the whole moment.\n",
+      "dialogue": [
+        {
+          "utteranceId": "DIA_002",
+          "character": "CHAR005",
+          "characterName": "Kavi",
+          "text": "Wait. Let's fix this safely.",
+          "delivery": "Keep the line concise, childlike, and emotionally direct.",
+          "attribution": "Kavi says",
+          "voiceConsistency": "Funny, impulsive",
+          "punctuationStatus": "COMPLETE",
+          "emotionalPurpose": "Escalate or refine the emotional journey through build feeling and expectation.."
+        }
+      ],
+      "pageTurnObjective": "Escalating tension",
+      "sourceSections": [
+        "SCENE_002"
+      ]
+    },
+    {
+      "page": 4,
+      "text": "Together, the children steadied the bridge, picked up the toy, and sat quietly under the tall green stalks. Kavi still felt the unfairness, but it no longer bossed every choice. Looking at the sheltering curve nearby, Kavi understood that real strength could feel soft and steady at the same time. ",
+      "narration": "Together, the children steadied the bridge, picked up the toy, and sat quietly under the tall green stalks. Kavi still felt the unfairness, but it no longer bossed every choice. Looking at the sheltering curve nearby, Kavi understood that real strength could feel soft and steady at the same time. ",
+      "dialogue": [],
+      "pageTurnObjective": "Anticipation of the final turn",
+      "sourceSections": [
+        "SCENE_003"
+      ]
+    },
+    {
+      "page": 5,
+      "text": "So when the other child offered the toy back, Kavi smiled and said, \"We can both take turns.\" In that gentle choice, Kavi truly discovered, \"I can pause and choose my response.\" The game began again, and this time the laughter sounded freer than before.",
+      "narration": "So when the other child offered the toy back, Kavi smiled and said, \"We can both take turns.\" In that gentle choice, Kavi truly discovered, \"I can pause and choose my response.\" The game began again, and this time the laughter sounded freer than before.",
+      "dialogue": [
+        {
+          "utteranceId": "DIA_003",
+          "character": "CHAR005",
+          "characterName": "Kavi",
+          "text": "We can both take turns.",
+          "delivery": "Keep the line concise, childlike, and emotionally direct.",
+          "attribution": "Kavi says",
+          "voiceConsistency": "Funny, impulsive",
+          "punctuationStatus": "COMPLETE",
+          "emotionalPurpose": "Deliver emotional release and integration while reinforcing i can pause and choose my response.."
+        },
+        {
+          "utteranceId": "DIA_004",
+          "character": "CHAR005",
+          "characterName": "Kavi",
+          "text": "I can pause and choose my response.",
+          "delivery": "Keep the line concise, childlike, and emotionally direct.",
+          "attribution": "Kavi says",
+          "voiceConsistency": "Funny, impulsive",
+          "punctuationStatus": "COMPLETE",
+          "emotionalPurpose": "Deliver emotional release and integration while reinforcing i can pause and choose my response.."
+        }
+      ],
+      "pageTurnObjective": "Emotional closure",
+      "sourceSections": [
+        "SCENE_003"
+      ]
+    }
+  ],
+  "storyQA": {
+    "status": "PASS",
+    "rulesPassed": 16,
+    "rulesFailed": 0,
+    "warnings": [],
+    "errors": []
+  }
+}

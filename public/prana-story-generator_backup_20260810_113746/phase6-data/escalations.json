@@ -1,0 +1,282 @@
+[
+  {
+    "id": "ESCALATION_OBSTACLE_GETS_HARDER",
+    "name": "Obstacle Gets Harder",
+    "description": "The existing obstacle becomes more difficult.",
+    "hard": {
+      "escalation_pattern": "The existing obstacle becomes more difficult.",
+      "maximum_repetitions": 3
+    },
+    "soft_suggested": {
+      "best_logic_families": [
+        "LOGIC_TRIAL_AND_ERROR"
+      ],
+      "typical_obstacle_domains": [
+        "OD_PHYSICAL",
+        "OD_PUZZLE"
+      ],
+      "typical_craft_devices": [
+        "CR-RHY-001"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic"
+    }
+  },
+  {
+    "id": "ESCALATION_NEW_OBSTACLE_APPEARS",
+    "name": "New Obstacle Appears",
+    "description": "A second challenge blocks progress.",
+    "hard": {
+      "escalation_pattern": "A second challenge blocks progress.",
+      "maximum_repetitions": 3
+    },
+    "soft_suggested": {
+      "best_logic_families": [
+        "LOGIC_CUMULATIVE_BUILD"
+      ],
+      "typical_obstacle_domains": [
+        "OD_PHYSICAL",
+        "OD_NATURE"
+      ],
+      "typical_craft_devices": [
+        "CR-RHY-001"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic"
+    }
+  },
+  {
+    "id": "ESCALATION_TIME_RUNS_SHORT",
+    "name": "Time Runs Short",
+    "description": "Less time remains to finish the mission.",
+    "hard": {
+      "escalation_pattern": "Less time remains to finish the mission.",
+      "maximum_repetitions": 2
+    },
+    "soft_suggested": {
+      "best_logic_families": [
+        "LOGIC_RUNAWAY_CHAIN"
+      ],
+      "typical_obstacle_domains": [
+        "OD_TIME"
+      ],
+      "typical_craft_devices": [
+        "CR-SUS-001"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic"
+    }
+  },
+  {
+    "id": "ESCALATION_WRONG_CHOICE",
+    "name": "Wrong Choice",
+    "description": "The hero's mistake makes things worse.",
+    "hard": {
+      "escalation_pattern": "The hero's mistake makes things worse.",
+      "maximum_repetitions": 1
+    },
+    "soft_suggested": {
+      "best_logic_families": [
+        "LOGIC_TRIAL_AND_ERROR"
+      ],
+      "typical_obstacle_domains": [
+        "OD_EMOTIONAL"
+      ],
+      "typical_craft_devices": [
+        "CR-EMO-001"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic"
+    }
+  },
+  {
+    "id": "ESCALATION_SOMEONE_GIVES_UP",
+    "name": "Someone Gives Up",
+    "description": "A companion loses hope.",
+    "hard": {
+      "escalation_pattern": "A companion loses hope.",
+      "maximum_repetitions": 1
+    },
+    "soft_suggested": {
+      "best_logic_families": [
+        "LOGIC_CUMULATIVE_BUILD"
+      ],
+      "typical_obstacle_domains": [
+        "OD_SOCIAL"
+      ],
+      "typical_craft_devices": [
+        "CR-EMO-001"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic"
+    }
+  },
+  {
+    "id": "ESCALATION_NATURE_CHANGES",
+    "name": "Nature Changes",
+    "description": "Weather or environment suddenly changes.",
+    "hard": {
+      "escalation_pattern": "Weather or environment suddenly changes.",
+      "maximum_repetitions": 2
+    },
+    "soft_suggested": {
+      "best_logic_families": [
+        "LOGIC_SAFETY_LOOP"
+      ],
+      "typical_obstacle_domains": [
+        "OD_NATURE"
+      ],
+      "typical_craft_devices": [
+        "CR-SUS-001"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic"
+    }
+  },
+  {
+    "id": "ESCALATION_IMPORTANT_CLUE_LOST",
+    "name": "Important Clue Lost",
+    "description": "A clue disappears or becomes unusable.",
+    "hard": {
+      "escalation_pattern": "A clue disappears or becomes unusable.",
+      "maximum_repetitions": 1
+    },
+    "soft_suggested": {
+      "best_logic_families": [
+        "LOGIC_TRIAL_AND_ERROR"
+      ],
+      "typical_obstacle_domains": [
+        "OD_PUZZLE"
+      ],
+      "typical_craft_devices": [
+        "CR-SUS-001"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic"
+    }
+  },
+  {
+    "id": "ESCALATION_PLAN_FAILS",
+    "name": "Plan Fails",
+    "description": "The first solution doesn't work.",
+    "hard": {
+      "escalation_pattern": "The first solution doesn't work.",
+      "maximum_repetitions": 3
+    },
+    "soft_suggested": {
+      "best_logic_families": [
+        "LOGIC_TRIAL_AND_ERROR"
+      ],
+      "typical_obstacle_domains": [
+        "OD_PHYSICAL",
+        "OD_PUZZLE"
+      ],
+      "typical_craft_devices": [
+        "CR-RHY-001"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic"
+    }
+  },
+  {
+    "id": "ESCALATION_MISSION_SEEMS_IMPOSSIBLE",
+    "name": "Mission Seems Impossible",
+    "description": "The hero reaches the emotional low.",
+    "hard": {
+      "escalation_pattern": "The hero reaches the emotional low.",
+      "maximum_repetitions": 1
+    },
+    "soft_suggested": {
+      "best_logic_families": [
+        "LOGIC_TRIAL_AND_ERROR"
+      ],
+      "typical_obstacle_domains": [
+        "OD_EMOTIONAL"
+      ],
+      "typical_craft_devices": [
+        "CR-EMO-001"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic"
+    }
+  },
+  {
+    "id": "ESCALATION_DIFFICULT_CHOICE",
+    "name": "Difficult Choice",
+    "description": "Two good options force a meaningful decision.",
+    "hard": {
+      "escalation_pattern": "Two good options force a meaningful decision.",
+      "maximum_repetitions": 1
+    },
+    "soft_suggested": {
+      "best_logic_families": [
+        "LOGIC_PERSPECTIVE_SHIFT"
+      ],
+      "typical_obstacle_domains": [
+        "OD_EMOTIONAL"
+      ],
+      "typical_craft_devices": [
+        "CR-EMO-001"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic"
+    }
+  },
+  {
+    "id": "ESCALATION_UNEXPECTED_TWIST",
+    "name": "Unexpected Twist",
+    "description": "A surprising revelation changes the situation.",
+    "hard": {
+      "escalation_pattern": "A surprising revelation changes the situation.",
+      "maximum_repetitions": 1
+    },
+    "soft_suggested": {
+      "best_logic_families": [
+        "LOGIC_TRICKSTER",
+        "LOGIC_CATALYST_VISIT"
+      ],
+      "typical_obstacle_domains": [
+        "OD_PUZZLE"
+      ],
+      "typical_craft_devices": [
+        "CR-SUS-001"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic"
+    }
+  },
+  {
+    "id": "ESCALATION_RIVAL_INTERFERES",
+    "name": "Rival Interferes",
+    "description": "Another character unintentionally or intentionally complicates the mission.",
+    "hard": {
+      "escalation_pattern": "Another character unintentionally or intentionally complicates the mission.",
+      "maximum_repetitions": 2
+    },
+    "soft_suggested": {
+      "best_logic_families": [
+        "LOGIC_TRICKSTER"
+      ],
+      "typical_obstacle_domains": [
+        "OD_SOCIAL"
+      ],
+      "typical_craft_devices": [
+        "CR-VIS-001"
+      ]
+    },
+    "_meta": {
+      "confidence": "heuristic"
+    }
+  }
+]

@@ -1,0 +1,168 @@
+SIT001 | Anger & Frustration | Toy not shared or taken away
+SIT002 | Anger & Frustration | Screen time cut off suddenly
+SIT003 | Anger & Frustration | Told 'no' without explanation
+SIT004 | Anger & Frustration | Sibling gets bigger portion or more attention
+SIT005 | Anger & Frustration | Can't finish homework or a craft
+SIT006 | Anger & Frustration | Playdate or plan suddenly cancelled
+SIT007 | Anger & Frustration | Someone breaks their Lego or drawing
+SIT008 | Anger & Frustration | Being hurried to put shoes on or leave
+SIT009 | Anger & Frustration | Feeling hungry or extremely tired (hangry)
+SIT010 | Anger & Frustration | Blamed for something they didn't do
+SIT011 | Anger & Frustration | Being teased or physically pushed
+SIT012 | Anger & Frustration | No say in what to wear or eat
+SIT013 | Anger & Frustration | Adult doesn't understand what they mean
+SIT014 | Anger & Frustration | Game crashes or internet lags during a win
+SIT015 | Anger & Frustration | Forced to sit still too long (car, flight)
+SIT016 | Anger & Frustration | Game save file corrupted or deleted
+SIT017 | Anger & Frustration | A treat or promise was forgotten
+SIT018 | Anger & Frustration | Sibling tells on them unfairly
+SIT019 | Anger & Frustration | Scratchy clothes or irritating noise
+SIT020 | Anger & Frustration | Repeatedly failing a level or concept
+SIT021 | Fear & Insecurity | Darkness or shadows in the room
+SIT022 | Fear & Insecurity | Thunder, fireworks, or loud sirens
+SIT023 | Fear & Insecurity | Monsters under the bed or scary stories
+SIT024 | Fear & Insecurity | Parent leaving for work or a long trip
+SIT025 | Fear & Insecurity | Fear of going on stage or presenting
+SIT026 | Fear & Insecurity | Anxiety before a big test or result
+SIT027 | Fear & Insecurity | Injections, doctors, or dentist visits
+SIT028 | Fear & Insecurity | New teacher or unfamiliar adult
+SIT029 | Fear & Insecurity | Fear of getting lost in a mall or crowd
+SIT030 | Fear & Insecurity | Accidentally saw a scary or violent video
+SIT031 | Fear & Insecurity | Heard about war or violence on news
+SIT032 | Fear & Insecurity | Saw news about floods, fires, earthquakes
+SIT033 | Fear & Insecurity | Fear that a parent might get sick
+SIT034 | Fear & Insecurity | Overheard adults talking about money problems
+SIT035 | Fear & Insecurity | Overthinking imaginary future dangers
+SIT036 | Fear & Insecurity | Fear of being laughed at by class
+SIT037 | Fear & Insecurity | First day at a new school
+SIT038 | Fear & Insecurity | Fear of dogs, spiders, or insects
+SIT039 | Fear & Insecurity | Fear of falling or getting hurt at park
+SIT040 | Fear & Insecurity | Fear of getting in trouble with teacher
+SIT041 | Fear & Insecurity | Anxiety about the earth breaking (climate change)
+SIT042 | Sadness & Grief | Friend is not playing with them today
+SIT043 | Sadness & Grief | Death of a pet
+SIT044 | Sadness & Grief | Death of a relative or family member
+SIT045 | Sadness & Grief | Lost a favourite toy or comfort blanket
+SIT046 | Sadness & Grief | Harshly reprimanded by a parent
+SIT047 | Sadness & Grief | Feeling invisible to a busy parent
+SIT048 | Sadness & Grief | Not invited to a birthday party
+SIT049 | Sadness & Grief | A fall or scrape — the shock of pain
+SIT050 | Sadness & Grief | Missing a parent who travels often
+SIT051 | Sadness & Grief | Close friend moved to another city
+SIT052 | Sadness & Grief | Moving house and leaving familiar bedroom
+SIT053 | Sadness & Grief | Long illness, lockdown recovery, school break
+SIT054 | Sadness & Grief | Highly anticipated movie or event cancelled
+SIT055 | Sadness & Grief | Seeing another child or animal cry or suffer
+SIT056 | Sadness & Grief | Excluded from a group chat
+SIT057 | Sadness & Grief | Not chosen for a special school role
+SIT058 | Sadness & Grief | Last day of summer vacation / school year end
+SIT059 | Sadness & Grief | Looking at photos when they were 'little'
+SIT060 | Sadness & Grief | Intentions were good but they got in trouble anyway
+SIT061 | Shame & Low Self-Esteem | Made a mistake in front of the class
+SIT062 | Shame & Low Self-Esteem | Forgot someone's name or a social cue
+SIT063 | Shame & Low Self-Esteem | Called 'fat' or 'chubby' by a peer
+SIT064 | Shame & Low Self-Esteem | New glasses and feeling 'nerdy' or 'ugly'
+SIT065 | Shame & Low Self-Esteem | Getting acne or pimples (older kids)
+SIT066 | Shame & Low Self-Esteem | Being shortest or tallest in the class line
+SIT067 | Shame & Low Self-Esteem | Being 'slower' at reading or math than others
+SIT068 | Shame & Low Self-Esteem | Picked last for a team or called 'clumsy'
+SIT069 | Shame & Low Self-Esteem | Their clothes aren't as 'cool' as others'
+SIT070 | Shame & Low Self-Esteem | Thinking 'I can't do anything right'
+SIT071 | Shame & Low Self-Esteem | Sibling praised while they were ignored
+SIT072 | Shame & Low Self-Esteem | Project or video gets no likes or views
+SIT073 | Shame & Low Self-Esteem | Drawing doesn't look how they imagined
+SIT074 | Shame & Low Self-Esteem | Reprimanded in front of friends or guests
+SIT075 | Shame & Low Self-Esteem | Stuttered or forgot lines in a play
+SIT076 | Shame & Low Self-Esteem | Told their work is 'messy' or unreadable
+SIT077 | Shame & Low Self-Esteem | Why can't you be more like [cousin/friend]?
+SIT078 | Shame & Low Self-Esteem | Feeling like a burden to parents
+SIT079 | Shame & Low Self-Esteem | Feeling like they're not seen or valued
+SIT080 | Shame & Low Self-Esteem | Secretly thinking 'I am just a bad kid'
+SIT081 | Jealousy & Envy | Parent praises sibling's work but not theirs
+SIT082 | Jealousy & Envy | Best friend is playing with someone else
+SIT083 | Jealousy & Envy | Friend got the newest toy, phone or iPad
+SIT084 | Jealousy & Envy | Classmate won Student of the Month
+SIT085 | Jealousy & Envy | Someone else always gets to go first
+SIT086 | Jealousy & Envy | Parent on work call when child wants to share something
+SIT087 | Jealousy & Envy | At a party but wanting the birthday gifts
+SIT088 | Jealousy & Envy | Friend is naturally better at football or dance
+SIT089 | Jealousy & Envy | New sibling gets all the attention and new things
+SIT090 | Jealousy & Envy | Another kid always gets teacher's favour
+SIT091 | Jealousy & Envy | Friend has more followers or game skins
+SIT092 | Jealousy & Envy | Friend went on a fancy international vacation
+SIT093 | Jealousy & Envy | Wishing they had someone else's hair or height
+SIT094 | Jealousy & Envy | Wanting what's in a friend's lunchbox
+SIT095 | Jealousy & Envy | Friend has a later bedtime or more freedom
+SIT096 | Jealousy & Envy | Always wearing older sibling's old clothes
+SIT097 | Regulation & Energy Overload | Post-party or festival hyperactivity
+SIT098 | Regulation & Energy Overload | Zoning out after too much YouTube or gaming
+SIT099 | Regulation & Energy Overload | Noisy, overcrowded mall or festival environment
+SIT100 | Regulation & Energy Overload | Too many classes — tuition, sport, music all in one day
+SIT101 | Regulation & Energy Overload | Long wait at doctor, bank, or during travel
+SIT102 | Regulation & Energy Overload | Stuck indoors on a rainy day with nothing to do
+SIT103 | Regulation & Energy Overload | End of a long school week — brain feels full
+SIT104 | Regulation & Energy Overload | Cranky after a late night or bad sleep
+SIT105 | Regulation & Energy Overload | Trying to do homework while TV is on
+SIT106 | Regulation & Energy Overload | Too many options for a toy or treat
+SIT107 | Regulation & Energy Overload | Pressure to always 'be good' and behave
+SIT108 | Regulation & Energy Overload | Waiting for a turn on the swings
+SIT109 | Regulation & Energy Overload | Switching from fun activity to chores or homework
+SIT110 | Regulation & Energy Overload | The 'before dinner' energy crash
+SIT111 | Regulation & Energy Overload | Uncomfortable uniform, flickering lights, strong smells
+SIT112 | Regulation & Energy Overload | Waiting very excitedly for birthday or special package
+SIT113 | Regulation & Energy Overload | Trying to learn a very hard new concept or language
+SIT114 | Change & Uncertainty | Moving to a new home or city
+SIT115 | Change & Uncertainty | Moving abroad (very relevant for NRI families)
+SIT116 | Change & Uncertainty | Parents separating or getting a divorce
+SIT117 | Change & Uncertainty | A parent starts a new job with different hours
+SIT118 | Change & Uncertainty | Starting at a completely new school
+SIT119 | Change & Uncertainty | Favourite teacher changes mid-year
+SIT120 | Change & Uncertainty | Sudden cancellation of a normal routine event
+SIT121 | Change & Uncertainty | Summer ending and school starting again
+SIT122 | Change & Uncertainty | Growing pains, first tooth loss, puberty signs
+SIT123 | Change & Uncertainty | Friend suddenly acting different or 'cooler'
+SIT124 | Change & Uncertainty | Game or app changes interface completely
+SIT125 | Change & Uncertainty | New nanny or household helper joins family
+SIT126 | Change & Uncertainty | News of an upcoming surgery or treatment
+SIT127 | Change & Uncertainty | Family having to cut back on treats or outings
+SIT128 | Change & Uncertainty | Waiting anxiously for exam results
+SIT129 | Change & Uncertainty | First time staying overnight away from home
+SIT130 | Change & Uncertainty | Stopping a favourite hobby or activity
+SIT131 | Change & Uncertainty | Overheard adults talk about 'a big change coming'
+SIT132 | Moral & Values Confusion | Told a lie to a parent and feels a 'heavy' stomach
+SIT133 | Moral & Values Confusion | Friends asked them to steal or break a rule
+SIT134 | Moral & Values Confusion | Watched someone get bullied and did nothing
+SIT135 | Moral & Values Confusion | A mean kid got praised or rewarded
+SIT136 | Moral & Values Confusion | Wants to play but knows they should study
+SIT137 | Moral & Values Confusion | Tempted to look at friend's paper during a test
+SIT138 | Moral & Values Confusion | Told a 'bad' secret they feel should be shared
+SIT139 | Moral & Values Confusion | Broke something by mistake and hid it
+SIT140 | Moral & Values Confusion | Realised some kids don't have food or shoes
+SIT141 | Moral & Values Confusion | Saw a parent or teacher break a rule they enforce
+SIT142 | Moral & Values Confusion | Someone online asked for their personal password
+SIT143 | Moral & Values Confusion | Saw someone litter and felt upset but said nothing
+SIT144 | Moral & Values Confusion | Saw a stray animal being treated badly
+SIT145 | Moral & Values Confusion | Failed to keep a promise they made to a friend
+SIT146 | Moral & Values Confusion | Feels guilty for not including someone in play
+SIT147 | Moral & Values Confusion | Friend said something mean about their culture or family
+SIT148 | Moral & Values Confusion | Found something and doesn't know whether to keep it
+SIT149 | Moral & Values Confusion | Overheard talk about politics, protests, or injustice
+SIT150 | Friendship & Peer Dynamics | Best friend makes a new best friend
+SIT151 | Friendship & Peer Dynamics | Friends don't reply to messages
+SIT152 | Friendship & Peer Dynamics | Accidentally left out of a game
+SIT153 | Friendship & Peer Dynamics | A secret wasn't shared with them
+SIT154 | Friendship & Peer Dynamics | Friend copies their work or idea
+SIT155 | Friendship & Peer Dynamics | A friend wins while they lose
+SIT156 | Friendship & Peer Dynamics | Friend breaks a promise
+SIT157 | Friendship & Peer Dynamics | Rumours or gossip spread about them
+SIT158 | Friendship & Peer Dynamics | Friend apologises after hurting them
+SIT159 | Friendship & Peer Dynamics | They hurt a friend's feelings by mistake
+SIT160 | Friendship & Peer Dynamics | Asked to choose between two friends
+SIT161 | Friendship & Peer Dynamics | Lost during a team game because of their mistake
+SIT162 | Friendship & Peer Dynamics | Teammate isn't doing their part
+SIT163 | Friendship & Peer Dynamics | Friend gets a pet they always wanted
+SIT164 | Friendship & Peer Dynamics | A younger child wants to join the game
+SIT165 | Friendship & Peer Dynamics | Friend is nervous before a performance
+SIT166 | Friendship & Peer Dynamics | Classmate is new and sitting alone
+SIT167 | Friendship & Peer Dynamics | Friend keeps interrupting while talking
+SIT168 | Friendship & Peer Dynamics | Group project where everyone has different ideas

@@ -1,0 +1,714 @@
+{
+  "resolveStatus": "PASS",
+  "resolveIssues": [],
+  "contextSituation": "Zoning out after too much YouTube or gaming",
+  "contextCharacter": "CHAR005",
+  "contextNeed": "NEED_SELF_REGULATION",
+  "contextBelief": {
+    "beliefIds": [
+      "BELIEF_MUST_FOLLOW_EVERY_IMPULSE"
+    ],
+    "falseBelief": "My attention controls me.",
+    "trueBelief": "I can guide my attention back to what matters."
+  },
+  "blueprintId": "BLUEPRINT_SIT098_CHAR005_STRUCT007",
+  "blueprintBelief": {
+    "falseBelief": "My attention controls me.",
+    "trueBelief": "I can guide my attention back to what matters.",
+    "reason": "Belief wording comes directly from Situation SIT098."
+  },
+  "storyPlanExists": true,
+  "storyPlanStoryFlow": {
+    "sequence": [
+      {
+        "id": "FLOW_01_B_ESC_01",
+        "purpose": "Open with the hero is asked to do something that feels far beyond their ability. while grounding the protagonist in my attention controls me..",
+        "beats": [
+          "B_ESC_01"
+        ]
+      },
+      {
+        "id": "FLOW_02_B_PEAK_01",
+        "purpose": "Escalate 57 through inner Conflict pressure and the escalation reaches its maximum point before resolution.",
+        "beats": [
+          "B_PEAK_01"
+        ]
+      },
+      {
+        "id": "FLOW_03_B_RESET_01",
+        "purpose": "Resolve 57 through nature quietly reflects the hero's emotional transformation. and confirm i can guide my attention back to what matters..",
+        "beats": [
+          "B_RESET_01"
+        ]
+      }
+    ],
+    "centralDramaticQuestion": "Will the protagonist complete the mission despite inner Conflict and discover that i can guide my attention back to what matters.?",
+    "resolution": "57 is resolved. Nature quietly reflects the hero's emotional transformation. I can guide my attention back to what matters."
+  },
+  "forcedTemplateSelection": {
+    "templateId": "T18",
+    "templateName": "The Growing Problem",
+    "template": {
+      "templateId": "T18",
+      "name": "The Growing Problem",
+      "storyMechanic": "A tiny problem is ignored, then grows larger and larger through repeated escalation, until the hero pauses instead of continuing to react, and identifies the real, smaller problem underneath the now-overwhelming one.",
+      "bestForNeeds": [
+        "NEED_SELF_REGULATION"
+      ],
+      "bestForSituations": [
+        "SIT008",
+        "SIT101",
+        "SIT108",
+        "SIT112"
+      ],
+      "bestForLogicFamilies": [
+        "LOGIC_RUNAWAY_CHAIN"
+      ],
+      "requiredBeats": [
+        "TINY_PROBLEM",
+        "IGNORED",
+        "GROWS_1",
+        "GROWS_2",
+        "OVERWHELMING",
+        "PAUSE",
+        "REAL_PROBLEM",
+        "RESOLUTION"
+      ],
+      "sceneStructure": [
+        "Tiny problem: a small, easy-to-dismiss problem appears.",
+        "Ignored: hero (driven by the false belief) ignores or reacts carelessly to it.",
+        "Grows 1: the problem grows larger as a direct consequence of being ignored.",
+        "Grows 2: it grows again, now visibly harder to ignore, feeding on the hero's reactions.",
+        "Overwhelming: the problem reaches its largest, most overwhelming size.",
+        "Pause: hero stops reacting entirely â€” the pause craft technique.",
+        "Real problem: underneath the now-huge problem, hero identifies the small, real, original issue.",
+        "Resolution: hero addresses the real (small) problem directly, and the overwhelming version dissolves."
+      ],
+      "repetitionPattern": {
+        "phrase/source": "a short description of the growing problem's size/shape, restated with the same sentence structure each time it grows",
+        "occurrenceCount": 3,
+        "occurrenceStages": [
+          "TINY_PROBLEM",
+          "GROWS_1",
+          "GROWS_2"
+        ],
+        "variationRule": "each restatement must use the same sentence pattern with an intensified word/image (e.g. 'a small cloud' â†’ 'a big cloud' â†’ 'a cloud that filled the whole sky'), so the growth is felt rhythmically",
+        "finalVariation": "at the pause beat, the growth pattern is explicitly broken â€” the next line does not describe the problem getting even bigger, it describes the hero stopping"
+      },
+      "escalationPattern": "This IS the escalation template â€” the growing problem should visibly double or intensify at each stage, feeding specifically on being ignored/reacted-to rather than addressed.",
+      "turningPoint": "The pause beat, placed at the problem's largest point â€” the hero must stop reacting entirely before the real, smaller problem can be seen.",
+      "resolutionPattern": "Resolution requires showing that the real problem was small all along â€” the 'growth' was created by avoidance, not by the problem's true size.",
+      "requiredBlueprintSlots": [
+        "situation",
+        "character",
+        "need",
+        "belief.falseBelief",
+        "belief.trueBelief",
+        "mission",
+        "symbol"
+      ],
+      "optionalBlueprintSlots": [
+        "world",
+        "obstacle",
+        "storyConflict"
+      ],
+      "symbolIntegrationPoint": "Symbol appears at the tiny-problem stage, buried/obscured as the problem grows, and is rediscovered at the pause, guiding the hero to the real problem.",
+      "illustrationOpportunities": [
+        "The tiny problem, visually small in the corner of the page",
+        "The problem growing, taking up increasing page space each time",
+        "The overwhelming version, filling the entire spread",
+        "The pause and real-problem reveal, back to a small, clear, contained image"
+      ],
+      "pageRhythmGuidance": "Let the illustrated 'size' of the problem physically grow across the page spreads (small to page-filling) so the escalation is felt visually, then cut sharply back to a small, calm image at the pause.",
+      "exampleSkeleton": [
+        "[HERO] + [SITUATION] + [TINY_PROBLEM]",
+        "[IGNORED]",
+        "[GROWS_1]",
+        "[GROWS_2]",
+        "[OVERWHELMING]",
+        "[PAUSE]",
+        "[TRUE_BELIEF]",
+        "[REAL_PROBLEM]",
+        "[RESOLUTION]",
+        "[SYMBOL]"
+      ]
+    },
+    "selectionReason": "Forced by QA matrix test harness (bypasses scoring).",
+    "confidence": "n/a (forced)",
+    "blueprintReference": "BLUEPRINT_SIT098_CHAR005_STRUCT007"
+  },
+  "eventChainResult": {
+    "events": [
+      {
+        "label": "SETUP",
+        "eventId": "E01",
+        "purpose": "setup",
+        "actor": "Kavi",
+        "action": "After spending a long time gaming or watching videos, Kavi sits down to do something else but struggles to focus. Kavi wanted to concentrate on the next activity. Kavi's attention feels scattered and their mind feels tired. While wondering what to do, Kavi noticed a round smooth stone nearby. The old thought came quickly: \"My attention controls me.\"",
+        "sourceField": "childExperience+immediateWant+immediateObstacle"
+      },
+      {
+        "label": "ATTEMPT_1",
+        "eventId": "E02",
+        "purpose": "attempt_1",
+        "actor": "Kavi",
+        "action": "So Kavi tried to study exactly how it worked. Kavi tried to push through it, and the feeling was still there, just as big as before.",
+        "sourceField": "demonstrated"
+      },
+      {
+        "label": "ATTEMPT_2",
+        "eventId": "E03",
+        "purpose": "attempt_2",
+        "actor": "Kavi",
+        "action": "Along the way, Kavi noticed the round smooth stone again. Kavi tried again, a different way instead. Kavi tried to focus even harder, and the feeling had not gone anywhere at all.",
+        "sourceField": "demonstrated"
+      },
+      {
+        "label": "TURNING_POINT",
+        "eventId": "E04",
+        "purpose": "turning_point",
+        "actor": "Kavi",
+        "action": "Kavi paused instead of forcing focus, and noticed what was actually pulling at their attention, realizing I can guide my attention back to what matters.",
+        "sourceField": "trueBelief"
+      },
+      {
+        "label": "ATTEMPT_3",
+        "eventId": "E05",
+        "purpose": "attempt_3",
+        "actor": "Kavi",
+        "action": "This time, Kavi took a step back and looked at it fresh — Kavi took one slow breath, then looked back at just the one thing in front of them, and this time it actually came into focus.",
+        "sourceField": "demonstrated"
+      },
+      {
+        "label": "RESOLUTION",
+        "eventId": "E06",
+        "purpose": "resolution",
+        "actor": "Kavi",
+        "action": "Kavi finished the thought all the way through — clearer, with the noise finally out of the way.",
+        "sourceField": "demonstrated"
+      }
+    ],
+    "ctx": {
+      "protagonist": "Kavi",
+      "situationTitle": "Zoning out after too much YouTube or gaming",
+      "goalPhrase": "to face a fear",
+      "missionPhrase": "overcome a personal fear",
+      "obstacleName": "Fear",
+      "conflictName": "Inner Conflict",
+      "symbolLabel": "Shelter",
+      "falseBelief": "My attention controls me.",
+      "trueBelief": "I can guide my attention back to what matters.",
+      "actionVerbs": [
+        "Learn",
+        "Look closer",
+        "Ask for help"
+      ],
+      "_lookups": {
+        "situation": {
+          "id": "SIT098",
+          "active": true,
+          "title": "Zoning out after too much YouTube or gaming",
+          "parentLabel": "Can't focus after too much screen time",
+          "storySeed": {
+            "childExperience": "After spending a long time gaming or watching videos, Kavi sits down to do something else but struggles to focus.",
+            "immediateWant": "Concentrate on the next activity.",
+            "immediateObstacle": "Kavi's attention feels scattered and their mind feels tired.",
+            "emotionalTension": "Kavi cannot understand why something enjoyable has suddenly made everything else feel difficult.",
+            "context": [
+              "home after extended screen use"
+            ],
+            "narrativeSummary": "Kavi puts the tablet away and opens a book. The first page is right there. Kavi reads the same line once. Then twice. Then a third time."
+          },
+          "emotionIds": [
+            "EMO_OVERWHELMED"
+          ],
+          "lifeDomainIds": [
+            "LIFE_DOMAIN_LEARNING",
+            "LIFE_DOMAIN_RESPONSIBILITY",
+            "LIFE_DOMAIN_FAMILY"
+          ],
+          "ontology": {
+            "needId": "NEED_SELF_REGULATION",
+            "beliefIds": [
+              "BELIEF_MUST_FOLLOW_EVERY_IMPULSE"
+            ],
+            "severity": 3,
+            "age": null,
+            "lifeDomainIds": [
+              "LIFE_DOMAIN_LEARNING",
+              "LIFE_DOMAIN_RESPONSIBILITY",
+              "LIFE_DOMAIN_FAMILY"
+            ],
+            "falseBeliefText": "My attention controls me.",
+            "trueBeliefText": "I can guide my attention back to what matters.",
+            "storyFamily": "FAM_SAFETY",
+            "ganeshaSymbolPrimary": "GAN_SYM_EYES",
+            "ganeshaSymbolSecondary": "GAN_SYM_MOUSE"
+          }
+        },
+        "character": {
+          "id": "CHAR005",
+          "name": "Kavi (Monkey)",
+          "core_personality": "Funny, impulsive",
+          "primary_story_role_text": "Comic Catalyst",
+          "hard": {
+            "role_id": "ROLE_PERFORMER",
+            "trait_id": "TRAIT_IMPULSIVE"
+          },
+          "soft_suggested": {
+            "best_need_ids": [
+              "NEED_SELF_REGULATION",
+              "NEED_RESPONSIBILITY"
+            ],
+            "best_ganesha_symbols": [
+              "GAN_SYM_MOUSE",
+              "GAN_SYM_CURVED_TRUNK"
+            ],
+            "best_mission_types": [
+              "MISSION_TRANSFORM"
+            ],
+            "best_logic_families": [
+              "LOGIC_RUNAWAY_CHAIN"
+            ]
+          },
+          "_meta": {
+            "confidence": "audited"
+          }
+        },
+        "mission": {
+          "id": 57,
+          "slug": "face-a-fear",
+          "name": "Face a Fear",
+          "missionGroup": "Learn & Grow",
+          "description": "Overcome a personal fear.",
+          "bestLifeDomains": [
+            "Self-Care",
+            "Learning & Problem Solving"
+          ],
+          "bestStoryActions": [
+            "Try",
+            "Learn"
+          ],
+          "bestStoryWorlds": [
+            "Any"
+          ],
+          "bestAdventureArchetypes": [
+            "Inner Journey"
+          ],
+          "bestCoreNeeds": [
+            "Courage",
+            "Confidence"
+          ],
+          "difficulty": "Medium",
+          "notes": "Strong emotional arc",
+          "_meta": {
+            "confidence": "audited",
+            "source": "user-provided clean table, replaces corrupted export",
+            "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped — flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+          },
+          "bestLifeDomainIds": [
+            "LIFE_DOMAIN_SELF_CARE",
+            "LIFE_DOMAIN_LEARNING"
+          ],
+          "bestStoryActionIds": [
+            null,
+            "ACTION_LEARN"
+          ],
+          "bestSettingIds": [
+            null
+          ],
+          "bestAdventureArchetypeIds": [
+            null
+          ],
+          "bestCoreNeedIds": [
+            "NEED_COURAGE",
+            "NEED_CONFIDENCE"
+          ],
+          "unresolvedArchetype": [
+            "Inner Journey"
+          ]
+        },
+        "obstacle": {
+          "id": "OBST036",
+          "name": "Fear",
+          "description": "Fear prevents action.",
+          "hard": {
+            "obstacle_domain": "OD_EMOTIONAL",
+            "obstacle_type": "OT_INTERNAL",
+            "obstacle_function": "OBSTACLE_FEAR"
+          },
+          "soft_suggested": {
+            "best_life_domains_raw": [
+              "Self-Care"
+            ],
+            "best_story_actions_raw": [
+              "Practice"
+            ],
+            "best_story_worlds_raw": [
+              "Any Story World"
+            ]
+          },
+          "escalation_type": "Emotional",
+          "difficulty": "Medium",
+          "_meta": {
+            "confidence": "audited"
+          }
+        },
+        "conflict": {
+          "id": "CONFLICT_INNER_CONFLICT",
+          "name": "Inner Conflict",
+          "description": "The hero's own false belief is the biggest obstacle.",
+          "hard": {
+            "conflict_intensity": "High"
+          },
+          "soft_suggested": {
+            "best_mission_types": [
+              "MISSION_MASTERY"
+            ],
+            "best_obstacle_domains": [
+              "OD_EMOTIONAL"
+            ],
+            "best_logic_families": [
+              "LOGIC_PERSPECTIVE_SHIFT"
+            ],
+            "typical_ending_types": [
+              "END_QUIET_MASTERY"
+            ]
+          },
+          "_meta": {
+            "confidence": "audited",
+            "note": "generatedFrom field in source confirms this is a computed Mission+Obstacle bridge, not primary data."
+          }
+        },
+        "symbolRecord": {
+          "id": "GAN_SYM_BIG_BELLY",
+          "symbol_theme": "SYMBOL_SHELTER",
+          "best_need_ids": [
+            "NEED_SELF_REGULATION",
+            "NEED_SAFETY"
+          ],
+          "best_mission_types": [
+            "MISSION_PROTECT"
+          ]
+        }
+      },
+      "_craftRequired": true,
+      "obstacle": {
+        "id": "OBST036",
+        "name": "Fear",
+        "description": "Fear prevents action.",
+        "hard": {
+          "obstacle_domain": "OD_EMOTIONAL",
+          "obstacle_type": "OT_INTERNAL",
+          "obstacle_function": "OBSTACLE_FEAR"
+        },
+        "soft_suggested": {
+          "best_life_domains_raw": [
+            "Self-Care"
+          ],
+          "best_story_actions_raw": [
+            "Practice"
+          ],
+          "best_story_worlds_raw": [
+            "Any Story World"
+          ]
+        },
+        "escalation_type": "Emotional",
+        "difficulty": "Medium",
+        "_meta": {
+          "confidence": "audited"
+        }
+      },
+      "mechanism": {
+        "motif": "round smooth stone",
+        "noticeVerb": "noticed",
+        "useVerb": "holding the stone tight"
+      },
+      "actionPhrases": [
+        "tried to study exactly how it worked",
+        "tried again, a different way",
+        "took a step back and looked at it fresh"
+      ],
+      "coreReference": null,
+      "objectReference": null,
+      "obstacleClause": "the feeling did not go away on its own: kavi's attention feels scattered and their mind feels tired",
+      "objective": "Kavi wanted to overcome a personal fear.",
+      "situationDetail": {
+        "status": "OK",
+        "concreteWords": [
+          "after",
+          "spending",
+          "long",
+          "time",
+          "gaming",
+          "watching",
+          "videos",
+          "kavi",
+          "sits",
+          "down",
+          "something",
+          "else",
+          "struggles",
+          "focus",
+          "concentrate",
+          "next",
+          "activity",
+          "attention",
+          "feels",
+          "scattered",
+          "mind",
+          "tired",
+          "cannot",
+          "understand",
+          "why",
+          "enjoyable",
+          "suddenly",
+          "made",
+          "everything",
+          "feel",
+          "difficult"
+        ]
+      },
+      "realizedSituation": {
+        "kind": "clause",
+        "sentence": "After spending a long time gaming or watching videos, Kavi sits down to do something else but struggles to focus.",
+        "want": "concentrate on the next activity"
+      },
+      "narrativeSummarySentences": [
+        "Kavi puts the tablet away and opens a book.",
+        "The first page is right there.",
+        "Kavi reads the same line once.",
+        "Then twice.",
+        "Then a third time."
+      ]
+    },
+    "templateId": "T18",
+    "planForLint": {
+      "templateId": "T18",
+      "situationId": "SIT098",
+      "eventChain": [
+        {
+          "label": "SETUP",
+          "eventId": "E01",
+          "purpose": "setup",
+          "actor": "Kavi",
+          "action": "After spending a long time gaming or watching videos, Kavi sits down to do something else but struggles to focus. Kavi wanted to concentrate on the next activity. Kavi's attention feels scattered and their mind feels tired. While wondering what to do, Kavi noticed a round smooth stone nearby. The old thought came quickly: \"My attention controls me.\"",
+          "sourceField": "childExperience+immediateWant+immediateObstacle"
+        },
+        {
+          "label": "ATTEMPT_1",
+          "eventId": "E02",
+          "purpose": "attempt_1",
+          "actor": "Kavi",
+          "action": "So Kavi tried to study exactly how it worked. Kavi tried to push through it, and the feeling was still there, just as big as before.",
+          "sourceField": "demonstrated"
+        },
+        {
+          "label": "ATTEMPT_2",
+          "eventId": "E03",
+          "purpose": "attempt_2",
+          "actor": "Kavi",
+          "action": "Along the way, Kavi noticed the round smooth stone again. Kavi tried again, a different way instead. Kavi tried to focus even harder, and the feeling had not gone anywhere at all.",
+          "sourceField": "demonstrated"
+        },
+        {
+          "label": "TURNING_POINT",
+          "eventId": "E04",
+          "purpose": "turning_point",
+          "actor": "Kavi",
+          "action": "Kavi paused instead of forcing focus, and noticed what was actually pulling at their attention, realizing I can guide my attention back to what matters.",
+          "sourceField": "trueBelief"
+        },
+        {
+          "label": "ATTEMPT_3",
+          "eventId": "E05",
+          "purpose": "attempt_3",
+          "actor": "Kavi",
+          "action": "This time, Kavi took a step back and looked at it fresh — Kavi took one slow breath, then looked back at just the one thing in front of them, and this time it actually came into focus.",
+          "sourceField": "demonstrated"
+        },
+        {
+          "label": "RESOLUTION",
+          "eventId": "E06",
+          "purpose": "resolution",
+          "actor": "Kavi",
+          "action": "Kavi finished the thought all the way through — clearer, with the noise finally out of the way.",
+          "sourceField": "demonstrated"
+        }
+      ],
+      "openingState": {
+        "situation": "After spending a long time gaming or watching videos, Kavi sits down to do something else but struggles to focus."
+      }
+    }
+  },
+  "eventChainValidation": {
+    "status": "PASS",
+    "issues": []
+  },
+  "completeStoryValidation": {
+    "status": "PASS",
+    "issues": [],
+    "blockingFailures": 0,
+    "warnings": 0,
+    "rulesPassed": 15
+  },
+  "pageValidation": {
+    "status": "PASS",
+    "issues": [],
+    "blockingFailures": 0,
+    "warnings": 0,
+    "rulesPassed": 13
+  },
+  "narrationValidation": {
+    "status": "PASS",
+    "issues": [],
+    "blockingFailures": 0,
+    "warnings": 0,
+    "rulesPassed": 6
+  },
+  "dialogueValidation": {
+    "status": "PASS",
+    "issues": [],
+    "blockingFailures": 0,
+    "warnings": 0,
+    "rulesPassed": 6
+  },
+  "polishValidation": {
+    "status": "PASS",
+    "issues": [],
+    "blockingFailures": 0,
+    "warnings": 0,
+    "rulesPassed": 7
+  },
+  "storyQAReport": {
+    "status": "FAIL",
+    "rulesPassed": 15,
+    "rulesFailed": 1,
+    "warnings": [],
+    "errors": [
+      {
+        "ruleId": "QA-007",
+        "status": "FAIL",
+        "severity": "blocking",
+        "evidence": "Emotional arc moves from upset pressure toward lighter release.",
+        "responsibleModule": "8A"
+      }
+    ],
+    "results": [
+      {
+        "ruleId": "QA-001",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "Page count and page order still match the locked Story Plan.",
+        "responsibleModule": "8B"
+      },
+      {
+        "ruleId": "QA-002",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "Protagonist takes meaningful action rather than being carried by the plot.",
+        "responsibleModule": "8A"
+      },
+      {
+        "ruleId": "QA-003",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "Cause and effect remain visible from conflict to turning point.",
+        "responsibleModule": "8A"
+      },
+      {
+        "ruleId": "QA-004",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "Mission resolves through the protagonist's final choice.",
+        "responsibleModule": "8A"
+      },
+      {
+        "ruleId": "QA-005",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "Core need is addressed through the protagonist's growth outcome.",
+        "responsibleModule": "8A"
+      },
+      {
+        "ruleId": "QA-006",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "False belief and true belief are both present in the actual story.",
+        "responsibleModule": "8A"
+      },
+      {
+        "ruleId": "QA-007",
+        "status": "FAIL",
+        "severity": "blocking",
+        "evidence": "Emotional arc moves from upset pressure toward lighter release.",
+        "responsibleModule": "8A"
+      },
+      {
+        "ruleId": "QA-008",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "Symbol/mission pairing is resolved in the Blueprint (not required to be spoken aloud in every story).",
+        "responsibleModule": "8A"
+      },
+      {
+        "ruleId": "QA-009",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "Craft requirements show up through a reflective pause in the actual manuscript (any concrete form, not one fixed phrase).",
+        "responsibleModule": "8B"
+      },
+      {
+        "ruleId": "QA-010",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "Every page still carries coherent transition guidance.",
+        "responsibleModule": "8B"
+      },
+      {
+        "ruleId": "QA-011",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "No internal engine placeholders or CR codes remain in the prose.",
+        "responsibleModule": "8E"
+      },
+      {
+        "ruleId": "QA-012",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "No obvious prose corruption or doubled punctuation remains.",
+        "responsibleModule": "8E"
+      },
+      {
+        "ruleId": "QA-013",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "Dialogue remains concise and read-aloud friendly.",
+        "responsibleModule": "8D"
+      },
+      {
+        "ruleId": "QA-014",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "Ending provides both emotional and narrative closure.",
+        "responsibleModule": "8A"
+      },
+      {
+        "ruleId": "QA-015",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "No placeholder prose or unplanned artifact text remains.",
+        "responsibleModule": "8E"
+      },
+      {
+        "ruleId": "QA-016",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "Page pacing still protects dramatic and emotional high points rather than flattening them.",
+        "responsibleModule": "8B"
+      }
+    ]
+  },
+  "lockedFinalStory": null,
+  "productionQAReport": null
+}

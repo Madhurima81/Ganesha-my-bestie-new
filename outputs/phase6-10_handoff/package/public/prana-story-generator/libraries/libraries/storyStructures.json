@@ -1,0 +1,2284 @@
+[
+  {
+    "id": 1,
+    "slug": "clever-underdog",
+    "name": "Clever Underdog",
+    "number": 1,
+    "corePattern": "Small Hero → Danger → Clever Invention → Twist → Adapt → Triumph",
+    "description": "A small hero overcomes a bigger challenge through intelligence.",
+    "whyItWorks": "Builds confidence and creative problem-solving.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Hero → Problem → Clever Attempt → Twist → New Plan → Success → Celebration",
+    "bestAdventureArchetypes": [
+      "Rescue Mission",
+      "Mystery to Solve",
+      "Problem Solver"
+    ],
+    "bestOpening": "The Unexpected Interruption",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Sound Words (Onomatopoeia)"
+    ]
+  },
+  {
+    "id": 2,
+    "slug": "emotional-harbor",
+    "name": "Emotional Harbor",
+    "number": 2,
+    "corePattern": "Outburst → Symbol World → Exploration → Mastery → Realization → Return",
+    "description": "Big emotions become a safe inner adventure.",
+    "whyItWorks": "Helps children process emotions safely.",
+    "bestAge": "6–8",
+    "sceneFlowTemplate": "Emotion → New World → Explore → Reflection → Insight → Return",
+    "bestAdventureArchetypes": [
+      "Dream Adventure",
+      "Restoration Story",
+      "Discovery Journey"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 3,
+    "slug": "rhythmic-growth",
+    "name": "Rhythmic Growth",
+    "number": 3,
+    "corePattern": "Need → Sequential Steps → Overreach → Setback → Stillness → Bloom",
+    "description": "Growth happens through patience and mistakes.",
+    "whyItWorks": "Mirrors natural development.",
+    "bestAge": "5–6",
+    "sceneFlowTemplate": "Goal → Progress → Mistake → Pause → Growth → Transformation",
+    "bestAdventureArchetypes": [
+      "Nature's Balance",
+      "Transformation Story"
+    ],
+    "bestOpening": "The Everyday Wonder",
+    "bestEnding": "Nature Responds",
+    "bestReplayHooks": [
+      "Nature Cycle"
+    ],
+    "bestReadAloudDevices": [
+      "Musical Sentence"
+    ]
+  },
+  {
+    "id": 4,
+    "slug": "mindful-catalog",
+    "name": "Mindful Catalog",
+    "number": 4,
+    "corePattern": "Sanctuary → Observation → Acknowledgment → Dimming → Stillness",
+    "description": "Calm is found by slowly noticing the world.",
+    "whyItWorks": "Encourages mindfulness and emotional regulation.",
+    "bestAge": "5–6",
+    "sceneFlowTemplate": "Safe Place → Observe → Slow Down → Quiet → Peace",
+    "bestAdventureArchetypes": [
+      "Dream Adventure"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 5,
+    "slug": "playful-comparison",
+    "name": "Playful Comparison",
+    "number": 5,
+    "corePattern": "Intimacy → Challenge → Escalation → Nature Vista → Infinite Reassurance",
+    "description": "A playful comparison reveals limitless love.",
+    "whyItWorks": "Makes abstract emotions tangible.",
+    "bestAge": "5–7",
+    "sceneFlowTemplate": "Conversation → Comparison → Bigger Comparison → Beautiful Reveal → Comfort",
+    "bestAdventureArchetypes": [
+      "Promise Keeper",
+      "New Friend"
+    ],
+    "bestOpening": "The Promise",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 6,
+    "slug": "shared-wait",
+    "name": "Shared Wait",
+    "number": 6,
+    "corePattern": "Departure → Uncertainty → Different Responses → Mutual Comfort → Return → Relief",
+    "description": "Friends wait together until someone they love returns.",
+    "whyItWorks": "Supports separation anxiety and trust.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Goodbye → Waiting → Different Reactions → Comfort → Reunion",
+    "bestAdventureArchetypes": [
+      "Race Against Time",
+      "Journey Together"
+    ],
+    "bestOpening": "The Unexpected Interruption",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Heartbeat Moment"
+    ]
+  },
+  {
+    "id": 7,
+    "slug": "interactive-guardrail",
+    "name": "Interactive Guardrail",
+    "number": 7,
+    "corePattern": "Assignment → Temptation → Negotiation → Escalation → Boundary Holds → New Focus",
+    "description": "A playful character tries to break an important rule.",
+    "whyItWorks": "Builds impulse control through humour.",
+    "bestAge": "5–7",
+    "sceneFlowTemplate": "Rule → Temptation → Funny Excuses → Decision → Respect Rule",
+    "bestAdventureArchetypes": [
+      "Choice & Consequence",
+      "Unexpected Surprise"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Choice Reflection"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 8,
+    "slug": "unstoppable-chain",
+    "name": "Unstoppable Chain",
+    "number": 8,
+    "corePattern": "Trigger → Logical Demand → Action → New Need → Escalation → Loop",
+    "description": "One small action creates a growing chain of consequences.",
+    "whyItWorks": "Teaches logical cause and effect.",
+    "bestAge": "6–8",
+    "sceneFlowTemplate": "Small Event → Bigger Event → Bigger Event → Circular Finish",
+    "bestAdventureArchetypes": [
+      "Problem Solver",
+      "Unexpected Surprise"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 9,
+    "slug": "solo-sensory-trek",
+    "name": "Solo Sensory Trek",
+    "number": 9,
+    "corePattern": "Waking → Discovery → Exploration → Sensory Wonder → Reflection",
+    "description": "Quiet exploration leads to wonder.",
+    "whyItWorks": "Encourages observation and curiosity.",
+    "bestAge": "5–7",
+    "sceneFlowTemplate": "Wake → Explore → Discover → Reflect → Peaceful Ending",
+    "bestAdventureArchetypes": [
+      "Secret Discovery",
+      "Nature's Balance"
+    ],
+    "bestOpening": "The Tiny Mystery",
+    "bestEnding": "The Gentle Surprise",
+    "bestReplayHooks": [
+      "Foreshadowed Prop"
+    ],
+    "bestReadAloudDevices": [
+      "Point-and-Find"
+    ]
+  },
+  {
+    "id": 10,
+    "slug": "flaw-as-quest",
+    "name": "Flaw as Quest",
+    "number": 10,
+    "corePattern": "Longing → Perceived Flaw → Determination → Mishap → Discovery → Acceptance",
+    "description": "A character learns they never needed to change to be worthy.",
+    "whyItWorks": "Builds self-worth.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Wish → Try to Change → Fail → Discovery → Acceptance",
+    "bestAdventureArchetypes": [
+      "Coming of Age"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Circular Return",
+    "bestReplayHooks": [
+      "Echo Scene"
+    ],
+    "bestReadAloudDevices": [
+      "Silent Spread"
+    ]
+  },
+  {
+    "id": 11,
+    "slug": "validated-grump",
+    "name": "Validated Grump",
+    "number": 11,
+    "corePattern": "Bad Start → Setbacks → Emotional Overflow → Being Heard → Soft Acceptance",
+    "description": "A terrible day becomes easier because someone understands.",
+    "whyItWorks": "Validates emotions instead of fixing them.",
+    "bestAge": "6–8",
+    "sceneFlowTemplate": "Bad Day → More Problems → Emotional Peak → Comfort → Calm Ending",
+    "bestAdventureArchetypes": [
+      "Training Journey",
+      "Community Project"
+    ],
+    "bestOpening": "The Impossible Task",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Repeated Action"
+    ]
+  },
+  {
+    "id": 12,
+    "slug": "surprise-visitor",
+    "name": "Surprise Visitor",
+    "number": 12,
+    "corePattern": "Routine → Unexpected Visitor → Escalating Disruption → Adaptation → Farewell",
+    "description": "A surprising guest changes everyone's plans.",
+    "whyItWorks": "Encourages flexibility and acceptance.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Quiet Routine → Visitor → Chaos → Adapt → Happy Goodbye",
+    "bestAdventureArchetypes": [
+      "Unexpected Surprise"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 13,
+    "slug": "world-creator",
+    "name": "World Creator",
+    "number": 13,
+    "corePattern": "Decision → World Building → Exploration → Hurdle → Creative Escape → Home",
+    "description": "Imagination creates the adventure itself.",
+    "whyItWorks": "Encourages creativity and agency.",
+    "bestAge": "5–7",
+    "sceneFlowTemplate": "Imagine → Build → Explore → Solve → Return Home",
+    "bestAdventureArchetypes": [
+      "Magical Discovery",
+      "Expedition"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 14,
+    "slug": "call-and-response",
+    "name": "Call-and-Response",
+    "number": 14,
+    "corePattern": "Question → Answer → New Question → Growing Chain → Group Finale",
+    "description": "Repeating questions build rhythm and joyful anticipation.",
+    "whyItWorks": "Builds participation and prediction.",
+    "bestAge": "5–6",
+    "sceneFlowTemplate": "Question → Answer → Repeat → Group Celebration",
+    "bestAdventureArchetypes": [
+      "Community Project",
+      "Team Adventure"
+    ],
+    "bestOpening": "The Invitation",
+    "bestEnding": "The Ripple Effect",
+    "bestReplayHooks": [
+      "Background Story"
+    ],
+    "bestReadAloudDevices": [
+      "Call and Response"
+    ]
+  },
+  {
+    "id": 15,
+    "slug": "portable-anchor",
+    "name": "Portable Anchor",
+    "number": 15,
+    "corePattern": "Anxiety → Ritual → Practice → Challenge → Confidence → Reunion",
+    "description": "A simple ritual gives courage during change.",
+    "whyItWorks": "Helps children cope with transitions.",
+    "bestAge": "5–7",
+    "sceneFlowTemplate": "Fear → Learn Ritual → Practice → Brave Moment → Success",
+    "bestAdventureArchetypes": [
+      "Hero's Trial"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Parallel Action"
+    ],
+    "bestReadAloudDevices": [
+      "Rule of Three"
+    ]
+  },
+  {
+    "id": 16,
+    "slug": "hospitality-chain",
+    "name": "Hospitality Chain",
+    "number": 16,
+    "corePattern": "Journey → Invitation → Growing Team → Threat → Teamwork → Celebration",
+    "description": "Every new friend strengthens the group.",
+    "whyItWorks": "Reinforces inclusion and teamwork.",
+    "bestAge": "5–7",
+    "sceneFlowTemplate": "Journey → Meet Friends → Bigger Team → Problem → Team Victory",
+    "bestAdventureArchetypes": [
+      "New Friend",
+      "Community Project"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Friendship Moments"
+    ],
+    "bestReadAloudDevices": [
+      "Character Catchphrase"
+    ]
+  },
+  {
+    "id": 17,
+    "slug": "perspective-reframe",
+    "name": "Perspective Reframe",
+    "number": 17,
+    "corePattern": "Complaint → Journey → Mentor → New Perspective → Gratitude",
+    "description": "Seeing the world differently changes the hero.",
+    "whyItWorks": "Encourages gratitude and empathy.",
+    "bestAge": "6–8",
+    "sceneFlowTemplate": "Complaint → Adventure → Observe → Realize → Appreciate",
+    "bestAdventureArchetypes": [
+      "Heritage Journey"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Mentor Clue"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 18,
+    "slug": "secret-witness",
+    "name": "Secret Witness",
+    "number": 18,
+    "corePattern": "Simple Mission → Hidden Parallel Story → Escalation → Safe Finish",
+    "description": "Readers know something the hero doesn't.",
+    "whyItWorks": "Creates dramatic irony and replay value.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Mission → Hidden Events → Escalation → Hero Unaware → Finish",
+    "bestAdventureArchetypes": [
+      "Unexpected Surprise",
+      "Mystery to Solve"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 19,
+    "slug": "copycat-mirror",
+    "name": "Copycat Mirror",
+    "number": 19,
+    "corePattern": "Routine → Loss → Mimicry → Observation → Trick → Recovery",
+    "description": "A repeating pattern becomes the solution.",
+    "whyItWorks": "Develops observation and problem-solving.",
+    "bestAge": "5–7",
+    "sceneFlowTemplate": "Loss → Frustration → Notice Pattern → Clever Trick → Success",
+    "bestAdventureArchetypes": [
+      "Problem Solver",
+      "Unexpected Surprise"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 20,
+    "slug": "tiny-spark",
+    "name": "Tiny Spark",
+    "number": 20,
+    "corePattern": "Paralysis → Tiny Step → Experiment → Confidence → Mentorship",
+    "description": "One tiny action grows into confidence.",
+    "whyItWorks": "Teaches growth mindset and persistence.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Fear → First Step → Practice → Success → Inspire Others",
+    "bestAdventureArchetypes": [
+      "Transformation Story",
+      "Build Together"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Echo Line"
+    ]
+  },
+  {
+    "id": 21,
+    "slug": "separation-anxiety",
+    "name": "Separation Anxiety",
+    "number": 21,
+    "corePattern": "Home → Separation → Parallel Routine → Near Miss → Reunion",
+    "description": "Two sides experience the same separation until they're reunited.",
+    "whyItWorks": "Reassures children that love continues even when apart.",
+    "bestAge": "5–7",
+    "sceneFlowTemplate": "Goodbye → Parallel Lives → Missing Each Other → Reunion",
+    "bestAdventureArchetypes": [
+      "Journey Together",
+      "Transformation Story"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 22,
+    "slug": "city-crossing",
+    "name": "City Crossing",
+    "number": 22,
+    "corePattern": "Safe Place → Journey → Big Obstacle → Helper → Arrival",
+    "description": "A small hero safely navigates a much bigger world.",
+    "whyItWorks": "Builds courage for unfamiliar environments.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Home → Travel → Major Obstacle → Help → Destination",
+    "bestAdventureArchetypes": [
+      "Great Journey",
+      "Expedition"
+    ],
+    "bestOpening": "The Unexpected Interruption",
+    "bestEnding": "The Circular Return",
+    "bestReplayHooks": [
+      "Secret Path"
+    ],
+    "bestReadAloudDevices": [
+      "Repeated Phrase"
+    ]
+  },
+  {
+    "id": 23,
+    "slug": "shifting-world",
+    "name": "Shifting World",
+    "number": 23,
+    "corePattern": "Peace → Change → Loss → Discovery → Restoration",
+    "description": "A changing world creates loss before a hopeful renewal.",
+    "whyItWorks": "Helps children process change and transition.",
+    "bestAge": "6–8",
+    "sceneFlowTemplate": "Happy Beginning → Disruption → Sadness → Hope → Renewal",
+    "bestAdventureArchetypes": [
+      "Transformation Story",
+      "Nature's Balance"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Echo Line"
+    ]
+  },
+  {
+    "id": 24,
+    "slug": "mirror-mistake",
+    "name": "Mirror Mistake",
+    "number": 24,
+    "corePattern": "Discovery → Ambition → Fail → Fail Again → Disappointment → Surprise Success",
+    "description": "Repeated failures unexpectedly lead to success.",
+    "whyItWorks": "Encourages persistence after mistakes.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Goal → Try → Fail → Learn → Unexpected Reward",
+    "bestAdventureArchetypes": [
+      "Transformation Story",
+      "Unexpected Surprise"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Echo Line"
+    ]
+  },
+  {
+    "id": 25,
+    "slug": "absurd-extraction",
+    "name": "Absurd Extraction",
+    "number": 25,
+    "corePattern": "Problem → Routine → Strange Discovery → Bigger Discovery → Resolution",
+    "description": "A normal situation becomes increasingly ridiculous.",
+    "whyItWorks": "Creates humor through escalating surprise.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Small Problem → Weird Discovery → Bigger Surprise → Funny Ending",
+    "bestAdventureArchetypes": [
+      "Unexpected Surprise",
+      "Mystery to Solve"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 26,
+    "slug": "surreal-night",
+    "name": "Surreal Night",
+    "number": 26,
+    "corePattern": "Night → Transformation → Exploration → Close Call → Morning",
+    "description": "An ordinary night becomes a magical adventure.",
+    "whyItWorks": "Balances imagination with emotional safety.",
+    "bestAge": "5–7",
+    "sceneFlowTemplate": "Bedtime → Magic → Adventure → Escape → Wake Up",
+    "bestAdventureArchetypes": [
+      "Magical Quest"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 27,
+    "slug": "mirror-invitation",
+    "name": "Mirror Invitation",
+    "number": 27,
+    "corePattern": "Question → Introductions → Growing Chain → Community",
+    "description": "One invitation grows into a joyful gathering.",
+    "whyItWorks": "Celebrates belonging and inclusion.",
+    "bestAge": "5–7",
+    "sceneFlowTemplate": "Invitation → Meet Others → Bigger Group → Celebration",
+    "bestAdventureArchetypes": [
+      "New Friend",
+      "Community Project"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Friendship Moments"
+    ],
+    "bestReadAloudDevices": [
+      "Character Catchphrase"
+    ]
+  },
+  {
+    "id": 28,
+    "slug": "subversive-princess",
+    "name": "Subversive Princess",
+    "number": 28,
+    "corePattern": "Peril → Humility → Clever Thinking → Victory → Healthy Boundary",
+    "description": "Expectations are overturned through wit instead of force.",
+    "whyItWorks": "Challenges stereotypes and rewards intelligence.",
+    "bestAge": "6–8",
+    "sceneFlowTemplate": "Danger → Underestimated Hero → Clever Plan → Victory",
+    "bestAdventureArchetypes": [
+      "Hero's Trial",
+      "Problem Solver"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Parallel Action"
+    ],
+    "bestReadAloudDevices": [
+      "Rule of Three"
+    ]
+  },
+  {
+    "id": 29,
+    "slug": "unique-eye",
+    "name": "Unique Eye",
+    "number": 29,
+    "corePattern": "Group → Difference → Solitary Discovery → Leadership → Unity",
+    "description": "A unique perspective becomes everyone's strength.",
+    "whyItWorks": "Celebrates individuality.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Different Hero → Discovery → Others Learn → Shared Success",
+    "bestAdventureArchetypes": [
+      "Leadership Challenge",
+      "Secret Discovery"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 30,
+    "slug": "functional-shift",
+    "name": "Functional Shift",
+    "number": 30,
+    "corePattern": "Ordinary Object → Innovation → Mockery → Proof → Acceptance",
+    "description": "A strange idea becomes obviously useful.",
+    "whyItWorks": "Encourages creativity despite criticism.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "New Idea → Others Laugh → Demonstration → Acceptance",
+    "bestAdventureArchetypes": [
+      "Problem Solver"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 31,
+    "slug": "shared-scale",
+    "name": "Shared Scale",
+    "number": 31,
+    "corePattern": "Vanity → Request → Isolation → Advice → Sharing → Belonging",
+    "description": "Happiness grows through sharing instead of keeping.",
+    "whyItWorks": "Builds generosity and empathy.",
+    "bestAge": "5–7",
+    "sceneFlowTemplate": "Wants More → Feels Alone → Learns → Shares → Friends Return",
+    "bestAdventureArchetypes": [
+      "Community Project",
+      "Helping Hand"
+    ],
+    "bestOpening": "The Invitation",
+    "bestEnding": "The Ripple Effect",
+    "bestReplayHooks": [
+      "Background Story"
+    ],
+    "bestReadAloudDevices": [
+      "Call and Response"
+    ]
+  },
+  {
+    "id": 32,
+    "slug": "disguise-trap",
+    "name": "Disguise Trap",
+    "number": 32,
+    "corePattern": "Difference → Hide → Pretend → Unhappiness → Reveal → Acceptance",
+    "description": "Pretending to fit in prevents true belonging.",
+    "whyItWorks": "Reinforces authenticity.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Feel Different → Hide → Problems Grow → Reveal → Accepted",
+    "bestAdventureArchetypes": [
+      "Coming of Age"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Circular Return",
+    "bestReplayHooks": [
+      "Echo Scene"
+    ],
+    "bestReadAloudDevices": [
+      "Silent Spread"
+    ]
+  },
+  {
+    "id": 33,
+    "slug": "role-reversal",
+    "name": "Role Reversal",
+    "number": 33,
+    "corePattern": "Helper Gives → Helper Needs Help → Friends Respond → Balance Restored",
+    "description": "Today's helper becomes tomorrow's receiver.",
+    "whyItWorks": "Teaches interdependence and gratitude.",
+    "bestAge": "5–7",
+    "sceneFlowTemplate": "Helping Others → Needs Help → Community Helps Back",
+    "bestAdventureArchetypes": [
+      "New Friend",
+      "Community Project"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Friendship Moments"
+    ],
+    "bestReadAloudDevices": [
+      "Character Catchphrase"
+    ]
+  },
+  {
+    "id": 34,
+    "slug": "perspective-bus",
+    "name": "Perspective Bus",
+    "number": 34,
+    "corePattern": "Complaint → Journey → Gentle Guide → New Eyes → Joy",
+    "description": "A mentor changes how the hero sees everyday life.",
+    "whyItWorks": "Encourages gratitude without preaching.",
+    "bestAge": "6–8",
+    "sceneFlowTemplate": "Complaint → Observe → Notice Beauty → Appreciate",
+    "bestAdventureArchetypes": [
+      "Heritage Journey"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Mentor Clue"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 35,
+    "slug": "secret-skill",
+    "name": "Secret Skill",
+    "number": 35,
+    "corePattern": "Teaching → Rival Success → Conflict → Realization → Teamwork",
+    "description": "Competition becomes collaboration.",
+    "whyItWorks": "Shows everyone has different strengths.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Teach → Conflict → Separation → Reconcile → Team Victory",
+    "bestAdventureArchetypes": [
+      "Friendship Repair",
+      "Team Adventure"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 36,
+    "slug": "silent-secret",
+    "name": "Silent Secret",
+    "number": 36,
+    "corePattern": "Ordinary Routine → Hidden Chaos → Escalation → Peaceful Ending",
+    "description": "Readers discover the hidden story while the hero never does.",
+    "whyItWorks": "Creates replay value through dramatic irony.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Hero Walks → Secret Events → Escalation → Hero Returns",
+    "bestAdventureArchetypes": [
+      "Unexpected Surprise",
+      "Mystery to Solve"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 37,
+    "slug": "echo-puzzle",
+    "name": "Echo Puzzle",
+    "number": 37,
+    "corePattern": "Loss → Sound Clue → Frustration → Careful Listening → Discovery",
+    "description": "Listening solves the mystery.",
+    "whyItWorks": "Reinforces observation and patience.",
+    "bestAge": "5–7",
+    "sceneFlowTemplate": "Problem → Hear Clue → Wrong Guess → Listen Better → Solve",
+    "bestAdventureArchetypes": [
+      "Mystery to Solve",
+      "Detective Story"
+    ],
+    "bestOpening": "The Tiny Mystery",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Object Hunt"
+    ],
+    "bestReadAloudDevices": [
+      "Prediction Pause"
+    ]
+  },
+  {
+    "id": 38,
+    "slug": "first-seed",
+    "name": "First Seed",
+    "number": 38,
+    "corePattern": "Fear → Tiny Step → Repetition → Growth → Sharing",
+    "description": "Small actions grow into lasting confidence.",
+    "whyItWorks": "Excellent for growth mindset stories.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Fear → First Step → Progress → Success → Help Others",
+    "bestAdventureArchetypes": [
+      "Transformation Story",
+      "Hero's Trial"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Echo Line"
+    ]
+  },
+  {
+    "id": 39,
+    "slug": "mystery-friend",
+    "name": "Mystery Friend",
+    "number": 39,
+    "corePattern": "Strange Sign → Fear → Investigation → Helpful Truth",
+    "description": "Something frightening becomes something wonderful.",
+    "whyItWorks": "Reframes fear through curiosity.",
+    "bestAge": "5–7",
+    "sceneFlowTemplate": "Strange Event → Investigation → Discovery → Friendship",
+    "bestAdventureArchetypes": [
+      "Mystery to Solve",
+      "Secret Discovery"
+    ],
+    "bestOpening": "The Tiny Mystery",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Object Hunt"
+    ],
+    "bestReadAloudDevices": [
+      "Prediction Pause"
+    ]
+  },
+  {
+    "id": 40,
+    "slug": "echo-cave",
+    "name": "Echo Cave",
+    "number": 40,
+    "corePattern": "Anger → Loud Reaction → Wise Advice → Gentle Response → Light",
+    "description": "Calm words change the outcome.",
+    "whyItWorks": "Teaches emotional regulation naturally.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Anger → Consequences → Reflection → Calm Choice → Resolution",
+    "bestAdventureArchetypes": [
+      "Transformation Story",
+      "Heritage Journey"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Echo Line"
+    ]
+  },
+  {
+    "id": 41,
+    "slug": "shared-light",
+    "name": "Shared Light",
+    "number": 41,
+    "corePattern": "Question → Demonstration → Multiplication → Shared Peace",
+    "description": "Kindness grows when it is shared.",
+    "whyItWorks": "Demonstrates that goodness multiplies.",
+    "bestAge": "5–7",
+    "sceneFlowTemplate": "Question → Demonstration → Others Join → Community Joy",
+    "bestAdventureArchetypes": [
+      "Helping Hand",
+      "Community Project"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Ripple Effect",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 42,
+    "slug": "lantern-wait",
+    "name": "Lantern Wait",
+    "number": 42,
+    "corePattern": "Mission → Waiting → Different Coping Styles → Reunion",
+    "description": "Waiting becomes easier through hope and togetherness.",
+    "whyItWorks": "Helps children handle uncertainty.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Mission → Wait → Different Reactions → Reunion",
+    "bestAdventureArchetypes": [
+      "Race Against Time",
+      "Journey Together"
+    ],
+    "bestOpening": "The Unexpected Interruption",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Heartbeat Moment"
+    ]
+  },
+  {
+    "id": 43,
+    "slug": "impulse-bell",
+    "name": "Impulse Bell",
+    "number": 43,
+    "corePattern": "Rule → Temptation → Excuses → Wise Choice → Reward",
+    "description": "The hero resists temptation through self-control.",
+    "whyItWorks": "Builds impulse control.",
+    "bestAge": "5–7",
+    "sceneFlowTemplate": "Rule → Temptation → Internal Conflict → Good Choice → Success",
+    "bestAdventureArchetypes": [
+      "Choice & Consequence",
+      "Responsibility Quest"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Choice Reflection"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 44,
+    "slug": "banyan-seed-chain",
+    "name": "Banyan Seed Chain",
+    "number": 44,
+    "corePattern": "Plant → Care → New Need → Growth → Bigger Chain",
+    "description": "One good deed creates another.",
+    "whyItWorks": "Shows ripple effects of kindness.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Plant → Care → More Help Needed → Growth → Celebration",
+    "bestAdventureArchetypes": [
+      "Problem Solver",
+      "Community Project"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 45,
+    "slug": "lotus-watch",
+    "name": "Lotus Watch",
+    "number": 45,
+    "corePattern": "Bloom → Observation → Discovery → Reflection",
+    "description": "Watching nature leads to inner wisdom.",
+    "whyItWorks": "Encourages mindfulness and patience.",
+    "bestAge": "5–7",
+    "sceneFlowTemplate": "Observe → Explore → Realize → Quiet Ending",
+    "bestAdventureArchetypes": [
+      "Nature's Balance",
+      "Dream Adventure"
+    ],
+    "bestOpening": "The Everyday Wonder",
+    "bestEnding": "Nature Responds",
+    "bestReplayHooks": [
+      "Nature Cycle"
+    ],
+    "bestReadAloudDevices": [
+      "Musical Sentence"
+    ]
+  },
+  {
+    "id": 46,
+    "slug": "crooked-shape",
+    "name": "Crooked Shape",
+    "number": 46,
+    "corePattern": "Flaw → Try to Fix → Bigger Problem → Wisdom → Joy",
+    "description": "Imperfection becomes the character's strength.",
+    "whyItWorks": "Builds self-acceptance.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Feel Flawed → Fix Attempts → Failure → Acceptance → Happiness",
+    "bestAdventureArchetypes": [
+      "Coming of Age"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Circular Return",
+    "bestReplayHooks": [
+      "Echo Scene"
+    ],
+    "bestReadAloudDevices": [
+      "Silent Spread"
+    ]
+  },
+  {
+    "id": 47,
+    "slug": "muddy-day",
+    "name": "Muddy Day",
+    "number": 47,
+    "corePattern": "Setbacks → More Setbacks → Silence → Reframe → Fresh Start",
+    "description": "A difficult day ends with a healthier perspective.",
+    "whyItWorks": "Normalizes bad days.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Bad Events → Emotional Low → Reflection → Hope",
+    "bestAdventureArchetypes": [
+      "Training Journey",
+      "Transformation Story"
+    ],
+    "bestOpening": "The Impossible Task",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Repeated Action"
+    ]
+  },
+  {
+    "id": 48,
+    "slug": "cloud-guest",
+    "name": "Cloud Guest",
+    "number": 48,
+    "corePattern": "Celebration → Unexpected Change → Adaptation → New Joy",
+    "description": "Unexpected disruptions become opportunities.",
+    "whyItWorks": "Encourages flexibility.",
+    "bestAge": "5–7",
+    "sceneFlowTemplate": "Plan → Disruption → Adapt → Better Outcome",
+    "bestAdventureArchetypes": [
+      "Unexpected Surprise"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 49,
+    "slug": "golden-path",
+    "name": "Golden Path",
+    "number": 49,
+    "corePattern": "Tool → Creative Journey → Adventure → Home",
+    "description": "A simple tool unlocks imagination.",
+    "whyItWorks": "Celebrates creativity.",
+    "bestAge": "5–7",
+    "sceneFlowTemplate": "Tool Found → Adventure → Problem Solved → Return",
+    "bestAdventureArchetypes": [
+      "Magical Discovery",
+      "Expedition"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 50,
+    "slug": "smile-chain",
+    "name": "Smile Chain",
+    "number": 50,
+    "corePattern": "Question → Nature Answers → Community Answers → Personal Discovery",
+    "description": "Happiness is discovered everywhere.",
+    "whyItWorks": "Reinforces optimism.",
+    "bestAge": "5–6",
+    "sceneFlowTemplate": "Question → Discover → Share → Joyful Ending",
+    "bestAdventureArchetypes": [
+      "Secret Discovery",
+      "Community Project"
+    ],
+    "bestOpening": "The Tiny Mystery",
+    "bestEnding": "The Gentle Surprise",
+    "bestReplayHooks": [
+      "Foreshadowed Prop"
+    ],
+    "bestReadAloudDevices": [
+      "Point-and-Find"
+    ]
+  },
+  {
+    "id": 51,
+    "slug": "spiral-breath",
+    "name": "Spiral Breath",
+    "number": 51,
+    "corePattern": "Fear → Restlessness → Guided Breath → Self-Regulation → Success",
+    "description": "Breathing transforms fear into courage.",
+    "whyItWorks": "Excellent emotional regulation model.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Fear → Learn Breathing → Practice → Brave Action",
+    "bestAdventureArchetypes": [
+      "Hero's Trial",
+      "Transformation Story"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Parallel Action"
+    ],
+    "bestReadAloudDevices": [
+      "Rule of Three"
+    ]
+  },
+  {
+    "id": 52,
+    "slug": "nest-build",
+    "name": "Nest Build",
+    "number": 52,
+    "corePattern": "Gather → Invite → Danger → Team Solution → Bigger Home",
+    "description": "Working together creates something stronger.",
+    "whyItWorks": "Reinforces teamwork.",
+    "bestAge": "5–7",
+    "sceneFlowTemplate": "Build → Friends Join → Threat → Solve Together",
+    "bestAdventureArchetypes": [
+      "Community Project",
+      "Build Together"
+    ],
+    "bestOpening": "The Invitation",
+    "bestEnding": "The Ripple Effect",
+    "bestReplayHooks": [
+      "Background Story"
+    ],
+    "bestReadAloudDevices": [
+      "Call and Response"
+    ]
+  },
+  {
+    "id": 53,
+    "slug": "hidden-lamp",
+    "name": "Hidden Lamp",
+    "number": 53,
+    "corePattern": "Difference → Hide → Inner Light → Recognition → Shared Glow",
+    "description": "Hidden strengths become visible.",
+    "whyItWorks": "Encourages authenticity.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Hide → Discover Strength → Share → Inspire Others",
+    "bestAdventureArchetypes": [
+      "Coming of Age"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Circular Return",
+    "bestReplayHooks": [
+      "Echo Scene"
+    ],
+    "bestReadAloudDevices": [
+      "Silent Spread"
+    ]
+  },
+  {
+    "id": 54,
+    "slug": "silent-flower",
+    "name": "Silent Flower",
+    "number": 54,
+    "corePattern": "Hurt → Advice → Quiet Presence → Healing",
+    "description": "Healing happens through companionship rather than fixing.",
+    "whyItWorks": "Models empathy.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Problem → Advice Fails → Stay Together → Recovery",
+    "bestAdventureArchetypes": [
+      "Restoration Story",
+      "New Friend"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 55,
+    "slug": "forest-helper",
+    "name": "Forest Helper",
+    "number": 55,
+    "corePattern": "Complaint → Discovery → Listening → Creative Solution → Appreciation",
+    "description": "The ordinary helper becomes extraordinary.",
+    "whyItWorks": "Builds gratitude and observation.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Complaint → Explore → Discover Value → Gratitude",
+    "bestAdventureArchetypes": [
+      "Secret Discovery",
+      "Heritage Journey"
+    ],
+    "bestOpening": "The Tiny Mystery",
+    "bestEnding": "The Gentle Surprise",
+    "bestReplayHooks": [
+      "Foreshadowed Prop"
+    ],
+    "bestReadAloudDevices": [
+      "Point-and-Find"
+    ]
+  },
+  {
+    "id": 56,
+    "slug": "flying-leaf",
+    "name": "Flying Leaf",
+    "number": 56,
+    "corePattern": "Ordinary Object → Small Adventure → Bigger Adventure → Wisdom",
+    "description": "An everyday object becomes the centre of an adventure.",
+    "whyItWorks": "Encourages imagination.",
+    "bestAge": "5–7",
+    "sceneFlowTemplate": "Discover Object → Adventure → Discovery → Reflection",
+    "bestAdventureArchetypes": [
+      "Expedition",
+      "Magical Discovery"
+    ],
+    "bestOpening": "The Invitation",
+    "bestEnding": "The New Beginning",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Cumulative Build"
+    ]
+  },
+  {
+    "id": 57,
+    "slug": "muddy-shield",
+    "name": "Muddy Shield",
+    "number": 57,
+    "corePattern": "Mockery → Challenge → Action → Respect",
+    "description": "Character matters more than appearance.",
+    "whyItWorks": "Encourages courage and resilience.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Mocked → Opportunity → Brave Action → Acceptance",
+    "bestAdventureArchetypes": [
+      "Hero's Trial"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Parallel Action"
+    ],
+    "bestReadAloudDevices": [
+      "Rule of Three"
+    ]
+  },
+  {
+    "id": 58,
+    "slug": "quiet-story",
+    "name": "Quiet Story",
+    "number": 58,
+    "corePattern": "Passion → Doubt → Stillness → Authentic Expression → Success",
+    "description": "Quiet confidence replaces the need to impress.",
+    "whyItWorks": "Builds authenticity.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Dream → Doubt → Reflection → Try Again → Success",
+    "bestAdventureArchetypes": [
+      "Performance Story",
+      "Transformation Story"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Tiny Visual Joke"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 59,
+    "slug": "banyan-wind",
+    "name": "Banyan Wind",
+    "number": 59,
+    "corePattern": "Hurry → Failure → Observe → Better Solution → Success",
+    "description": "Slowing down produces better results.",
+    "whyItWorks": "Reinforces patience and observation.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Rush → Mistake → Observe → Adapt → Win",
+    "bestAdventureArchetypes": [
+      "Heritage Journey",
+      "Problem Solver"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Mentor Clue"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 60,
+    "slug": "floating-seed",
+    "name": "Floating Seed",
+    "number": 60,
+    "corePattern": "Separation → Adaptation → Identity → Bloom",
+    "description": "Change becomes part of personal growth.",
+    "whyItWorks": "Helps children embrace transitions.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Separation → New Environment → Growth → Belonging",
+    "bestAdventureArchetypes": [
+      "Transformation Story",
+      "Nature's Balance"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Echo Line"
+    ]
+  },
+  {
+    "id": 61,
+    "slug": "lantern-circle",
+    "name": "Lantern Circle",
+    "number": 61,
+    "corePattern": "Storm → Solo Wonder → Fearful Friends → Unity",
+    "description": "One brave child helps everyone discover courage together.",
+    "whyItWorks": "Shows courage is contagious.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Storm → Discovery → Friends Join → Safe Together",
+    "bestAdventureArchetypes": [
+      "Hero's Trial",
+      "Community Project"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Parallel Action"
+    ],
+    "bestReadAloudDevices": [
+      "Rule of Three"
+    ]
+  },
+  {
+    "id": 62,
+    "slug": "yellow-ring",
+    "name": "Yellow Ring",
+    "number": 62,
+    "corePattern": "Discovery → Mockery → Unexpected Use → Acceptance",
+    "description": "An unusual idea proves surprisingly valuable.",
+    "whyItWorks": "Encourages innovation despite criticism.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Find → Ridiculed → Demonstrate → Community Accepts",
+    "bestAdventureArchetypes": [
+      "Problem Solver"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 63,
+    "slug": "seed-basket",
+    "name": "Seed Basket",
+    "number": 63,
+    "corePattern": "Hoarding → Isolation → Wise Advice → Sharing → Abundance",
+    "description": "Sharing creates more happiness than keeping everything.",
+    "whyItWorks": "Teaches generosity through experience.",
+    "bestAge": "5–7",
+    "sceneFlowTemplate": "Collect → Alone → Learn → Share → Community Joy",
+    "bestAdventureArchetypes": [
+      "Helping Hand",
+      "Community Project"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Ripple Effect",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 64,
+    "slug": "rhythmic-log",
+    "name": "Rhythmic Log",
+    "number": 64,
+    "corePattern": "Talent → Hiding → Silence → Discovery → Celebration",
+    "description": "Hidden talents emerge naturally.",
+    "whyItWorks": "Encourages authentic self-expression.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Hide Talent → Quiet Moment → Discovery → Celebrate",
+    "bestAdventureArchetypes": [
+      "Performance Story",
+      "Transformation Story"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Tiny Visual Joke"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 65,
+    "slug": "ankle-sprain",
+    "name": "Ankle Sprain",
+    "number": 65,
+    "corePattern": "Helper → Injury → Others Help → Gratitude",
+    "description": "Even helpers sometimes need help.",
+    "whyItWorks": "Teaches interdependence and humility.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Helping → Problem → Friends Return → Appreciation",
+    "bestAdventureArchetypes": [
+      "New Friend",
+      "Community Project"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Friendship Moments"
+    ],
+    "bestReadAloudDevices": [
+      "Character Catchphrase"
+    ]
+  },
+  {
+    "id": 66,
+    "slug": "village-path",
+    "name": "Village Path",
+    "number": 66,
+    "corePattern": "Journey → Observation → Gathering → Giving → Joy",
+    "description": "Everyday kindness transforms a community.",
+    "whyItWorks": "Shows small acts matter.",
+    "bestAge": "5–7",
+    "sceneFlowTemplate": "Walk → Notice Needs → Help → Community Celebration",
+    "bestAdventureArchetypes": [
+      "Community Project",
+      "Helping Hand"
+    ],
+    "bestOpening": "The Invitation",
+    "bestEnding": "The Ripple Effect",
+    "bestReplayHooks": [
+      "Background Story"
+    ],
+    "bestReadAloudDevices": [
+      "Call and Response"
+    ]
+  },
+  {
+    "id": 67,
+    "slug": "garden-song",
+    "name": "Garden Song",
+    "number": 67,
+    "corePattern": "Expert → Mimic → Conflict → Teamwork → Harmony",
+    "description": "Individual strengths become stronger together.",
+    "whyItWorks": "Encourages collaboration over competition.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Success → Rivalry → Conflict → Cooperation → Performance",
+    "bestAdventureArchetypes": [
+      "Team Adventure",
+      "Friendship Repair"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Running Joke"
+    ],
+    "bestReadAloudDevices": [
+      "Predictable Pattern"
+    ]
+  },
+  {
+    "id": 68,
+    "slug": "butterfly-walk",
+    "name": "Butterfly Walk",
+    "number": 68,
+    "corePattern": "Mission → Hidden Events → Hero Unaware → Success",
+    "description": "The hero unknowingly succeeds while hidden events unfold.",
+    "whyItWorks": "Creates dramatic irony and replay value.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Mission → Secret Events → Escalation → Happy Ending",
+    "bestAdventureArchetypes": [
+      "Unexpected Surprise",
+      "Mystery to Solve"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 69,
+    "slug": "sound-thief",
+    "name": "Sound Thief",
+    "number": 69,
+    "corePattern": "Gathering → Loss → Listening → Recovery",
+    "description": "Careful listening solves the mystery.",
+    "whyItWorks": "Reinforces observation skills.",
+    "bestAge": "5–7",
+    "sceneFlowTemplate": "Loss → Search → Listen → Discovery",
+    "bestAdventureArchetypes": [
+      "Detective Story",
+      "Mystery to Solve"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 70,
+    "slug": "mirror-reflection",
+    "name": "Mirror Reflection",
+    "number": 70,
+    "corePattern": "Search → False Success → Disappointment → True Discovery",
+    "description": "Early answers are misleading; persistence reveals the truth.",
+    "whyItWorks": "Builds perseverance and critical thinking.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Search → Wrong Answer → Try Again → Correct Solution",
+    "bestAdventureArchetypes": [
+      "Mystery to Solve",
+      "Secret Discovery"
+    ],
+    "bestOpening": "The Tiny Mystery",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Object Hunt"
+    ],
+    "bestReadAloudDevices": [
+      "Prediction Pause"
+    ]
+  },
+  {
+    "id": 71,
+    "slug": "human-bark",
+    "name": "Human Bark",
+    "number": 71,
+    "corePattern": "Problem → Strange Discovery → Normalization → Funny Twist",
+    "description": "An absurd situation becomes surprisingly ordinary.",
+    "whyItWorks": "Uses surprise to create humour.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Problem → Weird Event → Bigger Surprise → Laugh",
+    "bestAdventureArchetypes": [
+      "Unexpected Surprise"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 72,
+    "slug": "pig-flight",
+    "name": "Pig Flight",
+    "number": 72,
+    "corePattern": "Ordinary Night → Impossible Adventure → Morning Return",
+    "description": "Fantasy adventure safely ends back in reality.",
+    "whyItWorks": "Encourages imagination while preserving security.",
+    "bestAge": "5–7",
+    "sceneFlowTemplate": "Night → Adventure → Close Call → Wake Up",
+    "bestAdventureArchetypes": [
+      "Magical Quest"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 73,
+    "slug": "button-loop",
+    "name": "Button Loop",
+    "number": 73,
+    "corePattern": "Rule → Small Choice → Consequence → Escalation → Restart",
+    "description": "Tiny decisions create repeating consequences.",
+    "whyItWorks": "Teaches responsibility and cause-and-effect.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Rule → Break Rule → Consequences → Learn → Restart",
+    "bestAdventureArchetypes": [
+      "Problem Solver",
+      "Choice & Consequence"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 74,
+    "slug": "first-mark",
+    "name": "First Mark",
+    "number": 74,
+    "corePattern": "Fear → Tiny Beginning → Experimentation → Confidence → Inspire Others",
+    "description": "Starting small leads to mastery.",
+    "whyItWorks": "Excellent for growth mindset.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Hesitation → First Try → Practice → Success → Mentor Others",
+    "bestAdventureArchetypes": [
+      "Transformation Story",
+      "Build Together"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Echo Line"
+    ]
+  },
+  {
+    "id": 75,
+    "slug": "secret-map",
+    "name": "Secret Map",
+    "number": 75,
+    "corePattern": "Ordinary Place → Hidden Discovery → Adventure → Home Revealed",
+    "description": "Adventure begins in familiar surroundings.",
+    "whyItWorks": "Encourages curiosity about everyday places.",
+    "bestAge": "5–7",
+    "sceneFlowTemplate": "Discover Map → Adventure → Explore → Home Reimagined",
+    "bestAdventureArchetypes": [
+      "Treasure Hunt",
+      "Secret Discovery"
+    ],
+    "bestOpening": "The Tiny Mystery",
+    "bestEnding": "The Gentle Surprise",
+    "bestReplayHooks": [
+      "Hidden Object Hunt"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 76,
+    "slug": "heavy-suitcase",
+    "name": "Heavy Suitcase",
+    "number": 76,
+    "corePattern": "Choice → Burden → Persistence → Wisdom",
+    "description": "Carrying unnecessary burdens leads to an important lesson.",
+    "whyItWorks": "Helps children recognize emotional and physical burdens.",
+    "bestAge": "6–8",
+    "sceneFlowTemplate": "Choose → Struggle → Reflect → Let Go",
+    "bestAdventureArchetypes": [
+      "Heritage Journey",
+      "Transformation Story"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Mentor Clue"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 77,
+    "slug": "steep-slide",
+    "name": "Steep Slide",
+    "number": 77,
+    "corePattern": "Challenge → Fear → Observation → Small Step → Triumph",
+    "description": "Courage begins with one manageable action.",
+    "whyItWorks": "Breaks overwhelming challenges into small steps.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Fear → Observe → Tiny Step → Success",
+    "bestAdventureArchetypes": [
+      "Hero's Trial"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Parallel Action"
+    ],
+    "bestReadAloudDevices": [
+      "Rule of Three"
+    ]
+  },
+  {
+    "id": 78,
+    "slug": "mixed-foods",
+    "name": "Mixed Foods",
+    "number": 78,
+    "corePattern": "Rigidity → Disruption → Reflection → Flexibility",
+    "description": "Trying something different leads to growth.",
+    "whyItWorks": "Encourages openness to change.",
+    "bestAge": "5–7",
+    "sceneFlowTemplate": "Resistance → New Experience → Reflection → Acceptance",
+    "bestAdventureArchetypes": [
+      "Transformation Story"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Echo Line"
+    ]
+  },
+  {
+    "id": 79,
+    "slug": "stuck-zipper",
+    "name": "Stuck Zipper",
+    "number": 79,
+    "corePattern": "Goal → Obstacle → Frustration → Calm → Persistence",
+    "description": "Calm thinking solves frustrating problems.",
+    "whyItWorks": "Models emotional regulation during setbacks.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Goal → Problem → Frustration → Calm → Success",
+    "bestAdventureArchetypes": [
+      "Problem Solver",
+      "Transformation Story"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 80,
+    "slug": "missing-piece",
+    "name": "Missing Piece",
+    "number": 80,
+    "corePattern": "Achievement → Imperfection → Sadness → Acceptance",
+    "description": "Something incomplete is still valuable.",
+    "whyItWorks": "Reinforces self-acceptance over perfection.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Success → Missing Part → Grief → Wholeness",
+    "bestAdventureArchetypes": [
+      "Coming of Age",
+      "Transformation Story"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Circular Return",
+    "bestReplayHooks": [
+      "Echo Scene"
+    ],
+    "bestReadAloudDevices": [
+      "Silent Spread"
+    ]
+  },
+  {
+    "id": 81,
+    "slug": "empty-chair",
+    "name": "Empty Chair",
+    "number": 81,
+    "corePattern": "Loss → Remembering → Sharing Memories → New Tradition",
+    "description": "Love continues through memories and shared rituals.",
+    "whyItWorks": "Helps children process absence and change.",
+    "bestAge": "6–8",
+    "sceneFlowTemplate": "Loss → Remember → Share → New Beginning",
+    "bestAdventureArchetypes": [
+      "Restoration Story",
+      "Promise Keeper"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 82,
+    "slug": "borrowed-shoes",
+    "name": "Borrowed Shoes",
+    "number": 82,
+    "corePattern": "Judgment → Walking Another's Path → Understanding → Kindness",
+    "description": "Experiencing another's perspective builds empathy.",
+    "whyItWorks": "Develops compassion and perspective-taking.",
+    "bestAge": "6–8",
+    "sceneFlowTemplate": "Misjudge → Experience → Understand → Reconcile",
+    "bestAdventureArchetypes": [
+      "Transformation Story",
+      "New Friend"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Echo Line"
+    ]
+  },
+  {
+    "id": 83,
+    "slug": "broken-kite",
+    "name": "Broken Kite",
+    "number": 83,
+    "corePattern": "Excitement → Failure → Persistence → Better Creation",
+    "description": "Failure becomes the beginning of something better.",
+    "whyItWorks": "Encourages resilience after disappointment.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Build → Break → Learn → Rebuild → Fly",
+    "bestAdventureArchetypes": [
+      "Transformation Story",
+      "Build Together"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Echo Line"
+    ]
+  },
+  {
+    "id": 84,
+    "slug": "whisper-tree",
+    "name": "Whisper Tree",
+    "number": 84,
+    "corePattern": "Confusion → Listening → Discovery → Wise Decision",
+    "description": "Quiet listening reveals the answer.",
+    "whyItWorks": "Reinforces patience and attentive listening.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Problem → Listen → Discover → Act",
+    "bestAdventureArchetypes": [
+      "Heritage Journey",
+      "Secret Discovery"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Mentor Clue"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 85,
+    "slug": "hidden-door",
+    "name": "Hidden Door",
+    "number": 85,
+    "corePattern": "Curiosity → Search → Puzzle → Secret Place",
+    "description": "Curiosity unlocks a hidden adventure.",
+    "whyItWorks": "Rewards exploration and observation.",
+    "bestAge": "5–7",
+    "sceneFlowTemplate": "Wonder → Explore → Solve → Discover",
+    "bestAdventureArchetypes": [
+      "Mystery to Solve",
+      "Treasure Hunt"
+    ],
+    "bestOpening": "The Tiny Mystery",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Object Hunt"
+    ],
+    "bestReadAloudDevices": [
+      "Prediction Pause"
+    ]
+  },
+  {
+    "id": 86,
+    "slug": "lost-melody",
+    "name": "Lost Melody",
+    "number": 86,
+    "corePattern": "Loss → Searching → Unexpected Helper → Recovery",
+    "description": "Something precious is found through cooperation.",
+    "whyItWorks": "Builds teamwork and gratitude.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Lose → Search → Help → Recover",
+    "bestAdventureArchetypes": [
+      "Rescue Mission",
+      "New Friend"
+    ],
+    "bestOpening": "The Unexpected Interruption",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Sound Words (Onomatopoeia)"
+    ]
+  },
+  {
+    "id": 87,
+    "slug": "tiny-bridge",
+    "name": "Tiny Bridge",
+    "number": 87,
+    "corePattern": "Division → Cooperation → Connection",
+    "description": "Working together bridges differences.",
+    "whyItWorks": "Encourages inclusion and collaboration.",
+    "bestAge": "5–7",
+    "sceneFlowTemplate": "Conflict → Build → Connect → Celebrate",
+    "bestAdventureArchetypes": [
+      "Community Project",
+      "Build Together"
+    ],
+    "bestOpening": "The Invitation",
+    "bestEnding": "The Ripple Effect",
+    "bestReplayHooks": [
+      "Background Story"
+    ],
+    "bestReadAloudDevices": [
+      "Call and Response"
+    ]
+  },
+  {
+    "id": 88,
+    "slug": "brave-echo",
+    "name": "Brave Echo",
+    "number": 88,
+    "corePattern": "Fear → First Attempt → Echo of Success → Confidence",
+    "description": "One brave act inspires the next.",
+    "whyItWorks": "Demonstrates how confidence grows gradually.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Fear → Try → Small Success → Bigger Success",
+    "bestAdventureArchetypes": [
+      "Hero's Trial"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Parallel Action"
+    ],
+    "bestReadAloudDevices": [
+      "Rule of Three"
+    ]
+  },
+  {
+    "id": 89,
+    "slug": "forgotten-gift",
+    "name": "Forgotten Gift",
+    "number": 89,
+    "corePattern": "Giving → Forgotten Value → Rediscovery → Gratitude",
+    "description": "The greatest gifts are often the simplest.",
+    "whyItWorks": "Reinforces appreciation and generosity.",
+    "bestAge": "5–7",
+    "sceneFlowTemplate": "Give → Forget → Rediscover → Appreciate",
+    "bestAdventureArchetypes": [
+      "Helping Hand",
+      "Festival Adventure"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Ripple Effect",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 90,
+    "slug": "gentle-giant",
+    "name": "Gentle Giant",
+    "number": 90,
+    "corePattern": "Strength → Misunderstanding → Kind Action → Respect",
+    "description": "True strength is shown through kindness.",
+    "whyItWorks": "Redefines courage and leadership.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Misjudged → Opportunity → Kind Choice → Acceptance",
+    "bestAdventureArchetypes": [
+      "Leadership Challenge",
+      "New Friend"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 91,
+    "slug": "river-promise",
+    "name": "River Promise",
+    "number": 91,
+    "corePattern": "Promise → Challenge → Temptation → Keeping the Promise",
+    "description": "Integrity is tested through action.",
+    "whyItWorks": "Develops responsibility and trustworthiness.",
+    "bestAge": "6–8",
+    "sceneFlowTemplate": "Promise → Obstacle → Choice → Honour Promise",
+    "bestAdventureArchetypes": [
+      "Responsibility Quest",
+      "Great Journey"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 92,
+    "slug": "moon-garden",
+    "name": "Moon Garden",
+    "number": 92,
+    "corePattern": "Wish → Patience → Quiet Growth → Bloom",
+    "description": "Beautiful things take time.",
+    "whyItWorks": "Reinforces delayed gratification and hope.",
+    "bestAge": "5–7",
+    "sceneFlowTemplate": "Wish → Wait → Care → Bloom",
+    "bestAdventureArchetypes": [
+      "Nature's Balance",
+      "Transformation Story"
+    ],
+    "bestOpening": "The Everyday Wonder",
+    "bestEnding": "Nature Responds",
+    "bestReplayHooks": [
+      "Nature Cycle"
+    ],
+    "bestReadAloudDevices": [
+      "Musical Sentence"
+    ]
+  },
+  {
+    "id": 93,
+    "slug": "puzzle-trail",
+    "name": "Puzzle Trail",
+    "number": 93,
+    "corePattern": "Clue → Wrong Turn → New Clue → Final Discovery",
+    "description": "Every mistake reveals another clue.",
+    "whyItWorks": "Encourages persistence and logical thinking.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Clue → Mistake → Learn → Solve",
+    "bestAdventureArchetypes": [
+      "Detective Story",
+      "Mystery to Solve"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 94,
+    "slug": "kindness-ripple",
+    "name": "Kindness Ripple",
+    "number": 94,
+    "corePattern": "Small Kind Act → Inspires Another → Chain Reaction",
+    "description": "One act of kindness spreads through a community.",
+    "whyItWorks": "Shows the ripple effect of positive actions.",
+    "bestAge": "5–7",
+    "sceneFlowTemplate": "Help One → Others Help → Community Changes",
+    "bestAdventureArchetypes": [
+      "Community Project",
+      "Problem Solver"
+    ],
+    "bestOpening": "The Invitation",
+    "bestEnding": "The Ripple Effect",
+    "bestReplayHooks": [
+      "Background Story"
+    ],
+    "bestReadAloudDevices": [
+      "Call and Response"
+    ]
+  },
+  {
+    "id": 95,
+    "slug": "quiet-hero",
+    "name": "Quiet Hero",
+    "number": 95,
+    "corePattern": "Opportunity → Helping Without Recognition → Quiet Satisfaction",
+    "description": "Heroism doesn't require applause.",
+    "whyItWorks": "Promotes intrinsic motivation.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Notice Need → Help Quietly → Move On → Community Benefits",
+    "bestAdventureArchetypes": [
+      "Helping Hand",
+      "Rescue Mission"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Ripple Effect",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 96,
+    "slug": "festival-lantern",
+    "name": "Festival Lantern",
+    "number": 96,
+    "corePattern": "Preparation → Problems → Community Effort → Celebration",
+    "description": "Shared effort makes celebrations meaningful.",
+    "whyItWorks": "Reinforces teamwork and gratitude.",
+    "bestAge": "5–7",
+    "sceneFlowTemplate": "Prepare → Problems → Everyone Helps → Festival",
+    "bestAdventureArchetypes": [
+      "Festival Adventure",
+      "Community Project"
+    ],
+    "bestOpening": "The Race Against Time",
+    "bestEnding": "The Shared Celebration",
+    "bestReplayHooks": [
+      "Festival Detail"
+    ],
+    "bestReadAloudDevices": [
+      "Rhyme Burst"
+    ]
+  },
+  {
+    "id": 97,
+    "slug": "golden-feather",
+    "name": "Golden Feather",
+    "number": 97,
+    "corePattern": "Impossible Goal → Mentor → Practice → Achievement",
+    "description": "Success comes from steady effort.",
+    "whyItWorks": "Encourages perseverance and learning.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Dream → Learn → Practice → Achieve",
+    "bestAdventureArchetypes": [
+      "Training Journey",
+      "Transformation Story"
+    ],
+    "bestOpening": "The Impossible Task",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Repeated Action"
+    ]
+  },
+  {
+    "id": 98,
+    "slug": "last-seed",
+    "name": "Last Seed",
+    "number": 98,
+    "corePattern": "Scarcity → Sharing → Unexpected Abundance",
+    "description": "Generosity creates hope even during difficult times.",
+    "whyItWorks": "Builds trust and abundance thinking.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Scarcity → Share → Hope → Reward",
+    "bestAdventureArchetypes": [
+      "Helping Hand",
+      "Survival Adventure"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Ripple Effect",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Page-Turn Sentence"
+    ]
+  },
+  {
+    "id": 99,
+    "slug": "new-sunrise",
+    "name": "New Sunrise",
+    "number": 99,
+    "corePattern": "Failure → Reflection → Fresh Start → Success",
+    "description": "Every day is another opportunity to begin again.",
+    "whyItWorks": "Reinforces resilience and optimism.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Fail → Reflect → Try Again → Succeed",
+    "bestAdventureArchetypes": [
+      "Transformation Story"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Hidden Symbol"
+    ],
+    "bestReadAloudDevices": [
+      "Echo Line"
+    ]
+  },
+  {
+    "id": 100,
+    "slug": "circle-complete",
+    "name": "Circle Complete",
+    "number": 100,
+    "corePattern": "Journey → Return → New Understanding → Peace",
+    "description": "The hero returns home transformed.",
+    "whyItWorks": "Provides emotional closure and reinforces growth.",
+    "bestAge": "5–8",
+    "sceneFlowTemplate": "Adventure → Return → Reflection → Peaceful Ending",
+    "bestAdventureArchetypes": [
+      "Hero's Trial",
+      "Transformation Story"
+    ],
+    "bestOpening": "The Emotional Spark",
+    "bestEnding": "The Quiet Internal Victory",
+    "bestReplayHooks": [
+      "Parallel Action"
+    ],
+    "bestReadAloudDevices": [
+      "Rule of Three"
+    ]
+  }
+]

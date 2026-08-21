@@ -1,0 +1,37 @@
+{
+  "TITLE": "The Keep-Word Detective",
+  "HOOK": "Can you crack the clue and find the best word to keep?",
+  "MISSION": "Four words are hiding in the scene. Some belong in KEEP and some belong in LET GO. Sort them and unlock the word Ganesha wants you to remember.",
+  "SCENE_INSTRUCTION": "Spot the four hidden words, then sort them carefully.",
+  "SCENE_ART": {
+    "items": [
+      {
+        "asset_id": "ears_symbol",
+        "x": 250,
+        "y": 18,
+        "width": 54,
+        "height": 54
+      },
+      {
+        "asset_id": "heart",
+        "x": 300,
+        "y": 200,
+        "width": 26,
+        "height": 26
+      }
+    ]
+  },
+  "CHARACTER_LABEL": "Ganesha keeps the helpful clue",
+  "HIDDEN_WORD_1": "CALM",
+  "HIDDEN_WORD_2": "MEAN",
+  "HIDDEN_WORD_3": "TRY",
+  "HIDDEN_WORD_4": "QUIT",
+  "SORT_PROMPT": "Which words help you grow, and which words should you let go?",
+  "CLUE_1": "KEEP words give you letters 1 and 3.",
+  "CLUE_2": "LET GO words do not belong in the answer.",
+  "CLUE_3": "Read the KEEP letters from top to bottom.",
+  "ANSWER": "CTRY",
+  "WISDOM": "I keep the words that help me grow.",
+  "TODAY": "Try keeping one calm, brave, helpful word close today.",
+  "FOOTER": "Listen like Ganesha: keep what helps, let the noise go."
+}

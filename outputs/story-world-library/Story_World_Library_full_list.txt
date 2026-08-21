@@ -1,0 +1,66 @@
+STORY WORLD LIBRARY (LOCKED — 40)
+
+🌳 Nature Worlds
+#	Story World	Supports These Adventure Archetypes (examples)
+1	Enchanted Forest	Rescue Mission, Mystery to Solve, Treasure Hunt, Friendship Repair, Discovery Journey, Team Adventure, Great Journey
+2	Ancient Banyan Grove	— not yet mapped
+3	Whispering Meadow	— not yet mapped
+4	Crystal River Valley	— not yet mapped
+5	Hidden Waterfall	— not yet mapped
+6	Sunny Orchard	— not yet mapped
+7	Flower Garden	— not yet mapped
+8	Bamboo Forest	— not yet mapped
+9	Misty Mountains	— not yet mapped
+10	Golden Grasslands	— not yet mapped
+
+💧 Water Worlds
+#	Story World	Supports These Adventure Archetypes (examples)
+11	Lotus Pond	— not yet mapped
+12	Coral Reef Kingdom	Rescue Mission, Nature's Balance, Team Adventure, Discovery Journey, Great Journey
+13	Turtle Bay	— not yet mapped
+14	Mangrove Marsh	— not yet mapped
+15	Waterfall Caves	— not yet mapped
+
+🏡 Village & Community Worlds
+#	Story World	Supports These Adventure Archetypes (examples)
+16	Woodland Village	— not yet mapped
+17	Treehouse Village	— not yet mapped
+18	Riverside Village	— not yet mapped
+19	Hilltop Village	— not yet mapped
+20	Festival Square	Festival Adventure, Performance Story, Helping Hand, Community Project, Mystery to Solve, Gift of Giving
+
+🏰 Fantasy & Magic Worlds
+#	Story World	Supports These Adventure Archetypes (examples)
+21	Magic Garden	— not yet mapped
+22	Rainbow Kingdom	— not yet mapped
+23	Cloud Kingdom	— not yet mapped
+24	Moonlight Valley	— not yet mapped
+25	Star Forest	— not yet mapped
+26	Crystal Caverns	— not yet mapped
+27	Ancient Temple	Ancient Secret, Treasure Hunt, Wisdom Challenge, Mystery to Solve, Discovery Journey
+28	Wishing Woods	— not yet mapped
+
+🧩 Discovery Worlds
+#	Story World	Supports These Adventure Archetypes (examples)
+29	Secret Library	— not yet mapped
+30	Forgotten Ruins	— not yet mapped
+31	Hidden Cave Network	— not yet mapped
+32	Lost Island	— not yet mapped
+33	Treasure Cliffs	— not yet mapped
+
+🌍 Adventure Worlds
+#	Story World	Supports These Adventure Archetypes (examples)
+34	Great Caravan Trail	— not yet mapped
+35	Desert Oasis	— not yet mapped
+36	Snowy Highlands	— not yet mapped
+37	Volcano Valley	— not yet mapped
+38	Sky Islands	— not yet mapped
+
+🌌 Imagination Worlds
+#	Story World	Supports These Adventure Archetypes (examples)
+39	Dream World	— not yet mapped
+40	Toy Kingdom	— not yet mapped
+
+
+Gap: only 4 of 40 worlds had example archetype mappings provided (Enchanted Forest, Festival Square, Ancient Temple, Coral Reef Kingdom). The remaining 36 need their supported-archetype lists filled in before the engine can select worlds reliably.
+Note: this replaces the old 218 Full Library approach — that sheet and 'Candidates from 218' are now superseded and can be archived/removed.

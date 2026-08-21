@@ -1,0 +1,94 @@
+{
+  "template_id": "PT04_CRAFT",
+  "version": "1.0",
+  "format": "A4",
+  "orientation": "portrait",
+  "render_contract": "vector_svg_to_pdf",
+  "supported_variants": [
+    "band",
+    "bookmark",
+    "badge",
+    "wheel",
+    "gratitude_flower",
+    "kindness_coupon"
+  ],
+  "variant_registry": "craftVariantRegistry.json",
+  "slots": {
+    "TITLE": {
+      "type": "text",
+      "required": true,
+      "max_chars": 40
+    },
+    "MATERIALS": {
+      "type": "text",
+      "required": true,
+      "max_chars": 180
+    },
+    "STEPS": {
+      "type": "text",
+      "required": true,
+      "max_chars": 320
+    },
+    "MAIN_ART": {
+      "type": "asset",
+      "required": true
+    },
+    "CRAFT_GEOMETRY": {
+      "type": "vector_group",
+      "required": true
+    },
+    "DECORATIONS": {
+      "type": "asset_group",
+      "required": false
+    },
+    "WISDOM": {
+      "type": "text",
+      "required": true,
+      "max_chars": 110
+    },
+    "TAKE_IT_TODAY": {
+      "type": "text",
+      "required": true,
+      "max_chars": 110
+    }
+  },
+  "data_contract": {
+    "required_top_level": [
+      "template_id",
+      "theme_id",
+      "belief",
+      "title",
+      "subtitle",
+      "assets",
+      "content",
+      "generation",
+      "answer_key",
+      "wisdom"
+    ],
+    "required_content_fields": [
+      "materials",
+      "steps",
+      "craft_variant",
+      "craft_label",
+      "take_it_today"
+    ],
+    "required_asset_fields": [
+      "MAIN_ART"
+    ],
+    "required_generation_fields": [
+      "variant",
+      "geometry"
+    ],
+    "required_wisdom_fields": [
+      "statement"
+    ]
+  },
+  "print_rules": {
+    "paper": "A4",
+    "scale": "100%",
+    "safe_margin_mm": 12,
+    "vector_text_required": true,
+    "cut_line_dasharray": "10 6",
+    "fold_line_dasharray": "4 6"
+  }
+}

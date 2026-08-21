@@ -1,0 +1,13 @@
+[
+  {"id": "EMOTION_WONDER"}, {"id": "EMOTION_JOY"}, {"id": "EMOTION_PRIDE"}, {"id": "EMOTION_CALM"},
+  {"id": "EMOTION_BELONGING"}, {"id": "EMOTION_RELIEF"}, {"id": "EMOTION_FEAR"}, {"id": "EMOTION_FRUSTRATION"},
+  {"id": "EMOTION_PANIC"}, {"id": "EMOTION_CURIOSITY"}, {"id": "EMOTION_HOPE"}, {"id": "EMOTION_LONELINESS"},
+  {"id": "EMOTION_CONFUSION"}, {"id": "EMOTION_ANGER"}, {"id": "EMOTION_SADNESS"}, {"id": "EMOTION_JEALOUSY"},
+  {"id": "EMOTION_EMBARRASSMENT"}, {"id": "EMOTION_ANTICIPATION"}, {"id": "EMOTION_SATISFACTION"},
+  {"id": "EMOTION_AMUSEMENT"}, {"id": "EMOTION_DETERMINATION"}, {"id": "EMOTION_AWE"},
+  {"id": "EMOTION_LONGING", "added_phase": "5A.1"}, {"id": "EMOTION_WORRY", "added_phase": "5A.1"},
+  {"id": "EMOTION_FREEDOM", "added_phase": "5A.1"}, {"id": "EMOTION_CONFIDENCE", "added_phase": "5A.1"},
+  {"id": "EMOTION_ACCEPTANCE", "added_phase": "5A.1"}, {"id": "EMOTION_SELF_DOUBT", "added_phase": "5A.1"},
+  {"id": "EMOTION_GRATITUDE", "added_phase": "5A.1"},
+  {"id": "EMOTION_SECURITY", "definition": "Feeling safe from future threat, distinct from Calm (low arousal).", "added_phase": "5A.5"}
+]

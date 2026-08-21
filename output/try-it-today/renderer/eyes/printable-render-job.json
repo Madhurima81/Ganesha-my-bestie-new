@@ -1,0 +1,14 @@
+[
+  {
+    "template_id": "PT04",
+    "renderer_family": "puzzle-page",
+    "activity_id": "TIT-EYE-002",
+    "theme_id": "GT02",
+    "title": "Real Clue / Distracting Clue",
+    "content_spec": {
+      "scene_prompt": "A child sees a spilled juice box, wet footprints, an open window, and a sleeping cat.",
+      "task": "Circle the clues that truly help explain what happened."
+    },
+    "child_action": "Circle the real clues and cross out distracting details."
+  }
+]

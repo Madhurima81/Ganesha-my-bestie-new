@@ -1,0 +1,282 @@
+[
+  {
+    "label": "natural",
+    "situationId": "SIT137",
+    "forcedTemplateId": "T04",
+    "actualTemplateId": "T04",
+    "title": "Simha and the Question Chain in Tempted to look at friend's paper during a test",
+    "storyText": "Simha gets stuck on a test question and can see a friend's answer nearby. Simha wanted to get the answer right. Simha does not know the answer and would have to look at someone else's paper. Simha stopped, caught on the question the moment had just raised: if \"Cheating is okay if it helps me succeed.\" were true, would this really be as simple as it first seemed. Looking toward their friend answered nothing on its own — Simha does not know the answer and would have to look at someone else's paper was still there either way, and it only made Simha wonder something sharper: would taking the shortcut actually make getting to \"get the answer right\" go away, or just hide it for a moment. So Simha paused and asked the sharper question silently — if it came from their friend and not from Simha, would it actually be Simha's own. The answer came as a feeling more than a fact — one quick glance could solve the problem, which is exactly what makes the choice difficult that did not loosen no matter how Simha looked at it, as if some part of Simha already knew.\n\nThat left one question closer to the heart of it than either question before — not what would work, but what would actually make \"keep an important secret until the right time\" feel finished: the answer itself, or the way Simha got there. This time no new clue arrived from outside, not even a quiet hint of shelter. Simha already knew, quietly and completely, without needing anyone or anything else to say it first. All three questions folded into one another at once, and Simha understood: honest effort builds real confidence. Simha turned back to get the answer right and kept going, steady now instead of torn — not because the hard question had gone away, but because it was finally, fully answered.",
+    "compressedStory": "Simha gets stuck on a test question and can see a friend's answer nearby. Simha wanted to get the answer right, but the old thought said Cheating is okay if it helps me succeed. After a quiet \"Wait,\" Simha chose to look again and understood that Honest effort builds real confidence. Simha chose a different next step, and the problem eased into a warmer, freer ending.",
+    "compressedStoryWordCount": 66,
+    "storyQA": "PASS",
+    "productionQA": "PRODUCTION_READY",
+    "eventLabels": [
+      "OPENING_QUESTION",
+      "CLUE_1",
+      "QUESTION_2",
+      "CLUE_2",
+      "QUESTION_3",
+      "CLUE_3",
+      "REVELATION",
+      "RESOLUTION"
+    ],
+    "eventActions": [
+      {
+        "label": "OPENING_QUESTION",
+        "action": "Simha gets stuck on a test question and can see a friend's answer nearby. Simha wanted to get the answer right. Simha does not know the answer and would have to look at someone else's paper. Simha stopped, caught on the question the moment had just raised: if \"Cheating is okay if it helps me succeed.\" were true, would this really be as simple as it first seemed?"
+      },
+      {
+        "label": "CLUE_1",
+        "action": "Looking toward their friend answered nothing on its own — Simha does not know the answer and would have to look at someone else's paper was still there either way, and it only made Simha wonder something sharper: would taking the shortcut actually make getting to \"get the answer right\" go away, or just hide it for a moment?"
+      },
+      {
+        "label": "QUESTION_2",
+        "action": "So Simha paused and asked the sharper question silently — if it came from their friend and not from Simha, would it actually be Simha's own?"
+      },
+      {
+        "label": "CLUE_2",
+        "action": "The answer came as a feeling more than a fact — one quick glance could solve the problem, which is exactly what makes the choice difficult that did not loosen no matter how Simha looked at it, as if some part of Simha already knew."
+      },
+      {
+        "label": "QUESTION_3",
+        "action": "That left one question closer to the heart of it than either question before — not what would work, but what would actually make \"keep an important secret until the right time\" feel finished: the answer itself, or the way Simha got there."
+      },
+      {
+        "label": "CLUE_3",
+        "action": "This time no new clue arrived from outside, not even a quiet hint of shelter. Simha already knew, quietly and completely, without needing anyone or anything else to say it first."
+      },
+      {
+        "label": "REVELATION",
+        "action": "All three questions folded into one another at once, and Simha understood: honest effort builds real confidence."
+      },
+      {
+        "label": "RESOLUTION",
+        "action": "Simha turned back to get the answer right and kept going, steady now instead of torn — not because the hard question had gone away, but because it was finally, fully answered."
+      }
+    ]
+  },
+  {
+    "label": "stress",
+    "situationId": "SIT005",
+    "forcedTemplateId": "T04",
+    "actualTemplateId": "T04",
+    "title": "Tara and the Question Chain in Can't finish homework",
+    "storyText": "Tara is working on a difficult homework task and cannot get the answer right. Tara wanted to finish the problem successfully. The answer keeps coming out wrong despite trying. Tara stopped, caught on the question the moment had just raised: if \"If I can't do it quickly, I can't do it.\" were true, would this really be as simple as it first seemed. Looking toward the easy way out answered nothing on its own — the answer keeps coming out wrong despite trying was still there either way, and it only made Tara wonder something sharper: would taking the shortcut actually make getting to \"finish the problem successfully\" go away, or just hide it for a moment. So Tara paused and asked the sharper question silently — if it came from somewhere else and not from Tara, would it actually be Tara's own. The answer came as a feeling more than a fact — each failed attempt makes Tara wonder whether they simply can't do it that did not loosen no matter how Tara looked at it, as if some part of Tara already knew. That left one question closer to the heart of it than either question before — not what would work, but what would actually make \"finish a period of practice successfully\" feel finished: the answer itself, or the way Tara got there. This time no new clue arrived from outside, not even a quiet hint of creative Tool. Tara already knew, quietly and completely, without needing anyone or anything else to say it first. All three questions folded into one another at once, and Tara understood: every attempt helps me improve. Tara turned back to finish the problem successfully and kept going, steady now instead of torn — not because the hard question had gone away, but because it was finally, fully answered.",
+    "compressedStory": "Tara is working on a difficult homework task and cannot get the answer right. Tara wanted to finish the problem successfully, but the old thought said If I can't do it quickly, I can't do it. After a quiet \"Wait,\" Tara chose to look again and understood that Every attempt helps me improve. Tara chose a different next step, and the problem eased into a warmer, freer ending.",
+    "compressedStoryWordCount": 68,
+    "storyQA": "PASS",
+    "productionQA": "PRODUCTION_READY",
+    "eventLabels": [
+      "OPENING_QUESTION",
+      "CLUE_1",
+      "QUESTION_2",
+      "CLUE_2",
+      "QUESTION_3",
+      "CLUE_3",
+      "REVELATION",
+      "RESOLUTION"
+    ],
+    "eventActions": [
+      {
+        "label": "OPENING_QUESTION",
+        "action": "Tara is working on a difficult homework task and cannot get the answer right. Tara wanted to finish the problem successfully. The answer keeps coming out wrong despite trying. Tara stopped, caught on the question the moment had just raised: if \"If I can't do it quickly, I can't do it.\" were true, would this really be as simple as it first seemed?"
+      },
+      {
+        "label": "CLUE_1",
+        "action": "Looking toward the easy way out answered nothing on its own — the answer keeps coming out wrong despite trying was still there either way, and it only made Tara wonder something sharper: would taking the shortcut actually make getting to \"finish the problem successfully\" go away, or just hide it for a moment?"
+      },
+      {
+        "label": "QUESTION_2",
+        "action": "So Tara paused and asked the sharper question silently — if it came from somewhere else and not from Tara, would it actually be Tara's own?"
+      },
+      {
+        "label": "CLUE_2",
+        "action": "The answer came as a feeling more than a fact — each failed attempt makes Tara wonder whether they simply can't do it that did not loosen no matter how Tara looked at it, as if some part of Tara already knew."
+      },
+      {
+        "label": "QUESTION_3",
+        "action": "That left one question closer to the heart of it than either question before — not what would work, but what would actually make \"finish a period of practice successfully\" feel finished: the answer itself, or the way Tara got there."
+      },
+      {
+        "label": "CLUE_3",
+        "action": "This time no new clue arrived from outside, not even a quiet hint of creative Tool. Tara already knew, quietly and completely, without needing anyone or anything else to say it first."
+      },
+      {
+        "label": "REVELATION",
+        "action": "All three questions folded into one another at once, and Tara understood: every attempt helps me improve."
+      },
+      {
+        "label": "RESOLUTION",
+        "action": "Tara turned back to finish the problem successfully and kept going, steady now instead of torn — not because the hard question had gone away, but because it was finally, fully answered."
+      }
+    ]
+  },
+  {
+    "label": "stress",
+    "situationId": "SIT001",
+    "forcedTemplateId": "T04",
+    "actualTemplateId": "T04",
+    "title": "Kavi and the Question Chain in Toy not shared or taken away",
+    "storyText": "Kavi is playing with a favourite toy when another child picks it up and walks away with it. Kavi wanted to get the toy back. The other child is already playing with it and doesn't realize Kavi was using it. Kavi stopped, caught on the question the moment had just raised: if \"I have to react when things feel unfair.\" were true, would this really be as simple as it first seemed. Looking toward the easy way out answered nothing on its own — the other child is already playing with it and doesn't realize Kavi was using it was still there either way, and it only made Kavi wonder something sharper: would taking the shortcut actually make getting to \"get the toy back\" go away, or just hide it for a moment. So Kavi paused and asked the sharper question silently — if it came from somewhere else and not from Kavi, would it actually be Kavi's own. The answer came as a feeling more than a fact — it feels unfair, and Kavi wants to grab it back immediately that did not loosen no matter how Kavi looked at it, as if some part of Kavi already knew.\n\nThat left one question closer to the heart of it than either question before — not what would work, but what would actually make \"overcome a personal fear\" feel finished: the answer itself, or the way Kavi got there. This time no new clue arrived from outside, not even a quiet hint of shelter. Kavi already knew, quietly and completely, without needing anyone or anything else to say it first. All three questions folded into one another at once, and Kavi understood: I can pause and choose my response. Kavi turned back to get the toy back and kept going, steady now instead of torn — not because the hard question had gone away, but because it was finally, fully answered.",
+    "compressedStory": "The other child is already playing with it and doesn't realize Kavi was using it, and Kavi believed I have to react when things feel unfair. Kavi paused, chose to look again, and understood that I can pause and choose my response. Kavi chose a different response, and the ending felt warmer and freer than before.",
+    "compressedStoryWordCount": 56,
+    "storyQA": "PASS",
+    "productionQA": "PRODUCTION_READY",
+    "eventLabels": [
+      "OPENING_QUESTION",
+      "CLUE_1",
+      "QUESTION_2",
+      "CLUE_2",
+      "QUESTION_3",
+      "CLUE_3",
+      "REVELATION",
+      "RESOLUTION"
+    ],
+    "eventActions": [
+      {
+        "label": "OPENING_QUESTION",
+        "action": "Kavi is playing with a favourite toy when another child picks it up and walks away with it. Kavi wanted to get the toy back. The other child is already playing with it and doesn't realize Kavi was using it. Kavi stopped, caught on the question the moment had just raised: if \"I have to react when things feel unfair.\" were true, would this really be as simple as it first seemed?"
+      },
+      {
+        "label": "CLUE_1",
+        "action": "Looking toward the easy way out answered nothing on its own — the other child is already playing with it and doesn't realize Kavi was using it was still there either way, and it only made Kavi wonder something sharper: would taking the shortcut actually make getting to \"get the toy back\" go away, or just hide it for a moment?"
+      },
+      {
+        "label": "QUESTION_2",
+        "action": "So Kavi paused and asked the sharper question silently — if it came from somewhere else and not from Kavi, would it actually be Kavi's own?"
+      },
+      {
+        "label": "CLUE_2",
+        "action": "The answer came as a feeling more than a fact — it feels unfair, and Kavi wants to grab it back immediately that did not loosen no matter how Kavi looked at it, as if some part of Kavi already knew."
+      },
+      {
+        "label": "QUESTION_3",
+        "action": "That left one question closer to the heart of it than either question before — not what would work, but what would actually make \"overcome a personal fear\" feel finished: the answer itself, or the way Kavi got there."
+      },
+      {
+        "label": "CLUE_3",
+        "action": "This time no new clue arrived from outside, not even a quiet hint of shelter. Kavi already knew, quietly and completely, without needing anyone or anything else to say it first."
+      },
+      {
+        "label": "REVELATION",
+        "action": "All three questions folded into one another at once, and Kavi understood: I can pause and choose my response."
+      },
+      {
+        "label": "RESOLUTION",
+        "action": "Kavi turned back to get the toy back and kept going, steady now instead of torn — not because the hard question had gone away, but because it was finally, fully answered."
+      }
+    ]
+  },
+  {
+    "label": "stress",
+    "situationId": "SIT046",
+    "forcedTemplateId": "T04",
+    "actualTemplateId": "T04",
+    "title": "Bodhi and the Question Chain in Harshly reprimanded by a parent",
+    "storyText": "Bodhi makes a mistake and a parent reacts angrily. Bodhi wanted to feel loved and safe again. The parent's anger makes Bodhi feel ashamed. Bodhi stopped, caught on the question the moment had just raised: if \"When I make mistakes, I'm not loved.\" were true, would this really be as simple as it first seemed. Looking toward their parent answered nothing on its own — the parent's anger makes Bodhi feel ashamed was still there either way, and it only made Bodhi wonder something sharper: would taking the shortcut actually make getting to \"feel loved and safe again\" go away, or just hide it for a moment. So Bodhi paused and asked the sharper question silently — if it came from their parent and not from Bodhi, would it actually be Bodhi's own. The answer came as a feeling more than a fact — Bodhi begins to confuse being corrected with being unloved that did not loosen no matter how Bodhi looked at it, as if some part of Bodhi already knew. That left one question closer to the heart of it than either question before — not what would work, but what would actually make \"bring peace between two characters\" feel finished: the answer itself, or the way Bodhi got there. This time no new clue arrived from outside, not even a quiet hint of connection. Bodhi already knew, quietly and completely, without needing anyone or anything else to say it first. All three questions folded into one another at once, and Bodhi understood: I can make mistakes and still be deeply loved. Bodhi turned back to feel loved and safe again and kept going, steady now instead of torn — not because the hard question had gone away, but because it was finally, fully answered.",
+    "compressedStory": "Bodhi makes a mistake and a parent reacts angrily. Bodhi wanted to feel loved and safe again, but the old thought said When I make mistakes, I'm not loved. After a quiet \"Wait,\" Bodhi chose to look again and understood that I can make mistakes and still be deeply loved. Bodhi chose a different next step, and the problem eased into a warmer, freer ending.",
+    "compressedStoryWordCount": 65,
+    "storyQA": "PASS",
+    "productionQA": "PRODUCTION_READY",
+    "eventLabels": [
+      "OPENING_QUESTION",
+      "CLUE_1",
+      "QUESTION_2",
+      "CLUE_2",
+      "QUESTION_3",
+      "CLUE_3",
+      "REVELATION",
+      "RESOLUTION"
+    ],
+    "eventActions": [
+      {
+        "label": "OPENING_QUESTION",
+        "action": "Bodhi makes a mistake and a parent reacts angrily. Bodhi wanted to feel loved and safe again. The parent's anger makes Bodhi feel ashamed. Bodhi stopped, caught on the question the moment had just raised: if \"When I make mistakes, I'm not loved.\" were true, would this really be as simple as it first seemed?"
+      },
+      {
+        "label": "CLUE_1",
+        "action": "Looking toward their parent answered nothing on its own — the parent's anger makes Bodhi feel ashamed was still there either way, and it only made Bodhi wonder something sharper: would taking the shortcut actually make getting to \"feel loved and safe again\" go away, or just hide it for a moment?"
+      },
+      {
+        "label": "QUESTION_2",
+        "action": "So Bodhi paused and asked the sharper question silently — if it came from their parent and not from Bodhi, would it actually be Bodhi's own?"
+      },
+      {
+        "label": "CLUE_2",
+        "action": "The answer came as a feeling more than a fact — Bodhi begins to confuse being corrected with being unloved that did not loosen no matter how Bodhi looked at it, as if some part of Bodhi already knew."
+      },
+      {
+        "label": "QUESTION_3",
+        "action": "That left one question closer to the heart of it than either question before — not what would work, but what would actually make \"bring peace between two characters\" feel finished: the answer itself, or the way Bodhi got there."
+      },
+      {
+        "label": "CLUE_3",
+        "action": "This time no new clue arrived from outside, not even a quiet hint of connection. Bodhi already knew, quietly and completely, without needing anyone or anything else to say it first."
+      },
+      {
+        "label": "REVELATION",
+        "action": "All three questions folded into one another at once, and Bodhi understood: I can make mistakes and still be deeply loved."
+      },
+      {
+        "label": "RESOLUTION",
+        "action": "Bodhi turned back to feel loved and safe again and kept going, steady now instead of torn — not because the hard question had gone away, but because it was finally, fully answered."
+      }
+    ]
+  },
+  {
+    "label": "stress",
+    "situationId": "SIT028",
+    "forcedTemplateId": "T04",
+    "actualTemplateId": "T04",
+    "title": "Mitra and the Question Chain in Unfamiliar adult",
+    "storyText": "Mitra is dropped off somewhere unfamiliar and a grown-up Mitra has never met greets them and takes charge of the visit. Mitra wanted to know whether this new adult can be trusted and feel safe. Mitra doesn't know this person yet, and the usual trusted adult isn't right there. Mitra stopped, caught on the question the moment had just raised: if \"New people won't understand or help me.\" were true, would this really be as simple as it first seemed. Looking toward their adult answered nothing on its own — Mitra doesn't know this person yet, and the usual trusted adult isn't right there was still there either way, and it only made Mitra wonder something sharper: would taking the shortcut actually make getting to \"know whether this new adult can be trusted and feel safe\" go away, or just hide it for a moment. So Mitra paused and asked the sharper question silently — if it came from their adult and not from Mitra, would it actually be Mitra's own.\n\nThe answer came as a feeling more than a fact — Mitra wants to be polite but also wants to stay cautious until they know more that did not loosen no matter how Mitra looked at it, as if some part of Mitra already knew. That left one question closer to the heart of it than either question before — not what would work, but what would actually make \"keep an important secret until the right time\" feel finished: the answer itself, or the way Mitra got there. This time no new clue arrived from outside, not even a quiet hint of shelter. Mitra already knew, quietly and completely, without needing anyone or anything else to say it first.\n\nAll three questions folded into one another at once, and Mitra understood: trust grows one step at a time.\n\nMitra turned back to know whether this new adult can be trusted and feel safe and kept going, steady now instead of torn — not because the hard question had gone away, but because it was finally, fully answered.",
+    "compressedStory": "Mitra doesn't know this person yet, and the usual trusted adult isn't right there, and Mitra believed New people won't understand or help me. Mitra paused, chose to look again, and understood that Trust grows one step at a time. Mitra chose a different response, and the ending felt warmer and freer than before.",
+    "compressedStoryWordCount": 54,
+    "storyQA": "PASS",
+    "productionQA": "PRODUCTION_READY",
+    "eventLabels": [
+      "OPENING_QUESTION",
+      "CLUE_1",
+      "QUESTION_2",
+      "CLUE_2",
+      "QUESTION_3",
+      "CLUE_3",
+      "REVELATION",
+      "RESOLUTION"
+    ],
+    "eventActions": [
+      {
+        "label": "OPENING_QUESTION",
+        "action": "Mitra is dropped off somewhere unfamiliar and a grown-up Mitra has never met greets them and takes charge of the visit. Mitra wanted to know whether this new adult can be trusted and feel safe. Mitra doesn't know this person yet, and the usual trusted adult isn't right there. Mitra stopped, caught on the question the moment had just raised: if \"New people won't understand or help me.\" were true, would this really be as simple as it first seemed?"
+      },
+      {
+        "label": "CLUE_1",
+        "action": "Looking toward their adult answered nothing on its own — Mitra doesn't know this person yet, and the usual trusted adult isn't right there was still there either way, and it only made Mitra wonder something sharper: would taking the shortcut actually make getting to \"know whether this new adult can be trusted and feel safe\" go away, or just hide it for a moment?"
+      },
+      {
+        "label": "QUESTION_2",
+        "action": "So Mitra paused and asked the sharper question silently — if it came from their adult and not from Mitra, would it actually be Mitra's own?"
+      },
+      {
+        "label": "CLUE_2",
+        "action": "The answer came as a feeling more than a fact — Mitra wants to be polite but also wants to stay cautious until they know more that did not loosen no matter how Mitra looked at it, as if some part of Mitra already knew."
+      },
+      {
+        "label": "QUESTION_3",
+        "action": "That left one question closer to the heart of it than either question before — not what would work, but what would actually make \"keep an important secret until the right time\" feel finished: the answer itself, or the way Mitra got there."
+      },
+      {
+        "label": "CLUE_3",
+        "action": "This time no new clue arrived from outside, not even a quiet hint of shelter. Mitra already knew, quietly and completely, without needing anyone or anything else to say it first."
+      },
+      {
+        "label": "REVELATION",
+        "action": "All three questions folded into one another at once, and Mitra understood: trust grows one step at a time."
+      },
+      {
+        "label": "RESOLUTION",
+        "action": "Mitra turned back to know whether this new adult can be trusted and feel safe and kept going, steady now instead of torn — not because the hard question had gone away, but because it was finally, fully answered."
+      }
+    ]
+  }
+]

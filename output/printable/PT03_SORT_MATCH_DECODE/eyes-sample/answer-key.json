@@ -1,0 +1,47 @@
+{
+  "template_id": "PT03_SORT_MATCH_DECODE",
+  "theme_id": "GT02",
+  "title": "True Clue Detective Sort",
+  "left_category": {
+    "title": "TRUE CLUE",
+    "items": [
+      {
+        "id": "EYE-01",
+        "label": "Wet footprints lead from the juice box."
+      },
+      {
+        "id": "EYE-03",
+        "label": "The open window is beside the spill."
+      },
+      {
+        "id": "EYE-05",
+        "label": "A straw lies next to the puddle."
+      },
+      {
+        "id": "EYE-07",
+        "label": "The napkin is soaked where the spill began."
+      }
+    ]
+  },
+  "right_category": {
+    "title": "DISTRACTING DETAIL",
+    "items": [
+      {
+        "id": "EYE-02",
+        "label": "The curtain is bright blue."
+      },
+      {
+        "id": "EYE-04",
+        "label": "The cat is sleeping in the corner."
+      },
+      {
+        "id": "EYE-06",
+        "label": "Someone drew stars on the wall."
+      },
+      {
+        "id": "EYE-08",
+        "label": "A toy dinosaur is on the shelf."
+      }
+    ]
+  }
+}

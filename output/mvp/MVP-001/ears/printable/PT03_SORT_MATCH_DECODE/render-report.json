@@ -1,0 +1,35 @@
+{
+  "template_id": "PT03_SORT_MATCH_DECODE",
+  "input_json": "output\\mvp\\MVP-001\\ears\\printable-input.json",
+  "generated_at": "2026-08-12T07:03:37.429Z",
+  "final_result": "APPROVED",
+  "validation": {
+    "template_exists": true,
+    "manifest_exists": true,
+    "required_fields_exist": true,
+    "no_duplicate_item_ids": true,
+    "asset_ids_exist": true,
+    "text_fits": true,
+    "unresolved_slots": true,
+    "broken_asset_references": true,
+    "a4_dimensions_correct": true,
+    "safe_margins_preserved": true,
+    "vector_text_required": true,
+    "child_pdf_reveals_answers": false,
+    "answer_key_generated": true,
+    "render_contract": "vector_svg_to_pdf"
+  },
+  "errors": [],
+  "files": {
+    "source_svg": "output\\mvp\\MVP-001\\ears\\printable\\PT03_SORT_MATCH_DECODE\\source.svg",
+    "printable_pdf": "output\\mvp\\MVP-001\\ears\\printable\\PT03_SORT_MATCH_DECODE\\printable.pdf",
+    "preview_png": "output\\mvp\\MVP-001\\ears\\printable\\PT03_SORT_MATCH_DECODE\\preview.png",
+    "answer_key_json": "output\\mvp\\MVP-001\\ears\\printable\\PT03_SORT_MATCH_DECODE\\answer-key.json"
+  },
+  "data_summary": {
+    "theme_id": "SYM-GAN-008",
+    "belief": "I keep the words that help me grow.",
+    "mode": "sorting",
+    "item_count": 8
+  }
+}

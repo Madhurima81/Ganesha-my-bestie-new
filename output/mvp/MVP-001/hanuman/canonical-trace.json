@@ -1,0 +1,36 @@
+{
+  "wisdom": {
+    "wisdom_id": "SYM-HAN-002",
+    "tradition": "Hanuman",
+    "symbol": "Sanjeevani Mountain",
+    "belief": "Keep trying when helping someone matters.",
+    "authentic_anchor": "Devotion and determination in service of saving life.",
+    "source_document": "weekly story plan - posting on social media.docx",
+    "source_reference": "Research Symbol Library -> Hanuman Symbols -> SYM-HAN-002: Sanjeevani Mountain",
+    "source_verified": true,
+    "content_status": "NEEDS_SOURCE_CONTENT",
+    "source_gap": "The supplied bundle verifies the symbol id, but the child-facing supporting passage for the Sanjeevani teaching still needs to be extracted from research before story output is treated as source-complete."
+  },
+  "practice": {
+    "practice_id": "PRAC-HAN-SANJEEVANI-001",
+    "wisdom_id": "SYM-HAN-002",
+    "practice_name": "Keep Trying to Help",
+    "practice_belief": "Keep going when helping someone matters.",
+    "mechanic": "To be confirmed after source extraction.",
+    "source_document": "weekly story plan - posting on social media.docx",
+    "source_reference": "SYM-HAN-002 symbol listing only",
+    "source_verified": true,
+    "content_status": "NEEDS_SOURCE_CONTENT"
+  },
+  "story": {
+    "experience_id": "EXP-HAN-SANJEEVANI-STORY-001",
+    "wisdom_id": "SYM-HAN-002",
+    "practice_id": "PRAC-HAN-SANJEEVANI-001",
+    "experience_type": "story",
+    "title": "Hanuman / Sanjeevani child story placeholder",
+    "source_document": "weekly story plan - posting on social media.docx",
+    "source_reference": "SYM-HAN-002 symbol listing only",
+    "source_verified": true,
+    "content_status": "NEEDS_SOURCE_CONTENT"
+  }
+}

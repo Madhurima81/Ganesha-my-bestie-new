@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "1.0",
+  "status": "PRODUCTION_READY",
+  "storyId": "STORY_001",
+  "sourceReferences": {
+    "storyBlueprintReference": { "id": "STORY_001" },
+    "storyPlanReference": { "id": "STORYPLAN_001" },
+    "finalStoryReference": { "id": "FINALSTORY_001" },
+    "illustrationPlanReference": { "id": "ILLPLAN_001" },
+    "illustrationBibleReference": { "id": "BIBLE_001" },
+    "promptPackReference": { "id": "PROMPTPACK_001" },
+    "layoutReference": { "id": "LAYOUT_001" }
+  },
+  "story": { "title": "Anu and the Glowing Valley", "pageCount": 8 },
+  "layout": { "format": "8.5in square", "pageCount": 8, "exportProfiles": ["PRINT", "DIGITAL"] },
+  "illustrations": [
+    { "assetId": "ASSET_PAGE_1", "page": 1, "assetLocation": "s3://prana-assets/story_001/page_1.png", "format": "png", "width": 2550, "height": 2550 }
+  ],
+  "metadata": { "title": "Anu and the Glowing Valley", "language": "en", "targetAge": "5-8", "version": "1.0" },
+  "productionValidation": { "status": "PASS", "blockingFailures": 0, "warnings": 0, "checksPassed": 14 }
+}

@@ -1,0 +1,167 @@
+[
+  {
+    "id": "SETTING_FOREST",
+    "name": "Forest",
+    "soft_suggested": {
+      "linked_world_type": "WT_NATURE"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "source": "derived from real mission bestStoryWorlds generic tags"
+    }
+  },
+  {
+    "id": "SETTING_VILLAGE",
+    "name": "Village",
+    "soft_suggested": {
+      "linked_world_type": "WT_COMMUNITY"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "source": "derived from real mission bestStoryWorlds generic tags"
+    }
+  },
+  {
+    "id": "SETTING_RIVER",
+    "name": "River",
+    "soft_suggested": {
+      "linked_world_type": "WT_WATER"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "source": "derived from real mission bestStoryWorlds generic tags"
+    }
+  },
+  {
+    "id": "SETTING_MEADOW",
+    "name": "Meadow",
+    "soft_suggested": {
+      "linked_world_type": "WT_NATURE"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "source": "derived from real mission bestStoryWorlds generic tags"
+    }
+  },
+  {
+    "id": "SETTING_MOUNTAIN",
+    "name": "Mountain",
+    "soft_suggested": {
+      "linked_world_type": "WT_WILDERNESS"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "source": "derived from real mission bestStoryWorlds generic tags"
+    }
+  },
+  {
+    "id": "SETTING_SCHOOL",
+    "name": "School",
+    "soft_suggested": {
+      "linked_world_type": "WT_LEARNING"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "source": "derived from real mission bestStoryWorlds generic tags"
+    }
+  },
+  {
+    "id": "SETTING_CAVE",
+    "name": "Cave",
+    "soft_suggested": {
+      "linked_world_type": "WT_UNDERGROUND"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "source": "derived from real mission bestStoryWorlds generic tags"
+    }
+  },
+  {
+    "id": "SETTING_GARDEN",
+    "name": "Garden",
+    "soft_suggested": {
+      "linked_world_type": "WT_NATURE"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "source": "derived from real mission bestStoryWorlds generic tags"
+    }
+  },
+  {
+    "id": "SETTING_HOME",
+    "name": "Home",
+    "soft_suggested": {
+      "linked_world_type": "WT_COMMUNITY"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "source": "derived from real mission bestStoryWorlds generic tags"
+    }
+  },
+  {
+    "id": "SETTING_STORY_HOUSE",
+    "name": "Story House",
+    "soft_suggested": {
+      "linked_world_type": "WT_LEARNING"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "source": "derived from real mission bestStoryWorlds generic tags"
+    }
+  },
+  {
+    "id": "SETTING_POND",
+    "name": "Pond",
+    "soft_suggested": {
+      "linked_world_type": "WT_WATER"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "source": "derived from real mission bestStoryWorlds generic tags"
+    }
+  },
+  {
+    "id": "SETTING_BANYAN_TREE",
+    "name": "Banyan Tree",
+    "soft_suggested": {
+      "linked_world_type": "WT_ANCIENT"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "source": "derived from real mission bestStoryWorlds generic tags"
+    }
+  },
+  {
+    "id": "SETTING_TEMPLE",
+    "name": "Temple",
+    "soft_suggested": {
+      "linked_world_type": "WT_ANCIENT"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "source": "derived from real mission bestStoryWorlds generic tags"
+    }
+  },
+  {
+    "id": "SETTING_FARM",
+    "name": "Farm",
+    "soft_suggested": {
+      "linked_world_type": "WT_COMMUNITY"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "source": "derived from real mission bestStoryWorlds generic tags"
+    }
+  },
+  {
+    "id": "SETTING_ISLAND",
+    "name": "Island",
+    "soft_suggested": {
+      "linked_world_type": "WT_WATER"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "source": "derived from real mission bestStoryWorlds generic tags"
+    }
+  }
+]

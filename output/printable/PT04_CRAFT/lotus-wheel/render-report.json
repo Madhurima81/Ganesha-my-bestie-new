@@ -1,0 +1,31 @@
+{
+  "template_id": "PT04_CRAFT",
+  "input_json": "public\\prana-story-generator\\printable-poc\\data\\PT04_CRAFT\\PT04_CRAFT_LOTUS_WHEEL.sample.json",
+  "generated_at": "2026-08-11T15:46:10.896Z",
+  "final_result": "APPROVED",
+  "validation": {
+    "template_exists": true,
+    "manifest_exists": true,
+    "canonical_contract_valid": true,
+    "required_fields_exist": true,
+    "asset_ids_exist": true,
+    "geometry_inside_safe_margins": true,
+    "unresolved_slots": true,
+    "vector_text_required": true,
+    "cut_lines_present": true,
+    "fold_lines_match_contract": true,
+    "a4_dimensions_correct": true,
+    "render_contract": "vector_svg_to_pdf"
+  },
+  "errors": [],
+  "files": {
+    "source_svg": "output\\printable\\PT04_CRAFT\\lotus-wheel\\source.svg",
+    "printable_pdf": "output\\printable\\PT04_CRAFT\\lotus-wheel\\printable.pdf",
+    "preview_png": "output\\printable\\PT04_CRAFT\\lotus-wheel\\preview.png"
+  },
+  "data_summary": {
+    "theme_id": "GT03",
+    "belief": "I can grow something grateful in my heart each day.",
+    "variant": "wheel"
+  }
+}

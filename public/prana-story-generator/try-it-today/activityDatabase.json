@@ -1,0 +1,377 @@
+{
+  "themes": [
+    {
+      "id": "GT01",
+      "symbol": "Ears",
+      "meaning": "Listen Like a Winnowing Basket - sift helpful words from noisy distractions.",
+      "belief": "I keep the words that help me grow."
+    },
+    {
+      "id": "GT02",
+      "symbol": "Eyes",
+      "meaning": "See Clearly Like Ganesha's Eyes - notice what is true before you decide.",
+      "belief": "I look carefully before I decide what is true."
+    }
+  ],
+  "activities": [
+    {
+      "activity_id": "TIT-EAR-001",
+      "theme_id": "GT01",
+      "status": "approved",
+      "source": "activity_database",
+      "activity": {
+        "title": "Winnowing Breath",
+        "family": "calm",
+        "primary_skill": "attention",
+        "hook": "Can you breathe in the words that help and let the noisy ones float away?",
+        "duration_minutes": 3,
+        "players": "solo",
+        "materials": [],
+        "steps": [
+          "Sit comfortably and think of one helpful sentence someone said to you.",
+          "Breathe in as you whisper that helpful sentence to yourself.",
+          "Breathe out and imagine noisy unhelpful words blowing away like husks in the wind."
+        ],
+        "reflection": "Which words felt worth keeping today?",
+        "affirmation": "I keep the words that help me grow.",
+        "real_life_transfer": "Later today, pause for one breath before deciding which words to keep.",
+        "core_mechanic": "mindful filtering",
+        "emotional_payoff": "inner clarity"
+      },
+      "printable": {
+        "required": false,
+        "template_id": null,
+        "content_spec": null,
+        "title": null,
+        "child_action": null
+      }
+    },
+    {
+      "activity_id": "TIT-EAR-002",
+      "theme_id": "GT01",
+      "status": "approved",
+      "source": "activity_database",
+      "activity": {
+        "title": "Keep or Let Go Cards",
+        "family": "play",
+        "primary_skill": "discernment",
+        "hook": "Can you beat the noise and sort the words that help you grow?",
+        "duration_minutes": 6,
+        "players": "solo_or_pair",
+        "materials": [
+          "printed cards or scrap paper"
+        ],
+        "steps": [
+          "Place two labels in front of you: KEEP and LET GO.",
+          "Read or hear one word card at a time.",
+          "Put helpful growth words in KEEP and noisy put-down words in LET GO.",
+          "Pick one KEEP card to say out loud at the end."
+        ],
+        "reflection": "Which card would you like to remember the next time someone speaks to you?",
+        "affirmation": "I keep the words that help me grow.",
+        "real_life_transfer": "The next time you hear mixed messages, look for one sentence that truly helps you grow.",
+        "core_mechanic": "fast sorting game",
+        "emotional_payoff": "lighthearted mastery"
+      },
+      "printable": {
+        "required": true,
+        "template_id": "PT02",
+        "title": "Helpful Words / Noise",
+        "content_spec": {
+          "cards": [
+            "Try another way.",
+            "You can't do it.",
+            "I don't understand yet.",
+            "That's stupid.",
+            "Keep practicing.",
+            "Mistakes help us learn."
+          ],
+          "keep_label": "KEEP",
+          "let_go_label": "LET GO"
+        },
+        "child_action": "Sort each card into KEEP or LET GO."
+      }
+    },
+    {
+      "activity_id": "TIT-EAR-003",
+      "theme_id": "GT01",
+      "status": "approved",
+      "source": "activity_database",
+      "activity": {
+        "title": "Helpful or Noisy?",
+        "family": "notice",
+        "primary_skill": "discernment",
+        "hook": "Can you catch the words that help you grow and spot the words that are just noise?",
+        "duration_minutes": 4,
+        "players": "solo",
+        "materials": [],
+        "steps": [
+          "Listen to three sentences someone says to you today, or remember three you heard recently.",
+          "After each one, ask: 'Does this help me grow, or is it just noise?'",
+          "Choose one sentence to keep and one sentence to let go.",
+          "Say your keep sentence once more so it stays louder in your mind than the noisy one."
+        ],
+        "reflection": "Which words were truly helpful, and which ones were only noise?",
+        "affirmation": "I keep the words that help me grow.",
+        "real_life_transfer": "Later today, when you hear mixed messages, quietly sort them into keep or let go.",
+        "core_mechanic": "mental sorting of heard words",
+        "emotional_payoff": "clear inner filtering"
+      },
+      "printable": {
+        "required": false,
+        "template_id": null,
+        "content_spec": null,
+        "title": null,
+        "child_action": null
+      }
+    },
+    {
+      "activity_id": "TIT-EAR-004",
+      "theme_id": "GT01",
+      "status": "approved",
+      "source": "activity_database",
+      "activity": {
+        "title": "Keep the Helpful Part",
+        "family": "talk",
+        "primary_skill": "discernment",
+        "hook": "Can you listen for the one helpful part in what someone says, even if the rest feels noisy?",
+        "duration_minutes": 7,
+        "players": "pair_or_family",
+        "materials": [
+          "a pebble or small soft object"
+        ],
+        "steps": [
+          "One person shares a short opinion, reminder, or piece of advice while holding the pebble.",
+          "The listener waits quietly and then says one part that felt helpful.",
+          "If there was a noisy or unkind part, the listener names it as something to let go.",
+          "Switch turns and try again with a new sentence."
+        ],
+        "reflection": "What changed when you listened for the helpful part instead of holding onto the noisy part?",
+        "affirmation": "I keep the words that help me grow.",
+        "real_life_transfer": "At home today, try finding one useful sentence to keep, even if you do not keep the rest.",
+        "core_mechanic": "conversation filtering",
+        "emotional_payoff": "steady discernment"
+      },
+      "printable": {
+        "required": false,
+        "template_id": null,
+        "content_spec": null,
+        "title": null,
+        "child_action": null
+      }
+    },
+    {
+      "activity_id": "TIT-EAR-005",
+      "theme_id": "GT01",
+      "status": "approved",
+      "source": "activity_database",
+      "activity": {
+        "title": "Noise Catcher Crown",
+        "family": "make",
+        "primary_skill": "creative expression",
+        "hook": "Can you build something that catches helpful words and lets noisy words fall away?",
+        "duration_minutes": 8,
+        "players": "solo_or_pair",
+        "materials": [
+          "paper strip",
+          "pencil or crayons",
+          "tape or stapler"
+        ],
+        "steps": [
+          "Make a paper crown or headband strip.",
+          "On one side, write or draw three helpful words or sentences you want to keep.",
+          "On the other side, add two noisy messages you want to let fall away.",
+          "Put on the crown and point to the words you will keep before taking it off."
+        ],
+        "reflection": "Which helpful words do you want your mind to hear louder than the noise?",
+        "affirmation": "I keep the words that help me grow.",
+        "real_life_transfer": "Later today, remember one crown word when noisy words show up.",
+        "core_mechanic": "build-and-choose symbol object",
+        "emotional_payoff": "ownership of what to keep"
+      },
+      "printable": {
+        "required": false,
+        "template_id": null,
+        "content_spec": null,
+        "title": null,
+        "child_action": null
+      }
+    },
+    {
+      "activity_id": "TIT-EYE-001",
+      "theme_id": "GT02",
+      "status": "approved",
+      "source": "activity_database",
+      "activity": {
+        "title": "Clue Pause",
+        "family": "calm",
+        "primary_skill": "attention",
+        "hook": "Can you pause your eyes long enough to notice one true clue before you guess?",
+        "duration_minutes": 3,
+        "players": "solo",
+        "materials": [],
+        "steps": [
+          "Look at one object in the room for ten quiet seconds.",
+          "Name three details you can actually see.",
+          "Only then say what you think the object tells you."
+        ],
+        "reflection": "What did you notice after you slowed down your looking?",
+        "affirmation": "I look carefully before I decide what is true.",
+        "real_life_transfer": "Next time you feel ready to guess quickly, pause and look for three clues first.",
+        "core_mechanic": "slow looking",
+        "emotional_payoff": "clearer seeing"
+      },
+      "printable": {
+        "required": false,
+        "template_id": null,
+        "content_spec": null,
+        "title": null,
+        "child_action": null
+      }
+    },
+    {
+      "activity_id": "TIT-EYE-002",
+      "theme_id": "GT02",
+      "status": "approved",
+      "source": "activity_database",
+      "activity": {
+        "title": "Spot the Real Clue",
+        "family": "play",
+        "primary_skill": "discernment",
+        "hook": "Can your eyes find the clue that is true, not just the clue that is loud?",
+        "duration_minutes": 6,
+        "players": "solo_or_pair",
+        "materials": [
+          "printed clue page"
+        ],
+        "steps": [
+          "Look at the picture and find all the details you can.",
+          "Circle the details that are real clues.",
+          "Cross out the details that are distracting but do not prove anything.",
+          "Explain which clue helped you decide."
+        ],
+        "reflection": "Which detail looked important at first but was not the best clue?",
+        "affirmation": "I look carefully before I decide what is true.",
+        "real_life_transfer": "When something seems obvious later today, ask yourself what you actually saw.",
+        "core_mechanic": "visual clue sorting",
+        "emotional_payoff": "detective confidence"
+      },
+      "printable": {
+        "required": true,
+        "template_id": "PT04",
+        "title": "Real Clue / Distracting Clue",
+        "content_spec": {
+          "scene_prompt": "A child sees a spilled juice box, wet footprints, an open window, and a sleeping cat.",
+          "task": "Circle the clues that truly help explain what happened."
+        },
+        "child_action": "Circle the real clues and cross out distracting details."
+      }
+    },
+    {
+      "activity_id": "TIT-EYE-003",
+      "theme_id": "GT02",
+      "status": "approved",
+      "source": "activity_database",
+      "activity": {
+        "title": "True Clue Hunt",
+        "family": "notice",
+        "primary_skill": "discernment",
+        "hook": "Can your eyes find which detail is truly important, not just the one that grabs attention first?",
+        "duration_minutes": 4,
+        "players": "solo",
+        "materials": [],
+        "steps": [
+          "Look at a room, shelf, table, or outdoor spot with lots to notice.",
+          "Name three details that stand out first.",
+          "Then ask which one actually helps you understand what is happening there.",
+          "Choose the truest clue and explain why the other details were less important."
+        ],
+        "reflection": "Which clue turned out to be truly important, and which ones were only eye-catching?",
+        "affirmation": "I look carefully before I decide what is true.",
+        "real_life_transfer": "Later today, ask yourself which clue is actually true and important before you decide.",
+        "core_mechanic": "important-vs-distracting clue selection",
+        "emotional_payoff": "confident clear-seeing"
+      },
+      "printable": {
+        "required": false,
+        "template_id": null,
+        "content_spec": null,
+        "title": null,
+        "child_action": null
+      }
+    },
+    {
+      "activity_id": "TIT-EYE-004",
+      "theme_id": "GT02",
+      "status": "approved",
+      "source": "activity_database",
+      "activity": {
+        "title": "See Before You Say",
+        "family": "talk",
+        "primary_skill": "communication",
+        "hook": "Can you separate what you saw from what you guessed before you choose what to believe?",
+        "duration_minutes": 7,
+        "players": "pair_or_family",
+        "materials": [
+          "a household object"
+        ],
+        "steps": [
+          "One person holds up an object or photo.",
+          "The first speaker says only what they can actually see.",
+          "The second speaker names one guess and one real visible clue.",
+          "Together, decide whether the guess matches the visible evidence or needs to change.",
+          "Choose the version that fits what is actually true."
+        ],
+        "reflection": "How did the visible clues change what you chose to believe?",
+        "affirmation": "I look carefully before I decide what is true.",
+        "real_life_transfer": "When you react fast later today, pause and ask what you really saw before choosing your answer.",
+        "core_mechanic": "evidence-vs-guess conversation",
+        "emotional_payoff": "truth-based confidence"
+      },
+      "printable": {
+        "required": false,
+        "template_id": null,
+        "content_spec": null,
+        "title": null,
+        "child_action": null
+      }
+    },
+    {
+      "activity_id": "TIT-EYE-005",
+      "theme_id": "GT02",
+      "status": "approved",
+      "source": "activity_database",
+      "activity": {
+        "title": "Choose the Truest Picture",
+        "family": "make",
+        "primary_skill": "creative expression",
+        "hook": "Can you make two quick pictures and choose the one that shows what is really true?",
+        "duration_minutes": 8,
+        "players": "solo_or_pair",
+        "materials": [
+          "paper",
+          "pencil",
+          "crayons"
+        ],
+        "steps": [
+          "Think of a small moment, like a messy table, a frowning face, or spilled water.",
+          "Draw a first quick picture showing the first guess your eyes might make.",
+          "Draw a second picture showing what might be more true after you look for better clues.",
+          "Circle the picture you believe is truer and say which clue helped you choose it."
+        ],
+        "reflection": "What clue helped you choose the picture that felt truer?",
+        "affirmation": "I look carefully before I decide what is true.",
+        "real_life_transfer": "Later today, remember that your first picture is not always the truest one.",
+        "core_mechanic": "draw-two-interpretations and choose",
+        "emotional_payoff": "ownership of truthful choosing"
+      },
+      "printable": {
+        "required": false,
+        "template_id": null,
+        "content_spec": null,
+        "title": null,
+        "child_action": null
+      }
+    }
+  ]
+}

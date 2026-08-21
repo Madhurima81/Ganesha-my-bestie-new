@@ -1,0 +1,2872 @@
+{
+  "generatedAt": "2026-08-12",
+  "source": "V2_TEMPLATE_ARCHITECTURE_MAP_2026-08-12.md",
+  "totalActiveSituations": 156,
+  "templateCounts": {
+    "V2-04": 6,
+    "V2-02": 27,
+    "V2-05": 12,
+    "V2-01": 18,
+    "V2-09": 7,
+    "V2-11": 9,
+    "V2-12": 10,
+    "V2-07": 21,
+    "V2-03": 5,
+    "V2-06": 19,
+    "V2-10": 7
+  },
+  "zeroCoverage": [
+    "V2-08"
+  ],
+  "unresolved": [
+    {
+      "id": "SIT011",
+      "title": "Being pushed during a disagreement"
+    },
+    {
+      "id": "SIT030",
+      "title": "Accidentally saw a scary or violent video"
+    },
+    {
+      "id": "SIT055",
+      "title": "Seeing another child cry or suffer"
+    },
+    {
+      "id": "SIT060",
+      "title": "Intentions were good but they got in trouble anyway"
+    },
+    {
+      "id": "SIT073",
+      "title": "Drawing doesn't look how they imagined"
+    },
+    {
+      "id": "SIT076",
+      "title": "Told their work is 'messy' or unreadable"
+    },
+    {
+      "id": "SIT083",
+      "title": "Friend got a new toy"
+    },
+    {
+      "id": "SIT089",
+      "title": "New sibling gets all the attention and new things"
+    },
+    {
+      "id": "SIT103",
+      "title": "End of a long school week — brain feels full"
+    },
+    {
+      "id": "SIT109",
+      "title": "Switching from a fun activity to homework"
+    },
+    {
+      "id": "SIT120",
+      "title": "Sudden cancellation of a normal routine event"
+    },
+    {
+      "id": "SIT127",
+      "title": "Family having to cut back on treats or outings"
+    },
+    {
+      "id": "SIT129",
+      "title": "First time staying overnight away from home"
+    },
+    {
+      "id": "SIT130",
+      "title": "Stopping a favourite hobby or activity"
+    },
+    {
+      "id": "SIT139",
+      "title": "Broke something by mistake and hid it"
+    }
+  ],
+  "collisions": [
+    {
+      "id": "SIT001",
+      "title": "Toy not shared or taken away",
+      "collision": "V2-04 vs V2-09",
+      "strongestFit": "V2-04 Inversion",
+      "runnerUp": "V2-09 Judgment / Trickster Choice"
+    },
+    {
+      "id": "SIT007",
+      "title": "Someone breaks their Lego or drawing",
+      "collision": "V2-09 vs V2-12",
+      "strongestFit": "V2-09 Judgment / Trickster Choice",
+      "runnerUp": "V2-12 Quiet Strength"
+    },
+    {
+      "id": "SIT008",
+      "title": "Being hurried to put shoes on or leave",
+      "collision": "V2-11 vs V2-12",
+      "strongestFit": "V2-11 Attention Shift",
+      "runnerUp": "V2-12 Quiet Strength"
+    },
+    {
+      "id": "SIT009",
+      "title": "Feeling hungry or extremely tired (hangry)",
+      "collision": "V2-02 vs V2-04",
+      "strongestFit": "V2-02 Ritual Escalation",
+      "runnerUp": "V2-04 Inversion"
+    },
+    {
+      "id": "SIT013",
+      "title": "Adult doesn't understand what they mean",
+      "collision": "V2-05 vs V2-06",
+      "strongestFit": "V2-05 Question Chain",
+      "runnerUp": "V2-06 Role Reversal"
+    },
+    {
+      "id": "SIT015",
+      "title": "Forced to sit still too long (car, flight)",
+      "collision": "V2-11 vs V2-12",
+      "strongestFit": "V2-11 Attention Shift",
+      "runnerUp": "V2-12 Quiet Strength"
+    },
+    {
+      "id": "SIT017",
+      "title": "A treat or promise was forgotten",
+      "collision": "V2-05 vs V2-09",
+      "strongestFit": "V2-05 Question Chain",
+      "runnerUp": "V2-09 Judgment / Trickster Choice"
+    },
+    {
+      "id": "SIT022",
+      "title": "Thunder",
+      "collision": "V2-02 vs V2-11",
+      "strongestFit": "V2-02 Ritual Escalation",
+      "runnerUp": "V2-11 Attention Shift"
+    },
+    {
+      "id": "SIT023",
+      "title": "Monsters under the bed",
+      "collision": "V2-07 vs V2-02",
+      "strongestFit": "V2-07 Countdown / Resource Pressure",
+      "runnerUp": "V2-02 Ritual Escalation"
+    },
+    {
+      "id": "SIT024",
+      "title": "Parent leaving for a long trip",
+      "collision": "V2-07 vs V2-02",
+      "strongestFit": "V2-07 Countdown / Resource Pressure",
+      "runnerUp": "V2-02 Ritual Escalation"
+    },
+    {
+      "id": "SIT027",
+      "title": "Injections at the doctor",
+      "collision": "V2-07 vs V2-12",
+      "strongestFit": "V2-07 Countdown / Resource Pressure",
+      "runnerUp": "V2-12 Quiet Strength"
+    },
+    {
+      "id": "SIT032",
+      "title": "Saw news about floods",
+      "collision": "V2-01 vs V2-02",
+      "strongestFit": "V2-01 Cumulative Discovery",
+      "runnerUp": "V2-02 Ritual Escalation"
+    },
+    {
+      "id": "SIT033",
+      "title": "Fear that a parent might get sick",
+      "collision": "V2-01 vs V2-02",
+      "strongestFit": "V2-01 Cumulative Discovery",
+      "runnerUp": "V2-02 Ritual Escalation"
+    },
+    {
+      "id": "SIT034",
+      "title": "Overheard adults talking about money problems",
+      "collision": "V2-01 vs V2-05",
+      "strongestFit": "V2-01 Cumulative Discovery",
+      "runnerUp": "V2-05 Question Chain"
+    },
+    {
+      "id": "SIT035",
+      "title": "Overthinking imaginary future dangers",
+      "collision": "V2-07 vs V2-02",
+      "strongestFit": "V2-07 Countdown / Resource Pressure",
+      "runnerUp": "V2-02 Ritual Escalation"
+    },
+    {
+      "id": "SIT040",
+      "title": "Fear of getting in trouble with teacher",
+      "collision": "V2-04 vs V2-12",
+      "strongestFit": "V2-04 Inversion",
+      "runnerUp": "V2-12 Quiet Strength"
+    },
+    {
+      "id": "SIT042",
+      "title": "Friend doesn't want to play today",
+      "collision": "V2-04 vs V2-09",
+      "strongestFit": "V2-04 Inversion",
+      "runnerUp": "V2-09 Judgment / Trickster Choice"
+    },
+    {
+      "id": "SIT049",
+      "title": "Falling and deciding whether to try again",
+      "collision": "V2-02 vs V2-12",
+      "strongestFit": "V2-02 Ritual Escalation",
+      "runnerUp": "V2-12 Quiet Strength"
+    },
+    {
+      "id": "SIT051",
+      "title": "Close friend moved to another city",
+      "collision": "V2-06 vs V2-03",
+      "strongestFit": "V2-06 Role Reversal",
+      "runnerUp": "V2-03 Circular Return"
+    },
+    {
+      "id": "SIT054",
+      "title": "Highly anticipated movie or event cancelled",
+      "collision": "V2-02 vs V2-07",
+      "strongestFit": "V2-02 Ritual Escalation",
+      "runnerUp": "V2-07 Countdown / Resource Pressure"
+    },
+    {
+      "id": "SIT061",
+      "title": "Made a mistake in front of the class",
+      "collision": "V2-07 vs V2-02",
+      "strongestFit": "V2-07 Countdown / Resource Pressure",
+      "runnerUp": "V2-02 Ritual Escalation"
+    },
+    {
+      "id": "SIT062",
+      "title": "Forgot someone's name",
+      "collision": "V2-05 vs V2-12",
+      "strongestFit": "V2-05 Question Chain",
+      "runnerUp": "V2-12 Quiet Strength"
+    },
+    {
+      "id": "SIT065",
+      "title": "Getting acne or pimples (older kids)",
+      "collision": "V2-06 vs V2-12",
+      "strongestFit": "V2-06 Role Reversal",
+      "runnerUp": "V2-12 Quiet Strength"
+    },
+    {
+      "id": "SIT075",
+      "title": "Forgot lines in a play",
+      "collision": "V2-07 vs V2-02",
+      "strongestFit": "V2-07 Countdown / Resource Pressure",
+      "runnerUp": "V2-02 Ritual Escalation"
+    },
+    {
+      "id": "SIT082",
+      "title": "Best friend is playing with someone else",
+      "collision": "V2-06 vs V2-03",
+      "strongestFit": "V2-06 Role Reversal",
+      "runnerUp": "V2-03 Circular Return"
+    },
+    {
+      "id": "SIT085",
+      "title": "Someone else got to go first",
+      "collision": "V2-06 vs V2-07",
+      "strongestFit": "V2-06 Role Reversal",
+      "runnerUp": "V2-07 Countdown / Resource Pressure"
+    },
+    {
+      "id": "SIT086",
+      "title": "Parent on work call when child wants to share something",
+      "collision": "V2-07 vs V2-01",
+      "strongestFit": "V2-07 Countdown / Resource Pressure",
+      "runnerUp": "V2-01 Cumulative Discovery"
+    },
+    {
+      "id": "SIT090",
+      "title": "A classmate got the teacher's excited praise",
+      "collision": "V2-07 vs V2-02",
+      "strongestFit": "V2-07 Countdown / Resource Pressure",
+      "runnerUp": "V2-02 Ritual Escalation"
+    },
+    {
+      "id": "SIT092",
+      "title": "Friend went on a fancy international vacation",
+      "collision": "V2-07 vs V2-02",
+      "strongestFit": "V2-07 Countdown / Resource Pressure",
+      "runnerUp": "V2-02 Ritual Escalation"
+    },
+    {
+      "id": "SIT093",
+      "title": "Wishing they had someone else's hair",
+      "collision": "V2-06 vs V2-12",
+      "strongestFit": "V2-06 Role Reversal",
+      "runnerUp": "V2-12 Quiet Strength"
+    },
+    {
+      "id": "SIT096",
+      "title": "Wearing an older sibling's old clothes",
+      "collision": "V2-01 vs V2-12",
+      "strongestFit": "V2-01 Cumulative Discovery",
+      "runnerUp": "V2-12 Quiet Strength"
+    },
+    {
+      "id": "SIT098",
+      "title": "Zoning out after too much YouTube or gaming",
+      "collision": "V2-02 vs V2-05",
+      "strongestFit": "V2-02 Ritual Escalation",
+      "runnerUp": "V2-05 Question Chain"
+    },
+    {
+      "id": "SIT100",
+      "title": "Too many classes — tuition, sport, music all in one day",
+      "collision": "V2-07 vs V2-02",
+      "strongestFit": "V2-07 Countdown / Resource Pressure",
+      "runnerUp": "V2-02 Ritual Escalation"
+    },
+    {
+      "id": "SIT106",
+      "title": "Too many options for a toy or treat",
+      "collision": "V2-09 vs V2-12",
+      "strongestFit": "V2-09 Judgment / Trickster Choice",
+      "runnerUp": "V2-12 Quiet Strength"
+    },
+    {
+      "id": "SIT107",
+      "title": "Pressure to always 'be good' and behave",
+      "collision": "V2-06 vs V2-02",
+      "strongestFit": "V2-06 Role Reversal",
+      "runnerUp": "V2-02 Ritual Escalation"
+    },
+    {
+      "id": "SIT110",
+      "title": "The 'before dinner' energy crash",
+      "collision": "V2-07 vs V2-02",
+      "strongestFit": "V2-07 Countdown / Resource Pressure",
+      "runnerUp": "V2-02 Ritual Escalation"
+    },
+    {
+      "id": "SIT113",
+      "title": "Trying to learn a very hard new concept",
+      "collision": "V2-02 vs V2-07",
+      "strongestFit": "V2-02 Ritual Escalation",
+      "runnerUp": "V2-07 Countdown / Resource Pressure"
+    },
+    {
+      "id": "SIT116",
+      "title": "Parents separating or getting a divorce",
+      "collision": "V2-04 vs V2-12",
+      "strongestFit": "V2-04 Inversion",
+      "runnerUp": "V2-12 Quiet Strength"
+    },
+    {
+      "id": "SIT117",
+      "title": "A parent starts a new job with different hours",
+      "collision": "V2-07 vs V2-12",
+      "strongestFit": "V2-07 Countdown / Resource Pressure",
+      "runnerUp": "V2-12 Quiet Strength"
+    },
+    {
+      "id": "SIT119",
+      "title": "Favourite teacher changes mid-year",
+      "collision": "V2-01 vs V2-12",
+      "strongestFit": "V2-01 Cumulative Discovery",
+      "runnerUp": "V2-12 Quiet Strength"
+    },
+    {
+      "id": "SIT121",
+      "title": "Summer ending and school starting again",
+      "collision": "V2-07 vs V2-02",
+      "strongestFit": "V2-07 Countdown / Resource Pressure",
+      "runnerUp": "V2-02 Ritual Escalation"
+    },
+    {
+      "id": "SIT122",
+      "title": "Noticing a new change in their body",
+      "collision": "V2-06 vs V2-02",
+      "strongestFit": "V2-06 Role Reversal",
+      "runnerUp": "V2-02 Ritual Escalation"
+    },
+    {
+      "id": "SIT123",
+      "title": "Friend suddenly acting different or 'cooler'",
+      "collision": "V2-01 vs V2-09",
+      "strongestFit": "V2-01 Cumulative Discovery",
+      "runnerUp": "V2-09 Judgment / Trickster Choice"
+    },
+    {
+      "id": "SIT126",
+      "title": "News of an upcoming surgery or treatment",
+      "collision": "V2-01 vs V2-04",
+      "strongestFit": "V2-01 Cumulative Discovery",
+      "runnerUp": "V2-04 Inversion"
+    },
+    {
+      "id": "SIT131",
+      "title": "Overheard adults talk about 'a big change coming'",
+      "collision": "V2-01 vs V2-05",
+      "strongestFit": "V2-01 Cumulative Discovery",
+      "runnerUp": "V2-05 Question Chain"
+    },
+    {
+      "id": "SIT133",
+      "title": "Tempted to steal something",
+      "collision": "V2-10 vs V2-01",
+      "strongestFit": "V2-10 Threshold Choice",
+      "runnerUp": "V2-01 Cumulative Discovery"
+    },
+    {
+      "id": "SIT135",
+      "title": "A mean kid got praised or rewarded",
+      "collision": "V2-05 vs V2-09",
+      "strongestFit": "V2-05 Question Chain",
+      "runnerUp": "V2-09 Judgment / Trickster Choice"
+    },
+    {
+      "id": "SIT137",
+      "title": "Tempted to look at friend's paper during a test",
+      "collision": "V2-05 vs V2-10",
+      "strongestFit": "V2-05 Question Chain",
+      "runnerUp": "V2-10 Threshold Choice"
+    },
+    {
+      "id": "SIT138",
+      "title": "Told a 'bad' secret they feel should be shared",
+      "collision": "V2-01 vs V2-09",
+      "strongestFit": "V2-01 Cumulative Discovery",
+      "runnerUp": "V2-09 Judgment / Trickster Choice"
+    },
+    {
+      "id": "SIT141",
+      "title": "Saw a parent or teacher break a rule they enforce",
+      "collision": "V2-10 vs V2-01",
+      "strongestFit": "V2-10 Threshold Choice",
+      "runnerUp": "V2-01 Cumulative Discovery"
+    },
+    {
+      "id": "SIT142",
+      "title": "Someone online asked for their personal password",
+      "collision": "V2-10 vs V2-09",
+      "strongestFit": "V2-10 Threshold Choice",
+      "runnerUp": "V2-09 Judgment / Trickster Choice"
+    },
+    {
+      "id": "SIT148",
+      "title": "Found something and doesn't know whether to keep it",
+      "collision": "V2-07 vs V2-02",
+      "strongestFit": "V2-07 Countdown / Resource Pressure",
+      "runnerUp": "V2-02 Ritual Escalation"
+    },
+    {
+      "id": "SIT149",
+      "title": "Overheard talk about politics, protests, or injustice",
+      "collision": "V2-01 vs V2-05",
+      "strongestFit": "V2-01 Cumulative Discovery",
+      "runnerUp": "V2-05 Question Chain"
+    },
+    {
+      "id": "SIT150",
+      "title": "Best friend makes a new best friend",
+      "collision": "V2-03 vs V2-06",
+      "strongestFit": "V2-03 Circular Return",
+      "runnerUp": "V2-06 Role Reversal"
+    },
+    {
+      "id": "SIT151",
+      "title": "Friends don't reply to messages",
+      "collision": "V2-11 vs V2-02",
+      "strongestFit": "V2-11 Attention Shift",
+      "runnerUp": "V2-02 Ritual Escalation"
+    },
+    {
+      "id": "SIT153",
+      "title": "A secret wasn't shared with them",
+      "collision": "V2-06 vs V2-05",
+      "strongestFit": "V2-06 Role Reversal",
+      "runnerUp": "V2-05 Question Chain"
+    },
+    {
+      "id": "SIT154",
+      "title": "Friend copies their work or idea",
+      "collision": "V2-05 vs V2-11",
+      "strongestFit": "V2-05 Question Chain",
+      "runnerUp": "V2-11 Attention Shift"
+    },
+    {
+      "id": "SIT158",
+      "title": "Friend apologises after hurting them",
+      "collision": "V2-07 vs V2-02",
+      "strongestFit": "V2-07 Countdown / Resource Pressure",
+      "runnerUp": "V2-02 Ritual Escalation"
+    },
+    {
+      "id": "SIT160",
+      "title": "Asked to choose between two friends",
+      "collision": "V2-10 vs V2-09",
+      "strongestFit": "V2-10 Threshold Choice",
+      "runnerUp": "V2-09 Judgment / Trickster Choice"
+    },
+    {
+      "id": "SIT162",
+      "title": "Teammate isn't doing their part",
+      "collision": "V2-02 vs V2-12",
+      "strongestFit": "V2-02 Ritual Escalation",
+      "runnerUp": "V2-12 Quiet Strength"
+    },
+    {
+      "id": "SIT168",
+      "title": "Group project where everyone has different ideas",
+      "collision": "V2-02 vs V2-09",
+      "strongestFit": "V2-02 Ritual Escalation",
+      "runnerUp": "V2-09 Judgment / Trickster Choice"
+    }
+  ],
+  "situations": [
+    {
+      "id": "SIT001",
+      "title": "Toy not shared or taken away",
+      "candidateMechanisms": [
+        "V2-04 Inversion",
+        "V2-09 Judgment / Trickster Choice"
+      ],
+      "strongestFit": "V2-04 Inversion",
+      "runnerUp": "V2-09 Judgment / Trickster Choice",
+      "confidence": "low",
+      "collision": "V2-04 vs V2-09",
+      "notes": [
+        "V2-04: dismissed/underestimated helper or option",
+        "V2-09: multiple plausible options with reflective third move"
+      ]
+    },
+    {
+      "id": "SIT002",
+      "title": "Screen time cut off suddenly",
+      "candidateMechanisms": [
+        "V2-02 Ritual Escalation"
+      ],
+      "strongestFit": "V2-02 Ritual Escalation",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-02: recurring pressure/behavior loop; title/summary suggests repeat pattern"
+      ]
+    },
+    {
+      "id": "SIT003",
+      "title": "Told 'no' without explanation",
+      "candidateMechanisms": [
+        "V2-05 Question Chain"
+      ],
+      "strongestFit": "V2-05 Question Chain",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-05: successive clarification/inquiry fit"
+      ]
+    },
+    {
+      "id": "SIT004",
+      "title": "Sibling gets a bigger portion",
+      "candidateMechanisms": [
+        "V2-01 Cumulative Discovery"
+      ],
+      "strongestFit": "V2-01 Cumulative Discovery",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-01: multi-clue interpretation candidate"
+      ]
+    },
+    {
+      "id": "SIT005",
+      "title": "Can't finish homework",
+      "candidateMechanisms": [
+        "V2-02 Ritual Escalation"
+      ],
+      "strongestFit": "V2-02 Ritual Escalation",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-02: recurring pressure/behavior loop; title/summary suggests repeat pattern"
+      ]
+    },
+    {
+      "id": "SIT006",
+      "title": "Playdate or plan suddenly cancelled",
+      "candidateMechanisms": [
+        "V2-01 Cumulative Discovery"
+      ],
+      "strongestFit": "V2-01 Cumulative Discovery",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-01: multi-clue interpretation candidate"
+      ]
+    },
+    {
+      "id": "SIT007",
+      "title": "Someone breaks their Lego or drawing",
+      "candidateMechanisms": [
+        "V2-09 Judgment / Trickster Choice",
+        "V2-12 Quiet Strength"
+      ],
+      "strongestFit": "V2-09 Judgment / Trickster Choice",
+      "runnerUp": "V2-12 Quiet Strength",
+      "confidence": "low",
+      "collision": "V2-09 vs V2-12",
+      "notes": [
+        "V2-09: multiple plausible options with reflective third move",
+        "V2-12: big reaction likely solved by quiet internal quality"
+      ]
+    },
+    {
+      "id": "SIT008",
+      "title": "Being hurried to put shoes on or leave",
+      "candidateMechanisms": [
+        "V2-11 Attention Shift",
+        "V2-12 Quiet Strength"
+      ],
+      "strongestFit": "V2-11 Attention Shift",
+      "runnerUp": "V2-12 Quiet Strength",
+      "confidence": "low",
+      "collision": "V2-11 vs V2-12",
+      "notes": [
+        "V2-11: fixation/secondary return structure",
+        "V2-12: big reaction likely solved by quiet internal quality"
+      ]
+    },
+    {
+      "id": "SIT009",
+      "title": "Feeling hungry or extremely tired (hangry)",
+      "candidateMechanisms": [
+        "V2-02 Ritual Escalation",
+        "V2-04 Inversion"
+      ],
+      "strongestFit": "V2-02 Ritual Escalation",
+      "runnerUp": "V2-04 Inversion",
+      "confidence": "low",
+      "collision": "V2-02 vs V2-04",
+      "notes": [
+        "V2-02: recurring pressure/behavior loop",
+        "V2-04: dismissed/underestimated helper or option"
+      ]
+    },
+    {
+      "id": "SIT010",
+      "title": "Blamed for something they didn't do",
+      "candidateMechanisms": [
+        "V2-05 Question Chain",
+        "V2-12 Quiet Strength"
+      ],
+      "strongestFit": "V2-05 Question Chain",
+      "runnerUp": "V2-12 Quiet Strength",
+      "confidence": "medium",
+      "collision": "none",
+      "notes": [
+        "V2-05: successive clarification/inquiry fit; explicit mystery/interpretation structure",
+        "V2-12: big reaction likely solved by quiet internal quality"
+      ]
+    },
+    {
+      "id": "SIT011",
+      "title": "Being pushed during a disagreement",
+      "candidateMechanisms": [],
+      "strongestFit": null,
+      "runnerUp": null,
+      "confidence": "none",
+      "collision": "no clean V2 fit",
+      "notes": []
+    },
+    {
+      "id": "SIT012",
+      "title": "No say in what to wear",
+      "candidateMechanisms": [
+        "V2-09 Judgment / Trickster Choice"
+      ],
+      "strongestFit": "V2-09 Judgment / Trickster Choice",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-09: multiple plausible options with reflective third move"
+      ]
+    },
+    {
+      "id": "SIT013",
+      "title": "Adult doesn't understand what they mean",
+      "candidateMechanisms": [
+        "V2-05 Question Chain",
+        "V2-06 Role Reversal",
+        "V2-02 Ritual Escalation",
+        "V2-01 Cumulative Discovery"
+      ],
+      "strongestFit": "V2-05 Question Chain",
+      "runnerUp": "V2-06 Role Reversal",
+      "confidence": "medium",
+      "collision": "V2-05 vs V2-06",
+      "notes": [
+        "V2-05: successive clarification/inquiry fit; explicit mystery/interpretation structure",
+        "V2-06: legacy natural coverage via T14"
+      ]
+    },
+    {
+      "id": "SIT014",
+      "title": "Game crashes or internet lags during a win",
+      "candidateMechanisms": [
+        "V2-02 Ritual Escalation"
+      ],
+      "strongestFit": "V2-02 Ritual Escalation",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-02: recurring pressure/behavior loop"
+      ]
+    },
+    {
+      "id": "SIT015",
+      "title": "Forced to sit still too long (car, flight)",
+      "candidateMechanisms": [
+        "V2-11 Attention Shift",
+        "V2-12 Quiet Strength"
+      ],
+      "strongestFit": "V2-11 Attention Shift",
+      "runnerUp": "V2-12 Quiet Strength",
+      "confidence": "low",
+      "collision": "V2-11 vs V2-12",
+      "notes": [
+        "V2-11: fixation/secondary return structure",
+        "V2-12: big reaction likely solved by quiet internal quality"
+      ]
+    },
+    {
+      "id": "SIT016",
+      "title": "Game save file corrupted or deleted",
+      "candidateMechanisms": [
+        "V2-11 Attention Shift"
+      ],
+      "strongestFit": "V2-11 Attention Shift",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-11: fixation/secondary return structure"
+      ]
+    },
+    {
+      "id": "SIT017",
+      "title": "A treat or promise was forgotten",
+      "candidateMechanisms": [
+        "V2-05 Question Chain",
+        "V2-09 Judgment / Trickster Choice"
+      ],
+      "strongestFit": "V2-05 Question Chain",
+      "runnerUp": "V2-09 Judgment / Trickster Choice",
+      "confidence": "low",
+      "collision": "V2-05 vs V2-09",
+      "notes": [
+        "V2-05: successive clarification/inquiry fit",
+        "V2-09: multiple plausible options with reflective third move"
+      ]
+    },
+    {
+      "id": "SIT018",
+      "title": "Sibling tells on them unfairly",
+      "candidateMechanisms": [
+        "V2-05 Question Chain"
+      ],
+      "strongestFit": "V2-05 Question Chain",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-05: successive clarification/inquiry fit"
+      ]
+    },
+    {
+      "id": "SIT019",
+      "title": "Scratchy clothes",
+      "candidateMechanisms": [
+        "V2-02 Ritual Escalation"
+      ],
+      "strongestFit": "V2-02 Ritual Escalation",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-02: recurring pressure/behavior loop; title/summary suggests repeat pattern"
+      ]
+    },
+    {
+      "id": "SIT020",
+      "title": "Repeatedly failing a game level",
+      "candidateMechanisms": [
+        "V2-02 Ritual Escalation"
+      ],
+      "strongestFit": "V2-02 Ritual Escalation",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-02: recurring pressure/behavior loop; title/summary suggests repeat pattern"
+      ]
+    },
+    {
+      "id": "SIT021",
+      "title": "Darkness or shadows in the room",
+      "candidateMechanisms": [
+        "V2-12 Quiet Strength"
+      ],
+      "strongestFit": "V2-12 Quiet Strength",
+      "runnerUp": null,
+      "confidence": "medium",
+      "collision": "none",
+      "notes": [
+        "V2-12: obvious quiet-strength pattern"
+      ]
+    },
+    {
+      "id": "SIT022",
+      "title": "Thunder",
+      "candidateMechanisms": [
+        "V2-02 Ritual Escalation",
+        "V2-11 Attention Shift",
+        "V2-12 Quiet Strength"
+      ],
+      "strongestFit": "V2-02 Ritual Escalation",
+      "runnerUp": "V2-11 Attention Shift",
+      "confidence": "low",
+      "collision": "V2-02 vs V2-11",
+      "notes": [
+        "V2-02: recurring pressure/behavior loop",
+        "V2-11: fixation/secondary return structure"
+      ]
+    },
+    {
+      "id": "SIT023",
+      "title": "Monsters under the bed",
+      "candidateMechanisms": [
+        "V2-07 Countdown / Resource Pressure",
+        "V2-02 Ritual Escalation",
+        "V2-11 Attention Shift"
+      ],
+      "strongestFit": "V2-07 Countdown / Resource Pressure",
+      "runnerUp": "V2-02 Ritual Escalation",
+      "confidence": "low",
+      "collision": "V2-07 vs V2-02",
+      "notes": [
+        "V2-07: finite window / shrinking patience / countdown",
+        "V2-02: recurring pressure/behavior loop"
+      ]
+    },
+    {
+      "id": "SIT024",
+      "title": "Parent leaving for a long trip",
+      "candidateMechanisms": [
+        "V2-07 Countdown / Resource Pressure",
+        "V2-02 Ritual Escalation"
+      ],
+      "strongestFit": "V2-07 Countdown / Resource Pressure",
+      "runnerUp": "V2-02 Ritual Escalation",
+      "confidence": "low",
+      "collision": "V2-07 vs V2-02",
+      "notes": [
+        "V2-07: finite window / shrinking patience / countdown",
+        "V2-02: recurring pressure/behavior loop"
+      ]
+    },
+    {
+      "id": "SIT025",
+      "title": "Fear of going on stage or presenting",
+      "candidateMechanisms": [
+        "V2-07 Countdown / Resource Pressure",
+        "V2-02 Ritual Escalation",
+        "V2-12 Quiet Strength"
+      ],
+      "strongestFit": "V2-07 Countdown / Resource Pressure",
+      "runnerUp": "V2-02 Ritual Escalation",
+      "confidence": "high",
+      "collision": "none",
+      "notes": [
+        "V2-07: finite window / shrinking patience / countdown; strong explicit countdown/time-pressure",
+        "V2-02: recurring pressure/behavior loop; title/summary suggests repeat pattern"
+      ]
+    },
+    {
+      "id": "SIT026",
+      "title": "Anxiety before a big test or result",
+      "candidateMechanisms": [
+        "V2-07 Countdown / Resource Pressure",
+        "V2-02 Ritual Escalation",
+        "V2-11 Attention Shift"
+      ],
+      "strongestFit": "V2-07 Countdown / Resource Pressure",
+      "runnerUp": "V2-02 Ritual Escalation",
+      "confidence": "high",
+      "collision": "none",
+      "notes": [
+        "V2-07: finite window / shrinking patience / countdown; strong explicit countdown/time-pressure",
+        "V2-02: recurring pressure/behavior loop"
+      ]
+    },
+    {
+      "id": "SIT027",
+      "title": "Injections at the doctor",
+      "candidateMechanisms": [
+        "V2-07 Countdown / Resource Pressure",
+        "V2-12 Quiet Strength"
+      ],
+      "strongestFit": "V2-07 Countdown / Resource Pressure",
+      "runnerUp": "V2-12 Quiet Strength",
+      "confidence": "low",
+      "collision": "V2-07 vs V2-12",
+      "notes": [
+        "V2-07: finite window / shrinking patience / countdown",
+        "V2-12: big reaction likely solved by quiet internal quality"
+      ]
+    },
+    {
+      "id": "SIT028",
+      "title": "Unfamiliar adult",
+      "candidateMechanisms": [
+        "V2-04 Inversion"
+      ],
+      "strongestFit": "V2-04 Inversion",
+      "runnerUp": null,
+      "confidence": "medium",
+      "collision": "none",
+      "notes": [
+        "V2-04: dismissed/underestimated helper or option; dismissed person could become key contributor"
+      ]
+    },
+    {
+      "id": "SIT029",
+      "title": "Fear of getting lost in a mall or crowd",
+      "candidateMechanisms": [
+        "V2-11 Attention Shift",
+        "V2-12 Quiet Strength"
+      ],
+      "strongestFit": "V2-11 Attention Shift",
+      "runnerUp": "V2-12 Quiet Strength",
+      "confidence": "medium",
+      "collision": "none",
+      "notes": [
+        "V2-11: fixation/secondary return structure; clear fixation then reassessment candidate",
+        "V2-12: big reaction likely solved by quiet internal quality"
+      ]
+    },
+    {
+      "id": "SIT030",
+      "title": "Accidentally saw a scary or violent video",
+      "candidateMechanisms": [],
+      "strongestFit": null,
+      "runnerUp": null,
+      "confidence": "none",
+      "collision": "no clean V2 fit",
+      "notes": []
+    },
+    {
+      "id": "SIT031",
+      "title": "Heard about war or violence on news",
+      "candidateMechanisms": [
+        "V2-01 Cumulative Discovery",
+        "V2-05 Question Chain"
+      ],
+      "strongestFit": "V2-01 Cumulative Discovery",
+      "runnerUp": "V2-05 Question Chain",
+      "confidence": "medium",
+      "collision": "none",
+      "notes": [
+        "V2-01: multi-clue interpretation candidate; naturally clue-accumulation driven",
+        "V2-05: successive clarification/inquiry fit"
+      ]
+    },
+    {
+      "id": "SIT032",
+      "title": "Saw news about floods",
+      "candidateMechanisms": [
+        "V2-01 Cumulative Discovery",
+        "V2-02 Ritual Escalation",
+        "V2-12 Quiet Strength"
+      ],
+      "strongestFit": "V2-01 Cumulative Discovery",
+      "runnerUp": "V2-02 Ritual Escalation",
+      "confidence": "low",
+      "collision": "V2-01 vs V2-02",
+      "notes": [
+        "V2-01: multi-clue interpretation candidate",
+        "V2-02: recurring pressure/behavior loop"
+      ]
+    },
+    {
+      "id": "SIT033",
+      "title": "Fear that a parent might get sick",
+      "candidateMechanisms": [
+        "V2-01 Cumulative Discovery",
+        "V2-02 Ritual Escalation"
+      ],
+      "strongestFit": "V2-01 Cumulative Discovery",
+      "runnerUp": "V2-02 Ritual Escalation",
+      "confidence": "low",
+      "collision": "V2-01 vs V2-02",
+      "notes": [
+        "V2-01: multi-clue interpretation candidate",
+        "V2-02: recurring pressure/behavior loop"
+      ]
+    },
+    {
+      "id": "SIT034",
+      "title": "Overheard adults talking about money problems",
+      "candidateMechanisms": [
+        "V2-01 Cumulative Discovery",
+        "V2-05 Question Chain",
+        "V2-11 Attention Shift"
+      ],
+      "strongestFit": "V2-01 Cumulative Discovery",
+      "runnerUp": "V2-05 Question Chain",
+      "confidence": "medium",
+      "collision": "V2-01 vs V2-05",
+      "notes": [
+        "V2-01: multi-clue interpretation candidate; naturally clue-accumulation driven",
+        "V2-05: successive clarification/inquiry fit; explicit mystery/interpretation structure"
+      ]
+    },
+    {
+      "id": "SIT035",
+      "title": "Overthinking imaginary future dangers",
+      "candidateMechanisms": [
+        "V2-07 Countdown / Resource Pressure",
+        "V2-02 Ritual Escalation"
+      ],
+      "strongestFit": "V2-07 Countdown / Resource Pressure",
+      "runnerUp": "V2-02 Ritual Escalation",
+      "confidence": "low",
+      "collision": "V2-07 vs V2-02",
+      "notes": [
+        "V2-07: finite window / shrinking patience / countdown",
+        "V2-02: recurring pressure/behavior loop"
+      ]
+    },
+    {
+      "id": "SIT036",
+      "title": "Fear of being laughed at by class",
+      "candidateMechanisms": [
+        "V2-03 Circular Return"
+      ],
+      "strongestFit": "V2-03 Circular Return",
+      "runnerUp": null,
+      "confidence": "high",
+      "collision": "none",
+      "notes": [
+        "V2-03: legacy natural coverage via T05; clear candidate for opening/ending mirrored social moment"
+      ]
+    },
+    {
+      "id": "SIT038",
+      "title": "Fear of dogs",
+      "candidateMechanisms": [
+        "V2-12 Quiet Strength"
+      ],
+      "strongestFit": "V2-12 Quiet Strength",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-12: big reaction likely solved by quiet internal quality"
+      ]
+    },
+    {
+      "id": "SIT039",
+      "title": "Fear of falling or getting hurt at park",
+      "candidateMechanisms": [
+        "V2-12 Quiet Strength",
+        "V2-02 Ritual Escalation"
+      ],
+      "strongestFit": "V2-12 Quiet Strength",
+      "runnerUp": "V2-02 Ritual Escalation",
+      "confidence": "medium",
+      "collision": "none",
+      "notes": [
+        "V2-12: big reaction likely solved by quiet internal quality; obvious quiet-strength pattern",
+        "V2-02: recurring pressure/behavior loop; title/summary suggests repeat pattern"
+      ]
+    },
+    {
+      "id": "SIT040",
+      "title": "Fear of getting in trouble with teacher",
+      "candidateMechanisms": [
+        "V2-04 Inversion",
+        "V2-12 Quiet Strength"
+      ],
+      "strongestFit": "V2-04 Inversion",
+      "runnerUp": "V2-12 Quiet Strength",
+      "confidence": "low",
+      "collision": "V2-04 vs V2-12",
+      "notes": [
+        "V2-04: dismissed/underestimated helper or option",
+        "V2-12: big reaction likely solved by quiet internal quality"
+      ]
+    },
+    {
+      "id": "SIT042",
+      "title": "Friend doesn't want to play today",
+      "candidateMechanisms": [
+        "V2-04 Inversion",
+        "V2-09 Judgment / Trickster Choice",
+        "V2-12 Quiet Strength"
+      ],
+      "strongestFit": "V2-04 Inversion",
+      "runnerUp": "V2-09 Judgment / Trickster Choice",
+      "confidence": "low",
+      "collision": "V2-04 vs V2-09",
+      "notes": [
+        "V2-04: dismissed/underestimated helper or option",
+        "V2-09: multiple plausible options with reflective third move"
+      ]
+    },
+    {
+      "id": "SIT043",
+      "title": "Death of a pet",
+      "candidateMechanisms": [
+        "V2-02 Ritual Escalation"
+      ],
+      "strongestFit": "V2-02 Ritual Escalation",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-02: recurring pressure/behavior loop; title/summary suggests repeat pattern"
+      ]
+    },
+    {
+      "id": "SIT044",
+      "title": "Death of a relative or family member",
+      "candidateMechanisms": [
+        "V2-02 Ritual Escalation"
+      ],
+      "strongestFit": "V2-02 Ritual Escalation",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-02: recurring pressure/behavior loop"
+      ]
+    },
+    {
+      "id": "SIT045",
+      "title": "Lost a favourite toy or comfort blanket",
+      "candidateMechanisms": [
+        "V2-11 Attention Shift"
+      ],
+      "strongestFit": "V2-11 Attention Shift",
+      "runnerUp": null,
+      "confidence": "medium",
+      "collision": "none",
+      "notes": [
+        "V2-11: fixation/secondary return structure; clear fixation then reassessment candidate"
+      ]
+    },
+    {
+      "id": "SIT046",
+      "title": "Harshly reprimanded by a parent",
+      "candidateMechanisms": [
+        "V2-06 Role Reversal",
+        "V2-02 Ritual Escalation",
+        "V2-12 Quiet Strength"
+      ],
+      "strongestFit": "V2-06 Role Reversal",
+      "runnerUp": "V2-02 Ritual Escalation",
+      "confidence": "medium",
+      "collision": "none",
+      "notes": [
+        "V2-06: legacy natural coverage via T14",
+        "V2-02: recurring pressure/behavior loop"
+      ]
+    },
+    {
+      "id": "SIT048",
+      "title": "Not invited to a birthday party",
+      "candidateMechanisms": [
+        "V2-06 Role Reversal",
+        "V2-07 Countdown / Resource Pressure",
+        "V2-02 Ritual Escalation",
+        "V2-05 Question Chain"
+      ],
+      "strongestFit": "V2-06 Role Reversal",
+      "runnerUp": "V2-07 Countdown / Resource Pressure",
+      "confidence": "high",
+      "collision": "none",
+      "notes": [
+        "V2-06: legacy natural coverage via T14; direct receive/give or observe/give-help pattern available",
+        "V2-07: finite window / shrinking patience / countdown"
+      ]
+    },
+    {
+      "id": "SIT049",
+      "title": "Falling and deciding whether to try again",
+      "candidateMechanisms": [
+        "V2-02 Ritual Escalation",
+        "V2-12 Quiet Strength"
+      ],
+      "strongestFit": "V2-02 Ritual Escalation",
+      "runnerUp": "V2-12 Quiet Strength",
+      "confidence": "low",
+      "collision": "V2-02 vs V2-12",
+      "notes": [
+        "V2-02: recurring pressure/behavior loop",
+        "V2-12: big reaction likely solved by quiet internal quality"
+      ]
+    },
+    {
+      "id": "SIT050",
+      "title": "Missing a parent who travels often",
+      "candidateMechanisms": [
+        "V2-02 Ritual Escalation"
+      ],
+      "strongestFit": "V2-02 Ritual Escalation",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-02: recurring pressure/behavior loop; title/summary suggests repeat pattern"
+      ]
+    },
+    {
+      "id": "SIT051",
+      "title": "Close friend moved to another city",
+      "candidateMechanisms": [
+        "V2-06 Role Reversal",
+        "V2-03 Circular Return"
+      ],
+      "strongestFit": "V2-06 Role Reversal",
+      "runnerUp": "V2-03 Circular Return",
+      "confidence": "medium",
+      "collision": "V2-06 vs V2-03",
+      "notes": [
+        "V2-06: legacy natural coverage via T14",
+        "V2-03: clear candidate for opening/ending mirrored social moment"
+      ]
+    },
+    {
+      "id": "SIT052",
+      "title": "Moving house and leaving familiar bedroom",
+      "candidateMechanisms": [
+        "V2-02 Ritual Escalation"
+      ],
+      "strongestFit": "V2-02 Ritual Escalation",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-02: recurring pressure/behavior loop"
+      ]
+    },
+    {
+      "id": "SIT054",
+      "title": "Highly anticipated movie or event cancelled",
+      "candidateMechanisms": [
+        "V2-02 Ritual Escalation",
+        "V2-07 Countdown / Resource Pressure"
+      ],
+      "strongestFit": "V2-02 Ritual Escalation",
+      "runnerUp": "V2-07 Countdown / Resource Pressure",
+      "confidence": "medium",
+      "collision": "V2-02 vs V2-07",
+      "notes": [
+        "V2-02: legacy natural coverage via T02",
+        "V2-07: finite window / shrinking patience / countdown"
+      ]
+    },
+    {
+      "id": "SIT055",
+      "title": "Seeing another child cry or suffer",
+      "candidateMechanisms": [],
+      "strongestFit": null,
+      "runnerUp": null,
+      "confidence": "none",
+      "collision": "no clean V2 fit",
+      "notes": []
+    },
+    {
+      "id": "SIT056",
+      "title": "Excluded from a group chat",
+      "candidateMechanisms": [
+        "V2-06 Role Reversal",
+        "V2-05 Question Chain"
+      ],
+      "strongestFit": "V2-06 Role Reversal",
+      "runnerUp": "V2-05 Question Chain",
+      "confidence": "high",
+      "collision": "none",
+      "notes": [
+        "V2-06: legacy natural coverage via T14; direct receive/give or observe/give-help pattern available",
+        "V2-05: successive clarification/inquiry fit"
+      ]
+    },
+    {
+      "id": "SIT057",
+      "title": "Not chosen for a special school role",
+      "candidateMechanisms": [
+        "V2-03 Circular Return",
+        "V2-07 Countdown / Resource Pressure",
+        "V2-02 Ritual Escalation"
+      ],
+      "strongestFit": "V2-03 Circular Return",
+      "runnerUp": "V2-07 Countdown / Resource Pressure",
+      "confidence": "high",
+      "collision": "none",
+      "notes": [
+        "V2-03: legacy natural coverage via T05; clear candidate for opening/ending mirrored social moment",
+        "V2-07: finite window / shrinking patience / countdown"
+      ]
+    },
+    {
+      "id": "SIT060",
+      "title": "Intentions were good but they got in trouble anyway",
+      "candidateMechanisms": [],
+      "strongestFit": null,
+      "runnerUp": null,
+      "confidence": "none",
+      "collision": "no clean V2 fit",
+      "notes": []
+    },
+    {
+      "id": "SIT061",
+      "title": "Made a mistake in front of the class",
+      "candidateMechanisms": [
+        "V2-07 Countdown / Resource Pressure",
+        "V2-02 Ritual Escalation"
+      ],
+      "strongestFit": "V2-07 Countdown / Resource Pressure",
+      "runnerUp": "V2-02 Ritual Escalation",
+      "confidence": "low",
+      "collision": "V2-07 vs V2-02",
+      "notes": [
+        "V2-07: finite window / shrinking patience / countdown",
+        "V2-02: recurring pressure/behavior loop"
+      ]
+    },
+    {
+      "id": "SIT062",
+      "title": "Forgot someone's name",
+      "candidateMechanisms": [
+        "V2-05 Question Chain",
+        "V2-12 Quiet Strength"
+      ],
+      "strongestFit": "V2-05 Question Chain",
+      "runnerUp": "V2-12 Quiet Strength",
+      "confidence": "low",
+      "collision": "V2-05 vs V2-12",
+      "notes": [
+        "V2-05: successive clarification/inquiry fit",
+        "V2-12: big reaction likely solved by quiet internal quality"
+      ]
+    },
+    {
+      "id": "SIT063",
+      "title": "Called 'fat' or 'chubby' by a peer",
+      "candidateMechanisms": [
+        "V2-12 Quiet Strength"
+      ],
+      "strongestFit": "V2-12 Quiet Strength",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-12: big reaction likely solved by quiet internal quality"
+      ]
+    },
+    {
+      "id": "SIT064",
+      "title": "New glasses and feeling 'nerdy' or 'ugly'",
+      "candidateMechanisms": [
+        "V2-12 Quiet Strength"
+      ],
+      "strongestFit": "V2-12 Quiet Strength",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-12: big reaction likely solved by quiet internal quality"
+      ]
+    },
+    {
+      "id": "SIT065",
+      "title": "Getting acne or pimples (older kids)",
+      "candidateMechanisms": [
+        "V2-06 Role Reversal",
+        "V2-12 Quiet Strength",
+        "V2-01 Cumulative Discovery"
+      ],
+      "strongestFit": "V2-06 Role Reversal",
+      "runnerUp": "V2-12 Quiet Strength",
+      "confidence": "medium",
+      "collision": "V2-06 vs V2-12",
+      "notes": [
+        "V2-06: legacy natural coverage via T14",
+        "V2-12: obvious quiet-strength pattern"
+      ]
+    },
+    {
+      "id": "SIT066",
+      "title": "Being shortest or tallest in the class line",
+      "candidateMechanisms": [
+        "V2-03 Circular Return",
+        "V2-01 Cumulative Discovery"
+      ],
+      "strongestFit": "V2-03 Circular Return",
+      "runnerUp": "V2-01 Cumulative Discovery",
+      "confidence": "medium",
+      "collision": "none",
+      "notes": [
+        "V2-03: legacy natural coverage via T05",
+        "V2-01: multi-clue interpretation candidate"
+      ]
+    },
+    {
+      "id": "SIT067",
+      "title": "Being slower at reading than others",
+      "candidateMechanisms": [
+        "V2-05 Question Chain"
+      ],
+      "strongestFit": "V2-05 Question Chain",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-05: successive clarification/inquiry fit"
+      ]
+    },
+    {
+      "id": "SIT068",
+      "title": "Picked last for a team",
+      "candidateMechanisms": [
+        "V2-09 Judgment / Trickster Choice"
+      ],
+      "strongestFit": "V2-09 Judgment / Trickster Choice",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-09: multiple plausible options with reflective third move"
+      ]
+    },
+    {
+      "id": "SIT069",
+      "title": "Their clothes aren't as 'cool' as others'",
+      "candidateMechanisms": [
+        "V2-01 Cumulative Discovery"
+      ],
+      "strongestFit": "V2-01 Cumulative Discovery",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-01: multi-clue interpretation candidate"
+      ]
+    },
+    {
+      "id": "SIT072",
+      "title": "Project gets no likes or views",
+      "candidateMechanisms": [
+        "V2-02 Ritual Escalation"
+      ],
+      "strongestFit": "V2-02 Ritual Escalation",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-02: recurring pressure/behavior loop; title/summary suggests repeat pattern"
+      ]
+    },
+    {
+      "id": "SIT073",
+      "title": "Drawing doesn't look how they imagined",
+      "candidateMechanisms": [],
+      "strongestFit": null,
+      "runnerUp": null,
+      "confidence": "none",
+      "collision": "no clean V2 fit",
+      "notes": []
+    },
+    {
+      "id": "SIT074",
+      "title": "Reprimanded in front of friends or guests",
+      "candidateMechanisms": [
+        "V2-06 Role Reversal"
+      ],
+      "strongestFit": "V2-06 Role Reversal",
+      "runnerUp": null,
+      "confidence": "medium",
+      "collision": "none",
+      "notes": [
+        "V2-06: legacy natural coverage via T14"
+      ]
+    },
+    {
+      "id": "SIT075",
+      "title": "Forgot lines in a play",
+      "candidateMechanisms": [
+        "V2-07 Countdown / Resource Pressure",
+        "V2-02 Ritual Escalation"
+      ],
+      "strongestFit": "V2-07 Countdown / Resource Pressure",
+      "runnerUp": "V2-02 Ritual Escalation",
+      "confidence": "low",
+      "collision": "V2-07 vs V2-02",
+      "notes": [
+        "V2-07: finite window / shrinking patience / countdown",
+        "V2-02: recurring pressure/behavior loop"
+      ]
+    },
+    {
+      "id": "SIT076",
+      "title": "Told their work is 'messy' or unreadable",
+      "candidateMechanisms": [],
+      "strongestFit": null,
+      "runnerUp": null,
+      "confidence": "none",
+      "collision": "no clean V2 fit",
+      "notes": []
+    },
+    {
+      "id": "SIT077",
+      "title": "Why can't you be more like [cousin/friend]?",
+      "candidateMechanisms": [
+        "V2-05 Question Chain"
+      ],
+      "strongestFit": "V2-05 Question Chain",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-05: successive clarification/inquiry fit"
+      ]
+    },
+    {
+      "id": "SIT082",
+      "title": "Best friend is playing with someone else",
+      "candidateMechanisms": [
+        "V2-06 Role Reversal",
+        "V2-03 Circular Return",
+        "V2-11 Attention Shift",
+        "V2-12 Quiet Strength"
+      ],
+      "strongestFit": "V2-06 Role Reversal",
+      "runnerUp": "V2-03 Circular Return",
+      "confidence": "medium",
+      "collision": "V2-06 vs V2-03",
+      "notes": [
+        "V2-06: legacy natural coverage via T14",
+        "V2-03: clear candidate for opening/ending mirrored social moment"
+      ]
+    },
+    {
+      "id": "SIT083",
+      "title": "Friend got a new toy",
+      "candidateMechanisms": [],
+      "strongestFit": null,
+      "runnerUp": null,
+      "confidence": "none",
+      "collision": "no clean V2 fit",
+      "notes": []
+    },
+    {
+      "id": "SIT084",
+      "title": "Classmate won Student of the Month",
+      "candidateMechanisms": [
+        "V2-03 Circular Return",
+        "V2-07 Countdown / Resource Pressure",
+        "V2-02 Ritual Escalation",
+        "V2-11 Attention Shift"
+      ],
+      "strongestFit": "V2-03 Circular Return",
+      "runnerUp": "V2-07 Countdown / Resource Pressure",
+      "confidence": "high",
+      "collision": "none",
+      "notes": [
+        "V2-03: legacy natural coverage via T05; clear candidate for opening/ending mirrored social moment",
+        "V2-07: finite window / shrinking patience / countdown"
+      ]
+    },
+    {
+      "id": "SIT085",
+      "title": "Someone else got to go first",
+      "candidateMechanisms": [
+        "V2-06 Role Reversal",
+        "V2-07 Countdown / Resource Pressure",
+        "V2-02 Ritual Escalation",
+        "V2-12 Quiet Strength"
+      ],
+      "strongestFit": "V2-06 Role Reversal",
+      "runnerUp": "V2-07 Countdown / Resource Pressure",
+      "confidence": "low",
+      "collision": "V2-06 vs V2-07",
+      "notes": [
+        "V2-06: direct receive/give or observe/give-help pattern available",
+        "V2-07: finite window / shrinking patience / countdown"
+      ]
+    },
+    {
+      "id": "SIT086",
+      "title": "Parent on work call when child wants to share something",
+      "candidateMechanisms": [
+        "V2-07 Countdown / Resource Pressure",
+        "V2-01 Cumulative Discovery",
+        "V2-02 Ritual Escalation"
+      ],
+      "strongestFit": "V2-07 Countdown / Resource Pressure",
+      "runnerUp": "V2-01 Cumulative Discovery",
+      "confidence": "low",
+      "collision": "V2-07 vs V2-01",
+      "notes": [
+        "V2-07: finite window / shrinking patience / countdown",
+        "V2-01: multi-clue interpretation candidate"
+      ]
+    },
+    {
+      "id": "SIT087",
+      "title": "At a party but wanting the birthday gifts",
+      "candidateMechanisms": [
+        "V2-02 Ritual Escalation"
+      ],
+      "strongestFit": "V2-02 Ritual Escalation",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-02: recurring pressure/behavior loop"
+      ]
+    },
+    {
+      "id": "SIT088",
+      "title": "Friend is naturally better at football",
+      "candidateMechanisms": [
+        "V2-02 Ritual Escalation"
+      ],
+      "strongestFit": "V2-02 Ritual Escalation",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-02: recurring pressure/behavior loop; title/summary suggests repeat pattern"
+      ]
+    },
+    {
+      "id": "SIT089",
+      "title": "New sibling gets all the attention and new things",
+      "candidateMechanisms": [],
+      "strongestFit": null,
+      "runnerUp": null,
+      "confidence": "none",
+      "collision": "no clean V2 fit",
+      "notes": []
+    },
+    {
+      "id": "SIT090",
+      "title": "A classmate got the teacher's excited praise",
+      "candidateMechanisms": [
+        "V2-07 Countdown / Resource Pressure",
+        "V2-02 Ritual Escalation"
+      ],
+      "strongestFit": "V2-07 Countdown / Resource Pressure",
+      "runnerUp": "V2-02 Ritual Escalation",
+      "confidence": "low",
+      "collision": "V2-07 vs V2-02",
+      "notes": [
+        "V2-07: finite window / shrinking patience / countdown",
+        "V2-02: recurring pressure/behavior loop"
+      ]
+    },
+    {
+      "id": "SIT091",
+      "title": "Friend has more followers",
+      "candidateMechanisms": [
+        "V2-01 Cumulative Discovery"
+      ],
+      "strongestFit": "V2-01 Cumulative Discovery",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-01: multi-clue interpretation candidate"
+      ]
+    },
+    {
+      "id": "SIT092",
+      "title": "Friend went on a fancy international vacation",
+      "candidateMechanisms": [
+        "V2-07 Countdown / Resource Pressure",
+        "V2-02 Ritual Escalation"
+      ],
+      "strongestFit": "V2-07 Countdown / Resource Pressure",
+      "runnerUp": "V2-02 Ritual Escalation",
+      "confidence": "low",
+      "collision": "V2-07 vs V2-02",
+      "notes": [
+        "V2-07: finite window / shrinking patience / countdown",
+        "V2-02: recurring pressure/behavior loop"
+      ]
+    },
+    {
+      "id": "SIT093",
+      "title": "Wishing they had someone else's hair",
+      "candidateMechanisms": [
+        "V2-06 Role Reversal",
+        "V2-12 Quiet Strength",
+        "V2-01 Cumulative Discovery"
+      ],
+      "strongestFit": "V2-06 Role Reversal",
+      "runnerUp": "V2-12 Quiet Strength",
+      "confidence": "medium",
+      "collision": "V2-06 vs V2-12",
+      "notes": [
+        "V2-06: legacy natural coverage via T14",
+        "V2-12: obvious quiet-strength pattern"
+      ]
+    },
+    {
+      "id": "SIT094",
+      "title": "Wanting what's in a friend's lunchbox",
+      "candidateMechanisms": [
+        "V2-01 Cumulative Discovery"
+      ],
+      "strongestFit": "V2-01 Cumulative Discovery",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-01: multi-clue interpretation candidate"
+      ]
+    },
+    {
+      "id": "SIT095",
+      "title": "Friend has a later bedtime",
+      "candidateMechanisms": [
+        "V2-05 Question Chain"
+      ],
+      "strongestFit": "V2-05 Question Chain",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-05: successive clarification/inquiry fit"
+      ]
+    },
+    {
+      "id": "SIT096",
+      "title": "Wearing an older sibling's old clothes",
+      "candidateMechanisms": [
+        "V2-01 Cumulative Discovery",
+        "V2-12 Quiet Strength"
+      ],
+      "strongestFit": "V2-01 Cumulative Discovery",
+      "runnerUp": "V2-12 Quiet Strength",
+      "confidence": "low",
+      "collision": "V2-01 vs V2-12",
+      "notes": [
+        "V2-01: multi-clue interpretation candidate",
+        "V2-12: big reaction likely solved by quiet internal quality"
+      ]
+    },
+    {
+      "id": "SIT097",
+      "title": "Post-party or festival hyperactivity",
+      "candidateMechanisms": [
+        "V2-12 Quiet Strength"
+      ],
+      "strongestFit": "V2-12 Quiet Strength",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-12: big reaction likely solved by quiet internal quality"
+      ]
+    },
+    {
+      "id": "SIT098",
+      "title": "Zoning out after too much YouTube or gaming",
+      "candidateMechanisms": [
+        "V2-02 Ritual Escalation",
+        "V2-05 Question Chain"
+      ],
+      "strongestFit": "V2-02 Ritual Escalation",
+      "runnerUp": "V2-05 Question Chain",
+      "confidence": "low",
+      "collision": "V2-02 vs V2-05",
+      "notes": [
+        "V2-02: recurring pressure/behavior loop",
+        "V2-05: successive clarification/inquiry fit"
+      ]
+    },
+    {
+      "id": "SIT099",
+      "title": "Noisy, overcrowded mall or festival environment",
+      "candidateMechanisms": [
+        "V2-12 Quiet Strength",
+        "V2-01 Cumulative Discovery",
+        "V2-11 Attention Shift"
+      ],
+      "strongestFit": "V2-12 Quiet Strength",
+      "runnerUp": "V2-01 Cumulative Discovery",
+      "confidence": "medium",
+      "collision": "none",
+      "notes": [
+        "V2-12: big reaction likely solved by quiet internal quality; obvious quiet-strength pattern",
+        "V2-01: multi-clue interpretation candidate"
+      ]
+    },
+    {
+      "id": "SIT100",
+      "title": "Too many classes — tuition, sport, music all in one day",
+      "candidateMechanisms": [
+        "V2-07 Countdown / Resource Pressure",
+        "V2-02 Ritual Escalation"
+      ],
+      "strongestFit": "V2-07 Countdown / Resource Pressure",
+      "runnerUp": "V2-02 Ritual Escalation",
+      "confidence": "low",
+      "collision": "V2-07 vs V2-02",
+      "notes": [
+        "V2-07: finite window / shrinking patience / countdown",
+        "V2-02: recurring pressure/behavior loop"
+      ]
+    },
+    {
+      "id": "SIT101",
+      "title": "Long wait at doctor, bank, or during travel",
+      "candidateMechanisms": [
+        "V2-07 Countdown / Resource Pressure",
+        "V2-02 Ritual Escalation",
+        "V2-12 Quiet Strength"
+      ],
+      "strongestFit": "V2-07 Countdown / Resource Pressure",
+      "runnerUp": "V2-02 Ritual Escalation",
+      "confidence": "high",
+      "collision": "none",
+      "notes": [
+        "V2-07: finite window / shrinking patience / countdown; strong explicit countdown/time-pressure",
+        "V2-02: recurring pressure/behavior loop; title/summary suggests repeat pattern"
+      ]
+    },
+    {
+      "id": "SIT102",
+      "title": "Stuck indoors on a rainy day with nothing to do",
+      "candidateMechanisms": [
+        "V2-02 Ritual Escalation",
+        "V2-11 Attention Shift"
+      ],
+      "strongestFit": "V2-02 Ritual Escalation",
+      "runnerUp": "V2-11 Attention Shift",
+      "confidence": "high",
+      "collision": "none",
+      "notes": [
+        "V2-02: legacy natural coverage via T02; recurring pressure/behavior loop; title/summary suggests repeat pattern",
+        "V2-11: fixation/secondary return structure"
+      ]
+    },
+    {
+      "id": "SIT103",
+      "title": "End of a long school week — brain feels full",
+      "candidateMechanisms": [],
+      "strongestFit": null,
+      "runnerUp": null,
+      "confidence": "none",
+      "collision": "no clean V2 fit",
+      "notes": []
+    },
+    {
+      "id": "SIT104",
+      "title": "Cranky after a late night or bad sleep",
+      "candidateMechanisms": [
+        "V2-09 Judgment / Trickster Choice"
+      ],
+      "strongestFit": "V2-09 Judgment / Trickster Choice",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-09: multiple plausible options with reflective third move"
+      ]
+    },
+    {
+      "id": "SIT105",
+      "title": "Trying to do homework while TV is on",
+      "candidateMechanisms": [
+        "V2-02 Ritual Escalation"
+      ],
+      "strongestFit": "V2-02 Ritual Escalation",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-02: recurring pressure/behavior loop"
+      ]
+    },
+    {
+      "id": "SIT106",
+      "title": "Too many options for a toy or treat",
+      "candidateMechanisms": [
+        "V2-09 Judgment / Trickster Choice",
+        "V2-12 Quiet Strength"
+      ],
+      "strongestFit": "V2-09 Judgment / Trickster Choice",
+      "runnerUp": "V2-12 Quiet Strength",
+      "confidence": "low",
+      "collision": "V2-09 vs V2-12",
+      "notes": [
+        "V2-09: multiple plausible options with reflective third move",
+        "V2-12: big reaction likely solved by quiet internal quality"
+      ]
+    },
+    {
+      "id": "SIT107",
+      "title": "Pressure to always 'be good' and behave",
+      "candidateMechanisms": [
+        "V2-06 Role Reversal",
+        "V2-02 Ritual Escalation",
+        "V2-01 Cumulative Discovery"
+      ],
+      "strongestFit": "V2-06 Role Reversal",
+      "runnerUp": "V2-02 Ritual Escalation",
+      "confidence": "medium",
+      "collision": "V2-06 vs V2-02",
+      "notes": [
+        "V2-06: legacy natural coverage via T14",
+        "V2-02: recurring pressure/behavior loop; title/summary suggests repeat pattern"
+      ]
+    },
+    {
+      "id": "SIT108",
+      "title": "Waiting for a turn on the swings",
+      "candidateMechanisms": [
+        "V2-07 Countdown / Resource Pressure",
+        "V2-02 Ritual Escalation"
+      ],
+      "strongestFit": "V2-07 Countdown / Resource Pressure",
+      "runnerUp": "V2-02 Ritual Escalation",
+      "confidence": "high",
+      "collision": "none",
+      "notes": [
+        "V2-07: finite window / shrinking patience / countdown; strong explicit countdown/time-pressure",
+        "V2-02: recurring pressure/behavior loop; title/summary suggests repeat pattern"
+      ]
+    },
+    {
+      "id": "SIT109",
+      "title": "Switching from a fun activity to homework",
+      "candidateMechanisms": [],
+      "strongestFit": null,
+      "runnerUp": null,
+      "confidence": "none",
+      "collision": "no clean V2 fit",
+      "notes": []
+    },
+    {
+      "id": "SIT110",
+      "title": "The 'before dinner' energy crash",
+      "candidateMechanisms": [
+        "V2-07 Countdown / Resource Pressure",
+        "V2-02 Ritual Escalation"
+      ],
+      "strongestFit": "V2-07 Countdown / Resource Pressure",
+      "runnerUp": "V2-02 Ritual Escalation",
+      "confidence": "low",
+      "collision": "V2-07 vs V2-02",
+      "notes": [
+        "V2-07: finite window / shrinking patience / countdown",
+        "V2-02: recurring pressure/behavior loop"
+      ]
+    },
+    {
+      "id": "SIT111",
+      "title": "Uncomfortable uniform, flickering lights, strong smells",
+      "candidateMechanisms": [
+        "V2-02 Ritual Escalation"
+      ],
+      "strongestFit": "V2-02 Ritual Escalation",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-02: recurring pressure/behavior loop; title/summary suggests repeat pattern"
+      ]
+    },
+    {
+      "id": "SIT112",
+      "title": "Waiting very excitedly for birthday or special package",
+      "candidateMechanisms": [
+        "V2-07 Countdown / Resource Pressure",
+        "V2-02 Ritual Escalation"
+      ],
+      "strongestFit": "V2-07 Countdown / Resource Pressure",
+      "runnerUp": "V2-02 Ritual Escalation",
+      "confidence": "high",
+      "collision": "none",
+      "notes": [
+        "V2-07: finite window / shrinking patience / countdown; strong explicit countdown/time-pressure",
+        "V2-02: recurring pressure/behavior loop; title/summary suggests repeat pattern"
+      ]
+    },
+    {
+      "id": "SIT113",
+      "title": "Trying to learn a very hard new concept",
+      "candidateMechanisms": [
+        "V2-02 Ritual Escalation",
+        "V2-07 Countdown / Resource Pressure",
+        "V2-12 Quiet Strength"
+      ],
+      "strongestFit": "V2-02 Ritual Escalation",
+      "runnerUp": "V2-07 Countdown / Resource Pressure",
+      "confidence": "low",
+      "collision": "V2-02 vs V2-07",
+      "notes": [
+        "V2-02: recurring pressure/behavior loop; title/summary suggests repeat pattern",
+        "V2-07: finite window / shrinking patience / countdown"
+      ]
+    },
+    {
+      "id": "SIT114",
+      "title": "Moving to a new home or city",
+      "candidateMechanisms": [
+        "V2-06 Role Reversal",
+        "V2-02 Ritual Escalation"
+      ],
+      "strongestFit": "V2-06 Role Reversal",
+      "runnerUp": "V2-02 Ritual Escalation",
+      "confidence": "medium",
+      "collision": "none",
+      "notes": [
+        "V2-06: legacy natural coverage via T14",
+        "V2-02: recurring pressure/behavior loop"
+      ]
+    },
+    {
+      "id": "SIT115",
+      "title": "Moving abroad (very relevant for NRI families)",
+      "candidateMechanisms": [
+        "V2-06 Role Reversal"
+      ],
+      "strongestFit": "V2-06 Role Reversal",
+      "runnerUp": null,
+      "confidence": "medium",
+      "collision": "none",
+      "notes": [
+        "V2-06: legacy natural coverage via T14"
+      ]
+    },
+    {
+      "id": "SIT116",
+      "title": "Parents separating or getting a divorce",
+      "candidateMechanisms": [
+        "V2-04 Inversion",
+        "V2-12 Quiet Strength"
+      ],
+      "strongestFit": "V2-04 Inversion",
+      "runnerUp": "V2-12 Quiet Strength",
+      "confidence": "low",
+      "collision": "V2-04 vs V2-12",
+      "notes": [
+        "V2-04: dismissed/underestimated helper or option",
+        "V2-12: big reaction likely solved by quiet internal quality"
+      ]
+    },
+    {
+      "id": "SIT117",
+      "title": "A parent starts a new job with different hours",
+      "candidateMechanisms": [
+        "V2-07 Countdown / Resource Pressure",
+        "V2-12 Quiet Strength"
+      ],
+      "strongestFit": "V2-07 Countdown / Resource Pressure",
+      "runnerUp": "V2-12 Quiet Strength",
+      "confidence": "low",
+      "collision": "V2-07 vs V2-12",
+      "notes": [
+        "V2-07: finite window / shrinking patience / countdown",
+        "V2-12: big reaction likely solved by quiet internal quality"
+      ]
+    },
+    {
+      "id": "SIT118",
+      "title": "Starting at a completely new school",
+      "candidateMechanisms": [
+        "V2-11 Attention Shift"
+      ],
+      "strongestFit": "V2-11 Attention Shift",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-11: fixation/secondary return structure"
+      ]
+    },
+    {
+      "id": "SIT119",
+      "title": "Favourite teacher changes mid-year",
+      "candidateMechanisms": [
+        "V2-01 Cumulative Discovery",
+        "V2-12 Quiet Strength"
+      ],
+      "strongestFit": "V2-01 Cumulative Discovery",
+      "runnerUp": "V2-12 Quiet Strength",
+      "confidence": "low",
+      "collision": "V2-01 vs V2-12",
+      "notes": [
+        "V2-01: multi-clue interpretation candidate",
+        "V2-12: big reaction likely solved by quiet internal quality"
+      ]
+    },
+    {
+      "id": "SIT120",
+      "title": "Sudden cancellation of a normal routine event",
+      "candidateMechanisms": [],
+      "strongestFit": null,
+      "runnerUp": null,
+      "confidence": "none",
+      "collision": "no clean V2 fit",
+      "notes": []
+    },
+    {
+      "id": "SIT121",
+      "title": "Summer ending and school starting again",
+      "candidateMechanisms": [
+        "V2-07 Countdown / Resource Pressure",
+        "V2-02 Ritual Escalation"
+      ],
+      "strongestFit": "V2-07 Countdown / Resource Pressure",
+      "runnerUp": "V2-02 Ritual Escalation",
+      "confidence": "low",
+      "collision": "V2-07 vs V2-02",
+      "notes": [
+        "V2-07: finite window / shrinking patience / countdown",
+        "V2-02: recurring pressure/behavior loop"
+      ]
+    },
+    {
+      "id": "SIT122",
+      "title": "Noticing a new change in their body",
+      "candidateMechanisms": [
+        "V2-06 Role Reversal",
+        "V2-02 Ritual Escalation",
+        "V2-01 Cumulative Discovery"
+      ],
+      "strongestFit": "V2-06 Role Reversal",
+      "runnerUp": "V2-02 Ritual Escalation",
+      "confidence": "medium",
+      "collision": "V2-06 vs V2-02",
+      "notes": [
+        "V2-06: legacy natural coverage via T14",
+        "V2-02: recurring pressure/behavior loop; title/summary suggests repeat pattern"
+      ]
+    },
+    {
+      "id": "SIT123",
+      "title": "Friend suddenly acting different or 'cooler'",
+      "candidateMechanisms": [
+        "V2-01 Cumulative Discovery",
+        "V2-09 Judgment / Trickster Choice"
+      ],
+      "strongestFit": "V2-01 Cumulative Discovery",
+      "runnerUp": "V2-09 Judgment / Trickster Choice",
+      "confidence": "low",
+      "collision": "V2-01 vs V2-09",
+      "notes": [
+        "V2-01: multi-clue interpretation candidate",
+        "V2-09: multiple plausible options with reflective third move"
+      ]
+    },
+    {
+      "id": "SIT124",
+      "title": "Game or app changes interface completely",
+      "candidateMechanisms": [
+        "V2-02 Ritual Escalation",
+        "V2-01 Cumulative Discovery",
+        "V2-11 Attention Shift"
+      ],
+      "strongestFit": "V2-02 Ritual Escalation",
+      "runnerUp": "V2-01 Cumulative Discovery",
+      "confidence": "high",
+      "collision": "none",
+      "notes": [
+        "V2-02: legacy natural coverage via T02; recurring pressure/behavior loop; title/summary suggests repeat pattern",
+        "V2-01: multi-clue interpretation candidate"
+      ]
+    },
+    {
+      "id": "SIT125",
+      "title": "New nanny or household helper joins family",
+      "candidateMechanisms": [
+        "V2-04 Inversion",
+        "V2-12 Quiet Strength"
+      ],
+      "strongestFit": "V2-04 Inversion",
+      "runnerUp": "V2-12 Quiet Strength",
+      "confidence": "medium",
+      "collision": "none",
+      "notes": [
+        "V2-04: dismissed/underestimated helper or option; dismissed person could become key contributor",
+        "V2-12: big reaction likely solved by quiet internal quality"
+      ]
+    },
+    {
+      "id": "SIT126",
+      "title": "News of an upcoming surgery or treatment",
+      "candidateMechanisms": [
+        "V2-01 Cumulative Discovery",
+        "V2-04 Inversion",
+        "V2-12 Quiet Strength"
+      ],
+      "strongestFit": "V2-01 Cumulative Discovery",
+      "runnerUp": "V2-04 Inversion",
+      "confidence": "low",
+      "collision": "V2-01 vs V2-04",
+      "notes": [
+        "V2-01: multi-clue interpretation candidate",
+        "V2-04: dismissed/underestimated helper or option"
+      ]
+    },
+    {
+      "id": "SIT127",
+      "title": "Family having to cut back on treats or outings",
+      "candidateMechanisms": [],
+      "strongestFit": null,
+      "runnerUp": null,
+      "confidence": "none",
+      "collision": "no clean V2 fit",
+      "notes": []
+    },
+    {
+      "id": "SIT128",
+      "title": "Waiting anxiously for exam results",
+      "candidateMechanisms": [
+        "V2-07 Countdown / Resource Pressure",
+        "V2-02 Ritual Escalation"
+      ],
+      "strongestFit": "V2-07 Countdown / Resource Pressure",
+      "runnerUp": "V2-02 Ritual Escalation",
+      "confidence": "high",
+      "collision": "none",
+      "notes": [
+        "V2-07: finite window / shrinking patience / countdown; strong explicit countdown/time-pressure",
+        "V2-02: recurring pressure/behavior loop; title/summary suggests repeat pattern"
+      ]
+    },
+    {
+      "id": "SIT129",
+      "title": "First time staying overnight away from home",
+      "candidateMechanisms": [],
+      "strongestFit": null,
+      "runnerUp": null,
+      "confidence": "none",
+      "collision": "no clean V2 fit",
+      "notes": []
+    },
+    {
+      "id": "SIT130",
+      "title": "Stopping a favourite hobby or activity",
+      "candidateMechanisms": [],
+      "strongestFit": null,
+      "runnerUp": null,
+      "confidence": "none",
+      "collision": "no clean V2 fit",
+      "notes": []
+    },
+    {
+      "id": "SIT131",
+      "title": "Overheard adults talk about 'a big change coming'",
+      "candidateMechanisms": [
+        "V2-01 Cumulative Discovery",
+        "V2-05 Question Chain",
+        "V2-11 Attention Shift",
+        "V2-12 Quiet Strength"
+      ],
+      "strongestFit": "V2-01 Cumulative Discovery",
+      "runnerUp": "V2-05 Question Chain",
+      "confidence": "low",
+      "collision": "V2-01 vs V2-05",
+      "notes": [
+        "V2-01: multi-clue interpretation candidate",
+        "V2-05: successive clarification/inquiry fit"
+      ]
+    },
+    {
+      "id": "SIT132",
+      "title": "Told a lie to a parent and feels a 'heavy' stomach",
+      "candidateMechanisms": [
+        "V2-02 Ritual Escalation"
+      ],
+      "strongestFit": "V2-02 Ritual Escalation",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-02: recurring pressure/behavior loop; title/summary suggests repeat pattern"
+      ]
+    },
+    {
+      "id": "SIT133",
+      "title": "Tempted to steal something",
+      "candidateMechanisms": [
+        "V2-10 Threshold Choice",
+        "V2-01 Cumulative Discovery"
+      ],
+      "strongestFit": "V2-10 Threshold Choice",
+      "runnerUp": "V2-01 Cumulative Discovery",
+      "confidence": "low",
+      "collision": "V2-10 vs V2-01",
+      "notes": [
+        "V2-10: live moral threshold",
+        "V2-01: multi-clue interpretation candidate"
+      ]
+    },
+    {
+      "id": "SIT134",
+      "title": "Watched someone get bullied and did nothing",
+      "candidateMechanisms": [
+        "V2-12 Quiet Strength"
+      ],
+      "strongestFit": "V2-12 Quiet Strength",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-12: big reaction likely solved by quiet internal quality"
+      ]
+    },
+    {
+      "id": "SIT135",
+      "title": "A mean kid got praised or rewarded",
+      "candidateMechanisms": [
+        "V2-05 Question Chain",
+        "V2-09 Judgment / Trickster Choice"
+      ],
+      "strongestFit": "V2-05 Question Chain",
+      "runnerUp": "V2-09 Judgment / Trickster Choice",
+      "confidence": "low",
+      "collision": "V2-05 vs V2-09",
+      "notes": [
+        "V2-05: successive clarification/inquiry fit",
+        "V2-09: multiple plausible options with reflective third move"
+      ]
+    },
+    {
+      "id": "SIT136",
+      "title": "Wants to play but knows they should study",
+      "candidateMechanisms": [
+        "V2-10 Threshold Choice",
+        "V2-07 Countdown / Resource Pressure",
+        "V2-02 Ritual Escalation"
+      ],
+      "strongestFit": "V2-10 Threshold Choice",
+      "runnerUp": "V2-07 Countdown / Resource Pressure",
+      "confidence": "high",
+      "collision": "none",
+      "notes": [
+        "V2-10: live moral threshold; genuine two-path threshold",
+        "V2-07: finite window / shrinking patience / countdown"
+      ]
+    },
+    {
+      "id": "SIT137",
+      "title": "Tempted to look at friend's paper during a test",
+      "candidateMechanisms": [
+        "V2-05 Question Chain",
+        "V2-10 Threshold Choice",
+        "V2-09 Judgment / Trickster Choice"
+      ],
+      "strongestFit": "V2-05 Question Chain",
+      "runnerUp": "V2-10 Threshold Choice",
+      "confidence": "medium",
+      "collision": "V2-05 vs V2-10",
+      "notes": [
+        "V2-05: legacy natural coverage via T04",
+        "V2-10: live moral threshold"
+      ]
+    },
+    {
+      "id": "SIT138",
+      "title": "Told a 'bad' secret they feel should be shared",
+      "candidateMechanisms": [
+        "V2-01 Cumulative Discovery",
+        "V2-09 Judgment / Trickster Choice"
+      ],
+      "strongestFit": "V2-01 Cumulative Discovery",
+      "runnerUp": "V2-09 Judgment / Trickster Choice",
+      "confidence": "low",
+      "collision": "V2-01 vs V2-09",
+      "notes": [
+        "V2-01: multi-clue interpretation candidate",
+        "V2-09: multiple plausible options with reflective third move"
+      ]
+    },
+    {
+      "id": "SIT139",
+      "title": "Broke something by mistake and hid it",
+      "candidateMechanisms": [],
+      "strongestFit": null,
+      "runnerUp": null,
+      "confidence": "none",
+      "collision": "no clean V2 fit",
+      "notes": []
+    },
+    {
+      "id": "SIT140",
+      "title": "Realised some kids don't have food or shoes",
+      "candidateMechanisms": [
+        "V2-01 Cumulative Discovery",
+        "V2-10 Threshold Choice",
+        "V2-05 Question Chain"
+      ],
+      "strongestFit": "V2-01 Cumulative Discovery",
+      "runnerUp": "V2-10 Threshold Choice",
+      "confidence": "medium",
+      "collision": "none",
+      "notes": [
+        "V2-01: multi-clue interpretation candidate; naturally clue-accumulation driven",
+        "V2-10: live moral threshold"
+      ]
+    },
+    {
+      "id": "SIT141",
+      "title": "Saw a parent or teacher break a rule they enforce",
+      "candidateMechanisms": [
+        "V2-10 Threshold Choice",
+        "V2-01 Cumulative Discovery",
+        "V2-05 Question Chain",
+        "V2-09 Judgment / Trickster Choice"
+      ],
+      "strongestFit": "V2-10 Threshold Choice",
+      "runnerUp": "V2-01 Cumulative Discovery",
+      "confidence": "low",
+      "collision": "V2-10 vs V2-01",
+      "notes": [
+        "V2-10: live moral threshold",
+        "V2-01: multi-clue interpretation candidate"
+      ]
+    },
+    {
+      "id": "SIT142",
+      "title": "Someone online asked for their personal password",
+      "candidateMechanisms": [
+        "V2-10 Threshold Choice",
+        "V2-09 Judgment / Trickster Choice",
+        "V2-05 Question Chain"
+      ],
+      "strongestFit": "V2-10 Threshold Choice",
+      "runnerUp": "V2-09 Judgment / Trickster Choice",
+      "confidence": "high",
+      "collision": "V2-10 vs V2-09",
+      "notes": [
+        "V2-10: live moral threshold; genuine two-path threshold",
+        "V2-09: multiple plausible options with reflective third move; explicit choice architecture"
+      ]
+    },
+    {
+      "id": "SIT143",
+      "title": "Seeing someone litter",
+      "candidateMechanisms": [
+        "V2-10 Threshold Choice"
+      ],
+      "strongestFit": "V2-10 Threshold Choice",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-10: live moral threshold"
+      ]
+    },
+    {
+      "id": "SIT144",
+      "title": "Saw a stray animal being treated badly",
+      "candidateMechanisms": [
+        "V2-10 Threshold Choice",
+        "V2-04 Inversion"
+      ],
+      "strongestFit": "V2-10 Threshold Choice",
+      "runnerUp": "V2-04 Inversion",
+      "confidence": "high",
+      "collision": "none",
+      "notes": [
+        "V2-10: live moral threshold; genuine two-path threshold",
+        "V2-04: dismissed/underestimated helper or option"
+      ]
+    },
+    {
+      "id": "SIT145",
+      "title": "Failed to keep a promise they made to a friend",
+      "candidateMechanisms": [
+        "V2-09 Judgment / Trickster Choice"
+      ],
+      "strongestFit": "V2-09 Judgment / Trickster Choice",
+      "runnerUp": null,
+      "confidence": "medium",
+      "collision": "none",
+      "notes": [
+        "V2-09: multiple plausible options with reflective third move; explicit choice architecture"
+      ]
+    },
+    {
+      "id": "SIT146",
+      "title": "Feels guilty for not including someone in play",
+      "candidateMechanisms": [
+        "V2-06 Role Reversal",
+        "V2-01 Cumulative Discovery"
+      ],
+      "strongestFit": "V2-06 Role Reversal",
+      "runnerUp": "V2-01 Cumulative Discovery",
+      "confidence": "high",
+      "collision": "none",
+      "notes": [
+        "V2-06: legacy natural coverage via T14; direct receive/give or observe/give-help pattern available; concrete help-to-others situation",
+        "V2-01: multi-clue interpretation candidate"
+      ]
+    },
+    {
+      "id": "SIT147",
+      "title": "Friend said something mean about their culture or family",
+      "candidateMechanisms": [
+        "V2-12 Quiet Strength"
+      ],
+      "strongestFit": "V2-12 Quiet Strength",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-12: big reaction likely solved by quiet internal quality"
+      ]
+    },
+    {
+      "id": "SIT148",
+      "title": "Found something and doesn't know whether to keep it",
+      "candidateMechanisms": [
+        "V2-07 Countdown / Resource Pressure",
+        "V2-02 Ritual Escalation",
+        "V2-11 Attention Shift"
+      ],
+      "strongestFit": "V2-07 Countdown / Resource Pressure",
+      "runnerUp": "V2-02 Ritual Escalation",
+      "confidence": "low",
+      "collision": "V2-07 vs V2-02",
+      "notes": [
+        "V2-07: finite window / shrinking patience / countdown",
+        "V2-02: recurring pressure/behavior loop"
+      ]
+    },
+    {
+      "id": "SIT149",
+      "title": "Overheard talk about politics, protests, or injustice",
+      "candidateMechanisms": [
+        "V2-01 Cumulative Discovery",
+        "V2-05 Question Chain",
+        "V2-12 Quiet Strength"
+      ],
+      "strongestFit": "V2-01 Cumulative Discovery",
+      "runnerUp": "V2-05 Question Chain",
+      "confidence": "low",
+      "collision": "V2-01 vs V2-05",
+      "notes": [
+        "V2-01: multi-clue interpretation candidate",
+        "V2-05: successive clarification/inquiry fit"
+      ]
+    },
+    {
+      "id": "SIT150",
+      "title": "Best friend makes a new best friend",
+      "candidateMechanisms": [
+        "V2-03 Circular Return",
+        "V2-06 Role Reversal",
+        "V2-09 Judgment / Trickster Choice",
+        "V2-11 Attention Shift"
+      ],
+      "strongestFit": "V2-03 Circular Return",
+      "runnerUp": "V2-06 Role Reversal",
+      "confidence": "medium",
+      "collision": "V2-03 vs V2-06",
+      "notes": [
+        "V2-03: possible mirrored return scene; clear candidate for opening/ending mirrored social moment",
+        "V2-06: legacy natural coverage via T14"
+      ]
+    },
+    {
+      "id": "SIT151",
+      "title": "Friends don't reply to messages",
+      "candidateMechanisms": [
+        "V2-11 Attention Shift",
+        "V2-02 Ritual Escalation",
+        "V2-05 Question Chain"
+      ],
+      "strongestFit": "V2-11 Attention Shift",
+      "runnerUp": "V2-02 Ritual Escalation",
+      "confidence": "medium",
+      "collision": "V2-11 vs V2-02",
+      "notes": [
+        "V2-11: clear fixation then reassessment candidate",
+        "V2-02: recurring pressure/behavior loop; title/summary suggests repeat pattern"
+      ]
+    },
+    {
+      "id": "SIT152",
+      "title": "Accidentally left out of a game",
+      "candidateMechanisms": [
+        "V2-06 Role Reversal"
+      ],
+      "strongestFit": "V2-06 Role Reversal",
+      "runnerUp": null,
+      "confidence": "high",
+      "collision": "none",
+      "notes": [
+        "V2-06: legacy natural coverage via T14; direct receive/give or observe/give-help pattern available"
+      ]
+    },
+    {
+      "id": "SIT153",
+      "title": "A secret wasn't shared with them",
+      "candidateMechanisms": [
+        "V2-06 Role Reversal",
+        "V2-05 Question Chain"
+      ],
+      "strongestFit": "V2-06 Role Reversal",
+      "runnerUp": "V2-05 Question Chain",
+      "confidence": "low",
+      "collision": "V2-06 vs V2-05",
+      "notes": [
+        "V2-06: direct receive/give or observe/give-help pattern available",
+        "V2-05: successive clarification/inquiry fit"
+      ]
+    },
+    {
+      "id": "SIT154",
+      "title": "Friend copies their work or idea",
+      "candidateMechanisms": [
+        "V2-05 Question Chain",
+        "V2-11 Attention Shift"
+      ],
+      "strongestFit": "V2-05 Question Chain",
+      "runnerUp": "V2-11 Attention Shift",
+      "confidence": "low",
+      "collision": "V2-05 vs V2-11",
+      "notes": [
+        "V2-05: successive clarification/inquiry fit",
+        "V2-11: fixation/secondary return structure"
+      ]
+    },
+    {
+      "id": "SIT155",
+      "title": "A friend wins while they lose",
+      "candidateMechanisms": [
+        "V2-02 Ritual Escalation"
+      ],
+      "strongestFit": "V2-02 Ritual Escalation",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-02: recurring pressure/behavior loop"
+      ]
+    },
+    {
+      "id": "SIT156",
+      "title": "Friend breaks a promise",
+      "candidateMechanisms": [
+        "V2-09 Judgment / Trickster Choice",
+        "V2-05 Question Chain"
+      ],
+      "strongestFit": "V2-09 Judgment / Trickster Choice",
+      "runnerUp": "V2-05 Question Chain",
+      "confidence": "medium",
+      "collision": "none",
+      "notes": [
+        "V2-09: multiple plausible options with reflective third move; explicit choice architecture",
+        "V2-05: successive clarification/inquiry fit"
+      ]
+    },
+    {
+      "id": "SIT157",
+      "title": "Rumours or gossip spread about them",
+      "candidateMechanisms": [
+        "V2-01 Cumulative Discovery",
+        "V2-09 Judgment / Trickster Choice",
+        "V2-12 Quiet Strength"
+      ],
+      "strongestFit": "V2-01 Cumulative Discovery",
+      "runnerUp": "V2-09 Judgment / Trickster Choice",
+      "confidence": "medium",
+      "collision": "none",
+      "notes": [
+        "V2-01: multi-clue interpretation candidate; naturally clue-accumulation driven",
+        "V2-09: multiple plausible options with reflective third move"
+      ]
+    },
+    {
+      "id": "SIT158",
+      "title": "Friend apologises after hurting them",
+      "candidateMechanisms": [
+        "V2-07 Countdown / Resource Pressure",
+        "V2-02 Ritual Escalation",
+        "V2-04 Inversion",
+        "V2-12 Quiet Strength"
+      ],
+      "strongestFit": "V2-07 Countdown / Resource Pressure",
+      "runnerUp": "V2-02 Ritual Escalation",
+      "confidence": "low",
+      "collision": "V2-07 vs V2-02",
+      "notes": [
+        "V2-07: finite window / shrinking patience / countdown",
+        "V2-02: recurring pressure/behavior loop"
+      ]
+    },
+    {
+      "id": "SIT159",
+      "title": "They hurt a friend's feelings by mistake",
+      "candidateMechanisms": [
+        "V2-12 Quiet Strength"
+      ],
+      "strongestFit": "V2-12 Quiet Strength",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-12: big reaction likely solved by quiet internal quality"
+      ]
+    },
+    {
+      "id": "SIT160",
+      "title": "Asked to choose between two friends",
+      "candidateMechanisms": [
+        "V2-10 Threshold Choice",
+        "V2-09 Judgment / Trickster Choice"
+      ],
+      "strongestFit": "V2-10 Threshold Choice",
+      "runnerUp": "V2-09 Judgment / Trickster Choice",
+      "confidence": "high",
+      "collision": "V2-10 vs V2-09",
+      "notes": [
+        "V2-10: live moral threshold; genuine two-path threshold",
+        "V2-09: multiple plausible options with reflective third move; explicit choice architecture"
+      ]
+    },
+    {
+      "id": "SIT161",
+      "title": "Lost during a team game because of their mistake",
+      "candidateMechanisms": [
+        "V2-11 Attention Shift"
+      ],
+      "strongestFit": "V2-11 Attention Shift",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-11: fixation/secondary return structure"
+      ]
+    },
+    {
+      "id": "SIT162",
+      "title": "Teammate isn't doing their part",
+      "candidateMechanisms": [
+        "V2-02 Ritual Escalation",
+        "V2-12 Quiet Strength"
+      ],
+      "strongestFit": "V2-02 Ritual Escalation",
+      "runnerUp": "V2-12 Quiet Strength",
+      "confidence": "low",
+      "collision": "V2-02 vs V2-12",
+      "notes": [
+        "V2-02: recurring pressure/behavior loop",
+        "V2-12: big reaction likely solved by quiet internal quality"
+      ]
+    },
+    {
+      "id": "SIT163",
+      "title": "Friend gets a pet they always wanted",
+      "candidateMechanisms": [
+        "V2-11 Attention Shift"
+      ],
+      "strongestFit": "V2-11 Attention Shift",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-11: fixation/secondary return structure"
+      ]
+    },
+    {
+      "id": "SIT164",
+      "title": "A younger child wants to join the game",
+      "candidateMechanisms": [
+        "V2-06 Role Reversal"
+      ],
+      "strongestFit": "V2-06 Role Reversal",
+      "runnerUp": null,
+      "confidence": "medium",
+      "collision": "none",
+      "notes": [
+        "V2-06: direct receive/give or observe/give-help pattern available; concrete help-to-others situation"
+      ]
+    },
+    {
+      "id": "SIT165",
+      "title": "Friend is nervous before a performance",
+      "candidateMechanisms": [
+        "V2-06 Role Reversal",
+        "V2-07 Countdown / Resource Pressure",
+        "V2-01 Cumulative Discovery",
+        "V2-02 Ritual Escalation",
+        "V2-04 Inversion",
+        "V2-12 Quiet Strength"
+      ],
+      "strongestFit": "V2-06 Role Reversal",
+      "runnerUp": "V2-07 Countdown / Resource Pressure",
+      "confidence": "medium",
+      "collision": "none",
+      "notes": [
+        "V2-06: direct receive/give or observe/give-help pattern available; concrete help-to-others situation",
+        "V2-07: finite window / shrinking patience / countdown"
+      ]
+    },
+    {
+      "id": "SIT166",
+      "title": "Classmate is new and sitting alone",
+      "candidateMechanisms": [
+        "V2-06 Role Reversal",
+        "V2-04 Inversion",
+        "V2-07 Countdown / Resource Pressure",
+        "V2-01 Cumulative Discovery",
+        "V2-02 Ritual Escalation",
+        "V2-12 Quiet Strength"
+      ],
+      "strongestFit": "V2-06 Role Reversal",
+      "runnerUp": "V2-04 Inversion",
+      "confidence": "medium",
+      "collision": "none",
+      "notes": [
+        "V2-06: direct receive/give or observe/give-help pattern available; concrete help-to-others situation",
+        "V2-04: dismissed/underestimated helper or option; dismissed person could become key contributor"
+      ]
+    },
+    {
+      "id": "SIT167",
+      "title": "Friend keeps interrupting while talking",
+      "candidateMechanisms": [
+        "V2-02 Ritual Escalation"
+      ],
+      "strongestFit": "V2-02 Ritual Escalation",
+      "runnerUp": null,
+      "confidence": "low",
+      "collision": "none",
+      "notes": [
+        "V2-02: recurring pressure/behavior loop; title/summary suggests repeat pattern"
+      ]
+    },
+    {
+      "id": "SIT168",
+      "title": "Group project where everyone has different ideas",
+      "candidateMechanisms": [
+        "V2-02 Ritual Escalation",
+        "V2-09 Judgment / Trickster Choice",
+        "V2-07 Countdown / Resource Pressure"
+      ],
+      "strongestFit": "V2-02 Ritual Escalation",
+      "runnerUp": "V2-09 Judgment / Trickster Choice",
+      "confidence": "medium",
+      "collision": "V2-02 vs V2-09",
+      "notes": [
+        "V2-02: legacy natural coverage via T02; recurring pressure/behavior loop",
+        "V2-09: multiple plausible options with reflective third move; explicit choice architecture"
+      ]
+    }
+  ]
+}

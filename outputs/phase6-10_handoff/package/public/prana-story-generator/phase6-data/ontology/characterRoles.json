@@ -1,0 +1,14 @@
+[
+  {"id": "ROLE_UNDERDOG", "covers": ["Underdog Hero"]},
+  {"id": "ROLE_LEARNER", "covers": ["Courage Learner", "Young Learner"]},
+  {"id": "ROLE_EXPLORER", "covers": ["Explorer", "Adventurer"]},
+  {"id": "ROLE_MENTOR", "covers": ["Mentor / Protector", "Wise Guide / Detective"]},
+  {"id": "ROLE_GUARDIAN", "covers": ["Gentle Guardian", "Nurturer"]},
+  {"id": "ROLE_HELPER", "covers": ["Loyal Companion", "Empathy Builder"]},
+  {"id": "ROLE_CREATOR", "covers": ["Creator / Inventor"]},
+  {"id": "ROLE_SOLVER", "covers": ["Puzzle Solver"]},
+  {"id": "ROLE_PERFORMER", "covers": ["Performer", "Comic Catalyst"]},
+  {"id": "ROLE_MESSENGER", "covers": ["Messenger"]},
+  {"id": "ROLE_LEADER", "covers": ["Leader"]},
+  {"id": "ROLE_THINKER", "covers": ["Patient Thinker"]}
+]

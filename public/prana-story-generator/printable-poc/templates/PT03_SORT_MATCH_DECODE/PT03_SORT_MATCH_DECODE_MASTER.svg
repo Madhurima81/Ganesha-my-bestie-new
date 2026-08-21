@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="210mm" height="297mm" viewBox="0 0 794 1123">
+<defs>
+<style>
+.title{font-family:DejaVu Sans,sans-serif;font-weight:700;fill:#6B4F43}
+.body{font-family:DejaVu Sans,sans-serif;fill:#6F5B52}
+.small{font-family:DejaVu Sans,sans-serif;fill:#7B6B63}
+.panel{fill:#FFFDF9;stroke:#E6D8CC;stroke-width:2}
+.itemcard{fill:#FFFFFF;stroke:#DDCEC2;stroke-width:2}
+</style>
+</defs>
+<rect width="794" height="1123" fill="#FDF9F3"/>
+<rect x="24" y="24" width="746" height="1075" rx="28" fill="#FFFDF9" stroke="#E9DDD2" stroke-width="2"/>
+
+<rect x="55" y="50" width="684" height="140" rx="24" fill="#FFF1E1" stroke="#E7D5C7" stroke-width="2"/>
+<text id="TITLE" x="122" y="84" class="title" font-size="31">{{TITLE}}</text>
+<text id="SUBTITLE" x="122" y="116" class="body" font-size="15">{{SUBTITLE}}</text>
+<text id="INSTRUCTION" x="122" y="158" class="small" font-size="13">{{INSTRUCTION}}</text>
+<g id="MAIN_ART">
+  <circle cx="650" cy="120" r="44" fill="#FFF8EE" stroke="#E3D3C6" stroke-width="2"/>
+  <text x="650" y="126" text-anchor="middle" class="small" font-size="12">ART</text>
+</g>
+
+<rect x="55" y="210" width="684" height="470" rx="26" class="panel"/>
+<text x="80" y="243" class="title" font-size="16">SORT THE CLUES</text>
+<text x="220" y="243" class="small" font-size="12">Draw a line from each card to the best category.</text>
+<g id="ITEMS_GRID">
+  <text x="397" y="445" text-anchor="middle" class="small" font-size="14">{{ITEMS_GRID}}</text>
+</g>
+
+<rect x="55" y="710" width="330" height="185" rx="24" fill="#E4F2E2" stroke="#CADFCA" stroke-width="2"/>
+<text id="CATEGORY_LEFT_TITLE" x="220" y="754" text-anchor="middle" class="title" font-size="23">{{CATEGORY_LEFT_TITLE}}</text>
+<text id="CATEGORY_LEFT_HINT" x="220" y="790" text-anchor="middle" class="body" font-size="14">{{CATEGORY_LEFT_HINT}}</text>
+<line x1="110" y1="820" x2="330" y2="820" stroke="#A4B899" stroke-width="2" stroke-dasharray="8 8"/>
+<line x1="110" y1="852" x2="330" y2="852" stroke="#A4B899" stroke-width="2" stroke-dasharray="8 8"/>
+
+<rect x="409" y="710" width="330" height="185" rx="24" fill="#FCE6E0" stroke="#E7C9C1" stroke-width="2"/>
+<text id="CATEGORY_RIGHT_TITLE" x="574" y="754" text-anchor="middle" class="title" font-size="23">{{CATEGORY_RIGHT_TITLE}}</text>
+<text id="CATEGORY_RIGHT_HINT" x="574" y="790" text-anchor="middle" class="body" font-size="14">{{CATEGORY_RIGHT_HINT}}</text>
+<line x1="464" y1="820" x2="684" y2="820" stroke="#D0A7A1" stroke-width="2" stroke-dasharray="8 8"/>
+<line x1="464" y1="852" x2="684" y2="852" stroke="#D0A7A1" stroke-width="2" stroke-dasharray="8 8"/>
+
+<rect x="55" y="925" width="684" height="120" rx="24" fill="#E9F2E6" stroke="#D0E0CC" stroke-width="2"/>
+<text x="397" y="960" text-anchor="middle" class="title" font-size="16">GANESHA WISDOM</text>
+<text id="WISDOM" x="397" y="990" text-anchor="middle" class="body" font-size="17">{{WISDOM}}</text>
+<text id="TODAY" x="397" y="1018" text-anchor="middle" class="small" font-size="13">{{TODAY}}</text>
+
+<text id="FOOTER" x="397" y="1078" text-anchor="middle" class="title" font-size="15">{{FOOTER}}</text>
+</svg>

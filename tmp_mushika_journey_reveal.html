@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Mushika's Little Journey — Prototype</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(180deg, #fdf0d5 0%, #f4dba3 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    overflow: hidden;
+    touch-action: none;
+  }
+  h1 {
+    font-family: 'Baloo 2', cursive;
+    color: #7a4a1a;
+    margin: 6px 0;
+    font-size: 20px;
+  }
+  #hint {
+    font-size: 15px;
+    color: #8a5a20;
+    min-height: 20px;
+    margin-bottom: 6px;
+    font-weight: 700;
+    text-align: center;
+    transition: opacity 0.4s ease;
+  }
+  #sceneWrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+  #scene {
+    position: relative;
+    width: 900px;
+    height: 500px;
+    flex-shrink: 0;
+    background: linear-gradient(180deg, #fff6e0 0%, #f6e3ae 55%, #e8cf8a 100%);
+    border-radius: 16px;
+    border: 4px solid #c9a35a;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  }
+  #resetBtn {
+    margin-top: 10px;
+    padding: 8px 20px;
+    border: none;
+    border-radius: 20px;
+    background: #c98a3a;
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  #resetBtn:hover { background: #a96f2a; }
+
+  /* Ganesha waiting */
+  #ganesha {
+    position: absolute;
+    right: 50px;
+    bottom: 60px;
+    width: 130px;
+    height: 150px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    font-size: 90px;
+    z-index: 4;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+  }
+  #ganesha.acceptGlow {
+    animation: acceptPulse 1s ease;
+  }
+  @keyframes acceptPulse {
+    0%,100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+  }
+  #bellyTapZone {
+    position: absolute;
+    right: 78px;
+    bottom: 78px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    z-index: 5;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+  #bellyTapZone.active {
+    display: flex;
+    animation: bellyPulseHint 1.4s ease-in-out infinite;
+    box-shadow: 0 0 0 0 rgba(255,210,90,0.7);
+    border-radius: 50%;
+  }
+  @keyframes bellyPulseHint {
+    0%,100% { box-shadow: 0 0 0 0 rgba(255,210,90,0.55); }
+    50% { box-shadow: 0 0 0 14px rgba(255,210,90,0); }
+  }
+
+  /* Mushika */
+  #mushika {
+    position: absolute;
+    left: 60px;
+    top: 260px;
+    width: 54px;
+    height: 54px;
+    font-size: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 6;
+    cursor: pointer;
+    user-select: none;
+  }
+  #mushika.darting {
+    transition: left 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), top 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  #mushika.calm {
+    transition: left 1.4s ease, top 1.4s ease;
+  }
+
+  /* Distraction objects */
+  .distraction {
+    position: absolute;
+    font-size: 30px;
+    z-index: 3;
+    transition: opacity 0.8s ease, filter 0.8s ease, transform 0.8s ease;
+    pointer-events: none;
+  }
+  .distraction.faded {
+    opacity: 0.15;
+    filter: blur(2px);
+    transform: scale(0.8);
+  }
+  .distraction.active {
+    transform: scale(1.25);
+    filter: drop-shadow(0 0 8px rgba(255,210,90,0.8));
+  }
+
+  /* Hold ring on Mushika */
+  #holdRing {
+    position: absolute;
+    inset: -10px;
+    border-radius: 50%;
+    border: 5px solid rgba(255,190,70,0.9);
+    clip-path: inset(0 0 0 0);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Modak */
+  #modak {
+    position: absolute;
+    font-size: 40px;
+    z-index: 7;
+    opacity: 0;
+    transform: scale(0.5);
+    transition: opacity 0.9s ease, transform 0.9s ease;
+    cursor: grab;
+  }
+  #modak.visible {
+    opacity: 1;
+    transform: scale(1);
+  }
+  #modak.dragging {
+    transition: none;
+    cursor: grabbing;
+  }
+
+  /* Belly reveal overlay */
+  #bellyReveal {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 75% 70%, #4a2f0f 0%, #2a1a08 100%);
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1s ease;
+  }
+  #bellyReveal.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  #miniWorld {
+    position: relative;
+    width: 340px;
+    height: 220px;
+    background: radial-gradient(ellipse at center, #fff6e0 0%, #f0dca8 100%);
+    border-radius: 50%;
+    box-shadow: 0 0 60px rgba(255,220,150,0.5), inset 0 0 30px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    font-size: 26px;
+    transform: scale(0.3);
+    opacity: 0;
+    transition: transform 1s cubic-bezier(0.34,1.56,0.64,1), opacity 1s ease;
+  }
+  #bellyReveal.show #miniWorld {
+    transform: scale(1);
+    opacity: 1;
+  }
+  #miniWorld span {
+    animation: miniFloat 3s ease-in-out infinite;
+  }
+  #miniWorld span:nth-child(2) { animation-delay: 0.3s; }
+  #miniWorld span:nth-child(3) { animation-delay: 0.6s; }
+  #miniWorld span:nth-child(4) { animation-delay: 0.9s; }
+  #miniWorld span:nth-child(5) { animation-delay: 1.2s; }
+  @keyframes miniFloat {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+  #bellyCaption {
+    position: absolute;
+    bottom: 40px;
+    color: #fff6e0;
+    font-family: 'Baloo 2', cursive;
+    font-size: 20px;
+    text-align: center;
+    width: 100%;
+    opacity: 0;
+    transition: opacity 1s ease 0.8s;
+  }
+  #bellyReveal.show #bellyCaption {
+    opacity: 1;
+  }
+
+  #finalLine {
+    margin-top: 10px;
+    font-size: 16px;
+    color: #7a5220;
+    font-weight: 700;
+    min-height: 24px;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+  }
+  #finalLine.show { opacity: 1; }
+
+  .ground-path {
+    position: absolute;
+    left: 90px;
+    right: 200px;
+    bottom: 240px;
+    height: 6px;
+    background: repeating-linear-gradient(90deg, #d8b878 0 14px, transparent 14px 26px);
+    z-index: 1;
+    border-radius: 4px;
+  }
+</style>
+</head>
+<body>
+
+<h1>🐭 Mushika's Little Journey — Prototype</h1>
+<div id="hint">Mushika keeps getting pulled around... press and hold him to help him settle</div>
+
+<div id="sceneWrap">
+<div id="scene">
+  <div class="ground-path"></div>
+
+  <div class="distraction" id="d1" style="left:200px; top:150px;">🪶</div>
+  <div class="distraction" id="d2" style="left:340px; top:340px;">🫐</div>
+  <div class="distraction" id="d3" style="left:480px; top:170px;">🌰</div>
+
+  <div id="mushika">
+    <div id="holdRing"></div>
+    🐭
+  </div>
+
+  <div id="modak">🥟</div>
+
+  <div id="ganesha">🐘</div>
+  <div id="bellyTapZone"></div>
+
+  <div id="bellyReveal">
+    <div id="miniWorld">
+      <span>🪶</span><span>🫐</span><span>🌰</span><span>🥟</span><span>🐭</span>
+    </div>
+    <div id="bellyCaption">Everything from the journey<br>fits here.</div>
+  </div>
+</div>
+</div>
+
+<div id="finalLine"></div>
+<button id="resetBtn" onclick="resetScene()">Reset</button>
+
+<script>
+const mushika = document.getElementById('mushika');
+const holdRing = document.getElementById('holdRing');
+const hintEl = document.getElementById('hint');
+const distractions = [
+  document.getElementById('d1'),
+  document.getElementById('d2'),
+  document.getElementById('d3')
+];
+const modak = document.getElementById('modak');
+const ganesha = document.getElementById('ganesha');
+const bellyTapZone = document.getElementById('bellyTapZone');
+const bellyReveal = document.getElementById('bellyReveal');
+const finalLine = document.getElementById('finalLine');
+const scene = document.getElementById('scene');
+
+let PHASE = 'DISTRACTED'; // DISTRACTED -> STEADY -> WALKING -> MODAK_READY -> OFFERED -> BELLY
+let mushikaPos = { x: 60, y: 260 };
+let zigzagInterval = null;
+let holdStart = null;
+let holdRAF = null;
+const HOLD_DURATION = 1600;
+
+function setHint(text) {
+  hintEl.style.opacity = 0;
+  setTimeout(() => {
+    hintEl.textContent = text;
+    hintEl.style.opacity = 1;
+  }, 200);
+}
+
+// --- Phase 1: Mushika genuinely darts toward each distraction in turn ---
+// Distraction positions match their CSS placement (roughly, center-adjusted for mushika size)
+const distractionPositions = [
+  { el: distractions[0], x: 195, y: 155 }, // feather
+  { el: distractions[1], x: 335, y: 345 }, // berry
+  { el: distractions[2], x: 475, y: 175 }  // acorn
+];
+let distractionIndex = 0;
+
+function startZigzag() {
+  mushika.classList.remove('calm');
+  mushika.classList.add('darting');
+  distractionIndex = 0;
+  dartToNext();
+}
+
+function dartToNext() {
+  if (PHASE !== 'DISTRACTED') return;
+
+  // clear previous active highlight
+  distractionPositions.forEach(d => d.el.classList.remove('active'));
+
+  const target = distractionPositions[distractionIndex % distractionPositions.length];
+  target.el.classList.add('active');
+
+  mushikaPos = { x: target.x, y: target.y };
+  mushika.style.left = mushikaPos.x + 'px';
+  mushika.style.top = mushikaPos.y + 'px';
+
+  distractionIndex++;
+
+  zigzagInterval = setTimeout(() => {
+    if (PHASE === 'DISTRACTED') dartToNext();
+  }, 700);
+}
+
+// --- Hold to steady ---
+function startHold(e) {
+  if (PHASE !== 'DISTRACTED') return;
+  e.preventDefault();
+  holdStart = Date.now();
+  clearTimeout(zigzagInterval); // pause darting immediately
+  distractionPositions.forEach(d => d.el.classList.remove('active'));
+  holdRing.style.opacity = 1;
+  setHint('Keep holding... let him settle');
+  tickHold();
+}
+
+function tickHold() {
+  if (!holdStart) return;
+  const elapsed = Date.now() - holdStart;
+  const pct = Math.min(elapsed / HOLD_DURATION, 1);
+  holdRing.style.clipPath = `inset(${(1 - pct) * 100}% 0 0 0)`;
+
+  // as pct increases, distractions fade and zigzag slows
+  distractions.forEach((d, i) => {
+    if (pct > (i + 1) * 0.28) d.classList.add('faded');
+  });
+
+  if (pct >= 1) {
+    completeSteady();
+    return;
+  }
+  holdRAF = requestAnimationFrame(tickHold);
+}
+
+function endHold() {
+  if (PHASE !== 'DISTRACTED') return;
+  cancelAnimationFrame(holdRAF);
+  if (holdStart && (Date.now() - holdStart) < HOLD_DURATION) {
+    holdStart = null;
+    holdRing.style.opacity = 0;
+    holdRing.style.clipPath = 'inset(0 0 0 0)';
+    distractions.forEach(d => d.classList.remove('faded'));
+    setHint('He got pulled away again... try holding once more');
+    dartToNext(); // resume darting since hold was released early
+  }
+}
+
+function completeSteady() {
+  PHASE = 'STEADY';
+  clearTimeout(zigzagInterval);
+  cancelAnimationFrame(holdRAF);
+  holdStart = null;
+  holdRing.style.opacity = 0;
+  distractions.forEach(d => { d.classList.add('faded'); d.classList.remove('active'); });
+  mushika.classList.remove('darting');
+  mushika.classList.add('calm');
+  setHint('Mushika settles... and walks on steadily');
+
+  setTimeout(() => walkToClearing(), 900);
+}
+
+function walkToClearing() {
+  PHASE = 'WALKING';
+  mushikaPos = { x: 560, y: 300 };
+  mushika.style.left = mushikaPos.x + 'px';
+  mushika.style.top = mushikaPos.y + 'px';
+
+  setTimeout(() => {
+    PHASE = 'MODAK_READY';
+    modak.style.left = (mushikaPos.x + 30) + 'px';
+    modak.style.top = (mushikaPos.y - 10) + 'px';
+    modak.classList.add('visible');
+    setHint("He didn't chase for it... it was simply there. Drag the modak to Ganesha.");
+    enableModakDrag();
+  }, 1500);
+}
+
+// --- Drag modak to Ganesha ---
+let draggingModak = false;
+
+function enableModakDrag() {
+  modak.addEventListener('mousedown', startModakDrag);
+  modak.addEventListener('touchstart', startModakDrag, { passive: true });
+}
+
+function getPos(e) {
+  const rect = scene.getBoundingClientRect();
+  const scaleX = 900 / rect.width;
+  const scaleY = 500 / rect.height;
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+  return {
+    x: (clientX - rect.left) * scaleX,
+    y: (clientY - rect.top) * scaleY
+  };
+}
+
+function startModakDrag(e) {
+  if (PHASE !== 'MODAK_READY') return;
+  draggingModak = true;
+  modak.classList.add('dragging');
+  document.addEventListener('mousemove', moveModakDrag);
+  document.addEventListener('touchmove', moveModakDrag, { passive: true });
+  document.addEventListener('mouseup', endModakDrag);
+  document.addEventListener('touchend', endModakDrag);
+}
+
+function moveModakDrag(e) {
+  if (!draggingModak) return;
+  const p = getPos(e);
+  modak.style.left = (p.x - 20) + 'px';
+  modak.style.top = (p.y - 20) + 'px';
+}
+
+function endModakDrag(e) {
+  if (!draggingModak) return;
+  draggingModak = false;
+  modak.classList.remove('dragging');
+  document.removeEventListener('mousemove', moveModakDrag);
+  document.removeEventListener('touchmove', moveModakDrag);
+  document.removeEventListener('mouseup', endModakDrag);
+  document.removeEventListener('touchend', endModakDrag);
+
+  const rect = scene.getBoundingClientRect();
+  const modakRect = modak.getBoundingClientRect();
+  const ganeshaRect = ganesha.getBoundingClientRect();
+  const dist = Math.hypot(
+    (modakRect.left + modakRect.width/2) - (ganeshaRect.left + ganeshaRect.width/2),
+    (modakRect.top + modakRect.height/2) - (ganeshaRect.top + ganeshaRect.height/2)
+  );
+
+  if (dist < 130) {
+    offerToGanesha();
+  } else {
+    // snap back
+    modak.style.left = (mushikaPos.x + 30) + 'px';
+    modak.style.top = (mushikaPos.y - 10) + 'px';
+    setHint('Drag the modak all the way to Ganesha');
+  }
+}
+
+function offerToGanesha() {
+  PHASE = 'OFFERED';
+  modak.style.opacity = 0;
+  ganesha.classList.add('acceptGlow');
+  setHint('Ganesha accepts the modak...');
+
+  setTimeout(() => {
+    bellyTapZone.classList.add('active');
+    setHint("Now... gently tap Ganesha's belly");
+  }, 1100);
+}
+
+bellyTapZone.addEventListener('click', showBellyReveal);
+bellyTapZone.addEventListener('touchend', showBellyReveal);
+
+function showBellyReveal() {
+  if (PHASE !== 'OFFERED') return;
+  PHASE = 'BELLY';
+  bellyTapZone.classList.remove('active');
+  bellyReveal.classList.add('show');
+  setHint('');
+
+  setTimeout(() => {
+    finalLine.textContent = 'Everything from the journey belongs within something much bigger.';
+    finalLine.classList.add('show');
+  }, 1800);
+}
+
+// --- Mushika hold listeners ---
+mushika.addEventListener('mousedown', startHold);
+mushika.addEventListener('mouseup', endHold);
+mushika.addEventListener('mouseleave', endHold);
+mushika.addEventListener('touchstart', startHold, { passive: false });
+mushika.addEventListener('touchend', endHold);
+
+function resetScene() {
+  PHASE = 'DISTRACTED';
+  clearTimeout(zigzagInterval);
+  cancelAnimationFrame(holdRAF);
+  holdStart = null;
+  holdRing.style.opacity = 0;
+  holdRing.style.clipPath = 'inset(0 0 0 0)';
+  distractions.forEach(d => { d.classList.remove('faded'); d.classList.remove('active'); });
+  mushika.classList.remove('calm', 'darting');
+  mushikaPos = { x: 60, y: 260 };
+  mushika.style.left = '60px';
+  mushika.style.top = '260px';
+  modak.classList.remove('visible', 'dragging');
+  modak.style.opacity = 0;
+  ganesha.classList.remove('acceptGlow');
+  bellyTapZone.classList.remove('active');
+  bellyReveal.classList.remove('show');
+  finalLine.classList.remove('show');
+  finalLine.textContent = '';
+  setHint('Mushika keeps getting pulled around... press and hold him to help him settle');
+  startZigzag();
+}
+
+// init
+startZigzag();
+
+// Scale scene to fit viewport without breaking internal 900x500 coordinate math
+function fitScene() {
+  const wrap = document.getElementById('sceneWrap');
+  const availW = window.innerWidth * 0.95;
+  const availH = window.innerHeight * 0.72;
+  const scale = Math.min(1, availW / 900, availH / 500);
+  scene.style.transform = `scale(${scale})`;
+  scene.style.transformOrigin = 'center center';
+  wrap.style.height = (500 * scale) + 'px';
+}
+window.addEventListener('resize', fitScene);
+fitScene();
+
+// Auto-preview the belly reveal when opened with ?preview=belly
+if (window.location.search.includes('preview=belly')) {
+  setTimeout(() => {
+    PHASE = 'OFFERED';
+    bellyTapZone.classList.add('active');
+    showBellyReveal();
+  }, 300);
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,10 @@
+[
+  {"id": "GAN_SYM_MOUSE", "symbol_theme": "SYMBOL_PATIENCE", "best_need_ids": ["NEED_PATIENCE", "NEED_CONFIDENCE"], "best_mission_types": ["MISSION_MASTERY"]},
+  {"id": "GAN_SYM_BIG_BELLY", "symbol_theme": "SYMBOL_SHELTER", "best_need_ids": ["NEED_SELF_REGULATION", "NEED_SAFETY"], "best_mission_types": ["MISSION_PROTECT"]},
+  {"id": "GAN_SYM_CURVED_TRUNK", "symbol_theme": "SYMBOL_THRESHOLD", "best_need_ids": ["NEED_ADAPTABILITY", "NEED_CONFIDENCE"], "best_mission_types": ["MISSION_ADAPT"]},
+  {"id": "GAN_SYM_BROKEN_TUSK", "symbol_theme": "SYMBOL_CREATIVE_TOOL", "best_need_ids": ["NEED_CURIOSITY", "NEED_COMPETENCE"], "best_mission_types": ["MISSION_MASTERY"]},
+  {"id": "GAN_SYM_LOTUS", "symbol_theme": "SYMBOL_GROWTH", "best_need_ids": ["NEED_IDENTITY", "NEED_HOPE"], "best_mission_types": ["MISSION_ADAPT", "MISSION_TRANSFORM"]},
+  {"id": "GAN_SYM_BIG_EARS", "symbol_theme": "SYMBOL_CONNECTION", "best_need_ids": ["NEED_BELONGING", "NEED_RESPECT"], "best_mission_types": ["MISSION_RECONCILE"]},
+  {"id": "GAN_SYM_MODAK", "symbol_theme": "SYMBOL_FOOD", "best_need_ids": ["NEED_CONTENTMENT", "NEED_COMPASSION"], "best_mission_types": ["MISSION_CELEBRATE", "MISSION_DELIVER"]},
+  {"id": "GAN_SYM_EYES", "symbol_theme": "SYMBOL_LIGHT", "best_need_ids": ["NEED_CURIOSITY", "NEED_JUSTICE"], "best_mission_types": ["MISSION_DISCOVER"]}
+]

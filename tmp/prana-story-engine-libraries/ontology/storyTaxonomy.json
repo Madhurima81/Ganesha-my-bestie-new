@@ -1,0 +1,21 @@
+{
+  "note": "Combined per your request — these three are small (10-14 entries each) and each used by a single library, so kept together rather than as separate ontology files.",
+  "storyFamilies": [
+    {"id": "FAM_SAFETY"}, {"id": "FAM_ADVENTURE"}, {"id": "FAM_IDENTITY"}, {"id": "FAM_FRIENDSHIP"},
+    {"id": "FAM_DISCOVERY"}, {"id": "FAM_HUMOR"}, {"id": "FAM_COMMUNITY"}, {"id": "FAM_TRANSFORMATION"},
+    {"id": "FAM_BEDTIME"}, {"id": "FAM_GROWTH_MASTERY"}, {"id": "FAM_EMPATHY_CARE"}, {"id": "FAM_PLAY"},
+    {"id": "FAM_JUSTICE_RIGHTS"}, {"id": "FAM_LOSS_GRIEF"}
+  ],
+  "openingTypes": [
+    {"id": "OPEN_ROUTINE"}, {"id": "OPEN_ACTION"}, {"id": "OPEN_MYSTERY"}, {"id": "OPEN_QUESTION"},
+    {"id": "OPEN_CHARACTER"}, {"id": "OPEN_WORLD"}, {"id": "OPEN_PROBLEM"}, {"id": "OPEN_DIALOGUE"},
+    {"id": "OPEN_CELEBRATION"}, {"id": "OPEN_STRANGE_EVENT"}
+  ],
+  "endingTypes": [
+    {"id": "END_CIRCULAR_RETURN"}, {"id": "END_SHARED_CELEBRATION"}, {"id": "END_QUIET_REFLECTION"},
+    {"id": "END_PASSING_FORWARD"}, {"id": "END_EXPANDED_HORIZON"}, {"id": "END_SAFE_SANCTUARY"},
+    {"id": "END_NEW_BALANCE"}, {"id": "END_OPEN_WONDER"}, {"id": "END_RENEWED_ROUTINE"},
+    {"id": "END_HUMOROUS_TWIST"}, {"id": "END_TRANSFORMED_COMMUNITY"}, {"id": "END_RECONCILED_BOND"},
+    {"id": "END_QUIET_MASTERY"}, {"id": "END_GENTLE_RELEASE"}
+  ]
+}

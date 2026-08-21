@@ -1,0 +1,54 @@
+{
+  "_contract": "UI Category -> Life Domain ID mapping. Locked by product decision. Do not derive this automatically from situations.json or lifeDomains.json — edit by hand only, with explicit approval.",
+  "_source": "public/prana-story-generator/phase6-data/ontology/lifeDomains.json",
+  "categories": [
+    {
+      "id": "family",
+      "label": "Family",
+      "icon": "👨‍👩‍👧",
+      "lifeDomainIds": ["LIFE_DOMAIN_FAMILY", "LIFE_DOMAIN_RESPONSIBILITY", "LIFE_DOMAIN_CARING"]
+    },
+    {
+      "id": "school",
+      "label": "School",
+      "icon": "🏫",
+      "lifeDomainIds": ["LIFE_DOMAIN_SCHOOL", "LIFE_DOMAIN_LEARNING"]
+    },
+    {
+      "id": "friendship",
+      "label": "Friendship",
+      "icon": "👫",
+      "lifeDomainIds": ["LIFE_DOMAIN_FRIENDSHIP", "LIFE_DOMAIN_COMMUNICATION", "LIFE_DOMAIN_PLAY"]
+    },
+    {
+      "id": "feelings",
+      "label": "Feelings & Emotions",
+      "icon": "😊",
+      "lifeDomainIds": ["LIFE_DOMAIN_SELF_CARE"]
+    },
+    {
+      "id": "growing_up",
+      "label": "Growing Up",
+      "icon": "🌱",
+      "lifeDomainIds": ["LIFE_DOMAIN_RESPONSIBILITY", "LIFE_DOMAIN_LEARNING", "LIFE_DOMAIN_SELF_CARE"]
+    },
+    {
+      "id": "nature",
+      "label": "Nature & Animals",
+      "icon": "🌳",
+      "lifeDomainIds": ["LIFE_DOMAIN_NATURE", "LIFE_DOMAIN_CARING"]
+    },
+    {
+      "id": "celebrations",
+      "label": "Celebrations & Community",
+      "icon": "🎉",
+      "lifeDomainIds": ["LIFE_DOMAIN_CELEBRATIONS", "LIFE_DOMAIN_FAMILY"]
+    },
+    {
+      "id": "everyday",
+      "label": "Everyday Adventures",
+      "icon": "✨",
+      "lifeDomainIds": ["LIFE_DOMAIN_PLAY", "LIFE_DOMAIN_BUILDING", "LIFE_DOMAIN_CREATIVITY"]
+    }
+  ]
+}

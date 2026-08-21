@@ -1,0 +1,95 @@
+{
+  "storyId": "STORYPKG_BLUEPRINT_SIT001_CHAR005_STRUCT007",
+  "title": "Kavi and the Pause in Magic Garden",
+  "version": "1.0",
+  "assets": [
+    {
+      "assetId": "ASSET_PAGE_1",
+      "page": 1,
+      "location": "./assets/asset-page-1.png",
+      "svgSource": "./assets/asset-page-1.svg",
+      "format": "png",
+      "width": 2550,
+      "height": 2550,
+      "layoutReference": ""
+    },
+    {
+      "assetId": "ASSET_PAGE_2",
+      "page": 2,
+      "location": "./assets/asset-page-2.png",
+      "svgSource": "./assets/asset-page-2.svg",
+      "format": "png",
+      "width": 2550,
+      "height": 2550,
+      "layoutReference": ""
+    },
+    {
+      "assetId": "ASSET_PAGE_3",
+      "page": 3,
+      "location": "./assets/asset-page-3.png",
+      "svgSource": "./assets/asset-page-3.svg",
+      "format": "png",
+      "width": 2550,
+      "height": 2550,
+      "layoutReference": ""
+    },
+    {
+      "assetId": "ASSET_PAGE_4",
+      "page": 4,
+      "location": "./assets/asset-page-4.png",
+      "svgSource": "./assets/asset-page-4.svg",
+      "format": "png",
+      "width": 2550,
+      "height": 2550,
+      "layoutReference": ""
+    },
+    {
+      "assetId": "ASSET_PAGE_5",
+      "page": 5,
+      "location": "./assets/asset-page-5.png",
+      "svgSource": "./assets/asset-page-5.svg",
+      "format": "png",
+      "width": 2550,
+      "height": 2550,
+      "layoutReference": ""
+    }
+  ],
+  "fonts": [
+    {
+      "family": "Avenir Next Rounded",
+      "usage": "Story text blocks in the approved layout."
+    }
+  ],
+  "pageMap": [
+    {
+      "page": 1,
+      "assetId": "ASSET_PAGE_1",
+      "textLength": 217,
+      "layoutReference": "LAYOUT_FINALSTORY_BLUEPRINT_SIT001_CHAR005_STRUCT007"
+    },
+    {
+      "page": 2,
+      "assetId": "ASSET_PAGE_2",
+      "textLength": 670,
+      "layoutReference": "LAYOUT_FINALSTORY_BLUEPRINT_SIT001_CHAR005_STRUCT007"
+    },
+    {
+      "page": 3,
+      "assetId": "ASSET_PAGE_3",
+      "textLength": 172,
+      "layoutReference": "LAYOUT_FINALSTORY_BLUEPRINT_SIT001_CHAR005_STRUCT007"
+    },
+    {
+      "page": 4,
+      "assetId": "ASSET_PAGE_4",
+      "textLength": 298,
+      "layoutReference": "LAYOUT_FINALSTORY_BLUEPRINT_SIT001_CHAR005_STRUCT007"
+    },
+    {
+      "page": 5,
+      "assetId": "ASSET_PAGE_5",
+      "textLength": 253,
+      "layoutReference": "LAYOUT_FINALSTORY_BLUEPRINT_SIT001_CHAR005_STRUCT007"
+    }
+  ]
+}

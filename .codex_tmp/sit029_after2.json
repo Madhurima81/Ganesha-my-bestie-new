@@ -1,0 +1,1147 @@
+{
+  "resolveStatus": "PASS",
+  "resolveIssues": [],
+  "contextSituation": "Fear of getting lost in a mall or crowd",
+  "contextCharacter": "CHAR002",
+  "contextNeed": "NEED_SAFETY",
+  "contextBelief": {
+    "beliefIds": [
+      "BELIEF_UNEXPECTED_MEANS_UNSAFE"
+    ],
+    "falseBelief": "If I'm alone, I'm not safe.",
+    "trueBelief": "I can stay calm, make wise choices and find help."
+  },
+  "blueprintId": "BLUEPRINT_SIT029_CHAR002_STRUCT072",
+  "blueprintBelief": {
+    "falseBelief": "If I'm alone, I'm not safe.",
+    "trueBelief": "I can stay calm, make wise choices and find help.",
+    "reason": "Belief wording comes directly from Situation SIT029."
+  },
+  "storyPlanExists": true,
+  "storyPlanStoryFlow": {
+    "sequence": [
+      {
+        "id": "FLOW_01_B_SAN_01",
+        "purpose": "Open with the hero is asked to do something that feels far beyond their ability. while grounding the protagonist in if I'm alone, I'm not safe..",
+        "beats": [
+          "B_SAN_01"
+        ]
+      },
+      {
+        "id": "FLOW_02_B_DEP_01",
+        "purpose": "Escalate 56 through rescue Conflict pressure and character leaves the safe/known state, initiating the journey.",
+        "beats": [
+          "B_DEP_01"
+        ]
+      },
+      {
+        "id": "FLOW_03_B_EXP_01",
+        "purpose": "Resolve 56 through the biggest success is emotional rather than external. and confirm i can stay calm, make wise choices and find help..",
+        "beats": [
+          "B_EXP_01"
+        ]
+      }
+    ],
+    "centralDramaticQuestion": "Will the protagonist complete the mission despite rescue Conflict and discover that i can stay calm, make wise choices and find help.?",
+    "resolution": "56 is resolved. The biggest success is emotional rather than external. I can stay calm, make wise choices and find help."
+  },
+  "forcedTemplateSelection": {
+    "templateId": "T09",
+    "templateName": "Smallest Strength",
+    "template": {
+      "templateId": "T09",
+      "name": "Smallest Strength",
+      "storyMechanic": "Everyone (including the hero) expects the solution to require a big, obvious action; instead, the actual solution requires a quiet quality the hero already has (patience, listening, kindness), which is revealed to be powerful precisely because it was underestimated.",
+      "bestForNeeds": [
+        "NEED_CONFIDENCE"
+      ],
+      "bestForSituations": [],
+      "bestForLogicFamilies": [
+        "LOGIC_INVERSION"
+      ],
+      "requiredBeats": [
+        "BIG_EXPECTATION",
+        "BIG_ATTEMPT_FAILS",
+        "QUIET_QUALITY_NOTICED",
+        "QUIET_ACTION",
+        "RESOLUTION"
+      ],
+      "sceneStructure": [
+        "Big expectation: hero (or others) assumes the problem needs a big, loud, obvious action.",
+        "Big attempt fails: hero (or another character) tries the big action and it does not work.",
+        "Quiet quality noticed: hero notices a small, quiet quality in themselves that seemed unrelated to solving anything.",
+        "Quiet action: hero uses that quiet quality directly on the problem.",
+        "Resolution: the quiet action succeeds where the big attempt could not, and the true belief reframes strength itself."
+      ],
+      "repetitionPattern": null,
+      "repetitionNote": "T09 is a single-inversion template â€” it works through contrast (big vs. small), not repeated structure. Do not add a three-part repetition here.",
+      "escalationPattern": "Escalation is expectation-based: the story keeps implying the quiet quality is irrelevant, right up until it becomes the entire solution.",
+      "turningPoint": "The 'quiet quality noticed' beat â€” the moment the hero (or the story) stops dismissing the small strength and starts trusting it.",
+      "resolutionPattern": "Resolution must explicitly show the quiet quality succeeding where the big/loud attempt failed, so the inversion is legible, not just implied.",
+      "requiredBlueprintSlots": [
+        "situation",
+        "character",
+        "need",
+        "belief.falseBelief",
+        "belief.trueBelief",
+        "mission",
+        "symbol"
+      ],
+      "optionalBlueprintSlots": [
+        "world",
+        "obstacle",
+        "storyConflict"
+      ],
+      "symbolIntegrationPoint": "Symbol is closely tied to the quiet quality itself â€” introduced alongside it, so the symbol and the strength are recognized together.",
+      "illustrationOpportunities": [
+        "The big attempt, visually large/loud/dramatic",
+        "The failed big attempt, deflated",
+        "A small, quiet moment where the hero's real strength is visible",
+        "Resolution showing the quiet strength working, framed gently rather than dramatically"
+      ],
+      "pageRhythmGuidance": "Give the big attempt bold, busy page composition, then shift to quiet, spacious, minimal composition for the quiet action and resolution â€” the page design itself should embody the inversion.",
+      "exampleSkeleton": [
+        "[HERO] + [SITUATION]",
+        "[BIG_EXPECTATION]",
+        "[BIG_ATTEMPT_FAILS]",
+        "[QUIET_QUALITY_NOTICED]",
+        "[TRUE_BELIEF]",
+        "[QUIET_ACTION]",
+        "[RESOLUTION]",
+        "[SYMBOL]"
+      ]
+    },
+    "selectionReason": "Forced by QA matrix test harness (bypasses scoring).",
+    "confidence": "n/a (forced)",
+    "blueprintReference": "BLUEPRINT_SIT029_CHAR002_STRUCT072"
+  },
+  "eventChainResult": {
+    "events": [
+      {
+        "label": "BIG_EXPECTATION",
+        "eventId": "E01",
+        "purpose": "big_expectation",
+        "actor": "Arin",
+        "action": "Arin looks up in a busy place and suddenly cannot see their parent. Arin wanted to find the parent. There are many people moving around and the familiar hand is gone. Everyone around Arin, and Arin too, believed \"If I'm alone, I'm not safe.\" — so the fix had to be something big and frantic — running, shouting, pushing through the crowd as fast as possible — because surely finding a lost parent again needed a big enough search to match the fear.",
+        "sourceField": "childExperience+immediateWant+immediateObstacle"
+      },
+      {
+        "label": "BIG_ATTEMPT_FAILS",
+        "eventId": "E02",
+        "purpose": "big_attempt_fails",
+        "actor": "Arin",
+        "action": "So Arin tried exactly that — darting one way and then another, calling out into the noise — but it did nothing to fix the real trouble: there are many people moving around and the familiar hand is gone, and running only made the crowd feel bigger and more confusing.",
+        "sourceField": "demonstrated"
+      },
+      {
+        "label": "QUIET_QUALITY_NOTICED",
+        "eventId": "E03",
+        "purpose": "quiet_quality_noticed",
+        "actor": "Arin",
+        "action": "Then, in the middle of all that running, Arin noticed something small and quiet instead — panic makes it harder to remember what to do — and a quiet memory surfaced: the plan they had been taught for exactly this moment.",
+        "sourceField": "demonstrated"
+      },
+      {
+        "label": "QUIET_ACTION",
+        "eventId": "E04",
+        "purpose": "quiet_action",
+        "actor": "Arin",
+        "action": "So Arin stopped running and did the quiet thing instead — paused, stood still in one spot, looked for a grown-up who could help, and waited calmly to find the parent, instead of chasing after every stranger in the crowd.",
+        "sourceField": "demonstrated"
+      },
+      {
+        "label": "RESOLUTION",
+        "eventId": "E05",
+        "purpose": "resolution",
+        "actor": "Arin",
+        "action": "That is what worked — not the frantic running, which had changed nothing, but standing still and staying calm, and Arin understood: I can stay calm, make wise choices and find help.",
+        "sourceField": "trueBelief"
+      }
+    ],
+    "ctx": {
+      "protagonist": "Arin",
+      "situationTitle": "Fear of getting lost in a mall or crowd",
+      "goalPhrase": "to complete training",
+      "missionPhrase": "finish a period of practice successfully",
+      "obstacleName": "Broken Bridge",
+      "conflictName": "Rescue Conflict",
+      "symbolLabel": "Shelter",
+      "falseBelief": "If I'm alone, I'm not safe.",
+      "trueBelief": "I can stay calm, make wise choices and find help.",
+      "actionVerbs": [
+        "Practice",
+        "Look closer",
+        "Ask for help"
+      ],
+      "_lookups": {
+        "situation": {
+          "id": "SIT029",
+          "active": true,
+          "title": "Fear of getting lost in a mall or crowd",
+          "parentLabel": "Got separated from a parent in a crowd",
+          "storySeed": {
+            "childExperience": "Kavi looks up in a busy place and suddenly cannot see their parent.",
+            "immediateWant": "Find the parent.",
+            "immediateObstacle": "There are many people moving around and the familiar hand is gone.",
+            "emotionalTension": "Panic makes it harder to remember what to do.",
+            "context": [
+              "mall, festival or crowded public place"
+            ],
+            "narrativeSummary": "One moment Kavi is holding Mama's hand. The next, there are people everywhere—and Mama is nowhere in sight."
+          },
+          "emotionIds": [
+            "EMO_SCARED"
+          ],
+          "lifeDomainIds": [
+            "LIFE_DOMAIN_NATURE",
+            "LIFE_DOMAIN_COMMUNICATION",
+            "LIFE_DOMAIN_CARING"
+          ],
+          "ontology": {
+            "needId": "NEED_SAFETY",
+            "beliefIds": [
+              "BELIEF_UNEXPECTED_MEANS_UNSAFE"
+            ],
+            "severity": 2,
+            "age": null,
+            "lifeDomainIds": [
+              "LIFE_DOMAIN_NATURE",
+              "LIFE_DOMAIN_COMMUNICATION",
+              "LIFE_DOMAIN_CARING"
+            ],
+            "falseBeliefText": "If I'm alone, I'm not safe.",
+            "trueBeliefText": "I can stay calm, make wise choices and find help.",
+            "storyFamily": "FAM_SAFETY",
+            "ganeshaSymbolPrimary": "GAN_SYM_BIG_BELLY",
+            "ganeshaSymbolSecondary": "GAN_SYM_CURVED_TRUNK"
+          }
+        },
+        "character": {
+          "id": "CHAR002",
+          "name": "Arin (Rabbit)",
+          "core_personality": "Gentle, cautious",
+          "primary_story_role_text": "Courage Learner",
+          "hard": {
+            "role_id": "ROLE_LEARNER",
+            "trait_id": "TRAIT_CAUTIOUS"
+          },
+          "soft_suggested": {
+            "best_need_ids": [
+              "NEED_COURAGE",
+              "NEED_CONFIDENCE",
+              "NEED_SAFETY"
+            ],
+            "best_ganesha_symbols": [
+              "GAN_SYM_BROKEN_TUSK",
+              "GAN_SYM_BIG_BELLY",
+              "GAN_SYM_LOTUS"
+            ],
+            "best_mission_types": [
+              "MISSION_MASTERY"
+            ],
+            "best_logic_families": [
+              "LOGIC_SAFETY_LOOP"
+            ]
+          },
+          "_meta": {
+            "confidence": "audited"
+          }
+        },
+        "mission": {
+          "id": 56,
+          "slug": "complete-training",
+          "name": "Complete Training",
+          "missionGroup": "Learn & Grow",
+          "description": "Finish a period of practice successfully.",
+          "bestLifeDomains": [
+            "Learning & Problem Solving"
+          ],
+          "bestStoryActions": [
+            "Practice"
+          ],
+          "bestStoryWorlds": [
+            "Mountain",
+            "Forest"
+          ],
+          "bestAdventureArchetypes": [
+            "Training"
+          ],
+          "bestCoreNeeds": [
+            "Perseverance",
+            "Discipline"
+          ],
+          "difficulty": "Medium",
+          "notes": "Character growth",
+          "_meta": {
+            "confidence": "audited",
+            "source": "user-provided clean table, replaces corrupted export",
+            "resolution": "deterministic normalization (exact/singular/1:1-substring); unresolved Archetype values preserved in unresolvedArchetype, not force-mapped — flagged as abstraction-level mismatch (generic/role-verb/theme terms), parked per decision on 2026-08-07"
+          },
+          "bestLifeDomainIds": [
+            "LIFE_DOMAIN_LEARNING"
+          ],
+          "bestStoryActionIds": [
+            "ACTION_PRACTICE"
+          ],
+          "bestSettingIds": [
+            "SETTING_MOUNTAIN",
+            "SETTING_FOREST"
+          ],
+          "bestAdventureArchetypeIds": [
+            "ARCHETYPE_TRAINING_JOURNEY"
+          ],
+          "bestCoreNeedIds": [
+            null,
+            null
+          ]
+        },
+        "obstacle": {
+          "id": "OBST001",
+          "name": "Broken Bridge",
+          "description": "The bridge cannot be crossed.",
+          "hard": {
+            "obstacle_domain": "OD_PHYSICAL",
+            "obstacle_type": "OT_EXTERNAL",
+            "obstacle_function": "OBSTACLE_BLOCKED_PATH"
+          },
+          "soft_suggested": {
+            "best_life_domains_raw": [
+              "Exploring & Nature"
+            ],
+            "best_story_actions_raw": [
+              "Explore",
+              "Rescue"
+            ],
+            "best_story_worlds_raw": [
+              "Crystal River Valley"
+            ]
+          },
+          "escalation_type": "Progressive",
+          "difficulty": "Medium",
+          "_meta": {
+            "confidence": "audited"
+          }
+        },
+        "conflict": {
+          "id": "CONFLICT_RESCUE_CONFLICT",
+          "name": "Rescue Conflict",
+          "description": "Someone needs saving before it's too late.",
+          "hard": {
+            "conflict_intensity": "High"
+          },
+          "soft_suggested": {
+            "best_mission_types": [
+              "MISSION_RESCUE"
+            ],
+            "best_obstacle_domains": [
+              "OD_PHYSICAL"
+            ],
+            "best_logic_families": [
+              "LOGIC_SAFETY_LOOP"
+            ],
+            "typical_ending_types": [
+              "END_SAFE_SANCTUARY"
+            ]
+          },
+          "_meta": {
+            "confidence": "audited",
+            "note": "generatedFrom field in source confirms this is a computed Mission+Obstacle bridge, not primary data."
+          }
+        },
+        "symbolRecord": {
+          "id": "GAN_SYM_BIG_BELLY",
+          "symbol_theme": "SYMBOL_SHELTER",
+          "best_need_ids": [
+            "NEED_SELF_REGULATION",
+            "NEED_SAFETY"
+          ],
+          "best_mission_types": [
+            "MISSION_PROTECT"
+          ]
+        }
+      },
+      "_craftRequired": true,
+      "obstacle": {
+        "id": "OBST001",
+        "name": "Broken Bridge",
+        "description": "The bridge cannot be crossed.",
+        "hard": {
+          "obstacle_domain": "OD_PHYSICAL",
+          "obstacle_type": "OT_EXTERNAL",
+          "obstacle_function": "OBSTACLE_BLOCKED_PATH"
+        },
+        "soft_suggested": {
+          "best_life_domains_raw": [
+            "Exploring & Nature"
+          ],
+          "best_story_actions_raw": [
+            "Explore",
+            "Rescue"
+          ],
+          "best_story_worlds_raw": [
+            "Crystal River Valley"
+          ]
+        },
+        "escalation_type": "Progressive",
+        "difficulty": "Medium",
+        "_meta": {
+          "confidence": "audited"
+        }
+      },
+      "mechanism": {
+        "motif": "round smooth stone",
+        "noticeVerb": "noticed",
+        "useVerb": "holding the stone tight"
+      },
+      "actionPhrases": [
+        "tried the same thing again, a little harder",
+        "tried again, a different way",
+        "took a step back and looked at it fresh"
+      ],
+      "coreReference": "their parent",
+      "objectReference": null,
+      "obstacleClause": "nothing about it budged: there are many people moving around and the familiar hand is gone",
+      "objective": "Arin wanted to finish a period of practice successfully.",
+      "situationDetail": {
+        "status": "OK",
+        "concreteWords": [
+          "kavi",
+          "looks",
+          "busy",
+          "place",
+          "suddenly",
+          "cannot",
+          "see",
+          "parent",
+          "find",
+          "many",
+          "people",
+          "moving",
+          "around",
+          "familiar",
+          "hand",
+          "gone",
+          "panic",
+          "makes",
+          "harder",
+          "remember",
+          "what"
+        ]
+      },
+      "realizedSituation": {
+        "kind": "clause",
+        "sentence": "Arin looks up in a busy place and suddenly cannot see their parent.",
+        "want": "find the parent"
+      },
+      "narrativeSummarySentences": [
+        "One moment Arin is holding Mama's hand.",
+        "The next, there are people everywhere—and Mama is nowhere in sight."
+      ]
+    },
+    "templateId": "T09",
+    "planForLint": {
+      "templateId": "T09",
+      "situationId": "SIT029",
+      "eventChain": [
+        {
+          "label": "BIG_EXPECTATION",
+          "eventId": "E01",
+          "purpose": "big_expectation",
+          "actor": "Arin",
+          "action": "Arin looks up in a busy place and suddenly cannot see their parent. Arin wanted to find the parent. There are many people moving around and the familiar hand is gone. Everyone around Arin, and Arin too, believed \"If I'm alone, I'm not safe.\" — so the fix had to be something big and frantic — running, shouting, pushing through the crowd as fast as possible — because surely finding a lost parent again needed a big enough search to match the fear.",
+          "sourceField": "childExperience+immediateWant+immediateObstacle"
+        },
+        {
+          "label": "BIG_ATTEMPT_FAILS",
+          "eventId": "E02",
+          "purpose": "big_attempt_fails",
+          "actor": "Arin",
+          "action": "So Arin tried exactly that — darting one way and then another, calling out into the noise — but it did nothing to fix the real trouble: there are many people moving around and the familiar hand is gone, and running only made the crowd feel bigger and more confusing.",
+          "sourceField": "demonstrated"
+        },
+        {
+          "label": "QUIET_QUALITY_NOTICED",
+          "eventId": "E03",
+          "purpose": "quiet_quality_noticed",
+          "actor": "Arin",
+          "action": "Then, in the middle of all that running, Arin noticed something small and quiet instead — panic makes it harder to remember what to do — and a quiet memory surfaced: the plan they had been taught for exactly this moment.",
+          "sourceField": "demonstrated"
+        },
+        {
+          "label": "QUIET_ACTION",
+          "eventId": "E04",
+          "purpose": "quiet_action",
+          "actor": "Arin",
+          "action": "So Arin stopped running and did the quiet thing instead — paused, stood still in one spot, looked for a grown-up who could help, and waited calmly to find the parent, instead of chasing after every stranger in the crowd.",
+          "sourceField": "demonstrated"
+        },
+        {
+          "label": "RESOLUTION",
+          "eventId": "E05",
+          "purpose": "resolution",
+          "actor": "Arin",
+          "action": "That is what worked — not the frantic running, which had changed nothing, but standing still and staying calm, and Arin understood: I can stay calm, make wise choices and find help.",
+          "sourceField": "trueBelief"
+        }
+      ],
+      "openingState": {
+        "situation": "Arin looks up in a busy place and suddenly cannot see their parent."
+      }
+    }
+  },
+  "eventChainValidation": {
+    "status": "PASS",
+    "issues": []
+  },
+  "completeStoryValidation": {
+    "status": "PASS",
+    "issues": [],
+    "blockingFailures": 0,
+    "warnings": 0,
+    "rulesPassed": 15
+  },
+  "pageValidation": {
+    "status": "PASS",
+    "issues": [],
+    "blockingFailures": 0,
+    "warnings": 0,
+    "rulesPassed": 13
+  },
+  "narrationValidation": {
+    "status": "PASS",
+    "issues": [],
+    "blockingFailures": 0,
+    "warnings": 0,
+    "rulesPassed": 6
+  },
+  "dialogueValidation": {
+    "status": "PASS",
+    "issues": [],
+    "blockingFailures": 0,
+    "warnings": 0,
+    "rulesPassed": 6
+  },
+  "polishValidation": {
+    "status": "PASS",
+    "issues": [],
+    "blockingFailures": 0,
+    "warnings": 0,
+    "rulesPassed": 7
+  },
+  "storyQAReport": {
+    "status": "PASS",
+    "rulesPassed": 16,
+    "rulesFailed": 0,
+    "warnings": [],
+    "errors": [],
+    "results": [
+      {
+        "ruleId": "QA-001",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "Page count and page order still match the locked Story Plan.",
+        "responsibleModule": "8B"
+      },
+      {
+        "ruleId": "QA-002",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "Protagonist takes meaningful action rather than being carried by the plot.",
+        "responsibleModule": "8A"
+      },
+      {
+        "ruleId": "QA-003",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "Cause and effect remain visible from conflict to turning point.",
+        "responsibleModule": "8A"
+      },
+      {
+        "ruleId": "QA-004",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "Mission resolves through the protagonist's final choice.",
+        "responsibleModule": "8A"
+      },
+      {
+        "ruleId": "QA-005",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "Core need is addressed through the protagonist's growth outcome.",
+        "responsibleModule": "8A"
+      },
+      {
+        "ruleId": "QA-006",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "False belief and true belief are both present in the actual story.",
+        "responsibleModule": "8A"
+      },
+      {
+        "ruleId": "QA-007",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "Emotional arc moves from upset pressure toward lighter release.",
+        "responsibleModule": "8A"
+      },
+      {
+        "ruleId": "QA-008",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "Symbol/mission pairing is resolved in the Blueprint (not required to be spoken aloud in every story).",
+        "responsibleModule": "8A"
+      },
+      {
+        "ruleId": "QA-009",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "Craft requirements show up through a reflective pause in the actual manuscript (any concrete form, not one fixed phrase).",
+        "responsibleModule": "8B"
+      },
+      {
+        "ruleId": "QA-010",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "Every page still carries coherent transition guidance.",
+        "responsibleModule": "8B"
+      },
+      {
+        "ruleId": "QA-011",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "No internal engine placeholders or CR codes remain in the prose.",
+        "responsibleModule": "8E"
+      },
+      {
+        "ruleId": "QA-012",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "No obvious prose corruption or doubled punctuation remains.",
+        "responsibleModule": "8E"
+      },
+      {
+        "ruleId": "QA-013",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "Dialogue remains concise and read-aloud friendly.",
+        "responsibleModule": "8D"
+      },
+      {
+        "ruleId": "QA-014",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "Ending provides both emotional and narrative closure.",
+        "responsibleModule": "8A"
+      },
+      {
+        "ruleId": "QA-015",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "No placeholder prose or unplanned artifact text remains.",
+        "responsibleModule": "8E"
+      },
+      {
+        "ruleId": "QA-016",
+        "status": "PASS",
+        "severity": "info",
+        "evidence": "Page pacing still protects dramatic and emotional high points rather than flattening them.",
+        "responsibleModule": "8B"
+      }
+    ]
+  },
+  "lockedFinalStory": {
+    "id": "FINALSTORY_BLUEPRINT_SIT029_CHAR002_STRUCT072",
+    "status": "LOCKED",
+    "blueprintReference": {
+      "id": "BLUEPRINT_SIT029_CHAR002_STRUCT072"
+    },
+    "storyPlanReference": {
+      "id": "BLUEPRINT_SIT029_CHAR002_STRUCT072"
+    },
+    "pages": [
+      {
+        "page": 1,
+        "text": "Arin looks up in a busy place and suddenly cannot see their parent. Arin wanted to find the parent. There are many people moving around and the familiar hand is gone. Everyone around Arin, and Arin too, believed \"If I'm alone, I'm not safe.\" ",
+        "narration": "Arin looks up in a busy place and suddenly cannot see their parent. Arin wanted to find the parent. There are many people moving around and the familiar hand is gone. Everyone around Arin, and Arin too, believed \"If I'm alone, I'm not safe.\" ",
+        "dialogue": [
+          {
+            "utteranceId": "DIA_001",
+            "character": "CHAR002",
+            "characterName": "Arin",
+            "text": "If I'm alone, I'm not safe.",
+            "delivery": "Keep the line concise, childlike, and emotionally direct.",
+            "attribution": "Arin says",
+            "voiceConsistency": "Gentle, cautious",
+            "punctuationStatus": "COMPLETE",
+            "emotionalPurpose": "Establish the emotional baseline and story pressure while engage empathy and concern.."
+          }
+        ],
+        "pageTurnObjective": "Curiosity about the central problem",
+        "sourceSections": [
+          "SCENE_001"
+        ]
+      },
+      {
+        "page": 2,
+        "text": "— so the fix had to be something big and frantic — running, shouting, pushing through the crowd as fast as possible — because surely finding a lost parent again needed a big enough search to match the fear. So Arin tried exactly that — darting one way and then another, calling out into the noise — but it did nothing to fix the real trouble: there are many people moving around and the familiar hand is gone, and running only made the crowd feel bigger and more confusing. Then, in the middle of all that running, Arin noticed something small and quiet instead — panic makes it harder to remember what to do — and a quiet memory surfaced: the plan they had been taught for exactly this moment.\n",
+        "narration": "— so the fix had to be something big and frantic — running, shouting, pushing through the crowd as fast as possible — because surely finding a lost parent again needed a big enough search to match the fear. So Arin tried exactly that — darting one way and then another, calling out into the noise — but it did nothing to fix the real trouble: there are many people moving around and the familiar hand is gone, and running only made the crowd feel bigger and more confusing. Then, in the middle of all that running, Arin noticed something small and quiet instead — panic makes it harder to remember what to do — and a quiet memory surfaced: the plan they had been taught for exactly this moment.\n",
+        "dialogue": [],
+        "pageTurnObjective": "Commitment to the mission",
+        "sourceSections": [
+          "SCENE_001",
+          "SCENE_002"
+        ]
+      },
+      {
+        "page": 3,
+        "text": "So Arin stopped running and did the quiet thing instead — paused, stood still in one spot, looked for a grown-up who could help, and waited calmly to find the parent, instead of chasing after every stranger in the crowd.\n",
+        "narration": "So Arin stopped running and did the quiet thing instead — paused, stood still in one spot, looked for a grown-up who could help, and waited calmly to find the parent, instead of chasing after every stranger in the crowd.\n",
+        "dialogue": [],
+        "pageTurnObjective": "Escalating tension",
+        "sourceSections": [
+          "SCENE_002"
+        ]
+      },
+      {
+        "page": 4,
+        "text": "That is what worked — not the frantic running, which had changed nothing, but standing still ",
+        "narration": "That is what worked — not the frantic running, which had changed nothing, but standing still ",
+        "dialogue": [],
+        "pageTurnObjective": "Anticipation of the final turn",
+        "sourceSections": [
+          "SCENE_003"
+        ]
+      },
+      {
+        "page": 5,
+        "text": "and staying calm, and Arin understood: I can stay calm, make wise choices and find help.",
+        "narration": "and staying calm, and Arin understood: I can stay calm, make wise choices and find help.",
+        "dialogue": [],
+        "pageTurnObjective": "Emotional closure",
+        "sourceSections": [
+          "SCENE_003"
+        ]
+      }
+    ],
+    "storyQA": {
+      "status": "PASS",
+      "rulesPassed": 16,
+      "rulesFailed": 0,
+      "warnings": [],
+      "errors": []
+    }
+  },
+  "productionQAReport": {
+    "status": "PRODUCTION_READY",
+    "validation": {
+      "status": "PASS",
+      "rulesPassed": 49,
+      "rulesFailed": 0,
+      "warnings": [],
+      "errors": [],
+      "results": [
+        {
+          "ruleId": "PQA-001",
+          "status": "PASS",
+          "severity": "info",
+          "affected": null,
+          "description": "Final Story remains locked and immutable.",
+          "responsibleModule": "8F"
+        },
+        {
+          "ruleId": "PQA-002",
+          "status": "PASS",
+          "severity": "info",
+          "affected": null,
+          "description": "Every required story page exists in the layout.",
+          "responsibleModule": "9C"
+        },
+        {
+          "ruleId": "PQA-003",
+          "status": "PASS",
+          "severity": "info",
+          "affected": null,
+          "description": "Every required illustration asset exists.",
+          "responsibleModule": "9B"
+        },
+        {
+          "ruleId": "PQA-010",
+          "status": "PASS",
+          "severity": "info",
+          "affected": null,
+          "description": "Illustration asset resolution meets current production minimums.",
+          "responsibleModule": "9B"
+        },
+        {
+          "ruleId": "PQA-011",
+          "status": "PASS",
+          "severity": "info",
+          "affected": null,
+          "description": "Bleed requirements are present and valid.",
+          "responsibleModule": "9C"
+        },
+        {
+          "ruleId": "PQA-013",
+          "status": "PASS",
+          "severity": "info",
+          "affected": null,
+          "description": "Required production metadata is complete.",
+          "responsibleModule": "9D"
+        },
+        {
+          "ruleId": "PQA-004-P1",
+          "status": "PASS",
+          "severity": "info",
+          "affected": "page:1",
+          "description": "Page 1 references the correct illustration asset.",
+          "responsibleModule": "9C"
+        },
+        {
+          "ruleId": "PQA-008-P1",
+          "status": "PASS",
+          "severity": "info",
+          "affected": "page:1",
+          "description": "Page 1 layout preserves the locked story text exactly.",
+          "responsibleModule": "9C"
+        },
+        {
+          "ruleId": "PQA-009-P1",
+          "status": "PASS",
+          "severity": "info",
+          "affected": "page:1",
+          "description": "Page 1 typography remains readable and sized appropriately.",
+          "responsibleModule": "9C"
+        },
+        {
+          "ruleId": "PQA-012-P1",
+          "status": "PASS",
+          "severity": "info",
+          "affected": "asset:ASSET_PAGE_1",
+          "description": "Page 1 asset reference is concrete and not an unresolved placeholder.",
+          "responsibleModule": "9B"
+        },
+        {
+          "ruleId": "PQA-005-P1",
+          "status": "PASS",
+          "severity": "info",
+          "affected": "page:1",
+          "description": "Page 1 character continuity remains synchronized from plan to prompt.",
+          "responsibleModule": "9B"
+        },
+        {
+          "ruleId": "PQA-006-P1",
+          "status": "PASS",
+          "severity": "info",
+          "affected": "page:1",
+          "description": "Page 1 world continuity remains synchronized from plan to prompt.",
+          "responsibleModule": "9B"
+        },
+        {
+          "ruleId": "PQA-007-P1",
+          "status": "PASS",
+          "severity": "info",
+          "affected": "page:1",
+          "description": "Page 1 symbol continuity remains synchronized from plan to prompt.",
+          "responsibleModule": "9B"
+        },
+        {
+          "ruleId": "PQA-014-P1",
+          "status": "PASS",
+          "severity": "info",
+          "affected": "page:1",
+          "description": "Page 1 has no unresolved production dependency across story, prompt, asset, and layout layers.",
+          "responsibleModule": "9D"
+        },
+        {
+          "ruleId": "PQA-004-P2",
+          "status": "PASS",
+          "severity": "info",
+          "affected": "page:2",
+          "description": "Page 2 references the correct illustration asset.",
+          "responsibleModule": "9C"
+        },
+        {
+          "ruleId": "PQA-008-P2",
+          "status": "PASS",
+          "severity": "info",
+          "affected": "page:2",
+          "description": "Page 2 layout preserves the locked story text exactly.",
+          "responsibleModule": "9C"
+        },
+        {
+          "ruleId": "PQA-009-P2",
+          "status": "PASS",
+          "severity": "info",
+          "affected": "page:2",
+          "description": "Page 2 typography remains readable and sized appropriately.",
+          "responsibleModule": "9C"
+        },
+        {
+          "ruleId": "PQA-012-P2",
+          "status": "PASS",
+          "severity": "info",
+          "affected": "asset:ASSET_PAGE_2",
+          "description": "Page 2 asset reference is concrete and not an unresolved placeholder.",
+          "responsibleModule": "9B"
+        },
+        {
+          "ruleId": "PQA-005-P2",
+          "status": "PASS",
+          "severity": "info",
+          "affected": "page:2",
+          "description": "Page 2 character continuity remains synchronized from plan to prompt.",
+          "responsibleModule": "9B"
+        },
+        {
+          "ruleId": "PQA-006-P2",
+          "status": "PASS",
+          "severity": "info",
+          "affected": "page:2",
+          "description": "Page 2 world continuity remains synchronized from plan to prompt.",
+          "responsibleModule": "9B"
+        },
+        {
+          "ruleId": "PQA-007-P2",
+          "status": "PASS",
+          "severity": "info",
+          "affected": "page:2",
+          "description": "Page 2 symbol continuity remains synchronized from plan to prompt.",
+          "responsibleModule": "9B"
+        },
+        {
+          "ruleId": "PQA-014-P2",
+          "status": "PASS",
+          "severity": "info",
+          "affected": "page:2",
+          "description": "Page 2 has no unresolved production dependency across story, prompt, asset, and layout layers.",
+          "responsibleModule": "9D"
+        },
+        {
+          "ruleId": "PQA-004-P3",
+          "status": "PASS",
+          "severity": "info",
+          "affected": "page:3",
+          "description": "Page 3 references the correct illustration asset.",
+          "responsibleModule": "9C"
+        },
+        {
+          "ruleId": "PQA-008-P3",
+          "status": "PASS",
+          "severity": "info",
+          "affected": "page:3",
+          "description": "Page 3 layout preserves the locked story text exactly.",
+          "responsibleModule": "9C"
+        },
+        {
+          "ruleId": "PQA-009-P3",
+          "status": "PASS",
+          "severity": "info",
+          "affected": "page:3",
+          "description": "Page 3 typography remains readable and sized appropriately.",
+          "responsibleModule": "9C"
+        },
+        {
+          "ruleId": "PQA-012-P3",
+          "status": "PASS",
+          "severity": "info",
+          "affected": "asset:ASSET_PAGE_3",
+          "description": "Page 3 asset reference is concrete and not an unresolved placeholder.",
+          "responsibleModule": "9B"
+        },
+        {
+          "ruleId": "PQA-005-P3",
+          "status": "PASS",
+          "severity": "info",
+          "affected": "page:3",
+          "description": "Page 3 character continuity remains synchronized from plan to prompt.",
+          "responsibleModule": "9B"
+        },
+        {
+          "ruleId": "PQA-006-P3",
+          "status": "PASS",
+          "severity": "info",
+          "affected": "page:3",
+          "description": "Page 3 world continuity remains synchronized from plan to prompt.",
+          "responsibleModule": "9B"
+        },
+        {
+          "ruleId": "PQA-007-P3",
+          "status": "PASS",
+          "severity": "info",
+          "affected": "page:3",
+          "description": "Page 3 symbol continuity remains synchronized from plan to prompt.",
+          "responsibleModule": "9B"
+        },
+        {
+          "ruleId": "PQA-014-P3",
+          "status": "PASS",
+          "severity": "info",
+          "affected": "page:3",
+          "description": "Page 3 has no unresolved production dependency across story, prompt, asset, and layout layers.",
+          "responsibleModule": "9D"
+        },
+        {
+          "ruleId": "PQA-004-P4",
+          "status": "PASS",
+          "severity": "info",
+          "affected": "page:4",
+          "description": "Page 4 references the correct illustration asset.",
+          "responsibleModule": "9C"
+        },
+        {
+          "ruleId": "PQA-008-P4",
+          "status": "PASS",
+          "severity": "info",
+          "affected": "page:4",
+          "description": "Page 4 layout preserves the locked story text exactly.",
+          "responsibleModule": "9C"
+        },
+        {
+          "ruleId": "PQA-009-P4",
+          "status": "PASS",
+          "severity": "info",
+          "affected": "page:4",
+          "description": "Page 4 typography remains readable and sized appropriately.",
+          "responsibleModule": "9C"
+        },
+        {
+          "ruleId": "PQA-012-P4",
+          "status": "PASS",
+          "severity": "info",
+          "affected": "asset:ASSET_PAGE_4",
+          "description": "Page 4 asset reference is concrete and not an unresolved placeholder.",
+          "responsibleModule": "9B"
+        },
+        {
+          "ruleId": "PQA-005-P4",
+          "status": "PASS",
+          "severity": "info",
+          "affected": "page:4",
+          "description": "Page 4 character continuity remains synchronized from plan to prompt.",
+          "responsibleModule": "9B"
+        },
+        {
+          "ruleId": "PQA-006-P4",
+          "status": "PASS",
+          "severity": "info",
+          "affected": "page:4",
+          "description": "Page 4 world continuity remains synchronized from plan to prompt.",
+          "responsibleModule": "9B"
+        },
+        {
+          "ruleId": "PQA-007-P4",
+          "status": "PASS",
+          "severity": "info",
+          "affected": "page:4",
+          "description": "Page 4 symbol continuity remains synchronized from plan to prompt.",
+          "responsibleModule": "9B"
+        },
+        {
+          "ruleId": "PQA-014-P4",
+          "status": "PASS",
+          "severity": "info",
+          "affected": "page:4",
+          "description": "Page 4 has no unresolved production dependency across story, prompt, asset, and layout layers.",
+          "responsibleModule": "9D"
+        },
+        {
+          "ruleId": "PQA-004-P5",
+          "status": "PASS",
+          "severity": "info",
+          "affected": "page:5",
+          "description": "Page 5 references the correct illustration asset.",
+          "responsibleModule": "9C"
+        },
+        {
+          "ruleId": "PQA-008-P5",
+          "status": "PASS",
+          "severity": "info",
+          "affected": "page:5",
+          "description": "Page 5 layout preserves the locked story text exactly.",
+          "responsibleModule": "9C"
+        },
+        {
+          "ruleId": "PQA-009-P5",
+          "status": "PASS",
+          "severity": "info",
+          "affected": "page:5",
+          "description": "Page 5 typography remains readable and sized appropriately.",
+          "responsibleModule": "9C"
+        },
+        {
+          "ruleId": "PQA-012-P5",
+          "status": "PASS",
+          "severity": "info",
+          "affected": "asset:ASSET_PAGE_5",
+          "description": "Page 5 asset reference is concrete and not an unresolved placeholder.",
+          "responsibleModule": "9B"
+        },
+        {
+          "ruleId": "PQA-005-P5",
+          "status": "PASS",
+          "severity": "info",
+          "affected": "page:5",
+          "description": "Page 5 character continuity remains synchronized from plan to prompt.",
+          "responsibleModule": "9B"
+        },
+        {
+          "ruleId": "PQA-006-P5",
+          "status": "PASS",
+          "severity": "info",
+          "affected": "page:5",
+          "description": "Page 5 world continuity remains synchronized from plan to prompt.",
+          "responsibleModule": "9B"
+        },
+        {
+          "ruleId": "PQA-007-P5",
+          "status": "PASS",
+          "severity": "info",
+          "affected": "page:5",
+          "description": "Page 5 symbol continuity remains synchronized from plan to prompt.",
+          "responsibleModule": "9B"
+        },
+        {
+          "ruleId": "PQA-014-P5",
+          "status": "PASS",
+          "severity": "info",
+          "affected": "page:5",
+          "description": "Page 5 has no unresolved production dependency across story, prompt, asset, and layout layers.",
+          "responsibleModule": "9D"
+        },
+        {
+          "ruleId": "PQA-015",
+          "status": "PASS",
+          "severity": "info",
+          "affected": null,
+          "description": "Page order remains correct and sequential.",
+          "responsibleModule": "9C"
+        },
+        {
+          "ruleId": "PQA-016",
+          "status": "PASS",
+          "severity": "info",
+          "affected": null,
+          "description": "Title metadata is present for cover/title treatment.",
+          "responsibleModule": "9D"
+        },
+        {
+          "ruleId": "PQA-017",
+          "status": "PASS",
+          "severity": "info",
+          "affected": null,
+          "description": "No unresolved placeholder strings remain in the production package.",
+          "responsibleModule": "9D"
+        }
+      ]
+    },
+    "metadata": {
+      "title": "Arin and the Smallest Strength in Fear of getting lost in a mall or crowd",
+      "author": "Prana Story Engine",
+      "language": "en",
+      "targetAge": "5-8",
+      "version": "1.0",
+      "createdAt": "2026-08-08",
+      "updatedAt": "2026-08-08"
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "template_id": "PT11_MYSTERY_DETECTIVE",
+  "theme_id": "GT01",
+  "belief": "I keep the words that help me grow.",
+  "title": "The Helpful Words Mystery",
+  "subtitle": "Listen like Ganesha and sift the words worth keeping.",
+  "assets": {
+    "SCENE_ART": {
+      "items": []
+    }
+  },
+  "content": {
+    "hook": "Can you find the words worth keeping?",
+    "mission": "Some words help us grow and some words are only noise. Find the hidden words, sort them, and unlock Ganesha's secret reminder.",
+    "scene_instruction": "Find the four hidden words in the picture.",
+    "character_label": "Ganesha listens carefully",
+    "hidden_words": [
+      "TRY",
+      "KIND",
+      "LEARN",
+      "NOISE"
+    ],
+    "sort_prompt": "Which words belong in KEEP, and which belong in LET GO?",
+    "clues": [
+      "KEEP words give you letters 1 and 2.",
+      "LET GO words give you letters 3 and 4.",
+      "Put the KEEP letters first."
+    ],
+    "footer": "Listen like Ganesha: keep what helps, let the noise go."
+  },
+  "generation": {
+    "mode": "hidden-word sorting mystery",
+    "answer_rule": "Keep the helpful words and read their key letters first."
+  },
+  "answer_key": {
+    "keep_words": [
+      "TRY",
+      "KIND",
+      "LEARN"
+    ],
+    "let_go_words": [
+      "NOISE"
+    ],
+    "secret_word": "KIND"
+  },
+  "wisdom": {
+    "statement": "I keep the words that help me grow.",
+    "today": "Try noticing one helpful word someone says today."
+  }
+}

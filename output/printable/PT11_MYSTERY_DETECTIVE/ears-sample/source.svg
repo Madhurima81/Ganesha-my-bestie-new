@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="210mm" height="297mm" viewBox="0 0 794 1123">
+<defs>
+<style>
+.t{font-family:DejaVu Sans,sans-serif;font-weight:700;fill:#6F5145}
+.b{font-family:DejaVu Sans,sans-serif;fill:#6F5B52}
+.s{font-family:DejaVu Sans,sans-serif;font-size:13px;fill:#806F67}
+.card{fill:#FFFDF8;stroke:#E8D8CE;stroke-width:2}
+</style>
+</defs>
+<rect width="794" height="1123" fill="#FFFDF8"/>
+<rect x="24" y="24" width="746" height="1075" rx="26" fill="#FFFDF8" stroke="#EBD9CF" stroke-width="2"/>
+
+<!-- Header -->
+<text id="TITLE" x="397" y="72" text-anchor="middle" class="t" font-size="30"><tspan x="397" y="72">The Helpful Words Mystery</tspan></text>
+<text id="HOOK" x="397" y="104" text-anchor="middle" class="b" font-size="15"><tspan x="397" y="104">Can you find the words worth keeping?</tspan></text>
+
+<!-- Story hook -->
+<rect x="55" y="128" width="684" height="82" rx="18" fill="#FFF2E5" stroke="#E8D8CE"/>
+<text x="76" y="157" class="t" font-size="14">YOUR MISSION</text>
+<text id="MISSION" x="76" y="183" class="b" font-size="15"><tspan x="76" y="173.5">Some words help us grow and some words are only noise. Find the hidden</tspan><tspan x="76" y="192.5">words, sort them, and unlock Ganesha&apos;s secret reminder.</tspan></text>
+
+<!-- Scene -->
+<rect x="55" y="230" width="430" height="390" rx="22" class="card"/>
+<text x="75" y="258" class="t" font-size="15">LOOK CLOSELY</text>
+<text id="SCENE_INSTRUCTION" x="75" y="282" class="s"><tspan x="75" y="282">Find the four hidden words in the picture.</tspan></text>
+
+<!-- Vector scene slot -->
+<g id="SCENE_ART" transform="translate(78,300)">
+  <rect x="0" y="0" width="384" height="295" rx="18" fill="#F4F0EA"/>
+  <circle cx="95" cy="80" r="45" fill="#F6C58E"/>
+  <circle cx="72" cy="75" r="5" fill="#6F5145"/><circle cx="118" cy="75" r="5" fill="#6F5145"/>
+  <path d="M95 88 C72 104 76 137 105 142 C129 146 139 124 124 111" fill="none" stroke="#6F5145" stroke-width="7" stroke-linecap="round"/>
+  <path d="M62 48 Q95 10 128 48" fill="none" stroke="#D89B64" stroke-width="9" stroke-linecap="round"/>
+  <text id="CHARACTER_LABEL" x="192" y="270" text-anchor="middle" class="s"><tspan x="192" y="270">Ganesha listens carefully</tspan></text>
+</g>
+
+<!-- Hidden words -->
+<text id="HIDDEN_WORD_1" x="115" y="350" class="b" font-size="16"><tspan x="115" y="350">TRY</tspan></text>
+<text id="HIDDEN_WORD_2" x="315" y="405" class="b" font-size="16"><tspan x="315" y="405">KIND</tspan></text>
+<text id="HIDDEN_WORD_3" x="175" y="525" class="b" font-size="16"><tspan x="175" y="525">LEARN</tspan></text>
+<text id="HIDDEN_WORD_4" x="365" y="565" class="b" font-size="16"><tspan x="365" y="565">NOISE</tspan></text>
+
+<!-- Sorting -->
+<rect x="505" y="230" width="234" height="185" rx="22" class="card"/>
+<text x="622" y="258" text-anchor="middle" class="t" font-size="15">KEEP OR LET GO?</text>
+<text id="SORT_PROMPT" x="522" y="286" class="b" font-size="13"><tspan x="522" y="277.5">Which words belong in KEEP,</tspan><tspan x="522" y="294.5">and which belong in LET GO?</tspan></text>
+<rect x="522" y="314" width="90" height="55" rx="12" fill="#E4F1E3"/>
+<text x="567" y="347" text-anchor="middle" class="t" font-size="13">KEEP</text>
+<rect x="632" y="314" width="90" height="55" rx="12" fill="#F8DCDC"/>
+<text x="677" y="347" text-anchor="middle" class="t" font-size="13">LET GO</text>
+
+<!-- Clue -->
+<rect x="505" y="430" width="234" height="190" rx="22" class="card"/>
+<text x="622" y="458" text-anchor="middle" class="t" font-size="15">CLUE</text>
+<text id="CLUE_1" x="522" y="492" class="b" font-size="13"><tspan x="522" y="483.5">KEEP words give you letters</tspan><tspan x="522" y="500.5">1 and 2.</tspan></text>
+<text id="CLUE_2" x="522" y="545" class="b" font-size="13"><tspan x="522" y="536.5">LET GO words give you</tspan><tspan x="522" y="553.5">letters 3 and 4.</tspan></text>
+<text id="CLUE_3" x="522" y="598" class="b" font-size="13"><tspan x="522" y="598">Put the KEEP letters first.</tspan></text>
+
+<!-- Final answer -->
+<rect x="55" y="645" width="684" height="142" rx="22" fill="#EDE7F6" stroke="#D7CCE5" stroke-width="2"/>
+<text x="397" y="680" text-anchor="middle" class="t" font-size="18">SECRET WORD</text>
+<rect x="205" y="700" width="384" height="55" rx="15" fill="#FFFDF8" stroke="#D7CCE5" stroke-width="2"/>
+<text id="ANSWER" x="397" y="736" text-anchor="middle" class="t" font-size="25"><tspan x="397" y="736">KIND</tspan></text>
+
+<!-- Wisdom -->
+<rect x="55" y="812" width="684" height="125" rx="22" fill="#E4F1E3" stroke="#C9DEC5" stroke-width="2"/>
+<text x="397" y="842" text-anchor="middle" class="t" font-size="16">WHAT GANESHA REMINDS US</text>
+<text id="WISDOM" x="397" y="878" text-anchor="middle" class="b" font-size="17"><tspan x="397" y="878">I keep the words that help me grow.</tspan></text>
+<text id="TODAY" x="397" y="908" text-anchor="middle" class="s"><tspan x="397" y="908">Try noticing one helpful word someone says today.</tspan></text>
+
+<!-- Footer -->
+<text id="FOOTER" x="397" y="1010" text-anchor="middle" class="t" font-size="16"><tspan x="397" y="1010">Listen like Ganesha: keep what helps, let the noise go.</tspan></text>
+<text x="397" y="1045" text-anchor="middle" class="s">Prana Kids • Print at 100% • Vector master</text>
+</svg>

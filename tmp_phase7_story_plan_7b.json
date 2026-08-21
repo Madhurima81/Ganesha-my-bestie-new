@@ -1,0 +1,290 @@
+{
+  "blueprintReference": {
+    "id": "BLUEPRINT_SIT001_CHAR005_STRUCT007"
+  },
+  "craftPlan": [
+    {
+      "beatIds": [
+        "B_ESC_01",
+        "B_PEAK_01",
+        "B_RESET_01"
+      ],
+      "pageTurnUse": "Support the page-turn cadence between pages 1 and 2.",
+      "purpose": "Required by resolved Beat graph propagation.",
+      "sceneIds": [
+        "SCENE_001",
+        "SCENE_002",
+        "SCENE_003"
+      ],
+      "techniqueId": "CR-RHY-001"
+    },
+    {
+      "beatIds": [
+        "B_ESC_01",
+        "B_PEAK_01",
+        "B_RESET_01"
+      ],
+      "pageTurnUse": "Support the page-turn cadence between pages 2 and 3.",
+      "purpose": "Required by resolved Beat graph propagation.",
+      "sceneIds": [
+        "SCENE_001",
+        "SCENE_002",
+        "SCENE_003"
+      ],
+      "techniqueId": "CR-SUS-001"
+    },
+    {
+      "beatIds": [
+        "B_ESC_01",
+        "B_PEAK_01",
+        "B_RESET_01"
+      ],
+      "pageTurnUse": "Support the page-turn cadence between pages 3 and 4.",
+      "purpose": "Required by resolved Beat graph propagation.",
+      "sceneIds": [
+        "SCENE_001",
+        "SCENE_002",
+        "SCENE_003"
+      ],
+      "techniqueId": "CR-EMO-001"
+    }
+  ],
+  "directorValidation": {
+    "blockingFailures": 0,
+    "rulesPassed": 16,
+    "status": "PASS",
+    "warnings": 0
+  },
+  "emotionPlan": [
+    {
+      "endingState": "I Can Pause And Choose My Response.",
+      "function": "Establish the emotional baseline and story pressure.",
+      "id": "EMOTION_001",
+      "intensity": 0.34,
+      "page": 1,
+      "sceneId": "SCENE_001",
+      "startingState": "Self Regulation",
+      "transition": "Self Regulation -> I Can Pause And Choose My Response."
+    },
+    {
+      "endingState": "I Can Pause And Choose My Response.",
+      "function": "Escalate or refine the emotional journey.",
+      "id": "EMOTION_002",
+      "intensity": 0.48,
+      "page": 2,
+      "sceneId": "SCENE_001",
+      "startingState": "Self Regulation",
+      "transition": "Self Regulation -> I Can Pause And Choose My Response."
+    },
+    {
+      "endingState": "I Can Pause And Choose My Response.",
+      "function": "Escalate or refine the emotional journey.",
+      "id": "EMOTION_003",
+      "intensity": 0.62,
+      "page": 3,
+      "sceneId": "SCENE_002",
+      "startingState": "Self Regulation",
+      "transition": "Self Regulation -> I Can Pause And Choose My Response."
+    },
+    {
+      "endingState": "I Can Pause And Choose My Response.",
+      "function": "Escalate or refine the emotional journey.",
+      "id": "EMOTION_004",
+      "intensity": 0.76,
+      "page": 4,
+      "sceneId": "SCENE_003",
+      "startingState": "Self Regulation",
+      "transition": "Self Regulation -> I Can Pause And Choose My Response."
+    },
+    {
+      "endingState": "I Can Pause And Choose My Response.",
+      "function": "Deliver emotional release and integration.",
+      "id": "EMOTION_005",
+      "intensity": 0.9,
+      "page": 5,
+      "sceneId": "SCENE_003",
+      "startingState": "Self Regulation",
+      "transition": "Self Regulation -> I Can Pause And Choose My Response."
+    }
+  ],
+  "pagePlan": [
+    {
+      "beats": [
+        "B_ESC_01"
+      ],
+      "emotionalPurpose": "Engage empathy and concern.",
+      "objective": "Open the story world and surface the core pressure around NEED_SELF_REGULATION.",
+      "page": 1,
+      "pageTurnGoal": "Curiosity about the central problem",
+      "sceneIds": [
+        "SCENE_001"
+      ],
+      "symbolPurpose": "Signal the symbol's story role.",
+      "visualPurpose": "Establish the world and protagonist visually.",
+      "wordBudget": {
+        "maximum": 95,
+        "minimum": 20,
+        "target": 52
+      }
+    },
+    {
+      "beats": [
+        "B_ESC_01",
+        "B_PEAK_01"
+      ],
+      "emotionalPurpose": "Build feeling and expectation.",
+      "objective": "Clarify the mission direction and deepen the conflict around Inner Conflict.",
+      "page": 2,
+      "pageTurnGoal": "Commitment to the mission",
+      "sceneIds": [
+        "SCENE_001",
+        "SCENE_002"
+      ],
+      "symbolPurpose": "Keep symbolic recurrence supportive, not dominant.",
+      "visualPurpose": "Support action and transitions without overloading the spread.",
+      "wordBudget": {
+        "maximum": 95,
+        "minimum": 20,
+        "target": 52
+      }
+    },
+    {
+      "beats": [
+        "B_PEAK_01"
+      ],
+      "emotionalPurpose": "Build feeling and expectation.",
+      "objective": "Develop attempts, pressure, and internal change without breaking scene integrity.",
+      "page": 3,
+      "pageTurnGoal": "Escalating tension",
+      "sceneIds": [
+        "SCENE_002"
+      ],
+      "symbolPurpose": "Keep symbolic recurrence supportive, not dominant.",
+      "visualPurpose": "Support action and transitions without overloading the spread.",
+      "wordBudget": {
+        "maximum": 95,
+        "minimum": 20,
+        "target": 52
+      }
+    },
+    {
+      "beats": [
+        "B_RESET_01"
+      ],
+      "emotionalPurpose": "Build feeling and expectation.",
+      "objective": "Set up the final emotional and narrative payoff without resolving too early.",
+      "page": 4,
+      "pageTurnGoal": "Anticipation of the final turn",
+      "sceneIds": [
+        "SCENE_003"
+      ],
+      "symbolPurpose": "Keep symbolic recurrence supportive, not dominant.",
+      "visualPurpose": "Support action and transitions without overloading the spread.",
+      "wordBudget": {
+        "maximum": 95,
+        "minimum": 20,
+        "target": 52
+      }
+    },
+    {
+      "beats": [
+        "B_RESET_01"
+      ],
+      "emotionalPurpose": "Release and integration.",
+      "objective": "Land the resolution and reinforce I can pause and choose my response..",
+      "page": 5,
+      "pageTurnGoal": "Emotional closure",
+      "sceneIds": [
+        "SCENE_003"
+      ],
+      "symbolPurpose": "Complete the symbol payoff.",
+      "visualPurpose": "Give the resolution breathing room.",
+      "wordBudget": {
+        "maximum": 95,
+        "minimum": 20,
+        "target": 52
+      }
+    }
+  ],
+  "scenePlan": [
+    {
+      "beats": [
+        "B_ESC_01"
+      ],
+      "characterFocus": "CHAR005",
+      "conflictProgression": "Conflict is established.",
+      "emotionalFunction": "Set the protagonist's emotional baseline and pressure point.",
+      "id": "SCENE_001",
+      "missionProgress": "Mission is framed.",
+      "purpose": "Open with open with a strong feeling or emotional problem the hero is experiencing. while grounding the protagonist in i have to react when things feel unfair..",
+      "symbolFunction": "Introduce symbolic meaning."
+    },
+    {
+      "beats": [
+        "B_PEAK_01"
+      ],
+      "characterFocus": "CHAR005",
+      "conflictProgression": "Conflict pressure increases.",
+      "emotionalFunction": "Escalate emotional commitment and uncertainty.",
+      "id": "SCENE_002",
+      "missionProgress": "Mission advances through attempted action.",
+      "purpose": "Escalate 57 through inner Conflict pressure and the escalation reaches its maximum point before resolution.",
+      "symbolFunction": "Develop symbolic recurrence."
+    },
+    {
+      "beats": [
+        "B_RESET_01"
+      ],
+      "characterFocus": "CHAR005",
+      "conflictProgression": "Conflict releases into resolution.",
+      "emotionalFunction": "Convert emotional strain into earned release.",
+      "id": "SCENE_003",
+      "missionProgress": "Mission is resolved.",
+      "purpose": "Resolve 57 through the biggest success is emotional rather than external. and confirm i can pause and choose my response..",
+      "symbolFunction": "Deliver symbolic payoff."
+    }
+  ],
+  "schemaVersion": "1.0",
+  "status": "VALIDATED",
+  "storyFlow": {
+    "centralDramaticQuestion": "Will the protagonist complete the mission despite inner Conflict and discover that i can pause and choose my response.?",
+    "resolution": "57 is resolved. The biggest success is emotional rather than external. I can pause and choose my response.",
+    "sequence": [
+      {
+        "beats": [
+          "B_ESC_01"
+        ],
+        "id": "FLOW_01_B_ESC_01",
+        "purpose": "Open with open with a strong feeling or emotional problem the hero is experiencing. while grounding the protagonist in i have to react when things feel unfair.."
+      },
+      {
+        "beats": [
+          "B_PEAK_01"
+        ],
+        "id": "FLOW_02_B_PEAK_01",
+        "purpose": "Escalate 57 through inner Conflict pressure and the escalation reaches its maximum point before resolution."
+      },
+      {
+        "beats": [
+          "B_RESET_01"
+        ],
+        "id": "FLOW_03_B_RESET_01",
+        "purpose": "Resolve 57 through the biggest success is emotional rather than external. and confirm i can pause and choose my response.."
+      }
+    ]
+  },
+  "symbolPlan": [
+    {
+      "development": "B_PEAK_01",
+      "function": "Supports SYMBOL_SHELTER through Need and Mission Type compatibility.",
+      "introduction": "B_ESC_01",
+      "payoff": "B_RESET_01",
+      "sceneIds": [
+        "SCENE_001",
+        "SCENE_002",
+        "SCENE_003"
+      ],
+      "symbolId": "GAN_SYM_BIG_BELLY"
+    }
+  ]
+}

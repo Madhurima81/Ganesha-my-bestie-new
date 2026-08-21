@@ -1,0 +1,97 @@
+{
+  "generated_at": "2026-08-12T07:03:37.457Z",
+  "run": {
+    "run_id": "MVP-001",
+    "stage": "stage_1_source_supported_only",
+    "goal": "Prove one fully supported vertical slice end to end while canonicalizing unsupported slices honestly.",
+    "wisdom_ids": [
+      "SYM-GAN-008",
+      "SYM-HAN-002",
+      "BG-006"
+    ],
+    "outputs": [
+      "story",
+      "try_it_today",
+      "printable",
+      "escape"
+    ]
+  },
+  "stage_1_result": "APPROVED",
+  "run_result": "NEEDS_REVIEW",
+  "rationale": "Ears is fully run end to end. Hanuman and the requested Gita 2.47 slice remain open because source content is incomplete in the supplied bundle.",
+  "stage_checks": [
+    {
+      "stage": "research_to_wisdom",
+      "slice": "ears",
+      "status": "APPROVED",
+      "notes": "Large Ears anchor verified from research bundle."
+    },
+    {
+      "stage": "wisdom_to_practice",
+      "slice": "ears",
+      "status": "APPROVED",
+      "notes": "Practice locked to hear -> select -> sort."
+    },
+    {
+      "stage": "practice_to_story",
+      "slice": "ears",
+      "status": "APPROVED",
+      "notes": "Child story is a deterministic adaptation of the verified Ears anchor."
+    },
+    {
+      "stage": "practice_to_try_it_today",
+      "slice": "ears",
+      "status": "APPROVED",
+      "notes": "Try It Today mechanic stays on sift-helpful-vs-noise semantics."
+    },
+    {
+      "stage": "practice_to_pt03_svg_pdf",
+      "slice": "ears",
+      "status": "APPROVED",
+      "notes": "PT03 rendered from canonical Ears payload."
+    }
+  ],
+  "slices": {
+    "ears": {
+      "final_result": "APPROVED",
+      "wisdom_status": "SOURCE_VERIFIED",
+      "practice_status": "SOURCE_VERIFIED",
+      "story_status": "SOURCE_DERIVED",
+      "try_it_today_status": "SOURCE_DERIVED",
+      "printable_status": "APPROVED",
+      "output_files": {
+        "story_json": "output\\mvp\\MVP-001\\ears\\story.json",
+        "try_it_today_json": "output\\mvp\\MVP-001\\ears\\try-it-today.json",
+        "printable_input_json": "output\\mvp\\MVP-001\\ears\\printable-input.json",
+        "printable_report_json": "output\\mvp\\MVP-001\\ears\\printable\\PT03_SORT_MATCH_DECODE\\render-report.json",
+        "printable_pdf": "output\\mvp\\MVP-001\\ears\\printable\\PT03_SORT_MATCH_DECODE\\printable.pdf",
+        "printable_preview_png": "output\\mvp\\MVP-001\\ears\\printable\\PT03_SORT_MATCH_DECODE\\preview.png"
+      }
+    },
+    "hanuman": {
+      "final_result": "NEEDS_SOURCE_CONTENT",
+      "wisdom_status": "NEEDS_SOURCE_CONTENT",
+      "practice_status": "NEEDS_SOURCE_CONTENT",
+      "story_status": "NEEDS_SOURCE_CONTENT",
+      "blocking_gap": "The supplied bundle verifies the symbol id, but the child-facing supporting passage for the Sanjeevani teaching still needs to be extracted from research before story output is treated as source-complete."
+    },
+    "gita": {
+      "final_result": "NEEDS_SOURCE_CONTENT",
+      "wisdom_status": "NEEDS_SOURCE_CONTENT",
+      "practice_status": "NEEDS_SOURCE_CONTENT",
+      "story_status": "NEEDS_SOURCE_CONTENT",
+      "blocking_gap": "Requested BG-006 / 2.47 not found in supplied bundle. Verified alternate source present in bundle: Gita 2.10.",
+      "alternate_verified_source_reference": "Gita 2.10 appears in the supplied bundle, but it is not silently substituted for the requested 2.47 slice."
+    }
+  },
+  "source_provenance_summary": {
+    "verified_now": [
+      "SYM-GAN-008 Large Ears",
+      "SYM-HAN-002 symbol id only"
+    ],
+    "missing_for_completion": [
+      "Hanuman Sanjeevani child-facing supporting passage",
+      "Bhagavad Gita 2.47 / BG-006 source content"
+    ]
+  }
+}

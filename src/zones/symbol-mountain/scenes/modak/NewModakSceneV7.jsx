@@ -76,7 +76,6 @@ import forestBackground from './assets/images/newmodakbg.png';
 import modak1 from './assets/images/modak-new.webp';
 import modak2 from './assets/images/modak-new.webp';
 import modak3 from './assets/images/modak-new.webp';
-import basket from './assets/images/modak-plate.webp';
 import mooshikaActive from './assets/images/mushika-active-game2.png';
 import mooshikaCalm from './assets/images/mushika-calm-game2.png';
 import journeyFeather from './assets/images/journey-feather.png';
@@ -85,6 +84,10 @@ import journeyAcorn from './assets/images/journey-acorn.png';
 import offeringFlower from './assets/images/offering-flower-game2.png';
 import offeringDurva from './assets/images/offering-durva-game2.png';
 import offeringGarland from './assets/images/offering-garland-game2.png';
+import emotionWorried from './assets/images/emotion-worried-game3.png';
+import emotionSad from './assets/images/emotion-sad-game3.png';
+import emotionAngry from './assets/images/emotion-angry-game3.png';
+import emotionHappy from './assets/images/emotion-happy-game3.png';
 import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-new.webp';
 import symbolModakColored from '../../shared/images/icons/symbol-modak-new.webp';
 import symbolBellyColored from '../../shared/images/icons/symbol-belly-new.webp';
@@ -156,10 +159,17 @@ const MODAK_DISTRACTIONS = [
 ];
 const MUSHIKA_CLEARING_POSITION = { top: '58%', left: '35%' };
 const MUSHIKA_OFFERING_START_POSITION = { top: '64%', left: '18%' };
+const MUSHIKA_BELLY_POSITION = { top: '70%', left: '23%' };
 const MODAK_OFFERINGS = [
   { id: 'flower', image: offeringFlower, top: '38%', left: '28%', label: 'Red flower' },
   { id: 'durva', image: offeringDurva, top: '70%', left: '48%', label: 'Durva grass' },
   { id: 'garland', image: offeringGarland, top: '42%', left: '74%', label: 'Garland' }
+];
+const BELLY_EMOTIONS = [
+  { id: 'happy', image: emotionHappy, label: 'Happy', orbClass: 'modak-game-emotion-happy', insideClass: 'modak-game-inside-happy', left: '4%', top: '10%' },
+  { id: 'worried', image: emotionWorried, label: 'Worried', orbClass: 'modak-game-emotion-worried', insideClass: 'modak-game-inside-worried', right: '2%', top: '12%' },
+  { id: 'angry', image: emotionAngry, label: 'Angry', orbClass: 'modak-game-emotion-angry', insideClass: 'modak-game-inside-angry', left: '4%', bottom: '6%' },
+  { id: 'sad', image: emotionSad, label: 'Sad', orbClass: 'modak-game-emotion-sad', insideClass: 'modak-game-inside-sad', right: '4%', bottom: '8%' }
 ];
 const MUSHIKA_DART_INTERVAL_MS = 1100;
 const MUSHIKA_HOLD_MS = 1600;
@@ -242,9 +252,9 @@ const MODAK_WEB_SPEECH_VO = {
   collectStart: 'Mushika is ready to gather three offerings for Ganesha. Drag her to each one.',
   collectIdleHint: 'Guide Mushika to each offering for Ganesha.',
   sharingPower: 'Mushika finished with care. That peaceful feeling is sweet. Say it with me... I feel peaceful inside.',
-  feedGanesha: "Lets enjoy the sweet modaks. Drag them to me",
-  feedIdleHint: 'Drag a modak to me.',
-  gratitudePower: 'You gave... and it felt good. Say it with me... I feel good inside.',
+  feedGanesha: "Drag each feeling into Ganesha's belly. There is room for every feeling.",
+  feedIdleHint: "Move a feeling into Ganesha's belly.",
+  gratitudePower: 'All my feelings can rest safely inside.',
   sceneComplete: 'You found Mooshika. You felt joy. You feel good inside. All yours.',
 };
 
@@ -352,6 +362,7 @@ const NewModakSceneMVP = ({
           basketFull: false,
           basketReady: false,
           collectedModaks: [],
+          bellyEmotionIds: [],
 
           rockVisible: false,
           rockFeedCount: 0,
@@ -598,6 +609,7 @@ const NewModakSceneMVPContent = ({
   const [showMooshikaSpeech, setShowMooshikaSpeech] = useState(false);
   const [mooshikaSpeechMessage, setMooshikaSpeechMessage] = useState('');
   const showOpeningModal = sceneState.phase === PHASES.MOOSHIKA_SEARCH && !sceneState.welcomeShown;
+  const [isBellyPulseActive, setIsBellyPulseActive] = useState(false);
 
   const [debugSlotsPreview, setDebugSlotsPreview] = useState(SHOW_ALL_MODAK_SLOTS_PREVIEW);
   const [debugSlotCenters, setDebugSlotCenters] = useState(SHOW_MODAK_SLOT_DEBUG);
@@ -1119,24 +1131,23 @@ const NewModakSceneMVPContent = ({
           symbolId: 'modak',
           symbolImage: symbolModakColored,
           symbolName: 'Modak',
-          affirmation: 'I am full of joy.',
+          affirmation: 'I feel peaceful inside.',
           sidebarTarget: getSidebarTarget('modak')
         });
       }, 1200);
     }
 
-    // 5. RESET PARTIAL FEEDING
-    // If user fed 1 or 2 modaks to the rock, refill the basket to start feeding over.
+    // 5. RESET PARTIAL BELLY GAME
     if (sceneState.phase === PHASES.ROCK_FEEDING) {
-      hasShownDragHintRef.current = true; // Don't re-show drag hint on reload
       sceneActions.updateState({
-        phase: PHASES.ROCK_VISIBLE, // Go back to step before feeding
+        phase: PHASES.ROCK_VISIBLE,
         rockFeedCount: 0,
         rockBellySize: 0,
-        collectedModaks: [0, 1, 2], // Refill basket with 3 modaks
-        basketFull: true
+        collectedModaks: [],
+        bellyEmotionIds: [],
+        basketFull: true,
+        mooshikaPosition: MUSHIKA_BELLY_POSITION
       });
-      // Replay feed instruction VO on reload
       safeSetTimeout(() => {
         resetIdleBaseline();
         feedIdleVoPlayedRef.current = false;
@@ -1146,9 +1157,8 @@ const NewModakSceneMVPContent = ({
       }, 500);
     }
 
-    // 5b. REPLAY VO for feeding phase on reload
+    // 5b. REPLAY VO for belly phase on reload
     if (sceneState.phase === PHASES.ROCK_VISIBLE && sceneState.rockVisible) {
-      hasShownDragHintRef.current = true; // Don't re-show drag hint on reload
       safeSetTimeout(() => {
         resetIdleBaseline();
         feedIdleVoPlayedRef.current = false;
@@ -1169,7 +1179,7 @@ const NewModakSceneMVPContent = ({
           symbolId: 'belly',
           symbolImage: symbolBellyColored,
           symbolName: 'Big Belly',
-          affirmation: 'I feel good inside.',
+          affirmation: 'There is room for every feeling.',
           sidebarTarget: getSidebarTarget('belly')
         });
       }, 1200);
@@ -1190,7 +1200,7 @@ const NewModakSceneMVPContent = ({
           symbolId: 'belly',
           symbolImage: symbolBellyColored,
           symbolName: 'Big Belly',
-          affirmation: 'I feel good inside.',
+          affirmation: 'There is room for every feeling.',
           sidebarTarget: getSidebarTarget('belly')
         });
       }, 300);
@@ -1482,7 +1492,7 @@ const NewModakSceneMVPContent = ({
       }, 950);
 
     } else if (symbolId === 'modak') {
-      // 950ms: bloom fully done ? start VO + show rock
+      // 950ms: bloom fully done ? start belly game
       safeSetTimeout(() => {
         resetIdleBaseline();
         feedIdleVoPlayedRef.current = false;
@@ -1491,16 +1501,14 @@ const NewModakSceneMVPContent = ({
         });
         sceneActions.updateState({
           phase: PHASES.ROCK_VISIBLE,
-          basketReady: true,
           rockVisible: true,
+          rockTransformed: false,
+          bellyEmotionIds: [],
+          mooshikaVisible: true,
+          mooshikaPosition: MUSHIKA_BELLY_POSITION,
           discoveredSymbols: { ...sceneState.discoveredSymbols, modak: true }
         });
-        // Show drag hint while "bring the modaks to me" VO is playing (first time only)
-        if (!hasShownDragHintRef.current) {
-          hasShownDragHintRef.current = true;
-          safeSetTimeout(() => setShowDragHint(true), 400);         // 400ms after VO starts
-          safeSetTimeout(() => setShowDragHint(false), 4000);       // hide after 3.5s animation
-        }
+        hasShownDragHintRef.current = true;
       }, 950);
 
     } else if (symbolId === 'belly') {
@@ -1614,7 +1622,7 @@ const NewModakSceneMVPContent = ({
 
       safeSetTimeout(() => {
         setShowSparkle('modak-satisfaction');
-      }, 1100);
+      }, 1200);
 
       safeSetTimeout(() => {
         playRevealBloom();
@@ -1626,7 +1634,7 @@ const NewModakSceneMVPContent = ({
           affirmation: 'I feel peaceful inside.',
           sidebarTarget: getSidebarTarget('modak')
         });
-      }, 3200);
+      }, 4700);
     } else {
       sceneActions.updateState({
         modakStates,
@@ -1679,7 +1687,61 @@ const NewModakSceneMVPContent = ({
     handleOfferingCollect(offeringIndex);
   }, [handleOfferingCollect, sceneActions]);
 
-  // Handle drop on rock/belly - DropZone callback
+  const handleBellyEmotionDrop = useCallback(({ data }) => {
+    const emotionId = data?.emotionId;
+    if (!sceneState?.rockVisible || !emotionId) return;
+    if ((sceneState.bellyEmotionIds || []).includes(emotionId)) return;
+
+    recordInteraction();
+    stopVoice();
+    playUiTap();
+    setShowIdleGestureHint(false);
+    setHintResetKey(k => k + 1);
+    setIsBellyPulseActive(false);
+    requestAnimationFrame(() => {
+      setIsBellyPulseActive(true);
+    });
+    safeSetTimeout(() => {
+      setIsBellyPulseActive(false);
+    }, 430);
+
+    const nextEmotionIds = [...(sceneState.bellyEmotionIds || []), emotionId];
+    const isComplete = nextEmotionIds.length === BELLY_EMOTIONS.length;
+
+    sceneActions.updateState({
+      bellyEmotionIds: nextEmotionIds,
+      phase: isComplete ? PHASES.ROCK_TRANSFORMED : PHASES.ROCK_FEEDING,
+      rockTransformed: isComplete,
+      progress: { percentage: isComplete ? 90 : 60 + (nextEmotionIds.length * 7) }
+    });
+
+    if (!isComplete) {
+      return;
+    }
+
+    triggerMiniGesture('rock', 1800);
+    safeSetTimeout(() => {
+      playRevealBloom();
+      setRevealConfig({
+        symbolId: 'belly',
+        symbolImage: symbolBellyColored,
+        symbolName: 'Big Belly',
+        affirmation: 'There is room for every feeling.',
+        sidebarTarget: getSidebarTarget('belly')
+      });
+    }, 1800);
+  }, [
+    playRevealBloom,
+    playUiTap,
+    recordInteraction,
+    safeSetTimeout,
+    sceneActions,
+    sceneState,
+    stopVoice,
+    triggerMiniGesture
+  ]);
+
+  // Legacy feed callback retained while Game 3 transitions are being rebuilt.
   const handleRockFeed = ({ id, data }) => {
     console.log('?? Modak dropped on rock:', id, data);
 
@@ -1786,6 +1848,7 @@ const NewModakSceneMVPContent = ({
       basketFull: false,
       basketReady: false,
       collectedModaks: [],
+      bellyEmotionIds: [],
       rockVisible: false,
       rockFeedCount: 0,
       rockTransformed: false,
@@ -1875,6 +1938,7 @@ const NewModakSceneMVPContent = ({
         basketFull: false,
         basketReady: false,
         collectedModaks: [],
+        bellyEmotionIds: [],
         rockVisible: false,
         rockFeedCount: 0,
         rockTransformed: false,
@@ -1905,6 +1969,7 @@ const NewModakSceneMVPContent = ({
         basketFull: false,
         basketReady: false,
         collectedModaks: [],
+        bellyEmotionIds: [],
         rockVisible: false,
         rockFeedCount: 0,
         rockTransformed: false,
@@ -1932,8 +1997,9 @@ const NewModakSceneMVPContent = ({
       modaksUnlocked: true,
       basketVisible: true,
       basketFull: true,
-      basketReady: true,
-      collectedModaks: [0, 1, 2],
+      basketReady: false,
+      collectedModaks: [],
+      bellyEmotionIds: [],
       rockVisible: true,
       rockFeedCount: 0,
       rockTransformed: false,
@@ -1941,6 +2007,7 @@ const NewModakSceneMVPContent = ({
       phase: PHASES.ROCK_VISIBLE,
       currentFocus: 'belly',
       discoveredSymbols: { mooshika: true, modak: true },
+      mooshikaPosition: MUSHIKA_BELLY_POSITION,
       welcomeShown: true
     });
   }, [
@@ -2383,7 +2450,7 @@ const NewModakSceneMVPContent = ({
                 );
               })}
 
-              {sceneState.modaksUnlocked && !sceneState.rockVisible && sceneState.mooshikaVisible && (
+              {sceneState.modaksUnlocked && !sceneState.rockVisible && sceneState.mooshikaVisible && showSparkle !== 'modak-satisfaction' && (
                 <KidsDraggable
                   id="mushika-offering"
                   data={{ type: 'mushika-offering' }}
@@ -2433,83 +2500,110 @@ const NewModakSceneMVPContent = ({
                   style={sceneState.mooshikaPosition || MUSHIKA_OFFERING_START_POSITION}
                 >
                   <div className="modak-game-modak-satisfaction-glow" />
+                  <img
+                    src={mooshikaCalm}
+                    alt="Calm Mooshika"
+                    className="modak-game-modak-satisfaction-mushika"
+                  />
+                  <div className="modak-game-modak-satisfaction-pack" aria-hidden="true">
+                    {MODAK_OFFERINGS.map((offering, idx) => (
+                      <div key={`satisfaction-pack-${offering.id}`} className="modak-game-mushika-pack-slot">
+                        {sceneState.modakStates[idx] === 1 ? (
+                          <img src={offering.image} alt="" />
+                        ) : (
+                          <span className="modak-game-mushika-pack-dot" />
+                        )}
+                      </div>
+                    ))}
+                  </div>
                   <img src={symbolModakColored} alt="Golden Modak" className="modak-game-modak-satisfaction-icon" />
                 </div>
               )}
 
-              {/* BASKET */}
-              {sceneState.basketVisible && (
-                <div className="modak-game-basket-container">
-                  <img
-                    src={basket}
-                    alt="Plate"
-                    className="modak-game-plate-bg"
-                  />
-                  <div className="modak-game-basket-main">
-                    {!sceneState.rockVisible && MODAK_OFFERINGS.map((offering, index) => (
-                      <div
-                        key={`basket-slot-${offering.id}`}
-                        className={`modak-game-basket-slot modak-game-modak-collected-${index + 1}`}
-                        aria-hidden="true"
-                      />
+              {/* GAME 3 - FEELINGS INTO BELLY */}
+              {sceneState.rockVisible && (
+                <div className="modak-game-belly-stage">
+                  <div className={`modak-game-belly-mushika-area ${sceneState.rockTransformed ? 'complete' : ''}`}>
+                    <img
+                      src={mooshikaCalm}
+                      alt="Mooshika"
+                      className="modak-game-belly-mushika"
+                    />
+                    {BELLY_EMOTIONS.filter((emotion) => !(sceneState.bellyEmotionIds || []).includes(emotion.id)).map((emotion) => (
+                      <KidsDraggable
+                        key={emotion.id}
+                        id={`belly-emotion-${emotion.id}`}
+                        data={{ type: 'belly-emotion', emotionId: emotion.id }}
+                        dragScale={1.05}
+                        dragFilter="drop-shadow(0 8px 16px rgba(97, 63, 20, 0.2))"
+                        dragBorderRadius="50%"
+                        style={{
+                          position: 'absolute',
+                          left: emotion.left,
+                          right: emotion.right,
+                          top: emotion.top,
+                          bottom: emotion.bottom,
+                          zIndex: 4
+                        }}
+                        onDragStart={() => recordInteraction()}
+                      >
+                        <img
+                          src={emotion.image}
+                          alt={emotion.label}
+                          className={`modak-game-emotion-orb ${emotion.orbClass}`}
+                        />
+                      </KidsDraggable>
                     ))}
-                    {sceneState.collectedModaks?.map((modakIndex, displayIndex) => {
-                      const canDrag = sceneState.rockVisible && sceneState.rockFeedCount < 3;
-                      const isRockHintPhase =
-                        sceneState.phase === PHASES.ROCK_VISIBLE ||
-                        sceneState.phase === PHASES.ROCK_FEEDING;
-                      const rockHintClass = isRockHintPhase
-                        ? (idleHintLevel === 1
-                          ? 'hint'
-                          : idleHintLevel === 2
-                            ? 'hint-strong'
-                            : idleHintLevel >= 3
-                              ? 'hint-final'
-                              : '')
-                        : '';
+                  </div>
 
-                      return (
-                        <div
-                          key={`collected-${modakIndex}-${displayIndex}`}
-                          className={`modak-game-modak modak-game-modak-collected-${displayIndex + 1}
-                            ${rockHintClass}`}
-                          style={{
-                            position: 'absolute',
-                            zIndex: 15,
-                            animation: canDrag ? 'none' : 'modak-game-modakToBasket 0.8s ease-out'
-                          }}
-                        >
-                          <KidsDraggable
-                            id={`basket-modak-${modakIndex}`}
-                            data={{ type: 'basket-modak', index: modakIndex }}
-                            dragScale={1}
-                            dragFilter="none"
-                            dragBorderRadius="0"
-                            style={{ width: '100%', height: '100%' }}
-                            disabled={!canDrag}
-                            onDragStart={() => recordInteraction()}
-                          >
-                            <img
-                              src={sceneState.rockVisible ? getModakImage(modakIndex) : (MODAK_OFFERINGS[modakIndex]?.image || getModakImage(modakIndex))}
-                              alt={sceneState.rockVisible ? `Collected Modak ${modakIndex + 1}` : (MODAK_OFFERINGS[modakIndex]?.label || `Collected Offering ${modakIndex + 1}`)}
-                              style={{
-                                width: '100%',
-                                height: '100%',
-                                filter: 'brightness(1.1) saturate(1.2)',
-                                cursor: canDrag ? 'grab' : 'default'
-                              }}
-                            />
-                          </KidsDraggable>
-                          <SparkleAnimation type="star" count={8} color="#ffd700" size={6} duration={1500} fadeOut={true} area="full" />
+                  <div className="modak-game-belly-ganesha-area">
+                    <img
+                      src={GANESHA_SIT_FEED_IMAGE}
+                      alt="Ganesha"
+                      className="modak-game-belly-ganesha"
+                    />
+                    <KidsDropZone
+                      id="ganesha-belly-zone"
+                      accepts="belly-emotion"
+                      onDrop={handleBellyEmotionDrop}
+                      style={{
+                        position: 'absolute',
+                        left: '50%',
+                        top: '63%',
+                        width: '31%',
+                        aspectRatio: '1.12',
+                        transform: 'translate(-50%, -50%)',
+                        borderRadius: '50%',
+                        zIndex: 5
+                      }}
+                    >
+                      <div className={`modak-game-belly-zone ${isBellyPulseActive ? 'belly-pulse' : ''} ${sceneState.rockTransformed ? 'belly-complete' : ''}`}>
+                        <div className="modak-game-belly-glow" />
+                        <div className="modak-game-belly-inside-emotions">
+                          {(sceneState.bellyEmotionIds || []).map((emotionId) => {
+                            const emotion = BELLY_EMOTIONS.find((item) => item.id === emotionId);
+                            if (!emotion) return null;
+                            return (
+                              <span
+                                key={`inside-${emotionId}`}
+                                className={`modak-game-belly-inside-emotion ${emotion.insideClass}`}
+                              >
+                                <img src={emotion.image} alt="" />
+                              </span>
+                            );
+                          })}
                         </div>
-                      );
-                    })}
+                      </div>
+                    </KidsDropZone>
+                    {sceneState.rockTransformed && (
+                      <div className="modak-game-belly-completion-halo" aria-hidden="true" />
+                    )}
                   </div>
                 </div>
               )}
 
-              {/* GANESHA FEEDING TARGET - grows with each modak drop */}
-              {sceneState.rockVisible && (
+              {/* LEGACY FEED TARGET REMOVED */}
+              {false && sceneState.rockVisible && (
                 <div className="modak-game-rock-container breathing">
                   <KidsDropZone
                     id="feeding-rock"

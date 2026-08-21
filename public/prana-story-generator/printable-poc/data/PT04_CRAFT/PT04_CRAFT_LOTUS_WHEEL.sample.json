@@ -1,0 +1,54 @@
+{
+  "template_id": "PT04_CRAFT",
+  "theme_id": "GT03",
+  "belief": "I can grow something grateful in my heart each day.",
+  "title": "Lotus Gratitude Growth Wheel",
+  "subtitle": "Spin the wheel and name what helps your gratitude grow.",
+  "assets": {
+    "MAIN_ART": "lotus_symbol",
+    "DECORATIONS": [
+      "lotus_small",
+      "heart",
+      "lotus_small"
+    ]
+  },
+  "content": {
+    "craft_variant": "wheel",
+    "craft_label": "Growth Wheel",
+    "materials": [
+      "paper or cardstock",
+      "colours",
+      "scissors",
+      "split pin or string"
+    ],
+    "steps": [
+      "Colour each lotus petal and the gratitude window.",
+      "Cut the outer circle and the pointer.",
+      "Ask an adult to help you make the centre hole.",
+      "Spin the wheel and say one gratitude thought each time it stops."
+    ],
+    "take_it_today": "Spin once tonight and thank one person, place, or gift from your day.",
+    "footer": "Let gratitude bloom."
+  },
+  "generation": {
+    "variant": "wheel",
+    "geometry": {
+      "prompts": [
+        "A person who helped me",
+        "Something my body can do",
+        "A place that makes me feel safe",
+        "A lesson from today",
+        "A small joy I noticed",
+        "A way I can give thanks"
+      ],
+      "cut_lines": true,
+      "fold_lines": false,
+      "spinner": true
+    }
+  },
+  "answer_key": {},
+  "wisdom": {
+    "statement": "Like a lotus, gratitude can grow even when life feels muddy.",
+    "today": "Say one fresh thank-you after you spin the wheel."
+  }
+}

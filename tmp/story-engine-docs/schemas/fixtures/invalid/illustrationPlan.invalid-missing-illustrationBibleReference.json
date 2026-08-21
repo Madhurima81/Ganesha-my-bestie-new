@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "1.0",
+  "status": "VALIDATED",
+  "storyReference": { "id": "STORY_001" },
+  "visualStrategy": {
+    "style": "Warm watercolor storybook",
+    "visualContinuity": "Consistent character proportions across pages",
+    "ageAppropriateness": "5-8, no frightening imagery"
+  },
+  "characterPlan": [
+    { "characterId": "CHAR_ANU", "visualIdentity": "Small determined fox cub, orange fur, blue scarf" }
+  ],
+  "worldPlan": [
+    { "worldId": "WORLD_MOONLIGHT_VALLEY", "visualIdentity": "Soft blue-lit valley with glowing lanterns" }
+  ],
+  "scenePlan": [],
+  "pageIllustrations": [
+    { "page": 1, "sceneId": "SCENE_001", "purpose": "Introduce Anu at the forest edge", "composition": "wide shot" }
+  ],
+  "illustrationValidation": { "status": "PASS", "blockingFailures": 0, "warnings": 0, "rulesPassed": 9 }
+}

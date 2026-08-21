@@ -1,0 +1,111 @@
+{
+  "adventureArchetype": {
+    "id": "ARCHETYPE_NEW_FRIEND",
+    "reason": "Selected through Character best_mission_types to Archetype best_mission_types overlap."
+  },
+  "beats": [
+    {
+      "function": "Character must choose between two values or paths, revealing character.",
+      "id": "B_DEC_01"
+    }
+  ],
+  "belief": {
+    "falseBelief": "I won't fit in here.",
+    "reason": "Belief wording comes directly from Situation SIT037.",
+    "trueBelief": "I can make connections while being myself."
+  },
+  "blueprintId": "BLUEPRINT_SIT037_CHAR003_STRUCT011",
+  "character": {
+    "candidates": [
+      "CHAR003"
+    ],
+    "reason": "Selected through character.best_need_ids compatibility with NEED_BELONGING.",
+    "role": "ROLE_MENTOR",
+    "selected": "CHAR003"
+  },
+  "craft": [],
+  "ending": {
+    "function": "The ending echoes a moment, line or image from the opening, but with new emotional meaning.",
+    "requirements": [
+      "END_RECONCILED_BOND"
+    ],
+    "strategy": "END009"
+  },
+  "logic": {
+    "causalPattern": [
+      "CHOICE"
+    ],
+    "id": "LOGIC_PERSPECTIVE_SHIFT",
+    "reason": "Logic selected from Character, Archetype, and Conflict compatible logic pools."
+  },
+  "mission": {
+    "id": "95",
+    "reason": "Concrete Mission selected after resolving abstract Mission Type MISSION_RECONCILE."
+  },
+  "need": {
+    "id": "NEED_BELONGING",
+    "reason": "Resolved through Situation SIT037 hard.need_id."
+  },
+  "obstacle": {
+    "id": "OBST026",
+    "reason": "Obstacle selected through Archetype typical_obstacle_domains."
+  },
+  "opening": {
+    "function": "Introduce the hero facing a relatable emotional challenge before the adventure begins.",
+    "requirements": [
+      "OPEN_CHARACTER"
+    ],
+    "strategy": "OPEN001"
+  },
+  "plannerValidation": {
+    "blockingFailures": 0,
+    "rulesPassed": 22,
+    "status": "PASS",
+    "warnings": 0
+  },
+  "request": {
+    "language": "en",
+    "lifeDomain": "LIFE_DOMAIN_SCHOOL",
+    "pageRange": {
+      "max": 8,
+      "min": 5
+    },
+    "targetAge": "5-8"
+  },
+  "schemaVersion": "1.0",
+  "situation": {
+    "id": "SIT037"
+  },
+  "status": "VALIDATED",
+  "storyActions": [
+    {
+      "id": "ACTION_COMMUNICATE",
+      "purpose": "Selected as a compatible story action for the resolved Mission and Archetype: ACTION_COMMUNICATE."
+    }
+  ],
+  "storyConflict": {
+    "id": "CONFLICT_FRIENDSHIP_CONFLICT",
+    "reason": "Conflict selected through Obstacle Domain with Mission Type reinforcement.",
+    "type": "Moderate"
+  },
+  "storyStructure": {
+    "id": "STRUCT011",
+    "reason": "Structure selected through hard logic_family = LOGIC_PERSPECTIVE_SHIFT.",
+    "sequence": [
+      "Bad Day → More Problems → Emotional Peak → Comfort → Calm Ending"
+    ]
+  },
+  "symbols": [
+    {
+      "development": "B_DEC_01",
+      "function": "Supports SYMBOL_CONNECTION through Need and Mission Type compatibility.",
+      "introduction": "B_DEC_01",
+      "payoff": "B_DEC_01",
+      "symbolId": "GAN_SYM_BIG_EARS"
+    }
+  ],
+  "world": {
+    "id": "WORLD017",
+    "reason": "World selected through Mission settings and Archetype world-type compatibility."
+  }
+}

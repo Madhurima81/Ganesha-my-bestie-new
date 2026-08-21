@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "1.0",
+  "status": "VALIDATED",
+  "illustrationPlanReference": { "id": "ILLPLAN_001" },
+  "styleBible": {
+    "visualStyle": "Warm watercolor storybook",
+    "renderingStyle": "Soft-edge painted illustration",
+    "ageAppropriateness": "5-8, no frightening imagery"
+  },
+  "characters": [
+    { "characterId": "CHAR_ANU", "identity": "Small determined fox cub", "species": "fox", "clothing": "blue scarf" }
+  ],
+  "worlds": [
+    { "worldId": "WORLD_MOONLIGHT_VALLEY", "identity": "Soft blue-lit valley with glowing lanterns" }
+  ],
+  "objects": [],
+  "symbols": [
+    { "symbolId": "SYMBOL_LANTERN", "visualMeaning": "Growing confidence", "appearance": "small brass lantern" }
+  ],
+  "continuityRules": ["Anu's scarf color must remain consistent across all pages"],
+  "validation": { "status": "PASS", "blockingFailures": 0, "warnings": 0 }
+}

@@ -1,0 +1,64 @@
+DEV B — NEXT TASK: CONTINUE REALIZATION-FAMILY IMPLEMENTATION
+
+T13/T19 threshold-crossing diagnosis is LOCKED. Do NOT implement T13 or T19 yet because both currently have selectedCount=0.
+
+Continue the same proven process:
+
+1. Identify the next remaining template with REAL natural selector coverage.
+2. Audit its actual situations before designing anything.
+3. Derive the realization mechanism from the real situation data — do not assume the template's ontology label is the mechanism.
+4. Decide whether it belongs to an existing family or requires a genuinely distinct family.
+5. Write and LOCK a realization contract before coding.
+6. Implement the family realizer through the existing shared seam:
+   fillStoryTemplate
+   → buildTemplateRealizationContext
+   → family realizer
+   → complete story
+7. Keep template schemas, selector, QA framework, and frozen implementations unchanged.
+8. Pilot at least 5 representative situations.
+9. Run the full natural/forced regression set for that template.
+10. Run the frozen regression suite:
+    T03, T16, T21, T22, T23.
+11. Do a full blind read of the generated stories. Automated QA is NOT sufficient.
+12. Fix only mechanism-level defects discovered by the read; do not paper over them with QA changes.
+13. Report:
+    - mechanism/family decision
+    - situations audited
+    - contract
+    - pilot results
+    - full regression results
+    - blind-read defects and fixes
+    - whether the family is ready to freeze
+    - next viable family
+
+CURRENT LOCKED FAMILY COVERAGE:
+T01 — cumulative discovery
+T02 — ritual escalation
+T04 — question chain
+T05 — circular return
+T07 — three guides
+T09/T15 — inversion
+T11 — resource depreciation
+T12 — trickster/judgment
+T14 — role reversal
+T16 — frozen
+T21 — frozen
+T22 — frozen
+T23 — frozen
+
+REMAINING:
+T08, T10, T13, T17, T18, T19, T20.
+
+IMPORTANT:
+- T13/T19 are NOT one family. Locked diagnosis:
+  T13 = Threshold Crossing / Attention Shift
+  T19 = Threshold Crossing / Moral Choice
+  Both remain untouched until real selector coverage exists.
+- T08/T10/T17/T18/T20 must not be implemented merely because they are unfinished if they remain selector-empty/reserved.
+- Do not invent bestForSituations or taxonomy mappings just to create coverage.
+- Do not modify Dev A's selector/staging infrastructure.
+- Do not touch T16/T21/T22/T23 implementations.
+- Do not rewrite individual templates using the old generic writer.
+- The goal is scalable mechanism-family realization, not template-by-template copy editing.
+
+Use the staging validation harness after your implementation is ready; Dev A owns the infrastructure and will verify the integrated result.

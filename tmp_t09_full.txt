@@ -1,0 +1,168 @@
+==== SIT009 ====
+{
+  "id": "SIT009",
+  "active": true,
+  "title": "Feeling hungry or extremely tired (hangry)",
+  "parentLabel": "Hungry and tired all at once",
+  "storySeed": {
+    "childExperience": "Kavi has gone too long without food or rest and becomes unusually cranky over a small problem.",
+    "immediateWant": "Feel comfortable again.",
+    "immediateObstacle": "Hunger or tiredness is making ordinary things feel much harder.",
+    "emotionalTension": "Kavi feels overwhelmed without realizing how much the body is affecting the mood.",
+    "context": [
+      "late afternoon, after a busy stretch"
+    ],
+    "narrativeSummary": "Everything seems annoying. The noise is too loud, the little problem feels enormous, and Kavi doesn't realize yet that the real trouble may be a tired, hungry body."
+  },
+  "emotionIds": [
+    "EMO_CRANKY"
+  ],
+  "lifeDomainIds": [
+    "LIFE_DOMAIN_FAMILY",
+    "LIFE_DOMAIN_CARING"
+  ],
+  "ontology": {
+    "needId": "NEED_SAFETY",
+    "beliefIds": [
+      "BELIEF_DISCOMFORT_IS_UNBEARABLE"
+    ],
+    "severity": 2,
+    "age": null,
+    "lifeDomainIds": [
+      "LIFE_DOMAIN_FAMILY",
+      "LIFE_DOMAIN_CARING"
+    ],
+    "falseBeliefText": "I can't cope when my body feels uncomfortable.",
+    "trueBeliefText": "I can care for my body and uncomfortable moments will pass.",
+    "storyFamily": "FAM_SAFETY",
+    "ganeshaSymbolPrimary": "GAN_SYM_BIG_BELLY",
+    "ganeshaSymbolSecondary": "GAN_SYM_CURVED_TRUNK"
+  }
+}
+==== SIT019 ====
+{
+  "id": "SIT019",
+  "active": true,
+  "title": "Scratchy clothes",
+  "parentLabel": "Your clothes felt scratchy and uncomfortable",
+  "storySeed": {
+    "childExperience": "Kavi is wearing a shirt that feels scratchy and irritating.",
+    "immediateWant": "Get comfortable.",
+    "immediateObstacle": "The uncomfortable clothing keeps distracting Kavi.",
+    "emotionalTension": "The irritation grows until ordinary things start feeling unbearable.",
+    "context": [
+      "getting dressed / all day"
+    ],
+    "narrativeSummary": "The shirt is scratchy. Kavi tries to ignore it. Then tries again. Soon even a tiny question feels much too annoying."
+  },
+  "emotionIds": [
+    "EMO_FRUSTRATED"
+  ],
+  "lifeDomainIds": [
+    "LIFE_DOMAIN_FAMILY",
+    "LIFE_DOMAIN_LEARNING"
+  ],
+  "ontology": {
+    "needId": "NEED_SAFETY",
+    "beliefIds": [
+      "BELIEF_DISCOMFORT_IS_UNBEARABLE"
+    ],
+    "severity": 2,
+    "age": null,
+    "lifeDomainIds": [
+      "LIFE_DOMAIN_FAMILY",
+      "LIFE_DOMAIN_LEARNING"
+    ],
+    "falseBeliefText": "I can't be okay when things feel uncomfortable.",
+    "trueBeliefText": "I can stay peaceful even when my surroundings aren't perfect.",
+    "storyFamily": "FAM_SAFETY",
+    "ganeshaSymbolPrimary": "GAN_SYM_BIG_BELLY",
+    "ganeshaSymbolSecondary": "GAN_SYM_LOTUS"
+  }
+}
+==== SIT029 ====
+{
+  "id": "SIT029",
+  "active": true,
+  "title": "Fear of getting lost in a mall or crowd",
+  "parentLabel": "Got separated from a parent in a crowd",
+  "storySeed": {
+    "childExperience": "Kavi looks up in a busy place and suddenly cannot see their parent.",
+    "immediateWant": "Find the parent.",
+    "immediateObstacle": "There are many people moving around and the familiar hand is gone.",
+    "emotionalTension": "Panic makes it harder to remember what to do.",
+    "context": [
+      "mall, festival or crowded public place"
+    ],
+    "narrativeSummary": "One moment Kavi is holding Mama's hand. The next, there are people everywhere—and Mama is nowhere in sight."
+  },
+  "emotionIds": [
+    "EMO_SCARED"
+  ],
+  "lifeDomainIds": [
+    "LIFE_DOMAIN_NATURE",
+    "LIFE_DOMAIN_COMMUNICATION",
+    "LIFE_DOMAIN_CARING"
+  ],
+  "ontology": {
+    "needId": "NEED_SAFETY",
+    "beliefIds": [
+      "BELIEF_UNEXPECTED_MEANS_UNSAFE"
+    ],
+    "severity": 2,
+    "age": null,
+    "lifeDomainIds": [
+      "LIFE_DOMAIN_NATURE",
+      "LIFE_DOMAIN_COMMUNICATION",
+      "LIFE_DOMAIN_CARING"
+    ],
+    "falseBeliefText": "If I'm alone, I'm not safe.",
+    "trueBeliefText": "I can stay calm, make wise choices and find help.",
+    "storyFamily": "FAM_SAFETY",
+    "ganeshaSymbolPrimary": "GAN_SYM_BIG_BELLY",
+    "ganeshaSymbolSecondary": "GAN_SYM_CURVED_TRUNK"
+  }
+}
+==== SIT030 ====
+{
+  "id": "SIT030",
+  "active": true,
+  "title": "Accidentally saw a scary or violent video",
+  "parentLabel": "Accidentally saw something scary online",
+  "storySeed": {
+    "childExperience": "Kavi accidentally sees a frightening video on a phone or tablet.",
+    "immediateWant": "Make the frightening image stop replaying in their mind.",
+    "immediateObstacle": "The video is over, but the memory of it remains.",
+    "emotionalTension": "Kavi begins imagining that what they saw might happen to them.",
+    "context": [
+      "home, using a device"
+    ],
+    "narrativeSummary": "The video is gone now. But when Kavi closes their eyes, the scary picture comes back."
+  },
+  "emotionIds": [
+    "EMO_SCARED"
+  ],
+  "lifeDomainIds": [
+    "LIFE_DOMAIN_FAMILY",
+    "LIFE_DOMAIN_COMMUNICATION",
+    "LIFE_DOMAIN_CREATIVITY"
+  ],
+  "ontology": {
+    "needId": "NEED_SAFETY",
+    "beliefIds": [
+      "BELIEF_UNEXPECTED_MEANS_UNSAFE"
+    ],
+    "severity": 2,
+    "age": null,
+    "lifeDomainIds": [
+      "LIFE_DOMAIN_FAMILY",
+      "LIFE_DOMAIN_COMMUNICATION",
+      "LIFE_DOMAIN_CREATIVITY"
+    ],
+    "falseBeliefText": "The scary things I see will happen to me.",
+    "trueBeliefText": "I can separate imagination from reality and seek comfort.",
+    "storyFamily": "FAM_SAFETY",
+    "ganeshaSymbolPrimary": "GAN_SYM_BIG_BELLY",
+    "ganeshaSymbolSecondary": "GAN_SYM_LOTUS"
+  }
+}

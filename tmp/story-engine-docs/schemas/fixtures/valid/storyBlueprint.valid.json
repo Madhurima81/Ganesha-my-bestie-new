@@ -1,0 +1,73 @@
+{
+  "schemaVersion": "1.0",
+  "blueprintId": "STORY_001",
+  "status": "VALIDATED",
+  "request": {
+    "targetAge": "5-8",
+    "lifeDomain": "LIFE_DOMAIN_SCHOOL",
+    "language": "en",
+    "pageRange": { "min": 5, "max": 8 }
+  },
+  "situation": { "id": "SITUATION_001" },
+  "need": { "id": "NEED_CONFIDENCE", "reason": "Compatible with selected Situation and target age" },
+  "belief": {
+    "falseBelief": "I can't do difficult things.",
+    "trueBelief": "I can improve one step at a time.",
+    "reason": "Belief shift supports NEED_CONFIDENCE"
+  },
+  "character": {
+    "role": "ROLE_UNDERDOG",
+    "candidates": ["CHAR_ANU", "CHAR_NEEL"],
+    "selected": "CHAR_ANU",
+    "reason": "Highest compatibility with the Need and Belief Shift"
+  },
+  "adventureArchetype": { "id": "ARCHETYPE_TRY_AGAIN", "reason": "Supports confidence growth through repeated attempts" },
+  "mission": { "id": "MISSION_RESCUE", "reason": "Provides an age-appropriate challenge requiring the protagonist to act despite the False Belief." },
+  "storyActions": [
+    { "id": "ACTION_ATTEMPT", "purpose": "Take the first step toward the Mission" },
+    { "id": "ACTION_PERSIST", "purpose": "Continue after difficulty" }
+  ],
+  "world": { "id": "WORLD_MOONLIGHT_VALLEY", "reason": "Supports the Mission, action set and adventurous emotional journey" },
+  "obstacle": { "id": "OBSTACLE_FEAR_OF_FAILURE", "reason": "Creates difficulty that directly pressures the protagonist's False Belief" },
+  "storyConflict": {
+    "id": "CONFLICT_SELF_DOUBT_VS_ACTION",
+    "type": "INTERNAL_EXTERNAL_COMBINED",
+    "reason": "The external obstacle pressures the protagonist's self-doubt and requires action"
+  },
+  "logic": {
+    "id": "LOGIC_TRY_FAIL_ADAPT",
+    "causalPattern": ["attempt", "difficulty", "adapt", "retry", "progress"],
+    "reason": "Creates causal progression through repeated attempts and adaptation"
+  },
+  "storyStructure": {
+    "id": "STRUCTURE_ATTEMPT_TRANSFORM",
+    "sequence": ["SETUP", "CHALLENGE", "ATTEMPT", "SETBACK", "ADAPTATION", "CLIMAX", "RESOLUTION"],
+    "reason": "Supports the selected Logic, Mission and Belief Shift"
+  },
+  "beats": [
+    { "id": "BEAT_SETUP", "function": "Establish protagonist and situation" },
+    { "id": "BEAT_CLIMAX", "function": "Protagonist demonstrates growth" },
+    { "id": "BEAT_RESOLUTION", "function": "Show consequence and emotional closure" }
+  ],
+  "opening": {
+    "strategy": "ACTION_FIRST",
+    "function": "Begin inside a meaningful situation that immediately creates curiosity",
+    "requirements": ["Protagonist established", "Mission connection present"]
+  },
+  "ending": {
+    "strategy": "EARNED_GROWTH",
+    "requirements": ["Mission resolved", "Protagonist acts differently from the beginning", "True Belief demonstrated through action"]
+  },
+  "symbols": [
+    { "symbolId": "SYMBOL_LANTERN", "function": "Represents growing confidence", "introduction": "BEAT_SETUP", "development": "BEAT_SETBACK", "payoff": "BEAT_CLIMAX" }
+  ],
+  "craft": [
+    { "techniqueId": "CRAFT_REPETITION", "purpose": "Reinforce the protagonist's repeated attempts" }
+  ],
+  "plannerValidation": {
+    "status": "PASS",
+    "blockingFailures": 0,
+    "warnings": 0,
+    "rulesPassed": 20
+  }
+}

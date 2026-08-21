@@ -1,0 +1,125 @@
+[
+  {
+    "activity_id": "TIT-EAR-001",
+    "theme_id": "GT01",
+    "symbol": "Ears",
+    "belief": "I keep the words that help me grow.",
+    "status": "approved",
+    "source": "activity_database",
+    "presentation_template": "ganesha_connection -> title -> hook -> try_it -> notice -> optional_affirmation -> optional_try_this_today_action -> printable",
+    "sections": {
+      "ganesha_connection": "Ears teaches: Listen Like a Winnowing Basket - sift helpful words from noisy distractions.",
+      "title": "Winnowing Breath",
+      "hook": "Can you breathe in the words that help and let the noisy ones float away?",
+      "try_it": [
+        "Sit comfortably and think of one helpful sentence someone said to you.",
+        "Breathe in as you whisper that helpful sentence to yourself.",
+        "Breathe out and imagine noisy unhelpful words blowing away like husks in the wind."
+      ],
+      "notice": "Which words felt worth keeping today?",
+      "optional_affirmation": "I keep the words that help me grow.",
+      "optional_try_this_today_action": "Later today, pause for one breath before deciding which words to keep.",
+      "printable": null
+    }
+  },
+  {
+    "activity_id": "TIT-EAR-002",
+    "theme_id": "GT01",
+    "symbol": "Ears",
+    "belief": "I keep the words that help me grow.",
+    "status": "approved",
+    "source": "activity_database",
+    "presentation_template": "ganesha_connection -> title -> hook -> try_it -> notice -> optional_affirmation -> optional_try_this_today_action -> printable",
+    "sections": {
+      "ganesha_connection": "Ears teaches: Listen Like a Winnowing Basket - sift helpful words from noisy distractions.",
+      "title": "Keep or Let Go Cards",
+      "hook": "Can you beat the noise and sort the words that help you grow?",
+      "try_it": [
+        "Place two labels in front of you: KEEP and LET GO.",
+        "Read or hear one word card at a time.",
+        "Put helpful growth words in KEEP and noisy put-down words in LET GO.",
+        "Pick one KEEP card to say out loud at the end."
+      ],
+      "notice": "Which card would you like to remember the next time someone speaks to you?",
+      "optional_affirmation": "I keep the words that help me grow.",
+      "optional_try_this_today_action": "The next time you hear mixed messages, look for one sentence that truly helps you grow.",
+      "printable": {
+        "template_id": "PT02",
+        "title": "Helpful Words / Noise",
+        "child_action": "Sort each card into KEEP or LET GO."
+      }
+    }
+  },
+  {
+    "activity_id": "TIT-EAR-003",
+    "theme_id": "GT01",
+    "symbol": "Ears",
+    "belief": "I keep the words that help me grow.",
+    "status": "approved",
+    "source": "activity_database",
+    "presentation_template": "ganesha_connection -> title -> hook -> try_it -> notice -> optional_affirmation -> optional_try_this_today_action -> printable",
+    "sections": {
+      "ganesha_connection": "Ears teaches: Listen Like a Winnowing Basket - sift helpful words from noisy distractions.",
+      "title": "Helpful or Noisy?",
+      "hook": "Can you catch the words that help you grow and spot the words that are just noise?",
+      "try_it": [
+        "Listen to three sentences someone says to you today, or remember three you heard recently.",
+        "After each one, ask: 'Does this help me grow, or is it just noise?'",
+        "Choose one sentence to keep and one sentence to let go.",
+        "Say your keep sentence once more so it stays louder in your mind than the noisy one."
+      ],
+      "notice": "Which words were truly helpful, and which ones were only noise?",
+      "optional_affirmation": "I keep the words that help me grow.",
+      "optional_try_this_today_action": "Later today, when you hear mixed messages, quietly sort them into keep or let go.",
+      "printable": null
+    }
+  },
+  {
+    "activity_id": "TIT-EAR-004",
+    "theme_id": "GT01",
+    "symbol": "Ears",
+    "belief": "I keep the words that help me grow.",
+    "status": "approved",
+    "source": "activity_database",
+    "presentation_template": "ganesha_connection -> title -> hook -> try_it -> notice -> optional_affirmation -> optional_try_this_today_action -> printable",
+    "sections": {
+      "ganesha_connection": "Ears teaches: Listen Like a Winnowing Basket - sift helpful words from noisy distractions.",
+      "title": "Keep the Helpful Part",
+      "hook": "Can you listen for the one helpful part in what someone says, even if the rest feels noisy?",
+      "try_it": [
+        "One person shares a short opinion, reminder, or piece of advice while holding the pebble.",
+        "The listener waits quietly and then says one part that felt helpful.",
+        "If there was a noisy or unkind part, the listener names it as something to let go.",
+        "Switch turns and try again with a new sentence."
+      ],
+      "notice": "What changed when you listened for the helpful part instead of holding onto the noisy part?",
+      "optional_affirmation": "I keep the words that help me grow.",
+      "optional_try_this_today_action": "At home today, try finding one useful sentence to keep, even if you do not keep the rest.",
+      "printable": null
+    }
+  },
+  {
+    "activity_id": "TIT-EAR-005",
+    "theme_id": "GT01",
+    "symbol": "Ears",
+    "belief": "I keep the words that help me grow.",
+    "status": "approved",
+    "source": "activity_database",
+    "presentation_template": "ganesha_connection -> title -> hook -> try_it -> notice -> optional_affirmation -> optional_try_this_today_action -> printable",
+    "sections": {
+      "ganesha_connection": "Ears teaches: Listen Like a Winnowing Basket - sift helpful words from noisy distractions.",
+      "title": "Noise Catcher Crown",
+      "hook": "Can you build something that catches helpful words and lets noisy words fall away?",
+      "try_it": [
+        "Make a paper crown or headband strip.",
+        "On one side, write or draw three helpful words or sentences you want to keep.",
+        "On the other side, add two noisy messages you want to let fall away.",
+        "Put on the crown and point to the words you will keep before taking it off."
+      ],
+      "notice": "Which helpful words do you want your mind to hear louder than the noise?",
+      "optional_affirmation": "I keep the words that help me grow.",
+      "optional_try_this_today_action": "Later today, remember one crown word when noisy words show up.",
+      "printable": null
+    }
+  }
+]

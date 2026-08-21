@@ -1,0 +1,97 @@
+{
+  "schemaVersion": "1.0",
+  "status": "EXPORTED",
+  "storyId": "STORYPKG_BLUEPRINT_SIT001_CHAR005_STRUCT007",
+  "sourceReferences": {
+    "storyBlueprintReference": {
+      "id": "BLUEPRINT_SIT001_CHAR005_STRUCT007"
+    },
+    "storyPlanReference": {
+      "id": "BLUEPRINT_SIT001_CHAR005_STRUCT007"
+    },
+    "finalStoryReference": {
+      "id": "FINALSTORY_BLUEPRINT_SIT001_CHAR005_STRUCT007"
+    },
+    "illustrationPlanReference": {
+      "id": "ILLPLAN_BLUEPRINT_SIT001_CHAR005_STRUCT007"
+    },
+    "illustrationBibleReference": {
+      "id": "ILLBIBLE_BLUEPRINT_SIT001_CHAR005_STRUCT007"
+    },
+    "promptPackReference": {
+      "id": "PROMPTPACK_BLUEPRINT_SIT001_CHAR005_STRUCT007"
+    },
+    "layoutReference": {
+      "id": "LAYOUT_FINALSTORY_BLUEPRINT_SIT001_CHAR005_STRUCT007"
+    }
+  },
+  "story": {
+    "title": "Kavi and the Pause in Magic Garden",
+    "pageCount": 5
+  },
+  "layout": {
+    "format": "8.5in square",
+    "pageCount": 5,
+    "exportProfiles": [
+      "DIGITAL",
+      "PRINT"
+    ]
+  },
+  "illustrations": [
+    {
+      "assetId": "ASSET_PAGE_1",
+      "page": 1,
+      "assetLocation": "./assets/asset-page-1.png",
+      "format": "png",
+      "width": 2550,
+      "height": 2550
+    },
+    {
+      "assetId": "ASSET_PAGE_2",
+      "page": 2,
+      "assetLocation": "./assets/asset-page-2.png",
+      "format": "png",
+      "width": 2550,
+      "height": 2550
+    },
+    {
+      "assetId": "ASSET_PAGE_3",
+      "page": 3,
+      "assetLocation": "./assets/asset-page-3.png",
+      "format": "png",
+      "width": 2550,
+      "height": 2550
+    },
+    {
+      "assetId": "ASSET_PAGE_4",
+      "page": 4,
+      "assetLocation": "./assets/asset-page-4.png",
+      "format": "png",
+      "width": 2550,
+      "height": 2550
+    },
+    {
+      "assetId": "ASSET_PAGE_5",
+      "page": 5,
+      "assetLocation": "./assets/asset-page-5.png",
+      "format": "png",
+      "width": 2550,
+      "height": 2550
+    }
+  ],
+  "metadata": {
+    "title": "Kavi and the Pause in Magic Garden",
+    "author": "Prana Story Engine",
+    "language": "en",
+    "targetAge": "5-8",
+    "version": "1.0",
+    "createdAt": "2026-08-08",
+    "updatedAt": "2026-08-08"
+  },
+  "productionValidation": {
+    "status": "PASS",
+    "blockingFailures": 0,
+    "warnings": 0,
+    "checksPassed": 49
+  }
+}

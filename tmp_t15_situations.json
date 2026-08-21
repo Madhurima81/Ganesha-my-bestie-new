@@ -1,0 +1,216 @@
+[
+  {
+    "id": "SIT017",
+    "title": "A treat or promise was forgotten",
+    "storySeed": {
+      "childExperience": "A parent had promised Kavi a special treat, but later seems to have forgotten.",
+      "immediateWant": "Have the promised treat—or understand what happened.",
+      "immediateObstacle": "The promise has slipped the adult's mind.",
+      "emotionalTension": "Kavi wonders whether the forgotten promise means it wasn't important.",
+      "context": [
+        "family routine"
+      ],
+      "narrativeSummary": "Kavi has been remembering the promise all day. But when the moment arrives, the grown-up seems to have forgotten completely."
+    }
+  },
+  {
+    "id": "SIT024",
+    "title": "Parent leaving for a long trip",
+    "storySeed": {
+      "childExperience": "Kavi watches a parent pack for a work trip and knows they will be away for several days.",
+      "immediateWant": "Keep the parent from leaving or make sure they come back.",
+      "immediateObstacle": "The parent has to leave.",
+      "emotionalTension": "Goodbye feels much bigger when Kavi is already imagining being alone without them.",
+      "context": [
+        "home, airport, station, doorway"
+      ],
+      "narrativeSummary": "Kavi hugs Mama tightly at the door, suitcase already by her feet. Mama will come back—but Kavi's worried heart keeps asking, 'What if this goodbye lasts forever?'"
+    }
+  },
+  {
+    "id": "SIT028",
+    "title": "Unfamiliar adult",
+    "storySeed": {
+      "childExperience": "Kavi is dropped off somewhere unfamiliar and a grown-up Kavi has never met greets them and takes charge of the visit.",
+      "immediateWant": "Know whether this new adult can be trusted and feel safe.",
+      "immediateObstacle": "Kavi doesn't know this person yet, and the usual trusted adult isn't right there.",
+      "emotionalTension": "Kavi wants to be polite but also wants to stay cautious until they know more.",
+      "context": [
+        "a relative's friend's home, a birthday party, a new activity drop-off"
+      ],
+      "narrativeSummary": "The door opens and it isn't a face Kavi knows. 'You must be Kavi! Come on in,' the stranger says warmly. Kavi stands at the doorway a second longer than necessary.",
+      "note": "REWRITTEN — previous draft was specifically a new-teacher scene, which duplicated SIT118. This version is a genuinely unfamiliar adult outside a school context."
+    }
+  },
+  {
+    "id": "SIT033",
+    "title": "Fear that a parent might get sick",
+    "storySeed": {
+      "childExperience": "Kavi notices a parent feeling unwell and begins imagining something terrible happening.",
+      "immediateWant": "Make sure the parent will be okay.",
+      "immediateObstacle": "Kavi cannot know exactly what will happen.",
+      "emotionalTension": "The fear grows because Kavi keeps imagining losing someone they love.",
+      "context": [
+        "home, parent has a minor illness"
+      ],
+      "narrativeSummary": "Mama says she doesn't feel well and lies down. Kavi hears the words, 'I'll be fine,' but the worrying part of Kavi's mind isn't convinced."
+    }
+  },
+  {
+    "id": "SIT034",
+    "title": "Overheard adults talking about money problems",
+    "storySeed": {
+      "childExperience": "Kavi overhears parents discussing a money problem.",
+      "immediateWant": "Know whether the family will be okay.",
+      "immediateObstacle": "The conversation is adult-sized and Kavi doesn't know what the words mean.",
+      "emotionalTension": "Kavi begins filling the gaps with frightening possibilities.",
+      "context": [
+        "home, overhearing a private conversation"
+      ],
+      "narrativeSummary": "Kavi is getting a glass of water when voices drift from the next room. The grown-ups are talking about money, and suddenly Kavi wonders if everything at home is going to change."
+    }
+  },
+  {
+    "id": "SIT050",
+    "title": "Missing a parent who travels often",
+    "storySeed": {
+      "childExperience": "Kavi's parent travels frequently for work, and Kavi misses them between trips.",
+      "immediateWant": "Feel close to the parent even when they're away.",
+      "immediateObstacle": "The parent cannot be physically present.",
+      "emotionalTension": "Distance makes Kavi wonder whether being apart means being less loved.",
+      "context": [
+        "home during a parent's work trip"
+      ],
+      "narrativeSummary": "Kavi knows Mama will come back. Still, the empty chair at dinner seems to get louder every evening."
+    }
+  },
+  {
+    "id": "SIT052",
+    "title": "Moving house and leaving familiar bedroom",
+    "storySeed": {
+      "childExperience": "Kavi leaves a familiar bedroom and moves into a new home.",
+      "immediateWant": "Feel at home again.",
+      "immediateObstacle": "Everything familiar has changed.",
+      "emotionalTension": "Kavi misses the tiny details that made the old room feel like theirs.",
+      "context": [
+        "moving day or first night in new home"
+      ],
+      "narrativeSummary": "Kavi walks into the new bedroom. It has walls, a bed and a window—but none of the little things that made the old room feel like home."
+    }
+  },
+  {
+    "id": "SIT099",
+    "title": "Noisy, overcrowded mall or festival environment",
+    "storySeed": {
+      "childExperience": "Kavi is in a crowded mall where overlapping voices, music, movement, and smells gradually become overwhelming.",
+      "immediateWant": "Find somewhere quieter.",
+      "immediateObstacle": "There is noise and movement in every direction.",
+      "emotionalTension": "Kavi's body becomes tense and unsettled before Kavi can even explain what is wrong.",
+      "context": [
+        "busy shopping mall"
+      ],
+      "narrativeSummary": "Music plays overhead. People talk on every side. A trolley rattles past. Kavi takes another step into the crowd and wishes, just for a moment, that the world had a volume button."
+    }
+  },
+  {
+    "id": "SIT116",
+    "title": "Parents separating or getting a divorce",
+    "storySeed": {
+      "childExperience": "Kavi learns that their parents will no longer live together.",
+      "immediateWant": "Understand what will happen and know that they will still be loved and cared for.",
+      "immediateObstacle": "The family routine is changing in a way Kavi cannot control.",
+      "emotionalTension": "Kavi worries that a change between the parents might also change the family bond.",
+      "context": [
+        "home, after learning about the separation"
+      ],
+      "narrativeSummary": "Mama and Papa are speaking quietly. Kavi hears that things will be different and suddenly wants to know one thing: what will stay the same?"
+    }
+  },
+  {
+    "id": "SIT119",
+    "title": "Favourite teacher changes mid-year",
+    "storySeed": {
+      "childExperience": "Kavi learns that a favourite teacher will leave and be replaced by someone new.",
+      "immediateWant": "Keep the classroom the way it is.",
+      "immediateObstacle": "The teacher is leaving and Kavi cannot change that.",
+      "emotionalTension": "Kavi worries that the new teacher will not understand them in the same way.",
+      "context": [
+        "school during a mid-year teacher change"
+      ],
+      "narrativeSummary": "'There will be a new teacher next week,' the teacher says. Kavi looks around the familiar classroom and suddenly notices all the things that will be different."
+    }
+  },
+  {
+    "id": "SIT125",
+    "title": "New nanny or household helper joins family",
+    "storySeed": {
+      "childExperience": "A new nanny or household helper begins working at home, and Kavi is unsure about having an unfamiliar person in their everyday space.",
+      "immediateWant": "Feel comfortable and safe around the new person.",
+      "immediateObstacle": "Kavi does not know them yet.",
+      "emotionalTension": "Kavi wants to be welcoming but is not ready to trust someone simply because the adults do.",
+      "context": [
+        "home during the first days with the new helper"
+      ],
+      "narrativeSummary": "There is a new voice in the kitchen and a new pair of shoes by the door. Kavi watches quietly, wondering where this new person fits into the family's world."
+    }
+  },
+  {
+    "id": "SIT131",
+    "title": "Overheard adults talk about 'a big change coming'",
+    "storySeed": {
+      "childExperience": "Kavi overhears adults mention an important upcoming change but does not hear what the change is.",
+      "immediateWant": "Find out what is going to happen.",
+      "immediateObstacle": "The adults have not explained it yet.",
+      "emotionalTension": "Because Kavi has only part of the information, their imagination begins supplying the rest.",
+      "context": [
+        "home, after overhearing a private adult conversation"
+      ],
+      "narrativeSummary": "'Once the big change happens...' Kavi hears before the door closes. Big change? What change? Kavi stands still, trying to guess what the adults didn't say.",
+      "note": "Kept as-is per lock: overheard partial information → child interprets it → seeks understanding. Must not drift into a generic 'change is coming' story."
+    }
+  },
+  {
+    "id": "SIT142",
+    "title": "Someone online asked for their personal password",
+    "storySeed": {
+      "childExperience": "While playing an online game, Kavi receives a message from an unfamiliar person asking for their password or login details.",
+      "immediateWant": "Keep playing and possibly get the help or reward being offered.",
+      "immediateObstacle": "Sharing the information could put Kavi's account or privacy at risk.",
+      "emotionalTension": "The request sounds friendly, but something about it makes Kavi unsure whether to trust the person.",
+      "context": [
+        "online game or age-appropriate digital platform"
+      ],
+      "narrativeSummary": "A message appears: 'Give me your password and I'll help you level up!' Kavi's fingers hover over the keyboard."
+    }
+  },
+  {
+    "id": "SIT145",
+    "title": "Failed to keep a promise they made to a friend",
+    "storySeed": {
+      "childExperience": "Kavi promised a friend they would do something and then failed to follow through.",
+      "immediateWant": "Repair the friendship and make things right.",
+      "immediateObstacle": "The promise has already been broken and the friend is disappointed.",
+      "emotionalTension": "Kavi fears that one mistake may have damaged the friendship.",
+      "context": [
+        "school or playground"
+      ],
+      "narrativeSummary": "Kavi sees the friend's face fall. 'But you promised.' Kavi did promise. And now there is no way to change what happened.",
+      "note": "Distinct protagonist position from SIT156 (friend breaks a promise to Kavi) — kept both."
+    }
+  },
+  {
+    "id": "SIT156",
+    "title": "Friend breaks a promise",
+    "storySeed": {
+      "childExperience": "A friend promises to do something important to Kavi and then does not do it.",
+      "immediateWant": "Understand why the friend broke the promise and decide what to do next.",
+      "immediateObstacle": "The friend has already failed to keep their word.",
+      "emotionalTension": "Kavi feels hurt and wonders whether the friendship can still be trusted.",
+      "context": [
+        "school or playground"
+      ],
+      "narrativeSummary": "Kavi waits for the thing they were promised. The friend finally arrives—but without it. 'I forgot,' the friend says.",
+      "note": "Distinct protagonist position from SIT145 (Kavi breaks the promise) — kept both."
+    }
+  }
+]

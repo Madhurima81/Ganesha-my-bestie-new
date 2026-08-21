@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "1.0",
+  "status": "VALIDATED",
+  "styleBible": {
+    "visualStyle": "Warm watercolor storybook",
+    "renderingStyle": "Soft-edge painted illustration",
+    "ageAppropriateness": "5-8, no frightening imagery"
+  },
+  "characters": [
+    { "characterId": "CHAR_ANU", "identity": "Small determined fox cub" }
+  ],
+  "worlds": [],
+  "objects": [],
+  "symbols": [],
+  "continuityRules": [],
+  "validation": { "status": "PASS", "blockingFailures": 0, "warnings": 0 }
+}

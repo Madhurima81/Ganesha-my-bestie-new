@@ -1,0 +1,52 @@
+[
+  {
+    "id": "PT01",
+    "name": "Colouring page",
+    "renderer_family": "single-page-art"
+  },
+  {
+    "id": "PT02",
+    "name": "Sorting cards",
+    "renderer_family": "cut-cards"
+  },
+  {
+    "id": "PT03",
+    "name": "Matching cards",
+    "renderer_family": "matching-set"
+  },
+  {
+    "id": "PT04",
+    "name": "Maze / visual challenge",
+    "renderer_family": "puzzle-page"
+  },
+  {
+    "id": "PT05",
+    "name": "Cut-and-play cards",
+    "renderer_family": "play-card-set"
+  },
+  {
+    "id": "PT06",
+    "name": "Reflection/drawing page",
+    "renderer_family": "prompt-page"
+  },
+  {
+    "id": "PT07",
+    "name": "Tracker",
+    "renderer_family": "tracker-page"
+  },
+  {
+    "id": "PT08",
+    "name": "Game board",
+    "renderer_family": "board-page"
+  },
+  {
+    "id": "PT09",
+    "name": "Prompt cards",
+    "renderer_family": "prompt-card-set"
+  },
+  {
+    "id": "PT10",
+    "name": "Fold/craft template",
+    "renderer_family": "foldable-craft"
+  }
+]

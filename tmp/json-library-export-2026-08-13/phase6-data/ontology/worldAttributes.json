@@ -1,0 +1,11 @@
+[
+  {"id": "WA_SAFE", "category": "Social"}, {"id": "WA_MYSTERIOUS", "category": "Atmosphere"},
+  {"id": "WA_MAGICAL", "category": "Environment"}, {"id": "WA_PEACEFUL", "category": "Atmosphere"},
+  {"id": "WA_DANGEROUS", "category": "Atmosphere"}, {"id": "WA_SOCIAL", "category": "Social"},
+  {"id": "WA_ISOLATED", "category": "Environment"}, {"id": "WA_ANCIENT", "category": "Environment"},
+  {"id": "WA_HIDDEN", "category": "Environment"}, {"id": "WA_CHANGING", "category": "Environment"},
+  {"id": "WA_CREATIVE", "category": "Social"}, {"id": "WA_SPIRITUAL", "category": "Social"},
+  {"id": "WA_ABUNDANT", "category": "Environment"}, {"id": "WA_SURVIVAL", "category": "Social"},
+  {"id": "WA_PLAYFUL", "category": "Atmosphere"},
+  {"id": "WA_WISDOM", "category": "Social", "added_phase": "5A"}
+]

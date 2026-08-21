@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2048" height="2048" viewBox="0 0 2048 2048">
+  <defs>
+    <linearGradient id="bg1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f8d66d"/>
+      <stop offset="100%" stop-color="#7ecf9a"/>
+    </linearGradient>
+  </defs>
+  <rect width="2048" height="2048" fill="url(#bg1)"/>
+  <circle cx="1520" cy="420" r="180" fill="#fff4c5" opacity="0.7"/>
+  <rect x="180" y="1180" width="1688" height="520" rx="40" fill="#fff7ea" opacity="0.9"/>
+  <path d="M360 1160 C760 780, 1180 760, 1680 1160" fill="none" stroke="#7b5a3b" stroke-width="42" stroke-linecap="round"/>
+  <circle cx="760" cy="980" r="180" fill="#e68b4f"/>
+  <circle cx="1280" cy="930" r="150" fill="#6fbf8f"/>
+  <text x="1024" y="310" text-anchor="middle" font-family="Arial, sans-serif" font-size="120" fill="#6e4c1e">Magic Garden</text>
+  <text x="1024" y="1325" text-anchor="middle" font-family="Arial, sans-serif" font-size="96" fill="#6e4c1e">Page 1 Illustration Asset</text>
+  <text x="1024" y="1455" text-anchor="middle" font-family="Arial, sans-serif" font-size="68" fill="#6e4c1e">Opening tension with Kavi and the spinning toy</text>
+</svg>

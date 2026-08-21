@@ -1,0 +1,98 @@
+{
+  "template_id": "PT02_KINDNESS_BAND",
+  "version": "1.0",
+  "format": "A4",
+  "orientation": "portrait",
+  "source": "PT02_KINDNESS_BAND_MASTER.svg",
+  "slots": {
+    "TITLE": {
+      "type": "text",
+      "required": true,
+      "max_chars": 34
+    },
+    "SUBTITLE": {
+      "type": "text",
+      "required": true,
+      "max_chars": 70
+    },
+    "INSTRUCTION_1": {
+      "type": "text",
+      "required": true
+    },
+    "INSTRUCTION_1B": {
+      "type": "text",
+      "required": false
+    },
+    "INSTRUCTION_2": {
+      "type": "text",
+      "required": true
+    },
+    "INSTRUCTION_2B": {
+      "type": "text",
+      "required": false
+    },
+    "INSTRUCTION_3": {
+      "type": "text",
+      "required": true
+    },
+    "INSTRUCTION_3B": {
+      "type": "text",
+      "required": false
+    },
+    "INSTRUCTION_4": {
+      "type": "text",
+      "required": true
+    },
+    "INSTRUCTION_4B": {
+      "type": "text",
+      "required": false
+    },
+    "BAND_DECOR_TOP": {
+      "type": "asset_group_or_text",
+      "required": false
+    },
+    "BAND_TEXT": {
+      "type": "text",
+      "required": true,
+      "max_chars": 28
+    },
+    "BAND_DECOR_BOTTOM": {
+      "type": "asset_group_or_text",
+      "required": false
+    },
+    "CHARACTER_MAIN": {
+      "type": "asset",
+      "required": true
+    },
+    "WISDOM_TEXT": {
+      "type": "text",
+      "required": true,
+      "max_chars": 90
+    },
+    "CLUE_TEXT": {
+      "type": "text",
+      "required": false,
+      "max_chars": 100
+    },
+    "FOOTER_PROMPT": {
+      "type": "text",
+      "required": true,
+      "max_chars": 70
+    },
+    "FOOTER_SMALL": {
+      "type": "text",
+      "required": false,
+      "max_chars": 90
+    }
+  },
+  "asset_rules": {
+    "character_main": "Approved transparent PNG or SVG in the locked soft-doodle style",
+    "decorations": "Approved Prana Kids asset IDs only"
+  },
+  "print_rules": {
+    "paper": "A4",
+    "scale": "100%",
+    "safe_margin_mm": 12,
+    "cut_lines": "dashed"
+  }
+}

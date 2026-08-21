@@ -1,0 +1,163 @@
+You are Dev B on the Prana Story Generator.
+
+GOAL
+Diagnose and redesign the shared template-realization architecture for T01-T20 so we can stop treating them as 20 independent prose problems and start fixing the minimum number of underlying narrative mechanisms.
+
+MISSION SHIFT
+The prior audit changed the picture significantly.
+
+We should NOT start rewriting T01-T20 individually yet.
+
+The audit shows a shared architectural problem underneath them: generic template-fill prose is swallowing the intended template mechanics, and selector shadowing is leaving several templates effectively unreachable.
+
+Your mission is now:
+- audit + cluster + diagnose the shared architecture
+- identify the minimum number of realization contracts we actually need
+- separate selector/orphaning problems from prose/mechanism problems
+
+CRITICAL SCOPE
+- T16, T21, T22 are FROZEN. Do not modify them.
+- T03/T23 are reference implementations; do not change them unless explicitly instructed.
+- You own ANALYSIS + DIAGNOSIS + DESIGN for T01-T20, excluding direct rewrite implementation.
+- Do NOT start coding template rewrites yet.
+- Do NOT modify shared infrastructure yet unless explicitly instructed after diagnosis.
+
+WHY
+The audit suggests we do not have 20 independent broken templates.
+
+We likely have roughly 8-10 underlying narrative mechanisms being poorly expressed by a shared generation layer, plus a separate selector/orphaning problem causing multiple templates never to surface.
+
+Rewriting templates one by one before isolating those root causes would create duplicated work and false distinctions.
+
+PHASE 1 - FREEZE THE AUDIT FINDINGS
+
+1. Accept the existing audit findings as the current baseline.
+2. Do not re-litigate whether individual templates are "good enough" unless new evidence directly changes the diagnosis.
+3. Preserve the distinction between:
+   - templates that are selected but collapse into generic prose
+   - templates that are shadowed/orphaned by the selector
+   - templates that may be duplicates or near-duplicates at the mechanism level
+
+PHASE 2 - CLUSTER T01-T20 INTO MECHANISM FAMILIES
+
+For T01-T20:
+
+1. Read each template definition in storyTemplates.json.
+2. Group templates by actual narrative engine, not by cosmetic naming.
+3. Identify:
+   - genuinely distinct mechanisms
+   - duplicate/shadow mechanisms
+   - templates whose stated mechanic is not materially differentiated in the current architecture
+
+Likely examples to test:
+- repetition/language-shift family
+- circular return family
+- clue/discovery family
+- threshold/choice family
+- escalation/runaway-problem family
+- inversion/helper family
+- guide/relay/relational family
+
+Do NOT force a taxonomy for completeness.
+If two templates are not meaningfully distinct at the mechanism level, say so.
+
+PHASE 3 - DIAGNOSE THE SHARED WRITER / COMPOSER PATH
+
+Investigate the actual implementation path for T01-T20 in phase6-app.js and surrounding functions.
+
+Determine exactly:
+1. Where template-specific realization is supposed to enter.
+2. Where generic template-fill or generic composer language takes over.
+3. Which repeated fallback sentences / fallback beat realizations are being reused across many templates.
+4. Whether the template layer is failing at:
+   - beat realization
+   - storySeed grounding
+   - belief dramatization
+   - action differentiation
+   - resolution specificity
+   - post-assertion situation anchoring
+
+Do not stop at "the prose is generic."
+Pinpoint the actual architectural choke point(s).
+
+PHASE 4 - DIAGNOSE SELECTOR / ORPHANING SEPARATELY
+
+Treat selector shadowing as its own workstream.
+
+For T01-T20:
+1. Identify which templates are effectively unreachable.
+2. Identify which templates are shadowed by earlier tie-break behavior or overlapping need/logic families.
+3. Determine whether each unreachable template is:
+   - a selector problem only
+   - a duplicate-template problem
+   - both
+
+Important:
+Do NOT confuse unreachable templates with bad prose templates.
+If a template never gets selected, that is not yet evidence that its prose layer is the primary problem.
+
+PHASE 5 - DEFINE REPRESENTATIVE FAMILY CONTRACTS
+
+After clustering:
+
+1. Choose one representative template from each genuinely distinct mechanism family.
+2. For each representative template:
+   - define the intended realization contract
+   - define what must vary by situation
+   - define what remains structurally fixed
+   - define what concrete evidence must appear in prose
+   - define what would count as failure/interchangeability
+3. Use representative situations to test whether the contract would actually prevent generic collapse.
+
+This is still DESIGN ONLY.
+No implementation yet.
+
+PHASE 6 - FINAL DELIVERABLE
+
+Produce one concise architecture-first report containing:
+
+A. Mechanism-family map
+
+| Family | Templates | Distinct engine or duplicate/shadow? | Notes |
+|---|---|---|---|
+
+B. Selector/orphaning diagnosis
+
+| Template | Reachable? | Shadowed by | Root cause |
+|---|---|---|---|
+
+C. Shared writer/composer diagnosis
+- exact choke points
+- repeated fallback language patterns
+- where template-specific realization is being flattened
+
+D. Representative family contracts
+For each family:
+- representative template
+- intended mechanism
+- required situation-grounded evidence
+- fixed beats vs variable realization
+- failure modes to guard against
+
+E. Recommended implementation order
+- selector fixes
+- architecture fixes
+- representative family pilots
+- family rollout sequence
+
+IMPORTANT GUARDRAILS
+- No code rewrites yet.
+- No template-by-template rewrite pass yet.
+- No edits to T16/T21/T22/T03/T23.
+- Do not pretend 20 templates are 20 independent problems if the architecture says otherwise.
+- Separate selector failures from realization failures.
+- If two templates are functionally the same engine, say so plainly.
+- The objective is to discover the minimum number of narrative mechanisms and realization contracts we actually need.
+
+SUCCESS CONDITION
+By the end, we should know:
+- how many distinct mechanism families we really have
+- which templates are shadows/duplicates
+- where the shared architecture is flattening them
+- what must be fixed once at the architecture level
+- which representative templates to pilot before any broad rewrite effort

@@ -1,0 +1,2438 @@
+[
+  {
+    "id": 1,
+    "slug": "whispering-forest",
+    "name": "Whispering Forest",
+    "theme": "Discovery, kindness and courage",
+    "mainCharacters": [
+      "Chinu",
+      "Mira",
+      "Arin",
+      "Bodhi"
+    ],
+    "supportingCharacters": [
+      "Birds",
+      "squirrels",
+      "rabbits",
+      "butterflies",
+      "bees"
+    ],
+    "preferredCharacterTypes": [
+      "Explorer",
+      "Caregiver",
+      "Mentor"
+    ],
+    "settings": [
+      "Banyan Tree",
+      "Meadow",
+      "River Bend",
+      "Hollow Log",
+      "Cave Entrance",
+      "Vine Bridge"
+    ],
+    "natureMechanics": [
+      "Birds guide",
+      "leaves reveal clues",
+      "rivers change routes",
+      "vines block paths"
+    ],
+    "props": [
+      "Rope",
+      "Basket",
+      "Lantern",
+      "Leaf Boat",
+      "Map"
+    ],
+    "typicalMissions": [
+      "Rescue",
+      "Find & Discover",
+      "Explore",
+      "Help"
+    ],
+    "typicalObstacles": [
+      "Physical",
+      "Nature",
+      "Puzzle"
+    ],
+    "bestLifeDomains": [
+      "Exploring & Nature",
+      "Helping & Caring",
+      "Friendship & Sharing"
+    ],
+    "bestAdventureArchetypes": [
+      "Rescue Mission",
+      "Mystery to Solve",
+      "Great Journey",
+      "Secret Discovery"
+    ],
+    "bestEmotionalArcs": [
+      "Fear→Courage",
+      "Curiosity→Confidence",
+      "Loneliness→Belonging"
+    ],
+    "bestWisdomElements": [
+      "Big Ears",
+      "Eyes",
+      "Trunk",
+      "Mouse"
+    ],
+    "notes": "Introductory world"
+  },
+  {
+    "id": 2,
+    "slug": "ancient-banyan-grove",
+    "name": "Ancient Banyan Grove",
+    "theme": "Wisdom, patience and reflection",
+    "mainCharacters": [
+      "Bodhi",
+      "Ved",
+      "Chinu"
+    ],
+    "supportingCharacters": [
+      "Owls",
+      "squirrels",
+      "deer"
+    ],
+    "preferredCharacterTypes": [
+      "Mentor",
+      "Thinker",
+      "Explorer"
+    ],
+    "settings": [
+      "Giant Roots",
+      "Meditation Circle",
+      "Tree Library",
+      "Hidden Hollow"
+    ],
+    "natureMechanics": [
+      "Falling leaves reveal answers",
+      "roots create paths"
+    ],
+    "props": [
+      "Scrolls",
+      "Lamp",
+      "Seed Pods",
+      "Prayer Bells"
+    ],
+    "typicalMissions": [
+      "Learn & Grow",
+      "Find & Discover"
+    ],
+    "typicalObstacles": [
+      "Puzzle",
+      "Emotional"
+    ],
+    "bestLifeDomains": [
+      "Learning & Problem Solving",
+      "Self-Care"
+    ],
+    "bestAdventureArchetypes": [
+      "Mentor Journey",
+      "Ancient Secret",
+      "Training Journey"
+    ],
+    "bestEmotionalArcs": [
+      "Confusion→Clarity",
+      "Fear→Wisdom"
+    ],
+    "bestWisdomElements": [
+      "Eyes",
+      "Big Ears",
+      "Trunk"
+    ],
+    "notes": "Wisdom world"
+  },
+  {
+    "id": 3,
+    "slug": "whispering-meadow",
+    "name": "Whispering Meadow",
+    "theme": "Friendship and joyful play",
+    "mainCharacters": [
+      "Mira",
+      "Chinu",
+      "Anu"
+    ],
+    "supportingCharacters": [
+      "Rabbits",
+      "butterflies",
+      "birds"
+    ],
+    "preferredCharacterTypes": [
+      "Friend",
+      "Caregiver"
+    ],
+    "settings": [
+      "Flower Fields",
+      "Picnic Hill",
+      "Tall Grass",
+      "Brook"
+    ],
+    "natureMechanics": [
+      "Butterflies guide",
+      "flowers bloom",
+      "wind carries seeds"
+    ],
+    "props": [
+      "Flowers",
+      "Picnic Basket",
+      "Kites",
+      "Garlands"
+    ],
+    "typicalMissions": [
+      "Help",
+      "Celebrate",
+      "Find & Discover"
+    ],
+    "typicalObstacles": [
+      "Social",
+      "Emotional"
+    ],
+    "bestLifeDomains": [
+      "Friendship & Sharing",
+      "Playing & Games"
+    ],
+    "bestAdventureArchetypes": [
+      "New Friend",
+      "Friendship Repair",
+      "Gift of Giving"
+    ],
+    "bestEmotionalArcs": [
+      "Shyness→Belonging",
+      "Loneliness→Friendship"
+    ],
+    "bestWisdomElements": [
+      "Mouse",
+      "Modak",
+      "Big Ears"
+    ],
+    "notes": "Gentle world"
+  },
+  {
+    "id": 4,
+    "slug": "crystal-river-valley",
+    "name": "Crystal River Valley",
+    "theme": "Flow, teamwork and perseverance",
+    "mainCharacters": [
+      "Arin",
+      "Neel",
+      "Bodhi"
+    ],
+    "supportingCharacters": [
+      "Fish",
+      "turtles",
+      "otters"
+    ],
+    "preferredCharacterTypes": [
+      "Explorer",
+      "Guide"
+    ],
+    "settings": [
+      "River Crossing",
+      "Waterfall",
+      "Pebble Bank",
+      "Wooden Bridge"
+    ],
+    "natureMechanics": [
+      "River currents change routes",
+      "fish reveal clues"
+    ],
+    "props": [
+      "Raft",
+      "Rope",
+      "Fishing Net",
+      "Water Pot"
+    ],
+    "typicalMissions": [
+      "Rescue",
+      "Deliver",
+      "Explore"
+    ],
+    "typicalObstacles": [
+      "Physical",
+      "Nature",
+      "Time"
+    ],
+    "bestLifeDomains": [
+      "Exploring & Nature",
+      "Responsibility"
+    ],
+    "bestAdventureArchetypes": [
+      "Great Journey",
+      "Escort Mission",
+      "Rescue Mission"
+    ],
+    "bestEmotionalArcs": [
+      "Worry→Confidence",
+      "Fear→Courage"
+    ],
+    "bestWisdomElements": [
+      "Trunk",
+      "Mouse",
+      "Eyes"
+    ],
+    "notes": "Water adventures"
+  },
+  {
+    "id": 5,
+    "slug": "hidden-waterfall",
+    "name": "Hidden Waterfall",
+    "theme": "Wonder and discovery",
+    "mainCharacters": [
+      "Arin",
+      "Mira"
+    ],
+    "supportingCharacters": [
+      "Birds",
+      "frogs",
+      "dragonflies"
+    ],
+    "preferredCharacterTypes": [
+      "Explorer"
+    ],
+    "settings": [
+      "Waterfall Cave",
+      "Secret Pool",
+      "Moss Rocks"
+    ],
+    "natureMechanics": [
+      "Rainbow mist reveals hidden paths"
+    ],
+    "props": [
+      "Lantern",
+      "Crystal",
+      "Leaf Boat"
+    ],
+    "typicalMissions": [
+      "Find & Discover",
+      "Explore"
+    ],
+    "typicalObstacles": [
+      "Puzzle",
+      "Nature"
+    ],
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestAdventureArchetypes": [
+      "Secret Discovery",
+      "Treasure Hunt",
+      "Hidden World"
+    ],
+    "bestEmotionalArcs": [
+      "Curiosity→Wonder"
+    ],
+    "bestWisdomElements": [
+      "Eyes",
+      "Trunk"
+    ],
+    "notes": "Mystery location"
+  },
+  {
+    "id": 6,
+    "slug": "sunny-orchard",
+    "name": "Sunny Orchard",
+    "theme": "Gratitude, sharing and community",
+    "mainCharacters": [
+      "Gauri",
+      "Anu",
+      "Chinu"
+    ],
+    "supportingCharacters": [
+      "Birds",
+      "bees",
+      "cows"
+    ],
+    "preferredCharacterTypes": [
+      "Caregiver",
+      "Helper"
+    ],
+    "settings": [
+      "Fruit Trees",
+      "Barn",
+      "Well",
+      "Orchard Path"
+    ],
+    "natureMechanics": [
+      "Trees bear fruit seasonally"
+    ],
+    "props": [
+      "Basket",
+      "Ladder",
+      "Watering Can"
+    ],
+    "typicalMissions": [
+      "Help",
+      "Celebrate",
+      "Deliver"
+    ],
+    "typicalObstacles": [
+      "Social",
+      "Physical"
+    ],
+    "bestLifeDomains": [
+      "Helping & Caring",
+      "Celebrations & Traditions"
+    ],
+    "bestAdventureArchetypes": [
+      "Helping Hand",
+      "Community Project"
+    ],
+    "bestEmotionalArcs": [
+      "Gratitude→Joy"
+    ],
+    "bestWisdomElements": [
+      "Modak",
+      "Mouse"
+    ],
+    "notes": "Harvest stories"
+  },
+  {
+    "id": 7,
+    "slug": "flower-garden",
+    "name": "Flower Garden",
+    "theme": "Beauty, patience and care",
+    "mainCharacters": [
+      "Mira",
+      "Gauri"
+    ],
+    "supportingCharacters": [
+      "Bees",
+      "butterflies",
+      "ladybirds"
+    ],
+    "preferredCharacterTypes": [
+      "Caregiver",
+      "Creator"
+    ],
+    "settings": [
+      "Rose Garden",
+      "Lily Pond",
+      "Butterfly Corner"
+    ],
+    "natureMechanics": [
+      "Flowers bloom after kindness and care"
+    ],
+    "props": [
+      "Water Can",
+      "Seed Bag",
+      "Garden Tools"
+    ],
+    "typicalMissions": [
+      "Care & Restore",
+      "Help"
+    ],
+    "typicalObstacles": [
+      "Nature",
+      "Emotional"
+    ],
+    "bestLifeDomains": [
+      "Exploring & Nature",
+      "Helping & Caring"
+    ],
+    "bestAdventureArchetypes": [
+      "Nature's Balance",
+      "Restoration Story"
+    ],
+    "bestEmotionalArcs": [
+      "Impatience→Patience"
+    ],
+    "bestWisdomElements": [
+      "Lotus",
+      "Eyes"
+    ],
+    "notes": "Calm world"
+  },
+  {
+    "id": 8,
+    "slug": "bamboo-forest",
+    "name": "Bamboo Forest",
+    "theme": "Flexibility and resilience",
+    "mainCharacters": [
+      "Kavi",
+      "Chinu"
+    ],
+    "supportingCharacters": [
+      "Monkeys",
+      "pandas",
+      "birds"
+    ],
+    "preferredCharacterTypes": [
+      "Explorer",
+      "Trickster"
+    ],
+    "settings": [
+      "Bamboo Maze",
+      "Rope Bridge",
+      "Stream"
+    ],
+    "natureMechanics": [
+      "Bamboo bends",
+      "wind creates sounds"
+    ],
+    "props": [
+      "Bamboo Staff",
+      "Rope",
+      "Basket"
+    ],
+    "typicalMissions": [
+      "Explore",
+      "Rescue"
+    ],
+    "typicalObstacles": [
+      "Physical",
+      "Puzzle"
+    ],
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestAdventureArchetypes": [
+      "Expedition",
+      "Escape Adventure",
+      "Great Journey"
+    ],
+    "bestEmotionalArcs": [
+      "Fear→Confidence"
+    ],
+    "bestWisdomElements": [
+      "Trunk",
+      "Big Ears"
+    ],
+    "notes": "Fast-moving adventures"
+  },
+  {
+    "id": 9,
+    "slug": "misty-mountains",
+    "name": "Misty Mountains",
+    "theme": "Determination and courage",
+    "mainCharacters": [
+      "Kabir",
+      "Veer",
+      "Bodhi"
+    ],
+    "supportingCharacters": [
+      "Eagles",
+      "mountain goats"
+    ],
+    "preferredCharacterTypes": [
+      "Explorer",
+      "Mentor"
+    ],
+    "settings": [
+      "Cliffs",
+      "Snow Pass",
+      "Stone Steps",
+      "Peak"
+    ],
+    "natureMechanics": [
+      "Mist hides paths",
+      "echoes guide"
+    ],
+    "props": [
+      "Walking Stick",
+      "Rope",
+      "Compass"
+    ],
+    "typicalMissions": [
+      "Great Journey",
+      "Learn & Grow"
+    ],
+    "typicalObstacles": [
+      "Physical",
+      "Time"
+    ],
+    "bestLifeDomains": [
+      "Exploring & Nature",
+      "Self-Care"
+    ],
+    "bestAdventureArchetypes": [
+      "Hero's Trial",
+      "Great Journey",
+      "Training Journey"
+    ],
+    "bestEmotionalArcs": [
+      "Self-Doubt→Resilience"
+    ],
+    "bestWisdomElements": [
+      "Trunk",
+      "Eyes"
+    ],
+    "notes": "Challenging world"
+  },
+  {
+    "id": 10,
+    "slug": "golden-grasslands",
+    "name": "Golden Grasslands",
+    "theme": "Freedom, teamwork and exploration",
+    "mainCharacters": [
+      "Simha",
+      "Neel"
+    ],
+    "supportingCharacters": [
+      "Deer",
+      "birds",
+      "rabbits"
+    ],
+    "preferredCharacterTypes": [
+      "Leader",
+      "Explorer"
+    ],
+    "settings": [
+      "Open Plains",
+      "Tall Grass",
+      "Wind Hill"
+    ],
+    "natureMechanics": [
+      "Wind reveals tracks",
+      "grass hides clues"
+    ],
+    "props": [
+      "Flag",
+      "Binoculars",
+      "Rope"
+    ],
+    "typicalMissions": [
+      "Explore",
+      "Protect",
+      "Rescue"
+    ],
+    "typicalObstacles": [
+      "Nature",
+      "Social"
+    ],
+    "bestLifeDomains": [
+      "Exploring & Nature",
+      "Friendship & Sharing"
+    ],
+    "bestAdventureArchetypes": [
+      "Great Journey",
+      "Team Adventure",
+      "Rescue Mission"
+    ],
+    "bestEmotionalArcs": [
+      "Uncertainty→Confidence"
+    ],
+    "bestWisdomElements": [
+      "Eyes",
+      "Big Ears"
+    ],
+    "notes": "Open-world adventures"
+  },
+  {
+    "id": 11,
+    "slug": "lotus-pond",
+    "name": "Lotus Pond",
+    "theme": "Peace, reflection and kindness",
+    "mainCharacters": [
+      "Gauri",
+      "Mira",
+      "Bodhi"
+    ],
+    "supportingCharacters": [
+      "Frogs",
+      "ducks",
+      "dragonflies",
+      "fish"
+    ],
+    "preferredCharacterTypes": [
+      "Caregiver",
+      "Mentor"
+    ],
+    "settings": [
+      "Lotus Lake",
+      "Lily Pads",
+      "Wooden Jetty",
+      "Reed Beds"
+    ],
+    "natureMechanics": [
+      "Lotus blooms",
+      "ripples reveal clues",
+      "floating leaves create paths"
+    ],
+    "props": [
+      "Lotus Flower",
+      "Water Pot",
+      "Small Boat",
+      "Basket"
+    ],
+    "typicalMissions": [
+      "Care & Restore",
+      "Help",
+      "Find & Discover"
+    ],
+    "typicalObstacles": [
+      "Nature",
+      "Emotional"
+    ],
+    "bestLifeDomains": [
+      "Helping & Caring",
+      "Exploring & Nature"
+    ],
+    "bestAdventureArchetypes": [
+      "Nature's Balance",
+      "Restoration Story",
+      "Secret Discovery"
+    ],
+    "bestEmotionalArcs": [
+      "Worry → Peace",
+      "Fear → Trust"
+    ],
+    "bestWisdomElements": [
+      "Lotus",
+      "Eyes",
+      "Trunk"
+    ],
+    "notes": "Calm reflective world"
+  },
+  {
+    "id": 12,
+    "slug": "turtle-bay",
+    "name": "Turtle Bay",
+    "theme": "Patience and steady progress",
+    "mainCharacters": [
+      "Tara",
+      "Neel",
+      "Bodhi"
+    ],
+    "supportingCharacters": [
+      "Turtles",
+      "crabs",
+      "seabirds"
+    ],
+    "preferredCharacterTypes": [
+      "Guide",
+      "Caregiver"
+    ],
+    "settings": [
+      "Sandy Beach",
+      "Rock Pools",
+      "Wooden Pier",
+      "Sea Caves"
+    ],
+    "natureMechanics": [
+      "Tides change routes",
+      "shells hide clues"
+    ],
+    "props": [
+      "Shell",
+      "Raft",
+      "Fishing Net",
+      "Compass"
+    ],
+    "typicalMissions": [
+      "Rescue",
+      "Deliver",
+      "Explore"
+    ],
+    "typicalObstacles": [
+      "Nature",
+      "Time"
+    ],
+    "bestLifeDomains": [
+      "Exploring & Nature",
+      "Responsibility"
+    ],
+    "bestAdventureArchetypes": [
+      "Escort Mission",
+      "Delivery Quest",
+      "Great Journey"
+    ],
+    "bestEmotionalArcs": [
+      "Impatience → Patience"
+    ],
+    "bestWisdomElements": [
+      "Trunk",
+      "Mouse"
+    ],
+    "notes": "Coastal adventures"
+  },
+  {
+    "id": 13,
+    "slug": "mangrove-marsh",
+    "name": "Mangrove Marsh",
+    "theme": "Adaptability and teamwork",
+    "mainCharacters": [
+      "Arin",
+      "Tara"
+    ],
+    "supportingCharacters": [
+      "Cranes",
+      "fish",
+      "frogs"
+    ],
+    "preferredCharacterTypes": [
+      "Explorer",
+      "Problem Solver"
+    ],
+    "settings": [
+      "Mangrove Roots",
+      "Mud Flats",
+      "Narrow Streams"
+    ],
+    "natureMechanics": [
+      "Rising tides",
+      "tangled roots",
+      "hidden waterways"
+    ],
+    "props": [
+      "Pole Boat",
+      "Rope",
+      "Lantern"
+    ],
+    "typicalMissions": [
+      "Explore",
+      "Rescue",
+      "Find & Discover"
+    ],
+    "typicalObstacles": [
+      "Nature",
+      "Puzzle",
+      "Physical"
+    ],
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestAdventureArchetypes": [
+      "Expedition",
+      "Mystery to Solve",
+      "Escape Adventure"
+    ],
+    "bestEmotionalArcs": [
+      "Confusion → Confidence"
+    ],
+    "bestWisdomElements": [
+      "Big Ears",
+      "Trunk"
+    ],
+    "notes": "Navigation-focused"
+  },
+  {
+    "id": 14,
+    "slug": "waterfall-caves",
+    "name": "Waterfall Caves",
+    "theme": "Mystery beneath the surface",
+    "mainCharacters": [
+      "Kabir",
+      "Arin"
+    ],
+    "supportingCharacters": [
+      "Bats",
+      "glowworms",
+      "cave birds"
+    ],
+    "preferredCharacterTypes": [
+      "Explorer"
+    ],
+    "settings": [
+      "Crystal Caverns",
+      "Hidden Chamber",
+      "Underground Stream"
+    ],
+    "natureMechanics": [
+      "Echoes guide",
+      "crystals reflect light"
+    ],
+    "props": [
+      "Lantern",
+      "Rope",
+      "Crystal",
+      "Map"
+    ],
+    "typicalMissions": [
+      "Treasure Hunt",
+      "Explore"
+    ],
+    "typicalObstacles": [
+      "Puzzle",
+      "Physical"
+    ],
+    "bestLifeDomains": [
+      "Learning & Problem Solving",
+      "Exploring & Nature"
+    ],
+    "bestAdventureArchetypes": [
+      "Ancient Secret",
+      "Hidden World",
+      "Treasure Hunt"
+    ],
+    "bestEmotionalArcs": [
+      "Curiosity → Wonder"
+    ],
+    "bestWisdomElements": [
+      "Eyes",
+      "Trunk"
+    ],
+    "notes": "Rich visual world"
+  },
+  {
+    "id": 15,
+    "slug": "woodland-village",
+    "name": "Woodland Village",
+    "theme": "Community and belonging",
+    "mainCharacters": [
+      "Chinu",
+      "Gauri",
+      "Anu"
+    ],
+    "supportingCharacters": [
+      "Families",
+      "birds",
+      "woodland animals"
+    ],
+    "preferredCharacterTypes": [
+      "Helper",
+      "Community Builder"
+    ],
+    "settings": [
+      "Village Square",
+      "Market",
+      "Bakery",
+      "School",
+      "Garden"
+    ],
+    "natureMechanics": [
+      "Seasons change activities"
+    ],
+    "props": [
+      "Basket",
+      "Cart",
+      "Toolbox",
+      "Water Bucket"
+    ],
+    "typicalMissions": [
+      "Help",
+      "Deliver",
+      "Celebrate"
+    ],
+    "typicalObstacles": [
+      "Social",
+      "Responsibility"
+    ],
+    "bestLifeDomains": [
+      "School & Community",
+      "Friendship & Sharing"
+    ],
+    "bestAdventureArchetypes": [
+      "Community Project",
+      "Helping Hand",
+      "Celebration Preparation"
+    ],
+    "bestEmotionalArcs": [
+      "Loneliness → Belonging"
+    ],
+    "bestWisdomElements": [
+      "Modak",
+      "Mouse"
+    ],
+    "notes": "Everyday stories"
+  },
+  {
+    "id": 16,
+    "slug": "treehouse-village",
+    "name": "Treehouse Village",
+    "theme": "Creativity and teamwork",
+    "mainCharacters": [
+      "Chinu",
+      "Kavi",
+      "Pihu"
+    ],
+    "supportingCharacters": [
+      "Squirrels",
+      "birds",
+      "monkeys"
+    ],
+    "preferredCharacterTypes": [
+      "Builder",
+      "Explorer"
+    ],
+    "settings": [
+      "Treehouses",
+      "Rope Bridges",
+      "Lookout Tower"
+    ],
+    "natureMechanics": [
+      "Wind moves bridges",
+      "birds carry messages"
+    ],
+    "props": [
+      "Rope Ladder",
+      "Hammer",
+      "Basket",
+      "Flags"
+    ],
+    "typicalMissions": [
+      "Build",
+      "Explore",
+      "Help"
+    ],
+    "typicalObstacles": [
+      "Physical",
+      "Social"
+    ],
+    "bestLifeDomains": [
+      "Building & Creating",
+      "Friendship & Sharing"
+    ],
+    "bestAdventureArchetypes": [
+      "Build Together",
+      "Team Adventure",
+      "Great Journey"
+    ],
+    "bestEmotionalArcs": [
+      "Self-Doubt → Confidence"
+    ],
+    "bestWisdomElements": [
+      "Big Ears",
+      "Trunk"
+    ],
+    "notes": "Vertical adventure world"
+  },
+  {
+    "id": 17,
+    "slug": "riverside-village",
+    "name": "Riverside Village",
+    "theme": "Cooperation and responsibility",
+    "mainCharacters": [
+      "Gauri",
+      "Arin",
+      "Neel"
+    ],
+    "supportingCharacters": [
+      "Fisherfolk",
+      "birds",
+      "turtles"
+    ],
+    "preferredCharacterTypes": [
+      "Helper",
+      "Guide"
+    ],
+    "settings": [
+      "Riverbank",
+      "Docks",
+      "Ferry Crossing",
+      "Market"
+    ],
+    "natureMechanics": [
+      "River levels change",
+      "boats drift"
+    ],
+    "props": [
+      "Boat",
+      "Oars",
+      "Rope",
+      "Fishing Basket"
+    ],
+    "typicalMissions": [
+      "Deliver",
+      "Rescue",
+      "Community Help"
+    ],
+    "typicalObstacles": [
+      "Nature",
+      "Time"
+    ],
+    "bestLifeDomains": [
+      "Responsibility",
+      "Helping & Caring"
+    ],
+    "bestAdventureArchetypes": [
+      "Delivery Quest",
+      "Journey Together",
+      "Community Project"
+    ],
+    "bestEmotionalArcs": [
+      "Responsibility → Pride"
+    ],
+    "bestWisdomElements": [
+      "Trunk",
+      "Mouse"
+    ],
+    "notes": "River community"
+  },
+  {
+    "id": 18,
+    "slug": "hilltop-village",
+    "name": "Hilltop Village",
+    "theme": "Courage and leadership",
+    "mainCharacters": [
+      "Veer",
+      "Kabir",
+      "Simha"
+    ],
+    "supportingCharacters": [
+      "Goats",
+      "eagles",
+      "shepherds"
+    ],
+    "preferredCharacterTypes": [
+      "Leader",
+      "Mentor"
+    ],
+    "settings": [
+      "Hill Paths",
+      "Watchtower",
+      "Windmill",
+      "Stone Homes"
+    ],
+    "natureMechanics": [
+      "Strong winds",
+      "steep climbs"
+    ],
+    "props": [
+      "Walking Stick",
+      "Flag",
+      "Rope"
+    ],
+    "typicalMissions": [
+      "Protect",
+      "Guide",
+      "Help"
+    ],
+    "typicalObstacles": [
+      "Physical",
+      "Time"
+    ],
+    "bestLifeDomains": [
+      "Responsibility",
+      "School & Community"
+    ],
+    "bestAdventureArchetypes": [
+      "Leadership Challenge",
+      "Hero's Trial",
+      "Great Journey"
+    ],
+    "bestEmotionalArcs": [
+      "Fear → Courage"
+    ],
+    "bestWisdomElements": [
+      "Eyes",
+      "Trunk"
+    ],
+    "notes": "Leadership stories"
+  },
+  {
+    "id": 19,
+    "slug": "magic-garden",
+    "name": "Magic Garden",
+    "theme": "Wonder through nature",
+    "mainCharacters": [
+      "Mira",
+      "Pihu",
+      "Gauri"
+    ],
+    "supportingCharacters": [
+      "Butterflies",
+      "hummingbirds",
+      "rabbits"
+    ],
+    "preferredCharacterTypes": [
+      "Caregiver",
+      "Creator"
+    ],
+    "settings": [
+      "Rainbow Flowers",
+      "Crystal Pond",
+      "Butterfly Grove"
+    ],
+    "natureMechanics": [
+      "Flowers respond to care",
+      "vines create paths"
+    ],
+    "props": [
+      "Seeds",
+      "Watering Can",
+      "Crystal",
+      "Garden Tools"
+    ],
+    "typicalMissions": [
+      "Care & Restore",
+      "Explore"
+    ],
+    "typicalObstacles": [
+      "Nature",
+      "Emotional"
+    ],
+    "bestLifeDomains": [
+      "Art",
+      "Music & Creativity",
+      "Exploring & Nature"
+    ],
+    "bestAdventureArchetypes": [
+      "Magical Discovery",
+      "Nature's Balance",
+      "Transformation Story"
+    ],
+    "bestEmotionalArcs": [
+      "Wonder → Gratitude"
+    ],
+    "bestWisdomElements": [
+      "Lotus",
+      "Eyes"
+    ],
+    "notes": "Wonder comes from nature, not magic"
+  },
+  {
+    "id": 20,
+    "slug": "rainbow-kingdom",
+    "name": "Rainbow Kingdom",
+    "theme": "Joy, creativity and celebration",
+    "mainCharacters": [
+      "Mayur",
+      "Vani",
+      "Chinu"
+    ],
+    "supportingCharacters": [
+      "Peacocks",
+      "parrots",
+      "artists"
+    ],
+    "preferredCharacterTypes": [
+      "Creator",
+      "Performer"
+    ],
+    "settings": [
+      "Rainbow Plaza",
+      "Music Hall",
+      "Festival Street",
+      "Colour Gardens"
+    ],
+    "natureMechanics": [
+      "Rainbows appear after rain",
+      "colours inspire ideas"
+    ],
+    "props": [
+      "Paint Brushes",
+      "Musical Instruments",
+      "Festival Banners"
+    ],
+    "typicalMissions": [
+      "Celebrate",
+      "Perform",
+      "Create"
+    ],
+    "typicalObstacles": [
+      "Social",
+      "Time"
+    ],
+    "bestLifeDomains": [
+      "Art",
+      "Music & Creativity",
+      "Celebrations & Traditions"
+    ],
+    "bestAdventureArchetypes": [
+      "Festival Adventure",
+      "Performance Story",
+      "Gift of Giving"
+    ],
+    "bestEmotionalArcs": [
+      "Shyness → Confidence",
+      "Joy → Belonging"
+    ],
+    "bestWisdomElements": [
+      "Modak",
+      "Eyes",
+      "Big Ears"
+    ],
+    "notes": "Best festival world"
+  },
+  {
+    "id": 21,
+    "slug": "cloud-kingdom",
+    "name": "Cloud Kingdom",
+    "theme": "Imagination, hope and perspective",
+    "mainCharacters": [
+      "Mayur",
+      "Vani",
+      "Ved"
+    ],
+    "supportingCharacters": [
+      "Birds",
+      "cloud spirits",
+      "butterflies"
+    ],
+    "preferredCharacterTypes": [
+      "Explorer",
+      "Dreamer",
+      "Mentor"
+    ],
+    "settings": [
+      "Cloud Bridges",
+      "Rainbow Gate",
+      "Sky Garden",
+      "Floating Islands"
+    ],
+    "natureMechanics": [
+      "Clouds change shape",
+      "winds create pathways"
+    ],
+    "props": [
+      "Feather Glider",
+      "Kite",
+      "Wind Chimes",
+      "Sky Map"
+    ],
+    "typicalMissions": [
+      "Explore",
+      "Deliver",
+      "Discover"
+    ],
+    "typicalObstacles": [
+      "Nature",
+      "Time"
+    ],
+    "bestLifeDomains": [
+      "Exploring & Nature",
+      "Art",
+      "Music & Creativity"
+    ],
+    "bestAdventureArchetypes": [
+      "Great Journey",
+      "Hidden World",
+      "Magical Discovery"
+    ],
+    "bestEmotionalArcs": [
+      "Doubt → Wonder",
+      "Fear → Confidence"
+    ],
+    "bestWisdomElements": [
+      "Eyes",
+      "Big Ears"
+    ],
+    "notes": "Inspires imagination"
+  },
+  {
+    "id": 22,
+    "slug": "moonlight-valley",
+    "name": "Moonlight Valley",
+    "theme": "Reflection and quiet courage",
+    "mainCharacters": [
+      "Ved",
+      "Mira",
+      "Bodhi"
+    ],
+    "supportingCharacters": [
+      "Fireflies",
+      "owls",
+      "deer"
+    ],
+    "preferredCharacterTypes": [
+      "Mentor",
+      "Thinker"
+    ],
+    "settings": [
+      "Moon Lake",
+      "Silver Meadow",
+      "Firefly Grove"
+    ],
+    "natureMechanics": [
+      "Moonlight reveals hidden paths"
+    ],
+    "props": [
+      "Moon Lantern",
+      "Crystal Stone",
+      "Telescope"
+    ],
+    "typicalMissions": [
+      "Find & Discover",
+      "Learn & Grow"
+    ],
+    "typicalObstacles": [
+      "Emotional",
+      "Puzzle"
+    ],
+    "bestLifeDomains": [
+      "Self-Care",
+      "Learning & Problem Solving"
+    ],
+    "bestAdventureArchetypes": [
+      "Dream Adventure",
+      "Ancient Secret",
+      "Mystery to Solve"
+    ],
+    "bestEmotionalArcs": [
+      "Worry → Peace",
+      "Confusion → Clarity"
+    ],
+    "bestWisdomElements": [
+      "Eyes",
+      "Lotus"
+    ],
+    "notes": "Calm nighttime world"
+  },
+  {
+    "id": 23,
+    "slug": "star-forest",
+    "name": "Star Forest",
+    "theme": "Wonder and curiosity",
+    "mainCharacters": [
+      "Chinu",
+      "Pihu",
+      "Ved"
+    ],
+    "supportingCharacters": [
+      "Fireflies",
+      "birds",
+      "glowing insects"
+    ],
+    "preferredCharacterTypes": [
+      "Explorer",
+      "Dreamer"
+    ],
+    "settings": [
+      "Star Clearing",
+      "Starlight Trail",
+      "Ancient Trees"
+    ],
+    "natureMechanics": [
+      "Falling stars reveal clues"
+    ],
+    "props": [
+      "Star Compass",
+      "Lantern",
+      "Telescope"
+    ],
+    "typicalMissions": [
+      "Explore",
+      "Find & Discover"
+    ],
+    "typicalObstacles": [
+      "Puzzle",
+      "Nature"
+    ],
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestAdventureArchetypes": [
+      "Expedition",
+      "Hidden World",
+      "Discovery Journey"
+    ],
+    "bestEmotionalArcs": [
+      "Curiosity → Wonder"
+    ],
+    "bestWisdomElements": [
+      "Eyes",
+      "Trunk"
+    ],
+    "notes": "Excellent exploration world"
+  },
+  {
+    "id": 24,
+    "slug": "crystal-caverns",
+    "name": "Crystal Caverns",
+    "theme": "Discovery beneath the earth",
+    "mainCharacters": [
+      "Kabir",
+      "Arin"
+    ],
+    "supportingCharacters": [
+      "Bats",
+      "glowworms"
+    ],
+    "preferredCharacterTypes": [
+      "Explorer",
+      "Problem Solver"
+    ],
+    "settings": [
+      "Crystal Hall",
+      "Echo Tunnel",
+      "Hidden Chamber"
+    ],
+    "natureMechanics": [
+      "Light reflects through crystals"
+    ],
+    "props": [
+      "Crystal",
+      "Rope",
+      "Pickaxe",
+      "Lantern"
+    ],
+    "typicalMissions": [
+      "Treasure Hunt",
+      "Solve"
+    ],
+    "typicalObstacles": [
+      "Physical",
+      "Puzzle"
+    ],
+    "bestLifeDomains": [
+      "Learning & Problem Solving"
+    ],
+    "bestAdventureArchetypes": [
+      "Treasure Hunt",
+      "Mystery to Solve",
+      "Ancient Secret"
+    ],
+    "bestEmotionalArcs": [
+      "Curiosity → Achievement"
+    ],
+    "bestWisdomElements": [
+      "Trunk",
+      "Eyes"
+    ],
+    "notes": "Rich visual setting"
+  },
+  {
+    "id": 25,
+    "slug": "wishing-woods",
+    "name": "Wishing Woods",
+    "theme": "Hope, gratitude and possibility",
+    "mainCharacters": [
+      "Mira",
+      "Gauri",
+      "Chinu"
+    ],
+    "supportingCharacters": [
+      "Birds",
+      "rabbits",
+      "butterflies"
+    ],
+    "preferredCharacterTypes": [
+      "Caregiver",
+      "Dreamer"
+    ],
+    "settings": [
+      "Wish Tree",
+      "Flower Circle",
+      "Secret Grove"
+    ],
+    "natureMechanics": [
+      "Leaves carry wishes",
+      "flowers bloom with care"
+    ],
+    "props": [
+      "Wish Leaf",
+      "Ribbon",
+      "Lantern"
+    ],
+    "typicalMissions": [
+      "Help",
+      "Care & Restore"
+    ],
+    "typicalObstacles": [
+      "Emotional",
+      "Nature"
+    ],
+    "bestLifeDomains": [
+      "Helping & Caring",
+      "Self-Care"
+    ],
+    "bestAdventureArchetypes": [
+      "Wish or Blessing",
+      "Transformation Story",
+      "Gift of Giving"
+    ],
+    "bestEmotionalArcs": [
+      "Hopelessness → Hope"
+    ],
+    "bestWisdomElements": [
+      "Modak",
+      "Lotus"
+    ],
+    "notes": "Wishes inspire action only"
+  },
+  {
+    "id": 26,
+    "slug": "secret-library",
+    "name": "Secret Library",
+    "theme": "Curiosity and wisdom",
+    "mainCharacters": [
+      "Ved",
+      "Bodhi",
+      "Vani"
+    ],
+    "supportingCharacters": [
+      "Owls",
+      "mice",
+      "bookkeepers"
+    ],
+    "preferredCharacterTypes": [
+      "Mentor",
+      "Thinker"
+    ],
+    "settings": [
+      "Reading Hall",
+      "Scroll Room",
+      "Hidden Shelves"
+    ],
+    "natureMechanics": [
+      "Books reveal clues",
+      "moving shelves create puzzles"
+    ],
+    "props": [
+      "Scrolls",
+      "Keys",
+      "Magnifying Glass"
+    ],
+    "typicalMissions": [
+      "Learn",
+      "Solve",
+      "Discover"
+    ],
+    "typicalObstacles": [
+      "Puzzle",
+      "Emotional"
+    ],
+    "bestLifeDomains": [
+      "Learning & Problem Solving"
+    ],
+    "bestAdventureArchetypes": [
+      "Detective Story",
+      "Heritage Journey",
+      "Ancient Secret"
+    ],
+    "bestEmotionalArcs": [
+      "Curiosity → Understanding"
+    ],
+    "bestWisdomElements": [
+      "Eyes",
+      "Big Ears"
+    ],
+    "notes": "Knowledge-centered world"
+  },
+  {
+    "id": 27,
+    "slug": "forgotten-ruins",
+    "name": "Forgotten Ruins",
+    "theme": "History and hidden wisdom",
+    "mainCharacters": [
+      "Kabir",
+      "Ved",
+      "Bodhi"
+    ],
+    "supportingCharacters": [
+      "Lizards",
+      "birds",
+      "monkeys"
+    ],
+    "preferredCharacterTypes": [
+      "Explorer",
+      "Mentor"
+    ],
+    "settings": [
+      "Broken Temple",
+      "Stone Arch",
+      "Hidden Courtyard"
+    ],
+    "natureMechanics": [
+      "Ancient carvings reveal clues"
+    ],
+    "props": [
+      "Torch",
+      "Ancient Tablet",
+      "Rope"
+    ],
+    "typicalMissions": [
+      "Treasure Hunt",
+      "Explore"
+    ],
+    "typicalObstacles": [
+      "Physical",
+      "Puzzle"
+    ],
+    "bestLifeDomains": [
+      "Exploring & Nature",
+      "Learning & Problem Solving"
+    ],
+    "bestAdventureArchetypes": [
+      "Ancient Secret",
+      "Expedition",
+      "Mystery to Solve"
+    ],
+    "bestEmotionalArcs": [
+      "Curiosity → Wisdom"
+    ],
+    "bestWisdomElements": [
+      "Trunk",
+      "Eyes"
+    ],
+    "notes": "Ancient Indian feel"
+  },
+  {
+    "id": 28,
+    "slug": "hidden-cave-network",
+    "name": "Hidden Cave Network",
+    "theme": "Courage and perseverance",
+    "mainCharacters": [
+      "Arin",
+      "Kabir"
+    ],
+    "supportingCharacters": [
+      "Bats",
+      "cave insects"
+    ],
+    "preferredCharacterTypes": [
+      "Explorer"
+    ],
+    "settings": [
+      "Maze Tunnel",
+      "Underground Lake",
+      "Crystal Chamber"
+    ],
+    "natureMechanics": [
+      "Echoes guide the way"
+    ],
+    "props": [
+      "Rope",
+      "Lantern",
+      "Map"
+    ],
+    "typicalMissions": [
+      "Explore",
+      "Rescue"
+    ],
+    "typicalObstacles": [
+      "Physical",
+      "Puzzle"
+    ],
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestAdventureArchetypes": [
+      "Escape Adventure",
+      "Survival Adventure",
+      "Expedition"
+    ],
+    "bestEmotionalArcs": [
+      "Fear → Courage"
+    ],
+    "bestWisdomElements": [
+      "Trunk",
+      "Big Ears"
+    ],
+    "notes": "Adventure-heavy"
+  },
+  {
+    "id": 29,
+    "slug": "lost-island",
+    "name": "Lost Island",
+    "theme": "Survival and teamwork",
+    "mainCharacters": [
+      "Veer",
+      "Neel",
+      "Arin"
+    ],
+    "supportingCharacters": [
+      "Birds",
+      "turtles",
+      "monkeys"
+    ],
+    "preferredCharacterTypes": [
+      "Explorer",
+      "Leader"
+    ],
+    "settings": [
+      "Beach",
+      "Jungle",
+      "Cliffs",
+      "Hidden Lagoon"
+    ],
+    "natureMechanics": [
+      "Tides reshape paths",
+      "storms change terrain"
+    ],
+    "props": [
+      "Raft",
+      "Compass",
+      "Fishing Net"
+    ],
+    "typicalMissions": [
+      "Rescue",
+      "Explore",
+      "Build"
+    ],
+    "typicalObstacles": [
+      "Nature",
+      "Physical",
+      "Time"
+    ],
+    "bestLifeDomains": [
+      "Exploring & Nature",
+      "Helping & Caring"
+    ],
+    "bestAdventureArchetypes": [
+      "Survival Adventure",
+      "Great Journey",
+      "Rescue Mission"
+    ],
+    "bestEmotionalArcs": [
+      "Fear → Resilience"
+    ],
+    "bestWisdomElements": [
+      "Trunk",
+      "Mouse"
+    ],
+    "notes": "Survival world"
+  },
+  {
+    "id": 30,
+    "slug": "treasure-cliffs",
+    "name": "Treasure Cliffs",
+    "theme": "Adventure and perseverance",
+    "mainCharacters": [
+      "Kabir",
+      "Simha",
+      "Chinu"
+    ],
+    "supportingCharacters": [
+      "Eagles",
+      "mountain goats"
+    ],
+    "preferredCharacterTypes": [
+      "Explorer",
+      "Leader"
+    ],
+    "settings": [
+      "Cliff Trail",
+      "Hidden Cave",
+      "Rope Bridge"
+    ],
+    "natureMechanics": [
+      "Falling rocks",
+      "strong winds"
+    ],
+    "props": [
+      "Rope",
+      "Climbing Gear",
+      "Treasure Map"
+    ],
+    "typicalMissions": [
+      "Treasure Hunt",
+      "Explore"
+    ],
+    "typicalObstacles": [
+      "Physical",
+      "Time"
+    ],
+    "bestLifeDomains": [
+      "Exploring & Nature"
+    ],
+    "bestAdventureArchetypes": [
+      "Treasure Hunt",
+      "Hero's Trial",
+      "Race Against Time"
+    ],
+    "bestEmotionalArcs": [
+      "Self-Doubt → Achievement"
+    ],
+    "bestWisdomElements": [
+      "Trunk",
+      "Eyes"
+    ],
+    "notes": "High-energy adventure world"
+  },
+  {
+    "id": 31,
+    "slug": "great-caravan-trail",
+    "name": "Great Caravan Trail",
+    "theme": "Journey, cooperation and perseverance",
+    "mainCharacters": [
+      "Veer",
+      "Kabir",
+      "Mitra"
+    ],
+    "supportingCharacters": [
+      "Camels",
+      "traders",
+      "birds"
+    ],
+    "preferredCharacterTypes": [
+      "Explorer",
+      "Guide",
+      "Helper"
+    ],
+    "settings": [
+      "Caravan Camp",
+      "Sand Dunes",
+      "Oasis Stop",
+      "Trading Post"
+    ],
+    "natureMechanics": [
+      "Sandstorms change routes",
+      "stars guide travellers"
+    ],
+    "props": [
+      "Compass",
+      "Water Bag",
+      "Cart",
+      "Map"
+    ],
+    "typicalMissions": [
+      "Deliver",
+      "Escort",
+      "Explore"
+    ],
+    "typicalObstacles": [
+      "Nature",
+      "Time",
+      "Physical"
+    ],
+    "bestLifeDomains": [
+      "Responsibility",
+      "Exploring & Nature"
+    ],
+    "bestAdventureArchetypes": [
+      "Great Journey",
+      "Delivery Quest",
+      "Escort Mission"
+    ],
+    "bestEmotionalArcs": [
+      "Uncertainty → Confidence"
+    ],
+    "bestWisdomElements": [
+      "Trunk",
+      "Big Ears"
+    ],
+    "notes": "Travel-focused world"
+  },
+  {
+    "id": 32,
+    "slug": "desert-oasis",
+    "name": "Desert Oasis",
+    "theme": "Hope and resilience",
+    "mainCharacters": [
+      "Veer",
+      "Kabir",
+      "Gauri"
+    ],
+    "supportingCharacters": [
+      "Camels",
+      "desert foxes",
+      "birds"
+    ],
+    "preferredCharacterTypes": [
+      "Survivor",
+      "Caregiver"
+    ],
+    "settings": [
+      "Oasis",
+      "Palm Grove",
+      "Sand Dunes",
+      "Desert Cave"
+    ],
+    "natureMechanics": [
+      "Mirage",
+      "shifting dunes",
+      "scarce water"
+    ],
+    "props": [
+      "Water Flask",
+      "Rope",
+      "Shade Tent"
+    ],
+    "typicalMissions": [
+      "Rescue",
+      "Care & Restore",
+      "Explore"
+    ],
+    "typicalObstacles": [
+      "Nature",
+      "Time",
+      "Physical"
+    ],
+    "bestLifeDomains": [
+      "Self-Care",
+      "Exploring & Nature"
+    ],
+    "bestAdventureArchetypes": [
+      "Survival Adventure",
+      "Nature's Balance",
+      "Great Journey"
+    ],
+    "bestEmotionalArcs": [
+      "Hopelessness → Hope"
+    ],
+    "bestWisdomElements": [
+      "Trunk",
+      "Lotus"
+    ],
+    "notes": "Resilience stories"
+  },
+  {
+    "id": 33,
+    "slug": "snowy-highlands",
+    "name": "Snowy Highlands",
+    "theme": "Endurance and courage",
+    "mainCharacters": [
+      "Neel",
+      "Kabir",
+      "Veer"
+    ],
+    "supportingCharacters": [
+      "Snow hares",
+      "mountain birds",
+      "yaks"
+    ],
+    "preferredCharacterTypes": [
+      "Explorer",
+      "Leader"
+    ],
+    "settings": [
+      "Snow Trail",
+      "Frozen Lake",
+      "Ice Cave",
+      "Pine Forest"
+    ],
+    "natureMechanics": [
+      "Snowfall changes paths",
+      "frozen rivers become bridges"
+    ],
+    "props": [
+      "Snow Boots",
+      "Sled",
+      "Lantern",
+      "Rope"
+    ],
+    "typicalMissions": [
+      "Rescue",
+      "Explore",
+      "Learn"
+    ],
+    "typicalObstacles": [
+      "Physical",
+      "Nature",
+      "Time"
+    ],
+    "bestLifeDomains": [
+      "Self-Care",
+      "Exploring & Nature"
+    ],
+    "bestAdventureArchetypes": [
+      "Hero's Trial",
+      "Survival Adventure",
+      "Training Journey"
+    ],
+    "bestEmotionalArcs": [
+      "Fear → Resilience"
+    ],
+    "bestWisdomElements": [
+      "Eyes",
+      "Trunk"
+    ],
+    "notes": "Winter adventures"
+  },
+  {
+    "id": 34,
+    "slug": "volcano-valley",
+    "name": "Volcano Valley",
+    "theme": "Bravery under pressure",
+    "mainCharacters": [
+      "Simha",
+      "Kabir",
+      "Veer"
+    ],
+    "supportingCharacters": [
+      "Eagles",
+      "mountain goats"
+    ],
+    "preferredCharacterTypes": [
+      "Leader",
+      "Protector"
+    ],
+    "settings": [
+      "Lava Ridge",
+      "Ash Valley",
+      "Stone Bridge",
+      "Cave Shelter"
+    ],
+    "natureMechanics": [
+      "Heat creates urgency",
+      "ash hides clues"
+    ],
+    "props": [
+      "Heat Shield",
+      "Rope",
+      "Water Flask"
+    ],
+    "typicalMissions": [
+      "Rescue",
+      "Protect",
+      "Escape"
+    ],
+    "typicalObstacles": [
+      "Physical",
+      "Time",
+      "Nature"
+    ],
+    "bestLifeDomains": [
+      "Responsibility",
+      "Exploring & Nature"
+    ],
+    "bestAdventureArchetypes": [
+      "Escape Adventure",
+      "Race Against Time",
+      "Hero's Trial"
+    ],
+    "bestEmotionalArcs": [
+      "Panic → Courage"
+    ],
+    "bestWisdomElements": [
+      "Trunk",
+      "Eyes"
+    ],
+    "notes": "High-stakes world"
+  },
+  {
+    "id": 35,
+    "slug": "sky-islands",
+    "name": "Sky Islands",
+    "theme": "Wonder and exploration",
+    "mainCharacters": [
+      "Mayur",
+      "Vani",
+      "Pihu"
+    ],
+    "supportingCharacters": [
+      "Birds",
+      "butterflies",
+      "cloud creatures"
+    ],
+    "preferredCharacterTypes": [
+      "Explorer",
+      "Dreamer"
+    ],
+    "settings": [
+      "Floating Islands",
+      "Sky Bridge",
+      "Wind Garden"
+    ],
+    "natureMechanics": [
+      "Wind currents connect islands"
+    ],
+    "props": [
+      "Glider",
+      "Feather",
+      "Wind Compass"
+    ],
+    "typicalMissions": [
+      "Explore",
+      "Discover"
+    ],
+    "typicalObstacles": [
+      "Nature",
+      "Puzzle"
+    ],
+    "bestLifeDomains": [
+      "Exploring & Nature",
+      "Art",
+      "Music & Creativity"
+    ],
+    "bestAdventureArchetypes": [
+      "Hidden World",
+      "Expedition",
+      "Great Journey"
+    ],
+    "bestEmotionalArcs": [
+      "Curiosity → Wonder"
+    ],
+    "bestWisdomElements": [
+      "Eyes",
+      "Big Ears"
+    ],
+    "notes": "Fantasy without magic solving problems"
+  },
+  {
+    "id": 36,
+    "slug": "dream-world",
+    "name": "Dream World",
+    "theme": "Reflection and imagination",
+    "mainCharacters": [
+      "Ved",
+      "Bodhi",
+      "Pihu"
+    ],
+    "supportingCharacters": [
+      "Fireflies",
+      "dream animals"
+    ],
+    "preferredCharacterTypes": [
+      "Mentor",
+      "Thinker"
+    ],
+    "settings": [
+      "Dream Forest",
+      "Floating Steps",
+      "Moon Garden"
+    ],
+    "natureMechanics": [
+      "Dreams mirror emotions and reveal insights"
+    ],
+    "props": [
+      "Dream Journal",
+      "Lantern",
+      "Feather"
+    ],
+    "typicalMissions": [
+      "Learn",
+      "Discover"
+    ],
+    "typicalObstacles": [
+      "Emotional",
+      "Puzzle"
+    ],
+    "bestLifeDomains": [
+      "Self-Care",
+      "Learning & Problem Solving"
+    ],
+    "bestAdventureArchetypes": [
+      "Dream Adventure",
+      "Transformation Story",
+      "Wish or Blessing"
+    ],
+    "bestEmotionalArcs": [
+      "Confusion → Clarity"
+    ],
+    "bestWisdomElements": [
+      "Eyes",
+      "Lotus"
+    ],
+    "notes": "Insight comes from reflection"
+  },
+  {
+    "id": 37,
+    "slug": "toy-kingdom",
+    "name": "Toy Kingdom",
+    "theme": "Play, creativity and teamwork",
+    "mainCharacters": [
+      "Chinu",
+      "Kavi",
+      "Anu"
+    ],
+    "supportingCharacters": [
+      "Toy animals",
+      "dolls",
+      "wooden soldiers"
+    ],
+    "preferredCharacterTypes": [
+      "Creator",
+      "Friend"
+    ],
+    "settings": [
+      "Toy Workshop",
+      "Block City",
+      "Puppet Theatre"
+    ],
+    "natureMechanics": [
+      "Toys move through imagination and cooperation"
+    ],
+    "props": [
+      "Blocks",
+      "Puzzle Pieces",
+      "Toy Cart",
+      "Strings"
+    ],
+    "typicalMissions": [
+      "Build",
+      "Create",
+      "Help"
+    ],
+    "typicalObstacles": [
+      "Social",
+      "Puzzle"
+    ],
+    "bestLifeDomains": [
+      "Playing & Games",
+      "Building & Creating"
+    ],
+    "bestAdventureArchetypes": [
+      "Build Together",
+      "Performance Story",
+      "Team Adventure"
+    ],
+    "bestEmotionalArcs": [
+      "Frustration → Creativity"
+    ],
+    "bestWisdomElements": [
+      "Mouse",
+      "Modak"
+    ],
+    "notes": "Play-based learning"
+  },
+  {
+    "id": 38,
+    "slug": "celebration-village",
+    "name": "Celebration Village",
+    "theme": "Joy, gratitude and community",
+    "mainCharacters": [
+      "Mayur",
+      "Gauri",
+      "Vani"
+    ],
+    "supportingCharacters": [
+      "Musicians",
+      "dancers",
+      "villagers"
+    ],
+    "preferredCharacterTypes": [
+      "Organizer",
+      "Performer"
+    ],
+    "settings": [
+      "Festival Square",
+      "Food Stalls",
+      "Temple Courtyard"
+    ],
+    "natureMechanics": [
+      "Flowers bloom",
+      "bells ring",
+      "lamps light pathways"
+    ],
+    "props": [
+      "Garlands",
+      "Drums",
+      "Diyas",
+      "Modaks"
+    ],
+    "typicalMissions": [
+      "Celebrate",
+      "Organize",
+      "Help"
+    ],
+    "typicalObstacles": [
+      "Time",
+      "Social"
+    ],
+    "bestLifeDomains": [
+      "Celebrations & Traditions",
+      "School & Community"
+    ],
+    "bestAdventureArchetypes": [
+      "Festival Adventure",
+      "Celebration Preparation",
+      "Community Project"
+    ],
+    "bestEmotionalArcs": [
+      "Excitement → Belonging"
+    ],
+    "bestWisdomElements": [
+      "Modak",
+      "Lotus"
+    ],
+    "notes": "Ideal for Ganesh Chaturthi stories"
+  },
+  {
+    "id": 39,
+    "slug": "temple-courtyard",
+    "name": "Temple Courtyard",
+    "theme": "Wisdom, respect and gratitude",
+    "mainCharacters": [
+      "Bodhi",
+      "Ved",
+      "Gauri"
+    ],
+    "supportingCharacters": [
+      "Peacocks",
+      "squirrels",
+      "temple helpers"
+    ],
+    "preferredCharacterTypes": [
+      "Mentor",
+      "Caregiver"
+    ],
+    "settings": [
+      "Temple Steps",
+      "Bell Tower",
+      "Sacred Tree",
+      "Courtyard"
+    ],
+    "natureMechanics": [
+      "Bells signal moments",
+      "breeze carries prayers"
+    ],
+    "props": [
+      "Bell",
+      "Lamp",
+      "Prayer Mat",
+      "Flowers"
+    ],
+    "typicalMissions": [
+      "Learn",
+      "Help",
+      "Discover"
+    ],
+    "typicalObstacles": [
+      "Emotional",
+      "Puzzle"
+    ],
+    "bestLifeDomains": [
+      "Self-Care",
+      "Celebrations & Traditions"
+    ],
+    "bestAdventureArchetypes": [
+      "Heritage Journey",
+      "Ancient Secret",
+      "Promise Keeper"
+    ],
+    "bestEmotionalArcs": [
+      "Restlessness → Peace"
+    ],
+    "bestWisdomElements": [
+      "Lotus",
+      "Eyes",
+      "Trunk"
+    ],
+    "notes": "Quiet wisdom stories"
+  },
+  {
+    "id": 40,
+    "slug": "story-house",
+    "name": "Story House",
+    "theme": "Stories, imagination and learning",
+    "mainCharacters": [
+      "Ved",
+      "Chinu",
+      "Pihu"
+    ],
+    "supportingCharacters": [
+      "Storytellers",
+      "birds",
+      "mice"
+    ],
+    "preferredCharacterTypes": [
+      "Mentor",
+      "Creator"
+    ],
+    "settings": [
+      "Reading Corner",
+      "Story Hall",
+      "Attic",
+      "Secret Bookshelf"
+    ],
+    "natureMechanics": [
+      "Stories reveal clues",
+      "books inspire adventures"
+    ],
+    "props": [
+      "Story Scrolls",
+      "Books",
+      "Magnifying Glass",
+      "Story Chest"
+    ],
+    "typicalMissions": [
+      "Learn",
+      "Solve",
+      "Find & Discover"
+    ],
+    "typicalObstacles": [
+      "Puzzle",
+      "Emotional"
+    ],
+    "bestLifeDomains": [
+      "Learning & Problem Solving",
+      "Art",
+      "Music & Creativity"
+    ],
+    "bestAdventureArchetypes": [
+      "Heritage Journey",
+      "Mystery to Solve",
+      "Secret Discovery"
+    ],
+    "bestEmotionalArcs": [
+      "Curiosity → Understanding"
+    ],
+    "bestWisdomElements": [
+      "Big Ears",
+      "Eyes"
+    ],
+    "notes": "Gateway to storytelling adventures"
+  }
+]

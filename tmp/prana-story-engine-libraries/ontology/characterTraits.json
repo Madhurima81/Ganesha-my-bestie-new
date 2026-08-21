@@ -1,0 +1,8 @@
+[
+  {"id": "TRAIT_OBSERVER"}, {"id": "TRAIT_BUILDER"}, {"id": "TRAIT_EXPLORER"}, {"id": "TRAIT_INVENTOR"},
+  {"id": "TRAIT_HELPER"}, {"id": "TRAIT_LISTENER"}, {"id": "TRAIT_PERSISTENT"}, {"id": "TRAIT_IMPULSIVE"},
+  {"id": "TRAIT_CAUTIOUS"}, {"id": "TRAIT_PROTECTIVE"}, {"id": "TRAIT_PLAYFUL"}, {"id": "TRAIT_ANALYTICAL"},
+  {"id": "TRAIT_EMPATHETIC"}, {"id": "TRAIT_RESOURCEFUL"}, {"id": "TRAIT_DREAMER"}, {"id": "TRAIT_STUBBORN"},
+  {"id": "TRAIT_GENTLE"}, {"id": "TRAIT_DETERMINED"}, {"id": "TRAIT_GENEROUS"}, {"id": "TRAIT_SHY"},
+  {"id": "TRAIT_METICULOUS"}, {"id": "TRAIT_MISCHIEVOUS"}, {"id": "TRAIT_PATIENT"}, {"id": "TRAIT_OPTIMISTIC"}
+]

@@ -1,0 +1,274 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "storyPackage.schema.json",
+  "title": "Story Package",
+  "description": "Final production package for export. It traces every canonical upstream artifact (Blueprint, Plan, Final Story, Illustration Plan/Bible, Prompt Pack, Layout) by reference rather than duplicating their content, and adds only export-specific data: illustration asset locations, format metadata, and production validation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "status",
+    "storyId",
+    "sourceReferences",
+    "story",
+    "layout",
+    "illustrations",
+    "metadata",
+    "productionValidation"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "1.0"
+    },
+
+    "status": {
+      "type": "string",
+      "enum": [
+        "PRODUCTION_READY",
+        "EXPORTED"
+      ]
+    },
+
+    "storyId": {
+      "type": "string"
+    },
+
+    "sourceReferences": {
+      "$ref": "#/$defs/sourceReferences"
+    },
+
+    "story": {
+      "$ref": "#/$defs/story"
+    },
+
+    "layout": {
+      "$ref": "#/$defs/layout"
+    },
+
+    "illustrations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/illustration"
+      }
+    },
+
+    "metadata": {
+      "$ref": "#/$defs/metadata"
+    },
+
+    "productionValidation": {
+      "$ref": "#/$defs/validation"
+    }
+  },
+
+  "$defs": {
+
+    "reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+
+    "sourceReferences": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "storyBlueprintReference",
+        "storyPlanReference",
+        "finalStoryReference",
+        "illustrationPlanReference",
+        "illustrationBibleReference",
+        "promptPackReference",
+        "layoutReference"
+      ],
+      "description": "Traces this package back to every canonical upstream artifact. The Story Package does not duplicate their content, only references it — the artifacts themselves remain the source of truth.",
+      "properties": {
+        "storyBlueprintReference": {
+          "$ref": "#/$defs/reference"
+        },
+        "storyPlanReference": {
+          "$ref": "#/$defs/reference"
+        },
+        "finalStoryReference": {
+          "$ref": "#/$defs/reference"
+        },
+        "illustrationPlanReference": {
+          "$ref": "#/$defs/reference"
+        },
+        "illustrationBibleReference": {
+          "$ref": "#/$defs/reference"
+        },
+        "promptPackReference": {
+          "$ref": "#/$defs/reference"
+        },
+        "layoutReference": {
+          "$ref": "#/$defs/reference"
+        }
+      }
+    },
+
+    "story": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "title",
+        "pageCount"
+      ],
+      "description": "Lightweight identifying summary only. The full manuscript is not duplicated here — it lives in the LOCKED Final Story artifact referenced by sourceReferences.finalStoryReference.",
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+
+        "pageCount": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+
+    "layout": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "format",
+        "pageCount"
+      ],
+      "description": "Lightweight summary only. The full layout — page-by-page text and illustration placement — lives in the Book Layout artifact referenced by sourceReferences.layoutReference.",
+      "properties": {
+        "format": {
+          "type": "string"
+        },
+
+        "pageCount": {
+          "type": "integer",
+          "minimum": 1
+        },
+
+        "exportProfiles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+
+    "illustration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "assetId",
+        "page",
+        "assetLocation"
+      ],
+      "description": "Export-specific data not present upstream: the resolved file location of each generated illustration asset.",
+      "properties": {
+        "assetId": {
+          "type": "string"
+        },
+
+        "page": {
+          "type": "integer",
+          "minimum": 1
+        },
+
+        "assetLocation": {
+          "type": "string"
+        },
+
+        "format": {
+          "type": "string"
+        },
+
+        "width": {
+          "type": "integer",
+          "minimum": 1
+        },
+
+        "height": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "title"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+
+        "author": {
+          "type": "string"
+        },
+
+        "language": {
+          "type": "string"
+        },
+
+        "targetAge": {
+          "type": "string"
+        },
+
+        "version": {
+          "type": "string"
+        },
+
+        "createdAt": {
+          "type": "string"
+        },
+
+        "updatedAt": {
+          "type": "string"
+        }
+      }
+    },
+
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "blockingFailures"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "PASS"
+          ]
+        },
+
+        "blockingFailures": {
+          "type": "integer",
+          "const": 0
+        },
+
+        "warnings": {
+          "type": "integer",
+          "minimum": 0
+        },
+
+        "checksPassed": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}

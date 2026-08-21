@@ -1,0 +1,11 @@
+{
+  "true_words": [
+    "CLUE",
+    "TRUE"
+  ],
+  "guess_words": [
+    "GUESS",
+    "FLASH"
+  ],
+  "secret_word": "CLUE"
+}

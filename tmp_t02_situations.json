@@ -1,0 +1,58 @@
+[
+  {
+    "id": "SIT054",
+    "title": "Highly anticipated movie or event cancelled",
+    "storySeed": {
+      "childExperience": "Kavi has been excited about a special outing or event, but it is cancelled.",
+      "immediateWant": "Have the planned experience happen.",
+      "immediateObstacle": "The cancellation cannot be undone.",
+      "emotionalTension": "Kavi feels that all the anticipation was wasted.",
+      "context": [
+        "family outing or special event"
+      ],
+      "narrativeSummary": "Kavi has been counting down the days. Then, just before the big day, the message arrives: cancelled."
+    }
+  },
+  {
+    "id": "SIT102",
+    "title": "Stuck indoors on a rainy day with nothing to do",
+    "storySeed": {
+      "childExperience": "Heavy rain keeps Kavi indoors, and the activities that usually make a rainy day fun have already lost their appeal.",
+      "immediateWant": "Find something interesting to do.",
+      "immediateObstacle": "Kavi cannot go outside and has run out of ideas.",
+      "emotionalTension": "Boredom grows until Kavi starts feeling trapped by the day.",
+      "context": [
+        "home during heavy rain"
+      ],
+      "narrativeSummary": "Rain taps against the window. Kavi has finished the puzzle, built the tower, and played the game. Kavi looks at the rain again. Still raining."
+    }
+  },
+  {
+    "id": "SIT124",
+    "title": "Game or app changes interface completely",
+    "storySeed": {
+      "childExperience": "Kavi opens a favourite game or app and discovers that its layout has completely changed after an update.",
+      "immediateWant": "Find the familiar controls and start playing.",
+      "immediateObstacle": "The buttons, menus, and paths Kavi knows are no longer where they used to be.",
+      "emotionalTension": "Something familiar suddenly feels confusing and unfamiliar.",
+      "context": [
+        "at home while using a familiar game or app"
+      ],
+      "narrativeSummary": "Kavi taps the usual button. Nothing happens. Kavi looks again. The screen seems to have rearranged itself overnight."
+    }
+  },
+  {
+    "id": "SIT168",
+    "title": "Group project where everyone has different ideas",
+    "storySeed": {
+      "childExperience": "Kavi and several classmates are working on a group project, but each child has a different idea about what the finished project should look like.",
+      "immediateWant": "Create something the whole group can be proud of.",
+      "immediateObstacle": "The group cannot agree on which idea to follow.",
+      "emotionalTension": "Everyone believes their own idea is best, and disagreement begins turning into frustration.",
+      "context": [
+        "classroom group project"
+      ],
+      "narrativeSummary": "Kavi puts one idea on the table. Another child immediately shakes their head. Then someone else has a completely different idea. Soon the table is covered with plans—and nobody is listening."
+    }
+  }
+]

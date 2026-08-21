@@ -1,0 +1,2183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prana Kids Story Idea Generator</title>
+  <style>
+    :root {
+      --bg: #faf7f2;
+      --card: #ffffff;
+      --ink: #2f241d;
+      --sub: #766b61;
+      --line: #e7ddd2;
+      --sage: #6d7b65;
+      --sage-deep: #55614e;
+      --sage-soft: #edf2ea;
+      --earth: #ba7e58;
+      --earth-soft: #f6e7da;
+      --gold: #c79b45;
+      --gold-soft: #fbf1df;
+      --radius: 18px;
+      --shadow: 0 18px 40px rgba(47, 36, 29, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #fdfbf8 0%, var(--bg) 100%);
+      color: var(--ink);
+      font-family: Arial, sans-serif;
+    }
+
+    .wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 32px 20px 80px;
+    }
+
+    .top {
+      text-align: center;
+      margin-bottom: 26px;
+    }
+
+    .top h1 {
+      margin: 0 0 8px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      line-height: 1.08;
+    }
+
+    .top p {
+      margin: 0 auto;
+      max-width: 720px;
+      color: var(--sub);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .status {
+      min-height: 18px;
+      margin-top: 10px;
+      color: var(--sub);
+      font-size: 12px;
+    }
+
+    .steps {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 24px 0 28px;
+    }
+
+    .step-pill {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--sub);
+      border-radius: 999px;
+      padding: 7px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .step-pill.active {
+      background: var(--sage);
+      border-color: var(--sage);
+      color: #fff;
+    }
+
+    .step-pill.done {
+      background: var(--sage-soft);
+      border-color: #d8dfd4;
+      color: var(--sage-deep);
+      cursor: pointer;
+    }
+
+    .screen { display: none; }
+
+    .screen.visible {
+      display: block;
+      animation: fadeUp 0.2s ease;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 26px;
+    }
+
+    .card h2 {
+      margin: 0 0 4px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 24px;
+      line-height: 1.2;
+    }
+
+    .sub {
+      margin: 0 0 16px;
+      color: var(--sub);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .entry-toggle,
+    .pill-row,
+    .chip-select,
+    .length-row,
+    .row,
+    .btnrow {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .entry-toggle {
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .pill-row {
+      gap: 14px 16px;
+      margin-top: 8px;
+      margin-bottom: 14px;
+    }
+
+    .row > *,
+    .length-row > * {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .entry-btn,
+    .pill,
+    .chip,
+    .length-chip,
+    button.primary,
+    button.ghost {
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .entry-btn,
+    .pill,
+    .chip,
+    .length-chip {
+      border: 1.5px solid var(--line);
+      background: #fff;
+      color: var(--sub);
+      padding: 10px 16px;
+    }
+
+    .entry-btn.active,
+    .pill.active,
+    .chip.active,
+    .length-chip.active {
+      border-color: var(--sage);
+      background: var(--sage-soft);
+      color: var(--sage-deep);
+    }
+
+    .pill.sym-pill {
+      border-radius: 999px;
+      padding: 10px 18px;
+    }
+
+    label {
+      display: block;
+      margin: 14px 0 6px;
+      color: var(--sub);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    input[type="text"], select, textarea {
+      width: 100%;
+      padding: 11px 12px;
+      border: 1.5px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      color: var(--ink);
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+    }
+
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    .sit-list {
+      max-height: 360px;
+      overflow-y: auto;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      margin-top: 10px;
+      background: #fff;
+    }
+
+    .sit-item {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      cursor: pointer;
+      font-size: 13.5px;
+      line-height: 1.45;
+    }
+
+    .sit-item:last-child { border-bottom: none; }
+    .sit-item:hover { background: #faf8f5; }
+
+    .sit-item.selected {
+      background: var(--sage-soft);
+      border-left: 3px solid var(--sage);
+      padding-left: 11px;
+    }
+
+    .tag {
+      display: inline-block;
+      margin-right: 6px;
+      margin-bottom: 6px;
+      border-radius: 999px;
+      background: var(--earth-soft);
+      color: var(--earth);
+      padding: 2px 8px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .hint {
+      margin-top: 6px;
+      color: var(--sub);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .filter-bar {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      margin-top: 10px;
+      margin-bottom: 6px;
+      flex-wrap: wrap;
+    }
+
+    .filter-summary {
+      color: var(--sub);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .spine-row {
+      display: flex;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .spine-row:last-child { border-bottom: none; }
+
+    .spine-row b {
+      min-width: 120px;
+      color: var(--sub);
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .symbol-card {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      background: var(--gold-soft);
+      border: 1px solid #ead7aa;
+      border-radius: 12px;
+      padding: 14px;
+      margin-top: 12px;
+    }
+
+    .symbol-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: #fff;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      flex: none;
+    }
+
+    .symbol-card .say {
+      margin-top: 5px;
+      color: #8a6e2e;
+      font-style: italic;
+      font-size: 13px;
+    }
+
+    .strategy-card {
+      border: 1.5px solid var(--line);
+      border-radius: 12px;
+      padding: 16px 18px;
+      cursor: pointer;
+    }
+
+    #strategyList {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      margin-top: 10px;
+    }
+
+    .strategy-card:hover { border-color: var(--sage); }
+
+    .strategy-card.selected {
+      border-color: var(--sage);
+      background: var(--sage-soft);
+    }
+
+    .strategy-card h4 {
+      margin: 0 0 4px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 18px;
+      color: var(--sage-deep);
+    }
+
+    .strategy-card p {
+      margin: 0;
+      color: var(--sub);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .strategy-card .feel {
+      margin-top: 7px;
+      color: var(--earth);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .suggested-badge {
+      display: inline-block;
+      margin-left: 8px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--gold);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      vertical-align: middle;
+    }
+
+    .noted-badge {
+      display: inline-block;
+      margin-left: 8px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--earth-soft);
+      color: var(--earth);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      vertical-align: middle;
+    }
+
+    .form-badge {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 20px;
+      background: var(--sage);
+      color: #fff;
+      font-weight: 700;
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+
+    .form-why {
+      font-size: 12.5px;
+      color: var(--sub);
+      margin-bottom: 14px;
+      line-height: 1.55;
+    }
+
+    .locked-tag {
+      display: inline-block;
+      margin-bottom: 10px;
+      background: #e9f6eb;
+      color: #4f8b58;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .note {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 22px;
+    }
+
+    .note h3 {
+      margin: 18px 0 6px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 20px;
+      color: var(--sage-deep);
+    }
+
+    .note h3:first-child { margin-top: 0; }
+
+    .note p {
+      margin: 3px 0 0;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .note ul {
+      margin: 6px 0 0;
+      padding-left: 20px;
+    }
+
+    .note li {
+      font-size: 14px;
+      line-height: 1.7;
+      margin-bottom: 4px;
+    }
+
+    .title-ideas {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .title-idea {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 18px;
+    }
+
+    .beat-plan {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .beat-item {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px 16px;
+      background: #fffdf9;
+    }
+
+    .beat-label {
+      color: var(--sage-deep);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .beat-text {
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .beat-source {
+      margin-top: 8px;
+      color: var(--sub);
+      font-size: 12px;
+      line-height: 1.45;
+      font-style: italic;
+    }
+
+    .sample-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin: 14px 0 18px;
+    }
+
+    .sample-card {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fffdfa;
+      padding: 16px 18px;
+    }
+
+    .sample-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: baseline;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+
+    .sample-title {
+      color: var(--sage-deep);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .sample-count {
+      color: var(--sub);
+      font-size: 12px;
+    }
+
+    .sample-text {
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    button.primary,
+    button.ghost {
+      padding: 12px 18px;
+    }
+
+    button.primary {
+      border: none;
+      background: var(--sage);
+      color: #fff;
+    }
+
+    button.primary:hover { background: var(--sage-deep); }
+
+    button.ghost {
+      background: #fff;
+      border: 1.5px solid var(--line);
+      color: var(--ink);
+    }
+
+    button.ghost:hover { border-color: var(--sage); }
+
+    button.small {
+      padding: 7px 11px;
+      font-size: 12px;
+    }
+
+    @media (max-width: 700px) {
+      .card { padding: 20px; }
+      .spine-row { flex-direction: column; gap: 4px; }
+      .spine-row b { min-width: 0; }
+      .btnrow > * { flex: 1 1 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <h1>Prana Kids Story Idea Generator</h1>
+      <p>Pick a situation, lock the emotional spine, choose how the story should move, and get a writer-facing story note instead of a fake finished story.</p>
+      <div class="status" id="statusText">Loading libraries...</div>
+    </div>
+
+    <div class="steps" id="steps"></div>
+
+    <div class="screen" id="screen1">
+      <div class="card">
+        <h2>1. Start From...</h2>
+        <div class="sub">Start from a symbol, a child feeling, or browse all situations. The idea is to narrow the story seed before we shape the story.</div>
+
+        <div class="entry-toggle" id="entryToggle">
+          <button class="entry-btn active" data-mode="symbol" type="button">Start from a Symbol</button>
+          <button class="entry-btn" data-mode="emotion" type="button">Start from a Feeling</button>
+          <button class="entry-btn" data-mode="all" type="button">Browse All</button>
+        </div>
+
+        <div id="symbolEntry" class="entry-panel">
+          <div class="pill-row" id="symbolEntryPills"></div>
+        </div>
+
+        <div id="emotionEntry" class="entry-panel" style="display:none;">
+          <div class="pill-row" id="emotionEntryPills"></div>
+        </div>
+
+        <div class="row" style="margin-top:14px;">
+          <input type="text" id="searchBox" placeholder="Search situations... for example: drawing, friend, scared">
+          <select id="catFilter">
+            <option value="">All categories</option>
+          </select>
+        </div>
+
+        <div class="filter-bar">
+          <div class="filter-summary" id="filterSummary"></div>
+          <button class="ghost small" id="clearFilters" type="button">Clear Filters</button>
+        </div>
+
+        <div class="sit-list" id="sitList"></div>
+        <div class="hint">Choose one situation to lock the emotional spine.</div>
+
+        <div class="btnrow">
+          <button class="primary" id="toStep2" type="button">Continue</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="screen" id="screen2">
+      <div class="card">
+        <h2>2. Story Core</h2>
+        <div class="sub">This is the emotional heart. The symbol can be switched, but the core shift should stay coherent.</div>
+
+        <div class="spine-row"><b>Situation</b><span id="coreSit"></span></div>
+        <div class="spine-row"><b>Core Need</b><span id="coreNeed"></span></div>
+        <div class="spine-row"><b>False Belief</b><span id="coreFalse"></span></div>
+        <div class="spine-row"><b>True Belief</b><span id="coreTrue"></span></div>
+
+        <div class="symbol-card" id="symbolCard"></div>
+        <div class="pill-row" id="symbolAlts"></div>
+        <div class="hint">Tap another symbol if it feels like a better carrier of the story idea.</div>
+
+        <div class="btnrow">
+          <button class="ghost" id="toStep1b" type="button">Back</button>
+          <button class="primary" id="toStep3" type="button">This feels right</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="screen" id="screen3">
+      <div class="card">
+        <h2>3. Story Shape</h2>
+        <div class="sub">This is the important part. The strategy changes how the same emotional spine becomes a different story.</div>
+
+        <div id="strategyList"></div>
+
+        <div style="margin-top:18px; display:flex; justify-content:space-between; align-items:center;">
+          <div><b style="font-size:13px;">Character</b></div>
+          <button class="ghost small" id="shuffleChar" type="button">Shuffle</button>
+        </div>
+        <div class="chip-select" id="charChips"></div>
+
+        <div style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+          <div><b style="font-size:13px;">Setting Cue</b></div>
+          <button class="ghost small" id="shuffleSetting" type="button">Shuffle</button>
+        </div>
+        <div class="chip-select" id="settingChips"></div>
+
+        <div class="btnrow">
+          <button class="ghost" id="toStep2b" type="button">Back</button>
+          <button class="primary" id="toStep4" type="button">Build Story Idea</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="screen" id="screen4">
+      <div class="card">
+        <span class="locked-tag">Story Plan Ready</span>
+        <h2>4. Story Plan</h2>
+        <div class="sub">This is the auditable plan screen: core spine, form, mechanism, and beat flow pulled from the selected situation.</div>
+        <div class="note" id="ideaNote"></div>
+        <div class="btnrow">
+          <button class="ghost" id="toStep3b" type="button">Back</button>
+          <button class="ghost small" id="regenTitles" type="button">New Titles</button>
+          <button class="ghost small" id="regenBeats" type="button">New Beat Flavor</button>
+          <button class="primary" id="toStep5" type="button">Get Writing Prompt</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="screen" id="screen5">
+      <div class="card">
+        <h2>5. Writing Prompt</h2>
+        <div class="sub">Use this to write yourself, or paste into Claude/ChatGPT to get a first draft.</div>
+        <div class="length-row" id="lengthRow"></div>
+        <div class="sample-stack" id="sampleStack"></div>
+        <textarea id="promptBox" style="min-height:260px; font-size:12.5px; line-height:1.6;"></textarea>
+        <div class="btnrow">
+          <button class="ghost" id="toStep4b" type="button">Back</button>
+          <button class="primary" id="copyPrompt" type="button">Copy Prompt</button>
+          <button class="ghost" id="startOver" type="button">Start New Idea</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="./story-idea-mvp-data.js"></script>
+  <script>
+    const EMBEDDED_FALLBACK = {
+      situations: [
+        {
+          id: "SIT003",
+          title: "Drawing does not look as good as someone else's",
+          parentLabel: "Your drawing feels worse than another child's drawing",
+          storySeed: {
+            childExperience: "A child compares their drawing to someone else's and feels their own picture is not good enough.",
+            narrativeSummary: "A child looks at another drawing, then at their own, and suddenly their own page feels small and wrong."
+          },
+          emotionIds: ["EMOTION_SELF_DOUBT", "EMOTION_EMBARRASSMENT"],
+          ontology: {
+            needId: "NEED_IDENTITY",
+            falseBeliefText: "Good means looking like somebody else.",
+            trueBeliefText: "My way of seeing can have value even if it looks different.",
+            ganeshaSymbolPrimary: "GAN_SYM_BROKEN_TUSK",
+            ganeshaSymbolSecondary: "GAN_SYM_EYES"
+          }
+        },
+        {
+          id: "SIT013",
+          title: "Asking why a rule exists",
+          parentLabel: "A child keeps asking why a rule has to be followed",
+          storySeed: {
+            childExperience: "A child thinks a rule is pointless and wants a better reason.",
+            narrativeSummary: "A child bumps against a rule and does not want obedience alone to be the answer."
+          },
+          emotionIds: ["EMOTION_CURIOSITY", "EMOTION_FRUSTRATION"],
+          ontology: {
+            needId: "NEED_CURIOSITY",
+            falseBeliefText: "If I do not understand a rule, it must not matter.",
+            trueBeliefText: "Looking closer can reveal a reason I could not see at first.",
+            ganeshaSymbolPrimary: "GAN_SYM_EYES",
+            ganeshaSymbolSecondary: "GAN_SYM_BIG_EARS"
+          }
+        },
+        {
+          id: "SIT017",
+          title: "Misreading someone else's behavior",
+          parentLabel: "You think someone is ignoring you, but that is not the full story",
+          storySeed: {
+            childExperience: "A child assumes another person is being rude or distant.",
+            narrativeSummary: "What first feels like rejection may actually be something the child has not understood yet."
+          },
+          emotionIds: ["EMOTION_SADNESS", "EMOTION_CONFUSION"],
+          ontology: {
+            needId: "NEED_CONNECTION",
+            falseBeliefText: "If someone pulls away, it must be about me.",
+            trueBeliefText: "There can be another story behind what I first see.",
+            ganeshaSymbolPrimary: "GAN_SYM_BIG_EARS",
+            ganeshaSymbolSecondary: "GAN_SYM_EYES"
+          }
+        },
+        {
+          id: "SIT031",
+          title: "Trying to understand a confusing change",
+          parentLabel: "Something changed and the child cannot yet make sense of it",
+          storySeed: {
+            childExperience: "A familiar thing changes and the child keeps circling around what it means.",
+            narrativeSummary: "A child notices a change, asks one question, and ends up needing a deeper one."
+          },
+          emotionIds: ["EMOTION_CONFUSION", "EMOTION_WORRY"],
+          ontology: {
+            needId: "NEED_ADAPTABILITY",
+            falseBeliefText: "If something changes, I am losing what mattered.",
+            trueBeliefText: "Understanding the change can make it less frightening.",
+            ganeshaSymbolPrimary: "GAN_SYM_CURVED_TRUNK",
+            ganeshaSymbolSecondary: "GAN_SYM_EYES"
+          }
+        },
+        {
+          id: "SIT033",
+          title: "Noticing something hidden in plain sight",
+          parentLabel: "A child slowly realizes there was more to see than they first noticed",
+          storySeed: {
+            childExperience: "A child misses a clue at first, then another clue reorients the way they look.",
+            narrativeSummary: "The child starts with one interpretation, but each clue slightly bends the next question."
+          },
+          emotionIds: ["EMOTION_CURIOSITY", "EMOTION_WONDER"],
+          ontology: {
+            needId: "NEED_CURIOSITY",
+            falseBeliefText: "What I first see must be the whole picture.",
+            trueBeliefText: "Looking again can reveal what was always there.",
+            ganeshaSymbolPrimary: "GAN_SYM_EYES",
+            ganeshaSymbolSecondary: "GAN_SYM_MOUSE"
+          }
+        },
+        {
+          id: "SIT062",
+          title: "A child wants to know how something works",
+          parentLabel: "A child is pulled by a mystery and keeps following it",
+          storySeed: {
+            childExperience: "A child wants an answer but each answer opens a deeper curiosity.",
+            narrativeSummary: "The story moves through curiosity that keeps changing shape."
+          },
+          emotionIds: ["EMOTION_CURIOSITY", "EMOTION_WONDER"],
+          ontology: {
+            needId: "NEED_CURIOSITY",
+            falseBeliefText: "One quick answer should solve the mystery.",
+            trueBeliefText: "Questions can open into richer understanding.",
+            ganeshaSymbolPrimary: "GAN_SYM_EYES",
+            ganeshaSymbolSecondary: "GAN_SYM_BIG_EARS"
+          }
+        }
+      ],
+      symbols: [
+        { id: "GAN_SYM_MOUSE", symbol_theme: "SYMBOL_PATIENCE", best_need_ids: ["NEED_PATIENCE", "NEED_CONFIDENCE"] },
+        { id: "GAN_SYM_BIG_BELLY", symbol_theme: "SYMBOL_SHELTER", best_need_ids: ["NEED_SELF_REGULATION", "NEED_SAFETY"] },
+        { id: "GAN_SYM_CURVED_TRUNK", symbol_theme: "SYMBOL_THRESHOLD", best_need_ids: ["NEED_ADAPTABILITY", "NEED_CONFIDENCE"] },
+        { id: "GAN_SYM_BROKEN_TUSK", symbol_theme: "SYMBOL_CREATIVE_TOOL", best_need_ids: ["NEED_CURIOSITY", "NEED_COMPETENCE", "NEED_IDENTITY"] },
+        { id: "GAN_SYM_LOTUS", symbol_theme: "SYMBOL_GROWTH", best_need_ids: ["NEED_IDENTITY", "NEED_HOPE"] },
+        { id: "GAN_SYM_BIG_EARS", symbol_theme: "SYMBOL_CONNECTION", best_need_ids: ["NEED_BELONGING", "NEED_RESPECT", "NEED_CONNECTION"] },
+        { id: "GAN_SYM_MODAK", symbol_theme: "SYMBOL_FOOD", best_need_ids: ["NEED_CONTENTMENT", "NEED_COMPASSION"] },
+        { id: "GAN_SYM_EYES", symbol_theme: "SYMBOL_LIGHT", best_need_ids: ["NEED_CURIOSITY", "NEED_JUSTICE"] }
+      ],
+      characters: [
+        { id: "CHAR001", name: "Chinu (Squirrel)", core_personality: "Curious, energetic learner", soft_suggested: { best_need_ids: ["NEED_CURIOSITY", "NEED_CONFIDENCE"], best_ganesha_symbols: ["GAN_SYM_EYES", "GAN_SYM_MOUSE"] } },
+        { id: "CHAR002", name: "Arin (Rabbit)", core_personality: "Gentle, cautious", soft_suggested: { best_need_ids: ["NEED_COURAGE", "NEED_SAFETY"], best_ganesha_symbols: ["GAN_SYM_BROKEN_TUSK", "GAN_SYM_BIG_BELLY"] } },
+        { id: "CHAR003", name: "Mira (Deer)", core_personality: "Gentle, observant", soft_suggested: { best_need_ids: ["NEED_CONNECTION", "NEED_IDENTITY"], best_ganesha_symbols: ["GAN_SYM_EYES", "GAN_SYM_BIG_EARS"] } },
+        { id: "CHAR004", name: "Kavi (Monkey)", core_personality: "Expressive, impulsive", soft_suggested: { best_need_ids: ["NEED_EXPRESSION", "NEED_SELF_REGULATION"], best_ganesha_symbols: ["GAN_SYM_CURVED_TRUNK", "GAN_SYM_MOUSE"] } }
+      ],
+      settings: [
+        { id: "SETTING_FOREST", name: "Forest", soft_suggested: { linked_world_type: "WT_NATURE" } },
+        { id: "SETTING_RIVER", name: "River", soft_suggested: { linked_world_type: "WT_WATER" } },
+        { id: "SETTING_SCHOOL", name: "School", soft_suggested: { linked_world_type: "WT_LEARNING" } },
+        { id: "SETTING_GARDEN", name: "Garden", soft_suggested: { linked_world_type: "WT_NATURE" } },
+        { id: "SETTING_VILLAGE", name: "Village", soft_suggested: { linked_world_type: "WT_COMMUNITY" } }
+      ],
+      needs: [
+        { id: "NEED_BELONGING", definition: "The drive to be accepted and included." },
+        { id: "NEED_CURIOSITY", definition: "The drive to explore, question, and discover." },
+        { id: "NEED_CONNECTION", definition: "The need for deep mutual understanding." },
+        { id: "NEED_IDENTITY", definition: "The need to understand one's own worth and uniqueness." },
+        { id: "NEED_ADAPTABILITY", definition: "The need to cope constructively with change." },
+        { id: "NEED_CONFIDENCE", definition: "The need for felt self-belief." },
+        { id: "NEED_SELF_REGULATION", definition: "Managing impulses, attention, emotion, and behavior." },
+        { id: "NEED_SAFETY", definition: "The need for protection and emotional security." }
+      ],
+      emotions: [
+        { id: "EMOTION_CURIOSITY" },
+        { id: "EMOTION_CONFUSION" },
+        { id: "EMOTION_SELF_DOUBT" },
+        { id: "EMOTION_EMBARRASSMENT" },
+        { id: "EMOTION_SADNESS" },
+        { id: "EMOTION_WORRY" },
+        { id: "EMOTION_WONDER" }
+      ]
+    };
+
+    const STRATEGIES = [
+      {
+        id: "noticing",
+        name: "Noticing Sequence",
+        feel: "Quiet · Reflective · Pattern-based",
+        desc: "The child notices two or three small things. The meaning shifts through observation, not lecture.",
+        forms: ["discovery", "attention", "transformation"],
+        movement: "notice -> notice again -> connect -> see the original problem differently",
+        beats: [
+          "The child is bothered by the situation and keeps looking at it through the first, hurt interpretation.",
+          "A first small clue appears in the setting or symbol world.",
+          "A second clue changes the child’s next question.",
+          "The child connects the clues without being directly told what to think.",
+          "The child acts differently because what they now see is different."
+        ]
+      },
+      {
+        id: "conversation",
+        name: "Question Conversation",
+        feel: "Warm · Relational · Inquiry-led",
+        desc: "A guide does not explain too quickly. Each answer or clue changes the next question.",
+        forms: ["discovery", "threshold", "transformation"],
+        movement: "ask -> partial answer -> deeper question -> recognition -> changed choice",
+        beats: [
+          "The child voices the first surface question.",
+          "A guide or event offers a clue instead of a full answer.",
+          "That clue makes the child ask a deeper question.",
+          "The deeper question reveals the emotional truth underneath.",
+          "The child makes a different choice after the recognition."
+        ]
+      },
+      {
+        id: "cause_effect",
+        name: "Cause and Consequence",
+        feel: "Concrete · Immediate · Action-led",
+        desc: "The child tries one response, feels its consequence, then shifts course.",
+        forms: ["threshold", "transformation", "resource"],
+        movement: "act -> consequence -> insight -> new act",
+        beats: [
+          "The child acts from the false belief.",
+          "That action makes the problem sharper or sadder.",
+          "A clue shows what the action was really doing.",
+          "The child understands what needs to change.",
+          "The child chooses a better action and the feeling shifts."
+        ]
+      },
+      {
+        id: "three_tries",
+        name: "Three Tries",
+        feel: "Rhythmic · Childlike · Satisfying",
+        desc: "The child tries again and again, but each try is different because they are understanding more.",
+        forms: ["resource", "discovery", "quiet"],
+        movement: "try -> fail -> notice -> try differently -> recognize",
+        beats: [
+          "The first try is driven by the surface belief.",
+          "It does not work.",
+          "A clue changes what the child tries next.",
+          "The third try contains the real understanding.",
+          "The child ends in a different emotional place because the understanding changed."
+        ]
+      },
+      {
+        id: "journey",
+        name: "Little Journey",
+        feel: "Spatial · Expansive · Visual",
+        desc: "The child moves through spaces or encounters and each one reframes the earlier feeling.",
+        forms: ["discovery", "attention", "quiet"],
+        movement: "leave the first feeling -> encounter clues -> return with a changed view",
+        beats: [
+          "The child leaves the original spot carrying the false belief.",
+          "The journey presents one clue, then another.",
+          "Each clue changes what the child thinks the story is about.",
+          "A final encounter reveals the deeper truth.",
+          "The child returns or responds differently because the inner meaning shifted."
+        ]
+      }
+    ];
+
+    const LENGTH_OPTIONS = [
+      { id: "tiny", name: "20 Words", note: "pivot line only" },
+      { id: "micro", name: "40-60", note: "setup -> turn -> payoff" },
+      { id: "short", name: "80-120", note: "one-page brief" },
+      { id: "medium", name: "Medium", note: "beat-by-beat prompt" },
+      { id: "long", name: "Long", note: "detailed drafting prompt" }
+    ];
+
+    const state = {
+      libraries: null,
+      usedFallback: false,
+      step: 1,
+      entryMode: "symbol",
+      entrySymbol: "",
+      entryEmotion: "",
+      selectedSituation: null,
+      symbol: null,
+      strategy: null,
+      character: null,
+      setting: null,
+      length: "medium",
+      beatSeed: 0,
+      titleSeed: 0
+    };
+
+    function asArray(value) {
+      if (Array.isArray(value)) return value;
+      if (value && Array.isArray(value.value)) return value.value;
+      return [];
+    }
+
+    function normalizeLibraries(source) {
+      if (!source) return null;
+      return {
+        situations: asArray(source.situations),
+        symbols: asArray(source.symbols),
+        characters: asArray(source.characters),
+        settings: asArray(source.settings),
+        needs: asArray(source.needs),
+        emotions: asArray(source.emotions),
+        openings: asArray(source.openings),
+        endings: asArray(source.endings),
+        emotionalArcs: asArray(source.emotionalArcs),
+        storyStructures: asArray(source.storyStructures)
+      };
+    }
+
+    function prettyId(id) {
+      return String(id || "")
+        .replace(/^GAN_SYM_/, "")
+        .replace(/^NEED_/, "")
+        .replace(/^EMOTION_/, "")
+        .replace(/_/g, " ")
+        .toLowerCase()
+        .replace(/\b\w/g, m => m.toUpperCase());
+    }
+
+    function norm(value) {
+      return String(value || "").toLowerCase().trim();
+    }
+
+    function escapeHtml(text) {
+      return String(text || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function firstName(label) {
+      return String(label || "").split(" ")[0];
+    }
+
+    async function loadLibraries() {
+      const base = "./phase6-data";
+      const files = {
+        situations: `${base}/situations.json`,
+        symbols: `${base}/ontology/ganeshaSymbols.json`,
+        characters: `${base}/characters.json`,
+        settings: `${base}/settings.json`,
+        needs: `${base}/ontology/coreNeeds.json`,
+        emotions: `${base}/ontology/emotionalStates.json`,
+        openings: `${base}/openings.json`,
+        endings: `${base}/endings.json`,
+        emotionalArcs: `${base}/emotionalArcs.json`,
+        storyStructures: `${base}/storyStructures.json`
+      };
+
+      const bundled = normalizeLibraries(window.STORY_IDEA_MVP_DATA);
+      if (bundled?.situations?.length) {
+        state.libraries = bundled;
+        state.usedFallback = false;
+        return;
+      }
+
+      try {
+        const entries = await Promise.all(
+          Object.entries(files).map(async ([key, url]) => {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`Failed to load ${key}`);
+            const data = await response.json();
+            return [key, data];
+          })
+        );
+        state.libraries = normalizeLibraries(Object.fromEntries(entries));
+        state.usedFallback = false;
+      } catch (error) {
+        state.libraries = normalizeLibraries(EMBEDDED_FALLBACK);
+        state.usedFallback = true;
+      }
+    }
+
+    function activeSituations() {
+      return (state.libraries.situations || []).filter(s => s.active !== false);
+    }
+
+    function symbolById(id) {
+      return (state.libraries.symbols || []).find(item => item.id === id) || null;
+    }
+
+    function needById(id) {
+      return (state.libraries.needs || []).find(item => item.id === id) || null;
+    }
+
+    function characterList() {
+      return (state.libraries.characters || []).slice(0, 8);
+    }
+
+    function settingList() {
+      return (state.libraries.settings || []).slice(0, 8);
+    }
+
+    function emotionList() {
+      const counts = {};
+      activeSituations()
+        .flatMap(situation => situation.emotionIds || [])
+        .filter(Boolean)
+        .forEach(id => {
+          counts[id] = (counts[id] || 0) + 1;
+        });
+
+      const liveEmotionIds = Object.keys(counts);
+
+      if (liveEmotionIds.length) {
+        return liveEmotionIds
+          .sort((a, b) => prettyEmotion(a).localeCompare(prettyEmotion(b)))
+          .map(id => ({ id, count: counts[id] }));
+      }
+
+      return (state.libraries.emotions || []).slice(0, 12);
+    }
+
+    function prettyEmotion(id) {
+      const directMap = {
+        EMO_SCARED: "Fear",
+        EMO_WORRIED: "Worry",
+        EMO_SAD: "Sadness",
+        EMO_FRUSTRATED: "Frustration",
+        EMO_ANGRY: "Anger",
+        EMO_LEFT_OUT: "Belonging",
+        EMO_JEALOUS: "Jealousy",
+        EMO_ASHAMED: "Shame",
+        EMO_EMBARRASSED: "Embarrassment",
+        EMO_UNSURE: "Uncertainty",
+        EMO_DISAPPOINTED: "Disappointment",
+        EMO_GUILTY: "Guilt",
+        EMO_NERVOUS: "Nervousness",
+        EMO_OVERWHELMED: "Overwhelm",
+        EMO_TORN: "Inner Conflict",
+        EMO_COMPARING: "Comparison",
+        EMO_CONFUSED_RIGHT_WRONG: "Right Or Wrong",
+        EMO_CRANKY: "Irritability",
+        EMO_GRIEVING: "Grief",
+        EMO_BORED: "Boredom"
+      };
+
+      if (directMap[id]) return directMap[id];
+      return prettyId(id);
+    }
+
+    function statusMessage() {
+      const count = activeSituations().length;
+      const source = state.usedFallback
+        ? "Fallback mode: embedded sample data is loaded because the local data bundle was not available."
+        : "Live mode: using Phase 6 JSON libraries from this folder.";
+      document.getElementById("statusText").textContent = `${source} ${count} situations available.`;
+    }
+
+    function renderSteps() {
+      const labels = ["Situation", "Core", "Shape", "Idea Note", "Prompt"];
+      const el = document.getElementById("steps");
+      el.innerHTML = labels.map((label, index) => {
+        const step = index + 1;
+        let cls = "step-pill";
+        if (step === state.step) cls += " active";
+        if (step < state.step) cls += " done";
+        return `<button type="button" class="${cls}" data-step="${step}">${escapeHtml(label)}</button>`;
+      }).join("");
+      el.querySelectorAll(".done").forEach(btn => {
+        btn.addEventListener("click", () => goToStep(Number(btn.dataset.step)));
+      });
+    }
+
+    function goToStep(step) {
+      state.step = step;
+      document.querySelectorAll(".screen").forEach((screen, index) => {
+        screen.classList.toggle("visible", index + 1 === step);
+      });
+      renderSteps();
+      if (step === 2) renderStoryCore();
+      if (step === 3) renderStoryShape();
+      if (step === 4) renderIdeaNote();
+      if (step === 5) renderPrompt();
+    }
+
+    function categoryLabel(situation) {
+      const domains = situation.lifeDomainIds || situation.ontology?.lifeDomainIds || [];
+      if (domains.length) return prettyId(domains[0]).replace("Life Domain ", "");
+      return "General";
+    }
+
+    function populateCategoryFilter() {
+      const select = document.getElementById("catFilter");
+      const cats = [...new Set(activeSituations().map(categoryLabel))].sort();
+      select.innerHTML = `<option value="">All categories</option>` + cats.map(cat => `<option value="${escapeHtml(cat)}">${escapeHtml(cat)}</option>`).join("");
+    }
+
+    function renderEntryPanels() {
+      document.getElementById("symbolEntry").style.display = state.entryMode === "symbol" ? "block" : "none";
+      document.getElementById("emotionEntry").style.display = state.entryMode === "emotion" ? "block" : "none";
+      document.querySelectorAll(".entry-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.mode === state.entryMode);
+      });
+    }
+
+    function renderEntryPills() {
+      const symbolWrap = document.getElementById("symbolEntryPills");
+      symbolWrap.innerHTML = (state.libraries.symbols || []).map(symbol => {
+        const active = state.entrySymbol === symbol.id ? " active" : "";
+        return `<button type="button" class="pill sym-pill${active}" data-symbol="${escapeHtml(symbol.id)}">${escapeHtml(prettyId(symbol.id))}</button>`;
+      }).join("");
+
+      symbolWrap.querySelectorAll("[data-symbol]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          state.entrySymbol = btn.dataset.symbol === state.entrySymbol ? "" : btn.dataset.symbol;
+          renderEntryPills();
+          renderSituationList();
+        });
+      });
+
+      const emotionWrap = document.getElementById("emotionEntryPills");
+      emotionWrap.innerHTML = emotionList().map(emotion => {
+        const active = state.entryEmotion === emotion.id ? " active" : "";
+        const countText = emotion.count ? ` (${emotion.count})` : "";
+        return `<button type="button" class="pill${active}" data-emotion="${escapeHtml(emotion.id)}">${escapeHtml(prettyEmotion(emotion.id) + countText)}</button>`;
+      }).join("");
+
+      emotionWrap.querySelectorAll("[data-emotion]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          state.entryEmotion = btn.dataset.emotion === state.entryEmotion ? "" : btn.dataset.emotion;
+          renderEntryPills();
+            renderSituationList();
+          });
+        });
+    }
+
+    function currentFilterSummary(matchCount) {
+      const parts = [];
+      if (state.entryMode === "emotion" && state.entryEmotion) {
+        parts.push(`feeling: ${prettyEmotion(state.entryEmotion)}`);
+      }
+      if (state.entryMode === "symbol" && state.entrySymbol) {
+        parts.push(`symbol: ${prettyId(state.entrySymbol)}`);
+      }
+      const category = document.getElementById("catFilter").value;
+      if (category) parts.push(`category: ${category}`);
+      const search = document.getElementById("searchBox").value.trim();
+      if (search) parts.push(`search: "${search}"`);
+      if (!parts.length) return `Showing all ${activeSituations().length} situations.`;
+      return `Showing ${matchCount} situation${matchCount === 1 ? "" : "s"} for ${parts.join(" + ")}.`;
+    }
+
+    function filteredSituations() {
+      const search = norm(document.getElementById("searchBox").value);
+      const category = document.getElementById("catFilter").value;
+
+      return activeSituations().filter(situation => {
+        if (state.entryMode === "symbol" && state.entrySymbol) {
+          const a = situation.ontology?.ganeshaSymbolPrimary;
+          const b = situation.ontology?.ganeshaSymbolSecondary;
+          if (a !== state.entrySymbol && b !== state.entrySymbol) return false;
+        }
+
+        if (state.entryMode === "emotion" && state.entryEmotion) {
+          if (!(situation.emotionIds || []).includes(state.entryEmotion)) return false;
+        }
+
+        if (category && categoryLabel(situation) !== category) return false;
+
+        if (search) {
+          const hay = [
+            situation.id,
+            situation.title,
+            situation.parentLabel,
+            situation.storySeed?.childExperience,
+            situation.storySeed?.narrativeSummary,
+            situation.ontology?.falseBeliefText,
+            situation.ontology?.trueBeliefText
+          ].join(" ").toLowerCase();
+          if (!hay.includes(search)) return false;
+        }
+
+        return true;
+      });
+    }
+
+    function renderSituationList() {
+      const list = document.getElementById("sitList");
+      const items = filteredSituations();
+      document.getElementById("filterSummary").textContent = currentFilterSummary(items.length);
+      list.innerHTML = items.map(situation => {
+        const selected = state.selectedSituation?.id === situation.id ? " selected" : "";
+        const emotions = (situation.emotionIds || []).slice(0, 2).map(id => `<span class="tag">${escapeHtml(prettyEmotion(id))}</span>`).join("");
+        return `
+          <div class="sit-item${selected}" data-sit="${escapeHtml(situation.id)}">
+            <div>${emotions}<span class="tag">${escapeHtml(categoryLabel(situation))}</span></div>
+            <div><b>${escapeHtml(situation.id)}:</b> ${escapeHtml(situation.title || situation.parentLabel || "Untitled situation")}</div>
+            <div class="hint">${escapeHtml(situation.parentLabel || situation.storySeed?.narrativeSummary || "")}</div>
+          </div>
+        `;
+      }).join("");
+
+      if (!items.length) {
+        list.innerHTML = `<div class="sit-item">No situations matched this exact filter combination. Try clearing category/search or picking a different feeling.</div>`;
+      }
+
+      list.querySelectorAll("[data-sit]").forEach(item => {
+        item.addEventListener("click", () => {
+          state.selectedSituation = activeSituations().find(s => s.id === item.dataset.sit) || null;
+          if (state.selectedSituation) {
+            state.symbol = symbolById(state.selectedSituation.ontology?.ganeshaSymbolPrimary);
+          }
+          renderSituationList();
+        });
+      });
+    }
+
+    function symbolReason(symbol, situation) {
+      if (!symbol || !situation) return "";
+      const needId = situation.ontology?.needId;
+      const hit = (symbol.best_need_ids || []).includes(needId);
+      const theme = prettyId(symbol.symbol_theme);
+      if (hit) return `This symbol naturally supports the need behind this story and carries a ${theme.toLowerCase()} feeling.`;
+      return `This symbol can still work here if you want the story to lean into a ${theme.toLowerCase()} kind of image system.`;
+    }
+
+    function renderStoryCore() {
+      const situation = state.selectedSituation;
+      if (!situation) return;
+
+      const need = needById(situation.ontology?.needId);
+      document.getElementById("coreSit").textContent =
+        situation.parentLabel || situation.storySeed?.narrativeSummary || situation.title || "";
+      document.getElementById("coreNeed").textContent =
+        need ? `${prettyId(need.id)} - ${need.definition || ""}` : prettyId(situation.ontology?.needId);
+      document.getElementById("coreFalse").textContent =
+        situation.ontology?.falseBeliefText || "False belief not available.";
+      document.getElementById("coreTrue").textContent =
+        situation.ontology?.trueBeliefText || "True belief not available.";
+
+      const symbol = state.symbol || symbolById(situation.ontology?.ganeshaSymbolPrimary);
+      const symbolCard = document.getElementById("symbolCard");
+      if (symbol) {
+        symbolCard.innerHTML = `
+          <div class="symbol-icon">${escapeHtml(prettyId(symbol.id).split(" ").map(w => w[0]).join("").slice(0, 2))}</div>
+          <div>
+            <div><b>${escapeHtml(prettyId(symbol.id))}</b></div>
+            <div>${escapeHtml(prettyId(symbol.symbol_theme))}</div>
+            <div class="say">${escapeHtml(symbolReason(symbol, situation))}</div>
+          </div>
+        `;
+      } else {
+        symbolCard.innerHTML = `<div>No symbol found.</div>`;
+      }
+
+      const altIds = [
+        situation.ontology?.ganeshaSymbolPrimary,
+        situation.ontology?.ganeshaSymbolSecondary
+      ].filter(Boolean);
+      const alts = [...new Set(altIds)].map(id => symbolById(id)).filter(Boolean);
+      document.getElementById("symbolAlts").innerHTML = alts.map(item => {
+        const active = state.symbol?.id === item.id ? " active" : "";
+        return `<button type="button" class="pill sym-pill${active}" data-alt-symbol="${escapeHtml(item.id)}">${escapeHtml(prettyId(item.id))}</button>`;
+      }).join("");
+      document.querySelectorAll("[data-alt-symbol]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          state.symbol = symbolById(btn.dataset.altSymbol);
+          renderStoryCore();
+        });
+      });
+    }
+
+    function determineForm(situation) {
+      const need = situation?.ontology?.needId;
+      const emotions = situation?.emotionIds || [];
+      if (need === "NEED_CURIOSITY") return "discovery";
+      if (need === "NEED_IDENTITY" || emotions.includes("EMOTION_SELF_DOUBT")) return "transformation";
+      if (need === "NEED_SELF_REGULATION" || need === "NEED_ADAPTABILITY") return "threshold";
+      if (need === "NEED_CONNECTION" || need === "NEED_BELONGING") return "attention";
+      return "quiet";
+    }
+
+    function formLabel(form) {
+      const labels = {
+        discovery: "Discovery",
+        transformation: "Transformation",
+        threshold: "Threshold Choice",
+        attention: "Attention Shift",
+        quiet: "Quiet Strength"
+      };
+      return labels[form] || prettyId(form);
+    }
+
+    function suggestStrategies(form) {
+      return STRATEGIES
+        .map(strategy => ({
+          ...strategy,
+          isSuggested: strategy.forms.includes(form)
+        }))
+        .sort((a, b) => Number(b.isSuggested) - Number(a.isSuggested));
+    }
+
+    function pickDefaultCharacter() {
+      const situation = state.selectedSituation;
+      const symbolId = state.symbol?.id;
+      const needId = situation?.ontology?.needId;
+      const chars = characterList();
+      const scored = chars.map(character => {
+        let score = 0;
+        const soft = character.soft_suggested || {};
+        if ((soft.best_need_ids || []).includes(needId)) score += 2;
+        if ((soft.best_ganesha_symbols || []).includes(symbolId)) score += 2;
+        return { character, score };
+      }).sort((a, b) => b.score - a.score);
+      return scored[0]?.character || chars[0] || null;
+    }
+
+    function pickDefaultSetting() {
+      const settings = settingList();
+      const form = determineForm(state.selectedSituation);
+      const preferred = {
+        discovery: ["River", "Garden", "Forest", "School"],
+        transformation: ["Garden", "School", "Village", "Forest"],
+        threshold: ["School", "Village", "Forest", "River"],
+        attention: ["Village", "Garden", "School", "River"],
+        quiet: ["Forest", "River", "Garden", "Cave"]
+      }[form] || [];
+      return settings.find(s => preferred.includes(s.name)) || settings[0] || null;
+    }
+
+    function renderStoryShape() {
+      const situation = state.selectedSituation;
+      if (!situation) return;
+
+      const form = determineForm(situation);
+      const orderedStrategies = suggestStrategies(form);
+      const suggestedOnly = orderedStrategies.filter(strategy => strategy.isSuggested);
+      if (!state.strategy || !orderedStrategies.find(s => s.id === state.strategy.id)) {
+        state.strategy = suggestedOnly[0] || orderedStrategies[0];
+      }
+      if (!state.character) state.character = pickDefaultCharacter();
+      if (!state.setting) state.setting = pickDefaultSetting();
+
+      const strategyWrap = document.getElementById("strategyList");
+      strategyWrap.innerHTML = orderedStrategies.map((strategy, index) => {
+          const selected = state.strategy?.id === strategy.id ? " selected" : "";
+          const badge = strategy.isSuggested
+            ? `<span class="suggested-badge">Suggested For ${escapeHtml(formLabel(form))}</span>`
+            : `<span class="noted-badge">Also Possible</span>`;
+          return `
+          <div class="strategy-card${selected}" data-strategy="${escapeHtml(strategy.id)}">
+            <h4>${escapeHtml(strategy.name)}${badge}</h4>
+            <p>${escapeHtml(strategy.desc)}</p>
+            <div class="feel">${escapeHtml(strategy.feel)}</div>
+          </div>
+        `;
+      }).join("");
+      strategyWrap.querySelectorAll("[data-strategy]").forEach(card => {
+        card.addEventListener("click", () => {
+            state.strategy = orderedStrategies.find(item => item.id === card.dataset.strategy) || state.strategy;
+            renderStoryShape();
+          });
+        });
+
+      const chars = characterList();
+      document.getElementById("charChips").innerHTML = chars.map(character => {
+        const active = state.character?.id === character.id ? " active" : "";
+        return `<button type="button" class="chip${active}" data-char="${escapeHtml(character.id)}">${escapeHtml(character.name)}</button>`;
+      }).join("");
+      document.querySelectorAll("[data-char]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          state.character = chars.find(item => item.id === btn.dataset.char) || state.character;
+          renderStoryShape();
+        });
+      });
+
+      const settings = settingList();
+      document.getElementById("settingChips").innerHTML = settings.map(setting => {
+        const active = state.setting?.id === setting.id ? " active" : "";
+        return `<button type="button" class="chip${active}" data-setting="${escapeHtml(setting.id)}">${escapeHtml(setting.name)}</button>`;
+      }).join("");
+      document.querySelectorAll("[data-setting]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          state.setting = settings.find(item => item.id === btn.dataset.setting) || state.setting;
+          renderStoryShape();
+        });
+      });
+    }
+
+    function titleIdeas() {
+      const situation = state.selectedSituation;
+      const symbol = state.symbol;
+      const character = state.character;
+      const setting = state.setting;
+      const base = [
+        `${firstName(character?.name)} and the ${prettyId(symbol?.id)}`,
+        `The Day ${firstName(character?.name)} Looked Again`,
+        `What ${firstName(character?.name)} Noticed in the ${setting?.name || "Garden"}`,
+        `${firstName(character?.name)} and the Different Way`,
+        `The Small Clue in the ${setting?.name || "Forest"}`
+      ];
+      const shift = state.titleSeed % base.length;
+      return base.slice(shift).concat(base.slice(0, shift)).slice(0, 3);
+    }
+
+    function movementNote(situation, strategy) {
+      const child = firstName(state.character?.name || "The child");
+      const summary = situation.storySeed?.narrativeSummary || situation.parentLabel || situation.title;
+      const symbolName = prettyId(state.symbol?.id);
+      const settingName = state.setting?.name || "the setting";
+      const openings = {
+        noticing: `${child} starts with a quick first conclusion about what is happening. In ${settingName}, two or three small details quietly challenge that conclusion until ${child} sees the whole moment differently. Let the ${symbolName} appear as a small repeating clue, not as a lesson.`,
+        conversation: `${child} begins with one simple question about the problem. Instead of getting a full answer, ${child} receives partial clues that lead to a better second question, then a deeper recognition.`,
+        cause_effect: `${child} reacts too quickly at first. The consequence of that reaction reveals what the real problem was, and the ${symbolName} helps the next action feel wiser and more earned.`,
+        three_tries: `${child} tries to solve the problem more than once. What changes each time is not just behavior, but understanding, until the final attempt comes from a truer way of seeing.`,
+        journey: `${child} moves through ${settingName} carrying the first mistaken interpretation. Each encounter on the way reframes it, so the return feels emotionally changed as well as physically complete.`
+      };
+      return openings[strategy.id] || "";
+    }
+
+    function storyWhyItWorks() {
+      const situation = state.selectedSituation;
+      const strategy = state.strategy;
+      const symbol = state.symbol;
+      const need = needById(situation?.ontology?.needId);
+      const form = formLabel(determineForm(situation));
+      return `This combination works because the situation naturally carries a ${prettyId(need?.id || situation?.ontology?.needId).toLowerCase()} need, the ${strategy?.name.toLowerCase()} strategy gives that emotional shift a concrete story motion, and the ${prettyId(symbol?.id).toLowerCase()} keeps the theme visible without turning it into a lecture. The result should read as ${form.toLowerCase()} rather than as a generic moral tale.`;
+    }
+
+    function lowerFirst(text) {
+      if (!text) return "";
+      return text.charAt(0).toLowerCase() + text.slice(1);
+    }
+
+    function cleanSentence(text) {
+      return String(text || "").trim().replace(/\s+/g, " ").replace(/\.+$/, "");
+    }
+
+    function personalizeText(text, childName) {
+      const child = childName || "The child";
+      return String(text || "")
+        .replace(/\bKavi's\b/g, `${child}'s`)
+        .replace(/\bKavi\b/g, child)
+        .replace(/\bi can\b/gi, `${child} can`)
+        .replace(/\bmy\b/gi, `${child}'s`)
+        .replace(/\bme\b/gi, child);
+    }
+
+    function articleize(text) {
+      const cleaned = cleanSentence(text);
+      if (!cleaned) return "";
+      return /^[aeiou]/i.test(cleaned) ? `an ${cleaned}` : `a ${cleaned}`;
+    }
+
+    function symbolMotif(symbolId) {
+      const map = {
+        GAN_SYM_MOUSE: "something tiny that leads to a bigger noticing",
+        GAN_SYM_BIG_EARS: "a moment of listening more carefully than before",
+        GAN_SYM_CURVED_TRUNK: "a change in direction that becomes useful",
+        GAN_SYM_BROKEN_TUSK: "an imperfect detail that turns out to matter",
+        GAN_SYM_LOTUS: "something slowly unfolding instead of appearing all at once",
+        GAN_SYM_MODAK: "a small reward or discovery that comes after patience",
+        GAN_SYM_EYES: "a visual clue that only makes sense on the second look",
+        GAN_SYM_BIG_BELLY: "a feeling of safety that allows the child to soften"
+      };
+      return map[symbolId] || "a small recurring clue";
+    }
+
+    function mechanismLabel(situation, strategy) {
+      const need = situation?.ontology?.needId;
+      const form = determineForm(situation);
+      const byNeed = {
+        NEED_SELF_REGULATION: "impulse vs. pause",
+        NEED_CURIOSITY: "question -> clue -> reframe",
+        NEED_IDENTITY: "comparison vs. self-worth",
+        NEED_BELONGING: "misreading vs. understanding",
+        NEED_CONNECTION: "misreading vs. understanding",
+        NEED_ADAPTABILITY: "plan vs. adjustment",
+        NEED_COMPETENCE: "failure vs. learning",
+        NEED_CONFIDENCE: "hesitation vs. action",
+        NEED_COMPASSION: "assumption vs. attunement",
+        NEED_JUSTICE: "hurt vs. honest response",
+        NEED_RESPECT: "misunderstanding vs. expression",
+        NEED_CONTENTMENT: "comparison vs. appreciation"
+      };
+      if (byNeed[need]) return `${byNeed[need]} (${prettyId(need).toLowerCase()})`;
+      return `${strategy?.name.toLowerCase()} (${formLabel(form).toLowerCase()})`;
+    }
+
+    function chooseOpening(situation) {
+      const openings = state.libraries.openings || [];
+      const form = determineForm(situation);
+      const need = situation?.ontology?.needId;
+      if (!openings.length) return null;
+      const preferred = {
+        discovery: ["The Tiny Mystery", "The Everyday Wonder", "The Missing Something"],
+        transformation: ["The Emotional Spark", "The Vulnerable Wanderer"],
+        threshold: ["The Emotional Spark", "The Unexpected Interruption"],
+        attention: ["The Invitation", "The Emotional Spark"],
+        quiet: ["The Everyday Wonder", "The Vulnerable Wanderer", "The Emotional Spark"]
+      }[form] || [];
+      if (need === "NEED_SAFETY") preferred.unshift("The Emotional Spark");
+      return openings.find(item => preferred.includes(item.name)) || openings[0];
+    }
+
+    function chooseEnding(situation) {
+      const endings = state.libraries.endings || [];
+      const need = situation?.ontology?.needId;
+      const emotions = situation?.emotionIds || [];
+      if (!endings.length) return null;
+      if (need === "NEED_SAFETY" || emotions.includes("EMO_WORRIED")) {
+        return endings.find(item => item.name === "The Circular Return") || endings[0];
+      }
+      if (need === "NEED_IDENTITY" || need === "NEED_CONFIDENCE") {
+        return endings.find(item => item.name === "The Quiet Internal Victory") || endings[0];
+      }
+      if (need === "NEED_BELONGING" || need === "NEED_CONNECTION") {
+        return endings.find(item => item.name === "The Ripple Effect") || endings[0];
+      }
+      return endings.find(item => item.name === "The Quiet Internal Victory") || endings[0];
+    }
+
+    function chooseEmotionalArc(situation) {
+      const arcs = state.libraries.emotionalArcs || [];
+      const need = situation?.ontology?.needId;
+      if (!arcs.length) return null;
+      return arcs.find(arc => (arc.soft_suggested?.recommended_need_ids || []).includes(need)) || arcs[0];
+    }
+
+    function chooseStoryStructure(situation, strategy) {
+      const structures = state.libraries.storyStructures || [];
+      const need = situation?.ontology?.needId;
+      if (!structures.length) return null;
+      if (need === "NEED_SAFETY") {
+        return structures.find(item => item.name === "Emotional Harbor") || structures[0];
+      }
+      if (strategy?.id === "three_tries") {
+        return structures.find(item => item.name === "Rhythmic Growth") || structures[0];
+      }
+      if (strategy?.id === "conversation") {
+        return structures.find(item => item.name === "Playful Comparison") || structures[0];
+      }
+      if (strategy?.id === "noticing") {
+        return structures.find(item => item.name === "Mindful Catalog") || structures[0];
+      }
+      return structures[0];
+    }
+
+    function formWhyText(situation, strategy) {
+      const form = determineForm(situation);
+      const byForm = {
+        discovery: "The motion is driven by noticing and re-interpretation, not by a strong antagonist or obstacle. The payoff should come from what the child comes to see.",
+        transformation: "The engine is a belief shift. The child should end by seeing themselves or the situation differently, not merely by getting a surface solution.",
+        threshold: "The engine is a live moment of impulse, pause, or adaptation. The ending should prove a changed response, not just a changed circumstance.",
+        attention: "The child's first reading of another person or situation is incomplete. The story works when attention moves toward what is really happening.",
+        quiet: "The motion is small and inward. The ending should land softly through steadier seeing or a calmer action."
+      };
+      return byForm[form] || `This plan is being carried by ${strategy?.name || "the selected strategy"} within a ${formLabel(form)} shape.`;
+    }
+
+    function newChoiceLine(situation, strategy, childName) {
+      const want = cleanSentence(situation.storySeed?.immediateWant || "");
+      const trueBelief = cleanSentence(situation.ontology?.trueBeliefText || "");
+      const form = determineForm(situation);
+      const byStrategy = {
+        noticing: `${childName} slows down, looks again, and follows the new clue instead of clinging to the first conclusion.`,
+        conversation: `${childName} asks the better second question instead of staying stuck in the first reaction.`,
+        cause_effect: `${childName} stops repeating the first reaction and tries a calmer response shaped by what the clue revealed.`,
+        three_tries: `${childName} makes one more attempt, this time guided by the new understanding instead of the old habit.`,
+        journey: `${childName} changes course and responds from the fuller picture rather than the first assumption.`
+      };
+      if (form === "threshold") {
+        return `${childName} pauses, steadies, and chooses the next action more carefully instead of reacting on impulse.`;
+      }
+      if (form === "attention") {
+        return `${childName} responds to what is really happening, not just to the first hurt feeling.`;
+      }
+      if (want && trueBelief) {
+        return `${childName} stops trying only to ${lowerFirst(want)} and acts from this newer truth: ${lowerFirst(trueBelief)}.`;
+      }
+      return byStrategy[strategy?.id] || `${childName} makes a different choice because the meaning of the situation has changed.`;
+    }
+
+    function resolutionLine(situation, strategy, childName) {
+      const summary = cleanSentence(situation.storySeed?.narrativeSummary || situation.parentLabel || situation.title);
+      const trueBelief = cleanSentence(situation.ontology?.trueBeliefText || "");
+      const byStrategy = {
+        noticing: `The situation itself has not changed much, but ${childName} notices something new in it, and that new seeing softens the whole moment.`,
+        conversation: `What changes most is not the outside event but ${childName}'s understanding of it, which is enough to change the ending.`,
+        cause_effect: `The second response costs less than the first reaction would have, and ${childName} can feel the difference immediately.`,
+        three_tries: `The final attempt works not because it is bigger, but because it comes from better understanding.`,
+        journey: `By the end, ${childName} returns changed; the same world now means something different.`
+      };
+      if (trueBelief) {
+        return `${childName} can now feel that ${lowerFirst(trueBelief)}. The payoff is not just that ${lowerFirst(summary)} ends, but that the moment means something different now.`;
+      }
+      return byStrategy[strategy?.id] || `${childName} ends in a different emotional place because the meaning of the moment has changed.`;
+    }
+
+    function clueSuggestions(strategyId, settingName, symbolId) {
+      const motif = symbolMotif(symbolId);
+      const setting = settingName || "the setting";
+      const clues = {
+        noticing: [
+          `a tiny change in ${setting.toLowerCase()} that most children would walk past`,
+          `${motif}`,
+          "a second detail that makes the first conclusion feel incomplete"
+        ],
+        conversation: [
+          "one incomplete answer",
+          `${motif}`,
+          "a deeper follow-up question that changes the emotional meaning"
+        ],
+        cause_effect: [
+          "a consequence that the child did not expect",
+          `${motif}`,
+          "a visible sign that the first reaction was not the real answer"
+        ],
+        three_tries: [
+          "a first failed attempt",
+          "one clue that changes the next attempt",
+          `${motif}`
+        ],
+        journey: [
+          `one clue near the start of ${setting.toLowerCase()}`,
+          "a second encounter that reframes it",
+          `${motif}`
+        ]
+      };
+      return clues[strategyId] || ["one clue", "a second clue", motif];
+    }
+
+    function buildStoryBrief() {
+      const situation = state.selectedSituation;
+      const strategy = state.strategy;
+      const child = firstName(state.character?.name || "The child");
+      const setting = state.setting?.name || "the setting";
+      const symbol = state.symbol;
+      const falseBelief = cleanSentence(situation.ontology?.falseBeliefText || "The first conclusion feels complete");
+      const trueBelief = cleanSentence(situation.ontology?.trueBeliefText || "Looking again changes the meaning");
+      const summary = cleanSentence(situation.storySeed?.narrativeSummary || situation.storySeed?.childExperience || situation.parentLabel || situation.title);
+      const want = cleanSentence(situation.storySeed?.immediateWant || "solve the feeling quickly");
+      const obstacle = cleanSentence(situation.storySeed?.immediateObstacle || "the real meaning is not obvious yet");
+      const tension = cleanSentence(situation.storySeed?.emotionalTension || "the child wants a fast answer");
+      const motif = symbolMotif(symbol?.id);
+      const clueList = clueSuggestions(strategy.id, setting, symbol?.id);
+
+      const byStrategy = {
+        noticing: {
+          opening: `${child} begins in ${setting} carrying one quick conclusion: ${lowerFirst(summary)}.`,
+          middle: `${child} wants to ${lowerFirst(want)}, but ${lowerFirst(obstacle)}. Instead of solving the problem right away, the story slows down and lets ${child} notice ${articleize(clueList[0])}, then ${articleize(clueList[1])}.`,
+          turn: `The turning point comes when ${child} realizes those details are connected. The second clue changes the question from "What happened?" to something closer to "What have I not seen yet?"`,
+          ending: `By the end, ${child} is no longer trapped inside "${falseBelief}". The story should close on a quieter, more open feeling: ${trueBelief}.`
+        },
+        conversation: {
+          opening: `${child} begins with a simple question in ${setting}: ${lowerFirst(summary)}.`,
+          middle: `${child} wants to ${lowerFirst(want)}, but ${lowerFirst(obstacle)}. A guide or event offers only part of an answer, then another partial clue, so the real story opens gradually instead of all at once.`,
+          turn: `The turning point comes when the second question is wiser than the first. What began as a surface problem reveals the deeper tension: ${lowerFirst(tension)}.`,
+          ending: `By the end, ${child} acts from a different understanding rather than from the first emotion. The recognition should land in this truth: ${trueBelief}.`
+        },
+        cause_effect: {
+          opening: `${child} starts in ${setting} and reacts quickly because ${lowerFirst(summary)}.`,
+          middle: `${child} wants to ${lowerFirst(want)}, but ${lowerFirst(obstacle)}. The first reaction feels emotionally understandable, yet it creates a consequence that makes the real issue visible.`,
+          turn: `The turning point comes when ${child} notices ${articleize(motif)} and understands why the first move did not help.`,
+          ending: `The ending should show a second action that proves real change. The child moves from "${falseBelief}" toward ${trueBelief}.`
+        },
+        three_tries: {
+          opening: `${child} starts in ${setting} with a clear problem: ${lowerFirst(summary)}.`,
+          middle: `${child} wants to ${lowerFirst(want)}, but ${lowerFirst(obstacle)}. The first try fails, the next try shifts slightly, and a clue between attempts changes what ${child} thinks the problem really is.`,
+          turn: `The turning point comes when ${child} realizes the answer is not just trying harder. The answer is seeing differently.`,
+          ending: `The final attempt should feel small but earned. It works because ${child} is finally acting from this truth: ${trueBelief}.`
+        },
+        journey: {
+          opening: `${child} leaves the first moment in ${setting} still believing: "${falseBelief}"`,
+          middle: `As ${child} moves through the world, the story offers ${articleize(clueList[0])}, then ${articleize(clueList[1])}. Each encounter subtly changes the emotional meaning of the first problem.`,
+          turn: `The turning point comes when ${child} understands how ${motif} connects the separate clues into one fuller picture.`,
+          ending: `When the story closes, ${child} has not just returned physically. ${child} has returned with a changed way of seeing: ${trueBelief}.`
+        }
+      };
+
+      return byStrategy[strategy.id] || byStrategy.noticing;
+    }
+
+    function buildBeatFlow() {
+      const situation = state.selectedSituation;
+      const strategy = state.strategy;
+      const child = firstName(state.character?.name || "The child");
+      const falseBelief = situation.ontology?.falseBeliefText || "the surface belief";
+      const trueBelief = situation.ontology?.trueBeliefText || "the deeper truth";
+      const notice = cleanSentence(situation.storySeed?.narrativeSummary || situation.parentLabel || situation.title);
+      const investigate = cleanSentence(situation.storySeed?.emotionalTension || situation.storySeed?.immediateWant || "");
+      const discover = cleanSentence(situation.storySeed?.immediateObstacle || "");
+      const connected = falseBelief && trueBelief
+        ? `${personalizeText(cleanSentence(falseBelief), child)} But ${child} is beginning to see that ${lowerFirst(personalizeText(cleanSentence(trueBelief), child))}.`
+        : cleanSentence(trueBelief || falseBelief);
+
+      return [
+        {
+          label: "NOTICE",
+          text: personalizeText(notice, child),
+          sourceField: "storySeed.narrativeSummary"
+        },
+        {
+          label: "INVESTIGATE",
+          text: personalizeText(investigate || `${child} immediately wants to solve the moment as fast as possible.`, child),
+          sourceField: investigate ? "storySeed.emotionalTension" : "storySeed.immediateWant"
+        },
+        {
+          label: "DISCOVER",
+          text: personalizeText(discover || `${child} realizes there is more going on here than the first reaction allowed for.`, child),
+          sourceField: discover ? "storySeed.immediateObstacle" : "derivedFrom[storySeed + strategy]"
+        },
+        {
+          label: "CONNECTED_DISCOVERY",
+          text: connected,
+          sourceField: "ontology.falseBeliefText -> ontology.trueBeliefText"
+        },
+        {
+          label: "NEW_CHOICE",
+          text: newChoiceLine(situation, strategy, child),
+          sourceField: "derivedFrom[storySeed.immediateWant + ontology.trueBeliefText + strategy]"
+        },
+        {
+          label: "RESOLUTION",
+          text: resolutionLine(situation, strategy, child),
+          sourceField: "derivedFrom[storySeed.narrativeSummary + ontology.trueBeliefText + strategy]"
+        }
+      ];
+    }
+
+    function buildCompressedPlan(lengthId) {
+      const situation = state.selectedSituation;
+      const child = firstName(state.character?.name || "The child");
+      const symbol = prettyId(state.symbol?.id);
+      const notice = cleanSentence(situation.storySeed?.narrativeSummary || situation.parentLabel || situation.title);
+      const obstacle = cleanSentence(situation.storySeed?.immediateObstacle || "");
+      const falseBelief = cleanSentence(situation.ontology?.falseBeliefText || "");
+      const trueBelief = cleanSentence(situation.ontology?.trueBeliefText || "");
+      const setting = state.setting?.name || "the setting";
+
+      const setup = `${child} begins here: ${notice}`;
+      const turn = obstacle
+        ? `The turn comes when ${child} realizes ${lowerFirst(obstacle)} and the first belief no longer fully holds.`
+        : `The turn comes when a clue linked to ${lowerFirst(symbol)} makes ${child} question the first conclusion.`;
+      const payoff = trueBelief
+        ? `The payoff is a small changed action that proves: ${lowerFirst(trueBelief)}.`
+        : `The payoff is a small changed action that shows the situation means something different now.`;
+
+      if (lengthId === "tiny") {
+        return [
+          `Setup: ${notice}`,
+          `Pivot: ${falseBelief ? `${falseBelief} -> ${trueBelief}` : trueBelief || "the meaning changes"}`,
+          `Payoff: End on one clear image linked to ${symbol}.`
+        ];
+      }
+
+      if (lengthId === "micro") {
+        return [
+          `Setup: ${setup}.`,
+          `Turn: ${turn}`,
+          `Payoff: ${payoff} Keep it inside one short ending image in ${setting}.`
+        ];
+      }
+
+      if (lengthId === "short") {
+        return [
+          `Setup: ${setup}.`,
+          `Turn: ${turn}`,
+          `Payoff: ${payoff}`
+        ];
+      }
+
+      return [];
+    }
+
+    function countWords(text) {
+      return String(text || "").trim().split(/\s+/).filter(Boolean).length;
+    }
+
+    function shortTruth(text, childName) {
+      const truth = cleanSentence(text || "");
+      if (!truth) return `${childName} sees things differently now`;
+      return lowerFirst(truth).replace(/^i can /i, `${childName} can `);
+    }
+
+    function buildLiveStorySample(lengthId) {
+      const situation = state.selectedSituation;
+      const child = firstName(state.character?.name || "The child");
+      const symbol = prettyId(state.symbol?.id);
+      const notice = cleanSentence(situation.storySeed?.narrativeSummary || situation.parentLabel || situation.title);
+      const obstacle = cleanSentence(situation.storySeed?.immediateObstacle || "");
+      const truth = shortTruth(situation.ontology?.trueBeliefText || "", child);
+      const emotion = prettyEmotion((situation.emotionIds || [])[0] || "");
+      const setting = state.setting?.name || "the world around them";
+
+      const byLength = {
+        tiny: `${child} sees a clue linked to ${lowerFirst(symbol)} and realizes ${truth}. One small new choice changes the ending.`,
+        micro: `${child} feels ${emotion.toLowerCase()} when ${lowerFirst(notice)}. Then ${lowerFirst(obstacle || `a clue in ${setting} changes the moment`)}. Seeing it differently, ${child} realizes ${truth}. One small changed action becomes the payoff.`,
+        short: `${child} begins with one painful conclusion: ${lowerFirst(notice)}. It feels true at first. But then ${lowerFirst(obstacle || `a clue in ${setting} changes the meaning of the moment`)}. That shift helps ${child} realize ${truth}. Instead of repeating the first reaction, ${child} makes one smaller, wiser choice, and the ending feels different because the meaning has changed.`
+      };
+
+      return byLength[lengthId] || "";
+    }
+
+    function renderSampleStack() {
+      const stack = document.getElementById("sampleStack");
+      const samples = [
+        { id: "tiny", label: "20-Word Direction", text: buildLiveStorySample("tiny") },
+        { id: "micro", label: "40-60 Word Sample", text: buildLiveStorySample("micro") }
+      ];
+      stack.innerHTML = samples.map(sample => `
+        <div class="sample-card">
+          <div class="sample-top">
+            <div class="sample-title">${escapeHtml(sample.label)}</div>
+            <div class="sample-count">${escapeHtml(String(countWords(sample.text)))} words</div>
+          </div>
+          <div class="sample-text">${escapeHtml(sample.text)}</div>
+        </div>
+      `).join("");
+    }
+
+    function renderIdeaNote() {
+      const situation = state.selectedSituation;
+      const need = needById(situation.ontology?.needId);
+      const symbol = state.symbol;
+      const strategy = state.strategy;
+      const form = determineForm(situation);
+      const child = state.character;
+      const setting = state.setting;
+      const titles = titleIdeas();
+      const beats = buildBeatFlow();
+      const mechanism = mechanismLabel(situation, strategy);
+      const formWhy = formWhyText(situation, strategy);
+      const opening = chooseOpening(situation);
+      const ending = chooseEnding(situation);
+      const arc = chooseEmotionalArc(situation);
+      const structure = chooseStoryStructure(situation, strategy);
+
+      document.getElementById("ideaNote").innerHTML = `
+        <h3>Story Core</h3>
+        <p><b>Situation:</b> ${escapeHtml(situation.parentLabel || situation.title || "")}</p>
+        <p><b>Character:</b> ${escapeHtml(child?.name || "")}</p>
+        <p><b>Emotional movement:</b> ${escapeHtml((situation.emotionIds || []).map(prettyEmotion).join(" -> ") || "Not specified")}</p>
+        <p><b>Core need:</b> ${escapeHtml(prettyId(need?.id || situation.ontology?.needId))}</p>
+        <p><b>False belief:</b> ${escapeHtml(situation.ontology?.falseBeliefText || "")}</p>
+        <p><b>True belief:</b> ${escapeHtml(situation.ontology?.trueBeliefText || "")}</p>
+
+        <h3>Form</h3>
+        <div class="form-badge">${escapeHtml(formLabel(form))}</div>
+        <div class="form-why">${escapeHtml(formWhy)}</div>
+
+        <h3>Plan Setup</h3>
+        <p><b>Strategy:</b> ${escapeHtml(strategy.name)}</p>
+        <p><b>Mechanism:</b> ${escapeHtml(mechanism)}</p>
+        <p><b>Character profile:</b> ${escapeHtml(child?.core_personality || "")}</p>
+        <p><b>Setting:</b> ${escapeHtml(setting?.name || "")}</p>
+        <p><b>Symbol thread:</b> ${escapeHtml(prettyId(symbol?.id))} - ${escapeHtml(symbolMotif(symbol?.id))}</p>
+        <p><b>Opening pattern:</b> ${escapeHtml(opening?.name || "Not selected")} - ${escapeHtml(opening?.description || "")}</p>
+        <p><b>Emotional arc:</b> ${escapeHtml(arc?.name || "Not selected")} - ${escapeHtml((arc?.journey_raw || []).join(" -> "))}</p>
+        <p><b>Story structure:</b> ${escapeHtml(structure?.name || "Not selected")} - ${escapeHtml(structure?.scene_flow_template || "")}</p>
+        <p><b>Ending pattern:</b> ${escapeHtml(ending?.name || "Not selected")} - ${escapeHtml(ending?.description || "")}</p>
+
+        <h3>Beat Flow</h3>
+        <div class="beat-plan">
+          ${beats.map(beat => `
+            <div class="beat-item">
+              <div class="beat-label">${escapeHtml(beat.label)}</div>
+              <div class="beat-text">${escapeHtml(beat.text)}</div>
+              <div class="beat-source">sourceField: ${escapeHtml(beat.sourceField)}</div>
+            </div>
+          `).join("")}
+        </div>
+
+        <h3>Title Ideas</h3>
+        <div class="title-ideas">${titles.map(title => `<div class="title-idea">${escapeHtml(title)}</div>`).join("")}</div>
+      `;
+    }
+
+    function renderLengthRow() {
+      const row = document.getElementById("lengthRow");
+      row.innerHTML = LENGTH_OPTIONS.map(option => {
+        const active = state.length === option.id ? " active" : "";
+        return `<button type="button" class="length-chip${active}" data-length="${escapeHtml(option.id)}">${escapeHtml(option.name)}<br><span style="font-size:11px; font-weight:400;">${escapeHtml(option.note)}</span></button>`;
+      }).join("");
+      row.querySelectorAll("[data-length]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          state.length = btn.dataset.length;
+          renderLengthRow();
+          renderPrompt();
+        });
+      });
+    }
+
+    function buildPrompt() {
+      const situation = state.selectedSituation;
+      const strategy = state.strategy;
+      const child = state.character;
+      const setting = state.setting;
+      const symbol = state.symbol;
+      const beats = buildBeatFlow();
+      const compressedPlan = buildCompressedPlan(state.length);
+      const lengthLine = {
+        tiny: "Write this in about 20 words total. Keep only the pivot, the core symbol/object, and the payoff line.",
+        micro: "Write this in 40-60 words total. Use only Setup -> Turn -> Payoff. Keep 2-3 beats maximum.",
+        short: "Write this in about 80-120 words as a very short picture-book seed.",
+        medium: "Write this as a fuller story brief with opening, middle movement, emotional turn, and ending.",
+        long: "Write this as a detailed drafting brief with scene-by-scene beat guidance and image cues."
+      }[state.length];
+
+      const trimRule = {
+        tiny: [
+          "Compression rule for 20 words:",
+          "- Keep fixed: the false belief -> true belief pivot, the core symbol/object, and the payoff line.",
+          "- Cut first: setting detail, sensory description, extra motion, and all dialogue except maybe one tiny phrase.",
+          "- Structure: Setup -> Pivot -> Payoff in 1-2 sentences."
+        ],
+        micro: [
+          "Compression rule for 40-60 words:",
+          "- Keep fixed: the pivot, the core symbol/object, and the payoff line.",
+          "- Cut first: sensory detail, setting description, repeated struggle beats, and back-and-forth dialogue.",
+          "- Keep only 2-3 beats: Setup -> Turn -> Payoff.",
+          "- If the original strategy has 5-7 beats, drop the middle struggle beats first."
+        ],
+          short: [
+            "Compression rule for 80-120 words:",
+            "- Keep the full emotional spine, but merge beats where possible.",
+            "- One clue can carry the turn if needed.",
+            "- Keep dialogue minimal."
+        ],
+        medium: [],
+        long: []
+      }[state.length] || [];
+
+        return [
+          "Write a children's story from this brief.",
+          "",
+          lengthLine,
+          "",
+        `Situation: ${situation.parentLabel || situation.title}`,
+        `Child experience: ${situation.storySeed?.childExperience || situation.storySeed?.narrativeSummary || ""}`,
+        `Child feeling: ${(situation.emotionIds || []).map(prettyEmotion).join(", ")}`,
+        `Core need: ${prettyId(situation.ontology?.needId)}`,
+        `False belief: ${situation.ontology?.falseBeliefText || ""}`,
+        `True belief: ${situation.ontology?.trueBeliefText || ""}`,
+        `Narrative form: ${formLabel(determineForm(situation))}`,
+        `Narrative strategy: ${strategy.name}`,
+        `Character: ${child?.name || ""} - ${child?.core_personality || ""}`,
+          `Setting cue: ${setting?.name || ""}`,
+          `Symbol: ${prettyId(symbol?.id)} (${prettyId(symbol?.symbol_theme)})`,
+          ...(compressedPlan.length ? ["", "Short-form structure to preserve:", ...compressedPlan] : []),
+          "",
+          "Required movement:",
+          movementNote(situation, strategy),
+          "",
+          ...(state.length === "medium" || state.length === "long"
+            ? ["Beat guide:", ...beats.map((beat, index) => `${index + 1}. ${beat.label}: ${beat.text}`)]
+            : ["Beat priority:", "Use the short-form structure above instead of expanding every beat."]),
+          ...(trimRule.length ? ["", ...trimRule] : []),
+          "",
+          "Important:",
+          "- Do not make it preachy.",
+          "- Let the recognition arrive through the chosen strategy, not through adult explanation alone.",
+          "- Keep the symbol present as an image or motif, not as heavy moral instruction.",
+          "- End with a changed feeling or action that proves the inner shift.",
+          ...(state.length === "tiny" || state.length === "micro"
+            ? [
+                "- Do not include extra walking, scenery, or side beats unless they directly cause the pivot.",
+                "- Do not restate the same emotion twice in different words.",
+                "- Prefer one clean turn over several mini-events."
+              ]
+            : [])
+        ].join("\n");
+      }
+
+    function renderPrompt() {
+      renderLengthRow();
+      renderSampleStack();
+      document.getElementById("promptBox").value = buildPrompt();
+    }
+
+    function shuffleCharacter() {
+      const chars = characterList();
+      if (!chars.length) return;
+      const idx = Math.floor(Math.random() * chars.length);
+      state.character = chars[idx];
+      renderStoryShape();
+    }
+
+    function shuffleSetting() {
+      const settings = settingList();
+      if (!settings.length) return;
+      const idx = Math.floor(Math.random() * settings.length);
+      state.setting = settings[idx];
+      renderStoryShape();
+    }
+
+    function wireEvents() {
+      document.getElementById("entryToggle").addEventListener("click", event => {
+        const btn = event.target.closest("[data-mode]");
+        if (!btn) return;
+        state.entryMode = btn.dataset.mode;
+        if (state.entryMode !== "symbol") state.entrySymbol = "";
+        if (state.entryMode !== "emotion") state.entryEmotion = "";
+        renderEntryPanels();
+        renderEntryPills();
+        renderSituationList();
+      });
+
+      document.getElementById("searchBox").addEventListener("input", renderSituationList);
+      document.getElementById("catFilter").addEventListener("change", renderSituationList);
+
+      document.getElementById("toStep2").addEventListener("click", () => {
+        if (!state.selectedSituation) {
+          alert("Choose a situation first.");
+          return;
+        }
+        state.symbol = symbolById(state.selectedSituation.ontology?.ganeshaSymbolPrimary) || state.symbol;
+        goToStep(2);
+      });
+
+      document.getElementById("toStep1b").addEventListener("click", () => goToStep(1));
+      document.getElementById("toStep3").addEventListener("click", () => goToStep(3));
+      document.getElementById("toStep2b").addEventListener("click", () => goToStep(2));
+      document.getElementById("toStep4").addEventListener("click", () => goToStep(4));
+      document.getElementById("toStep3b").addEventListener("click", () => goToStep(3));
+      document.getElementById("toStep5").addEventListener("click", () => goToStep(5));
+      document.getElementById("toStep4b").addEventListener("click", () => goToStep(4));
+
+      document.getElementById("shuffleChar").addEventListener("click", shuffleCharacter);
+      document.getElementById("shuffleSetting").addEventListener("click", shuffleSetting);
+
+      document.getElementById("regenTitles").addEventListener("click", () => {
+        state.titleSeed += 1;
+        renderIdeaNote();
+      });
+
+      document.getElementById("regenBeats").addEventListener("click", () => {
+        state.beatSeed += 1;
+        renderIdeaNote();
+      });
+
+      document.getElementById("copyPrompt").addEventListener("click", async () => {
+        const text = document.getElementById("promptBox").value;
+        try {
+          await navigator.clipboard.writeText(text);
+          alert("Prompt copied.");
+        } catch (error) {
+          document.getElementById("promptBox").select();
+          document.execCommand("copy");
+          alert("Prompt copied.");
+        }
+      });
+
+      document.getElementById("clearFilters").addEventListener("click", () => {
+        state.entrySymbol = "";
+        state.entryEmotion = "";
+        document.getElementById("searchBox").value = "";
+        document.getElementById("catFilter").value = "";
+        renderEntryPills();
+        renderSituationList();
+      });
+
+      document.getElementById("startOver").addEventListener("click", () => {
+        state.step = 1;
+        state.entryMode = "symbol";
+        state.entrySymbol = "";
+        state.entryEmotion = "";
+        state.selectedSituation = null;
+        state.symbol = null;
+        state.strategy = null;
+        state.character = null;
+        state.setting = null;
+        state.length = "medium";
+        state.beatSeed = 0;
+        state.titleSeed = 0;
+        document.getElementById("searchBox").value = "";
+        document.getElementById("catFilter").value = "";
+        renderEntryPanels();
+        renderEntryPills();
+        renderSituationList();
+        goToStep(1);
+      });
+    }
+
+    async function init() {
+      await loadLibraries();
+      populateCategoryFilter();
+      renderEntryPanels();
+      renderEntryPills();
+      renderSituationList();
+      renderSteps();
+      wireEvents();
+      statusMessage();
+      goToStep(1);
+    }
+
+    init();
+  </script>
+</body>
+</html>

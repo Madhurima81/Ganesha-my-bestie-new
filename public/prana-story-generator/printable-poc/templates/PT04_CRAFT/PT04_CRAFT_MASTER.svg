@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="210mm" height="297mm" viewBox="0 0 794 1123">
+<defs>
+<style>
+.title{font-family:DejaVu Sans,sans-serif;font-weight:700;fill:#6B4F43}
+.body{font-family:DejaVu Sans,sans-serif;fill:#6F5B52}
+.small{font-family:DejaVu Sans,sans-serif;fill:#7B6B63}
+.panel{fill:#FFFDF9;stroke:#E6D8CC;stroke-width:2}
+.panel-soft{fill:#FFF2E4;stroke:#E8D5C6;stroke-width:2}
+.panel-green{fill:#E8F2E4;stroke:#CFE0C8;stroke-width:2}
+</style>
+</defs>
+<rect width="794" height="1123" fill="#FDF9F3"/>
+<rect x="24" y="24" width="746" height="1075" rx="28" fill="#FFFDF9" stroke="#E9DDD2" stroke-width="2"/>
+
+<rect x="55" y="50" width="684" height="110" rx="24" class="panel-soft"/>
+<text id="TITLE" x="122" y="88" class="title" font-size="30">{{TITLE}}</text>
+<text x="122" y="118" class="small" font-size="13">Make it with your hands. Practise it with your heart.</text>
+<g id="MAIN_ART">
+  <circle cx="650" cy="105" r="38" fill="#FFF8EE" stroke="#E3D3C6" stroke-width="2"/>
+  <text x="650" y="111" text-anchor="middle" class="small" font-size="12">ART</text>
+</g>
+<g id="DECORATIONS"></g>
+
+<rect x="55" y="190" width="240" height="270" rx="24" class="panel"/>
+<text x="85" y="225" class="title" font-size="17">WHAT YOU NEED</text>
+<text id="MATERIALS" x="85" y="255" class="body" font-size="14">{{MATERIALS}}</text>
+
+<rect x="310" y="190" width="429" height="270" rx="24" class="panel"/>
+<text x="340" y="225" class="title" font-size="17">MAKE IT</text>
+<text id="STEPS" x="340" y="255" class="body" font-size="14">{{STEPS}}</text>
+
+<rect x="55" y="490" width="684" height="355" rx="28" class="panel"/>
+<text x="397" y="525" text-anchor="middle" class="title" font-size="18">CRAFT TEMPLATE</text>
+<text x="397" y="550" text-anchor="middle" class="small" font-size="12">Cut solid-outlined parts. Fold only where the fold guide appears.</text>
+<g id="CRAFT_GEOMETRY">
+  <text x="397" y="690" text-anchor="middle" class="small" font-size="16">{{CRAFT_GEOMETRY}}</text>
+</g>
+
+<rect x="55" y="875" width="684" height="170" rx="24" class="panel-green"/>
+<text x="397" y="910" text-anchor="middle" class="title" font-size="16">WHY THIS CRAFT MATTERS</text>
+<text id="WISDOM" x="397" y="946" text-anchor="middle" class="body" font-size="17">{{WISDOM}}</text>
+<text id="TAKE_IT_TODAY" x="397" y="998" text-anchor="middle" class="small" font-size="14">{{TAKE_IT_TODAY}}</text>
+</svg>

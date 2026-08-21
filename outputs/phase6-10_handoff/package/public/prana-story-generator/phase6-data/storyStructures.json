@@ -1,0 +1,1302 @@
+[
+  {
+    "id": "STRUCT001",
+    "name": "Clever Underdog",
+    "core_pattern": "Small Hero \u2192 Danger \u2192 Clever Invention \u2192 Twist \u2192 Adapt \u2192 Triumph",
+    "scene_flow_template": "Hero \u2192 Problem \u2192 Clever Attempt \u2192 Twist \u2192 New Plan \u2192 Success \u2192 Celebration",
+    "hard": {
+      "logic_family": "LOGIC_TRICKSTER"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT002",
+    "name": "Emotional Harbor",
+    "core_pattern": "Outburst \u2192 Symbol World \u2192 Exploration \u2192 Mastery \u2192 Realization \u2192 Return",
+    "scene_flow_template": "Emotion \u2192 New World \u2192 Explore \u2192 Reflection \u2192 Insight \u2192 Return",
+    "hard": {
+      "logic_family": "LOGIC_SAFETY_LOOP"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT003",
+    "name": "Rhythmic Growth",
+    "core_pattern": "Need \u2192 Sequential Steps \u2192 Overreach \u2192 Setback \u2192 Stillness \u2192 Bloom",
+    "scene_flow_template": "Goal \u2192 Progress \u2192 Mistake \u2192 Pause \u2192 Growth \u2192 Transformation",
+    "hard": {
+      "logic_family": "LOGIC_TRIAL_AND_ERROR"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT004",
+    "name": "Mindful Catalog",
+    "core_pattern": "Sanctuary \u2192 Observation \u2192 Acknowledgment \u2192 Dimming \u2192 Stillness",
+    "scene_flow_template": "Safe Place \u2192 Observe \u2192 Slow Down \u2192 Quiet \u2192 Peace",
+    "hard": {
+      "logic_family": "LOGIC_RITUAL_ESCALATION"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT005",
+    "name": "Playful Comparison",
+    "core_pattern": "Intimacy \u2192 Challenge \u2192 Escalation \u2192 Nature Vista \u2192 Infinite Reassurance",
+    "scene_flow_template": "Conversation \u2192 Comparison \u2192 Bigger Comparison \u2192 Beautiful Reveal \u2192 Comfort",
+    "hard": {
+      "logic_family": "LOGIC_RITUAL_ESCALATION"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT006",
+    "name": "Shared Wait",
+    "core_pattern": "Departure \u2192 Uncertainty \u2192 Different Responses \u2192 Mutual Comfort \u2192 Return \u2192 Relief",
+    "scene_flow_template": "Goodbye \u2192 Waiting \u2192 Different Reactions \u2192 Comfort \u2192 Reunion",
+    "hard": {
+      "logic_family": "LOGIC_SAFETY_LOOP"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT007",
+    "name": "Interactive Guardrail",
+    "core_pattern": "Assignment \u2192 Temptation \u2192 Negotiation \u2192 Escalation \u2192 Boundary Holds \u2192 New Focus",
+    "scene_flow_template": "Rule \u2192 Temptation \u2192 Funny Excuses \u2192 Decision \u2192 Respect Rule",
+    "hard": {
+      "logic_family": "LOGIC_RUNAWAY_CHAIN"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT008",
+    "name": "Unstoppable Chain",
+    "core_pattern": "Trigger \u2192 Logical Demand \u2192 Action \u2192 New Need \u2192 Escalation \u2192 Loop",
+    "scene_flow_template": "Small Event \u2192 Bigger Event \u2192 Bigger Event \u2192 Circular Finish",
+    "hard": {
+      "logic_family": "LOGIC_RUNAWAY_CHAIN"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT009",
+    "name": "Solo Sensory Trek",
+    "core_pattern": "Waking \u2192 Discovery \u2192 Exploration \u2192 Sensory Wonder \u2192 Reflection",
+    "scene_flow_template": "Wake \u2192 Explore \u2192 Discover \u2192 Reflect \u2192 Peaceful Ending",
+    "hard": {
+      "logic_family": "LOGIC_SAFETY_LOOP"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT010",
+    "name": "Flaw as Quest",
+    "core_pattern": "Longing \u2192 Perceived Flaw \u2192 Determination \u2192 Mishap \u2192 Discovery \u2192 Acceptance",
+    "scene_flow_template": "Wish \u2192 Try to Change \u2192 Fail \u2192 Discovery \u2192 Acceptance",
+    "hard": {
+      "logic_family": "LOGIC_PERSPECTIVE_SHIFT"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT011",
+    "name": "Validated Grump",
+    "core_pattern": "Bad Start \u2192 Setbacks \u2192 Emotional Overflow \u2192 Being Heard \u2192 Soft Acceptance",
+    "scene_flow_template": "Bad Day \u2192 More Problems \u2192 Emotional Peak \u2192 Comfort \u2192 Calm Ending",
+    "hard": {
+      "logic_family": "LOGIC_PERSPECTIVE_SHIFT"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT012",
+    "name": "Surprise Visitor",
+    "core_pattern": "Routine \u2192 Unexpected Visitor \u2192 Escalating Disruption \u2192 Adaptation \u2192 Farewell",
+    "scene_flow_template": "Quiet Routine \u2192 Visitor \u2192 Chaos \u2192 Adapt \u2192 Happy Goodbye",
+    "hard": {
+      "logic_family": "LOGIC_CATALYST_VISIT"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT013",
+    "name": "World Creator",
+    "core_pattern": "Decision \u2192 World Building \u2192 Exploration \u2192 Hurdle \u2192 Creative Escape \u2192 Home",
+    "scene_flow_template": "Imagine \u2192 Build \u2192 Explore \u2192 Solve \u2192 Return Home",
+    "hard": {
+      "logic_family": "LOGIC_THRESHOLD_CROSSING"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT014",
+    "name": "Call-and-Response",
+    "core_pattern": "Question \u2192 Answer \u2192 New Question \u2192 Growing Chain \u2192 Group Finale",
+    "scene_flow_template": "Question \u2192 Answer \u2192 Repeat \u2192 Group Celebration",
+    "hard": {
+      "logic_family": "LOGIC_CUMULATIVE_BUILD"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT015",
+    "name": "Portable Anchor",
+    "core_pattern": "Anxiety \u2192 Ritual \u2192 Practice \u2192 Challenge \u2192 Confidence \u2192 Reunion",
+    "scene_flow_template": "Fear \u2192 Learn Ritual \u2192 Practice \u2192 Brave Moment \u2192 Success",
+    "hard": {
+      "logic_family": "LOGIC_SAFETY_LOOP"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT016",
+    "name": "Hospitality Chain",
+    "core_pattern": "Journey \u2192 Invitation \u2192 Growing Team \u2192 Threat \u2192 Teamwork \u2192 Celebration",
+    "scene_flow_template": "Journey \u2192 Meet Friends \u2192 Bigger Team \u2192 Problem \u2192 Team Victory",
+    "hard": {
+      "logic_family": "LOGIC_CUMULATIVE_BUILD"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT017",
+    "name": "Perspective Reframe",
+    "core_pattern": "Complaint \u2192 Journey \u2192 Mentor \u2192 New Perspective \u2192 Gratitude",
+    "scene_flow_template": "Complaint \u2192 Adventure \u2192 Observe \u2192 Realize \u2192 Appreciate",
+    "hard": {
+      "logic_family": "LOGIC_PERSPECTIVE_SHIFT"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT018",
+    "name": "Secret Witness",
+    "core_pattern": "Simple Mission \u2192 Hidden Parallel Story \u2192 Escalation \u2192 Safe Finish",
+    "scene_flow_template": "Mission \u2192 Hidden Events \u2192 Escalation \u2192 Hero Unaware \u2192 Finish",
+    "hard": {
+      "logic_family": "LOGIC_PARALLEL_JOURNEY"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT019",
+    "name": "Copycat Mirror",
+    "core_pattern": "Routine \u2192 Loss \u2192 Mimicry \u2192 Observation \u2192 Trick \u2192 Recovery",
+    "scene_flow_template": "Loss \u2192 Frustration \u2192 Notice Pattern \u2192 Clever Trick \u2192 Success",
+    "hard": {
+      "logic_family": "LOGIC_TRICKSTER"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT020",
+    "name": "Tiny Spark",
+    "core_pattern": "Paralysis \u2192 Tiny Step \u2192 Experiment \u2192 Confidence \u2192 Mentorship",
+    "scene_flow_template": "Fear \u2192 First Step \u2192 Practice \u2192 Success \u2192 Inspire Others",
+    "hard": {
+      "logic_family": "LOGIC_TRIAL_AND_ERROR"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT021",
+    "name": "Separation Anxiety",
+    "core_pattern": "Home \u2192 Separation \u2192 Parallel Routine \u2192 Near Miss \u2192 Reunion",
+    "scene_flow_template": "Goodbye \u2192 Parallel Lives \u2192 Missing Each Other \u2192 Reunion",
+    "hard": {
+      "logic_family": "LOGIC_SAFETY_LOOP"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT022",
+    "name": "City Crossing",
+    "core_pattern": "Safe Place \u2192 Journey \u2192 Big Obstacle \u2192 Helper \u2192 Arrival",
+    "scene_flow_template": "Home \u2192 Travel \u2192 Major Obstacle \u2192 Help \u2192 Destination",
+    "hard": {
+      "logic_family": "LOGIC_THRESHOLD_CROSSING"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT023",
+    "name": "Shifting World",
+    "core_pattern": "Peace \u2192 Change \u2192 Loss \u2192 Discovery \u2192 Restoration",
+    "scene_flow_template": "Happy Beginning \u2192 Disruption \u2192 Sadness \u2192 Hope \u2192 Renewal",
+    "hard": {
+      "logic_family": "LOGIC_CIRCULAR_RETURN"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT024",
+    "name": "Mirror Mistake",
+    "core_pattern": "Discovery \u2192 Ambition \u2192 Fail \u2192 Fail Again \u2192 Disappointment \u2192 Surprise Success",
+    "scene_flow_template": "Goal \u2192 Try \u2192 Fail \u2192 Learn \u2192 Unexpected Reward",
+    "hard": {
+      "logic_family": "LOGIC_TRIAL_AND_ERROR"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT025",
+    "name": "Absurd Extraction",
+    "core_pattern": "Problem \u2192 Routine \u2192 Strange Discovery \u2192 Bigger Discovery \u2192 Resolution",
+    "scene_flow_template": "Small Problem \u2192 Weird Discovery \u2192 Bigger Surprise \u2192 Funny Ending",
+    "hard": {
+      "logic_family": "LOGIC_THRESHOLD_CROSSING"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT026",
+    "name": "Surreal Night",
+    "core_pattern": "Night \u2192 Transformation \u2192 Exploration \u2192 Close Call \u2192 Morning",
+    "scene_flow_template": "Bedtime \u2192 Magic \u2192 Adventure \u2192 Escape \u2192 Wake Up",
+    "hard": {
+      "logic_family": "LOGIC_THRESHOLD_CROSSING"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT027",
+    "name": "Mirror Invitation",
+    "core_pattern": "Question \u2192 Introductions \u2192 Growing Chain \u2192 Community",
+    "scene_flow_template": "Invitation \u2192 Meet Others \u2192 Bigger Group \u2192 Celebration",
+    "hard": {
+      "logic_family": "LOGIC_CUMULATIVE_BUILD"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT028",
+    "name": "Subversive Princess",
+    "core_pattern": "Peril \u2192 Humility \u2192 Clever Thinking \u2192 Victory \u2192 Healthy Boundary",
+    "scene_flow_template": "Danger \u2192 Underestimated Hero \u2192 Clever Plan \u2192 Victory",
+    "hard": {
+      "logic_family": "LOGIC_TRICKSTER"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT029",
+    "name": "Unique Eye",
+    "core_pattern": "Group \u2192 Difference \u2192 Solitary Discovery \u2192 Leadership \u2192 Unity",
+    "scene_flow_template": "Different Hero \u2192 Discovery \u2192 Others Learn \u2192 Shared Success",
+    "hard": {
+      "logic_family": "LOGIC_PERSPECTIVE_SHIFT"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT030",
+    "name": "Functional Shift",
+    "core_pattern": "Ordinary Object \u2192 Innovation \u2192 Mockery \u2192 Proof \u2192 Acceptance",
+    "scene_flow_template": "New Idea \u2192 Others Laugh \u2192 Demonstration \u2192 Acceptance",
+    "hard": {
+      "logic_family": "LOGIC_INVERSION"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT031",
+    "name": "Shared Scale",
+    "core_pattern": "Vanity \u2192 Request \u2192 Isolation \u2192 Advice \u2192 Sharing \u2192 Belonging",
+    "scene_flow_template": "Wants More \u2192 Feels Alone \u2192 Learns \u2192 Shares \u2192 Friends Return",
+    "hard": {
+      "logic_family": "LOGIC_RESOURCE_DEPRECIATION"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT032",
+    "name": "Disguise Trap",
+    "core_pattern": "Difference \u2192 Hide \u2192 Pretend \u2192 Unhappiness \u2192 Reveal \u2192 Acceptance",
+    "scene_flow_template": "Feel Different \u2192 Hide \u2192 Problems Grow \u2192 Reveal \u2192 Accepted",
+    "hard": {
+      "logic_family": "LOGIC_PERSPECTIVE_SHIFT"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT033",
+    "name": "Role Reversal",
+    "core_pattern": "Helper Gives \u2192 Helper Needs Help \u2192 Friends Respond \u2192 Balance Restored",
+    "scene_flow_template": "Helping Others \u2192 Needs Help \u2192 Community Helps Back",
+    "hard": {
+      "logic_family": "LOGIC_ROLE_REVERSAL"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT034",
+    "name": "Perspective Bus",
+    "core_pattern": "Complaint \u2192 Journey \u2192 Gentle Guide \u2192 New Eyes \u2192 Joy",
+    "scene_flow_template": "Complaint \u2192 Observe \u2192 Notice Beauty \u2192 Appreciate",
+    "hard": {
+      "logic_family": "LOGIC_PERSPECTIVE_SHIFT"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT035",
+    "name": "Secret Skill",
+    "core_pattern": "Teaching \u2192 Rival Success \u2192 Conflict \u2192 Realization \u2192 Teamwork",
+    "scene_flow_template": "Teach \u2192 Conflict \u2192 Separation \u2192 Reconcile \u2192 Team Victory",
+    "hard": {
+      "logic_family": "LOGIC_TRICKSTER"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT036",
+    "name": "Silent Secret",
+    "core_pattern": "Ordinary Routine \u2192 Hidden Chaos \u2192 Escalation \u2192 Peaceful Ending",
+    "scene_flow_template": "Hero Walks \u2192 Secret Events \u2192 Escalation \u2192 Hero Returns",
+    "hard": {
+      "logic_family": "LOGIC_PARALLEL_JOURNEY"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT037",
+    "name": "Echo Puzzle",
+    "core_pattern": "Loss \u2192 Sound Clue \u2192 Frustration \u2192 Careful Listening \u2192 Discovery",
+    "scene_flow_template": "Problem \u2192 Hear Clue \u2192 Wrong Guess \u2192 Listen Better \u2192 Solve",
+    "hard": {
+      "logic_family": "LOGIC_TRIAL_AND_ERROR"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT038",
+    "name": "First Seed",
+    "core_pattern": "Fear \u2192 Tiny Step \u2192 Repetition \u2192 Growth \u2192 Sharing",
+    "scene_flow_template": "Fear \u2192 First Step \u2192 Progress \u2192 Success \u2192 Help Others",
+    "hard": {
+      "logic_family": "LOGIC_TRIAL_AND_ERROR"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT039",
+    "name": "Mystery Friend",
+    "core_pattern": "Strange Sign \u2192 Fear \u2192 Investigation \u2192 Helpful Truth",
+    "scene_flow_template": "Strange Event \u2192 Investigation \u2192 Discovery \u2192 Friendship",
+    "hard": {
+      "logic_family": "LOGIC_CATALYST_VISIT"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT040",
+    "name": "Echo Cave",
+    "core_pattern": "Anger \u2192 Loud Reaction \u2192 Wise Advice \u2192 Gentle Response \u2192 Light",
+    "scene_flow_template": "Anger \u2192 Consequences \u2192 Reflection \u2192 Calm Choice \u2192 Resolution",
+    "hard": {
+      "logic_family": "LOGIC_PERSPECTIVE_SHIFT"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT041",
+    "name": "Shared Light",
+    "core_pattern": "Question \u2192 Demonstration \u2192 Multiplication \u2192 Shared Peace",
+    "scene_flow_template": "Question \u2192 Demonstration \u2192 Others Join \u2192 Community Joy",
+    "hard": {
+      "logic_family": "LOGIC_CUMULATIVE_BUILD"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT042",
+    "name": "Lantern Wait",
+    "core_pattern": "Mission \u2192 Waiting \u2192 Different Coping Styles \u2192 Reunion",
+    "scene_flow_template": "Mission \u2192 Wait \u2192 Different Reactions \u2192 Reunion",
+    "hard": {
+      "logic_family": "LOGIC_SAFETY_LOOP"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT043",
+    "name": "Impulse Bell",
+    "core_pattern": "Rule \u2192 Temptation \u2192 Excuses \u2192 Wise Choice \u2192 Reward",
+    "scene_flow_template": "Rule \u2192 Temptation \u2192 Internal Conflict \u2192 Good Choice \u2192 Success",
+    "hard": {
+      "logic_family": "LOGIC_RITUAL_ESCALATION"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT044",
+    "name": "Banyan Seed Chain",
+    "core_pattern": "Plant \u2192 Care \u2192 New Need \u2192 Growth \u2192 Bigger Chain",
+    "scene_flow_template": "Plant \u2192 Care \u2192 More Help Needed \u2192 Growth \u2192 Celebration",
+    "hard": {
+      "logic_family": "LOGIC_RUNAWAY_CHAIN"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT045",
+    "name": "Lotus Watch",
+    "core_pattern": "Bloom \u2192 Observation \u2192 Discovery \u2192 Reflection",
+    "scene_flow_template": "Observe \u2192 Explore \u2192 Realize \u2192 Quiet Ending",
+    "hard": {
+      "logic_family": "LOGIC_SAFETY_LOOP"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT046",
+    "name": "Crooked Shape",
+    "core_pattern": "Flaw \u2192 Try to Fix \u2192 Bigger Problem \u2192 Wisdom \u2192 Joy",
+    "scene_flow_template": "Feel Flawed \u2192 Fix Attempts \u2192 Failure \u2192 Acceptance \u2192 Happiness",
+    "hard": {
+      "logic_family": "LOGIC_INVERSION"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT047",
+    "name": "Muddy Day",
+    "core_pattern": "Setbacks \u2192 More Setbacks \u2192 Silence \u2192 Reframe \u2192 Fresh Start",
+    "scene_flow_template": "Bad Events \u2192 Emotional Low \u2192 Reflection \u2192 Hope",
+    "hard": {
+      "logic_family": "LOGIC_TRIAL_AND_ERROR"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT048",
+    "name": "Cloud Guest",
+    "core_pattern": "Celebration \u2192 Unexpected Change \u2192 Adaptation \u2192 New Joy",
+    "scene_flow_template": "Plan \u2192 Disruption \u2192 Adapt \u2192 Better Outcome",
+    "hard": {
+      "logic_family": "LOGIC_CATALYST_VISIT"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT049",
+    "name": "Golden Path",
+    "core_pattern": "Tool \u2192 Creative Journey \u2192 Adventure \u2192 Home",
+    "scene_flow_template": "Tool Found \u2192 Adventure \u2192 Problem Solved \u2192 Return",
+    "hard": {
+      "logic_family": "LOGIC_THRESHOLD_CROSSING"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT050",
+    "name": "Smile Chain",
+    "core_pattern": "Question \u2192 Nature Answers \u2192 Community Answers \u2192 Personal Discovery",
+    "scene_flow_template": "Question \u2192 Discover \u2192 Share \u2192 Joyful Ending",
+    "hard": {
+      "logic_family": "LOGIC_CUMULATIVE_BUILD"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT051",
+    "name": "Spiral Breath",
+    "core_pattern": "Fear \u2192 Restlessness \u2192 Guided Breath \u2192 Self-Regulation \u2192 Success",
+    "scene_flow_template": "Fear \u2192 Learn Breathing \u2192 Practice \u2192 Brave Action",
+    "hard": {
+      "logic_family": "LOGIC_TRIAL_AND_ERROR"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT052",
+    "name": "Nest Build",
+    "core_pattern": "Gather \u2192 Invite \u2192 Danger \u2192 Team Solution \u2192 Bigger Home",
+    "scene_flow_template": "Build \u2192 Friends Join \u2192 Threat \u2192 Solve Together",
+    "hard": {
+      "logic_family": "LOGIC_CUMULATIVE_BUILD"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT053",
+    "name": "Hidden Lamp",
+    "core_pattern": "Difference \u2192 Hide \u2192 Inner Light \u2192 Recognition \u2192 Shared Glow",
+    "scene_flow_template": "Hide \u2192 Discover Strength \u2192 Share \u2192 Inspire Others",
+    "hard": {
+      "logic_family": "LOGIC_PERSPECTIVE_SHIFT"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT054",
+    "name": "Silent Flower",
+    "core_pattern": "Hurt \u2192 Advice \u2192 Quiet Presence \u2192 Healing",
+    "scene_flow_template": "Problem \u2192 Advice Fails \u2192 Stay Together \u2192 Recovery",
+    "hard": {
+      "logic_family": "LOGIC_PERSPECTIVE_SHIFT"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT055",
+    "name": "Forest Helper",
+    "core_pattern": "Complaint \u2192 Discovery \u2192 Listening \u2192 Creative Solution \u2192 Appreciation",
+    "scene_flow_template": "Complaint \u2192 Explore \u2192 Discover Value \u2192 Gratitude",
+    "hard": {
+      "logic_family": "LOGIC_PERSPECTIVE_SHIFT"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT056",
+    "name": "Flying Leaf",
+    "core_pattern": "Ordinary Object \u2192 Small Adventure \u2192 Bigger Adventure \u2192 Wisdom",
+    "scene_flow_template": "Discover Object \u2192 Adventure \u2192 Discovery \u2192 Reflection",
+    "hard": {
+      "logic_family": "LOGIC_THRESHOLD_CROSSING"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT057",
+    "name": "Muddy Shield",
+    "core_pattern": "Mockery \u2192 Challenge \u2192 Action \u2192 Respect",
+    "scene_flow_template": "Mocked \u2192 Opportunity \u2192 Brave Action \u2192 Acceptance",
+    "hard": {
+      "logic_family": "LOGIC_INVERSION"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT058",
+    "name": "Quiet Story",
+    "core_pattern": "Passion \u2192 Doubt \u2192 Stillness \u2192 Authentic Expression \u2192 Success",
+    "scene_flow_template": "Dream \u2192 Doubt \u2192 Reflection \u2192 Try Again \u2192 Success",
+    "hard": {
+      "logic_family": "LOGIC_TRIAL_AND_ERROR"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT059",
+    "name": "Banyan Wind",
+    "core_pattern": "Hurry \u2192 Failure \u2192 Observe \u2192 Better Solution \u2192 Success",
+    "scene_flow_template": "Rush \u2192 Mistake \u2192 Observe \u2192 Adapt \u2192 Win",
+    "hard": {
+      "logic_family": "LOGIC_TRIAL_AND_ERROR"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT060",
+    "name": "Floating Seed",
+    "core_pattern": "Separation \u2192 Adaptation \u2192 Identity \u2192 Bloom",
+    "scene_flow_template": "Separation \u2192 New Environment \u2192 Growth \u2192 Belonging",
+    "hard": {
+      "logic_family": "LOGIC_PERSPECTIVE_SHIFT"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT061",
+    "name": "Lantern Circle",
+    "core_pattern": "Storm \u2192 Solo Wonder \u2192 Fearful Friends \u2192 Unity",
+    "scene_flow_template": "Storm \u2192 Discovery \u2192 Friends Join \u2192 Safe Together",
+    "hard": {
+      "logic_family": "LOGIC_CATALYST_VISIT"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT062",
+    "name": "Yellow Ring",
+    "core_pattern": "Discovery \u2192 Mockery \u2192 Unexpected Use \u2192 Acceptance",
+    "scene_flow_template": "Find \u2192 Ridiculed \u2192 Demonstrate \u2192 Community Accepts",
+    "hard": {
+      "logic_family": "LOGIC_INVERSION"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT063",
+    "name": "Seed Basket",
+    "core_pattern": "Hoarding \u2192 Isolation \u2192 Wise Advice \u2192 Sharing \u2192 Abundance",
+    "scene_flow_template": "Collect \u2192 Alone \u2192 Learn \u2192 Share \u2192 Community Joy",
+    "hard": {
+      "logic_family": "LOGIC_RESOURCE_DEPRECIATION"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT064",
+    "name": "Rhythmic Log",
+    "core_pattern": "Talent \u2192 Hiding \u2192 Silence \u2192 Discovery \u2192 Celebration",
+    "scene_flow_template": "Hide Talent \u2192 Quiet Moment \u2192 Discovery \u2192 Celebrate",
+    "hard": {
+      "logic_family": "LOGIC_INVERSION"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT065",
+    "name": "Ankle Sprain",
+    "core_pattern": "Helper \u2192 Injury \u2192 Others Help \u2192 Gratitude",
+    "scene_flow_template": "Helping \u2192 Problem \u2192 Friends Return \u2192 Appreciation",
+    "hard": {
+      "logic_family": "LOGIC_ROLE_REVERSAL"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT066",
+    "name": "Village Path",
+    "core_pattern": "Journey \u2192 Observation \u2192 Gathering \u2192 Giving \u2192 Joy",
+    "scene_flow_template": "Walk \u2192 Notice Needs \u2192 Help \u2192 Community Celebration",
+    "hard": {
+      "logic_family": "LOGIC_CUMULATIVE_BUILD"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT067",
+    "name": "Garden Song",
+    "core_pattern": "Expert \u2192 Mimic \u2192 Conflict \u2192 Teamwork \u2192 Harmony",
+    "scene_flow_template": "Success \u2192 Rivalry \u2192 Conflict \u2192 Cooperation \u2192 Performance",
+    "hard": {
+      "logic_family": "LOGIC_ROLE_REVERSAL"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT068",
+    "name": "Butterfly Walk",
+    "core_pattern": "Mission \u2192 Hidden Events \u2192 Hero Unaware \u2192 Success",
+    "scene_flow_template": "Mission \u2192 Secret Events \u2192 Escalation \u2192 Happy Ending",
+    "hard": {
+      "logic_family": "LOGIC_PARALLEL_JOURNEY"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT069",
+    "name": "Sound Thief",
+    "core_pattern": "Gathering \u2192 Loss \u2192 Listening \u2192 Recovery",
+    "scene_flow_template": "Loss \u2192 Search \u2192 Listen \u2192 Discovery",
+    "hard": {
+      "logic_family": "LOGIC_CIRCULAR_RETURN"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT070",
+    "name": "Mirror Reflection",
+    "core_pattern": "Search \u2192 False Success \u2192 Disappointment \u2192 True Discovery",
+    "scene_flow_template": "Search \u2192 Wrong Answer \u2192 Try Again \u2192 Correct Solution",
+    "hard": {
+      "logic_family": "LOGIC_TRIAL_AND_ERROR"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT071",
+    "name": "Human Bark",
+    "core_pattern": "Problem \u2192 Strange Discovery \u2192 Normalization \u2192 Funny Twist",
+    "scene_flow_template": "Problem \u2192 Weird Event \u2192 Bigger Surprise \u2192 Laugh",
+    "hard": {
+      "logic_family": "LOGIC_THRESHOLD_CROSSING"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT072",
+    "name": "Pig Flight",
+    "core_pattern": "Ordinary Night \u2192 Impossible Adventure \u2192 Morning Return",
+    "scene_flow_template": "Night \u2192 Adventure \u2192 Close Call \u2192 Wake Up",
+    "hard": {
+      "logic_family": "LOGIC_SAFETY_LOOP"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT073",
+    "name": "Button Loop",
+    "core_pattern": "Rule \u2192 Small Choice \u2192 Consequence \u2192 Escalation \u2192 Restart",
+    "scene_flow_template": "Rule \u2192 Break Rule \u2192 Consequences \u2192 Learn \u2192 Restart",
+    "hard": {
+      "logic_family": "LOGIC_RUNAWAY_CHAIN"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT074",
+    "name": "First Mark",
+    "core_pattern": "Fear \u2192 Tiny Beginning \u2192 Experimentation \u2192 Confidence \u2192 Inspire Others",
+    "scene_flow_template": "Hesitation \u2192 First Try \u2192 Practice \u2192 Success \u2192 Mentor Others",
+    "hard": {
+      "logic_family": "LOGIC_TRIAL_AND_ERROR"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT075",
+    "name": "Secret Map",
+    "core_pattern": "Ordinary Place \u2192 Hidden Discovery \u2192 Adventure \u2192 Home Revealed",
+    "scene_flow_template": "Discover Map \u2192 Adventure \u2192 Explore \u2192 Home Reimagined",
+    "hard": {
+      "logic_family": "LOGIC_THRESHOLD_CROSSING"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT076",
+    "name": "Heavy Suitcase",
+    "core_pattern": "Choice \u2192 Burden \u2192 Persistence \u2192 Wisdom",
+    "scene_flow_template": "Choose \u2192 Struggle \u2192 Reflect \u2192 Let Go",
+    "hard": {
+      "logic_family": "LOGIC_RESOURCE_DEPRECIATION"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT077",
+    "name": "Steep Slide",
+    "core_pattern": "Challenge \u2192 Fear \u2192 Observation \u2192 Small Step \u2192 Triumph",
+    "scene_flow_template": "Fear \u2192 Observe \u2192 Tiny Step \u2192 Success",
+    "hard": {
+      "logic_family": "LOGIC_TRIAL_AND_ERROR"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT078",
+    "name": "Mixed Foods",
+    "core_pattern": "Rigidity \u2192 Disruption \u2192 Reflection \u2192 Flexibility",
+    "scene_flow_template": "Resistance \u2192 New Experience \u2192 Reflection \u2192 Acceptance",
+    "hard": {
+      "logic_family": "LOGIC_PERSPECTIVE_SHIFT"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT079",
+    "name": "Stuck Zipper",
+    "core_pattern": "Goal \u2192 Obstacle \u2192 Frustration \u2192 Calm \u2192 Persistence",
+    "scene_flow_template": "Goal \u2192 Problem \u2192 Frustration \u2192 Calm \u2192 Success",
+    "hard": {
+      "logic_family": "LOGIC_TRIAL_AND_ERROR"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT080",
+    "name": "Missing Piece",
+    "core_pattern": "Achievement \u2192 Imperfection \u2192 Sadness \u2192 Acceptance",
+    "scene_flow_template": "Success \u2192 Missing Part \u2192 Grief \u2192 Wholeness",
+    "hard": {
+      "logic_family": "LOGIC_PERSPECTIVE_SHIFT"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT081",
+    "name": "Empty Chair",
+    "core_pattern": "Loss \u2192 Remembering \u2192 Sharing Memories \u2192 New Tradition",
+    "scene_flow_template": "Loss \u2192 Remember \u2192 Share \u2192 New Beginning",
+    "hard": {
+      "logic_family": "LOGIC_CIRCULAR_RETURN"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT082",
+    "name": "Borrowed Shoes",
+    "core_pattern": "Judgment \u2192 Walking Another's Path \u2192 Understanding \u2192 Kindness",
+    "scene_flow_template": "Misjudge \u2192 Experience \u2192 Understand \u2192 Reconcile",
+    "hard": {
+      "logic_family": "LOGIC_PERSPECTIVE_SHIFT"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT083",
+    "name": "Broken Kite",
+    "core_pattern": "Excitement \u2192 Failure \u2192 Persistence \u2192 Better Creation",
+    "scene_flow_template": "Build \u2192 Break \u2192 Learn \u2192 Rebuild \u2192 Fly",
+    "hard": {
+      "logic_family": "LOGIC_TRIAL_AND_ERROR"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT084",
+    "name": "Whisper Tree",
+    "core_pattern": "Confusion \u2192 Listening \u2192 Discovery \u2192 Wise Decision",
+    "scene_flow_template": "Problem \u2192 Listen \u2192 Discover \u2192 Act",
+    "hard": {
+      "logic_family": "LOGIC_PERSPECTIVE_SHIFT"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT085",
+    "name": "Hidden Door",
+    "core_pattern": "Curiosity \u2192 Search \u2192 Puzzle \u2192 Secret Place",
+    "scene_flow_template": "Wonder \u2192 Explore \u2192 Solve \u2192 Discover",
+    "hard": {
+      "logic_family": "LOGIC_THRESHOLD_CROSSING"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT086",
+    "name": "Lost Melody",
+    "core_pattern": "Loss \u2192 Searching \u2192 Unexpected Helper \u2192 Recovery",
+    "scene_flow_template": "Lose \u2192 Search \u2192 Help \u2192 Recover",
+    "hard": {
+      "logic_family": "LOGIC_CIRCULAR_RETURN"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT087",
+    "name": "Tiny Bridge",
+    "core_pattern": "Division \u2192 Cooperation \u2192 Connection",
+    "scene_flow_template": "Conflict \u2192 Build \u2192 Connect \u2192 Celebrate",
+    "hard": {
+      "logic_family": "LOGIC_ROLE_REVERSAL"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT088",
+    "name": "Brave Echo",
+    "core_pattern": "Fear \u2192 First Attempt \u2192 Echo of Success \u2192 Confidence",
+    "scene_flow_template": "Fear \u2192 Try \u2192 Small Success \u2192 Bigger Success",
+    "hard": {
+      "logic_family": "LOGIC_TRIAL_AND_ERROR"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT089",
+    "name": "Forgotten Gift",
+    "core_pattern": "Giving \u2192 Forgotten Value \u2192 Rediscovery \u2192 Gratitude",
+    "scene_flow_template": "Give \u2192 Forget \u2192 Rediscover \u2192 Appreciate",
+    "hard": {
+      "logic_family": "LOGIC_CIRCULAR_RETURN"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT090",
+    "name": "Gentle Giant",
+    "core_pattern": "Strength \u2192 Misunderstanding \u2192 Kind Action \u2192 Respect",
+    "scene_flow_template": "Misjudged \u2192 Opportunity \u2192 Kind Choice \u2192 Acceptance",
+    "hard": {
+      "logic_family": "LOGIC_PERSPECTIVE_SHIFT"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT091",
+    "name": "River Promise",
+    "core_pattern": "Promise \u2192 Challenge \u2192 Temptation \u2192 Keeping the Promise",
+    "scene_flow_template": "Promise \u2192 Obstacle \u2192 Choice \u2192 Honour Promise",
+    "hard": {
+      "logic_family": "LOGIC_RUNAWAY_CHAIN"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT092",
+    "name": "Moon Garden",
+    "core_pattern": "Wish \u2192 Patience \u2192 Quiet Growth \u2192 Bloom",
+    "scene_flow_template": "Wish \u2192 Wait \u2192 Care \u2192 Bloom",
+    "hard": {
+      "logic_family": "LOGIC_PERSPECTIVE_SHIFT"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT093",
+    "name": "Puzzle Trail",
+    "core_pattern": "Clue \u2192 Wrong Turn \u2192 New Clue \u2192 Final Discovery",
+    "scene_flow_template": "Clue \u2192 Mistake \u2192 Learn \u2192 Solve",
+    "hard": {
+      "logic_family": "LOGIC_TRIAL_AND_ERROR"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT094",
+    "name": "Kindness Ripple",
+    "core_pattern": "Small Kind Act \u2192 Inspires Another \u2192 Chain Reaction",
+    "scene_flow_template": "Help One \u2192 Others Help \u2192 Community Changes",
+    "hard": {
+      "logic_family": "LOGIC_CUMULATIVE_BUILD"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT095",
+    "name": "Quiet Hero",
+    "core_pattern": "Opportunity \u2192 Helping Without Recognition \u2192 Quiet Satisfaction",
+    "scene_flow_template": "Notice Need \u2192 Help Quietly \u2192 Move On \u2192 Community Benefits",
+    "hard": {
+      "logic_family": "LOGIC_INVERSION"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT096",
+    "name": "Festival Lantern",
+    "core_pattern": "Preparation \u2192 Problems \u2192 Community Effort \u2192 Celebration",
+    "scene_flow_template": "Prepare \u2192 Problems \u2192 Everyone Helps \u2192 Festival",
+    "hard": {
+      "logic_family": "LOGIC_CUMULATIVE_BUILD"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT097",
+    "name": "Golden Feather",
+    "core_pattern": "Impossible Goal \u2192 Mentor \u2192 Practice \u2192 Achievement",
+    "scene_flow_template": "Dream \u2192 Learn \u2192 Practice \u2192 Achieve",
+    "hard": {
+      "logic_family": "LOGIC_TRIAL_AND_ERROR"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT098",
+    "name": "Last Seed",
+    "core_pattern": "Scarcity \u2192 Sharing \u2192 Unexpected Abundance",
+    "scene_flow_template": "Scarcity \u2192 Share \u2192 Hope \u2192 Reward",
+    "hard": {
+      "logic_family": "LOGIC_RESOURCE_DEPRECIATION"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT099",
+    "name": "New Sunrise",
+    "core_pattern": "Failure \u2192 Reflection \u2192 Fresh Start \u2192 Success",
+    "scene_flow_template": "Fail \u2192 Reflect \u2192 Try Again \u2192 Succeed",
+    "hard": {
+      "logic_family": "LOGIC_TRIAL_AND_ERROR"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  },
+  {
+    "id": "STRUCT100",
+    "name": "Circle Complete",
+    "core_pattern": "Journey \u2192 Return \u2192 New Understanding \u2192 Peace",
+    "scene_flow_template": "Adventure \u2192 Return \u2192 Reflection \u2192 Peaceful Ending",
+    "hard": {
+      "logic_family": "LOGIC_CIRCULAR_RETURN"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "classified from corePattern text, first-pass heuristic per Phase5A4"
+    }
+  }
+]

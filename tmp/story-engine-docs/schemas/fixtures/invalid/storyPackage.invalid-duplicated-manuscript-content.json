@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "1.0",
+  "status": "PRODUCTION_READY",
+  "storyId": "STORY_001",
+  "sourceReferences": {
+    "storyBlueprintReference": { "id": "STORY_001" },
+    "storyPlanReference": { "id": "STORYPLAN_001" },
+    "finalStoryReference": { "id": "FINALSTORY_001" },
+    "illustrationPlanReference": { "id": "ILLPLAN_001" },
+    "illustrationBibleReference": { "id": "BIBLE_001" },
+    "promptPackReference": { "id": "PROMPTPACK_001" },
+    "layoutReference": { "id": "LAYOUT_001" }
+  },
+  "story": {
+    "title": "Anu and the Glowing Valley",
+    "pageCount": 8,
+    "manuscript": "Once upon a time, Anu stood at the edge of the valley..."
+  },
+  "layout": { "format": "8.5in square", "pageCount": 8 },
+  "illustrations": [],
+  "metadata": { "title": "Anu and the Glowing Valley" },
+  "productionValidation": { "status": "PASS", "blockingFailures": 0 }
+}

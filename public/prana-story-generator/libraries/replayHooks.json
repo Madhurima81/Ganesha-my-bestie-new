@@ -1,0 +1,664 @@
+[
+  {
+    "id": 1,
+    "slug": "hidden-object-hunt",
+    "name": "Hidden Object Hunt",
+    "category": "Visual",
+    "description": "Hide one object on every page.",
+    "howItWorks": "Children search each reread.",
+    "whyItWorks": "Encourages observation.",
+    "complexity": "★",
+    "bestStoryStage": "Throughout",
+    "bestStoryStructures": [
+      "Discovery",
+      "Mystery"
+    ],
+    "bestAdventureArchetypes": [
+      "Mystery to Solve",
+      "Treasure Hunt"
+    ],
+    "bestEmotionalArcs": [
+      "Curiosity → Wonder"
+    ],
+    "bestAge": "4–8",
+    "notes": "Vary difficulty."
+  },
+  {
+    "id": 2,
+    "slug": "hidden-symbol",
+    "name": "Hidden Symbol",
+    "category": "Visual",
+    "description": "Hide the Ganesha wisdom element.",
+    "howItWorks": "Children find the symbol.",
+    "whyItWorks": "Reinforces the lesson visually.",
+    "complexity": "★",
+    "bestStoryStage": "Throughout",
+    "bestStoryStructures": [
+      "Transformation"
+    ],
+    "bestAdventureArchetypes": [
+      "Transformation Story"
+    ],
+    "bestEmotionalArcs": [
+      "False Belief → True Belief"
+    ],
+    "bestAge": "5–10",
+    "notes": "One per spread."
+  },
+  {
+    "id": 3,
+    "slug": "background-story",
+    "name": "Background Story",
+    "category": "Visual",
+    "description": "Side characters have their own mini-story.",
+    "howItWorks": "Children notice new details.",
+    "whyItWorks": "Rewards rereading.",
+    "complexity": "★★",
+    "bestStoryStage": "Throughout",
+    "bestStoryStructures": [
+      "Community"
+    ],
+    "bestAdventureArchetypes": [
+      "Community Project"
+    ],
+    "bestEmotionalArcs": [
+      "Belonging"
+    ],
+    "bestAge": "5–9",
+    "notes": "Keep subtle."
+  },
+  {
+    "id": 4,
+    "slug": "tiny-visual-joke",
+    "name": "Tiny Visual Joke",
+    "category": "Visual",
+    "description": "Small humorous details.",
+    "howItWorks": "Easy to miss first time.",
+    "whyItWorks": "Adds delight.",
+    "complexity": "★",
+    "bestStoryStage": "Throughout",
+    "bestStoryStructures": [
+      "Any"
+    ],
+    "bestAdventureArchetypes": [
+      "Performance Story"
+    ],
+    "bestEmotionalArcs": [
+      "Joy"
+    ],
+    "bestAge": "5–8",
+    "notes": "Never distract."
+  },
+  {
+    "id": 5,
+    "slug": "secret-path",
+    "name": "Secret Path",
+    "category": "Visual",
+    "description": "A hidden trail connects pages.",
+    "howItWorks": "Children follow clues.",
+    "whyItWorks": "Makes rereads interactive.",
+    "complexity": "★★",
+    "bestStoryStage": "Throughout",
+    "bestStoryStructures": [
+      "Journey"
+    ],
+    "bestAdventureArchetypes": [
+      "Great Journey"
+    ],
+    "bestEmotionalArcs": [
+      "Curiosity"
+    ],
+    "bestAge": "5–9",
+    "notes": "Great for maps."
+  },
+  {
+    "id": 6,
+    "slug": "colour-clue",
+    "name": "Colour Clue",
+    "category": "Visual",
+    "description": "Colour hints foreshadow events.",
+    "howItWorks": "Seen only later.",
+    "whyItWorks": "Clever payoff.",
+    "complexity": "★★",
+    "bestStoryStage": "Beginning–Middle",
+    "bestStoryStructures": [
+      "Mystery"
+    ],
+    "bestAdventureArchetypes": [
+      "Ancient Secret"
+    ],
+    "bestEmotionalArcs": [
+      "Curiosity"
+    ],
+    "bestAge": "6–10",
+    "notes": "Use sparingly."
+  },
+  {
+    "id": 7,
+    "slug": "foreshadowed-prop",
+    "name": "Foreshadowed Prop",
+    "category": "Visual",
+    "description": "A future prop appears early.",
+    "howItWorks": "Reward on reread.",
+    "whyItWorks": "Creates \"I saw that!\" moments.",
+    "complexity": "★★",
+    "bestStoryStage": "Opening",
+    "bestStoryStructures": [
+      "Quest"
+    ],
+    "bestAdventureArchetypes": [
+      "Secret Discovery"
+    ],
+    "bestEmotionalArcs": [
+      "Surprise"
+    ],
+    "bestAge": "5–10",
+    "notes": "Natural placement."
+  },
+  {
+    "id": 8,
+    "slug": "symbol-evolution",
+    "name": "Symbol Evolution",
+    "category": "Visual",
+    "description": "Wisdom element changes across pages.",
+    "howItWorks": "Tracks inner growth.",
+    "whyItWorks": "Connects story and symbol.",
+    "complexity": "★★",
+    "bestStoryStage": "Throughout",
+    "bestStoryStructures": [
+      "Transformation"
+    ],
+    "bestAdventureArchetypes": [
+      "Transformation Story"
+    ],
+    "bestEmotionalArcs": [
+      "Growth"
+    ],
+    "bestAge": "5–10",
+    "notes": "Excellent for Prana Kids."
+  },
+  {
+    "id": 9,
+    "slug": "circular-callback",
+    "name": "Circular Callback",
+    "category": "Story",
+    "description": "End with a visual or line from the opening.",
+    "howItWorks": "Creates satisfying closure.",
+    "whyItWorks": "Children notice the change.",
+    "complexity": "★",
+    "bestStoryStage": "Ending",
+    "bestStoryStructures": [
+      "Circular Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Transformation Story"
+    ],
+    "bestEmotionalArcs": [
+      "False Belief → True Belief"
+    ],
+    "bestAge": "5–10",
+    "notes": "Best emotional payoff."
+  },
+  {
+    "id": 10,
+    "slug": "repeated-phrase",
+    "name": "Repeated Phrase",
+    "category": "Language",
+    "description": "Repeat a memorable phrase with new meaning.",
+    "howItWorks": "Phrase evolves through the story.",
+    "whyItWorks": "Fun to anticipate.",
+    "complexity": "★",
+    "bestStoryStage": "Throughout",
+    "bestStoryStructures": [
+      "Journey Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Great Journey"
+    ],
+    "bestEmotionalArcs": [
+      "Confidence"
+    ],
+    "bestAge": "4–8",
+    "notes": "Use 2–4 repetitions."
+  },
+  {
+    "id": 11,
+    "slug": "running-joke",
+    "name": "Running Joke",
+    "category": "Humor",
+    "description": "Repeat a joke with variations.",
+    "howItWorks": "Builds expectation.",
+    "whyItWorks": "Predictable humor delights children.",
+    "complexity": "★",
+    "bestStoryStage": "Throughout",
+    "bestStoryStructures": [
+      "Adventure"
+    ],
+    "bestAdventureArchetypes": [
+      "Team Adventure"
+    ],
+    "bestEmotionalArcs": [
+      "Joy"
+    ],
+    "bestAge": "5–8",
+    "notes": "Don't overuse."
+  },
+  {
+    "id": 12,
+    "slug": "returning-character",
+    "name": "Returning Character",
+    "category": "Character",
+    "description": "A background character appears throughout.",
+    "howItWorks": "Children look for them each time.",
+    "whyItWorks": "Creates familiarity.",
+    "complexity": "★",
+    "bestStoryStage": "Throughout",
+    "bestStoryStructures": [
+      "Community Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Community Project"
+    ],
+    "bestEmotionalArcs": [
+      "Belonging"
+    ],
+    "bestAge": "5–8",
+    "notes": "Subtle appearances."
+  },
+  {
+    "id": 13,
+    "slug": "echo-scene",
+    "name": "Echo Scene",
+    "category": "Story",
+    "description": "A later scene mirrors an earlier one.",
+    "howItWorks": "Highlights growth.",
+    "whyItWorks": "Reinforces transformation.",
+    "complexity": "★★",
+    "bestStoryStage": "Ending",
+    "bestStoryStructures": [
+      "Transformation Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Coming of Age"
+    ],
+    "bestEmotionalArcs": [
+      "Growth"
+    ],
+    "bestAge": "6–10",
+    "notes": "Same setting, different outcome."
+  },
+  {
+    "id": 14,
+    "slug": "parallel-action",
+    "name": "Parallel Action",
+    "category": "Story",
+    "description": "Two similar events occur differently.",
+    "howItWorks": "Encourages comparison.",
+    "whyItWorks": "Shows learning without explaining.",
+    "complexity": "★★",
+    "bestStoryStage": "Middle–Ending",
+    "bestStoryStructures": [
+      "Growth Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Hero's Trial"
+    ],
+    "bestEmotionalArcs": [
+      "Confidence"
+    ],
+    "bestAge": "6–10",
+    "notes": "Great for emotional arcs."
+  },
+  {
+    "id": 15,
+    "slug": "mirror-ending",
+    "name": "Mirror Ending",
+    "category": "Story",
+    "description": "Final illustration mirrors the first.",
+    "howItWorks": "Visual transformation.",
+    "whyItWorks": "Powerful emotional closure.",
+    "complexity": "★★",
+    "bestStoryStage": "Ending",
+    "bestStoryStructures": [
+      "Circular Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Transformation Story"
+    ],
+    "bestEmotionalArcs": [
+      "Peace"
+    ],
+    "bestAge": "5–10",
+    "notes": "Excellent for picture books."
+  },
+  {
+    "id": 16,
+    "slug": "side-character-story",
+    "name": "Side Character Story",
+    "category": "Character",
+    "description": "Supporting characters have their own mini-journey.",
+    "howItWorks": "New discoveries each reread.",
+    "whyItWorks": "Expands the world.",
+    "complexity": "★★",
+    "bestStoryStage": "Throughout",
+    "bestStoryStructures": [
+      "Community Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Community Project"
+    ],
+    "bestEmotionalArcs": [
+      "Belonging"
+    ],
+    "bestAge": "5–9",
+    "notes": "Keep secondary."
+  },
+  {
+    "id": 17,
+    "slug": "mentor-clue",
+    "name": "Mentor Clue",
+    "category": "Character",
+    "description": "Mentor quietly hints at the solution early.",
+    "howItWorks": "Makes sense on reread.",
+    "whyItWorks": "Rewards observation.",
+    "complexity": "★★",
+    "bestStoryStage": "Beginning",
+    "bestStoryStructures": [
+      "Mentor Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Heritage Journey"
+    ],
+    "bestEmotionalArcs": [
+      "Understanding"
+    ],
+    "bestAge": "6–10",
+    "notes": "Never too obvious."
+  },
+  {
+    "id": 18,
+    "slug": "friendship-moments",
+    "name": "Friendship Moments",
+    "category": "Character",
+    "description": "Tiny acts of kindness in the background.",
+    "howItWorks": "Emotional details emerge later.",
+    "whyItWorks": "Builds warmth.",
+    "complexity": "★",
+    "bestStoryStage": "Throughout",
+    "bestStoryStructures": [
+      "Friendship Story"
+    ],
+    "bestAdventureArchetypes": [
+      "New Friend"
+    ],
+    "bestEmotionalArcs": [
+      "Belonging"
+    ],
+    "bestAge": "4–8",
+    "notes": "Small visual actions."
+  },
+  {
+    "id": 19,
+    "slug": "character-hobby",
+    "name": "Character Hobby",
+    "category": "Character",
+    "description": "Recurring hobbies appear across stories.",
+    "howItWorks": "Builds familiarity.",
+    "whyItWorks": "Makes characters memorable.",
+    "complexity": "★",
+    "bestStoryStage": "Throughout",
+    "bestStoryStructures": [
+      "Any"
+    ],
+    "bestAdventureArchetypes": [
+      "Any"
+    ],
+    "bestEmotionalArcs": [
+      "Any"
+    ],
+    "bestAge": "5–10",
+    "notes": "Helps build the Prana Kids universe."
+  },
+  {
+    "id": 20,
+    "slug": "hidden-emotion",
+    "name": "Hidden Emotion",
+    "category": "Character",
+    "description": "Expressions reveal feelings before dialogue does.",
+    "howItWorks": "Encourages emotional literacy.",
+    "whyItWorks": "Children notice more over time.",
+    "complexity": "★★",
+    "bestStoryStage": "Throughout",
+    "bestStoryStructures": [
+      "Emotional Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Transformation Story"
+    ],
+    "bestEmotionalArcs": [
+      "All"
+    ],
+    "bestAge": "5–10",
+    "notes": "Excellent illustration cue."
+  },
+  {
+    "id": 21,
+    "slug": "map-connection",
+    "name": "Map Connection",
+    "category": "World",
+    "description": "Hidden map links important places.",
+    "howItWorks": "Children trace future adventures.",
+    "whyItWorks": "Builds a connected universe.",
+    "complexity": "★★",
+    "bestStoryStage": "Throughout",
+    "bestStoryStructures": [
+      "Journey Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Great Journey"
+    ],
+    "bestEmotionalArcs": [
+      "Curiosity"
+    ],
+    "bestAge": "5–10",
+    "notes": "Great for series."
+  },
+  {
+    "id": 22,
+    "slug": "nature-cycle",
+    "name": "Nature Cycle",
+    "category": "World",
+    "description": "Nature changes with the story.",
+    "howItWorks": "Seasons mirror emotions.",
+    "whyItWorks": "Makes worlds feel alive.",
+    "complexity": "★★",
+    "bestStoryStage": "Throughout",
+    "bestStoryStructures": [
+      "Nature Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Nature's Balance"
+    ],
+    "bestEmotionalArcs": [
+      "Growth"
+    ],
+    "bestAge": "5–10",
+    "notes": "Subtle changes."
+  },
+  {
+    "id": 23,
+    "slug": "world-rule",
+    "name": "World Rule",
+    "category": "World",
+    "description": "A recurring rule governs the world.",
+    "howItWorks": "Children remember the world's logic.",
+    "whyItWorks": "Adds consistency.",
+    "complexity": "★",
+    "bestStoryStage": "Beginning",
+    "bestStoryStructures": [
+      "Any"
+    ],
+    "bestAdventureArchetypes": [
+      "Hidden World"
+    ],
+    "bestEmotionalArcs": [
+      "Understanding"
+    ],
+    "bestAge": "5–10",
+    "notes": "Keep rules simple."
+  },
+  {
+    "id": 24,
+    "slug": "festival-detail",
+    "name": "Festival Detail",
+    "category": "World",
+    "description": "Festival decorations reveal new details each read.",
+    "howItWorks": "Encourages observation.",
+    "whyItWorks": "Rich visual rewards.",
+    "complexity": "★",
+    "bestStoryStage": "Throughout",
+    "bestStoryStructures": [
+      "Celebration Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Festival Adventure"
+    ],
+    "bestEmotionalArcs": [
+      "Joy"
+    ],
+    "bestAge": "5–8",
+    "notes": "Ideal for Ganesh Chaturthi."
+  },
+  {
+    "id": 25,
+    "slug": "prop-history",
+    "name": "Prop History",
+    "category": "World",
+    "description": "Objects quietly reappear across stories.",
+    "howItWorks": "Creates continuity.",
+    "whyItWorks": "Rewards loyal readers.",
+    "complexity": "★★",
+    "bestStoryStage": "Throughout",
+    "bestStoryStructures": [
+      "Series"
+    ],
+    "bestAdventureArchetypes": [
+      "Heritage Journey"
+    ],
+    "bestEmotionalArcs": [
+      "Belonging"
+    ],
+    "bestAge": "6–10",
+    "notes": "Excellent series device."
+  },
+  {
+    "id": 26,
+    "slug": "wisdom-element-discovery",
+    "name": "Wisdom Element Discovery",
+    "category": "Wisdom",
+    "description": "Children notice the Ganesha wisdom element appearing in different forms.",
+    "howItWorks": "Symbol reinforces the story visually.",
+    "whyItWorks": "Strengthens recall.",
+    "complexity": "★",
+    "bestStoryStage": "Throughout",
+    "bestStoryStructures": [
+      "Transformation Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Transformation Story"
+    ],
+    "bestEmotionalArcs": [
+      "False Belief → True Belief"
+    ],
+    "bestAge": "5–10",
+    "notes": "Signature Prana Kids hook."
+  },
+  {
+    "id": 27,
+    "slug": "chant-connection",
+    "name": "Chant Connection",
+    "category": "Wisdom",
+    "description": "A chant echoes the emotional journey.",
+    "howItWorks": "Children connect sound with meaning.",
+    "whyItWorks": "Encourages participation.",
+    "complexity": "★★",
+    "bestStoryStage": "Middle–Ending",
+    "bestStoryStructures": [
+      "Wisdom Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Heritage Journey"
+    ],
+    "bestEmotionalArcs": [
+      "Calm → Confidence"
+    ],
+    "bestAge": "5–10",
+    "notes": "Never presented as magic."
+  },
+  {
+    "id": 28,
+    "slug": "choice-reflection",
+    "name": "Choice Reflection",
+    "category": "Wisdom",
+    "description": "Earlier choices gain new meaning after the ending.",
+    "howItWorks": "Children rethink the story.",
+    "whyItWorks": "Deepens understanding.",
+    "complexity": "★★",
+    "bestStoryStage": "Ending",
+    "bestStoryStructures": [
+      "Choice Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Choice & Consequence"
+    ],
+    "bestEmotionalArcs": [
+      "Wisdom"
+    ],
+    "bestAge": "6–10",
+    "notes": "Excellent discussion starter."
+  },
+  {
+    "id": 29,
+    "slug": "true-belief-callback",
+    "name": "True Belief Callback",
+    "category": "Wisdom",
+    "description": "Final scene reflects the new True Belief without stating it.",
+    "howItWorks": "Shows growth through action.",
+    "whyItWorks": "Reinforces transformation.",
+    "complexity": "★★",
+    "bestStoryStage": "Ending",
+    "bestStoryStructures": [
+      "Transformation Story"
+    ],
+    "bestAdventureArchetypes": [
+      "Coming of Age"
+    ],
+    "bestEmotionalArcs": [
+      "False Belief → True Belief"
+    ],
+    "bestAge": "5–10",
+    "notes": "Avoid explaining the lesson."
+  },
+  {
+    "id": 30,
+    "slug": "parent-discussion-prompt",
+    "name": "Parent Discussion Prompt",
+    "category": "Reflection",
+    "description": "Ending naturally invites conversation.",
+    "howItWorks": "Extends learning beyond the story.",
+    "whyItWorks": "Builds replay through discussion.",
+    "complexity": "★",
+    "bestStoryStage": "Ending",
+    "bestStoryStructures": [
+      "Any"
+    ],
+    "bestAdventureArchetypes": [
+      "Any"
+    ],
+    "bestEmotionalArcs": [
+      "Any"
+    ],
+    "bestAge": "5–10",
+    "notes": "Optional, outside the story text."
+  }
+]

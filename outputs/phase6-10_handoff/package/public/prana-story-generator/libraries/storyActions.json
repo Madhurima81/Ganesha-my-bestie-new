@@ -1,0 +1,315 @@
+[
+  {
+    "id": 1,
+    "slug": "search",
+    "name": "Search",
+    "description": "Look for someone, something or clues.",
+    "bestLifeDomains": [
+      "Exploring & Nature",
+      "Learning & Problem Solving",
+      "Responsibility"
+    ],
+    "bestAdventureArchetypes": [
+      "Rescue Mission",
+      "Mystery to Solve",
+      "Detective Story",
+      "Treasure Hunt",
+      "Secret Discovery"
+    ]
+  },
+  {
+    "id": 2,
+    "slug": "explore",
+    "name": "Explore",
+    "description": "Discover unknown places or investigate new environments.",
+    "bestLifeDomains": [
+      "Exploring & Nature",
+      "Playing & Games"
+    ],
+    "bestAdventureArchetypes": [
+      "Great Journey",
+      "Expedition",
+      "Hidden World",
+      "Secret Discovery",
+      "Ancient Secret"
+    ]
+  },
+  {
+    "id": 3,
+    "slug": "help",
+    "name": "Help",
+    "description": "Assist another character in overcoming a challenge.",
+    "bestLifeDomains": [
+      "Helping & Caring",
+      "Friendship & Sharing",
+      "School & Community"
+    ],
+    "bestAdventureArchetypes": [
+      "Helping Hand",
+      "Shared Mission",
+      "Team Adventure",
+      "Community Project"
+    ]
+  },
+  {
+    "id": 4,
+    "slug": "rescue",
+    "name": "Rescue",
+    "description": "Save someone or something from danger.",
+    "bestLifeDomains": [
+      "Helping & Caring",
+      "Exploring & Nature"
+    ],
+    "bestAdventureArchetypes": [
+      "Rescue Mission",
+      "Guardian Adventure",
+      "Escape Adventure",
+      "Race Against Time"
+    ]
+  },
+  {
+    "id": 5,
+    "slug": "protect",
+    "name": "Protect",
+    "description": "Keep a person, place or object safe.",
+    "bestLifeDomains": [
+      "Responsibility",
+      "Helping & Caring",
+      "Exploring & Nature"
+    ],
+    "bestAdventureArchetypes": [
+      "Guardian Adventure",
+      "Nature's Balance",
+      "Responsibility Quest"
+    ]
+  },
+  {
+    "id": 6,
+    "slug": "build",
+    "name": "Build",
+    "description": "Construct, repair or improve something.",
+    "bestLifeDomains": [
+      "Building & Creating"
+    ],
+    "bestAdventureArchetypes": [
+      "Build Together",
+      "Restoration Story",
+      "Community Project"
+    ]
+  },
+  {
+    "id": 7,
+    "slug": "create",
+    "name": "Create",
+    "description": "Make something artistic, useful or original.",
+    "bestLifeDomains": [
+      "Art",
+      "Music & Creativity",
+      "Building & Creating"
+    ],
+    "bestAdventureArchetypes": [
+      "Performance Story",
+      "Festival Adventure",
+      "Magical Discovery"
+    ]
+  },
+  {
+    "id": 8,
+    "slug": "deliver",
+    "name": "Deliver",
+    "description": "Carry something safely to its destination.",
+    "bestLifeDomains": [
+      "Responsibility",
+      "Family & Daily Life",
+      "Communication"
+    ],
+    "bestAdventureArchetypes": [
+      "Delivery Quest",
+      "Escort Mission",
+      "Promise Keeper"
+    ]
+  },
+  {
+    "id": 9,
+    "slug": "solve",
+    "name": "Solve",
+    "description": "Solve a mystery, puzzle or practical problem.",
+    "bestLifeDomains": [
+      "Learning & Problem Solving"
+    ],
+    "bestAdventureArchetypes": [
+      "Mystery to Solve",
+      "Detective Story",
+      "Problem Solver",
+      "Ancient Secret"
+    ]
+  },
+  {
+    "id": 10,
+    "slug": "learn",
+    "name": "Learn",
+    "description": "Gain a new skill or understanding.",
+    "bestLifeDomains": [
+      "Learning & Problem Solving",
+      "Self-Care"
+    ],
+    "bestAdventureArchetypes": [
+      "Training Journey",
+      "Transformation Story",
+      "Learning Quest"
+    ]
+  },
+  {
+    "id": 11,
+    "slug": "teach",
+    "name": "Teach",
+    "description": "Help another character learn.",
+    "bestLifeDomains": [
+      "Learning & Problem Solving",
+      "Helping & Caring"
+    ],
+    "bestAdventureArchetypes": [
+      "Helping Hand",
+      "Community Project",
+      "Journey Together"
+    ]
+  },
+  {
+    "id": 12,
+    "slug": "share",
+    "name": "Share",
+    "description": "Give, include or cooperate with others.",
+    "bestLifeDomains": [
+      "Friendship & Sharing",
+      "Celebrations & Traditions"
+    ],
+    "bestAdventureArchetypes": [
+      "Gift of Giving",
+      "Friendship Repair",
+      "New Friend",
+      "Journey Together"
+    ]
+  },
+  {
+    "id": 13,
+    "slug": "care-for",
+    "name": "Care For",
+    "description": "Look after a person, animal, place or nature.",
+    "bestLifeDomains": [
+      "Helping & Caring",
+      "Self-Care"
+    ],
+    "bestAdventureArchetypes": [
+      "Nature's Balance",
+      "Restoration Story",
+      "Helping Hand"
+    ]
+  },
+  {
+    "id": 14,
+    "slug": "restore",
+    "name": "Restore",
+    "description": "Bring something back to its best condition.",
+    "bestLifeDomains": [
+      "Building & Creating",
+      "Exploring & Nature",
+      "Helping & Caring"
+    ],
+    "bestAdventureArchetypes": [
+      "Restoration Story",
+      "Nature's Balance",
+      "Friendship Repair"
+    ]
+  },
+  {
+    "id": 15,
+    "slug": "organize",
+    "name": "Organize",
+    "description": "Plan, prepare or coordinate an activity.",
+    "bestLifeDomains": [
+      "Responsibility",
+      "School & Community",
+      "Celebrations & Traditions"
+    ],
+    "bestAdventureArchetypes": [
+      "Celebration Preparation",
+      "Festival Adventure",
+      "Community Project"
+    ]
+  },
+  {
+    "id": 16,
+    "slug": "communicate",
+    "name": "Communicate",
+    "description": "Listen, explain or resolve through conversation.",
+    "bestLifeDomains": [
+      "Communication",
+      "Friendship & Sharing"
+    ],
+    "bestAdventureArchetypes": [
+      "Friendship Repair",
+      "Promise Keeper",
+      "Choice & Consequence"
+    ]
+  },
+  {
+    "id": 17,
+    "slug": "guide",
+    "name": "Guide",
+    "description": "Lead others safely or wisely.",
+    "bestLifeDomains": [
+      "Helping & Caring",
+      "Exploring & Nature"
+    ],
+    "bestAdventureArchetypes": [
+      "Great Journey",
+      "Escort Mission",
+      "Guardian Adventure"
+    ]
+  },
+  {
+    "id": 18,
+    "slug": "perform",
+    "name": "Perform",
+    "description": "Present music, dance, drama or another talent.",
+    "bestLifeDomains": [
+      "Art",
+      "Music & Creativity"
+    ],
+    "bestAdventureArchetypes": [
+      "Performance Story",
+      "Festival Adventure",
+      "Celebration Preparation"
+    ]
+  },
+  {
+    "id": 19,
+    "slug": "celebrate",
+    "name": "Celebrate",
+    "description": "Mark a joyful occasion together.",
+    "bestLifeDomains": [
+      "Celebrations & Traditions",
+      "Family & Daily Life"
+    ],
+    "bestAdventureArchetypes": [
+      "Festival Adventure",
+      "Celebration Preparation",
+      "Heritage Journey"
+    ]
+  },
+  {
+    "id": 20,
+    "slug": "practice",
+    "name": "Practice",
+    "description": "Improve through repetition and perseverance.",
+    "bestLifeDomains": [
+      "Learning & Problem Solving",
+      "Self-Care"
+    ],
+    "bestAdventureArchetypes": [
+      "Training Journey",
+      "Hero's Trial",
+      "Transformation Story"
+    ]
+  }
+]

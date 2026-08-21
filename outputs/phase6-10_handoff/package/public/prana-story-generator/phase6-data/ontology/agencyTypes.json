@@ -1,0 +1,6 @@
+[
+  {"id": "AGENCY_OBSERVE"}, {"id": "AGENCY_BUILD"}, {"id": "AGENCY_REPAIR"}, {"id": "AGENCY_NEGOTIATE"},
+  {"id": "AGENCY_PERSIST"}, {"id": "AGENCY_CREATE"}, {"id": "AGENCY_PROTECT"}, {"id": "AGENCY_EXPLORE"},
+  {"id": "AGENCY_SHARE"}, {"id": "AGENCY_ADAPT"}, {"id": "AGENCY_ORGANIZING"}, {"id": "AGENCY_COMFORT"},
+  {"id": "AGENCY_TRANSFORM"}, {"id": "AGENCY_RECLAIM"}
+]

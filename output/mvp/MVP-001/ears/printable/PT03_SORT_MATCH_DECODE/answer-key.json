@@ -1,0 +1,47 @@
+{
+  "template_id": "PT03_SORT_MATCH_DECODE",
+  "theme_id": "SYM-GAN-008",
+  "title": "Keep or Let Go Sort",
+  "left_category": {
+    "title": "KEEP",
+    "items": [
+      {
+        "id": "EAR-01",
+        "label": "Try another way."
+      },
+      {
+        "id": "EAR-03",
+        "label": "Mistakes help us learn."
+      },
+      {
+        "id": "EAR-05",
+        "label": "Keep practicing."
+      },
+      {
+        "id": "EAR-07",
+        "label": "I do not understand yet."
+      }
+    ]
+  },
+  "right_category": {
+    "title": "LET GO",
+    "items": [
+      {
+        "id": "EAR-02",
+        "label": "You cannot do it."
+      },
+      {
+        "id": "EAR-04",
+        "label": "That is stupid."
+      },
+      {
+        "id": "EAR-06",
+        "label": "Quit now."
+      },
+      {
+        "id": "EAR-08",
+        "label": "Nobody likes your ideas."
+      }
+    ]
+  }
+}

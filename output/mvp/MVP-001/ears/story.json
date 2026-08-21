@@ -1,0 +1,25 @@
+{
+  "experience_id": "EXP-GAN-EARS-STORY-001",
+  "wisdom_id": "SYM-GAN-008",
+  "practice_id": "PRAC-GAN-EARS-001",
+  "experience_type": "story",
+  "title": "Kavi and the Words to Keep",
+  "source_document": "Teachings for kids from 5 sources - july 2026 - doodles, insta.docx",
+  "source_reference": "Teaching 1: The Power of Deep Listening (The Large Ears)",
+  "source_verified": true,
+  "content_status": "SOURCE_DERIVED",
+  "story_payload": {
+    "cover_title": "Kavi and the Words to Keep",
+    "cover_subtitle": "A story about listening for what truly helps you grow.",
+    "pages": [
+      "Kavi Monkey was building a leaf kite when two voices flew toward him at once. One friend shouted, 'You will never make it!' Another said, 'Try another way.'",
+      "Kavi's mind felt full of noise. The mean words stuck fast, and he almost crumpled his kite before it could fly.",
+      "Bodhi Elephant gently tapped his own big ears. 'Listen like Ganesha,' he said. 'A winnowing basket keeps the good grain and lets the dust blow away.'",
+      "Kavi listened again. He let 'You will never make it' drift off like dry chaff. He held on to 'Try another way' and 'Keep practicing.'",
+      "Kavi changed the kite string, lifted the frame, and the leaf kite caught the wind. This time he smiled, because he knew which words were worth keeping.",
+      "Reflection: Which words help you grow, and which ones can you let go like dust?"
+    ],
+    "symbol_line": "Large Ears -> sift helpful words from noise.",
+    "mantra": "I keep the words that help me grow."
+  }
+}

@@ -1,0 +1,508 @@
+<title>Staging Validation Harness — Prana Template Pipeline</title>
+<style>
+  :root {
+    --bg: #F5F6F3;
+    --surface: #FFFFFF;
+    --surface-alt: #EDF1EC;
+    --text: #1A231F;
+    --text-dim: #5E6E66;
+    --border: #DCE3DD;
+    --accent: #2C6E63;
+    --accent-soft: #DCEEE9;
+    --pass: #2E7D46;
+    --pass-soft: #E1F1E6;
+    --warn: #A9720A;
+    --warn-soft: #FBEFD8;
+    --fail: #B23A22;
+    --fail-soft: #FBE4DE;
+    --shadow: 0 1px 2px rgba(20, 30, 25, 0.06), 0 8px 24px -12px rgba(20, 30, 25, 0.18);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #101512;
+      --surface: #171E1B;
+      --surface-alt: #1D2521;
+      --text: #E6ECE8;
+      --text-dim: #93A39B;
+      --border: #29332D;
+      --accent: #57D9BC;
+      --accent-soft: #1B332E;
+      --pass: #57C97C;
+      --pass-soft: #163425;
+      --warn: #E3BE5C;
+      --warn-soft: #35290F;
+      --fail: #EA7A67;
+      --fail-soft: #3A1D17;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px -12px rgba(0, 0, 0, 0.5);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #101512;
+    --surface: #171E1B;
+    --surface-alt: #1D2521;
+    --text: #E6ECE8;
+    --text-dim: #93A39B;
+    --border: #29332D;
+    --accent: #57D9BC;
+    --accent-soft: #1B332E;
+    --pass: #57C97C;
+    --pass-soft: #163425;
+    --warn: #E3BE5C;
+    --warn-soft: #35290F;
+    --fail: #EA7A67;
+    --fail-soft: #3A1D17;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px -12px rgba(0, 0, 0, 0.5);
+  }
+  :root[data-theme="light"] {
+    --bg: #F5F6F3;
+    --surface: #FFFFFF;
+    --surface-alt: #EDF1EC;
+    --text: #1A231F;
+    --text-dim: #5E6E66;
+    --border: #DCE3DD;
+    --accent: #2C6E63;
+    --accent-soft: #DCEEE9;
+    --pass: #2E7D46;
+    --pass-soft: #E1F1E6;
+    --warn: #A9720A;
+    --warn-soft: #FBEFD8;
+    --fail: #B23A22;
+    --fail-soft: #FBE4DE;
+    --shadow: 0 1px 2px rgba(20, 30, 25, 0.06), 0 8px 24px -12px rgba(20, 30, 25, 0.18);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: ui-sans-serif, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+  }
+  .mono {
+    font-family: ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas, Menlo, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 40px 28px 80px; }
+
+  header.page-head { margin-bottom: 32px; }
+  .eyebrow {
+    font-family: ui-monospace, "SFMono-Regular", Consolas, Menlo, monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 10px;
+  }
+  h1 {
+    font-size: clamp(1.6rem, 2.6vw, 2.15rem);
+    margin: 0 0 8px;
+    text-wrap: balance;
+    letter-spacing: -0.01em;
+  }
+  .subhead { color: var(--text-dim); font-size: 0.98rem; max-width: 62ch; margin: 0; }
+  .pipeline-line {
+    margin-top: 18px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    font-family: ui-monospace, "SFMono-Regular", Consolas, Menlo, monospace;
+    font-size: 0.82rem;
+    color: var(--text-dim);
+  }
+  .pipeline-line b { color: var(--text); font-weight: 600; }
+  .pipeline-line .arrow { color: var(--accent); }
+
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin: 28px 0 30px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    box-shadow: var(--shadow);
+  }
+  .stat-card .n {
+    font-family: ui-monospace, "SFMono-Regular", Consolas, Menlo, monospace;
+    font-size: 1.7rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .stat-card .n.pass { color: var(--pass); }
+  .stat-card .n.warn { color: var(--warn); }
+  .stat-card .label {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 4px;
+  }
+
+  .toggle-banner {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    background: var(--warn-soft);
+    border: 1px solid color-mix(in srgb, var(--warn) 40%, transparent);
+    color: var(--text);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 0.88rem;
+    margin-bottom: 28px;
+  }
+  .toggle-banner .dot {
+    flex: none;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--warn);
+    margin-top: 6px;
+  }
+  .toggle-banner b { color: var(--warn); }
+
+  .filters {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .chip {
+    font-family: ui-monospace, "SFMono-Regular", Consolas, Menlo, monospace;
+    font-size: 0.78rem;
+    padding: 7px 13px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-dim);
+    cursor: pointer;
+    user-select: none;
+    transition: border-color 0.12s ease, color 0.12s ease, background 0.12s ease;
+  }
+  .chip:hover { border-color: var(--accent); color: var(--text); }
+  .chip.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--surface);
+    font-weight: 600;
+  }
+  :root[data-theme="dark"] .chip.active { color: #0A130F; }
+  @media (prefers-color-scheme: dark) { .chip.active { color: #0A130F; } }
+
+  .table-shell {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .table-scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; min-width: 880px; }
+  thead th {
+    text-align: left;
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    background: var(--surface-alt);
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  tbody tr.row {
+    cursor: pointer;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s ease;
+  }
+  tbody tr.row:hover { background: var(--surface-alt); }
+  tbody tr.row:last-child { border-bottom: none; }
+  tbody td { padding: 11px 14px; font-size: 0.86rem; vertical-align: middle; }
+  td.sit { font-weight: 600; }
+  td.title-cell { color: var(--text-dim); max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: ui-monospace, "SFMono-Regular", Consolas, Menlo, monospace;
+    font-size: 0.74rem;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 6px;
+  }
+  .badge.tpl { background: var(--accent-soft); color: var(--accent); }
+  .badge.none { background: var(--fail-soft); color: var(--fail); }
+
+  .gate-strip { display: inline-flex; gap: 2px; }
+  .gate-dot {
+    width: 7px; height: 7px; border-radius: 2px;
+    background: var(--pass);
+  }
+  .gate-dot.fail { background: var(--fail); }
+  .gate-dot.na { background: var(--border); }
+
+  .result-pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 0.74rem; font-weight: 700;
+    padding: 3px 10px; border-radius: 999px;
+    letter-spacing: 0.02em;
+  }
+  .result-pill.pass { background: var(--pass-soft); color: var(--pass); }
+  .result-pill.fail { background: var(--fail-soft); color: var(--fail); }
+  .result-pill.gap { background: var(--warn-soft); color: var(--warn); }
+
+  .tag {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 1px 6px;
+    margin-left: 6px;
+  }
+
+  tr.detail-row { display: none; }
+  tr.detail-row.open { display: table-row; }
+  tr.detail-row td {
+    background: var(--surface-alt);
+    padding: 18px 20px 22px;
+    border-bottom: 1px solid var(--border);
+  }
+  .detail-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: 22px;
+  }
+  @media (max-width: 720px) { .detail-grid { grid-template-columns: 1fr; } }
+  .detail-block h4 {
+    margin: 0 0 8px;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-dim);
+  }
+  .gate-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 5px; }
+  .gate-list li {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 0.82rem; padding: 5px 0; border-bottom: 1px dashed var(--border);
+  }
+  .gate-list li:last-child { border-bottom: none; }
+  .gate-status { font-family: ui-monospace, "SFMono-Regular", Consolas, Menlo, monospace; font-size: 0.74rem; font-weight: 600; }
+  .gate-status.pass { color: var(--pass); }
+  .gate-status.fail { color: var(--fail); }
+  .gate-status.na { color: var(--text-dim); }
+  .compression-text {
+    font-size: 0.86rem;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    line-height: 1.55;
+  }
+  .reason-text {
+    font-family: ui-monospace, "SFMono-Regular", Consolas, Menlo, monospace;
+    font-size: 0.76rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+  .empty-note { color: var(--text-dim); font-size: 0.86rem; font-style: italic; }
+
+  footer.foot {
+    margin-top: 26px;
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  a { color: var(--accent); }
+
+  .visually-hidden-focusable:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header class="page-head">
+    <p class="eyebrow">Dev A — Selector / Engine Infrastructure</p>
+    <h1>Staging Validation Harness</h1>
+    <p class="subhead">Every row below ran through the complete template pipeline exactly as a real user would with the staging toggle on — natural <code class="mono">selectStoryTemplate</code>, never a forced QA path. This is the evidence gate before the toggle becomes default.</p>
+    <div class="pipeline-line">
+      <span>situation</span><span class="arrow">→</span><span>selected template</span><span class="arrow">→</span><span>realization family</span><span class="arrow">→</span><span>11 QA gates</span><span class="arrow">→</span><span>export</span><span class="arrow">→</span><b>final story</b>
+    </div>
+  </header>
+
+  <div class="toggle-banner">
+    <span class="dot"></span>
+    <div><b>Toggle status: OFF for real users.</b> This run used <code class="mono">?templatePipeline=1</code> / <code class="mono">setTemplatePipelineEnabled(true)</code> in an isolated staging browser session only. Nothing here reflects current production behavior.</div>
+  </div>
+
+  <div class="stat-row" id="statRow"></div>
+
+  <div class="filters" id="filters"></div>
+
+  <div class="table-shell">
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>Situation</th>
+            <th>Need</th>
+            <th>Template</th>
+            <th>Realization family</th>
+            <th>Gates</th>
+            <th>Result</th>
+            <th>Pages</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <footer class="foot">
+    <span>Generated by <code class="mono">phase8-tools/runStagingValidationHarness.js</code> — rerun after any <code class="mono">storyTemplates.json</code> curation change.</span>
+    <span id="genCount"></span>
+  </footer>
+</div>
+
+<script>
+  const DATA = {"totalActiveSituations":156,"representativeCount":47,"rows":[{"situationId":"SIT004","title":"Sibling gets a bigger portion","curated":true,"isZeroTierFallback":false,"needId":"NEED_IDENTITY","templateId":"T08","templateName":"The Repeating Mistake","selectionReason":"situation SIT004 exact fit; need NEED_IDENTITY exact fit; logic family LOGIC_RITUAL_ESCALATION fit; emotional arc fit via recommended needs; specificity score 1.00","realizationFamily":"N/A (generic Phase-7 event chain — no per-mechanism realization modes authored for this template yet)","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"The sibling's portion is already theirs, and Tara believed Someone else's success makes me less important. Tara paused, chose to look again, and understood that Everyone has their own gifts and my worth doesn't depend on comparison. Tara chose a different response, and the ending felt warmer and freer than before.","buildError":null},{"situationId":"SIT063","title":"Called 'fat' or 'chubby' by a peer","curated":true,"isZeroTierFallback":false,"needId":"NEED_IDENTITY","templateId":"T08","templateName":"The Repeating Mistake","selectionReason":"situation SIT063 exact fit; need NEED_IDENTITY exact fit; logic family LOGIC_RITUAL_ESCALATION fit; emotional arc fit via recommended needs; specificity score 1.00","realizationFamily":"N/A (generic Phase-7 event chain — no per-mechanism realization modes authored for this template yet)","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"Another child makes an unkind comment about Tara's body. Tara wanted to stop feeling ashamed and know how to respond, but the old thought said My appearance decides my value. After a quiet \"Wait,\" Tara chose to look again and understood that My worth comes from who I am, not how I look. Tara chose a different next step, and the problem eased into a warmer, freer ending.","buildError":null},{"situationId":"SIT072","title":"Project gets no likes or views","curated":true,"isZeroTierFallback":false,"needId":"NEED_IDENTITY","templateId":"T08","templateName":"The Repeating Mistake","selectionReason":"situation SIT072 exact fit; need NEED_IDENTITY exact fit; logic family LOGIC_RITUAL_ESCALATION fit; emotional arc fit via recommended needs; specificity score 1.00","realizationFamily":"N/A (generic Phase-7 event chain — no per-mechanism realization modes authored for this template yet)","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"The number of views or likes stays low, and Tara believed If people don't notice me, I don't matter. Tara paused, chose to look again, and understood that My work has value even without applause. Tara chose a different response, and the ending felt warmer and freer than before. The change was clear in what happened next.","buildError":null},{"situationId":"SIT096","title":"Wearing an older sibling's old clothes","curated":true,"isZeroTierFallback":false,"needId":"NEED_IDENTITY","templateId":"T08","templateName":"The Repeating Mistake","selectionReason":"situation SIT096 exact fit; need NEED_IDENTITY exact fit; logic family LOGIC_RITUAL_ESCALATION fit; emotional arc fit via recommended needs; specificity score 1.00","realizationFamily":"N/A (generic Phase-7 event chain — no per-mechanism realization modes authored for this template yet)","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"The clothes are old and were chosen by someone else before Tara had them, and Tara believed New things make someone more valuable. Tara paused, chose to look again, and understood that My value isn't determined by what I own. Tara chose a different response, and the ending felt warmer and freer than before.","buildError":null},{"situationId":"SIT155","title":"A friend wins while they lose","curated":true,"isZeroTierFallback":false,"needId":"NEED_IDENTITY","templateId":"T08","templateName":"The Repeating Mistake","selectionReason":"situation SIT155 exact fit; need NEED_IDENTITY exact fit; logic family LOGIC_RITUAL_ESCALATION fit; emotional arc fit via recommended needs; specificity score 1.00","realizationFamily":"N/A (generic Phase-7 event chain — no per-mechanism realization modes authored for this template yet)","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"The friend's success makes Tara more aware of their own disappointment, and Tara believed Someone else's success makes me less successful. Tara paused, chose to look again, and understood that I can celebrate others while continuing my own journey. Tara chose a different response, and the ending felt warmer and freer than before.","buildError":null},{"situationId":"SIT040","title":"Fear of getting in trouble with teacher","curated":true,"isZeroTierFallback":false,"needId":"NEED_INTEGRITY","templateId":"T16","templateName":"Two Ways to See It","selectionReason":"situation SIT040 exact fit","realizationFamily":"SOCIAL_REACTION","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"Tara realizes they made a mistake at school and worries the teacher will be angry, and the old thought said Making mistakes makes me a bad child. Tara told the truth instead of hiding it. Tara and the moment settled, calmer for it. The change was clear in what happened next.","buildError":null},{"situationId":"SIT064","title":"New glasses and feeling 'nerdy' or 'ugly'","curated":true,"isZeroTierFallback":false,"needId":"NEED_BELONGING","templateId":"T16","templateName":"Two Ways to See It","selectionReason":"situation SIT064 exact fit; logic family LOGIC_PERSPECTIVE_SHIFT fit; specificity score 0.33","realizationFamily":"SOCIAL_PERCEPTION","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"Bodhi gets new glasses and feels strange seeing their own face in them, and the old thought said Looking different makes me less lovable. Someone's actual reaction wasn't the one Bodhi had braced for. Bodhi stopped watching for a reaction that was never coming, steadier for it. The change was clear in what happened next.","buildError":null},{"situationId":"SIT067","title":"Being slower at reading than others","curated":true,"isZeroTierFallback":false,"needId":"NEED_CONFIDENCE","templateId":"T16","templateName":"Two Ways to See It","selectionReason":"situation SIT067 exact fit","realizationFamily":"SELF_TEST","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"Chinu is still working on a reading skill while classmates seem to finish quickly, and the old thought said If I learn slowly, I'm not smart. Chinu tried it out loud, unprompted, just to see. Chinu kept going at their own pace, steadier now. The change was clear in what happened next.","buildError":null},{"situationId":"SIT077","title":"Why can't you be more like [cousin/friend]?","curated":true,"isZeroTierFallback":false,"needId":"NEED_IDENTITY","templateId":"T16","templateName":"Two Ways to See It","selectionReason":"situation SIT077 exact fit","realizationFamily":"RETROSPECTIVE_RECALL","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"An adult tells Tara they should be more like a cousin or friend, and the old thought said I have to be like someone else to be valued. A specific memory surfaced on its own. Tara answered honestly instead of shrinking, standing steadier. The change was clear in what happened next.","buildError":null},{"situationId":"SIT128","title":"Waiting anxiously for exam results","curated":true,"isZeroTierFallback":false,"needId":"NEED_CONFIDENCE","templateId":"T16","templateName":"Two Ways to See It","selectionReason":"situation SIT128 exact fit","realizationFamily":"INTERNAL_REASONING","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"Chinu has finished an important exam and now has to wait several days before the result is released, and the old thought said My marks decide my value. There was nothing new to check or find yet. Chinu let the waiting stop feeling like a verdict, calmer for it. The change was clear in what happened next.","buildError":null},{"situationId":"SIT060","title":"Intentions were good but they got in trouble anyway","curated":true,"isZeroTierFallback":false,"needId":"NEED_INTEGRITY","templateId":"T16","templateName":"Two Ways to See It","selectionReason":"situation SIT060 exact fit","realizationFamily":"SOCIAL_REACTION","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"Tara tries to help someone without being asked, and the attempt accidentally creates a problem, and the old thought said Good intentions don't matter if I make mistakes. Tara told the truth instead of hiding it. Tara and the moment settled, calmer for it. The change was clear in what happened next.","buildError":null},{"situationId":"SIT132","title":"Told a lie to a parent and feels a 'heavy' stomach","curated":true,"isZeroTierFallback":false,"needId":"NEED_INTEGRITY","templateId":"T16","templateName":"Two Ways to See It","selectionReason":"situation SIT132 exact fit","realizationFamily":"SOMATIC_SIGNAL","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"Tara has lied to a parent about something and now has to decide whether to tell the truth, and the old thought said Hiding the truth will protect me. The uneasy feeling only got heavier the longer it was carried. Tara said the real thing out loud, and it felt lighter.","buildError":null},{"situationId":"SIT008","title":"Being hurried to put shoes on or leave","curated":true,"isZeroTierFallback":false,"needId":"NEED_PATIENCE","templateId":"T18","templateName":"The Growing Problem","selectionReason":"situation SIT008 exact fit","realizationFamily":"N/A (generic Phase-7 event chain — no per-mechanism realization modes authored for this template yet)","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"The family needs to leave now, and Tara believed Everything has to happen right now. Tara paused, chose to look again, and understood that I can slow down and work with the moment I'm in. Tara chose a different response, and the ending felt warmer and freer than before. The change was clear in what happened next.","buildError":null},{"situationId":"SIT101","title":"Long wait at doctor, bank, or during travel","curated":true,"isZeroTierFallback":false,"needId":"NEED_PATIENCE","templateId":"T18","templateName":"The Growing Problem","selectionReason":"situation SIT101 exact fit","realizationFamily":"N/A (generic Phase-7 event chain — no per-mechanism realization modes authored for this template yet)","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"Tara's turn, appointment, or journey has not begun, and Tara believed Waiting is pointless and unbearable. Tara paused, chose to look again, and understood that I can use waiting time calmly and wisely. Tara chose a different response, and the ending felt warmer and freer than before. The change was clear in what happened next.","buildError":null},{"situationId":"SIT108","title":"Waiting for a turn on the swings","curated":true,"isZeroTierFallback":false,"needId":"NEED_PATIENCE","templateId":"T18","templateName":"The Growing Problem","selectionReason":"situation SIT108 exact fit","realizationFamily":"N/A (generic Phase-7 event chain — no per-mechanism realization modes authored for this template yet)","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"Tara reaches the playground ready to use the swing, but another child is already having a turn. Tara wanted to get on the swing, but the old thought said I should always go first. After a quiet \"Wait,\" Tara chose to look again and understood that Everyone deserves a turn. Tara chose a different next step, and the problem eased into a warmer, freer ending.","buildError":null},{"situationId":"SIT112","title":"Waiting very excitedly for birthday or special package","curated":true,"isZeroTierFallback":false,"needId":"NEED_PATIENCE","templateId":"T18","templateName":"The Growing Problem","selectionReason":"situation SIT112 exact fit","realizationFamily":"N/A (generic Phase-7 event chain — no per-mechanism realization modes authored for this template yet)","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"Tara is eagerly waiting for something special that is due to arrive or happen on a particular day. Tara wanted to make the special moment arrive sooner, but the old thought said Waiting ruins the fun. After a quiet \"Wait,\" Tara chose to look again and understood that Anticipation can make joyful moments even sweeter. Tara chose a different next step, and the problem eased into a warmer, freer ending.","buildError":null},{"situationId":"SIT006","title":"Playdate or plan suddenly cancelled","curated":true,"isZeroTierFallback":false,"needId":"NEED_ADAPTABILITY","templateId":"T21","templateName":"The Disrupted Plan","selectionReason":"situation SIT006 exact fit; need NEED_ADAPTABILITY exact fit; emotional arc fit via recommended needs; specificity score 0.50","realizationFamily":"EXTERNAL_CANCELLATION","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"Chinu is ready for a playdate when they learn the friend cannot come, and the old thought said Plans must happen my way. Chinu tried to recreate the same plan alone, and it fell flat. Chinu picked something new instead, and it actually worked. The change was clear in what happened next.","buildError":null},{"situationId":"SIT111","title":"Uncomfortable uniform, flickering lights, strong smells","curated":true,"isZeroTierFallback":false,"needId":"NEED_SAFETY","templateId":"T21","templateName":"The Disrupted Plan","selectionReason":"situation SIT111 exact fit","realizationFamily":"PERSISTENT_INTERFERENCE","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"During class, Arin is distracted by an uncomfortable uniform, flickering light, strong smell, or another persistent sensory irritation, and the old thought said I can't cope when things feel uncomfortable. Arin gritted through it, same as any other day, and missed most of what mattered. Arin asked for what would actually help, instead of pushing through alone.","buildError":null},{"situationId":"SIT118","title":"Starting at a completely new school","curated":true,"isZeroTierFallback":false,"needId":"NEED_BELONGING","templateId":"T21","templateName":"The Disrupted Plan","selectionReason":"situation SIT118 exact fit","realizationFamily":"UNFAMILIAR_TERRITORY","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"Bodhi begins at a school where the teachers, children, classrooms, and routines are all unfamiliar, and the old thought said Nobody will accept me. Bodhi picked a direction and walked like it was already familiar — it wasn't. Bodhi asked the next person who walked past, and got pointed the right way.","buildError":null},{"situationId":"SIT120","title":"Sudden cancellation of a normal routine event","curated":true,"isZeroTierFallback":false,"needId":"NEED_ADAPTABILITY","templateId":"T21","templateName":"The Disrupted Plan","selectionReason":"situation SIT120 exact fit; need NEED_ADAPTABILITY exact fit; emotional arc fit via recommended needs; specificity score 0.50","realizationFamily":"EXTERNAL_CANCELLATION","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"Chinu has been looking forward to a familiar weekly activity, but learns shortly before it begins that it has been cancelled, and the old thought said Everything has to happen the way I expected. Chinu tried to recreate the same plan alone, and it fell flat. Chinu picked something new instead, and it actually worked.","buildError":null},{"situationId":"SIT164","title":"A younger child wants to join the game","curated":true,"isZeroTierFallback":false,"needId":"NEED_BELONGING","templateId":"T21","templateName":"The Disrupted Plan","selectionReason":"situation SIT164 exact fit","realizationFamily":"INCLUSION_REQUEST","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"Bodhi and friends are playing a game when a younger child asks if they can join, and the old thought said Younger children will spoil our fun. Bodhi tried to keep the game exactly the same, and the fun went thin. Bodhi waved them in, and it turned out to be more fun with one more player.","buildError":null},{"situationId":"SIT157","title":"Rumours or gossip spread about them","curated":true,"isZeroTierFallback":false,"needId":"NEED_INTEGRITY","templateId":"T21","templateName":"The Disrupted Plan","selectionReason":"situation SIT157 exact fit","realizationFamily":"SOCIAL_THREAT_MANAGEMENT","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":6,"compression":"Simha discovers that other children are spreading a rumour about them, and the old thought said I have to prove myself to everyone. Simha tried to argue the story down, and it only got bigger. Simha stopped chasing the conversation and just kept showing up the same way. The change was clear in what happened next.","buildError":null},{"situationId":"SIT045","title":"Lost a favourite toy or comfort blanket","curated":true,"isZeroTierFallback":false,"needId":"NEED_SAFETY","templateId":"T22","templateName":"The Reframe Trail","selectionReason":"situation SIT045 exact fit","realizationFamily":"ABSENCE","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"Arin discovers that a favourite toy or comfort blanket is missing, while the old thought said I can't be okay without this special thing. Arin searched but couldn't find their toy, until Arin understood that The love and comfort I feel live inside me too. Arin got ready for bed anyway, calmer for it.","buildError":null},{"situationId":"SIT083","title":"Friend got a new toy","curated":true,"isZeroTierFallback":false,"needId":"NEED_CONTENTMENT","templateId":"T22","templateName":"The Reframe Trail","selectionReason":"situation SIT083 exact fit","realizationFamily":"SOCIAL","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"Gauri sees a friend bring a brand-new toy to school, and everyone gathers around to see it, while the old thought said I need what others have to be happy. Gauri kept comparing their own things to it, until Gauri understood that Gratitude brings more joy than comparison. Gauri joined in and shared their own thing too, calmer about it than before.","buildError":null},{"situationId":"SIT139","title":"Broke something by mistake and hid it","curated":true,"isZeroTierFallback":false,"needId":"NEED_RESPONSIBILITY","templateId":"T22","templateName":"The Reframe Trail","selectionReason":"situation SIT139 exact fit","realizationFamily":"SOUND_AFTERMATH","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"Kavi accidentally breaks something important and hides what happened instead of telling the truth, while the old thought said Hiding mistakes makes them disappear. Hiding it only made the worry grow, until Kavi understood that Taking responsibility helps rebuild trust. Kavi told the truth instead, and the relief was bigger than the worry had been.","buildError":null},{"situationId":"SIT148","title":"Found something and doesn't know whether to keep it","curated":true,"isZeroTierFallback":false,"needId":"NEED_INTEGRITY","templateId":"T22","templateName":"The Reframe Trail","selectionReason":"situation SIT148 exact fit","realizationFamily":"PHYSICAL_DISCOVERY","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"Ved finds something valuable or interesting that clearly belongs to someone else, while the old thought said If I found it, it belongs to me. Ved turned the found item over, wondering who it belonged to, until Ved understood that Doing the right thing matters more than getting something extra. Ved returned it, and walked off lighter.","buildError":null},{"situationId":"SIT154","title":"Friend copies their work or idea","curated":true,"isZeroTierFallback":false,"needId":"NEED_RESPECT","templateId":"T22","templateName":"The Reframe Trail","selectionReason":"situation SIT154 exact fit","realizationFamily":"RECOGNITION","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"Vani shares an idea for a drawing, project, game, or creation, and a friend uses the same idea, while the old thought said If someone copies me, I've lost what makes me special. Vani almost stayed quiet about it, until Vani understood that My ideas and creativity remain valuable. Vani spoke up about it, and felt steadier for having said it.","buildError":null},{"situationId":"SIT141","title":"Saw a parent or teacher break a rule they enforce","curated":true,"isZeroTierFallback":false,"needId":"NEED_INTEGRITY","templateId":"T22","templateName":"The Reframe Trail","selectionReason":"situation SIT141 exact fit","realizationFamily":"SOCIAL","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"Tara notices a parent or teacher doing something they have previously told Tara not to do, while the old thought said Rules only matter when they're convenient. Tara kept comparing their own things to it, until Tara understood that I can choose integrity regardless of what others do. Tara joined in and shared their own thing too, calmer about it than before.","buildError":null},{"situationId":"SIT042","title":"Friend doesn't want to play today","curated":true,"isZeroTierFallback":false,"needId":"NEED_BELONGING","templateId":"T23","templateName":"The Assumption Bridge","selectionReason":"situation SIT042 exact fit; logic family LOGIC_PERSPECTIVE_SHIFT fit; specificity score 0.33","realizationFamily":"UNEXPLAINED_WITHDRAWAL","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"Bodhi asks a friend to play, but the friend says they don't want to play today, and the old thought said If my friend chooses someone else, I'm not important. The same wave came anyway, before Bodhi's friend ran off, same as any other day. Bodhi asked for tomorrow instead of writing the friendship off.","buildError":null},{"situationId":"SIT086","title":"Parent on work call when child wants to share something","curated":true,"isZeroTierFallback":false,"needId":"NEED_PATIENCE","templateId":"T23","templateName":"The Assumption Bridge","selectionReason":"situation SIT086 exact fit","realizationFamily":"DIVIDED_ATTENTION","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"Tara has exciting news they have been saving to tell a parent, but the parent starts an important work call, and the old thought said If I have to wait, what I want to say isn't important. Mid-call, Tara still got a caught eye and a mouthed \"one minute\". Tara let the call end instead of standing there watching the clock.","buildError":null},{"situationId":"SIT089","title":"New sibling gets all the attention and new things","curated":true,"isZeroTierFallback":false,"needId":"NEED_BELONGING","templateId":"T23","templateName":"The Assumption Bridge","selectionReason":"situation SIT089 exact fit; logic family LOGIC_PERSPECTIVE_SHIFT fit; specificity score 0.33","realizationFamily":"DIVIDED_ATTENTION","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"Bodhi has something they want to show the family, but everyone is gathered around the new baby, and the old thought said The new baby has replaced me. The camera turned toward Bodhi too, without anyone having to ask. Bodhi held the picture up and ended up in the same photo as the baby.","buildError":null},{"situationId":"SIT123","title":"Friend suddenly acting different or 'cooler'","curated":true,"isZeroTierFallback":false,"needId":"NEED_BELONGING","templateId":"T23","templateName":"The Assumption Bridge","selectionReason":"situation SIT123 exact fit; logic family LOGIC_PERSPECTIVE_SHIFT fit; specificity score 0.33","realizationFamily":"UNEXPLAINED_WITHDRAWAL","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"Bodhi notices that a close friend has started talking, behaving, or dressing differently around other children, and the old thought said I have to change to keep my friends. Bodhi's friend still sat right there at lunch, same seat as always, cooler words and all. Bodhi dropped the copied voice and told the old joke the way that was actually theirs.","buildError":null},{"situationId":"SIT158","title":"Friend apologises after hurting them","curated":true,"isZeroTierFallback":false,"needId":"NEED_FORGIVENESS","templateId":"T23","templateName":"The Assumption Bridge","selectionReason":"situation SIT158 exact fit; logic family LOGIC_PERSPECTIVE_SHIFT fit; specificity score 0.33","realizationFamily":"OFFERED_REPAIR","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"A friend who hurt Bodhi's feelings comes back and apologises, and the old thought said Holding on to hurt keeps me safe. The hurt stayed put in the middle of the chest, right there even after the apology came. Bodhi accepted the apology anyway, without pretending the hurt was already gone.","buildError":null},{"situationId":"SIT133","title":"Tempted to steal something","curated":true,"isZeroTierFallback":false,"needId":"NEED_INTEGRITY","templateId":"T23","templateName":"The Assumption Bridge","selectionReason":"situation SIT133 exact fit","realizationFamily":"PEER_PRESSURE_TEMPTATION","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"Simha is with friends at a shop or another child's house, and a friend dares Simha to slip something small into their pocket without paying or asking, and the old thought said I must follow my friends to belong. Simha's own hand stopped on its own, before any decision was made out loud. Simha said no and stayed part of the group anyway.","buildError":null},{"situationId":"SIT001","title":"Toy not shared or taken away","curated":false,"isZeroTierFallback":false,"needId":"NEED_SELF_REGULATION","templateId":"T18","templateName":"The Growing Problem","selectionReason":"need NEED_SELF_REGULATION exact fit; logic family LOGIC_RUNAWAY_CHAIN fit; emotional arc fit via recommended needs; specificity score 0.70","realizationFamily":"N/A (generic Phase-7 event chain — no per-mechanism realization modes authored for this template yet)","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"The other child is already playing with it and doesn't realize Kavi was using it, and Kavi believed I have to react when things feel unfair. Kavi paused, chose to look again, and understood that I can pause and choose my response. Kavi chose a different response, and the ending felt warmer and freer than before.","buildError":null},{"situationId":"SIT003","title":"Told 'no' without explanation","curated":false,"isZeroTierFallback":false,"needId":"NEED_RESPECT","templateId":"T16","templateName":"Two Ways to See It","selectionReason":"need NEED_RESPECT exact fit; logic family LOGIC_PERSPECTIVE_SHIFT fit; emotional arc fit via recommended needs; specificity score 0.67","realizationFamily":"INTERNAL_REASONING","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"Vani asks to do something they really want to do, and a parent simply says no, and the old thought said If people say \"no\", they don't care about me. There was nothing new to check or find yet. Vani let the waiting stop feeling like a verdict, calmer for it.","buildError":null},{"situationId":"SIT005","title":"Can't finish homework","curated":false,"isZeroTierFallback":false,"needId":"NEED_COMPETENCE","templateId":"T03","templateName":"Three Tries","selectionReason":"need NEED_COMPETENCE exact fit; emotional arc fit via recommended needs; specificity score 0.50","realizationFamily":"N/A (generic Phase-7 event chain — no per-mechanism realization modes authored for this template yet)","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"Tara is working on a difficult homework task and cannot get the answer right. Tara wanted to finish the problem successfully, but the old thought said If I can't do it quickly, I can't do it. After a quiet \"Wait,\" Tara chose to look again and understood that Every attempt helps me improve. Tara chose a different next step, and the problem eased into a warmer, freer ending.","buildError":null},{"situationId":"SIT009","title":"Feeling hungry or extremely tired (hangry)","curated":false,"isZeroTierFallback":true,"needId":"NEED_SAFETY","templateId":"T09","templateName":"Smallest Strength","selectionReason":"beat count compatible with 3-scene Story Plan","realizationFamily":"N/A (generic Phase-7 event chain — no per-mechanism realization modes authored for this template yet)","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"Hunger or tiredness is making ordinary things feel much harder, and Arin believed I can't cope when my body feels uncomfortable. Arin paused, chose to look again, and understood that I can care for my body and uncomfortable moments will pass. Arin chose a different response, and the ending felt warmer and freer than before.","buildError":null},{"situationId":"SIT013","title":"Adult doesn't understand what they mean","curated":false,"isZeroTierFallback":false,"needId":"NEED_BELONGING","templateId":"T14","templateName":"Pass It On","selectionReason":"need NEED_BELONGING exact fit; emotional arc fit via recommended needs; specificity score 1.00","realizationFamily":"N/A (generic Phase-7 event chain — no per-mechanism realization modes authored for this template yet)","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"Bodhi explains something important to a parent, but the parent misunderstands. Bodhi wanted to be understood, but the old thought said If people don't understand me, something is wrong with me. After a quiet \"Wait,\" Bodhi chose to look again and understood that I can express myself patiently and be myself. Bodhi chose a different next step, and the problem eased into a warmer, freer ending.","buildError":null},{"situationId":"SIT017","title":"A treat or promise was forgotten","curated":false,"isZeroTierFallback":false,"needId":"NEED_TRUST","templateId":"T15","templateName":"The Unexpected Helper","selectionReason":"need NEED_TRUST exact fit; beat count compatible with 4-scene Story Plan; emotional arc fit via recommended needs; specificity score 1.00","realizationFamily":"N/A (generic Phase-7 event chain — no per-mechanism realization modes authored for this template yet)","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":6,"compression":"The promise has slipped the adult's mind, and Mitra believed Broken promises mean people don't care about me. Mitra paused, chose to look again, and understood that Trust grows through honesty, reliability and understanding. Mitra chose a different response, and the ending felt warmer and freer than before. The change was clear in what happened next.","buildError":null},{"situationId":"SIT021","title":"Darkness or shadows in the room","curated":false,"isZeroTierFallback":false,"needId":"NEED_COURAGE","templateId":"T11","templateName":"The Countdown","selectionReason":"need NEED_COURAGE exact fit; emotional arc fit via recommended needs; specificity score 0.50","realizationFamily":"N/A (generic Phase-7 event chain — no per-mechanism realization modes authored for this template yet)","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"Arin needs to cross a dark room to get something. Arin wanted to reach the other side and get the object, but the old thought said Fear means I should stop. After a quiet \"Wait,\" Arin chose to look again and understood that Courage is taking one small brave step. Arin chose a different next step, and the problem eased into a warmer, freer ending.","buildError":null},{"situationId":"SIT036","title":"Fear of being laughed at by class","curated":false,"isZeroTierFallback":false,"needId":"NEED_IDENTITY","templateId":"T05","templateName":"Circle Back","selectionReason":"need NEED_IDENTITY exact fit; emotional arc fit via recommended needs; specificity score 0.50","realizationFamily":"N/A (generic Phase-7 event chain — no per-mechanism realization modes authored for this template yet)","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"Tara has to answer, perform or show something in front of the class. Tara wanted to avoid being laughed at, but the old thought said If others laugh at me, I don't matter. After a quiet \"Wait,\" Tara chose to look again and understood that My value isn't decided by other people's opinions. Tara chose a different next step, and the problem eased into a warmer, freer ending.","buildError":null},{"situationId":"SIT054","title":"Highly anticipated movie or event cancelled","curated":false,"isZeroTierFallback":false,"needId":"NEED_ADAPTABILITY","templateId":"T02","templateName":"Refrain & Change","selectionReason":"need NEED_ADAPTABILITY exact fit; emotional arc fit via recommended needs; specificity score 0.50","realizationFamily":"N/A (generic Phase-7 event chain — no per-mechanism realization modes authored for this template yet)","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"Chinu has been excited about a special outing or event, but it is cancelled. Chinu wanted to have the planned experience happen, but the old thought said If plans change, everything is ruined. After a quiet \"Wait,\" Chinu chose to look again and understood that New opportunities can grow from unexpected changes. Chinu chose a different next step, and the problem eased into a warmer, freer ending.","buildError":null},{"situationId":"SIT137","title":"Tempted to look at friend's paper during a test","curated":false,"isZeroTierFallback":false,"needId":"NEED_INTEGRITY","templateId":"T04","templateName":"Question Chain","selectionReason":"need NEED_INTEGRITY exact fit; emotional arc fit via recommended needs; specificity score 0.33","realizationFamily":"N/A (generic Phase-7 event chain — no per-mechanism realization modes authored for this template yet)","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"Simha gets stuck on a test question and can see a friend's answer nearby. Simha wanted to get the answer right, but the old thought said Cheating is okay if it helps me succeed. After a quiet \"Wait,\" Simha chose to look again and understood that Honest effort builds real confidence. Simha chose a different next step, and the problem eased into a warmer, freer ending.","buildError":null},{"situationId":"SIT138","title":"Told a 'bad' secret they feel should be shared","curated":false,"isZeroTierFallback":false,"needId":"NEED_RESPONSIBILITY","templateId":"T12","templateName":"The Almost-Right Path","selectionReason":"need NEED_RESPONSIBILITY exact fit; specificity score 0.50","realizationFamily":"N/A (generic Phase-7 event chain — no per-mechanism realization modes authored for this template yet)","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"Keeping the secret may mean staying silent when a trusted adult needs to know, and Kavi believed Keeping every secret makes me a good friend. Kavi paused, chose to look again, and understood that Safe adults should know secrets that can protect someone. Kavi chose a different response, and the ending felt warmer and freer than before.","buildError":null},{"situationId":"SIT010","title":"Blamed for something they didn't do","curated":false,"isZeroTierFallback":true,"needId":"NEED_JUSTICE","templateId":null,"templateName":null,"selectionReason":null,"realizationFamily":"N/A (generic Phase-7 event chain — no per-mechanism realization modes authored for this template yet)","gates":[{"label":"Complete story","status":"FAIL","pass":false},{"label":"Pagination","status":"N/A","pass":false},{"label":"Narration","status":"N/A","pass":false},{"label":"Dialogue","status":"N/A","pass":false},{"label":"Polish","status":"N/A","pass":false},{"label":"Story QA","status":"N/A","pass":false},{"label":"Illustration plan","status":"N/A","pass":false},{"label":"Prompt pack","status":"N/A","pass":false},{"label":"Layout","status":"N/A","pass":false},{"label":"Production QA","status":"N/A","pass":false},{"label":"Export","status":"N/A","pass":false}],"allGatesPass":false,"pageCount":null,"compression":null,"buildError":null},{"situationId":"SIT012","title":"No say in what to wear","curated":false,"isZeroTierFallback":true,"needId":"NEED_AUTONOMY","templateId":"T03","templateName":"Three Tries","selectionReason":"logic family LOGIC_TRIAL_AND_ERROR fit; emotional arc fit via recommended needs; specificity score 1.00","realizationFamily":"N/A (generic Phase-7 event chain — no per-mechanism realization modes authored for this template yet)","gates":[{"label":"Complete story","status":"PASS","pass":true},{"label":"Pagination","status":"PASS","pass":true},{"label":"Narration","status":"PASS","pass":true},{"label":"Dialogue","status":"PASS","pass":true},{"label":"Polish","status":"PASS","pass":true},{"label":"Story QA","status":"PASS","pass":true},{"label":"Illustration plan","status":"PASS","pass":true},{"label":"Prompt pack","status":"PASS","pass":true},{"label":"Layout","status":"PASS","pass":true},{"label":"Production QA","status":"PRODUCTION_READY","pass":true},{"label":"Export","status":"PASS","pass":true}],"allGatesPass":true,"pageCount":5,"compression":"The parent has already decided what is appropriate for the day, and Kabir believed I should always get to decide everything. Kabir paused, chose to look again, and understood that I can cooperate even when I don't get my way. Kabir chose a different response, and the ending felt warmer and freer than before.","buildError":null}]};
+  const rows = DATA.rows;
+
+  function classify(row) {
+    if (row.isZeroTierFallback) return "gap";
+    return row.allGatesPass ? "pass" : "fail";
+  }
+
+  const passCount = rows.filter(r => classify(r) === "pass").length;
+  const failCount = rows.filter(r => classify(r) === "fail").length;
+  const gapCount = rows.filter(r => classify(r) === "gap").length;
+  const curatedCount = rows.filter(r => r.curated).length;
+  const genericCount = rows.filter(r => !r.curated && !r.isZeroTierFallback).length;
+
+  const stats = [
+    { n: rows.length, label: "Situations run", cls: "" },
+    { n: passCount, label: "Full pipeline pass", cls: "pass" },
+    { n: curatedCount, label: "Curated (T16/21/22/23)", cls: "" },
+    { n: genericCount, label: "Generic template", cls: "" },
+    { n: failCount, label: "Real QA gaps found", cls: failCount ? "warn" : "" },
+    { n: gapCount, label: "No-template fallback", cls: gapCount ? "warn" : "" },
+  ];
+  document.getElementById("statRow").innerHTML = stats.map(s =>
+    `<div class="stat-card"><div class="n ${s.cls}">${s.n}</div><div class="label">${s.label}</div></div>`
+  ).join("");
+
+  document.getElementById("genCount").textContent =
+    `${DATA.representativeCount} of ${DATA.totalActiveSituations} active situations sampled`;
+
+  const FILTERS = [
+    { id: "all", label: "All" },
+    { id: "curated", label: "Curated (T16/21/22/23)" },
+    { id: "generic", label: "Generic template" },
+    { id: "fail", label: "Real gaps" },
+    { id: "gap", label: "No-template fallback" },
+  ];
+  let activeFilter = "all";
+
+  function matchesFilter(row) {
+    if (activeFilter === "all") return true;
+    if (activeFilter === "curated") return row.curated;
+    if (activeFilter === "generic") return !row.curated && !row.isZeroTierFallback;
+    if (activeFilter === "fail") return classify(row) === "fail";
+    if (activeFilter === "gap") return classify(row) === "gap";
+    return true;
+  }
+
+  function renderFilters() {
+    document.getElementById("filters").innerHTML = FILTERS.map(f =>
+      `<span class="chip ${activeFilter === f.id ? 'active' : ''}" data-filter="${f.id}">${f.label}</span>`
+    ).join("");
+    document.querySelectorAll(".chip").forEach(chip => {
+      chip.addEventListener("click", () => {
+        activeFilter = chip.dataset.filter;
+        renderFilters();
+        renderTable();
+      });
+    });
+  }
+
+  function gateStripHtml(gates) {
+    return '<span class="gate-strip">' + gates.map(g =>
+      `<span class="gate-dot ${g.pass ? '' : (g.status === 'N/A' ? 'na' : 'fail')}" title="${g.label}: ${g.status}"></span>`
+    ).join('') + '</span>';
+  }
+
+  function renderTable() {
+    const tbody = document.getElementById("tbody");
+    const visible = rows.filter(matchesFilter);
+    tbody.innerHTML = visible.map((r, i) => {
+      const cls = classify(r);
+      const pill = cls === "pass"
+        ? '<span class="result-pill pass">PASS</span>'
+        : cls === "gap"
+          ? '<span class="result-pill gap">NO TEMPLATE</span>'
+          : '<span class="result-pill fail">GAP FOUND</span>';
+      const tplBadge = r.templateId
+        ? `<span class="badge tpl">${r.templateId}</span>`
+        : '<span class="badge none">NONE</span>';
+      const curatedTag = r.curated ? '<span class="tag">curated</span>' : '';
+      const rowId = 'row-' + i;
+      const detailId = 'detail-' + i;
+
+      const gateListHtml = r.gates.map(g =>
+        `<li><span>${g.label}</span><span class="gate-status ${g.pass ? 'pass' : (g.status === 'N/A' ? 'na' : 'fail')}">${g.status}</span></li>`
+      ).join('');
+
+      return `
+        <tr class="row" data-target="${detailId}" id="${rowId}">
+          <td class="mono" style="color:var(--text-dim)">▸</td>
+          <td class="sit mono">${r.situationId}${curatedTag}</td>
+          <td class="mono" style="color:var(--text-dim)">${(r.needId || '—').replace('NEED_', '')}</td>
+          <td>${tplBadge}</td>
+          <td style="color:var(--text-dim); font-size:0.82rem;">${r.realizationFamily.startsWith('N/A') ? '<span class="empty-note">generic — no modes yet</span>' : r.realizationFamily}</td>
+          <td>${gateStripHtml(r.gates)}</td>
+          <td>${pill}</td>
+          <td class="mono">${r.pageCount || '—'}</td>
+        </tr>
+        <tr class="detail-row" id="${detailId}">
+          <td colspan="8">
+            <div class="detail-grid">
+              <div class="detail-block">
+                <h4>Situation</h4>
+                <div style="margin-bottom:14px;">"${r.title || ''}"</div>
+                <h4>Selection reasoning</h4>
+                <div class="reason-text">${r.selectionReason || 'No template selected — see item 2, needs taxonomy gap.'}</div>
+                ${r.buildError ? `<h4 style="margin-top:14px;color:var(--fail);">Build error</h4><div class="reason-text">${r.buildError}</div>` : ''}
+              </div>
+              <div class="detail-block">
+                <h4>All 11 QA gates</h4>
+                <ul class="gate-list">${gateListHtml}</ul>
+              </div>
+            </div>
+            ${r.compression ? `<h4 style="margin-top:18px;">Compression (final story summary)</h4><div class="compression-text">${r.compression}</div>` : ''}
+          </td>
+        </tr>
+      `;
+    }).join("");
+
+    tbody.querySelectorAll("tr.row").forEach(row => {
+      row.addEventListener("click", () => {
+        const detail = document.getElementById(row.dataset.target);
+        detail.classList.toggle("open");
+        const arrow = row.querySelector("td.mono");
+        arrow.textContent = detail.classList.contains("open") ? "▾" : "▸";
+      });
+    });
+  }
+
+  renderFilters();
+  renderTable();
+</script>

@@ -1,0 +1,3211 @@
+[
+  {
+    "id": 1,
+    "slug": "toy-not-shared-or-taken-away",
+    "name": "Toy not shared or taken away",
+    "category": "Anger & Frustration",
+    "coreNeed": "Self-Control",
+    "falseBelief": "I have to react when things feel unfair.",
+    "trueBelief": "I can pause and choose my response.",
+    "feeling": "Hot frustration and a flash of 'that's mine' — wanting to grab it back.",
+    "parentTeach": "That other people's feelings matter too, even when something feels unfair.",
+    "wisdomElement": "Curved Trunk",
+    "secondaryWisdomElement": "Mouse",
+    "lifeDomains": [
+      "Friendship & Sharing",
+      "Playing & Games",
+      "Communication"
+    ],
+    "priority": "⭐⭐⭐ High"
+  },
+  {
+    "id": 2,
+    "slug": "screen-time-cut-off-suddenly",
+    "name": "Screen time cut off suddenly",
+    "category": "Anger & Frustration",
+    "coreNeed": "Self-Control",
+    "falseBelief": "I have to get what I want immediately.",
+    "trueBelief": "I can handle disappointment and make wise choices.",
+    "feeling": "A sudden jolt of protest — the fun was cut off with no warning.",
+    "parentTeach": "That transitions go easier with a heads-up, and endings aren't punishments.",
+    "wisdomElement": "Curved Trunk",
+    "secondaryWisdomElement": "Mouse",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Communication",
+      "Responsibility"
+    ],
+    "priority": "⭐⭐⭐ High"
+  },
+  {
+    "id": 3,
+    "slug": "told-no-without-explanation",
+    "name": "Told 'no' without explanation",
+    "category": "Anger & Frustration",
+    "coreNeed": "Respect",
+    "falseBelief": "If people say \"no\", they don't care about me.",
+    "trueBelief": "I can listen, ask and understand even when I don't like the answer.",
+    "feeling": "Stubborn defiance — wanting a reason, not just an order.",
+    "parentTeach": "That some rules don't need debate, and trust can hold even without an explanation.",
+    "wisdomElement": "Big Ears",
+    "secondaryWisdomElement": "Curved Trunk",
+    "lifeDomains": [
+      "Communication",
+      "Family & Daily Life",
+      "Learning & Problem Solving"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 4,
+    "slug": "sibling-gets-bigger-portion-or-more-attention",
+    "name": "Sibling gets bigger portion or more attention",
+    "category": "Anger & Frustration",
+    "coreNeed": "Self-Worth",
+    "falseBelief": "Someone else's success makes me less important.",
+    "trueBelief": "Everyone has their own gifts and my worth doesn't depend on comparison.",
+    "feeling": "A sting of unfairness — feeling smaller and less important than a sibling.",
+    "parentTeach": "That love isn't measured in portions, and being loved doesn't mean being equal.",
+    "wisdomElement": "Broken Tusk (Writing Tusk)",
+    "secondaryWisdomElement": "Big Belly",
+    "lifeDomains": [
+      "Helping & Caring",
+      "Responsibility",
+      "Learning & Problem Solving"
+    ],
+    "priority": "⭐⭐⭐ High"
+  },
+  {
+    "id": 5,
+    "slug": "can-t-finish-homework-or-a-craft",
+    "name": "Can't finish homework or a craft",
+    "category": "Anger & Frustration",
+    "coreNeed": "Perseverance",
+    "falseBelief": "If I can't do it quickly, I can't do it.",
+    "trueBelief": "Every attempt helps me improve.",
+    "feeling": "Rising frustration at their own hands not doing what their mind wants.",
+    "parentTeach": "That struggling is part of learning, not proof they're bad at it.",
+    "wisdomElement": "Mouse",
+    "secondaryWisdomElement": "Broken Tusk (Writing Tusk)",
+    "lifeDomains": [
+      "Learning & Problem Solving",
+      "Building & Creating",
+      "Art",
+      "Music & Creativity"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 6,
+    "slug": "playdate-or-plan-suddenly-cancelled",
+    "name": "Playdate or plan suddenly cancelled",
+    "category": "Anger & Frustration",
+    "coreNeed": "Flexibility",
+    "falseBelief": "Plans must happen my way.",
+    "trueBelief": "I can adapt and still enjoy life.",
+    "feeling": "Sharp disappointment — an exciting plan just disappeared.",
+    "parentTeach": "That plans can change and disappointment can be survived without spoiling everything.",
+    "wisdomElement": "Curved Trunk",
+    "secondaryWisdomElement": "Big Belly",
+    "lifeDomains": [
+      "Friendship & Sharing",
+      "Playing & Games",
+      "Family & Daily Life"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 7,
+    "slug": "someone-breaks-their-lego-or-drawing",
+    "name": "Someone breaks their Lego or drawing",
+    "category": "Anger & Frustration",
+    "coreNeed": "Self-Control",
+    "falseBelief": "My anger should decide what I do.",
+    "trueBelief": "I can choose calm actions even when I'm upset.",
+    "feeling": "A wave of anger at seeing something they made get destroyed.",
+    "parentTeach": "That things can be rebuilt, and their effort still counted even if it broke.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Curved Trunk",
+    "lifeDomains": [
+      "Building & Creating",
+      "Communication",
+      "Friendship & Sharing"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 8,
+    "slug": "being-hurried-to-put-shoes-on-or-leave",
+    "name": "Being hurried to put shoes on or leave",
+    "category": "Anger & Frustration",
+    "coreNeed": "Patience",
+    "falseBelief": "Everything has to happen right now.",
+    "trueBelief": "I can slow down and work with the moment I'm in.",
+    "feeling": "Irritable resistance to being hurried when they weren't ready.",
+    "parentTeach": "That slowing down sometimes isn't possible, but their pace still matters.",
+    "wisdomElement": "Mouse",
+    "secondaryWisdomElement": "Modak",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Responsibility",
+      "Communication"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 9,
+    "slug": "feeling-hungry-or-extremely-tired-hangry",
+    "name": "Feeling hungry or extremely tired (hangry)",
+    "category": "Anger & Frustration",
+    "coreNeed": "Comfort",
+    "falseBelief": "I can't cope when my body feels uncomfortable.",
+    "trueBelief": "I can care for my body and uncomfortable moments will pass.",
+    "feeling": "Short-fused crankiness that isn't really about what just happened.",
+    "parentTeach": "That big feelings are sometimes just a full tummy or tired body in disguise.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Curved Trunk",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Helping & Caring"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 10,
+    "slug": "blamed-for-something-they-didn-t-do",
+    "name": "Blamed for something they didn't do",
+    "category": "Anger & Frustration",
+    "coreNeed": "Fairness",
+    "falseBelief": "Being blamed means nobody believes me.",
+    "trueBelief": "I can respond honestly and calmly, even when things feel unfair.",
+    "feeling": "Indignation at being punished for something they didn't do.",
+    "parentTeach": "That being falsely blamed hurts, and it's safe to say so calmly.",
+    "wisdomElement": "Big Ears",
+    "secondaryWisdomElement": "Broken Tusk (Writing Tusk)",
+    "lifeDomains": [
+      "Communication",
+      "Responsibility",
+      "Learning & Problem Solving"
+    ],
+    "priority": "⭐⭐⭐ High"
+  },
+  {
+    "id": 11,
+    "slug": "being-teased-or-physically-pushed",
+    "name": "Being teased or physically pushed",
+    "category": "Anger & Frustration",
+    "coreNeed": "Self-Control",
+    "falseBelief": "If someone hurts me, I should hurt them back.",
+    "trueBelief": "I can protect myself without losing control.",
+    "feeling": "Fear tangled with anger — wanting to hit back or hide.",
+    "parentTeach": "That standing tall doesn't require becoming what hurt them.",
+    "wisdomElement": "Curved Trunk",
+    "secondaryWisdomElement": "Big Belly",
+    "lifeDomains": [
+      "Friendship & Sharing",
+      "Communication",
+      "Playing & Games"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 12,
+    "slug": "no-say-in-what-to-wear-or-eat",
+    "name": "No say in what to wear or eat",
+    "category": "Anger & Frustration",
+    "coreNeed": "Independence",
+    "falseBelief": "I should always get to decide everything.",
+    "trueBelief": "I can cooperate even when I don't get my way.",
+    "feeling": "Frustration at having no vote in small everyday decisions.",
+    "parentTeach": "That a little choice, even in small things, builds real self-trust.",
+    "wisdomElement": "Mouse",
+    "secondaryWisdomElement": "Curved Trunk",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Communication",
+      "Responsibility"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 13,
+    "slug": "adult-doesn-t-understand-what-they-mean",
+    "name": "Adult doesn't understand what they mean",
+    "category": "Anger & Frustration",
+    "coreNeed": "Acceptance",
+    "falseBelief": "If people don't understand me, something is wrong with me.",
+    "trueBelief": "I can express myself patiently and be myself.",
+    "feeling": "Helpless irritation at not being understood, even while trying to explain.",
+    "parentTeach": "That being patient while explaining again is its own kind of strength.",
+    "wisdomElement": "Big Ears",
+    "secondaryWisdomElement": "Big Belly",
+    "lifeDomains": [
+      "Communication",
+      "Helping & Caring",
+      "Family & Daily Life"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 14,
+    "slug": "game-crashes-or-internet-lags-during-a-win",
+    "name": "Game crashes or internet lags during a win",
+    "category": "Anger & Frustration",
+    "coreNeed": "Resilience",
+    "falseBelief": "One setback ruins everything.",
+    "trueBelief": "I can begin again after setbacks.",
+    "feeling": "Sharp letdown when a win gets erased by something out of their control.",
+    "parentTeach": "That effort still counts even when the outcome gets taken away.",
+    "wisdomElement": "Lotus",
+    "secondaryWisdomElement": "Big Belly",
+    "lifeDomains": [
+      "Learning & Problem Solving",
+      "Playing & Games",
+      "Responsibility"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 15,
+    "slug": "forced-to-sit-still-too-long-car-flight",
+    "name": "Forced to sit still too long (car, flight)",
+    "category": "Anger & Frustration",
+    "coreNeed": "Self-Control",
+    "falseBelief": "I can't stay calm when I feel trapped.",
+    "trueBelief": "I can find peaceful ways to handle uncomfortable moments.",
+    "feeling": "Restless, fidgety irritation at a body that wants to move.",
+    "parentTeach": "That stillness is a skill that grows, not a switch that flips.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Mouse",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Playing & Games",
+      "Art",
+      "Music & Creativity"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 16,
+    "slug": "game-save-file-corrupted-or-deleted",
+    "name": "Game save file corrupted or deleted",
+    "category": "Anger & Frustration",
+    "coreNeed": "Resilience",
+    "falseBelief": "Losing my progress means I've failed.",
+    "trueBelief": "I can rebuild and keep moving forward.",
+    "feeling": "Grief-tinged anger at losing hours of effort in an instant.",
+    "parentTeach": "That things we build can be rebuilt, and the loss still deserves comfort.",
+    "wisdomElement": "Lotus",
+    "secondaryWisdomElement": "Broken Tusk (Writing Tusk)",
+    "lifeDomains": [
+      "Learning & Problem Solving",
+      "Playing & Games",
+      "Building & Creating"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 17,
+    "slug": "a-treat-or-promise-was-forgotten",
+    "name": "A treat or promise was forgotten",
+    "category": "Anger & Frustration",
+    "coreNeed": "Trust",
+    "falseBelief": "Broken promises mean people don't care about me.",
+    "trueBelief": "Trust grows through honesty, reliability and understanding.",
+    "feeling": "Betrayal-flavored disappointment when a promised treat quietly vanishes.",
+    "parentTeach": "That promises matter, and it's fair to remind grown-ups gently when one slips.",
+    "wisdomElement": "Big Ears",
+    "secondaryWisdomElement": "Curved Trunk",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Communication",
+      "Responsibility"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 18,
+    "slug": "sibling-tells-on-them-unfairly",
+    "name": "Sibling tells on them unfairly",
+    "category": "Anger & Frustration",
+    "coreNeed": "Fairness",
+    "falseBelief": "I have to get even when something feels unfair.",
+    "trueBelief": "I can respond with honesty instead of revenge.",
+    "feeling": "Anger at being reported on, especially if it feels exaggerated.",
+    "parentTeach": "That tattling and telling are different, and both siblings deserve fairness.",
+    "wisdomElement": "Big Ears",
+    "secondaryWisdomElement": "Broken Tusk (Writing Tusk)",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Communication",
+      "Friendship & Sharing"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 19,
+    "slug": "scratchy-clothes-or-irritating-noise",
+    "name": "Scratchy clothes or irritating noise",
+    "category": "Anger & Frustration",
+    "coreNeed": "Comfort",
+    "falseBelief": "I can't be okay when things feel uncomfortable.",
+    "trueBelief": "I can stay peaceful even when my surroundings aren't perfect.",
+    "feeling": "Irritable discomfort that has nothing to do with anyone's behavior.",
+    "parentTeach": "That bodies have limits too, and naming discomfort isn't complaining.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Lotus",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Learning & Problem Solving"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 20,
+    "slug": "repeatedly-failing-a-level-or-concept",
+    "name": "Repeatedly failing a level or concept",
+    "category": "Anger & Frustration",
+    "coreNeed": "Perseverance",
+    "falseBelief": "If I keep failing, I should quit.",
+    "trueBelief": "Every challenge helps me become stronger.",
+    "feeling": "Mounting frustration at hitting the same wall again and again.",
+    "parentTeach": "That repetition isn't failure — it's how mastery actually happens.",
+    "wisdomElement": "Mouse",
+    "secondaryWisdomElement": "Broken Tusk (Writing Tusk)",
+    "lifeDomains": [
+      "Learning & Problem Solving",
+      "Playing & Games",
+      "Building & Creating"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 21,
+    "slug": "darkness-or-shadows-in-the-room",
+    "name": "Darkness or shadows in the room",
+    "category": "Fear & Insecurity",
+    "coreNeed": "Courage",
+    "falseBelief": "Fear means I should stop.",
+    "trueBelief": "Courage is taking one small brave step.",
+    "feeling": "A prickle of dread when the room turns unfamiliar in the dark.",
+    "parentTeach": "That the dark hides nothing new, just what daylight already showed.",
+    "wisdomElement": "Mouse",
+    "secondaryWisdomElement": "Broken Tusk (Writing Tusk)",
+    "lifeDomains": [
+      "Exploring & Nature",
+      "Family & Daily Life",
+      "Communication"
+    ],
+    "priority": "⭐⭐⭐ High"
+  },
+  {
+    "id": 22,
+    "slug": "thunder-fireworks-or-loud-sirens",
+    "name": "Thunder, fireworks, or loud sirens",
+    "category": "Fear & Insecurity",
+    "coreNeed": "Security",
+    "falseBelief": "Loud or unexpected things mean I'm not safe.",
+    "trueBelief": "I can find safety, calm and support.",
+    "feeling": "A full-body startle at a sound too loud to predict.",
+    "parentTeach": "That loud sounds pass, and their body can learn to settle after the jolt.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Mouse",
+    "lifeDomains": [
+      "Exploring & Nature",
+      "Family & Daily Life",
+      "Communication"
+    ],
+    "priority": "⭐⭐⭐ High"
+  },
+  {
+    "id": 23,
+    "slug": "monsters-under-the-bed-or-scary-stories",
+    "name": "Monsters under the bed or scary stories",
+    "category": "Fear & Insecurity",
+    "coreNeed": "Courage",
+    "falseBelief": "My imagination can control me.",
+    "trueBelief": "I can be braver than my fears.",
+    "feeling": "Vivid, sticky fear from an imagined creature that feels very real.",
+    "parentTeach": "That imagination can also invent safety, not just monsters.",
+    "wisdomElement": "Mouse",
+    "secondaryWisdomElement": "Lotus",
+    "lifeDomains": [
+      "Art",
+      "Music & Creativity",
+      "Family & Daily Life",
+      "Communication"
+    ],
+    "priority": "⭐⭐⭐ High"
+  },
+  {
+    "id": 24,
+    "slug": "parent-leaving-for-work-or-a-long-trip",
+    "name": "Parent leaving for work or a long trip",
+    "category": "Fear & Insecurity",
+    "coreNeed": "Trust",
+    "falseBelief": "When someone leaves, they might not come back.",
+    "trueBelief": "I can trust the people who love and care for me.",
+    "feeling": "A tight knot of worry that the goodbye might be a forever one.",
+    "parentTeach": "That leaving and returning are part of the same promise, kept every time.",
+    "wisdomElement": "Big Ears",
+    "secondaryWisdomElement": "Big Belly",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Communication",
+      "Helping & Caring"
+    ],
+    "priority": "⭐⭐⭐ High"
+  },
+  {
+    "id": 25,
+    "slug": "fear-of-going-on-stage-or-presenting",
+    "name": "Fear of going on stage or presenting",
+    "category": "Fear & Insecurity",
+    "coreNeed": "Confidence",
+    "falseBelief": "If I'm nervous, I can't do it.",
+    "trueBelief": "Confidence grows each time I try.",
+    "feeling": "Stomach-churning stage fright — every eye suddenly too much.",
+    "parentTeach": "That shaky knees and a steady voice can exist in the same moment.",
+    "wisdomElement": "Mouse",
+    "secondaryWisdomElement": "Broken Tusk (Writing Tusk)",
+    "lifeDomains": [
+      "Art",
+      "Music & Creativity",
+      "Communication",
+      "Learning & Problem Solving"
+    ],
+    "priority": "⭐⭐⭐ High"
+  },
+  {
+    "id": 26,
+    "slug": "anxiety-before-a-big-test-or-result",
+    "name": "Anxiety before a big test or result",
+    "category": "Fear & Insecurity",
+    "coreNeed": "Confidence",
+    "falseBelief": "If I don't do well, I'm not good enough.",
+    "trueBelief": "My effort and learning matter more than perfect results.",
+    "feeling": "Anticipatory dread that builds for days before the actual test.",
+    "parentTeach": "That preparation is protection, and one result doesn't define their worth.",
+    "wisdomElement": "Broken Tusk (Writing Tusk)",
+    "secondaryWisdomElement": "Mouse",
+    "lifeDomains": [
+      "Learning & Problem Solving",
+      "Responsibility",
+      "Communication"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 27,
+    "slug": "injections-doctors-or-dentist-visits",
+    "name": "Injections, doctors, or dentist visits",
+    "category": "Fear & Insecurity",
+    "coreNeed": "Courage",
+    "falseBelief": "If something hurts, I can't handle it.",
+    "trueBelief": "I am stronger than I think, even during difficult moments.",
+    "feeling": "Sharp anxiety about pain that hasn't even happened yet.",
+    "parentTeach": "That brief discomfort can be survived, and asking for comfort is allowed.",
+    "wisdomElement": "Mouse",
+    "secondaryWisdomElement": "Big Belly",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Helping & Caring",
+      "Learning & Problem Solving"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 28,
+    "slug": "new-teacher-or-unfamiliar-adult",
+    "name": "New teacher or unfamiliar adult",
+    "category": "Fear & Insecurity",
+    "coreNeed": "Trust",
+    "falseBelief": "New people won't understand or help me.",
+    "trueBelief": "Trust grows one step at a time.",
+    "feeling": "Wary uncertainty around someone new whose intentions aren't known yet.",
+    "parentTeach": "That caution is wise, and warming up slowly is not the same as rudeness.",
+    "wisdomElement": "Big Ears",
+    "secondaryWisdomElement": "Curved Trunk",
+    "lifeDomains": [
+      "School & Community",
+      "Communication",
+      "Friendship & Sharing"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 29,
+    "slug": "fear-of-getting-lost-in-a-mall-or-crowd",
+    "name": "Fear of getting lost in a mall or crowd",
+    "category": "Fear & Insecurity",
+    "coreNeed": "Security",
+    "falseBelief": "If I'm alone, I'm not safe.",
+    "trueBelief": "I can stay calm, make wise choices and find help.",
+    "feeling": "Panic at the thought of a familiar hand suddenly not being there.",
+    "parentTeach": "That a plan for 'what if we get separated' turns fear into readiness.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Curved Trunk",
+    "lifeDomains": [
+      "Exploring & Nature",
+      "Communication",
+      "Helping & Caring"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 30,
+    "slug": "accidentally-saw-a-scary-or-violent-video",
+    "name": "Accidentally saw a scary or violent video",
+    "category": "Fear & Insecurity",
+    "coreNeed": "Security",
+    "falseBelief": "The scary things I see will happen to me.",
+    "trueBelief": "I can separate imagination from reality and seek comfort.",
+    "feeling": "Intrusive, unsettling images that won't easily leave their mind.",
+    "parentTeach": "That not everything seen online is meant for their eyes, and that's okay to say.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Lotus",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Communication",
+      "Art",
+      "Music & Creativity"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 31,
+    "slug": "heard-about-war-or-violence-on-news",
+    "name": "Heard about war or violence on news",
+    "category": "Fear & Insecurity",
+    "coreNeed": "Security",
+    "falseBelief": "The world is always dangerous.",
+    "trueBelief": "There are many people working every day to keep others safe.",
+    "feeling": "Heavy, adult-sized dread about something too big to fully picture.",
+    "parentTeach": "That caring adults are working on big problems, and their job is just to be a kid.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Lotus",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Communication",
+      "Helping & Caring"
+    ],
+    "priority": "⭐ Low"
+  },
+  {
+    "id": 32,
+    "slug": "saw-news-about-floods-fires-earthquakes",
+    "name": "Saw news about floods, fires, earthquakes",
+    "category": "Fear & Insecurity",
+    "coreNeed": "Hope",
+    "falseBelief": "Bad things mean everything is ruined forever.",
+    "trueBelief": "People can help, rebuild and begin again.",
+    "feeling": "Overwhelm at scenes of destruction that feel close even from far away.",
+    "parentTeach": "That most places, most days, are safe — and helpers exist for the hard days.",
+    "wisdomElement": "Lotus",
+    "secondaryWisdomElement": "Big Belly",
+    "lifeDomains": [
+      "Exploring & Nature",
+      "Helping & Caring",
+      "Learning & Problem Solving"
+    ],
+    "priority": "⭐ Low"
+  },
+  {
+    "id": 33,
+    "slug": "fear-that-a-parent-might-get-sick",
+    "name": "Fear that a parent might get sick",
+    "category": "Fear & Insecurity",
+    "coreNeed": "Trust",
+    "falseBelief": "I might lose the people I love.",
+    "trueBelief": "Love, care and support help us through uncertain times.",
+    "feeling": "Quiet, private fear they might be carrying alone.",
+    "parentTeach": "That saying a fear out loud to a trusted adult makes it smaller, not bigger.",
+    "wisdomElement": "Big Ears",
+    "secondaryWisdomElement": "Big Belly",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Helping & Caring",
+      "Communication"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 34,
+    "slug": "overheard-adults-talking-about-money-problems",
+    "name": "Overheard adults talking about money problems",
+    "category": "Fear & Insecurity",
+    "coreNeed": "Security",
+    "falseBelief": "We won't be okay if money is tight.",
+    "trueBelief": "Families work together and find solutions during hard times.",
+    "feeling": "A confusing unease absorbed from grown-up conversations not meant for them.",
+    "parentTeach": "That money worries are a grown-up job, and they are still fully provided for.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Mouse",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Communication",
+      "Learning & Problem Solving"
+    ],
+    "priority": "⭐ Low"
+  },
+  {
+    "id": 35,
+    "slug": "overthinking-imaginary-future-dangers",
+    "name": "Overthinking imaginary future dangers",
+    "category": "Fear & Insecurity",
+    "coreNeed": "Calm",
+    "falseBelief": "I have to believe every scary thought.",
+    "trueBelief": "Thoughts are not always facts, and I can return to the present.",
+    "feeling": "Spiraling worry about things that haven't happened and may never.",
+    "parentTeach": "That imagined futures aren't facts, and today is the only place to stand.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Big Ears",
+    "lifeDomains": [
+      "Art",
+      "Music & Creativity",
+      "Learning & Problem Solving",
+      "Communication"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 36,
+    "slug": "fear-of-being-laughed-at-by-class",
+    "name": "Fear of being laughed at by class",
+    "category": "Fear & Insecurity",
+    "coreNeed": "Self-Worth",
+    "falseBelief": "If others laugh at me, I don't matter.",
+    "trueBelief": "My value isn't decided by other people's opinions.",
+    "feeling": "Sharp social dread — imagining every eye and every laugh.",
+    "parentTeach": "That embarrassment fades fast, faster than it feels in the moment.",
+    "wisdomElement": "Broken Tusk (Writing Tusk)",
+    "secondaryWisdomElement": "Big Belly",
+    "lifeDomains": [
+      "School & Community",
+      "Communication",
+      "Friendship & Sharing"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 37,
+    "slug": "first-day-at-a-new-school",
+    "name": "First day at a new school",
+    "category": "Fear & Insecurity",
+    "coreNeed": "Belonging",
+    "falseBelief": "I won't fit in here.",
+    "trueBelief": "I can make connections while being myself.",
+    "feeling": "Nervous unfamiliarity about a place with no known faces yet.",
+    "parentTeach": "That every friend was once a stranger, and the first day is just the start.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Big Ears",
+    "lifeDomains": [
+      "School & Community",
+      "Friendship & Sharing",
+      "Communication"
+    ],
+    "priority": "⭐⭐⭐ High"
+  },
+  {
+    "id": 38,
+    "slug": "fear-of-dogs-spiders-or-insects",
+    "name": "Fear of dogs, spiders, or insects",
+    "category": "Fear & Insecurity",
+    "coreNeed": "Courage",
+    "falseBelief": "Fear means I should avoid everything unfamiliar.",
+    "trueBelief": "I can learn, stay safe and become braver step by step.",
+    "feeling": "Instinctive alarm at something small, fast, or many-legged.",
+    "parentTeach": "That fear can be respected without needing to run the whole show.",
+    "wisdomElement": "Mouse",
+    "secondaryWisdomElement": "Eyes",
+    "lifeDomains": [
+      "Exploring & Nature",
+      "Helping & Caring",
+      "Learning & Problem Solving"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 39,
+    "slug": "fear-of-falling-or-getting-hurt-at-park",
+    "name": "Fear of falling or getting hurt at park",
+    "category": "Fear & Insecurity",
+    "coreNeed": "Confidence",
+    "falseBelief": "If I fall once, I shouldn't try again.",
+    "trueBelief": "Trying again helps me grow stronger and more confident.",
+    "feeling": "Wary caution about a body that sometimes surprises them.",
+    "parentTeach": "That falling is part of moving, and their body knows more than fear admits.",
+    "wisdomElement": "Mouse",
+    "secondaryWisdomElement": "Broken Tusk (Writing Tusk)",
+    "lifeDomains": [
+      "Playing & Games",
+      "Learning & Problem Solving",
+      "Helping & Caring"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 40,
+    "slug": "fear-of-getting-in-trouble-with-teacher",
+    "name": "Fear of getting in trouble with teacher",
+    "category": "Fear & Insecurity",
+    "coreNeed": "Integrity",
+    "falseBelief": "Making mistakes makes me a bad child.",
+    "trueBelief": "Honesty and responsibility are more important than being perfect.",
+    "feeling": "Anxious dread about disappointing someone with authority.",
+    "parentTeach": "That mistakes and consequences are both survivable, and trust can hold through both.",
+    "wisdomElement": "Broken Tusk (Writing Tusk)",
+    "secondaryWisdomElement": "Big Ears",
+    "lifeDomains": [
+      "School & Community",
+      "Responsibility",
+      "Communication"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 41,
+    "slug": "anxiety-about-the-earth-breaking-climate-change",
+    "name": "Anxiety about the earth breaking (climate change)",
+    "category": "Fear & Insecurity",
+    "coreNeed": "Hope",
+    "falseBelief": "Nothing I do can make a difference.",
+    "trueBelief": "Small caring actions can help create a better future.",
+    "feeling": "Diffuse, grown-up-scaled anxiety about a world too large to control.",
+    "parentTeach": "That small daily actions matter, and worry doesn't have to carry the whole planet.",
+    "wisdomElement": "Lotus",
+    "secondaryWisdomElement": "Curved Trunk",
+    "lifeDomains": [
+      "Exploring & Nature",
+      "Helping & Caring",
+      "Learning & Problem Solving"
+    ],
+    "priority": "⭐ Low"
+  },
+  {
+    "id": 42,
+    "slug": "friend-is-not-playing-with-them-today",
+    "name": "Friend is not playing with them today",
+    "category": "Sadness & Grief",
+    "coreNeed": "Belonging",
+    "falseBelief": "If my friend chooses someone else, I'm not important.",
+    "trueBelief": "Friendships can grow even when people spend time with others.",
+    "feeling": "A quiet ache of being left out of today's fun.",
+    "parentTeach": "That one day of distance doesn't undo a friendship.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Big Ears",
+    "lifeDomains": [
+      "Friendship & Sharing",
+      "Communication",
+      "Playing & Games"
+    ],
+    "priority": "⭐⭐⭐ High"
+  },
+  {
+    "id": 43,
+    "slug": "death-of-a-pet",
+    "name": "Death of a pet",
+    "category": "Sadness & Grief",
+    "coreNeed": "Compassion",
+    "falseBelief": "Love disappears when someone is gone.",
+    "trueBelief": "Love stays with us through our memories and kindness.",
+    "feeling": "Deep, unfiltered grief for a companion who won't come back.",
+    "parentTeach": "That loving something means grieving it fully, and grief is love with nowhere to go yet.",
+    "wisdomElement": "Lotus",
+    "secondaryWisdomElement": "Big Belly",
+    "lifeDomains": [
+      "Helping & Caring",
+      "Family & Daily Life",
+      "Communication"
+    ],
+    "priority": "⭐⭐⭐ High"
+  },
+  {
+    "id": 44,
+    "slug": "death-of-a-relative-or-family-member",
+    "name": "Death of a relative or family member",
+    "category": "Sadness & Grief",
+    "coreNeed": "Hope",
+    "falseBelief": "Life will never feel happy again.",
+    "trueBelief": "Love continues through memories, family and hope.",
+    "feeling": "Heavy, disorienting sadness around a loss too big for words.",
+    "parentTeach": "That missing someone forever is the price and the proof of having loved them.",
+    "wisdomElement": "Lotus",
+    "secondaryWisdomElement": "Big Belly",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Communication",
+      "Helping & Caring"
+    ],
+    "priority": "⭐⭐⭐ High"
+  },
+  {
+    "id": 45,
+    "slug": "lost-a-favourite-toy-or-comfort-blanket",
+    "name": "Lost a favourite toy or comfort blanket",
+    "category": "Sadness & Grief",
+    "coreNeed": "Comfort",
+    "falseBelief": "I can't be okay without this special thing.",
+    "trueBelief": "The love and comfort I feel live inside me too.",
+    "feeling": "Sharp grief over something small to others but precious to them.",
+    "parentTeach": "That objects can be mourned too, and new comfort can still be found.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Lotus",
+    "lifeDomains": [
+      "Exploring & Nature",
+      "Learning & Problem Solving",
+      "Family & Daily Life"
+    ],
+    "priority": "⭐⭐⭐ High"
+  },
+  {
+    "id": 46,
+    "slug": "harshly-reprimanded-by-a-parent",
+    "name": "Harshly reprimanded by a parent",
+    "category": "Sadness & Grief",
+    "coreNeed": "Acceptance",
+    "falseBelief": "When I make mistakes, I'm not loved.",
+    "trueBelief": "I can make mistakes and still be deeply loved.",
+    "feeling": "Stinging shame layered under sadness after being scolded hard.",
+    "parentTeach": "That correction and love can coexist, even when a voice was raised.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Broken Tusk (Writing Tusk)",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Communication",
+      "Responsibility"
+    ],
+    "priority": "⭐⭐⭐ High"
+  },
+  {
+    "id": 47,
+    "slug": "feeling-invisible-to-a-busy-parent",
+    "name": "Feeling invisible to a busy parent",
+    "category": "Sadness & Grief",
+    "coreNeed": "Belonging",
+    "falseBelief": "I'm not important because nobody notices me.",
+    "trueBelief": "I matter even when people are busy.",
+    "feeling": "A lonely ache of not being noticed, even in a full house.",
+    "parentTeach": "That being busy isn't the same as not caring, and both can be true.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Big Ears",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Helping & Caring",
+      "Communication"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 48,
+    "slug": "not-invited-to-a-birthday-party",
+    "name": "Not invited to a birthday party",
+    "category": "Sadness & Grief",
+    "coreNeed": "Belonging",
+    "falseBelief": "Being left out means nobody likes me.",
+    "trueBelief": "One invitation does not decide my worth or my friendships.",
+    "feeling": "Sharp exclusion — wondering what made them not good enough to invite.",
+    "parentTeach": "That not every gathering includes everyone, and that isn't a verdict on their worth.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Broken Tusk (Writing Tusk)",
+    "lifeDomains": [
+      "Friendship & Sharing",
+      "Celebrations & Traditions",
+      "Communication"
+    ],
+    "priority": "⭐⭐⭐ High"
+  },
+  {
+    "id": 49,
+    "slug": "a-fall-or-scrape-the-shock-of-pain",
+    "name": "A fall or scrape — the shock of pain",
+    "category": "Sadness & Grief",
+    "coreNeed": "Resilience",
+    "falseBelief": "Getting hurt means I should stop trying.",
+    "trueBelief": "I can heal, recover and keep growing.",
+    "feeling": "Shock and sting that arrive together in the first seconds of pain.",
+    "parentTeach": "That comfort matters as much as the injury, and both deserve attention.",
+    "wisdomElement": "Lotus",
+    "secondaryWisdomElement": "Big Belly",
+    "lifeDomains": [
+      "Helping & Caring",
+      "Playing & Games",
+      "Learning & Problem Solving"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 50,
+    "slug": "missing-a-parent-who-travels-often",
+    "name": "Missing a parent who travels often",
+    "category": "Sadness & Grief",
+    "coreNeed": "Trust",
+    "falseBelief": "Distance means love becomes smaller.",
+    "trueBelief": "Love stays strong even when people are far away.",
+    "feeling": "A steady undercurrent of missing someone who's often away.",
+    "parentTeach": "That distance doesn't shrink love, and counting days can make waiting easier.",
+    "wisdomElement": "Big Ears",
+    "secondaryWisdomElement": "Big Belly",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Communication",
+      "Art",
+      "Music & Creativity"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 51,
+    "slug": "close-friend-moved-to-another-city",
+    "name": "Close friend moved to another city",
+    "category": "Sadness & Grief",
+    "coreNeed": "Belonging",
+    "falseBelief": "If someone leaves, our friendship is over.",
+    "trueBelief": "Real friendships can continue across distance and time.",
+    "feeling": "Grief for a friendship that now has geography in the way.",
+    "parentTeach": "That friendships can stretch across distance, even if they change shape.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Big Ears",
+    "lifeDomains": [
+      "Friendship & Sharing",
+      "Communication",
+      "Art",
+      "Music & Creativity"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 52,
+    "slug": "moving-house-and-leaving-familiar-bedroom",
+    "name": "Moving house and leaving familiar bedroom",
+    "category": "Sadness & Grief",
+    "coreNeed": "Security",
+    "falseBelief": "Everything familiar is gone forever.",
+    "trueBelief": "Home is built through love, memories and new beginnings.",
+    "feeling": "Disoriented sadness at losing the small, familiar details of home.",
+    "parentTeach": "That a new room can become familiar too, in its own time.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Lotus",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Building & Creating",
+      "Communication"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 53,
+    "slug": "long-illness-lockdown-recovery-school-break",
+    "name": "Long illness, lockdown recovery, school break",
+    "category": "Sadness & Grief",
+    "coreNeed": "Resilience",
+    "falseBelief": "Life will never feel normal again.",
+    "trueBelief": "I can adapt and create new routines after change.",
+    "feeling": "Fatigue-laced sadness from days that all started to blur together.",
+    "parentTeach": "That slow recovery is still progress, even without visible milestones.",
+    "wisdomElement": "Lotus",
+    "secondaryWisdomElement": "Curved Trunk",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Playing & Games",
+      "Friendship & Sharing"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 54,
+    "slug": "highly-anticipated-movie-or-event-cancelled",
+    "name": "Highly anticipated movie or event cancelled",
+    "category": "Sadness & Grief",
+    "coreNeed": "Flexibility",
+    "falseBelief": "If plans change, everything is ruined.",
+    "trueBelief": "New opportunities can grow from unexpected changes.",
+    "feeling": "Sharp letdown when eager anticipation meets sudden cancellation.",
+    "parentTeach": "That disappointment is proportional to how much they cared, and that's not silly.",
+    "wisdomElement": "Curved Trunk",
+    "secondaryWisdomElement": "Lotus",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Art",
+      "Music & Creativity",
+      "Learning & Problem Solving"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 55,
+    "slug": "seeing-another-child-or-animal-cry-or-suffer",
+    "name": "Seeing another child or animal cry or suffer",
+    "category": "Sadness & Grief",
+    "coreNeed": "Compassion",
+    "falseBelief": "Their pain has nothing to do with me.",
+    "trueBelief": "Caring actions can comfort others and make a difference.",
+    "feeling": "Tender sadness on behalf of someone else's pain.",
+    "parentTeach": "That noticing others' pain is a sign of a caring heart, not a burden.",
+    "wisdomElement": "Curved Trunk",
+    "secondaryWisdomElement": "Big Ears",
+    "lifeDomains": [
+      "Helping & Caring",
+      "Communication",
+      "Friendship & Sharing"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 56,
+    "slug": "excluded-from-a-group-chat",
+    "name": "Excluded from a group chat",
+    "category": "Sadness & Grief",
+    "coreNeed": "Belonging",
+    "falseBelief": "Being left out means I don't matter.",
+    "trueBelief": "One group doesn't decide my value or my friendships.",
+    "feeling": "Modern exclusion — watching a conversation happen without them.",
+    "parentTeach": "That being left off one thread doesn't mean being left out of the friendship.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Broken Tusk (Writing Tusk)",
+    "lifeDomains": [
+      "Friendship & Sharing",
+      "Communication",
+      "School & Community"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 57,
+    "slug": "not-chosen-for-a-special-school-role",
+    "name": "Not chosen for a special school role",
+    "category": "Sadness & Grief",
+    "coreNeed": "Self-Worth",
+    "falseBelief": "If I'm not chosen, I'm not good enough.",
+    "trueBelief": "My worth isn't decided by awards or roles.",
+    "feeling": "Quiet disappointment at being passed over for something they wanted.",
+    "parentTeach": "That not being chosen this time isn't a measure of their value.",
+    "wisdomElement": "Broken Tusk (Writing Tusk)",
+    "secondaryWisdomElement": "Big Belly",
+    "lifeDomains": [
+      "School & Community",
+      "Learning & Problem Solving",
+      "Communication"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 58,
+    "slug": "last-day-of-summer-vacation-school-year-end",
+    "name": "Last day of summer vacation / school year end",
+    "category": "Sadness & Grief",
+    "coreNeed": "Hope",
+    "falseBelief": "Good things are over forever.",
+    "trueBelief": "Every ending also brings a new beginning.",
+    "feeling": "Bittersweet sadness at something good coming to a close.",
+    "parentTeach": "That endings can be grieved and next things can still be looked forward to.",
+    "wisdomElement": "Lotus",
+    "secondaryWisdomElement": "Eyes",
+    "lifeDomains": [
+      "Friendship & Sharing",
+      "Celebrations & Traditions",
+      "Family & Daily Life"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 59,
+    "slug": "looking-at-photos-when-they-were-little",
+    "name": "Looking at photos when they were 'little'",
+    "category": "Sadness & Grief",
+    "coreNeed": "Acceptance",
+    "falseBelief": "I've lost who I used to be.",
+    "trueBelief": "Growing changes me, but I'm still me inside.",
+    "feeling": "Wistful longing for a smaller, simpler version of themselves.",
+    "parentTeach": "That growing up doesn't erase who they were — it adds to it.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Lotus",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Art",
+      "Music & Creativity",
+      "Communication"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 60,
+    "slug": "intentions-were-good-but-they-got-in-trouble-anyway",
+    "name": "Intentions were good but they got in trouble anyway",
+    "category": "Sadness & Grief",
+    "coreNeed": "Integrity",
+    "falseBelief": "Good intentions don't matter if I make mistakes.",
+    "trueBelief": "Honest intentions and taking responsibility both matter.",
+    "feeling": "Confused hurt at being punished despite meaning well.",
+    "parentTeach": "That intentions matter, and it's fair to explain them calmly, even after trouble.",
+    "wisdomElement": "Broken Tusk (Writing Tusk)",
+    "secondaryWisdomElement": "Big Ears",
+    "lifeDomains": [
+      "Responsibility",
+      "Communication",
+      "Learning & Problem Solving"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 61,
+    "slug": "made-a-mistake-in-front-of-the-class",
+    "name": "Made a mistake in front of the class",
+    "category": "Shame & Low Self-Esteem",
+    "coreNeed": "Confidence",
+    "falseBelief": "One mistake means I'm not capable.",
+    "trueBelief": "Mistakes are part of learning and growing.",
+    "feeling": "Hot, exposed embarrassment with every eye suddenly on them.",
+    "parentTeach": "That mistakes in public are still just mistakes, not verdicts.",
+    "wisdomElement": "Broken Tusk (Writing Tusk)",
+    "secondaryWisdomElement": "Mouse",
+    "lifeDomains": [
+      "School & Community",
+      "Learning & Problem Solving",
+      "Communication"
+    ],
+    "priority": "⭐⭐⭐ High"
+  },
+  {
+    "id": 62,
+    "slug": "forgot-someone-s-name-or-a-social-cue",
+    "name": "Forgot someone's name or a social cue",
+    "category": "Shame & Low Self-Esteem",
+    "coreNeed": "Respect",
+    "falseBelief": "If I forget, people won't like me.",
+    "trueBelief": "Everyone makes mistakes, and kindness repairs them.",
+    "feeling": "A flush of awkwardness at a small social slip.",
+    "parentTeach": "That everyone forgets and fumbles sometimes — it's not a character flaw.",
+    "wisdomElement": "Big Ears",
+    "secondaryWisdomElement": "Big Belly",
+    "lifeDomains": [
+      "Communication",
+      "Friendship & Sharing",
+      "Learning & Problem Solving"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 63,
+    "slug": "called-fat-or-chubby-by-a-peer",
+    "name": "Called 'fat' or 'chubby' by a peer",
+    "category": "Shame & Low Self-Esteem",
+    "coreNeed": "Self-Worth",
+    "falseBelief": "My appearance decides my value.",
+    "trueBelief": "My worth comes from who I am, not how I look.",
+    "feeling": "Wounded hurt at being labeled by their body.",
+    "parentTeach": "That bodies come in every shape, and none of them need permission to take up space.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Broken Tusk (Writing Tusk)",
+    "lifeDomains": [
+      "Friendship & Sharing",
+      "Communication",
+      "Playing & Games"
+    ],
+    "priority": "⭐⭐⭐ High"
+  },
+  {
+    "id": 64,
+    "slug": "new-glasses-and-feeling-nerdy-or-ugly",
+    "name": "New glasses and feeling 'nerdy' or 'ugly'",
+    "category": "Shame & Low Self-Esteem",
+    "coreNeed": "Acceptance",
+    "falseBelief": "Looking different makes me less lovable.",
+    "trueBelief": "The things that make me different are part of who I am.",
+    "feeling": "Self-conscious unease about looking different overnight.",
+    "parentTeach": "That how they see feels the same, even if how they look has changed.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Broken Tusk (Writing Tusk)",
+    "lifeDomains": [
+      "School & Community",
+      "Communication",
+      "Friendship & Sharing"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 65,
+    "slug": "getting-acne-or-pimples-older-kids",
+    "name": "Getting acne or pimples (older kids)",
+    "category": "Shame & Low Self-Esteem",
+    "coreNeed": "Acceptance",
+    "falseBelief": "I have to look perfect to be accepted.",
+    "trueBelief": "My appearance doesn't define my value.",
+    "feeling": "New, unfamiliar embarrassment about their changing skin.",
+    "parentTeach": "That bodies change on their own timeline, and it says nothing about their worth.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Lotus",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Communication",
+      "Responsibility"
+    ],
+    "priority": "⭐ Low"
+  },
+  {
+    "id": 66,
+    "slug": "being-shortest-or-tallest-in-the-class-line",
+    "name": "Being shortest or tallest in the class line",
+    "category": "Shame & Low Self-Esteem",
+    "coreNeed": "Self-Worth",
+    "falseBelief": "Being different makes me less important.",
+    "trueBelief": "Everyone grows in their own unique way.",
+    "feeling": "Awareness of standing out physically in a lineup of peers.",
+    "parentTeach": "That height is just a number, not a ranking of anything that matters.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Broken Tusk (Writing Tusk)",
+    "lifeDomains": [
+      "School & Community",
+      "Playing & Games",
+      "Friendship & Sharing"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 67,
+    "slug": "being-slower-at-reading-or-math-than-others",
+    "name": "Being 'slower' at reading or math than others",
+    "category": "Shame & Low Self-Esteem",
+    "coreNeed": "Confidence",
+    "falseBelief": "If I learn slowly, I'm not smart.",
+    "trueBelief": "Everyone learns at their own pace.",
+    "feeling": "Quiet shame at needing more time than classmates to learn something.",
+    "parentTeach": "That everyone's brain has its own pace, and pace isn't proof of ability.",
+    "wisdomElement": "Mouse",
+    "secondaryWisdomElement": "Broken Tusk (Writing Tusk)",
+    "lifeDomains": [
+      "Learning & Problem Solving",
+      "School & Community",
+      "Responsibility"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 68,
+    "slug": "picked-last-for-a-team-or-called-clumsy",
+    "name": "Picked last for a team or called 'clumsy'",
+    "category": "Shame & Low Self-Esteem",
+    "coreNeed": "Confidence",
+    "falseBelief": "I'm not good enough to belong.",
+    "trueBelief": "Skills improve with practice and effort.",
+    "feeling": "Sting of being ranked last, publicly, by peers.",
+    "parentTeach": "That being picked last for one game says nothing about their overall worth.",
+    "wisdomElement": "Mouse",
+    "secondaryWisdomElement": "Broken Tusk (Writing Tusk)",
+    "lifeDomains": [
+      "Playing & Games",
+      "School & Community",
+      "Learning & Problem Solving"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 69,
+    "slug": "their-clothes-aren-t-as-cool-as-others",
+    "name": "Their clothes aren't as 'cool' as others'",
+    "category": "Shame & Low Self-Esteem",
+    "coreNeed": "Contentment",
+    "falseBelief": "I need nicer things to be accepted.",
+    "trueBelief": "Who I am matters more than what I own.",
+    "feeling": "Self-conscious comparison of their clothes against everyone else's.",
+    "parentTeach": "That style is self-expression, not a scoreboard to win.",
+    "wisdomElement": "Modak",
+    "secondaryWisdomElement": "Big Belly",
+    "lifeDomains": [
+      "Friendship & Sharing",
+      "Communication",
+      "Art",
+      "Music & Creativity"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 70,
+    "slug": "thinking-i-can-t-do-anything-right",
+    "name": "Thinking 'I can't do anything right'",
+    "category": "Shame & Low Self-Esteem",
+    "coreNeed": "Confidence",
+    "falseBelief": "I fail at everything.",
+    "trueBelief": "I have many strengths and can keep improving.",
+    "feeling": "A harsh inner voice repeating 'I can't.'",
+    "parentTeach": "That the inner voice can be gentler than it currently is, and that's a skill to build.",
+    "wisdomElement": "Mouse",
+    "secondaryWisdomElement": "Big Belly",
+    "lifeDomains": [
+      "Learning & Problem Solving",
+      "Building & Creating",
+      "Helping & Caring"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 71,
+    "slug": "sibling-praised-while-they-were-ignored",
+    "name": "Sibling praised while they were ignored",
+    "category": "Shame & Low Self-Esteem",
+    "coreNeed": "Self-Worth",
+    "falseBelief": "Love has to be earned by being the best.",
+    "trueBelief": "I am loved for who I am, not because I outperform others.",
+    "feeling": "Quiet hurt at being overlooked while a sibling is celebrated.",
+    "parentTeach": "That praise for one child doesn't subtract from another's worth.",
+    "wisdomElement": "Broken Tusk (Writing Tusk)",
+    "secondaryWisdomElement": "Big Belly",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Helping & Caring",
+      "Responsibility"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 72,
+    "slug": "project-or-video-gets-no-likes-or-views",
+    "name": "Project or video gets no likes or views",
+    "category": "Shame & Low Self-Esteem",
+    "coreNeed": "Self-Worth",
+    "falseBelief": "If people don't notice me, I don't matter.",
+    "trueBelief": "My work has value even without applause.",
+    "feeling": "New-world sting of public performance with a visible scorecard.",
+    "parentTeach": "That worth was never meant to be counted in likes.",
+    "wisdomElement": "Broken Tusk (Writing Tusk)",
+    "secondaryWisdomElement": "Big Belly",
+    "lifeDomains": [
+      "Art",
+      "Music & Creativity",
+      "Communication",
+      "Learning & Problem Solving"
+    ],
+    "priority": "⭐ Low"
+  },
+  {
+    "id": 73,
+    "slug": "drawing-doesn-t-look-how-they-imagined",
+    "name": "Drawing doesn't look how they imagined",
+    "category": "Shame & Low Self-Esteem",
+    "coreNeed": "Perseverance",
+    "falseBelief": "If it isn't perfect, I should stop.",
+    "trueBelief": "Improvement comes through practice, not perfection.",
+    "feeling": "Frustrated disappointment when the hand can't match the imagination yet.",
+    "parentTeach": "That the gap between vision and skill is where all artists live, and it closes with practice.",
+    "wisdomElement": "Mouse",
+    "secondaryWisdomElement": "Broken Tusk (Writing Tusk)",
+    "lifeDomains": [
+      "Art",
+      "Music & Creativity",
+      "Learning & Problem Solving",
+      "Building & Creating"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 74,
+    "slug": "reprimanded-in-front-of-friends-or-guests",
+    "name": "Reprimanded in front of friends or guests",
+    "category": "Shame & Low Self-Esteem",
+    "coreNeed": "Acceptance",
+    "falseBelief": "Public mistakes make me less worthy.",
+    "trueBelief": "One embarrassing moment doesn't change my worth.",
+    "feeling": "Doubled embarrassment — being corrected and watched at the same time.",
+    "parentTeach": "That being corrected in front of others still doesn't make them any less loved.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Broken Tusk (Writing Tusk)",
+    "lifeDomains": [
+      "Communication",
+      "Family & Daily Life",
+      "School & Community"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 75,
+    "slug": "stuttered-or-forgot-lines-in-a-play",
+    "name": "Stuttered or forgot lines in a play",
+    "category": "Shame & Low Self-Esteem",
+    "coreNeed": "Confidence",
+    "falseBelief": "If I mess up, everyone will remember forever.",
+    "trueBelief": "Courage is continuing even after mistakes.",
+    "feeling": "Panic-laced embarrassment at forgetting words in front of everyone.",
+    "parentTeach": "That forgetting a line isn't the same as failing — recovering it is the real skill.",
+    "wisdomElement": "Mouse",
+    "secondaryWisdomElement": "Broken Tusk (Writing Tusk)",
+    "lifeDomains": [
+      "Art",
+      "Music & Creativity",
+      "Communication",
+      "Learning & Problem Solving"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 76,
+    "slug": "told-their-work-is-messy-or-unreadable",
+    "name": "Told their work is 'messy' or unreadable",
+    "category": "Shame & Low Self-Esteem",
+    "coreNeed": "Confidence",
+    "falseBelief": "If my work isn't perfect, I'm not capable.",
+    "trueBelief": "Skills improve with practice and feedback.",
+    "feeling": "Quiet shame about work that feels judged as sloppy.",
+    "parentTeach": "That neat and good are different things, and effort shows in more than tidiness.",
+    "wisdomElement": "Mouse",
+    "secondaryWisdomElement": "Broken Tusk (Writing Tusk)",
+    "lifeDomains": [
+      "Learning & Problem Solving",
+      "Art",
+      "Music & Creativity",
+      "Responsibility"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 77,
+    "slug": "why-can-t-you-be-more-like-cousin-friend",
+    "name": "Why can't you be more like [cousin/friend]?",
+    "category": "Shame & Low Self-Esteem",
+    "coreNeed": "Self-Worth",
+    "falseBelief": "I have to be like someone else to be valued.",
+    "trueBelief": "My unique strengths make me valuable.",
+    "feeling": "The ache of being held up against someone else, and coming up short.",
+    "parentTeach": "That comparisons say more about the comparer than the child being measured.",
+    "wisdomElement": "Broken Tusk (Writing Tusk)",
+    "secondaryWisdomElement": "Big Belly",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Communication",
+      "Learning & Problem Solving"
+    ],
+    "priority": "⭐⭐⭐ High"
+  },
+  {
+    "id": 78,
+    "slug": "feeling-like-a-burden-to-parents",
+    "name": "Feeling like a burden to parents",
+    "category": "Shame & Low Self-Esteem",
+    "coreNeed": "Acceptance",
+    "falseBelief": "I make life harder for everyone.",
+    "trueBelief": "I am loved because I am part of the family, not because I'm perfect.",
+    "feeling": "A heavy, private worry that they cost more than they give.",
+    "parentTeach": "That children are never a burden — needing care is what childhood is for.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Big Ears",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Communication",
+      "Helping & Caring"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 79,
+    "slug": "feeling-like-they-re-not-seen-or-valued",
+    "name": "Feeling like they're not seen or valued",
+    "category": "Shame & Low Self-Esteem",
+    "coreNeed": "Belonging",
+    "falseBelief": "Nobody notices or values me.",
+    "trueBelief": "I matter even when others are busy or distracted.",
+    "feeling": "A lonely feeling of going unnoticed even while present.",
+    "parentTeach": "That being quiet doesn't mean being unimportant, and quiet needs can be spoken.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Big Ears",
+    "lifeDomains": [
+      "Communication",
+      "Family & Daily Life",
+      "Friendship & Sharing"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 80,
+    "slug": "secretly-thinking-i-am-just-a-bad-kid",
+    "name": "Secretly thinking 'I am just a bad kid'",
+    "category": "Shame & Low Self-Esteem",
+    "coreNeed": "Acceptance",
+    "falseBelief": "I am a bad person because I make mistakes.",
+    "trueBelief": "I make mistakes, but I am still a good person who can grow.",
+    "feeling": "A frightening, secret belief that they are fundamentally bad.",
+    "parentTeach": "That behavior and identity are different — a hard moment doesn't make a hard heart.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Broken Tusk (Writing Tusk)",
+    "lifeDomains": [
+      "Responsibility",
+      "Family & Daily Life",
+      "Communication"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 81,
+    "slug": "parent-praises-sibling-s-work-but-not-theirs",
+    "name": "Parent praises sibling's work but not theirs",
+    "category": "Jealousy & Envy",
+    "coreNeed": "Self-Worth",
+    "falseBelief": "Praise decides my value.",
+    "trueBelief": "My worth isn't measured by comparison or praise.",
+    "feeling": "A pang of hurt watching praise go somewhere else.",
+    "parentTeach": "That there's enough praise to go around, even if it doesn't always feel that way.",
+    "wisdomElement": "Broken Tusk (Writing Tusk)",
+    "secondaryWisdomElement": "Big Belly",
+    "lifeDomains": [
+      "Helping & Caring",
+      "Responsibility",
+      "Learning & Problem Solving"
+    ],
+    "priority": "⭐⭐⭐ High"
+  },
+  {
+    "id": 82,
+    "slug": "best-friend-is-playing-with-someone-else",
+    "name": "Best friend is playing with someone else",
+    "category": "Jealousy & Envy",
+    "coreNeed": "Belonging",
+    "falseBelief": "I'll be replaced.",
+    "trueBelief": "Friendships grow and there's room for many connections.",
+    "feeling": "The ache of being replaced, even temporarily, by someone else's company.",
+    "parentTeach": "That friendships can include more than one person without anyone losing their place.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Big Ears",
+    "lifeDomains": [
+      "Friendship & Sharing",
+      "Communication",
+      "Playing & Games"
+    ],
+    "priority": "⭐⭐⭐ High"
+  },
+  {
+    "id": 83,
+    "slug": "friend-got-the-newest-toy-phone-or-ipad",
+    "name": "Friend got the newest toy, phone or iPad",
+    "category": "Jealousy & Envy",
+    "coreNeed": "Contentment",
+    "falseBelief": "I need what others have to be happy.",
+    "trueBelief": "Gratitude brings more joy than comparison.",
+    "feeling": "Sharp wanting at seeing someone else get the newer, shinier thing.",
+    "parentTeach": "That having less right now doesn't mean having less worth.",
+    "wisdomElement": "Modak",
+    "secondaryWisdomElement": "Big Belly",
+    "lifeDomains": [
+      "Friendship & Sharing",
+      "Family & Daily Life",
+      "Communication"
+    ],
+    "priority": "⭐⭐⭐ High"
+  },
+  {
+    "id": 84,
+    "slug": "classmate-won-student-of-the-month",
+    "name": "Classmate won Student of the Month",
+    "category": "Jealousy & Envy",
+    "coreNeed": "Self-Worth",
+    "falseBelief": "Someone else's success means I'm not successful.",
+    "trueBelief": "I can celebrate others while continuing my own journey.",
+    "feeling": "Competitive sting at someone else's recognition.",
+    "parentTeach": "That someone else's win doesn't take anything away from their own effort.",
+    "wisdomElement": "Broken Tusk (Writing Tusk)",
+    "secondaryWisdomElement": "Modak",
+    "lifeDomains": [
+      "School & Community",
+      "Learning & Problem Solving",
+      "Communication"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 85,
+    "slug": "someone-else-always-gets-to-go-first",
+    "name": "Someone else always gets to go first",
+    "category": "Jealousy & Envy",
+    "coreNeed": "Fairness",
+    "falseBelief": "Fair means I should get an equal turn every time.",
+    "trueBelief": "Fairness includes patience and considering everyone.",
+    "feeling": "Low-grade resentment at always being second in line.",
+    "parentTeach": "That turns come around, even when the wait feels unfair in the moment.",
+    "wisdomElement": "Big Ears",
+    "secondaryWisdomElement": "Mouse",
+    "lifeDomains": [
+      "Playing & Games",
+      "Responsibility",
+      "Communication"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 86,
+    "slug": "parent-on-work-call-when-child-wants-to-share-something",
+    "name": "Parent on work call when child wants to share something",
+    "category": "Jealousy & Envy",
+    "coreNeed": "Patience",
+    "falseBelief": "If I have to wait, what I want to say isn't important.",
+    "trueBelief": "My thoughts matter, and I can wait for the right moment.",
+    "feeling": "Frustrated longing to be heard right now, not later.",
+    "parentTeach": "That waiting for attention is hard, and their voice still matters when it comes.",
+    "wisdomElement": "Mouse",
+    "secondaryWisdomElement": "Big Ears",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Communication",
+      "Responsibility"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 87,
+    "slug": "at-a-party-but-wanting-the-birthday-gifts",
+    "name": "At a party but wanting the birthday gifts",
+    "category": "Jealousy & Envy",
+    "coreNeed": "Contentment",
+    "falseBelief": "I'll only be happy if I get what someone else has.",
+    "trueBelief": "Celebrating others can bring joy too.",
+    "feeling": "Wistful envy at gifts meant for someone else.",
+    "parentTeach": "That celebrating others can feel good too, even while wanting something similar.",
+    "wisdomElement": "Modak",
+    "secondaryWisdomElement": "Big Belly",
+    "lifeDomains": [
+      "Celebrations & Traditions",
+      "Friendship & Sharing",
+      "Communication"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 88,
+    "slug": "friend-is-naturally-better-at-football-or-dance",
+    "name": "Friend is naturally better at football or dance",
+    "category": "Jealousy & Envy",
+    "coreNeed": "Confidence",
+    "falseBelief": "Talent is something you either have or don't.",
+    "trueBelief": "Practice helps me improve my own abilities.",
+    "feeling": "A twinge of inadequacy next to someone else's natural talent.",
+    "parentTeach": "That other people's skill isn't a measure of their own potential.",
+    "wisdomElement": "Mouse",
+    "secondaryWisdomElement": "Broken Tusk (Writing Tusk)",
+    "lifeDomains": [
+      "Playing & Games",
+      "Learning & Problem Solving",
+      "Self-Care"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 89,
+    "slug": "new-sibling-gets-all-the-attention-and-new-things",
+    "name": "New sibling gets all the attention and new things",
+    "category": "Jealousy & Envy",
+    "coreNeed": "Belonging",
+    "falseBelief": "The new baby has replaced me.",
+    "trueBelief": "Love grows; it isn't divided.",
+    "feeling": "Complicated jealousy toward someone who can't even talk yet.",
+    "parentTeach": "That love expands for new arrivals — it doesn't get divided up and shrink.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Big Ears",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Helping & Caring",
+      "Communication"
+    ],
+    "priority": "⭐⭐⭐ High"
+  },
+  {
+    "id": 90,
+    "slug": "another-kid-always-gets-teacher-s-favour",
+    "name": "Another kid always gets teacher's favour",
+    "category": "Jealousy & Envy",
+    "coreNeed": "Fairness",
+    "falseBelief": "If someone else is chosen, I'm less important.",
+    "trueBelief": "I can focus on my own growth instead of comparison.",
+    "feeling": "Resentment at a favoritism that feels impossible to earn.",
+    "parentTeach": "That one adult's favor isn't the only kind of approval worth having.",
+    "wisdomElement": "Eyes",
+    "secondaryWisdomElement": "Broken Tusk (Writing Tusk)",
+    "lifeDomains": [
+      "School & Community",
+      "Communication",
+      "Learning & Problem Solving"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 91,
+    "slug": "friend-has-more-followers-or-game-skins",
+    "name": "Friend has more followers or game skins",
+    "category": "Jealousy & Envy",
+    "coreNeed": "Contentment",
+    "falseBelief": "Having more things or popularity makes someone better.",
+    "trueBelief": "Real happiness and friendship can't be measured by possessions or popularity.",
+    "feeling": "Comparison-driven envy fed by numbers on a screen.",
+    "parentTeach": "That connection in real life outweighs any number online.",
+    "wisdomElement": "Modak",
+    "secondaryWisdomElement": "Broken Tusk (Writing Tusk)",
+    "lifeDomains": [
+      "Friendship & Sharing",
+      "Communication",
+      "Learning & Problem Solving"
+    ],
+    "priority": "⭐ Low"
+  },
+  {
+    "id": 92,
+    "slug": "friend-went-on-a-fancy-international-vacation",
+    "name": "Friend went on a fancy international vacation",
+    "category": "Jealousy & Envy",
+    "coreNeed": "Contentment",
+    "falseBelief": "Exciting experiences make someone more important.",
+    "trueBelief": "Meaningful memories can be created anywhere.",
+    "feeling": "Envy at a life that looks more exciting from the outside.",
+    "parentTeach": "That every family's story is different, and different isn't worse.",
+    "wisdomElement": "Modak",
+    "secondaryWisdomElement": "Big Belly",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Friendship & Sharing",
+      "Communication"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 93,
+    "slug": "wishing-they-had-someone-else-s-hair-or-height",
+    "name": "Wishing they had someone else's hair or height",
+    "category": "Jealousy & Envy",
+    "coreNeed": "Acceptance",
+    "falseBelief": "I have to look different to be enough.",
+    "trueBelief": "My uniqueness is part of what makes me special.",
+    "feeling": "Wishing to look like someone else instead of themselves.",
+    "parentTeach": "That the features they have are the ones worth learning to love.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Lotus",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Communication",
+      "Self-Care"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 94,
+    "slug": "wanting-what-s-in-a-friend-s-lunchbox",
+    "name": "Wanting what's in a friend's lunchbox",
+    "category": "Jealousy & Envy",
+    "coreNeed": "Contentment",
+    "falseBelief": "What others have is always better.",
+    "trueBelief": "Gratitude helps me enjoy what I already have.",
+    "feeling": "Simple, physical envy over someone else's snack.",
+    "parentTeach": "That trading and sharing can turn envy into connection.",
+    "wisdomElement": "Modak",
+    "secondaryWisdomElement": "Big Belly",
+    "lifeDomains": [
+      "Friendship & Sharing",
+      "Family & Daily Life",
+      "Communication"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 95,
+    "slug": "friend-has-a-later-bedtime-or-more-freedom",
+    "name": "Friend has a later bedtime or more freedom",
+    "category": "Jealousy & Envy",
+    "coreNeed": "Fairness",
+    "falseBelief": "Different rules mean my parents are unfair.",
+    "trueBelief": "Every family makes choices based on different needs.",
+    "feeling": "Chafing against rules that feel stricter than a friend's.",
+    "parentTeach": "That every family sets its own rules for its own good reasons.",
+    "wisdomElement": "Big Ears",
+    "secondaryWisdomElement": "Eyes",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Communication",
+      "Learning & Problem Solving"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 96,
+    "slug": "always-wearing-older-sibling-s-old-clothes",
+    "name": "Always wearing older sibling's old clothes",
+    "category": "Jealousy & Envy",
+    "coreNeed": "Self-Worth",
+    "falseBelief": "New things make someone more valuable.",
+    "trueBelief": "My value isn't determined by what I own.",
+    "feeling": "Quiet embarrassment about wearing what's already been worn.",
+    "parentTeach": "That hand-me-downs carry history, not less value.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Modak",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Self-Care",
+      "Communication"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 97,
+    "slug": "post-party-or-festival-hyperactivity",
+    "name": "Post-party or festival hyperactivity",
+    "category": "Regulation & Energy Overload",
+    "coreNeed": "Self-Control",
+    "falseBelief": "I have to follow every exciting feeling.",
+    "trueBelief": "I can enjoy excitement and still calm my body afterwards.",
+    "feeling": "Buzzing, uncontainable energy with no clear place to go.",
+    "parentTeach": "That big energy needs a big outlet, not a lecture.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Mouse",
+    "lifeDomains": [
+      "Celebrations & Traditions",
+      "Family & Daily Life",
+      "Self-Care"
+    ],
+    "priority": "⭐⭐⭐ High"
+  },
+  {
+    "id": 98,
+    "slug": "zoning-out-after-too-much-youtube-or-gaming",
+    "name": "Zoning out after too much YouTube or gaming",
+    "category": "Regulation & Energy Overload",
+    "coreNeed": "Self-Control",
+    "falseBelief": "My attention controls me.",
+    "trueBelief": "I can guide my attention back to what matters.",
+    "feeling": "Foggy, disconnected zoning-out after too much screen stimulation.",
+    "parentTeach": "That the brain needs quiet time to reset after bright, fast input.",
+    "wisdomElement": "Eyes",
+    "secondaryWisdomElement": "Mouse",
+    "lifeDomains": [
+      "Learning & Problem Solving",
+      "Responsibility",
+      "Family & Daily Life"
+    ],
+    "priority": "⭐⭐⭐ High"
+  },
+  {
+    "id": 99,
+    "slug": "noisy-overcrowded-mall-or-festival-environment",
+    "name": "Noisy, overcrowded mall or festival environment",
+    "category": "Regulation & Energy Overload",
+    "coreNeed": "Comfort",
+    "falseBelief": "I can't cope when everything feels overwhelming.",
+    "trueBelief": "I can notice what I need and find calm even in busy places.",
+    "feeling": "Sensory flooding from noise and crowds pressing in on all sides.",
+    "parentTeach": "That it's okay to need a quiet corner in a loud world.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Big Ears",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Communication",
+      "Self-Care"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 100,
+    "slug": "too-many-classes-tuition-sport-music-all-in-one-day",
+    "name": "Too many classes — tuition, sport, music all in one day",
+    "category": "Regulation & Energy Overload",
+    "coreNeed": "Calm",
+    "falseBelief": "I have to do everything perfectly.",
+    "trueBelief": "I can do my best while caring for my energy.",
+    "feeling": "Frayed, thin patience from a day with no breathing room.",
+    "parentTeach": "That rest is productive too, not just the things on the schedule.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Modak",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Responsibility",
+      "Learning & Problem Solving"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 101,
+    "slug": "long-wait-at-doctor-bank-or-during-travel",
+    "name": "Long wait at doctor, bank, or during travel",
+    "category": "Regulation & Energy Overload",
+    "coreNeed": "Patience",
+    "falseBelief": "Waiting is pointless and unbearable.",
+    "trueBelief": "I can use waiting time calmly and wisely.",
+    "feeling": "Restless irritability from time stretching with nothing to do.",
+    "parentTeach": "That boredom can be sat with — it isn't an emergency to fix.",
+    "wisdomElement": "Mouse",
+    "secondaryWisdomElement": "Big Belly",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Responsibility",
+      "Playing & Games"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 102,
+    "slug": "stuck-indoors-on-a-rainy-day-with-nothing-to-do",
+    "name": "Stuck indoors on a rainy day with nothing to do",
+    "category": "Regulation & Energy Overload",
+    "coreNeed": "Flexibility",
+    "falseBelief": "Fun only happens when things go as planned.",
+    "trueBelief": "I can create joy wherever I am.",
+    "feeling": "Antsy frustration at being stuck with no outlet for the day's energy.",
+    "parentTeach": "That indoor days can still hold adventure, just a smaller-scale one.",
+    "wisdomElement": "Curved Trunk",
+    "secondaryWisdomElement": "Eyes",
+    "lifeDomains": [
+      "Playing & Games",
+      "Art",
+      "Music & Creativity",
+      "Building & Creating"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 103,
+    "slug": "end-of-a-long-school-week-brain-feels-full",
+    "name": "End of a long school week — brain feels full",
+    "category": "Regulation & Energy Overload",
+    "coreNeed": "Comfort",
+    "falseBelief": "I should always keep going.",
+    "trueBelief": "Rest is part of learning and growing.",
+    "feeling": "Depleted, foggy exhaustion by the end of a long week.",
+    "parentTeach": "That a full brain deserves rest, the same way a full day deserves sleep.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Modak",
+    "lifeDomains": [
+      "School & Community",
+      "Family & Daily Life",
+      "Learning & Problem Solving"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 104,
+    "slug": "cranky-after-a-late-night-or-bad-sleep",
+    "name": "Cranky after a late night or bad sleep",
+    "category": "Regulation & Energy Overload",
+    "coreNeed": "Self-Control",
+    "falseBelief": "Being tired gives me no control over my behaviour.",
+    "trueBelief": "I can notice my feelings and choose kind actions.",
+    "feeling": "Thin-skinned crankiness from a body running on too little sleep.",
+    "parentTeach": "That crankiness isn't a character flaw — it's a body asking for rest.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Mouse",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Responsibility",
+      "Helping & Caring"
+    ],
+    "priority": "⭐⭐⭐ High"
+  },
+  {
+    "id": 105,
+    "slug": "trying-to-do-homework-while-tv-is-on",
+    "name": "Trying to do homework while TV is on",
+    "category": "Regulation & Energy Overload",
+    "coreNeed": "Self-Control",
+    "falseBelief": "I can't focus when there are distractions.",
+    "trueBelief": "I can gently bring my attention back.",
+    "feeling": "Scattered frustration trying to focus with noise pulling attention away.",
+    "parentTeach": "That focus needs a quiet space, and asking for one is a smart move, not a weakness.",
+    "wisdomElement": "Eyes",
+    "secondaryWisdomElement": "Mouse",
+    "lifeDomains": [
+      "Learning & Problem Solving",
+      "Responsibility",
+      "Family & Daily Life"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 106,
+    "slug": "too-many-options-for-a-toy-or-treat",
+    "name": "Too many options for a toy or treat",
+    "category": "Regulation & Energy Overload",
+    "coreNeed": "Contentment",
+    "falseBelief": "More choices always make me happier.",
+    "trueBelief": "Wise choices matter more than having everything.",
+    "feeling": "Frozen overwhelm faced with too many options at once.",
+    "parentTeach": "That fewer choices, offered kindly, can feel like relief instead of restriction.",
+    "wisdomElement": "Modak",
+    "secondaryWisdomElement": "Eyes",
+    "lifeDomains": [
+      "Learning & Problem Solving",
+      "Responsibility",
+      "Communication"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 107,
+    "slug": "pressure-to-always-be-good-and-behave",
+    "name": "Pressure to always 'be good' and behave",
+    "category": "Regulation & Energy Overload",
+    "coreNeed": "Acceptance",
+    "falseBelief": "I have to be perfect to be loved.",
+    "trueBelief": "I am loved even while I'm learning and growing.",
+    "feeling": "Quiet exhaustion from trying to be 'good' all the time.",
+    "parentTeach": "That needing a break from being perfect is normal, not naughty.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Broken Tusk (Writing Tusk)",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Communication",
+      "Responsibility"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 108,
+    "slug": "waiting-for-a-turn-on-the-swings",
+    "name": "Waiting for a turn on the swings",
+    "category": "Regulation & Energy Overload",
+    "coreNeed": "Patience",
+    "falseBelief": "I should always go first.",
+    "trueBelief": "Everyone deserves a turn.",
+    "feeling": "Impatient fidgeting while watching someone else get a turn.",
+    "parentTeach": "That waiting is a skill, and it gets easier with practice, not willpower alone.",
+    "wisdomElement": "Mouse",
+    "secondaryWisdomElement": "Modak",
+    "lifeDomains": [
+      "Playing & Games",
+      "Friendship & Sharing",
+      "Responsibility"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 109,
+    "slug": "switching-from-fun-activity-to-chores-or-homework",
+    "name": "Switching from fun activity to chores or homework",
+    "category": "Regulation & Energy Overload",
+    "coreNeed": "Self-Control",
+    "falseBelief": "I should only do what I enjoy.",
+    "trueBelief": "Responsibility helps me earn greater freedom.",
+    "feeling": "Resistant friction switching from something fun to something necessary.",
+    "parentTeach": "That transitions go smoother with a warning and a moment to finish up.",
+    "wisdomElement": "Mouse",
+    "secondaryWisdomElement": "Broken Tusk (Writing Tusk)",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Responsibility",
+      "Learning & Problem Solving"
+    ],
+    "priority": "⭐⭐⭐ High"
+  },
+  {
+    "id": 110,
+    "slug": "the-before-dinner-energy-crash",
+    "name": "The 'before dinner' energy crash",
+    "category": "Regulation & Energy Overload",
+    "coreNeed": "Self-Control",
+    "falseBelief": "My feelings should decide my behaviour.",
+    "trueBelief": "I can care for my feelings without hurting others.",
+    "feeling": "Sudden, sharp crankiness as hunger outruns patience.",
+    "parentTeach": "That hunger changes mood, and naming it early heads off a meltdown.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Mouse",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Helping & Caring",
+      "Responsibility"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 111,
+    "slug": "uncomfortable-uniform-flickering-lights-strong-smells",
+    "name": "Uncomfortable uniform, flickering lights, strong smells",
+    "category": "Regulation & Energy Overload",
+    "coreNeed": "Comfort",
+    "falseBelief": "I can't cope when things feel uncomfortable.",
+    "trueBelief": "I can care for myself and ask for help when needed.",
+    "feeling": "Irritable overload from textures, lights, or smells that feel like too much.",
+    "parentTeach": "That sensory needs are real needs, not fussiness.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Curved Trunk",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Communication",
+      "Learning & Problem Solving"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 112,
+    "slug": "waiting-very-excitedly-for-birthday-or-special-package",
+    "name": "Waiting very excitedly for birthday or special package",
+    "category": "Regulation & Energy Overload",
+    "coreNeed": "Patience",
+    "falseBelief": "Waiting ruins the fun.",
+    "trueBelief": "Anticipation can make joyful moments even sweeter.",
+    "feeling": "Electric, can't-sit-still excitement that's hard to contain.",
+    "parentTeach": "That excitement is welcome, even when it needs a little channeling.",
+    "wisdomElement": "Modak",
+    "secondaryWisdomElement": "Mouse",
+    "lifeDomains": [
+      "Celebrations & Traditions",
+      "Family & Daily Life",
+      "Responsibility"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 113,
+    "slug": "trying-to-learn-a-very-hard-new-concept-or-language",
+    "name": "Trying to learn a very hard new concept or language",
+    "category": "Regulation & Energy Overload",
+    "coreNeed": "Confidence",
+    "falseBelief": "If I don't understand quickly, I'm not smart.",
+    "trueBelief": "Understanding grows with patience and practice.",
+    "feeling": "Mental strain from a concept that isn't clicking yet.",
+    "parentTeach": "That confusion is the first step of learning, not a sign of failure.",
+    "wisdomElement": "Mouse",
+    "secondaryWisdomElement": "Broken Tusk (Writing Tusk)",
+    "lifeDomains": [
+      "Learning & Problem Solving",
+      "School & Community",
+      "Communication"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 114,
+    "slug": "moving-to-a-new-home-or-city",
+    "name": "Moving to a new home or city",
+    "category": "Change & Uncertainty",
+    "coreNeed": "Belonging",
+    "falseBelief": "I'll never feel at home again.",
+    "trueBelief": "Home grows wherever love and connection grow.",
+    "feeling": "Unmooring uncertainty about leaving everything familiar behind.",
+    "parentTeach": "That home is made of people first, walls second.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Lotus",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Friendship & Sharing",
+      "Building & Creating"
+    ],
+    "priority": "⭐⭐⭐ High"
+  },
+  {
+    "id": 115,
+    "slug": "moving-abroad-very-relevant-for-nri-families",
+    "name": "Moving abroad (very relevant for NRI families)",
+    "category": "Change & Uncertainty",
+    "coreNeed": "Belonging",
+    "falseBelief": "I won't belong in a new country.",
+    "trueBelief": "I can build new friendships while keeping my roots.",
+    "feeling": "Disorientation layered with the extra weight of a whole new culture.",
+    "parentTeach": "That belonging can grow in more than one place at once.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Lotus",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Friendship & Sharing",
+      "Communication"
+    ],
+    "priority": "⭐⭐⭐ High"
+  },
+  {
+    "id": 116,
+    "slug": "parents-separating-or-getting-a-divorce",
+    "name": "Parents separating or getting a divorce",
+    "category": "Change & Uncertainty",
+    "coreNeed": "Security",
+    "falseBelief": "My family is broken and I'm not safe anymore.",
+    "trueBelief": "Love and security can continue even when families change.",
+    "feeling": "Confused grief about a family shape that's about to change.",
+    "parentTeach": "That both parents' love continues, even when the household doesn't stay the same.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Lotus",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Communication",
+      "Helping & Caring"
+    ],
+    "priority": "⭐⭐⭐ High"
+  },
+  {
+    "id": 117,
+    "slug": "a-parent-starts-a-new-job-with-different-hours",
+    "name": "A parent starts a new job with different hours",
+    "category": "Change & Uncertainty",
+    "coreNeed": "Trust",
+    "falseBelief": "Less time together means less love.",
+    "trueBelief": "Love isn't measured by time but by care and connection.",
+    "feeling": "Uneasy adjustment to a parent being less available than before.",
+    "parentTeach": "That love isn't measured only in hours in the room.",
+    "wisdomElement": "Big Ears",
+    "secondaryWisdomElement": "Big Belly",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Communication",
+      "Responsibility"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 118,
+    "slug": "starting-at-a-completely-new-school",
+    "name": "Starting at a completely new school",
+    "category": "Change & Uncertainty",
+    "coreNeed": "Belonging",
+    "falseBelief": "Nobody will accept me.",
+    "trueBelief": "I can create new friendships by being myself.",
+    "feeling": "Anxious blankness facing a place with no familiar faces yet.",
+    "parentTeach": "That every new place becomes familiar with enough small, repeated days.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Big Ears",
+    "lifeDomains": [
+      "School & Community",
+      "Friendship & Sharing",
+      "Communication"
+    ],
+    "priority": "⭐⭐⭐ High"
+  },
+  {
+    "id": 119,
+    "slug": "favourite-teacher-changes-mid-year",
+    "name": "Favourite teacher changes mid-year",
+    "category": "Change & Uncertainty",
+    "coreNeed": "Trust",
+    "falseBelief": "Good things never last.",
+    "trueBelief": "New people can also become trusted guides.",
+    "feeling": "Quiet grief for a favorite adult who is no longer in charge.",
+    "parentTeach": "That good people can still be missed even after they're gone from a role.",
+    "wisdomElement": "Big Ears",
+    "secondaryWisdomElement": "Eyes",
+    "lifeDomains": [
+      "School & Community",
+      "Communication",
+      "Helping & Caring"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 120,
+    "slug": "sudden-cancellation-of-a-normal-routine-event",
+    "name": "Sudden cancellation of a normal routine event",
+    "category": "Change & Uncertainty",
+    "coreNeed": "Flexibility",
+    "falseBelief": "Everything has to happen the way I expected.",
+    "trueBelief": "I can adapt and discover new possibilities.",
+    "feeling": "Frustrated disorientation when something ordinary suddenly doesn't happen.",
+    "parentTeach": "That flexibility is a muscle, and disappointment can be worked through, not avoided.",
+    "wisdomElement": "Curved Trunk",
+    "secondaryWisdomElement": "Lotus",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Learning & Problem Solving",
+      "Responsibility"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 121,
+    "slug": "summer-ending-and-school-starting-again",
+    "name": "Summer ending and school starting again",
+    "category": "Change & Uncertainty",
+    "coreNeed": "Hope",
+    "falseBelief": "Fun is over now.",
+    "trueBelief": "Every new season brings new adventures.",
+    "feeling": "A wistful, unsettled feeling as one familiar season hands off to another.",
+    "parentTeach": "That endings and beginnings are the same event seen from two sides.",
+    "wisdomElement": "Lotus",
+    "secondaryWisdomElement": "Eyes",
+    "lifeDomains": [
+      "School & Community",
+      "Family & Daily Life",
+      "Friendship & Sharing"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 122,
+    "slug": "growing-pains-first-tooth-loss-puberty-signs",
+    "name": "Growing pains, first tooth loss, puberty signs",
+    "category": "Change & Uncertainty",
+    "coreNeed": "Acceptance",
+    "falseBelief": "Growing and changing is scary.",
+    "trueBelief": "Growing is a natural and wonderful part of life.",
+    "feeling": "Confusing physical sensations that don't match how they feel inside.",
+    "parentTeach": "That growing bodies are strange and normal at the same time.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Lotus",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Learning & Problem Solving",
+      "Communication"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 123,
+    "slug": "friend-suddenly-acting-different-or-cooler",
+    "name": "Friend suddenly acting different or 'cooler'",
+    "category": "Change & Uncertainty",
+    "coreNeed": "Belonging",
+    "falseBelief": "I have to change to keep my friends.",
+    "trueBelief": "Real friendships accept me for who I am.",
+    "feeling": "Uneasy watchfulness as a friendship starts to feel different.",
+    "parentTeach": "That friends can change without the friendship having to end.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Broken Tusk (Writing Tusk)",
+    "lifeDomains": [
+      "Friendship & Sharing",
+      "Communication",
+      "Learning & Problem Solving"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 124,
+    "slug": "game-or-app-changes-interface-completely",
+    "name": "Game or app changes interface completely",
+    "category": "Change & Uncertainty",
+    "coreNeed": "Flexibility",
+    "falseBelief": "I don't like change, so I can't enjoy it.",
+    "trueBelief": "I can learn new ways of doing things.",
+    "feeling": "Mild disorientation at a familiar tool suddenly behaving differently.",
+    "parentTeach": "That adapting to change is a skill, practiced on small things first.",
+    "wisdomElement": "Curved Trunk",
+    "secondaryWisdomElement": "Eyes",
+    "lifeDomains": [
+      "Learning & Problem Solving",
+      "Playing & Games",
+      "Responsibility"
+    ],
+    "priority": "⭐ Low"
+  },
+  {
+    "id": 125,
+    "slug": "new-nanny-or-household-helper-joins-family",
+    "name": "New nanny or household helper joins family",
+    "category": "Change & Uncertainty",
+    "coreNeed": "Trust",
+    "falseBelief": "New people can't become part of my safe world.",
+    "trueBelief": "Trust grows through kindness and shared experiences.",
+    "feeling": "Wary uncertainty about a new person joining the household routine.",
+    "parentTeach": "That trust with a new person builds the same way it did with the old one — slowly.",
+    "wisdomElement": "Big Ears",
+    "secondaryWisdomElement": "Big Belly",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Helping & Caring",
+      "Communication"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 126,
+    "slug": "news-of-an-upcoming-surgery-or-treatment",
+    "name": "News of an upcoming surgery or treatment",
+    "category": "Change & Uncertainty",
+    "coreNeed": "Courage",
+    "falseBelief": "I won't be able to handle what's coming.",
+    "trueBelief": "I can face difficult moments one brave step at a time.",
+    "feeling": "Quiet fear behind news of an upcoming medical event.",
+    "parentTeach": "That worry and information can sit side by side, and questions are always welcome.",
+    "wisdomElement": "Mouse",
+    "secondaryWisdomElement": "Big Belly",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Helping & Caring",
+      "Communication"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 127,
+    "slug": "family-having-to-cut-back-on-treats-or-outings",
+    "name": "Family having to cut back on treats or outings",
+    "category": "Change & Uncertainty",
+    "coreNeed": "Contentment",
+    "falseBelief": "Happiness comes from having more.",
+    "trueBelief": "Love, togetherness and gratitude bring lasting happiness.",
+    "feeling": "Confused disappointment at hearing 'we can't this time.'",
+    "parentTeach": "That family resources ebb and flow, and love isn't rationed the same way money is.",
+    "wisdomElement": "Modak",
+    "secondaryWisdomElement": "Big Belly",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Responsibility",
+      "Learning & Problem Solving"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 128,
+    "slug": "waiting-anxiously-for-exam-results",
+    "name": "Waiting anxiously for exam results",
+    "category": "Change & Uncertainty",
+    "coreNeed": "Confidence",
+    "falseBelief": "My marks decide my value.",
+    "trueBelief": "My effort and character matter more than any score.",
+    "feeling": "Stomach-churning anticipation while waiting for news out of their control.",
+    "parentTeach": "That the waiting is often harder than the result, and both can be survived.",
+    "wisdomElement": "Broken Tusk (Writing Tusk)",
+    "secondaryWisdomElement": "Mouse",
+    "lifeDomains": [
+      "School & Community",
+      "Learning & Problem Solving",
+      "Responsibility"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 129,
+    "slug": "first-time-staying-overnight-away-from-home",
+    "name": "First time staying overnight away from home",
+    "category": "Change & Uncertainty",
+    "coreNeed": "Security",
+    "falseBelief": "I can't feel safe away from home.",
+    "trueBelief": "I can feel safe in new places with trusted people.",
+    "feeling": "Nervous excitement tangled with homesickness before a first night away.",
+    "parentTeach": "That being brave doesn't mean not missing home — both can be true at once.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Big Ears",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Friendship & Sharing",
+      "Communication"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 130,
+    "slug": "stopping-a-favourite-hobby-or-activity",
+    "name": "Stopping a favourite hobby or activity",
+    "category": "Change & Uncertainty",
+    "coreNeed": "Hope",
+    "falseBelief": "If one chapter ends, all the joy is gone.",
+    "trueBelief": "New interests and opportunities will come.",
+    "feeling": "Quiet grief for a hobby or identity that's ending.",
+    "parentTeach": "That interests can change without erasing what was loved about the old one.",
+    "wisdomElement": "Lotus",
+    "secondaryWisdomElement": "Eyes",
+    "lifeDomains": [
+      "Art",
+      "Music & Creativity",
+      "Playing & Games",
+      "Learning & Problem Solving"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 131,
+    "slug": "overheard-adults-talk-about-a-big-change-coming",
+    "name": "Overheard adults talk about 'a big change coming'",
+    "category": "Change & Uncertainty",
+    "coreNeed": "Security",
+    "falseBelief": "Unknown changes are always bad.",
+    "trueBelief": "I can face change calmly and ask questions when I'm unsure.",
+    "feeling": "Anxious eavesdropping-driven dread about an unnamed 'big change.'",
+    "parentTeach": "That asking directly is safer than imagining, and most answers are less scary than the unknown.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Curved Trunk",
+    "lifeDomains": [
+      "Family & Daily Life",
+      "Communication",
+      "Learning & Problem Solving"
+    ],
+    "priority": "⭐ Low"
+  },
+  {
+    "id": 132,
+    "slug": "told-a-lie-to-a-parent-and-feels-a-heavy-stomach",
+    "name": "Told a lie to a parent and feels a 'heavy' stomach",
+    "category": "Moral & Values Confusion",
+    "coreNeed": "Integrity",
+    "falseBelief": "Hiding the truth will protect me.",
+    "trueBelief": "Honesty brings trust, even after mistakes.",
+    "feeling": "A heavy, guilty knot in the stomach after bending the truth.",
+    "parentTeach": "That honesty feels lighter than the lie, even when it's harder to say.",
+    "wisdomElement": "Broken Tusk (Writing Tusk)",
+    "secondaryWisdomElement": "Big Ears",
+    "lifeDomains": [
+      "Communication",
+      "Responsibility",
+      "Family & Daily Life"
+    ],
+    "priority": "⭐⭐⭐ High"
+  },
+  {
+    "id": 133,
+    "slug": "friends-asked-them-to-steal-or-break-a-rule",
+    "name": "Friends asked them to steal or break a rule",
+    "category": "Moral & Values Confusion",
+    "coreNeed": "Integrity",
+    "falseBelief": "I must follow my friends to belong.",
+    "trueBelief": "Doing what's right is more important than fitting in.",
+    "feeling": "Torn unease between wanting to belong and knowing something is wrong.",
+    "parentTeach": "That real friends don't require doing something that feels wrong.",
+    "wisdomElement": "Broken Tusk (Writing Tusk)",
+    "secondaryWisdomElement": "Mouse",
+    "lifeDomains": [
+      "Friendship & Sharing",
+      "Communication",
+      "Responsibility"
+    ],
+    "priority": "⭐⭐⭐ High"
+  },
+  {
+    "id": 134,
+    "slug": "watched-someone-get-bullied-and-did-nothing",
+    "name": "Watched someone get bullied and did nothing",
+    "category": "Moral & Values Confusion",
+    "coreNeed": "Courage",
+    "falseBelief": "Speaking up won't make a difference.",
+    "trueBelief": "Small acts of courage can protect others.",
+    "feeling": "Guilty discomfort at having stood by while someone else got hurt.",
+    "parentTeach": "That speaking up, even quietly to a trusted adult, is its own kind of courage.",
+    "wisdomElement": "Broken Tusk (Writing Tusk)",
+    "secondaryWisdomElement": "Curved Trunk",
+    "lifeDomains": [
+      "Helping & Caring",
+      "Communication",
+      "School & Community"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 135,
+    "slug": "a-mean-kid-got-praised-or-rewarded",
+    "name": "A mean kid got praised or rewarded",
+    "category": "Moral & Values Confusion",
+    "coreNeed": "Fairness",
+    "falseBelief": "Bad behaviour always wins.",
+    "trueBelief": "I can't control others, but I can choose my own values.",
+    "feeling": "Confused indignation when good behavior isn't the one that gets rewarded.",
+    "parentTeach": "That doing right doesn't depend on being noticed for it.",
+    "wisdomElement": "Eyes",
+    "secondaryWisdomElement": "Broken Tusk (Writing Tusk)",
+    "lifeDomains": [
+      "Communication",
+      "Learning & Problem Solving",
+      "School & Community"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 136,
+    "slug": "wants-to-play-but-knows-they-should-study",
+    "name": "Wants to play but knows they should study",
+    "category": "Moral & Values Confusion",
+    "coreNeed": "Self-Control",
+    "falseBelief": "I should always do what feels fun now.",
+    "trueBelief": "Choosing responsibility today helps me tomorrow.",
+    "feeling": "An inner tug-of-war between what's fun and what's responsible.",
+    "parentTeach": "That choosing the harder, better thing gets easier with practice, not willpower alone.",
+    "wisdomElement": "Mouse",
+    "secondaryWisdomElement": "Broken Tusk (Writing Tusk)",
+    "lifeDomains": [
+      "Playing & Games",
+      "Learning & Problem Solving",
+      "Responsibility"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 137,
+    "slug": "tempted-to-look-at-friend-s-paper-during-a-test",
+    "name": "Tempted to look at friend's paper during a test",
+    "category": "Moral & Values Confusion",
+    "coreNeed": "Integrity",
+    "falseBelief": "Cheating is okay if it helps me succeed.",
+    "trueBelief": "Honest effort builds real confidence.",
+    "feeling": "Tempting shortcut-thinking under the pressure of a ticking clock.",
+    "parentTeach": "That their own effort, even if smaller, belongs to them in a way a copied answer never will.",
+    "wisdomElement": "Broken Tusk (Writing Tusk)",
+    "secondaryWisdomElement": "Mouse",
+    "lifeDomains": [
+      "School & Community",
+      "Responsibility",
+      "Communication"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 138,
+    "slug": "told-a-bad-secret-they-feel-should-be-shared",
+    "name": "Told a 'bad' secret they feel should be shared",
+    "category": "Moral & Values Confusion",
+    "coreNeed": "Responsibility",
+    "falseBelief": "Keeping every secret makes me a good friend.",
+    "trueBelief": "Safe adults should know secrets that can protect someone.",
+    "feeling": "Uneasy custodianship of information that feels too big to hold alone.",
+    "parentTeach": "That some secrets are meant to be shared with a trusted adult, and that's not betrayal.",
+    "wisdomElement": "Big Ears",
+    "secondaryWisdomElement": "Broken Tusk (Writing Tusk)",
+    "lifeDomains": [
+      "Communication",
+      "Helping & Caring",
+      "Responsibility"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 139,
+    "slug": "broke-something-by-mistake-and-hid-it",
+    "name": "Broke something by mistake and hid it",
+    "category": "Moral & Values Confusion",
+    "coreNeed": "Responsibility",
+    "falseBelief": "Hiding mistakes makes them disappear.",
+    "trueBelief": "Taking responsibility helps rebuild trust.",
+    "feeling": "Panicked guilt after damage they're afraid to admit to.",
+    "parentTeach": "That owning a mistake quickly is easier than carrying the secret of it.",
+    "wisdomElement": "Broken Tusk (Writing Tusk)",
+    "secondaryWisdomElement": "Curved Trunk",
+    "lifeDomains": [
+      "Responsibility",
+      "Building & Creating",
+      "Communication"
+    ],
+    "priority": "⭐⭐⭐ High"
+  },
+  {
+    "id": 140,
+    "slug": "realised-some-kids-don-t-have-food-or-shoes",
+    "name": "Realised some kids don't have food or shoes",
+    "category": "Moral & Values Confusion",
+    "coreNeed": "Compassion",
+    "falseBelief": "Other people's struggles have nothing to do with me.",
+    "trueBelief": "Kindness and generosity can make a real difference.",
+    "feeling": "Unsettled awareness of unfairness bigger than their own life.",
+    "parentTeach": "That noticing unfairness in the world is the first step toward caring about it.",
+    "wisdomElement": "Curved Trunk",
+    "secondaryWisdomElement": "Modak",
+    "lifeDomains": [
+      "Helping & Caring",
+      "Friendship & Sharing",
+      "Family & Daily Life"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 141,
+    "slug": "saw-a-parent-or-teacher-break-a-rule-they-enforce",
+    "name": "Saw a parent or teacher break a rule they enforce",
+    "category": "Moral & Values Confusion",
+    "coreNeed": "Integrity",
+    "falseBelief": "Rules only matter when they're convenient.",
+    "trueBelief": "I can choose integrity regardless of what others do.",
+    "feeling": "Confusing cognitive dissonance seeing a rule-enforcer break their own rule.",
+    "parentTeach": "That adults are still learning too, and noticing that is a sign of a sharp, fair mind.",
+    "wisdomElement": "Broken Tusk (Writing Tusk)",
+    "secondaryWisdomElement": "Eyes",
+    "lifeDomains": [
+      "Communication",
+      "Learning & Problem Solving",
+      "Responsibility"
+    ],
+    "priority": "⭐ Low"
+  },
+  {
+    "id": 142,
+    "slug": "someone-online-asked-for-their-personal-password",
+    "name": "Someone online asked for their personal password",
+    "category": "Moral & Values Confusion",
+    "coreNeed": "Security",
+    "falseBelief": "Everyone online can be trusted.",
+    "trueBelief": "I protect myself by making safe choices and asking trusted adults.",
+    "feeling": "Wary unease at a request that feels like it's crossing a line.",
+    "parentTeach": "That trusted adults, not strangers online, are who private information belongs to.",
+    "wisdomElement": "Eyes",
+    "secondaryWisdomElement": "Big Ears",
+    "lifeDomains": [
+      "Learning & Problem Solving",
+      "Communication",
+      "Responsibility"
+    ],
+    "priority": "⭐ Low"
+  },
+  {
+    "id": 143,
+    "slug": "saw-someone-litter-and-felt-upset-but-said-nothing",
+    "name": "Saw someone litter and felt upset but said nothing",
+    "category": "Moral & Values Confusion",
+    "coreNeed": "Responsibility",
+    "falseBelief": "One person's actions don't matter.",
+    "trueBelief": "Small responsible actions help care for our world.",
+    "feeling": "Frustrated helplessness witnessing carelessness they can't undo.",
+    "parentTeach": "That one person's small action, repeated, adds up to real care for a shared place.",
+    "wisdomElement": "Curved Trunk",
+    "secondaryWisdomElement": "Lotus",
+    "lifeDomains": [
+      "Helping & Caring",
+      "Exploring & Nature",
+      "Communication"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 144,
+    "slug": "saw-a-stray-animal-being-treated-badly",
+    "name": "Saw a stray animal being treated badly",
+    "category": "Moral & Values Confusion",
+    "coreNeed": "Compassion",
+    "falseBelief": "It's not my place to help.",
+    "trueBelief": "Every living being deserves kindness and care.",
+    "feeling": "Distressed empathy at cruelty toward a creature who can't speak up.",
+    "parentTeach": "That kindness to animals is a rehearsal for kindness everywhere.",
+    "wisdomElement": "Curved Trunk",
+    "secondaryWisdomElement": "Big Belly",
+    "lifeDomains": [
+      "Helping & Caring",
+      "Exploring & Nature",
+      "Communication"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 145,
+    "slug": "failed-to-keep-a-promise-they-made-to-a-friend",
+    "name": "Failed to keep a promise they made to a friend",
+    "category": "Moral & Values Confusion",
+    "coreNeed": "Trust",
+    "falseBelief": "One broken promise means the friendship is ruined.",
+    "trueBelief": "Trust can be rebuilt through honesty and consistent actions.",
+    "feeling": "Guilty regret at letting a friend down.",
+    "parentTeach": "That a broken promise can be repaired with an honest apology and a next try.",
+    "wisdomElement": "Big Ears",
+    "secondaryWisdomElement": "Broken Tusk (Writing Tusk)",
+    "lifeDomains": [
+      "Friendship & Sharing",
+      "Responsibility",
+      "Communication"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 146,
+    "slug": "feels-guilty-for-not-including-someone-in-play",
+    "name": "Feels guilty for not including someone in play",
+    "category": "Moral & Values Confusion",
+    "coreNeed": "Inclusion",
+    "falseBelief": "There's only room for some people.",
+    "trueBelief": "Everyone deserves a chance to belong.",
+    "feeling": "A tender guilt about a small social exclusion.",
+    "parentTeach": "That noticing the discomfort of leaving someone out is the beginning of including them next time.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Curved Trunk",
+    "lifeDomains": [
+      "Friendship & Sharing",
+      "Playing & Games",
+      "Communication"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 147,
+    "slug": "friend-said-something-mean-about-their-culture-or-family",
+    "name": "Friend said something mean about their culture or family",
+    "category": "Moral & Values Confusion",
+    "coreNeed": "Respect",
+    "falseBelief": "I should hide who I am to fit in.",
+    "trueBelief": "My identity deserves respect, and I can respect others too.",
+    "feeling": "Defensive hurt layered with confusion after an identity-based jab.",
+    "parentTeach": "That their family's traditions are not something to be embarrassed by — curiosity from others is a chance to teach, not a verdict.",
+    "wisdomElement": "Eyes",
+    "secondaryWisdomElement": "Big Belly",
+    "lifeDomains": [
+      "Communication",
+      "Friendship & Sharing",
+      "School & Community"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 148,
+    "slug": "found-something-and-doesn-t-know-whether-to-keep-it",
+    "name": "Found something and doesn't know whether to keep it",
+    "category": "Moral & Values Confusion",
+    "coreNeed": "Integrity",
+    "falseBelief": "If I found it, it belongs to me.",
+    "trueBelief": "Doing the right thing matters more than getting something extra.",
+    "feeling": "Uncertain hesitation weighing honesty against a lucky find.",
+    "parentTeach": "That doing the effortful right thing (asking, returning) feels better in the long run than keeping something unclaimed.",
+    "wisdomElement": "Broken Tusk (Writing Tusk)",
+    "secondaryWisdomElement": "Mouse",
+    "lifeDomains": [
+      "Responsibility",
+      "Learning & Problem Solving",
+      "Communication"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 149,
+    "slug": "overheard-talk-about-politics-protests-or-injustice",
+    "name": "Overheard talk about politics, protests, or injustice",
+    "category": "Moral & Values Confusion",
+    "coreNeed": "Fairness",
+    "falseBelief": "The world is only unfair and nothing can change.",
+    "trueBelief": "Fairness grows through understanding, courage and responsible action.",
+    "feeling": "Confused unease absorbing adult-sized topics without adult-sized context.",
+    "parentTeach": "That the world has hard chapters and repair, and it's alright to ask questions about both.",
+    "wisdomElement": "Eyes",
+    "secondaryWisdomElement": "Lotus",
+    "lifeDomains": [
+      "Communication",
+      "Learning & Problem Solving",
+      "Helping & Caring"
+    ],
+    "priority": "⭐ Low"
+  },
+  {
+    "id": 150,
+    "slug": "best-friend-makes-a-new-best-friend",
+    "name": "Best friend makes a new best friend",
+    "category": "Friendship & Peer Dynamics",
+    "coreNeed": "Belonging",
+    "falseBelief": "If my friend likes someone else, I'll be forgotten.",
+    "trueBelief": "Friendships can grow without replacing each other.",
+    "feeling": "A sharp pang of replacement — like their special spot just got taken.",
+    "parentTeach": "That love and friendship expand to fit more people, they don't get divided up.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Big Ears",
+    "lifeDomains": [
+      "Friendship & Sharing",
+      "Communication",
+      "Playing & Games"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 151,
+    "slug": "friends-don-t-reply-to-messages",
+    "name": "Friends don't reply to messages",
+    "category": "Friendship & Peer Dynamics",
+    "coreNeed": "Trust",
+    "falseBelief": "No reply means they don't care about me.",
+    "trueBelief": "I shouldn't assume the worst before I know the truth.",
+    "feeling": "Anxious spiraling, assuming the worst from silence.",
+    "parentTeach": "That a slow reply is rarely a verdict, and checking in beats assuming.",
+    "wisdomElement": "Big Ears",
+    "secondaryWisdomElement": "Eyes",
+    "lifeDomains": [
+      "Friendship & Sharing",
+      "Communication",
+      "Learning & Problem Solving"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 152,
+    "slug": "accidentally-left-out-of-a-game",
+    "name": "Accidentally left out of a game",
+    "category": "Friendship & Peer Dynamics",
+    "coreNeed": "Inclusion",
+    "falseBelief": "Being left out means I don't belong.",
+    "trueBelief": "I can help create spaces where everyone belongs.",
+    "feeling": "A quiet sting of exclusion, even without anyone meaning it.",
+    "parentTeach": "That noticing who's left out, even by accident, is worth speaking up about.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Big Ears",
+    "lifeDomains": [
+      "Friendship & Sharing",
+      "Playing & Games",
+      "Communication"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 153,
+    "slug": "a-secret-wasn-t-shared-with-them",
+    "name": "A secret wasn't shared with them",
+    "category": "Friendship & Peer Dynamics",
+    "coreNeed": "Trust",
+    "falseBelief": "If I'm not told everything, I'm not important.",
+    "trueBelief": "Trust grows through honesty, not knowing every secret.",
+    "feeling": "A hurt feeling of being on the outside of something.",
+    "parentTeach": "That not knowing everything doesn't mean being less trusted or valued.",
+    "wisdomElement": "Big Ears",
+    "secondaryWisdomElement": "Broken Tusk (Writing Tusk)",
+    "lifeDomains": [
+      "Friendship & Sharing",
+      "Communication",
+      "Responsibility"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 154,
+    "slug": "friend-copies-their-work-or-idea",
+    "name": "Friend copies their work or idea",
+    "category": "Friendship & Peer Dynamics",
+    "coreNeed": "Respect",
+    "falseBelief": "If someone copies me, I've lost what makes me special.",
+    "trueBelief": "My ideas and creativity remain valuable.",
+    "feeling": "Territorial frustration at losing what felt uniquely theirs.",
+    "parentTeach": "That being copied is often a compliment in disguise, and originality isn't used up by sharing.",
+    "wisdomElement": "Broken Tusk (Writing Tusk)",
+    "secondaryWisdomElement": "Eyes",
+    "lifeDomains": [
+      "Learning & Problem Solving",
+      "Art",
+      "Music & Creativity",
+      "Communication"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 155,
+    "slug": "a-friend-wins-while-they-lose",
+    "name": "A friend wins while they lose",
+    "category": "Friendship & Peer Dynamics",
+    "coreNeed": "Self-Worth",
+    "falseBelief": "Someone else's success makes me less successful.",
+    "trueBelief": "I can celebrate others while continuing my own journey.",
+    "feeling": "Competitive sting swallowed under a forced smile.",
+    "parentTeach": "That someone else's win and their own effort can both be true at once.",
+    "wisdomElement": "Broken Tusk (Writing Tusk)",
+    "secondaryWisdomElement": "Modak",
+    "lifeDomains": [
+      "Playing & Games",
+      "Friendship & Sharing",
+      "Communication"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 156,
+    "slug": "friend-breaks-a-promise",
+    "name": "Friend breaks a promise",
+    "category": "Friendship & Peer Dynamics",
+    "coreNeed": "Trust",
+    "falseBelief": "Once trust is broken, it can never be repaired.",
+    "trueBelief": "Honest conversations and actions can rebuild trust.",
+    "feeling": "Disappointment curdling into distrust.",
+    "parentTeach": "That one broken promise is a repair conversation, not proof the friendship is over.",
+    "wisdomElement": "Big Ears",
+    "secondaryWisdomElement": "Curved Trunk",
+    "lifeDomains": [
+      "Friendship & Sharing",
+      "Communication",
+      "Responsibility"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 157,
+    "slug": "rumours-or-gossip-spread-about-them",
+    "name": "Rumours or gossip spread about them",
+    "category": "Friendship & Peer Dynamics",
+    "coreNeed": "Integrity",
+    "falseBelief": "I have to prove myself to everyone.",
+    "trueBelief": "Truth and character matter more than rumours.",
+    "feeling": "Helpless anger at a story about them they didn't get to tell.",
+    "parentTeach": "That their actions and character speak louder than a rumor, over time.",
+    "wisdomElement": "Broken Tusk (Writing Tusk)",
+    "secondaryWisdomElement": "Big Ears",
+    "lifeDomains": [
+      "Communication",
+      "School & Community",
+      "Responsibility"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 158,
+    "slug": "friend-apologises-after-hurting-them",
+    "name": "Friend apologises after hurting them",
+    "category": "Friendship & Peer Dynamics",
+    "coreNeed": "Forgiveness",
+    "falseBelief": "Holding on to hurt keeps me safe.",
+    "trueBelief": "Forgiveness helps relationships heal and grow.",
+    "feeling": "A tug-of-war between wanting to forgive and wanting to protect themselves.",
+    "parentTeach": "That accepting an apology is a choice they get to make in their own time.",
+    "wisdomElement": "Lotus",
+    "secondaryWisdomElement": "Big Belly",
+    "lifeDomains": [
+      "Friendship & Sharing",
+      "Communication",
+      "Helping & Caring"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 159,
+    "slug": "they-hurt-a-friend-s-feelings-by-mistake",
+    "name": "They hurt a friend's feelings by mistake",
+    "category": "Friendship & Peer Dynamics",
+    "coreNeed": "Responsibility",
+    "falseBelief": "One mistake makes me a bad friend.",
+    "trueBelief": "I can apologise, repair and learn from my mistakes.",
+    "feeling": "Guilty regret at seeing the effect of their own words.",
+    "parentTeach": "That a sincere apology repairs more than staying quiet out of embarrassment.",
+    "wisdomElement": "Broken Tusk (Writing Tusk)",
+    "secondaryWisdomElement": "Curved Trunk",
+    "lifeDomains": [
+      "Friendship & Sharing",
+      "Communication",
+      "Responsibility"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 160,
+    "slug": "asked-to-choose-between-two-friends",
+    "name": "Asked to choose between two friends",
+    "category": "Friendship & Peer Dynamics",
+    "coreNeed": "Fairness",
+    "falseBelief": "I have to choose one person over another.",
+    "trueBelief": "I can be kind and fair to everyone.",
+    "feeling": "Squeezed, torn loyalty with no comfortable answer.",
+    "parentTeach": "That they don't have to rank people they care about.",
+    "wisdomElement": "Big Ears",
+    "secondaryWisdomElement": "Big Belly",
+    "lifeDomains": [
+      "Friendship & Sharing",
+      "Communication",
+      "Learning & Problem Solving"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 161,
+    "slug": "lost-during-a-team-game-because-of-their-mistake",
+    "name": "Lost during a team game because of their mistake",
+    "category": "Friendship & Peer Dynamics",
+    "coreNeed": "Responsibility",
+    "falseBelief": "Everyone will blame me forever.",
+    "trueBelief": "Mistakes are part of teamwork and learning.",
+    "feeling": "Public, hot-faced guilt at letting the team down.",
+    "parentTeach": "That one mistake in a team game is shared, not carried alone.",
+    "wisdomElement": "Broken Tusk (Writing Tusk)",
+    "secondaryWisdomElement": "Mouse",
+    "lifeDomains": [
+      "Playing & Games",
+      "Communication",
+      "Responsibility"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 162,
+    "slug": "teammate-isn-t-doing-their-part",
+    "name": "Teammate isn't doing their part",
+    "category": "Friendship & Peer Dynamics",
+    "coreNeed": "Respect",
+    "falseBelief": "I have to control others for things to go well.",
+    "trueBelief": "Cooperation grows through patience and communication.",
+    "feeling": "Simmering frustration at carrying more than their share.",
+    "parentTeach": "That naming the problem calmly works better than doing it all silently.",
+    "wisdomElement": "Curved Trunk",
+    "secondaryWisdomElement": "Big Ears",
+    "lifeDomains": [
+      "Playing & Games",
+      "Communication",
+      "Responsibility"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 163,
+    "slug": "friend-gets-a-pet-they-always-wanted",
+    "name": "Friend gets a pet they always wanted",
+    "category": "Friendship & Peer Dynamics",
+    "coreNeed": "Contentment",
+    "falseBelief": "Life is unfair because I don't have what they have.",
+    "trueBelief": "I can be genuinely happy for others while appreciating my own life.",
+    "feeling": "A wistful envy dressed up as happiness for a friend.",
+    "parentTeach": "That wanting what someone else has doesn't make their own life less good.",
+    "wisdomElement": "Modak",
+    "secondaryWisdomElement": "Big Belly",
+    "lifeDomains": [
+      "Friendship & Sharing",
+      "Helping & Caring",
+      "Communication"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 164,
+    "slug": "a-younger-child-wants-to-join-the-game",
+    "name": "A younger child wants to join the game",
+    "category": "Friendship & Peer Dynamics",
+    "coreNeed": "Inclusion",
+    "falseBelief": "Younger children will spoil our fun.",
+    "trueBelief": "Everyone deserves a chance to belong.",
+    "feeling": "Impatient reluctance to slow down for someone less skilled.",
+    "parentTeach": "That making room for someone smaller is its own kind of strength.",
+    "wisdomElement": "Big Belly",
+    "secondaryWisdomElement": "Curved Trunk",
+    "lifeDomains": [
+      "Playing & Games",
+      "Friendship & Sharing",
+      "Helping & Caring"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 165,
+    "slug": "friend-is-nervous-before-a-performance",
+    "name": "Friend is nervous before a performance",
+    "category": "Friendship & Peer Dynamics",
+    "coreNeed": "Compassion",
+    "falseBelief": "It's not my job to help.",
+    "trueBelief": "Encouragement can help someone become brave.",
+    "feeling": "A protective instinct paired with not knowing what to do with it.",
+    "parentTeach": "That a few kind words before a hard moment can genuinely help someone else.",
+    "wisdomElement": "Curved Trunk",
+    "secondaryWisdomElement": "Big Ears",
+    "lifeDomains": [
+      "Helping & Caring",
+      "Art",
+      "Music & Creativity",
+      "Communication"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 166,
+    "slug": "classmate-is-new-and-sitting-alone",
+    "name": "Classmate is new and sitting alone",
+    "category": "Friendship & Peer Dynamics",
+    "coreNeed": "Kindness",
+    "falseBelief": "Someone else will help them.",
+    "trueBelief": "Small acts of kindness can make someone feel welcome.",
+    "feeling": "A flicker of concern quickly talked out of by shyness.",
+    "parentTeach": "That the small effort of saying hello can change someone's whole day.",
+    "wisdomElement": "Curved Trunk",
+    "secondaryWisdomElement": "Big Belly",
+    "lifeDomains": [
+      "School & Community",
+      "Helping & Caring",
+      "Communication"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 167,
+    "slug": "friend-keeps-interrupting-while-talking",
+    "name": "Friend keeps interrupting while talking",
+    "category": "Friendship & Peer Dynamics",
+    "coreNeed": "Respect",
+    "falseBelief": "The loudest person should be heard.",
+    "trueBelief": "Listening is an important way to show respect.",
+    "feeling": "Mounting frustration at not getting to finish a thought.",
+    "parentTeach": "That asking to be heard, calmly, is fair and normal.",
+    "wisdomElement": "Big Ears",
+    "secondaryWisdomElement": "Curved Trunk",
+    "lifeDomains": [
+      "Communication",
+      "Friendship & Sharing",
+      "School & Community"
+    ],
+    "priority": "⭐⭐ Medium"
+  },
+  {
+    "id": 168,
+    "slug": "group-project-where-everyone-has-different-ideas",
+    "name": "Group project where everyone has different ideas",
+    "category": "Friendship & Peer Dynamics",
+    "coreNeed": "Flexibility",
+    "falseBelief": "My idea has to be chosen.",
+    "trueBelief": "Great ideas grow when people work together.",
+    "feeling": "Frustrated insistence that their idea is the right one.",
+    "parentTeach": "That combining ideas usually makes something better than any one idea alone.",
+    "wisdomElement": "Curved Trunk",
+    "secondaryWisdomElement": "Big Ears",
+    "lifeDomains": [
+      "Learning & Problem Solving",
+      "Building & Creating",
+      "Communication"
+    ],
+    "priority": "⭐⭐ Medium"
+  }
+]

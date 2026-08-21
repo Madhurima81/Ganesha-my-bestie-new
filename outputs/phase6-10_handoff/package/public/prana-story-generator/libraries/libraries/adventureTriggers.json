@@ -1,0 +1,2202 @@
+[
+  {
+    "id": 1,
+    "archetype": "Rescue Mission",
+    "name": "Someone is trapped."
+  },
+  {
+    "id": 2,
+    "archetype": "Rescue Mission",
+    "name": "Someone has gone missing."
+  },
+  {
+    "id": 3,
+    "archetype": "Rescue Mission",
+    "name": "A young creature is separated from its family."
+  },
+  {
+    "id": 4,
+    "archetype": "Rescue Mission",
+    "name": "A cry for help echoes nearby."
+  },
+  {
+    "id": 5,
+    "archetype": "Rescue Mission",
+    "name": "A dangerous situation is getting worse."
+  },
+  {
+    "id": 6,
+    "archetype": "Rescue Mission",
+    "name": "An important rescue must happen before sunset."
+  },
+  {
+    "id": 7,
+    "archetype": "Rescue Mission",
+    "name": "A safe path suddenly disappears."
+  },
+  {
+    "id": 8,
+    "archetype": "Rescue Mission",
+    "name": "Someone cannot escape without help."
+  },
+  {
+    "id": 9,
+    "archetype": "Guardian Adventure",
+    "name": "Someone asks you to protect something precious."
+  },
+  {
+    "id": 10,
+    "archetype": "Guardian Adventure",
+    "name": "A younger companion depends on you."
+  },
+  {
+    "id": 11,
+    "archetype": "Guardian Adventure",
+    "name": "Danger begins approaching a peaceful place."
+  },
+  {
+    "id": 12,
+    "archetype": "Guardian Adventure",
+    "name": "An important object attracts unwanted attention."
+  },
+  {
+    "id": 13,
+    "archetype": "Guardian Adventure",
+    "name": "A promise to protect must be honored."
+  },
+  {
+    "id": 14,
+    "archetype": "Guardian Adventure",
+    "name": "A safe place becomes unsafe."
+  },
+  {
+    "id": 15,
+    "archetype": "Guardian Adventure",
+    "name": "Someone is too small to protect themselves."
+  },
+  {
+    "id": 16,
+    "archetype": "Guardian Adventure",
+    "name": "Staying watchful becomes the biggest challenge."
+  },
+  {
+    "id": 17,
+    "archetype": "Escape Adventure",
+    "name": "The only exit suddenly closes."
+  },
+  {
+    "id": 18,
+    "archetype": "Escape Adventure",
+    "name": "Time begins running out."
+  },
+  {
+    "id": 19,
+    "archetype": "Escape Adventure",
+    "name": "A dangerous place must be escaped."
+  },
+  {
+    "id": 20,
+    "archetype": "Escape Adventure",
+    "name": "The group becomes trapped."
+  },
+  {
+    "id": 21,
+    "archetype": "Escape Adventure",
+    "name": "A wrong turn leads into trouble."
+  },
+  {
+    "id": 22,
+    "archetype": "Escape Adventure",
+    "name": "The safest route disappears."
+  },
+  {
+    "id": 23,
+    "archetype": "Escape Adventure",
+    "name": "A hidden exit may exist."
+  },
+  {
+    "id": 24,
+    "archetype": "Escape Adventure",
+    "name": "Every decision changes the escape."
+  },
+  {
+    "id": 25,
+    "archetype": "Survival Adventure",
+    "name": "Shelter is suddenly lost."
+  },
+  {
+    "id": 26,
+    "archetype": "Survival Adventure",
+    "name": "Supplies begin running out."
+  },
+  {
+    "id": 27,
+    "archetype": "Survival Adventure",
+    "name": "Nature becomes unpredictable."
+  },
+  {
+    "id": 28,
+    "archetype": "Survival Adventure",
+    "name": "The group becomes stranded."
+  },
+  {
+    "id": 29,
+    "archetype": "Survival Adventure",
+    "name": "Food or water is difficult to find."
+  },
+  {
+    "id": 30,
+    "archetype": "Survival Adventure",
+    "name": "Weather creates unexpected danger."
+  },
+  {
+    "id": 31,
+    "archetype": "Survival Adventure",
+    "name": "Help is too far away."
+  },
+  {
+    "id": 32,
+    "archetype": "Survival Adventure",
+    "name": "Working together becomes essential."
+  },
+  {
+    "id": 33,
+    "archetype": "Delivery Quest",
+    "name": "An important message must be delivered."
+  },
+  {
+    "id": 34,
+    "archetype": "Delivery Quest",
+    "name": "A special gift needs to reach someone."
+  },
+  {
+    "id": 35,
+    "archetype": "Delivery Quest",
+    "name": "Medicine is urgently needed."
+  },
+  {
+    "id": 36,
+    "archetype": "Delivery Quest",
+    "name": "A promise depends on making the delivery."
+  },
+  {
+    "id": 37,
+    "archetype": "Delivery Quest",
+    "name": "The shortest route becomes impossible."
+  },
+  {
+    "id": 38,
+    "archetype": "Delivery Quest",
+    "name": "The package is accidentally misplaced."
+  },
+  {
+    "id": 39,
+    "archetype": "Delivery Quest",
+    "name": "Someone is waiting and cannot leave."
+  },
+  {
+    "id": 40,
+    "archetype": "Delivery Quest",
+    "name": "Every delay makes the mission harder."
+  },
+  {
+    "id": 41,
+    "archetype": "Mystery to Solve",
+    "name": "Something disappears without explanation."
+  },
+  {
+    "id": 42,
+    "archetype": "Mystery to Solve",
+    "name": "Strange clues begin appearing."
+  },
+  {
+    "id": 43,
+    "archetype": "Mystery to Solve",
+    "name": "Nobody knows what really happened."
+  },
+  {
+    "id": 44,
+    "archetype": "Mystery to Solve",
+    "name": "Everyone remembers the story differently."
+  },
+  {
+    "id": 45,
+    "archetype": "Mystery to Solve",
+    "name": "Something important is out of place."
+  },
+  {
+    "id": 46,
+    "archetype": "Mystery to Solve",
+    "name": "A secret message is discovered."
+  },
+  {
+    "id": 47,
+    "archetype": "Mystery to Solve",
+    "name": "Strange sounds are heard every night."
+  },
+  {
+    "id": 48,
+    "archetype": "Mystery to Solve",
+    "name": "The final clue is hiding in plain sight."
+  },
+  {
+    "id": 49,
+    "archetype": "Detective Story",
+    "name": "A tiny clue is overlooked."
+  },
+  {
+    "id": 50,
+    "archetype": "Detective Story",
+    "name": "A valuable object goes missing."
+  },
+  {
+    "id": 51,
+    "archetype": "Detective Story",
+    "name": "Someone's story doesn't match the facts."
+  },
+  {
+    "id": 52,
+    "archetype": "Detective Story",
+    "name": "A trail suddenly ends."
+  },
+  {
+    "id": 53,
+    "archetype": "Detective Story",
+    "name": "Strange footprints appear."
+  },
+  {
+    "id": 54,
+    "archetype": "Detective Story",
+    "name": "An unusual pattern keeps repeating."
+  },
+  {
+    "id": 55,
+    "archetype": "Detective Story",
+    "name": "A witness remembers one important detail."
+  },
+  {
+    "id": 56,
+    "archetype": "Detective Story",
+    "name": "Solving the puzzle will help everyone."
+  },
+  {
+    "id": 57,
+    "archetype": "Treasure Hunt",
+    "name": "An old map is discovered."
+  },
+  {
+    "id": 58,
+    "archetype": "Treasure Hunt",
+    "name": "A mysterious clue appears."
+  },
+  {
+    "id": 59,
+    "archetype": "Treasure Hunt",
+    "name": "Pieces of something valuable are scattered."
+  },
+  {
+    "id": 60,
+    "archetype": "Treasure Hunt",
+    "name": "A forgotten legend points somewhere."
+  },
+  {
+    "id": 61,
+    "archetype": "Treasure Hunt",
+    "name": "A hidden path is uncovered."
+  },
+  {
+    "id": 62,
+    "archetype": "Treasure Hunt",
+    "name": "A riddle reveals the next step."
+  },
+  {
+    "id": 63,
+    "archetype": "Treasure Hunt",
+    "name": "Every clue becomes harder to solve."
+  },
+  {
+    "id": 64,
+    "archetype": "Treasure Hunt",
+    "name": "The final treasure isn't what anyone expected."
+  },
+  {
+    "id": 65,
+    "archetype": "Secret Discovery",
+    "name": "A hidden door appears."
+  },
+  {
+    "id": 66,
+    "archetype": "Secret Discovery",
+    "name": "Something forgotten is uncovered."
+  },
+  {
+    "id": 67,
+    "archetype": "Secret Discovery",
+    "name": "An unusual object is found."
+  },
+  {
+    "id": 68,
+    "archetype": "Secret Discovery",
+    "name": "A secret has been waiting for years."
+  },
+  {
+    "id": 69,
+    "archetype": "Secret Discovery",
+    "name": "Curiosity leads somewhere unexpected."
+  },
+  {
+    "id": 70,
+    "archetype": "Secret Discovery",
+    "name": "An old mystery returns."
+  },
+  {
+    "id": 71,
+    "archetype": "Secret Discovery",
+    "name": "Something ordinary reveals an extraordinary secret."
+  },
+  {
+    "id": 72,
+    "archetype": "Secret Discovery",
+    "name": "The discovery changes everything."
+  },
+  {
+    "id": 73,
+    "archetype": "Hidden World",
+    "name": "A secret entrance opens."
+  },
+  {
+    "id": 74,
+    "archetype": "Hidden World",
+    "name": "Someone accidentally crosses into another world."
+  },
+  {
+    "id": 75,
+    "archetype": "Hidden World",
+    "name": "A hidden community needs help."
+  },
+  {
+    "id": 76,
+    "archetype": "Hidden World",
+    "name": "The secret place is disappearing."
+  },
+  {
+    "id": 77,
+    "archetype": "Hidden World",
+    "name": "Someone discovers its existence."
+  },
+  {
+    "id": 78,
+    "archetype": "Hidden World",
+    "name": "A forgotten guardian appears."
+  },
+  {
+    "id": 79,
+    "archetype": "Hidden World",
+    "name": "The way back is no longer obvious."
+  },
+  {
+    "id": 80,
+    "archetype": "Hidden World",
+    "name": "Keeping the secret becomes important."
+  },
+  {
+    "id": 81,
+    "archetype": "Great Journey",
+    "name": "A destination must be reached."
+  },
+  {
+    "id": 82,
+    "archetype": "Great Journey",
+    "name": "Someone asks for help far away."
+  },
+  {
+    "id": 83,
+    "archetype": "Great Journey",
+    "name": "A journey begins unexpectedly."
+  },
+  {
+    "id": 84,
+    "archetype": "Great Journey",
+    "name": "Home cannot be reached the usual way."
+  },
+  {
+    "id": 85,
+    "archetype": "Great Journey",
+    "name": "A shortcut becomes an adventure."
+  },
+  {
+    "id": 86,
+    "archetype": "Great Journey",
+    "name": "The map proves unreliable."
+  },
+  {
+    "id": 87,
+    "archetype": "Great Journey",
+    "name": "Every stop teaches something new."
+  },
+  {
+    "id": 88,
+    "archetype": "Great Journey",
+    "name": "Reaching the destination changes the traveler."
+  },
+  {
+    "id": 89,
+    "archetype": "Expedition",
+    "name": "An unexplored place is discovered."
+  },
+  {
+    "id": 90,
+    "archetype": "Expedition",
+    "name": "A rare sighting is reported."
+  },
+  {
+    "id": 91,
+    "archetype": "Expedition",
+    "name": "Something valuable may be hidden there."
+  },
+  {
+    "id": 92,
+    "archetype": "Expedition",
+    "name": "The journey requires careful planning."
+  },
+  {
+    "id": 93,
+    "archetype": "Expedition",
+    "name": "Nature blocks the easiest route."
+  },
+  {
+    "id": 94,
+    "archetype": "Expedition",
+    "name": "A guide is needed."
+  },
+  {
+    "id": 95,
+    "archetype": "Expedition",
+    "name": "Every step uncovers something new."
+  },
+  {
+    "id": 96,
+    "archetype": "Expedition",
+    "name": "The expedition reveals more than expected."
+  },
+  {
+    "id": 97,
+    "archetype": "Find the Way Home",
+    "name": "Someone becomes separated from the group."
+  },
+  {
+    "id": 98,
+    "archetype": "Find the Way Home",
+    "name": "Familiar landmarks disappear."
+  },
+  {
+    "id": 99,
+    "archetype": "Find the Way Home",
+    "name": "The usual path is blocked."
+  },
+  {
+    "id": 100,
+    "archetype": "Find the Way Home",
+    "name": "A guide goes missing."
+  },
+  {
+    "id": 101,
+    "archetype": "Find the Way Home",
+    "name": "Darkness arrives too soon."
+  },
+  {
+    "id": 102,
+    "archetype": "Find the Way Home",
+    "name": "A map is lost."
+  },
+  {
+    "id": 103,
+    "archetype": "Find the Way Home",
+    "name": "Every direction looks the same."
+  },
+  {
+    "id": 104,
+    "archetype": "Find the Way Home",
+    "name": "Home can only be reached by helping someone else first."
+  },
+  {
+    "id": 105,
+    "archetype": "Escort Mission",
+    "name": "Someone cannot travel alone."
+  },
+  {
+    "id": 106,
+    "archetype": "Escort Mission",
+    "name": "A younger companion needs guidance."
+  },
+  {
+    "id": 107,
+    "archetype": "Escort Mission",
+    "name": "A visitor needs help reaching safety."
+  },
+  {
+    "id": 108,
+    "archetype": "Escort Mission",
+    "name": "The journey becomes more dangerous than expected."
+  },
+  {
+    "id": 109,
+    "archetype": "Escort Mission",
+    "name": "The companion has an important secret."
+  },
+  {
+    "id": 110,
+    "archetype": "Escort Mission",
+    "name": "The safest route suddenly changes."
+  },
+  {
+    "id": 111,
+    "archetype": "Escort Mission",
+    "name": "Trust grows along the journey."
+  },
+  {
+    "id": 112,
+    "archetype": "Escort Mission",
+    "name": "Reaching the destination is only half the mission."
+  },
+  {
+    "id": 113,
+    "archetype": "Race Against Time",
+    "name": "Something important must happen before sunset."
+  },
+  {
+    "id": 114,
+    "archetype": "Race Against Time",
+    "name": "Every minute counts."
+  },
+  {
+    "id": 115,
+    "archetype": "Race Against Time",
+    "name": "A deadline is fast approaching."
+  },
+  {
+    "id": 116,
+    "archetype": "Race Against Time",
+    "name": "Someone needs help immediately."
+  },
+  {
+    "id": 117,
+    "archetype": "Race Against Time",
+    "name": "A natural event is about to begin."
+  },
+  {
+    "id": 118,
+    "archetype": "Race Against Time",
+    "name": "Waiting is no longer an option."
+  },
+  {
+    "id": 119,
+    "archetype": "Race Against Time",
+    "name": "One delay creates another."
+  },
+  {
+    "id": 120,
+    "archetype": "Race Against Time",
+    "name": "Success depends on perfect timing."
+  },
+  {
+    "id": 121,
+    "archetype": "Friendship Repair",
+    "name": "Two friends stop talking."
+  },
+  {
+    "id": 122,
+    "archetype": "Friendship Repair",
+    "name": "Someone feels left out."
+  },
+  {
+    "id": 123,
+    "archetype": "Friendship Repair",
+    "name": "A misunderstanding grows bigger."
+  },
+  {
+    "id": 124,
+    "archetype": "Friendship Repair",
+    "name": "A promise is accidentally broken."
+  },
+  {
+    "id": 125,
+    "archetype": "Friendship Repair",
+    "name": "Hurt feelings remain unspoken."
+  },
+  {
+    "id": 126,
+    "archetype": "Friendship Repair",
+    "name": "An apology needs courage."
+  },
+  {
+    "id": 127,
+    "archetype": "Friendship Repair",
+    "name": "Trust has to be rebuilt."
+  },
+  {
+    "id": 128,
+    "archetype": "Friendship Repair",
+    "name": "Working together becomes unavoidable."
+  },
+  {
+    "id": 129,
+    "archetype": "New Friend",
+    "name": "A newcomer arrives."
+  },
+  {
+    "id": 130,
+    "archetype": "New Friend",
+    "name": "Someone is sitting alone."
+  },
+  {
+    "id": 131,
+    "archetype": "New Friend",
+    "name": "Two strangers meet unexpectedly."
+  },
+  {
+    "id": 132,
+    "archetype": "New Friend",
+    "name": "A shared problem brings two children together."
+  },
+  {
+    "id": 133,
+    "archetype": "New Friend",
+    "name": "A misunderstanding creates distance."
+  },
+  {
+    "id": 134,
+    "archetype": "New Friend",
+    "name": "Different personalities must cooperate."
+  },
+  {
+    "id": 135,
+    "archetype": "New Friend",
+    "name": "A kind act starts a friendship."
+  },
+  {
+    "id": 136,
+    "archetype": "New Friend",
+    "name": "Saying hello changes everything."
+  },
+  {
+    "id": 137,
+    "archetype": "Second Chance",
+    "name": "A mistake deserves another opportunity."
+  },
+  {
+    "id": 138,
+    "archetype": "Second Chance",
+    "name": "Trust is slowly returning."
+  },
+  {
+    "id": 139,
+    "archetype": "Second Chance",
+    "name": "Someone wants to make things right."
+  },
+  {
+    "id": 140,
+    "archetype": "Second Chance",
+    "name": "A new opportunity appears unexpectedly."
+  },
+  {
+    "id": 141,
+    "archetype": "Second Chance",
+    "name": "Past mistakes create fresh challenges."
+  },
+  {
+    "id": 142,
+    "archetype": "Second Chance",
+    "name": "Actions matter more than words."
+  },
+  {
+    "id": 143,
+    "archetype": "Second Chance",
+    "name": "Forgiveness must be earned."
+  },
+  {
+    "id": 144,
+    "archetype": "Second Chance",
+    "name": "A better choice changes the ending."
+  },
+  {
+    "id": 145,
+    "archetype": "Helping Hand",
+    "name": "Someone quietly needs help."
+  },
+  {
+    "id": 146,
+    "archetype": "Helping Hand",
+    "name": "A difficult task is too big for one person."
+  },
+  {
+    "id": 147,
+    "archetype": "Helping Hand",
+    "name": "A small act of kindness makes a difference."
+  },
+  {
+    "id": 148,
+    "archetype": "Helping Hand",
+    "name": "Someone asks for help for the first time."
+  },
+  {
+    "id": 149,
+    "archetype": "Helping Hand",
+    "name": "A problem affects everyone."
+  },
+  {
+    "id": 150,
+    "archetype": "Helping Hand",
+    "name": "Helping requires giving up something."
+  },
+  {
+    "id": 151,
+    "archetype": "Helping Hand",
+    "name": "Unexpected helpers appear."
+  },
+  {
+    "id": 152,
+    "archetype": "Helping Hand",
+    "name": "Kindness spreads from one person to another."
+  },
+  {
+    "id": 153,
+    "archetype": "Journey Together",
+    "name": "Two very different companions must travel together."
+  },
+  {
+    "id": 154,
+    "archetype": "Journey Together",
+    "name": "A shared destination brings strangers together."
+  },
+  {
+    "id": 155,
+    "archetype": "Journey Together",
+    "name": "One traveler knows the way."
+  },
+  {
+    "id": 156,
+    "archetype": "Journey Together",
+    "name": "Both travelers need each other in different ways."
+  },
+  {
+    "id": 157,
+    "archetype": "Journey Together",
+    "name": "The journey tests the friendship."
+  },
+  {
+    "id": 158,
+    "archetype": "Journey Together",
+    "name": "The path is harder than expected."
+  },
+  {
+    "id": 159,
+    "archetype": "Journey Together",
+    "name": "Helping each other becomes essential."
+  },
+  {
+    "id": 160,
+    "archetype": "Journey Together",
+    "name": "They arrive as different people than when they started."
+  },
+  {
+    "id": 161,
+    "archetype": "Team Adventure",
+    "name": "One person cannot solve the problem alone."
+  },
+  {
+    "id": 162,
+    "archetype": "Team Adventure",
+    "name": "Everyone has a different strength."
+  },
+  {
+    "id": 163,
+    "archetype": "Team Adventure",
+    "name": "The team disagrees on the plan."
+  },
+  {
+    "id": 164,
+    "archetype": "Team Adventure",
+    "name": "Success depends on cooperation."
+  },
+  {
+    "id": 165,
+    "archetype": "Team Adventure",
+    "name": "Every member gets an important role."
+  },
+  {
+    "id": 166,
+    "archetype": "Team Adventure",
+    "name": "A setback tests the team."
+  },
+  {
+    "id": 167,
+    "archetype": "Team Adventure",
+    "name": "Someone feels they aren't needed."
+  },
+  {
+    "id": 168,
+    "archetype": "Team Adventure",
+    "name": "Working together achieves the impossible."
+  },
+  {
+    "id": 169,
+    "archetype": "Community Project",
+    "name": "The whole community needs help."
+  },
+  {
+    "id": 170,
+    "archetype": "Community Project",
+    "name": "A place needs rebuilding."
+  },
+  {
+    "id": 171,
+    "archetype": "Community Project",
+    "name": "Everyone contributes differently."
+  },
+  {
+    "id": 172,
+    "archetype": "Community Project",
+    "name": "Resources are limited."
+  },
+  {
+    "id": 173,
+    "archetype": "Community Project",
+    "name": "People disagree on the best solution."
+  },
+  {
+    "id": 174,
+    "archetype": "Community Project",
+    "name": "Unexpected volunteers arrive."
+  },
+  {
+    "id": 175,
+    "archetype": "Community Project",
+    "name": "A setback delays the work."
+  },
+  {
+    "id": 176,
+    "archetype": "Community Project",
+    "name": "The finished project brings everyone together."
+  },
+  {
+    "id": 177,
+    "archetype": "Leadership Challenge",
+    "name": "Nobody knows what to do."
+  },
+  {
+    "id": 178,
+    "archetype": "Leadership Challenge",
+    "name": "A leader is suddenly needed."
+  },
+  {
+    "id": 179,
+    "archetype": "Leadership Challenge",
+    "name": "Everyone has different opinions."
+  },
+  {
+    "id": 180,
+    "archetype": "Leadership Challenge",
+    "name": "A difficult decision must be made."
+  },
+  {
+    "id": 181,
+    "archetype": "Leadership Challenge",
+    "name": "Confidence begins to fade."
+  },
+  {
+    "id": 182,
+    "archetype": "Leadership Challenge",
+    "name": "A quiet child steps forward."
+  },
+  {
+    "id": 183,
+    "archetype": "Leadership Challenge",
+    "name": "Responsibility feels overwhelming."
+  },
+  {
+    "id": 184,
+    "archetype": "Leadership Challenge",
+    "name": "Good leadership inspires others to lead."
+  },
+  {
+    "id": 185,
+    "archetype": "Shared Mission",
+    "name": "Several groups have the same goal."
+  },
+  {
+    "id": 186,
+    "archetype": "Shared Mission",
+    "name": "Different talents must be combined."
+  },
+  {
+    "id": 187,
+    "archetype": "Shared Mission",
+    "name": "Success depends on everyone contributing."
+  },
+  {
+    "id": 188,
+    "archetype": "Shared Mission",
+    "name": "Helping others helps yourself."
+  },
+  {
+    "id": 189,
+    "archetype": "Shared Mission",
+    "name": "Someone must coordinate the effort."
+  },
+  {
+    "id": 190,
+    "archetype": "Shared Mission",
+    "name": "A setback affects everyone equally."
+  },
+  {
+    "id": 191,
+    "archetype": "Shared Mission",
+    "name": "Sharing resources becomes necessary."
+  },
+  {
+    "id": 192,
+    "archetype": "Shared Mission",
+    "name": "The mission succeeds because nobody works alone."
+  },
+  {
+    "id": 193,
+    "archetype": "Build Together",
+    "name": "Something important needs building."
+  },
+  {
+    "id": 194,
+    "archetype": "Build Together",
+    "name": "Something valuable is broken."
+  },
+  {
+    "id": 195,
+    "archetype": "Build Together",
+    "name": "A new idea needs creating."
+  },
+  {
+    "id": 196,
+    "archetype": "Build Together",
+    "name": "Materials are difficult to find."
+  },
+  {
+    "id": 197,
+    "archetype": "Build Together",
+    "name": "Everyone contributes one piece."
+  },
+  {
+    "id": 198,
+    "archetype": "Build Together",
+    "name": "The design doesn't work at first."
+  },
+  {
+    "id": 199,
+    "archetype": "Build Together",
+    "name": "Nature creates an unexpected obstacle."
+  },
+  {
+    "id": 200,
+    "archetype": "Build Together",
+    "name": "The finished creation solves a much bigger problem."
+  },
+  {
+    "id": 201,
+    "archetype": "Hero's Trial",
+    "name": "Three difficult challenges must be completed."
+  },
+  {
+    "id": 202,
+    "archetype": "Hero's Trial",
+    "name": "Courage is tested before strength."
+  },
+  {
+    "id": 203,
+    "archetype": "Hero's Trial",
+    "name": "Every success unlocks the next challenge."
+  },
+  {
+    "id": 204,
+    "archetype": "Hero's Trial",
+    "name": "Giving up becomes tempting."
+  },
+  {
+    "id": 205,
+    "archetype": "Hero's Trial",
+    "name": "Someone weaker needs help during the trial."
+  },
+  {
+    "id": 206,
+    "archetype": "Hero's Trial",
+    "name": "The hardest challenge is inside yourself."
+  },
+  {
+    "id": 207,
+    "archetype": "Hero's Trial",
+    "name": "Pride becomes the biggest obstacle."
+  },
+  {
+    "id": 208,
+    "archetype": "Hero's Trial",
+    "name": "The final reward is wisdom, not victory."
+  },
+  {
+    "id": 209,
+    "archetype": "Final Challenge",
+    "name": "Everything depends on one last attempt."
+  },
+  {
+    "id": 210,
+    "archetype": "Final Challenge",
+    "name": "One final obstacle blocks success."
+  },
+  {
+    "id": 211,
+    "archetype": "Final Challenge",
+    "name": "All previous lessons are needed."
+  },
+  {
+    "id": 212,
+    "archetype": "Final Challenge",
+    "name": "The easiest choice is the wrong one."
+  },
+  {
+    "id": 213,
+    "archetype": "Final Challenge",
+    "name": "Friends arrive just in time."
+  },
+  {
+    "id": 214,
+    "archetype": "Final Challenge",
+    "name": "Confidence begins to disappear."
+  },
+  {
+    "id": 215,
+    "archetype": "Final Challenge",
+    "name": "A surprising solution appears."
+  },
+  {
+    "id": 216,
+    "archetype": "Final Challenge",
+    "name": "The ending depends on one brave decision."
+  },
+  {
+    "id": 217,
+    "archetype": "Training Journey",
+    "name": "A new skill must be learned."
+  },
+  {
+    "id": 218,
+    "archetype": "Training Journey",
+    "name": "Practice feels frustrating."
+  },
+  {
+    "id": 219,
+    "archetype": "Training Journey",
+    "name": "A mentor gives a difficult challenge."
+  },
+  {
+    "id": 220,
+    "archetype": "Training Journey",
+    "name": "Improvement happens slowly."
+  },
+  {
+    "id": 221,
+    "archetype": "Training Journey",
+    "name": "A setback tests determination."
+  },
+  {
+    "id": 222,
+    "archetype": "Training Journey",
+    "name": "Confidence grows little by little."
+  },
+  {
+    "id": 223,
+    "archetype": "Training Journey",
+    "name": "The training prepares for something unexpected."
+  },
+  {
+    "id": 224,
+    "archetype": "Training Journey",
+    "name": "The real lesson isn't the skill itself."
+  },
+  {
+    "id": 225,
+    "archetype": "Problem Solver",
+    "name": "A problem affects everyone."
+  },
+  {
+    "id": 226,
+    "archetype": "Problem Solver",
+    "name": "Every obvious solution fails."
+  },
+  {
+    "id": 227,
+    "archetype": "Problem Solver",
+    "name": "A clever idea changes everything."
+  },
+  {
+    "id": 228,
+    "archetype": "Problem Solver",
+    "name": "Small clues point toward the answer."
+  },
+  {
+    "id": 229,
+    "archetype": "Problem Solver",
+    "name": "Different opinions create confusion."
+  },
+  {
+    "id": 230,
+    "archetype": "Problem Solver",
+    "name": "Trial and error lead to progress."
+  },
+  {
+    "id": 231,
+    "archetype": "Problem Solver",
+    "name": "Teamwork reveals the solution."
+  },
+  {
+    "id": 232,
+    "archetype": "Problem Solver",
+    "name": "Solving one problem uncovers another opportunity."
+  },
+  {
+    "id": 233,
+    "archetype": "Responsibility Quest",
+    "name": "An important duty is entrusted to someone."
+  },
+  {
+    "id": 234,
+    "archetype": "Responsibility Quest",
+    "name": "A promise must be kept."
+  },
+  {
+    "id": 235,
+    "archetype": "Responsibility Quest",
+    "name": "Looking after something becomes harder than expected."
+  },
+  {
+    "id": 236,
+    "archetype": "Responsibility Quest",
+    "name": "A careless mistake has consequences."
+  },
+  {
+    "id": 237,
+    "archetype": "Responsibility Quest",
+    "name": "Choosing responsibility means giving something up."
+  },
+  {
+    "id": 238,
+    "archetype": "Responsibility Quest",
+    "name": "Others begin depending on them."
+  },
+  {
+    "id": 239,
+    "archetype": "Responsibility Quest",
+    "name": "Doing the right thing isn't the easiest choice."
+  },
+  {
+    "id": 240,
+    "archetype": "Responsibility Quest",
+    "name": "Responsibility earns trust and respect."
+  },
+  {
+    "id": 241,
+    "archetype": "Invention Story",
+    "name": "An everyday problem needs a new solution."
+  },
+  {
+    "id": 242,
+    "archetype": "Invention Story",
+    "name": "An old invention inspires a new idea."
+  },
+  {
+    "id": 243,
+    "archetype": "Invention Story",
+    "name": "A tool suddenly stops working."
+  },
+  {
+    "id": 244,
+    "archetype": "Invention Story",
+    "name": "Different ideas compete."
+  },
+  {
+    "id": 245,
+    "archetype": "Invention Story",
+    "name": "An experiment fails unexpectedly."
+  },
+  {
+    "id": 246,
+    "archetype": "Invention Story",
+    "name": "A small discovery becomes important."
+  },
+  {
+    "id": 247,
+    "archetype": "Invention Story",
+    "name": "Limited materials force creativity."
+  },
+  {
+    "id": 248,
+    "archetype": "Invention Story",
+    "name": "The invention solves a bigger problem."
+  },
+  {
+    "id": 249,
+    "archetype": "Restoration Story",
+    "name": "Something beautiful has been damaged."
+  },
+  {
+    "id": 250,
+    "archetype": "Restoration Story",
+    "name": "A special place has been forgotten."
+  },
+  {
+    "id": 251,
+    "archetype": "Restoration Story",
+    "name": "An important object breaks."
+  },
+  {
+    "id": 252,
+    "archetype": "Restoration Story",
+    "name": "Nature needs healing."
+  },
+  {
+    "id": 253,
+    "archetype": "Restoration Story",
+    "name": "Hope begins to disappear."
+  },
+  {
+    "id": 254,
+    "archetype": "Restoration Story",
+    "name": "Small repairs make a big difference."
+  },
+  {
+    "id": 255,
+    "archetype": "Restoration Story",
+    "name": "Everyone contributes one part."
+  },
+  {
+    "id": 256,
+    "archetype": "Restoration Story",
+    "name": "Restoring something restores friendships too."
+  },
+  {
+    "id": 257,
+    "archetype": "Creative Quest",
+    "name": "A blank space needs imagination."
+  },
+  {
+    "id": 258,
+    "archetype": "Creative Quest",
+    "name": "A celebration needs something special."
+  },
+  {
+    "id": 259,
+    "archetype": "Creative Quest",
+    "name": "Inspiration suddenly disappears."
+  },
+  {
+    "id": 260,
+    "archetype": "Creative Quest",
+    "name": "Different ideas clash."
+  },
+  {
+    "id": 261,
+    "archetype": "Creative Quest",
+    "name": "A creative mistake becomes an opportunity."
+  },
+  {
+    "id": 262,
+    "archetype": "Creative Quest",
+    "name": "Nature inspires a solution."
+  },
+  {
+    "id": 263,
+    "archetype": "Creative Quest",
+    "name": "Working together creates something unique."
+  },
+  {
+    "id": 264,
+    "archetype": "Creative Quest",
+    "name": "The finished creation surprises everyone."
+  },
+  {
+    "id": 265,
+    "archetype": "Build & Repair",
+    "name": "Something essential breaks."
+  },
+  {
+    "id": 266,
+    "archetype": "Build & Repair",
+    "name": "A structure becomes unsafe."
+  },
+  {
+    "id": 267,
+    "archetype": "Build & Repair",
+    "name": "Missing pieces must be found."
+  },
+  {
+    "id": 268,
+    "archetype": "Build & Repair",
+    "name": "A repair must happen before time runs out."
+  },
+  {
+    "id": 269,
+    "archetype": "Build & Repair",
+    "name": "Working alone isn't enough."
+  },
+  {
+    "id": 270,
+    "archetype": "Build & Repair",
+    "name": "Unexpected damage appears."
+  },
+  {
+    "id": 271,
+    "archetype": "Build & Repair",
+    "name": "Creative materials replace missing ones."
+  },
+  {
+    "id": 272,
+    "archetype": "Build & Repair",
+    "name": "The repaired object becomes even better."
+  },
+  {
+    "id": 273,
+    "archetype": "Transformation Story",
+    "name": "Someone gets an unexpected opportunity."
+  },
+  {
+    "id": 274,
+    "archetype": "Transformation Story",
+    "name": "A place begins changing."
+  },
+  {
+    "id": 275,
+    "archetype": "Transformation Story",
+    "name": "A small act starts a big change."
+  },
+  {
+    "id": 276,
+    "archetype": "Transformation Story",
+    "name": "Fear prevents growth."
+  },
+  {
+    "id": 277,
+    "archetype": "Transformation Story",
+    "name": "Kindness transforms the situation."
+  },
+  {
+    "id": 278,
+    "archetype": "Transformation Story",
+    "name": "A hidden talent emerges."
+  },
+  {
+    "id": 279,
+    "archetype": "Transformation Story",
+    "name": "Old habits no longer work."
+  },
+  {
+    "id": 280,
+    "archetype": "Transformation Story",
+    "name": "The greatest transformation happens inside."
+  },
+  {
+    "id": 281,
+    "archetype": "Mentor Journey",
+    "name": "A wise guide appears unexpectedly."
+  },
+  {
+    "id": 282,
+    "archetype": "Mentor Journey",
+    "name": "A difficult lesson blocks progress."
+  },
+  {
+    "id": 283,
+    "archetype": "Mentor Journey",
+    "name": "Practice becomes the only path forward."
+  },
+  {
+    "id": 284,
+    "archetype": "Mentor Journey",
+    "name": "The mentor gives very little help."
+  },
+  {
+    "id": 285,
+    "archetype": "Mentor Journey",
+    "name": "Confidence is tested."
+  },
+  {
+    "id": 286,
+    "archetype": "Mentor Journey",
+    "name": "The mentor suddenly disappears."
+  },
+  {
+    "id": 287,
+    "archetype": "Mentor Journey",
+    "name": "The student must teach someone else."
+  },
+  {
+    "id": 288,
+    "archetype": "Mentor Journey",
+    "name": "The final lesson is discovered independently."
+  },
+  {
+    "id": 289,
+    "archetype": "Learning Quest",
+    "name": "A new skill becomes necessary."
+  },
+  {
+    "id": 290,
+    "archetype": "Learning Quest",
+    "name": "A difficult question appears."
+  },
+  {
+    "id": 291,
+    "archetype": "Learning Quest",
+    "name": "Curiosity starts the adventure."
+  },
+  {
+    "id": 292,
+    "archetype": "Learning Quest",
+    "name": "Every mistake teaches something useful."
+  },
+  {
+    "id": 293,
+    "archetype": "Learning Quest",
+    "name": "Learning unlocks the next step."
+  },
+  {
+    "id": 294,
+    "archetype": "Learning Quest",
+    "name": "A puzzle cannot be solved without knowledge."
+  },
+  {
+    "id": 295,
+    "archetype": "Learning Quest",
+    "name": "Someone unexpected becomes the teacher."
+  },
+  {
+    "id": 296,
+    "archetype": "Learning Quest",
+    "name": "The lesson changes future choices."
+  },
+  {
+    "id": 297,
+    "archetype": "Discovery Journey",
+    "name": "Curiosity leads somewhere unexpected."
+  },
+  {
+    "id": 298,
+    "archetype": "Discovery Journey",
+    "name": "Something forgotten is rediscovered."
+  },
+  {
+    "id": 299,
+    "archetype": "Discovery Journey",
+    "name": "A hidden clue changes everything."
+  },
+  {
+    "id": 300,
+    "archetype": "Discovery Journey",
+    "name": "Every answer raises another question."
+  },
+  {
+    "id": 301,
+    "archetype": "Discovery Journey",
+    "name": "A surprising connection is revealed."
+  },
+  {
+    "id": 302,
+    "archetype": "Discovery Journey",
+    "name": "A journey uncovers forgotten history."
+  },
+  {
+    "id": 303,
+    "archetype": "Discovery Journey",
+    "name": "The discovery helps others."
+  },
+  {
+    "id": 304,
+    "archetype": "Discovery Journey",
+    "name": "Knowledge becomes the greatest treasure."
+  },
+  {
+    "id": 305,
+    "archetype": "Wisdom Challenge",
+    "name": "Two choices both seem right."
+  },
+  {
+    "id": 306,
+    "archetype": "Wisdom Challenge",
+    "name": "A difficult decision affects everyone."
+  },
+  {
+    "id": 307,
+    "archetype": "Wisdom Challenge",
+    "name": "Listening becomes more important than speaking."
+  },
+  {
+    "id": 308,
+    "archetype": "Wisdom Challenge",
+    "name": "Patience reveals the answer."
+  },
+  {
+    "id": 309,
+    "archetype": "Wisdom Challenge",
+    "name": "A simple solution is overlooked."
+  },
+  {
+    "id": 310,
+    "archetype": "Wisdom Challenge",
+    "name": "Someone asks for wise advice."
+  },
+  {
+    "id": 311,
+    "archetype": "Wisdom Challenge",
+    "name": "Kindness solves the problem."
+  },
+  {
+    "id": 312,
+    "archetype": "Wisdom Challenge",
+    "name": "Wisdom changes the outcome."
+  },
+  {
+    "id": 313,
+    "archetype": "Teaching Adventure",
+    "name": "Someone wants to learn."
+  },
+  {
+    "id": 314,
+    "archetype": "Teaching Adventure",
+    "name": "A lesson must be shared."
+  },
+  {
+    "id": 315,
+    "archetype": "Teaching Adventure",
+    "name": "The student learns differently."
+  },
+  {
+    "id": 316,
+    "archetype": "Teaching Adventure",
+    "name": "Practice becomes difficult."
+  },
+  {
+    "id": 317,
+    "archetype": "Teaching Adventure",
+    "name": "Teaching requires patience."
+  },
+  {
+    "id": 318,
+    "archetype": "Teaching Adventure",
+    "name": "The teacher learns something too."
+  },
+  {
+    "id": 319,
+    "archetype": "Teaching Adventure",
+    "name": "A mistake becomes the best lesson."
+  },
+  {
+    "id": 320,
+    "archetype": "Teaching Adventure",
+    "name": "The student eventually teaches others."
+  },
+  {
+    "id": 321,
+    "archetype": "Festival Adventure",
+    "name": "Festival preparations begin."
+  },
+  {
+    "id": 322,
+    "archetype": "Festival Adventure",
+    "name": "A tradition is in danger."
+  },
+  {
+    "id": 323,
+    "archetype": "Festival Adventure",
+    "name": "Guests arrive unexpectedly."
+  },
+  {
+    "id": 324,
+    "archetype": "Festival Adventure",
+    "name": "Something important goes missing."
+  },
+  {
+    "id": 325,
+    "archetype": "Festival Adventure",
+    "name": "Weather threatens the celebration."
+  },
+  {
+    "id": 326,
+    "archetype": "Festival Adventure",
+    "name": "Everyone has a role."
+  },
+  {
+    "id": 327,
+    "archetype": "Festival Adventure",
+    "name": "A surprise changes the festival."
+  },
+  {
+    "id": 328,
+    "archetype": "Festival Adventure",
+    "name": "The celebration brings everyone together."
+  },
+  {
+    "id": 329,
+    "archetype": "Celebration Preparation",
+    "name": "A special event is approaching."
+  },
+  {
+    "id": 330,
+    "archetype": "Celebration Preparation",
+    "name": "Decorations need finishing."
+  },
+  {
+    "id": 331,
+    "archetype": "Celebration Preparation",
+    "name": "A last-minute problem appears."
+  },
+  {
+    "id": 332,
+    "archetype": "Celebration Preparation",
+    "name": "Time becomes short."
+  },
+  {
+    "id": 333,
+    "archetype": "Celebration Preparation",
+    "name": "Friends work together."
+  },
+  {
+    "id": 334,
+    "archetype": "Celebration Preparation",
+    "name": "Someone feels left out."
+  },
+  {
+    "id": 335,
+    "archetype": "Celebration Preparation",
+    "name": "Preparations don't go as planned."
+  },
+  {
+    "id": 336,
+    "archetype": "Celebration Preparation",
+    "name": "The celebration becomes unforgettable."
+  },
+  {
+    "id": 337,
+    "archetype": "Performance Story",
+    "name": "A performance is announced."
+  },
+  {
+    "id": 338,
+    "archetype": "Performance Story",
+    "name": "Stage fright appears."
+  },
+  {
+    "id": 339,
+    "archetype": "Performance Story",
+    "name": "Practice goes poorly."
+  },
+  {
+    "id": 340,
+    "archetype": "Performance Story",
+    "name": "The audience grows unexpectedly."
+  },
+  {
+    "id": 341,
+    "archetype": "Performance Story",
+    "name": "The main performer cannot continue."
+  },
+  {
+    "id": 342,
+    "archetype": "Performance Story",
+    "name": "A mistake happens on stage."
+  },
+  {
+    "id": 343,
+    "archetype": "Performance Story",
+    "name": "Friends offer encouragement."
+  },
+  {
+    "id": 344,
+    "archetype": "Performance Story",
+    "name": "Confidence shines brighter than perfection."
+  },
+  {
+    "id": 345,
+    "archetype": "Heritage Journey",
+    "name": "An old family story is discovered."
+  },
+  {
+    "id": 346,
+    "archetype": "Heritage Journey",
+    "name": "A forgotten tradition returns."
+  },
+  {
+    "id": 347,
+    "archetype": "Heritage Journey",
+    "name": "A meaningful object is found."
+  },
+  {
+    "id": 348,
+    "archetype": "Heritage Journey",
+    "name": "Elders share an important lesson."
+  },
+  {
+    "id": 349,
+    "archetype": "Heritage Journey",
+    "name": "History holds the answer."
+  },
+  {
+    "id": 350,
+    "archetype": "Heritage Journey",
+    "name": "A celebration honors the past."
+  },
+  {
+    "id": 351,
+    "archetype": "Heritage Journey",
+    "name": "A forgotten place is revisited."
+  },
+  {
+    "id": 352,
+    "archetype": "Heritage Journey",
+    "name": "The tradition gains new meaning."
+  },
+  {
+    "id": 353,
+    "archetype": "Gift of Giving",
+    "name": "Someone needs encouragement."
+  },
+  {
+    "id": 354,
+    "archetype": "Gift of Giving",
+    "name": "A thoughtful gift is planned."
+  },
+  {
+    "id": 355,
+    "archetype": "Gift of Giving",
+    "name": "Kindness is returned unexpectedly."
+  },
+  {
+    "id": 356,
+    "archetype": "Gift of Giving",
+    "name": "Giving requires sacrifice."
+  },
+  {
+    "id": 357,
+    "archetype": "Gift of Giving",
+    "name": "A handmade gift becomes special."
+  },
+  {
+    "id": 358,
+    "archetype": "Gift of Giving",
+    "name": "A surprise brightens someone's day."
+  },
+  {
+    "id": 359,
+    "archetype": "Gift of Giving",
+    "name": "Generosity inspires others."
+  },
+  {
+    "id": 360,
+    "archetype": "Gift of Giving",
+    "name": "The greatest gift isn't something you keep."
+  },
+  {
+    "id": 361,
+    "archetype": "Magical Discovery",
+    "name": "Magic appears unexpectedly."
+  },
+  {
+    "id": 362,
+    "archetype": "Magical Discovery",
+    "name": "A magical object awakens."
+  },
+  {
+    "id": 363,
+    "archetype": "Magical Discovery",
+    "name": "A hidden power is revealed."
+  },
+  {
+    "id": 364,
+    "archetype": "Magical Discovery",
+    "name": "A magical creature asks for help."
+  },
+  {
+    "id": 365,
+    "archetype": "Magical Discovery",
+    "name": "A spell changes everything."
+  },
+  {
+    "id": 366,
+    "archetype": "Magical Discovery",
+    "name": "Kindness unlocks magic."
+  },
+  {
+    "id": 367,
+    "archetype": "Magical Discovery",
+    "name": "Magic creates an unexpected problem."
+  },
+  {
+    "id": 368,
+    "archetype": "Magical Discovery",
+    "name": "Responsibility comes with magical power."
+  },
+  {
+    "id": 369,
+    "archetype": "Magical Quest",
+    "name": "A magical mission begins."
+  },
+  {
+    "id": 370,
+    "archetype": "Magical Quest",
+    "name": "Ancient magic needs restoring."
+  },
+  {
+    "id": 371,
+    "archetype": "Magical Quest",
+    "name": "A magical guide appears."
+  },
+  {
+    "id": 372,
+    "archetype": "Magical Quest",
+    "name": "Three magical tasks must be completed."
+  },
+  {
+    "id": 373,
+    "archetype": "Magical Quest",
+    "name": "A magical object must be returned."
+  },
+  {
+    "id": 374,
+    "archetype": "Magical Quest",
+    "name": "The wrong spell creates trouble."
+  },
+  {
+    "id": 375,
+    "archetype": "Magical Quest",
+    "name": "Every magical choice has consequences."
+  },
+  {
+    "id": 376,
+    "archetype": "Magical Quest",
+    "name": "Balance must be restored."
+  },
+  {
+    "id": 377,
+    "archetype": "Nature's Balance",
+    "name": "Nature behaves unusually."
+  },
+  {
+    "id": 378,
+    "archetype": "Nature's Balance",
+    "name": "Animals begin acting differently."
+  },
+  {
+    "id": 379,
+    "archetype": "Nature's Balance",
+    "name": "Water starts disappearing."
+  },
+  {
+    "id": 380,
+    "archetype": "Nature's Balance",
+    "name": "Plants stop growing."
+  },
+  {
+    "id": 381,
+    "archetype": "Nature's Balance",
+    "name": "Weather changes unexpectedly."
+  },
+  {
+    "id": 382,
+    "archetype": "Nature's Balance",
+    "name": "Balance is slowly returning."
+  },
+  {
+    "id": 383,
+    "archetype": "Nature's Balance",
+    "name": "A tiny action has a huge effect."
+  },
+  {
+    "id": 384,
+    "archetype": "Nature's Balance",
+    "name": "Caring for nature restores harmony."
+  },
+  {
+    "id": 385,
+    "archetype": "Ancient Secret",
+    "name": "An old map is discovered."
+  },
+  {
+    "id": 386,
+    "archetype": "Ancient Secret",
+    "name": "Forgotten symbols appear."
+  },
+  {
+    "id": 387,
+    "archetype": "Ancient Secret",
+    "name": "An ancient door opens."
+  },
+  {
+    "id": 388,
+    "archetype": "Ancient Secret",
+    "name": "A legend proves true."
+  },
+  {
+    "id": 389,
+    "archetype": "Ancient Secret",
+    "name": "A hidden guardian appears."
+  },
+  {
+    "id": 390,
+    "archetype": "Ancient Secret",
+    "name": "History reveals a forgotten truth."
+  },
+  {
+    "id": 391,
+    "archetype": "Ancient Secret",
+    "name": "The secret changes the mission."
+  },
+  {
+    "id": 392,
+    "archetype": "Ancient Secret",
+    "name": "The past helps solve today's problem."
+  },
+  {
+    "id": 393,
+    "archetype": "Wish or Blessing",
+    "name": "A heartfelt wish is made."
+  },
+  {
+    "id": 394,
+    "archetype": "Wish or Blessing",
+    "name": "A blessing arrives unexpectedly."
+  },
+  {
+    "id": 395,
+    "archetype": "Wish or Blessing",
+    "name": "Someone wishes for the wrong thing."
+  },
+  {
+    "id": 396,
+    "archetype": "Wish or Blessing",
+    "name": "Gratitude changes the outcome."
+  },
+  {
+    "id": 397,
+    "archetype": "Wish or Blessing",
+    "name": "A wish comes true in an unexpected way."
+  },
+  {
+    "id": 398,
+    "archetype": "Wish or Blessing",
+    "name": "Helping others brings a blessing."
+  },
+  {
+    "id": 399,
+    "archetype": "Wish or Blessing",
+    "name": "A difficult choice determines the blessing."
+  },
+  {
+    "id": 400,
+    "archetype": "Wish or Blessing",
+    "name": "True happiness wasn't what was wished for."
+  },
+  {
+    "id": 401,
+    "archetype": "Dream Adventure",
+    "name": "A mysterious dream repeats."
+  },
+  {
+    "id": 402,
+    "archetype": "Dream Adventure",
+    "name": "A dream gives an important clue."
+  },
+  {
+    "id": 403,
+    "archetype": "Dream Adventure",
+    "name": "Dreams and reality begin connecting."
+  },
+  {
+    "id": 404,
+    "archetype": "Dream Adventure",
+    "name": "A dream guide appears."
+  },
+  {
+    "id": 405,
+    "archetype": "Dream Adventure",
+    "name": "Fear must be faced in the dream."
+  },
+  {
+    "id": 406,
+    "archetype": "Dream Adventure",
+    "name": "Something learned in sleep helps later."
+  },
+  {
+    "id": 407,
+    "archetype": "Dream Adventure",
+    "name": "Waking creates a new mystery."
+  },
+  {
+    "id": 408,
+    "archetype": "Dream Adventure",
+    "name": "The final answer comes after the dream."
+  },
+  {
+    "id": 409,
+    "archetype": "Time Adventure",
+    "name": "Time suddenly becomes important."
+  },
+  {
+    "id": 410,
+    "archetype": "Time Adventure",
+    "name": "Every minute counts."
+  },
+  {
+    "id": 411,
+    "archetype": "Time Adventure",
+    "name": "Waiting changes everything."
+  },
+  {
+    "id": 412,
+    "archetype": "Time Adventure",
+    "name": "The right moment must be found."
+  },
+  {
+    "id": 413,
+    "archetype": "Time Adventure",
+    "name": "A forgotten deadline returns."
+  },
+  {
+    "id": 414,
+    "archetype": "Time Adventure",
+    "name": "Small delays create big problems."
+  },
+  {
+    "id": 415,
+    "archetype": "Time Adventure",
+    "name": "Patience reveals the answer."
+  },
+  {
+    "id": 416,
+    "archetype": "Time Adventure",
+    "name": "Perfect timing saves the day."
+  },
+  {
+    "id": 417,
+    "archetype": "Choice & Consequence",
+    "name": "Two paths appear."
+  },
+  {
+    "id": 418,
+    "archetype": "Choice & Consequence",
+    "name": "Every choice changes the story."
+  },
+  {
+    "id": 419,
+    "archetype": "Choice & Consequence",
+    "name": "The easiest option isn't the best."
+  },
+  {
+    "id": 420,
+    "archetype": "Choice & Consequence",
+    "name": "Someone else's future depends on the decision."
+  },
+  {
+    "id": 421,
+    "archetype": "Choice & Consequence",
+    "name": "A selfish choice creates problems."
+  },
+  {
+    "id": 422,
+    "archetype": "Choice & Consequence",
+    "name": "Kindness changes the outcome."
+  },
+  {
+    "id": 423,
+    "archetype": "Choice & Consequence",
+    "name": "Courage requires making a difficult choice."
+  },
+  {
+    "id": 424,
+    "archetype": "Choice & Consequence",
+    "name": "Every decision teaches something valuable."
+  },
+  {
+    "id": 425,
+    "archetype": "Promise Keeper",
+    "name": "An important promise is made."
+  },
+  {
+    "id": 426,
+    "archetype": "Promise Keeper",
+    "name": "Keeping the promise becomes difficult."
+  },
+  {
+    "id": 427,
+    "archetype": "Promise Keeper",
+    "name": "Obstacles test determination."
+  },
+  {
+    "id": 428,
+    "archetype": "Promise Keeper",
+    "name": "Others begin depending on the promise."
+  },
+  {
+    "id": 429,
+    "archetype": "Promise Keeper",
+    "name": "Breaking the promise seems easier."
+  },
+  {
+    "id": 430,
+    "archetype": "Promise Keeper",
+    "name": "Unexpected help appears."
+  },
+  {
+    "id": 431,
+    "archetype": "Promise Keeper",
+    "name": "Honoring the promise changes lives."
+  },
+  {
+    "id": 432,
+    "archetype": "Promise Keeper",
+    "name": "The promise becomes the greatest reward."
+  },
+  {
+    "id": 433,
+    "archetype": "Unexpected Surprise",
+    "name": "An ordinary day changes suddenly."
+  },
+  {
+    "id": 434,
+    "archetype": "Unexpected Surprise",
+    "name": "An unexpected visitor arrives."
+  },
+  {
+    "id": 435,
+    "archetype": "Unexpected Surprise",
+    "name": "A hidden opportunity appears."
+  },
+  {
+    "id": 436,
+    "archetype": "Unexpected Surprise",
+    "name": "A mistake leads to something wonderful."
+  },
+  {
+    "id": 437,
+    "archetype": "Unexpected Surprise",
+    "name": "The smallest idea grows unexpectedly."
+  },
+  {
+    "id": 438,
+    "archetype": "Unexpected Surprise",
+    "name": "Someone receives surprising news."
+  },
+  {
+    "id": 439,
+    "archetype": "Unexpected Surprise",
+    "name": "A coincidence changes everything."
+  },
+  {
+    "id": 440,
+    "archetype": "Unexpected Surprise",
+    "name": "The ending is better than anyone imagined."
+  }
+]

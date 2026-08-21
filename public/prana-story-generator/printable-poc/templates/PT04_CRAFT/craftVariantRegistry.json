@@ -1,0 +1,38 @@
+{
+  "band": {
+    "layout_id": "band_layout_v1",
+    "geometry_builder": "band",
+    "status": "implemented",
+    "description": "Wearable strip or bracelet with cut-only geometry."
+  },
+  "wheel": {
+    "layout_id": "wheel_layout_v1",
+    "geometry_builder": "wheel",
+    "status": "implemented",
+    "description": "Spinner or wheel craft with pointer and centre attachment."
+  },
+  "badge": {
+    "layout_id": "badge_layout_v1",
+    "geometry_builder": "badge",
+    "status": "implemented",
+    "description": "Badge or token craft with optional fold tab."
+  },
+  "bookmark": {
+    "layout_id": "bookmark_layout_v1",
+    "geometry_builder": "bookmark",
+    "status": "registered",
+    "description": "Slim vertical bookmark craft."
+  },
+  "flower": {
+    "layout_id": "flower_layout_v1",
+    "geometry_builder": "gratitude_flower",
+    "status": "registered",
+    "description": "Flower craft with petals or gratitude prompts."
+  },
+  "coupon": {
+    "layout_id": "coupon_layout_v1",
+    "geometry_builder": "kindness_coupon",
+    "status": "registered",
+    "description": "Coupon or kindness card craft."
+  }
+}

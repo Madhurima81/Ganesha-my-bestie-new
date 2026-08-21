@@ -1,0 +1,461 @@
+[
+  {
+    "id": 1,
+    "slug": "chinu-squirrel",
+    "name": "Chinu (Squirrel)",
+    "corePersonality": "Curious, energetic learner",
+    "canAlsoBe": [
+      "Explorer",
+      "helper",
+      "comic"
+    ],
+    "primaryStoryRole": "Explorer",
+    "bestCoreNeeds": [
+      "Curiosity & Exploration",
+      "Confidence",
+      "Problem Solving"
+    ],
+    "bestChallenges": [
+      "Trying new things",
+      "Making mistakes",
+      "Asking questions",
+      "Solving mysteries",
+      "Feeling left out because of curiosity"
+    ],
+    "bestWisdomElements": [
+      "Big Ears",
+      "Curved Trunk",
+      "Mouse"
+    ]
+  },
+  {
+    "id": 2,
+    "slug": "arin-rabbit",
+    "name": "Arin (Rabbit)",
+    "corePersonality": "Gentle, cautious",
+    "canAlsoBe": [
+      "Brave hero",
+      "thoughtful friend"
+    ],
+    "primaryStoryRole": "Courage Learner",
+    "bestCoreNeeds": [
+      "Courage",
+      "Confidence",
+      "Emotional Safety"
+    ],
+    "bestChallenges": [
+      "Fear of trying",
+      "Anxiety",
+      "New experiences",
+      "Fear of failure",
+      "Fear of the unknown"
+    ],
+    "bestWisdomElements": [
+      "Broken Tusk (Writing Tusk)",
+      "Big Belly",
+      "Lotus"
+    ]
+  },
+  {
+    "id": 3,
+    "slug": "bodhi-elephant",
+    "name": "Bodhi (Elephant)",
+    "corePersonality": "Wise, calm",
+    "canAlsoBe": [
+      "Protector",
+      "playful elder brother"
+    ],
+    "primaryStoryRole": "Mentor / Protector",
+    "bestCoreNeeds": [
+      "Belonging",
+      "Kindness",
+      "Generosity",
+      "Emotional Security"
+    ],
+    "bestChallenges": [
+      "Big feelings",
+      "Sharing",
+      "Helping others",
+      "Resolving conflicts",
+      "Caring for friends"
+    ],
+    "bestWisdomElements": [
+      "Big Belly",
+      "Curved Trunk"
+    ]
+  },
+  {
+    "id": 4,
+    "slug": "tara-turtle",
+    "name": "Tara (Turtle)",
+    "corePersonality": "Patient, steady",
+    "canAlsoBe": [
+      "Quiet thinker"
+    ],
+    "primaryStoryRole": "Patient Thinker",
+    "bestCoreNeeds": [
+      "Patience",
+      "Perseverance",
+      "Self-Belief"
+    ],
+    "bestChallenges": [
+      "Waiting",
+      "Slow progress",
+      "Feeling left behind",
+      "Giving up too soon"
+    ],
+    "bestWisdomElements": [
+      "Lotus",
+      "Big Belly"
+    ]
+  },
+  {
+    "id": 5,
+    "slug": "kavi-monkey",
+    "name": "Kavi (Monkey)",
+    "corePersonality": "Funny, impulsive",
+    "canAlsoBe": [
+      "Inventor",
+      "explorer"
+    ],
+    "primaryStoryRole": "Comic Catalyst",
+    "bestCoreNeeds": [
+      "Self-Control",
+      "Focus",
+      "Responsibility"
+    ],
+    "bestChallenges": [
+      "Distraction",
+      "Acting without thinking",
+      "Overexcitement",
+      "Following rules"
+    ],
+    "bestWisdomElements": [
+      "Mouse",
+      "Curved Trunk"
+    ]
+  },
+  {
+    "id": 6,
+    "slug": "mira-deer",
+    "name": "Mira (Deer)",
+    "corePersonality": "Gentle, observant",
+    "canAlsoBe": [
+      "Brave friend"
+    ],
+    "primaryStoryRole": "Empathy Builder",
+    "bestCoreNeeds": [
+      "Empathy",
+      "Kindness",
+      "Belonging"
+    ],
+    "bestChallenges": [
+      "Shyness",
+      "Making friends",
+      "Understanding others",
+      "Helping someone lonely"
+    ],
+    "bestWisdomElements": [
+      "Eyes",
+      "Lotus"
+    ]
+  },
+  {
+    "id": 7,
+    "slug": "nayan-fox",
+    "name": "Nayan (Fox)",
+    "corePersonality": "Clever, resourceful",
+    "canAlsoBe": [
+      "Puzzle solver"
+    ],
+    "primaryStoryRole": "Puzzle Solver",
+    "bestCoreNeeds": [
+      "Problem Solving",
+      "Confidence",
+      "Creativity"
+    ],
+    "bestChallenges": [
+      "Solving difficult problems",
+      "Thinking differently",
+      "Making smart choices"
+    ],
+    "bestWisdomElements": [
+      "Eyes",
+      "Broken Tusk (Writing Tusk)"
+    ]
+  },
+  {
+    "id": 8,
+    "slug": "ved-owl",
+    "name": "Ved (Owl)",
+    "corePersonality": "Wise, reflective",
+    "canAlsoBe": [
+      "Detective",
+      "teacher"
+    ],
+    "primaryStoryRole": "Wise Guide / Detective",
+    "bestCoreNeeds": [
+      "Curiosity",
+      "Wisdom",
+      "Understanding"
+    ],
+    "bestChallenges": [
+      "Confusion",
+      "Curiosity",
+      "Asking questions",
+      "Solving mysteries"
+    ],
+    "bestWisdomElements": [
+      "Eyes",
+      "Big Ears"
+    ]
+  },
+  {
+    "id": 9,
+    "slug": "veer-bear",
+    "name": "Veer (Bear)",
+    "corePersonality": "Strong, kind",
+    "canAlsoBe": [
+      "Gentle protector"
+    ],
+    "primaryStoryRole": "Gentle Guardian",
+    "bestCoreNeeds": [
+      "Courage",
+      "Responsibility",
+      "Kindness"
+    ],
+    "bestChallenges": [
+      "Helping others",
+      "Standing up for someone",
+      "Protecting others",
+      "Leadership"
+    ],
+    "bestWisdomElements": [
+      "Big Belly",
+      "Broken Tusk (Writing Tusk)"
+    ]
+  },
+  {
+    "id": 10,
+    "slug": "anu-mouse",
+    "name": "Anu (Mouse)",
+    "corePersonality": "Tiny but courageous",
+    "canAlsoBe": [
+      "Determined learner"
+    ],
+    "primaryStoryRole": "Underdog Hero",
+    "bestCoreNeeds": [
+      "Courage",
+      "Self-Worth",
+      "Confidence"
+    ],
+    "bestChallenges": [
+      "Feeling small",
+      "Being underestimated",
+      "Fear of trying",
+      "Speaking up"
+    ],
+    "bestWisdomElements": [
+      "Mouse",
+      "Broken Tusk (Writing Tusk)"
+    ]
+  },
+  {
+    "id": 11,
+    "slug": "mayur-peacock",
+    "name": "Mayur (Peacock)",
+    "corePersonality": "Joyful, expressive",
+    "canAlsoBe": [
+      "Performer"
+    ],
+    "primaryStoryRole": "Performer",
+    "bestCoreNeeds": [
+      "Self-Expression",
+      "Confidence",
+      "Joy"
+    ],
+    "bestChallenges": [
+      "Stage fright",
+      "Expressing talents",
+      "Celebrating uniqueness"
+    ],
+    "bestWisdomElements": [
+      "Lotus"
+    ]
+  },
+  {
+    "id": 12,
+    "slug": "vani-parrot",
+    "name": "Vani (Parrot)",
+    "corePersonality": "Talkative, cheerful",
+    "canAlsoBe": [
+      "Messenger"
+    ],
+    "primaryStoryRole": "Messenger",
+    "bestCoreNeeds": [
+      "Communication",
+      "Listening",
+      "Friendship"
+    ],
+    "bestChallenges": [
+      "Listening carefully",
+      "Speaking kindly",
+      "Solving misunderstandings"
+    ],
+    "bestWisdomElements": [
+      "Big Ears"
+    ]
+  },
+  {
+    "id": 13,
+    "slug": "mitra-dog",
+    "name": "Mitra (Dog)",
+    "corePersonality": "Loyal, dependable",
+    "canAlsoBe": [
+      "Best friend"
+    ],
+    "primaryStoryRole": "Loyal Companion",
+    "bestCoreNeeds": [
+      "Trust",
+      "Friendship",
+      "Belonging"
+    ],
+    "bestChallenges": [
+      "Broken promises",
+      "Friendship problems",
+      "Loyalty",
+      "Teamwork"
+    ],
+    "bestWisdomElements": [
+      "Big Belly"
+    ]
+  },
+  {
+    "id": 14,
+    "slug": "gauri-cow",
+    "name": "Gauri (Cow)",
+    "corePersonality": "Caring, nurturing",
+    "canAlsoBe": [
+      "Mother figure"
+    ],
+    "primaryStoryRole": "Nurturer",
+    "bestCoreNeeds": [
+      "Kindness",
+      "Gratitude",
+      "Generosity"
+    ],
+    "bestChallenges": [
+      "Sharing",
+      "Caring for others",
+      "Gratitude",
+      "Community"
+    ],
+    "bestWisdomElements": [
+      "Modak",
+      "Big Belly"
+    ]
+  },
+  {
+    "id": 15,
+    "slug": "simha-lion",
+    "name": "Simha (Lion)",
+    "corePersonality": "Brave, confident",
+    "canAlsoBe": [
+      "Protector"
+    ],
+    "primaryStoryRole": "Leader",
+    "bestCoreNeeds": [
+      "Leadership",
+      "Courage",
+      "Responsibility"
+    ],
+    "bestChallenges": [
+      "Leading others",
+      "Making difficult choices",
+      "Protecting others",
+      "Doing the right thing"
+    ],
+    "bestWisdomElements": [
+      "Broken Tusk (Writing Tusk)"
+    ]
+  },
+  {
+    "id": 16,
+    "slug": "neel-young-elephant-calf",
+    "name": "Neel (Young Elephant Calf)",
+    "corePersonality": "Curious, playful, eager to learn",
+    "canAlsoBe": [
+      "Adventurous learner"
+    ],
+    "primaryStoryRole": "Young Learner",
+    "bestCoreNeeds": [
+      "Curiosity",
+      "Confidence",
+      "Courage",
+      "Self-Belief"
+    ],
+    "bestChallenges": [
+      "First-time experiences",
+      "Fear of failure",
+      "Learning from mistakes",
+      "Trying again"
+    ],
+    "bestWisdomElements": [
+      "Curved Trunk",
+      "Big Ears",
+      "Modak"
+    ]
+  },
+  {
+    "id": 17,
+    "slug": "pihu-red-panda",
+    "name": "Pihu (Red Panda)",
+    "corePersonality": "Imaginative, artistic",
+    "canAlsoBe": [
+      "Creator",
+      "inventor"
+    ],
+    "primaryStoryRole": "Creator / Inventor",
+    "bestCoreNeeds": [
+      "Creativity",
+      "Self-Expression",
+      "Problem Solving"
+    ],
+    "bestChallenges": [
+      "Creative blocks",
+      "Thinking differently",
+      "Inventing solutions",
+      "Expressing ideas"
+    ],
+    "bestWisdomElements": [
+      "Lotus",
+      "Mouse"
+    ]
+  },
+  {
+    "id": 18,
+    "slug": "kabir-mountain-goat",
+    "name": "Kabir (Mountain Goat)",
+    "corePersonality": "Determined, adventurous",
+    "canAlsoBe": [
+      "Explorer",
+      "climber"
+    ],
+    "primaryStoryRole": "Adventurer",
+    "bestCoreNeeds": [
+      "Perseverance",
+      "Courage",
+      "Independence"
+    ],
+    "bestChallenges": [
+      "Difficult challenges",
+      "Never giving up",
+      "Exploring unknown places",
+      "Reaching a goal"
+    ],
+    "bestWisdomElements": [
+      "Broken Tusk (Writing Tusk)",
+      "Lotus"
+    ]
+  }
+]

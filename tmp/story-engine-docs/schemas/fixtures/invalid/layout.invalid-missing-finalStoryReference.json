@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "1.0",
+  "status": "PRODUCTION_READY",
+  "storyReference": { "id": "STORY_001" },
+  "illustrationAssetReferences": [ { "id": "ASSET_PAGE_1" } ],
+  "format": { "width": 8.5, "height": 8.5, "orientation": "square" },
+  "pages": [
+    {
+      "page": 1,
+      "text": { "content": "Anu stood at the edge of the valley.", "position": { "x": 0.5, "y": 7.0 } },
+      "illustration": { "assetId": "ASSET_PAGE_1", "position": { "x": 0, "y": 0 } }
+    }
+  ],
+  "layoutValidation": { "status": "PASS", "blockingFailures": 0, "warnings": 0 }
+}

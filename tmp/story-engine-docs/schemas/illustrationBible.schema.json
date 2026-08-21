@@ -1,0 +1,381 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "illustrationBible.schema.json",
+  "title": "Illustration Bible",
+  "description": "Canonical visual-continuity specification for characters, worlds, objects, symbols, style and recurring visual elements across a story. Produced by 9A alongside the Illustration Plan, which it is bound to via illustrationPlanReference.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "status",
+    "illustrationPlanReference",
+    "styleBible",
+    "characters",
+    "worlds",
+    "objects",
+    "symbols",
+    "continuityRules",
+    "validation"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "1.0"
+    },
+
+    "status": {
+      "type": "string",
+      "enum": [
+        "VALIDATED"
+      ]
+    },
+
+    "illustrationPlanReference": {
+      "$ref": "#/$defs/reference",
+      "description": "References the Illustration Plan this Bible was produced alongside by 9A. The Bible is not an independent downstream artifact — it is 9A's visual-continuity output, consumed directly by 9B."
+    },
+
+    "styleBible": {
+      "$ref": "#/$defs/styleBible"
+    },
+
+    "characters": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/character"
+      }
+    },
+
+    "worlds": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/world"
+      }
+    },
+
+    "objects": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/object"
+      }
+    },
+
+    "symbols": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/symbol"
+      }
+    },
+
+    "continuityRules": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+
+    "validation": {
+      "$ref": "#/$defs/validation"
+    }
+  },
+
+  "$defs": {
+
+    "reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+
+    "styleBible": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "visualStyle",
+        "renderingStyle",
+        "ageAppropriateness"
+      ],
+      "properties": {
+        "visualStyle": {
+          "type": "string"
+        },
+
+        "renderingStyle": {
+          "type": "string"
+        },
+
+        "palette": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+
+        "lighting": {
+          "type": "string"
+        },
+
+        "texture": {
+          "type": "string"
+        },
+
+        "lineStyle": {
+          "type": "string"
+        },
+
+        "compositionStyle": {
+          "type": "string"
+        },
+
+        "ageAppropriateness": {
+          "type": "string"
+        },
+
+        "negativeStyleRules": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+
+    "character": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "characterId",
+        "identity"
+      ],
+      "properties": {
+        "characterId": {
+          "type": "string"
+        },
+
+        "identity": {
+          "type": "string"
+        },
+
+        "species": {
+          "type": "string"
+        },
+
+        "ageAppearance": {
+          "type": "string"
+        },
+
+        "bodyShape": {
+          "type": "string"
+        },
+
+        "face": {
+          "type": "string"
+        },
+
+        "eyes": {
+          "type": "string"
+        },
+
+        "hair": {
+          "type": "string"
+        },
+
+        "clothing": {
+          "type": "string"
+        },
+
+        "accessories": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+
+        "expressionRules": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+
+        "poseRules": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+
+        "continuityRules": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+
+    "world": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "worldId",
+        "identity"
+      ],
+      "properties": {
+        "worldId": {
+          "type": "string"
+        },
+
+        "identity": {
+          "type": "string"
+        },
+
+        "environment": {
+          "type": "string"
+        },
+
+        "architecture": {
+          "type": "string"
+        },
+
+        "landscape": {
+          "type": "string"
+        },
+
+        "lighting": {
+          "type": "string"
+        },
+
+        "recurringElements": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+
+        "continuityRules": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+
+    "object": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "objectId",
+        "identity"
+      ],
+      "properties": {
+        "objectId": {
+          "type": "string"
+        },
+
+        "identity": {
+          "type": "string"
+        },
+
+        "appearance": {
+          "type": "string"
+        },
+
+        "color": {
+          "type": "string"
+        },
+
+        "scale": {
+          "type": "string"
+        },
+
+        "purpose": {
+          "type": "string"
+        },
+
+        "continuityRules": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+
+    "symbol": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "symbolId",
+        "visualMeaning"
+      ],
+      "properties": {
+        "symbolId": {
+          "type": "string"
+        },
+
+        "visualMeaning": {
+          "type": "string"
+        },
+
+        "appearance": {
+          "type": "string"
+        },
+
+        "color": {
+          "type": "string"
+        },
+
+        "transformationRules": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+
+        "continuityRules": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "blockingFailures"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "PASS"
+          ]
+        },
+
+        "blockingFailures": {
+          "type": "integer",
+          "const": 0
+        },
+
+        "warnings": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}

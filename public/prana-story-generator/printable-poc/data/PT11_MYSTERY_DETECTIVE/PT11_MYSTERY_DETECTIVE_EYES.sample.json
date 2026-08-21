@@ -1,0 +1,58 @@
+{
+  "template_id": "PT11_MYSTERY_DETECTIVE",
+  "theme_id": "GT02",
+  "belief": "I look carefully before I decide what is true.",
+  "title": "The True Clue Mystery",
+  "subtitle": "See clearly like Ganesha and choose the clue that is true.",
+  "assets": {
+    "SCENE_ART": {
+      "items": [
+        {
+          "asset_id": "eyes_symbol",
+          "x": 250,
+          "y": 18,
+          "width": 54,
+          "height": 54
+        }
+      ]
+    }
+  },
+  "content": {
+    "hook": "Can you spot the clue that really helps you decide?",
+    "mission": "Four hidden words are in the scene. Sort the true clues from the distracting guesses and unlock the word Ganesha wants you to remember.",
+    "scene_instruction": "Find the four hidden words, then sort them carefully.",
+    "character_label": "Ganesha checks each clue",
+    "hidden_words": [
+      "CLUE",
+      "GUESS",
+      "TRUE",
+      "FLASH"
+    ],
+    "sort_prompt": "Which words help you decide what is true, and which ones are only guesses?",
+    "clues": [
+      "TRUE words give you letters 1 and 3.",
+      "GUESS words do not belong in the answer.",
+      "Read the TRUE letters from top to bottom."
+    ],
+    "footer": "See like Ganesha: look closely, then choose what is true."
+  },
+  "generation": {
+    "mode": "hidden-word sorting mystery",
+    "answer_rule": "Keep the true clues and ignore the distracting guesses."
+  },
+  "answer_key": {
+    "true_words": [
+      "CLUE",
+      "TRUE"
+    ],
+    "guess_words": [
+      "GUESS",
+      "FLASH"
+    ],
+    "secret_word": "CLUE"
+  },
+  "wisdom": {
+    "statement": "I look carefully before I decide what is true.",
+    "today": "Before you choose today, look for one clue that really proves it."
+  }
+}

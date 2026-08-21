@@ -1,0 +1,635 @@
+[
+  {
+    "id": "B_SAN_01",
+    "name": "Sanctuary Establishment",
+    "family": "SANCTUARY",
+    "purpose": "Establish emotional/physical equilibrium before any disruption.",
+    "state_change": {
+      "from": "NULL",
+      "to": "SAFE"
+    },
+    "allowed_logic": [
+      "LOGIC_SAFETY_LOOP",
+      "LOGIC_CIRCULAR_RETURN"
+    ],
+    "required_craft": [
+      "CR-EMO-001"
+    ],
+    "repeatable": false,
+    "max_repeats": null,
+    "next_beats": [
+      "B_DEP_01",
+      "B_VUL_01",
+      "B_ROU_01"
+    ]
+  },
+  {
+    "id": "B_ROU_01",
+    "name": "Routine Cataloging",
+    "family": "SANCTUARY",
+    "purpose": "Ground the reader in the character's normal world through repeated, listable detail.",
+    "state_change": {
+      "from": "SAFE",
+      "to": "SAFE"
+    },
+    "allowed_logic": [
+      "LOGIC_SAFETY_LOOP",
+      "LOGIC_RITUAL_ESCALATION"
+    ],
+    "required_craft": [
+      "CR-RHY-001"
+    ],
+    "repeatable": true,
+    "max_repeats": 3,
+    "next_beats": [
+      "B_DEP_01",
+      "B_ESC_01"
+    ]
+  },
+  {
+    "id": "B_DEP_01",
+    "name": "Departure",
+    "family": "DEPARTURE",
+    "purpose": "Character leaves the safe/known state, initiating the journey.",
+    "state_change": {
+      "from": "SAFE",
+      "to": "EXPLORATION"
+    },
+    "allowed_logic": [
+      "LOGIC_SAFETY_LOOP",
+      "LOGIC_THRESHOLD_CROSSING"
+    ],
+    "required_craft": [],
+    "repeatable": false,
+    "max_repeats": null,
+    "next_beats": [
+      "B_EXP_01",
+      "B_VUL_01"
+    ]
+  },
+  {
+    "id": "B_THR_01",
+    "name": "Threshold Crossing",
+    "family": "DEPARTURE",
+    "purpose": "Character crosses into a world with different rules than the one they know.",
+    "state_change": {
+      "from": "ORDINARY_WORLD",
+      "to": "NEW_RULES_WORLD"
+    },
+    "allowed_logic": [
+      "LOGIC_THRESHOLD_CROSSING"
+    ],
+    "required_craft": [
+      "CR-SUS-001"
+    ],
+    "repeatable": false,
+    "max_repeats": null,
+    "next_beats": [
+      "B_EXP_01",
+      "B_DIS_01"
+    ]
+  },
+  {
+    "id": "B_VUL_01",
+    "name": "Vulnerability Exposure",
+    "family": "VULNERABILITY",
+    "purpose": "Establish the character's exposed, at-risk state before a threat appears.",
+    "state_change": {
+      "from": "SAFE",
+      "to": "AT_RISK"
+    },
+    "allowed_logic": [
+      "LOGIC_TRICKSTER",
+      "LOGIC_SAFETY_LOOP"
+    ],
+    "required_craft": [],
+    "repeatable": false,
+    "max_repeats": null,
+    "next_beats": [
+      "B_THREAT_01"
+    ]
+  },
+  {
+    "id": "B_THREAT_01",
+    "name": "Threat Appearance",
+    "family": "VULNERABILITY",
+    "purpose": "An antagonist or danger enters, forcing a response.",
+    "state_change": {
+      "from": "AT_RISK",
+      "to": "ACTIVE_DANGER"
+    },
+    "allowed_logic": [
+      "LOGIC_TRICKSTER",
+      "LOGIC_SAFETY_LOOP"
+    ],
+    "required_craft": [
+      "CR-SUS-001"
+    ],
+    "repeatable": false,
+    "max_repeats": null,
+    "next_beats": [
+      "B_DEF_01"
+    ]
+  },
+  {
+    "id": "B_EXP_01",
+    "name": "Exploration",
+    "family": "EXPLORATION",
+    "purpose": "Character investigates the new environment, gathering sensory/narrative information.",
+    "state_change": {
+      "from": "EXPLORATION",
+      "to": "EXPANSION"
+    },
+    "allowed_logic": [
+      "LOGIC_SAFETY_LOOP",
+      "LOGIC_TRIAL_AND_ERROR"
+    ],
+    "required_craft": [],
+    "repeatable": true,
+    "max_repeats": 2,
+    "next_beats": [
+      "B_DIS_01",
+      "B_ESC_01"
+    ]
+  },
+  {
+    "id": "B_DIS_01",
+    "name": "Discovery",
+    "family": "EXPLORATION",
+    "purpose": "Character finds a key object, clue, or fact that changes the situation.",
+    "state_change": {
+      "from": "EXPANSION",
+      "to": "NEW_KNOWLEDGE"
+    },
+    "allowed_logic": [
+      "LOGIC_TRIAL_AND_ERROR",
+      "LOGIC_PARALLEL_JOURNEY"
+    ],
+    "required_craft": [
+      "CR-SUS-001"
+    ],
+    "repeatable": false,
+    "max_repeats": null,
+    "next_beats": [
+      "B_DEC_01",
+      "B_ESC_01"
+    ]
+  },
+  {
+    "id": "B_DEF_01",
+    "name": "Active Defense",
+    "family": "STRATEGY",
+    "purpose": "Character takes an initial defensive or evasive action against the threat.",
+    "state_change": {
+      "from": "ACTIVE_DANGER",
+      "to": "CONTESTED"
+    },
+    "allowed_logic": [
+      "LOGIC_TRICKSTER"
+    ],
+    "required_craft": [],
+    "repeatable": false,
+    "max_repeats": null,
+    "next_beats": [
+      "B_INV_01"
+    ]
+  },
+  {
+    "id": "B_INV_01",
+    "name": "Strategic Invention",
+    "family": "STRATEGY",
+    "purpose": "Character devises a clever, non-physical solution (wit over force).",
+    "state_change": {
+      "from": "CONTESTED",
+      "to": "PLAN_FORMED"
+    },
+    "allowed_logic": [
+      "LOGIC_TRICKSTER"
+    ],
+    "required_craft": [
+      "CR-VIS-001"
+    ],
+    "repeatable": false,
+    "max_repeats": null,
+    "next_beats": [
+      "B_TEST_01"
+    ]
+  },
+  {
+    "id": "B_TEST_01",
+    "name": "Physical/Bluff Test",
+    "family": "STRATEGY",
+    "purpose": "The invented plan is tested against the antagonist or obstacle.",
+    "state_change": {
+      "from": "PLAN_FORMED",
+      "to": "TESTED"
+    },
+    "allowed_logic": [
+      "LOGIC_TRICKSTER"
+    ],
+    "required_craft": [
+      "CR-VIS-001"
+    ],
+    "repeatable": false,
+    "max_repeats": null,
+    "next_beats": [
+      "B_MASTERY_01",
+      "B_FAIL_01"
+    ]
+  },
+  {
+    "id": "B_ESC_01",
+    "name": "Sequential Escalation",
+    "family": "ESCALATION",
+    "purpose": "Stakes, demands, or chaos increase in a repeating, causal pattern.",
+    "state_change": {
+      "from": "STABLE",
+      "to": "ESCALATING"
+    },
+    "allowed_logic": [
+      "LOGIC_RUNAWAY_CHAIN",
+      "LOGIC_TRICKSTER",
+      "LOGIC_CUMULATIVE_BUILD"
+    ],
+    "required_craft": [
+      "CR-RHY-001"
+    ],
+    "repeatable": true,
+    "max_repeats": 7,
+    "next_beats": [
+      "B_PEAK_01",
+      "B_ESC_01"
+    ]
+  },
+  {
+    "id": "B_PEAK_01",
+    "name": "Peak Chaos",
+    "family": "ESCALATION",
+    "purpose": "The escalation reaches its maximum point before resolution.",
+    "state_change": {
+      "from": "ESCALATING",
+      "to": "CRISIS"
+    },
+    "allowed_logic": [
+      "LOGIC_RUNAWAY_CHAIN"
+    ],
+    "required_craft": [
+      "CR-SUS-001"
+    ],
+    "repeatable": false,
+    "max_repeats": null,
+    "next_beats": [
+      "B_RESET_01"
+    ]
+  },
+  {
+    "id": "B_FAIL_01",
+    "name": "Failed Attempt",
+    "family": "TRIAL",
+    "purpose": "An attempted solution does not work, forcing reassessment.",
+    "state_change": {
+      "from": "ATTEMPTING",
+      "to": "SETBACK"
+    },
+    "allowed_logic": [
+      "LOGIC_TRIAL_AND_ERROR"
+    ],
+    "required_craft": [],
+    "repeatable": true,
+    "max_repeats": 3,
+    "next_beats": [
+      "B_REFLECT_01",
+      "B_FAIL_01"
+    ]
+  },
+  {
+    "id": "B_REFLECT_01",
+    "name": "Reflective Pause",
+    "family": "TRIAL",
+    "purpose": "Character stops to reconsider approach after a setback.",
+    "state_change": {
+      "from": "SETBACK",
+      "to": "RECONSIDERING"
+    },
+    "allowed_logic": [
+      "LOGIC_TRIAL_AND_ERROR",
+      "LOGIC_PERSPECTIVE_SHIFT"
+    ],
+    "required_craft": [
+      "CR-EMO-001"
+    ],
+    "repeatable": false,
+    "max_repeats": null,
+    "next_beats": [
+      "B_SMALLWIN_01"
+    ]
+  },
+  {
+    "id": "B_SMALLWIN_01",
+    "name": "Small Success",
+    "family": "TRIAL",
+    "purpose": "A modest win rebuilds confidence and momentum after failure.",
+    "state_change": {
+      "from": "RECONSIDERING",
+      "to": "REBUILDING"
+    },
+    "allowed_logic": [
+      "LOGIC_TRIAL_AND_ERROR"
+    ],
+    "required_craft": [],
+    "repeatable": false,
+    "max_repeats": null,
+    "next_beats": [
+      "B_MASTERY_01"
+    ]
+  },
+  {
+    "id": "B_PRESSURE_01",
+    "name": "External Pressure",
+    "family": "PERSPECTIVE",
+    "purpose": "Outside forces (peers, comparison) intensify the character's false belief.",
+    "state_change": {
+      "from": "MATERIAL_LACK",
+      "to": "CRISIS_OF_BELIEF"
+    },
+    "allowed_logic": [
+      "LOGIC_PERSPECTIVE_SHIFT"
+    ],
+    "required_craft": [],
+    "repeatable": false,
+    "max_repeats": null,
+    "next_beats": [
+      "B_MIRROR_01"
+    ]
+  },
+  {
+    "id": "B_MIRROR_01",
+    "name": "Mentor Mirror",
+    "family": "PERSPECTIVE",
+    "purpose": "A mentor or reflective moment shows the character a new way of seeing, without lecturing.",
+    "state_change": {
+      "from": "CRISIS_OF_BELIEF",
+      "to": "INTERNAL_REALIZATION"
+    },
+    "allowed_logic": [
+      "LOGIC_PERSPECTIVE_SHIFT"
+    ],
+    "required_craft": [
+      "CR-EMO-001"
+    ],
+    "repeatable": false,
+    "max_repeats": null,
+    "next_beats": [
+      "B_REFRAME_01"
+    ]
+  },
+  {
+    "id": "B_REFRAME_01",
+    "name": "Reframed Reality",
+    "family": "PERSPECTIVE",
+    "purpose": "The character's false belief is replaced by the true belief through observation, not instruction.",
+    "state_change": {
+      "from": "INTERNAL_REALIZATION",
+      "to": "EMPATHETIC_CLARITY"
+    },
+    "allowed_logic": [
+      "LOGIC_PERSPECTIVE_SHIFT"
+    ],
+    "required_craft": [
+      "CR-EMO-001"
+    ],
+    "repeatable": false,
+    "max_repeats": null,
+    "next_beats": [
+      "B_MASTERY_01"
+    ]
+  },
+  {
+    "id": "B_DEC_01",
+    "name": "Decision Point",
+    "family": "CHOICE",
+    "purpose": "Character must choose between two values or paths, revealing character.",
+    "state_change": {
+      "from": "NEW_KNOWLEDGE",
+      "to": "COMMITTED"
+    },
+    "allowed_logic": [
+      "LOGIC_PERSPECTIVE_SHIFT",
+      "LOGIC_ROLE_REVERSAL"
+    ],
+    "required_craft": [],
+    "repeatable": false,
+    "max_repeats": null,
+    "next_beats": [
+      "B_SAC_01",
+      "B_ESC_01"
+    ]
+  },
+  {
+    "id": "B_SAC_01",
+    "name": "Sacrifice",
+    "family": "CHOICE",
+    "purpose": "Character gives up something of value to advance the mission or help another.",
+    "state_change": {
+      "from": "COMMITTED",
+      "to": "COSTLY_ACTION_TAKEN"
+    },
+    "allowed_logic": [
+      "LOGIC_RESOURCE_DEPRECIATION",
+      "LOGIC_ROLE_REVERSAL"
+    ],
+    "required_craft": [
+      "CR-EMO-001"
+    ],
+    "repeatable": false,
+    "max_repeats": null,
+    "next_beats": [
+      "B_MASTERY_01"
+    ]
+  },
+  {
+    "id": "B_RESET_01",
+    "name": "Restorative Reset",
+    "family": "RESOLUTION",
+    "purpose": "Chaos is resolved and a circular reset to baseline occurs.",
+    "state_change": {
+      "from": "CRISIS",
+      "to": "RESTORED"
+    },
+    "allowed_logic": [
+      "LOGIC_RUNAWAY_CHAIN",
+      "LOGIC_CIRCULAR_RETURN"
+    ],
+    "required_craft": [
+      "CR-EMO-001"
+    ],
+    "repeatable": false,
+    "max_repeats": null,
+    "next_beats": [
+      "B_RET_01"
+    ]
+  },
+  {
+    "id": "B_DEESC_01",
+    "name": "De-escalation",
+    "family": "RESOLUTION",
+    "purpose": "Sensory or emotional intensity gradually decreases (e.g. bedtime dimming).",
+    "state_change": {
+      "from": "EXPANSION",
+      "to": "CALMING"
+    },
+    "allowed_logic": [
+      "LOGIC_SAFETY_LOOP"
+    ],
+    "required_craft": [
+      "CR-EMO-001"
+    ],
+    "repeatable": false,
+    "max_repeats": null,
+    "next_beats": [
+      "B_RET_01"
+    ]
+  },
+  {
+    "id": "B_MASTERY_01",
+    "name": "Empowered Mastery",
+    "family": "RESOLUTION",
+    "purpose": "Character demonstrates newly won competence or confidence.",
+    "state_change": {
+      "from": "TESTED",
+      "to": "MASTERY_ACHIEVED"
+    },
+    "allowed_logic": [
+      "LOGIC_TRICKSTER",
+      "LOGIC_TRIAL_AND_ERROR",
+      "LOGIC_PERSPECTIVE_SHIFT"
+    ],
+    "required_craft": [],
+    "repeatable": false,
+    "max_repeats": null,
+    "next_beats": [
+      "B_RET_01",
+      "B_CEL_01"
+    ]
+  },
+  {
+    "id": "B_RET_01",
+    "name": "Return",
+    "family": "RESOLUTION",
+    "purpose": "Character returns to the sanctuary or starting point, now changed.",
+    "state_change": {
+      "from": "MASTERY_ACHIEVED",
+      "to": "RESTORED_SAFETY"
+    },
+    "allowed_logic": [
+      "LOGIC_SAFETY_LOOP",
+      "LOGIC_CIRCULAR_RETURN"
+    ],
+    "required_craft": [
+      "CR-EMO-001"
+    ],
+    "repeatable": false,
+    "max_repeats": null,
+    "next_beats": [
+      "B_ANC_01"
+    ]
+  },
+  {
+    "id": "B_ANC_01",
+    "name": "Anchor Validation",
+    "family": "RESOLUTION",
+    "purpose": "A physical anchor object/detail proves safety remained constant (the 'still hot supper' beat). Mandatory closure for Safety Loop.",
+    "state_change": {
+      "from": "RESTORED_SAFETY",
+      "to": "CLOSURE"
+    },
+    "allowed_logic": [
+      "LOGIC_SAFETY_LOOP"
+    ],
+    "required_craft": [
+      "CR-EMO-001"
+    ],
+    "repeatable": false,
+    "max_repeats": null,
+    "next_beats": []
+  },
+  {
+    "id": "B_CEL_01",
+    "name": "Celebration",
+    "family": "RESOLUTION",
+    "purpose": "Community or relational joy marks the mission's success.",
+    "state_change": {
+      "from": "MASTERY_ACHIEVED",
+      "to": "SHARED_JOY"
+    },
+    "allowed_logic": [
+      "LOGIC_CUMULATIVE_BUILD",
+      "LOGIC_RITUAL_ESCALATION"
+    ],
+    "required_craft": [],
+    "repeatable": false,
+    "max_repeats": null,
+    "next_beats": []
+  },
+  {
+    "id": "B_VISITOR_01",
+    "name": "Catalyst Arrival",
+    "family": "CATALYST",
+    "purpose": "An outside visitor disrupts routine, introducing new possibility.",
+    "state_change": {
+      "from": "SAFE",
+      "to": "DISRUPTED"
+    },
+    "allowed_logic": [
+      "LOGIC_CATALYST_VISIT"
+    ],
+    "required_craft": [
+      "CR-SUS-001"
+    ],
+    "repeatable": false,
+    "max_repeats": null,
+    "next_beats": [
+      "B_ADAPT_01"
+    ]
+  },
+  {
+    "id": "B_ADAPT_01",
+    "name": "Adaptation",
+    "family": "CATALYST",
+    "purpose": "Character adjusts to the disruption, finding new joy or routine.",
+    "state_change": {
+      "from": "DISRUPTED",
+      "to": "NEW_NORMAL"
+    },
+    "allowed_logic": [
+      "LOGIC_CATALYST_VISIT"
+    ],
+    "required_craft": [],
+    "repeatable": false,
+    "max_repeats": null,
+    "next_beats": [
+      "B_VISITOR_02"
+    ]
+  },
+  {
+    "id": "B_VISITOR_02",
+    "name": "Catalyst Departure",
+    "family": "CATALYST",
+    "purpose": "The visitor leaves, and routine resumes changed by the encounter.",
+    "state_change": {
+      "from": "NEW_NORMAL",
+      "to": "RESTORED_SAFETY"
+    },
+    "allowed_logic": [
+      "LOGIC_CATALYST_VISIT"
+    ],
+    "required_craft": [
+      "CR-EMO-001"
+    ],
+    "repeatable": false,
+    "max_repeats": null,
+    "next_beats": [
+      "B_ANC_01"
+    ]
+  }
+]

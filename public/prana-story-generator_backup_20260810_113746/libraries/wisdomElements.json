@@ -1,0 +1,278 @@
+[
+  {
+    "id": 1,
+    "slug": "big-ears",
+    "name": "Big Ears",
+    "type": "Symbol",
+    "coreMeaning": "Listen deeply before acting",
+    "bestCoreNeeds": [
+      "Belonging",
+      "Communication"
+    ],
+    "bestChallenges": [
+      "Interrupting",
+      "Misunderstandings",
+      "Not feeling heard"
+    ],
+    "teachingMethod": "Listening before speaking",
+    "storyExpression": "Child pauses to listen to others or nature",
+    "insight": "\"When I listen carefully, I understand better.\"",
+    "bestEmotionalArcs": [
+      "Empathetic Witness",
+      "Circle of Safety"
+    ],
+    "bestStoryWorlds": [
+      "Whispering Forest",
+      "Whispering Meadow",
+      "Crystal River Valley"
+    ]
+  },
+  {
+    "id": 2,
+    "slug": "eyes",
+    "name": "Eyes",
+    "type": "Symbol",
+    "coreMeaning": "Observe with awareness, kindness and understanding",
+    "bestCoreNeeds": [
+      "Empathy",
+      "Curiosity"
+    ],
+    "bestChallenges": [
+      "Judging others",
+      "Missing details",
+      "Jumping to conclusions"
+    ],
+    "teachingMethod": "Observe before deciding",
+    "storyExpression": "Notices small clues, emotions or beauty",
+    "insight": "\"When I look carefully, I understand more.\"",
+    "bestEmotionalArcs": [
+      "Sensory Discovery",
+      "Identity Reframing"
+    ],
+    "bestStoryWorlds": [
+      "Whispering Forest",
+      "Lotus Pond",
+      "Woodland Village"
+    ]
+  },
+  {
+    "id": 3,
+    "slug": "curved-trunk",
+    "name": "Curved Trunk",
+    "type": "Symbol",
+    "coreMeaning": "Be flexible and solve problems creatively",
+    "bestCoreNeeds": [
+      "Confidence",
+      "Adaptability"
+    ],
+    "bestChallenges": [
+      "Frustration",
+      "Unexpected change"
+    ],
+    "teachingMethod": "Explore different solutions",
+    "storyExpression": "Tries another path or approach",
+    "insight": "\"There is more than one way.\"",
+    "bestEmotionalArcs": [
+      "Resourceful Improviser",
+      "Creative Empowerment"
+    ],
+    "bestStoryWorlds": [
+      "Whispering Forest",
+      "Hidden Cave Network",
+      "Golden Grasslands"
+    ]
+  },
+  {
+    "id": 4,
+    "slug": "big-belly",
+    "name": "Big Belly",
+    "type": "Symbol",
+    "coreMeaning": "Accept and hold big feelings calmly",
+    "bestCoreNeeds": [
+      "Emotional Regulation",
+      "Safety"
+    ],
+    "bestChallenges": [
+      "Anger",
+      "Worry",
+      "Embarrassment"
+    ],
+    "teachingMethod": "Pause, breathe, reflect",
+    "storyExpression": "Breathes, waits, responds calmly",
+    "insight": "\"I can hold my feelings without letting them control me.\"",
+    "bestEmotionalArcs": [
+      "Emotional Harbor",
+      "Mindful De-escalation"
+    ],
+    "bestStoryWorlds": [
+      "Lotus Pond",
+      "Crystal River Valley",
+      "Ancient Banyan Grove"
+    ]
+  },
+  {
+    "id": 5,
+    "slug": "mouse",
+    "name": "Mouse",
+    "type": "Symbol",
+    "coreMeaning": "Small, focused steps overcome big obstacles",
+    "bestCoreNeeds": [
+      "Confidence",
+      "Self-Belief"
+    ],
+    "bestChallenges": [
+      "Feeling small",
+      "Fear of trying"
+    ],
+    "teachingMethod": "Tiny actions build courage",
+    "storyExpression": "Small successes lead to bigger ones",
+    "insight": "\"Small steps create big change.\"",
+    "bestEmotionalArcs": [
+      "Underdog's Wit",
+      "Courageous Breath"
+    ],
+    "bestStoryWorlds": [
+      "Whispering Forest",
+      "Whispering Meadow",
+      "Woodland Village"
+    ]
+  },
+  {
+    "id": 6,
+    "slug": "modak",
+    "name": "Modak",
+    "type": "Symbol",
+    "coreMeaning": "True joy comes through effort and sharing",
+    "bestCoreNeeds": [
+      "Gratitude",
+      "Generosity"
+    ],
+    "bestChallenges": [
+      "Selfishness",
+      "Impatience",
+      "Sharing"
+    ],
+    "teachingMethod": "Reward through effort",
+    "storyExpression": "Shares, celebrates and enjoys together",
+    "insight": "\"Giving and earning bring lasting joy.\"",
+    "bestEmotionalArcs": [
+      "Generous Heart",
+      "Appreciated Helper"
+    ],
+    "bestStoryWorlds": [
+      "Whispering Meadow",
+      "Celebration Village",
+      "Woodland Village"
+    ]
+  },
+  {
+    "id": 7,
+    "slug": "lotus",
+    "name": "Lotus",
+    "type": "Symbol",
+    "coreMeaning": "Grow beautifully through every challenge",
+    "bestCoreNeeds": [
+      "Self-Worth",
+      "Hope"
+    ],
+    "bestChallenges": [
+      "Feeling different",
+      "Comparison"
+    ],
+    "teachingMethod": "Quiet inner growth",
+    "storyExpression": "Blooms despite difficult surroundings",
+    "insight": "\"I can grow wherever I am planted.\"",
+    "bestEmotionalArcs": [
+      "Radical Self-Acceptance",
+      "Identity Reframing"
+    ],
+    "bestStoryWorlds": [
+      "Lotus Pond",
+      "Crystal River Valley",
+      "Flower Garden"
+    ]
+  },
+  {
+    "id": 8,
+    "slug": "broken-tusk-writing-tusk",
+    "name": "Broken Tusk (Writing Tusk)",
+    "type": "Symbol",
+    "coreMeaning": "Learn through perseverance and wisdom",
+    "bestCoreNeeds": [
+      "Curiosity",
+      "Learning"
+    ],
+    "bestChallenges": [
+      "Fear of mistakes",
+      "Learning new skills"
+    ],
+    "teachingMethod": "Learn by doing",
+    "storyExpression": "Tries, reflects and improves",
+    "insight": "\"Every mistake helps me grow wiser.\"",
+    "bestEmotionalArcs": [
+      "Creative Empowerment",
+      "Rhythmic Growth"
+    ],
+    "bestStoryWorlds": [
+      "Ancient Banyan Grove",
+      "Secret Library",
+      "Story House"
+    ]
+  },
+  {
+    "id": 17,
+    "slug": "",
+    "name": "•",
+    "type": "Ganesha Chants",
+    "coreMeaning": null,
+    "bestCoreNeeds": [],
+    "bestChallenges": [],
+    "teachingMethod": null,
+    "storyExpression": null,
+    "insight": null,
+    "bestEmotionalArcs": [],
+    "bestStoryWorlds": []
+  },
+  {
+    "id": 18,
+    "slug": "",
+    "name": "•",
+    "type": "Ganesha Festivals",
+    "coreMeaning": null,
+    "bestCoreNeeds": [],
+    "bestChallenges": [],
+    "teachingMethod": null,
+    "storyExpression": null,
+    "insight": null,
+    "bestEmotionalArcs": [],
+    "bestStoryWorlds": []
+  },
+  {
+    "id": 19,
+    "slug": "",
+    "name": "•",
+    "type": "Sacred Objects",
+    "coreMeaning": null,
+    "bestCoreNeeds": [],
+    "bestChallenges": [],
+    "teachingMethod": null,
+    "storyExpression": null,
+    "insight": null,
+    "bestEmotionalArcs": [],
+    "bestStoryWorlds": []
+  },
+  {
+    "id": 20,
+    "slug": "",
+    "name": "•",
+    "type": "Ganesha Stories",
+    "coreMeaning": null,
+    "bestCoreNeeds": [],
+    "bestChallenges": [],
+    "teachingMethod": null,
+    "storyExpression": null,
+    "insight": null,
+    "bestEmotionalArcs": [],
+    "bestStoryWorlds": []
+  }
+]

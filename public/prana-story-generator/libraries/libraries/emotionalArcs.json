@@ -1,0 +1,1142 @@
+[
+  {
+    "id": 1,
+    "slug": "1-radical-self-acceptance",
+    "name": "1. Radical Self-Acceptance",
+    "journey": [
+      "Hopeful Longing",
+      "Curious Determination",
+      "Accidental Panic",
+      "Relieved Wonder",
+      "Deep Belonging"
+    ],
+    "description": "A child believes something is wrong with them but discovers they are loved exactly as they are.",
+    "whyItWorks": "Builds deep self-worth and belonging.",
+    "whenToUse": "Feeling different, self-doubt, insecurity.",
+    "bestAge": "5–8",
+    "buildingBlocks": [
+      "Quiet longing",
+      "Trying to change",
+      "Vulnerability",
+      "Unexpected acceptance",
+      "Belonging"
+    ],
+    "avoid": "Fixing the flaw instead of accepting it.",
+    "shortForm": "Insecurity → Belonging"
+  },
+  {
+    "id": 2,
+    "slug": "2-circle-of-safety",
+    "name": "2. Circle of Safety",
+    "journey": [
+      "Surprise",
+      "Hope",
+      "Worry",
+      "Comfort",
+      "Relief",
+      "Security"
+    ],
+    "description": "Temporary separation becomes an opportunity to build trust and reassurance.",
+    "whyItWorks": "Helps children process separation anxiety safely.",
+    "whenToUse": "Waiting, school, caregiver separation.",
+    "bestAge": "5–8",
+    "buildingBlocks": [
+      "Goodbye",
+      "Waiting",
+      "Comfort from others",
+      "Safe reunion",
+      "Emotional security"
+    ],
+    "avoid": "Turning it into a dangerous rescue.",
+    "shortForm": "Worry → Security"
+  },
+  {
+    "id": 3,
+    "slug": "3-empathetic-witness",
+    "name": "3. Empathetic Witness",
+    "journey": [
+      "Devastation",
+      "Frustration",
+      "Isolation",
+      "Calm Safety",
+      "Healing"
+    ],
+    "description": "Healing begins when someone quietly listens instead of trying to solve the problem.",
+    "whyItWorks": "Validates feelings before solutions.",
+    "whenToUse": "Disappointment, grief, losing, failure.",
+    "bestAge": "5–8",
+    "buildingBlocks": [
+      "Meaningful loss",
+      "Unhelpful advice",
+      "Withdrawal",
+      "Quiet presence",
+      "Emotional release"
+    ],
+    "avoid": "Mentor fixing everything immediately.",
+    "shortForm": "Devastation → Healing"
+  },
+  {
+    "id": 4,
+    "slug": "4-sensory-discovery",
+    "name": "4. Sensory Discovery",
+    "journey": [
+      "Wonder",
+      "Freedom",
+      "Curiosity",
+      "Gentle Satisfaction",
+      "Warm Nostalgia"
+    ],
+    "description": "Exploring nature creates emotional growth through experience.",
+    "whyItWorks": "Encourages mindfulness and observation.",
+    "whenToUse": "Nature stories, quiet adventures, curiosity.",
+    "bestAge": "5–7",
+    "buildingBlocks": [
+      "Morning discovery",
+      "Solo exploration",
+      "Sensory play",
+      "Reflection",
+      "Warm memory"
+    ],
+    "avoid": "Villains or high-stakes conflict.",
+    "shortForm": "Wonder → Nostalgia"
+  },
+  {
+    "id": 5,
+    "slug": "5-triumphant-teamwork",
+    "name": "5. Triumphant Teamwork",
+    "journey": [
+      "Belonging",
+      "Shock",
+      "Leadership",
+      "Hope",
+      "Shared Triumph"
+    ],
+    "description": "Friends combine different strengths to solve a problem together.",
+    "whyItWorks": "Reinforces cooperation and inclusion.",
+    "whenToUse": "Friendship, community, rescue missions.",
+    "bestAge": "5–8",
+    "buildingBlocks": [
+      "Peaceful beginning",
+      "Threat",
+      "Gathering helpers",
+      "Everyone contributes",
+      "Shared celebration"
+    ],
+    "avoid": "One hero doing everything.",
+    "shortForm": "Shock → Triumph"
+  },
+  {
+    "id": 6,
+    "slug": "6-mindful-de-escalation",
+    "name": "6. Mindful De-escalation",
+    "journey": [
+      "Safe",
+      "Curious",
+      "Relaxed",
+      "Peaceful Rest"
+    ],
+    "description": "A child gradually slows down until they feel calm and secure.",
+    "whyItWorks": "Excellent for bedtime and emotional regulation.",
+    "whenToUse": "Bedtime, overstimulation, anxiety.",
+    "bestAge": "5–6",
+    "buildingBlocks": [
+      "Safe place",
+      "Familiar objects",
+      "Gentle repetition",
+      "Slowing rhythm",
+      "Stillness"
+    ],
+    "avoid": "Introducing excitement near the end.",
+    "shortForm": "Restlessness → Peace"
+  },
+  {
+    "id": 7,
+    "slug": "7-rhythmic-growth",
+    "name": "7. Rhythmic Growth",
+    "journey": [
+      "Wonder",
+      "Excitement",
+      "Overwhelm",
+      "Relief",
+      "Patience",
+      "Joy"
+    ],
+    "description": "Growth happens through effort, mistakes, rest and transformation.",
+    "whyItWorks": "Teaches patience and healthy development.",
+    "whenToUse": "Growth, learning, perseverance.",
+    "bestAge": "5–6",
+    "buildingBlocks": [
+      "Small beginning",
+      "Gradual progress",
+      "Too much",
+      "Rest",
+      "Transformation"
+    ],
+    "avoid": "Skipping the recovery phase.",
+    "shortForm": "Wonder → Joy"
+  },
+  {
+    "id": 8,
+    "slug": "8-underdog-s-wit",
+    "name": "8. Underdog's Wit",
+    "journey": [
+      "Cautious Curiosity",
+      "Calm Confidence",
+      "Shock",
+      "Creative Thinking",
+      "Triumph"
+    ],
+    "description": "A small hero succeeds through intelligence instead of strength.",
+    "whyItWorks": "Builds confidence and problem-solving.",
+    "whenToUse": "Courage, mystery, adventure.",
+    "bestAge": "5–8",
+    "buildingBlocks": [
+      "Small hero",
+      "Bigger challenge",
+      "Twist",
+      "Clever solution",
+      "Quiet victory"
+    ],
+    "avoid": "Winning through luck or magic.",
+    "shortForm": "Self-Doubt → Triumph"
+  },
+  {
+    "id": 9,
+    "slug": "9-empowered-boundary",
+    "name": "9. Empowered Boundary",
+    "journey": [
+      "Responsibility",
+      "Temptation",
+      "Pressure",
+      "Confidence",
+      "Pride"
+    ],
+    "description": "Holding a healthy boundary becomes a joyful achievement.",
+    "whyItWorks": "Builds impulse control and self-confidence.",
+    "whenToUse": "Rules, self-control, everyday life.",
+    "bestAge": "5–7",
+    "buildingBlocks": [
+      "Important task",
+      "Funny persuasion",
+      "Firm decision",
+      "Success",
+      "New focus"
+    ],
+    "avoid": "Punishing mistakes harshly.",
+    "shortForm": "Temptation → Pride"
+  },
+  {
+    "id": 10,
+    "slug": "10-generous-heart",
+    "name": "10. Generous Heart",
+    "journey": [
+      "Pride",
+      "Loneliness",
+      "Hesitation",
+      "Giving",
+      "Joy"
+    ],
+    "description": "Sharing transforms loneliness into connection.",
+    "whyItWorks": "Demonstrates that generosity multiplies happiness.",
+    "whenToUse": "Sharing, kindness, friendship.",
+    "bestAge": "5–7",
+    "buildingBlocks": [
+      "Special possession",
+      "Refusal",
+      "Loneliness",
+      "First gift",
+      "Ripple of joy"
+    ],
+    "avoid": "Forcing generosity.",
+    "shortForm": "Hesitation → Joy"
+  },
+  {
+    "id": 11,
+    "slug": "11-emotional-harbor",
+    "name": "11. Emotional Harbor",
+    "journey": [
+      "Defiance",
+      "Emotional Release",
+      "Loneliness",
+      "Reflection",
+      "Love"
+    ],
+    "description": "Big emotions are expressed safely before returning to connection.",
+    "whyItWorks": "Validates anger while preserving emotional safety.",
+    "whenToUse": "Tantrums, frustration, feeling misunderstood.",
+    "bestAge": "5–8",
+    "buildingBlocks": [
+      "Emotional outburst",
+      "Imaginative escape",
+      "Peak freedom",
+      "Homesickness",
+      "Loving return"
+    ],
+    "avoid": "Punishing emotional expression.",
+    "shortForm": "Defiance → Love"
+  },
+  {
+    "id": 12,
+    "slug": "12-validated-grump",
+    "name": "12. Validated Grump",
+    "journey": [
+      "Resentment",
+      "Frustration",
+      "Overwhelm",
+      "Despair",
+      "Acceptance"
+    ],
+    "description": "A terrible day becomes bearable when feelings are acknowledged.",
+    "whyItWorks": "Builds resilience through validation instead of forced positivity.",
+    "whenToUse": "Bad days, setbacks, frustration.",
+    "bestAge": "5–8",
+    "buildingBlocks": [
+      "Series of setbacks",
+      "Emotional overload",
+      "Quiet listening",
+      "Gentle reassurance",
+      "Acceptance"
+    ],
+    "avoid": "Lecturing about staying positive.",
+    "shortForm": "Resentment → Acceptance"
+  },
+  {
+    "id": 13,
+    "slug": "13-creative-empowerment",
+    "name": "13. Creative Empowerment",
+    "journey": [
+      "Uncertainty",
+      "Curiosity",
+      "Experimentation",
+      "Discovery",
+      "Pride"
+    ],
+    "description": "A child solves a problem through imagination and creativity.",
+    "whyItWorks": "Builds creative confidence instead of dependence.",
+    "whenToUse": "Inventing, making, problem-solving.",
+    "bestAge": "5–8",
+    "buildingBlocks": [
+      "Open problem",
+      "Playful ideas",
+      "Failed attempts",
+      "Creative breakthrough",
+      "Pride"
+    ],
+    "avoid": "Adults providing the solution.",
+    "shortForm": "Uncertainty → Pride"
+  },
+  {
+    "id": 14,
+    "slug": "14-identity-reframing",
+    "name": "14. Identity Reframing",
+    "journey": [
+      "Self-Doubt",
+      "Comparison",
+      "Discovery",
+      "Acceptance",
+      "Confidence"
+    ],
+    "description": "A child learns their difference is a unique strength.",
+    "whyItWorks": "Builds identity and self-esteem.",
+    "whenToUse": "Feeling different, jealousy, comparison.",
+    "bestAge": "5–8",
+    "buildingBlocks": [
+      "Feeling left out",
+      "Comparison",
+      "Discovery",
+      "Acceptance",
+      "Confidence"
+    ],
+    "avoid": "Changing the child to fit in.",
+    "shortForm": "Self-Doubt → Confidence"
+  },
+  {
+    "id": 15,
+    "slug": "15-resourceful-improviser",
+    "name": "15. Resourceful Improviser",
+    "journey": [
+      "Loss",
+      "Frustration",
+      "Curiosity",
+      "New Possibility",
+      "Success"
+    ],
+    "description": "Losing something leads to discovering an even better solution.",
+    "whyItWorks": "Encourages flexibility and resilience.",
+    "whenToUse": "Mistakes, setbacks, accidents.",
+    "bestAge": "5–8",
+    "buildingBlocks": [
+      "Loss",
+      "Search",
+      "Experiment",
+      "Unexpected solution",
+      "Celebration"
+    ],
+    "avoid": "Solving everything with luck.",
+    "shortForm": "Loss → Success"
+  },
+  {
+    "id": 16,
+    "slug": "16-surprise-guest",
+    "name": "16. Surprise Guest",
+    "journey": [
+      "Routine",
+      "Surprise",
+      "Confusion",
+      "Adaptation",
+      "Joy"
+    ],
+    "description": "An unexpected visitor or event enriches everyone's lives.",
+    "whyItWorks": "Builds adaptability and openness.",
+    "whenToUse": "New friends, visitors, change.",
+    "bestAge": "5–7",
+    "buildingBlocks": [
+      "Calm routine",
+      "Unexpected arrival",
+      "Adjustment",
+      "Shared fun",
+      "Warm goodbye"
+    ],
+    "avoid": "Making the visitor a villain.",
+    "shortForm": "Confusion → Joy"
+  },
+  {
+    "id": 17,
+    "slug": "17-infinite-measure",
+    "name": "17. Infinite Measure",
+    "journey": [
+      "Love",
+      "Wonder",
+      "Bigger Comparison",
+      "Awe",
+      "Security"
+    ],
+    "description": "A child discovers love cannot be measured because it keeps growing.",
+    "whyItWorks": "Makes abstract love tangible.",
+    "whenToUse": "Parent-child stories, reassurance.",
+    "bestAge": "5–7",
+    "buildingBlocks": [
+      "Loving question",
+      "Bigger examples",
+      "Nature comparisons",
+      "Comfort",
+      "Belonging"
+    ],
+    "avoid": "Treating love like a competition.",
+    "shortForm": "Wonder → Security"
+  },
+  {
+    "id": 18,
+    "slug": "18-runaway-logic",
+    "name": "18. Runaway Logic",
+    "journey": [
+      "Small Choice",
+      "Bigger Consequence",
+      "Escalation",
+      "Funny Chaos",
+      "Resolution"
+    ],
+    "description": "One simple action creates an increasingly funny chain reaction.",
+    "whyItWorks": "Teaches cause and effect through humour.",
+    "whenToUse": "Comedy, problem-solving.",
+    "bestAge": "5–8",
+    "buildingBlocks": [
+      "Tiny event",
+      "Domino chain",
+      "Escalation",
+      "Creative solution",
+      "Calm ending"
+    ],
+    "avoid": "Random, unrelated events.",
+    "shortForm": "Small Choice → Resolution"
+  },
+  {
+    "id": 19,
+    "slug": "19-comic-pivot",
+    "name": "19. Comic Pivot",
+    "journey": [
+      "Obsession",
+      "Frustration",
+      "Bigger Obsession",
+      "Sudden Shift",
+      "Laughter"
+    ],
+    "description": "The hero's focus suddenly changes, ending the conflict.",
+    "whyItWorks": "Creates satisfying comic relief.",
+    "whenToUse": "Funny stories, stubborn characters.",
+    "bestAge": "5–7",
+    "buildingBlocks": [
+      "One desire",
+      "Escalation",
+      "Distraction",
+      "Instant change",
+      "Laughter"
+    ],
+    "avoid": "Mean-spirited humour.",
+    "shortForm": "Frustration → Laughter"
+  },
+  {
+    "id": 20,
+    "slug": "20-curious-insecurity",
+    "name": "20. Curious Insecurity",
+    "journey": [
+      "Curiosity",
+      "Self-Doubt",
+      "Exploration",
+      "Understanding",
+      "Belonging"
+    ],
+    "description": "Questions about identity lead to deeper confidence.",
+    "whyItWorks": "Helps children understand themselves.",
+    "whenToUse": "Identity, belonging, curiosity.",
+    "bestAge": "5–8",
+    "buildingBlocks": [
+      "Question",
+      "Search",
+      "Reflection",
+      "Discovery",
+      "Acceptance"
+    ],
+    "avoid": "Giving quick answers without exploration.",
+    "shortForm": "Self-Doubt → Belonging"
+  },
+  {
+    "id": 21,
+    "slug": "21-courageous-breath",
+    "name": "21. Courageous Breath",
+    "journey": [
+      "Nervousness",
+      "Pause",
+      "Calm Breathing",
+      "First Step",
+      "Confidence"
+    ],
+    "description": "A child calms themselves before facing a challenge.",
+    "whyItWorks": "Teaches emotional regulation in stressful moments.",
+    "whenToUse": "New experiences, stage fear, school.",
+    "bestAge": "5–8",
+    "buildingBlocks": [
+      "Fear",
+      "Breathing",
+      "Small action",
+      "Success",
+      "Confidence"
+    ],
+    "avoid": "Removing all fear instantly.",
+    "shortForm": "Nervousness → Confidence"
+  },
+  {
+    "id": 22,
+    "slug": "22-appreciated-helper",
+    "name": "22. Appreciated Helper",
+    "journey": [
+      "Happy Helping",
+      "Feeling Invisible",
+      "Recognition",
+      "Gratitude",
+      "Joy"
+    ],
+    "description": "A helpful child realizes their kindness is seen and valued.",
+    "whyItWorks": "Encourages kindness without resentment.",
+    "whenToUse": "Gratitude, family, friendship.",
+    "bestAge": "5–8",
+    "buildingBlocks": [
+      "Helping",
+      "Being unnoticed",
+      "Recognition",
+      "Gratitude",
+      "Celebration"
+    ],
+    "avoid": "Rewarding only with prizes.",
+    "shortForm": "Feeling Invisible → Joy"
+  },
+  {
+    "id": 23,
+    "slug": "23-melodramatic-threat",
+    "name": "23. Melodramatic Threat",
+    "journey": [
+      "Frustration",
+      "Big Declaration",
+      "Reflection",
+      "Comfort",
+      "Calm"
+    ],
+    "description": "Dramatic reactions soften through understanding and reassurance.",
+    "whyItWorks": "Lets children laugh at exaggerated emotions.",
+    "whenToUse": "Bad days, disappointment, comedy.",
+    "bestAge": "5–8",
+    "buildingBlocks": [
+      "Big complaint",
+      "Funny exaggeration",
+      "Gentle listening",
+      "Calm ending"
+    ],
+    "avoid": "Mocking the child's emotions.",
+    "shortForm": "Frustration → Calm"
+  },
+  {
+    "id": 24,
+    "slug": "24-silent-awe",
+    "name": "24. Silent Awe",
+    "journey": [
+      "Curiosity",
+      "Wonder",
+      "Stillness",
+      "Gratitude",
+      "Peace"
+    ],
+    "description": "A child quietly experiences something beautiful without needing words.",
+    "whyItWorks": "Develops mindfulness and appreciation.",
+    "whenToUse": "Nature, festivals, spiritual moments.",
+    "bestAge": "5–8",
+    "buildingBlocks": [
+      "Quiet observation",
+      "Beautiful moment",
+      "Silence",
+      "Reflection",
+      "Peace"
+    ],
+    "avoid": "Explaining the experience too much.",
+    "shortForm": "Curiosity → Peace"
+  },
+  {
+    "id": 26,
+    "slug": "self-identity",
+    "name": "Self & Identity",
+    "journey": [
+      "Radical Self-Acceptance, Identity Reframing, Creative Empowerment, Underdog's Wit"
+    ],
+    "description": null,
+    "whyItWorks": null,
+    "whenToUse": null,
+    "bestAge": null,
+    "buildingBlocks": [],
+    "avoid": null,
+    "shortForm": null
+  },
+  {
+    "id": 27,
+    "slug": "emotional-regulation",
+    "name": "Emotional Regulation",
+    "journey": [
+      "Emotional Harbor, Mindful De-escalation, Validated Grump, Courageous Breath"
+    ],
+    "description": null,
+    "whyItWorks": null,
+    "whenToUse": null,
+    "bestAge": null,
+    "buildingBlocks": [],
+    "avoid": null,
+    "shortForm": null
+  },
+  {
+    "id": 28,
+    "slug": "relationships",
+    "name": "Relationships",
+    "journey": [
+      "Circle of Safety, Empathetic Witness, Triumphant Teamwork, Generous Heart, Appreciated Helper, Infinite Measure"
+    ],
+    "description": null,
+    "whyItWorks": null,
+    "whenToUse": null,
+    "bestAge": null,
+    "buildingBlocks": [],
+    "avoid": null,
+    "shortForm": null
+  },
+  {
+    "id": 29,
+    "slug": "growth-resilience",
+    "name": "Growth & Resilience",
+    "journey": [
+      "Rhythmic Growth, Resourceful Improviser, Empowered Boundary"
+    ],
+    "description": null,
+    "whyItWorks": null,
+    "whenToUse": null,
+    "bestAge": null,
+    "buildingBlocks": [],
+    "avoid": null,
+    "shortForm": null
+  },
+  {
+    "id": 30,
+    "slug": "wonder-exploration",
+    "name": "Wonder & Exploration",
+    "journey": [
+      "Sensory Discovery, Silent Awe, Curious Insecurity"
+    ],
+    "description": null,
+    "whyItWorks": null,
+    "whenToUse": null,
+    "bestAge": null,
+    "buildingBlocks": [],
+    "avoid": null,
+    "shortForm": null
+  },
+  {
+    "id": 31,
+    "slug": "adventure-humor",
+    "name": "Adventure & Humor",
+    "journey": [
+      "Runaway Logic, Comic Pivot, Surprise Guest"
+    ],
+    "description": null,
+    "whyItWorks": null,
+    "whenToUse": null,
+    "bestAge": null,
+    "buildingBlocks": [],
+    "avoid": null,
+    "shortForm": null
+  },
+  {
+    "id": 33,
+    "slug": "if-the-story-is-about",
+    "name": "If the Story is About...",
+    "journey": [
+      "Recommended Emotional Arc(s)"
+    ],
+    "description": null,
+    "whyItWorks": null,
+    "whenToUse": null,
+    "bestAge": null,
+    "buildingBlocks": [],
+    "avoid": null,
+    "shortForm": null
+  },
+  {
+    "id": 34,
+    "slug": "feeling-different",
+    "name": "Feeling Different",
+    "journey": [
+      "Radical Self-Acceptance, Identity Reframing"
+    ],
+    "description": null,
+    "whyItWorks": null,
+    "whenToUse": null,
+    "bestAge": null,
+    "buildingBlocks": [],
+    "avoid": null,
+    "shortForm": null
+  },
+  {
+    "id": 35,
+    "slug": "fear",
+    "name": "Fear",
+    "journey": [
+      "Circle of Safety, Courageous Breath"
+    ],
+    "description": null,
+    "whyItWorks": null,
+    "whenToUse": null,
+    "bestAge": null,
+    "buildingBlocks": [],
+    "avoid": null,
+    "shortForm": null
+  },
+  {
+    "id": 36,
+    "slug": "anger",
+    "name": "Anger",
+    "journey": [
+      "Emotional Harbor"
+    ],
+    "description": null,
+    "whyItWorks": null,
+    "whenToUse": null,
+    "bestAge": null,
+    "buildingBlocks": [],
+    "avoid": null,
+    "shortForm": null
+  },
+  {
+    "id": 37,
+    "slug": "sadness",
+    "name": "Sadness",
+    "journey": [
+      "Empathetic Witness, Validated Grump"
+    ],
+    "description": null,
+    "whyItWorks": null,
+    "whenToUse": null,
+    "bestAge": null,
+    "buildingBlocks": [],
+    "avoid": null,
+    "shortForm": null
+  },
+  {
+    "id": 38,
+    "slug": "friendship",
+    "name": "Friendship",
+    "journey": [
+      "Triumphant Teamwork, Generous Heart"
+    ],
+    "description": null,
+    "whyItWorks": null,
+    "whenToUse": null,
+    "bestAge": null,
+    "buildingBlocks": [],
+    "avoid": null,
+    "shortForm": null
+  },
+  {
+    "id": 39,
+    "slug": "sharing",
+    "name": "Sharing",
+    "journey": [
+      "Generous Heart"
+    ],
+    "description": null,
+    "whyItWorks": null,
+    "whenToUse": null,
+    "bestAge": null,
+    "buildingBlocks": [],
+    "avoid": null,
+    "shortForm": null
+  },
+  {
+    "id": 40,
+    "slug": "confidence",
+    "name": "Confidence",
+    "journey": [
+      "Underdog's Wit, Creative Empowerment"
+    ],
+    "description": null,
+    "whyItWorks": null,
+    "whenToUse": null,
+    "bestAge": null,
+    "buildingBlocks": [],
+    "avoid": null,
+    "shortForm": null
+  },
+  {
+    "id": 41,
+    "slug": "mistakes",
+    "name": "Mistakes",
+    "journey": [
+      "Resourceful Improviser, Rhythmic Growth"
+    ],
+    "description": null,
+    "whyItWorks": null,
+    "whenToUse": null,
+    "bestAge": null,
+    "buildingBlocks": [],
+    "avoid": null,
+    "shortForm": null
+  },
+  {
+    "id": 42,
+    "slug": "waiting",
+    "name": "Waiting",
+    "journey": [
+      "Circle of Safety, Rhythmic Growth"
+    ],
+    "description": null,
+    "whyItWorks": null,
+    "whenToUse": null,
+    "bestAge": null,
+    "buildingBlocks": [],
+    "avoid": null,
+    "shortForm": null
+  },
+  {
+    "id": 43,
+    "slug": "new-experiences",
+    "name": "New Experiences",
+    "journey": [
+      "Courageous Breath, Circle of Safety"
+    ],
+    "description": null,
+    "whyItWorks": null,
+    "whenToUse": null,
+    "bestAge": null,
+    "buildingBlocks": [],
+    "avoid": null,
+    "shortForm": null
+  },
+  {
+    "id": 44,
+    "slug": "patience",
+    "name": "Patience",
+    "journey": [
+      "Rhythmic Growth"
+    ],
+    "description": null,
+    "whyItWorks": null,
+    "whenToUse": null,
+    "bestAge": null,
+    "buildingBlocks": [],
+    "avoid": null,
+    "shortForm": null
+  },
+  {
+    "id": 45,
+    "slug": "nature",
+    "name": "Nature",
+    "journey": [
+      "Sensory Discovery, Silent Awe"
+    ],
+    "description": null,
+    "whyItWorks": null,
+    "whenToUse": null,
+    "bestAge": null,
+    "buildingBlocks": [],
+    "avoid": null,
+    "shortForm": null
+  },
+  {
+    "id": 46,
+    "slug": "gratitude",
+    "name": "Gratitude",
+    "journey": [
+      "Appreciated Helper, Infinite Measure"
+    ],
+    "description": null,
+    "whyItWorks": null,
+    "whenToUse": null,
+    "bestAge": null,
+    "buildingBlocks": [],
+    "avoid": null,
+    "shortForm": null
+  },
+  {
+    "id": 47,
+    "slug": "rules-boundaries",
+    "name": "Rules & Boundaries",
+    "journey": [
+      "Empowered Boundary"
+    ],
+    "description": null,
+    "whyItWorks": null,
+    "whenToUse": null,
+    "bestAge": null,
+    "buildingBlocks": [],
+    "avoid": null,
+    "shortForm": null
+  },
+  {
+    "id": 48,
+    "slug": "curiosity",
+    "name": "Curiosity",
+    "journey": [
+      "Sensory Discovery, Curious Insecurity"
+    ],
+    "description": null,
+    "whyItWorks": null,
+    "whenToUse": null,
+    "bestAge": null,
+    "buildingBlocks": [],
+    "avoid": null,
+    "shortForm": null
+  },
+  {
+    "id": 49,
+    "slug": "change",
+    "name": "Change",
+    "journey": [
+      "Surprise Guest, Resourceful Improviser"
+    ],
+    "description": null,
+    "whyItWorks": null,
+    "whenToUse": null,
+    "bestAge": null,
+    "buildingBlocks": [],
+    "avoid": null,
+    "shortForm": null
+  },
+  {
+    "id": 50,
+    "slug": "teamwork",
+    "name": "Teamwork",
+    "journey": [
+      "Triumphant Teamwork"
+    ],
+    "description": null,
+    "whyItWorks": null,
+    "whenToUse": null,
+    "bestAge": null,
+    "buildingBlocks": [],
+    "avoid": null,
+    "shortForm": null
+  },
+  {
+    "id": 51,
+    "slug": "bedtime",
+    "name": "Bedtime",
+    "journey": [
+      "Mindful De-escalation"
+    ],
+    "description": null,
+    "whyItWorks": null,
+    "whenToUse": null,
+    "bestAge": null,
+    "buildingBlocks": [],
+    "avoid": null,
+    "shortForm": null
+  },
+  {
+    "id": 52,
+    "slug": "problem-solving",
+    "name": "Problem Solving",
+    "journey": [
+      "Underdog's Wit, Creative Empowerment"
+    ],
+    "description": null,
+    "whyItWorks": null,
+    "whenToUse": null,
+    "bestAge": null,
+    "buildingBlocks": [],
+    "avoid": null,
+    "shortForm": null
+  },
+  {
+    "id": 53,
+    "slug": "belonging",
+    "name": "Belonging",
+    "journey": [
+      "Radical Self-Acceptance, Circle of Safety"
+    ],
+    "description": null,
+    "whyItWorks": null,
+    "whenToUse": null,
+    "bestAge": null,
+    "buildingBlocks": [],
+    "avoid": null,
+    "shortForm": null
+  },
+  {
+    "id": 55,
+    "slug": "",
+    "name": "☐",
+    "journey": [
+      "Emotion starts small and grows naturally."
+    ],
+    "description": null,
+    "whyItWorks": null,
+    "whenToUse": null,
+    "bestAge": null,
+    "buildingBlocks": [],
+    "avoid": null,
+    "shortForm": null
+  },
+  {
+    "id": 56,
+    "slug": "",
+    "name": "☐",
+    "journey": [
+      "Child experiences the feeling before the solution appears."
+    ],
+    "description": null,
+    "whyItWorks": null,
+    "whenToUse": null,
+    "bestAge": null,
+    "buildingBlocks": [],
+    "avoid": null,
+    "shortForm": null
+  },
+  {
+    "id": 57,
+    "slug": "",
+    "name": "☐",
+    "journey": [
+      "Only one major emotional turning point."
+    ],
+    "description": null,
+    "whyItWorks": null,
+    "whenToUse": null,
+    "bestAge": null,
+    "buildingBlocks": [],
+    "avoid": null,
+    "shortForm": null
+  },
+  {
+    "id": 58,
+    "slug": "",
+    "name": "☐",
+    "journey": [
+      "Recovery follows the emotional climax."
+    ],
+    "description": null,
+    "whyItWorks": null,
+    "whenToUse": null,
+    "bestAge": null,
+    "buildingBlocks": [],
+    "avoid": null,
+    "shortForm": null
+  },
+  {
+    "id": 59,
+    "slug": "",
+    "name": "☐",
+    "journey": [
+      "Child solves or participates in solving the emotional problem."
+    ],
+    "description": null,
+    "whyItWorks": null,
+    "whenToUse": null,
+    "bestAge": null,
+    "buildingBlocks": [],
+    "avoid": null,
+    "shortForm": null
+  },
+  {
+    "id": 60,
+    "slug": "",
+    "name": "☐",
+    "journey": [
+      "Emotional lesson is shown through actions."
+    ],
+    "description": null,
+    "whyItWorks": null,
+    "whenToUse": null,
+    "bestAge": null,
+    "buildingBlocks": [],
+    "avoid": null,
+    "shortForm": null
+  },
+  {
+    "id": 61,
+    "slug": "",
+    "name": "☐",
+    "journey": [
+      "Ending feels emotionally safe."
+    ],
+    "description": null,
+    "whyItWorks": null,
+    "whenToUse": null,
+    "bestAge": null,
+    "buildingBlocks": [],
+    "avoid": null,
+    "shortForm": null
+  },
+  {
+    "id": 62,
+    "slug": "",
+    "name": "☐",
+    "journey": [
+      "Emotional arc matches the child's developmental age."
+    ],
+    "description": null,
+    "whyItWorks": null,
+    "whenToUse": null,
+    "bestAge": null,
+    "buildingBlocks": [],
+    "avoid": null,
+    "shortForm": null
+  },
+  {
+    "id": 63,
+    "slug": "",
+    "name": "☐",
+    "journey": [
+      "The ending leaves hope, not fear."
+    ],
+    "description": null,
+    "whyItWorks": null,
+    "whenToUse": null,
+    "bestAge": null,
+    "buildingBlocks": [],
+    "avoid": null,
+    "shortForm": null
+  }
+]

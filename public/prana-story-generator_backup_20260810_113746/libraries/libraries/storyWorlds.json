@@ -1,0 +1,522 @@
+[
+  {
+    "id": 1,
+    "slug": "whispering-forest",
+    "name": "Whispering Forest",
+    "bestAdventureArchetypes": [
+      "Rescue Mission",
+      "Mystery to Solve",
+      "Treasure Hunt",
+      "Friendship Repair",
+      "Discovery Journey",
+      "Team Adventure",
+      "Great Journey"
+    ]
+  },
+  {
+    "id": 2,
+    "slug": "ancient-banyan-grove",
+    "name": "Ancient Banyan Grove",
+    "bestAdventureArchetypes": [
+      "Wisdom Challenge",
+      "Mentor Journey",
+      "Discovery Journey",
+      "Ancient Secret",
+      "Great Journey",
+      "Choice & Consequence"
+    ]
+  },
+  {
+    "id": 3,
+    "slug": "whispering-meadow",
+    "name": "Whispering Meadow",
+    "bestAdventureArchetypes": [
+      "Friendship Repair",
+      "Gift of Giving",
+      "New Friend",
+      "Discovery Journey",
+      "Helping Hand",
+      "Nature's Balance"
+    ]
+  },
+  {
+    "id": 4,
+    "slug": "crystal-river-valley",
+    "name": "Crystal River Valley",
+    "bestAdventureArchetypes": [
+      "Rescue Mission",
+      "Great Journey",
+      "Nature's Balance",
+      "Discovery Journey",
+      "Time Adventure",
+      "Team Adventure"
+    ]
+  },
+  {
+    "id": 5,
+    "slug": "hidden-waterfall",
+    "name": "Hidden Waterfall",
+    "bestAdventureArchetypes": [
+      "Secret Discovery",
+      "Treasure Hunt",
+      "Rescue Mission",
+      "Discovery Journey",
+      "Great Journey",
+      "Ancient Secret"
+    ]
+  },
+  {
+    "id": 6,
+    "slug": "sunny-orchard",
+    "name": "Sunny Orchard",
+    "bestAdventureArchetypes": [
+      "Gift of Giving",
+      "Helping Hand",
+      "Community Project",
+      "Celebration Preparation",
+      "Friendship Repair",
+      "Nature's Balance"
+    ]
+  },
+  {
+    "id": 7,
+    "slug": "flower-garden",
+    "name": "Flower Garden",
+    "bestAdventureArchetypes": [
+      "Nature's Balance",
+      "Gift of Giving",
+      "Helping Hand",
+      "Discovery Journey",
+      "Friendship Repair",
+      "New Friend"
+    ]
+  },
+  {
+    "id": 8,
+    "slug": "bamboo-forest",
+    "name": "Bamboo Forest",
+    "bestAdventureArchetypes": [
+      "Great Journey",
+      "Discovery Journey",
+      "Build & Repair",
+      "Nature's Balance",
+      "Team Adventure",
+      "Rescue Mission"
+    ]
+  },
+  {
+    "id": 9,
+    "slug": "misty-mountains",
+    "name": "Misty Mountains",
+    "bestAdventureArchetypes": [
+      "Great Journey",
+      "Survival Adventure",
+      "Rescue Mission",
+      "Time Adventure",
+      "Discovery Journey",
+      "Hero's Trial"
+    ]
+  },
+  {
+    "id": 10,
+    "slug": "golden-grasslands",
+    "name": "Golden Grasslands",
+    "bestAdventureArchetypes": [
+      "Great Journey",
+      "Community Project",
+      "Team Adventure",
+      "Nature's Balance",
+      "Discovery Journey",
+      "Helping Hand"
+    ]
+  },
+  {
+    "id": 12,
+    "slug": "lotus-pond",
+    "name": "Lotus Pond",
+    "bestAdventureArchetypes": [
+      "Discovery Journey",
+      "Gift of Giving",
+      "Nature's Balance",
+      "New Friend",
+      "Helping Hand",
+      "Mystery to Solve"
+    ]
+  },
+  {
+    "id": 13,
+    "slug": "turtle-bay",
+    "name": "Turtle Bay",
+    "bestAdventureArchetypes": [
+      "Rescue Mission",
+      "Great Journey",
+      "Nature's Balance",
+      "Helping Hand",
+      "Team Adventure",
+      "Gift of Giving"
+    ]
+  },
+  {
+    "id": 14,
+    "slug": "mangrove-marsh",
+    "name": "Mangrove Marsh",
+    "bestAdventureArchetypes": [
+      "Discovery Journey",
+      "Mystery to Solve",
+      "Nature's Balance",
+      "Rescue Mission",
+      "Great Journey",
+      "Survival Adventure"
+    ]
+  },
+  {
+    "id": 15,
+    "slug": "waterfall-caves",
+    "name": "Waterfall Caves",
+    "bestAdventureArchetypes": [
+      "Ancient Secret",
+      "Treasure Hunt",
+      "Rescue Mission",
+      "Discovery Journey",
+      "Mystery to Solve",
+      "Great Journey"
+    ]
+  },
+  {
+    "id": 17,
+    "slug": "woodland-village",
+    "name": "Woodland Village",
+    "bestAdventureArchetypes": [
+      "Community Project",
+      "Helping Hand",
+      "Gift of Giving",
+      "Build Together",
+      "Friendship Repair",
+      "Celebration Preparation"
+    ]
+  },
+  {
+    "id": 18,
+    "slug": "treehouse-village",
+    "name": "Treehouse Village",
+    "bestAdventureArchetypes": [
+      "Team Adventure",
+      "Build Together",
+      "Community Project",
+      "Discovery Journey",
+      "Helping Hand",
+      "Performance Story"
+    ]
+  },
+  {
+    "id": 19,
+    "slug": "riverside-village",
+    "name": "Riverside Village",
+    "bestAdventureArchetypes": [
+      "Community Project",
+      "Festival Adventure",
+      "Helping Hand",
+      "Nature's Balance",
+      "Gift of Giving",
+      "Performance Story"
+    ]
+  },
+  {
+    "id": 20,
+    "slug": "hilltop-village",
+    "name": "Hilltop Village",
+    "bestAdventureArchetypes": [
+      "Community Project",
+      "Helping Hand",
+      "Build Together",
+      "Promise Keeper",
+      "Celebration Preparation",
+      "Performance Story"
+    ]
+  },
+  {
+    "id": 21,
+    "slug": "celebration-village",
+    "name": "Celebration Village",
+    "bestAdventureArchetypes": [
+      "Festival Adventure",
+      "Performance Story",
+      "Helping Hand",
+      "Community Project",
+      "Mystery to Solve",
+      "Gift of Giving"
+    ]
+  },
+  {
+    "id": 23,
+    "slug": "magic-garden",
+    "name": "Magic Garden",
+    "bestAdventureArchetypes": [
+      "Magical Discovery",
+      "Nature's Balance",
+      "Gift of Giving",
+      "Discovery Journey",
+      "Helping Hand",
+      "New Friend"
+    ]
+  },
+  {
+    "id": 24,
+    "slug": "rainbow-kingdom",
+    "name": "Rainbow Kingdom",
+    "bestAdventureArchetypes": [
+      "Great Journey",
+      "Festival Adventure",
+      "Gift of Giving",
+      "Community Project",
+      "Magical Quest",
+      "Performance Story"
+    ]
+  },
+  {
+    "id": 25,
+    "slug": "cloud-kingdom",
+    "name": "Cloud Kingdom",
+    "bestAdventureArchetypes": [
+      "Great Journey",
+      "Rescue Mission",
+      "Magical Quest",
+      "Discovery Journey",
+      "Time Adventure",
+      "Team Adventure"
+    ]
+  },
+  {
+    "id": 26,
+    "slug": "moonlight-valley",
+    "name": "Moonlight Valley",
+    "bestAdventureArchetypes": [
+      "Ancient Secret",
+      "Mystery to Solve",
+      "Dream Adventure",
+      "Discovery Journey",
+      "Wisdom Challenge",
+      "Magical Discovery"
+    ]
+  },
+  {
+    "id": 27,
+    "slug": "star-forest",
+    "name": "Star Forest",
+    "bestAdventureArchetypes": [
+      "Great Journey",
+      "Ancient Secret",
+      "Discovery Journey",
+      "Wish or Blessing",
+      "Magical Quest",
+      "Treasure Hunt"
+    ]
+  },
+  {
+    "id": 28,
+    "slug": "crystal-caverns",
+    "name": "Crystal Caverns",
+    "bestAdventureArchetypes": [
+      "Treasure Hunt",
+      "Ancient Secret",
+      "Mystery to Solve",
+      "Rescue Mission",
+      "Discovery Journey",
+      "Magical Discovery"
+    ]
+  },
+  {
+    "id": 29,
+    "slug": "temple-courtyard",
+    "name": "Temple Courtyard",
+    "bestAdventureArchetypes": [
+      "Ancient Secret",
+      "Treasure Hunt",
+      "Wisdom Challenge",
+      "Mystery to Solve",
+      "Discovery Journey"
+    ]
+  },
+  {
+    "id": 30,
+    "slug": "wishing-woods",
+    "name": "Wishing Woods",
+    "bestAdventureArchetypes": [
+      "Wish or Blessing",
+      "Magical Discovery",
+      "Choice & Consequence",
+      "Discovery Journey",
+      "Gift of Giving",
+      "Dream Adventure"
+    ]
+  },
+  {
+    "id": 32,
+    "slug": "secret-library",
+    "name": "Secret Library",
+    "bestAdventureArchetypes": [
+      "Discovery Journey",
+      "Ancient Secret",
+      "Wisdom Challenge",
+      "Learning Quest",
+      "Mentor Journey",
+      "Mystery to Solve"
+    ]
+  },
+  {
+    "id": 33,
+    "slug": "forgotten-ruins",
+    "name": "Forgotten Ruins",
+    "bestAdventureArchetypes": [
+      "Ancient Secret",
+      "Treasure Hunt",
+      "Discovery Journey",
+      "Great Journey",
+      "Mystery to Solve",
+      "Survival Adventure"
+    ]
+  },
+  {
+    "id": 34,
+    "slug": "hidden-cave-network",
+    "name": "Hidden Cave Network",
+    "bestAdventureArchetypes": [
+      "Treasure Hunt",
+      "Rescue Mission",
+      "Mystery to Solve",
+      "Discovery Journey",
+      "Great Journey",
+      "Time Adventure"
+    ]
+  },
+  {
+    "id": 35,
+    "slug": "lost-island",
+    "name": "Lost Island",
+    "bestAdventureArchetypes": [
+      "Great Journey",
+      "Survival Adventure",
+      "Rescue Mission",
+      "Discovery Journey",
+      "Nature's Balance",
+      "Team Adventure"
+    ]
+  },
+  {
+    "id": 36,
+    "slug": "treasure-cliffs",
+    "name": "Treasure Cliffs",
+    "bestAdventureArchetypes": [
+      "Treasure Hunt",
+      "Great Journey",
+      "Rescue Mission",
+      "Time Adventure",
+      "Discovery Journey",
+      "Hero's Trial"
+    ]
+  },
+  {
+    "id": 38,
+    "slug": "great-caravan-trail",
+    "name": "Great Caravan Trail",
+    "bestAdventureArchetypes": [
+      "Great Journey",
+      "Escort Mission",
+      "Delivery Quest",
+      "Team Adventure",
+      "Community Project",
+      "Time Adventure"
+    ]
+  },
+  {
+    "id": 39,
+    "slug": "desert-oasis",
+    "name": "Desert Oasis",
+    "bestAdventureArchetypes": [
+      "Survival Adventure",
+      "Great Journey",
+      "Rescue Mission",
+      "Discovery Journey",
+      "Nature's Balance",
+      "Time Adventure"
+    ]
+  },
+  {
+    "id": 40,
+    "slug": "snowy-highlands",
+    "name": "Snowy Highlands",
+    "bestAdventureArchetypes": [
+      "Survival Adventure",
+      "Rescue Mission",
+      "Great Journey",
+      "Hero's Trial",
+      "Time Adventure",
+      "Build & Repair"
+    ]
+  },
+  {
+    "id": 41,
+    "slug": "volcano-valley",
+    "name": "Volcano Valley",
+    "bestAdventureArchetypes": [
+      "Rescue Mission",
+      "Survival Adventure",
+      "Hero's Trial",
+      "Time Adventure",
+      "Build & Repair",
+      "Great Journey"
+    ]
+  },
+  {
+    "id": 42,
+    "slug": "sky-islands",
+    "name": "Sky Islands",
+    "bestAdventureArchetypes": [
+      "Great Journey",
+      "Discovery Journey",
+      "Magical Quest",
+      "Rescue Mission",
+      "Time Adventure",
+      "Team Adventure"
+    ]
+  },
+  {
+    "id": 44,
+    "slug": "dream-world",
+    "name": "Dream World",
+    "bestAdventureArchetypes": [
+      "Dream Adventure",
+      "Wisdom Challenge",
+      "Choice & Consequence",
+      "Ancient Secret",
+      "Discovery Journey",
+      "Mentor Journey"
+    ]
+  },
+  {
+    "id": 45,
+    "slug": "toy-kingdom",
+    "name": "Toy Kingdom",
+    "bestAdventureArchetypes": [
+      "Creative Quest",
+      "Build & Repair",
+      "Helping Hand",
+      "Friendship Repair",
+      "Community Project",
+      "Magical Discovery"
+    ]
+  },
+  {
+    "id": 46,
+    "slug": "story-house",
+    "name": "Story House",
+    "bestAdventureArchetypes": [
+      "Ancient Secret",
+      "Discovery Journey",
+      "Mentor Journey",
+      "Learning Quest",
+      "Wisdom Challenge",
+      "Teaching Adventure"
+    ]
+  }
+]

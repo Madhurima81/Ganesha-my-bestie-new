@@ -1,0 +1,842 @@
+[
+  {
+    "id": "SIT011",
+    "storyText": "Another child pushes Kavi during a disagreement over a game. Kavi wanted to stay safe and make the unfairness stop. Kavi is hurt and angry, and pushing back could make the situation worse. The old thought came quickly: \"If someone hurts me, I should hurt them back.\" It was small, at first. Kavi didn't stop to think — grabbed for it right away. The grabbing turned \"my toy\" into a tug-of-war, and now it was a fight about winning, not about the toy at all. Kavi shoved back, just once, and the fight grew bigger than the thing that had started it.\n\nBy now the anger filled everything — bigger than any one toy could ever be worth. Kavi took one breath, fists still tight, before reaching again. The real problem was never the fight — it was just wanting the toy back. I can protect myself without losing control. Kavi asked for it back, plainly, and held it again a moment later — the fight already forgotten, the actual want finally met.",
+    "completeStoryValidation": {
+      "status": "PASS",
+      "issues": [],
+      "blockingFailures": 0,
+      "warnings": 0,
+      "rulesPassed": 15
+    },
+    "pageValidation": {
+      "status": "PASS",
+      "issues": [],
+      "blockingFailures": 0,
+      "warnings": 0,
+      "rulesPassed": 13
+    },
+    "narrationValidation": {
+      "status": "PASS",
+      "issues": [],
+      "blockingFailures": 0,
+      "warnings": 0,
+      "rulesPassed": 6
+    },
+    "dialogueValidation": {
+      "status": "PASS",
+      "issues": [],
+      "blockingFailures": 0,
+      "warnings": 0,
+      "rulesPassed": 6
+    },
+    "polishValidation": {
+      "status": "PASS",
+      "issues": [],
+      "blockingFailures": 0,
+      "warnings": 0,
+      "rulesPassed": 7
+    },
+    "storyQAReport": {
+      "status": "FAIL",
+      "rulesPassed": 15,
+      "rulesFailed": 1,
+      "warnings": [],
+      "errors": [
+        {
+          "ruleId": "QA-003",
+          "status": "FAIL",
+          "severity": "blocking",
+          "evidence": "Cause and effect remain visible from conflict to turning point.",
+          "responsibleModule": "8A"
+        }
+      ],
+      "results": [
+        {
+          "ruleId": "QA-001",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Page count and page order still match the locked Story Plan.",
+          "responsibleModule": "8B"
+        },
+        {
+          "ruleId": "QA-002",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Protagonist takes meaningful action rather than being carried by the plot.",
+          "responsibleModule": "8A"
+        },
+        {
+          "ruleId": "QA-003",
+          "status": "FAIL",
+          "severity": "blocking",
+          "evidence": "Cause and effect remain visible from conflict to turning point.",
+          "responsibleModule": "8A"
+        },
+        {
+          "ruleId": "QA-004",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Mission resolves through the protagonist's final choice.",
+          "responsibleModule": "8A"
+        },
+        {
+          "ruleId": "QA-005",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Core need is addressed through the protagonist's growth outcome.",
+          "responsibleModule": "8A"
+        },
+        {
+          "ruleId": "QA-006",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "False belief and true belief are both present in the actual story.",
+          "responsibleModule": "8A"
+        },
+        {
+          "ruleId": "QA-007",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Emotional arc moves from upset pressure toward lighter release.",
+          "responsibleModule": "8A"
+        },
+        {
+          "ruleId": "QA-008",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Symbol/mission pairing is resolved in the Blueprint (not required to be spoken aloud in every story).",
+          "responsibleModule": "8A"
+        },
+        {
+          "ruleId": "QA-009",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Craft requirements show up through a reflective pause in the actual manuscript (any concrete form, not one fixed phrase).",
+          "responsibleModule": "8B"
+        },
+        {
+          "ruleId": "QA-010",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Every page still carries coherent transition guidance.",
+          "responsibleModule": "8B"
+        },
+        {
+          "ruleId": "QA-011",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "No internal engine placeholders or CR codes remain in the prose.",
+          "responsibleModule": "8E"
+        },
+        {
+          "ruleId": "QA-012",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "No obvious prose corruption or doubled punctuation remains.",
+          "responsibleModule": "8E"
+        },
+        {
+          "ruleId": "QA-013",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Dialogue remains concise and read-aloud friendly.",
+          "responsibleModule": "8D"
+        },
+        {
+          "ruleId": "QA-014",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Ending provides both emotional and narrative closure.",
+          "responsibleModule": "8A"
+        },
+        {
+          "ruleId": "QA-015",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "No placeholder prose or unplanned artifact text remains.",
+          "responsibleModule": "8E"
+        },
+        {
+          "ruleId": "QA-016",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Page pacing still protects dramatic and emotional high points rather than flattening them.",
+          "responsibleModule": "8B"
+        }
+      ]
+    }
+  },
+  {
+    "id": "SIT098",
+    "storyText": "After spending a long time gaming or watching videos, Kavi sits down to do something else but struggles to focus. Kavi wanted to concentrate on the next activity. Kavi's attention feels scattered and their mind feels tired. The old thought came quickly: \"My attention controls me.\" It was small, at first. Kavi didn't notice the wandering — pushed straight through instead. Pushing through only made the mind notice its own drifting even more, like watching yourself trip. Kavi squeezed both eyes shut and forced it harder, and three more lines went by, still unread. Soon it felt like focusing was impossible altogether — not just this page, but everything. Kavi sat with the wandering for a second, instead of fighting it.\n\nThe real problem was never a broken ability to focus — it was just one line, sitting there, not yet actually read. I can guide my attention back to what matters.\n\nKavi read that one line, just that one, and it finally landed — clearer than the whole page had felt a moment before.",
+    "completeStoryValidation": {
+      "status": "PASS",
+      "issues": [],
+      "blockingFailures": 0,
+      "warnings": 0,
+      "rulesPassed": 15
+    },
+    "pageValidation": {
+      "status": "PASS",
+      "issues": [],
+      "blockingFailures": 0,
+      "warnings": 0,
+      "rulesPassed": 13
+    },
+    "narrationValidation": {
+      "status": "PASS",
+      "issues": [],
+      "blockingFailures": 0,
+      "warnings": 0,
+      "rulesPassed": 6
+    },
+    "dialogueValidation": {
+      "status": "PASS",
+      "issues": [],
+      "blockingFailures": 0,
+      "warnings": 0,
+      "rulesPassed": 6
+    },
+    "polishValidation": {
+      "status": "PASS",
+      "issues": [],
+      "blockingFailures": 0,
+      "warnings": 0,
+      "rulesPassed": 7
+    },
+    "storyQAReport": {
+      "status": "FAIL",
+      "rulesPassed": 15,
+      "rulesFailed": 1,
+      "warnings": [],
+      "errors": [
+        {
+          "ruleId": "QA-002",
+          "status": "FAIL",
+          "severity": "blocking",
+          "evidence": "Protagonist takes meaningful action rather than being carried by the plot.",
+          "responsibleModule": "8A"
+        }
+      ],
+      "results": [
+        {
+          "ruleId": "QA-001",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Page count and page order still match the locked Story Plan.",
+          "responsibleModule": "8B"
+        },
+        {
+          "ruleId": "QA-002",
+          "status": "FAIL",
+          "severity": "blocking",
+          "evidence": "Protagonist takes meaningful action rather than being carried by the plot.",
+          "responsibleModule": "8A"
+        },
+        {
+          "ruleId": "QA-003",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Cause and effect remain visible from conflict to turning point.",
+          "responsibleModule": "8A"
+        },
+        {
+          "ruleId": "QA-004",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Mission resolves through the protagonist's final choice.",
+          "responsibleModule": "8A"
+        },
+        {
+          "ruleId": "QA-005",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Core need is addressed through the protagonist's growth outcome.",
+          "responsibleModule": "8A"
+        },
+        {
+          "ruleId": "QA-006",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "False belief and true belief are both present in the actual story.",
+          "responsibleModule": "8A"
+        },
+        {
+          "ruleId": "QA-007",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Emotional arc moves from upset pressure toward lighter release.",
+          "responsibleModule": "8A"
+        },
+        {
+          "ruleId": "QA-008",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Symbol/mission pairing is resolved in the Blueprint (not required to be spoken aloud in every story).",
+          "responsibleModule": "8A"
+        },
+        {
+          "ruleId": "QA-009",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Craft requirements show up through a reflective pause in the actual manuscript (any concrete form, not one fixed phrase).",
+          "responsibleModule": "8B"
+        },
+        {
+          "ruleId": "QA-010",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Every page still carries coherent transition guidance.",
+          "responsibleModule": "8B"
+        },
+        {
+          "ruleId": "QA-011",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "No internal engine placeholders or CR codes remain in the prose.",
+          "responsibleModule": "8E"
+        },
+        {
+          "ruleId": "QA-012",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "No obvious prose corruption or doubled punctuation remains.",
+          "responsibleModule": "8E"
+        },
+        {
+          "ruleId": "QA-013",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Dialogue remains concise and read-aloud friendly.",
+          "responsibleModule": "8D"
+        },
+        {
+          "ruleId": "QA-014",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Ending provides both emotional and narrative closure.",
+          "responsibleModule": "8A"
+        },
+        {
+          "ruleId": "QA-015",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "No placeholder prose or unplanned artifact text remains.",
+          "responsibleModule": "8E"
+        },
+        {
+          "ruleId": "QA-016",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Page pacing still protects dramatic and emotional high points rather than flattening them.",
+          "responsibleModule": "8B"
+        }
+      ]
+    }
+  },
+  {
+    "id": "SIT104",
+    "storyText": "After sleeping badly, Kavi wakes up tired and becomes irritated by small things that normally would not bother them. Kavi wanted to get through the day without losing their temper. Kavi is already tired before the day properly begins. The old thought came quickly: \"Being tired gives me no control over my behaviour.\" It was small, at first. Kavi didn't notice why the sock felt wrong — snapped at it instead. Snapping at the sock made the very next ordinary thing feel like an insult too. Kavi snapped at that one as well, and the whole morning started stacking up like one long unfairness. By now everything felt like the worst day ever — the sock, the toast, all of it, much bigger than any of them actually were. Kavi stopped, just for a second, before the next small thing could land.\n\nNone of it was really about the sock or the toast — Kavi was just hungry and tired underneath it all. I can notice my feelings and choose kind actions.\n\nKavi said the actual, unglamorous truth out loud — hungry, tired — and felt the sock and the toast shrink back down to the small things they had always been.",
+    "completeStoryValidation": {
+      "status": "PASS",
+      "issues": [],
+      "blockingFailures": 0,
+      "warnings": 0,
+      "rulesPassed": 15
+    },
+    "pageValidation": {
+      "status": "PASS",
+      "issues": [],
+      "blockingFailures": 0,
+      "warnings": 0,
+      "rulesPassed": 13
+    },
+    "narrationValidation": {
+      "status": "PASS",
+      "issues": [],
+      "blockingFailures": 0,
+      "warnings": 0,
+      "rulesPassed": 6
+    },
+    "dialogueValidation": {
+      "status": "PASS",
+      "issues": [],
+      "blockingFailures": 0,
+      "warnings": 0,
+      "rulesPassed": 6
+    },
+    "polishValidation": {
+      "status": "PASS",
+      "issues": [],
+      "blockingFailures": 0,
+      "warnings": 0,
+      "rulesPassed": 7
+    },
+    "storyQAReport": {
+      "status": "FAIL",
+      "rulesPassed": 15,
+      "rulesFailed": 1,
+      "warnings": [],
+      "errors": [
+        {
+          "ruleId": "QA-003",
+          "status": "FAIL",
+          "severity": "blocking",
+          "evidence": "Cause and effect remain visible from conflict to turning point.",
+          "responsibleModule": "8A"
+        }
+      ],
+      "results": [
+        {
+          "ruleId": "QA-001",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Page count and page order still match the locked Story Plan.",
+          "responsibleModule": "8B"
+        },
+        {
+          "ruleId": "QA-002",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Protagonist takes meaningful action rather than being carried by the plot.",
+          "responsibleModule": "8A"
+        },
+        {
+          "ruleId": "QA-003",
+          "status": "FAIL",
+          "severity": "blocking",
+          "evidence": "Cause and effect remain visible from conflict to turning point.",
+          "responsibleModule": "8A"
+        },
+        {
+          "ruleId": "QA-004",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Mission resolves through the protagonist's final choice.",
+          "responsibleModule": "8A"
+        },
+        {
+          "ruleId": "QA-005",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Core need is addressed through the protagonist's growth outcome.",
+          "responsibleModule": "8A"
+        },
+        {
+          "ruleId": "QA-006",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "False belief and true belief are both present in the actual story.",
+          "responsibleModule": "8A"
+        },
+        {
+          "ruleId": "QA-007",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Emotional arc moves from upset pressure toward lighter release.",
+          "responsibleModule": "8A"
+        },
+        {
+          "ruleId": "QA-008",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Symbol/mission pairing is resolved in the Blueprint (not required to be spoken aloud in every story).",
+          "responsibleModule": "8A"
+        },
+        {
+          "ruleId": "QA-009",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Craft requirements show up through a reflective pause in the actual manuscript (any concrete form, not one fixed phrase).",
+          "responsibleModule": "8B"
+        },
+        {
+          "ruleId": "QA-010",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Every page still carries coherent transition guidance.",
+          "responsibleModule": "8B"
+        },
+        {
+          "ruleId": "QA-011",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "No internal engine placeholders or CR codes remain in the prose.",
+          "responsibleModule": "8E"
+        },
+        {
+          "ruleId": "QA-012",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "No obvious prose corruption or doubled punctuation remains.",
+          "responsibleModule": "8E"
+        },
+        {
+          "ruleId": "QA-013",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Dialogue remains concise and read-aloud friendly.",
+          "responsibleModule": "8D"
+        },
+        {
+          "ruleId": "QA-014",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Ending provides both emotional and narrative closure.",
+          "responsibleModule": "8A"
+        },
+        {
+          "ruleId": "QA-015",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "No placeholder prose or unplanned artifact text remains.",
+          "responsibleModule": "8E"
+        },
+        {
+          "ruleId": "QA-016",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Page pacing still protects dramatic and emotional high points rather than flattening them.",
+          "responsibleModule": "8B"
+        }
+      ]
+    }
+  },
+  {
+    "id": "SIT105",
+    "storyText": "Kavi is doing homework while an exciting programme is playing nearby. Kavi wanted to finish the homework without missing the show. The sounds and action from the TV keep pulling Kavi's attention away. The old thought came quickly: \"I can't focus when there are distractions.\" It was small, at first. Kavi didn't notice the wandering — pushed straight through instead. Pushing through only made the mind notice its own drifting even more, like watching yourself trip. Kavi squeezed both eyes shut and forced it harder, and three more lines went by, still unread.\n\nSoon it felt like focusing was impossible altogether — not just this page, but everything. Kavi sat with the wandering for a second, instead of fighting it. The real problem was never a broken ability to focus — it was just one line, sitting there, not yet actually read. I can gently bring my attention back. Kavi read that one line, just that one, and it finally landed — clearer than the whole page had felt a moment before.",
+    "completeStoryValidation": {
+      "status": "PASS",
+      "issues": [],
+      "blockingFailures": 0,
+      "warnings": 0,
+      "rulesPassed": 15
+    },
+    "pageValidation": {
+      "status": "PASS",
+      "issues": [],
+      "blockingFailures": 0,
+      "warnings": 0,
+      "rulesPassed": 13
+    },
+    "narrationValidation": {
+      "status": "PASS",
+      "issues": [],
+      "blockingFailures": 0,
+      "warnings": 0,
+      "rulesPassed": 6
+    },
+    "dialogueValidation": {
+      "status": "PASS",
+      "issues": [],
+      "blockingFailures": 0,
+      "warnings": 0,
+      "rulesPassed": 6
+    },
+    "polishValidation": {
+      "status": "PASS",
+      "issues": [],
+      "blockingFailures": 0,
+      "warnings": 0,
+      "rulesPassed": 7
+    },
+    "storyQAReport": {
+      "status": "FAIL",
+      "rulesPassed": 15,
+      "rulesFailed": 1,
+      "warnings": [],
+      "errors": [
+        {
+          "ruleId": "QA-002",
+          "status": "FAIL",
+          "severity": "blocking",
+          "evidence": "Protagonist takes meaningful action rather than being carried by the plot.",
+          "responsibleModule": "8A"
+        }
+      ],
+      "results": [
+        {
+          "ruleId": "QA-001",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Page count and page order still match the locked Story Plan.",
+          "responsibleModule": "8B"
+        },
+        {
+          "ruleId": "QA-002",
+          "status": "FAIL",
+          "severity": "blocking",
+          "evidence": "Protagonist takes meaningful action rather than being carried by the plot.",
+          "responsibleModule": "8A"
+        },
+        {
+          "ruleId": "QA-003",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Cause and effect remain visible from conflict to turning point.",
+          "responsibleModule": "8A"
+        },
+        {
+          "ruleId": "QA-004",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Mission resolves through the protagonist's final choice.",
+          "responsibleModule": "8A"
+        },
+        {
+          "ruleId": "QA-005",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Core need is addressed through the protagonist's growth outcome.",
+          "responsibleModule": "8A"
+        },
+        {
+          "ruleId": "QA-006",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "False belief and true belief are both present in the actual story.",
+          "responsibleModule": "8A"
+        },
+        {
+          "ruleId": "QA-007",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Emotional arc moves from upset pressure toward lighter release.",
+          "responsibleModule": "8A"
+        },
+        {
+          "ruleId": "QA-008",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Symbol/mission pairing is resolved in the Blueprint (not required to be spoken aloud in every story).",
+          "responsibleModule": "8A"
+        },
+        {
+          "ruleId": "QA-009",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Craft requirements show up through a reflective pause in the actual manuscript (any concrete form, not one fixed phrase).",
+          "responsibleModule": "8B"
+        },
+        {
+          "ruleId": "QA-010",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Every page still carries coherent transition guidance.",
+          "responsibleModule": "8B"
+        },
+        {
+          "ruleId": "QA-011",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "No internal engine placeholders or CR codes remain in the prose.",
+          "responsibleModule": "8E"
+        },
+        {
+          "ruleId": "QA-012",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "No obvious prose corruption or doubled punctuation remains.",
+          "responsibleModule": "8E"
+        },
+        {
+          "ruleId": "QA-013",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Dialogue remains concise and read-aloud friendly.",
+          "responsibleModule": "8D"
+        },
+        {
+          "ruleId": "QA-014",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Ending provides both emotional and narrative closure.",
+          "responsibleModule": "8A"
+        },
+        {
+          "ruleId": "QA-015",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "No placeholder prose or unplanned artifact text remains.",
+          "responsibleModule": "8E"
+        },
+        {
+          "ruleId": "QA-016",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Page pacing still protects dramatic and emotional high points rather than flattening them.",
+          "responsibleModule": "8B"
+        }
+      ]
+    }
+  },
+  {
+    "id": "SIT110",
+    "storyText": "Near dinner time, Kavi is hungry and tired after a long day and becomes increasingly irritable while waiting for food. Kavi wanted to feel better immediately. Dinner is not ready yet. The old thought came quickly: \"My feelings should decide my behaviour.\" It was small, at first. Kavi didn't notice why the sock felt wrong — snapped at it instead. Snapping at the sock made the very next ordinary thing feel like an insult too. Kavi snapped at that one as well, and the whole morning started stacking up like one long unfairness. By now everything felt like the worst day ever — the sock, the toast, all of it, much bigger than any of them actually were. Kavi stopped, just for a second, before the next small thing could land.\n\nNone of it was really about the sock or the toast — Kavi was just hungry and tired underneath it all. I can care for my feelings without hurting others.\n\nKavi said the actual, unglamorous truth out loud — hungry, tired — and felt the sock and the toast shrink back down to the small things they had always been.",
+    "completeStoryValidation": {
+      "status": "PASS",
+      "issues": [],
+      "blockingFailures": 0,
+      "warnings": 0,
+      "rulesPassed": 15
+    },
+    "pageValidation": {
+      "status": "PASS",
+      "issues": [],
+      "blockingFailures": 0,
+      "warnings": 0,
+      "rulesPassed": 13
+    },
+    "narrationValidation": {
+      "status": "PASS",
+      "issues": [],
+      "blockingFailures": 0,
+      "warnings": 0,
+      "rulesPassed": 6
+    },
+    "dialogueValidation": {
+      "status": "PASS",
+      "issues": [],
+      "blockingFailures": 0,
+      "warnings": 0,
+      "rulesPassed": 6
+    },
+    "polishValidation": {
+      "status": "PASS",
+      "issues": [],
+      "blockingFailures": 0,
+      "warnings": 0,
+      "rulesPassed": 7
+    },
+    "storyQAReport": {
+      "status": "FAIL",
+      "rulesPassed": 15,
+      "rulesFailed": 1,
+      "warnings": [],
+      "errors": [
+        {
+          "ruleId": "QA-003",
+          "status": "FAIL",
+          "severity": "blocking",
+          "evidence": "Cause and effect remain visible from conflict to turning point.",
+          "responsibleModule": "8A"
+        }
+      ],
+      "results": [
+        {
+          "ruleId": "QA-001",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Page count and page order still match the locked Story Plan.",
+          "responsibleModule": "8B"
+        },
+        {
+          "ruleId": "QA-002",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Protagonist takes meaningful action rather than being carried by the plot.",
+          "responsibleModule": "8A"
+        },
+        {
+          "ruleId": "QA-003",
+          "status": "FAIL",
+          "severity": "blocking",
+          "evidence": "Cause and effect remain visible from conflict to turning point.",
+          "responsibleModule": "8A"
+        },
+        {
+          "ruleId": "QA-004",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Mission resolves through the protagonist's final choice.",
+          "responsibleModule": "8A"
+        },
+        {
+          "ruleId": "QA-005",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Core need is addressed through the protagonist's growth outcome.",
+          "responsibleModule": "8A"
+        },
+        {
+          "ruleId": "QA-006",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "False belief and true belief are both present in the actual story.",
+          "responsibleModule": "8A"
+        },
+        {
+          "ruleId": "QA-007",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Emotional arc moves from upset pressure toward lighter release.",
+          "responsibleModule": "8A"
+        },
+        {
+          "ruleId": "QA-008",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Symbol/mission pairing is resolved in the Blueprint (not required to be spoken aloud in every story).",
+          "responsibleModule": "8A"
+        },
+        {
+          "ruleId": "QA-009",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Craft requirements show up through a reflective pause in the actual manuscript (any concrete form, not one fixed phrase).",
+          "responsibleModule": "8B"
+        },
+        {
+          "ruleId": "QA-010",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Every page still carries coherent transition guidance.",
+          "responsibleModule": "8B"
+        },
+        {
+          "ruleId": "QA-011",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "No internal engine placeholders or CR codes remain in the prose.",
+          "responsibleModule": "8E"
+        },
+        {
+          "ruleId": "QA-012",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "No obvious prose corruption or doubled punctuation remains.",
+          "responsibleModule": "8E"
+        },
+        {
+          "ruleId": "QA-013",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Dialogue remains concise and read-aloud friendly.",
+          "responsibleModule": "8D"
+        },
+        {
+          "ruleId": "QA-014",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Ending provides both emotional and narrative closure.",
+          "responsibleModule": "8A"
+        },
+        {
+          "ruleId": "QA-015",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "No placeholder prose or unplanned artifact text remains.",
+          "responsibleModule": "8E"
+        },
+        {
+          "ruleId": "QA-016",
+          "status": "PASS",
+          "severity": "info",
+          "evidence": "Page pacing still protects dramatic and emotional high points rather than flattening them.",
+          "responsibleModule": "8B"
+        }
+      ]
+    }
+  }
+]

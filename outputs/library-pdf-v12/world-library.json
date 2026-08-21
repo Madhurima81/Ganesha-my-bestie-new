@@ -1,0 +1,265 @@
+{
+  "label": "World Library",
+  "sheetName": "Story World Library",
+  "range": "A1:B64",
+  "rows": 64,
+  "cols": 2,
+  "values": [
+    [
+      "STORY WORLD LIBRARY (LOCKED — 40) — Story World ↔ Adventure Archetype Mapping",
+      null
+    ],
+    [
+      null,
+      null
+    ],
+    [
+      "🌳 Nature Worlds",
+      null
+    ],
+    [
+      "Story World",
+      "Best Adventure Archetypes"
+    ],
+    [
+      "Whispering Forest",
+      "Rescue Mission, Mystery to Solve, Treasure Hunt, Friendship Repair, Discovery Journey, Team Adventure, Great Journey"
+    ],
+    [
+      "Ancient Banyan Grove",
+      "Wisdom Challenge, Mentor Journey, Discovery Journey, Ancient Secret, Great Journey, Choice & Consequence"
+    ],
+    [
+      "Whispering Meadow",
+      "Friendship Repair, Gift of Giving, New Friend, Discovery Journey, Helping Hand, Nature's Balance"
+    ],
+    [
+      "Crystal River Valley",
+      "Rescue Mission, Great Journey, Nature's Balance, Discovery Journey, Time Adventure, Team Adventure"
+    ],
+    [
+      "Hidden Waterfall",
+      "Secret Discovery, Treasure Hunt, Rescue Mission, Discovery Journey, Great Journey, Ancient Secret"
+    ],
+    [
+      "Sunny Orchard",
+      "Gift of Giving, Helping Hand, Community Project, Celebration Preparation, Friendship Repair, Nature's Balance"
+    ],
+    [
+      "Flower Garden",
+      "Nature's Balance, Gift of Giving, Helping Hand, Discovery Journey, Friendship Repair, New Friend"
+    ],
+    [
+      "Bamboo Forest",
+      "Great Journey, Discovery Journey, Build & Repair, Nature's Balance, Team Adventure, Rescue Mission"
+    ],
+    [
+      "Misty Mountains",
+      "Great Journey, Survival Adventure, Rescue Mission, Time Adventure, Discovery Journey, Hero's Trial"
+    ],
+    [
+      "Golden Grasslands",
+      "Great Journey, Community Project, Team Adventure, Nature's Balance, Discovery Journey, Helping Hand"
+    ],
+    [
+      null,
+      null
+    ],
+    [
+      "💧 Water Worlds",
+      null
+    ],
+    [
+      "Story World",
+      "Best Adventure Archetypes"
+    ],
+    [
+      "Lotus Pond",
+      "Discovery Journey, Gift of Giving, Nature's Balance, New Friend, Helping Hand, Mystery to Solve"
+    ],
+    [
+      "Turtle Bay",
+      "Rescue Mission, Great Journey, Nature's Balance, Helping Hand, Team Adventure, Gift of Giving"
+    ],
+    [
+      "Mangrove Marsh",
+      "Discovery Journey, Mystery to Solve, Nature's Balance, Rescue Mission, Great Journey, Survival Adventure"
+    ],
+    [
+      "Waterfall Caves",
+      "Ancient Secret, Treasure Hunt, Rescue Mission, Discovery Journey, Mystery to Solve, Great Journey"
+    ],
+    [
+      null,
+      null
+    ],
+    [
+      "🏘️ Village & Community Worlds",
+      null
+    ],
+    [
+      "Story World",
+      "Best Adventure Archetypes"
+    ],
+    [
+      "Woodland Village",
+      "Community Project, Helping Hand, Gift of Giving, Build Together, Friendship Repair, Celebration Preparation"
+    ],
+    [
+      "Treehouse Village",
+      "Team Adventure, Build Together, Community Project, Discovery Journey, Helping Hand, Performance Story"
+    ],
+    [
+      "Riverside Village",
+      "Community Project, Festival Adventure, Helping Hand, Nature's Balance, Gift of Giving, Performance Story"
+    ],
+    [
+      "Hilltop Village",
+      "Community Project, Helping Hand, Build Together, Promise Keeper, Celebration Preparation, Performance Story"
+    ],
+    [
+      "Celebration Village",
+      "Festival Adventure, Performance Story, Helping Hand, Community Project, Mystery to Solve, Gift of Giving"
+    ],
+    [
+      null,
+      null
+    ],
+    [
+      "✨ Fantasy & Magic Worlds",
+      null
+    ],
+    [
+      "Story World",
+      "Best Adventure Archetypes"
+    ],
+    [
+      "Magic Garden",
+      "Magical Discovery, Nature's Balance, Gift of Giving, Discovery Journey, Helping Hand, New Friend"
+    ],
+    [
+      "Rainbow Kingdom",
+      "Great Journey, Festival Adventure, Gift of Giving, Community Project, Magical Quest, Performance Story"
+    ],
+    [
+      "Cloud Kingdom",
+      "Great Journey, Rescue Mission, Magical Quest, Discovery Journey, Time Adventure, Team Adventure"
+    ],
+    [
+      "Moonlight Valley",
+      "Ancient Secret, Mystery to Solve, Dream Adventure, Discovery Journey, Wisdom Challenge, Magical Discovery"
+    ],
+    [
+      "Star Forest",
+      "Great Journey, Ancient Secret, Discovery Journey, Wish or Blessing, Magical Quest, Treasure Hunt"
+    ],
+    [
+      "Crystal Caverns",
+      "Treasure Hunt, Ancient Secret, Mystery to Solve, Rescue Mission, Discovery Journey, Magical Discovery"
+    ],
+    [
+      "Temple Courtyard",
+      "Ancient Secret, Treasure Hunt, Wisdom Challenge, Mystery to Solve, Discovery Journey"
+    ],
+    [
+      "Wishing Woods",
+      "Wish or Blessing, Magical Discovery, Choice & Consequence, Discovery Journey, Gift of Giving, Dream Adventure"
+    ],
+    [
+      null,
+      null
+    ],
+    [
+      "🔍 Discovery Worlds",
+      null
+    ],
+    [
+      "Story World",
+      "Best Adventure Archetypes"
+    ],
+    [
+      "Secret Library",
+      "Discovery Journey, Ancient Secret, Wisdom Challenge, Learning Quest, Mentor Journey, Mystery to Solve"
+    ],
+    [
+      "Forgotten Ruins",
+      "Ancient Secret, Treasure Hunt, Discovery Journey, Great Journey, Mystery to Solve, Survival Adventure"
+    ],
+    [
+      "Hidden Cave Network",
+      "Treasure Hunt, Rescue Mission, Mystery to Solve, Discovery Journey, Great Journey, Time Adventure"
+    ],
+    [
+      "Lost Island",
+      "Great Journey, Survival Adventure, Rescue Mission, Discovery Journey, Nature's Balance, Team Adventure"
+    ],
+    [
+      "Treasure Cliffs",
+      "Treasure Hunt, Great Journey, Rescue Mission, Time Adventure, Discovery Journey, Hero's Trial"
+    ],
+    [
+      null,
+      null
+    ],
+    [
+      "🏔️ Adventure Worlds",
+      null
+    ],
+    [
+      "Story World",
+      "Best Adventure Archetypes"
+    ],
+    [
+      "Great Caravan Trail",
+      "Great Journey, Escort Mission, Delivery Quest, Team Adventure, Community Project, Time Adventure"
+    ],
+    [
+      "Desert Oasis",
+      "Survival Adventure, Great Journey, Rescue Mission, Discovery Journey, Nature's Balance, Time Adventure"
+    ],
+    [
+      "Snowy Highlands",
+      "Survival Adventure, Rescue Mission, Great Journey, Hero's Trial, Time Adventure, Build & Repair"
+    ],
+    [
+      "Volcano Valley",
+      "Rescue Mission, Survival Adventure, Hero's Trial, Time Adventure, Build & Repair, Great Journey"
+    ],
+    [
+      "Sky Islands",
+      "Great Journey, Discovery Journey, Magical Quest, Rescue Mission, Time Adventure, Team Adventure"
+    ],
+    [
+      null,
+      null
+    ],
+    [
+      "💭 Imagination Worlds",
+      null
+    ],
+    [
+      "Story World",
+      "Best Adventure Archetypes"
+    ],
+    [
+      "Dream World",
+      "Dream Adventure, Wisdom Challenge, Choice & Consequence, Ancient Secret, Discovery Journey, Mentor Journey"
+    ],
+    [
+      "Toy Kingdom",
+      "Creative Quest, Build & Repair, Helping Hand, Friendship Repair, Community Project, Magical Discovery"
+    ],
+    [
+      "Story House",
+      "Ancient Secret, Discovery Journey, Mentor Journey, Learning Quest, Wisdom Challenge, Teaching Adventure"
+    ],
+    [
+      null,
+      null
+    ],
+    [
+      "STATUS: 40/40 Story Worlds fully mapped to 5–7 Adventure Archetypes each. Standardized to Story World Packs naming (Whispering Forest, Celebration Village, Temple Courtyard). Coral Reef Kingdom archived (no Story World Pack built); Story House added.",
+      null
+    ]
+  ]
+}

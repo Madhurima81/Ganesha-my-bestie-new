@@ -1,0 +1,216 @@
+{
+  "label": "Character Library",
+  "sheetName": "Main Character Library",
+  "range": "A1:G23",
+  "rows": 23,
+  "cols": 7,
+  "values": [
+    [
+      "MAIN CHARACTER LIBRARY (LOCKED — 18)",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      "Character",
+      "Core Personality",
+      "Can Also Be",
+      "Primary Story Role",
+      "Best Core Needs",
+      "Best Childhood Challenges",
+      "Best Ganesha Symbols"
+    ],
+    [
+      "Chinu (Squirrel)",
+      "Curious, energetic learner",
+      "Explorer, helper, comic",
+      "Explorer",
+      "Curiosity & Exploration, Confidence, Problem Solving",
+      "Trying new things, Making mistakes, Asking questions, Solving mysteries, Feeling left out because of curiosity",
+      "Big Ears, Curved Trunk, Mouse"
+    ],
+    [
+      "Arin (Rabbit)",
+      "Gentle, cautious",
+      "Brave hero, thoughtful friend",
+      "Courage Learner",
+      "Courage, Confidence, Emotional Safety",
+      "Fear of trying, Anxiety, New experiences, Fear of failure, Fear of the unknown",
+      "Broken Tusk (Writing Tusk), Big Belly, Lotus"
+    ],
+    [
+      "Bodhi (Elephant)",
+      "Wise, calm",
+      "Protector, playful elder brother",
+      "Mentor / Protector",
+      "Belonging, Kindness, Generosity, Emotional Security",
+      "Big feelings, Sharing, Helping others, Resolving conflicts, Caring for friends",
+      "Big Belly, Curved Trunk"
+    ],
+    [
+      "Tara (Turtle)",
+      "Patient, steady",
+      "Quiet thinker",
+      "Patient Thinker",
+      "Patience, Perseverance, Self-Belief",
+      "Waiting, Slow progress, Feeling left behind, Giving up too soon",
+      "Lotus, Big Belly"
+    ],
+    [
+      "Kavi (Monkey)",
+      "Funny, impulsive",
+      "Inventor, explorer",
+      "Comic Catalyst",
+      "Self-Control, Focus, Responsibility",
+      "Distraction, Acting without thinking, Overexcitement, Following rules",
+      "Mouse, Curved Trunk"
+    ],
+    [
+      "Mira (Deer)",
+      "Gentle, observant",
+      "Brave friend",
+      "Empathy Builder",
+      "Empathy, Kindness, Belonging",
+      "Shyness, Making friends, Understanding others, Helping someone lonely",
+      "Eyes, Lotus"
+    ],
+    [
+      "Nayan (Fox)",
+      "Clever, resourceful",
+      "Puzzle solver",
+      "Puzzle Solver",
+      "Problem Solving, Confidence, Creativity",
+      "Solving difficult problems, Thinking differently, Making smart choices",
+      "Eyes, Broken Tusk (Writing Tusk)"
+    ],
+    [
+      "Ved (Owl)",
+      "Wise, reflective",
+      "Detective, teacher",
+      "Wise Guide / Detective",
+      "Curiosity, Wisdom, Understanding",
+      "Confusion, Curiosity, Asking questions, Solving mysteries",
+      "Eyes, Big Ears"
+    ],
+    [
+      "Veer (Bear)",
+      "Strong, kind",
+      "Gentle protector",
+      "Gentle Guardian",
+      "Courage, Responsibility, Kindness",
+      "Helping others, Standing up for someone, Protecting others, Leadership",
+      "Big Belly, Broken Tusk (Writing Tusk)"
+    ],
+    [
+      "Anu (Mouse)",
+      "Tiny but courageous",
+      "Determined learner",
+      "Underdog Hero",
+      "Courage, Self-Worth, Confidence",
+      "Feeling small, Being underestimated, Fear of trying, Speaking up",
+      "Mouse, Broken Tusk (Writing Tusk)"
+    ],
+    [
+      "Mayur (Peacock)",
+      "Joyful, expressive",
+      "Performer",
+      "Performer",
+      "Self-Expression, Confidence, Joy",
+      "Stage fright, Expressing talents, Celebrating uniqueness",
+      "Lotus"
+    ],
+    [
+      "Vani (Parrot)",
+      "Talkative, cheerful",
+      "Messenger",
+      "Messenger",
+      "Communication, Listening, Friendship",
+      "Listening carefully, Speaking kindly, Solving misunderstandings",
+      "Big Ears"
+    ],
+    [
+      "Mitra (Dog)",
+      "Loyal, dependable",
+      "Best friend",
+      "Loyal Companion",
+      "Trust, Friendship, Belonging",
+      "Broken promises, Friendship problems, Loyalty, Teamwork",
+      "Big Belly"
+    ],
+    [
+      "Gauri (Cow)",
+      "Caring, nurturing",
+      "Mother figure",
+      "Nurturer",
+      "Kindness, Gratitude, Generosity",
+      "Sharing, Caring for others, Gratitude, Community",
+      "Modak, Big Belly"
+    ],
+    [
+      "Simha (Lion)",
+      "Brave, confident",
+      "Protector",
+      "Leader",
+      "Leadership, Courage, Responsibility",
+      "Leading others, Making difficult choices, Protecting others, Doing the right thing",
+      "Broken Tusk (Writing Tusk)"
+    ],
+    [
+      "Neel (Young Elephant Calf)",
+      "Curious, playful, eager to learn",
+      "Adventurous learner",
+      "Young Learner",
+      "Curiosity, Confidence, Courage, Self-Belief",
+      "First-time experiences, Fear of failure, Learning from mistakes, Trying again",
+      "Curved Trunk, Big Ears, Modak"
+    ],
+    [
+      "Pihu (Red Panda)",
+      "Imaginative, artistic",
+      "Creator, inventor",
+      "Creator / Inventor",
+      "Creativity, Self-Expression, Problem Solving",
+      "Creative blocks, Thinking differently, Inventing solutions, Expressing ideas",
+      "Lotus, Mouse"
+    ],
+    [
+      "Kabir (Mountain Goat)",
+      "Determined, adventurous",
+      "Explorer, climber",
+      "Adventurer",
+      "Perseverance, Courage, Independence",
+      "Difficult challenges, Never giving up, Exploring unknown places, Reaching a goal",
+      "Broken Tusk (Writing Tusk), Lotus"
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      "Consistency check: this 18-character cast matches the Character Relationship Library exactly — no new or missing names.",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  ]
+}

@@ -1,0 +1,162 @@
+[
+  {
+    "situationId": "SIT009",
+    "actualTemplateId": "T09",
+    "storyText": "Arin has gone too long without food or rest and becomes unusually cranky over a small problem. Arin wanted to feel comfortable again. Hunger or tiredness is making ordinary things feel much harder. Everyone around Arin, and Arin too, believed \"I can't cope when my body feels uncomfortable.\" \n\n— so the fix had to be something big and obvious — snapping back louder, arguing harder, pushing through the annoyance by sheer stubbornness — because surely a problem this loud needed a big enough reaction to match it. So Arin tried exactly that — raising a voice, tugging and huffing and complaining at full volume — but it did nothing to fix the real trouble: hunger or tiredness is making ordinary things feel much harder, still there, unchanged, no matter how big the reaction got. Then, in the middle of all that noise, Arin noticed something small and quiet instead — Arin feels overwhelmed without realizing how much the body is affecting the mood, and underneath it was a tired, uncomfortable body asking to be listened to.\n\n\nSo Arin stopped pushing and did the quiet thing instead — paused, took a slow breath, and gave the body what it had been asking for all along, so Arin could finally feel comfortable again, without any fuss or fighting at all.\n\n\nThat is what worked — not the loud reaction, which had changed nothing, but the quiet act of caring for \n\nthe body underneath it, and Arin understood: I can care for my body and uncomfortable moments will pass.",
+    "compressedStory": "Hunger or tiredness is making ordinary things feel much harder, and Arin believed I can't cope when my body feels uncomfortable. Arin paused, chose to look again, and understood that I can care for my body and uncomfortable moments will pass. Arin chose a different response, and the ending felt warmer and freer than before.",
+    "storyQA": "PASS",
+    "productionQA": "PRODUCTION_READY",
+    "eventLabels": [
+      "BIG_EXPECTATION",
+      "BIG_ATTEMPT_FAILS",
+      "QUIET_QUALITY_NOTICED",
+      "QUIET_ACTION",
+      "RESOLUTION"
+    ],
+    "eventActions": [
+      {
+        "label": "BIG_EXPECTATION",
+        "action": "Arin has gone too long without food or rest and becomes unusually cranky over a small problem. Arin wanted to feel comfortable again. Hunger or tiredness is making ordinary things feel much harder. Everyone around Arin, and Arin too, believed \"I can't cope when my body feels uncomfortable.\" — so the fix had to be something big and obvious — snapping back louder, arguing harder, pushing through the annoyance by sheer stubbornness — because surely a problem this loud needed a big enough reaction to match it."
+      },
+      {
+        "label": "BIG_ATTEMPT_FAILS",
+        "action": "So Arin tried exactly that — raising a voice, tugging and huffing and complaining at full volume — but it did nothing to fix the real trouble: hunger or tiredness is making ordinary things feel much harder, still there, unchanged, no matter how big the reaction got."
+      },
+      {
+        "label": "QUIET_QUALITY_NOTICED",
+        "action": "Then, in the middle of all that noise, Arin noticed something small and quiet instead — Arin feels overwhelmed without realizing how much the body is affecting the mood, and underneath it was a tired, uncomfortable body asking to be listened to."
+      },
+      {
+        "label": "QUIET_ACTION",
+        "action": "So Arin stopped pushing and did the quiet thing instead — paused, took a slow breath, and gave the body what it had been asking for all along, so Arin could finally feel comfortable again, without any fuss or fighting at all."
+      },
+      {
+        "label": "RESOLUTION",
+        "action": "That is what worked — not the loud reaction, which had changed nothing, but the quiet act of caring for the body underneath it, and Arin understood: I can care for my body and uncomfortable moments will pass."
+      }
+    ],
+    "realizedWant": "feel comfortable again",
+    "falseBelief": "I can't cope when my body feels uncomfortable.",
+    "trueBelief": "I can care for my body and uncomfortable moments will pass."
+  },
+  {
+    "situationId": "SIT019",
+    "actualTemplateId": "T09",
+    "storyText": "Arin is wearing a shirt that feels scratchy and irritating. Arin wanted to get comfortable. The uncomfortable clothing keeps distracting Arin. Everyone around Arin, and Arin too, believed \"I can't be okay when things feel uncomfortable.\" \n\n— so the fix had to be something big and obvious — snapping back louder, arguing harder, pushing through the annoyance by sheer stubbornness — because surely a problem this loud needed a big enough reaction to match it. So Arin tried exactly that — raising a voice, tugging and huffing and complaining at full volume — but it did nothing to fix the real trouble: the uncomfortable clothing keeps distracting Arin, still there, unchanged, no matter how big the reaction got. Then, in the middle of all that noise, Arin noticed something small and quiet instead — the irritation grows until ordinary things start feeling unbearable, and underneath it was a tired, uncomfortable body asking to be listened to.\n\n\nSo Arin stopped pushing and did the quiet thing instead — paused, took a slow breath, and gave the body what it had been asking for all along, so Arin could finally get comfortable, without any fuss or fighting at all.\n\n\nThat is what worked — not the loud reaction, which had changed nothing, but the quiet act of caring for the \n\nbody underneath it, and Arin understood: I can stay peaceful even when my surroundings aren't perfect.",
+    "compressedStory": "Arin is wearing a shirt that feels scratchy and irritating. Arin wanted to get comfortable, but the old thought said I can't be okay when things feel uncomfortable. After a quiet \"Wait,\" Arin chose to look again and understood that I can stay peaceful even when my surroundings aren't perfect. Arin chose a different next step, and the problem eased into a warmer, freer ending.",
+    "storyQA": "PASS",
+    "productionQA": "PRODUCTION_READY",
+    "eventLabels": [
+      "BIG_EXPECTATION",
+      "BIG_ATTEMPT_FAILS",
+      "QUIET_QUALITY_NOTICED",
+      "QUIET_ACTION",
+      "RESOLUTION"
+    ],
+    "eventActions": [
+      {
+        "label": "BIG_EXPECTATION",
+        "action": "Arin is wearing a shirt that feels scratchy and irritating. Arin wanted to get comfortable. The uncomfortable clothing keeps distracting Arin. Everyone around Arin, and Arin too, believed \"I can't be okay when things feel uncomfortable.\" — so the fix had to be something big and obvious — snapping back louder, arguing harder, pushing through the annoyance by sheer stubbornness — because surely a problem this loud needed a big enough reaction to match it."
+      },
+      {
+        "label": "BIG_ATTEMPT_FAILS",
+        "action": "So Arin tried exactly that — raising a voice, tugging and huffing and complaining at full volume — but it did nothing to fix the real trouble: the uncomfortable clothing keeps distracting Arin, still there, unchanged, no matter how big the reaction got."
+      },
+      {
+        "label": "QUIET_QUALITY_NOTICED",
+        "action": "Then, in the middle of all that noise, Arin noticed something small and quiet instead — the irritation grows until ordinary things start feeling unbearable, and underneath it was a tired, uncomfortable body asking to be listened to."
+      },
+      {
+        "label": "QUIET_ACTION",
+        "action": "So Arin stopped pushing and did the quiet thing instead — paused, took a slow breath, and gave the body what it had been asking for all along, so Arin could finally get comfortable, without any fuss or fighting at all."
+      },
+      {
+        "label": "RESOLUTION",
+        "action": "That is what worked — not the loud reaction, which had changed nothing, but the quiet act of caring for the body underneath it, and Arin understood: I can stay peaceful even when my surroundings aren't perfect."
+      }
+    ],
+    "realizedWant": "get comfortable",
+    "falseBelief": "I can't be okay when things feel uncomfortable.",
+    "trueBelief": "I can stay peaceful even when my surroundings aren't perfect."
+  },
+  {
+    "situationId": "SIT029",
+    "actualTemplateId": "T09",
+    "storyText": "Arin looks up in a busy place and suddenly cannot see their parent. Arin wanted to find the parent. There are many people moving around and the familiar hand is gone. Everyone around Arin, and Arin too, believed \"If I'm alone, I'm not safe.\" \n\n— so the fix had to be something big and frantic — running, shouting, pushing through the crowd as fast as possible — because surely finding a lost parent again needed a big enough search to match the fear. So Arin tried exactly that — darting one way and then another, calling out into the noise — but it did nothing to fix the real trouble: there are many people moving around and the familiar hand is gone, and running only made the crowd feel bigger and more confusing. Then, in the middle of all that running, Arin noticed something small and quiet instead — panic makes it harder to remember what to do — and a quiet memory surfaced: the plan they had been taught for exactly this moment.\n\n\nSo Arin stopped running and did the quiet thing instead — paused, stood still in one spot, looked for a grown-up who could help, and waited calmly to find the parent, instead of chasing after every stranger in the crowd.\n\n\nThat is what worked — not the frantic running, which had changed nothing, but standing still \n\nand staying calm, and Arin understood: I can stay calm, make wise choices and find help.",
+    "compressedStory": "Arin looks up in a busy place and suddenly cannot see their parent. Arin wanted to find the parent, but the old thought said If I'm alone, I'm not safe. After a quiet \"Wait,\" Arin chose to look again and understood that I can stay calm, make wise choices and find help. Arin chose a different next step, and the problem eased into a warmer, freer ending.",
+    "storyQA": "PASS",
+    "productionQA": "PRODUCTION_READY",
+    "eventLabels": [
+      "BIG_EXPECTATION",
+      "BIG_ATTEMPT_FAILS",
+      "QUIET_QUALITY_NOTICED",
+      "QUIET_ACTION",
+      "RESOLUTION"
+    ],
+    "eventActions": [
+      {
+        "label": "BIG_EXPECTATION",
+        "action": "Arin looks up in a busy place and suddenly cannot see their parent. Arin wanted to find the parent. There are many people moving around and the familiar hand is gone. Everyone around Arin, and Arin too, believed \"If I'm alone, I'm not safe.\" — so the fix had to be something big and frantic — running, shouting, pushing through the crowd as fast as possible — because surely finding a lost parent again needed a big enough search to match the fear."
+      },
+      {
+        "label": "BIG_ATTEMPT_FAILS",
+        "action": "So Arin tried exactly that — darting one way and then another, calling out into the noise — but it did nothing to fix the real trouble: there are many people moving around and the familiar hand is gone, and running only made the crowd feel bigger and more confusing."
+      },
+      {
+        "label": "QUIET_QUALITY_NOTICED",
+        "action": "Then, in the middle of all that running, Arin noticed something small and quiet instead — panic makes it harder to remember what to do — and a quiet memory surfaced: the plan they had been taught for exactly this moment."
+      },
+      {
+        "label": "QUIET_ACTION",
+        "action": "So Arin stopped running and did the quiet thing instead — paused, stood still in one spot, looked for a grown-up who could help, and waited calmly to find the parent, instead of chasing after every stranger in the crowd."
+      },
+      {
+        "label": "RESOLUTION",
+        "action": "That is what worked — not the frantic running, which had changed nothing, but standing still and staying calm, and Arin understood: I can stay calm, make wise choices and find help."
+      }
+    ],
+    "realizedWant": "find the parent",
+    "falseBelief": "If I'm alone, I'm not safe.",
+    "trueBelief": "I can stay calm, make wise choices and find help."
+  },
+  {
+    "situationId": "SIT030",
+    "actualTemplateId": "T09",
+    "storyText": "Arin accidentally sees a frightening video on a phone or tablet. Arin wanted to make the frightening image stop replaying in their mind. The video is over, but the memory of it remains. Everyone around Arin, and Arin too, believed \"The scary things I see will happen to me.\" \n\n— so the fix had to be something big and forceful — trying hard to never think about it again, staying busy every second, pushing the memory away by sheer effort — because surely a scary picture this loud in the mind needed a big enough push to make it stop. So Arin tried exactly that — staying busy, refusing to think about it, trying to force the memory shut — but it did nothing to fix the real trouble: the video is over, but the memory of it remains, returning again every time Arin closed their eyes. Then, in the middle of all that pushing, Arin noticed something small and quiet instead — Arin begins imagining that what they saw might happen to them — and that noticing was quieter than any of the pushing had been.\n\n\nSo Arin stopped pushing the memory away and did the quiet thing instead — found a trusted grown-up and said out loud what had been replaying inside, letting the words carry some of the fear out with them until Arin could make the frightening image stop replaying in their mind.\n\n\nThat is what worked — not forcing the memory away, which had changed nothing, but naming it quietly out loud \n\nto someone who could help, and Arin understood: I can separate imagination from reality and seek comfort.",
+    "compressedStory": "The video is over, but the memory of it remains, and Arin believed The scary things I see will happen to me. Arin paused, chose to look again, and understood that I can separate imagination from reality and seek comfort. Arin chose a different response, and the ending felt warmer and freer than before.",
+    "storyQA": "PASS",
+    "productionQA": "PRODUCTION_READY",
+    "eventLabels": [
+      "BIG_EXPECTATION",
+      "BIG_ATTEMPT_FAILS",
+      "QUIET_QUALITY_NOTICED",
+      "QUIET_ACTION",
+      "RESOLUTION"
+    ],
+    "eventActions": [
+      {
+        "label": "BIG_EXPECTATION",
+        "action": "Arin accidentally sees a frightening video on a phone or tablet. Arin wanted to make the frightening image stop replaying in their mind. The video is over, but the memory of it remains. Everyone around Arin, and Arin too, believed \"The scary things I see will happen to me.\" — so the fix had to be something big and forceful — trying hard to never think about it again, staying busy every second, pushing the memory away by sheer effort — because surely a scary picture this loud in the mind needed a big enough push to make it stop."
+      },
+      {
+        "label": "BIG_ATTEMPT_FAILS",
+        "action": "So Arin tried exactly that — staying busy, refusing to think about it, trying to force the memory shut — but it did nothing to fix the real trouble: the video is over, but the memory of it remains, returning again every time Arin closed their eyes."
+      },
+      {
+        "label": "QUIET_QUALITY_NOTICED",
+        "action": "Then, in the middle of all that pushing, Arin noticed something small and quiet instead — Arin begins imagining that what they saw might happen to them — and that noticing was quieter than any of the pushing had been."
+      },
+      {
+        "label": "QUIET_ACTION",
+        "action": "So Arin stopped pushing the memory away and did the quiet thing instead — found a trusted grown-up and said out loud what had been replaying inside, letting the words carry some of the fear out with them until Arin could make the frightening image stop replaying in their mind."
+      },
+      {
+        "label": "RESOLUTION",
+        "action": "That is what worked — not forcing the memory away, which had changed nothing, but naming it quietly out loud to someone who could help, and Arin understood: I can separate imagination from reality and seek comfort."
+      }
+    ],
+    "realizedWant": "make the frightening image stop replaying in their mind",
+    "falseBelief": "The scary things I see will happen to me.",
+    "trueBelief": "I can separate imagination from reality and seek comfort."
+  }
+]

@@ -1,0 +1,16 @@
+[
+  {
+    "id": "SIT137",
+    "title": "Tempted to look at friend's paper during a test",
+    "storySeed": {
+      "childExperience": "Kavi gets stuck on a test question and can see a friend's answer nearby.",
+      "immediateWant": "Get the answer right.",
+      "immediateObstacle": "Kavi does not know the answer and would have to look at someone else's paper.",
+      "emotionalTension": "One quick glance could solve the problem, which is exactly what makes the choice difficult.",
+      "context": [
+        "classroom during a test"
+      ],
+      "narrativeSummary": "Kavi's pencil stops over the blank answer. Just to the left is the solution. Kavi looks at the paper, then quickly looks away."
+    }
+  }
+]

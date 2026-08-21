@@ -1,0 +1,40 @@
+{
+  "experience_id": "EXP-GAN-EARS-TRYIT-001",
+  "wisdom_id": "SYM-GAN-008",
+  "practice_id": "PRAC-GAN-EARS-001",
+  "experience_type": "try_it_today",
+  "title": "Keep or Let Go Sort",
+  "source_document": "Teachings for kids from 5 sources - july 2026 - doodles, insta.docx",
+  "source_reference": "Teaching 1: The Power of Deep Listening (The Large Ears)",
+  "source_verified": true,
+  "content_status": "SOURCE_DERIVED",
+  "activity_payload": {
+    "activity_id": "MVP-EARS-001",
+    "theme_id": "SYM-GAN-008",
+    "symbol": "Large Ears",
+    "meaning": "Listen like a winnowing basket and sift useful words from noise.",
+    "belief": "I keep the words that help me grow.",
+    "title": "Keep or Let Go Sort",
+    "family": "play",
+    "primary_skill": "discernment",
+    "hook": "Can you listen like Ganesha and sort the words that help you grow?",
+    "duration_minutes": 6,
+    "players": "solo_or_pair",
+    "materials": [
+      "printed page or scrap paper"
+    ],
+    "steps": [
+      "Read each word or sentence one at a time.",
+      "Put helpful growth words into KEEP and noisy hurtful words into LET GO.",
+      "Choose one KEEP card to say out loud at the end."
+    ],
+    "reflection": "Which helpful words do you want your ears to remember today?",
+    "affirmation": "I keep the words that help me grow.",
+    "real_life_transfer": "Later today, pause and keep the sentence that truly helps.",
+    "core_mechanic": "hear-select-sort",
+    "emotional_payoff": "clear inner filtering",
+    "printable": {
+      "template_id": "PT03_SORT_MATCH_DECODE"
+    }
+  }
+}

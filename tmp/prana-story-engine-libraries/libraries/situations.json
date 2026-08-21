@@ -1,0 +1,4715 @@
+[
+  {
+    "id": "SIT001",
+    "title": "Toy not shared or taken away",
+    "category": "Anger & Frustration",
+    "false_belief_text": "I have to react when things feel unfair.",
+    "true_belief_text": "I can pause and choose my response.",
+    "hard": {
+      "need_id": "NEED_SELF_REGULATION",
+      "belief_ids": [
+        "BELIEF_MUST_REACT_TO_UNFAIRNESS"
+      ],
+      "severity": 3,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FRIENDSHIP",
+        "LIFE_DOMAIN_PLAY",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_CURVED_TRUNK",
+      "ganesha_symbol_secondary": "GAN_SYM_MOUSE"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT002",
+    "title": "Screen time cut off suddenly",
+    "category": "Anger & Frustration",
+    "false_belief_text": "I have to get what I want immediately.",
+    "true_belief_text": "I can handle disappointment and make wise choices.",
+    "hard": {
+      "need_id": "NEED_SELF_REGULATION",
+      "belief_ids": [
+        "BELIEF_NEED_IMMEDIATE_GRATIFICATION"
+      ],
+      "severity": 3,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_RESPONSIBILITY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_CURVED_TRUNK",
+      "ganesha_symbol_secondary": "GAN_SYM_MOUSE"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT003",
+    "title": "Told 'no' without explanation",
+    "category": "Anger & Frustration",
+    "false_belief_text": "If people say \"no\", they don't care about me.",
+    "true_belief_text": "I can listen, ask and understand even when I don't like the answer.",
+    "hard": {
+      "need_id": "NEED_RESPECT",
+      "belief_ids": [
+        "BELIEF_REJECTION_MEANS_NOT_CARED_FOR"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_LEARNING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_EARS",
+      "ganesha_symbol_secondary": "GAN_SYM_CURVED_TRUNK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT004",
+    "title": "Sibling gets bigger portion or more attention",
+    "category": "Anger & Frustration",
+    "false_belief_text": "Someone else's success makes me less important.",
+    "true_belief_text": "Everyone has their own gifts and my worth doesn't depend on comparison.",
+    "hard": {
+      "need_id": "NEED_IDENTITY",
+      "belief_ids": [
+        "BELIEF_OTHERS_SUCCESS_DIMINISHES_ME"
+      ],
+      "severity": 3,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_CARING",
+        "LIFE_DOMAIN_RESPONSIBILITY",
+        "LIFE_DOMAIN_LEARNING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_BROKEN_TUSK",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_BELLY"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT005",
+    "title": "Can't finish homework or a craft",
+    "category": "Anger & Frustration",
+    "false_belief_text": "If I can't do it quickly, I can't do it.",
+    "true_belief_text": "Every attempt helps me improve.",
+    "hard": {
+      "need_id": "NEED_COMPETENCE",
+      "belief_ids": [
+        "BELIEF_SPEED_EQUALS_ABILITY"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_LEARNING",
+        "LIFE_DOMAIN_BUILDING",
+        "LIFE_DOMAIN_CREATIVITY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_MOUSE",
+      "ganesha_symbol_secondary": "GAN_SYM_BROKEN_TUSK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT006",
+    "title": "Playdate or plan suddenly cancelled",
+    "category": "Anger & Frustration",
+    "false_belief_text": "Plans must happen my way.",
+    "true_belief_text": "I can adapt and still enjoy life.",
+    "hard": {
+      "need_id": "NEED_ADAPTABILITY",
+      "belief_ids": [
+        "BELIEF_PLANS_MUST_GO_MY_WAY"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FRIENDSHIP",
+        "LIFE_DOMAIN_PLAY",
+        "LIFE_DOMAIN_FAMILY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_CURVED_TRUNK",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_BELLY"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT007",
+    "title": "Someone breaks their Lego or drawing",
+    "category": "Anger & Frustration",
+    "false_belief_text": "My anger should decide what I do.",
+    "true_belief_text": "I can choose calm actions even when I'm upset.",
+    "hard": {
+      "need_id": "NEED_SELF_REGULATION",
+      "belief_ids": [
+        "BELIEF_MUST_REACT_TO_UNFAIRNESS"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_BUILDING",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_FRIENDSHIP"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_CURVED_TRUNK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT008",
+    "title": "Being hurried to put shoes on or leave",
+    "category": "Anger & Frustration",
+    "false_belief_text": "Everything has to happen right now.",
+    "true_belief_text": "I can slow down and work with the moment I'm in.",
+    "hard": {
+      "need_id": "NEED_PATIENCE",
+      "belief_ids": [
+        "BELIEF_NEED_IMMEDIATE_GRATIFICATION"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_RESPONSIBILITY",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_MOUSE",
+      "ganesha_symbol_secondary": "GAN_SYM_MODAK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT009",
+    "title": "Feeling hungry or extremely tired (hangry)",
+    "category": "Anger & Frustration",
+    "false_belief_text": "I can't cope when my body feels uncomfortable.",
+    "true_belief_text": "I can care for my body and uncomfortable moments will pass.",
+    "hard": {
+      "need_id": "NEED_SAFETY",
+      "belief_ids": [
+        "BELIEF_DISCOMFORT_IS_UNBEARABLE"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_CARING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_CURVED_TRUNK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT010",
+    "title": "Blamed for something they didn't do",
+    "category": "Anger & Frustration",
+    "false_belief_text": "Being blamed means nobody believes me.",
+    "true_belief_text": "I can respond honestly and calmly, even when things feel unfair.",
+    "hard": {
+      "need_id": "NEED_JUSTICE",
+      "belief_ids": [
+        "BELIEF_BLAME_MEANS_DISTRUST"
+      ],
+      "severity": 3,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_RESPONSIBILITY",
+        "LIFE_DOMAIN_LEARNING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_EARS",
+      "ganesha_symbol_secondary": "GAN_SYM_BROKEN_TUSK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT011",
+    "title": "Being teased or physically pushed",
+    "category": "Anger & Frustration",
+    "false_belief_text": "If someone hurts me, I should hurt them back.",
+    "true_belief_text": "I can protect myself without losing control.",
+    "hard": {
+      "need_id": "NEED_SELF_REGULATION",
+      "belief_ids": [
+        "BELIEF_MUST_REACT_TO_UNFAIRNESS"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FRIENDSHIP",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_PLAY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_CURVED_TRUNK",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_BELLY"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT012",
+    "title": "No say in what to wear or eat",
+    "category": "Anger & Frustration",
+    "false_belief_text": "I should always get to decide everything.",
+    "true_belief_text": "I can cooperate even when I don't get my way.",
+    "hard": {
+      "need_id": "NEED_AUTONOMY",
+      "belief_ids": [
+        "BELIEF_MUST_CONTROL_EVERYTHING"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_RESPONSIBILITY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_MOUSE",
+      "ganesha_symbol_secondary": "GAN_SYM_CURVED_TRUNK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT013",
+    "title": "Adult doesn't understand what they mean",
+    "category": "Anger & Frustration",
+    "false_belief_text": "If people don't understand me, something is wrong with me.",
+    "true_belief_text": "I can express myself patiently and be myself.",
+    "hard": {
+      "need_id": "NEED_BELONGING",
+      "belief_ids": [
+        "BELIEF_MISUNDERSTOOD_MEANS_FLAWED"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_CARING",
+        "LIFE_DOMAIN_FAMILY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_EARS",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_BELLY"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT014",
+    "title": "Game crashes or internet lags during a win",
+    "category": "Anger & Frustration",
+    "false_belief_text": "One setback ruins everything.",
+    "true_belief_text": "I can begin again after setbacks.",
+    "hard": {
+      "need_id": "NEED_COMPETENCE",
+      "belief_ids": [
+        "BELIEF_SETBACK_IS_PERMANENT"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_LEARNING",
+        "LIFE_DOMAIN_PLAY",
+        "LIFE_DOMAIN_RESPONSIBILITY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_LOTUS",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_BELLY"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT015",
+    "title": "Forced to sit still too long (car, flight)",
+    "category": "Anger & Frustration",
+    "false_belief_text": "I can't stay calm when I feel trapped.",
+    "true_belief_text": "I can find peaceful ways to handle uncomfortable moments.",
+    "hard": {
+      "need_id": "NEED_SELF_REGULATION",
+      "belief_ids": [
+        "BELIEF_TRAPPED_MEANS_LOSS_OF_CALM"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_PLAY",
+        "LIFE_DOMAIN_CREATIVITY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_MOUSE"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT016",
+    "title": "Game save file corrupted or deleted",
+    "category": "Anger & Frustration",
+    "false_belief_text": "Losing my progress means I've failed.",
+    "true_belief_text": "I can rebuild and keep moving forward.",
+    "hard": {
+      "need_id": "NEED_COMPETENCE",
+      "belief_ids": [
+        "BELIEF_SETBACK_IS_PERMANENT"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_LEARNING",
+        "LIFE_DOMAIN_PLAY",
+        "LIFE_DOMAIN_BUILDING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_LOTUS",
+      "ganesha_symbol_secondary": "GAN_SYM_BROKEN_TUSK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT017",
+    "title": "A treat or promise was forgotten",
+    "category": "Anger & Frustration",
+    "false_belief_text": "Broken promises mean people don't care about me.",
+    "true_belief_text": "Trust grows through honesty, reliability and understanding.",
+    "hard": {
+      "need_id": "NEED_TRUST",
+      "belief_ids": [
+        "BELIEF_REJECTION_MEANS_NOT_CARED_FOR"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_RESPONSIBILITY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_EARS",
+      "ganesha_symbol_secondary": "GAN_SYM_CURVED_TRUNK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT018",
+    "title": "Sibling tells on them unfairly",
+    "category": "Anger & Frustration",
+    "false_belief_text": "I have to get even when something feels unfair.",
+    "true_belief_text": "I can respond with honesty instead of revenge.",
+    "hard": {
+      "need_id": "NEED_JUSTICE",
+      "belief_ids": [
+        "BELIEF_MUST_REACT_TO_UNFAIRNESS"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_FRIENDSHIP"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_EARS",
+      "ganesha_symbol_secondary": "GAN_SYM_BROKEN_TUSK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT019",
+    "title": "Scratchy clothes or irritating noise",
+    "category": "Anger & Frustration",
+    "false_belief_text": "I can't be okay when things feel uncomfortable.",
+    "true_belief_text": "I can stay peaceful even when my surroundings aren't perfect.",
+    "hard": {
+      "need_id": "NEED_SAFETY",
+      "belief_ids": [
+        "BELIEF_DISCOMFORT_IS_UNBEARABLE"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_LEARNING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_LOTUS"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT020",
+    "title": "Repeatedly failing a level or concept",
+    "category": "Anger & Frustration",
+    "false_belief_text": "If I keep failing, I should quit.",
+    "true_belief_text": "Every challenge helps me become stronger.",
+    "hard": {
+      "need_id": "NEED_COMPETENCE",
+      "belief_ids": [
+        "BELIEF_SPEED_EQUALS_ABILITY"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_LEARNING",
+        "LIFE_DOMAIN_PLAY",
+        "LIFE_DOMAIN_BUILDING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_MOUSE",
+      "ganesha_symbol_secondary": "GAN_SYM_BROKEN_TUSK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT021",
+    "title": "Darkness or shadows in the room",
+    "category": "Fear & Insecurity",
+    "false_belief_text": "Fear means I should stop.",
+    "true_belief_text": "Courage is taking one small brave step.",
+    "hard": {
+      "need_id": "NEED_COURAGE",
+      "belief_ids": [
+        "BELIEF_FEAR_MEANS_STOP"
+      ],
+      "severity": 3,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_NATURE",
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_MOUSE",
+      "ganesha_symbol_secondary": "GAN_SYM_BROKEN_TUSK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT022",
+    "title": "Thunder, fireworks, or loud sirens",
+    "category": "Fear & Insecurity",
+    "false_belief_text": "Loud or unexpected things mean I'm not safe.",
+    "true_belief_text": "I can find safety, calm and support.",
+    "hard": {
+      "need_id": "NEED_SAFETY",
+      "belief_ids": [
+        "BELIEF_UNEXPECTED_MEANS_UNSAFE"
+      ],
+      "severity": 3,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_NATURE",
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_MOUSE"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT023",
+    "title": "Monsters under the bed or scary stories",
+    "category": "Fear & Insecurity",
+    "false_belief_text": "My imagination can control me.",
+    "true_belief_text": "I can be braver than my fears.",
+    "hard": {
+      "need_id": "NEED_COURAGE",
+      "belief_ids": [
+        "BELIEF_FEAR_MEANS_STOP"
+      ],
+      "severity": 3,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_CREATIVITY",
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_MOUSE",
+      "ganesha_symbol_secondary": "GAN_SYM_LOTUS"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT024",
+    "title": "Parent leaving for work or a long trip",
+    "category": "Fear & Insecurity",
+    "false_belief_text": "When someone leaves, they might not come back.",
+    "true_belief_text": "I can trust the people who love and care for me.",
+    "hard": {
+      "need_id": "NEED_TRUST",
+      "belief_ids": [
+        "BELIEF_REJECTION_MEANS_NOT_CARED_FOR"
+      ],
+      "severity": 3,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_CARING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_EARS",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_BELLY"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT025",
+    "title": "Fear of going on stage or presenting",
+    "category": "Fear & Insecurity",
+    "false_belief_text": "If I'm nervous, I can't do it.",
+    "true_belief_text": "Confidence grows each time I try.",
+    "hard": {
+      "need_id": "NEED_CONFIDENCE",
+      "belief_ids": [
+        "BELIEF_NERVOUS_MEANS_CANT"
+      ],
+      "severity": 3,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_CREATIVITY",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_LEARNING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_MOUSE",
+      "ganesha_symbol_secondary": "GAN_SYM_BROKEN_TUSK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT026",
+    "title": "Anxiety before a big test or result",
+    "category": "Fear & Insecurity",
+    "false_belief_text": "If I don't do well, I'm not good enough.",
+    "true_belief_text": "My effort and learning matter more than perfect results.",
+    "hard": {
+      "need_id": "NEED_CONFIDENCE",
+      "belief_ids": [
+        "BELIEF_RESULT_DEFINES_WORTH"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_LEARNING",
+        "LIFE_DOMAIN_RESPONSIBILITY",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_BROKEN_TUSK",
+      "ganesha_symbol_secondary": "GAN_SYM_MOUSE"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT027",
+    "title": "Injections, doctors, or dentist visits",
+    "category": "Fear & Insecurity",
+    "false_belief_text": "If something hurts, I can't handle it.",
+    "true_belief_text": "I am stronger than I think, even during difficult moments.",
+    "hard": {
+      "need_id": "NEED_COURAGE",
+      "belief_ids": [
+        "BELIEF_PAIN_IS_UNMANAGEABLE"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_CARING",
+        "LIFE_DOMAIN_LEARNING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_MOUSE",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_BELLY"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT028",
+    "title": "New teacher or unfamiliar adult",
+    "category": "Fear & Insecurity",
+    "false_belief_text": "New people won't understand or help me.",
+    "true_belief_text": "Trust grows one step at a time.",
+    "hard": {
+      "need_id": "NEED_TRUST",
+      "belief_ids": [
+        "BELIEF_NEW_PEOPLE_UNSAFE"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_SCHOOL",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_FRIENDSHIP"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_EARS",
+      "ganesha_symbol_secondary": "GAN_SYM_CURVED_TRUNK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT029",
+    "title": "Fear of getting lost in a mall or crowd",
+    "category": "Fear & Insecurity",
+    "false_belief_text": "If I'm alone, I'm not safe.",
+    "true_belief_text": "I can stay calm, make wise choices and find help.",
+    "hard": {
+      "need_id": "NEED_SAFETY",
+      "belief_ids": [
+        "BELIEF_UNEXPECTED_MEANS_UNSAFE"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_NATURE",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_CARING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_CURVED_TRUNK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT030",
+    "title": "Accidentally saw a scary or violent video",
+    "category": "Fear & Insecurity",
+    "false_belief_text": "The scary things I see will happen to me.",
+    "true_belief_text": "I can separate imagination from reality and seek comfort.",
+    "hard": {
+      "need_id": "NEED_SAFETY",
+      "belief_ids": [
+        "BELIEF_UNEXPECTED_MEANS_UNSAFE"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_CREATIVITY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_LOTUS"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT031",
+    "title": "Heard about war or violence on news",
+    "category": "Fear & Insecurity",
+    "false_belief_text": "The world is always dangerous.",
+    "true_belief_text": "There are many people working every day to keep others safe.",
+    "hard": {
+      "need_id": "NEED_SAFETY",
+      "belief_ids": [
+        "BELIEF_UNEXPECTED_MEANS_UNSAFE"
+      ],
+      "severity": 1,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_CARING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_LOTUS"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT032",
+    "title": "Saw news about floods, fires, earthquakes",
+    "category": "Fear & Insecurity",
+    "false_belief_text": "Bad things mean everything is ruined forever.",
+    "true_belief_text": "People can help, rebuild and begin again.",
+    "hard": {
+      "need_id": "NEED_HOPE",
+      "belief_ids": [
+        "BELIEF_ENDINGS_ARE_PERMANENT_LOSS"
+      ],
+      "severity": 1,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_NATURE",
+        "LIFE_DOMAIN_CARING",
+        "LIFE_DOMAIN_LEARNING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_LOTUS",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_BELLY"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT033",
+    "title": "Fear that a parent might get sick",
+    "category": "Fear & Insecurity",
+    "false_belief_text": "I might lose the people I love.",
+    "true_belief_text": "Love, care and support help us through uncertain times.",
+    "hard": {
+      "need_id": "NEED_TRUST",
+      "belief_ids": [
+        "BELIEF_REJECTION_MEANS_NOT_CARED_FOR"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_CARING",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_EARS",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_BELLY"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT034",
+    "title": "Overheard adults talking about money problems",
+    "category": "Fear & Insecurity",
+    "false_belief_text": "We won't be okay if money is tight.",
+    "true_belief_text": "Families work together and find solutions during hard times.",
+    "hard": {
+      "need_id": "NEED_SAFETY",
+      "belief_ids": [
+        "BELIEF_UNEXPECTED_MEANS_UNSAFE"
+      ],
+      "severity": 1,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_LEARNING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_MOUSE"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT035",
+    "title": "Overthinking imaginary future dangers",
+    "category": "Fear & Insecurity",
+    "false_belief_text": "I have to believe every scary thought.",
+    "true_belief_text": "Thoughts are not always facts, and I can return to the present.",
+    "hard": {
+      "need_id": "NEED_STABILITY",
+      "belief_ids": [
+        "BELIEF_SCARY_THOUGHTS_ARE_FACTS"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_CREATIVITY",
+        "LIFE_DOMAIN_LEARNING",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_EARS"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT036",
+    "title": "Fear of being laughed at by class",
+    "category": "Fear & Insecurity",
+    "false_belief_text": "If others laugh at me, I don't matter.",
+    "true_belief_text": "My value isn't decided by other people's opinions.",
+    "hard": {
+      "need_id": "NEED_IDENTITY",
+      "belief_ids": [
+        "BELIEF_EXCLUSION_MEANS_UNWORTHY"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_SCHOOL",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_FRIENDSHIP"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_BROKEN_TUSK",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_BELLY"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT037",
+    "title": "First day at a new school",
+    "category": "Fear & Insecurity",
+    "false_belief_text": "I won't fit in here.",
+    "true_belief_text": "I can make connections while being myself.",
+    "hard": {
+      "need_id": "NEED_BELONGING",
+      "belief_ids": [
+        "BELIEF_NEW_PLACE_MEANS_NO_FIT"
+      ],
+      "severity": 3,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_SCHOOL",
+        "LIFE_DOMAIN_FRIENDSHIP",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_EARS"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT038",
+    "title": "Fear of dogs, spiders, or insects",
+    "category": "Fear & Insecurity",
+    "false_belief_text": "Fear means I should avoid everything unfamiliar.",
+    "true_belief_text": "I can learn, stay safe and become braver step by step.",
+    "hard": {
+      "need_id": "NEED_COURAGE",
+      "belief_ids": [
+        "BELIEF_FEAR_MEANS_STOP"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_NATURE",
+        "LIFE_DOMAIN_CARING",
+        "LIFE_DOMAIN_LEARNING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_MOUSE",
+      "ganesha_symbol_secondary": "GAN_SYM_EYES"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT039",
+    "title": "Fear of falling or getting hurt at park",
+    "category": "Fear & Insecurity",
+    "false_belief_text": "If I fall once, I shouldn't try again.",
+    "true_belief_text": "Trying again helps me grow stronger and more confident.",
+    "hard": {
+      "need_id": "NEED_CONFIDENCE",
+      "belief_ids": [
+        "BELIEF_ONE_FAILURE_MEANS_STOP_TRYING"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_PLAY",
+        "LIFE_DOMAIN_LEARNING",
+        "LIFE_DOMAIN_CARING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_MOUSE",
+      "ganesha_symbol_secondary": "GAN_SYM_BROKEN_TUSK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT040",
+    "title": "Fear of getting in trouble with teacher",
+    "category": "Fear & Insecurity",
+    "false_belief_text": "Making mistakes makes me a bad child.",
+    "true_belief_text": "Honesty and responsibility are more important than being perfect.",
+    "hard": {
+      "need_id": "NEED_INTEGRITY",
+      "belief_ids": [
+        "BELIEF_ONE_MISTAKE_DEFINES_ME"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_SCHOOL",
+        "LIFE_DOMAIN_RESPONSIBILITY",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_BROKEN_TUSK",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_EARS"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT041",
+    "title": "Anxiety about the earth breaking (climate change)",
+    "category": "Fear & Insecurity",
+    "false_belief_text": "Nothing I do can make a difference.",
+    "true_belief_text": "Small caring actions can help create a better future.",
+    "hard": {
+      "need_id": "NEED_HOPE",
+      "belief_ids": [
+        "BELIEF_ONE_ACTION_CANT_MATTER"
+      ],
+      "severity": 1,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_NATURE",
+        "LIFE_DOMAIN_CARING",
+        "LIFE_DOMAIN_LEARNING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_LOTUS",
+      "ganesha_symbol_secondary": "GAN_SYM_CURVED_TRUNK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT042",
+    "title": "Friend is not playing with them today",
+    "category": "Sadness & Grief",
+    "false_belief_text": "If my friend chooses someone else, I'm not important.",
+    "true_belief_text": "Friendships can grow even when people spend time with others.",
+    "hard": {
+      "need_id": "NEED_BELONGING",
+      "belief_ids": [
+        "BELIEF_EXCLUSION_MEANS_UNWORTHY"
+      ],
+      "severity": 3,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FRIENDSHIP",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_PLAY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_LOSS_GRIEF",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_EARS"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT043",
+    "title": "Death of a pet",
+    "category": "Sadness & Grief",
+    "false_belief_text": "Love disappears when someone is gone.",
+    "true_belief_text": "Love stays with us through our memories and kindness.",
+    "hard": {
+      "need_id": "NEED_COMPASSION",
+      "belief_ids": [
+        "BELIEF_LOVE_ENDS_WITH_LOSS"
+      ],
+      "severity": 3,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_CARING",
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_LOSS_GRIEF",
+      "ganesha_symbol_primary": "GAN_SYM_LOTUS",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_BELLY"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT044",
+    "title": "Death of a relative or family member",
+    "category": "Sadness & Grief",
+    "false_belief_text": "Life will never feel happy again.",
+    "true_belief_text": "Love continues through memories, family and hope.",
+    "hard": {
+      "need_id": "NEED_HOPE",
+      "belief_ids": [
+        "BELIEF_ENDINGS_ARE_PERMANENT_LOSS"
+      ],
+      "severity": 3,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_CARING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_LOSS_GRIEF",
+      "ganesha_symbol_primary": "GAN_SYM_LOTUS",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_BELLY"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT045",
+    "title": "Lost a favourite toy or comfort blanket",
+    "category": "Sadness & Grief",
+    "false_belief_text": "I can't be okay without this special thing.",
+    "true_belief_text": "The love and comfort I feel live inside me too.",
+    "hard": {
+      "need_id": "NEED_SAFETY",
+      "belief_ids": [
+        "BELIEF_OBJECT_NEEDED_FOR_OKAY"
+      ],
+      "severity": 3,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_NATURE",
+        "LIFE_DOMAIN_LEARNING",
+        "LIFE_DOMAIN_FAMILY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_LOSS_GRIEF",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_LOTUS"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT046",
+    "title": "Harshly reprimanded by a parent",
+    "category": "Sadness & Grief",
+    "false_belief_text": "When I make mistakes, I'm not loved.",
+    "true_belief_text": "I can make mistakes and still be deeply loved.",
+    "hard": {
+      "need_id": "NEED_BELONGING",
+      "belief_ids": [
+        "BELIEF_REJECTION_MEANS_NOT_CARED_FOR"
+      ],
+      "severity": 3,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_RESPONSIBILITY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_LOSS_GRIEF",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_BROKEN_TUSK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT047",
+    "title": "Feeling invisible to a busy parent",
+    "category": "Sadness & Grief",
+    "false_belief_text": "I'm not important because nobody notices me.",
+    "true_belief_text": "I matter even when people are busy.",
+    "hard": {
+      "need_id": "NEED_BELONGING",
+      "belief_ids": [
+        "BELIEF_EXCLUSION_MEANS_UNWORTHY"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_CARING",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_LOSS_GRIEF",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_EARS"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT048",
+    "title": "Not invited to a birthday party",
+    "category": "Sadness & Grief",
+    "false_belief_text": "Being left out means nobody likes me.",
+    "true_belief_text": "One invitation does not decide my worth or my friendships.",
+    "hard": {
+      "need_id": "NEED_BELONGING",
+      "belief_ids": [
+        "BELIEF_EXCLUSION_MEANS_UNWORTHY"
+      ],
+      "severity": 3,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FRIENDSHIP",
+        "LIFE_DOMAIN_CELEBRATIONS",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_LOSS_GRIEF",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_BROKEN_TUSK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT049",
+    "title": "A fall or scrape \u2014 the shock of pain",
+    "category": "Sadness & Grief",
+    "false_belief_text": "Getting hurt means I should stop trying.",
+    "true_belief_text": "I can heal, recover and keep growing.",
+    "hard": {
+      "need_id": "NEED_COMPETENCE",
+      "belief_ids": [
+        "BELIEF_SETBACK_IS_PERMANENT"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_CARING",
+        "LIFE_DOMAIN_PLAY",
+        "LIFE_DOMAIN_LEARNING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_LOSS_GRIEF",
+      "ganesha_symbol_primary": "GAN_SYM_LOTUS",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_BELLY"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT050",
+    "title": "Missing a parent who travels often",
+    "category": "Sadness & Grief",
+    "false_belief_text": "Distance means love becomes smaller.",
+    "true_belief_text": "Love stays strong even when people are far away.",
+    "hard": {
+      "need_id": "NEED_TRUST",
+      "belief_ids": [
+        "BELIEF_DISTANCE_WEAKENS_LOVE"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_CREATIVITY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_LOSS_GRIEF",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_EARS",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_BELLY"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT051",
+    "title": "Close friend moved to another city",
+    "category": "Sadness & Grief",
+    "false_belief_text": "If someone leaves, our friendship is over.",
+    "true_belief_text": "Real friendships can continue across distance and time.",
+    "hard": {
+      "need_id": "NEED_BELONGING",
+      "belief_ids": [
+        "BELIEF_SEPARATION_ENDS_RELATIONSHIP"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FRIENDSHIP",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_CREATIVITY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_LOSS_GRIEF",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_EARS"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT052",
+    "title": "Moving house and leaving familiar bedroom",
+    "category": "Sadness & Grief",
+    "false_belief_text": "Everything familiar is gone forever.",
+    "true_belief_text": "Home is built through love, memories and new beginnings.",
+    "hard": {
+      "need_id": "NEED_SAFETY",
+      "belief_ids": [
+        "BELIEF_CHANGE_DESTROYS_EVERYTHING"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_BUILDING",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_LOSS_GRIEF",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_LOTUS"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT053",
+    "title": "Long illness, lockdown recovery, school break",
+    "category": "Sadness & Grief",
+    "false_belief_text": "Life will never feel normal again.",
+    "true_belief_text": "I can adapt and create new routines after change.",
+    "hard": {
+      "need_id": "NEED_COMPETENCE",
+      "belief_ids": [
+        "BELIEF_SETBACK_IS_PERMANENT"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_PLAY",
+        "LIFE_DOMAIN_FRIENDSHIP"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_LOSS_GRIEF",
+      "ganesha_symbol_primary": "GAN_SYM_LOTUS",
+      "ganesha_symbol_secondary": "GAN_SYM_CURVED_TRUNK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT054",
+    "title": "Highly anticipated movie or event cancelled",
+    "category": "Sadness & Grief",
+    "false_belief_text": "If plans change, everything is ruined.",
+    "true_belief_text": "New opportunities can grow from unexpected changes.",
+    "hard": {
+      "need_id": "NEED_ADAPTABILITY",
+      "belief_ids": [
+        "BELIEF_PLANS_MUST_GO_MY_WAY"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_CREATIVITY",
+        "LIFE_DOMAIN_LEARNING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_LOSS_GRIEF",
+      "ganesha_symbol_primary": "GAN_SYM_CURVED_TRUNK",
+      "ganesha_symbol_secondary": "GAN_SYM_LOTUS"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT055",
+    "title": "Seeing another child or animal cry or suffer",
+    "category": "Sadness & Grief",
+    "false_belief_text": "Their pain has nothing to do with me.",
+    "true_belief_text": "Caring actions can comfort others and make a difference.",
+    "hard": {
+      "need_id": "NEED_COMPASSION",
+      "belief_ids": [
+        "BELIEF_OTHERS_PAIN_NOT_MY_CONCERN"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_CARING",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_FRIENDSHIP"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_LOSS_GRIEF",
+      "ganesha_symbol_primary": "GAN_SYM_CURVED_TRUNK",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_EARS"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT056",
+    "title": "Excluded from a group chat",
+    "category": "Sadness & Grief",
+    "false_belief_text": "Being left out means I don't matter.",
+    "true_belief_text": "One group doesn't decide my value or my friendships.",
+    "hard": {
+      "need_id": "NEED_BELONGING",
+      "belief_ids": [
+        "BELIEF_EXCLUSION_MEANS_UNWORTHY"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FRIENDSHIP",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_SCHOOL"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_LOSS_GRIEF",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_BROKEN_TUSK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT057",
+    "title": "Not chosen for a special school role",
+    "category": "Sadness & Grief",
+    "false_belief_text": "If I'm not chosen, I'm not good enough.",
+    "true_belief_text": "My worth isn't decided by awards or roles.",
+    "hard": {
+      "need_id": "NEED_IDENTITY",
+      "belief_ids": [
+        "BELIEF_RESULT_DEFINES_WORTH",
+        "BELIEF_UNCHOSEN_MEANS_UNWORTHY"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_SCHOOL",
+        "LIFE_DOMAIN_LEARNING",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_LOSS_GRIEF",
+      "ganesha_symbol_primary": "GAN_SYM_BROKEN_TUSK",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_BELLY"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT058",
+    "title": "Last day of summer vacation / school year end",
+    "category": "Sadness & Grief",
+    "false_belief_text": "Good things are over forever.",
+    "true_belief_text": "Every ending also brings a new beginning.",
+    "hard": {
+      "need_id": "NEED_HOPE",
+      "belief_ids": [
+        "BELIEF_ENDINGS_ARE_PERMANENT_LOSS"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FRIENDSHIP",
+        "LIFE_DOMAIN_CELEBRATIONS",
+        "LIFE_DOMAIN_FAMILY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_LOSS_GRIEF",
+      "ganesha_symbol_primary": "GAN_SYM_LOTUS",
+      "ganesha_symbol_secondary": "GAN_SYM_EYES"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT059",
+    "title": "Looking at photos when they were 'little'",
+    "category": "Sadness & Grief",
+    "false_belief_text": "I've lost who I used to be.",
+    "true_belief_text": "Growing changes me, but I'm still me inside.",
+    "hard": {
+      "need_id": "NEED_BELONGING",
+      "belief_ids": [
+        "BELIEF_GROWING_MEANS_LOSING_SELF"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_CREATIVITY",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_LOSS_GRIEF",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_LOTUS"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT060",
+    "title": "Intentions were good but they got in trouble anyway",
+    "category": "Sadness & Grief",
+    "false_belief_text": "Good intentions don't matter if I make mistakes.",
+    "true_belief_text": "Honest intentions and taking responsibility both matter.",
+    "hard": {
+      "need_id": "NEED_INTEGRITY",
+      "belief_ids": [
+        "BELIEF_ONE_MISTAKE_DEFINES_ME"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_RESPONSIBILITY",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_LEARNING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_LOSS_GRIEF",
+      "ganesha_symbol_primary": "GAN_SYM_BROKEN_TUSK",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_EARS"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT061",
+    "title": "Made a mistake in front of the class",
+    "category": "Shame & Low Self-Esteem",
+    "false_belief_text": "One mistake means I'm not capable.",
+    "true_belief_text": "Mistakes are part of learning and growing.",
+    "hard": {
+      "need_id": "NEED_CONFIDENCE",
+      "belief_ids": [
+        "BELIEF_ONE_MISTAKE_DEFINES_ME"
+      ],
+      "severity": 3,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_SCHOOL",
+        "LIFE_DOMAIN_LEARNING",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_IDENTITY",
+      "ganesha_symbol_primary": "GAN_SYM_BROKEN_TUSK",
+      "ganesha_symbol_secondary": "GAN_SYM_MOUSE"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT062",
+    "title": "Forgot someone's name or a social cue",
+    "category": "Shame & Low Self-Esteem",
+    "false_belief_text": "If I forget, people won't like me.",
+    "true_belief_text": "Everyone makes mistakes, and kindness repairs them.",
+    "hard": {
+      "need_id": "NEED_RESPECT",
+      "belief_ids": [
+        "BELIEF_SMALL_SLIP_LOSES_LIKING"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_FRIENDSHIP",
+        "LIFE_DOMAIN_LEARNING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_IDENTITY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_EARS",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_BELLY"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT063",
+    "title": "Called 'fat' or 'chubby' by a peer",
+    "category": "Shame & Low Self-Esteem",
+    "false_belief_text": "My appearance decides my value.",
+    "true_belief_text": "My worth comes from who I am, not how I look.",
+    "hard": {
+      "need_id": "NEED_IDENTITY",
+      "belief_ids": [
+        "BELIEF_APPEARANCE_DEFINES_VALUE"
+      ],
+      "severity": 3,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FRIENDSHIP",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_PLAY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_IDENTITY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_BROKEN_TUSK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT064",
+    "title": "New glasses and feeling 'nerdy' or 'ugly'",
+    "category": "Shame & Low Self-Esteem",
+    "false_belief_text": "Looking different makes me less lovable.",
+    "true_belief_text": "The things that make me different are part of who I am.",
+    "hard": {
+      "need_id": "NEED_BELONGING",
+      "belief_ids": [
+        "BELIEF_APPEARANCE_DEFINES_VALUE"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_SCHOOL",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_FRIENDSHIP"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_IDENTITY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_BROKEN_TUSK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT065",
+    "title": "Getting acne or pimples (older kids)",
+    "category": "Shame & Low Self-Esteem",
+    "false_belief_text": "I have to look perfect to be accepted.",
+    "true_belief_text": "My appearance doesn't define my value.",
+    "hard": {
+      "need_id": "NEED_BELONGING",
+      "belief_ids": [
+        "BELIEF_APPEARANCE_DEFINES_VALUE"
+      ],
+      "severity": 1,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_RESPONSIBILITY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_IDENTITY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_LOTUS"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT066",
+    "title": "Being shortest or tallest in the class line",
+    "category": "Shame & Low Self-Esteem",
+    "false_belief_text": "Being different makes me less important.",
+    "true_belief_text": "Everyone grows in their own unique way.",
+    "hard": {
+      "need_id": "NEED_IDENTITY",
+      "belief_ids": [
+        "BELIEF_APPEARANCE_DEFINES_VALUE"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_SCHOOL",
+        "LIFE_DOMAIN_PLAY",
+        "LIFE_DOMAIN_FRIENDSHIP"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_IDENTITY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_BROKEN_TUSK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT067",
+    "title": "Being 'slower' at reading or math than others",
+    "category": "Shame & Low Self-Esteem",
+    "false_belief_text": "If I learn slowly, I'm not smart.",
+    "true_belief_text": "Everyone learns at their own pace.",
+    "hard": {
+      "need_id": "NEED_CONFIDENCE",
+      "belief_ids": [
+        "BELIEF_SPEED_EQUALS_ABILITY"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_LEARNING",
+        "LIFE_DOMAIN_SCHOOL",
+        "LIFE_DOMAIN_RESPONSIBILITY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_IDENTITY",
+      "ganesha_symbol_primary": "GAN_SYM_MOUSE",
+      "ganesha_symbol_secondary": "GAN_SYM_BROKEN_TUSK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT068",
+    "title": "Picked last for a team or called 'clumsy'",
+    "category": "Shame & Low Self-Esteem",
+    "false_belief_text": "I'm not good enough to belong.",
+    "true_belief_text": "Skills improve with practice and effort.",
+    "hard": {
+      "need_id": "NEED_CONFIDENCE",
+      "belief_ids": [
+        "BELIEF_LOW_SKILL_MEANS_UNBELONGING"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_PLAY",
+        "LIFE_DOMAIN_SCHOOL",
+        "LIFE_DOMAIN_LEARNING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_IDENTITY",
+      "ganesha_symbol_primary": "GAN_SYM_MOUSE",
+      "ganesha_symbol_secondary": "GAN_SYM_BROKEN_TUSK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT069",
+    "title": "Their clothes aren't as 'cool' as others'",
+    "category": "Shame & Low Self-Esteem",
+    "false_belief_text": "I need nicer things to be accepted.",
+    "true_belief_text": "Who I am matters more than what I own.",
+    "hard": {
+      "need_id": "NEED_CONTENTMENT",
+      "belief_ids": [
+        "BELIEF_POSSESSIONS_BRING_HAPPINESS"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FRIENDSHIP",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_CREATIVITY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_IDENTITY",
+      "ganesha_symbol_primary": "GAN_SYM_MODAK",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_BELLY"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT070",
+    "title": "Thinking 'I can't do anything right'",
+    "category": "Shame & Low Self-Esteem",
+    "false_belief_text": "I fail at everything.",
+    "true_belief_text": "I have many strengths and can keep improving.",
+    "hard": {
+      "need_id": "NEED_CONFIDENCE",
+      "belief_ids": [
+        "BELIEF_ONE_MISTAKE_DEFINES_ME"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_LEARNING",
+        "LIFE_DOMAIN_BUILDING",
+        "LIFE_DOMAIN_CARING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_IDENTITY",
+      "ganesha_symbol_primary": "GAN_SYM_MOUSE",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_BELLY"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT071",
+    "title": "Sibling praised while they were ignored",
+    "category": "Shame & Low Self-Esteem",
+    "false_belief_text": "Love has to be earned by being the best.",
+    "true_belief_text": "I am loved for who I am, not because I outperform others.",
+    "hard": {
+      "need_id": "NEED_IDENTITY",
+      "belief_ids": [
+        "BELIEF_OTHERS_SUCCESS_DIMINISHES_ME"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_CARING",
+        "LIFE_DOMAIN_RESPONSIBILITY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_IDENTITY",
+      "ganesha_symbol_primary": "GAN_SYM_BROKEN_TUSK",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_BELLY"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT072",
+    "title": "Project or video gets no likes or views",
+    "category": "Shame & Low Self-Esteem",
+    "false_belief_text": "If people don't notice me, I don't matter.",
+    "true_belief_text": "My work has value even without applause.",
+    "hard": {
+      "need_id": "NEED_IDENTITY",
+      "belief_ids": [
+        "BELIEF_EXCLUSION_MEANS_UNWORTHY"
+      ],
+      "severity": 1,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_CREATIVITY",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_LEARNING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_IDENTITY",
+      "ganesha_symbol_primary": "GAN_SYM_BROKEN_TUSK",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_BELLY"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT073",
+    "title": "Drawing doesn't look how they imagined",
+    "category": "Shame & Low Self-Esteem",
+    "false_belief_text": "If it isn't perfect, I should stop.",
+    "true_belief_text": "Improvement comes through practice, not perfection.",
+    "hard": {
+      "need_id": "NEED_COMPETENCE",
+      "belief_ids": [
+        "BELIEF_SPEED_EQUALS_ABILITY"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_CREATIVITY",
+        "LIFE_DOMAIN_LEARNING",
+        "LIFE_DOMAIN_BUILDING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_IDENTITY",
+      "ganesha_symbol_primary": "GAN_SYM_MOUSE",
+      "ganesha_symbol_secondary": "GAN_SYM_BROKEN_TUSK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT074",
+    "title": "Reprimanded in front of friends or guests",
+    "category": "Shame & Low Self-Esteem",
+    "false_belief_text": "Public mistakes make me less worthy.",
+    "true_belief_text": "One embarrassing moment doesn't change my worth.",
+    "hard": {
+      "need_id": "NEED_BELONGING",
+      "belief_ids": [
+        "BELIEF_PUBLIC_MISTAKE_LOWERS_WORTH"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_SCHOOL"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_IDENTITY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_BROKEN_TUSK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT075",
+    "title": "Stuttered or forgot lines in a play",
+    "category": "Shame & Low Self-Esteem",
+    "false_belief_text": "If I mess up, everyone will remember forever.",
+    "true_belief_text": "Courage is continuing even after mistakes.",
+    "hard": {
+      "need_id": "NEED_CONFIDENCE",
+      "belief_ids": [
+        "BELIEF_NERVOUS_MEANS_CANT"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_CREATIVITY",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_LEARNING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_IDENTITY",
+      "ganesha_symbol_primary": "GAN_SYM_MOUSE",
+      "ganesha_symbol_secondary": "GAN_SYM_BROKEN_TUSK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT076",
+    "title": "Told their work is 'messy' or unreadable",
+    "category": "Shame & Low Self-Esteem",
+    "false_belief_text": "If my work isn't perfect, I'm not capable.",
+    "true_belief_text": "Skills improve with practice and feedback.",
+    "hard": {
+      "need_id": "NEED_CONFIDENCE",
+      "belief_ids": [
+        "BELIEF_ONE_MISTAKE_DEFINES_ME"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_LEARNING",
+        "LIFE_DOMAIN_CREATIVITY",
+        "LIFE_DOMAIN_RESPONSIBILITY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_IDENTITY",
+      "ganesha_symbol_primary": "GAN_SYM_MOUSE",
+      "ganesha_symbol_secondary": "GAN_SYM_BROKEN_TUSK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT077",
+    "title": "Why can't you be more like [cousin/friend]?",
+    "category": "Shame & Low Self-Esteem",
+    "false_belief_text": "I have to be like someone else to be valued.",
+    "true_belief_text": "My unique strengths make me valuable.",
+    "hard": {
+      "need_id": "NEED_IDENTITY",
+      "belief_ids": [
+        "BELIEF_MUST_BE_LIKE_OTHERS"
+      ],
+      "severity": 3,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_LEARNING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_IDENTITY",
+      "ganesha_symbol_primary": "GAN_SYM_BROKEN_TUSK",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_BELLY"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT078",
+    "title": "Feeling like a burden to parents",
+    "category": "Shame & Low Self-Esteem",
+    "false_belief_text": "I make life harder for everyone.",
+    "true_belief_text": "I am loved because I am part of the family, not because I'm perfect.",
+    "hard": {
+      "need_id": "NEED_BELONGING",
+      "belief_ids": [
+        "BELIEF_REJECTION_MEANS_NOT_CARED_FOR",
+        "BELIEF_MUST_BE_PERFECT_TO_BE_LOVED"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_CARING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_IDENTITY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_EARS"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT079",
+    "title": "Feeling like they're not seen or valued",
+    "category": "Shame & Low Self-Esteem",
+    "false_belief_text": "Nobody notices or values me.",
+    "true_belief_text": "I matter even when others are busy or distracted.",
+    "hard": {
+      "need_id": "NEED_BELONGING",
+      "belief_ids": [
+        "BELIEF_EXCLUSION_MEANS_UNWORTHY"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_FRIENDSHIP"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_IDENTITY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_EARS"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT080",
+    "title": "Secretly thinking 'I am just a bad kid'",
+    "category": "Shame & Low Self-Esteem",
+    "false_belief_text": "I am a bad person because I make mistakes.",
+    "true_belief_text": "I make mistakes, but I am still a good person who can grow.",
+    "hard": {
+      "need_id": "NEED_BELONGING",
+      "belief_ids": [
+        "BELIEF_ONE_MISTAKE_DEFINES_ME"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_RESPONSIBILITY",
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_IDENTITY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_BROKEN_TUSK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT081",
+    "title": "Parent praises sibling's work but not theirs",
+    "category": "Jealousy & Envy",
+    "false_belief_text": "Praise decides my value.",
+    "true_belief_text": "My worth isn't measured by comparison or praise.",
+    "hard": {
+      "need_id": "NEED_IDENTITY",
+      "belief_ids": [
+        "BELIEF_OTHERS_SUCCESS_DIMINISHES_ME"
+      ],
+      "severity": 3,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_CARING",
+        "LIFE_DOMAIN_RESPONSIBILITY",
+        "LIFE_DOMAIN_LEARNING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_IDENTITY",
+      "ganesha_symbol_primary": "GAN_SYM_BROKEN_TUSK",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_BELLY"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT082",
+    "title": "Best friend is playing with someone else",
+    "category": "Jealousy & Envy",
+    "false_belief_text": "I'll be replaced.",
+    "true_belief_text": "Friendships grow and there's room for many connections.",
+    "hard": {
+      "need_id": "NEED_BELONGING",
+      "belief_ids": [
+        "BELIEF_EXCLUSION_MEANS_UNWORTHY"
+      ],
+      "severity": 3,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FRIENDSHIP",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_PLAY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_IDENTITY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_EARS"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT083",
+    "title": "Friend got the newest toy, phone or iPad",
+    "category": "Jealousy & Envy",
+    "false_belief_text": "I need what others have to be happy.",
+    "true_belief_text": "Gratitude brings more joy than comparison.",
+    "hard": {
+      "need_id": "NEED_CONTENTMENT",
+      "belief_ids": [
+        "BELIEF_POSSESSIONS_BRING_HAPPINESS"
+      ],
+      "severity": 3,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FRIENDSHIP",
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_IDENTITY",
+      "ganesha_symbol_primary": "GAN_SYM_MODAK",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_BELLY"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT084",
+    "title": "Classmate won Student of the Month",
+    "category": "Jealousy & Envy",
+    "false_belief_text": "Someone else's success means I'm not successful.",
+    "true_belief_text": "I can celebrate others while continuing my own journey.",
+    "hard": {
+      "need_id": "NEED_IDENTITY",
+      "belief_ids": [
+        "BELIEF_OTHERS_SUCCESS_DIMINISHES_ME"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_SCHOOL",
+        "LIFE_DOMAIN_LEARNING",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_IDENTITY",
+      "ganesha_symbol_primary": "GAN_SYM_BROKEN_TUSK",
+      "ganesha_symbol_secondary": "GAN_SYM_MODAK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT085",
+    "title": "Someone else always gets to go first",
+    "category": "Jealousy & Envy",
+    "false_belief_text": "Fair means I should get an equal turn every time.",
+    "true_belief_text": "Fairness includes patience and considering everyone.",
+    "hard": {
+      "need_id": "NEED_JUSTICE",
+      "belief_ids": [
+        "BELIEF_FAIR_MEANS_EQUAL_EVERY_TIME"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_PLAY",
+        "LIFE_DOMAIN_RESPONSIBILITY",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_IDENTITY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_EARS",
+      "ganesha_symbol_secondary": "GAN_SYM_MOUSE"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT086",
+    "title": "Parent on work call when child wants to share something",
+    "category": "Jealousy & Envy",
+    "false_belief_text": "If I have to wait, what I want to say isn't important.",
+    "true_belief_text": "My thoughts matter, and I can wait for the right moment.",
+    "hard": {
+      "need_id": "NEED_PATIENCE",
+      "belief_ids": [
+        "BELIEF_ATTENTION_MUST_BE_INSTANT"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_RESPONSIBILITY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_IDENTITY",
+      "ganesha_symbol_primary": "GAN_SYM_MOUSE",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_EARS"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT087",
+    "title": "At a party but wanting the birthday gifts",
+    "category": "Jealousy & Envy",
+    "false_belief_text": "I'll only be happy if I get what someone else has.",
+    "true_belief_text": "Celebrating others can bring joy too.",
+    "hard": {
+      "need_id": "NEED_CONTENTMENT",
+      "belief_ids": [
+        "BELIEF_POSSESSIONS_BRING_HAPPINESS"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_CELEBRATIONS",
+        "LIFE_DOMAIN_FRIENDSHIP",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_IDENTITY",
+      "ganesha_symbol_primary": "GAN_SYM_MODAK",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_BELLY"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT088",
+    "title": "Friend is naturally better at football or dance",
+    "category": "Jealousy & Envy",
+    "false_belief_text": "Talent is something you either have or don't.",
+    "true_belief_text": "Practice helps me improve my own abilities.",
+    "hard": {
+      "need_id": "NEED_CONFIDENCE",
+      "belief_ids": [
+        "BELIEF_TALENT_IS_FIXED"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_PLAY",
+        "LIFE_DOMAIN_LEARNING",
+        "LIFE_DOMAIN_SELF_CARE"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_IDENTITY",
+      "ganesha_symbol_primary": "GAN_SYM_MOUSE",
+      "ganesha_symbol_secondary": "GAN_SYM_BROKEN_TUSK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT089",
+    "title": "New sibling gets all the attention and new things",
+    "category": "Jealousy & Envy",
+    "false_belief_text": "The new baby has replaced me.",
+    "true_belief_text": "Love grows; it isn't divided.",
+    "hard": {
+      "need_id": "NEED_BELONGING",
+      "belief_ids": [
+        "BELIEF_LESS_ATTENTION_MEANS_REPLACED"
+      ],
+      "severity": 3,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_CARING",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_IDENTITY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_EARS"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT090",
+    "title": "Another kid always gets teacher's favour",
+    "category": "Jealousy & Envy",
+    "false_belief_text": "If someone else is chosen, I'm less important.",
+    "true_belief_text": "I can focus on my own growth instead of comparison.",
+    "hard": {
+      "need_id": "NEED_JUSTICE",
+      "belief_ids": [
+        "BELIEF_UNCHOSEN_MEANS_UNWORTHY"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_SCHOOL",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_LEARNING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_IDENTITY",
+      "ganesha_symbol_primary": "GAN_SYM_EYES",
+      "ganesha_symbol_secondary": "GAN_SYM_BROKEN_TUSK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT091",
+    "title": "Friend has more followers or game skins",
+    "category": "Jealousy & Envy",
+    "false_belief_text": "Having more things or popularity makes someone better.",
+    "true_belief_text": "Real happiness and friendship can't be measured by possessions or popularity.",
+    "hard": {
+      "need_id": "NEED_CONTENTMENT",
+      "belief_ids": [
+        "BELIEF_POSSESSIONS_BRING_HAPPINESS"
+      ],
+      "severity": 1,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FRIENDSHIP",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_LEARNING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_IDENTITY",
+      "ganesha_symbol_primary": "GAN_SYM_MODAK",
+      "ganesha_symbol_secondary": "GAN_SYM_BROKEN_TUSK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT092",
+    "title": "Friend went on a fancy international vacation",
+    "category": "Jealousy & Envy",
+    "false_belief_text": "Exciting experiences make someone more important.",
+    "true_belief_text": "Meaningful memories can be created anywhere.",
+    "hard": {
+      "need_id": "NEED_CONTENTMENT",
+      "belief_ids": [
+        "BELIEF_POSSESSIONS_BRING_HAPPINESS"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_FRIENDSHIP",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_IDENTITY",
+      "ganesha_symbol_primary": "GAN_SYM_MODAK",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_BELLY"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT093",
+    "title": "Wishing they had someone else's hair or height",
+    "category": "Jealousy & Envy",
+    "false_belief_text": "I have to look different to be enough.",
+    "true_belief_text": "My uniqueness is part of what makes me special.",
+    "hard": {
+      "need_id": "NEED_BELONGING",
+      "belief_ids": [
+        "BELIEF_APPEARANCE_DEFINES_VALUE"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_SELF_CARE"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_IDENTITY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_LOTUS"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT094",
+    "title": "Wanting what's in a friend's lunchbox",
+    "category": "Jealousy & Envy",
+    "false_belief_text": "What others have is always better.",
+    "true_belief_text": "Gratitude helps me enjoy what I already have.",
+    "hard": {
+      "need_id": "NEED_CONTENTMENT",
+      "belief_ids": [
+        "BELIEF_POSSESSIONS_BRING_HAPPINESS"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FRIENDSHIP",
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_IDENTITY",
+      "ganesha_symbol_primary": "GAN_SYM_MODAK",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_BELLY"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT095",
+    "title": "Friend has a later bedtime or more freedom",
+    "category": "Jealousy & Envy",
+    "false_belief_text": "Different rules mean my parents are unfair.",
+    "true_belief_text": "Every family makes choices based on different needs.",
+    "hard": {
+      "need_id": "NEED_JUSTICE",
+      "belief_ids": [
+        "BELIEF_DIFFERENT_RULES_ARE_UNFAIR"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_LEARNING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_IDENTITY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_EARS",
+      "ganesha_symbol_secondary": "GAN_SYM_EYES"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT096",
+    "title": "Always wearing older sibling's old clothes",
+    "category": "Jealousy & Envy",
+    "false_belief_text": "New things make someone more valuable.",
+    "true_belief_text": "My value isn't determined by what I own.",
+    "hard": {
+      "need_id": "NEED_IDENTITY",
+      "belief_ids": [
+        "BELIEF_APPEARANCE_DEFINES_VALUE"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_SELF_CARE",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_IDENTITY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_MODAK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT097",
+    "title": "Post-party or festival hyperactivity",
+    "category": "Regulation & Energy Overload",
+    "false_belief_text": "I have to follow every exciting feeling.",
+    "true_belief_text": "I can enjoy excitement and still calm my body afterwards.",
+    "hard": {
+      "need_id": "NEED_SELF_REGULATION",
+      "belief_ids": [
+        "BELIEF_MUST_FOLLOW_EVERY_IMPULSE"
+      ],
+      "severity": 3,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_CELEBRATIONS",
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_SELF_CARE"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_MOUSE"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT098",
+    "title": "Zoning out after too much YouTube or gaming",
+    "category": "Regulation & Energy Overload",
+    "false_belief_text": "My attention controls me.",
+    "true_belief_text": "I can guide my attention back to what matters.",
+    "hard": {
+      "need_id": "NEED_SELF_REGULATION",
+      "belief_ids": [
+        "BELIEF_MUST_FOLLOW_EVERY_IMPULSE"
+      ],
+      "severity": 3,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_LEARNING",
+        "LIFE_DOMAIN_RESPONSIBILITY",
+        "LIFE_DOMAIN_FAMILY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_EYES",
+      "ganesha_symbol_secondary": "GAN_SYM_MOUSE"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT099",
+    "title": "Noisy, overcrowded mall or festival environment",
+    "category": "Regulation & Energy Overload",
+    "false_belief_text": "I can't cope when everything feels overwhelming.",
+    "true_belief_text": "I can notice what I need and find calm even in busy places.",
+    "hard": {
+      "need_id": "NEED_SAFETY",
+      "belief_ids": [
+        "BELIEF_DISCOMFORT_IS_UNBEARABLE"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_SELF_CARE"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_EARS"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT100",
+    "title": "Too many classes \u2014 tuition, sport, music all in one day",
+    "category": "Regulation & Energy Overload",
+    "false_belief_text": "I have to do everything perfectly.",
+    "true_belief_text": "I can do my best while caring for my energy.",
+    "hard": {
+      "need_id": "NEED_STABILITY",
+      "belief_ids": [
+        "BELIEF_MUST_ALWAYS_KEEP_GOING"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_RESPONSIBILITY",
+        "LIFE_DOMAIN_LEARNING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_MODAK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT101",
+    "title": "Long wait at doctor, bank, or during travel",
+    "category": "Regulation & Energy Overload",
+    "false_belief_text": "Waiting is pointless and unbearable.",
+    "true_belief_text": "I can use waiting time calmly and wisely.",
+    "hard": {
+      "need_id": "NEED_PATIENCE",
+      "belief_ids": [
+        "BELIEF_WAITING_IS_WORTHLESS"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_RESPONSIBILITY",
+        "LIFE_DOMAIN_PLAY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_MOUSE",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_BELLY"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT102",
+    "title": "Stuck indoors on a rainy day with nothing to do",
+    "category": "Regulation & Energy Overload",
+    "false_belief_text": "Fun only happens when things go as planned.",
+    "true_belief_text": "I can create joy wherever I am.",
+    "hard": {
+      "need_id": "NEED_ADAPTABILITY",
+      "belief_ids": [
+        "BELIEF_PLANS_MUST_GO_MY_WAY"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_PLAY",
+        "LIFE_DOMAIN_CREATIVITY",
+        "LIFE_DOMAIN_BUILDING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_CURVED_TRUNK",
+      "ganesha_symbol_secondary": "GAN_SYM_EYES"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT103",
+    "title": "End of a long school week \u2014 brain feels full",
+    "category": "Regulation & Energy Overload",
+    "false_belief_text": "I should always keep going.",
+    "true_belief_text": "Rest is part of learning and growing.",
+    "hard": {
+      "need_id": "NEED_SAFETY",
+      "belief_ids": [
+        "BELIEF_DISCOMFORT_IS_UNBEARABLE",
+        "BELIEF_MUST_ALWAYS_KEEP_GOING"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_SCHOOL",
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_LEARNING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_MODAK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT104",
+    "title": "Cranky after a late night or bad sleep",
+    "category": "Regulation & Energy Overload",
+    "false_belief_text": "Being tired gives me no control over my behaviour.",
+    "true_belief_text": "I can notice my feelings and choose kind actions.",
+    "hard": {
+      "need_id": "NEED_SELF_REGULATION",
+      "belief_ids": [
+        "BELIEF_TIREDNESS_REMOVES_CONTROL"
+      ],
+      "severity": 3,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_RESPONSIBILITY",
+        "LIFE_DOMAIN_CARING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_MOUSE"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT105",
+    "title": "Trying to do homework while TV is on",
+    "category": "Regulation & Energy Overload",
+    "false_belief_text": "I can't focus when there are distractions.",
+    "true_belief_text": "I can gently bring my attention back.",
+    "hard": {
+      "need_id": "NEED_SELF_REGULATION",
+      "belief_ids": [
+        "BELIEF_MUST_FOLLOW_EVERY_IMPULSE"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_LEARNING",
+        "LIFE_DOMAIN_RESPONSIBILITY",
+        "LIFE_DOMAIN_FAMILY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_EYES",
+      "ganesha_symbol_secondary": "GAN_SYM_MOUSE"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT106",
+    "title": "Too many options for a toy or treat",
+    "category": "Regulation & Energy Overload",
+    "false_belief_text": "More choices always make me happier.",
+    "true_belief_text": "Wise choices matter more than having everything.",
+    "hard": {
+      "need_id": "NEED_CONTENTMENT",
+      "belief_ids": [
+        "BELIEF_MUST_CONTROL_EVERYTHING",
+        "BELIEF_POSSESSIONS_BRING_HAPPINESS"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_LEARNING",
+        "LIFE_DOMAIN_RESPONSIBILITY",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_MODAK",
+      "ganesha_symbol_secondary": "GAN_SYM_EYES"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT107",
+    "title": "Pressure to always 'be good' and behave",
+    "category": "Regulation & Energy Overload",
+    "false_belief_text": "I have to be perfect to be loved.",
+    "true_belief_text": "I am loved even while I'm learning and growing.",
+    "hard": {
+      "need_id": "NEED_BELONGING",
+      "belief_ids": [
+        "BELIEF_REJECTION_MEANS_NOT_CARED_FOR",
+        "BELIEF_MUST_BE_PERFECT_TO_BE_LOVED"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_RESPONSIBILITY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_BROKEN_TUSK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT108",
+    "title": "Waiting for a turn on the swings",
+    "category": "Regulation & Energy Overload",
+    "false_belief_text": "I should always go first.",
+    "true_belief_text": "Everyone deserves a turn.",
+    "hard": {
+      "need_id": "NEED_PATIENCE",
+      "belief_ids": [
+        "BELIEF_NEED_IMMEDIATE_GRATIFICATION"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_PLAY",
+        "LIFE_DOMAIN_FRIENDSHIP",
+        "LIFE_DOMAIN_RESPONSIBILITY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_MOUSE",
+      "ganesha_symbol_secondary": "GAN_SYM_MODAK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT109",
+    "title": "Switching from fun activity to chores or homework",
+    "category": "Regulation & Energy Overload",
+    "false_belief_text": "I should only do what I enjoy.",
+    "true_belief_text": "Responsibility helps me earn greater freedom.",
+    "hard": {
+      "need_id": "NEED_SELF_REGULATION",
+      "belief_ids": [
+        "BELIEF_MUST_FOLLOW_EVERY_IMPULSE"
+      ],
+      "severity": 3,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_RESPONSIBILITY",
+        "LIFE_DOMAIN_LEARNING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_MOUSE",
+      "ganesha_symbol_secondary": "GAN_SYM_BROKEN_TUSK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT110",
+    "title": "The 'before dinner' energy crash",
+    "category": "Regulation & Energy Overload",
+    "false_belief_text": "My feelings should decide my behaviour.",
+    "true_belief_text": "I can care for my feelings without hurting others.",
+    "hard": {
+      "need_id": "NEED_SELF_REGULATION",
+      "belief_ids": [
+        "BELIEF_TIREDNESS_REMOVES_CONTROL"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_CARING",
+        "LIFE_DOMAIN_RESPONSIBILITY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_MOUSE"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT111",
+    "title": "Uncomfortable uniform, flickering lights, strong smells",
+    "category": "Regulation & Energy Overload",
+    "false_belief_text": "I can't cope when things feel uncomfortable.",
+    "true_belief_text": "I can care for myself and ask for help when needed.",
+    "hard": {
+      "need_id": "NEED_SAFETY",
+      "belief_ids": [
+        "BELIEF_DISCOMFORT_IS_UNBEARABLE"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_LEARNING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_CURVED_TRUNK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT112",
+    "title": "Waiting very excitedly for birthday or special package",
+    "category": "Regulation & Energy Overload",
+    "false_belief_text": "Waiting ruins the fun.",
+    "true_belief_text": "Anticipation can make joyful moments even sweeter.",
+    "hard": {
+      "need_id": "NEED_PATIENCE",
+      "belief_ids": [
+        "BELIEF_NEED_IMMEDIATE_GRATIFICATION",
+        "BELIEF_WAITING_IS_WORTHLESS"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_CELEBRATIONS",
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_RESPONSIBILITY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_MODAK",
+      "ganesha_symbol_secondary": "GAN_SYM_MOUSE"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT113",
+    "title": "Trying to learn a very hard new concept or language",
+    "category": "Regulation & Energy Overload",
+    "false_belief_text": "If I don't understand quickly, I'm not smart.",
+    "true_belief_text": "Understanding grows with patience and practice.",
+    "hard": {
+      "need_id": "NEED_CONFIDENCE",
+      "belief_ids": [
+        "BELIEF_SPEED_EQUALS_ABILITY"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_LEARNING",
+        "LIFE_DOMAIN_SCHOOL",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_SAFETY",
+      "ganesha_symbol_primary": "GAN_SYM_MOUSE",
+      "ganesha_symbol_secondary": "GAN_SYM_BROKEN_TUSK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT114",
+    "title": "Moving to a new home or city",
+    "category": "Change & Uncertainty",
+    "false_belief_text": "I'll never feel at home again.",
+    "true_belief_text": "Home grows wherever love and connection grow.",
+    "hard": {
+      "need_id": "NEED_BELONGING",
+      "belief_ids": [
+        "BELIEF_NEW_PLACE_MEANS_NO_FIT"
+      ],
+      "severity": 3,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_FRIENDSHIP",
+        "LIFE_DOMAIN_BUILDING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_TRANSFORMATION",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_LOTUS"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT115",
+    "title": "Moving abroad (very relevant for NRI families)",
+    "category": "Change & Uncertainty",
+    "false_belief_text": "I won't belong in a new country.",
+    "true_belief_text": "I can build new friendships while keeping my roots.",
+    "hard": {
+      "need_id": "NEED_BELONGING",
+      "belief_ids": [
+        "BELIEF_NEW_PLACE_MEANS_NO_FIT"
+      ],
+      "severity": 3,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_FRIENDSHIP",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_TRANSFORMATION",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_LOTUS"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT116",
+    "title": "Parents separating or getting a divorce",
+    "category": "Change & Uncertainty",
+    "false_belief_text": "My family is broken and I'm not safe anymore.",
+    "true_belief_text": "Love and security can continue even when families change.",
+    "hard": {
+      "need_id": "NEED_SAFETY",
+      "belief_ids": [
+        "BELIEF_REJECTION_MEANS_NOT_CARED_FOR",
+        "BELIEF_CHANGE_DESTROYS_EVERYTHING"
+      ],
+      "severity": 3,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_CARING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_TRANSFORMATION",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_LOTUS"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT117",
+    "title": "A parent starts a new job with different hours",
+    "category": "Change & Uncertainty",
+    "false_belief_text": "Less time together means less love.",
+    "true_belief_text": "Love isn't measured by time but by care and connection.",
+    "hard": {
+      "need_id": "NEED_TRUST",
+      "belief_ids": [
+        "BELIEF_REJECTION_MEANS_NOT_CARED_FOR"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_RESPONSIBILITY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_TRANSFORMATION",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_EARS",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_BELLY"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT118",
+    "title": "Starting at a completely new school",
+    "category": "Change & Uncertainty",
+    "false_belief_text": "Nobody will accept me.",
+    "true_belief_text": "I can create new friendships by being myself.",
+    "hard": {
+      "need_id": "NEED_BELONGING",
+      "belief_ids": [
+        "BELIEF_NEW_PLACE_MEANS_NO_FIT"
+      ],
+      "severity": 3,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_SCHOOL",
+        "LIFE_DOMAIN_FRIENDSHIP",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_TRANSFORMATION",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_EARS"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT119",
+    "title": "Favourite teacher changes mid-year",
+    "category": "Change & Uncertainty",
+    "false_belief_text": "Good things never last.",
+    "true_belief_text": "New people can also become trusted guides.",
+    "hard": {
+      "need_id": "NEED_TRUST",
+      "belief_ids": [
+        "BELIEF_NEW_PEOPLE_UNSAFE"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_SCHOOL",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_CARING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_TRANSFORMATION",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_EARS",
+      "ganesha_symbol_secondary": "GAN_SYM_EYES"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT120",
+    "title": "Sudden cancellation of a normal routine event",
+    "category": "Change & Uncertainty",
+    "false_belief_text": "Everything has to happen the way I expected.",
+    "true_belief_text": "I can adapt and discover new possibilities.",
+    "hard": {
+      "need_id": "NEED_ADAPTABILITY",
+      "belief_ids": [
+        "BELIEF_PLANS_MUST_GO_MY_WAY"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_LEARNING",
+        "LIFE_DOMAIN_RESPONSIBILITY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_TRANSFORMATION",
+      "ganesha_symbol_primary": "GAN_SYM_CURVED_TRUNK",
+      "ganesha_symbol_secondary": "GAN_SYM_LOTUS"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT121",
+    "title": "Summer ending and school starting again",
+    "category": "Change & Uncertainty",
+    "false_belief_text": "Fun is over now.",
+    "true_belief_text": "Every new season brings new adventures.",
+    "hard": {
+      "need_id": "NEED_HOPE",
+      "belief_ids": [
+        "BELIEF_ENDINGS_ARE_PERMANENT_LOSS"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_SCHOOL",
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_FRIENDSHIP"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_TRANSFORMATION",
+      "ganesha_symbol_primary": "GAN_SYM_LOTUS",
+      "ganesha_symbol_secondary": "GAN_SYM_EYES"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT122",
+    "title": "Growing pains, first tooth loss, puberty signs",
+    "category": "Change & Uncertainty",
+    "false_belief_text": "Growing and changing is scary.",
+    "true_belief_text": "Growing is a natural and wonderful part of life.",
+    "hard": {
+      "need_id": "NEED_BELONGING",
+      "belief_ids": [
+        "BELIEF_GROWING_MEANS_LOSING_SELF"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_LEARNING",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_TRANSFORMATION",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_LOTUS"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT123",
+    "title": "Friend suddenly acting different or 'cooler'",
+    "category": "Change & Uncertainty",
+    "false_belief_text": "I have to change to keep my friends.",
+    "true_belief_text": "Real friendships accept me for who I am.",
+    "hard": {
+      "need_id": "NEED_BELONGING",
+      "belief_ids": [
+        "BELIEF_SEPARATION_ENDS_RELATIONSHIP"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FRIENDSHIP",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_LEARNING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_TRANSFORMATION",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_BROKEN_TUSK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT124",
+    "title": "Game or app changes interface completely",
+    "category": "Change & Uncertainty",
+    "false_belief_text": "I don't like change, so I can't enjoy it.",
+    "true_belief_text": "I can learn new ways of doing things.",
+    "hard": {
+      "need_id": "NEED_ADAPTABILITY",
+      "belief_ids": [
+        "BELIEF_PLANS_MUST_GO_MY_WAY"
+      ],
+      "severity": 1,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_LEARNING",
+        "LIFE_DOMAIN_PLAY",
+        "LIFE_DOMAIN_RESPONSIBILITY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_TRANSFORMATION",
+      "ganesha_symbol_primary": "GAN_SYM_CURVED_TRUNK",
+      "ganesha_symbol_secondary": "GAN_SYM_EYES"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT125",
+    "title": "New nanny or household helper joins family",
+    "category": "Change & Uncertainty",
+    "false_belief_text": "New people can't become part of my safe world.",
+    "true_belief_text": "Trust grows through kindness and shared experiences.",
+    "hard": {
+      "need_id": "NEED_TRUST",
+      "belief_ids": [
+        "BELIEF_NEW_PEOPLE_UNSAFE"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_CARING",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_TRANSFORMATION",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_EARS",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_BELLY"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT126",
+    "title": "News of an upcoming surgery or treatment",
+    "category": "Change & Uncertainty",
+    "false_belief_text": "I won't be able to handle what's coming.",
+    "true_belief_text": "I can face difficult moments one brave step at a time.",
+    "hard": {
+      "need_id": "NEED_COURAGE",
+      "belief_ids": [
+        "BELIEF_PAIN_IS_UNMANAGEABLE"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_CARING",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_TRANSFORMATION",
+      "ganesha_symbol_primary": "GAN_SYM_MOUSE",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_BELLY"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT127",
+    "title": "Family having to cut back on treats or outings",
+    "category": "Change & Uncertainty",
+    "false_belief_text": "Happiness comes from having more.",
+    "true_belief_text": "Love, togetherness and gratitude bring lasting happiness.",
+    "hard": {
+      "need_id": "NEED_CONTENTMENT",
+      "belief_ids": [
+        "BELIEF_POSSESSIONS_BRING_HAPPINESS"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_RESPONSIBILITY",
+        "LIFE_DOMAIN_LEARNING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_TRANSFORMATION",
+      "ganesha_symbol_primary": "GAN_SYM_MODAK",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_BELLY"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT128",
+    "title": "Waiting anxiously for exam results",
+    "category": "Change & Uncertainty",
+    "false_belief_text": "My marks decide my value.",
+    "true_belief_text": "My effort and character matter more than any score.",
+    "hard": {
+      "need_id": "NEED_CONFIDENCE",
+      "belief_ids": [
+        "BELIEF_RESULT_DEFINES_WORTH"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_SCHOOL",
+        "LIFE_DOMAIN_LEARNING",
+        "LIFE_DOMAIN_RESPONSIBILITY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_TRANSFORMATION",
+      "ganesha_symbol_primary": "GAN_SYM_BROKEN_TUSK",
+      "ganesha_symbol_secondary": "GAN_SYM_MOUSE"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT129",
+    "title": "First time staying overnight away from home",
+    "category": "Change & Uncertainty",
+    "false_belief_text": "I can't feel safe away from home.",
+    "true_belief_text": "I can feel safe in new places with trusted people.",
+    "hard": {
+      "need_id": "NEED_SAFETY",
+      "belief_ids": [
+        "BELIEF_AWAY_FROM_HOME_IS_UNSAFE"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_FRIENDSHIP",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_TRANSFORMATION",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_EARS"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT130",
+    "title": "Stopping a favourite hobby or activity",
+    "category": "Change & Uncertainty",
+    "false_belief_text": "If one chapter ends, all the joy is gone.",
+    "true_belief_text": "New interests and opportunities will come.",
+    "hard": {
+      "need_id": "NEED_HOPE",
+      "belief_ids": [
+        "BELIEF_ENDINGS_ARE_PERMANENT_LOSS"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_CREATIVITY",
+        "LIFE_DOMAIN_PLAY",
+        "LIFE_DOMAIN_LEARNING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_TRANSFORMATION",
+      "ganesha_symbol_primary": "GAN_SYM_LOTUS",
+      "ganesha_symbol_secondary": "GAN_SYM_EYES"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT131",
+    "title": "Overheard adults talk about 'a big change coming'",
+    "category": "Change & Uncertainty",
+    "false_belief_text": "Unknown changes are always bad.",
+    "true_belief_text": "I can face change calmly and ask questions when I'm unsure.",
+    "hard": {
+      "need_id": "NEED_SAFETY",
+      "belief_ids": [
+        "BELIEF_UNEXPECTED_MEANS_UNSAFE",
+        "BELIEF_CHANGE_DESTROYS_EVERYTHING"
+      ],
+      "severity": 1,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FAMILY",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_LEARNING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_TRANSFORMATION",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_CURVED_TRUNK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT132",
+    "title": "Told a lie to a parent and feels a 'heavy' stomach",
+    "category": "Moral & Values Confusion",
+    "false_belief_text": "Hiding the truth will protect me.",
+    "true_belief_text": "Honesty brings trust, even after mistakes.",
+    "hard": {
+      "need_id": "NEED_INTEGRITY",
+      "belief_ids": [
+        "BELIEF_HIDING_TRUTH_PROTECTS"
+      ],
+      "severity": 3,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_RESPONSIBILITY",
+        "LIFE_DOMAIN_FAMILY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_JUSTICE_RIGHTS",
+      "ganesha_symbol_primary": "GAN_SYM_BROKEN_TUSK",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_EARS"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT133",
+    "title": "Friends asked them to steal or break a rule",
+    "category": "Moral & Values Confusion",
+    "false_belief_text": "I must follow my friends to belong.",
+    "true_belief_text": "Doing what's right is more important than fitting in.",
+    "hard": {
+      "need_id": "NEED_INTEGRITY",
+      "belief_ids": [
+        "BELIEF_BELONGING_REQUIRES_COMPLIANCE"
+      ],
+      "severity": 3,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FRIENDSHIP",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_RESPONSIBILITY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_JUSTICE_RIGHTS",
+      "ganesha_symbol_primary": "GAN_SYM_BROKEN_TUSK",
+      "ganesha_symbol_secondary": "GAN_SYM_MOUSE"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT134",
+    "title": "Watched someone get bullied and did nothing",
+    "category": "Moral & Values Confusion",
+    "false_belief_text": "Speaking up won't make a difference.",
+    "true_belief_text": "Small acts of courage can protect others.",
+    "hard": {
+      "need_id": "NEED_COURAGE",
+      "belief_ids": [
+        "BELIEF_ONE_ACTION_CANT_MATTER"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_CARING",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_SCHOOL"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_JUSTICE_RIGHTS",
+      "ganesha_symbol_primary": "GAN_SYM_BROKEN_TUSK",
+      "ganesha_symbol_secondary": "GAN_SYM_CURVED_TRUNK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT135",
+    "title": "A mean kid got praised or rewarded",
+    "category": "Moral & Values Confusion",
+    "false_belief_text": "Bad behaviour always wins.",
+    "true_belief_text": "I can't control others, but I can choose my own values.",
+    "hard": {
+      "need_id": "NEED_JUSTICE",
+      "belief_ids": [
+        "BELIEF_UNFAIRNESS_IS_PERMANENT"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_LEARNING",
+        "LIFE_DOMAIN_SCHOOL"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_JUSTICE_RIGHTS",
+      "ganesha_symbol_primary": "GAN_SYM_EYES",
+      "ganesha_symbol_secondary": "GAN_SYM_BROKEN_TUSK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT136",
+    "title": "Wants to play but knows they should study",
+    "category": "Moral & Values Confusion",
+    "false_belief_text": "I should always do what feels fun now.",
+    "true_belief_text": "Choosing responsibility today helps me tomorrow.",
+    "hard": {
+      "need_id": "NEED_SELF_REGULATION",
+      "belief_ids": [
+        "BELIEF_MUST_CONTROL_EVERYTHING",
+        "BELIEF_MUST_FOLLOW_EVERY_IMPULSE"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_PLAY",
+        "LIFE_DOMAIN_LEARNING",
+        "LIFE_DOMAIN_RESPONSIBILITY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_JUSTICE_RIGHTS",
+      "ganesha_symbol_primary": "GAN_SYM_MOUSE",
+      "ganesha_symbol_secondary": "GAN_SYM_BROKEN_TUSK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT137",
+    "title": "Tempted to look at friend's paper during a test",
+    "category": "Moral & Values Confusion",
+    "false_belief_text": "Cheating is okay if it helps me succeed.",
+    "true_belief_text": "Honest effort builds real confidence.",
+    "hard": {
+      "need_id": "NEED_INTEGRITY",
+      "belief_ids": [
+        "BELIEF_RULES_ARE_OPTIONAL"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_SCHOOL",
+        "LIFE_DOMAIN_RESPONSIBILITY",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_JUSTICE_RIGHTS",
+      "ganesha_symbol_primary": "GAN_SYM_BROKEN_TUSK",
+      "ganesha_symbol_secondary": "GAN_SYM_MOUSE"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT138",
+    "title": "Told a 'bad' secret they feel should be shared",
+    "category": "Moral & Values Confusion",
+    "false_belief_text": "Keeping every secret makes me a good friend.",
+    "true_belief_text": "Safe adults should know secrets that can protect someone.",
+    "hard": {
+      "need_id": "NEED_RESPONSIBILITY",
+      "belief_ids": [
+        "BELIEF_SECRETS_MUST_ALWAYS_BE_KEPT"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_CARING",
+        "LIFE_DOMAIN_RESPONSIBILITY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_JUSTICE_RIGHTS",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_EARS",
+      "ganesha_symbol_secondary": "GAN_SYM_BROKEN_TUSK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT139",
+    "title": "Broke something by mistake and hid it",
+    "category": "Moral & Values Confusion",
+    "false_belief_text": "Hiding mistakes makes them disappear.",
+    "true_belief_text": "Taking responsibility helps rebuild trust.",
+    "hard": {
+      "need_id": "NEED_RESPONSIBILITY",
+      "belief_ids": [
+        "BELIEF_ONE_MISTAKE_DEFINES_ME",
+        "BELIEF_HIDING_TRUTH_PROTECTS"
+      ],
+      "severity": 3,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_RESPONSIBILITY",
+        "LIFE_DOMAIN_BUILDING",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_JUSTICE_RIGHTS",
+      "ganesha_symbol_primary": "GAN_SYM_BROKEN_TUSK",
+      "ganesha_symbol_secondary": "GAN_SYM_CURVED_TRUNK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT140",
+    "title": "Realised some kids don't have food or shoes",
+    "category": "Moral & Values Confusion",
+    "false_belief_text": "Other people's struggles have nothing to do with me.",
+    "true_belief_text": "Kindness and generosity can make a real difference.",
+    "hard": {
+      "need_id": "NEED_COMPASSION",
+      "belief_ids": [
+        "BELIEF_OTHERS_PAIN_NOT_MY_CONCERN"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_CARING",
+        "LIFE_DOMAIN_FRIENDSHIP",
+        "LIFE_DOMAIN_FAMILY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_JUSTICE_RIGHTS",
+      "ganesha_symbol_primary": "GAN_SYM_CURVED_TRUNK",
+      "ganesha_symbol_secondary": "GAN_SYM_MODAK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT141",
+    "title": "Saw a parent or teacher break a rule they enforce",
+    "category": "Moral & Values Confusion",
+    "false_belief_text": "Rules only matter when they're convenient.",
+    "true_belief_text": "I can choose integrity regardless of what others do.",
+    "hard": {
+      "need_id": "NEED_INTEGRITY",
+      "belief_ids": [
+        "BELIEF_RULES_ARE_OPTIONAL"
+      ],
+      "severity": 1,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_LEARNING",
+        "LIFE_DOMAIN_RESPONSIBILITY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_JUSTICE_RIGHTS",
+      "ganesha_symbol_primary": "GAN_SYM_BROKEN_TUSK",
+      "ganesha_symbol_secondary": "GAN_SYM_EYES"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT142",
+    "title": "Someone online asked for their personal password",
+    "category": "Moral & Values Confusion",
+    "false_belief_text": "Everyone online can be trusted.",
+    "true_belief_text": "I protect myself by making safe choices and asking trusted adults.",
+    "hard": {
+      "need_id": "NEED_SAFETY",
+      "belief_ids": [
+        "BELIEF_UNEXPECTED_MEANS_UNSAFE",
+        "BELIEF_TRUST_IS_ALWAYS_DEFAULT"
+      ],
+      "severity": 1,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_LEARNING",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_RESPONSIBILITY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_JUSTICE_RIGHTS",
+      "ganesha_symbol_primary": "GAN_SYM_EYES",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_EARS"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT143",
+    "title": "Saw someone litter and felt upset but said nothing",
+    "category": "Moral & Values Confusion",
+    "false_belief_text": "One person's actions don't matter.",
+    "true_belief_text": "Small responsible actions help care for our world.",
+    "hard": {
+      "need_id": "NEED_RESPONSIBILITY",
+      "belief_ids": [
+        "BELIEF_ONE_ACTION_CANT_MATTER"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_CARING",
+        "LIFE_DOMAIN_NATURE",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_JUSTICE_RIGHTS",
+      "ganesha_symbol_primary": "GAN_SYM_CURVED_TRUNK",
+      "ganesha_symbol_secondary": "GAN_SYM_LOTUS"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT144",
+    "title": "Saw a stray animal being treated badly",
+    "category": "Moral & Values Confusion",
+    "false_belief_text": "It's not my place to help.",
+    "true_belief_text": "Every living being deserves kindness and care.",
+    "hard": {
+      "need_id": "NEED_COMPASSION",
+      "belief_ids": [
+        "BELIEF_NOT_MY_PROBLEM"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_CARING",
+        "LIFE_DOMAIN_NATURE",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_JUSTICE_RIGHTS",
+      "ganesha_symbol_primary": "GAN_SYM_CURVED_TRUNK",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_BELLY"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT145",
+    "title": "Failed to keep a promise they made to a friend",
+    "category": "Moral & Values Confusion",
+    "false_belief_text": "One broken promise means the friendship is ruined.",
+    "true_belief_text": "Trust can be rebuilt through honesty and consistent actions.",
+    "hard": {
+      "need_id": "NEED_TRUST",
+      "belief_ids": [
+        "BELIEF_SEPARATION_ENDS_RELATIONSHIP"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FRIENDSHIP",
+        "LIFE_DOMAIN_RESPONSIBILITY",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_JUSTICE_RIGHTS",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_EARS",
+      "ganesha_symbol_secondary": "GAN_SYM_BROKEN_TUSK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT146",
+    "title": "Feels guilty for not including someone in play",
+    "category": "Moral & Values Confusion",
+    "false_belief_text": "There's only room for some people.",
+    "true_belief_text": "Everyone deserves a chance to belong.",
+    "hard": {
+      "need_id": "NEED_BELONGING",
+      "belief_ids": [
+        "BELIEF_EXCLUSIVITY_PROTECTS_FUN"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FRIENDSHIP",
+        "LIFE_DOMAIN_PLAY",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_JUSTICE_RIGHTS",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_CURVED_TRUNK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT147",
+    "title": "Friend said something mean about their culture or family",
+    "category": "Moral & Values Confusion",
+    "false_belief_text": "I should hide who I am to fit in.",
+    "true_belief_text": "My identity deserves respect, and I can respect others too.",
+    "hard": {
+      "need_id": "NEED_RESPECT",
+      "belief_ids": [
+        "BELIEF_BELONGING_REQUIRES_COMPLIANCE"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_FRIENDSHIP",
+        "LIFE_DOMAIN_SCHOOL"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_JUSTICE_RIGHTS",
+      "ganesha_symbol_primary": "GAN_SYM_EYES",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_BELLY"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT148",
+    "title": "Found something and doesn't know whether to keep it",
+    "category": "Moral & Values Confusion",
+    "false_belief_text": "If I found it, it belongs to me.",
+    "true_belief_text": "Doing the right thing matters more than getting something extra.",
+    "hard": {
+      "need_id": "NEED_INTEGRITY",
+      "belief_ids": [
+        "BELIEF_FOUND_ITEM_BELONGS_TO_FINDER"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_RESPONSIBILITY",
+        "LIFE_DOMAIN_LEARNING",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_JUSTICE_RIGHTS",
+      "ganesha_symbol_primary": "GAN_SYM_BROKEN_TUSK",
+      "ganesha_symbol_secondary": "GAN_SYM_MOUSE"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT149",
+    "title": "Overheard talk about politics, protests, or injustice",
+    "category": "Moral & Values Confusion",
+    "false_belief_text": "The world is only unfair and nothing can change.",
+    "true_belief_text": "Fairness grows through understanding, courage and responsible action.",
+    "hard": {
+      "need_id": "NEED_JUSTICE",
+      "belief_ids": [
+        "BELIEF_UNFAIRNESS_IS_PERMANENT"
+      ],
+      "severity": 1,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_LEARNING",
+        "LIFE_DOMAIN_CARING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_JUSTICE_RIGHTS",
+      "ganesha_symbol_primary": "GAN_SYM_EYES",
+      "ganesha_symbol_secondary": "GAN_SYM_LOTUS"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT150",
+    "title": "Best friend makes a new best friend",
+    "category": "Friendship & Peer Dynamics",
+    "false_belief_text": "If my friend likes someone else, I'll be forgotten.",
+    "true_belief_text": "Friendships can grow without replacing each other.",
+    "hard": {
+      "need_id": "NEED_BELONGING",
+      "belief_ids": [
+        "BELIEF_EXCLUSION_MEANS_UNWORTHY"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FRIENDSHIP",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_PLAY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_FRIENDSHIP",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_EARS"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT151",
+    "title": "Friends don't reply to messages",
+    "category": "Friendship & Peer Dynamics",
+    "false_belief_text": "No reply means they don't care about me.",
+    "true_belief_text": "I shouldn't assume the worst before I know the truth.",
+    "hard": {
+      "need_id": "NEED_TRUST",
+      "belief_ids": [
+        "BELIEF_EXCLUSION_MEANS_UNWORTHY"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FRIENDSHIP",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_LEARNING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_FRIENDSHIP",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_EARS",
+      "ganesha_symbol_secondary": "GAN_SYM_EYES"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT152",
+    "title": "Accidentally left out of a game",
+    "category": "Friendship & Peer Dynamics",
+    "false_belief_text": "Being left out means I don't belong.",
+    "true_belief_text": "I can help create spaces where everyone belongs.",
+    "hard": {
+      "need_id": "NEED_BELONGING",
+      "belief_ids": [
+        "BELIEF_EXCLUSIVITY_PROTECTS_FUN"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FRIENDSHIP",
+        "LIFE_DOMAIN_PLAY",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_FRIENDSHIP",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_EARS"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT153",
+    "title": "A secret wasn't shared with them",
+    "category": "Friendship & Peer Dynamics",
+    "false_belief_text": "If I'm not told everything, I'm not important.",
+    "true_belief_text": "Trust grows through honesty, not knowing every secret.",
+    "hard": {
+      "need_id": "NEED_TRUST",
+      "belief_ids": [
+        "BELIEF_EXCLUSION_MEANS_UNWORTHY"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FRIENDSHIP",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_RESPONSIBILITY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_FRIENDSHIP",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_EARS",
+      "ganesha_symbol_secondary": "GAN_SYM_BROKEN_TUSK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT154",
+    "title": "Friend copies their work or idea",
+    "category": "Friendship & Peer Dynamics",
+    "false_belief_text": "If someone copies me, I've lost what makes me special.",
+    "true_belief_text": "My ideas and creativity remain valuable.",
+    "hard": {
+      "need_id": "NEED_RESPECT",
+      "belief_ids": [
+        "BELIEF_BEING_COPIED_MEANS_LOSING_SPECIALNESS"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_LEARNING",
+        "LIFE_DOMAIN_CREATIVITY",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_FRIENDSHIP",
+      "ganesha_symbol_primary": "GAN_SYM_BROKEN_TUSK",
+      "ganesha_symbol_secondary": "GAN_SYM_EYES"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT155",
+    "title": "A friend wins while they lose",
+    "category": "Friendship & Peer Dynamics",
+    "false_belief_text": "Someone else's success makes me less successful.",
+    "true_belief_text": "I can celebrate others while continuing my own journey.",
+    "hard": {
+      "need_id": "NEED_IDENTITY",
+      "belief_ids": [
+        "BELIEF_OTHERS_SUCCESS_DIMINISHES_ME"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_PLAY",
+        "LIFE_DOMAIN_FRIENDSHIP",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_FRIENDSHIP",
+      "ganesha_symbol_primary": "GAN_SYM_BROKEN_TUSK",
+      "ganesha_symbol_secondary": "GAN_SYM_MODAK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT156",
+    "title": "Friend breaks a promise",
+    "category": "Friendship & Peer Dynamics",
+    "false_belief_text": "Once trust is broken, it can never be repaired.",
+    "true_belief_text": "Honest conversations and actions can rebuild trust.",
+    "hard": {
+      "need_id": "NEED_TRUST",
+      "belief_ids": [
+        "BELIEF_SEPARATION_ENDS_RELATIONSHIP"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FRIENDSHIP",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_RESPONSIBILITY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_FRIENDSHIP",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_EARS",
+      "ganesha_symbol_secondary": "GAN_SYM_CURVED_TRUNK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT157",
+    "title": "Rumours or gossip spread about them",
+    "category": "Friendship & Peer Dynamics",
+    "false_belief_text": "I have to prove myself to everyone.",
+    "true_belief_text": "Truth and character matter more than rumours.",
+    "hard": {
+      "need_id": "NEED_INTEGRITY",
+      "belief_ids": [
+        "BELIEF_MUST_PROVE_SELF_TO_ALL"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_SCHOOL",
+        "LIFE_DOMAIN_RESPONSIBILITY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_FRIENDSHIP",
+      "ganesha_symbol_primary": "GAN_SYM_BROKEN_TUSK",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_EARS"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT158",
+    "title": "Friend apologises after hurting them",
+    "category": "Friendship & Peer Dynamics",
+    "false_belief_text": "Holding on to hurt keeps me safe.",
+    "true_belief_text": "Forgiveness helps relationships heal and grow.",
+    "hard": {
+      "need_id": "NEED_FORGIVENESS",
+      "belief_ids": [
+        "BELIEF_HOLDING_GRUDGE_PROTECTS"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FRIENDSHIP",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_CARING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_FRIENDSHIP",
+      "ganesha_symbol_primary": "GAN_SYM_LOTUS",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_BELLY"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT159",
+    "title": "They hurt a friend's feelings by mistake",
+    "category": "Friendship & Peer Dynamics",
+    "false_belief_text": "One mistake makes me a bad friend.",
+    "true_belief_text": "I can apologise, repair and learn from my mistakes.",
+    "hard": {
+      "need_id": "NEED_RESPONSIBILITY",
+      "belief_ids": [
+        "BELIEF_ONE_MISTAKE_DEFINES_ME"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FRIENDSHIP",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_RESPONSIBILITY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_FRIENDSHIP",
+      "ganesha_symbol_primary": "GAN_SYM_BROKEN_TUSK",
+      "ganesha_symbol_secondary": "GAN_SYM_CURVED_TRUNK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT160",
+    "title": "Asked to choose between two friends",
+    "category": "Friendship & Peer Dynamics",
+    "false_belief_text": "I have to choose one person over another.",
+    "true_belief_text": "I can be kind and fair to everyone.",
+    "hard": {
+      "need_id": "NEED_JUSTICE",
+      "belief_ids": [
+        "BELIEF_MUST_CHOOSE_SIDES"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FRIENDSHIP",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_LEARNING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_FRIENDSHIP",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_EARS",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_BELLY"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT161",
+    "title": "Lost during a team game because of their mistake",
+    "category": "Friendship & Peer Dynamics",
+    "false_belief_text": "Everyone will blame me forever.",
+    "true_belief_text": "Mistakes are part of teamwork and learning.",
+    "hard": {
+      "need_id": "NEED_RESPONSIBILITY",
+      "belief_ids": [
+        "BELIEF_ONE_MISTAKE_DEFINES_ME"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_PLAY",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_RESPONSIBILITY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_FRIENDSHIP",
+      "ganesha_symbol_primary": "GAN_SYM_BROKEN_TUSK",
+      "ganesha_symbol_secondary": "GAN_SYM_MOUSE"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT162",
+    "title": "Teammate isn't doing their part",
+    "category": "Friendship & Peer Dynamics",
+    "false_belief_text": "I have to control others for things to go well.",
+    "true_belief_text": "Cooperation grows through patience and communication.",
+    "hard": {
+      "need_id": "NEED_RESPECT",
+      "belief_ids": [
+        "BELIEF_MUST_CONTROL_OTHERS"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_PLAY",
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_RESPONSIBILITY"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_FRIENDSHIP",
+      "ganesha_symbol_primary": "GAN_SYM_CURVED_TRUNK",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_EARS"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT163",
+    "title": "Friend gets a pet they always wanted",
+    "category": "Friendship & Peer Dynamics",
+    "false_belief_text": "Life is unfair because I don't have what they have.",
+    "true_belief_text": "I can be genuinely happy for others while appreciating my own life.",
+    "hard": {
+      "need_id": "NEED_CONTENTMENT",
+      "belief_ids": [
+        "BELIEF_POSSESSIONS_BRING_HAPPINESS"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_FRIENDSHIP",
+        "LIFE_DOMAIN_CARING",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_FRIENDSHIP",
+      "ganesha_symbol_primary": "GAN_SYM_MODAK",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_BELLY"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT164",
+    "title": "A younger child wants to join the game",
+    "category": "Friendship & Peer Dynamics",
+    "false_belief_text": "Younger children will spoil our fun.",
+    "true_belief_text": "Everyone deserves a chance to belong.",
+    "hard": {
+      "need_id": "NEED_BELONGING",
+      "belief_ids": [
+        "BELIEF_EXCLUSIVITY_PROTECTS_FUN"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_PLAY",
+        "LIFE_DOMAIN_FRIENDSHIP",
+        "LIFE_DOMAIN_CARING"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_FRIENDSHIP",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_BELLY",
+      "ganesha_symbol_secondary": "GAN_SYM_CURVED_TRUNK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT165",
+    "title": "Friend is nervous before a performance",
+    "category": "Friendship & Peer Dynamics",
+    "false_belief_text": "It's not my job to help.",
+    "true_belief_text": "Encouragement can help someone become brave.",
+    "hard": {
+      "need_id": "NEED_COMPASSION",
+      "belief_ids": [
+        "BELIEF_NOT_MY_PROBLEM"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_CARING",
+        "LIFE_DOMAIN_CREATIVITY",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_FRIENDSHIP",
+      "ganesha_symbol_primary": "GAN_SYM_CURVED_TRUNK",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_EARS"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT166",
+    "title": "Classmate is new and sitting alone",
+    "category": "Friendship & Peer Dynamics",
+    "false_belief_text": "Someone else will help them.",
+    "true_belief_text": "Small acts of kindness can make someone feel welcome.",
+    "hard": {
+      "need_id": "NEED_COMPASSION",
+      "belief_ids": [
+        "BELIEF_SOMEONE_ELSE_WILL_HELP"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_SCHOOL",
+        "LIFE_DOMAIN_CARING",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_FRIENDSHIP",
+      "ganesha_symbol_primary": "GAN_SYM_CURVED_TRUNK",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_BELLY"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT167",
+    "title": "Friend keeps interrupting while talking",
+    "category": "Friendship & Peer Dynamics",
+    "false_belief_text": "The loudest person should be heard.",
+    "true_belief_text": "Listening is an important way to show respect.",
+    "hard": {
+      "need_id": "NEED_RESPECT",
+      "belief_ids": [
+        "BELIEF_LOUDEST_DESERVES_ATTENTION"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_COMMUNICATION",
+        "LIFE_DOMAIN_FRIENDSHIP",
+        "LIFE_DOMAIN_SCHOOL"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_FRIENDSHIP",
+      "ganesha_symbol_primary": "GAN_SYM_BIG_EARS",
+      "ganesha_symbol_secondary": "GAN_SYM_CURVED_TRUNK"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  },
+  {
+    "id": "SIT168",
+    "title": "Group project where everyone has different ideas",
+    "category": "Friendship & Peer Dynamics",
+    "false_belief_text": "My idea has to be chosen.",
+    "true_belief_text": "Great ideas grow when people work together.",
+    "hard": {
+      "need_id": "NEED_ADAPTABILITY",
+      "belief_ids": [
+        "BELIEF_PLANS_MUST_GO_MY_WAY"
+      ],
+      "severity": 2,
+      "age": null,
+      "life_domain_ids": [
+        "LIFE_DOMAIN_LEARNING",
+        "LIFE_DOMAIN_BUILDING",
+        "LIFE_DOMAIN_COMMUNICATION"
+      ]
+    },
+    "soft_suggested": {
+      "story_family": "FAM_FRIENDSHIP",
+      "ganesha_symbol_primary": "GAN_SYM_CURVED_TRUNK",
+      "ganesha_symbol_secondary": "GAN_SYM_BIG_EARS"
+    },
+    "_meta": {
+      "confidence": "audited"
+    }
+  }
+]

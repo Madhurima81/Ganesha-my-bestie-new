@@ -1,0 +1,518 @@
+ADVENTURE TRIGGER LIBRARY (LOCKED — 55 × 8 = 440)
+
+RESCUE & PROTECTION
+Rescue Mission
+1. Someone is trapped.
+2. Someone has gone missing.
+3. A young creature is separated from its family.
+4. A cry for help echoes nearby.
+5. A dangerous situation is getting worse.
+6. An important rescue must happen before sunset.
+7. A safe path suddenly disappears.
+8. Someone cannot escape without help.
+Guardian Adventure
+1. Someone asks you to protect something precious.
+2. A younger companion depends on you.
+3. Danger begins approaching a peaceful place.
+4. An important object attracts unwanted attention.
+5. A promise to protect must be honored.
+6. A safe place becomes unsafe.
+7. Someone is too small to protect themselves.
+8. Staying watchful becomes the biggest challenge.
+Escape Adventure
+1. The only exit suddenly closes.
+2. Time begins running out.
+3. A dangerous place must be escaped.
+4. The group becomes trapped.
+5. A wrong turn leads into trouble.
+6. The safest route disappears.
+7. A hidden exit may exist.
+8. Every decision changes the escape.
+Survival Adventure
+1. Shelter is suddenly lost.
+2. Supplies begin running out.
+3. Nature becomes unpredictable.
+4. The group becomes stranded.
+5. Food or water is difficult to find.
+6. Weather creates unexpected danger.
+7. Help is too far away.
+8. Working together becomes essential.
+Delivery Quest
+1. An important message must be delivered.
+2. A special gift needs to reach someone.
+3. Medicine is urgently needed.
+4. A promise depends on making the delivery.
+5. The shortest route becomes impossible.
+6. The package is accidentally misplaced.
+7. Someone is waiting and cannot leave.
+8. Every delay makes the mission harder.
+
+DISCOVERY & MYSTERY
+Mystery to Solve
+1. Something disappears without explanation.
+2. Strange clues begin appearing.
+3. Nobody knows what really happened.
+4. Everyone remembers the story differently.
+5. Something important is out of place.
+6. A secret message is discovered.
+7. Strange sounds are heard every night.
+8. The final clue is hiding in plain sight.
+Detective Story
+1. A tiny clue is overlooked.
+2. A valuable object goes missing.
+3. Someone's story doesn't match the facts.
+4. A trail suddenly ends.
+5. Strange footprints appear.
+6. An unusual pattern keeps repeating.
+7. A witness remembers one important detail.
+8. Solving the puzzle will help everyone.
+Treasure Hunt
+1. An old map is discovered.
+2. A mysterious clue appears.
+3. Pieces of something valuable are scattered.
+4. A forgotten legend points somewhere.
+5. A hidden path is uncovered.
+6. A riddle reveals the next step.
+7. Every clue becomes harder to solve.
+8. The final treasure isn't what anyone expected.
+Secret Discovery
+1. A hidden door appears.
+2. Something forgotten is uncovered.
+3. An unusual object is found.
+4. A secret has been waiting for years.
+5. Curiosity leads somewhere unexpected.
+6. An old mystery returns.
+7. Something ordinary reveals an extraordinary secret.
+8. The discovery changes everything.
+Hidden World
+1. A secret entrance opens.
+2. Someone accidentally crosses into another world.
+3. A hidden community needs help.
+4. The secret place is disappearing.
+5. Someone discovers its existence.
+6. A forgotten guardian appears.
+7. The way back is no longer obvious.
+8. Keeping the secret becomes important.
+
+JOURNEYS
+Great Journey
+1. A destination must be reached.
+2. Someone asks for help far away.
+3. A journey begins unexpectedly.
+4. Home cannot be reached the usual way.
+5. A shortcut becomes an adventure.
+6. The map proves unreliable.
+7. Every stop teaches something new.
+8. Reaching the destination changes the traveler.
+Expedition
+1. An unexplored place is discovered.
+2. A rare sighting is reported.
+3. Something valuable may be hidden there.
+4. The journey requires careful planning.
+5. Nature blocks the easiest route.
+6. A guide is needed.
+7. Every step uncovers something new.
+8. The expedition reveals more than expected.
+Find the Way Home
+1. Someone becomes separated from the group.
+2. Familiar landmarks disappear.
+3. The usual path is blocked.
+4. A guide goes missing.
+5. Darkness arrives too soon.
+6. A map is lost.
+7. Every direction looks the same.
+8. Home can only be reached by helping someone else first.
+Escort Mission
+1. Someone cannot travel alone.
+2. A younger companion needs guidance.
+3. A visitor needs help reaching safety.
+4. The journey becomes more dangerous than expected.
+5. The companion has an important secret.
+6. The safest route suddenly changes.
+7. Trust grows along the journey.
+8. Reaching the destination is only half the mission.
+Race Against Time
+1. Something important must happen before sunset.
+2. Every minute counts.
+3. A deadline is fast approaching.
+4. Someone needs help immediately.
+5. A natural event is about to begin.
+6. Waiting is no longer an option.
+7. One delay creates another.
+8. Success depends on perfect timing.
+
+RELATIONSHIPS
+Friendship Repair
+1. Two friends stop talking.
+2. Someone feels left out.
+3. A misunderstanding grows bigger.
+4. A promise is accidentally broken.
+5. Hurt feelings remain unspoken.
+6. An apology needs courage.
+7. Trust has to be rebuilt.
+8. Working together becomes unavoidable.
+New Friend
+1. A newcomer arrives.
+2. Someone is sitting alone.
+3. Two strangers meet unexpectedly.
+4. A shared problem brings two children together.
+5. A misunderstanding creates distance.
+6. Different personalities must cooperate.
+7. A kind act starts a friendship.
+8. Saying hello changes everything.
+Second Chance
+1. A mistake deserves another opportunity.
+2. Trust is slowly returning.
+3. Someone wants to make things right.
+4. A new opportunity appears unexpectedly.
+5. Past mistakes create fresh challenges.
+6. Actions matter more than words.
+7. Forgiveness must be earned.
+8. A better choice changes the ending.
+Helping Hand
+1. Someone quietly needs help.
+2. A difficult task is too big for one person.
+3. A small act of kindness makes a difference.
+4. Someone asks for help for the first time.
+5. A problem affects everyone.
+6. Helping requires giving up something.
+7. Unexpected helpers appear.
+8. Kindness spreads from one person to another.
+Journey Together
+1. Two very different companions must travel together.
+2. A shared destination brings strangers together.
+3. One traveler knows the way.
+4. Both travelers need each other in different ways.
+5. The journey tests the friendship.
+6. The path is harder than expected.
+7. Helping each other becomes essential.
+8. They arrive as different people than when they started.
+
+TEAMWORK & COMMUNITY
+Team Adventure
+1. One person cannot solve the problem alone.
+2. Everyone has a different strength.
+3. The team disagrees on the plan.
+4. Success depends on cooperation.
+5. Every member gets an important role.
+6. A setback tests the team.
+7. Someone feels they aren't needed.
+8. Working together achieves the impossible.
+Community Project
+1. The whole community needs help.
+2. A place needs rebuilding.
+3. Everyone contributes differently.
+4. Resources are limited.
+5. People disagree on the best solution.
+6. Unexpected volunteers arrive.
+7. A setback delays the work.
+8. The finished project brings everyone together.
+Leadership Challenge
+1. Nobody knows what to do.
+2. A leader is suddenly needed.
+3. Everyone has different opinions.
+4. A difficult decision must be made.
+5. Confidence begins to fade.
+6. A quiet child steps forward.
+7. Responsibility feels overwhelming.
+8. Good leadership inspires others to lead.
+Shared Mission
+1. Several groups have the same goal.
+2. Different talents must be combined.
+3. Success depends on everyone contributing.
+4. Helping others helps yourself.
+5. Someone must coordinate the effort.
+6. A setback affects everyone equally.
+7. Sharing resources becomes necessary.
+8. The mission succeeds because nobody works alone.
+Build Together
+1. Something important needs building.
+2. Something valuable is broken.
+3. A new idea needs creating.
+4. Materials are difficult to find.
+5. Everyone contributes one piece.
+6. The design doesn't work at first.
+7. Nature creates an unexpected obstacle.
+8. The finished creation solves a much bigger problem.
+
+CHALLENGES & GROWTH
+Hero's Trial
+1. Three difficult challenges must be completed.
+2. Courage is tested before strength.
+3. Every success unlocks the next challenge.
+4. Giving up becomes tempting.
+5. Someone weaker needs help during the trial.
+6. The hardest challenge is inside yourself.
+7. Pride becomes the biggest obstacle.
+8. The final reward is wisdom, not victory.
+Final Challenge
+1. Everything depends on one last attempt.
+2. One final obstacle blocks success.
+3. All previous lessons are needed.
+4. The easiest choice is the wrong one.
+5. Friends arrive just in time.
+6. Confidence begins to disappear.
+7. A surprising solution appears.
+8. The ending depends on one brave decision.
+Training Journey
+1. A new skill must be learned.
+2. Practice feels frustrating.
+3. A mentor gives a difficult challenge.
+4. Improvement happens slowly.
+5. A setback tests determination.
+6. Confidence grows little by little.
+7. The training prepares for something unexpected.
+8. The real lesson isn't the skill itself.
+Problem Solver
+1. A problem affects everyone.
+2. Every obvious solution fails.
+3. A clever idea changes everything.
+4. Small clues point toward the answer.
+5. Different opinions create confusion.
+6. Trial and error lead to progress.
+7. Teamwork reveals the solution.
+8. Solving one problem uncovers another opportunity.
+Responsibility Quest
+1. An important duty is entrusted to someone.
+2. A promise must be kept.
+3. Looking after something becomes harder than expected.
+4. A careless mistake has consequences.
+5. Choosing responsibility means giving something up.
+6. Others begin depending on them.
+7. Doing the right thing isn't the easiest choice.
+8. Responsibility earns trust and respect.
+
+CREATION & INNOVATION
+Invention Story
+1. An everyday problem needs a new solution.
+2. An old invention inspires a new idea.
+3. A tool suddenly stops working.
+4. Different ideas compete.
+5. An experiment fails unexpectedly.
+6. A small discovery becomes important.
+7. Limited materials force creativity.
+8. The invention solves a bigger problem.
+Restoration Story
+1. Something beautiful has been damaged.
+2. A special place has been forgotten.
+3. An important object breaks.
+4. Nature needs healing.
+5. Hope begins to disappear.
+6. Small repairs make a big difference.
+7. Everyone contributes one part.
+8. Restoring something restores friendships too.
+Creative Quest
+1. A blank space needs imagination.
+2. A celebration needs something special.
+3. Inspiration suddenly disappears.
+4. Different ideas clash.
+5. A creative mistake becomes an opportunity.
+6. Nature inspires a solution.
+7. Working together creates something unique.
+8. The finished creation surprises everyone.
+Build & Repair
+1. Something essential breaks.
+2. A structure becomes unsafe.
+3. Missing pieces must be found.
+4. A repair must happen before time runs out.
+5. Working alone isn't enough.
+6. Unexpected damage appears.
+7. Creative materials replace missing ones.
+8. The repaired object becomes even better.
+Transformation Story
+1. Someone gets an unexpected opportunity.
+2. A place begins changing.
+3. A small act starts a big change.
+4. Fear prevents growth.
+5. Kindness transforms the situation.
+6. A hidden talent emerges.
+7. Old habits no longer work.
+8. The greatest transformation happens inside.
+
+LEARNING & WISDOM
+Mentor Journey
+1. A wise guide appears unexpectedly.
+2. A difficult lesson blocks progress.
+3. Practice becomes the only path forward.
+4. The mentor gives very little help.
+5. Confidence is tested.
+6. The mentor suddenly disappears.
+7. The student must teach someone else.
+8. The final lesson is discovered independently.
+Learning Quest
+1. A new skill becomes necessary.
+2. A difficult question appears.
+3. Curiosity starts the adventure.
+4. Every mistake teaches something useful.
+5. Learning unlocks the next step.
+6. A puzzle cannot be solved without knowledge.
+7. Someone unexpected becomes the teacher.
+8. The lesson changes future choices.
+Discovery Journey
+1. Curiosity leads somewhere unexpected.
+2. Something forgotten is rediscovered.
+3. A hidden clue changes everything.
+4. Every answer raises another question.
+5. A surprising connection is revealed.
+6. A journey uncovers forgotten history.
+7. The discovery helps others.
+8. Knowledge becomes the greatest treasure.
+Wisdom Challenge
+1. Two choices both seem right.
+2. A difficult decision affects everyone.
+3. Listening becomes more important than speaking.
+4. Patience reveals the answer.
+5. A simple solution is overlooked.
+6. Someone asks for wise advice.
+7. Kindness solves the problem.
+8. Wisdom changes the outcome.
+Teaching Adventure
+1. Someone wants to learn.
+2. A lesson must be shared.
+3. The student learns differently.
+4. Practice becomes difficult.
+5. Teaching requires patience.
+6. The teacher learns something too.
+7. A mistake becomes the best lesson.
+8. The student eventually teaches others.
+
+CELEBRATIONS
+Festival Adventure
+1. Festival preparations begin.
+2. A tradition is in danger.
+3. Guests arrive unexpectedly.
+4. Something important goes missing.
+5. Weather threatens the celebration.
+6. Everyone has a role.
+7. A surprise changes the festival.
+8. The celebration brings everyone together.
+Celebration Preparation
+1. A special event is approaching.
+2. Decorations need finishing.
+3. A last-minute problem appears.
+4. Time becomes short.
+5. Friends work together.
+6. Someone feels left out.
+7. Preparations don't go as planned.
+8. The celebration becomes unforgettable.
+Performance Story
+1. A performance is announced.
+2. Stage fright appears.
+3. Practice goes poorly.
+4. The audience grows unexpectedly.
+5. The main performer cannot continue.
+6. A mistake happens on stage.
+7. Friends offer encouragement.
+8. Confidence shines brighter than perfection.
+Heritage Journey
+1. An old family story is discovered.
+2. A forgotten tradition returns.
+3. A meaningful object is found.
+4. Elders share an important lesson.
+5. History holds the answer.
+6. A celebration honors the past.
+7. A forgotten place is revisited.
+8. The tradition gains new meaning.
+Gift of Giving
+1. Someone needs encouragement.
+2. A thoughtful gift is planned.
+3. Kindness is returned unexpectedly.
+4. Giving requires sacrifice.
+5. A handmade gift becomes special.
+6. A surprise brightens someone's day.
+7. Generosity inspires others.
+8. The greatest gift isn't something you keep.
+
+NATURE & MAGIC
+Magical Discovery
+1. Magic appears unexpectedly.
+2. A magical object awakens.
+3. A hidden power is revealed.
+4. A magical creature asks for help.
+5. A spell changes everything.
+6. Kindness unlocks magic.
+7. Magic creates an unexpected problem.
+8. Responsibility comes with magical power.
+Magical Quest
+1. A magical mission begins.
+2. Ancient magic needs restoring.
+3. A magical guide appears.
+4. Three magical tasks must be completed.
+5. A magical object must be returned.
+6. The wrong spell creates trouble.
+7. Every magical choice has consequences.
+8. Balance must be restored.
+Nature's Balance
+1. Nature behaves unusually.
+2. Animals begin acting differently.
+3. Water starts disappearing.
+4. Plants stop growing.
+5. Weather changes unexpectedly.
+6. Balance is slowly returning.
+7. A tiny action has a huge effect.
+8. Caring for nature restores harmony.
+Ancient Secret
+1. An old map is discovered.
+2. Forgotten symbols appear.
+3. An ancient door opens.
+4. A legend proves true.
+5. A hidden guardian appears.
+6. History reveals a forgotten truth.
+7. The secret changes the mission.
+8. The past helps solve today's problem.
+Wish or Blessing
+1. A heartfelt wish is made.
+2. A blessing arrives unexpectedly.
+3. Someone wishes for the wrong thing.
+4. Gratitude changes the outcome.
+5. A wish comes true in an unexpected way.
+6. Helping others brings a blessing.
+7. A difficult choice determines the blessing.
+8. True happiness wasn't what was wished for.
+
+PERSONAL ADVENTURES
+Dream Adventure
+1. A mysterious dream repeats.
+2. A dream gives an important clue.
+3. Dreams and reality begin connecting.
+4. A dream guide appears.
+5. Fear must be faced in the dream.
+6. Something learned in sleep helps later.
+7. Waking creates a new mystery.
+8. The final answer comes after the dream.
+Time Adventure
+1. Time suddenly becomes important.
+2. Every minute counts.
+3. Waiting changes everything.
+4. The right moment must be found.
+5. A forgotten deadline returns.
+6. Small delays create big problems.
+7. Patience reveals the answer.
+8. Perfect timing saves the day.
+Choice & Consequence
+1. Two paths appear.
+2. Every choice changes the story.
+3. The easiest option isn't the best.
+4. Someone else's future depends on the decision.
+5. A selfish choice creates problems.
+6. Kindness changes the outcome.
+7. Courage requires making a difficult choice.
+8. Every decision teaches something valuable.
+Promise Keeper
+1. An important promise is made.
+2. Keeping the promise becomes difficult.
+3. Obstacles test determination.
+4. Others begin depending on the promise.
+5. Breaking the promise seems easier.
+6. Unexpected help appears.
+7. Honoring the promise changes lives.
+8. The promise becomes the greatest reward.
+Unexpected Surprise
+1. An ordinary day changes suddenly.
+2. An unexpected visitor arrives.
+3. A hidden opportunity appears.
+4. A mistake leads to something wonderful.
+5. The smallest idea grows unexpectedly.
+6. Someone receives surprising news.
+7. A coincidence changes everything.
+8. The ending is better than anyone imagined.

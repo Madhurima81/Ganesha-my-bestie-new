@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "1.0",
+  "status": "VALIDATED",
+  "request": { "targetAge": "5-8" },
+  "situation": { "id": "SITUATION_001" },
+  "need": { "id": "NEED_CONFIDENCE", "reason": "..." },
+  "belief": { "falseBelief": "...", "trueBelief": "...", "reason": "..." },
+  "character": { "role": "ROLE_UNDERDOG", "selected": "CHAR_ANU", "reason": "..." },
+  "adventureArchetype": { "id": "ARCHETYPE_TRY_AGAIN", "reason": "..." },
+  "mission": { "id": "MISSION_RESCUE", "reason": "..." },
+  "storyActions": [{ "id": "ACTION_ATTEMPT", "purpose": "..." }],
+  "world": { "id": "WORLD_MOONLIGHT_VALLEY", "reason": "..." },
+  "obstacle": { "id": "OBSTACLE_FEAR_OF_FAILURE", "reason": "..." },
+  "storyConflict": { "id": "CONFLICT_SELF_DOUBT_VS_ACTION", "type": "INTERNAL_EXTERNAL_COMBINED", "reason": "..." },
+  "logic": { "id": "LOGIC_TRY_FAIL_ADAPT", "causalPattern": ["attempt"], "reason": "..." },
+  "storyStructure": { "id": "STRUCTURE_ATTEMPT_TRANSFORM", "sequence": ["SETUP"], "reason": "..." },
+  "beats": [{ "id": "BEAT_SETUP", "function": "..." }],
+  "opening": { "strategy": "ACTION_FIRST" },
+  "ending": { "strategy": "EARNED_GROWTH" },
+  "symbols": [],
+  "craft": [],
+  "plannerValidation": { "status": "PASS", "blockingFailures": 0, "warnings": 0, "rulesPassed": 20 }
+}

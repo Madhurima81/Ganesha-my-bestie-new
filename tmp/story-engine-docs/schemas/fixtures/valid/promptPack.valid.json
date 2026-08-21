@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "1.0",
+  "status": "VALIDATED",
+  "storyReference": { "id": "STORY_001" },
+  "globalPrompt": "Warm watercolor children's storybook illustration, soft edges, gentle lighting",
+  "pagePrompts": [
+    {
+      "page": 1,
+      "sceneId": "SCENE_001",
+      "prompt": "Anu the fox cub stands at the edge of a glowing valley, looking uncertain",
+      "characters": ["CHAR_ANU"],
+      "environment": "WORLD_MOONLIGHT_VALLEY",
+      "emotion": "curious, uncertain",
+      "negativePrompt": "no text, no frightening imagery, no adult proportions"
+    }
+  ],
+  "continuityInstructions": ["Anu's blue scarf must appear on every page"],
+  "validation": { "status": "PASS", "blockingFailures": 0, "warnings": 0 }
+}

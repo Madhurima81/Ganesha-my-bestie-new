@@ -1,0 +1,46 @@
+{
+  "status": "SUCCESS",
+  "version": "1.0",
+  "profiles": [
+    "DIGITAL",
+    "PRINT"
+  ],
+  "preservedReferences": {
+    "storyBlueprintReference": {
+      "id": "BLUEPRINT_SIT001_CHAR005_STRUCT007"
+    },
+    "storyPlanReference": {
+      "id": "BLUEPRINT_SIT001_CHAR005_STRUCT007"
+    },
+    "finalStoryReference": {
+      "id": "FINALSTORY_BLUEPRINT_SIT001_CHAR005_STRUCT007"
+    },
+    "illustrationPlanReference": {
+      "id": "ILLPLAN_BLUEPRINT_SIT001_CHAR005_STRUCT007"
+    },
+    "illustrationBibleReference": {
+      "id": "ILLBIBLE_BLUEPRINT_SIT001_CHAR005_STRUCT007"
+    },
+    "promptPackReference": {
+      "id": "PROMPTPACK_BLUEPRINT_SIT001_CHAR005_STRUCT007"
+    },
+    "layoutReference": {
+      "id": "LAYOUT_FINALSTORY_BLUEPRINT_SIT001_CHAR005_STRUCT007"
+    }
+  },
+  "integrityChecks": {
+    "productionQAStatus": "PASS",
+    "lockedStoryPreserved": true,
+    "pageOrderPreserved": true,
+    "illustrationCountMatches": true,
+    "metadataComplete": true
+  },
+  "generatedFiles": {
+    "digitalIndex": "./digital-story/index.html",
+    "digitalManifest": "./digital-story/manifest.webmanifest",
+    "pdf": "./print/story-book.pdf",
+    "storyPackage": "./story-package.json",
+    "assetManifest": "./asset-manifest.json",
+    "exportMetadata": "./export-metadata.json"
+  }
+}

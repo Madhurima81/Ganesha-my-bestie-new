@@ -1,0 +1,170 @@
+[
+  {
+    "activity_id": "TIT-EAR-001",
+    "theme_id": "GT01",
+    "symbol": "Ears",
+    "title": "Winnowing Breath",
+    "slides": [
+      {
+        "role": "ganesha_connection",
+        "text": "Ears: Listen Like a Winnowing Basket - sift helpful words from noisy distractions."
+      },
+      {
+        "role": "hook",
+        "text": "Can you breathe in the words that help and let the noisy ones float away?"
+      },
+      {
+        "role": "try_it",
+        "text": "Sit comfortably and think of one helpful sentence someone said to you. Breathe in as you whisper that helpful sentence to yourself. Breathe out and imagine noisy unhelpful words blowing away like husks in the wind."
+      },
+      {
+        "role": "notice",
+        "text": "Which words felt worth keeping today?"
+      },
+      {
+        "role": "affirmation",
+        "text": "I keep the words that help me grow."
+      },
+      {
+        "role": "try_this_today",
+        "text": "Later today, pause for one breath before deciding which words to keep."
+      }
+    ],
+    "printable": null
+  },
+  {
+    "activity_id": "TIT-EAR-002",
+    "theme_id": "GT01",
+    "symbol": "Ears",
+    "title": "Keep or Let Go Cards",
+    "slides": [
+      {
+        "role": "ganesha_connection",
+        "text": "Ears: Listen Like a Winnowing Basket - sift helpful words from noisy distractions."
+      },
+      {
+        "role": "hook",
+        "text": "Can you beat the noise and sort the words that help you grow?"
+      },
+      {
+        "role": "try_it",
+        "text": "Place two labels in front of you: KEEP and LET GO. Read or hear one word card at a time. Put helpful growth words in KEEP and noisy put-down words in LET GO. Pick one KEEP card to say out loud at the end."
+      },
+      {
+        "role": "notice",
+        "text": "Which card would you like to remember the next time someone speaks to you?"
+      },
+      {
+        "role": "affirmation",
+        "text": "I keep the words that help me grow."
+      },
+      {
+        "role": "try_this_today",
+        "text": "The next time you hear mixed messages, look for one sentence that truly helps you grow."
+      }
+    ],
+    "printable": {
+      "template_id": "PT02",
+      "title": "Helpful Words / Noise"
+    }
+  },
+  {
+    "activity_id": "TIT-EAR-003",
+    "theme_id": "GT01",
+    "symbol": "Ears",
+    "title": "Helpful or Noisy?",
+    "slides": [
+      {
+        "role": "ganesha_connection",
+        "text": "Ears: Listen Like a Winnowing Basket - sift helpful words from noisy distractions."
+      },
+      {
+        "role": "hook",
+        "text": "Can you catch the words that help you grow and spot the words that are just noise?"
+      },
+      {
+        "role": "try_it",
+        "text": "Listen to three sentences someone says to you today, or remember three you heard recently. After each one, ask: 'Does this help me grow, or is it just noise?' Choose one sentence to keep and one sentence to let go. Say your keep sentence once more so it stays louder in your mind than the noisy one."
+      },
+      {
+        "role": "notice",
+        "text": "Which words were truly helpful, and which ones were only noise?"
+      },
+      {
+        "role": "affirmation",
+        "text": "I keep the words that help me grow."
+      },
+      {
+        "role": "try_this_today",
+        "text": "Later today, when you hear mixed messages, quietly sort them into keep or let go."
+      }
+    ],
+    "printable": null
+  },
+  {
+    "activity_id": "TIT-EAR-004",
+    "theme_id": "GT01",
+    "symbol": "Ears",
+    "title": "Keep the Helpful Part",
+    "slides": [
+      {
+        "role": "ganesha_connection",
+        "text": "Ears: Listen Like a Winnowing Basket - sift helpful words from noisy distractions."
+      },
+      {
+        "role": "hook",
+        "text": "Can you listen for the one helpful part in what someone says, even if the rest feels noisy?"
+      },
+      {
+        "role": "try_it",
+        "text": "One person shares a short opinion, reminder, or piece of advice while holding the pebble. The listener waits quietly and then says one part that felt helpful. If there was a noisy or unkind part, the listener names it as something to let go. Switch turns and try again with a new sentence."
+      },
+      {
+        "role": "notice",
+        "text": "What changed when you listened for the helpful part instead of holding onto the noisy part?"
+      },
+      {
+        "role": "affirmation",
+        "text": "I keep the words that help me grow."
+      },
+      {
+        "role": "try_this_today",
+        "text": "At home today, try finding one useful sentence to keep, even if you do not keep the rest."
+      }
+    ],
+    "printable": null
+  },
+  {
+    "activity_id": "TIT-EAR-005",
+    "theme_id": "GT01",
+    "symbol": "Ears",
+    "title": "Noise Catcher Crown",
+    "slides": [
+      {
+        "role": "ganesha_connection",
+        "text": "Ears: Listen Like a Winnowing Basket - sift helpful words from noisy distractions."
+      },
+      {
+        "role": "hook",
+        "text": "Can you build something that catches helpful words and lets noisy words fall away?"
+      },
+      {
+        "role": "try_it",
+        "text": "Make a paper crown or headband strip. On one side, write or draw three helpful words or sentences you want to keep. On the other side, add two noisy messages you want to let fall away. Put on the crown and point to the words you will keep before taking it off."
+      },
+      {
+        "role": "notice",
+        "text": "Which helpful words do you want your mind to hear louder than the noise?"
+      },
+      {
+        "role": "affirmation",
+        "text": "I keep the words that help me grow."
+      },
+      {
+        "role": "try_this_today",
+        "text": "Later today, remember one crown word when noisy words show up."
+      }
+    ],
+    "printable": null
+  }
+]

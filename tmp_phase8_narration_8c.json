@@ -1,0 +1,295 @@
+{
+  "completeStoryMaster": {
+    "title": "Kavi and the Pause in Magic Garden",
+    "storyText": "Kavi scampered through Magic Garden with a brand-new spinning toy tucked under one arm. When another child grabbed it first, hot feelings rushed up so fast that Kavi wanted to snatch it back and shout right away. The unfair moment felt as sharp as a thorn, and Kavi forgot every calm thought except, \"I have to react when things feel unfair.\" Near the path sat a round, sheltering shape that reminded Kavi of shelter, but in that first flash of anger Kavi was too upset to notice what it meant. Craft focus: CR-RHY-001.\n\nKavi charged after the toy, then stopped when the bamboo path bent and the other child stumbled near a wobbly bridge of roots. If Kavi kept rushing, both children could get hurt and the toy might tumble into the stream below. Heart thumping, Kavi remembered the mission to face a Fear and realized that this inner Conflict was not only about the toy, but also about what happened inside. Kavi pressed both hands to that big-belly feeling, took one slow breath, then another, and finally said, \"Wait. Let's fix this safely.\" The pause changed the whole moment. Craft focus: CR-SUS-001.\n\nTogether, the children steadied the bridge, picked up the toy, and sat quietly under the tall green stalks. Kavi still felt the unfairness, but it no longer bossed every choice. Looking at the sheltering curve nearby, Kavi understood that real strength could feel soft and steady at the same time. So when the other child offered the toy back, Kavi smiled and said, \"We can both take turns.\" In that gentle choice, Kavi truly discovered, \"I can pause and choose my response.\" The game began again, and this time the laughter sounded freer than before. Craft focus: CR-EMO-001.",
+    "scenes": [
+      {
+        "sceneId": "SCENE_001",
+        "text": "Kavi scampered through Magic Garden with a brand-new spinning toy tucked under one arm. When another child grabbed it first, hot feelings rushed up so fast that Kavi wanted to snatch it back and shout right away. The unfair moment felt as sharp as a thorn, and Kavi forgot every calm thought except, \"I have to react when things feel unfair.\" Near the path sat a round, sheltering shape that reminded Kavi of shelter, but in that first flash of anger Kavi was too upset to notice what it meant. Craft focus: CR-RHY-001."
+      },
+      {
+        "sceneId": "SCENE_002",
+        "text": "Kavi charged after the toy, then stopped when the bamboo path bent and the other child stumbled near a wobbly bridge of roots. If Kavi kept rushing, both children could get hurt and the toy might tumble into the stream below. Heart thumping, Kavi remembered the mission to face a Fear and realized that this inner Conflict was not only about the toy, but also about what happened inside. Kavi pressed both hands to that big-belly feeling, took one slow breath, then another, and finally said, \"Wait. Let's fix this safely.\" The pause changed the whole moment. Craft focus: CR-SUS-001."
+      },
+      {
+        "sceneId": "SCENE_003",
+        "text": "Together, the children steadied the bridge, picked up the toy, and sat quietly under the tall green stalks. Kavi still felt the unfairness, but it no longer bossed every choice. Looking at the sheltering curve nearby, Kavi understood that real strength could feel soft and steady at the same time. So when the other child offered the toy back, Kavi smiled and said, \"We can both take turns.\" In that gentle choice, Kavi truly discovered, \"I can pause and choose my response.\" The game began again, and this time the laughter sounded freer than before. Craft focus: CR-EMO-001."
+      }
+    ],
+    "status": "COMPLETE_STORY_READY"
+  },
+  "pageManuscript": {
+    "pages": [
+      {
+        "page": 1,
+        "storyText": "Kavi scampered through Magic Garden with a brand-new spinning toy tucked under one arm. When another child grabbed it first, hot feelings rushed up so fast that Kavi wanted to snatch it back and shout right away. The unfair moment felt as sharp as a thorn, and Kavi forgot every calm thought except, \"I have to react when things feel unfair.\" ",
+        "sourceSections": [
+          "SCENE_001"
+        ],
+        "pageTurnObjective": "Curiosity about the central problem",
+        "illustrationNote": "Establish the world, protagonist, and opening tension visually. Signal the symbol's story role.",
+        "sceneIds": [
+          "SCENE_001"
+        ]
+      },
+      {
+        "page": 2,
+        "storyText": "Near the path sat a round, sheltering shape that reminded Kavi of shelter, but in that first flash of anger Kavi was too upset to notice what it meant. Craft focus: CR-RHY-001.\n\nKavi charged after the toy, then stopped when the bamboo path bent and the other child stumbled near a wobbly bridge of roots. If Kavi kept rushing, both children could get hurt and the toy might tumble into the stream below. Heart thumping, Kavi remembered the mission to face a Fear and realized that this inner Conflict was not only about the toy, but also about what happened inside. Kavi pressed both hands to that big-belly feeling, took one slow breath, then another, and finally said, \"Wait. ",
+        "sourceSections": [
+          "SCENE_001",
+          "SCENE_002"
+        ],
+        "pageTurnObjective": "Commitment to the mission",
+        "illustrationNote": "Show the story problem becoming active. Begin symbol recurrence if it helps the scene.",
+        "sceneIds": [
+          "SCENE_001",
+          "SCENE_002"
+        ]
+      },
+      {
+        "page": 3,
+        "storyText": "Let's fix this safely.\" The pause changed the whole moment. Craft focus: CR-SUS-001.\n\n",
+        "sourceSections": [
+          "SCENE_002"
+        ],
+        "pageTurnObjective": "Escalating tension",
+        "illustrationNote": "Support action and transitions without overloading the spread. Keep symbolic recurrence supportive, not dominant.",
+        "sceneIds": [
+          "SCENE_002"
+        ]
+      },
+      {
+        "page": 4,
+        "storyText": "Together, the children steadied the bridge, picked up the toy, and sat quietly under the tall green stalks. Kavi still felt the unfairness, but it no longer bossed every choice. Looking at the sheltering curve nearby, Kavi understood that real strength could feel soft and steady at the same time. So when the other child offered the toy back, Kavi smiled and said, \"We can both take turns.\" ",
+        "sourceSections": [
+          "SCENE_003"
+        ],
+        "pageTurnObjective": "Anticipation of the final turn",
+        "illustrationNote": "Protect the pre-climax turn and hold visual tension. Prepare the symbol for payoff without completing it.",
+        "sceneIds": [
+          "SCENE_003"
+        ]
+      },
+      {
+        "page": 5,
+        "storyText": "In that gentle choice, Kavi truly discovered, \"I can pause and choose my response.\" The game began again, and this time the laughter sounded freer than before. Craft focus: CR-EMO-001.",
+        "sourceSections": [
+          "SCENE_003"
+        ],
+        "pageTurnObjective": "Emotional closure",
+        "illustrationNote": "Give the resolution breathing room. Complete the symbol payoff.",
+        "sceneIds": [
+          "SCENE_003"
+        ]
+      }
+    ],
+    "paginationStatus": "VALID",
+    "pageToStoryMapping": [
+      {
+        "page": 1,
+        "sourceSections": [
+          "SCENE_001"
+        ]
+      },
+      {
+        "page": 2,
+        "sourceSections": [
+          "SCENE_001",
+          "SCENE_002"
+        ]
+      },
+      {
+        "page": 3,
+        "sourceSections": [
+          "SCENE_002"
+        ]
+      },
+      {
+        "page": 4,
+        "sourceSections": [
+          "SCENE_003"
+        ]
+      },
+      {
+        "page": 5,
+        "sourceSections": [
+          "SCENE_003"
+        ]
+      }
+    ],
+    "pageTurnMap": [
+      {
+        "page": 1,
+        "objective": "Curiosity about the central problem"
+      },
+      {
+        "page": 2,
+        "objective": "Commitment to the mission"
+      },
+      {
+        "page": 3,
+        "objective": "Escalating tension"
+      },
+      {
+        "page": 4,
+        "objective": "Anticipation of the final turn"
+      },
+      {
+        "page": 5,
+        "objective": "Emotional closure"
+      }
+    ]
+  },
+  "narrationLayer": [
+    {
+      "page": 1,
+      "narration": "Kavi scampered through Magic Garden with a brand-new spinning toy tucked under one arm. When another child grabbed it first, hot feelings rushed up so fast that Kavi wanted to snatch it back and shout right away. The unfair moment felt as sharp as a thorn, and Kavi forgot every calm thought except, \"I have to react when things feel unfair.\" ",
+      "voice": "Warm, inviting, and slightly playful.",
+      "deliveryCue": "Let the opening curiosity land before the first emotional spike.",
+      "pauses": [
+        "Pause after the unfair moment lands.",
+        "Brief pause before the final line that leads into curiosity about the central problem."
+      ],
+      "emphasisPhrases": [
+        "I have to react when things feel unfair.",
+        "EMOTION_SECURITY"
+      ],
+      "pronunciationNotes": [
+        {
+          "term": "Kavi",
+          "guide": "KAA-vee"
+        }
+      ],
+      "emotionalIntent": "Establish the emotional baseline and story pressure while engage empathy and concern..",
+      "craftSupport": [
+        "CR-RHY-001"
+      ],
+      "sourceSections": [
+        "SCENE_001"
+      ]
+    },
+    {
+      "page": 2,
+      "narration": "Near the path sat a round, sheltering shape that reminded Kavi of shelter, but in that first flash of anger Kavi was too upset to notice what it meant. Craft focus: CR-RHY-001.\n\nKavi charged after the toy, then stopped when the bamboo path bent and the other child stumbled near a wobbly bridge of roots. If Kavi kept rushing, both children could get hurt and the toy might tumble into the stream below. Heart thumping, Kavi remembered the mission to face a Fear and realized that this inner Conflict was not only about the toy, but also about what happened inside. Kavi pressed both hands to that big-belly feeling, took one slow breath, then another, and finally said, \"Wait. ",
+      "voice": "Clear, steady, and supportive of rising tension.",
+      "deliveryCue": "Keep momentum moving toward commitment to the mission.",
+      "pauses": [
+        "Brief pause before the final line that leads into commitment to the mission."
+      ],
+      "emphasisPhrases": [
+        "EMOTION_CURIOSITY"
+      ],
+      "pronunciationNotes": [
+        {
+          "term": "Kavi",
+          "guide": "KAA-vee"
+        }
+      ],
+      "emotionalIntent": "Escalate or refine the emotional journey through move from concern into committed effort..",
+      "craftSupport": [
+        "CR-RHY-001",
+        "CR-SUS-001"
+      ],
+      "sourceSections": [
+        "SCENE_001",
+        "SCENE_002"
+      ]
+    },
+    {
+      "page": 3,
+      "narration": "Let's fix this safely.\" The pause changed the whole moment. Craft focus: CR-SUS-001.\n\n",
+      "voice": "Clear, steady, and supportive of rising tension.",
+      "deliveryCue": "Keep momentum moving toward escalating tension.",
+      "pauses": [
+        "Brief pause before the final line that leads into escalating tension."
+      ],
+      "emphasisPhrases": [
+        "EMOTION_CALM"
+      ],
+      "pronunciationNotes": [
+        {
+          "term": "Kavi",
+          "guide": "KAA-vee"
+        }
+      ],
+      "emotionalIntent": "Escalate or refine the emotional journey through build feeling and expectation..",
+      "craftSupport": [
+        "CR-SUS-001"
+      ],
+      "sourceSections": [
+        "SCENE_002"
+      ]
+    },
+    {
+      "page": 4,
+      "narration": "Together, the children steadied the bridge, picked up the toy, and sat quietly under the tall green stalks. Kavi still felt the unfairness, but it no longer bossed every choice. Looking at the sheltering curve nearby, Kavi understood that real strength could feel soft and steady at the same time. So when the other child offered the toy back, Kavi smiled and said, \"We can both take turns.\" ",
+      "voice": "Clear, steady, and supportive of rising tension.",
+      "deliveryCue": "Keep momentum moving toward anticipation of the final turn.",
+      "pauses": [
+        "Brief pause before the final line that leads into anticipation of the final turn."
+      ],
+      "emphasisPhrases": [
+        "We can both take turns.",
+        "EMOTION_CALM"
+      ],
+      "pronunciationNotes": [
+        {
+          "term": "Kavi",
+          "guide": "KAA-vee"
+        }
+      ],
+      "emotionalIntent": "Reach the emotional high point before the final release.",
+      "craftSupport": [
+        "CR-EMO-001"
+      ],
+      "sourceSections": [
+        "SCENE_003"
+      ]
+    },
+    {
+      "page": 5,
+      "narration": "In that gentle choice, Kavi truly discovered, \"I can pause and choose my response.\" The game began again, and this time the laughter sounded freer than before. Craft focus: CR-EMO-001.",
+      "voice": "Gentle, satisfied, and emotionally settled.",
+      "deliveryCue": "Slow slightly on the final belief line and close with calm warmth.",
+      "pauses": [
+        "Pause before the final belief sentence.",
+        "Brief pause before the final line that leads into emotional closure."
+      ],
+      "emphasisPhrases": [
+        "I can pause and choose my response.",
+        "EMOTION_CALM"
+      ],
+      "pronunciationNotes": [
+        {
+          "term": "Kavi",
+          "guide": "KAA-vee"
+        }
+      ],
+      "emotionalIntent": "Deliver emotional release and integration while reinforcing i can pause and choose my response..",
+      "craftSupport": [
+        "CR-EMO-001"
+      ],
+      "sourceSections": [
+        "SCENE_003"
+      ]
+    }
+  ],
+  "storyWriterValidation": {
+    "status": "PASS",
+    "blockingFailures": 0,
+    "warnings": 0,
+    "rulesPassed": 15
+  },
+  "pageWriterValidation": {
+    "status": "PASS",
+    "blockingFailures": 0,
+    "warnings": 0,
+    "rulesPassed": 13
+  },
+  "narrationWriterValidation": {
+    "status": "PASS",
+    "blockingFailures": 0,
+    "warnings": 0,
+    "rulesPassed": 6
+  }
+}

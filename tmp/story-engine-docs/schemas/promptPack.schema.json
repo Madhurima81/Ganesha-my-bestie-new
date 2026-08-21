@@ -1,0 +1,150 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "promptPack.schema.json",
+  "title": "Prompt Pack",
+  "description": "Canonical prompt package produced by Phase 9B for generating and managing illustrations while preserving visual and narrative continuity.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "status",
+    "storyReference",
+    "globalPrompt",
+    "pagePrompts",
+    "continuityInstructions",
+    "validation"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "VALIDATED"
+      ]
+    },
+    "storyReference": {
+      "$ref": "#/$defs/reference"
+    },
+    "globalPrompt": {
+      "type": "string",
+      "minLength": 1
+    },
+    "pagePrompts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/pagePrompt"
+      }
+    },
+    "continuityInstructions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "validation": {
+      "$ref": "#/$defs/validation"
+    }
+  },
+  "$defs": {
+    "reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "pagePrompt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "page",
+        "prompt"
+      ],
+      "properties": {
+        "page": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "sceneId": {
+          "type": "string"
+        },
+        "prompt": {
+          "type": "string",
+          "minLength": 1
+        },
+        "characters": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "environment": {
+          "type": "string"
+        },
+        "action": {
+          "type": "string"
+        },
+        "emotion": {
+          "type": "string"
+        },
+        "composition": {
+          "type": "string"
+        },
+        "camera": {
+          "type": "string"
+        },
+        "symbol": {
+          "type": "string"
+        },
+        "negativePrompt": {
+          "type": "string"
+        },
+        "continuityRequirements": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "assetReferences": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "blockingFailures"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "PASS"
+          ]
+        },
+        "blockingFailures": {
+          "type": "integer",
+          "const": 0
+        },
+        "warnings": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}

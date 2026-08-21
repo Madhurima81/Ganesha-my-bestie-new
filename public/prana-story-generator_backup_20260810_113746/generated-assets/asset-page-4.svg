@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2048" height="2048" viewBox="0 0 2048 2048">
+  <defs>
+    <linearGradient id="bg4" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#b8e08d"/>
+      <stop offset="100%" stop-color="#6fc291"/>
+    </linearGradient>
+  </defs>
+  <rect width="2048" height="2048" fill="url(#bg4)"/>
+  <rect x="150" y="180" width="1748" height="1688" rx="70" fill="#f6ffef" opacity="0.26"/>
+  <path d="M360 1100 C760 830, 1230 850, 1660 1120" fill="none" stroke="#82623e" stroke-width="40" stroke-linecap="round"/>
+  <circle cx="820" cy="920" r="145" fill="#f6a05b"/>
+  <circle cx="1220" cy="920" r="135" fill="#8bd1b0"/>
+  <text x="1024" y="310" text-anchor="middle" font-family="Arial, sans-serif" font-size="116" fill="#355437">Page 4 Illustration Asset</text>
+  <text x="1024" y="1465" text-anchor="middle" font-family="Arial, sans-serif" font-size="72" fill="#355437">Shared action steadies the bridge and the problem softens</text>
+</svg>

@@ -1,0 +1,152 @@
+[
+  {
+    "id": "OPEN001",
+    "name": "The Vulnerable Wanderer",
+    "description": "Introduce the hero facing a relatable emotional challenge before the adventure begins.",
+    "hard": {
+      "opening_type": "OPEN_CHARACTER"
+    },
+    "soft_suggested": {
+      "purpose": "Create empathy before curiosity"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "source JSON has 21 total entries but 11 (id 11-21) are broken stub/index rows, excluded here"
+    }
+  },
+  {
+    "id": "OPEN002",
+    "name": "The Tiny Mystery",
+    "description": "Begin with a small unexplained event that sparks curiosity.",
+    "hard": {
+      "opening_type": "OPEN_MYSTERY"
+    },
+    "soft_suggested": {
+      "purpose": "Create curiosity via unexplained detail"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "source JSON has 21 total entries but 11 (id 11-21) are broken stub/index rows, excluded here"
+    }
+  },
+  {
+    "id": "OPEN003",
+    "name": "The Unexpected Interruption",
+    "description": "The hero's ordinary day is suddenly interrupted by an unexpected event.",
+    "hard": {
+      "opening_type": "OPEN_ACTION"
+    },
+    "soft_suggested": {
+      "purpose": "Create momentum without setup"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "source JSON has 21 total entries but 11 (id 11-21) are broken stub/index rows, excluded here"
+    }
+  },
+  {
+    "id": "OPEN004",
+    "name": "The Everyday Wonder",
+    "description": "Begin in an ordinary place where something beautiful or unusual is quietly discovered.",
+    "hard": {
+      "opening_type": "OPEN_WORLD"
+    },
+    "soft_suggested": {
+      "purpose": "Build curiosity through observation"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "source JSON has 21 total entries but 11 (id 11-21) are broken stub/index rows, excluded here"
+    }
+  },
+  {
+    "id": "OPEN005",
+    "name": "The Emotional Spark",
+    "description": "Open with a strong feeling or emotional problem the hero is experiencing.",
+    "hard": {
+      "opening_type": "OPEN_CHARACTER"
+    },
+    "soft_suggested": {
+      "purpose": "Create empathy through internal state"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "source JSON has 21 total entries but 11 (id 11-21) are broken stub/index rows, excluded here"
+    }
+  },
+  {
+    "id": "OPEN006",
+    "name": "The Invitation",
+    "description": "Someone invites the hero to help, join or explore something new.",
+    "hard": {
+      "opening_type": "OPEN_DIALOGUE"
+    },
+    "soft_suggested": {
+      "purpose": "Draw reader in via direct address"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "source JSON has 21 total entries but 11 (id 11-21) are broken stub/index rows, excluded here"
+    }
+  },
+  {
+    "id": "OPEN007",
+    "name": "The Missing Something",
+    "description": "An important object, person or idea has disappeared.",
+    "hard": {
+      "opening_type": "OPEN_PROBLEM"
+    },
+    "soft_suggested": {
+      "purpose": "Create urgency via absence"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "source JSON has 21 total entries but 11 (id 11-21) are broken stub/index rows, excluded here"
+    }
+  },
+  {
+    "id": "OPEN008",
+    "name": "The Promise",
+    "description": "The hero makes\u2014or receives\u2014a meaningful promise.",
+    "hard": {
+      "opening_type": "OPEN_DIALOGUE"
+    },
+    "soft_suggested": {
+      "purpose": "Establish stakes via commitment"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "source JSON has 21 total entries but 11 (id 11-21) are broken stub/index rows, excluded here"
+    }
+  },
+  {
+    "id": "OPEN009",
+    "name": "The Race Against Time",
+    "description": "The hero must complete something before a deadline.",
+    "hard": {
+      "opening_type": "OPEN_ACTION"
+    },
+    "soft_suggested": {
+      "purpose": "Create urgency via ticking clock"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "source JSON has 21 total entries but 11 (id 11-21) are broken stub/index rows, excluded here"
+    }
+  },
+  {
+    "id": "OPEN010",
+    "name": "The Impossible Task",
+    "description": "The hero is asked to do something that feels far beyond their ability.",
+    "hard": {
+      "opening_type": "OPEN_PROBLEM"
+    },
+    "soft_suggested": {
+      "purpose": "Create tension via a stated-impossible goal"
+    },
+    "_meta": {
+      "confidence": "audited",
+      "note": "source JSON has 21 total entries but 11 (id 11-21) are broken stub/index rows, excluded here"
+    }
+  }
+]

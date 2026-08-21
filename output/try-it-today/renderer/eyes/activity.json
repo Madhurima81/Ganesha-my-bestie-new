@@ -1,0 +1,126 @@
+[
+  {
+    "activity_id": "TIT-EYE-001",
+    "theme_id": "GT02",
+    "symbol": "Eyes",
+    "belief": "I look carefully before I decide what is true.",
+    "status": "approved",
+    "source": "activity_database",
+    "presentation_template": "ganesha_connection -> title -> hook -> try_it -> notice -> optional_affirmation -> optional_try_this_today_action -> printable",
+    "sections": {
+      "ganesha_connection": "Eyes teaches: See Clearly Like Ganesha's Eyes - notice what is true before you decide.",
+      "title": "Clue Pause",
+      "hook": "Can you pause your eyes long enough to notice one true clue before you guess?",
+      "try_it": [
+        "Look at one object in the room for ten quiet seconds.",
+        "Name three details you can actually see.",
+        "Only then say what you think the object tells you."
+      ],
+      "notice": "What did you notice after you slowed down your looking?",
+      "optional_affirmation": "I look carefully before I decide what is true.",
+      "optional_try_this_today_action": "Next time you feel ready to guess quickly, pause and look for three clues first.",
+      "printable": null
+    }
+  },
+  {
+    "activity_id": "TIT-EYE-002",
+    "theme_id": "GT02",
+    "symbol": "Eyes",
+    "belief": "I look carefully before I decide what is true.",
+    "status": "approved",
+    "source": "activity_database",
+    "presentation_template": "ganesha_connection -> title -> hook -> try_it -> notice -> optional_affirmation -> optional_try_this_today_action -> printable",
+    "sections": {
+      "ganesha_connection": "Eyes teaches: See Clearly Like Ganesha's Eyes - notice what is true before you decide.",
+      "title": "Spot the Real Clue",
+      "hook": "Can your eyes find the clue that is true, not just the clue that is loud?",
+      "try_it": [
+        "Look at the picture and find all the details you can.",
+        "Circle the details that are real clues.",
+        "Cross out the details that are distracting but do not prove anything.",
+        "Explain which clue helped you decide."
+      ],
+      "notice": "Which detail looked important at first but was not the best clue?",
+      "optional_affirmation": "I look carefully before I decide what is true.",
+      "optional_try_this_today_action": "When something seems obvious later today, ask yourself what you actually saw.",
+      "printable": {
+        "template_id": "PT04",
+        "title": "Real Clue / Distracting Clue",
+        "child_action": "Circle the real clues and cross out distracting details."
+      }
+    }
+  },
+  {
+    "activity_id": "TIT-EYE-003",
+    "theme_id": "GT02",
+    "symbol": "Eyes",
+    "belief": "I look carefully before I decide what is true.",
+    "status": "approved",
+    "source": "activity_database",
+    "presentation_template": "ganesha_connection -> title -> hook -> try_it -> notice -> optional_affirmation -> optional_try_this_today_action -> printable",
+    "sections": {
+      "ganesha_connection": "Eyes teaches: See Clearly Like Ganesha's Eyes - notice what is true before you decide.",
+      "title": "True Clue Hunt",
+      "hook": "Can your eyes find which detail is truly important, not just the one that grabs attention first?",
+      "try_it": [
+        "Look at a room, shelf, table, or outdoor spot with lots to notice.",
+        "Name three details that stand out first.",
+        "Then ask which one actually helps you understand what is happening there.",
+        "Choose the truest clue and explain why the other details were less important."
+      ],
+      "notice": "Which clue turned out to be truly important, and which ones were only eye-catching?",
+      "optional_affirmation": "I look carefully before I decide what is true.",
+      "optional_try_this_today_action": "Later today, ask yourself which clue is actually true and important before you decide.",
+      "printable": null
+    }
+  },
+  {
+    "activity_id": "TIT-EYE-004",
+    "theme_id": "GT02",
+    "symbol": "Eyes",
+    "belief": "I look carefully before I decide what is true.",
+    "status": "approved",
+    "source": "activity_database",
+    "presentation_template": "ganesha_connection -> title -> hook -> try_it -> notice -> optional_affirmation -> optional_try_this_today_action -> printable",
+    "sections": {
+      "ganesha_connection": "Eyes teaches: See Clearly Like Ganesha's Eyes - notice what is true before you decide.",
+      "title": "See Before You Say",
+      "hook": "Can you separate what you saw from what you guessed before you choose what to believe?",
+      "try_it": [
+        "One person holds up an object or photo.",
+        "The first speaker says only what they can actually see.",
+        "The second speaker names one guess and one real visible clue.",
+        "Together, decide whether the guess matches the visible evidence or needs to change.",
+        "Choose the version that fits what is actually true."
+      ],
+      "notice": "How did the visible clues change what you chose to believe?",
+      "optional_affirmation": "I look carefully before I decide what is true.",
+      "optional_try_this_today_action": "When you react fast later today, pause and ask what you really saw before choosing your answer.",
+      "printable": null
+    }
+  },
+  {
+    "activity_id": "TIT-EYE-005",
+    "theme_id": "GT02",
+    "symbol": "Eyes",
+    "belief": "I look carefully before I decide what is true.",
+    "status": "approved",
+    "source": "activity_database",
+    "presentation_template": "ganesha_connection -> title -> hook -> try_it -> notice -> optional_affirmation -> optional_try_this_today_action -> printable",
+    "sections": {
+      "ganesha_connection": "Eyes teaches: See Clearly Like Ganesha's Eyes - notice what is true before you decide.",
+      "title": "Choose the Truest Picture",
+      "hook": "Can you make two quick pictures and choose the one that shows what is really true?",
+      "try_it": [
+        "Think of a small moment, like a messy table, a frowning face, or spilled water.",
+        "Draw a first quick picture showing the first guess your eyes might make.",
+        "Draw a second picture showing what might be more true after you look for better clues.",
+        "Circle the picture you believe is truer and say which clue helped you choose it."
+      ],
+      "notice": "What clue helped you choose the picture that felt truer?",
+      "optional_affirmation": "I look carefully before I decide what is true.",
+      "optional_try_this_today_action": "Later today, remember that your first picture is not always the truest one.",
+      "printable": null
+    }
+  }
+]

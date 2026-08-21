@@ -1,0 +1,475 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "storyBlueprint.schema.json",
+  "title": "Story Blueprint",
+  "description": "Canonical validated blueprint produced by Phase 6. It contains the resolved story architecture required by Phase 7.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "blueprintId",
+    "status",
+    "request",
+    "situation",
+    "need",
+    "belief",
+    "character",
+    "adventureArchetype",
+    "mission",
+    "storyActions",
+    "world",
+    "obstacle",
+    "storyConflict",
+    "logic",
+    "storyStructure",
+    "beats",
+    "opening",
+    "ending",
+    "symbols",
+    "craft",
+    "plannerValidation"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "1.0"
+    },
+
+    "blueprintId": {
+      "type": "string",
+      "description": "Unique identifier for this Story Blueprint. Referenced downstream by storyPlan.schema.json (blueprintReference) and, transitively, by storyPackage.schema.json's sourceReferences."
+    },
+
+    "status": {
+      "type": "string",
+      "enum": [
+        "VALIDATED"
+      ]
+    },
+
+    "request": {
+      "$ref": "#/$defs/request"
+    },
+
+    "situation": {
+      "$ref": "#/$defs/situation"
+    },
+
+    "need": {
+      "$ref": "#/$defs/need"
+    },
+
+    "belief": {
+      "$ref": "#/$defs/belief"
+    },
+
+    "character": {
+      "$ref": "#/$defs/character"
+    },
+
+    "adventureArchetype": {
+      "$ref": "#/$defs/referenceWithReason"
+    },
+
+    "mission": {
+      "$ref": "#/$defs/referenceWithReason"
+    },
+
+    "storyActions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/storyAction"
+      }
+    },
+
+    "world": {
+      "$ref": "#/$defs/referenceWithReason"
+    },
+
+    "obstacle": {
+      "$ref": "#/$defs/referenceWithReason"
+    },
+
+    "storyConflict": {
+      "$ref": "#/$defs/storyConflict"
+    },
+
+    "logic": {
+      "$ref": "#/$defs/logic"
+    },
+
+    "storyStructure": {
+      "$ref": "#/$defs/storyStructure"
+    },
+
+    "beats": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/beat"
+      }
+    },
+
+    "opening": {
+      "$ref": "#/$defs/plan"
+    },
+
+    "ending": {
+      "$ref": "#/$defs/plan"
+    },
+
+    "symbols": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/symbol"
+      }
+    },
+
+    "craft": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/craft"
+      }
+    },
+
+    "plannerValidation": {
+      "$ref": "#/$defs/plannerValidation"
+    }
+  },
+
+  "$defs": {
+    "request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "targetAge"
+      ],
+      "properties": {
+        "targetAge": {
+          "type": "string"
+        },
+        "lifeDomain": {
+          "type": "string"
+        },
+        "language": {
+          "type": "string"
+        },
+        "pageRange": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "min",
+            "max"
+          ],
+          "properties": {
+            "min": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "max": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        }
+      }
+    },
+
+    "situation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+
+    "need": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "reason"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        }
+      }
+    },
+
+    "belief": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "falseBelief",
+        "trueBelief",
+        "reason"
+      ],
+      "properties": {
+        "falseBelief": {
+          "type": "string"
+        },
+        "trueBelief": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        }
+      }
+    },
+
+    "character": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "role",
+        "selected",
+        "reason"
+      ],
+      "properties": {
+        "role": {
+          "type": "string"
+        },
+        "candidates": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "selected": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        }
+      }
+    },
+
+    "referenceWithReason": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "reason"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        }
+      }
+    },
+
+    "storyAction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "purpose"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "purpose": {
+          "type": "string"
+        }
+      }
+    },
+
+    "storyConflict": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "type",
+        "reason"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        }
+      }
+    },
+
+    "logic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "causalPattern",
+        "reason"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "causalPattern": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "reason": {
+          "type": "string"
+        }
+      }
+    },
+
+    "storyStructure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "sequence",
+        "reason"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "sequence": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "reason": {
+          "type": "string"
+        }
+      }
+    },
+
+    "beat": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "function"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "function": {
+          "type": "string"
+        }
+      }
+    },
+
+    "plan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "strategy"
+      ],
+      "properties": {
+        "strategy": {
+          "type": "string"
+        },
+        "function": {
+          "type": "string"
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+
+    "symbol": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "symbolId",
+        "function"
+      ],
+      "properties": {
+        "symbolId": {
+          "type": "string"
+        },
+        "function": {
+          "type": "string"
+        },
+        "introduction": {
+          "type": "string"
+        },
+        "development": {
+          "type": "string"
+        },
+        "payoff": {
+          "type": "string"
+        }
+      }
+    },
+
+    "craft": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "techniqueId",
+        "purpose"
+      ],
+      "properties": {
+        "techniqueId": {
+          "type": "string"
+        },
+        "purpose": {
+          "type": "string"
+        }
+      }
+    },
+
+    "plannerValidation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "blockingFailures",
+        "warnings",
+        "rulesPassed"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "PASS"
+          ]
+        },
+        "blockingFailures": {
+          "type": "integer",
+          "const": 0
+        },
+        "warnings": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rulesPassed": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    }
+  }
+}

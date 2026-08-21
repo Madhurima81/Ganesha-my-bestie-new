@@ -1,0 +1,22 @@
+[
+  {
+    "template_id": "PT02",
+    "renderer_family": "cut-cards",
+    "activity_id": "TIT-EAR-002",
+    "theme_id": "GT01",
+    "title": "Helpful Words / Noise",
+    "content_spec": {
+      "cards": [
+        "Try another way.",
+        "You can't do it.",
+        "I don't understand yet.",
+        "That's stupid.",
+        "Keep practicing.",
+        "Mistakes help us learn."
+      ],
+      "keep_label": "KEEP",
+      "let_go_label": "LET GO"
+    },
+    "child_action": "Sort each card into KEEP or LET GO."
+  }
+]

@@ -1,0 +1,141 @@
+{
+  "generated_at": "2026-08-12T07:10:00.000Z",
+  "run_id": "MVP-001",
+  "slice": "ears",
+  "review_scope": "Product QA of the generated child-facing Ears vertical slice only. No engine changes made during this pass.",
+  "artifacts_reviewed": {
+    "story_json": "output/mvp/MVP-001/ears/story.json",
+    "try_it_today_json": "output/mvp/MVP-001/ears/try-it-today.json",
+    "printable_pdf": "output/mvp/MVP-001/ears/printable/PT03_SORT_MATCH_DECODE/printable.pdf",
+    "printable_preview_png": "output/mvp/MVP-001/ears/printable/PT03_SORT_MATCH_DECODE/preview.png"
+  },
+  "verdict": "NEEDS_REVISION",
+  "output_scores": {
+    "story": {
+      "authentic_ears_meaning": 4,
+      "child_appeal": 3,
+      "ganesha_specificity": 2,
+      "genuine_activity_or_practice": 2,
+      "distinctness_from_other_outputs": 3,
+      "production_quality": 3,
+      "notes": [
+        "The story clearly includes the winnowing idea and the keep-vs-noise distinction.",
+        "Most of the story would still function with a generic wise mentor after removing the explicit Ganesha line.",
+        "The practice is mostly explained to the child rather than dramatically discovered through action."
+      ]
+    },
+    "try_it_today": {
+      "authentic_ears_meaning": 4,
+      "child_appeal": 3,
+      "ganesha_specificity": 2,
+      "genuine_activity_or_practice": 4,
+      "distinctness_from_other_outputs": 2,
+      "production_quality": 4,
+      "notes": [
+        "This is a real practice, not just an explanation.",
+        "The mechanic is effective but nearly identical to the printable mechanic.",
+        "Without the Ganesha mention, it becomes a generic SEL sort activity."
+      ]
+    },
+    "printable": {
+      "authentic_ears_meaning": 4,
+      "child_appeal": 2,
+      "ganesha_specificity": 2,
+      "genuine_activity_or_practice": 4,
+      "distinctness_from_other_outputs": 1,
+      "production_quality": 4,
+      "notes": [
+        "The rendered artifact is clean and readable.",
+        "The page feels more like a worksheet than a voluntarily chosen play experience.",
+        "Its mechanic is effectively the same as the Try It Today record rather than a new expression of the same belief."
+      ]
+    }
+  },
+  "combined_journey": {
+    "belief_alignment": 4,
+    "mechanic_variety": 1,
+    "journey_cohesion": 3,
+    "ganesha_specificity_across_journey": 2,
+    "child_choice_energy": 2,
+    "production_quality": 4,
+    "verdict": "NEEDS_REVISION",
+    "summary": "All three artifacts reinforce the same belief, but the Try It Today and printable collapse into the same sorting mechanic. The journey is coherent but not varied enough, and much of it would still work with a generic mindfulness character."
+  },
+  "tests": {
+    "remove_ganesha_test": {
+      "result": "FLAGGED",
+      "findings": [
+        "Story: replacing the Bodhi/Ganesha line with a generic 'listen carefully' mentor would preserve almost the entire story.",
+        "Try It Today: the activity becomes a standard helpful-vs-hurtful word sort if Ganesha is removed.",
+        "Printable: the page still works almost identically with any calm or SEL character; Ganesha is presently decorative rather than structurally necessary."
+      ]
+    },
+    "kid_choice_test": {
+      "result": "FLAGGED",
+      "findings": [
+        "The printable strongly resembles schoolwork because it asks the child to sort text cards into two labeled buckets on paper.",
+        "The Try It Today version is somewhat better because it can be played with another person or with spoken words, but it still leans instructional.",
+        "The story is accessible, but it is more lesson-delivery than delight or adventure."
+      ]
+    }
+  },
+  "issues": [
+    {
+      "id": "EARS-QA-001",
+      "severity": "high",
+      "category": "COMPOSER",
+      "artifact": "combined_journey",
+      "title": "Try It Today and printable repeat the same mechanic",
+      "detail": "The vertical slice is supposed to reinforce one belief across formats without repeating the same mechanic. Here, the printable is essentially the Try It Today activity rendered onto paper, so the journey lacks progression."
+    },
+    {
+      "id": "EARS-QA-002",
+      "severity": "medium",
+      "category": "WISDOM",
+      "artifact": "story, try_it_today, printable",
+      "title": "The wisdom is flattened into generic helpful-vs-mean sorting",
+      "detail": "The child-facing outputs capture the basic keep-vs-noise idea, but they reduce winnowing discernment into a simple positive-vs-negative word sort. The deeper sense of listening for what is truly wise or growth-bearing is only partially present."
+    },
+    {
+      "id": "EARS-QA-003",
+      "severity": "medium",
+      "category": "CONTENT",
+      "artifact": "story",
+      "title": "Story is didactic and only lightly dramatized",
+      "detail": "The story delivers the teaching clearly, but the lesson arrives as an explicit explanation from Bodhi rather than through a richer child-scale problem-solving moment. It reads more like a moral example than a memorable mini-adventure."
+    },
+    {
+      "id": "EARS-QA-004",
+      "severity": "medium",
+      "category": "ACTIVITY",
+      "artifact": "printable",
+      "title": "Printable feels like worksheet work more than chosen play",
+      "detail": "The page is clean and functional, but the child interaction is still a text-sorting worksheet. It does not yet create enough playful energy or surprise to feel voluntarily chosen by many 5–12-year-olds."
+    },
+    {
+      "id": "EARS-QA-005",
+      "severity": "medium",
+      "category": "CONTENT",
+      "artifact": "story, try_it_today, printable",
+      "title": "Remove-Ganesha test is not passed",
+      "detail": "Ganesha is named, but the outputs do not yet rely strongly enough on a specifically Ganesha-rooted image, action, or narrative logic. Most of the slice would still work almost unchanged with a generic wise listening character."
+    },
+    {
+      "id": "EARS-QA-006",
+      "severity": "low",
+      "category": "RENDERING",
+      "artifact": "printable",
+      "title": "Rendering quality is solid",
+      "detail": "No layout, fitting, slot-resolution, or obvious visual production issues were found in the rendered printable. Current concerns are semantic and product-facing rather than renderer defects."
+    }
+  ],
+  "strengths": [
+    "The Ears belief stays consistent across story, activity, and printable.",
+    "The printable rendering is production-clean and technically reliable.",
+    "The core practice of sorting helpful language from unhelpful noise is understandable for children."
+  ],
+  "baseline_recommendation": {
+    "status": "NEEDS_REVISION",
+    "reason": "The slice is technically working and semantically coherent, but it is not yet strong enough as a product experience because Ganesha specificity is weak and the activity/printable pair repeat the same mechanic."
+  }
+}

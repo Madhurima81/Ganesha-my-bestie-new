@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "1.0",
+  "status": "VALIDATED",
+  "blueprintReference": { "id": "STORY_001" },
+  "storyFlow": {
+    "sequence": [{ "id": "FLOW_SETUP", "purpose": "Establish protagonist and situation" }],
+    "centralDramaticQuestion": "Will Anu find the courage to try again?",
+    "resolution": "Anu learns that trying again builds confidence."
+  },
+  "scenePlan": [{ "id": "SCENE_001", "purpose": "Introduce the problem", "beats": ["BEAT_SETUP"] }],
+  "pagePlan": [
+    { "page": 1, "objective": "Introduce hero and problem", "pageTurnGoal": "CURIOSITY", "finalText": "Once upon a time, Anu stood at the edge of the forest..." }
+  ],
+  "emotionPlan": [{ "id": "EMOTION_001", "function": "Establish curiosity" }],
+  "symbolPlan": [],
+  "craftPlan": [],
+  "directorValidation": { "status": "PASS", "blockingFailures": 0, "warnings": 0, "rulesPassed": 16 }
+}
