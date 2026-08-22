@@ -1,6 +1,7 @@
 // zones/symbol-mountain/shared/components/SymbolPowerMission.jsx
 import React, { useState, useEffect } from 'react';
 import './SymbolPowerMission.css';
+import CloseButton from '../../../../components/CloseButton';
 
 const SymbolPowerMission = ({
   show,
@@ -96,13 +97,11 @@ const SymbolPowerMission = ({
         
         {/* Cancel Button */}
         {rescuePhase === 'problem' && onCancel && (
-          <button 
-            className="symbol-mission-btn-close" 
-            onClick={onCancel}
-            aria-label="Close"
-          >
-            ✕
-          </button>
+          <CloseButton
+            className="symbol-mission-btn-close"
+            onClose={onCancel}
+            label="Close"
+          />
         )}
 
         {/* Title */}

@@ -121,11 +121,11 @@ export default function SarvakaryeshuGame({
   const { hintLevel, pulseTick, markInteraction } = useRepeatedHintCycle({
     enabled: isActive && !isPaused && phase === 'play' && canPick,
     stageKey: isActive ? `card-${cardIndex}` : null,
-    initialDelay: 8500,
+    initialDelay: 14000,
     pulseCountBeforeEscalation: 3,
-    pulseInterval: 1500,
-    level2Delay: 16000,
-    level3Delay: 23000,
+    pulseInterval: 1800,
+    level2Delay: 22000,
+    level3Delay: 30000,
   });
 
   useEffect(() => {
@@ -325,7 +325,11 @@ export default function SarvakaryeshuGame({
 
         {phase === 'play' && (
           <div className={`sarva-card${isCorrect ? ' is-correct' : ''}`} key={situation.id}>
-            <div ref={imageWrapRef} className={`sarva-card-img-wrap${imageHit ? ' power-hit' : ''}`}>
+            <div
+              ref={imageWrapRef}
+              className={`sarva-card-img-wrap${imageHit ? ' power-hit' : ''}${showAfter ? ' is-after-reveal' : ''}`}
+            >
+              {showAfter && <div className="sarva-after-badge">After</div>}
               <img
                 className={`sarva-card-img${showAfter ? ' is-after' : ''}`}
                 src={showAfter ? situation.after : situation.before}

@@ -683,11 +683,11 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     }
     // Reset shake states on tab return
     if (shakeLang !== null) {
-      console.log('[Tab Return] Clearing shake state for language guess');
+      if (import.meta.env.DEV) console.log('[Tab Return] Clearing shake state for language guess');
       setShakeLang(null);
     }
     if (shakeGuess !== null) {
-      console.log('[Tab Return] Clearing shake state for festival guess');
+      if (import.meta.env.DEV) console.log('[Tab Return] Clearing shake state for festival guess');
       setShakeGuess(null);
     }
     // Play return hint VO if audio is on
@@ -996,23 +996,23 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   useEffect(() => {
     if (phase !== STEPS.GANESHA_HOME || discoveredLocations.length === PHASE1_LOCATIONS.length) {
       if (ganeshaHomeIdleLevel > 0) {
-        console.log('[Idle Hint] Cleared: Exiting Ganesha Home phase or all spots discovered');
+        if (import.meta.env.DEV) console.log('[Idle Hint] Cleared: Exiting Ganesha Home phase or all spots discovered');
       }
       setGaneshaHomeIdleLevel(0);
       ganeshaHomeIdleVoiceRef.current = false;
       if (ganeshaHomeIdleTimerRef.current) clearTimeout(ganeshaHomeIdleTimerRef.current);
       return;
     }
-    console.log('[Idle Hint] Started: Ganesha Home phase idle timer will trigger in 6s');
+    if (import.meta.env.DEV) console.log('[Idle Hint] Started: Ganesha Home phase idle timer will trigger in 6s');
 
     ganeshaHomeIdleTimerRef.current = setTimeout(() => {
       // Level 1 @ 10 seconds: Spots glow once + magnifying glass wobbles
-      console.log('[Idle Hint] Level 1 triggered: Spots glow + magnifying glass wobbles');
+      if (import.meta.env.DEV) console.log('[Idle Hint] Level 1 triggered: Spots glow + magnifying glass wobbles');
       setGaneshaHomeIdleLevel(1);
 
       // Level 2 @ 18 seconds: Spots glow stronger + voice over (single play)
       ganeshaHomeIdleTimerRef.current = setTimeout(() => {
-        console.log('[Idle Hint] Level 2 triggered: Repeating glow + voice over');
+        if (import.meta.env.DEV) console.log('[Idle Hint] Level 2 triggered: Repeating glow + voice over');
         setGaneshaHomeIdleLevel(2);
         if (!ganeshaHomeIdleVoiceRef.current) {
           speakIfUnmuted('Drag the magnifying glass to find me.', { age: childAge, moment: 'default' });
@@ -1021,7 +1021,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
 
         // Level 3 @ 26 seconds: Pointing emoji + continue glowing (visual-only)
         ganeshaHomeIdleTimerRef.current = setTimeout(() => {
-          console.log('[Idle Hint] Level 3 triggered: Pointing emoji appears');
+          if (import.meta.env.DEV) console.log('[Idle Hint] Level 3 triggered: Pointing emoji appears');
           setGaneshaHomeIdleLevel(3);
           // Keep Level 3 visual-only to avoid VO overlap right after Level 2.
         }, 8000);
@@ -1105,23 +1105,23 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   useEffect(() => {
     if (phase !== STEPS.LANGUAGE_GANESHA || shakeLang !== null || langGuessPhase !== 'guessing' || !hasPressedLanguagePlay) {
       if (langGuessIdleLevel > 0) {
-        console.log('[Idle Hint Language] Cleared: Exiting phase or user made a guess');
+        if (import.meta.env.DEV) console.log('[Idle Hint Language] Cleared: Exiting phase or user made a guess');
       }
       setLangGuessIdleLevel(0);
       langGuessIdleVoiceRef.current = false;
       if (langGuessIdleTimerRef.current) clearTimeout(langGuessIdleTimerRef.current);
       return;
     }
-    console.log('[Idle Hint Language] Started: Idle timer will trigger in 10s');
+    if (import.meta.env.DEV) console.log('[Idle Hint Language] Started: Idle timer will trigger in 10s');
 
     langGuessIdleTimerRef.current = setTimeout(() => {
       // Level 1 @ 10 seconds: Cards wobble
-      console.log('[Idle Hint Language] Level 1 triggered: Cards wobble');
+      if (import.meta.env.DEV) console.log('[Idle Hint Language] Level 1 triggered: Cards wobble');
       setLangGuessIdleLevel(1);
 
       // Level 2 @ 18 seconds: Cards wobble + voice over
       langGuessIdleTimerRef.current = setTimeout(() => {
-        console.log('[Idle Hint Language] Level 2 triggered: Repeating wobble + voice over');
+        if (import.meta.env.DEV) console.log('[Idle Hint Language] Level 2 triggered: Repeating wobble + voice over');
         setLangGuessIdleLevel(2);
         if (!langGuessIdleVoiceRef.current) {
           speakIfUnmuted(VOICE.language_guess_hint, { age: childAge, moment: 'default' });
@@ -1130,7 +1130,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
 
         // Level 3 @ 26 seconds: stronger glow only (visual-only, no repeated VO)
         langGuessIdleTimerRef.current = setTimeout(() => {
-          console.log('[Idle Hint Language] Level 3 triggered: Repeat hint audio');
+          if (import.meta.env.DEV) console.log('[Idle Hint Language] Level 3 triggered: Repeat hint audio');
           setLangGuessIdleLevel(3);
           // Keep Level 3 visual-only to avoid back-to-back hint VO.
         }, 8000);
@@ -1146,23 +1146,23 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   useEffect(() => {
     if (phase !== STEPS.FESTIVALS_GANESHA || shakeGuess !== null || guessPhase !== 'guessing') {
       if (festGuessIdleLevel > 0) {
-        console.log('[Idle Hint Festival] Cleared: Exiting phase or user made a guess');
+        if (import.meta.env.DEV) console.log('[Idle Hint Festival] Cleared: Exiting phase or user made a guess');
       }
       setFestGuessIdleLevel(0);
       festGuessIdleVoiceRef.current = false;
       if (festGuessIdleTimerRef.current) clearTimeout(festGuessIdleTimerRef.current);
       return;
     }
-    console.log('[Idle Hint Festival] Started: Idle timer will trigger in 10s');
+    if (import.meta.env.DEV) console.log('[Idle Hint Festival] Started: Idle timer will trigger in 10s');
 
     festGuessIdleTimerRef.current = setTimeout(() => {
       // Level 1 @ 10 seconds: Cards wobble
-      console.log('[Idle Hint Festival] Level 1 triggered: Cards wobble');
+      if (import.meta.env.DEV) console.log('[Idle Hint Festival] Level 1 triggered: Cards wobble');
       setFestGuessIdleLevel(1);
 
       // Level 2 @ 18 seconds: Cards wobble + voice over
       festGuessIdleTimerRef.current = setTimeout(() => {
-        console.log('[Idle Hint Festival] Level 2 triggered: Repeating wobble + voice over');
+        if (import.meta.env.DEV) console.log('[Idle Hint Festival] Level 2 triggered: Repeating wobble + voice over');
         setFestGuessIdleLevel(2);
         if (!festGuessIdleVoiceRef.current) {
           speakIfUnmuted(VOICE.festivals_guess_hint, { age: childAge, moment: 'default' });
@@ -1171,7 +1171,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
 
         // Level 3 @ 26 seconds: stronger glow only (no repeated VO)
         festGuessIdleTimerRef.current = setTimeout(() => {
-          console.log('[Idle Hint Festival] Level 3 triggered: stronger glow only');
+          if (import.meta.env.DEV) console.log('[Idle Hint Festival] Level 3 triggered: stronger glow only');
           setFestGuessIdleLevel(3);
         }, 8000);
       }, 8000);
@@ -1247,7 +1247,7 @@ const discoverLocation = useCallback((index) => {
     setMglassPosition(newPosition);
     // Reset idle hint level when user interacts
     if (phase === STEPS.GANESHA_HOME && ganeshaHomeIdleLevel > 0) {
-      console.log('[Idle Hint] Reset: User dragged magnifying glass');
+      if (import.meta.env.DEV) console.log('[Idle Hint] Reset: User dragged magnifying glass');
       setGaneshaHomeIdleLevel(0);
       ganeshaHomeIdleVoiceRef.current = false;
       if (ganeshaHomeIdleTimerRef.current) clearTimeout(ganeshaHomeIdleTimerRef.current);
@@ -1272,7 +1272,7 @@ const discoverLocation = useCallback((index) => {
     childHomeIdleHintVoiceRef.current = false;
     // Reset idle hint on region selection
     if (ganeshaHomeIdleLevel > 0) {
-      console.log('[Idle Hint] Reset: Child selected region');
+      if (import.meta.env.DEV) console.log('[Idle Hint] Reset: Child selected region');
       setGaneshaHomeIdleLevel(0);
       ganeshaHomeIdleVoiceRef.current = false;
     }
@@ -1296,7 +1296,7 @@ const discoverLocation = useCallback((index) => {
     triggerSparkle({ type: 'single', durationMs: 1200, position: langSparklePosition, radius: 170 });
     // Reset idle hints on language selection
     if (langGuessIdleLevel > 0) {
-      console.log('[Idle Hint Language] Reset: Child selected language');
+      if (import.meta.env.DEV) console.log('[Idle Hint Language] Reset: Child selected language');
       setLangGuessIdleLevel(0);
       langGuessIdleVoiceRef.current = false;
       if (langGuessIdleTimerRef.current) clearTimeout(langGuessIdleTimerRef.current);
@@ -1340,7 +1340,7 @@ const discoverLocation = useCallback((index) => {
     triggerSparkle({ type: 'single', durationMs: 1200, position: festSparklePosition, radius: 170 });
     // Reset idle hints on festival selection
     if (festGuessIdleLevel > 0) {
-      console.log('[Idle Hint Festival] Reset: Child selected festival');
+      if (import.meta.env.DEV) console.log('[Idle Hint Festival] Reset: Child selected festival');
       setFestGuessIdleLevel(0);
       festGuessIdleVoiceRef.current = false;
       if (festGuessIdleTimerRef.current) clearTimeout(festGuessIdleTimerRef.current);

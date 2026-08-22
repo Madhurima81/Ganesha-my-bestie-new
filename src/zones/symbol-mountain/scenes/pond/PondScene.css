@@ -1827,6 +1827,16 @@
   pointer-events: none;
 }
 
+.pond-lotus-bloom-pop {
+  animation: pondLotusBloomPop 900ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes pondLotusBloomPop {
+  0% { transform: scale(0.75) rotate(-6deg); filter: brightness(1); }
+  55% { transform: scale(1.18) rotate(3deg); filter: brightness(1.25); }
+  100% { transform: scale(1) rotate(0deg); filter: brightness(1); }
+}
+
 .pond-fish-overlay {
   position: absolute;
   top: 42%;
@@ -1858,6 +1868,94 @@
 .pond-fit-image {
   width: 100%;
   height: 100%;
+}
+
+/* ==================== V6 TRUNK/LOTUS FLOW (rock + free-drag + single lotus) ==================== */
+.pond-trunk-rock {
+  position: absolute;
+  left: 29%;
+  top: 42%;
+  width: 22%;
+  height: auto;
+  pointer-events: none;
+  z-index: 20;
+  filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.35));
+}
+
+.pond-trunk-lotus {
+  position: absolute;
+  left: 71%;
+  top: 46%;
+  width: 15%;
+  min-width: 70px;
+  min-height: 70px;
+  z-index: 21;
+}
+
+.pond-water-source {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: clamp(48px, 6vw, 72px);
+  height: clamp(48px, 6vw, 72px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(22px, 3vw, 32px);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(184, 229, 251, 0.55) 0%, rgba(58, 143, 203, 0.25) 100%);
+  box-shadow: 0 0 16px rgba(91, 179, 232, 0.55);
+  cursor: grab;
+  touch-action: none;
+  z-index: 25;
+  animation: pondWaterSourcePulse 1.6s ease-in-out infinite;
+}
+
+@keyframes pondWaterSourcePulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.08); }
+}
+
+.pond-route-stone {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: clamp(28px, 3.4vw, 42px);
+  height: clamp(28px, 3.4vw, 42px);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 23;
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+.pond-trail-dot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, #cfeeff 0%, #5BB3E8 100%);
+  pointer-events: none;
+  z-index: 24;
+  transition: opacity 0.25s ease-out;
+}
+
+.pond-lead-drop {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: clamp(30px, 4vw, 44px);
+  height: clamp(30px, 4vw, 44px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(18px, 2.4vw, 26px);
+  pointer-events: none;
+  z-index: 26;
+  filter: drop-shadow(0 3px 6px rgba(0, 100, 200, 0.5));
+  transition: opacity 0.3s ease-out;
+}
+
+.pond-lotus-wake-glow {
+  position: absolute;
+  inset: -20%;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .pond-drag-path-overlay {

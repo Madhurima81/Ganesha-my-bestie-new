@@ -32,12 +32,6 @@ const Wish2PlateDropGame = ({
   const firstAvailableFoodKey = activeFoodPool[0];
   const pointerStart = WISH2_FOOD_POSITIONS[firstAvailableFoodKey] || { left: '18%', top: '62%' };
   const pointerTarget = WISH2_PLATE_POSITIONS[firstUnfilledBowlIndex] || { left: '50%', top: '62%' };
-  const showWish2DragPointer =
-    wish2IdleLevel >= 3 &&
-    (sceneState.wish2Taps || 0) < 3 &&
-    activeFoodPool.length > 0 &&
-    firstUnfilledBowlIndex !== null &&
-    firstUnfilledBowlIndex !== undefined;
 
   return (
     <div className="wish-screen">
@@ -78,22 +72,6 @@ const Wish2PlateDropGame = ({
           idleDelay={1800}
           zIndex={24}
         />
-
-        {showWish2DragPointer && (
-          <div className="wish2-drag-pointer-overlay" aria-hidden="true">
-            <img
-              className="wish2-drag-pointer-hand"
-              src="/images/ganesha-point.png"
-              alt=""
-              style={{
-                '--wish2-pointer-start-left': pointerStart.left,
-                '--wish2-pointer-start-top': pointerStart.top,
-                '--wish2-pointer-end-left': pointerTarget.left,
-                '--wish2-pointer-end-top': pointerTarget.top,
-              }}
-            />
-          </div>
-        )}
 
         {/* Food items */}
         {WISH2_FOOD_KEYS.map((foodKey) => {

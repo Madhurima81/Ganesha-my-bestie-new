@@ -820,7 +820,10 @@ const SacredAssemblyContent = ({
     if (cardPhase === 'side') {
       // No VO here � card is mid-flip, child can't read it yet
       playUiTap();
-      const t = safeSetTimeout(() => setCardPhase('flipped'), 1150);
+      // Card slides to the side over a 1.1s CSS transition (see style block below) —
+      // wait for the slide to visibly finish before starting the flip, so the two
+      // animations never overlap even on a slower device.
+      const t = safeSetTimeout(() => setCardPhase('flipped'), 1350);
       return () => clearTimeout(t);
     }
 
@@ -1169,8 +1172,8 @@ const SacredAssemblyContent = ({
     // Fallback
     if (!tLeft) tLeft = '50%'; 
   
-    console.log(`?? Flying to: Top ${tTop}, Left ${tLeft}`); // Debug log
-  
+    if (import.meta.env.DEV) console.log(`Flying to: Top ${tTop}, Left ${tLeft}`);
+
     setFlyingSymbol({
       image: symbol.image,
       targetTop: tTop,
@@ -2122,8 +2125,8 @@ const SacredAssemblyContent = ({
               onProgress={() => {
                 setShowCulturalCelebration(true);
               }}
-              onHelp={() => console.log('Show help')}
-              onParentMenu={() => console.log('Parent menu')}
+              onHelp={() => { if (import.meta.env.DEV) console.log('Show help'); }}
+              onParentMenu={() => { if (import.meta.env.DEV) console.log('Parent menu'); }}
               isAudioOn={isAudioOn}
               onAudioToggle={toggleAudio}
               onZonesClick={() => {

@@ -33,6 +33,12 @@ const CleanProfileSelector = ({
   const { isAudioOn, toggleAudio } = useAudioPreference();
 
   const longPressTimer = React.useRef(null);
+  // HIGH FIX: guards against the stale-closure touchend synthetic click. The
+  // 900ms timer flips manageModeId state, but a touchend-triggered click event
+  // fires with the pre-timer `isManaging` closure still false, launching the
+  // game instead of entering delete mode. A ref updates synchronously so the
+  // click handler always sees the current value.
+  const isManagingRef = React.useRef(false);
   const voiceTimersRef = useRef([]);
   const hasPlayedFriendChoiceVoRef = useRef(false);
   const playedStepVoRef = useRef({ 1: false, 2: false, 3: false });
@@ -418,23 +424,30 @@ const CleanProfileSelector = ({
               {profileArray.map((profile) => {
                 const animalId = getAnimalId(profile.avatar);
                 const isManaging = manageModeId === profile.id;
+                isManagingRef.current = isManaging;
                 return (
                   <div
                     key={profile.id}
                     className={`clean-profile-card ${isManaging ? 'manage' : ''}`}
                     onClick={() => {
-                      if (!isManaging) {
+                      if (!isManagingRef.current) {
                         playUiTap(0.24);
                         onProfileSelect(profile.id);
                       }
                     }}
                     onMouseDown={() => {
-                      longPressTimer.current = setTimeout(() => setManageModeId(profile.id), 900);
+                      longPressTimer.current = setTimeout(() => {
+                        isManagingRef.current = true;
+                        setManageModeId(profile.id);
+                      }, 900);
                     }}
                     onMouseUp={clearLongPressTimer}
                     onMouseLeave={clearLongPressTimer}
                     onTouchStart={() => {
-                      longPressTimer.current = setTimeout(() => setManageModeId(profile.id), 900);
+                      longPressTimer.current = setTimeout(() => {
+                        isManagingRef.current = true;
+                        setManageModeId(profile.id);
+                      }, 900);
                     }}
                     onTouchEnd={clearLongPressTimer}
                     onTouchCancel={clearLongPressTimer}

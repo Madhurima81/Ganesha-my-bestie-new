@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vakratunda Trace Gameplay Preview</title>
+  <style>
+    :root {
+      --bg: #f8f1df;
+      --card: rgba(255, 251, 240, 0.9);
+      --ink: #5a3f2b;
+      --accent: #ef9f27;
+      --soft: #ffe8b3;
+      --river: #6ec1ff;
+      --grass: #d9ee68;
+      --hill: #cbb5f3;
+      --line: #ee9f4e;
+      --glow: rgba(255, 215, 120, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(255, 247, 205, 0.95), transparent 28%),
+        linear-gradient(180deg, #f7efe2 0%, #f3ead8 100%);
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .page {
+      max-width: 1300px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid rgba(165, 120, 40, 0.12);
+      border-radius: 28px;
+      box-shadow: 0 16px 40px rgba(105, 78, 38, 0.12);
+      backdrop-filter: blur(10px);
+      padding: 22px;
+    }
+
+    h1,
+    h2,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 28px;
+      line-height: 1.1;
+      margin-bottom: 10px;
+    }
+
+    .intro {
+      font-size: 15px;
+      line-height: 1.45;
+      margin-bottom: 18px;
+      color: rgba(90, 63, 43, 0.88);
+    }
+
+    .phase-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255, 228, 164, 0.7);
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .helper-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 16px 0 18px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 999px;
+      background: #fff3ca;
+      color: var(--ink);
+      padding: 10px 14px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(125, 96, 36, 0.12);
+    }
+
+    button.primary {
+      background: linear-gradient(135deg, #f4ac45 0%, #ec8e2a 100%);
+      color: white;
+    }
+
+    .steps {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .step {
+      padding: 12px 14px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.68);
+      border: 1px solid rgba(225, 197, 139, 0.38);
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .step.active {
+      border-color: rgba(239, 159, 39, 0.7);
+      box-shadow: 0 0 0 3px rgba(239, 159, 39, 0.14);
+    }
+
+    .step strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .hint {
+      margin-top: 18px;
+      padding: 12px 14px;
+      border-radius: 18px;
+      background: rgba(144, 208, 255, 0.12);
+      border: 1px dashed rgba(83, 158, 220, 0.38);
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .stage-shell {
+      position: relative;
+    }
+
+    .caption {
+      margin-top: 12px;
+      text-align: center;
+      font-size: 14px;
+      color: rgba(90, 63, 43, 0.82);
+    }
+
+    .game {
+      position: relative;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      border-radius: 30px;
+      background:
+        linear-gradient(180deg, #f2e8ff 0%, #efe7fd 22%, transparent 22%),
+        linear-gradient(180deg, transparent 0%, transparent 62%, var(--grass) 62%, #d3ee5f 100%);
+      border: 1px solid rgba(183, 152, 111, 0.24);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+      touch-action: none;
+      user-select: none;
+    }
+
+    .hill {
+      position: absolute;
+      background: rgba(190, 163, 238, 0.62);
+      border-radius: 50%;
+      filter: blur(0.2px);
+    }
+
+    .hill.one { width: 45%; height: 24%; left: -4%; top: 11%; }
+    .hill.two { width: 42%; height: 26%; left: 21%; top: 8%; background: rgba(180, 149, 235, 0.65); }
+    .hill.three { width: 38%; height: 20%; right: -2%; top: 13%; background: rgba(204, 191, 243, 0.72); }
+
+    .river {
+      position: absolute;
+      left: -6%;
+      right: -4%;
+      top: 38%;
+      height: 44%;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.02)),
+        linear-gradient(90deg, #7fc9ff 0%, #62b4f3 42%, #7bc9ff 100%);
+      border-top: 12px solid #c88528;
+      transform: rotate(6deg);
+      border-radius: 50% 12% 0 0 / 18% 14% 0 0;
+      box-shadow: inset 0 18px 0 rgba(255,255,255,0.08);
+    }
+
+    .river::before,
+    .river::after {
+      content: "";
+      position: absolute;
+      left: 6%;
+      right: 8%;
+      height: 12%;
+      border-radius: 999px;
+      border-top: 5px solid rgba(255,255,255,0.25);
+      transform: rotate(-7deg);
+    }
+
+    .river::before { top: 25%; }
+    .river::after { top: 58%; left: 18%; right: 16%; }
+
+    .entity {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .frog {
+      width: 10%;
+      filter: drop-shadow(0 8px 12px rgba(0,0,0,0.14));
+      transition: none;
+    }
+
+    .family {
+      width: 16%;
+      filter: drop-shadow(0 10px 12px rgba(0,0,0,0.12));
+    }
+
+    .obstacle {
+      filter: drop-shadow(0 12px 14px rgba(0,0,0,0.18));
+    }
+
+    .obstacle.logpile { width: 17%; }
+    .obstacle.rock { width: 18%; }
+    .obstacle.reed { width: 12%; }
+
+    .pad {
+      width: 9.5%;
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.6);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      filter: drop-shadow(0 8px 10px rgba(0,0,0,0.14));
+    }
+
+    .pad.visible {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .current {
+      position: absolute;
+      border-radius: 999px;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 28% 45%, rgba(255,255,255,0.55) 0 10%, transparent 11%),
+        linear-gradient(90deg, rgba(62,156,235,0.08) 0%, rgba(62,156,235,0.34) 42%, rgba(123,204,255,0.08) 100%);
+      filter: blur(1px);
+      opacity: 0.92;
+      animation: drift 1.5s ease-in-out infinite;
+    }
+
+    .current.diag {
+      left: 29%;
+      top: 50%;
+      width: 21%;
+      height: 10%;
+      transform: rotate(18deg);
+    }
+
+    .current.right {
+      left: 56%;
+      top: 62%;
+      width: 20%;
+      height: 9%;
+    }
+
+    .helper-path,
+    .trace-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .helper-path polyline {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.38);
+      stroke-width: 11;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 10 12;
+    }
+
+    .helper-path.hidden {
+      opacity: 0;
+    }
+
+    .trace-svg polyline.glow {
+      fill: none;
+      stroke: rgba(255, 228, 166, 0.72);
+      stroke-width: 18;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: blur(4px);
+    }
+
+    .trace-svg polyline.line {
+      fill: none;
+      stroke: var(--line);
+      stroke-width: 9;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .ring {
+      position: absolute;
+      width: 8.5%;
+      aspect-ratio: 1;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      border: 3px dashed rgba(241, 162, 52, 0.82);
+      background: radial-gradient(circle, rgba(255, 220, 150, 0.12) 0%, rgba(255, 220, 150, 0.02) 58%, transparent 72%);
+      pointer-events: none;
+      animation: pulse 1.15s ease-in-out infinite;
+      transition: left 0.18s ease-out, top 0.18s ease-out, opacity 0.18s ease-out;
+    }
+
+    .ring.start {
+      border-style: solid;
+      border-color: rgba(255, 226, 150, 0.8);
+      box-shadow: 0 0 18px rgba(255, 215, 120, 0.18);
+    }
+
+    .status {
+      position: absolute;
+      left: 16px;
+      top: 16px;
+      z-index: 3;
+      background: rgba(255, 250, 234, 0.86);
+      padding: 10px 14px;
+      border-radius: 16px;
+      font-size: 14px;
+      font-weight: 700;
+      box-shadow: 0 8px 18px rgba(104, 77, 30, 0.08);
+    }
+
+    .toast {
+      position: absolute;
+      left: 50%;
+      bottom: 22px;
+      transform: translateX(-50%);
+      z-index: 4;
+      background: rgba(90, 63, 43, 0.9);
+      color: white;
+      padding: 12px 18px;
+      border-radius: 999px;
+      font-size: 14px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      opacity: 1;
+    }
+
+    .syllables {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .syllable {
+      padding: 10px 14px;
+      border-radius: 14px;
+      background: rgba(214, 205, 232, 0.65);
+      color: rgba(90, 63, 43, 0.72);
+      font-weight: 800;
+      min-width: 50px;
+      text-align: center;
+    }
+
+    .syllable.lit {
+      background: linear-gradient(180deg, #ffd981 0%, #f5b33f 100%);
+      color: #73460c;
+      box-shadow: 0 8px 18px rgba(239, 159, 39, 0.22);
+    }
+
+    .syllable.dim {
+      background: linear-gradient(180deg, #f4dea9 0%, #dcb56e 100%);
+      color: rgba(115, 70, 12, 0.7);
+    }
+
+    .legend {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+      font-size: 13px;
+      color: rgba(90, 63, 43, 0.78);
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.66);
+      border-radius: 999px;
+      padding: 7px 10px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .dot.orange { background: var(--line); }
+    .dot.blue { background: #67b8f6; }
+    .dot.gold { background: #f0b64b; }
+
+    @keyframes pulse {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.62; }
+      50% { transform: translate(-50%, -50%) scale(1.08); opacity: 1; }
+    }
+
+    @keyframes drift {
+      0%, 100% { transform: translateX(0) scaleX(1); opacity: 0.72; }
+      50% { transform: translateX(3%) scaleX(1.05); opacity: 1; }
+    }
+
+    @media (max-width: 980px) {
+      .page {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <aside class="panel">
+      <h1>Vakratunda Gameplay Preview</h1>
+      <p class="intro">
+        This HTML shows the gameplay idea clearly: the child traces the safe route through obstacles,
+        and lily pads appear only when the route is traced correctly.
+      </p>
+
+      <div class="syllables" id="syllables">
+        <div class="syllable" data-syllable="va">va</div>
+        <div class="syllable" data-syllable="kra">kra</div>
+        <div class="syllable" data-syllable="tun">tun</div>
+        <div class="syllable" data-syllable="da">da</div>
+      </div>
+
+      <div class="phase-badge" id="phaseBadge">Phase: va</div>
+
+      <div class="helper-row">
+        <button class="primary" id="resetBtn">Reset Demo</button>
+        <button class="primary" id="autoBtn">Play Auto Demo</button>
+        <button id="helperBtn">Hide Helper Path</button>
+      </div>
+
+      <div class="steps">
+        <div class="step active" id="step-va">
+          <strong>1. `va` attempt</strong>
+          Try the straight route first. It looks tempting, but the current will prove it is not the safe way.
+        </div>
+        <div class="step" id="step-kra">
+          <strong>2. `kra` reroute</strong>
+          Start again and move up around the log pile instead of going through the middle.
+        </div>
+        <div class="step" id="step-tun">
+          <strong>3. `tun` continue</strong>
+          From the middle checkpoint, guide the frog past the rock and towards the family.
+        </div>
+      </div>
+
+      <div class="hint" id="hintBox">
+        Touch the frog and drag along the visible helper path. Once this feels right, we can make the helper path fainter in the actual game.
+      </div>
+
+      <div class="legend">
+        <span><i class="dot orange"></i>Your trace</span>
+        <span><i class="dot blue"></i>Current push</span>
+        <span><i class="dot gold"></i>Lily pads revealed</span>
+      </div>
+    </aside>
+
+    <section class="stage-shell">
+      <div class="game panel" id="game">
+        <div class="status" id="statusText">Trace from the frog to begin.</div>
+        <div class="toast" id="toast"></div>
+
+        <div class="hill one"></div>
+        <div class="hill two"></div>
+        <div class="hill three"></div>
+        <div class="river"></div>
+
+        <div class="current diag"></div>
+        <div class="current right"></div>
+
+        <svg class="helper-path" id="helperPath" viewBox="0 0 1000 563" preserveAspectRatio="none">
+          <polyline id="helperPolyline" points=""></polyline>
+        </svg>
+
+        <svg class="trace-svg" viewBox="0 0 1000 563" preserveAspectRatio="none">
+          <polyline class="glow" id="traceGlow" points=""></polyline>
+          <polyline class="line" id="traceLine" points=""></polyline>
+        </svg>
+
+        <div class="ring start" id="startRing"></div>
+        <div class="ring" id="targetRing"></div>
+
+        <img class="entity frog" id="frog" src="../src/zones/shloka-river/scenes/Scene1/assets/images/vakratunda/frog-swim.webp" alt="" />
+        <img class="entity family" id="family" src="../src/zones/shloka-river/scenes/Scene1/assets/images/vakratunda/frog-family-from-download.webp" alt="" style="left: 81%; top: 54%;" />
+        <img class="entity obstacle logpile" src="../src/zones/shloka-river/scenes/Scene1/assets/images/vakratunda/19.png" alt="" style="left: 27%; top: 63%; transform: translate(-50%, -50%) rotate(4deg);" />
+        <img class="entity obstacle rock" src="../src/zones/shloka-river/scenes/Scene1/assets/images/vakratunda/18.png" alt="" style="left: 58%; top: 55%;" />
+        <img class="entity obstacle reed" src="../src/zones/shloka-river/scenes/Scene3/assets/images/nirvighnam/reed.png" alt="" style="left: 78%; top: 25%; transform: translate(-50%, -50%) rotate(-4deg);" />
+
+        <img class="entity pad" id="pad1" src="../src/zones/shloka-river/scenes/Scene1/assets/images/vakratunda/lilypad.webp" alt="" />
+        <img class="entity pad" id="pad2" src="../src/zones/shloka-river/scenes/Scene1/assets/images/vakratunda/lilypad.webp" alt="" />
+        <img class="entity pad" id="pad3" src="../src/zones/shloka-river/scenes/Scene1/assets/images/vakratunda/lilypad.webp" alt="" />
+        <img class="entity pad" id="pad4" src="../src/zones/shloka-river/scenes/Scene1/assets/images/vakratunda/lilypad.webp" alt="" />
+        <img class="entity pad" id="pad5" src="../src/zones/shloka-river/scenes/Scene1/assets/images/vakratunda/lilypad.webp" alt="" />
+        <img class="entity pad" id="pad6" src="../src/zones/shloka-river/scenes/Scene1/assets/images/vakratunda/lilypad.webp" alt="" />
+      </div>
+      <div class="caption">
+        This is a readable prototype: in the real scene the helper path can be lighter, delayed, or shown only after a hint.
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const phases = {
+      va: {
+        label: "va",
+        points: [
+          { x: 140, y: 320 },
+          { x: 240, y: 300 },
+          { x: 330, y: 304 },
+          { x: 410, y: 332 }
+        ],
+        checkpoints: [1, 2, 3],
+        helper: "Try the straight route first. It will fail because the current is too strong.",
+        status: "Trace the straight route.",
+        syllables: { lit: [], dim: [] }
+      },
+      kra: {
+        label: "kra",
+        points: [
+          { x: 140, y: 320 },
+          { x: 190, y: 252 },
+          { x: 304, y: 248 },
+          { x: 404, y: 270 },
+          { x: 498, y: 264 }
+        ],
+        checkpoints: [1, 2, 4],
+        helper: "Now find the safer route above the log pile.",
+        status: "Trace around the log pile.",
+        syllables: { lit: ["va"], dim: [] }
+      },
+      tun: {
+        label: "tun",
+        points: [
+          { x: 498, y: 264 },
+          { x: 560, y: 344 },
+          { x: 680, y: 350 },
+          { x: 790, y: 316 }
+        ],
+        checkpoints: [1, 2, 3],
+        helper: "Continue from the middle checkpoint and curve past the rock.",
+        status: "Guide the frog to the family.",
+        syllables: { lit: ["va", "kra"], dim: [] }
+      }
+    };
+
+    const obstacleEllipses = [
+      { x: 270, y: 350, rx: 86, ry: 66 },
+      { x: 580, y: 306, rx: 88, ry: 88 },
+      { x: 780, y: 145, rx: 54, ry: 78 }
+    ];
+
+    const pads = [
+      document.getElementById("pad1"),
+      document.getElementById("pad2"),
+      document.getElementById("pad3"),
+      document.getElementById("pad4"),
+      document.getElementById("pad5"),
+      document.getElementById("pad6")
+    ];
+
+    const game = document.getElementById("game");
+    const frog = document.getElementById("frog");
+    const startRing = document.getElementById("startRing");
+    const targetRing = document.getElementById("targetRing");
+    const helperPath = document.getElementById("helperPath");
+    const helperPolyline = document.getElementById("helperPolyline");
+    const traceGlow = document.getElementById("traceGlow");
+    const traceLine = document.getElementById("traceLine");
+    const hintBox = document.getElementById("hintBox");
+    const phaseBadge = document.getElementById("phaseBadge");
+    const statusText = document.getElementById("statusText");
+    const toast = document.getElementById("toast");
+    const helperBtn = document.getElementById("helperBtn");
+
+    let phase = "va";
+    let tracing = false;
+    let activeSegment = 0;
+    let tracePoints = [];
+    let helperVisible = true;
+    let committedPads = [];
+    let tempPads = [];
+    let autoDemoRunning = false;
+
+    function setToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(setToast.timer);
+      setToast.timer = setTimeout(() => toast.classList.remove("show"), 1600);
+    }
+
+    function pointToPct(point) {
+      return {
+        left: `${(point.x / 1000) * 100}%`,
+        top: `${(point.y / 563) * 100}%`
+      };
+    }
+
+    function setEntityPosition(el, point) {
+      const pct = pointToPct(point);
+      el.style.left = pct.left;
+      el.style.top = pct.top;
+    }
+
+    function distance(a, b) {
+      return Math.hypot(a.x - b.x, a.y - b.y);
+    }
+
+    function distanceToSegment(point, start, end) {
+      const dx = end.x - start.x;
+      const dy = end.y - start.y;
+      if (!dx && !dy) return { distance: distance(point, start), t: 0 };
+      const rawT = ((point.x - start.x) * dx + (point.y - start.y) * dy) / (dx * dx + dy * dy);
+      const t = Math.max(0, Math.min(1, rawT));
+      const px = start.x + dx * t;
+      const py = start.y + dy * t;
+      return { distance: Math.hypot(point.x - px, point.y - py), t };
+    }
+
+    function insideObstacle(point) {
+      return obstacleEllipses.some((obs) => {
+        const dx = (point.x - obs.x) / obs.rx;
+        const dy = (point.y - obs.y) / obs.ry;
+        return dx * dx + dy * dy <= 1;
+      });
+    }
+
+    function renderPads() {
+      pads.forEach((pad) => {
+        pad.classList.remove("visible");
+      });
+      const allPads = [...committedPads, ...tempPads];
+      allPads.forEach((point, index) => {
+        const pad = pads[index];
+        if (!pad) return;
+        setEntityPosition(pad, point);
+        pad.classList.add("visible");
+      });
+    }
+
+    function renderTrace() {
+      const points = tracePoints.map((p) => `${p.x},${p.y}`).join(" ");
+      traceGlow.setAttribute("points", points);
+      traceLine.setAttribute("points", points);
+    }
+
+    function updateStepUI() {
+      document.getElementById("step-va").classList.toggle("active", phase === "va");
+      document.getElementById("step-kra").classList.toggle("active", phase === "kra");
+      document.getElementById("step-tun").classList.toggle("active", phase === "tun");
+    }
+
+    function updateSyllables() {
+      const items = [...document.querySelectorAll(".syllable")];
+      items.forEach((item) => {
+        item.classList.remove("lit", "dim");
+      });
+
+      if (phase === "va") return;
+
+      if (phase === "kra") {
+        document.querySelector('[data-syllable="va"]').classList.add("dim");
+        return;
+      }
+
+      if (phase === "tun") {
+        document.querySelector('[data-syllable="va"]').classList.add("lit");
+        document.querySelector('[data-syllable="kra"]').classList.add("lit");
+        return;
+      }
+
+      document.querySelector('[data-syllable="va"]').classList.add("lit");
+      document.querySelector('[data-syllable="kra"]').classList.add("lit");
+      document.querySelector('[data-syllable="tun"]').classList.add("lit");
+      document.querySelector('[data-syllable="da"]').classList.add("lit");
+    }
+
+    function layoutForPhase() {
+      const config = phases[phase];
+      helperPolyline.setAttribute("points", config.points.map((p) => `${p.x},${p.y}`).join(" "));
+      setEntityPosition(startRing, config.points[0]);
+      setEntityPosition(targetRing, config.points[Math.min(activeSegment + 1, config.points.length - 1)]);
+      hintBox.textContent = config.helper;
+      phaseBadge.textContent = `Phase: ${config.label}`;
+      statusText.textContent = config.status;
+      updateStepUI();
+      updateSyllables();
+      if (phase === "va" || phase === "kra") {
+        setEntityPosition(frog, config.points[0]);
+      }
+      if (phase === "tun") {
+        setEntityPosition(frog, config.points[0]);
+      }
+    }
+
+    function resetTraceOnly() {
+      tracing = false;
+      activeSegment = 0;
+      tracePoints = [];
+      tempPads = [];
+      renderTrace();
+      renderPads();
+      layoutForPhase();
+    }
+
+    function resetDemo() {
+      autoDemoRunning = false;
+      phase = "va";
+      tracing = false;
+      activeSegment = 0;
+      tracePoints = [];
+      committedPads = [];
+      tempPads = [];
+      frog.src = "../src/zones/shloka-river/scenes/Scene1/assets/images/vakratunda/frog-swim.webp";
+      renderTrace();
+      renderPads();
+      layoutForPhase();
+      setToast("Demo reset.");
+    }
+
+    function failAttempt(message) {
+      if (autoDemoRunning) return;
+      tracing = false;
+      tracePoints = [];
+      tempPads = [];
+      activeSegment = 0;
+      renderTrace();
+      renderPads();
+      setToast(message);
+      statusText.textContent = "Try again from the frog.";
+    }
+
+    function completePhase() {
+      if (phase === "va") {
+        tracing = false;
+        tempPads = [];
+        tracePoints = [];
+        renderTrace();
+        renderPads();
+        setEntityPosition(frog, { x: 430, y: 335 });
+        document.querySelector('[data-syllable="va"]').classList.add("dim");
+        statusText.textContent = "The current pushes the frog away.";
+        setToast("Too strong. Find another route.");
+        setTimeout(() => {
+          phase = "kra";
+          activeSegment = 0;
+          layoutForPhase();
+        }, 900);
+        return;
+      }
+
+      if (phase === "kra") {
+        committedPads = [...tempPads];
+        tempPads = [];
+        tracePoints = [];
+        tracing = false;
+        activeSegment = 0;
+        renderTrace();
+        renderPads();
+        phase = "tun";
+        layoutForPhase();
+        setToast("Good. Now continue to the family.");
+        return;
+      }
+
+      if (phase === "tun") {
+        committedPads = [...committedPads, ...tempPads];
+        tempPads = [];
+        tracePoints = [];
+        tracing = false;
+        activeSegment = 0;
+        renderTrace();
+        renderPads();
+        frog.src = "../src/zones/shloka-river/scenes/Scene1/assets/images/vakratunda/frog-happy.webp";
+        setEntityPosition(frog, { x: 790, y: 316 });
+        phaseBadge.textContent = "Phase: da";
+        statusText.textContent = "Reunion complete.";
+        hintBox.textContent = "This is where `da` lands and the frog reunites with the family.";
+        updateSyllables();
+        document.querySelector('[data-syllable="va"]').classList.add("lit");
+        document.querySelector('[data-syllable="kra"]').classList.add("lit");
+        document.querySelector('[data-syllable="tun"]').classList.add("lit");
+        document.querySelector('[data-syllable="da"]').classList.add("lit");
+        setToast("Vakratunda complete.");
+      }
+    }
+
+    function beginTrace(point) {
+      if (autoDemoRunning) return;
+      const config = phases[phase];
+      if (distance(point, config.points[0]) > 52) return;
+      tracing = true;
+      activeSegment = 0;
+      tracePoints = [config.points[0], point];
+      statusText.textContent = "Keep tracing the safe route.";
+      renderTrace();
+    }
+
+    function continueTrace(point) {
+      if (autoDemoRunning) return;
+      if (!tracing) return;
+      const config = phases[phase];
+      const start = config.points[activeSegment];
+      const end = config.points[activeSegment + 1];
+      if (!start || !end) return;
+
+      if (insideObstacle(point)) {
+        failAttempt("Oops, that went into an obstacle.");
+        return;
+      }
+
+      const seg = distanceToSegment(point, start, end);
+      if (seg.distance > 44) {
+        failAttempt("Too far away from the route.");
+        return;
+      }
+
+      tracePoints.push(point);
+      renderTrace();
+      setEntityPosition(frog, point);
+
+      if (seg.t < 0.9 && distance(point, end) > 28) return;
+
+      const reachedIndex = activeSegment + 1;
+      if (config.checkpoints.includes(reachedIndex)) {
+        tempPads = config.checkpoints
+          .filter((index) => index <= reachedIndex)
+          .map((index) => config.points[index]);
+        renderPads();
+      }
+
+      if (reachedIndex >= config.points.length - 1) {
+        completePhase();
+        return;
+      }
+
+      activeSegment = reachedIndex;
+      setEntityPosition(targetRing, config.points[activeSegment + 1]);
+    }
+
+    function pointerPoint(event) {
+      const rect = game.getBoundingClientRect();
+      return {
+        x: ((event.clientX - rect.left) / rect.width) * 1000,
+        y: ((event.clientY - rect.top) / rect.height) * 563
+      };
+    }
+
+    function wait(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
+    function easeInOutSine(t) {
+      return -(Math.cos(Math.PI * t) - 1) / 2;
+    }
+
+    function animatePosition(element, fromPoint, toPoint, duration = 600) {
+      return new Promise((resolve) => {
+        const startTime = performance.now();
+
+        function frame(now) {
+          const elapsed = now - startTime;
+          const t = Math.min(1, elapsed / duration);
+          const eased = easeInOutSine(t);
+          const point = {
+            x: fromPoint.x + (toPoint.x - fromPoint.x) * eased,
+            y: fromPoint.y + (toPoint.y - fromPoint.y) * eased
+          };
+          setEntityPosition(element, point);
+          if (t < 1) {
+            requestAnimationFrame(frame);
+          } else {
+            resolve();
+          }
+        }
+
+        requestAnimationFrame(frame);
+      });
+    }
+
+    async function animateTrace(routePoints, checkpointIndices, options = {}) {
+      const {
+        duration = 1850,
+        liftAtEnd = false
+      } = options;
+
+      tracing = true;
+      activeSegment = 0;
+      tracePoints = [routePoints[0]];
+      tempPads = [];
+      renderTrace();
+      setEntityPosition(frog, routePoints[0]);
+      setEntityPosition(startRing, routePoints[0]);
+      setEntityPosition(targetRing, routePoints[1] || routePoints[0]);
+      const segmentLengths = [];
+      let totalLength = 0;
+      for (let i = 0; i < routePoints.length - 1; i += 1) {
+        const len = distance(routePoints[i], routePoints[i + 1]);
+        segmentLengths.push(len);
+        totalLength += len;
+      }
+
+      for (let segmentIndex = 0; segmentIndex < routePoints.length - 1; segmentIndex += 1) {
+        const start = routePoints[segmentIndex];
+        const end = routePoints[segmentIndex + 1];
+        const segmentDuration = Math.max(320, (segmentLengths[segmentIndex] / totalLength) * duration);
+        const startTime = performance.now();
+
+        await new Promise((resolve) => {
+          function frame(now) {
+            const elapsed = now - startTime;
+            const t = Math.min(1, elapsed / segmentDuration);
+            const eased = easeInOutSine(t);
+            const point = {
+              x: start.x + (end.x - start.x) * eased,
+              y: start.y + (end.y - start.y) * eased
+            };
+            tracePoints.push(point);
+            if (tracePoints.length > 220) {
+              tracePoints = tracePoints.slice(tracePoints.length - 220);
+            }
+            renderTrace();
+            setEntityPosition(frog, point);
+
+            if (t < 1) {
+              requestAnimationFrame(frame);
+            } else {
+              resolve();
+            }
+          }
+
+          requestAnimationFrame(frame);
+        });
+
+        activeSegment = segmentIndex + 1;
+        if (checkpointIndices.includes(activeSegment)) {
+          tempPads = checkpointIndices
+            .filter((index) => index <= activeSegment)
+            .map((index) => routePoints[index]);
+          renderPads();
+        }
+
+        if (routePoints[activeSegment + 1]) {
+          setEntityPosition(targetRing, routePoints[activeSegment + 1]);
+        }
+      }
+
+      if (liftAtEnd) {
+        await wait(240);
+      }
+
+      tracing = false;
+    }
+
+    async function playAutoDemo() {
+      if (autoDemoRunning) return;
+      autoDemoRunning = true;
+      resetDemo();
+      autoDemoRunning = true;
+      statusText.textContent = "Auto demo is showing the full gameplay.";
+      setToast("Auto demo started.");
+
+      const vaConfig = phases.va;
+      await animateTrace(vaConfig.points, vaConfig.checkpoints, { duration: 1600, liftAtEnd: true });
+      tempPads = [];
+      tracePoints = [];
+      renderPads();
+      renderTrace();
+      await animatePosition(frog, vaConfig.points[vaConfig.points.length - 1], { x: 430, y: 335 }, 650);
+      document.querySelector('[data-syllable="va"]').classList.add("dim");
+      statusText.textContent = "First route fails because of the current.";
+      setToast("The current pushes the frog away.");
+      await wait(1200);
+
+      phase = "kra";
+      activeSegment = 0;
+      layoutForPhase();
+      await wait(650);
+      const kraConfig = phases.kra;
+      await animateTrace(kraConfig.points, kraConfig.checkpoints, { duration: 2200 });
+      committedPads = [...tempPads];
+      tempPads = [];
+      tracePoints = [];
+      renderPads();
+      renderTrace();
+      document.querySelector('[data-syllable="va"]').classList.remove("dim");
+      document.querySelector('[data-syllable="va"]').classList.add("lit");
+      document.querySelector('[data-syllable="kra"]').classList.add("lit");
+      setToast("Now the safer route is found.");
+      await wait(900);
+
+      phase = "tun";
+      activeSegment = 0;
+      layoutForPhase();
+      await wait(650);
+      const tunConfig = phases.tun;
+      await animateTrace(tunConfig.points, tunConfig.checkpoints, { duration: 2100 });
+      committedPads = [...committedPads, ...tempPads];
+      tempPads = [];
+      tracePoints = [];
+      renderPads();
+      renderTrace();
+      frog.src = "../src/zones/shloka-river/scenes/Scene1/assets/images/vakratunda/frog-happy.webp";
+      setEntityPosition(frog, { x: 790, y: 316 });
+      phaseBadge.textContent = "Phase: da";
+      statusText.textContent = "Reunion complete.";
+      hintBox.textContent = "This is the full intended flow: try, fail, reroute, continue, reunite.";
+      document.querySelector('[data-syllable="tun"]').classList.add("lit");
+      document.querySelector('[data-syllable="da"]').classList.add("lit");
+      setToast("Vakratunda complete.");
+      autoDemoRunning = false;
+    }
+
+    game.addEventListener("pointerdown", (event) => {
+      if (!phases[phase]) return;
+      beginTrace(pointerPoint(event));
+      game.setPointerCapture(event.pointerId);
+    });
+
+    game.addEventListener("pointermove", (event) => {
+      if (!tracing) return;
+      continueTrace(pointerPoint(event));
+    });
+
+    function stopTrace(event) {
+      if (event && game.hasPointerCapture(event.pointerId)) {
+        game.releasePointerCapture(event.pointerId);
+      }
+      if (tracing) {
+        failAttempt("Keep your finger on the route until the checkpoint.");
+      }
+    }
+
+    game.addEventListener("pointerup", stopTrace);
+    game.addEventListener("pointercancel", stopTrace);
+
+    document.getElementById("resetBtn").addEventListener("click", resetDemo);
+    document.getElementById("autoBtn").addEventListener("click", playAutoDemo);
+    helperBtn.addEventListener("click", () => {
+      helperVisible = !helperVisible;
+      helperPath.classList.toggle("hidden", !helperVisible);
+      helperBtn.textContent = helperVisible ? "Hide Helper Path" : "Show Helper Path";
+    });
+
+    layoutForPhase();
+    renderPads();
+    renderTrace();
+    window.setTimeout(() => {
+      playAutoDemo();
+    }, 700);
+  </script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 import './CloseButton.css';
 
-export default function CloseButton({ onClose, label = 'Close dialog' }) {
+export default function CloseButton({ onClose, label = 'Close dialog', className = '' }) {
   const handle = () => {
     window.speechSynthesis?.cancel?.();
     onClose?.();
@@ -9,7 +9,7 @@ export default function CloseButton({ onClose, label = 'Close dialog' }) {
   return (
     <button
       type="button"
-      className="gmb-close-btn"
+      className={`gmb-close-btn ${className}`.trim()}
       onClick={handle}
       aria-label={label}
     >

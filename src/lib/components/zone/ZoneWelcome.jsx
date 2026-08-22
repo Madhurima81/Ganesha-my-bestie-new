@@ -32,7 +32,7 @@ const ZONE_LIFE_CONFIG = {
   'symbol-mountain': {
     creature: {
       kind: 'butterfly',
-      src: '/images/map/butterflyyellow.png',
+      src: '/images/map/butterflyyellow.webp',
       alt: 'Yellow butterfly',
       className: 'zone-card-creature--butterfly zone-card-creature--yellow',
     },
@@ -45,7 +45,7 @@ const ZONE_LIFE_CONFIG = {
   'shloka-river': {
     creature: {
       kind: 'butterfly',
-      src: '/images/map/butterflyblue.png',
+      src: '/images/map/butterflyblue.webp',
       alt: 'Blue butterfly',
       className: 'zone-card-creature--butterfly zone-card-creature--blue',
     },
@@ -96,7 +96,7 @@ const ZONE_LIFE_CONFIG = {
   'story-treehouse': {
     creature: {
       kind: 'bird',
-      src: '/images/map/birdnew.png',
+      src: '/images/map/birdnew.webp',
       alt: 'Yellow bird',
       className: 'zone-card-creature--bird zone-card-creature--yellow',
     },
@@ -123,6 +123,12 @@ const ZoneWelcome = ({
   const [isHomeExiting, setIsHomeExiting] = useState(false);
   const [profileChipPulse, setProfileChipPulse] = useState(false);
   const [confetti, setConfetti] = useState([]);
+  // HIGH FIX: tracked in a ref so the confetti cleanup timer survives effect
+  // re-runs. Previously the setTimeout lived only in the effect's own closure —
+  // if sceneProgress kept updating within the 1500ms window, each re-run's
+  // cleanup cancelled the pending setConfetti([]) and started a fresh timer,
+  // so cleanup could be deferred indefinitely and confetti DOM nodes leaked.
+  const confettiTimeoutRef = React.useRef(null);
 
   const dlog = import.meta.env.DEV ? console.log : () => {};
 
@@ -285,12 +291,24 @@ useEffect(() => {
       delay: Math.random() * 0.2
     }));
     setConfetti(newConfetti);
-  }
-  if (confetti.length > 0) {
-    const timer = setTimeout(() => setConfetti([]), 1500);
-    return () => clearTimeout(timer);
+
+    // Always clear any prior pending cleanup before scheduling a fresh one —
+    // the timeout lives in a ref, so a re-render/re-run of this effect from an
+    // unrelated sceneProgress update can never orphan it.
+    if (confettiTimeoutRef.current) clearTimeout(confettiTimeoutRef.current);
+    confettiTimeoutRef.current = setTimeout(() => {
+      setConfetti([]);
+      confettiTimeoutRef.current = null;
+    }, 1500);
   }
 }, [sceneProgress, zoneData?.scenes, confetti.length]);
+
+// Belt-and-braces: clear the confetti timeout on unmount.
+useEffect(() => {
+  return () => {
+    if (confettiTimeoutRef.current) clearTimeout(confettiTimeoutRef.current);
+  };
+}, []);
 
 // ✅ FIXED: Check BOTH permanent AND temporary storage
 const loadSceneProgress = () => {
@@ -1040,7 +1058,7 @@ const handleReplayIntroStory = () => {
                     {/* Moon overlay for MVP locked scenes */}
                     {status.status === 'locked' && (
                       <div className="scene-lock-overlay" aria-hidden="true">
-                        <img src="/images/map/lock.png" alt="" className="scene-lock-icon" />
+                        <img src="/images/map/lock.webp" alt="" className="scene-lock-icon" />
                       </div>
                     )}
                   </div>
@@ -1175,7 +1193,7 @@ const handleReplayIntroStory = () => {
     const progressDotsCount = completedCount;
     const allScenesCompleted = completedCount >= totalScenes && totalScenes > 0;
 
-    const statIcon = '/images/icons/symbols-icon.png';
+    const statIcon = '/images/icons/symbols-icon.webp';
     const statLabel = 'Scenes';
 
     return (

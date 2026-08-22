@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './ProgressPopup.css';
 import { symbolCardContent } from '../../../zones/symbol-mountain/shared/components/symbolCardContent';
+import CloseButton from '../../../components/CloseButton';
 
 const AUDIO_PREF_KEY = 'ganesha_audio_enabled';
 
@@ -131,16 +132,17 @@ const DetailCard = ({
   <div className={overlayClassName} onClick={onClose}>
     <div className={cardClassName} onClick={onCardTap}>
       {showCloseButton ? (
-        <button
-          className="pp-detail-close"
+        <div
           onClick={(e) => {
             e.stopPropagation();
-            onClose();
           }}
-          aria-label="Close"
         >
-          &times;
-        </button>
+          <CloseButton
+            className="pp-detail-close"
+            onClose={onClose}
+            label="Close"
+          />
+        </div>
       ) : null}
 
       <div className={`symbol-content ${cardClassName.includes('open') || cardClassName.includes('instant') ? 'open' : ''}`}>

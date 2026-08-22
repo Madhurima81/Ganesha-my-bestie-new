@@ -17,6 +17,7 @@ import HomeButton from '../../../lib/components/ui/HomeButton';
 import AudioToggle from '../../../lib/components/ui/AudioToggle/AudioToggle';
 import ZoneBadgeButton from '../../../lib/components/navigation/ZoneBadgeButton';
 import VOReplayButton from '../../../lib/components/feedback/VOReplayButton';
+import CloseButton from '../../../components/CloseButton';
 import useAudioPreference from '../../../lib/hooks/useAudioPreference';
 import useResumeCountdown from '../../../lib/hooks/useResumeCountdown';
 import ResumeCountdown from '../../../lib/components/feedback/ResumeCountdown';
@@ -636,7 +637,7 @@ const FamilyTreeGameContent = ({
 
  const { gamePhase, placedGaneshaMembers, childFamily } = sceneState;
 
- console.log(" Reload detected, gamePhase:", gamePhase);
+ if (import.meta.env.DEV) console.log(" Reload detected, gamePhase:", gamePhase);
 
  // Clear any existing timeouts
  cancelTimer(resumePopupTimeoutRef);
@@ -907,7 +908,7 @@ showTreeSparkles: false,
 
  if (allPlacedSequenceStartedRef.current) return;
  allPlacedSequenceStartedRef.current = true;
- console.log(" allPlaced sequence STARTED");
+ if (import.meta.env.DEV) console.log(" allPlaced sequence STARTED");
 
  // Wait for last deity VO to complete (varies by deity: 2.5-3.5s) + 1s gap
  // Using 5000ms to safely account for all deity VOs + TTS variation
@@ -915,7 +916,7 @@ showTreeSparkles: false,
  const ALL_PLACED_SPARKLE_MS = 2500;
 
 allPlacedSequenceTimerRef.current = scheduleTimeout(() => {
-console.log(" allPlaced timeout FIRED, calling speakHint");
+if (import.meta.env.DEV) console.log(" allPlaced timeout FIRED, calling speakHint");
 sceneActions.updateState({ showTreeSparkles: true });
 allPlacedSparkleTimerRef.current = scheduleTimeout(() => {
 sceneActions.updateState({ showTreeSparkles: false });
@@ -1433,7 +1434,7 @@ sceneActions.updateState({ gamePhase: 'transition' });
 
  {/* Home Button */}
  <HomeButton onNavigate={onNavigate} />
- <ZoneBadgeButton zoneId="about-me-hut" onBack={() => { onNavigate?.('zone-welcome') || onBack?.(); }} />
+ <ZoneBadgeButton zoneId="about-me-hut" onBack={() => { onNavigate?.('zone-welcome'); }} />
  <AudioToggle isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
  <VOReplayButton onReplay={replayCurrentVoice} disabled={!isAudioOn} />
 
@@ -1809,15 +1810,15 @@ sceneActions.updateState({ gamePhase: 'transition' });
  {sceneState.showNameModal && sceneState.currentFamilyType && (
  <div className="modal-overlay">
  <div className="name-input-modal" style={kbStyle}>
- <button className="modal-close-btn" onClick={() => {
- // Dismiss resume popup on any action
- if (showResumePopup) {
- setShowResumePopup(false);
- cancelTimer(resumePopupTimeoutRef);
- }
- stopVoice(); // Stop VO when modal closes
- sceneActions.updateState({ showNameModal: false });
- }}>×</button>
+<CloseButton className="modal-close-btn" onClose={() => {
+// Dismiss resume popup on any action
+if (showResumePopup) {
+setShowResumePopup(false);
+cancelTimer(resumePopupTimeoutRef);
+}
+stopVoice(); // Stop VO when modal closes
+sceneActions.updateState({ showNameModal: false });
+}} />
  <div className="modal-emoji-large" style={{ width: '100px', height: '100px', margin: '0 auto 15px' }}>
  <img src={sceneState.currentFamilyType.image} alt={sceneState.currentFamilyType.label} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
  </div>

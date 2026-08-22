@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import './CulturalCelebrationModal.css';
 import CulturalProgressExtractor from '../../services/CulturalProgressExtractor';
+import CloseButton from '../../../components/CloseButton';
 
 const CulturalCelebrationModal = ({ 
   show = false,
@@ -185,7 +186,7 @@ const CulturalCelebrationModal = ({
       <div className="adventure-celebration-modal" onClick={(e) => e.stopPropagation()}>
         
         {/* Close Button */}
-        <button className="adventure-close-btn" onClick={onClose}>×</button>
+        <CloseButton className="adventure-close-btn" onClose={onClose} />
         
         {/* ✨ DEBUG: Manual refresh button (remove in production) */}
         {process.env.NODE_ENV === 'development' && (

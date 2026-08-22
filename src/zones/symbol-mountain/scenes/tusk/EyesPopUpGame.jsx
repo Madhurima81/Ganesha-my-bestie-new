@@ -1,19 +1,17 @@
 ﻿// zones/symbol-mountain/scenes/symbol/EyesPopUpGame.jsx
-// ðŸŽ¯ Eyes Pop-Up Game â€” discover 4 animals as they fade in/out from hidden spots
+// ðŸŽ¯ Eyes Pop-Up Game â€” discover 2 animals as they fade in/out from hidden spots
 // Replaces EyesTelescopeGame (magnifier mechanic)
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './EyesPopUpGame.css';
 
 // Animals
-import peacockImg from './assets/images/peacock-new.png';
-import monkeyImg from './assets/images/monkey-new.png';
-import elephantImg from './assets/images/elephant-new1.png';
-import cowImg from './assets/images/cow-new.png';
-import bgBackImg from './assets/images/trail-bg.png';
-import backRocksImg from './assets/images/trail-back.png';
-import middleRocksImg from './assets/images/trail-mid.png';
-import frontRocksImg from './assets/images/trail-front.png';
+import peacockImg from './assets/images/peacock-new.webp';
+import monkeyImg from './assets/images/monkey-new.webp';
+import bgBackImg from './assets/images/trail-bg.webp';
+import backRocksImg from './assets/images/trail-back.webp';
+import middleRocksImg from './assets/images/trail-mid.webp';
+import frontRocksImg from './assets/images/trail-front.webp';
 import { ANIMAL_SIZES } from './animalConfig';
 import { ANIMAL_POSITIONS } from './animalPositions';
 
@@ -23,16 +21,12 @@ import { ANIMAL_POSITIONS } from './animalPositions';
 const VO_PATHS = {
   peacock: null,
   monkey: null,
-  elephant: null,
-  cow: null,
   intro: null
 };
 const VO_TEXTS = {
   intro: 'Look closely. Tap the animals when you see them.',
   peacock: 'Peacock',
-  monkey: 'Monkey',
-  elephant: 'Elephant',
-  cow: 'Cow'
+  monkey: 'Monkey'
 };
 
 // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -41,10 +35,9 @@ const VO_TEXTS = {
 
 const ANIMALS = [
   { id: 'peacock', name: 'Peacock', img: peacockImg, vo: VO_PATHS.peacock },
-  { id: 'monkey', name: 'Monkey', img: monkeyImg, vo: VO_PATHS.monkey },
-  { id: 'elephant', name: 'Elephant', img: elephantImg, vo: VO_PATHS.elephant },
-  { id: 'cow', name: 'Cow', img: cowImg, vo: VO_PATHS.cow }
+  { id: 'monkey', name: 'Monkey', img: monkeyImg, vo: VO_PATHS.monkey }
 ];
+const TOTAL_ANIMALS_TO_FIND = ANIMALS.length;
 
 // Each animal gets its own small pool of hide options.
 // This keeps placements natural and lets us randomize one option per animal at runtime.
@@ -56,14 +49,6 @@ const ANIMAL_HIDE_OPTIONS = {
   monkey: [
     { id: 'monkey-1', x: 27.54, y: 48.37, zone: 'left-bushes', depth: 'behind-middle', revealOffsetX: 0, revealOffsetY: 0, scale: 1.7 },
     { id: 'monkey-2', x: 77.07, y: 32.79, zone: 'mid-trail', depth: 'behind-middle', revealOffsetX: 0, revealOffsetY: 0, scale: 1.7 }
-  ],
-  elephant: [
-    { id: 'elephant-1', x: 21.89, y: 55.42, zone: 'left-rocks', depth: 'behind-middle', revealOffsetX: 0, revealOffsetY: 0, scale: 2.8 },
-    { id: 'elephant-2', x: 68.79, y: 64.5, zone: 'mid-trail', depth: 'between-middle-front', revealOffsetX: 0, revealOffsetY: 0, scale: 2.8 }
-  ],
-  cow: [
-    { id: 'cow-1', x: 23.96, y: 72.09, zone: 'left-rocks', depth: 'between-middle-front', revealOffsetX: 0, revealOffsetY: 0, scale: 2.4 },
-    { id: 'cow-2', x: 88.65, y: 54.34, zone: 'right-rocks', depth: 'between-middle-front', revealOffsetX: 0, revealOffsetY: 0, scale: 2.4 }
   ]
 };
 const ZONES = {
@@ -91,9 +76,7 @@ const DEBUG_MODE_STORAGE_KEY = 'symbol_mountain_eyes_debug_mode_v2';
 const DEBUG_DEPTHS = ['behind-middle', 'behind-front', 'between-middle-front'];
 const DEBUG_ASSIGNMENT_COLORS = {
   peacock: '#22d3ee',
-  monkey: '#fb923c',
-  elephant: '#9ca3af',
-  cow: '#f8fafc'
+  monkey: '#fb923c'
 };
 // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // HELPERS
@@ -359,7 +342,7 @@ const EyesPopUpGame = ({
   // Pop cycle: pick an undiscovered animal, show it, hide it, repeat
   useEffect(() => {
     if (!isActive) return;
-    if (discovered.size >= 4) return;
+    if (discovered.size >= TOTAL_ANIMALS_TO_FIND) return;
 
     let stopped = false;
 
@@ -388,7 +371,7 @@ const EyesPopUpGame = ({
 
   // Idle hint: if no tap for 8s, glow one undiscovered animal
   useEffect(() => {
-    if (!isActive || discovered.size >= 4) return;
+    if (!isActive || discovered.size >= TOTAL_ANIMALS_TO_FIND) return;
 
     const checkIdle = () => {
       const idleMs = Date.now() - lastTapTimeRef.current;
@@ -444,7 +427,7 @@ const EyesPopUpGame = ({
 
   // Win condition
   useEffect(() => {
-    if (discovered.size === 4 && onGameComplete) {
+    if (discovered.size === TOTAL_ANIMALS_TO_FIND && onGameComplete) {
       const completionTimer = setTimeout(() => {
         // Report the fixed resting spot each animal snapped to on discovery
         // (see the render below) — not the random hide spot it came from —
@@ -462,7 +445,7 @@ const EyesPopUpGame = ({
         }, {});
         onGameComplete({
           discoveredAnimals: Array.from(discovered),
-          totalDiscovered: 4,
+          totalDiscovered: TOTAL_ANIMALS_TO_FIND,
           assignedSpots
         });
       }, 1200);

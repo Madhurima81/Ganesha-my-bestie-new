@@ -4,6 +4,7 @@ import './SyllableHighlight.css';
 export default function SyllableHighlight({
   syllables = [],
   litCount = 0,
+  dimIndices = [],
   audioSyllables = [],
   onSyllableLit = null,
 }) {
@@ -25,7 +26,12 @@ export default function SyllableHighlight({
   return (
     <div className="syl-row" role="status" aria-live="polite">
       {syllables.map((s, i) => (
-        <span key={i} className={`syl ${i < litCount ? 'lit' : ''}`}>{s}</span>
+        <span
+          key={i}
+          className={`syl ${i < litCount ? 'lit' : ''} ${dimIndices.includes(i) ? 'is-dimmed' : ''}`}
+        >
+          {s}
+        </span>
       ))}
     </div>
   );

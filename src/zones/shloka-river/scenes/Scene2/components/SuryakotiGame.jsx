@@ -297,6 +297,15 @@ export default function SuryakotiGame({
     drawingRef.current = false;
   }, []);
 
+  // Pause-triggered cleanup: clears an in-progress scratch-drag if isPaused
+  // flips true mid-gesture (pause button, tab switch, etc.), mirroring
+  // MahakayaRescueGame's pattern.
+  useEffect(() => {
+    if (isPaused) {
+      drawingRef.current = false;
+    }
+  }, [isPaused]);
+
   const completeAfterSuccess = useCallback(() => {
     if (!successVoDoneRef.current || !hopDoneRef.current || completionScheduledRef.current) return;
     completionScheduledRef.current = true;

@@ -1,7 +1,7 @@
 ﻿// zones/shloka-river/scenes/Scene1/VakratundaGroveSimplified.jsx
 // FIXED: Removed SanskritWordMission, connected PowerUnlockOverlay directly to next phase
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useGameSounds } from '../../../../lib/hooks/useGameSounds';
 import './VakratundaGroveSimplified.css';
 
@@ -55,7 +55,7 @@ import MahakayaRescueGame from './MahakayaRescueGame';
 import ganeshaHeadphones from './assets/images/ganesha_with_headphones.webp';
 
 // Images
-import riverBackground from './assets/images/riverbg-new.png';
+import riverBackground from './assets/images/riverbg-new.webp';
 import mooshikaCoach from "./assets/images/mooshika-coach.webp";
 import banyanTree from './assets/images/banyan-full-from-download.webp';
 import symbolVakratunda from '../../../symbol-mountain/shared/images/icons/symbol-trunk-new.webp';
@@ -364,11 +364,11 @@ const VakratundaGroveContent = ({
     const webSpeechMap = {
       welcome: "Let's help our friends by the river.",
       instructionListen: 'Listen carefully.',
-      instructionTapAndRepeat: 'Tap a leaf, stone, or log.',
-      instructionTapTheElephant: 'Tap a leaf, stone, or log.',
-      hintTapElephant: 'Tap a leaf, stone, or log.',
+      instructionTapAndRepeat: 'Help guide the lily pad another way.',
+      instructionTapTheElephant: 'Help guide the lily pad another way.',
+      hintTapElephant: 'Help guide the lily pad another way.',
       hintLookForGlow: 'Drag it to the glowing circle.',
-      hintKeepBuildingPath: 'Keep building the path!',
+      hintKeepBuildingPath: 'Keep guiding the lily pad.',
       vakratundaSetup: 'The frog made it! He found his family!',
       vakratundaClaim: 'I find a new way.',
       mahakayaSetup: 'You chanted… and it grew tall and strong.',
@@ -381,14 +381,15 @@ const VakratundaGroveContent = ({
       instructionTapLily: 'Tap the lily.',
       instructionTapLilyUnlock: 'Tap the lily.',
       scene10_vak_intro: 'The little frog wants to meet his family!',
+      scene10_vak_current_too_strong: "The river current is too strong there. Let's try another way.",
       scene10_vak_frog_cross: 'The little frog wants to meet his family!',
-      scene10_vak_tap_logs: 'Tap the logs and see what happens.',
+      scene10_vak_tap_logs: 'Help guide the lily pad another way.',
       scene10_vak_blocked: 'Oh no... that way is blocked.',
-      scene10_vak_choose: 'Tap a leaf, stone, or log.',
-      scene10_vak_make_path: "Let's build a path.",
-      scene10_vak_drag_leaves: 'Drag the leaves onto the water.',
-      scene10_vak_drag: 'Now drag it to the glowing circles.',
-      scene10_vak_drag_pieces: 'Now drag it to the glowing circles.',
+      scene10_vak_choose: 'Help guide the lily pad another way.',
+      scene10_vak_make_path: "Let's find another way across.",
+      scene10_vak_drag_leaves: 'Drag the lily pad to the glowing circle.',
+      scene10_vak_drag: 'Now drag the lily pad to the glowing circle.',
+      scene10_vak_drag_pieces: 'Now drag the lily pad to the glowing circle.',
       scene10_vak_crossed: 'You found another way! The frog made it home to his family!',
       scene10_vak_meaning: 'Vakratunda means finding another way.',
       scene10_maha_intro: "Now let's help the little calf.",
@@ -413,7 +414,11 @@ const VakratundaGroveContent = ({
       return;
     }
     if (sceneState.phase === PHASES.VAKRATUNDA_GAME) {
-      playGuidanceVoice(vakratundaStage === 'build' ? 'scene10_vak_drag' : 'scene10_vak_choose');
+      if (vakratundaStage === 'vaFail') {
+        playGuidanceVoice('scene10_vak_current_too_strong');
+        return;
+      }
+      playGuidanceVoice(['kra', 'tun', 'da'].includes(vakratundaStage) ? 'scene10_vak_drag' : 'scene10_vak_choose');
       return;
     }
     if (sceneState.phase === PHASES.MAHAKAYA_GAME) {

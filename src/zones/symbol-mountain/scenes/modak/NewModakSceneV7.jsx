@@ -58,6 +58,7 @@ import OpeningModal from '../../../shared/components/OpeningModal';
 
 // UI Components
 import SparkleAnimation from '../../../../lib/components/animation/SparkleAnimation';
+import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
 // import Fireworks from '../../../../lib/components/feedback/Fireworks'; // ? replaced by FireworksCompletion
 import FireworksCompletion from '../../../../lib/components/feedback/FireworksCompletion';
 import SymbolSidebar from '../../shared/components/SymbolSidebar';
@@ -71,23 +72,23 @@ import { useGaneshaVoice } from '../../../../lib/hooks/useGaneshaVoice';
 
 // Images
 //import forestBackground from './assets/images/forest-background.webp';
-import forestBackground from './assets/images/newmodakbg.png';
+import forestBackground from './assets/images/newmodakbg.webp';
 // import foregroundOverlay from './assets/images/modaktree.png';
 import modak1 from './assets/images/modak-new.webp';
 import modak2 from './assets/images/modak-new.webp';
 import modak3 from './assets/images/modak-new.webp';
-import mooshikaActive from './assets/images/mushika-active-game2.png';
-import mooshikaCalm from './assets/images/mushika-calm-game2.png';
-import journeyFeather from './assets/images/journey-feather.png';
-import journeyBerry from './assets/images/journey-berry.png';
-import journeyAcorn from './assets/images/journey-acorn.png';
-import offeringFlower from './assets/images/offering-flower-game2.png';
-import offeringDurva from './assets/images/offering-durva-game2.png';
-import offeringGarland from './assets/images/offering-garland-game2.png';
-import emotionWorried from './assets/images/emotion-worried-game3.png';
-import emotionSad from './assets/images/emotion-sad-game3.png';
-import emotionAngry from './assets/images/emotion-angry-game3.png';
-import emotionHappy from './assets/images/emotion-happy-game3.png';
+import mooshikaActive from './assets/images/mushika-active-game2.webp';
+import mooshikaCalm from './assets/images/mushika-calm-game2.webp';
+import journeyFeather from './assets/images/journey-feather.webp';
+import journeyBerry from './assets/images/journey-berry.webp';
+import journeyAcorn from './assets/images/journey-acorn.webp';
+import offeringFlower from './assets/images/offering-flower-game2.webp';
+import offeringDurva from './assets/images/offering-durva-game2.webp';
+import offeringGarland from './assets/images/offering-garland-game2.webp';
+import emotionWorried from './assets/images/emotion-worried-game3.webp';
+import emotionSad from './assets/images/emotion-sad-game3.webp';
+import emotionAngry from './assets/images/emotion-angry-game3.webp';
+import emotionHappy from './assets/images/emotion-happy-game3.webp';
 import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-new.webp';
 import symbolModakColored from '../../shared/images/icons/symbol-modak-new.webp';
 import symbolBellyColored from '../../shared/images/icons/symbol-belly-new.webp';
@@ -97,7 +98,7 @@ import modakBefore from './assets/images/modak-before.webp';
 import modakAfter from './assets/images/modak-after.webp';
 import bellyBefore from './assets/images/belly-before.webp';
 import bellyAfter from './assets/images/belly-after.webp';
-import ganeshaFeeding from './assets/images/ganesha-game3-new.png';
+import ganeshaFeeding from './assets/images/ganesha-game3-new.webp';
 
 // ========================================
 // VO-GATED BUTTON COMPONENT
@@ -159,6 +160,13 @@ const MODAK_DISTRACTIONS = [
 ];
 const MUSHIKA_CLEARING_POSITION = { top: '58%', left: '35%' };
 const MUSHIKA_OFFERING_START_POSITION = { top: '64%', left: '18%' };
+const BELLY_GESTURE_TARGET = { x: 50, y: 72 };
+
+function parsePercentValue(value, fallback) {
+  if (value == null) return fallback;
+  const parsed = Number.parseFloat(String(value));
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
 const MUSHIKA_BELLY_POSITION = { top: '70%', left: '23%' };
 const MODAK_OFFERINGS = [
   { id: 'flower', image: offeringFlower, top: '38%', left: '28%', label: 'Red flower' },
@@ -1893,6 +1901,18 @@ const NewModakSceneMVPContent = ({
   const nextOfferingHintTarget =
     MODAK_OFFERINGS.find((_, index) => sceneState.modakStates?.[index] !== 1) ||
     MODAK_OFFERINGS[0];
+  const nextBellyEmotionHint =
+    BELLY_EMOTIONS.find((emotion) => !(sceneState.bellyEmotionIds || []).includes(emotion.id)) ||
+    BELLY_EMOTIONS[0];
+  const bellyGestureStart = nextBellyEmotionHint?.left != null
+    ? {
+        x: parsePercentValue(nextBellyEmotionHint.left, 24),
+        y: parsePercentValue(nextBellyEmotionHint.top, 55),
+      }
+    : {
+        x: 100 - parsePercentValue(nextBellyEmotionHint?.right, 32),
+        y: parsePercentValue(nextBellyEmotionHint?.top, 55),
+      };
   const jumpToDebugGame = useCallback((gameNumber) => {
     if (!sceneActions) return;
 
@@ -2654,39 +2674,40 @@ const NewModakSceneMVPContent = ({
               )}
 
               {/* Phase-specific gesture demos for the three games. */}
-              {showIdleGestureHint && isMooshikaSearchPhase && (
-                <div
-                  className="modak-drag-hint-overlay modak-gesture-demo modak-gesture-demo--hold-mooshika"
-                  style={{
-                    '--hint-left': (sceneState.mooshikaPosition || MODAK_DISTRACTIONS[0]).left,
-                    '--hint-top': (sceneState.mooshikaPosition || MODAK_DISTRACTIONS[0]).top
-                  }}
-                  aria-hidden="true"
-                >
-                  <img className="modak-drag-hint-hand" src="/images/ganesha-point.webp" alt="" />
-                </div>
-              )}
+              <GestureDemo
+                type="point"
+                from={{
+                  x: parsePercentValue((sceneState.mooshikaPosition || MODAK_DISTRACTIONS[0]).left, 24),
+                  y: parsePercentValue((sceneState.mooshikaPosition || MODAK_DISTRACTIONS[0]).top, 54),
+                }}
+                active={showIdleGestureHint && isMooshikaSearchPhase && !sceneState.mushikaHolding}
+                idleDelay={120}
+                zIndex={24}
+              />
 
-              {showIdleGestureHint && isOfferingPhase && (
-                <div
-                  className="modak-drag-hint-overlay modak-gesture-demo modak-gesture-demo--mooshika-offering"
-                  style={{
-                    '--hint-start-left': (sceneState.mooshikaPosition || MUSHIKA_OFFERING_START_POSITION).left,
-                    '--hint-start-top': (sceneState.mooshikaPosition || MUSHIKA_OFFERING_START_POSITION).top,
-                    '--hint-end-left': nextOfferingHintTarget.left,
-                    '--hint-end-top': nextOfferingHintTarget.top
-                  }}
-                  aria-hidden="true"
-                >
-                  <img className="modak-drag-hint-hand" src="/images/ganesha-point.webp" alt="" />
-                </div>
-              )}
+              <GestureDemo
+                type="drag"
+                from={{
+                  x: parsePercentValue((sceneState.mooshikaPosition || MUSHIKA_OFFERING_START_POSITION).left, 18),
+                  y: parsePercentValue((sceneState.mooshikaPosition || MUSHIKA_OFFERING_START_POSITION).top, 64),
+                }}
+                to={{
+                  x: parsePercentValue(nextOfferingHintTarget.left, 28),
+                  y: parsePercentValue(nextOfferingHintTarget.top, 38),
+                }}
+                active={showIdleGestureHint && isOfferingPhase && !isOfferingDragActive}
+                idleDelay={120}
+                zIndex={24}
+              />
 
-              {showIdleGestureHint && isBellyDragPhase && (
-                <div className="modak-drag-hint-overlay modak-gesture-demo modak-gesture-demo--emotion-belly" aria-hidden="true">
-                  <img className="modak-drag-hint-hand" src="/images/ganesha-point.webp" alt="" />
-                </div>
-              )}
+              <GestureDemo
+                type="drag"
+                from={bellyGestureStart}
+                to={BELLY_GESTURE_TARGET}
+                active={showIdleGestureHint && isBellyDragPhase}
+                idleDelay={120}
+                zIndex={24}
+              />
 
 
 

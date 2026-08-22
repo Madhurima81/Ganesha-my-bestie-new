@@ -299,6 +299,15 @@ export default function SamaprabhaGame({
     setDraggingState(false);
   }, []);
 
+  // Pause-triggered cleanup: clears an in-progress drag if isPaused flips true
+  // mid-gesture (pause button, tab switch, etc.), mirroring MahakayaRescueGame.
+  useEffect(() => {
+    if (isPaused) {
+      dragRef.current = false;
+      setDraggingState(false);
+    }
+  }, [isPaused]);
+
   // Reset on deactivate
   useEffect(() => {
     if (!isActive) {

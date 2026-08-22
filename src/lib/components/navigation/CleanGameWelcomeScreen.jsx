@@ -11,6 +11,7 @@ import ProgressPopup from './ProgressPopup';
 import InnerMandala from '../celebration/InnerMandala';
 import { symbolCardContent } from '../../../zones/symbol-mountain/shared/components/symbolCardContent';
 import { playUiTap } from '../../services/AudioService';
+import CloseButton from '../../../components/CloseButton';
 
 const ZONE_SCENES = [
   { zone: 'symbol-mountain', scenes: ['pond', 'modak', 'symbol', 'final-scene'] },
@@ -57,7 +58,11 @@ const CleanGameWelcomeScreen = ({
     const audio = ambientRef.current;
     if (!audio) return;
 
-    if (!audioOn) {
+    // BLOCKER FIX: never autoplay ambient inside a modal — the sound toggle is
+    // hidden in modal mode, so a layered ambient track had no way to be muted
+    // and would stack on top of the underlying scene/map audio.
+    const isModalMode = displayMode === 'modal';
+    if (isModalMode || !audioOn) {
       clearInterval(fadeRef.current);
       audio.pause();
       audio.currentTime = 0;
@@ -254,7 +259,10 @@ const CleanGameWelcomeScreen = ({
             );
           }
         } catch {
-          if (!latestZone) { latestZone = zone; latestScene = scene; latestCompleted = false; }
+          // BLOCKER FIX: malformed JSON must never be treated as a valid session —
+          // previously this assigned latestZone/latestScene from garbage data,
+          // which could hijack "Continue" into resuming the wrong scene.
+          continue;
         }
       }
     }
@@ -414,14 +422,14 @@ const CleanGameWelcomeScreen = ({
     }
     else if (type === 'chants') {
       const allChants = [
-        { id: 'vakratunda-chant', displayName: 'Vakratunda', image: '/images/apps-shlokariver/app-Vakratunda.png', audio: '/audio/chants/vakratunda_full.mp3' },
-        { id: 'mahakaya-chant', displayName: 'Mahakaya', image: '/images/apps-shlokariver/app-mahakaya.png', audio: '/audio/chants/mahakaya_full.mp3' },
-        { id: 'suryakoti-chant', displayName: 'Surya Koti', image: '/images/apps-shlokariver/app-suryakoti.png', audio: '/audio/chants/suryakoti_full.mp3' },
-        { id: 'samaprabha-chant', displayName: 'Samaprabha', image: '/images/apps-shlokariver/app-samaprabha.png', audio: '/audio/chants/samaprabha_full.mp3' },
-        { id: 'nirvighnam-chant', displayName: 'Nirvighnam', image: '/images/apps-shlokariver/app-nirvighnam.png', audio: '/audio/chants/nirvighnam_full.mp3' },
-        { id: 'kurumedeva-chant', displayName: 'Kurume Deva', image: '/images/apps-shlokariver/app-kurumedeva.png', audio: '/audio/chants/kurumedeva_full.mp3' },
-        { id: 'sarvakaryeshu-chant', displayName: 'Sarvakaryeshu', image: '/images/apps-shlokariver/app-sarvakaryeshu.png', audio: '/audio/chants/sarvakaryeshu_full.mp3' },
-        { id: 'sarvada-chant', displayName: 'Sarvada', image: '/images/apps-shlokariver/app-sarvada.png', audio: '/audio/chants/sarvada_full.mp3' }
+        { id: 'vakratunda-chant', displayName: 'Vakratunda', image: '/images/apps-shlokariver/app-Vakratunda.webp', audio: '/audio/chants/vakratunda_full.mp3' },
+        { id: 'mahakaya-chant', displayName: 'Mahakaya', image: '/images/apps-shlokariver/app-mahakaya.webp', audio: '/audio/chants/mahakaya_full.mp3' },
+        { id: 'suryakoti-chant', displayName: 'Surya Koti', image: '/images/apps-shlokariver/app-suryakoti.webp', audio: '/audio/chants/suryakoti_full.mp3' },
+        { id: 'samaprabha-chant', displayName: 'Samaprabha', image: '/images/apps-shlokariver/app-samaprabha.webp', audio: '/audio/chants/samaprabha_full.mp3' },
+        { id: 'nirvighnam-chant', displayName: 'Nirvighnam', image: '/images/apps-shlokariver/app-nirvighnam.webp', audio: '/audio/chants/nirvighnam_full.mp3' },
+        { id: 'kurumedeva-chant', displayName: 'Kurume Deva', image: '/images/apps-shlokariver/app-kurumedeva.webp', audio: '/audio/chants/kurumedeva_full.mp3' },
+        { id: 'sarvakaryeshu-chant', displayName: 'Sarvakaryeshu', image: '/images/apps-shlokariver/app-sarvakaryeshu.webp', audio: '/audio/chants/sarvakaryeshu_full.mp3' },
+        { id: 'sarvada-chant', displayName: 'Sarvada', image: '/images/apps-shlokariver/app-sarvada.webp', audio: '/audio/chants/sarvada_full.mp3' }
       ];
       
       const items = allChants.map(c => ({
@@ -545,44 +553,6 @@ const CleanGameWelcomeScreen = ({
     return states;
   };
 
-  const getOuterPetalStatesFromSymbols = (symbols, fallbackCount = 0) => {
-    const states = { 1: 'dormant', 2: 'dormant', 3: 'dormant', 4: 'dormant', 5: 'dormant', 6: 'dormant', 7: 'dormant', 8: 'dormant' };
-    const idByName = {
-      mooshika: 1,
-      modak: 2,
-      belly: 3,
-      lotus: 4,
-      trunk: 5,
-      ear: 6,
-      ears: 6,
-      eye: 7,
-      eyes: 7,
-      tusk: 8,
-    };
-    const resolvePetalId = (text) => {
-      const t = (text || '').toLowerCase();
-      if (t.includes('mooshika')) return 1;
-      if (t.includes('modak')) return 2;
-      if (t.includes('belly')) return 3;
-      if (t.includes('lotus')) return 4;
-      if (t.includes('trunk')) return 5;
-      if (t.includes('ear')) return 6;
-      if (t.includes('eye')) return 7;
-      if (t.includes('tusk')) return 8;
-      return null;
-    };
-    (symbols || []).forEach((entry) => {
-      const raw = (entry?.id || entry?.name || entry?.displayName || entry || '').toString().toLowerCase().trim();
-      const pid = idByName[raw] || resolvePetalId(raw);
-      if (pid) states[pid] = 'awakened';
-    });
-    if (Object.values(states).every((v) => v === 'dormant')) {
-      const safeCount = Math.max(1, Math.min(8, fallbackCount || 1));
-      for (let i = 1; i <= safeCount; i += 1) states[i] = 'awakened';
-    }
-    return states;
-  };
-
   const getMiddlePetalStatesFromKeys = (symbolKeys) => {
     const states = { 1: 'dormant', 2: 'dormant', 3: 'dormant', 4: 'dormant', 5: 'dormant', 6: 'dormant', 7: 'dormant', 8: 'dormant' };
     const map = { mooshika: 1, modak: 2, belly: 3, lotus: 4, trunk: 5, ear: 6, eyes: 7, tusk: 8 };
@@ -590,8 +560,11 @@ const CleanGameWelcomeScreen = ({
       const id = map[key];
       if (id) states[id] = 'awakened';
     });
-    if (Object.values(states).every((v) => v === 'dormant')) {
-      const safeCount = Math.max(1, Math.min(8, culturalProgress.symbols || 1));
+    // HIGH FIX: a brand-new profile with zero discovered symbols must show every
+    // petal dormant. Math.max(1, ...) previously forced petal 1 to falsely appear
+    // awakened even when culturalProgress.symbols was 0.
+    if (Object.values(states).every((v) => v === 'dormant') && (culturalProgress.symbols || 0) > 0) {
+      const safeCount = Math.min(8, culturalProgress.symbols);
       for (let i = 1; i <= safeCount; i += 1) states[i] = 'awakened';
     }
     return states;
@@ -681,16 +654,14 @@ const CleanGameWelcomeScreen = ({
         </button>
       )}
       {isModal && (
-        <button
+        <CloseButton
           className="welcome-close-btn"
-          onClick={() => {
+          onClose={() => {
             playUiTap(0.22);
             onClose?.();
           }}
-          aria-label="Close welcome popup"
-        >
-          ×
-        </button>
+          label="Close welcome popup"
+        />
       )}
       <div className={`clean-welcome-content clean-welcome-card ${isModal ? 'clean-welcome-content--modal compact' : ''}`}>
         <span className="welcome-card-lotus" aria-hidden="true" />
@@ -706,7 +677,7 @@ const CleanGameWelcomeScreen = ({
               showAsOverlay={false}
               allowTapToSkip={false}
               message=""
-              shlokaPetalStates={buildPetalStates(culturalProgress.chants, 'activated')}
+              shlokaPetalStates={buildPetalStates(culturalProgress.chants, 'awakened')}
               symbolPetalStates={getMiddlePetalStatesFromKeys(completedSymbolKeys)}
               onPetalClick={handleMandalaPetalTap}
               avatar={

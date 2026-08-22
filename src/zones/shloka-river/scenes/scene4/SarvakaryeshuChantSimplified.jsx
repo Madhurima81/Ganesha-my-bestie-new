@@ -40,7 +40,7 @@ import SarvadaGame from './SarvadaGame';
 
 import ganeshaHeadphones from './assets/images/ganesha_with_headphones.webp';
 import mooshikaCoach from './assets/images/mooshika-coach.webp';
-import sarvadaBg from './assets/images/sarvada/night.png';
+import sarvadaBg from './assets/images/sarvada/night.webp';
 
 import symbolVakratunda from '../../../meaning cave/assets/images/symbols/vakratunda-symbol.png';
 import symbolMahakaya from '../../../meaning cave/assets/images/symbols/mahakaya-symbol.png';

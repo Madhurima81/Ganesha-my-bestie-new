@@ -1,6 +1,7 @@
 // ProgressModal.jsx - Simplified Version
 import React from 'react';
 import './ProgressModal.css';
+import CloseButton from '../../../components/CloseButton';
 
 const ProgressModal = ({ 
   progress, 
@@ -13,7 +14,7 @@ const ProgressModal = ({
   return (
     <div className="progress-modal-overlay" onClick={onClose}>
       <div className="progress-modal-content" onClick={(e) => e.stopPropagation()}>
-        <button className="progress-close-btn" onClick={onClose}>×</button>
+        <CloseButton className="progress-close-btn" onClose={onClose} />
         
         <h2 className="progress-title">Your Adventure</h2>
         

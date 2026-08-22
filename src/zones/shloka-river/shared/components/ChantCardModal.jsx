@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { chantCardContent } from './chantCardContent';
 import InvitationCue from './InvitationCue';
 import './ChantCardModal.css';
+import CloseButton from '../../../../components/CloseButton';
 
 export default function ChantCardModal({ wordId, themeStyles = {}, onPracticeChant, onClose }) {
   const [isExiting, setIsExiting] = useState(false);
@@ -47,14 +48,11 @@ export default function ChantCardModal({ wordId, themeStyles = {}, onPracticeCha
         aria-modal="true"
         aria-labelledby="chant-card-title"
       >
-        <button
-          type="button"
+        <CloseButton
           className="chant-card__close"
-          onClick={handleClose}
-          aria-label="Close chant card"
-        >
-          x
-        </button>
+          onClose={handleClose}
+          label="Close chant card"
+        />
 
         <div className="chant-card__icon-wrap">
           <img src={content.icon} alt={content.label} className="chant-card__icon" />

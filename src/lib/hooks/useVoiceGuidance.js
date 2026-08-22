@@ -476,7 +476,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
     }
 
     const audio = new Audio(path);
-    audio.volume = voiceVolume; // always full volume — game audio, never muted by toggle
+    audio.volume = voiceVolumeRef.current; // always full volume — game audio, never muted by toggle
 
     // Guard: ensure onEnded is called exactly once
     let callbackFired = false;
@@ -502,6 +502,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
     voiceRef.current = audio;
     setIsPlaying(true);
     audio.play().catch(err => {
+      if (err.name === 'AbortError') return;
       console.error('Syllable play failed:', err);
       setIsPlaying(false);
       voiceRef.current = null;
@@ -509,7 +510,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
     });
 
     lastInteractionRef.current = Date.now();
-  }, [voiceVolume]);
+  }, []);
 
   // Play a full word audio (e.g., "vakratunda")
   const playWord = useCallback((word, onEnded) => {
@@ -529,7 +530,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
     }
 
     const audio = new Audio(path);
-    audio.volume = voiceVolume; // always full volume — game audio, never muted by toggle
+    audio.volume = voiceVolumeRef.current; // always full volume — game audio, never muted by toggle
 
     // Guard: ensure onEnded is called exactly once
     let callbackFired = false;
@@ -555,6 +556,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
     voiceRef.current = audio;
     setIsPlaying(true);
     audio.play().catch(err => {
+      if (err.name === 'AbortError') return;
       console.error('Word play failed:', err);
       setIsPlaying(false);
       voiceRef.current = null;
@@ -562,7 +564,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
     });
 
     lastInteractionRef.current = Date.now();
-  }, [voiceVolume]);
+  }, []);
 
   // ========================================
   // APP VISIBILITY (tab switch / phone call)

@@ -3,19 +3,19 @@ import './TuskPathGame.css';
 import { ANIMAL_SIZES } from './animalConfig';
 import { TUSK_ANIMAL_POSITIONS, TUSK_OBSTACLE_POSITION } from './tuskPathLayout';
 
-import peacockImg from '../tusk/assets/images/peacock-new.png';
-import monkeyImg from '../tusk/assets/images/monkey-new.png';
-import elephantImg from '../tusk/assets/images/elephant-new1.png';
-import cowImg from '../tusk/assets/images/cow-new.png';
-import bgBackImg from './assets/images/tusk-bg-new.png';
+import peacockImg from '../tusk/assets/images/peacock-new.webp';
+import monkeyImg from '../tusk/assets/images/monkey-new.webp';
+import elephantImg from '../tusk/assets/images/elephant-new1.webp';
+import cowImg from '../tusk/assets/images/cow-new.webp';
+import bgBackImg from './assets/images/tusk-bg-new.webp';
 
-import blockageFull from './assets/images/full-obtacle-new.png';
-import blockageNoVines from './assets/images/sand-boulder-new.png';
-import blockageNoRocks from './assets/images/sand new.png';
-import blockageNoMud from './assets/images/boulder new.png';
-import blockageCleared from './assets/images/final obstacle.png';
+import blockageFull from './assets/images/full-obtacle-new.webp';
+import blockageNoVines from './assets/images/sand-boulder-new.webp';
+import blockageNoRocks from './assets/images/sand new.webp';
+import blockageNoMud from './assets/images/boulder new.webp';
+import blockageCleared from './assets/images/final obstacle.webp';
 
-import tuskImg from '../../shared/images/icons/broken-tusk-symbol.png';
+import tuskImg from '../../shared/images/icons/broken-tusk-symbol.webp';
 
 // VO — recorded files do not exist yet (the old '/audio/...' paths 404'd).
 // Null paths fall back to Web Speech so the new stage guidance still plays.

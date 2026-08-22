@@ -45,7 +45,7 @@ import KurumedevaGame from './KurumedevaGame';
 
 // Assets
 import ganeshaHeadphones from './assets/images/ganesha_with_headphones.webp';
-import nirvighnamBg from './assets/images/nirvighnam/bg.png';
+import nirvighnamBg from './assets/images/nirvighnam/bg.webp';
 import mooshikaCoach from './assets/images/mooshika-coach.webp';
 
 // Symbol icons — TODO: replace with actual nirvighnam/kurumedeva symbols
@@ -457,7 +457,7 @@ const NirvighnamChantContent = ({
   // ── Reload: clear mini-game states ────────────────────────────────────────
   useEffect(() => {
     if (
-      sceneState.phase === PHASES.SCENE_COMPLETE &&
+      sceneState.phase === PHASES.COMPLETE &&
       !showSparkle &&
       !showMandala &&
       !showSceneCompletion

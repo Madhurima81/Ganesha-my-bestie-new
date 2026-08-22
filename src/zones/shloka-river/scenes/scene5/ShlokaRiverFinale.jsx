@@ -25,16 +25,16 @@ import OpeningModal from '../../../shared/components/OpeningModal';
 
 import { getCompletionModal } from '../../../../lib/config/content';
 
-import riverBg from './assets/images/river-finale-bg.png';
-import boatSailImage from './assets/images/boat-sail.png';
-import vakratundaRecapBoat from './assets/images/recap-boats/vakratunda.png';
-import mahakayaRecapBoat from './assets/images/recap-boats/mahakaya.png';
-import suryakotiRecapBoat from './assets/images/recap-boats/suryakoti.png';
-import samaprabhaRecapBoat from './assets/images/recap-boats/samaprabha.png';
-import nirvighnamRecapBoat from './assets/images/recap-boats/nirvighnam.png';
-import kurumedevaRecapBoat from './assets/images/recap-boats/kurumedeva.png';
-import sarvakaryeshuRecapBoat from './assets/images/recap-boats/sarvakaryeshu.png';
-import sarvadaRecapBoat from './assets/images/recap-boats/sarvada.png';
+import riverBg from './assets/images/river-finale-bg.webp';
+import boatSailImage from './assets/images/boat-sail.webp';
+import vakratundaRecapBoat from './assets/images/recap-boats/vakratunda.webp';
+import mahakayaRecapBoat from './assets/images/recap-boats/mahakaya.webp';
+import suryakotiRecapBoat from './assets/images/recap-boats/suryakoti.webp';
+import samaprabhaRecapBoat from './assets/images/recap-boats/samaprabha.webp';
+import nirvighnamRecapBoat from './assets/images/recap-boats/nirvighnam.webp';
+import kurumedevaRecapBoat from './assets/images/recap-boats/kurumedeva.webp';
+import sarvakaryeshuRecapBoat from './assets/images/recap-boats/sarvakaryeshu.webp';
+import sarvadaRecapBoat from './assets/images/recap-boats/sarvada.webp';
 import revealVakratunda from '../../../symbol-mountain/shared/images/icons/symbol-trunk-new.png';
 import revealMahakaya from '../../../meaning cave/assets/images/symbols/mahakaya-symbol.png';
 import revealSuryakoti from '../../../meaning cave/assets/images/symbols/suryakoti-symbol.png';

@@ -305,9 +305,9 @@ const ZONE_LAYOUT = {
 // Creature assigned to each active zone (butterfly / bird).
 // coming-soon zones get no creature — they have the building sign instead.
 const ZONE_CREATURES = {
-  'symbol-mountain': { src: '/images/map/butterflyyellow.png', cls: 'zone-butterfly modak-butterfly'   },
-  'shloka-river':    { src: '/images/map/butterflyblue.png',   cls: 'zone-butterfly shloka-butterfly'  },
-  'about-me-hut':    { src: '/images/map/birdnew.png',         cls: 'zone-bird     mooshika-bird'      },
+  'symbol-mountain': { src: '/images/map/butterflyyellow.webp', cls: 'zone-butterfly modak-butterfly'   },
+  'shloka-river':    { src: '/images/map/butterflyblue.webp',   cls: 'zone-butterfly shloka-butterfly'  },
+  'about-me-hut':    { src: '/images/map/birdnew.webp',         cls: 'zone-bird     mooshika-bird'      },
 };
 
 // Lock position per lockable zone — placed on the map directly over the zone label
@@ -319,35 +319,35 @@ const ZONE_LOCK_POS = {
 // Permanent decorative props placed via the Map Prop Editor.
 // To adjust: open the editor (🌿 Edit Props button), tweak, Copy JSON, paste here.
 const MAP_PROPS = [
-  { id: 'tree2-6', type: 'tree2', src: '/images/map/tree2.png', left: 57, top: 76.9, w: 4, flip: false },
-  { id: 'tree1-9', type: 'tree1', src: '/images/map/tree1.png', left: 89.8, top: 65.3, w: 6, flip: false },
-  { id: 'flower1-25', type: 'flower1', src: '/images/map/flower1.png', left: 9.1, top: 45.2, w: 3, flip: false },
-  { id: 'flower2-26', type: 'flower2', src: '/images/map/flower2.png', left: 50.4, top: 47.8, w: 3, flip: false },
-  { id: 'flower2-31', type: 'flower2', src: '/images/map/flower2.png', left: 72.8, top: 59.9, w: 3, flip: false },
-  { id: 'flower1-32', type: 'flower1', src: '/images/map/flower1.png', left: 44.4, top: 69, w: 3, flip: true },
-  { id: 'flower1-34', type: 'flower1', src: '/images/map/flower1.png', left: 81.8, top: 87.1, w: 3, flip: false },
-  { id: 'flower1-35', type: 'flower1', src: '/images/map/flower1.png', left: 67.8, top: 90.4, w: 3, flip: false },
-  { id: 'flower1-36', type: 'flower1', src: '/images/map/flower1.png', left: 45.1, top: 85.3, w: 4, flip: false },
-  { id: 'grass-39', type: 'grass', src: '/images/map/grass.png', left: 55, top: 40, w: 3, flip: true },
-  { id: 'grass-40', type: 'grass', src: '/images/map/grass.png', left: 55.5, top: 85.2, w: 3, flip: false },
-  { id: 'grass-41', type: 'grass', src: '/images/map/grass.png', left: 5.3, top: 41.5, w: 3, flip: false },
-  { id: 'grass-45', type: 'grass', src: '/images/map/grass.png', left: 40.2, top: 80.3, w: 3, flip: false },
-  { id: 'grass-46', type: 'grass', src: '/images/map/grass.png', left: 93.8, top: 39.2, w: 3, flip: false },
-  { id: 'grass-48', type: 'grass', src: '/images/map/grass.png', left: 92.6, top: 40.8, w: 3, flip: false },
-  { id: 'grass-49', type: 'grass', src: '/images/map/grass.png', left: 57, top: 84.3, w: 3, flip: false },
-  { id: 'grass-51', type: 'grass', src: '/images/map/grass.png', left: 93, top: 78.8, w: 3, flip: false },
-  { id: 'grass-52', type: 'grass', src: '/images/map/grass.png', left: 81.8, top: 81.1, w: 3, flip: false },
-  { id: 'tree1-54', type: 'tree1', src: '/images/map/tree1.png', left: 1.9, top: 51.9, w: 6, flip: false },
-  { id: 'tree1-55', type: 'tree1', src: '/images/map/tree1.png', left: 43.1, top: 47.3, w: 4, flip: false },
-  { id: 'tree2-56', type: 'tree2', src: '/images/map/tree2.png', left: 41.1, top: 45.5, w: 3, flip: false },
-  { id: 'flower1-57', type: 'flower1', src: '/images/map/flower1.png', left: 31.3, top: 45.3, w: 4, flip: false },
-  { id: 'grass-58', type: 'grass', src: '/images/map/grass.png', left: 63.4, top: 48, w: 4, flip: false },
-  { id: 'grass-59', type: 'grass', src: '/images/map/grass.png', left: 32.9, top: 36.3, w: 4, flip: false },
-  { id: 'bush1-62', type: 'bush1', src: '/images/map/bush1.png', left: 14.4, top: 45.6, w: 5, flip: false },
-  { id: 'bush1-64', type: 'bush1', src: '/images/map/bush1.png', left: 25.3, top: 45.7, w: 5, flip: false },
-  { id: 'bush2-65', type: 'bush2', src: '/images/map/bush2.png', left: 23.4, top: 46.8, w: 4, flip: false },
-  { id: 'flower1-66', type: 'flower1', src: '/images/map/flower1.png', left: 45, top: 48, w: 5, flip: false },
-  { id: 'flower2-67', type: 'flower2', src: '/images/map/flower2.png', left: 45, top: 48, w: 5, flip: false },
+  { id: 'tree2-6', type: 'tree2', src: '/images/map/tree2.webp', left: 57, top: 76.9, w: 4, flip: false },
+  { id: 'tree1-9', type: 'tree1', src: '/images/map/tree1.webp', left: 89.8, top: 65.3, w: 6, flip: false },
+  { id: 'flower1-25', type: 'flower1', src: '/images/map/flower1.webp', left: 9.1, top: 45.2, w: 3, flip: false },
+  { id: 'flower2-26', type: 'flower2', src: '/images/map/flower2.webp', left: 50.4, top: 47.8, w: 3, flip: false },
+  { id: 'flower2-31', type: 'flower2', src: '/images/map/flower2.webp', left: 72.8, top: 59.9, w: 3, flip: false },
+  { id: 'flower1-32', type: 'flower1', src: '/images/map/flower1.webp', left: 44.4, top: 69, w: 3, flip: true },
+  { id: 'flower1-34', type: 'flower1', src: '/images/map/flower1.webp', left: 81.8, top: 87.1, w: 3, flip: false },
+  { id: 'flower1-35', type: 'flower1', src: '/images/map/flower1.webp', left: 67.8, top: 90.4, w: 3, flip: false },
+  { id: 'flower1-36', type: 'flower1', src: '/images/map/flower1.webp', left: 45.1, top: 85.3, w: 4, flip: false },
+  { id: 'grass-39', type: 'grass', src: '/images/map/grass.webp', left: 55, top: 40, w: 3, flip: true },
+  { id: 'grass-40', type: 'grass', src: '/images/map/grass.webp', left: 55.5, top: 85.2, w: 3, flip: false },
+  { id: 'grass-41', type: 'grass', src: '/images/map/grass.webp', left: 5.3, top: 41.5, w: 3, flip: false },
+  { id: 'grass-45', type: 'grass', src: '/images/map/grass.webp', left: 40.2, top: 80.3, w: 3, flip: false },
+  { id: 'grass-46', type: 'grass', src: '/images/map/grass.webp', left: 93.8, top: 39.2, w: 3, flip: false },
+  { id: 'grass-48', type: 'grass', src: '/images/map/grass.webp', left: 92.6, top: 40.8, w: 3, flip: false },
+  { id: 'grass-49', type: 'grass', src: '/images/map/grass.webp', left: 57, top: 84.3, w: 3, flip: false },
+  { id: 'grass-51', type: 'grass', src: '/images/map/grass.webp', left: 93, top: 78.8, w: 3, flip: false },
+  { id: 'grass-52', type: 'grass', src: '/images/map/grass.webp', left: 81.8, top: 81.1, w: 3, flip: false },
+  { id: 'tree1-54', type: 'tree1', src: '/images/map/tree1.webp', left: 1.9, top: 51.9, w: 6, flip: false },
+  { id: 'tree1-55', type: 'tree1', src: '/images/map/tree1.webp', left: 43.1, top: 47.3, w: 4, flip: false },
+  { id: 'tree2-56', type: 'tree2', src: '/images/map/tree2.webp', left: 41.1, top: 45.5, w: 3, flip: false },
+  { id: 'flower1-57', type: 'flower1', src: '/images/map/flower1.webp', left: 31.3, top: 45.3, w: 4, flip: false },
+  { id: 'grass-58', type: 'grass', src: '/images/map/grass.webp', left: 63.4, top: 48, w: 4, flip: false },
+  { id: 'grass-59', type: 'grass', src: '/images/map/grass.webp', left: 32.9, top: 36.3, w: 4, flip: false },
+  { id: 'bush1-62', type: 'bush1', src: '/images/map/bush1.webp', left: 14.4, top: 45.6, w: 5, flip: false },
+  { id: 'bush1-64', type: 'bush1', src: '/images/map/bush1.webp', left: 25.3, top: 45.7, w: 5, flip: false },
+  { id: 'bush2-65', type: 'bush2', src: '/images/map/bush2.webp', left: 23.4, top: 46.8, w: 4, flip: false },
+  { id: 'flower1-66', type: 'flower1', src: '/images/map/flower1.webp', left: 45, top: 48, w: 5, flip: false },
+  { id: 'flower2-67', type: 'flower2', src: '/images/map/flower2.webp', left: 45, top: 48, w: 5, flip: false },
 ];
 
 const MAP_PROPS_STORAGE_KEY = 'gmb_map_props';
@@ -399,7 +399,7 @@ const MAP_OVERLAY_DEFAULTS = {
     id: 'festivalBuilding',
     label: 'Lotus Sign',
     kind: 'sign',
-    src: '/images/map/building.png',
+    src: '/images/map/building.webp',
     left: 82,
     top: 67,
     w: 12,
@@ -429,7 +429,7 @@ const MAP_OVERLAY_DEFAULTS = {
     id: 'treehouseBuilding',
     label: 'Treehouse Sign',
     kind: 'sign',
-    src: '/images/map/building.png',
+    src: '/images/map/building.webp',
     left: 76,
     top: 98,
     w: 12,
@@ -569,7 +569,7 @@ const MAP_OVERLAY_DEFAULTS = {
     id: 'creatureSymbol',
     label: 'Butterfly Modak',
     kind: 'image',
-    src: '/images/map/butterflyyellow.png',
+    src: '/images/map/butterflyyellow.webp',
     left: 32,
     top: 28,
     w: 4,
@@ -579,7 +579,7 @@ const MAP_OVERLAY_DEFAULTS = {
     id: 'creatureRiver',
     label: 'Butterfly River',
     kind: 'image',
-    src: '/images/map/butterflyblue.png',
+    src: '/images/map/butterflyblue.webp',
     left: 74,
     top: 18,
     w: 4,
@@ -589,7 +589,7 @@ const MAP_OVERLAY_DEFAULTS = {
     id: 'creatureHut',
     label: 'Bird Hut',
     kind: 'image',
-    src: '/images/map/birdnew.png',
+    src: '/images/map/birdnew.webp',
     left: 26,
     top: 55,
     w: 4,
@@ -677,7 +677,7 @@ const MAP_ZONE_ART_DEFAULTS = {
   symbol: {
     id: 'symbol',
     label: 'Modak Mountain',
-    src: '/images/map/modakmtn.png',
+    src: '/images/map/modakmtn.webp',
     left: 3.8,
     top: 17,
     w: 38.5,
@@ -703,7 +703,7 @@ const MAP_ZONE_ART_DEFAULTS = {
   bridge1: {
     id: 'bridge1',
     label: 'Bridge 1',
-    src: '/images/map/bridge-new.png',
+    src: '/images/map/bridge-new.webp',
     left: 58.8,
     top: 48.9,
     w: 18,
@@ -717,7 +717,7 @@ const MAP_ZONE_ART_DEFAULTS = {
   bridge2: {
     id: 'bridge2',
     label: 'Bridge 2',
-    src: '/images/map/bridge-new.png',
+    src: '/images/map/bridge-new.webp',
     left: 52.5,
     top: 76.5,
     w: 19,
@@ -731,7 +731,7 @@ const MAP_ZONE_ART_DEFAULTS = {
   cave: {
     id: 'cave',
     label: 'Wonder Caves',
-    src: '/images/map/cavelight.png',
+    src: '/images/map/cavelight.webp',
     left: 73,
     top: 41,
     w: 28,
@@ -744,7 +744,7 @@ const MAP_ZONE_ART_DEFAULTS = {
   hut: {
     id: 'hut',
     label: "Mooshika's Hut",
-    src: '/images/map/abtmehut2.png',
+    src: '/images/map/abtmehut2.webp',
     left: 22.6,
     top: 54.1,
     w: 27,
@@ -757,7 +757,7 @@ const MAP_ZONE_ART_DEFAULTS = {
   festival: {
     id: 'festival',
     label: 'Lotus Square',
-    src: '/images/map/festivalsq1.png',
+    src: '/images/map/festivalsq1.webp',
     left: 70.7,
     top: 44.1,
     w: 30,
@@ -770,7 +770,7 @@ const MAP_ZONE_ART_DEFAULTS = {
   treehouse: {
     id: 'treehouse',
     label: 'Tusk Treehouse',
-    src: '/images/map/treehouse1.png',
+    src: '/images/map/treehouse1.webp',
     left: 65,
     top: 70,
     w: 22,
@@ -1445,7 +1445,11 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
     return {
       'symbol-mountain':  true,
       'shloka-river':     smCompleted >= 1,
-      'about-me-hut':     isZoneComplete(zoneProgress, ZONE_IDS.SYMBOL),
+      // Aligned to the actual unlock threshold for About Me Hut (smCompleted >= 2) —
+      // previously required the entire Symbol Mountain zone complete, which showed
+      // zero dot progress on a zone the child could already tap into. Flagged for
+      // Madhurima to confirm this is the intended threshold.
+      'about-me-hut':     smCompleted >= 2,
       'cave-of-secrets':  isZoneComplete(zoneProgress, ZONE_IDS.RIVER),
       'festival-square':  isZoneComplete(zoneProgress, ZONE_IDS.CAVE),
     };
@@ -1593,7 +1597,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         className="map-bg-img"
       />
       <img
-        src="/images/map/modakmtn.png"
+        src="/images/map/modakmtn.webp"
         alt=""
         className="map-zone-art map-zone-art-symbol"
         onClick={() => handleZoneClick(ZONES_DATA.find((zone) => zone.id === 'symbol-mountain'), getZoneState('symbol-mountain', zoneProgress))}
@@ -1616,14 +1620,14 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         style={getZoneArtStyle('river')}
       />
       <img
-        src="/images/map/bridge-new.png"
+        src="/images/map/bridge-new.webp"
         alt=""
         className="map-zone-art map-zone-art-bridge map-zone-art-bridge-1"
         aria-hidden="true"
         style={getZoneArtStyle('bridge1')}
       />
       <img
-        src="/images/map/bridge-new.png"
+        src="/images/map/bridge-new.webp"
         alt=""
         className="map-zone-art map-zone-art-bridge map-zone-art-bridge-2"
         aria-hidden="true"
@@ -1631,7 +1635,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
       />
       {/* Wonder Caves is temporarily hidden from the map. Keep this block for quick restore later.
       <img
-        src="/images/map/cavelight.png"
+        src="/images/map/cavelight.webp"
         alt=""
         className="map-zone-art map-zone-art-cave"
         onClick={() => handleZoneClick(ZONES_DATA.find((zone) => zone.id === 'cave-of-secrets'), getZoneState('cave-of-secrets', zoneProgress))}
@@ -1648,7 +1652,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
       />
       */}
       <img
-        src="/images/map/abtmehut2.png"
+        src="/images/map/abtmehut2.webp"
         alt=""
         className="map-zone-art map-zone-art-hut"
         onClick={() => handleZoneClick(ZONES_DATA.find((zone) => zone.id === 'about-me-hut'), getZoneState('about-me-hut', zoneProgress))}
@@ -1664,7 +1668,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         style={getZoneArtStyle('hut', { cursor: 'pointer', pointerEvents: 'auto' })}
       />
       <img
-        src="/images/map/festivalsq1.png"
+        src="/images/map/festivalsq1.webp"
         alt=""
         className="map-zone-art map-zone-art-festival"
         onClick={() => handleZoneClick(ZONES_DATA.find((zone) => zone.id === 'festival-square'), getZoneState('festival-square', zoneProgress))}
@@ -1680,7 +1684,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         style={getZoneArtStyle('festival', { cursor: 'pointer', pointerEvents: 'auto' })}
       />
       <img
-        src="/images/map/treehouse1.png"
+        src="/images/map/treehouse1.webp"
         alt=""
         className="map-zone-art map-zone-art-treehouse"
         onClick={() => handleZoneClick(ZONES_DATA.find((zone) => zone.id === 'story-treehouse'), getZoneState('story-treehouse', zoneProgress))}
@@ -1825,7 +1829,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         return (
           <img
             key={`building-${id}`}
-            src="/images/map/building.png"
+            src="/images/map/building.webp"
             alt=""
             aria-hidden="true"
             className="zone-building-sign"
@@ -1845,15 +1849,15 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
           <React.Fragment key={`lock-${zoneId}`}>
             {/* Locked → wiggling lock */}
             {zState === 'locked' && !isUnlocking && (
-              <img src="/images/map/lock.png" alt="" aria-hidden="true"
+              <img src="/images/map/lock.webp" alt="" aria-hidden="true"
                 className="zone-lock" style={pos} />
             )}
             {/* Unlocking transition → lock flies out, unlock flashes in */}
             {isUnlocking && (
               <>
-                <img src="/images/map/lock.png" alt="" aria-hidden="true"
+                <img src="/images/map/lock.webp" alt="" aria-hidden="true"
                   className="zone-lock zone-lock--out" style={pos} />
-                <img src="/images/map/unlock.png" alt="" aria-hidden="true"
+                <img src="/images/map/unlock.webp" alt="" aria-hidden="true"
                   className="zone-unlock-flash" style={pos} />
               </>
             )}
@@ -1937,7 +1941,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
                 if (e.key === 'Enter' || e.key === ' ') triggerParentCorner(e);
               }}
             >
-              <img src="/images/icons/parent-icon.png" alt="" className="parent-icon-img" />
+              <img src="/images/icons/parent-icon.webp" alt="" className="parent-icon-img" />
             </span>
           </button>
         );

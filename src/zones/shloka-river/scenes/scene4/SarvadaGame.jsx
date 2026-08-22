@@ -307,6 +307,20 @@ export default function SarvadaGame({
             />
             {findMode && (
               <>
+                {!ganeshaFound && (
+                  <img
+                    className="sarvada-ganesha-hidden"
+                    src={ganeshaPopImg}
+                    alt=""
+                    aria-hidden="true"
+                    draggable={false}
+                    style={{
+                      left: `${cfg.ganeshaSpot.l}%`,
+                      top: `${cfg.ganeshaSpot.t}%`,
+                      width: `${cfg.ganeshaSpot.w}%`,
+                    }}
+                  />
+                )}
                 <button
                   className={`sarvada-ganesha-target${ganeshaFound ? ' is-found' : ''}`}
                   style={{

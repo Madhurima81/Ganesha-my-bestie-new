@@ -61,7 +61,7 @@ import VOReplayButton from '../../../../lib/components/feedback/VOReplayButton';
 import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal';
 
 // Images
-import mountainBackground from '../tusk/assets/images/trail-bg.png';
+import mountainBackground from '../tusk/assets/images/trail-bg.webp';
 import ganeshaCharacter from './assets/images/ganesha-character.webp';
 
 // Symbol Icons
@@ -556,12 +556,12 @@ const SymbolMountainSceneContent = ({
   useEffect(() => {
     if (!isReload || reloadHandledRef.current || !sceneState.welcomeShown) return;
 
-    console.log('?? RELOAD DETECTED - Resuming from phase:', sceneState.phase);
+    if (import.meta.env.DEV) console.log('RELOAD DETECTED - Resuming from phase:', sceneState.phase);
     reloadHandledRef.current = true;
 
     // If a game is actively running, restart it
     if (sceneState.showEyesTelescopeGame && sceneState.phase === PHASES.EYES_GAME) {
-      console.log('?? Restarting EyesTelescopeGame');
+      if (import.meta.env.DEV) console.log('Restarting EyesTelescopeGame');
       sceneActions.updateState({
         showEyesTelescopeGame: false,
         eyesGameComplete: false,
@@ -573,7 +573,7 @@ const SymbolMountainSceneContent = ({
     }
 
     if (sceneState.showEarsRhythmGame && sceneState.phase === PHASES.EARS_GAME) {
-      console.log('?? Restarting EarsRhythmGame');
+      if (import.meta.env.DEV) console.log('Restarting EarsRhythmGame');
       sceneActions.updateState({
         showEarsRhythmGame: false,
         earsGamePhase: 'waiting',
@@ -589,7 +589,7 @@ const SymbolMountainSceneContent = ({
     }
 
     if (sceneState.showTuskAssemblyGame && sceneState.phase === PHASES.TUSK_GAME) {
-      console.log('?? Restarting Tusk Game');
+      if (import.meta.env.DEV) console.log('Restarting Tusk Game');
       sceneActions.updateState({
         ganeshaComplete: false,
         showTuskAssemblyGame: false,
@@ -875,7 +875,7 @@ const SymbolMountainSceneContent = ({
                       showEyesTelescopeGame: false,
                       phase: PHASES.EYES_COMPLETE
                     });
-                    // Keep all 4 discovered animals visible a bit longer before symbol reveal.
+                    // Keep discovered animals visible a bit longer before symbol reveal.
                     safeSetTimeout(() => handleEyesGameComplete(), 1800);
                   }}
                 />
@@ -1033,7 +1033,7 @@ const SymbolMountainSceneContent = ({
                   // Keep sidebar alias in sync with game-logic alias.
                   ear: sceneState?.discoveredSymbols?.ear || sceneState?.discoveredSymbols?.ears || false
                 }}
-                onSymbolClick={(id) => console.log(`Symbol clicked: ${id}`)}
+                onSymbolClick={(id) => { if (import.meta.env.DEV) console.log(`Symbol clicked: ${id}`); }}
                 onPopupOpen={() => {
                   setIsSymbolPopupOpen(true);
                   stopSpokenVoice();

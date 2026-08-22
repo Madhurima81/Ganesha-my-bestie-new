@@ -61,6 +61,18 @@ export const VOICE_SCRIPTS = {
       },
 
       // Mahakaya Rescue Game — scene 10 VO lines
+      scene10_vak_intro: {
+        text: "The little frog wants to meet his family."
+      },
+      scene10_vak_choose: {
+        text: "Help guide the lily pad another way."
+      },
+      scene10_vak_crossed: {
+        text: "You found another way. The frog made it home to the family."
+      },
+      scene10_vak_current_too_strong: {
+        text: "The river current is too strong there. Let's try another way."
+      },
       scene10_maha_intro: {
         text: "Now let's help the little calf."
       },
@@ -641,6 +653,7 @@ export const VOICE_SCRIPTS = {
     idleHint: { file: 'sfx-idle-hint.wav' },
     frogHop: { file: 'sfx-frog-hop.mp3' },
     frogReunion: { file: 'sfx-frog-reunion.mp3' },
+    currentPush: { file: 'sfx-soft-wrong.wav' },
 
     // Legacy keys (kept for backward compatibility during migration)
     success: { file: 'sfx-success.wav' },

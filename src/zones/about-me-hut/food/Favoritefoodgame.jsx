@@ -750,7 +750,9 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       suppressPhaseVoUntilReloadSettlesRef.current = false;
       expectedReloadPhaseRef.current = null;
 
-      console.log("🔄 Reload detected. Phase:", gamePhase, "Modal:", currentModal);
+      if (import.meta.env.DEV) {
+        console.log("🔄 Reload detected. Phase:", gamePhase, "Modal:", currentModal);
+      }
 
       if (resumePopupTimeoutRef.current) clearTimeout(resumePopupTimeoutRef.current);
       // --- 1. RESTORE MODALS (Drawing/Typing) ---
