@@ -104,6 +104,19 @@ export default defineConfig(({ command }) => ({
               cacheableResponse: { statuses: [0, 200] }
             }
           },
+          // Images imported inside a scene's own assets folder (e.g. Modak's
+          // ./assets/images/*) end up in the build's /assets/ folder, not
+          // /images/ — the rule above never matched them, so every scene's
+          // own art was re-downloaded from network on every single visit.
+          {
+            urlPattern: /\/assets\/.+\.(png|jpe?g|webp|svg)$/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'ganesha-scene-images',
+              expiration: { maxEntries: 400, maxAgeSeconds: 30 * 24 * 60 * 60 },
+              cacheableResponse: { statuses: [0, 200] }
+            }
+          },
           // Google Fonts stylesheet: cache-first to avoid offline revalidate fetch errors
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
