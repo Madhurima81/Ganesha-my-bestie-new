@@ -161,11 +161,20 @@ export default defineConfig(({ command }) => ({
     // Optimize for PWA
     rollupOptions: {
       output: {
-        // Manual chunking for better caching
-        manualChunks: {
-          // Core app dependencies
-          'vendor-react': ['react', 'react-dom'],
-          'vendor-motion': ['framer-motion']
+        // Manual chunking for better caching.
+        // Function form, not the old { 'vendor-react': ['react', 'react-dom'] }
+        // object map — that form only matches the exact specifiers listed, so
+        // main.jsx's `import ReactDOM from 'react-dom/client'` (a different
+        // specifier) fell through and shipped the whole DOM renderer inside
+        // the main chunk instead of this one. Matching by path catches every
+        // subpath of a package.
+        manualChunks(id) {
+          if (id.includes('node_modules/react-dom') || id.includes('node_modules/react/') || id.includes('node_modules/scheduler')) {
+            return 'vendor-react';
+          }
+          if (id.includes('node_modules/framer-motion')) {
+            return 'vendor-motion';
+          }
           // Zone chunks removed — the dynamic import() map in App.jsx
           // (SCENE_MAPPING) already gives per-scene code splitting; the old
           // entries referenced stale scene versions pulled in via AppV2/V3.
