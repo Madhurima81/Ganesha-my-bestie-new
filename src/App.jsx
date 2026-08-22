@@ -46,7 +46,7 @@ const ZONE_FIRST_SCENE_IMAGES = {
   //   '/images/zones/cave-of-secrets/vakratunda-icon.png',
   // ],
   'shloka-river': [
-    '/images/shloka-river-bg.webp',
+    '/images/shlokariver-bg.webp',
     '/images/zones/shloka-river/vakratunda-grove-icon.png',
   ],
   // 'festival-square': [
