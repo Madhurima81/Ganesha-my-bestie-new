@@ -1,16 +1,23 @@
 // analytics.js — PostHog wrapper
 // COPPA-safe: no cookies (persistence: 'localStorage'), no PII collected.
 // Silently disabled if VITE_POSTHOG_KEY is not set.
-
-import posthog from 'posthog-js';
+//
+// posthog-js (~58KB gzip) is dynamic-imported inside initAnalytics(), not at
+// module top — the Analytics object below stays a normal synchronous import
+// for every consumer (App.jsx, scene files); only the heavy SDK itself is
+// deferred, so it no longer blocks first paint.
 
 const KEY = import.meta.env.VITE_POSTHOG_KEY;
 const HOST = import.meta.env.VITE_POSTHOG_HOST || 'https://app.posthog.com';
 
+let _posthog = null;
 let _ready = false;
 
-export function initAnalytics() {
+export async function initAnalytics() {
   if (!KEY || KEY.startsWith('your_')) return;
+
+  const { default: posthog } = await import('posthog-js');
+  _posthog = posthog;
 
   posthog.init(KEY, {
     api_host: HOST,
@@ -25,8 +32,8 @@ export function initAnalytics() {
 // ── Core track function ───────────────────────────────────────────────────────
 
 export function track(event, props = {}) {
-  if (!_ready) return;
-  posthog.capture(event, props);
+  if (!_ready || !_posthog) return;
+  _posthog.capture(event, props);
 }
 
 // ── Key events for this app ───────────────────────────────────────────────────

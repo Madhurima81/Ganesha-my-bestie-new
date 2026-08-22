@@ -1,14 +1,23 @@
-import { createClient } from '@supabase/supabase-js';
-
 const url  = import.meta.env.VITE_SUPABASE_URL;
 const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// Supabase is optional — app works fully offline if keys aren't set
-export const supabase = (url && anonKey && !url.startsWith('your_'))
-  ? createClient(url, anonKey)
-  : null;
+export const isSupabaseEnabled = () => !!(url && anonKey && !url.startsWith('your_'));
 
-export const isSupabaseEnabled = () => !!supabase;
+// @supabase/supabase-js (~137KB gzip, pulling in auth-js/postgrest-js/
+// realtime-js/storage-js) is dynamic-imported here instead of at module top.
+// Only .auth and .from() are actually used anywhere in this app (verified —
+// storage-js and realtime-js are dead weight even eager) — CloudSync's own
+// `_ready` gate already ensures nothing touches the client before init()
+// resolves it, so this is a drop-in replacement for the old synchronous
+// `supabase` export.
+let _clientPromise = null;
+export function getSupabaseClient() {
+  if (!isSupabaseEnabled()) return Promise.resolve(null);
+  if (!_clientPromise) {
+    _clientPromise = import('@supabase/supabase-js').then(({ createClient }) => createClient(url, anonKey));
+  }
+  return _clientPromise;
+}
 
 /*
  * ── SQL to run once in Supabase SQL Editor ──────────────────────────────────

@@ -13,11 +13,22 @@ import { initAnalytics } from './lib/services/analytics'
 import { initErrorMonitoring } from './lib/services/errorMonitoring'
 import { initAudioService } from './lib/services/AudioService'
 
-// Initialise services (all no-ops if env keys are missing)
-initErrorMonitoring();   // Sentry â€” init first so it catches early errors
-initAnalytics();         // PostHog
-cloudSync.init();        // Supabase cloud sync
+// initAudioService() stays eager - MainWelcomeScreen needs it for its own
+// sound toggle on the very first screen, so it can't be deferred.
 initAudioService();      // Preload Howler SFX instances
+
+// Sentry/PostHog/Supabase (~310KB gzip combined) were previously initialised
+// here too, before React even rendered - meaning the welcome screen's first
+// paint waited on fetching, parsing, and executing all three SDKs. None of
+// them are needed for that first paint (error monitoring, analytics, and
+// cloud sync all matter for what happens after a child starts playing, not
+// for the screen itself), so they're deferred until the browser is idle
+// after the initial render instead of blocking it.
+const deferredInit = () => {
+  initErrorMonitoring();   // Sentry
+  initAnalytics();         // PostHog
+  cloudSync.init();        // Supabase cloud sync
+};
 // Dev safety: prevent stale UI from old PWA service-worker caches on localhost.
 if (typeof window !== 'undefined' && 'serviceWorker' in navigator && (
   window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
@@ -38,3 +49,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       : <UpdateManager><App/></UpdateManager>}
   </React.StrictMode>,
 )
+
+if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+  window.requestIdleCallback(deferredInit, { timeout: 2000 });
+} else {
+  setTimeout(deferredInit, 0);
+}

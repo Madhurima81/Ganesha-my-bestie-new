@@ -175,6 +175,21 @@ export default defineConfig(({ command }) => ({
           if (id.includes('node_modules/framer-motion')) {
             return 'vendor-motion';
           }
+          // Sentry/PostHog/Supabase are dynamic-imported (see analytics.js,
+          // errorMonitoring.js, supabase.js) specifically so they don't block
+          // first paint. Without an explicit name here, Rollup auto-names
+          // dynamic-import chunks "index-*" — which collides with the SW's
+          // app-shell precache glob (assets/index-*.js) and would precache
+          // these ~450KB/170KB/60KB SDKs eagerly anyway, defeating the point.
+          if (id.includes('node_modules/@sentry')) {
+            return 'lazy-sentry';
+          }
+          if (id.includes('node_modules/posthog-js')) {
+            return 'lazy-posthog';
+          }
+          if (id.includes('node_modules/@supabase')) {
+            return 'lazy-supabase';
+          }
           // Zone chunks removed — the dynamic import() map in App.jsx
           // (SCENE_MAPPING) already gives per-scene code splitting; the old
           // entries referenced stale scene versions pulled in via AppV2/V3.

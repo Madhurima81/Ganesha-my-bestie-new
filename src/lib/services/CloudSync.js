@@ -3,12 +3,13 @@
 // All methods are fire-and-forget — they never block the game.
 // If Supabase is not configured or offline, everything silently falls back to localStorage.
 
-import { supabase, isSupabaseEnabled } from './supabase';
+import { getSupabaseClient, isSupabaseEnabled } from './supabase';
 
 class CloudSync {
   constructor() {
     this._userId = null;
     this._ready = false;
+    this._supabase = null;
     this._saveTimers = {}; // debounce timers per profileId
   }
 
@@ -18,13 +19,16 @@ class CloudSync {
     if (!isSupabaseEnabled()) return;
 
     try {
+      this._supabase = await getSupabaseClient();
+      if (!this._supabase) return;
+
       // Reuse existing session or sign in anonymously
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await this._supabase.auth.getSession();
 
       if (session?.user) {
         this._userId = session.user.id;
       } else {
-        const { data, error } = await supabase.auth.signInAnonymously();
+        const { data, error } = await this._supabase.auth.signInAnonymously();
         if (error) throw error;
         this._userId = data.user.id;
       }
@@ -45,7 +49,7 @@ class CloudSync {
 
     try {
       // Pull profiles
-      const { data: profileRows } = await supabase
+      const { data: profileRows } = await this._supabase
         .from('profiles')
         .select('id, data, updated_at')
         .eq('user_id', this._userId);
@@ -66,7 +70,7 @@ class CloudSync {
       }
 
       // Pull progress for each profile
-      const { data: progressRows } = await supabase
+      const { data: progressRows } = await this._supabase
         .from('progress')
         .select('profile_id, data, updated_at')
         .eq('user_id', this._userId);
@@ -104,7 +108,7 @@ class CloudSync {
         updated_at: new Date().toISOString()
       }));
 
-      await supabase.from('profiles').upsert(rows, { onConflict: 'id' });
+      await this._supabase.from('profiles').upsert(rows, { onConflict: 'id' });
     } catch (err) {
       console.warn('[CloudSync] pushProfiles failed:', err.message);
     }
@@ -131,7 +135,7 @@ class CloudSync {
       data.lastSaved = Date.now();
       this._setLocal(key, data);
 
-      await supabase.from('progress').upsert([{
+      await this._supabase.from('progress').upsert([{
         profile_id: profileId,
         user_id: this._userId,
         data,
@@ -149,8 +153,8 @@ class CloudSync {
 
     try {
       await Promise.all([
-        supabase.from('profiles').delete().eq('id', profileId).eq('user_id', this._userId),
-        supabase.from('progress').delete().eq('profile_id', profileId).eq('user_id', this._userId)
+        this._supabase.from('profiles').delete().eq('id', profileId).eq('user_id', this._userId),
+        this._supabase.from('progress').delete().eq('profile_id', profileId).eq('user_id', this._userId)
       ]);
     } catch (err) {
       console.warn('[CloudSync] deleteProfile failed:', err.message);

@@ -1,12 +1,17 @@
 // errorMonitoring.js — Sentry wrapper
 // Silently disabled if VITE_SENTRY_DSN is not set.
-
-import * as Sentry from '@sentry/react';
+//
+// @sentry/react (~112KB gzip) is dynamic-imported here, not at module top —
+// neither SentryErrorBoundary nor reportError has any caller in the app
+// (verified), so the only real entry point is initErrorMonitoring(), and
+// deferring the import means Sentry's weight no longer blocks first paint.
 
 const DSN = import.meta.env.VITE_SENTRY_DSN;
 
-export function initErrorMonitoring() {
+export async function initErrorMonitoring() {
   if (!DSN || DSN.startsWith('your_')) return;
+
+  const Sentry = await import('@sentry/react');
 
   Sentry.init({
     dsn: DSN,
@@ -23,15 +28,13 @@ export function initErrorMonitoring() {
   });
 }
 
-// Wrap your top-level component with this for automatic error boundaries
-export const SentryErrorBoundary = Sentry.ErrorBoundary;
-
 // Manual error reporting (use sparingly — Sentry auto-catches unhandled errors)
-export function reportError(error, context = {}) {
+export async function reportError(error, context = {}) {
   if (!DSN || DSN.startsWith('your_')) {
     console.error('[Error]', error, context);
     return;
   }
+  const Sentry = await import('@sentry/react');
   Sentry.withScope(scope => {
     Object.entries(context).forEach(([k, v]) => scope.setExtra(k, v));
     Sentry.captureException(error);
