@@ -59,16 +59,31 @@ export default defineConfig(({ command }) => ({
       // Use existing public/manifest.json — don't let the plugin override it
       manifest: false,
       workbox: {
-        // Precache only JS/CSS/HTML + small icons — NOT full images or audio (too large)
-        globPatterns: ['**/*.{js,css,html}', 'icons/*.{png,svg,ico}'],
-        // Explicitly exclude large asset folders from precache scan
-        globIgnores: ['**/audio/**', '**/images/**', '**/words/**'],
+        // Precache only the app shell — entry HTML + the JS/CSS needed before
+        // React mounts (index + vendor chunks) + small icons. Per-scene chunks
+        // (Modak, Pond, Family Tree, etc.) are NOT precached — with 22 scenes
+        // across 5 zones the shell used to sweep in every scene's code on first
+        // install (210 entries / ~8.3MB), even ones a child never opens. Those
+        // now cache on demand via the runtimeCaching rule below, the first time
+        // the dynamic import() in App.jsx's SCENE_MAPPING actually loads one.
+        globPatterns: ['index.html', 'offline.html', 'assets/index-*.{js,css}', 'assets/vendor-*.js', 'icons/*.{png,svg,ico}'],
         // Hard cap: skip anything over 3 MB in the precache sweep
         maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
         // Serve offline.html when a page navigation fails (no connection)
         navigateFallback: '/offline.html',
         navigateFallbackDenylist: [/^\/api\//],
         runtimeCaching: [
+          // Scene/component chunks not in the app shell: fetched normally on
+          // first visit to that scene, then served from cache after.
+          {
+            urlPattern: /\/assets\/.+\.(js|css)$/i,
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'ganesha-chunks',
+              expiration: { maxEntries: 200, maxAgeSeconds: 30 * 24 * 60 * 60 },
+              cacheableResponse: { statuses: [0, 200] }
+            }
+          },
           // Audio: cache-first, keep indefinitely
           {
             urlPattern: /\/audio\/.+\.(mp3|wav)$/i,
