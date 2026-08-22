@@ -107,6 +107,16 @@ async function preloadSceneImages(zoneId, sceneId) {
   preloadImages(urls.filter(Boolean));
 }
 
+// Scene 1 of every zone never benefits from the scene-to-scene prefetch
+// below (there's no "previous scene" for it to warm during) — it was always
+// a cold load while scenes 2+ got a head start. This gives it the same
+// treatment, fired from Lot 3 (zone selection) instead of scene-to-scene.
+const ZONE_FIRST_SCENE_ID = {
+  'symbol-mountain': 'modak',
+  'shloka-river': 'vakratunda-grove',
+  'about-me-hut': 'family-tree',
+};
+
 const SCENE_MAPPING = {
   'symbol-mountain': {
     'modak': () => import('./zones/symbol-mountain/scenes/modak/NewModakSceneV7.jsx'),
@@ -987,6 +997,17 @@ const handleContinue = (targetZone, targetScene) => {
   } else {
     // Lot 3 — warm this zone's welcome bg + first scene assets
     preloadImages(ZONE_FIRST_SCENE_IMAGES[zoneId] || []);
+
+    // Also warm the first scene's own chunk + background — same treatment
+    // Lot 4 gives every later scene, since scene 1 has no earlier scene to
+    // get that head start during.
+    const firstSceneId = ZONE_FIRST_SCENE_ID[zoneId];
+    if (firstSceneId) {
+      const firstSceneLoader = SCENE_MAPPING[zoneId]?.[firstSceneId];
+      if (firstSceneLoader) firstSceneLoader().catch(() => {});
+      preloadSceneImages(zoneId, firstSceneId);
+    }
+
     setCurrentView('zone-welcome');
   }
 };
