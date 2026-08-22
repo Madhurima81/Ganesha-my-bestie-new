@@ -46,7 +46,7 @@ const ZONE_FIRST_SCENE_IMAGES = {
   //   '/images/zones/cave-of-secrets/vakratunda-icon.png',
   // ],
   'shloka-river': [
-    '/images/shlokariver-bg.webp',
+    '/images/shloka-river-bg.webp',
     '/images/zones/shloka-river/vakratunda-grove-icon.png',
   ],
   // 'festival-square': [
@@ -61,6 +61,51 @@ const ZONE_FIRST_SCENE_IMAGES = {
     '/images/ganesha-final-new.svg',
   ],
 };
+
+// Lot 4 — warm the NEXT scene's own background while the current scene is
+// still playing. Unlike the images above (all in public/), each scene's
+// background is a bundled import (./assets/images/...) that Vite renames to
+// a hashed build filename — preloadImages() can't reference it by a static
+// path. import.meta.glob resolves the real URL for a known source path
+// without importing (and running) the whole scene module.
+const SCENE_BG_GLOB = import.meta.glob(
+  '/src/zones/**/assets/images/**/*.{webp,png,jpg,jpeg,svg}',
+  { query: '?url', import: 'default' }
+);
+
+// Covers the 3 live zones only (Symbol Mountain, Shloka River, About Me Hut).
+// Cave of Secrets is obsolete and Festival Square isn't in active scope —
+// leaving both out on purpose, not an oversight.
+const SCENE_IMAGES = {
+  'symbol-mountain': {
+    'modak': ['/src/zones/symbol-mountain/scenes/modak/assets/images/newmodakbg.webp'],
+    'pond': ['/src/zones/symbol-mountain/scenes/pond/assets/images/trunk-pond-bg-new.webp'],
+    'symbol': ['/src/zones/symbol-mountain/scenes/tusk/assets/images/trail-bg.webp'],
+    'final-scene': ['/src/zones/symbol-mountain/scenes/final scene/assets/images/final_symbol_background.webp'],
+  },
+  'shloka-river': {
+    'vakratunda-grove': ['/src/zones/shloka-river/scenes/Scene1/assets/images/riverbg-new.webp'],
+    'suryakoti-bank': ['/src/zones/shloka-river/scenes/Scene2/assets/images/saurakoti-bg.webp'],
+    'nirvighnam-chant': ['/src/zones/shloka-river/scenes/Scene3/assets/images/nirvighnam/bg.webp'],
+    'sarvakaryeshu-chant': ['/src/zones/shloka-river/scenes/scene4/assets/images/sarvada/night.webp'],
+    'shloka-river-finale': ['/src/zones/shloka-river/scenes/scene5/assets/images/river-finale-bg.webp'],
+  },
+  'about-me-hut': {
+    'family-tree': ['/src/zones/about-me-hut/family-tree/assets/images/family_background.webp'],
+    'favorite-food': ['/src/zones/about-me-hut/food/assets/images/fav_background.webp'],
+    'dreams-wishes': ['/src/zones/about-me-hut/enjoy/assets/images/dream_background.webp'],
+    'my-indian-story': ['/src/zones/about-me-hut/indian-story/assets/images/name_background.webp'],
+  },
+};
+
+async function preloadSceneImages(zoneId, sceneId) {
+  const paths = SCENE_IMAGES[zoneId]?.[sceneId];
+  if (!paths) return;
+  const urls = await Promise.all(
+    paths.map(p => (SCENE_BG_GLOB[p] ? SCENE_BG_GLOB[p]() : null))
+  );
+  preloadImages(urls.filter(Boolean));
+}
 
 const SCENE_MAPPING = {
   'symbol-mountain': {
@@ -503,7 +548,12 @@ useEffect(() => {
     };
   }, []);
 
-// Smart preloading — actually fetches the next scene's chunk
+// Smart preloading — fetches the next scene's chunk AND its background image
+// (Lot 4). The chunk fetch alone doesn't warm the image: a dynamic import()
+// resolves string constants for bundled asset URLs, it doesn't request the
+// bytes — only an <img>/CSS url() actually referencing that URL does. So
+// without this, the next scene's JS could be ready while its background
+// still cold-loads over the network the moment the scene mounts.
 useEffect(() => {
   if (currentZone && currentScene) {
     const nextScene = getNextScene(currentZone, currentScene);
@@ -513,6 +563,7 @@ useEffect(() => {
         .then(() => console.log(`✅ Preloaded next scene: ${nextScene}`))
         .catch(err => console.warn(`⚠️ Preload failed: ${nextScene}`, err));
     }
+    preloadSceneImages(currentZone, nextScene);
   }
 }, [currentZone, currentScene]);
 
