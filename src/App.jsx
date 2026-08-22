@@ -720,13 +720,15 @@ const initializeApp = async () => {
     // Step 1: Sound system already initialised via initAudioService() in main.jsx
     setLoadingProgress(20);
     setLoadingStep('Bringing in happy sounds…');
-    await new Promise(resolve => setTimeout(resolve, 300));
+    // Shortened from 300ms — bar still visibly steps + message still reads at
+    // this pace; kept the finale (below) at 500ms as the "let's play" payoff.
+    await new Promise(resolve => setTimeout(resolve, 150));
     
     // Step 2: Verify managers are loaded (40%)
     console.log('📦 Managers loaded and ready');
     setLoadingProgress(40);
     setLoadingStep('Getting our world ready…');
-    await new Promise(resolve => setTimeout(resolve, 300));
+    await new Promise(resolve => setTimeout(resolve, 150));
 
     // Step 2.5: Preload critical images (50%)
     const criticalImages = [
@@ -761,7 +763,7 @@ const initializeApp = async () => {
 
     setLoadingProgress(50);
     setLoadingStep('Adding beautiful pictures…');
-    await new Promise(resolve => setTimeout(resolve, 300));
+    await new Promise(resolve => setTimeout(resolve, 150));
     
     // Step 3: Check for active profile (60%)
     console.log('📊 Checking for active profile...');
@@ -781,13 +783,13 @@ const initializeApp = async () => {
     }
     setLoadingProgress(60);
     setLoadingStep('Remembering your progress…');
-    await new Promise(resolve => setTimeout(resolve, 300));
+    await new Promise(resolve => setTimeout(resolve, 150));
     
     // Step 4: Scene Manager ready (80%)
     console.log('🎬 Scene Manager ready');
     setLoadingProgress(80);
     setLoadingStep('Setting up your adventure…');
-    await new Promise(resolve => setTimeout(resolve, 300));
+    await new Promise(resolve => setTimeout(resolve, 150));
     
     // Step 5: Check for existing profiles in localStorage (90%)
     let hasExistingProfiles = false;
@@ -801,7 +803,7 @@ const initializeApp = async () => {
     }
     setLoadingProgress(90);
     setLoadingStep('Almost ready, bestie…');
-    await new Promise(resolve => setTimeout(resolve, 300));
+    await new Promise(resolve => setTimeout(resolve, 150));
     
     // Step 6: Complete (100%)
     setLoadingProgress(100);
