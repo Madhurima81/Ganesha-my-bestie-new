@@ -348,3 +348,17 @@ Before proposing any architecture/logic fix, grep DECISIONS.md for related keywo
 
 ### 3. Update DECISIONS.md (only for locked architectural/logic calls, not routine fixes)
 Format: `[date] - decision - reason - don't revisit unless X changes`
+
+---
+
+## Session-Start Protocol (run automatically BEFORE starting any work)
+
+1. Read TASKS.md — list any tasks not marked complete.
+2. Read CHANGELOG.md — pull the "Open" line from the most recent dated entry.
+3. Scan DECISIONS.md for any entry tagged `PENDING` (unresolved, needs Madhurima's call).
+4. Print a 3-line summary before doing anything else:
+   - Pending tasks: ...
+   - Left open last session: ...
+   - Decisions awaiting confirmation: ...
+
+Do not skip this even for small requests — it's the first output of every session.
