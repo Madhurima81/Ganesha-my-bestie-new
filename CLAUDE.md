@@ -327,3 +327,24 @@ Then suggest opening modal, completion modal, and affirmation content.
 Output everything into a new file called CONTENT_SUGGESTIONS.md.
 Do not change any existing content files.
 Wait for Madhurima's approval before anything is updated.
+```
+
+---
+
+## Session-End Protocol (run automatically before ending any work session)
+
+### 1. Update CHANGELOG.md
+Run: `git log --oneline -20` and `git diff --stat HEAD~N` (N = commits this session)
+Append entry:
+```
+## [YYYY-MM-DD]
+**Touched:** file1.jsx, file2.js
+**Changed:** what + why (1-2 lines)
+**Open:** anything left incomplete / flagged for next session
+```
+
+### 2. Check DECISIONS.md before answering
+Before proposing any architecture/logic fix, grep DECISIONS.md for related keywords. If a decision already exists, follow it — don't re-litigate or re-ask.
+
+### 3. Update DECISIONS.md (only for locked architectural/logic calls, not routine fixes)
+Format: `[date] - decision - reason - don't revisit unless X changes`
