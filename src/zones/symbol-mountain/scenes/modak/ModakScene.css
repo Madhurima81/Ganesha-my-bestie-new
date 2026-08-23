@@ -2151,13 +2151,10 @@ div[class*="discovery"] img {
       The generic 768–1250px block at line 1058 handles base sizing,
       but Vinayaka rock and basket modaks need landscape-tuned positions. */
 @media (min-width: 1024px) and (max-width: 1366px) and (orientation: landscape) and (max-height: 900px) {
-  .modak-game-basket-container {
-    width: 340px;
-    height: 235px;
-    top: 52%;
-    left: 6%;
-    --basket-modak-size: calc(var(--modak-size) * 0.85);
-  }
+  /* .modak-game-basket-container sizing removed from here — it duplicated,
+     and was always overridden by, the "Final override: SINGLE source of
+     truth" block further down (identical media query, !important). See
+     that block for basket-container's actual live values. */
 
   .modak-game-rock-container {
     width: 260px;
