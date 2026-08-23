@@ -3,6 +3,7 @@
 .maha-game {
   position: absolute;
   inset: 0;
+  overflow: hidden;
 }
 
 .maha-game.is-hidden {
@@ -21,15 +22,7 @@
   object-fit: contain;
   display: block;
   -webkit-user-drag: none;
-}
-
-.maha-calf {
-  transition: left 0.5s ease, top 0.5s ease;
-}
-
-.maha-log {
-  cursor: pointer;
-  touch-action: none;
+  pointer-events: none;
 }
 
 .maha-hint,
@@ -37,11 +30,11 @@
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 30;
+  z-index: 34;
   color: #fff;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
   text-align: center;
   white-space: nowrap;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
 }
 
 .maha-hint {
@@ -56,24 +49,33 @@
 }
 
 .maha-doneline {
-  top: 40%;
+  top: 39%;
   font-family: 'Baloo 2', cursive;
   font-weight: 700;
   font-size: clamp(18px, 3vw, 28px);
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 }
 
-
-/* rope-pulley additions */
-
-.maha-knob {
-  cursor: grab;
-  touch-action: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.maha-rope-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
 
+.maha-pulley {
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 50%, #65442d 0 27%, transparent 29%),
+    radial-gradient(circle at 35% 28%, #fff1bd 0 10%, transparent 11%),
+    linear-gradient(145deg, #9b6a3f, #4d301f);
+  border: 0.28vw solid #f0bc58;
+  box-shadow: 0 0.35vw 0.7vw rgba(0, 0, 0, 0.35);
+}
+
+.maha-knob,
 .maha-pull {
   cursor: grab;
   touch-action: none;
@@ -100,6 +102,68 @@
   filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.45));
 }
 
+.maha-raft-glow {
+  border-radius: 999px;
+  background: radial-gradient(ellipse at center, rgba(255, 218, 121, 0.24), rgba(255, 218, 121, 0) 68%);
+  opacity: 0.68;
+  transition: opacity 0.35s ease, filter 0.35s ease;
+  pointer-events: none;
+}
+
+.maha-raft-glow.is-complete {
+  opacity: 1;
+  filter: drop-shadow(0 0 1.4vw rgba(255, 214, 105, 0.78));
+  animation: mahaRaftGlow 1.6s ease-in-out infinite;
+}
+
+.maha-log-piece {
+  cursor: default;
+  touch-action: none;
+  transition:
+    left 0.32s ease,
+    top 0.32s ease,
+    opacity 0.26s ease,
+    filter 0.26s ease,
+    transform 0.26s ease;
+  filter: drop-shadow(0 0.45vw 0.55vw rgba(0, 0, 0, 0.24));
+}
+
+.maha-log-piece.is-current {
+  filter: brightness(1.06) drop-shadow(0 0 0.7vw rgba(255, 205, 95, 0.62));
+}
+
+.maha-log-piece.is-moving {
+  transition: none;
+  filter: brightness(1.08) drop-shadow(0 0.55vw 0.75vw rgba(0, 0, 0, 0.35));
+}
+
+.maha-raft-log {
+  filter: drop-shadow(0 0.35vw 0.45vw rgba(0, 0, 0, 0.23));
+}
+
+.maha-raft-log.is-attached {
+  animation: mahaLogSnap 0.38s ease;
+}
+
+.maha-animal {
+  pointer-events: auto;
+  transition:
+    left 0.44s ease,
+    top 0.44s ease,
+    opacity 0.35s ease,
+    transform 0.35s ease,
+    filter 0.35s ease;
+  filter: drop-shadow(0 0.28vw 0.36vw rgba(0, 0, 0, 0.24));
+}
+
+.maha-animal.is-joined {
+  animation: mahaAnimalJoin 0.42s ease;
+}
+
+.maha-animal.is-waiting {
+  opacity: 0.92;
+}
+
 .maha-game .maha-hint-pulse {
   animation: mahaHintPulse 1.15s ease-in-out infinite;
 }
@@ -113,6 +177,84 @@
   filter: brightness(1.04) drop-shadow(0 0 10px rgba(255, 188, 98, 0.55));
 }
 
+.maha-debug-toggle {
+  position: absolute;
+  left: 1.5%;
+  bottom: 2%;
+  z-index: 80;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 6px;
+  background: rgba(26, 31, 44, 0.72);
+  color: #fff;
+  font: 700 12px 'Nunito', sans-serif;
+  padding: 6px 9px;
+  cursor: pointer;
+}
+
+.maha-debug-panel {
+  position: absolute;
+  left: 1.5%;
+  bottom: 9%;
+  z-index: 80;
+  width: min(250px, 34%);
+  color: #fff;
+  background: rgba(21, 27, 38, 0.86);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
+  font: 12px 'Nunito', sans-serif;
+}
+
+.maha-debug-panel label {
+  display: grid;
+  gap: 4px;
+}
+
+.maha-debug-panel select {
+  width: 100%;
+  border: 0;
+  border-radius: 5px;
+  padding: 5px;
+  font: inherit;
+}
+
+.maha-debug-actions {
+  display: flex;
+  gap: 7px;
+  margin: 8px 0;
+}
+
+.maha-debug-actions button {
+  flex: 1;
+  border: 0;
+  border-radius: 5px;
+  background: #ffd36d;
+  color: #33210b;
+  font: 800 11px 'Nunito', sans-serif;
+  padding: 6px;
+  cursor: pointer;
+}
+
+.maha-debug-panel pre {
+  max-height: 120px;
+  margin: 0;
+  overflow: auto;
+  color: #e8f4ff;
+  white-space: pre-wrap;
+}
+
+.maha-game.is-debugging .maha-layer {
+  pointer-events: auto;
+  outline: 1px dashed rgba(255, 255, 255, 0.48);
+  cursor: move;
+}
+
+.maha-game.is-debugging .is-debug-selected {
+  outline: 2px solid #ffde6d;
+  box-shadow: 0 0 0 4px rgba(255, 222, 109, 0.22);
+}
+
 @keyframes mahaHintFade {
   from { opacity: 0; transform: translateX(-50%) translateY(8px); }
   to { opacity: 0.92; transform: translateX(-50%) translateY(0); }
@@ -124,16 +266,33 @@
 }
 
 @keyframes mahaHintGlow {
-  0%, 100% {
-    transform: translate(-50%, -50%) scale(1);
-  }
-  50% {
-    transform: translate(-50%, -50%) scale(1.06);
-  }
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.06); }
+}
+
+@keyframes mahaLogSnap {
+  0% { transform: translate(-50%, -50%) scale(1.08); }
+  100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes mahaAnimalJoin {
+  0% { transform: translate(-50%, -50%) translateY(8%) scale(0.92); }
+  70% { transform: translate(-50%, -50%) translateY(-5%) scale(1.06); }
+  100% { transform: translate(-50%, -50%) translateY(0) scale(1); }
+}
+
+@keyframes mahaRaftGlow {
+  0%, 100% { filter: drop-shadow(0 0 1.1vw rgba(255, 214, 105, 0.68)); }
+  50% { filter: drop-shadow(0 0 1.9vw rgba(255, 226, 133, 0.94)); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .maha-calf {
+  .maha-log-piece,
+  .maha-animal,
+  .maha-raft-glow,
+  .maha-raft-log.is-attached,
+  .maha-animal.is-joined {
+    animation: none;
     transition: none;
   }
 }

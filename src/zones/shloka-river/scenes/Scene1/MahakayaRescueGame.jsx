@@ -1,54 +1,87 @@
 // src/zones/shloka-river/scenes/Scene1/MahakayaRescueGame.jsx
 //
-// MAHAKAYA - rope-pulley mechanic
-// Stage 1 (detached): drag rope knob -> drop near log -> attaches
-// Stage 2 (attached): drag pull-handle DOWN (p 0->1) -> log rises, syllables lock
-//                      let go -> smooth sink back
-// Stage 3 (free): p>=1 -> calf free, game complete
-//
-// Layer model, %-positioned, positions from editor.
+// MAHAKAYA - attach rope, pull logs into the raft, make room for everyone.
+// Each completed pull adds one log, welcomes one animal, and locks one syllable.
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import SyllableHighlight from '../../shared/SyllableHighlight';
 import useRepeatedHintCycle from '../../../../lib/hooks/useRepeatedHintCycle';
 import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
 import './MahakayaRescueGame.css';
 
-import calfPinned from './assets/images/mahakaya/calf-pinned.webp';
-import calfFree from './assets/images/mahakaya/calf-free.webp';
 import logHeavy from './assets/images/mahakaya/log-heavy.webp';
+import frogHappy from './assets/images/vakratunda/frog-happy.webp';
+import duckling from './assets/images/vakratunda/duckling.png';
+import bunnyHappy from '../Scene2/assets/images/Samaprabha/bunny-happy.png';
+import birdHappy from '../Scene2/assets/images/Samaprabha/bird-happy.png';
 
 const SYLLABLES = ['Ma', 'ha', 'ka', 'ya'];
-const TOTAL = 4;
+const AUDIO = { syllables: ['ma', 'ha', 'ka', 'ya'] };
+const TOTAL_LOGS = 3;
+const TOTAL_SYLLABLES = 4;
+const ATTACH_DIST = 10;
 
-const AUDIO = {
-  syllables: ['ma', 'ha', 'ka', 'ya'],
+const DEFAULT_LAYOUT = {
+  pulley: { l: 56, t: 12, w: 4.5 },
+  handleStart: { l: 45, t: 36, w: 6.6 },
+  pullTop: { l: 56, t: 24, w: 6.6 },
+  pullBottom: { l: 56, t: 78, w: 6.6 },
+  raft: { l: 49, t: 59, w: 47, h: 14 },
+  raftLog0: { l: 34, t: 59, w: 16 },
+  raftLog1: { l: 44, t: 59, w: 16 },
+  raftLog2: { l: 54, t: 59, w: 16 },
+  raftLog3: { l: 64, t: 59, w: 16 },
+  waitingLog0: { l: 23, t: 75, w: 15 },
+  waitingLog1: { l: 38, t: 78, w: 15 },
+  waitingLog2: { l: 53, t: 76, w: 15 },
+  animal0: { l: 34, t: 51, w: 8 },
+  animal1: { l: 44, t: 50, w: 7.5 },
+  animal2: { l: 54, t: 50, w: 7.5 },
+  animal3: { l: 64, t: 50, w: 7.5 },
+  waitingAnimal1: { l: 73, t: 68, w: 7.5 },
+  waitingAnimal2: { l: 82, t: 70, w: 7.5 },
+  waitingAnimal3: { l: 91, t: 67, w: 7.5 },
 };
 
-// Positions from editor (% of stage)
-const POS = {
-  ropeAnchor: { l: 56, t: 12 },
-  logRest: { l: 34, t: 54, w: 18 },
-  logGround: { l: 52.9, t: 17.9, w: 18 },
-  cueTarget: { l: 38, t: 52, w: 10 },
-  logLiftY: 34,
-  calfPinned: { l: 31.2, t: 63.9, w: 17 },
-  calfFree: { l: 32.5, t: 66, w: 17 },
-  ropeKnob: { l: 45, t: 38, w: 6.6 },
-  pullBottom: 78,
-};
+const DEBUG_KEYS = [
+  'pulley',
+  'handleStart',
+  'pullTop',
+  'pullBottom',
+  'raft',
+  'raftLog0',
+  'raftLog1',
+  'raftLog2',
+  'raftLog3',
+  'waitingLog0',
+  'waitingLog1',
+  'waitingLog2',
+  'animal0',
+  'animal1',
+  'animal2',
+  'animal3',
+  'waitingAnimal1',
+  'waitingAnimal2',
+  'waitingAnimal3',
+];
 
-const ATTACH_DIST = 14;
+const ANIMALS = [
+  { id: 'frog', img: frogHappy, name: 'Frog' },
+  { id: 'duckling', img: duckling, name: 'Duckling' },
+  { id: 'bunny', img: bunnyHappy, name: 'Bunny' },
+  { id: 'bird', img: birdHappy, name: 'Bird' },
+];
+
 const lerp = (a, b, t) => a + (b - a) * t;
+const mixPos = (from, to, t) => ({
+  l: lerp(from.l, to.l, t),
+  t: lerp(from.t, to.t, t),
+  w: lerp(from.w, to.w, t),
+});
 
 function RopeGripSvg() {
   return (
-    <svg
-      className="maha-grip-svg"
-      viewBox="0 0 120 44"
-      aria-hidden="true"
-      focusable="false"
-    >
+    <svg className="maha-grip-svg" viewBox="0 0 120 44" aria-hidden="true" focusable="false">
       <defs>
         <linearGradient id="mahaGripWood" x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%" stopColor="#d49a66" />
@@ -71,14 +104,42 @@ function RopeGripSvg() {
   );
 }
 
+function RopeLine({ x1, y1, x2, y2, zIndex = 14 }) {
+  const midX = (x1 + x2) / 2;
+  const midY = (y1 + y2) / 2;
+  const distance = Math.hypot(x2 - x1, y2 - y1);
+  const controlX = midX + (x2 - x1) * 0.04;
+  const controlY = midY + Math.min(14, Math.max(4, distance * 0.12));
+  const d = `M ${x1} ${y1} Q ${controlX} ${controlY} ${x2} ${y2}`;
+
+  return (
+    <svg
+      className="maha-rope-svg"
+      style={{ zIndex }}
+      viewBox="0 0 100 100"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+    >
+      <path d={d} fill="none" stroke="#d19159" strokeWidth="0.95" strokeLinecap="round" />
+      <path
+        d={d}
+        fill="none"
+        stroke="#efc392"
+        strokeWidth="0.48"
+        strokeLinecap="round"
+        strokeDasharray="0.01 2.2"
+        opacity="0.82"
+      />
+    </svg>
+  );
+}
+
 export default function MahakayaRescueGame({
   isActive = false,
   hideElements = false,
-  powerGained = false,
   onMicroWin = () => {},
   onPhaseComplete = () => {},
   onGameComplete = () => {},
-  profileName = '',
   voiceGuidance = {},
   isPaused = false,
 }) {
@@ -86,34 +147,40 @@ export default function MahakayaRescueGame({
 
   const [phase, setPhase] = useState('intro');
   const [ropeStage, setRopeStage] = useState('detached');
-  const [knobPos, setKnobPos] = useState({ l: POS.ropeKnob.l, t: POS.ropeKnob.t });
-  const [p, setP] = useState(0);
-  const [locked, setLocked] = useState(0);
+  const [activeLog, setActiveLog] = useState(0);
+  const [completedLogs, setCompletedLogs] = useState(0);
+  const [litCount, setLitCount] = useState(0);
+  const [pullProgress, setPullProgress] = useState(0);
+  const [knobPos, setKnobPos] = useState({ l: DEFAULT_LAYOUT.handleStart.l, t: DEFAULT_LAYOUT.handleStart.t });
   const [dragging, setDragging] = useState(null);
+  const [layout, setLayout] = useState(DEFAULT_LAYOUT);
+  const [debugMode, setDebugMode] = useState(false);
+  const [selectedDebugKey, setSelectedDebugKey] = useState('waitingLog0');
+  const [debugDrag, setDebugDrag] = useState(null);
 
-  const pRef = useRef(0);
-  const lockedRef = useRef(0);
-  const maxLockedRef = useRef(0);
-  const draggingRef = useRef(null);
-  const ropeStageRef = useRef('detached');
-  const phaseRef = useRef('intro');
-  const isPausedRef = useRef(isPaused);
-  const completionStartedRef = useRef(false);
-  const timers = useRef([]);
-  const slip = useRef(null);
   const stageRef = useRef(null);
-  const {
-    hintLevel,
-    markInteraction,
-  } = useRepeatedHintCycle({
-    enabled: isActive && !isPaused && phase === 'play',
-    stageKey: ropeStage === 'detached' ? 'detached' : 'attached',
-    initialDelay: ropeStage === 'detached' ? 8000 : 7000,
+  const timers = useRef([]);
+  const isPausedRef = useRef(isPaused);
+  const phaseRef = useRef('intro');
+  const ropeStageRef = useRef('detached');
+  const draggingRef = useRef(null);
+  const completedLogsRef = useRef(0);
+  const completionStartedRef = useRef(false);
+
+  const { hintLevel, markInteraction } = useRepeatedHintCycle({
+    enabled: isActive && !isPaused && phase === 'play' && !debugMode,
+    stageKey: `${ropeStage}-${activeLog}`,
+    initialDelay: ropeStage === 'detached' ? 8000 : 6500,
     pulseCountBeforeEscalation: 3,
     pulseInterval: 1800,
-    level2Delay: ropeStage === 'detached' ? 15000 : 14000,
-    level3Delay: ropeStage === 'detached' ? 22000 : 21000,
+    level2Delay: ropeStage === 'detached' ? 15000 : 13000,
+    level3Delay: ropeStage === 'detached' ? 22000 : 20000,
   });
+
+  const clearTimers = useCallback(() => {
+    timers.current.forEach(clearTimeout);
+    timers.current = [];
+  }, []);
 
   const after = useCallback((ms, fn) => {
     const runWhenReady = () => {
@@ -128,89 +195,150 @@ export default function MahakayaRescueGame({
     timers.current.push(id);
   }, []);
 
-  useEffect(() => {
-    isPausedRef.current = isPaused;
-  }, [isPaused]);
+  const pointFromEvent = useCallback((e) => {
+    const rect = stageRef.current?.getBoundingClientRect();
+    if (!rect) return null;
+    return {
+      l: ((e.clientX - rect.left) / rect.width) * 100,
+      t: ((e.clientY - rect.top) / rect.height) * 100,
+    };
+  }, []);
 
-  const clearTimers = () => {
-    timers.current.forEach(clearTimeout);
-    timers.current = [];
-  };
-
-  const resetState = () => {
+  const resetState = useCallback(() => {
+    clearTimers();
     setPhase('intro');
     phaseRef.current = 'intro';
     setRopeStage('detached');
     ropeStageRef.current = 'detached';
-    setKnobPos({ l: POS.ropeKnob.l, t: POS.ropeKnob.t });
-    setP(0);
-    pRef.current = 0;
-    setLocked(0);
-    lockedRef.current = 0;
-    maxLockedRef.current = 0;
+    setActiveLog(0);
+    setCompletedLogs(0);
+    completedLogsRef.current = 0;
+    setLitCount(0);
+    setPullProgress(0);
+    setKnobPos({ l: layout.handleStart.l, t: layout.handleStart.t });
     setDragging(null);
     draggingRef.current = null;
     completionStartedRef.current = false;
-    if (slip.current) {
-      clearInterval(slip.current);
-      slip.current = null;
-    }
-  };
+  }, [clearTimers, layout.handleStart.l, layout.handleStart.t]);
 
   useEffect(() => {
-    if (!isActive) return;
-    resetState();
-    playSceneLine?.('scene10_maha_intro');
-    after(2800, () => playSceneLine?.('scene10_maha_blocking'));
-    after(4600, () => playSceneLine?.('scene10_maha_drag_rope'));
-    after(4600, () => {
-      setPhase('play');
-      phaseRef.current = 'play';
-    });
-    return () => {
-      clearTimers();
-      if (slip.current) clearInterval(slip.current);
-    };
-    // `after` is intentionally stable and pause-aware via ref; recorder toggles
-    // should not restart the game.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isActive]);
-
-  function startSink() {
-    if (slip.current) return;
-    slip.current = setInterval(() => {
-      if (draggingRef.current === 'pull') {
-        clearInterval(slip.current);
-        slip.current = null;
-        return;
-      }
-      const np = Math.max(0, pRef.current - 0.04);
-      pRef.current = np;
-      setP(np);
-      lockedRef.current = Math.floor(np * TOTAL + 1e-6);
-      setLocked(lockedRef.current);
-      if (np <= 0) {
-        clearInterval(slip.current);
-        slip.current = null;
-      }
-    }, 60);
-  }
-
-  useEffect(() => {
+    isPausedRef.current = isPaused;
     if (isPaused) {
       draggingRef.current = null;
       setDragging(null);
-      if (slip.current) {
-        clearInterval(slip.current);
-        slip.current = null;
-      }
+      setDebugDrag(null);
     }
   }, [isPaused]);
 
+  useEffect(() => {
+    if (!isActive) return undefined;
+    resetState();
+    playSceneLine?.('scene10_maha_intro');
+    after(2600, () => {
+      setPhase('play');
+      phaseRef.current = 'play';
+      playSceneLine?.('scene10_maha_drag_rope');
+    });
+    return clearTimers;
+    // Voice and timer helpers are stable enough for this scene lifecycle.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isActive]);
+
+  useEffect(() => {
+    if (!debugMode) return;
+    setKnobPos({ l: layout.handleStart.l, t: layout.handleStart.t });
+  }, [debugMode, layout.handleStart.l, layout.handleStart.t]);
+
   if (!isActive) return null;
 
+  const updateLayout = (key, patch) => {
+    setLayout((current) => ({
+      ...current,
+      [key]: { ...current[key], ...patch },
+    }));
+  };
+
+  const nudgeSize = (delta) => {
+    updateLayout(selectedDebugKey, {
+      w: Math.max(2, Number(((layout[selectedDebugKey].w || 4) + delta).toFixed(1))),
+    });
+  };
+
+  const startDebugDrag = (e, key) => {
+    if (!debugMode) return false;
+    e.preventDefault();
+    e.stopPropagation();
+    const point = pointFromEvent(e);
+    if (!point) return true;
+    setSelectedDebugKey(key);
+    setDebugDrag({
+      key,
+      offsetL: point.l - layout[key].l,
+      offsetT: point.t - layout[key].t,
+    });
+    return true;
+  };
+
+  const placeStyle = (pos, extra = {}) => ({
+    left: `${pos.l}%`,
+    top: `${pos.t}%`,
+    width: `${pos.w}%`,
+    ...(pos.h ? { height: `${pos.h}%` } : {}),
+    ...extra,
+  });
+
+  const waitingLogKey = `waitingLog${activeLog}`;
+  const targetLogKey = `raftLog${activeLog + 1}`;
+  const currentWaitingLog = layout[waitingLogKey];
+  const currentTargetLog = layout[targetLogKey];
+  const currentMovingLog = mixPos(currentWaitingLog, currentTargetLog, pullProgress);
+  const pullHandleTop = lerp(layout.pullTop.t, layout.pullBottom.t, pullProgress);
+  const activePullHandle = { ...layout.pullTop, t: pullHandleTop };
+  const allDone = litCount >= TOTAL_SYLLABLES;
+
+  const completeRound = () => {
+    if (ropeStageRef.current !== 'attached') return;
+    const nextCompleted = Math.min(TOTAL_LOGS, completedLogsRef.current + 1);
+    completedLogsRef.current = nextCompleted;
+    setCompletedLogs(nextCompleted);
+    setLitCount(nextCompleted);
+    onMicroWin?.();
+    playSfx?.('chime');
+    setPullProgress(0);
+    draggingRef.current = null;
+    setDragging(null);
+
+    if (nextCompleted >= TOTAL_LOGS) {
+      ropeStageRef.current = 'done';
+      setRopeStage('done');
+      after(700, () => {
+        setLitCount(TOTAL_SYLLABLES);
+        playWord?.('mahakaya');
+      });
+      after(1500, () => {
+        setPhase('complete');
+        phaseRef.current = 'complete';
+        playSceneLine?.('scene10_maha_success');
+      });
+      after(4300, () => {
+        if (completionStartedRef.current) return;
+        completionStartedRef.current = true;
+        onGameComplete?.();
+        onPhaseComplete();
+      });
+      return;
+    }
+
+    const nextLog = nextCompleted;
+    setActiveLog(nextLog);
+    ropeStageRef.current = 'detached';
+    setRopeStage('detached');
+    setKnobPos({ l: layout.handleStart.l, t: layout.handleStart.t });
+    after(350, () => playSceneLine?.('scene10_maha_drag_rope'));
+  };
+
   const onKnobDown = (e) => {
-    if (isPaused || phaseRef.current !== 'play' || ropeStageRef.current !== 'detached') return;
+    if (debugMode || isPaused || phaseRef.current !== 'play' || ropeStageRef.current !== 'detached') return;
     e.preventDefault();
     e.stopPropagation();
     e.currentTarget.setPointerCapture?.(e.pointerId);
@@ -220,145 +348,104 @@ export default function MahakayaRescueGame({
   };
 
   const onPullDown = (e) => {
-    if (isPaused || phaseRef.current !== 'play' || ropeStageRef.current !== 'attached') return;
+    if (debugMode || isPaused || phaseRef.current !== 'play' || ropeStageRef.current !== 'attached') return;
     e.preventDefault();
     e.stopPropagation();
     e.currentTarget.setPointerCapture?.(e.pointerId);
     markInteraction();
-    if (slip.current) {
-      clearInterval(slip.current);
-      slip.current = null;
-    }
     draggingRef.current = 'pull';
     setDragging('pull');
   };
 
   const onPointerMove = (e) => {
+    if (debugDrag && !isPaused) {
+      const point = pointFromEvent(e);
+      if (!point) return;
+      updateLayout(debugDrag.key, {
+        l: Number((point.l - debugDrag.offsetL).toFixed(1)),
+        t: Number((point.t - debugDrag.offsetT).toFixed(1)),
+      });
+      return;
+    }
+
     if (!draggingRef.current || isPaused) return;
-    const rect = stageRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    const lPct = ((e.clientX - rect.left) / rect.width) * 100;
-    const tPct = ((e.clientY - rect.top) / rect.height) * 100;
+    const point = pointFromEvent(e);
+    if (!point) return;
 
     if (draggingRef.current === 'knob') {
-      setKnobPos({ l: lPct, t: tPct });
-    } else if (draggingRef.current === 'pull') {
-      if (completionStartedRef.current) return;
-      const topPct = POS.ropeAnchor.t + 10;
-      const botPct = POS.pullBottom;
-      const np = Math.max(0, Math.min(1, (tPct - topPct) / (botPct - topPct)));
-      pRef.current = np;
-      setP(np);
+      setKnobPos(point);
+      return;
+    }
 
-      const sl = Math.min(TOTAL, Math.floor(np * TOTAL + 1e-6));
-      if (sl > lockedRef.current) {
-        lockedRef.current = sl;
-        setLocked(sl);
-        if (sl > maxLockedRef.current && sl <= TOTAL) {
-          maxLockedRef.current = sl;
-          onMicroWin?.();
-        }
-      }
-      if (np >= 1) {
-        completionStartedRef.current = true;
-        ropeStageRef.current = 'done';
-        setRopeStage('done');
-        draggingRef.current = null;
-        setDragging(null);
-        playWord?.('mahakaya');
-        after(400, () => { playSceneLine?.('scene10_maha_success'); });
-        after(1200, () => {
-          setPhase('free');
-          phaseRef.current = 'free';
-        });
-        after(4700, () => {
-          onGameComplete?.();
-          onPhaseComplete();
-        });
-      }
+    if (draggingRef.current === 'pull') {
+      const np = Math.max(0, Math.min(1, (point.t - layout.pullTop.t) / (layout.pullBottom.t - layout.pullTop.t)));
+      setPullProgress(np);
+      if (np >= 1) completeRound();
     }
   };
 
   const onPointerUp = (e) => {
+    if (debugDrag) {
+      setDebugDrag(null);
+      return;
+    }
+
     if (!draggingRef.current) return;
     if (draggingRef.current === 'knob') {
-      const rect = stageRef.current?.getBoundingClientRect();
-      const lPct = rect ? ((e.clientX - rect.left) / rect.width) * 100 : knobPos.l;
-      const tPct = rect ? ((e.clientY - rect.top) / rect.height) * 100 : knobPos.t;
-      const dist = Math.hypot(lPct - POS.cueTarget.l, tPct - POS.cueTarget.t);
+      const point = pointFromEvent(e) || knobPos;
+      const dist = Math.hypot(point.l - currentWaitingLog.l, point.t - currentWaitingLog.t);
       if (dist < ATTACH_DIST) {
         ropeStageRef.current = 'attached';
         setRopeStage('attached');
+        setKnobPos({ l: currentWaitingLog.l, t: currentWaitingLog.t });
         playSfx?.('chime');
         playSceneLine?.('scene10_maha_pull_down');
       } else {
-        setKnobPos({ l: POS.ropeKnob.l, t: POS.ropeKnob.t });
+        setKnobPos({ l: layout.handleStart.l, t: layout.handleStart.t });
       }
     } else if (draggingRef.current === 'pull') {
-      startSink();
+      setPullProgress(0);
     }
     draggingRef.current = null;
     setDragging(null);
   };
 
-  const freed = phase === 'free';
-  const logPos = freed
-    ? POS.logGround
-    : { l: POS.logRest.l, t: lerp(POS.logRest.t, POS.logLiftY, p), w: POS.logRest.w };
-  const pullT = lerp(POS.ropeAnchor.t + 10, POS.pullBottom, p);
-  const calfPos = freed ? POS.calfFree : POS.calfPinned;
-  const lyr = (pos) => ({ left: `${pos.l}%`, top: `${pos.t}%`, width: `${pos.w}%` });
+  const renderLog = (key, className, pos, zIndex, options = {}) => (
+    <div
+      key={key}
+      className={`maha-layer maha-log-piece ${className || ''} ${debugMode && selectedDebugKey === key ? 'is-debug-selected' : ''}`}
+      style={placeStyle(pos, {
+        zIndex,
+        opacity: options.hidden ? 0 : 1,
+        pointerEvents: options.hidden ? 'none' : undefined,
+      })}
+      onPointerDown={(e) => startDebugDrag(e, key)}
+    >
+      <img src={logHeavy} alt="" />
+    </div>
+  );
 
-  const RopeLine = ({ x1, y1, x2, y2, sag = 0 }) => {
-    const midX = (x1 + x2) / 2;
-    const midY = (y1 + y2) / 2;
-    const dx = x2 - x1;
-    const dy = y2 - y1;
-    const distance = Math.hypot(dx, dy);
-    const sagY = sag || Math.min(14, Math.max(4, distance * 0.12));
-    const controlX = midX + dx * 0.04;
-    const controlY = midY + sagY;
-    const d = `M ${x1} ${y1} Q ${controlX} ${controlY} ${x2} ${y2}`;
-
+  const renderAnimal = (animalIndex, joined) => {
+    const animal = ANIMALS[animalIndex];
+    const key = joined ? `animal${animalIndex}` : `waitingAnimal${animalIndex}`;
+    const pos = layout[key];
     return (
-      <svg
-        className="maha-layer"
-        style={{
-          left: 0,
-          top: 0,
-          width: '100%',
-          height: '100%',
-          transform: 'none',
-          zIndex: 14,
-          pointerEvents: 'none'
-        }}
-        viewBox="0 0 100 100"
-        preserveAspectRatio="none"
+      <div
+        key={`${animal.id}-${joined ? 'raft' : 'wait'}`}
+        className={`maha-layer maha-animal ${joined ? 'is-joined' : 'is-waiting'} ${debugMode && selectedDebugKey === key ? 'is-debug-selected' : ''}`}
+        style={placeStyle(pos, { zIndex: joined ? 22 : 9 })}
+        onPointerDown={(e) => startDebugDrag(e, key)}
+        title={animal.name}
       >
-        <path
-          d={d}
-          fill="none"
-          stroke="#d19159"
-          strokeWidth="0.95"
-          strokeLinecap="round"
-        />
-        <path
-          d={d}
-          fill="none"
-          stroke="#efc392"
-          strokeWidth="0.48"
-          strokeLinecap="round"
-          strokeDasharray="0.01 2.2"
-          opacity="0.82"
-        />
-      </svg>
+        <img src={animal.img} alt="" />
+      </div>
     );
   };
 
   return (
     <div
       ref={stageRef}
-      className={`maha-game ${hideElements ? 'is-hidden' : ''}`}
+      className={`maha-game ${hideElements ? 'is-hidden' : ''} ${debugMode ? 'is-debugging' : ''}`}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
@@ -366,7 +453,7 @@ export default function MahakayaRescueGame({
       {phase !== 'intro' && (
         <SyllableHighlight
           syllables={SYLLABLES}
-          litCount={locked}
+          litCount={litCount}
           audioSyllables={AUDIO.syllables}
           onSyllableLit={(syllable) => {
             stopVoice?.();
@@ -374,70 +461,61 @@ export default function MahakayaRescueGame({
           }}
         />
       )}
-      {freed && <p className="maha-doneline">The calf is free!</p>}
 
-      <div className="maha-layer maha-calf" style={{ ...lyr(calfPos), zIndex: 8 }}>
-        <img src={freed ? calfFree : calfPinned} alt="" />
-      </div>
+      <button
+        type="button"
+        className="maha-debug-toggle"
+        onClick={() => setDebugMode((show) => !show)}
+      >
+        {debugMode ? 'Done layout' : 'Layout'}
+      </button>
+
+      {phase === 'play' && (
+        <p className={`maha-hint ${hintLevel >= 1 ? 'is-visible' : ''}`}>
+          {ropeStage === 'detached' && hintLevel === 1 && 'Try the glowing rope.'}
+          {ropeStage === 'detached' && hintLevel === 2 && 'Attach the rope to a log.'}
+          {ropeStage === 'detached' && hintLevel >= 3 && 'Drag the handle to the next log.'}
+          {ropeStage === 'attached' && hintLevel === 1 && 'Pull the handle down.'}
+          {ropeStage === 'attached' && hintLevel === 2 && 'Pull to add the log.'}
+          {ropeStage === 'attached' && hintLevel >= 3 && 'Pull all the way down.'}
+        </p>
+      )}
+
+      {phase === 'complete' && <p className="maha-doneline">There&apos;s room for everyone.</p>}
 
       <div
-        className="maha-layer maha-log"
-        style={{
-          left: `${logPos.l}%`,
-          top: `${logPos.t}%`,
-          width: `${logPos.w}%`,
-          zIndex: 12,
-          transition: dragging === 'pull' ? 'none' : 'left .45s ease-out, top .45s ease-out'
-        }}
-      >
-        <img src={logHeavy} alt="" />
-      </div>
+        className={`maha-layer maha-raft-glow ${allDone ? 'is-complete' : ''}`}
+        style={placeStyle(layout.raft, { zIndex: 10 })}
+        onPointerDown={(e) => startDebugDrag(e, 'raft')}
+      />
+
+      {renderLog('raftLog0', 'maha-raft-log', layout.raftLog0, 18)}
+      {[0, 1, 2].map((index) => {
+        if (index < completedLogs) {
+          return renderLog(`raftLog${index + 1}`, 'maha-raft-log is-attached', layout[`raftLog${index + 1}`], 18 + index);
+        }
+        if (index === activeLog && ropeStage === 'attached') {
+          return renderLog(`movingLog${index}`, 'is-moving', currentMovingLog, 20);
+        }
+        return renderLog(`waitingLog${index}`, index === activeLog ? 'is-current' : '', layout[`waitingLog${index}`], 8);
+      })}
+
+      {ANIMALS.map((_, index) => renderAnimal(index, index === 0 || index <= completedLogs))}
+
+      <div
+        className={`maha-layer maha-pulley ${debugMode && selectedDebugKey === 'pulley' ? 'is-debug-selected' : ''}`}
+        style={placeStyle(layout.pulley, { zIndex: 16 })}
+        onPointerDown={(e) => startDebugDrag(e, 'pulley')}
+        aria-hidden="true"
+      />
 
       {ropeStage === 'detached' && phase === 'play' && (
         <>
-          <p className={`maha-hint ${hintLevel >= 1 ? 'is-visible' : ''}`}>
-            {hintLevel === 1 && 'Try the glowing rope.'}
-            {hintLevel === 2 && 'Drag the rope to the log.'}
-            {hintLevel >= 3 && 'Drag the rope knob to the target.'}
-          </p>
-          {/* Inline drag cue replaced by GestureDemo
-          <svg
-            className={`maha-cue-line ${hintLevel >= 1 ? 'maha-hint-glow' : ''}`}
-            viewBox="0 0 100 100"
-            preserveAspectRatio="none"
-            aria-hidden="true"
-          >
-            <path d={`M ${POS.ropeKnob.l - (POS.ropeKnob.w * 0.34)} ${POS.ropeKnob.t + 0.2} Q ${POS.ropeKnob.l - 1.4} ${POS.ropeKnob.t + 5.5} ${POS.logRest.l} ${POS.logRest.t}`} />
-          </svg>
+          <RopeLine x1={layout.pulley.l} y1={layout.pulley.t} x2={knobPos.l} y2={knobPos.t} />
           <div
-            className={`maha-cue-target ${hintLevel >= 1 ? 'maha-hint-pulse' : ''} ${hintLevel >= 2 ? 'maha-hint-glow' : ''}`}
-            key={`maha-cue-target-${pulseTick}`}
-            style={{ left: `${POS.cueTarget.l}%`, top: `${POS.cueTarget.t}%`, width: `${POS.cueTarget.w}%` }}
-            aria-hidden="true"
-          />
-          <div
-            className="maha-cue-arrow"
-            style={{ left: `${POS.cueTarget.l}%`, top: `${POS.cueTarget.t - 8}%` }}
-            aria-hidden="true"
-          >
-            {'\u2193'}
-          </div>
-          */}
-          <RopeLine
-            x1={POS.ropeAnchor.l}
-            y1={POS.ropeAnchor.t}
-            x2={knobPos.l}
-            y2={knobPos.t}
-          />
-          <div
-            className={`maha-layer maha-knob ${dragging === 'knob' ? 'grabbing' : ''} ${hintLevel >= 1 ? 'maha-hint-pulse' : ''} ${hintLevel >= 2 ? 'maha-hint-glow' : ''}`}
-            style={{
-              left: `${knobPos.l}%`,
-              top: `${knobPos.t}%`,
-              width: `${POS.ropeKnob.w}%`,
-              zIndex: 16
-            }}
-            onPointerDown={onKnobDown}
+            className={`maha-layer maha-knob ${dragging === 'knob' ? 'grabbing' : ''} ${hintLevel >= 1 ? 'maha-hint-pulse' : ''} ${hintLevel >= 2 ? 'maha-hint-glow' : ''} ${debugMode && selectedDebugKey === 'handleStart' ? 'is-debug-selected' : ''}`}
+            style={placeStyle({ ...layout.handleStart, l: knobPos.l, t: knobPos.t }, { zIndex: 24 })}
+            onPointerDown={(e) => (debugMode ? startDebugDrag(e, 'handleStart') : onKnobDown(e))}
           >
             <RopeGripSvg />
           </div>
@@ -446,73 +524,50 @@ export default function MahakayaRescueGame({
 
       {ropeStage === 'attached' && phase === 'play' && (
         <>
-          <p className={`maha-hint ${hintLevel >= 1 ? 'is-visible' : ''}`}>
-            {hintLevel === 1 && 'Pull the handle down.'}
-            {hintLevel === 2 && 'Keep pulling to lift the log.'}
-            {hintLevel >= 3 && 'Pull all the way down!'}
-          </p>
-          {/* Inline pull-down cue replaced by GestureDemo
-          {locked === 0 && (
-            <div
-              className={`maha-cue-arrow maha-cue-arrow-down ${hintLevel >= 1 ? 'maha-hint-pulse' : ''}`}
-              style={{ left: `${POS.ropeAnchor.l}%`, top: `${pullT - 12}%` }}
-              aria-hidden="true"
-            >
-              {'\u2193'}
-            </div>
-          )}
-          */}
-          <RopeLine
-            x1={POS.ropeAnchor.l}
-            y1={POS.ropeAnchor.t}
-            x2={POS.logRest.l}
-            y2={logPos.t}
-          />
-          <RopeLine
-            x1={POS.ropeAnchor.l}
-            y1={POS.ropeAnchor.t}
-            x2={POS.ropeAnchor.l}
-            y2={pullT}
-          />
+          <RopeLine x1={layout.pulley.l} y1={layout.pulley.t} x2={currentMovingLog.l} y2={currentMovingLog.t} />
+          <RopeLine x1={layout.pulley.l} y1={layout.pulley.t} x2={layout.pullTop.l} y2={activePullHandle.t} />
           <div
-            className={`maha-layer maha-pull ${dragging === 'pull' ? 'grabbing' : ''} ${hintLevel >= 1 ? 'maha-hint-pulse' : ''} ${hintLevel >= 2 ? 'maha-hint-glow' : ''}`}
-            style={{
-              left: `${POS.ropeAnchor.l}%`,
-              top: `${pullT}%`,
-              width: '6%',
-              zIndex: 16
-            }}
-            onPointerDown={onPullDown}
+            className={`maha-layer maha-pull ${dragging === 'pull' ? 'grabbing' : ''} ${hintLevel >= 1 ? 'maha-hint-pulse' : ''} ${hintLevel >= 2 ? 'maha-hint-glow' : ''} ${debugMode && selectedDebugKey === 'pullTop' ? 'is-debug-selected' : ''}`}
+            style={placeStyle(activePullHandle, { zIndex: 24 })}
+            onPointerDown={(e) => (debugMode ? startDebugDrag(e, 'pullTop') : onPullDown(e))}
           >
             <RopeGripSvg />
           </div>
         </>
       )}
 
-      {freed && (
-        <RopeLine
-          x1={POS.ropeAnchor.l}
-          y1={POS.ropeAnchor.t}
-          x2={logPos.l}
-          y2={logPos.t}
-        />
-      )}
-
       <GestureDemo
         type="drag"
-        from={{ x: POS.ropeKnob.l, y: POS.ropeKnob.t }}
-        to={{ x: POS.cueTarget.l, y: POS.cueTarget.t }}
-        active={ropeStage === 'detached' && phase === 'play' && locked === 0}
+        from={{ x: layout.handleStart.l, y: layout.handleStart.t }}
+        to={{ x: currentWaitingLog.l, y: currentWaitingLog.t }}
+        active={!debugMode && ropeStage === 'detached' && phase === 'play'}
         idleDelay={3000}
       />
       <GestureDemo
         type="pull-down"
-        from={{ x: POS.ropeAnchor.l, y: POS.ropeAnchor.t + 10 }}
-        to={{ x: POS.ropeAnchor.l, y: POS.pullBottom }}
-        active={ropeStage === 'attached' && phase === 'play' && locked === 0}
+        from={{ x: layout.pullTop.l, y: layout.pullTop.t }}
+        to={{ x: layout.pullBottom.l, y: layout.pullBottom.t }}
+        active={!debugMode && ropeStage === 'attached' && phase === 'play'}
         idleDelay={3000}
       />
+
+      {debugMode && (
+        <div className="maha-debug-panel">
+          <label>
+            Object
+            <select value={selectedDebugKey} onChange={(e) => setSelectedDebugKey(e.target.value)}>
+              {DEBUG_KEYS.map((key) => (
+                <option key={key} value={key}>{key}</option>
+              ))}
+            </select>
+          </label>
+          <div className="maha-debug-actions">
+            <button type="button" onClick={() => nudgeSize(-0.5)}>- size</button>
+            <button type="button" onClick={() => nudgeSize(0.5)}>+ size</button>
+          </div>
+          <pre>{JSON.stringify(layout[selectedDebugKey], null, 2)}</pre>
+        </div>
+      )}
     </div>
   );
 }
-
