@@ -3,6 +3,7 @@
 // Replaces EyesTelescopeGame (magnifier mechanic)
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import useAppVisibility from '../../../../lib/hooks/useAppVisibility';
 import './EyesPopUpGame.css';
 
 // Animals
@@ -402,6 +403,18 @@ const EyesPopUpGame = ({
       if (idleTimerRef.current) clearInterval(idleTimerRef.current);
     };
   }, [isActive, assignments, discovered]);
+
+  // Backgrounding the tab (phone call, home button, tab switch) doesn't stop
+  // this interval, so Date.now() - lastTapTimeRef.current keeps growing while
+  // hidden — without this, returning to the tab after any real idle time
+  // instantly jumps straight to the full-reveal hint. Reset the idle clock
+  // and clear any hint that was mid-escalation on tab return.
+  useAppVisibility(null, useCallback(() => {
+    lastTapTimeRef.current = Date.now();
+    setShowIdleHint(null);
+    setShowZoneHint(null);
+    setShowFullReveal(null);
+  }, []));
 
   // Reset idle hint when game state changes
   useEffect(() => {
