@@ -2904,16 +2904,9 @@ const handleComplete = () => {
           }}
           leftColumn={{
             header: (
-              <img
-                src={babyGaneshaImg}
-                alt="Ganesha"
-                style={{
-                  width: '96px',
-                  height: '96px',
-                  objectFit: 'contain',
-                  filter: 'drop-shadow(0 5px 10px rgba(0,0,0,0.2))'
-                }}
-              />
+              <div className="aboutme-comparison-avatar is-plain">
+                <img src={babyGaneshaImg} alt="Ganesha" />
+              </div>
             ),
             title: "Ganesha's Story",
             items: [
@@ -2924,29 +2917,13 @@ const handleComplete = () => {
           }}
           rightColumn={{
             header: (
-              <div
-                style={{
-                  width: '96px',
-                  height: '96px',
-                  borderRadius: '50%',
-                  background: (activeProfile?.icon || activeProfile?.profileIcon || profileAvatarImage) ? 'transparent' : 'linear-gradient(135deg, #4ECDC4, #44A08D)',
-                  border: (activeProfile?.icon || activeProfile?.profileIcon || profileAvatarImage) ? 'none' : '4px solid white',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontFamily: "'Baloo 2', cursive",
-                  fontSize: '40px',
-                  color: 'white',
-                  boxShadow: '0 5px 15px rgba(0,0,0,0.2)',
-                  overflow: 'hidden'
-                }}
-              >
+              <div className={`aboutme-comparison-avatar${(activeProfile?.icon || activeProfile?.profileIcon || profileAvatarImage) ? '' : ' is-fallback'}`}>
                 {activeProfile?.icon ? (
-                  <img src={activeProfile.icon} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img src={activeProfile.icon} alt="Profile" />
                 ) : activeProfile?.profileIcon ? (
-                  <img src={activeProfile.profileIcon} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img src={activeProfile.profileIcon} alt="Profile" />
                 ) : profileAvatarImage ? (
-                  <img src={profileAvatarImage} alt={profileDisplayName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img src={profileAvatarImage} alt={profileDisplayName} />
                 ) : (
                   profileAvatar
                 )}
