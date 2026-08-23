@@ -1815,14 +1815,6 @@ const NewModakSceneMVPContent = ({
             sidebarTarget: bellySidebarTarget
           });
         }, 950);
-        // -- Old useSymbolCollection trigger (superseded) --
-        // safeSetTimeout(() => {
-        //   const el = document.querySelector('.modak-game-rock-container');
-        //   const startRect = el ? el.getBoundingClientRect() : { top: window.innerHeight*0.6, left: window.innerWidth*0.5, width: 80, height: 80 };
-        //   setCurrentOverlaySymbol('belly');
-        //   handleCollect('belly', startRect, symbolBellyColored);
-        // }, 2300);
-
       }, 900);
     } else {
       safeSetTimeout(() => setShowSparkle(null), 1500);
@@ -2629,47 +2621,6 @@ const NewModakSceneMVPContent = ({
                       <div className="modak-game-belly-completion-halo" aria-hidden="true" />
                     )}
                   </div>
-                </div>
-              )}
-
-              {/* LEGACY FEED TARGET REMOVED */}
-              {false && sceneState.rockVisible && (
-                <div className="modak-game-rock-container breathing">
-                  <KidsDropZone
-                    id="feeding-rock"
-                    accepts="basket-modak"
-                    onDrop={handleRockFeed}
-                    disabled={sceneState.rockFeedCount >= 3}
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      borderRadius: '50%'
-                    }}
-                  >
-                    <img
-                      src={GANESHA_SIT_FEED_IMAGE}
-                      alt="Ganesha"
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        cursor: 'default',
-                        transform: `scale(${getFeedingGaneshaScale(sceneState.rockFeedCount, sceneState.rockTransformed)})`,
-                        transition: 'transform 2.2s cubic-bezier(0.34, 1.2, 0.64, 1)'
-                      }}
-                    />
-                  </KidsDropZone>
-
-                  {(showSparkle === 'rock-feeding' || showSparkle === 'belly-transform') && (
-                    <SparkleAnimation
-                      type={showSparkle === 'belly-transform' ? 'glitter' : 'star'}
-                      count={showSparkle === 'belly-transform' ? 25 : 12}
-                      color="#FFD700"
-                      size={showSparkle === 'belly-transform' ? 12 : 7}
-                      duration={showSparkle === 'belly-transform' ? 2000 : 1500}
-                      fadeOut={true}
-                      area="full"
-                    />
-                  )}
                 </div>
               )}
 
