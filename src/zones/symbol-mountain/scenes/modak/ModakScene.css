@@ -738,25 +738,6 @@ div[class*="modak-game-modak-collected"]:active {
   filter: none !important;
 }
 
-/* ===========================
-   ROCK/BELLY
-   =========================== */
-.modak-game-rock-container {
-  position: absolute; left: 74%; top: 22%;
-  width: 180px; height: auto;
-  cursor: pointer; transition: all 0.5s ease;
-  z-index: 8;
-}
-
-.modak-game-rock-container:hover { transform: scale(1.02); }
-.modak-game-rock-container:active { transform: scale(0.98); }
-.modak-game-rock-container.breathing { animation: modak-game-ganeshaBreathing 4s ease-in-out infinite; }
-
-@keyframes modak-game-ganeshaBreathing {
-  0%, 100% { transform: scale(1); filter: drop-shadow(0 4px 12px rgba(255, 140, 0, 0.3)); }
-  50% { transform: scale(1.02); filter: drop-shadow(0 6px 16px rgba(255, 140, 0, 0.5)); }
-}
-
 @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
 
 /* ========================================== */
@@ -779,15 +760,11 @@ div[class*="modak-game-modak-collected"]:active {
 /* === 2. MOBILE PORTRAIT (Phones) === */
 @media (max-width: 600px) {
   .modak-game-modak { width: 55px; height: 55px; }
-
-  .modak-game-rock-container { width: 120px; left: 65%; top: 24%; }
 }
 
 /* === 3. MOBILE LANDSCAPE (Phones horizontal) === */
 @media (min-width: 568px) and (max-width: 1019px) and (orientation: landscape) {
   .modak-game-modak { width: 65px; height: 65px; }
-
-  .modak-game-rock-container { width: 140px; top: 18%; }
 }
 
 /* === 4. iPAD ALL / TABLET MEDIUM (Portrait + Landscape) === */
@@ -797,7 +774,6 @@ div[class*="modak-game-modak-collected"]:active {
   /* 3. SCALE THE BASKET IMAGE ONLY (Visual Pop) */
   /* 4. GROUND ELEMENTS (Tablet Size) */
   .modak-game-modak { width: 100px; height: 100px; }
-  .modak-game-rock-container { width: 240px; top: 44%; left: 60%; }
 
   /* 5. COLLECTED MODAKS — sized/positioned via basket vars */
 }
@@ -811,8 +787,6 @@ div[class*="modak-game-modak-collected"]:active {
 
   /* Ground Modaks */
   .modak-game-modak { width: 115px; height: 115px; }
-
-  .modak-game-rock-container { width: 220px; top: 30%; left: 64%; }
 }
 
 /* === 5b. TIER 2: iPAD AIR (810px - 1023px width) === */
@@ -823,17 +797,12 @@ div[class*="modak-game-modak-collected"]:active {
   .modak-game-modak { width: 140px; height: 140px; }
 
   /* Collected Modaks — sized/positioned via basket vars */
-
-  /* Rock */
-  .modak-game-rock-container { width: 250px; top: 30%; left: 64%; }
 }
 
 /* === 5c. TIER 3: iPAD PRO (1024px+ width) === */
 /* Keeps the GIANT sizes */
 @media (min-width: 1024px) and (orientation: portrait) {
   .modak-game-modak { width: 165px; height: 165px; }
-
-  .modak-game-rock-container { width: 360px; top: 38%; left: 45%; }
 
   /* Collected Modaks — sized/positioned via basket vars */
 }
@@ -850,7 +819,6 @@ div[class*="modak-game-modak-collected"]:active {
     transform: scale(1);
     transform-origin: center;
   }
-  .modak-game-rock-container { width: 300px; top: 46%; left: 58%; }
 
   /* 4. GIANT COLLECTED MODAKS — sized/positioned via basket vars */
 }
@@ -921,14 +889,6 @@ div[class*="discovery"] img {
    Added: code-freeze fixes
    =========================================================== */
 
-/* 1. VINAYAKA IN FRONT OF TREE (foreground overlay is z-index 16) */
-.modak-game-rock-container { z-index: 17 !important; }
-
-/* 3. SMOOTHER ROCK GROWTH — transition the container, not just the breathing scale */
-.modak-game-rock-container {
-  transition: top 1s ease, left 1s ease, width 1s ease, filter 0.5s ease !important;
-}
-
 /* 4. FIX iPad Pro basket modak positions
       (was --basket-modak-top: 6% / 8% — way above bowl rim) */
 /* 5. iPAD MINI LANDSCAPE FALLBACK (1024×768 landscape)
@@ -941,12 +901,6 @@ div[class*="discovery"] img {
      truth" block further down (identical media query, !important). See
      that block for basket-container's actual live values. */
 
-  .modak-game-rock-container {
-    width: 260px;
-    top: 32%;
-    left: 60%;
-  }
-
   .modak-game-modak { width: var(--modak-size); height: var(--modak-size); }
 }
 
@@ -957,23 +911,12 @@ div[class*="discovery"] img {
     height: var(--modak-size) !important;
   }
 
-  .modak-game-rock-container {
-    width: 200px !important;
-    top: 36%;
-    left: 60%;
-  }
 }
 
 /* === iPad Pro 11" LANDSCAPE (1194x834) — dedicated fixes ===
    Catches iPad Pro 11" specifically, fixes modaks spilling
    below plate and Ganesha sitting too low/small. */
 @media (min-width: 1180px) and (max-width: 1250px) and (orientation: landscape) {
-  .modak-game-rock-container {
-    width: 320px !important;
-    top: 38% !important;
-    left: 58% !important;
-  }
-
   .modak-game-modak { width: var(--modak-size); height: var(--modak-size); }
 }
 
