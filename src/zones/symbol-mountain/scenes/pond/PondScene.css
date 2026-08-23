@@ -396,48 +396,14 @@
   z-index: 1;
 }
 
-.interactive-hint,
-.hint-bubble {
+.interactive-hint {
   z-index: 90;
-}
-
-.scene-navigation-bar {
-  z-index: 100;
 }
 
 .popup-overlay,
 .scroll-animation-overlay,
 .celebration-overlay {
   z-index: 1000;
-}
-
-/* Force GameCoach to Top Center
-.game-coach {
-  position: fixed !important;
-  top: 80px !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  right: auto !important;
-  bottom: auto !important;
-  z-index: 200 !important;
-}
-
-/* Ensure the message bubble is styled properly 
-.coach-container {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-.message-bubble {
-  background: white !important;
-  border: 3px solid #4ECDC4 !important;
-  border-radius: 20px !important;
-  padding: 15px 20px !important;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
-  font-size: 16px !important;
-  max-width: 300px !important;
-  text-align: center !important;
 }
 
 /* ── Suppress interactive-element pulse on lotus ──
