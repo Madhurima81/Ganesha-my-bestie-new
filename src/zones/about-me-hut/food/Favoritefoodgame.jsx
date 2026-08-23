@@ -2282,9 +2282,11 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           title="We're Friends Now!"
           leftColumn={{
             header: (
-              <div className="profile-header">
-                <img src={babyGaneshaSit} alt="Ganesha" className="column-header-image profile-avatar" />
-                <span className="profile-name">Ganesha</span>
+              <div className="aboutme-comparison-avatar-header">
+                <div className="aboutme-comparison-avatar is-plain">
+                  <img src={babyGaneshaSit} alt="Ganesha" />
+                </div>
+                <span className="aboutme-comparison-avatar-name">Ganesha</span>
               </div>
             ),
             items: [
@@ -2296,27 +2298,19 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           }}
           rightColumn={{
             header: (
-              <div className="profile-header">
-                <div
-                  className="profile-avatar child-avatar-display"
-                  style={{
-                    background: (activeProfile?.icon || activeProfile?.profileIcon || profileAvatarImage) ? 'transparent' : 'linear-gradient(135deg, #4ECDC4, #44A08D)',
-                    border: (activeProfile?.icon || activeProfile?.profileIcon || profileAvatarImage) ? 'none' : '4px solid white',
-                    boxShadow: '0 5px 15px rgba(0,0,0,0.2)',
-                    overflow: 'hidden'
-                  }}
-                >
+              <div className="aboutme-comparison-avatar-header">
+                <div className={`aboutme-comparison-avatar${(activeProfile?.icon || activeProfile?.profileIcon || profileAvatarImage) ? '' : ' is-fallback'}`}>
                   {activeProfile?.icon ? (
-                    <img src={activeProfile.icon} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img src={activeProfile.icon} alt="Profile" />
                   ) : activeProfile?.profileIcon ? (
-                    <img src={activeProfile.profileIcon} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img src={activeProfile.profileIcon} alt="Profile" />
                   ) : profileAvatarImage ? (
-                    <img src={profileAvatarImage} alt={profileDisplayName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img src={profileAvatarImage} alt={profileDisplayName} />
                   ) : (
                     profileAvatar
                   )}
                 </div>
-                <span className="profile-name">{profileDisplayName}</span>
+                <span className="aboutme-comparison-avatar-name">{profileDisplayName}</span>
               </div>
             ),
             items: [
