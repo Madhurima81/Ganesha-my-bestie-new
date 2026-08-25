@@ -9,8 +9,8 @@ import puzzleBeforeImg from './assets/images/sarvakaryeshu/puzzle-before.png';
 import puzzleAfterImg from './assets/images/sarvakaryeshu/after-puzzle.png';
 import sportsBeforeImg from './assets/images/sarvakaryeshu/before-sports.png';
 import sportsAfterImg from './assets/images/sarvakaryeshu/after-sports.png';
-import bikeBeforeImg from './assets/images/sarvakaryeshu/after-ride.png';
-import bikeAfterImg from './assets/images/sarvakaryeshu/before-ride.png';
+import bikeBeforeImg from './assets/images/sarvakaryeshu/before-ride.png';
+import bikeAfterImg from './assets/images/sarvakaryeshu/after-ride.png';
 import grandmaBeforeImg from './assets/images/sarvakaryeshu/before-grandma.png';
 import grandmaAfterImg from './assets/images/sarvakaryeshu/after-grandma.png';
 import boatImg from './assets/images/boat.png';
@@ -36,12 +36,13 @@ const SITUATIONS = [
     id: 'trunk',
     before: puzzleBeforeImg,
     after: puzzleAfterImg,
-    situation: "The painting went splat — so he tried a new way!",
-    question: 'Which symbol helps here?',
-    voKey: 'scene13_puzzle',
+    beforeLine: 'The painting went splat.',
+    afterLine: 'Trying a new way worked!',
+    question: 'Which symbol fits best?',
+    voKeyBefore: 'scene13_puzzle',
     voKeyAfter: 'scene13_puzzle_after',
     correct: 'trunk',
-    feedback: 'Trunk power helped him try a new way!',
+    feedback: 'The Trunk helped him try another way!',
     syllableChunk: 'SAR',
     options: ['trunk', 'tusk', 'modak'],
     clues: [
@@ -54,12 +55,13 @@ const SITUATIONS = [
     id: 'belly',
     before: sportsBeforeImg,
     after: sportsAfterImg,
-    situation: 'The blocks felt frustrating — so he found his calm inside!',
-    question: 'Which symbol helps here?',
-    voKey: 'scene13_sports',
+    beforeLine: 'Her feelings feel too big.',
+    afterLine: 'She made room for her feelings.',
+    question: 'Which symbol fits best?',
+    voKeyBefore: 'scene13_sports',
     voKeyAfter: 'scene13_sports_after',
     correct: 'belly',
-    feedback: 'Belly power helped him feel calm!',
+    feedback: 'The Belly helped her make room for her feelings!',
     syllableChunk: 'VA',
     options: ['belly', 'lotus', 'modak'],
     clues: [
@@ -72,12 +74,13 @@ const SITUATIONS = [
     id: 'eyes',
     before: bikeBeforeImg,
     after: bikeAfterImg,
-    situation: 'The craft needed care — so he looked closely at every detail!',
-    question: 'Which symbol helps here?',
-    voKey: 'scene13_bike',
+    beforeLine: 'The toy is still missing.',
+    afterLine: 'She noticed the clue!',
+    question: 'Which symbol fits best?',
+    voKeyBefore: 'scene13_bike',
     voKeyAfter: 'scene13_bike_after',
     correct: 'eyes',
-    feedback: 'Eyes power helped him notice what to do!',
+    feedback: 'The Eyes helped her notice what others missed!',
     syllableChunk: 'KAR',
     options: ['eyes', 'modak', 'belly'],
     clues: [
@@ -90,12 +93,13 @@ const SITUATIONS = [
     id: 'tusk',
     before: grandmaBeforeImg,
     after: grandmaAfterImg,
-    situation: 'The kite needed a clever fix — so he used one strong idea!',
-    question: 'Which symbol helps here?',
-    voKey: 'scene13_grandma',
+    beforeLine: 'So many things are distracting him.',
+    afterLine: 'He stayed focused on what mattered.',
+    question: 'Which symbol fits best?',
+    voKeyBefore: 'scene13_grandma',
     voKeyAfter: 'scene13_grandma_after',
     correct: 'tusk',
-    feedback: 'Tusk power helped solve it!',
+    feedback: 'The Tusk helped him stay focused on what mattered!',
     syllableChunk: 'YESHU',
     options: ['tusk', 'eyes', 'trunk'],
     clues: [
@@ -251,24 +255,14 @@ export default function SarvakaryeshuGame({
 
     const t1 = window.setTimeout(() => {
       if (cancelled) return;
-      const afterFallback = addFallback(3500, () => showAfterBeat());
-      playSceneLine?.(s.voKey, () => {
-        window.clearTimeout(afterFallback);
-        if (!cancelled) showAfterBeat();
-      });
-    }, 700);
-
-    function showAfterBeat() {
-      if (cancelled) return;
-      setShowAfter(true);
       const pickFallback = addFallback(2500, () => {
         if (!cancelled) setCanPick(true);
       });
-      playSceneLine?.(s.voKeyAfter, () => {
+      playSceneLine?.(s.voKeyBefore, () => {
         window.clearTimeout(pickFallback);
         if (!cancelled) setCanPick(true);
       });
-    }
+    }, 500);
 
     return () => {
       cancelled = true;
@@ -291,7 +285,7 @@ export default function SarvakaryeshuGame({
 
     if (!correct) {
       setIsCorrect(null);
-      setGuidanceMessage('That power could help too...');
+      setGuidanceMessage('Try another symbol.');
       playSceneLine?.('scene13_try_again');
       return;
     }
@@ -300,37 +294,43 @@ export default function SarvakaryeshuGame({
     setIsCorrect(true);
     setGuidanceMessage('');
     setGuidedPowerId(null);
-    playSceneLine?.('scene13_success');
+
+    const nextLit = SYLLABLE_INDEX_BY_CHUNK[situation.syllableChunk] ?? (cardIndex + 1);
+    safeAfter(250, () => setLitCount(nextLit));
 
     const optionRect = optionRefs.current[powerId]?.getBoundingClientRect?.();
     const imageRect = imageWrapRef.current?.getBoundingClientRect?.();
 
-    if (optionRect && imageRect) {
-      setFlyingPower({
-        img: POWER_ICONS[powerId].img,
-        left: optionRect.left + (optionRect.width / 2),
-        top: optionRect.top + (optionRect.height / 2),
-        flyX: (imageRect.left + (imageRect.width / 2)) - (optionRect.left + (optionRect.width / 2)),
-        flyY: (imageRect.top + (imageRect.height / 2)) - (optionRect.top + (optionRect.height / 2)),
-      });
-    }
+    safeAfter(650, () => {
+      if (optionRect && imageRect) {
+        setFlyingPower({
+          img: POWER_ICONS[powerId].img,
+          left: optionRect.left + (optionRect.width / 2),
+          top: optionRect.top + (optionRect.height / 2),
+          flyX: (imageRect.left + (imageRect.width / 2)) - (optionRect.left + (optionRect.width / 2)),
+          flyY: (imageRect.top + (imageRect.height / 2)) - (optionRect.top + (optionRect.height / 2)),
+        });
+      }
+    });
 
-    safeAfter(420, () => {
+    safeAfter(1100, () => {
       setImageHit(true);
+      setShowAfter(true);
       window.setTimeout(() => onMicroWin?.(), 0);
     });
 
-    safeAfter(1800, () => {
-      setFlyingPower(null);
+    safeAfter(1400, () => {
+      playSceneLine?.(situation.voKeyAfter);
     });
 
-    const nextLit = SYLLABLE_INDEX_BY_CHUNK[situation.syllableChunk] ?? (cardIndex + 1);
-    safeAfter(2200, () => setLitCount(nextLit));
+    safeAfter(1650, () => {
+      setFlyingPower(null);
+    });
 
     const nextIndex = cardIndex + 1;
 
     if (nextIndex >= SITUATIONS.length) {
-      safeAfter(3100, () => {
+      safeAfter(3200, () => {
         setLitCount(SITUATIONS.length);
         const finishAfterWord = () => {
           if (doneCalledRef.current) return;
@@ -352,14 +352,13 @@ export default function SarvakaryeshuGame({
       return;
     }
 
-    safeAfter(3300, () => {
+    safeAfter(3000, () => {
       setCardIndex(nextIndex);
       setPicked(null);
       setIsCorrect(null);
       setShowAfter(false);
       setCanPick(false);
       setGuidanceMessage('');
-      setClueMessage('');
       setGuidedPowerId(null);
       setRescueHintActive(false);
       setFlyingPower(null);
@@ -390,7 +389,7 @@ export default function SarvakaryeshuGame({
         />
 
         {phase === 'done' && (
-          <p className="sarva-doneline">Ganesha helps in all things!</p>
+          <p className="sarva-doneline">Ganesha's lessons can help in many moments!</p>
         )}
 
         {phase === 'play' && (
@@ -408,8 +407,8 @@ export default function SarvakaryeshuGame({
               />
             </div>
 
-            <p className="sarva-situation">{situation.situation}</p>
-            {situation.question && (
+            <p className="sarva-situation">{showAfter ? situation.afterLine : situation.beforeLine}</p>
+            {situation.question && !showAfter && (
               <p className="sarva-question">{situation.question}</p>
             )}
             {canPick && (

@@ -84,9 +84,61 @@
   pointer-events: none;
 }
 
+.sarvada-boat-ganesha {
+  position: absolute;
+  width: clamp(46px, 7vw, 82px);
+  right: 18%;
+  bottom: 33%;
+  z-index: 2;
+  pointer-events: none;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.22));
+  transform-origin: 50% 85%;
+}
+
+.sarvada-boat-ganesha.is-joining {
+  animation: sarvadaBoatGaneshaJoin 1s cubic-bezier(0.2, 0.9, 0.2, 1) forwards;
+}
+
+.sarvada-boat-ganesha.is-celebrating {
+  animation: sarvadaBoatGaneshaCelebrate 1.15s ease-in-out;
+}
+
 @keyframes sarvadaBob {
   0%, 100% { transform: translateX(-50%) translateY(0px) rotate(-0.5deg); }
   50% { transform: translateX(-50%) translateY(-7px) rotate(0.5deg); }
+}
+
+@keyframes sarvadaBoatGaneshaJoin {
+  0% {
+    opacity: 0;
+    transform: translate(12px, -180px) scale(0.38) rotate(-18deg);
+    filter: drop-shadow(0 0 18px rgba(255, 214, 102, 0.52));
+  }
+  55% {
+    opacity: 1;
+    transform: translate(0, -24px) scale(1.04) rotate(5deg);
+    filter: drop-shadow(0 0 22px rgba(255, 214, 102, 0.64));
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.22));
+  }
+}
+
+@keyframes sarvadaBoatGaneshaCelebrate {
+  0%, 100% {
+    transform: translateY(0) scale(1) rotate(0deg);
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.22));
+  }
+  35% {
+    transform: translateY(-8px) scale(1.08) rotate(-7deg);
+    filter: drop-shadow(0 0 18px rgba(255, 214, 102, 0.62));
+  }
+  70% {
+    transform: translateY(-4px) scale(1.04) rotate(6deg);
+    filter: drop-shadow(0 0 14px rgba(255, 214, 102, 0.42));
+  }
 }
 
 .sarvada-bubble {
@@ -246,17 +298,38 @@
   z-index: 2;
 }
 
-/* Ganesha peeking in the scene, waiting to be spotted — sits under the (invisible)
-   tap target above, small and softly blended so he takes a careful look to find,
-   not just a random guess. */
+/* The hidden Ganesha symbol sits under the invisible tap target above, softly blended
+   so it still takes a careful look to find. */
 .sarvada-ganesha-hidden {
   position: absolute;
   transform: translate(-50%, -50%);
   pointer-events: none;
   z-index: 1;
-  opacity: 0.88;
-  filter: saturate(0.85) brightness(0.96) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
+  opacity: 0.3;
+  filter: saturate(0.48) brightness(0.82) contrast(0.92) drop-shadow(0 1px 3px rgba(0, 0, 0, 0.14));
   -webkit-user-drag: none;
+  transition: opacity 0.25s ease, filter 0.25s ease;
+}
+
+.sarvada-ganesha-hidden.is-guided {
+  opacity: 0.92;
+}
+
+.sarvada-ganesha-hidden.hint-glow {
+  opacity: 1;
+  filter:
+    drop-shadow(0 0 6px rgba(255, 220, 120, 0.24))
+    drop-shadow(0 0 12px rgba(255, 220, 120, 0.18));
+}
+
+.sarvada-ganesha-hidden.has-soft-hint {
+  opacity: 0.42;
+  filter:
+    saturate(0.58)
+    brightness(0.9)
+    contrast(0.96)
+    drop-shadow(0 0 10px rgba(255, 224, 130, 0.18))
+    drop-shadow(0 1px 4px rgba(0, 0, 0, 0.16));
 }
 
 .sarvada-ganesha-target.is-found {
@@ -268,24 +341,68 @@
   pointer-events: none;
   min-width: 60px;
   min-height: 60px;
-  border: 3px solid rgba(255, 213, 79, 0.4);
-  box-shadow: 0 0 0 8px rgba(255, 213, 79, 0.12);
+  border: 2px solid rgba(255, 213, 79, 0.28);
+  box-shadow: 0 0 0 6px rgba(255, 213, 79, 0.08);
   z-index: 1;
   animation: sarvadaFindPulse 1.2s ease-in-out infinite;
 }
 
 .sarvada-ganesha-ring.hint-glow {
-  box-shadow: 0 0 0 10px rgba(255, 213, 79, 0.18), 0 0 26px rgba(255, 213, 79, 0.45);
+  box-shadow: 0 0 0 8px rgba(255, 213, 79, 0.12), 0 0 18px rgba(255, 213, 79, 0.28);
+}
+
+.sarvada-scene-hint {
+  margin: 0;
+  width: 100%;
+  text-align: center;
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(13px, 1.8vw, 16px);
+  line-height: 1.35;
+  color: #6d4c2f;
+  min-height: 2.7em;
 }
 
 .sarvada-ganesha-pop {
   position: absolute;
   width: clamp(70px, 14vw, 120px);
   transform: translate(-50%, -50%);
-  z-index: 3;
+  z-index: 4;
   pointer-events: none;
   filter: drop-shadow(0 0 20px rgba(255, 213, 79, 0.9));
   animation: ganeshaPopOut 2s ease-out forwards;
+}
+
+.sarvada-found-burst {
+  position: absolute;
+  width: clamp(68px, 13vw, 112px);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 3;
+  background:
+    radial-gradient(circle, rgba(255, 245, 203, 0.96) 0 20%, rgba(255, 213, 79, 0.72) 30%, rgba(255, 213, 79, 0.14) 58%, transparent 74%);
+  animation: sarvadaFoundBurst 0.72s ease-out forwards;
+}
+
+.sarvada-found-label {
+  position: absolute;
+  transform: translate(-50%, calc(-50% - 74px));
+  pointer-events: none;
+  z-index: 5;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: rgba(255, 251, 235, 0.96);
+  color: #7a4b09;
+  font-family: 'Baloo 2', cursive;
+  font-size: clamp(14px, 2vw, 20px);
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+  box-shadow:
+    0 10px 24px rgba(122, 75, 9, 0.18),
+    0 0 0 2px rgba(255, 219, 122, 0.52);
+  animation: sarvadaFoundLabelIn 1.2s ease-out forwards;
 }
 
 @keyframes ganeshaPopOut {
@@ -293,6 +410,70 @@
   25%  { opacity: 1; transform: translate(-50%, -60%) scale(1.15); }
   45%  { transform: translate(-50%, -65%) scale(1); }
   100% { opacity: 0; transform: translate(-50%, -110%) scale(0.85); }
+}
+
+@keyframes sarvadaFoundBurst {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.35);
+  }
+  35% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.08);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.55);
+  }
+}
+
+@keyframes sarvadaFoundLabelIn {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% - 58px)) scale(0.82);
+  }
+  18% {
+    opacity: 1;
+    transform: translate(-50%, calc(-50% - 82px)) scale(1.04);
+  }
+  75% {
+    opacity: 1;
+    transform: translate(-50%, calc(-50% - 90px)) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% - 102px)) scale(0.98);
+  }
+}
+
+@keyframes sarvadaHiddenPulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+}
+
+@keyframes sarvadaHiddenGlow {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1.02);
+    filter:
+      saturate(0.92)
+      brightness(1.05)
+      contrast(1)
+      drop-shadow(0 0 8px rgba(255, 222, 118, 0.34))
+      drop-shadow(0 2px 5px rgba(0, 0, 0, 0.18));
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.08);
+    filter:
+      saturate(1)
+      brightness(1.12)
+      contrast(1.03)
+      drop-shadow(0 0 14px rgba(255, 222, 118, 0.48))
+      drop-shadow(0 2px 6px rgba(0, 0, 0, 0.2));
+  }
 }
 
 @keyframes sarvadaMemoryIn {
@@ -402,7 +583,9 @@
 
 @media (prefers-reduced-motion: reduce) {
   .sarvada-boat,
-  .sarvada-bubble.pulsing {
+  .sarvada-bubble.pulsing,
+  .sarvada-boat-ganesha.is-joining,
+  .sarvada-boat-ganesha.is-celebrating {
     animation: none;
   }
 
