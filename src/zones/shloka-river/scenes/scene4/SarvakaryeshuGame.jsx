@@ -36,8 +36,8 @@ const SITUATIONS = [
     id: 'trunk',
     before: puzzleBeforeImg,
     after: puzzleAfterImg,
-    beforeLine: 'The painting went splat.',
-    afterLine: 'Trying a new way worked!',
+    beforeLine: 'Oops! The painting went splat.',
+    afterLine: 'The splat became something new!',
     question: 'Which symbol fits best?',
     voKeyBefore: 'scene13_puzzle',
     voKeyAfter: 'scene13_puzzle_after',
@@ -56,7 +56,7 @@ const SITUATIONS = [
     before: sportsBeforeImg,
     after: sportsAfterImg,
     beforeLine: 'Her feelings feel too big.',
-    afterLine: 'She made room for her feelings.',
+    afterLine: 'She feels calmer inside.',
     question: 'Which symbol fits best?',
     voKeyBefore: 'scene13_sports',
     voKeyAfter: 'scene13_sports_after',
@@ -74,8 +74,8 @@ const SITUATIONS = [
     id: 'eyes',
     before: bikeBeforeImg,
     after: bikeAfterImg,
-    beforeLine: 'The toy is still missing.',
-    afterLine: 'She noticed the clue!',
+    beforeLine: 'Where did the toy go?',
+    afterLine: 'She spotted the clue!',
     question: 'Which symbol fits best?',
     voKeyBefore: 'scene13_bike',
     voKeyAfter: 'scene13_bike_after',
@@ -94,7 +94,7 @@ const SITUATIONS = [
     before: grandmaBeforeImg,
     after: grandmaAfterImg,
     beforeLine: 'So many things are distracting him.',
-    afterLine: 'He stayed focused on what mattered.',
+    afterLine: 'He stayed with what mattered.',
     question: 'Which symbol fits best?',
     voKeyBefore: 'scene13_grandma',
     voKeyAfter: 'scene13_grandma_after',
@@ -177,8 +177,12 @@ export default function SarvakaryeshuGame({
     }
 
     const situation = SITUATIONS[cardIndex];
+
+    if (hintLevel < 3) {
+      setGuidedPowerId(null);
+    }
+
     const hintVoiceKey = `scene13_hint_${situation.id}_${hintLevel}`;
-    setGuidedPowerId(hintLevel >= 3 ? situation.correct : null);
     if (lastHintVoiceKeyRef.current !== hintVoiceKey) {
       lastHintVoiceKeyRef.current = hintVoiceKey;
       const timerId = window.setTimeout(() => {
@@ -190,6 +194,22 @@ export default function SarvakaryeshuGame({
       return () => window.clearTimeout(timerId);
     }
   }, [cardIndex, hintLevel, isActive, isCorrect, phase, playSceneLine]);
+
+  // The correct symbol only starts glowing a beat after the 3rd hint VO has
+  // had time to play — not the instant hintLevel reaches 3 — so the glow
+  // reads as "here's the answer" rather than overlapping the hint speech.
+  useEffect(() => {
+    if (!isActive || phase !== 'play' || isCorrect || hintLevel < 3) {
+      return undefined;
+    }
+
+    const situation = SITUATIONS[cardIndex];
+    const id = window.setTimeout(() => {
+      setGuidedPowerId(situation.correct);
+    }, 1800);
+
+    return () => window.clearTimeout(id);
+  }, [cardIndex, hintLevel, isActive, isCorrect, phase]);
 
   useEffect(() => {
     if (!isActive || phase !== 'play' || hintLevel < 3 || isCorrect) {

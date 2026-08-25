@@ -68,7 +68,7 @@ export const VOICE_SCRIPTS = {
         text: "Help guide the lily pad another way."
       },
       scene10_vak_crossed: {
-        text: "You found another way. The frog made it home to the family."
+        text: "Vakratunda! You found another way and helped the frog across."
       },
       scene10_vak_current_too_strong: {
         text: "The river current is too strong there. Let's try another way."
@@ -86,7 +86,7 @@ export const VOICE_SCRIPTS = {
         text: "Now pull down!"
       },
       scene10_maha_success: {
-        text: "We made space for everyone and helped them cross the river!"
+        text: "Mahakaya! You made the raft bigger, and everyone crossed."
       },
       scene10_maha_meaning: {
         text: "It means great strength."
@@ -186,28 +186,28 @@ export const VOICE_SCRIPTS = {
         text: "Let's see who needs help. Look carefully."
       },
       scene13_puzzle: {
-        text: "It didn't go as planned. What could help him try another way?"
+        text: "The painting didn't go as planned. What could help him try a different way?"
       },
       scene13_puzzle_after: {
-        text: "The Trunk helped him try another way."
+        text: "The Trunk helped him try another way — and the splat became a whale!"
       },
       scene13_sports: {
         text: "She feels upset inside. What could help her make room for her feelings?"
       },
       scene13_sports_after: {
-        text: "The Belly helped her make room for her feelings."
+        text: "The Belly reminded her to make room for her feelings and take a slow breath."
       },
       scene13_bike: {
-        text: "They're missing an important clue. What could help her notice it?"
+        text: "Everyone is looking, but they're missing an important clue. What could help her notice it?"
       },
       scene13_bike_after: {
-        text: "The Eyes helped her notice what others missed."
+        text: "The Eyes helped her look carefully and notice what everyone else missed."
       },
       scene13_grandma: {
-        text: "So many things are distracting him. What could help him stay focused?"
+        text: "He wants to finish his special card, but everything keeps pulling his attention away. What could help him stay focused?"
       },
       scene13_grandma_after: {
-        text: "The Tusk helped him stay focused on what mattered."
+        text: "The Tusk helped him stay focused on what was important."
       },
       scene13_hint_trunk_1: {
         text: "Which symbol helps when one way doesn't work?"
