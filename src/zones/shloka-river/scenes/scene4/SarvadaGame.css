@@ -29,6 +29,7 @@
 .sarvada-game.is-hidden .sarvada-time-label,
 .sarvada-game.is-hidden .sarvada-bubble,
 .sarvada-game.is-hidden .sarvada-memory,
+.sarvada-game.is-hidden .sarvada-converge,
 .sarvada-game.is-hidden .sarvada-reveal {
   opacity: 0;
 }
@@ -273,23 +274,25 @@
 
 .sarvada-memory-img {
   width: 100%;
+  aspect-ratio: 1440 / 680;
   max-height: clamp(180px, 42vh, 360px);
-  object-fit: cover;
+  object-fit: contain;
+  background: #111;
   border-radius: 14px;
   display: block;
   -webkit-user-drag: none;
   transition: opacity 0.25s ease;
 }
 
-.sarvada-ganesha-target,
-.sarvada-ganesha-ring {
+.sarvada-symbol-target,
+.sarvada-symbol-ring {
   position: absolute;
   transform: translate(-50%, -50%);
   aspect-ratio: 1;
   border-radius: 50%;
 }
 
-.sarvada-ganesha-target {
+.sarvada-symbol-target {
   background: none;
   border: none;
   cursor: pointer;
@@ -298,46 +301,44 @@
   z-index: 2;
 }
 
-/* The hidden Ganesha symbol sits under the invisible tap target above, softly blended
-   so it still takes a careful look to find. */
-.sarvada-ganesha-hidden {
+/* The hidden symbol sits under the invisible tap target above, softly blended
+   so it still takes a careful look to find, without feeling impossible. */
+.sarvada-hidden-symbol {
   position: absolute;
   transform: translate(-50%, -50%);
   pointer-events: none;
   z-index: 1;
-  opacity: 0.3;
-  filter: saturate(0.48) brightness(0.82) contrast(0.92) drop-shadow(0 1px 3px rgba(0, 0, 0, 0.14));
+  opacity: 0.5;
+  filter: saturate(0.7) brightness(0.92) contrast(0.96) drop-shadow(0 1px 3px rgba(0, 0, 0, 0.14));
   -webkit-user-drag: none;
   transition: opacity 0.25s ease, filter 0.25s ease;
 }
 
-.sarvada-ganesha-hidden.is-guided {
+.sarvada-hidden-symbol.is-guided {
   opacity: 0.92;
 }
 
-.sarvada-ganesha-hidden.hint-glow {
+.sarvada-hidden-symbol.hint-glow {
   opacity: 1;
-  filter:
-    drop-shadow(0 0 6px rgba(255, 220, 120, 0.24))
-    drop-shadow(0 0 12px rgba(255, 220, 120, 0.18));
+  animation: sarvadaHiddenGlow 1.3s ease-in-out infinite;
 }
 
-.sarvada-ganesha-hidden.has-soft-hint {
-  opacity: 0.42;
+.sarvada-hidden-symbol.has-soft-hint {
+  opacity: 0.6;
   filter:
-    saturate(0.58)
-    brightness(0.9)
-    contrast(0.96)
+    saturate(0.78)
+    brightness(0.96)
+    contrast(0.98)
     drop-shadow(0 0 10px rgba(255, 224, 130, 0.18))
     drop-shadow(0 1px 4px rgba(0, 0, 0, 0.16));
 }
 
-.sarvada-ganesha-target.is-found {
+.sarvada-symbol-target.is-found {
   animation: sarvadaFoundGlow 0.6s ease;
   box-shadow: 0 0 0 4px rgba(255,213,79,0.5), 0 0 24px rgba(255,213,79,0.8);
 }
 
-.sarvada-ganesha-ring {
+.sarvada-symbol-ring {
   pointer-events: none;
   min-width: 60px;
   min-height: 60px;
@@ -347,7 +348,7 @@
   animation: sarvadaFindPulse 1.2s ease-in-out infinite;
 }
 
-.sarvada-ganesha-ring.hint-glow {
+.sarvada-symbol-ring.hint-glow {
   box-shadow: 0 0 0 8px rgba(255, 213, 79, 0.12), 0 0 18px rgba(255, 213, 79, 0.28);
 }
 
@@ -362,7 +363,7 @@
   min-height: 2.7em;
 }
 
-.sarvada-ganesha-pop {
+.sarvada-symbol-pop {
   position: absolute;
   width: clamp(70px, 14vw, 120px);
   transform: translate(-50%, -50%);
@@ -513,6 +514,45 @@
   align-items: center;
   gap: clamp(6px, 1vw, 12px);
   animation: sarvadaFadeIn 0.6s ease;
+}
+
+.sarvada-converge {
+  position: absolute;
+  top: 44%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 38;
+  display: flex;
+  gap: clamp(10px, 2vw, 22px);
+  pointer-events: none;
+}
+
+.sarvada-converge-symbol {
+  width: clamp(46px, 8vw, 76px);
+  height: clamp(46px, 8vw, 76px);
+  object-fit: contain;
+  -webkit-user-drag: none;
+  filter: drop-shadow(0 0 14px rgba(255, 220, 120, 0.6));
+  animation: sarvadaConverge 1.1s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes sarvadaConverge {
+  0% {
+    opacity: 0;
+    transform: scale(0.6) translateY(10px);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1.12) translateY(-4px);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.7) translateY(-18px);
+  }
 }
 
 .sarvada-syllables-row {
