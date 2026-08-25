@@ -42,7 +42,7 @@ const PHASES_CONFIG = [
       'He may be hiding near something you take with you in the morning.',
       'Look near the school bag for a tiny mouse.',
     ],
-    ganeshaSpot: { l: 89, t: 56, w: 14 },
+    symbolSpot: { l: 89, t: 56, w: 14 },
   },
   {
     id: 'afternoon',
@@ -60,7 +60,7 @@ const PHASES_CONFIG = [
       'Something flying in the sky has a long curving shape.',
       "Look closely at the kite's tail.",
     ],
-    ganeshaSpot: { l: 50, t: 22, w: 14 },
+    symbolSpot: { l: 50, t: 22, w: 14 },
   },
   {
     id: 'night',
@@ -78,7 +78,7 @@ const PHASES_CONFIG = [
       'A flower shape is hiding somewhere near the bed.',
       'Look at the bedside lamp for the lotus.',
     ],
-    ganeshaSpot: { l: 60, t: 17, w: 14 },
+    symbolSpot: { l: 60, t: 17, w: 14 },
   },
 ];
 
@@ -102,7 +102,7 @@ export default function SarvadaGame({
   const [prevBgOpacity, setPrevBgOpacity] = useState(1);
   const [flash, setFlash] = useState(false);
   const [findMode, setFindMode] = useState(false);
-  const [ganeshaFound, setGaneshaFound] = useState(false);
+  const [symbolFound, setSymbolFound] = useState(false);
   const [popOut, setPopOut] = useState(false);
   const [rescueHintActive, setRescueHintActive] = useState(false);
   const [boatGaneshaVisible, setBoatGaneshaVisible] = useState(false);
@@ -114,7 +114,7 @@ export default function SarvadaGame({
   const doneCalledRef = useRef(false);
 
   const { hintLevel, markInteraction } = useRepeatedHintCycle({
-    enabled: isActive && !isPaused && findMode && !ganeshaFound,
+    enabled: isActive && !isPaused && findMode && !symbolFound,
     stageKey: isActive && findMode ? `find-${phaseIndex}` : null,
     initialDelay: 7000,
     pulseCountBeforeEscalation: 1,
@@ -124,7 +124,7 @@ export default function SarvadaGame({
   });
 
   useEffect(() => {
-    if (!isActive || !findMode || ganeshaFound) {
+    if (!isActive || !findMode || symbolFound) {
       setRescueHintActive(false);
       lastHintVoiceKeyRef.current = null;
       return;
@@ -148,10 +148,10 @@ export default function SarvadaGame({
       }, 120);
       return () => window.clearTimeout(timerId);
     }
-  }, [findMode, ganeshaFound, hintLevel, isActive, phaseIndex, playSceneLine]);
+  }, [findMode, symbolFound, hintLevel, isActive, phaseIndex, playSceneLine]);
 
   useEffect(() => {
-    if (!isActive || !findMode || ganeshaFound || hintLevel < 3) {
+    if (!isActive || !findMode || symbolFound || hintLevel < 3) {
       setRescueHintActive(false);
       return undefined;
     }
@@ -161,7 +161,7 @@ export default function SarvadaGame({
     }, 7000);
 
     return () => window.clearTimeout(id);
-  }, [findMode, ganeshaFound, hintLevel, isActive]);
+  }, [findMode, symbolFound, hintLevel, isActive]);
 
   const safeAfter = useCallback((ms, fn) => {
     const id = window.setTimeout(fn, ms);
@@ -193,7 +193,7 @@ export default function SarvadaGame({
       setPrevBgOpacity(1);
       setFlash(false);
       setFindMode(false);
-      setGaneshaFound(false);
+      setSymbolFound(false);
       setPopOut(false);
       setRescueHintActive(false);
       setBoatGaneshaVisible(false);
@@ -232,10 +232,9 @@ export default function SarvadaGame({
       setBubbleState('memory');
       safeAfter(800, () => {
         setFindMode(true);
-        setClueMessage('');
         setRescueHintActive(false);
         lastHintVoiceKeyRef.current = null;
-        playSceneLine?.('scene14_find_ganesha');
+        playSceneLine?.('scene14_find_symbol');
       });
     });
   }, [
@@ -251,34 +250,23 @@ export default function SarvadaGame({
     stopSceneVoice,
   ]);
 
-  const handleGaneshaFound = useCallback(() => {
-    if (!findMode || ganeshaFound || isPaused) return;
+  const handleSymbolFound = useCallback(() => {
+    if (!findMode || symbolFound || isPaused) return;
 
     const cfg = PHASES_CONFIG[phaseIndex];
 
-    setGaneshaFound(true);
+    setSymbolFound(true);
     setPopOut(true);
     markInteraction();
-    playSceneLine?.(`scene14_found_${cfg.id}`);
-    setLitCount(cfg.litCount);
     window.setTimeout(() => onMicroWin?.(), 0);
-    setRevealedSyls((prev) => [...prev, cfg.syllable]);
 
-    if (phaseIndex === 0) {
-      safeAfter(650, () => {
-        setBoatGaneshaVisible(true);
-        setBoatGaneshaJoining(true);
-      });
-      safeAfter(1650, () => {
-        setBoatGaneshaJoining(false);
-        setBoatGaneshaCelebrating(true);
-      });
-      safeAfter(2550, () => setBoatGaneshaCelebrating(false));
-    } else {
-      setBoatGaneshaVisible(true);
-      safeAfter(450, () => setBoatGaneshaCelebrating(true));
-      safeAfter(1700, () => setBoatGaneshaCelebrating(false));
-    }
+    // Sequence: symbol pops first, syllable lights (and its audio fires via
+    // SyllableHighlight's onSyllableLit) a beat after — keeps the two audio
+    // cues from firing on top of each other.
+    safeAfter(280, () => {
+      setLitCount(cfg.litCount);
+      setRevealedSyls((prev) => [...prev, cfg.syllable]);
+    });
 
     safeAfter(2200, () => {
       setPopOut(false);
@@ -287,34 +275,39 @@ export default function SarvadaGame({
       safeAfter(650, () => setFlash(false));
       setShowMemory(false);
       setFindMode(false);
-      setGaneshaFound(false);
-      setClueMessage('');
+      setSymbolFound(false);
       setRescueHintActive(false);
       lastHintVoiceKeyRef.current = null;
 
       const nextIndex = phaseIndex + 1;
 
       if (nextIndex >= PHASES_CONFIG.length) {
+        // Final beat: let the three found symbols converge toward the boat,
+        // THEN reveal Ganesha — the mid-game boat appearance is gone so this
+        // is the first time Ganesha shows up, saving the payoff for the end.
         safeAfter(1000, () => {
-          setGamePhase('sarvada');
-          const playMeaningLine = () => {
-            playSceneLine?.('scene14_meaning', () => {
-              if (doneCalledRef.current) return;
-              doneCalledRef.current = true;
-              setGamePhase('done');
-              safeAfter(600, () => {
-                window.setTimeout(() => {
-                  onGameComplete?.();
-                  onPhaseComplete?.();
-                }, 0);
-              });
+          setGamePhase('convergence');
+          safeAfter(1300, () => {
+            setBoatGaneshaVisible(true);
+            setBoatGaneshaJoining(true);
+          });
+          safeAfter(2300, () => {
+            setBoatGaneshaJoining(false);
+            setBoatGaneshaCelebrating(true);
+          });
+          safeAfter(3200, () => setBoatGaneshaCelebrating(false));
+          safeAfter(3100, () => {
+            setGamePhase('sarvada');
+            if (doneCalledRef.current) return;
+            doneCalledRef.current = true;
+            setGamePhase('done');
+            safeAfter(600, () => {
+              window.setTimeout(() => {
+                onGameComplete?.();
+                onPhaseComplete?.();
+              }, 0);
             });
-          };
-          if (playWord) {
-            playWord('sarvada', playMeaningLine);
-          } else {
-            playMeaningLine();
-          }
+          });
         });
       } else {
         safeAfter(600, () => {
@@ -337,7 +330,7 @@ export default function SarvadaGame({
     });
   }, [
     findMode,
-    ganeshaFound,
+    symbolFound,
     isPaused,
     markInteraction,
     onGameComplete,
@@ -410,63 +403,79 @@ export default function SarvadaGame({
             />
             {findMode && (
               <>
-                {!ganeshaFound && (
+                {!symbolFound && (
                   <img
-                    className={`sarvada-ganesha-hidden${hintLevel >= 3 ? ' is-guided hint-glow' : ''}`}
+                    className={`sarvada-hidden-symbol${hintLevel >= 3 ? ' is-guided hint-glow' : ''}`}
                     src={cfg.hiddenSymbol}
                     alt=""
                     aria-hidden="true"
                     draggable={false}
                     style={{
-                      left: `${cfg.ganeshaSpot.l}%`,
-                      top: `${cfg.ganeshaSpot.t}%`,
-                      width: `${cfg.ganeshaSpot.w}%`,
+                      left: `${cfg.symbolSpot.l}%`,
+                      top: `${cfg.symbolSpot.t}%`,
+                      width: `${cfg.symbolSpot.w}%`,
                     }}
                   />
                 )}
                 <button
-                  className={`sarvada-ganesha-target${ganeshaFound ? ' is-found' : ''}`}
+                  className={`sarvada-symbol-target${symbolFound ? ' is-found' : ''}`}
                   style={{
-                    left: `${cfg.ganeshaSpot.l}%`,
-                    top: `${cfg.ganeshaSpot.t}%`,
-                    width: `${cfg.ganeshaSpot.w}%`,
+                    left: `${cfg.symbolSpot.l}%`,
+                    top: `${cfg.symbolSpot.t}%`,
+                    width: `${cfg.symbolSpot.w}%`,
                   }}
-                  onPointerDown={handleGaneshaFound}
+                  onPointerDown={handleSymbolFound}
                   aria-label={`Find the hidden ${cfg.id} symbol`}
                 />
                 {popOut && (
                   <>
                     <div
                       className="sarvada-found-burst"
-                      style={{ left: `${cfg.ganeshaSpot.l}%`, top: `${cfg.ganeshaSpot.t}%` }}
+                      style={{ left: `${cfg.symbolSpot.l}%`, top: `${cfg.symbolSpot.t}%` }}
                     />
                     <img
-                      className="sarvada-ganesha-pop"
+                      className="sarvada-symbol-pop"
                       src={cfg.hiddenSymbol}
                       alt=""
-                      style={{ left: `${cfg.ganeshaSpot.l}%`, top: `${cfg.ganeshaSpot.t}%` }}
+                      style={{ left: `${cfg.symbolSpot.l}%`, top: `${cfg.symbolSpot.t}%` }}
                     />
                     <div
                       className="sarvada-found-label"
-                      style={{ left: `${cfg.ganeshaSpot.l}%`, top: `${cfg.ganeshaSpot.t}%` }}
+                      style={{ left: `${cfg.symbolSpot.l}%`, top: `${cfg.symbolSpot.t}%` }}
                     >
                       {cfg.foundLabel}
                     </div>
                   </>
                 )}
-                {rescueHintActive && !ganeshaFound && (
+                {rescueHintActive && !symbolFound && (
                   <div
-                    className="sarvada-ganesha-ring hint-glow"
+                    className="sarvada-symbol-ring hint-glow"
                     style={{
-                      left: `${cfg.ganeshaSpot.l}%`,
-                      top: `${cfg.ganeshaSpot.t}%`,
-                      width: `${cfg.ganeshaSpot.w}%`,
+                      left: `${cfg.symbolSpot.l}%`,
+                      top: `${cfg.symbolSpot.t}%`,
+                      width: `${cfg.symbolSpot.w}%`,
                     }}
                   />
                 )}
               </>
             )}
           </div>
+        </div>
+      )}
+
+      {gamePhase === 'convergence' && (
+        <div className="sarvada-converge">
+          {PHASES_CONFIG.map((p, i) => (
+            <img
+              key={p.id}
+              className="sarvada-converge-symbol"
+              src={p.hiddenSymbol}
+              alt=""
+              aria-hidden="true"
+              draggable={false}
+              style={{ animationDelay: `${i * 0.12}s` }}
+            />
+          ))}
         </div>
       )}
 
