@@ -41,6 +41,7 @@ import SarvadaGame from './SarvadaGame';
 import ganeshaHeadphones from './assets/images/ganesha_with_headphones.webp';
 import mooshikaCoach from './assets/images/mooshika-coach.webp';
 import sarvadaBg from './assets/images/sarvada/night.webp';
+import sarvakaryeshuBg from './assets/images/sarvakaryeshu-bg.png';
 
 import symbolVakratunda from '../../../meaning cave/assets/images/symbols/vakratunda-symbol.png';
 import symbolMahakaya from '../../../meaning cave/assets/images/symbols/mahakaya-symbol.png';
@@ -81,6 +82,8 @@ const PHASES = {
   SARVADA_POWER: 'sarvada_power',
   COMPLETE: 'complete',
 };
+
+const SARVADA_PHASES = [PHASES.SARVADA_GAME, PHASES.SARVADA_COMPLETE, PHASES.SARVADA_POWER, PHASES.COMPLETE];
 
 const powerConfig = {
   sarvakaryeshu: {
@@ -620,7 +623,12 @@ const SarvakaryeshuChantContent = ({
           <VOReplayButton onReplay={replayCurrentVoice} disabled={!isAudioOn} />
           <ResumeCountdown value={countdownValue} />
 
-          <div className="sarva-scene-background" style={{ backgroundImage: `url(${sarvadaBg})` }}>
+          <div
+            className="sarva-scene-background"
+            style={{
+              backgroundImage: `url(${SARVADA_PHASES.includes(sceneState.phase) ? sarvadaBg : sarvakaryeshuBg})`,
+            }}
+          >
             {!showSceneCompletion && (
               <>
                 <SarvakaryeshuGame
