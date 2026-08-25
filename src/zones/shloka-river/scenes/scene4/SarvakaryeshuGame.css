@@ -242,11 +242,11 @@
 
 .sarva-option.hint-glow .sarva-option-circle {
   box-shadow:
-    0 0 0 3px rgba(255, 213, 79, 0.14),
-    0 0 10px rgba(255, 213, 79, 0.18);
-  border-color: rgba(255, 213, 79, 0.72);
-  background: rgba(255, 249, 224, 0.96);
-  animation: guidedPulse 1.25s ease-in-out infinite;
+    0 0 0 2px rgba(255, 213, 79, 0.1),
+    0 0 6px rgba(255, 213, 79, 0.12);
+  border-color: rgba(255, 213, 79, 0.55);
+  background: rgba(255, 249, 224, 0.9);
+  animation: guidedPulse 1.6s ease-in-out infinite;
 }
 
 .sarva-option-circle {
@@ -416,7 +416,7 @@
 
 @keyframes guidedPulse {
   0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.08); }
+  50% { transform: scale(1.025); }
 }
 
 @keyframes stageHintPulse {

@@ -320,7 +320,7 @@
 
 .sarvada-hidden-symbol.hint-glow {
   opacity: 1;
-  animation: sarvadaHiddenGlow 1.3s ease-in-out infinite;
+  animation: sarvadaHiddenGlow 1.7s ease-in-out infinite;
 }
 
 .sarvada-hidden-symbol.has-soft-hint {
@@ -458,21 +458,21 @@
 
 @keyframes sarvadaHiddenGlow {
   0%, 100% {
-    transform: translate(-50%, -50%) scale(1.02);
+    transform: translate(-50%, -50%) scale(1);
     filter:
-      saturate(0.92)
-      brightness(1.05)
+      saturate(0.88)
+      brightness(1.02)
       contrast(1)
-      drop-shadow(0 0 8px rgba(255, 222, 118, 0.34))
+      drop-shadow(0 0 5px rgba(255, 222, 118, 0.22))
       drop-shadow(0 2px 5px rgba(0, 0, 0, 0.18));
   }
   50% {
-    transform: translate(-50%, -50%) scale(1.08);
+    transform: translate(-50%, -50%) scale(1.025);
     filter:
-      saturate(1)
-      brightness(1.12)
-      contrast(1.03)
-      drop-shadow(0 0 14px rgba(255, 222, 118, 0.48))
+      saturate(0.94)
+      brightness(1.06)
+      contrast(1.01)
+      drop-shadow(0 0 9px rgba(255, 222, 118, 0.3))
       drop-shadow(0 2px 6px rgba(0, 0, 0, 0.2));
   }
 }
