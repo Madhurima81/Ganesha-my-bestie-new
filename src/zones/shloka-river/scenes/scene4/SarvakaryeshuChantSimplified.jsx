@@ -288,14 +288,14 @@ const SarvakaryeshuChantContent = ({
   const playGuidanceVoice = useCallback((key, onEnded, options = {}) => {
     const { minDelayAfterVoiceMs = 0, replayOnReturn = false } = options;
     const map = {
-      scene13_puzzle: "It didn’t go as planned. What could help him try another way?",
-      scene13_puzzle_after: "The Trunk helped him try another way.",
+      scene13_puzzle: "The painting didn’t go as planned. What could help him try a different way?",
+      scene13_puzzle_after: "The Trunk helped him try another way — and the splat became a whale!",
       scene13_sports: "She feels upset inside. What could help her make room for her feelings?",
-      scene13_sports_after: "The Belly helped her make room for her feelings.",
-      scene13_bike: "They’re missing an important clue. What could help her notice it?",
-      scene13_bike_after: "The Eyes helped her notice what others missed.",
-      scene13_grandma: "So many things are distracting him. What could help him stay focused?",
-      scene13_grandma_after: "The Tusk helped him stay focused on what mattered.",
+      scene13_sports_after: "The Belly reminded her to make room for her feelings and take a slow breath.",
+      scene13_bike: "Everyone is looking, but they’re missing an important clue. What could help her notice it?",
+      scene13_bike_after: "The Eyes helped her look carefully and notice what everyone else missed.",
+      scene13_grandma: "He wants to finish his special card, but everything keeps pulling his attention away. What could help him stay focused?",
+      scene13_grandma_after: "The Tusk helped him stay focused on what was important.",
       welcome: "Now let us use Ganesha’s powers to help!",
       scene13_try_again: "Try another symbol.",
       scene13_success: "Sarva-Karyeshu! You chose the right power and solved every task.",
