@@ -228,6 +228,10 @@
   pointer-events: none;
 }
 
+.sarva-option.is-rescue-dimmed {
+  opacity: 0.45;
+}
+
 .sarva-option.is-selected .sarva-option-circle {
   border-color: #FFD54F;
   background: #FFF8D6;
@@ -236,18 +240,12 @@
     0 0 12px rgba(255, 213, 79, 0.35);
 }
 
-.sarva-option.is-guided .sarva-option-circle {
-  box-shadow: 0 0 0 4px rgba(255, 213, 79, 0.18), 0 0 16px rgba(255, 213, 79, 0.45);
-}
-
-.sarva-option.pulse-1 .sarva-option-circle,
-.sarva-option.pulse-2 .sarva-option-circle,
-.sarva-option.pulse-3 .sarva-option-circle {
-  animation: stageHintPulse 0.75s ease-in-out;
-}
-
 .sarva-option.hint-glow .sarva-option-circle {
-  animation: stageHintGlow 1.25s ease-in-out infinite;
+  box-shadow:
+    0 0 0 3px rgba(255, 213, 79, 0.14),
+    0 0 10px rgba(255, 213, 79, 0.18);
+  border-color: rgba(255, 213, 79, 0.72);
+  background: rgba(255, 249, 224, 0.96);
 }
 
 .sarva-option-circle {
