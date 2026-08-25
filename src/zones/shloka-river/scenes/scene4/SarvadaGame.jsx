@@ -9,50 +9,75 @@ import nightBg from './assets/images/sarvada/night.png';
 
 import boatImg from './assets/images/sarvada/boat.png';
 import ganeshaPopImg from '/images/ganesha-hi-stand.png';
+import mooshikaSymbolImg from '../../../../zones/symbol-mountain/shared/images/icons/symbol-mooshika-new.png';
+import trunkSymbolImg from '../../../../zones/symbol-mountain/shared/images/icons/symbol-trunk-new.png';
+import lotusSymbolImg from '../../../../zones/symbol-mountain/shared/images/icons/symbol-lotus-new.png';
 
-import puzzleBubbleImg from './assets/images/sarvada/puzzle-bubble.png';
-import sportsBubbleImg from './assets/images/sarvada/sports-bubble.png';
-import groceryBubbleImg from './assets/images/sarvada/gocery-bubble.png';
+import morningBubbleImg from './assets/images/sarvada/puzzle-bubble.png';
+import afternoonBubbleImg from './assets/images/sarvada/sports-bubble.png';
+import nightBubbleImg from './assets/images/sarvada/gocery-bubble.png';
 
 import morningSceneImg from './assets/images/sarvada/morning-scene.png';
 import afternoonSceneImg from './assets/images/sarvada/afternoon-scene.png';
 import nightSceneImg from './assets/images/sarvada/night-scene.png';
 
 const SYLLABLES = ['Sar', 'va', 'da'];
+const AUDIO = ['sar', 'va', 'da'];
 const PHASE_VO_KEYS = ['scene14_morning', 'scene14_afternoon', 'scene14_night'];
 
 const PHASES_CONFIG = [
   {
     id: 'morning',
     bg: morningBg,
-    bubble: puzzleBubbleImg,
+    bubble: morningBubbleImg,
     scene: morningSceneImg,
     label: 'Morning',
     syllable: 'SAR',
     litCount: 1,
     timeColor: '#FFE066',
+    hiddenSymbol: mooshikaSymbolImg,
+    foundLabel: 'Mooshika found!',
+    clues: [
+      'Look for a small friend who can be quick and busy.',
+      'He may be hiding near something you take with you in the morning.',
+      'Look near the school bag for a tiny mouse.',
+    ],
     ganeshaSpot: { l: 89, t: 56, w: 14 },
   },
   {
     id: 'afternoon',
     bg: afternoonBg,
-    bubble: sportsBubbleImg,
+    bubble: afternoonBubbleImg,
     scene: afternoonSceneImg,
     label: 'Afternoon',
     syllable: 'VA',
     litCount: 2,
     timeColor: '#FFB347',
+    hiddenSymbol: trunkSymbolImg,
+    foundLabel: 'Trunk symbol found!',
+    clues: [
+      'Look for a symbol that can bend and curve.',
+      'Something flying in the sky has a long curving shape.',
+      "Look closely at the kite's tail.",
+    ],
     ganeshaSpot: { l: 50, t: 22, w: 14 },
   },
   {
     id: 'night',
     bg: nightBg,
-    bubble: groceryBubbleImg,
+    bubble: nightBubbleImg,
     scene: nightSceneImg,
     label: 'Night',
     syllable: 'DA',
     litCount: 3,
     timeColor: '#B39DDB',
+    hiddenSymbol: lotusSymbolImg,
+    foundLabel: 'Lotus found!',
+    clues: [
+      'Look for a symbol that stays peaceful even when things around it are messy.',
+      'A flower shape is hiding somewhere near the bed.',
+      'Look at the bedside lamp for the lotus.',
+    ],
     ganeshaSpot: { l: 60, t: 17, w: 14 },
   },
 ];
@@ -66,7 +91,7 @@ export default function SarvadaGame({
   isPaused = false,
   voiceGuidance = {},
 }) {
-  const { playVoice: playSceneLine, stopVoice: stopSceneVoice, playWord } = voiceGuidance;
+  const { playVoice: playSceneLine, stopVoice: stopSceneVoice, playWord, playSyllable } = voiceGuidance;
   const [phaseIndex, setPhaseIndex] = useState(0);
   const [bubbleState, setBubbleState] = useState('idle');
   const [showMemory, setShowMemory] = useState(false);
@@ -79,19 +104,64 @@ export default function SarvadaGame({
   const [findMode, setFindMode] = useState(false);
   const [ganeshaFound, setGaneshaFound] = useState(false);
   const [popOut, setPopOut] = useState(false);
+  const [rescueHintActive, setRescueHintActive] = useState(false);
+  const [boatGaneshaVisible, setBoatGaneshaVisible] = useState(false);
+  const [boatGaneshaJoining, setBoatGaneshaJoining] = useState(false);
+  const [boatGaneshaCelebrating, setBoatGaneshaCelebrating] = useState(false);
+  const lastHintVoiceKeyRef = useRef(null);
 
   const timersRef = useRef([]);
   const doneCalledRef = useRef(false);
 
   const { hintLevel, markInteraction } = useRepeatedHintCycle({
-    enabled: isActive && !isPaused && gamePhase !== 'done' && gamePhase !== 'sarvada',
-    stageKey: isActive ? (findMode ? `find-${phaseIndex}` : `bubble-${phaseIndex}`) : null,
+    enabled: isActive && !isPaused && findMode && !ganeshaFound,
+    stageKey: isActive && findMode ? `find-${phaseIndex}` : null,
     initialDelay: 7000,
-    pulseCountBeforeEscalation: 3,
+    pulseCountBeforeEscalation: 1,
     pulseInterval: 1400,
-    level2Delay: 15000,
-    level3Delay: 22000,
+    level2Delay: 14000,
+    level3Delay: 21000,
   });
+
+  useEffect(() => {
+    if (!isActive || !findMode || ganeshaFound) {
+      setRescueHintActive(false);
+      lastHintVoiceKeyRef.current = null;
+      return;
+    }
+
+    if (hintLevel === 0) {
+      setRescueHintActive(false);
+      lastHintVoiceKeyRef.current = null;
+      return;
+    }
+
+    const cfg = PHASES_CONFIG[phaseIndex];
+    const hintVoiceKey = `scene14_hint_${cfg.id}_${hintLevel}`;
+    if (lastHintVoiceKeyRef.current !== hintVoiceKey) {
+      lastHintVoiceKeyRef.current = hintVoiceKey;
+      const timerId = window.setTimeout(() => {
+        playSceneLine?.(hintVoiceKey, undefined, {
+          replayOnReturn: false,
+          minDelayAfterVoiceMs: 5000,
+        });
+      }, 120);
+      return () => window.clearTimeout(timerId);
+    }
+  }, [findMode, ganeshaFound, hintLevel, isActive, phaseIndex, playSceneLine]);
+
+  useEffect(() => {
+    if (!isActive || !findMode || ganeshaFound || hintLevel < 3) {
+      setRescueHintActive(false);
+      return undefined;
+    }
+
+    const id = window.setTimeout(() => {
+      setRescueHintActive(true);
+    }, 7000);
+
+    return () => window.clearTimeout(id);
+  }, [findMode, ganeshaFound, hintLevel, isActive]);
 
   const safeAfter = useCallback((ms, fn) => {
     const id = window.setTimeout(fn, ms);
@@ -125,6 +195,11 @@ export default function SarvadaGame({
       setFindMode(false);
       setGaneshaFound(false);
       setPopOut(false);
+      setRescueHintActive(false);
+      setBoatGaneshaVisible(false);
+      setBoatGaneshaJoining(false);
+      setBoatGaneshaCelebrating(false);
+      lastHintVoiceKeyRef.current = null;
       doneCalledRef.current = false;
       return;
     }
@@ -157,6 +232,9 @@ export default function SarvadaGame({
       setBubbleState('memory');
       safeAfter(800, () => {
         setFindMode(true);
+        setClueMessage('');
+        setRescueHintActive(false);
+        lastHintVoiceKeyRef.current = null;
         playSceneLine?.('scene14_find_ganesha');
       });
     });
@@ -186,6 +264,22 @@ export default function SarvadaGame({
     window.setTimeout(() => onMicroWin?.(), 0);
     setRevealedSyls((prev) => [...prev, cfg.syllable]);
 
+    if (phaseIndex === 0) {
+      safeAfter(650, () => {
+        setBoatGaneshaVisible(true);
+        setBoatGaneshaJoining(true);
+      });
+      safeAfter(1650, () => {
+        setBoatGaneshaJoining(false);
+        setBoatGaneshaCelebrating(true);
+      });
+      safeAfter(2550, () => setBoatGaneshaCelebrating(false));
+    } else {
+      setBoatGaneshaVisible(true);
+      safeAfter(450, () => setBoatGaneshaCelebrating(true));
+      safeAfter(1700, () => setBoatGaneshaCelebrating(false));
+    }
+
     safeAfter(2200, () => {
       setPopOut(false);
       setBubbleState('bursting');
@@ -194,27 +288,33 @@ export default function SarvadaGame({
       setShowMemory(false);
       setFindMode(false);
       setGaneshaFound(false);
+      setClueMessage('');
+      setRescueHintActive(false);
+      lastHintVoiceKeyRef.current = null;
 
       const nextIndex = phaseIndex + 1;
 
       if (nextIndex >= PHASES_CONFIG.length) {
         safeAfter(1000, () => {
           setGamePhase('sarvada');
-          playWord?.('sarvada');
-          safeAfter(2200, () => {
-            playSceneLine?.('scene14_meaning');
-          });
-          safeAfter(3200, () => {
-            if (doneCalledRef.current) return;
-            doneCalledRef.current = true;
-            setGamePhase('done');
-            safeAfter(600, () => {
-              window.setTimeout(() => {
-                onGameComplete?.();
-                onPhaseComplete?.();
-              }, 0);
+          const playMeaningLine = () => {
+            playSceneLine?.('scene14_meaning', () => {
+              if (doneCalledRef.current) return;
+              doneCalledRef.current = true;
+              setGamePhase('done');
+              safeAfter(600, () => {
+                window.setTimeout(() => {
+                  onGameComplete?.();
+                  onPhaseComplete?.();
+                }, 0);
+              });
             });
-          });
+          };
+          if (playWord) {
+            playWord('sarvada', playMeaningLine);
+          } else {
+            playMeaningLine();
+          }
         });
       } else {
         safeAfter(600, () => {
@@ -279,8 +379,11 @@ export default function SarvadaGame({
         <SyllableHighlight
           syllables={SYLLABLES}
           litCount={litCount}
-          audioSyllables={SYLLABLES}
-          onSyllableLit={() => {}}
+          audioSyllables={AUDIO}
+          onSyllableLit={(syllable) => {
+            stopSceneVoice?.();
+            playSyllable?.('sarvada', syllable);
+          }}
         />
       </div>
 
@@ -309,8 +412,8 @@ export default function SarvadaGame({
               <>
                 {!ganeshaFound && (
                   <img
-                    className="sarvada-ganesha-hidden"
-                    src={ganeshaPopImg}
+                    className={`sarvada-ganesha-hidden${hintLevel >= 3 ? ' is-guided hint-glow' : ''}`}
+                    src={cfg.hiddenSymbol}
                     alt=""
                     aria-hidden="true"
                     draggable={false}
@@ -329,19 +432,31 @@ export default function SarvadaGame({
                     width: `${cfg.ganeshaSpot.w}%`,
                   }}
                   onPointerDown={handleGaneshaFound}
-                  aria-label="Find Ganesha"
+                  aria-label={`Find the hidden ${cfg.id} symbol`}
                 />
                 {popOut && (
-                  <img
-                    className="sarvada-ganesha-pop"
-                    src={ganeshaPopImg}
-                    alt=""
-                    style={{ left: `${cfg.ganeshaSpot.l}%`, top: `${cfg.ganeshaSpot.t}%` }}
-                  />
+                  <>
+                    <div
+                      className="sarvada-found-burst"
+                      style={{ left: `${cfg.ganeshaSpot.l}%`, top: `${cfg.ganeshaSpot.t}%` }}
+                    />
+                    <img
+                      className="sarvada-ganesha-pop"
+                      src={cfg.hiddenSymbol}
+                      alt=""
+                      style={{ left: `${cfg.ganeshaSpot.l}%`, top: `${cfg.ganeshaSpot.t}%` }}
+                    />
+                    <div
+                      className="sarvada-found-label"
+                      style={{ left: `${cfg.ganeshaSpot.l}%`, top: `${cfg.ganeshaSpot.t}%` }}
+                    >
+                      {cfg.foundLabel}
+                    </div>
+                  </>
                 )}
-                {hintLevel >= 2 && !ganeshaFound && (
+                {rescueHintActive && !ganeshaFound && (
                   <div
-                    className={`sarvada-ganesha-ring${hintLevel >= 3 ? ' hint-glow' : ''}`}
+                    className="sarvada-ganesha-ring hint-glow"
                     style={{
                       left: `${cfg.ganeshaSpot.l}%`,
                       top: `${cfg.ganeshaSpot.t}%`,
@@ -375,6 +490,15 @@ export default function SarvadaGame({
 
       <div className="sarvada-boat">
         <img src={boatImg} alt="boat with kids" draggable={false} />
+        {boatGaneshaVisible && (
+          <img
+            className={`sarvada-boat-ganesha${boatGaneshaJoining ? ' is-joining' : ''}${boatGaneshaCelebrating ? ' is-celebrating' : ''}`}
+            src={ganeshaPopImg}
+            alt=""
+            aria-hidden="true"
+            draggable={false}
+          />
+        )}
       </div>
     </div>
   );

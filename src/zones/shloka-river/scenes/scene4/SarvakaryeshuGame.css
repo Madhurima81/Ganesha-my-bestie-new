@@ -88,7 +88,7 @@
   left: 50%;
   top: 42%;
   transform: translate(-50%, -42%);
-  width: min(88%, 720px);
+  width: min(88%, 780px);
   z-index: 20;
   border-radius: 24px;
   background: rgba(255, 252, 245, 0.96);
@@ -177,7 +177,7 @@
   font-family: 'Nunito', sans-serif;
   font-size: clamp(12px, 1.7vw, 16px);
   color: #7a5c44;
-  margin: 0;
+  margin: -4px 0 0;
   text-align: center;
 }
 
@@ -246,11 +246,12 @@
     0 0 10px rgba(255, 213, 79, 0.18);
   border-color: rgba(255, 213, 79, 0.72);
   background: rgba(255, 249, 224, 0.96);
+  animation: guidedPulse 1.25s ease-in-out infinite;
 }
 
 .sarva-option-circle {
-  width: clamp(44px, 8vw, 72px);
-  height: clamp(44px, 8vw, 72px);
+  width: clamp(48px, 9vw, 80px);
+  height: clamp(48px, 9vw, 80px);
   border-radius: 50%;
   background: rgba(240, 235, 255, 0.9);
   border: 2.5px solid rgba(200, 190, 230, 0.5);
@@ -338,7 +339,7 @@
   margin-left: -42px;
   margin-top: -42px;
   filter: drop-shadow(0 0 24px rgba(255, 213, 79, 0.78));
-  animation: flyPower 1800ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: flyPower 1000ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .sarva-option.is-wrong .sarva-option-circle {
