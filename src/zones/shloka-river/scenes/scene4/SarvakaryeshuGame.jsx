@@ -185,31 +185,31 @@ export default function SarvakaryeshuGame({
     const hintVoiceKey = `scene13_hint_${situation.id}_${hintLevel}`;
     if (lastHintVoiceKeyRef.current !== hintVoiceKey) {
       lastHintVoiceKeyRef.current = hintVoiceKey;
+      let glowTimerId = null;
       const timerId = window.setTimeout(() => {
-        playSceneLine?.(hintVoiceKey, undefined, {
-          replayOnReturn: false,
-          minDelayAfterVoiceMs: 5000,
-        });
+        playSceneLine?.(
+          hintVoiceKey,
+          // At hint level 3, wait until the VO actually finishes, then glow
+          // the correct symbol 1.8s after that — not on a guessed delay.
+          hintLevel >= 3
+            ? () => {
+                glowTimerId = window.setTimeout(() => {
+                  setGuidedPowerId(situation.correct);
+                }, 1800);
+              }
+            : undefined,
+          {
+            replayOnReturn: false,
+            minDelayAfterVoiceMs: 5000,
+          }
+        );
       }, 120);
-      return () => window.clearTimeout(timerId);
+      return () => {
+        window.clearTimeout(timerId);
+        if (glowTimerId) window.clearTimeout(glowTimerId);
+      };
     }
   }, [cardIndex, hintLevel, isActive, isCorrect, phase, playSceneLine]);
-
-  // The correct symbol only starts glowing a beat after the 3rd hint VO has
-  // had time to play — not the instant hintLevel reaches 3 — so the glow
-  // reads as "here's the answer" rather than overlapping the hint speech.
-  useEffect(() => {
-    if (!isActive || phase !== 'play' || isCorrect || hintLevel < 3) {
-      return undefined;
-    }
-
-    const situation = SITUATIONS[cardIndex];
-    const id = window.setTimeout(() => {
-      setGuidedPowerId(situation.correct);
-    }, 1800);
-
-    return () => window.clearTimeout(id);
-  }, [cardIndex, hintLevel, isActive, isCorrect, phase]);
 
   useEffect(() => {
     if (!isActive || phase !== 'play' || hintLevel < 3 || isCorrect) {
