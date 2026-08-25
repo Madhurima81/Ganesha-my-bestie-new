@@ -13,6 +13,7 @@ import { getSceneResetConfig } from '../../../../lib/config/SceneResetConfigs';
 import useVoiceGuidance from '../../../../lib/hooks/useVoiceGuidance';
 import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
 import usePauseAwareTimeout from '../../../../lib/hooks/usePauseAwareTimeout';
+import { useGameSounds } from '../../../../lib/hooks/useGameSounds';
 
 import TocaBocaNav from '../../../../lib/components/navigation/TocaBocaNav';
 import HomeButton from '../../../../lib/components/ui/HomeButton/HomeButton';
@@ -205,6 +206,7 @@ const ShlokaRiverFinaleContent = ({
     { enableMusic: false, idleTimeout: 999999 }
   );
   const { safeSetTimeout, clearAll: clearAllTimeouts } = usePauseAwareTimeout({});
+  const { playUiTap, playSparkle, playChime } = useGameSounds();
 
   const [scrambledWords, setScrambledWords] = useState(() => shuffle(SHLOKA_WORDS));
   const [slots, setSlots] = useState(Array(8).fill(null));
@@ -375,8 +377,9 @@ const ShlokaRiverFinaleContent = ({
 
   const handleStartGame = () => {
     sceneActions.updateState({ phase: PHASES.ARRANGE, welcomeShown: true });
-    playVoice?.('arrangeStart', undefined, { replayOnReturn: false });
-    safeSetTimeout(() => playWordAudio?.(SHLOKA_WORDS[0].id), 1800);
+    playVoice?.('arrangeStart', () => {
+      playWordAudio?.(SHLOKA_WORDS[0].id);
+    }, { replayOnReturn: false });
   };
 
   const triggerSuccessFlow = useCallback(() => {
@@ -462,25 +465,30 @@ const ShlokaRiverFinaleContent = ({
       return next;
     });
     setRippleSlot(slotIdx);
-    playWordAudio?.(wordData.id);
     safeSetTimeout(() => setRippleSlot(null), 650);
 
     if (slotIdx === SHLOKA_WORDS.length - 1) {
-      safeSetTimeout(triggerSuccessFlow, 500);
+      playSparkle();
+      playChime();
+      playWordAudio?.(wordData.id, () => {
+        triggerSuccessFlow();
+      });
       return;
     }
 
-    safeSetTimeout(() => {
+    playSparkle();
+    playWordAudio?.(wordData.id, () => {
       setActiveSlotIndex(slotIdx + 1);
       setHintLevel(0);
       playWordAudio?.(SHLOKA_WORDS[slotIdx + 1].id);
-    }, 420);
-  }, [markInteraction, playWordAudio, safeSetTimeout, triggerSuccessFlow]);
+    });
+  }, [markInteraction, playChime, playSparkle, playWordAudio, safeSetTimeout, triggerSuccessFlow]);
 
   const handleTrayPointerDown = (e, wordData) => {
     if (phase !== PHASES.ARRANGE || usedWords.has(wordData.id)) return;
     e.preventDefault();
     dragMovedRef.current = false;
+    playUiTap();
     markInteraction();
     setDraggingWord(wordData);
     const rect = stageRef.current?.getBoundingClientRect();

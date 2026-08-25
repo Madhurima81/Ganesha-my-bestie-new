@@ -13,7 +13,7 @@ export default function CloseButton({ onClose, label = 'Close dialog', className
       onClick={handle}
       aria-label={label}
     >
-      ✕
+      <span className="gmb-close-btn__icon" aria-hidden="true" />
     </button>
   );
 }

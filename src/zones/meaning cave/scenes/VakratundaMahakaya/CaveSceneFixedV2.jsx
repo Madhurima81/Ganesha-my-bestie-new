@@ -29,7 +29,7 @@ import CulturalProgressExtractor from '../../../../lib/services/CulturalProgress
 import SparkleAnimation from '../../../../lib/components/animation/SparkleAnimation';
 import FireworksCompletion from '../../../../lib/components/feedback/FireworksCompletion';
 import CalmGoldenFireworks from '../../../../lib/components/feedback/CalmGoldenFireworks';
-import ProgressiveHintSystem from '../../../../lib/components/interactive/ProgressiveHintSystem';
+// import ProgressiveHintSystem from '../../../../lib/components/interactive/ProgressiveHintSystem';
 import SymbolSceneIntegration from '../../../../lib/components/animation/SymbolSceneIntegration';
 import MagicalCardFlip from '../../../../lib/components/animation/MagicalCardFlip';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
@@ -2026,23 +2026,7 @@ const CaveSceneContent = ({
                 }}
               />
 
-              {/* Progressive Hints */}
-              {sceneState.welcomeShown && (
-                <ProgressiveHintSystem
-                  ref={progressiveHintRef}
-                  sceneId={sceneId}
-                  sceneState={sceneState}
-                  hintConfigs={getHintConfigs()}
-                  characterImage={mooshikaCoach}
-                  initialDelay={20000}
-                  hintDisplayTime={10000}
-                  position="bottom-right"
-                  iconSize={60}
-                  zIndex={2000}
-                  onHintShown={() => setHintUsed(true)}
-                  enabled={!showPowerModal && !showRescueModal}
-                />
-              )}
+              {/* ProgressiveHintSystem disabled per request */}
 
               {/* Symbol Sidebar */}
               <div style={{ filter: 'none' }}>

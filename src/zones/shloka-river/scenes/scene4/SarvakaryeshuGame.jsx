@@ -55,13 +55,13 @@ const SITUATIONS = [
     id: 'belly',
     before: sportsBeforeImg,
     after: sportsAfterImg,
-    beforeLine: 'Her feelings feel too big.',
-    afterLine: 'She feels calmer inside.',
+    beforeLine: 'His feelings feel too big.',
+    afterLine: 'He feels calmer inside.',
     question: 'Which symbol fits best?',
     voKeyBefore: 'scene13_sports',
     voKeyAfter: 'scene13_sports_after',
     correct: 'belly',
-    feedback: 'The Belly helped her make room for her feelings!',
+    feedback: 'The Belly helped him make room for his feelings!',
     syllableChunk: 'VA',
     options: ['belly', 'lotus', 'modak'],
     clues: [
@@ -72,8 +72,8 @@ const SITUATIONS = [
   },
   {
     id: 'eyes',
-    before: bikeBeforeImg,
-    after: bikeAfterImg,
+    before: grandmaBeforeImg,
+    after: grandmaAfterImg,
     beforeLine: 'Where did the toy go?',
     afterLine: 'She spotted the clue!',
     question: 'Which symbol fits best?',
@@ -91,8 +91,8 @@ const SITUATIONS = [
   },
   {
     id: 'tusk',
-    before: grandmaBeforeImg,
-    after: grandmaAfterImg,
+    before: bikeBeforeImg,
+    after: bikeAfterImg,
     beforeLine: 'So many things are distracting him.',
     afterLine: 'He stayed with what mattered.',
     question: 'Which symbol fits best?',
@@ -141,6 +141,7 @@ export default function SarvakaryeshuGame({
   const [rescueHintActive, setRescueHintActive] = useState(false);
   const [flyingPower, setFlyingPower] = useState(null);
   const [imageHit, setImageHit] = useState(false);
+  const [activeSyllableHit, setActiveSyllableHit] = useState(null);
 
   const timersRef = useRef([]);
   const doneCalledRef = useRef(false);
@@ -148,8 +149,15 @@ export default function SarvakaryeshuGame({
   const resolvingRef = useRef(false);
   const optionRefs = useRef({});
   const imageWrapRef = useRef(null);
+  const syllableAnchorRefs = useRef({});
+  const syllableWrapRef = useRef(null);
   const lastHintVoiceKeyRef = useRef(null);
   phaseRef.current = phase;
+
+  const getRectCenter = (rect) => ({
+    x: rect.left + rect.width / 2,
+    y: rect.top + rect.height / 2,
+  });
 
   const { hintLevel, markInteraction } = useRepeatedHintCycle({
     enabled: isActive && !isPaused && phase === 'play' && canPick,
@@ -250,6 +258,7 @@ export default function SarvakaryeshuGame({
       setRescueHintActive(false);
       setFlyingPower(null);
       setImageHit(false);
+      setActiveSyllableHit(null);
       lastHintVoiceKeyRef.current = null;
       doneCalledRef.current = false;
       resolvingRef.current = false;
@@ -264,6 +273,14 @@ export default function SarvakaryeshuGame({
     const s = SITUATIONS[cardIndex];
     setShowAfter(false);
     setCanPick(false);
+    setPicked(null);
+    setIsCorrect(null);
+    setGuidanceMessage('');
+    setGuidedPowerId(null);
+    setRescueHintActive(false);
+    setFlyingPower(null);
+    setImageHit(false);
+    setActiveSyllableHit(null);
 
     let cancelled = false;
     const fallbacks = [];
@@ -315,62 +332,74 @@ export default function SarvakaryeshuGame({
     setGuidanceMessage('');
     setGuidedPowerId(null);
 
-    const nextLit = SYLLABLE_INDEX_BY_CHUNK[situation.syllableChunk] ?? (cardIndex + 1);
-    safeAfter(250, () => setLitCount(nextLit));
+    const syllableIndex = SYLLABLE_INDEX_BY_CHUNK[situation.syllableChunk] ?? (cardIndex + 1);
 
     const optionRect = optionRefs.current[powerId]?.getBoundingClientRect?.();
+    const syllableRect = syllableAnchorRefs.current[syllableIndex]?.getBoundingClientRect?.();
     const imageRect = imageWrapRef.current?.getBoundingClientRect?.();
 
-    // Symbol flies to the centre of the card (the image area) — the flight
-    // itself takes ~1000ms (see .flying-power in the CSS), so the After
-    // reveal is timed to land right as the symbol arrives, not before.
-    safeAfter(500, () => {
-      if (optionRect && imageRect) {
-        setFlyingPower({
-          img: POWER_ICONS[powerId].img,
-          left: optionRect.left + (optionRect.width / 2),
-          top: optionRect.top + (optionRect.height / 2),
-          flyX: (imageRect.left + (imageRect.width / 2)) - (optionRect.left + (optionRect.width / 2)),
-          flyY: (imageRect.top + (imageRect.height / 2)) - (optionRect.top + (optionRect.height / 2)),
-        });
-      }
+    // Two-stage journey: chosen symbol → syllable (earns the sound) →
+    // scene image (applies the lesson) → After reveal. Gives each correct
+    // answer a clear choose → syllable → result rhythm instead of flying
+    // straight into the image.
+    if (optionRect && syllableRect && imageRect) {
+      const optionCenter = getRectCenter(optionRect);
+      const syllableCenter = getRectCenter(syllableRect);
+      const imageCenter = getRectCenter(imageRect);
+
+      setFlyingPower({
+        img: POWER_ICONS[powerId].img,
+        left: optionCenter.x,
+        top: optionCenter.y,
+        syllableX: syllableCenter.x - optionCenter.x,
+        syllableY: syllableCenter.y - optionCenter.y,
+        sceneX: imageCenter.x - optionCenter.x,
+        sceneY: imageCenter.y - optionCenter.y,
+      });
+    }
+
+    // 1) Symbol reaches the syllable — it lights up and plays.
+    safeAfter(600, () => {
+      setActiveSyllableHit(syllableIndex);
+      setLitCount(syllableIndex);
     });
 
-    safeAfter(1500, () => {
+    // 2) Symbol reaches the image — a quick power-hit glow.
+    safeAfter(1250, () => {
       setImageHit(true);
-      setShowAfter(true);
-      setFlyingPower(null);
       window.setTimeout(() => onMicroWin?.(), 0);
     });
 
-    safeAfter(1750, () => {
-      playSceneLine?.(situation.voKeyAfter);
+    // 3) After image reveals, flying icon clears.
+    safeAfter(1450, () => {
+      setShowAfter(true);
     });
 
-    // Hold on the After image for a couple of seconds before advancing —
-    // gives the child time to actually see and register the result.
+    safeAfter(1500, () => {
+      setFlyingPower(null);
+    });
+
     const nextIndex = cardIndex + 1;
 
-    if (nextIndex >= SITUATIONS.length) {
-      safeAfter(4200, () => {
-        setLitCount(SITUATIONS.length);
-        const finishPhase = () => {
-          if (doneCalledRef.current) return;
-          doneCalledRef.current = true;
-          setPhase('done');
-          safeAfter(700, () => {
-            window.setTimeout(() => {
-              onGameComplete?.();
-              onPhaseComplete?.();
-            }, 0);
-          });
-        };
-        finishPhase();
-      });
-      return;
-    }
+    let advanceCalled = false;
+    const advance = () => {
+      if (advanceCalled) return;
+      advanceCalled = true;
 
-    safeAfter(4200, () => {
+      if (nextIndex >= SITUATIONS.length) {
+        setLitCount(SITUATIONS.length);
+        if (doneCalledRef.current) return;
+        doneCalledRef.current = true;
+        setPhase('done');
+        safeAfter(700, () => {
+          window.setTimeout(() => {
+            onGameComplete?.();
+            onPhaseComplete?.();
+          }, 0);
+        });
+        return;
+      }
+
       setCardIndex(nextIndex);
       setPicked(null);
       setIsCorrect(null);
@@ -381,8 +410,21 @@ export default function SarvakaryeshuGame({
       setRescueHintActive(false);
       setFlyingPower(null);
       setImageHit(false);
+      setActiveSyllableHit(null);
       lastHintVoiceKeyRef.current = null;
       resolvingRef.current = false;
+    };
+
+    // Advance only once the After VO has actually finished playing, then
+    // hold a further ~2.5s of calm silence before moving on — a fixed
+    // guessed delay was cutting the VO off / rushing straight to the next
+    // card while it was still talking. A generous fallback timer covers
+    // the case where the VO fails to fire its completion callback at all.
+    safeAfter(1750, () => {
+      playSceneLine?.(situation.voKeyAfter, () => {
+        safeAfter(2500, advance);
+      });
+      safeAfter(8000, advance);
     });
   }, [canPick, cardIndex, isPaused, markInteraction, onGameComplete, onMicroWin, onPhaseComplete, playSceneLine, safeAfter, stopSceneVoice]);
 
@@ -396,15 +438,30 @@ export default function SarvakaryeshuGame({
           <img src={boatImg} alt="" draggable={false} />
         </div>
 
-        <SyllableHighlight
-          syllables={SYLLABLES}
-          litCount={litCount}
-          audioSyllables={AUDIO}
-          onSyllableLit={(syllable) => {
-            stopSceneVoice?.();
-            playSyllable?.('sarvakaryeshu', syllable);
-          }}
-        />
+        <div className="sarva-syllable-wrap" ref={syllableWrapRef}>
+          <SyllableHighlight
+            syllables={SYLLABLES}
+            litCount={litCount}
+            audioSyllables={AUDIO}
+            onSyllableLit={(syllable) => {
+              stopSceneVoice?.();
+              playSyllable?.(syllable);
+            }}
+          />
+
+          <div className="sarva-syllable-anchors" aria-hidden="true">
+            {SYLLABLES.map((_, idx) => {
+              const oneBased = idx + 1;
+              return (
+                <span
+                  key={oneBased}
+                  ref={(node) => { syllableAnchorRefs.current[oneBased] = node; }}
+                  className={`sarva-syllable-anchor${activeSyllableHit === oneBased ? ' is-hit' : ''}`}
+                />
+              );
+            })}
+          </div>
+        </div>
 
         {phase === 'done' && (
           <p className="sarva-doneline">Ganesha's lessons can help in many moments!</p>
@@ -478,8 +535,10 @@ export default function SarvakaryeshuGame({
             style={{
               left: `${flyingPower.left}px`,
               top: `${flyingPower.top}px`,
-              '--fly-x': `${flyingPower.flyX}px`,
-              '--fly-y': `${flyingPower.flyY}px`,
+              '--syllable-x': `${flyingPower.syllableX}px`,
+              '--syllable-y': `${flyingPower.syllableY}px`,
+              '--scene-x': `${flyingPower.sceneX}px`,
+              '--scene-y': `${flyingPower.sceneY}px`,
             }}
           />
         )}

@@ -88,21 +88,11 @@
   background: url('../../../assets/cards/lotus-iconnew.svg') no-repeat center / contain;
 }
 
-.welcome-close-btn {
-  position: fixed;
-  top: 46px;
-  right: max(28px, calc(50% - min(620px, 88vw) / 2 + 22px));
-  z-index: 4;
-  width: 46px;
-  height: 46px;
-  border: none;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.88);
-  color: #5c3ea6;
-  font-size: 30px;
-  line-height: 1;
-  box-shadow: 0 12px 28px rgba(60, 36, 106, 0.18);
-  cursor: pointer;
+.gmb-close-btn.welcome-close-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 24;
 }
 
 @keyframes groundedFade {
@@ -1662,6 +1652,13 @@
   margin: 0 !important;
 }
 
+/* Shift the flower artwork up a touch so its bottom petals clear the
+   "Tap a petal..." hint text, which sits at a fixed offset below the box. */
+.profile-mandala .inner-mandala svg,
+.profile-mandala .ganesha-mandala svg {
+  transform: translateY(-14px);
+}
+
 .profile-actions {
   display: flex;
   flex-direction: column;
@@ -1693,6 +1690,10 @@
 
 .start-over-link {
   margin-top: 6px !important;
+}
+
+.clean-welcome-card .mandala-hint {
+  bottom: -40px;
 }
 
 /* Sound on/off toggle — top-right, 60px touch target */
@@ -1749,3 +1750,4 @@
   box-shadow: none !important;
   filter: none !important;
 }
+

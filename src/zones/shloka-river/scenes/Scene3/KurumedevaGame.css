@@ -15,6 +15,7 @@
   background-repeat: no-repeat;
   background-size: cover;
   overflow: hidden;
+  touch-action: none;
 }
 
 .kuru-hint {
@@ -185,9 +186,10 @@
 }
 
 .kuru-friend--waiting {
-  opacity: 0;
+  opacity: 0.62;
   pointer-events: none;
-  transform: translate(-50%, -50%) scale(0.9);
+  transform: translate(-50%, -50%) scale(0.94);
+  filter: saturate(0.82);
 }
 
 .kuru-friend--waiting img {
@@ -232,6 +234,61 @@
   border: 3px solid rgba(255, 220, 80, 0.75);
   animation: kuruTapRing 1.4s ease-out infinite;
   pointer-events: none;
+}
+
+.kuru-help-line {
+  position: absolute;
+  inset: 0;
+  z-index: 27;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.kuru-help-line.is-dragging {
+  opacity: 1;
+}
+
+.kuru-help-line line {
+  stroke: rgba(255, 241, 139, 0.9);
+  stroke-width: 0.9;
+  stroke-linecap: round;
+  stroke-dasharray: 2 1.3;
+  filter: drop-shadow(0 0 4px rgba(255, 204, 80, 0.85));
+}
+
+.kuru-help-token {
+  position: absolute;
+  width: clamp(58px, 8.4vw, 92px);
+  aspect-ratio: 1.48;
+  z-index: 45;
+  transform: translate(-50%, -50%);
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: grab;
+  touch-action: none;
+  transition:
+    left 0.28s ease,
+    top 0.28s ease,
+    transform 0.18s ease;
+}
+
+.kuru-help-token.is-dragging {
+  cursor: grabbing;
+  transform: translate(-50%, -50%) scale(1.08);
+  transition: transform 0.12s ease;
+}
+
+.kuru-help-token img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  -webkit-user-drag: none;
+  pointer-events: none;
+  filter: drop-shadow(0 8px 14px rgba(77, 48, 8, 0.24));
 }
 
 @keyframes kuruObjIdle {

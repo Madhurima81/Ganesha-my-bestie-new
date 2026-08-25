@@ -8,16 +8,16 @@ export const OPENING_MODALS = {
   // ========================================
   'symbol-mountain': {
     'modak': {
-      title: "Share the Modaks",
-      description: "Find Mooshika nearby and share the modaks.",
+      title: "Calm Mooshika",
+      description: "Help busy Mooshika settle, gather the offerings, and discover what comes next.",
       icons: ['mooshika', 'modak', 'belly'],
       buttonText: "Let's Begin",
       character: 'ganesha-happy'
     },
 
     'pond': {
-      title: "The Golden Lotus",
-      description: "A golden lotus is waiting to bloom.",
+      title: "Find a Way to the Lotus",
+      description: "Guide the water around the rock, then help the lotus bloom.",
       icons: ['lotus', 'trunk'],
       iconLabels: ['Lotus', 'Trunk'],
       buttonText: "Let's Explore",
@@ -25,8 +25,8 @@ export const OPENING_MODALS = {
     },
 
     'symbol': {
-      title: "Ganesha's Symbols",
-      description: "Look, listen, and find what awakens the tusk.",
+      title: "Look, Listen, Choose",
+      description: "Spot hidden friends, follow their sounds, then choose who can clear each obstacle.",
       icons: ['eyes', 'ears', 'tusk'],
       iconLabels: ['Eyes', 'Ears', 'Tusk'],
       buttonText: "Let's Explore",
@@ -121,8 +121,8 @@ export const OPENING_MODALS = {
     },
 
     'sarvakaryeshu-chant': {
-      title: "Your Powers in Action!",
-      description: "See where your powers belong - and remember them always.",
+      title: "Ganesha’s Wisdom in Action",
+      description: "Different moments may need different things you have learned.",
       icons: ['sarvakaryeshu', 'sarvada'],
       iconLabels: ['Sarvakaryeshu', 'Sarvada'],
       buttonText: "Let's Explore",
@@ -201,7 +201,7 @@ export const OPENING_MODALS = {
   'about-me-hut': {
 'my-indian-story': {
   title: "My Indian Story",
-  description: "Let's explore my Indian story and yours!",
+  description: "Let's explore Ganesha's story and your family's story!",
   icons: [
     '/images/about-me-hut/house-icon.webp',
     '/images/about-me-hut/language-icon.webp',
@@ -212,7 +212,7 @@ export const OPENING_MODALS = {
   character: 'baby-ganesha-sit'
 },
     'family-tree': {
-      title: "Our families",
+      title: "Our Families",
       description: "Let's meet my family and yours!",
       icons: [
         '/images/about-me-hut/house-icon.webp',

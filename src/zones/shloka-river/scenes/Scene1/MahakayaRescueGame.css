@@ -16,6 +16,10 @@
   transform: translate(-50%, -50%);
 }
 
+.maha-layer.is-crossing {
+  transition: left 2.4s cubic-bezier(0.42, 0, 0.2, 1), top 2.4s cubic-bezier(0.42, 0, 0.2, 1);
+}
+
 .maha-layer img {
   width: 100%;
   height: 100%;
@@ -68,11 +72,40 @@
   aspect-ratio: 1;
   border-radius: 50%;
   background:
-    radial-gradient(circle at 50% 50%, #65442d 0 27%, transparent 29%),
-    radial-gradient(circle at 35% 28%, #fff1bd 0 10%, transparent 11%),
-    linear-gradient(145deg, #9b6a3f, #4d301f);
-  border: 0.28vw solid #f0bc58;
-  box-shadow: 0 0.35vw 0.7vw rgba(0, 0, 0, 0.35);
+    radial-gradient(circle at 50% 50%, #5f381f 0 10%, transparent 11%),
+    radial-gradient(circle at 50% 50%, transparent 0 24%, rgba(77, 44, 23, 0.92) 24.5% 31%, transparent 31.5%),
+    radial-gradient(circle at 34% 30%, rgba(255, 235, 182, 0.34) 0 8%, transparent 9%),
+    radial-gradient(circle at 50% 50%, #c68446 0 46%, #8d572f 47% 66%, #5d351f 67% 100%);
+  border: 0.2vw solid #f1c36a;
+  box-shadow:
+    inset 0 0 0 0.18vw rgba(255, 240, 202, 0.24),
+    inset 0 -0.2vw 0.38vw rgba(66, 34, 16, 0.34),
+    0 0.35vw 0.7vw rgba(0, 0, 0, 0.28);
+}
+
+.maha-pulley::before,
+.maha-pulley::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border-radius: 999px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.maha-pulley::before {
+  width: 72%;
+  height: 10%;
+  background: linear-gradient(90deg, rgba(104, 60, 31, 0.2), rgba(104, 60, 31, 0.7), rgba(104, 60, 31, 0.2));
+  box-shadow: 0 0 0.08vw rgba(255, 234, 182, 0.24);
+}
+
+.maha-pulley::after {
+  width: 10%;
+  height: 72%;
+  background: linear-gradient(180deg, rgba(104, 60, 31, 0.2), rgba(104, 60, 31, 0.7), rgba(104, 60, 31, 0.2));
+  box-shadow: 0 0 0.08vw rgba(255, 234, 182, 0.24);
 }
 
 .maha-knob,
@@ -102,16 +135,12 @@
   filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.45));
 }
 
-.maha-raft-glow {
-  border-radius: 999px;
-  background: radial-gradient(ellipse at center, rgba(255, 218, 121, 0.24), rgba(255, 218, 121, 0) 68%);
-  opacity: 0.68;
-  transition: opacity 0.35s ease, filter 0.35s ease;
-  pointer-events: none;
+.maha-raft-art {
+  transition: filter 0.35s ease, transform 0.35s ease;
+  filter: drop-shadow(0 0.4vw 0.6vw rgba(0, 0, 0, 0.25));
 }
 
-.maha-raft-glow.is-complete {
-  opacity: 1;
+.maha-raft-art.is-complete {
   filter: drop-shadow(0 0 1.4vw rgba(255, 214, 105, 0.78));
   animation: mahaRaftGlow 1.6s ease-in-out infinite;
 }
@@ -164,6 +193,10 @@
   opacity: 0.92;
 }
 
+.maha-animal.is-flipped {
+  transform: translate(-50%, -50%) scaleX(-1);
+}
+
 .maha-game .maha-hint-pulse {
   animation: mahaHintPulse 1.15s ease-in-out infinite;
 }
@@ -177,55 +210,116 @@
   filter: brightness(1.04) drop-shadow(0 0 10px rgba(255, 188, 98, 0.55));
 }
 
-.maha-debug-toggle {
-  position: absolute;
-  left: 1.5%;
-  bottom: 2%;
-  z-index: 80;
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  border-radius: 6px;
-  background: rgba(26, 31, 44, 0.72);
-  color: #fff;
-  font: 700 12px 'Nunito', sans-serif;
-  padding: 6px 9px;
-  cursor: pointer;
-}
-
 .maha-debug-panel {
-  position: absolute;
-  left: 1.5%;
-  bottom: 9%;
-  z-index: 80;
-  width: min(250px, 34%);
-  color: #fff;
-  background: rgba(21, 27, 38, 0.86);
-  border: 1px solid rgba(255, 255, 255, 0.24);
-  border-radius: 8px;
-  padding: 10px;
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
-  font: 12px 'Nunito', sans-serif;
+  position: fixed;
+  left: 0.75rem;
+  right: auto;
+  top: 6rem;
+  bottom: auto;
+  width: min(22rem, calc(100% - 1.5rem));
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  pointer-events: auto;
 }
 
-.maha-debug-panel label {
-  display: grid;
-  gap: 4px;
-}
-
-.maha-debug-panel select {
-  width: 100%;
+.maha-debug-toggle {
   border: 0;
-  border-radius: 5px;
-  padding: 5px;
+  border-radius: 999px;
+  background: rgba(15, 36, 54, 0.9);
+  color: #f6fbff;
+  font: inherit;
+  font-weight: 700;
+  padding: 0.55rem 0.95rem;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.24);
+}
+
+.maha-debug-body {
+  width: 100%;
+  max-height: min(70vh, 32rem);
+  overflow: auto;
+  border-radius: 1rem;
+  background: rgba(255, 251, 242, 0.96);
+  color: #203040;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.24);
+  padding: 0.85rem;
+}
+
+.maha-debug-drag-handle {
+  cursor: move;
+  touch-action: none;
+  user-select: none;
+  margin: -0.2rem -0.2rem 0.75rem;
+  border-radius: 0.65rem;
+  background: linear-gradient(90deg, rgba(21, 155, 155, 0.94), rgba(32, 95, 116, 0.94));
+  color: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 900;
+  padding: 0.5rem 0.65rem;
+  text-align: center;
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.16);
+}
+
+.maha-debug-section-title {
+  margin: 0.2rem 0 0.65rem;
+  color: #0f4c4c;
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.maha-debug-note {
+  margin: -0.35rem 0 0.75rem;
+  color: rgba(32, 48, 64, 0.78);
+  font-size: 0.74rem;
+  line-height: 1.35;
+}
+
+.maha-debug-row {
+  display: grid;
+  grid-template-columns: 4.6rem 1fr 4.4rem;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.55rem;
+  font-size: 0.8rem;
+}
+
+.maha-debug-row span {
+  font-weight: 700;
+}
+
+.maha-debug-row input[type='range'] {
+  width: 100%;
+}
+
+.maha-debug-row input[type='number'],
+.maha-debug-row select {
+  width: 100%;
+  border: 1px solid rgba(32, 48, 64, 0.2);
+  border-radius: 0.45rem;
+  background: rgba(255, 255, 255, 0.92);
+  padding: 0.28rem 0.42rem;
   font: inherit;
 }
 
 .maha-debug-actions {
   display: flex;
+  justify-content: flex-end;
+  gap: 7px;
+  margin: 0.75rem 0;
+}
+
+.maha-debug-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 7px;
   margin: 8px 0;
 }
 
-.maha-debug-actions button {
+.maha-debug-actions button,
+.maha-debug-grid button {
   flex: 1;
   border: 0;
   border-radius: 5px;
@@ -237,10 +331,14 @@
 }
 
 .maha-debug-panel pre {
-  max-height: 120px;
   margin: 0;
-  overflow: auto;
+  padding: 0.7rem;
+  border-radius: 0.7rem;
+  background: rgba(18, 33, 46, 0.92);
   color: #e8f4ff;
+  font-size: 0.68rem;
+  line-height: 1.35;
+  overflow: auto;
   white-space: pre-wrap;
 }
 
@@ -289,7 +387,7 @@
 @media (prefers-reduced-motion: reduce) {
   .maha-log-piece,
   .maha-animal,
-  .maha-raft-glow,
+  .maha-raft-art,
   .maha-raft-log.is-attached,
   .maha-animal.is-joined {
     animation: none;

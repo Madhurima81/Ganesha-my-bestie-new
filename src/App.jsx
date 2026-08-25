@@ -399,6 +399,7 @@ const [showDarePopup, setShowDarePopup] = useState(false);
 const [showDareChip, setShowDareChip] = useState(false);
 const previousViewRef = useRef('loading');
 const dareOpenTimerRef = useRef(null);
+const sceneJustCompletedRef = useRef(false);
 const [kindnessCheckEntry, setKindnessCheckEntry] = useState(null);
 const [showIntroStory, setShowIntroStory] = useState(false);
 const [introStoryReturnView, setIntroStoryReturnView] = useState('map');
@@ -629,13 +630,27 @@ useEffect(() => {
 
     setShowDareChip(false);
 
-    // Don't show Daily Dare on the user's very first map visit —
-    // let map intro VO + tutorial breathe.
+    // Stamp "has landed on map before" on every map arrival, not just ones that
+    // follow a scene completion — this is the profile's actual first-ever map
+    // visit, before anything has been played, so the map intro VO can breathe.
     const profileId = localStorage.getItem('activeProfileId') || 'default';
     const firstMapVisitKey = `gmb_map_first_visit_done_${profileId}`;
     const isFirstMapVisit = !localStorage.getItem(firstMapVisitKey);
     if (isFirstMapVisit) {
       localStorage.setItem(firstMapVisitKey, '1');
+    }
+
+    // Only offer the Daily Dare popup right after a scene completes —
+    // not on every map landing (app boot, back button, profile switch, etc).
+    const justCompletedScene = sceneJustCompletedRef.current;
+    sceneJustCompletedRef.current = false;
+    if (!justCompletedScene) {
+      return;
+    }
+
+    // A scene can only be completed after at least one prior map visit, so
+    // isFirstMapVisit is only ever true here in edge cases — kept as a safety net.
+    if (isFirstMapVisit) {
       return;
     }
 
@@ -1306,11 +1321,13 @@ chants: result?.chants || result?.chantedVerses || {},
       });
     }
     
+    sceneJustCompletedRef.current = true;
     setCurrentScene(null);
     setCurrentView('zone-welcome');
-    
+
   } catch (error) {
     console.error('❌ APP: Error saving scene completion:', error);
+    sceneJustCompletedRef.current = true;
     setCurrentScene(null);
     setCurrentView('zone-welcome');
   }

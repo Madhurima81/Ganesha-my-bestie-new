@@ -67,19 +67,19 @@ export const DISCOVERY_CONTENT = {
     'modak': {
       mooshika: {
         title: "Mooshika",
-        affirmation: "I can focus.",
+        affirmation: "I can guide my busy thoughts.",
         icon: 'mooshika-happy'
       },
 
       modak: {
         title: "Modak",
-        affirmation: "I am full of joy.",
+        affirmation: "I have joy inside me.",
         icon: 'modak-basket'
       },
 
       belly: {
         title: "Big Belly",
-        affirmation: "I feel safe inside.",
+        affirmation: "I have room for all my feelings.",
         icon: 'belly-full'
       }
     },
@@ -87,7 +87,7 @@ export const DISCOVERY_CONTENT = {
     'pond': {
       lotus: {
         title: "Lotus",
-        affirmation: "I stay calm.",
+        affirmation: "I can stay calm when things get messy.",
         icon: 'golden-lotus'
       },
 
@@ -101,7 +101,7 @@ export const DISCOVERY_CONTENT = {
     'tusk': {
       eyes: {
         title: "Eyes",
-        affirmation: "I see clearly.",
+        affirmation: "I notice the good around me.",
         icon: 'ganesha-eyes'
       },
 
@@ -113,7 +113,7 @@ export const DISCOVERY_CONTENT = {
 
       tusk: {
         title: "Tusk",
-        affirmation: "I finish what I start.",
+        affirmation: "I stay focused on what is true.",
         icon: 'ganesha-tusk'
       }
     }
@@ -130,7 +130,7 @@ export const DISCOVERY_CONTENT = {
 
       mahakaya: {
         title: "Mahakaya",
-        affirmation: "I am strong inside.",
+        affirmation: "I can make room.",
         icon: 'mahakaya-complete'
       }
     },
@@ -138,13 +138,13 @@ export const DISCOVERY_CONTENT = {
     'suryakoti-bank': {
       suryakoti: {
         title: "Suryakoti",
-        affirmation: "I shine brightly.",
+        affirmation: "I can see the way.",
         icon: 'suryakoti-complete'
       },
 
       samaprabha: {
         title: "Samaprabha",
-        affirmation: "I share my light.",
+        affirmation: "I can make the light even.",
         icon: 'samaprabha-complete'
       }
     },
@@ -166,13 +166,13 @@ export const DISCOVERY_CONTENT = {
     'sarvakaryeshu-chant': {
       sarvakaryeshu: {
         title: "Sarva Karyeshu",
-        affirmation: "I use my powers in every task.",
+        affirmation: "I do every task with care.",
         icon: 'sarvakaryeshu-complete'
       },
 
       sarvada: {
         title: "Sarvada",
-        affirmation: "These powers stay with me, always.",
+        affirmation: "What I learn stays with me.",
         icon: 'sarvada-complete'
       }
     }

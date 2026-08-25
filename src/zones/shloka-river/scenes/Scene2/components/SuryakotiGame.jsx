@@ -322,7 +322,6 @@ export default function SuryakotiGame({
 
     if (playSceneLine) {
       stopVoice?.();
-      playWord?.('suryakoti');
       playSceneLine('scene11_surya_success', () => {
         successVoDoneRef.current = true;
         completeAfterSuccess();

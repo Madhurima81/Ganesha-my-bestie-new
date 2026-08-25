@@ -30,7 +30,7 @@ const VO_PATHS = {
 };
 
 const VO_TEXTS = {
-  intro: 'My tusk is hidden beyond this blocked path. Let us work together to clear the way!',
+  intro: 'My tusk is beyond this blocked path. Stay focused and choose what each obstacle needs.',
   vinesPrompt: 'Who can help with these tangled vines?',
   vinesSelected: 'Great choice! Now rub the vines away!',
   vinesDone: 'Wonderful! The vines are cleared.',
@@ -43,7 +43,7 @@ const VO_TEXTS = {
   boulderPrompt: 'Who is strong enough to move this giant boulder?',
   boulderSelected: 'Great choice! Press and hold to push the boulder!',
   keepPushing: 'Keep pushing... You are doing great!',
-  finale: 'Hooray! You did it! The tusk has appeared! Every friend used their special gift. Working together helped clear the path. Wonderful teamwork!'
+  finale: 'Hooray! You did it! The tusk has appeared! You stayed focused and chose just what each obstacle needed. Great teamwork!'
 };
 
 // Debug layout editor — only with ?debug in the URL, never for children in prod.

@@ -15,40 +15,40 @@ export const ZONE_CONFIGS = {
     scenes: [
       {
         id: 'modak',
-        name: 'Share the Modaks',
+        name: 'Calm Mooshika',
         emoji: '🍯',
         iconImage: '/images/zones/symbol-mountain/modak-icon.png',
-        description: 'Help Mooshika collect sweet modaks',
+        description: 'Help busy Mooshika settle, gather the offerings, and discover what comes next.',
         unlocked: true,
         order: 1,
         position: { top: 25, left: 25 }
       },
       {
         id: 'pond',
-        name: 'The Golden Lotus',
+        name: 'Find a Way to the Lotus',
         emoji: '🪷',
         iconImage: '/images/zones/symbol-mountain/pond-icon.png',
-        description: 'Find lotus flowers and meet the elephant',
+        description: 'Guide the water around the rock, then help the lotus bloom.',
         unlocked: false,
         order: 2,
         position: { top: 25, left: 75 }
       },
       {
         id: 'symbol',
-        name: "Ganesha's Symbols",
+        name: 'Look, Listen, Choose',
         emoji: '😀',
         iconImage: '/images/symbols-symbolmountain/broken-tusk-symbol.png',
-        description: 'Master the musical tusk assembly',
+        description: 'Spot hidden friends, follow their sounds, then choose who can clear each obstacle.',
         unlocked: false,
         order: 3,
         position: { top: 25, left: 50 }
       },
       {
         id: 'final-scene',
-        name: 'Shine Together',
+        name: 'All Symbols Together',
         emoji: '🕉️',
         iconImage: '/images/zones/symbol-mountain/assembly-icon.png',
-        description: 'Assemble all sacred symbols to awaken Ganesha',
+        description: "Every symbol is ready. Let's bring them together.",
         unlocked: false,
         order: 4,
         position: { top: 75, left: 30 }

@@ -843,47 +843,6 @@ div[class*="discovery"] img {
   filter: drop-shadow(0 0 15px #FFD700) !important; /* Reduced from 50px */
 }
 
-.modak-mini-ganesha-cue {
-  --mini-cue-duration: 1.5s;
-  animation-duration: var(--mini-cue-duration);
-}
-
-.modak-mini-gesture-icon {
-  width: clamp(52px, 5vw, 76px);
-  height: auto;
-  display: block;
-  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.2));
-}
-
-.modak-mini-ganesha-cue--mound {
-  left: 24%;
-  top: 43%;
-}
-
-.modak-mini-ganesha-cue--modak {
-  left: 31%;
-  top: 47%;
-}
-
-.modak-mini-ganesha-cue--rock {
-  left: 68%;
-  top: 51%;
-}
-
-.modak-mini-ganesha-cue--center {
-  left: 50%;
-  top: 30%;
-  transform: translate(-50%, -50%);
-}
-
-/* Mobile: mound and modak positions shift slightly */
-@media (max-width: 600px) {
-  .modak-mini-ganesha-cue--mound { left: 22%; top: 45%; }
-  .modak-mini-ganesha-cue--modak { left: 30%; top: 49%; }
-  .modak-mini-ganesha-cue--rock { left: 68%; top: 51%; }
-  .modak-mini-ganesha-cue--center { top: 34%; }
-}
-
 /* ===========================================================
    FIX BLOCK — Rock-feeding phase polish + iPad consistency
    Added: code-freeze fixes

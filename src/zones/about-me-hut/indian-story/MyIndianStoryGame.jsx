@@ -2,9 +2,12 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import './MyIndianStoryGame.css';
 import '../../shared/components/OpeningModal.css';
 import SceneCompletionCelebration from '../../../lib/components/celebration/SceneCompletionCelebration';
+import GaneshaGestureCue from '../../../lib/components/gesture/GaneshaGestureCue';
+import { useMiniGesture } from '../../../lib/hooks/useMiniGesture';
 import AboutMeComparisonCard from '../components/AboutMeComparisonCard';
 import GameStateManager from '../../../lib/services/GameStateManager';
 import ProgressManager from '../../../lib/services/ProgressManager';
+import SimpleSceneManager from '../../../lib/services/SimpleSceneManager';
 import { useGaneshaVoice } from '../../../lib/hooks/useGaneshaVoice';
 import { useGameSounds } from '../../../lib/hooks/useGameSounds';
 import useVoiceGuidance from '../../../lib/hooks/useVoiceGuidance';
@@ -283,6 +286,10 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   // ─── PHASE (from SceneManager - single source of truth) ───────────
   const phase = sceneState.phase || STEPS.OPENING;
 
+  useEffect(() => {
+    SimpleSceneManager.setCurrentScene('about-me-hut', 'my-indian-story', false, false);
+  }, []);
+
   // ─── STATE ───────────────────────────────────────────────────────
   const [selectedRegion, setSelectedRegion] = useState(null);
   const [selectedLanguages, setSelectedLanguages] = useState([]);
@@ -315,7 +322,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   const [showFestSelectionHelper, setShowFestSelectionHelper] = useState(false); // Show helper text at 4 selections
 
   // Gesture & sparkle
-  const [miniGesture, setMiniGesture] = useState({ show: false, target: 'center', position: null, durationMs: 1500, key: 0 });
+  const { miniGesture, triggerMiniGesture: triggerMiniGestureRaw } = useMiniGesture();
   const [sparkleState, setSparkleState] = useState({ type: null, key: 0, position: null, radius: 180 });
 
   // Idle Hint Level for Ganesha Home Phase
@@ -353,7 +360,6 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   const { countdownValue } = useResumeCountdown(RESUME_DELAY_MS / 1000);
   // Refs
   const discoveredRef = useRef(new Set());
-  const miniGestureTimerRef = useRef(null);
   const sparkleCancelRef = useRef(null);
   const phase1SpotSparkleTimerRef = useRef(null);
   const childHomeEntryVoiceTimerRef = useRef(null);
@@ -408,7 +414,6 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
       stop();
       stopMusic();
       clearAllTimeouts();
-      if (miniGestureTimerRef.current) clearTimeout(miniGestureTimerRef.current);
       if (sparkleCancelRef.current) clearTimeout(sparkleCancelRef.current);
       if (phase1SpotSparkleTimerRef.current) clearTimeout(phase1SpotSparkleTimerRef.current);
       if (childHomeEntryVoiceTimerRef.current) clearTimeout(childHomeEntryVoiceTimerRef.current);
@@ -456,18 +461,9 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
       position = options.position ?? null;
     }
 
-    if (miniGestureTimerRef.current) clearTimeout(miniGestureTimerRef.current);
-    setMiniGesture(prev => ({
-      show: true,
-      target,
-      position,
-      durationMs,
-      key: prev.key + 1
-    }));
-    miniGestureTimerRef.current = setTimeout(() => {
-      setMiniGesture(prev => ({ ...prev, show: false }));
-    }, durationMs);
-  }, []);
+    const anchor = target === 'phase1-spot' && position ? position : null;
+    triggerMiniGestureRaw('thumbsup', anchor ? 'anchored' : 'center', durationMs, anchor);
+  }, [triggerMiniGestureRaw]);
 
   const triggerSparkle = useCallback((typeOrOptions, durationMs = 1500) => {
     let sparkleType = 'single';
@@ -520,9 +516,9 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   const VOICE = {
     opening:        `Tap to explore my India story and yours!`,
     ganesha_home:   `Drag the magnifying glass to find me.`,
-    child_home_entry: `Tap where your family lives in India.`,
-    child_home_idle: `Look closely… can you find your home?`,
-    child_home_confirmed: `Beautiful! This is your home.`,
+    child_home_entry: `Choose the place connected with your family.`,
+    child_home_idle: `Look closely… which place feels right for your family?`,
+    child_home_confirmed: `This is the place you chose for your family.`,
     language_play_first: `Tap play to listen.`,
     language_play_hint: `Tap play.`,
     language_guess:   `Tap the right language.`,
@@ -537,9 +533,9 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     festivals_wheel:  `Tap the festivals you celebrate.`,
     festivals_child_idle: `Tap the cards to choose.`,
     festivals_confirmed: `Lovely! These are your festivals.`,
-    origin_card:      `We are part of India!`,
-    phase1_complete:  `You found my special places! I am everywhere!`,
-    completion_screen: `Your story is special. We're all connected!`,
+    origin_card:      `Your family has its own Indian story.`,
+    phase1_complete:  `You found many places connected with Ganesha!`,
+    completion_screen: `Your family's story is special too.`,
   };
 
   const activeProfile = GameStateManager.getCurrentProfile?.() || null;
@@ -600,7 +596,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
       case STEPS.GANESHA_HOME:
         return 'Drag the magnifying glass to find me.';
       case STEPS.CHILD_HOME:
-        return 'Tap where your family lives in India.';
+        return 'Choose the place connected with your family.';
       case STEPS.LANGUAGE_GANESHA:
         return hasPressedLanguagePlay ? VOICE.language_guess : VOICE.language_play_hint;
       case STEPS.LANGUAGE_CHILD:
@@ -610,7 +606,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
       case STEPS.FESTIVALS_CHILD:
         return 'Tap the festivals you celebrate.';
       case STEPS.ORIGIN_CARD:
-        return 'Our stories connect in India!';
+        return 'Your family has its own Indian story.';
       default:
         return null;
     }
@@ -1433,7 +1429,7 @@ const discoverLocation = useCallback((index) => {
       };
 
       if (isAudioOn) {
-        speakIfUnmuted('Yes! Ganesh Chaturthi is my birthday!', {
+        speakIfUnmuted('Yes! Ganesh Chaturthi is a special festival for Ganesha.', {
           age: childAge,
           moment: 'celebration',
           onEnd: goToFestivalChildPhase,
@@ -1456,6 +1452,7 @@ const discoverLocation = useCallback((index) => {
   // Complete scene
 const handleComplete = () => {
   saveProgress(selectedRegion, selectedLanguages, selectedFestivals, STEPS.COMPLETE);
+  SimpleSceneManager.clearCurrentScene();
   sceneActions.updateState({ completed: true, phase: STEPS.COMPLETE, showingCompletionScreen: true });
   
   // ⭐ ADD THIS - Save to ProgressManager's storage
@@ -1472,8 +1469,14 @@ const handleComplete = () => {
     <div className="mis-wrapper">
       <img src={bgImage} alt="Background" className="mis-background" />
       <ResumeCountdown value={countdownValue} />
-      <HomeButton onNavigate={onNavigate} />
-      <ZoneBadgeButton zoneId="about-me-hut" onBack={() => onNavigate?.('zone-welcome')} />
+      <HomeButton onNavigate={(...args) => {
+        SimpleSceneManager.clearCurrentScene();
+        onNavigate?.(...args);
+      }} />
+      <ZoneBadgeButton zoneId="about-me-hut" onBack={() => {
+        SimpleSceneManager.clearCurrentScene();
+        onNavigate?.('zone-welcome');
+      }} />
       <AudioToggle isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
       <VOReplayButton onReplay={replayCurrentVoice} disabled={!isAudioOn} />
       {/* Sparkles */}
@@ -1508,43 +1511,14 @@ const handleComplete = () => {
       )}
 
       {/* Center mini gesture (used across child phases and celebration taps) */}
-      {miniGesture.show && miniGesture.target === 'center' && (
-        <div
-          key={`center-mini-gesture-${miniGesture.key}`}
-          style={{
-            position: 'fixed',
-            left: '50%',
-            top: '28%',
-            transform: 'translate(-50%, -50%)',
-            zIndex: 170,
-            pointerEvents: 'none',
-            fontSize: 48,
-            lineHeight: 1,
-            animation: `misMiniGestureCenterPop ${miniGesture.durationMs}ms ease-out forwards`,
-            filter: 'drop-shadow(0 3px 6px rgba(0,0,0,0.18))'
-          }}
-          aria-hidden="true"
-        >
-          <img
-            src="/images/hand-thumbsup.svg"
-            alt=""
-            style={{
-              width: '56px',
-              height: '56px',
-              display: 'block',
-              filter: 'drop-shadow(0 4px 10px rgba(0, 0, 0, 0.25))'
-            }}
-          />
-        </div>
+      {miniGesture.show && miniGesture.position === 'center' && (
+        <GaneshaGestureCue
+          key={miniGesture.key}
+          gestureType={miniGesture.type}
+          position="center"
+          size={56}
+        />
       )}
-      <style>{`
-        @keyframes misMiniGestureCenterPop {
-          0% { opacity: 0; transform: translate(-50%, -42%) scale(0.75); }
-          18% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
-          62% { opacity: 1; transform: translate(-50%, -52%) scale(1); }
-          100% { opacity: 0; transform: translate(-50%, -58%) scale(0.92); }
-        }
-      `}</style>
 
       {/* Opening Modal */}
       {phase === STEPS.OPENING && (
@@ -1576,7 +1550,7 @@ const handleComplete = () => {
           zoneId="about-me-hut"
           sceneName="My Indian Story"
           completionTitle="Your Story Is Special!"
-          completionSubtitle="You are part of India’s story."
+          completionSubtitle="Your family’s story is part of India’s many stories."
           childName={childName || 'Friend'}
           sceneId="my-indian-story"
           isFinalScene={true}
@@ -1595,10 +1569,12 @@ const handleComplete = () => {
             selectedFestivals: selectedFestivals
           }}
           onContinue={() => {
+            SimpleSceneManager.clearCurrentScene();
             if (onComplete) onComplete(sceneId, { stars: 3, completed: true });
             if (onNavigate) onNavigate('zone-welcome');
           }}
           onReplay={() => {
+            SimpleSceneManager.setCurrentScene('about-me-hut', 'my-indian-story', false, false);
             clearAllTimeouts();
             stopVoice();
             stop();
@@ -1617,7 +1593,6 @@ const handleComplete = () => {
             if (festivalSelectionIdleHintTimerRef.current) clearTimeout(festivalSelectionIdleHintTimerRef.current);
             if (languagePlayNudgeTimeoutRef.current) clearTimeout(languagePlayNudgeTimeoutRef.current);
             if (phase1ReturnHintTimerCancelRef.current) phase1ReturnHintTimerCancelRef.current();
-            if (miniGestureTimerRef.current) clearTimeout(miniGestureTimerRef.current);
             if (sparkleCancelRef.current) clearTimeout(sparkleCancelRef.current);
 
             discoveredRef.current = new Set();
@@ -1667,10 +1642,12 @@ const handleComplete = () => {
             });
           }}
           onExploreZones={() => {
+            SimpleSceneManager.clearCurrentScene();
             if (onNavigate) onNavigate('zone-welcome');
             else if (onBack) onBack();
           }}
           onHome={() => {
+            SimpleSceneManager.clearCurrentScene();
             if (onNavigate) onNavigate('home');
           }}
         />
@@ -1708,31 +1685,14 @@ const handleComplete = () => {
             />
 
             {/* Mini gesture near discovered spot */}
-            {miniGesture.show && miniGesture.target === 'phase1-spot' && miniGesture.position && (
-              <div
-                key={`phase1-mini-gesture-${miniGesture.key}`}
-                style={{
-                  position: 'absolute',
-                  left: `${miniGesture.position.x}%`,
-                  top: `${miniGesture.position.y}%`,
-                  transform: 'translate(-50%, -50%)',
-                  zIndex: 14,
-                  pointerEvents: 'none',
-                  animation: `miniGesturePop ${miniGesture.durationMs}ms ease-out forwards`,
-                }}
-              >
-                <img
-                  src="/images/hand-thumbsup.svg"
-                  alt=""
-                  aria-hidden="true"
-                  style={{
-                    width: '56px',
-                    height: '56px',
-                    display: 'block',
-                    filter: 'drop-shadow(0 4px 10px rgba(0, 0, 0, 0.25))',
-                  }}
-                />
-              </div>
+            {miniGesture.show && miniGesture.position === 'anchored' && miniGesture.anchor && (
+              <GaneshaGestureCue
+                key={miniGesture.key}
+                gestureType={miniGesture.type}
+                position="anchored"
+                anchor={miniGesture.anchor}
+                size={56}
+              />
             )}
 
             {/* Undiscovered location targets with idle hint glow */}

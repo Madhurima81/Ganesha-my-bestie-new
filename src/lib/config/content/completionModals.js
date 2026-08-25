@@ -4,20 +4,20 @@
 export const COMPLETION_MODALS = {
   'symbol-mountain': {
     modak: {
-      title: 'You Shared the Modaks!',
-      subtitle: 'You found Mooshika and shared the modaks.'
+      title: 'Mooshika Found His Calm!',
+      subtitle: 'You gathered the offerings and made room for every feeling.'
     },
     pond: {
-      title: 'The Lotus Has Bloomed',
-      subtitle: 'You helped it bloom. It opened for you.'
+      title: 'The Lotus Has Bloomed!',
+      subtitle: 'You found another way and helped it bloom.'
     },
     symbol: {
-      title: 'Ganesha Shines',
-      subtitle: 'You saw, you listened, and finished it.'
+      title: 'You Looked and Listened Carefully!',
+      subtitle: 'Then you stayed focused and chose what each obstacle needed.'
     },
     'final-scene': {
-      title: 'Ganesha Shines',
-      subtitle: 'All the symbols are together. Ganesha shines.'
+      title: 'All Eight Symbols Together!',
+      subtitle: 'Every symbol has found its place.'
     }
   },
   'cave-of-secrets': {
@@ -45,24 +45,24 @@ export const COMPLETION_MODALS = {
 
 'shloka-river': {
   'vakratunda-grove': {
-    title: 'First Powers Unlocked!',
-    subtitle: 'Vakratunda and Mahakaya are yours.'
+    title: 'You found another way!',
+    subtitle: 'There is room for everyone.'
   },
   'suryakoti-bank': {
-    title: 'The River Is Glowing!',
-    subtitle: 'You helped the light shine everywhere.'
+    title: 'The light showed the way!',
+    subtitle: 'Both shine equally now!'
   },
   'nirvighnam-chant': {
     title: 'The Way Is Clear!',
-    subtitle: 'You helped everyone move forward.'
+    subtitle: 'You asked for help! The bridge is ready!'
   },
   'sarvakaryeshu-chant': {
-    title: 'All Eight Powers Are Yours!',
-    subtitle: 'These powers stay with you wherever you go.'
+    title: 'In Everything You Do',
+    subtitle: 'You can use Ganesha’s lessons in many different moments.'
   },
   'shloka-river-finale': {
     title: 'The Shloka River Is Complete!',
-    subtitle: 'The whole shloka now flows inside you.'
+    subtitle: 'You put the whole shloka together.'
   }
 },
 
@@ -88,11 +88,11 @@ export const COMPLETION_MODALS = {
   'about-me-hut': {
   'my-indian-story': {
     title: 'Your Story Is Special!',
-    subtitle: 'You are part of India’s story.'
+    subtitle: "Your family's story is part of India's many stories."
   },
   'family-tree': {
     title: 'Our Families Are Special!',
-    subtitle: 'Every family is full of love.'
+    subtitle: 'Every family is different, and full of love.'
   },
   'favorite-food': {
     title: 'We Know Each Other!',
@@ -100,7 +100,7 @@ export const COMPLETION_MODALS = {
   },
   'dreams-wishes': {
     title: 'Your Dream Shines!',
-    subtitle: 'Your dream makes the world brighter.'
+    subtitle: "Your dream is special because it's yours."
   }
 }
 };

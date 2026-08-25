@@ -375,7 +375,7 @@ export default function SarvadaGame({
           audioSyllables={AUDIO}
           onSyllableLit={(syllable) => {
             stopSceneVoice?.();
-            playSyllable?.('sarvada', syllable);
+            playSyllable?.(syllable);
           }}
         />
       </div>

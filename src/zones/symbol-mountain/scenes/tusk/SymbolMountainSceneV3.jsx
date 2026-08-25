@@ -1,4 +1,4 @@
-﻿// zones/symbol-mountain/scenes/symbol/SymbolMountainSceneV3.jsx
+// zones/symbol-mountain/scenes/symbol/SymbolMountainSceneV3.jsx
 // ?? Complete Musical Mountain Scene - Final Migration V5
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
@@ -87,15 +87,15 @@ const MINI_OK_ICON = '/images/hand-ok.svg';
 const VOICE_LINES = {
   opening: "Let's explore... look and listen.",
   eyes: 'Look closely and spot what is hidden.',
-  ears: 'Listen carefully and match the sounds.',
+  ears: 'Listen carefully and find where the sound is coming from.',
   eyesSetup: 'You looked carefully... and found them all.',
   earsSetup: 'You listened closely... and got it right.',
-  tuskSetup: 'You kept going... and cleared the way.',
-  tusk: 'My tusk is hidden beyond this blocked path. Let us clear the way together.',
+  tuskSetup: "You stayed focused... now let's clear the path.",
+  tusk: 'My tusk is beyond this blocked path. Stay focused and choose what each obstacle needs.',
   idleEyes: 'Look closely... you can find them.',
-  idleEars: 'Listen carefully... then choose the match.',
+  idleEars: 'Listen carefully... then choose where the sound came from.',
   idleTusk: 'Choose the friend who can help, then clear the obstacle.',
-  complete: 'You saw clearly. You listened well. You finished strong. All yours.'
+  complete: 'You looked carefully, listened closely, and stayed focused.'
 };
 
 // Game phases
@@ -599,7 +599,7 @@ const SymbolMountainSceneContent = ({
     }
 
     if (sceneState.phase === PHASES.EYES_COMPLETE) {
-      safeSetTimeout(() => setRevealConfig({ symbolId: 'eyes', symbolImage: symbolEyesColored, symbolName: 'Eyes', affirmation: 'I see clearly.', sidebarTarget: getSidebarTarget('eyes'), sayWithMeDelayMs: 3200 }), 500);
+      safeSetTimeout(() => setRevealConfig({ symbolId: 'eyes', symbolImage: symbolEyesColored, symbolName: 'Eyes', affirmation: 'I notice the good around me.', sidebarTarget: getSidebarTarget('eyes'), sayWithMeDelayMs: 3200 }), 500);
       return;
     }
     if (sceneState.phase === PHASES.EARS_COMPLETE) {
@@ -607,7 +607,7 @@ const SymbolMountainSceneContent = ({
       return;
     }
     if (sceneState.phase === PHASES.TUSK_COMPLETE) {
-      safeSetTimeout(() => setRevealConfig({ symbolId: 'tusk', symbolImage: symbolTuskColored, symbolName: 'Tusk', affirmation: 'I finish what I start.', sidebarTarget: getSidebarTarget('tusk'), sayWithMeDelayMs: 3200 }), 500);
+      safeSetTimeout(() => setRevealConfig({ symbolId: 'tusk', symbolImage: symbolTuskColored, symbolName: 'Tusk', affirmation: 'I stay focused on what is true.', sidebarTarget: getSidebarTarget('tusk'), sayWithMeDelayMs: 3200 }), 500);
       return;
     }
 
@@ -711,7 +711,7 @@ const SymbolMountainSceneContent = ({
     triggerMiniGesture('center', 2000, MINI_VICTORY_ICON);
     safeSetTimeout(() => {
       setShowSparkle(null);
-      setRevealConfig({ symbolId: 'eyes', symbolImage: symbolEyesColored, symbolName: 'Eyes', affirmation: 'I see clearly.', sidebarTarget: getSidebarTarget('eyes'), sayWithMeDelayMs: 3200 });
+      setRevealConfig({ symbolId: 'eyes', symbolImage: symbolEyesColored, symbolName: 'Eyes', affirmation: 'I notice the good around me.', sidebarTarget: getSidebarTarget('eyes'), sayWithMeDelayMs: 3200 });
     }, 1200);
   };
 
@@ -741,7 +741,7 @@ const SymbolMountainSceneContent = ({
       setGaneshaRevealing(false);
     }, 3000);
     safeSetTimeout(() => {
-      setRevealConfig({ symbolId: 'tusk', symbolImage: symbolTuskColored, symbolName: 'Tusk', affirmation: 'I finish what I start.', sidebarTarget: getSidebarTarget('tusk'), sayWithMeDelayMs: 3200 });
+      setRevealConfig({ symbolId: 'tusk', symbolImage: symbolTuskColored, symbolName: 'Tusk', affirmation: 'I stay focused on what is true.', sidebarTarget: getSidebarTarget('tusk'), sayWithMeDelayMs: 3200 });
     }, 3200);
   };
 

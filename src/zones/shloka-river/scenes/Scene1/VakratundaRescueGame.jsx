@@ -10,91 +10,64 @@ import frogFamily from './assets/images/vakratunda/frog-family-from-download.web
 import lilypad from './assets/images/vakratunda/lilypad.webp';
 import stoneImg from './assets/images/vakratunda/18.png';
 import logPileImg from './assets/images/vakratunda/19.png';
-import reedImg from '../Scene3/assets/images/nirvighnam/reed.png';
 
 const SYLLABLES = ['va', 'kra', 'tun', 'da'];
 const AUDIO = { syllables: ['va', 'kra', 'tun', 'da'] };
 
 const POS = {
-  start: { l: 14, t: 52, w: 11 },
-  vaDrift: { l: 45, t: 66, w: 11 },
+  start: { l: 14, t: 52, w: 8.4 },
+  reunionFrog: { w: 7.6 },
   family: { l: 78, t: 40, w: 14 },
 };
 
+const DEFAULT_ROUTE_NODES = [
+  { x: 14, y: 52 },
+  { x: 16.4, y: 55.2 },
+  { x: 22.8, y: 38.8 },
+  { x: 34.4, y: 38.4 },
+  { x: 44.8, y: 39.1 },
+  { x: 50.8, y: 61.6 },
+  { x: 54.2, y: 63.8 },
+  { x: 80.6, y: 55.1 },
+];
+
 const ROUTES = {
-  vaTry: {
-    nodes: [
-      { x: 14, y: 52 },
-      { x: 22, y: 49 },
-      { x: 31, y: 49 },
-      { x: 40, y: 53 },
-    ],
-    tolerance: 5.6,
-    checkpointIndices: [1, 2, 3],
-    hintTargetIndex: 2,
-  },
-  kra: {
-    nodes: [
-      { x: 14, y: 52 },
-      { x: 19, y: 44 },
-      { x: 31, y: 44 },
-      { x: 40, y: 48 },
-      { x: 50, y: 47 },
-    ],
-    tolerance: 5.2,
-    checkpointIndices: [1, 2, 4],
-    hintTargetIndex: 2,
-  },
-  tun: {
-    nodes: [
-      { x: 50, y: 47 },
-      { x: 56, y: 60 },
-      { x: 68, y: 61 },
-      { x: 78, y: 56 },
-    ],
-    tolerance: 5.1,
-    checkpointIndices: [1, 2, 3],
-    hintTargetIndex: 2,
+  trace: {
+    nodes: DEFAULT_ROUTE_NODES,
+    tolerance: 7.2,
+    checkpointIndices: [2, 4, 6, 7],
+    hintTargetIndex: 4,
   },
 };
 
-const OBSTACLES = [
+const DEFAULT_OBSTACLES = [
   {
     id: 'logpile',
     img: logPileImg,
-    l: 27.2,
-    t: 62.8,
-    w: 16.8,
+    l: 36.2,
+    t: 51.4,
+    w: 25.2,
     z: 7,
     cls: 'vak-obstacle--logpile',
-    hit: { x: 27.2, y: 62.4, rx: 8.8, ry: 8.2 },
+    hit: { x: 36.2, y: 51.4, rx: 12.6, ry: 12.2 },
   },
   {
     id: 'stone',
     img: stoneImg,
-    l: 54.8,
-    t: 57.6,
-    w: 17,
+    l: 63.4,
+    t: 44,
+    w: 23.3,
     z: 7,
     cls: 'vak-obstacle--stone',
-    hit: { x: 54.8, y: 57.8, rx: 8.4, ry: 10.2 },
-  },
-  {
-    id: 'reed',
-    img: reedImg,
-    l: 77,
-    t: 34.8,
-    w: 12,
-    z: 6,
-    cls: 'vak-obstacle--reed',
-    hit: { x: 77, y: 35.2, rx: 5.8, ry: 10.6 },
+    hit: { x: 63.9, y: 45, rx: 11.7, ry: 10.5 },
   },
 ];
 
 const TRACE_STROKE_LIMIT = 120;
-const NODE_SNAP_DISTANCE = 4.6;
-const VA_DRIFT_MS = 950;
-const REUNION_DELAY_MS = 2200;
+const NODE_SNAP_DISTANCE = 5.8;
+const OFF_PATH_GRACE = 2.5;
+const RESUME_TOLERANCE_BONUS = 2.5;
+const INTRO_GESTURE_DURATION_MS = 5200;
 
 const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
 
@@ -115,8 +88,19 @@ function distanceToSegment(point, start, end) {
   };
 }
 
-function isPointInsideObstacle(point) {
-  return OBSTACLES.some((obstacle) => {
+function cloneObstacles() {
+  return DEFAULT_OBSTACLES.map((obstacle) => ({
+    ...obstacle,
+    hit: { ...obstacle.hit },
+  }));
+}
+
+function cloneRouteNodes() {
+  return DEFAULT_ROUTE_NODES.map((node) => ({ ...node }));
+}
+
+function isPointInsideObstacle(point, obstacles) {
+  return obstacles.some((obstacle) => {
     const { x, y, rx, ry } = obstacle.hit;
     const dx = (point.x - x) / rx;
     const dy = (point.y - y) / ry;
@@ -124,14 +108,14 @@ function isPointInsideObstacle(point) {
   });
 }
 
-function buildPadsForRoute(phaseKey, uptoNodeIndex) {
-  const route = ROUTES[phaseKey];
+function buildPadsForRoute(route, phaseKey, uptoNodeIndex) {
   if (!route) return [];
   return route.checkpointIndices
     .filter((index) => index <= uptoNodeIndex)
     .map((index) => ({
       id: `${phaseKey}-${index}`,
       phase: phaseKey,
+      nodeIndex: index,
       point: route.nodes[index],
     }));
 }
@@ -155,20 +139,35 @@ export default function VakratundaRescueGame({
   const [tracePoints, setTracePoints] = useState([]);
   const [isTracing, setIsTracing] = useState(false);
   const [activeSegment, setActiveSegment] = useState(0);
+  const activeSegmentRef = useRef(0);
   const [currentPoint, setCurrentPoint] = useState(null);
+  const [frogHopPoint, setFrogHopPoint] = useState({ x: POS.start.l, y: POS.start.t });
+  const [frogSnapping, setFrogSnapping] = useState(false);
   const [wrongPathPulse, setWrongPathPulse] = useState(false);
   const [familyBounce, setFamilyBounce] = useState(false);
-  const [showFailedPad, setShowFailedPad] = useState(false);
+  const [obstacles, setObstacles] = useState(() => cloneObstacles());
+  const [routeNodes, setRouteNodes] = useState(() => cloneRouteNodes());
+  const [familyPoint, setFamilyPoint] = useState({ x: POS.family.l, y: POS.family.t });
+  const [showDebugPanel, setShowDebugPanel] = useState(false);
+  const [showHitboxes, setShowHitboxes] = useState(false);
+  const [debugPanelPosition, setDebugPanelPosition] = useState({ x: 12, y: 96 });
+  const [selectedObstacleId, setSelectedObstacleId] = useState(DEFAULT_OBSTACLES[0].id);
+  const [selectedRouteNodeIndex, setSelectedRouteNodeIndex] = useState(0);
 
   const stageRef = useRef(null);
+  const debugDragRef = useRef(null);
+  const debugPanelDragRef = useRef(null);
   const timers = useRef([]);
   const isPausedRef = useRef(isPaused);
   const vakHintVoiceRef = useRef({ phase: null, level: 0 });
   const wrongPulseTimeoutRef = useRef(null);
   const traceCompletedRef = useRef(false);
+  const hasShownIntroGestureRef = useRef(new Set());
+  const introGestureTimeoutRef = useRef(null);
+  const [showIntroGesture, setShowIntroGesture] = useState(false);
 
   const { hintLevel, markInteraction } = useRepeatedHintCycle({
-    enabled: isActive && !isPaused && ['vaTry', 'kra', 'tun'].includes(phase),
+    enabled: isActive && !isPaused && phase === 'trace',
     stageKey: phase,
     initialDelay: 9000,
     pulseCountBeforeEscalation: 3,
@@ -183,6 +182,10 @@ export default function VakratundaRescueGame({
     if (wrongPulseTimeoutRef.current) {
       clearTimeout(wrongPulseTimeoutRef.current);
       wrongPulseTimeoutRef.current = null;
+    }
+    if (introGestureTimeoutRef.current) {
+      clearTimeout(introGestureTimeoutRef.current);
+      introGestureTimeoutRef.current = null;
     }
   }, []);
 
@@ -217,21 +220,18 @@ export default function VakratundaRescueGame({
     };
   }, []);
 
-  const failTrace = useCallback(() => {
-    traceCompletedRef.current = false;
-    setIsTracing(false);
-    setTracePoints([]);
-    setCurrentPoint(null);
-    setActiveSegment(0);
-    setPhasePads([]);
+  const showTraceWarning = useCallback(() => {
     setWrongPathPulse(true);
-    playSfx?.('tap');
-    if (wrongPulseTimeoutRef.current) clearTimeout(wrongPulseTimeoutRef.current);
+
+    if (wrongPulseTimeoutRef.current) {
+      clearTimeout(wrongPulseTimeoutRef.current);
+    }
+
     wrongPulseTimeoutRef.current = setTimeout(() => {
       setWrongPathPulse(false);
       wrongPulseTimeoutRef.current = null;
-    }, 700);
-  }, [playSfx]);
+    }, 500);
+  }, []);
 
   const resetState = useCallback(() => {
     clearTimers();
@@ -243,169 +243,165 @@ export default function VakratundaRescueGame({
     setPhasePads([]);
     setTracePoints([]);
     setIsTracing(false);
+    activeSegmentRef.current = 0;
     setActiveSegment(0);
     setCurrentPoint(null);
+    setFrogHopPoint({ x: POS.start.l, y: POS.start.t });
+    setFrogSnapping(false);
     setWrongPathPulse(false);
     setFamilyBounce(false);
-    setShowFailedPad(false);
+    setObstacles((prev) => (prev.length ? prev : cloneObstacles()));
+    setRouteNodes((prev) => (prev.length ? prev : cloneRouteNodes()));
+    setFamilyPoint({ x: POS.family.l, y: POS.family.t });
+    setShowIntroGesture(false);
+    hasShownIntroGestureRef.current = new Set();
   }, [clearTimers, onStageChange]);
 
-  const startStraightTry = useCallback(() => {
-    setPhase('vaTry');
-    onStageChange('vaTry');
+  const startTraceCourse = useCallback(() => {
+    setPhase('trace');
+    onStageChange('trace');
     setCommittedPads([]);
     setPhasePads([]);
+    setFrogHopPoint(routeNodes[0]);
+    setFrogSnapping(false);
     playSceneLine?.('scene10_vak_intro');
-  }, [onStageChange, playSceneLine]);
+  }, [onStageChange, playSceneLine, routeNodes]);
 
   useEffect(() => {
     if (!isActive) return;
 
     resetState();
-    after(700, startStraightTry);
+    after(700, startTraceCourse);
 
     return clearTimers;
-  }, [after, clearTimers, isActive, resetState, startStraightTry]);
+  }, [after, clearTimers, isActive, resetState, startTraceCourse]);
 
   const goToReunion = useCallback(() => {
     setPhase('reunion');
     onStageChange('reunion');
+    setFrogHopPoint(routeNodes[routeNodes.length - 1]);
+    setFrogSnapping(false);
     setFamilyBounce(true);
     playSfx?.('frogReunion');
-    playWord?.('vakratunda');
-    playSceneLine?.('scene10_vak_crossed');
-    after(600, () => setFamilyBounce(false));
-    after(REUNION_DELAY_MS, () => {
+    playSceneLine?.('scene10_vak_crossed', () => {
       onGameComplete?.();
       onPhaseComplete?.();
     });
-  }, [after, onGameComplete, onPhaseComplete, onStageChange, playSceneLine, playSfx, playWord]);
+    after(4200, () => setFamilyBounce(false));
+  }, [after, onGameComplete, onPhaseComplete, onStageChange, playSceneLine, playSfx, routeNodes]);
 
   const completePhase = useCallback((phaseKey) => {
     traceCompletedRef.current = true;
     setIsTracing(false);
     setTracePoints([]);
     setCurrentPoint(null);
+    setFrogSnapping(false);
+    activeSegmentRef.current = 0;
     setActiveSegment(0);
     onMicroWin?.();
     stopVoice?.();
 
-    if (phaseKey === 'vaTry') {
-      setPhasePads(buildPadsForRoute('vaTry', ROUTES.vaTry.nodes.length - 1));
-      after(250, () => {
-        setPhase('vaFail');
-        onStageChange('vaFail');
-        setShowFailedPad(true);
-        playSfx?.('currentPush');
-      });
-      after(250 + VA_DRIFT_MS, () => {
-        playSceneLine?.('scene10_vak_current_too_strong');
-        setLitCount(1);
-        playSyllable?.(AUDIO.syllables[0]);
-      });
-      after(250 + VA_DRIFT_MS + 1100, () => {
-        setPhase('kra');
-        onStageChange('kra');
-        setShowFailedPad(false);
-        setCommittedPads([]);
-        setPhasePads([]);
-        playSceneLine?.('scene10_vak_choose');
-      });
-      return;
-    }
-
-    if (phaseKey === 'kra') {
-      const finalKraPads = buildPadsForRoute('kra', ROUTES.kra.nodes.length - 1);
-      setCommittedPads(finalKraPads);
+    if (phaseKey === 'trace') {
+      const route = { ...ROUTES.trace, nodes: routeNodes };
+      const finalPads = buildPadsForRoute(route, 'trace', route.nodes.length - 1);
+      setCommittedPads(finalPads);
       setPhasePads([]);
-      setLitCount(2);
-      playSyllable?.(AUDIO.syllables[1]);
-      after(500, () => {
-        setPhase('tun');
-        onStageChange('tun');
-      });
-      return;
+      setFrogHopPoint(route.nodes[route.nodes.length - 1]);
+      // va/kra/tun already lit + played live as their checkpoints (2/4/6) were
+      // crossed while tracing. Jump straight to the last syllable instead of
+      // resetting litCount to 1 and re-running the reveal ladder — that used
+      // to replay kra/tun a second time before da.
+      // goToReunion now fires from the last syllable's real onEnded (see
+      // onSyllableLit below) instead of a guessed delay, so it no longer
+      // races the 'da' syllable clip off the shared voice channel.
+      setLitCount(4);
     }
-
-    if (phaseKey === 'tun') {
-      const finalTunPads = buildPadsForRoute('tun', ROUTES.tun.nodes.length - 1);
-      setCommittedPads((prev) => [...prev, ...finalTunPads]);
-      setPhasePads([]);
-      setLitCount(3);
-      playSyllable?.(AUDIO.syllables[2]);
-      after(280, () => {
-        setLitCount(4);
-        playSyllable?.(AUDIO.syllables[3]);
-      });
-      after(560, goToReunion);
-    }
-  }, [after, goToReunion, onMicroWin, onStageChange, playSceneLine, playSfx, playSyllable, stopVoice]);
+  }, [onMicroWin, routeNodes, stopVoice]);
 
   const handleTraceMove = useCallback((point) => {
-    const route = ROUTES[phase];
+    const route = phase === 'trace' ? { ...ROUTES.trace, nodes: routeNodes } : ROUTES[phase];
     if (!route || !isTracing) return;
 
-    const segmentStart = route.nodes[activeSegment];
-    const segmentEnd = route.nodes[activeSegment + 1];
+    const segmentIndex = activeSegmentRef.current;
+
+    const segmentStart = route.nodes[segmentIndex];
+    const segmentEnd = route.nodes[segmentIndex + 1];
     if (!segmentStart || !segmentEnd) return;
 
-    if (isPointInsideObstacle(point)) {
-      failTrace();
+    if (isPointInsideObstacle(point, obstacles)) {
+      showTraceWarning();
       return;
     }
 
     const segmentState = distanceToSegment(point, segmentStart, segmentEnd);
     if (segmentState.distance > route.tolerance) {
-      failTrace();
+      if (segmentState.distance > route.tolerance + OFF_PATH_GRACE) {
+        showTraceWarning();
+      }
+
       return;
     }
 
-    setCurrentPoint(point);
+    const projectedPoint = {
+      x: segmentStart.x + (segmentEnd.x - segmentStart.x) * segmentState.t,
+      y: segmentStart.y + (segmentEnd.y - segmentStart.y) * segmentState.t,
+    };
+
+    setCurrentPoint(projectedPoint);
     setTracePoints((prev) => {
-      if (prev.length === 0) return [route.nodes[0], point];
+      if (prev.length === 0) return [route.nodes[0], projectedPoint];
       const last = prev[prev.length - 1];
-      if (distance(last, point) < 1) return prev;
-      const next = [...prev, point];
+      if (distance(last, projectedPoint) < 0.7) return prev;
+      const next = [...prev, projectedPoint];
       return next.length > TRACE_STROKE_LIMIT ? next.slice(next.length - TRACE_STROKE_LIMIT) : next;
     });
 
     const reachedNode =
-      segmentState.t >= 0.9 || distance(point, segmentEnd) <= NODE_SNAP_DISTANCE;
+      segmentState.t >= 0.86 || distance(projectedPoint, segmentEnd) <= NODE_SNAP_DISTANCE;
 
     if (!reachedNode) return;
 
-    const reachedIndex = activeSegment + 1;
-    setPhasePads(buildPadsForRoute(phase, reachedIndex));
+    const reachedIndex = segmentIndex + 1;
+    activeSegmentRef.current = reachedIndex;
+    setActiveSegment(reachedIndex);
+    const revealedPads = buildPadsForRoute(route, phase, reachedIndex);
+    setPhasePads(revealedPads);
+    setLitCount(revealedPads.length);
+    setFrogHopPoint(route.nodes[reachedIndex]);
+    setFrogSnapping(true);
+    after(300, () => setFrogSnapping(false));
 
     if (reachedIndex >= route.nodes.length - 1) {
       completePhase(phase);
       return;
     }
-
-    setActiveSegment(reachedIndex);
-  }, [activeSegment, completePhase, failTrace, isTracing, phase]);
+  }, [after, completePhase, isTracing, obstacles, phase, routeNodes, showTraceWarning]);
 
   const beginTrace = useCallback((event) => {
     if (isPaused) return;
-    const route = ROUTES[phase];
+    const route = phase === 'trace' ? { ...ROUTES.trace, nodes: routeNodes } : ROUTES[phase];
     if (!route) return;
 
     const point = getPoint(event.clientX, event.clientY);
     if (!point) return;
 
-    const startNode = route.nodes[0];
-    if (distance(point, startNode) > route.tolerance + 1.8) return;
+    const segmentIndex = activeSegmentRef.current;
+    const resumePoint = route.nodes[segmentIndex];
+    const startTolerance = route.tolerance + RESUME_TOLERANCE_BONUS;
+    if (distance(point, resumePoint) > startTolerance) {
+      showTraceWarning();
+      return;
+    }
 
     markInteraction();
     traceCompletedRef.current = false;
     setWrongPathPulse(false);
     setIsTracing(true);
-    setActiveSegment(0);
-    setCurrentPoint(point);
-    setTracePoints([startNode, point]);
-    setPhasePads([]);
+    setCurrentPoint(resumePoint);
+    setFrogSnapping(false);
+    setTracePoints([resumePoint]);
     event.currentTarget.setPointerCapture?.(event.pointerId);
-  }, [getPoint, isPaused, markInteraction, phase]);
+  }, [getPoint, isPaused, markInteraction, phase, routeNodes, showTraceWarning]);
 
   const continueTrace = useCallback((event) => {
     if (!isTracing || isPaused) return;
@@ -416,23 +412,54 @@ export default function VakratundaRescueGame({
 
   const endTrace = useCallback((event) => {
     if (isPaused) return;
-    try {
+    if (event.currentTarget.hasPointerCapture?.(event.pointerId)) {
       event.currentTarget.releasePointerCapture?.(event.pointerId);
-    } catch {}
+    }
     if (traceCompletedRef.current) {
       traceCompletedRef.current = false;
       return;
     }
-    if (isTracing) failTrace();
-  }, [failTrace, isPaused, isTracing]);
+    setIsTracing(false);
+    setCurrentPoint(null);
+    setTracePoints([]);
+    setFrogSnapping(false);
+  }, [isPaused]);
 
   useEffect(() => {
     vakHintVoiceRef.current = { phase, level: 0 };
   }, [phase]);
 
   useEffect(() => {
+    if (!isActive || isPaused) return;
+    if (phase !== 'trace') {
+      setShowIntroGesture(false);
+      return;
+    }
+    if (showDebugPanel) return;
+    if (hintLevel >= 3) return;
+    if (hasShownIntroGestureRef.current.has(phase)) return;
+
+    hasShownIntroGestureRef.current.add(phase);
+    setShowIntroGesture(true);
+    if (introGestureTimeoutRef.current) clearTimeout(introGestureTimeoutRef.current);
+    introGestureTimeoutRef.current = setTimeout(() => {
+      setShowIntroGesture(false);
+      introGestureTimeoutRef.current = null;
+    }, INTRO_GESTURE_DURATION_MS);
+
+    return () => {
+      if (introGestureTimeoutRef.current) {
+        clearTimeout(introGestureTimeoutRef.current);
+        introGestureTimeoutRef.current = null;
+      }
+    };
+  }, [hintLevel, isActive, isPaused, phase, showDebugPanel]);
+
+
+
+  useEffect(() => {
     if (!isActive) return;
-    if (!['vaTry', 'kra', 'tun'].includes(phase)) return;
+    if (phase !== 'trace') return;
     if (hintLevel <= 0) return;
 
     const last = vakHintVoiceRef.current;
@@ -445,22 +472,207 @@ export default function VakratundaRescueGame({
 
   if (!isActive) return null;
 
-  const isTraceStep = ['vaTry', 'kra', 'tun'].includes(phase);
-  const currentRoute = ROUTES[phase];
+  const isTraceStep = phase === 'trace';
+  const currentRoute = phase === 'trace' ? { ...ROUTES.trace, nodes: routeNodes } : ROUTES[phase];
   const targetIndex = currentRoute
     ? Math.min(activeSegment + 1, currentRoute.nodes.length - 1)
     : 0;
-  const targetPoint = currentRoute?.nodes[targetIndex] ?? ROUTES.vaTry.nodes[0];
-  const startPoint = currentRoute?.nodes[0] ?? ROUTES.vaTry.nodes[0];
-  const showGesture = isTraceStep && !isTracing && hintLevel >= 3;
+  const targetPoint = currentRoute?.nodes[targetIndex] ?? routeNodes[0];
+  const startPoint = currentRoute?.nodes[0] ?? routeNodes[0];
+  const introGestureTargetIndex = currentRoute?.checkpointIndices?.[0] ?? targetIndex;
+  const gestureTargetPoint = showIntroGesture
+    ? (currentRoute?.nodes[introGestureTargetIndex] ?? targetPoint)
+    : targetPoint;
+
+  const hintRingTargetIndex = isTracing
+    ? targetIndex
+    : (currentRoute?.checkpointIndices?.find((index) => index > activeSegment) ?? targetIndex);
+  const hintRingPoint = currentRoute?.nodes[hintRingTargetIndex] ?? targetPoint;
+  const showGesture = isTraceStep && !isTracing && (showIntroGesture || hintLevel >= 3);
   const showHintRing = isTraceStep && (hintLevel >= 2 || wrongPathPulse);
   const visiblePads = [...committedPads, ...phasePads];
+  const debugPads = showDebugPanel && currentRoute
+    ? currentRoute.checkpointIndices.map((index) => ({
+        id: `debug-pad-${index}`,
+        phase: phase || 'trace',
+        nodeIndex: index,
+        point: routeNodes[index],
+      }))
+    : [];
+  const padsToRender = debugPads.length ? debugPads : visiblePads;
   const frogPoint =
-    phase === 'tun'
-      ? ROUTES.tun.nodes[0]
-      : phase === 'vaFail'
-        ? ROUTES.vaTry.nodes[ROUTES.vaTry.nodes.length - 1]
-        : ROUTES.vaTry.nodes[0];
+    phase === 'reunion'
+      ? familyPoint
+      : isTraceStep
+      ? (isTracing && currentPoint && !frogSnapping ? currentPoint : frogHopPoint)
+      : routeNodes[0];
+  const frogWidth = phase === 'reunion' ? POS.reunionFrog.w : POS.start.w;
+  const selectedObstacle = obstacles.find((obstacle) => obstacle.id === selectedObstacleId) ?? obstacles[0];
+  const selectedRouteNode = routeNodes[selectedRouteNodeIndex] ?? routeNodes[0];
+
+  const updateObstacle = (obstacleId, section, key, value) => {
+    const numericValue = Number(value);
+    if (Number.isNaN(numericValue)) return;
+
+    setObstacles((prev) => prev.map((obstacle) => {
+      if (obstacle.id !== obstacleId) return obstacle;
+      if (section === 'root') {
+        return { ...obstacle, [key]: numericValue };
+      }
+      return {
+        ...obstacle,
+        [section]: {
+          ...obstacle[section],
+          [key]: numericValue,
+        },
+      };
+    }));
+  };
+
+  const updateRouteNode = (nodeIndex, key, value) => {
+    const numericValue = Number(value);
+    if (Number.isNaN(numericValue)) return;
+
+    setRouteNodes((prev) => prev.map((node, index) => (
+      index === nodeIndex ? { ...node, [key]: numericValue } : node
+    )));
+
+    if (nodeIndex === 0 && activeSegmentRef.current === 0) {
+      setFrogHopPoint((prev) => ({ ...prev, [key]: numericValue }));
+    }
+  };
+
+  const setRouteNodePoint = (nodeIndex, point) => {
+    setRouteNodes((prev) => prev.map((node, index) => (
+      index === nodeIndex ? { ...node, x: point.x, y: point.y } : node
+    )));
+
+    if (nodeIndex === 0 && activeSegmentRef.current === 0) {
+      setFrogHopPoint(point);
+    }
+  };
+
+  const moveObstacle = (obstacleId, point, hitOffset = { x: 0, y: 0 }) => {
+    setObstacles((prev) => prev.map((obstacle) => (
+      obstacle.id === obstacleId
+        ? {
+            ...obstacle,
+            l: point.x,
+            t: point.y,
+            hit: {
+              ...obstacle.hit,
+              x: point.x + hitOffset.x,
+              y: point.y + hitOffset.y,
+            },
+          }
+        : obstacle
+    )));
+  };
+
+  const moveObstacleHitbox = (obstacleId, point) => {
+    setObstacles((prev) => prev.map((obstacle) => (
+      obstacle.id === obstacleId
+        ? {
+            ...obstacle,
+            hit: {
+              ...obstacle.hit,
+              x: point.x,
+              y: point.y,
+            },
+          }
+        : obstacle
+    )));
+  };
+
+  const applyDebugDrag = (event) => {
+    const drag = debugDragRef.current;
+    if (!drag) return;
+
+    const point = getPoint(event.clientX, event.clientY);
+    if (!point) return;
+
+    if (drag.type === 'routeNode') {
+      setRouteNodePoint(drag.nodeIndex, point);
+      setSelectedRouteNodeIndex(drag.nodeIndex);
+      return;
+    }
+
+    if (drag.type === 'obstacle') {
+      moveObstacle(drag.obstacleId, point, drag.hitOffset);
+      setSelectedObstacleId(drag.obstacleId);
+      return;
+    }
+
+    if (drag.type === 'obstacleHitbox') {
+      moveObstacleHitbox(drag.obstacleId, point);
+      setSelectedObstacleId(drag.obstacleId);
+      return;
+    }
+
+    if (drag.type === 'family') {
+      setFamilyPoint(point);
+    }
+  };
+
+  const startDebugDrag = (event, drag) => {
+    if (!showDebugPanel) return;
+    event.preventDefault();
+    event.stopPropagation();
+    debugDragRef.current = drag;
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+    applyDebugDrag(event);
+  };
+
+  const continueDebugDrag = (event) => {
+    if (!debugDragRef.current) return;
+    event.preventDefault();
+    event.stopPropagation();
+    applyDebugDrag(event);
+  };
+
+  const endDebugDrag = (event) => {
+    if (!debugDragRef.current) return;
+    event.preventDefault();
+    event.stopPropagation();
+    if (event.currentTarget.hasPointerCapture?.(event.pointerId)) {
+      event.currentTarget.releasePointerCapture?.(event.pointerId);
+    }
+    debugDragRef.current = null;
+  };
+
+  const startDebugPanelDrag = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    debugPanelDragRef.current = {
+      offsetX: event.clientX - debugPanelPosition.x,
+      offsetY: event.clientY - debugPanelPosition.y,
+    };
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+  };
+
+  const continueDebugPanelDrag = (event) => {
+    const drag = debugPanelDragRef.current;
+    if (!drag) return;
+    event.preventDefault();
+    event.stopPropagation();
+
+    const panelWidth = Math.min(352, window.innerWidth - 24);
+    const panelHeight = showDebugPanel ? Math.min(window.innerHeight * 0.7, 512) : 48;
+    const nextX = Math.max(8, Math.min(window.innerWidth - panelWidth - 8, event.clientX - drag.offsetX));
+    const nextY = Math.max(8, Math.min(window.innerHeight - panelHeight - 8, event.clientY - drag.offsetY));
+
+    setDebugPanelPosition({ x: nextX, y: nextY });
+  };
+
+  const endDebugPanelDrag = (event) => {
+    if (!debugPanelDragRef.current) return;
+    event.preventDefault();
+    event.stopPropagation();
+    if (event.currentTarget.hasPointerCapture?.(event.pointerId)) {
+      event.currentTarget.releasePointerCapture?.(event.pointerId);
+    }
+    debugPanelDragRef.current = null;
+  };
 
   const lyr = (p, w = p.w) => ({
     left: `${p.l}%`,
@@ -477,6 +689,7 @@ export default function VakratundaRescueGame({
   const tracePath = tracePoints.length
     ? tracePoints.map((point) => `${point.x},${point.y}`).join(' ')
     : '';
+  const routePath = routeNodes.map((point) => `${point.x},${point.y}`).join(' ');
 
   return (
     <div
@@ -487,106 +700,311 @@ export default function VakratundaRescueGame({
       onPointerMove={continueTrace}
       onPointerUp={endTrace}
       onPointerCancel={endTrace}
-      onPointerLeave={endTrace}
     >
       {phase !== 'intro' && (
         <SyllableHighlight
           syllables={SYLLABLES}
           litCount={litCount}
-          dimIndices={phase === 'vaFail' || litCount === 1 ? [0] : []}
+          dimIndices={[]}
           audioSyllables={AUDIO.syllables}
-          onSyllableLit={() => {}}
+          onSyllableLit={(syllable, index) => {
+            stopVoice?.();
+            if (index === SYLLABLES.length - 1) {
+              playSyllable?.(syllable, () => goToReunion());
+            } else {
+              playSyllable?.(syllable);
+            }
+          }}
         />
       )}
 
       <svg className="vak-trace-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        {isTraceStep && (
+          <>
+            <polyline className="vak-route-corridor" points={routePath} />
+            <polyline className="vak-route-guide" points={routePath} />
+          </>
+        )}
         {tracePath && <polyline className="vak-trace-line vak-trace-line--glow" points={tracePath} />}
         {tracePath && <polyline className="vak-trace-line" points={tracePath} />}
       </svg>
 
-      {phase !== 'reunion' && (
-        <div
-          className={`vak-layer vak-start-frog ${isTraceStep ? 'is-waiting' : ''} ${wrongPathPulse ? 'is-shaking' : ''}`}
-          style={{ left: `${frogPoint.x}%`, top: `${frogPoint.y}%`, width: `${POS.start.w}%`, zIndex: 12 }}
-        >
-          <img src={litCount >= 3 ? frogHappy : frogSwim} alt="" />
-        </div>
+      {phase === 'reunion' && (
+        <p className="vak-doneline">
+          Vakratunda means finding another way.
+        </p>
       )}
 
-      {visiblePads.map((pad) => (
+        <div
+          className={`vak-layer vak-start-frog ${phase === 'reunion' ? 'is-reunion' : ''} ${phase === 'reunion' && familyBounce ? 'is-bouncing' : ''} ${phase !== 'reunion' && isTraceStep && !isTracing ? 'is-waiting' : ''} ${wrongPathPulse ? 'is-shaking' : ''} ${frogSnapping ? 'is-snapping' : ''} ${showDebugPanel ? 'is-debug-draggable' : ''}`}
+          style={{ left: `${frogPoint.x}%`, top: `${frogPoint.y}%`, width: `${frogWidth}%`, zIndex: 12 }}
+          onPointerDown={(event) => startDebugDrag(event, { type: 'routeNode', nodeIndex: 0 })}
+          onPointerMove={continueDebugDrag}
+          onPointerUp={endDebugDrag}
+          onPointerCancel={endDebugDrag}
+        >
+          <img src={litCount >= 4 ? frogHappy : frogSwim} alt="" />
+        </div>
+
+      {padsToRender.map((pad) => (
         <div
           key={pad.id}
-          className={`vak-layer vak-pad ${pad.phase === 'vaTry' && phase === 'vaFail' ? 'is-drifting' : 'is-revealed'}`}
-          style={{ ...padStyle(pad.point), zIndex: 11 }}
+          className={`vak-layer vak-pad is-revealed ${showDebugPanel ? 'is-debug-draggable is-debug-pad' : ''}`}
+          style={{ ...padStyle(pad.point), zIndex: showDebugPanel ? 29 : 11 }}
+          onPointerDown={(event) => startDebugDrag(event, { type: 'routeNode', nodeIndex: pad.nodeIndex })}
+          onPointerMove={continueDebugDrag}
+          onPointerUp={endDebugDrag}
+          onPointerCancel={endDebugDrag}
         >
           <img src={lilypad} alt="" />
         </div>
       ))}
 
-      {showFailedPad && (
-        <div
-          className="vak-layer vak-pad vak-pad--failed is-drifting"
-          style={{ ...lyr(POS.vaDrift, 10.2), zIndex: 10 }}
-        >
-          <img src={lilypad} alt="" />
-        </div>
-      )}
+      <div
+        className={`vak-layer vak-family-pad ${showDebugPanel ? 'is-debug-draggable' : ''}`}
+        style={{ ...padStyle({ x: familyPoint.x, y: familyPoint.y + 3.6 }, 18), zIndex: 7 }}
+        onPointerDown={(event) => startDebugDrag(event, { type: 'family' })}
+        onPointerMove={continueDebugDrag}
+        onPointerUp={endDebugDrag}
+        onPointerCancel={endDebugDrag}
+      >
+        <img src={lilypad} alt="" />
+      </div>
 
       <div
-        className={`vak-layer vak-family ${familyBounce ? 'is-bouncing' : 'is-breathing'}`}
-        style={{ ...lyr(POS.family), zIndex: 8 }}
+        className={`vak-layer vak-family ${familyBounce ? 'is-bouncing' : 'is-breathing'} ${showDebugPanel ? 'is-debug-draggable' : ''}`}
+        style={{ left: `${familyPoint.x}%`, top: `${familyPoint.y}%`, width: `${POS.family.w}%`, zIndex: 8 }}
+        onPointerDown={(event) => startDebugDrag(event, { type: 'family' })}
+        onPointerMove={continueDebugDrag}
+        onPointerUp={endDebugDrag}
+        onPointerCancel={endDebugDrag}
       >
         <img src={frogFamily} alt="" />
       </div>
 
-      {OBSTACLES.map((obstacle) => (
+      {obstacles.map((obstacle) => (
+        <React.Fragment key={obstacle.id}>
+          <div
+            className={`vak-layer vak-obstacle ${obstacle.cls} ${showDebugPanel ? 'is-debug-draggable' : ''}`}
+            style={{ ...lyr(obstacle), zIndex: obstacle.z }}
+            onPointerDown={(event) => startDebugDrag(event, {
+              type: 'obstacle',
+              obstacleId: obstacle.id,
+              hitOffset: {
+                x: obstacle.hit.x - obstacle.l,
+                y: obstacle.hit.y - obstacle.t,
+              },
+            })}
+            onPointerMove={continueDebugDrag}
+            onPointerUp={endDebugDrag}
+            onPointerCancel={endDebugDrag}
+          >
+            <img src={obstacle.img} alt="" />
+          </div>
+          {showDebugPanel && showHitboxes && (
+            <div
+              className="vak-layer vak-debug-hitbox"
+              style={{
+                left: `${obstacle.hit.x}%`,
+                top: `${obstacle.hit.y}%`,
+                width: `${obstacle.hit.rx * 2}%`,
+                height: `${obstacle.hit.ry * 2}%`,
+                zIndex: obstacle.z + 1,
+              }}
+              onPointerDown={(event) => startDebugDrag(event, { type: 'obstacleHitbox', obstacleId: obstacle.id })}
+              onPointerMove={continueDebugDrag}
+              onPointerUp={endDebugDrag}
+              onPointerCancel={endDebugDrag}
+            />
+          )}
+        </React.Fragment>
+      ))}
+
+      {showDebugPanel && routeNodes.map((node, index) => (
         <div
-          key={obstacle.id}
-          className={`vak-layer vak-obstacle ${obstacle.cls}`}
-          style={{ ...lyr(obstacle), zIndex: obstacle.z }}
+          key={`route-node-${index}`}
+          className={`vak-layer vak-debug-route-node ${index === selectedRouteNodeIndex ? 'is-selected' : ''}`}
+          style={{ left: `${node.x}%`, top: `${node.y}%`, zIndex: 30 }}
+          onPointerDown={(event) => startDebugDrag(event, { type: 'routeNode', nodeIndex: index })}
+          onPointerMove={continueDebugDrag}
+          onPointerUp={endDebugDrag}
+          onPointerCancel={endDebugDrag}
         >
-          <img src={obstacle.img} alt="" />
+          {index}
         </div>
       ))}
 
-      {(phase === 'vaTry' || phase === 'vaFail' || phase === 'kra' || phase === 'tun') && (
-        <>
-          <div className="vak-current-trail vak-current-trail--diagonal" aria-hidden="true" />
-          <div className="vak-current-trail vak-current-trail--right" aria-hidden="true" />
-          <div className="vak-current-arrow vak-current-arrow--down" aria-hidden="true">↘</div>
-          <div className="vak-current-arrow vak-current-arrow--right" aria-hidden="true">→</div>
-        </>
-      )}
-
-      {isTraceStep && (
-        <div
-          className={`vak-layer vak-trace-start-ring ${wrongPathPulse ? 'is-warning' : ''}`}
-          style={{ left: `${startPoint.x}%`, top: `${startPoint.y}%`, zIndex: 9 }}
-        />
-      )}
 
       {showHintRing && (
         <div
           className={`vak-layer vak-trace-target-ring ${wrongPathPulse ? 'is-warning' : ''}`}
-          style={{ left: `${targetPoint.x}%`, top: `${targetPoint.y}%`, zIndex: 5 }}
+          style={{ left: `${hintRingPoint.x}%`, top: `${hintRingPoint.y}%`, zIndex: 5 }}
         />
       )}
 
-      {currentPoint && isTracing && (
-        <div
-          className="vak-layer vak-trace-tip"
-          style={{ left: `${currentPoint.x}%`, top: `${currentPoint.y}%`, zIndex: 15 }}
-        />
-      )}
+
+
 
       <GestureDemo
-        key={`vak-gesture-${phase}-${hintLevel}`}
+        key={`vak-gesture-${phase}-${showIntroGesture ? 'intro' : hintLevel}`}
         type="drag"
         from={{ x: startPoint.x, y: startPoint.y }}
-        to={{ x: targetPoint.x, y: targetPoint.y }}
+        to={{ x: gestureTargetPoint.x, y: gestureTargetPoint.y }}
         active={showGesture}
-        idleDelay={500}
+        idleDelay={showIntroGesture ? 0 : 500}
       />
+      <div
+        className={`vak-debug-panel ${showDebugPanel ? 'is-open' : ''}`}
+        style={{ left: `${debugPanelPosition.x}px`, top: `${debugPanelPosition.y}px` }}
+        onPointerDown={(event) => event.stopPropagation()}
+        onPointerMove={(event) => event.stopPropagation()}
+        onPointerUp={(event) => event.stopPropagation()}
+      >
+        <button
+          type="button"
+          className="vak-debug-toggle"
+          onClick={() => setShowDebugPanel((prev) => !prev)}
+        >
+          {showDebugPanel ? 'Hide Trace Debug' : 'Trace Debug'}
+        </button>
+
+        {showDebugPanel && selectedObstacle && (
+          <div className="vak-debug-body">
+            <div
+              className="vak-debug-drag-handle"
+              onPointerDown={startDebugPanelDrag}
+              onPointerMove={continueDebugPanelDrag}
+              onPointerUp={endDebugPanelDrag}
+              onPointerCancel={endDebugPanelDrag}
+            >
+              Drag Panel
+            </div>
+            <div className="vak-debug-section-title">Obstacles</div>
+            <p className="vak-debug-note">
+              Hitbox is the invisible collision area. Keep it close to the object, but tune it for fair touch feedback.
+            </p>
+            <label className="vak-debug-row">
+              <span>Obstacle</span>
+              <select
+                value={selectedObstacle.id}
+                onChange={(event) => setSelectedObstacleId(event.target.value)}
+              >
+                {obstacles.map((obstacle) => (
+                  <option key={obstacle.id} value={obstacle.id}>
+                    {obstacle.id}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className="vak-debug-check">
+              <input
+                type="checkbox"
+                checked={showHitboxes}
+                onChange={(event) => setShowHitboxes(event.target.checked)}
+              />
+              <span>Show hitboxes</span>
+            </label>
+
+            {[
+              ['Visual X', 'root', 'l', 0, 100, 0.1],
+              ['Visual Y', 'root', 't', 0, 100, 0.1],
+              ['Visual W', 'root', 'w', 4, 30, 0.1],
+              ['Hit X', 'hit', 'x', 0, 100, 0.1],
+              ['Hit Y', 'hit', 'y', 0, 100, 0.1],
+              ['Hit RX', 'hit', 'rx', 1, 20, 0.1],
+              ['Hit RY', 'hit', 'ry', 1, 20, 0.1],
+            ].map(([label, section, key, min, max, step]) => {
+              const source = section === 'root' ? selectedObstacle : selectedObstacle[section];
+              return (
+                <label key={`${section}-${key}`} className="vak-debug-row">
+                  <span>{label}</span>
+                  <input
+                    type="range"
+                    min={min}
+                    max={max}
+                    step={step}
+                    value={source[key]}
+                    onChange={(event) => updateObstacle(selectedObstacle.id, section, key, event.target.value)}
+                  />
+                  <input
+                    type="number"
+                    min={min}
+                    max={max}
+                    step={step}
+                    value={source[key]}
+                    onChange={(event) => updateObstacle(selectedObstacle.id, section, key, event.target.value)}
+                  />
+                </label>
+              );
+            })}
+
+            <div className="vak-debug-actions">
+              <button
+                type="button"
+                className="vak-debug-reset"
+                onClick={() => setObstacles(cloneObstacles())}
+              >
+                Reset Obstacles
+              </button>
+            </div>
+
+            <div className="vak-debug-section-title">Path Line</div>
+            <label className="vak-debug-row">
+              <span>Node</span>
+              <select
+                value={selectedRouteNodeIndex}
+                onChange={(event) => setSelectedRouteNodeIndex(Number(event.target.value))}
+              >
+                {routeNodes.map((node, index) => (
+                  <option key={`node-option-${index}`} value={index}>
+                    {index}: {node.x.toFixed(1)}, {node.y.toFixed(1)}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            {selectedRouteNode && ([
+              ['Node X', 'x', 0, 100, 0.1],
+              ['Node Y', 'y', 0, 100, 0.1],
+            ].map(([label, key, min, max, step]) => (
+              <label key={`route-${key}`} className="vak-debug-row">
+                <span>{label}</span>
+                <input
+                  type="range"
+                  min={min}
+                  max={max}
+                  step={step}
+                  value={selectedRouteNode[key]}
+                  onChange={(event) => updateRouteNode(selectedRouteNodeIndex, key, event.target.value)}
+                />
+                <input
+                  type="number"
+                  min={min}
+                  max={max}
+                  step={step}
+                  value={selectedRouteNode[key]}
+                  onChange={(event) => updateRouteNode(selectedRouteNodeIndex, key, event.target.value)}
+                />
+              </label>
+            )))}
+
+            <div className="vak-debug-actions">
+              <button
+                type="button"
+                className="vak-debug-reset"
+                onClick={() => setRouteNodes(cloneRouteNodes())}
+              >
+                Reset Path
+              </button>
+            </div>
+
+            <pre className="vak-debug-readout">
+              {JSON.stringify({ routeNodes, obstacles, familyPoint }, null, 2)}
+            </pre>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

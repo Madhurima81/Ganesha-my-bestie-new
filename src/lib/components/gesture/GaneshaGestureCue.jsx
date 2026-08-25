@@ -14,16 +14,23 @@ export default function GaneshaGestureCue({
   gestureType = 'thumbsup',
   position = 'item',
   size = 120,
+  // Optional { x, y } percentages — anchors the cue to a specific spot inside
+  // the nearest positioned scene container (e.g. next to a game object the
+  // child just interacted with), instead of the fixed item/center corners.
+  anchor = null,
 }) {
   const gestureIcon = GESTURE_ICON_MAP[gestureType] || GESTURE_ICON_MAP.thumbsup;
 
+  const style = { width: size, height: size };
+  if (anchor) {
+    style.left = `${anchor.x}%`;
+    style.top = `${anchor.y}%`;
+  }
+
   return (
     <div
-      className={`ganesha-gesture-cue ganesha-gesture-cue--${position}`}
-      style={{
-        width: size,
-        height: size,
-      }}
+      className={`ganesha-gesture-cue ganesha-gesture-cue--${anchor ? 'anchored' : position}`}
+      style={style}
       aria-hidden="true"
     >
       <img

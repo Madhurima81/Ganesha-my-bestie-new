@@ -195,29 +195,6 @@
 }
 
 /* Lotus positions and styles */
-/* Gesture cue positions — pond-specific */
-.modak-mini-ganesha-cue--lotus {
-  left: 38%;
-  top: 42%;
-}
-
-/* Mini gesture sizing (match Modak) */
-.modak-mini-ganesha-cue {
-  --mini-cue-duration: 1.5s;
-  animation-duration: var(--mini-cue-duration);
-}
-
-.modak-mini-gesture-icon {
-  width: clamp(52px, 5vw, 76px);
-  height: auto;
-  display: block;
-  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.2));
-}
-
-.modak-mini-ganesha-cue--idle {
-  --mini-cue-duration: 3.5s;
-}
-
 .lotus {
   position: absolute;
   width: 13%;

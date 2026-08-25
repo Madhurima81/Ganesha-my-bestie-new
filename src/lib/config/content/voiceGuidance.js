@@ -192,10 +192,10 @@ export const VOICE_SCRIPTS = {
         text: "The Trunk helped him try another way — and the splat became a whale!"
       },
       scene13_sports: {
-        text: "She feels upset inside. What could help her make room for her feelings?"
+        text: "He feels upset inside. What could help him make room for his feelings?"
       },
       scene13_sports_after: {
-        text: "The Belly reminded her to make room for her feelings and take a slow breath."
+        text: "The Belly reminded him to make room for his feelings and take a slow breath."
       },
       scene13_bike: {
         text: "Everyone is looking, but they're missing an important clue. What could help her notice it?"

@@ -61,7 +61,7 @@ Before every task, Claude Code must:
 - [ ] T19 · Image Audit — list all PNG and SVG assets used per scene
 - [ ] T20 · CSS Media Queries audit — check clamp() present, add where missing
 - [ ] T21 · Test Cases + Edge Cases — document in TESTCASES.md
-- [ ] T32 · Content Audit — refer to CONTENT.md
+- [~] T32 · Content Audit — opening/closing modal text + AutoReveal/sidebar/chant-card content documented for Symbol Mountain (scenes 01-04) and Shloka River (scenes 10-14) in `SHLOKA_RIVER_AND_SYMBOL_MOUNTAIN_CONTENT.md` and `THREE_LEARNING_ZONES_MODAL_AND_GAMEPLAY_CONTENT.md`; About Me Hut (19-22) also covered in the latter. Festival Square (15-18) and Cave of Secrets (05-09, obsolete zone) not yet documented.
 
 ### Additional things
 - [ ] T34 · Parent Dashboard
@@ -140,6 +140,7 @@ Before every task, Claude Code must:
 ### Scene Behaviour & Hooks
 
 > T22 = zones 1–3 (scenes 01–14) · T27 = zones 4–5 (scenes 15–22)
+> T27 for scenes 19–22 confirmed via NAVIGATION.md scan: Family Tree, Favorite Food, and Dreams and Wishes each have a working 10s/18s/26s-style idle ladder. My Indian Story (22) has idle hints but split across 6 separate timer refs (one per exploration/pick phase) — left as `[~]` pending a cleanup audit (see NAVIGATION.md Scene 22 gaps).
 
 | # | Scene | File | T06 | T08 | T22 | T27 |
 |---|---|---|---|---|---|---|
@@ -161,9 +162,9 @@ Before every task, Claude Code must:
 | 16 | game2-rangoli | FestivalRangoliGame | [ ] | [x] | [--] | [ ] |
 | 17 | game3-cooking | ModakCookingGame | [ ] | [x] | [--] | [ ] |
 | 18 | game4-mandap | MandapDecorationGame | [ ] | [x] | [--] | [ ] |
-| 19 | family-tree | Familytreegame | [ ] | [x] | [--] | [ ] |
-| 20 | favorite-food | Favoritefoodgame | [ ] | [x] | [--] | [ ] |
-| 21 | dreams-wishes | ObstacleRemoverGame | [ ] | [x] | [--] | [ ] |
+| 19 | family-tree | Familytreegame | [ ] | [x] | [--] | [x] |
+| 20 | favorite-food | Favoritefoodgame | [ ] | [x] | [--] | [x] |
+| 21 | dreams-wishes | ObstacleRemoverGame | [ ] | [x] | [--] | [x] |
 | 22 | my-indian-story | MyIndianStoryGame | [ ] | [x] | [--] | [~] |
 
 ### Ganesha & Mooshika Presence
@@ -209,30 +210,32 @@ Before every task, Claude Code must:
 
 ### Quality & Audit
 
-| # | Scene | File | T19 | T20 | T21 |
-|---|---|---|---|---|---|
-| 01 | modak | NewModakSceneV7 | [ ] | [ ] | [ ] |
-| 02 | pond | PondSceneSimplifiedV4 | [ ] | [ ] | [ ] |
-| 03 | symbol | SymbolMountainSceneV3 | [ ] | [ ] | [ ] |
-| 04 | final-scene | SacredAssemblySceneV8 | [ ] | [ ] | [ ] |
-| 05 | vakratunda-mahakaya | CaveSceneFixedV2 | [ ] | [ ] | [ ] |
-| 06 | suryakoti-samaprabha | SuryakotiSceneV4 | [ ] | [ ] | [ ] |
-| 07 | nirvighnam-kurumedeva | NirvighnamSceneV5 | [ ] | [ ] | [ ] |
-| 08 | sarvakaryeshu-sarvada | SarvakaryeshuSarvadaV7 | [ ] | [ ] | [ ] |
-| 09 | final-meaning-scene | Cavescene5memoryfinale | [ ] | [ ] | [ ] |
-| 10 | vakratunda-grove | VakratundaGroveSimplified | [ ] | [ ] | [ ] |
-| 11 | suryakoti-bank | SuryakotiBankSimplified | [ ] | [ ] | [ ] |
-| 12 | nirvighnam-chant | NirvighnamChantSimplified | [ ] | [ ] | [ ] |
-| 13 | sarvakaryeshu-chant | SarvakaryeshuChantSimplified | [ ] | [ ] | [ ] |
-| 14 | shloka-river-finale | ShlokaRiverFinale | [ ] | [ ] | [ ] |
-| 15 | game1-piano | FestivalPianoGame | [ ] | [ ] | [ ] |
-| 16 | game2-rangoli | FestivalRangoliGame | [ ] | [ ] | [ ] |
-| 17 | game3-cooking | ModakCookingGame | [ ] | [ ] | [ ] |
-| 18 | game4-mandap | MandapDecorationGame | [ ] | [ ] | [ ] |
-| 19 | family-tree | Familytreegame | [ ] | [ ] | [ ] |
-| 20 | favorite-food | Favoritefoodgame | [ ] | [ ] | [ ] |
-| 21 | dreams-wishes | ObstacleRemoverGame | [ ] | [ ] | [ ] |
-| 22 | my-indian-story | MyIndianStoryGame | [ ] | [ ] | [ ] |
+> T32 = opening title/subtitle + closing title/subtitle + AutoReveal affirmation/sidebar content documented in a CONTENT.md-style file. `[x]` = documented, `[--]` = zone obsolete or not yet scanned.
+
+| # | Scene | File | T19 | T20 | T21 | T32 |
+|---|---|---|---|---|---|---|
+| 01 | modak | NewModakSceneV7 | [ ] | [ ] | [ ] | [x] |
+| 02 | pond | PondSceneSimplifiedV4 | [ ] | [ ] | [ ] | [x] |
+| 03 | symbol | SymbolMountainSceneV3 | [ ] | [ ] | [ ] | [x] |
+| 04 | final-scene | SacredAssemblySceneV8 | [ ] | [ ] | [ ] | [x] |
+| 05 | vakratunda-mahakaya | CaveSceneFixedV2 | [ ] | [ ] | [ ] | [--] |
+| 06 | suryakoti-samaprabha | SuryakotiSceneV4 | [ ] | [ ] | [ ] | [--] |
+| 07 | nirvighnam-kurumedeva | NirvighnamSceneV5 | [ ] | [ ] | [ ] | [--] |
+| 08 | sarvakaryeshu-sarvada | SarvakaryeshuSarvadaV7 | [ ] | [ ] | [ ] | [--] |
+| 09 | final-meaning-scene | Cavescene5memoryfinale | [ ] | [ ] | [ ] | [--] |
+| 10 | vakratunda-grove | VakratundaGroveSimplified | [ ] | [ ] | [ ] | [x] |
+| 11 | suryakoti-bank | SuryakotiBankSimplified | [ ] | [ ] | [ ] | [x] |
+| 12 | nirvighnam-chant | NirvighnamChantSimplified | [ ] | [ ] | [ ] | [x] |
+| 13 | sarvakaryeshu-chant | SarvakaryeshuChantSimplified | [ ] | [ ] | [ ] | [x] |
+| 14 | shloka-river-finale | ShlokaRiverFinale | [ ] | [ ] | [ ] | [x] |
+| 15 | game1-piano | FestivalPianoGame | [ ] | [ ] | [ ] | [ ] |
+| 16 | game2-rangoli | FestivalRangoliGame | [ ] | [ ] | [ ] | [ ] |
+| 17 | game3-cooking | ModakCookingGame | [ ] | [ ] | [ ] | [ ] |
+| 18 | game4-mandap | MandapDecorationGame | [ ] | [ ] | [ ] | [ ] |
+| 19 | family-tree | Familytreegame | [ ] | [ ] | [ ] | [x] |
+| 20 | favorite-food | Favoritefoodgame | [ ] | [ ] | [ ] | [x] |
+| 21 | dreams-wishes | ObstacleRemoverGame | [ ] | [ ] | [ ] | [x] |
+| 22 | my-indian-story | MyIndianStoryGame | [ ] | [ ] | [ ] | [x] |
 
 ---
 

@@ -17,7 +17,7 @@ import FireworksCompletion from '../../../../lib/components/feedback/FireworksCo
 import CalmGoldenFireworks from '../../../../lib/components/feedback/CalmGoldenFireworks';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
 import InnerMandala from '../../../../lib/components/celebration/InnerMandala';
-import ProgressiveHintSystem from '../../../../lib/components/interactive/ProgressiveHintSystem';
+// import ProgressiveHintSystem from '../../../../lib/components/interactive/ProgressiveHintSystem';
 import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal';
 import HomeButton from '../../../../lib/components/ui/HomeButton';
 import AudioToggle from '../../../../lib/components/ui/AudioToggle/AudioToggle';
@@ -55,22 +55,6 @@ import symbolSarvada from '../../../meaning cave/assets/images/symbols/sarvada-s
 const RESUME_DELAY_MS = 3000;
 const sceneOuterPetalId = SCENE_TO_OUTER_PETAL_ID['River Memories!'];
 const sceneOuterPetalIds = [sceneOuterPetalId - 1, sceneOuterPetalId];
-const debugFireworksBtnStyle = {
-  position: 'fixed',
-  top: '18px',
-  right: '18px',
-  zIndex: 1200,
-  padding: '8px 12px',
-  borderRadius: '999px',
-  border: '1px solid rgba(255,255,255,0.45)',
-  background: 'rgba(34, 24, 68, 0.82)',
-  color: '#fff7d6',
-  fontSize: '12px',
-  fontWeight: 800,
-  letterSpacing: '0.02em',
-  cursor: 'pointer',
-  boxShadow: '0 10px 24px rgba(0,0,0,0.22)',
-};
 
 const PHASES = {
   INITIAL: 'initial',
@@ -293,8 +277,8 @@ const SarvakaryeshuChantContent = ({
     const map = {
       scene13_puzzle: "The painting didn’t go as planned. What could help him try a different way?",
       scene13_puzzle_after: "The Trunk helped him try another way — and the splat became a whale!",
-      scene13_sports: "She feels upset inside. What could help her make room for her feelings?",
-      scene13_sports_after: "The Belly reminded her to make room for her feelings and take a slow breath.",
+      scene13_sports: "He feels upset inside. What could help him make room for his feelings?",
+      scene13_sports_after: "The Belly reminded him to make room for his feelings and take a slow breath.",
       scene13_bike: "Everyone is looking, but they’re missing an important clue. What could help her notice it?",
       scene13_bike_after: "The Eyes helped her look carefully and notice what everyone else missed.",
       scene13_grandma: "He wants to finish his special card, but everything keeps pulling his attention away. What could help him stay focused?",
@@ -598,16 +582,6 @@ const SarvakaryeshuChantContent = ({
     setShowSparkle('final-fireworks');
   };
 
-  const handleDebugFireworks = useCallback(() => {
-    stopAllVoice();
-    setShowAppDiscovery(false);
-    setRevealConfig(null);
-    setShowPowerOverlay(false);
-    setShowMandala(false);
-    setShowSceneCompletion(false);
-    setShowSparkle('final-fireworks');
-  }, [stopAllVoice]);
-
   if (!sceneState) return <div className="loading">Loading...</div>;
 
   return (
@@ -616,9 +590,6 @@ const SarvakaryeshuChantContent = ({
         <div className="sarva-scene-container">
           <HomeButton onNavigate={onNavigate} />
           <ZoneBadgeButton zoneId="shloka-river" onBack={() => onNavigate?.('zone-welcome')} />
-          <button type="button" style={debugFireworksBtnStyle} onClick={handleDebugFireworks}>
-            Debug Fireworks
-          </button>
           <AudioToggle isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
           <VOReplayButton onReplay={replayCurrentVoice} disabled={!isAudioOn} />
           <ResumeCountdown value={countdownValue} />
@@ -835,14 +806,7 @@ const SarvakaryeshuChantContent = ({
               onContinue={() => onNavigate?.('scene-complete-continue')}
             />
 
-            <ProgressiveHintSystem
-              ref={hintSystemRef}
-              sceneId={sceneId}
-              sceneState={sceneState}
-              hintConfigs={[]}
-              characterImage={mooshikaCoach}
-              enabled={false}
-            />
+            {/* ProgressiveHintSystem disabled per request */}
           </div>
         </div>
       </MessageManager>
