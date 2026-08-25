@@ -128,7 +128,7 @@ export default function SarvakaryeshuGame({
   isPaused = false,
   voiceGuidance = {},
 }) {
-  const { playVoice: playSceneLine, playWord, playSyllable, stopVoice: stopSceneVoice } = voiceGuidance;
+  const { playVoice: playSceneLine, playSyllable, stopVoice: stopSceneVoice } = voiceGuidance;
   const [cardIndex, setCardIndex] = useState(0);
   const [picked, setPicked] = useState(null);
   const [isCorrect, setIsCorrect] = useState(null);
@@ -301,7 +301,10 @@ export default function SarvakaryeshuGame({
     const optionRect = optionRefs.current[powerId]?.getBoundingClientRect?.();
     const imageRect = imageWrapRef.current?.getBoundingClientRect?.();
 
-    safeAfter(650, () => {
+    // Symbol flies to the centre of the card (the image area) — the flight
+    // itself takes ~1000ms (see .flying-power in the CSS), so the After
+    // reveal is timed to land right as the symbol arrives, not before.
+    safeAfter(500, () => {
       if (optionRect && imageRect) {
         setFlyingPower({
           img: POWER_ICONS[powerId].img,
@@ -313,26 +316,25 @@ export default function SarvakaryeshuGame({
       }
     });
 
-    safeAfter(1100, () => {
+    safeAfter(1500, () => {
       setImageHit(true);
       setShowAfter(true);
+      setFlyingPower(null);
       window.setTimeout(() => onMicroWin?.(), 0);
     });
 
-    safeAfter(1400, () => {
+    safeAfter(1750, () => {
       playSceneLine?.(situation.voKeyAfter);
     });
 
-    safeAfter(1650, () => {
-      setFlyingPower(null);
-    });
-
+    // Hold on the After image for a couple of seconds before advancing —
+    // gives the child time to actually see and register the result.
     const nextIndex = cardIndex + 1;
 
     if (nextIndex >= SITUATIONS.length) {
-      safeAfter(3200, () => {
+      safeAfter(4200, () => {
         setLitCount(SITUATIONS.length);
-        const finishAfterWord = () => {
+        const finishPhase = () => {
           if (doneCalledRef.current) return;
           doneCalledRef.current = true;
           setPhase('done');
@@ -343,16 +345,12 @@ export default function SarvakaryeshuGame({
             }, 0);
           });
         };
-        if (playWord) {
-          playWord('sarvakaryeshu', finishAfterWord);
-        } else {
-          finishAfterWord();
-        }
+        finishPhase();
       });
       return;
     }
 
-    safeAfter(3000, () => {
+    safeAfter(4200, () => {
       setCardIndex(nextIndex);
       setPicked(null);
       setIsCorrect(null);
@@ -366,7 +364,7 @@ export default function SarvakaryeshuGame({
       lastHintVoiceKeyRef.current = null;
       resolvingRef.current = false;
     });
-  }, [canPick, cardIndex, isPaused, markInteraction, onGameComplete, onMicroWin, onPhaseComplete, playSceneLine, playWord, safeAfter, stopSceneVoice]);
+  }, [canPick, cardIndex, isPaused, markInteraction, onGameComplete, onMicroWin, onPhaseComplete, playSceneLine, safeAfter, stopSceneVoice]);
 
   if (!isActive) return null;
 
