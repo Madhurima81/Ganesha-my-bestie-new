@@ -638,8 +638,29 @@
   width: 100%;
 }
 
-/* Hide old order indicator and stars */
-.scene-order-indicator,
+/* Scene numbers stay visible on card for easy child navigation */
+.scene-order-indicator {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  min-width: 34px;
+  height: 34px;
+  padding: 0 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 2px solid rgba(255, 206, 84, 0.95);
+  color: #7b5a12;
+  font-family: 'Baloo 2', cursive;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1;
+  box-shadow: 0 8px 16px rgba(90, 64, 20, 0.14);
+  z-index: 4;
+}
+
 .scene-stars-display {
   display: none;
 }

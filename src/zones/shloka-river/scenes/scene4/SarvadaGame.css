@@ -274,7 +274,7 @@
 
 .sarvada-memory-img {
   width: 100%;
-  aspect-ratio: 1440 / 680;
+  aspect-ratio: 4 / 3;
   max-height: clamp(180px, 42vh, 360px);
   object-fit: contain;
   background: #111;

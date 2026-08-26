@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import SyllableHighlight from '../../shared/SyllableHighlight';
 import useRepeatedHintCycle from '../../../../lib/hooks/useRepeatedHintCycle';
-import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
 import './KurumedevaGame.css';
 
 import bgImg from './assets/images/nirvighnam/bg.png';
@@ -28,6 +27,7 @@ import step4Img from './assets/images/Kurumedeva/step4.png';
 import beaverHappyImg from './assets/images/Kurumedeva/beaver-happy.png';
 import beaverSadImg from './assets/images/Kurumedeva/beaver-sad.png';
 import beaverBabyImg from './assets/images/Kurumedeva/beaver-baby.png';
+import helpHandIconImg from './assets/images/Kurumedeva/help-hand-icon.png';
 
 import { KURUMEDEVA_LAYOUT } from './scene3LayoutConfig';
 
@@ -36,6 +36,7 @@ const BRIDGE_TARGET = {
   l: KURUMEDEVA_LAYOUT.bridge.l,
   t: KURUMEDEVA_LAYOUT.bridge.t,
 };
+const HELP_TOKEN_HOME = { l: 70.5, t: 60.8 };
 
 const FRIENDS = [
   {
@@ -104,6 +105,7 @@ const WAIT_SPOTS = [
   { l: 14, t: 70 },
   { l: 20, t: 74 },
 ];
+const ROUND_SETTLE_MS = 1450;
 
 export default function KurumedevaGame({
   isActive = false,
@@ -124,7 +126,13 @@ export default function KurumedevaGame({
   const [friendImgStates, setFriendImgStates] = useState(() => FRIENDS.map(() => 'carry'));
   const [objectPhases, setObjectPhases] = useState(() => FRIENDS.map(() => 'idle'));
   const [friendPositions, setFriendPositions] = useState(() => FRIENDS.map((friend) => ({ l: friend.l, t: friend.t })));
+  const [helpTokenPos, setHelpTokenPos] = useState(HELP_TOKEN_HOME);
+  const [isDraggingHelp, setIsDraggingHelp] = useState(false);
+  const [helpDelivered, setHelpDelivered] = useState(false);
+  const [isRoundSettling, setIsRoundSettling] = useState(false);
 
+  const stageRef = useRef(null);
+  const dragPointerRef = useRef(null);
   const timersRef = useRef([]);
   const doneCalledRef = useRef(false);
   const successVoDoneRef = useRef(false);
@@ -139,7 +147,7 @@ export default function KurumedevaGame({
     hintLevel,
     markInteraction,
   } = useRepeatedHintCycle({
-    enabled: isActive && !isPaused && phase === 'play',
+    enabled: isActive && !isPaused && phase === 'play' && !isRoundSettling,
     stageKey: phase === 'play' ? `friend-${friendStep}` : phase,
     initialDelay: 8000,
     pulseCountBeforeEscalation: 3,
@@ -147,6 +155,7 @@ export default function KurumedevaGame({
     level2Delay: 15000,
     level3Delay: 22000,
   });
+  const currentFriend = friendStep < FRIENDS.length ? FRIENDS[friendStep] : null;
 
   useEffect(() => {
     onPhaseCompleteRef.current = onPhaseComplete;
@@ -190,6 +199,11 @@ export default function KurumedevaGame({
       setFriendImgStates(FRIENDS.map(() => 'carry'));
       setObjectPhases(FRIENDS.map(() => 'idle'));
       setFriendPositions(FRIENDS.map((friend) => ({ l: friend.l, t: friend.t })));
+      setHelpTokenPos(HELP_TOKEN_HOME);
+      setIsDraggingHelp(false);
+      setHelpDelivered(false);
+      setIsRoundSettling(false);
+      dragPointerRef.current = null;
       doneCalledRef.current = false;
       successVoDoneRef.current = false;
       crossingDoneRef.current = false;
@@ -221,19 +235,45 @@ export default function KurumedevaGame({
     });
   }, []);
 
-  const handleFriendTap = useCallback((friendIndex) => {
+  const resetHelpToken = useCallback(() => {
+    setIsDraggingHelp(false);
+    setHelpDelivered(false);
+    setHelpTokenPos(HELP_TOKEN_HOME);
+    dragPointerRef.current = null;
+  }, []);
+
+  const getStagePoint = useCallback((event) => {
+    const rect = stageRef.current?.getBoundingClientRect();
+    if (!rect) return HELP_TOKEN_HOME;
+    const l = ((event.clientX - rect.left) / rect.width) * 100;
+    const t = ((event.clientY - rect.top) / rect.height) * 100;
+    return {
+      l: Math.max(4, Math.min(96, l)),
+      t: Math.max(6, Math.min(94, t)),
+    };
+  }, []);
+
+  const askFriendForHelp = useCallback((friendIndex) => {
     if (isPaused || phaseRef.current !== 'play') return;
     if (friendIndex !== friendStep) return;
     if (friendImgStates[friendIndex] !== 'carry') return;
     stopSceneVoice?.();
     markInteraction();
-
     const friend = FRIENDS[friendIndex];
+    const friendPos = friendPositions[friendIndex] || friend;
+    const targetL = friendPos.l + (friendIndex === 0 ? TURTLE_RIVER_SHIFT : 0);
+    const targetT = friendPos.t;
+
+    setIsDraggingHelp(false);
+    setHelpTokenPos({ l: targetL, t: targetT });
+    setHelpDelivered(true);
+    dragPointerRef.current = null;
+    setIsRoundSettling(true);
 
     setTappedId(friend.id);
-    safeAfter(350, () => setTappedId(null));
+    safeAfter(250, () => setTappedId(null));
 
-    safeAfter(180, () => {
+    safeAfter(350, () => {
       setObjectPhases((prev) => {
         const next = [...prev];
         next[friendIndex] = 'flying';
@@ -262,19 +302,71 @@ export default function KurumedevaGame({
       moveFriendToWait(friendIndex);
     });
 
-    safeAfter(1550, () => {
+    safeAfter(ROUND_SETTLE_MS, () => {
       const nextStep = friendIndex + 1;
       setFriendStep(nextStep);
 
       if (nextStep >= FRIENDS.length) {
         safeAfter(420, () => {
+          setHelpDelivered(false);
+          setIsRoundSettling(false);
           setPhase('crossing');
           phaseRef.current = 'crossing';
           setLitCount(4);
         });
+        return;
       }
+
+      setHelpDelivered(false);
+      setHelpTokenPos(HELP_TOKEN_HOME);
+      setIsRoundSettling(false);
     });
-  }, [friendStep, friendImgStates, isPaused, markInteraction, moveFriendToWait, onMicroWin, safeAfter, stopSceneVoice]);
+  }, [friendPositions, friendStep, friendImgStates, isPaused, markInteraction, moveFriendToWait, onMicroWin, safeAfter, stopSceneVoice]);
+
+  const handleHelpPointerDown = useCallback((event) => {
+    if (isPaused || phaseRef.current !== 'play' || !currentFriend) return;
+    event.preventDefault();
+    event.stopPropagation();
+    stopSceneVoice?.();
+    dragPointerRef.current = event.pointerId;
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+    setIsDraggingHelp(true);
+    setHelpTokenPos(getStagePoint(event));
+  }, [currentFriend, getStagePoint, isPaused, stopSceneVoice]);
+
+  const handleHelpPointerMove = useCallback((event) => {
+    if (!isDraggingHelp || dragPointerRef.current !== event.pointerId) return;
+    event.preventDefault();
+    setHelpTokenPos(getStagePoint(event));
+  }, [getStagePoint, isDraggingHelp]);
+
+  const handleHelpPointerUp = useCallback((event) => {
+    if (!isDraggingHelp || dragPointerRef.current !== event.pointerId) return;
+    event.preventDefault();
+    event.currentTarget.releasePointerCapture?.(event.pointerId);
+
+    const dropPoint = getStagePoint(event);
+    const friend = FRIENDS[friendStep];
+    const friendPos = friendPositions[friendStep] || friend;
+    const targetL = friendPos.l + (friendStep === 0 ? TURTLE_RIVER_SHIFT : 0);
+    const targetT = friendPos.t;
+    const distance = Math.hypot(dropPoint.l - targetL, dropPoint.t - targetT);
+    const dropRadius = Math.max(18, friend.w * 1.6);
+
+    // Also accept the drop if the pointer was released directly over the
+    // current friend's element (generous touch target for young kids).
+    let overFriend = false;
+    if (typeof document !== 'undefined') {
+      const el = document.elementFromPoint(event.clientX, event.clientY);
+      overFriend = !!el?.closest?.(`[data-friend-id="${friend.id}"]`);
+    }
+
+    if (distance <= dropRadius || overFriend) {
+      askFriendForHelp(friendStep);
+    } else {
+      resetHelpToken();
+    }
+  }, [askFriendForHelp, friendPositions, friendStep, getStagePoint, isDraggingHelp, resetHelpToken]);
 
   const completeAfterSuccess = useCallback(() => {
     if (!successVoDoneRef.current || !crossingDoneRef.current || completionScheduledRef.current) return;
@@ -290,18 +382,24 @@ export default function KurumedevaGame({
     doneCalledRef.current = true;
 
     if (playSceneLine) {
-      playWord?.('kurumedeva');
-      playSceneLine('kuru_done', () => {
-        successVoDoneRef.current = true;
-        completeAfterSuccess();
-      });
+      // Stop any still-playing last-syllable clip first (it was overlapping the
+      // success VO — "two voices"), then: full word "kurumedeva" → completion line.
+      stopSceneVoice?.();
+      const afterWord = () => {
+        playSceneLine('kuru_done', () => {
+          successVoDoneRef.current = true;
+          completeAfterSuccess();
+        }, { stripLeadingText: 'Kurume Deva' });
+      };
+      if (playWord) playWord('kurumedeva', afterWord);
+      else afterWord();
       // iOS Safari can silently drop utterance onend/onerror — don't let completion hang on VO
       voFallbackRef.current = window.setTimeout(() => {
         if (!successVoDoneRef.current) {
           successVoDoneRef.current = true;
           completeAfterSuccess();
         }
-      }, 8000);
+      }, 10000);
     } else {
       successVoDoneRef.current = true;
     }
@@ -327,7 +425,7 @@ export default function KurumedevaGame({
         }
       });
     });
-  }, [completeAfterSuccess, phase, playSceneLine, playWord, safeAfter]);
+  }, [completeAfterSuccess, phase, playSceneLine, playWord, stopSceneVoice, safeAfter]);
 
   useEffect(() => () => {
     if (voFallbackRef.current) {
@@ -338,13 +436,12 @@ export default function KurumedevaGame({
 
   if (!isActive) return null;
 
-  const currentFriend = friendStep < FRIENDS.length ? FRIENDS[friendStep] : null;
   const bridgeImg = bridgeStep > 0 ? FRIENDS[bridgeStep - 1].bridgeImg : null;
   const beaverImg = phase === 'crossing' || phase === 'done' ? beaverHappyImg : beaverSadImg;
 
   return (
     <div className={`kuru-game${hideElements ? ' is-hidden' : ''}`}>
-      <div className="kuru-stage" style={{ backgroundImage: `url(${bgImg})` }}>
+      <div ref={stageRef} className="kuru-stage" style={{ backgroundImage: `url(${bgImg})` }}>
         <SyllableHighlight
           syllables={SYLLABLES}
           litCount={litCount}
@@ -355,11 +452,11 @@ export default function KurumedevaGame({
           }}
         />
 
-        {phase === 'play' && currentFriend && (
+        {phase === 'play' && currentFriend && !isRoundSettling && (
           <p className="kuru-hint">
-            {(hintLevel === 0 || hintLevel === 1) && 'Tap the glowing friend.'}
-            {hintLevel === 2 && 'Each friend brings a bridge piece.'}
-            {hintLevel >= 3 && 'Keep asking your friends for help.'}
+            {(hintLevel === 0 || hintLevel === 1) && 'Who can Beaver ask for help?'}
+            {hintLevel === 2 && `Ask ${currentFriend.label} for help.`}
+            {hintLevel >= 3 && `Drag the help bubble to ${currentFriend.label}.`}
           </p>
         )}
 
@@ -369,7 +466,7 @@ export default function KurumedevaGame({
 
         {bridgeImg && (
           <div
-            className={`kuru-bridge${bridgeStep === 4 ? ' is-complete' : ''}`}
+            className={`kuru-bridge is-piece-added${bridgeStep === 4 ? ' is-complete' : ''}`}
             key={bridgeStep}
             style={{
               left: `${KURUMEDEVA_LAYOUT.bridge.l}%`,
@@ -443,6 +540,7 @@ export default function KurumedevaGame({
           return (
             <div
               key={friend.id}
+              data-friend-id={friend.id}
               className={`
                 kuru-friend
                 ${isCurrent && imgState === 'carry' ? 'is-active' : ''}
@@ -450,8 +548,7 @@ export default function KurumedevaGame({
                 ${isWaiting ? 'kuru-friend--waiting' : ''}
                 ${isHelped ? 'kuru-friend--helped' : ''}
                 ${isCrossing ? 'kuru-friend--crossing' : ''}
-                ${isCurrent && imgState === 'carry' && hintLevel >= 1 ? 'pulse' : ''}
-                ${isCurrent && imgState === 'carry' && hintLevel >= 2 ? 'hint-glow' : ''}
+                ${isCurrent && imgState === 'carry' && hintLevel >= 2 ? 'pulse' : ''}
               `}
               style={{
                 left: `${pos.l + (index === 0 ? TURTLE_RIVER_SHIFT : 0)}%`,
@@ -459,7 +556,6 @@ export default function KurumedevaGame({
                 width: `${friend.w * KURU_HIT_SCALE}%`,
                 scale: friend.flip ? '-1 1' : '1 1',
               }}
-              onPointerDown={() => handleFriendTap(index)}
             >
               <img
                 src={imgState === 'carry' ? friend.carryImg : friend.emptyImg}
@@ -469,13 +565,26 @@ export default function KurumedevaGame({
             </div>
           );
         })}
-        <GestureDemo
-          type="tap"
-          from={{ x: FRIENDS[0].l, y: FRIENDS[0].t }}
-          to={{ x: FRIENDS[0].l, y: FRIENDS[0].t }}
-          active={phase === 'play' && friendStep === 0}
-          idleDelay={3000}
-        />
+
+        {phase === 'play' && currentFriend && (
+          <>
+            <button
+              type="button"
+              className={`kuru-help-token${isDraggingHelp ? ' is-dragging' : ''}${helpDelivered ? ' is-delivered' : ''}${hintLevel >= 1 && !isDraggingHelp && !helpDelivered ? ' pulse' : ''}`}
+              style={{
+                left: `${helpTokenPos.l}%`,
+                top: `${helpTokenPos.t}%`,
+              }}
+              aria-label={`Ask ${currentFriend.label} for help`}
+              onPointerDown={handleHelpPointerDown}
+              onPointerMove={handleHelpPointerMove}
+              onPointerUp={handleHelpPointerUp}
+              onPointerCancel={resetHelpToken}
+            >
+              <img src={helpHandIconImg} alt="" draggable={false} />
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

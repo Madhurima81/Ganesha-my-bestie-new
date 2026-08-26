@@ -22,13 +22,27 @@ const HOP_PATH = [
 ];
 
 const SYLLABLES = ['Su', 'rya', 'ko', 'ti'];
-const AUDIO = { syllables: ['su', 'ya', 'ko', 'ti'] };
+// audio keys must match /audio/syllables/suryakoti-<key>.mp3 → sur, ya, ko, ti
+// ('su' had no file, so the first syllable silently 404'd)
+const AUDIO = { syllables: ['sur', 'ya', 'ko', 'ti'] };
 const SUN_CX = 0.65;
 const SUN_CY = 0.18;
 const SUN_R = 0.17;
 const SCRATCH_R = 0.09;
 const GRID = 10;
 const CLEAR_THRESHOLD = 0.7;
+
+// Four syllables (SU/RYA/KO/TI) paced across the 0–70% playable scratch range,
+// mirroring the 4-step syllable reveal in Mahakaya/Kurumedeva. The old
+// Math.floor(light / 0.25) mapping put TI at 100% clear, which the 70%
+// completion threshold never reached — so it jumped 2→4 on finish.
+const getLitCount = (progress) => {
+  if (progress >= 0.70) return 4; // TI
+  if (progress >= 0.52) return 3; // KO
+  if (progress >= 0.35) return 2; // RYA
+  if (progress >= 0.18) return 1; // SU
+  return 0;
+};
 
 export default function SuryakotiGame({
   isActive = false,
@@ -244,7 +258,7 @@ export default function SuryakotiGame({
     }
 
     const light = totalRef.current > 0 ? doneRef.current / totalRef.current : 0;
-    const nextLit = Math.min(4, Math.floor(light / 0.25 + 1e-6));
+    const nextLit = getLitCount(light);
     setLitCount((prev) => {
       if (nextLit > prev) {
         window.setTimeout(() => {
@@ -257,9 +271,11 @@ export default function SuryakotiGame({
 
     if (light >= CLEAR_THRESHOLD) {
       completedRef.current = true;
-      setPhase('hop');
-      setLitCount(4);
-      fadeOverlay(cv);
+      setLitCount(4); // TI lights first — give it a beat before the fade/hop
+      window.setTimeout(() => {
+        setPhase('hop');
+        fadeOverlay(cv);
+      }, 500);
     }
   }, [fadeOverlay, isPaused, onMicroWin]);
 
@@ -322,11 +338,11 @@ export default function SuryakotiGame({
 
     if (playSceneLine) {
       stopVoice?.();
-      playWord?.('suryakoti');
+      playWord?.('suryakoti'); // whole word once, then the success line (matches Nirvighnam/Mahakaya)
       playSceneLine('scene11_surya_success', () => {
         successVoDoneRef.current = true;
         completeAfterSuccess();
-      });
+      }, { stripLeadingText: 'Suryakoti' });
       // iOS Safari can silently drop utterance onend/onerror — don't let completion hang on VO
       voFallbackRef.current = window.setTimeout(() => {
         if (!successVoDoneRef.current) {

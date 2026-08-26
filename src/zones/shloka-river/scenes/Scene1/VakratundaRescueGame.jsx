@@ -15,20 +15,20 @@ const SYLLABLES = ['va', 'kra', 'tun', 'da'];
 const AUDIO = { syllables: ['va', 'kra', 'tun', 'da'] };
 
 const POS = {
-  start: { l: 14, t: 52, w: 8.4 },
+  start: { l: 9.213056885480531, t: 52.61479616165161, w: 8.4 },
   reunionFrog: { w: 7.6 },
   family: { l: 78, t: 40, w: 14 },
 };
 
 const DEFAULT_ROUTE_NODES = [
-  { x: 14, y: 52 },
-  { x: 16.4, y: 55.2 },
-  { x: 22.8, y: 38.8 },
-  { x: 34.4, y: 38.4 },
-  { x: 44.8, y: 39.1 },
-  { x: 50.8, y: 61.6 },
-  { x: 54.2, y: 63.8 },
-  { x: 80.6, y: 55.1 },
+  { x: 9.213056885480531, y: 52.61479616165161 },
+  { x: 9.213056885480531, y: 52.349066734313965 },
+  { x: 16.483901150928233, y: 36.67092025279999 },
+  { x: 31.1251862331854, y: 33.747875690460205 },
+  { x: 41.38405214815154, y: 34.677934646606445 },
+  { x: 53.834124854159036, y: 65.90136289596558 },
+  { x: 53.73452495167231, y: 65.76849818229675 },
+  { x: 79.13267881245424, y: 60.98533272743225 },
 ];
 
 const ROUTES = {
@@ -44,22 +44,22 @@ const DEFAULT_OBSTACLES = [
   {
     id: 'logpile',
     img: logPileImg,
-    l: 36.2,
-    t: 51.4,
+    l: 60.40776756811631,
+    t: 48.23023080825806,
     w: 25.2,
     z: 7,
     cls: 'vak-obstacle--logpile',
-    hit: { x: 36.2, y: 51.4, rx: 12.6, ry: 12.2 },
+    hit: { x: 60.40776756811631, y: 48.23023080825806, rx: 12.6, ry: 12.2 },
   },
   {
     id: 'stone',
     img: stoneImg,
-    l: 63.4,
-    t: 44,
-    w: 23.3,
+    l: 29.43197895457769,
+    t: 48.628827929496765,
+    w: 28.1,
     z: 7,
     cls: 'vak-obstacle--stone',
-    hit: { x: 63.9, y: 45, rx: 11.7, ry: 10.5 },
+    hit: { x: 29.93197895457769, y: 49.628827929496765, rx: 11.7, ry: 10.5 },
   },
 ];
 
@@ -130,7 +130,7 @@ export default function VakratundaRescueGame({
   voiceGuidance = {},
   isPaused = false,
 }) {
-  const { playVoice: playSceneLine, playSfx, playWord, playSyllable, stopVoice } = voiceGuidance;
+  const { playVoice: playSceneLine, playSfx, playSyllable, playWord, stopVoice } = voiceGuidance;
 
   const [phase, setPhase] = useState('intro');
   const [litCount, setLitCount] = useState(0);
@@ -153,6 +153,7 @@ export default function VakratundaRescueGame({
   const [debugPanelPosition, setDebugPanelPosition] = useState({ x: 12, y: 96 });
   const [selectedObstacleId, setSelectedObstacleId] = useState(DEFAULT_OBSTACLES[0].id);
   const [selectedRouteNodeIndex, setSelectedRouteNodeIndex] = useState(0);
+  const [layoutCopyStatus, setLayoutCopyStatus] = useState('');
 
   const stageRef = useRef(null);
   const debugDragRef = useRef(null);
@@ -283,12 +284,28 @@ export default function VakratundaRescueGame({
     setFrogSnapping(false);
     setFamilyBounce(true);
     playSfx?.('frogReunion');
-    playSceneLine?.('scene10_vak_crossed', () => {
+
+    // Play the full word "vakratunda", then the completion VO — mirrors
+    // Mahakaya/Suryakoti/Nirvighnam. Previously only the VO line played.
+    let done = false;
+    let voFallback;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      clearTimeout(voFallback);
       onGameComplete?.();
       onPhaseComplete?.();
+    };
+    // Browser audio onended can silently drop (esp. iOS Safari) — don't hang.
+    voFallback = setTimeout(finish, 8000);
+    timers.current.push(voFallback);
+
+    playWord?.('vakratunda', () => {
+      playSceneLine?.('scene10_vak_crossed', finish, { stripLeadingText: 'Vakratunda' });
     });
+
     after(4200, () => setFamilyBounce(false));
-  }, [after, onGameComplete, onPhaseComplete, onStageChange, playSceneLine, playSfx, routeNodes]);
+  }, [after, onGameComplete, onPhaseComplete, onStageChange, playSceneLine, playSfx, playWord, routeNodes]);
 
   const completePhase = useCallback((phaseKey) => {
     traceCompletedRef.current = true;
@@ -509,6 +526,33 @@ export default function VakratundaRescueGame({
   const frogWidth = phase === 'reunion' ? POS.reunionFrog.w : POS.start.w;
   const selectedObstacle = obstacles.find((obstacle) => obstacle.id === selectedObstacleId) ?? obstacles[0];
   const selectedRouteNode = routeNodes[selectedRouteNodeIndex] ?? routeNodes[0];
+
+  const copyLayoutJson = async () => {
+    const payload = JSON.stringify({ routeNodes, obstacles, familyPoint }, null, 2);
+    const canPrompt = typeof window !== 'undefined' && typeof window.prompt === 'function';
+
+    try {
+      if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(payload);
+        setLayoutCopyStatus('Copied');
+      } else if (canPrompt) {
+        window.prompt('Copy layout JSON', payload);
+        setLayoutCopyStatus('Shown');
+      }
+    } catch {
+      if (canPrompt) {
+        window.prompt('Copy layout JSON', payload);
+        setLayoutCopyStatus('Shown');
+      } else {
+        console.log('Vakratunda layout JSON:', payload);
+        setLayoutCopyStatus('Logged');
+      }
+    }
+
+    if (typeof window !== 'undefined') {
+      window.setTimeout(() => setLayoutCopyStatus(''), 1600);
+    }
+  };
 
   const updateObstacle = (obstacleId, section, key, value) => {
     const numericValue = Number(value);
@@ -878,6 +922,18 @@ export default function VakratundaRescueGame({
               onPointerCancel={endDebugPanelDrag}
             >
               Drag Panel
+            </div>
+            <div className="vak-debug-copy-row">
+              <button
+                type="button"
+                className="vak-debug-copy"
+                onClick={copyLayoutJson}
+              >
+                Copy Layout JSON
+              </button>
+              {layoutCopyStatus && (
+                <span>{layoutCopyStatus}</span>
+              )}
             </div>
             <div className="vak-debug-section-title">Obstacles</div>
             <p className="vak-debug-note">

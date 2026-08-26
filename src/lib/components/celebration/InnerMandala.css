@@ -151,10 +151,6 @@
   fill: #ffd978;
 }
 
-.outer-petal.just-earned {
-  fill: #91d8c8;
-}
-
 /* ===== Center ===== */
 .inner-ring-thin {
   fill: #f6edff;
@@ -176,7 +172,7 @@
 
 .mandala-avatar-slot {
   position: absolute;
-  top: 50%;
+  top: calc(50% - 6px);
   left: 50%;
   transform: translate(-50%, -50%);
   width: 18%;
@@ -201,8 +197,8 @@
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 7.2%;
-  max-width: 36px;
+  width: 9.6%;
+  max-width: 48px;
   aspect-ratio: 1;
   object-fit: contain;
   opacity: 0;
@@ -241,7 +237,7 @@
 
 .mandala-subtitle {
   position: absolute;
-  bottom: 12px;
+  bottom: -34px;
   left: 50%;
   transform: translateX(-50%);
   width: min(88%, 320px);
@@ -259,7 +255,7 @@
 
 .mandala-hint {
   position: absolute;
-  bottom: -8px;
+  bottom: -30px;
   left: 50%;
   transform: translateX(-50%);
   width: min(90%, 320px);
@@ -372,7 +368,7 @@
 
 @media (max-width: 480px) {
   .inner-mandala-overlay { padding: 12px; }
-  .mandala-subtitle { bottom: 10px; width: min(90%, 280px); }
+  .mandala-subtitle { bottom: -30px; width: min(90%, 280px); }
 }
 
 @media (max-width: 380px) {

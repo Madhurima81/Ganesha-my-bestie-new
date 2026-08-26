@@ -1,4 +1,4 @@
-﻿// zones/shloka-river/scenes/Scene1/VakratundaGroveSimplified.jsx
+// zones/shloka-river/scenes/Scene1/VakratundaGroveSimplified.jsx
 // FIXED: Removed SanskritWordMission, connected PowerUnlockOverlay directly to next phase
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
@@ -46,6 +46,7 @@ import OpeningModal from '../../../shared/components/OpeningModal';
 // Zone Theme
 import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
 import { getOpeningModal, getCompletionModal, getDiscoveryContent } from '../../../../lib/config/content';
+import { getVoiceScript } from '../../../../lib/config/content/voiceGuidance';
 
 // Game Components
 import VakratundaRescueGame from './VakratundaRescueGame';
@@ -77,22 +78,6 @@ import flowerMa from './assets/images/mahakaya/ma-flower.webp';
 
 const sceneOuterPetalId = SCENE_TO_OUTER_PETAL_ID['Your Journey Begins!'];
 const sceneOuterPetalIds = [sceneOuterPetalId - 1, sceneOuterPetalId];
-const debugFireworksBtnStyle = {
-  position: 'fixed',
-  top: '18px',
-  right: '18px',
-  zIndex: 1200,
-  padding: '8px 12px',
-  borderRadius: '999px',
-  border: '1px solid rgba(255,255,255,0.45)',
-  background: 'rgba(34, 24, 68, 0.82)',
-  color: '#fff7d6',
-  fontSize: '12px',
-  fontWeight: 800,
-  letterSpacing: '0.02em',
-  cursor: 'pointer',
-  boxShadow: '0 10px 24px rgba(0,0,0,0.22)',
-};
 
 const VOGatedButton = ({ visible, onClick, children, className = '', style = {} }) => {
   if (!visible) return null;
@@ -132,6 +117,12 @@ const PHASES = {
   MAHAKAYA_COMPLETE: 'mahakaya_complete',
   MAHAKAYA_POWER: 'mahakaya_power',
   COMPLETE: 'complete'
+};
+
+const stripLeadingSpeechText = (text, leadingText) => {
+  if (!text || !leadingText) return text;
+  const pattern = new RegExp(`^\\s*${leadingText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*[:.!,-]*\\s*`, 'i');
+  return text.replace(pattern, '').trim();
 };
 
 const powerConfig = {
@@ -301,6 +292,7 @@ const VakratundaGroveContent = ({
 
   // Voice Guidance Hook
   const {
+    playVoice: playHookVoice,
     stopVoice,
     setVoiceVolume,
     playSyllable,
@@ -360,7 +352,7 @@ const VakratundaGroveContent = ({
     }
   }, []);
 
-  const playGuidanceVoice = useCallback((key, onEnded) => {
+  const playGuidanceVoice = useCallback((key, onEnded, options = {}) => {
     const webSpeechMap = {
       welcome: "Let's help our friends by the river.",
       instructionListen: 'Listen carefully.',
@@ -373,7 +365,7 @@ const VakratundaGroveContent = ({
       vakratundaClaim: 'I find a new way.',
       mahakayaSetup: 'You chanted… and it grew tall and strong.',
       mahakayaClaim: 'You have that strength too.',
-      sceneComplete: 'You found another way. You used your strength. Both powers are yours now.',
+      sceneComplete: "You found another way. There's room for everyone. Both powers are yours now.",
       instructionTapLotusWord: 'Tap the lotus.',
       instructionTapLotus: 'Tap the lotus.',
       instructionTapLotusUnlock: 'Tap the lotus.',
@@ -390,23 +382,28 @@ const VakratundaGroveContent = ({
       scene10_vak_drag_leaves: 'Drag the lily pad to the glowing circle.',
       scene10_vak_drag: 'Now drag the lily pad to the glowing circle.',
       scene10_vak_drag_pieces: 'Now drag the lily pad to the glowing circle.',
-      scene10_vak_crossed: 'You found another way! The frog made it home to his family!',
+      scene10_vak_crossed: 'Vakratunda! You found another way and helped the frog across.',
       scene10_vak_meaning: 'Vakratunda means finding another way.',
       scene10_maha_intro: "Now let's help the little calf.",
       scene10_maha_blocking: 'A heavy log is trapping him!',
       scene10_maha_drag_rope: 'Drag the rope to the log.',
       scene10_maha_pull_down: 'Now pull down!',
       scene10_maha_log_moving: 'The log is moving.',
-      scene10_maha_success: 'You used your strength! The calf is free!',
+      scene10_maha_success: 'Mahakaya! You made the raft bigger, and everyone crossed.',
       scene10_maha_meaning: 'Mahakaya means great strength.',
       scene10_maha_strength: 'You have strength inside you too.',
     };
+    const script = getVoiceScript(zoneId, sceneId, key);
+    if (script) {
+      playHookVoice(key, onEnded, options);
+      return;
+    }
     if (webSpeechMap[key]) {
-      speakWebSpeech(webSpeechMap[key], onEnded);
+      speakWebSpeech(stripLeadingSpeechText(webSpeechMap[key], options.stripLeadingText), onEnded);
       return;
     }
     if (onEnded) onEnded();
-  }, [speakWebSpeech]);
+  }, [playHookVoice, sceneId, speakWebSpeech, zoneId]);
   const replayCurrentVoice = useCallback(() => {
     if (!isAudioOn) return;
     if (!sceneState.welcomeShown || sceneState.phase === PHASES.INITIAL) {
@@ -592,8 +589,16 @@ const VakratundaGroveContent = ({
     }
   };
 
+  // Reload-only restore: re-show the reveal card + chime if the saved state
+  // was mid-reveal when the page was refreshed. Guarded to run once per
+  // mount (not on every live phase change) — otherwise this races
+  // handlePhaseComplete's own triggerReveal() for the same phase transition
+  // and both fire playChime()/setRevealConfig() back to back (double SFX).
+  const hasRestoredRevealRef = useRef(false);
   useEffect(() => {
     if (!sceneState || revealConfig) return;
+    if (hasRestoredRevealRef.current) return;
+    hasRestoredRevealRef.current = true;
 
     const restoreReveal = (word) => {
       safeSetTimeout(() => {
@@ -805,16 +810,6 @@ const VakratundaGroveContent = ({
     setShowSparkle('final-fireworks');
   };
 
-  const handleDebugFireworks = () => {
-    stopAllVoice();
-    setShowAppDiscovery(false);
-    setRevealConfig(null);
-    setShowPowerOverlay(false);
-    setShowMandala(false);
-    setShowSceneCompletion(false);
-    setShowSparkle('final-fireworks');
-  };
-
   useEffect(() => {
     if (
       sceneState.phase === PHASES.COMPLETE &&
@@ -855,6 +850,16 @@ const VakratundaGroveContent = ({
     setCurrentWord(null);
   };
 
+  // Stable identity for SceneCompletionCelebration's completionData prop —
+  // an inline object literal here would recreate on every render and re-fire
+  // that component's save-on-show effect in a loop while showing.
+  const completionData = useMemo(() => ({
+    stars: 5,
+    syllables: sceneState?.learnedSyllables,
+    words: sceneState?.learnedWords,
+    completed: true
+  }), [sceneState?.learnedSyllables, sceneState?.learnedWords]);
+
   // Unified State Saver
   if (!sceneState) return <div className="loading">Loading...</div>;
 
@@ -864,9 +869,6 @@ const VakratundaGroveContent = ({
         <div className="vakratunda-simplified-container">
           <HomeButton onNavigate={onNavigate} />
           <ZoneBadgeButton zoneId="shloka-river" onBack={() => onNavigate?.('zone-welcome')} />
-          <button type="button" style={debugFireworksBtnStyle} onClick={handleDebugFireworks}>
-            Debug Fireworks
-          </button>
           <AudioToggle isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
           <VOReplayButton onReplay={replayCurrentVoice} disabled={!isAudioOn} />
           <ResumeCountdown value={countdownValue} />
@@ -1041,7 +1043,7 @@ const VakratundaGroveContent = ({
                   emphasis: currentWord === 'vakratunda'
                     ? 'I can try again.'
                     : currentWord === 'mahakaya'
-                      ? 'I am strong inside.'
+                      ? 'I can make room.'
                       : 'You have mastered both powers!'
                 }}
                 icon={powerConfig[currentWord].image}
@@ -1156,8 +1158,8 @@ const VakratundaGroveContent = ({
                 }}
                 justEarnedPetals={sceneOuterPetalIds.map((id) => ({ ring: 'outer', id }))}
                 earnedSymbols={[
-                  { id: 'vakratunda', petalId: 1, ring: 'middle', image: symbolVakratunda },
-                  { id: 'mahakaya', petalId: 2, ring: 'middle', image: symbolMahakaya },
+                  { id: 'vakratunda', petalId: 1, ring: 'outer', image: symbolVakratunda },
+                  { id: 'mahakaya', petalId: 2, ring: 'outer', image: symbolMahakaya },
                 ]}
                 highlightPetals={sceneOuterPetalIds}
                 message="These meanings are growing inside you"
@@ -1201,12 +1203,7 @@ const VakratundaGroveContent = ({
               savedRecordings={savedRecordings}
               nextSceneName="Suryakoti Bank"
               sceneId="vakratunda-grove"
-              completionData={{
-                stars: 5,
-                syllables: sceneState.learnedSyllables,
-                words: sceneState.learnedWords,
-                completed: true
-              }}
+              completionData={completionData}
               onComplete={() => onNavigate?.('zone-welcome')}
               onReplay={() => {
                 stopAllVoice();

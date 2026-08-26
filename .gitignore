@@ -70,3 +70,6 @@ docs/reports/image-quarantine-report-*.csv
 
 # Stray full-repo worktree copies at repo root
 _worktree_main_assets/
+
+# dev/game-test annotation scratch (viteAnnotationsPlugin writes here)
+src/dev/annotations/

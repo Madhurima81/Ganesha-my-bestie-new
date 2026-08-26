@@ -26,7 +26,7 @@ import CulturalCelebrationModal from '../../../../lib/components/progress/Cultur
 import SparkleAnimation from '../../../../lib/components/animation/SparkleAnimation';
 import FireworksCompletion from '../../../../lib/components/feedback/FireworksCompletion';
 import CalmGoldenFireworks from '../../../../lib/components/feedback/CalmGoldenFireworks';
-import ProgressiveHintSystem from '../../../../lib/components/interactive/ProgressiveHintSystem';
+// import ProgressiveHintSystem from '../../../../lib/components/interactive/ProgressiveHintSystem';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
 import HomeButton from '../../../../lib/components/ui/HomeButton';
 import AudioToggle from '../../../../lib/components/ui/AudioToggle';

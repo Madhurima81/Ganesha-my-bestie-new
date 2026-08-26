@@ -153,6 +153,16 @@ export default function GestureDemo({
     onDismiss?.();
   }, [onDismiss]);
 
+  // Stop showing the demo after 2 full loops — instant, no fade, no
+  // partial 3rd loop. The animation itself is set to run exactly 2
+  // iterations (not infinite), so the browser guarantees a 3rd loop
+  // never starts; we just hide on the browser's own animationend event.
+  // Doesn't fire onDismiss — this isn't a user interaction, just the demo
+  // stepping aside so the scene's own hint escalation can take over.
+  const handleAnimationEnd = useCallback(() => {
+    setVisible(false);
+  }, []);
+
   // Start idle timer
   useEffect(() => {
     if (!active) {
@@ -199,6 +209,10 @@ export default function GestureDemo({
 
   if (!visible) return null;
 
+  const loopAnimation = {
+    animation: `${styleId} ${config.loopDuration}ms ease-in-out 2`,
+  };
+
   return (
     <div
       className="gesture-demo-overlay"
@@ -209,9 +223,7 @@ export default function GestureDemo({
       {config.asset === 'touch' && (
         <div
           className="gesture-demo-ripple"
-          style={{
-            animation: `${styleId} ${config.loopDuration}ms ease-in-out infinite`,
-          }}
+          style={loopAnimation}
         />
       )}
 
@@ -220,9 +232,8 @@ export default function GestureDemo({
         src={handImage}
         alt=""
         className="gesture-demo-hand"
-        style={{
-          animation: `${styleId} ${config.loopDuration}ms ease-in-out infinite`,
-        }}
+        style={loopAnimation}
+        onAnimationEnd={handleAnimationEnd}
         draggable={false}
       />
 

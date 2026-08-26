@@ -187,6 +187,7 @@ export default function SamaprabhaGame({
   const [phase, setPhase] = useState('play');
   const [birdState, setBirdState] = useState('cold');
   const [dragging, setDraggingState] = useState(false);
+  const [dragBalance, setDragBalance] = useState(null);
   const onGameCompleteRef = useRef(onGameComplete);
   const onPhaseCompleteRef = useRef(onPhaseComplete);
 
@@ -226,8 +227,11 @@ export default function SamaprabhaGame({
   }, [onGameComplete, onPhaseComplete]);
 
   const balance = STOPS[currentStop].balance;
-  const leftBrightness = 1 - balance;
-  const rightBrightness = balance;
+  // While dragging, the sun glides under the finger continuously; syllables/birds
+  // still only advance at the discrete STOPS thresholds (see advanceToStop).
+  const displayBalance = dragging && dragBalance !== null ? dragBalance : balance;
+  const leftBrightness = 1 - displayBalance;
+  const rightBrightness = displayBalance;
   const litCount = STOPS[currentStop].litCount + (phase === 'done' ? 1 : 0);
 
   const clearTimers = useCallback(() => {
@@ -276,6 +280,7 @@ export default function SamaprabhaGame({
     e.currentTarget.setPointerCapture?.(e.pointerId);
     dragRef.current = true;
     setDraggingState(true);
+    setDragBalance(STOPS[currentStopRef.current].balance);
     if (!firstInteractionSentRef.current) {
       firstInteractionSentRef.current = true;
       onFirstInteraction?.();
@@ -288,6 +293,7 @@ export default function SamaprabhaGame({
     if (!rect) return;
     const xPct = ((e.clientX - rect.left) / rect.width) * 100;
     const bal = clamp((xPct - TRACK_START) / (TRACK_END - TRACK_START), 0.5, 0.92);
+    setDragBalance(bal);
     const next = currentStopRef.current + 1;
     if (next < STOPS.length && bal <= STOPS[next].balance) {
       advanceToStop(next);
@@ -297,6 +303,7 @@ export default function SamaprabhaGame({
   const onHandleUp = useCallback(() => {
     dragRef.current = false;
     setDraggingState(false);
+    setDragBalance(null);
   }, []);
 
   // Pause-triggered cleanup: clears an in-progress drag if isPaused flips true
@@ -305,6 +312,7 @@ export default function SamaprabhaGame({
     if (isPaused) {
       dragRef.current = false;
       setDraggingState(false);
+      setDragBalance(null);
     }
   }, [isPaused]);
 
@@ -318,6 +326,7 @@ export default function SamaprabhaGame({
       currentStopRef.current = 0;
       setPhase('play');
       setBirdState('cold');
+      setDragBalance(null);
     }
   }, [isActive, clearTimers]);
 
@@ -340,11 +349,10 @@ export default function SamaprabhaGame({
 
     const timerId = window.setTimeout(() => {
       const fallback = window.setTimeout(finish, 4000);
-      playWord?.('samaprabha');
       playSceneLine('scene11_sama_done', () => {
         window.clearTimeout(fallback);
         finish();
-      });
+      }, { stripLeadingText: 'Samaprabha' });
     }, 150);
 
     return () => {
@@ -372,7 +380,7 @@ export default function SamaprabhaGame({
           style={{ opacity: clamp(0.1 + (1 - Math.abs(leftBrightness - rightBrightness)) * 0.85, 0.1, 1) }}
         />
 
-        <SunRays balance={balance} stop={currentStop} isDone={phase === 'done'} />
+        <SunRays balance={displayBalance} stop={currentStop} isDone={phase === 'done'} />
 
         <SyllableHighlight
           syllables={SYLLABLES}
@@ -416,14 +424,14 @@ export default function SamaprabhaGame({
         <Bird side="right" brightness={rightBrightness} birdState={birdState} />
 
         <SunHandle
-          balance={balance}
+          balance={displayBalance}
           isDragging={dragging}
           isBalanced={phase === 'done'}
         />
 
         <div
           className={`sama-handle-hit${phase !== 'play' ? ' is-disabled' : ''}`}
-          style={{ left: `${sunLeftPct(balance)}%`, top: `${SUN_TOP_PCT}%` }}
+          style={{ left: `${sunLeftPct(displayBalance)}%`, top: `${SUN_TOP_PCT}%` }}
           onPointerDown={onHandleDown}
         />
 

@@ -11,7 +11,8 @@
 
 .sarva-game.is-hidden .sarva-card,
 .sarva-game.is-hidden .sarva-doneline,
-.sarva-game.is-hidden .flying-power {
+.sarva-game.is-hidden .flying-power,
+.sarva-game.is-hidden .sarva-syllable-anchor.is-hit {
   opacity: 0;
 }
 
@@ -65,6 +66,44 @@
   width: 100%;
   height: auto;
   -webkit-user-drag: none;
+}
+
+.sarva-syllable-wrap {
+  position: relative;
+}
+
+/* Mirrors .syl-row's own absolute positioning (left/top/gap) so each anchor
+   sits over its matching syllable pill — the wrap collapses to zero height
+   since all its children are absolutely positioned, so inset:0 alone would
+   not land here. */
+.sarva-syllable-anchors {
+  position: absolute;
+  left: 16px;
+  top: 66px;
+  z-index: 33;
+  display: flex;
+  gap: 5px;
+  pointer-events: none;
+}
+
+.sarva-syllable-anchor {
+  width: 40px;
+  height: 32px;
+  border-radius: 10px;
+  opacity: 0;
+}
+
+.sarva-syllable-anchor.is-hit {
+  opacity: 1;
+  animation: sarvaSyllableHit 650ms ease-out;
+}
+
+@media (max-width: 820px) {
+  .sarva-syllable-anchors {
+    left: 12px;
+    top: 60px;
+    gap: 4px;
+  }
 }
 
 .sarva-doneline {
@@ -124,7 +163,7 @@
     linear-gradient(115deg, transparent 0 30%, rgba(255, 255, 255, 0.7) 42%, transparent 54%),
     radial-gradient(circle at 50% 50%, rgba(255, 214, 102, 0.2) 0%, rgba(255, 214, 102, 0.08) 38%, transparent 68%);
   pointer-events: none;
-  animation: sarvaAfterSweep 900ms ease-out;
+  animation: sarvaAfterSweep 550ms ease-out;
 }
 
 .sarva-after-badge {
@@ -146,7 +185,7 @@
 }
 
 .sarva-card-img-wrap.power-hit {
-  animation: imageGlow 1200ms ease-out;
+  animation: sarvaScenePowerHit 600ms ease-out;
 }
 
 .sarva-card-img {
@@ -161,7 +200,7 @@
 }
 
 .sarva-card-img.is-after {
-  animation: revealAfter 650ms ease-out;
+  animation: revealAfter 550ms ease-out;
 }
 
 .sarva-situation {
@@ -276,9 +315,9 @@
   border-color: #FFD54F;
   background: #FFF8D6;
   box-shadow:
-    0 0 0 4px rgba(255, 213, 79, 0.25),
-    0 0 18px rgba(255, 213, 79, 0.65);
-  transform: scale(1.15);
+    0 0 0 4px rgba(255, 213, 79, 0.22),
+    0 0 16px rgba(255, 213, 79, 0.55);
+  transform: scale(1.1);
 }
 
 .sarva-option-label {
@@ -333,13 +372,16 @@
   position: fixed;
   z-index: 999;
   pointer-events: none;
-  width: 84px;
-  height: 84px;
+  width: 76px;
+  height: 76px;
   object-fit: contain;
-  margin-left: -42px;
-  margin-top: -42px;
-  filter: drop-shadow(0 0 24px rgba(255, 213, 79, 0.78));
-  animation: flyPower 1000ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  margin-left: -38px;
+  margin-top: -38px;
+  filter:
+    drop-shadow(0 0 12px rgba(255, 213, 79, 0.45))
+    drop-shadow(0 0 22px rgba(255, 213, 79, 0.3));
+  transform-origin: center;
+  animation: sarvaPowerJourney 2400ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .sarva-option.is-wrong .sarva-option-circle {
@@ -443,40 +485,94 @@
   }
 }
 
-@keyframes flyPower {
+@keyframes sarvaPowerJourney {
+  /* Starts on the selected symbol */
   0% {
     transform: translate(0, 0) scale(1);
     opacity: 1;
   }
 
-  18% {
+  /* Tiny lift off the option */
+  8% {
     transform: translate(0, -8px) scale(1.12);
     opacity: 1;
   }
 
-  55% {
-    transform: translate(calc(var(--fly-x) * 0.45), calc(var(--fly-y) * 0.45 - 10px)) scale(0.92);
+  /* Arrives at the syllable (Sar / va / kar / yeshu) — timed to match the
+     ~1080ms JS trigger that lights the syllable and plays its audio. */
+  45% {
+    transform: translate(var(--syllable-x), var(--syllable-y)) scale(0.92);
+    opacity: 1;
+    filter:
+      drop-shadow(0 0 16px rgba(255, 213, 79, 0.7))
+      drop-shadow(0 0 28px rgba(255, 213, 79, 0.45));
+  }
+
+  /* Long hold on the syllable — gives its audio clip room to actually play
+     out before the symbol moves on. */
+  68% {
+    transform: translate(var(--syllable-x), var(--syllable-y)) scale(1.05);
     opacity: 1;
   }
 
+  /* Flies from the syllable into the situation image */
+  96% {
+    transform: translate(var(--scene-x), var(--scene-y)) scale(0.62);
+    opacity: 1;
+  }
+
+  /* Lands / fades into the image */
   100% {
-    transform: translate(var(--fly-x), var(--fly-y)) scale(0.42);
+    transform: translate(var(--scene-x), var(--scene-y)) scale(0.38);
     opacity: 0;
   }
 }
 
-@keyframes imageGlow {
+@keyframes sarvaScenePowerHit {
   0% {
+    transform: scale(1);
     filter: brightness(1);
   }
 
-  40% {
+  35% {
+    transform: scale(1.015);
     filter:
-      brightness(1.25)
-      drop-shadow(0 0 24px rgba(255, 215, 0, 0.8));
+      brightness(1.12)
+      drop-shadow(0 0 18px rgba(255, 213, 79, 0.45));
   }
 
   100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
+
+/* One-shot "SAR!" style pop when the flying symbol reaches the syllable —
+   grows once rather than pulsing continuously, so it reads as a reward
+   beat, not another hint animation. */
+@keyframes sarvaSyllableHit {
+  0% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+
+  30% {
+    transform: scale(1.2);
+    filter:
+      brightness(1.2)
+      drop-shadow(0 0 8px rgba(255, 213, 79, 0.8))
+      drop-shadow(0 0 18px rgba(255, 213, 79, 0.55));
+  }
+
+  65% {
+    transform: scale(1.12);
+    filter:
+      brightness(1.12)
+      drop-shadow(0 0 10px rgba(255, 213, 79, 0.5));
+  }
+
+  100% {
+    transform: scale(1);
     filter: brightness(1);
   }
 }

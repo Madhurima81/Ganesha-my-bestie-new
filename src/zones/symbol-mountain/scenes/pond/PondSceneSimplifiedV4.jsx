@@ -48,6 +48,8 @@ import VOReplayButton from '../../../../lib/components/feedback/VOReplayButton';
 import CulturalCelebrationModal from '../../../../lib/components/progress/CulturalCelebrationModal';
 import CulturalProgressExtractor from '../../../../lib/services/CulturalProgressExtractor';
 import SparkleAnimation from '../../../../lib/components/animation/SparkleAnimation';
+import GaneshaGestureCue from '../../../../lib/components/gesture/GaneshaGestureCue';
+import { useMiniGesture } from '../../../../lib/hooks/useMiniGesture';
 import FireworksCompletion from '../../../../lib/components/feedback/FireworksCompletion';
 import CalmGoldenFireworks from '../../../../lib/components/feedback/CalmGoldenFireworks';
 import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
@@ -83,10 +85,6 @@ const GANESHA_REFLECTION_IMAGE = '/images/ganesha-sit.svg';
 
 const RESUME_DELAY_MS = 3000;
 
-const MINI_THUMBS_UP_ICON = '/images/hand-thumbsup.svg';
-const MINI_VICTORY_ICON   = '/images/hand-victory.svg';
-const MINI_OK_ICON        = '/images/hand-ok.svg';
-
 const PHASES = {
   INITIAL: 'initial',           // stream blocked by rock, lotus dormant, dragging enabled
   TRUNK_SOLVED: 'trunk_solved', // water reached the pond, lotus lifting upright
@@ -107,11 +105,11 @@ const VOICE_LINES = {
 
   // Lotus phase (press-and-hold to bloom) — second
   lotusRound: 'The lotus woke up... press and hold it gently... let it bloom.',
-  idleLotus: 'Hold it gently... watch it rise.',
-  lotusBloomPower: 'You stayed with it... nice and slow. Say it with me... I stay calm.',
+  idleLotus: 'Hold it gently... watch it bloom.',
+  lotusBloomPower: 'You stayed with it... nice and slow. Say it with me... I can stay calm when things get messy.',
 
   // Completion
-  complete: 'You found a way, and something beautiful grew. All yours.'
+  complete: 'You found another way, and the lotus bloomed.'
 };
 
 const powerConfig = {
@@ -327,11 +325,7 @@ const PondSceneContent = ({
 
 
   // Mini gesture cue
-  const [miniGesture, setMiniGesture] = useState({ show: false, target: 'center', durationMs: 1500, key: 0, icon: MINI_THUMBS_UP_ICON });
-  const triggerMiniGesture = useCallback((target = 'center', durationMs = 1500, icon = MINI_THUMBS_UP_ICON) => {
-    setMiniGesture(prev => ({ show: true, target, durationMs, key: prev.key + 1, icon }));
-    setTimeout(() => setMiniGesture(prev => ({ ...prev, show: false })), durationMs);
-  }, []);
+  const { miniGesture, triggerMiniGesture } = useMiniGesture();
 
   // Audio
   const { isAudioOn, toggleAudio } = useAudioPreference();
@@ -670,7 +664,7 @@ const PondSceneContent = ({
         setRevealConfig({
           symbolId: 'lotus',
           symbolName: 'Lotus',
-          affirmation: 'I stay calm.',
+          affirmation: 'I can stay calm when things get messy.',
           symbolImage: symbolLotusColored
         });
       }, 1200);
@@ -689,7 +683,7 @@ const PondSceneContent = ({
         setRevealConfig({
           symbolId: 'lotus',
           symbolName: 'Lotus',
-          affirmation: 'I stay calm.',
+          affirmation: 'I can stay calm when things get messy.',
           symbolImage: symbolLotusColored
         });
       }, 300);
@@ -894,7 +888,7 @@ const PondSceneContent = ({
     safeSetTimeout(() => {
       sceneActions.updateState({ lotusUpright: true });
       playGlow();
-      triggerMiniGesture('center', 2000, MINI_VICTORY_ICON);
+      triggerMiniGesture('victory', 'center', 2000);
     }, 250);
     safeSetTimeout(() => {
       setShowSparkle(null);
@@ -974,7 +968,7 @@ const PondSceneContent = ({
     if (!sceneActions) return;
     playBloom();
     playChime();
-    triggerMiniGesture('center', 2500, MINI_VICTORY_ICON);
+    triggerMiniGesture('victory', 'center', 2500);
     sceneActions.updateState({
       lotusBloomed: true,
       phase: PHASES.BLOOMED,
@@ -988,7 +982,7 @@ const PondSceneContent = ({
     safeSetTimeout(() => setRevealConfig({
       symbolId: 'lotus',
       symbolName: 'Lotus',
-      affirmation: 'I stay calm.',
+      affirmation: 'I can stay calm when things get messy.',
       symbolImage: symbolLotusColored
     }), 2400);
   }, [sceneActions, playBloom, playChime, triggerMiniGesture, safeSetTimeout]);
@@ -1359,14 +1353,13 @@ const PondSceneContent = ({
 
               {/* MINI GESTURE CUE — thumbs up / victory / ok */}
               {miniGesture.show && (
-                <div
-                  key={`mini-gesture-${miniGesture.key}`}
-                  className={`ganesha-gesture-cue modak-mini-ganesha-cue modak-mini-ganesha-cue--${miniGesture.target}`}
-                  style={{ '--mini-cue-duration': `${miniGesture.durationMs}ms` }}
-                  aria-hidden="true"
-                >
-                  <img className="modak-mini-gesture-icon" src={miniGesture.icon} alt="" />
-                </div>
+                <GaneshaGestureCue
+                  key={miniGesture.key}
+                  gestureType={miniGesture.type}
+                  position={miniGesture.position}
+                  anchor={miniGesture.anchor}
+                  size={72}
+                />
               )}
                 </>
               )}

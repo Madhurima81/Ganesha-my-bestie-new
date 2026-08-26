@@ -20,7 +20,7 @@ import FireworksCompletion from '../../../../lib/components/feedback/FireworksCo
 import CalmGoldenFireworks from '../../../../lib/components/feedback/CalmGoldenFireworks';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
 import InnerMandala from '../../../../lib/components/celebration/InnerMandala';
-import ProgressiveHintSystem from '../../../../lib/components/interactive/ProgressiveHintSystem';
+// import ProgressiveHintSystem from '../../../../lib/components/interactive/ProgressiveHintSystem';
 import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal';
 import HomeButton from '../../../../lib/components/ui/HomeButton';
 import AudioToggle from '../../../../lib/components/ui/AudioToggle/AudioToggle';
@@ -80,22 +80,6 @@ const VOGatedButton = ({ visible, onClick, children, className = '', style = {} 
 const RESUME_DELAY_MS = 3000;
 const sceneOuterPetalId = SCENE_TO_OUTER_PETAL_ID['The River Needs You!'];
 const sceneOuterPetalIds = [sceneOuterPetalId - 1, sceneOuterPetalId];
-const debugFireworksBtnStyle = {
-  position: 'fixed',
-  top: '18px',
-  right: '18px',
-  zIndex: 1200,
-  padding: '8px 12px',
-  borderRadius: '999px',
-  border: '1px solid rgba(255,255,255,0.45)',
-  background: 'rgba(34, 24, 68, 0.82)',
-  color: '#fff7d6',
-  fontSize: '12px',
-  fontWeight: 800,
-  letterSpacing: '0.02em',
-  cursor: 'pointer',
-  boxShadow: '0 10px 24px rgba(0,0,0,0.22)',
-};
 
 const PHASES = {
   INITIAL:              'initial',
@@ -107,6 +91,12 @@ const PHASES = {
   KURUMEDEVA_POWER:     'kurumedeva_power',
   SCENE_COMPLETE:       'complete',
   COMPLETE:             'complete'
+};
+
+const stripLeadingSpeechText = (text, leadingText) => {
+  if (!text || !leadingText) return text;
+  const pattern = new RegExp(`^\\s*${leadingText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*[:.!,-]*\\s*`, 'i');
+  return text.replace(pattern, '').trim();
 };
 
 const powerConfig = {
@@ -271,26 +261,26 @@ const NirvighnamChantContent = ({
     } catch { onEnded?.(); }
   }, []);
 
-  const playGuidanceVoice = useCallback((key, onEnded) => {
+  const playGuidanceVoice = useCallback((key, onEnded, options = {}) => {
     const map = {
       welcome:             "Let's help our river friends.",
       scene12_nir_intro:   'The little turtle wants to reach her nest!',
       scene12_nir_drag:    'Drag the obstacles away.',
       nirv_hint:           'Drag the obstacle away.',
-      nirv_done:           'You cleared the path! The turtle reached her nest!',
+      nirv_done:           'Nirvighnam! You cleared the way and helped the turtle through.',
       nirv_meaning:        'Nirvighnam means removing obstacles.',
       nirvighnamSetup:     'You cleared the path… and the turtle made it home.',
       nirvighnamClaim:     'I clear the way and move forward.',
       scene12_kuru_intro:  'The beaver needs help to cross the river!',
-      scene12_kuru_tap:    'Tap each friend to help build the bridge.',
-      kuru_hint:           'Tap the glowing friend.',
-      kuru_done:           'You asked for help! The bridge is ready!',
+      scene12_kuru_tap:    'Drag the help bubble to a friend. Each friend can help build the bridge.',
+      kuru_hint:           'Drag the help bubble to the glowing friend.',
+      kuru_done:           'Kurume Deva! You asked for help and built the beaver’s bridge.',
       kuru_meaning:        'Kuru Me Deva means please help us.',
       kurumedevaSetup:     'You called for help… and friends came.',
       kurumedevaClaim:     'Asking for help is a superpower.',
       sceneComplete:       'The turtle reached her nest. The bridge is ready. Both powers are yours now.',
     };
-    if (map[key]) { speakWebSpeech(map[key], onEnded); return; }
+    if (map[key]) { speakWebSpeech(stripLeadingSpeechText(map[key], options.stripLeadingText), onEnded); return; }
     onEnded?.();
   }, [speakWebSpeech]);
 
@@ -467,8 +457,14 @@ const NirvighnamChantContent = ({
   }, [sceneState.phase, showMandala, showSparkle, showSceneCompletion]);
 
   // ── Reload: restore SymbolAutoReveal if resumed mid-reveal ─────────────────
+  // Guarded to run once per mount (not on every live phase change) — otherwise
+  // this races the live completion handler's own reveal trigger for the same
+  // phase transition and both fire playChime()/setRevealConfig() (double SFX).
+  const hasRestoredRevealRef = useRef(false);
   useEffect(() => {
     if (!sceneState || revealConfig) return;
+    if (hasRestoredRevealRef.current) return;
+    hasRestoredRevealRef.current = true;
 
     const restoreReveal = (word) => {
       safeSetTimeout(() => {
@@ -551,17 +547,6 @@ const NirvighnamChantContent = ({
     setShowSparkle('final-fireworks');
   };
 
-  const handleDebugFireworks = useCallback(() => {
-    stopAllVoice();
-    setShowAppDiscovery(false);
-    setRevealConfig(null);
-    setShowCenteredWord(false);
-    setShowPowerOverlay(false);
-    setShowMandala(false);
-    setShowSceneCompletion(false);
-    setShowSparkle('final-fireworks');
-  }, [stopAllVoice]);
-
   if (!sceneState) return <div className="loading">Loading...</div>;
 
   return (
@@ -570,9 +555,6 @@ const NirvighnamChantContent = ({
         <div className="nirv-scene-container">
           <HomeButton onNavigate={onNavigate} />
           <ZoneBadgeButton zoneId="shloka-river" onBack={() => onNavigate?.('zone-welcome')} />
-          <button type="button" style={debugFireworksBtnStyle} onClick={handleDebugFireworks}>
-            Debug Fireworks
-          </button>
           <AudioToggle isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
           <VOReplayButton onReplay={replayCurrentVoice} disabled={!isAudioOn} />
           <ResumeCountdown value={countdownValue} />
@@ -697,8 +679,8 @@ const NirvighnamChantContent = ({
                   shlokaPetalStates={{ 1: 'activated', 2: 'activated', 3: 'activated', 4: 'activated' }}
                   justEarnedPetals={sceneOuterPetalIds.map((id) => ({ ring: 'outer', id }))}
                   earnedSymbols={[
-                    { id: 'nirvighnam', petalId: 5, ring: 'middle', image: symbolNirvighnam },
-                    { id: 'kurumedeva', petalId: 6, ring: 'middle', image: symbolKurumedeva },
+                    { id: 'nirvighnam', petalId: 5, ring: 'outer', image: symbolNirvighnam },
+                    { id: 'kurumedeva', petalId: 6, ring: 'outer', image: symbolKurumedeva },
                   ]}
                   highlightPetals={sceneOuterPetalIds}
                   message="These meanings are growing inside you"
@@ -760,14 +742,7 @@ const NirvighnamChantContent = ({
               onContinue={() => onNavigate?.('scene-complete-continue')}
             />
 
-            <ProgressiveHintSystem
-              ref={hintRef}
-              sceneId={sceneId}
-              sceneState={sceneState}
-              hintConfigs={[]}
-              characterImage={mooshikaCoach}
-              enabled={false}
-            />
+            {/* ProgressiveHintSystem disabled per request */}
           </div>
         </div>
       </MessageManager>

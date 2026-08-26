@@ -25,7 +25,7 @@ import CulturalCelebrationModal from '../../../../lib/components/progress/Cultur
 import SparkleAnimation from '../../../../lib/components/animation/SparkleAnimation';
 import FireworksCompletion from '../../../../lib/components/feedback/FireworksCompletion';
 import CalmGoldenFireworks from '../../../../lib/components/feedback/CalmGoldenFireworks';
-import ProgressiveHintSystem from '../../../../lib/components/interactive/ProgressiveHintSystem';
+// import ProgressiveHintSystem from '../../../../lib/components/interactive/ProgressiveHintSystem';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
 import HomeButton from '../../../../lib/components/ui/HomeButton';
 import AudioToggle from '../../../../lib/components/ui/AudioToggle';
@@ -2899,22 +2899,7 @@ if (currentMissionSymbol === 'nirvighnam') {
               }}
             />
 
-            {/* Progressive Hints System */}
-            <ProgressiveHintSystem
-              ref={progressiveHintRef}
-              sceneId={sceneId}
-              sceneState={sceneState}
-              hintConfigs={getHintConfigs()}
-              characterImage={mooshikaCoach}
-              initialDelay={20000}
-              hintDisplayTime={10000}
-              position="bottom-right"
-              iconSize={60}
-              zIndex={2000}
-              onHintShown={handleHintShown}
-              onHintButtonClick={() => console.log("Hint clicked")}
-              enabled={true}
-            />
+            {/* ProgressiveHintSystem disabled per request */}
 
             {/* Navigation - Always on top */}
             <div style={{ position: 'relative', zIndex: 10000 }}>

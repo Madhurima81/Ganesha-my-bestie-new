@@ -4,6 +4,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 import { ViteImageOptimizer } from 'vite-plugin-image-optimizer'
 import fs from 'fs'
 import path from 'path'
+import annotationsPlugin from './src/dev/viteAnnotationsPlugin.js'
 
 // Custom plugin to enforce case-sensitive imports (catches issues that would fail on Linux)
 function caseSensitivePlugin() {
@@ -44,6 +45,7 @@ function caseSensitivePlugin() {
 export default defineConfig(({ command }) => ({
   plugins: [
     caseSensitivePlugin(),
+    annotationsPlugin(),
     react(),
     // PNG → WebP conversion only — SVGs are untouched (clean in Inkscape first)
     // Skip icons folder to avoid optimization issues

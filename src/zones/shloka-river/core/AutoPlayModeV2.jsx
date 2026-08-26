@@ -890,8 +890,13 @@ const AutoPlayModeV2 = ({
 
     if (voiceGuidanceRef.current?.playVoice) {
       const roundVOKey = `${gamePrefix}Round${currentRound}`;
+      const isFinalRound = currentRound >= maxRound;
       lastInterruptibleVORef.current = roundVOKey;
-      voiceGuidanceRef.current.playVoice(roundVOKey);
+      voiceGuidanceRef.current.playVoice(
+        roundVOKey,
+        undefined,
+        isFinalRound ? { stripLeadingText: gameConfig.displayName } : undefined
+      );
     }
 
     safeSetTimeout(() => {

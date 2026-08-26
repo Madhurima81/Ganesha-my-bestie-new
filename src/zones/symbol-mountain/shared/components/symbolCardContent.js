@@ -7,14 +7,14 @@
 const eyesCard = {
   label: 'Eyes',
   icon: '/images/icons/symbol-eyes-new.png',
-  affirmation: 'I see clearly.',
+  affirmation: 'I notice the good around me.',
   ganeshaLines: [
-    'My eyes are small for a reason.',
-    "I don't look at everything - I look at what matters.",
+    'My eyes help me look carefully.',
+    'They remind me to notice what is good, beautiful, and worth seeing.',
   ],
   invitation:
-    'Look around slowly. Find one thing that feels good or beautiful. Stay with it for 3 seconds.',
-  gift: "That's clear seeing. You can choose what to notice.",
+    'Look around slowly. Find one small thing that looks good or beautiful to you. Stay with it for 3 seconds.',
+  gift: 'You can choose to notice something good.',
 };
 
 const earCard = {
@@ -22,65 +22,65 @@ const earCard = {
   icon: '/images/icons/symbol-ears-new.png',
   affirmation: 'I listen with care.',
   ganeshaLines: [
-    'My ears are big like fans.',
-    'They keep the good... and let the rest go.',
+    'My big ears are shaped like little filters.',
+    'They remind me to listen carefully and notice the sounds and words worth keeping.',
   ],
   invitation:
     'Close your eyes. Listen for the quietest sound around you. Stay with it for 3 seconds.',
-  gift: "That's listening with care. You can listen to people this way too.",
+  gift: 'Careful listening helps you notice more.',
 };
 
 export const symbolCardContent = {
   modak: {
     label: 'Modak',
     icon: '/images/icons/symbol-modak-new.png',
-    affirmation: 'I am full of joy.',
+    affirmation: 'I have joy inside me.',
     ganeshaLines: [
-      'I love modak for a reason.',
-      'The sweetness is inside... just like your joy.',
+      'There is a reason I love modak.',
+      'Its sweetness reminds us of the happy, peaceful feeling that can grow inside.',
     ],
     invitation:
-      'Close your eyes for a second. Think of one small moment that made you smile today - a tiny modak moment. Hold it... feel it again.',
-    gift: 'That feeling is yours. You can come back to it anytime.',
+      'Think of one small thing you did today that made you feel good inside. Stay with that feeling for a moment.',
+    gift: 'That quiet sweetness can come from inside you.',
   },
 
   mooshika: {
     label: 'Mooshika',
     icon: '/images/icons/symbol-mooshika-new.png',
-    affirmation: 'I can focus.',
+    affirmation: 'I can guide my busy thoughts.',
     ganeshaLines: [
       'Did you ever wonder why I ride a mouse?',
-      'Mooshika is fast and curious, like our thoughts. I taught him to pause - and now we go anywhere together.',
+      'Mooshika can be quick and restless, just like our thoughts and little wants. We can learn to guide them.',
     ],
     invitation:
-      "Look around you. Pick one tiny thing you've never noticed before. Look at it for 3 seconds.",
-    gift: "That's focus. You can use it anytime your thoughts run fast.",
+      'Pause for a moment. Pick one thing near you and give it all your attention for 3 seconds.',
+    gift: 'When your thoughts run around, you can gently guide them back.',
   },
 
   belly: {
     label: 'Belly',
     icon: '/images/icons/symbol-belly-new.png',
-    affirmation: 'I feel safe inside.',
+    affirmation: 'I have room for all my feelings.',
     ganeshaLines: [
-      'My belly is bigger than you think.',
-      'It holds everything - happy days, hard days, all of it.',
+      'My belly can hold a lot.',
+      'Happy feelings, hard feelings, and everything in between can all have some room.',
     ],
     invitation:
-      'Put your hand on your belly. Take one slow breath in. One slow breath out. Feel it rise and fall.',
-    gift: 'This is your safe place inside. All your feelings can rest here.',
+      'Put your hand on your belly. Think of two different feelings you had today. Can you make room for both?',
+    gift: "You don't have to push a feeling away. There is room for it.",
   },
 
   lotus: {
     label: 'Lotus',
     icon: '/images/icons/symbol-lotus-new.png',
-    affirmation: 'I stay calm.',
+    affirmation: 'I can stay calm when things get messy.',
     ganeshaLines: [
       'The lotus has a secret.',
-      'It grows in muddy water - and still stays calm.',
+      'It grows in muddy water and still rises peaceful and beautiful.',
     ],
     invitation:
-      'Close your eyes. Take one slow breath in... and out. Notice the quiet inside.',
-    gift: 'That calm is yours. You can find it anytime.',
+      'Take one slow breath in and out. Notice one calm feeling inside, even if things around you are busy.',
+    gift: "A messy moment doesn't have to take away your calm.",
   },
 
   trunk: {
@@ -88,12 +88,12 @@ export const symbolCardContent = {
     icon: '/images/icons/symbol-trunk-new.png',
     affirmation: 'I find my way.',
     ganeshaLines: [
-      'My trunk can do many things.',
-      'It bends, twists, and finds a way every time.',
+      'My trunk can bend and curve.',
+      "When one way doesn't work, it can twist and find another.",
     ],
     invitation:
-      "Think of one thing that didn't go your way today. Now imagine going around it instead of through it. What else could you try?",
-    gift: 'There is always another way. You can find it.',
+      "Think of something that didn't go your way today. What is one different way you could try?",
+    gift: 'When one way is blocked, another way may be waiting.',
   },
 
   eye: eyesCard,
@@ -105,13 +105,13 @@ export const symbolCardContent = {
   tusk: {
     label: 'Tusk',
     icon: '/images/icons/broken-tusk-symbol.png',
-    affirmation: 'I finish what I start.',
+    affirmation: 'I stay focused on what is true.',
     ganeshaLines: [
-      'You see I have only one tusk?',
-      "I didn't stop when things got hard. I finished what I started.",
+      'You see I have one strong tusk?',
+      'It reminds me to stay strong and focused on what is true, even when things are difficult.',
     ],
     invitation:
-      'Think of one small thing you started today. Maybe you left it halfway. Now imagine going back and finishing it - what is one tiny step you could do? Start there.',
-    gift: 'You can finish what you begin.',
+      'Think of something you know is important to do. What is one small step that keeps you focused on it?',
+    gift: 'You can stay strong and focused on what matters.',
   },
 };

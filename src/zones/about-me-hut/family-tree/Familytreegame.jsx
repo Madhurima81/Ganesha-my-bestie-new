@@ -2,6 +2,9 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useGameSounds } from '../../../lib/hooks/useGameSounds';
 import './Familytreegame.css';
 import SceneCompletionCelebration from "../../../lib/components/celebration/SceneCompletionCelebration";
+import SparkleAnimation from '../../../lib/components/animation/SparkleAnimation';
+import GaneshaGestureCue from '../../../lib/components/gesture/GaneshaGestureCue';
+import { useMiniGesture } from '../../../lib/hooks/useMiniGesture';
 
 // Import SceneManager & Navigation
 import SceneManager from "../../../lib/components/scenes/SceneManager";
@@ -24,6 +27,7 @@ import ResumeCountdown from '../../../lib/components/feedback/ResumeCountdown';
 import usePauseAwareTimeout from '../../../lib/hooks/usePauseAwareTimeout';
 import GameStateManager from '../../../lib/services/GameStateManager';
 import ProgressManager from '../../../lib/services/ProgressManager';
+import SimpleSceneManager from '../../../lib/services/SimpleSceneManager';
 import useKeyboardAwareModal from '../../../lib/hooks/useKeyboardAwareModal';
 
 // Content Configs
@@ -206,6 +210,10 @@ const FamilyTreeGameContent = ({
 }) => {
  const { modalStyle: kbStyle } = useKeyboardAwareModal();
 
+ useEffect(() => {
+ SimpleSceneManager.setCurrentScene('about-me-hut', 'family-tree', false, false);
+ }, []);
+
  if (!sceneState ||!sceneActions) return <div>Loading...</div>;
 
  // Get content from configs
@@ -224,7 +232,7 @@ const FamilyTreeGameContent = ({
 ? rawProfileAvatar
 : profileDisplayName.charAt(0).toUpperCase();
  const FINAL_VO = {
- comparison: "All families are full of love.",
+ comparison: "Look at our family trees. Every family has its own story.",
  completion: "Our families are special. Now let's find our favorite things!"
  };
 
@@ -377,13 +385,7 @@ const FamilyTreeGameContent = ({
  }, []);
 
  // Mini gesture (thumbs up) on successful taps
- const [miniGesture, setMiniGesture] = useState({
- show: false,
- target: 'center',
- durationMs: 1500,
- key: 0
- });
- const miniGestureTimerRef = useRef(null);
+ const { miniGesture, triggerMiniGesture } = useMiniGesture();
 
  // Idle hint system (choice modal)
  const [idleHintLevel, setIdleHintLevel] = useState(0); // 0=none, 1=hint, 2=hint-strong, 3=hint-final
@@ -517,22 +519,6 @@ const FamilyTreeGameContent = ({
  }
  }, [sceneActions, sceneState?.gamePhase]);
 
- const triggerMiniGesture = useCallback((target = 'center', durationMs = 1500) => {
- if (miniGestureTimerRef.current) {
- clearTimeout(miniGestureTimerRef.current);
- miniGestureTimerRef.current = null;
- }
- setMiniGesture(prev => ({
- show: true,
- target,
- durationMs,
- key: prev.key + 1
- }));
- miniGestureTimerRef.current = setTimeout(() => {
- setMiniGesture(prev => ({...prev, show: false }));
- miniGestureTimerRef.current = null;
- }, durationMs);
- }, []);
 
  // --- IDLE HINT VO CLUES (spoken via Web Speech API) ---
  const IDLE_HINT_VO = {
@@ -1225,7 +1211,7 @@ sceneState.isSequencePlaying,
  }, 120);
  }
 
- triggerMiniGesture('center', 1500);
+ triggerMiniGesture('thumbsup', 'center', 1500);
  sceneActions.updateState({ isSequencePlaying: true, showYouGotIt: choice.id });
  scheduleTimeout(() => sceneActions.updateState({ correctChoiceId: choice.id }), 800);
  scheduleTimeout(() => sceneActions.updateState({ showYouGotIt: null }), 1400);
@@ -1433,8 +1419,14 @@ sceneActions.updateState({ gamePhase: 'transition' });
  <img src={familyTreeBg} alt="Background" className="tree-background" />
 
  {/* Home Button */}
- <HomeButton onNavigate={onNavigate} />
- <ZoneBadgeButton zoneId="about-me-hut" onBack={() => { onNavigate?.('zone-welcome'); }} />
+ <HomeButton onNavigate={(...args) => {
+ SimpleSceneManager.clearCurrentScene();
+ onNavigate?.(...args);
+ }} />
+ <ZoneBadgeButton zoneId="about-me-hut" onBack={() => {
+ SimpleSceneManager.clearCurrentScene();
+ onNavigate?.('zone-welcome');
+ }} />
  <AudioToggle isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
  <VOReplayButton onReplay={replayCurrentVoice} disabled={!isAudioOn} />
 
@@ -1448,14 +1440,13 @@ sceneActions.updateState({ gamePhase: 'transition' });
 
  {/* Mini Gesture (Thumbs Up) on Success */}
  {miniGesture.show && (
- <div
- key={`mini-gesture-${miniGesture.key}`}
- className={`ganesha-gesture-cue ganesha-gesture-cue--${miniGesture.target}`}
- style={{ '--mini-cue-duration': `${miniGesture.durationMs}ms` }}
- aria-hidden="true"
- >
- <img className="mini-gesture-icon" src="/images/hand-thumbsup.svg" alt="" />
- </div>
+ <GaneshaGestureCue
+ key={miniGesture.key}
+ gestureType={miniGesture.type}
+ position={miniGesture.position}
+ anchor={miniGesture.anchor}
+ size={72}
+ />
  )}
 
  {/* Back to Map Button - Commented out like in Modak */}
@@ -1583,29 +1574,13 @@ sceneActions.updateState({ gamePhase: 'transition' });
  <div className="choice-name-integrated">{choice.name}</div>
  {sceneState.correctChoiceId === choice.id && choice.isCorrect && (
  <div className="choice-soft-sparkles" aria-hidden="true">
- {Array.from({ length: 10 }).map((_, sparkleIndex) => (
- <span
- key={`${choice.id}-sparkle-${sparkleIndex}`}
- className="choice-soft-sparkle"
- style={{
- left: `${10 + Math.random() * 80}%`,
- top: `${10 + Math.random() * 80}%`,
- animationDelay: `${sparkleIndex * 0.06}s`
- }}
- />
- ))}
+ <SparkleAnimation type="star" count={10} color="#FFE1A0" size={9} duration={900} fadeOut={true} area="full" />
  </div>
  )}
  </button>
  ))}
  </div>
 
- {/* Ganesha thumbs-up commented out (using voice-over only) */}
- {/* {sceneState.showYouGotIt && (
- <div className="choice-thumbsup-cue" key={sceneState.showYouGotIt}>
- <img src="/images/hand-thumbsup.svg" alt="" className="choice-thumbsup-icon" />
- </div>
- )} */}
  </div>
  </div>
  )}
@@ -1625,18 +1600,9 @@ sceneActions.updateState({ gamePhase: 'transition' });
 
  {/* SPARKLE LAYER */}
  <div className={`tree-sparkle-layer ${sceneState.showTreeSparkles? 'active': ''}`}>
- {sceneState.showTreeSparkles && [...Array(30)].map((_, i) => (
- <div
- key={i}
- className="tree-sparkle"
- style={{
- left: `${Math.random() * 100}%`,
- top: `${Math.random() * 100}%`,
- animationDelay: `${Math.random() * 2}s`,
- animationDuration: `${1.5 + Math.random()}s`
- }}
- />
- ))}
+ {sceneState.showTreeSparkles && (
+ <SparkleAnimation type="glitter" count={30} color="#FFD700" size={10} duration={2000} fadeOut={false} area="full" />
+ )}
  </div>
 
  {/* BIG FLIP CARD OVERLAY */}
@@ -1855,23 +1821,10 @@ sceneActions.updateState({ showNameModal: false });
  {/* SIDE BY SIDE (Magical Reveal) */}
  {sceneState.gamePhase === 'sideBySide' &&!sceneState.showingCompletionScreen && (
  <div className="side-by-side-screen">
- {[...Array(20)].map((_, i) => (
- <div
- key={i}
- className="final-sparkle"
- style={{
- left: `${Math.random() * 100}%`,
- top: `${Math.random() * 100}%`,
- animationDelay: `${Math.random() * 4}s`,
- width: `${Math.random() * 7 + 4}px`,
- height: `${Math.random() * 7 + 4}px`,
- opacity: `${Math.random() * 0.35 + 0.45}`
- }}
- />
- ))}
+ <SparkleAnimation type="star" count={20} color="#FFD700" size={7} duration={4000} fadeOut={false} area="full" />
 
  <h1 className="reveal-title">Our Families!</h1>
- <p className="reveal-subtitle">All families are full of love.</p>
+ <p className="reveal-subtitle">Every family has its own story.</p>
 
  <div className="two-trees-container">
  {/* LEFT CARD: Ganesha */}
@@ -1969,6 +1922,7 @@ justifyContent: 'center',
  <div className="action-buttons">
  <button className="family-tree-end-game-btn" onClick={() => {
    playTwinkle();
+   SimpleSceneManager.clearCurrentScene();
    sceneActions.updateState({ showingCompletionScreen: true, completed: true, stars: 3 });
    const profileId = GameStateManager.getCurrentProfile()?.id;
    if (profileId) {
@@ -2031,11 +1985,13 @@ justifyContent: 'center',
  }}
  onContinue={() => {
  if (playTap) playTap();
+ SimpleSceneManager.setCurrentScene('about-me-hut', 'favorite-food', false, false);
  if (onNavigate) onNavigate('favorite-food');
  else if (onComplete) onComplete();
  }}
  onReplay={() => {
  if (playTap) playTap();
+ SimpleSceneManager.setCurrentScene('about-me-hut', 'family-tree', false, false);
  stopVoice();
  stopSpokenVoice();
  sceneActions.updateState({
@@ -2072,11 +2028,13 @@ justifyContent: 'center',
  }}
  onExploreZones={() => {
  if (playTap) playTap();
+ SimpleSceneManager.clearCurrentScene();
  if (onNavigate) onNavigate('zone-welcome');
  else if (onBack) onBack();
  }}
  onHome={() => {
  if (playTap) playTap();
+ SimpleSceneManager.clearCurrentScene();
  if (onNavigate) onNavigate('home');
  }}
  />

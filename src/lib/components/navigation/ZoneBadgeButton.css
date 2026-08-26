@@ -1,0 +1,59 @@
+/* ============================================================
+   ZoneBadgeButton — sits directly beside HomeButton.
+   Position/size mirror HomeButton's clamp() tokens exactly so the
+   two stay aligned side-by-side at every breakpoint. See HomeButton.css.
+   ============================================================ */
+
+.zone-badge-button {
+  position: fixed;
+  top: clamp(12px, 1.5vw, 24px);
+  left: calc(clamp(12px, 1.5vw, 24px) + clamp(52px, 5.5vw, 68px) + 8px);
+  z-index: 9999;
+
+  width: clamp(52px, 5.5vw, 68px);
+  height: clamp(52px, 5.5vw, 68px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+  border-radius: 50%;
+  border: 2px solid rgba(160, 120, 220, 0.4);
+  box-shadow: 0 3px 8px rgba(140, 120, 180, 0.12);
+
+  cursor: pointer;
+  font-size: 26px;
+  line-height: 1;
+  overflow: hidden;
+  padding: 0;
+  transition: transform 0.16s ease-out, box-shadow 0.16s ease-out;
+}
+
+.zone-badge-button:hover {
+  transform: scale(1.06);
+  box-shadow: 0 4px 12px rgba(140, 120, 180, 0.22);
+}
+
+.zone-badge-button:active {
+  transform: scale(0.95);
+  box-shadow: 0 1px 4px rgba(140, 120, 180, 0.12);
+}
+
+.zone-badge-button__icon {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+@media (min-width: 768px) and (max-width: 1366px) {
+  .zone-badge-button {
+    top: 10px;
+    left: 54px; /* 10px + HomeButton's 36px + 8px gap */
+    width: 36px;
+    height: 36px;
+    opacity: 0.9;
+  }
+}

@@ -3,9 +3,9 @@ import SyllableHighlight from '../../shared/SyllableHighlight';
 import useRepeatedHintCycle from '../../../../lib/hooks/useRepeatedHintCycle';
 import './SarvadaGame.css';
 
-import morningBg from './assets/images/sarvada/morning.png';
-import afternoonBg from './assets/images/sarvada/afternoon.png';
-import nightBg from './assets/images/sarvada/night.png';
+import morningBg from './assets/images/sarvada/morning.webp';
+import afternoonBg from './assets/images/sarvada/afternoon.webp';
+import nightBg from './assets/images/sarvada/night-phase.webp';
 
 import boatImg from './assets/images/sarvada/boat.png';
 import ganeshaPopImg from '/images/ganesha-hi-stand.png';
@@ -17,9 +17,9 @@ import morningBubbleImg from './assets/images/sarvada/puzzle-bubble.png';
 import afternoonBubbleImg from './assets/images/sarvada/sports-bubble.png';
 import nightBubbleImg from './assets/images/sarvada/gocery-bubble.png';
 
-import morningSceneImg from './assets/images/sarvada/morning-scene.png';
-import afternoonSceneImg from './assets/images/sarvada/afternoon-scene.png';
-import nightSceneImg from './assets/images/sarvada/night-scene.png';
+import morningSceneImg from './assets/images/sarvada/morning-scene.webp';
+import afternoonSceneImg from './assets/images/sarvada/afternoon-scene.webp';
+import nightSceneImg from './assets/images/sarvada/night-scene.webp';
 
 const SYLLABLES = ['Sar', 'va', 'da'];
 const AUDIO = ['sar', 'va', 'da'];
@@ -42,7 +42,7 @@ const PHASES_CONFIG = [
       'He may be hiding near something you take with you in the morning.',
       'Look near the school bag for a tiny mouse.',
     ],
-    symbolSpot: { l: 89, t: 56, w: 14 },
+    symbolSpot: { l: 6, t: 65, w: 12 },
   },
   {
     id: 'afternoon',
@@ -60,7 +60,7 @@ const PHASES_CONFIG = [
       'Something flying in the sky has a long curving shape.',
       "Look closely at the kite's tail.",
     ],
-    symbolSpot: { l: 50, t: 22, w: 14 },
+    symbolSpot: { l: 78, t: 54, w: 12 },
   },
   {
     id: 'night',
@@ -78,7 +78,7 @@ const PHASES_CONFIG = [
       'A flower shape is hiding somewhere near the bed.',
       'Look at the bedside lamp for the lotus.',
     ],
-    symbolSpot: { l: 60, t: 17, w: 14 },
+    symbolSpot: { l: 86, t: 46, w: 10 },
   },
 ];
 
@@ -375,7 +375,7 @@ export default function SarvadaGame({
           audioSyllables={AUDIO}
           onSyllableLit={(syllable) => {
             stopSceneVoice?.();
-            playSyllable?.('sarvada', syllable);
+            playSyllable?.(syllable);
           }}
         />
       </div>

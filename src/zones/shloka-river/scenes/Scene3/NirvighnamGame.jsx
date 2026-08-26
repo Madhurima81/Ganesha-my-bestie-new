@@ -227,7 +227,7 @@ export default function NirvighnamGame({
       playSceneLine('nirv_done', () => {
         successVoDoneRef.current = true;
         completeAfterSuccess();
-      });
+      }, { stripLeadingText: 'Nirvighnam' });
       // iOS Safari can silently drop utterance onend/onerror — don't let completion hang on VO
       voFallbackRef.current = window.setTimeout(() => {
         if (!successVoDoneRef.current) {

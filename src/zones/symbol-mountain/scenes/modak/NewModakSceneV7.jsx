@@ -58,6 +58,8 @@ import OpeningModal from '../../../shared/components/OpeningModal';
 
 // UI Components
 import SparkleAnimation from '../../../../lib/components/animation/SparkleAnimation';
+import GaneshaGestureCue from '../../../../lib/components/gesture/GaneshaGestureCue';
+import { useMiniGesture } from '../../../../lib/hooks/useMiniGesture';
 import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
 // import Fireworks from '../../../../lib/components/feedback/Fireworks'; // ? replaced by FireworksCompletion
 import FireworksCompletion from '../../../../lib/components/feedback/FireworksCompletion';
@@ -182,7 +184,14 @@ const BELLY_EMOTIONS = [
 const MUSHIKA_DART_INTERVAL_MS = 1100;
 const MUSHIKA_HOLD_MS = 1600;
 const MUSHIKA_CALM_BEAT_MS = 1200;
-const MINI_THUMBS_UP_ICON = '/images/hand-thumbsup.svg';
+// Mini gesture cue anchor points (% of scene) — matches the old
+// .modak-mini-ganesha-cue--{mound,modak,rock,center} CSS positions.
+const MINI_GESTURE_ANCHORS = {
+  mound: { x: 24, y: 43 },
+  modak: { x: 31, y: 47 },
+  rock: { x: 68, y: 51 },
+  center: { x: 50, y: 30 },
+};
 const MODAK_POSITION_SLOTS = [
   { top: '32.1%', left: '32.8%' },
   { top: '35.6%', left: '66.2%' },
@@ -252,22 +261,20 @@ const getFeedingGaneshaScale = (feedCount, transformed) => {
 };
 
 const MODAK_WEB_SPEECH_VO = {
-  welcome: "Mooshika is nearby. Let's find the sweet modaks.",
   findMooshika: 'Mooshika is darting around. Press and hold him gently to help him settle.',
   findMooshikaIdle: 'Hold Mooshika gently when he pauses near an object.',
   mooshikaFound: 'There he is... calm and ready to walk with us.',
-  focusPower: 'You looked closely... and found him. Say it with me... I can focus.',
+  focusPower: 'You helped Mooshika slow down. Say it with me... I can guide my busy thoughts.',
   collectStart: 'Mushika is ready to gather three offerings for Ganesha. Drag her to each one.',
   collectIdleHint: 'Guide Mushika to each offering for Ganesha.',
-  sharingPower: 'Mushika finished with care. That peaceful feeling is sweet. Say it with me... I feel peaceful inside.',
+  sharingPower: 'The sweetness of modak reminds us of a happy, peaceful feeling inside. Say it with me... I have joy inside me.',
   feedGanesha: "Drag each feeling into Ganesha's belly. There is room for every feeling.",
   feedIdleHint: "Move a feeling into Ganesha's belly.",
-  gratitudePower: 'All my feelings can rest safely inside.',
-  sceneComplete: 'You found Mooshika. You felt joy. You feel good inside. All yours.',
+  gratitudePower: 'There is room for all my feelings.',
+  sceneComplete: 'You helped Mooshika settle, found the sweetness inside, and made room for every feeling.',
 };
 
 const MODAK_WEB_SPEECH_MOMENT = {
-  welcome: 'greeting',
   findMooshika: 'default',
   findMooshikaIdle: 'default',
   mooshikaFound: 'celebration',
@@ -562,11 +569,6 @@ const NewModakSceneMVPContent = ({
     wasAudioOnRef.current = isAudioOn;
 
     if (!wasAudioOn && isAudioOn) {
-      if (sceneState.phase === PHASES.MOOSHIKA_SEARCH && !sceneState.welcomeShown) {
-        playVoice('welcome');
-        return;
-      }
-
       if (revealConfig?.symbolId) {
         const voMap = {
           mooshika: 'focusPower',
@@ -649,13 +651,7 @@ const NewModakSceneMVPContent = ({
   const offeringCollectLockRef = useRef(false);
   const [isOfferingDragActive, setIsOfferingDragActive] = useState(false);
   const idleHintsEnabled = true;
-  const miniGestureTimerRef = useRef(null);
-  const [miniGesture, setMiniGesture] = useState({
-    show: false,
-    target: 'center',
-    durationMs: 1500,
-    key: 0
-  });
+  const { miniGesture, triggerMiniGesture } = useMiniGesture();
 
   // Incremented each time the child returns from a tab switch (after countdown).
   // Adding this to the hint effects forces a full reset:
@@ -720,19 +716,7 @@ const NewModakSceneMVPContent = ({
     stopVoice();
     if (idleHintsEnabled) stopIdleTimer();
     playDiscovery();
-    setMiniGesture(prev => ({
-      show: true,
-      target: 'mound',
-      durationMs: 1500,
-      key: prev.key + 1
-    }));
-    if (miniGestureTimerRef.current) {
-      clearTimeout(miniGestureTimerRef.current);
-    }
-    miniGestureTimerRef.current = setTimeout(() => {
-      setMiniGesture(prev => ({ ...prev, show: false }));
-      miniGestureTimerRef.current = null;
-    }, 1500);
+    triggerMiniGesture('thumbsup', 'anchored', 1500, MINI_GESTURE_ANCHORS.mound);
     playVoice('mooshikaFound');
     setShowSparkle('mooshika-calm');
 
@@ -765,7 +749,7 @@ const NewModakSceneMVPContent = ({
         symbolId: 'mooshika',
         symbolImage: symbolMooshikaColored,
         symbolName: 'Mooshika',
-        affirmation: 'I can focus.',
+        affirmation: 'I can guide my busy thoughts.',
         sidebarTarget
       });
     }, MUSHIKA_CALM_BEAT_MS);
@@ -796,23 +780,6 @@ const NewModakSceneMVPContent = ({
     document.body.classList.remove('modak-opening-active');
     return undefined;
   }, [showOpeningModal]);
-
-  const triggerMiniGesture = useCallback((target = 'center', durationMs = 1500) => {
-    if (miniGestureTimerRef.current) {
-      clearTimeout(miniGestureTimerRef.current);
-      miniGestureTimerRef.current = null;
-    }
-    setMiniGesture(prev => ({
-      show: true,
-      target,
-      durationMs,
-      key: prev.key + 1
-    }));
-    miniGestureTimerRef.current = setTimeout(() => {
-      setMiniGesture(prev => ({ ...prev, show: false }));
-      miniGestureTimerRef.current = null;
-    }, durationMs);
-  }, []);
 
   useEffect(() => {
     return () => {
@@ -1053,10 +1020,6 @@ const NewModakSceneMVPContent = ({
   useEffect(() => {
     return () => {
       clearAllTimeouts();
-      if (miniGestureTimerRef.current) {
-        clearTimeout(miniGestureTimerRef.current);
-        miniGestureTimerRef.current = null;
-      }
       stopMusic();
       if (idleHintsEnabled) stopIdleTimer();
     };
@@ -1091,7 +1054,7 @@ const NewModakSceneMVPContent = ({
           symbolId: 'mooshika',
           symbolImage: symbolMooshikaColored,
           symbolName: 'Mooshika',
-          affirmation: 'I can focus.',
+          affirmation: 'I can guide my busy thoughts.',
           sidebarTarget: getSidebarTarget('mooshika')
         });
       }, 1200);
@@ -1215,23 +1178,8 @@ const NewModakSceneMVPContent = ({
 
   }, []); // Empty dependency array ensures this runs only ONCE on reload
 
-  // ========================================
-  // VOICE: Play welcome on OPENING MODAL (before game starts)
-  // Button appears only after VO finishes
-  // ========================================
-  useEffect(() => {
-    // Play welcome voice when opening modal is shown (phase is MOOSHIKA_SEARCH and not yet started)
-    if (sceneState.phase === PHASES.MOOSHIKA_SEARCH && !sceneState.welcomeShown) {
-      if (!isAudioOn) return;
-      // Small delay before starting welcome VO
-      const timer = safeSetTimeout(() => {
-        // Button shows immediately from start
-        playTransition();
-        playVoice('welcome');
-      }, 800);
-      return timer;
-    }
-  }, [sceneState.phase, sceneState.welcomeShown, isAudioOn, playTransition, playVoice, safeSetTimeout]);
+  // Opening modal VO intentionally disabled: the first spoken instruction is
+  // the Mooshika darting/press-and-hold line after Start.
 
   // ========================================
   // VOICE: Play instruction after game starts
@@ -1519,7 +1467,7 @@ const NewModakSceneMVPContent = ({
       }, 950);
 
     } else if (symbolId === 'belly') {
-      // Release gratitudePower ("I feel safe inside") from interruptedVoiceRef tracking.
+      // Release gratitudePower from interruptedVoiceRef tracking.
       // Without this, if the child switches tab in the 2450ms window before triggerFireworks
       // fires, handleShow will replay gratitudePower on return � which then races with
       // sceneComplete VO and its setSceneCompleteVOFinished callback never fires ? frozen.
@@ -1601,9 +1549,9 @@ const NewModakSceneMVPContent = ({
 
     const collectedCount = collectedModaks.length;
     if (collectedCount === 3) {
-      triggerMiniGesture('center', 2000);
+      triggerMiniGesture('thumbsup', 'anchored', 2000, MINI_GESTURE_ANCHORS.center);
     } else {
-      triggerMiniGesture('modak', 1500);
+      triggerMiniGesture('thumbsup', 'anchored', 1500, MINI_GESTURE_ANCHORS.modak);
     }
 
     if (collectedCount === 3) {
@@ -1726,7 +1674,7 @@ const NewModakSceneMVPContent = ({
       return;
     }
 
-    triggerMiniGesture('rock', 1800);
+    triggerMiniGesture('thumbsup', 'anchored', 1800, MINI_GESTURE_ANCHORS.rock);
     safeSetTimeout(() => {
       playRevealBloom();
       setRevealConfig({
@@ -1775,9 +1723,9 @@ const NewModakSceneMVPContent = ({
     setShowSparkle('rock-feeding');
     playEmotionalGlow();
     if (newFeedCount >= 3) {
-      triggerMiniGesture('rock', 2000);
+      triggerMiniGesture('thumbsup', 'anchored', 2000, MINI_GESTURE_ANCHORS.rock);
     } else {
-      triggerMiniGesture('rock', 1500);
+      triggerMiniGesture('thumbsup', 'anchored', 1500, MINI_GESTURE_ANCHORS.rock);
     }
 
     sceneActions.updateState({
@@ -2664,14 +2612,13 @@ const NewModakSceneMVPContent = ({
 
               {/* MINI THUMBS-UP CUE � micro rewards + reassurance across phase transitions */}
               {miniGesture.show && (
-                <div
-                  key={`mini-gesture-${miniGesture.key}`}
-                  className={`ganesha-gesture-cue modak-mini-ganesha-cue modak-mini-ganesha-cue--${miniGesture.target}`}
-                  style={{ '--mini-cue-duration': `${miniGesture.durationMs}ms` }}
-                  aria-hidden="true"
-                >
-                  <img className="modak-mini-gesture-icon" src={MINI_THUMBS_UP_ICON} alt="" />
-                </div>
+                <GaneshaGestureCue
+                  key={miniGesture.key}
+                  gestureType={miniGesture.type}
+                  position={miniGesture.position}
+                  anchor={miniGesture.anchor}
+                  size={72}
+                />
               )}
 
               {/* SYMBOL LEARNING SPARKLES */}

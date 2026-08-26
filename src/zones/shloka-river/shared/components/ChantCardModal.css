@@ -149,6 +149,15 @@
   max-width: 92%;
 }
 
+.chant-card__cta-helper {
+  margin: 18px 0 0;
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(15px, 1.1vw, 18px);
+  font-weight: 600;
+  line-height: 1.45;
+  color: rgba(61, 40, 23, 0.72);
+}
+
 .chant-card__cta {
   margin-top: clamp(22px, 1.8vw, 28px);
   border: none;

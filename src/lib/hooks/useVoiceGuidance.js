@@ -37,6 +37,12 @@ const SFX_BASE_VOLUME = {
 
 const VO_DUCK_FACTOR = 0.7; // ~30% reduction while VO is active
 
+const stripLeadingSpeechText = (text, leadingText) => {
+  if (!text || !leadingText) return text;
+  const pattern = new RegExp(`^\\s*${leadingText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*[:.!,-]*\\s*`, 'i');
+  return text.replace(pattern, '').trim();
+};
+
 /**
  * useVoiceGuidance - Hook for playing voice guidance, SFX, and background music
  *
@@ -73,6 +79,8 @@ const useVoiceGuidance = (zoneId, sceneId, {
   const activeVoiceKeyRef = useRef(null);
   const activeVoiceCallbackRef = useRef(null);
   const activeVoiceReplayRef = useRef(true);  // whether to replay on tab return
+  const activeVoiceTextOverrideRef = useRef(null);
+  const activeVoiceStripLeadingTextRef = useRef(null);
   // Belt-and-suspenders: cleanup fn for the per-audio visibilitychange listener
   const audioVisibilityCleanupRef = useRef(null);
   // Called from handleShow when no VO is replayed — scene provides context-aware hint
@@ -124,16 +132,21 @@ const useVoiceGuidance = (zoneId, sceneId, {
   // replayOnReturn: whether to replay this VO when the child returns from a tab switch.
   // Default true. Pass false for celebratory one-shot VOs where the scene has moved on
   // (e.g. mooshikaFound) so we don't replay "You found Mooshika!" after the child returns.
-  const playVoice = useCallback((key, onEnded, { replayOnReturn = true } = {}) => {
+  const playVoice = useCallback((key, onEnded, {
+    replayOnReturn = true,
+    textOverride = null,
+    stripLeadingText = null
+  } = {}) => {
     if (isHiddenRef.current) {
-      pendingVoiceRef.current = { key, onEnded };
+      pendingVoiceRef.current = { key, onEnded, options: { replayOnReturn, textOverride, stripLeadingText } };
       return;
     }
 
     const script = getVoiceScript(zoneId, sceneId, key);
     const path = getAudioPath(zoneId, sceneId, key);
+    const ttsText = stripLeadingSpeechText(textOverride || script?.text, stripLeadingText);
     if (!path) {
-      if (script?.text && typeof window !== 'undefined' && window.speechSynthesis && typeof SpeechSynthesisUtterance !== 'undefined') {
+      if (ttsText && typeof window !== 'undefined' && window.speechSynthesis && typeof SpeechSynthesisUtterance !== 'undefined') {
         audioVisibilityCleanupRef.current?.();
         audioVisibilityCleanupRef.current = null;
 
@@ -144,7 +157,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
           voiceRef.current = null;
         }
 
-        const utterance = new SpeechSynthesisUtterance(script.text);
+        const utterance = new SpeechSynthesisUtterance(ttsText);
         utterance.lang = 'en-IN';
         utterance.rate = 0.95;
         utterance.pitch = 1;
@@ -162,6 +175,8 @@ const useVoiceGuidance = (zoneId, sceneId, {
           activeVoiceKeyRef.current = null;
           activeVoiceCallbackRef.current = null;
           activeVoiceReplayRef.current = true;
+          activeVoiceTextOverrideRef.current = null;
+          activeVoiceStripLeadingTextRef.current = null;
           setIsPlaying(false);
           clearVoDuck();
         };
@@ -173,6 +188,8 @@ const useVoiceGuidance = (zoneId, sceneId, {
         activeVoiceKeyRef.current = key;
         activeVoiceCallbackRef.current = onEnded ?? null;
         activeVoiceReplayRef.current = replayOnReturn;
+        activeVoiceTextOverrideRef.current = textOverride;
+        activeVoiceStripLeadingTextRef.current = stripLeadingText;
         setIsPlaying(true);
 
         window.speechSynthesis.cancel();
@@ -188,6 +205,11 @@ const useVoiceGuidance = (zoneId, sceneId, {
     // Tear down previous audio's belt-and-suspenders listener before replacing it
     audioVisibilityCleanupRef.current?.();
     audioVisibilityCleanupRef.current = null;
+
+    // Cancel any in-flight TTS fallback so it can't queue behind this audio
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
 
     // Stop any currently playing voice - clear handlers BEFORE pausing
     // to prevent the old audio's queued 'ended' event from nulling out voiceRef
@@ -223,6 +245,8 @@ const useVoiceGuidance = (zoneId, sceneId, {
       activeVoiceKeyRef.current = null;
       activeVoiceCallbackRef.current = null;
       activeVoiceReplayRef.current = true;
+      activeVoiceTextOverrideRef.current = null;
+      activeVoiceStripLeadingTextRef.current = null;
       setIsPlaying(false);
       clearVoDuck();
     };
@@ -238,6 +262,8 @@ const useVoiceGuidance = (zoneId, sceneId, {
     activeVoiceKeyRef.current = key;
     activeVoiceCallbackRef.current = onEnded ?? null;
     activeVoiceReplayRef.current = replayOnReturn;
+    activeVoiceTextOverrideRef.current = textOverride;
+    activeVoiceStripLeadingTextRef.current = stripLeadingText;
     setIsPlaying(true);
 
     audio.play().catch(err => {
@@ -254,6 +280,9 @@ const useVoiceGuidance = (zoneId, sceneId, {
 
   // Stop voice
   const stopVoice = useCallback(() => {
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
     if (voiceRef.current) {
       // Clear handlers BEFORE pausing — prevents a queued 'ended' event on the
       // old audio from firing after the new audio is already assigned to voiceRef,
@@ -267,6 +296,8 @@ const useVoiceGuidance = (zoneId, sceneId, {
       activeVoiceKeyRef.current = null;
       activeVoiceCallbackRef.current = null;
       activeVoiceReplayRef.current = true;
+      activeVoiceTextOverrideRef.current = null;
+      activeVoiceStripLeadingTextRef.current = null;
       setIsPlaying(false);
       clearVoDuck();
     }
@@ -467,13 +498,9 @@ const useVoiceGuidance = (zoneId, sceneId, {
       return;
     }
 
-    // Stop any currently playing voice - clear handlers BEFORE pausing
-    if (voiceRef.current) {
-      voiceRef.current.onended = null;
-      voiceRef.current.onerror = null;
-      voiceRef.current.pause();
-      voiceRef.current = null;
-    }
+    // Route through stopVoice so activeVoiceKeyRef/activeVoiceReplayRef/vo-duck
+    // stay consistent — this is the shared "kill whatever's on the channel" path.
+    stopVoice();
 
     const audio = new Audio(path);
     audio.volume = voiceVolumeRef.current; // always full volume — game audio, never muted by toggle
@@ -489,6 +516,10 @@ const useVoiceGuidance = (zoneId, sceneId, {
     audio.onended = () => {
       setIsPlaying(false);
       voiceRef.current = null;
+      activeVoiceKeyRef.current = null;
+      activeVoiceCallbackRef.current = null;
+      activeVoiceTextOverrideRef.current = null;
+      activeVoiceStripLeadingTextRef.current = null;
       fireCallback();
     };
 
@@ -496,21 +527,34 @@ const useVoiceGuidance = (zoneId, sceneId, {
       console.error(`Error playing syllable ${word}/${syllable}:`, e);
       setIsPlaying(false);
       voiceRef.current = null;
+      activeVoiceKeyRef.current = null;
+      activeVoiceCallbackRef.current = null;
+      activeVoiceTextOverrideRef.current = null;
+      activeVoiceStripLeadingTextRef.current = null;
       fireCallback();
     };
 
     voiceRef.current = audio;
+    activeVoiceKeyRef.current = `syllable:${word}-${syllable}`;
+    activeVoiceCallbackRef.current = onEnded ?? null;
+    activeVoiceReplayRef.current = false; // don't replay a syllable tap after tab return
+    activeVoiceTextOverrideRef.current = null;
+    activeVoiceStripLeadingTextRef.current = null;
     setIsPlaying(true);
     audio.play().catch(err => {
       if (err.name === 'AbortError') return;
       console.error('Syllable play failed:', err);
       setIsPlaying(false);
       voiceRef.current = null;
+      activeVoiceKeyRef.current = null;
+      activeVoiceCallbackRef.current = null;
+      activeVoiceTextOverrideRef.current = null;
+      activeVoiceStripLeadingTextRef.current = null;
       fireCallback();
     });
 
     lastInteractionRef.current = Date.now();
-  }, []);
+  }, [stopVoice]);
 
   // Play a full word audio (e.g., "vakratunda")
   const playWord = useCallback((word, onEnded) => {
@@ -521,13 +565,9 @@ const useVoiceGuidance = (zoneId, sceneId, {
       return;
     }
 
-    // Stop any currently playing voice - clear handlers BEFORE pausing
-    if (voiceRef.current) {
-      voiceRef.current.onended = null;
-      voiceRef.current.onerror = null;
-      voiceRef.current.pause();
-      voiceRef.current = null;
-    }
+    // Route through stopVoice so activeVoiceKeyRef/activeVoiceReplayRef/vo-duck
+    // stay consistent — this is the shared "kill whatever's on the channel" path.
+    stopVoice();
 
     const audio = new Audio(path);
     audio.volume = voiceVolumeRef.current; // always full volume — game audio, never muted by toggle
@@ -543,6 +583,10 @@ const useVoiceGuidance = (zoneId, sceneId, {
     audio.onended = () => {
       setIsPlaying(false);
       voiceRef.current = null;
+      activeVoiceKeyRef.current = null;
+      activeVoiceCallbackRef.current = null;
+      activeVoiceTextOverrideRef.current = null;
+      activeVoiceStripLeadingTextRef.current = null;
       fireCallback();
     };
 
@@ -550,21 +594,34 @@ const useVoiceGuidance = (zoneId, sceneId, {
       console.error(`Error playing word ${word}:`, e);
       setIsPlaying(false);
       voiceRef.current = null;
+      activeVoiceKeyRef.current = null;
+      activeVoiceCallbackRef.current = null;
+      activeVoiceTextOverrideRef.current = null;
+      activeVoiceStripLeadingTextRef.current = null;
       fireCallback();
     };
 
     voiceRef.current = audio;
+    activeVoiceKeyRef.current = `word:${word}`;
+    activeVoiceCallbackRef.current = onEnded ?? null;
+    activeVoiceReplayRef.current = false; // don't replay a word playback after tab return
+    activeVoiceTextOverrideRef.current = null;
+    activeVoiceStripLeadingTextRef.current = null;
     setIsPlaying(true);
     audio.play().catch(err => {
       if (err.name === 'AbortError') return;
       console.error('Word play failed:', err);
       setIsPlaying(false);
       voiceRef.current = null;
+      activeVoiceKeyRef.current = null;
+      activeVoiceCallbackRef.current = null;
+      activeVoiceTextOverrideRef.current = null;
+      activeVoiceStripLeadingTextRef.current = null;
       fireCallback();
     });
 
     lastInteractionRef.current = Date.now();
-  }, []);
+  }, [stopVoice]);
 
   // ========================================
   // APP VISIBILITY (tab switch / phone call)
@@ -586,6 +643,8 @@ const useVoiceGuidance = (zoneId, sceneId, {
         key: activeVoiceKeyRef.current,
         onEnded: activeVoiceCallbackRef.current,
         replayOnReturn: activeVoiceReplayRef.current,
+        textOverride: activeVoiceTextOverrideRef.current,
+        stripLeadingText: activeVoiceStripLeadingTextRef.current,
       };
     }
 
@@ -608,6 +667,8 @@ const useVoiceGuidance = (zoneId, sceneId, {
     activeVoiceKeyRef.current = null;
     activeVoiceCallbackRef.current = null;
     activeVoiceReplayRef.current = true;
+    activeVoiceTextOverrideRef.current = null;
+    activeVoiceStripLeadingTextRef.current = null;
     setIsPlaying(false);
     clearVoDuck();
     stopIdleTimer();
@@ -623,21 +684,21 @@ const useVoiceGuidance = (zoneId, sceneId, {
     let voiceWillPlay = false;
 
     if (interruptedVoiceRef.current?.key) {
-      const { key, onEnded, replayOnReturn } = interruptedVoiceRef.current;
+      const { key, onEnded, replayOnReturn, textOverride, stripLeadingText } = interruptedVoiceRef.current;
       interruptedVoiceRef.current = null;
       if (replayOnReturn) {
         // 2-second pause before replay to avoid collision with hint reset
         setTimeout(() => {
-          playVoice(key, onEnded);
+          playVoice(key, onEnded, { replayOnReturn, textOverride, stripLeadingText });
         }, 2000);
         voiceWillPlay = true;
       }
     } else if (pendingVoiceRef.current) {
-      const { key, onEnded } = pendingVoiceRef.current;
+      const { key, onEnded, options } = pendingVoiceRef.current;
       pendingVoiceRef.current = null;
       // 2-second pause before replay to avoid collision with hint reset
       setTimeout(() => {
-        playVoice(key, onEnded);
+        playVoice(key, onEnded, options);
       }, 2000);
       voiceWillPlay = true;
     }

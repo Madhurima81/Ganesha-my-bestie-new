@@ -653,17 +653,17 @@ const CleanGameWelcomeScreen = ({
           {audioOn ? '🔊' : '🔇'}
         </button>
       )}
-      {isModal && (
-        <CloseButton
-          className="welcome-close-btn"
-          onClose={() => {
-            playUiTap(0.22);
-            onClose?.();
-          }}
-          label="Close welcome popup"
-        />
-      )}
       <div className={`clean-welcome-content clean-welcome-card ${isModal ? 'clean-welcome-content--modal compact' : ''}`}>
+        {isModal && (
+          <CloseButton
+            className="welcome-close-btn"
+            onClose={() => {
+              playUiTap(0.22);
+              onClose?.();
+            }}
+            label="Close welcome popup"
+          />
+        )}
         <span className="welcome-card-lotus" aria-hidden="true" />
         <ScreenHeader
           title={isModal ? modalTitle : welcomeMsg.title}
