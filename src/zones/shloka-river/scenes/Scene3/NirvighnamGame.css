@@ -198,6 +198,149 @@
   filter: drop-shadow(0 0 14px rgba(255, 220, 90, 0.8));
 }
 
+/* ── Debug layout panel, gated by ?debug in the component ─────────────── */
+.nirv-debug-toggle {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 10020;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 8px;
+  background: rgba(22, 28, 38, 0.9);
+  color: #fff;
+  padding: 9px 12px;
+  font: 700 12px/1 'Nunito', sans-serif;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.24);
+}
+
+.nirv-debug-panel {
+  position: fixed;
+  right: 18px;
+  bottom: 60px;
+  z-index: 10020;
+  width: min(360px, calc(100vw - 36px));
+  max-height: min(70vh, 560px);
+  overflow: auto;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  background: rgba(19, 24, 34, 0.94);
+  color: #f7f7f7;
+  padding: 12px;
+  font: 12px/1.35 'Nunito', sans-serif;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.35);
+}
+
+.nirv-debug-title {
+  margin-bottom: 10px;
+  font-weight: 800;
+  font-size: 13px;
+}
+
+.nirv-debug-row {
+  display: grid;
+  grid-template-columns: 78px 1fr 64px;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.nirv-debug-row:first-of-type {
+  grid-template-columns: 78px 1fr;
+}
+
+.nirv-debug-row span {
+  color: rgba(255, 255, 255, 0.76);
+  font-weight: 700;
+}
+
+.nirv-debug-row select,
+.nirv-debug-row input[type='number'] {
+  min-width: 0;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  padding: 6px 8px;
+}
+
+.nirv-debug-row input[type='range'] {
+  min-width: 0;
+}
+
+.nirv-debug-actions {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.nirv-debug-actions button {
+  flex: 1;
+  border: 0;
+  border-radius: 6px;
+  background: #f0c94a;
+  color: #201b08;
+  padding: 8px 10px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.nirv-debug-actions button:last-child {
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+}
+
+.nirv-debug-panel pre {
+  max-height: 180px;
+  overflow: auto;
+  margin: 0;
+  padding: 8px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.24);
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 10px;
+  white-space: pre-wrap;
+}
+
+.nirv-debug-marker {
+  position: absolute;
+  z-index: 10010;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(255, 255, 255, 0.86);
+  border-radius: 999px;
+  background: rgba(20, 30, 44, 0.78);
+  color: #fff;
+  padding: 4px 7px;
+  font: 800 10px/1 'Nunito', sans-serif;
+  pointer-events: none;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 0 0 2px rgba(20, 30, 44, 0.3);
+}
+
+.nirv-debug-marker::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+  background: #fff;
+}
+
+.nirv-debug-marker.is-obstacle {
+  background: rgba(114, 77, 24, 0.82);
+}
+
+.nirv-debug-marker.is-drop {
+  background: rgba(39, 109, 82, 0.82);
+}
+
+.nirv-debug-marker.is-swim {
+  background: rgba(43, 90, 148, 0.82);
+}
+
 @keyframes stageHintPulse {
   0%, 100% { transform: translate(-50%, -50%) scale(1); }
   50% { transform: translate(-50%, -50%) scale(1.05); }
