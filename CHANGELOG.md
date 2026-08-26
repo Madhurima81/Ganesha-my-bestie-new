@@ -1,6 +1,11 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
 
+## [2026-08-26]
+Marked Meaning Cave / Cave of Secrets scenes obsolete in `src/App.jsx`.
+- Current mantra gameplay, including Nirvighnam, lives under Shloka River.
+- Meaning Cave scene files are retained only as history and should not be edited for current gameplay.
+
 ## [2026-08-25]
 Checked and frozen:
 - Replay button

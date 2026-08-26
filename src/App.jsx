@@ -124,15 +124,16 @@ const SCENE_MAPPING = {
     'symbol': () => import('./zones/symbol-mountain/scenes/tusk/SymbolMountainSceneV3'),
     'final-scene': () => import('./zones/symbol-mountain/scenes/final scene/SacredAssemblySceneV8'),
   },
-  'cave-of-secrets': {
-    'vakratunda-mahakaya': () => import('./zones/meaning cave/scenes/VakratundaMahakaya/CaveSceneFixedV2'),
-    'suryakoti-samaprabha': () => import('./zones/meaning cave/scenes/suryakoti-samaprabha/SuryakotiSceneV4'), 
-    'nirvighnam-kurumedeva': () => import('./zones/meaning cave/scenes/nirvighnam-kurumedeva/NirvighnamSceneV5'),
-    'sarvakaryeshu-sarvada': () => import('./zones/meaning cave/scenes/sarvakaryeshu-sarvada/SarvakaryeshuSarvadaV7.jsx'),
-    'final-meaning-scene': () => import('./zones/meaning cave/scenes/final meaning scene/Cavescene5memoryfinale.jsx'),
-    'mantra-assembly': () => import('./zones/meaning cave/scenes/final meaning scene/Cavescene5memoryfinale.jsx'),
-
-  },
+  // OBSOLETE: Meaning Cave / Cave of Secrets scenes are retained in the repo
+  // only as history. Current mantra gameplay lives under Shloka River.
+  // 'cave-of-secrets': {
+  //   'vakratunda-mahakaya': () => import('./zones/meaning cave/scenes/VakratundaMahakaya/CaveSceneFixedV2'),
+  //   'suryakoti-samaprabha': () => import('./zones/meaning cave/scenes/suryakoti-samaprabha/SuryakotiSceneV4'),
+  //   'nirvighnam-kurumedeva': () => import('./zones/meaning cave/scenes/nirvighnam-kurumedeva/NirvighnamSceneV5'),
+  //   'sarvakaryeshu-sarvada': () => import('./zones/meaning cave/scenes/sarvakaryeshu-sarvada/SarvakaryeshuSarvadaV7.jsx'),
+  //   'final-meaning-scene': () => import('./zones/meaning cave/scenes/final meaning scene/Cavescene5memoryfinale.jsx'),
+  //   'mantra-assembly': () => import('./zones/meaning cave/scenes/final meaning scene/Cavescene5memoryfinale.jsx'),
+  // },
   // ✅ ADD: Shloka River scenes
   'shloka-river': {
     'vakratunda-grove': () => import('./zones/shloka-river/scenes/Scene1/VakratundaGroveSimplified.jsx'),
@@ -1071,13 +1072,15 @@ const handleSceneSelect = (sceneId, options = {}) => {
 const getNextScene = (zoneId, currentSceneId) => {
   const sceneProgression = {
     'symbol-mountain': ['modak', 'pond', 'symbol', 'final-scene'],
-    'cave-of-secrets': [
-      'vakratunda-mahakaya',
-      'suryakoti-samaprabha',
-      'nirvighnam-kurumedeva',
-      'sarvakaryeshu-sarvada',
-      'final-meaning-scene'
-    ],
+    // OBSOLETE: Meaning Cave / Cave of Secrets progression is disabled.
+    // Use Shloka River for current mantra scenes.
+    // 'cave-of-secrets': [
+    //   'vakratunda-mahakaya',
+    //   'suryakoti-samaprabha',
+    //   'nirvighnam-kurumedeva',
+    //   'sarvakaryeshu-sarvada',
+    //   'final-meaning-scene'
+    // ],
     // ✅ ADD: Shloka River progression - Sanskrit chant learning journey
     'shloka-river': [
       'vakratunda-grove',      // Scene 1: Learn Vakratunda
