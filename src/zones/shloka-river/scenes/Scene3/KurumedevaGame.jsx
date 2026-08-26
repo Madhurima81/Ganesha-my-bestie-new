@@ -472,7 +472,7 @@ export default function KurumedevaGame({
               left: `${KURUMEDEVA_LAYOUT.bridge.l}%`,
               top: `${KURUMEDEVA_LAYOUT.bridge.t}%`,
               width: `${KURUMEDEVA_LAYOUT.bridge.w}%`,
-              transform: `translate(-50%, -50%) rotate(${KURUMEDEVA_LAYOUT.bridge.r || 0}deg) scaleX(${KURUMEDEVA_LAYOUT.bridge.flip ? -1 : 1})`,
+              transform: `translate(-50%, -50%) rotate(${KURUMEDEVA_LAYOUT.bridge.r || 0}deg) scaleX(${KURUMEDEVA_LAYOUT.bridge.flip ? -1 : 1}) scale(1.3)`,
               opacity: 0.3 + (bridgeStep / 4) * 0.7,
               transition: 'opacity 0.6s ease',
             }}

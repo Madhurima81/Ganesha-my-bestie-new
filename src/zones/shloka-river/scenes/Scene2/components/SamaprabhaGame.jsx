@@ -294,9 +294,15 @@ export default function SamaprabhaGame({
     const xPct = ((e.clientX - rect.left) / rect.width) * 100;
     const bal = clamp((xPct - TRACK_START) / (TRACK_END - TRACK_START), 0.5, 0.92);
     setDragBalance(bal);
-    const next = currentStopRef.current + 1;
-    if (next < STOPS.length && bal <= STOPS[next].balance) {
-      advanceToStop(next);
+    // Advance through EVERY stop the sun has now passed in this move, not just the
+    // next one — so a quick drag flows smoothly instead of stalling one stop per
+    // pointer event. Syllable audio still fires per newly-lit stop (SyllableHighlight).
+    let target = currentStopRef.current;
+    while (target + 1 < STOPS.length && bal <= STOPS[target + 1].balance) {
+      target += 1;
+    }
+    if (target > currentStopRef.current) {
+      advanceToStop(target);
     }
   }, [advanceToStop]);
 
