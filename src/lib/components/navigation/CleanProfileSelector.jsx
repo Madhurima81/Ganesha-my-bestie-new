@@ -4,6 +4,7 @@ import GameStateManager from '../../services/GameStateManager';
 import PrimaryBtn from '../shared/PrimaryBtn';
 import ScreenHeader from '../shared/ScreenHeader';
 import MooshikaRideTransition from './MooshikaRideTransition';
+import InstallPromptBanner from '../onboarding/InstallPromptBanner';
 import AudioToggle from '../ui/AudioToggle/AudioToggle';
 import useAudioPreference from '../../hooks/useAudioPreference';
 import { playUiTap } from '../../services/AudioService';
@@ -269,17 +270,23 @@ const CleanProfileSelector = ({
   // RIDE TRANSITION â€” render first if active
   if (transitionStage === 'ride' && pendingProfile) {
     return (
-      <MooshikaRideTransition
-        avatarId={getAnimalId(pendingProfile.avatar)}
-        profileName={pendingProfile.name}
-        onComplete={() => {
-          const id = pendingProfile.id;
-          setTransitionStage(null);
-          setPendingProfile(null);
-          setIsCreatingProfile(false);
-          onProfileSelect(id);
-        }}
-      />
+      <>
+        <MooshikaRideTransition
+          avatarId={getAnimalId(pendingProfile.avatar)}
+          profileName={pendingProfile.name}
+          onComplete={() => {
+            const id = pendingProfile.id;
+            setTransitionStage(null);
+            setPendingProfile(null);
+            setIsCreatingProfile(false);
+            onProfileSelect(id);
+          }}
+        />
+        {/* Onboarding step 6 — PWA install nudge. Fires right after the child profile
+            is created (parent still confirmed present here), before the handoff to the
+            child. Dismissible banner, never a blocking modal; self-hides after 2 declines. */}
+        <InstallPromptBanner />
+      </>
     );
   }
 
