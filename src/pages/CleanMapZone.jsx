@@ -1035,6 +1035,21 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
   const editorTouchedRef = useRef(false);
   const isMuted = !isAudioOn;
 
+  // Freemium extension point: Day-3-or-later return is the other paywall-trigger
+  // moment (alongside Zone 1 completion in GameStateManager.unlockNextScene). No
+  // paywall UI is built yet — see PaywallManager.js — this just wires the call site.
+  // Runs once per map mount, not part of the onboarding sequence.
+  useEffect(() => {
+    const profile = GameStateManager.getCurrentProfile?.();
+    if (!profile) return;
+    import('../lib/services/PaywallManager').then(({ checkPaywallTrigger, isDayThreeOrLaterReturn }) => {
+      if (isDayThreeOrLaterReturn(profile)) {
+        checkPaywallTrigger({ reason: 'day3-return', profile });
+      }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     if (!editorTouchedRef.current) return;
     try {

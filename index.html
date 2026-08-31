@@ -42,23 +42,7 @@
     
     <!-- PWA Service Worker registered automatically by vite-plugin-pwa -->
 
-    <!-- Install Prompt Handler -->
-    <script>
-      let deferredPrompt;
-      
-      window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        console.log('📱 PWA: Install prompt ready');
-        
-        // You can show a custom install button here
-        // For now, browser will show its own install UI
-      });
-      
-      window.addEventListener('appinstalled', () => {
-        console.log('🎉 PWA: App installed successfully!');
-        deferredPrompt = null;
-      });
-    </script>
+    <!-- Install prompt handling lives in src/lib/services/PwaInstallManager.js,
+         imported app-wide from main.jsx, so there is a single source of truth. -->
   </body>
 </html>

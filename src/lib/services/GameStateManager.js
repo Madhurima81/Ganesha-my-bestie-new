@@ -246,6 +246,16 @@ scenes: ['family-tree', 'favorite-food', 'dreams-wishes', 'my-indian-story']
         
         if (allCompleted) {
           console.log('🎉 DISNEY: Unlocking next zone:', nextZoneId);
+
+          // Freemium extension point: Zone 1 (symbol-mountain) is the free zone, so
+          // completing it is the first paywall-trigger moment. See PaywallManager.js —
+          // no UI is built yet, this just wires the call site.
+          if (zoneId === 'symbol-mountain') {
+            import('./PaywallManager').then(({ checkPaywallTrigger }) => {
+              checkPaywallTrigger({ reason: 'zone1-complete', profile: this.getCurrentProfile() });
+            });
+          }
+
           progress.zones[nextZoneId].unlocked = true;
           
           // Unlock first scene in next zone
