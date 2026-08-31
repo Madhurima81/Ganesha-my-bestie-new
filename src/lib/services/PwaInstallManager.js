@@ -7,6 +7,24 @@
 const DISMISS_COUNT_KEY = 'pwaInstallDismissCount';
 const MAX_DISMISSALS = 2;
 
+// iOS Safari never fires `beforeinstallprompt` — there is no programmatic install
+// trigger at all there, only the manual Share -> Add to Home Screen path. So instead
+// of waiting on an event that will never come, detect iOS Safari directly and let
+// InstallPromptBanner render visual instructions instead of an "Install" button.
+export function isIOS() {
+  if (typeof navigator === 'undefined') return false;
+  const ua = navigator.userAgent || navigator.vendor || '';
+  const isAppleMobile = /iPad|iPhone|iPod/.test(ua) ||
+    // iPadOS 13+ reports as "MacIntel" with touch support — the classic iPad sniff misses it.
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  return isAppleMobile && !window.MSStream;
+}
+
+export function isStandalone() {
+  if (typeof window === 'undefined') return false;
+  return window.matchMedia?.('(display-mode: standalone)')?.matches || window.navigator?.standalone === true;
+}
+
 class PwaInstallManager {
   constructor() {
     this.deferredPrompt = null;
@@ -29,6 +47,14 @@ class PwaInstallManager {
 
   isAvailable() {
     return !!this.deferredPrompt;
+  }
+
+  // True when we should show SOME install nudge — either the real Chrome/Android
+  // prompt, or (on iOS Safari, which has no such prompt) the manual instructions.
+  shouldShowAnyNudge() {
+    if (this.hasExhaustedDismissals()) return false;
+    if (isStandalone()) return false; // already installed
+    return this.isAvailable() || isIOS();
   }
 
   // Subscribe to prompt-availability changes. Returns an unsubscribe function.
