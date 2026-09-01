@@ -153,33 +153,38 @@ export default function VakratundaRescueGame({
   const [selectedObstacleId, setSelectedObstacleId] = useState(DEFAULT_OBSTACLES[0].id);
   const [selectedRouteNodeIndex, setSelectedRouteNodeIndex] = useState(0);
   const [layoutCopyStatus, setLayoutCopyStatus] = useState('');
+  // Idle-hint timing is measured from when the intro VO finishes, not from
+  // when the trace phase starts. Otherwise the first hint's VO cancels the
+  // still-playing intro line on the shared speech channel.
+  const [introVoDone, setIntroVoDone] = useState(false);
 
   const stageRef = useRef(null);
   const debugDragRef = useRef(null);
   const debugPanelDragRef = useRef(null);
   const timers = useRef([]);
   const isPausedRef = useRef(isPaused);
-  const vakHintVoiceRef = useRef({ phase: null, level: 0 });
   const wrongPulseTimeoutRef = useRef(null);
   const traceCompletedRef = useRef(false);
+  // The "drag to the glow" line plays at most once for the whole game.
+  const hasPlayedGlowVoRef = useRef(false);
 
   // Progressive route help. The child meets each section with NOTHING drawn
   // ahead — not at game start, not when they start dragging. Discovery first,
-  // then escalate only on genuine idle:
-  //   ~2.5s idle -> soft glow ring at the next opening        (hintLevel 1)
-  //   ~6s idle   -> short dotted curve for THIS section only  (hintLevel 2)
-  //   ~11s idle  -> GestureDemo traces that section from the  (hintLevel 3)
-  //                 frog's CURRENT position
+  // then escalate only on genuine idle (timed from the intro VO ending):
+  //   ~3s idle  -> soft glow ring at the next opening        (hintLevel 1)
+  //   ~8s idle  -> short dotted curve for THIS section only  (hintLevel 2)
+  //   ~14s idle -> GestureDemo traces that section from the  (hintLevel 3)
+  //               frog's CURRENT position
   // The cycle restarts on real progress (checkpoint cleared), not on every
   // random touch, so repeated failed starts don't keep deferring the help.
   const { hintLevel, markInteraction } = useRepeatedHintCycle({
-    enabled: isActive && !isPaused && phase === 'trace',
+    enabled: isActive && !isPaused && phase === 'trace' && introVoDone,
     stageKey: phase,
-    initialDelay: 2500,
+    initialDelay: 3000,
     pulseCountBeforeEscalation: 2,
-    pulseInterval: 1600,
-    level2Delay: 6000,
-    level3Delay: 11000,
+    pulseInterval: 1800,
+    level2Delay: 8000,
+    level3Delay: 14000,
   });
 
   const clearTimers = useCallback(() => {
@@ -255,6 +260,8 @@ export default function VakratundaRescueGame({
     setObstacles((prev) => (prev.length ? prev : cloneObstacles()));
     setRouteNodes((prev) => (prev.length ? prev : cloneRouteNodes()));
     setFamilyPoint({ x: POS.family.l, y: POS.family.t });
+    setIntroVoDone(false);
+    hasPlayedGlowVoRef.current = false;
   }, [clearTimers, onStageChange]);
 
   const startTraceCourse = useCallback(() => {
@@ -264,8 +271,11 @@ export default function VakratundaRescueGame({
     setPhasePads([]);
     setFrogHopPoint(routeNodes[0]);
     setFrogSnapping(false);
-    playSceneLine?.('scene10_vak_intro');
-  }, [onStageChange, playSceneLine, routeNodes]);
+    // Start the idle-hint clock only once this line finishes. Safety timer in
+    // case the browser drops speechSynthesis 'end' (seen on iOS Safari).
+    playSceneLine?.('scene10_vak_intro', () => setIntroVoDone(true));
+    after(9000, () => setIntroVoDone(true));
+  }, [after, onStageChange, playSceneLine, routeNodes]);
 
   useEffect(() => {
     if (!isActive) return;
@@ -448,23 +458,18 @@ export default function VakratundaRescueGame({
     setFrogSnapping(false);
   }, [isPaused]);
 
-  useEffect(() => {
-    vakHintVoiceRef.current = { phase, level: 0 };
-  }, [phase]);
-
+  // Hint escalation (idle timed from the intro VO ending):
+  //   Level 1 -> drag GestureDemo only. Silent. Teaches "you can drag me".
+  //   Level 2 -> glow ring at the next opening + gesture now points at it,
+  //             and the "drag to the glow" line plays ONCE for the whole game.
+  //   Level 3 -> the short dotted path for this section appears. Silent.
   useEffect(() => {
     if (!isActive) return;
     if (phase !== 'trace') return;
-    if (hintLevel <= 0) return;
-
-    const last = vakHintVoiceRef.current;
-    if (last.phase === phase && last.level === hintLevel) return;
-
-    vakHintVoiceRef.current = { phase, level: hintLevel };
-    // Level 1 now carries the glow ring, so the "look for the glow" nudge
-    // belongs here; level 2 surfaces the curve; level 3 is the gesture.
-    if (hintLevel === 1) playSceneLine?.('hintLookForGlow');
-    if (hintLevel >= 3) playSceneLine?.('hintKeepBuildingPath');
+    if (hintLevel < 2) return;
+    if (hasPlayedGlowVoRef.current) return;
+    hasPlayedGlowVoRef.current = true;
+    playSceneLine?.('hintLookForGlow');
   }, [hintLevel, isActive, phase, playSceneLine]);
 
   if (!isActive) return null;
@@ -489,19 +494,27 @@ export default function VakratundaRescueGame({
     : 0;
 
   const hintRingPoint = currentRoute?.nodes[guideCheckpointIndex] ?? targetPoint;
-  const showGesture = isTraceStep && !isTracing && hintLevel >= 3;
-  const showHintRing = isTraceStep && !isTracing && (hintLevel >= 1 || wrongPathPulse);
 
-  // The dotted guide is drawn ONLY on real idle (hintLevel >= 2) and ONLY for
-  // the current little section (frog's position -> next opening). Nothing is
-  // drawn at game start or just because the child started dragging, and
-  // already-completed sections are never redrawn.
-  const revealLegAhead = hintLevel >= 2;
+  // Escalation: L1 gesture only · L2 adds the glow ring · L3 adds the dotted path.
+  const showGesture = isTraceStep && !isTracing && hintLevel >= 1;
+  const showHintRing = isTraceStep && !isTracing && (hintLevel >= 2 || wrongPathPulse);
+
+  // The dotted path for the current little section (frog's position -> next
+  // opening) appears only at L3. Nothing is drawn before that — not at game
+  // start, not on drag — and completed sections are never redrawn.
+  const revealLegAhead = hintLevel >= 3;
   const guideNodes = revealLegAhead && currentRoute
     ? currentRoute.nodes.slice(activeSegment, guideCheckpointIndex + 1)
     : [];
   const guidePath = guideNodes.map((point) => `${point.x},${point.y}`).join(' ');
-  const gestureTargetPoint = hintRingPoint;
+
+  // L1: a short drag away from the frog (teach the mechanic, don't trace the
+  // route). L2+: the gesture points straight at the glow ring.
+  const gestureNudgePoint = {
+    x: currentSegmentStart.x + (hintRingPoint.x - currentSegmentStart.x) * 0.22,
+    y: currentSegmentStart.y + (hintRingPoint.y - currentSegmentStart.y) * 0.22,
+  };
+  const gestureTargetPoint = hintLevel >= 2 ? hintRingPoint : gestureNudgePoint;
   const visiblePads = [...committedPads, ...phasePads];
   const debugPads = showDebugPanel && currentRoute
     ? currentRoute.checkpointIndices.map((index) => ({
