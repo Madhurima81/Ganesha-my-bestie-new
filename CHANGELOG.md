@@ -1,6 +1,201 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
 
+## [2026-08-29] — Shloka River reward ladder
+**Touched:** src/lib/components/animation/SparkleAnimation.jsx + .css,
+src/zones/shloka-river/scenes/Scene1/VakratundaGroveSimplified.jsx + .css,
+src/zones/shloka-river/scenes/Scene2/SuryakotiBankSimplified.jsx + .css,
+src/zones/shloka-river/scenes/Scene3/NirvighnamChantSimplified.jsx + .css,
+src/zones/shloka-river/scenes/scene4/SarvakaryeshuChantSimplified.jsx
+**Changed:** Locked a three-tier reward ladder so interactions stop competing at
+the same volume.
+- Root cause of the "red dots": `SparkleAnimation type="magic"` forces a
+  transparent fill and a `var(--sparkle-color, purple)` glow — the passed gold
+  colour was ignored. Added a new `dust` type (small gold motes that rise + fade)
+  and switched the micro-win bursts to it; `star` (real gold clip-path star) is
+  now the discovery burst.
+- Micro-action (syllable lit / correct tap): local **Rising Dust** only, in the
+  centred 46%×42% play-area box, 1600ms window. Removed the per-action
+  `triggerMiniGesture('thumbsup')` from `handleMicroWin` in all four wrappers.
+- Word/symbol discovery (`handlePhaseComplete`): one **Golden Star** (new
+  `showWordStar` state + `.<scene>-word-star` centred 72%×60% overlay, z-index
+  140) + the existing single `blessing` Ganesha gesture. Kept `blessing` rather
+  than swapping to `thumbsup` — it's the purpose-built Sanskrit-moment cue per
+  useMiniGesture's tier map; flag if you want it literally thumbs-up.
+- Power/symbol overlay: no extra major FX added (word-complete already celebrated).
+- Scene complete: existing `final-fireworks` / SceneCompletionCelebration
+  untouched.
+- Exception — Sarvakaryeshu & Sarvada (scene4 wrapper): each correct answer *is*
+  the discovery, so `handleMicroWin` there fires **Golden Star** per correct
+  answer (not dust), gesture still once at `handlePhaseComplete`.
+- Wrong actions: no celebratory FX (unchanged).
+**Point-of-finger localisation (done):** each wrapper now records the last
+pointer-down position as a % of the `*-scene-background` / `river-background`
+div (`onPointerDownCapture` + `fxBgRef` + `recordPoint`), and `handleMicroWin`
+stashes it into `sparklePos`. The `*-tap-sparkles` div then gets an inline
+`left/top` at that point (32% box, 42% for the scene4 star) instead of the
+centred fallback; `sparklePos` null (keyboard / autoplay) keeps the centred box.
+No changes needed in the game components — the pointer-down that drove the
+micro-win is the same gesture, milliseconds earlier.
+**Open:** Sarvada's small `sarvada-found-burst` local ring left in place
+alongside the new Golden Star. Pre-existing `no-empty` lint in
+NirvighnamChantSimplified is not from this work.
+
+## [2026-08-29]
+**Touched:** src/dev/webSpeechScripts.js, src/dev/GameTestHarness.jsx,
+src/zones/shloka-river/scenes/Scene1/VakratundaGroveSimplified.jsx,
+src/zones/shloka-river/scenes/Scene1/MahakayaRescueGame.jsx,
+src/zones/shloka-river/scenes/Scene2/SuryakotiBankSimplified.jsx,
+src/zones/shloka-river/scenes/Scene2/components/SamaprabhaGame.jsx,
+src/zones/shloka-river/scenes/Scene3/NirvighnamChantSimplified.jsx,
+src/zones/shloka-river/scenes/scene4/SarvakaryeshuChantSimplified.jsx,
+src/zones/shloka-river/scenes/scene4/SarvadaGame.jsx
+**Changed:** Shloka River VO cleanup, two phases. Locked system rule: opening VO =
+problem + goal; on-screen hint / GestureDemo = how; idle VO = reminder of what's
+still unsolved; never narrate an animation the child can already see.
+- Phase 1 — one spoken setup line per game. Rewrote all 8 opening VOs (Vakratunda,
+  Mahakaya, Suryakoti, Samaprabha, Nirvighnam, Kurumedeva, Sarvakaryeshu, Sarvada)
+  in both the scene-wrapper `playGuidanceVoice` maps and the harness copy. Added a
+  real `scene11_sama_intro` key (Samaprabha slot previously misfired
+  `samaprabhaSetup`, the ending line) and repointed harness INTRO_VO to it.
+  Removed the auto-chained second instruction VO after every intro: Mahakaya
+  (`scene10_maha_drag_rope`), Suryakoti (`scene11_surya_rub`), Nirvighnam
+  (`scene12_nir_drag`), Kurumedeva (`scene12_kuru_tap`), Sarvada
+  (`scene14_morning`). Vakratunda's duplicate setup lines
+  (`scene10_vak_frog_cross`, `scene10_vak_make_path`) collapsed to the single
+  intro text. Added the missing on-screen `.sama-hint` element to SamaprabhaGame
+  (CSS already existed) so softening its VO doesn't leave a stuck child with only
+  a glow. Also deleted a stray `))}` at MahakayaRescueGame ~L951 (leftover from an
+  earlier uncommitted rewrite) that was a hard parse error.
+- Phase 2 — stripped gesture narration from idle-hint VO across the 5 scenes,
+  replaced with goal reminders (e.g. "Drag it to the glowing circle" →
+  "See the glow? That's the way around"; "Rub the darkness away" → "The bunny's
+  still lost — light the next spot"; "Drag the obstacle away" → "Something's still
+  blocking the turtle's way"; "Drag the help bubble to the glowing friend" →
+  "Who can Beaver ask for help next?"). Mahakaya `scene10_maha_pull_down` VO cut
+  entirely (call removed + key emptied); `scene10_maha_log_moving` emptied.
+  Sarvakaryeshu VO left as-is (already goal-framed). `scene14_find_symbol` kept.
+**Open:** Docs NAVIGATION.md / CONTENT_AUDIT.md not refreshed for these VO edits.
+GestureDemo is wired in 6/8 Shloka games — missing from SarvakaryeshuGame and
+SarvadaGame (both rely on useRepeatedHintCycle + a rescue glow-ring instead);
+ShlokaRiverFinale has no mechanic so needs none. All 8 touched files parse clean;
+remaining eslint errors are pre-existing unused-var noise.
+
+## [2026-08-28]
+**Touched:** src/zones/shloka-river/scenes/Scene2/components/SamaprabhaGame.jsx,
+src/zones/shloka-river/scenes/Scene2/components/SamaprabhaGame.css
+**Changed:** Reworked the Samaprabha game per annotate pin
+(samaprabha-2026-08-28T09-49-39-963Z.json). Mechanic is now tap, not drag: the
+child taps the next glowing circle in sequence, which slides the sun onto it and
+plays that syllable. Circles now map 1:1 to the four syllable sounds
+(Sa / ma / pra / bha) — added the 4th, removed the separate start dot; sun starts
+off to the side at START_BALANCE. Snap dots are real `<button>`s (styled reset,
+64px hit area kept). Dropped all pointer drag handlers / drag state / sama-handle-hit;
+GestureDemo switched from "drag" to "tap" on the first circle.
+**Open:** INTRO_VO for samaprabha in GameTestHarness still points at
+`samaprabhaSetup` (off the sceneNN_<word>_intro naming pattern) — verify it's a
+real registered VO line.
+
+## [2026-08-26]
+**Touched:** src/zones/shloka-river/scenes/scene4/SarvadaGame.jsx, src/zones/shloka-river/scenes/scene4/SarvadaGame.css
+**Changed:** Rebuilt the Sarvada find-symbol phase. Memory image now renders in a
+true 4:3 frame (no letterbox, tap coords map 1:1 to the picture). Removed the
+pre-placed "mouse marker" — the child taps anywhere on the image; a tap inside the
+per-phase circular zone flies the symbol up to the syllable tile and plays the
+syllable. Off-zone taps do a gentle shake, no punish; rescue glow-ring still fires
+after the 3rd hint. Added a "Tap Zone Debug" panel (bottom-left) with X/Y/Size
+sliders per phase, live dashed-circle overlay, and Copy symbolSpot config.
+Addressed all annotate pins (sarvada latest.json):
+- Fly slowed to 1.5s; syllable sound now fires on tile-touch (fly onAnimationEnd),
+  matching Sarvakaryeshu.
+- Boat-Ganesha moved to the bow (front) of the boat, z-index above the hull.
+- Preload all 3 phase bgs + warmer base colour (#241a33) so crossfades don't
+  flash blue between morning/afternoon/night.
+- Harness bg for the Sarvada entry was importing sarvada/night.webp — pointed it
+  at morning.webp, which is why the stage flashed night before the scene painted.
+- End reveal adds the house story line "Morning, afternoon, night — always."
+  under SARVADA / Always (copy from powerConfig.sarvada in the parent scene).
+**Open:** Zone coords still at old guessed values — tune each phase via the
+debug panel, paste copied config into PHASES_CONFIG.
+
+---
+
+Marked Meaning Cave / Cave of Secrets scenes obsolete in `src/App.jsx`.
+- Current mantra gameplay, including Nirvighnam, lives under Shloka River.
+- Meaning Cave scene files are retained only as history and should not be edited for current gameplay.
+
+## [2026-08-29]
+**Touched:** NewModakSceneV7.jsx, PondSceneSimplifiedV4.jsx, SymbolMountainSceneV3.jsx, SacredAssemblySceneV8.jsx, voiceGuidance.js
+**Changed:** Rewrote all Symbol Mountain VO to the "problem -> mechanic (2nd sentence) -> child acts -> symbol meaning" rule. Idle hints now restate the goal only, no mechanic repeat. Retargeted affirmations to match each mechanic: Modak "I can feel peaceful inside", Belly "I have room for all my feelings", Trunk "I can find another way", Eyes "I notice what's around me". Scene 04 opening/onboarding/correct/wrong lines simplified; final fireworks chain cut from 3 lines to 2 (recap + meaning, 700ms gap) in triggerFinalCelebration(). Scene 04 changed keys had their `file:` .wav refs stripped to force TTS until re-cut.
+**Open:** Scene 03 has no `correct` VO key — per-obstacle correct feedback in the Tusk sub-game is sound-only (playChime); adding "Yes — that was the right choice." needs an onCorrect callback prop on the Tusk game component. Scene 04 `finalNowComplete` key now unused (kept in config, out of the chain). Recorded .wav files for Scene 04 are stale and need re-recording to the new script.
+
+## [2026-08-29]
+**Touched:** VO_FLOW.md (new), src/lib/config/content/voiceGuidance.js,
+src/zones/about-me-hut/family-tree/Familytreegame.jsx,
+src/zones/about-me-hut/food/Favoritefoodgame.jsx,
+src/zones/about-me-hut/enjoy/ObstacleRemoverGame.jsx,
+src/zones/about-me-hut/indian-story/MyIndianStoryGame.jsx
+**Changed:** Added VO_FLOW.md — the locked four-beat VO rule (setup = what's
+happening + why it matters / mechanic = one short action sentence / idle = goal
+reminder, not repeated instructions / completion = what the child discovered or
+made happen) plus the full About Me Hut rewrite tables and locked completion VOs.
+Applied the rewrite to all 4 About Me Hut scenes:
+- Family Tree: `voiceGuidance.js` about-me-hut/family-tree (welcome, tapCircle,
+  correct*, fact*, hintTap, allPlaced, transition, childStart, childHint,
+  childProgress* all collapsed to "Your family tree is growing.",
+  childProgressComplete, sceneComplete) + inline `FINAL_VO`. Facts trimmed to one
+  clause each; removed "gives the best hugs". Per-spot `IDLE_HINT_VO` clues
+  (trident / golden sari / peacock / elephant head) kept — they name the person,
+  not the mechanic.
+- Favorite Things: inline `VOICE_LINES`. "best friend" -> "a friend you care
+  about"; "We like so many fun things!" -> connection-through-sharing line.
+- Dreams & Wishes: inline `VOICE_LINES`. Wishes reframed as "things we hope to
+  make better"; killed "Let's make the world smile!" and "Keep dreaming!";
+  garden used consistently for wish 3; ending now ties both halves together.
+- My Indian Story: inline `VOICE`. Removed "feels right" (implied correct
+  emotion); "languages you speak" -> "languages you use or hear"; finale states
+  what the child did instead of generic "special".
+- Stripped `file:` refs on every changed voiceGuidance.js key (family-tree +
+  the 3 opening lines) to force TTS to the new script until re-cut.
+**Open:** All recorded .wav/.mp3 for About Me Hut VO are now stale vs the new
+script and need re-recording. Family Tree `childProgressStart/Small/Mid/NearFull`
+are intentionally identical now — if variety is wanted later, write 4 distinct
+goal-framed lines. Docs NAVIGATION.md / CONTENT_AUDIT.md not refreshed.
+
+## [2026-08-25]
+Checked and frozen:
+- Replay button
+- Audio toggle
+- Home and zone badge
+- Sparkles gesture
+- Demo cue
+- Hint SFX
+- The game welcome screen
+- Inner mandala
+
+## [2026-08-31]
+**Touched:** src/lib/services/sceneAnalytics.js (new), src/lib/services/CloudSync.js, src/App.jsx, src/zones/symbol-mountain/scenes/modak/NewModakSceneV7.jsx
+**Changed:** Added internal-only scene/mini-game replay-frequency analytics, fully
+decoupled from ProgressManager (no shared state, no imports). New module
+`sceneAnalytics.js` dedupes (4s) + debounces (2s) entries and calls a Supabase
+`increment_scene_play` RPC (atomic upsert-increment) on a NEW `scene_plays` table
+keyed (user_id, child_id, scene_id, game_id). Reuses CloudSync's anonymous auth
+identity via two new read-only accessors on CloudSync (`whenReady()`,
+`getUserId()`); `init()` is now memoised. Fails silently (console.warn only),
+never blocks gameplay. Data is NOT surfaced in any app UI — query via Supabase
+dashboard. App.jsx fires one whole-scene `_scene` ping per scene load; per-mini-game
+wiring done as a reference on NewModakSceneV7 (findMooshika / collectModaks /
+shareWithGanesha).
+**Open:**
+- SQL not yet run — table + RLS policy + `increment_scene_play()` function are in a
+  comment block at the top of `sceneAnalytics.js`; must be pasted into the Supabase
+  SQL Editor before any rows are written.
+- Column naming: spec asked camelCase; implemented snake_case to match existing
+  `profiles`/`progress` tables. Logical mapping documented in the module header.
+- Per-mini-game wiring is done only for Modak (scene 1). Remaining 21 scenes still
+  fire only the whole-scene `_scene` ping from App.jsx — extend per scene using
+  each scene's own phase model (Modak useEffect is the template).
+
 <!-- Example entry — delete once real entries start
 ## [2026-08-22]
 **Touched:** DailyDarePopup.jsx, dareTracker.js

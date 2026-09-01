@@ -2,31 +2,34 @@ import React, { useEffect, useRef, useState } from 'react';
 import './ProgressPopup.css';
 import { symbolCardContent } from '../../../zones/symbol-mountain/shared/components/symbolCardContent';
 import CloseButton from '../../../components/CloseButton';
+import SanskritVoiceRecorder from '../audio/SanskritVoiceRecorder';
+import ChantCardModal from '../../../zones/shloka-river/shared/components/ChantCardModal';
+import { chantCardContent } from '../../../zones/shloka-river/shared/components/chantCardContent';
 
 const AUDIO_PREF_KEY = 'ganesha_audio_enabled';
 
 const GRID_OPEN_VO = 'These are your Ganesha powers. Tap any one to remember.';
 
 const GRID_TAP_VO = {
-  modak: 'Modak... I am full of joy.',
-  mooshika: 'Mooshika... I can focus.',
-  belly: 'Belly... I feel safe inside.',
-  lotus: 'Lotus... I stay calm.',
+  modak: 'Modak... I have joy inside me.',
+  mooshika: 'Mooshika... I can guide my busy thoughts.',
+  belly: 'Belly... I have room for all my feelings.',
+  lotus: 'Lotus... I can stay calm when things get messy.',
   trunk: 'Trunk... I find my way.',
-  eye: 'Eyes... I see clearly.',
+  eye: 'Eyes... I notice the good around me.',
   ear: 'Ears... I listen with care.',
-  tusk: 'Tusk... I finish what I start.',
+  tusk: 'Tusk... I stay focused on what is true.',
 };
 
 const DETAIL_VO = {
-  modak: 'Think of one small moment that made you smile today.',
-  mooshika: 'Pick one tiny thing. Look at it for 3 seconds.',
-  belly: 'Hand on belly. Breathe in... breathe out.',
-  lotus: 'Close your eyes. One slow breath in... and out.',
-  trunk: "Think of something hard today. What's another way?",
-  eye: 'Look around. Find one beautiful thing.',
+  modak: 'Think of one small thing you did today that made you feel good inside.',
+  mooshika: 'Pick one thing near you and give it all your attention for 3 seconds.',
+  belly: 'Think of two feelings you had today. Can you make room for both?',
+  lotus: 'Notice one calm feeling inside, even if things around you are busy.',
+  trunk: "Think of something that didn't go your way. What is another way?",
+  eye: 'Look around. Find one small thing that looks good or beautiful to you.',
   ear: 'Close your eyes. Find the quietest sound.',
-  tusk: 'Pick one small thing you can finish today.',
+  tusk: 'What is one small step that helps you stay focused on what matters?',
 };
 
 export const PETAL_TO_SCENE = {
@@ -114,6 +117,15 @@ const getDisplayName = (name) => {
   if (!name) return '';
   return String(name).trim();
 };
+
+const normalizeChantWordId = (value) => (
+  (value?.id || value?.name || value || '')
+    .toString()
+    .toLowerCase()
+    .replace(/-chant$/, '')
+    .replace(/\s+/g, '')
+    .trim()
+);
 
 const DetailCard = ({
   item,
@@ -212,6 +224,7 @@ const DetailCard = ({
 const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, directItemId = null }) => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [detailOpen, setDetailOpen] = useState(false);
+  const [showChantPractice, setShowChantPractice] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isBreathingCueActive, setIsBreathingCueActive] = useState(false);
   const [audioError, setAudioError] = useState('');
@@ -299,6 +312,7 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
       stopVoice();
       setSelectedItem(null);
       setDetailOpen(false);
+      setShowChantPractice(false);
       setAudioError('');
       setLockedHint('');
       setLockedTileId('');
@@ -340,6 +354,22 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
     setLockedHint('');
     setLockedTileId('');
     const isCompleted = checkIsCompleted(item);
+
+    if (type === 'chants') {
+      const chantWordId = normalizeChantWordId(item);
+      setShowChantPractice(false);
+      setSelectedItem({
+        ...item,
+        chantWordId,
+      });
+      setDetailOpen(false);
+      const openTimer = setTimeout(() => setDetailOpen(true), 0);
+      voTimersRef.current.push(openTimer);
+      if (!isCompleted) {
+        return;
+      }
+      return;
+    }
 
     if (type === 'symbols') {
       const symbolId = normalizeSymbolId(item);
@@ -417,6 +447,7 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
 
   const closeDetail = () => {
     setAudioError('');
+    setShowChantPractice(false);
     if (directItemId) {
       stopVoice();
       onClose?.();
@@ -462,14 +493,57 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
 
   const handleCloseAll = () => {
     stopVoice();
+    setShowChantPractice(false);
     setAudioError('');
     onClose?.();
+  };
+
+  const renderChantFlow = () => {
+    if (!selectedItem) return null;
+
+    const chantWordId = selectedItem.chantWordId || normalizeChantWordId(selectedItem);
+    const chantContent = chantCardContent[chantWordId];
+    if (!chantContent) return null;
+
+    if (showChantPractice) {
+      return (
+        <SanskritVoiceRecorder
+          word={chantWordId}
+          syllables={chantContent.syllables}
+          chantResult={null}
+          appIcon={selectedItem.image}
+          savedRecordings={{}}
+          allowSkip
+          onSkip={closeDetail}
+          stopAudio={() => {
+            document.querySelectorAll('audio').forEach((audio) => {
+              audio.pause();
+              audio.currentTime = 0;
+            });
+          }}
+          title="Practice Chanting"
+          prompt="Listen to the word and try saying"
+          onComplete={closeDetail}
+        />
+      );
+    }
+
+    return (
+      <ChantCardModal
+        wordId={chantWordId}
+        onPracticeChant={() => setShowChantPractice(true)}
+        onClose={closeDetail}
+      />
+    );
   };
 
   if (!isOpen) return null;
 
   if (directItemId) {
     if (!selectedItem) return null;
+    if (type === 'chants') {
+      return renderChantFlow();
+    }
     const directLocked = !checkIsCompleted(selectedItem);
     return (
       <DetailCard
@@ -548,7 +622,9 @@ const ProgressPopup = ({ isOpen, onClose, title, items, completedItems, type, di
         <button className="pp-action-btn" onClick={handleCloseAll}>Continue</button>
       </div>
 
-      {selectedItem ? (
+      {selectedItem && type === 'chants' ? renderChantFlow() : null}
+
+      {selectedItem && type !== 'chants' ? (
         <DetailCard
           item={selectedItem}
           type={type}

@@ -29,6 +29,7 @@ import SimpleSceneManager from './lib/services/SimpleSceneManager';
 import { getPendingKindnessCheck, resolveKindnessCheck } from './lib/services/KindnessJournal';
 // initializeSounds replaced by initAudioService() in main.jsx (AudioService/Howler)
 import { Analytics } from './lib/services/analytics';
+import { sceneAnalytics } from './lib/services/sceneAnalytics';
 import { preloadImages, avatarImagePaths } from './lib/utils/preloadImages';
 
 const AVATAR_IDS = ['monkey', 'peacock', 'squirrel', 'tiger'];
@@ -125,15 +126,16 @@ const SCENE_MAPPING = {
     'symbol': () => import('./zones/symbol-mountain/scenes/tusk/SymbolMountainSceneV3'),
     'final-scene': () => import('./zones/symbol-mountain/scenes/final scene/SacredAssemblySceneV8'),
   },
-  'cave-of-secrets': {
-    'vakratunda-mahakaya': () => import('./zones/meaning cave/scenes/VakratundaMahakaya/CaveSceneFixedV2'),
-    'suryakoti-samaprabha': () => import('./zones/meaning cave/scenes/suryakoti-samaprabha/SuryakotiSceneV4'), 
-    'nirvighnam-kurumedeva': () => import('./zones/meaning cave/scenes/nirvighnam-kurumedeva/NirvighnamSceneV5'),
-    'sarvakaryeshu-sarvada': () => import('./zones/meaning cave/scenes/sarvakaryeshu-sarvada/SarvakaryeshuSarvadaV7.jsx'),
-    'final-meaning-scene': () => import('./zones/meaning cave/scenes/final meaning scene/Cavescene5memoryfinale.jsx'),
-    'mantra-assembly': () => import('./zones/meaning cave/scenes/final meaning scene/Cavescene5memoryfinale.jsx'),
-
-  },
+  // OBSOLETE: Meaning Cave / Cave of Secrets scenes are retained in the repo
+  // only as history. Current mantra gameplay lives under Shloka River.
+  // 'cave-of-secrets': {
+  //   'vakratunda-mahakaya': () => import('./zones/meaning cave/scenes/VakratundaMahakaya/CaveSceneFixedV2'),
+  //   'suryakoti-samaprabha': () => import('./zones/meaning cave/scenes/suryakoti-samaprabha/SuryakotiSceneV4'),
+  //   'nirvighnam-kurumedeva': () => import('./zones/meaning cave/scenes/nirvighnam-kurumedeva/NirvighnamSceneV5'),
+  //   'sarvakaryeshu-sarvada': () => import('./zones/meaning cave/scenes/sarvakaryeshu-sarvada/SarvakaryeshuSarvadaV7.jsx'),
+  //   'final-meaning-scene': () => import('./zones/meaning cave/scenes/final meaning scene/Cavescene5memoryfinale.jsx'),
+  //   'mantra-assembly': () => import('./zones/meaning cave/scenes/final meaning scene/Cavescene5memoryfinale.jsx'),
+  // },
   // ✅ ADD: Shloka River scenes
   'shloka-river': {
     'vakratunda-grove': () => import('./zones/shloka-river/scenes/Scene1/VakratundaGroveSimplified.jsx'),
@@ -389,6 +391,7 @@ function App() {
     return <Suspense fallback={null}><GaneshaEngineTest /></Suspense>;
   }
 
+
   const [currentView, setCurrentView] = useState('loading');
   const [currentZone, setCurrentZone] = useState(null);
   const [currentScene, setCurrentScene] = useState(null);
@@ -400,6 +403,7 @@ const [showDarePopup, setShowDarePopup] = useState(false);
 const [showDareChip, setShowDareChip] = useState(false);
 const previousViewRef = useRef('loading');
 const dareOpenTimerRef = useRef(null);
+const sceneJustCompletedRef = useRef(false);
 const [kindnessCheckEntry, setKindnessCheckEntry] = useState(null);
 const [showIntroStory, setShowIntroStory] = useState(false);
 const [introStoryReturnView, setIntroStoryReturnView] = useState('map');
@@ -417,6 +421,16 @@ useEffect(() => {
   }
 }, [currentView, showIntroStory]);
   
+  // Internal-only replay analytics: one whole-scene entry ping per scene load.
+  // Per-mini-game entries are recorded inside each scene file. Fully decoupled
+  // from ProgressManager — best-effort, never blocks render.
+  useEffect(() => {
+    if (!currentZone || !currentScene) return;
+    const profileId = localStorage.getItem('activeProfileId');
+    if (!profileId) return;
+    sceneAnalytics.recordEntry(profileId, currentScene, '_scene');
+  }, [currentZone, currentScene]);
+
   console.log('🌟 Clean App rendering - current view:', currentView);
   console.log('🎯 Current zone:', currentZone, 'Current scene:', currentScene);
   
@@ -630,13 +644,27 @@ useEffect(() => {
 
     setShowDareChip(false);
 
-    // Don't show Daily Dare on the user's very first map visit —
-    // let map intro VO + tutorial breathe.
+    // Stamp "has landed on map before" on every map arrival, not just ones that
+    // follow a scene completion — this is the profile's actual first-ever map
+    // visit, before anything has been played, so the map intro VO can breathe.
     const profileId = localStorage.getItem('activeProfileId') || 'default';
     const firstMapVisitKey = `gmb_map_first_visit_done_${profileId}`;
     const isFirstMapVisit = !localStorage.getItem(firstMapVisitKey);
     if (isFirstMapVisit) {
       localStorage.setItem(firstMapVisitKey, '1');
+    }
+
+    // Only offer the Daily Dare popup right after a scene completes —
+    // not on every map landing (app boot, back button, profile switch, etc).
+    const justCompletedScene = sceneJustCompletedRef.current;
+    sceneJustCompletedRef.current = false;
+    if (!justCompletedScene) {
+      return;
+    }
+
+    // A scene can only be completed after at least one prior map visit, so
+    // isFirstMapVisit is only ever true here in edge cases — kept as a safety net.
+    if (isFirstMapVisit) {
       return;
     }
 
@@ -1058,13 +1086,15 @@ const handleSceneSelect = (sceneId, options = {}) => {
 const getNextScene = (zoneId, currentSceneId) => {
   const sceneProgression = {
     'symbol-mountain': ['modak', 'pond', 'symbol', 'final-scene'],
-    'cave-of-secrets': [
-      'vakratunda-mahakaya',
-      'suryakoti-samaprabha',
-      'nirvighnam-kurumedeva',
-      'sarvakaryeshu-sarvada',
-      'final-meaning-scene'
-    ],
+    // OBSOLETE: Meaning Cave / Cave of Secrets progression is disabled.
+    // Use Shloka River for current mantra scenes.
+    // 'cave-of-secrets': [
+    //   'vakratunda-mahakaya',
+    //   'suryakoti-samaprabha',
+    //   'nirvighnam-kurumedeva',
+    //   'sarvakaryeshu-sarvada',
+    //   'final-meaning-scene'
+    // ],
     // ✅ ADD: Shloka River progression - Sanskrit chant learning journey
     'shloka-river': [
       'vakratunda-grove',      // Scene 1: Learn Vakratunda
@@ -1309,11 +1339,13 @@ chants: result?.chants || result?.chantedVerses || {},
       });
     }
     
+    sceneJustCompletedRef.current = true;
     setCurrentScene(null);
     setCurrentView('zone-welcome');
-    
+
   } catch (error) {
     console.error('❌ APP: Error saving scene completion:', error);
+    sceneJustCompletedRef.current = true;
     setCurrentScene(null);
     setCurrentView('zone-welcome');
   }
@@ -1558,6 +1590,30 @@ chants: result?.chants || result?.chantedVerses || {},
           >
             Test Intro Story
           </button>
+          )}
+          {import.meta.env.DEV && (
+          <a
+            href="/game-test.html?game=vakratunda"
+            style={{
+              position: 'absolute',
+              left: '16px',
+              top: '104px',
+              zIndex: 1200,
+              border: 'none',
+              borderRadius: '999px',
+              padding: '10px 14px',
+              background: 'rgba(255,255,255,0.94)',
+              boxShadow: '0 8px 24px rgba(40,20,80,0.2)',
+              color: '#5e49a8',
+              fontWeight: 700,
+              fontSize: '12px',
+              textDecoration: 'none',
+              cursor: 'pointer'
+            }}
+            aria-label="Open Shloka River game test harness"
+          >
+            🧪 Game Test
+          </a>
           )}
           {showDareChip && !showDarePopup && (
             <button

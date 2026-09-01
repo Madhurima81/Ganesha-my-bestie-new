@@ -21,7 +21,11 @@
 
 .sarva-tap-sparkles {
   position: absolute;
-  inset: 0;
+  left: 50%;
+  top: 46%;
+  width: 46%;
+  height: 42%;
+  transform: translate(-50%, -50%);
   z-index: 130;
   pointer-events: none;
 }

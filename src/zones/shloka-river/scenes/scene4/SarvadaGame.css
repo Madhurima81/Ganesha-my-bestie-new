@@ -4,7 +4,9 @@
   position: absolute;
   inset: 0;
   overflow: hidden;
-  background: #1a3a5c;
+  /* Warm neutral — if a bg image is still decoding mid-crossfade this shows
+     through instead of a hard blue flash. */
+  background: #241a33;
 }
 
 .sarvada-game::after {
@@ -29,6 +31,7 @@
 .sarvada-game.is-hidden .sarvada-time-label,
 .sarvada-game.is-hidden .sarvada-bubble,
 .sarvada-game.is-hidden .sarvada-memory,
+.sarvada-game.is-hidden .sarvada-converge,
 .sarvada-game.is-hidden .sarvada-reveal {
   opacity: 0;
 }
@@ -82,6 +85,31 @@
   display: block;
   -webkit-user-drag: none;
   pointer-events: none;
+  /* Sits in front of the boat-Ganesha so the hull occludes his legs. */
+  position: relative;
+  z-index: 4;
+}
+
+.sarvada-boat-ganesha {
+  position: absolute;
+  width: clamp(40px, 6vw, 70px);
+  /* Seated in the bow — the hull (z-index 4 below) crosses in front of his
+     legs so he reads as sitting *in* the boat, not pasted on top of it. */
+  left: 24%;
+  right: auto;
+  bottom: 44%;
+  z-index: 2;
+  pointer-events: none;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.22));
+  transform-origin: 50% 85%;
+}
+
+.sarvada-boat-ganesha.is-joining {
+  animation: sarvadaBoatGaneshaJoin 1s cubic-bezier(0.2, 0.9, 0.2, 1) forwards;
+}
+
+.sarvada-boat-ganesha.is-celebrating {
+  animation: sarvadaBoatGaneshaCelebrate 1.15s ease-in-out;
 }
 
 @keyframes sarvadaBob {
@@ -89,12 +117,45 @@
   50% { transform: translateX(-50%) translateY(-7px) rotate(0.5deg); }
 }
 
+@keyframes sarvadaBoatGaneshaJoin {
+  0% {
+    opacity: 0;
+    transform: translate(12px, -180px) scale(0.38) rotate(-18deg);
+    filter: drop-shadow(0 0 18px rgba(255, 214, 102, 0.52));
+  }
+  55% {
+    opacity: 1;
+    transform: translate(0, -24px) scale(1.04) rotate(5deg);
+    filter: drop-shadow(0 0 22px rgba(255, 214, 102, 0.64));
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.22));
+  }
+}
+
+@keyframes sarvadaBoatGaneshaCelebrate {
+  0%, 100% {
+    transform: translateY(0) scale(1) rotate(0deg);
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.22));
+  }
+  35% {
+    transform: translateY(-8px) scale(1.08) rotate(-7deg);
+    filter: drop-shadow(0 0 18px rgba(255, 214, 102, 0.62));
+  }
+  70% {
+    transform: translateY(-4px) scale(1.04) rotate(6deg);
+    filter: drop-shadow(0 0 14px rgba(255, 214, 102, 0.42));
+  }
+}
+
 .sarvada-bubble {
   position: absolute;
-  top: 22%;
+  top: 12%;
   left: 50%;
   transform: translateX(-50%) scale(0);
-  width: clamp(100px, 18vw, 170px);
+  width: clamp(115px, 21vw, 195px);
   z-index: 22;
   cursor: pointer;
   touch-action: manipulation;
@@ -103,7 +164,7 @@
 
 .sarvada-bubble.pulsing {
   transform: translateX(-50%) scale(1);
-  animation: none;
+  animation: sarvadaBubblePulse 2.4s ease-in-out infinite;
 }
 
 .sarvada-bubble.expanding {
@@ -119,7 +180,7 @@
 
 .sarvada-ring-burst {
   position: absolute;
-  top: 22%;
+  top: 12%;
   left: 50%;
   width: 40px;
   height: 40px;
@@ -202,7 +263,9 @@
   top: 14%;
   left: 50%;
   transform: translateX(-50%);
-  width: min(92%, 640px);
+  /* Cap by viewport height too, so the 4:3 frame never gets letterboxed and
+     tap coordinates map 1:1 onto the picture. */
+  width: min(92%, 640px, calc(52vh * 4 / 3));
   z-index: 35;
   animation: sarvadaMemoryIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
 }
@@ -219,25 +282,94 @@
   gap: 6px;
 }
 
-.sarvada-memory-img {
+/* 4:3 frame — the picture fills it exactly, so % coords == picture coords. */
+.sarvada-find-frame {
+  position: relative;
   width: 100%;
-  max-height: clamp(180px, 42vh, 360px);
+  aspect-ratio: 4 / 3;
+  border-radius: 14px;
+}
+
+.sarvada-memory-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
+  background: #111;
   border-radius: 14px;
   display: block;
   -webkit-user-drag: none;
   transition: opacity 0.25s ease;
 }
 
-.sarvada-ganesha-target,
-.sarvada-ganesha-ring {
+/* Invisible full-image tap surface — the child taps to find the symbol. */
+.sarvada-image-tap {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  border-radius: 14px;
+  cursor: crosshair;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sarvada-image-tap.is-wrong {
+  animation: sarvadaWrongTap 0.4s ease;
+}
+
+@keyframes sarvadaWrongTap {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* Symbol flying from the tap point up to the syllable tile. */
+.sarvada-fly-symbol {
+  position: fixed;
+  width: clamp(48px, 10vw, 84px);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  z-index: 60;
+  pointer-events: none;
+  filter: drop-shadow(0 0 16px rgba(255, 213, 79, 0.9));
+  animation: sarvadaFly 1.9s cubic-bezier(0.45, 0.05, 0.35, 1) forwards;
+}
+
+@keyframes sarvadaFly {
+  0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+  14% { transform: translate(-50%, -50%) scale(1.15); opacity: 1; }
+  85% { opacity: 1; }
+  100% {
+    transform: translate(calc(-50% + var(--fly-dx)), calc(-50% + var(--fly-dy))) scale(0.6);
+    opacity: 0.9;
+  }
+}
+
+/* Debug-only outline of the current tap zone. */
+.sarvada-zone-outline {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 2px dashed rgba(3, 169, 244, 0.9);
+  background: rgba(3, 169, 244, 0.14);
+  pointer-events: none;
+  z-index: 4;
+}
+
+.sarvada-symbol-target,
+.sarvada-symbol-ring {
   position: absolute;
   transform: translate(-50%, -50%);
   aspect-ratio: 1;
   border-radius: 50%;
 }
 
-.sarvada-ganesha-target {
+.sarvada-symbol-target {
   background: none;
   border: none;
   cursor: pointer;
@@ -246,46 +378,109 @@
   z-index: 2;
 }
 
-/* Ganesha peeking in the scene, waiting to be spotted — sits under the (invisible)
-   tap target above, small and softly blended so he takes a careful look to find,
-   not just a random guess. */
-.sarvada-ganesha-hidden {
+/* The hidden symbol sits under the invisible tap target above, softly blended
+   so it still takes a careful look to find, without feeling impossible. */
+.sarvada-hidden-symbol {
   position: absolute;
   transform: translate(-50%, -50%);
   pointer-events: none;
   z-index: 1;
-  opacity: 0.88;
-  filter: saturate(0.85) brightness(0.96) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
+  opacity: 0.5;
+  filter: saturate(0.7) brightness(0.92) contrast(0.96) drop-shadow(0 1px 3px rgba(0, 0, 0, 0.14));
   -webkit-user-drag: none;
+  transition: opacity 0.25s ease, filter 0.25s ease;
 }
 
-.sarvada-ganesha-target.is-found {
+.sarvada-hidden-symbol.is-guided {
+  opacity: 0.92;
+}
+
+.sarvada-hidden-symbol.hint-glow {
+  opacity: 1;
+  animation: sarvadaHiddenGlow 1.7s ease-in-out infinite;
+}
+
+.sarvada-hidden-symbol.has-soft-hint {
+  opacity: 0.6;
+  filter:
+    saturate(0.78)
+    brightness(0.96)
+    contrast(0.98)
+    drop-shadow(0 0 10px rgba(255, 224, 130, 0.18))
+    drop-shadow(0 1px 4px rgba(0, 0, 0, 0.16));
+}
+
+.sarvada-symbol-target.is-found {
   animation: sarvadaFoundGlow 0.6s ease;
   box-shadow: 0 0 0 4px rgba(255,213,79,0.5), 0 0 24px rgba(255,213,79,0.8);
 }
 
-.sarvada-ganesha-ring {
+.sarvada-symbol-ring {
   pointer-events: none;
-  min-width: 60px;
-  min-height: 60px;
-  border: 3px solid rgba(255, 213, 79, 0.4);
-  box-shadow: 0 0 0 8px rgba(255, 213, 79, 0.12);
+  /* No min size — the ring must match the tap zone exactly (width = s.w%,
+     aspect-ratio 1), same as .sarvada-zone-outline in the debug panel. */
+  border: 2px solid rgba(255, 213, 79, 0.28);
+  box-shadow: 0 0 0 6px rgba(255, 213, 79, 0.08);
   z-index: 1;
   animation: sarvadaFindPulse 1.2s ease-in-out infinite;
 }
 
-.sarvada-ganesha-ring.hint-glow {
-  box-shadow: 0 0 0 10px rgba(255, 213, 79, 0.18), 0 0 26px rgba(255, 213, 79, 0.45);
+.sarvada-symbol-ring.hint-glow {
+  box-shadow: 0 0 0 8px rgba(255, 213, 79, 0.12), 0 0 18px rgba(255, 213, 79, 0.28);
 }
 
-.sarvada-ganesha-pop {
+.sarvada-scene-hint {
+  margin: 0;
+  width: 100%;
+  text-align: center;
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(13px, 1.8vw, 16px);
+  line-height: 1.35;
+  color: #6d4c2f;
+  min-height: 2.7em;
+}
+
+.sarvada-symbol-pop {
   position: absolute;
   width: clamp(70px, 14vw, 120px);
   transform: translate(-50%, -50%);
-  z-index: 3;
+  z-index: 4;
   pointer-events: none;
   filter: drop-shadow(0 0 20px rgba(255, 213, 79, 0.9));
   animation: ganeshaPopOut 2s ease-out forwards;
+}
+
+.sarvada-found-burst {
+  position: absolute;
+  width: clamp(68px, 13vw, 112px);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 3;
+  background:
+    radial-gradient(circle, rgba(255, 245, 203, 0.96) 0 20%, rgba(255, 213, 79, 0.72) 30%, rgba(255, 213, 79, 0.14) 58%, transparent 74%);
+  animation: sarvadaFoundBurst 0.72s ease-out forwards;
+}
+
+.sarvada-found-label {
+  position: absolute;
+  transform: translate(-50%, calc(-50% - 74px));
+  pointer-events: none;
+  z-index: 5;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: rgba(255, 251, 235, 0.96);
+  color: #7a4b09;
+  font-family: 'Baloo 2', cursive;
+  font-size: clamp(14px, 2vw, 20px);
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+  box-shadow:
+    0 10px 24px rgba(122, 75, 9, 0.18),
+    0 0 0 2px rgba(255, 219, 122, 0.52);
+  animation: sarvadaFoundLabelIn 1.2s ease-out forwards;
 }
 
 @keyframes ganeshaPopOut {
@@ -293,6 +488,70 @@
   25%  { opacity: 1; transform: translate(-50%, -60%) scale(1.15); }
   45%  { transform: translate(-50%, -65%) scale(1); }
   100% { opacity: 0; transform: translate(-50%, -110%) scale(0.85); }
+}
+
+@keyframes sarvadaFoundBurst {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.35);
+  }
+  35% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.08);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.55);
+  }
+}
+
+@keyframes sarvadaFoundLabelIn {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% - 58px)) scale(0.82);
+  }
+  18% {
+    opacity: 1;
+    transform: translate(-50%, calc(-50% - 82px)) scale(1.04);
+  }
+  75% {
+    opacity: 1;
+    transform: translate(-50%, calc(-50% - 90px)) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% - 102px)) scale(0.98);
+  }
+}
+
+@keyframes sarvadaHiddenPulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+}
+
+@keyframes sarvadaHiddenGlow {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    filter:
+      saturate(0.88)
+      brightness(1.02)
+      contrast(1)
+      drop-shadow(0 0 5px rgba(255, 222, 118, 0.22))
+      drop-shadow(0 2px 5px rgba(0, 0, 0, 0.18));
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.025);
+    filter:
+      saturate(0.94)
+      brightness(1.06)
+      contrast(1.01)
+      drop-shadow(0 0 9px rgba(255, 222, 118, 0.3))
+      drop-shadow(0 2px 6px rgba(0, 0, 0, 0.2));
+  }
 }
 
 @keyframes sarvadaMemoryIn {
@@ -334,6 +593,45 @@
   animation: sarvadaFadeIn 0.6s ease;
 }
 
+.sarvada-converge {
+  position: absolute;
+  top: 44%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 38;
+  display: flex;
+  gap: clamp(10px, 2vw, 22px);
+  pointer-events: none;
+}
+
+.sarvada-converge-symbol {
+  width: clamp(46px, 8vw, 76px);
+  height: clamp(46px, 8vw, 76px);
+  object-fit: contain;
+  -webkit-user-drag: none;
+  filter: drop-shadow(0 0 14px rgba(255, 220, 120, 0.6));
+  animation: sarvadaConverge 1.1s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes sarvadaConverge {
+  0% {
+    opacity: 0;
+    transform: scale(0.6) translateY(10px);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1.12) translateY(-4px);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.7) translateY(-18px);
+  }
+}
+
 .sarvada-syllables-row {
   display: flex;
   gap: clamp(8px, 1.5vw, 16px);
@@ -370,6 +668,16 @@
   animation: sarvadaFadeIn 0.5s ease 1s both;
 }
 
+.sarvada-story {
+  margin-top: 4px;
+  font-family: 'Baloo 2', cursive;
+  font-size: clamp(13px, 1.9vw, 18px);
+  font-weight: 700;
+  color: rgba(255, 236, 179, 0.95);
+  text-shadow: 0 2px 6px rgba(0,0,0,0.45);
+  animation: sarvadaFadeIn 0.5s ease 1.25s both;
+}
+
 @keyframes sarvadaSylFloat {
   from { opacity: 0; transform: translateY(12px) scale(0.8); }
   to { opacity: 1; transform: translateY(0) scale(1); }
@@ -402,7 +710,9 @@
 
 @media (prefers-reduced-motion: reduce) {
   .sarvada-boat,
-  .sarvada-bubble.pulsing {
+  .sarvada-bubble.pulsing,
+  .sarvada-boat-ganesha.is-joining,
+  .sarvada-boat-ganesha.is-celebrating {
     animation: none;
   }
 
@@ -411,4 +721,129 @@
   .sarvada-bg {
     transition: none;
   }
+}
+
+/* ── Tap Zone Debug panel ───────────────────────────────────────────────── */
+.sarvada-debug {
+  position: fixed;
+  left: 0.75rem;
+  bottom: 0.75rem;
+  width: min(20rem, calc(100% - 1.5rem));
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-family: 'Nunito', sans-serif;
+}
+
+.sarvada-debug-toggle,
+.sarvada-debug-reset {
+  border: 0;
+  border-radius: 999px;
+  background: rgba(15, 36, 54, 0.9);
+  color: #f6fbff;
+  font: inherit;
+  font-weight: 700;
+  padding: 0.55rem 0.95rem;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.24);
+  cursor: pointer;
+}
+
+.sarvada-debug-body {
+  width: 100%;
+  max-height: min(66vh, 30rem);
+  overflow: auto;
+  border-radius: 1rem;
+  background: rgba(255, 251, 242, 0.97);
+  color: #203040;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.24);
+  padding: 0.85rem;
+}
+
+.sarvada-debug-copy-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.7rem;
+}
+
+.sarvada-debug-copy {
+  border: 0;
+  border-radius: 999px;
+  background: rgba(46, 125, 50, 0.96);
+  color: #fff;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 900;
+  padding: 0.48rem 0.8rem;
+  cursor: pointer;
+}
+
+.sarvada-debug-copy-row span {
+  color: #1b5e20;
+  font-size: 0.76rem;
+  font-weight: 900;
+}
+
+.sarvada-debug-check {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.6rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.sarvada-debug-note {
+  margin: 0 0 0.75rem;
+  color: rgba(32, 48, 64, 0.78);
+  font-size: 0.74rem;
+  line-height: 1.35;
+}
+
+.sarvada-debug-group {
+  margin-bottom: 0.6rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid rgba(32, 48, 64, 0.12);
+}
+
+.sarvada-debug-section-title {
+  margin: 0.2rem 0 0.5rem;
+  color: #0f4c4c;
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.sarvada-debug-row {
+  display: grid;
+  grid-template-columns: 3rem 1fr 4rem;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.45rem;
+  font-size: 0.8rem;
+}
+
+.sarvada-debug-row span {
+  font-weight: 700;
+}
+
+.sarvada-debug-row input[type='range'] {
+  width: 100%;
+}
+
+.sarvada-debug-row input[type='number'] {
+  width: 100%;
+  border: 1px solid rgba(32, 48, 64, 0.2);
+  border-radius: 0.45rem;
+  background: rgba(255, 255, 255, 0.92);
+  padding: 0.28rem 0.42rem;
+  font: inherit;
+}
+
+.sarvada-debug-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
 }

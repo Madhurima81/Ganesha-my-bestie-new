@@ -144,17 +144,11 @@
 .mandala-petal.just-earned {
   transform-box: fill-box;
   transform-origin: center;
-  animation: petalBloom 1.8s cubic-bezier(0.22, 1, 0.36, 1) both;
-  filter:
-    drop-shadow(0 0 0 rgba(255, 243, 180, 0))
-    drop-shadow(0 0 0 rgba(255, 209, 102, 0));
+  animation: petalAwaken 1.05s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-.outer-petal.just-earned,
 .middle-petal.just-earned {
-  animation:
-    petalBloom 1.8s cubic-bezier(0.22, 1, 0.36, 1) both,
-    petalGlow 2.4s ease-out both;
+  fill: #ffd978;
 }
 
 /* ===== Center ===== */
@@ -178,7 +172,7 @@
 
 .mandala-avatar-slot {
   position: absolute;
-  top: 50%;
+  top: calc(50% - 6px);
   left: 50%;
   transform: translate(-50%, -50%);
   width: 18%;
@@ -203,16 +197,16 @@
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 8.5%;
-  max-width: 42px;
+  width: 9.6%;
+  max-width: 48px;
   aspect-ratio: 1;
   object-fit: contain;
-  transform: translate(-50%, -50%) scale(0.42);
   opacity: 0;
-  filter:
-    drop-shadow(0 10px 16px rgba(32, 20, 55, 0.28))
-    drop-shadow(0 0 12px rgba(255, 228, 151, 0.4));
-  animation: symbolJourney 2.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  transform: translate(-50%, -50%) scale(0.55);
+  transform-origin: center;
+  filter: drop-shadow(0 3px 6px rgba(32, 20, 55, 0.14));
+  will-change: left, top, transform, opacity;
+  animation: symbolToPetal 1.95s cubic-bezier(0.22, 0.8, 0.25, 1) forwards;
 }
 
 .mandala-sparkle-layer {
@@ -224,17 +218,15 @@
 
 .mandala-sparkle {
   position: absolute;
-  width: 10px;
-  height: 10px;
+  width: 5px;
+  height: 5px;
   border-radius: 999px;
   background:
-    radial-gradient(circle, rgba(255, 252, 231, 0.98) 0%, rgba(255, 220, 120, 0.95) 34%, rgba(255, 220, 120, 0) 72%);
+    radial-gradient(circle, rgba(255, 252, 231, 0.95) 0%, rgba(255, 220, 120, 0.7) 38%, rgba(255, 220, 120, 0) 74%);
   opacity: 0;
-  transform: translate(-50%, -50%) scale(0.4);
-  box-shadow:
-    0 0 10px rgba(255, 230, 150, 0.75),
-    0 0 18px rgba(255, 209, 102, 0.45);
-  animation: petalSparkle 1.5s ease-out both;
+  transform: translate(-50%, -50%) scale(0.45);
+  box-shadow: 0 0 6px rgba(255, 230, 150, 0.4);
+  animation: softPetalSparkle 1s ease-out both;
 }
 
 .mandala-avatar-slot img {
@@ -245,7 +237,7 @@
 
 .mandala-subtitle {
   position: absolute;
-  bottom: 12px;
+  bottom: -34px;
   left: 50%;
   transform: translateX(-50%);
   width: min(88%, 320px);
@@ -263,7 +255,7 @@
 
 .mandala-hint {
   position: absolute;
-  bottom: -8px;
+  bottom: -30px;
   left: 50%;
   transform: translateX(-50%);
   width: min(90%, 320px);
@@ -291,82 +283,92 @@
   50% { opacity: 0.92; }
 }
 
-@keyframes petalBloom {
-  0% { transform: scale(0.82); opacity: 0.28; }
-  55% { transform: scale(1.06); opacity: 0.88; }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-@keyframes petalGlow {
+@keyframes petalAwaken {
   0% {
-    filter:
-      drop-shadow(0 0 0 rgba(255, 243, 180, 0))
-      drop-shadow(0 0 0 rgba(255, 209, 102, 0));
+    opacity: 0.62;
+    transform: scale(0.97);
+    filter: drop-shadow(0 0 0 rgba(255, 223, 130, 0));
   }
-  45% {
-    filter:
-      drop-shadow(0 0 8px rgba(255, 243, 180, 0.95))
-      drop-shadow(0 0 16px rgba(255, 209, 102, 0.75));
+  38% {
+    opacity: 1;
+    transform: scale(1.018);
+    filter: drop-shadow(0 0 7px rgba(255, 223, 130, 0.45));
+  }
+  72% {
+    opacity: 1;
+    transform: scale(1.006);
+    filter: drop-shadow(0 0 4px rgba(255, 223, 130, 0.22));
   }
   100% {
-    filter:
-      drop-shadow(0 0 3px rgba(255, 243, 180, 0.35))
-      drop-shadow(0 0 8px rgba(255, 209, 102, 0.25));
+    opacity: 1;
+    transform: scale(1);
+    filter: drop-shadow(0 0 2px rgba(255, 223, 130, 0.12));
   }
 }
 
-@keyframes petalSparkle {
+@keyframes softPetalSparkle {
   0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.45);
+  }
+  35% {
+    opacity: 0.82;
+    transform: translate(-50%, -58%) scale(0.92);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -72%) scale(0.62);
+  }
+}
+
+@keyframes symbolToPetal {
+  0% {
+    left: 50%;
+    top: 50%;
     opacity: 0;
     transform: translate(-50%, -50%) scale(0.4);
   }
+  16% {
+    left: 50%;
+    top: 50%;
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.08);
+  }
   28% {
-    opacity: 1;
-    transform: translate(-50%, -60%) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -95%) scale(0.55);
-  }
-}
-
-@keyframes symbolJourney {
-  0% {
-    left: 50%;
-    top: 50%;
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.15);
-  }
-  22% {
     left: 50%;
     top: 50%;
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1.05);
+    transform: translate(-50%, -50%) scale(1);
   }
-  30% {
-    transform: translate(-50%, -50%) scale(0.95);
+  42% {
+    left: 50%;
+    top: 50%;
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
   }
-  72% {
+  84% {
     left: var(--target-x);
     top: var(--target-y);
     opacity: 1;
-    transform: translate(-50%, -50%) scale(0.75);
-    filter:
-      drop-shadow(0 10px 16px rgba(32, 20, 55, 0.28))
-      drop-shadow(0 0 12px rgba(255, 228, 151, 0.4));
+    transform: translate(-50%, -50%) scale(0.72);
+  }
+  92% {
+    left: var(--target-x);
+    top: var(--target-y);
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.8);
   }
   100% {
     left: var(--target-x);
     top: var(--target-y);
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(1.3);
-    filter: blur(4px);
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.74);
   }
 }
 
 @media (max-width: 480px) {
   .inner-mandala-overlay { padding: 12px; }
-  .mandala-subtitle { bottom: 10px; width: min(90%, 280px); }
+  .mandala-subtitle { bottom: -30px; width: min(90%, 280px); }
 }
 
 @media (max-width: 380px) {
@@ -400,7 +402,7 @@
     animation: none;
     left: var(--target-x);
     top: var(--target-y);
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(1.3);
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.74);
   }
 }

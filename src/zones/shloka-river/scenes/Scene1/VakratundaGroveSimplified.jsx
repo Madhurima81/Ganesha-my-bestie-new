@@ -1,4 +1,4 @@
-﻿// zones/shloka-river/scenes/Scene1/VakratundaGroveSimplified.jsx
+// zones/shloka-river/scenes/Scene1/VakratundaGroveSimplified.jsx
 // FIXED: Removed SanskritWordMission, connected PowerUnlockOverlay directly to next phase
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
@@ -46,6 +46,7 @@ import OpeningModal from '../../../shared/components/OpeningModal';
 // Zone Theme
 import { getZoneTheme } from '../../../../lib/config/ZoneThemes';
 import { getOpeningModal, getCompletionModal, getDiscoveryContent } from '../../../../lib/config/content';
+import { getVoiceScript } from '../../../../lib/config/content/voiceGuidance';
 
 // Game Components
 import VakratundaRescueGame from './VakratundaRescueGame';
@@ -77,22 +78,6 @@ import flowerMa from './assets/images/mahakaya/ma-flower.webp';
 
 const sceneOuterPetalId = SCENE_TO_OUTER_PETAL_ID['Your Journey Begins!'];
 const sceneOuterPetalIds = [sceneOuterPetalId - 1, sceneOuterPetalId];
-const debugFireworksBtnStyle = {
-  position: 'fixed',
-  top: '18px',
-  right: '18px',
-  zIndex: 1200,
-  padding: '8px 12px',
-  borderRadius: '999px',
-  border: '1px solid rgba(255,255,255,0.45)',
-  background: 'rgba(34, 24, 68, 0.82)',
-  color: '#fff7d6',
-  fontSize: '12px',
-  fontWeight: 800,
-  letterSpacing: '0.02em',
-  cursor: 'pointer',
-  boxShadow: '0 10px 24px rgba(0,0,0,0.22)',
-};
 
 const VOGatedButton = ({ visible, onClick, children, className = '', style = {} }) => {
   if (!visible) return null;
@@ -132,6 +117,12 @@ const PHASES = {
   MAHAKAYA_COMPLETE: 'mahakaya_complete',
   MAHAKAYA_POWER: 'mahakaya_power',
   COMPLETE: 'complete'
+};
+
+const stripLeadingSpeechText = (text, leadingText) => {
+  if (!text || !leadingText) return text;
+  const pattern = new RegExp(`^\\s*${leadingText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*[:.!,-]*\\s*`, 'i');
+  return text.replace(pattern, '').trim();
 };
 
 const powerConfig = {
@@ -251,6 +242,24 @@ const VakratundaGroveContent = ({
   audioEnabledRef.current = isAudioOn;
 
   const [showTapSparkles, setShowTapSparkles] = useState(false);
+  const [showWordStar, setShowWordStar] = useState(false);
+  const fxBgRef = useRef(null);
+  const lastPointRef = useRef(null);
+  const [sparklePos, setSparklePos] = useState(null);
+  const recordPoint = useCallback((e) => {
+    const el = fxBgRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    if (!r.width || !r.height) return;
+    const cx = e.clientX != null ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : null);
+    const cy = e.clientY != null ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : null);
+    if (cx == null || cy == null) return;
+    lastPointRef.current = {
+      x: Math.min(95, Math.max(5, ((cx - r.left) / r.width) * 100)),
+      y: Math.min(95, Math.max(5, ((cy - r.top) / r.height) * 100)),
+    };
+  }, []);
+
   const [vakratundaStage, setVakratundaStage] = useState('intro');
 
   // Pause Menu State — removed: replaced by home icon
@@ -301,6 +310,7 @@ const VakratundaGroveContent = ({
 
   // Voice Guidance Hook
   const {
+    playVoice: playHookVoice,
     stopVoice,
     setVoiceVolume,
     playSyllable,
@@ -360,53 +370,58 @@ const VakratundaGroveContent = ({
     }
   }, []);
 
-  const playGuidanceVoice = useCallback((key, onEnded) => {
+  const playGuidanceVoice = useCallback((key, onEnded, options = {}) => {
     const webSpeechMap = {
       welcome: "Let's help our friends by the river.",
       instructionListen: 'Listen carefully.',
-      instructionTapAndRepeat: 'Help guide the lily pad another way.',
-      instructionTapTheElephant: 'Help guide the lily pad another way.',
-      hintTapElephant: 'Help guide the lily pad another way.',
-      hintLookForGlow: 'Drag it to the glowing circle.',
-      hintKeepBuildingPath: 'Keep guiding the lily pad.',
+      instructionTapAndRepeat: "That way's blocked — look for another way around.",
+      instructionTapTheElephant: "That way's blocked — look for another way around.",
+      hintTapElephant: "That way's blocked — look for another way around.",
+      hintLookForGlow: "See the glow? That's the way around.",
+      hintKeepBuildingPath: "Keep going — you're finding the way through.",
       vakratundaSetup: 'The frog made it! He found his family!',
       vakratundaClaim: 'I find a new way.',
       mahakayaSetup: 'You chanted… and it grew tall and strong.',
       mahakayaClaim: 'You have that strength too.',
-      sceneComplete: 'You found another way. You used your strength. Both powers are yours now.',
+      sceneComplete: "You found another way. There's room for everyone. Both powers are yours now.",
       instructionTapLotusWord: 'Tap the lotus.',
       instructionTapLotus: 'Tap the lotus.',
       instructionTapLotusUnlock: 'Tap the lotus.',
       instructionTapLilyWord: 'Tap the lily.',
       instructionTapLily: 'Tap the lily.',
       instructionTapLilyUnlock: 'Tap the lily.',
-      scene10_vak_intro: 'The little frog wants to meet his family!',
+      scene10_vak_intro: 'The frog can see his family, but rocks and logs block the way. Help him find a way around.',
       scene10_vak_current_too_strong: "The river current is too strong there. Let's try another way.",
-      scene10_vak_frog_cross: 'The little frog wants to meet his family!',
-      scene10_vak_tap_logs: 'Help guide the lily pad another way.',
-      scene10_vak_blocked: 'Oh no... that way is blocked.',
-      scene10_vak_choose: 'Help guide the lily pad another way.',
-      scene10_vak_make_path: "Let's find another way across.",
-      scene10_vak_drag_leaves: 'Drag the lily pad to the glowing circle.',
-      scene10_vak_drag: 'Now drag the lily pad to the glowing circle.',
-      scene10_vak_drag_pieces: 'Now drag the lily pad to the glowing circle.',
-      scene10_vak_crossed: 'You found another way! The frog made it home to his family!',
+      scene10_vak_frog_cross: 'The frog can see his family, but rocks and logs block the way. Help him find a way around.',
+      scene10_vak_tap_logs: "That way's blocked — look for another way around.",
+      scene10_vak_blocked: "That way's blocked — look for another way around.",
+      scene10_vak_choose: "That way's blocked — look for another way around.",
+      scene10_vak_make_path: 'The frog can see his family, but rocks and logs block the way. Help him find a way around.',
+      scene10_vak_drag_leaves: 'Follow the safe water past the rocks.',
+      scene10_vak_drag: 'Follow the safe water past the rocks.',
+      scene10_vak_drag_pieces: 'Follow the safe water past the rocks.',
+      scene10_vak_crossed: 'Vakratunda! You found another way and helped the frog reach his family.',
       scene10_vak_meaning: 'Vakratunda means finding another way.',
-      scene10_maha_intro: "Now let's help the little calf.",
-      scene10_maha_blocking: 'A heavy log is trapping him!',
-      scene10_maha_drag_rope: 'Drag the rope to the log.',
-      scene10_maha_pull_down: 'Now pull down!',
-      scene10_maha_log_moving: 'The log is moving.',
-      scene10_maha_success: 'You used your strength! The calf is free!',
+      scene10_maha_intro: 'Everyone wants to cross, but the raft is too small. Help make room for them all.',
+      scene10_maha_blocking: "The raft's still too small for everyone.",
+      scene10_maha_drag_rope: 'Grab another log so everyone can fit.',
+      scene10_maha_pull_down: '',
+      scene10_maha_log_moving: '',
+      scene10_maha_success: 'Mahakaya! You made the raft bigger, and everyone crossed.',
       scene10_maha_meaning: 'Mahakaya means great strength.',
       scene10_maha_strength: 'You have strength inside you too.',
     };
+    const script = getVoiceScript(zoneId, sceneId, key);
+    if (script) {
+      playHookVoice(key, onEnded, options);
+      return;
+    }
     if (webSpeechMap[key]) {
-      speakWebSpeech(webSpeechMap[key], onEnded);
+      speakWebSpeech(stripLeadingSpeechText(webSpeechMap[key], options.stripLeadingText), onEnded);
       return;
     }
     if (onEnded) onEnded();
-  }, [speakWebSpeech]);
+  }, [playHookVoice, sceneId, speakWebSpeech, zoneId]);
   const replayCurrentVoice = useCallback(() => {
     if (!isAudioOn) return;
     if (!sceneState.welcomeShown || sceneState.phase === PHASES.INITIAL) {
@@ -592,8 +607,16 @@ const VakratundaGroveContent = ({
     }
   };
 
+  // Reload-only restore: re-show the reveal card + chime if the saved state
+  // was mid-reveal when the page was refreshed. Guarded to run once per
+  // mount (not on every live phase change) — otherwise this races
+  // handlePhaseComplete's own triggerReveal() for the same phase transition
+  // and both fire playChime()/setRevealConfig() back to back (double SFX).
+  const hasRestoredRevealRef = useRef(false);
   useEffect(() => {
     if (!sceneState || revealConfig) return;
+    if (hasRestoredRevealRef.current) return;
+    hasRestoredRevealRef.current = true;
 
     const restoreReveal = (word) => {
       safeSetTimeout(() => {
@@ -698,8 +721,10 @@ const VakratundaGroveContent = ({
   const handlePhaseComplete = (word) => {
     console.log(`${word} learned!`);
 
-    // Sanskrit moment — full word learned ? blessing gesture
+    // Sanskrit moment — full word learned: one blessing gesture + one Golden Star
     triggerMiniGesture('blessing', 'center', 2500);
+    setShowWordStar(true);
+    safeSetTimeout(() => setShowWordStar(false), 1500);
 
     // Stop idle timer — game is done, no more hints
     stopIdleTimer();
@@ -805,16 +830,6 @@ const VakratundaGroveContent = ({
     setShowSparkle('final-fireworks');
   };
 
-  const handleDebugFireworks = () => {
-    stopAllVoice();
-    setShowAppDiscovery(false);
-    setRevealConfig(null);
-    setShowPowerOverlay(false);
-    setShowMandala(false);
-    setShowSceneCompletion(false);
-    setShowSparkle('final-fireworks');
-  };
-
   useEffect(() => {
     if (
       sceneState.phase === PHASES.COMPLETE &&
@@ -827,10 +842,10 @@ const VakratundaGroveContent = ({
   }, [sceneState.phase, showMandala, showSparkle, showSceneCompletion]);
 
   const handleElephantMicroWin = useCallback(() => {
-    triggerMiniGesture('thumbsup', 'item', 1200);
+    setSparklePos(lastPointRef.current);
     setShowTapSparkles(true);
-    safeSetTimeout(() => setShowTapSparkles(false), 850);
-  }, [triggerMiniGesture, safeSetTimeout]);
+    safeSetTimeout(() => setShowTapSparkles(false), 1600);
+  }, [safeSetTimeout]);
 
   // ?? Play Again - Replay the current word's game
   const handlePlayAgain = () => {
@@ -855,6 +870,16 @@ const VakratundaGroveContent = ({
     setCurrentWord(null);
   };
 
+  // Stable identity for SceneCompletionCelebration's completionData prop —
+  // an inline object literal here would recreate on every render and re-fire
+  // that component's save-on-show effect in a loop while showing.
+  const completionData = useMemo(() => ({
+    stars: 5,
+    syllables: sceneState?.learnedSyllables,
+    words: sceneState?.learnedWords,
+    completed: true
+  }), [sceneState?.learnedSyllables, sceneState?.learnedWords]);
+
   // Unified State Saver
   if (!sceneState) return <div className="loading">Loading...</div>;
 
@@ -864,13 +889,10 @@ const VakratundaGroveContent = ({
         <div className="vakratunda-simplified-container">
           <HomeButton onNavigate={onNavigate} />
           <ZoneBadgeButton zoneId="shloka-river" onBack={() => onNavigate?.('zone-welcome')} />
-          <button type="button" style={debugFireworksBtnStyle} onClick={handleDebugFireworks}>
-            Debug Fireworks
-          </button>
           <AudioToggle isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
           <VOReplayButton onReplay={replayCurrentVoice} disabled={!isAudioOn} />
           <ResumeCountdown value={countdownValue} />
-          <div className="river-background" style={{ backgroundImage: `url(${riverBackground})` }}>
+          <div className="river-background" ref={fxBgRef} onPointerDownCapture={recordPoint} style={{ backgroundImage: `url(${riverBackground})` }}>
             <div style={{ display: showSceneCompletion ? 'none' : 'contents' }}>
             <>
 
@@ -987,14 +1009,20 @@ const VakratundaGroveContent = ({
               </div>
             )} */}
 
+            {showWordStar && (
+              <div className="vakratunda-word-star">
+                <SparkleAnimation type="star" count={20} color="#FFD54F" size={14} duration={1500} area="full" />
+              </div>
+            )}
+
             {showTapSparkles && (
-              <div className="vakratunda-tap-sparkles">
+              <div className="vakratunda-tap-sparkles" style={sparklePos ? { left: `${sparklePos.x}%`, top: `${sparklePos.y}%`, width: '32%', height: '32%', right: 'auto', bottom: 'auto', transform: 'translate(-50%, -50%)' } : undefined}>
                 <SparkleAnimation
-                  type="magic"
-                  count={14}
+                  type="dust"
+                  count={22}
                   color="#FFD54F"
-                  size={9}
-                  duration={850}
+                  size={5}
+                  duration={1600}
                   area="full"
                 />
               </div>
@@ -1041,7 +1069,7 @@ const VakratundaGroveContent = ({
                   emphasis: currentWord === 'vakratunda'
                     ? 'I can try again.'
                     : currentWord === 'mahakaya'
-                      ? 'I am strong inside.'
+                      ? 'I can make room.'
                       : 'You have mastered both powers!'
                 }}
                 icon={powerConfig[currentWord].image}
@@ -1156,8 +1184,8 @@ const VakratundaGroveContent = ({
                 }}
                 justEarnedPetals={sceneOuterPetalIds.map((id) => ({ ring: 'outer', id }))}
                 earnedSymbols={[
-                  { id: 'vakratunda', petalId: 1, ring: 'middle', image: symbolVakratunda },
-                  { id: 'mahakaya', petalId: 2, ring: 'middle', image: symbolMahakaya },
+                  { id: 'vakratunda', petalId: 1, ring: 'outer', image: symbolVakratunda },
+                  { id: 'mahakaya', petalId: 2, ring: 'outer', image: symbolMahakaya },
                 ]}
                 highlightPetals={sceneOuterPetalIds}
                 message="These meanings are growing inside you"
@@ -1201,12 +1229,7 @@ const VakratundaGroveContent = ({
               savedRecordings={savedRecordings}
               nextSceneName="Suryakoti Bank"
               sceneId="vakratunda-grove"
-              completionData={{
-                stars: 5,
-                syllables: sceneState.learnedSyllables,
-                words: sceneState.learnedWords,
-                completed: true
-              }}
+              completionData={completionData}
               onComplete={() => onNavigate?.('zone-welcome')}
               onReplay={() => {
                 stopAllVoice();

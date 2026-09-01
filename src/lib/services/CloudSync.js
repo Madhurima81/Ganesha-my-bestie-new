@@ -11,11 +11,17 @@ class CloudSync {
     this._ready = false;
     this._supabase = null;
     this._saveTimers = {}; // debounce timers per profileId
+    this._initPromise = null; // memoised init(), so repeat calls are no-ops
   }
 
   // ── Init ──────────────────────────────────────────────────────────────────
 
-  async init() {
+  init() {
+    if (!this._initPromise) this._initPromise = this._doInit();
+    return this._initPromise;
+  }
+
+  async _doInit() {
     if (!isSupabaseEnabled()) return;
 
     try {
@@ -159,6 +165,29 @@ class CloudSync {
     } catch (err) {
       console.warn('[CloudSync] deleteProfile failed:', err.message);
     }
+  }
+
+  // ── Read-only accessors for sibling services (e.g. sceneAnalytics) ────────
+  // These expose the already-initialised client identity so other best-effort
+  // cloud writers can reuse the same anonymous auth session instead of opening
+  // a second one. They never mutate CloudSync state.
+
+  // Resolves true once anonymous auth + first pull are done, false if cloud
+  // sync is disabled or init failed. Safe to call before init().
+  async whenReady() {
+    if (this._ready) return true;
+    if (!isSupabaseEnabled()) return false;
+    if (!this._initPromise) return false;
+    try {
+      await this._initPromise;
+    } catch {
+      return false;
+    }
+    return this._ready;
+  }
+
+  getUserId() {
+    return this._userId;
   }
 
   // ── Helpers ───────────────────────────────────────────────────────────────

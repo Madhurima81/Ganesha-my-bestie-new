@@ -21,14 +21,26 @@ const HOP_PATH = [
   { l: 11, t: 67.5 },
 ];
 
-const SYLLABLES = ['Su', 'rya', 'ko', 'ti'];
-const AUDIO = { syllables: ['su', 'ya', 'ko', 'ti'] };
-const SUN_CX = 0.65;
-const SUN_CY = 0.18;
-const SUN_R = 0.17;
-const SCRATCH_R = 0.09;
-const GRID = 10;
-const CLEAR_THRESHOLD = 0.7;
+// Chanted as sur-ya-ko-ti — display labels match the audio segmentation below.
+const SYLLABLES = ['Sur', 'ya', 'ko', 'ti'];
+// audio keys must match /audio/syllables/suryakoti-<key>.mp3 → sur, ya, ko, ti
+// ('su' had no file, so the first syllable silently 404'd)
+const AUDIO = { syllables: ['sur', 'ya', 'ko', 'ti'] };
+
+// Four discrete dark spots to rub, one per syllable, revealed in order
+// (Sur → ya → ko → ti). Rubbing the active spot clear enough lights that
+// syllable and advances to the next — mirrors the one-target-at-a-time
+// 4-step reveal in Mahakaya/Kurumedeva. cx/cy are fractions of the stage box.
+const SPOTS = [
+  { cx: 0.24, cy: 0.31 }, // Sur
+  { cx: 0.44, cy: 0.20 }, // ya
+  { cx: 0.63, cy: 0.15 }, // ko
+  { cx: 0.80, cy: 0.27 }, // ti
+];
+const SPOT_R = 0.10;        // spot radius, fraction of canvas width
+const SCRATCH_R = 0.055;    // brush radius, fraction of canvas width
+const SPOT_GRID = 8;        // cells per axis inside each spot
+const SPOT_CLEAR = 0.6;     // fraction of a spot's cells cleared to light its syllable
 
 export default function SuryakotiGame({
   isActive = false,
@@ -43,13 +55,15 @@ export default function SuryakotiGame({
   const { playVoice: playSceneLine, playWord, playSyllable, stopVoice } = voiceGuidance;
   const [phase, setPhase] = useState('play');
   const [litCount, setLitCount] = useState(0);
+  const [activeSpot, setActiveSpot] = useState(0);
   const [bunnyPos, setBunnyPos] = useState(POS.bunny);
   const [bunnyHopping, setBunnyHopping] = useState(false);
   const [canvasReady, setCanvasReady] = useState(false);
   const canvasRef = useRef(null);
-  const gridRef = useRef([]);
-  const totalRef = useRef(0);
-  const doneRef = useRef(0);
+  const gridRef = useRef([]);            // flat list of cells: { px, py, cleared, spot }
+  const spotTotalRef = useRef([0, 0, 0, 0]);
+  const spotDoneRef = useRef([0, 0, 0, 0]);
+  const activeSpotRef = useRef(0);
   const drawingRef = useRef(false);
   const phaseRef = useRef('play');
   const completedRef = useRef(false);
@@ -58,6 +72,9 @@ export default function SuryakotiGame({
   const successVoDoneRef = useRef(false);
   const hopDoneRef = useRef(false);
   const completionScheduledRef = useRef(false);
+  const lastSyllableDoneRef = useRef(false);
+  const completionVoStartedRef = useRef(false);
+  const sylEndFallbackRef = useRef(null);
   const voFallbackRef = useRef(null);
   const fadeOverlayRef = useRef(null);
   const onGameCompleteRef = useRef(onGameComplete);
@@ -140,38 +157,41 @@ export default function SuryakotiGame({
 
     ctx.globalCompositeOperation = 'destination-out';
 
-    const szx = cv.width * SUN_CX;
-    const szy = cv.height * SUN_CY;
-    const szr = cv.width * SUN_R;
-
     // Scratch-target ring cue is the animated .surya-scratch-ring overlay
     // (see render) — not painted here to avoid a duplicate static ring.
 
-    let total = 0;
-    let done = 0;
     const grid = [];
+    const totals = [0, 0, 0, 0];
+    const dones = [0, 0, 0, 0];
     const scratchRadius = cv.width * SCRATCH_R;
-    for (let gy = 0; gy < GRID; gy += 1) {
-      for (let gx = 0; gx < GRID; gx += 1) {
-        const px = szx - szr + gx * ((szr * 2) / GRID);
-        const py = szy - szr + gy * ((szr * 2) / GRID);
-        const inside = Math.hypot(px - szx, py - szy) < szr;
-        const cleared = Boolean(prevCleared?.[grid.length]) && inside;
-        grid.push({ px, py, cleared, inside });
-        if (inside) total += 1;
-        if (cleared) {
-          done += 1;
-          // Re-punch previously cleared cells at the new geometry
-          ctx.beginPath();
-          ctx.arc(px, py, scratchRadius, 0, Math.PI * 2);
-          ctx.fill();
+    const spotRadius = cv.width * SPOT_R;
+
+    SPOTS.forEach((spot, si) => {
+      const scx = cv.width * spot.cx;
+      const scy = cv.height * spot.cy;
+      for (let gy = 0; gy < SPOT_GRID; gy += 1) {
+        for (let gx = 0; gx < SPOT_GRID; gx += 1) {
+          const px = scx - spotRadius + gx * ((spotRadius * 2) / SPOT_GRID);
+          const py = scy - spotRadius + gy * ((spotRadius * 2) / SPOT_GRID);
+          if (Math.hypot(px - scx, py - scy) >= spotRadius) continue;
+          const idx = grid.length;
+          const cleared = Boolean(prevCleared?.[idx]);
+          grid.push({ px, py, cleared, spot: si });
+          totals[si] += 1;
+          if (cleared) {
+            dones[si] += 1;
+            // Re-punch previously cleared cells at the new geometry
+            ctx.beginPath();
+            ctx.arc(px, py, scratchRadius, 0, Math.PI * 2);
+            ctx.fill();
+          }
         }
       }
-    }
+    });
 
     gridRef.current = grid;
-    totalRef.current = total;
-    doneRef.current = done;
+    spotTotalRef.current = totals;
+    spotDoneRef.current = dones;
 
     if (!preserve) {
       completedRef.current = false;
@@ -180,10 +200,21 @@ export default function SuryakotiGame({
       successVoDoneRef.current = false;
       hopDoneRef.current = false;
       completionScheduledRef.current = false;
+      lastSyllableDoneRef.current = false;
+      completionVoStartedRef.current = false;
+      activeSpotRef.current = 0;
+      setActiveSpot(0);
       setBunnyPos(POS.bunny);
       setBunnyHopping(false);
       setPhase('play');
       setLitCount(0);
+    } else {
+      // Recover how far the player had gotten from the restored cleared cells.
+      let lit = 0;
+      while (lit < 4 && totals[lit] > 0 && dones[lit] / totals[lit] >= SPOT_CLEAR) lit += 1;
+      activeSpotRef.current = lit;
+      setActiveSpot(lit);
+      setLitCount(lit);
     }
     setCanvasReady(true);
   }, []);
@@ -233,33 +264,42 @@ export default function SuryakotiGame({
     ctx.arc(x, y, radius, 0, Math.PI * 2);
     ctx.fill();
 
-    let newClears = 0;
+    // Only cells belonging to the spot the player is meant to be on right now
+    // count toward progress — keeps the syllables lighting in order.
+    const active = activeSpotRef.current;
     for (const cell of gridRef.current) {
-      if (cell.cleared || !cell.inside) continue;
+      if (cell.cleared || cell.spot !== active) continue;
       if (Math.hypot(cell.px - x, cell.py - y) < radius) {
         cell.cleared = true;
-        doneRef.current += 1;
-        newClears += 1;
+        spotDoneRef.current[cell.spot] += 1;
       }
     }
 
-    const light = totalRef.current > 0 ? doneRef.current / totalRef.current : 0;
-    const nextLit = Math.min(4, Math.floor(light / 0.25 + 1e-6));
-    setLitCount((prev) => {
-      if (nextLit > prev) {
-        window.setTimeout(() => {
-          for (let i = prev; i < nextLit; i += 1) onMicroWin?.();
-        }, 0);
-        return nextLit;
-      }
-      return prev;
-    });
+    // Advance through any spots that are now clear enough (handles a spot the
+    // player scrubbed past in one stroke).
+    let next = activeSpotRef.current;
+    while (
+      next < 4
+      && spotTotalRef.current[next] > 0
+      && spotDoneRef.current[next] / spotTotalRef.current[next] >= SPOT_CLEAR
+    ) {
+      next += 1;
+      onMicroWin?.();
+    }
 
-    if (light >= CLEAR_THRESHOLD) {
+    if (next !== activeSpotRef.current) {
+      activeSpotRef.current = next;
+      setActiveSpot(next);
+      setLitCount(next); // lighting syllable `next-1`; SyllableHighlight plays its clip
+    }
+
+    if (next >= 4 && !completedRef.current) {
       completedRef.current = true;
-      setPhase('hop');
-      setLitCount(4);
-      fadeOverlay(cv);
+      setLitCount(4); // TI lights first — give it a beat before the fade/hop
+      window.setTimeout(() => {
+        setPhase('hop');
+        fadeOverlay(cv);
+      }, 500);
     }
   }, [fadeOverlay, isPaused, onMicroWin]);
 
@@ -315,28 +355,58 @@ export default function SuryakotiGame({
     }, 500);
   }, []);
 
+  // Completion audio plays strictly in sequence, no overlap:
+  //   final syllable "ti"  ->  full word "suryakoti"  ->  ending line
+  // Fires only once the last syllable has finished AND the hop has begun.
+  // (Mirrors NirvighnamGame — the earlier parallel playWord/playSceneLine here
+  //  drowned out "ti".)
+  const startCompletionVo = useCallback(() => {
+    if (completionVoStartedRef.current) return;
+    if (!lastSyllableDoneRef.current || !doneAnnouncedRef.current) return;
+    completionVoStartedRef.current = true;
+
+    if (sylEndFallbackRef.current) {
+      window.clearTimeout(sylEndFallbackRef.current);
+      sylEndFallbackRef.current = null;
+    }
+
+    if (!playSceneLine) {
+      successVoDoneRef.current = true;
+      return;
+    }
+
+    const afterWord = () => {
+      playSceneLine('scene11_surya_success', () => {
+        successVoDoneRef.current = true;
+        completeAfterSuccess();
+      }, { stripLeadingText: 'Suryakoti' });
+    };
+
+    if (playWord) playWord('suryakoti', afterWord);
+    else afterWord();
+
+    // iOS Safari can silently drop utterance onend/onerror — don't hang.
+    voFallbackRef.current = window.setTimeout(() => {
+      if (!successVoDoneRef.current) {
+        successVoDoneRef.current = true;
+        completeAfterSuccess();
+      }
+    }, 10000);
+  }, [completeAfterSuccess, playSceneLine, playWord]);
+
   useEffect(() => {
     if (phase !== 'hop' || doneAnnouncedRef.current) return undefined;
     doneAnnouncedRef.current = true;
     const timers = [];
 
-    if (playSceneLine) {
-      stopVoice?.();
-      playWord?.('suryakoti');
-      playSceneLine('scene11_surya_success', () => {
-        successVoDoneRef.current = true;
-        completeAfterSuccess();
-      });
-      // iOS Safari can silently drop utterance onend/onerror — don't let completion hang on VO
-      voFallbackRef.current = window.setTimeout(() => {
-        if (!successVoDoneRef.current) {
-          successVoDoneRef.current = true;
-          completeAfterSuccess();
-        }
-      }, 8000);
-    } else {
-      successVoDoneRef.current = true;
-    }
+    // Hold the word/ending line until the final "ti" syllable clip has
+    // finished (its onSyllableLit onEnded sets lastSyllableDoneRef). Fallback
+    // covers a dropped callback (audio error / iOS / test mock).
+    sylEndFallbackRef.current = window.setTimeout(() => {
+      lastSyllableDoneRef.current = true;
+      startCompletionVo();
+    }, 1600);
+    startCompletionVo();
 
     const hopAfter = (ms, fn) => {
       const runWhenReady = () => {
@@ -369,12 +439,16 @@ export default function SuryakotiGame({
     return () => {
       timers.forEach((timerId) => window.clearTimeout(timerId));
     };
-  }, [completeAfterSuccess, phase, playSceneLine, playWord, stopVoice]);
+  }, [completeAfterSuccess, phase, startCompletionVo]);
 
   useEffect(() => () => {
     if (voFallbackRef.current) {
       window.clearTimeout(voFallbackRef.current);
       voFallbackRef.current = null;
+    }
+    if (sylEndFallbackRef.current) {
+      window.clearTimeout(sylEndFallbackRef.current);
+      sylEndFallbackRef.current = null;
     }
     if (fadeOverlayRef.current) {
       window.clearInterval(fadeOverlayRef.current);
@@ -384,10 +458,12 @@ export default function SuryakotiGame({
 
   if (!isActive) return null;
 
-  const progress = totalRef.current > 0 ? doneRef.current / totalRef.current : 0;
-  const sunOp = Math.max(0, progress * 1.2 - 0.1);
-  const showSun = progress > 0.4;
-  const sunFadeOp = showSun ? Math.min(1, (progress - 0.4) * 2.5) : 0;
+  // Sun brightens one step per syllable lit (0→4).
+  const litFrac = litCount / SPOTS.length;
+  const sunOp = Math.max(0, litFrac * 1.1 - 0.1);
+  const showSun = litCount >= 2;
+  const sunFadeOp = showSun ? Math.min(1, (litCount - 1) / 3) : 0;
+  const cueSpot = SPOTS[Math.min(activeSpot, SPOTS.length - 1)];
 
   return (
     <div className={`surya-game ${hideElements ? 'is-hidden' : ''}`}>
@@ -397,18 +473,21 @@ export default function SuryakotiGame({
           syllables={SYLLABLES}
           litCount={litCount}
           audioSyllables={AUDIO.syllables}
-          onSyllableLit={(syllable) => {
+          onSyllableLit={(syllable, index) => {
             stopVoice?.();
-            playSyllable?.(syllable);
+            const isLast = index === SYLLABLES.length - 1;
+            playSyllable?.(syllable, isLast ? () => {
+              lastSyllableDoneRef.current = true;
+              startCompletionVo();
+            } : undefined);
           }}
         />
 
         {phase === 'play' && (
           <p className="surya-hint">
-            {hintLevel === 0 && 'Swipe the dark patch.'}
-            {hintLevel === 1 && 'Swipe the dark patch.'}
-            {hintLevel === 2 && 'Keep swiping to find the bunny.'}
-            {hintLevel >= 3 && 'Swipe all the way across.'}
+            {hintLevel <= 1 && `Rub the glowing spot — ${litCount}/4 lit.`}
+            {hintLevel === 2 && 'Keep rubbing inside the ring.'}
+            {hintLevel >= 3 && 'Rub the glowing spot to light each sound.'}
           </p>
         )}
 
@@ -456,9 +535,12 @@ export default function SuryakotiGame({
         </div>
 
         <div className={`surya-dark-wrap ${canvasReady ? 'is-ready' : ''}`} style={{ pointerEvents: phase === 'play' && !isPaused ? 'auto' : 'none' }}>
-          {/* Pulsing ring cue over scratch area — hides once scratching starts */}
-          {phase === 'play' && canvasReady && litCount === 0 && (
-            <div className="surya-scratch-ring" />
+          {/* Pulsing ring cue over the spot the player should rub next */}
+          {phase === 'play' && canvasReady && !completedRef.current && (
+            <div
+              className="surya-scratch-ring"
+              style={{ left: `${cueSpot.cx * 100}%`, top: `${cueSpot.cy * 100}%`, width: '20%' }}
+            />
           )}
           <canvas
             ref={canvasRef}
@@ -472,9 +554,9 @@ export default function SuryakotiGame({
 
         <GestureDemo
           type="scratch"
-          from={{ x: 58, y: 14 }}
-          to={{ x: 74, y: 24 }}
-          active={phase === 'play' && litCount === 0}
+          from={{ x: cueSpot.cx * 100 - 6, y: cueSpot.cy * 100 - 5 }}
+          to={{ x: cueSpot.cx * 100 + 6, y: cueSpot.cy * 100 + 5 }}
+          active={phase === 'play' && !completedRef.current}
           idleDelay={3000}
         />
 

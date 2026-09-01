@@ -56,19 +56,19 @@ export const VOICE_SCRIPTS = {
 
       // Mahakaya power reveal
       mahakayaPower: {
-        text: "I am strong!",
+        text: "I can make room!",
         file: '/audio/voicenew/vakratundachant/vakratunda-mahakaya-I am strong.mp3'
       },
 
       // Mahakaya Rescue Game — scene 10 VO lines
       scene10_vak_intro: {
-        text: "The little frog wants to meet his family."
+        text: "The frog can see his family, but rocks and logs block the way. Help him find a way around."
       },
       scene10_vak_choose: {
         text: "Help guide the lily pad another way."
       },
       scene10_vak_crossed: {
-        text: "You found another way. The frog made it home to the family."
+        text: "Vakratunda! You found another way and helped the frog reach his family."
       },
       scene10_vak_current_too_strong: {
         text: "The river current is too strong there. Let's try another way."
@@ -86,7 +86,7 @@ export const VOICE_SCRIPTS = {
         text: "Now pull down!"
       },
       scene10_maha_success: {
-        text: "You did it! The calf is free!"
+        text: "Mahakaya! You made the raft bigger, and everyone crossed."
       },
       scene10_maha_meaning: {
         text: "It means great strength."
@@ -134,7 +134,7 @@ export const VOICE_SCRIPTS = {
         text: "Drag the light across. Share the light evenly. Keep balancing."
       },
       scene11SuryaDone: {
-        text: "You did it! The bunny found its way home!"
+        text: "The light showed the way!"
       },
       scene11SamaDone: {
         text: "Both sides are glowing now. You did it."
@@ -146,13 +146,13 @@ export const VOICE_SCRIPTS = {
         text: "It helps us share fairly."
       },
       suryakotiSetup: {
-        text: "The bunny found its way because of your light."
+        text: "The light showed the way."
       },
       suryakotiClaim: {
         text: "Suryakoti lights the way."
       },
       sceneComplete: {
-        text: "You found the bunny. You shared the light. Both powers are yours now."
+        text: "The light showed the way. Both shine equally now."
       }
     },
     'nirvighnam-chant': {
@@ -163,7 +163,7 @@ export const VOICE_SCRIPTS = {
         text: "Something is blocking the way. Drag the obstacle away. Great job. Clear the next one."
       },
       scene12KuruHint: {
-        text: "Now another friend needs help. The beaver needs a bridge. Tap the glowing friend. Look. They are helping. Tap the next friend."
+        text: "Now another friend needs help. The beaver needs a bridge. Drag the help bubble to a friend. Look. They are helping. Ask the next friend."
       },
       scene12NirvDone: {
         text: "The path is opening up. You did it. The turtle made it home."
@@ -186,34 +186,97 @@ export const VOICE_SCRIPTS = {
         text: "Let's see who needs help. Look carefully."
       },
       scene13_puzzle: {
-        text: "The piece wouldn't fit."
+        text: "The painting didn't go as planned. What could help him try a different way?"
       },
       scene13_puzzle_after: {
-        text: "So she twisted it a new way!"
+        text: "The Trunk helped him try another way — and the splat became a whale!"
       },
       scene13_sports: {
-        text: "He wanted to give up."
+        text: "He feels upset inside. What could help him make room for his feelings?"
       },
       scene13_sports_after: {
-        text: "But he stayed strong and kept trying!"
+        text: "The Belly reminded him to make room for his feelings and take a slow breath."
       },
       scene13_bike: {
-        text: "Both wanted the bike."
+        text: "Everyone is looking, but they're missing an important clue. What could help her notice it?"
       },
       scene13_bike_after: {
-        text: "So they took fair turns!"
+        text: "The Eyes helped her look carefully and notice what everyone else missed."
       },
       scene13_grandma: {
-        text: "Grandma's bags were heavy."
+        text: "He wants to finish his special card, but everything keeps pulling his attention away. What could help him stay focused?"
       },
       scene13_grandma_after: {
-        text: "So he ran to help!"
+        text: "The Tusk helped him stay focused on what was important."
+      },
+      scene13_hint_trunk_1: {
+        text: "Which symbol helps when one way doesn't work?"
+      },
+      scene13_hint_trunk_2: {
+        text: "Which symbol reminds you to bend, change, and try another way?"
+      },
+      scene13_hint_trunk_3: {
+        text: "Which long, bendy part of Ganesha can twist and turn?"
+      },
+      scene13_hint_belly_1: {
+        text: "Which symbol reminds you there is room for all your feelings?"
+      },
+      scene13_hint_belly_2: {
+        text: "Which symbol can hold happy, sad, worried, and angry feelings too?"
+      },
+      scene13_hint_belly_3: {
+        text: "Which big part of Ganesha can hold so much inside?"
+      },
+      scene13_hint_eyes_1: {
+        text: "Which symbol helps you notice what matters?"
+      },
+      scene13_hint_eyes_2: {
+        text: "Which symbol reminds you to look carefully and spot what others may miss?"
+      },
+      scene13_hint_eyes_3: {
+        text: "Which part of Ganesha helps him see?"
+      },
+      scene13_hint_tusk_1: {
+        text: "Which symbol reminds you to stay with what is important?"
+      },
+      scene13_hint_tusk_2: {
+        text: "Which symbol reminds you to stay strong and focused, even when something is difficult?"
+      },
+      scene13_hint_tusk_3: {
+        text: "Which strong white part does Ganesha have only one of?"
       },
       scene13SarvaHint: {
         text: "Which power would help here? Tap a power. Nice choice. The problem is solved. Let's help another friend."
       },
       scene13SarvaDone: {
         text: "Choose a power again. You got it. That helped too. One more challenge. Great thinking."
+      },
+      scene14_hint_morning_1: {
+        text: "Look for a small friend who can be quick and busy."
+      },
+      scene14_hint_morning_2: {
+        text: "He may be hiding near something you take with you in the morning."
+      },
+      scene14_hint_morning_3: {
+        text: "Look near the school bag for a tiny mouse."
+      },
+      scene14_hint_afternoon_1: {
+        text: "Look for a symbol that can bend and curve."
+      },
+      scene14_hint_afternoon_2: {
+        text: "Something flying in the sky has a long curving shape."
+      },
+      scene14_hint_afternoon_3: {
+        text: "Look closely at the kite's tail."
+      },
+      scene14_hint_night_1: {
+        text: "Look for a symbol that stays peaceful even when things around it are messy."
+      },
+      scene14_hint_night_2: {
+        text: "A flower shape is hiding somewhere near the bed."
+      },
+      scene14_hint_night_3: {
+        text: "Look at the bedside lamp for the lotus."
       },
       scene13SarvadaHint: {
         text: "Our journey is not over yet. Let's keep floating down the river. Tap the bubble."
@@ -222,13 +285,13 @@ export const VOICE_SCRIPTS = {
         text: "Morning. Ganesha is there too. Tap the next bubble. Afternoon. Ganesha is there too. Tap the last bubble. Night. Ganesha is there too."
       },
       scene13SarvaMeaning: {
-        text: "All the problems are solved. Sarvakaryeshu. Ganesha helps in all things."
+        text: "Sarvakaryeshu. Every task can be done with care."
       },
       scene13SarvadaMeaning: {
-        text: "Sarvada. Ganesha guides us always."
+        text: "Sarvada. What I learn stays with me."
       },
       sceneComplete: {
-        text: "All the problems are solved. Ganesha helps in all things. Ganesha guides us always."
+        text: "Every task can be done with care. Sarvada. Always."
       }
     },
     'shloka-river-finale': {
@@ -267,46 +330,43 @@ export const VOICE_SCRIPTS = {
       // ========================================
       // SCENE ENTRY
       // ========================================
-      welcome: {
-        text: "Mooshika is nearby. Let's find the sweet modaks."
-      },
 
       // ========================================
       // PHASE 1: FIND MOOSHIKA
       // ========================================
       findMooshika: {
-        text: "Mooshika is hiding. Tap the mounds to find him."
+        text: "Mooshika is darting around. Press and hold him gently to help him settle."
       },
       mooshikaFound: {
-        text: "There he is... my little friend."
+        text: "There he is... calm and ready to walk with us."
       },
       focusPower: {
-        text: "You looked closely... and found him. Say it with me... I can focus."
+        text: "You helped Mooshika slow down. Say it with me... I can guide my busy thoughts."
       },
 
       // ========================================
       // PHASE 2: COLLECT MODAKS
       // ========================================
       collectStart: {
-        text: "Look... sweet modaks. Tap them to collect."
+        text: "Mushika is ready to gather three offerings for Ganesha. Drag her to each one."
       },
 
       // ========================================
       // PHASE 3: SHARE WITH GANESHA
       // ========================================
       sharingPower: {
-        text: "You found them... one by one. That feels good. Say it with me... I am full of joy."
+        text: "The sweetness of modak reminds us of a happy, peaceful feeling inside. Say it with me... I have joy inside me."
       },
       // Instruction to feed (drag version)
       feedGanesha: {
-        text: "Let's enjoy the sweet modaks... drag them here."
+        text: "Drag each feeling into Ganesha's belly. There is room for every feeling."
       },
 
       // ========================================
       // PHASE 4: SCENE COMPLETE
       // ========================================
       gratitudePower: {
-        text: "You gave... and it felt good. Say it with me... I feel good inside."
+        text: "There is room for all my feelings."
       },
       kindHeartPower: {
         text: "You have a kind heart!",
@@ -319,14 +379,13 @@ export const VOICE_SCRIPTS = {
       },
 
       sceneComplete: {
-        text: "You found Mooshika. You felt joy. You feel good inside. All yours."
+        text: "You helped Mooshika settle, found the sweetness inside, and made room for every feeling."
       },
     }
     ,
     'final-scene': {
       openingModalPrompt: {
-        text: "You found every symbol... let's place them together.",
-        file: '/audio/voicenew/sacredassembly/opening-modal-ready-together.wav'
+        text: "You found all eight symbols. Now let's put them in the right place."
       },
 
       cardEyes: {
@@ -363,58 +422,54 @@ export const VOICE_SCRIPTS = {
       },
 
       hintEyes: {
-        text: "I see clearly."
+        text: "I notice what's around me."
       },
       hintEars: {
         text: "I listen with care."
       },
       hintTrunk: {
-        text: "I find my way."
+        text: "I can find another way."
       },
       hintTusk: {
-        text: "I finish what I start."
+        text: "I stay focused on what is true."
       },
       hintModak: {
-        text: "I am full of joy."
+        text: "I can feel peaceful inside."
       },
       hintLotus: {
-        text: "I stay calm."
+        text: "I can stay calm when things get messy."
       },
       hintBelly: {
-        text: "I feel safe inside."
+        text: "I have room for all my feelings."
       },
       hintMooshika: {
-        text: "I can focus."
+        text: "I can guide my busy thoughts."
       },
 
       onboardingTapRightPart: {
-        text: "Tap the right part of me.",
-        file: '/audio/voicenew/sacredassembly/onboarding-tap-right-part.wav'
+        text: "Look at the symbol, then tap where it belongs."
       },
 
       firstSymbolPlaced: {
-        text: "Yes... that's exactly right."
+        text: "Yes — that's the right place."
       },
       midProgressWonder: {
-        text: "Look... you're bringing me alive."
+        text: "Look — the symbols are coming together."
       },
 
       wrongTryAgain: {
-        text: "Hmm... try again.",
-        file: '/audio/voicenew/sacredassembly/wrong-try-again.wav'
+        text: "Not there. Try again."
       },
 
+      // Final fireworks: 2-line recap (what you did -> what it means), 700ms gap
       finalYouFoundAll: {
-        text: "You found all my symbols...",
-        file: '/audio/voicenew/sacredassembly/final-you-found-all.wav'
+        text: "You found them all and put them together."
       },
       finalNowComplete: {
-        text: "Now I am complete.",
-        file: '/audio/voicenew/sacredassembly/final-now-complete.wav'
+        text: "Now you know what each symbol can remind you of."
       },
       finalAlwaysWithYou: {
-        text: "And all my powers... are with you now.",
-        file: '/audio/voicenew/sacredassembly/final-always-with-you.wav'
+        text: "Now you know what each symbol can remind you of."
       }
     }
   },
@@ -428,7 +483,7 @@ export const VOICE_SCRIPTS = {
       // OPENING MODAL
       // ========================================
       welcome: {
-        text: "Let's meet my family and yours!",
+        text: "Let's meet my family, then make a tree for yours.",
         useWebSpeech: true
       },
 
@@ -436,8 +491,7 @@ export const VOICE_SCRIPTS = {
       // GANESHA PHASE - INSTRUCTIONS
       // ========================================
       tapCircle: {
-        text: "Tap a circle to meet my family!",
-        file: 'family-tree-tap-circle.wav'
+        text: "Tap a circle, then drag each family member to where they belong."
       },
 
       // ========================================
@@ -492,40 +546,32 @@ export const VOICE_SCRIPTS = {
       // GANESHA PHASE - CORRECT PLACEMENT (relationship reveal)
       // ========================================
       correctFather: {
-        text: "That's my father!",
-        file: '/audio/voicenew/familytree/ganesha_shiva_father.mp3'
+        text: "Yes — that's my father."
       },
       correctMother: {
-        text: "That's my mother!",
-        file: '/audio/voicenew/familytree/ganesha_parvati_mother.mp3'
+        text: "Yes — that's my mother."
       },
       correctBrother: {
-        text: "That's my brother!",
-        file: '/audio/voicenew/familytree/ganesha_kartikeya_brother.mp3'
+        text: "Yes — that's my brother."
       },
       correctMyself: {
-        text: "That's me!",
-        file: '/audio/voicenew/familytree/ganesha_me.mp3'
+        text: "And that's me!"
       },
 
       // ========================================
       // GANESHA PHASE - FUN FACTS
       // ========================================
       factFather: {
-        text: "My father is calm and strong. He protects us and teaches me peace.",
-        file: 'family-tree-fact-father.wav'
+        text: "My father is calm and strong."
       },
       factMother: {
-        text: "My mother is kind and loving. She gives the best hugs and keeps me safe.",
-        file: 'family-tree-fact-mother.wav'
+        text: "My mother is kind and caring."
       },
       factBrother: {
-        text: "My brother is very brave. He travels the world on his peacock.",
-        file: 'family-tree-fact-brother.wav'
+        text: "My brother is brave and rides a peacock."
       },
       factMyself: {
-        text: "That's me! I love modaks and helping my friends.",
-        file: 'family-tree-fact-myself.wav'
+        text: "I love modaks and helping my friends."
       },
 
       // ========================================
@@ -560,78 +606,64 @@ export const VOICE_SCRIPTS = {
         file: 'family-tree-progress-near-full-ganesha.wav'
       },
       hintTap: {
-        text: "Tap a circle to meet my family!",
-        file: '/audio/family-tree/family-tree-hint-tap.mp3'
+        text: "Who belongs in this spot?"
       },
       allPlaced: {
-        text: "Great! You met my loving family!",
-        file: '/audio/voicenew/familytree/ganesha_family_safe.mp3'
+        text: "You met everyone in my family."
       },
 
       // ========================================
       // TRANSITION MODAL
       // ========================================
       transition: {
-        text: "Show me your family!",
-        file: '/audio/voicenew/familytree/ganesha_build_tree.mp3'
+        text: "Now let's make your family tree."
       },
 
       // ========================================
       // CHILD PHASE
       // ========================================
       childStart: {
-        text: "Now it's your turn! Add your family to the tree.",
-        file: 'family-tree-child-start.wav'
+        text: "Tap the people or pets you want to add."
       },
       childHint: {
-        text: "Tap someone below to add to your tree!",
-        file: 'family-tree-child-hint.wav'
+        text: "Who else belongs on your tree?"
       },
       childProgressStart: {
-        text: "Nice! Your tree has started growing.",
-        file: 'family-tree-child-progress1.wav'
+        text: "Your family tree is growing."
       },
       childProgressSmall: {
-        text: "Beautiful! You added someone to your family tree.",
-        file: 'family-tree-child-progress2.wav'
+        text: "Your family tree is growing."
       },
       childProgressMid: {
-        text: "Look at that! Your family tree is getting bigger.",
-        file: 'family-tree-child-progress3.wav'
+        text: "Your family tree is growing."
       },
       childProgressNearFull: {
-        text: "Mmm. Your tree is filling with love.",
-        file: 'family-tree-child-progress-1full.wav'
+        text: "Your family tree is growing."
       },
       childProgressComplete: {
-        text: "Look at your beautiful family tree… So many people care about you.",
-        file: '/audio/voicenew/familytree/ganesha_beautiful_tree.mp3'
+        text: "These are the people and pets you chose for your family."
       },
 
       // ========================================
       // FINAL SCENE
       // ========================================
       sceneComplete: {
-        text: "Look at our family trees. Connected by love.",
-        file: '/audio/voicenew/familytree/ganesha_connected_love.mp3'
+        text: "Our family trees are different, and each one tells a story."
       }
     },
     'favorite-food': {
       opening: {
-        text: "Let's explore my favorite things and yours!",
-        file: '/audio/about-me-hut/favorite-food/opening.mp3'
+        text: "Let's find out what I like, then you can choose your favorites."
       }
     },
     'dreams-wishes': {
       opening: {
-        text: "Let’s help and dream together!",
-        file: '/audio/about-me-hut/dreams-wishes/opening.mp3'
+        text: "I have a few wishes for the world. Will you help me?"
       }
     },
     'my-indian-story': {
       opening: {
-        text: "Tap to explore my India story and yours!",
-        file: '/audio/about-me-hut/my-indian-story/opening.mp3'
+        text: "Let's explore some parts of my India story, then you can share yours."
       }
     },
     
@@ -756,7 +788,7 @@ const PRERECORDED_SYLLABLE_PATHS = {
   sarvakaryeshu: {
     sar: '/audio/syllables/sarvakaryeshu-sar.mp3',
     va: '/audio/syllables/sarvakaryeshu-va.mp3',
-    kar: '/audio/syllables/sarvakaryeshu-kar.mp3',
+    kar: '/audio/voiceover/sarvakaryeshu/kar.mp3', // was sarvakaryeshu-kar.mp3 (missing); this is the real "kar" clip
     rye: '/audio/syllables/sarvakaryeshu-rye.mp3',
     yeshu: '/audio/syllables/sarvakaryeshu-shu.mp3',
     shu: '/audio/syllables/sarvakaryeshu-shu.mp3'

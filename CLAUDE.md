@@ -51,24 +51,35 @@ src/
 ├── config/
 │   └── SceneResetConfigs.js
 └── zones/
-    ├── zone1-symbol-mountain/
-    ├── zone2-cave-of-secrets/
-    ├── zone3-shloka-river/
-    ├── zone4-festival-square/
-    └── zone5-about-me-hut/
+    ├── symbol-mountain/   # live
+    ├── shloka-river/      # live
+    ├── about-me-hut/      # live
+    ├── meaning cave/      # OBSOLETE (Cave of Secrets)
+    └── festival-square/   # parked — coming later
 ```
 
 ---
 
-## The 5 Zones
+## Zones — CURRENT SCOPE
 
-| # | Zone | Free/Paid |
-|---|------|-----------|
-| 1 | Symbol Mountain — 8 Ganesha symbols | FREE |
-| 2 | Cave of Secrets — 8 Sanskrit words | Paid |
-| 3 | Shloka River — Vakratunda Shloka scenes | Paid |
-| 4 | Festival Square — Piano, Rangoli, Modak, Mandap | Paid |
-| 5 | About Me Hut — Family Tree, Name, Food, Friends | Paid |
+**3 live zones, 13 scenes total.** This is the real scope. Ignore any
+"22 scenes / 5 zones" phrasing elsewhere in this file or in old docs — it is
+stale. Default all "apply to all scenes" work to these 13 only.
+
+| # | Zone | Scenes | Free/Paid | Status |
+|---|------|--------|-----------|--------|
+| 1 | Symbol Mountain — 8 Ganesha symbols | 4 | FREE | live |
+| 2 | Shloka River — Vakratunda Shloka scenes | 5 | Paid | live |
+| 3 | About Me Hut — Family Tree, Food, Dreams, My Indian Story | 4 | Paid | live |
+
+**Next 2 zones (NOT in scope yet — do not build/fix/audit proactively, ask first):**
+- Festival Square — has scene code in the repo, parked
+- Story Treehouse — not yet built
+
+**Cave of Secrets — OBSOLETE / dead.** Not a future zone, not coming back. Code
+still in repo (`SCENE_MAPPING['cave-of-secrets']`, `src/zones/meaning cave/`
+files, rows in `sceneRegistry.js`) but it is not part of the product. Exclude
+from all work.
 
 ---
 
@@ -139,22 +150,25 @@ Vakratunda · Mahakaya · Suryakoti · Samaprabha · Nirvighnam · Kurumedeva ·
 ---
 
 ## Scene Registry
-All 22 scene files are listed in `src/config/sceneRegistry.js`.
-When Madhurima says "apply X to all scenes" or "add X to all 22 scenes":
-1. Read sceneRegistry.js first to get all file paths
-2. Apply consistently to every file listed
+`src/config/sceneRegistry.js` still contains 22 entries (Cave of Secrets and
+Festival Square rows are dead/parked). **"All scenes" = the 13 live scenes only.**
+When Madhurima says "apply X to all scenes":
+1. Read sceneRegistry.js, filter to the 3 live zones below
+2. Apply consistently to every live file
 3. Confirm each file updated with ✅
 
 When she says "apply X to Zone 2" or "only Shloka River scenes":
 1. Filter sceneRegistry.js by zone field
 2. Apply only to those files
 
-Quick zone reference:
-- symbol-mountain → 4 scenes (01–04)
-- cave-of-secrets → 5 scenes (05–09)
-- shloka-river    → 5 scenes (10–14)
-- festival-square → 4 scenes (15–18)
-- about-me-hut    → 4 scenes (19–22)
+Quick zone reference (LIVE — 13 scenes):
+- symbol-mountain → 4 scenes
+- shloka-river    → 5 scenes
+- about-me-hut    → 4 scenes
+
+Parked / obsolete — exclude unless explicitly asked:
+- cave-of-secrets → OBSOLETE
+- festival-square → parked (coming later)
 
 ---
 
@@ -197,7 +211,7 @@ For each scene check:
 2. Is <OpeningModal /> rendered in JSX?
 3. Are all required props passed — match NewModakV7 exactly
 4. OpeningModal.css is imported inside the component itself — do NOT re-import in scene files
-5. T11 (remove fade-out) — fix ONCE in OpeningModal.css, affects all 22 scenes automatically
+5. T11 (remove fade-out) — fix ONCE in OpeningModal.css, affects all live scenes automatically
 
 ---
 
@@ -321,7 +335,7 @@ Suggested affirmation: "I stay calm."
 And the Claude Code prompt to kick it all off:
 ```
 Read CLAUDE.md and sceneRegistry.js.
-For each of the 22 scenes, read the JSX file.
+For each of the 13 live scenes, read the JSX file.
 Write a MECHANIC / EMOTION / CULTURE summary for each scene.
 Then suggest opening modal, completion modal, and affirmation content.
 Output everything into a new file called CONTENT_SUGGESTIONS.md.
@@ -348,3 +362,17 @@ Before proposing any architecture/logic fix, grep DECISIONS.md for related keywo
 
 ### 3. Update DECISIONS.md (only for locked architectural/logic calls, not routine fixes)
 Format: `[date] - decision - reason - don't revisit unless X changes`
+
+---
+
+## Session-Start Protocol (run automatically BEFORE starting any work)
+
+1. Read TASKS.md — list any tasks not marked complete.
+2. Read CHANGELOG.md — pull the "Open" line from the most recent dated entry.
+3. Scan DECISIONS.md for any entry tagged `PENDING` (unresolved, needs Madhurima's call).
+4. Print a 3-line summary before doing anything else:
+   - Pending tasks: ...
+   - Left open last session: ...
+   - Decisions awaiting confirmation: ...
+
+Do not skip this even for small requests — it's the first output of every session.

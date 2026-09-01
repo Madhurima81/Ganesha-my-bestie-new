@@ -6,12 +6,15 @@ import StoryProgressHeader from '../components/StoryProgressHeader';
 import TextInputModal from '../components/Textinputmodal';
 import LetterInputKeyboard from '../components/LetterInputKeyboard';
 import SparkleAnimation from '../../../lib/components/animation/SparkleAnimation';
+import GaneshaGestureCue from '../../../lib/components/gesture/GaneshaGestureCue';
+import { useMiniGesture } from '../../../lib/hooks/useMiniGesture';
 
 // Import SceneManager & Navigation
 import SceneManager from "../../../lib/components/scenes/SceneManager";
 import AboutMeComparisonCard from '../components/AboutMeComparisonCard';
 import GameStateManager from '../../../lib/services/GameStateManager';
 import ProgressManager from '../../../lib/services/ProgressManager';
+import SimpleSceneManager from '../../../lib/services/SimpleSceneManager';
 
 // Content Configs
 import { getOpeningModal, getCompletionModal } from '../../../lib/config/content';
@@ -102,6 +105,16 @@ class ErrorBoundary extends React.Component {
   }
 }
 
+// Mini gesture cue anchor points (% of scene) — matches the old
+// .ganesha-gesture-cue--{food,color,activity,friend,center} CSS positions.
+const MINI_GESTURE_ANCHORS = {
+  food: { x: 31, y: 35 },
+  color: { x: 68, y: 35 },
+  activity: { x: 31, y: 60 },
+  friend: { x: 68, y: 60 },
+  center: { x: 50, y: 30 },
+};
+
 // =========================================================
 // 1. MAIN WRAPPER (Handles SceneManager)
 // =========================================================
@@ -176,55 +189,59 @@ const FavoriteFoodGame = ({ onComplete, onBack, onNavigate, zoneId = 'about-me-h
 // =========================================================
 const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplete, onNavigate, onBack }) => {
 
+  useEffect(() => {
+    SimpleSceneManager.setCurrentScene('about-me-hut', 'favorite-food', false, false);
+  }, []);
+
   const VOICE_LINES = {
     // Opening Screen
-    opening: "Let's explore my favorite things and yours!",
+    opening: "Let's find out what I like, then you can choose your favorites.",
 
     // Ganesha Section - Food
-    foodQuestion: "Tap my favorite food.",
-    foodCorrect: "Yes! Modak is my favorite!",
+    foodQuestion: "Which food is my favorite? Tap your guess.",
+    foodCorrect: "Yes — I love modak!",
 
     // Ganesha Section - Color
-    colorQuestion: "Tap my favorite color.",
-    colorCorrect: "Yes! Red is my favorite!",
+    colorQuestion: "Which color do I like best?",
+    colorCorrect: "Yes — red!",
 
     // Ganesha Section - Activity
-    activityQuestion: "Tap my favorite activity.",
-    activityCorrect: "Yes! I love to dance!",
+    activityQuestion: "What do I love to do?",
+    activityCorrect: "Yes — I love to dance!",
 
     // Ganesha Section - Friend
-    friendQuestion: "Tap my best friend.",
-    friendCorrect: "Yes! Mooshika is my friend!",
+    friendQuestion: "Who is my friend?",
+    friendCorrect: "Yes — Mooshika!",
 
     // Transition to Child Section
-    transition: "Now it's your turn!",
-    childIntro: "Now it's your turn!",
+    transition: "Now I want to know your favorites.",
+    childIntro: "Now I want to know your favorites.",
 
     // Child Section - Food
-    childFoodQuestion: "Tap your favorite food.",
+    childFoodQuestion: "Choose your favorite food.",
     childFoodCorrect: "Yummy!",
 
     // Child Section - Color
-    childColorQuestion: "Tap your favorite color.",
+    childColorQuestion: "Choose your favorite color.",
     childColorCorrect: "Nice choice!",
 
     // Child Section - Activity
-    childActivityQuestion: "Tap what you love to do.",
+    childActivityQuestion: "Choose something you love to do.",
     childActivityCorrect: "That sounds like fun!",
 
     // Child Section - Friend
-    childFriendQuestion: "Type the name of your best friend.",
-    childFriendCorrect: "That's lovely!",
+    childFriendQuestion: "Add the name of a friend you care about.",
+    childFriendCorrect: "Nice choice!",
 
     // Connection Moment (emotional beat)
-    friendCelebration: "We like so many fun things!",
-    completionCelebration: "We know what we both love! Let's make our dreams come true!",
+    friendCelebration: "Now we know some things we each enjoy.",
+    completionCelebration: "We learned a little more about each other.",
 
     // Idle Hints (Ganesha Section)
     foodHint: "Look for the sweet I love.",
-    colorHint: "Look for the bright red color.",
-    activityHint: "I love moving to music.",
-    friendHint: "My tiny friend runs very fast."
+    colorHint: "Which one is bright red?",
+    activityHint: "What lets me move to music?",
+    friendHint: "Look for my tiny friend."
   };
 
   if (!sceneState) return <div>Loading...</div>;
@@ -342,7 +359,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       phaseVoiceRef.current = {};
       setDiscoveryFly(null);
       setSparkleState(prev => ({ ...prev, active: false }));
-      setMiniGesture(prev => ({ ...prev, show: false }));
+      hideMiniGesture();
     },
     onShow: () => {
       // On tab resume: resume celebration + reset idle hints
@@ -409,13 +426,13 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const childEntryVoRepeatRef = useRef(false);
 
   // Mini gesture (thumbs up) on successful taps
-  const [miniGesture, setMiniGesture] = useState({
-    show: false,
-    target: 'center',
-    durationMs: 1500,
-    key: 0
-  });
-  const miniGestureTimerRef = useRef(null);
+  const { miniGesture, triggerMiniGesture: triggerMiniGestureRaw, hideMiniGesture } = useMiniGesture();
+  const triggerMiniGesture = useCallback(
+    (target = 'center', durationMs = 1500) => {
+      triggerMiniGestureRaw('thumbsup', 'anchored', durationMs, MINI_GESTURE_ANCHORS[target] || MINI_GESTURE_ANCHORS.center);
+    },
+    [triggerMiniGestureRaw]
+  );
   const [sparkleState, setSparkleState] = useState({ active: false, key: 0, type: 'single' });
   const sparkleTimerRef = useRef(null);
 
@@ -461,23 +478,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       setDiscoveryFly(null);
     }, durationMs);
   };
-
-  const triggerMiniGesture = useCallback((target = 'center', durationMs = 1500) => {
-    if (miniGestureTimerRef.current) {
-      clearTimeout(miniGestureTimerRef.current);
-      miniGestureTimerRef.current = null;
-    }
-    setMiniGesture(prev => ({
-      show: true,
-      target,
-      durationMs,
-      key: prev.key + 1
-    }));
-    miniGestureTimerRef.current = setTimeout(() => {
-      setMiniGesture(prev => ({ ...prev, show: false }));
-      miniGestureTimerRef.current = null;
-    }, durationMs);
-  }, []);
 
   const triggerSparkleFx = useCallback((type = 'single', durationMs = 1700) => {
     if (sparkleTimerRef.current) {
@@ -685,7 +685,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   useEffect(() => {
     return () => {
       if (discoveryFlyTimeoutRef.current) clearTimeout(discoveryFlyTimeoutRef.current);
-      if (miniGestureTimerRef.current) clearTimeout(miniGestureTimerRef.current);
       if (sparkleTimerRef.current) clearTimeout(sparkleTimerRef.current);
     };
   }, []);
@@ -1607,11 +1606,13 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     <div className="favorite-food-game">
       <img src={foodBg} alt="Background" className="food-background" />
       <HomeButton onNavigate={(...args) => {
+        SimpleSceneManager.clearCurrentScene();
         interruptCurrentVoice();
         clearAllTimeouts();
         onNavigate?.(...args);
       }} />
       <ZoneBadgeButton zoneId="about-me-hut" onBack={() => {
+        SimpleSceneManager.clearCurrentScene();
         interruptCurrentVoice();
         clearAllTimeouts();
         onNavigate?.('zone-welcome');
@@ -1654,14 +1655,13 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
       {/* Mini Gesture (Thumbs Up) on Success */}
       {miniGesture.show && (
-        <div
-          key={`mini-gesture-${miniGesture.key}`}
-          className={`ganesha-gesture-cue ganesha-gesture-cue--${miniGesture.target}`}
-          style={{ '--mini-cue-duration': `${miniGesture.durationMs}ms` }}
-          aria-hidden="true"
-        >
-          <img className="mini-gesture-icon" src="/images/hand-thumbsup.svg" alt="" />
-        </div>
+        <GaneshaGestureCue
+          key={miniGesture.key}
+          gestureType={miniGesture.type}
+          position={miniGesture.position}
+          anchor={miniGesture.anchor}
+          size={72}
+        />
       )}
 
 
@@ -2282,9 +2282,11 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           title="We're Friends Now!"
           leftColumn={{
             header: (
-              <div className="profile-header">
-                <img src={babyGaneshaSit} alt="Ganesha" className="column-header-image profile-avatar" />
-                <span className="profile-name">Ganesha</span>
+              <div className="aboutme-comparison-avatar-header">
+                <div className="aboutme-comparison-avatar is-plain">
+                  <img src={babyGaneshaSit} alt="Ganesha" />
+                </div>
+                <span className="aboutme-comparison-avatar-name">Ganesha</span>
               </div>
             ),
             items: [
@@ -2296,27 +2298,19 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           }}
           rightColumn={{
             header: (
-              <div className="profile-header">
-                <div
-                  className="profile-avatar child-avatar-display"
-                  style={{
-                    background: (activeProfile?.icon || activeProfile?.profileIcon || profileAvatarImage) ? 'transparent' : 'linear-gradient(135deg, #4ECDC4, #44A08D)',
-                    border: (activeProfile?.icon || activeProfile?.profileIcon || profileAvatarImage) ? 'none' : '4px solid white',
-                    boxShadow: '0 5px 15px rgba(0,0,0,0.2)',
-                    overflow: 'hidden'
-                  }}
-                >
+              <div className="aboutme-comparison-avatar-header">
+                <div className={`aboutme-comparison-avatar${(activeProfile?.icon || activeProfile?.profileIcon || profileAvatarImage) ? '' : ' is-fallback'}`}>
                   {activeProfile?.icon ? (
-                    <img src={activeProfile.icon} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img src={activeProfile.icon} alt="Profile" />
                   ) : activeProfile?.profileIcon ? (
-                    <img src={activeProfile.profileIcon} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img src={activeProfile.profileIcon} alt="Profile" />
                   ) : profileAvatarImage ? (
-                    <img src={profileAvatarImage} alt={profileDisplayName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img src={profileAvatarImage} alt={profileDisplayName} />
                   ) : (
                     profileAvatar
                   )}
                 </div>
-                <span className="profile-name">{profileDisplayName}</span>
+                <span className="aboutme-comparison-avatar-name">{profileDisplayName}</span>
               </div>
             ),
             items: [
@@ -2394,6 +2388,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           onContinue={() => {
             playChime();
             hardStopSceneAudio();
+            SimpleSceneManager.clearCurrentScene();
             sceneActions.updateState({ completed: true, showingCompletionScreen: true });
             const profileId = GameStateManager.getCurrentProfile()?.id;
             if (profileId) {
@@ -2442,6 +2437,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             hardStopSceneAudio();
             setTimeout(() => {
               hardStopSceneAudio();
+              SimpleSceneManager.setCurrentScene('about-me-hut', 'dreams-wishes', false, false);
               if (onNavigate) {
                 onNavigate('dreams-wishes');
               } else if (onComplete) {
@@ -2452,6 +2448,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           onReplay={() => {
             playUiTap();
             hardStopSceneAudio();
+            SimpleSceneManager.setCurrentScene('about-me-hut', 'favorite-food', false, false);
             sceneActions.updateState({
               randomFoods: shuffleArray(foods),
               randomFriends: shuffleArray(friends),
@@ -2488,6 +2485,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           onBackToMap={() => {
             playUiTap();
             hardStopSceneAudio();
+            SimpleSceneManager.clearCurrentScene();
             if (onNavigate) {
               onNavigate('zone-welcome');
             } else if (onBack) {
@@ -2497,6 +2495,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           onHome={() => {
             playUiTap();
             hardStopSceneAudio();
+            SimpleSceneManager.clearCurrentScene();
             if (onNavigate) {
               onNavigate('home');
             }

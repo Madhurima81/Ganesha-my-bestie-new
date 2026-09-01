@@ -1,13 +1,16 @@
-﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './DreamsWishesGame.css';
 import SceneCompletionCelebration from "../../../lib/components/celebration/SceneCompletionCelebration";
 import DrawingPad from '../components/Drawingpad';
 import StoryProgressHeader from '../components/StoryProgressHeader';
+import GaneshaGestureCue from '../../../lib/components/gesture/GaneshaGestureCue';
+import { useMiniGesture } from '../../../lib/hooks/useMiniGesture';
 
 // Navigation Components
 import SceneManager from "../../../lib/components/scenes/SceneManager";
 import GameStateManager from "../../../lib/services/GameStateManager";
 import ProgressManager from "../../../lib/services/ProgressManager";
+import SimpleSceneManager from "../../../lib/services/SimpleSceneManager";
 
 // Content Configs
 import { getOpeningModal, getCompletionModal } from '../../../lib/config/content';
@@ -162,6 +165,10 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate, zoneId = 'about-me-h
 // 2. CONTENT COMPONENT
 // =========================================================
 const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplete, onNavigate, onBack }) => {
+  useEffect(() => {
+    SimpleSceneManager.setCurrentScene('about-me-hut', 'dreams-wishes', false, false);
+  }, []);
+
   const WISH2_FOOD_KEYS = ['apple', 'banana', 'rice'];
   const WISH2_FOOD_ASSETS = {
     apple: appleImg,
@@ -191,44 +198,44 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
   const VOICE_LINES = {
     // Opening Modal
-    opening: "Let’s help and dream together!",
+    opening: "I have a few wishes for the world. Will you help me?",
 
     // Wish 1
-    wish1Intro: "Let's make the world smile!",
-    wish1Active: "Tap the kind actions.",
-    wish1Complete: "You made the world kinder!",
+    wish1Intro: "My first wish is for more kindness.",
+    wish1Active: "Tap the kind actions you can spot.",
+    wish1Complete: "You found all the kind choices.",
 
     // Wish 2
-    wish2Intro: "My second wish… is to share our food. So no one stays hungry.",
-    wish2Active: "Drag food to the plates.",
-    wish2Complete: "Everyone has food now!",
+    wish2Intro: "My next wish is for everyone to have food.",
+    wish2Active: "Drag food to each empty plate.",
+    wish2Complete: "Now every plate has food.",
 
     // Wish 3
-    wish3Intro: "My last wish… is for a green world full of life. Let’s help this forest grow!",
-    wish3Active: "Tap to grow the garden.",
-    wish3Complete: "The world is green and happy!",
+    wish3Intro: "My next wish is for a greener world.",
+    wish3Active: "Tap the bare spaces to help the garden grow.",
+    wish3Complete: "Look how green it has become.",
 
     // All Wishes Complete
-    allWishesComplete: "Now it’s your turn!",
+    allWishesComplete: "Now it's your turn to make a wish.",
 
     // Dream Phases
     // dreamIntro: (REMOVED — merged into allWishesComplete)
-    dreamDrawing: "Draw your happy dream.",
-    dreamClouded: "Tap my trunk to clear the clouds.",
-    dreamClearing: "Keep tapping to clear the clouds!",
-    dreamRevealed: "Wow, that’s a beautiful dream!",
+    dreamDrawing: "Draw something you hope for or dream about.",
+    dreamClouded: "Your dream is hidden by the clouds. Tap my trunk to clear them.",
+    dreamClearing: "There are still clouds in the way.",
+    dreamRevealed: "There it is — your dream!",
 
     // Comparison Card
-    comparison: "This can help the world!",
-    completionCelebration: "It’s shining bright! Now let’s discover your story!",
+    comparison: "Everyone can dream about something different.",
+    completionCelebration: "You helped my wishes grow, and made a dream of your own.",
 
     // Ending
-    ending: "Keep dreaming and helping!",
+    ending: "You helped my wishes grow, and made a dream of your own.",
 
     // Idle hints
-    wish1Hint: "Look for the kind actions.",
-    wish2Hint: "Try dragging food to the plates.",
-    wish3Hint: "Tap the forest to make it grow."
+    wish1Hint: "Can you find another kind action?",
+    wish2Hint: "There's still an empty plate.",
+    wish3Hint: "There's still space for more to grow."
   };
 
   // Profile Display
@@ -401,13 +408,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const [openingButtonVisible] = useState(true);
 
   // Mini gesture (thumbs up) on successful taps
-  const [miniGesture, setMiniGesture] = useState({
-    show: false,
-    target: 'center',
-    durationMs: 1500,
-    key: 0
-  });
-  const miniGestureTimerRef = useRef(null);
+  const { miniGesture, triggerMiniGesture } = useMiniGesture();
   const wish1SparkleCancelRef = useRef(null);
   const [wish1Sparkle, setWish1Sparkle] = useState({ type: null, key: 0 });
   const wish2SparkleCancelRef = useRef(null);
@@ -589,23 +590,6 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     if (!line) return;
     speakLine(line, { moment: sceneState.gamePhase === 'ending' ? 'closing' : 'encouragement' });
   }, [VOICE_LINES.completionCelebration, getPhaseReminderLine, getResumeVoiceLine, isAudioOn, playVoice, sceneState.gamePhase, sceneState.showingCompletionScreen, setVoiceVolume]);
-
-  const triggerMiniGesture = useCallback((target = 'center', durationMs = 1500) => {
-    if (miniGestureTimerRef.current) {
-      clearTimeout(miniGestureTimerRef.current);
-      miniGestureTimerRef.current = null;
-    }
-    setMiniGesture(prev => ({
-      show: true,
-      target,
-      durationMs,
-      key: prev.key + 1
-    }));
-    miniGestureTimerRef.current = setTimeout(() => {
-      setMiniGesture(prev => ({ ...prev, show: false }));
-      miniGestureTimerRef.current = null;
-    }, durationMs);
-  }, []);
 
   // --- HELPERS ---
   const getDiscoveries = () => {
@@ -1158,7 +1142,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       interruptCurrentVoice();
       playUiTap();
     }
-    triggerMiniGesture('center', 1500);
+    triggerMiniGesture('thumbsup', 'center', 1500);
     const newTaps = currentTaps + 1;
     wish1TapCountRef.current = newTaps;
     sceneActions.updateState({ wish1Taps: newTaps });
@@ -1433,7 +1417,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     markInteraction();
     interruptCurrentVoice();
     playUiTap();
-    triggerMiniGesture('center', 1500);
+    triggerMiniGesture('thumbsup', 'center', 1500);
 
     const newStates = [...sceneState.bowlStates];
     newStates[index] = true;
@@ -1494,7 +1478,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     markInteraction();
     interruptCurrentVoice();
     playUiTap();
-    triggerMiniGesture('center', 1500);
+    triggerMiniGesture('thumbsup', 'center', 1500);
     const newTaps = sceneState.wish3Taps + 1;
     sceneActions.updateState({ wish3Taps: newTaps });
 
@@ -1530,7 +1514,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     markInteraction();
     interruptCurrentVoice();
     playUiTap();
-    triggerMiniGesture('center', 1500);
+    triggerMiniGesture('thumbsup', 'center', 1500);
     const newStates = [...sceneState.parkStates];
     newStates[index] = true;
     const count = newStates.filter(Boolean).length;
@@ -1571,7 +1555,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     markInteraction();
     interruptCurrentVoice();
     playUiTap();
-    triggerMiniGesture('center', 1500);
+    triggerMiniGesture('thumbsup', 'center', 1500);
     const newTaps = sceneState.trunkTaps + 1;
     sceneActions.updateState({ trunkTaps: newTaps, gamePhase: 'dream-clearing' });
 
@@ -1613,8 +1597,14 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   return (
     <div className="dreams-wishes-game" data-zone="about-me-hut">
       <img src={dreamsBg} alt="Background" className="dreams-background" />
-      <HomeButton onNavigate={onNavigate} />
-      <ZoneBadgeButton zoneId="about-me-hut" onBack={() => onNavigate?.('zone-welcome')} />
+      <HomeButton onNavigate={(...args) => {
+        SimpleSceneManager.clearCurrentScene();
+        onNavigate?.(...args);
+      }} />
+      <ZoneBadgeButton zoneId="about-me-hut" onBack={() => {
+        SimpleSceneManager.clearCurrentScene();
+        onNavigate?.('zone-welcome');
+      }} />
       <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
       <VOReplayButton onReplay={replayCurrentVoice} disabled={!isAudioOn} />
 
@@ -2270,6 +2260,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
           <button
             onClick={() => {
               playChime();
+              SimpleSceneManager.clearCurrentScene();
               sceneActions.updateState({ showingCompletionScreen: true, completed: true });
             }}
             className="continue-btn-simple done-btn-pulse"
@@ -2308,14 +2299,13 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
       {/* Mini Gesture (Thumbs Up) on Success */}
       {miniGesture.show && (
-        <div
-          key={`mini-gesture-${miniGesture.key}`}
-          className={`ganesha-gesture-cue ganesha-gesture-cue--${miniGesture.target}`}
-          style={{ '--mini-cue-duration': `${miniGesture.durationMs}ms` }}
-          aria-hidden="true"
-        >
-          <img className="mini-gesture-icon" src="/images/hand-thumbsup.svg" alt="" />
-        </div>
+        <GaneshaGestureCue
+          key={miniGesture.key}
+          gestureType={miniGesture.type}
+          position={miniGesture.position}
+          anchor={miniGesture.anchor}
+          size={72}
+        />
       )}
 
       {/* Completion Modal */}
@@ -2356,17 +2346,20 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                   stars: sceneState.stars || 3
                 });
               }
+              SimpleSceneManager.setCurrentScene('about-me-hut', 'my-indian-story', false, false);
               if (onNavigate) onNavigate('my-indian-story');
               else if (onComplete) onComplete();
             }}
             onExploreZones={() => {
               playUiTap();
               hardStopSceneAudio();
+              SimpleSceneManager.clearCurrentScene();
               if (onNavigate) onNavigate('zones');
             }}
             onReplay={() => {
               playUiTap();
               hardStopSceneAudio();
+              SimpleSceneManager.setCurrentScene('about-me-hut', 'dreams-wishes', false, false);
               // Pre-set the opening flag so intro-VO effect won't double-fire; we speak explicitly.
               phaseVoiceRef.current = { opening: true };
               safeSetTimeout(() => {
@@ -2399,12 +2392,14 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
             onBackToMap={() => {
               playUiTap();
               hardStopSceneAudio();
+              SimpleSceneManager.clearCurrentScene();
               if (onNavigate) onNavigate('zone-welcome');
               else if (onBack) onBack();
             }}
             onHome={() => {
               playUiTap();
               hardStopSceneAudio();
+              SimpleSceneManager.clearCurrentScene();
               if (onNavigate) onNavigate('home');
             }}
           />

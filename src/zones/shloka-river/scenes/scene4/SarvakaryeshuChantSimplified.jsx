@@ -17,7 +17,7 @@ import FireworksCompletion from '../../../../lib/components/feedback/FireworksCo
 import CalmGoldenFireworks from '../../../../lib/components/feedback/CalmGoldenFireworks';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
 import InnerMandala from '../../../../lib/components/celebration/InnerMandala';
-import ProgressiveHintSystem from '../../../../lib/components/interactive/ProgressiveHintSystem';
+// import ProgressiveHintSystem from '../../../../lib/components/interactive/ProgressiveHintSystem';
 import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal';
 import HomeButton from '../../../../lib/components/ui/HomeButton';
 import AudioToggle from '../../../../lib/components/ui/AudioToggle/AudioToggle';
@@ -41,6 +41,7 @@ import SarvadaGame from './SarvadaGame';
 import ganeshaHeadphones from './assets/images/ganesha_with_headphones.webp';
 import mooshikaCoach from './assets/images/mooshika-coach.webp';
 import sarvadaBg from './assets/images/sarvada/night.webp';
+import sarvakaryeshuBg from './assets/images/sarvakaryeshu-bg.webp';
 
 import symbolVakratunda from '../../../meaning cave/assets/images/symbols/vakratunda-symbol.png';
 import symbolMahakaya from '../../../meaning cave/assets/images/symbols/mahakaya-symbol.png';
@@ -54,22 +55,6 @@ import symbolSarvada from '../../../meaning cave/assets/images/symbols/sarvada-s
 const RESUME_DELAY_MS = 3000;
 const sceneOuterPetalId = SCENE_TO_OUTER_PETAL_ID['River Memories!'];
 const sceneOuterPetalIds = [sceneOuterPetalId - 1, sceneOuterPetalId];
-const debugFireworksBtnStyle = {
-  position: 'fixed',
-  top: '18px',
-  right: '18px',
-  zIndex: 1200,
-  padding: '8px 12px',
-  borderRadius: '999px',
-  border: '1px solid rgba(255,255,255,0.45)',
-  background: 'rgba(34, 24, 68, 0.82)',
-  color: '#fff7d6',
-  fontSize: '12px',
-  fontWeight: 800,
-  letterSpacing: '0.02em',
-  cursor: 'pointer',
-  boxShadow: '0 10px 24px rgba(0,0,0,0.22)',
-};
 
 const PHASES = {
   INITIAL: 'initial',
@@ -82,19 +67,27 @@ const PHASES = {
   COMPLETE: 'complete',
 };
 
+const stripLeadingSpeechText = (text, leadingText) => {
+  if (!text || !leadingText) return text;
+  const pattern = new RegExp(`^\\s*${leadingText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*[:.!,-]*\\s*`, 'i');
+  return text.replace(pattern, '').trim();
+};
+
+const SARVADA_PHASES = [PHASES.SARVADA_GAME, PHASES.SARVADA_COMPLETE, PHASES.SARVADA_POWER, PHASES.COMPLETE];
+
 const powerConfig = {
   sarvakaryeshu: {
     name: 'In All Tasks',
     image: symbolSarvakaryeshu,
     color: '#9C6FD6',
-    affirmation: 'I use my powers in every task.',
+    affirmation: 'I do every task with care.',
     story: 'Ganesha helps in all things - big and small.',
   },
   sarvada: {
     name: 'Always',
     image: symbolSarvada,
     color: '#FFB347',
-    affirmation: 'These powers stay with me, always.',
+    affirmation: 'What I learn stays with me.',
     story: 'Morning, afternoon, night - always.',
   },
 };
@@ -188,6 +181,23 @@ const SarvakaryeshuChantContent = ({
   const [showPowerOverlay, setShowPowerOverlay] = useState(false);
   const [revealConfig, setRevealConfig] = useState(null);
   const [showTapSparkles, setShowTapSparkles] = useState(false);
+  const fxBgRef = useRef(null);
+  const lastPointRef = useRef(null);
+  const [sparklePos, setSparklePos] = useState(null);
+  const recordPoint = useCallback((e) => {
+    const el = fxBgRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    if (!r.width || !r.height) return;
+    const cx = e.clientX != null ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : null);
+    const cy = e.clientY != null ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : null);
+    if (cx == null || cy == null) return;
+    lastPointRef.current = {
+      x: Math.min(95, Math.max(5, ((cx - r.left) / r.width) * 100)),
+      y: Math.min(95, Math.max(5, ((cy - r.top) / r.height) * 100)),
+    };
+  }, []);
+
   const [openingButtonVisible, setOpeningButtonVisible] = useState(false);
   const [savedRecordings, setSavedRecordings] = useState({});
   const handleSaveRecording = useCallback((wordId, data) => {
@@ -224,9 +234,11 @@ const SarvakaryeshuChantContent = ({
     showSparkle !== 'final-fireworks';
 
   const {
+    playVoice: playConfiguredVoice,
     stopVoice,
     setVoiceVolume,
     playSfx,
+    playSyllable,
     playWord: playWordAudio,
     setCurrentPhase,
     startIdleTimer,
@@ -241,11 +253,21 @@ const SarvakaryeshuChantContent = ({
 
   const { playUiTap, playChime } = useGameSounds();
   const speechSynthRef = useRef(typeof window !== 'undefined' ? window.speechSynthesis : null);
+  const guidanceVoiceActiveRef = useRef(false);
+  const guidanceVoiceTimerRef = useRef(null);
+  const lastGuidanceVoiceEndedAtRef = useRef(0);
 
   const stopWebSpeech = useCallback(() => {
     try {
       speechSynthRef.current?.cancel();
     } catch {}
+  }, []);
+
+  const clearGuidanceVoiceTimer = useCallback(() => {
+    if (guidanceVoiceTimerRef.current) {
+      window.clearTimeout(guidanceVoiceTimerRef.current);
+      guidanceVoiceTimerRef.current = null;
+    }
   }, []);
 
   const speakWebSpeech = useCallback((text, onEnded) => {
@@ -273,30 +295,67 @@ const SarvakaryeshuChantContent = ({
     }
   }, []);
 
-  const playGuidanceVoice = useCallback((key, onEnded) => {
+  const playGuidanceVoice = useCallback((key, onEnded, options = {}) => {
+    const { minDelayAfterVoiceMs = 0, replayOnReturn = false, stripLeadingText = null } = options;
     const map = {
-      scene13_puzzle: "The puzzle piece won’t fit. Tap the best power.",
-      scene13_sports: "I want to give up. Tap the best power.",
-      scene13_bike: "We both want the bike. Tap the best power.",
-      scene13_grandma: "Grandma needs help with the bags. Tap the best power.",
-      welcome: "Now let us use Ganesha’s powers to help!",
-      scene13_try_again: "That power could help too. Try another one.",
-      scene13_success: "You chose the right power! You solved the problem!",
+      scene13_puzzle: "The painting didn’t go as planned. What could help him try a different way?",
+      scene13_puzzle_after: "The Trunk helped him try another way — and the splat became a whale!",
+      scene13_sports: "He feels upset inside. What could help him make room for his feelings?",
+      scene13_sports_after: "The Belly reminded him to make room for his feelings and take a slow breath.",
+      scene13_bike: "Everyone is looking, but they’re missing an important clue. What could help her notice it?",
+      scene13_bike_after: "The Eyes helped her look carefully and notice what everyone else missed.",
+      scene13_grandma: "He wants to finish his special card, but everything keeps pulling his attention away. What could help him stay focused?",
+      scene13_grandma_after: "The Tusk helped him stay focused on what was important.",
+      welcome: "Each friend is stuck in a different way. Look carefully and choose the power that can help.",
+      scene13_try_again: "Try another symbol.",
+      scene13_success: "Sarva-Karyeshu! You chose the right power and solved every task.",
       scene13_meaning: "Sarva Karyeshu means in everything we do.",
-      scene14_intro: "Morning, afternoon, and night. Ganesha is with us all day.",
-      scene14_morning: "Tap the morning memory bubble.",
-      scene14_afternoon: "Now tap the afternoon bubble.",
-      scene14_night: "Now tap the night bubble.",
-      scene14_success: "You remembered Ganesha all day long!",
+      scene14_intro: "Morning, afternoon, and night, Ganesha's symbols are there to find. Can you spot each one?",
+      scene14_morning: "Let's look at the morning memory.",
+      scene14_afternoon: "Now the afternoon memory.",
+      scene14_night: "Now the night memory.",
+      scene14_find_symbol: "Can you find the hidden symbol?",
+      scene14_success: "Sarvada! You found the wisdom in every part of the day.",
       scene14_meaning: "Sarvada means always.",
-      sceneComplete: "In every task. Always. These powers are yours.",
+      sceneComplete: "And you can carry them with you, all through your day.",
     };
-    if (map[key]) {
-      speakWebSpeech(map[key], onEnded);
+    const finishPlayback = () => {
+      guidanceVoiceActiveRef.current = false;
+      lastGuidanceVoiceEndedAtRef.current = Date.now();
+      onEnded?.();
+    };
+    const startPlayback = () => {
+      guidanceVoiceActiveRef.current = true;
+      if (map[key]) {
+        speakWebSpeech(stripLeadingSpeechText(map[key], stripLeadingText), finishPlayback);
+        return;
+      }
+      playConfiguredVoice?.(key, finishPlayback, { replayOnReturn, stripLeadingText });
+    };
+    const remainingQuietGap = Math.max(
+      0,
+      lastGuidanceVoiceEndedAtRef.current + minDelayAfterVoiceMs - Date.now(),
+    );
+    if (guidanceVoiceActiveRef.current || remainingQuietGap > 0) {
+      clearGuidanceVoiceTimer();
+      const schedulePlayback = () => {
+        const delay = guidanceVoiceActiveRef.current
+          ? minDelayAfterVoiceMs
+          : Math.max(0, lastGuidanceVoiceEndedAtRef.current + minDelayAfterVoiceMs - Date.now());
+        guidanceVoiceTimerRef.current = window.setTimeout(() => {
+          guidanceVoiceTimerRef.current = null;
+          if (guidanceVoiceActiveRef.current) {
+            schedulePlayback();
+            return;
+          }
+          startPlayback();
+        }, delay);
+      };
+      schedulePlayback();
       return;
     }
-    onEnded?.();
-  }, [speakWebSpeech]);
+    startPlayback();
+  }, [clearGuidanceVoiceTimer, playConfiguredVoice, speakWebSpeech]);
 
   const replayCurrentVoice = useCallback(() => {
     if (!isAudioOn) return;
@@ -316,9 +375,11 @@ const SarvakaryeshuChantContent = ({
   }, [isAudioOn, playGuidanceVoice, sceneState.phase, sceneState.welcomeShown, showSceneCompletion]);
 
   const stopAllVoice = useCallback(() => {
+    clearGuidanceVoiceTimer();
+    guidanceVoiceActiveRef.current = false;
     stopVoice();
     stopWebSpeech();
-  }, [stopVoice, stopWebSpeech]);
+  }, [clearGuidanceVoiceTimer, stopVoice, stopWebSpeech]);
 
   const pauseCelebRef = useRef(null);
   const onPauseHide = useCallback(() => pauseCelebRef.current?.(), []);
@@ -436,8 +497,14 @@ const SarvakaryeshuChantContent = ({
   }, [sceneState.phase, showMandala, showSparkle, showSceneCompletion]);
 
   // ── Reload: restore SymbolAutoReveal if resumed mid-reveal ─────────────────
+  // Guarded to run once per mount (not on every live phase change) — otherwise
+  // this races the live completion handler's own reveal trigger for the same
+  // phase transition and both fire playChime()/setRevealConfig() (double SFX).
+  const hasRestoredRevealRef = useRef(false);
   useEffect(() => {
     if (!sceneState || revealConfig) return;
+    if (hasRestoredRevealRef.current) return;
+    hasRestoredRevealRef.current = true;
 
     const restoreReveal = (word) => {
       window.setTimeout(() => {
@@ -501,7 +568,7 @@ const SarvakaryeshuChantContent = ({
         playGuidanceVoice(successKey, () => {
           window.clearTimeout(voFallback);
           window.setTimeout(() => triggerReveal(), 250);
-        });
+        }, { stripLeadingText: word === 'sarvakaryeshu' ? 'Sarva-Karyeshu' : 'Sarvada' });
       }, 250);
     } else {
       window.setTimeout(() => triggerReveal(), 350);
@@ -520,10 +587,10 @@ const SarvakaryeshuChantContent = ({
   ]);
 
   const handleMicroWin = useCallback(() => {
-    triggerMiniGesture('thumbsup', 'item', 1200);
+    setSparklePos(lastPointRef.current);
     setShowTapSparkles(true);
-    window.setTimeout(() => setShowTapSparkles(false), 850);
-  }, [triggerMiniGesture]);
+    window.setTimeout(() => setShowTapSparkles(false), 1600);
+  }, []);
 
   const handleAppDiscoveryCelebrate = () => {
     setShowAppDiscovery(false);
@@ -538,16 +605,6 @@ const SarvakaryeshuChantContent = ({
     setShowSparkle('final-fireworks');
   };
 
-  const handleDebugFireworks = useCallback(() => {
-    stopAllVoice();
-    setShowAppDiscovery(false);
-    setRevealConfig(null);
-    setShowPowerOverlay(false);
-    setShowMandala(false);
-    setShowSceneCompletion(false);
-    setShowSparkle('final-fireworks');
-  }, [stopAllVoice]);
-
   if (!sceneState) return <div className="loading">Loading...</div>;
 
   return (
@@ -556,14 +613,18 @@ const SarvakaryeshuChantContent = ({
         <div className="sarva-scene-container">
           <HomeButton onNavigate={onNavigate} />
           <ZoneBadgeButton zoneId="shloka-river" onBack={() => onNavigate?.('zone-welcome')} />
-          <button type="button" style={debugFireworksBtnStyle} onClick={handleDebugFireworks}>
-            Debug Fireworks
-          </button>
           <AudioToggle isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
           <VOReplayButton onReplay={replayCurrentVoice} disabled={!isAudioOn} />
           <ResumeCountdown value={countdownValue} />
 
-          <div className="sarva-scene-background" style={{ backgroundImage: `url(${sarvadaBg})` }}>
+          <div
+            className="sarva-scene-background"
+            ref={fxBgRef}
+            onPointerDownCapture={recordPoint}
+            style={{
+              backgroundImage: `url(${SARVADA_PHASES.includes(sceneState.phase) ? sarvadaBg : sarvakaryeshuBg})`,
+            }}
+          >
             {!showSceneCompletion && (
               <>
                 <SarvakaryeshuGame
@@ -573,7 +634,18 @@ const SarvakaryeshuChantContent = ({
                   onPhaseComplete={() => window.setTimeout(() => handlePhaseComplete('sarvakaryeshu'), 0)}
                   onGameComplete={() => {}}
                   isPaused={isRecorderOpen}
-                  voiceGuidance={{ playVoice: playGuidanceVoice, playWord: playWordAudio, stopVoice: stopAllVoice }}
+                  voiceGuidance={{
+                    playVoice: playGuidanceVoice,
+                    playWord: playWordAudio,
+                    playSyllable: (syllable, onEnded) => {
+                      if (!audioEnabledRef.current) {
+                        onEnded?.();
+                        return;
+                      }
+                      playSyllable('sarvakaryeshu', syllable, onEnded);
+                    },
+                    stopVoice: stopAllVoice
+                  }}
                 />
 
                 <SarvadaGame
@@ -583,12 +655,23 @@ const SarvakaryeshuChantContent = ({
                   onPhaseComplete={() => window.setTimeout(() => handlePhaseComplete('sarvada'), 0)}
                   onGameComplete={() => {}}
                   isPaused={isRecorderOpen}
-                  voiceGuidance={{ playVoice: playGuidanceVoice, playWord: playWordAudio, stopVoice: stopAllVoice }}
+                  voiceGuidance={{
+                    playVoice: playGuidanceVoice,
+                    playWord: playWordAudio,
+                    playSyllable: (syllable, onEnded) => {
+                      if (!audioEnabledRef.current) {
+                        onEnded?.();
+                        return;
+                      }
+                      playSyllable('sarvada', syllable, onEnded);
+                    },
+                    stopVoice: stopAllVoice
+                  }}
                 />
 
                 {showTapSparkles && (
-                  <div className="sarva-tap-sparkles">
-                    <SparkleAnimation type="magic" count={14} color="#FFD54F" size={9} duration={850} area="full" />
+                  <div className="sarva-tap-sparkles" style={sparklePos ? { left: `${sparklePos.x}%`, top: `${sparklePos.y}%`, width: '42%', height: '42%', right: 'auto', bottom: 'auto', transform: 'translate(-50%, -50%)' } : undefined}>
+                    <SparkleAnimation type="star" count={16} color="#FFD54F" size={13} duration={1300} area="full" />
                   </div>
                 )}
 
@@ -670,8 +753,8 @@ const SarvakaryeshuChantContent = ({
                     shlokaPetalStates={{ 1: 'activated', 2: 'activated', 3: 'activated', 4: 'activated', 5: 'activated', 6: 'activated' }}
                     justEarnedPetals={sceneOuterPetalIds.map((id) => ({ ring: 'outer', id }))}
                     earnedSymbols={[
-                      { id: 'sarvakaryeshu', petalId: 7, ring: 'middle', image: symbolSarvakaryeshu },
-                      { id: 'sarvada', petalId: 8, ring: 'middle', image: symbolSarvada },
+                      { id: 'sarvakaryeshu', petalId: 7, ring: 'outer', image: symbolSarvakaryeshu },
+                      { id: 'sarvada', petalId: 8, ring: 'outer', image: symbolSarvada },
                     ]}
                     highlightPetals={sceneOuterPetalIds}
                     message="These meanings are growing inside you"
@@ -748,14 +831,7 @@ const SarvakaryeshuChantContent = ({
               onContinue={() => onNavigate?.('scene-complete-continue')}
             />
 
-            <ProgressiveHintSystem
-              ref={hintSystemRef}
-              sceneId={sceneId}
-              sceneState={sceneState}
-              hintConfigs={[]}
-              characterImage={mooshikaCoach}
-              enabled={false}
-            />
+            {/* ProgressiveHintSystem disabled per request */}
           </div>
         </div>
       </MessageManager>

@@ -15,14 +15,20 @@ import { useState, useCallback, useRef } from 'react';
  * durationMs: how long the cue stays visible
  *
  * Returns:
- *   miniGesture       — { show, type, position, durationMs, key }
- *   triggerMiniGesture — (type, position, durationMs) => void
+ *   miniGesture       — { show, type, position, anchor, durationMs, key }
+ *   triggerMiniGesture — (type, position, durationMs, anchor?) => void
+ *   hideMiniGesture    — () => void — hides the cue early (e.g. on tab hide)
+ *
+ * anchor is optional { x, y } percentages — when passed, the cue is
+ * anchored to that spot instead of the fixed item/center corners
+ * (see GaneshaGestureCue's `anchor` prop).
  */
 export function useMiniGesture() {
   const [miniGesture, setMiniGesture] = useState({
     show: false,
     type: 'thumbsup',
     position: 'item',
+    anchor: null,
     durationMs: 1500,
     key: 0,
   });
@@ -30,7 +36,7 @@ export function useMiniGesture() {
   const timerRef = useRef(null);
 
   const triggerMiniGesture = useCallback(
-    (type = 'thumbsup', position = 'item', durationMs = 1500) => {
+    (type = 'thumbsup', position = 'item', durationMs = 1500, anchor = null) => {
       if (timerRef.current) {
         clearTimeout(timerRef.current);
         timerRef.current = null;
@@ -40,6 +46,7 @@ export function useMiniGesture() {
         show: true,
         type,
         position,
+        anchor,
         durationMs,
         key: prev.key + 1,
       }));
@@ -52,5 +59,13 @@ export function useMiniGesture() {
     []
   );
 
-  return { miniGesture, triggerMiniGesture };
+  const hideMiniGesture = useCallback(() => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+    setMiniGesture(prev => ({ ...prev, show: false }));
+  }, []);
+
+  return { miniGesture, triggerMiniGesture, hideMiniGesture };
 }

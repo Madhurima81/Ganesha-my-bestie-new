@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
 import './TuskPathGame.css';
 import { ANIMAL_SIZES } from './animalConfig';
 import { TUSK_ANIMAL_POSITIONS, TUSK_OBSTACLE_POSITION } from './tuskPathLayout';
@@ -30,7 +31,7 @@ const VO_PATHS = {
 };
 
 const VO_TEXTS = {
-  intro: 'My tusk is hidden beyond this blocked path. Let us work together to clear the way!',
+  intro: 'My tusk is beyond this blocked path. Stay focused and choose what each obstacle needs.',
   vinesPrompt: 'Who can help with these tangled vines?',
   vinesSelected: 'Great choice! Now rub the vines away!',
   vinesDone: 'Wonderful! The vines are cleared.',
@@ -43,7 +44,7 @@ const VO_TEXTS = {
   boulderPrompt: 'Who is strong enough to move this giant boulder?',
   boulderSelected: 'Great choice! Press and hold to push the boulder!',
   keepPushing: 'Keep pushing... You are doing great!',
-  finale: 'Hooray! You did it! The tusk has appeared! Every friend used their special gift. Working together helped clear the path. Wonderful teamwork!'
+  finale: 'Hooray! You did it! The tusk has appeared! You stayed focused and chose just what each obstacle needed. Great teamwork!'
 };
 
 // Debug layout editor — only with ?debug in the URL, never for children in prod.
@@ -755,6 +756,40 @@ const TuskPathGame = ({
           </div>
         );
       })}
+
+      {!staticPreview && currentLayer && (
+        <GestureDemo
+          type="tap"
+          from={{
+            x: (activeAnimalPositions[currentLayer.correctAnimal] || TUSK_ANIMAL_POSITIONS[currentLayer.correctAnimal]).x,
+            y: (activeAnimalPositions[currentLayer.correctAnimal] || TUSK_ANIMAL_POSITIONS[currentLayer.correctAnimal]).y,
+          }}
+          active={!debugMode && !peeling && !showFinale && !allCleared && !helperAnimal}
+          idleDelay={1800}
+          zIndex={30}
+        />
+      )}
+
+      {!staticPreview && currentLayer && !isElephantLayer && (
+        <GestureDemo
+          type="scratch"
+          from={{ x: activeObstaclePosition.x - 8, y: activeObstaclePosition.y - 6 }}
+          to={{ x: activeObstaclePosition.x + 8, y: activeObstaclePosition.y + 6 }}
+          active={!debugMode && !peeling && !allCleared && !!helperAnimal}
+          idleDelay={1800}
+          zIndex={30}
+        />
+      )}
+
+      {!staticPreview && currentLayer && isElephantLayer && (
+        <GestureDemo
+          type="hold"
+          from={{ x: activeObstaclePosition.x, y: activeObstaclePosition.y }}
+          active={!debugMode && !peeling && !allCleared && !!helperAnimal && !isHolding}
+          idleDelay={1800}
+          zIndex={30}
+        />
+      )}
 
       {!staticPreview && helperAnimal && !peeling && !allCleared && (
         <>

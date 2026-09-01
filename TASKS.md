@@ -70,6 +70,14 @@ Before every task, Claude Code must:
 - [x] T38 · Scene 21 continue/resume behavior — restart phases on continue (wish1/2/3 intro & active, dream phases)
 - [x] T39 · Scene 21 voice bug fix — return hint now clears only phase-specific VO key, allows subsequent VOs to play
 - [x] T40 · Scene 21 combined modal — merge "all-wishes-complete" + "dream-intro" into single modal, skip dream-intro phase, go straight to drawing
+- [x] T41 · GestureDemo — cap loop to exactly 2 iterations (was infinite), hide on browser's own `animationend` instead of a fade timer
+- [x] T42 · GaneshaGestureCue — add optional `anchor` `{x, y}` prop to pin the cue to a specific on-screen spot instead of only fixed item/center corners
+- [x] T43 · useMiniGesture — add `anchor` param passthrough + new `hideMiniGesture()` escape hatch (e.g. for tab-hide handling)
+- [x] T44 · Migrate 6 scenes off hand-rolled gesture cues onto shared `GaneshaGestureCue` + `useMiniGesture`: NewModakSceneV7, PondSceneSimplifiedV4, Familytreegame (also fixed a real bug — cue had no matching CSS before), Favoritefoodgame, ObstacleRemoverGame, MyIndianStoryGame — removed dead duplicate `character/GaneshaGestureCue.jsx`, Family Tree's commented-out `choice-thumbsup-cue` block + CSS, and orphaned per-scene gesture CSS
+- [x] T45 · TuskPathGame — add GestureDemo for tap-the-correct-animal and scratch-the-obstacle steps (was missing from all 3 tusk sub-games)
+- [x] T46 · ShlokaRiverFinale — wire SFX consistently with other Shloka River scenes: `playUiTap` on word pickup, `playSparkle` on every correct placement, `playSparkle`+`playChime` on the 8th/final word (matches Pond's bloom+chime pattern)
+- [x] T47 · InnerMandala — earned-symbol size increased ~33% (7.2%/36px → 9.6%/48px max) and subtitle/hint text repositioned below the flower (was overlapping the lowest petal) — confirmed via DOM measurement, mobile breakpoint updated to match
+- [x] T48 · CleanGameWelcomeScreen / InnerMandala — nudged avatar/monkey slot up 6px total via `.mandala-avatar-slot`
 
 
 

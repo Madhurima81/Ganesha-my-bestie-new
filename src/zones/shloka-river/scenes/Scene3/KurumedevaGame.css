@@ -15,6 +15,7 @@
   background-repeat: no-repeat;
   background-size: cover;
   overflow: hidden;
+  touch-action: none;
 }
 
 .kuru-hint {
@@ -51,16 +52,12 @@
 }
 
 .kuru-bridge {
+  /* left / top / width / transform are set inline per KURUMEDEVA_LAYOUT.bridge */
   position: absolute;
-  left: 50%;
-  top: 56%;
-  width: 52%;
-  transform: translate(-50%, -50%);
   z-index: 6;
-  animation: kuruBridgePop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.kuru-bridge img {
+.kuru-bridge-img {
   width: 100%;
   display: block;
   -webkit-user-drag: none;
@@ -68,10 +65,33 @@
   filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.22));
 }
 
-.kuru-bridge.is-complete img {
+/* Newest stage sits in flow (drives the container height) and fades in. */
+.kuru-bridge-img.is-cur {
+  position: relative;
+  animation: kuruBridgeFadeIn 0.55s ease-out;
+}
+
+/* Previous stage is kept underneath for one cross-fade, then fades out. */
+.kuru-bridge-img.is-prev {
+  position: absolute;
+  inset: 0;
+  animation: kuruBridgeFadeOut 0.55s ease-out forwards;
+}
+
+.kuru-bridge.is-complete .kuru-bridge-img.is-cur {
   filter:
     drop-shadow(0 6px 14px rgba(0, 0, 0, 0.22))
     drop-shadow(0 0 20px rgba(255, 220, 80, 0.4));
+}
+
+@keyframes kuruBridgeFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes kuruBridgeFadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
 }
 
 .kuru-beaver {
@@ -79,8 +99,8 @@
   transform: translate(-50%, -50%);
   z-index: 15;
   transition:
-    left 0.48s cubic-bezier(0.22, 1, 0.36, 1),
-    top 0.48s cubic-bezier(0.22, 1, 0.36, 1);
+    left 0.9s cubic-bezier(0.4, 0, 0.3, 1),
+    top 0.9s cubic-bezier(0.4, 0, 0.3, 1);
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.18));
 }
 
@@ -105,7 +125,7 @@
 }
 
 .kuru-beaver.is-walking {
-  animation: kuruBeaverWalk 0.48s ease-in-out infinite;
+  animation: kuruBeaverWalk 0.72s ease-in-out infinite;
 }
 
 .kuru-object {
@@ -132,12 +152,21 @@
   animation: kuruObjIdle 2.5s ease-in-out infinite;
 }
 
+/* Material held by a friend while it walks to the gap — rides along with it. */
+.kuru-object--carrying {
+  opacity: 1;
+  z-index: 32;
+  transition:
+    left 1s cubic-bezier(0.4, 0, 0.3, 1),
+    top 1s cubic-bezier(0.4, 0, 0.3, 1);
+}
+
 .kuru-object--flying {
   opacity: 1;
   z-index: 35;
   transition:
-    left 0.6s cubic-bezier(0.22, 1, 0.36, 1),
-    top 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    left 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    top 0.55s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .kuru-obj-roll img {
@@ -167,6 +196,8 @@
   justify-content: center;
   z-index: 20;
   touch-action: manipulation;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
   transition:
     left 0.65s cubic-bezier(0.22, 1, 0.36, 1),
     top 0.65s cubic-bezier(0.22, 1, 0.36, 1),
@@ -185,9 +216,10 @@
 }
 
 .kuru-friend--waiting {
-  opacity: 0;
+  opacity: 0.62;
   pointer-events: none;
-  transform: translate(-50%, -50%) scale(0.9);
+  transform: translate(-50%, -50%) scale(0.94);
+  filter: saturate(0.82);
 }
 
 .kuru-friend--waiting img {
@@ -200,11 +232,10 @@
   z-index: 25;
   opacity: 1;
   transform: translate(-50%, -50%) scale(1);
-  animation: kuruFriendPulse 1.4s ease-in-out infinite;
 }
 
 .kuru-friend.is-tapped {
-  animation: kuruFriendTap 0.35s ease-out !important;
+  animation: kuruFriendTap 0.25s ease-out !important;
 }
 
 .kuru-friend--helped {
@@ -213,8 +244,26 @@
 }
 
 .kuru-friend--helped img {
-  animation: kuruHappyBounce 2s ease-in-out infinite;
   transform-origin: center bottom;
+}
+
+/* Friend ambling to the gap / back to the bank line. */
+.kuru-friend.is-walking {
+  z-index: 24;
+  transition:
+    left 1s cubic-bezier(0.4, 0, 0.3, 1),
+    top 1s cubic-bezier(0.4, 0, 0.3, 1),
+    opacity 0.5s ease;
+}
+
+.kuru-friend.is-walking img {
+  animation: kuruWalkBob 0.5s ease-in-out infinite;
+  transform-origin: center bottom;
+}
+
+@keyframes kuruWalkBob {
+  0%, 100% { transform: translateY(0) rotate(-1.5deg); }
+  50% { transform: translateY(-6%) rotate(1.5deg); }
 }
 
 .kuru-friend--crossing {
@@ -234,6 +283,83 @@
   pointer-events: none;
 }
 
+.kuru-help-line {
+  position: absolute;
+  inset: 0;
+  z-index: 27;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.kuru-help-line.is-dragging {
+  opacity: 1;
+}
+
+.kuru-help-line line {
+  stroke: rgba(255, 238, 150, 0.82);
+  stroke-width: 0.7;
+  stroke-linecap: round;
+  stroke-dasharray: 4 2.5;
+  filter: drop-shadow(0 0 3px rgba(255, 204, 80, 0.5));
+}
+
+.kuru-help-token {
+  position: absolute;
+  width: clamp(58px, 8.4vw, 92px);
+  aspect-ratio: 1.48;
+  z-index: 45;
+  transform: translate(-50%, -50%);
+  border: 0;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  padding: 0;
+  background: transparent;
+  cursor: grab;
+  touch-action: none;
+  transition:
+    left 0.28s ease,
+    top 0.28s ease,
+    transform 0.18s ease,
+    opacity 0.18s ease,
+    filter 0.18s ease;
+}
+
+.kuru-help-token:focus,
+.kuru-help-token:focus-visible {
+  outline: none;
+}
+
+.kuru-help-token.is-dragging {
+  cursor: grabbing;
+  transform: translate(-50%, -50%) scale(1.08);
+  transition: transform 0.12s ease;
+}
+
+.kuru-help-token.is-delivered {
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0.9);
+  opacity: 0;
+  filter:
+    drop-shadow(0 0 12px rgba(255, 220, 90, 0.8))
+    drop-shadow(0 0 24px rgba(255, 220, 90, 0.5));
+  transition:
+    transform 0.35s ease,
+    opacity 0.35s ease,
+    filter 0.35s ease;
+}
+
+.kuru-help-token img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  -webkit-user-drag: none;
+  pointer-events: none;
+  filter: drop-shadow(0 8px 14px rgba(77, 48, 8, 0.24));
+}
+
 @keyframes kuruObjIdle {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-4%); }
@@ -241,31 +367,26 @@
 
 @keyframes kuruObjRoll {
   0% { transform: rotate(0deg) scale(1); opacity: 1; }
-  30% { transform: rotate(-120deg) scale(1.1); }
-  60% { transform: rotate(-280deg) scale(1.05); }
-  100% { transform: rotate(-360deg) scale(0.9); opacity: 0.6; }
+  55% { transform: rotate(-28deg) scale(1.04); }
+  100% { transform: rotate(-42deg) scale(0.92); opacity: 0.72; }
 }
 
 @keyframes kuruObjSwoop {
   0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
-  30% { transform: translateY(30%) rotate(15deg) scale(1.1); }
-  70% { transform: translateY(-15%) rotate(-10deg) scale(1.05); }
-  100% { transform: translateY(0) rotate(0deg) scale(0.85); opacity: 0.6; }
+  45% { transform: translateY(-9%) rotate(7deg) scale(1.04); }
+  100% { transform: translateY(0) rotate(-4deg) scale(0.9); opacity: 0.72; }
 }
 
 @keyframes kuruObjTumble {
   0% { transform: rotate(0deg) translateY(0) scale(1); opacity: 1; }
-  20% { transform: rotate(40deg) translateY(-20%) scale(1.1); }
-  50% { transform: rotate(-30deg) translateY(10%) scale(1.05); }
-  75% { transform: rotate(20deg) translateY(-8%) scale(0.95); }
-  100% { transform: rotate(0deg) translateY(0) scale(0.85); opacity: 0.6; }
+  40% { transform: rotate(16deg) translateY(-8%) scale(1.04); }
+  100% { transform: rotate(-8deg) translateY(0) scale(0.9); opacity: 0.72; }
 }
 
 @keyframes kuruObjFlip {
   0% { transform: perspective(300px) rotateX(0deg) scale(1); opacity: 1; }
-  40% { transform: perspective(300px) rotateX(180deg) scale(1.1); }
-  70% { transform: perspective(300px) rotateX(300deg) scale(1); }
-  100% { transform: perspective(300px) rotateX(360deg) scale(0.85); opacity: 0.6; }
+  45% { transform: perspective(300px) rotateX(14deg) rotateZ(4deg) scale(1.04); }
+  100% { transform: perspective(300px) rotateX(0deg) rotateZ(-5deg) scale(0.9); opacity: 0.72; }
 }
 
 @keyframes kuruIdleBreathe {
@@ -286,7 +407,7 @@
 
 @keyframes kuruFriendTap {
   0% { transform: translate(-50%, -50%) scale(1); }
-  40% { transform: translate(-50%, -60%) scale(1.18); filter: brightness(1.3) drop-shadow(0 0 16px rgba(255, 220, 80, 0.8)); }
+  45% { transform: translate(-50%, -55%) scale(1.1); filter: brightness(1.18) drop-shadow(0 0 12px rgba(255, 220, 80, 0.65)); }
   100% { transform: translate(-50%, -50%) scale(1); }
 }
 
@@ -298,6 +419,24 @@
 @keyframes kuruBridgePop {
   0% { opacity: 0.4; transform: translate(-50%, -44%) scale(0.96); }
   100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes kuruBridgeLand {
+  0% {
+    transform: scale(0.97);
+    filter: brightness(1) drop-shadow(0 6px 14px rgba(0, 0, 0, 0.22));
+  }
+  45% {
+    transform: scale(1.025);
+    filter:
+      brightness(1.12)
+      drop-shadow(0 6px 14px rgba(0, 0, 0, 0.22))
+      drop-shadow(0 0 14px rgba(255, 220, 90, 0.5));
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1) drop-shadow(0 6px 14px rgba(0, 0, 0, 0.22));
+  }
 }
 
 @keyframes kuruBeaverWalk {
@@ -338,4 +477,438 @@
     filter: drop-shadow(0 0 18px rgba(255, 220, 90, 0.85));
     transform: translate(-50%, -50%) scale(1.08);
   }
+}
+
+/* ------------------------------------------------------------------ */
+/* Layout Debug panel (ported from MahakayaRescueGame)                 */
+/* ------------------------------------------------------------------ */
+.kuru-debug-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+}
+
+.kuru-debug-marker {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  cursor: move;
+  touch-action: none;
+  user-select: none;
+}
+
+.kuru-debug-marker.has-art img,
+.kuru-debug-marker.is-friend img {
+  width: 100%;
+  display: block;
+  pointer-events: none;
+  opacity: 0.55;
+  outline: 1px dashed rgba(255, 255, 255, 0.55);
+}
+
+.kuru-debug-marker.is-debug-selected.has-art img {
+  opacity: 1;
+}
+
+.kuru-debug-marker .kuru-debug-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #03a9f4;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 2px rgba(3, 169, 244, 0.4);
+}
+
+.kuru-debug-marker .kuru-debug-label {
+  font: 800 10px 'Nunito', sans-serif;
+  color: #fff;
+  background: rgba(15, 36, 54, 0.85);
+  padding: 1px 5px;
+  border-radius: 6px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.kuru-debug-marker.is-debug-selected .kuru-debug-dot {
+  background: #ffde6d;
+  box-shadow: 0 0 0 4px rgba(255, 222, 109, 0.35);
+}
+
+.kuru-debug-marker.is-debug-selected img {
+  outline: 2px solid #ffde6d;
+  box-shadow: 0 0 0 4px rgba(255, 222, 109, 0.25);
+}
+
+.kuru-debug-panel {
+  position: fixed;
+  width: min(22rem, calc(100% - 1.5rem));
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  pointer-events: auto;
+}
+
+.kuru-debug-toggle {
+  border: 0;
+  border-radius: 999px;
+  background: rgba(15, 36, 54, 0.9);
+  color: #f6fbff;
+  font: 700 13px 'Nunito', sans-serif;
+  padding: 0.55rem 0.95rem;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.24);
+  cursor: pointer;
+}
+
+.kuru-debug-body {
+  width: 100%;
+  max-height: min(70vh, 32rem);
+  overflow: auto;
+  border-radius: 1rem;
+  background: rgba(255, 251, 242, 0.97);
+  color: #203040;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.24);
+  padding: 0.85rem;
+}
+
+.kuru-debug-drag-handle {
+  cursor: move;
+  touch-action: none;
+  user-select: none;
+  margin: -0.2rem -0.2rem 0.75rem;
+  border-radius: 0.65rem;
+  background: linear-gradient(90deg, rgba(21, 155, 155, 0.94), rgba(32, 95, 116, 0.94));
+  color: #fff;
+  font: 900 0.78rem 'Nunito', sans-serif;
+  padding: 0.5rem 0.65rem;
+  text-align: center;
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.16);
+}
+
+.kuru-debug-note {
+  margin: -0.15rem 0 0.75rem;
+  color: rgba(32, 48, 64, 0.78);
+  font-size: 0.74rem;
+  line-height: 1.35;
+}
+
+.kuru-debug-row {
+  display: grid;
+  grid-template-columns: 3.6rem 1fr 4.4rem;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.55rem;
+  font-size: 0.8rem;
+}
+
+.kuru-debug-row span {
+  font-weight: 700;
+}
+
+.kuru-debug-row input[type='range'] {
+  width: 100%;
+}
+
+.kuru-debug-row input[type='number'],
+.kuru-debug-row select {
+  width: 100%;
+  border: 1px solid rgba(32, 48, 64, 0.2);
+  border-radius: 0.45rem;
+  background: rgba(255, 255, 255, 0.92);
+  padding: 0.28rem 0.42rem;
+  font: inherit;
+}
+
+.kuru-debug-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 7px;
+  margin: 0.75rem 0;
+}
+
+.kuru-debug-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 7px;
+  margin: 8px 0;
+}
+
+.kuru-debug-actions button,
+.kuru-debug-grid button {
+  flex: 1;
+  border: 0;
+  border-radius: 5px;
+  background: #ffd36d;
+  color: #33210b;
+  font: 800 11px 'Nunito', sans-serif;
+  padding: 6px;
+  cursor: pointer;
+}
+
+.kuru-debug-readout {
+  margin: 0;
+  padding: 0.7rem;
+  border-radius: 0.7rem;
+  background: rgba(18, 33, 46, 0.92);
+  color: #e8f4ff;
+  font-size: 0.68rem;
+  line-height: 1.35;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+
+/* ------------------------------------------------------------------ */
+/* Round 1 — drag 3 logs into the gap                                 */
+/* ------------------------------------------------------------------ */
+.kuru-span-log {
+  position: absolute;
+  display: block;
+  /* left / top / width / transform (with per-slot rotate) set inline */
+  z-index: 7;
+  pointer-events: none;
+}
+
+.kuru-span-log img {
+  width: 100%;
+  display: block;
+  -webkit-user-drag: none;
+  pointer-events: none;
+  filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.24));
+}
+
+.kuru-span-log.is-newest {
+  animation: kuruSpanLogIn 0.32s ease-out;
+}
+
+.kuru-span-log.is-ghost {
+  z-index: 20; /* the active target sits above the placed deck / pegs */
+  opacity: 0.26;
+  animation: kuruGhostPulse 1.5s ease-in-out infinite;
+}
+
+.kuru-span-log.is-ghost img {
+  filter: grayscale(0.3);
+}
+
+@keyframes kuruSpanLogIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes kuruGhostPulse {
+  0%, 100% { opacity: 0.18; }
+  50% { opacity: 0.42; }
+}
+
+.kuru-log-piece {
+  position: absolute;
+  width: clamp(66px, 13vw, 140px);
+  transform: translate(-50%, -50%) rotate(-20deg);
+  z-index: 27;
+  border: 0;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  padding: 0;
+  background: transparent;
+  touch-action: none;
+}
+
+.kuru-log-piece:not(.is-top) {
+  pointer-events: none;
+  filter: brightness(0.93);
+}
+
+.kuru-log-piece.is-top {
+  cursor: grab;
+  z-index: 29;
+}
+
+.kuru-log-piece.is-top:not(.is-dragging) {
+  animation: kuruLogNudge 1.7s ease-in-out infinite;
+}
+
+/* Log pile: near-straight, neatly stacked (not fanned). */
+.kuru-log-piece.is-log {
+  transform: translate(-50%, -50%) rotate(-3deg);
+}
+
+.kuru-log-piece.is-log.is-top:not(.is-dragging) {
+  animation: kuruLogPileNudge 1.7s ease-in-out infinite;
+}
+
+@keyframes kuruLogPileNudge {
+  0%, 100% { transform: translate(-50%, -50%) rotate(-3deg); }
+  50% { transform: translate(-50%, -52%) rotate(-1deg); }
+}
+
+.kuru-log-piece.is-dragging {
+  cursor: grabbing;
+  z-index: 42;
+  transform: translate(-50%, -50%) rotate(-10deg) scale(1.06);
+  transition: transform 0.12s ease;
+}
+
+/* Turtle's log rolls while it's being pushed across. */
+.kuru-log-piece.is-dragging.is-log {
+  animation: kuruLogDragRoll 0.5s linear infinite;
+}
+
+@keyframes kuruLogDragRoll {
+  from { transform: translate(-50%, -50%) rotate(0) scale(1.05); }
+  to   { transform: translate(-50%, -50%) rotate(360deg) scale(1.05); }
+}
+
+.kuru-log-piece.pulse {
+  animation: stageHintPulse 1.15s ease-in-out infinite !important;
+}
+
+.kuru-log-piece img {
+  width: 100%;
+  display: block;
+  -webkit-user-drag: none;
+  pointer-events: none;
+  filter: drop-shadow(0 7px 13px rgba(0, 0, 0, 0.3));
+}
+
+@keyframes kuruLogNudge {
+  0%, 100% { transform: translate(-50%, -50%) rotate(-20deg); }
+  50% { transform: translate(-50%, -53%) rotate(-16deg); }
+}
+
+/* Round 2 — planks sit ON the logs (a touch higher z), flatter tilt. */
+.kuru-span-log.is-plank {
+  z-index: 8;
+}
+
+.kuru-log-piece.is-plank {
+  transform: translate(-50%, -50%) rotate(-6deg);
+}
+
+.kuru-log-piece.is-plank.is-dragging {
+  transform: translate(-50%, -50%) rotate(-3deg) scale(1.06);
+}
+
+.kuru-log-piece.is-plank.is-top:not(.is-dragging) {
+  animation: kuruPlankNudge 1.7s ease-in-out infinite;
+}
+
+@keyframes kuruPlankNudge {
+  0%, 100% { transform: translate(-50%, -50%) rotate(-6deg); }
+  50% { transform: translate(-50%, -53%) rotate(-4deg); }
+}
+
+/* Tap-mode: the glowing slot is the tap target — keep it finger-sized even
+   when the placed piece itself is tiny (small PEG_SLOT_W etc.). */
+.kuru-span-log.is-tappable {
+  pointer-events: auto;
+  cursor: pointer;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  min-width: 60px;
+}
+
+.kuru-span-log.is-tappable.beckon {
+  animation: kuruTapBeckon 1.05s ease-in-out infinite;
+}
+
+@keyframes kuruTapBeckon {
+  0%, 100% { opacity: 0.32; }
+  50% { opacity: 0.66; }
+}
+
+/* Piece dropping into place after a tap. */
+.kuru-span-log.is-drop img {
+  animation: kuruPieceDropImg 0.34s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes kuruPieceDropImg {
+  0% { transform: translateY(-36%) scale(0.96); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* Log rolling to rest after the child drags it into the gap. */
+.kuru-span-log.is-roll img {
+  animation: kuruLogLandRoll 0.44s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes kuruLogLandRoll {
+  0% { transform: translateX(-32%) rotate(-160deg); opacity: 0.3; }
+  70% { transform: translateX(5%) rotate(14deg); opacity: 1; }
+  100% { transform: translateX(0) rotate(0); opacity: 1; }
+}
+
+/* Round 3 pegs — small upright posts on the deck rails. */
+.kuru-span-log.is-peg img {
+  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.3));
+}
+
+/* Multi-row pieces: back rail sits behind the deck, front rail in front. */
+.kuru-span-log.is-back {
+  z-index: 10;
+  filter: brightness(0.92) saturate(0.95);
+}
+
+.kuru-span-log.is-front {
+  z-index: 14;
+}
+
+/* Stack order: logs < plank < vine-far < peg-far/near < vine-near */
+.kuru-span-log.is-vine.is-back {
+  z-index: 9;
+}
+
+.kuru-span-log.is-vine.is-front {
+  z-index: 16;
+}
+
+/* Round 4 vines — trace along the rail. */
+.kuru-span-log.is-vine img {
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.28));
+}
+
+
+/* Dashed guide the child strokes along. */
+.kuru-trace-guide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9;
+  pointer-events: none;
+}
+
+.kuru-trace-guide polyline {
+  fill: none;
+  stroke: rgba(255, 238, 150, 0.75);
+  stroke-width: 1.1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 3 2.4;
+  filter: drop-shadow(0 0 3px rgba(255, 204, 80, 0.55));
+  animation: kuruTraceFlow 1.1s linear infinite;
+}
+
+@keyframes kuruTraceFlow {
+  to { stroke-dashoffset: -10.8; }
+}
+
+/* Invisible stroke band sitting over the rail. */
+.kuru-trace-band {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 31;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+  touch-action: none;
 }

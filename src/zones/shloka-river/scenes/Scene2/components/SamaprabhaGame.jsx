@@ -13,13 +13,15 @@ import birdHappyImg from '../assets/images/Samaprabha/bird-happy.png';
 const SYLLABLES = ['Sa', 'ma', 'pra', 'bha'];
 const AUDIO = { syllables: ['sa', 'ma', 'pra', 'bha'] };
 
-const STOPS = [
-  { balance: 0.92, litCount: 0 },
-  { balance: 0.815, litCount: 1 },
-  { balance: 0.71, litCount: 2 },
-  { balance: 0.605, litCount: 3 },
-  { balance: 0.50, litCount: 3 },
+// One tappable circle per syllable sound (4 total). The child taps the next
+// circle in sequence; each tap slides the sun onto it and plays that syllable.
+const SYLLABLE_STOPS = [
+  { balance: 0.80 },
+  { balance: 0.70 },
+  { balance: 0.60 },
+  { balance: 0.50 },
 ];
+const START_BALANCE = 0.92;
 
 const TRACK_START = 22;
 const TRACK_END = 78;
@@ -27,13 +29,16 @@ const SUN_TOP_PCT = 19;
 
 function clamp(v, lo, hi) { return Math.min(hi, Math.max(lo, v)); }
 function sunLeftPct(balance) { return TRACK_START + balance * (TRACK_END - TRACK_START); }
+function balanceForLit(lit) {
+  return lit <= 0 ? START_BALANCE : SYLLABLE_STOPS[lit - 1].balance;
+}
 
-function SunRays({ balance, stop, isDone }) {
+function SunRays({ balance, lit, isDone }) {
   const sunX = sunLeftPct(balance);
   const sunY = SUN_TOP_PCT;
   const leftBirdX = 22;
   const rightBirdX = 78;
-  const progress = stop / (STOPS.length - 1);
+  const progress = lit / SYLLABLE_STOPS.length;
 
   const leftOp = clamp(0.06 + (1 - balance) * 0.88, 0.06, 0.94);
   const leftFan = clamp(2 + (1 - balance) * 18, 2, 20);
@@ -129,10 +134,10 @@ function Bird({ side, brightness, birdState }) {
   );
 }
 
-function SunHandle({ balance, isDragging, isBalanced, className = '' }) {
+function SunHandle({ balance, isBalanced }) {
   return (
     <div
-      className={`sama-handle${isDragging ? ' is-dragging' : ''}${isBalanced ? ' is-balanced' : ''}${className ? ` ${className}` : ''}`}
+      className={`sama-handle${isBalanced ? ' is-balanced' : ''}`}
       style={{ left: `${sunLeftPct(balance)}%`, top: `${SUN_TOP_PCT}%` }}
       aria-hidden="true"
     >
@@ -143,19 +148,23 @@ function SunHandle({ balance, isDragging, isBalanced, className = '' }) {
   );
 }
 
-function SnapDots({ currentStop, enabled, hintLevel = 0 }) {
+function SyllableDots({ lit, enabled, hintLevel = 0, onTap }) {
   return (
-    <div className="sama-snap-dots" aria-hidden="true">
-      {STOPS.map((s, i) => {
-        const isNext = enabled && i === currentStop + 1;
-        const isLit = i <= currentStop;
-        const isCurrent = i === currentStop;
+    <div className="sama-snap-dots">
+      {SYLLABLE_STOPS.map((s, i) => {
+        const isNext = enabled && i === lit;
+        const isLit = i < lit;
+        const isCurrent = i === lit - 1;
         const isHint = isNext && hintLevel >= 2;
         return (
-          <div
+          <button
             key={i}
+            type="button"
             className={`sama-snap-dot${isLit ? ' is-lit' : ''}${isCurrent ? ' is-current' : ''}${isNext ? ' is-next' : ''}${isHint ? ' is-hint' : ''}`}
-            style={{ left: `${sunLeftPct(s.balance)}%`, pointerEvents: 'none' }}
+            style={{ left: `${sunLeftPct(s.balance)}%` }}
+            aria-label={isNext ? `Play syllable ${SYLLABLES[i]}` : undefined}
+            disabled={!isNext}
+            onPointerDown={isNext ? () => onTap(i) : undefined}
           />
         );
       })}
@@ -174,19 +183,22 @@ export default function SamaprabhaGame({
   isPaused = false,
 }) {
   const { playVoice: playSceneLine, playSyllable, playWord, stopVoice } = voiceGuidance;
-  const containerRef = useRef(null);
   const timersRef = useRef([]);
   const doneCalledRef = useRef(false);
   const isPausedRef = useRef(isPaused);
-  const currentStopRef = useRef(0);
+  const litRef = useRef(0);
   const firstInteractionSentRef = useRef(false);
-  const dragRef = useRef(false);
+  const doneAnnouncedRef = useRef(false);
+  const lastSyllableDoneRef = useRef(false);
+  const completionVoStartedRef = useRef(false);
+  const completionFinishedRef = useRef(false);
+  const sylEndFallbackRef = useRef(null);
+  const voFallbackRef = useRef(null);
   isPausedRef.current = isPaused;
 
-  const [currentStop, setCurrentStop] = useState(0);
+  const [lit, setLit] = useState(0);
   const [phase, setPhase] = useState('play');
   const [birdState, setBirdState] = useState('cold');
-  const [dragging, setDraggingState] = useState(false);
   const onGameCompleteRef = useRef(onGameComplete);
   const onPhaseCompleteRef = useRef(onPhaseComplete);
 
@@ -195,7 +207,7 @@ export default function SamaprabhaGame({
     markInteraction,
   } = useRepeatedHintCycle({
     enabled: isActive && !isPaused && phase === 'play',
-    stageKey: phase === 'play' ? `stop-${currentStop}` : phase,
+    stageKey: phase === 'play' ? `stop-${lit}` : phase,
     initialDelay: 8000,
     pulseCountBeforeEscalation: 3,
     pulseInterval: 1800,
@@ -217,18 +229,18 @@ export default function SamaprabhaGame({
   }, [hintLevel, isActive, phase, playSceneLine]);
 
   useEffect(() => {
-    currentStopRef.current = currentStop;
-  }, [currentStop]);
+    litRef.current = lit;
+  }, [lit]);
 
   useEffect(() => {
     onGameCompleteRef.current = onGameComplete;
     onPhaseCompleteRef.current = onPhaseComplete;
   }, [onGameComplete, onPhaseComplete]);
 
-  const balance = STOPS[currentStop].balance;
+  const balance = balanceForLit(lit);
   const leftBrightness = 1 - balance;
   const rightBrightness = balance;
-  const litCount = STOPS[currentStop].litCount + (phase === 'done' ? 1 : 0);
+  const litCount = lit;
 
   const clearTimers = useCallback(() => {
     timersRef.current.forEach(clearTimeout);
@@ -240,28 +252,26 @@ export default function SamaprabhaGame({
     timersRef.current.push(id);
   }, []);
 
-  const advanceToStop = useCallback((targetStop) => {
+  // Tap the next circle -> light that syllable, slide the sun onto it.
+  const tapCircle = useCallback((index) => {
     if (phase !== 'play' || isPausedRef.current || doneCalledRef.current) return;
-    const prev = currentStopRef.current;
-    if (targetStop <= prev || targetStop >= STOPS.length) return;
+    if (index !== litRef.current) return;
+
     if (!firstInteractionSentRef.current) {
       firstInteractionSentRef.current = true;
       onFirstInteraction?.();
     }
     markInteraction();
 
-    currentStopRef.current = targetStop;
-    setCurrentStop(targetStop);
+    const next = index + 1;
+    litRef.current = next;
+    setLit(next);
 
-    const newLit = STOPS[targetStop].litCount;
-    const prevLit = STOPS[prev].litCount;
-    if (newLit > prevLit) {
-      window.setTimeout(() => onMicroWin?.(), 0);
-    }
+    window.setTimeout(() => onMicroWin?.(), 0);
 
-    setBirdState(targetStop >= 2 ? 'warm' : 'cold');
+    setBirdState(next >= 2 ? 'warm' : 'cold');
 
-    if (targetStop === STOPS.length - 1 && !doneCalledRef.current) {
+    if (next === SYLLABLE_STOPS.length && !doneCalledRef.current) {
       doneCalledRef.current = true;
       safeAfter(300, () => {
         setPhase('done');
@@ -270,101 +280,95 @@ export default function SamaprabhaGame({
     }
   }, [markInteraction, onFirstInteraction, onMicroWin, phase, safeAfter]);
 
-  const onHandleDown = useCallback((e) => {
-    if (isPausedRef.current || phase !== 'play') return;
-    e.preventDefault();
-    e.currentTarget.setPointerCapture?.(e.pointerId);
-    dragRef.current = true;
-    setDraggingState(true);
-    if (!firstInteractionSentRef.current) {
-      firstInteractionSentRef.current = true;
-      onFirstInteraction?.();
-    }
-  }, [onFirstInteraction, phase]);
-
-  const onHandleMove = useCallback((e) => {
-    if (!dragRef.current || isPausedRef.current) return;
-    const rect = containerRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    const xPct = ((e.clientX - rect.left) / rect.width) * 100;
-    const bal = clamp((xPct - TRACK_START) / (TRACK_END - TRACK_START), 0.5, 0.92);
-    const next = currentStopRef.current + 1;
-    if (next < STOPS.length && bal <= STOPS[next].balance) {
-      advanceToStop(next);
-    }
-  }, [advanceToStop]);
-
-  const onHandleUp = useCallback(() => {
-    dragRef.current = false;
-    setDraggingState(false);
-  }, []);
-
-  // Pause-triggered cleanup: clears an in-progress drag if isPaused flips true
-  // mid-gesture (pause button, tab switch, etc.), mirroring MahakayaRescueGame.
-  useEffect(() => {
-    if (isPaused) {
-      dragRef.current = false;
-      setDraggingState(false);
-    }
-  }, [isPaused]);
-
   // Reset on deactivate
   useEffect(() => {
     if (!isActive) {
       clearTimers();
       doneCalledRef.current = false;
+      doneAnnouncedRef.current = false;
+      lastSyllableDoneRef.current = false;
+      completionVoStartedRef.current = false;
+      completionFinishedRef.current = false;
       firstInteractionSentRef.current = false;
-      setCurrentStop(0);
-      currentStopRef.current = 0;
+      setLit(0);
+      litRef.current = 0;
       setPhase('play');
       setBirdState('cold');
     }
   }, [isActive, clearTimers]);
 
-  useEffect(() => () => clearTimers(), [clearTimers]);
+  useEffect(() => () => {
+    clearTimers();
+    if (sylEndFallbackRef.current) window.clearTimeout(sylEndFallbackRef.current);
+    if (voFallbackRef.current) window.clearTimeout(voFallbackRef.current);
+  }, [clearTimers]);
 
-  useEffect(() => {
-    if (phase !== 'done') return undefined;
-    let finished = false;
+  // Completion audio plays strictly in sequence, no overlap:
+  //   final syllable "bha"  ->  full word "samaprabha"  ->  ending line
+  // Fires only once the last syllable clip has finished AND the win is
+  // announced — same pattern as SuryakotiGame / NirvighnamGame. (The earlier
+  // version played no word and let the ending line start over "bha".)
+  const startCompletionVo = useCallback(() => {
+    if (completionVoStartedRef.current) return;
+    if (!lastSyllableDoneRef.current || !doneAnnouncedRef.current) return;
+    completionVoStartedRef.current = true;
+
+    if (sylEndFallbackRef.current) {
+      window.clearTimeout(sylEndFallbackRef.current);
+      sylEndFallbackRef.current = null;
+    }
+
     const finish = () => {
-      if (finished) return;
-      finished = true;
+      if (completionFinishedRef.current) return;
+      completionFinishedRef.current = true;
+      if (voFallbackRef.current) {
+        window.clearTimeout(voFallbackRef.current);
+        voFallbackRef.current = null;
+      }
       onGameCompleteRef.current?.();
       onPhaseCompleteRef.current?.();
     };
 
     if (!playSceneLine) {
-      const timerId = window.setTimeout(finish, 1200);
-      return () => window.clearTimeout(timerId);
+      window.setTimeout(finish, 800);
+      return;
     }
 
-    const timerId = window.setTimeout(() => {
-      const fallback = window.setTimeout(finish, 4000);
-      playWord?.('samaprabha');
-      playSceneLine('scene11_sama_done', () => {
-        window.clearTimeout(fallback);
-        finish();
-      });
-    }, 150);
-
-    return () => {
-      window.clearTimeout(timerId);
-      stopVoice?.();
+    const afterWord = () => {
+      playSceneLine('scene11_sama_done', finish, { stripLeadingText: 'Samaprabha' });
     };
-  }, [phase, playSceneLine, playWord, stopVoice]);
+
+    if (playWord) playWord('samaprabha', afterWord);
+    else afterWord();
+
+    // iOS Safari can silently drop utterance onend/onerror — don't hang.
+    voFallbackRef.current = window.setTimeout(finish, 10000);
+  }, [playSceneLine, playWord]);
+
+  useEffect(() => {
+    if (phase !== 'done' || doneAnnouncedRef.current) return undefined;
+    doneAnnouncedRef.current = true;
+
+    // Hold the word/ending line until the final "bha" syllable clip has
+    // finished (its onSyllableLit onEnded sets lastSyllableDoneRef). Fallback
+    // covers a dropped callback (audio error / iOS / test mock).
+    sylEndFallbackRef.current = window.setTimeout(() => {
+      lastSyllableDoneRef.current = true;
+      startCompletionVo();
+    }, 1600);
+    startCompletionVo();
+
+    return undefined;
+  }, [phase, startCompletionVo]);
 
   if (!isActive) return null;
 
   return (
     <div className={`sama-game${hideElements ? ' is-hidden' : ''}`}>
       <div
-        ref={containerRef}
         className="sama-stage"
         style={{ backgroundImage: `url(${sharedSceneBg})` }}
         onContextMenu={(e) => e.preventDefault()}
-        onPointerMove={onHandleMove}
-        onPointerUp={onHandleUp}
-        onPointerCancel={onHandleUp}
       >
         <div className="sama-skywash" />
         <div
@@ -372,17 +376,29 @@ export default function SamaprabhaGame({
           style={{ opacity: clamp(0.1 + (1 - Math.abs(leftBrightness - rightBrightness)) * 0.85, 0.1, 1) }}
         />
 
-        <SunRays balance={balance} stop={currentStop} isDone={phase === 'done'} />
+        <SunRays balance={balance} lit={lit} isDone={phase === 'done'} />
 
         <SyllableHighlight
           syllables={SYLLABLES}
           litCount={litCount}
           audioSyllables={AUDIO.syllables}
-          onSyllableLit={(syllable) => {
+          onSyllableLit={(syllable, index) => {
             stopVoice?.();
-            playSyllable?.(syllable);
+            const isLast = index === SYLLABLES.length - 1;
+            playSyllable?.(syllable, isLast ? () => {
+              lastSyllableDoneRef.current = true;
+              startCompletionVo();
+            } : undefined);
           }}
         />
+
+        {phase === 'play' && (
+          <p className="sama-hint">
+            {lit <= 1
+              ? 'Tap the next glowing dot.'
+              : `Tap the next glowing dot — ${SYLLABLE_STOPS.length - lit} to go.`}
+          </p>
+        )}
 
         {phase === 'done' && (
           <p className="sama-doneline is-visible">Both shine equally now!</p>
@@ -410,28 +426,22 @@ export default function SamaprabhaGame({
           </svg>
         </div>
 
-        <SnapDots currentStop={currentStop} enabled={phase === 'play'} hintLevel={hintLevel} />
+        <SyllableDots
+          lit={lit}
+          enabled={phase === 'play'}
+          hintLevel={hintLevel}
+          onTap={tapCircle}
+        />
 
         <Bird side="left" brightness={leftBrightness} birdState={birdState} />
         <Bird side="right" brightness={rightBrightness} birdState={birdState} />
 
-        <SunHandle
-          balance={balance}
-          isDragging={dragging}
-          isBalanced={phase === 'done'}
-        />
-
-        <div
-          className={`sama-handle-hit${phase !== 'play' ? ' is-disabled' : ''}`}
-          style={{ left: `${sunLeftPct(balance)}%`, top: `${SUN_TOP_PCT}%` }}
-          onPointerDown={onHandleDown}
-        />
+        <SunHandle balance={balance} isBalanced={phase === 'done'} />
 
         <GestureDemo
-          type="drag"
-          from={{ x: sunLeftPct(STOPS[0].balance), y: SUN_TOP_PCT }}
-          to={{ x: sunLeftPct(STOPS[1].balance), y: SUN_TOP_PCT }}
-          active={phase === 'play' && currentStop === 0}
+          type="tap"
+          from={{ x: sunLeftPct(SYLLABLE_STOPS[0].balance), y: SUN_TOP_PCT }}
+          active={phase === 'play' && lit === 0}
           idleDelay={3000}
         />
       </div>

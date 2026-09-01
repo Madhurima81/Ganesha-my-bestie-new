@@ -27,7 +27,7 @@ import CulturalProgressExtractor from '../../../../lib/services/CulturalProgress
 import SparkleAnimation from '../../../../lib/components/animation/SparkleAnimation';
 import FireworksCompletion from '../../../../lib/components/feedback/FireworksCompletion';
 import CalmGoldenFireworks from '../../../../lib/components/feedback/CalmGoldenFireworks';
-import ProgressiveHintSystem from '../../../../lib/components/interactive/ProgressiveHintSystem';
+// import ProgressiveHintSystem from '../../../../lib/components/interactive/ProgressiveHintSystem';
 import SymbolSceneIntegration from '../../../../lib/components/animation/SymbolSceneIntegration';
 import MagicalCardFlip from '../../../../lib/components/animation/MagicalCardFlip';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
@@ -3120,22 +3120,7 @@ const SuryakotiSceneContent = ({
               }}
             />
 
-            {/* Progressive Hints System */}
-            <ProgressiveHintSystem
-              ref={progressiveHintRef}
-              sceneId={sceneId}
-              sceneState={sceneState}
-              hintConfigs={getHintConfigs()}
-              characterImage={mooshikaCoach}
-              initialDelay={20000}
-              hintDisplayTime={10000}
-              position="bottom-right"
-              iconSize={60}
-              zIndex={2000}
-              onHintShown={handleHintShown}
-              onHintButtonClick={handleHintButtonClick}
-              enabled={true}
-            />
+            {/* ProgressiveHintSystem disabled per request */}
             {/* Navigation - Always on top */}
             <div style={{ position: 'relative', zIndex: 10000 }}>
               <TocaBocaNav

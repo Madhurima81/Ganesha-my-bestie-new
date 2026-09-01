@@ -73,6 +73,20 @@
     }
   }
   
+  /* Dust sparkle style - small motes that rise and fade (micro-win reward) */
+  .sparkle-dust {
+    border-radius: 50%;
+    background-color: var(--sparkle-color, #FFD54F);
+    box-shadow: 0 0 6px 1px rgba(255, 213, 79, 0.55);
+    animation: sparkleDustAnimation var(--sparkle-duration, 1600ms) ease-out infinite;
+  }
+
+  @keyframes sparkleDustAnimation {
+    0%   { transform: translateY(6px) scale(0.3); opacity: 0; }
+    20%  { opacity: 0.95; }
+    100% { transform: translateY(-42px) scale(0.25); opacity: 0; }
+  }
+
   /* Firefly sparkle style */
   .sparkle-firefly {
     border-radius: 50%;

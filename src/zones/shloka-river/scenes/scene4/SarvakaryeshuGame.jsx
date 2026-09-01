@@ -3,89 +3,122 @@ import SyllableHighlight from '../../shared/SyllableHighlight';
 import useRepeatedHintCycle from '../../../../lib/hooks/useRepeatedHintCycle';
 import './SarvakaryeshuGame.css';
 
-import bgImg from './assets/images/sarvakaryeshu-bg.png';
+import bgImg from './assets/images/sarvakaryeshu-bg.webp';
 
-import puzzleBeforeImg from './assets/images/sarvakaryeshu/puzzle-before.png';
-import puzzleAfterImg from './assets/images/sarvakaryeshu/after-puzzle.png';
-import sportsBeforeImg from './assets/images/sarvakaryeshu/before-sports.png';
-import sportsAfterImg from './assets/images/sarvakaryeshu/after-sports.png';
-import bikeBeforeImg from './assets/images/sarvakaryeshu/after-ride.png';
-import bikeAfterImg from './assets/images/sarvakaryeshu/before-ride.png';
-import grandmaBeforeImg from './assets/images/sarvakaryeshu/before-grandma.png';
-import grandmaAfterImg from './assets/images/sarvakaryeshu/after-grandma.png';
-import boatImg from './assets/images/boat.png';
+import puzzleBeforeImg from './assets/images/sarvakaryeshu/puzzle-before.webp';
+import puzzleAfterImg from './assets/images/sarvakaryeshu/after-puzzle.webp';
+import sportsBeforeImg from './assets/images/sarvakaryeshu/before-sports.webp';
+import sportsAfterImg from './assets/images/sarvakaryeshu/after-sports.webp';
+import bikeBeforeImg from './assets/images/sarvakaryeshu/before-ride.webp';
+import bikeAfterImg from './assets/images/sarvakaryeshu/after-ride.webp';
+import grandmaBeforeImg from './assets/images/sarvakaryeshu/before-grandma.webp';
+import grandmaAfterImg from './assets/images/sarvakaryeshu/after-grandma.webp';
+import boatImg from './assets/images/boat.webp';
 
-import vakratundaIcon from '../../../../zones/symbol-mountain/shared/images/icons/symbol-trunk-new.png';
-import mahakayaIcon from '../../../../zones/meaning cave/assets/images/symbols/mahakaya-symbol.png';
-import samaprabhaIcon from '../../../../zones/meaning cave/assets/images/symbols/samaprabha-symbol.png';
-import kurumedevaIcon from '../../../../zones/meaning cave/assets/images/symbols/kurumedeva-symbol.png';
-import nirvighnamIcon from '../../../../zones/meaning cave/assets/images/symbols/nirvighnam-symbol.png';
-import suryakotiIcon from '../../../../zones/meaning cave/assets/images/symbols/suryakoti-symbol.png';
+import trunkIcon from '../../../../zones/symbol-mountain/shared/images/icons/symbol-trunk-new.png';
+import tuskIcon from '../../../../zones/symbol-mountain/shared/images/icons/symbol-tusk-new.png';
+import modakIcon from '../../../../zones/symbol-mountain/shared/images/icons/symbol-modak-new.png';
+import bellyIcon from '../../../../zones/symbol-mountain/shared/images/icons/symbol-belly-new.png';
+import lotusIcon from '../../../../zones/symbol-mountain/shared/images/icons/symbol-lotus-new.png';
+import eyesIcon from '../../../../zones/symbol-mountain/shared/images/icons/symbol-eyes-new.png';
 
 const SYLLABLES = ['Sar', 'va', 'kar', 'yeshu'];
+const AUDIO = ['sar', 'va', 'kar', 'yeshu'];
+const SYLLABLE_INDEX_BY_CHUNK = {
+  SAR: 1,
+  VA: 2,
+  KAR: 3,
+  YESHU: 4,
+};
 
 const SITUATIONS = [
   {
-    id: 'puzzle',
+    id: 'trunk',
     before: puzzleBeforeImg,
     after: puzzleAfterImg,
-    situation: "The piece wouldn't fit — so she twisted it a new way!",
-    question: 'Which power did she use?',
-    voKey: 'scene13_puzzle',
+    beforeLine: 'Oops! The painting went splat.',
+    afterLine: 'The splat became something new!',
+    question: 'Which symbol fits best?',
+    voKeyBefore: 'scene13_puzzle',
     voKeyAfter: 'scene13_puzzle_after',
-    correct: 'vakratunda',
-    feedback: 'You tried another way and it fit!',
+    correct: 'trunk',
+    feedback: 'The Trunk helped him try another way!',
     syllableChunk: 'SAR',
-    options: ['vakratunda', 'mahakaya', 'kurumedeva'],
+    options: ['trunk', 'tusk', 'modak'],
+    clues: [
+      "Which symbol helps when one way doesn't work?",
+      'Which symbol reminds you to bend, change, and try another way?',
+      'Which long, bendy part of Ganesha can twist and turn?',
+    ],
   },
   {
-    id: 'sports',
+    id: 'belly',
     before: sportsBeforeImg,
     after: sportsAfterImg,
-    situation: 'He wanted to give up — but he stayed strong and kept trying!',
-    question: 'Which power did he use?',
-    voKey: 'scene13_sports',
+    beforeLine: 'His feelings feel too big.',
+    afterLine: 'He feels calmer inside.',
+    question: 'Which symbol fits best?',
+    voKeyBefore: 'scene13_sports',
     voKeyAfter: 'scene13_sports_after',
-    correct: 'mahakaya',
-    feedback: 'You stayed strong and kept trying!',
+    correct: 'belly',
+    feedback: 'The Belly helped him make room for his feelings!',
     syllableChunk: 'VA',
-    options: ['vakratunda', 'mahakaya', 'nirvighnam'],
+    options: ['belly', 'lotus', 'modak'],
+    clues: [
+      'Which symbol reminds you there is room for all your feelings?',
+      'Which symbol can hold happy, sad, worried, and angry feelings too?',
+      'Which big part of Ganesha can hold so much inside?',
+    ],
   },
   {
-    id: 'bike',
-    before: bikeBeforeImg,
-    after: bikeAfterImg,
-    situation: 'Both wanted the bike — so they took fair turns!',
-    question: 'Which power did they use?',
-    voKey: 'scene13_bike',
-    voKeyAfter: 'scene13_bike_after',
-    correct: 'samaprabha',
-    feedback: 'You shared and both were happy!',
-    syllableChunk: 'KAR',
-    options: ['mahakaya', 'samaprabha', 'suryakoti'],
-  },
-  {
-    id: 'grandma',
+    id: 'eyes',
     before: grandmaBeforeImg,
     after: grandmaAfterImg,
-    situation: "Grandma's bags were heavy — so he ran to help!",
-    question: 'Which power did he use?',
-    voKey: 'scene13_grandma',
+    beforeLine: 'Where did the toy go?',
+    afterLine: 'She spotted the clue!',
+    question: 'Which symbol fits best?',
+    voKeyBefore: 'scene13_bike',
+    voKeyAfter: 'scene13_bike_after',
+    correct: 'eyes',
+    feedback: 'The Eyes helped her notice what others missed!',
+    syllableChunk: 'KAR',
+    options: ['eyes', 'modak', 'belly'],
+    clues: [
+      'Which symbol helps you notice what matters?',
+      'Which symbol reminds you to look carefully and spot what others may miss?',
+      'Which part of Ganesha helps him see?',
+    ],
+  },
+  {
+    id: 'tusk',
+    // swapped: before-ride = engaged, after-ride = distracted — so the
+    // "before" (distracted) is after-ride and the "after" (focused) is before-ride
+    before: bikeAfterImg,
+    after: bikeBeforeImg,
+    beforeLine: 'So many things are distracting him.',
+    afterLine: 'He stayed with what mattered.',
+    question: 'Which symbol fits best?',
+    voKeyBefore: 'scene13_grandma',
     voKeyAfter: 'scene13_grandma_after',
-    correct: 'kurumedeva',
-    feedback: 'You helped and Grandma smiled!',
+    correct: 'tusk',
+    feedback: 'The Tusk helped him stay focused on what mattered!',
     syllableChunk: 'YESHU',
-    options: ['vakratunda', 'samaprabha', 'kurumedeva'],
+    options: ['tusk', 'eyes', 'trunk'],
+    clues: [
+      'Which symbol reminds you to stay with what is important?',
+      'Which symbol reminds you to stay strong and focused, even when something is difficult?',
+      'Which strong white part does Ganesha have only one of?',
+    ],
   },
 ];
 
 const POWER_ICONS = {
-  vakratunda: { img: vakratundaIcon, label: 'Vakratunda', color: '#9C6FD6' },
-  mahakaya: { img: mahakayaIcon, label: 'Mahakaya', color: '#E07B3A' },
-  samaprabha: { img: samaprabhaIcon, label: 'Samaprabha', color: '#F9B7D2' },
-  kurumedeva: { img: kurumedevaIcon, label: 'Kurumedeva', color: '#7B9ED9' },
-  nirvighnam: { img: nirvighnamIcon, label: 'Nirvighnam', color: '#6DBF67' },
-  suryakoti: { img: suryakotiIcon, label: 'Suryakoti', color: '#EF9F27' },
+  trunk: { img: trunkIcon, label: 'Trunk', color: '#9C6FD6' },
+  tusk: { img: tuskIcon, label: 'Tusk', color: '#F2B94B' },
+  modak: { img: modakIcon, label: 'Modak', color: '#E07B3A' },
+  belly: { img: bellyIcon, label: 'Belly', color: '#F48FB1' },
+  lotus: { img: lotusIcon, label: 'Lotus', color: '#D86ACB' },
+  eyes: { img: eyesIcon, label: 'Eyes', color: '#57A6D9' },
 };
 
 export default function SarvakaryeshuGame({
@@ -97,7 +130,7 @@ export default function SarvakaryeshuGame({
   isPaused = false,
   voiceGuidance = {},
 }) {
-  const { playVoice: playSceneLine, playWord, stopVoice: stopSceneVoice } = voiceGuidance;
+  const { playVoice: playSceneLine, playSyllable, playWord, stopVoice: stopSceneVoice } = voiceGuidance;
   const [cardIndex, setCardIndex] = useState(0);
   const [picked, setPicked] = useState(null);
   const [isCorrect, setIsCorrect] = useState(null);
@@ -107,8 +140,10 @@ export default function SarvakaryeshuGame({
   const [phase, setPhase] = useState('play');
   const [guidanceMessage, setGuidanceMessage] = useState('');
   const [guidedPowerId, setGuidedPowerId] = useState(null);
+  const [rescueHintActive, setRescueHintActive] = useState(false);
   const [flyingPower, setFlyingPower] = useState(null);
   const [imageHit, setImageHit] = useState(false);
+  const [activeSyllableHit, setActiveSyllableHit] = useState(null);
 
   const timersRef = useRef([]);
   const doneCalledRef = useRef(false);
@@ -116,30 +151,87 @@ export default function SarvakaryeshuGame({
   const resolvingRef = useRef(false);
   const optionRefs = useRef({});
   const imageWrapRef = useRef(null);
+  const syllableAnchorRefs = useRef({});
+  const syllableWrapRef = useRef(null);
+  const lastHintVoiceKeyRef = useRef(null);
   phaseRef.current = phase;
 
-  const { hintLevel, pulseTick, markInteraction } = useRepeatedHintCycle({
+  const getRectCenter = (rect) => ({
+    x: rect.left + rect.width / 2,
+    y: rect.top + rect.height / 2,
+  });
+
+  const { hintLevel, markInteraction } = useRepeatedHintCycle({
     enabled: isActive && !isPaused && phase === 'play' && canPick,
     stageKey: isActive ? `card-${cardIndex}` : null,
-    initialDelay: 14000,
-    pulseCountBeforeEscalation: 3,
+    initialDelay: 7000,
+    pulseCountBeforeEscalation: 1,
     pulseInterval: 1800,
-    level2Delay: 22000,
-    level3Delay: 30000,
+    level2Delay: 14000,
+    level3Delay: 21000,
   });
 
   useEffect(() => {
     if (!isActive || phase !== 'play' || isCorrect) {
       setGuidedPowerId(null);
+      setRescueHintActive(false);
+      lastHintVoiceKeyRef.current = null;
       return;
     }
 
     if (hintLevel === 0) {
       setGuidedPowerId(null);
+      setRescueHintActive(false);
+      lastHintVoiceKeyRef.current = null;
       return;
     }
 
-    setGuidedPowerId(SITUATIONS[cardIndex].correct);
+    const situation = SITUATIONS[cardIndex];
+
+    if (hintLevel < 3) {
+      setGuidedPowerId(null);
+    }
+
+    const hintVoiceKey = `scene13_hint_${situation.id}_${hintLevel}`;
+    if (lastHintVoiceKeyRef.current !== hintVoiceKey) {
+      lastHintVoiceKeyRef.current = hintVoiceKey;
+      let glowTimerId = null;
+      const timerId = window.setTimeout(() => {
+        playSceneLine?.(
+          hintVoiceKey,
+          // At hint level 3, wait until the VO actually finishes, then glow
+          // the correct symbol 1.8s after that — not on a guessed delay.
+          hintLevel >= 3
+            ? () => {
+                glowTimerId = window.setTimeout(() => {
+                  setGuidedPowerId(situation.correct);
+                }, 1800);
+              }
+            : undefined,
+          {
+            replayOnReturn: false,
+            minDelayAfterVoiceMs: 5000,
+          }
+        );
+      }, 120);
+      return () => {
+        window.clearTimeout(timerId);
+        if (glowTimerId) window.clearTimeout(glowTimerId);
+      };
+    }
+  }, [cardIndex, hintLevel, isActive, isCorrect, phase, playSceneLine]);
+
+  useEffect(() => {
+    if (!isActive || phase !== 'play' || hintLevel < 3 || isCorrect) {
+      setRescueHintActive(false);
+      return undefined;
+    }
+
+    const id = window.setTimeout(() => {
+      setRescueHintActive(true);
+    }, 7000);
+
+    return () => window.clearTimeout(id);
   }, [cardIndex, hintLevel, isActive, isCorrect, phase]);
 
   const safeAfter = useCallback((ms, fn) => {
@@ -165,8 +257,11 @@ export default function SarvakaryeshuGame({
       setPhase('play');
       setGuidanceMessage('');
       setGuidedPowerId(null);
+      setRescueHintActive(false);
       setFlyingPower(null);
       setImageHit(false);
+      setActiveSyllableHit(null);
+      lastHintVoiceKeyRef.current = null;
       doneCalledRef.current = false;
       resolvingRef.current = false;
       phaseRef.current = 'play';
@@ -180,6 +275,14 @@ export default function SarvakaryeshuGame({
     const s = SITUATIONS[cardIndex];
     setShowAfter(false);
     setCanPick(false);
+    setPicked(null);
+    setIsCorrect(null);
+    setGuidanceMessage('');
+    setGuidedPowerId(null);
+    setRescueHintActive(false);
+    setFlyingPower(null);
+    setImageHit(false);
+    setActiveSyllableHit(null);
 
     let cancelled = false;
     const fallbacks = [];
@@ -191,24 +294,14 @@ export default function SarvakaryeshuGame({
 
     const t1 = window.setTimeout(() => {
       if (cancelled) return;
-      const afterFallback = addFallback(3500, () => showAfterBeat());
-      playSceneLine?.(s.voKey, () => {
-        window.clearTimeout(afterFallback);
-        if (!cancelled) showAfterBeat();
-      });
-    }, 700);
-
-    function showAfterBeat() {
-      if (cancelled) return;
-      setShowAfter(true);
       const pickFallback = addFallback(2500, () => {
         if (!cancelled) setCanPick(true);
       });
-      playSceneLine?.(s.voKeyAfter, () => {
+      playSceneLine?.(s.voKeyBefore, () => {
         window.clearTimeout(pickFallback);
         if (!cancelled) setCanPick(true);
       });
-    }
+    }, 500);
 
     return () => {
       cancelled = true;
@@ -231,7 +324,7 @@ export default function SarvakaryeshuGame({
 
     if (!correct) {
       setIsCorrect(null);
-      setGuidanceMessage('That power could help too...');
+      setGuidanceMessage('Try another symbol.');
       playSceneLine?.('scene13_try_again');
       return;
     }
@@ -240,55 +333,93 @@ export default function SarvakaryeshuGame({
     setIsCorrect(true);
     setGuidanceMessage('');
     setGuidedPowerId(null);
-    playSceneLine?.('scene13_success');
+
+    const syllableIndex = SYLLABLE_INDEX_BY_CHUNK[situation.syllableChunk] ?? (cardIndex + 1);
 
     const optionRect = optionRefs.current[powerId]?.getBoundingClientRect?.();
+    const syllableRect = syllableAnchorRefs.current[syllableIndex]?.getBoundingClientRect?.();
     const imageRect = imageWrapRef.current?.getBoundingClientRect?.();
 
-    if (optionRect && imageRect) {
+    // Two-stage journey: chosen symbol → syllable (earns the sound) →
+    // scene image (applies the lesson) → After reveal. Gives each correct
+    // answer a clear choose → syllable → result rhythm instead of flying
+    // straight into the image.
+    if (optionRect && syllableRect && imageRect) {
+      const optionCenter = getRectCenter(optionRect);
+      const syllableCenter = getRectCenter(syllableRect);
+      const imageCenter = getRectCenter(imageRect);
+
       setFlyingPower({
         img: POWER_ICONS[powerId].img,
-        left: optionRect.left + (optionRect.width / 2),
-        top: optionRect.top + (optionRect.height / 2),
-        flyX: (imageRect.left + (imageRect.width / 2)) - (optionRect.left + (optionRect.width / 2)),
-        flyY: (imageRect.top + (imageRect.height / 2)) - (optionRect.top + (optionRect.height / 2)),
+        left: optionCenter.x,
+        top: optionCenter.y,
+        syllableX: syllableCenter.x - optionCenter.x,
+        syllableY: syllableCenter.y - optionCenter.y,
+        sceneX: imageCenter.x - optionCenter.x,
+        sceneY: imageCenter.y - optionCenter.y,
       });
     }
 
-    safeAfter(420, () => {
+    // 1) Symbol reaches the syllable — it lights up and plays. Matches the
+    // ~1080ms arrival point of the (now 2400ms) flight, with a long dwell
+    // afterward so the syllable's own audio clip has time to actually play
+    // before anything moves on. Play the syllable audio directly here
+    // (rather than relying on SyllableHighlight's own litCount-triggered
+    // side effect) so it's guaranteed to fire at this exact beat.
+    safeAfter(1080, () => {
+      setActiveSyllableHit(syllableIndex);
+      setLitCount(syllableIndex);
+      stopSceneVoice?.();
+      playSyllable?.(AUDIO[syllableIndex - 1]);
+    });
+
+    // 2) Symbol reaches the image — a quick power-hit glow.
+    safeAfter(2350, () => {
       setImageHit(true);
       window.setTimeout(() => onMicroWin?.(), 0);
     });
 
-    safeAfter(1800, () => {
+    // 3) After image reveals, flying icon clears.
+    safeAfter(2400, () => {
+      setShowAfter(true);
       setFlyingPower(null);
     });
 
-    const nextLit = cardIndex + 1;
-    safeAfter(2200, () => setLitCount(nextLit));
-
     const nextIndex = cardIndex + 1;
 
-    if (nextIndex >= SITUATIONS.length) {
-      safeAfter(3100, () => {
+    let advanceCalled = false;
+    const advance = () => {
+      if (advanceCalled) return;
+      advanceCalled = true;
+
+      if (nextIndex >= SITUATIONS.length) {
         setLitCount(SITUATIONS.length);
-        playWord?.('sarvakaryeshu');
-        safeAfter(600, () => {
-          if (doneCalledRef.current) return;
-          doneCalledRef.current = true;
-          setPhase('done');
-          safeAfter(700, () => {
-            window.setTimeout(() => {
-              onGameComplete?.();
-              onPhaseComplete?.();
-            }, 0);
+        if (doneCalledRef.current) return;
+        doneCalledRef.current = true;
+        setPhase('done');
+        // Ending VO: full word "sarvakaryeshu" → the completion line.
+        // Previously the game just ended silently after the last card's VO.
+        stopSceneVoice?.();
+        let finished = false;
+        const finish = () => {
+          if (finished) return;
+          finished = true;
+          onGameComplete?.();
+          onPhaseComplete?.();
+        };
+        const voFallback = window.setTimeout(finish, 9000);
+        timersRef.current.push(voFallback);
+        safeAfter(500, () => {
+          playWord?.('sarvakaryeshu', () => {
+            playSceneLine?.('scene13_success', () => {
+              clearTimeout(voFallback);
+              finish();
+            }, { stripLeadingText: 'Sarva-Karyeshu' });
           });
         });
-      });
-      return;
-    }
+        return;
+      }
 
-    safeAfter(3300, () => {
       setCardIndex(nextIndex);
       setPicked(null);
       setIsCorrect(null);
@@ -296,11 +427,26 @@ export default function SarvakaryeshuGame({
       setCanPick(false);
       setGuidanceMessage('');
       setGuidedPowerId(null);
+      setRescueHintActive(false);
       setFlyingPower(null);
       setImageHit(false);
+      setActiveSyllableHit(null);
+      lastHintVoiceKeyRef.current = null;
       resolvingRef.current = false;
+    };
+
+    // Advance only once the After VO has actually finished playing, then
+    // hold a further ~2.5s of calm silence before moving on — a fixed
+    // guessed delay was cutting the VO off / rushing straight to the next
+    // card while it was still talking. A generous fallback timer covers
+    // the case where the VO fails to fire its completion callback at all.
+    safeAfter(2700, () => {
+      playSceneLine?.(situation.voKeyAfter, () => {
+        safeAfter(2500, advance);
+      });
+      safeAfter(9000, advance);
     });
-  }, [canPick, cardIndex, isPaused, markInteraction, onGameComplete, onMicroWin, onPhaseComplete, playSceneLine, playWord, safeAfter, stopSceneVoice]);
+  }, [canPick, cardIndex, isPaused, markInteraction, onGameComplete, onMicroWin, onPhaseComplete, playSceneLine, playSyllable, playWord, safeAfter, stopSceneVoice]);
 
   if (!isActive) return null;
 
@@ -312,15 +458,29 @@ export default function SarvakaryeshuGame({
           <img src={boatImg} alt="" draggable={false} />
         </div>
 
-        <SyllableHighlight
-          syllables={SYLLABLES}
-          litCount={litCount}
-          audioSyllables={SYLLABLES}
-          onSyllableLit={() => {}}
-        />
+        <div className="sarva-syllable-wrap" ref={syllableWrapRef}>
+          <SyllableHighlight
+            syllables={SYLLABLES}
+            litCount={litCount}
+            audioSyllables={AUDIO}
+          />
+
+          <div className="sarva-syllable-anchors" aria-hidden="true">
+            {SYLLABLES.map((_, idx) => {
+              const oneBased = idx + 1;
+              return (
+                <span
+                  key={oneBased}
+                  ref={(node) => { syllableAnchorRefs.current[oneBased] = node; }}
+                  className={`sarva-syllable-anchor${activeSyllableHit === oneBased ? ' is-hit' : ''}`}
+                />
+              );
+            })}
+          </div>
+        </div>
 
         {phase === 'done' && (
-          <p className="sarva-doneline">Ganesha helps in all things!</p>
+          <p className="sarva-doneline">Ganesha's lessons can help in many moments!</p>
         )}
 
         {phase === 'play' && (
@@ -338,8 +498,8 @@ export default function SarvakaryeshuGame({
               />
             </div>
 
-            <p className="sarva-situation">{situation.situation}</p>
-            {situation.question && (
+            <p className="sarva-situation">{showAfter ? situation.afterLine : situation.beforeLine}</p>
+            {situation.question && !showAfter && (
               <p className="sarva-question">{situation.question}</p>
             )}
             {canPick && (
@@ -350,14 +510,14 @@ export default function SarvakaryeshuGame({
                   const isSelected = picked === powerId;
                   const isWrong = picked === powerId && picked !== null && !isCorrect;
                   const isGuided = guidedPowerId === powerId;
-                  const isHintPulse = isGuided && hintLevel === 1;
-                  const isHintGlow = isGuided && hintLevel >= 2;
+                  const isHintGlow = isGuided && hintLevel >= 3;
+                  const isRescueDimmed = rescueHintActive && guidedPowerId && powerId !== guidedPowerId;
 
                   return (
                     <button
                       key={powerId}
                       ref={(node) => { optionRefs.current[powerId] = node; }}
-                      className={`sarva-option${isRight ? ' is-right' : ''}${isWrong ? ' is-wrong' : ''}${isSelected ? ' is-selected' : ''}${isGuided ? ' is-guided' : ''}${isHintPulse ? ` pulse pulse-${pulseTick}` : ''}${isHintGlow ? ' hint-glow' : ''}${isCorrect && picked && !isRight ? ' is-dimmed' : ''}`}
+                      className={`sarva-option${isRight ? ' is-right' : ''}${isWrong ? ' is-wrong' : ''}${isSelected ? ' is-selected' : ''}${isGuided ? ' is-guided' : ''}${isHintGlow ? ' hint-glow' : ''}${isRescueDimmed ? ' is-rescue-dimmed' : ''}${isCorrect && picked && !isRight ? ' is-dimmed' : ''}`}
                       style={{ '--power-color': power.color }}
                       onPointerDown={() => handlePick(powerId)}
                       aria-label={power.label}
@@ -391,8 +551,10 @@ export default function SarvakaryeshuGame({
             style={{
               left: `${flyingPower.left}px`,
               top: `${flyingPower.top}px`,
-              '--fly-x': `${flyingPower.flyX}px`,
-              '--fly-y': `${flyingPower.flyY}px`,
+              '--syllable-x': `${flyingPower.syllableX}px`,
+              '--syllable-y': `${flyingPower.syllableY}px`,
+              '--scene-x': `${flyingPower.sceneX}px`,
+              '--scene-y': `${flyingPower.sceneY}px`,
             }}
           />
         )}

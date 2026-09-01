@@ -1277,23 +1277,6 @@
   align-items: center;
   justify-content: center;
 }
-.favorite-food-game .profile-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 16px;
-}
-.favorite-food-game .profile-header img,
-.favorite-food-game .profile-avatar {
-  width: 60px;
-  height: 60px;
-}
-.favorite-food-game .profile-name {
-  font-size: 21px;
-  font-weight: 600;
-  margin: 0;
-}
 .favorite-food-game .aboutme-comparison-column-title {
   margin: 0;
   font-size: 14px;
@@ -1397,26 +1380,6 @@
 }
 .friend-column.you-card {
   animation: finalCardIn 0.35s ease-out 0.55s forwards;
-}
-.column-header-image {
-  width: 48px;
-  height: 48px;
-  object-fit: contain;
-}
-.child-avatar-display {
-  width: 48px;
-  height: 48px;
-  padding: 0;
-  border-radius: 50%;
-  background: linear-gradient(145deg, #64c5c0, #49a8a2);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-size: 40px;
-  font-weight: 800;
-  box-shadow: 0 8px 20px rgba(47, 126, 121, 0.35);
 }
 .column-label {
   font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -1572,83 +1535,6 @@
 @keyframes popInCard { 0% { transform: translateX(-50%) scale(0.92); opacity: 0; } 100% { transform: translateX(-50%) scale(1); opacity: 1; } }
 
 /* ========================================= */
-/* MINI GESTURE SYSTEM (Thumbs Up on success) */
-/* ========================================= */
-.ganesha-gesture-cue {
-  position: absolute;
-  z-index: 60;
-  pointer-events: none;
-  --mini-cue-duration: 1.5s;
-  animation-duration: var(--mini-cue-duration);
-}
-
-.mini-gesture-icon {
-  width: clamp(52px, 5vw, 76px);
-  height: auto;
-  display: block;
-  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.2));
-}
-
-/* Position variants for different tap locations */
-.ganesha-gesture-cue--food {
-  left: 31%;
-  top: 35%;
-  animation: miniGestureVictory var(--mini-cue-duration) ease-out forwards;
-}
-
-.ganesha-gesture-cue--color {
-  left: 68%;
-  top: 35%;
-  animation: miniGestureVictory var(--mini-cue-duration) ease-out forwards;
-}
-
-.ganesha-gesture-cue--activity {
-  left: 31%;
-  top: 60%;
-  animation: miniGestureVictory var(--mini-cue-duration) ease-out forwards;
-}
-
-.ganesha-gesture-cue--friend {
-  left: 68%;
-  top: 60%;
-  animation: miniGestureVictory var(--mini-cue-duration) ease-out forwards;
-}
-
-.ganesha-gesture-cue--center {
-  left: 50%;
-  top: 30%;
-  transform: translate(-50%, -50%);
-  animation: miniGestureVictory var(--mini-cue-duration) ease-out forwards;
-}
-
-@keyframes miniGestureVictory {
-  0% {
-    opacity: 0;
-    transform: scale(0.6) translateY(20px);
-  }
-  20% {
-    opacity: 1;
-    transform: scale(1.15) translateY(-10px);
-  }
-  40% {
-    opacity: 1;
-    transform: scale(1) translateY(0px) rotate(8deg);
-  }
-  60% {
-    opacity: 1;
-    transform: scale(1) translateY(-5px) rotate(-4deg);
-  }
-  80% {
-    opacity: 0.8;
-    transform: scale(1) translateY(0px);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(0.8) translateY(-30px);
-  }
-}
-
-/* ========================================= */
 /* 9. MEDIA QUERIES (Mobile Reset)           */
 /* ========================================= */
 @media (max-width: 768px) {
@@ -1733,7 +1619,6 @@
   .friendship-grid { max-width: 100%; gap: 10px; }
   .friend-column { min-width: 0; max-width: 100%; padding: 12px; border-radius: 18px; }
   .column-label { font-size: 24px; }
-  .column-header-image, .child-avatar-display { width: 60px; height: 60px; font-size: 24px; }
   .friend-items-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
   .friend-item { padding: 8px 4px; min-height: 90px; border-radius: 12px; }
   .friend-item-img { width: 36px; height: 36px; }
@@ -1751,7 +1636,6 @@
   .friendship-grid { max-width: 1100px; gap: 16px; }
   .friend-column { min-width: 420px; padding: 18px; }
   .column-label { font-size: 30px; }
-  .column-header-image, .child-avatar-display { width: 74px; height: 74px; font-size: 30px; }
   .friend-items-grid { gap: 10px; }
   .friend-item { padding: 10px 6px; min-height: 110px; }
   .friend-item-img { width: 52px; height: 52px; }
@@ -1766,7 +1650,6 @@
   .friendship-grid { max-width: 1500px; gap: 26px; }
   .friend-column { min-width: 460px; max-width: 680px; padding: 30px 28px 26px; }
   .column-label { font-size: 40px; }
-  .column-header-image, .child-avatar-display { width: 92px; height: 92px; font-size: 40px; }
   .friend-items-grid { gap: 16px; }
   .friend-item { padding: 10px 10px 12px; min-height: 156px; }
   .friend-item-img { width: 80px; height: 80px; }

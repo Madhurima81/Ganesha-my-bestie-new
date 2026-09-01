@@ -118,7 +118,7 @@ const SACRED_SYMBOLS = [
     emoji: '???',
     image: symbolEyesColored,
     associationIcon: iconTarget,
-    associationText: "I see clearly.",
+    associationText: "I notice the good around me.",
     bodyPartImage: ganeshaEyes,
     blessing: "Ganesha's divine eyes awaken! May you see truth in all things.",
     bodyPart: 'eyes',
@@ -157,7 +157,7 @@ const SACRED_SYMBOLS = [
     emoji: '??',
     image: symbolTuskColored,
     associationIcon: iconHammer,
-    associationText: "I finish what I start.",
+    associationText: "I stay focused on what is true.",
     bodyPartImage: ganeshaTusk,
     blessing: "Ganesha's powerful tusk glows! May you break through any challenge with determination.",
     bodyPart: 'tusk',
@@ -170,7 +170,7 @@ const SACRED_SYMBOLS = [
     emoji: '??',
     image: symbolModakColored,
     associationIcon: iconHoney,
-    associationText: "I am full of joy.",
+    associationText: "I have joy inside me.",
     bodyPartImage: ganeshaLeftHand,
     blessing: "Ganesha's blessing hand awakens! May sweetness and abundance fill your life.",
     bodyPart: 'left-hand',
@@ -183,7 +183,7 @@ const SACRED_SYMBOLS = [
     emoji: '??',
     image: symbolLotusColored,
     associationIcon: iconLightbulb,
-    associationText: "I stay calm.",
+    associationText: "I can stay calm when things get messy.",
     bodyPartImage: ganeshaRightHand,
     blessing: "Ganesha's wisdom hand comes alive! May purity and enlightenment guide you.",
     bodyPart: 'right-hand',
@@ -196,7 +196,7 @@ const SACRED_SYMBOLS = [
     emoji: '??',
     image: symbolBellyColored,
     associationIcon: iconUniverse,
-    associationText: "I feel good inside.",
+    associationText: "I have room for all my feelings.",
     bodyPartImage: ganeshaBelly,
     blessing: "Ganesha's sacred belly awakens! May you hold the universe's love within you.",
     bodyPart: 'belly',
@@ -209,7 +209,7 @@ const SACRED_SYMBOLS = [
     emoji: '??',
     image: symbolMooshikaColored,
     associationIcon: iconPath,
-    associationText: "I can focus.",
+    associationText: "I can guide my busy thoughts.",
     bodyPartImage: ganeshaBase,
     blessing: "Mooshika, Ganesha's divine vehicle awakens! May wisdom guide your every journey, dear child.",
     bodyPart: 'base',
@@ -1474,15 +1474,12 @@ const SacredAssemblyContent = ({
     setShowSparkle('final-fireworks');
 
     finalVoPlayedRef.current = false;
+    // 2-line recap: "what you did" -> 700ms -> "what it means"
     playSceneVoice('finalYouFoundAll', () => {
       safeSetTimeout(() => {
-        playSceneVoice('finalNowComplete', () => {
-          safeSetTimeout(() => {
-            playSceneVoice('finalAlwaysWithYou', () => {
-              finalVoPlayedRef.current = true;
-              setSceneCompleteVOFinished(true);
-            }, { replayOnReturn: false });
-          }, 700);
+        playSceneVoice('finalAlwaysWithYou', () => {
+          finalVoPlayedRef.current = true;
+          setSceneCompleteVOFinished(true);
         }, { replayOnReturn: false });
       }, 700);
     }, { replayOnReturn: false });

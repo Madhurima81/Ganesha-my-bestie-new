@@ -81,6 +81,8 @@ export default function ChantCardModal({ wordId, themeStyles = {}, onPracticeCha
 
         <p className="chant-card__gift">{content.gift}</p>
 
+        <p className="chant-card__cta-helper">Listen to the word, then practice chanting.</p>
+
         <button type="button" className="chant-card__cta" onClick={handlePractice}>
           Practice Chanting
         </button>
