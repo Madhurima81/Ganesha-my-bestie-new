@@ -5,6 +5,7 @@ import PrimaryBtn from '../shared/PrimaryBtn';
 import ScreenHeader from '../shared/ScreenHeader';
 import MooshikaRideTransition from './MooshikaRideTransition';
 import InstallPromptBanner from '../onboarding/InstallPromptBanner';
+import ParentGate from '../onboarding/ParentGate';
 import AudioToggle from '../ui/AudioToggle/AudioToggle';
 import useAudioPreference from '../../hooks/useAudioPreference';
 import { playUiTap } from '../../services/AudioService';
@@ -29,8 +30,12 @@ const CleanProfileSelector = ({
   const [createError, setCreateError] = useState('');
 
   // NEW: transition state
-  const [transitionStage, setTransitionStage] = useState(null); // null | 'ride'
+  const [transitionStage, setTransitionStage] = useState(null); // null | 'install' | 'ride'
   const [pendingProfile, setPendingProfile] = useState(null);
+  // Gate re-triggered for "add another profile" from the selector grid — the
+  // first-run path already passed the parent gate upstream (App.jsx), so this only
+  // fires for later add-profile entries, not the initial forceCreate flow.
+  const [showAddGate, setShowAddGate] = useState(false);
   const { isAudioOn, toggleAudio } = useAudioPreference();
 
   const longPressTimer = React.useRef(null);
@@ -42,7 +47,7 @@ const CleanProfileSelector = ({
   const isManagingRef = React.useRef(false);
   const voiceTimersRef = useRef([]);
   const hasPlayedFriendChoiceVoRef = useRef(false);
-  const playedStepVoRef = useRef({ 1: false, 2: false, 3: false });
+  const playedStepVoRef = useRef({ 1: false, 2: false });
   const avatarAudioCtxRef = useRef(null);
 
   const animalAvatars = [
@@ -64,7 +69,7 @@ const CleanProfileSelector = ({
     if (showCreateProfile) {
       setCurrentStep(1);
       setCreateError('');
-      playedStepVoRef.current = { 1: false, 2: false, 3: false };
+      playedStepVoRef.current = { 1: false, 2: false };
     }
   }, [showCreateProfile]);
 
@@ -79,11 +84,10 @@ const CleanProfileSelector = ({
       window.speechSynthesis.cancel();
       const u = new window.SpeechSynthesisUtterance(
         currentStep === 1 ? 'What should I call you?'
-          : currentStep === 2 ? 'How old are you?'
-            : 'Pick your friend!'
+          : 'How old are you, and who will join your adventure?'
       );
-      u.rate = currentStep === 3 ? 1.05 : 1.02;
-      u.pitch = currentStep === 3 ? 1.05 : 1;
+      u.rate = currentStep === 2 ? 1.05 : 1.02;
+      u.pitch = currentStep === 2 ? 1.05 : 1;
       u.volume = 0.9;
       window.speechSynthesis.speak(u);
       playedStepVoRef.current[currentStep] = true;
@@ -143,7 +147,7 @@ const CleanProfileSelector = ({
     setIsCreatingProfile(false);
     setCreateError('');
     hasPlayedFriendChoiceVoRef.current = false;
-    playedStepVoRef.current = { 1: false, 2: false, 3: false };
+    playedStepVoRef.current = { 1: false, 2: false };
     window.speechSynthesis?.cancel();
   };
 
@@ -239,10 +243,11 @@ const CleanProfileSelector = ({
         setSelectedAvatar('monkey');
         setSelectedAge(7);
 
-        // Hand off to Mooshika ride
+        // Screen 6 — PWA install nudge fires first (parent still confirmed present),
+        // then hand off to the Mooshika ride.
         setPendingProfile(newProfile);
         setShowCreateProfile(false);
-        setTransitionStage('ride');
+        setTransitionStage('install');
       } else {
         setCreateError('That profile could not be created. Try deleting one first.');
         setIsCreatingProfile(false);
@@ -267,26 +272,48 @@ const CleanProfileSelector = ({
     }
   };
 
-  // RIDE TRANSITION â€” render first if active
+  // SCREEN 6 — PWA install nudge. Fires right after the child profile is created
+  // (parent still confirmed present here), BEFORE the Mooshika ride transition —
+  // this is the one moment an adult is confirmed present. Dismissible banner, never
+  // a blocking modal; self-hides after 2 declines (tracked in PwaInstallManager).
+  if (transitionStage === 'install' && pendingProfile) {
+    return (
+      <div className="clean-profile-overlay">
+        <div className="clean-forest-background">
+          <div className="profile-bg-overlay" />
+          <div className="profile-vignette" />
+        </div>
+        <InstallPromptBanner onContinue={() => setTransitionStage('ride')} />
+      </div>
+    );
+  }
+
+  // RIDE TRANSITION â€” handoff to the child, no changes.
   if (transitionStage === 'ride' && pendingProfile) {
     return (
-      <>
-        <MooshikaRideTransition
-          avatarId={getAnimalId(pendingProfile.avatar)}
-          profileName={pendingProfile.name}
-          onComplete={() => {
-            const id = pendingProfile.id;
-            setTransitionStage(null);
-            setPendingProfile(null);
-            setIsCreatingProfile(false);
-            onProfileSelect(id);
-          }}
-        />
-        {/* Onboarding step 6 — PWA install nudge. Fires right after the child profile
-            is created (parent still confirmed present here), before the handoff to the
-            child. Dismissible banner, never a blocking modal; self-hides after 2 declines. */}
-        <InstallPromptBanner />
-      </>
+      <MooshikaRideTransition
+        avatarId={getAnimalId(pendingProfile.avatar)}
+        profileName={pendingProfile.name}
+        onComplete={() => {
+          const id = pendingProfile.id;
+          setTransitionStage(null);
+          setPendingProfile(null);
+          setIsCreatingProfile(false);
+          onProfileSelect(id);
+        }}
+      />
+    );
+  }
+
+  if (showAddGate) {
+    return (
+      <ParentGate
+        onComplete={() => {
+          setShowAddGate(false);
+          setShowCreateProfile(true);
+        }}
+        onBackToWelcome={() => setShowAddGate(false)}
+      />
     );
   }
 
@@ -361,12 +388,7 @@ const CleanProfileSelector = ({
                           +
                         </button>
                       </div>
-                    </>
-                  )}
 
-                  {currentStep === 3 && (
-                    <>
-                      <h2 className="create-step-heading">Pick your friend</h2>
                       <p className="create-step-subheading">Who will join your adventure?</p>
                       <div className="friend-grid">
                         {animalAvatars.map((animal) => (
@@ -388,17 +410,16 @@ const CleanProfileSelector = ({
                 {createError ? <p className="create-error-text">{createError}</p> : null}
 
                 <PrimaryBtn
-                  label={currentStep < 3 ? '→' : "Let's Explore"}
+                  label={currentStep < 2 ? '→' : "Let's Explore"}
                   onClick={() => {
                     setCreateError('');
                     if (currentStep === 1) setCurrentStep(2);
-                    else if (currentStep === 2) setCurrentStep(3);
                     else handleCreateProfile();
                   }}
                   disabled={(currentStep === 1 && newProfileName.trim().length < 2) || isCreatingProfile}
                   size="md"
-                  fullWidth={currentStep === 3}
-                  className={currentStep < 3 ? 'arrow-btn' : 'final-cta-btn'}
+                  fullWidth={currentStep === 2}
+                  className={currentStep < 2 ? 'arrow-btn' : 'final-cta-btn'}
                 />
 
                 {(currentStep > 1 || !forceCreate) && (
@@ -486,7 +507,9 @@ const CleanProfileSelector = ({
                     playUiTap(0.24);
                     setManageModeId(null);
                     setCreateError('');
-                    setShowCreateProfile(true);
+                    // Re-adding a profile from here is a fresh "add profile" entry
+                    // point — re-trigger the parent gate rather than skip straight in.
+                    setShowAddGate(true);
                   }}
                 >
                   <div className="clean-add-icon">+</div>

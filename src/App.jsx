@@ -13,6 +13,7 @@ const GaneshaEngineTest  = lazy(() => import('./lib/components/twg/GaneshaEngine
 const MainWelcomeScreen  = lazy(() => import('./lib/components/navigation/MainWelcomeScreen'));
 const GaneshaIntroStory  = lazy(() => import('./components/GaneshaIntroStory'));
 const ParentGate         = lazy(() => import('./lib/components/onboarding/ParentGate'));
+const SignInScreen       = lazy(() => import('./lib/components/onboarding/SignInScreen'));
 import { GANESHA_USAGE_SYSTEM } from './lib/config/ganeshaUsageSystem';
 
 const CleanGameWelcomeScreen = lazy(() => import('./lib/components/navigation/CleanGameWelcomeScreen'));
@@ -864,8 +865,10 @@ const initializeApp = async () => {
     try { window.speechSynthesis.speak(new SpeechSynthesisUtterance('')); } catch(e) {}
     restoreDefaultStyles();
 
-    const existingConsent = localStorage.getItem('parentConsent');
-    setCurrentView(existingConsent ? 'profile-create' : 'parent-gate');
+    // The parent gate is a reusable adult-check, re-triggered on every "add profile"
+    // entry, not just first run — so unlike the old parentConsent flow, there's no
+    // stored bypass here.
+    setCurrentView('parent-gate');
   };
   
   // Handle continuing from last save
@@ -1429,8 +1432,17 @@ chants: result?.chants || result?.chantedVerses || {},
       {currentView === 'parent-gate' && (
         <div className="view-transition">
           <ParentGate
-            onComplete={() => setCurrentView('profile-create')}
+            onComplete={() => setCurrentView('sign-in')}
             onBackToWelcome={() => setCurrentView('main-welcome')}
+          />
+        </div>
+      )}
+
+      {currentView === 'sign-in' && (
+        <div className="view-transition">
+          <SignInScreen
+            onContinue={() => setCurrentView('profile-create')}
+            onSkip={() => setCurrentView('profile-create')}
           />
         </div>
       )}
@@ -1754,7 +1766,7 @@ if (tempData.playAgainRequested) {
       )}
       
       {/* Fallback view */}
-      {!['loading', 'error', 'main-welcome', 'parent-gate', 'profile-welcome', 'profile-create', 'profile-selector', 'map', 'zone-welcome', 'scene', 'parent-dashboard', 'twg'].includes(currentView) && (
+      {!['loading', 'error', 'main-welcome', 'parent-gate', 'sign-in', 'profile-welcome', 'profile-create', 'profile-selector', 'map', 'zone-welcome', 'scene', 'parent-dashboard', 'twg'].includes(currentView) && (
         <div className="unknown-view-error">
           <h2>Error: Unknown view state</h2>
           <p>Current view: {currentView}</p>

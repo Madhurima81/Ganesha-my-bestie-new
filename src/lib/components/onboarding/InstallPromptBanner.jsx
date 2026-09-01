@@ -9,7 +9,12 @@ import pwaInstallManager, { isIOS } from '../../services/PwaInstallManager';
 // iOS Safari never fires `beforeinstallprompt` — there is no programmatic install
 // trigger there at all, only the manual Share -> Add to Home Screen path. So on iOS
 // this renders a 3-step visual walkthrough instead of an "Install" button.
-const InstallPromptBanner = () => {
+//
+// `onContinue` is optional — pass it when this banner sits on its own screen (screen
+// 6) and something downstream (the Mooshika ride) is waiting for this moment to
+// resolve, one way or another. It fires once, whether the parent installs, dismisses,
+// or there was never anything to show in the first place.
+const InstallPromptBanner = ({ onContinue }) => {
   const [visible, setVisible] = useState(pwaInstallManager.shouldShowAnyNudge());
   const [showIOSSteps, setShowIOSSteps] = useState(false);
   const onIOS = isIOS();
@@ -21,15 +26,22 @@ const InstallPromptBanner = () => {
     return unsubscribe;
   }, []);
 
+  useEffect(() => {
+    if (!visible) onContinue?.();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleInstall = async () => {
     await pwaInstallManager.promptInstall();
     setVisible(false);
+    onContinue?.();
   };
 
   const handleDismiss = () => {
     pwaInstallManager.recordDismissal();
     setVisible(false);
     setShowIOSSteps(false);
+    onContinue?.();
   };
 
   if (!visible) return null;

@@ -1,0 +1,80 @@
+.signin-oauth-btn {
+  width: min(360px, 100%);
+  min-height: 52px;
+  border-radius: 18px;
+  border: 2px solid rgba(155, 125, 216, 0.28);
+  background: #fff;
+  color: #5c3ea6;
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.05rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.signin-oauth-icon {
+  font-family: 'Baloo 2', cursive;
+  font-weight: 900;
+  font-size: 1.1rem;
+}
+
+.signin-divider {
+  width: min(360px, 100%);
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: #9b8bc4;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.85rem;
+}
+
+.signin-divider::before,
+.signin-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(155, 125, 216, 0.24);
+}
+
+.signin-divider span {
+  padding: 0 10px;
+}
+
+.signin-skip-link {
+  border: none;
+  background: none;
+  color: #7a5bc1;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 1rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  min-height: 44px;
+  padding: 4px 8px;
+}
+
+.signin-legal {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.82rem;
+  color: #9b8bc4;
+  text-align: center;
+  max-width: 400px;
+  line-height: 1.5;
+}
+
+.signin-legal-link {
+  border: none;
+  background: none;
+  color: #7a5bc1;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.82rem;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  padding: 0;
+}
