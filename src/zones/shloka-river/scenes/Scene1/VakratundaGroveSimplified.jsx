@@ -377,7 +377,7 @@ const VakratundaGroveContent = ({
       instructionTapAndRepeat: "That way's blocked — look for another way around.",
       instructionTapTheElephant: "That way's blocked — look for another way around.",
       hintTapElephant: "That way's blocked — look for another way around.",
-      hintLookForGlow: "See the glow? That's the way around.",
+      hintLookForGlow: "Drag the frog to the glow.",
       hintKeepBuildingPath: "Keep going — you're finding the way through.",
       vakratundaSetup: 'The frog made it! He found his family!',
       vakratundaClaim: 'I find a new way.',
