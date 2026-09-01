@@ -86,16 +86,16 @@ const MINI_OK_ICON = '/images/hand-ok.svg';
 
 const VOICE_LINES = {
   opening: "Let's explore... look and listen.",
-  eyes: 'Look closely and spot what is hidden.',
-  ears: 'Listen carefully and find where the sound is coming from.',
-  eyesSetup: 'You looked carefully... and found them all.',
-  earsSetup: 'You listened closely... and got it right.',
+  eyes: 'Some things are hiding. Look closely and tap each one you find.',
+  ears: 'Listen to the sound. Tap where you think it came from.',
+  eyesSetup: 'You looked closely and found them all.',
+  earsSetup: 'You listened carefully and found every sound.',
   tuskSetup: "You stayed focused... now let's clear the path.",
-  tusk: 'My tusk is beyond this blocked path. Stay focused and choose what each obstacle needs.',
-  idleEyes: 'Look closely... you can find them.',
-  idleEars: 'Listen carefully... then choose where the sound came from.',
-  idleTusk: 'Choose the friend who can help, then clear the obstacle.',
-  complete: 'You looked carefully, listened closely, and stayed focused.'
+  tusk: 'The path is blocked. Stay focused and choose what can clear each obstacle.',
+  idleEyes: "Look closely — there's still one hiding.",
+  idleEars: 'Listen again — where did it come from?',
+  idleTusk: 'Look at the obstacle. What can clear it?',
+  complete: 'You looked closely, listened carefully, and stayed focused.'
 };
 
 // Game phases
@@ -599,7 +599,7 @@ const SymbolMountainSceneContent = ({
     }
 
     if (sceneState.phase === PHASES.EYES_COMPLETE) {
-      safeSetTimeout(() => setRevealConfig({ symbolId: 'eyes', symbolImage: symbolEyesColored, symbolName: 'Eyes', affirmation: 'I notice the good around me.', sidebarTarget: getSidebarTarget('eyes'), sayWithMeDelayMs: 3200 }), 500);
+      safeSetTimeout(() => setRevealConfig({ symbolId: 'eyes', symbolImage: symbolEyesColored, symbolName: 'Eyes', affirmation: "I notice what's around me.", sidebarTarget: getSidebarTarget('eyes'), sayWithMeDelayMs: 3200 }), 500);
       return;
     }
     if (sceneState.phase === PHASES.EARS_COMPLETE) {
@@ -711,7 +711,7 @@ const SymbolMountainSceneContent = ({
     triggerMiniGesture('center', 2000, MINI_VICTORY_ICON);
     safeSetTimeout(() => {
       setShowSparkle(null);
-      setRevealConfig({ symbolId: 'eyes', symbolImage: symbolEyesColored, symbolName: 'Eyes', affirmation: 'I notice the good around me.', sidebarTarget: getSidebarTarget('eyes'), sayWithMeDelayMs: 3200 });
+      setRevealConfig({ symbolId: 'eyes', symbolImage: symbolEyesColored, symbolName: 'Eyes', affirmation: "I notice what's around me.", sidebarTarget: getSidebarTarget('eyes'), sayWithMeDelayMs: 3200 });
     }, 1200);
   };
 

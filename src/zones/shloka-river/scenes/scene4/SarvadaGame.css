@@ -4,7 +4,9 @@
   position: absolute;
   inset: 0;
   overflow: hidden;
-  background: #1a3a5c;
+  /* Warm neutral — if a bg image is still decoding mid-crossfade this shows
+     through instead of a hard blue flash. */
+  background: #241a33;
 }
 
 .sarvada-game::after {
@@ -83,13 +85,19 @@
   display: block;
   -webkit-user-drag: none;
   pointer-events: none;
+  /* Sits in front of the boat-Ganesha so the hull occludes his legs. */
+  position: relative;
+  z-index: 4;
 }
 
 .sarvada-boat-ganesha {
   position: absolute;
-  width: clamp(46px, 7vw, 82px);
-  right: 18%;
-  bottom: 33%;
+  width: clamp(40px, 6vw, 70px);
+  /* Seated in the bow — the hull (z-index 4 below) crosses in front of his
+     legs so he reads as sitting *in* the boat, not pasted on top of it. */
+  left: 24%;
+  right: auto;
+  bottom: 44%;
   z-index: 2;
   pointer-events: none;
   filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.22));
@@ -144,10 +152,10 @@
 
 .sarvada-bubble {
   position: absolute;
-  top: 22%;
+  top: 12%;
   left: 50%;
   transform: translateX(-50%) scale(0);
-  width: clamp(100px, 18vw, 170px);
+  width: clamp(115px, 21vw, 195px);
   z-index: 22;
   cursor: pointer;
   touch-action: manipulation;
@@ -156,7 +164,7 @@
 
 .sarvada-bubble.pulsing {
   transform: translateX(-50%) scale(1);
-  animation: none;
+  animation: sarvadaBubblePulse 2.4s ease-in-out infinite;
 }
 
 .sarvada-bubble.expanding {
@@ -172,7 +180,7 @@
 
 .sarvada-ring-burst {
   position: absolute;
-  top: 22%;
+  top: 12%;
   left: 50%;
   width: 40px;
   height: 40px;
@@ -255,7 +263,9 @@
   top: 14%;
   left: 50%;
   transform: translateX(-50%);
-  width: min(92%, 640px);
+  /* Cap by viewport height too, so the 4:3 frame never gets letterboxed and
+     tap coordinates map 1:1 onto the picture. */
+  width: min(92%, 640px, calc(52vh * 4 / 3));
   z-index: 35;
   animation: sarvadaMemoryIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
 }
@@ -272,16 +282,83 @@
   gap: 6px;
 }
 
-.sarvada-memory-img {
+/* 4:3 frame — the picture fills it exactly, so % coords == picture coords. */
+.sarvada-find-frame {
+  position: relative;
   width: 100%;
   aspect-ratio: 4 / 3;
-  max-height: clamp(180px, 42vh, 360px);
-  object-fit: contain;
+  border-radius: 14px;
+}
+
+.sarvada-memory-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   background: #111;
   border-radius: 14px;
   display: block;
   -webkit-user-drag: none;
   transition: opacity 0.25s ease;
+}
+
+/* Invisible full-image tap surface — the child taps to find the symbol. */
+.sarvada-image-tap {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  border-radius: 14px;
+  cursor: crosshair;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sarvada-image-tap.is-wrong {
+  animation: sarvadaWrongTap 0.4s ease;
+}
+
+@keyframes sarvadaWrongTap {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* Symbol flying from the tap point up to the syllable tile. */
+.sarvada-fly-symbol {
+  position: fixed;
+  width: clamp(48px, 10vw, 84px);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  z-index: 60;
+  pointer-events: none;
+  filter: drop-shadow(0 0 16px rgba(255, 213, 79, 0.9));
+  animation: sarvadaFly 1.9s cubic-bezier(0.45, 0.05, 0.35, 1) forwards;
+}
+
+@keyframes sarvadaFly {
+  0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+  14% { transform: translate(-50%, -50%) scale(1.15); opacity: 1; }
+  85% { opacity: 1; }
+  100% {
+    transform: translate(calc(-50% + var(--fly-dx)), calc(-50% + var(--fly-dy))) scale(0.6);
+    opacity: 0.9;
+  }
+}
+
+/* Debug-only outline of the current tap zone. */
+.sarvada-zone-outline {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 2px dashed rgba(3, 169, 244, 0.9);
+  background: rgba(3, 169, 244, 0.14);
+  pointer-events: none;
+  z-index: 4;
 }
 
 .sarvada-symbol-target,
@@ -340,8 +417,8 @@
 
 .sarvada-symbol-ring {
   pointer-events: none;
-  min-width: 60px;
-  min-height: 60px;
+  /* No min size — the ring must match the tap zone exactly (width = s.w%,
+     aspect-ratio 1), same as .sarvada-zone-outline in the debug panel. */
   border: 2px solid rgba(255, 213, 79, 0.28);
   box-shadow: 0 0 0 6px rgba(255, 213, 79, 0.08);
   z-index: 1;
@@ -591,6 +668,16 @@
   animation: sarvadaFadeIn 0.5s ease 1s both;
 }
 
+.sarvada-story {
+  margin-top: 4px;
+  font-family: 'Baloo 2', cursive;
+  font-size: clamp(13px, 1.9vw, 18px);
+  font-weight: 700;
+  color: rgba(255, 236, 179, 0.95);
+  text-shadow: 0 2px 6px rgba(0,0,0,0.45);
+  animation: sarvadaFadeIn 0.5s ease 1.25s both;
+}
+
 @keyframes sarvadaSylFloat {
   from { opacity: 0; transform: translateY(12px) scale(0.8); }
   to { opacity: 1; transform: translateY(0) scale(1); }
@@ -634,4 +721,129 @@
   .sarvada-bg {
     transition: none;
   }
+}
+
+/* ── Tap Zone Debug panel ───────────────────────────────────────────────── */
+.sarvada-debug {
+  position: fixed;
+  left: 0.75rem;
+  bottom: 0.75rem;
+  width: min(20rem, calc(100% - 1.5rem));
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-family: 'Nunito', sans-serif;
+}
+
+.sarvada-debug-toggle,
+.sarvada-debug-reset {
+  border: 0;
+  border-radius: 999px;
+  background: rgba(15, 36, 54, 0.9);
+  color: #f6fbff;
+  font: inherit;
+  font-weight: 700;
+  padding: 0.55rem 0.95rem;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.24);
+  cursor: pointer;
+}
+
+.sarvada-debug-body {
+  width: 100%;
+  max-height: min(66vh, 30rem);
+  overflow: auto;
+  border-radius: 1rem;
+  background: rgba(255, 251, 242, 0.97);
+  color: #203040;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.24);
+  padding: 0.85rem;
+}
+
+.sarvada-debug-copy-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.7rem;
+}
+
+.sarvada-debug-copy {
+  border: 0;
+  border-radius: 999px;
+  background: rgba(46, 125, 50, 0.96);
+  color: #fff;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 900;
+  padding: 0.48rem 0.8rem;
+  cursor: pointer;
+}
+
+.sarvada-debug-copy-row span {
+  color: #1b5e20;
+  font-size: 0.76rem;
+  font-weight: 900;
+}
+
+.sarvada-debug-check {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.6rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.sarvada-debug-note {
+  margin: 0 0 0.75rem;
+  color: rgba(32, 48, 64, 0.78);
+  font-size: 0.74rem;
+  line-height: 1.35;
+}
+
+.sarvada-debug-group {
+  margin-bottom: 0.6rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid rgba(32, 48, 64, 0.12);
+}
+
+.sarvada-debug-section-title {
+  margin: 0.2rem 0 0.5rem;
+  color: #0f4c4c;
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.sarvada-debug-row {
+  display: grid;
+  grid-template-columns: 3rem 1fr 4rem;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.45rem;
+  font-size: 0.8rem;
+}
+
+.sarvada-debug-row span {
+  font-weight: 700;
+}
+
+.sarvada-debug-row input[type='range'] {
+  width: 100%;
+}
+
+.sarvada-debug-row input[type='number'] {
+  width: 100%;
+  border: 1px solid rgba(32, 48, 64, 0.2);
+  border-radius: 0.45rem;
+  background: rgba(255, 255, 255, 0.92);
+  padding: 0.28rem 0.42rem;
+  font: inherit;
+}
+
+.sarvada-debug-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
 }

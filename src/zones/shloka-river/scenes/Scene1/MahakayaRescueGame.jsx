@@ -17,7 +17,7 @@ import monkeySymbolMountain from '../../../symbol-mountain/scenes/tusk/assets/im
 
 const SYLLABLES = ['Ma', 'ha', 'ka', 'ya'];
 const AUDIO = { syllables: ['ma', 'ha', 'ka', 'ya'] };
-const TOTAL_LOGS = 3;
+const TOTAL_LOGS = 4;
 const TOTAL_SYLLABLES = 4;
 const ATTACH_DIST = 10;
 const DEBUG_PHASE_OPTIONS = [
@@ -25,34 +25,38 @@ const DEBUG_PHASE_OPTIONS = [
   { value: 1, label: 'After Log 1' },
   { value: 2, label: 'After Log 2' },
   { value: 3, label: 'After Log 3' },
+  { value: 4, label: 'After Log 4' },
 ];
 const JOIN_SEQUENCE = [0, 2, 1, 3];
-const LAYOUT_PRESET_VERSION = '2026-08-24-mahakaya-start-scale-3';
+const LAYOUT_PRESET_VERSION = '2026-08-27-mahakaya-pasted-layout-15';
 // Final raft position after crossing. Derived from the last log (logTarget2)
 // landing at ~{ l: 76, t: 52 } in the "After Log 3" layout:
 //   logTarget2 phase-3 layout {39.6, 46.6} + CROSS_DELTA {36.4, 5.5}
 //   → raft target {24.8 + 36.4, 39.3 + 5.5}
-const CROSS_TARGET_RAFT = { l: 61, t: 45 };
+const CROSS_TARGET_RAFT = { l: 63.79, t: 41.67 };
 
 const PHASE0_LAYOUT = {
-  pulley: { l: 56.2, t: 12.4, w: 4.5 },
+  pulley: { l: 39.7, t: 11.15, w: 3 },
   handleStart: { l: 45.3, t: 35.8, w: 6.6 },
-  pullTop: { l: 56.2, t: 24.2, w: 6.6 },
+  pullTop: { l: 39.67, t: 31, w: 6.6 },
   pullBottom: { l: 56.2, t: 78, w: 6.6 },
-  raft: { l: 24.8, t: 39.3, w: 31.8 },
+  raft: { l: 21.81, t: 46.38, w: 31.8, r: -18 },
   logTarget0: { l: 31.2, t: 40.6, w: 31.8 },
   logTarget1: { l: 39.6, t: 41.2, w: 31.8 },
   logTarget2: { l: 48, t: 41.8, w: 31.8 },
+  logTarget3: { l: 55.5, t: 43.2, w: 31.8 },
   waitingLog0: { l: 77.2, t: 23.8, w: 31.8 },
   waitingLog1: { l: 81.7, t: 21.4, w: 31.8 },
   waitingLog2: { l: 85.5, t: 24.9, w: 31.8 },
+  waitingLog3: { l: 81, t: 28.6, w: 31.8 },
   animal0: { l: 21.6, t: 31.8, w: 19.4 },
   animal1: { l: 39.6, t: 33.7, w: 16.9 },
   animal2: { l: 31.3, t: 32.2, w: 17.6 },
   animal3: { l: 47.2, t: 32.5, w: 15.8 },
-  waitingAnimal1: { l: 12.7, t: 81.1, w: 16.7 },
-  waitingAnimal2: { l: 30.1, t: 78.2, w: 18.2 },
-  waitingAnimal3: { l: 15.9, t: 65.4, w: 11.1 },
+  waitingAnimal0: { l: 19.6, t: 66, w: 19.4 },
+  waitingAnimal1: { l: 55.9, t: 81.1, w: 16.7 },
+  waitingAnimal2: { l: 38.96, t: 84.86, w: 18.2 },
+  waitingAnimal3: { l: 36.6, t: 72.9, w: 11.1 },
 };
 
 const CROSS_DELTA = {
@@ -64,50 +68,61 @@ const DEFAULT_PHASE_LAYOUTS = [
   PHASE0_LAYOUT,
   {
     ...PHASE0_LAYOUT,
-    logTarget0: { l: 28.4, t: 44.3, w: 31.8 },
-    animal2: { l: 32.9, t: 31.6, w: 15.8 },
-    waitingAnimal1: { l: 13.8, t: 81.6, w: 17.6 },
-    waitingAnimal3: { l: 14.2, t: 65.8, w: 15.1 },
+    logTarget0: { l: 19.83, t: 43.61, w: 31.8, r: -40 },
+    animal0: { l: 22.15, t: 33.68, w: 15.8 },
+  },
+  {
+    ...PHASE0_LAYOUT,
+    logTarget0: { l: 31.4, t: 40.4, w: 31.8 },
+    logTarget1: { l: 23.94, t: 45.44, w: 31.8, r: -41 },
+    animal0: { l: 22.15, t: 33.68, w: 15.8 },
+    animal2: { l: 21.16, t: 43.12, w: 16.9 },
   },
   {
     ...PHASE0_LAYOUT,
     logTarget0: { l: 31.4, t: 40.4, w: 31.8 },
     logTarget1: { l: 33.9, t: 43.5, w: 31.8 },
-    animal2: { l: 31.2, t: 31.9, w: 15.8 },
-    animal1: { l: 37.1, t: 29.1, w: 16.9 },
-    waitingAnimal3: { l: 14.2, t: 65.8, w: 15.1 },
+    logTarget2: { l: 28.54, t: 47.43, w: 31.8, r: -41 },
+    animal0: { l: 22.15, t: 33.68, w: 15.8 },
+    animal1: { l: 34.4, t: 38, w: 15.5 },
+    animal2: { l: 21.16, t: 43.12, w: 16.9 },
   },
   {
     ...PHASE0_LAYOUT,
     logTarget0: { l: 31.4, t: 40.4, w: 31.8 },
     logTarget1: { l: 33.9, t: 43.5, w: 31.8 },
     logTarget2: { l: 39.6, t: 46.6, w: 31.8 },
-    animal2: { l: 31.2, t: 31.9, w: 15.8 },
-    animal1: { l: 37.1, t: 29.1, w: 16.9 },
-    animal3: { l: 34.4, t: 38, w: 15.5 },
+    logTarget3: { l: 33.25, t: 49.64, w: 31.8, r: -41 },
+    animal0: { l: 22.15, t: 33.68, w: 15.8 },
+    animal1: { l: 34.4, t: 38, w: 15.5 },
+    animal2: { l: 21.16, t: 43.12, w: 16.9 },
+    animal3: { l: 29.24, t: 46.61, w: 12.7 },
   },
 ];
 
-const DEBUG_KEYS = [
+const START_DEBUG_KEYS = [
   'pulley',
   'handleStart',
   'pullTop',
   'pullBottom',
   'raft',
-  'logTarget0',
-  'logTarget1',
-  'logTarget2',
   'waitingLog0',
   'waitingLog1',
   'waitingLog2',
-  'animal0',
-  'animal1',
-  'animal2',
-  'animal3',
+  'waitingLog3',
+  'waitingAnimal0',
   'waitingAnimal1',
   'waitingAnimal2',
   'waitingAnimal3',
 ];
+const CROSS_TARGET_DEBUG_KEY = 'crossTargetRaft';
+
+const getDebugKeysForPhase = (phaseIndex) => {
+  if (phaseIndex === 0) return START_DEBUG_KEYS;
+  if (phaseIndex === TOTAL_LOGS) return [`logTarget${phaseIndex - 1}`, `animal${JOIN_SEQUENCE[phaseIndex - 1]}`, CROSS_TARGET_DEBUG_KEY];
+  const newAnimalIndex = JOIN_SEQUENCE[phaseIndex - 1];
+  return [`logTarget${phaseIndex - 1}`, `animal${newAnimalIndex}`];
+};
 
 const ANIMALS = [
   { id: 'elephant', img: elephantCalf, name: 'Elephant' },
@@ -206,6 +221,8 @@ export default function MahakayaRescueGame({
   const [debugPanelPosition, setDebugPanelPosition] = useState({ x: 12, y: 96 });
   const [crossing, setCrossing] = useState(false);
   const [layoutPresetVersion, setLayoutPresetVersion] = useState(LAYOUT_PRESET_VERSION);
+  const [layoutCopyStatus, setLayoutCopyStatus] = useState('');
+  const [crossTargetRaft, setCrossTargetRaft] = useState(CROSS_TARGET_RAFT);
 
   const stageRef = useRef(null);
   const timers = useRef([]);
@@ -289,7 +306,6 @@ export default function MahakayaRescueGame({
     playSceneLine?.('scene10_maha_intro', () => {
       setPhase('play');
       phaseRef.current = 'play';
-      playSceneLine?.('scene10_maha_drag_rope');
     });
     return clearTimers;
     // Voice and timer helpers are stable enough for this scene lifecycle.
@@ -306,20 +322,46 @@ export default function MahakayaRescueGame({
     if (layoutPresetVersion === LAYOUT_PRESET_VERSION) return;
     setPhaseLayouts(DEFAULT_PHASE_LAYOUTS);
     setLayoutPresetVersion(LAYOUT_PRESET_VERSION);
+    setCrossTargetRaft(CROSS_TARGET_RAFT);
     setKnobPos({ l: DEFAULT_PHASE_LAYOUTS[0].handleStart.l, t: DEFAULT_PHASE_LAYOUTS[0].handleStart.t });
     if (completedLogsRef.current === 0) {
       setDebugPhase(0);
     }
   }, [layoutPresetVersion]);
 
+  useEffect(() => {
+    const availableKeys = getDebugKeysForPhase(debugPhase);
+    if (!availableKeys.includes(selectedDebugKey)) {
+      setSelectedDebugKey(availableKeys[0]);
+    }
+  }, [debugPhase, selectedDebugKey]);
+
   if (!isActive) return null;
 
   const visiblePhase = debugMode ? debugPhase : completedLogs;
+  const baseLayout = phaseLayouts[0];
   const visibleLayout = phaseLayouts[visiblePhase];
   const activeLayout = phaseLayouts[completedLogs];
   const nextLayout = phaseLayouts[Math.min(completedLogs + 1, TOTAL_LOGS)];
+  const availableDebugKeys = getDebugKeysForPhase(debugPhase);
+  const getDebugObject = (key) => {
+    if (key === CROSS_TARGET_DEBUG_KEY) {
+      return { ...crossTargetRaft, w: baseLayout.raft.w, r: baseLayout.raft.r };
+    }
+    return visibleLayout[key];
+  };
+
+  const getLogLayoutForPhase = (logIndex) => phaseLayouts[Math.min(logIndex + 1, phaseLayouts.length - 1)];
+  const getJoinedAnimalPhase = (animalIndex) => {
+    const joinOrderIndex = JOIN_SEQUENCE.indexOf(animalIndex);
+    return joinOrderIndex === -1 ? 1 : joinOrderIndex + 1;
+  };
 
   const updateLayout = (key, patch) => {
+    if (key === CROSS_TARGET_DEBUG_KEY) {
+      setCrossTargetRaft((current) => ({ ...current, ...patch }));
+      return;
+    }
     setPhaseLayouts((current) => current.map((phaseLayout, phaseIndex) => {
       if (phaseIndex !== debugPhase) return phaseLayout;
       return {
@@ -330,6 +372,10 @@ export default function MahakayaRescueGame({
   };
 
   const resetCurrentPhaseLayout = () => {
+    if (selectedDebugKey === CROSS_TARGET_DEBUG_KEY) {
+      setCrossTargetRaft(CROSS_TARGET_RAFT);
+      return;
+    }
     setPhaseLayouts((current) => current.map((phaseLayout, phaseIndex) => (
       phaseIndex === debugPhase ? DEFAULT_PHASE_LAYOUTS[debugPhase] : phaseLayout
     )));
@@ -337,26 +383,27 @@ export default function MahakayaRescueGame({
 
   const resetAllPhaseLayouts = () => {
     setPhaseLayouts(DEFAULT_PHASE_LAYOUTS);
+    setCrossTargetRaft(CROSS_TARGET_RAFT);
     setDebugPhase(0);
-    setSelectedDebugKey('waitingLog0');
+    setSelectedDebugKey(START_DEBUG_KEYS[0]);
     setKnobPos({ l: DEFAULT_PHASE_LAYOUTS[0].handleStart.l, t: DEFAULT_PHASE_LAYOUTS[0].handleStart.t });
   };
 
   const nudgeSize = (delta) => {
     updateLayout(selectedDebugKey, {
-      w: Math.max(2, Number(((visibleLayout[selectedDebugKey].w || 4) + delta).toFixed(1))),
+      w: Math.max(2, Number(((getDebugObject(selectedDebugKey).w || 4) + delta).toFixed(1))),
     });
   };
 
   const nudgeHeight = (delta) => {
     updateLayout(selectedDebugKey, {
-      h: Math.max(2, Number((((visibleLayout[selectedDebugKey].h || visibleLayout[selectedDebugKey].w || 4) + delta)).toFixed(1))),
+      h: Math.max(2, Number((((getDebugObject(selectedDebugKey).h || getDebugObject(selectedDebugKey).w || 4) + delta)).toFixed(1))),
     });
   };
 
   const nudgePosition = (axis, delta) => {
     updateLayout(selectedDebugKey, {
-      [axis]: Number(((visibleLayout[selectedDebugKey][axis] || 0) + delta).toFixed(1)),
+      [axis]: Number(((getDebugObject(selectedDebugKey)[axis] || 0) + delta).toFixed(1)),
     });
   };
 
@@ -366,6 +413,34 @@ export default function MahakayaRescueGame({
     updateLayout(key, {
       [field]: nextValue,
     });
+  };
+
+  // Dump the tuned layout so it can be pasted straight into the source
+  // (DEFAULT_PHASE_LAYOUTS / CROSS_TARGET_RAFT) — no need to screenshot positions.
+  const copyLayoutJson = async () => {
+    const payload = JSON.stringify(
+      { CROSS_TARGET_RAFT: crossTargetRaft, phaseLayouts },
+      (k, v) => (typeof v === 'number' ? Number(v.toFixed(2)) : v),
+      2,
+    );
+    const canPrompt = typeof window !== 'undefined' && typeof window.prompt === 'function';
+    try {
+      if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(payload);
+        setLayoutCopyStatus('Copied');
+      } else if (canPrompt) {
+        window.prompt('Copy layout JSON', payload);
+        setLayoutCopyStatus('Shown');
+      }
+    } catch {
+      if (canPrompt) {
+        window.prompt('Copy layout JSON', payload);
+        setLayoutCopyStatus('Shown');
+      } else {
+        console.log('Mahakaya layout JSON:', payload);
+        setLayoutCopyStatus('Logged');
+      }
+    }
   };
 
   const applyDebugDrag = (event) => {
@@ -385,13 +460,17 @@ export default function MahakayaRescueGame({
     if (!debugMode) return false;
     e.preventDefault();
     e.stopPropagation();
+    if (selectedDebugKey !== key) {
+      setSelectedDebugKey(key);
+      return true;
+    }
     const point = pointFromEvent(e);
     if (!point) return true;
-    setSelectedDebugKey(key);
+    const debugObject = getDebugObject(key);
     debugDragRef.current = {
       key,
-      offsetL: point.l - visibleLayout[key].l,
-      offsetT: point.t - visibleLayout[key].t,
+      offsetL: point.l - debugObject.l,
+      offsetT: point.t - debugObject.t,
     };
     e.currentTarget.setPointerCapture?.(e.pointerId);
     applyDebugDrag(e);
@@ -407,18 +486,32 @@ export default function MahakayaRescueGame({
     top: `${pos.t}%`,
     width: `${pos.w}%`,
     ...(pos.h ? { height: `${pos.h}%` } : {}),
+    // .maha-layer centers with translate(-50%,-50%); keep that when rotating
+    ...(pos.r ? { transform: `translate(-50%, -50%) rotate(${pos.r}deg)` } : {}),
     ...extra,
   });
+
+  const sharedRigLayout = {
+    pulley: baseLayout.pulley,
+    handleStart: baseLayout.handleStart,
+    pullTop: baseLayout.pullTop,
+    pullBottom: baseLayout.pullBottom,
+  };
 
   const waitingLogKey = `waitingLog${activeLog}`;
   const targetLogKey = `logTarget${activeLog}`;
   const currentWaitingLog = activeLayout[waitingLogKey];
   const currentTargetLog = nextLayout[targetLogKey];
   const currentMovingLog = mixPos(currentWaitingLog, currentTargetLog, pullProgress);
-  const pullHandleTop = lerp(activeLayout.pullTop.t, activeLayout.pullBottom.t, pullProgress);
-  const activePullHandle = { ...activeLayout.pullTop, t: pullHandleTop };
+  const pullHandleTop = lerp(sharedRigLayout.pullTop.t, sharedRigLayout.pullBottom.t, pullProgress);
+  const activePullHandle = { ...sharedRigLayout.pullTop, t: pullHandleTop };
   const allDone = litCount >= TOTAL_SYLLABLES;
   const raftImage = raftLogSingle;
+  const crossTargetDebugLayout = { ...crossTargetRaft, w: baseLayout.raft.w, r: baseLayout.raft.r };
+  const crossTargetPreviewDelta = {
+    l: crossTargetRaft.l - baseLayout.raft.l,
+    t: crossTargetRaft.t - baseLayout.raft.t,
+  };
 
   const completeRound = () => {
     if (ropeStageRef.current !== 'attached') return;
@@ -483,7 +576,7 @@ export default function MahakayaRescueGame({
     setActiveLog(nextLog);
     ropeStageRef.current = 'detached';
     setRopeStage('detached');
-    setKnobPos({ l: phaseLayouts[nextLog].handleStart.l, t: phaseLayouts[nextLog].handleStart.t });
+    setKnobPos({ l: sharedRigLayout.handleStart.l, t: sharedRigLayout.handleStart.t });
     // Full "drag the rope" VO only plays once, before round 1 (via the intro
     // sequence). Rounds 2+ rely on the hint-cycle text + GestureDemo instead —
     // avoids repeating the line and colliding with the syllable clip's audio.
@@ -551,11 +644,10 @@ export default function MahakayaRescueGame({
         setRopeStage('attached');
         setKnobPos({ l: currentWaitingLog.l, t: currentWaitingLog.t });
         playSfx?.('chime');
-        if (completedLogsRef.current === 0) {
-          playSceneLine?.('scene10_maha_pull_down');
-        }
+        // "How" (pull the handle down) is taught by the pull-handle glow +
+        // GestureDemo — no spoken gesture line here.
       } else {
-        setKnobPos({ l: activeLayout.handleStart.l, t: activeLayout.handleStart.t });
+        setKnobPos({ l: sharedRigLayout.handleStart.l, t: sharedRigLayout.handleStart.t });
       }
     } else if (draggingRef.current === 'pull') {
       setPullProgress(0);
@@ -613,18 +705,19 @@ export default function MahakayaRescueGame({
     </div>
   );
 
-  const renderAnimal = (animalIndex, joined) => {
+  const renderAnimal = (animalIndex) => {
     const animal = ANIMALS[animalIndex];
-    const key = joined ? `animal${animalIndex}` : `waitingAnimal${animalIndex}`;
-    const joinOrderIndex = JOIN_SEQUENCE.indexOf(animalIndex);
-    const shouldBeJoined = joinOrderIndex !== -1 && joinOrderIndex <= visiblePhase;
-    const pos = shouldBeJoined ? withCross(visibleLayout[key]) : visibleLayout[key];
+    const joinedKey = `animal${animalIndex}`;
+    const waitingKey = `waitingAnimal${animalIndex}`;
+    const shouldBeJoined = getJoinedAnimalPhase(animalIndex) <= visiblePhase;
+    const sourceLayout = shouldBeJoined ? visibleLayout : baseLayout;
+    const pos = shouldBeJoined ? withCross(sourceLayout[joinedKey]) : sourceLayout[waitingKey];
     return (
       <div
         key={`${animal.id}-${shouldBeJoined ? 'raft' : 'wait'}`}
-        className={`maha-layer maha-animal ${shouldBeJoined ? 'is-joined' : 'is-waiting'} ${FLIPPED_ANIMAL_IDS.has(animal.id) ? 'is-flipped' : ''} ${crossing ? 'is-crossing' : ''} ${debugMode && selectedDebugKey === key ? 'is-debug-selected' : ''}`}
+        className={`maha-layer maha-animal ${shouldBeJoined ? 'is-joined' : 'is-waiting'} ${FLIPPED_ANIMAL_IDS.has(animal.id) ? 'is-flipped' : ''} ${crossing ? 'is-crossing' : ''} ${debugMode && selectedDebugKey === (shouldBeJoined ? joinedKey : waitingKey) ? 'is-debug-selected' : ''}`}
         style={placeStyle(pos, { zIndex: shouldBeJoined ? 22 : 9 })}
-        onPointerDown={(e) => startDebugDrag(e, key)}
+        onPointerDown={(e) => startDebugDrag(e, shouldBeJoined ? joinedKey : waitingKey)}
         title={animal.name}
       >
         <img src={animal.img} alt="" />
@@ -665,46 +758,77 @@ export default function MahakayaRescueGame({
 
       {phase === 'complete' && <p className="maha-doneline">There is room for everyone.</p>}
 
+      {/* Hidden base anchor for tuning/crossing math. No starter log is shown. */}
       <div
         className={`maha-layer maha-raft-art ${allDone ? 'is-complete' : ''} ${crossing ? 'is-crossing' : ''} ${debugMode && selectedDebugKey === 'raft' ? 'is-debug-selected' : ''}`}
-        style={placeStyle(withCross(visibleLayout.raft), { zIndex: 10 })}
+        style={placeStyle(withCross(baseLayout.raft), { zIndex: 10, opacity: debugMode ? 0.2 : 0, pointerEvents: debugMode ? 'auto' : 'none' })}
         onPointerDown={(e) => startDebugDrag(e, 'raft')}
       >
         <img src={raftImage} alt="" />
       </div>
 
-      {[0, 1, 2].map((index) => {
+      {debugMode && (
+        <>
+          {[0, 1, 2, 3].map((index) => {
+            const finalLogLayout = phaseLayouts[TOTAL_LOGS][`logTarget${index}`];
+            if (!finalLogLayout) return null;
+            return (
+              <div
+                key={`crossTargetPreviewLog${index}`}
+                className={`maha-layer maha-log-piece maha-raft-log maha-cross-target-preview ${selectedDebugKey === CROSS_TARGET_DEBUG_KEY ? 'is-debug-selected' : ''}`}
+                style={placeStyle(
+                  {
+                    ...finalLogLayout,
+                    l: finalLogLayout.l + crossTargetPreviewDelta.l,
+                    t: finalLogLayout.t + crossTargetPreviewDelta.t,
+                  },
+                  { zIndex: 11 + index },
+                )}
+                onPointerDown={(e) => startDebugDrag(e, CROSS_TARGET_DEBUG_KEY)}
+              >
+                <img src={raftLogSingle} alt="" />
+              </div>
+            );
+          })}
+          <div
+            className={`maha-layer maha-raft-art maha-cross-target-hitbox ${selectedDebugKey === CROSS_TARGET_DEBUG_KEY ? 'is-debug-selected' : ''}`}
+            style={placeStyle(crossTargetDebugLayout, { zIndex: 16, opacity: 0.001 })}
+            onPointerDown={(e) => startDebugDrag(e, CROSS_TARGET_DEBUG_KEY)}
+          >
+            <img src={raftImage} alt="" />
+          </div>
+        </>
+      )}
+
+      {[0, 1, 2, 3].map((index) => {
         if (index < visiblePhase) {
-          return renderLog(`logTarget${index}`, 'maha-raft-log is-attached', withCross(visibleLayout[`logTarget${index}`]), 18 + index);
+          const logLayout = getLogLayoutForPhase(index);
+          return renderLog(`logTarget${index}`, 'maha-raft-log is-attached', withCross(logLayout[`logTarget${index}`]), 18 + index);
         }
         if (index === activeLog && ropeStage === 'attached') {
           return renderLog(`movingLog${index}`, 'is-moving', currentMovingLog, 20);
         }
         if (index >= completedLogs) {
-          return renderLog(`waitingLog${index}`, index === activeLog ? 'is-current' : '', visibleLayout[`waitingLog${index}`], 8);
+          return renderLog(`waitingLog${index}`, index === activeLog ? 'is-current' : '', baseLayout[`waitingLog${index}`], 8);
         }
         return null;
       })}
 
-      {ANIMALS.map((_, index) => {
-        const joinOrderIndex = JOIN_SEQUENCE.indexOf(index);
-        const isJoined = joinOrderIndex !== -1 && joinOrderIndex <= visiblePhase;
-        return renderAnimal(index, isJoined);
-      })}
+      {ANIMALS.map((_, index) => renderAnimal(index))}
 
       <div
         className={`maha-layer maha-pulley ${debugMode && selectedDebugKey === 'pulley' ? 'is-debug-selected' : ''}`}
-        style={placeStyle(visibleLayout.pulley, { zIndex: 16 })}
+        style={placeStyle(sharedRigLayout.pulley, { zIndex: 16 })}
         onPointerDown={(e) => startDebugDrag(e, 'pulley')}
         aria-hidden="true"
       />
 
       {ropeStage === 'detached' && phase === 'play' && (
         <>
-          <RopeLine x1={activeLayout.pulley.l} y1={activeLayout.pulley.t} x2={knobPos.l} y2={knobPos.t} />
+          <RopeLine x1={sharedRigLayout.pulley.l} y1={sharedRigLayout.pulley.t} x2={knobPos.l} y2={knobPos.t} />
           <div
             className={`maha-layer maha-knob ${dragging === 'knob' ? 'grabbing' : ''} ${hintLevel >= 1 ? 'maha-hint-pulse' : ''} ${hintLevel >= 2 ? 'maha-hint-glow' : ''} ${debugMode && selectedDebugKey === 'handleStart' ? 'is-debug-selected' : ''}`}
-            style={placeStyle({ ...activeLayout.handleStart, l: knobPos.l, t: knobPos.t }, { zIndex: 24 })}
+            style={placeStyle({ ...sharedRigLayout.handleStart, l: knobPos.l, t: knobPos.t }, { zIndex: 24 })}
             onPointerDown={(e) => (debugMode ? startDebugDrag(e, 'handleStart') : onKnobDown(e))}
           >
             <RopeGripSvg />
@@ -714,8 +838,8 @@ export default function MahakayaRescueGame({
 
       {ropeStage === 'attached' && phase === 'play' && (
         <>
-          <RopeLine x1={activeLayout.pulley.l} y1={activeLayout.pulley.t} x2={currentMovingLog.l} y2={currentMovingLog.t} />
-          <RopeLine x1={activeLayout.pulley.l} y1={activeLayout.pulley.t} x2={activeLayout.pullTop.l} y2={activePullHandle.t} />
+          <RopeLine x1={sharedRigLayout.pulley.l} y1={sharedRigLayout.pulley.t} x2={currentMovingLog.l} y2={currentMovingLog.t} />
+          <RopeLine x1={sharedRigLayout.pulley.l} y1={sharedRigLayout.pulley.t} x2={sharedRigLayout.pullTop.l} y2={activePullHandle.t} />
           <div
             className={`maha-layer maha-pull ${dragging === 'pull' ? 'grabbing' : ''} ${hintLevel >= 1 ? 'maha-hint-pulse' : ''} ${hintLevel >= 2 ? 'maha-hint-glow' : ''} ${debugMode && selectedDebugKey === 'pullTop' ? 'is-debug-selected' : ''}`}
             style={placeStyle(activePullHandle, { zIndex: 24 })}
@@ -728,15 +852,15 @@ export default function MahakayaRescueGame({
 
       <GestureDemo
         type="drag"
-        from={{ x: activeLayout.handleStart.l, y: activeLayout.handleStart.t }}
+        from={{ x: sharedRigLayout.handleStart.l, y: sharedRigLayout.handleStart.t }}
         to={{ x: currentWaitingLog.l, y: currentWaitingLog.t }}
         active={!debugMode && ropeStage === 'detached' && phase === 'play'}
         idleDelay={3000}
       />
       <GestureDemo
         type="pull-down"
-        from={{ x: activeLayout.pullTop.l, y: activeLayout.pullTop.t }}
-        to={{ x: activeLayout.pullBottom.l, y: activeLayout.pullBottom.t }}
+        from={{ x: sharedRigLayout.pullTop.l, y: sharedRigLayout.pullTop.t }}
+        to={{ x: sharedRigLayout.pullBottom.l, y: sharedRigLayout.pullBottom.t }}
         active={!debugMode && ropeStage === 'attached' && phase === 'play'}
         idleDelay={3000}
       />
@@ -765,6 +889,11 @@ export default function MahakayaRescueGame({
               Drag layout panel
             </div>
 
+            <div className="maha-debug-actions" style={{ alignItems: 'center' }}>
+              <button type="button" onClick={copyLayoutJson}>Copy Layout JSON</button>
+              {layoutCopyStatus && <span style={{ fontSize: 12, opacity: 0.8 }}>{layoutCopyStatus}</span>}
+            </div>
+
             <div className="maha-debug-section-title">Scene Objects</div>
             <p className="maha-debug-note">
               Switch phases, then drag any highlighted element on the scene or tune its numbers here.
@@ -783,34 +912,41 @@ export default function MahakayaRescueGame({
             <label className="maha-debug-row">
               <span>Object</span>
               <select value={selectedDebugKey} onChange={(e) => setSelectedDebugKey(e.target.value)}>
-                {DEBUG_KEYS.map((key) => (
+                {availableDebugKeys.map((key) => (
                   <option key={key} value={key}>{key}</option>
                 ))}
               </select>
               <span />
             </label>
 
-            {['l', 't', 'w', 'h'].map((field) => (
-              <label key={field} className="maha-debug-row">
-                <span>{field === 'l' ? 'left' : field === 't' ? 'top' : field === 'w' ? 'width' : 'height'}</span>
-                <input
-                  type="range"
-                  min={field === 'w' || field === 'h' ? 2 : 0}
-                  max={field === 'w' || field === 'h' ? 80 : 100}
-                  step="0.1"
-                  value={visibleLayout[selectedDebugKey][field] ?? (field === 'h' ? visibleLayout[selectedDebugKey].w : 0)}
-                  onChange={(e) => updateLayoutField(selectedDebugKey, field, e.target.value)}
-                />
-                <input
-                  type="number"
-                  min={field === 'w' || field === 'h' ? 2 : 0}
-                  max={field === 'w' || field === 'h' ? 80 : 100}
-                  step="0.1"
-                  value={visibleLayout[selectedDebugKey][field] ?? ''}
-                  onChange={(e) => updateLayoutField(selectedDebugKey, field, e.target.value)}
-                />
-              </label>
-            ))}
+            {['l', 't', 'w', 'h', 'r'].map((field) => {
+              const isSize = field === 'w' || field === 'h';
+              const isRot = field === 'r';
+              const min = isRot ? -180 : isSize ? 2 : 0;
+              const max = isRot ? 180 : isSize ? 80 : 100;
+              const label = field === 'l' ? 'left' : field === 't' ? 'top' : field === 'w' ? 'width' : field === 'h' ? 'height' : 'rotate';
+              return (
+                <label key={field} className="maha-debug-row">
+                  <span>{label}</span>
+                  <input
+                    type="range"
+                    min={min}
+                    max={max}
+                    step={isRot ? 1 : 0.1}
+                    value={getDebugObject(selectedDebugKey)[field] ?? (field === 'h' ? getDebugObject(selectedDebugKey).w : 0)}
+                    onChange={(e) => updateLayoutField(selectedDebugKey, field, e.target.value)}
+                  />
+                  <input
+                    type="number"
+                    min={min}
+                    max={max}
+                    step={isRot ? 1 : 0.1}
+                    value={getDebugObject(selectedDebugKey)[field] ?? ''}
+                    onChange={(e) => updateLayoutField(selectedDebugKey, field, e.target.value)}
+                  />
+                </label>
+              );
+            })}
 
             <div className="maha-debug-grid">
               <button type="button" onClick={() => nudgePosition('t', -0.5)}>up</button>
@@ -832,7 +968,7 @@ export default function MahakayaRescueGame({
               <button type="button" onClick={resetAllPhaseLayouts}>reset all</button>
             </div>
 
-            <pre className="maha-debug-readout">{JSON.stringify(visibleLayout[selectedDebugKey], null, 2)}</pre>
+            <pre className="maha-debug-readout">{JSON.stringify(getDebugObject(selectedDebugKey), null, 2)}</pre>
           </div>
         )}
       </div>

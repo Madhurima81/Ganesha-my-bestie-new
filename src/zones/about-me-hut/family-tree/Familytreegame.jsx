@@ -232,8 +232,8 @@ const FamilyTreeGameContent = ({
 ? rawProfileAvatar
 : profileDisplayName.charAt(0).toUpperCase();
  const FINAL_VO = {
- comparison: "Look at our family trees. Every family has its own story.",
- completion: "Our families are special. Now let's find our favorite things!"
+ comparison: "Our family trees are different, and each one tells a story.",
+ completion: "Our family trees are different, and each one tells a story."
  };
 
  // IMPORTANT: Ensure phase exists (just like Modak code)

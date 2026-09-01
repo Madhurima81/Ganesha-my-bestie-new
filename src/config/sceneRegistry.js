@@ -1,5 +1,9 @@
 // Ganesha My Bestie — Scene Registry
-// Single source of truth for all 22 scenes across 5 zones.
+// CURRENT SCOPE: 3 live zones, 13 scenes — symbol-mountain (4),
+// shloka-river (5), about-me-hut (4). The cave-of-secrets rows are OBSOLETE
+// and the festival-square rows are PARKED (coming later); they stay listed
+// here only because their code still exists in the repo.
+// "Apply X to all scenes" = the 13 live scenes only, unless told otherwise.
 // Claude Code reads this file whenever Madhurima says:
 // "apply X to all scenes" or "apply X to Zone 2" etc.
 

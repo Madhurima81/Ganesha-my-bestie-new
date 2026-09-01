@@ -39,9 +39,24 @@
   overflow: hidden;
 }
 
+.vakratunda-word-star {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  width: 72%;
+  height: 60%;
+  transform: translate(-50%, -50%);
+  z-index: 140;
+  pointer-events: none;
+}
+
 .vakratunda-tap-sparkles {
   position: absolute;
-  inset: 0;
+  left: 50%;
+  top: 46%;
+  width: 46%;
+  height: 42%;
+  transform: translate(-50%, -50%);
   z-index: 130;
   pointer-events: none;
 }

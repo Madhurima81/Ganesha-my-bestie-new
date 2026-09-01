@@ -195,53 +195,53 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
   const VOICE_LINES = {
     // Opening Screen
-    opening: "Let's explore my favorite things and yours!",
+    opening: "Let's find out what I like, then you can choose your favorites.",
 
     // Ganesha Section - Food
-    foodQuestion: "Tap my favorite food.",
-    foodCorrect: "Yes! Modak is my favorite!",
+    foodQuestion: "Which food is my favorite? Tap your guess.",
+    foodCorrect: "Yes — I love modak!",
 
     // Ganesha Section - Color
-    colorQuestion: "Tap my favorite color.",
-    colorCorrect: "Yes! Red is my favorite!",
+    colorQuestion: "Which color do I like best?",
+    colorCorrect: "Yes — red!",
 
     // Ganesha Section - Activity
-    activityQuestion: "Tap my favorite activity.",
-    activityCorrect: "Yes! I love to dance!",
+    activityQuestion: "What do I love to do?",
+    activityCorrect: "Yes — I love to dance!",
 
     // Ganesha Section - Friend
-    friendQuestion: "Tap my best friend.",
-    friendCorrect: "Yes! Mooshika is my friend!",
+    friendQuestion: "Who is my friend?",
+    friendCorrect: "Yes — Mooshika!",
 
     // Transition to Child Section
-    transition: "Now it's your turn!",
-    childIntro: "Now it's your turn!",
+    transition: "Now I want to know your favorites.",
+    childIntro: "Now I want to know your favorites.",
 
     // Child Section - Food
-    childFoodQuestion: "Tap your favorite food.",
+    childFoodQuestion: "Choose your favorite food.",
     childFoodCorrect: "Yummy!",
 
     // Child Section - Color
-    childColorQuestion: "Tap your favorite color.",
+    childColorQuestion: "Choose your favorite color.",
     childColorCorrect: "Nice choice!",
 
     // Child Section - Activity
-    childActivityQuestion: "Tap what you love to do.",
+    childActivityQuestion: "Choose something you love to do.",
     childActivityCorrect: "That sounds like fun!",
 
     // Child Section - Friend
-    childFriendQuestion: "Type the name of your best friend.",
+    childFriendQuestion: "Add the name of a friend you care about.",
     childFriendCorrect: "Nice choice!",
 
     // Connection Moment (emotional beat)
-    friendCelebration: "We like so many fun things!",
-    completionCelebration: "Now we know more about each other!",
+    friendCelebration: "Now we know some things we each enjoy.",
+    completionCelebration: "We learned a little more about each other.",
 
     // Idle Hints (Ganesha Section)
     foodHint: "Look for the sweet I love.",
-    colorHint: "Look for the bright red color.",
-    activityHint: "I love moving to music.",
-    friendHint: "My tiny friend runs very fast."
+    colorHint: "Which one is bright red?",
+    activityHint: "What lets me move to music?",
+    friendHint: "Look for my tiny friend."
   };
 
   if (!sceneState) return <div>Loading...</div>;

@@ -781,6 +781,16 @@ const TuskPathGame = ({
         />
       )}
 
+      {!staticPreview && currentLayer && isElephantLayer && (
+        <GestureDemo
+          type="hold"
+          from={{ x: activeObstaclePosition.x, y: activeObstaclePosition.y }}
+          active={!debugMode && !peeling && !allCleared && !!helperAnimal && !isHolding}
+          idleDelay={1800}
+          zIndex={30}
+        />
+      )}
+
       {!staticPreview && helperAnimal && !peeling && !allCleared && (
         <>
           <div

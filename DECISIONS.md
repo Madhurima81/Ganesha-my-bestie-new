@@ -12,3 +12,6 @@ Locked calls — check here before re-litigating. Don't re-ask Claude about thes
 - [2026] Bug severity tiers: 🔴 Tier 1 (blocks progress/softlock), 🟠 Tier 2 (visible/annoying but workaroundable), 🟡 Tier 3 (cosmetic). Use this scale in all bug sweeps.
 
 <!-- Add new entries below in format: [date] - decision - reason -->
+- [2026-08-31] Replay analytics (`sceneAnalytics.js`) is fully decoupled from ProgressManager — no imports, no shared state. ProgressManager stays sole source of truth for parent-facing completion. Reason: analytics must never affect completion writes. Don't revisit unless analytics needs completion-derived fields (then read from localStorage, not ProgressManager).
+- [2026-08-31] `sceneAnalytics` reuses CloudSync's anonymous auth session via read-only `whenReady()`/`getUserId()`, does NOT open its own. Reason: a second `signInAnonymously()` would key analytics rows to a different `auth.uid()` than progress. Don't revisit unless CloudSync's auth model changes.
+- [2026-08-31] `scene_plays` uses snake_case columns (not spec camelCase) to match existing tables; PK (user_id, child_id, scene_id, game_id); increments via `increment_scene_play()` SQL function, never row-per-play.

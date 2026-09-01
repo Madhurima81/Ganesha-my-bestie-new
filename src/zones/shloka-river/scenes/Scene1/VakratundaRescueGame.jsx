@@ -67,7 +67,6 @@ const TRACE_STROKE_LIMIT = 120;
 const NODE_SNAP_DISTANCE = 5.8;
 const OFF_PATH_GRACE = 2.5;
 const RESUME_TOLERANCE_BONUS = 2.5;
-const INTRO_GESTURE_DURATION_MS = 5200;
 
 const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
 
@@ -163,18 +162,24 @@ export default function VakratundaRescueGame({
   const vakHintVoiceRef = useRef({ phase: null, level: 0 });
   const wrongPulseTimeoutRef = useRef(null);
   const traceCompletedRef = useRef(false);
-  const hasShownIntroGestureRef = useRef(new Set());
-  const introGestureTimeoutRef = useRef(null);
-  const [showIntroGesture, setShowIntroGesture] = useState(false);
 
+  // Progressive route help. The child meets each section with NOTHING drawn
+  // ahead — not at game start, not when they start dragging. Discovery first,
+  // then escalate only on genuine idle:
+  //   ~2.5s idle -> soft glow ring at the next opening        (hintLevel 1)
+  //   ~6s idle   -> short dotted curve for THIS section only  (hintLevel 2)
+  //   ~11s idle  -> GestureDemo traces that section from the  (hintLevel 3)
+  //                 frog's CURRENT position
+  // The cycle restarts on real progress (checkpoint cleared), not on every
+  // random touch, so repeated failed starts don't keep deferring the help.
   const { hintLevel, markInteraction } = useRepeatedHintCycle({
     enabled: isActive && !isPaused && phase === 'trace',
     stageKey: phase,
-    initialDelay: 9000,
-    pulseCountBeforeEscalation: 3,
-    pulseInterval: 2400,
-    level2Delay: 18000,
-    level3Delay: 28000,
+    initialDelay: 2500,
+    pulseCountBeforeEscalation: 2,
+    pulseInterval: 1600,
+    level2Delay: 6000,
+    level3Delay: 11000,
   });
 
   const clearTimers = useCallback(() => {
@@ -183,10 +188,6 @@ export default function VakratundaRescueGame({
     if (wrongPulseTimeoutRef.current) {
       clearTimeout(wrongPulseTimeoutRef.current);
       wrongPulseTimeoutRef.current = null;
-    }
-    if (introGestureTimeoutRef.current) {
-      clearTimeout(introGestureTimeoutRef.current);
-      introGestureTimeoutRef.current = null;
     }
   }, []);
 
@@ -254,8 +255,6 @@ export default function VakratundaRescueGame({
     setObstacles((prev) => (prev.length ? prev : cloneObstacles()));
     setRouteNodes((prev) => (prev.length ? prev : cloneRouteNodes()));
     setFamilyPoint({ x: POS.family.l, y: POS.family.t });
-    setShowIntroGesture(false);
-    hasShownIntroGestureRef.current = new Set();
   }, [clearTimers, onStageChange]);
 
   const startTraceCourse = useCallback(() => {
@@ -381,6 +380,11 @@ export default function VakratundaRescueGame({
     const reachedIndex = segmentIndex + 1;
     activeSegmentRef.current = reachedIndex;
     setActiveSegment(reachedIndex);
+    // Cleared a checkpoint (went around an obstacle) — restart the hint cycle
+    // so the next leg starts with no route drawn ahead and its own fresh beat.
+    if (route.checkpointIndices.includes(reachedIndex)) {
+      markInteraction();
+    }
     const revealedPads = buildPadsForRoute(route, phase, reachedIndex);
     setPhasePads(revealedPads);
     setLitCount(revealedPads.length);
@@ -392,7 +396,7 @@ export default function VakratundaRescueGame({
       completePhase(phase);
       return;
     }
-  }, [after, completePhase, isTracing, obstacles, phase, routeNodes, showTraceWarning]);
+  }, [after, completePhase, isTracing, markInteraction, obstacles, phase, routeNodes, showTraceWarning]);
 
   const beginTrace = useCallback((event) => {
     if (isPaused) return;
@@ -410,7 +414,9 @@ export default function VakratundaRescueGame({
       return;
     }
 
-    markInteraction();
+    // Note: no markInteraction() here. A random touch or a failed start must
+    // not keep pushing back the idle-help timer — only real progress
+    // (clearing a checkpoint, see handleTraceMove) restarts the hint cycle.
     traceCompletedRef.current = false;
     setWrongPathPulse(false);
     setIsTracing(true);
@@ -418,7 +424,7 @@ export default function VakratundaRescueGame({
     setFrogSnapping(false);
     setTracePoints([resumePoint]);
     event.currentTarget.setPointerCapture?.(event.pointerId);
-  }, [getPoint, isPaused, markInteraction, phase, routeNodes, showTraceWarning]);
+  }, [getPoint, isPaused, phase, routeNodes, showTraceWarning]);
 
   const continueTrace = useCallback((event) => {
     if (!isTracing || isPaused) return;
@@ -447,34 +453,6 @@ export default function VakratundaRescueGame({
   }, [phase]);
 
   useEffect(() => {
-    if (!isActive || isPaused) return;
-    if (phase !== 'trace') {
-      setShowIntroGesture(false);
-      return;
-    }
-    if (showDebugPanel) return;
-    if (hintLevel >= 3) return;
-    if (hasShownIntroGestureRef.current.has(phase)) return;
-
-    hasShownIntroGestureRef.current.add(phase);
-    setShowIntroGesture(true);
-    if (introGestureTimeoutRef.current) clearTimeout(introGestureTimeoutRef.current);
-    introGestureTimeoutRef.current = setTimeout(() => {
-      setShowIntroGesture(false);
-      introGestureTimeoutRef.current = null;
-    }, INTRO_GESTURE_DURATION_MS);
-
-    return () => {
-      if (introGestureTimeoutRef.current) {
-        clearTimeout(introGestureTimeoutRef.current);
-        introGestureTimeoutRef.current = null;
-      }
-    };
-  }, [hintLevel, isActive, isPaused, phase, showDebugPanel]);
-
-
-
-  useEffect(() => {
     if (!isActive) return;
     if (phase !== 'trace') return;
     if (hintLevel <= 0) return;
@@ -483,7 +461,9 @@ export default function VakratundaRescueGame({
     if (last.phase === phase && last.level === hintLevel) return;
 
     vakHintVoiceRef.current = { phase, level: hintLevel };
-    if (hintLevel === 2) playSceneLine?.('hintLookForGlow');
+    // Level 1 now carries the glow ring, so the "look for the glow" nudge
+    // belongs here; level 2 surfaces the curve; level 3 is the gesture.
+    if (hintLevel === 1) playSceneLine?.('hintLookForGlow');
     if (hintLevel >= 3) playSceneLine?.('hintKeepBuildingPath');
   }, [hintLevel, isActive, phase, playSceneLine]);
 
@@ -496,17 +476,32 @@ export default function VakratundaRescueGame({
     : 0;
   const targetPoint = currentRoute?.nodes[targetIndex] ?? routeNodes[0];
   const startPoint = currentRoute?.nodes[0] ?? routeNodes[0];
-  const introGestureTargetIndex = currentRoute?.checkpointIndices?.[0] ?? targetIndex;
-  const gestureTargetPoint = showIntroGesture
-    ? (currentRoute?.nodes[introGestureTargetIndex] ?? targetPoint)
-    : targetPoint;
 
-  const hintRingTargetIndex = isTracing
-    ? targetIndex
-    : (currentRoute?.checkpointIndices?.find((index) => index > activeSegment) ?? targetIndex);
-  const hintRingPoint = currentRoute?.nodes[hintRingTargetIndex] ?? targetPoint;
-  const showGesture = isTraceStep && !isTracing && (showIntroGesture || hintLevel >= 3);
-  const showHintRing = isTraceStep && (hintLevel >= 2 || wrongPathPulse);
+  // The frog's CURRENT position on the route — every hint (ring, curve,
+  // gesture) is anchored here, not at the original start, so help after the
+  // rock demonstrates from where the frog actually is.
+  const currentSegmentStart = currentRoute?.nodes[activeSegment] ?? startPoint;
+
+  // Next opening/turn ahead — where "there may be a way here" is suggested.
+  const guideCheckpointIndex = currentRoute
+    ? (currentRoute.checkpointIndices.find((index) => index > activeSegment)
+        ?? currentRoute.nodes.length - 1)
+    : 0;
+
+  const hintRingPoint = currentRoute?.nodes[guideCheckpointIndex] ?? targetPoint;
+  const showGesture = isTraceStep && !isTracing && hintLevel >= 3;
+  const showHintRing = isTraceStep && !isTracing && (hintLevel >= 1 || wrongPathPulse);
+
+  // The dotted guide is drawn ONLY on real idle (hintLevel >= 2) and ONLY for
+  // the current little section (frog's position -> next opening). Nothing is
+  // drawn at game start or just because the child started dragging, and
+  // already-completed sections are never redrawn.
+  const revealLegAhead = hintLevel >= 2;
+  const guideNodes = revealLegAhead && currentRoute
+    ? currentRoute.nodes.slice(activeSegment, guideCheckpointIndex + 1)
+    : [];
+  const guidePath = guideNodes.map((point) => `${point.x},${point.y}`).join(' ');
+  const gestureTargetPoint = hintRingPoint;
   const visiblePads = [...committedPads, ...phasePads];
   const debugPads = showDebugPanel && currentRoute
     ? currentRoute.checkpointIndices.map((index) => ({
@@ -734,6 +729,9 @@ export default function VakratundaRescueGame({
     ? tracePoints.map((point) => `${point.x},${point.y}`).join(' ')
     : '';
   const routePath = routeNodes.map((point) => `${point.x},${point.y}`).join(' ');
+  // Debug panel authors the whole route, so show all of it there; gameplay
+  // only ever sees the progressively-revealed portion.
+  const guideRenderPath = showDebugPanel ? routePath : guidePath;
 
   return (
     <div
@@ -763,21 +761,16 @@ export default function VakratundaRescueGame({
       )}
 
       <svg className="vak-trace-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-        {isTraceStep && (
+        {isTraceStep && guideRenderPath && (
           <>
-            <polyline className="vak-route-corridor" points={routePath} />
-            <polyline className="vak-route-guide" points={routePath} />
+            <polyline className="vak-route-corridor" points={guideRenderPath} />
+            <polyline className="vak-route-guide" points={guideRenderPath} />
           </>
         )}
         {tracePath && <polyline className="vak-trace-line vak-trace-line--glow" points={tracePath} />}
         {tracePath && <polyline className="vak-trace-line" points={tracePath} />}
       </svg>
 
-      {phase === 'reunion' && (
-        <p className="vak-doneline">
-          Vakratunda means finding another way.
-        </p>
-      )}
 
         <div
           className={`vak-layer vak-start-frog ${phase === 'reunion' ? 'is-reunion' : ''} ${phase === 'reunion' && familyBounce ? 'is-bouncing' : ''} ${phase !== 'reunion' && isTraceStep && !isTracing ? 'is-waiting' : ''} ${wrongPathPulse ? 'is-shaking' : ''} ${frogSnapping ? 'is-snapping' : ''} ${showDebugPanel ? 'is-debug-draggable' : ''}`}
@@ -890,12 +883,12 @@ export default function VakratundaRescueGame({
 
 
       <GestureDemo
-        key={`vak-gesture-${phase}-${showIntroGesture ? 'intro' : hintLevel}`}
+        key={`vak-gesture-${phase}-${activeSegment}-${hintLevel}`}
         type="drag"
-        from={{ x: startPoint.x, y: startPoint.y }}
+        from={{ x: currentSegmentStart.x, y: currentSegmentStart.y }}
         to={{ x: gestureTargetPoint.x, y: gestureTargetPoint.y }}
         active={showGesture}
-        idleDelay={showIntroGesture ? 0 : 500}
+        idleDelay={500}
       />
       <div
         className={`vak-debug-panel ${showDebugPanel ? 'is-open' : ''}`}

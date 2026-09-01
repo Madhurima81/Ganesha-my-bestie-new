@@ -242,6 +242,24 @@ const VakratundaGroveContent = ({
   audioEnabledRef.current = isAudioOn;
 
   const [showTapSparkles, setShowTapSparkles] = useState(false);
+  const [showWordStar, setShowWordStar] = useState(false);
+  const fxBgRef = useRef(null);
+  const lastPointRef = useRef(null);
+  const [sparklePos, setSparklePos] = useState(null);
+  const recordPoint = useCallback((e) => {
+    const el = fxBgRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    if (!r.width || !r.height) return;
+    const cx = e.clientX != null ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : null);
+    const cy = e.clientY != null ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : null);
+    if (cx == null || cy == null) return;
+    lastPointRef.current = {
+      x: Math.min(95, Math.max(5, ((cx - r.left) / r.width) * 100)),
+      y: Math.min(95, Math.max(5, ((cy - r.top) / r.height) * 100)),
+    };
+  }, []);
+
   const [vakratundaStage, setVakratundaStage] = useState('intro');
 
   // Pause Menu State — removed: replaced by home icon
@@ -356,11 +374,11 @@ const VakratundaGroveContent = ({
     const webSpeechMap = {
       welcome: "Let's help our friends by the river.",
       instructionListen: 'Listen carefully.',
-      instructionTapAndRepeat: 'Help guide the lily pad another way.',
-      instructionTapTheElephant: 'Help guide the lily pad another way.',
-      hintTapElephant: 'Help guide the lily pad another way.',
-      hintLookForGlow: 'Drag it to the glowing circle.',
-      hintKeepBuildingPath: 'Keep guiding the lily pad.',
+      instructionTapAndRepeat: "That way's blocked — look for another way around.",
+      instructionTapTheElephant: "That way's blocked — look for another way around.",
+      hintTapElephant: "That way's blocked — look for another way around.",
+      hintLookForGlow: "See the glow? That's the way around.",
+      hintKeepBuildingPath: "Keep going — you're finding the way through.",
       vakratundaSetup: 'The frog made it! He found his family!',
       vakratundaClaim: 'I find a new way.',
       mahakayaSetup: 'You chanted… and it grew tall and strong.',
@@ -372,23 +390,23 @@ const VakratundaGroveContent = ({
       instructionTapLilyWord: 'Tap the lily.',
       instructionTapLily: 'Tap the lily.',
       instructionTapLilyUnlock: 'Tap the lily.',
-      scene10_vak_intro: 'The little frog wants to meet his family!',
+      scene10_vak_intro: 'The frog can see his family, but rocks and logs block the way. Help him find a way around.',
       scene10_vak_current_too_strong: "The river current is too strong there. Let's try another way.",
-      scene10_vak_frog_cross: 'The little frog wants to meet his family!',
-      scene10_vak_tap_logs: 'Help guide the lily pad another way.',
-      scene10_vak_blocked: 'Oh no... that way is blocked.',
-      scene10_vak_choose: 'Help guide the lily pad another way.',
-      scene10_vak_make_path: "Let's find another way across.",
-      scene10_vak_drag_leaves: 'Drag the lily pad to the glowing circle.',
-      scene10_vak_drag: 'Now drag the lily pad to the glowing circle.',
-      scene10_vak_drag_pieces: 'Now drag the lily pad to the glowing circle.',
-      scene10_vak_crossed: 'Vakratunda! You found another way and helped the frog across.',
+      scene10_vak_frog_cross: 'The frog can see his family, but rocks and logs block the way. Help him find a way around.',
+      scene10_vak_tap_logs: "That way's blocked — look for another way around.",
+      scene10_vak_blocked: "That way's blocked — look for another way around.",
+      scene10_vak_choose: "That way's blocked — look for another way around.",
+      scene10_vak_make_path: 'The frog can see his family, but rocks and logs block the way. Help him find a way around.',
+      scene10_vak_drag_leaves: 'Follow the safe water past the rocks.',
+      scene10_vak_drag: 'Follow the safe water past the rocks.',
+      scene10_vak_drag_pieces: 'Follow the safe water past the rocks.',
+      scene10_vak_crossed: 'Vakratunda! You found another way and helped the frog reach his family.',
       scene10_vak_meaning: 'Vakratunda means finding another way.',
-      scene10_maha_intro: "Now let's help the little calf.",
-      scene10_maha_blocking: 'A heavy log is trapping him!',
-      scene10_maha_drag_rope: 'Drag the rope to the log.',
-      scene10_maha_pull_down: 'Now pull down!',
-      scene10_maha_log_moving: 'The log is moving.',
+      scene10_maha_intro: 'Everyone wants to cross, but the raft is too small. Help make room for them all.',
+      scene10_maha_blocking: "The raft's still too small for everyone.",
+      scene10_maha_drag_rope: 'Grab another log so everyone can fit.',
+      scene10_maha_pull_down: '',
+      scene10_maha_log_moving: '',
       scene10_maha_success: 'Mahakaya! You made the raft bigger, and everyone crossed.',
       scene10_maha_meaning: 'Mahakaya means great strength.',
       scene10_maha_strength: 'You have strength inside you too.',
@@ -703,8 +721,10 @@ const VakratundaGroveContent = ({
   const handlePhaseComplete = (word) => {
     console.log(`${word} learned!`);
 
-    // Sanskrit moment — full word learned ? blessing gesture
+    // Sanskrit moment — full word learned: one blessing gesture + one Golden Star
     triggerMiniGesture('blessing', 'center', 2500);
+    setShowWordStar(true);
+    safeSetTimeout(() => setShowWordStar(false), 1500);
 
     // Stop idle timer — game is done, no more hints
     stopIdleTimer();
@@ -822,10 +842,10 @@ const VakratundaGroveContent = ({
   }, [sceneState.phase, showMandala, showSparkle, showSceneCompletion]);
 
   const handleElephantMicroWin = useCallback(() => {
-    triggerMiniGesture('thumbsup', 'item', 1200);
+    setSparklePos(lastPointRef.current);
     setShowTapSparkles(true);
-    safeSetTimeout(() => setShowTapSparkles(false), 850);
-  }, [triggerMiniGesture, safeSetTimeout]);
+    safeSetTimeout(() => setShowTapSparkles(false), 1600);
+  }, [safeSetTimeout]);
 
   // ?? Play Again - Replay the current word's game
   const handlePlayAgain = () => {
@@ -872,7 +892,7 @@ const VakratundaGroveContent = ({
           <AudioToggle isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
           <VOReplayButton onReplay={replayCurrentVoice} disabled={!isAudioOn} />
           <ResumeCountdown value={countdownValue} />
-          <div className="river-background" style={{ backgroundImage: `url(${riverBackground})` }}>
+          <div className="river-background" ref={fxBgRef} onPointerDownCapture={recordPoint} style={{ backgroundImage: `url(${riverBackground})` }}>
             <div style={{ display: showSceneCompletion ? 'none' : 'contents' }}>
             <>
 
@@ -989,14 +1009,20 @@ const VakratundaGroveContent = ({
               </div>
             )} */}
 
+            {showWordStar && (
+              <div className="vakratunda-word-star">
+                <SparkleAnimation type="star" count={20} color="#FFD54F" size={14} duration={1500} area="full" />
+              </div>
+            )}
+
             {showTapSparkles && (
-              <div className="vakratunda-tap-sparkles">
+              <div className="vakratunda-tap-sparkles" style={sparklePos ? { left: `${sparklePos.x}%`, top: `${sparklePos.y}%`, width: '32%', height: '32%', right: 'auto', bottom: 'auto', transform: 'translate(-50%, -50%)' } : undefined}>
                 <SparkleAnimation
-                  type="magic"
-                  count={14}
+                  type="dust"
+                  count={22}
                   color="#FFD54F"
-                  size={9}
-                  duration={850}
+                  size={5}
+                  duration={1600}
                   area="full"
                 />
               </div>

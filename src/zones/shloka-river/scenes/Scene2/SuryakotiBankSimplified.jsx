@@ -177,6 +177,24 @@ const SuryakotiBankContent = ({
   const [showMandala, setShowMandala] = useState(false);
   const [revealConfig, setRevealConfig] = useState(null);
   const [showTapSparkles, setShowTapSparkles] = useState(false);
+  const [showWordStar, setShowWordStar] = useState(false);
+  const fxBgRef = useRef(null);
+  const lastPointRef = useRef(null);
+  const [sparklePos, setSparklePos] = useState(null);
+  const recordPoint = useCallback((e) => {
+    const el = fxBgRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    if (!r.width || !r.height) return;
+    const cx = e.clientX != null ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : null);
+    const cy = e.clientY != null ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : null);
+    if (cx == null || cy == null) return;
+    lastPointRef.current = {
+      x: Math.min(95, Math.max(5, ((cx - r.left) / r.width) * 100)),
+      y: Math.min(95, Math.max(5, ((cy - r.top) / r.height) * 100)),
+    };
+  }, []);
+
   const [openingButtonVisible, setOpeningButtonVisible] = useState(false);
   const [savedRecordings, setSavedRecordings] = useState({});
   const handleSaveRecording = useCallback((wordId, data) => {
@@ -270,13 +288,14 @@ const SuryakotiBankContent = ({
     const webSpeechMap = {
       welcome: "The river is dark today. Let's bring back the light!",
       scene11_intro: "The river is dark today. Let's bring back the light!",
-      scene11_surya_intro: 'The little bunny wants to find its way home!',
-      scene11_surya_rub: 'Rub the darkness away.',
-      scene11_surya_hint: 'Rub the darkness away.',
+      scene11_surya_intro: "The bunny can't find her way home in the dark. Help light the path for her.",
+      scene11_surya_rub: "The bunny's still lost — light the next spot.",
+      scene11_surya_hint: "The bunny's still lost — light the next spot.",
       scene11_surya_success: 'Suryakoti! You brought back the light and helped the bunny home.',
       scene11_surya_done: 'Suryakoti! You brought back the light and helped the bunny home.',
       scene11_surya_meaning: 'Suryakoti means bright as ten million suns.',
-      scene11_sama_hint: 'Tap the glowing circle to move the sun.',
+      scene11_sama_intro: 'One bird is warm in the light, while the other sits in shadow. Help them share the light.',
+      scene11_sama_hint: 'The other bird is still in shadow — even out the light.',
       scene11_sama_done: 'Samaprabha! You spread the light so both birds could see.',
       scene11_sama_meaning: 'Samaprabha means equal brightness.',
       suryakotiSetup: 'The light showed the way.',
@@ -493,12 +512,9 @@ const SuryakotiBankContent = ({
           if (suryaInteractionStartedRef.current) return;
           playGuidanceVoice('scene11_surya_intro', () => {
             if (suryaInteractionStartedRef.current) return;
-            playGuidanceVoice('scene11_surya_rub', () => {
-              if (suryaInteractionStartedRef.current) return;
-              safeSetTimeout(() => {
-                startIdleTimer();
-              }, 3500);
-            });
+            safeSetTimeout(() => {
+              startIdleTimer();
+            }, 3500);
           });
         }, 2500);
         return () => cancelIntro?.();
@@ -522,14 +538,11 @@ const SuryakotiBankContent = ({
       setCurrentPhase('samaprabhaGame');
       if (isAudioOn && !samaIntroPlayedRef.current) {
         samaIntroPlayedRef.current = true;
-        playGuidanceVoice('samaprabhaSetup', () => {
+        playGuidanceVoice('scene11_sama_intro', () => {
           if (samaInteractionStartedRef.current) return;
-          playGuidanceVoice('scene11_sama_hint', () => {
-            if (samaInteractionStartedRef.current) return;
-            safeSetTimeout(() => {
-              startIdleTimer();
-            }, 3500);
-          });
+          safeSetTimeout(() => {
+            startIdleTimer();
+          }, 3500);
         });
         return undefined;
       }
@@ -550,6 +563,8 @@ const SuryakotiBankContent = ({
   const handlePhaseComplete = useCallback((word) => {
     safeSetTimeout(() => {
       triggerMiniGesture('blessing', 'center', 2500);
+      setShowWordStar(true);
+      safeSetTimeout(() => setShowWordStar(false), 1500);
       stopIdleTimer();
       setCurrentPhase(null);
 
@@ -599,10 +614,10 @@ const SuryakotiBankContent = ({
   ]);
 
   const handleMicroWin = useCallback(() => {
-    triggerMiniGesture('thumbsup', 'item', 1200);
+    setSparklePos(lastPointRef.current);
     setShowTapSparkles(true);
-    safeSetTimeout(() => setShowTapSparkles(false), 850);
-  }, [safeSetTimeout, triggerMiniGesture]);
+    safeSetTimeout(() => setShowTapSparkles(false), 1600);
+  }, [safeSetTimeout]);
 
   // Stable identity for SceneCompletionCelebration's completionData prop —
   // an inline object literal here would recreate on every render and re-fire
@@ -626,7 +641,7 @@ const SuryakotiBankContent = ({
           <VOReplayButton onReplay={replayCurrentVoice} disabled={!isAudioOn} />
           <ResumeCountdown value={countdownValue} />
 
-          <div className="suryakoti-river-background" style={{ backgroundImage: `url(${riverBackground})` }}>
+          <div className="suryakoti-river-background" ref={fxBgRef} onPointerDownCapture={recordPoint} style={{ backgroundImage: `url(${riverBackground})` }}>
             {!showSceneCompletion && (
               <>
                 <SuryakotiGame
@@ -673,14 +688,20 @@ const SuryakotiBankContent = ({
                   isPaused={isRecorderOpen}
                 />
 
+                {showWordStar && (
+                  <div className="suryakoti-word-star">
+                    <SparkleAnimation type="star" count={20} color="#FFD54F" size={14} duration={1500} area="full" />
+                  </div>
+                )}
+
                 {showTapSparkles && (
-                  <div className="suryakoti-tap-sparkles">
+                  <div className="suryakoti-tap-sparkles" style={sparklePos ? { left: `${sparklePos.x}%`, top: `${sparklePos.y}%`, width: '32%', height: '32%', right: 'auto', bottom: 'auto', transform: 'translate(-50%, -50%)' } : undefined}>
                     <SparkleAnimation
-                      type="magic"
-                      count={14}
+                      type="dust"
+                      count={22}
                       color="#FFD54F"
-                      size={9}
-                      duration={850}
+                      size={5}
+                      duration={1600}
                       area="full"
                     />
                   </div>

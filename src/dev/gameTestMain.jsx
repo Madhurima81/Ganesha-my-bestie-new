@@ -15,6 +15,25 @@ import ReactDOM from 'react-dom/client';
 import GameTestHarness from './GameTestHarness.jsx';
 import '../index.css';
 
+// Seed a throwaway profile so full scenes (SceneManager / ProgressManager /
+// useSceneReset) have an activeProfileId to read. Only if none exists.
+try {
+  if (!localStorage.getItem('activeProfileId')) {
+    const id = 'gametest';
+    localStorage.setItem('activeProfileId', id);
+    localStorage.setItem('gameProfiles', JSON.stringify({
+      activeProfileId: id,
+      profiles: {
+        [id]: {
+          id, name: 'Test', avatar: '🧪', color: '#03A9F4', age: 8,
+          totalStars: 0, completedScenes: [], created: Date.now(), lastPlayed: Date.now(),
+        },
+      },
+    }));
+    localStorage.setItem(`ganeshaStoryShown_${id}`, '1');
+  }
+} catch { /* private mode / storage disabled */ }
+
 // Kill any stale PWA service worker / caches so the harness isn't served old code.
 if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
   navigator.serviceWorker.getRegistrations()

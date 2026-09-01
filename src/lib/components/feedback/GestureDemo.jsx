@@ -14,7 +14,9 @@
 //     onDismiss={() => setShowDemo(false)}
 //   />
 //
-// Types: drag, tap, scratch, swipe-left, swipe-right, swipe-down, pull-down
+// Types: drag, tap, hold, scratch, swipe-left, swipe-right, swipe-down, pull-down, point
+//   hold  -> finger presses and stays down with an expanding ring (press-and-hold
+//            interactions: progress-ring holds, long-press). Uses `from` only.
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './GestureDemo.css';
@@ -47,6 +49,21 @@ const GESTURE_CONFIGS = {
       65%  { left: ${from.x}%; top: ${from.y}%; opacity: 1; transform: translate(-50%,-50%) scale(0.88); }
       80%  { left: ${from.x}%; top: ${from.y}%; opacity: 1; transform: translate(-50%,-50%) scale(1); }
       100% { left: ${from.x}%; top: ${from.y}%; opacity: 0; transform: translate(-50%,-50%) scale(0.8); }
+    `,
+  },
+  hold: {
+    asset: 'touch',
+    loopDuration: 2800,
+    keyframes: (from) => `
+      0%   { left: ${from.x}%; top: ${from.y}%; opacity: 0; transform: translate(-50%,-50%) scale(0.92); }
+      10%  { left: ${from.x}%; top: ${from.y}%; opacity: 1; transform: translate(-50%,-50%) scale(1); }
+      20%  { left: ${from.x}%; top: ${from.y}%; opacity: 1; transform: translate(-50%,-50%) scale(0.82); }
+      35%  { left: ${from.x}%; top: ${from.y}%; opacity: 1; transform: translate(-50%,-50%) scale(0.85); }
+      50%  { left: ${from.x}%; top: ${from.y}%; opacity: 1; transform: translate(-50%,-50%) scale(0.82); }
+      65%  { left: ${from.x}%; top: ${from.y}%; opacity: 1; transform: translate(-50%,-50%) scale(0.85); }
+      80%  { left: ${from.x}%; top: ${from.y}%; opacity: 1; transform: translate(-50%,-50%) scale(0.82); }
+      90%  { left: ${from.x}%; top: ${from.y}%; opacity: 1; transform: translate(-50%,-50%) scale(1); }
+      100% { left: ${from.x}%; top: ${from.y}%; opacity: 0; transform: translate(-50%,-50%) scale(0.92); }
     `,
   },
   scratch: {
@@ -224,6 +241,18 @@ export default function GestureDemo({
         <div
           className="gesture-demo-ripple"
           style={loopAnimation}
+        />
+      )}
+
+      {/* Expanding "keep holding" ring for press-and-hold gestures */}
+      {type === 'hold' && (
+        <div
+          className="gesture-demo-hold-ring"
+          style={{
+            left: `${from.x}%`,
+            top: `${from.y}%`,
+            animation: `gd-hold-ring ${config.loopDuration}ms ease-in-out 2`,
+          }}
         />
       )}
 

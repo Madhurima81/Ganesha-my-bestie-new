@@ -17,6 +17,7 @@ import React, { Suspense, lazy, useMemo, useState, useCallback, useRef, useEffec
 import { makeMockVoiceGuidance, makeMockCallbacks } from './mockVoiceGuidance';
 import useVoiceGuidance from '../lib/hooks/useVoiceGuidance';
 import { makeTtsVoiceGuidance } from './webSpeechScripts';
+import SparkleAnimation from '../lib/components/animation/SparkleAnimation';
 
 // Real-audio mode: which scene id + Sanskrit word each game maps to, so the
 // real useVoiceGuidance hook resolves the right MP3s (/audio/syllables/*,
@@ -37,7 +38,7 @@ const REAL_WORD = {
 // components don't trigger their own, so real-audio mode plays it on mount.
 const INTRO_VO = {
   vakratunda: 'scene10_vak_intro', mahakaya: 'scene10_maha_intro',
-  suryakoti: 'scene11_surya_intro', samaprabha: 'samaprabhaSetup',
+  suryakoti: 'scene11_surya_intro', samaprabha: 'scene11_sama_intro',
   nirvighnam: 'scene12_nir_intro', kurumedeva: 'scene12_kuru_intro',
   sarvakaryeshu: 'welcome', sarvada: 'scene14_intro',
 };
@@ -50,7 +51,7 @@ import banyanTree from '../zones/shloka-river/scenes/Scene1/assets/images/banyan
 import suryakotiBg from '../zones/shloka-river/scenes/Scene2/assets/images/saurakoti-bg.webp';
 import nirvighnamBg from '../zones/shloka-river/scenes/Scene3/assets/images/nirvighnam/bg.webp';
 import sarvakaryeshuBg from '../zones/shloka-river/scenes/scene4/assets/images/sarvakaryeshu-bg.webp';
-import sarvadaBg from '../zones/shloka-river/scenes/scene4/assets/images/sarvada/night.webp';
+import sarvadaBg from '../zones/shloka-river/scenes/scene4/assets/images/sarvada/morning.webp';
 
 const GAMES = {
   vakratunda:    { label: 'Vakratunda Rescue', bg: riverBg, scenery: banyanTree, Comp: lazy(() => import('../zones/shloka-river/scenes/Scene1/VakratundaRescueGame')) },
@@ -63,6 +64,18 @@ const GAMES = {
   sarvada:       { label: 'Sarvada',           bg: sarvadaBg,       Comp: lazy(() => import('../zones/shloka-river/scenes/scene4/SarvadaGame')) },
 };
 
+// Full scenes — self-contained (they wire their own SceneManager / useVoiceGuidance /
+// ProgressManager). Rendered full-bleed; real audio works without the mock.
+const SCENES = {
+  'sr-finale':   { label: 'Shloka River — Finale',       isScene: true, zoneId: 'shloka-river',    sceneId: 'shloka-river-finale', Comp: lazy(() => import('../zones/shloka-river/scenes/scene5/ShlokaRiverFinale')) },
+  'sm-modak':    { label: 'Symbol Mtn 1 — Modak',        isScene: true, zoneId: 'symbol-mountain', sceneId: 'modak',       Comp: lazy(() => import('../zones/symbol-mountain/scenes/modak/NewModakSceneV7')) },
+  'sm-pond':     { label: 'Symbol Mtn 2 — Pond',         isScene: true, zoneId: 'symbol-mountain', sceneId: 'pond',        Comp: lazy(() => import('../zones/symbol-mountain/scenes/pond/PondSceneSimplifiedV4')) },
+  'sm-symbol':   { label: 'Symbol Mtn 3 — Symbol',       isScene: true, zoneId: 'symbol-mountain', sceneId: 'symbol',      Comp: lazy(() => import('../zones/symbol-mountain/scenes/tusk/SymbolMountainSceneV3')) },
+  'sm-final':    { label: 'Symbol Mtn 4 — Sacred Assembly', isScene: true, zoneId: 'symbol-mountain', sceneId: 'final-scene', Comp: lazy(() => import('../zones/symbol-mountain/scenes/final scene/SacredAssemblySceneV8')) },
+};
+
+const ALL = { ...GAMES, ...SCENES };
+
 const HEADING = "'Baloo 2', system-ui, sans-serif";
 const BODY = "'Nunito', system-ui, sans-serif";
 const TOOLBAR_H = 44;
@@ -70,7 +83,7 @@ const TOOLBAR_H = 44;
 function getInitialGame() {
   if (typeof window === 'undefined') return null;
   const key = new URLSearchParams(window.location.search).get('game');
-  return GAMES[key] ? key : null;
+  return ALL[key] ? key : null;
 }
 
 // Describe the DOM element under a point, for code-level context.
@@ -144,6 +157,35 @@ export default function GameTestHarness() {
   const voiceGuidance = realAudio ? realWrapped : mockVG;
   const callbacks = useMemo(() => makeMockCallbacks(setBanner), []);
 
+  // --- SPARKLE REWARD MIRROR ------------------------------------------------
+  // Dev preview of the wrapper reward ladder (the harness bypasses the
+  // wrappers). Dust at the finger on each micro-win; Golden Star centre-stage
+  // on word/phase complete. Scene4 games (sarvakaryeshu/sarvada) get a star
+  // per correct answer instead of dust. Safe to delete this block + its JSX.
+  const lastPtRef = useRef({ x: 50, y: 50 });
+  const [tapFx, setTapFx] = useState(null);   // { x, y, key, star }
+  const [starFx, setStarFx] = useState(0);    // remount key; 0 = hidden
+  const scene4 = gameKey === 'sarvakaryeshu' || gameKey === 'sarvada';
+  const recordPt = useCallback((e) => {
+    const r = stageRef.current?.getBoundingClientRect();
+    if (!r || !r.width || !r.height) return;
+    lastPtRef.current = {
+      x: Math.min(95, Math.max(5, ((e.clientX - r.left) / r.width) * 100)),
+      y: Math.min(95, Math.max(5, ((e.clientY - r.top) / r.height) * 100)),
+    };
+  }, []);
+  const fxCallbacks = useMemo(() => ({
+    ...callbacks,
+    onMicroWin: (id) => {
+      callbacks.onMicroWin?.(id);
+      setTapFx({ ...lastPtRef.current, key: Date.now(), star: scene4 });
+    },
+    onPhaseComplete: (ph) => {
+      callbacks.onPhaseComplete?.(ph);
+      setStarFx(Date.now());
+    },
+  }), [callbacks, scene4]);
+
   // Speak the scene's intro line on mount/remount in real-audio mode — the
   // parent scene normally does this and some game components don't.
   useEffect(() => {
@@ -158,6 +200,7 @@ export default function GameTestHarness() {
   const pick = useCallback((key) => {
     setBanner('');
     setItems([]);
+    setTapFx(null); setStarFx(0);
     setMountId((n) => n + 1);
     setGameKey(key);
     const url = new URL(window.location.href);
@@ -165,7 +208,7 @@ export default function GameTestHarness() {
     window.history.replaceState(null, '', url);
   }, []);
 
-  const remount = useCallback(() => { setBanner(''); setMountId((n) => n + 1); }, []);
+  const remount = useCallback(() => { setBanner(''); setTapFx(null); setStarFx(0); setMountId((n) => n + 1); }, []);
 
   // --- pointer → normalized stage coords (0..1) ---
   const norm = useCallback((e) => {
@@ -236,7 +279,8 @@ export default function GameTestHarness() {
     }
   }, [gameKey, items, isActive, isPaused, hideElements]);
 
-  const entry = gameKey ? GAMES[gameKey] : null;
+  const entry = gameKey ? ALL[gameKey] : null;
+  const isScene = !!entry?.isScene;
   const pinItems = items.filter((it) => it.type === 'pin');
 
   return (
@@ -245,8 +289,13 @@ export default function GameTestHarness() {
       <div style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 99999, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8, padding: '8px 12px', background: 'rgba(26,10,46,0.92)', color: '#fff', fontFamily: BODY, fontSize: 13, minHeight: TOOLBAR_H, boxSizing: 'border-box' }}>
         <strong style={{ fontFamily: HEADING, fontSize: 14 }}>game-test</strong>
         <select value={gameKey ?? ''} onChange={(e) => pick(e.target.value)} style={{ fontFamily: BODY, padding: '4px 6px', borderRadius: 6 }}>
-          <option value="" disabled>pick a game…</option>
-          {Object.entries(GAMES).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+          <option value="" disabled>pick…</option>
+          <optgroup label="Games">
+            {Object.entries(GAMES).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+          </optgroup>
+          <optgroup label="Full scenes">
+            {Object.entries(SCENES).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+          </optgroup>
         </select>
         <button onClick={remount} style={btn}>⟳ remount</button>
         <label style={lbl}><input type="checkbox" checked={isActive} onChange={(e) => setIsActive(e.target.checked)} /> isActive</label>
@@ -279,7 +328,7 @@ export default function GameTestHarness() {
 
       {/* stage + annotation panel */}
       <div style={{ position: 'absolute', inset: 0, paddingTop: TOOLBAR_H, display: 'flex' }}>
-        <div ref={stageRef} style={{ position: 'relative', flex: 1, height: '100%', overflow: 'hidden', backgroundColor: '#E8F5E9', backgroundImage: entry?.bg ? `url(${entry.bg})` : 'none', backgroundSize: 'cover', backgroundPosition: 'center' }}>
+        <div ref={stageRef} onPointerDownCapture={recordPt} style={{ position: 'relative', flex: 1, height: '100%', overflow: 'hidden', backgroundColor: '#E8F5E9', backgroundImage: (!isScene && entry?.bg) ? `url(${entry.bg})` : 'none', backgroundSize: 'cover', backgroundPosition: 'center' }}>
           {!entry && (
             <div style={{ padding: 32, color: '#1A0A2E' }}>
               <h1 style={{ fontFamily: HEADING }}>Shloka River game test</h1>
@@ -287,15 +336,53 @@ export default function GameTestHarness() {
               <ul>{Object.entries(GAMES).map(([k, v]) => <li key={k}><a href={`?game=${k}`} onClick={(e) => { e.preventDefault(); pick(k); }}>{v.label}</a> — <code>?game={k}</code></li>)}</ul>
             </div>
           )}
-          {entry && (
+          {entry && !isScene && (
             <Suspense fallback={<div style={{ padding: 24 }}>loading {entry.label}…</div>}>
-              <entry.Comp key={`${gameKey}-${mountId}`} isActive={isActive} isPaused={isPaused} hideElements={hideElements} voiceGuidance={voiceGuidance} {...callbacks} />
+              <entry.Comp key={`${gameKey}-${mountId}`} isActive={isActive} isPaused={isPaused} hideElements={hideElements} voiceGuidance={voiceGuidance} {...fxCallbacks} />
+            </Suspense>
+          )}
+
+          {/* SPARKLE REWARD MIRROR overlays */}
+          {tapFx && (
+            <div
+              key={tapFx.key}
+              style={{ position: 'absolute', left: `${tapFx.x}%`, top: `${tapFx.y}%`, width: tapFx.star ? '42%' : '32%', height: tapFx.star ? '42%' : '32%', transform: 'translate(-50%, -50%)', pointerEvents: 'none', zIndex: 500 }}
+            >
+              <SparkleAnimation
+                type={tapFx.star ? 'star' : 'dust'}
+                count={tapFx.star ? 16 : 22}
+                color="#FFD54F"
+                size={tapFx.star ? 13 : 5}
+                duration={tapFx.star ? 1300 : 1600}
+                area="full"
+                onComplete={() => setTapFx(null)}
+              />
+            </div>
+          )}
+          {starFx > 0 && (
+            <div
+              key={starFx}
+              style={{ position: 'absolute', left: '50%', top: '44%', width: '72%', height: '60%', transform: 'translate(-50%, -50%)', pointerEvents: 'none', zIndex: 500 }}
+            >
+              <SparkleAnimation type="star" count={20} color="#FFD54F" size={14} duration={1500} area="full" onComplete={() => setStarFx(0)} />
+            </div>
+          )}
+
+          {entry && isScene && (
+            <Suspense fallback={<div style={{ padding: 24 }}>loading {entry.label}…</div>}>
+              <entry.Comp
+                key={`${gameKey}-${mountId}`}
+                zoneId={entry.zoneId}
+                sceneId={entry.sceneId}
+                onNavigate={(dest) => setBanner(`scene → onNavigate(${dest}) — ignored`)}
+                onComplete={() => setBanner('✅ scene onComplete')}
+              />
             </Suspense>
           )}
 
           {/* Parent-scene scenery the game component doesn't render itself
               (e.g. Vakratunda/Mahakaya banyan tree) — mirrors .vakratunda-scene-banyan */}
-          {entry?.scenery && (
+          {!isScene && entry?.scenery && (
             <img
               src={entry.scenery}
               alt=""

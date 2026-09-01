@@ -181,6 +181,23 @@ const SarvakaryeshuChantContent = ({
   const [showPowerOverlay, setShowPowerOverlay] = useState(false);
   const [revealConfig, setRevealConfig] = useState(null);
   const [showTapSparkles, setShowTapSparkles] = useState(false);
+  const fxBgRef = useRef(null);
+  const lastPointRef = useRef(null);
+  const [sparklePos, setSparklePos] = useState(null);
+  const recordPoint = useCallback((e) => {
+    const el = fxBgRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    if (!r.width || !r.height) return;
+    const cx = e.clientX != null ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : null);
+    const cy = e.clientY != null ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : null);
+    if (cx == null || cy == null) return;
+    lastPointRef.current = {
+      x: Math.min(95, Math.max(5, ((cx - r.left) / r.width) * 100)),
+      y: Math.min(95, Math.max(5, ((cy - r.top) / r.height) * 100)),
+    };
+  }, []);
+
   const [openingButtonVisible, setOpeningButtonVisible] = useState(false);
   const [savedRecordings, setSavedRecordings] = useState({});
   const handleSaveRecording = useCallback((wordId, data) => {
@@ -289,14 +306,14 @@ const SarvakaryeshuChantContent = ({
       scene13_bike_after: "The Eyes helped her look carefully and notice what everyone else missed.",
       scene13_grandma: "He wants to finish his special card, but everything keeps pulling his attention away. What could help him stay focused?",
       scene13_grandma_after: "The Tusk helped him stay focused on what was important.",
-      welcome: "Now let us use Ganesha’s powers to help!",
+      welcome: "Each friend is stuck in a different way. Look carefully and choose the power that can help.",
       scene13_try_again: "Try another symbol.",
       scene13_success: "Sarva-Karyeshu! You chose the right power and solved every task.",
       scene13_meaning: "Sarva Karyeshu means in everything we do.",
-      scene14_intro: "Morning, afternoon, and night. Ganesha is with us all day.",
-      scene14_morning: "Tap the morning memory bubble.",
-      scene14_afternoon: "Now tap the afternoon bubble.",
-      scene14_night: "Now tap the night bubble.",
+      scene14_intro: "Morning, afternoon, and night, Ganesha's symbols are there to find. Can you spot each one?",
+      scene14_morning: "Let's look at the morning memory.",
+      scene14_afternoon: "Now the afternoon memory.",
+      scene14_night: "Now the night memory.",
       scene14_find_symbol: "Can you find the hidden symbol?",
       scene14_success: "Sarvada! You found the wisdom in every part of the day.",
       scene14_meaning: "Sarvada means always.",
@@ -570,10 +587,10 @@ const SarvakaryeshuChantContent = ({
   ]);
 
   const handleMicroWin = useCallback(() => {
-    triggerMiniGesture('thumbsup', 'item', 1200);
+    setSparklePos(lastPointRef.current);
     setShowTapSparkles(true);
-    window.setTimeout(() => setShowTapSparkles(false), 850);
-  }, [triggerMiniGesture]);
+    window.setTimeout(() => setShowTapSparkles(false), 1600);
+  }, []);
 
   const handleAppDiscoveryCelebrate = () => {
     setShowAppDiscovery(false);
@@ -602,6 +619,8 @@ const SarvakaryeshuChantContent = ({
 
           <div
             className="sarva-scene-background"
+            ref={fxBgRef}
+            onPointerDownCapture={recordPoint}
             style={{
               backgroundImage: `url(${SARVADA_PHASES.includes(sceneState.phase) ? sarvadaBg : sarvakaryeshuBg})`,
             }}
@@ -651,8 +670,8 @@ const SarvakaryeshuChantContent = ({
                 />
 
                 {showTapSparkles && (
-                  <div className="sarva-tap-sparkles">
-                    <SparkleAnimation type="magic" count={14} color="#FFD54F" size={9} duration={850} area="full" />
+                  <div className="sarva-tap-sparkles" style={sparklePos ? { left: `${sparklePos.x}%`, top: `${sparklePos.y}%`, width: '42%', height: '42%', right: 'auto', bottom: 'auto', transform: 'translate(-50%, -50%)' } : undefined}>
+                    <SparkleAnimation type="star" count={16} color="#FFD54F" size={13} duration={1300} area="full" />
                   </div>
                 )}
 

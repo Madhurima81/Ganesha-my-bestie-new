@@ -2,17 +2,25 @@ export const NIRVIGHNAM_LAYOUT = {
   turtleStart: { l: 79.2, t: 76.4 },
   turtleWidth: 9,
   turtleFlip: false,
-  nest: { l: 27.8, t: 63.2, w: 12, flip: false },
+  nest: { l: 27.8, t: 55.3, w: 12, flip: false },
   obstacles: [
-    { id: 'stone', l: 45.8, t: 77.6, w: 10, label: 'stone', flip: false },
-    { id: 'branch', l: 55.8, t: 75.1, w: 9, label: 'branch', flip: false },
-    { id: 'reed', l: 65, t: 71.4, w: 11, label: 'reeds', flip: false },
+    { id: 'stone', l: 67.3, t: 73.2, w: 14.7, label: 'stone', flip: false },
+    { id: 'branch', l: 58.3, t: 71.7, w: 12.3, label: 'branch', flip: false },
+    { id: 'reed', l: 50.8, t: 71.4, w: 17.7, label: 'reeds', flip: false },
   ],
+  bankSpots: {
+    stone: { l: 74, t: 56 },
+    branch: { l: 62, t: 84 },
+  },
+  turtleNodes: [
+    { l: 64.3, t: 74 },
+    { l: 59, t: 71.7 },
+    { l: 50.2, t: 72.2 },
+  ],
+  // The turtle walks the crossing obstacle-by-obstacle and ends at Turtle
+  // Node 3, then does one short swim from there to settle at the nest.
   swimPath: [
-    { l: 66.5, t: 77.4 },
-    { l: 53.2, t: 78.1 },
-    { l: 43.4, t: 71.1 },
-    { l: 33.8, t: 66.2 },
+    { l: 32.9, t: 58.3 },
   ],
   pathLine: {
     x1: 16,
@@ -24,7 +32,7 @@ export const NIRVIGHNAM_LAYOUT = {
 
 export const KURUMEDEVA_LAYOUT = {
   bridge: {
-    l: 60.4,
+    l: 57.7,
     t: 71.1,
     w: 46.5,
     r: 5,
@@ -35,16 +43,16 @@ export const KURUMEDEVA_LAYOUT = {
     flip: true,
   },
   beaverBaby: {
-    l: 18.6,
-    t: 64.8,
+    l: 10.6,
+    t: 66.7,
     w: 8.5,
     flip: false,
   },
   friends: [
-    { id: 'turtle', label: 'Turtle', brings: 'logs', l: 32, t: 62, w: 10, flip: false },
-    { id: 'bird', label: 'Bird', brings: 'vines', l: 24.3, t: 54.7, w: 10, flip: false },
-    { id: 'squirrel', label: 'Squirrel', brings: 'pegs', l: 38, t: 62.8, w: 10, flip: false },
-    { id: 'bunny', label: 'Bunny', brings: 'planks', l: 33.1, t: 57.3, w: 10, flip: false },
+    { id: 'turtle', label: 'Turtle', brings: 'logs', l: 30.1, t: 63.3, w: 10, flip: false },
+    { id: 'bird', label: 'Bird', brings: 'vines', l: 21.7, t: 39.7, w: 10, flip: false },
+    { id: 'squirrel', label: 'Squirrel', brings: 'pegs', l: 38.7, t: 47.7, w: 10, flip: false },
+    { id: 'bunny', label: 'Bunny', brings: 'planks', l: 29.6, t: 47.9, w: 10, flip: false },
   ],
   beaverPath: [
     { l: 73.9, t: 69.9 },

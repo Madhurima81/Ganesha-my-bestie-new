@@ -191,6 +191,24 @@ const NirvighnamChantContent = ({
   const [revealConfig,         setRevealConfig]         = useState(null);
   const [currentWord,          setCurrentWord]          = useState(null);
   const [showTapSparkles,      setShowTapSparkles]      = useState(false);
+  const [showWordStar,         setShowWordStar]         = useState(false);
+  const fxBgRef = useRef(null);
+  const lastPointRef = useRef(null);
+  const [sparklePos, setSparklePos] = useState(null);
+  const recordPoint = useCallback((e) => {
+    const el = fxBgRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    if (!r.width || !r.height) return;
+    const cx = e.clientX != null ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : null);
+    const cy = e.clientY != null ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : null);
+    if (cx == null || cy == null) return;
+    lastPointRef.current = {
+      x: Math.min(95, Math.max(5, ((cx - r.left) / r.width) * 100)),
+      y: Math.min(95, Math.max(5, ((cy - r.top) / r.height) * 100)),
+    };
+  }, []);
+
   const [openingButtonVisible, setOpeningButtonVisible] = useState(false);
   const [savedRecordings,      setSavedRecordings]      = useState({});
   const handleSaveRecording = useCallback((wordId, data) => {
@@ -264,16 +282,16 @@ const NirvighnamChantContent = ({
   const playGuidanceVoice = useCallback((key, onEnded, options = {}) => {
     const map = {
       welcome:             "Let's help our river friends.",
-      scene12_nir_intro:   'The little turtle wants to reach her nest!',
-      scene12_nir_drag:    'Drag the obstacles away.',
-      nirv_hint:           'Drag the obstacle away.',
+      scene12_nir_intro:   "The turtle's way home is blocked. Clear what's in her path, one thing at a time.",
+      scene12_nir_drag:    "Something's still blocking the turtle's way.",
+      nirv_hint:           "Something's still blocking the turtle's way.",
       nirv_done:           'Nirvighnam! You cleared the way and helped the turtle through.',
       nirv_meaning:        'Nirvighnam means removing obstacles.',
       nirvighnamSetup:     'You cleared the path… and the turtle made it home.',
       nirvighnamClaim:     'I clear the way and move forward.',
-      scene12_kuru_intro:  'The beaver needs help to cross the river!',
-      scene12_kuru_tap:    'Drag the help bubble to a friend. Each friend can help build the bridge.',
-      kuru_hint:           'Drag the help bubble to the glowing friend.',
+      scene12_kuru_intro:  "Beaver can't build the bridge alone. Help him ask his friends to build it together.",
+      scene12_kuru_tap:    'Who can Beaver ask for help next?',
+      kuru_hint:           'Who can Beaver ask for help next?',
       kuru_done:           'Kurume Deva! You asked for help and built the beaver’s bridge.',
       kuru_meaning:        'Kuru Me Deva means please help us.',
       kurumedevaSetup:     'You called for help… and friends came.',
@@ -410,9 +428,7 @@ const NirvighnamChantContent = ({
       if (isAudioOn && !nirvIntroPlayedRef.current) {
         nirvIntroPlayedRef.current = true;
         playGuidanceVoice('scene12_nir_intro', () => {
-          playGuidanceVoice('scene12_nir_drag', () => {
-            safeSetTimeout(() => startIdleTimer(), 3500);
-          });
+          safeSetTimeout(() => startIdleTimer(), 3500);
         });
         return;
       }
@@ -430,9 +446,7 @@ const NirvighnamChantContent = ({
       if (isAudioOn && !kuruIntroPlayedRef.current) {
         kuruIntroPlayedRef.current = true;
         playGuidanceVoice('scene12_kuru_intro', () => {
-          playGuidanceVoice('scene12_kuru_tap', () => {
-            safeSetTimeout(() => startIdleTimer(), 3500);
-          });
+          safeSetTimeout(() => startIdleTimer(), 3500);
         });
         return;
       }
@@ -494,6 +508,8 @@ const NirvighnamChantContent = ({
   // ── Phase complete handler ─────────────────────────────────────────────────
   const handlePhaseComplete = useCallback((word) => {
     triggerMiniGesture('blessing', 'center', 2500);
+    setShowWordStar(true);
+    window.setTimeout(() => setShowWordStar(false), 1500);
     stopIdleTimer();
     setCurrentPhase(null);
 
@@ -531,10 +547,10 @@ const NirvighnamChantContent = ({
       stopIdleTimer, setCurrentPhase, triggerMiniGesture, safeSetTimeout]);
 
   const handleMicroWin = useCallback(() => {
-    triggerMiniGesture('thumbsup', 'item', 1200);
+    setSparklePos(lastPointRef.current);
     setShowTapSparkles(true);
-    window.setTimeout(() => setShowTapSparkles(false), 850);
-  }, [triggerMiniGesture]);
+    window.setTimeout(() => setShowTapSparkles(false), 1600);
+  }, []);
 
   const handleAppDiscoveryCelebrate = () => {
     setShowAppDiscovery(false);
@@ -559,7 +575,7 @@ const NirvighnamChantContent = ({
           <VOReplayButton onReplay={replayCurrentVoice} disabled={!isAudioOn} />
           <ResumeCountdown value={countdownValue} />
 
-          <div className="nirv-scene-background" style={{ backgroundImage: `url(${nirvighnamBg})` }}>
+          <div className="nirv-scene-background" ref={fxBgRef} onPointerDownCapture={recordPoint} style={{ backgroundImage: `url(${nirvighnamBg})` }}>
             {!showSceneCompletion && (
             <>
               {/* ── NIRVIGHNAM GAME — drag obstacles ── */}
@@ -600,9 +616,14 @@ const NirvighnamChantContent = ({
                 isPaused={isRecorderOpen}
               />
 
+              {showWordStar && (
+                <div className="nirv-word-star">
+                  <SparkleAnimation type="star" count={20} color="#FFD54F" size={14} duration={1500} area="full" />
+                </div>
+              )}
               {showTapSparkles && (
-                <div className="nirv-tap-sparkles">
-                  <SparkleAnimation type="magic" count={14} color="#FFD54F" size={9} duration={850} area="full" />
+                <div className="nirv-tap-sparkles" style={sparklePos ? { left: `${sparklePos.x}%`, top: `${sparklePos.y}%`, width: '32%', height: '32%', right: 'auto', bottom: 'auto', transform: 'translate(-50%, -50%)' } : undefined}>
+                  <SparkleAnimation type="dust" count={22} color="#FFD54F" size={5} duration={1600} area="full" />
                 </div>
               )}
 

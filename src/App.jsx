@@ -28,6 +28,7 @@ import SimpleSceneManager from './lib/services/SimpleSceneManager';
 import { getPendingKindnessCheck, resolveKindnessCheck } from './lib/services/KindnessJournal';
 // initializeSounds replaced by initAudioService() in main.jsx (AudioService/Howler)
 import { Analytics } from './lib/services/analytics';
+import { sceneAnalytics } from './lib/services/sceneAnalytics';
 import { preloadImages, avatarImagePaths } from './lib/utils/preloadImages';
 
 const AVATAR_IDS = ['monkey', 'peacock', 'squirrel', 'tiger'];
@@ -419,6 +420,16 @@ useEffect(() => {
   }
 }, [currentView, showIntroStory]);
   
+  // Internal-only replay analytics: one whole-scene entry ping per scene load.
+  // Per-mini-game entries are recorded inside each scene file. Fully decoupled
+  // from ProgressManager — best-effort, never blocks render.
+  useEffect(() => {
+    if (!currentZone || !currentScene) return;
+    const profileId = localStorage.getItem('activeProfileId');
+    if (!profileId) return;
+    sceneAnalytics.recordEntry(profileId, currentScene, '_scene');
+  }, [currentZone, currentScene]);
+
   console.log('🌟 Clean App rendering - current view:', currentView);
   console.log('🎯 Current zone:', currentZone, 'Current scene:', currentScene);
   

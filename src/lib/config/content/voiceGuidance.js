@@ -62,13 +62,13 @@ export const VOICE_SCRIPTS = {
 
       // Mahakaya Rescue Game — scene 10 VO lines
       scene10_vak_intro: {
-        text: "The little frog wants to meet his family."
+        text: "The frog can see his family, but rocks and logs block the way. Help him find a way around."
       },
       scene10_vak_choose: {
         text: "Help guide the lily pad another way."
       },
       scene10_vak_crossed: {
-        text: "Vakratunda! You found another way and helped the frog across."
+        text: "Vakratunda! You found another way and helped the frog reach his family."
       },
       scene10_vak_current_too_strong: {
         text: "The river current is too strong there. Let's try another way."
@@ -385,8 +385,7 @@ export const VOICE_SCRIPTS = {
     ,
     'final-scene': {
       openingModalPrompt: {
-        text: "You found every symbol... let's place them together.",
-        file: '/audio/voicenew/sacredassembly/opening-modal-ready-together.wav'
+        text: "You found all eight symbols. Now let's put them in the right place."
       },
 
       cardEyes: {
@@ -423,19 +422,19 @@ export const VOICE_SCRIPTS = {
       },
 
       hintEyes: {
-        text: "I notice the good around me."
+        text: "I notice what's around me."
       },
       hintEars: {
         text: "I listen with care."
       },
       hintTrunk: {
-        text: "I find my way."
+        text: "I can find another way."
       },
       hintTusk: {
         text: "I stay focused on what is true."
       },
       hintModak: {
-        text: "I have joy inside me."
+        text: "I can feel peaceful inside."
       },
       hintLotus: {
         text: "I can stay calm when things get messy."
@@ -448,33 +447,29 @@ export const VOICE_SCRIPTS = {
       },
 
       onboardingTapRightPart: {
-        text: "Tap the right part of me.",
-        file: '/audio/voicenew/sacredassembly/onboarding-tap-right-part.wav'
+        text: "Look at the symbol, then tap where it belongs."
       },
 
       firstSymbolPlaced: {
-        text: "Yes... that's exactly right."
+        text: "Yes — that's the right place."
       },
       midProgressWonder: {
-        text: "Look... all the symbols are coming together."
+        text: "Look — the symbols are coming together."
       },
 
       wrongTryAgain: {
-        text: "Hmm... try again.",
-        file: '/audio/voicenew/sacredassembly/wrong-try-again.wav'
+        text: "Not there. Try again."
       },
 
+      // Final fireworks: 2-line recap (what you did -> what it means), 700ms gap
       finalYouFoundAll: {
-        text: "You found all my symbols...",
-        file: '/audio/voicenew/sacredassembly/final-you-found-all.wav'
+        text: "You found them all and put them together."
       },
       finalNowComplete: {
-        text: "Now they are all together.",
-        file: '/audio/voicenew/sacredassembly/final-now-complete.wav'
+        text: "Now you know what each symbol can remind you of."
       },
       finalAlwaysWithYou: {
-        text: "And their lessons can stay with you.",
-        file: '/audio/voicenew/sacredassembly/final-always-with-you.wav'
+        text: "Now you know what each symbol can remind you of."
       }
     }
   },
@@ -488,7 +483,7 @@ export const VOICE_SCRIPTS = {
       // OPENING MODAL
       // ========================================
       welcome: {
-        text: "Let's meet my family and yours!",
+        text: "Let's meet my family, then make a tree for yours.",
         useWebSpeech: true
       },
 
@@ -496,8 +491,7 @@ export const VOICE_SCRIPTS = {
       // GANESHA PHASE - INSTRUCTIONS
       // ========================================
       tapCircle: {
-        text: "Tap a circle to meet my family!",
-        file: 'family-tree-tap-circle.wav'
+        text: "Tap a circle, then drag each family member to where they belong."
       },
 
       // ========================================
@@ -552,40 +546,32 @@ export const VOICE_SCRIPTS = {
       // GANESHA PHASE - CORRECT PLACEMENT (relationship reveal)
       // ========================================
       correctFather: {
-        text: "That's my father!",
-        file: '/audio/voicenew/familytree/ganesha_shiva_father.mp3'
+        text: "Yes — that's my father."
       },
       correctMother: {
-        text: "That's my mother!",
-        file: '/audio/voicenew/familytree/ganesha_parvati_mother.mp3'
+        text: "Yes — that's my mother."
       },
       correctBrother: {
-        text: "That's my brother!",
-        file: '/audio/voicenew/familytree/ganesha_kartikeya_brother.mp3'
+        text: "Yes — that's my brother."
       },
       correctMyself: {
-        text: "That's me!",
-        file: '/audio/voicenew/familytree/ganesha_me.mp3'
+        text: "And that's me!"
       },
 
       // ========================================
       // GANESHA PHASE - FUN FACTS
       // ========================================
       factFather: {
-        text: "My father is calm and strong. He protects us and teaches me peace.",
-        file: 'family-tree-fact-father.wav'
+        text: "My father is calm and strong."
       },
       factMother: {
-        text: "My mother is kind and loving. She gives the best hugs and keeps me safe.",
-        file: 'family-tree-fact-mother.wav'
+        text: "My mother is kind and caring."
       },
       factBrother: {
-        text: "My brother is very brave. He travels the world on his peacock.",
-        file: 'family-tree-fact-brother.wav'
+        text: "My brother is brave and rides a peacock."
       },
       factMyself: {
-        text: "That's me! I love modaks and helping my friends.",
-        file: 'family-tree-fact-myself.wav'
+        text: "I love modaks and helping my friends."
       },
 
       // ========================================
@@ -620,78 +606,64 @@ export const VOICE_SCRIPTS = {
         file: 'family-tree-progress-near-full-ganesha.wav'
       },
       hintTap: {
-        text: "Tap a circle to meet my family!",
-        file: '/audio/family-tree/family-tree-hint-tap.mp3'
+        text: "Who belongs in this spot?"
       },
       allPlaced: {
-        text: "Great! You met my loving family!",
-        file: '/audio/voicenew/familytree/ganesha_family_safe.mp3'
+        text: "You met everyone in my family."
       },
 
       // ========================================
       // TRANSITION MODAL
       // ========================================
       transition: {
-        text: "Show me your family!",
-        file: '/audio/voicenew/familytree/ganesha_build_tree.mp3'
+        text: "Now let's make your family tree."
       },
 
       // ========================================
       // CHILD PHASE
       // ========================================
       childStart: {
-        text: "Now it's your turn! Add your family to the tree.",
-        file: 'family-tree-child-start.wav'
+        text: "Tap the people or pets you want to add."
       },
       childHint: {
-        text: "Tap someone below to add to your tree!",
-        file: 'family-tree-child-hint.wav'
+        text: "Who else belongs on your tree?"
       },
       childProgressStart: {
-        text: "Nice! Your tree has started growing.",
-        file: 'family-tree-child-progress1.wav'
+        text: "Your family tree is growing."
       },
       childProgressSmall: {
-        text: "You added someone to your family tree!",
-        file: 'family-tree-child-progress2.wav'
+        text: "Your family tree is growing."
       },
       childProgressMid: {
-        text: "Look at that! Your family tree is getting bigger.",
-        file: 'family-tree-child-progress3.wav'
+        text: "Your family tree is growing."
       },
       childProgressNearFull: {
-        text: "Your family tree is growing.",
-        file: 'family-tree-child-progress-1full.wav'
+        text: "Your family tree is growing."
       },
       childProgressComplete: {
-        text: "Look at your family tree… these are the people and pets you chose to include.",
-        file: '/audio/voicenew/familytree/ganesha_beautiful_tree.mp3'
+        text: "These are the people and pets you chose for your family."
       },
 
       // ========================================
       // FINAL SCENE
       // ========================================
       sceneComplete: {
-        text: "Look at our family trees. Every family has its own story.",
-        file: '/audio/voicenew/familytree/ganesha_connected_love.mp3'
+        text: "Our family trees are different, and each one tells a story."
       }
     },
     'favorite-food': {
       opening: {
-        text: "Let's explore my favorite things and yours!",
-        file: '/audio/about-me-hut/favorite-food/opening.mp3'
+        text: "Let's find out what I like, then you can choose your favorites."
       }
     },
     'dreams-wishes': {
       opening: {
-        text: "Let’s help and dream together!",
-        file: '/audio/about-me-hut/dreams-wishes/opening.mp3'
+        text: "I have a few wishes for the world. Will you help me?"
       }
     },
     'my-indian-story': {
       opening: {
-        text: "Tap to explore my India story and yours!",
-        file: '/audio/about-me-hut/my-indian-story/opening.mp3'
+        text: "Let's explore some parts of my India story, then you can share yours."
       }
     },
     

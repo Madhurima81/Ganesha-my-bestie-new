@@ -198,44 +198,44 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
   const VOICE_LINES = {
     // Opening Modal
-    opening: "Let’s help and dream together!",
+    opening: "I have a few wishes for the world. Will you help me?",
 
     // Wish 1
-    wish1Intro: "Let's make the world smile!",
-    wish1Active: "Tap the kind actions.",
-    wish1Complete: "You found the kind actions!",
+    wish1Intro: "My first wish is for more kindness.",
+    wish1Active: "Tap the kind actions you can spot.",
+    wish1Complete: "You found all the kind choices.",
 
     // Wish 2
-    wish2Intro: "My second wish… is to share our food. So no one stays hungry.",
-    wish2Active: "Drag food to the plates.",
-    wish2Complete: "Every plate has food now!",
+    wish2Intro: "My next wish is for everyone to have food.",
+    wish2Active: "Drag food to each empty plate.",
+    wish2Complete: "Now every plate has food.",
 
     // Wish 3
-    wish3Intro: "My last wish… is for a green world full of life. Let’s help this forest grow!",
-    wish3Active: "Tap to grow the garden.",
-    wish3Complete: "Look how much the garden has grown!",
+    wish3Intro: "My next wish is for a greener world.",
+    wish3Active: "Tap the bare spaces to help the garden grow.",
+    wish3Complete: "Look how green it has become.",
 
     // All Wishes Complete
-    allWishesComplete: "Now it’s your turn!",
+    allWishesComplete: "Now it's your turn to make a wish.",
 
     // Dream Phases
     // dreamIntro: (REMOVED — merged into allWishesComplete)
-    dreamDrawing: "Draw a dream or wish of your own.",
-    dreamClouded: "Tap my trunk to clear the clouds.",
-    dreamClearing: "Keep tapping to clear the clouds!",
-    dreamRevealed: "That's your dream!",
+    dreamDrawing: "Draw something you hope for or dream about.",
+    dreamClouded: "Your dream is hidden by the clouds. Tap my trunk to clear them.",
+    dreamClearing: "There are still clouds in the way.",
+    dreamRevealed: "There it is — your dream!",
 
     // Comparison Card
-    comparison: "Your dream can be anything you imagine.",
-    completionCelebration: "Your dream is ready! Now let's discover your story.",
+    comparison: "Everyone can dream about something different.",
+    completionCelebration: "You helped my wishes grow, and made a dream of your own.",
 
     // Ending
-    ending: "Keep dreaming!",
+    ending: "You helped my wishes grow, and made a dream of your own.",
 
     // Idle hints
-    wish1Hint: "Look for the kind actions.",
-    wish2Hint: "Try dragging food to the plates.",
-    wish3Hint: "Tap the forest to make it grow."
+    wish1Hint: "Can you find another kind action?",
+    wish2Hint: "There's still an empty plate.",
+    wish3Hint: "There's still space for more to grow."
   };
 
   // Profile Display

@@ -29,6 +29,15 @@
   pointer-events: none;
 }
 
+.maha-cross-target-preview {
+  opacity: 0.28;
+  filter: saturate(0.9);
+}
+
+.maha-cross-target-hitbox {
+  pointer-events: auto;
+}
+
 .maha-hint,
 .maha-doneline {
   position: absolute;

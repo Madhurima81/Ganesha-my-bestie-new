@@ -96,20 +96,20 @@ const PHASES = {
 
 const VOICE_LINES = {
   // Entry
-  opening: "The water can't get through... let's find it a way around.",
+  opening: 'A rock is blocking the water.',
 
   // Trunk phase (blocked stream, drag around rock) — first
-  trunkRound: "The rock is in the way. Guide the water around it, to the pond.",
-  idleTrunk: 'Try curving the water around the rock...',
-  waterPathPower: "You found a way around... Say it with me... I find my way.",
+  trunkRound: 'Drag the water around the rock and into the pond.',
+  idleTrunk: 'Curve the water around the rock.',
+  waterPathPower: 'You found another way around.',
 
   // Lotus phase (press-and-hold to bloom) — second
-  lotusRound: 'The lotus woke up... press and hold it gently... let it bloom.',
-  idleLotus: 'Hold it gently... watch it bloom.',
-  lotusBloomPower: 'You stayed with it... nice and slow. Say it with me... I can stay calm when things get messy.',
+  lotusRound: 'The water reached the lotus. Press and hold the bud to help it bloom.',
+  idleLotus: 'Hold the bud gently until it blooms.',
+  lotusBloomPower: 'The lotus bloomed, even in the muddy pond.',
 
   // Completion
-  complete: 'You found another way, and the lotus bloomed.'
+  complete: 'You found a way around, and helped the lotus bloom.'
 };
 
 const powerConfig = {
@@ -139,6 +139,7 @@ const missionImages = {
 const SOURCE_POINT = { x: 8, y: 47 };
 const POND_POINT = { x: 78, y: 58 };
 const ROCK = { x: 40, y: 51, rx: 11, ry: 10 };
+const LOTUS_HOLD_POINT = { x: 78.5, y: 53.5 };
 const TOP_ROUTE_STONES = [
   { id: 'top-1', x: 30, y: 34 },
   { id: 'top-2', x: 48, y: 30 },
@@ -627,7 +628,7 @@ const PondSceneContent = ({
         setRevealConfig({
           symbolId: 'trunk',
           symbolName: 'Trunk',
-          affirmation: 'I find my way.',
+          affirmation: 'I can find another way.',
           symbolImage: symbolTrunkColored
         });
       }, 1200);
@@ -642,7 +643,7 @@ const PondSceneContent = ({
         setRevealConfig({
           symbolId: 'trunk',
           symbolName: 'Trunk',
-          affirmation: 'I find my way.',
+          affirmation: 'I can find another way.',
           symbolImage: symbolTrunkColored
         });
       }, 1200);
@@ -901,7 +902,7 @@ const PondSceneContent = ({
       setRevealConfig({
         symbolId: 'trunk',
         symbolName: 'Trunk',
-        affirmation: 'I find my way.',
+        affirmation: 'I can find another way.',
         symbolImage: symbolTrunkColored
       });
     }, LOTUS_GLOW_MS + TRUNK_REVEAL_DELAY_MS);
@@ -1269,6 +1270,14 @@ const PondSceneContent = ({
               )}
 
               {/* Lotus — dormant → upright (Trunk success) → bloomed (Lotus success) */}
+              <GestureDemo
+                type="hold"
+                from={LOTUS_HOLD_POINT}
+                active={sceneState.phase === PHASES.LOTUS_ACTIVE && !sceneState.lotusBloomed && holdProgress <= 0}
+                idleDelay={1800}
+                zIndex={28}
+              />
+
               <div
                 className={`pond-trunk-lotus ${sceneState.phase === PHASES.LOTUS_ACTIVE && !sceneState.lotusBloomed ? hintClassName : ''}`}
               >

@@ -24,6 +24,7 @@ import { KidsDraggable, KidsDropZone } from '../../../../lib/components/interact
 
 // Analytics
 import { Analytics } from '../../../../lib/services/analytics';
+import { sceneAnalytics } from '../../../../lib/services/sceneAnalytics';
 
 // Voice Guidance Hook
 import useVoiceGuidance from '../../../../lib/hooks/useVoiceGuidance';
@@ -261,16 +262,16 @@ const getFeedingGaneshaScale = (feedCount, transformed) => {
 };
 
 const MODAK_WEB_SPEECH_VO = {
-  findMooshika: 'Mooshika is darting around. Press and hold him gently to help him settle.',
-  findMooshikaIdle: 'Hold Mooshika gently when he pauses near an object.',
-  mooshikaFound: 'There he is... calm and ready to walk with us.',
-  focusPower: 'You helped Mooshika slow down. Say it with me... I can guide my busy thoughts.',
-  collectStart: 'Mushika is ready to gather three offerings for Ganesha. Drag her to each one.',
-  collectIdleHint: 'Guide Mushika to each offering for Ganesha.',
-  sharingPower: 'The sweetness of modak reminds us of a happy, peaceful feeling inside. Say it with me... I have joy inside me.',
-  feedGanesha: "Drag each feeling into Ganesha's belly. There is room for every feeling.",
-  feedIdleHint: "Move a feeling into Ganesha's belly.",
-  gratitudePower: 'There is room for all my feelings.',
+  findMooshika: 'Mooshika is rushing around. Press and hold him gently to help him calm down.',
+  findMooshikaIdle: 'Wait for him to pause, then hold him gently.',
+  mooshikaFound: 'You helped Mooshika slow down and settle.',
+  focusPower: 'I can guide my busy thoughts.',
+  collectStart: 'Mooshika has three offerings to collect. Drag him to each one.',
+  collectIdleHint: 'There are more offerings to collect.',
+  sharingPower: 'The modak reminds us of a sweet, peaceful feeling inside.',
+  feedGanesha: "Ganesha has room for every feeling. Drag each feeling into his belly.",
+  feedIdleHint: "There's room for another feeling.",
+  gratitudePower: 'You made room for every feeling.',
   sceneComplete: 'You helped Mooshika settle, found the sweetness inside, and made room for every feeling.',
 };
 
@@ -893,6 +894,17 @@ const NewModakSceneMVPContent = ({
     return null;
   };
 
+  // Internal-only replay analytics: record entry into each mini-game the first
+  // time the child reaches its phase this mount. Decoupled from ProgressManager;
+  // best-effort, never blocks. sceneAnalytics handles its own dedupe/debounce.
+  const currentMiniGame = getCurrentGamePhase();
+  useEffect(() => {
+    if (!currentMiniGame) return;
+    const profileId = localStorage.getItem('activeProfileId');
+    if (!profileId) return;
+    sceneAnalytics.recordEntry(profileId, sceneId, currentMiniGame);
+  }, [currentMiniGame, sceneId]);
+
   // Replay initial instruction with callback to mark as complete
   const replayInitialInstruction = (phase) => {
     if (phase === 'findMooshika') {
@@ -1101,7 +1113,7 @@ const NewModakSceneMVPContent = ({
           symbolId: 'modak',
           symbolImage: symbolModakColored,
           symbolName: 'Modak',
-          affirmation: 'I feel happy inside.',
+          affirmation: 'I can feel peaceful inside.',
           sidebarTarget: getSidebarTarget('modak')
         });
       }, 1200);
@@ -1149,7 +1161,7 @@ const NewModakSceneMVPContent = ({
           symbolId: 'belly',
           symbolImage: symbolBellyColored,
           symbolName: 'Big Belly',
-          affirmation: 'I have room for every feeling.',
+          affirmation: 'I have room for all my feelings.',
           sidebarTarget: getSidebarTarget('belly')
         });
       }, 1200);
@@ -1170,7 +1182,7 @@ const NewModakSceneMVPContent = ({
           symbolId: 'belly',
           symbolImage: symbolBellyColored,
           symbolName: 'Big Belly',
-          affirmation: 'I have room for every feeling.',
+          affirmation: 'I have room for all my feelings.',
           sidebarTarget: getSidebarTarget('belly')
         });
       }, 300);
@@ -1586,7 +1598,7 @@ const NewModakSceneMVPContent = ({
           symbolId: 'modak',
           symbolImage: symbolModakColored,
           symbolName: 'Modak',
-          affirmation: 'I feel happy inside.',
+          affirmation: 'I can feel peaceful inside.',
           sidebarTarget: getSidebarTarget('modak')
         });
       }, 4700);
@@ -1681,7 +1693,7 @@ const NewModakSceneMVPContent = ({
         symbolId: 'belly',
         symbolImage: symbolBellyColored,
         symbolName: 'Big Belly',
-        affirmation: 'I have room for every feeling.',
+        affirmation: 'I have room for all my feelings.',
         sidebarTarget: getSidebarTarget('belly')
       });
     }, 1800);
@@ -1759,7 +1771,7 @@ const NewModakSceneMVPContent = ({
             symbolId: 'belly',
             symbolImage: symbolBellyColored,
             symbolName: 'Big Belly',
-            affirmation: 'I have room for every feeling.',
+            affirmation: 'I have room for all my feelings.',
             sidebarTarget: bellySidebarTarget
           });
         }, 950);
@@ -2574,7 +2586,7 @@ const NewModakSceneMVPContent = ({
 
               {/* Phase-specific gesture demos for the three games. */}
               <GestureDemo
-                type="point"
+                type="hold"
                 from={{
                   x: parsePercentValue((sceneState.mooshikaPosition || MODAK_DISTRACTIONS[0]).left, 24),
                   y: parsePercentValue((sceneState.mooshikaPosition || MODAK_DISTRACTIONS[0]).top, 54),

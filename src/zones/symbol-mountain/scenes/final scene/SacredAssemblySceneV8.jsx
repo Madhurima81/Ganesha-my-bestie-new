@@ -1474,15 +1474,12 @@ const SacredAssemblyContent = ({
     setShowSparkle('final-fireworks');
 
     finalVoPlayedRef.current = false;
+    // 2-line recap: "what you did" -> 700ms -> "what it means"
     playSceneVoice('finalYouFoundAll', () => {
       safeSetTimeout(() => {
-        playSceneVoice('finalNowComplete', () => {
-          safeSetTimeout(() => {
-            playSceneVoice('finalAlwaysWithYou', () => {
-              finalVoPlayedRef.current = true;
-              setSceneCompleteVOFinished(true);
-            }, { replayOnReturn: false });
-          }, 700);
+        playSceneVoice('finalAlwaysWithYou', () => {
+          finalVoPlayedRef.current = true;
+          setSceneCompleteVOFinished(true);
         }, { replayOnReturn: false });
       }, 700);
     }, { replayOnReturn: false });

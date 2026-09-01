@@ -110,17 +110,32 @@ export default function SarvadaGame({
   const [boatGaneshaCelebrating, setBoatGaneshaCelebrating] = useState(false);
   const lastHintVoiceKeyRef = useRef(null);
 
+  // Tap-to-find: the symbol is hidden — the child taps a spot on the memory
+  // image. A tap inside the (invisible) circular zone flies the symbol up to
+  // the syllable tile. Zones are tunable per phase via the debug panel below.
+  const [spots, setSpots] = useState(() =>
+    PHASES_CONFIG.map((p) => ({ ...p.symbolSpot })),
+  );
+  const [flySymbol, setFlySymbol] = useState(null);
+  const [wrongTap, setWrongTap] = useState(false);
+  const [showDebugPanel, setShowDebugPanel] = useState(false);
+  const [showZones, setShowZones] = useState(true);
+  const [copyStatus, setCopyStatus] = useState('');
+
   const timersRef = useRef([]);
   const doneCalledRef = useRef(false);
+  const completeCalledRef = useRef(false);
 
   const { hintLevel, markInteraction } = useRepeatedHintCycle({
-    enabled: isActive && !isPaused && findMode && !symbolFound,
+    enabled: isActive && !isPaused && findMode && !symbolFound && !showDebugPanel,
     stageKey: isActive && findMode ? `find-${phaseIndex}` : null,
     initialDelay: 7000,
     pulseCountBeforeEscalation: 1,
     pulseInterval: 1400,
-    level2Delay: 14000,
-    level3Delay: 21000,
+    // Wide gaps so each hint VO line has ~5s of clear air before the next
+    // one starts (playSceneLine also enforces minDelayAfterVoiceMs: 5000).
+    level2Delay: 16000,
+    level3Delay: 27000,
   });
 
   useEffect(() => {
@@ -195,23 +210,33 @@ export default function SarvadaGame({
       setFindMode(false);
       setSymbolFound(false);
       setPopOut(false);
+      setFlySymbol(null);
+      setWrongTap(false);
       setRescueHintActive(false);
       setBoatGaneshaVisible(false);
       setBoatGaneshaJoining(false);
       setBoatGaneshaCelebrating(false);
       lastHintVoiceKeyRef.current = null;
       doneCalledRef.current = false;
+      completeCalledRef.current = false;
       return;
     }
     safeAfter(700, () => {
-      playSceneLine?.('scene14_intro', () => {
-        playSceneLine?.('scene14_morning');
-      });
+      playSceneLine?.('scene14_intro');
     });
     return clearTimers;
   }, [isActive, clearTimers, safeAfter, playSceneLine]);
 
   useEffect(() => () => clearTimers(), [clearTimers]);
+
+  // Preload all three phase backgrounds so the morning→afternoon→night
+  // crossfades never flash the base colour while a new image decodes.
+  useEffect(() => {
+    [morningBg, afternoonBg, nightBg].forEach((src) => {
+      const img = new Image();
+      img.src = src;
+    });
+  }, []);
 
   useEffect(() => {
     if (!isActive || gamePhase !== 'intro') return;
@@ -250,25 +275,38 @@ export default function SarvadaGame({
     stopSceneVoice,
   ]);
 
-  const handleSymbolFound = useCallback(() => {
+  const triggerFound = useCallback((clientX, clientY) => {
     if (!findMode || symbolFound || isPaused) return;
 
     const cfg = PHASES_CONFIG[phaseIndex];
 
+    // Fly the found symbol from the tap point to *this phase's* syllable tile
+    // (Sar / va / da), not just the top of the screen.
+    const tiles = document.querySelectorAll('.sarvada-syl-wrap .syl');
+    const tileEl = tiles[phaseIndex] || document.querySelector('.sarvada-syl-wrap');
+    const tRect = tileEl?.getBoundingClientRect();
+    const targetX = tRect ? tRect.left + tRect.width / 2 : window.innerWidth / 2;
+    const targetY = tRect ? tRect.top + tRect.height / 2 : 48;
+    setFlySymbol({
+      key: Date.now(),
+      src: cfg.hiddenSymbol,
+      startX: clientX,
+      startY: clientY,
+      dx: targetX - clientX,
+      dy: targetY - clientY,
+    });
+
     setSymbolFound(true);
     setPopOut(true);
+    setWrongTap(false);
     markInteraction();
     window.setTimeout(() => onMicroWin?.(), 0);
 
-    // Sequence: symbol pops first, syllable lights (and its audio fires via
-    // SyllableHighlight's onSyllableLit) a beat after — keeps the two audio
-    // cues from firing on top of each other.
-    safeAfter(280, () => {
-      setLitCount(cfg.litCount);
-      setRevealedSyls((prev) => [...prev, cfg.syllable]);
-    });
+    // The syllable lights (and its audio fires via SyllableHighlight's
+    // onSyllableLit) the moment the flying symbol reaches the tile — see
+    // the .sarvada-fly-symbol onAnimationEnd handler. Fly runs ~1.5s.
 
-    safeAfter(2200, () => {
+    safeAfter(3400, () => {
       setPopOut(false);
       setBubbleState('bursting');
       setFlash(true);
@@ -297,16 +335,25 @@ export default function SarvadaGame({
           });
           safeAfter(3200, () => setBoatGaneshaCelebrating(false));
           safeAfter(3100, () => {
-            setGamePhase('sarvada');
             if (doneCalledRef.current) return;
             doneCalledRef.current = true;
             setGamePhase('done');
-            safeAfter(600, () => {
-              window.setTimeout(() => {
-                onGameComplete?.();
-                onPhaseComplete?.();
-              }, 0);
+
+            const finish = () => {
+              if (completeCalledRef.current) return;
+              completeCalledRef.current = true;
+              onGameComplete?.();
+              onPhaseComplete?.();
+            };
+
+            // Full word "sarvada" → closing line → meaning, then hand off.
+            // Fallback timer covers muted audio / missing callbacks.
+            playWord?.('sarvada', () => {
+              playSceneLine?.('scene14_success', () => {
+                playSceneLine?.('scene14_meaning', finish);
+              });
             });
+            safeAfter(9000, finish);
           });
         });
       } else {
@@ -343,9 +390,59 @@ export default function SarvadaGame({
     startPhase,
   ]);
 
+  const handleImageTap = useCallback(
+    (event) => {
+      if (!findMode || symbolFound || isPaused) return;
+      const rect = event.currentTarget.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      const px = ((event.clientX - rect.left) / rect.width) * 100;
+      const py = ((event.clientY - rect.top) / rect.height) * 100;
+      const s = spots[phaseIndex] || PHASES_CONFIG[phaseIndex].symbolSpot;
+      // Frame is 4:3 — convert the vertical %-of-height delta into %-of-width
+      // units so the hit zone is a true circle, not an ellipse.
+      const dx = px - s.l;
+      const dy = (py - s.t) * (3 / 4);
+      if (Math.hypot(dx, dy) <= s.w / 2) {
+        triggerFound(event.clientX, event.clientY);
+      } else {
+        setWrongTap(true);
+        window.setTimeout(() => setWrongTap(false), 400);
+      }
+    },
+    [findMode, symbolFound, isPaused, spots, phaseIndex, triggerFound],
+  );
+
+  const updateSpot = useCallback((index, key, value) => {
+    setSpots((prev) =>
+      prev.map((s, i) => (i === index ? { ...s, [key]: Number(value) } : s)),
+    );
+  }, []);
+
+  const copyZoneConfig = useCallback(() => {
+    const text = spots
+      .map((s, i) => {
+        const n = (v) => Number(v).toFixed(1);
+        return `    // ${PHASES_CONFIG[i].id}\n    symbolSpot: { l: ${n(s.l)}, t: ${n(s.t)}, w: ${n(s.w)} },`;
+      })
+      .join('\n');
+    try {
+      navigator.clipboard?.writeText(text);
+      setCopyStatus('Copied!');
+    } catch {
+      setCopyStatus('Copy failed');
+    }
+    window.setTimeout(() => setCopyStatus(''), 1500);
+  }, [spots]);
+
   if (!isActive) return null;
 
   const cfg = PHASES_CONFIG[phaseIndex];
+  const spot = spots[phaseIndex] || cfg.symbolSpot;
+  const zoneStyle = (s) => ({
+    left: `${s.l}%`,
+    top: `${s.t}%`,
+    width: `${s.w}%`,
+  });
   const isPlaying = gamePhase === 'playing' || gamePhase === 'transition';
   const showSarvada = gamePhase === 'sarvada' || gamePhase === 'done';
   return (
@@ -395,70 +492,41 @@ export default function SarvadaGame({
       {showMemory && (
         <div className="sarvada-memory" key={`memory-${phaseIndex}`}>
           <div className="sarvada-memory-inner">
-            <img
-              className="sarvada-memory-img"
-              src={cfg.scene}
-              alt="memory"
-              draggable={false}
-            />
-            {findMode && (
-              <>
-                {!symbolFound && (
-                  <img
-                    className={`sarvada-hidden-symbol${hintLevel >= 3 ? ' is-guided hint-glow' : ''}`}
-                    src={cfg.hiddenSymbol}
-                    alt=""
-                    aria-hidden="true"
-                    draggable={false}
-                    style={{
-                      left: `${cfg.symbolSpot.l}%`,
-                      top: `${cfg.symbolSpot.t}%`,
-                      width: `${cfg.symbolSpot.w}%`,
-                    }}
-                  />
-                )}
+            <div className="sarvada-find-frame">
+              <img
+                className="sarvada-memory-img"
+                src={cfg.scene}
+                alt="memory"
+                draggable={false}
+              />
+              {findMode && !symbolFound && (
                 <button
-                  className={`sarvada-symbol-target${symbolFound ? ' is-found' : ''}`}
-                  style={{
-                    left: `${cfg.symbolSpot.l}%`,
-                    top: `${cfg.symbolSpot.t}%`,
-                    width: `${cfg.symbolSpot.w}%`,
-                  }}
-                  onPointerDown={handleSymbolFound}
-                  aria-label={`Find the hidden ${cfg.id} symbol`}
+                  className={`sarvada-image-tap${wrongTap ? ' is-wrong' : ''}`}
+                  onPointerDown={handleImageTap}
+                  aria-label="Tap where you think the symbol is hiding"
                 />
-                {popOut && (
-                  <>
-                    <div
-                      className="sarvada-found-burst"
-                      style={{ left: `${cfg.symbolSpot.l}%`, top: `${cfg.symbolSpot.t}%` }}
-                    />
-                    <img
-                      className="sarvada-symbol-pop"
-                      src={cfg.hiddenSymbol}
-                      alt=""
-                      style={{ left: `${cfg.symbolSpot.l}%`, top: `${cfg.symbolSpot.t}%` }}
-                    />
-                    <div
-                      className="sarvada-found-label"
-                      style={{ left: `${cfg.symbolSpot.l}%`, top: `${cfg.symbolSpot.t}%` }}
-                    >
-                      {cfg.foundLabel}
-                    </div>
-                  </>
-                )}
-                {rescueHintActive && !symbolFound && (
+              )}
+              {findMode && showDebugPanel && showZones && (
+                <div className="sarvada-zone-outline" style={zoneStyle(spot)} />
+              )}
+              {findMode && rescueHintActive && !symbolFound && (
+                <div className="sarvada-symbol-ring hint-glow" style={zoneStyle(spot)} />
+              )}
+              {findMode && popOut && (
+                <>
                   <div
-                    className="sarvada-symbol-ring hint-glow"
-                    style={{
-                      left: `${cfg.symbolSpot.l}%`,
-                      top: `${cfg.symbolSpot.t}%`,
-                      width: `${cfg.symbolSpot.w}%`,
-                    }}
+                    className="sarvada-found-burst"
+                    style={{ left: `${spot.l}%`, top: `${spot.t}%` }}
                   />
-                )}
-              </>
-            )}
+                  <div
+                    className="sarvada-found-label"
+                    style={{ left: `${spot.l}%`, top: `${spot.t}%` }}
+                  >
+                    {cfg.foundLabel}
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </div>
       )}
@@ -494,6 +562,7 @@ export default function SarvadaGame({
           </div>
           <div className="sarvada-word">SARVADA</div>
           <div className="sarvada-meaning">Always</div>
+          <div className="sarvada-story">Morning, afternoon, night — always.</div>
         </div>
       )}
 
@@ -507,6 +576,113 @@ export default function SarvadaGame({
             aria-hidden="true"
             draggable={false}
           />
+        )}
+      </div>
+
+      {flySymbol && (
+        <img
+          key={flySymbol.key}
+          className="sarvada-fly-symbol"
+          src={flySymbol.src}
+          alt=""
+          aria-hidden="true"
+          draggable={false}
+          style={{
+            left: `${flySymbol.startX}px`,
+            top: `${flySymbol.startY}px`,
+            '--fly-dx': `${flySymbol.dx}px`,
+            '--fly-dy': `${flySymbol.dy}px`,
+          }}
+          onAnimationEnd={() => {
+            // Symbol has reached the syllable tile — light it now so the
+            // syllable sound lands on contact (matches Sarvakaryeshu).
+            const cfgNow = PHASES_CONFIG[phaseIndex];
+            setLitCount(cfgNow.litCount);
+            setRevealedSyls((prev) =>
+              prev.includes(cfgNow.syllable) ? prev : [...prev, cfgNow.syllable],
+            );
+            window.setTimeout(() => setFlySymbol(null), 120);
+          }}
+        />
+      )}
+
+      <div className={`sarvada-debug ${showDebugPanel ? 'is-open' : ''}`}>
+        <button
+          type="button"
+          className="sarvada-debug-toggle"
+          onClick={() => setShowDebugPanel((v) => !v)}
+        >
+          {showDebugPanel ? 'Hide Tap Zone Debug' : 'Tap Zone Debug'}
+        </button>
+
+        {showDebugPanel && (
+          <div className="sarvada-debug-body">
+            <div className="sarvada-debug-copy-row">
+              <button type="button" className="sarvada-debug-copy" onClick={copyZoneConfig}>
+                Copy symbolSpot config
+              </button>
+              {copyStatus && <span>{copyStatus}</span>}
+            </div>
+
+            <label className="sarvada-debug-check">
+              <input
+                type="checkbox"
+                checked={showZones}
+                onChange={(e) => setShowZones(e.target.checked)}
+              />
+              <span>Show tap zones on image</span>
+            </label>
+
+            <p className="sarvada-debug-note">
+              {findMode
+                ? `Editing: ${cfg.label}. Tap the memory bubble on each phase to line up its zone.`
+                : 'Tap the memory bubble to open the image and see the zone.'}
+            </p>
+
+            {PHASES_CONFIG.map((p, i) => (
+              <div key={p.id} className="sarvada-debug-group">
+                <div className="sarvada-debug-section-title">
+                  {p.label}
+                  {i === phaseIndex && findMode ? ' — live' : ''}
+                </div>
+                {[
+                  ['X', 'l', 0, 100, 0.5],
+                  ['Y', 't', 0, 100, 0.5],
+                  ['Size', 'w', 4, 40, 0.5],
+                ].map(([label, key, min, max, step]) => (
+                  <label key={key} className="sarvada-debug-row">
+                    <span>{label}</span>
+                    <input
+                      type="range"
+                      min={min}
+                      max={max}
+                      step={step}
+                      value={spots[i][key]}
+                      onChange={(e) => updateSpot(i, key, e.target.value)}
+                    />
+                    <input
+                      type="number"
+                      min={min}
+                      max={max}
+                      step={step}
+                      value={spots[i][key]}
+                      onChange={(e) => updateSpot(i, key, e.target.value)}
+                    />
+                  </label>
+                ))}
+              </div>
+            ))}
+
+            <div className="sarvada-debug-actions">
+              <button
+                type="button"
+                className="sarvada-debug-reset"
+                onClick={() => setSpots(PHASES_CONFIG.map((p) => ({ ...p.symbolSpot })))}
+              >
+                Reset zones
+              </button>
+            </div>
+          </div>
         )}
       </div>
     </div>

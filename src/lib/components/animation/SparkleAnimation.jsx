@@ -105,6 +105,8 @@ const SparkleAnimation = ({
         return 'sparkle-firefly';
       case 'magic':
         return 'sparkle-magic';
+      case 'dust':
+        return 'sparkle-dust';
       default:
         return 'sparkle-star';
     }
