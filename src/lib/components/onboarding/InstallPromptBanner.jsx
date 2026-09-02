@@ -58,7 +58,9 @@ const InstallPromptBanner = ({ onContinue }) => {
           borderTop: '3px solid #FF5722',
           boxShadow: '0 -4px 12px rgba(0,0,0,0.15)',
           padding: '16px 20px',
-          zIndex: 2000,
+          maxHeight: '46vh',
+          overflowY: 'auto',
+          zIndex: 10000,
           fontFamily: "'Nunito', sans-serif",
         }}
       >
@@ -115,15 +117,15 @@ const InstallPromptBanner = ({ onContinue }) => {
         alignItems: 'center',
         justifyContent: 'space-between',
         gap: '12px',
-        zIndex: 2000,
+        zIndex: 10000,
         fontFamily: "'Nunito', sans-serif",
       }}
     >
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontFamily: "'Baloo 2', cursive", color: '#FF5722', fontSize: '1rem' }}>
+        <div style={{ fontFamily: "'Baloo 2', cursive", color: '#FF5722', fontSize: '1rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
           Add to Home Screen
         </div>
-        <div style={{ fontSize: '0.85rem', color: '#5D4037' }}>
+        <div style={{ fontSize: '0.85rem', color: '#5D4037', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
           Install for instant, full-screen access.
         </div>
       </div>

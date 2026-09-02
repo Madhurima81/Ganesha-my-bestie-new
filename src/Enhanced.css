@@ -384,6 +384,18 @@
   .loader-mushika { width: 78px; bottom: 46px; }
 }
 
+/* Phone landscape / very short viewports — keep Ganesha + loader from crowding */
+@media (max-height: 480px) {
+  .loading-ganesha-container {
+    width: clamp(120px, 22vh, 190px);
+    height: clamp(120px, 22vh, 190px);
+    margin-bottom: 6px;
+  }
+  .loader-track { gap: 18px; bottom: 16px; }
+  .loader-modak { width: clamp(40px, 9vh, 56px); }
+  .loader-mushika { width: clamp(52px, 12vh, 72px); bottom: 30px; }
+}
+
 /* Accessibility */
 @media (prefers-reduced-motion: reduce) {
   .loader-mushika { animation: none !important; transition: none !important; }

@@ -279,6 +279,7 @@
   .welcome-title { font-size: 28px !important; }
   .welcome-title-container { top: 3%; }
 
+  .welcome-content-overlay { padding-block: 12px; }
   .adventure-button-container .profile-cta-btn-unified { font-size: 18px; padding: 10px 44px; }
   .adventure-button-container { margin-bottom: 20px; }
 }
