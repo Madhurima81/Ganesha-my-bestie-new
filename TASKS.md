@@ -78,6 +78,8 @@ Before every task, Claude Code must:
 - [x] T46 · ShlokaRiverFinale — wire SFX consistently with other Shloka River scenes: `playUiTap` on word pickup, `playSparkle` on every correct placement, `playSparkle`+`playChime` on the 8th/final word (matches Pond's bloom+chime pattern)
 - [x] T47 · InnerMandala — earned-symbol size increased ~33% (7.2%/36px → 9.6%/48px max) and subtitle/hint text repositioned below the flower (was overlapping the lowest petal) — confirmed via DOM measurement, mobile breakpoint updated to match
 - [x] T48 · CleanGameWelcomeScreen / InnerMandala — nudged avatar/monkey slot up 6px total via `.mandala-avatar-slot`
+- [~] T20 · CSS media-queries audit — Zone 1 (Symbol Mountain) done: phone-landscape (915×412 / 640×360) audit + fixes in 3 shared components (SymbolSidebar, ZoneWelcome, OpeningModal) via new `@media (max-height: 480px)` blocks; verified in-browser on all 4 SM scenes (Modak, Pond, Symbol, Sacred Assembly). Portrait out of scope (rotate overlay). SceneStage NOT used by SM scenes — see DECISIONS.md #7. Zones 2–3 still pending.
+- [ ] T49 · CleanGameWelcomeScreen (returning-user "Welcome Back / Continue Adventure" screen) — short-landscape (≤412px h) vertical overflow: "Continue Adventure" + Home / Switch Explorer / Start Over buttons sit below the fold, page scrolls. Flagged and deferred by TWO separate 2026-09-02 sweeps (Zone 1 CSS pilot + pre-Zone-1 onboarding). Returning families hit this every session — needs its own `@media (max-height: 480px)` pass (same pattern as ParentGate / ProfileSelector). Do before wider beta.
 
 
 
@@ -219,10 +221,10 @@ Before every task, Claude Code must:
 
 | # | Scene | File | T19 | T20 | T21 |
 |---|---|---|---|---|---|
-| 01 | modak | NewModakSceneV7 | [ ] | [ ] | [ ] |
-| 02 | pond | PondSceneSimplifiedV4 | [ ] | [ ] | [ ] |
-| 03 | symbol | SymbolMountainSceneV3 | [ ] | [ ] | [ ] |
-| 04 | final-scene | SacredAssemblySceneV8 | [ ] | [ ] | [ ] |
+| 01 | modak | NewModakSceneV7 | [ ] | [x] | [ ] |
+| 02 | pond | PondSceneSimplifiedV4 | [ ] | [x] | [ ] |
+| 03 | symbol | SymbolMountainSceneV3 | [ ] | [x] | [ ] |
+| 04 | final-scene | SacredAssemblySceneV8 | [ ] | [x] | [ ] |
 | 05 | vakratunda-mahakaya | CaveSceneFixedV2 | [ ] | [ ] | [ ] |
 | 06 | suryakoti-samaprabha | SuryakotiSceneV4 | [ ] | [ ] | [ ] |
 | 07 | nirvighnam-kurumedeva | NirvighnamSceneV5 | [ ] | [ ] | [ ] |

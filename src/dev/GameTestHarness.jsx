@@ -46,7 +46,7 @@ const INTRO_VO = {
 // Scene backgrounds — normally rendered by the parent scene wrapper, not the
 // game component. Vakratunda/Mahakaya draw nothing of their own, so without
 // this the stage is blank; the others paint their own bg on top anyway.
-import riverBg from '../zones/shloka-river/scenes/Scene1/assets/images/riverbg-new.webp';
+import riverBg from '../zones/shloka-river/scenes/Scene1/assets/images/vakratunda-scene-bg.webp';
 import banyanTree from '../zones/shloka-river/scenes/Scene1/assets/images/banyan-full-from-download.webp';
 import suryakotiBg from '../zones/shloka-river/scenes/Scene2/assets/images/saurakoti-bg.webp';
 import nirvighnamBg from '../zones/shloka-river/scenes/Scene3/assets/images/nirvighnam/bg.webp';
@@ -67,7 +67,11 @@ const GAMES = {
 // Full scenes — self-contained (they wire their own SceneManager / useVoiceGuidance /
 // ProgressManager). Rendered full-bleed; real audio works without the mock.
 const SCENES = {
+  'sr-vakratunda': { label: 'Shloka River 1 — Vakratunda Grove', isScene: true, zoneId: 'shloka-river', sceneId: 'vakratunda-grove', Comp: lazy(() => import('../zones/shloka-river/scenes/Scene1/VakratundaGroveSimplified')) },
+  'sr-suryakoti':  { label: 'Shloka River 2 — Suryakoti Bank',   isScene: true, zoneId: 'shloka-river', sceneId: 'suryakoti-bank',  Comp: lazy(() => import('../zones/shloka-river/scenes/Scene2/SuryakotiBankSimplified')) },
   'sr-finale':   { label: 'Shloka River — Finale',       isScene: true, zoneId: 'shloka-river',    sceneId: 'shloka-river-finale', Comp: lazy(() => import('../zones/shloka-river/scenes/scene5/ShlokaRiverFinale')) },
+  'cel-sm':      { label: 'Closing modal — Symbol Mtn',   isScene: true, zoneId: 'symbol-mountain', sceneId: 'modak',           Comp: lazy(() => import('./CelebrationPreview')) },
+  'cel-sr':      { label: 'Closing modal — Shloka River', isScene: true, zoneId: 'shloka-river',    sceneId: 'vakratunda-grove', Comp: lazy(() => import('./CelebrationPreview')) },
   'sm-modak':    { label: 'Symbol Mtn 1 — Modak',        isScene: true, zoneId: 'symbol-mountain', sceneId: 'modak',       Comp: lazy(() => import('../zones/symbol-mountain/scenes/modak/NewModakSceneV7')) },
   'sm-pond':     { label: 'Symbol Mtn 2 — Pond',         isScene: true, zoneId: 'symbol-mountain', sceneId: 'pond',        Comp: lazy(() => import('../zones/symbol-mountain/scenes/pond/PondSceneSimplifiedV4')) },
   'sm-symbol':   { label: 'Symbol Mtn 3 — Symbol',       isScene: true, zoneId: 'symbol-mountain', sceneId: 'symbol',      Comp: lazy(() => import('../zones/symbol-mountain/scenes/tusk/SymbolMountainSceneV3')) },

@@ -1087,6 +1087,13 @@
   100% { transform: translate(-50%, -50%) translateY(0px); }
 }
 
+/* Shorter bob for short-landscape viewports (see max-height: 480px block) */
+@keyframes floatSoftShort {
+  0%   { transform: translate(-50%, -50%) translateY(0px); }
+  50%  { transform: translate(-50%, -50%) translateY(-5px); }
+  100% { transform: translate(-50%, -50%) translateY(0px); }
+}
+
 /* Float animation is uniform — delays removed */
 
 /* Split Buttons for In-Progress */
@@ -1144,6 +1151,64 @@
   .zone-btn:active,
   .action-button-split:active {
     transform: translateY(2px) scale(0.985);
+  }
+}
+
+/* ==========================================================
+   SHORT LANDSCAPE (phones held sideways, height <= 480px)
+   The 4-card pyramid + bottom journey pill are together taller
+   than the viewport: top card's number badge clips off the top
+   and the bottom card overlaps the progress pill. Compress the
+   pyramid rows, shrink the card min-height floor, and tuck the
+   bottom bar closer to the edge so everything fits without
+   scrolling.
+   ========================================================== */
+@media (max-height: 480px) {
+  .cards-wrapper {
+    height: 92vh;
+  }
+
+  .zone-scene-card {
+    width: clamp(150px, min(19.5vw, 40vh), 320px);
+    min-height: clamp(150px, min(22vw, 44vh), 360px);
+  }
+
+  /* 4-card pyramid — pull the top and bottom rows inward */
+  .zone-1 { top: 73%; }
+  .zone-2,
+  .zone-3 { top: 50%; }
+  .zone-4 { top: 29%; }
+
+  /* Trim the float bob so the top card's badge doesn't ride under the
+     zone title on a short viewport. */
+  .zone-card {
+    animation-name: floatSoftShort;
+  }
+
+  /* 5-card two-row zones (Shloka River / Cave) — same compression */
+  .cave-of-secrets .zone-1,
+  .shloka-river .zone-1,
+  .cave-of-secrets .zone-2,
+  .shloka-river .zone-2,
+  .cave-of-secrets .zone-3,
+  .shloka-river .zone-3 { top: 73%; }
+
+  .cave-of-secrets .zone-4,
+  .shloka-river .zone-4,
+  .cave-of-secrets .zone-5,
+  .shloka-river .zone-5 { top: 30%; }
+
+  .stats-bottom-bar {
+    bottom: 8px;
+  }
+
+  .journey-panel {
+    gap: clamp(12px, 2.1vw, 34px);
+    padding: 6px clamp(16px, 2.5vw, 42px);
+  }
+
+  .zone-title-top {
+    top: 4px;
   }
 }
 

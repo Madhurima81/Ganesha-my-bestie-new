@@ -407,6 +407,17 @@
     min-height: 95dvh;
     padding: 0 20px;
     gap: 20px;
+    /* Cancel the -42px base lift — on a short landscape viewport it pushes
+       the card's top (and the lotus icon) off the top edge. */
+    transform: translateY(0);
+  }
+
+  /* Lotus icon was clipping past the top edge; keep it inside the card. */
+  .game-modal-lotus-top {
+    width: clamp(32px, 4.4vw, 44px);
+    height: clamp(32px, 4.4vw, 44px);
+    transform: none;
+    margin-bottom: 2px;
   }
 
   .game-modal-character {
@@ -421,24 +432,32 @@
 
   .game-modal-card {
     flex: 1;
-    padding: 44px 50px 36px;
+    padding: 28px 46px 22px;
     max-width: none;
     min-height: auto;
+    justify-content: flex-start;
+    gap: 4px;
+    overflow-y: auto;
   }
 
   .game-modal-title {
-    font-size: 28px !important;
-    margin-bottom: 10px;
+    font-size: 26px !important;
+    margin-bottom: 6px;
   }
 
   .game-modal-subtitle {
     font-size: 15px !important;
-    margin-bottom: 10px !important;
+    margin-bottom: 8px !important;
   }
 
   .game-modal-icons {
-    gap: 16px;
-    margin-bottom: 15px;
+    gap: 14px;
+    margin: 6px 0 10px;
+  }
+
+  .game-modal-icon-circle {
+    width: clamp(44px, 6vw, 58px);
+    height: clamp(44px, 6vw, 58px);
   }
 
 }

@@ -42,6 +42,13 @@
   stroke-linejoin: round;
 }
 
+/* Debug-only: vertical X lines where va / kra / tun light. */
+.vak-debug-band {
+  stroke: rgba(233, 30, 99, 0.55);
+  stroke-width: 0.4;
+  stroke-dasharray: 1.6 1.6;
+}
+
 .vak-route-guide {
   fill: none;
   stroke: rgba(22, 151, 151, 0.32);

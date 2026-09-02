@@ -56,7 +56,7 @@ import MahakayaRescueGame from './MahakayaRescueGame';
 import ganeshaHeadphones from './assets/images/ganesha_with_headphones.webp';
 
 // Images
-import riverBackground from './assets/images/riverbg-new.webp';
+import riverBackground from './assets/images/vakratunda-scene-bg.webp';
 import mooshikaCoach from "./assets/images/mooshika-coach.webp";
 import banyanTree from './assets/images/banyan-full-from-download.webp';
 import symbolVakratunda from '../../../symbol-mountain/shared/images/icons/symbol-trunk-new.webp';

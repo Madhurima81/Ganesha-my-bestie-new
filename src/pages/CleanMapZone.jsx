@@ -122,8 +122,8 @@ const MAP_ZONE_COMPLETION_VO = {
 
 // Temporary debug switches for QA checks.
 // Set both back to false after verification.
-const DEBUG_UNLOCK_ALL_ZONES = false;
-const DEBUG_ALWAYS_OPEN_ZONE_WELCOME = false;
+const DEBUG_UNLOCK_ALL_ZONES = true;
+const DEBUG_ALWAYS_OPEN_ZONE_WELCOME = true;
 
 const getZoneDefinition = (zoneId) => ZONES_DATA.find((zone) => zone.id === zoneId);
 

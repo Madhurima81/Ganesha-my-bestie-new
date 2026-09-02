@@ -395,3 +395,45 @@
     height: 38px;
   }
 }
+
+/* Short landscape (phones held sideways): the vertically-centred strip is
+   taller than the viewport, so the first and last symbol slots get clipped
+   off both edges and the strip crowds the bottom-right mute button.
+   Anchor it top-to-near-bottom instead of centring, reserve room for the
+   mute control, and let it scroll internally if symbols still overflow. */
+@media (max-height: 480px) {
+  .ganesha-sidebar {
+    top: 6px;
+    bottom: 72px;
+    transform: none;
+    height: auto;
+    max-height: none;
+    justify-content: flex-start;
+    gap: 4px;
+    padding: 6px 2px;
+    border-radius: 34px;
+    overflow-y: auto;
+    overflow-x: visible;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .ganesha-sidebar::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+
+  /* 8 symbol slots have to share ~330px here — below the 60px ideal, but
+     this strip is a passive collection readout (slots aren't tappable until
+     discovered) and overflow-y keeps any remainder reachable. */
+  .ganesha-icon-hitarea {
+    width: 38px;
+    height: 38px;
+    flex: 0 0 auto;
+  }
+
+  .ganesha-icon {
+    width: 30px;
+    height: 30px;
+  }
+}

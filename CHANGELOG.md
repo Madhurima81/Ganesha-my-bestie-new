@@ -39,8 +39,15 @@ pre-Zone-1 onboarding sweep below (no file overlap).
   overrides them). Per-scene, not shared; sweep during the per-scene rollout.
 - Residual: at <=360px height the ZoneWelcome top card's number badge still rides
   close under the zone title.
-- Rollout pending: re-verify Pond / Symbol / Sacred Assembly pick up the shared
-  fixes cleanly; TASKS.md T20 cells for Zone 1 left unchecked until then.
+**Rollout (same session):** verified the 3 shared fixes on Pond / Symbol / Sacred
+Assembly via `/game-test.html` at 915x412. All 3 import the identical shared
+SymbolSidebar + OpeningModal, and grep confirmed no per-scene CSS touches
+`.ganesha-sidebar` / `.ganesha-icon` / `.game-modal-*` — so no new edits needed.
+OpeningModal (lotus + button) checked clean on all 4 SM scenes; SymbolSidebar (no
+edge clip, mute clear) checked on Modak/Pond/Symbol (Sacred Assembly's sidebar
+phase wouldn't drive in the harness, but same component + zero override).
+TASKS.md T20 marked [x] for scenes 01-04; new **T49** logged for the
+CleanGameWelcomeScreen short-landscape overflow (deferred by two sweeps now).
 
 ## [2026-09-02] — Pre-Zone-1 onboarding chrome: mobile landscape CSS audit + fixes
 **Touched:** src/Enhanced.css, src/lib/components/navigation/MainWelcomeScreen.css,
