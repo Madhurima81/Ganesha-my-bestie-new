@@ -1,6 +1,81 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
 
+## [2026-09-02] — Zone 1 phone-landscape CSS pilot (Scene 1 + shared chrome)
+**Touched:** DECISIONS.md,
+src/zones/symbol-mountain/shared/components/SymbolSidebar.css,
+src/lib/components/zone/ZoneWelcome.css,
+src/zones/shared/components/OpeningModal.css
+**Changed:** Pilot pass of a Zone 1 (Symbol Mountain) mobile-CSS audit, fix-in-place
+(no SceneStage — deliberately dropped earlier for layout issues; recorded under
+DECISIONS.md #7 so the stale 1280x800 decision stops resurfacing). Tested Scene 1
+(Modak) in the in-app browser at phone-landscape 915x412 and 640x360; portrait out
+of scope (rotate-device overlay). Three shared-component fixes, so this also
+previews the change for Pond / Symbol / Sacred Assembly. Complements the same-day
+pre-Zone-1 onboarding sweep below (no file overlap).
+- **SymbolSidebar** — new `@media (max-height: 480px)` block. The vertically-centred
+  8-slot strip was taller than the viewport: top+bottom slots clipped off both
+  edges and it overlapped the bottom-right mute button. Now anchored `top:6px /
+  bottom:72px` (not centred), slots 38px hitarea / 30px icon, `gap:4px`,
+  `overflow-y:auto` + hidden scrollbar as safety net. Verified: no edge clip, mute
+  clear.
+- **ZoneWelcome** — new `@media (max-height: 480px)` block. 4-card pyramid + "N/4
+  Scenes" pill together taller than the viewport (top badge clipped, bottom card
+  overlapped the pill). Compressed rows (`.zone-4` 29% / mid 50% / `.zone-1` 73%),
+  lower card min-height floor, `stats-bottom-bar` bottom 8px, tighter journey-panel
+  padding, `zone-title-top` top 4px, `floatSoftShort` keyframe (±5px bob). Same
+  compression for the 5-card Shloka/Cave rows. Verified: pill/bottom-card overlap
+  gone.
+- **OpeningModal** — MOBILE LANDSCAPE block (568-1023 landscape) now cancels the base
+  `translateY(-42px)` lift (was pushing card top + lotus icon off-screen), shrinks
+  the lotus, tightens card padding / title+subtitle margins / icon circle so
+  "Let's Begin" stays on-screen at 360px height. Verified at 915x412 and 640x360.
+**Open:**
+- Fix 2 (`.modak-game-background` `100% 100%` -> `cover`) NOT applied — stretch keeps
+  the `%`-positioned game elements mapped to the art at every aspect ratio; `cover`
+  would crop and drift them. Recommend leaving as-is.
+- Fix 3 (fixed-`px !important` overrides in ModakScene.css media queries ~L760-886)
+  NOT applied — already dead code (the `--modak-size` "Final lock" at L883-886
+  overrides them). Per-scene, not shared; sweep during the per-scene rollout.
+- Residual: at <=360px height the ZoneWelcome top card's number badge still rides
+  close under the zone title.
+- Rollout pending: re-verify Pond / Symbol / Sacred Assembly pick up the shared
+  fixes cleanly; TASKS.md T20 cells for Zone 1 left unchecked until then.
+
+## [2026-09-02] — Pre-Zone-1 onboarding chrome: mobile landscape CSS audit + fixes
+**Touched:** src/Enhanced.css, src/lib/components/navigation/MainWelcomeScreen.css,
+src/lib/components/onboarding/ParentGate.css,
+src/lib/components/navigation/CleanProfileSelector.css,
+src/lib/components/onboarding/InstallPromptBanner.jsx
+**Changed:** Extended the Scene 1 mobile-landscape CSS approach (clamp/%, `@media
+(max-height: 480px)` compression, no new fixed-px `!important`) to the six
+pre-Zone-1 onboarding screens. Audited at 915×412 and 640×360.
+- **ParentGate (HIGH):** `.parent-gate-card` `min-height` floor of 520px exceeded
+  short-landscape viewports and centered content (incl. Continue button) off
+  screen with no in-card scroll. The one relaxing query was width-bound at 900px
+  so 915-wide phones missed it. Fix: added `(min-height: 481px)` to that query;
+  new `max-height: 480px` block unlocks the floor, top-aligns, compresses type +
+  checkbox, makes `.parent-gate-actions` a sticky footer, card scrolls internally.
+- **CleanProfileSelector create flow (HIGH):** `.scroll-card` `aspect-ratio: 0.72`
+  computed ~833px tall at 915w; `.clean-modal-overlay.scroll-overlay` had no
+  `overflow-y`. New `max-height: 480px` block drops the aspect lock (card hugs
+  content), scrolls the overlay, kills the fixed 146px `padding-top`, hides the
+  decorative lotus, compresses name input / age stepper / friend grid / buttons.
+  Button height overrides keep `!important` only to match the pre-existing
+  PrimaryBtn override specificity.
+- **Splash loader (LOW):** added `max-height: 480px` shrink for
+  `.loading-ganesha-container` + loader track.
+- **MainWelcomeScreen (LOW):** trimmed `.welcome-content-overlay` padding in the
+  existing short-landscape block.
+- **InstallPromptBanner (LOW):** ellipsis guards on banner title/subtitle;
+  `maxHeight: 46vh` + scroll on the iOS steps sheet; **z-index 2000 → 10000** so
+  the PWA nudge actually renders above the MooshikaRideTransition (z 9999) during
+  the profile-create → handoff moment, as the code comments intend.
+**Open:** CleanGameWelcomeScreen (returning-user welcome/continue screen)
+deliberately not swept — outside first-run scope; revisit before wider beta since
+returning families hit it every session. Fixes are code-verified only, not yet
+tested on a physical landscape phone.
+
 ## [2026-08-29] — Shloka River reward ladder
 **Touched:** src/lib/components/animation/SparkleAnimation.jsx + .css,
 src/zones/shloka-river/scenes/Scene1/VakratundaGroveSimplified.jsx + .css,
