@@ -4,11 +4,13 @@ import ProfilePillBtn from '../shared/ProfilePillBtn';
 import { playUiTap } from '../../services/AudioService';
 import AudioToggle from '../ui/AudioToggle/AudioToggle';
 import useAudioPreference from '../../hooks/useAudioPreference';
+import DeviceChoiceModal from './DeviceChoiceModal';
 import './MainWelcomeScreen.css';
 
 const MainWelcomeScreen = ({ onStartAdventure }) => {
   const [showButton, setShowButton] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
+  const [showDeviceChoice, setShowDeviceChoice] = useState(false);
   const { isAudioOn, toggleAudio } = useAudioPreference();
   const ambientRef = useRef(null);
   const fadeRef = useRef(null);
@@ -94,8 +96,16 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
       return;
     }
 
-    setIsStarting(true);
     playUiTap(0.24);
+    setShowDeviceChoice(true);
+  };
+
+  const handleContinueHere = () => {
+    if (isStarting) {
+      return;
+    }
+
+    setIsStarting(true);
 
     // Add slight delay for visual feedback
     startTimerRef.current = setTimeout(() => {
@@ -131,7 +141,7 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
       <div className="welcome-content-overlay">
         <div className={`adventure-button-container ${showButton ? 'visible' : ''}`}>
           <ProfilePillBtn
-            label={isStarting ? 'Starting...' : 'Begin'}
+            label={isStarting ? 'Starting...' : 'Start Free'}
             onClick={handleStartAdventure}
             disabled={isStarting}
             size="lg"
@@ -152,6 +162,12 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
         loop
         preload="metadata"
         style={{ display: 'none' }}
+      />
+
+      <DeviceChoiceModal
+        isOpen={showDeviceChoice}
+        onClose={() => setShowDeviceChoice(false)}
+        onContinueHere={handleContinueHere}
       />
     </div>
   );

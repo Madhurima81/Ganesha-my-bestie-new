@@ -853,6 +853,16 @@ const initializeApp = async () => {
     console.log('✅ App initialization complete');
     setIsInitialized(true);
 
+    const params = new URLSearchParams(window.location.search);
+    const shouldStartParentGate =
+      params.get('start') === 'parent-gate' ||
+      params.get('continue') === 'ipad';
+
+    if (shouldStartParentGate) {
+      setCurrentView('parent-gate');
+      return;
+    }
+
     // Determine starting view
     if (hasExistingProfiles && activeProfileId) {
       setCurrentView('profile-welcome');
