@@ -141,7 +141,7 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
       <div className="welcome-content-overlay">
         <div className={`adventure-button-container ${showButton ? 'visible' : ''}`}>
           <ProfilePillBtn
-            label={isStarting ? 'Starting...' : 'Start Free'}
+            label={isStarting ? 'Starting...' : 'Begin'}
             onClick={handleStartAdventure}
             disabled={isStarting}
             size="lg"
