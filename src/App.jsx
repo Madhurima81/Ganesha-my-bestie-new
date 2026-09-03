@@ -20,6 +20,7 @@ const CleanGameWelcomeScreen = lazy(() => import('./lib/components/navigation/Cl
 const CleanProfileSelector   = lazy(() => import('./lib/components/navigation/CleanProfileSelector'));
 const ParentDashboard        = lazy(() => import('./lib/components/navigation/ParentDashboard'));
 const CleanMapZone         = lazy(() => import('./pages/CleanMapZone'));
+const LandingPage          = lazy(() => import('./pages/LandingPage'));
 const ZoneWelcome          = lazy(() => import('./lib/components/zone/ZoneWelcome'));
 import { getZoneConfig } from './lib/components/zone/ZoneConfig';
 import GameStateManager from './lib/services/GameStateManager';
@@ -86,7 +87,7 @@ const SCENE_IMAGES = {
     'final-scene': ['/src/zones/symbol-mountain/scenes/final scene/assets/images/final_symbol_background.webp'],
   },
   'shloka-river': {
-    'vakratunda-grove': ['/src/zones/shloka-river/scenes/Scene1/assets/images/riverbg-new.webp'],
+    'vakratunda-grove': ['/src/zones/shloka-river/scenes/Scene1/assets/images/vakratunda-scene-bg.webp'],
     'suryakoti-bank': ['/src/zones/shloka-river/scenes/Scene2/assets/images/saurakoti-bg.webp'],
     'nirvighnam-chant': ['/src/zones/shloka-river/scenes/Scene3/assets/images/nirvighnam/bg.webp'],
     'sarvakaryeshu-chant': ['/src/zones/shloka-river/scenes/scene4/assets/images/sarvada/night.webp'],
@@ -750,9 +751,15 @@ useEffect(() => {
 };*/
 
 const initializeApp = async () => {
+  // Marketing landing page: it's a static React page that needs none of the
+  // game managers to paint. Show it immediately instead of the kids-app
+  // loading scene — the manager/profile setup below still runs in the
+  // background so "Start Free" works by the time anyone taps it.
+  const isLandingBoot =
+    new URLSearchParams(window.location.search).get('view') === 'landing';
   try {
     console.log('🌟 Initializing app...');
-    setCurrentView('loading');
+    setCurrentView(isLandingBoot ? 'landing' : 'loading');
     setLoadingProgress(0);
     setLoadingStep('Just a moment… let\'s get ready.');
     
@@ -847,8 +854,12 @@ const initializeApp = async () => {
     // Step 6: Complete (100%)
     setLoadingProgress(100);
     setLoadingStep('Yay… let\'s play!');
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
+    // Skip the "let's play" payoff pause when we're already showing the
+    // landing page — that pause only exists for the loader animation.
+    if (!isLandingBoot) {
+      await new Promise(resolve => setTimeout(resolve, 500));
+    }
+
     console.log('⏱️ Load time:', performance.now().toFixed(0), 'ms');
     console.log('✅ App initialization complete');
     setIsInitialized(true);
@@ -860,6 +871,14 @@ const initializeApp = async () => {
 
     if (shouldStartParentGate) {
       setCurrentView('parent-gate');
+      return;
+    }
+
+    // Marketing/beta-recruitment landing page — opt-in via ?view=landing by
+    // design (decision 2026-09-03). 'main-welcome' stays the default so
+    // returning users land on their saved profile, not the Start Free funnel.
+    if (params.get('view') === 'landing') {
+      setCurrentView('landing');
       return;
     }
 
@@ -1459,6 +1478,12 @@ chants: result?.chants || result?.chantedVerses || {},
           />
         </div>
       )}
+
+      {currentView === 'landing' && (
+        <div className="view-transition">
+          <LandingPage onStartFree={handleStartAdventure} />
+        </div>
+      )}
       
       {currentView === 'profile-welcome' && (
         <div className="view-transition">
@@ -1832,7 +1857,7 @@ if (tempData.playAgainRequested) {
       )}
       
       {/* Fallback view */}
-      {!['loading', 'error', 'main-welcome', 'parent-gate', 'sign-in', 'profile-welcome', 'profile-create', 'profile-selector', 'map', 'zone-welcome', 'scene', 'parent-dashboard', 'twg'].includes(currentView) && (
+      {!['loading', 'error', 'main-welcome', 'landing', 'parent-gate', 'sign-in', 'profile-welcome', 'profile-create', 'profile-selector', 'map', 'zone-welcome', 'scene', 'parent-dashboard', 'twg'].includes(currentView) && (
         <div className="unknown-view-error">
           <h2>Error: Unknown view state</h2>
           <p>Current view: {currentView}</p>

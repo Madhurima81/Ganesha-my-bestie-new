@@ -1,0 +1,1126 @@
+/* =========================================================================
+   LandingPage.css — GMB marketing landing page
+   Merged from 11 standalone mockups (screens 1–10 + strip + founder + faq).
+
+   Structure:
+   - ONE shared design-token block (:root-level, scoped to .landing-page)
+   - ONE shared sticky header (.lp-header) — the per-section header markup
+     from screen1 / screen2 / screen3 / screen3b was removed
+   - ONE shared sticky bottom CTA bar (.lp-bottombar)
+   - Each mockup section is scoped under a unique .lp-<name> parent and all
+     of its selectors are prefixed, so the class collisions between files
+     (.cta, .icon-circle, h2, .eyebrow, .curve-top, .dot, .carousel-dots)
+     no longer clash.
+
+   Fonts: Baloo 2 + Nunito are loaded globally in index.html — NOT re-loaded
+   here. (index.html was updated to also request Nunito italic for the
+   founder note.)
+
+   CANONICAL TOKEN DECISIONS (small hex conflicts across the source files):
+   - purple  : #52306b  (10/11 files; hero used #3A2A4A "plum" for its H1 ink
+               and #5A3D8A / #6A4C9C for accents — hero H1 kept as --gmb-ink,
+               hero accent folded into --gmb-accent)
+   - accent  : #7a5ad9  (hero used #6A4C9C — folded in)
+   - cream   : #fff9f1  (unanimous)
+   - lavender-soft: #f0e8fa (screen5 #f3ecfa / screen8 #efe7f8 were within a
+               few % — folded in; the screen5 SVG blob fill stays #F3ECFA
+               inline because it is art, not a token)
+   ========================================================================= */
+
+.landing-page {
+  --gmb-cream: #fff9f1;
+  --gmb-purple: #52306b;
+  --gmb-purple-deep: #3d2350;
+  --gmb-ink: #3a2a4a;
+  --gmb-accent: #7a5ad9;
+  --gmb-violet: #8a6fd8;
+  --gmb-lavender: #cdc1e3;
+  --gmb-lavender-soft: #f0e8fa;
+  --gmb-muted: #6f6577;
+  --gmb-text-soft: #6f6380;
+  --gmb-yellow-soft: #ffe9a8;
+  --gmb-white: #ffffff;
+  --gmb-line: rgba(82, 48, 107, 0.16);
+
+  --lp-shell: 390px;
+  --lp-header-h: 64px;
+
+  box-sizing: border-box;
+  /* The app locks html/body/#root to overflow:hidden (single-screen game
+     views). This is the one scrolling view, so it breaks out of that clip
+     and becomes its own full-viewport scroll container. */
+  position: fixed;
+  inset: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  background: #ece7e0;
+  font-family: "Nunito", sans-serif;
+  color: var(--gmb-purple);
+  -webkit-font-smoothing: antialiased;
+}
+.landing-page * { box-sizing: border-box; }
+
+/* The whole page is a single centred 390px column (portrait-mobile by
+   design — this is a marketing page, viewed on phones in portrait; the
+   in-app "rotate your device" overlay rule does NOT apply here). */
+.lp-shell {
+  width: 100%;
+  max-width: var(--lp-shell);
+  margin: 0 auto;
+  background: var(--gmb-cream);
+  position: relative;
+  padding-top: var(--lp-header-h);
+  overflow-x: clip;
+}
+
+.lp-shell section { width: 100%; }
+
+/* ---------- shared: eyebrow pill ---------- */
+.lp-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+  padding: 7px 16px;
+  border-radius: 999px;
+  background: #ede1fa;
+  font-family: "Baloo 2", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gmb-accent);
+}
+
+/* ---------- shared: primary CTA button ---------- */
+.lp-cta {
+  width: 280px;
+  max-width: 100%;
+  height: 55px;
+  background: var(--gmb-purple);
+  color: #fff;
+  border: none;
+  border-radius: 17px;
+  font-family: "Baloo 2", sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  box-shadow: 0 6px 0 var(--gmb-purple-deep);
+  cursor: pointer;
+}
+.lp-cta:active { transform: translateY(2px); box-shadow: 0 4px 0 var(--gmb-purple-deep); }
+
+/* =========================================================================
+   SHARED STICKY HEADER  (replaces the duplicated headers in screens
+   1 / 2 / 3 / 3b)
+   ========================================================================= */
+.lp-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: center;
+  background: var(--gmb-cream);
+  transition: box-shadow 0.2s ease;
+}
+.lp-header.is-scrolled {
+  box-shadow: 0 2px 12px rgba(82, 48, 107, 0.12);
+}
+.lp-header__inner {
+  width: 100%;
+  max-width: var(--lp-shell);
+  height: var(--lp-header-h);
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.lp-header__logo {
+  font-family: "Baloo 2", sans-serif;
+  font-weight: 700;
+  font-size: 19px;
+  line-height: 1;
+  color: var(--gmb-purple);
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+/* =========================================================================
+   SHARED STICKY BOTTOM CTA BAR
+   Appears once the user scrolls past the hero; hides again when Screen 10's
+   own CTA scrolls into view (so two "Start Free" prompts never compete).
+   ========================================================================= */
+.lp-bottombar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 45;
+  display: flex;
+  justify-content: center;
+  transform: translateY(120%);
+  transition: transform 0.28s ease;
+  pointer-events: none;
+}
+.lp-bottombar.is-visible {
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.lp-bottombar__inner {
+  width: 100%;
+  max-width: var(--lp-shell);
+  padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
+  background: var(--gmb-white);
+  border-top: 1px solid var(--gmb-line);
+  box-shadow: 0 -4px 16px rgba(82, 48, 107, 0.1);
+}
+.lp-bottombar .lp-cta {
+  width: 100%;
+  height: 48px;
+  font-size: 16px;
+  box-shadow: 0 4px 0 var(--gmb-purple-deep);
+}
+
+/* =========================================================================
+   SECTION 1 — HERO  (.lp-hero)   [was screen1]
+   ========================================================================= */
+.lp-hero {
+  background: var(--gmb-cream);
+  padding-bottom: 8px;
+}
+.lp-hero h1 {
+  text-align: center;
+  font-family: "Baloo 2", sans-serif;
+  font-weight: 700;
+  font-size: 38px;
+  line-height: 1.02;
+  color: var(--gmb-ink);
+  max-width: 340px;
+  margin: 24px auto 0;
+}
+.lp-hero__subline {
+  text-align: center;
+  font-weight: 600;
+  font-size: 15.5px;
+  color: var(--gmb-accent);
+  max-width: 280px;
+  margin: 12px auto 0;
+  line-height: 1.3;
+}
+.lp-hero__visual {
+  position: relative;
+  height: 300px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+.lp-hero__blob {
+  position: absolute;
+  left: 50%;
+  top: 20px;
+  transform: translateX(-50%);
+  width: 280px;
+  height: 280px;
+  background: #ede4f9;
+  opacity: 0.7;
+  border-radius: 44% 56% 60% 40% / 50% 45% 55% 50%;
+  z-index: 0;
+}
+.lp-hero__device {
+  position: relative;
+  z-index: 2;
+  width: 335px;
+  max-width: calc(100% - 24px);
+  margin: 16px auto 0;
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 16px 32px rgba(58, 42, 74, 0.22);
+  border: 3px solid #fff;
+}
+.lp-hero__device img {
+  display: block;
+  width: 100%;
+  height: 230px;
+  object-fit: cover;
+  object-position: center 20%;
+}
+.lp-hero__ganesha {
+  position: absolute;
+  z-index: 3;
+  right: -6px;
+  top: 0;
+  width: 150px;
+  filter: drop-shadow(0 10px 14px rgba(58, 42, 74, 0.18));
+}
+.lp-hero__usp-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+.lp-hero__usp {
+  font-family: "Baloo 2", sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--gmb-ink);
+}
+.lp-hero__pill {
+  background: var(--gmb-yellow-soft);
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-weight: 700;
+  font-size: 13px;
+  color: #8a6a1a;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.lp-hero__cta-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+.lp-hero__trust {
+  text-align: center;
+  font-weight: 600;
+  font-size: 13.5px;
+  color: var(--gmb-muted);
+  margin-top: 16px;
+}
+
+/* =========================================================================
+   SECTION 2 — NO APP STORE STRIP  (.lp-strip)   [was strip]
+   ========================================================================= */
+.lp-strip {
+  background: var(--gmb-cream);
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+}
+.lp-strip p {
+  margin: 0;
+  font-family: "Baloo 2", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gmb-purple);
+}
+.lp-strip p span { color: var(--gmb-accent); font-weight: 700; }
+
+/* =========================================================================
+   SECTION 3 — VAKRATUNDA PROOF  (.lp-proof)   [was screen2]
+   ========================================================================= */
+.lp-proof {
+  position: relative;
+  padding: 44px 22px 56px;
+  overflow: hidden;
+  background: var(--gmb-cream);
+}
+.lp-proof__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+.lp-proof__content { position: relative; z-index: 1; text-align: center; }
+.lp-proof h2 {
+  margin: 0 auto;
+  max-width: 340px;
+  font-family: "Baloo 2", sans-serif;
+  font-size: 31px;
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -0.4px;
+  color: var(--gmb-purple);
+}
+.lp-proof__intro {
+  margin: 18px auto 0;
+  max-width: 300px;
+  font-size: 15.5px;
+  font-weight: 500;
+  line-height: 1.45;
+  color: #7659a9;
+}
+.lp-proof__frame {
+  width: 100%;
+  margin-top: 34px;
+  overflow: hidden;
+  background: #fff;
+  border: 4px solid #fff;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(82, 48, 107, 0.12);
+}
+.lp-proof__frame img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1.47 / 1;
+  object-fit: cover;
+}
+.lp-proof__method {
+  margin-top: 20px;
+  font-family: "Baloo 2", sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--gmb-purple);
+}
+.lp-proof__takeaway { margin-top: 35px; }
+.lp-proof__takeaway-label {
+  margin-bottom: 10px;
+  font-family: "Baloo 2", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #8264bd;
+}
+.lp-proof__takeaway-text {
+  font-family: "Baloo 2", sans-serif;
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--gmb-purple);
+}
+
+/* =========================================================================
+   SECTION 4 — GANESHA LAND MAP  (.lp-map)   [was screen3]
+   ========================================================================= */
+.lp-map {
+  overflow: hidden;
+  background: var(--gmb-cream);
+  color: var(--gmb-purple);
+}
+.lp-map__copy { position: relative; z-index: 2; padding: 22px 24px 8px; text-align: center; }
+.lp-map__copy h2 {
+  margin: 0;
+  font-family: "Baloo 2", sans-serif;
+  font-size: 36px;
+  line-height: 0.98;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--gmb-purple);
+}
+.lp-map__copy p {
+  margin: 10px auto 0;
+  max-width: 310px;
+  font-size: 14.5px;
+  line-height: 1.35;
+  font-weight: 500;
+  color: var(--gmb-accent);
+}
+.lp-map__visual { position: relative; margin-top: 6px; min-height: 460px; padding: 46px 20px 32px; }
+.lp-map__blob { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+.lp-map__content { position: relative; z-index: 1; }
+.lp-map__frame {
+  width: 100%;
+  overflow: hidden;
+  border: 4px solid var(--gmb-white);
+  border-radius: 22px;
+  background: var(--gmb-white);
+  box-shadow: 0 8px 22px rgba(82, 48, 107, 0.14);
+}
+.lp-map__frame img { display: block; width: 100%; height: auto; object-fit: cover; }
+.lp-map__closing {
+  margin: 22px auto 0;
+  max-width: 300px;
+  text-align: center;
+  font-family: "Baloo 2", sans-serif;
+  font-size: 17px;
+  line-height: 1.35;
+  font-weight: 600;
+  color: var(--gmb-accent);
+}
+
+/* =========================================================================
+   SECTION 5 — ZONE CAROUSEL  (.lp-zones)   [was screen3b]
+   ========================================================================= */
+.lp-zones {
+  padding: 52px 0 46px;
+  overflow: hidden;
+  background: var(--gmb-cream);
+  color: var(--gmb-purple);
+}
+.lp-zones__copy { padding: 0 24px; text-align: center; }
+.lp-zones__copy h2 {
+  margin: 0;
+  font-family: "Baloo 2", sans-serif;
+  font-size: 32px;
+  line-height: 1.02;
+  font-weight: 700;
+  color: var(--gmb-purple);
+}
+.lp-zones__copy p {
+  max-width: 305px;
+  margin: 12px auto 0;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--gmb-accent);
+}
+.lp-zones__carousel {
+  display: flex;
+  gap: 14px;
+  margin-top: 30px;
+  padding: 0 42px 10px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-left: 42px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.lp-zones__carousel::-webkit-scrollbar { display: none; }
+.lp-zone-card {
+  flex: 0 0 76%;
+  min-width: 0;
+  scroll-snap-align: center;
+  overflow: hidden;
+  border-radius: 22px;
+  background: var(--gmb-white);
+  box-shadow: 0 7px 18px rgba(82, 48, 107, 0.11);
+}
+.lp-zone-card__image {
+  position: relative;
+  height: 165px;
+  overflow: hidden;
+  background: var(--gmb-lavender);
+}
+.lp-zone-card__image img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.lp-zone-card__copy { min-height: 112px; padding: 18px 16px 20px; text-align: center; }
+.lp-zone-card__copy h3 {
+  margin: 0;
+  font-family: "Baloo 2", sans-serif;
+  font-size: 21px;
+  line-height: 1.1;
+  font-weight: 700;
+  color: var(--gmb-purple);
+}
+.lp-zone-card__copy p {
+  margin: 8px auto 0;
+  max-width: 220px;
+  font-size: 14px;
+  line-height: 1.35;
+  color: var(--gmb-accent);
+}
+.lp-zone-card__badge {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(255, 249, 241, 0.92);
+  font-family: "Baloo 2", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gmb-purple);
+}
+.lp-zone-card.is-coming-soon { opacity: 0.88; }
+.lp-zones__dots { display: flex; justify-content: center; gap: 7px; margin-top: 14px; }
+.lp-zones__dots .dot { width: 7px; height: 7px; border-radius: 50%; background: #d7cdea; }
+.lp-zones__dots .dot.active { width: 9px; height: 9px; background: var(--gmb-purple); }
+
+/* =========================================================================
+   SECTION 6 — SYMBOLS  (.lp-symbols)   [was screen5]
+   Note: this file's .icon-circle is a STATIC 72px badge — different from
+   screen6's absolutely-positioned one. Both are now scoped.
+   ========================================================================= */
+.lp-symbols {
+  --lavender-soft: #f3ecfa;  --lavender-line: #d8cbea;
+  --mint-soft: #edf9f4;      --mint-line: #bfe8d9;
+  --pink-soft: #fff0f3;      --pink-line: #f6c7d2;
+  --green-soft: #f1f8e9;     --green-line: #c7dda7;
+  --gold-soft: #fff8e6;      --gold-line: #f2d37d;
+  overflow: hidden;
+  background: var(--gmb-cream);
+  color: var(--gmb-purple);
+}
+.lp-symbols__copy { padding: 54px 24px 18px; text-align: center; }
+.lp-symbols__copy h2 {
+  margin: 0 auto;
+  max-width: 300px;
+  font-family: "Baloo 2", sans-serif;
+  font-size: 29px;
+  line-height: 1.15;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  color: var(--gmb-purple);
+}
+.lp-symbols__copy .accent { color: var(--gmb-violet); }
+.lp-symbols__stage { position: relative; width: 100%; min-height: 560px; padding: 30px 18px 38px; }
+.lp-symbols__bg { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+.lp-symbols__ganesha {
+  position: absolute;
+  z-index: 2;
+  width: 175px;
+  height: auto;
+  left: 50%;
+  top: 145px;
+  transform: translateX(-50%);
+  filter: drop-shadow(0 10px 16px rgba(82, 48, 107, 0.14));
+}
+.lp-symbol-callout {
+  position: absolute;
+  z-index: 3;
+  width: 116px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.lp-symbol-callout__circle {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 6px 14px rgba(82, 48, 107, 0.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: -16px;
+  z-index: 2;
+  position: relative;
+}
+.lp-symbol-callout__circle img { display: block; width: 46px; height: 46px; object-fit: contain; }
+.lp-symbol-callout__pill { width: 100%; padding: 20px 8px 12px; border-radius: 20px; text-align: center; }
+.lp-symbol-callout__name {
+  font-family: "Baloo 2", sans-serif;
+  font-size: 13px;
+  line-height: 1.1;
+  font-weight: 600;
+  color: var(--gmb-purple);
+  opacity: 0.85;
+}
+.lp-symbol-callout__quality {
+  margin-top: 5px;
+  font-family: "Baloo 2", sans-serif;
+  font-size: 17px;
+  line-height: 1.08;
+  font-weight: 700;
+  color: var(--gmb-purple);
+}
+.lp-symbol-callout.pos-ears { left: 18px; top: 62px; }
+.lp-symbol-callout.pos-trunk { right: 18px; top: 62px; }
+.lp-symbol-callout.pos-lotus { left: 18px; top: 315px; }
+.lp-symbol-callout.pos-mooshika { right: 18px; top: 315px; }
+.lp-symbol-callout.pos-modak { left: 50%; top: 430px; transform: translateX(-50%); }
+.lp-symbol-callout.pos-ears .lp-symbol-callout__pill { background: var(--lavender-soft); border: 1.5px solid var(--lavender-line); }
+.lp-symbol-callout.pos-trunk .lp-symbol-callout__pill { background: var(--mint-soft); border: 1.5px solid var(--mint-line); }
+.lp-symbol-callout.pos-lotus .lp-symbol-callout__pill { background: var(--pink-soft); border: 1.5px solid var(--pink-line); }
+.lp-symbol-callout.pos-mooshika .lp-symbol-callout__pill { background: var(--green-soft); border: 1.5px solid var(--green-line); }
+.lp-symbol-callout.pos-modak .lp-symbol-callout__pill { background: var(--gold-soft); border: 1.5px solid var(--gold-line); }
+
+/* =========================================================================
+   SECTION 7 — BEYOND THE GAME  (.lp-beyond)   [was screen6]
+   ========================================================================= */
+.lp-beyond {
+  overflow: hidden;
+  background: var(--gmb-cream);
+  color: var(--gmb-purple);
+  position: relative;
+}
+.lp-beyond__copy { padding: 44px 24px 22px; text-align: center; position: relative; }
+.lp-beyond__copy h2 {
+  margin: 0 auto;
+  max-width: 320px;
+  font-family: "Baloo 2", sans-serif;
+  font-size: 29px;
+  line-height: 1.12;
+  font-weight: 700;
+  color: var(--gmb-purple);
+}
+.lp-beyond__copy p {
+  max-width: 300px;
+  margin: 14px auto 0;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--gmb-text-soft);
+}
+.lp-beyond__sparkle { position: absolute; color: #f2c94c; font-size: 18px; }
+.lp-beyond__sparkle.s1 { top: 46px; left: 14px; color: var(--gmb-lavender); }
+.lp-beyond__sparkle.s2 { top: 44px; right: 14px; }
+.lp-beyond__sparkle.s3 { top: 140px; right: 24px; color: var(--gmb-purple); opacity: 0.7; }
+.lp-beyond__sparkle.s4 { top: 200px; left: 20px; color: var(--gmb-accent); opacity: 0.7; }
+.lp-beyond__stage { position: relative; background: var(--gmb-lavender-soft); padding: 90px 20px 34px; }
+.lp-beyond__curve { position: absolute; top: -1px; left: 0; width: 100%; height: 44px; }
+.lp-beyond__ganesha-wrap {
+  position: absolute;
+  top: -28px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+  display: flex;
+  align-items: flex-end;
+}
+.lp-beyond__ganesha { width: 118px; height: auto; filter: drop-shadow(0 10px 14px rgba(82, 48, 107, 0.16)); }
+.lp-beyond__bubble {
+  position: relative;
+  background: #fff;
+  border-radius: 20px;
+  padding: 12px 18px;
+  margin-left: -8px;
+  margin-bottom: 30px;
+  box-shadow: 0 6px 16px rgba(82, 48, 107, 0.12);
+  font-family: "Baloo 2", sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--gmb-purple);
+  text-align: center;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+.lp-beyond__carousel {
+  position: relative;
+  z-index: 2;
+  min-height: 300px;
+  margin-top: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lp-beyond-card {
+  position: absolute;
+  width: 78%;
+  min-height: 280px;
+  padding: 50px 22px 26px;
+  border-radius: 26px;
+  text-align: center;
+  transition: all 0.3s ease;
+  opacity: 0;
+  transform: scale(0.86);
+  pointer-events: none;
+}
+.lp-beyond-card.is-active {
+  position: relative;
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+  z-index: 3;
+  background: rgba(255, 255, 255, 0.97);
+  border: 1px solid rgba(82, 48, 107, 0.1);
+  box-shadow: 0 10px 24px rgba(82, 48, 107, 0.14);
+}
+.lp-beyond-card.is-prev { left: 0; opacity: 0.7; z-index: 1; background: #e4f3e9; }
+.lp-beyond-card.is-next { right: 0; opacity: 0.7; z-index: 1; background: #fcefd5; }
+.lp-beyond-card__circle {
+  position: absolute;
+  left: 50%;
+  top: -32px;
+  width: 70px;
+  height: 70px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lp-beyond-card__circle img { width: 70px; height: 70px; object-fit: contain; }
+.lp-beyond-card__kicker-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+.lp-beyond-card__kicker-row .line { width: 18px; height: 1.5px; background: var(--gmb-lavender); }
+.lp-beyond-card__kicker { font-size: 13px; font-weight: 700; color: var(--gmb-accent); }
+.lp-beyond-card h3 {
+  margin: 6px 0 0;
+  font-family: "Baloo 2", sans-serif;
+  font-size: 26px;
+  line-height: 1;
+  color: var(--gmb-accent);
+}
+.lp-beyond-card__star { margin-top: 12px; color: #f2c94c; font-size: 16px; }
+.lp-beyond-card__main {
+  margin: 8px auto 0;
+  max-width: 240px;
+  font-family: "Baloo 2", sans-serif;
+  font-size: 22px;
+  line-height: 1.25;
+  font-weight: 700;
+  color: var(--gmb-purple);
+}
+.lp-beyond-card__main.is-tools { font-size: 17px; line-height: 1.4; }
+.lp-beyond__controls {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 18px;
+}
+.lp-beyond__controls .dot {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: #d4c8e8;
+  cursor: pointer;
+}
+.lp-beyond__controls .dot.active { width: 10px; height: 10px; background: var(--gmb-accent); }
+.lp-beyond__tabs {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin-top: 18px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.6);
+  padding: 4px;
+  gap: 4px;
+}
+.lp-beyond__tab {
+  min-height: 44px;
+  padding: 8px 6px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-family: "Baloo 2", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gmb-purple);
+  cursor: pointer;
+}
+.lp-beyond__tab img { width: 22px; height: 22px; object-fit: contain; }
+.lp-beyond__tab.active { background: #fff; box-shadow: 0 3px 8px rgba(82, 48, 107, 0.14); }
+
+/* =========================================================================
+   SECTION 8 — FAMILY BRIDGE  (.lp-family)   [was screen8]
+   ========================================================================= */
+.lp-family {
+  overflow: hidden;
+  background: var(--gmb-cream);
+  color: var(--gmb-purple);
+}
+.lp-family__copy { padding: 54px 24px 20px; text-align: center; }
+.lp-family__copy h2 {
+  margin: 0 auto;
+  max-width: 320px;
+  font-family: "Baloo 2", sans-serif;
+  font-size: 29px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--gmb-purple);
+}
+.lp-family__stage { position: relative; padding: 62px 20px 44px; }
+.lp-family__bg { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+.lp-family__content { position: relative; z-index: 1; }
+.lp-family-card {
+  padding: 26px 24px 24px;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(82, 48, 107, 0.08);
+  box-shadow: 0 8px 20px rgba(82, 48, 107, 0.08);
+}
+.lp-family-card + .lp-family-card { margin-top: 22px; }
+.lp-family-card__label {
+  margin-bottom: 7px;
+  font-family: "Baloo 2", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gmb-accent);
+}
+.lp-family-card h3 {
+  margin: 0;
+  font-family: "Baloo 2", sans-serif;
+  font-size: 24px;
+  line-height: 1.08;
+  font-weight: 700;
+  color: var(--gmb-purple);
+}
+.lp-family-card p {
+  margin: 12px 0 0;
+  font-size: 14.5px;
+  line-height: 1.45;
+  color: var(--gmb-muted);
+}
+.lp-family__chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+.lp-family__chips span {
+  padding: 9px 12px;
+  border-radius: 999px;
+  background: #f6f0fb;
+  font-family: "Baloo 2", sans-serif;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--gmb-purple);
+}
+.lp-family__example { margin-top: 20px; padding: 14px; border-radius: 20px; background: #faf7fd; }
+.lp-family__example-block { padding: 13px 12px; }
+.lp-family__example-block + .lp-family__example-block { border-top: 1px solid rgba(82, 48, 107, 0.08); }
+.lp-family__example-label { font-family: "Baloo 2", sans-serif; font-size: 13.5px; font-weight: 700; color: var(--gmb-purple); }
+.lp-family__example-text { margin-top: 4px; font-size: 14px; line-height: 1.35; color: var(--gmb-muted); }
+.lp-family__short-strip {
+  margin-top: 22px;
+  padding: 16px 18px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.74);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: center;
+}
+.lp-family__short-strip strong { font-family: "Baloo 2", sans-serif; font-size: 16px; color: var(--gmb-accent); }
+.lp-family__short-strip span { font-size: 12.5px; color: var(--gmb-muted); }
+
+/* =========================================================================
+   SECTION 9 — FOUNDER NOTE  (.lp-founder)   [was founder]
+   ========================================================================= */
+.lp-founder { background: var(--gmb-cream); padding: 46px 32px; text-align: center; }
+.lp-founder__divider { width: 100%; height: 1px; background: var(--gmb-line); margin-bottom: 30px; }
+.lp-founder__divider.bottom { margin-top: 30px; margin-bottom: 0; }
+.lp-founder__kicker {
+  font-family: "Baloo 2", sans-serif;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gmb-muted);
+  margin-bottom: 16px;
+}
+.lp-founder h2 {
+  margin: 0 auto;
+  max-width: 260px;
+  font-family: "Baloo 2", sans-serif;
+  font-size: 22px;
+  line-height: 1.28;
+  font-weight: 700;
+  color: var(--gmb-purple);
+}
+.lp-founder__body {
+  margin: 22px auto 0;
+  max-width: 280px;
+  font-style: italic;
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--gmb-muted);
+}
+.lp-founder__body p + p { margin-top: 14px; }
+.lp-founder__signature { margin-top: 26px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.lp-founder__label {
+  font-family: "Baloo 2", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gmb-muted);
+  letter-spacing: 0.02em;
+}
+
+/* =========================================================================
+   SECTION 10 — FAQ  (.lp-faq)   [was faq]
+   ========================================================================= */
+.lp-faq {
+  --lavender-soft: #f0e8fa;
+  background: var(--gmb-cream);
+  color: var(--gmb-purple);
+  padding: 44px 24px 56px;
+}
+.lp-faq__copy { text-align: center; margin-bottom: 30px; }
+.lp-faq__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+  padding: 7px 16px;
+  border-radius: 999px;
+  background: #ede1fa;
+  font-family: "Baloo 2", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gmb-accent);
+}
+.lp-faq__copy h2 {
+  margin: 0 auto;
+  max-width: 300px;
+  font-family: "Baloo 2", sans-serif;
+  font-size: 29px;
+  line-height: 1.12;
+  font-weight: 700;
+  color: var(--gmb-purple);
+}
+.lp-faq__copy p {
+  max-width: 290px;
+  margin: 12px auto 0;
+  font-size: 14.5px;
+  line-height: 1.4;
+  color: var(--gmb-text-soft);
+}
+.lp-faq__list { display: flex; flex-direction: column; gap: 12px; }
+.lp-faq__item {
+  background: var(--gmb-white);
+  border-radius: 18px;
+  border: 1px solid rgba(82, 48, 107, 0.08);
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(82, 48, 107, 0.06);
+}
+.lp-faq__item summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 18px 50px 18px 18px;
+  position: relative;
+  font-family: "Baloo 2", sans-serif;
+  font-size: 15.5px;
+  font-weight: 700;
+  color: var(--gmb-purple);
+  line-height: 1.35;
+}
+.lp-faq__item summary::-webkit-details-marker { display: none; }
+.lp-faq__icon {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--lavender-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Baloo 2", sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--gmb-accent);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+.lp-faq__item[open] .lp-faq__icon { transform: translateY(-50%) rotate(45deg); }
+.lp-faq__answer { padding: 0 18px 18px; font-size: 14.5px; line-height: 1.5; color: var(--gmb-text-soft); }
+
+/* =========================================================================
+   SECTION 11 — FIRST FAMILIES CTA  (.lp-final)   [was screen10]
+   ========================================================================= */
+.lp-final {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--gmb-lavender-soft) 0%, #e4d6f5 100%);
+  padding: 54px 24px 50px;
+  text-align: center;
+}
+.lp-final__curve { position: absolute; top: -1px; left: 0; width: 100%; height: 44px; }
+.lp-final__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 16px;
+  padding: 7px 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.7);
+  font-family: "Baloo 2", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gmb-accent);
+  position: relative;
+  z-index: 2;
+}
+.lp-final h2 {
+  position: relative;
+  z-index: 2;
+  margin: 0 auto;
+  max-width: 300px;
+  font-family: "Baloo 2", sans-serif;
+  font-size: 30px;
+  line-height: 1.12;
+  font-weight: 700;
+  color: var(--gmb-purple);
+}
+.lp-final__copy {
+  position: relative;
+  z-index: 2;
+  max-width: 290px;
+  margin: 14px auto 0;
+  font-size: 15px;
+  line-height: 1.45;
+  color: #5b4770;
+}
+.lp-final__ganesha {
+  position: relative;
+  z-index: 2;
+  width: 168px;
+  height: auto;
+  margin: 24px auto 0;
+  display: block;
+  filter: drop-shadow(0 14px 18px rgba(82, 48, 107, 0.18));
+}
+.lp-final__cta-wrap { position: relative; z-index: 2; margin-top: 8px; }
+.lp-final__cta-wrap .lp-cta { width: 260px; height: 56px; border-radius: 17px; }
+.lp-final__trust {
+  position: relative;
+  z-index: 2;
+  margin-top: 16px;
+  font-weight: 600;
+  font-size: 13px;
+  color: #6b5a80;
+}
+.lp-final__spot-note {
+  position: relative;
+  z-index: 2;
+  margin-top: 22px;
+  padding: 12px 18px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.55);
+  display: inline-block;
+  font-family: "Baloo 2", sans-serif;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--gmb-purple);
+}
+
+/* =========================================================================
+   NARROW-PHONE TWEAKS  (merged @media (max-width:360px) blocks)
+   ========================================================================= */
+@media (max-width: 360px) {
+  .lp-hero h1 { font-size: 33px; }
+  .lp-hero__ganesha { width: 132px; }
+
+  .lp-proof { padding-left: 18px; padding-right: 18px; }
+  .lp-proof h2 { font-size: 28px; }
+  .lp-proof__intro { font-size: 14.5px; }
+  .lp-proof__takeaway-text { font-size: 19px; }
+
+  .lp-map__copy h2 { font-size: 33px; }
+  .lp-map__copy p { font-size: 14px; }
+  .lp-map__visual { padding-left: 18px; padding-right: 18px; }
+  .lp-map__closing { font-size: 16px; }
+
+  .lp-zones__copy h2 { font-size: 29px; }
+  .lp-zones__carousel { padding-left: 34px; padding-right: 34px; }
+  .lp-zone-card { flex-basis: 79%; }
+  .lp-zone-card__image { height: 155px; }
+  .lp-zone-card__copy h3 { font-size: 20px; }
+
+  .lp-symbols__copy h2 { font-size: 29px; }
+  .lp-symbols__stage { min-height: 535px; }
+  .lp-symbols__ganesha { width: 160px; }
+  .lp-symbol-callout { width: 102px; }
+  .lp-symbol-callout__quality { font-size: 16px; }
+
+  .lp-beyond__copy h2 { font-size: 26px; }
+  .lp-beyond__stage { padding-left: 16px; padding-right: 16px; }
+  .lp-beyond-card h3 { font-size: 23px; }
+  .lp-beyond-card__main { font-size: 19px; }
+
+  .lp-family__copy h2 { font-size: 26px; }
+  .lp-family__stage { padding-left: 18px; padding-right: 18px; }
+  .lp-family-card { padding: 24px 20px; }
+  .lp-family-card h3 { font-size: 22px; }
+  .lp-family-card p { font-size: 14px; }
+
+  .lp-founder { padding: 40px 26px; }
+  .lp-founder h2 { font-size: 20px; }
+  .lp-founder__body { font-size: 14px; }
+
+  .lp-faq__copy h2 { font-size: 26px; }
+  .lp-faq__item summary { font-size: 14.5px; }
+
+  .lp-final h2 { font-size: 27px; }
+  .lp-final__ganesha { width: 148px; }
+  .lp-final__cta-wrap .lp-cta { width: 100%; }
+}
