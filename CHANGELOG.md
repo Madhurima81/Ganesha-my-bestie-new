@@ -1,6 +1,38 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
 
+## [2026-09-03] — Marketing landing page: merged 11 mockups into one React page
+**Touched:** src/pages/LandingPage.jsx (new), src/pages/LandingPage.css (new),
+src/App.jsx, index.html, public/images/landing/* (19 extracted assets),
+LANDING_PAGE_MERGE_NOTES.md (new)
+**Changed:** Merged the 11 standalone GMB landing mockups (gmb_landing_screens.zip)
+into one React page. Base64 images extracted to public/images/landing/ as real
+files. ONE consolidated design-token block, ONE shared sticky header (per-section
+headers from screens 1/2/3/3b removed), ONE shared sticky bottom "Start Free" bar
+(appears past the hero, hides when Screen 10's CTA is on screen via
+IntersectionObserver). All three "Start Free" buttons reuse the existing
+DeviceChoiceModal. Per-section CSS scoped under .lp-<name> prefixes to kill the
+.cta / .icon-circle / h2 / .curve-top / .dot collisions. Routed in App.jsx as
+currentView 'landing', opt-in via ?view=landing. index.html font load extended to
+include Nunito italic (founder note). LandingPage.jsx lints clean; App.jsx's
+pre-existing lint errors untouched.
+**Follow-up (same day, per Madhurima):** zone names CONFIRMED as the new marketing
+names (map alt text aligned); Start Free flow CONFIRMED (device-choice modal);
+landing stays OPT-IN (?view=landing) — not the default first-run view; all 17 PNGs
+converted to WebP via sharp (public/images/landing ~13 MB → ~0.9 MB, map 2.7 MB →
+83 KB), refs updated, email assets untouched; header hamburger REMOVED (no menu
+behind it — re-add with a real menu later). Also fixed live in preview: screen5
+symbol icons were rotated in the mockup (ear label → lotus art etc.) — icon files
+renamed to match; and `.landing-page` made its own `position:fixed` scroll
+container since the app locks body/#root to `overflow:hidden`.
+Also per Madhurima: all eyebrow labels unified to the pill style (added to
+"See how GMB works" / "Explore GMB"); section-7 "For parents" strip removed
+(Family bridge section already says it); all placeholder emoji removed (📱 strip,
+🐘 founder mark, 🌱 first-families note); landing page now paints immediately
+instead of showing the kids-app loading scene (App init still runs in the
+background so Start Free works).
+**Open:** add a real nav menu + trigger before wider launch — TASKS.md T50.
+
 ## [2026-09-02] — Zone 1 phone-landscape CSS pilot (Scene 1 + shared chrome)
 **Touched:** DECISIONS.md,
 src/zones/symbol-mountain/shared/components/SymbolSidebar.css,
