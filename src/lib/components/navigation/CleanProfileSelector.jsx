@@ -97,8 +97,8 @@ const CleanProfileSelector = ({
     const entryTimerId = setTimeout(() => {
       window.speechSynthesis.cancel();
       const u = new window.SpeechSynthesisUtterance(
-        currentStep === 1 ? 'What should I call you?'
-          : 'How old are you, and who will join your adventure?'
+        currentStep === 1 ? "What's your child's name?"
+          : 'How old is your child?'
       );
       u.rate = currentStep === 2 ? 1.05 : 1.02;
       u.pitch = currentStep === 2 ? 1.05 : 1;
@@ -294,9 +294,10 @@ const CleanProfileSelector = ({
   };
 
   // Shared shell for the post-Age handoff scenes — same scroll-card / scenic
-  // background as the create flow, plus a Ganesha figure peeking beside the
-  // card. `pose` is a file in /images/ganesha-poses.
-  const renderHandoffCard = (inner, pose = 'sit-hi') => (
+  // background as the create flow. (No Ganesha figure here — Ganesha's own
+  // "hello" moment is the kids-facing Meet Ganesha screen after Pick Your
+  // Friend.)
+  const renderHandoffCard = (inner) => (
     <div className="clean-profile-overlay">
       <div className="clean-forest-background">
         <div className="profile-bg-overlay" />
@@ -304,12 +305,6 @@ const CleanProfileSelector = ({
       </div>
       <div className="clean-profile-container">
         <div className="clean-modal-overlay scroll-overlay">
-          <img
-            className={`handoff-ganesha handoff-ganesha--${pose}`}
-            src={`/images/ganesha-poses/${pose}.webp`}
-            alt=""
-            aria-hidden="true"
-          />
           <div className="scroll-card">
             <div className="scroll-card-inner">
               <span className="create-card-lotus" aria-hidden="true" />
@@ -350,18 +345,16 @@ const CleanProfileSelector = ({
           <button type="button" className="back-btn" onClick={() => setShowInstallSteps(false)}>
             ← Back
           </button>
-        </>,
-        'sit-hi'
+        </>
       );
     }
 
     if (wantInstall) {
       return renderHandoffCard(
         <>
-          <h2 className="create-step-heading">All set!</h2>
-          <p className="create-step-subheading">One last thing before the adventure begins.</p>
+          <h2 className="create-step-heading">Almost there!</h2>
           <p className="handoff-body">
-            <strong>Add GMB to your Home Screen</strong> so it&rsquo;s easy to come back.
+            Add GMB to your Home Screen so it&rsquo;s easy to come back.
           </p>
           <PrimaryBtn
             label="Show me how"
@@ -387,26 +380,24 @@ const CleanProfileSelector = ({
           >
             Maybe later
           </button>
-        </>,
-        'sit-hi'
+        </>
       );
     }
 
     // handoff state
     return renderHandoffCard(
       <>
-        <h2 className="create-step-heading">Ready for an adventure?</h2>
+        <h2 className="create-step-heading">All set!</h2>
         <p className="create-step-subheading">Now it&rsquo;s your child&rsquo;s turn.</p>
-        <p className="handoff-body"><strong>Hand them the device.</strong></p>
+        <p className="handoff-body">Hand them the device and let the adventure begin.</p>
         <PrimaryBtn
-          label="Start Adventure"
+          label="Start Adventure  →"
           onClick={() => setTransitionStage('pick-character')}
           size="md"
           fullWidth
           className="final-cta-btn"
         />
-      </>,
-      'celebrate'
+      </>
     );
   }
 
@@ -417,6 +408,7 @@ const CleanProfileSelector = ({
     return renderHandoffCard(
       <>
         <h2 className="create-step-heading">Who will join your adventure?</h2>
+        <p className="create-step-subheading">Pick a friend to explore with.</p>
         <div className="friend-grid">
           {animalAvatars.map((animal) => (
             <div
@@ -502,7 +494,8 @@ const CleanProfileSelector = ({
                 <div className="create-step-content">
                   {currentStep === 1 && (
                     <>
-                      <h2 className="create-step-heading">What should I call you?</h2>
+                      <h2 className="create-step-heading">What&rsquo;s your child&rsquo;s name?</h2>
+                      <p className="create-step-subheading">We&rsquo;ll use this to personalise their experience.</p>
                       <input
                         type="text"
                         value={newProfileName}
@@ -512,7 +505,7 @@ const CleanProfileSelector = ({
                             setCurrentStep(2);
                           }
                         }}
-                        placeholder="Type your name"
+                        placeholder="Enter their name"
                         maxLength={12}
                         className="name-input"
                         autoFocus
@@ -522,7 +515,8 @@ const CleanProfileSelector = ({
 
                   {currentStep === 2 && (
                     <>
-                      <h2 className="create-step-heading">How old are you, {newProfileName.trim()}?</h2>
+                      <h2 className="create-step-heading">How old is {newProfileName.trim() || 'your child'}?</h2>
+                      <p className="create-step-subheading">We&rsquo;ll tailor the games and stories to their age.</p>
                       <div className="age-stepper">
                         <button
                           className="age-stepper-btn"
