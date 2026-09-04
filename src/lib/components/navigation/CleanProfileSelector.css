@@ -1176,6 +1176,29 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   height: clamp(56px, 8vw, 76px);
 }
 
+/* person icon sits inside the name field, left */
+.scroll-card-inner .name-input-wrap {
+  position: relative;
+  width: min(340px, 100%);
+}
+.scroll-card-inner .name-input-icon {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  opacity: 0.7;
+  pointer-events: none;
+}
+.scroll-card-inner .name-input-wrap .name-input {
+  width: 100%;
+  padding-left: 46px;
+  padding-right: 20px;
+  text-align: left;
+}
+
 .scroll-card-inner .create-step-heading {
   font-family: var(--font-title);
   color: #7B6D9E;

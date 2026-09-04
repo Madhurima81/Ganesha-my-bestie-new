@@ -1,7 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { playUiTap } from '../../services/AudioService';
-import OnboardingCard from '../onboarding/OnboardingCard';
+import './DeviceChoiceModal.css';
 
+// White modal that opens over the landing page from "Start Free" / "Begin".
+// Not the full scenic onboarding card — the onboarding screens after this
+// (grown-up check, sign-in, name, age, install, hand-off) use OnboardingCard.
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const DeviceChoiceModal = ({ isOpen, onClose, onContinueHere }) => {
@@ -13,7 +16,7 @@ const DeviceChoiceModal = ({ isOpen, onClose, onContinueHere }) => {
   const emailInputRef = useRef(null);
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen) return undefined;
 
     setParentEmail('');
     setStatus('idle');
@@ -81,96 +84,81 @@ const DeviceChoiceModal = ({ isOpen, onClose, onContinueHere }) => {
   const isSent = status === 'sent';
 
   return (
-    <OnboardingCard heading="Where would you like to begin?">
-      {!showEmail && (
-        <button
-          type="button"
-          className="onb-row"
-          onClick={handleContinueHere}
-          ref={firstActionRef}
-        >
-          <span className="onb-row__icon" aria-hidden="true">
-            <img src="/images/onboarding/icon-continue-here.webp" alt="" />
-          </span>
-          <span className="onb-row__text">
-            <span className="onb-row__title">Continue here</span>
-            <span className="onb-row__sub">Start on this device now.</span>
-          </span>
-          <span className="onb-row__chev" aria-hidden="true">›</span>
-        </button>
-      )}
+    <div
+      className="dcm-backdrop"
+      role="presentation"
+      onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <section className="dcm-card" role="dialog" aria-modal="true" aria-labelledby="dcm-title">
+        <h2 className="dcm-title" id="dcm-title">Where would you like to begin?</h2>
 
-      {!showEmail && (
-        <button
-          type="button"
-          className="onb-row"
-          onClick={() => setShowEmail(true)}
-        >
-          <span className="onb-row__icon" aria-hidden="true">
-            <img src="/images/onboarding/icon-email.webp" alt="" />
-          </span>
-          <span className="onb-row__text">
-            <span className="onb-row__title">Send to iPad</span>
-            <span className="onb-row__sub">Get a link by email.</span>
-          </span>
-          <span className="onb-row__chev" aria-hidden="true">›</span>
-        </button>
-      )}
+        {!showEmail && (
+          <div className="dcm-rows">
+            <button type="button" className="dcm-row" onClick={handleContinueHere} ref={firstActionRef}>
+              <span className="dcm-row__icon" aria-hidden="true">
+                <img src="/images/onboarding/icon-continue-here.webp" alt="" />
+              </span>
+              <span className="dcm-row__text">
+                <span className="dcm-row__title">Continue here</span>
+                <span className="dcm-row__sub">Start on this device now.</span>
+              </span>
+              <span className="dcm-row__chev" aria-hidden="true">›</span>
+            </button>
 
-      {showEmail && !isSent && (
-        <form
-          onSubmit={handleSendToIpad}
-          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, width: '100%' }}
-        >
-          <p className="onb-sub" style={{ margin: 0 }}>
-            GMB feels best on a bigger screen. We&rsquo;ll email a link so you can
-            continue on an iPad.
-          </p>
-          <input
-            ref={emailInputRef}
-            className="onb-input"
-            type="email"
-            inputMode="email"
-            autoComplete="email"
-            value={parentEmail}
-            onChange={(event) => {
-              setParentEmail(event.target.value);
-              if (status === 'error') {
-                setStatus('idle');
-                setMessage('');
-              }
-            }}
-            placeholder="Parent email"
-            disabled={isSending}
-            required
-          />
-          {message && (
-            <p className={status === 'error' ? 'onb-error' : 'onb-sub'} style={{ margin: 0 }} aria-live="polite">
-              {message}
-            </p>
-          )}
-          <button type="submit" className="onb-btn" disabled={isSending}>
-            {isSending ? 'Sending…' : 'Email me the link'}
-          </button>
-          <button type="button" className="onb-link" onClick={() => setShowEmail(false)}>
-            ← Back
-          </button>
-        </form>
-      )}
+            <button type="button" className="dcm-row" onClick={() => setShowEmail(true)}>
+              <span className="dcm-row__icon" aria-hidden="true">
+                <img src="/images/onboarding/icon-email.webp" alt="" />
+              </span>
+              <span className="dcm-row__text">
+                <span className="dcm-row__title">Send to iPad</span>
+                <span className="dcm-row__sub">Get a link by email.</span>
+              </span>
+              <span className="dcm-row__chev" aria-hidden="true">›</span>
+            </button>
+          </div>
+        )}
 
-      {showEmail && isSent && (
-        <>
-          <p className="onb-sub" style={{ margin: 0 }} aria-live="polite">{message}</p>
-          <button type="button" className="onb-btn" onClick={onClose}>Done</button>
-        </>
-      )}
+        {showEmail && !isSent && (
+          <form className="dcm-form" onSubmit={handleSendToIpad}>
+            <p>GMB feels best on a bigger screen. We&rsquo;ll email a link so you can continue on an iPad.</p>
+            <input
+              ref={emailInputRef}
+              className="dcm-input"
+              type="email"
+              inputMode="email"
+              autoComplete="email"
+              value={parentEmail}
+              onChange={(e) => {
+                setParentEmail(e.target.value);
+                if (status === 'error') {
+                  setStatus('idle');
+                  setMessage('');
+                }
+              }}
+              placeholder="Parent email"
+              disabled={isSending}
+              required
+            />
+            {message && <p className={status === 'error' ? 'dcm-error' : ''} aria-live="polite">{message}</p>}
+            <button type="submit" className="dcm-btn" disabled={isSending}>
+              {isSending ? 'Sending…' : 'Email me the link'}
+            </button>
+            <button type="button" className="dcm-link" onClick={() => setShowEmail(false)}>← Back</button>
+          </form>
+        )}
 
-      {!showEmail && (
-        <button type="button" className="onb-link" onClick={onClose}>
-          Maybe later
-        </button>
-      )}
-    </OnboardingCard>
+        {showEmail && isSent && (
+          <div className="dcm-form">
+            <p aria-live="polite">{message}</p>
+            <button type="button" className="dcm-btn" onClick={onClose}>Done</button>
+          </div>
+        )}
+
+        {!showEmail && (
+          <button type="button" className="dcm-link" onClick={onClose}>Maybe later</button>
+        )}
+      </section>
+    </div>
   );
 };
 
