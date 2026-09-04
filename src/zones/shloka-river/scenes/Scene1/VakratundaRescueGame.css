@@ -49,6 +49,31 @@
   stroke-dasharray: 1.6 1.6;
 }
 
+/* Debug-only: the water area the frog can be dragged inside. */
+.vak-debug-water {
+  fill: rgba(3, 169, 244, 0.16);
+  stroke: rgba(3, 169, 244, 0.85);
+  stroke-width: 0.5;
+  stroke-dasharray: 1.4 1.2;
+}
+
+.vak-debug-water-vtx {
+  width: 3.4%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(3, 169, 244, 0.92);
+  color: #fff;
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-size: 1.6vmin;
+  font-weight: 800;
+  border: 0.3vmin solid #fff;
+  box-shadow: 0 0.4vmin 1vmin rgba(0, 0, 0, 0.3);
+}
+
 .vak-route-guide {
   fill: none;
   stroke: rgba(22, 151, 151, 0.32);
@@ -95,6 +120,11 @@
 
 .vak-obstacle--logpile {
   transform: translate(-50%, -50%) rotate(4deg);
+}
+
+.vak-obstacle--reeds {
+  /* wispy plant — softer, tighter shadow than the rock/logs */
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.14));
 }
 
 .vak-start-frog {

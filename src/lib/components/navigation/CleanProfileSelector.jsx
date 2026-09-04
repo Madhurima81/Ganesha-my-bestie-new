@@ -359,6 +359,7 @@ const CleanProfileSelector = ({
     if (wantInstall) {
       return renderHandoffCard(
         <>
+          <img className="cps-step-icon cps-step-icon--install" src="/images/onboarding/icon-install.webp" alt="" aria-hidden="true" />
           <h2 className="create-step-heading">Almost there!</h2>
           <p className="handoff-body">
             Add GMB to your Home Screen so it&rsquo;s easy to come back.
@@ -501,6 +502,7 @@ const CleanProfileSelector = ({
                 <div className="create-step-content">
                   {currentStep === 1 && (
                     <>
+                      <img className="cps-step-icon" src="/images/onboarding/icon-name.webp" alt="" aria-hidden="true" />
                       <h2 className="create-step-heading">What&rsquo;s your child&rsquo;s name?</h2>
                       <p className="create-step-subheading">We&rsquo;ll use this to personalise their experience.</p>
                       <input

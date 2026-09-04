@@ -198,6 +198,7 @@
   justify-content: center;
   color: #8163b8;
 }
+.onb-row__icon img { width: 26px; height: 26px; object-fit: contain; }
 .onb-row__text { flex: 1; min-width: 0; }
 .onb-row__title { display: block; font-family: 'Baloo 2', cursive; font-weight: 700; font-size: 16px; color: #52306b; }
 .onb-row__sub { display: block; font-family: 'Nunito', sans-serif; font-size: 13px; color: #8779a0; margin-top: 2px; }
