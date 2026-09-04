@@ -9,7 +9,7 @@ const ZONE_BADGES = {
   'cave-of-secrets': { image: '/images/cave-of-secrets-map-icon.png',   emoji: 'CS', label: 'Cave of Secrets' },
   'shloka-river':    { image: '/images/zone-badge/icon-shlokariver.png', emoji: 'SR', label: 'Shloka River' },
   'festival-square': { image: '/images/festival-square-map-icon.png',   emoji: 'FS', label: 'Festival Square' },
-  'about-me-hut':    { image: '/images/zone-badge/icon-aboutme.png',    emoji: 'AH', label: 'About Me Hut' },
+  'about-me-hut':    { image: '/images/zone-badge/icon-aboutme.png',    emoji: 'AH', label: 'Lambodara Lodge' },
 };
 
 const ZoneBadgeButton = ({ zoneId, onBack, style = {} }) => {

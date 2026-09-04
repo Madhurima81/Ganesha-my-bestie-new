@@ -9,7 +9,7 @@ const getZoneName = (zoneId) => {
     'cave-of-secrets': 'Cave of Secrets',
     'festival-square': 'Festival Square',
     'shloka-river': 'Shloka River',
-    'about-me-hut': 'About Me Hut'
+    'about-me-hut': 'Lambodara Lodge'
   };
   return names[zoneId] || 'Game Zone';
 };

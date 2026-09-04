@@ -28,7 +28,7 @@ const LevelProgressionPortal = ({
     'Cave of Secrets': '🌈',
     'Obstacle Forest': '🌊',
     'Shloka River': '☁️',
-    'About Me Hut': '🌲',
+    'Lambodara Lodge': '🌲',
     'Story Treehouse': '🏜️',
     'Festival Square': '❄️',
   };

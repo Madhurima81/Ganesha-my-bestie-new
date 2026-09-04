@@ -311,8 +311,8 @@ export const speakZoneWelcome = (speakFn, zoneName, childName, age = 7) => {
       `${childName}, the Shloka River is alive. Every word you learn here makes the water rise higher. By the end — you will have done that. Just you.`,
     'Festival Square':
       `${childName}! Can you hear the drums? Ganesh Chaturthi has started and everyone is waiting — the piano, the rangoli, the modaks — all of it needs YOU!`,
-    'About Me Hut':
-      `This is my favourite place, ${childName}. The About Me Hut is just for you — where we find out what makes you, YOU. I have been curious about that for a while.`,
+    'Lambodara Lodge':
+      `This is my favourite place, ${childName}. Lambodara Lodge is just for you — where we find out what makes you, YOU. I have been curious about that for a while.`,
   }
   const text = lines[zoneName] || `Welcome ${childName}! Something wonderful is waiting inside.`
   speakFn(text, { age, moment: 'greeting' })

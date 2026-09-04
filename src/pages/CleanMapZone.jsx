@@ -79,7 +79,7 @@ const ZONES_DATA = [
   },
   {
     id: 'about-me-hut',
-    name: "Mooshika's Hut",
+    name: "Lambodara Lodge",
     sequence: 1,
     unlockRequires: 'symbol-mountain',
     unlockNote: 'Complete 2 Symbol Mountain scenes',
@@ -107,7 +107,7 @@ const HIDDEN_MAP_ZONE_IDS = new Set([ZONE_IDS.CAVE]);
 const MAP_ZONE_UNLOCK_VO = {
   [ZONE_IDS.SYMBOL]: "Tap Symbol Mountain — that's where we start!",
   [ZONE_IDS.RIVER]: 'Look! The Shloka River is flowing!',
-  [ZONE_IDS.HUT]: 'Come inside! The About Me Hut is open!',
+  [ZONE_IDS.HUT]: 'Come inside! Lambodara Lodge is open!',
   [ZONE_IDS.CAVE]: 'The cave doors are opening!',
   [ZONE_IDS.FESTIVAL]: 'The festival has begun!',
 };
@@ -117,7 +117,7 @@ const MAP_ZONE_COMPLETION_VO = {
   [ZONE_IDS.RIVER]: 'Beautiful chanting! You completed the Shloka River.',
   [ZONE_IDS.CAVE]: 'Amazing! You uncovered all the secrets of the cave.',
   [ZONE_IDS.FESTIVAL]: 'What a celebration! You finished everything in Festival Square.',
-  [ZONE_IDS.HUT]: 'I loved learning about you! You completed the About Me Hut.',
+  [ZONE_IDS.HUT]: 'I loved learning about you! You completed Lambodara Lodge.',
 };
 
 // Temporary debug switches for QA checks.
@@ -409,7 +409,7 @@ const MAP_OVERLAY_DEFAULTS = {
     id: 'hutLabel',
     label: 'Hut Title',
     kind: 'label',
-    text: "Mooshika's Hut",
+    text: "Lambodara Lodge",
     left: 9,
     top: 59,
     w: 22,
@@ -743,7 +743,7 @@ const MAP_ZONE_ART_DEFAULTS = {
   },
   hut: {
     id: 'hut',
-    label: "Mooshika's Hut",
+    label: "Lambodara Lodge",
     src: '/images/map/abtmehut2.webp',
     left: 22.6,
     top: 54.1,
@@ -1673,7 +1673,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         onClick={() => handleZoneClick(ZONES_DATA.find((zone) => zone.id === 'about-me-hut'), getZoneState('about-me-hut', zoneProgress))}
         role="button"
         tabIndex={0}
-        aria-label="Open Mooshika's Hut"
+        aria-label="Open Lambodara Lodge"
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();

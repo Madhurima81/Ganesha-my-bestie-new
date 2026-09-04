@@ -29,7 +29,7 @@ export const ZONE_WELCOMES = {
     preRecorded: null,
   },
   'about-me-hut': {
-    text: `This is my favourite place, ${NAME}. The About Me Hut is just for you — where we find out what makes you, YOU. I have been curious about that for a while, actually.`,
+    text: `This is my favourite place, ${NAME}. Lambodara Lodge is just for you — where we find out what makes you, YOU. I have been curious about that for a while, actually.`,
     preRecorded: null,
   },
 }
