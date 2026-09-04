@@ -31,6 +31,7 @@ const CleanProfileSelector = ({
   const [newProfileName, setNewProfileName] = useState(resumedName);
   const [selectedAvatar, setSelectedAvatar] = useState('monkey');
   const [avatarTapPulseId, setAvatarTapPulseId] = useState(null);
+  const [charPage, setCharPage] = useState(0);
   const [selectedAge, setSelectedAge] = useState(resumedAge);
   const [currentStep, setCurrentStep] = useState(1);
   const [isCreatingProfile, setIsCreatingProfile] = useState(false);
@@ -75,7 +76,6 @@ const CleanProfileSelector = ({
     { id: 'squirrel', name: 'Squirrel' },
     { id: 'mouse', name: 'Mouse' },
     { id: 'owl', name: 'Owl' },
-    { id: 'peacock1', name: 'Peacock' }, // placeholder slot — replaced below
     { id: 'deer', name: 'Deer' },
     { id: 'horse', name: 'Horse' },
     { id: 'camel', name: 'Camel' },
@@ -87,7 +87,7 @@ const CleanProfileSelector = ({
     { id: 'crane', name: 'Crane' },
     { id: 'crow', name: 'Crow' },
     { id: 'fox', name: 'Fox' },
-  ].filter((a) => a.id !== 'peacock1');
+  ];
 
   const CHARS_PER_PAGE = 8;
   const charPageCount = Math.ceil(animalAvatars.length / CHARS_PER_PAGE);
@@ -426,21 +426,69 @@ const CleanProfileSelector = ({
   // child. The profile is created here (name + age were captured earlier),
   // then straight into the Mooshika ride.
   if (transitionStage === 'pick-character') {
+    const pageStart = charPage * CHARS_PER_PAGE;
+    const pageItems = animalAvatars.slice(pageStart, pageStart + CHARS_PER_PAGE);
+    const fillerCount = CHARS_PER_PAGE - pageItems.length;
     return renderHandoffCard(
       <>
         <h2 className="create-step-heading">Who will join your adventure?</h2>
         <p className="create-step-subheading">Pick a friend to explore with.</p>
-        <div className="friend-grid">
-          {animalAvatars.map((animal) => (
-            <div
-              key={animal.id}
-              className={`friend-card ${selectedAvatar === animal.id ? 'active' : ''} ${avatarTapPulseId === animal.id ? 'pop' : ''}`}
-              onClick={() => handleAvatarSelect(animal.id)}
-              aria-label={animal.name}
-              role="button"
-            >
-              <img src={`/images/new-explorer-${animal.id}.webp`} alt={animal.name} />
-            </div>
+        <div className="friend-carousel">
+          <button
+            type="button"
+            className="friend-carousel-arrow"
+            onClick={() => { playUiTap(0.2); setCharPage((p) => Math.max(0, p - 1)); }}
+            disabled={charPage === 0}
+            aria-label="Previous friends"
+          >
+            ‹
+          </button>
+          <div className="friend-grid">
+            {pageItems.map((animal) => (
+              <div
+                key={animal.id}
+                className={`friend-card ${selectedAvatar === animal.id ? 'active' : ''} ${avatarTapPulseId === animal.id ? 'pop' : ''}`}
+                onClick={() => handleAvatarSelect(animal.id)}
+                aria-label={animal.name}
+                role="button"
+              >
+                <img
+                  src={`/images/new-explorer-${animal.id}.webp`}
+                  alt={animal.name}
+                  onError={(e) => {
+                    if (!e.currentTarget.dataset.fallback) {
+                      e.currentTarget.dataset.fallback = '1';
+                      e.currentTarget.src = `/images/new-explorer-${animal.id}.png`;
+                    }
+                  }}
+                />
+              </div>
+            ))}
+            {Array.from({ length: fillerCount }).map((_, i) => (
+              <div key={`filler-${i}`} className="friend-card filler" aria-hidden="true" />
+            ))}
+          </div>
+          <button
+            type="button"
+            className="friend-carousel-arrow"
+            onClick={() => { playUiTap(0.2); setCharPage((p) => Math.min(charPageCount - 1, p + 1)); }}
+            disabled={charPage >= charPageCount - 1}
+            aria-label="More friends"
+          >
+            ›
+          </button>
+        </div>
+        <div className="friend-pagedots" role="tablist" aria-label="Friend pages">
+          {Array.from({ length: charPageCount }).map((_, i) => (
+            <button
+              key={`dot-${i}`}
+              type="button"
+              className={`friend-pagedot ${i === charPage ? 'active' : ''}`}
+              onClick={() => { playUiTap(0.2); setCharPage(i); }}
+              aria-label={`Page ${i + 1}`}
+              aria-selected={i === charPage}
+              role="tab"
+            />
           ))}
         </div>
         {createError ? <p className="create-error-text">{createError}</p> : null}

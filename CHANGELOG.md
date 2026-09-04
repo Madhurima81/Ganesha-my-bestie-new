@@ -423,3 +423,22 @@ shareWithGanesha).
 **Changed:** Fixed hint cycle gating bug on Tier 2 list; added maxLocked guard
 **Open:** pause-mid-pull sink still pending on Mahakaya scene
 -->
+
+## [2026-09-04]
+**Touched:** CleanProfileSelector.jsx, CleanProfileSelector.css, MooshikaRideTransition.jsx, public/images/new-explorer-*.{webp,png} (20 animals)
+**Changed:** Pick-your-friend screen now offers 20 explorer characters instead of 4.
+New paged carousel (2×4 grid, ‹ › arrows + page dots, 8 per page → 3 pages, last
+page padded with invisible filler cards to keep height stable). New ids: squirrel,
+crane, fish, camel, buffalo, owl, rabbit, swan, cobra, horse, lion, monkey,
+elephant, peacock, mouse, turtle, fox, crow, deer, tiger (tiger art refreshed,
+old peacock/squirrel/monkey/owl/mouse overwritten). Source PNGs from ChatGPT,
+downscaled to 256² + alpha-floor pass (≥60) to strip speckle noise, emitted as
+webp + png at the app's existing `new-explorer-<id>` naming so the profile grid,
+ProfileChip, CleanMapZone and the 4 About Me Hut games pick them up unchanged.
+MooshikaRideTransition rider img switched to .webp with .png onError fallback.
+**Open:**
+- Not device-tested on real iOS/Android; verified in-browser at 1440×900 only
+  (portrait-lock overlay blocks the automated flow, hidden via injected CSS for
+  the check). Confirm carousel arrow spacing on short-landscape phones.
+- `charPage` state resets to 0 on re-entry; selectedAvatar still defaults to
+  'monkey' if a child taps "Let's go" without picking (pre-existing behaviour).

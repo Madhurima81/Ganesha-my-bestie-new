@@ -90,9 +90,15 @@ const MooshikaRideTransition = ({ avatarId = 'monkey', profileName, onComplete }
           className="mooshika-img"
         />
         <img
-          src={`/images/new-explorer-${avatarId}.png`}
+          src={`/images/new-explorer-${avatarId}.webp`}
           alt="Your avatar"
           className="rider-img"
+          onError={(e) => {
+            if (!e.currentTarget.dataset.fallback) {
+              e.currentTarget.dataset.fallback = '1';
+              e.currentTarget.src = `/images/new-explorer-${avatarId}.png`;
+            }
+          }}
         />
       </div>
 
