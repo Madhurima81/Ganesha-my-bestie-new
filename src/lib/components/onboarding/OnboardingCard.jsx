@@ -1,37 +1,36 @@
 // OnboardingCard.jsx
 // ---------------------------------------------------------------------------
-// The shared "scroll-card" skin for the onboarding flow — the same scalloped
-// cream card on a scenic lavender background used by the child-profile create
-// screens (CleanProfileSelector). Extracted so DeviceChoiceModal, ParentGate
-// and SignInScreen all render the same way.
-//
-// Palette is purple-only. Card art: src/assets/cards/createprofile.svg,
-// lotus: src/assets/cards/lotus-iconnew.svg, background: /images/profile-bg.webp
-// (all already in the repo).
-//
-// Usage:
-//   <OnboardingCard heading="Grown-ups only!" subheading="A quick check…">
-//     …fields / buttons / ghost links go here…
-//   </OnboardingCard>
+// The shared onboarding card — renders the SAME markup + classes as the
+// child-profile create screen (CleanProfileSelector) so every setup screen
+// (grown-up check, sign-in, name, age, install, hand-off) looks identical to
+// it. The card CSS is CleanProfileSelector.css; OnboardingCard.css only adds
+// a few "hug the content" overrides (scoped to `.onb`) plus the small
+// building-block classes the screens use (.onb-btn, .onb-row, .onb-input…).
+// Purple-only.
 // ---------------------------------------------------------------------------
 
 import React from 'react';
+import '../navigation/CleanProfileSelector.css';
 import './OnboardingCard.css';
 
 export default function OnboardingCard({ heading, subheading, children, className = '' }) {
   return (
-    <div className={`onb-overlay ${className}`.trim()}>
-      <div className="onb-bg" aria-hidden="true">
-        <span className="onb-bg-twinkle" />
-        <span className="onb-bg-vignette" />
+    <div className={`clean-profile-overlay onb ${className}`.trim()}>
+      <div className="clean-forest-background">
+        <div className="profile-bg-overlay" />
+        <div className="profile-vignette" />
       </div>
 
-      <div className="onb-card">
-        <div className="onb-card-inner">
-          <span className="onb-lotus" aria-hidden="true" />
-          {heading && <h2 className="onb-heading">{heading}</h2>}
-          {subheading && <p className="onb-sub">{subheading}</p>}
-          <div className="onb-content">{children}</div>
+      <div className="clean-profile-container">
+        <div className="clean-modal-overlay scroll-overlay">
+          <div className="scroll-card">
+            <div className="scroll-card-inner">
+              <span className="create-card-lotus" aria-hidden="true" />
+              {heading && <h2 className="create-step-heading">{heading}</h2>}
+              {subheading && <p className="create-step-subheading">{subheading}</p>}
+              <div className="onb-content">{children}</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

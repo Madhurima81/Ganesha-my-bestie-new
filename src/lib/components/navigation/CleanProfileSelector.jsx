@@ -502,23 +502,25 @@ const CleanProfileSelector = ({
                 <div className="create-step-content">
                   {currentStep === 1 && (
                     <>
-                      <img className="cps-step-icon" src="/images/onboarding/icon-name.webp" alt="" aria-hidden="true" />
                       <h2 className="create-step-heading">What&rsquo;s your child&rsquo;s name?</h2>
                       <p className="create-step-subheading">We&rsquo;ll use this to personalise their experience.</p>
-                      <input
-                        type="text"
-                        value={newProfileName}
-                        onChange={(e) => setNewProfileName(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' && newProfileName.trim().length >= 2) {
-                            setCurrentStep(2);
-                          }
-                        }}
-                        placeholder="Enter their name"
-                        maxLength={12}
-                        className="name-input"
-                        autoFocus
-                      />
+                      <div className="name-input-wrap">
+                        <img className="name-input-icon" src="/images/onboarding/icon-name.webp" alt="" aria-hidden="true" />
+                        <input
+                          type="text"
+                          value={newProfileName}
+                          onChange={(e) => setNewProfileName(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' && newProfileName.trim().length >= 2) {
+                              setCurrentStep(2);
+                            }
+                          }}
+                          placeholder="Enter their name"
+                          maxLength={12}
+                          className="name-input"
+                          autoFocus
+                        />
+                      </div>
                     </>
                   )}
 
