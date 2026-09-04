@@ -27,11 +27,11 @@ const SignInScreen = ({ onContinue, onSkip }) => {
       subheading="Save your child's progress, get updates and new adventures."
     >
       <button type="button" className="onb-btn onb-btn--ghost si-oauth" onClick={onContinue}>
-        <span className="si-oauth-icon" aria-hidden="true">G</span>
+        <img className="si-oauth-icon" src="/images/onboarding/google.svg" alt="" aria-hidden="true" />
         Continue with Google
       </button>
       <button type="button" className="onb-btn onb-btn--ghost si-oauth" onClick={onContinue}>
-        <span className="si-oauth-icon" aria-hidden="true">🍎</span>
+        <img className="si-oauth-icon" src="/images/onboarding/apple.svg" alt="" aria-hidden="true" />
         Continue with Apple
       </button>
 
