@@ -1,0 +1,258 @@
+/* OnboardingCard.css — shared scroll-card skin for the onboarding flow.
+   Self-contained; mirrors the CleanProfileSelector "scroll-overlay" look.
+   Everything is namespaced `.onb-*`. Purple-only palette. */
+
+.onb-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: var(--app-height, 100vh);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: max(24px, env(safe-area-inset-top)) 24px 24px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  z-index: 2000;
+  font-family: 'Nunito', sans-serif;
+}
+
+/* ---- scenic background ---- */
+.onb-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background-color: #f4ecff;
+  background-image:
+    linear-gradient(rgba(255, 244, 214, 0.45), rgba(255, 244, 214, 0.45)),
+    url('/images/profile-bg.webp');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.onb-bg-twinkle {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(2px 2px at 25% 30%, rgba(255, 255, 255, 0.9), transparent),
+    radial-gradient(2px 2px at 70% 40%, rgba(255, 255, 255, 0.8), transparent),
+    radial-gradient(1.5px 1.5px at 55% 20%, rgba(255, 255, 255, 0.7), transparent),
+    radial-gradient(2px 2px at 15% 65%, rgba(255, 255, 255, 0.8), transparent),
+    radial-gradient(1.5px 1.5px at 85% 55%, rgba(255, 255, 255, 0.7), transparent);
+  animation: onb-twinkle 5s ease-in-out infinite alternate;
+}
+@keyframes onb-twinkle {
+  0% { opacity: 0.4; }
+  100% { opacity: 0.9; }
+}
+.onb-bg-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle, transparent 50%, rgba(80, 50, 120, 0.18) 100%);
+}
+
+/* ---- scalloped card ---- */
+/* The card art (createprofile.svg) stretches to whatever box size via
+   background-size:100% 100%, so the card hugs its content instead of a fixed
+   aspect-ratio — onboarding screens vary a lot in height (a name field vs a
+   full keypad). */
+.onb-card {
+  position: relative;
+  z-index: 1;
+  width: min(560px, 92vw);
+  min-height: 420px;
+  margin: auto 0;
+  padding: clamp(84px, 12vh, 116px) clamp(40px, 8vw, 78px) clamp(36px, 6vh, 56px);
+  box-sizing: border-box;
+  background-image: url('../../../assets/cards/createprofile.svg');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  animation: onb-unroll 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes onb-unroll {
+  0% { transform: scale(0.94); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.onb-card-inner {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.onb-card-inner > * { flex-shrink: 0; }
+
+.onb-lotus {
+  position: absolute;
+  top: clamp(-64px, -9vh, -44px);
+  left: 50%;
+  width: clamp(58px, 8vw, 72px);
+  height: clamp(58px, 8vw, 72px);
+  transform: translateX(-50%);
+  opacity: 0.6;
+  background: url('../../../assets/cards/lotus-iconnew.svg') no-repeat center / contain;
+  filter: sepia(0.12) saturate(0.72) hue-rotate(10deg) brightness(1.03);
+}
+
+.onb-heading {
+  font-family: 'Baloo 2', cursive;
+  color: #7b6d9e;
+  font-size: clamp(22px, 2.8vw, 38px);
+  font-weight: 800;
+  line-height: 1.15;
+  margin: 0 0 10px;
+}
+.onb-sub {
+  font-family: 'Nunito', sans-serif;
+  color: #7a4ba0;
+  font-size: clamp(13px, 1.8vw, 16px);
+  line-height: 1.4;
+  margin: 0 0 22px;
+  max-width: 34ch;
+}
+.onb-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+/* ---- shared building blocks for the three screens ---- */
+
+/* pill primary button */
+.onb-btn {
+  width: 300px;
+  max-width: 100%;
+  min-height: 56px;
+  padding: 14px 22px;
+  border: none;
+  border-radius: 999px;
+  font-family: 'Baloo 2', cursive;
+  font-size: clamp(15px, 1.4vw, 18px);
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(180deg, #c3a8f3 0%, #b99aec 100%);
+  box-shadow: 0 6px 0 #9b7dd8, 0 12px 24px rgba(180, 158, 232, 0.2);
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+}
+.onb-btn:hover { filter: brightness(1.03); }
+.onb-btn:active { transform: translateY(3px); box-shadow: 0 3px 0 #9b7dd8, 0 6px 12px rgba(180, 158, 232, 0.18); }
+.onb-btn:disabled { opacity: 0.5; cursor: default; box-shadow: 0 6px 0 #9b7dd8; }
+
+/* secondary / outline button */
+.onb-btn--ghost {
+  background: #fff;
+  color: #7c4d8f;
+  border: 2px solid #d9cbef;
+  box-shadow: 0 4px 10px rgba(180, 158, 232, 0.16);
+}
+.onb-btn--ghost:active { box-shadow: 0 2px 6px rgba(180, 158, 232, 0.14); }
+
+/* text ghost link ("Maybe later", "Skip for now") */
+.onb-link {
+  margin-top: 4px;
+  padding: 8px 12px;
+  background: none;
+  border: none;
+  font-family: 'Baloo 2', cursive;
+  font-size: clamp(13px, 1.2vw, 15px);
+  font-weight: 700;
+  color: #8e7bb6;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+.onb-link:hover { color: #6a4c9c; }
+
+/* full-width choice row (device choice screen) */
+.onb-row {
+  width: 340px;
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: 20px;
+  background: #fff;
+  border: 1.5px solid #e6dcf7;
+  box-shadow: 0 6px 16px rgba(120, 80, 200, 0.1);
+  cursor: pointer;
+  text-align: left;
+  transition: transform 0.12s ease, border-color 0.12s ease;
+}
+.onb-row:hover { border-color: #c9b6ef; }
+.onb-row:active { transform: scale(0.99); }
+.onb-row__icon {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8163b8;
+}
+.onb-row__text { flex: 1; min-width: 0; }
+.onb-row__title { display: block; font-family: 'Baloo 2', cursive; font-weight: 700; font-size: 16px; color: #52306b; }
+.onb-row__sub { display: block; font-family: 'Nunito', sans-serif; font-size: 13px; color: #8779a0; margin-top: 2px; }
+.onb-row__chev { flex-shrink: 0; color: #b7a6d6; font-size: 20px; }
+
+/* text input on the card */
+.onb-input {
+  width: 320px;
+  max-width: 100%;
+  height: 56px;
+  padding: 0 18px;
+  border-radius: 16px;
+  border: 2px solid #cbb9ee;
+  background: #fff;
+  font-family: 'Nunito', sans-serif;
+  font-size: 16px;
+  color: #4b3a63;
+  text-align: center;
+}
+.onb-input:focus { outline: none; border-color: #a98fe0; box-shadow: 0 0 0 4px rgba(169, 143, 224, 0.18); }
+.onb-input::placeholder { color: #b3a6c8; }
+
+.onb-error {
+  font-family: 'Nunito', sans-serif;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #8b2f4b;
+  margin: 0;
+}
+.onb-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 240px;
+  color: #a996c4;
+  font-size: 12px;
+  font-family: 'Nunito', sans-serif;
+}
+.onb-divider::before,
+.onb-divider::after { content: ''; flex: 1; height: 1px; background: #ddd0f0; }
+
+/* ---- short viewport / very narrow: drop the SVG frame for a plain card so
+   tall content (keypad, sign-in) always fits ---- */
+@media (max-height: 560px), (max-width: 380px) {
+  .onb-card {
+    min-height: 0;
+    width: min(560px, 94vw);
+    padding: 52px 24px 26px;
+    border-radius: 28px;
+    background-image: none;
+    background: #fffdf7;
+    box-shadow: 0 12px 32px rgba(82, 48, 107, 0.16);
+  }
+  .onb-lotus { top: -34px; width: 52px; height: 52px; }
+  .onb-heading { font-size: clamp(20px, 3.4vw, 26px); margin-bottom: 8px; }
+  .onb-sub { margin-bottom: 16px; }
+  .onb-content { gap: 10px; }
+}

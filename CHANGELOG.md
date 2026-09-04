@@ -1,6 +1,35 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
 
+## [2026-09-04] — Onboarding: unified card skin across all setup screens
+**Touched:** src/lib/components/onboarding/OnboardingCard.jsx + .css (new),
+ParentGate.jsx + .css, SignInScreen.jsx + .css,
+src/lib/components/navigation/DeviceChoiceModal.jsx (DeviceChoiceModal.css deleted)
+**Changed:** Extracted the child-profile "scroll-card" look into a shared
+`<OnboardingCard heading subheading>` (scenic lavender bg + scalloped cream
+card + lotus, self-contained CSS, `.onb-*` namespace, purple-only) and put
+every setup screen on it:
+- **DeviceChoiceModal** → card. "Where would you like to begin?" with two
+  tap rows (Continue here / Send to iPad → reveals the email field) +
+  "Maybe later". Same send-continuation logic, just restyled.
+- **ParentGate** → card. "Grown-ups only! / A quick check before we
+  continue." + purple keypad + digit slots. Challenge logic unchanged.
+  ParentGate.css trimmed from 477 lines to ~55 (keypad only).
+- **SignInScreen** → card. "Stay in the loop / Save your child's progress,
+  get updates and new adventures." Dropped the password field to match the
+  mockup (email-only). OAuth buttons still stubs.
+The card hugs its content (SVG frame stretches) instead of a fixed aspect
+ratio, and drops to a plain rounded card under `max-height:560px` /
+`max-width:380px` so the keypad / sign-in form always fit.
+CleanProfileSelector already had this look natively — left as-is; it could
+migrate onto OnboardingCard later for a single source.
+**Verified:** production build green; lint clean. Walked device-choice →
+parent-gate → sign-in in the dev preview — all three render on the card.
+**Open:** at exactly ~640px height the sign-in card scrolls ~20px; fine on
+real phone-landscape (plain-card path) and tablet+. `DeviceChoiceModal.css`
+was fully orphaned so it was deleted.
+
+
 ## [2026-09-04] — Onboarding: install nudge + child hand-off restructured
 **Touched:** src/lib/components/navigation/CleanProfileSelector.jsx + .css,
 src/lib/services/PwaInstallManager.js, src/App.jsx, src/pages/LandingPage.jsx
