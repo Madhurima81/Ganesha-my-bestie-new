@@ -230,7 +230,7 @@ export const ZONE_CONFIGS = {
 
   'about-me-hut': {
     id: 'about-me-hut',
-    name: "Mooshika's Hut",
+    name: "Lambodara Lodge",
     icon: '🏡',
     emoji: '🏡',
     background: '/images/about-me-hut-bg.webp',

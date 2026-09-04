@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import SyllableHighlight from '../../shared/SyllableHighlight';
-import useRepeatedHintCycle from '../../../../lib/hooks/useRepeatedHintCycle';
+import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
 import './VakratundaRescueGame.css';
 
 import frogSwim from './assets/images/vakratunda/frog-baby.webp';
@@ -39,6 +39,13 @@ const TRAIL_LIMIT = 200;        // cap wake points so the polyline stays cheap
 const BLOCK_SFX_COOLDOWN_MS = 500;   // throttle the soft "nope" bump SFX
 const EDGE = { minX: 3, maxX: 96, minY: 6, maxY: 93 };
 
+// Reactive "stuck" hint: only fires after repeated bumps with no forward
+// progress — a child who is exploring calmly triggers nothing.
+const STUCK_BUMPS = 3;           // bumps (no progress) before the shimmer shows
+const STUCK_PROGRESS_EPS = 3;    // % of new forward progress that counts as unstuck
+const STUCK_L2_MS = 6000;        // shimmer -> shimmer + VO
+const STUCK_L3_MS = 12000;       // -> shimmer + short arc toward the opening
+
 // The frog can only be dragged INSIDE this shape — the river channel, with a
 // bay cut into the near bank at the frog's start and another at the family's
 // pad. Outside it is land: the drag holds at the last water point. Authored
@@ -76,6 +83,31 @@ function isPointInPolygon(point, poly) {
     }
   }
   return inside;
+}
+
+// Nearest patch of clear, open water around `from` — in the water polygon, not
+// inside any obstacle — biased toward the family (higher x). Used to place the
+// stuck-hint shimmer right where the child is stuck, not at a fixed point.
+function findNearbyOpening(from, obstacles, poly, familyX) {
+  let best = null;
+  let bestScore = -Infinity;
+  for (let r = 8; r <= 26; r += 3) {
+    for (let deg = 0; deg < 360; deg += 15) {
+      const a = (deg * Math.PI) / 180;
+      const p = { x: from.x + Math.cos(a) * r, y: from.y + Math.sin(a) * r };
+      if (!isPointInPolygon(p, poly)) continue;
+      if (isPointInsideObstacle(p, obstacles)) continue;
+      // Prefer forward (toward family) and a gentle, not-too-vertical hop.
+      const forward = Math.sign(familyX - from.x) * (p.x - from.x);
+      const score = forward * 2 - Math.abs(p.y - from.y) * 0.4 - r * 0.15;
+      if (score > bestScore) {
+        bestScore = score;
+        best = p;
+      }
+    }
+    if (best) return best;
+  }
+  return best;
 }
 
 const DEFAULT_OBSTACLES = [
@@ -165,7 +197,6 @@ export default function VakratundaRescueGame({
   const [familyPoint, setFamilyPoint] = useState({ x: FAMILY.x, y: FAMILY.y });
   const [familyW, setFamilyW] = useState(FAMILY.w);      // family width %
   const [waterPoly, setWaterPoly] = useState(DEFAULT_WATER_POLY);  // drag-allowed region
-  const [introVoDone, setIntroVoDone] = useState(false);
 
   // Debug / layout authoring
   const [showDebugPanel, setShowDebugPanel] = useState(false);
@@ -175,13 +206,21 @@ export default function VakratundaRescueGame({
   const [selectedObstacleId, setSelectedObstacleId] = useState(DEFAULT_OBSTACLES[0].id);
   const [layoutCopyStatus, setLayoutCopyStatus] = useState('');
 
+  const [stuckLevel, setStuckLevel] = useState(0);  // 0 none · 1 shimmer · 2 +VO · 3 +arc
+  const [showIntroGesture, setShowIntroGesture] = useState(false);  // one-time "you drag me" cue
+  const introGestureShownRef = useRef(false);
+
   const stageRef = useRef(null);
   const debugDragRef = useRef(null);
   const debugPanelDragRef = useRef(null);
   const timers = useRef([]);
   const isPausedRef = useRef(isPaused);
   const blockPulseTimeoutRef = useRef(null);
-  const hasPlayedGlowVoRef = useRef(false);
+  const hasPlayedStuckVoRef = useRef(false);
+  const bumpCountRef = useRef(0);          // bumps since the last forward progress
+  const stuckAnchorXRef = useRef(START_POS.x);   // furthest x when the streak began
+  const stuckLevelRef = useRef(0);         // mirror of stuckLevel for the drag loop
+  const stuckTimersRef = useRef([]);
 
   const frogPosRef = useRef(START_POS);
   const startPosRef = useRef(START_POS);   // authored frog start; kept in a ref so
@@ -218,30 +257,35 @@ export default function VakratundaRescueGame({
     setWaterPoly(next);
   }, []);
 
-  // Idle-hint escalation (timed from the intro VO ending so the first hint's
-  // line doesn't cancel the intro on the shared speech channel):
-  //   L1 ~3s  -> soft glow ring over the open water between the obstacles.
-  //   L2 ~8s  -> glow ring + the "drag to the glow" line, ONCE for the game.
-  //   L3 ~14s -> glow keeps pulsing (no extra element).
-  // No GestureDemo — a canned drag animation over free water read as random.
-  const { hintLevel, markInteraction } = useRepeatedHintCycle({
-    enabled: isActive && !isPaused && phase === 'trace' && introVoDone,
-    stageKey: phase,
-    initialDelay: 3000,
-    pulseCountBeforeEscalation: 2,
-    pulseInterval: 1800,
-    level2Delay: 8000,
-    level3Delay: 14000,
-  });
+  // REACTIVE stuck hint — no idle timer. It only escalates after repeated bumps
+  // with no forward progress, and only near where the child is stuck:
+  //   L1 -> a soft water shimmer in the nearest clear gap. Silent.
+  //   L2 (+6s stuck) -> shimmer + "Try going around — see the open water?" (once)
+  //   L3 (+12s stuck) -> shimmer + a short 3-ripple arc toward that gap
+  // Any new furthest-right position clears the streak and hides it again, so
+  // every rock / reed / log is its own fresh little puzzle.
+  const clearStuckTimers = useCallback(() => {
+    stuckTimersRef.current.forEach(clearTimeout);
+    stuckTimersRef.current = [];
+  }, []);
+
+  const resetStuck = useCallback(() => {
+    clearStuckTimers();
+    bumpCountRef.current = 0;
+    stuckAnchorXRef.current = maxProgressXRef.current;
+    stuckLevelRef.current = 0;
+    setStuckLevel(0);
+  }, [clearStuckTimers]);
 
   const clearTimers = useCallback(() => {
     timers.current.forEach(clearTimeout);
     timers.current = [];
+    clearStuckTimers();
     if (blockPulseTimeoutRef.current) {
       clearTimeout(blockPulseTimeoutRef.current);
       blockPulseTimeoutRef.current = null;
     }
-  }, []);
+  }, [clearStuckTimers]);
 
   useEffect(() => {
     isPausedRef.current = isPaused;
@@ -271,7 +315,7 @@ export default function VakratundaRescueGame({
     };
   }, []);
 
-  // Frog bumped a rock / log — gentle redirect, never a reset.
+  // Frog bumped a rock / log / bank — gentle redirect, never a reset.
   const triggerBlock = useCallback(() => {
     setBlockPulse(true);
     if (blockPulseTimeoutRef.current) clearTimeout(blockPulseTimeoutRef.current);
@@ -287,7 +331,24 @@ export default function VakratundaRescueGame({
       lastBlockSfxRef.current = now;
       playSfx?.('softWrong');
     }
-  }, [playSfx]);
+
+    // Stuck detection: N bumps with no forward progress since the streak began.
+    bumpCountRef.current += 1;
+    const stalled = maxProgressXRef.current <= stuckAnchorXRef.current + STUCK_PROGRESS_EPS;
+    if (bumpCountRef.current >= STUCK_BUMPS && stalled && stuckLevelRef.current === 0) {
+      stuckLevelRef.current = 1;
+      setStuckLevel(1);
+      clearStuckTimers();
+      stuckTimersRef.current.push(setTimeout(() => {
+        stuckLevelRef.current = 2;
+        setStuckLevel(2);
+      }, STUCK_L2_MS));
+      stuckTimersRef.current.push(setTimeout(() => {
+        stuckLevelRef.current = 3;
+        setStuckLevel(3);
+      }, STUCK_L3_MS));
+    }
+  }, [clearStuckTimers, playSfx]);
 
   const resetState = useCallback(() => {
     clearTimers();
@@ -305,10 +366,15 @@ export default function VakratundaRescueGame({
     setObstacles((prev) => (prev.length ? prev : cloneObstacles()));
     // startPos / frogW / familyPoint / familyW are authoring values — keep
     // them across resets, like obstacles.
-    setIntroVoDone(false);
-    hasPlayedGlowVoRef.current = false;
+    hasPlayedStuckVoRef.current = false;
     maxProgressXRef.current = startPosRef.current.x;
     lastBlockSfxRef.current = 0;
+    bumpCountRef.current = 0;
+    stuckAnchorXRef.current = startPosRef.current.x;
+    stuckLevelRef.current = 0;
+    setStuckLevel(0);
+    introGestureShownRef.current = false;
+    setShowIntroGesture(false);
   }, [clearTimers, onStageChange, setFrog, setLit]);
 
   const startTraceCourse = useCallback(() => {
@@ -317,11 +383,21 @@ export default function VakratundaRescueGame({
     setPads([]);
     setTrailPoints([]);
     setFrog(startPosRef.current);
-    // Start the idle-hint clock only once this line finishes. Safety timer in
-    // case the browser drops speechSynthesis 'end' (seen on iOS Safari).
-    playSceneLine?.('scene10_vak_intro', () => setIntroVoDone(true));
-    after(9000, () => setIntroVoDone(true));
-  }, [after, onStageChange, playSceneLine, setFrog]);
+    playSceneLine?.('scene10_vak_intro');
+  }, [onStageChange, playSceneLine, setFrog]);
+
+  // One-time onboarding: a hand drags the frog from the bank into the water so
+  // kids know to DRAG (not tap). Fires once when play starts, GestureDemo
+  // auto-hides after 2 loops, and beginDrag kills it on first grab. Keyed only
+  // on `phase` so a re-rendering parent can't cancel the timer.
+  useEffect(() => {
+    if (phase !== 'trace' || introGestureShownRef.current) return undefined;
+    const t = setTimeout(() => {
+      introGestureShownRef.current = true;
+      setShowIntroGesture(true);
+    }, 1200);
+    return () => clearTimeout(t);
+  }, [phase]);
 
   useEffect(() => {
     if (!isActive) return undefined;
@@ -394,7 +470,16 @@ export default function VakratundaRescueGame({
     });
 
     // Forward progress is monotonic — backing up never un-lights a syllable.
-    if (point.x > maxProgressXRef.current) maxProgressXRef.current = point.x;
+    // A new furthest point also clears any bump streak / stuck shimmer.
+    if (point.x > maxProgressXRef.current) {
+      maxProgressXRef.current = point.x;
+      bumpCountRef.current = 0;
+      if (stuckLevelRef.current > 0 && point.x > stuckAnchorXRef.current + STUCK_PROGRESS_EPS) {
+        resetStuck();
+      } else {
+        stuckAnchorXRef.current = point.x;
+      }
+    }
     const maxX = maxProgressXRef.current;
     const reachedFamily = distance(point, familyPoint) <= FAMILY_WIN_RADIUS;
 
@@ -413,7 +498,7 @@ export default function VakratundaRescueGame({
       // reached 4. Progress stays gated on how far the frog actually travelled
       // (maxProgressXRef / reachedFamily) — no destination shortcut.
       setLit(target);
-      markInteraction(); // real progress resets the idle-hint clock
+      resetStuck(); // a syllable earned is real progress — clear any stuck hint
       // One lily pad per syllable newly earned this tick — stepping stones that
       // MEAN something, not a breadcrumb trail. Drop where the frog crossed;
       // the 4th lands at the family as 'da' completes the whole word.
@@ -436,7 +521,7 @@ export default function VakratundaRescueGame({
       }
     }
   }, [
-    after, bandsX, familyPoint, goToReunion, isDragging, markInteraction,
+    after, bandsX, familyPoint, goToReunion, isDragging, resetStuck,
     obstacles, onMicroWin, setFrog, setLit, triggerBlock,
   ]);
 
@@ -447,9 +532,10 @@ export default function VakratundaRescueGame({
     if (!point) return;
     if (distance(point, frogPosRef.current) > GRAB_RADIUS) return; // must grab the frog
     setIsDragging(true);
-    markInteraction();
+    introGestureShownRef.current = true;   // they've got it — kill the intro cue
+    setShowIntroGesture(false);
     event.currentTarget.setPointerCapture?.(event.pointerId);
-  }, [getPoint, isPaused, markInteraction, phase, showDebugPanel]);
+  }, [getPoint, isPaused, phase, showDebugPanel]);
 
   const continueDrag = useCallback((event) => {
     if (!isDragging || isPaused) return;
@@ -466,31 +552,36 @@ export default function VakratundaRescueGame({
     // has drawn stays on screen so they can pick up and continue.
   }, []);
 
-  // Level 2 nudge: play the "drag to the glow" line once for the whole game.
+  // Stuck level 2: play the "try going around" line once for the whole game.
   useEffect(() => {
-    if (!isActive) return;
-    if (phase !== 'trace') return;
-    if (hintLevel < 2) return;
-    if (hasPlayedGlowVoRef.current) return;
-    hasPlayedGlowVoRef.current = true;
+    if (!isActive || phase !== 'trace') return;
+    if (stuckLevel < 2 || hasPlayedStuckVoRef.current) return;
+    hasPlayedStuckVoRef.current = true;
     playSceneLine?.('hintLookForGlow');
-  }, [hintLevel, isActive, phase, playSceneLine]);
+  }, [stuckLevel, isActive, phase, playSceneLine]);
 
   if (!isActive) return null;
 
   const isPlaying = phase === 'trace';
 
-  // A suggested opening: the open water just above the gap between the two
-  // obstacles. Only ever a hint — there is no single "correct" route.
-  const gapPoint = (() => {
-    if (obstacles.length < 2) return { x: 45, y: 30 };
-    const [a, b] = obstacles;
-    const midX = (a.hit.x + b.hit.x) / 2;
-    const topY = Math.min(a.hit.y - a.hit.ry, b.hit.y - b.hit.ry) - 7;
-    return { x: midX, y: Math.max(EDGE.minY + 2, topY) };
-  })();
+  // Where the stuck shimmer sits — the nearest clear water beside the frog,
+  // computed live so it always points at the gap next to where the child is
+  // stuck. null if the frog is fully boxed in (bad layout — fix in debug).
+  const openingPoint = (isPlaying && !isDragging && stuckLevel >= 1)
+    ? findNearbyOpening(frogPos, obstacles, waterPoly, familyPoint.x)
+    : null;
+  const showShimmer = !!openingPoint;
+  const arcDots = (showShimmer && stuckLevel >= 3)
+    ? [0.34, 0.6, 0.85].map((t, i) => ({
+        id: `arc-${i}`,
+        x: frogPos.x + (openingPoint.x - frogPos.x) * t,
+        y: frogPos.y + (openingPoint.y - frogPos.y) * t,
+      }))
+    : [];
 
-  const showHintRing = isPlaying && !isDragging && (hintLevel >= 1 || blockPulse);
+  // One-time onboarding drag: bank -> nearest open water.
+  const introGestureTo = findNearbyOpening(startPos, obstacles, waterPoly, familyPoint.x)
+    ?? { x: clamp(startPos.x + 12, EDGE.minX, EDGE.maxX), y: clamp(startPos.y - 8, EDGE.minY, EDGE.maxY) };
 
   const frogRenderPos = phase === 'reunion' ? familyPoint : frogPos;
   const frogWidth = phase === 'reunion' ? frogW * (REUNION_FROG_W / FROG_W) : frogW;
@@ -811,12 +902,27 @@ export default function VakratundaRescueGame({
         </React.Fragment>
       ))}
 
-      {showHintRing && (
+      {showShimmer && (
         <div
-          className={`vak-layer vak-trace-target-ring ${blockPulse ? 'is-warning' : ''}`}
-          style={{ left: `${gapPoint.x}%`, top: `${gapPoint.y}%`, zIndex: 5 }}
+          className={`vak-layer vak-water-shimmer ${stuckLevel >= 2 ? 'is-strong' : ''}`}
+          style={{ left: `${openingPoint.x}%`, top: `${openingPoint.y}%`, zIndex: 5 }}
         />
       )}
+      {arcDots.map((dot, i) => (
+        <div
+          key={dot.id}
+          className="vak-layer vak-shimmer-dot"
+          style={{ left: `${dot.x}%`, top: `${dot.y}%`, zIndex: 5, animationDelay: `${i * 0.18}s` }}
+        />
+      ))}
+
+      <GestureDemo
+        type="drag"
+        from={{ x: startPos.x, y: startPos.y }}
+        to={{ x: introGestureTo.x, y: introGestureTo.y }}
+        active={isPlaying && showIntroGesture}
+        idleDelay={0}
+      />
 
       <div
         className={`vak-debug-panel ${showDebugPanel ? 'is-open' : ''}`}
