@@ -81,6 +81,7 @@ Before every task, Claude Code must:
 - [~] T20 · CSS media-queries audit — Zone 1 (Symbol Mountain) done: phone-landscape (915×412 / 640×360) audit + fixes in 3 shared components (SymbolSidebar, ZoneWelcome, OpeningModal) via new `@media (max-height: 480px)` blocks; verified in-browser on all 4 SM scenes (Modak, Pond, Symbol, Sacred Assembly). Portrait out of scope (rotate overlay). SceneStage NOT used by SM scenes — see DECISIONS.md #7. Zones 2–3 still pending.
 - [ ] T49 · CleanGameWelcomeScreen (returning-user "Welcome Back / Continue Adventure" screen) — short-landscape (≤412px h) vertical overflow: "Continue Adventure" + Home / Switch Explorer / Start Over buttons sit below the fold, page scrolls. Flagged and deferred by TWO separate 2026-09-02 sweeps (Zone 1 CSS pilot + pre-Zone-1 onboarding). Returning families hit this every session — needs its own `@media (max-height: 480px)` pass (same pattern as ParentGate / ProfileSelector). Do before wider beta.
 - [ ] T50 · Marketing landing page (`src/pages/LandingPage.jsx`, `?view=landing`) — no nav menu yet (hamburger removed until it does something). Add the trigger + a real menu together before wider launch.
+- [ ] T51 · Onboarding install/hand-off scene (`CleanProfileSelector.jsx`, `PwaInstallManager.getInstallGuide`) — device-test the *install* state on real iOS Safari, iOS Chrome and Android (desktop Chrome skips it, so it was never seen live). Also verify the installed-PWA relaunch → Pick Your Friend boot on a real installed PWA. Nudge the beside-card Ganesha up a little if it reads too low.
 
 
 

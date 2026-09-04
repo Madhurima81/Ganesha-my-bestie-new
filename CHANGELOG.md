@@ -1,6 +1,63 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
 
+## [2026-09-04] — Onboarding: install nudge + child hand-off restructured
+**Touched:** src/lib/components/navigation/CleanProfileSelector.jsx + .css,
+src/lib/services/PwaInstallManager.js, src/App.jsx, src/pages/LandingPage.jsx
+**Changed:** Reworked the post–parent-gate onboarding into:
+`Name → Age → All Set (install) → Hand-off → Pick Your Friend → Mooshika ride
+→ Meet Ganesha → map`.
+- **Name** and **Age** are now two separate parent screens (avatar dropped from
+  the age step). After Age, name+age are stashed to localStorage
+  (`gmb_onboarding_name` / `_age`) so an installed-PWA relaunch can resume.
+- **One "All set" scene, two states** (content swap, no page load): *install*
+  ("Add GMB to your Home Screen", `[Show me how]` → browser-specific in-card
+  steps, `Maybe later`) and *hand-off* ("Ready for an adventure? … Hand them
+  the device", `[Start Adventure]`). Skips straight to hand-off when there's
+  nothing to install. Ganesha figure beside the card: `sit-hi` pose in install,
+  `celebrate` pose in hand-off.
+- **Pick Your Friend** is now its own child-facing screen after the hand-off
+  (was bundled into the parent's create step). Picking creates the profile
+  (name+age+avatar), clears the onboarding crumbs, sets `gmb_handoff_done`,
+  then → Mooshika ride → Meet Ganesha → map (that tail unchanged).
+- **PwaInstallManager**: new `detectPlatform()`, `isAndroid()`, and
+  `getInstallGuide()` returning `{os, browser, canNativePrompt, title, steps[]}`
+  for iOS Safari / iOS Chrome / Android Chromium / Android other / desktop.
+- **App.jsx**: installed-PWA relaunch mid-setup (name+age saved, no profile
+  yet, `display-mode: standalone`) → boots straight to the Pick Your Friend
+  screen via `CleanProfileSelector bootStage="pick-character"`. New `handoff`
+  currentView. Also: the top-level `<Suspense>` fallback now shows the Ganesha
+  loader instead of a blank scene; LandingPage "Continue here" strips
+  `?view=landing` from the URL before entering the app.
+**Verified:** production build green; lint clean (no new errors). Walked the
+full flow in the dev preview screen-by-screen through "Meet Ganesha". Not
+live-verified: final map paint after the intro story (unchanged code) and the
+standalone-relaunch boot (can't emulate `display-mode: standalone` in-preview).
+**Open:** on real iOS/Android the *install* state of the All-set scene shows;
+give it a device pass. Ganesha figure sits a touch low on the card — nudge if
+it bugs you.
+
+
+## [2026-09-03] — Delayed beta feedback-email automation (backend only)
+**Touched:** netlify/functions/send-feedback-emails.js (new),
+netlify/functions/send-continuation.js, netlify.toml (new),
+netlify/functions/_sql/beta_signups.sql (new)
+**Changed:** Nothing was persisted for signups before — send-continuation.js only
+fired the Resend continuation email. Added a minimal `beta_signups` table
+(id, parent_email unique, signed_up_at, feedback_email_sent_at nullable);
+send-continuation.js now best-effort inserts a row after a successful send
+(ignore-duplicates, never blocks the user). New Netlify scheduled function
+send-feedback-emails.js runs daily (netlify.toml `schedule = "0 8 * * *"`),
+selects rows 3+ days old with feedback_email_sent_at null, sends the verbatim
+feedback email via Resend, stamps feedback_email_sent_at, and continues the
+batch on per-email failure. No UI change.
+**Open:** (1) Run beta_signups.sql in Supabase SQL Editor — could not run it here
+(Supabase MCP not authorized). (2) Add Netlify env vars SUPABASE_URL +
+SUPABASE_SERVICE_ROLE_KEY (RESEND_API_KEY already set). (3) Paste real Google
+Form URL into FEEDBACK_FORM_URL in send-feedback-emails.js (function no-ops
+while it's still PLACEHOLDER_GOOGLE_FORM_URL).
+
+
 ## [2026-09-03] — Marketing landing page: merged 11 mockups into one React page
 **Touched:** src/pages/LandingPage.jsx (new), src/pages/LandingPage.css (new),
 src/App.jsx, index.html, public/images/landing/* (19 extracted assets),

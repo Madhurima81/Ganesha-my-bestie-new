@@ -1189,6 +1189,82 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   margin: 0;
 }
 
+/* Ganesha figure peeking beside the card on the "All set" / pick-friend scenes */
+.clean-modal-overlay .handoff-ganesha {
+  position: absolute;
+  bottom: 14%;
+  left: 50%;
+  width: clamp(88px, 15vw, 170px);
+  height: auto;
+  transform: translateX(calc(-50% - min(268px, 33vw)));
+  filter: drop-shadow(0 10px 16px rgba(58, 42, 74, 0.18));
+  pointer-events: none;
+  z-index: 1;
+  animation: handoff-ganesha-in 0.5s ease both;
+}
+.clean-modal-overlay .handoff-ganesha--celebrate {
+  width: clamp(96px, 17vw, 190px);
+  bottom: 16%;
+}
+@keyframes handoff-ganesha-in {
+  from { opacity: 0; transform: translateX(calc(-50% - min(268px, 33vw))) translateY(14px); }
+  to   { opacity: 1; }
+}
+@media (max-width: 560px) {
+  .clean-modal-overlay .handoff-ganesha { transform: translateX(calc(-50% - 40vw)); opacity: 0.9; }
+  .clean-modal-overlay .handoff-ganesha--celebrate { transform: translateX(calc(-50% - 40vw)); }
+}
+
+/* Post-create handoff screens (Add to Home Screen / All set!) */
+.scroll-card-inner .handoff-body {
+  font-family: 'Nunito', sans-serif;
+  color: #7a6d92;
+  text-align: center;
+  font-size: clamp(13px, 1.9vw, 16px);
+  line-height: 1.5;
+  margin: 10px 0 26px;
+  max-width: 34ch;
+}
+
+.scroll-card-inner .install-steps {
+  list-style: none;
+  margin: 6px 0 26px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  max-width: 40ch;
+}
+
+.scroll-card-inner .install-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  text-align: left;
+}
+
+.scroll-card-inner .install-step-icon {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #F0E4FA;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  line-height: 1;
+}
+
+.scroll-card-inner .install-step-text {
+  font-family: 'Nunito', sans-serif;
+  color: #6a5d82;
+  font-size: clamp(12.5px, 1.7vw, 15px);
+  line-height: 1.45;
+  padding-top: 6px;
+}
+
 /* Name input on parchment */
 .scroll-card-inner .name-input {
   font-family: var(--font-title);

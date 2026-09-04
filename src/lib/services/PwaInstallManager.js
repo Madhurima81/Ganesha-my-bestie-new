@@ -25,6 +25,117 @@ export function isStandalone() {
   return window.matchMedia?.('(display-mode: standalone)')?.matches || window.navigator?.standalone === true;
 }
 
+export function isAndroid() {
+  if (typeof navigator === 'undefined') return false;
+  return /Android/i.test(navigator.userAgent || '');
+}
+
+// Coarse OS + browser sniff, only for choosing which "Add to Home Screen"
+// walkthrough to show. Never used for feature gating.
+export function detectPlatform() {
+  const ua = (typeof navigator !== 'undefined' && (navigator.userAgent || '')) || '';
+  const os = isIOS() ? 'ios' : isAndroid() ? 'android' : 'desktop';
+
+  let browser = 'other';
+  if (os === 'ios') {
+    if (/CriOS/.test(ua)) browser = 'chrome';
+    else if (/FxiOS/.test(ua)) browser = 'firefox';
+    else if (/EdgiOS/.test(ua)) browser = 'edge';
+    else browser = 'safari'; // any other iOS browser uses the Safari-style share sheet
+  } else if (os === 'android') {
+    if (/SamsungBrowser/.test(ua)) browser = 'samsung';
+    else if (/Firefox/.test(ua)) browser = 'firefox';
+    else if (/EdgA/.test(ua)) browser = 'edge';
+    else if (/Chrome/.test(ua)) browser = 'chrome';
+  } else {
+    if (/Edg\//.test(ua)) browser = 'edge';
+    else if (/Chrome\//.test(ua) && !/OPR|Brave/.test(ua)) browser = 'chrome';
+    else if (/Safari/.test(ua) && /Version\//.test(ua)) browser = 'safari';
+    else if (/Firefox/.test(ua)) browser = 'firefox';
+  }
+  return { os, browser };
+}
+
+// Returns the walkthrough to render in the "Show me how" in-card step view.
+// `canNativePrompt` means we can just call promptInstall() and skip the steps.
+export function getInstallGuide() {
+  const { os, browser } = detectPlatform();
+  const canNativePrompt = pwaInstallManager.isAvailable();
+  const installed = isStandalone();
+
+  if (installed) {
+    return { os, browser, canNativePrompt, installed, title: 'Already added', steps: [] };
+  }
+
+  if (canNativePrompt) {
+    return {
+      os,
+      browser,
+      canNativePrompt,
+      installed,
+      title: 'One tap to add',
+      steps: [{ icon: '⬇️', text: 'Tap the button below and confirm “Install”.' }],
+    };
+  }
+
+  if (os === 'ios') {
+    // Every iOS browser routes through the OS share sheet; only the button's
+    // spot differs (Safari = bottom bar, Chrome/Edge/Firefox = address bar).
+    const shareSpot =
+      browser === 'safari'
+        ? 'the Share button at the bottom of the screen'
+        : 'the Share button in the address bar';
+    return {
+      os,
+      browser,
+      canNativePrompt,
+      installed,
+      title: 'Add to Home Screen',
+      steps: [
+        { icon: '⬆️', text: `Tap ${shareSpot} (the box with an arrow).` },
+        { icon: '➕', text: 'Choose “Add to Home Screen”.' },
+        { icon: '✅', text: 'Tap “Add” — the Ganesha icon appears on your home screen.' },
+      ],
+    };
+  }
+
+  if (os === 'android') {
+    const menuHint =
+      browser === 'samsung'
+        ? 'Open the menu (☰), then “Add page to” → “Home screen”.'
+        : browser === 'firefox'
+          ? 'Open the menu (⋮), then “Install” (or “Add to Home screen”).'
+          : 'Open the menu (⋮), then “Add to Home screen” (or “Install app”).';
+    return {
+      os,
+      browser,
+      canNativePrompt,
+      installed,
+      title: 'Add to Home Screen',
+      steps: [
+        { icon: '⋮', text: menuHint },
+        { icon: '✅', text: 'Confirm — the Ganesha icon appears on your home screen.' },
+      ],
+    };
+  }
+
+  // Desktop, no install prompt available
+  const desktopHint =
+    browser === 'safari'
+      ? 'Open the Share menu, then “Add to Dock”.'
+      : browser === 'firefox'
+        ? 'Firefox desktop can’t add app icons — open GMB in Chrome or Edge to install.'
+        : 'Click the install icon (⊕ / monitor) at the right of the address bar.';
+  return {
+    os,
+    browser,
+    canNativePrompt,
+    installed,
+    title: 'Add GMB as an app',
+    steps: [{ icon: '🖥️', text: desktopHint }],
+  };
+}
+
 class PwaInstallManager {
   constructor() {
     this.deferredPrompt = null;
