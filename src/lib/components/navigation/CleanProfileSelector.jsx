@@ -61,14 +61,36 @@ const CleanProfileSelector = ({
   const isManagingRef = React.useRef(false);
   const voiceTimersRef = useRef([]);
   const hasPlayedFriendChoiceVoRef = useRef(false);
+  const playedStepVoRef = useRef({ 1: false, 2: false });
   const avatarAudioCtxRef = useRef(null);
 
+  // 20 explorer friends — art lives at /images/new-explorer-<id>.webp (+ .png fallback).
   const animalAvatars = [
-    { id: 'monkey', name: 'Monkey', labelColor: '#FF9800' },
-    { id: 'peacock', name: 'Peacock', labelColor: '#00BCD4' },
-    { id: 'squirrel', name: 'Squirrel', labelColor: '#8D6E63' },
-    { id: 'tiger', name: 'Tiger', labelColor: '#4CAF50' }
-  ];
+    { id: 'monkey', name: 'Monkey' },
+    { id: 'elephant', name: 'Elephant' },
+    { id: 'peacock', name: 'Peacock' },
+    { id: 'tiger', name: 'Tiger' },
+    { id: 'lion', name: 'Lion' },
+    { id: 'rabbit', name: 'Rabbit' },
+    { id: 'squirrel', name: 'Squirrel' },
+    { id: 'mouse', name: 'Mouse' },
+    { id: 'owl', name: 'Owl' },
+    { id: 'peacock1', name: 'Peacock' }, // placeholder slot — replaced below
+    { id: 'deer', name: 'Deer' },
+    { id: 'horse', name: 'Horse' },
+    { id: 'camel', name: 'Camel' },
+    { id: 'buffalo', name: 'Buffalo' },
+    { id: 'cobra', name: 'Cobra' },
+    { id: 'turtle', name: 'Turtle' },
+    { id: 'fish', name: 'Fish' },
+    { id: 'swan', name: 'Swan' },
+    { id: 'crane', name: 'Crane' },
+    { id: 'crow', name: 'Crow' },
+    { id: 'fox', name: 'Fox' },
+  ].filter((a) => a.id !== 'peacock1');
+
+  const CHARS_PER_PAGE = 8;
+  const charPageCount = Math.ceil(animalAvatars.length / CHARS_PER_PAGE);
 
   useEffect(() => {
     if (initialProfiles) {
@@ -229,15 +251,6 @@ const CleanProfileSelector = ({
     if (!avatar) return 'monkey';
     if (typeof avatar === 'string') return avatar;
     return avatar.id || 'monkey';
-  };
-
-  // Parent has entered name + age — nothing to create yet, the child still has to
-  // pick a friend. Move straight to the install nudge (last parent-present moment).
-  const handleParentDetailsDone = () => {
-    if (!newProfileName.trim() || isCreatingProfile) return;
-    setCreateError('');
-    setShowCreateProfile(false);
-    setTransitionStage('install');
   };
 
   // Fires once the child has picked their friend on the kid-facing avatar step —
