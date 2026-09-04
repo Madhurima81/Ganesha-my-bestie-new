@@ -62,7 +62,6 @@ const CleanProfileSelector = ({
   const isManagingRef = React.useRef(false);
   const voiceTimersRef = useRef([]);
   const hasPlayedFriendChoiceVoRef = useRef(false);
-  const playedStepVoRef = useRef({ 1: false, 2: false });
   const avatarAudioCtxRef = useRef(null);
 
   // 20 explorer friends — art lives at /images/new-explorer-<id>.webp (+ .png fallback).
@@ -107,45 +106,8 @@ const CleanProfileSelector = ({
     }
   }, [showCreateProfile]);
 
-  useEffect(() => {
-    const canSpeak = isAudioOn && window.speechSynthesis && typeof window.SpeechSynthesisUtterance !== 'undefined';
-
-    if (!showCreateProfile || !canSpeak || playedStepVoRef.current[currentStep]) {
-      return;
-    }
-
-    const entryTimerId = setTimeout(() => {
-      window.speechSynthesis.cancel();
-      const u = new window.SpeechSynthesisUtterance(
-        currentStep === 1 ? "What's your child's name?"
-          : 'How old is your child?'
-      );
-      u.rate = currentStep === 2 ? 1.05 : 1.02;
-      u.pitch = currentStep === 2 ? 1.05 : 1;
-      u.volume = 0.9;
-      window.speechSynthesis.speak(u);
-      playedStepVoRef.current[currentStep] = true;
-    }, 220);
-    let idleTimerId = null;
-
-    if (currentStep === 1 && !newProfileName.trim()) {
-      idleTimerId = setTimeout(() => {
-        if (!newProfileName.trim()) {
-          window.speechSynthesis.cancel();
-          const idleU = new window.SpeechSynthesisUtterance('Tell me your name.');
-          idleU.rate = 1.02;
-          idleU.pitch = 1;
-          idleU.volume = 0.9;
-          window.speechSynthesis.speak(idleU);
-        }
-      }, 2500);
-    }
-
-    return () => {
-      clearTimeout(entryTimerId);
-      if (idleTimerId) clearTimeout(idleTimerId);
-    };
-  }, [showCreateProfile, currentStep, newProfileName, isAudioOn]);
+  // No voice-over on the parent-facing name / age steps (or any parent
+  // onboarding screen) — VO is for the child screens only.
 
   useEffect(() => {
     return () => {
