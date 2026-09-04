@@ -47,7 +47,6 @@ const CleanProfileSelector = ({
   const isManagingRef = React.useRef(false);
   const voiceTimersRef = useRef([]);
   const hasPlayedFriendChoiceVoRef = useRef(false);
-  const playedStepVoRef = useRef({ 1: false, 2: false });
   const avatarAudioCtxRef = useRef(null);
 
   const animalAvatars = [
@@ -69,49 +68,11 @@ const CleanProfileSelector = ({
     if (showCreateProfile) {
       setCurrentStep(1);
       setCreateError('');
-      playedStepVoRef.current = { 1: false, 2: false };
     }
   }, [showCreateProfile]);
 
-  useEffect(() => {
-    const canSpeak = isAudioOn && window.speechSynthesis && typeof window.SpeechSynthesisUtterance !== 'undefined';
-
-    if (!showCreateProfile || !canSpeak || playedStepVoRef.current[currentStep]) {
-      return;
-    }
-
-    const entryTimerId = setTimeout(() => {
-      window.speechSynthesis.cancel();
-      const u = new window.SpeechSynthesisUtterance(
-        currentStep === 1 ? 'What should I call you?'
-          : 'How old are you, and who will join your adventure?'
-      );
-      u.rate = currentStep === 2 ? 1.05 : 1.02;
-      u.pitch = currentStep === 2 ? 1.05 : 1;
-      u.volume = 0.9;
-      window.speechSynthesis.speak(u);
-      playedStepVoRef.current[currentStep] = true;
-    }, 220);
-    let idleTimerId = null;
-
-    if (currentStep === 1 && !newProfileName.trim()) {
-      idleTimerId = setTimeout(() => {
-        if (!newProfileName.trim()) {
-          window.speechSynthesis.cancel();
-          const idleU = new window.SpeechSynthesisUtterance('Tell me your name.');
-          idleU.rate = 1.02;
-          idleU.pitch = 1;
-          idleU.volume = 0.9;
-          window.speechSynthesis.speak(idleU);
-        }
-      }, 2500);
-    }
-
-    return () => {
-      clearTimeout(entryTimerId);
-      if (idleTimerId) clearTimeout(idleTimerId);
-    };
-  }, [showCreateProfile, currentStep, newProfileName, isAudioOn]);
+  // Steps 1-2 (name, age) are filled in by the parent, so no narration plays here —
+  // VO only resumes once we hand off to the child at the avatar-pick step.
 
   useEffect(() => {
     return () => {
@@ -147,7 +108,6 @@ const CleanProfileSelector = ({
     setIsCreatingProfile(false);
     setCreateError('');
     hasPlayedFriendChoiceVoRef.current = false;
-    playedStepVoRef.current = { 1: false, 2: false };
     window.speechSynthesis?.cancel();
   };
 
@@ -220,7 +180,17 @@ const CleanProfileSelector = ({
     return avatar.id || 'monkey';
   };
 
-  // UPDATED: instead of calling onProfileSelect immediately, trigger Mooshika ride
+  // Parent has entered name + age — nothing to create yet, the child still has to
+  // pick a friend. Move straight to the install nudge (last parent-present moment).
+  const handleParentDetailsDone = () => {
+    if (!newProfileName.trim() || isCreatingProfile) return;
+    setCreateError('');
+    setShowCreateProfile(false);
+    setTransitionStage('install');
+  };
+
+  // Fires once the child has picked their friend on the kid-facing avatar step —
+  // this is where the profile actually gets created, then straight to the ride.
   const handleCreateProfile = () => {
     if (!newProfileName.trim() || isCreatingProfile) return;
     setIsCreatingProfile(true);
@@ -236,18 +206,12 @@ const CleanProfileSelector = ({
       );
 
       if (newProfile && newProfile.id) {
-        // Cancel any in-flight VO so it doesn't bleed into the ride
-        window.speechSynthesis?.cancel();
-
         setNewProfileName('');
         setSelectedAvatar('monkey');
         setSelectedAge(7);
 
-        // Screen 6 — PWA install nudge fires first (parent still confirmed present),
-        // then hand off to the Mooshika ride.
         setPendingProfile(newProfile);
-        setShowCreateProfile(false);
-        setTransitionStage('install');
+        setTransitionStage('ride');
       } else {
         setCreateError('That profile could not be created. Try deleting one first.');
         setIsCreatingProfile(false);
@@ -283,7 +247,58 @@ const CleanProfileSelector = ({
           <div className="profile-bg-overlay" />
           <div className="profile-vignette" />
         </div>
-        <InstallPromptBanner onContinue={() => setTransitionStage('ride')} />
+        <InstallPromptBanner onContinue={() => setTransitionStage('avatar')} />
+      </div>
+    );
+  }
+
+  // SCREEN — pick your friend. Kid-facing: the parent has handed the device over,
+  // so this is the first moment VO/tap-audio plays in the create-profile flow.
+  if (transitionStage === 'avatar') {
+    return (
+      <div className="clean-profile-overlay">
+        <div className="clean-forest-background">
+          <div className="profile-bg-overlay" />
+          <div className="profile-vignette" />
+        </div>
+        <div className="clean-profile-container">
+          <div className="clean-modal-overlay scroll-overlay">
+            <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} position="top-right" />
+            <div className="scroll-card">
+              <div className="scroll-card-inner">
+                <span className="create-card-lotus" aria-hidden="true" />
+                <div className="create-step-content">
+                  <h2 className="create-step-heading">Pick your friend, {newProfileName.trim()}!</h2>
+                  <p className="create-step-subheading">Who will join your adventure?</p>
+                  <div className="friend-grid">
+                    {animalAvatars.map((animal) => (
+                      <div
+                        key={animal.id}
+                        className={`friend-card ${selectedAvatar === animal.id ? 'active' : ''} ${avatarTapPulseId === animal.id ? 'pop' : ''}`}
+                        onClick={() => handleAvatarSelect(animal.id)}
+                        aria-label={animal.name}
+                        role="button"
+                      >
+                        <img src={`/images/new-explorer-${animal.id}.webp`} alt={animal.name} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {createError ? <p className="create-error-text">{createError}</p> : null}
+
+                <PrimaryBtn
+                  label="Let's Explore"
+                  onClick={handleCreateProfile}
+                  disabled={isCreatingProfile}
+                  size="md"
+                  fullWidth
+                  className="final-cta-btn"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -346,7 +361,7 @@ const CleanProfileSelector = ({
                 <div className="create-step-content">
                   {currentStep === 1 && (
                     <>
-                      <h2 className="create-step-heading">What should I call you?</h2>
+                      <h2 className="create-step-heading">What's your child's name?</h2>
                       <input
                         type="text"
                         value={newProfileName}
@@ -356,7 +371,7 @@ const CleanProfileSelector = ({
                             setCurrentStep(2);
                           }
                         }}
-                        placeholder="Type your name"
+                        placeholder="Enter their name"
                         maxLength={12}
                         className="name-input"
                         autoFocus
@@ -366,7 +381,7 @@ const CleanProfileSelector = ({
 
                   {currentStep === 2 && (
                     <>
-                      <h2 className="create-step-heading">How old are you, {newProfileName.trim()}?</h2>
+                      <h2 className="create-step-heading">How old is {newProfileName.trim()}?</h2>
                       <div className="age-stepper">
                         <button
                           className="age-stepper-btn"
@@ -388,21 +403,6 @@ const CleanProfileSelector = ({
                           +
                         </button>
                       </div>
-
-                      <p className="create-step-subheading">Who will join your adventure?</p>
-                      <div className="friend-grid">
-                        {animalAvatars.map((animal) => (
-                          <div
-                            key={animal.id}
-                            className={`friend-card ${selectedAvatar === animal.id ? 'active' : ''} ${avatarTapPulseId === animal.id ? 'pop' : ''}`}
-                            onClick={() => handleAvatarSelect(animal.id)}
-                            aria-label={animal.name}
-                            role="button"
-                          >
-                            <img src={`/images/new-explorer-${animal.id}.webp`} alt={animal.name} />
-                          </div>
-                        ))}
-                      </div>
                     </>
                   )}
                 </div>
@@ -410,11 +410,11 @@ const CleanProfileSelector = ({
                 {createError ? <p className="create-error-text">{createError}</p> : null}
 
                 <PrimaryBtn
-                  label={currentStep < 2 ? '→' : "Let's Explore"}
+                  label={currentStep < 2 ? '→' : 'Next'}
                   onClick={() => {
                     setCreateError('');
                     if (currentStep === 1) setCurrentStep(2);
-                    else handleCreateProfile();
+                    else handleParentDetailsDone();
                   }}
                   disabled={(currentStep === 1 && newProfileName.trim().length < 2) || isCreatingProfile}
                   size="md"
