@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { playUiTap } from '../../services/AudioService';
-import './DeviceChoiceModal.css';
+import OnboardingCard from '../onboarding/OnboardingCard';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -8,6 +8,7 @@ const DeviceChoiceModal = ({ isOpen, onClose, onContinueHere }) => {
   const [parentEmail, setParentEmail] = useState('');
   const [status, setStatus] = useState('idle');
   const [message, setMessage] = useState('');
+  const [showEmail, setShowEmail] = useState(false);
   const firstActionRef = useRef(null);
   const emailInputRef = useRef(null);
 
@@ -17,6 +18,7 @@ const DeviceChoiceModal = ({ isOpen, onClose, onContinueHere }) => {
     setParentEmail('');
     setStatus('idle');
     setMessage('');
+    setShowEmail(false);
 
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -26,6 +28,10 @@ const DeviceChoiceModal = ({ isOpen, onClose, onContinueHere }) => {
       document.body.style.overflow = previousOverflow;
     };
   }, [isOpen]);
+
+  useEffect(() => {
+    if (showEmail) window.requestAnimationFrame(() => emailInputRef.current?.focus());
+  }, [showEmail]);
 
   if (!isOpen) return null;
 
@@ -75,101 +81,96 @@ const DeviceChoiceModal = ({ isOpen, onClose, onContinueHere }) => {
   const isSent = status === 'sent';
 
   return (
-    <div
-      className="device-choice-backdrop"
-      role="presentation"
-      onMouseDown={(event) => {
-        if (event.target === event.currentTarget) onClose();
-      }}
-    >
-      <section
-        className="device-choice-modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="device-choice-title"
-      >
+    <OnboardingCard heading="Where would you like to begin?">
+      {!showEmail && (
         <button
           type="button"
-          className="device-choice-close"
-          onClick={onClose}
-          aria-label="Close device choice"
+          className="onb-row"
+          onClick={handleContinueHere}
+          ref={firstActionRef}
         >
-          &times;
+          <span className="onb-row__icon" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="3" width="16" height="18" rx="2" /><line x1="10" y1="18" x2="14" y2="18" /></svg>
+          </span>
+          <span className="onb-row__text">
+            <span className="onb-row__title">Continue here</span>
+            <span className="onb-row__sub">Start on this device now.</span>
+          </span>
+          <span className="onb-row__chev" aria-hidden="true">›</span>
         </button>
+      )}
 
-        <div className="device-choice-header">
-          <p className="device-choice-kicker">Start free</p>
-          <h2 id="device-choice-title">Where would you like to begin?</h2>
-        </div>
+      {!showEmail && (
+        <button
+          type="button"
+          className="onb-row"
+          onClick={() => setShowEmail(true)}
+        >
+          <span className="onb-row__icon" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" /></svg>
+          </span>
+          <span className="onb-row__text">
+            <span className="onb-row__title">Send to iPad</span>
+            <span className="onb-row__sub">Get a link by email.</span>
+          </span>
+          <span className="onb-row__chev" aria-hidden="true">›</span>
+        </button>
+      )}
 
-        <div className="device-choice-options">
-          <button
-            type="button"
-            className="device-choice-option device-choice-option--primary"
-            onClick={handleContinueHere}
-            ref={firstActionRef}
-          >
-            <span className="device-choice-option-title">Continue here</span>
-            <span className="device-choice-option-copy">
-              Start on this device now.
-            </span>
+      {showEmail && !isSent && (
+        <form
+          onSubmit={handleSendToIpad}
+          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, width: '100%' }}
+        >
+          <p className="onb-sub" style={{ margin: 0 }}>
+            GMB feels best on a bigger screen. We&rsquo;ll email a link so you can
+            continue on an iPad.
+          </p>
+          <input
+            ref={emailInputRef}
+            className="onb-input"
+            type="email"
+            inputMode="email"
+            autoComplete="email"
+            value={parentEmail}
+            onChange={(event) => {
+              setParentEmail(event.target.value);
+              if (status === 'error') {
+                setStatus('idle');
+                setMessage('');
+              }
+            }}
+            placeholder="Parent email"
+            disabled={isSending}
+            required
+          />
+          {message && (
+            <p className={status === 'error' ? 'onb-error' : 'onb-sub'} style={{ margin: 0 }} aria-live="polite">
+              {message}
+            </p>
+          )}
+          <button type="submit" className="onb-btn" disabled={isSending}>
+            {isSending ? 'Sending…' : 'Email me the link'}
           </button>
+          <button type="button" className="onb-link" onClick={() => setShowEmail(false)}>
+            ← Back
+          </button>
+        </form>
+      )}
 
-          <form className="device-choice-option device-choice-email" onSubmit={handleSendToIpad}>
-            <div>
-              <span className="device-choice-option-title">Send to iPad</span>
-              <p className="device-choice-option-copy">
-                GMB is designed for a bigger screen, with more room to play and discover.
-              </p>
-            </div>
+      {showEmail && isSent && (
+        <>
+          <p className="onb-sub" style={{ margin: 0 }} aria-live="polite">{message}</p>
+          <button type="button" className="onb-btn" onClick={onClose}>Done</button>
+        </>
+      )}
 
-            {isSent ? (
-              <p className="device-choice-confirmation" aria-live="polite">
-                {message}
-              </p>
-            ) : (
-              <>
-                <label className="device-choice-email-field">
-                  <span>Parent email</span>
-                  <input
-                    ref={emailInputRef}
-                    type="email"
-                    inputMode="email"
-                    autoComplete="email"
-                    value={parentEmail}
-                    onChange={(event) => {
-                      setParentEmail(event.target.value);
-                      if (status === 'error') {
-                        setStatus('idle');
-                        setMessage('');
-                      }
-                    }}
-                    placeholder="you@example.com"
-                    disabled={isSending}
-                    required
-                  />
-                </label>
-
-                <button
-                  type="submit"
-                  className="device-choice-submit"
-                  disabled={isSending}
-                >
-                  {isSending ? 'Sending...' : 'Email me the link'}
-                </button>
-
-                <p
-                  className={`device-choice-status ${status === 'error' ? 'device-choice-status--error' : ''}`}
-                  aria-live="polite"
-                >
-                  {message}
-                </p>
-              </>
-            )}
-          </form>
-        </div>
-      </section>
-    </div>
+      {!showEmail && (
+        <button type="button" className="onb-link" onClick={onClose}>
+          Maybe later
+        </button>
+      )}
+    </OnboardingCard>
   );
 };
 

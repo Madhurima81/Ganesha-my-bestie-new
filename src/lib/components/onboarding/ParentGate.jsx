@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useCallback } from 'react';
+import OnboardingCard from './OnboardingCard';
 import './ParentGate.css';
 
 // Reusable parent gate — a Khan Academy Kids-style challenge: 3-4 random digits are
@@ -56,54 +57,36 @@ const ParentGate = ({ onComplete, onBackToWelcome }) => {
   const displaySlots = challenge.digits.map((_, i) => input[i] || '');
 
   return (
-    <div className="parent-gate-screen">
-      <div className="parent-gate-card">
-        <div className="parent-gate-stage parent-gate-stage--age">
-          <p className="parent-gate-kicker">Grown-ups only!</p>
-          <h1>Time to get a grown-up!</h1>
-          <p className="parent-gate-copy">
-            Ganesha needs a quick check before a child profile is created.
-          </p>
+    <OnboardingCard heading="Grown-ups only!" subheading="A quick check before we continue.">
+      <p className="pg-prompt">{words}</p>
 
-          <p className="parent-gate-copy" style={{ fontWeight: 800, fontSize: '1.15rem', letterSpacing: '0.04em' }}>
-            {words}
-          </p>
-
-          <div className="parent-gate-keypad-slots" aria-live="polite">
-            {displaySlots.map((digit, i) => (
-              <span key={i} className="parent-gate-keypad-slot">{digit}</span>
-            ))}
-          </div>
-
-          {feedback ? (
-            <p className="parent-gate-feedback">{feedback}</p>
-          ) : null}
-
-          <div className="parent-gate-keypad">
-            {KEYS.map((key) => (
-              <button
-                key={key}
-                type="button"
-                className="parent-gate-keypad-key"
-                onClick={() => handleKey(key)}
-              >
-                {key === 'clear' ? 'Clear' : key === 'back' ? '⌫' : key}
-              </button>
-            ))}
-          </div>
-
-          {onBackToWelcome && (
-            <button
-              type="button"
-              className="parent-gate-link parent-gate-link--text"
-              onClick={onBackToWelcome}
-            >
-              ← Back
-            </button>
-          )}
-        </div>
+      <div className="pg-slots" aria-live="polite">
+        {displaySlots.map((digit, i) => (
+          <span key={i} className="pg-slot">{digit}</span>
+        ))}
       </div>
-    </div>
+
+      {feedback ? <p className="onb-error">{feedback}</p> : null}
+
+      <div className="pg-keypad">
+        {KEYS.map((key) => (
+          <button
+            key={key}
+            type="button"
+            className="pg-key"
+            onClick={() => handleKey(key)}
+          >
+            {key === 'clear' ? 'Clear' : key === 'back' ? '⌫' : key}
+          </button>
+        ))}
+      </div>
+
+      {onBackToWelcome && (
+        <button type="button" className="onb-link" onClick={onBackToWelcome}>
+          ← Back
+        </button>
+      )}
+    </OnboardingCard>
   );
 };
 
