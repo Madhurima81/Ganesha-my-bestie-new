@@ -12,6 +12,7 @@ import InnerMandala from '../celebration/InnerMandala';
 import { symbolCardContent } from '../../../zones/symbol-mountain/shared/components/symbolCardContent';
 import { playUiTap } from '../../services/AudioService';
 import CloseButton from '../../../components/CloseButton';
+import AudioToggle from '../ui/AudioToggle/AudioToggle';
 
 const ZONE_SCENES = [
   { zone: 'symbol-mountain', scenes: ['pond', 'modak', 'symbol', 'final-scene'] },
@@ -645,13 +646,11 @@ const CleanGameWelcomeScreen = ({
   return (
     <div className={`clean-welcome-overlay page-transition ${isModal ? 'clean-welcome-overlay--modal' : 'clean-welcome-overlay--fullscreen'}`}>
       {!isModal && (
-        <button
-          className="welcome-sound-toggle"
-          onClick={toggleAudio}
-          aria-label={audioOn ? 'Turn sound off' : 'Turn sound on'}
-        >
-          {audioOn ? '🔊' : '🔇'}
-        </button>
+        <AudioToggle
+          isAudioOn={audioOn}
+          onToggle={toggleAudio}
+          position="top-right"
+        />
       )}
       <div className={`clean-welcome-content clean-welcome-card ${isModal ? 'clean-welcome-content--modal compact' : ''}`}>
         {isModal && (

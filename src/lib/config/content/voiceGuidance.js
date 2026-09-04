@@ -62,7 +62,7 @@ export const VOICE_SCRIPTS = {
 
       // Mahakaya Rescue Game — scene 10 VO lines
       scene10_vak_intro: {
-        text: "The frog can see his family, but rocks and logs block the way. Help him find a way around."
+        text: "The frog can see his family, but rocks and logs block the way. Drag the frog to help him find a way around."
       },
       scene10_vak_choose: {
         text: "Help guide the lily pad another way."

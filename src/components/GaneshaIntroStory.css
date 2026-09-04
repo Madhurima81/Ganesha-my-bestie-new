@@ -320,6 +320,13 @@
   transform: scale(0.94);
 }
 
+.storyReplayVoIcon {
+  width: 24px;
+  height: 24px;
+  display: block;
+  pointer-events: none;
+}
+
 @media (max-width: 700px) {
   .gis-stage {
     width: 100vw;
