@@ -905,14 +905,14 @@ export default function VakratundaRescueGame({
       {showShimmer && (
         <div
           className={`vak-layer vak-water-shimmer ${stuckLevel >= 2 ? 'is-strong' : ''}`}
-          style={{ left: `${openingPoint.x}%`, top: `${openingPoint.y}%`, zIndex: 5 }}
+          style={{ left: `${openingPoint.x}%`, top: `${openingPoint.y}%`, zIndex: 13 }}
         />
       )}
       {arcDots.map((dot, i) => (
         <div
           key={dot.id}
           className="vak-layer vak-shimmer-dot"
-          style={{ left: `${dot.x}%`, top: `${dot.y}%`, zIndex: 5, animationDelay: `${i * 0.18}s` }}
+          style={{ left: `${dot.x}%`, top: `${dot.y}%`, zIndex: 13, animationDelay: `${i * 0.18}s` }}
         />
       ))}
 

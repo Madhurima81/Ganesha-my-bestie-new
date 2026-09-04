@@ -207,48 +207,49 @@
   animation: vakTraceWarning 0.45s ease-in-out;
 }
 
-/* Reactive stuck hint — a soft cyan water shimmer in the nearest clear gap. */
+/* Reactive stuck hint — a BRIGHT ripple in the nearest clear gap. Warm white
+   so it pops on the blue water (cyan-on-blue was invisible). */
 .vak-water-shimmer {
-  width: 7.4%;
-  height: 7.4%;
+  width: 9%;
+  height: 9%;
   border-radius: 50%;
   pointer-events: none;
   background: radial-gradient(circle,
-    rgba(210, 245, 255, 0.55) 0%,
-    rgba(120, 214, 255, 0.34) 38%,
-    rgba(90, 190, 245, 0.12) 60%,
-    rgba(90, 190, 245, 0) 76%);
+    rgba(255, 255, 255, 0.85) 0%,
+    rgba(255, 244, 214, 0.55) 30%,
+    rgba(255, 224, 150, 0.22) 55%,
+    rgba(255, 224, 150, 0) 74%);
+  border: 0.6% solid rgba(255, 255, 255, 0.9);
   box-shadow:
-    inset 0 0 8px rgba(226, 248, 255, 0.4),
-    0 0 14px rgba(120, 210, 255, 0.34);
-  opacity: 0.5;
-  animation: vakShimmer 2.2s ease-in-out infinite;
+    0 0 10px 2px rgba(255, 246, 224, 0.7),
+    0 0 26px 6px rgba(255, 214, 130, 0.45);
+  animation: vakShimmer 1.6s ease-in-out infinite;
 }
 
 .vak-water-shimmer.is-strong {
-  width: 8.8%;
-  height: 8.8%;
-  opacity: 0.72;
-  animation-duration: 1.6s;
+  width: 11%;
+  height: 11%;
+  animation-duration: 1.15s;
 }
 
 .vak-shimmer-dot {
-  width: 2.6%;
-  height: 2.6%;
+  width: 3.4%;
+  height: 3.4%;
   border-radius: 50%;
   pointer-events: none;
-  background: radial-gradient(circle, rgba(226, 248, 255, 0.9) 0%, rgba(120, 210, 255, 0.5) 55%, rgba(120, 210, 255, 0) 80%);
-  animation: vakShimmerDot 1.5s ease-in-out infinite;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.95) 0%, rgba(255, 232, 170, 0.6) 55%, rgba(255, 232, 170, 0) 80%);
+  box-shadow: 0 0 8px 2px rgba(255, 246, 224, 0.6);
+  animation: vakShimmerDot 1.4s ease-in-out infinite;
 }
 
 @keyframes vakShimmer {
-  0%, 100% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.4; }
-  50%      { transform: translate(-50%, -50%) scale(1.12); opacity: 0.72; }
+  0%, 100% { transform: translate(-50%, -50%) scale(0.82); opacity: 0.55; }
+  50%      { transform: translate(-50%, -50%) scale(1.15); opacity: 1; }
 }
 
 @keyframes vakShimmerDot {
-  0%, 100% { transform: translate(-50%, -50%) scale(0.6); opacity: 0.15; }
-  45%      { transform: translate(-50%, -50%) scale(1); opacity: 0.85; }
+  0%, 100% { transform: translate(-50%, -50%) scale(0.5); opacity: 0.2; }
+  45%      { transform: translate(-50%, -50%) scale(1); opacity: 0.95; }
 }
 
 .vak-debug-hitbox {
