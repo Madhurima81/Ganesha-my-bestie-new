@@ -1,21 +1,25 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
 
-## [2026-09-04] — Meet Ganesha welcome video + real OAuth icons
+## [2026-09-04] — Meet Ganesha welcome video + onboarding icons
 **Touched:** src/components/GaneshaIntroStory.jsx + .css,
-src/lib/components/onboarding/SignInScreen.jsx + .css,
-public/images/onboarding/google.svg + apple.svg (new)
+src/lib/components/onboarding/SignInScreen.jsx + .css + OnboardingCard.css,
+src/lib/components/navigation/DeviceChoiceModal.jsx + CleanProfileSelector.jsx + .css,
+public/images/onboarding/ (google.svg, apple.svg, icon-name/-continue-here/-email/-install.webp — new)
 **Changed:**
 - `/videos/ganeshawelcome-new.webm` (mp4 fallback) now plays full-screen and
   autoplays as the first beat of the Meet Ganesha screen, before slide 0.
   Advances on `ended` / `error` / a 15s hard cap / the existing Skip button.
   Slide-0 VO is already gesture-gated so it can't talk over the video.
   `showVideoIntro` state + one effect; early return after all existing hooks.
-- SignInScreen: real Google and Apple logo SVGs replace the "G" text and 🍎
-  emoji on the sign-in buttons.
-**Open:** four more onboarding icons (person → name screen, devices → device
-choice "Continue here", envelope → "Send to iPad", phone+lotus+sparkles →
-"Almost there!" install screen) — pasted as images, need the source files.
+- Real icons wired into the onboarding screens (PNGs from Downloads, resized
+  to 160px WebP via sharp): Google + Apple logos on the sign-in buttons;
+  devices icon on device-choice "Continue here", envelope on "Send to iPad";
+  person icon on the child's-name screen; phone+lotus+sparkles on the
+  "Almost there!" install screen. Replaced the inline-SVG / emoji stand-ins.
+- Fixed `.onb-row__title/sub` to stack (were running together).
+**Verified:** build green; lint clean. Device-choice icons checked in the
+preview.
 
 
 ## [2026-09-04] — Onboarding: unified card skin across all setup screens
