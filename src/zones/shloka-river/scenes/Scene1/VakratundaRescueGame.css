@@ -207,6 +207,50 @@
   animation: vakTraceWarning 0.45s ease-in-out;
 }
 
+/* Reactive stuck hint — a soft cyan water shimmer in the nearest clear gap. */
+.vak-water-shimmer {
+  width: 7.4%;
+  height: 7.4%;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle,
+    rgba(210, 245, 255, 0.55) 0%,
+    rgba(120, 214, 255, 0.34) 38%,
+    rgba(90, 190, 245, 0.12) 60%,
+    rgba(90, 190, 245, 0) 76%);
+  box-shadow:
+    inset 0 0 8px rgba(226, 248, 255, 0.4),
+    0 0 14px rgba(120, 210, 255, 0.34);
+  opacity: 0.5;
+  animation: vakShimmer 2.2s ease-in-out infinite;
+}
+
+.vak-water-shimmer.is-strong {
+  width: 8.8%;
+  height: 8.8%;
+  opacity: 0.72;
+  animation-duration: 1.6s;
+}
+
+.vak-shimmer-dot {
+  width: 2.6%;
+  height: 2.6%;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(226, 248, 255, 0.9) 0%, rgba(120, 210, 255, 0.5) 55%, rgba(120, 210, 255, 0) 80%);
+  animation: vakShimmerDot 1.5s ease-in-out infinite;
+}
+
+@keyframes vakShimmer {
+  0%, 100% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.4; }
+  50%      { transform: translate(-50%, -50%) scale(1.12); opacity: 0.72; }
+}
+
+@keyframes vakShimmerDot {
+  0%, 100% { transform: translate(-50%, -50%) scale(0.6); opacity: 0.15; }
+  45%      { transform: translate(-50%, -50%) scale(1); opacity: 0.85; }
+}
+
 .vak-debug-hitbox {
   border: 2px dashed rgba(53, 182, 255, 0.92);
   border-radius: 999px;

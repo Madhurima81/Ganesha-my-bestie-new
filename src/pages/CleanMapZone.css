@@ -773,51 +773,6 @@
 }
 
 /* =========================
-   SOUND TOGGLE — bottom-left
-   Matches the back-button pill style but circular.
-========================= */
-.map-sound-toggle {
-  position: fixed;
-  bottom: 24px;
-  left: 24px;
-  z-index: 20;
-  background: rgba(255, 255, 255, 0.92);
-  border: 2px solid rgba(160, 120, 220, 0.4);
-  border-radius: 50%;
-  width:  clamp(52px, 5.5vw, 68px);
-  height: clamp(52px, 5.5vw, 68px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 3px 8px rgba(140, 120, 180, 0.12);
-  transition: transform 0.16s ease-out, opacity 0.16s ease-out;
-  padding: 0;
-  opacity: 0.6;
-  transform: scale(0.9);
-}
-
-.map-sound-toggle__icon {
-  width:  clamp(28px, 3vw, 38px);
-  height: clamp(28px, 3vw, 38px);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: clamp(20px, 2.4vw, 28px);
-  line-height: 1;
-}
-
-.map-sound-toggle:hover,
-.map-sound-toggle:active {
-  transform: scale(0.95);
-  opacity: 0.75;
-}
-
-.map-sound-toggle.muted {
-  opacity: 0.55;
-}
-
-/* =========================
    BACK BUTTON
 ========================= */
 .map-back-button {
@@ -1258,27 +1213,6 @@
   50% { transform: translateX(2px); }
   75% { transform: translateX(-1px); }
   100% { transform: translateX(0); }
-}
-
-.ganesha-gesture-cue--map-symbol {
-  left: 29%;
-  top: 22%;
-  animation: mapGestureFloat 1.8s ease-in-out infinite !important;
-}
-
-.ganesha-gesture-cue--map-symbol .ganesha-gesture-cue__icon {
-  filter: drop-shadow(0 8px 18px rgba(82, 45, 0, 0.18));
-}
-
-@keyframes mapGestureFloat {
-  0%, 100% {
-    transform: translateY(0) scale(1);
-    opacity: 0.88;
-  }
-  50% {
-    transform: translateY(-6px) scale(1.04);
-    opacity: 1;
-  }
 }
 
 /* Primary CTA: Symbol Mountain only */

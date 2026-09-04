@@ -4,6 +4,7 @@ import './CleanMapZone.css';
 import GameStateManager from '../lib/services/GameStateManager';
 import { GANESHA_POSE_ASSETS } from '../lib/config/ganeshaUsageSystem';
 import GaneshaGestureCue from '../lib/components/gesture/GaneshaGestureCue';
+import AudioToggle from '../lib/components/ui/AudioToggle/AudioToggle';
 // import ZonePreviewModal from './components/ZonePreviewModal'; // commented out — no preview modal
 import useAudioPreference from '../lib/hooks/useAudioPreference';
 
@@ -1593,17 +1594,11 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         preload="metadata"
       />
 
-      <button
-        type="button"
-        className={`map-sound-toggle ${isMuted ? 'muted' : ''}`}
-        onClick={toggleAudio}
-        aria-label={isMuted ? 'Turn sound on' : 'Turn sound off'}
-        title={isMuted ? 'Sound off (tap to turn on)' : 'Sound on (tap to turn off)'}
-      >
-        <span className="map-sound-toggle__icon" aria-hidden="true">
-          {isMuted ? '🔇' : '🔊'}
-        </span>
-      </button>
+      <AudioToggle
+        isAudioOn={!isMuted}
+        onToggle={toggleAudio}
+        position="bottom-left"
+      />
 
       {/* Background image */}
       <img

@@ -284,7 +284,7 @@ const GaneshaIntroStory = ({ profileId, childName, onComplete }) => {
                     <button type="button" className="storyBackArrow" onClick={handleBack} aria-label="Previous page" />
                   )}
                   <button type="button" className="storyReplayVo" onClick={handleReplayVo} aria-label="Hear this page again">
-                    🔊
+                    <img src="/images/icons/icon-sound-on.svg" alt="" className="storyReplayVoIcon" draggable={false} />
                   </button>
                   <button type="button" className="storyNextArrow" onClick={() => handleNext(true)} aria-label="Next slide" />
                   {showTapPuff ? <span key={tapPuffKey} className="storyTapPuff" aria-hidden="true" /> : null}
