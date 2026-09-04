@@ -4,8 +4,10 @@ import { GANESHA_USAGE_SYSTEM } from '../lib/config/ganeshaUsageSystem';
 
 const GaneshaIntroStory = ({ profileId, childName, onComplete }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [showVideoIntro, setShowVideoIntro] = useState(true);
   const [showTapPuff, setShowTapPuff] = useState(false);
   const [tapPuffKey, setTapPuffKey] = useState(0);
+  const videoIntroRef = useRef(null);
   const speechTimerRef = useRef(null);
   const tapPuffTimerRef = useRef(null);
   const introAdvanceTimerRef = useRef(null);
@@ -177,6 +179,43 @@ const GaneshaIntroStory = ({ profileId, childName, onComplete }) => {
     window.speechSynthesis?.cancel?.();
     setCurrentSlide((prev) => prev - 1);
   };
+
+  // Short Ganesha welcome video, before slide 0. Autoplays; advances to the
+  // story on end / error / a hard 15s cap / the Skip button. The slide-0 VO
+  // is gesture-gated so it can't talk over the video.
+  useEffect(() => {
+    if (!showVideoIntro) return undefined;
+    const cap = setTimeout(() => setShowVideoIntro(false), 15000);
+    const p = videoIntroRef.current?.play?.();
+    if (p && typeof p.catch === 'function') {
+      p.catch(() => {
+        /* autoplay blocked — the Skip button is still there */
+      });
+    }
+    return () => clearTimeout(cap);
+  }, [showVideoIntro]);
+
+  if (showVideoIntro) {
+    return (
+      <div className="gis-overlay gis-video-intro">
+        <video
+          ref={videoIntroRef}
+          className="gis-intro-video"
+          autoPlay
+          playsInline
+          preload="auto"
+          onEnded={() => setShowVideoIntro(false)}
+          onError={() => setShowVideoIntro(false)}
+        >
+          <source src="/videos/ganeshawelcome-new.webm" type="video/webm" />
+          <source src="/videos/ganeshawelcome-new.mp4" type="video/mp4" />
+        </video>
+        <button type="button" className="storySkip" onClick={() => setShowVideoIntro(false)}>
+          Skip
+        </button>
+      </div>
+    );
+  }
 
   const slide = slides[currentSlide];
 

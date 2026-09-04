@@ -1,6 +1,23 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
 
+## [2026-09-04] — Meet Ganesha welcome video + real OAuth icons
+**Touched:** src/components/GaneshaIntroStory.jsx + .css,
+src/lib/components/onboarding/SignInScreen.jsx + .css,
+public/images/onboarding/google.svg + apple.svg (new)
+**Changed:**
+- `/videos/ganeshawelcome-new.webm` (mp4 fallback) now plays full-screen and
+  autoplays as the first beat of the Meet Ganesha screen, before slide 0.
+  Advances on `ended` / `error` / a 15s hard cap / the existing Skip button.
+  Slide-0 VO is already gesture-gated so it can't talk over the video.
+  `showVideoIntro` state + one effect; early return after all existing hooks.
+- SignInScreen: real Google and Apple logo SVGs replace the "G" text and 🍎
+  emoji on the sign-in buttons.
+**Open:** four more onboarding icons (person → name screen, devices → device
+choice "Continue here", envelope → "Send to iPad", phone+lotus+sparkles →
+"Almost there!" install screen) — pasted as images, need the source files.
+
+
 ## [2026-09-04] — Onboarding: unified card skin across all setup screens
 **Touched:** src/lib/components/onboarding/OnboardingCard.jsx + .css (new),
 ParentGate.jsx + .css, SignInScreen.jsx + .css,
