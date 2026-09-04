@@ -236,11 +236,13 @@ const CleanProfileSelector = ({
     }
   };
 
-  // SCREEN 6 — PWA install nudge. Fires right after the child profile is created
-  // (parent still confirmed present here), BEFORE the Mooshika ride transition —
-  // this is the one moment an adult is confirmed present. Dismissible banner, never
-  // a blocking modal; self-hides after 2 declines (tracked in PwaInstallManager).
-  if (transitionStage === 'install' && pendingProfile) {
+  // SCREEN 6 — PWA install nudge. Fires right after the parent enters name + age
+  // (parent still confirmed present here), BEFORE the child picks an avatar and the
+  // Mooshika ride transition — this is the one moment an adult is confirmed present.
+  // Dismissible banner, never a blocking modal; self-hides after 2 declines (tracked
+  // in PwaInstallManager). No profile exists yet at this point (created after the
+  // child picks an avatar), so this no longer gates on pendingProfile.
+  if (transitionStage === 'install') {
     return (
       <div className="clean-profile-overlay">
         <div className="clean-forest-background">
