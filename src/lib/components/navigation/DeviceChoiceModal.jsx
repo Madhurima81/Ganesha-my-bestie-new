@@ -90,7 +90,7 @@ const DeviceChoiceModal = ({ isOpen, onClose, onContinueHere }) => {
           ref={firstActionRef}
         >
           <span className="onb-row__icon" aria-hidden="true">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="3" width="16" height="18" rx="2" /><line x1="10" y1="18" x2="14" y2="18" /></svg>
+            <img src="/images/onboarding/icon-continue-here.webp" alt="" />
           </span>
           <span className="onb-row__text">
             <span className="onb-row__title">Continue here</span>
@@ -107,7 +107,7 @@ const DeviceChoiceModal = ({ isOpen, onClose, onContinueHere }) => {
           onClick={() => setShowEmail(true)}
         >
           <span className="onb-row__icon" aria-hidden="true">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" /></svg>
+            <img src="/images/onboarding/icon-email.webp" alt="" />
           </span>
           <span className="onb-row__text">
             <span className="onb-row__title">Send to iPad</span>

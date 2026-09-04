@@ -1,15 +1,15 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import SyllableHighlight from '../../shared/SyllableHighlight';
 import useRepeatedHintCycle from '../../../../lib/hooks/useRepeatedHintCycle';
-import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
 import './VakratundaRescueGame.css';
 
-import frogSwim from './assets/images/vakratunda/frog-swim.webp';
+import frogSwim from './assets/images/vakratunda/frog-baby.webp';
 import frogHappy from './assets/images/vakratunda/frog-happy.webp';
 import frogFamily from './assets/images/vakratunda/frog-family-from-download.webp';
 import lilypad from './assets/images/vakratunda/lilypad.webp';
 import stoneImg from './assets/images/vakratunda/18.png';
 import logPileImg from './assets/images/vakratunda/19.png';
+import reedsImg from './assets/images/vakratunda/reeds.webp';
 
 // ---------------------------------------------------------------------------
 // FREE-PATH RESCUE
@@ -23,10 +23,10 @@ import logPileImg from './assets/images/vakratunda/19.png';
 const SYLLABLES = ['va', 'kra', 'tun', 'da'];
 const AUDIO = { syllables: ['va', 'kra', 'tun', 'da'] };
 
-const START_POS = { x: 9.21, y: 52.61 };
-const FROG_W = 6.2;
-const REUNION_FROG_W = 5.6;
-const FAMILY = { x: 78, y: 40, w: 14 };
+const START_POS = { x: 15.5, y: 72 };
+const FROG_W = 6;
+const REUNION_FROG_W = 5.4;
+const FAMILY = { x: 88, y: 42, w: 14 };
 
 // X thresholds (in %) that light va / kra / tun as the frog passes them.
 // 'da' lights on actually reaching the family, not just an X line.
@@ -36,32 +36,88 @@ const FAMILY_WIN_RADIUS = 12;   // how close counts as "reached the family"
 const GRAB_RADIUS = 15;         // must press near the frog to pick it up
 const TRAIL_MIN_STEP = 1.0;     // ignore micro jitter when drawing the wake
 const TRAIL_LIMIT = 200;        // cap wake points so the polyline stays cheap
-const BLOCK_VO_COOLDOWN_MS = 4200;
+const BLOCK_SFX_COOLDOWN_MS = 500;   // throttle the soft "nope" bump SFX
 const EDGE = { minX: 3, maxX: 96, minY: 6, maxY: 93 };
+
+// The frog can only be dragged INSIDE this shape — the river channel, with a
+// bay cut into the near bank at the frog's start and another at the family's
+// pad. Outside it is land: the drag holds at the last water point. Authored
+// live in the Trace Debug panel ("Water area"); these are just the seed points
+// (clockwise, % of the stage).
+const DEFAULT_WATER_POLY = [
+  { x: 3, y: 42 },
+  { x: 70.77, y: 39.1 },
+  { x: 80.63, y: 38.41 },
+  { x: 98.65, y: 43.27 },
+  { x: 96.66, y: 98.8 },
+  { x: 77.74, y: 90.19 },
+  { x: 52.94, y: 70.62 },
+  { x: 37, y: 71.87 },
+  { x: 25.25, y: 66.18 },
+  { x: 15.29, y: 64.51 },
+  { x: 9.01, y: 61.59 },
+  { x: 3, y: 58 },
+];
 
 const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
 const clamp = (value, lo, hi) => Math.min(hi, Math.max(lo, value));
 
+// Ray-casting point-in-polygon. poly is a list of {x,y} in the same units.
+function isPointInPolygon(point, poly) {
+  let inside = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i, i += 1) {
+    const xi = poly[i].x;
+    const yi = poly[i].y;
+    const xj = poly[j].x;
+    const yj = poly[j].y;
+    const straddles = (yi > point.y) !== (yj > point.y);
+    if (straddles && point.x < ((xj - xi) * (point.y - yi)) / (yj - yi) + xi) {
+      inside = !inside;
+    }
+  }
+  return inside;
+}
+
 const DEFAULT_OBSTACLES = [
-  {
-    id: 'logpile',
-    img: logPileImg,
-    l: 60.507367470603036,
-    t: 49.79314687300702,
-    w: 27.5,
-    z: 7,
-    cls: 'vak-obstacle--logpile',
-    hit: { x: 60.507367470603036, y: 49.79314687300702, rx: 12.6, ry: 12.2 },
-  },
   {
     id: 'stone',
     img: stoneImg,
-    l: 33.8,
-    t: 41.74094375298948,
+    l: 30.03,
+    t: 38.55,
     w: 30,
     z: 7,
     cls: 'vak-obstacle--stone',
-    hit: { x: 34.414005843647054, y: 42.74094375298948, rx: 11.7, ry: 10.5 },
+    hit: { x: 30.63, y: 39.55, rx: 14, ry: 12.5 },
+  },
+  {
+    id: 'logpile',
+    img: logPileImg,
+    l: 67.68,
+    t: 43.82,
+    w: 30,
+    z: 7,
+    cls: 'vak-obstacle--logpile',
+    hit: { x: 67.68, y: 43.82, rx: 14, ry: 12.5 },
+  },
+  {
+    id: 'reeds',
+    img: reedsImg,
+    l: 49.55,
+    t: 63.4,
+    w: 20,
+    z: 12,   // above the dropped lily pads (z 11) so pads sit BEHIND the reeds
+    cls: 'vak-obstacle--reeds',
+    hit: { x: 49.55, y: 63.4, rx: 7.5, ry: 12 },
+  },
+  {
+    id: 'reeds2',
+    img: reedsImg,
+    l: 57.32,
+    t: 69.92,
+    w: 17,
+    z: 12,
+    cls: 'vak-obstacle--reeds',
+    hit: { x: 57.32, y: 68.92, rx: 6.5, ry: 11 },
   },
 ];
 
@@ -108,11 +164,13 @@ export default function VakratundaRescueGame({
   const [frogW, setFrogW] = useState(FROG_W);            // frog width %
   const [familyPoint, setFamilyPoint] = useState({ x: FAMILY.x, y: FAMILY.y });
   const [familyW, setFamilyW] = useState(FAMILY.w);      // family width %
+  const [waterPoly, setWaterPoly] = useState(DEFAULT_WATER_POLY);  // drag-allowed region
   const [introVoDone, setIntroVoDone] = useState(false);
 
   // Debug / layout authoring
   const [showDebugPanel, setShowDebugPanel] = useState(false);
   const [showHitboxes, setShowHitboxes] = useState(false);
+  const [showWaterArea, setShowWaterArea] = useState(false);
   const [debugPanelPosition, setDebugPanelPosition] = useState({ x: 12, y: 96 });
   const [selectedObstacleId, setSelectedObstacleId] = useState(DEFAULT_OBSTACLES[0].id);
   const [layoutCopyStatus, setLayoutCopyStatus] = useState('');
@@ -127,9 +185,10 @@ export default function VakratundaRescueGame({
 
   const frogPosRef = useRef(START_POS);
   const startPosRef = useRef(START_POS);   // authored frog start; kept in a ref so
+  const waterPolyRef = useRef(DEFAULT_WATER_POLY);  // read in the drag loop
   const litCountRef = useRef(0);           // resetState identity stays stable
   const maxProgressXRef = useRef(START_POS.x);
-  const lastBlockVoRef = useRef(0);
+  const lastBlockSfxRef = useRef(0);
   const reunionStartedRef = useRef(false);
 
   const setFrog = useCallback((point) => {
@@ -150,12 +209,21 @@ export default function VakratundaRescueGame({
     setFrog(next);
   }, [setFrog]);
 
+  // Debug authoring: drag one water-area vertex.
+  const moveWaterVertex = useCallback((index, point) => {
+    const next = waterPolyRef.current.map((v, i) => (
+      i === index ? { x: +point.x.toFixed(2), y: +point.y.toFixed(2) } : v
+    ));
+    waterPolyRef.current = next;
+    setWaterPoly(next);
+  }, []);
+
   // Idle-hint escalation (timed from the intro VO ending so the first hint's
   // line doesn't cancel the intro on the shared speech channel):
-  //   L1 ~3s  -> drag GestureDemo only. Silent. "you can drag me".
-  //   L2 ~8s  -> soft glow over the open water between the rocks + the
-  //             "drag to the glow" line, ONCE for the whole game.
-  //   L3 ~14s -> GestureDemo arcs all the way through that gap.
+  //   L1 ~3s  -> soft glow ring over the open water between the obstacles.
+  //   L2 ~8s  -> glow ring + the "drag to the glow" line, ONCE for the game.
+  //   L3 ~14s -> glow keeps pulsing (no extra element).
+  // No GestureDemo — a canned drag animation over free water read as random.
   const { hintLevel, markInteraction } = useRepeatedHintCycle({
     enabled: isActive && !isPaused && phase === 'trace' && introVoDone,
     stageKey: phase,
@@ -212,14 +280,14 @@ export default function VakratundaRescueGame({
       blockPulseTimeoutRef.current = null;
     }, 450);
 
-    playSfx?.('softWrong');
-
+    // Soft "nope" SFX only — no VO. Throttled so scrubbing along the bank or a
+    // rock doesn't machine-gun it.
     const now = Date.now();
-    if (now - lastBlockVoRef.current > BLOCK_VO_COOLDOWN_MS) {
-      lastBlockVoRef.current = now;
-      playSceneLine?.('scene10_vak_current_too_strong');
+    if (now - lastBlockSfxRef.current > BLOCK_SFX_COOLDOWN_MS) {
+      lastBlockSfxRef.current = now;
+      playSfx?.('softWrong');
     }
-  }, [playSceneLine, playSfx]);
+  }, [playSfx]);
 
   const resetState = useCallback(() => {
     clearTimers();
@@ -240,7 +308,7 @@ export default function VakratundaRescueGame({
     setIntroVoDone(false);
     hasPlayedGlowVoRef.current = false;
     maxProgressXRef.current = startPosRef.current.x;
-    lastBlockVoRef.current = 0;
+    lastBlockSfxRef.current = 0;
   }, [clearTimers, onStageChange, setFrog, setLit]);
 
   const startTraceCourse = useCallback(() => {
@@ -309,6 +377,12 @@ export default function VakratundaRescueGame({
       return; // frog holds at the last safe spot — no reset
     }
 
+    // Off the water (grass / far bank) — same as a rock: hold, don't follow.
+    if (!isPointInPolygon(point, waterPolyRef.current)) {
+      triggerBlock();
+      return;
+    }
+
     const prev = frogPosRef.current;
     setFrog(point);
 
@@ -331,14 +405,27 @@ export default function VakratundaRescueGame({
     if (reachedFamily) target = 4;
 
     if (target > litCountRef.current) {
-      const nextLit = litCountRef.current + 1; // +1 per tick — reveal stays smooth
-      setLit(nextLit);
+      const prevLit = litCountRef.current;
+      // Apply the FULL computed target in one step. A fast flick that clears
+      // several bands (or reaches the family) in a single pointer-move must not
+      // strand the child at +1 with the rest of the syllables unlit — that was
+      // the fast-flick soft-stuck: reunion never fired because litCount never
+      // reached 4. Progress stays gated on how far the frog actually travelled
+      // (maxProgressXRef / reachedFamily) — no destination shortcut.
+      setLit(target);
       markInteraction(); // real progress resets the idle-hint clock
-      // One lily pad per syllable earned — a stepping stone that MEANS
-      // something, not a breadcrumb trail. Drops where the frog crossed;
+      // One lily pad per syllable newly earned this tick — stepping stones that
+      // MEAN something, not a breadcrumb trail. Drop where the frog crossed;
       // the 4th lands at the family as 'da' completes the whole word.
-      setPads((pd) => [...pd, { id: `pad-${nextLit}`, x: point.x, y: point.y }]);
-      if (nextLit < 4) {
+      setPads((pd) => [
+        ...pd,
+        ...Array.from({ length: target - prevLit }, (_, i) => ({
+          id: `pad-${prevLit + i + 1}`,
+          x: point.x,
+          y: point.y,
+        })),
+      ]);
+      if (target < 4) {
         setFrogSnapping(true);
         after(260, () => setFrogSnapping(false));
       } else {
@@ -403,16 +490,7 @@ export default function VakratundaRescueGame({
     return { x: midX, y: Math.max(EDGE.minY + 2, topY) };
   })();
 
-  const showGesture = isPlaying && !isDragging && hintLevel >= 1;
-  const showHintRing = isPlaying && !isDragging && (hintLevel >= 2 || blockPulse);
-
-  // L1 gesture is a short nudge from the frog (teach the drag). L2+ points at
-  // the glow over the open water.
-  const gestureNudge = {
-    x: frogPos.x + (gapPoint.x - frogPos.x) * 0.28,
-    y: frogPos.y + (gapPoint.y - frogPos.y) * 0.28,
-  };
-  const gestureTo = hintLevel >= 2 ? gapPoint : gestureNudge;
+  const showHintRing = isPlaying && !isDragging && (hintLevel >= 1 || blockPulse);
 
   const frogRenderPos = phase === 'reunion' ? familyPoint : frogPos;
   const frogWidth = phase === 'reunion' ? frogW * (REUNION_FROG_W / FROG_W) : frogW;
@@ -420,7 +498,7 @@ export default function VakratundaRescueGame({
     obstacles.find((obstacle) => obstacle.id === selectedObstacleId) ?? obstacles[0];
 
   const copyLayoutJson = async () => {
-    const payload = JSON.stringify({ obstacles, startPos, frogW, familyPoint, familyW, bandsX }, null, 2);
+    const payload = JSON.stringify({ obstacles, startPos, frogW, familyPoint, familyW, bandsX, waterPoly }, null, 2);
     const canPrompt = typeof window !== 'undefined' && typeof window.prompt === 'function';
 
     try {
@@ -507,6 +585,10 @@ export default function VakratundaRescueGame({
     }
     if (drag.type === 'frogStart') {
       moveStartPos(point);
+      return;
+    }
+    if (drag.type === 'waterVertex') {
+      moveWaterVertex(drag.index, point);
     }
   };
 
@@ -614,6 +696,12 @@ export default function VakratundaRescueGame({
       )}
 
       <svg className="vak-trace-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        {showDebugPanel && showWaterArea && (
+          <polygon
+            className="vak-debug-water"
+            points={waterPoly.map((v) => `${v.x},${v.y}`).join(' ')}
+          />
+        )}
         {showDebugPanel && bandsX.map((band, index) => (
           <line
             key={`band-${index}`}
@@ -628,6 +716,20 @@ export default function VakratundaRescueGame({
         {trailPath && <polyline className="vak-trace-line" points={trailPath} />}
       </svg>
 
+      {showDebugPanel && showWaterArea && waterPoly.map((v, index) => (
+        <div
+          key={`water-vtx-${index}`}
+          className="vak-layer vak-debug-water-vtx is-debug-draggable"
+          style={{ left: `${v.x}%`, top: `${v.y}%`, zIndex: 40 }}
+          onPointerDown={(event) => startDebugDrag(event, { type: 'waterVertex', index })}
+          onPointerMove={continueDebugDrag}
+          onPointerUp={endDebugDrag}
+          onPointerCancel={endDebugDrag}
+        >
+          {index}
+        </div>
+      ))}
+
       {pads.map((pad) => (
         <div
           key={pad.id}
@@ -640,7 +742,7 @@ export default function VakratundaRescueGame({
 
       <div
         className={`vak-layer vak-start-frog ${phase === 'reunion' ? 'is-reunion' : ''} ${phase === 'reunion' && familyBounce ? 'is-bouncing' : ''} ${isPlaying && !isDragging ? 'is-waiting' : ''} ${blockPulse ? 'is-shaking' : ''} ${frogSnapping ? 'is-snapping' : ''} ${showDebugPanel ? 'is-debug-draggable' : ''}`}
-        style={{ left: `${frogRenderPos.x}%`, top: `${frogRenderPos.y}%`, width: `${frogWidth}%`, zIndex: 12 }}
+        style={{ left: `${frogRenderPos.x}%`, top: `${frogRenderPos.y}%`, width: `${frogWidth}%`, zIndex: 14 }}
         onPointerDown={(event) => startDebugDrag(event, { type: 'frogStart' })}
         onPointerMove={continueDebugDrag}
         onPointerUp={endDebugDrag}
@@ -715,15 +817,6 @@ export default function VakratundaRescueGame({
           style={{ left: `${gapPoint.x}%`, top: `${gapPoint.y}%`, zIndex: 5 }}
         />
       )}
-
-      <GestureDemo
-        key={`vak-gesture-${phase}-${litCount}-${hintLevel}`}
-        type="drag"
-        from={{ x: frogPos.x, y: frogPos.y }}
-        to={{ x: gestureTo.x, y: gestureTo.y }}
-        active={showGesture}
-        idleDelay={500}
-      />
 
       <div
         className={`vak-debug-panel ${showDebugPanel ? 'is-open' : ''}`}
@@ -942,8 +1035,30 @@ export default function VakratundaRescueGame({
               </button>
             </div>
 
+            <div className="vak-debug-section-title">Water area</div>
+            <p className="vak-debug-note">
+              The frog can only be dragged inside this shape. Turn it on, then drag the numbered handles on the canvas to fit the river + the start/family bays.
+            </p>
+            <label className="vak-debug-check">
+              <input
+                type="checkbox"
+                checked={showWaterArea}
+                onChange={(event) => setShowWaterArea(event.target.checked)}
+              />
+              <span>Show water area &amp; handles</span>
+            </label>
+            <div className="vak-debug-actions">
+              <button
+                type="button"
+                className="vak-debug-reset"
+                onClick={() => { waterPolyRef.current = DEFAULT_WATER_POLY; setWaterPoly(DEFAULT_WATER_POLY); }}
+              >
+                Reset Water
+              </button>
+            </div>
+
             <pre className="vak-debug-readout">
-              {JSON.stringify({ obstacles, startPos, frogW, familyPoint, familyW, bandsX }, null, 2)}
+              {JSON.stringify({ obstacles, startPos, frogW, familyPoint, familyW, bandsX, waterPoly }, null, 2)}
             </pre>
           </div>
         )}

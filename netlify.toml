@@ -1,0 +1,10 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+  functions = "netlify/functions"
+
+# Scheduled functions — https://docs.netlify.com/functions/scheduled-functions/
+# `schedule` accepts standard cron (UTC) or the shorthands @hourly / @daily / @weekly / @monthly.
+# Runs once per day at 08:00 UTC.
+[functions."send-feedback-emails"]
+  schedule = "0 8 * * *"

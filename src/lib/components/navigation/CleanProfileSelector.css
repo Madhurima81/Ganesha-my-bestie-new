@@ -1164,6 +1164,18 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 }
 
 /* Headings on the scroll — use Baloo, parchment-friendly purple */
+.scroll-card-inner .cps-step-icon {
+  width: clamp(44px, 6vw, 58px);
+  height: clamp(44px, 6vw, 58px);
+  object-fit: contain;
+  margin: 0 auto 12px;
+  display: block;
+}
+.scroll-card-inner .cps-step-icon--install {
+  width: clamp(56px, 8vw, 76px);
+  height: clamp(56px, 8vw, 76px);
+}
+
 .scroll-card-inner .create-step-heading {
   font-family: var(--font-title);
   color: #7B6D9E;
