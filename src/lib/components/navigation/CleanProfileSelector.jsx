@@ -4,7 +4,7 @@ import GameStateManager from '../../services/GameStateManager';
 import PrimaryBtn from '../shared/PrimaryBtn';
 import ScreenHeader from '../shared/ScreenHeader';
 import MooshikaRideTransition from './MooshikaRideTransition';
-import InstallPromptBanner from '../onboarding/InstallPromptBanner';
+import pwaInstallManager, { getInstallGuide } from '../../services/PwaInstallManager';
 import ParentGate from '../onboarding/ParentGate';
 import AudioToggle from '../ui/AudioToggle/AudioToggle';
 import useAudioPreference from '../../hooks/useAudioPreference';
@@ -14,14 +14,24 @@ import './CleanProfileSelector.css';
 const CleanProfileSelector = ({
   onProfileSelect,
   profiles: initialProfiles,
-  forceCreate = false
+  forceCreate = false,
+  // Installed-PWA relaunch: the parent already captured name + age in the
+  // browser and installed mid-setup. App.jsx mounts this straight into the
+  // child-facing "Pick your friend" screen; name/age come from localStorage.
+  bootStage = null,
 }) => {
+  const ONB_NAME_KEY = 'gmb_onboarding_name';
+  const ONB_AGE_KEY = 'gmb_onboarding_age';
+  const bootPickCharacter = bootStage === 'pick-character';
+  const resumedName = bootPickCharacter ? (localStorage.getItem(ONB_NAME_KEY) || '') : '';
+  const resumedAge = bootPickCharacter ? Number(localStorage.getItem(ONB_AGE_KEY)) || 7 : 7;
+
   const [profiles, setProfiles] = useState(initialProfiles || {});
-  const [showCreateProfile, setShowCreateProfile] = useState(forceCreate);
-  const [newProfileName, setNewProfileName] = useState('');
+  const [showCreateProfile, setShowCreateProfile] = useState(forceCreate && !bootStage);
+  const [newProfileName, setNewProfileName] = useState(resumedName);
   const [selectedAvatar, setSelectedAvatar] = useState('monkey');
   const [avatarTapPulseId, setAvatarTapPulseId] = useState(null);
-  const [selectedAge, setSelectedAge] = useState(7);
+  const [selectedAge, setSelectedAge] = useState(resumedAge);
   const [currentStep, setCurrentStep] = useState(1);
   const [isCreatingProfile, setIsCreatingProfile] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
@@ -29,9 +39,13 @@ const CleanProfileSelector = ({
   const [manageModeId, setManageModeId] = useState(null);
   const [createError, setCreateError] = useState('');
 
-  // NEW: transition state
-  const [transitionStage, setTransitionStage] = useState(null); // null | 'install' | 'ride'
+  // Post-Age flow:
+  //   null → 'allset' (one scene, two phases) → 'pick-character' → 'ride'
+  const [transitionStage, setTransitionStage] = useState(bootPickCharacter ? 'pick-character' : null);
   const [pendingProfile, setPendingProfile] = useState(null);
+  // 'allset' scene sub-state: 'install' (Add to Home Screen) | 'handoff' (hand to child)
+  const [allSetPhase, setAllSetPhase] = useState('install');
+  const [showInstallSteps, setShowInstallSteps] = useState(false);
   // Gate re-triggered for "add another profile" from the selector grid — the
   // first-run path already passed the parent gate upstream (App.jsx), so this only
   // fires for later add-profile entries, not the initial forceCreate flow.
@@ -206,11 +220,24 @@ const CleanProfileSelector = ({
       );
 
       if (newProfile && newProfile.id) {
+        // Cancel any in-flight VO so it doesn't bleed into the ride
+        window.speechSynthesis?.cancel();
+
+        // Onboarding is complete now — clear the resume crumbs so a later PWA
+        // relaunch doesn't drop back into "pick your friend".
+        try {
+          localStorage.removeItem(ONB_NAME_KEY);
+          localStorage.removeItem(ONB_AGE_KEY);
+          localStorage.setItem('gmb_handoff_done', '1');
+        } catch { /* ignore */ }
+
         setNewProfileName('');
         setSelectedAvatar('monkey');
         setSelectedAge(7);
 
+        // Straight to the Mooshika ride — the child just picked their friend.
         setPendingProfile(newProfile);
+        setShowCreateProfile(false);
         setTransitionStage('ride');
       } else {
         setCreateError('That profile could not be created. Try deleting one first.');
@@ -236,72 +263,154 @@ const CleanProfileSelector = ({
     }
   };
 
-  // SCREEN 6 — PWA install nudge. Fires right after the parent enters name + age
-  // (parent still confirmed present here), BEFORE the child picks an avatar and the
-  // Mooshika ride transition — this is the one moment an adult is confirmed present.
-  // Dismissible banner, never a blocking modal; self-hides after 2 declines (tracked
-  // in PwaInstallManager). No profile exists yet at this point (created after the
-  // child picks an avatar), so this no longer gates on pendingProfile.
-  if (transitionStage === 'install') {
-    return (
-      <div className="clean-profile-overlay">
-        <div className="clean-forest-background">
-          <div className="profile-bg-overlay" />
-          <div className="profile-vignette" />
-        </div>
-        <InstallPromptBanner onContinue={() => setTransitionStage('avatar')} />
+  // Shared shell for the post-Age handoff scenes — same scroll-card / scenic
+  // background as the create flow, plus a Ganesha figure peeking beside the
+  // card. `pose` is a file in /images/ganesha-poses.
+  const renderHandoffCard = (inner, pose = 'sit-hi') => (
+    <div className="clean-profile-overlay">
+      <div className="clean-forest-background">
+        <div className="profile-bg-overlay" />
+        <div className="profile-vignette" />
       </div>
-    );
-  }
-
-  // SCREEN — pick your friend. Kid-facing: the parent has handed the device over,
-  // so this is the first moment VO/tap-audio plays in the create-profile flow.
-  if (transitionStage === 'avatar') {
-    return (
-      <div className="clean-profile-overlay">
-        <div className="clean-forest-background">
-          <div className="profile-bg-overlay" />
-          <div className="profile-vignette" />
-        </div>
-        <div className="clean-profile-container">
-          <div className="clean-modal-overlay scroll-overlay">
-            <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} position="top-right" />
-            <div className="scroll-card">
-              <div className="scroll-card-inner">
-                <span className="create-card-lotus" aria-hidden="true" />
-                <div className="create-step-content">
-                  <h2 className="create-step-heading">Pick your friend, {newProfileName.trim()}!</h2>
-                  <p className="create-step-subheading">Who will join your adventure?</p>
-                  <div className="friend-grid">
-                    {animalAvatars.map((animal) => (
-                      <div
-                        key={animal.id}
-                        className={`friend-card ${selectedAvatar === animal.id ? 'active' : ''} ${avatarTapPulseId === animal.id ? 'pop' : ''}`}
-                        onClick={() => handleAvatarSelect(animal.id)}
-                        aria-label={animal.name}
-                        role="button"
-                      >
-                        <img src={`/images/new-explorer-${animal.id}.webp`} alt={animal.name} />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {createError ? <p className="create-error-text">{createError}</p> : null}
-
-                <PrimaryBtn
-                  label="Let's Explore"
-                  onClick={handleCreateProfile}
-                  disabled={isCreatingProfile}
-                  size="md"
-                  fullWidth
-                  className="final-cta-btn"
-                />
-              </div>
+      <div className="clean-profile-container">
+        <div className="clean-modal-overlay scroll-overlay">
+          <img
+            className={`handoff-ganesha handoff-ganesha--${pose}`}
+            src={`/images/ganesha-poses/${pose}.webp`}
+            alt=""
+            aria-hidden="true"
+          />
+          <div className="scroll-card">
+            <div className="scroll-card-inner">
+              <span className="create-card-lotus" aria-hidden="true" />
+              {inner}
             </div>
           </div>
         </div>
       </div>
+    </div>
+  );
+
+  const goToHandoff = () => {
+    setShowInstallSteps(false);
+    setAllSetPhase('handoff');
+  };
+
+  // ONE "All set" scene, two states (content transition — no new page):
+  //   'install'  — final setup step: add GMB to the Home Screen
+  //   'handoff'  — pass the device to the child
+  // Skips straight to 'handoff' when there's nothing to install.
+  if (transitionStage === 'allset') {
+    const guide = getInstallGuide();
+    const wantInstall = allSetPhase === 'install' && pwaInstallManager.shouldShowAnyNudge();
+
+    if (wantInstall && showInstallSteps) {
+      return renderHandoffCard(
+        <>
+          <h2 className="create-step-heading">{guide.title}</h2>
+          <ul className="install-steps">
+            {guide.steps.map((step, i) => (
+              <li className="install-step" key={i}>
+                <span className="install-step-icon" aria-hidden="true">{step.icon}</span>
+                <span className="install-step-text">{step.text}</span>
+              </li>
+            ))}
+          </ul>
+          <PrimaryBtn label="Done" onClick={goToHandoff} size="md" fullWidth className="final-cta-btn" />
+          <button type="button" className="back-btn" onClick={() => setShowInstallSteps(false)}>
+            ← Back
+          </button>
+        </>,
+        'sit-hi'
+      );
+    }
+
+    if (wantInstall) {
+      return renderHandoffCard(
+        <>
+          <h2 className="create-step-heading">All set!</h2>
+          <p className="create-step-subheading">One last thing before the adventure begins.</p>
+          <p className="handoff-body">
+            <strong>Add GMB to your Home Screen</strong> so it&rsquo;s easy to come back.
+          </p>
+          <PrimaryBtn
+            label="Show me how"
+            onClick={async () => {
+              if (guide.canNativePrompt) {
+                await pwaInstallManager.promptInstall();
+                goToHandoff();
+              } else {
+                setShowInstallSteps(true);
+              }
+            }}
+            size="md"
+            fullWidth
+            className="final-cta-btn"
+          />
+          <button
+            type="button"
+            className="back-btn"
+            onClick={() => {
+              pwaInstallManager.recordDismissal();
+              goToHandoff();
+            }}
+          >
+            Maybe later
+          </button>
+        </>,
+        'sit-hi'
+      );
+    }
+
+    // handoff state
+    return renderHandoffCard(
+      <>
+        <h2 className="create-step-heading">Ready for an adventure?</h2>
+        <p className="create-step-subheading">Now it&rsquo;s your child&rsquo;s turn.</p>
+        <p className="handoff-body"><strong>Hand them the device.</strong></p>
+        <PrimaryBtn
+          label="Start Adventure"
+          onClick={() => setTransitionStage('pick-character')}
+          size="md"
+          fullWidth
+          className="final-cta-btn"
+        />
+      </>,
+      'celebrate'
+    );
+  }
+
+  // PICK YOUR FRIEND — child-facing. First real choice that belongs to the
+  // child. The profile is created here (name + age were captured earlier),
+  // then straight into the Mooshika ride.
+  if (transitionStage === 'pick-character') {
+    return renderHandoffCard(
+      <>
+        <h2 className="create-step-heading">Who will join your adventure?</h2>
+        <div className="friend-grid">
+          {animalAvatars.map((animal) => (
+            <div
+              key={animal.id}
+              className={`friend-card ${selectedAvatar === animal.id ? 'active' : ''} ${avatarTapPulseId === animal.id ? 'pop' : ''}`}
+              onClick={() => handleAvatarSelect(animal.id)}
+              aria-label={animal.name}
+              role="button"
+            >
+              <img src={`/images/new-explorer-${animal.id}.webp`} alt={animal.name} />
+            </div>
+          ))}
+        </div>
+        {createError ? <p className="create-error-text">{createError}</p> : null}
+        <PrimaryBtn
+          label="Let's go"
+          onClick={handleCreateProfile}
+          disabled={isCreatingProfile}
+          size="md"
+          fullWidth
+          className="final-cta-btn"
+        />
+      </>,
+      'sit-hi'
     );
   }
 
@@ -415,8 +524,21 @@ const CleanProfileSelector = ({
                   label={currentStep < 2 ? '→' : 'Next'}
                   onClick={() => {
                     setCreateError('');
-                    if (currentStep === 1) setCurrentStep(2);
-                    else handleParentDetailsDone();
+                    if (currentStep === 1) {
+                      setCurrentStep(2);
+                      return;
+                    }
+                    // Age done — stash name + age so an installed-PWA relaunch
+                    // can resume at "pick your friend", then go to the one
+                    // "All set" scene.
+                    try {
+                      localStorage.setItem(ONB_NAME_KEY, newProfileName.trim());
+                      localStorage.setItem(ONB_AGE_KEY, String(selectedAge || 7));
+                    } catch { /* ignore */ }
+                    setShowCreateProfile(false);
+                    setAllSetPhase('install');
+                    setShowInstallSteps(false);
+                    setTransitionStage('allset');
                   }}
                   disabled={(currentStep === 1 && newProfileName.trim().length < 2) || isCreatingProfile}
                   size="md"

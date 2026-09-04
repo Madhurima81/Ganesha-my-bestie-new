@@ -4,6 +4,11 @@ import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
 import './App.css';
 import './Enhanced.css'
 import ErrorBoundary from './lib/components/error/ErrorBoundary';
+// TEMPORARY beta-testing landscape lock — covers onboarding + every zone +
+// gameplay, no exemptions. Pure CSS visibility (portrait media query), mounted
+// once at App root above all routes. Portrait onboarding support may be
+// revisited post-launch (see DECISIONS.md).
+import PortraitLockOverlay from './components/PortraitLockOverlay';
 
 // Lazy-loaded views — keep the startup bundle small; only the loading screen
 // needs to be eager.
@@ -32,6 +37,7 @@ import { getPendingKindnessCheck, resolveKindnessCheck } from './lib/services/Ki
 import { Analytics } from './lib/services/analytics';
 import { sceneAnalytics } from './lib/services/sceneAnalytics';
 import { preloadImages, avatarImagePaths } from './lib/utils/preloadImages';
+import { isStandalone } from './lib/services/PwaInstallManager';
 
 const AVATAR_IDS = ['monkey', 'peacock', 'squirrel', 'tiger'];
 
@@ -882,6 +888,19 @@ const initializeApp = async () => {
       return;
     }
 
+    // Installed-PWA relaunch after the parent captured name + age but before a
+    // profile was created (they installed mid-setup). The child opens the app
+    // straight to "pick your friend" → Mooshika ride → Meet Ganesha → map.
+    if (
+      isStandalone() &&
+      !hasExistingProfiles &&
+      localStorage.getItem('gmb_onboarding_name') &&
+      localStorage.getItem('gmb_onboarding_age')
+    ) {
+      setCurrentView('handoff');
+      return;
+    }
+
     // Determine starting view
     if (hasExistingProfiles && activeProfileId) {
       setCurrentView('profile-welcome');
@@ -1432,8 +1451,23 @@ chants: result?.chants || result?.chantedVerses || {},
   // Render different views
   return (
     <>
+    {/* Root-level landscape lock — above all routes/screens (onboarding, zones,
+        gameplay). CSS-driven, so it covers the screen in portrait before any
+        route JS mounts. Temporary for beta testing. */}
+    <PortraitLockOverlay />
     {/* GameCoachProvider disabled — not used per CLAUDE.md */}
-    <Suspense fallback={<div className="enhanced-loading-screen" />}>
+    <Suspense fallback={
+      <div className="enhanced-loading-screen">
+        <div className="loading-ganesha-container">
+          <div className="loading-ganesha-glow"></div>
+          <img
+            src={GANESHA_USAGE_SYSTEM.loading.asset}
+            className="loading-ganesha"
+            alt="Ganesha"
+          />
+        </div>
+      </div>
+    }>
 {showEngineTest ? (
   <GaneshaEngineTest />
 ) : (
@@ -1546,6 +1580,21 @@ chants: result?.chants || result?.chantedVerses || {},
             onProfileSelect={(profileId) => {
               GameStateManager.setActiveProfile(profileId);
               setCurrentView('profile-welcome');  // go to dashboard, not map
+            }}
+          />
+        </div>
+      )}
+
+      {/* Installed-PWA relaunch mid-setup → straight to "pick your friend" */}
+      {currentView === 'handoff' && (
+        <div className="view-transition">
+          <CleanProfileSelector
+            bootStage="pick-character"
+            onProfileSelect={(profileId) => {
+              GameStateManager.setActiveProfile(profileId);
+              setIntroStoryReturnView('map');
+              setShowIntroStory(!localStorage.getItem(`ganeshaStoryShown_${profileId}`));
+              setCurrentView('map');
             }}
           />
         </div>
@@ -1857,7 +1906,7 @@ if (tempData.playAgainRequested) {
       )}
       
       {/* Fallback view */}
-      {!['loading', 'error', 'main-welcome', 'landing', 'parent-gate', 'sign-in', 'profile-welcome', 'profile-create', 'profile-selector', 'map', 'zone-welcome', 'scene', 'parent-dashboard', 'twg'].includes(currentView) && (
+      {!['loading', 'error', 'main-welcome', 'landing', 'parent-gate', 'sign-in', 'profile-welcome', 'profile-create', 'profile-selector', 'handoff', 'map', 'zone-welcome', 'scene', 'parent-dashboard', 'twg'].includes(currentView) && (
         <div className="unknown-view-error">
           <h2>Error: Unknown view state</h2>
           <p>Current view: {currentView}</p>

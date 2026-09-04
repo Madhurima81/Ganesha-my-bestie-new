@@ -202,6 +202,18 @@ export default function LandingPage({ onStartFree = () => {} }) {
 
   const openDeviceChoice = useCallback(() => setShowDeviceChoice(true), []);
 
+  // Entering the app from the landing page: drop ?view=landing from the URL
+  // first, so a later reload lands the user back in the app (their profile /
+  // adventure) instead of bouncing to the marketing page again.
+  const enterApp = useCallback(() => {
+    try {
+      window.history.replaceState({}, '', window.location.pathname + window.location.hash);
+    } catch {
+      /* history API unavailable — proceed anyway */
+    }
+    onStartFree();
+  }, [onStartFree]);
+
   // Sticky-header shadow on scroll
   useEffect(() => {
     const onScroll = () => setHeaderScrolled(window.scrollY > 8);
@@ -493,7 +505,7 @@ export default function LandingPage({ onStartFree = () => {} }) {
       <DeviceChoiceModal
         isOpen={showDeviceChoice}
         onClose={() => setShowDeviceChoice(false)}
-        onContinueHere={onStartFree}
+        onContinueHere={enterApp}
       />
     </div>
   );
