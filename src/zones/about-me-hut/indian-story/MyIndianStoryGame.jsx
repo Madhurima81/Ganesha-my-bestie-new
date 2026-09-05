@@ -298,6 +298,10 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   // Phase 1 state
   const [discoveredLocations, setDiscoveredLocations] = useState([]);
   const [mglassPosition, setMglassPosition] = useState({ top: '30%', left: '20%' });
+  const [mglassBounds, setMglassBounds] = useState({ top: 0, left: 0, right: 100, bottom: 100 });
+  const [mglassHalfSizePct, setMglassHalfSizePct] = useState({ x: 0, y: 0 });
+  const mapWrapRef = useRef(null);
+  const mglassImgRef = useRef(null);
   const [showCelebration, setShowCelebration] = useState(false);
   const [phase1SpotSparkle, setPhase1SpotSparkle] = useState({ index: null, key: 0 });
   const [isChildHomeContinueEnabled, setIsChildHomeContinueEnabled] = useState(false);
@@ -1211,14 +1215,54 @@ useEffect(() => {
   }
 }, [phase, selectedRegion, selectedLanguages, selectedFestivals, sceneActions]);
 
-  // Check location discovery
+  // Measure the magnifying glass + map so drag bounds/hit-testing account for the
+  // glass's own footprint — otherwise its top-left corner can never reach far enough
+  // to uncover spots near the bottom edge (e.g. Tamil Nadu) on smaller screens.
+  useEffect(() => {
+    if (phase !== STEPS.GANESHA_HOME) return;
+
+    const recalc = () => {
+      const wrapEl = mapWrapRef.current;
+      const glassEl = mglassImgRef.current?.parentElement;
+      if (!wrapEl || !glassEl) return;
+      const wrapRect = wrapEl.getBoundingClientRect();
+      const glassRect = glassEl.getBoundingClientRect();
+      if (!wrapRect.width || !wrapRect.height) return;
+
+      const halfWPct = (glassRect.width / wrapRect.width) * 100 / 2;
+      const halfHPct = (glassRect.height / wrapRect.height) * 100 / 2;
+
+      setMglassHalfSizePct({ x: halfWPct, y: halfHPct });
+      setMglassBounds({
+        left: -halfWPct,
+        right: 100 + halfWPct,
+        top: -halfHPct,
+        bottom: 100 + halfHPct,
+      });
+    };
+
+    recalc();
+    const observer = new ResizeObserver(recalc);
+    if (mapWrapRef.current) observer.observe(mapWrapRef.current);
+    if (mglassImgRef.current?.parentElement) observer.observe(mglassImgRef.current.parentElement);
+    window.addEventListener('resize', recalc);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', recalc);
+    };
+  }, [phase]);
+
+  // Check location discovery — compare against the glass's CENTER (position is its
+  // top-left corner), matching how spot markers are centered on the map.
   const checkLocationDiscovery = useCallback((percentX, percentY) => {
+    const centerX = percentX + mglassHalfSizePct.x;
+    const centerY = percentY + mglassHalfSizePct.y;
     PHASE1_LOCATIONS.forEach((loc, idx) => {
-      if (Math.abs(percentX - loc.x) < 7 && Math.abs(percentY - loc.y) < 7) {
+      if (Math.abs(centerX - loc.x) < 7 && Math.abs(centerY - loc.y) < 7) {
         discoverLocation(idx);
       }
     });
-  }, []);
+  }, [mglassHalfSizePct]);
 
 const discoverLocation = useCallback((index) => {
   if (discoveredRef.current.has(index)) return;
@@ -1664,6 +1708,7 @@ const handleComplete = () => {
 
           {/* India Map Container */}
           <div
+            ref={mapWrapRef}
             className="mis-india-map-wrap"
             style={{
               margin: 'clamp(24px, 6vh, 90px) auto 0',
@@ -1911,7 +1956,7 @@ const handleComplete = () => {
               id="magnifying-glass"
               position={mglassPosition}
               onPositionChange={(newPos) => handleMglassMove(newPos)}
-              bounds={{ top: 0, left: 0, right: 100, bottom: 100 }}
+              bounds={mglassBounds}
               style={{
                 width: 'clamp(72px, 9vw + 48px, 130px)',
                 height: 'clamp(72px, 9vw + 48px, 130px)',
@@ -1921,6 +1966,7 @@ const handleComplete = () => {
               }}
             >
               <img
+                ref={mglassImgRef}
                 src={mglass}
                 alt="Magnifying Glass"
                 style={{
