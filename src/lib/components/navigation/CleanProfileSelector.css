@@ -1194,7 +1194,7 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 }
 .scroll-card-inner .name-input-wrap .name-input {
   width: 100%;
-  padding-left: 46px;
+  padding-left: 50px;
   padding-right: 20px;
   text-align: left;
 }
@@ -1277,10 +1277,11 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 /* Name input on parchment */
 .scroll-card-inner .name-input {
   font-family: var(--font-title);
-  font-size: clamp(22px, 2.3vw, 28px);
+  font-size: clamp(18px, 2vw, 22px);
   font-weight: 700;
   text-align: center;
-  height: 88px;
+  height: clamp(56px, 6vw, 64px);
+  line-height: normal;
   padding: 0 clamp(20px, 2.4vw, 28px);
   border: 3px solid #B49EE8;
   border-radius: 999px;
@@ -1313,7 +1314,7 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 
 .scroll-card-inner .name-input::placeholder {
   color: #B5A7C8;
-  font-size: clamp(22px, 2.3vw, 28px);
+  font-size: clamp(18px, 2vw, 22px);
 }
 
 /* Age stepper */
@@ -1527,7 +1528,7 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(4px, 1.2vw, 10px);
+  gap: clamp(10px, 2.2vw, 18px);
   width: 100%;
 }
 
@@ -1536,6 +1537,7 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   width: auto;
   min-width: 0;
   gap: clamp(6px, 1.4vw, 12px);
+  padding: 6px;
 }
 
 .scroll-card-inner .friend-carousel-arrow {
