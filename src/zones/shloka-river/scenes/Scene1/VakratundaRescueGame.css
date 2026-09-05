@@ -74,6 +74,20 @@
   box-shadow: 0 0.4vmin 1vmin rgba(0, 0, 0, 0.3);
 }
 
+/* Debug-only: obstacle-hole rings carved out of the water area (no-go zones). */
+.vak-debug-water-hole {
+  fill: rgba(233, 30, 99, 0.12);
+  stroke: rgba(233, 30, 99, 0.8);
+  stroke-width: 0.45;
+  stroke-dasharray: 1 1;
+}
+
+.vak-debug-water-vtx.is-hole {
+  width: 2.6%;
+  background: rgba(233, 30, 99, 0.92);
+  font-size: 1.3vmin;
+}
+
 .vak-route-guide {
   fill: none;
   stroke: rgba(22, 151, 151, 0.32);
@@ -250,6 +264,29 @@
 @keyframes vakShimmerDot {
   0%, 100% { transform: translate(-50%, -50%) scale(0.5); opacity: 0.2; }
   45%      { transform: translate(-50%, -50%) scale(1); opacity: 0.95; }
+}
+
+/* Stuck-hint L2: small cream speech bubble near the frog. */
+.vak-hint-bubble {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  padding: 7px 13px;
+  background: #FFF9E6;
+  color: #5D2E0F;
+  border: 1.5px solid rgba(150, 121, 196, 0.28);
+  border-radius: 20px 24px 21px 25px;
+  box-shadow: 0 6px 16px rgba(40, 20, 80, 0.12);
+  font-family: 'Baloo 2', cursive;
+  font-weight: 700;
+  font-size: clamp(15px, 2.2vw, 19px);
+  white-space: nowrap;
+  pointer-events: none;
+  animation: vakHintIn 0.24s ease-out;
+}
+
+@keyframes vakHintIn {
+  from { opacity: 0; transform: translate(-50%, -92%) scale(0.96); }
+  to   { opacity: 1; transform: translate(-50%, -100%) scale(1); }
 }
 
 .vak-debug-hitbox {

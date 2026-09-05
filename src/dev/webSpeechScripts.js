@@ -28,6 +28,7 @@ export const WEB_SPEECH_SCRIPTS = {
     sceneComplete: "You found another way. There's room for everyone. Both powers are yours now.",
     scene10_vak_intro: 'The frog can see his family, but rocks and logs block the way. Drag the frog to help him find a way around.',
     scene10_vak_current_too_strong: "The river current is too strong there. Let's try another way.",
+    scene10_vak_hint_another_way: "Can you find another way?",
     scene10_vak_frog_cross: 'The frog can see his family, but rocks and logs block the way. Drag the frog to help him find a way around.',
     scene10_vak_tap_logs: "That way's blocked — look for another way around.",
     scene10_vak_blocked: "That way's blocked — look for another way around.",

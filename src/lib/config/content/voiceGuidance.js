@@ -73,6 +73,9 @@ export const VOICE_SCRIPTS = {
       scene10_vak_current_too_strong: {
         text: "The river current is too strong there. Let's try another way."
       },
+      scene10_vak_hint_another_way: {
+        text: "Can you find another way?"
+      },
       scene10_maha_intro: {
         text: "Now let's help the little calf."
       },
@@ -129,6 +132,12 @@ export const VOICE_SCRIPTS = {
       },
       scene11SuryaHint: {
         text: "Swipe the dark patch."
+      },
+      surya_hint_rub: {
+        text: "Rub the glowing spot."
+      },
+      surya_hint_keep: {
+        text: "Keep rubbing."
       },
       scene11SamaHint: {
         text: "Drag the light across. Share the light evenly. Keep balancing."

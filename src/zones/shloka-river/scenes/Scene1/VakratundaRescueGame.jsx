@@ -46,37 +46,72 @@ const STUCK_PROGRESS_EPS = 3;    // % of new forward progress that counts as uns
 const STUCK_L2_MS = 6000;        // shimmer -> shimmer + VO
 const STUCK_L3_MS = 12000;       // -> shimmer + short arc toward the opening
 
-// The frog can only be dragged INSIDE this shape — the river channel, with a
-// bay cut into the near bank at the frog's start and another at the family's
-// pad. Outside it is land: the drag holds at the last water point. Authored
-// live in the Trace Debug panel ("Water area"); these are just the seed points
-// (clockwise, % of the stage).
-const DEFAULT_WATER_POLY = [
-  { x: 3, y: 42 },
-  { x: 70.77, y: 39.1 },
-  { x: 80.63, y: 38.41 },
-  { x: 98.65, y: 43.27 },
-  { x: 96.66, y: 98.8 },
-  { x: 77.74, y: 90.19 },
-  { x: 52.94, y: 70.62 },
-  { x: 37, y: 71.87 },
-  { x: 25.25, y: 66.18 },
-  { x: 15.29, y: 64.51 },
-  { x: 9.01, y: 61.59 },
-  { x: 3, y: 58 },
-];
+// The frog can only be dragged INSIDE this area — the river channel (outer),
+// with the four obstacles carved out as holes (a child can never be "in
+// water" while inside a rock/log/reed footprint, even at the edges where the
+// hitbox and artwork don't line up perfectly). Outside the outer ring, or
+// inside any hole, is a no-go: the drag holds at the last valid water point.
+// Bay cut into the near bank at the frog's start, another at the family's
+// pad. Authored live in the Trace Debug panel ("Water area"); these are just
+// the seed points (clockwise, % of the stage).
+const DEFAULT_WATER_POLY = {
+  outer: [
+    { x: 3, y: 42 },
+    { x: 70.77, y: 39.1 },
+    { x: 80.63, y: 38.41 },
+    { x: 98.65, y: 43.27 },
+    { x: 96.66, y: 98.8 },
+    { x: 77.74, y: 90.19 },
+    { x: 52.94, y: 70.62 },
+    { x: 37, y: 71.87 },
+    { x: 25.25, y: 66.18 },
+    { x: 15.29, y: 64.51 },
+    { x: 9.01, y: 61.59 },
+    { x: 3, y: 58 },
+  ],
+  // One ring per obstacle (stone, logpile, reeds, reeds2), each a 12-point
+  // ellipse ~10% bigger than its hitbox so the boundary sits just outside the
+  // art. Regenerate these (via the obstacle hit values) if you move an
+  // obstacle a lot — "Reset Water" restores this seed.
+  holes: [
+    [ // stone
+      { x: 46.03, y: 39.55 }, { x: 43.97, y: 46.42 }, { x: 38.33, y: 51.46 },
+      { x: 30.63, y: 53.3 }, { x: 22.93, y: 51.46 }, { x: 17.29, y: 46.42 },
+      { x: 15.23, y: 39.55 }, { x: 17.29, y: 32.67 }, { x: 22.93, y: 27.64 },
+      { x: 30.63, y: 25.8 }, { x: 38.33, y: 27.64 }, { x: 43.97, y: 32.67 },
+    ],
+    [ // logpile
+      { x: 83.08, y: 43.82 }, { x: 81.02, y: 50.7 }, { x: 75.38, y: 55.73 },
+      { x: 67.68, y: 57.57 }, { x: 59.98, y: 55.73 }, { x: 54.34, y: 50.7 },
+      { x: 52.28, y: 43.82 }, { x: 54.34, y: 36.95 }, { x: 59.98, y: 31.91 },
+      { x: 67.68, y: 30.07 }, { x: 75.38, y: 31.91 }, { x: 81.02, y: 36.94 },
+    ],
+    [ // reeds
+      { x: 57.8, y: 63.4 }, { x: 56.69, y: 70 }, { x: 53.67, y: 74.83 },
+      { x: 49.55, y: 76.6 }, { x: 45.42, y: 74.83 }, { x: 42.41, y: 70 },
+      { x: 41.3, y: 63.4 }, { x: 42.41, y: 56.8 }, { x: 45.42, y: 51.97 },
+      { x: 49.55, y: 50.2 }, { x: 53.67, y: 51.97 }, { x: 56.69, y: 56.8 },
+    ],
+    [ // reeds2
+      { x: 64.47, y: 68.92 }, { x: 63.51, y: 74.97 }, { x: 60.9, y: 79.4 },
+      { x: 57.32, y: 81.02 }, { x: 53.75, y: 79.4 }, { x: 51.13, y: 74.97 },
+      { x: 50.17, y: 68.92 }, { x: 51.13, y: 62.87 }, { x: 53.74, y: 58.44 },
+      { x: 57.32, y: 56.82 }, { x: 60.9, y: 58.44 }, { x: 63.51, y: 62.87 },
+    ],
+  ],
+};
 
 const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
 const clamp = (value, lo, hi) => Math.min(hi, Math.max(lo, value));
 
-// Ray-casting point-in-polygon. poly is a list of {x,y} in the same units.
-function isPointInPolygon(point, poly) {
+// Ray-casting point-in-polygon. ring is a list of {x,y} in the same units.
+function isPointInPolygon(point, ring) {
   let inside = false;
-  for (let i = 0, j = poly.length - 1; i < poly.length; j = i, i += 1) {
-    const xi = poly[i].x;
-    const yi = poly[i].y;
-    const xj = poly[j].x;
-    const yj = poly[j].y;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i, i += 1) {
+    const xi = ring[i].x;
+    const yi = ring[i].y;
+    const xj = ring[j].x;
+    const yj = ring[j].y;
     const straddles = (yi > point.y) !== (yj > point.y);
     if (straddles && point.x < ((xj - xi) * (point.y - yi)) / (yj - yi) + xi) {
       inside = !inside;
@@ -85,17 +120,23 @@ function isPointInPolygon(point, poly) {
   return inside;
 }
 
-// Nearest patch of clear, open water around `from` — in the water polygon, not
+// In the outer water ring AND not inside any obstacle hole. area = { outer, holes }.
+function isInWaterArea(point, area) {
+  if (!isPointInPolygon(point, area.outer)) return false;
+  return !area.holes.some((hole) => isPointInPolygon(point, hole));
+}
+
+// Nearest patch of clear, open water around `from` — in the water area, not
 // inside any obstacle — biased toward the family (higher x). Used to place the
 // stuck-hint shimmer right where the child is stuck, not at a fixed point.
-function findNearbyOpening(from, obstacles, poly, familyX) {
+function findNearbyOpening(from, obstacles, area, familyX) {
   let best = null;
   let bestScore = -Infinity;
   for (let r = 8; r <= 26; r += 3) {
     for (let deg = 0; deg < 360; deg += 15) {
       const a = (deg * Math.PI) / 180;
       const p = { x: from.x + Math.cos(a) * r, y: from.y + Math.sin(a) * r };
-      if (!isPointInPolygon(p, poly)) continue;
+      if (!isInWaterArea(p, area)) continue;
       if (isPointInsideObstacle(p, obstacles)) continue;
       // Prefer forward (toward family) and a gentle, not-too-vertical hop.
       const forward = Math.sign(familyX - from.x) * (p.x - from.x);
@@ -206,7 +247,8 @@ export default function VakratundaRescueGame({
   const [selectedObstacleId, setSelectedObstacleId] = useState(DEFAULT_OBSTACLES[0].id);
   const [layoutCopyStatus, setLayoutCopyStatus] = useState('');
 
-  const [stuckLevel, setStuckLevel] = useState(0);  // 0 none · 1 shimmer · 2 +VO · 3 +arc
+  const [stuckLevel, setStuckLevel] = useState(0);  // 0 none · 1 shimmer · 2 +bubble/VO · 3 +arc
+  const [showStuckBubble, setShowStuckBubble] = useState(false);
   const [showIntroGesture, setShowIntroGesture] = useState(false);  // one-time "you drag me" cue
   const introGestureShownRef = useRef(false);
 
@@ -221,6 +263,11 @@ export default function VakratundaRescueGame({
   const stuckAnchorXRef = useRef(START_POS.x);   // furthest x when the streak began
   const stuckLevelRef = useRef(0);         // mirror of stuckLevel for the drag loop
   const stuckTimersRef = useRef([]);
+  // True while the frog is held against the SAME blocked spot (pointermove
+  // fires many times a second while pushing). Only the first contact of a
+  // push counts as one "bump" — otherwise 3 real attempts could be manufactured
+  // out of one continuous shove in under a second.
+  const blockedContactRef = useRef(false);
 
   const frogPosRef = useRef(START_POS);
   const startPosRef = useRef(START_POS);   // authored frog start; kept in a ref so
@@ -248,11 +295,18 @@ export default function VakratundaRescueGame({
     setFrog(next);
   }, [setFrog]);
 
-  // Debug authoring: drag one water-area vertex.
-  const moveWaterVertex = useCallback((index, point) => {
-    const next = waterPolyRef.current.map((v, i) => (
-      i === index ? { x: +point.x.toFixed(2), y: +point.y.toFixed(2) } : v
-    ));
+  // Debug authoring: drag one water-area vertex. ring is 'outer' or a hole index.
+  const moveWaterVertex = useCallback((ring, index, point) => {
+    const pt = { x: +point.x.toFixed(2), y: +point.y.toFixed(2) };
+    const current = waterPolyRef.current;
+    const next = ring === 'outer'
+      ? { ...current, outer: current.outer.map((v, i) => (i === index ? pt : v)) }
+      : {
+          ...current,
+          holes: current.holes.map((hole, hi) => (
+            hi === ring ? hole.map((v, i) => (i === index ? pt : v)) : hole
+          )),
+        };
     waterPolyRef.current = next;
     setWaterPoly(next);
   }, []);
@@ -333,6 +387,11 @@ export default function VakratundaRescueGame({
     }
 
     // Stuck detection: N bumps with no forward progress since the streak began.
+    // One continuous shove against the same spot must count as ONE bump, not
+    // one per pointermove — blockedContactRef only clears when the frog
+    // reaches valid water again (or the drag ends).
+    if (blockedContactRef.current) return;
+    blockedContactRef.current = true;
     bumpCountRef.current += 1;
     const stalled = maxProgressXRef.current <= stuckAnchorXRef.current + STUCK_PROGRESS_EPS;
     if (bumpCountRef.current >= STUCK_BUMPS && stalled && stuckLevelRef.current === 0) {
@@ -370,9 +429,11 @@ export default function VakratundaRescueGame({
     maxProgressXRef.current = startPosRef.current.x;
     lastBlockSfxRef.current = 0;
     bumpCountRef.current = 0;
+    blockedContactRef.current = false;
     stuckAnchorXRef.current = startPosRef.current.x;
     stuckLevelRef.current = 0;
     setStuckLevel(0);
+    setShowStuckBubble(false);
     introGestureShownRef.current = false;
     setShowIntroGesture(false);
   }, [clearTimers, onStageChange, setFrog, setLit]);
@@ -454,10 +515,13 @@ export default function VakratundaRescueGame({
     }
 
     // Off the water (grass / far bank) — same as a rock: hold, don't follow.
-    if (!isPointInPolygon(point, waterPolyRef.current)) {
+    if (!isInWaterArea(point, waterPolyRef.current)) {
       triggerBlock();
       return;
     }
+
+    // Reached valid water — this contact is over, the next bump (if any) is new.
+    blockedContactRef.current = false;
 
     const prev = frogPosRef.current;
     setFrog(point);
@@ -548,16 +612,29 @@ export default function VakratundaRescueGame({
       event.currentTarget.releasePointerCapture?.(event.pointerId);
     }
     setIsDragging(false);
+    blockedContactRef.current = false;
     // Trail, pads and frog position deliberately PERSIST — the path the child
     // has drawn stays on screen so they can pick up and continue.
   }, []);
 
-  // Stuck level 2: play the "try going around" line once for the whole game.
+  // Stuck level 2 = "Think": a small cream bubble near the frog every time
+  // this episode escalates (visual, so it repeats without VO fatigue), plus
+  // the actual "can you find another way" line ONCE for the whole game.
+  useEffect(() => {
+    if (!isActive || phase !== 'trace' || stuckLevel !== 2) {
+      setShowStuckBubble(false);
+      return undefined;
+    }
+    setShowStuckBubble(true);
+    const timer = window.setTimeout(() => setShowStuckBubble(false), 2800);
+    return () => window.clearTimeout(timer);
+  }, [stuckLevel, isActive, phase]);
+
   useEffect(() => {
     if (!isActive || phase !== 'trace') return;
     if (stuckLevel < 2 || hasPlayedStuckVoRef.current) return;
     hasPlayedStuckVoRef.current = true;
-    playSceneLine?.('hintLookForGlow');
+    playSceneLine?.('scene10_vak_hint_another_way');
   }, [stuckLevel, isActive, phase, playSceneLine]);
 
   if (!isActive) return null;
@@ -571,13 +648,21 @@ export default function VakratundaRescueGame({
     ? findNearbyOpening(frogPos, obstacles, waterPoly, familyPoint.x)
     : null;
   const showShimmer = !!openingPoint;
-  const arcDots = (showShimmer && stuckLevel >= 3)
-    ? [0.34, 0.6, 0.85].map((t, i) => ({
-        id: `arc-${i}`,
-        x: frogPos.x + (openingPoint.x - frogPos.x) * t,
-        y: frogPos.y + (openingPoint.y - frogPos.y) * t,
-      }))
-    : [];
+  // Straight-line interpolation between the frog and the opening could, in
+  // principle, cut across an obstacle sitting between them — a hint that
+  // visually goes THROUGH the blocker would undermine the "find another way"
+  // lesson. Only show the arc if every dot on it is genuinely valid water.
+  const arcDots = (() => {
+    if (!showShimmer || stuckLevel < 3) return [];
+    const candidates = [0.34, 0.6, 0.85].map((t) => ({
+      x: frogPos.x + (openingPoint.x - frogPos.x) * t,
+      y: frogPos.y + (openingPoint.y - frogPos.y) * t,
+    }));
+    const allClear = candidates.every((p) => (
+      isInWaterArea(p, waterPoly) && !isPointInsideObstacle(p, obstacles)
+    ));
+    return allClear ? candidates.map((p, i) => ({ id: `arc-${i}`, x: p.x, y: p.y })) : [];
+  })();
 
   // One-time onboarding drag: bank -> nearest open water.
   const introGestureTo = findNearbyOpening(startPos, obstacles, waterPoly, familyPoint.x)
@@ -679,7 +764,7 @@ export default function VakratundaRescueGame({
       return;
     }
     if (drag.type === 'waterVertex') {
-      moveWaterVertex(drag.index, point);
+      moveWaterVertex(drag.ring, drag.index, point);
     }
   };
 
@@ -790,9 +875,16 @@ export default function VakratundaRescueGame({
         {showDebugPanel && showWaterArea && (
           <polygon
             className="vak-debug-water"
-            points={waterPoly.map((v) => `${v.x},${v.y}`).join(' ')}
+            points={waterPoly.outer.map((v) => `${v.x},${v.y}`).join(' ')}
           />
         )}
+        {showDebugPanel && showWaterArea && waterPoly.holes.map((hole, hi) => (
+          <polygon
+            key={`water-hole-${hi}`}
+            className="vak-debug-water-hole"
+            points={hole.map((v) => `${v.x},${v.y}`).join(' ')}
+          />
+        ))}
         {showDebugPanel && bandsX.map((band, index) => (
           <line
             key={`band-${index}`}
@@ -807,18 +899,36 @@ export default function VakratundaRescueGame({
         {trailPath && <polyline className="vak-trace-line" points={trailPath} />}
       </svg>
 
-      {showDebugPanel && showWaterArea && waterPoly.map((v, index) => (
+      {showDebugPanel && showWaterArea && waterPoly.outer.map((v, index) => (
         <div
           key={`water-vtx-${index}`}
           className="vak-layer vak-debug-water-vtx is-debug-draggable"
           style={{ left: `${v.x}%`, top: `${v.y}%`, zIndex: 40 }}
-          onPointerDown={(event) => startDebugDrag(event, { type: 'waterVertex', index })}
+          onPointerDown={(event) => startDebugDrag(event, { type: 'waterVertex', ring: 'outer', index })}
           onPointerMove={continueDebugDrag}
           onPointerUp={endDebugDrag}
           onPointerCancel={endDebugDrag}
         >
           {index}
         </div>
+      ))}
+
+      {showDebugPanel && showWaterArea && waterPoly.holes.map((hole, hi) => (
+        <React.Fragment key={`water-hole-vtx-${hi}`}>
+          {hole.map((v, index) => (
+            <div
+              key={`water-hole-${hi}-vtx-${index}`}
+              className="vak-layer vak-debug-water-vtx is-hole is-debug-draggable"
+              style={{ left: `${v.x}%`, top: `${v.y}%`, zIndex: 40 }}
+              onPointerDown={(event) => startDebugDrag(event, { type: 'waterVertex', ring: hi, index })}
+              onPointerMove={continueDebugDrag}
+              onPointerUp={endDebugDrag}
+              onPointerCancel={endDebugDrag}
+            >
+              {obstacles[hi]?.id?.[0]?.toUpperCase() ?? hi}{index}
+            </div>
+          ))}
+        </React.Fragment>
       ))}
 
       {pads.map((pad) => (
@@ -915,6 +1025,17 @@ export default function VakratundaRescueGame({
           style={{ left: `${dot.x}%`, top: `${dot.y}%`, zIndex: 13, animationDelay: `${i * 0.18}s` }}
         />
       ))}
+
+      {showStuckBubble && (
+        <div
+          className="vak-hint-bubble"
+          style={{ left: `${frogPos.x}%`, top: `${frogPos.y - 8}%`, zIndex: 30 }}
+          role="status"
+          aria-live="polite"
+        >
+          Another way?
+        </div>
+      )}
 
       <GestureDemo
         type="drag"
