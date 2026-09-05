@@ -213,6 +213,52 @@
     inset 0 2px 4px rgba(255, 255, 255, 0.3);
 }
 
+.profile-map-back-btn {
+  position: fixed;
+  top: max(16px, env(safe-area-inset-top));
+  left: max(16px, env(safe-area-inset-left));
+  z-index: 20;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 74px;
+  height: 40px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 999px;
+  font-family: 'Baloo 2', cursive;
+  font-size: clamp(14px, 1.2vw, 17px);
+  font-weight: 700;
+  line-height: 1;
+  color: #ffffff;
+  background: linear-gradient(180deg, #d7c6f7 0%, #c7b1f0 100%);
+  box-shadow:
+    0 3px 0 #a68fd8,
+    0 7px 14px rgba(155, 125, 216, 0.16),
+    inset 0 2px 4px rgba(255, 255, 255, 0.34);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+}
+
+.profile-map-back-btn:hover {
+  filter: brightness(1.02);
+  transform: translateY(-1px);
+  box-shadow:
+    0 4px 0 #a68fd8,
+    0 9px 16px rgba(155, 125, 216, 0.18),
+    inset 0 2px 4px rgba(255, 255, 255, 0.38);
+}
+
+.profile-map-back-btn:active {
+  transform: translateY(3px);
+  box-shadow:
+    0 1px 0 #a68fd8,
+    0 3px 6px rgba(155, 125, 216, 0.14),
+    inset 0 2px 4px rgba(255, 255, 255, 0.28);
+}
+
 /* ========================================== */
 /* 2. MODALS                                  */
 /* ========================================== */
@@ -571,6 +617,13 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 /* Mobile Portrait */
 @media (max-width: 600px) {
   .clean-profile-overlay { padding: 14px 14px 20px; }
+  .profile-map-back-btn {
+    top: max(12px, env(safe-area-inset-top));
+    left: max(12px, env(safe-area-inset-left));
+    min-width: 66px;
+    height: 36px;
+    padding: 0 12px;
+  }
   .clean-profile-header { margin-bottom: 20px; }
   .clean-create-card { width: 95%; padding: 25px; }
   .modal-title { font-size: 26px; }
@@ -1360,7 +1413,7 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 /* Friend (avatar) grid */
 .scroll-card-inner .friend-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: clamp(8px, 1.5vw, 16px);
   width: 100%;
   max-width: 480px;
@@ -1470,7 +1523,7 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
     padding-top: 132px;
   }
   .scroll-card-inner .friend-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
