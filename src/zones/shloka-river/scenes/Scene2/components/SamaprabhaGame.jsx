@@ -4,171 +4,67 @@ import GestureDemo from '../../../../../lib/components/feedback/GestureDemo';
 import useRepeatedHintCycle from '../../../../../lib/hooks/useRepeatedHintCycle';
 import './SamaprabhaGame.css';
 
-import sharedSceneBg from '../assets/images/saurakoti-bg.png';
-import sunImg from '../assets/images/Suryakoti/sun-zip.png';
-import birdColdImg from '../assets/images/Samaprabha/bird-cold.png';
-import birdFlyImg from '../assets/images/Samaprabha/bird-fly.png';
-import birdHappyImg from '../assets/images/Samaprabha/bird-happy.png';
+import bgImg from '../assets/images/Samaprabha/samaprabha-bg.png';
+import fawnWorriedImg from '../assets/images/Samaprabha/fawn-worried.png';
+import fawnHappyImg from '../assets/images/Samaprabha/fawn-happy.png';
+import fawnWalkImg from '../assets/images/Samaprabha/fawn-walk.png';
+import shadowImg from '../assets/images/Samaprabha/shadow.png';
+import mysterySourceFullImg from '../assets/images/Samaprabha/mystery-source-full.png';
+import branchImg from '../assets/images/Samaprabha/reveal-branch.png';
+import reedsLeavesImg from '../assets/images/Samaprabha/reveal-reeds-leaves.png';
+import stumpImg from '../assets/images/Samaprabha/reveal-stump.png';
+import rocksGrassImg from '../assets/images/Samaprabha/reveal-rocks-grass.png';
 
 const SYLLABLES = ['Sa', 'ma', 'pra', 'bha'];
 const AUDIO = { syllables: ['sa', 'ma', 'pra', 'bha'] };
+const HOLD_MS = 1150;
 
-// One tappable circle per syllable sound (4 total). The child taps the next
-// circle in sequence; each tap slides the sun onto it and plays that syllable.
-const SYLLABLE_STOPS = [
-  { balance: 0.80 },
-  { balance: 0.70 },
-  { balance: 0.60 },
-  { balance: 0.50 },
+// These are invisible discovery zones. Tune cx/cy/rx/ry once final art lands.
+const CLUES = [
+  { id: 'branch', label: 'branch', img: branchImg, cx: 75, cy: 47, rx: 8, ry: 9, hintW: 18, hintH: 20 },
+  { id: 'reeds-leaves', label: 'reeds and leaves', img: reedsLeavesImg, cx: 86, cy: 51, rx: 8, ry: 12, hintW: 18, hintH: 24 },
+  { id: 'stump', label: 'stump', img: stumpImg, cx: 82, cy: 62, rx: 8, ry: 10, hintW: 19, hintH: 21 },
+  { id: 'rocks', label: 'rocks and grass', img: rocksGrassImg, cx: 76, cy: 67, rx: 9, ry: 8, hintW: 21, hintH: 17 },
 ];
-const START_BALANCE = 0.92;
 
-const TRACK_START = 22;
-const TRACK_END = 78;
-const SUN_TOP_PCT = 19;
+const START_BEAM = { x: 31, y: 57 };
 
-function clamp(v, lo, hi) { return Math.min(hi, Math.max(lo, v)); }
-function sunLeftPct(balance) { return TRACK_START + balance * (TRACK_END - TRACK_START); }
-function balanceForLit(lit) {
-  return lit <= 0 ? START_BALANCE : SYLLABLE_STOPS[lit - 1].balance;
+function pointInsideClue(point, clue) {
+  if (!clue) return false;
+  const dx = (point.x - clue.cx) / clue.rx;
+  const dy = (point.y - clue.cy) / clue.ry;
+  return dx * dx + dy * dy <= 1;
 }
 
-function SunRays({ balance, lit, isDone }) {
-  const sunX = sunLeftPct(balance);
-  const sunY = SUN_TOP_PCT;
-  const leftBirdX = 22;
-  const rightBirdX = 78;
-  const progress = lit / SYLLABLE_STOPS.length;
-
-  const leftOp = clamp(0.06 + (1 - balance) * 0.88, 0.06, 0.94);
-  const leftFan = clamp(2 + (1 - balance) * 18, 2, 20);
-  const rightOp = clamp(0.06 + balance * 0.88, 0.06, 0.94);
-  const rightFan = clamp(2 + balance * 18, 2, 20);
-  const glowR = 5 + progress * 10;
-  const glowOp = 0.15 + progress * 0.35;
+function Animal({ animalState }) {
+  const src =
+    animalState === 'walking'
+      ? fawnWalkImg
+      : animalState === 'worried'
+        ? fawnWorriedImg
+        : fawnHappyImg;
 
   return (
-    <svg
-      className={`sama-rays-svg${isDone ? ' is-done' : ''}`}
-      viewBox="0 0 100 100"
-      preserveAspectRatio="none"
-      aria-hidden="true"
-    >
-      <defs>
-        <radialGradient id="sunGlow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#FFE87A" stopOpacity={glowOp + 0.15} />
-          <stop offset="60%" stopColor="#FFD54F" stopOpacity={glowOp} />
-          <stop offset="100%" stopColor="#FFD54F" stopOpacity={0} />
-        </radialGradient>
-        <linearGradient id="rayLeft" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#FFE87A" stopOpacity={leftOp + 0.1} />
-          <stop offset="100%" stopColor="#FFE87A" stopOpacity={0} />
-        </linearGradient>
-        <linearGradient id="rayRight" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#FFE87A" stopOpacity={0} />
-          <stop offset="100%" stopColor="#FFE87A" stopOpacity={rightOp + 0.1} />
-        </linearGradient>
-      </defs>
-
-      <polygon
-        points={`${sunX},${sunY} ${leftBirdX - leftFan},58 ${leftBirdX + leftFan},58`}
-        fill="url(#rayLeft)"
-      />
-      <polygon
-        points={`${sunX},${sunY} ${rightBirdX - rightFan},57 ${rightBirdX + rightFan},57`}
-        fill="url(#rayRight)"
-      />
-      <ellipse cx={sunX} cy={sunY} rx={glowR} ry={glowR * 0.7} fill="url(#sunGlow)" />
-
-      {isDone && (
-        <>
-          <circle
-            cx={sunX}
-            cy={sunY}
-            r="12"
-            fill="none"
-            stroke="#FFE87A"
-            strokeWidth="0.6"
-            opacity="0.5"
-            className="sama-burst-ring sama-burst-ring-1"
-          />
-          <circle
-            cx={sunX}
-            cy={sunY}
-            r="18"
-            fill="none"
-            stroke="#FFD54F"
-            strokeWidth="0.4"
-            opacity="0.35"
-            className="sama-burst-ring sama-burst-ring-2"
-          />
-        </>
-      )}
-    </svg>
-  );
-}
-
-function Bird({ side, brightness, birdState }) {
-  return (
-    <div
-      className={`sama-bird ${side} sama-bird--${birdState}`}
-      style={{ filter: `brightness(${0.5 + brightness * 0.7}) saturate(${0.6 + brightness * 0.7})` }}
-    >
-      <div className="sama-bird-halo" style={{ opacity: 0.1 + brightness * 0.6 }} />
-      <img
-        className="sama-bird-img sama-bird-cold"
-        src={birdColdImg}
-        alt=""
-        style={{ opacity: birdState === 'done' ? 0 : clamp(1.1 - brightness * 1.2, 0, 0.9) }}
-      />
-      <img
-        className="sama-bird-img sama-bird-happy"
-        src={birdHappyImg}
-        alt=""
-        style={{ opacity: birdState === 'done' ? 0 : clamp(brightness * 1.1, 0, 1) }}
-      />
-      {birdState === 'done' && (
-        <img className="sama-bird-img sama-bird-fly" src={birdFlyImg} alt="" />
-      )}
+    <div className={`sama-animal is-${animalState}`} aria-hidden="true">
+      <img src={src} alt="" draggable={false} />
     </div>
   );
 }
 
-function SunHandle({ balance, isBalanced }) {
+function TruthLayer({ clue, isRevealed, isBeingSeen, isNew }) {
   return (
-    <div
-      className={`sama-handle${isBalanced ? ' is-balanced' : ''}`}
-      style={{ left: `${sunLeftPct(balance)}%`, top: `${SUN_TOP_PCT}%` }}
-      aria-hidden="true"
-    >
-      <div className="sama-handle-core">
-        <img className="sama-handle-sun-img" src={sunImg} alt="" />
-      </div>
-    </div>
-  );
-}
-
-function SyllableDots({ lit, enabled, hintLevel = 0, onTap }) {
-  return (
-    <div className="sama-snap-dots">
-      {SYLLABLE_STOPS.map((s, i) => {
-        const isNext = enabled && i === lit;
-        const isLit = i < lit;
-        const isCurrent = i === lit - 1;
-        const isHint = isNext && hintLevel >= 2;
-        return (
-          <button
-            key={i}
-            type="button"
-            className={`sama-snap-dot${isLit ? ' is-lit' : ''}${isCurrent ? ' is-current' : ''}${isNext ? ' is-next' : ''}${isHint ? ' is-hint' : ''}`}
-            style={{ left: `${sunLeftPct(s.balance)}%` }}
-            aria-label={isNext ? `Play syllable ${SYLLABLES[i]}` : undefined}
-            disabled={!isNext}
-            onPointerDown={isNext ? () => onTap(i) : undefined}
-          />
-        );
-      })}
-    </div>
+    <img
+      className={[
+        'sama-truth-layer',
+        `sama-truth-${clue.id}`,
+        isRevealed ? 'is-revealed' : '',
+        isBeingSeen ? 'is-being-seen' : '',
+        isNew ? 'is-new' : '',
+      ].filter(Boolean).join(' ')}
+      src={clue.img}
+      alt=""
+      draggable={false}
+    />
   );
 }
 
@@ -183,50 +79,222 @@ export default function SamaprabhaGame({
   isPaused = false,
 }) {
   const { playVoice: playSceneLine, playSyllable, playWord, stopVoice } = voiceGuidance;
-  const timersRef = useRef([]);
-  const doneCalledRef = useRef(false);
-  const isPausedRef = useRef(isPaused);
+
+  const [lit, setLit] = useState(0);
+  const [phase, setPhase] = useState('play');
+  const [animalState, setAnimalState] = useState('worried');
+  const [beamPos, setBeamPos] = useState(START_BEAM);
+  const [isDraggingLight, setIsDraggingLight] = useState(false);
+  const [isHoldingClue, setIsHoldingClue] = useState(false);
+  const [holdProgress, setHoldProgress] = useState(0);
+  const [hasInteracted, setHasInteracted] = useState(false);
+  const [revealPulse, setRevealPulse] = useState(null);
+
+  const stageRef = useRef(null);
+  const pointerIdRef = useRef(null);
+  const holdRafRef = useRef(null);
+  const holdStartedAtRef = useRef(null);
+  const holdingClueIndexRef = useRef(null);
   const litRef = useRef(0);
+  const timersRef = useRef([]);
+  const isPausedRef = useRef(isPaused);
   const firstInteractionSentRef = useRef(false);
+  const doneCalledRef = useRef(false);
   const doneAnnouncedRef = useRef(false);
   const lastSyllableDoneRef = useRef(false);
   const completionVoStartedRef = useRef(false);
   const completionFinishedRef = useRef(false);
   const sylEndFallbackRef = useRef(null);
   const voFallbackRef = useRef(null);
-  isPausedRef.current = isPaused;
-
-  const [lit, setLit] = useState(0);
-  const [phase, setPhase] = useState('play');
-  const [birdState, setBirdState] = useState('cold');
+  const lastHintVoKeyRef = useRef(null);
   const onGameCompleteRef = useRef(onGameComplete);
   const onPhaseCompleteRef = useRef(onPhaseComplete);
 
-  const {
-    hintLevel,
-    markInteraction,
-  } = useRepeatedHintCycle({
+  isPausedRef.current = isPaused;
+
+  const activeClue = phase === 'play' && lit < CLUES.length ? CLUES[lit] : null;
+
+  const clearTimers = useCallback(() => {
+    timersRef.current.forEach((id) => window.clearTimeout(id));
+    timersRef.current = [];
+  }, []);
+
+  const safeAfter = useCallback((ms, fn) => {
+    const runWhenReady = () => {
+      if (isPausedRef.current) {
+        const retry = window.setTimeout(runWhenReady, 150);
+        timersRef.current.push(retry);
+        return;
+      }
+      fn();
+    };
+
+    const id = window.setTimeout(runWhenReady, ms);
+    timersRef.current.push(id);
+    return id;
+  }, []);
+
+  const { hintLevel, markInteraction } = useRepeatedHintCycle({
     enabled: isActive && !isPaused && phase === 'play',
-    stageKey: phase === 'play' ? `stop-${lit}` : phase,
-    initialDelay: 8000,
+    stageKey: phase === 'play' ? `clue-${lit}` : phase,
+    initialDelay: lit === 0 ? 10500 : 8500,
     pulseCountBeforeEscalation: 3,
     pulseInterval: 1800,
-    level2Delay: 15000,
-    level3Delay: 22000,
+    level2Delay: lit === 0 ? 17500 : 15500,
+    level3Delay: lit === 0 ? 25000 : 22500,
   });
 
-  // Escalated idle hint: repeat the spoken cue once per escalation level
-  const lastHintVoLevelRef = useRef(0);
   useEffect(() => {
-    if (!isActive || phase !== 'play') {
-      lastHintVoLevelRef.current = 0;
+    if (!isActive || isPaused || phase !== 'play' || hintLevel !== 2) return;
+
+    const onceKey = `${lit}-look`;
+    if (lastHintVoKeyRef.current === onceKey) return;
+
+    lastHintVoKeyRef.current = onceKey;
+    stopVoice?.();
+    playSceneLine?.('scene11_sama_hint_look', undefined, { replayOnReturn: false });
+  }, [hintLevel, isActive, isPaused, lit, phase, playSceneLine, stopVoice]);
+
+  useEffect(() => {
+    lastHintVoKeyRef.current = null;
+  }, [lit]);
+
+  const cancelHold = useCallback(() => {
+    if (holdRafRef.current) {
+      window.cancelAnimationFrame(holdRafRef.current);
+      holdRafRef.current = null;
+    }
+
+    holdStartedAtRef.current = null;
+    holdingClueIndexRef.current = null;
+    setIsHoldingClue(false);
+    setHoldProgress(0);
+  }, []);
+
+  const revealCurrentClue = useCallback(() => {
+    if (phase !== 'play' || isPausedRef.current) return;
+
+    const currentIndex = litRef.current;
+    if (currentIndex >= CLUES.length) return;
+
+    const next = currentIndex + 1;
+    litRef.current = next;
+    setLit(next);
+    setRevealPulse(currentIndex);
+
+    safeAfter(480, () => setRevealPulse(null));
+    window.setTimeout(() => onMicroWin?.(), 0);
+    markInteraction();
+
+    if (next === CLUES.length && !doneCalledRef.current) {
+      doneCalledRef.current = true;
+      safeAfter(450, () => {
+        setPhase('resolved');
+        setAnimalState('relieved');
+      });
+      safeAfter(1250, () => setAnimalState('walking'));
+      safeAfter(3000, () => setPhase('done'));
+    }
+  }, [markInteraction, onMicroWin, phase, safeAfter]);
+
+  const startHoldAtPoint = useCallback((point) => {
+    if (phase !== 'play' || isPausedRef.current) {
+      cancelHold();
       return;
     }
-    if (hintLevel >= 2 && hintLevel > lastHintVoLevelRef.current) {
-      lastHintVoLevelRef.current = hintLevel;
-      playSceneLine?.('scene11_sama_hint');
+
+    const clueIndex = litRef.current;
+    const clue = CLUES[clueIndex];
+
+    if (!clue || !pointInsideClue(point, clue)) {
+      cancelHold();
+      return;
     }
-  }, [hintLevel, isActive, phase, playSceneLine]);
+
+    if (holdingClueIndexRef.current === clueIndex && holdRafRef.current) return;
+
+    cancelHold();
+    holdingClueIndexRef.current = clueIndex;
+    holdStartedAtRef.current = performance.now();
+    setIsHoldingClue(true);
+    setHoldProgress(0);
+    markInteraction();
+
+    const tick = (now) => {
+      if (isPausedRef.current || holdingClueIndexRef.current !== litRef.current) {
+        cancelHold();
+        return;
+      }
+
+      const progress = Math.min((now - holdStartedAtRef.current) / HOLD_MS, 1);
+      setHoldProgress(progress);
+
+      if (progress >= 1) {
+        holdRafRef.current = null;
+        holdStartedAtRef.current = null;
+        holdingClueIndexRef.current = null;
+        setIsHoldingClue(false);
+        setHoldProgress(0);
+        revealCurrentClue();
+        return;
+      }
+
+      holdRafRef.current = window.requestAnimationFrame(tick);
+    };
+
+    holdRafRef.current = window.requestAnimationFrame(tick);
+  }, [cancelHold, markInteraction, phase, revealCurrentClue]);
+
+  const getStagePoint = useCallback((event) => {
+    const rect = stageRef.current?.getBoundingClientRect();
+    if (!rect || !rect.width || !rect.height) return START_BEAM;
+
+    return {
+      x: Math.max(3, Math.min(97, ((event.clientX - rect.left) / rect.width) * 100)),
+      y: Math.max(5, Math.min(95, ((event.clientY - rect.top) / rect.height) * 100)),
+    };
+  }, []);
+
+  const handlePointerDown = useCallback((event) => {
+    if (isPaused || phase !== 'play') return;
+
+    event.preventDefault();
+    pointerIdRef.current = event.pointerId;
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+    setIsDraggingLight(true);
+
+    const point = getStagePoint(event);
+    setBeamPos(point);
+
+    if (!firstInteractionSentRef.current) {
+      firstInteractionSentRef.current = true;
+      setHasInteracted(true);
+      onFirstInteraction?.();
+    }
+
+    startHoldAtPoint(point);
+  }, [getStagePoint, isPaused, onFirstInteraction, phase, startHoldAtPoint]);
+
+  const handlePointerMove = useCallback((event) => {
+    if (pointerIdRef.current !== event.pointerId || !isDraggingLight) return;
+
+    event.preventDefault();
+    const point = getStagePoint(event);
+    setBeamPos(point);
+    startHoldAtPoint(point);
+  }, [getStagePoint, isDraggingLight, startHoldAtPoint]);
+
+  const endPointer = useCallback((event) => {
+    if (event && pointerIdRef.current !== event.pointerId) return;
+
+    if (event?.currentTarget.hasPointerCapture?.(event.pointerId)) {
+      event.currentTarget.releasePointerCapture?.(event.pointerId);
+    }
+
+    pointerIdRef.current = null;
+    setIsDraggingLight(false);
+    cancelHold();
+  }, [cancelHold]);
 
   useEffect(() => {
     litRef.current = lit;
@@ -237,80 +305,46 @@ export default function SamaprabhaGame({
     onPhaseCompleteRef.current = onPhaseComplete;
   }, [onGameComplete, onPhaseComplete]);
 
-  const balance = balanceForLit(lit);
-  const leftBrightness = 1 - balance;
-  const rightBrightness = balance;
-  const litCount = lit;
-
-  const clearTimers = useCallback(() => {
-    timersRef.current.forEach(clearTimeout);
-    timersRef.current = [];
-  }, []);
-
-  const safeAfter = useCallback((ms, fn) => {
-    const id = window.setTimeout(fn, ms);
-    timersRef.current.push(id);
-  }, []);
-
-  // Tap the next circle -> light that syllable, slide the sun onto it.
-  const tapCircle = useCallback((index) => {
-    if (phase !== 'play' || isPausedRef.current || doneCalledRef.current) return;
-    if (index !== litRef.current) return;
-
-    if (!firstInteractionSentRef.current) {
-      firstInteractionSentRef.current = true;
-      onFirstInteraction?.();
-    }
-    markInteraction();
-
-    const next = index + 1;
-    litRef.current = next;
-    setLit(next);
-
-    window.setTimeout(() => onMicroWin?.(), 0);
-
-    setBirdState(next >= 2 ? 'warm' : 'cold');
-
-    if (next === SYLLABLE_STOPS.length && !doneCalledRef.current) {
-      doneCalledRef.current = true;
-      safeAfter(300, () => {
-        setPhase('done');
-        setBirdState('done');
-      });
-    }
-  }, [markInteraction, onFirstInteraction, onMicroWin, phase, safeAfter]);
-
-  // Reset on deactivate
   useEffect(() => {
-    if (!isActive) {
-      clearTimers();
-      doneCalledRef.current = false;
-      doneAnnouncedRef.current = false;
-      lastSyllableDoneRef.current = false;
-      completionVoStartedRef.current = false;
-      completionFinishedRef.current = false;
-      firstInteractionSentRef.current = false;
-      setLit(0);
-      litRef.current = 0;
-      setPhase('play');
-      setBirdState('cold');
-    }
-  }, [isActive, clearTimers]);
+    if (!isPaused) return;
 
-  useEffect(() => () => {
+    pointerIdRef.current = null;
+    setIsDraggingLight(false);
+    cancelHold();
+  }, [cancelHold, isPaused]);
+
+  useEffect(() => {
+    if (isActive) return;
+
     clearTimers();
-    if (sylEndFallbackRef.current) window.clearTimeout(sylEndFallbackRef.current);
-    if (voFallbackRef.current) window.clearTimeout(voFallbackRef.current);
-  }, [clearTimers]);
+    cancelHold();
+    setLit(0);
+    litRef.current = 0;
+    setPhase('play');
+    setAnimalState('worried');
+    setBeamPos(START_BEAM);
+    setIsDraggingLight(false);
+    setHasInteracted(false);
+    setRevealPulse(null);
+    pointerIdRef.current = null;
+    firstInteractionSentRef.current = false;
+    doneCalledRef.current = false;
+    doneAnnouncedRef.current = false;
+    lastSyllableDoneRef.current = false;
+    completionVoStartedRef.current = false;
+    completionFinishedRef.current = false;
+    lastHintVoKeyRef.current = null;
+  }, [cancelHold, clearTimers, isActive]);
 
-  // Completion audio plays strictly in sequence, no overlap:
-  //   final syllable "bha"  ->  full word "samaprabha"  ->  ending line
-  // Fires only once the last syllable clip has finished AND the win is
-  // announced — same pattern as SuryakotiGame / NirvighnamGame. (The earlier
-  // version played no word and let the ending line start over "bha".)
   const startCompletionVo = useCallback(() => {
-    if (completionVoStartedRef.current) return;
-    if (!lastSyllableDoneRef.current || !doneAnnouncedRef.current) return;
+    if (
+      completionVoStartedRef.current ||
+      !lastSyllableDoneRef.current ||
+      !doneAnnouncedRef.current
+    ) {
+      return;
+    }
+
     completionVoStartedRef.current = true;
 
     if (sylEndFallbackRef.current) {
@@ -320,11 +354,14 @@ export default function SamaprabhaGame({
 
     const finish = () => {
       if (completionFinishedRef.current) return;
+
       completionFinishedRef.current = true;
+
       if (voFallbackRef.current) {
         window.clearTimeout(voFallbackRef.current);
         voFallbackRef.current = null;
       }
+
       onGameCompleteRef.current?.();
       onPhaseCompleteRef.current?.();
     };
@@ -341,46 +378,55 @@ export default function SamaprabhaGame({
     if (playWord) playWord('samaprabha', afterWord);
     else afterWord();
 
-    // iOS Safari can silently drop utterance onend/onerror — don't hang.
     voFallbackRef.current = window.setTimeout(finish, 10000);
   }, [playSceneLine, playWord]);
 
   useEffect(() => {
-    if (phase !== 'done' || doneAnnouncedRef.current) return undefined;
-    doneAnnouncedRef.current = true;
+    if (phase !== 'done' || doneAnnouncedRef.current) return;
 
-    // Hold the word/ending line until the final "bha" syllable clip has
-    // finished (its onSyllableLit onEnded sets lastSyllableDoneRef). Fallback
-    // covers a dropped callback (audio error / iOS / test mock).
+    doneAnnouncedRef.current = true;
     sylEndFallbackRef.current = window.setTimeout(() => {
       lastSyllableDoneRef.current = true;
       startCompletionVo();
-    }, 1600);
-    startCompletionVo();
+    }, 1700);
 
-    return undefined;
+    startCompletionVo();
   }, [phase, startCompletionVo]);
 
+  useEffect(() => () => {
+    clearTimers();
+    cancelHold();
+
+    if (sylEndFallbackRef.current) window.clearTimeout(sylEndFallbackRef.current);
+    if (voFallbackRef.current) window.clearTimeout(voFallbackRef.current);
+  }, [cancelHold, clearTimers]);
+
   if (!isActive) return null;
+
+  const rescueDots = activeClue && hintLevel >= 3
+    ? [0.34, 0.52, 0.70].map((amount) => ({
+      x: beamPos.x + (activeClue.cx - beamPos.x) * amount,
+      y: beamPos.y + (activeClue.cy - beamPos.y) * amount,
+    }))
+    : [];
 
   return (
     <div className={`sama-game${hideElements ? ' is-hidden' : ''}`}>
       <div
-        className="sama-stage"
-        style={{ backgroundImage: `url(${sharedSceneBg})` }}
-        onContextMenu={(e) => e.preventDefault()}
+        ref={stageRef}
+        className={`sama-stage is-${phase}`}
+        style={{ backgroundImage: `url(${bgImg})` }}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={endPointer}
+        onPointerCancel={endPointer}
+        onContextMenu={(event) => event.preventDefault()}
       >
-        <div className="sama-skywash" />
-        <div
-          className={`sama-stage-glow${phase === 'done' ? ' is-done' : ''}`}
-          style={{ opacity: clamp(0.1 + (1 - Math.abs(leftBrightness - rightBrightness)) * 0.85, 0.1, 1) }}
-        />
-
-        <SunRays balance={balance} lit={lit} isDone={phase === 'done'} />
+        <div className="sama-dusk-wash" />
 
         <SyllableHighlight
           syllables={SYLLABLES}
-          litCount={litCount}
+          litCount={lit}
           audioSyllables={AUDIO.syllables}
           onSyllableLit={(syllable, index) => {
             stopVoice?.();
@@ -392,58 +438,98 @@ export default function SamaprabhaGame({
           }}
         />
 
-        {phase === 'play' && (
-          <p className="sama-hint">
-            {lit <= 1
-              ? 'Tap the next glowing dot.'
-              : `Tap the next glowing dot — ${SYLLABLE_STOPS.length - lit} to go.`}
-          </p>
-        )}
+        <Animal animalState={animalState} />
 
-        {phase === 'done' && (
-          <p className="sama-doneline is-visible">Both shine equally now!</p>
-        )}
-
-        <div className="sama-beam" aria-hidden="true">
-          <svg viewBox="0 0 100 100" preserveAspectRatio="none">
-            <defs>
-              <linearGradient id="samaBeamGlow" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="rgba(255,255,255,0.06)" />
-                <stop offset="40%" stopColor="rgba(255,223,138,0.32)" />
-                <stop offset="60%" stopColor="rgba(255,223,138,0.32)" />
-                <stop offset="100%" stopColor="rgba(255,255,255,0.06)" />
-              </linearGradient>
-            </defs>
-            <line
-              x1={TRACK_START}
-              y1={SUN_TOP_PCT}
-              x2={TRACK_END}
-              y2={SUN_TOP_PCT}
-              stroke="url(#samaBeamGlow)"
-              strokeWidth="0.6"
-              strokeDasharray="1 2"
-            />
-          </svg>
+        <div className={`sama-shadow${phase !== 'play' ? ' is-understood' : ''}`} aria-hidden="true">
+          <img src={shadowImg} alt="" draggable={false} />
         </div>
 
-        <SyllableDots
-          lit={lit}
-          enabled={phase === 'play'}
-          hintLevel={hintLevel}
-          onTap={tapCircle}
-        />
+        <div className={`sama-mystery${phase !== 'play' ? ' is-understood' : ''}`} aria-hidden="true">
+          <img className="sama-full-source" src={mysterySourceFullImg} alt="" draggable={false} />
+          {CLUES.map((clue, index) => (
+            <TruthLayer
+              key={clue.id}
+              clue={clue}
+              isRevealed={index < lit}
+              isBeingSeen={index === lit && isHoldingClue}
+              isNew={revealPulse === index}
+            />
+          ))}
+        </div>
 
-        <Bird side="left" brightness={leftBrightness} birdState={birdState} />
-        <Bird side="right" brightness={rightBrightness} birdState={birdState} />
+        {activeClue && hintLevel >= 1 && (
+          <div
+            className="sama-hint-area"
+            style={{
+              left: `${activeClue.cx}%`,
+              top: `${activeClue.cy}%`,
+              width: `${activeClue.hintW}%`,
+              height: `${activeClue.hintH}%`,
+            }}
+          />
+        )}
 
-        <SunHandle balance={balance} isBalanced={phase === 'done'} />
+        {rescueDots.map((dot, index) => (
+          <span
+            key={`rescue-${index}`}
+            className="sama-rescue-dot"
+            style={{
+              left: `${dot.x}%`,
+              top: `${dot.y}%`,
+              animationDelay: `${index * 0.13}s`,
+            }}
+          />
+        ))}
+
+        <div
+          className={[
+            'sama-inspection-light',
+            isDraggingLight ? 'is-moving' : '',
+            isHoldingClue ? 'is-holding' : '',
+          ].filter(Boolean).join(' ')}
+          style={{ left: `${beamPos.x}%`, top: `${beamPos.y}%` }}
+          aria-hidden="true"
+        >
+          <div className="sama-light-core" />
+          {isHoldingClue && (
+            <svg className="sama-hold-progress" viewBox="0 0 44 44">
+              <circle className="sama-hold-track" cx="22" cy="22" r="18" />
+              <circle
+                className="sama-hold-fill"
+                cx="22"
+                cy="22"
+                r="18"
+                pathLength="100"
+                strokeDasharray="100"
+                strokeDashoffset={100 - holdProgress * 100}
+              />
+            </svg>
+          )}
+        </div>
+
+        {activeClue && hintLevel === 2 && (
+          <div
+            className="sama-hint-bubble"
+            style={{
+              left: `${activeClue.cx}%`,
+              top: `${Math.min(82, activeClue.cy + 16)}%`,
+            }}
+          >
+            Look closely.
+          </div>
+        )}
 
         <GestureDemo
-          type="tap"
-          from={{ x: sunLeftPct(SYLLABLE_STOPS[0].balance), y: SUN_TOP_PCT }}
-          active={phase === 'play' && lit === 0}
-          idleDelay={3000}
+          type="drag"
+          from={START_BEAM}
+          to={{ x: 43, y: 50 }}
+          active={phase === 'play' && lit === 0 && !hasInteracted}
+          idleDelay={1000}
         />
+
+        {phase === 'done' && (
+          <p className="sama-doneline is-visible">Now you can see clearly.</p>
+        )}
       </div>
     </div>
   );
