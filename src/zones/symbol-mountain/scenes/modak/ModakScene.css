@@ -514,6 +514,116 @@ div[class*="modak-game-modak-collected"] {
   filter: saturate(0.96);
 }
 
+.modak-game-belly-journey-mushika {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.modak-game-belly-journey-mushika .modak-game-belly-mushika {
+  width: 76%;
+}
+
+.modak-game-belly-feelings {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.modak-game-belly-travelling-emotion {
+  position: absolute;
+  width: 38%;
+  height: 38%;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(80, 50, 30, 0.12));
+}
+
+.modak-game-belly-travelling-emotion--happy {
+  left: -14%;
+  top: -22%;
+}
+
+.modak-game-belly-travelling-emotion--worried {
+  right: -16%;
+  top: -14%;
+}
+
+.modak-game-belly-travelling-emotion--angry {
+  left: -12%;
+  bottom: -18%;
+}
+
+.modak-game-belly-travelling-emotion--sad {
+  right: -14%;
+  bottom: -20%;
+}
+
+.modak-game-belly-destination {
+  width: 100%;
+  height: 100%;
+  border-radius: 45%;
+  pointer-events: none;
+  transition:
+    opacity 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.modak-game-belly-destination.hint {
+  box-shadow:
+    0 0 0 5px rgba(255, 215, 100, 0.18),
+    0 0 22px rgba(255, 215, 100, 0.24);
+}
+
+.modak-game-belly-destination.hint-strong {
+  box-shadow:
+    0 0 0 8px rgba(255, 215, 100, 0.24),
+    0 0 32px rgba(255, 215, 100, 0.32);
+}
+
+.modak-game-belly-destination.hint-final {
+  box-shadow:
+    0 0 0 10px rgba(255, 215, 100, 0.3),
+    0 0 38px rgba(255, 215, 100, 0.4);
+}
+
+.modak-game-belly-arrived-feelings {
+  position: absolute;
+  left: 50%;
+  top: 57%;
+  width: 46%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 7;
+}
+
+.modak-game-belly-arrived-emotion {
+  position: absolute;
+  width: 28%;
+  height: 28%;
+  object-fit: contain;
+}
+
+.modak-game-belly-arrived-emotion--happy {
+  left: 0;
+  top: 5%;
+}
+
+.modak-game-belly-arrived-emotion--worried {
+  right: 0;
+  top: 10%;
+}
+
+.modak-game-belly-arrived-emotion--angry {
+  left: 4%;
+  bottom: 4%;
+}
+
+.modak-game-belly-arrived-emotion--sad {
+  right: 4%;
+  bottom: 2%;
+}
+
 .modak-game-emotion-orb {
   width: clamp(72px, 6.4vw, 104px);
   height: clamp(72px, 6.4vw, 104px);
