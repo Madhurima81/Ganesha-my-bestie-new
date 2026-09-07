@@ -23,7 +23,7 @@ import reedsImg from './assets/images/vakratunda/reeds.webp';
 const SYLLABLES = ['va', 'kra', 'tun', 'da'];
 const AUDIO = { syllables: ['va', 'kra', 'tun', 'da'] };
 
-const START_POS = { x: 14, y: 63 };
+const START_POS = { x: 24.1, y: 64 };
 const FROG_W = 6;
 const REUNION_FROG_W = 5.4;
 const FAMILY = { x: 91.08, y: 52.71, w: 14 };
