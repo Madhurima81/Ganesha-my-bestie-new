@@ -68,7 +68,7 @@ import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
 import { useGaneshaVoice } from '../../../../lib/hooks/useGaneshaVoice';
 
 // Images ---------------------------------------------------------------
-import forestBackground from './assets/images/newmodakbg.webp';
+import forestBackground from './assets/images/modak-fj-bg.webp';
 import mooshikaActive from './assets/images/mushika-active-game2.webp';
 import mooshikaCalm from './assets/images/mushika-calm-game2.webp';
 import journeyFeather from './assets/images/journey-feather.webp';
