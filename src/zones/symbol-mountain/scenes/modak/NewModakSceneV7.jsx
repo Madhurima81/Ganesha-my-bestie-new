@@ -2108,74 +2108,89 @@ const NewModakSceneMVPContent = ({
             </div>
 
             {/* ============ BEAT 5: GARLAND OVERLAY (drag + snap) ============ */}
-            {!isCompletionView && !isFinalTransitionView && sceneState.phase === PHASES.GARLAND_MAKING && (
+            {!isCompletionView && !isFinalTransitionView && sceneState.phase === PHASES.GARLAND_MAKING && (() => {
+              const placedList = sceneState.placedGarlandFlowers || [];
+              return (
               <div className="modak-garland-overlay">
-                <div className="modak-garland-stage">
-                  <img
-                    src={sceneState.garlandComplete ? fjGarlandComplete : fjGarlandEmpty}
-                    alt=""
-                    className="modak-garland-thread"
-                    aria-hidden="true"
-                  />
-
-                  {!sceneState.garlandComplete && GARLAND_SLOTS.map((slot, i) => (
-                    <span
-                      key={`gslot-${i}`}
-                      className={`modak-garland-slot ${i < (sceneState.garlandFilled || 0) ? 'filled' : ''} ${garlandBounce === i ? 'bounce' : ''} ${i === (sceneState.garlandFilled || 0) && idleHintLevel >= 1 ? 'hint' : ''}`}
-                      style={{ left: slot.left, top: slot.top }}
-                    >
-                      {i < (sceneState.garlandFilled || 0) && (
-                        <img src={garlandFlowerImage(GARLAND_FLOWER_TYPES[i])} alt="" />
-                      )}
-                    </span>
-                  ))}
-
+                <div className="modak-garland-work-area">
                   {!sceneState.garlandComplete && (
-                    <KidsDropZone
-                      id="garland-thread-zone"
-                      accepts="garland-flower"
-                      onDrop={handleGarlandDrop}
-                      style={{
-                        position: 'absolute',
-                        left: '10%',
-                        top: '30%',
-                        width: '80%',
-                        height: '50%',
-                        zIndex: 4
-                      }}
-                    >
-                      <div className="modak-garland-thread-zone" />
-                    </KidsDropZone>
+                    <>
+                      {/* the whole string is one forgiving drop zone */}
+                      <KidsDropZone
+                        id="garland-thread-zone"
+                        accepts="garland-flower"
+                        onDrop={({ data }) => handleGarlandFlowerDrop(data?.flowerIndex)}
+                        style={{ position: 'absolute', left: '15%', top: '18%', width: '70%', height: '64%', zIndex: 5 }}
+                      >
+                        <img src={fjGarlandEmpty} alt="Garland string" className="modak-garland-thread" />
+                        {placedList.map((flowerIndex, slotIndex) => {
+                          const slot = GARLAND_SLOTS[slotIndex];
+                          if (!slot) return null;
+                          return (
+                            <img
+                              key={`placed-${flowerIndex}`}
+                              src={garlandFlowerImage(GARLAND_FLOWER_TYPES[slotIndex])}
+                              alt=""
+                              className={`modak-garland-placed-flower ${garlandBounce === slotIndex ? 'bounce' : ''}`}
+                              style={{ left: slot.left, top: slot.top }}
+                            />
+                          );
+                        })}
+                      </KidsDropZone>
+
+                      {/* loose flowers scattered around the work area */}
+                      {GARLAND_FLOWER_TYPES.map((type, i) => {
+                        if (placedList.includes(i)) return null;
+                        const pos = GARLAND_LOOSE_POSITIONS[i];
+                        return (
+                          <KidsDraggable
+                            key={`loose-${i}`}
+                            id={`garland-flower-${i}`}
+                            data={{ type: 'garland-flower', flowerIndex: i }}
+                            dragScale={1.12}
+                            dragBorderRadius="50%"
+                            style={{
+                              position: 'absolute',
+                              left: pos.left,
+                              top: pos.top,
+                              width: 'clamp(62px, 7vw, 100px)',
+                              height: 'clamp(62px, 7vw, 100px)',
+                              transform: 'translate(-50%, -50%)',
+                              zIndex: 12,
+                              touchAction: 'none'
+                            }}
+                          >
+                            <img src={garlandFlowerImage(type)} alt="Flower" className="modak-garland-loose-flower" />
+                          </KidsDraggable>
+                        );
+                      })}
+
+                      {garlandKnot && (
+                        <img src={fjGarlandKnot} alt="" className="modak-garland-knot" aria-hidden="true" />
+                      )}
+
+                      {(introGesture || showIdleGestureHint) && placedList.length < 6 && (
+                        <img
+                          src={garlandFlowerImage(GARLAND_FLOWER_TYPES[placedList.length])}
+                          alt=""
+                          className="modak-garland-hint-flower"
+                          aria-hidden="true"
+                        />
+                      )}
+                    </>
                   )}
 
                   {sceneState.garlandComplete && (
-                    <SparkleAnimation type="glitter" count={28} color="#ffd700" size={13} duration={2600} fadeOut area="full" />
+                    <div className="modak-garland-finished">
+                      <div className="modak-garland-finished-glow" aria-hidden="true" />
+                      <img src={fjGarlandComplete} alt="Completed flower garland" className="modak-garland-complete-image" />
+                      <SparkleAnimation type="glitter" count={26} color="#ffd700" size={13} duration={2400} fadeOut area="full" />
+                    </div>
                   )}
                 </div>
-
-                {!sceneState.garlandComplete && (
-                  <div className="modak-garland-tray">
-                    {GARLAND_FLOWER_TYPES.map((type, i) => {
-                      if (i < (sceneState.garlandFilled || 0)) {
-                        return <span key={`tray-${i}`} className="modak-garland-tray-slot empty" />;
-                      }
-                      return (
-                        <KidsDraggable
-                          key={`tray-${i}`}
-                          id={`garland-flower-${i}`}
-                          data={{ type: 'garland-flower', flowerIndex: i }}
-                          dragScale={1.12}
-                          dragBorderRadius="50%"
-                          style={{ width: 'clamp(52px, 6vw, 84px)', height: 'clamp(52px, 6vw, 84px)', touchAction: 'none' }}
-                        >
-                          <img src={garlandFlowerImage(type)} alt="Flower" className="modak-garland-tray-flower" />
-                        </KidsDraggable>
-                      );
-                    })}
-                  </div>
-                )}
               </div>
-            )}
+              );
+            })()}
 
             {/* FIREWORKS (visual only) */}
             {!isCompletionView && (
