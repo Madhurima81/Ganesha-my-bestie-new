@@ -55,12 +55,15 @@ const STUCK_L3_MS = 12000;       // -> shimmer + short arc toward the opening
 // live in the Trace Debug panel ("Water area") — drag handles, double-click
 // to delete one, "Subdivide" to add resolution, "Reset Water" for this seed.
 const DEFAULT_WATER_POLY = [
-  { x: 22.05, y: 78.02 }, { x: 25.61, y: 66.98 }, { x: 32.56, y: 63.05 },
-  { x: 40.49, y: 55.07 }, { x: 50.55, y: 54.37 }, { x: 58.91, y: 60.62 },
-  { x: 71.66, y: 64.51 }, { x: 87.7, y: 73.81 }, { x: 93.34, y: 51.36 },
-  { x: 80.23, y: 51.04 }, { x: 68.28, y: 53.68 }, { x: 58.22, y: 53.13 },
-  { x: 53.93, y: 39.24 }, { x: 48.95, y: 39.66 }, { x: 39.49, y: 45.35 },
-  { x: 27.84, y: 53.4 }, { x: 14.39, y: 57.02 }, { x: 5.95, y: 69.98 },
+  { x: 17, y: 77.5 }, { x: 22.5, y: 77.5 }, { x: 27.14, y: 73 }, { x: 32.42, y: 66.87 },
+  { x: 37.5, y: 69.37 }, { x: 42.28, y: 69.51 }, { x: 42.98, y: 60.21 }, { x: 45.07, y: 55.62 },
+  { x: 49.05, y: 52.29 }, { x: 55.33, y: 53.26 }, { x: 60.21, y: 57.85 }, { x: 66.38, y: 63.54 },
+  { x: 68.28, y: 70.62 }, { x: 66.48, y: 83.95 }, { x: 90.39, y: 96.86 }, { x: 99.55, y: 68.12 },
+  { x: 97.26, y: 50.21 }, { x: 88.1, y: 47.43 }, { x: 80.23, y: 51.04 }, { x: 74.25, y: 52.36 },
+  { x: 67.78, y: 51.32 }, { x: 63.69, y: 49.38 }, { x: 59.71, y: 48.82 }, { x: 56.32, y: 44.73 },
+  { x: 53.93, y: 39.24 }, { x: 51.44, y: 39.45 }, { x: 49.95, y: 45.49 }, { x: 45.77, y: 46.88 },
+  { x: 39.09, y: 48.27 }, { x: 33.66, y: 49.38 }, { x: 23.85, y: 43.82 }, { x: 22.76, y: 33.69 },
+  { x: 15.59, y: 34.11 }, { x: 6.82, y: 33.69 }, { x: 3.34, y: 74 }, { x: 9, y: 78 },
 ];
 
 const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
@@ -137,22 +140,22 @@ const DEFAULT_OBSTACLES = [
   {
     id: 'reeds',
     img: reedsImg,
-    l: 49.85,
-    t: 69.65,
+    l: 52.24,
+    t: 67.29,
     w: 20,
     z: 12,   // above the dropped lily pads (z 11) so pads sit BEHIND the reeds
     cls: 'vak-obstacle--reeds',
-    hit: { x: 49.85, y: 69.65, rx: 7.5, ry: 12 },
+    hit: { x: 52.24, y: 67.29, rx: 7.5, ry: 12 },
   },
   {
     id: 'reeds2',
     img: reedsImg,
-    l: 55.73,
-    t: 71.87,
+    l: 59.81,
+    t: 71.73,
     w: 17,
     z: 12,
     cls: 'vak-obstacle--reeds',
-    hit: { x: 55.73, y: 70.87, rx: 6.5, ry: 11 },
+    hit: { x: 59.81, y: 70.73, rx: 6.5, ry: 11 },
   },
 ];
 
