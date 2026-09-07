@@ -30,7 +30,9 @@ const FAMILY = { x: 91.08, y: 52.71, w: 14 };
 
 // X thresholds (in %) that light va / kra / tun as the frog passes them.
 // 'da' lights on actually reaching the family, not just an X line.
-const DEFAULT_BANDS_X = [24, 44, 62];
+// Band 0 must sit clearly PAST the frog's start x or the first syllable
+// (and its lily pad) fires for free the moment play begins.
+const DEFAULT_BANDS_X = [32, 46, 62];
 
 const FAMILY_WIN_RADIUS = 12;   // how close counts as "reached the family"
 const GRAB_RADIUS = 15;         // must press near the frog to pick it up
