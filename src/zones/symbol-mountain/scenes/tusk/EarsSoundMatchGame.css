@@ -362,3 +362,138 @@
     bottom: 78px;
   }
 }
+
+.ears-sound-game.is-debugging .ears-source,
+.ears-sound-game.is-debugging .ears-animal-reveal,
+.ears-sound-game.is-debugging .ears-game-prompt,
+.ears-sound-game.is-debugging .ears-found-tray,
+.ears-sound-game.is-debugging .ears-soft-feedback {
+  pointer-events: auto;
+  cursor: grab;
+}
+
+.ears-source.is-debug-selected,
+.ears-animal-reveal.is-debug-selected,
+.ears-game-prompt.is-debug-selected,
+.ears-found-tray.is-debug-selected,
+.ears-soft-feedback.is-debug-selected {
+  outline: 3px solid rgba(255, 80, 80, 0.95);
+  outline-offset: 4px;
+}
+
+.ears-animal-reveal.debug-preview {
+  opacity: 0.48;
+  pointer-events: auto;
+  animation: none;
+}
+
+.ears-debug-panel {
+  position: fixed;
+  z-index: 9999;
+  width: min(352px, calc(100vw - 24px));
+  max-height: min(78vh, 560px);
+  border: 1px solid rgba(255, 244, 190, 0.34);
+  border-radius: 8px;
+  background: rgba(21, 31, 36, 0.94);
+  color: #fff8dc;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.34);
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 12px;
+  overflow: hidden;
+}
+
+.ears-debug-toggle {
+  width: 100%;
+  min-height: 42px;
+  border: 0;
+  background: rgba(255, 225, 120, 0.94);
+  color: #1d2d32;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.ears-debug-body {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  overflow: auto;
+  max-height: calc(min(78vh, 560px) - 42px);
+}
+
+.ears-debug-drag-handle {
+  border: 1px dashed rgba(255, 248, 220, 0.42);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff8dc;
+  font: inherit;
+  padding: 7px 8px;
+  cursor: grab;
+}
+
+.ears-debug-section-title {
+  font-weight: 900;
+  color: #ffe178;
+}
+
+.ears-debug-note {
+  margin: 0;
+  color: rgba(255, 248, 220, 0.74);
+  line-height: 1.35;
+}
+
+.ears-debug-row {
+  display: grid;
+  grid-template-columns: 58px 1fr 64px;
+  align-items: center;
+  gap: 8px;
+}
+
+.ears-debug-row span {
+  font-weight: 800;
+}
+
+.ears-debug-row select,
+.ears-debug-row input[type='number'] {
+  min-width: 0;
+  border: 1px solid rgba(255, 248, 220, 0.24);
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff8dc;
+  padding: 5px 6px;
+  font: inherit;
+}
+
+.ears-debug-row select {
+  grid-column: 2 / 4;
+}
+
+.ears-debug-row input[type='range'] {
+  width: 100%;
+}
+
+.ears-debug-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.ears-debug-actions button {
+  flex: 1;
+  border: 1px solid rgba(255, 248, 220, 0.28);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff8dc;
+  font: inherit;
+  padding: 7px 8px;
+  cursor: pointer;
+}
+
+.ears-debug-readout {
+  max-height: 150px;
+  margin: 0;
+  padding: 8px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.28);
+  overflow: auto;
+  white-space: pre-wrap;
+}

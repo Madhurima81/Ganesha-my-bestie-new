@@ -32,11 +32,70 @@ const PHASE = {
   COMPLETE: 'complete'
 };
 
+const DEBUG_UI_ENABLED =
+  typeof window !== 'undefined' &&
+  (window.location.pathname.includes('game-test') ||
+    new URLSearchParams(window.location.search).has('debugEars'));
+const LAYOUT_STORAGE_KEY = 'symbol_mountain_ears_layout_v1';
+const LAYOUT_PRESET_VERSION = '2026-09-07-ear-listening-layout-1';
+
+const DEFAULT_LAYOUT = {
+  prompt: { x: 50, y: 5.6, w: 52 },
+  feedback: { x: 50, y: 84, w: 42 },
+  tray: { x: 50, y: 93, w: 18 },
+  elephantLeftBush: { x: 24, y: 62, w: 20, z: 16 },
+  elephantCenterRock: { x: 49, y: 72, w: 21, z: 16 },
+  elephantRightPond: { x: 75, y: 75, w: 21, z: 16 },
+  cowLeftBush: { x: 24, y: 62, w: 20, z: 16 },
+  cowCenterRock: { x: 49, y: 72, w: 21, z: 16 },
+  cowRightCave: { x: 78, y: 56, w: 20, z: 16 },
+  elephantReveal: { x: 73, y: 59, w: 27, z: 31 },
+  cowReveal: { x: 41, y: 67, w: 18, z: 32 }
+};
+
+const DEBUG_KEYS = [
+  { key: 'prompt', label: 'Prompt' },
+  { key: 'feedback', label: 'Feedback' },
+  { key: 'tray', label: 'Found tray' },
+  { key: 'elephantLeftBush', label: 'Elephant - left bush' },
+  { key: 'elephantCenterRock', label: 'Elephant - center rock' },
+  { key: 'elephantRightPond', label: 'Elephant - water patch' },
+  { key: 'cowLeftBush', label: 'Cow - left bush' },
+  { key: 'cowCenterRock', label: 'Cow - center rock' },
+  { key: 'cowRightCave', label: 'Cow - cave nook' },
+  { key: 'elephantReveal', label: 'Elephant reveal' },
+  { key: 'cowReveal', label: 'Cow reveal' }
+];
+
+const loadSavedLayout = () => {
+  if (typeof window === 'undefined') return DEFAULT_LAYOUT;
+  try {
+    const saved = JSON.parse(window.localStorage.getItem(LAYOUT_STORAGE_KEY) || '{}');
+    if (saved.version !== LAYOUT_PRESET_VERSION || !saved.layout) return DEFAULT_LAYOUT;
+    return Object.fromEntries(
+      Object.entries(DEFAULT_LAYOUT).map(([key, fallback]) => [
+        key,
+        { ...fallback, ...(saved.layout[key] || {}) }
+      ])
+    );
+  } catch {
+    return DEFAULT_LAYOUT;
+  }
+};
+
+const styleFromLayout = (layoutItem) => ({
+  left: `${layoutItem.x}%`,
+  top: `${layoutItem.y}%`,
+  bottom: 'auto',
+  width: `${layoutItem.w}%`,
+  zIndex: layoutItem.z
+});
+
 const BASE_SOURCES = {
-  leftBush: { id: 'leftBush', label: 'Left bush', img: leftBushImg, x: 24, y: 62, w: 20 },
-  centerRock: { id: 'centerRock', label: 'Center rock', img: centerRockImg, x: 49, y: 72, w: 21 },
-  rightPond: { id: 'rightPond', label: 'Water patch', img: pondPatchImg, x: 75, y: 75, w: 21 },
-  rightCave: { id: 'rightCave', label: 'Cave nook', img: caveNookImg, x: 78, y: 56, w: 20 }
+  leftBush: { id: 'leftBush', label: 'Left bush', img: leftBushImg },
+  centerRock: { id: 'centerRock', label: 'Center rock', img: centerRockImg },
+  rightPond: { id: 'rightPond', label: 'Water patch', img: pondPatchImg },
+  rightCave: { id: 'rightCave', label: 'Cave nook', img: caveNookImg }
 };
 
 const ROUNDS = [
@@ -46,14 +105,12 @@ const ROUNDS = [
     prompt: 'Listen for the animal near the water.',
     targetSourceId: 'rightPond',
     sources: [
-      { ...BASE_SOURCES.leftBush, sound: decoyRustle, kind: 'decoy' },
-      { ...BASE_SOURCES.centerRock, sound: decoyWind, kind: 'decoy' },
-      { ...BASE_SOURCES.rightPond, sound: soundElephant, kind: 'target' }
+      { ...BASE_SOURCES.leftBush, layoutKey: 'elephantLeftBush', sound: decoyRustle, kind: 'decoy' },
+      { ...BASE_SOURCES.centerRock, layoutKey: 'elephantCenterRock', sound: decoyWind, kind: 'decoy' },
+      { ...BASE_SOURCES.rightPond, layoutKey: 'elephantRightPond', sound: soundElephant, kind: 'target' }
     ],
     frames: [elephantRestingImg, elephantNoticesImg, elephantDrinksImg, elephantSpraysImg, elephantIdleImg],
-    revealX: 73,
-    revealY: 59,
-    revealW: 27
+    revealLayoutKey: 'elephantReveal'
   },
   {
     id: 'cow',
@@ -61,14 +118,12 @@ const ROUNDS = [
     prompt: 'Listen for the animal near the grass.',
     targetSourceId: 'rightCave',
     sources: [
-      { ...BASE_SOURCES.leftBush, sound: decoyWind, kind: 'decoy' },
-      { ...BASE_SOURCES.centerRock, sound: decoyRustle, kind: 'decoy' },
-      { ...BASE_SOURCES.rightCave, sound: soundCow, kind: 'target' }
+      { ...BASE_SOURCES.leftBush, layoutKey: 'cowLeftBush', sound: decoyWind, kind: 'decoy' },
+      { ...BASE_SOURCES.centerRock, layoutKey: 'cowCenterRock', sound: decoyRustle, kind: 'decoy' },
+      { ...BASE_SOURCES.rightCave, layoutKey: 'cowRightCave', sound: soundCow, kind: 'target' }
     ],
     frames: [cowRestingImg, cowLooksImg, cowNibblesImg, cowChewsImg, cowIdleImg],
-    revealX: 41,
-    revealY: 67,
-    revealW: 18
+    revealLayoutKey: 'cowReveal'
   }
 ];
 
@@ -120,6 +175,11 @@ const EarsSoundMatchGame = ({
   const [feedback, setFeedback] = useState('');
   const [revealFrameByAnimal, setRevealFrameByAnimal] = useState({});
   const [hintSourceId, setHintSourceId] = useState(null);
+  const [layout, setLayout] = useState(loadSavedLayout);
+  const [debugMode, setDebugMode] = useState(false);
+  const [selectedDebugKey, setSelectedDebugKey] = useState('elephantLeftBush');
+  const [debugPanelPosition, setDebugPanelPosition] = useState({ x: 12, y: 96 });
+  const [layoutCopyStatus, setLayoutCopyStatus] = useState('');
 
   const audioRef = useRef(null);
   const timersRef = useRef([]);
@@ -127,9 +187,13 @@ const EarsSoundMatchGame = ({
   const chooseStartedAtRef = useRef(Date.now());
   const hintStageRef = useRef(0);
   const completedRef = useRef(false);
+  const stageRef = useRef(null);
+  const debugDragRef = useRef(null);
+  const debugPanelDragRef = useRef(null);
 
   const round = ROUNDS[roundIndex];
   const completedIds = useMemo(() => new Set(completedRounds), [completedRounds]);
+  const selectedDebugLayout = layout[selectedDebugKey] || DEFAULT_LAYOUT[selectedDebugKey];
 
   const clearTimers = useCallback(() => {
     timersRef.current.forEach((timer) => clearTimeout(timer));
@@ -202,6 +266,125 @@ const EarsSoundMatchGame = ({
     setFeedback(message);
     schedule(() => setFeedback(''), 1500);
   }, [schedule]);
+
+  const saveLayout = useCallback((nextLayout) => {
+    if (typeof window === 'undefined') return;
+    try {
+      window.localStorage.setItem(LAYOUT_STORAGE_KEY, JSON.stringify({
+        version: LAYOUT_PRESET_VERSION,
+        layout: nextLayout
+      }));
+    } catch {
+      // Local storage is optional in the dev harness.
+    }
+  }, []);
+
+  const updateLayout = useCallback((key, patch) => {
+    setLayout((current) => {
+      const next = {
+        ...current,
+        [key]: {
+          ...(current[key] || DEFAULT_LAYOUT[key]),
+          ...patch
+        }
+      };
+      saveLayout(next);
+      return next;
+    });
+  }, [saveLayout]);
+
+  const updateLayoutField = useCallback((key, field, value) => {
+    const max = field === 'z' ? 80 : 100;
+    const numeric = Math.max(0, Math.min(max, Number(value)));
+    updateLayout(key, { [field]: numeric });
+  }, [updateLayout]);
+
+  const resetLayout = useCallback(() => {
+    setLayout(DEFAULT_LAYOUT);
+    if (typeof window !== 'undefined') {
+      try {
+        window.localStorage.removeItem(LAYOUT_STORAGE_KEY);
+      } catch {
+        // no-op
+      }
+    }
+  }, []);
+
+  const copyLayoutJson = useCallback(async () => {
+    const payload = JSON.stringify({ version: LAYOUT_PRESET_VERSION, layout }, null, 2);
+    try {
+      await navigator.clipboard?.writeText(payload);
+      setLayoutCopyStatus('Copied');
+    } catch {
+      window.prompt?.('Copy Ear layout JSON', payload);
+      setLayoutCopyStatus('Shown');
+    }
+    console.log('Ear layout JSON:', payload);
+    schedule(() => setLayoutCopyStatus(''), 1500);
+  }, [layout, schedule]);
+
+  const getPointerPercent = useCallback((event) => {
+    const rect = stageRef.current?.getBoundingClientRect();
+    if (!rect || !rect.width || !rect.height) return null;
+    return {
+      x: Math.max(0, Math.min(100, ((event.clientX - rect.left) / rect.width) * 100)),
+      y: Math.max(0, Math.min(100, ((event.clientY - rect.top) / rect.height) * 100))
+    };
+  }, []);
+
+  const startDebugDrag = useCallback((event, key) => {
+    if (!debugMode) return;
+    const point = getPointerPercent(event);
+    const item = layout[key] || DEFAULT_LAYOUT[key];
+    if (!point || !item) return;
+    event.stopPropagation();
+    debugDragRef.current = {
+      key,
+      offsetX: point.x - item.x,
+      offsetY: point.y - item.y
+    };
+    setSelectedDebugKey(key);
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+  }, [debugMode, getPointerPercent, layout]);
+
+  const handleDebugPointerMove = useCallback((event) => {
+    const drag = debugDragRef.current;
+    if (!drag) return;
+    const point = getPointerPercent(event);
+    if (!point) return;
+    event.stopPropagation();
+    updateLayout(drag.key, {
+      x: Number(Math.max(0, Math.min(100, point.x - drag.offsetX)).toFixed(2)),
+      y: Number(Math.max(0, Math.min(100, point.y - drag.offsetY)).toFixed(2))
+    });
+  }, [getPointerPercent, updateLayout]);
+
+  const stopDebugDrag = useCallback(() => {
+    debugDragRef.current = null;
+  }, []);
+
+  const startDebugPanelDrag = useCallback((event) => {
+    debugPanelDragRef.current = {
+      offsetX: event.clientX - debugPanelPosition.x,
+      offsetY: event.clientY - debugPanelPosition.y
+    };
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+  }, [debugPanelPosition.x, debugPanelPosition.y]);
+
+  const moveDebugPanelDrag = useCallback((event) => {
+    const drag = debugPanelDragRef.current;
+    if (!drag) return;
+    const panelWidth = Math.min(352, window.innerWidth - 24);
+    const panelHeight = debugMode ? Math.min(window.innerHeight * 0.78, 560) : 48;
+    setDebugPanelPosition({
+      x: Math.max(8, Math.min(window.innerWidth - panelWidth - 8, event.clientX - drag.offsetX)),
+      y: Math.max(8, Math.min(window.innerHeight - panelHeight - 8, event.clientY - drag.offsetY))
+    });
+  }, [debugMode]);
+
+  const stopDebugPanelDrag = useCallback(() => {
+    debugPanelDragRef.current = null;
+  }, []);
 
   const playSequence = useCallback((targetRound, afterSequence = null) => {
     if (!isActive || !targetRound) return;
@@ -357,7 +540,7 @@ const EarsSoundMatchGame = ({
 
   const handleSourceTap = useCallback((source, e) => {
     e.stopPropagation();
-    if (!round || phase !== PHASE.CHOOSING) return;
+    if (debugMode || !round || phase !== PHASE.CHOOSING) return;
 
     if (source.id !== round.targetSourceId) {
       setWrongSourceId(source.id);
@@ -370,15 +553,25 @@ const EarsSoundMatchGame = ({
     setCompletedRounds((prev) => [...prev, round.id]);
     showFeedback(`${round.label} found.`);
     startReveal(round);
-  }, [phase, round, schedule, showFeedback, speak, startReveal]);
+  }, [debugMode, phase, round, schedule, showFeedback, speak, startReveal]);
 
   if (hideElements || !isActive) return null;
 
   return (
-    <div className={`ears-sound-game ${className}`}>
+    <div
+      ref={stageRef}
+      className={`ears-sound-game ${className} ${debugMode ? 'is-debugging' : ''}`}
+      onPointerMove={handleDebugPointerMove}
+      onPointerUp={stopDebugDrag}
+      onPointerLeave={stopDebugDrag}
+    >
       <img className="ears-game-bg" src={bgImg} alt="" draggable={false} />
 
-      <div className="ears-game-prompt">
+      <div
+        className={`ears-game-prompt ${debugMode && selectedDebugKey === 'prompt' ? 'is-debug-selected' : ''}`}
+        style={styleFromLayout(layout.prompt)}
+        onPointerDown={(e) => startDebugDrag(e, 'prompt')}
+      >
         <span>
           {phase === PHASE.LISTENING
             ? 'Listen to each sound'
@@ -401,10 +594,11 @@ const EarsSoundMatchGame = ({
           <button
             key={`${round.id}-${source.id}`}
             type="button"
-            className={`ears-source ${locked ? 'locked' : 'ready'} ${isPlaying ? 'playing' : ''} ${isWrong ? 'wrong' : ''} ${isHinted ? 'hinted' : ''}`}
-            style={{ left: `${source.x}%`, top: `${source.y}%`, width: `${source.w}%`, '--source-index': index + 1 }}
+            className={`ears-source ${locked ? 'locked' : 'ready'} ${isPlaying ? 'playing' : ''} ${isWrong ? 'wrong' : ''} ${isHinted ? 'hinted' : ''} ${debugMode && selectedDebugKey === source.layoutKey ? 'is-debug-selected' : ''}`}
+            style={{ ...styleFromLayout(layout[source.layoutKey]), '--source-index': index + 1 }}
             onClick={(e) => handleSourceTap(source, e)}
-            disabled={locked}
+            onPointerDown={(e) => debugMode && startDebugDrag(e, source.layoutKey)}
+            disabled={!debugMode && locked}
             aria-label={source.label}
           >
             <span className="ears-source-number">{index + 1}</span>
@@ -420,12 +614,9 @@ const EarsSoundMatchGame = ({
         return (
           <div
             key={`reveal-${animalRound.id}`}
-            className={`ears-animal-reveal ${animalRound.id}`}
-            style={{
-              left: `${animalRound.revealX}%`,
-              top: `${animalRound.revealY}%`,
-              width: `${animalRound.revealW}%`
-            }}
+            className={`ears-animal-reveal ${animalRound.id} ${debugMode && selectedDebugKey === animalRound.revealLayoutKey ? 'is-debug-selected' : ''}`}
+            style={styleFromLayout(layout[animalRound.revealLayoutKey])}
+            onPointerDown={(e) => startDebugDrag(e, animalRound.revealLayoutKey)}
           >
             <img src={animalRound.frames[frameIndex] || animalRound.frames[animalRound.frames.length - 1]} alt="" draggable={false} />
             <span className="ears-animal-sparkle" aria-hidden="true" />
@@ -433,7 +624,23 @@ const EarsSoundMatchGame = ({
         );
       })}
 
-      <div className="ears-found-tray" aria-hidden="true">
+      {debugMode && ROUNDS.filter((animalRound) => !completedIds.has(animalRound.id)).map((animalRound) => (
+        <div
+          key={`debug-reveal-${animalRound.id}`}
+          className={`ears-animal-reveal ${animalRound.id} debug-preview ${selectedDebugKey === animalRound.revealLayoutKey ? 'is-debug-selected' : ''}`}
+          style={styleFromLayout(layout[animalRound.revealLayoutKey])}
+          onPointerDown={(e) => startDebugDrag(e, animalRound.revealLayoutKey)}
+        >
+          <img src={animalRound.frames[animalRound.frames.length - 1]} alt="" draggable={false} />
+        </div>
+      ))}
+
+      <div
+        className={`ears-found-tray ${debugMode && selectedDebugKey === 'tray' ? 'is-debug-selected' : ''}`}
+        style={styleFromLayout(layout.tray)}
+        aria-hidden="true"
+        onPointerDown={(e) => startDebugDrag(e, 'tray')}
+      >
         {ROUNDS.map((animalRound) => (
           <div key={animalRound.id} className={`ears-found-slot ${completedIds.has(animalRound.id) ? 'filled' : ''}`}>
             {completedIds.has(animalRound.id) ? (
@@ -445,7 +652,87 @@ const EarsSoundMatchGame = ({
         ))}
       </div>
 
-      {feedback && <div className="ears-soft-feedback">{feedback}</div>}
+      {(feedback || debugMode) && (
+        <div
+          className={`ears-soft-feedback ${debugMode && selectedDebugKey === 'feedback' ? 'is-debug-selected' : ''}`}
+          style={styleFromLayout(layout.feedback)}
+          onPointerDown={(e) => startDebugDrag(e, 'feedback')}
+        >
+          {feedback || 'Feedback'}
+        </div>
+      )}
+
+      {DEBUG_UI_ENABLED && (
+        <div
+          className={`ears-debug-panel ${debugMode ? 'is-open' : ''}`}
+          style={{ left: debugPanelPosition.x, top: debugPanelPosition.y }}
+          onPointerMove={moveDebugPanelDrag}
+          onPointerUp={stopDebugPanelDrag}
+          onPointerLeave={stopDebugPanelDrag}
+        >
+          <button
+            type="button"
+            className="ears-debug-toggle"
+            onClick={() => setDebugMode((value) => !value)}
+          >
+            {debugMode ? 'Hide Layout Debug' : 'Layout Debug'}
+          </button>
+
+          {debugMode && (
+            <div className="ears-debug-body">
+              <button
+                type="button"
+                className="ears-debug-drag-handle"
+                onPointerDown={startDebugPanelDrag}
+              >
+                Drag panel
+              </button>
+              <div className="ears-debug-section-title">Scene Objects</div>
+              <p className="ears-debug-note">Drag any object in the scene, or tune exact values here.</p>
+
+              <label className="ears-debug-row">
+                <span>Element</span>
+                <select value={selectedDebugKey} onChange={(e) => setSelectedDebugKey(e.target.value)}>
+                  {DEBUG_KEYS.map((item) => (
+                    <option key={item.key} value={item.key}>{item.label}</option>
+                  ))}
+                </select>
+              </label>
+
+              {['x', 'y', 'w', 'z'].map((field) => (
+                <label key={field} className="ears-debug-row">
+                  <span>{field.toUpperCase()}</span>
+                  <input
+                    type="range"
+                    min="0"
+                    max={field === 'z' ? 80 : 100}
+                    step={field === 'z' ? 1 : 0.25}
+                    value={selectedDebugLayout?.[field] ?? (field === 'z' ? 20 : 0)}
+                    onChange={(e) => updateLayoutField(selectedDebugKey, field, e.target.value)}
+                  />
+                  <input
+                    type="number"
+                    min="0"
+                    max={field === 'z' ? 80 : 100}
+                    step={field === 'z' ? 1 : 0.25}
+                    value={selectedDebugLayout?.[field] ?? (field === 'z' ? 20 : 0)}
+                    onChange={(e) => updateLayoutField(selectedDebugKey, field, e.target.value)}
+                  />
+                </label>
+              ))}
+
+              <div className="ears-debug-actions">
+                <button type="button" onClick={copyLayoutJson}>
+                  {layoutCopyStatus || 'Copy JSON'}
+                </button>
+                <button type="button" onClick={resetLayout}>Reset</button>
+              </div>
+
+              <pre className="ears-debug-readout">{JSON.stringify({ [selectedDebugKey]: selectedDebugLayout }, null, 2)}</pre>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
