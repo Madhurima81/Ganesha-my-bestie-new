@@ -154,7 +154,15 @@ const DEFAULT_FJ_LAYOUT = {
   leaves:      { x: 50, y: 52, w: 26 },
   branch:      { x: 70, y: 34, w: 24 },
   carryStart:  { x: 16, y: 72 },
-  carryEnd:    { x: 74, y: 52 }
+  carryEnd:    { x: 74, y: 52 },
+  // Garland-build: resting spots of the 6 loose flowers (percent of the
+  // garland work area, not the whole scene).
+  garlandF1:   { x: 10, y: 20 },
+  garlandF2:   { x: 10, y: 72 },
+  garlandF3:   { x: 25, y: 88 },
+  garlandF4:   { x: 75, y: 88 },
+  garlandF5:   { x: 90, y: 72 },
+  garlandF6:   { x: 90, y: 20 }
 };
 const MUD_STONE_KEYS = ['mudS1', 'mudS2', 'mudS3'];
 
@@ -2153,10 +2161,10 @@ const NewModakSceneMVPContent = ({
                         })}
                       </KidsDropZone>
 
-                      {/* loose flowers scattered around the work area */}
+                      {/* loose flowers scattered around the work area (debug-tunable) */}
                       {GARLAND_FLOWER_TYPES.map((type, i) => {
                         if (placedList.includes(i)) return null;
-                        const pos = GARLAND_LOOSE_POSITIONS[i];
+                        const pos = L[`garlandF${i + 1}`] || { x: 50, y: 50 };
                         return (
                           <KidsDraggable
                             key={`loose-${i}`}
@@ -2166,8 +2174,8 @@ const NewModakSceneMVPContent = ({
                             dragBorderRadius="50%"
                             style={{
                               position: 'absolute',
-                              left: pos.left,
-                              top: pos.top,
+                              left: `${pos.x}%`,
+                              top: `${pos.y}%`,
                               width: 'clamp(62px, 7vw, 100px)',
                               height: 'clamp(62px, 7vw, 100px)',
                               transform: 'translate(-50%, -50%)',
