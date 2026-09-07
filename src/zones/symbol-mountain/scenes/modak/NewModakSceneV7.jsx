@@ -85,15 +85,16 @@ import symbolModakColored from '../../shared/images/icons/symbol-modak-new.webp'
 import symbolBellyColored from '../../shared/images/icons/symbol-belly-new.webp';
 
 // Flower Journey assets (new)
-import fjMudCrossing from './assets/images/fj-mud-crossing.png';
-import fjLeafyClosed from './assets/images/fj-leafy-closed.png';
-import fjLeafyOpened from './assets/images/fj-leafy-opened.png';
-import fjTree from './assets/images/fj-tree.png';
-import fjBranch from './assets/images/fj-branch.png';
-import fjFlowerCoral from './assets/images/fj-flower-coral.png';
-import fjFlowerCream from './assets/images/fj-flower-cream.png';
-import fjGarlandEmpty from './assets/images/fj-garland-empty.png';
-import fjGarlandComplete from './assets/images/fj-garland-complete.png';
+import fjMudCrossing from './assets/images/fj-mud-crossing.webp';
+import fjLeafyClosed from './assets/images/fj-leafy-closed.webp';
+import fjLeafyOpened from './assets/images/fj-leafy-opened.webp';
+import fjTree from './assets/images/fj-tree.webp';
+import fjBranch from './assets/images/fj-branch.webp';
+import fjFlowerCoral from './assets/images/fj-flower-coral.webp';
+import fjFlowerCream from './assets/images/fj-flower-cream.webp';
+import fjGarlandEmpty from './assets/images/fj-garland-empty.webp';
+import fjGarlandKnot from './assets/images/fj-garland-knot.webp';
+import fjGarlandComplete from './assets/images/fj-garland-complete.webp';
 
 // ========================================
 // PHASES
@@ -140,14 +141,59 @@ const BRANCH_HOLD_MS = 1100;
 const CARRY_START_POSITION = { top: '72%', left: '16%' };
 const CARRY_END_POSITION = { top: '52%', left: '74%' };
 
-// garland thread slots (percent within the garland overlay stage)
+// Live-tunable layout (percent of the scene). Editable via the debug panel
+// (?debugModak=1) and persisted to localStorage so tuning survives reload.
+const FJ_LAYOUT_KEY = 'modakFjLayout';
+const DEFAULT_FJ_LAYOUT = {
+  calmSettle:  { x: 32, y: 58 },
+  mud:         { x: 50, y: 74, w: 42 },
+  mudStart:    { x: 26, y: 74 },
+  mudS1:       { x: 36, y: 72 },
+  mudS2:       { x: 46, y: 68 },
+  mudS3:       { x: 56, y: 64 },
+  leaves:      { x: 50, y: 52, w: 26 },
+  branch:      { x: 70, y: 34, w: 24 },
+  carryStart:  { x: 16, y: 72 },
+  carryEnd:    { x: 74, y: 52 }
+};
+const MUD_STONE_KEYS = ['mudS1', 'mudS2', 'mudS3'];
+const loadFjLayout = () => {
+  if (typeof window === 'undefined') return { ...DEFAULT_FJ_LAYOUT };
+  try {
+    const raw = window.localStorage.getItem(FJ_LAYOUT_KEY);
+    if (!raw) return { ...DEFAULT_FJ_LAYOUT };
+    const saved = JSON.parse(raw);
+    const merged = { ...DEFAULT_FJ_LAYOUT };
+    Object.keys(DEFAULT_FJ_LAYOUT).forEach((k) => {
+      if (saved[k]) merged[k] = { ...DEFAULT_FJ_LAYOUT[k], ...saved[k] };
+    });
+    return merged;
+  } catch {
+    return { ...DEFAULT_FJ_LAYOUT };
+  }
+};
+const asPos = (o) => ({ top: `${o.y}%`, left: `${o.x}%` });
+
+// Snap positions along the U-shaped thread (percent within the work area).
+//        0                     5
+//            1             4
+//                 2     3
 const GARLAND_SLOTS = [
-  { left: '20%', top: '46%' },
-  { left: '31%', top: '58%' },
-  { left: '43%', top: '64%' },
-  { left: '57%', top: '64%' },
-  { left: '69%', top: '58%' },
-  { left: '80%', top: '46%' }
+  { left: '23%', top: '43%' },
+  { left: '32%', top: '58%' },
+  { left: '43%', top: '68%' },
+  { left: '57%', top: '68%' },
+  { left: '68%', top: '58%' },
+  { left: '77%', top: '43%' }
+];
+// Loose flowers rest around the outside of the work area before placement.
+const GARLAND_LOOSE_POSITIONS = [
+  { left: '10%', top: '20%' },
+  { left: '10%', top: '72%' },
+  { left: '25%', top: '88%' },
+  { left: '75%', top: '88%' },
+  { left: '90%', top: '72%' },
+  { left: '90%', top: '20%' }
 ];
 const GARLAND_FLOWER_TYPES = ['coral', 'cream', 'coral', 'cream', 'coral', 'cream'];
 const garlandFlowerImage = (type) => (type === 'cream' ? fjFlowerCream : fjFlowerCoral);
@@ -295,6 +341,7 @@ const NewModakSceneMVP = ({
 
           // flowers gathered across beats 2-4
           flowers: 0,
+          mudStoneIndex: 0,
 
           // beat 3
           leafSwipes: 0,
@@ -304,7 +351,7 @@ const NewModakSceneMVP = ({
           branchDone: false,
 
           // beat 5
-          garlandFilled: 0,
+          placedGarlandFlowers: [],
           garlandComplete: false,
 
           // beat 6
@@ -498,7 +545,54 @@ const NewModakSceneMVPContent = ({
   const [leavesShake, setLeavesShake] = useState(false);
   const [activeEmotion, setActiveEmotion] = useState(null); // 'worried' | 'angry' | 'sad'
   const [garlandBounce, setGarlandBounce] = useState(-1);
+  const [garlandKnot, setGarlandKnot] = useState(false);
   const [dragActive, setDragActive] = useState(false);
+
+  // Show-what-to-do gesture shown briefly on entering each working beat.
+  const [introGesture, setIntroGesture] = useState(false);
+
+  // --- Live layout + debug panel -----------------------------------
+  const [fjLayout, setFjLayout] = useState(loadFjLayout);
+  const [showDebugPanel, setShowDebugPanel] = useState(false);
+  const [dbgShowAll, setDbgShowAll] = useState(false);
+  const [dbgCopyStatus, setDbgCopyStatus] = useState('');
+  const [debugPanelPos, setDebugPanelPos] = useState({ x: 16, y: 90 });
+  const debugDragRef = useRef(null);
+  const L = fjLayout;
+
+  const updateFjLayout = useCallback((key, axis, value) => {
+    setFjLayout((prev) => {
+      const next = { ...prev, [key]: { ...prev[key], [axis]: Number(value) } };
+      try { window.localStorage.setItem(FJ_LAYOUT_KEY, JSON.stringify(next)); } catch {}
+      return next;
+    });
+  }, []);
+  const resetFjLayout = useCallback(() => {
+    setFjLayout({ ...DEFAULT_FJ_LAYOUT });
+    try { window.localStorage.removeItem(FJ_LAYOUT_KEY); } catch {}
+  }, []);
+  const copyFjLayout = useCallback(() => {
+    const json = JSON.stringify(fjLayout, null, 2);
+    try {
+      navigator.clipboard?.writeText(json);
+      setDbgCopyStatus('copied');
+    } catch {
+      setDbgCopyStatus('see console');
+    }
+    console.log('[modak-fj-layout]\n' + json);
+    setTimeout(() => setDbgCopyStatus(''), 1500);
+  }, [fjLayout]);
+
+  const startDebugDrag = (e) => {
+    debugDragRef.current = { ox: e.clientX - debugPanelPos.x, oy: e.clientY - debugPanelPos.y };
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+  };
+  const moveDebugDrag = (e) => {
+    const d = debugDragRef.current;
+    if (!d) return;
+    setDebugPanelPos({ x: e.clientX - d.ox, y: e.clientY - d.oy });
+  };
+  const endDebugDrag = () => { debugDragRef.current = null; };
 
   // final celebration sync
   const [sceneCompleteVOFinished, setSceneCompleteVOFinished] = useState(false);
@@ -525,8 +619,20 @@ const NewModakSceneMVPContent = ({
     recordInteraction();
     resetIdleBaseline();
     setShowIdleGestureHint(false);
+    setIntroGesture(false);
     setHintResetKey(k => k + 1);
   }, [recordInteraction, resetIdleBaseline]);
+
+  // Brief "show what to do" gesture whenever a working beat begins.
+  useEffect(() => {
+    if (!PHASE_META[sceneState.phase] || !sceneState.welcomeShown) {
+      setIntroGesture(false);
+      return undefined;
+    }
+    setIntroGesture(true);
+    const t = setTimeout(() => setIntroGesture(false), 6000);
+    return () => clearTimeout(t);
+  }, [sceneState.phase, sceneState.welcomeShown]);
 
   // ------------------------------------------------------------------
   // beat 1 - HOLD Mooshika
@@ -535,9 +641,11 @@ const NewModakSceneMVPContent = ({
   const mushikaHoldStartRef = useRef(null);
   const mushikaHoldRafRef = useRef(null);
   const mushikaDartIndexRef = useRef(0);
+  const calmRevealFiredRef = useRef(false);
   const MUSHIKA_DART_INTERVAL_MS = 1100;
   const MUSHIKA_HOLD_MS = 1600;
-  const MUSHIKA_CALM_BEAT_MS = 1200;
+  const CALM_REVEAL_GAP_MS = 500;   // beat after "well done" line ends
+  const CALM_REVEAL_FALLBACK_MS = 6500; // safety net if speech onEnd never fires
 
   const clearMushikaDartTimer = useCallback(() => {
     if (mushikaDartTimerRef.current) {
@@ -582,7 +690,6 @@ const NewModakSceneMVPContent = ({
     if (idleHintsEnabled) stopIdleTimer();
     playDiscovery();
     triggerMiniGesture('thumbsup', 'anchored', 1500, MINI_GESTURE_ANCHORS.calm);
-    playVoice('mooshikaCalmed');
     setShowSparkle('mooshika-calm');
 
     sceneActions.updateState({
@@ -595,7 +702,12 @@ const NewModakSceneMVPContent = ({
       mooshikaPosition: CALM_SETTLE_POSITION
     });
 
-    safeSetTimeout(() => {
+    // Gate the reveal card (and the affirmation VO it auto-plays) until the
+    // "well done" line has finished, so the two VOs never collide.
+    calmRevealFiredRef.current = false;
+    const showMooshikaReveal = () => {
+      if (calmRevealFiredRef.current) return;
+      calmRevealFiredRef.current = true;
       playRevealBloom();
       setShowSparkle(null);
       setRevealConfig({
@@ -605,7 +717,9 @@ const NewModakSceneMVPContent = ({
         affirmation: MODAK_VO.guidePower,
         sidebarTarget: getSidebarTarget('mooshika')
       });
-    }, MUSHIKA_CALM_BEAT_MS);
+    };
+    playVoice('mooshikaCalmed', () => safeSetTimeout(showMooshikaReveal, CALM_REVEAL_GAP_MS));
+    safeSetTimeout(showMooshikaReveal, CALM_REVEAL_FALLBACK_MS);
   }, [clearMushikaDartTimer, clearMushikaHoldLoop, idleHintsEnabled, playDiscovery, playRevealBloom, playVoice, safeSetTimeout, sceneActions, stopIdleTimer, stopVoice, triggerMiniGesture]);
 
   const tickMushikaHold = useCallback(() => {
@@ -663,45 +777,72 @@ const NewModakSceneMVPContent = ({
   }, [clearMushikaDartTimer, clearMushikaHoldLoop]);
 
   // ------------------------------------------------------------------
-  // beat 2 - GUIDE across mud
+  // beat 2 - GUIDE across mud (sequential stepping stones)
+  // The child cannot drag Mooshika straight to the flowers: he must be
+  // guided stone 1 -> 2 -> 3, in order, and only then does he cross.
   // ------------------------------------------------------------------
   const mudLockRef = useRef(false);
+
   const handleMudDragStart = useCallback(() => {
     if (sceneState.phase !== PHASES.MUD_CROSS) return;
     noteInteraction();
     stopVoice();
     setDragActive(true);
-    setActiveEmotion('worried');
   }, [noteInteraction, sceneState.phase, stopVoice]);
 
   const handleMudDragEnd = useCallback(() => {
     setDragActive(false);
   }, []);
 
-  const handleMudArrive = useCallback(() => {
-    if (sceneState.phase !== PHASES.MUD_CROSS || mudLockRef.current) return;
+  // Reaching the last stone -> flowers collected, cross to the leaves.
+  const finishMudCrossing = useCallback(() => {
+    if (mudLockRef.current) return;
     mudLockRef.current = true;
     setDragActive(false);
     setActiveEmotion(null);
-    playPlace();
-    playDiscovery();
-    setShowSparkle('flowers-2');
     triggerMiniGesture('thumbsup', 'anchored', 1500, MINI_GESTURE_ANCHORS.mud);
     if (idleHintsEnabled) stopIdleTimer();
-    sceneActions.updateState({
-      flowers: 2,
-      phase: PHASES.LEAVES_OPEN,
-      mooshikaPosition: { top: '52%', left: '40%' },
-      progress: { percentage: 25 }
-    });
-    safeSetTimeout(() => setShowSparkle(null), 1100);
     safeSetTimeout(() => {
-      resetIdleBaseline();
-      playVoice('leavesStart');
-      setCurrentPhase('leaves');
-      if (idleHintsEnabled) startIdleTimer();
-    }, 700);
-  }, [idleHintsEnabled, playDiscovery, playPlace, playVoice, resetIdleBaseline, safeSetTimeout, sceneActions, sceneState.phase, setCurrentPhase, startIdleTimer, stopIdleTimer, triggerMiniGesture]);
+      playDiscovery();
+      setShowSparkle('flowers-2');
+      sceneActions.updateState({
+        flowers: 2,
+        phase: PHASES.LEAVES_OPEN,
+        mooshikaPosition: { top: `${fjLayout.leaves.y + 8}%`, left: `${fjLayout.leaves.x - 14}%` },
+        progress: { percentage: 25 }
+      });
+      safeSetTimeout(() => setShowSparkle(null), 1100);
+      safeSetTimeout(() => {
+        resetIdleBaseline();
+        playVoice('leavesStart');
+        setCurrentPhase('leaves');
+        if (idleHintsEnabled) startIdleTimer();
+      }, 700);
+    }, 600);
+  }, [fjLayout.leaves, idleHintsEnabled, playDiscovery, playVoice, resetIdleBaseline, safeSetTimeout, sceneActions, setCurrentPhase, startIdleTimer, stopIdleTimer, triggerMiniGesture]);
+
+  const handleMudStoneDrop = useCallback((stoneIndex) => {
+    if (sceneState.phase !== PHASES.MUD_CROSS || mudLockRef.current) return;
+    // must step through the stones in order
+    if (stoneIndex !== (sceneState.mudStoneIndex || 0)) {
+      playSoftWrong();
+      return;
+    }
+    noteInteraction();
+    stopVoice();
+
+    const stoneKey = MUD_STONE_KEYS[stoneIndex];
+    const target = fjLayout[stoneKey];
+    playPlace();
+    setDragActive(false);
+    setActiveEmotion('worried'); // worry travels with him once the crossing begins
+    sceneActions.updateState({
+      mooshikaPosition: { top: `${target.y}%`, left: `${target.x}%` },
+      mudStoneIndex: stoneIndex + 1
+    });
+
+    if (stoneIndex === MUD_STONE_KEYS.length - 1) finishMudCrossing();
+  }, [fjLayout, finishMudCrossing, noteInteraction, playPlace, playSoftWrong, sceneActions, sceneState.mudStoneIndex, sceneState.phase, stopVoice]);
 
   // ------------------------------------------------------------------
   // beat 3 - SWIPE leaves apart
@@ -842,43 +983,55 @@ const NewModakSceneMVPContent = ({
 
   // ------------------------------------------------------------------
   // beat 5 - DRAG + SNAP garland
+  // The whole string is one forgiving drop zone: drop any loose flower
+  // near it and it snaps to the next position (1 -> 6). No empty targets.
   // ------------------------------------------------------------------
   const garlandLockRef = useRef(false);
-  const handleGarlandDrop = useCallback(() => {
-    if (sceneState.phase !== PHASES.GARLAND_MAKING || sceneState.garlandComplete) return;
-    const filled = (sceneState.garlandFilled || 0) + 1;
+  const garlandDropLockRef = useRef(false);
+  const handleGarlandFlowerDrop = useCallback((flowerIndex) => {
+    if (sceneStateRef.current?.phase !== PHASES.GARLAND_MAKING || sceneStateRef.current?.garlandComplete) return;
+    if (typeof flowerIndex !== 'number') return;
+
+    const placed = sceneStateRef.current?.placedGarlandFlowers || [];
+    if (placed.includes(flowerIndex)) return;
+    if (garlandDropLockRef.current) return;
+    garlandDropLockRef.current = true;
+    safeSetTimeout(() => { garlandDropLockRef.current = false; }, 220);
+
     noteInteraction();
     stopVoice();
     playPlace();
-    setGarlandBounce(filled - 1);
-    safeSetTimeout(() => setGarlandBounce(-1), 420);
 
-    if (filled >= 6) {
-      if (garlandLockRef.current) return;
-      garlandLockRef.current = true;
+    const next = [...placed, flowerIndex];
+    setGarlandBounce(next.length - 1);
+    safeSetTimeout(() => setGarlandBounce(-1), 420);
+    sceneActions.updateState({ placedGarlandFlowers: next });
+
+    if (next.length < 6) return;
+
+    if (garlandLockRef.current) return;
+    garlandLockRef.current = true;
+    if (idleHintsEnabled) stopIdleTimer();
+
+    // flowers complete -> knot flashes -> finished garland -> on to carry
+    safeSetTimeout(() => {
+      setGarlandKnot(true);
       playDiscovery();
-      triggerMiniGesture('thumbsup', 'anchored', 2000, MINI_GESTURE_ANCHORS.garland);
-      if (idleHintsEnabled) stopIdleTimer();
-      sceneActions.updateState({
-        garlandFilled: filled,
-        garlandComplete: true,
-        progress: { percentage: 70 }
-      });
+    }, 300);
+    safeSetTimeout(() => {
+      setGarlandKnot(false);
+      sceneActions.updateState({ garlandComplete: true, progress: { percentage: 70 } });
       playVoice('garlandDone');
-      safeSetTimeout(() => {
-        resetIdleBaseline();
-        sceneActions.updateState({
-          phase: PHASES.CARRY,
-          mooshikaPosition: CARRY_START_POSITION
-        });
-        playVoice('carryStart');
-        setCurrentPhase('carry');
-        if (idleHintsEnabled) startIdleTimer();
-      }, 2200);
-    } else {
-      sceneActions.updateState({ garlandFilled: filled });
-    }
-  }, [idleHintsEnabled, noteInteraction, playDiscovery, playPlace, playVoice, resetIdleBaseline, safeSetTimeout, sceneActions, sceneState.garlandComplete, sceneState.garlandFilled, sceneState.phase, setCurrentPhase, startIdleTimer, stopIdleTimer, stopVoice, triggerMiniGesture]);
+      triggerMiniGesture('thumbsup', 'anchored', 1600, MINI_GESTURE_ANCHORS.garland);
+    }, 900);
+    safeSetTimeout(() => {
+      resetIdleBaseline();
+      sceneActions.updateState({ phase: PHASES.CARRY, mooshikaPosition: CARRY_START_POSITION });
+      playVoice('carryStart');
+      setCurrentPhase('carry');
+      if (idleHintsEnabled) startIdleTimer();
+    }, 2400);
+  }, [idleHintsEnabled, noteInteraction, playDiscovery, playPlace, playVoice, resetIdleBaseline, safeSetTimeout, sceneActions, setCurrentPhase, startIdleTimer, stopIdleTimer, stopVoice, triggerMiniGesture]);
 
   // ------------------------------------------------------------------
   // beat 6 - GUIDE to Ganesha
@@ -1175,6 +1328,7 @@ const NewModakSceneMVPContent = ({
     if (phase === PHASES.MUD_CROSS) {
       sceneActions.updateState({
         flowers: 0,
+        mudStoneIndex: 0,
         mooshikaVisible: true,
         mooshikaPosition: MUD_START_POSITION
       });
@@ -1184,7 +1338,7 @@ const NewModakSceneMVPContent = ({
       sceneActions.updateState({ flowers: 4, branchDone: false });
       setBranchPull(0);
     } else if (phase === PHASES.GARLAND_MAKING) {
-      sceneActions.updateState({ flowers: 6, garlandFilled: 0, garlandComplete: false });
+      sceneActions.updateState({ flowers: 6, placedGarlandFlowers: [], garlandComplete: false });
     } else if (phase === PHASES.CARRY) {
       sceneActions.updateState({
         carryComplete: false,
@@ -1340,10 +1494,11 @@ const NewModakSceneMVPContent = ({
       holdProgress: 0,
       mooshikaCalm: false,
       flowers: 0,
+      mudStoneIndex: 0,
       leafSwipes: 0,
       leavesOpen: false,
       branchDone: false,
-      garlandFilled: 0,
+      placedGarlandFlowers: [],
       garlandComplete: false,
       carryComplete: false,
       discoveredSymbols: {},
@@ -1403,10 +1558,11 @@ const NewModakSceneMVPContent = ({
         mooshikaPosition: { top: CALM_DISTRACTIONS[0].top, left: CALM_DISTRACTIONS[0].left },
         activeDistractionId: CALM_DISTRACTIONS[0].id,
         flowers: 0,
+        mudStoneIndex: 0,
         leafSwipes: 0,
         leavesOpen: false,
         branchDone: false,
-        garlandFilled: 0,
+        placedGarlandFlowers: [],
         garlandComplete: false,
         carryComplete: false,
         discoveredSymbols: {},
@@ -1422,7 +1578,7 @@ const NewModakSceneMVPContent = ({
         leafSwipes: LEAVES_SWIPES_NEEDED,
         leavesOpen: true,
         branchDone: true,
-        garlandFilled: 0,
+        placedGarlandFlowers: [],
         garlandComplete: false,
         carryComplete: false,
         discoveredSymbols: { mooshika: true },
@@ -1438,7 +1594,7 @@ const NewModakSceneMVPContent = ({
         leafSwipes: LEAVES_SWIPES_NEEDED,
         leavesOpen: true,
         branchDone: true,
-        garlandFilled: 6,
+        placedGarlandFlowers: [0, 1, 2, 3, 4, 5],
         garlandComplete: true,
         carryComplete: false,
         discoveredSymbols: { mooshika: true },
@@ -1500,6 +1656,74 @@ const NewModakSceneMVPContent = ({
         </button>
       ))}
 
+      {!isFinalTransitionView && MODAK_DEBUG_UI_ENABLED && !showDebugPanel && (
+        <button
+          type="button"
+          onClick={() => setShowDebugPanel(true)}
+          style={{
+            position: 'fixed', top: '184px', right: '74px', zIndex: 1200,
+            border: '1px solid #7c3aed', background: '#7c3aed', color: '#fff',
+            borderRadius: '999px', padding: '8px 12px', fontWeight: 700, fontSize: '12px', cursor: 'pointer'
+          }}
+        >
+          Layout Debug
+        </button>
+      )}
+
+      {!isFinalTransitionView && MODAK_DEBUG_UI_ENABLED && showDebugPanel && (
+        <div
+          className="modak-fj-debug-panel"
+          style={{ left: `${debugPanelPos.x}px`, top: `${debugPanelPos.y}px` }}
+        >
+          <div
+            className="modak-fj-debug-handle"
+            onPointerDown={startDebugDrag}
+            onPointerMove={moveDebugDrag}
+            onPointerUp={endDebugDrag}
+            onPointerCancel={endDebugDrag}
+          >
+            <span>Flower Journey layout</span>
+            <button type="button" onClick={() => setShowDebugPanel(false)}>close</button>
+          </div>
+          <div className="modak-fj-debug-body">
+            <label className="modak-fj-debug-row" style={{ gridTemplateColumns: '1fr auto' }}>
+              <span>Show all beats</span>
+              <input type="checkbox" checked={dbgShowAll} onChange={(e) => setDbgShowAll(e.target.checked)} />
+            </label>
+
+            {Object.keys(DEFAULT_FJ_LAYOUT).map((key) => (
+              <div key={key}>
+                <div className="modak-fj-debug-section">{key}</div>
+                {['x', 'y', ...(('w' in DEFAULT_FJ_LAYOUT[key]) ? ['w'] : [])].map((axis) => {
+                  const max = axis === 'w' ? 80 : 100;
+                  return (
+                    <label key={axis} className="modak-fj-debug-row">
+                      <span>{axis.toUpperCase()}</span>
+                      <input
+                        type="range" min={0} max={max} step={0.5}
+                        value={L[key][axis]}
+                        onChange={(e) => updateFjLayout(key, axis, e.target.value)}
+                      />
+                      <input
+                        type="number" min={0} max={max} step={0.5}
+                        value={L[key][axis]}
+                        onChange={(e) => updateFjLayout(key, axis, e.target.value)}
+                      />
+                    </label>
+                  );
+                })}
+              </div>
+            ))}
+
+            <div className="modak-fj-debug-actions">
+              <button type="button" onClick={copyFjLayout}>Copy Layout JSON</button>
+              {dbgCopyStatus && <span style={{ alignSelf: 'center' }}>{dbgCopyStatus}</span>}
+              <button type="button" onClick={resetFjLayout}>Reset</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
         <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
           <div className="modak-game-container">
@@ -1509,7 +1733,7 @@ const NewModakSceneMVPContent = ({
 
             <div
               ref={backgroundRef}
-              className="modak-game-background"
+              className={`modak-game-background ${dbgShowAll ? 'modak-fj-debug-live' : ''}`}
               style={{ backgroundImage: `url(${forestBackground})` }}
             >
               {!isCompletionView && !isFinalTransitionView && (
@@ -1610,25 +1834,36 @@ const NewModakSceneMVPContent = ({
                     )}
 
                   {/* ============ BEAT 2: MUD CROSSING (guide) ============ */}
-                  {sceneState.phase === PHASES.MUD_CROSS && (
+                  {(sceneState.phase === PHASES.MUD_CROSS || dbgShowAll) && (
                     <>
-                      <img src={fjMudCrossing} alt="" className="modak-fj-mud" aria-hidden="true" />
-                      <KidsDropZone
-                        id="mud-far-side"
-                        accepts="fj-mooshika"
-                        onDrop={handleMudArrive}
-                        style={{
-                          position: 'absolute',
-                          left: MUD_END_POSITION.left,
-                          top: MUD_END_POSITION.top,
-                          width: 'clamp(120px, 12vw, 190px)',
-                          height: 'clamp(120px, 12vw, 190px)',
-                          transform: 'translate(-50%, -50%)',
-                          zIndex: 12
-                        }}
-                      >
-                        <div className={`modak-fj-target ${idleHintLevel >= 2 ? 'hint-strong' : idleHintLevel >= 1 ? 'hint' : ''}`} />
-                      </KidsDropZone>
+                      <img src={fjMudCrossing} alt="" className="modak-fj-mud" data-fj-el aria-hidden="true"
+                        style={{ ...asPos(L.mud), width: `${L.mud.w}vw` }} />
+
+                      {/* Sequential stepping stones - must be stepped in order */}
+                      {MUD_STONE_KEYS.map((key, i) => {
+                        const done = i < (sceneState.mudStoneIndex || 0);
+                        const next = i === (sceneState.mudStoneIndex || 0);
+                        return (
+                          <KidsDropZone
+                            key={key}
+                            id={`mud-stone-${i}`}
+                            accepts="fj-mooshika"
+                            onDrop={() => handleMudStoneDrop(i)}
+                            style={{
+                              position: 'absolute',
+                              left: `${L[key].x}%`,
+                              top: `${L[key].y}%`,
+                              width: 'clamp(78px, 8vw, 120px)',
+                              height: 'clamp(64px, 6.5vw, 100px)',
+                              transform: 'translate(-50%, -50%)',
+                              borderRadius: '50%',
+                              zIndex: 13
+                            }}
+                          >
+                            <div className={`modak-fj-stone-target ${done ? 'done' : ''} ${next ? 'active' : ''}`} data-fj-el />
+                          </KidsDropZone>
+                        );
+                      })}
 
                       <KidsDraggable
                         id="fj-mooshika"
@@ -1637,8 +1872,8 @@ const NewModakSceneMVPContent = ({
                         dragBorderRadius="50%"
                         style={{
                           position: 'absolute',
-                          left: (sceneState.mooshikaPosition || MUD_START_POSITION).left,
-                          top: (sceneState.mooshikaPosition || MUD_START_POSITION).top,
+                          left: (sceneState.mooshikaPosition || asPos(L.mudStart)).left,
+                          top: (sceneState.mooshikaPosition || asPos(L.mudStart)).top,
                           width: 'clamp(120px, 11vw, 175px)',
                           height: 'clamp(120px, 11vw, 175px)',
                           transform: `translate(-50%, -50%)${dragActive ? ' scale(1.03)' : ''}`,
@@ -1648,7 +1883,7 @@ const NewModakSceneMVPContent = ({
                         onDragStart={handleMudDragStart}
                         onDragEnd={handleMudDragEnd}
                       >
-                        <div className={`modak-fj-carrier ${dragActive ? 'wobble' : ''}`}>
+                        <div className={`modak-fj-carrier ${dragActive ? 'wobble' : ''}`} data-fj-el>
                           <img src={mooshikaCalm} alt="Mooshika" style={{ width: '100%', height: '100%', pointerEvents: 'none' }} />
                           {activeEmotion === 'worried' && (
                             <img src={emotionImageFor('worried')} alt="" className="modak-fj-emotion modak-fj-emotion--tr" aria-hidden="true" />
@@ -1659,10 +1894,11 @@ const NewModakSceneMVPContent = ({
                   )}
 
                   {/* ============ BEAT 3: LEAVES (swipe apart) ============ */}
-                  {sceneState.phase === PHASES.LEAVES_OPEN && (
+                  {(sceneState.phase === PHASES.LEAVES_OPEN || dbgShowAll) && (
                     <div
                       className="modak-fj-leaves-stage"
-                      style={{ left: LEAVES_POSITION.left, top: LEAVES_POSITION.top }}
+                      data-fj-el
+                      style={{ ...asPos(L.leaves), width: `${L.leaves.w}vw` }}
                     >
                       <img
                         src={sceneState.leavesOpen ? fjLeafyOpened : fjLeafyClosed}
@@ -1682,10 +1918,11 @@ const NewModakSceneMVPContent = ({
                   )}
 
                   {/* ============ BEAT 4: BRANCH (pull + hold) ============ */}
-                  {sceneState.phase === PHASES.BRANCH_PULL && (
+                  {(sceneState.phase === PHASES.BRANCH_PULL || dbgShowAll) && (
                     <div
                       className="modak-fj-branch-stage"
-                      style={{ left: BRANCH_ANCHOR.left, top: BRANCH_ANCHOR.top }}
+                      data-fj-el
+                      style={{ ...asPos(L.branch), width: `${L.branch.w}vw` }}
                     >
                       <img src={fjTree} alt="" className="modak-fj-tree" aria-hidden="true" />
                       <img
@@ -1712,9 +1949,9 @@ const NewModakSceneMVPContent = ({
 
                   {/* ============ BEAT 6: CARRY to Ganesha (guide) ============ */}
                   {sceneState.phase === PHASES.CARRY || sceneState.phase === PHASES.CARRY_REVEAL ||
-                    sceneState.phase === PHASES.MODAK_PAUSE || sceneState.phase === PHASES.MODAK_REVEAL ? (
+                    sceneState.phase === PHASES.MODAK_PAUSE || sceneState.phase === PHASES.MODAK_REVEAL || dbgShowAll ? (
                     <div className="modak-game-belly-stage">
-                      {sceneState.phase === PHASES.CARRY && (
+                      {(sceneState.phase === PHASES.CARRY || dbgShowAll) && (
                         <KidsDraggable
                           id="fj-carry"
                           data={{ type: 'fj-carry' }}
@@ -1722,8 +1959,8 @@ const NewModakSceneMVPContent = ({
                           dragBorderRadius="50%"
                           style={{
                             position: 'absolute',
-                            left: (sceneState.mooshikaPosition || CARRY_START_POSITION).left,
-                            top: (sceneState.mooshikaPosition || CARRY_START_POSITION).top,
+                            left: `${L.carryStart.x}%`,
+                            top: `${L.carryStart.y}%`,
                             width: 'clamp(120px, 11vw, 175px)',
                             height: 'clamp(120px, 11vw, 175px)',
                             transform: 'translate(-50%, -50%)',
@@ -1809,30 +2046,33 @@ const NewModakSceneMVPContent = ({
                       x: parsePercentValue((sceneState.mooshikaPosition || CALM_DISTRACTIONS[0]).left, 30),
                       y: parsePercentValue((sceneState.mooshikaPosition || CALM_DISTRACTIONS[0]).top, 52)
                     }}
-                    active={showIdleGestureHint && sceneState.phase === PHASES.CALM_SEARCH && !sceneState.mushikaHolding}
+                    active={(introGesture || showIdleGestureHint) && sceneState.phase === PHASES.CALM_SEARCH && !sceneState.mushikaHolding}
                     idleDelay={120}
                     zIndex={24}
                   />
                   <GestureDemo
                     type="drag"
-                    from={{ x: parsePercentValue(MUD_START_POSITION.left, 28), y: parsePercentValue(MUD_START_POSITION.top, 70) }}
-                    to={{ x: parsePercentValue(MUD_END_POSITION.left, 70), y: parsePercentValue(MUD_END_POSITION.top, 63) }}
-                    active={showIdleGestureHint && sceneState.phase === PHASES.MUD_CROSS && !dragActive}
+                    from={{
+                      x: (sceneState.mooshikaPosition ? parsePercentValue(sceneState.mooshikaPosition.left, L.mudStart.x) : L.mudStart.x),
+                      y: (sceneState.mooshikaPosition ? parsePercentValue(sceneState.mooshikaPosition.top, L.mudStart.y) : L.mudStart.y)
+                    }}
+                    to={{ x: L[MUD_STONE_KEYS[Math.min(sceneState.mudStoneIndex || 0, 2)]].x, y: L[MUD_STONE_KEYS[Math.min(sceneState.mudStoneIndex || 0, 2)]].y }}
+                    active={(introGesture || showIdleGestureHint) && sceneState.phase === PHASES.MUD_CROSS && !dragActive}
                     idleDelay={120}
                     zIndex={24}
                   />
                   <GestureDemo
                     type="swipe-left"
-                    from={{ x: parsePercentValue(LEAVES_POSITION.left, 50), y: parsePercentValue(LEAVES_POSITION.top, 55) }}
-                    active={showIdleGestureHint && sceneState.phase === PHASES.LEAVES_OPEN && !sceneState.leavesOpen}
+                    from={{ x: L.leaves.x, y: L.leaves.y }}
+                    active={(introGesture || showIdleGestureHint) && sceneState.phase === PHASES.LEAVES_OPEN && !sceneState.leavesOpen}
                     idleDelay={120}
                     zIndex={24}
                   />
                   <GestureDemo
                     type="pull-down"
-                    from={{ x: parsePercentValue(BRANCH_ANCHOR.left, 70), y: parsePercentValue(BRANCH_ANCHOR.top, 38) }}
-                    to={{ x: parsePercentValue(BRANCH_ANCHOR.left, 70), y: parsePercentValue(BRANCH_ANCHOR.top, 38) + 20 }}
-                    active={showIdleGestureHint && sceneState.phase === PHASES.BRANCH_PULL && !sceneState.branchDone}
+                    from={{ x: L.branch.x, y: L.branch.y }}
+                    to={{ x: L.branch.x, y: L.branch.y + 20 }}
+                    active={(introGesture || showIdleGestureHint) && sceneState.phase === PHASES.BRANCH_PULL && !sceneState.branchDone}
                     idleDelay={120}
                     zIndex={24}
                   />
@@ -1840,15 +2080,15 @@ const NewModakSceneMVPContent = ({
                     type="drag"
                     from={{ x: 50, y: 82 }}
                     to={{ x: 50, y: 55 }}
-                    active={showIdleGestureHint && sceneState.phase === PHASES.GARLAND_MAKING && !sceneState.garlandComplete}
+                    active={(introGesture || showIdleGestureHint) && sceneState.phase === PHASES.GARLAND_MAKING && !sceneState.garlandComplete}
                     idleDelay={120}
                     zIndex={2600}
                   />
                   <GestureDemo
                     type="drag"
-                    from={{ x: parsePercentValue(CARRY_START_POSITION.left, 16), y: parsePercentValue(CARRY_START_POSITION.top, 72) }}
-                    to={{ x: parsePercentValue(CARRY_END_POSITION.left, 74), y: parsePercentValue(CARRY_END_POSITION.top, 52) }}
-                    active={showIdleGestureHint && sceneState.phase === PHASES.CARRY && !dragActive}
+                    from={{ x: L.carryStart.x, y: L.carryStart.y }}
+                    to={{ x: L.carryEnd.x, y: L.carryEnd.y }}
+                    active={(introGesture || showIdleGestureHint) && sceneState.phase === PHASES.CARRY && !dragActive}
                     idleDelay={120}
                     zIndex={24}
                   />

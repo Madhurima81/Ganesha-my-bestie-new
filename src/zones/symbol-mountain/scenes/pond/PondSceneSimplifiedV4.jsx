@@ -64,6 +64,8 @@ import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal
 // Images
 import trunkPondBg from './assets/images/trunk-pond-bg-new.webp';
 import trunkRock from './assets/images/trunk-rock-new.webp';
+import trunkReedsLeft from './assets/images/trunk-reeds-left.webp';
+import trunkReedsRight from './assets/images/trunk-reeds-right.webp';
 import lotusDormant from './assets/images/trunk-lotus-dormant-new.webp';
 import lotusUpright from './assets/images/trunk-lotus-upright-new.webp';
 import lotusBloomedImg from './assets/images/trunk-lotus-bloomed-new.webp';
@@ -86,8 +88,10 @@ const GANESHA_REFLECTION_IMAGE = '/images/ganesha-sit.svg';
 const RESUME_DELAY_MS = 3000;
 
 const PHASES = {
-  INITIAL: 'initial',           // stream blocked by rock, lotus dormant, dragging enabled
-  TRUNK_SOLVED: 'trunk_solved', // water reached the pond, lotus lifting upright
+  INITIAL: 'initial',           // heavy rock blocks water
+  ROCK_MOVING: 'rock_moving',   // child holding rock
+  REEDS_ACTIVE: 'reeds_active', // rock moved, soft reeds still block water
+  TRUNK_SOLVED: 'trunk_solved', // reeds parted, water reaches lotus
   TRUNK_REVEAL: 'trunk_reveal', // SymbolAutoReveal card for trunk showing
   LOTUS_ACTIVE: 'lotus_active', // lotus upright, press-and-hold enabled
   BLOOMED: 'bloomed',           // lotus bloomed, about to reveal lotus card
@@ -98,18 +102,20 @@ const VOICE_LINES = {
   // Entry
   opening: 'A rock is blocking the water.',
 
-  // Trunk phase (blocked stream, drag around rock) — first
-  trunkRound: 'Drag the water around the rock and into the pond.',
-  idleTrunk: 'Curve the water around the rock.',
-  waterPathPower: 'You found another way around.',
+  // Trunk phase (strength, then gentleness) — first
+  rockRound: 'This heavy rock needs strength. Press and hold it.',
+  idleRock: 'Keep holding. This one needs strength.',
+  reedsRound: 'These reeds are delicate. Gently part them for the water.',
+  idleReeds: 'A gentle touch will move the reeds.',
+  waterPathPower: 'Strong when needed. Gentle when needed.',
 
   // Lotus phase (press-and-hold to bloom) — second
-  lotusRound: 'The water reached the lotus. Press and hold the bud to help it bloom.',
-  idleLotus: 'Hold the bud gently until it blooms.',
+  lotusRound: 'The lotus is growing through the muddy water. Press and hold the bud.',
+  idleLotus: 'Keep holding the bud.',
   lotusBloomPower: 'The lotus bloomed, even in the muddy pond.',
 
   // Completion
-  complete: 'You found a way around, and helped the lotus bloom.'
+  complete: 'You used strength, then gentleness, and helped the lotus grow.'
 };
 
 const powerConfig = {
@@ -131,31 +137,11 @@ const missionImages = {
 };
 
 // ==================== V6 GAMEPLAY CONFIG ====================
-// Trunk phase: guided drag around a rock obstacle to the pond, stepping-stone
-// style (same feel as the earlier pond water-drag) — the child commits to a
-// side (top or bottom) on the first move, then snaps stone-by-stone to the
-// pond. A hard rock collision still blocks cutting through the middle.
 // Coordinates are % of the background container.
-const SOURCE_POINT = { x: 8, y: 47 };
-const POND_POINT = { x: 78, y: 58 };
-const ROCK = { x: 40, y: 51, rx: 11, ry: 10 };
+const ROCK_HOLD_MS = 1600;
+const REEDS_START_POINT = { x: 55, y: 51 };
+const REEDS_DRAG_DISTANCE = 90;
 const LOTUS_HOLD_POINT = { x: 78.5, y: 53.5 };
-const TOP_ROUTE_STONES = [
-  { id: 'top-1', x: 30, y: 34 },
-  { id: 'top-2', x: 48, y: 30 },
-  { id: 'top-3', x: 62, y: 40 },
-];
-const BOTTOM_ROUTE_STONES = [
-  { id: 'bot-1', x: 30, y: 68 },
-  { id: 'bot-2', x: 48, y: 72 },
-  { id: 'bot-3', x: 62, y: 62 },
-];
-const ROUTE_SIDE_LOCK_DELTA = 8;   // % vertical offset from source before a side commits
-const STONE_SNAP_RADIUS_PCT = 9;   // % distance to snap onto the next stone
-const POND_SUCCESS_RADIUS = 13;    // % distance from POND_POINT counted as "reached"
-const SOURCE_GRAB_RADIUS = 12;     // % distance from SOURCE_POINT to start dragging
-const DRAG_FADE_MS = 300;          // fade-out duration when a failed drag resets
-const TRAIL_MAX_DOTS = 16;         // how many droplet trail dots stay visible at once
 
 // Lotus phase: press-and-hold to bloom. Same forgiving-release feel as before.
 const LOTUS_HOLD_MS = 1800;
@@ -164,6 +150,8 @@ const HOLD_RESET_GRACE_MS = 1000;
 
 const LOTUS_GLOW_MS = 900;           // glow burst duration as the lotus wakes up
 const TRUNK_REVEAL_DELAY_MS = 1200;  // pause before the trunk SymbolAutoReveal card
+const WATER_TO_REEDS_MS = 900;
+const WATER_TO_POND_MS = 1100;
 const POND_OVERLAY_MID = null;
 const POND_OVERLAY_FRONT = '';
 // =============================================================
@@ -230,6 +218,8 @@ const PondSceneSimplifiedV5 = ({
         zoneId={zoneId}
         sceneId={sceneId}
         initialState={{
+          rockMoved: false,
+          reedsParted: false,
           streamSolved: false,
           lotusUpright: false,
           lotusBloomed: false,
@@ -305,23 +295,16 @@ const PondSceneContent = ({
   const holdReleaseRef = useRef(null);     // release decay rAF id
   const holdResetTimerRef = useRef(null);  // 1s grace timer
 
-  // ==================== V6 DRAG-AROUND-ROCK STATE ====================
-  // dragActive: finger currently guiding the water.
-  // routeSide: null until the child commits up/down, then 'top' | 'bottom'.
-  // currentStone: index of the last stone snapped onto (-1 = none yet).
-  // dropPosition: current % position of the lead water drop.
-  // dragTrail: recent points behind the lead drop, rendered as small fading
-  // droplets so the water reads as flowing, not a single dot.
-  const [dragActive, setDragActive] = useState(false);
-  const [routeSide, setRouteSide] = useState(null);
-  const [currentStone, setCurrentStone] = useState(-1);
-  const [dropPosition, setDropPosition] = useState(null);
-  const [dragTrail, setDragTrail] = useState([]);
-  const [dragFading, setDragFading] = useState(false);
-  const dragContainerRef = useRef(null);
-  const dragActiveRef = useRef(false);
-  const streamCompletedRef = useRef(false);
-  const stoneAdvanceLockUntilRef = useRef(0);
+  // ==================== TRUNK GAME ====================
+  const [rockHoldProgress, setRockHoldProgress] = useState(0);
+  const rockHoldRafRef = useRef(null);
+  const rockHoldStartRef = useRef(null);
+
+  const [reedsDragActive, setReedsDragActive] = useState(false);
+  const [reedsProgress, setReedsProgress] = useState(0);
+  const reedsStartXRef = useRef(null);
+
+  const [waterStage, setWaterStage] = useState(0);
   // ================================================================
 
 
@@ -332,7 +315,7 @@ const PondSceneContent = ({
   const { isAudioOn, toggleAudio } = useAudioPreference();
   const { speak, stop: stopSpokenVoice } = useGaneshaVoice();
   const { setGlobalVolume } = useGameSounds();
-  const { startMusic, stopMusic, setVoiceVolume, playTap, playCorrect, playPowerUnlock, playCelebration } = useVoiceGuidance(
+  const { startMusic, stopMusic, setVoiceVolume, playCorrect, playPowerUnlock, playCelebration } = useVoiceGuidance(
     zoneId, sceneId, {
       enableMusic: true,
       musicVolume: 0.06,
@@ -341,7 +324,6 @@ const PondSceneContent = ({
       resumeDelay: RESUME_DELAY_MS,
     }
   );
-  const playUiTap = playTap;
   const playBloom = playCorrect;
   const playChime = playCorrect;
   const playGlow = playPowerUnlock;
@@ -402,7 +384,8 @@ const PondSceneContent = ({
     if (revealConfig || showSparkle === 'final-fireworks') return null;
     if (sceneState?.phase === PHASES.COMPLETE) return 'complete';
     if (sceneState?.phase === PHASES.LOTUS_ACTIVE || sceneState?.phase === PHASES.BLOOMED) return 'lotusRound';
-    if (sceneState?.phase === PHASES.INITIAL || sceneState?.phase === PHASES.TRUNK_SOLVED) return 'trunkRound';
+    if (sceneState?.phase === PHASES.INITIAL || sceneState?.phase === PHASES.ROCK_MOVING) return 'rockRound';
+    if (sceneState?.phase === PHASES.REEDS_ACTIVE) return 'reedsRound';
     return null;
   }, [
     sceneState?.phase,
@@ -414,23 +397,15 @@ const PondSceneContent = ({
     const replayKey = getPromptKeyForPhase();
     if (replayKey) speakPondPrompt(replayKey);
   }, [getPromptKeyForPhase, speakPondPrompt]);
-  function cancelActiveDrag() {
-    setDragActive(false);
-    if (streamCompletedRef.current) return;
-    setDragFading(true);
-    safeSetTimeout(() => {
-      setRouteSide(null);
-      setCurrentStone(-1);
-      setDropPosition(null);
-      setDragTrail([]);
-      setDragFading(false);
-      stoneAdvanceLockUntilRef.current = 0;
-    }, DRAG_FADE_MS);
-  }
-
   function onPauseHide() {
     stopSpokenVoice();
-    cancelActiveDrag();
+    if (rockHoldRafRef.current) {
+      cancelAnimationFrame(rockHoldRafRef.current);
+      rockHoldRafRef.current = null;
+    }
+    rockHoldStartRef.current = null;
+    setReedsDragActive(false);
+    reedsStartXRef.current = null;
     // Lotus press-and-hold uses its own rAF loops (not covered by
     // cancelActiveDrag, which only tracks the rock-drag state) — a
     // pointercancel-equivalent pause (tab hidden mid-hold) must stop them too,
@@ -467,13 +442,10 @@ const PondSceneContent = ({
   const { countdownValue } = useResumeCountdown(RESUME_DELAY_MS / 1000);
 
   useEffect(() => {
-    dragActiveRef.current = dragActive;
-  }, [dragActive]);
-
-  useEffect(() => {
     return () => {
       clearAllTimeouts();
       stopSpokenVoice();
+      if (rockHoldRafRef.current) cancelAnimationFrame(rockHoldRafRef.current);
       reloadHandledRef.current = false;
     };
   }, [clearAllTimeouts, stopSpokenVoice]);
@@ -521,7 +493,7 @@ const PondSceneContent = ({
       resetIdleBaseline();
       speakPondPrompt(promptKey);
       lastAnnouncedPromptRef.current = promptKey;
-    }, promptKey === 'complete' ? 250 : promptKey === 'trunkRound' ? 850 : 500);
+    }, promptKey === 'complete' ? 250 : promptKey === 'rockRound' ? 850 : 500);
     return () => clearTimeout(timer);
   }, [
     isAudioOn,
@@ -539,7 +511,8 @@ const PondSceneContent = ({
   useEffect(() => {
     const hintPhases = [
       PHASES.INITIAL,
-      PHASES.TRUNK_SOLVED,
+      PHASES.ROCK_MOVING,
+      PHASES.REEDS_ACTIVE,
       PHASES.LOTUS_ACTIVE
     ];
     const isHintPhase = hintPhases.includes(sceneState?.phase)
@@ -583,9 +556,11 @@ const PondSceneContent = ({
     if (idleHintLevel < 2) return;
     if (idleVoGateRef.current) return;
 
-    let idleKey = 'idleTrunk';
+    let idleKey = null;
+    if (sceneState?.phase === PHASES.INITIAL || sceneState?.phase === PHASES.ROCK_MOVING) idleKey = 'idleRock';
+    if (sceneState?.phase === PHASES.REEDS_ACTIVE) idleKey = 'idleReeds';
     if (sceneState?.phase === PHASES.LOTUS_ACTIVE) idleKey = 'idleLotus';
-    speakPondPrompt(idleKey);
+    if (idleKey) speakPondPrompt(idleKey);
     idleVoGateRef.current = true;
   }, [idleHintLevel, sceneState?.phase, speakPondPrompt]);
 
@@ -608,27 +583,42 @@ const PondSceneContent = ({
     // soft-locked the scene for muted players reloading mid-phase.
     if (!sceneState?.welcomeShown) return;
 
-    // 1. RESTORE TRUNK-DRAG PHASE (INITIAL / TRUNK_SOLVED before card shown)
-    // Re-seed drag UI state so the water-drag is visible and interactive.
     if (sceneState.phase === PHASES.INITIAL) {
-      streamCompletedRef.current = false;
-      setRouteSide(null);
-      setCurrentStone(-1);
-      setDropPosition(null);
-      setDragTrail([]);
-      setDragFading(false);
+      setRockHoldProgress(0);
+      setReedsProgress(0);
+      setWaterStage(0);
+      return;
+    }
+
+    if (sceneState.phase === PHASES.ROCK_MOVING) {
+      sceneActions.updateState({
+        phase: PHASES.INITIAL,
+        rockMoved: false
+      });
+      setRockHoldProgress(0);
+      setReedsProgress(0);
+      setWaterStage(0);
+      return;
+    }
+
+    if (sceneState.phase === PHASES.REEDS_ACTIVE) {
+      setRockHoldProgress(1);
+      setReedsProgress(0);
+      setWaterStage(1);
       return;
     }
 
     // 2. TRUNK SOLVED BUT CARD NOT YET SHOWN (rare mid-transition reload)
     if (sceneState.phase === PHASES.TRUNK_SOLVED) {
-      streamCompletedRef.current = true;
+      setRockHoldProgress(1);
+      setReedsProgress(1);
+      setWaterStage(2);
       safeSetTimeout(() => {
         playChime();
         setRevealConfig({
           symbolId: 'trunk',
           symbolName: 'Trunk',
-          affirmation: 'I can find another way.',
+          affirmation: 'I can be strong and gentle.',
           symbolImage: symbolTrunkColored
         });
       }, 1200);
@@ -637,13 +627,15 @@ const PondSceneContent = ({
 
     // 3. RESTORE TRUNK CARD FLIP
     if (sceneState.phase === PHASES.TRUNK_REVEAL) {
-      streamCompletedRef.current = true;
+      setRockHoldProgress(1);
+      setReedsProgress(1);
+      setWaterStage(2);
       safeSetTimeout(() => {
         playChime();
         setRevealConfig({
           symbolId: 'trunk',
           symbolName: 'Trunk',
-          affirmation: 'I can find another way.',
+          affirmation: 'I can be strong and gentle.',
           symbolImage: symbolTrunkColored
         });
       }, 1200);
@@ -653,19 +645,23 @@ const PondSceneContent = ({
     // 4. RESTORE LOTUS PRESS-HOLD PHASE — nothing to seed, target just needs
     // to render (handled by JSX reading sceneState.phase directly).
     if (sceneState.phase === PHASES.LOTUS_ACTIVE) {
-      streamCompletedRef.current = true;
+      setRockHoldProgress(1);
+      setReedsProgress(1);
+      setWaterStage(2);
       return;
     }
 
     // 5. LOTUS BLOOMED BUT CARD NOT YET SHOWN
     if (sceneState.phase === PHASES.BLOOMED && !sceneState.completed) {
-      streamCompletedRef.current = true;
+      setRockHoldProgress(1);
+      setReedsProgress(1);
+      setWaterStage(2);
       safeSetTimeout(() => {
         playChime();
         setRevealConfig({
           symbolId: 'lotus',
           symbolName: 'Lotus',
-          affirmation: 'I can stay calm when things get messy.',
+          affirmation: 'I can keep growing when things are hard.',
           symbolImage: symbolLotusColored
         });
       }, 1200);
@@ -684,7 +680,7 @@ const PondSceneContent = ({
         setRevealConfig({
           symbolId: 'lotus',
           symbolName: 'Lotus',
-          affirmation: 'I can stay calm when things get messy.',
+          affirmation: 'I can keep growing when things are hard.',
           symbolImage: symbolLotusColored
         });
       }, 300);
@@ -714,7 +710,7 @@ const PondSceneContent = ({
       resetIdleBaseline();
       speakPondPrompt(promptKey);
       lastAnnouncedPromptRef.current = promptKey;
-    }, promptKey === 'trunkRound' ? 850 : 500);
+    }, promptKey === 'rockRound' ? 850 : 500);
     return () => clearTimeout(timer);
   }, [
     isAudioOn,
@@ -736,8 +732,8 @@ const PondSceneContent = ({
 
   const getPowerDescription = (symbolKey) => {
     const descriptions = {
-      lotus: 'The Sacred Lotus represents purity.\nIt blooms beautifully even in muddy water!',
-      trunk: 'The Curved Trunk represents adaptability.\nGanesha uses it to remove obstacles!'
+      lotus: 'The lotus grows through muddy water and still blooms.\nIt reminds us that we can keep growing through difficult things.',
+      trunk: "Ganesha's trunk can move something heavy or handle something tiny.\nIt reminds us to know when to use strength and when to be gentle."
     };
     return descriptions[symbolKey] || 'You unlocked a special power!';
   };
@@ -826,139 +822,189 @@ const PondSceneContent = ({
   // grace, hold fully resets. No fail state, no reset on the lotus that's
   // already bloomed.
 
-  // ==================== V6 PHASE 1 (TRUNK, FIRST) — DRAG AROUND THE ROCK ====================
-  // Free-drag the water from the source, around either side of the rock
-  // (hard collision — can't pass through it), to the muddy pond.
-  // No fail state: bumping the rock just bounces the path back; drifting
-  // too far off fades the path and resets.
-
-  const pctDistance = (a, b) => {
-    const dx = a.x - b.x;
-    const dy = a.y - b.y;
-    return Math.sqrt(dx * dx + dy * dy);
-  };
-
-  // Pointer position → % within the drag container
-  const getPctFromEvent = (e) => {
-    const container = dragContainerRef.current;
-    if (!container) return null;
-    const rect = container.getBoundingClientRect();
-    const clientX = e.clientX ?? e.touches?.[0]?.clientX;
-    const clientY = e.clientY ?? e.touches?.[0]?.clientY;
-    if (clientX == null) return null;
-    return {
-      x: ((clientX - rect.left) / rect.width) * 100,
-      y: ((clientY - rect.top) / rect.height) * 100
+  // ==================== TRUNK GAME — STRENGTH THEN GENTLENESS ====================
+  const completeRockMove = useCallback(() => {
+    if (sceneStateRef.current?.rockMoved) return;
+    sceneStateRef.current = {
+      ...sceneStateRef.current,
+      rockMoved: true,
+      phase: PHASES.REEDS_ACTIVE
     };
-  };
 
-  const addTrailDot = (pct) => {
-    setDragTrail(prev => {
-      const next = [...prev, { ...pct, key: Date.now() + Math.random() }];
-      return next.length > TRAIL_MAX_DOTS ? next.slice(next.length - TRAIL_MAX_DOTS) : next;
-    });
-  };
+    if (rockHoldRafRef.current) {
+      cancelAnimationFrame(rockHoldRafRef.current);
+      rockHoldRafRef.current = null;
+    }
+    rockHoldStartRef.current = null;
 
-  const handleStreamPointerDown = (e) => {
-    if (!sceneState || streamCompletedRef.current) return;
-    if (sceneState.phase !== PHASES.INITIAL) return;
-    const pct = getPctFromEvent(e);
-    if (!pct || pctDistance(pct, SOURCE_POINT) > SOURCE_GRAB_RADIUS) return;
-    if (!sceneState.welcomeShown) sceneActions.updateState({ welcomeShown: true });
-    rearmIdleHints();
-    setDragActive(true);
-    setDragFading(false);
-    setRouteSide(null);
-    setCurrentStone(-1);
-    setDropPosition(SOURCE_POINT);
-    setDragTrail([SOURCE_POINT]);
-    stoneAdvanceLockUntilRef.current = 0;
-    e.preventDefault?.();
-  };
-
-  const completeStreamDrag = () => {
-    if (streamCompletedRef.current) return;
-    streamCompletedRef.current = true;
-    setDragActive(false);
-    setDropPosition(POND_POINT);
-    addTrailDot(POND_POINT);
+    playGlow();
     playChime();
+    setRockHoldProgress(1);
+    setWaterStage(1);
 
-    // Beat 1: lotus glows, then lifts from dormant → upright (confirmation only, no bloom).
-    setShowSparkle('lotus-wake');
+    sceneActions.updateState({
+      rockMoved: true,
+      phase: PHASES.REEDS_ACTIVE,
+      progress: {
+        percentage: 25,
+        starsEarned: 0
+      }
+    });
+
+    triggerMiniGesture('thumbsup', 'center', 1500);
     safeSetTimeout(() => {
+      resetIdleBaseline();
+      speakPondPrompt('reedsRound');
+    }, WATER_TO_REEDS_MS);
+  }, [
+    playGlow,
+    playChime,
+    sceneActions,
+    triggerMiniGesture,
+    safeSetTimeout,
+    resetIdleBaseline,
+    speakPondPrompt
+  ]);
+
+  const handleRockHoldStart = useCallback((e) => {
+    e.preventDefault?.();
+
+    if (
+      sceneState.phase !== PHASES.INITIAL &&
+      sceneState.phase !== PHASES.ROCK_MOVING
+    ) return;
+
+    rearmIdleHints();
+    stopSpokenVoice();
+    if (rockHoldRafRef.current) {
+      cancelAnimationFrame(rockHoldRafRef.current);
+      rockHoldRafRef.current = null;
+    }
+    sceneActions.updateState({ phase: PHASES.ROCK_MOVING });
+    rockHoldStartRef.current = performance.now();
+
+    const tick = () => {
+      if (!rockHoldStartRef.current) return;
+      const elapsed = performance.now() - rockHoldStartRef.current;
+      const progress = Math.min(elapsed / ROCK_HOLD_MS, 1);
+      setRockHoldProgress(progress);
+
+      if (progress >= 1) {
+        completeRockMove();
+        return;
+      }
+
+      rockHoldRafRef.current = requestAnimationFrame(tick);
+    };
+
+    rockHoldRafRef.current = requestAnimationFrame(tick);
+  }, [
+    sceneState.phase,
+    sceneActions,
+    completeRockMove,
+    rearmIdleHints,
+    stopSpokenVoice
+  ]);
+
+  const handleRockHoldEnd = useCallback(() => {
+    if (sceneStateRef.current?.rockMoved) return;
+
+    if (rockHoldRafRef.current) {
+      cancelAnimationFrame(rockHoldRafRef.current);
+      rockHoldRafRef.current = null;
+    }
+    rockHoldStartRef.current = null;
+    setRockHoldProgress(prev => Math.max(0, prev - 0.18));
+    sceneActions.updateState({ phase: PHASES.INITIAL });
+  }, [sceneActions]);
+
+  const completeReeds = useCallback(() => {
+    if (sceneStateRef.current?.reedsParted) return;
+    sceneStateRef.current = {
+      ...sceneStateRef.current,
+      reedsParted: true,
+      streamSolved: true,
+      phase: PHASES.TRUNK_SOLVED
+    };
+
+    setReedsDragActive(false);
+    setReedsProgress(1);
+    playGlow();
+    playChime();
+    setWaterStage(2);
+
+    sceneActions.updateState({
+      reedsParted: true,
+      streamSolved: true,
+      phase: PHASES.TRUNK_SOLVED,
+      progress: {
+        percentage: 50,
+        starsEarned: 0
+      }
+    });
+
+    safeSetTimeout(() => {
+      setShowSparkle('lotus-wake');
       sceneActions.updateState({ lotusUpright: true });
+      triggerMiniGesture('victory', 'center', 1800);
       playGlow();
-      triggerMiniGesture('victory', 'center', 2000);
-    }, 250);
+    }, WATER_TO_POND_MS);
+
     safeSetTimeout(() => {
       setShowSparkle(null);
-      sceneActions.updateState({ phase: PHASES.TRUNK_SOLVED });
-    }, LOTUS_GLOW_MS);
-
-    // Beat 2: reveal the Trunk symbol card.
-    safeSetTimeout(() => {
       sceneActions.updateState({ phase: PHASES.TRUNK_REVEAL });
       setRevealConfig({
         symbolId: 'trunk',
         symbolName: 'Trunk',
-        affirmation: 'I can find another way.',
+        affirmation: 'I can be strong and gentle.',
         symbolImage: symbolTrunkColored
       });
-    }, LOTUS_GLOW_MS + TRUNK_REVEAL_DELAY_MS);
-  };
+    }, WATER_TO_POND_MS + LOTUS_GLOW_MS);
+  }, [
+    playGlow,
+    playChime,
+    safeSetTimeout,
+    sceneActions,
+    triggerMiniGesture
+  ]);
 
-  const handleStreamPointerMove = (e) => {
-    if (!dragActive || streamCompletedRef.current) return;
-    const pct = getPctFromEvent(e);
-    if (!pct) return;
+  const handleReedsPointerDown = useCallback((e) => {
+    if (sceneState.phase !== PHASES.REEDS_ACTIVE) return;
+    e.preventDefault?.();
+    rearmIdleHints();
+    stopSpokenVoice();
+    setReedsDragActive(true);
+    reedsStartXRef.current = e.clientX;
+  }, [
+    sceneState.phase,
+    rearmIdleHints,
+    stopSpokenVoice
+  ]);
 
-    // Commit to a side once the finger has moved clearly up or down from the source.
-    let side = routeSide;
-    if (!side) {
-      const dy = pct.y - SOURCE_POINT.y;
-      if (Math.abs(dy) >= ROUTE_SIDE_LOCK_DELTA) {
-        side = dy < 0 ? 'top' : 'bottom';
-        setRouteSide(side);
-      } else {
-        setDropPosition(pct);
-        addTrailDot(pct);
-        return;
-      }
-    }
+  const handleReedsPointerMove = useCallback((e) => {
+    if (!reedsDragActive) return;
+    if (reedsStartXRef.current == null) return;
+    const distance = Math.abs(e.clientX - reedsStartXRef.current);
+    const progress = Math.min(distance / REEDS_DRAG_DISTANCE, 1);
+    setReedsProgress(progress);
+  }, [reedsDragActive]);
 
-    const stones = side === 'top' ? TOP_ROUTE_STONES : BOTTOM_ROUTE_STONES;
-    const nextIdx = currentStone + 1;
-    const stepLockActive = Date.now() < stoneAdvanceLockUntilRef.current;
+  const handleReedsPointerUp = useCallback(() => {
+    if (!reedsDragActive) return;
+    setReedsDragActive(false);
+    reedsStartXRef.current = null;
 
-    if (nextIdx < stones.length) {
-      const nextStone = stones[nextIdx];
-      if (!stepLockActive && pctDistance(pct, nextStone) < STONE_SNAP_RADIUS_PCT) {
-        setCurrentStone(nextIdx);
-        setDropPosition(nextStone);
-        addTrailDot(nextStone);
-        playUiTap();
-        stoneAdvanceLockUntilRef.current = Date.now() + 220;
-        return;
-      }
-      setDropPosition(pct);
-      addTrailDot(pct);
+    if (reedsProgress >= 0.75) {
+      completeReeds();
       return;
     }
 
-    // All stones reached — final leg is a free approach into the pond.
-    setDropPosition(pct);
-    addTrailDot(pct);
-    if (pctDistance(pct, POND_POINT) < POND_SUCCESS_RADIUS) {
-      completeStreamDrag();
-    }
-  };
-
-  const handleStreamPointerUp = () => {
-    if (!dragActive) return;
-    setDragActive(false);
-    cancelActiveDrag();
-  };
+    setReedsProgress(prev => prev * 0.65);
+  }, [
+    reedsDragActive,
+    reedsProgress,
+    completeReeds
+  ]);
   // ==========================================================================================
 
   // ==================== V6 PHASE 2 (LOTUS, SECOND) — PRESS AND HOLD TO BLOOM ====================
@@ -983,7 +1029,7 @@ const PondSceneContent = ({
     safeSetTimeout(() => setRevealConfig({
       symbolId: 'lotus',
       symbolName: 'Lotus',
-      affirmation: 'I can stay calm when things get messy.',
+      affirmation: 'I can keep growing when things are hard.',
       symbolImage: symbolLotusColored
     }), 2400);
   }, [sceneActions, playBloom, playChime, triggerMiniGesture, safeSetTimeout]);
@@ -1080,7 +1126,7 @@ const PondSceneContent = ({
   const getHintConfigs = () => [
     {
       id: 'trunk-hint',
-      message: 'Guide the water around the rock 💧',
+      message: 'Hold the rock, then gently part the reeds',
       position: { bottom: '60%', left: '30%', transform: 'translateX(-50%)' },
       condition: (sceneState) => sceneState?.phase === PHASES.INITIAL
     },
@@ -1145,14 +1191,8 @@ const PondSceneContent = ({
           <div className="pond-scene-container">
             <HomeButton onNavigate={onNavigate} />
             <div
-              ref={dragContainerRef}
               className="pond-background"
               style={{ backgroundImage: `url(${trunkPondBg})` }}
-              onPointerDown={sceneState.phase === PHASES.INITIAL ? handleStreamPointerDown : undefined}
-              onPointerMove={dragActive ? handleStreamPointerMove : undefined}
-              onPointerUp={dragActive ? handleStreamPointerUp : undefined}
-              onPointerCancel={dragActive ? handleStreamPointerUp : undefined}
-              onPointerLeave={dragActive ? handleStreamPointerUp : undefined}
               onContextMenu={(e) => e.preventDefault()}
             >
               {!isCompletionView && !isFinalFireworksView && (
@@ -1178,103 +1218,136 @@ const PondSceneContent = ({
                 />
               )}
 
-              {/* Rock — static obstacle, always rendered while the pond is visible */}
-              <img
-                src={trunkRock}
-                alt=""
+              <div
+                className={`
+                  pond-trunk-water-flow
+                  pond-trunk-water-flow--${waterStage}
+                `}
                 aria-hidden="true"
-                className="pond-trunk-rock"
-                draggable={false}
               />
 
-              {/* V6 PHASE 1 (TRUNK, FIRST) — guided drag around the rock, stepping-stone style */}
-              {sceneState.phase === PHASES.INITIAL && (
-                <>
-                  <GestureDemo
-                    type="drag"
-                    from={{ x: SOURCE_POINT.x, y: SOURCE_POINT.y }}
-                    to={{ x: TOP_ROUTE_STONES[0].x, y: TOP_ROUTE_STONES[0].y }}
-                    active={!dragActive && currentStone === -1 && !dropPosition}
-                    idleDelay={1800}
-                    zIndex={28}
-                  />
+              <GestureDemo
+                type="hold"
+                from={{ x: 40, y: 51 }}
+                active={
+                  idleHintLevel >= 3 &&
+                  (
+                    sceneState.phase === PHASES.INITIAL ||
+                    sceneState.phase === PHASES.ROCK_MOVING
+                  ) &&
+                  !sceneState.rockMoved
+                }
+                idleDelay={120}
+                zIndex={28}
+              />
 
-                  {/* Water source handle — hides once dragging starts, the lead drop takes over */}
-                  {!dropPosition && (
-                    <div
-                      role="button"
-                      aria-label="Drag the water around the rock, to the pond"
-                      className={`pond-water-source ${hintClassName}`}
-                      style={{ left: `${SOURCE_POINT.x}%`, top: `${SOURCE_POINT.y}%` }}
-                    >
-                      💧
-                    </div>
-                  )}
+              <div
+                role="button"
+                aria-label="Press and hold the heavy rock"
+                className={`
+                  pond-strength-rock-wrap
+                  ${sceneState.rockMoved ? 'moved' : ''}
+                  ${
+                    (
+                      sceneState.phase === PHASES.INITIAL ||
+                      sceneState.phase === PHASES.ROCK_MOVING
+                    )
+                      ? hintClassName
+                      : ''
+                  }
+                `}
+                onPointerDown={handleRockHoldStart}
+                onPointerUp={handleRockHoldEnd}
+                onPointerLeave={handleRockHoldEnd}
+                onPointerCancel={handleRockHoldEnd}
+              >
+                <img
+                  src={trunkRock}
+                  alt=""
+                  aria-hidden="true"
+                  className="pond-trunk-rock"
+                  draggable={false}
+                />
 
-                  {/* Stepping stones for the committed side only */}
-                  {routeSide && (routeSide === 'top' ? TOP_ROUTE_STONES : BOTTOM_ROUTE_STONES).map((stone, idx) => {
-                    const reached = idx <= currentStone;
-                    const isNext = idx === currentStone + 1;
-                    return (
-                      <div
-                        key={stone.id}
-                        aria-hidden="true"
-                        className="pond-route-stone"
-                        style={{
-                          left: `${stone.x}%`,
-                          top: `${stone.y}%`,
-                          background: reached
-                            ? 'radial-gradient(circle, #AEE8FF 0%, #5BB3E8 100%)'
-                            : 'radial-gradient(circle, rgba(174,232,255,0.55) 0%, rgba(91,179,232,0.35) 100%)',
-                          boxShadow: reached
-                            ? '0 0 16px rgba(91, 179, 232, 0.85)'
-                            : '0 0 8px rgba(91, 179, 232, 0.45)',
-                          animation: reached ? 'none' : isNext ? 'pondPetalPulse 1.2s ease-in-out infinite' : 'pondPetalPulse 2.4s ease-in-out infinite',
-                          opacity: reached ? 1 : isNext ? 1 : 0.5,
-                        }}
-                      />
-                    );
-                  })}
-
-                  {/* Flowing droplet trail — many small dots so the water reads as moving, not one dot */}
-                  {dragTrail.map((p, idx) => (
-                    <div
-                      key={p.key}
-                      aria-hidden="true"
-                      className="pond-trail-dot"
-                      style={{
-                        left: `${p.x}%`,
-                        top: `${p.y}%`,
-                        opacity: dragFading ? 0 : 0.25 + (idx / dragTrail.length) * 0.6,
-                        width: `${6 + (idx / dragTrail.length) * 6}px`,
-                        height: `${6 + (idx / dragTrail.length) * 6}px`,
-                      }}
+                {!sceneState.rockMoved && rockHoldProgress > 0 && (
+                  <svg
+                    viewBox="0 0 100 100"
+                    className="pond-rock-strength-ring"
+                    aria-hidden="true"
+                  >
+                    <circle
+                      cx="50"
+                      cy="50"
+                      r="45"
+                      fill="none"
+                      stroke="#FFD86B"
+                      strokeWidth="4"
+                      strokeLinecap="round"
+                      strokeDasharray={2 * Math.PI * 45}
+                      strokeDashoffset={2 * Math.PI * 45 * (1 - rockHoldProgress)}
+                      transform="rotate(-90 50 50)"
                     />
-                  ))}
+                  </svg>
+                )}
+              </div>
 
-                  {/* Lead water drop — follows the finger/stone snaps */}
-                  {dropPosition && (
-                    <div
-                      aria-hidden="true"
-                      className="pond-lead-drop"
-                      style={{
-                        left: `${dropPosition.x}%`,
-                        top: `${dropPosition.y}%`,
-                        opacity: dragFading ? 0 : 1,
-                      }}
-                    >
-                      💧
-                    </div>
-                  )}
-                </>
+              <GestureDemo
+                type="drag"
+                from={REEDS_START_POINT}
+                to={{ x: 61, y: 51 }}
+                active={
+                  idleHintLevel >= 3 &&
+                  sceneState.phase === PHASES.REEDS_ACTIVE &&
+                  !sceneState.reedsParted &&
+                  !reedsDragActive
+                }
+                idleDelay={120}
+                zIndex={28}
+              />
+
+              {sceneState.rockMoved && !sceneState.reedsParted && (
+                <div
+                  role="button"
+                  aria-label="Gently part the soft reeds"
+                  className={`
+                    pond-trunk-reeds
+                    ${sceneState.phase === PHASES.REEDS_ACTIVE ? hintClassName : ''}
+                  `}
+                  onPointerDown={handleReedsPointerDown}
+                  onPointerMove={handleReedsPointerMove}
+                  onPointerUp={handleReedsPointerUp}
+                  onPointerCancel={handleReedsPointerUp}
+                  onPointerLeave={handleReedsPointerUp}
+                  style={{ '--reeds-progress': reedsProgress }}
+                >
+                  <img
+                    src={trunkReedsLeft}
+                    className="pond-reeds-half pond-reeds-half--left"
+                    alt=""
+                    aria-hidden="true"
+                    draggable={false}
+                  />
+                  <img
+                    src={trunkReedsRight}
+                    className="pond-reeds-half pond-reeds-half--right"
+                    alt=""
+                    aria-hidden="true"
+                    draggable={false}
+                  />
+                </div>
               )}
 
               {/* Lotus — dormant → upright (Trunk success) → bloomed (Lotus success) */}
               <GestureDemo
                 type="hold"
                 from={LOTUS_HOLD_POINT}
-                active={sceneState.phase === PHASES.LOTUS_ACTIVE && !sceneState.lotusBloomed && holdProgress <= 0}
-                idleDelay={1800}
+                active={
+                  idleHintLevel >= 3 &&
+                  sceneState.phase === PHASES.LOTUS_ACTIVE &&
+                  !sceneState.lotusBloomed &&
+                  holdProgress <= 0
+                }
+                idleDelay={120}
                 zIndex={28}
               />
 
@@ -1456,12 +1529,12 @@ const PondSceneContent = ({
                 }}
                 symbolData={{
                   trunk: {
-                    title: "Trunk — Ganesha's Super Tool!",
-                    description: "Ganesha's trunk can pick up tiny flowers or move giant rocks! It shows us that being gentle AND strong is a superpower."
+                    title: "Ganesha's Trunk",
+                    description: "Ganesha's trunk can move something heavy or handle something tiny. It reminds us to know when to use strength and when to be gentle."
                   },
                   lotus: {
-                    title: "Lotus — Ganesha's Pure Flower!",
-                    description: "The lotus grows in muddy water but blooms beautifully clean. It reminds us to stay pure and bright no matter what!"
+                    title: "Lotus",
+                    description: "The lotus grows through muddy water and still blooms. It reminds us that we can keep growing through difficult things."
                   }
                 }}
                 nextSceneName="Temple Discovery"

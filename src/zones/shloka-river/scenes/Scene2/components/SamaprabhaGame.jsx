@@ -4,16 +4,16 @@ import GestureDemo from '../../../../../lib/components/feedback/GestureDemo';
 import useRepeatedHintCycle from '../../../../../lib/hooks/useRepeatedHintCycle';
 import './SamaprabhaGame.css';
 
-import bgImg from '../assets/images/Samaprabha/samaprabha-bg.png';
-import fawnWorriedImg from '../assets/images/Samaprabha/fawn-worried.png';
-import fawnHappyImg from '../assets/images/Samaprabha/fawn-happy.png';
-import fawnWalkImg from '../assets/images/Samaprabha/fawn-walk.png';
-import shadowImg from '../assets/images/Samaprabha/shadow.png';
-import mysterySourceFullImg from '../assets/images/Samaprabha/mystery-source-full.png';
-import branchImg from '../assets/images/Samaprabha/reveal-branch.png';
-import reedsLeavesImg from '../assets/images/Samaprabha/reveal-reeds-leaves.png';
-import stumpImg from '../assets/images/Samaprabha/reveal-stump.png';
-import rocksGrassImg from '../assets/images/Samaprabha/reveal-rocks-grass.png';
+import bgImg from '../assets/images/Samaprabha/samaprabha-bg.webp';
+import fawnWorriedImg from '../assets/images/Samaprabha/fawn-worried.webp';
+import fawnHappyImg from '../assets/images/Samaprabha/fawn-happy.webp';
+import fawnWalkImg from '../assets/images/Samaprabha/fawn-walk.webp';
+import shadowImg from '../assets/images/Samaprabha/shadow.webp';
+import mysterySourceFullImg from '../assets/images/Samaprabha/mystery-source-full.webp';
+import branchImg from '../assets/images/Samaprabha/reveal-branch.webp';
+import reedsLeavesImg from '../assets/images/Samaprabha/reveal-reeds-leaves.webp';
+import stumpImg from '../assets/images/Samaprabha/reveal-stump.webp';
+import rocksGrassImg from '../assets/images/Samaprabha/reveal-rocks-grass.webp';
 
 const SYLLABLES = ['Sa', 'ma', 'pra', 'bha'];
 const AUDIO = { syllables: ['sa', 'ma', 'pra', 'bha'] };

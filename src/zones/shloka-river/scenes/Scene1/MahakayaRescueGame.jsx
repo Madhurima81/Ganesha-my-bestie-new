@@ -223,6 +223,8 @@ export default function MahakayaRescueGame({
   const [layoutPresetVersion, setLayoutPresetVersion] = useState(LAYOUT_PRESET_VERSION);
   const [layoutCopyStatus, setLayoutCopyStatus] = useState('');
   const [crossTargetRaft, setCrossTargetRaft] = useState(CROSS_TARGET_RAFT);
+  const [teachingCompleteKey, setTeachingCompleteKey] = useState(null);
+  const [showHintBubble, setShowHintBubble] = useState(false);
 
   const stageRef = useRef(null);
   const timers = useRef([]);
@@ -235,15 +237,40 @@ export default function MahakayaRescueGame({
   const debugDragRef = useRef(null);
   const debugPanelDragRef = useRef(null);
 
+  const hintStageKey = `${ropeStage}-${activeLog}`;
+  const needsInitialTeaching = activeLog === 0 && (ropeStage === 'detached' || ropeStage === 'attached');
+  const teachingComplete = !needsInitialTeaching || teachingCompleteKey === hintStageKey;
+  const isFirstLog = activeLog === 0;
+  const hintTimings = ropeStage === 'detached'
+    ? (isFirstLog
+      ? { initialDelay: 8000, level2Delay: 15000, level3Delay: 22000 }
+      : { initialDelay: 10000, level2Delay: 18000, level3Delay: 26000 })
+    : (isFirstLog
+      ? { initialDelay: 6500, level2Delay: 13000, level3Delay: 20000 }
+      : { initialDelay: 8000, level2Delay: 16000, level3Delay: 24000 });
+
   const { hintLevel, markInteraction } = useRepeatedHintCycle({
-    enabled: isActive && !isPaused && phase === 'play' && !debugMode,
-    stageKey: `${ropeStage}-${activeLog}`,
-    initialDelay: ropeStage === 'detached' ? 8000 : 6500,
+    enabled: isActive && !isPaused && phase === 'play' && !debugMode && teachingComplete,
+    stageKey: hintStageKey,
+    initialDelay: hintTimings.initialDelay,
     pulseCountBeforeEscalation: 3,
     pulseInterval: 1800,
-    level2Delay: ropeStage === 'detached' ? 15000 : 13000,
-    level3Delay: ropeStage === 'detached' ? 22000 : 20000,
+    level2Delay: hintTimings.level2Delay,
+    level3Delay: hintTimings.level3Delay,
   });
+
+  useEffect(() => {
+    if (hintLevel !== 2 || phase !== 'play' || debugMode || isPaused) {
+      setShowHintBubble(false);
+      return undefined;
+    }
+    setShowHintBubble(true);
+    const voiceKey = ropeStage === 'detached' ? 'scene10_maha_drag_rope' : 'scene10_maha_pull_down';
+    playSceneLine?.(voiceKey, () => {});
+    const hideBubble = window.setTimeout(() => setShowHintBubble(false), 2800);
+    return () => window.clearTimeout(hideBubble);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hintLevel, ropeStage, activeLog, phase, debugMode, isPaused]);
 
   const clearTimers = useCallback(() => {
     timers.current.forEach(clearTimeout);
@@ -289,6 +316,8 @@ export default function MahakayaRescueGame({
     completionStartedRef.current = false;
     setDebugPhase(0);
     setCrossing(false);
+    setTeachingCompleteKey(null);
+    setShowHintBubble(false);
   }, [clearTimers, phaseLayouts]);
 
   useEffect(() => {
@@ -745,15 +774,18 @@ export default function MahakayaRescueGame({
         />
       )}
 
-      {phase === 'play' && (
-        <p className={`maha-hint ${hintLevel >= 1 ? 'is-visible' : ''}`}>
-          {ropeStage === 'detached' && hintLevel === 1 && 'Try the glowing rope.'}
-          {ropeStage === 'detached' && hintLevel === 2 && 'Attach the rope to a log.'}
-          {ropeStage === 'detached' && hintLevel >= 3 && 'Drag the handle to the next log.'}
-          {ropeStage === 'attached' && hintLevel === 1 && 'Pull the handle down.'}
-          {ropeStage === 'attached' && hintLevel === 2 && 'Pull to add the log.'}
-          {ropeStage === 'attached' && hintLevel >= 3 && 'Pull all the way down.'}
-        </p>
+      {phase === 'play' && showHintBubble && hintLevel === 2 && (
+        <div
+          className={`maha-hint-bubble ${ropeStage === 'detached' ? 'is-attach' : 'is-pull'}`}
+          style={{
+            left: `${ropeStage === 'detached' ? sharedRigLayout.handleStart.l : sharedRigLayout.pullTop.l}%`,
+            top: `${ropeStage === 'detached' ? sharedRigLayout.handleStart.t - 10 : sharedRigLayout.pullTop.t - 9}%`,
+          }}
+          role="status"
+          aria-live="polite"
+        >
+          {ropeStage === 'detached' ? 'Rope to the log.' : 'Pull down.'}
+        </div>
       )}
 
       {phase === 'complete' && <p className="maha-doneline">There is room for everyone.</p>}
@@ -854,15 +886,35 @@ export default function MahakayaRescueGame({
         type="drag"
         from={{ x: sharedRigLayout.handleStart.l, y: sharedRigLayout.handleStart.t }}
         to={{ x: currentWaitingLog.l, y: currentWaitingLog.t }}
-        active={!debugMode && ropeStage === 'detached' && phase === 'play'}
-        idleDelay={3000}
+        active={
+          !debugMode && phase === 'play' && ropeStage === 'detached'
+          && ((needsInitialTeaching && !teachingComplete) || hintLevel >= 3)
+        }
+        idleDelay={needsInitialTeaching && !teachingComplete ? 3000 : 0}
+        iterations={needsInitialTeaching && !teachingComplete ? 2 : 1}
+        onComplete={() => {
+          if (needsInitialTeaching && !teachingComplete) setTeachingCompleteKey(hintStageKey);
+        }}
+        onDismiss={() => {
+          if (needsInitialTeaching && !teachingComplete) setTeachingCompleteKey(hintStageKey);
+        }}
       />
       <GestureDemo
         type="pull-down"
         from={{ x: sharedRigLayout.pullTop.l, y: sharedRigLayout.pullTop.t }}
         to={{ x: sharedRigLayout.pullBottom.l, y: sharedRigLayout.pullBottom.t }}
-        active={!debugMode && ropeStage === 'attached' && phase === 'play'}
-        idleDelay={3000}
+        active={
+          !debugMode && phase === 'play' && ropeStage === 'attached'
+          && ((needsInitialTeaching && !teachingComplete) || hintLevel >= 3)
+        }
+        idleDelay={needsInitialTeaching && !teachingComplete ? 3000 : 0}
+        iterations={needsInitialTeaching && !teachingComplete ? 2 : 1}
+        onComplete={() => {
+          if (needsInitialTeaching && !teachingComplete) setTeachingCompleteKey(hintStageKey);
+        }}
+        onDismiss={() => {
+          if (needsInitialTeaching && !teachingComplete) setTeachingCompleteKey(hintStageKey);
+        }}
       />
 
       <div

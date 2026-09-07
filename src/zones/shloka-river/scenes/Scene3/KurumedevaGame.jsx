@@ -49,6 +49,7 @@ const FRIENDS = [
     label: 'Turtle',
     brings: 'log',
     carryImg: turtleCarryImg,
+    helpingImg: turtleEmptyImg, // TODO: swap for a real "helping" pose
     emptyImg: turtleEmptyImg,
     objectImg: logObj,
     bridgeImg: step1Img,
@@ -62,6 +63,7 @@ const FRIENDS = [
     label: 'Bunny',
     brings: 'planks',
     carryImg: bunnyCarryImg,
+    helpingImg: bunnyEmptyImg, // TODO: swap for a real "helping" pose
     emptyImg: bunnyEmptyImg,
     objectImg: plankObj,
     bridgeImg: step2Img,
@@ -75,6 +77,7 @@ const FRIENDS = [
     label: 'Squirrel',
     brings: 'pegs',
     carryImg: squirrelCarryImg,
+    helpingImg: squirrelEmptyImg, // TODO: swap for a real "helping" pose
     emptyImg: squirrelEmptyImg,
     objectImg: pegObj,
     bridgeImg: step3Img,
@@ -88,6 +91,7 @@ const FRIENDS = [
     label: 'Bird',
     brings: 'vine',
     carryImg: birdCarryImg,
+    helpingImg: birdEmptyImg, // TODO: swap for a real "helping" pose
     emptyImg: birdEmptyImg,
     objectImg: vineObj,
     bridgeImg: step4Img,
@@ -169,6 +173,8 @@ const VINE_ROWS = [
 ];
 const VINE_SLOTS = VINE_ROWS[0];
 const VINE_SLOT_W = 13;
+const VINE_TRACE_START = VINE_ROWS[0][0];
+const VINE_TRACE_END = VINE_ROWS[0][2];
 const TRACE_BAND_T = 9; // vertical tolerance (% of stage) around the rail
 const TRACE_LEAD = 2; // wrap snaps on slightly before the finger reaches it
 
@@ -176,27 +182,43 @@ const LOG_DROP_RADIUS = 18; // forgiving snap to the active slot
 // Anywhere over the gap counts as "close enough" for little hands.
 const GAP_ZONE = { l0: 40, l1: 84, t0: 58, t1: 84 };
 
-// friendStep -> piece-placing config. Steps not listed keep the older
-// walk-and-drop-material flow (pegs / vines, until those rounds are built).
+// friendStep -> piece-placing config. Simplified pass: ONE cooperative action
+// per helper (not three) — ask, friend comes and helps, one action, bridge
+// advances. `helperSpot` is where the friend stands while helping (beside the
+// piece, not just "at the gap"); `farExit` is where it goes once done.
 const PLACE_ROUNDS = {
-  // mode 'drag' — pull each piece from a pile into a slot.
-  0: { kind: 'log', mode: 'drag', img: logObj, slots: LOG_SLOTS, pile: LOG_PILE, slotW: LOG_SLOT_W },
-  // mode 'tap' — tap each slot; Bunny hops along the deck between planks and
-  // hops to the far bank after the last one.
+  // mode 'drag' — pull the one log from the pile into its slot.
+  0: {
+    kind: 'log', mode: 'drag', img: logObj,
+    slots: [LOG_SLOTS[1]], pile: LOG_PILE, slotW: LOG_SLOT_W,
+    helperSpot: { l: LOG_SLOTS[1].l - 10, t: LOG_SLOTS[1].t - 5 },
+  },
+  // mode 'tap' — tap the one glowing slot and the plank drops in.
   1: {
-    kind: 'plank', mode: 'tap', img: plankObj, slots: PLANK_SLOTS, pile: PLANK_PILE,
-    slotW: PLANK_SLOT_W, hopAlong: true, farExit: { l: 88, t: 70.2 },
+    kind: 'plank', mode: 'tap', img: plankObj,
+    slots: [PLANK_SLOTS[1]], pile: PLANK_PILE, slotW: PLANK_SLOT_W,
+    helperSpot: { l: PLANK_SLOTS[1].l - 8, t: PLANK_SLOTS[1].t - 7 },
+    farExit: { l: 88, t: 70.2 },
   },
-  // mode 'tap' — each tap drives a GROUP: the slot + every extra row → 4 posts.
-  // Squirrel hops group-to-group, then hops to the far bank.
+  // mode 'tap' — one tap drives the whole GROUP: the slot + every extra row → 4 posts.
   2: {
-    kind: 'peg', mode: 'tap', img: pegObj, slots: PEG_SLOTS, farSlots: PEG_ROWS.slice(1),
-    slotW: PEG_SLOT_W, hopAlong: true, farExit: { l: 78.7, t: 58.2 },
+    kind: 'peg', mode: 'tap', img: pegObj,
+    slots: [PEG_ROWS[0][1]], farSlots: PEG_ROWS.slice(1).map((row) => [row[1]]),
+    slotW: PEG_SLOT_W,
+    helperSpot: { l: PEG_ROWS[0][1].l - 6, t: PEG_ROWS[0][1].t - 5 },
+    farExit: { l: 78.7, t: 58.2 },
   },
-  // mode 'trace' — each stroke lays a near + far wrap.
-  3: { kind: 'vine', mode: 'trace', img: vineObj, slots: VINE_SLOTS, farSlots: VINE_ROWS.slice(1), slotW: VINE_SLOT_W },
+  // mode 'trace' — one sweep from the start post to the end post lays both wraps.
+  3: {
+    kind: 'vine', mode: 'trace', img: vineObj,
+    slots: [{ ...VINE_TRACE_END, r: 0 }], farSlots: [[VINE_ROWS[1][1]]],
+    traceStart: VINE_TRACE_START, traceEnd: VINE_TRACE_END,
+    slotW: VINE_SLOT_W,
+    helperSpot: { l: VINE_TRACE_END.l + 5, t: VINE_TRACE_END.t - 14 },
+  },
 };
 const LAST_PLACE_ROUND = 3; // highest friendStep that uses PLACE_ROUNDS
+const getRoundActionCount = (step) => PLACE_ROUNDS[step]?.slots?.length || 0;
 
 // ---------------------------------------------------------------------------
 // Layout Debug panel (ported from MahakayaRescueGame). Drag any marker on the
@@ -368,7 +390,6 @@ export default function KurumedevaGame({
   const [pieceDragPos, setPieceDragPos] = useState(null);
   const pieceDragRef = useRef(null);
   const placeDoneRef = useRef(false);
-  const hopRef = useRef(0);
 
   const [debugMode, setDebugMode] = useState(false);
   const [debugPhase, setDebugPhase] = useState(0);
@@ -466,7 +487,6 @@ export default function KurumedevaGame({
       setPieceDragPos(null);
       pieceDragRef.current = null;
       placeDoneRef.current = false;
-      hopRef.current = 0;
       dragPointerRef.current = null;
       doneCalledRef.current = false;
       successVoDoneRef.current = false;
@@ -538,24 +558,27 @@ export default function KurumedevaGame({
     setTappedId(friend.id);
     safeAfter(250, () => setTappedId(null));
 
-    // --- Per-piece round: friend carries the pile to the gap, then the child
-    //     drags the 3 pieces in one by one. No auto-advance — the effect below
-    //     finishes it once placedCount reaches 3. ---
+    // --- Per-piece round: friend walks beside the piece, stays and helps, the
+    //     child does ONE cooperative action. No auto-advance — the effect below
+    //     finishes it once that action lands. ---
     if (PLACE_ROUNDS[friendIndex]) {
       const cfg = PLACE_ROUNDS[friendIndex];
       placeDoneRef.current = false;
-      hopRef.current = 0;
       setPlacedCount(0);
       setWalkingIndex(friendIndex);
       setFriendPositions((prev) => {
         const next = [...prev];
-        next[friendIndex] = cfg.hopAlong
-          ? { l: cfg.slots[0].l - 4, t: cfg.slots[0].t - 7 }
-          : DELIVERY_SPOTS[friendIndex];
+        next[friendIndex] = cfg.helperSpot || DELIVERY_SPOTS[friendIndex];
         return next;
       });
       safeAfter(WALK_TO_MS, () => {
         setWalkingIndex(null);
+        // Friend stays and visibly helps — not just a delivery.
+        setFriendImgStates((prev) => {
+          const next = [...prev];
+          next[friendIndex] = 'helping';
+          return next;
+        });
         setPlaceActive(true);
         setIsRoundSettling(false); // let the "drag a piece" hint run
       });
@@ -632,64 +655,43 @@ export default function KurumedevaGame({
 
   // --- Per-piece drag handlers: pull a piece from the pile into the gap ------
   const placeNextPiece = useCallback(() => {
-    setPlacedCount((n) => Math.min(3, n + 1));
-  }, []);
-
-  // `hopAlong` rounds: friend hops to stand beside the next slot after each
-  // placement (the far-bank hop after the 3rd is handled by the completion effect).
-  useEffect(() => {
-    if (!placeActive) { hopRef.current = 0; return; }
-    const cfg = PLACE_ROUNDS[friendStep];
-    if (!cfg?.hopAlong || placedCount === hopRef.current) return;
-    hopRef.current = placedCount;
-    if (placedCount < 1 || placedCount >= 3) return;
-    const s = cfg.slots[placedCount];
-    setWalkingIndex(friendStep);
-    setFriendPositions((prev) => {
-      const next = [...prev];
-      next[friendStep] = { l: s.l - 4, t: s.t - 7 };
-      return next;
-    });
-    safeAfter(650, () => setWalkingIndex(null));
-  }, [placeActive, placedCount, friendStep, safeAfter]);
+    const target = getRoundActionCount(friendStep);
+    setPlacedCount((n) => Math.min(target, n + 1));
+  }, [friendStep]);
 
   // Tap-mode: tap the glowing slot and the piece drops in.
   const handleSlotTap = useCallback((event) => {
-    if (isPaused || !placeActive || placedCount >= 3) return;
+    if (isPaused || !placeActive || placedCount >= getRoundActionCount(friendStep)) return;
     event.preventDefault();
     event.stopPropagation();
     stopSceneVoice?.();
     markInteraction();
     placeNextPiece();
-  }, [isPaused, markInteraction, placeActive, placedCount, placeNextPiece, stopSceneVoice]);
+  }, [friendStep, isPaused, markInteraction, placeActive, placedCount, placeNextPiece, stopSceneVoice]);
 
-  // Trace-mode: one stroke along the rail places each wrap as the finger passes.
+  // Trace-mode: one sweep from the start post to the end post lays the wrap(s).
   const traceStartLRef = useRef(null);
   const maybePlaceAlongTrace = useCallback((point) => {
     const cfg = PLACE_ROUNDS[friendStep];
     if (!cfg || cfg.mode !== 'trace') return;
-    // A stroke that began at/left of the first post is a genuine left-to-right
+    const start = cfg.traceStart || cfg.slots[0];
+    const end = cfg.traceEnd || cfg.slots[cfg.slots.length - 1];
+    // A stroke that began at/left of the start post is a genuine left-to-right
     // trace — accept it generously (fast flicks included). One that began
-    // further in must actually sweep through each post's neighbourhood.
+    // further in must actually sweep through the end post's neighbourhood.
     const cleanStart = traceStartLRef.current != null
-      && traceStartLRef.current <= cfg.slots[0].l + 6;
-    setPlacedCount((n) => {
-      let k = n;
-      while (k < 3) {
-        const slot = cfg.slots[k];
-        const onBand = Math.abs(point.t - slot.t) <= TRACE_BAND_T;
-        const reached = cleanStart
-          ? point.l >= slot.l - TRACE_LEAD
-          : point.l >= slot.l - TRACE_LEAD && point.l <= slot.l + 14;
-        if (onBand && reached) k += 1;
-        else break;
-      }
-      return k;
-    });
+      && traceStartLRef.current <= start.l + 6;
+    const onBand = Math.abs(point.t - end.t) <= TRACE_BAND_T;
+    const reached = cleanStart
+      ? point.l >= end.l - TRACE_LEAD
+      : point.l >= end.l - TRACE_LEAD && point.l <= end.l + 14;
+    if (onBand && reached) {
+      setPlacedCount((n) => Math.min(cfg.slots.length, n + 1));
+    }
   }, [friendStep]);
 
   const handleTracePointerDown = useCallback((event) => {
-    if (isPaused || !placeActive || placedCount >= 3) return;
+    if (isPaused || !placeActive || placedCount >= getRoundActionCount(friendStep)) return;
     event.preventDefault();
     event.stopPropagation();
     stopSceneVoice?.();
@@ -701,7 +703,7 @@ export default function KurumedevaGame({
     traceStartLRef.current = point.l;
     setPieceDragPos(point);
     maybePlaceAlongTrace(point);
-  }, [getStagePoint, isPaused, markInteraction, maybePlaceAlongTrace, placeActive, placedCount, stopSceneVoice]);
+  }, [friendStep, getStagePoint, isPaused, markInteraction, maybePlaceAlongTrace, placeActive, placedCount, stopSceneVoice]);
 
   const handleTracePointerMove = useCallback((event) => {
     if (pieceDragRef.current !== event.pointerId || !pieceDragActive) return;
@@ -712,7 +714,7 @@ export default function KurumedevaGame({
   }, [getStagePoint, maybePlaceAlongTrace, pieceDragActive]);
 
   const handlePiecePointerDown = useCallback((event) => {
-    if (isPaused || !placeActive || placedCount >= 3) return;
+    if (isPaused || !placeActive || placedCount >= getRoundActionCount(friendStep)) return;
     event.preventDefault();
     event.stopPropagation();
     stopSceneVoice?.();
@@ -721,7 +723,7 @@ export default function KurumedevaGame({
     event.currentTarget.setPointerCapture?.(event.pointerId);
     setPieceDragActive(true);
     setPieceDragPos(getStagePoint(event));
-  }, [getStagePoint, isPaused, placeActive, placedCount, markInteraction, stopSceneVoice]);
+  }, [friendStep, getStagePoint, isPaused, placeActive, placedCount, markInteraction, stopSceneVoice]);
 
   const handlePiecePointerMove = useCallback((event) => {
     if (pieceDragRef.current !== event.pointerId || !pieceDragActive) return;
@@ -751,10 +753,11 @@ export default function KurumedevaGame({
     if (near || overGap) placeNextPiece();
   }, [endPieceDrag, friendStep, getStagePoint, placedCount, placeNextPiece]);
 
-  // A per-piece round completes once all 3 pieces are in — light its syllable,
-  // walk the friend to the bank line, then hand over to the next round.
+  // A round completes once its one cooperative action lands — light its
+  // syllable, walk the friend to the bank line, then hand over to the next round.
   useEffect(() => {
-    if (!placeActive || placedCount < 3 || placeDoneRef.current) return;
+    const target = getRoundActionCount(friendStep);
+    if (!placeActive || placedCount < target || placeDoneRef.current) return;
     placeDoneRef.current = true;
 
     const idx = friendStep;
@@ -1097,15 +1100,12 @@ export default function KurumedevaGame({
 
   if (!isActive) return null;
 
-  // Stages 1-2 ARE the pieces the child places (logs, planks) — no image.
-  // Stages 3-4 (pegs, vines) still use the placeholder step3-4 art for now; it
-  // draws its own logs+deck, so the placed pieces hide once it appears.
-  const firstImgStep = LAST_PLACE_ROUND + 2; // bridgeStep at which step-art starts
-  const bridgeImg = bridgeStep >= firstImgStep ? FRIENDS[bridgeStep - 1].bridgeImg : null;
-  const prevBridgeImg = bridgeStep >= firstImgStep + 1 ? FRIENDS[bridgeStep - 2].bridgeImg : null;
-  // Placed pieces ARE the bridge now — keep them through the crossing too, and
-  // in debug mode so each phase can be positioned over the layers beneath it.
-  const showPlacedPieces = debugMode || bridgeStep < firstImgStep;
+  // Each round's success swaps in that stage's bridge artwork (step1-4,
+  // cumulative): Turtle -> step1, Bunny -> step2, Squirrel -> step3, Bird -> step4.
+  const bridgeImg = bridgeStep > 0 ? FRIENDS[bridgeStep - 1]?.bridgeImg : null;
+  // The loose piece only shows for the round currently being helped with — once
+  // it succeeds, the bridge artwork above represents it instead (no clutter).
+  const showPlacedPieces = debugMode || placeActive;
   const placeCfg = placeActive ? PLACE_ROUNDS[friendStep] : null;
 
   // One idle gesture hint, keyed to the current piece/slot (never the friend,
@@ -1121,8 +1121,8 @@ export default function KurumedevaGame({
         return { type: 'tap', from: { x: s.l, y: s.t }, to: { x: s.l, y: s.t }, k: `tap-${placedCount}` };
       }
       if (placeCfg.mode === 'trace') {
-        const a = placeCfg.slots[0];
-        const b = placeCfg.slots[placeCfg.slots.length - 1];
+        const a = placeCfg.traceStart || placeCfg.slots[0];
+        const b = placeCfg.traceEnd || placeCfg.slots[placeCfg.slots.length - 1];
         return { type: 'scratch', from: { x: a.l, y: a.t }, to: { x: b.l, y: b.t }, k: `trace-${placedCount}` };
       }
     }
@@ -1154,18 +1154,9 @@ export default function KurumedevaGame({
           }}
         />
 
-        {phase === 'play' && !isRoundSettling && !debugMode && placeCfg && (
-          <p className="kuru-hint">
-            {hintLevel < 2 && (
-              placeCfg.mode === 'trace' ? 'Trace along the rail to wind the vine.'
-                : placeCfg.mode === 'tap' ? `Tap each glowing spot to add a ${placeCfg.kind}.`
-                  : `Drag a ${placeCfg.kind} across the gap.`)}
-            {hintLevel >= 2 && (
-              placeCfg.mode === 'trace' ? `Keep tracing along the rail — ${3 - placedCount} to go.`
-                : placeCfg.mode === 'tap' ? `Tap each glowing spot — ${3 - placedCount} to go.`
-                  : `Drop each ${placeCfg.kind} on a glowing spot — ${3 - placedCount} to go.`)}
-          </p>
-        )}
+        {/* Building-hint copy removed for this pass — one cooperative action per
+            helper needs no "N to go" count. Gesture demo + hint levels 1-3
+            already carry the "who to ask" guidance below. */}
 
         {phase === 'play' && currentFriend && !isRoundSettling && !debugMode && !placeActive && (
           <p className="kuru-hint">
@@ -1176,12 +1167,12 @@ export default function KurumedevaGame({
         )}
 
         {phase === 'done' && (
-          <p className="kuru-doneline">You asked for help! The bridge is ready!</p>
+          <p className="kuru-doneline">You asked for help. Together, you made a way!</p>
         )}
 
         {bridgeImg && (
           <div
-            className={`kuru-bridge${bridgeStep === 4 ? ' is-complete' : ''}`}
+            className={`kuru-bridge${bridgeStep === FRIENDS.length ? ' is-complete' : ''}`}
             style={{
               left: `${KURUMEDEVA_LAYOUT.bridge.l}%`,
               top: `${KURUMEDEVA_LAYOUT.bridge.t}%`,
@@ -1189,17 +1180,8 @@ export default function KurumedevaGame({
               transform: `translate(-50%, -50%) rotate(${KURUMEDEVA_LAYOUT.bridge.r || 0}deg) scaleX(${KURUMEDEVA_LAYOUT.bridge.flip ? -1 : 1}) scale(1.3)`,
             }}
           >
-            {prevBridgeImg && (
-              <img
-                key={`bridge-prev-${bridgeStep}`}
-                className="kuru-bridge-img is-prev"
-                src={prevBridgeImg}
-                alt=""
-                draggable={false}
-              />
-            )}
             <img
-              key={`bridge-cur-${bridgeStep}`}
+              key={`bridge-${bridgeStep}`}
               className="kuru-bridge-img is-cur"
               src={bridgeImg}
               alt="bridge"
@@ -1208,20 +1190,19 @@ export default function KurumedevaGame({
           </div>
         )}
 
-        {/* Per-piece rounds — pieces the child has dropped into the gap. They
-            ARE the bridge (logs → planks → pegs, stacking) and persist until
-            the round-4 step art covers them. */}
+        {/* The piece the child is currently helping place. Once it succeeds the
+            bridge artwork above takes over — no loose pieces linger. */}
         {showPlacedPieces && Array.from({ length: LAST_PLACE_ROUND + 1 }, (_, r) => r).map((roundIndex) => {
           const cfg = PLACE_ROUNDS[roundIndex];
           if (!cfg) return null;
-          // In debug: show every round below the selected phase fully built.
+          // In debug: preview earlier phases fully built so the current one can
+          // be positioned against them.
           const debugDone = debugMode && roundIndex <= debugPhase - 2;
-          const roundDone = debugDone || bridgeStep > roundIndex;
-          const roundCurrent = !debugMode && placeActive && friendStep === roundIndex;
-          if (!roundDone && !roundCurrent) return null;
-          const count = roundDone ? cfg.slots.length : placedCount;
+          const roundCurrent = placeActive && friendStep === roundIndex;
+          if (!debugDone && !roundCurrent) return null;
+          const count = debugDone ? cfg.slots.length : placedCount;
           return cfg.slots.slice(0, count).flatMap((slot, i) => {
-            const isNewest = !roundDone && i === count - 1;
+            const isNewest = !debugDone && i === count - 1;
             const dropCls = isNewest
               ? ` is-newest${cfg.mode === 'tap' ? ' is-drop' : cfg.mode === 'drag' ? ' is-roll' : ''}`
               : '';
@@ -1251,10 +1232,10 @@ export default function KurumedevaGame({
         })}
 
         {/* Active round, TAP mode — the glowing slot is the tap target, no pile. */}
-        {placeActive && placeCfg && placeCfg.mode === 'tap' && phase === 'play' && placedCount < 3 && (
+        {placeActive && placeCfg && placeCfg.mode === 'tap' && phase === 'play' && placedCount < placeCfg.slots.length && (
           <>
             {/* Small non-interactive supply pile that shrinks as pieces are placed. */}
-            {placeCfg.pile && Array.from({ length: 3 - placedCount }).map((_, i) => (
+            {placeCfg.pile && Array.from({ length: placeCfg.slots.length - placedCount }).map((_, i) => (
               <div
                 key={`tpile-${placeCfg.kind}-${placedCount}-${i}`}
                 className={`kuru-log-piece is-${placeCfg.kind}`}
@@ -1286,10 +1267,10 @@ export default function KurumedevaGame({
         )}
 
         {/* Active round, TRACE mode — dashed rail guide + a stroke band. */}
-        {placeActive && placeCfg && placeCfg.mode === 'trace' && phase === 'play' && placedCount < 3 && (
+        {placeActive && placeCfg && placeCfg.mode === 'trace' && phase === 'play' && placedCount < placeCfg.slots.length && (
           <>
             <svg className="kuru-trace-guide" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-              <polyline points={placeCfg.slots.map((s) => `${s.l},${s.t}`).join(' ')} />
+              <polyline points={`${placeCfg.traceStart.l},${placeCfg.traceStart.t} ${placeCfg.traceEnd.l},${placeCfg.traceEnd.t}`} />
             </svg>
             <div
               className="kuru-span-log is-vine is-ghost beckon"
@@ -1306,9 +1287,9 @@ export default function KurumedevaGame({
               type="button"
               className="kuru-trace-band"
               style={{
-                left: `${(placeCfg.slots[0].l + placeCfg.slots[placeCfg.slots.length - 1].l) / 2}%`,
-                top: `${placeCfg.slots[0].t}%`,
-                width: `${Math.abs(placeCfg.slots[placeCfg.slots.length - 1].l - placeCfg.slots[0].l) + 26}%`,
+                left: `${(placeCfg.traceStart.l + placeCfg.traceEnd.l) / 2}%`,
+                top: `${placeCfg.traceStart.t}%`,
+                width: `${Math.abs(placeCfg.traceEnd.l - placeCfg.traceStart.l) + 26}%`,
                 height: `${TRACE_BAND_T * 2}%`,
               }}
               aria-label="Trace along the rail to wind the vine"
@@ -1321,7 +1302,7 @@ export default function KurumedevaGame({
         )}
 
         {/* Active round, DRAG mode — ghost slot + draggable pile at the friend's feet. */}
-        {placeActive && placeCfg && placeCfg.mode === 'drag' && phase === 'play' && placedCount < 3 && (
+        {placeActive && placeCfg && placeCfg.mode === 'drag' && phase === 'play' && placedCount < placeCfg.slots.length && (
           <>
             <div
               className={`kuru-span-log is-${placeCfg.kind} is-ghost`}
@@ -1335,7 +1316,7 @@ export default function KurumedevaGame({
               <img src={placeCfg.img} alt="" draggable={false} />
             </div>
 
-            {Array.from({ length: 3 - placedCount }).map((_, i) => {
+            {Array.from({ length: placeCfg.slots.length - placedCount }).map((_, i) => {
               const isTop = i === 0;
               const dragging = isTop && pieceDragActive;
               const pileL = placeCfg.pile.l + i * 0.5;
@@ -1427,9 +1408,13 @@ export default function KurumedevaGame({
           const isCurrent = index === friendStep && phase === 'play';
           const isTapped = tappedId === friend.id;
           const isWaiting = index > friendStep;
+          const isHelping = imgState === 'helping';
           const isHelped = imgState === 'empty' && index <= friendStep;
           const isCrossing = phase === 'crossing' || phase === 'done';
           const isWalking = walkingIndex === index;
+          const friendSprite = imgState === 'carry'
+            ? friend.carryImg
+            : isHelping ? friend.helpingImg : friend.emptyImg;
 
           return (
             <div
@@ -1440,6 +1425,7 @@ export default function KurumedevaGame({
                 ${isCurrent && imgState === 'carry' ? 'is-active' : ''}
                 ${isTapped ? 'is-tapped' : ''}
                 ${isWaiting ? 'kuru-friend--waiting' : ''}
+                ${isHelping ? 'kuru-friend--helping' : ''}
                 ${isHelped ? 'kuru-friend--helped' : ''}
                 ${isCrossing ? 'kuru-friend--crossing' : ''}
                 ${isWalking ? 'is-walking' : ''}
@@ -1453,7 +1439,7 @@ export default function KurumedevaGame({
               }}
             >
               <img
-                src={imgState === 'carry' ? friend.carryImg : friend.emptyImg}
+                src={friendSprite}
                 alt={friend.label}
                 draggable={false}
               />

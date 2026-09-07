@@ -19,20 +19,22 @@
   overflow: hidden;
 }
 
-.nirv-hint {
+.nirv-hint-bubble {
   position: absolute;
-  top: 11%;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 40;
-  color: #fff;
-  font-family: 'Nunito', sans-serif;
-  font-size: clamp(13px, 1.9vw, 17px);
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
-  text-align: center;
-  max-width: 80%;
-  margin: 0;
+  transform: translate(-50%, 0);
+  z-index: 42;
   pointer-events: none;
+  background: #FFF9E6;
+  color: #5D2E0F;
+  border: 1.5px solid rgba(150, 121, 196, 0.28);
+  border-radius: 20px 24px 21px 25px;
+  box-shadow: 0 6px 16px rgba(40, 20, 80, 0.12);
+  padding: 7px 12px;
+  font-family: 'Baloo 2', cursive;
+  font-weight: 700;
+  font-size: clamp(13px, 1.8vw, 17px);
+  line-height: 1.15;
+  white-space: nowrap;
   animation: nirv-fadeIn 0.6s ease;
 }
 
@@ -54,6 +56,25 @@
 .nirv-layer {
   position: absolute;
   transform: translate(-50%, -50%);
+}
+
+/* Only the current obstacle should demand attention; the ones still ahead
+   stay visible (so the child knows more is coming) but visually recede. */
+.nirv-layer.is-current-focus {
+  opacity: 1;
+  filter: none;
+  transition: opacity 0.35s ease, filter 0.35s ease;
+}
+
+.nirv-layer.is-future-focus {
+  opacity: 0.52;
+  filter: saturate(0.65) brightness(0.9);
+  transition: opacity 0.35s ease, filter 0.35s ease;
+}
+
+.nirv-layer.is-cleared-focus {
+  opacity: 0.72;
+  filter: saturate(0.8);
 }
 
 .nirv-layer img {
