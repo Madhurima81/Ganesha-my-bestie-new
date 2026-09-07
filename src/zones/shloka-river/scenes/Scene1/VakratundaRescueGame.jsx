@@ -23,7 +23,7 @@ import reedsImg from './assets/images/vakratunda/reeds.webp';
 const SYLLABLES = ['va', 'kra', 'tun', 'da'];
 const AUDIO = { syllables: ['va', 'kra', 'tun', 'da'] };
 
-const START_POS = { x: 15.5, y: 72 };
+const START_POS = { x: 14, y: 63 };
 const FROG_W = 6;
 const REUNION_FROG_W = 5.4;
 const FAMILY = { x: 91.08, y: 52.71, w: 14 };
@@ -55,7 +55,7 @@ const STUCK_L3_MS = 12000;       // -> shimmer + short arc toward the opening
 // live in the Trace Debug panel ("Water area") — drag handles, double-click
 // to delete one, "Subdivide" to add resolution, "Reset Water" for this seed.
 const DEFAULT_WATER_POLY = [
-  { x: 17, y: 77.5 }, { x: 22.5, y: 77.5 }, { x: 27.14, y: 73 }, { x: 32.42, y: 66.87 },
+  { x: 16.68, y: 64.51 }, { x: 21.76, y: 65.48 }, { x: 27.14, y: 64.79 }, { x: 32.42, y: 66.87 },
   { x: 37.5, y: 69.37 }, { x: 42.28, y: 69.51 }, { x: 42.98, y: 60.21 }, { x: 45.07, y: 55.62 },
   { x: 49.05, y: 52.29 }, { x: 55.33, y: 53.26 }, { x: 60.21, y: 57.85 }, { x: 66.38, y: 63.54 },
   { x: 68.28, y: 70.62 }, { x: 66.48, y: 83.95 }, { x: 90.39, y: 96.86 }, { x: 99.55, y: 68.12 },
@@ -63,7 +63,7 @@ const DEFAULT_WATER_POLY = [
   { x: 67.78, y: 51.32 }, { x: 63.69, y: 49.38 }, { x: 59.71, y: 48.82 }, { x: 56.32, y: 44.73 },
   { x: 53.93, y: 39.24 }, { x: 51.44, y: 39.45 }, { x: 49.95, y: 45.49 }, { x: 45.77, y: 46.88 },
   { x: 39.09, y: 48.27 }, { x: 33.66, y: 49.38 }, { x: 23.85, y: 43.82 }, { x: 22.76, y: 33.69 },
-  { x: 15.59, y: 34.11 }, { x: 6.82, y: 33.69 }, { x: 3.34, y: 74 }, { x: 9, y: 78 },
+  { x: 15.59, y: 34.11 }, { x: 6.82, y: 33.69 }, { x: 3.34, y: 58.54 }, { x: 9.71, y: 61.32 },
 ];
 
 const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
