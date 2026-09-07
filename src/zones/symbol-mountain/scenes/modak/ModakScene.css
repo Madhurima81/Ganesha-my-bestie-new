@@ -999,3 +999,355 @@ div[class*="modak-game-modak-collected"] {
   width: var(--basket-modak-size) !important;
   height: var(--basket-modak-size) !important;
 }
+
+/* ===========================================================
+   FLOWER JOURNEY + GARLAND REWORK (2026-09-06)
+   Prefix: modak-fj- / modak-garland-
+   =========================================================== */
+
+/* --- flower counter tray --------------------------------- */
+.modak-fj-flower-tray {
+  position: absolute;
+  top: clamp(10px, 2vh, 22px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: clamp(4px, 0.7vw, 8px);
+  padding: clamp(6px, 1vw, 10px) clamp(10px, 1.4vw, 16px);
+  background: rgba(255, 248, 224, 0.92);
+  border: 2px solid rgba(181, 118, 31, 0.32);
+  border-radius: 999px;
+  box-shadow: 0 8px 18px rgba(97, 63, 20, 0.18);
+  z-index: 30;
+  pointer-events: none;
+}
+
+.modak-fj-flower-slot {
+  width: clamp(20px, 2.4vw, 32px);
+  height: clamp(20px, 2.4vw, 32px);
+  border-radius: 50%;
+  background: rgba(184, 141, 75, 0.22);
+  display: grid;
+  place-items: center;
+  transition: background 0.25s ease;
+}
+
+.modak-fj-flower-slot.filled {
+  background: rgba(255, 226, 150, 0.55);
+}
+
+.modak-fj-flower-slot img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.modak-fj-flower-slot.pop {
+  animation: modak-fj-pop 0.5s ease-out;
+}
+
+@keyframes modak-fj-pop {
+  0% { transform: scale(0.4); }
+  55% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+
+/* --- shared carrier (Mooshika + floating emotion) -------- */
+.modak-fj-carrier {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.modak-fj-carrier.wobble {
+  animation: modak-fj-wobble 0.6s ease-in-out infinite;
+}
+
+@keyframes modak-fj-wobble {
+  0%, 100% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+}
+
+.modak-fj-emotion {
+  position: absolute;
+  width: 42%;
+  height: 42%;
+  object-fit: contain;
+  pointer-events: none;
+  filter: drop-shadow(0 4px 8px rgba(80, 50, 30, 0.16));
+  animation: modak-fj-emotion-in 0.3s ease-out, modak-fj-float 1.8s ease-in-out infinite alternate;
+}
+
+.modak-fj-emotion--tr { right: -18%; top: -20%; }
+.modak-fj-emotion--tl { left: -18%; top: -20%; }
+.modak-fj-emotion--bl { left: -16%; bottom: -18%; }
+
+@keyframes modak-fj-emotion-in {
+  from { opacity: 0; transform: scale(0.6); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes modak-fj-float {
+  from { transform: translateY(0); }
+  to { transform: translateY(-6px); }
+}
+
+/* --- beat 2: mud crossing -------------------------------- */
+.modak-fj-mud {
+  position: absolute;
+  left: 50%;
+  top: 74%;
+  width: clamp(300px, 42vw, 620px);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 6;
+  filter: drop-shadow(0 10px 20px rgba(80, 50, 30, 0.18));
+}
+
+.modak-fj-target {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  transition: box-shadow 0.25s ease;
+}
+
+.modak-fj-target.hint {
+  box-shadow: 0 0 0 5px rgba(255, 215, 100, 0.18), 0 0 22px rgba(255, 215, 100, 0.24);
+}
+
+.modak-fj-target.hint-strong {
+  box-shadow: 0 0 0 8px rgba(255, 215, 100, 0.26), 0 0 34px rgba(255, 215, 100, 0.36);
+}
+
+/* --- beat 3: leaves cluster ------------------------------ */
+.modak-fj-leaves-stage {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: clamp(220px, 26vw, 400px);
+  aspect-ratio: 1;
+  z-index: 10;
+}
+
+.modak-fj-leaves {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+  filter: drop-shadow(0 8px 16px rgba(40, 80, 30, 0.2));
+}
+
+.modak-fj-leaves.shake {
+  animation: modak-fj-jerk 0.36s ease-in-out;
+}
+
+@keyframes modak-fj-jerk {
+  0%, 100% { transform: translateX(0) rotate(0); }
+  25% { transform: translateX(-8px) rotate(-2deg); }
+  75% { transform: translateX(8px) rotate(2deg); }
+}
+
+.modak-fj-leaves.hint {
+  animation: modak-fj-leaf-hint 1.6s ease-in-out infinite;
+}
+
+@keyframes modak-fj-leaf-hint {
+  0%, 100% { filter: drop-shadow(0 8px 16px rgba(40, 80, 30, 0.2)); }
+  50% { filter: drop-shadow(0 0 22px rgba(255, 220, 120, 0.7)); }
+}
+
+/* --- beat 4: branch pull -------------------------------- */
+.modak-fj-branch-stage {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: clamp(220px, 24vw, 380px);
+  aspect-ratio: 1;
+  z-index: 10;
+}
+
+.modak-fj-tree {
+  position: absolute;
+  right: -6%;
+  top: -10%;
+  width: 78%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.modak-fj-branch {
+  position: absolute;
+  left: 2%;
+  top: 28%;
+  width: 68%;
+  object-fit: contain;
+  transform-origin: 88% 12%;
+  transition: transform 0.18s ease-out;
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+  filter: drop-shadow(0 6px 12px rgba(60, 90, 40, 0.22));
+  z-index: 3;
+}
+
+.modak-fj-branch.hint {
+  animation: modak-fj-branch-hint 1.8s ease-in-out infinite;
+}
+
+@keyframes modak-fj-branch-hint {
+  0%, 100% { filter: drop-shadow(0 6px 12px rgba(60, 90, 40, 0.22)); }
+  50% { filter: drop-shadow(0 10px 20px rgba(255, 210, 110, 0.6)); }
+}
+
+.modak-fj-branch-hold-ring {
+  position: absolute;
+  left: 20%;
+  bottom: 4%;
+  width: clamp(56px, 6vw, 84px);
+  height: clamp(56px, 6vw, 84px);
+  border-radius: 50%;
+  border: 5px solid rgba(255, 213, 95, 0.92);
+  box-shadow: 0 0 16px rgba(255, 208, 79, 0.4);
+  animation: modak-fj-ring-pulse 1.1s ease-out infinite;
+  pointer-events: none;
+}
+
+@keyframes modak-fj-ring-pulse {
+  0% { transform: scale(0.8); opacity: 0.4; }
+  60% { transform: scale(1.12); opacity: 1; }
+  100% { transform: scale(1.2); opacity: 0; }
+}
+
+/* --- beat 6: carry garland on Mooshika + Ganesha -------- */
+.modak-fj-carry-garland {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: 62%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  opacity: 0.95;
+}
+
+.modak-fj-garland-on-ganesha {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  width: 46%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 5;
+  animation: modak-fj-emotion-in 0.5s ease-out;
+  filter: drop-shadow(0 0 14px rgba(255, 206, 79, 0.5));
+}
+
+.modak-fj-modak-pop {
+  position: absolute;
+  left: 50%;
+  top: 14%;
+  width: clamp(90px, 10vw, 150px);
+  height: clamp(90px, 10vw, 150px);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 12;
+}
+
+.modak-fj-modak-pop img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  animation: modak-game-modakReveal 0.6s ease-out forwards,
+             modak-game-modakFloat 1.6s ease-in-out 0.9s infinite alternate;
+  filter: drop-shadow(0 0 18px rgba(255, 206, 79, 0.6));
+}
+
+/* --- beat 5: garland overlay ---------------------------- */
+.modak-garland-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(12px, 3vh, 40px);
+  background: radial-gradient(circle at 50% 40%, rgba(255, 248, 231, 0.96), rgba(251, 233, 231, 0.98));
+  z-index: 2400;
+}
+
+.modak-garland-stage {
+  position: relative;
+  width: clamp(320px, 62vw, 760px);
+  aspect-ratio: 16 / 9;
+}
+
+.modak-garland-thread {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  filter: drop-shadow(0 8px 18px rgba(97, 63, 20, 0.16));
+}
+
+.modak-garland-thread-zone {
+  width: 100%;
+  height: 100%;
+}
+
+.modak-garland-slot {
+  position: absolute;
+  width: clamp(46px, 5.4vw, 76px);
+  height: clamp(46px, 5.4vw, 76px);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  display: grid;
+  place-items: center;
+  z-index: 5;
+}
+
+.modak-garland-slot:not(.filled) {
+  border: 3px dashed rgba(181, 118, 31, 0.4);
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.modak-garland-slot img {
+  width: 118%;
+  height: 118%;
+  object-fit: contain;
+}
+
+.modak-garland-slot.bounce {
+  animation: modak-fj-pop 0.42s ease-out;
+}
+
+.modak-garland-slot.hint:not(.filled) {
+  animation: modak-fj-leaf-hint 1.4s ease-in-out infinite;
+  border-color: rgba(255, 200, 90, 0.9);
+}
+
+.modak-garland-tray {
+  display: flex;
+  gap: clamp(8px, 1.6vw, 18px);
+  padding: clamp(10px, 1.6vw, 18px) clamp(14px, 2vw, 24px);
+  background: rgba(255, 248, 224, 0.95);
+  border: 2px solid rgba(181, 118, 31, 0.3);
+  border-radius: 24px;
+  box-shadow: 0 10px 22px rgba(97, 63, 20, 0.2);
+}
+
+.modak-garland-tray-slot.empty {
+  width: clamp(52px, 6vw, 84px);
+  height: clamp(52px, 6vw, 84px);
+  border-radius: 50%;
+  background: rgba(184, 141, 75, 0.16);
+}
+
+.modak-garland-tray-flower {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  cursor: grab;
+  user-select: none;
+  filter: drop-shadow(0 6px 12px rgba(97, 63, 20, 0.22));
+}
