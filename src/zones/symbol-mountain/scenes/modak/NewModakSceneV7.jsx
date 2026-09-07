@@ -280,7 +280,11 @@ const WORKING_PHASES = Object.keys(PHASE_META);
 const MODAK_DEBUG_UI_ENABLED = (() => {
   if (typeof window === 'undefined') return false;
   const params = new URLSearchParams(window.location.search);
-  return params.has('debugModak') || window.localStorage.getItem('debugModakUI') === '1';
+  if (params.has('debugModak') || window.localStorage.getItem('debugModakUI') === '1') return true;
+  // Always on inside the local dev harnesses (never in a production build).
+  let isDev = false;
+  try { isDev = !!import.meta.env?.DEV; } catch { isDev = false; }
+  return isDev && /game-test|modak-test|\/dev\//.test(window.location.pathname);
 })();
 
 // ========================================
