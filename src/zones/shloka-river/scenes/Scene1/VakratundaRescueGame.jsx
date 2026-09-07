@@ -46,60 +46,24 @@ const STUCK_PROGRESS_EPS = 3;    // % of new forward progress that counts as uns
 const STUCK_L2_MS = 6000;        // shimmer -> shimmer + VO
 const STUCK_L3_MS = 12000;       // -> shimmer + short arc toward the opening
 
-// The frog can only be dragged INSIDE this area — the river channel (outer),
-// with the four obstacles carved out as holes (a child can never be "in
-// water" while inside a rock/log/reed footprint, even at the edges where the
-// hitbox and artwork don't line up perfectly). Outside the outer ring, or
-// inside any hole, is a no-go: the drag holds at the last valid water point.
-// Bay cut into the near bank at the frog's start, another at the family's
-// pad. Authored live in the Trace Debug panel ("Water area"); these are just
-// the seed points (clockwise, % of the stage).
-const DEFAULT_WATER_POLY = {
-  outer: [
-    { x: 3, y: 42 },
-    { x: 70.77, y: 39.1 },
-    { x: 80.63, y: 38.41 },
-    { x: 98.65, y: 43.27 },
-    { x: 96.66, y: 98.8 },
-    { x: 77.74, y: 90.19 },
-    { x: 52.94, y: 70.62 },
-    { x: 37, y: 71.87 },
-    { x: 25.25, y: 66.18 },
-    { x: 15.29, y: 64.51 },
-    { x: 9.01, y: 61.59 },
-    { x: 3, y: 58 },
-  ],
-  // One ring per obstacle (stone, logpile, reeds, reeds2), each a 12-point
-  // ellipse ~10% bigger than its hitbox so the boundary sits just outside the
-  // art. Regenerate these (via the obstacle hit values) if you move an
-  // obstacle a lot — "Reset Water" restores this seed.
-  holes: [
-    [ // stone
-      { x: 46.03, y: 39.55 }, { x: 43.97, y: 46.42 }, { x: 38.33, y: 51.46 },
-      { x: 30.63, y: 53.3 }, { x: 22.93, y: 51.46 }, { x: 17.29, y: 46.42 },
-      { x: 15.23, y: 39.55 }, { x: 17.29, y: 32.67 }, { x: 22.93, y: 27.64 },
-      { x: 30.63, y: 25.8 }, { x: 38.33, y: 27.64 }, { x: 43.97, y: 32.67 },
-    ],
-    [ // logpile
-      { x: 83.08, y: 43.82 }, { x: 81.02, y: 50.7 }, { x: 75.38, y: 55.73 },
-      { x: 67.68, y: 57.57 }, { x: 59.98, y: 55.73 }, { x: 54.34, y: 50.7 },
-      { x: 52.28, y: 43.82 }, { x: 54.34, y: 36.95 }, { x: 59.98, y: 31.91 },
-      { x: 67.68, y: 30.07 }, { x: 75.38, y: 31.91 }, { x: 81.02, y: 36.94 },
-    ],
-    [ // reeds
-      { x: 57.8, y: 63.4 }, { x: 56.69, y: 70 }, { x: 53.67, y: 74.83 },
-      { x: 49.55, y: 76.6 }, { x: 45.42, y: 74.83 }, { x: 42.41, y: 70 },
-      { x: 41.3, y: 63.4 }, { x: 42.41, y: 56.8 }, { x: 45.42, y: 51.97 },
-      { x: 49.55, y: 50.2 }, { x: 53.67, y: 51.97 }, { x: 56.69, y: 56.8 },
-    ],
-    [ // reeds2
-      { x: 64.47, y: 68.92 }, { x: 63.51, y: 74.97 }, { x: 60.9, y: 79.4 },
-      { x: 57.32, y: 81.02 }, { x: 53.75, y: 79.4 }, { x: 51.13, y: 74.97 },
-      { x: 50.17, y: 68.92 }, { x: 51.13, y: 62.87 }, { x: 53.74, y: 58.44 },
-      { x: 57.32, y: 56.82 }, { x: 60.9, y: 58.44 }, { x: 63.51, y: 62.87 },
-    ],
-  ],
-};
+// The swimmable CHANNEL — a single closed polygon shaped like a fat ribbon
+// along the intended route (start bay -> below the rock -> the lane between
+// reeds and logs -> family bay). The frog can only be dragged INSIDE it;
+// outside is a no-go and the drag holds at the last valid point. The
+// obstacles need no separate exclusion: the channel simply routes around
+// them, so a rock/log/reed footprint is never inside the channel. Authored
+// live in the Trace Debug panel ("Water area") — drag handles, double-click
+// to delete one, "Subdivide" to add resolution, "Reset Water" for this seed.
+const DEFAULT_WATER_POLY = [
+  { x: 21.9, y: 78.31 }, { x: 24.79, y: 68.11 }, { x: 31.22, y: 65.39 },
+  { x: 40.73, y: 64.49 }, { x: 49.72, y: 64.49 }, { x: 57.64, y: 64.45 },
+  { x: 65.24, y: 62.33 }, { x: 72.67, y: 60.18 }, { x: 81.5, y: 55.74 },
+  { x: 89.3, y: 50.4 }, { x: 95.12, y: 49.86 }, { x: 86.88, y: 36.14 },
+  { x: 82.7, y: 41.6 }, { x: 76.5, y: 48.26 }, { x: 69.33, y: 51.82 },
+  { x: 62.76, y: 53.67 }, { x: 56.36, y: 55.55 }, { x: 50.28, y: 55.51 },
+  { x: 41.27, y: 53.51 }, { x: 28.78, y: 52.61 }, { x: 15.21, y: 57.89 },
+  { x: 6.1, y: 69.69 },
+];
 
 const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
 const clamp = (value, lo, hi) => Math.min(hi, Math.max(lo, value));
@@ -120,10 +84,10 @@ function isPointInPolygon(point, ring) {
   return inside;
 }
 
-// In the outer water ring AND not inside any obstacle hole. area = { outer, holes }.
-function isInWaterArea(point, area) {
-  if (!isPointInPolygon(point, area.outer)) return false;
-  return !area.holes.some((hole) => isPointInPolygon(point, hole));
+// Inside the swimmable channel. (Thin wrapper so call sites stay stable if the
+// shape model changes again.)
+function isInWaterArea(point, channel) {
+  return isPointInPolygon(point, channel);
 }
 
 // Nearest patch of clear, open water around `from` — in the water area, not
@@ -175,22 +139,22 @@ const DEFAULT_OBSTACLES = [
   {
     id: 'reeds',
     img: reedsImg,
-    l: 49.55,
-    t: 63.4,
+    l: 46,
+    t: 67,
     w: 20,
     z: 12,   // above the dropped lily pads (z 11) so pads sit BEHIND the reeds
     cls: 'vak-obstacle--reeds',
-    hit: { x: 49.55, y: 63.4, rx: 7.5, ry: 12 },
+    hit: { x: 46, y: 67, rx: 7.5, ry: 12 },
   },
   {
     id: 'reeds2',
     img: reedsImg,
-    l: 57.32,
-    t: 69.92,
+    l: 53,
+    t: 72.5,
     w: 17,
     z: 12,
     cls: 'vak-obstacle--reeds',
-    hit: { x: 57.32, y: 68.92, rx: 6.5, ry: 11 },
+    hit: { x: 53, y: 71.5, rx: 6.5, ry: 11 },
   },
 ];
 
@@ -295,18 +259,32 @@ export default function VakratundaRescueGame({
     setFrog(next);
   }, [setFrog]);
 
-  // Debug authoring: drag one water-area vertex. ring is 'outer' or a hole index.
-  const moveWaterVertex = useCallback((ring, index, point) => {
+  // Debug authoring: drag one channel vertex.
+  const moveWaterVertex = useCallback((index, point) => {
     const pt = { x: +point.x.toFixed(2), y: +point.y.toFixed(2) };
+    const next = waterPolyRef.current.map((v, i) => (i === index ? pt : v));
+    waterPolyRef.current = next;
+    setWaterPoly(next);
+  }, []);
+
+  // Debug authoring: double-click a handle to delete that vertex (min 3).
+  const deleteWaterVertex = useCallback((index) => {
     const current = waterPolyRef.current;
-    const next = ring === 'outer'
-      ? { ...current, outer: current.outer.map((v, i) => (i === index ? pt : v)) }
-      : {
-          ...current,
-          holes: current.holes.map((hole, hi) => (
-            hi === ring ? hole.map((v, i) => (i === index ? pt : v)) : hole
-          )),
-        };
+    if (current.length <= 3) return;
+    const next = current.filter((_, i) => i !== index);
+    waterPolyRef.current = next;
+    setWaterPoly(next);
+  }, []);
+
+  // Debug authoring: insert a midpoint on every edge (12 -> 24 -> 48 ...).
+  const subdivideWater = useCallback(() => {
+    const cur = waterPolyRef.current;
+    const next = [];
+    for (let i = 0; i < cur.length; i += 1) {
+      const a = cur[i];
+      const b = cur[(i + 1) % cur.length];
+      next.push(a, { x: +((a.x + b.x) / 2).toFixed(2), y: +((a.y + b.y) / 2).toFixed(2) });
+    }
     waterPolyRef.current = next;
     setWaterPoly(next);
   }, []);
@@ -764,7 +742,7 @@ export default function VakratundaRescueGame({
       return;
     }
     if (drag.type === 'waterVertex') {
-      moveWaterVertex(drag.ring, drag.index, point);
+      moveWaterVertex(drag.index, point);
     }
   };
 
@@ -875,16 +853,9 @@ export default function VakratundaRescueGame({
         {showDebugPanel && showWaterArea && (
           <polygon
             className="vak-debug-water"
-            points={waterPoly.outer.map((v) => `${v.x},${v.y}`).join(' ')}
+            points={waterPoly.map((v) => `${v.x},${v.y}`).join(' ')}
           />
         )}
-        {showDebugPanel && showWaterArea && waterPoly.holes.map((hole, hi) => (
-          <polygon
-            key={`water-hole-${hi}`}
-            className="vak-debug-water-hole"
-            points={hole.map((v) => `${v.x},${v.y}`).join(' ')}
-          />
-        ))}
         {showDebugPanel && bandsX.map((band, index) => (
           <line
             key={`band-${index}`}
@@ -899,36 +870,19 @@ export default function VakratundaRescueGame({
         {trailPath && <polyline className="vak-trace-line" points={trailPath} />}
       </svg>
 
-      {showDebugPanel && showWaterArea && waterPoly.outer.map((v, index) => (
+      {showDebugPanel && showWaterArea && waterPoly.map((v, index) => (
         <div
           key={`water-vtx-${index}`}
           className="vak-layer vak-debug-water-vtx is-debug-draggable"
           style={{ left: `${v.x}%`, top: `${v.y}%`, zIndex: 40 }}
-          onPointerDown={(event) => startDebugDrag(event, { type: 'waterVertex', ring: 'outer', index })}
+          onPointerDown={(event) => startDebugDrag(event, { type: 'waterVertex', index })}
           onPointerMove={continueDebugDrag}
           onPointerUp={endDebugDrag}
           onPointerCancel={endDebugDrag}
+          onDoubleClick={(event) => { event.stopPropagation(); deleteWaterVertex(index); }}
         >
           {index}
         </div>
-      ))}
-
-      {showDebugPanel && showWaterArea && waterPoly.holes.map((hole, hi) => (
-        <React.Fragment key={`water-hole-vtx-${hi}`}>
-          {hole.map((v, index) => (
-            <div
-              key={`water-hole-${hi}-vtx-${index}`}
-              className="vak-layer vak-debug-water-vtx is-hole is-debug-draggable"
-              style={{ left: `${v.x}%`, top: `${v.y}%`, zIndex: 40 }}
-              onPointerDown={(event) => startDebugDrag(event, { type: 'waterVertex', ring: hi, index })}
-              onPointerMove={continueDebugDrag}
-              onPointerUp={endDebugDrag}
-              onPointerCancel={endDebugDrag}
-            >
-              {obstacles[hi]?.id?.[0]?.toUpperCase() ?? hi}{index}
-            </div>
-          ))}
-        </React.Fragment>
       ))}
 
       {pads.map((pad) => (
@@ -1264,7 +1218,7 @@ export default function VakratundaRescueGame({
 
             <div className="vak-debug-section-title">Water area</div>
             <p className="vak-debug-note">
-              The frog can only be dragged inside this shape. Turn it on, then drag the numbered handles on the canvas to fit the river + the start/family bays.
+              This is the swimmable CHANNEL — the frog can only be dragged inside it, and it routes around the obstacles so they block automatically. Drag a handle to reshape; double-click a handle to delete it (min 3); "Subdivide" doubles the handle count for finer shaping; "Reset Water" restores the seed.
             </p>
             <label className="vak-debug-check">
               <input
@@ -1272,9 +1226,12 @@ export default function VakratundaRescueGame({
                 checked={showWaterArea}
                 onChange={(event) => setShowWaterArea(event.target.checked)}
               />
-              <span>Show water area &amp; handles</span>
+              <span>Show channel &amp; handles</span>
             </label>
             <div className="vak-debug-actions">
+              <button type="button" className="vak-debug-reset" onClick={subdivideWater}>
+                Subdivide ({waterPoly.length})
+              </button>
               <button
                 type="button"
                 className="vak-debug-reset"
