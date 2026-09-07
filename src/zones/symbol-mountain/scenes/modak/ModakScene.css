@@ -1561,3 +1561,26 @@ div[class*="modak-game-modak-collected"] {
   from { opacity: 0; transform: translate(-50%, -50%) scale(0.75); }
   to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 }
+
+/* beat 2 - forgiving mud zone + visual stone markers */
+.modak-fj-mud-zone { width: 100%; height: 100%; }
+.modak-fj-stone-marker {
+  position: absolute;
+  width: clamp(20px, 2.2vw, 34px);
+  height: clamp(20px, 2.2vw, 34px);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  border: 3px solid rgba(255, 255, 255, 0.55);
+  background: rgba(120, 90, 55, 0.25);
+  z-index: 11;
+  pointer-events: none;
+  transition: background 0.25s ease, box-shadow 0.25s ease, opacity 0.25s ease;
+}
+.modak-fj-stone-marker.done {
+  background: rgba(255, 216, 110, 0.55);
+  border-color: rgba(255, 216, 110, 0.9);
+  opacity: 0.55;
+}
+.modak-fj-stone-marker.active {
+  animation: modak-fj-stone-breath 1.4s ease-in-out infinite;
+}

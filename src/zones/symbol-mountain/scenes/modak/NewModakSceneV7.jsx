@@ -825,28 +825,27 @@ const NewModakSceneMVPContent = ({
     }, 600);
   }, [fjLayout.leaves, idleHintsEnabled, playDiscovery, playVoice, resetIdleBaseline, safeSetTimeout, sceneActions, setCurrentPhase, startIdleTimer, stopIdleTimer, triggerMiniGesture]);
 
-  const handleMudStoneDrop = useCallback((stoneIndex) => {
-    if (sceneState.phase !== PHASES.MUD_CROSS || mudLockRef.current) return;
-    // must step through the stones in order
-    if (stoneIndex !== (sceneState.mudStoneIndex || 0)) {
-      playSoftWrong();
-      return;
-    }
+  // One forgiving step: each drop onto the mud advances Mooshika to the next
+  // stone in sequence (so the crossing still takes 3 deliberate moves) and the
+  // last step carries him across to the flowers.
+  const handleMudStep = useCallback(() => {
+    if (sceneStateRef.current?.phase !== PHASES.MUD_CROSS || mudLockRef.current) return;
+    const idx = sceneStateRef.current?.mudStoneIndex || 0;
+    if (idx >= MUD_STONE_KEYS.length) return;
+
     noteInteraction();
     stopVoice();
-
-    const stoneKey = MUD_STONE_KEYS[stoneIndex];
-    const target = fjLayout[stoneKey];
+    const target = fjLayout[MUD_STONE_KEYS[idx]];
     playPlace();
     setDragActive(false);
     setActiveEmotion('worried'); // worry travels with him once the crossing begins
     sceneActions.updateState({
       mooshikaPosition: { top: `${target.y}%`, left: `${target.x}%` },
-      mudStoneIndex: stoneIndex + 1
+      mudStoneIndex: idx + 1
     });
 
-    if (stoneIndex === MUD_STONE_KEYS.length - 1) finishMudCrossing();
-  }, [fjLayout, finishMudCrossing, noteInteraction, playPlace, playSoftWrong, sceneActions, sceneState.mudStoneIndex, sceneState.phase, stopVoice]);
+    if (idx === MUD_STONE_KEYS.length - 1) finishMudCrossing();
+  }, [fjLayout, finishMudCrossing, noteInteraction, playPlace, sceneActions, stopVoice]);
 
   // ------------------------------------------------------------------
   // beat 3 - SWIPE leaves apart
@@ -1843,29 +1842,35 @@ const NewModakSceneMVPContent = ({
                       <img src={fjMudCrossing} alt="" className="modak-fj-mud" data-fj-el aria-hidden="true"
                         style={{ ...asPos(L.mud), width: `${L.mud.w}vw` }} />
 
-                      {/* Sequential stepping stones - must be stepped in order */}
+                      {/* One forgiving drop zone over the mud; each drop = one step */}
+                      <KidsDropZone
+                        id="mud-cross-zone"
+                        accepts="fj-mooshika"
+                        onDrop={handleMudStep}
+                        style={{
+                          position: 'absolute',
+                          left: `${L.mud.x}%`,
+                          top: `${L.mud.y}%`,
+                          width: `${L.mud.w + 6}vw`,
+                          height: `${L.mud.w * 0.62}vw`,
+                          transform: 'translate(-50%, -50%)',
+                          zIndex: 12
+                        }}
+                      >
+                        <div className="modak-fj-mud-zone" />
+                      </KidsDropZone>
+
+                      {/* Visual-only stepping-stone markers along the path */}
                       {MUD_STONE_KEYS.map((key, i) => {
                         const done = i < (sceneState.mudStoneIndex || 0);
                         const next = i === (sceneState.mudStoneIndex || 0);
                         return (
-                          <KidsDropZone
+                          <span
                             key={key}
-                            id={`mud-stone-${i}`}
-                            accepts="fj-mooshika"
-                            onDrop={() => handleMudStoneDrop(i)}
-                            style={{
-                              position: 'absolute',
-                              left: `${L[key].x}%`,
-                              top: `${L[key].y}%`,
-                              width: 'clamp(78px, 8vw, 120px)',
-                              height: 'clamp(64px, 6.5vw, 100px)',
-                              transform: 'translate(-50%, -50%)',
-                              borderRadius: '50%',
-                              zIndex: 13
-                            }}
-                          >
-                            <div className={`modak-fj-stone-target ${done ? 'done' : ''} ${next ? 'active' : ''}`} data-fj-el />
-                          </KidsDropZone>
+                            data-fj-el
+                            className={`modak-fj-stone-marker ${done ? 'done' : ''} ${next ? 'active' : ''}`}
+                            style={{ left: `${L[key].x}%`, top: `${L[key].y}%` }}
+                          />
                         );
                       })}
 
@@ -1876,12 +1881,12 @@ const NewModakSceneMVPContent = ({
                         dragBorderRadius="50%"
                         style={{
                           position: 'absolute',
-                          left: (sceneState.mooshikaPosition || asPos(L.mudStart)).left,
-                          top: (sceneState.mooshikaPosition || asPos(L.mudStart)).top,
+                          left: (sceneState.mudStoneIndex ? sceneState.mooshikaPosition : asPos(L.mudStart)).left,
+                          top: (sceneState.mudStoneIndex ? sceneState.mooshikaPosition : asPos(L.mudStart)).top,
                           width: 'clamp(120px, 11vw, 175px)',
                           height: 'clamp(120px, 11vw, 175px)',
                           transform: `translate(-50%, -50%)${dragActive ? ' scale(1.03)' : ''}`,
-                          zIndex: 15,
+                          zIndex: 20,
                           touchAction: 'none'
                         }}
                         onDragStart={handleMudDragStart}
