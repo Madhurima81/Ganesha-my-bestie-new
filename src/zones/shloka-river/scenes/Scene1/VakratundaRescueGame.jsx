@@ -26,7 +26,7 @@ const AUDIO = { syllables: ['va', 'kra', 'tun', 'da'] };
 const START_POS = { x: 15.5, y: 72 };
 const FROG_W = 6;
 const REUNION_FROG_W = 5.4;
-const FAMILY = { x: 88, y: 42, w: 14 };
+const FAMILY = { x: 91.08, y: 52.71, w: 14 };
 
 // X thresholds (in %) that light va / kra / tun as the frog passes them.
 // 'da' lights on actually reaching the family, not just an X line.
@@ -55,14 +55,12 @@ const STUCK_L3_MS = 12000;       // -> shimmer + short arc toward the opening
 // live in the Trace Debug panel ("Water area") — drag handles, double-click
 // to delete one, "Subdivide" to add resolution, "Reset Water" for this seed.
 const DEFAULT_WATER_POLY = [
-  { x: 21.9, y: 78.31 }, { x: 24.79, y: 68.11 }, { x: 31.22, y: 65.39 },
-  { x: 40.73, y: 64.49 }, { x: 49.72, y: 64.49 }, { x: 57.64, y: 64.45 },
-  { x: 65.24, y: 62.33 }, { x: 72.67, y: 60.18 }, { x: 81.5, y: 55.74 },
-  { x: 89.3, y: 50.4 }, { x: 95.12, y: 49.86 }, { x: 86.88, y: 36.14 },
-  { x: 82.7, y: 41.6 }, { x: 76.5, y: 48.26 }, { x: 69.33, y: 51.82 },
-  { x: 62.76, y: 53.67 }, { x: 56.36, y: 55.55 }, { x: 50.28, y: 55.51 },
-  { x: 41.27, y: 53.51 }, { x: 28.78, y: 52.61 }, { x: 15.21, y: 57.89 },
-  { x: 6.1, y: 69.69 },
+  { x: 22.05, y: 78.02 }, { x: 25.61, y: 66.98 }, { x: 32.56, y: 63.05 },
+  { x: 40.49, y: 55.07 }, { x: 50.55, y: 54.37 }, { x: 58.91, y: 60.62 },
+  { x: 71.66, y: 64.51 }, { x: 87.7, y: 73.81 }, { x: 93.34, y: 51.36 },
+  { x: 80.23, y: 51.04 }, { x: 68.28, y: 53.68 }, { x: 58.22, y: 53.13 },
+  { x: 53.93, y: 39.24 }, { x: 48.95, y: 39.66 }, { x: 39.49, y: 45.35 },
+  { x: 27.84, y: 53.4 }, { x: 14.39, y: 57.02 }, { x: 5.95, y: 69.98 },
 ];
 
 const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
@@ -119,42 +117,42 @@ const DEFAULT_OBSTACLES = [
   {
     id: 'stone',
     img: stoneImg,
-    l: 30.03,
-    t: 38.55,
+    l: 36.01,
+    t: 34.11,
     w: 30,
     z: 7,
     cls: 'vak-obstacle--stone',
-    hit: { x: 30.63, y: 39.55, rx: 14, ry: 12.5 },
+    hit: { x: 36.61, y: 35.11, rx: 14, ry: 12.5 },
   },
   {
     id: 'logpile',
     img: logPileImg,
-    l: 67.68,
-    t: 43.82,
+    l: 69.07,
+    t: 39.24,
     w: 30,
     z: 7,
     cls: 'vak-obstacle--logpile',
-    hit: { x: 67.68, y: 43.82, rx: 14, ry: 12.5 },
+    hit: { x: 69.07, y: 39.24, rx: 14, ry: 12.5 },
   },
   {
     id: 'reeds',
     img: reedsImg,
-    l: 46,
-    t: 67,
+    l: 49.85,
+    t: 69.65,
     w: 20,
     z: 12,   // above the dropped lily pads (z 11) so pads sit BEHIND the reeds
     cls: 'vak-obstacle--reeds',
-    hit: { x: 46, y: 67, rx: 7.5, ry: 12 },
+    hit: { x: 49.85, y: 69.65, rx: 7.5, ry: 12 },
   },
   {
     id: 'reeds2',
     img: reedsImg,
-    l: 53,
-    t: 72.5,
+    l: 55.73,
+    t: 71.87,
     w: 17,
     z: 12,
     cls: 'vak-obstacle--reeds',
-    hit: { x: 53, y: 71.5, rx: 6.5, ry: 11 },
+    hit: { x: 55.73, y: 70.87, rx: 6.5, ry: 11 },
   },
 ];
 
