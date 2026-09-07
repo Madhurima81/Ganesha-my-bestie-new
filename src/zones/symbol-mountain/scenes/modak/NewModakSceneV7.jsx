@@ -155,6 +155,13 @@ const DEFAULT_FJ_LAYOUT = {
   branch:      { x: 70, y: 34, w: 24 },
   carryStart:  { x: 16, y: 72 },
   carryEnd:    { x: 74, y: 52 },
+  // The 6 real pickup flowers (percent of the scene) - 2 per challenge.
+  mudF1:       { x: 70, y: 56 },
+  mudF2:       { x: 77, y: 58 },
+  leafF1:      { x: 46, y: 50 },
+  leafF2:      { x: 54, y: 50 },
+  branchF1:    { x: 66, y: 40 },
+  branchF2:    { x: 73, y: 41 },
   // Garland-build: resting spots of the 6 loose flowers (percent of the
   // garland work area, not the whole scene).
   garlandF1:   { x: 10, y: 20 },
@@ -566,6 +573,23 @@ const NewModakSceneMVPContent = ({
   const [garlandKnot, setGarlandKnot] = useState(false);
   const [dragActive, setDragActive] = useState(false);
 
+  // Real pickup flowers flying up to the counter when a challenge is cleared.
+  const [flyers, setFlyers] = useState([]);
+  const launchFlowers = useCallback((startIdx, positions) => {
+    const items = positions.map((p, k) => ({
+      id: `fly-${startIdx + k}-${Date.now()}`,
+      type: GARLAND_FLOWER_TYPES[startIdx + k],
+      x: p.x,
+      y: p.y,
+      go: false
+    }));
+    setFlyers(items);
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      setFlyers((f) => f.map((it) => ({ ...it, go: true })));
+    }));
+    safeSetTimeout(() => setFlyers([]), 820);
+  }, [safeSetTimeout]);
+
   // Show-what-to-do gesture shown briefly on entering each working beat.
   const [introGesture, setIntroGesture] = useState(false);
 
@@ -822,6 +846,7 @@ const NewModakSceneMVPContent = ({
     if (idleHintsEnabled) stopIdleTimer();
     safeSetTimeout(() => {
       playDiscovery();
+      launchFlowers(0, [fjLayout.mudF1, fjLayout.mudF2]);
       setShowSparkle('flowers-2');
       sceneActions.updateState({
         flowers: 2,
@@ -837,7 +862,7 @@ const NewModakSceneMVPContent = ({
         if (idleHintsEnabled) startIdleTimer();
       }, 700);
     }, 600);
-  }, [fjLayout.leaves, idleHintsEnabled, playDiscovery, playVoice, resetIdleBaseline, safeSetTimeout, sceneActions, setCurrentPhase, startIdleTimer, stopIdleTimer, triggerMiniGesture]);
+  }, [fjLayout.leaves, fjLayout.mudF1, fjLayout.mudF2, idleHintsEnabled, launchFlowers, playDiscovery, playVoice, resetIdleBaseline, safeSetTimeout, sceneActions, setCurrentPhase, startIdleTimer, stopIdleTimer, triggerMiniGesture]);
 
   // One forgiving step: each drop onto the mud advances Mooshika to the next
   // stone in sequence (so the crossing still takes 3 deliberate moves) and the
@@ -887,27 +912,27 @@ const NewModakSceneMVPContent = ({
       setActiveEmotion(null);
       playDiscovery();
       playPlace();
-      setShowSparkle('flowers-4');
       triggerMiniGesture('thumbsup', 'anchored', 1500, MINI_GESTURE_ANCHORS.leaves);
       if (idleHintsEnabled) stopIdleTimer();
-      sceneActions.updateState({
-        leafSwipes: next,
-        leavesOpen: true,
-        flowers: 4,
-        phase: PHASES.BRANCH_PULL,
-        progress: { percentage: 40 }
-      });
-      safeSetTimeout(() => setShowSparkle(null), 1200);
+      // bush opens: the 2 flowers sit revealed inside it for a beat...
+      sceneActions.updateState({ leafSwipes: next, leavesOpen: true, progress: { percentage: 40 } });
+      safeSetTimeout(() => {
+        // ...then they fly to the counter and we move on to the branch
+        launchFlowers(2, [fjLayout.leafF1, fjLayout.leafF2]);
+        setShowSparkle('flowers-4');
+        sceneActions.updateState({ flowers: 4, phase: PHASES.BRANCH_PULL });
+        safeSetTimeout(() => setShowSparkle(null), 1200);
+      }, 550);
       safeSetTimeout(() => {
         resetIdleBaseline();
         playVoice('branchStart');
         setCurrentPhase('branch');
         if (idleHintsEnabled) startIdleTimer();
-      }, 900);
+      }, 1450);
     } else {
       sceneActions.updateState({ leafSwipes: next });
     }
-  }, [idleHintsEnabled, noteInteraction, playDiscovery, playPlace, playUiTap, playVoice, resetIdleBaseline, safeSetTimeout, sceneActions, sceneState.leafSwipes, sceneState.leavesOpen, sceneState.phase, setCurrentPhase, startIdleTimer, stopIdleTimer, stopVoice, triggerMiniGesture]);
+  }, [fjLayout.leafF1, fjLayout.leafF2, idleHintsEnabled, launchFlowers, noteInteraction, playDiscovery, playPlace, playUiTap, playVoice, resetIdleBaseline, safeSetTimeout, sceneActions, sceneState.leafSwipes, sceneState.leavesOpen, sceneState.phase, setCurrentPhase, startIdleTimer, stopIdleTimer, stopVoice, triggerMiniGesture]);
 
   const handleLeavesPointerUp = (e) => {
     const startX = leafSwipeStartRef.current;
@@ -940,6 +965,7 @@ const NewModakSceneMVPContent = ({
     setActiveEmotion(null);
     playPlace();
     playDiscovery();
+    launchFlowers(4, [fjLayout.branchF1, fjLayout.branchF2]);
     setShowSparkle('flowers-6');
     triggerMiniGesture('thumbsup', 'anchored', 1800, MINI_GESTURE_ANCHORS.branch);
     if (idleHintsEnabled) stopIdleTimer();
@@ -956,7 +982,7 @@ const NewModakSceneMVPContent = ({
       playVoice('garlandStart');
       setCurrentPhase('garland');
     }, 1200);
-  }, [idleHintsEnabled, playDiscovery, playPlace, playVoice, resetIdleBaseline, safeSetTimeout, sceneActions, setCurrentPhase, stopIdleTimer, triggerMiniGesture]);
+  }, [fjLayout.branchF1, fjLayout.branchF2, idleHintsEnabled, launchFlowers, playDiscovery, playPlace, playVoice, resetIdleBaseline, safeSetTimeout, sceneActions, setCurrentPhase, stopIdleTimer, triggerMiniGesture]);
 
   const handleBranchPointerDown = (e) => {
     if (sceneState.phase !== PHASES.BRANCH_PULL || sceneState.branchDone) return;
@@ -1500,6 +1526,7 @@ const NewModakSceneMVPContent = ({
     carryLockRef.current = false;
     setBranchPull(0);
     setActiveEmotion(null);
+    setFlyers([]);
 
     sceneActions.updateState({
       phase: PHASES.CALM_SEARCH,
@@ -1546,6 +1573,7 @@ const NewModakSceneMVPContent = ({
     carryLockRef.current = false;
     setBranchPull(0);
     setActiveEmotion(null);
+    setFlyers([]);
     setShowSparkle(null);
     setShowSceneCompletion(false);
     setShowMandala(false);
@@ -1969,6 +1997,41 @@ const NewModakSceneMVPContent = ({
                       )}
                     </div>
                   )}
+
+                  {/* Real pickup flowers - 2 per challenge, positioned via the debug panel */}
+                  {[
+                    { key: 'mudF1', idx: 0, show: (sceneState.phase === PHASES.MUD_CROSS || dbgShowAll) && flowers < 2 },
+                    { key: 'mudF2', idx: 1, show: (sceneState.phase === PHASES.MUD_CROSS || dbgShowAll) && flowers < 2 },
+                    { key: 'leafF1', idx: 2, show: ((sceneState.phase === PHASES.LEAVES_OPEN && sceneState.leavesOpen) || dbgShowAll) && flowers < 4 },
+                    { key: 'leafF2', idx: 3, show: ((sceneState.phase === PHASES.LEAVES_OPEN && sceneState.leavesOpen) || dbgShowAll) && flowers < 4 },
+                    { key: 'branchF1', idx: 4, show: (sceneState.phase === PHASES.BRANCH_PULL || dbgShowAll) && flowers < 6 },
+                    { key: 'branchF2', idx: 5, show: (sceneState.phase === PHASES.BRANCH_PULL || dbgShowAll) && flowers < 6 }
+                  ].map(({ key, idx, show }) => (show ? (
+                    <img
+                      key={key}
+                      data-fj-el
+                      src={garlandFlowerImage(GARLAND_FLOWER_TYPES[idx])}
+                      alt=""
+                      className="modak-fj-pickup"
+                      style={{ left: `${L[key].x}%`, top: `${L[key].y}%` }}
+                    />
+                  ) : null))}
+
+                  {/* pickup flowers flying up into the counter */}
+                  {flyers.map((f) => (
+                    <img
+                      key={f.id}
+                      src={garlandFlowerImage(f.type)}
+                      alt=""
+                      className="modak-fj-flyer"
+                      style={{
+                        left: f.go ? '50%' : `${f.x}%`,
+                        top: f.go ? '5%' : `${f.y}%`,
+                        opacity: f.go ? 0 : 1,
+                        transform: `translate(-50%, -50%) scale(${f.go ? 0.35 : 1})`
+                      }}
+                    />
+                  ))}
 
                   {/* ============ BEAT 6: CARRY to Ganesha (guide) ============ */}
                   {sceneState.phase === PHASES.CARRY || sceneState.phase === PHASES.CARRY_REVEAL ||
