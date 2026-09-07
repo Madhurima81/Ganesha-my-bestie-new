@@ -157,6 +157,12 @@ const DEFAULT_FJ_LAYOUT = {
   carryEnd:    { x: 74, y: 52 }
 };
 const MUD_STONE_KEYS = ['mudS1', 'mudS2', 'mudS3'];
+
+// Stable drag payloads - a fresh object literal each render makes KidsDraggable's
+// effect re-run mid-drag and its cleanup kills the in-flight clone.
+const DRAG_DATA_MOOSHIKA = { type: 'fj-mooshika' };
+const DRAG_DATA_CARRY = { type: 'fj-carry' };
+const DRAG_DATA_GARLAND = [0, 1, 2, 3, 4, 5].map((i) => ({ type: 'garland-flower', flowerIndex: i }));
 const loadFjLayout = () => {
   if (typeof window === 'undefined') return { ...DEFAULT_FJ_LAYOUT };
   try {
@@ -1876,7 +1882,7 @@ const NewModakSceneMVPContent = ({
 
                       <KidsDraggable
                         id="fj-mooshika"
-                        data={{ type: 'fj-mooshika' }}
+                        data={DRAG_DATA_MOOSHIKA}
                         dragScale={1.06}
                         dragBorderRadius="50%"
                         style={{
@@ -1963,7 +1969,7 @@ const NewModakSceneMVPContent = ({
                       {(sceneState.phase === PHASES.CARRY || dbgShowAll) && (
                         <KidsDraggable
                           id="fj-carry"
-                          data={{ type: 'fj-carry' }}
+                          data={DRAG_DATA_CARRY}
                           dragScale={1.04}
                           dragBorderRadius="50%"
                           style={{
@@ -2155,7 +2161,7 @@ const NewModakSceneMVPContent = ({
                           <KidsDraggable
                             key={`loose-${i}`}
                             id={`garland-flower-${i}`}
-                            data={{ type: 'garland-flower', flowerIndex: i }}
+                            data={DRAG_DATA_GARLAND[i]}
                             dragScale={1.12}
                             dragBorderRadius="50%"
                             style={{
