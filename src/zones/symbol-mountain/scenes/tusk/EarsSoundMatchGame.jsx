@@ -1,401 +1,451 @@
-// zones/symbol-mountain/scenes/symbol/EarsSoundMatchGame.jsx
-// Ears Directional Listening Game: hear a sound from a hidden spot, then tap where it came from.
+// zones/symbol-mountain/scenes/tusk/EarsSoundMatchGame.jsx
+// Ear listening game: hear all sources first, then choose the animal sound.
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import './EarsSoundMatchGame.css';
 
-// Animals found through listening. Eye keeps peacock + monkey.
-import elephantImg from './assets/images/elephant-new1.webp';
-import cowImg from './assets/images/cow-new.webp';
-
-// Environment layers
-import bgBackImg from './assets/images/trail-bg.webp';
-import backRocksImg from './assets/images/trail-back.webp';
-import middleRocksImg from './assets/images/trail-mid.webp';
-import frontRocksImg from './assets/images/trail-front.webp';
-
-// Neutral hiding spot art: these reveal nothing about the animal behind them.
-import rockSpotImg from './assets/images/trail-blockage-no-rocks.webp';
-import bushSpotImg from './assets/images/obstacle-bush-clean.webp';
-import caveSpotImg from './assets/images/rock-background.webp';
-
-import { ANIMAL_SIZES } from './animalConfig';
-
-// Real animal calls
+import bgImg from './assets/images/ears-game/symbol_mountain_3_bg.png';
+import leftBushImg from './assets/images/ears-game/left_bush.png';
+import centerRockImg from './assets/images/ears-game/center_rock_cluster.png';
+import pondPatchImg from './assets/images/ears-game/right_pond_water_patch.png';
+import caveNookImg from './assets/images/ears-game/right_cave_nook.png';
+import cowRestingImg from './assets/images/ears-game/cow_01_resting.png';
+import cowLooksImg from './assets/images/ears-game/cow_02_looks_toward_grass.png';
+import cowNibblesImg from './assets/images/ears-game/cow_03_starts_nibbling.png';
+import cowChewsImg from './assets/images/ears-game/cow_04_chews_happily.png';
+import cowIdleImg from './assets/images/ears-game/cow_05_idle_with_grass.png';
+import elephantRestingImg from './assets/images/ears-game/elephant_01_resting.png';
+import elephantNoticesImg from './assets/images/ears-game/elephant_02_notices_water.png';
+import elephantDrinksImg from './assets/images/ears-game/elephant_03_drinks_or_dips_trunk.png';
+import elephantSpraysImg from './assets/images/ears-game/elephant_04_sprays_water.png';
+import elephantIdleImg from './assets/images/ears-game/elephant_05_idle_with_water.png';
 import soundElephant from './assets/audio/sound-elephant.webm';
 import soundCow from './assets/audio/sound-cow.webm';
-
-// Decoy / ambient sounds
 import decoyWind from './assets/audio/dragon-studio-wind-gust-386158.mp3';
 import decoyRustle from './assets/audio/dragon-studio-dry-grass-rustling-478361.mp3';
+import { ANIMAL_POSITIONS } from './animalPositions';
 
-const SOUND_PATHS = {
-  elephant: soundElephant,
-  cow: soundCow
+const PHASE = {
+  LISTENING: 'listening',
+  CHOOSING: 'choosing',
+  REVEALING: 'revealing',
+  COMPLETE: 'complete'
 };
 
-const VO_PATHS = {
-  intro: null,
-  elephant: null,
-  cow: null
+const BASE_SOURCES = {
+  leftBush: { id: 'leftBush', label: 'Left bush', img: leftBushImg, x: 24, y: 62, w: 20 },
+  centerRock: { id: 'centerRock', label: 'Center rock', img: centerRockImg, x: 49, y: 72, w: 21 },
+  rightPond: { id: 'rightPond', label: 'Water patch', img: pondPatchImg, x: 75, y: 75, w: 21 },
+  rightCave: { id: 'rightCave', label: 'Cave nook', img: caveNookImg, x: 78, y: 56, w: 20 }
 };
+
+const ROUNDS = [
+  {
+    id: 'elephant',
+    label: 'Elephant',
+    prompt: 'Listen for the animal near the water.',
+    targetSourceId: 'rightPond',
+    sources: [
+      { ...BASE_SOURCES.leftBush, sound: decoyRustle, kind: 'decoy' },
+      { ...BASE_SOURCES.centerRock, sound: decoyWind, kind: 'decoy' },
+      { ...BASE_SOURCES.rightPond, sound: soundElephant, kind: 'target' }
+    ],
+    frames: [elephantRestingImg, elephantNoticesImg, elephantDrinksImg, elephantSpraysImg, elephantIdleImg],
+    revealX: 73,
+    revealY: 59,
+    revealW: 27
+  },
+  {
+    id: 'cow',
+    label: 'Cow',
+    prompt: 'Listen for the animal near the grass.',
+    targetSourceId: 'rightCave',
+    sources: [
+      { ...BASE_SOURCES.leftBush, sound: decoyWind, kind: 'decoy' },
+      { ...BASE_SOURCES.centerRock, sound: decoyRustle, kind: 'decoy' },
+      { ...BASE_SOURCES.rightCave, sound: soundCow, kind: 'target' }
+    ],
+    frames: [cowRestingImg, cowLooksImg, cowNibblesImg, cowChewsImg, cowIdleImg],
+    revealX: 41,
+    revealY: 67,
+    revealW: 18
+  }
+];
 
 const VO_TEXTS = {
-  intro: 'Now listen closely. Tap where you hear the sound.',
+  intro: 'Listen closely. Hear each place first. Then choose the animal sound.',
+  choose: 'Now choose the animal sound.',
+  neutral: 'Good listening. Try another sound source.',
+  hint: 'Listen for the animal sound.',
+  complete: 'You listened carefully and found what mattered.',
   elephant: 'Elephant',
   cow: 'Cow'
 };
 
-const ANIMALS = [
-  { id: 'elephant', name: 'Elephant', img: elephantImg, sound: SOUND_PATHS.elephant, vo: VO_PATHS.elephant },
-  { id: 'cow', name: 'Cow', img: cowImg, sound: SOUND_PATHS.cow, vo: VO_PATHS.cow }
-];
-
-const HIDE_SPOTS = [
-  { id: 'left-rocks', x: 23, y: 61, img: rockSpotImg, scale: 1.15 },
-  { id: 'middle-bush', x: 54, y: 59, img: bushSpotImg, scale: 0.95 },
-  { id: 'right-cave', x: 80, y: 64, img: caveSpotImg, scale: 0.82 }
-];
-
-const DECOY_SOUNDS = [decoyWind, decoyRustle];
-const ROUND_STEP_GAP_MS = 520;
-const WRONG_FEEDBACK_MS = 420;
-const INTRO_TO_SEQUENCE_DELAY_MS = 900;
-const ANIMAL_SOUND_VOLUME = 0.65;
-const DECOY_VOLUME = 0.42;
-
-const shuffle = (arr) => {
-  const copy = [...arr];
-  for (let i = copy.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
-  }
-  return copy;
-};
+const BETWEEN_SOUND_MS = 560;
+const INTRO_DELAY_MS = 700;
+const REVEAL_FRAME_MS = 420;
+const NEXT_ROUND_DELAY_MS = 1350;
+const COMPLETE_DELAY_MS = 1500;
+const HINT_REPLAY_MS = 10000;
+const HINT_TEXT_MS = 18000;
+const HINT_TARGET_MS = 26000;
 
 const speakFallback = (text) => {
   if (!text || typeof window === 'undefined' || !window.speechSynthesis) return;
   try {
-    const u = new SpeechSynthesisUtterance(text);
-    u.rate = 0.95;
-    u.pitch = 1;
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 0.92;
+    utterance.pitch = 1;
     window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(u);
-  } catch {}
+    window.speechSynthesis.speak(utterance);
+  } catch {
+    // Speech synthesis is optional.
+  }
 };
 
 const EarsSoundMatchGame = ({
   isActive = true,
   isAudioOn = true,
   onGameComplete,
+  onAnimalPositionsChange,
   hideElements = false,
   className = ''
 }) => {
-  const [spotAssignments, setSpotAssignments] = useState(() => {
-    const shuffledSpots = shuffle(HIDE_SPOTS);
-    return ANIMALS.map((animal, index) => ({ animal, spot: shuffledSpots[index] }));
-  });
-  const [roundOrder, setRoundOrder] = useState(() => shuffle(ANIMALS.map((a) => a.id)));
-  const [currentRound, setCurrentRound] = useState(0);
-  const [found, setFound] = useState(new Set());
-  const [revealedAnimalIds, setRevealedAnimalIds] = useState(new Set());
-  const [introShown, setIntroShown] = useState(false);
-  const [playingSpotId, setPlayingSpotId] = useState(null);
-  const [currentStepIsTarget, setCurrentStepIsTarget] = useState(false);
-  const [wrongSpotId, setWrongSpotId] = useState(null);
+  const [roundIndex, setRoundIndex] = useState(0);
+  const [phase, setPhase] = useState(PHASE.LISTENING);
+  const [activeSourceId, setActiveSourceId] = useState(null);
+  const [completedRounds, setCompletedRounds] = useState([]);
+  const [wrongSourceId, setWrongSourceId] = useState(null);
+  const [feedback, setFeedback] = useState('');
+  const [revealFrameByAnimal, setRevealFrameByAnimal] = useState({});
+  const [hintSourceId, setHintSourceId] = useState(null);
 
-  const currentSoundRef = useRef(null);
-  const sequenceTimerRef = useRef(null);
-  const wrongResetTimerRef = useRef(null);
-  const audioFallbackTimerRef = useRef(null);
-  const sequenceRunIdRef = useRef(0);
+  const audioRef = useRef(null);
+  const timersRef = useRef([]);
+  const runIdRef = useRef(0);
+  const chooseStartedAtRef = useRef(Date.now());
+  const hintStageRef = useRef(0);
+  const completedRef = useRef(false);
 
-  const currentTargetId = roundOrder[currentRound];
-  const currentAssignment = spotAssignments.find((assignment) => assignment.animal.id === currentTargetId);
+  const round = ROUNDS[roundIndex];
+  const completedIds = useMemo(() => new Set(completedRounds), [completedRounds]);
 
-  const clearSequenceTimer = useCallback(() => {
-    if (sequenceTimerRef.current) {
-      clearTimeout(sequenceTimerRef.current);
-      sequenceTimerRef.current = null;
-    }
+  const clearTimers = useCallback(() => {
+    timersRef.current.forEach((timer) => clearTimeout(timer));
+    timersRef.current = [];
   }, []);
 
-  const clearAudioFallbackTimer = useCallback(() => {
-    if (audioFallbackTimerRef.current) {
-      clearTimeout(audioFallbackTimerRef.current);
-      audioFallbackTimerRef.current = null;
-    }
+  const schedule = useCallback((fn, delay) => {
+    const timer = setTimeout(() => {
+      timersRef.current = timersRef.current.filter((item) => item !== timer);
+      fn();
+    }, delay);
+    timersRef.current.push(timer);
+    return timer;
   }, []);
 
-  const stopCurrentAudio = useCallback(() => {
-    clearAudioFallbackTimer();
-    if (currentSoundRef.current) {
+  const stopAudio = useCallback(() => {
+    if (audioRef.current) {
       try {
-        currentSoundRef.current.onended = null;
-        currentSoundRef.current.onerror = null;
-        currentSoundRef.current.pause();
-        currentSoundRef.current.currentTime = 0;
-      } catch {}
-      currentSoundRef.current = null;
+        audioRef.current.onended = null;
+        audioRef.current.onerror = null;
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      } catch {
+        // Audio cleanup is best-effort.
+      }
+      audioRef.current = null;
     }
     if (typeof window !== 'undefined' && window.speechSynthesis?.cancel) {
       window.speechSynthesis.cancel();
     }
-  }, [clearAudioFallbackTimer]);
+  }, []);
 
-  const playGameAudio = useCallback((src, volume = 0.9, fallbackText = '', onEnded = null) => {
-    stopCurrentAudio();
+  const speak = useCallback((text) => {
+    if (!isAudioOn) return;
+    speakFallback(text);
+  }, [isAudioOn]);
 
-    const finishOnce = (() => {
-      let finished = false;
+  const playSound = useCallback((src, fallbackText = '', onDone = null, volume = 0.72) => {
+    stopAudio();
+
+    const finish = (() => {
+      let done = false;
       return () => {
-        if (finished) return;
-        finished = true;
-        clearAudioFallbackTimer();
-        currentSoundRef.current = null;
-        onEnded?.();
+        if (done) return;
+        done = true;
+        audioRef.current = null;
+        onDone?.();
       };
     })();
 
-    if (!isAudioOn) {
-      if (onEnded) {
-        audioFallbackTimerRef.current = setTimeout(finishOnce, 900);
-      }
-      return null;
-    }
-
-    if (!src) {
-      speakFallback(fallbackText);
-      if (onEnded) {
-        audioFallbackTimerRef.current = setTimeout(finishOnce, 900);
-      }
-      return null;
+    if (!isAudioOn || !src) {
+      if (fallbackText) speakFallback(fallbackText);
+      schedule(finish, 850);
+      return;
     }
 
     try {
       const audio = new Audio(src);
       audio.volume = volume;
-      audio.onended = finishOnce;
-      audio.onerror = () => {
-        speakFallback(fallbackText);
-        finishOnce();
-      };
-      audio.play().catch(() => {
-        speakFallback(fallbackText);
-        finishOnce();
-      });
-      currentSoundRef.current = audio;
-      return audio;
+      audio.onended = finish;
+      audio.onerror = finish;
+      audio.play().catch(finish);
+      audioRef.current = audio;
     } catch {
-      speakFallback(fallbackText);
-      finishOnce();
-      return null;
+      finish();
     }
-  }, [clearAudioFallbackTimer, isAudioOn, stopCurrentAudio]);
+  }, [isAudioOn, schedule, stopAudio]);
 
-  const playIntro = useCallback(() => {
-    playGameAudio(VO_PATHS.intro, 0.95, VO_TEXTS.intro);
-  }, [playGameAudio]);
+  const showFeedback = useCallback((message) => {
+    setFeedback(message);
+    schedule(() => setFeedback(''), 1500);
+  }, [schedule]);
 
-  const resetSession = useCallback(() => {
-    stopCurrentAudio();
-    clearSequenceTimer();
-    const shuffledSpots = shuffle(HIDE_SPOTS);
-    setSpotAssignments(ANIMALS.map((animal, index) => ({ animal, spot: shuffledSpots[index] })));
-    setRoundOrder(shuffle(ANIMALS.map((a) => a.id)));
-    setCurrentRound(0);
-    setFound(new Set());
-    setRevealedAnimalIds(new Set());
-    setIntroShown(false);
-    setPlayingSpotId(null);
-    setCurrentStepIsTarget(false);
-    setWrongSpotId(null);
-    sequenceRunIdRef.current += 1;
-  }, [clearSequenceTimer, stopCurrentAudio]);
+  const playSequence = useCallback((targetRound, afterSequence = null) => {
+    if (!isActive || !targetRound) return;
+    runIdRef.current += 1;
+    const runId = runIdRef.current;
+    clearTimers();
+    stopAudio();
+    setPhase(PHASE.LISTENING);
+    setHintSourceId(null);
+    setWrongSourceId(null);
+    setFeedback(targetRound.prompt);
 
-  useEffect(() => {
-    if (!isActive) return;
-    resetSession();
-  }, [isActive, resetSession]);
-
-  useEffect(() => {
-    if (!isActive || introShown) return;
-    setIntroShown(true);
-    playIntro();
-  }, [isActive, introShown, playIntro]);
-
-  const playRoundSequence = useCallback(() => {
-    if (!isActive || !currentAssignment || found.has(currentTargetId)) return;
-
-    const runId = sequenceRunIdRef.current;
-    const targetSpotId = currentAssignment.spot.id;
-    const otherSpotIds = HIDE_SPOTS.filter((spot) => spot.id !== targetSpotId).map((spot) => spot.id);
-    const decoySteps = shuffle(otherSpotIds).slice(0, 2).map((spotId) => ({
-      spotId,
-      isTarget: false,
-      sound: DECOY_SOUNDS[Math.floor(Math.random() * DECOY_SOUNDS.length)],
-      volume: DECOY_VOLUME
-    }));
-    const sequence = shuffle([
-      ...decoySteps,
-      {
-        spotId: targetSpotId,
-        isTarget: true,
-        sound: currentAssignment.animal.sound,
-        volume: ANIMAL_SOUND_VOLUME
-      }
-    ]);
-
-    let stepIndex = 0;
-    const runStep = () => {
-      if (runId !== sequenceRunIdRef.current) return;
-
-      if (stepIndex >= sequence.length) {
-        setPlayingSpotId(null);
-        setCurrentStepIsTarget(false);
-        sequenceTimerRef.current = setTimeout(() => {
-          if (runId === sequenceRunIdRef.current && !found.has(currentTargetId)) {
-            playRoundSequence();
-          }
-        }, ROUND_STEP_GAP_MS);
+    let index = 0;
+    const playNext = () => {
+      if (runId !== runIdRef.current) return;
+      if (index >= targetRound.sources.length) {
+        setActiveSourceId(null);
+        setPhase(PHASE.CHOOSING);
+        chooseStartedAtRef.current = Date.now();
+        hintStageRef.current = 0;
+        setFeedback(VO_TEXTS.choose);
+        speak(VO_TEXTS.choose);
+        afterSequence?.();
         return;
       }
 
-      const step = sequence[stepIndex];
-      setPlayingSpotId(step.spotId);
-      setCurrentStepIsTarget(step.isTarget);
-
-      const advance = () => {
-        if (runId !== sequenceRunIdRef.current) return;
-        setPlayingSpotId(null);
-        setCurrentStepIsTarget(false);
-        stepIndex += 1;
-        sequenceTimerRef.current = setTimeout(runStep, ROUND_STEP_GAP_MS);
-      };
-
-      playGameAudio(step.sound, step.volume, '', advance);
+      const source = targetRound.sources[index];
+      setActiveSourceId(source.id);
+      playSound(source.sound, '', () => {
+        if (runId !== runIdRef.current) return;
+        setActiveSourceId(null);
+        index += 1;
+        schedule(playNext, BETWEEN_SOUND_MS);
+      }, source.kind === 'target' ? 0.68 : 0.42);
     };
 
-    runStep();
-  }, [currentAssignment, currentTargetId, found, isActive, playGameAudio]);
+    schedule(playNext, index === 0 ? 240 : BETWEEN_SOUND_MS);
+  }, [clearTimers, isActive, playSound, schedule, speak, stopAudio]);
+
+  const resetGame = useCallback(() => {
+    runIdRef.current += 1;
+    clearTimers();
+    stopAudio();
+    completedRef.current = false;
+    setRoundIndex(0);
+    setPhase(PHASE.LISTENING);
+    setActiveSourceId(null);
+    setCompletedRounds([]);
+    setWrongSourceId(null);
+    setFeedback('');
+    setRevealFrameByAnimal({});
+    setHintSourceId(null);
+    chooseStartedAtRef.current = Date.now();
+    hintStageRef.current = 0;
+  }, [clearTimers, stopAudio]);
 
   useEffect(() => {
-    if (!isActive || !introShown || currentRound >= ANIMALS.length) return;
-    clearSequenceTimer();
-    setPlayingSpotId(null);
-    setCurrentStepIsTarget(false);
-    sequenceRunIdRef.current += 1;
+    if (!isActive) return;
+    resetGame();
+    speak(VO_TEXTS.intro);
+    schedule(() => playSequence(ROUNDS[0]), INTRO_DELAY_MS);
+  }, [isActive, playSequence, resetGame, schedule, speak]);
 
-    sequenceTimerRef.current = setTimeout(playRoundSequence, INTRO_TO_SEQUENCE_DELAY_MS);
+  useEffect(() => {
+    if (!isActive || phase !== PHASE.CHOOSING || !round) return;
 
-    return () => {
-      clearSequenceTimer();
+    const tick = () => {
+      const waitingMs = Date.now() - chooseStartedAtRef.current;
+      if (waitingMs >= HINT_TARGET_MS && hintStageRef.current < 3) {
+        hintStageRef.current = 3;
+        const targetSource = round.sources.find((source) => source.id === round.targetSourceId);
+        setHintSourceId(targetSource?.id || null);
+        if (targetSource) {
+          playSound(targetSource.sound, VO_TEXTS[round.id], () => {
+            schedule(() => playSequence(round), BETWEEN_SOUND_MS);
+          }, 0.68);
+        }
+        chooseStartedAtRef.current = Date.now();
+      } else if (waitingMs >= HINT_TEXT_MS && hintStageRef.current < 2) {
+        hintStageRef.current = 2;
+        showFeedback(VO_TEXTS.hint);
+        speak(VO_TEXTS.hint);
+      } else if (waitingMs >= HINT_REPLAY_MS && hintStageRef.current < 1) {
+        hintStageRef.current = 1;
+        playSequence(round);
+      }
     };
-  }, [clearSequenceTimer, currentRound, introShown, isActive, playRoundSequence]);
 
-  useEffect(() => {
-    if (found.size === ANIMALS.length && onGameComplete) {
-      const completionTimer = setTimeout(() => {
-        onGameComplete({
-          matchedAnimals: Array.from(found),
-          totalMatched: ANIMALS.length
-        });
-      }, 1500);
-      return () => clearTimeout(completionTimer);
-    }
-  }, [found, onGameComplete]);
+    const timer = setInterval(tick, 1000);
+    return () => clearInterval(timer);
+  }, [isActive, phase, playSequence, playSound, round, schedule, showFeedback, speak]);
 
-  const handleSpotTap = useCallback((spotId, e) => {
-    e?.stopPropagation();
-    if (!isActive || currentRound >= ANIMALS.length || !currentAssignment) return;
+  useEffect(() => () => {
+    runIdRef.current += 1;
+    clearTimers();
+    stopAudio();
+  }, [clearTimers, stopAudio]);
 
-    const isCorrect = playingSpotId === spotId && currentStepIsTarget;
+  const startReveal = useCallback((animalRound) => {
+    if (!animalRound) return;
+    runIdRef.current += 1;
+    clearTimers();
+    stopAudio();
+    setPhase(PHASE.REVEALING);
+    setActiveSourceId(null);
+    setHintSourceId(null);
+    setWrongSourceId(null);
+    setRevealFrameByAnimal((prev) => ({ ...prev, [animalRound.id]: 0 }));
+    speak(VO_TEXTS[animalRound.id]);
 
-    if (isCorrect) {
-      sequenceRunIdRef.current += 1;
-      clearSequenceTimer();
-      setPlayingSpotId(null);
-      setCurrentStepIsTarget(false);
-      playGameAudio(currentAssignment.animal.vo, 0.95, VO_TEXTS[currentAssignment.animal.id]);
-      setFound((prev) => new Set([...prev, currentTargetId]));
-      setRevealedAnimalIds((prev) => new Set([...prev, currentTargetId]));
+    let frame = 0;
+    const advanceFrame = () => {
+      frame += 1;
+      setRevealFrameByAnimal((prev) => ({
+        ...prev,
+        [animalRound.id]: Math.min(frame, animalRound.frames.length - 1)
+      }));
+      if (frame < animalRound.frames.length - 1) {
+        schedule(advanceFrame, REVEAL_FRAME_MS);
+      }
+    };
 
-      sequenceTimerRef.current = setTimeout(() => {
-        setCurrentRound((round) => round + 1);
-      }, 1200);
+    schedule(advanceFrame, REVEAL_FRAME_MS);
+    schedule(() => {
+      const nextIndex = roundIndex + 1;
+      if (nextIndex >= ROUNDS.length) {
+        setPhase(PHASE.COMPLETE);
+        showFeedback(VO_TEXTS.complete);
+        speak(VO_TEXTS.complete);
+
+        const positions = {
+          elephant: ANIMAL_POSITIONS.elephant,
+          cow: ANIMAL_POSITIONS.cow
+        };
+        onAnimalPositionsChange?.(positions);
+
+        schedule(() => {
+          if (completedRef.current) return;
+          completedRef.current = true;
+          onGameComplete?.({
+            matchedAnimals: ROUNDS.map((item) => item.id),
+            totalMatched: ROUNDS.length,
+            animalPositions: positions
+          });
+        }, COMPLETE_DELAY_MS);
+        return;
+      }
+
+      setRoundIndex(nextIndex);
+      playSequence(ROUNDS[nextIndex]);
+    }, (animalRound.frames.length * REVEAL_FRAME_MS) + NEXT_ROUND_DELAY_MS);
+  }, [clearTimers, onAnimalPositionsChange, onGameComplete, playSequence, roundIndex, schedule, showFeedback, speak, stopAudio]);
+
+  const handleSourceTap = useCallback((source, e) => {
+    e.stopPropagation();
+    if (!round || phase !== PHASE.CHOOSING) return;
+
+    if (source.id !== round.targetSourceId) {
+      setWrongSourceId(source.id);
+      showFeedback(VO_TEXTS.neutral);
+      speak(VO_TEXTS.neutral);
+      schedule(() => setWrongSourceId(null), 520);
       return;
     }
 
-    if (playingSpotId) {
-      setWrongSpotId(spotId);
-      if (wrongResetTimerRef.current) clearTimeout(wrongResetTimerRef.current);
-      wrongResetTimerRef.current = setTimeout(() => {
-        setWrongSpotId(null);
-        wrongResetTimerRef.current = null;
-      }, WRONG_FEEDBACK_MS);
-    }
-  }, [
-    clearSequenceTimer,
-    currentAssignment,
-    currentRound,
-    currentStepIsTarget,
-    currentTargetId,
-    isActive,
-    playGameAudio,
-    playingSpotId
-  ]);
-
-  useEffect(() => () => {
-    sequenceRunIdRef.current += 1;
-    stopCurrentAudio();
-    clearSequenceTimer();
-    if (wrongResetTimerRef.current) clearTimeout(wrongResetTimerRef.current);
-  }, [clearSequenceTimer, stopCurrentAudio]);
+    setCompletedRounds((prev) => [...prev, round.id]);
+    showFeedback(`${round.label} found.`);
+    startReveal(round);
+  }, [phase, round, schedule, showFeedback, speak, startReveal]);
 
   if (hideElements || !isActive) return null;
 
   return (
     <div className={`ears-sound-game ${className}`}>
-      <img className="ears-sound-layer ears-sound-layer-back" src={bgBackImg} alt="" />
-      <img className="ears-sound-layer ears-sound-layer-back-rocks" src={backRocksImg} alt="" />
-      <img className="ears-sound-layer ears-sound-layer-middle" src={middleRocksImg} alt="" />
+      <img className="ears-game-bg" src={bgImg} alt="" draggable={false} />
 
-      {HIDE_SPOTS.map((spot) => {
-        const assignment = spotAssignments.find((item) => item.spot.id === spot.id);
-        const animal = assignment?.animal;
-        const isFound = animal && revealedAnimalIds.has(animal.id);
-        const isPlaying = playingSpotId === spot.id;
-        const isWrong = wrongSpotId === spot.id;
+      <div className="ears-game-prompt">
+        <span>
+          {phase === PHASE.LISTENING
+            ? 'Listen to each sound'
+            : phase === PHASE.CHOOSING
+              ? 'Choose the animal sound'
+              : phase === PHASE.REVEALING
+                ? 'You found it'
+                : 'You listened carefully'}
+        </span>
+        <strong>{completedRounds.length}/{ROUNDS.length}</strong>
+      </div>
+
+      {round?.sources.map((source, index) => {
+        const isPlaying = activeSourceId === source.id;
+        const isWrong = wrongSourceId === source.id;
+        const isHinted = hintSourceId === source.id;
+        const locked = phase !== PHASE.CHOOSING;
 
         return (
           <button
-            key={spot.id}
+            key={`${round.id}-${source.id}`}
             type="button"
-            className={`ears-hide-spot ${isPlaying ? 'playing' : ''} ${isWrong ? 'wrong' : ''} ${isFound ? 'found' : ''}`}
-            style={{
-              left: `${spot.x}%`,
-              top: `${spot.y}%`,
-              '--spot-scale': spot.scale,
-              '--animal-scale': animal ? ANIMAL_SIZES[animal.id] || 1 : 1
-            }}
-            onClick={(e) => handleSpotTap(spot.id, e)}
-            aria-label={isFound && animal ? `${animal.name} found` : 'Hidden listening spot'}
+            className={`ears-source ${locked ? 'locked' : 'ready'} ${isPlaying ? 'playing' : ''} ${isWrong ? 'wrong' : ''} ${isHinted ? 'hinted' : ''}`}
+            style={{ left: `${source.x}%`, top: `${source.y}%`, width: `${source.w}%`, '--source-index': index + 1 }}
+            onClick={(e) => handleSourceTap(source, e)}
+            disabled={locked}
+            aria-label={source.label}
           >
-            <span className="ears-hide-spot-pulse-ring" aria-hidden="true" />
-            <img src={spot.img} alt="" className="ears-hide-spot-art" draggable={false} />
-            {isFound && animal && (
-              <img
-                src={animal.img}
-                alt={animal.name}
-                className="ears-hide-spot-animal-reveal"
-                draggable={false}
-              />
-            )}
+            <span className="ears-source-number">{index + 1}</span>
+            <span className="ears-source-pulse" aria-hidden="true" />
+            <img src={source.img} alt="" draggable={false} />
           </button>
         );
       })}
 
-      <img className="ears-sound-layer ears-sound-layer-front" src={frontRocksImg} alt="" />
+      {ROUNDS.map((animalRound) => {
+        if (!completedIds.has(animalRound.id)) return null;
+        const frameIndex = revealFrameByAnimal[animalRound.id] ?? animalRound.frames.length - 1;
+        return (
+          <div
+            key={`reveal-${animalRound.id}`}
+            className={`ears-animal-reveal ${animalRound.id}`}
+            style={{
+              left: `${animalRound.revealX}%`,
+              top: `${animalRound.revealY}%`,
+              width: `${animalRound.revealW}%`
+            }}
+          >
+            <img src={animalRound.frames[frameIndex] || animalRound.frames[animalRound.frames.length - 1]} alt="" draggable={false} />
+            <span className="ears-animal-sparkle" aria-hidden="true" />
+          </div>
+        );
+      })}
+
+      <div className="ears-found-tray" aria-hidden="true">
+        {ROUNDS.map((animalRound) => (
+          <div key={animalRound.id} className={`ears-found-slot ${completedIds.has(animalRound.id) ? 'filled' : ''}`}>
+            {completedIds.has(animalRound.id) ? (
+              <img src={animalRound.frames[animalRound.frames.length - 1]} alt="" />
+            ) : (
+              <span />
+            )}
+          </div>
+        ))}
+      </div>
+
+      {feedback && <div className="ears-soft-feedback">{feedback}</div>}
     </div>
   );
 };

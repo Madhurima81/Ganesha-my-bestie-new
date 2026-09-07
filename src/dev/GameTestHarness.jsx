@@ -63,6 +63,7 @@ const GAMES = {
   sarvakaryeshu: { label: 'Sarvakaryeshu',     bg: sarvakaryeshuBg, Comp: lazy(() => import('../zones/shloka-river/scenes/scene4/SarvakaryeshuGame')) },
   sarvada:       { label: 'Sarvada',           bg: sarvadaBg,       Comp: lazy(() => import('../zones/shloka-river/scenes/scene4/SarvadaGame')) },
   'sm-eyes':     { label: 'Symbol Mtn — Eyes Clue Game',            Comp: lazy(() => import('../zones/symbol-mountain/scenes/tusk/EyesPopUpGame')) },
+  'sm-ears':     { label: 'Symbol Mtn — Ear Listening Game',         Comp: lazy(() => import('../zones/symbol-mountain/scenes/tusk/EarsSoundMatchGame')) },
 };
 
 // Full scenes — self-contained (they wire their own SceneManager / useVoiceGuidance /
