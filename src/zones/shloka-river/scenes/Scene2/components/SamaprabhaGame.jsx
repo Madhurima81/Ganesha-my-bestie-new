@@ -8,7 +8,7 @@ import bgImg from '../assets/images/Samaprabha/samaprabha-bg.webp';
 import fawnWorriedImg from '../assets/images/Samaprabha/fawn-worried.webp';
 import fawnHappyImg from '../assets/images/Samaprabha/fawn-happy.webp';
 import fawnWalkImg from '../assets/images/Samaprabha/fawn-walk.webp';
-import shadowImg from '../assets/images/Samaprabha/shadow.webp';
+import shadowImg from '../assets/images/Samaprabha/shadow.png';
 import mysterySourceFullImg from '../assets/images/Samaprabha/mystery-source-full.webp';
 import branchImg from '../assets/images/Samaprabha/reveal-branch.webp';
 import reedsLeavesImg from '../assets/images/Samaprabha/reveal-reeds-leaves.webp';
