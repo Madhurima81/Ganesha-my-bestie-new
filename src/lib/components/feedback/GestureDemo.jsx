@@ -151,6 +151,8 @@ export default function GestureDemo({
   idleDelay = 3000,
   active = true,
   onDismiss,
+  onComplete,
+  iterations = 2,
   zIndex = 100,
 }) {
   const [visible, setVisible] = useState(false);
@@ -178,7 +180,8 @@ export default function GestureDemo({
   // stepping aside so the scene's own hint escalation can take over.
   const handleAnimationEnd = useCallback(() => {
     setVisible(false);
-  }, []);
+    onComplete?.();
+  }, [onComplete]);
 
   // Start idle timer
   useEffect(() => {
@@ -226,8 +229,9 @@ export default function GestureDemo({
 
   if (!visible) return null;
 
+  const loopCount = Math.max(1, Number(iterations) || 1);
   const loopAnimation = {
-    animation: `${styleId} ${config.loopDuration}ms ease-in-out 2`,
+    animation: `${styleId} ${config.loopDuration}ms ease-in-out ${loopCount}`,
   };
 
   return (
@@ -251,7 +255,7 @@ export default function GestureDemo({
           style={{
             left: `${from.x}%`,
             top: `${from.y}%`,
-            animation: `gd-hold-ring ${config.loopDuration}ms ease-in-out 2`,
+            animation: `gd-hold-ring ${config.loopDuration}ms ease-in-out ${loopCount}`,
           }}
         />
       )}

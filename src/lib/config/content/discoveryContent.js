@@ -79,7 +79,7 @@ export const DISCOVERY_CONTENT = {
 
       belly: {
         title: "Big Belly",
-        affirmation: "I have room for all my feelings.",
+        affirmation: "I can feel many things and still stay steady.",
         icon: 'belly-full'
       }
     },

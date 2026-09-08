@@ -1,549 +1,425 @@
-﻿/* zones/symbol-mountain/scenes/symbol/TuskPathGame.css */
-/* ðŸŽ¯ Tusk Path Game V2 â€” herd + single obstacle */
-
-.tusk-path-game {
-  position: absolute;
-  inset: 0;
+.tusk-giving-game {
+  position: relative;
   width: 100%;
-  height: 100%;
-  z-index: 5;
-  font-family: 'Nunito', sans-serif;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  user-select: none;
+  touch-action: pan-y;
+  background: #d7d4ff;
+  border-radius: 22px;
 }
 
-.tusk-edit-bar {
-  position: absolute;
-  top: 92px;
-  left: 16px;
-  transform: none;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 8px;
-  width: min(260px, calc(100vw - 32px));
-  max-height: calc(var(--app-height, 100vh) - 120px);
-  overflow-y: auto;
-  padding: 12px;
-  border-radius: 16px;
-  background: rgba(41, 34, 62, 0.94);
-  border: 2px solid rgba(255, 210, 74, 0.45);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  z-index: 120;
+.tusk-giving-game * {
+  box-sizing: border-box;
 }
 
-.tusk-debug-panel-toggle {
-  position: absolute;
-  top: 92px;
-  left: 16px;
-  z-index: 121;
-  border: 0;
-  border-radius: 10px;
-  padding: 10px 14px;
-  background: rgba(41, 34, 62, 0.94);
-  color: #fff7d8;
-  font-family: 'Nunito', sans-serif;
-  font-size: 13px;
-  font-weight: 800;
-  cursor: pointer;
-  border: 2px solid rgba(255, 210, 74, 0.45);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-
-.tusk-edit-help {
-  color: #fff7d8;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1.35;
-}
-
-.tusk-edit-toggle,
-.tusk-edit-item-btn,
-.tusk-edit-depth-btn,
-.tusk-edit-copy-btn,
-.tusk-edit-save-btn {
-  border: 0;
-  border-radius: 10px;
-  padding: 8px 12px;
-  font-family: 'Nunito', sans-serif;
-  font-weight: 800;
-  font-size: 13px;
-  cursor: pointer;
-  width: 100%;
-  text-align: left;
-}
-
-.tusk-edit-toggle,
-.tusk-edit-item-btn,
-.tusk-edit-depth-btn {
-  background: rgba(255, 255, 255, 0.18);
-  color: #fff7d8;
-}
-
-.tusk-edit-toggle.active,
-.tusk-edit-item-btn.active,
-.tusk-edit-depth-btn.active {
-  background: #ffcb3d;
-  color: #3a2f54;
-}
-
-.tusk-edit-copy-btn {
-  background: #80d8ff;
-  color: #16324f;
-}
-
-.tusk-edit-save-btn {
-  background: #3ddc84;
-  color: #123b2a;
-}
-
-.tusk-edit-depths {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.tusk-edit-section-label {
-  color: #ffda6a;
-  font-size: 11px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-top: 2px;
-}
-
-.tusk-path-layer {
+.tusk-bg {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.tusk-instruction {
+  position: absolute;
+  z-index: 40;
+  left: 50%;
+  top: 3.5%;
+  transform: translateX(-50%);
+  max-width: 68%;
+  padding: 9px 15px;
+  border-radius: 999px;
+  background: rgba(255, 249, 230, 0.94);
+  color: #5d2e0f;
+  font-weight: 800;
+  font-size: clamp(13px, 1.65vw, 19px);
+  text-align: center;
+  box-shadow: 0 5px 16px rgba(60, 35, 90, 0.1);
   pointer-events: none;
 }
 
-.tusk-path-layer-back { z-index: 1; }
-
-/* â”€â”€â”€ Animal Herd â”€â”€â”€ */
-
-/* â”€â”€â”€ Animal Herd â”€â”€â”€ */
-
-.tusk-path-animal {
+.animal {
   position: absolute;
-  z-index: 10;
-  width: clamp(70px, 9vw, 110px);
-  height: clamp(70px, 9vw, 110px);
-  transform: translate(-50%, -50%) scale(var(--animal-scale, 1));
-  cursor: pointer;
-  user-select: none;
-  -webkit-user-select: none;
-  -webkit-tap-highlight-color: transparent;
-  /* `left` transition = herd slide between obstacles */
-  transition: left 800ms ease-out, transform 300ms ease-out, filter 400ms ease-out;
-  animation: tusk-animal-breath 3s ease-in-out infinite;
+  z-index: 12;
+  transform: translate(-50%, -50%);
+  transition: opacity 260ms ease, transform 260ms ease, filter 260ms ease;
+  pointer-events: none;
 }
 
-.tusk-path-animal.static-preview {
+.animal img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.animal.active {
+  opacity: 1;
+  filter: saturate(1);
+  transform: translate(-50%, -50%) scale(1.04);
+}
+
+.animal.dimmed {
+  opacity: 0.66;
+  filter: saturate(0.82);
+}
+
+.peacock {
+  left: 16%;
+  top: 62%;
+  width: 16%;
+}
+
+.monkey {
+  left: 31%;
+  top: 60%;
+  width: 14%;
+}
+
+.cow {
+  left: 69%;
+  top: 61%;
+  width: 19%;
+}
+
+.elephant {
+  left: 84%;
+  top: 58%;
+  width: 18%;
+}
+
+.animal-button {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  min-width: 0;
+  min-height: 0;
   cursor: default;
 }
 
-.tusk-path-animal.debug-draggable {
-  cursor: grab;
-  touch-action: none;
-  outline: 2px dashed rgba(255, 203, 61, 0.65);
-  outline-offset: 4px;
-}
-
-.tusk-path-animal img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  display: block;
-  pointer-events: none;
-}
-
-.tusk-path-animal:hover {
-  transform: translate(-50%, -50%) scale(calc(var(--animal-scale, 1) * 1.06));
-}
-
-.tusk-path-animal.wrong {
-  animation: tusk-animal-wobble 700ms ease-in-out;
-}
-
-.tusk-path-animal.hinted {
-  filter: drop-shadow(0 0 14px #FFD700);
-}
-
-.tusk-path-animal.celebrate {
-  animation: tusk-animal-celebrate 1.6s ease-in-out infinite;
-}
-
-@keyframes tusk-animal-breath {
-  0%, 100% { transform: translate(-50%, -50%) scale(var(--animal-scale, 1)); }
-  50%      { transform: translate(-50%, -50%) scale(calc(var(--animal-scale, 1) * 1.03)); }
-}
-
-@keyframes tusk-animal-wobble {
-  0%, 100% { transform: translate(-50%, -50%) scale(var(--animal-scale, 1)) rotate(0); }
-  20%      { transform: translate(-50%, -50%) scale(var(--animal-scale, 1)) translateX(-6px) rotate(-4deg); }
-  40%      { transform: translate(-50%, -50%) scale(var(--animal-scale, 1)) translateX(6px) rotate(4deg); }
-  60%      { transform: translate(-50%, -50%) scale(var(--animal-scale, 1)) translateX(-4px) rotate(-3deg); }
-  80%      { transform: translate(-50%, -50%) scale(var(--animal-scale, 1)) translateX(4px) rotate(3deg); }
-}
-
-@keyframes tusk-animal-bob {
-  0%, 100% { transform: translate(-50%, -50%) scale(var(--animal-scale, 1)) translateY(0); }
-  50%      { transform: translate(-50%, -50%) scale(var(--animal-scale, 1)) translateY(-6px); }
-}
-
-@keyframes tusk-animal-celebrate {
-  0%, 100% { transform: translate(-50%, -50%) scale(var(--animal-scale, 1)) translateY(0) rotate(0); }
-  25%      { transform: translate(-50%, -50%) scale(var(--animal-scale, 1)) translateY(-8px) rotate(-3deg); }
-  75%      { transform: translate(-50%, -50%) scale(var(--animal-scale, 1)) translateY(-8px) rotate(3deg); }
-}
-
-/* Lean forward when correctly tapped */
-.tusk-path-animal.leaning {
-  animation: tusk-animal-lean 500ms ease-out;
-}
-
-@keyframes tusk-animal-lean {
-  0%   { transform: translate(-50%, -50%) scale(var(--animal-scale, 1)); }
-  40%  { transform: translate(calc(-50% + 18px), -50%) scale(calc(var(--animal-scale, 1) * 1.08)); }
-  100% { transform: translate(-50%, -50%) scale(var(--animal-scale, 1)); }
-}
-
-/* Helper animal glides to the obstacle and works */
-.tusk-path-animal.helping {
-  transition: left 800ms ease-out, top 800ms ease-out, transform 300ms ease-out;
-  filter: drop-shadow(0 0 12px #FFD700);
-  z-index: 11;
-  animation: tusk-animal-work 900ms ease-in-out infinite;
-}
-
-@keyframes tusk-animal-work {
-  0%, 100% { transform: translate(-50%, -50%) scale(var(--animal-scale, 1)) rotate(0); }
-  50%      { transform: translate(calc(-50% + 8px), -50%) scale(calc(var(--animal-scale, 1) * 1.05)) rotate(3deg); }
-}
-
-/* â”€â”€â”€ Obstacles â”€â”€â”€ */
-
-.tusk-path-obstacle {
-  position: absolute;
-  z-index: 2;
-  transform: translate(-50%, -50%) scale(var(--obstacle-scale, 1));
+.animal-button.active {
   pointer-events: auto;
-  user-select: none;
-  touch-action: none;
-  transition: opacity 600ms ease-out, transform 600ms ease-out, filter 600ms ease-out;
+  cursor: pointer;
 }
 
-/* Active blocking obstacle = full size */
-.tusk-path-obstacle.active {
-  width: clamp(320px, 44vw, 520px);
-  height: clamp(320px, 44vw, 520px);
+.bunny-zone {
+  position: absolute;
+  z-index: 17;
+  left: 50%;
+  top: 65%;
+  width: 16%;
+  transform: translate(-50%, -50%);
+  border: 0;
+  padding: 0;
+  background: transparent;
+  min-width: 0;
+  min-height: 0;
 }
 
-/* Obstacle becomes the work surface once helper is latched */
-.tusk-path-obstacle.active.workable {
-  cursor: grab;
-  touch-action: none;
+.bunny {
+  width: 100%;
+  display: block;
 }
 
-/* Cleared evidence = smaller, slightly dimmed, sits in path */
-.tusk-path-obstacle.cleared-evidence {
-  width: clamp(80px, 12vw, 140px);
-  height: clamp(80px, 12vw, 140px);
-  opacity: 0.75;
-  filter: saturate(0.85);
+.bunny-zone.is-target {
+  cursor: pointer;
 }
 
-.tusk-path-obstacle img {
+.bunny-zone.is-target::after,
+.grass-bed-zone.is-target::after {
+  content: '';
+  position: absolute;
+  inset: -8%;
+  border: 3px solid rgba(255, 203, 74, 0);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.hint-1 .bunny-zone.is-target::after,
+.hint-1 .grass-bed-zone.is-target::after {
+  border-color: rgba(255, 203, 74, 0.36);
+  animation: tuskPulse 1.7s ease-in-out infinite;
+}
+
+.hint-2 .bunny-zone.is-target::after,
+.hint-2 .grass-bed-zone.is-target::after,
+.hint-3 .bunny-zone.is-target::after,
+.hint-3 .grass-bed-zone.is-target::after {
+  border-color: rgba(255, 203, 74, 0.72);
+  animation: tuskPulse 1.1s ease-in-out infinite;
+}
+
+.hint-1 .animal.active,
+.hint-2 .animal.active,
+.hint-3 .animal.active {
+  filter: drop-shadow(0 0 8px rgba(255, 203, 74, 0.32));
+}
+
+.water-zone {
+  position: absolute;
+  z-index: 16;
+  left: 58%;
+  top: 72%;
+  width: 10%;
+  transform: translate(-50%, -50%);
+}
+
+.bowl {
+  width: 100%;
+  display: block;
+}
+
+.water-pour {
+  position: absolute;
+  z-index: 20;
+  left: 44%;
+  top: -145%;
+  width: 62%;
+  transform: rotate(10deg);
+  transform-origin: bottom center;
+  animation: pourAppear 700ms ease-out both;
+}
+
+.grass-bed-zone {
+  position: absolute;
+  z-index: 14;
+  left: 50%;
+  top: 76%;
+  width: 22%;
+  height: 13%;
+  transform: translate(-50%, -50%);
+  border: 0;
+  background: transparent;
+  padding: 0;
+}
+
+.grass-bed-zone img {
   width: 100%;
   height: 100%;
   object-fit: contain;
+}
+
+.grass-bed-zone > span {
   display: block;
-  pointer-events: none;
-}
-
-.tusk-debug-label {
-  position: absolute;
-  left: 50%;
-  top: calc(100% + 10px);
-  transform: translateX(-50%);
-  padding: 5px 10px;
-  border-radius: 999px;
-  background: rgba(31, 25, 46, 0.9);
-  color: #fff2b6;
-  font-size: 12px;
-  font-weight: 800;
-  white-space: nowrap;
-  pointer-events: none;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-}
-
-.tusk-debug-label.selected {
-  background: #ffcb3d;
-  color: #352a4f;
-}
-
-.tusk-path-obstacle .tusk-debug-label {
-  top: auto;
-  bottom: calc(100% + 10px);
-}
-
-/* Crumble animation when active obstacle clears (image swap + scale down) */
-.tusk-path-obstacle.active.crumbling {
-  animation: tusk-obstacle-crumble 900ms ease-out forwards;
-}
-
-@keyframes tusk-obstacle-crumble {
-  0%   { transform: translate(-50%, -50%) scale(var(--obstacle-scale, 1)); }
-  30%  { transform: translate(-50%, -50%) scale(calc(var(--obstacle-scale, 1) * 0.9)) rotate(-2deg); }
-  60%  { transform: translate(-50%, -50%) scale(calc(var(--obstacle-scale, 1) * 0.55)) rotate(2deg); }
-  100% { transform: translate(-50%, -50%) scale(calc(var(--obstacle-scale, 1) * 0.6)); }
-}
-
-/* Idle hint glow */
-.tusk-path-obstacle.active.hint {
-  animation: tusk-obstacle-hint 1.4s ease-in-out infinite;
-}
-
-@keyframes tusk-obstacle-hint {
-  0%, 100% { filter: drop-shadow(0 0 4px #FFD700); }
-  50%      { filter: drop-shadow(0 0 16px #FFD700); }
-}
-
-/* Final reveal — sparkle glow when elephant peels the last rock layer */
-.tusk-path-obstacle.boulder.final-reveal {
-  animation: tusk-final-sparkle 900ms ease-out;
-}
-
-@keyframes tusk-final-sparkle {
-  0%   { filter: drop-shadow(0 0 0 #FFD700); }
-  50%  { filter: drop-shadow(0 0 24px #FFD700) brightness(1.3); }
-  100% { filter: drop-shadow(0 0 0 #FFD700); }
-}
-
-/* â”€â”€â”€ Per-tap feedback animations â”€â”€â”€ */
-
-.tusk-path-obstacle.active.feedback-shake {
-  animation: tusk-fb-shake 450ms ease-in-out;
-}
-@keyframes tusk-fb-shake {
-  0%, 100% { transform: translate(-50%, -50%) scale(var(--obstacle-scale, 1)); }
-  25%      { transform: translate(-50%, -50%) scale(var(--obstacle-scale, 1)) translateX(-8px) rotate(-3deg); }
-  75%      { transform: translate(-50%, -50%) scale(var(--obstacle-scale, 1)) translateX(8px) rotate(3deg); }
-}
-
-.tusk-path-obstacle.active.feedback-pluck {
-  animation: tusk-fb-pluck 450ms ease-out;
-}
-@keyframes tusk-fb-pluck {
-  0%   { transform: translate(-50%, -50%) scale(var(--obstacle-scale, 1)); }
-  50%  { transform: translate(-50%, -50%) scale(calc(var(--obstacle-scale, 1) * 0.95)) rotate(-2deg); }
-  100% { transform: translate(-50%, -50%) scale(var(--obstacle-scale, 1)); }
-}
-
-.tusk-path-obstacle.active.feedback-sweep {
-  animation: tusk-fb-sweep 500ms ease-out;
-}
-@keyframes tusk-fb-sweep {
-  0%   { transform: translate(-50%, -50%) scale(var(--obstacle-scale, 1)); }
-  50%  { transform: translate(-50%, -50%) scale(var(--obstacle-scale, 1)) translateX(10px) rotate(3deg); }
-  100% { transform: translate(-50%, -50%) scale(var(--obstacle-scale, 1)); }
-}
-
-.tusk-path-obstacle.active.feedback-walk {
-  animation: tusk-fb-walk 500ms ease-out;
-}
-@keyframes tusk-fb-walk {
-  0%   { transform: translate(-50%, -50%) scale(var(--obstacle-scale, 1)); }
-  50%  { transform: translate(-50%, -50%) scale(calc(var(--obstacle-scale, 1) * 1.04)) translateY(-3px); }
-  100% { transform: translate(-50%, -50%) scale(var(--obstacle-scale, 1)); }
-}
-
-/* â”€â”€â”€ Progress dots â”€â”€â”€ */
-
-.tusk-path-progress {
-  position: absolute;
-  top: clamp(12px, 2vh, 22px);
-  right: clamp(12px, 2vw, 22px);
-  display: flex;
-  gap: clamp(6px, 1vw, 10px);
-  z-index: 10;
-}
-
-.tusk-path-dot {
-  width: clamp(12px, 1.8vw, 18px);
-  height: clamp(12px, 1.8vw, 18px);
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.5);
-  border: clamp(2px, 0.3vw, 3px) solid #6A1B9A;
-  transition: all 400ms ease-out;
-}
-
-.tusk-path-dot.current {
-  background: rgba(255, 215, 0, 0.5);
-  animation: tusk-dot-pulse 1.4s ease-in-out infinite;
-}
-
-.tusk-path-dot.done {
-  background: #FFD700;
-  border-color: #FF5722;
-}
-
-@keyframes tusk-dot-pulse {
-  0%, 100% { transform: scale(1); }
-  50%      { transform: scale(1.2); }
-}
-
-/* â”€â”€â”€ Counter â”€â”€â”€ */
-
-.tusk-path-counter {
-  position: absolute;
-  top: clamp(12px, 2vh, 22px);
-  left: clamp(16px, 2vw, 22px);
-  transform: none;
-  padding: clamp(6px, 1vh, 10px) clamp(14px, 2vw, 22px);
-  background: rgba(106, 27, 154, 0.85);
-  color: white;
-  border-radius: clamp(16px, 2.5vw, 24px);
-  font-family: 'Baloo 2', cursive;
-  font-weight: 500;
-  font-size: clamp(13px, 1.8vw, 18px);
-  letter-spacing: 0.5px;
-  z-index: 10;
-  pointer-events: none;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  z-index: 121;
-}
-
-.tusk-path-counter span {
-  color: #FFD700;
-  font-weight: 700;
-  margin: 0 2px;
-}
-
-/* â”€â”€â”€ Tap progress bar (multi-tap obstacles) â”€â”€â”€ */
-
-.tusk-path-progress-bar {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  width: clamp(80px, 12vw, 140px);
-  height: clamp(4px, 0.5vh, 6px);
-  background: rgba(255, 255, 255, 0.5);
-  border-radius: 999px;
-  overflow: hidden;
-  z-index: 6;
-  pointer-events: none;
-  transition: opacity 400ms ease-out;
-}
-
-.tusk-path-progress-bar.completing {
-  opacity: 0;
-}
-
-.tusk-path-progress-fill {
+  width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, #FFD700 0%, #FFA726 100%);
-  border-radius: 999px;
-  box-shadow: 0 0 6px rgba(255, 215, 0, 0.6);
-  transition: width 350ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* â”€â”€â”€ Mid-step tap hint â”€â”€â”€ */
-
-.tusk-path-tap-hint {
+.draggable-item {
   position: absolute;
-  top: clamp(50px, 7vh, 75px);
-  left: 50%;
-  transform: translateX(-50%);
-  padding: clamp(6px, 1vh, 10px) clamp(14px, 2vw, 22px);
-  background: rgba(255, 248, 231, 0.92);
-  border: clamp(2px, 0.3vw, 3px) solid #FFD700;
-  border-radius: clamp(16px, 2.5vw, 24px);
-  font-family: 'Baloo 2', cursive;
-  font-weight: 500;
-  font-size: clamp(13px, 1.7vw, 17px);
-  color: #FF5722;
-  z-index: 10;
+  z-index: 28;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: grab;
+  min-width: 44px;
+  min-height: 44px;
+  touch-action: none;
+}
+
+.draggable-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
   pointer-events: none;
-  animation: tusk-hint-bounce 1s ease-in-out infinite;
 }
 
-@keyframes tusk-hint-bounce {
-  0%, 100% { transform: translateX(-50%) translateY(0); }
-  50%      { transform: translateX(-50%) translateY(-3px); }
+.draggable-item.selected {
+  filter: drop-shadow(0 0 10px rgba(255, 203, 74, 0.75));
 }
 
-/* â”€â”€â”€ Finale â”€â”€â”€ */
+.mango-item {
+  left: 34%;
+  top: 60%;
+  width: 8%;
+}
 
-.tusk-path-finale {
+.grass-item {
+  left: 68%;
+  top: 61%;
+  width: 9%;
+}
+
+.feather-item {
+  left: 19%;
+  top: 61%;
+  width: 9%;
+}
+
+.hint-2 .draggable-item,
+.hint-3 .draggable-item {
+  animation: itemNudge 1.3s ease-in-out infinite;
+}
+
+.result-prop {
+  position: absolute;
+  z-index: 22;
+  pointer-events: none;
+}
+
+.mango-result {
+  left: 46%;
+  top: 68%;
+  width: 6%;
+}
+
+.feather-result {
+  left: 42%;
+  top: 72%;
+  width: 12%;
+}
+
+.drag-ghost {
+  position: absolute;
+  z-index: 60;
+  width: 9%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  filter: drop-shadow(0 8px 6px rgba(35, 25, 40, 0.18));
+}
+
+.drag-ghost img {
+  width: 100%;
+  display: block;
+}
+
+.gesture-path {
+  position: absolute;
+  z-index: 55;
+  pointer-events: none;
+  width: 20%;
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    rgba(255,255,255,0),
+    rgba(255,255,255,.9),
+    rgba(255,255,255,0)
+  );
+  transform-origin: left center;
+  opacity: .85;
+}
+
+.gesture-mango {
+  left: 35%;
+  top: 63%;
+  transform: rotate(8deg);
+}
+
+.gesture-grass {
+  left: 65%;
+  top: 65%;
+  transform: rotate(160deg);
+}
+
+.gesture-feather {
+  left: 22%;
+  top: 63%;
+  transform: rotate(8deg);
+}
+
+.gesture-dot {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255,255,255,.98);
+  border: 3px solid rgba(116, 85, 210, .72);
+  animation: handSlide 1.6s ease-in-out infinite;
+}
+
+.tusk-complete {
   position: absolute;
   inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  z-index: 50;
-  pointer-events: none;
-  animation: tusk-finale-fade-in 1200ms ease-out forwards;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  background: rgba(223, 214, 255, 0.66);
+  backdrop-filter: blur(1px);
 }
 
-@keyframes tusk-finale-fade-in {
-  0%   { background: rgba(0, 0, 0, 0); }
-  100% { background: rgba(0, 0, 0, 0.35); }
+.complete-card {
+  width: min(76%, 420px);
+  padding: 24px 22px;
+  border-radius: 28px;
+  background: rgba(255, 249, 230, 0.97);
+  text-align: center;
+  color: #5d2e0f;
+  box-shadow: 0 12px 34px rgba(45, 32, 76, .13);
 }
 
-.tusk-path-finale-glow {
-  position: absolute;
-  width: clamp(200px, 30vw, 360px);
-  height: clamp(200px, 30vw, 360px);
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 215, 0, 0.6) 0%, rgba(255, 215, 0, 0.2) 40%, transparent 70%);
-  animation: tusk-glow-pulse 2.4s ease-in-out infinite;
+.complete-kicker {
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: .03em;
+  opacity: .72;
 }
 
-@keyframes tusk-glow-pulse {
-  0%, 100% { transform: scale(1); opacity: 0.7; }
-  50%      { transform: scale(1.15); opacity: 1; }
+.complete-title {
+  margin-top: 7px;
+  font-size: clamp(20px, 2.8vw, 30px);
+  font-weight: 900;
+  line-height: 1.12;
 }
 
-.tusk-path-finale-tusk {
-  width: clamp(120px, 18vw, 200px);
-  height: clamp(120px, 18vw, 200px);
-  object-fit: contain;
-  filter: drop-shadow(0 0 24px #FFD700);
-  z-index: 1;
-  animation: tusk-finale-tusk-in 1500ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-  opacity: 0;
-  transform: scale(0.3);
+.complete-sub {
+  margin-top: 10px;
+  font-size: clamp(15px, 1.8vw, 19px);
+  font-weight: 750;
 }
 
-@keyframes tusk-finale-tusk-in {
-  0%   { opacity: 0; transform: scale(0.3); }
-  60%  { opacity: 1; transform: scale(1.1); }
-  100% { opacity: 1; transform: scale(1); }
+@keyframes tuskPulse {
+  0%, 100% { transform: scale(.96); opacity: .45; }
+  50% { transform: scale(1.06); opacity: 1; }
 }
 
-.tusk-path-finale-text {
-  margin-top: clamp(16px, 3vh, 28px);
-  padding: clamp(8px, 1.2vh, 12px) clamp(20px, 3vw, 32px);
-  background: rgba(106, 27, 154, 0.92);
-  color: #FFD700;
-  border-radius: clamp(20px, 3vw, 32px);
-  font-family: 'Baloo 2', cursive;
-  font-weight: 500;
-  font-size: clamp(16px, 2.4vw, 24px);
-  letter-spacing: 0.5px;
-  z-index: 1;
-  animation: tusk-finale-text-in 800ms ease-out 1000ms forwards;
-  opacity: 0;
+@keyframes itemNudge {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
 }
 
-@keyframes tusk-finale-text-in {
-  0%   { opacity: 0; transform: translateY(10px); }
-  100% { opacity: 1; transform: translateY(0); }
+@keyframes handSlide {
+  0% { left: 0; opacity: .2; }
+  18% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { left: 100%; opacity: .15; }
 }
 
+@keyframes pourAppear {
+  from { opacity: 0; transform: translateY(-12px) rotate(10deg) scale(.92); }
+  to { opacity: 1; transform: translateY(0) rotate(10deg) scale(1); }
+}
+
+@media (max-width: 720px) {
+  .tusk-instruction {
+    max-width: 82%;
+    top: 2.4%;
+    padding: 7px 11px;
+  }
+
+  .peacock { width: 19%; }
+  .monkey { width: 17%; }
+  .cow { width: 21%; }
+  .elephant { width: 20%; }
+  .bunny-zone { width: 19%; }
+
+  .draggable-item {
+    min-width: 40px;
+    min-height: 40px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animal,
+  .draggable-item,
+  .gesture-dot,
+  .bunny-zone::after,
+  .grass-bed-zone::after,
+  .water-pour {
+    animation: none !important;
+    transition: none !important;
+  }
+}

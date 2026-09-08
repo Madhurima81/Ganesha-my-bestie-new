@@ -1911,7 +1911,7 @@ const handleComplete = () => {
               id="magnifying-glass"
               position={mglassPosition}
               onPositionChange={(newPos) => handleMglassMove(newPos)}
-              bounds={{ top: 0, left: 0, right: 100, bottom: 100 }}
+              bounds={{ top: 0, left: 0, right: 100, bottom: 140 }}
               style={{
                 width: 'clamp(72px, 9vw + 48px, 130px)',
                 height: 'clamp(72px, 9vw + 48px, 130px)',

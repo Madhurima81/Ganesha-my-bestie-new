@@ -50,10 +50,10 @@
 
 @media (min-width: 768px) and (max-width: 1366px) {
   .zone-badge-button {
-    top: 10px;
-    left: 54px; /* 10px + HomeButton's 36px + 8px gap */
-    width: 36px;
-    height: 36px;
-    opacity: 0.9;
+    top: clamp(12px, 1.5vw, 24px);
+    left: calc(clamp(12px, 1.5vw, 24px) + clamp(52px, 5.5vw, 68px) + 8px);
+    width: clamp(52px, 5.5vw, 68px);
+    height: clamp(52px, 5.5vw, 68px);
+    opacity: 0.98;
   }
 }

@@ -73,6 +73,9 @@ export const VOICE_SCRIPTS = {
       scene10_vak_current_too_strong: {
         text: "The river current is too strong there. Let's try another way."
       },
+      scene10_vak_hint_another_way: {
+        text: "Can you find another way?"
+      },
       scene10_maha_intro: {
         text: "Now let's help the little calf."
       },
@@ -129,6 +132,12 @@ export const VOICE_SCRIPTS = {
       },
       scene11SuryaHint: {
         text: "Swipe the dark patch."
+      },
+      surya_hint_rub: {
+        text: "Rub the glowing spot."
+      },
+      surya_hint_keep: {
+        text: "Keep rubbing."
       },
       scene11SamaHint: {
         text: "Drag the light across. Share the light evenly. Keep balancing."
@@ -357,16 +366,18 @@ export const VOICE_SCRIPTS = {
       sharingPower: {
         text: "The sweetness of modak reminds us of a happy, peaceful feeling inside. Say it with me... I have joy inside me."
       },
-      // Instruction to feed (drag version)
-      feedGanesha: {
-        text: "Drag each feeling into Ganesha's belly. There is room for every feeling."
+      bellyStart: {
+        text: "Mooshika is feeling lots of things as he goes. Help him keep going steadily."
+      },
+      bellyIdle: {
+        text: "He can keep going with all those feelings."
       },
 
       // ========================================
       // PHASE 4: SCENE COMPLETE
       // ========================================
-      gratitudePower: {
-        text: "There is room for all my feelings."
+      bellyPower: {
+        text: "I can feel many things and still stay steady."
       },
       kindHeartPower: {
         text: "You have a kind heart!",
@@ -379,7 +390,7 @@ export const VOICE_SCRIPTS = {
       },
 
       sceneComplete: {
-        text: "You helped Mooshika settle, found the sweetness inside, and made room for every feeling."
+        text: "You helped Mooshika settle, found the sweetness inside, and stayed steady with many feelings."
       },
     }
     ,
@@ -440,7 +451,7 @@ export const VOICE_SCRIPTS = {
         text: "I can stay calm when things get messy."
       },
       hintBelly: {
-        text: "I have room for all my feelings."
+        text: "I can feel many things and still stay steady."
       },
       hintMooshika: {
         text: "I can guide my busy thoughts."
