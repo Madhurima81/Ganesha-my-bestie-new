@@ -43,7 +43,7 @@ import { getSceneResetConfig } from '../../../../lib/config/SceneResetConfigs';
 // Import game components
 import EyesPopUpGame from './EyesPopUpGame';
 import EarsSoundMatchGame from './EarsSoundMatchGame';
-import TuskPathGame from './TuskPathGame';
+import TuskGivingGame from './TuskGivingGame';
 
 // UI Components
 import FireworksCompletion from '../../../../lib/components/feedback/FireworksCompletion';
@@ -922,29 +922,14 @@ const SymbolMountainSceneContent = ({
                 />
               )}
 
-              {/* TUSK GAME - Path clearing */}
+              {/* TUSK GAME - Giving (mango / water / grass / feather to bunny traveller) */}
               {sceneState.showTuskAssemblyGame &&
                !isEarRevealActive &&
                !sceneState.discoveredSymbols?.tusk && (
-                <TuskPathGame
+                <TuskGivingGame
                   key={`tusk-${tuskTestRunKey}`}
                   isActive={sceneState.showTuskAssemblyGame}
                   isAudioOn={isAudioOn}
-                  animalPositions={sceneState.tuskAnimalPositions}
-                  obstaclePosition={sceneState.tuskObstaclePosition}
-                  onAnimalPositionsChange={(positions) => {
-                    sceneActions.updateState({
-                      tuskAnimalPositions: {
-                        ...(sceneState.tuskAnimalPositions || {}),
-                        ...(positions || {})
-                      }
-                    });
-                  }}
-                  onObstaclePositionChange={(position) => {
-                    sceneActions.updateState({
-                      tuskObstaclePosition: position || sceneState.tuskObstaclePosition || null
-                    });
-                  }}
                   onGameComplete={handleTuskGameComplete}
                 />
               )}
