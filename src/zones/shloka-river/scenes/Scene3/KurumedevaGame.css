@@ -912,3 +912,18 @@
   cursor: pointer;
   touch-action: none;
 }
+
+/* Friend stays and helps with the one cooperative action (not just delivery). */
+.kuru-friend--helping {
+  z-index: 32;
+}
+
+.kuru-friend--helping img {
+  transform-origin: center bottom;
+  animation: kuruHelping 1.4s ease-in-out infinite;
+}
+
+@keyframes kuruHelping {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}

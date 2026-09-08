@@ -29,7 +29,7 @@ export const ZONE_CONFIGS = {
         emoji: '🪷',
         iconImage: '/images/zones/symbol-mountain/pond-icon.png',
         description: 'Guide the water around the rock, then help the lotus bloom.',
-        unlocked: false,
+        unlocked: true,
         order: 2,
         position: { top: 25, left: 75 }
       },
@@ -39,7 +39,7 @@ export const ZONE_CONFIGS = {
         emoji: '😀',
         iconImage: '/images/symbols-symbolmountain/broken-tusk-symbol.png',
         description: 'Spot hidden friends, follow their sounds, then choose who can clear each obstacle.',
-        unlocked: false,
+        unlocked: true,
         order: 3,
         position: { top: 25, left: 50 }
       },

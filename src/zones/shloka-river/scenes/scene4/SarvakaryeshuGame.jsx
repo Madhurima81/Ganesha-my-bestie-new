@@ -38,7 +38,7 @@ const SITUATIONS = [
     after: puzzleAfterImg,
     beforeLine: 'Oops! The painting went splat.',
     afterLine: 'The splat became something new!',
-    question: 'Which symbol fits best?',
+    question: 'Which Ganesha power can help?',
     voKeyBefore: 'scene13_puzzle',
     voKeyAfter: 'scene13_puzzle_after',
     correct: 'trunk',
@@ -57,7 +57,7 @@ const SITUATIONS = [
     after: sportsAfterImg,
     beforeLine: 'His feelings feel too big.',
     afterLine: 'He feels calmer inside.',
-    question: 'Which symbol fits best?',
+    question: 'Which Ganesha power can help?',
     voKeyBefore: 'scene13_sports',
     voKeyAfter: 'scene13_sports_after',
     correct: 'belly',
@@ -76,7 +76,7 @@ const SITUATIONS = [
     after: grandmaAfterImg,
     beforeLine: 'Where did the toy go?',
     afterLine: 'She spotted the clue!',
-    question: 'Which symbol fits best?',
+    question: 'Which Ganesha power can help?',
     voKeyBefore: 'scene13_bike',
     voKeyAfter: 'scene13_bike_after',
     correct: 'eyes',
@@ -97,7 +97,7 @@ const SITUATIONS = [
     after: bikeBeforeImg,
     beforeLine: 'So many things are distracting him.',
     afterLine: 'He stayed with what mattered.',
-    question: 'Which symbol fits best?',
+    question: 'Which Ganesha power can help?',
     voKeyBefore: 'scene13_grandma',
     voKeyAfter: 'scene13_grandma_after',
     correct: 'tusk',
@@ -320,7 +320,6 @@ export default function SarvakaryeshuGame({
 
     stopSceneVoice?.();
     setPicked(powerId);
-    markInteraction();
 
     if (!correct) {
       setIsCorrect(null);
@@ -329,6 +328,9 @@ export default function SarvakaryeshuGame({
       return;
     }
 
+    // Only successful understanding resets the hint cycle — a wrong guess
+    // must not let the child keep postponing the clues.
+    markInteraction();
     resolvingRef.current = true;
     setIsCorrect(true);
     setGuidanceMessage('');
@@ -480,7 +482,7 @@ export default function SarvakaryeshuGame({
         </div>
 
         {phase === 'done' && (
-          <p className="sarva-doneline">Ganesha's lessons can help in many moments!</p>
+          <p className="sarva-doneline">Ganesha's wisdom can help in every task!</p>
         )}
 
         {phase === 'play' && (

@@ -1,241 +1,179 @@
-﻿// zones/symbol-mountain/scenes/symbol/EyesPopUpGame.jsx
-// ðŸŽ¯ Eyes Pop-Up Game â€” discover 2 animals as they fade in/out from hidden spots
-// Replaces EyesTelescopeGame (magnifier mechanic)
+// zones/symbol-mountain/scenes/tusk/EyesPopUpGame.jsx
+// Eyes investigation game: find clues first, then find who they belong to.
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useAppVisibility from '../../../../lib/hooks/useAppVisibility';
 import './EyesPopUpGame.css';
 
-// Animals
-import peacockImg from './assets/images/peacock-new.webp';
-import monkeyImg from './assets/images/monkey-new.webp';
-import bgBackImg from './assets/images/trail-bg.webp';
-import backRocksImg from './assets/images/trail-back.webp';
-import middleRocksImg from './assets/images/trail-mid.webp';
-import frontRocksImg from './assets/images/trail-front.webp';
-import { ANIMAL_SIZES } from './animalConfig';
+import bgImg from './assets/images/eyes-game/symbol_mountain_3_bg.png';
+import featherImg from './assets/images/eyes-game/peacock_feather.png';
+import mangoImg from './assets/images/eyes-game/mango.png';
+import butterflyImg from './assets/images/eyes-game/butterfly.png';
+import leavesImg from './assets/images/eyes-game/drifting_leaf_cluster.png';
+import bushImg from './assets/images/eyes-game/modular_tall_bush.png';
+import rockImg from './assets/images/eyes-game/modular_rock_cluster.png';
+import peacockRestingImg from './assets/images/eyes-game/peacock_01_resting_fanned_tail.png';
+import peacockAdmiringImg from './assets/images/eyes-game/peacock_02_admiring_tail.png';
+import peacockSparkleImg from './assets/images/eyes-game/peacock_03_tail_sparkle.png';
+import peacockHighlightImg from './assets/images/eyes-game/peacock_04_feather_highlight.png';
+import monkeyRestingImg from './assets/images/eyes-game/monkey_01_resting.png';
+import monkeyLookingImg from './assets/images/eyes-game/monkey_02_looks_toward_fruit.png';
+import monkeyPicksImg from './assets/images/eyes-game/monkey_03_picks_fruit_up.png';
+import monkeySmilesImg from './assets/images/eyes-game/monkey_04_smiles_holds_close.png';
+import monkeyHoldingImg from './assets/images/eyes-game/monkey_05_idle_holding_fruit.png';
 import { ANIMAL_POSITIONS } from './animalPositions';
 
-// VO — recorded files do not exist yet. Paths are null so the Web Speech
-// fallback fires immediately (the old '/src/...' URLs 404'd in production
-// builds; when real files land, import them via Vite so they get bundled).
-const VO_PATHS = {
-  peacock: null,
-  monkey: null,
-  intro: null
+const FLOW = {
+  CLUES: 'clues',
+  ANIMALS: 'animals',
+  COMPLETE: 'complete'
 };
+
+const DEBUG_UI_ENABLED =
+  typeof window !== 'undefined' &&
+  (window.location.pathname.includes('game-test') ||
+    new URLSearchParams(window.location.search).has('debugEyes'));
+const LAYOUT_STORAGE_KEY = 'symbol_mountain_eyes_layout_v1';
+const LAYOUT_PRESET_VERSION = '2026-09-07-eyes-investigation-layout-1';
+
+const DEFAULT_LAYOUT = {
+  prompt: { x: 50, y: 5.6, w: 52, z: 40 },
+  feedback: { x: 50, y: 84, w: 40, z: 44 },
+  tray: { x: 50, y: 93, w: 26, z: 42 },
+  clueFeather: { x: 28, y: 58, w: 10, z: 12 },
+  clueMango: { x: 44, y: 70, w: 9, z: 12 },
+  clueButterfly: { x: 77, y: 58, w: 11, z: 11 },
+  clueLeaves: { x: 73, y: 82, w: 14, z: 11 },
+  peacockHidden: { x: 28, y: 56, w: 26, z: 13 },
+  monkeyHidden: { x: 45, y: 64, w: 15, z: 13 },
+  peacockReveal: { x: 69.21, y: 68.92, w: 26, z: 32 },
+  monkeyReveal: { x: 10.07, y: 18.11, w: 15, z: 32 },
+  animalBird: { x: 77, y: 47, w: 8, z: 11 },
+  animalLeaves: { x: 73, y: 78, w: 13, z: 11 },
+  propBushLeft: { x: 28, y: 61, w: 22, z: 18 },
+  propRockLeft: { x: 43, y: 76, w: 20, z: 20 },
+  propBushRight: { x: 78, y: 63, w: 19, z: 18 }
+};
+
+const DEBUG_KEYS = [
+  { key: 'prompt', label: 'Prompt' },
+  { key: 'feedback', label: 'Feedback' },
+  { key: 'tray', label: 'Found tray' },
+  { key: 'clueFeather', label: 'Clue - feather' },
+  { key: 'clueMango', label: 'Clue - mango' },
+  { key: 'clueButterfly', label: 'Clue decoy - butterfly' },
+  { key: 'clueLeaves', label: 'Clue decoy - leaves' },
+  { key: 'peacockHidden', label: 'Peacock hidden' },
+  { key: 'monkeyHidden', label: 'Monkey hidden' },
+  { key: 'peacockReveal', label: 'Peacock reveal' },
+  { key: 'monkeyReveal', label: 'Monkey reveal' },
+  { key: 'animalBird', label: 'Animal decoy - bird' },
+  { key: 'animalLeaves', label: 'Animal decoy - leaves' },
+  { key: 'propBushLeft', label: 'Prop - left bush' },
+  { key: 'propRockLeft', label: 'Prop - rock' },
+  { key: 'propBushRight', label: 'Prop - right bush' }
+];
+
+const loadSavedLayout = () => {
+  if (typeof window === 'undefined') return DEFAULT_LAYOUT;
+  try {
+    const saved = JSON.parse(window.localStorage.getItem(LAYOUT_STORAGE_KEY) || '{}');
+    if (saved.version !== LAYOUT_PRESET_VERSION || !saved.layout) return DEFAULT_LAYOUT;
+    return Object.fromEntries(
+      Object.entries(DEFAULT_LAYOUT).map(([key, fallback]) => [
+        key,
+        { ...fallback, ...(saved.layout[key] || {}) }
+      ])
+    );
+  } catch {
+    return DEFAULT_LAYOUT;
+  }
+};
+
+const styleFromLayout = (layoutItem) => ({
+  left: `${layoutItem.x}%`,
+  top: `${layoutItem.y}%`,
+  bottom: 'auto',
+  width: `${layoutItem.w}%`,
+  zIndex: layoutItem.z
+});
+
+const CLUE_TARGETS = [
+  {
+    id: 'feather',
+    label: 'Feather',
+    img: featherImg,
+    layoutKey: 'clueFeather',
+    prompt: 'Feather found.'
+  },
+  {
+    id: 'mango',
+    label: 'Mango',
+    img: mangoImg,
+    layoutKey: 'clueMango',
+    prompt: 'Mango found.'
+  }
+];
+
+const CLUE_DISTRACTORS = [
+  { id: 'butterfly', label: 'Butterfly', img: butterflyImg, layoutKey: 'clueButterfly' },
+  { id: 'leaves', label: 'Leaves', img: leavesImg, layoutKey: 'clueLeaves' }
+];
+
+const ANIMAL_TARGETS = [
+  {
+    id: 'peacock',
+    label: 'Peacock',
+    frames: [peacockRestingImg, peacockAdmiringImg, peacockSparkleImg, peacockHighlightImg],
+    hiddenLayoutKey: 'peacockHidden',
+    revealLayoutKey: 'peacockReveal',
+    prompt: 'Peacock found.'
+  },
+  {
+    id: 'monkey',
+    label: 'Monkey',
+    frames: [monkeyRestingImg, monkeyLookingImg, monkeyPicksImg, monkeySmilesImg, monkeyHoldingImg],
+    hiddenLayoutKey: 'monkeyHidden',
+    revealLayoutKey: 'monkeyReveal',
+    prompt: 'Monkey found.'
+  }
+];
+
+const ANIMAL_DISTRACTORS = [
+  { id: 'bird-shadow', label: 'Bird', img: butterflyImg, layoutKey: 'animalBird' },
+  { id: 'leaf-rustle', label: 'Leaves', img: leavesImg, layoutKey: 'animalLeaves' }
+];
+
+const HIDING_PROPS = [
+  { id: 'bush-left', img: bushImg, layoutKey: 'propBushLeft' },
+  { id: 'rock-left', img: rockImg, layoutKey: 'propRockLeft' },
+  { id: 'bush-right', img: bushImg, layoutKey: 'propBushRight' }
+];
 const VO_TEXTS = {
-  intro: 'Look closely. Tap the animals when you see them.',
+  intro: 'Look closely. Find the clues that matter.',
+  clueFlowDone: 'Now find who they belong to.',
+  complete: 'You looked carefully and connected what you found.',
+  neutral: 'That is interesting, but it is not the clue we need.',
+  feather: 'Feather',
+  mango: 'Mango',
   peacock: 'Peacock',
   monkey: 'Monkey'
 };
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-// CONFIG
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
-const ANIMALS = [
-  { id: 'peacock', name: 'Peacock', img: peacockImg, vo: VO_PATHS.peacock },
-  { id: 'monkey', name: 'Monkey', img: monkeyImg, vo: VO_PATHS.monkey }
-];
-const TOTAL_ANIMALS_TO_FIND = ANIMALS.length;
-
-// Each animal gets its own small pool of hide options.
-// This keeps placements natural and lets us randomize one option per animal at runtime.
-const ANIMAL_HIDE_OPTIONS = {
-  peacock: [
-    { id: 'peacock-1', x: 28.39, y: 42.28, zone: 'left-bushes', depth: 'behind-middle', revealOffsetX: 0, revealOffsetY: 0, scale: 2 },
-    { id: 'peacock-2', x: 73.96, y: 66.8, zone: 'right-rocks', depth: 'between-middle-front', revealOffsetX: 0, revealOffsetY: 0, scale: 2 }
-  ],
-  monkey: [
-    { id: 'monkey-1', x: 27.54, y: 48.37, zone: 'left-bushes', depth: 'behind-middle', revealOffsetX: 0, revealOffsetY: 0, scale: 1.7 },
-    { id: 'monkey-2', x: 77.07, y: 32.79, zone: 'mid-trail', depth: 'behind-middle', revealOffsetX: 0, revealOffsetY: 0, scale: 1.7 }
-  ]
-};
-const ZONES = {
-  'left-rocks': { x: 13, y: 70, w: 18, h: 26 },
-  'left-bushes': { x: 28, y: 69, w: 22, h: 22 },
-  'mid-trail': { x: 51, y: 58, w: 24, h: 18 },
-  'right-rocks': { x: 72, y: 64, w: 18, h: 22 },
-  'right-bushes': { x: 87, y: 68, w: 18, h: 26 }
-};
-const FADE_IN_OPACITY = 0.35;    // hidden-state opacity â€” visible silhouette, partial hiding behind rocks does the rest
-const POP_OPACITY = 1.0;          // pre-click pop opacity
-const SHOW_OPACITY = 1.0;         // after discovery
-const POP_VISIBLE_MS = 2600;       // calmer window â€” noticing, not panic
-const POP_HIDDEN_MS = 900;         // gentle cooldown
-const IDLE_HINT_MS = 8000;         // glow an undiscovered animal after 8s
-const IDLE_ZONE_HINT_MS = 16000;   // glow hint zone after longer idle
-const IDLE_FULL_REVEAL_MS = 24000; // full reveal after long idle
-// Debug spot editor — only with ?debug in the URL, never for children in prod.
-const SHOW_SPOT_DEBUG =
-  typeof window !== 'undefined' &&
-  new URLSearchParams(window.location.search).has('debug');
-const SPOT_STORAGE_KEY = 'symbol_mountain_eyes_hide_options_v5';
-const ANIMAL_POSITION_STORAGE_KEY = 'symbol_mountain_eyes_animal_positions_v3';
-const DEBUG_MODE_STORAGE_KEY = 'symbol_mountain_eyes_debug_mode_v2';
-const DEBUG_DEPTHS = ['behind-middle', 'behind-front', 'between-middle-front'];
-const DEBUG_ASSIGNMENT_COLORS = {
-  peacock: '#22d3ee',
-  monkey: '#fb923c'
-};
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-// HELPERS
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
-const shuffle = (arr) => {
-  const copy = [...arr];
-  for (let i = copy.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
-  }
-  return copy;
-};
-
-const randomItem = (arr) => {
-  if (!Array.isArray(arr) || arr.length === 0) return null;
-  return arr[Math.floor(Math.random() * arr.length)] || null;
-};
-
-const getZoneBucket = (spot) => {
-  if (!spot) return 'unknown';
-  if (spot.x < 35) return spot.y >= 58 ? 'left-front' : 'left-back';
-  if (spot.x <= 68) return spot.y >= 58 ? 'middle-front' : 'middle-back';
-  return spot.y >= 58 ? 'right-front' : 'right-back';
-};
-
-const distanceBetweenSpots = (a, b) => {
-  if (!a || !b) return Infinity;
-  return Math.hypot((a.x ?? 0) - (b.x ?? 0), (a.y ?? 0) - (b.y ?? 0));
-};
-
-const getSpotScale = (animalId, spot) => {
-  return spot?.scale ?? ANIMAL_SIZES[animalId] ?? 1;
-};
-
-const getRequiredSeparation = (animalA, spotA, animalB, spotB) => {
-  const scaleA = getSpotScale(animalA.id, spotA);
-  const scaleB = getSpotScale(animalB.id, spotB);
-  const avgScale = (scaleA + scaleB) / 2;
-  const sameBucketBonus = getZoneBucket(spotA) === getZoneBucket(spotB) ? 6 : 0;
-  return 8 + (avgScale * 4) + sameBucketBonus;
-};
-
-const scoreAssignmentSet = (assignmentSet) => {
-  let penalty = 0;
-
-  for (let i = 0; i < assignmentSet.length; i += 1) {
-    for (let j = i + 1; j < assignmentSet.length; j += 1) {
-      const first = assignmentSet[i];
-      const second = assignmentSet[j];
-      const distance = distanceBetweenSpots(first.spot, second.spot);
-      const required = getRequiredSeparation(first.animal, first.spot, second.animal, second.spot);
-
-      if (distance < required) {
-        penalty += (required - distance) * 10;
-      }
-
-      if (getZoneBucket(first.spot) === getZoneBucket(second.spot)) {
-        penalty += 3;
-      }
-    }
-  }
-
-  return penalty;
-};
-
-const cloneHideOptions = (hideOptionsByAnimal) => Object.fromEntries(
-  Object.entries(hideOptionsByAnimal || {}).map(([animalId, options]) => {
-    const defaultOptions = ANIMAL_HIDE_OPTIONS[animalId] || [];
-    const safeOptions = Array.isArray(options) ? options : defaultOptions;
-
-    return [
-      animalId,
-      safeOptions.map((option, index) => {
-        const fallback = defaultOptions[index] || defaultOptions[0] || {};
-        const source = option && typeof option === 'object' ? option : fallback;
-
-        return {
-          ...source,
-          id: source.id || `${animalId}-${index + 1}`,
-          zone: source.zone || fallback.zone || 'mid-trail',
-          depth: source.depth || fallback.depth || 'behind-middle',
-          revealOffsetX: source.revealOffsetX ?? fallback.revealOffsetX ?? 0,
-          revealOffsetY: source.revealOffsetY ?? fallback.revealOffsetY ?? 0,
-          scale: source.scale ?? fallback.scale ?? ANIMAL_SIZES[animalId] ?? 1
-        };
-      }).filter(Boolean)
-    ];
-  })
-);
-
-const PENALTY_TOLERANCE = 15; // combos within this of the best are all acceptable
-
-const assignAnimalsToSpots = (hideOptionsByAnimal) => {
-  const poolsByAnimal = ANIMALS.map((animal) => ({
-    animal,
-    pool: shuffle((hideOptionsByAnimal?.[animal.id]?.length ? hideOptionsByAnimal[animal.id] : ANIMAL_HIDE_OPTIONS[animal.id]) || [])
-  }));
-
-  const candidates = []; // { assignments, penalty }
-
-  const search = (index, chosen) => {
-    if (index >= poolsByAnimal.length) {
-      candidates.push({ assignments: chosen, penalty: scoreAssignmentSet(chosen) });
-      return;
-    }
-    const { animal, pool } = poolsByAnimal[index];
-    for (const spot of pool) {
-      search(index + 1, [...chosen, { animal, spot }]);
-    }
-  };
-
-  search(0, []);
-  if (!candidates.length) return [];
-
-  const best = Math.min(...candidates.map((c) => c.penalty));
-  const acceptable = candidates.filter((c) => c.penalty <= best + PENALTY_TOLERANCE);
-  return randomItem(acceptable).assignments;
-};
-
-const syncAssignmentsWithOptions = (currentAssignments, hideOptionsByAnimal) => {
-  return ANIMALS.map((animal) => {
-    const options = hideOptionsByAnimal?.[animal.id] || [];
-    const pool = options.length ? options : ANIMAL_HIDE_OPTIONS[animal.id] || [];
-    const existing = (currentAssignments || []).find((item) => item?.animal?.id === animal.id);
-    const matchedSpot = pool.find((option) => option?.id === existing?.spot?.id);
-    const nextSpot = matchedSpot || existing?.spot || pool[0] || null;
-    return nextSpot ? { animal, spot: nextSpot } : null;
-  }).filter(Boolean);
-};
+const IDLE_HINT_MS = 9000;
 
 const speakFallback = (text) => {
   if (!text || typeof window === 'undefined' || !window.speechSynthesis) return;
   try {
-    const u = new SpeechSynthesisUtterance(text);
-    u.rate = 0.95;
-    u.pitch = 1;
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 0.92;
+    utterance.pitch = 1;
     window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(u);
-  } catch {}
-};
-
-const playAudio = (src, fallbackText = '') => {
-  if (!src) {
-    speakFallback(fallbackText);
-    return;
+    window.speechSynthesis.speak(utterance);
+  } catch {
+    // Speech synthesis is optional.
   }
-  try {
-    const audio = new Audio(src);
-    audio.volume = 0.9;
-    audio.onerror = () => speakFallback(fallbackText);
-    audio.play().catch(() => speakFallback(fallbackText));
-  } catch (e) {}
 };
-
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-// COMPONENT
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const EyesPopUpGame = ({
   isActive = true,
@@ -244,653 +182,562 @@ const EyesPopUpGame = ({
   hideElements = false,
   className = ''
 }) => {
-  const [debugMode, setDebugMode] = useState(() => {
-    if (!SHOW_SPOT_DEBUG) return false; // never resurrect debug mode from storage in play builds
-    try {
-      return localStorage.getItem(DEBUG_MODE_STORAGE_KEY) === 'true';
-    } catch {
-      return false;
-    }
-  });
-  const [editableHideOptions, setEditableHideOptions] = useState(() => {
-    try {
-      const raw = localStorage.getItem(SPOT_STORAGE_KEY);
-      if (!raw) return cloneHideOptions(ANIMAL_HIDE_OPTIONS);
-      const parsed = JSON.parse(raw);
-      return parsed && typeof parsed === 'object'
-        ? cloneHideOptions({ ...ANIMAL_HIDE_OPTIONS, ...parsed })
-        : cloneHideOptions(ANIMAL_HIDE_OPTIONS);
-    } catch {
-      return cloneHideOptions(ANIMAL_HIDE_OPTIONS);
-    }
-  });
-  const [editableAnimalPositions, setEditableAnimalPositions] = useState(() => {
-    try {
-      const raw = localStorage.getItem(ANIMAL_POSITION_STORAGE_KEY);
-      if (!raw) return ANIMAL_POSITIONS;
-      const parsed = JSON.parse(raw);
-      return parsed && typeof parsed === 'object' ? { ...ANIMAL_POSITIONS, ...parsed } : ANIMAL_POSITIONS;
-    } catch {
-      return ANIMAL_POSITIONS;
-    }
-  });
-  const [selectedOptionIndex, setSelectedOptionIndex] = useState(0);
-  const [selectedAnimalId, setSelectedAnimalId] = useState(() => ANIMALS[0]?.id || null);
-  const [showExportPanel, setShowExportPanel] = useState(false);
-  const [assignments, setAssignments] = useState(() => assignAnimalsToSpots(ANIMAL_HIDE_OPTIONS));
-  const [discovered, setDiscovered] = useState(new Set());
-  const [visibleAnimal, setVisibleAnimal] = useState(null); // id of animal currently popping up
-  const [showIdleHint, setShowIdleHint] = useState(null);   // id to glow
-  const [showZoneHint, setShowZoneHint] = useState(null);   // zone key to glow
-  const [showFullReveal, setShowFullReveal] = useState(null); // id to fully reveal
-  const [introShown, setIntroShown] = useState(false);
+  const [flow, setFlow] = useState(FLOW.CLUES);
+  const [foundClues, setFoundClues] = useState([]);
+  const [foundAnimals, setFoundAnimals] = useState([]);
+  const [feedback, setFeedback] = useState('');
+  const [softPulse, setSoftPulse] = useState(null);
+  const [hintId, setHintId] = useState(null);
+  const [revealingAnimal, setRevealingAnimal] = useState(null);
+  const [frameIndexByAnimal, setFrameIndexByAnimal] = useState({});
+  const [layout, setLayout] = useState(loadSavedLayout);
+  const [debugMode, setDebugMode] = useState(false);
+  const [selectedDebugKey, setSelectedDebugKey] = useState('clueFeather');
+  const [debugPanelPosition, setDebugPanelPosition] = useState({ x: 12, y: 96 });
+  const [layoutCopyStatus, setLayoutCopyStatus] = useState('');
 
-  const cycleTimerRef = useRef(null);
   const idleTimerRef = useRef(null);
+  const feedbackTimerRef = useRef(null);
+  const completionTimerRef = useRef(null);
+  const frameTimerRef = useRef(null);
   const lastTapTimeRef = useRef(Date.now());
-  const hintedTargetRef = useRef(null);
-  const dragTargetRef = useRef(null);
-  const activeAudioRef = useRef(null);
-  const shimmerTimerRef = useRef(null);
-  const activeHideOptions = editableHideOptions[selectedAnimalId] || [];
-  const selectedHideOption = activeHideOptions[selectedOptionIndex] || null;
-  const exportPayload = JSON.stringify({
-    hideOptions: editableHideOptions,
-    animalPositions: editableAnimalPositions
-  }, null, 2);
+  const completedRef = useRef(false);
+  const stageRef = useRef(null);
+  const debugDragRef = useRef(null);
+  const debugPanelDragRef = useRef(null);
 
-  const stopGameAudio = useCallback(() => {
-    if (activeAudioRef.current) {
-      try {
-        activeAudioRef.current.pause();
-        activeAudioRef.current.currentTime = 0;
-      } catch {}
-      activeAudioRef.current = null;
-    }
-    if (typeof window !== 'undefined' && window.speechSynthesis?.cancel) {
-      window.speechSynthesis.cancel();
+  const foundClueIds = useMemo(() => new Set(foundClues), [foundClues]);
+  const foundAnimalIds = useMemo(() => new Set(foundAnimals), [foundAnimals]);
+  const activeTargets = flow === FLOW.CLUES ? CLUE_TARGETS : ANIMAL_TARGETS;
+  const activeFoundIds = flow === FLOW.CLUES ? foundClueIds : foundAnimalIds;
+  const progressFound = activeTargets.filter((target) => activeFoundIds.has(target.id)).length;
+  const selectedDebugLayout = layout[selectedDebugKey] || DEFAULT_LAYOUT[selectedDebugKey];
+
+  const stopTimers = useCallback(() => {
+    if (idleTimerRef.current) clearInterval(idleTimerRef.current);
+    if (feedbackTimerRef.current) clearTimeout(feedbackTimerRef.current);
+    if (completionTimerRef.current) clearTimeout(completionTimerRef.current);
+    if (frameTimerRef.current) clearInterval(frameTimerRef.current);
+    idleTimerRef.current = null;
+    feedbackTimerRef.current = null;
+    completionTimerRef.current = null;
+    frameTimerRef.current = null;
+  }, []);
+
+  const speak = useCallback((text) => {
+    if (!isAudioOn) return;
+    speakFallback(text);
+  }, [isAudioOn]);
+
+  const showFeedback = useCallback((message, pulseId = null) => {
+    setFeedback(message);
+    setSoftPulse(pulseId);
+    if (feedbackTimerRef.current) clearTimeout(feedbackTimerRef.current);
+    feedbackTimerRef.current = setTimeout(() => {
+      setFeedback('');
+      setSoftPulse(null);
+    }, 1500);
+  }, []);
+
+  const resetIdle = useCallback(() => {
+    lastTapTimeRef.current = Date.now();
+    setHintId(null);
+  }, []);
+  const saveLayout = useCallback((nextLayout) => {
+    if (typeof window === 'undefined') return;
+    try {
+      window.localStorage.setItem(LAYOUT_STORAGE_KEY, JSON.stringify({
+        version: LAYOUT_PRESET_VERSION,
+        layout: nextLayout
+      }));
+    } catch {
+      // Local storage is optional in the dev harness.
     }
   }, []);
 
-  const playGameAudio = useCallback((src, fallbackText = '') => {
-    if (!isAudioOn) return null;
-    stopGameAudio();
-    const nextAudio = playAudio(src, fallbackText) || null;
-    activeAudioRef.current = nextAudio;
-    return nextAudio;
-  }, [isAudioOn, stopGameAudio]);
-
-  // Intro VO once on mount
-  useEffect(() => {
-    if (!isActive || introShown) return;
-    setIntroShown(true);
-    playGameAudio(VO_PATHS.intro, VO_TEXTS.intro);
-  }, [isActive, introShown, playGameAudio]);
-
-  // Each active session should get a fresh randomized assignment set.
-  useEffect(() => {
-    if (!isActive) return;
-    setAssignments(assignAnimalsToSpots(editableHideOptions));
-    setDiscovered(new Set());
-    setVisibleAnimal(null);
-    setShowIdleHint(null);
-    setShowZoneHint(null);
-    setShowFullReveal(null);
-    hintedTargetRef.current = null;
-    lastTapTimeRef.current = Date.now();
-  }, [isActive, editableHideOptions]);
-
-  // Pop cycle: pick an undiscovered animal, show it, hide it, repeat
-  useEffect(() => {
-    if (!isActive) return;
-    if (discovered.size >= TOTAL_ANIMALS_TO_FIND) return;
-
-    let stopped = false;
-
-    const cycle = () => {
-      if (stopped) return;
-      const undiscovered = assignments.filter(a => !discovered.has(a.animal.id));
-      if (undiscovered.length === 0) return;
-
-      const next = undiscovered[Math.floor(Math.random() * undiscovered.length)];
-      setVisibleAnimal(next.animal.id);
-
-      cycleTimerRef.current = setTimeout(() => {
-        if (stopped) return;
-        setVisibleAnimal(null);
-        cycleTimerRef.current = setTimeout(cycle, POP_HIDDEN_MS);
-      }, POP_VISIBLE_MS);
-    };
-
-    cycleTimerRef.current = setTimeout(cycle, 800); // small initial delay
-
-    return () => {
-      stopped = true;
-      if (cycleTimerRef.current) clearTimeout(cycleTimerRef.current);
-    };
-  }, [isActive, assignments, discovered]);
-
-  // Idle hint: if no tap for 8s, glow one undiscovered animal
-  useEffect(() => {
-    if (!isActive || discovered.size >= TOTAL_ANIMALS_TO_FIND) return;
-
-    const checkIdle = () => {
-      const idleMs = Date.now() - lastTapTimeRef.current;
-      const undiscovered = assignments.filter(a => !discovered.has(a.animal.id));
-      if (undiscovered.length > 0) {
-        if (!hintedTargetRef.current || discovered.has(hintedTargetRef.current.animal.id)) {
-          hintedTargetRef.current = randomItem(undiscovered) || undiscovered[0];
+  const updateLayout = useCallback((key, patch) => {
+    setLayout((current) => {
+      const next = {
+        ...current,
+        [key]: {
+          ...(current[key] || DEFAULT_LAYOUT[key]),
+          ...patch
         }
-        const hintedTarget = hintedTargetRef.current;
-        if (idleMs >= IDLE_FULL_REVEAL_MS) {
-          setShowFullReveal(hintedTarget?.animal?.id || null);
-          setShowZoneHint(null);
-          setShowIdleHint(null);
-        } else if (idleMs >= IDLE_ZONE_HINT_MS) {
-          setShowZoneHint(hintedTarget?.spot?.zone || null);
-          setShowFullReveal(null);
-          setShowIdleHint(null);
-        } else if (idleMs >= IDLE_HINT_MS) {
-          setShowIdleHint(hintedTarget?.animal?.id || null);
-          setShowZoneHint(null);
-          setShowFullReveal(null);
-        }
+      };
+      saveLayout(next);
+      return next;
+    });
+  }, [saveLayout]);
+
+  const updateLayoutField = useCallback((key, field, value) => {
+    const max = field === 'z' ? 80 : 100;
+    const numeric = Math.max(0, Math.min(max, Number(value)));
+    updateLayout(key, { [field]: numeric });
+  }, [updateLayout]);
+
+  const resetLayout = useCallback(() => {
+    setLayout(DEFAULT_LAYOUT);
+    if (typeof window !== 'undefined') {
+      try {
+        window.localStorage.removeItem(LAYOUT_STORAGE_KEY);
+      } catch {
+        // no-op
       }
+    }
+  }, []);
+
+  const copyLayoutJson = useCallback(async () => {
+    const payload = JSON.stringify({ version: LAYOUT_PRESET_VERSION, layout }, null, 2);
+    try {
+      await navigator.clipboard?.writeText(payload);
+      setLayoutCopyStatus('Copied');
+    } catch {
+      window.prompt?.('Copy Eyes layout JSON', payload);
+      setLayoutCopyStatus('Shown');
+    }
+    console.log('Eyes layout JSON:', payload);
+    if (feedbackTimerRef.current) clearTimeout(feedbackTimerRef.current);
+    feedbackTimerRef.current = setTimeout(() => setLayoutCopyStatus(''), 1500);
+  }, [layout]);
+
+  const getPointerPercent = useCallback((event) => {
+    const rect = stageRef.current?.getBoundingClientRect();
+    if (!rect || !rect.width || !rect.height) return null;
+    return {
+      x: Math.max(0, Math.min(100, ((event.clientX - rect.left) / rect.width) * 100)),
+      y: Math.max(0, Math.min(100, ((event.clientY - rect.top) / rect.height) * 100))
     };
-    idleTimerRef.current = setInterval(checkIdle, 1000);
+  }, []);
+
+  const startDebugDrag = useCallback((event, key) => {
+    if (!debugMode) return;
+    const point = getPointerPercent(event);
+    const item = layout[key] || DEFAULT_LAYOUT[key];
+    if (!point || !item) return;
+    event.stopPropagation();
+    debugDragRef.current = {
+      key,
+      offsetX: point.x - item.x,
+      offsetY: point.y - item.y
+    };
+    setSelectedDebugKey(key);
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+  }, [debugMode, getPointerPercent, layout]);
+
+  const handleDebugPointerMove = useCallback((event) => {
+    const drag = debugDragRef.current;
+    if (!drag) return;
+    const point = getPointerPercent(event);
+    if (!point) return;
+    event.stopPropagation();
+    updateLayout(drag.key, {
+      x: Number(Math.max(0, Math.min(100, point.x - drag.offsetX)).toFixed(2)),
+      y: Number(Math.max(0, Math.min(100, point.y - drag.offsetY)).toFixed(2))
+    });
+  }, [getPointerPercent, updateLayout]);
+
+  const stopDebugDrag = useCallback(() => {
+    debugDragRef.current = null;
+  }, []);
+
+  const startDebugPanelDrag = useCallback((event) => {
+    debugPanelDragRef.current = {
+      offsetX: event.clientX - debugPanelPosition.x,
+      offsetY: event.clientY - debugPanelPosition.y
+    };
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+  }, [debugPanelPosition.x, debugPanelPosition.y]);
+
+  const moveDebugPanelDrag = useCallback((event) => {
+    const drag = debugPanelDragRef.current;
+    if (!drag) return;
+    const panelWidth = Math.min(352, window.innerWidth - 24);
+    const panelHeight = debugMode ? Math.min(window.innerHeight * 0.78, 560) : 48;
+    setDebugPanelPosition({
+      x: Math.max(8, Math.min(window.innerWidth - panelWidth - 8, event.clientX - drag.offsetX)),
+      y: Math.max(8, Math.min(window.innerHeight - panelHeight - 8, event.clientY - drag.offsetY))
+    });
+  }, [debugMode]);
+
+  const stopDebugPanelDrag = useCallback(() => {
+    debugPanelDragRef.current = null;
+  }, []);
+
+  useEffect(() => {
+    if (!isActive) return;
+    stopTimers();
+    completedRef.current = false;
+    setFlow(FLOW.CLUES);
+    setFoundClues([]);
+    setFoundAnimals([]);
+    setFeedback('');
+    setSoftPulse(null);
+    setHintId(null);
+    setRevealingAnimal(null);
+    setFrameIndexByAnimal({});
+    lastTapTimeRef.current = Date.now();
+    speak(VO_TEXTS.intro);
+  }, [isActive, speak, stopTimers]);
+
+  useEffect(() => {
+    if (!isActive || flow === FLOW.COMPLETE) return;
+
+    idleTimerRef.current = setInterval(() => {
+      const idleMs = Date.now() - lastTapTimeRef.current;
+      if (idleMs < IDLE_HINT_MS) return;
+      const nextHint = activeTargets.find((target) => !activeFoundIds.has(target.id));
+      setHintId(nextHint?.id || null);
+    }, 1000);
 
     return () => {
       if (idleTimerRef.current) clearInterval(idleTimerRef.current);
+      idleTimerRef.current = null;
     };
-  }, [isActive, assignments, discovered]);
+  }, [activeFoundIds, activeTargets, flow, isActive]);
 
-  // Backgrounding the tab (phone call, home button, tab switch) doesn't stop
-  // this interval, so Date.now() - lastTapTimeRef.current keeps growing while
-  // hidden — without this, returning to the tab after any real idle time
-  // instantly jumps straight to the full-reveal hint. Reset the idle clock
-  // and clear any hint that was mid-escalation on tab return.
   useAppVisibility(null, useCallback(() => {
-    lastTapTimeRef.current = Date.now();
-    setShowIdleHint(null);
-    setShowZoneHint(null);
-    setShowFullReveal(null);
-  }, []));
-
-  // Reset idle hint when game state changes
-  useEffect(() => {
-    setShowIdleHint(null);
-    setShowZoneHint(null);
-    setShowFullReveal(null);
-    hintedTargetRef.current = null;
-  }, [visibleAnimal, discovered]);
-
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.hidden) return;
-      lastTapTimeRef.current = Date.now();
-      hintedTargetRef.current = null;
-      setShowIdleHint(null);
-      setShowZoneHint(null);
-      setShowFullReveal(null);
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-  }, []);
-
-  // Win condition
-  useEffect(() => {
-    if (discovered.size === TOTAL_ANIMALS_TO_FIND && onGameComplete) {
-      const completionTimer = setTimeout(() => {
-        // Report the fixed resting spot each animal snapped to on discovery
-        // (see the render below) — not the random hide spot it came from —
-        // so downstream scenes (Ears) that read this via sceneState.animalSpots
-        // show the same hand-placed positions instead of wherever it happened
-        // to be hiding this session.
-        const assignedSpots = assignments.reduce((acc, item) => {
-          const fixedPos = editableAnimalPositions[item.animal.id] || ANIMAL_POSITIONS[item.animal.id];
-          acc[item.animal.id] = {
-            x: fixedPos.x,
-            y: fixedPos.y,
-            depth: fixedPos.depth || 'between-middle-front'
-          };
-          return acc;
-        }, {});
-        onGameComplete({
-          discoveredAnimals: Array.from(discovered),
-          totalDiscovered: TOTAL_ANIMALS_TO_FIND,
-          assignedSpots
-        });
-      }, 1200);
-      return () => clearTimeout(completionTimer);
-    }
-  }, [discovered, onGameComplete, assignments, editableAnimalPositions]);
-
-  const handleAnimalTap = useCallback((animalId, e) => {
-    e?.stopPropagation();
-    if (discovered.has(animalId)) return;
-    // ðŸŽ¯ NEW FLOW: any animal is tappable anytime â€” no gating on visibility
-    // Pop cycle remains as a gentle "peekaboo" hint, not a gate
-
-    lastTapTimeRef.current = Date.now();
-    setShowIdleHint(null);
-    setShowZoneHint(null);
-    setShowFullReveal(null);
-
-    // play that animal's name VO
-    const found = assignments.find(a => a.animal.id === animalId);
-    if (found) playGameAudio(found.animal.vo, VO_TEXTS[found.animal.id]);
-
-    setDiscovered(prev => new Set([...prev, animalId]));
-  }, [assignments, discovered, playGameAudio]);
-
-  const handleSceneTap = useCallback((e) => {
-    // wrong-tap shimmer where they tapped
-    lastTapTimeRef.current = Date.now();
-    setShowIdleHint(null);
-    setShowZoneHint(null);
-    setShowFullReveal(null);
-
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    const shimmer = document.createElement('div');
-    shimmer.className = 'eyes-popup-shimmer';
-    shimmer.style.left = `${x}px`;
-    shimmer.style.top = `${y}px`;
-    e.currentTarget.appendChild(shimmer);
-    if (shimmerTimerRef.current) clearTimeout(shimmerTimerRef.current);
-    shimmerTimerRef.current = setTimeout(() => {
-      shimmer.remove();
-      shimmerTimerRef.current = null;
-    }, 600);
-  }, []);
-
-  useEffect(() => {
-    if (!SHOW_SPOT_DEBUG) return;
-    try {
-      localStorage.setItem(DEBUG_MODE_STORAGE_KEY, String(debugMode));
-      localStorage.setItem(SPOT_STORAGE_KEY, JSON.stringify(editableHideOptions));
-      localStorage.setItem(ANIMAL_POSITION_STORAGE_KEY, JSON.stringify(editableAnimalPositions));
-    } catch {
-      // no-op
-    }
-  }, [debugMode, editableHideOptions, editableAnimalPositions]);
-
-  useEffect(() => {
-    if (!isActive) return;
-
-    if (debugMode) {
-      setAssignments((prev) => syncAssignmentsWithOptions(prev, editableHideOptions));
-      return;
-    }
-
-    setAssignments(assignAnimalsToSpots(editableHideOptions));
-    setDiscovered(new Set());
-    setVisibleAnimal(null);
-    setShowIdleHint(null);
-    setShowZoneHint(null);
-    setShowFullReveal(null);
-    hintedTargetRef.current = null;
-    lastTapTimeRef.current = Date.now();
-  }, [isActive, editableHideOptions, debugMode]);
-
-  useEffect(() => {
-    const optionCount = activeHideOptions.length;
-    if (optionCount === 0) {
-      setSelectedOptionIndex(0);
-      return;
-    }
-    if (selectedOptionIndex >= optionCount) {
-      setSelectedOptionIndex(optionCount - 1);
-    }
-  }, [activeHideOptions, selectedOptionIndex]);
-
-  useEffect(() => {
-    if (!debugMode || !selectedAnimalId || !selectedHideOption) return;
-
-    setAssignments((prev) => prev.map((item) => {
-      if (item?.animal?.id !== selectedAnimalId) return item;
-      return {
-        ...item,
-        spot: selectedHideOption
-      };
-    }));
-  }, [debugMode, selectedAnimalId, selectedHideOption]);
+    resetIdle();
+  }, [resetIdle]));
 
   useEffect(() => () => {
-    stopGameAudio();
-    if (shimmerTimerRef.current) clearTimeout(shimmerTimerRef.current);
-  }, [stopGameAudio]);
+    stopTimers();
+    if (typeof window !== 'undefined' && window.speechSynthesis?.cancel) {
+      window.speechSynthesis.cancel();
+    }
+  }, [stopTimers]);
+
+  useEffect(() => {
+    if (foundClues.length !== CLUE_TARGETS.length || flow !== FLOW.CLUES) return;
+    completionTimerRef.current = setTimeout(() => {
+      setFlow(FLOW.ANIMALS);
+      setFeedback(VO_TEXTS.clueFlowDone);
+      setHintId(null);
+      lastTapTimeRef.current = Date.now();
+      speak(VO_TEXTS.clueFlowDone);
+    }, 900);
+    return () => {
+      if (completionTimerRef.current) clearTimeout(completionTimerRef.current);
+    };
+  }, [flow, foundClues.length, speak]);
+
+  useEffect(() => {
+    if (foundAnimals.length !== ANIMAL_TARGETS.length || completedRef.current) return;
+    completedRef.current = true;
+    setFlow(FLOW.COMPLETE);
+    setFeedback(VO_TEXTS.complete);
+    speak(VO_TEXTS.complete);
+
+    completionTimerRef.current = setTimeout(() => {
+      const assignedSpots = ANIMAL_TARGETS.reduce((acc, animal) => {
+        const revealLayout = layout[animal.revealLayoutKey] || DEFAULT_LAYOUT[animal.revealLayoutKey];
+        const fixedPos = ANIMAL_POSITIONS[animal.id] || { x: revealLayout.x, y: revealLayout.y };
+        acc[animal.id] = {
+          x: fixedPos.x ?? revealLayout.x,
+          y: fixedPos.y ?? revealLayout.y,
+          depth: fixedPos.depth || 'between-middle-front'
+        };
+        return acc;
+      }, {});
+
+      onGameComplete?.({
+        discoveredClues: foundClues,
+        discoveredAnimals: foundAnimals,
+        totalDiscovered: foundAnimals.length,
+        assignedSpots
+      });
+    }, 1500);
+
+    return () => {
+      if (completionTimerRef.current) clearTimeout(completionTimerRef.current);
+    };
+  }, [foundAnimals, foundClues, layout, onGameComplete, speak]);
+
+  const handleSceneTap = useCallback((e) => {
+    if (debugMode || flow === FLOW.COMPLETE) return;
+    resetIdle();
+
+    const rect = e.currentTarget.getBoundingClientRect();
+    const shimmer = document.createElement('div');
+    shimmer.className = 'eyes-popup-shimmer';
+    shimmer.style.left = `${e.clientX - rect.left}px`;
+    shimmer.style.top = `${e.clientY - rect.top}px`;
+    e.currentTarget.appendChild(shimmer);
+    setTimeout(() => shimmer.remove(), 650);
+  }, [debugMode, flow, resetIdle]);
+
+  const handleDistractorTap = useCallback((target, e) => {
+    e.stopPropagation();
+    if (debugMode || flow === FLOW.COMPLETE) return;
+    resetIdle();
+    showFeedback(VO_TEXTS.neutral, target.id);
+    speak(VO_TEXTS.neutral);
+  }, [debugMode, flow, resetIdle, showFeedback, speak]);
+
+  const startAnimalReveal = useCallback((animalId) => {
+    const animal = ANIMAL_TARGETS.find((target) => target.id === animalId);
+    if (!animal) return;
+
+    setRevealingAnimal(animalId);
+    setFrameIndexByAnimal((prev) => ({ ...prev, [animalId]: 0 }));
+    if (frameTimerRef.current) clearInterval(frameTimerRef.current);
+
+    let nextFrame = 0;
+    frameTimerRef.current = setInterval(() => {
+      nextFrame += 1;
+      setFrameIndexByAnimal((prev) => ({
+        ...prev,
+        [animalId]: Math.min(nextFrame, animal.frames.length - 1)
+      }));
+      if (nextFrame >= animal.frames.length - 1) {
+        clearInterval(frameTimerRef.current);
+        frameTimerRef.current = null;
+        setTimeout(() => setRevealingAnimal(null), 600);
+      }
+    }, 360);
+  }, []);
+
+  const handleClueTap = useCallback((target, e) => {
+    e.stopPropagation();
+    if (debugMode || flow !== FLOW.CLUES || foundClueIds.has(target.id)) return;
+    resetIdle();
+    setFoundClues((prev) => [...prev, target.id]);
+    showFeedback(target.prompt, target.id);
+    speak(VO_TEXTS[target.id] || target.label);
+  }, [debugMode, flow, foundClueIds, resetIdle, showFeedback, speak]);
+
+  const handleAnimalTap = useCallback((target, e) => {
+    e.stopPropagation();
+    if (debugMode || flow !== FLOW.ANIMALS || foundAnimalIds.has(target.id)) return;
+    resetIdle();
+    setFoundAnimals((prev) => [...prev, target.id]);
+    showFeedback(target.prompt, target.id);
+    speak(VO_TEXTS[target.id] || target.label);
+    startAnimalReveal(target.id);
+  }, [debugMode, flow, foundAnimalIds, resetIdle, showFeedback, speak, startAnimalReveal]);
 
   if (hideElements || !isActive) return null;
 
   return (
     <div
-      className={`eyes-popup-game ${className}`}
+      ref={stageRef}
+      className={`eyes-popup-game ${className} ${debugMode ? 'is-debugging' : ''}`}
       onClick={handleSceneTap}
-      onPointerMove={(e) => {
-        const dragTarget = dragTargetRef.current;
-        if (!dragTarget) return;
-        e.stopPropagation();
-        const rect = e.currentTarget.getBoundingClientRect();
-        const x = Math.min(99.5, Math.max(0.5, ((e.clientX - rect.left) / rect.width) * 100));
-        const y = Math.min(99.5, Math.max(0.5, ((e.clientY - rect.top) / rect.height) * 100));
-        if (dragTarget.type === 'spot' && dragTarget.animalId) {
-          setEditableHideOptions((prev) => ({
-            ...prev,
-            [dragTarget.animalId]: (prev[dragTarget.animalId] || []).map((spot, index) =>
-              index === dragTarget.optionIndex
-                ? { ...spot, x: Number(x.toFixed(2)), y: Number(y.toFixed(2)) }
-                : spot
-            )
-          }));
-        } else if (dragTarget.type === 'assigned-spot' && dragTarget.animalId && dragTarget.spotId) {
-          const nextX = Number(x.toFixed(2));
-          const nextY = Number(y.toFixed(2));
-
-          setAssignments((prev) => prev.map((item) => {
-            if (item?.animal?.id !== dragTarget.animalId || item?.spot?.id !== dragTarget.spotId) {
-              return item;
-            }
-            return {
-              ...item,
-              spot: {
-                ...item.spot,
-                x: nextX,
-                y: nextY
-              }
-            };
-          }));
-
-          setEditableHideOptions((prev) => ({
-            ...prev,
-            [dragTarget.animalId]: (prev[dragTarget.animalId] || []).map((spot) =>
-              spot?.id === dragTarget.spotId
-                ? { ...spot, x: nextX, y: nextY }
-                : spot
-            )
-          }));
-        } else if (dragTarget.type === 'animal' && dragTarget.id) {
-          setEditableAnimalPositions((prev) => ({
-            ...prev,
-            [dragTarget.id]: {
-              x: Number(x.toFixed(2)),
-              y: Number(y.toFixed(2))
-            }
-          }));
-        }
-      }}
-      onPointerUp={() => {
-        dragTargetRef.current = null;
-      }}
-      onPointerLeave={() => {
-        dragTargetRef.current = null;
-      }}
+      onPointerMove={handleDebugPointerMove}
+      onPointerUp={stopDebugDrag}
+      onPointerLeave={stopDebugDrag}
     >
-      <img className="eyes-popup-layer eyes-popup-layer-back" src={bgBackImg} alt="" />
-      <img className="eyes-popup-layer eyes-popup-layer-back-rocks" src={backRocksImg} alt="" />
-      <img className="eyes-popup-layer eyes-popup-layer-middle" src={middleRocksImg} alt="" />
-      {showZoneHint && ZONES[showZoneHint] && (
-        <div
-          className="eyes-popup-zone-hint"
-          style={{
-            left: `${ZONES[showZoneHint].x}%`,
-            top: `${ZONES[showZoneHint].y}%`,
-            width: `${ZONES[showZoneHint].w}%`,
-            height: `${ZONES[showZoneHint].h}%`
-          }}
-        />
-      )}
+      <img className="eyes-game-bg" src={bgImg} alt="" draggable={false} />
 
-      {SHOW_SPOT_DEBUG && (
-        <div className="eyes-edit-bar" onClick={(e) => e.stopPropagation()}>
-          <button
-            type="button"
-            className={`eyes-edit-toggle ${debugMode ? 'on' : ''}`}
-            onClick={() => setDebugMode((prev) => !prev)}
-          >
-            {debugMode ? 'Editing' : 'Play'}
-          </button>
-          {debugMode && (
-            <>
-              {ANIMALS.map((animal) => (
-                <button
-                  key={animal.id}
-                  type="button"
-                  className={`eyes-edit-animal-btn ${selectedAnimalId === animal.id ? 'active' : ''}`}
-                  onClick={() => {
-                    setSelectedAnimalId(animal.id);
-                    setSelectedOptionIndex(0);
-                  }}
-                >
-                  {animal.name}
-                </button>
-              ))}
-              {activeHideOptions.map((spot, index) => (
-                <button
-                  key={`eyes-option-${spot.id}`}
-                  type="button"
-                  className={`eyes-edit-option-btn ${selectedOptionIndex === index ? 'active' : ''}`}
-                  onClick={() => setSelectedOptionIndex(index)}
-                >
-                  {index + 1}
-                </button>
-              ))}
-              <button
-                type="button"
-                className="eyes-edit-export-btn"
-                onClick={() => setShowExportPanel((prev) => !prev)}
-              >
-                {showExportPanel ? 'Hide Data' : 'Export'}
-              </button>
-              <button
-                type="button"
-                className="eyes-edit-save-btn"
-                onClick={() => {
-                  try {
-                    localStorage.setItem(DEBUG_MODE_STORAGE_KEY, String(debugMode));
-                    localStorage.setItem(SPOT_STORAGE_KEY, JSON.stringify(editableHideOptions));
-                    localStorage.setItem(ANIMAL_POSITION_STORAGE_KEY, JSON.stringify(editableAnimalPositions));
-                  } catch {
-                    // no-op
-                  }
-                }}
-              >
-                Save
-              </button>
-            </>
-          )}
-        </div>
-      )}
+      <div
+        className={`eyes-game-prompt ${debugMode && selectedDebugKey === 'prompt' ? 'is-debug-selected' : ''}`}
+        style={styleFromLayout(layout.prompt)}
+        onPointerDown={(e) => startDebugDrag(e, 'prompt')}
+      >
+        <span>
+          {flow === FLOW.CLUES
+            ? 'Find the clues that matter'
+            : flow === FLOW.ANIMALS
+              ? 'Find who they belong to'
+              : 'You connected the clues'}
+        </span>
+        <strong>{progressFound}/{activeTargets.length}</strong>
+      </div>
 
-      {SHOW_SPOT_DEBUG && debugMode && showExportPanel && (
-        <div className="eyes-export-panel" onClick={(e) => e.stopPropagation()}>
-          <div className="eyes-export-header">
-            <strong>Saved Eyes Data</strong>
-            <button
-              type="button"
-              className="eyes-export-copy-btn"
-              onClick={() => {
-                navigator.clipboard?.writeText(exportPayload).catch(() => {});
-              }}
-            >
-              Copy
-            </button>
-          </div>
-          <pre>{exportPayload}</pre>
-        </div>
-      )}
-
-      {SHOW_SPOT_DEBUG && debugMode && activeHideOptions.map((spot, index) => (
-        <div
-          key={spot.id}
-          className="eyes-popup-debug-spot"
-          style={{
-            position: 'absolute',
-            left: `${spot.x}%`,
-            top: `${spot.y}%`,
-            transform: 'translate(-50%, -50%)'
-          }}
-        >
-          <div
-            className={`eyes-popup-debug-dot ${selectedOptionIndex === index ? 'is-selected' : ''}`}
-            onPointerDown={(e) => {
-              e.stopPropagation();
-              setSelectedOptionIndex(index);
-              dragTargetRef.current = {
-                type: 'spot',
-                animalId: selectedAnimalId,
-                optionIndex: index
-              };
-              if (typeof e.currentTarget.setPointerCapture === 'function') {
-                e.currentTarget.setPointerCapture(e.pointerId);
-              }
-            }}
-            onPointerUp={(e) => {
-              e.stopPropagation();
-              dragTargetRef.current = null;
-            }}
-            onPointerCancel={() => {
-              dragTargetRef.current = null;
-            }}
-          >
-            {index + 1}
-          </div>
-          <button
-            type="button"
-            className={`eyes-popup-debug-depth ${selectedOptionIndex === index ? 'is-selected' : ''}`}
-            onClick={(e) => {
-              e.stopPropagation();
-              setEditableHideOptions((prev) => ({
-                ...prev,
-                [selectedAnimalId]: (prev[selectedAnimalId] || []).map((spotItem, optionIndex) => {
-                  if (optionIndex !== index) return spotItem;
-                  const currentIndex = DEBUG_DEPTHS.indexOf(spotItem.depth || 'behind-middle');
-                  const nextDepth = DEBUG_DEPTHS[(currentIndex + 1) % DEBUG_DEPTHS.length];
-                  return { ...spotItem, depth: nextDepth };
-                })
-              }));
-            }}
-          >
-            {(spot.depth || 'behind-middle').replaceAll('-', ' ')}
-          </button>
-        </div>
-      ))}
-
-      {SHOW_SPOT_DEBUG && debugMode && (() => {
-        const animal = ANIMALS.find((item) => item.id === selectedAnimalId);
-        if (!animal) return null;
-        const pos = editableAnimalPositions[animal.id] || ANIMAL_POSITIONS[animal.id];
-        const scale = ANIMAL_SIZES[animal.id] || 1;
+      {CLUE_TARGETS.map((target) => {
+        const isFound = foundClueIds.has(target.id);
+        const isVisible = flow === FLOW.CLUES || isFound;
         return (
-          <div
-            className="eyes-popup-debug-animal is-selected"
-            style={{
-              left: `${pos.x}%`,
-              top: `${pos.y}%`,
-              '--animal-scale': scale
-            }}
-            onPointerDown={(e) => {
-              e.stopPropagation();
-              dragTargetRef.current = { type: 'animal', id: animal.id };
-              if (typeof e.currentTarget.setPointerCapture === 'function') {
-                e.currentTarget.setPointerCapture(e.pointerId);
-              }
-            }}
-            onPointerUp={(e) => {
-              e.stopPropagation();
-              dragTargetRef.current = null;
-            }}
-            onPointerCancel={() => {
-              dragTargetRef.current = null;
-            }}
+          <button
+            key={target.id}
+            type="button"
+            className={`eyes-hidden-target clue-target ${isFound ? 'found' : ''} ${hintId === target.id ? 'hinting' : ''} ${softPulse === target.id ? 'soft-pulse' : ''} ${debugMode && selectedDebugKey === target.layoutKey ? 'is-debug-selected' : ''}`}
+            style={styleFromLayout(layout[target.layoutKey])}
+            onClick={(e) => handleClueTap(target, e)}
+            onPointerDown={(e) => debugMode && startDebugDrag(e, target.layoutKey)}
+            aria-label={`Find ${target.label}`}
+            disabled={!debugMode && (!isVisible || isFound)}
           >
-            <img src={animal.img} alt={animal.name} draggable={false} />
-            <span>{animal.name} ({Math.round(pos.x)}, {Math.round(pos.y)})</span>
-          </div>
-        );
-      })()}
-
-      {SHOW_SPOT_DEBUG && debugMode && assignments.map(({ animal, spot }) => (
-        <div
-          key={`assigned-spot-${animal.id}`}
-          className="eyes-popup-assignment-dot"
-          style={{
-            left: `${spot.x}%`,
-            top: `${spot.y}%`,
-            '--assignment-color': DEBUG_ASSIGNMENT_COLORS[animal.id] || '#ffffff'
-          }}
-          title={`${animal.name} (${Math.round(spot.x)}, ${Math.round(spot.y)})`}
-          onPointerDown={(e) => {
-            e.stopPropagation();
-            dragTargetRef.current = {
-              type: 'assigned-spot',
-              animalId: animal.id,
-              spotId: spot.id
-            };
-            if (typeof e.currentTarget.setPointerCapture === 'function') {
-              e.currentTarget.setPointerCapture(e.pointerId);
-            }
-          }}
-          onPointerUp={(e) => {
-            e.stopPropagation();
-            dragTargetRef.current = null;
-          }}
-          onPointerCancel={() => {
-            dragTargetRef.current = null;
-          }}
-        >
-          <span>{animal.name} ({Math.round(spot.x)}, {Math.round(spot.y)})</span>
-        </div>
-      ))}
-
-      {/* Hidden animals */}
-      {assignments.map(({ animal, spot }) => {
-        const isDiscovered = discovered.has(animal.id);
-        const isVisible = visibleAnimal === animal.id;
-        const isHinting = showIdleHint === animal.id;
-        // Hide spots are randomized per session, but once found the animal snaps
-        // to its fixed, hand-placed resting spot (shared with animalPositions.js)
-        // instead of staying wherever it happened to be hiding — a random hide
-        // spot can put it on top of a bush/rock that looks wrong once revealed.
-        const fixedPos = editableAnimalPositions[animal.id] || ANIMAL_POSITIONS[animal.id];
-        const finalX = isDiscovered ? fixedPos.x : spot.x;
-        const finalY = isDiscovered ? fixedPos.y : spot.y;
-        const scale = isDiscovered ? (ANIMAL_SIZES[animal.id] || 1) : (spot.scale || ANIMAL_SIZES[animal.id] || 1);
-
-        const opacity = (isDiscovered || showFullReveal === animal.id || showIdleHint === animal.id)
-          ? SHOW_OPACITY
-          : isVisible
-            ? POP_OPACITY
-            : FADE_IN_OPACITY;
-
-        return (
-          <div
-            key={animal.id}
-            className={`eyes-popup-animal depth-${isDiscovered ? 'front-show' : (spot.depth || 'between-middle-front')} ${isDiscovered ? 'discovered' : ''} ${isVisible ? 'popped' : ''} ${isHinting ? 'hinting' : ''}`}
-            style={{
-              left: `${finalX}%`,
-              top: `${finalY}%`,
-              opacity,
-              '--animal-scale': scale
-            }}
-            onClick={(e) => handleAnimalTap(animal.id, e)}
-          >
-            <img
-              src={animal.img}
-              alt={animal.name}
-              draggable={false}
-            />
-            {isDiscovered && <div className="eyes-popup-sparkle" />}
-          </div>
+            <img src={target.img} alt="" draggable={false} />
+          </button>
         );
       })}
 
-      <img className="eyes-popup-layer eyes-popup-layer-front" src={frontRocksImg} alt="" />
+      {(flow === FLOW.CLUES || debugMode) && CLUE_DISTRACTORS.map((target) => (
+        <button
+          key={target.id}
+          type="button"
+          className={`eyes-hidden-target distractor-target ${softPulse === target.id ? 'soft-pulse' : ''} ${debugMode && selectedDebugKey === target.layoutKey ? 'is-debug-selected' : ''}`}
+          style={styleFromLayout(layout[target.layoutKey])}
+          onClick={(e) => handleDistractorTap(target, e)}
+          onPointerDown={(e) => debugMode && startDebugDrag(e, target.layoutKey)}
+          aria-label={target.label}
+        >
+          <img src={target.img} alt="" draggable={false} />
+        </button>
+      ))}
 
-      {/* Progress tray and counter intentionally removed per new flow */}
+      {(flow !== FLOW.CLUES || debugMode) && ANIMAL_TARGETS.map((target) => {
+        const isFound = foundAnimalIds.has(target.id);
+        const frameIndex = frameIndexByAnimal[target.id] || 0;
+        const frame = isFound
+          ? target.frames[frameIndex] || target.frames[target.frames.length - 1]
+          : target.frames[0];
+        const layoutKey = isFound ? target.revealLayoutKey : target.hiddenLayoutKey;
+        return (
+          <button
+            key={target.id}
+            type="button"
+            className={`eyes-hidden-target animal-target ${isFound ? 'found' : ''} ${revealingAnimal === target.id ? 'revealing' : ''} ${hintId === target.id ? 'hinting' : ''} ${debugMode && selectedDebugKey === layoutKey ? 'is-debug-selected' : ''}`}
+            style={styleFromLayout(layout[layoutKey])}
+            onClick={(e) => handleAnimalTap(target, e)}
+            onPointerDown={(e) => debugMode && startDebugDrag(e, layoutKey)}
+            aria-label={`Find ${target.label}`}
+            disabled={!debugMode && isFound}
+          >
+            <img src={frame} alt="" draggable={false} />
+            {isFound && <span className="eyes-popup-sparkle" />}
+          </button>
+        );
+      })}
+
+      {(flow === FLOW.ANIMALS || debugMode) && ANIMAL_DISTRACTORS.map((target) => (
+        <button
+          key={target.id}
+          type="button"
+          className={`eyes-hidden-target distractor-target animal-distractor ${softPulse === target.id ? 'soft-pulse' : ''} ${debugMode && selectedDebugKey === target.layoutKey ? 'is-debug-selected' : ''}`}
+          style={styleFromLayout(layout[target.layoutKey])}
+          onClick={(e) => handleDistractorTap(target, e)}
+          onPointerDown={(e) => debugMode && startDebugDrag(e, target.layoutKey)}
+          aria-label={target.label}
+        >
+          <img src={target.img} alt="" draggable={false} />
+        </button>
+      ))}
+
+      {debugMode && ANIMAL_TARGETS.filter((target) => !foundAnimalIds.has(target.id)).map((target) => (
+        <button
+          key={`debug-reveal-${target.id}`}
+          type="button"
+          className={`eyes-hidden-target animal-target debug-preview ${selectedDebugKey === target.revealLayoutKey ? 'is-debug-selected' : ''}`}
+          style={styleFromLayout(layout[target.revealLayoutKey])}
+          onPointerDown={(e) => startDebugDrag(e, target.revealLayoutKey)}
+          aria-label={`Move ${target.label} reveal`}
+        >
+          <img src={target.frames[target.frames.length - 1]} alt="" draggable={false} />
+        </button>
+      ))}
+
+      {HIDING_PROPS.map((prop) => (
+        <img
+          key={prop.id}
+          className={`eyes-hiding-prop ${debugMode && selectedDebugKey === prop.layoutKey ? 'is-debug-selected' : ''}`}
+          src={prop.img}
+          alt=""
+          draggable={false}
+          style={styleFromLayout(layout[prop.layoutKey])}
+          onPointerDown={(e) => startDebugDrag(e, prop.layoutKey)}
+        />
+      ))}
+
+      <div
+        className={`eyes-clue-tray ${debugMode && selectedDebugKey === 'tray' ? 'is-debug-selected' : ''}`}
+        style={styleFromLayout(layout.tray)}
+        aria-hidden="true"
+        onPointerDown={(e) => startDebugDrag(e, 'tray')}
+      >
+        {CLUE_TARGETS.map((target) => (
+          <div key={target.id} className={`eyes-clue-slot ${foundClueIds.has(target.id) ? 'filled' : ''}`}>
+            {foundClueIds.has(target.id) ? <img src={target.img} alt="" /> : <span />}
+          </div>
+        ))}
+        {ANIMAL_TARGETS.map((target) => (
+          <div key={target.id} className={`eyes-clue-slot animal-slot ${foundAnimalIds.has(target.id) ? 'filled' : ''}`}>
+            {foundAnimalIds.has(target.id) ? <img src={target.frames[target.frames.length - 1]} alt="" /> : <span />}
+          </div>
+        ))}
+      </div>
+
+      {(feedback || debugMode) && (
+        <div
+          className={`eyes-soft-feedback ${debugMode && selectedDebugKey === 'feedback' ? 'is-debug-selected' : ''}`}
+          style={styleFromLayout(layout.feedback)}
+          onPointerDown={(e) => startDebugDrag(e, 'feedback')}
+        >
+          {feedback || 'Feedback'}
+        </div>
+      )}
+
+      {DEBUG_UI_ENABLED && (
+        <div
+          className={`eyes-debug-panel ${debugMode ? 'is-open' : ''}`}
+          style={{ left: debugPanelPosition.x, top: debugPanelPosition.y }}
+          onPointerMove={moveDebugPanelDrag}
+          onPointerUp={stopDebugPanelDrag}
+          onPointerLeave={stopDebugPanelDrag}
+        >
+          <button
+            type="button"
+            className="eyes-debug-toggle"
+            onClick={() => setDebugMode((value) => !value)}
+          >
+            {debugMode ? 'Hide Layout Debug' : 'Layout Debug'}
+          </button>
+
+          {debugMode && (
+            <div className="eyes-debug-body">
+              <button
+                type="button"
+                className="eyes-debug-drag-handle"
+                onPointerDown={startDebugPanelDrag}
+              >
+                Drag panel
+              </button>
+              <div className="eyes-debug-section-title">Scene Objects</div>
+              <p className="eyes-debug-note">Drag any object in the scene, or tune exact values here.</p>
+
+              <label className="eyes-debug-row">
+                <span>Element</span>
+                <select value={selectedDebugKey} onChange={(e) => setSelectedDebugKey(e.target.value)}>
+                  {DEBUG_KEYS.map((item) => (
+                    <option key={item.key} value={item.key}>{item.label}</option>
+                  ))}
+                </select>
+              </label>
+
+              {['x', 'y', 'w', 'z'].map((field) => (
+                <label key={field} className="eyes-debug-row">
+                  <span>{field.toUpperCase()}</span>
+                  <input
+                    type="range"
+                    min="0"
+                    max={field === 'z' ? 80 : 100}
+                    step={field === 'z' ? 1 : 0.25}
+                    value={selectedDebugLayout?.[field] ?? (field === 'z' ? 20 : 0)}
+                    onChange={(e) => updateLayoutField(selectedDebugKey, field, e.target.value)}
+                  />
+                  <input
+                    type="number"
+                    min="0"
+                    max={field === 'z' ? 80 : 100}
+                    step={field === 'z' ? 1 : 0.25}
+                    value={selectedDebugLayout?.[field] ?? (field === 'z' ? 20 : 0)}
+                    onChange={(e) => updateLayoutField(selectedDebugKey, field, e.target.value)}
+                  />
+                </label>
+              ))}
+
+              <div className="eyes-debug-actions">
+                <button type="button" onClick={copyLayoutJson}>
+                  {layoutCopyStatus || 'Copy JSON'}
+                </button>
+                <button type="button" onClick={resetLayout}>Reset</button>
+              </div>
+
+              <pre className="eyes-debug-readout">{JSON.stringify({ [selectedDebugKey]: selectedDebugLayout }, null, 2)}</pre>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

@@ -1581,6 +1581,7 @@ chants: result?.chants || result?.chantedVerses || {},
               GameStateManager.setActiveProfile(profileId);
               setCurrentView('profile-welcome');  // go to dashboard, not map
             }}
+            onBackToMap={() => setCurrentView('map')}
           />
         </div>
       )}

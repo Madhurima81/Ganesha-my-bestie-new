@@ -62,6 +62,8 @@ const GAMES = {
   kurumedeva:    { label: 'Kurumedeva',        bg: nirvighnamBg,    Comp: lazy(() => import('../zones/shloka-river/scenes/Scene3/KurumedevaGame')) },
   sarvakaryeshu: { label: 'Sarvakaryeshu',     bg: sarvakaryeshuBg, Comp: lazy(() => import('../zones/shloka-river/scenes/scene4/SarvakaryeshuGame')) },
   sarvada:       { label: 'Sarvada',           bg: sarvadaBg,       Comp: lazy(() => import('../zones/shloka-river/scenes/scene4/SarvadaGame')) },
+  'sm-eyes':     { label: 'Symbol Mtn — Eyes Clue Game',            Comp: lazy(() => import('../zones/symbol-mountain/scenes/tusk/EyesPopUpGame')) },
+  'sm-ears':     { label: 'Symbol Mtn — Ear Listening Game',         Comp: lazy(() => import('../zones/symbol-mountain/scenes/tusk/EarsSoundMatchGame')) },
 };
 
 // Full scenes — self-contained (they wire their own SceneManager / useVoiceGuidance /
@@ -285,7 +287,6 @@ export default function GameTestHarness() {
 
   const entry = gameKey ? ALL[gameKey] : null;
   const isScene = !!entry?.isScene;
-  const pinItems = items.filter((it) => it.type === 'pin');
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: '#E8F5E9', fontFamily: BODY, overflow: 'hidden' }}>

@@ -38,7 +38,6 @@
   pointer-events: auto;
 }
 
-.maha-hint,
 .maha-doneline {
   position: absolute;
   left: 50%;
@@ -48,20 +47,6 @@
   text-align: center;
   white-space: nowrap;
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
-}
-
-.maha-hint {
-  top: 11%;
-  font-family: 'Nunito', sans-serif;
-  font-size: clamp(13px, 1.9vw, 17px);
-  opacity: 0.92;
-}
-
-.maha-hint.is-visible {
-  animation: mahaHintFade 0.45s ease;
-}
-
-.maha-doneline {
   top: 39%;
   font-family: 'Baloo 2', cursive;
   font-weight: 700;
@@ -219,6 +204,59 @@
   filter: brightness(1.04) drop-shadow(0 0 10px rgba(255, 188, 98, 0.55));
 }
 
+.maha-hint-bubble {
+  position: absolute;
+  z-index: 40;
+  transform: translate(-50%, -100%);
+  max-width: min(72%, 220px);
+  padding: 8px 14px;
+  background: #FFF9E6;
+  color: #5D2E0F;
+  border: 1.5px solid rgba(150, 121, 196, 0.28);
+  border-radius: 20px 24px 21px 25px;
+  box-shadow:
+    0 6px 16px rgba(40, 20, 80, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  font-family: 'Baloo 2', cursive;
+  font-size: clamp(15px, 2.2vw, 19px);
+  font-weight: 700;
+  line-height: 1.15;
+  text-align: center;
+  white-space: nowrap;
+  pointer-events: none;
+  animation: mahaHintBubbleIn 0.24s ease-out;
+}
+
+.maha-hint-bubble::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  width: 12px;
+  height: 12px;
+  background: #FFF9E6;
+  border-right: 1.5px solid rgba(150, 121, 196, 0.28);
+  border-bottom: 1.5px solid rgba(150, 121, 196, 0.28);
+  transform: translateX(-50%) rotate(45deg);
+}
+
+@keyframes mahaHintBubbleIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -92%) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -100%) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .maha-hint-bubble {
+    animation: none;
+  }
+}
+
 .maha-debug-panel {
   position: fixed;
   left: 0.75rem;
@@ -360,11 +398,6 @@
 .maha-game.is-debugging .is-debug-selected {
   outline: 2px solid #ffde6d;
   box-shadow: 0 0 0 4px rgba(255, 222, 109, 0.22);
-}
-
-@keyframes mahaHintFade {
-  from { opacity: 0; transform: translateX(-50%) translateY(8px); }
-  to { opacity: 0.92; transform: translateX(-50%) translateY(0); }
 }
 
 @keyframes mahaHintPulse {

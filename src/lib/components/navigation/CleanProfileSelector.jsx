@@ -13,6 +13,7 @@ import './CleanProfileSelector.css';
 
 const CleanProfileSelector = ({
   onProfileSelect,
+  onBackToMap,
   profiles: initialProfiles,
   forceCreate = false,
   // Installed-PWA relaunch: the parent already captured name + age in the
@@ -617,6 +618,21 @@ const CleanProfileSelector = ({
 
         {!showCreateProfile && (
           <>
+            {onBackToMap && (
+              <button
+                type="button"
+                className="profile-map-back-btn"
+                onClick={() => {
+                  playUiTap(0.22);
+                  onBackToMap();
+                }}
+                aria-label="Back to main map"
+              >
+                <span aria-hidden="true">&larr;</span>
+                <span>Map</span>
+              </button>
+            )}
+
             <div className="clean-profile-header">
               <ScreenHeader title="Who's Playing?" glowColor="purple" />
               <button className="clean-info-btn" onClick={() => setShowInfo(true)}>

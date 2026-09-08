@@ -73,3 +73,6 @@ _worktree_main_assets/
 
 # dev/game-test annotation scratch (viteAnnotationsPlugin writes here)
 src/dev/annotations/
+
+# Local Netlify folder
+.netlify

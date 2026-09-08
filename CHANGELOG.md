@@ -1,6 +1,33 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
 
+## [2026-09-06] — Modak scene: Flower Journey + Garland rework
+**Touched:** src/zones/symbol-mountain/scenes/modak/NewModakSceneV7.jsx (full body
+rewrite), ModakScene.css (new `modak-fj-` / `modak-garland-` section appended),
+assets/images/fj-*.png (10 new assets from modak_scene_new_assets.zip)
+**Changed:** Replaced the old 3-game Modak scene (mound search → offering drag-collect
+→ belly journey) with the 7-beat Flower Journey. Interaction vocabulary:
+HOLD (calm Mooshika) → GUIDE across mud → SWIPE leaves apart (2 swipes) →
+PULL+HOLD branch → DRAG+SNAP 6 flowers into a garland (full-screen overlay) →
+GUIDE garland to Ganesha → REVEAL Modak (no mechanic). Symbols now unlock in
+order mooshika → belly → modak (modak is the final sweet reveal). Preserved the
+whole shell: useVoiceGuidance, pause/idle-ladder/reload plumbing, SymbolAutoReveal,
+FireworksCompletion + CalmGoldenFireworks + InnerMandala + SceneCompletionCelebration,
+SymbolSidebar, HomeButton/ZoneBadge/AudioToggle/VOReplay, GestureDemo hints per beat.
+New web-speech VO map (MODAK_VO) as TTS scaffolding — MP3s later. Debug jump
+buttons rescoped to Beat 1 / Beat 5 / Beat 6. Git: checkpoint commit 83ecbcf +
+backup branch backup/modak-pre-rework-20260906 + dated .backup files.
+**Open:**
+- NOT playtested in-app yet — needs a full run of all 7 beats + reload mid-beat +
+  tab-switch/resume + audio toggle. Build compiles clean (esbuild resolve check).
+- Beat-position %s (mud/leaves/branch/Ganesha anchors) are first-pass guesses vs
+  the new background art — will need visual tuning against newmodakbg.webp.
+- New fj-*.png assets are large (mud 1.1MB, leafy-closed 919KB, flower-cream 604KB)
+  — compress / convert to webp before prod.
+- OpeningModal + completion copy still pull old text from content configs
+  (discoveryContent.js / voiceGuidance.js) — needs Madhurima's approval to update.
+- Old `modak-game-*` CSS for the retired games left in place (unused, harmless).
+
 ## [2026-09-04] — Meet Ganesha welcome video + onboarding icons
 **Touched:** src/components/GaneshaIntroStory.jsx + .css,
 src/lib/components/onboarding/SignInScreen.jsx + .css + OnboardingCard.css,
