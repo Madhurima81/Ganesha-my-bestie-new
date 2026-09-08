@@ -104,8 +104,8 @@
 
 .sama-shadow {
   position: absolute;
-  left: 45%;
-  top: 70%;
+  left: 58%;
+  top: 63%;
   width: clamp(205px, 28vw, 430px);
   aspect-ratio: 1;
   transform: translate(-50%, -50%);
