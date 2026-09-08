@@ -21,10 +21,10 @@ const HOLD_MS = 1150;
 
 // These are invisible discovery zones. Tune cx/cy/rx/ry once final art lands.
 const CLUES = [
-  { id: 'branch', label: 'branch', img: branchImg, cx: 75, cy: 47, rx: 8, ry: 9, hintW: 18, hintH: 20 },
-  { id: 'reeds-leaves', label: 'reeds and leaves', img: reedsLeavesImg, cx: 86, cy: 51, rx: 8, ry: 12, hintW: 18, hintH: 24 },
-  { id: 'stump', label: 'stump', img: stumpImg, cx: 82, cy: 62, rx: 8, ry: 10, hintW: 19, hintH: 21 },
-  { id: 'rocks', label: 'rocks and grass', img: rocksGrassImg, cx: 76, cy: 67, rx: 9, ry: 8, hintW: 21, hintH: 17 },
+  { id: 'branch', label: 'branch', img: branchImg, cx: 75, cy: 47, rx: 11, ry: 9, hintW: 18, hintH: 20 },
+  { id: 'reeds-leaves', label: 'reeds and leaves', img: reedsLeavesImg, cx: 86, cy: 51, rx: 11, ry: 12, hintW: 18, hintH: 24 },
+  { id: 'stump', label: 'stump', img: stumpImg, cx: 82, cy: 62, rx: 11, ry: 10, hintW: 19, hintH: 21 },
+  { id: 'rocks', label: 'rocks and grass', img: rocksGrassImg, cx: 76, cy: 67, rx: 12, ry: 8, hintW: 21, hintH: 17 },
 ];
 
 const START_BEAM = { x: 31, y: 57 };
