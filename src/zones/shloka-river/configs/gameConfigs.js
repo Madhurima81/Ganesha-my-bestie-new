@@ -295,7 +295,7 @@ export const GAME_CONFIGS = {
         'ko': 'suryakoti-ko',
         'ti': 'suryakoti-ti'
       },
-      completeWordFile: '/audio/words/Suryakoti.mp3'
+      completeWordFile: '/audio/words/suryakoti.mp3'
     },
     
     waterSpray: {
@@ -397,7 +397,7 @@ clicker: {
         'pra': 'samaprabha-pra',
         'bha': 'samaprabha-bha'
       },
-      completeWordFile: '/audio/words/Samaprabha.mp3'
+      completeWordFile: '/audio/words/samaprabha.mp3'
     },
     
     waterSpray: {
@@ -493,7 +493,7 @@ clicker: {
         'vigh': 'nirvighnam-vigh',
         'nam': 'nirvighnam-nam'
       },
-      completeWordFile: '/audio/words/Nirvighnam.mp3'
+      completeWordFile: '/audio/words/nirvighnam.mp3'
     },
     
     waterSpray: {
@@ -601,7 +601,7 @@ elements: {
         'me': 'kurumedeva-me',
         'va': 'kurumedeva-va' 
       },
-      completeWordFile: '/audio/words/Kurumedeva.mp3'
+      completeWordFile: '/audio/words/kurumedeva.mp3'
     },
     
     waterSpray: {
@@ -699,7 +699,7 @@ elements: {
         'kar': 'sarvakaryeshu-kar',
         'yeshu': 'sarvakaryeshu-yeshu'
       },
-      completeWordFile: '/audio/words/Sarvakaryeshu.mp3'
+      completeWordFile: '/audio/words/sarvakaryeshu.mp3'
     },
     
     waterSpray: {
@@ -793,7 +793,7 @@ elements: {
         'va': 'sarvada-va',
         'da': 'sarvada-da'
       },
-      completeWordFile: '/audio/words/Sarvada.mp3'
+      completeWordFile: '/audio/words/sarvada.mp3'
     },
     
     waterSpray: {
