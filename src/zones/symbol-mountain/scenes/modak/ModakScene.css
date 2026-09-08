@@ -1022,6 +1022,15 @@ div[class*="modak-game-modak-collected"] {
   pointer-events: none;
 }
 
+/* Docked beside Mooshika's current spot instead of a fixed top counter -
+   top/left are set inline per-render, this just anchors + smooths the move. */
+.modak-fj-flower-tray--follow {
+  transform: translate(-50%, -100%);
+  transition: top 0.35s ease, left 0.35s ease;
+  gap: clamp(3px, 0.5vw, 6px);
+  padding: clamp(4px, 0.7vw, 8px) clamp(7px, 1vw, 12px);
+}
+
 .modak-fj-flower-slot {
   width: clamp(20px, 2.4vw, 32px);
   height: clamp(20px, 2.4vw, 32px);
