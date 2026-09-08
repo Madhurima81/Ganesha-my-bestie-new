@@ -30,7 +30,10 @@ const FAMILY = { x: 88, y: 42, w: 14 };
 
 // X thresholds (in %) that light va / kra / tun as the frog passes them.
 // 'da' lights on actually reaching the family, not just an X line.
-const DEFAULT_BANDS_X = [24, 44, 62];
+// Each threshold sits in clear water just PAST the obstacle it marks, not at
+// its hit-ellipse edge — otherwise a bump-and-graze against the obstacle
+// (not real forward swimming) can trip the band and drop a pad.
+const DEFAULT_BANDS_X = [47, 66, 84];
 
 const FAMILY_WIN_RADIUS = 12;   // how close counts as "reached the family"
 const GRAB_RADIUS = 15;         // must press near the frog to pick it up
