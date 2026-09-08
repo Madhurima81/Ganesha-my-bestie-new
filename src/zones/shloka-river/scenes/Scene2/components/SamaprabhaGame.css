@@ -108,17 +108,18 @@
   top: 68%;
   width: clamp(205px, 28vw, 430px);
   aspect-ratio: 1;
-  transform: translate(-50%, -50%);
+  transform-origin: 80% 40%;
+  transform: translate(-50%, -50%) rotate(-8deg) scaleX(1.2) scaleY(0.55) skewX(-12deg);
   z-index: 5;
   pointer-events: none;
-  opacity: 0.84;
-  filter: blur(1.2px) saturate(0.72);
+  opacity: 0.7;
+  filter: blur(1.5px) saturate(0.6) brightness(0.55);
   transition: opacity 0.7s ease, filter 0.7s ease;
 }
 
 .sama-shadow.is-understood {
-  opacity: 0.42;
-  filter: blur(0) saturate(0.8);
+  opacity: 0.35;
+  filter: blur(0) saturate(0.7) brightness(0.6);
 }
 
 .sama-shadow img,
