@@ -43,7 +43,7 @@ import { getSceneResetConfig } from '../../../../lib/config/SceneResetConfigs';
 // Import game components
 import EyesPopUpGame from './EyesPopUpGame';
 import EarsSoundMatchGame from './EarsSoundMatchGame';
-import TuskGivingGame from './TuskGivingGame';
+import TuskPathGame from './TuskPathGame';
 
 // UI Components
 import FireworksCompletion from '../../../../lib/components/feedback/FireworksCompletion';
@@ -926,7 +926,7 @@ const SymbolMountainSceneContent = ({
               {sceneState.showTuskAssemblyGame &&
                !isEarRevealActive &&
                !sceneState.discoveredSymbols?.tusk && (
-                <TuskGivingGame
+                <TuskPathGame
                   key={`tusk-${tuskTestRunKey}`}
                   isActive={sceneState.showTuskAssemblyGame}
                   isAudioOn={isAudioOn}
