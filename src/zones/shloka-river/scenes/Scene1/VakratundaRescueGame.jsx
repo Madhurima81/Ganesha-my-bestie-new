@@ -28,17 +28,6 @@ const FROG_W = 6;
 const REUNION_FROG_W = 5.4;
 const FAMILY = { x: 91.08, y: 52.71, w: 14 };
 
-// X thresholds (in %) that light va / kra / tun as the frog passes them.
-// 'da' lights on actually reaching the family, not just an X line.
-// Band 0 must sit clearly PAST the frog's start x (24.1) or the first
-// syllable fires for free the moment play begins. Each threshold also sits
-// in clear water just PAST the obstacle it marks (stone: hit x 36.61 rx 14 ->
-// edge 50.61; reeds/reeds2 cluster -> edge 66.31; logpile: hit x 69.07 rx 14
-// -> edge 83.07), not at its hit-ellipse edge — otherwise a bump-and-graze
-// against the obstacle (not real forward swimming) can trip the band and
-// drop a pad.
-const DEFAULT_BANDS_X = [53, 69, 86];
-
 const FAMILY_WIN_RADIUS = 12;   // how close counts as "reached the family"
 const GRAB_RADIUS = 15;         // must press near the frog to pick it up
 const TRAIL_MIN_STEP = 1.0;     // ignore micro jitter when drawing the wake
@@ -173,6 +162,26 @@ function cloneObstacles() {
   }));
 }
 
+// X thresholds (in %) that light va / kra / tun as the frog passes them.
+// 'da' lights on actually reaching the family, not just an X line.
+// Derived from the obstacles each syllable is meant to mark — never a
+// hand-picked line — so a threshold can't end up sitting inside the very
+// hitbox it's supposed to be past. 'reeds' + 'reeds2' are one checkpoint (the
+// reed cluster). Order matches how the frog actually meets them swimming
+// right: stone -> reed cluster -> logpile.
+const BAND_CHECKPOINTS = [['stone'], ['reeds', 'reeds2'], ['logpile']];
+const BAND_CLEAR_MARGIN = 6; // % past the obstacle's outer edge — clear water, not a graze
+
+function computeBandsX(obstacles) {
+  return BAND_CHECKPOINTS.map((ids) => {
+    const edge = Math.max(...ids.map((id) => {
+      const obstacle = obstacles.find((o) => o.id === id);
+      return obstacle.hit.x + obstacle.hit.rx;
+    }));
+    return edge + BAND_CLEAR_MARGIN;
+  });
+}
+
 function isPointInsideObstacle(point, obstacles) {
   return obstacles.some((obstacle) => {
     const { x, y, rx, ry } = obstacle.hit;
@@ -204,7 +213,7 @@ export default function VakratundaRescueGame({
   const [blockPulse, setBlockPulse] = useState(false);
   const [familyBounce, setFamilyBounce] = useState(false);
   const [obstacles, setObstacles] = useState(() => cloneObstacles());
-  const [bandsX, setBandsX] = useState(DEFAULT_BANDS_X);
+  const [bandsX, setBandsX] = useState(() => computeBandsX(DEFAULT_OBSTACLES));
   const [startPos, setStartPos] = useState(START_POS);   // frog start / reset spot
   const [frogW, setFrogW] = useState(FROG_W);            // frog width %
   const [familyPoint, setFamilyPoint] = useState({ x: FAMILY.x, y: FAMILY.y });
@@ -1218,7 +1227,7 @@ export default function VakratundaRescueGame({
               <button
                 type="button"
                 className="vak-debug-reset"
-                onClick={() => setBandsX(DEFAULT_BANDS_X)}
+                onClick={() => setBandsX(computeBandsX(obstacles))}
               >
                 Reset Bands
               </button>
