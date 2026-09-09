@@ -922,7 +922,7 @@ const SymbolMountainSceneContent = ({
                 />
               )}
 
-              {/* TUSK GAME - Path clearing */}
+              {/* TUSK GAME - Giving (mango / water / grass / feather to bunny traveller) */}
               {sceneState.showTuskAssemblyGame &&
                !isEarRevealActive &&
                !sceneState.discoveredSymbols?.tusk && (
@@ -930,21 +930,6 @@ const SymbolMountainSceneContent = ({
                   key={`tusk-${tuskTestRunKey}`}
                   isActive={sceneState.showTuskAssemblyGame}
                   isAudioOn={isAudioOn}
-                  animalPositions={sceneState.tuskAnimalPositions}
-                  obstaclePosition={sceneState.tuskObstaclePosition}
-                  onAnimalPositionsChange={(positions) => {
-                    sceneActions.updateState({
-                      tuskAnimalPositions: {
-                        ...(sceneState.tuskAnimalPositions || {}),
-                        ...(positions || {})
-                      }
-                    });
-                  }}
-                  onObstaclePositionChange={(position) => {
-                    sceneActions.updateState({
-                      tuskObstaclePosition: position || sceneState.tuskObstaclePosition || null
-                    });
-                  }}
                   onGameComplete={handleTuskGameComplete}
                 />
               )}

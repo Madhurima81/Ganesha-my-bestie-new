@@ -92,7 +92,7 @@
 
 .clue-target {
   opacity: 0.78;
-  transition: opacity 260ms ease, transform 260ms ease, filter 260ms ease;
+  transition: opacity 260ms ease, transform 260ms ease, filter 260ms ease, left 420ms ease, top 420ms ease, width 420ms ease;
 }
 
 .clue-target.found {
@@ -147,6 +147,20 @@
   pointer-events: none;
   user-select: none;
   filter: drop-shadow(0 10px 14px rgba(30, 49, 35, 0.2));
+}
+
+.eyes-story-character {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  user-select: none;
+  filter: drop-shadow(0 10px 14px rgba(30, 49, 35, 0.2));
+  transition: filter 420ms ease;
+}
+
+.eyes-story-character.is-debug-selected {
+  outline: 3px solid rgba(255, 80, 80, 0.95);
+  outline-offset: 4px;
 }
 
 .eyes-clue-tray {
@@ -333,6 +347,7 @@
 
 .eyes-popup-game.is-debugging .eyes-hidden-target,
 .eyes-popup-game.is-debugging .eyes-hiding-prop,
+.eyes-popup-game.is-debugging .eyes-story-character,
 .eyes-popup-game.is-debugging .eyes-game-prompt,
 .eyes-popup-game.is-debugging .eyes-clue-tray,
 .eyes-popup-game.is-debugging .eyes-soft-feedback {

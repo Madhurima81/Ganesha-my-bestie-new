@@ -1,6 +1,41 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
 
+## [2026-09-09] — Modak game 2: prop visibility, follow-tray, ghost-drag fix, Belly/Modak sequencing
+**Touched:** src/zones/symbol-mountain/scenes/modak/NewModakSceneV7.jsx,
+src/zones/symbol-mountain/scenes/modak/ModakScene.css,
+src/lib/components/interactive/KidsDraggable.jsx (shared component)
+**Changed:** Four fixes to the Flower Journey game (game 2 of Modak scene),
+driven by Madhurima's design-review feedback:
+1. Mud/leaf/branch backdrop props + their flower pairs now render from the
+   start of the challenge sequence (`showChallengeProps` flag) instead of
+   phase-by-phase, so the child sees the whole layout upfront. Actual
+   interactions still gate to their own phase.
+2. Flower counter ("tray") now tracks Mooshika's live position
+   (`modak-fj-flower-tray--follow`) instead of a fixed top-of-screen bar.
+3. Ghost/duplicate Mooshika during the mud-crossing drag: root cause was in
+   the SHARED `KidsDraggable.jsx` component — its floating drag-clone was
+   never accompanied by dimming the source element (a stale comment
+   ("// Restore original") implied it used to). Fixed at the shared-component
+   level in `onPointerDown` (`el.style.opacity = '0.35'`), so this also fixes
+   ghosting in every other scene that uses KidsDraggable, not just here.
+4. Belly/Modak sequencing locked per design: worried/angry/sad emotion icons
+   now fade over ~900ms instead of vanishing instantly (so all three are
+   visible together at the pause before Belly reveals), confirmed Belly only
+   triggers on explicit garland-drop-on-Ganesha (never proximity), and
+   confirmed MODAK_PAUSE already holds ~1.65s+ between the Belly reveal and
+   the Modak reveal after the garland is offered.
+Verified live via a temporary local-only preview route in main.jsx
+(`?preview=modakv7`, reverted before commit — never pushed) driven with
+Playwright: screenshotted all-props-visible state, the follow-tray, the
+drag with no ghost, all three emotion icons together at the Belly pause, and
+the Belly→pause→Modak reveal sequence. Commits: b2480ec (scene fixes),
+5d8e579 (KidsDraggable ghost fix). Pushed to origin/staging.
+**Open:** Leaves-swipe and branch-pull challenges were only exercised via
+debug-jump states, not driven end-to-end by simulated swipe/pull gestures —
+worth a manual pass to confirm angry/sad icons fire correctly from those
+specific interactions (not just that they're renderable).
+
 ## [2026-09-06] — Modak scene: Flower Journey + Garland rework
 **Touched:** src/zones/symbol-mountain/scenes/modak/NewModakSceneV7.jsx (full body
 rewrite), ModakScene.css (new `modak-fj-` / `modak-garland-` section appended),

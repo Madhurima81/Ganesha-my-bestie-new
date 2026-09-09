@@ -1,31 +1,27 @@
 // zones/symbol-mountain/scenes/tusk/EyesPopUpGame.jsx
-// Eyes investigation game: find clues first, then find who they belong to.
+// Eyes investigation game: a single story-led search — Monkey is hungry,
+// Peacock is missing a feather. Find both camouflaged things at once.
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useAppVisibility from '../../../../lib/hooks/useAppVisibility';
 import './EyesPopUpGame.css';
 
 import bgImg from './assets/images/eyes-game/symbol_mountain_3_bg.png';
-import featherImg from './assets/images/eyes-game/peacock_feather.png';
-import mangoImg from './assets/images/eyes-game/mango.png';
-import butterflyImg from './assets/images/eyes-game/butterfly.png';
-import leavesImg from './assets/images/eyes-game/drifting_leaf_cluster.png';
-import bushImg from './assets/images/eyes-game/modular_tall_bush.png';
-import rockImg from './assets/images/eyes-game/modular_rock_cluster.png';
-import peacockRestingImg from './assets/images/eyes-game/peacock_01_resting_fanned_tail.png';
-import peacockAdmiringImg from './assets/images/eyes-game/peacock_02_admiring_tail.png';
-import peacockSparkleImg from './assets/images/eyes-game/peacock_03_tail_sparkle.png';
-import peacockHighlightImg from './assets/images/eyes-game/peacock_04_feather_highlight.png';
-import monkeyRestingImg from './assets/images/eyes-game/monkey_01_resting.png';
-import monkeyLookingImg from './assets/images/eyes-game/monkey_02_looks_toward_fruit.png';
-import monkeyPicksImg from './assets/images/eyes-game/monkey_03_picks_fruit_up.png';
-import monkeySmilesImg from './assets/images/eyes-game/monkey_04_smiles_holds_close.png';
-import monkeyHoldingImg from './assets/images/eyes-game/monkey_05_idle_holding_fruit.png';
+import monkeyWorriedImg from './assets/images/eyes-game-v2/monkey_hungry_worried.png';
+import peacockWorriedImg from './assets/images/eyes-game-v2/peacock_worried_missing_feather.png';
+import monkeyHappyImg from './assets/images/eyes-game/monkey_04_smiles_holds_close.png';
+import peacockHappyImg from './assets/images/eyes-game/peacock_04_feather_highlight.png';
+import featherHiddenImg from './assets/images/eyes-game-v2/feather_hidden_in_leafy_bush.png';
+import mangoHiddenImg from './assets/images/eyes-game-v2/mango_hidden_in_yellow_flower_bush.png';
+import featherFoundImg from './assets/images/eyes-game-v2/peacock_feather_single.png';
+import mangoFoundImg from './assets/images/eyes-game/mango.png';
+import butterflyImg from './assets/images/eyes-game-v2/golden_butterfly.png';
+import yellowFlowerClusterImg from './assets/images/eyes-game-v2/yellow_flower_cluster.png';
+import creamFlowerClusterImg from './assets/images/eyes-game-v2/cream_flower_cluster.png';
 import { ANIMAL_POSITIONS } from './animalPositions';
 
 const FLOW = {
-  CLUES: 'clues',
-  ANIMALS: 'animals',
+  SEARCH: 'search',
   COMPLETE: 'complete'
 };
 
@@ -33,45 +29,37 @@ const DEBUG_UI_ENABLED =
   typeof window !== 'undefined' &&
   (window.location.pathname.includes('game-test') ||
     new URLSearchParams(window.location.search).has('debugEyes'));
-const LAYOUT_STORAGE_KEY = 'symbol_mountain_eyes_layout_v1';
-const LAYOUT_PRESET_VERSION = '2026-09-07-eyes-investigation-layout-1';
+const LAYOUT_STORAGE_KEY = 'symbol_mountain_eyes_layout_v2';
+const LAYOUT_PRESET_VERSION = '2026-09-09-eyes-single-search-layout-1';
 
 const DEFAULT_LAYOUT = {
   prompt: { x: 50, y: 5.6, w: 52, z: 40 },
   feedback: { x: 50, y: 84, w: 40, z: 44 },
-  tray: { x: 50, y: 93, w: 26, z: 42 },
-  clueFeather: { x: 28, y: 58, w: 10, z: 12 },
-  clueMango: { x: 44, y: 70, w: 9, z: 12 },
-  clueButterfly: { x: 77, y: 58, w: 11, z: 11 },
-  clueLeaves: { x: 73, y: 82, w: 14, z: 11 },
-  peacockHidden: { x: 28, y: 56, w: 26, z: 13 },
-  monkeyHidden: { x: 45, y: 64, w: 15, z: 13 },
-  peacockReveal: { x: 69.21, y: 68.92, w: 26, z: 32 },
-  monkeyReveal: { x: 10.07, y: 18.11, w: 15, z: 32 },
-  animalBird: { x: 77, y: 47, w: 8, z: 11 },
-  animalLeaves: { x: 73, y: 78, w: 13, z: 11 },
-  propBushLeft: { x: 28, y: 61, w: 22, z: 18 },
-  propRockLeft: { x: 43, y: 76, w: 20, z: 20 },
-  propBushRight: { x: 78, y: 63, w: 19, z: 18 }
+  tray: { x: 50, y: 93, w: 22, z: 42 },
+  monkeyCharacter: { x: 14, y: 60, w: 20, z: 15 },
+  peacockCharacter: { x: 86, y: 55, w: 24, z: 15 },
+  targetFeather: { x: 68, y: 70, w: 20, z: 12 },
+  targetFeatherFound: { x: 68, y: 70, w: 11, z: 12 },
+  targetMango: { x: 40, y: 68, w: 16, z: 12 },
+  targetMangoFound: { x: 40, y: 68, w: 10, z: 12 },
+  distractorButterfly: { x: 55, y: 40, w: 9, z: 11 },
+  distractorYellowFlowers: { x: 30, y: 82, w: 16, z: 11 },
+  distractorCreamFlowers: { x: 78, y: 30, w: 15, z: 11 }
 };
 
 const DEBUG_KEYS = [
   { key: 'prompt', label: 'Prompt' },
   { key: 'feedback', label: 'Feedback' },
   { key: 'tray', label: 'Found tray' },
-  { key: 'clueFeather', label: 'Clue - feather' },
-  { key: 'clueMango', label: 'Clue - mango' },
-  { key: 'clueButterfly', label: 'Clue decoy - butterfly' },
-  { key: 'clueLeaves', label: 'Clue decoy - leaves' },
-  { key: 'peacockHidden', label: 'Peacock hidden' },
-  { key: 'monkeyHidden', label: 'Monkey hidden' },
-  { key: 'peacockReveal', label: 'Peacock reveal' },
-  { key: 'monkeyReveal', label: 'Monkey reveal' },
-  { key: 'animalBird', label: 'Animal decoy - bird' },
-  { key: 'animalLeaves', label: 'Animal decoy - leaves' },
-  { key: 'propBushLeft', label: 'Prop - left bush' },
-  { key: 'propRockLeft', label: 'Prop - rock' },
-  { key: 'propBushRight', label: 'Prop - right bush' }
+  { key: 'monkeyCharacter', label: 'Monkey (worried)' },
+  { key: 'peacockCharacter', label: 'Peacock (worried)' },
+  { key: 'targetFeather', label: 'Target - feather in bush' },
+  { key: 'targetFeatherFound', label: 'Target - feather found (small)' },
+  { key: 'targetMango', label: 'Target - mango in flowers' },
+  { key: 'targetMangoFound', label: 'Target - mango found (small)' },
+  { key: 'distractorButterfly', label: 'Distractor - butterfly' },
+  { key: 'distractorYellowFlowers', label: 'Distractor - yellow flowers' },
+  { key: 'distractorCreamFlowers', label: 'Distractor - cream flowers' }
 ];
 
 const loadSavedLayout = () => {
@@ -98,66 +86,39 @@ const styleFromLayout = (layoutItem) => ({
   zIndex: layoutItem.z
 });
 
-const CLUE_TARGETS = [
+const SEARCH_TARGETS = [
   {
     id: 'feather',
     label: 'Feather',
-    img: featherImg,
-    layoutKey: 'clueFeather',
-    prompt: 'Feather found.'
+    hiddenImg: featherHiddenImg,
+    foundImg: featherFoundImg,
+    layoutKey: 'targetFeather',
+    foundLayoutKey: 'targetFeatherFound',
+    prompt: 'Feather found! Peacock will be so happy.'
   },
   {
     id: 'mango',
     label: 'Mango',
-    img: mangoImg,
-    layoutKey: 'clueMango',
-    prompt: 'Mango found.'
+    hiddenImg: mangoHiddenImg,
+    foundImg: mangoFoundImg,
+    layoutKey: 'targetMango',
+    foundLayoutKey: 'targetMangoFound',
+    prompt: 'Mango found! Monkey is hungry no more.'
   }
 ];
 
-const CLUE_DISTRACTORS = [
-  { id: 'butterfly', label: 'Butterfly', img: butterflyImg, layoutKey: 'clueButterfly' },
-  { id: 'leaves', label: 'Leaves', img: leavesImg, layoutKey: 'clueLeaves' }
+const DISTRACTORS = [
+  { id: 'butterfly', label: 'Butterfly', img: butterflyImg, layoutKey: 'distractorButterfly' },
+  { id: 'yellow-flowers', label: 'Flowers', img: yellowFlowerClusterImg, layoutKey: 'distractorYellowFlowers' },
+  { id: 'cream-flowers', label: 'Flowers', img: creamFlowerClusterImg, layoutKey: 'distractorCreamFlowers' }
 ];
 
-const ANIMAL_TARGETS = [
-  {
-    id: 'peacock',
-    label: 'Peacock',
-    frames: [peacockRestingImg, peacockAdmiringImg, peacockSparkleImg, peacockHighlightImg],
-    hiddenLayoutKey: 'peacockHidden',
-    revealLayoutKey: 'peacockReveal',
-    prompt: 'Peacock found.'
-  },
-  {
-    id: 'monkey',
-    label: 'Monkey',
-    frames: [monkeyRestingImg, monkeyLookingImg, monkeyPicksImg, monkeySmilesImg, monkeyHoldingImg],
-    hiddenLayoutKey: 'monkeyHidden',
-    revealLayoutKey: 'monkeyReveal',
-    prompt: 'Monkey found.'
-  }
-];
-
-const ANIMAL_DISTRACTORS = [
-  { id: 'bird-shadow', label: 'Bird', img: butterflyImg, layoutKey: 'animalBird' },
-  { id: 'leaf-rustle', label: 'Leaves', img: leavesImg, layoutKey: 'animalLeaves' }
-];
-
-const HIDING_PROPS = [
-  { id: 'bush-left', img: bushImg, layoutKey: 'propBushLeft' },
-  { id: 'rock-left', img: rockImg, layoutKey: 'propRockLeft' },
-  { id: 'bush-right', img: bushImg, layoutKey: 'propBushRight' }
-];
 const VO_TEXTS = {
-  intro: 'Look closely. Find the clues that matter.',
-  clueFlowDone: 'Now find who they belong to.',
-  complete: 'You looked carefully and connected what you found.',
-  neutral: 'That is interesting, but it is not the clue we need.',
-  feather: 'Feather',
-  mango: 'Mango',
-  peacock: 'Peacock',
-  monkey: 'Monkey'
+  intro: 'Monkey is hungry, and Peacock has lost a special feather. Look carefully. Can you find what they need?',
+  complete: 'You looked closely and found them both!',
+  neutral: 'That is interesting, but it is not what they are looking for.',
+  feather: 'Feather found! Peacock will be so happy.',
+  mango: 'Mango found! Monkey is hungry no more.'
 };
 
 const IDLE_HINT_MS = 9000;
@@ -182,46 +143,37 @@ const EyesPopUpGame = ({
   hideElements = false,
   className = ''
 }) => {
-  const [flow, setFlow] = useState(FLOW.CLUES);
-  const [foundClues, setFoundClues] = useState([]);
-  const [foundAnimals, setFoundAnimals] = useState([]);
+  const [flow, setFlow] = useState(FLOW.SEARCH);
+  const [foundTargets, setFoundTargets] = useState([]);
   const [feedback, setFeedback] = useState('');
   const [softPulse, setSoftPulse] = useState(null);
   const [hintId, setHintId] = useState(null);
-  const [revealingAnimal, setRevealingAnimal] = useState(null);
-  const [frameIndexByAnimal, setFrameIndexByAnimal] = useState({});
   const [layout, setLayout] = useState(loadSavedLayout);
   const [debugMode, setDebugMode] = useState(false);
-  const [selectedDebugKey, setSelectedDebugKey] = useState('clueFeather');
+  const [selectedDebugKey, setSelectedDebugKey] = useState('targetFeather');
   const [debugPanelPosition, setDebugPanelPosition] = useState({ x: 12, y: 96 });
   const [layoutCopyStatus, setLayoutCopyStatus] = useState('');
 
   const idleTimerRef = useRef(null);
   const feedbackTimerRef = useRef(null);
   const completionTimerRef = useRef(null);
-  const frameTimerRef = useRef(null);
   const lastTapTimeRef = useRef(Date.now());
   const completedRef = useRef(false);
   const stageRef = useRef(null);
   const debugDragRef = useRef(null);
   const debugPanelDragRef = useRef(null);
 
-  const foundClueIds = useMemo(() => new Set(foundClues), [foundClues]);
-  const foundAnimalIds = useMemo(() => new Set(foundAnimals), [foundAnimals]);
-  const activeTargets = flow === FLOW.CLUES ? CLUE_TARGETS : ANIMAL_TARGETS;
-  const activeFoundIds = flow === FLOW.CLUES ? foundClueIds : foundAnimalIds;
-  const progressFound = activeTargets.filter((target) => activeFoundIds.has(target.id)).length;
+  const foundIds = useMemo(() => new Set(foundTargets), [foundTargets]);
+  const progressFound = foundTargets.length;
   const selectedDebugLayout = layout[selectedDebugKey] || DEFAULT_LAYOUT[selectedDebugKey];
 
   const stopTimers = useCallback(() => {
     if (idleTimerRef.current) clearInterval(idleTimerRef.current);
     if (feedbackTimerRef.current) clearTimeout(feedbackTimerRef.current);
     if (completionTimerRef.current) clearTimeout(completionTimerRef.current);
-    if (frameTimerRef.current) clearInterval(frameTimerRef.current);
     idleTimerRef.current = null;
     feedbackTimerRef.current = null;
     completionTimerRef.current = null;
-    frameTimerRef.current = null;
   }, []);
 
   const speak = useCallback((text) => {
@@ -243,6 +195,7 @@ const EyesPopUpGame = ({
     lastTapTimeRef.current = Date.now();
     setHintId(null);
   }, []);
+
   const saveLayout = useCallback((nextLayout) => {
     if (typeof window === 'undefined') return;
     try {
@@ -367,14 +320,11 @@ const EyesPopUpGame = ({
     if (!isActive) return;
     stopTimers();
     completedRef.current = false;
-    setFlow(FLOW.CLUES);
-    setFoundClues([]);
-    setFoundAnimals([]);
+    setFlow(FLOW.SEARCH);
+    setFoundTargets([]);
     setFeedback('');
     setSoftPulse(null);
     setHintId(null);
-    setRevealingAnimal(null);
-    setFrameIndexByAnimal({});
     lastTapTimeRef.current = Date.now();
     speak(VO_TEXTS.intro);
   }, [isActive, speak, stopTimers]);
@@ -385,7 +335,7 @@ const EyesPopUpGame = ({
     idleTimerRef.current = setInterval(() => {
       const idleMs = Date.now() - lastTapTimeRef.current;
       if (idleMs < IDLE_HINT_MS) return;
-      const nextHint = activeTargets.find((target) => !activeFoundIds.has(target.id));
+      const nextHint = SEARCH_TARGETS.find((target) => !foundIds.has(target.id));
       setHintId(nextHint?.id || null);
     }, 1000);
 
@@ -393,7 +343,7 @@ const EyesPopUpGame = ({
       if (idleTimerRef.current) clearInterval(idleTimerRef.current);
       idleTimerRef.current = null;
     };
-  }, [activeFoundIds, activeTargets, flow, isActive]);
+  }, [foundIds, flow, isActive]);
 
   useAppVisibility(null, useCallback(() => {
     resetIdle();
@@ -407,42 +357,22 @@ const EyesPopUpGame = ({
   }, [stopTimers]);
 
   useEffect(() => {
-    if (foundClues.length !== CLUE_TARGETS.length || flow !== FLOW.CLUES) return;
-    completionTimerRef.current = setTimeout(() => {
-      setFlow(FLOW.ANIMALS);
-      setFeedback(VO_TEXTS.clueFlowDone);
-      setHintId(null);
-      lastTapTimeRef.current = Date.now();
-      speak(VO_TEXTS.clueFlowDone);
-    }, 900);
-    return () => {
-      if (completionTimerRef.current) clearTimeout(completionTimerRef.current);
-    };
-  }, [flow, foundClues.length, speak]);
-
-  useEffect(() => {
-    if (foundAnimals.length !== ANIMAL_TARGETS.length || completedRef.current) return;
+    if (foundTargets.length !== SEARCH_TARGETS.length || completedRef.current) return;
     completedRef.current = true;
     setFlow(FLOW.COMPLETE);
     setFeedback(VO_TEXTS.complete);
     speak(VO_TEXTS.complete);
 
     completionTimerRef.current = setTimeout(() => {
-      const assignedSpots = ANIMAL_TARGETS.reduce((acc, animal) => {
-        const revealLayout = layout[animal.revealLayoutKey] || DEFAULT_LAYOUT[animal.revealLayoutKey];
-        const fixedPos = ANIMAL_POSITIONS[animal.id] || { x: revealLayout.x, y: revealLayout.y };
-        acc[animal.id] = {
-          x: fixedPos.x ?? revealLayout.x,
-          y: fixedPos.y ?? revealLayout.y,
-          depth: fixedPos.depth || 'between-middle-front'
-        };
-        return acc;
-      }, {});
+      const assignedSpots = {
+        monkey: ANIMAL_POSITIONS.monkey,
+        peacock: ANIMAL_POSITIONS.peacock
+      };
 
       onGameComplete?.({
-        discoveredClues: foundClues,
-        discoveredAnimals: foundAnimals,
-        totalDiscovered: foundAnimals.length,
+        discoveredClues: foundTargets,
+        discoveredAnimals: foundTargets,
+        totalDiscovered: foundTargets.length,
         assignedSpots
       });
     }, 1500);
@@ -450,7 +380,7 @@ const EyesPopUpGame = ({
     return () => {
       if (completionTimerRef.current) clearTimeout(completionTimerRef.current);
     };
-  }, [foundAnimals, foundClues, layout, onGameComplete, speak]);
+  }, [foundTargets, onGameComplete, speak]);
 
   const handleSceneTap = useCallback((e) => {
     if (debugMode || flow === FLOW.COMPLETE) return;
@@ -473,49 +403,19 @@ const EyesPopUpGame = ({
     speak(VO_TEXTS.neutral);
   }, [debugMode, flow, resetIdle, showFeedback, speak]);
 
-  const startAnimalReveal = useCallback((animalId) => {
-    const animal = ANIMAL_TARGETS.find((target) => target.id === animalId);
-    if (!animal) return;
-
-    setRevealingAnimal(animalId);
-    setFrameIndexByAnimal((prev) => ({ ...prev, [animalId]: 0 }));
-    if (frameTimerRef.current) clearInterval(frameTimerRef.current);
-
-    let nextFrame = 0;
-    frameTimerRef.current = setInterval(() => {
-      nextFrame += 1;
-      setFrameIndexByAnimal((prev) => ({
-        ...prev,
-        [animalId]: Math.min(nextFrame, animal.frames.length - 1)
-      }));
-      if (nextFrame >= animal.frames.length - 1) {
-        clearInterval(frameTimerRef.current);
-        frameTimerRef.current = null;
-        setTimeout(() => setRevealingAnimal(null), 600);
-      }
-    }, 360);
-  }, []);
-
-  const handleClueTap = useCallback((target, e) => {
+  const handleTargetTap = useCallback((target, e) => {
     e.stopPropagation();
-    if (debugMode || flow !== FLOW.CLUES || foundClueIds.has(target.id)) return;
+    if (debugMode || flow === FLOW.COMPLETE || foundIds.has(target.id)) return;
     resetIdle();
-    setFoundClues((prev) => [...prev, target.id]);
+    setFoundTargets((prev) => [...prev, target.id]);
     showFeedback(target.prompt, target.id);
     speak(VO_TEXTS[target.id] || target.label);
-  }, [debugMode, flow, foundClueIds, resetIdle, showFeedback, speak]);
-
-  const handleAnimalTap = useCallback((target, e) => {
-    e.stopPropagation();
-    if (debugMode || flow !== FLOW.ANIMALS || foundAnimalIds.has(target.id)) return;
-    resetIdle();
-    setFoundAnimals((prev) => [...prev, target.id]);
-    showFeedback(target.prompt, target.id);
-    speak(VO_TEXTS[target.id] || target.label);
-    startAnimalReveal(target.id);
-  }, [debugMode, flow, foundAnimalIds, resetIdle, showFeedback, speak, startAnimalReveal]);
+  }, [debugMode, flow, foundIds, resetIdle, showFeedback, speak]);
 
   if (hideElements || !isActive) return null;
+
+  const monkeyImg = foundIds.has('mango') ? monkeyHappyImg : monkeyWorriedImg;
+  const peacockImg = foundIds.has('feather') ? peacockHappyImg : peacockWorriedImg;
 
   return (
     <div
@@ -534,35 +434,48 @@ const EyesPopUpGame = ({
         onPointerDown={(e) => startDebugDrag(e, 'prompt')}
       >
         <span>
-          {flow === FLOW.CLUES
-            ? 'Find the clues that matter'
-            : flow === FLOW.ANIMALS
-              ? 'Find who they belong to'
-              : 'You connected the clues'}
+          {flow === FLOW.SEARCH ? 'Look closely. Find what they need.' : 'You connected the clues'}
         </span>
-        <strong>{progressFound}/{activeTargets.length}</strong>
+        <strong>{progressFound}/{SEARCH_TARGETS.length}</strong>
       </div>
 
-      {CLUE_TARGETS.map((target) => {
-        const isFound = foundClueIds.has(target.id);
-        const isVisible = flow === FLOW.CLUES || isFound;
+      <img
+        className={`eyes-story-character ${debugMode && selectedDebugKey === 'monkeyCharacter' ? 'is-debug-selected' : ''}`}
+        src={monkeyImg}
+        alt=""
+        draggable={false}
+        style={styleFromLayout(layout.monkeyCharacter)}
+        onPointerDown={(e) => startDebugDrag(e, 'monkeyCharacter')}
+      />
+      <img
+        className={`eyes-story-character ${debugMode && selectedDebugKey === 'peacockCharacter' ? 'is-debug-selected' : ''}`}
+        src={peacockImg}
+        alt=""
+        draggable={false}
+        style={styleFromLayout(layout.peacockCharacter)}
+        onPointerDown={(e) => startDebugDrag(e, 'peacockCharacter')}
+      />
+
+      {SEARCH_TARGETS.map((target) => {
+        const isFound = foundIds.has(target.id);
+        const activeLayoutKey = isFound ? target.foundLayoutKey : target.layoutKey;
         return (
           <button
             key={target.id}
             type="button"
-            className={`eyes-hidden-target clue-target ${isFound ? 'found' : ''} ${hintId === target.id ? 'hinting' : ''} ${softPulse === target.id ? 'soft-pulse' : ''} ${debugMode && selectedDebugKey === target.layoutKey ? 'is-debug-selected' : ''}`}
-            style={styleFromLayout(layout[target.layoutKey])}
-            onClick={(e) => handleClueTap(target, e)}
-            onPointerDown={(e) => debugMode && startDebugDrag(e, target.layoutKey)}
+            className={`eyes-hidden-target clue-target ${isFound ? 'found' : ''} ${hintId === target.id ? 'hinting' : ''} ${softPulse === target.id ? 'soft-pulse' : ''} ${debugMode && selectedDebugKey === activeLayoutKey ? 'is-debug-selected' : ''}`}
+            style={styleFromLayout(layout[activeLayoutKey])}
+            onClick={(e) => handleTargetTap(target, e)}
+            onPointerDown={(e) => debugMode && startDebugDrag(e, activeLayoutKey)}
             aria-label={`Find ${target.label}`}
-            disabled={!debugMode && (!isVisible || isFound)}
+            disabled={!debugMode && isFound}
           >
-            <img src={target.img} alt="" draggable={false} />
+            <img src={isFound ? target.foundImg : target.hiddenImg} alt="" draggable={false} />
           </button>
         );
       })}
 
-      {(flow === FLOW.CLUES || debugMode) && CLUE_DISTRACTORS.map((target) => (
+      {DISTRACTORS.map((target) => (
         <button
           key={target.id}
           type="button"
@@ -576,83 +489,15 @@ const EyesPopUpGame = ({
         </button>
       ))}
 
-      {(flow !== FLOW.CLUES || debugMode) && ANIMAL_TARGETS.map((target) => {
-        const isFound = foundAnimalIds.has(target.id);
-        const frameIndex = frameIndexByAnimal[target.id] || 0;
-        const frame = isFound
-          ? target.frames[frameIndex] || target.frames[target.frames.length - 1]
-          : target.frames[0];
-        const layoutKey = isFound ? target.revealLayoutKey : target.hiddenLayoutKey;
-        return (
-          <button
-            key={target.id}
-            type="button"
-            className={`eyes-hidden-target animal-target ${isFound ? 'found' : ''} ${revealingAnimal === target.id ? 'revealing' : ''} ${hintId === target.id ? 'hinting' : ''} ${debugMode && selectedDebugKey === layoutKey ? 'is-debug-selected' : ''}`}
-            style={styleFromLayout(layout[layoutKey])}
-            onClick={(e) => handleAnimalTap(target, e)}
-            onPointerDown={(e) => debugMode && startDebugDrag(e, layoutKey)}
-            aria-label={`Find ${target.label}`}
-            disabled={!debugMode && isFound}
-          >
-            <img src={frame} alt="" draggable={false} />
-            {isFound && <span className="eyes-popup-sparkle" />}
-          </button>
-        );
-      })}
-
-      {(flow === FLOW.ANIMALS || debugMode) && ANIMAL_DISTRACTORS.map((target) => (
-        <button
-          key={target.id}
-          type="button"
-          className={`eyes-hidden-target distractor-target animal-distractor ${softPulse === target.id ? 'soft-pulse' : ''} ${debugMode && selectedDebugKey === target.layoutKey ? 'is-debug-selected' : ''}`}
-          style={styleFromLayout(layout[target.layoutKey])}
-          onClick={(e) => handleDistractorTap(target, e)}
-          onPointerDown={(e) => debugMode && startDebugDrag(e, target.layoutKey)}
-          aria-label={target.label}
-        >
-          <img src={target.img} alt="" draggable={false} />
-        </button>
-      ))}
-
-      {debugMode && ANIMAL_TARGETS.filter((target) => !foundAnimalIds.has(target.id)).map((target) => (
-        <button
-          key={`debug-reveal-${target.id}`}
-          type="button"
-          className={`eyes-hidden-target animal-target debug-preview ${selectedDebugKey === target.revealLayoutKey ? 'is-debug-selected' : ''}`}
-          style={styleFromLayout(layout[target.revealLayoutKey])}
-          onPointerDown={(e) => startDebugDrag(e, target.revealLayoutKey)}
-          aria-label={`Move ${target.label} reveal`}
-        >
-          <img src={target.frames[target.frames.length - 1]} alt="" draggable={false} />
-        </button>
-      ))}
-
-      {HIDING_PROPS.map((prop) => (
-        <img
-          key={prop.id}
-          className={`eyes-hiding-prop ${debugMode && selectedDebugKey === prop.layoutKey ? 'is-debug-selected' : ''}`}
-          src={prop.img}
-          alt=""
-          draggable={false}
-          style={styleFromLayout(layout[prop.layoutKey])}
-          onPointerDown={(e) => startDebugDrag(e, prop.layoutKey)}
-        />
-      ))}
-
       <div
         className={`eyes-clue-tray ${debugMode && selectedDebugKey === 'tray' ? 'is-debug-selected' : ''}`}
         style={styleFromLayout(layout.tray)}
         aria-hidden="true"
         onPointerDown={(e) => startDebugDrag(e, 'tray')}
       >
-        {CLUE_TARGETS.map((target) => (
-          <div key={target.id} className={`eyes-clue-slot ${foundClueIds.has(target.id) ? 'filled' : ''}`}>
-            {foundClueIds.has(target.id) ? <img src={target.img} alt="" /> : <span />}
-          </div>
-        ))}
-        {ANIMAL_TARGETS.map((target) => (
-          <div key={target.id} className={`eyes-clue-slot animal-slot ${foundAnimalIds.has(target.id) ? 'filled' : ''}`}>
-            {foundAnimalIds.has(target.id) ? <img src={target.frames[target.frames.length - 1]} alt="" /> : <span />}
+        {SEARCH_TARGETS.map((target) => (
+          <div key={target.id} className={`eyes-clue-slot ${foundIds.has(target.id) ? 'filled' : ''}`}>
+            {foundIds.has(target.id) ? <img src={target.foundImg} alt="" /> : <span />}
           </div>
         ))}
       </div>
