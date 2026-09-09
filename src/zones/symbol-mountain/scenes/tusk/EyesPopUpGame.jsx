@@ -427,16 +427,6 @@ const EyesPopUpGame = ({
     >
       <img className="eyes-game-bg" src={bgImg} alt="" draggable={false} />
 
-      <div
-        className={`eyes-game-prompt ${debugMode && selectedDebugKey === 'prompt' ? 'is-debug-selected' : ''}`}
-        style={styleFromLayout(layout.prompt)}
-        onPointerDown={(e) => startDebugDrag(e, 'prompt')}
-      >
-        <span>
-          {flow === FLOW.SEARCH ? 'Look closely. Find what they need.' : 'You connected the clues'}
-        </span>
-      </div>
-
       <img
         className={`eyes-story-character ${debugMode && selectedDebugKey === 'monkeyCharacter' ? 'is-debug-selected' : ''}`}
         src={monkeyImg}
