@@ -593,21 +593,6 @@ const EarsSoundMatchGame = ({
         onPointerDown={(e) => startDebugDrag(e, 'cowSprite')}
       />
 
-      <div
-        className={`ears-game-prompt ${debugMode && selectedDebugKey === 'prompt' ? 'is-debug-selected' : ''}`}
-        style={styleFromLayout(layout.prompt)}
-        onPointerDown={(e) => startDebugDrag(e, 'prompt')}
-      >
-        <span>
-          {phase === PHASE.LISTENING
-            ? 'Listen to each sound'
-            : phase === PHASE.CHOOSING
-              ? 'Choose the sound that matters'
-              : phase === PHASE.REVEALING
-                ? 'You found it'
-                : 'You listened carefully'}
-        </span>
-      </div>
 
       {Object.values(ZONES).map((zone, index) => {
         const isPlaying = activeZoneId === zone.id;
