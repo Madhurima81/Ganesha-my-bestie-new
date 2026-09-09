@@ -15,12 +15,14 @@ import monkeyTyingImg from './assets/images/bridge/Characters/monkey-tying.png';
 import monkeyHappyImg from './assets/images/bridge/Characters/monkey-happy.png';
 
 import supportLogsObj from './assets/images/bridge/Bridge/bridge-support-logs.png';
-import ropeObj from './assets/images/bridge/Characters/monkey-tying.png';
+// Cropped from the broken-bridge asset's own loose rope tail — the pack has
+// no standalone rope glyph, and using the Monkey sprite here duplicated him
+// mid-river during the trace.
+import ropeObj from './assets/images/bridge/Bridge/rope-knot.png';
 import plankObj from './assets/images/bridge/Bridge/bridge-single-plank.png';
 
 import bridgeBrokenImg from './assets/images/bridge/Bridge/bridge-broken.png';
 import bridgeSupportedImg from './assets/images/bridge/Bridge/bridge-before-tying.png';
-import bridgePlankedImg from './assets/images/bridge/Bridge/bridge-three-planks.png';
 import bridgeCompleteImg from './assets/images/bridge/Bridge/bridge-complete.png';
 
 import beaverAskingImg from './assets/images/bridge/Characters/beaver-asking.png';
@@ -84,7 +86,9 @@ const FRIENDS = [
     helpingImg: monkeyHappyImg,
     emptyImg: monkeyHappyImg,
     objectImg: plankObj,
-    bridgeImg: bridgePlankedImg,
+    // bridge-three-planks.png is loose plank *pieces*, not a full-bridge
+    // state — the only other full-bridge art the pack ships is the final one.
+    bridgeImg: bridgeCompleteImg,
     objectAnim: 'kuru-obj-flip',
     objectW: 7,
     objectOffset: { l: 4.8, t: 1.3 },
@@ -845,10 +849,13 @@ export default function KurumedevaGame({
       safeAfter(index * 950, () => {
         setBeaverPos(pos);
         if (index === BEAVER_PATH.length - 1) {
-          // Off the bridge — one last step to reunite with the baby.
+          // Off the bridge — one last step to reunite with the baby. Lands
+          // exactly on the baby's spot: the reunion art already draws both
+          // beavers together, so the baby's own sprite is hidden at 'done'
+          // (see the `phase === 'done'` check below) rather than doubling up.
           safeAfter(700, () => {
             setBeaverPos({
-              l: KURUMEDEVA_LAYOUT.beaverBaby.l + 5,
+              l: KURUMEDEVA_LAYOUT.beaverBaby.l,
               t: KURUMEDEVA_LAYOUT.beaverBaby.t,
             });
           });
@@ -1306,17 +1313,21 @@ export default function KurumedevaGame({
         )}
 
         <div
-          className={`kuru-beaver${phase === 'crossing' || phase === 'done' ? ' is-walking' : ''}`}
+          className={`kuru-beaver${phase === 'crossing' ? ' is-walking' : ''}`}
           style={{
             left: `${beaverPos.l}%`,
             top: `${beaverPos.t}%`,
-            width: `${KURUMEDEVA_LAYOUT.beaver.w}%`,
-            scale: KURUMEDEVA_LAYOUT.beaver.flip ? '-1 1' : '1 1',
+            // beaver-baby-reunion.png already draws both beavers hugging —
+            // render it a little larger, unmirrored, and drop the baby's own
+            // sprite below so the pair don't double up.
+            width: `${phase === 'done' ? KURUMEDEVA_LAYOUT.beaverBaby.w * 1.3 : KURUMEDEVA_LAYOUT.beaver.w}%`,
+            scale: (phase !== 'done' && KURUMEDEVA_LAYOUT.beaver.flip) ? '-1 1' : '1 1',
           }}
         >
           <img src={beaverImg} alt="Beaver" draggable={false} />
         </div>
 
+        {phase !== 'done' && (
         <div
           className="kuru-beaver-baby"
           style={{
@@ -1328,6 +1339,7 @@ export default function KurumedevaGame({
         >
           <img src={babyBeaverWavingImg} alt="Baby beaver" draggable={false} />
         </div>
+        )}
 
         {FRIENDS.map((friend, index) => {
           const objPhase = objectPhases[index];
