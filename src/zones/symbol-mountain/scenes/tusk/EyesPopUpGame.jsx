@@ -94,6 +94,7 @@ const SEARCH_TARGETS = [
     foundImg: featherFoundImg,
     layoutKey: 'targetFeather',
     foundLayoutKey: 'targetFeatherFound',
+    carryLayoutKey: 'peacockCharacter',
     prompt: 'Feather found! Peacock will be so happy.'
   },
   {
@@ -103,6 +104,7 @@ const SEARCH_TARGETS = [
     foundImg: mangoFoundImg,
     layoutKey: 'targetMango',
     foundLayoutKey: 'targetMangoFound',
+    carryLayoutKey: 'monkeyCharacter',
     prompt: 'Mango found! Monkey is hungry no more.'
   }
 ];
@@ -145,6 +147,8 @@ const EyesPopUpGame = ({
 }) => {
   const [flow, setFlow] = useState(FLOW.SEARCH);
   const [foundTargets, setFoundTargets] = useState([]);
+  const [carriedTargets, setCarriedTargets] = useState([]);
+  const [goneTargets, setGoneTargets] = useState([]);
   const [feedback, setFeedback] = useState('');
   const [softPulse, setSoftPulse] = useState(null);
   const [hintId, setHintId] = useState(null);
@@ -157,6 +161,7 @@ const EyesPopUpGame = ({
   const idleTimerRef = useRef(null);
   const feedbackTimerRef = useRef(null);
   const completionTimerRef = useRef(null);
+  const carryTimersRef = useRef([]);
   const lastTapTimeRef = useRef(Date.now());
   const completedRef = useRef(false);
   const stageRef = useRef(null);
@@ -164,15 +169,28 @@ const EyesPopUpGame = ({
   const debugPanelDragRef = useRef(null);
 
   const foundIds = useMemo(() => new Set(foundTargets), [foundTargets]);
+  const carriedIds = useMemo(() => new Set(carriedTargets), [carriedTargets]);
+  const goneIds = useMemo(() => new Set(goneTargets), [goneTargets]);
   const selectedDebugLayout = layout[selectedDebugKey] || DEFAULT_LAYOUT[selectedDebugKey];
 
   const stopTimers = useCallback(() => {
     if (idleTimerRef.current) clearInterval(idleTimerRef.current);
     if (feedbackTimerRef.current) clearTimeout(feedbackTimerRef.current);
     if (completionTimerRef.current) clearTimeout(completionTimerRef.current);
+    carryTimersRef.current.forEach((timer) => clearTimeout(timer));
+    carryTimersRef.current = [];
     idleTimerRef.current = null;
     feedbackTimerRef.current = null;
     completionTimerRef.current = null;
+  }, []);
+
+  const schedule = useCallback((fn, delay) => {
+    const timer = setTimeout(() => {
+      carryTimersRef.current = carryTimersRef.current.filter((item) => item !== timer);
+      fn();
+    }, delay);
+    carryTimersRef.current.push(timer);
+    return timer;
   }, []);
 
   const speak = useCallback((text) => {
@@ -321,6 +339,8 @@ const EyesPopUpGame = ({
     completedRef.current = false;
     setFlow(FLOW.SEARCH);
     setFoundTargets([]);
+    setCarriedTargets([]);
+    setGoneTargets([]);
     setFeedback('');
     setSoftPulse(null);
     setHintId(null);
@@ -409,7 +429,12 @@ const EyesPopUpGame = ({
     setFoundTargets((prev) => [...prev, target.id]);
     showFeedback(target.prompt, target.id);
     speak(VO_TEXTS[target.id] || target.label);
-  }, [debugMode, flow, foundIds, resetIdle, showFeedback, speak]);
+
+    // Let the child see it found in place briefly, then carry it to the
+    // animal, then remove it so only the resolved animal state remains.
+    schedule(() => setCarriedTargets((prev) => [...prev, target.id]), 550);
+    schedule(() => setGoneTargets((prev) => [...prev, target.id]), 1150);
+  }, [debugMode, flow, foundIds, resetIdle, schedule, showFeedback, speak]);
 
   if (hideElements || !isActive) return null;
 
@@ -446,12 +471,21 @@ const EyesPopUpGame = ({
 
       {SEARCH_TARGETS.map((target) => {
         const isFound = foundIds.has(target.id);
-        const activeLayoutKey = isFound ? target.foundLayoutKey : target.layoutKey;
+        const isCarried = carriedIds.has(target.id);
+        const isGone = goneIds.has(target.id);
+        if (isGone) return null;
+
+        const activeLayoutKey = isCarried
+          ? target.carryLayoutKey
+          : isFound
+            ? target.foundLayoutKey
+            : target.layoutKey;
+
         return (
           <button
             key={target.id}
             type="button"
-            className={`eyes-hidden-target clue-target ${isFound ? 'found' : ''} ${hintId === target.id ? 'hinting' : ''} ${softPulse === target.id ? 'soft-pulse' : ''} ${debugMode && selectedDebugKey === activeLayoutKey ? 'is-debug-selected' : ''}`}
+            className={`eyes-hidden-target clue-target ${isFound ? 'found' : ''} ${isCarried ? 'carried' : ''} ${hintId === target.id ? 'hinting' : ''} ${softPulse === target.id ? 'soft-pulse' : ''} ${debugMode && selectedDebugKey === activeLayoutKey ? 'is-debug-selected' : ''}`}
             style={styleFromLayout(layout[activeLayoutKey])}
             onClick={(e) => handleTargetTap(target, e)}
             onPointerDown={(e) => debugMode && startDebugDrag(e, activeLayoutKey)}

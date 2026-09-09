@@ -103,6 +103,14 @@
   animation: eyes-found-pop 620ms ease-out;
 }
 
+.clue-target.carried {
+  z-index: 30;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0.35);
+  transition: opacity 560ms ease, transform 560ms ease, filter 260ms ease, left 600ms ease, top 600ms ease, width 600ms ease;
+}
+
 .distractor-target {
   z-index: 11;
   opacity: 0.6;
