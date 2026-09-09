@@ -22,6 +22,32 @@
   user-select: none;
 }
 
+.ears-story-sprite {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  user-select: none;
+  filter: drop-shadow(0 10px 14px rgba(30, 49, 35, 0.2));
+  transition: opacity 620ms ease, filter 420ms ease;
+}
+
+.ears-story-sprite.ears-sprite-waiting {
+  opacity: 0.5;
+}
+
+.ears-story-sprite.ears-sprite-active {
+  opacity: 1;
+}
+
+.ears-story-sprite.ears-sprite-softened {
+  opacity: 0.7;
+}
+
+.ears-story-sprite.is-debug-selected {
+  outline: 3px solid rgba(255, 80, 80, 0.95);
+  outline-offset: 4px;
+}
+
 .ears-game-prompt {
   position: absolute;
   top: clamp(12px, 2vh, 22px);
@@ -365,6 +391,7 @@
 
 .ears-sound-game.is-debugging .ears-source,
 .ears-sound-game.is-debugging .ears-animal-reveal,
+.ears-sound-game.is-debugging .ears-story-sprite,
 .ears-sound-game.is-debugging .ears-game-prompt,
 .ears-sound-game.is-debugging .ears-found-tray,
 .ears-sound-game.is-debugging .ears-soft-feedback {

@@ -1,26 +1,28 @@
 // zones/symbol-mountain/scenes/tusk/EarsSoundMatchGame.jsx
-// Ear listening game: hear all sources first, then choose the animal sound.
+// Ear listening game: one continuous scene. Elephant (thirsty) is active
+// first while Cow (hungry) waits faded; after Elephant is solved, Cow
+// becomes the focal animal. Same 3 listening zones serve both rounds.
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import './EarsSoundMatchGame.css';
 
+// TODO: swap back to the ears-game-v2 background once a clean version is
+// supplied — the delivered ear_game_background.png is a captured screenshot
+// of the Eyes-game dev harness (toolbar/debug UI baked into the pixels).
 import bgImg from './assets/images/ears-game/symbol_mountain_3_bg.png';
-import leftBushImg from './assets/images/ears-game/left_bush.png';
-import centerRockImg from './assets/images/ears-game/center_rock_cluster.png';
-import pondPatchImg from './assets/images/ears-game/right_pond_water_patch.png';
-import caveNookImg from './assets/images/ears-game/right_cave_nook.png';
-import cowRestingImg from './assets/images/ears-game/cow_01_resting.png';
-import cowLooksImg from './assets/images/ears-game/cow_02_looks_toward_grass.png';
-import cowNibblesImg from './assets/images/ears-game/cow_03_starts_nibbling.png';
-import cowChewsImg from './assets/images/ears-game/cow_04_chews_happily.png';
-import cowIdleImg from './assets/images/ears-game/cow_05_idle_with_grass.png';
-import elephantRestingImg from './assets/images/ears-game/elephant_01_resting.png';
-import elephantNoticesImg from './assets/images/ears-game/elephant_02_notices_water.png';
-import elephantDrinksImg from './assets/images/ears-game/elephant_03_drinks_or_dips_trunk.png';
-import elephantSpraysImg from './assets/images/ears-game/elephant_04_sprays_water.png';
-import elephantIdleImg from './assets/images/ears-game/elephant_05_idle_with_water.png';
-import soundElephant from './assets/audio/sound-elephant.webm';
-import soundCow from './assets/audio/sound-cow.webm';
+import leafyBushImg from './assets/images/ears-game-v2/leafy_bush.png';
+import modularRockImg from './assets/images/ears-game-v2/modular_rock.png';
+import waterPatchImg from './assets/images/ears-game-v2/water_patch.png';
+import elephantThirstyImg from './assets/images/ears-game-v2/elephant_thirsty.png';
+import elephantDrinkingImg from './assets/images/ears-game-v2/elephant_drinking.png';
+import elephantHappyWaterImg from './assets/images/ears-game-v2/elephant_happy_water.png';
+import cowTiredImg from './assets/images/ears-game-v2/cow_tired.png';
+import cowHungryImg from './assets/images/ears-game-v2/cow_hungry.png';
+import cowEatingGrassImg from './assets/images/ears-game-v2/cow_eating_grass.png';
+import cowHappyChewingImg from './assets/images/ears-game-v2/cow_happy_chewing.png';
+import soundWaterDrip from './assets/audio/ear_water_drip.wav';
+import soundGrassRustle from './assets/audio/ear_grass_rustle.wav';
+import soundBirdAmbient from './assets/audio/ear_bird_forest_ambient.wav';
 import decoyWind from './assets/audio/dragon-studio-wind-gust-386158.mp3';
 import decoyRustle from './assets/audio/dragon-studio-dry-grass-rustling-478361.mp3';
 import { ANIMAL_POSITIONS } from './animalPositions';
@@ -36,35 +38,29 @@ const DEBUG_UI_ENABLED =
   typeof window !== 'undefined' &&
   (window.location.pathname.includes('game-test') ||
     new URLSearchParams(window.location.search).has('debugEars'));
-const LAYOUT_STORAGE_KEY = 'symbol_mountain_ears_layout_v1';
-const LAYOUT_PRESET_VERSION = '2026-09-07-ear-listening-layout-1';
+const LAYOUT_STORAGE_KEY = 'symbol_mountain_ears_layout_v2';
+const LAYOUT_PRESET_VERSION = '2026-09-09-ear-continuous-layout-1';
 
 const DEFAULT_LAYOUT = {
   prompt: { x: 50, y: 5.6, w: 52 },
   feedback: { x: 50, y: 84, w: 42 },
   tray: { x: 50, y: 93, w: 18 },
-  elephantLeftBush: { x: 24, y: 62, w: 20, z: 16 },
-  elephantCenterRock: { x: 49, y: 72, w: 21, z: 16 },
-  elephantRightPond: { x: 75, y: 75, w: 21, z: 16 },
-  cowLeftBush: { x: 24, y: 62, w: 20, z: 16 },
-  cowCenterRock: { x: 49, y: 72, w: 21, z: 16 },
-  cowRightCave: { x: 78, y: 56, w: 20, z: 16 },
-  elephantReveal: { x: 73, y: 59, w: 27, z: 31 },
-  cowReveal: { x: 41, y: 67, w: 18, z: 32 }
+  leftBush: { x: 24, y: 55, w: 22, z: 16 },
+  centerRock: { x: 50, y: 68, w: 20, z: 16 },
+  rightSource: { x: 78, y: 52, w: 22, z: 16 },
+  elephantSprite: { x: 14, y: 74, w: 24, z: 20 },
+  cowSprite: { x: 88, y: 78, w: 20, z: 20 }
 };
 
 const DEBUG_KEYS = [
   { key: 'prompt', label: 'Prompt' },
   { key: 'feedback', label: 'Feedback' },
   { key: 'tray', label: 'Found tray' },
-  { key: 'elephantLeftBush', label: 'Elephant - left bush' },
-  { key: 'elephantCenterRock', label: 'Elephant - center rock' },
-  { key: 'elephantRightPond', label: 'Elephant - water patch' },
-  { key: 'cowLeftBush', label: 'Cow - left bush' },
-  { key: 'cowCenterRock', label: 'Cow - center rock' },
-  { key: 'cowRightCave', label: 'Cow - cave nook' },
-  { key: 'elephantReveal', label: 'Elephant reveal' },
-  { key: 'cowReveal', label: 'Cow reveal' }
+  { key: 'leftBush', label: 'Zone - left bush' },
+  { key: 'centerRock', label: 'Zone - center rock' },
+  { key: 'rightSource', label: 'Zone - right water/grass' },
+  { key: 'elephantSprite', label: 'Elephant' },
+  { key: 'cowSprite', label: 'Cow' }
 ];
 
 const loadSavedLayout = () => {
@@ -91,55 +87,55 @@ const styleFromLayout = (layoutItem) => ({
   zIndex: layoutItem.z
 });
 
-const BASE_SOURCES = {
-  leftBush: { id: 'leftBush', label: 'Left bush', img: leftBushImg },
-  centerRock: { id: 'centerRock', label: 'Center rock', img: centerRockImg },
-  rightPond: { id: 'rightPond', label: 'Water patch', img: pondPatchImg },
-  rightCave: { id: 'rightCave', label: 'Cave nook', img: caveNookImg }
+// Same 3 zones/art for both rounds — only the sound behind each changes.
+const ZONES = {
+  left: { id: 'left', label: 'Bush', img: leafyBushImg, layoutKey: 'leftBush' },
+  center: { id: 'center', label: 'Rock', img: modularRockImg, layoutKey: 'centerRock' },
+  right: { id: 'right', label: 'Water', img: waterPatchImg, layoutKey: 'rightSource' }
 };
 
 const ROUNDS = [
   {
     id: 'elephant',
     label: 'Elephant',
-    prompt: 'Listen for the animal near the water.',
-    targetSourceId: 'rightPond',
-    sources: [
-      { ...BASE_SOURCES.leftBush, layoutKey: 'elephantLeftBush', sound: decoyRustle, kind: 'decoy' },
-      { ...BASE_SOURCES.centerRock, layoutKey: 'elephantCenterRock', sound: decoyWind, kind: 'decoy' },
-      { ...BASE_SOURCES.rightPond, layoutKey: 'elephantRightPond', sound: soundElephant, kind: 'target' }
-    ],
-    frames: [elephantRestingImg, elephantNoticesImg, elephantDrinksImg, elephantSpraysImg, elephantIdleImg],
-    revealLayoutKey: 'elephantReveal'
+    prompt: 'Listen for the water.',
+    targetZoneId: 'right',
+    sounds: {
+      left: decoyRustle,
+      center: soundBirdAmbient,
+      right: soundWaterDrip
+    },
+    idleImg: elephantThirstyImg,
+    revealFrames: [elephantDrinkingImg, elephantHappyWaterImg]
   },
   {
     id: 'cow',
     label: 'Cow',
-    prompt: 'Listen for the animal near the grass.',
-    targetSourceId: 'rightCave',
-    sources: [
-      { ...BASE_SOURCES.leftBush, layoutKey: 'cowLeftBush', sound: decoyWind, kind: 'decoy' },
-      { ...BASE_SOURCES.centerRock, layoutKey: 'cowCenterRock', sound: decoyRustle, kind: 'decoy' },
-      { ...BASE_SOURCES.rightCave, layoutKey: 'cowRightCave', sound: soundCow, kind: 'target' }
-    ],
-    frames: [cowRestingImg, cowLooksImg, cowNibblesImg, cowChewsImg, cowIdleImg],
-    revealLayoutKey: 'cowReveal'
+    prompt: 'Listen for the grass.',
+    targetZoneId: 'right',
+    sounds: {
+      left: decoyWind,
+      center: soundBirdAmbient,
+      right: soundGrassRustle
+    },
+    idleImg: cowHungryImg,
+    revealFrames: [cowEatingGrassImg, cowHappyChewingImg]
   }
 ];
 
 const VO_TEXTS = {
-  intro: 'Listen closely. Hear each place first. Then choose the animal sound.',
-  choose: 'Now choose the animal sound.',
+  intro: 'Listen closely. Hear each place first. Then choose the sound that matters.',
+  choose: 'Now choose the sound.',
   neutral: 'Good listening. Try another sound source.',
-  hint: 'Listen for the animal sound.',
+  hint: 'Listen for the sound.',
   complete: 'You listened carefully and found what mattered.',
-  elephant: 'Elephant',
-  cow: 'Cow'
+  elephant: 'Elephant found water.',
+  cow: 'Cow found grass.'
 };
 
 const BETWEEN_SOUND_MS = 560;
 const INTRO_DELAY_MS = 700;
-const REVEAL_FRAME_MS = 420;
+const REVEAL_FRAME_MS = 480;
 const NEXT_ROUND_DELAY_MS = 1350;
 const COMPLETE_DELAY_MS = 1500;
 const HINT_REPLAY_MS = 10000;
@@ -169,15 +165,15 @@ const EarsSoundMatchGame = ({
 }) => {
   const [roundIndex, setRoundIndex] = useState(0);
   const [phase, setPhase] = useState(PHASE.LISTENING);
-  const [activeSourceId, setActiveSourceId] = useState(null);
+  const [activeZoneId, setActiveZoneId] = useState(null);
   const [completedRounds, setCompletedRounds] = useState([]);
-  const [wrongSourceId, setWrongSourceId] = useState(null);
+  const [wrongZoneId, setWrongZoneId] = useState(null);
   const [feedback, setFeedback] = useState('');
   const [revealFrameByAnimal, setRevealFrameByAnimal] = useState({});
-  const [hintSourceId, setHintSourceId] = useState(null);
+  const [hintZoneId, setHintZoneId] = useState(null);
   const [layout, setLayout] = useState(loadSavedLayout);
   const [debugMode, setDebugMode] = useState(false);
-  const [selectedDebugKey, setSelectedDebugKey] = useState('elephantLeftBush');
+  const [selectedDebugKey, setSelectedDebugKey] = useState('leftBush');
   const [debugPanelPosition, setDebugPanelPosition] = useState({ x: 12, y: 96 });
   const [layoutCopyStatus, setLayoutCopyStatus] = useState('');
 
@@ -393,15 +389,16 @@ const EarsSoundMatchGame = ({
     clearTimers();
     stopAudio();
     setPhase(PHASE.LISTENING);
-    setHintSourceId(null);
-    setWrongSourceId(null);
+    setHintZoneId(null);
+    setWrongZoneId(null);
     setFeedback(targetRound.prompt);
 
+    const zoneIds = ['left', 'center', 'right'];
     let index = 0;
     const playNext = () => {
       if (runId !== runIdRef.current) return;
-      if (index >= targetRound.sources.length) {
-        setActiveSourceId(null);
+      if (index >= zoneIds.length) {
+        setActiveZoneId(null);
         setPhase(PHASE.CHOOSING);
         chooseStartedAtRef.current = Date.now();
         hintStageRef.current = 0;
@@ -411,14 +408,14 @@ const EarsSoundMatchGame = ({
         return;
       }
 
-      const source = targetRound.sources[index];
-      setActiveSourceId(source.id);
-      playSound(source.sound, '', () => {
+      const zoneId = zoneIds[index];
+      setActiveZoneId(zoneId);
+      playSound(targetRound.sounds[zoneId], '', () => {
         if (runId !== runIdRef.current) return;
-        setActiveSourceId(null);
+        setActiveZoneId(null);
         index += 1;
         schedule(playNext, BETWEEN_SOUND_MS);
-      }, source.kind === 'target' ? 0.68 : 0.42);
+      }, zoneId === targetRound.targetZoneId ? 0.68 : 0.42);
     };
 
     schedule(playNext, index === 0 ? 240 : BETWEEN_SOUND_MS);
@@ -431,12 +428,12 @@ const EarsSoundMatchGame = ({
     completedRef.current = false;
     setRoundIndex(0);
     setPhase(PHASE.LISTENING);
-    setActiveSourceId(null);
+    setActiveZoneId(null);
     setCompletedRounds([]);
-    setWrongSourceId(null);
+    setWrongZoneId(null);
     setFeedback('');
     setRevealFrameByAnimal({});
-    setHintSourceId(null);
+    setHintZoneId(null);
     chooseStartedAtRef.current = Date.now();
     hintStageRef.current = 0;
   }, [clearTimers, stopAudio]);
@@ -455,13 +452,10 @@ const EarsSoundMatchGame = ({
       const waitingMs = Date.now() - chooseStartedAtRef.current;
       if (waitingMs >= HINT_TARGET_MS && hintStageRef.current < 3) {
         hintStageRef.current = 3;
-        const targetSource = round.sources.find((source) => source.id === round.targetSourceId);
-        setHintSourceId(targetSource?.id || null);
-        if (targetSource) {
-          playSound(targetSource.sound, VO_TEXTS[round.id], () => {
-            schedule(() => playSequence(round), BETWEEN_SOUND_MS);
-          }, 0.68);
-        }
+        setHintZoneId(round.targetZoneId);
+        playSound(round.sounds[round.targetZoneId], VO_TEXTS[round.id], () => {
+          schedule(() => playSequence(round), BETWEEN_SOUND_MS);
+        }, 0.68);
         chooseStartedAtRef.current = Date.now();
       } else if (waitingMs >= HINT_TEXT_MS && hintStageRef.current < 2) {
         hintStageRef.current = 2;
@@ -489,9 +483,9 @@ const EarsSoundMatchGame = ({
     clearTimers();
     stopAudio();
     setPhase(PHASE.REVEALING);
-    setActiveSourceId(null);
-    setHintSourceId(null);
-    setWrongSourceId(null);
+    setActiveZoneId(null);
+    setHintZoneId(null);
+    setWrongZoneId(null);
     setRevealFrameByAnimal((prev) => ({ ...prev, [animalRound.id]: 0 }));
     speak(VO_TEXTS[animalRound.id]);
 
@@ -500,9 +494,9 @@ const EarsSoundMatchGame = ({
       frame += 1;
       setRevealFrameByAnimal((prev) => ({
         ...prev,
-        [animalRound.id]: Math.min(frame, animalRound.frames.length - 1)
+        [animalRound.id]: Math.min(frame, animalRound.revealFrames.length - 1)
       }));
-      if (frame < animalRound.frames.length - 1) {
+      if (frame < animalRound.revealFrames.length - 1) {
         schedule(advanceFrame, REVEAL_FRAME_MS);
       }
     };
@@ -535,27 +529,43 @@ const EarsSoundMatchGame = ({
 
       setRoundIndex(nextIndex);
       playSequence(ROUNDS[nextIndex]);
-    }, (animalRound.frames.length * REVEAL_FRAME_MS) + NEXT_ROUND_DELAY_MS);
+    }, (animalRound.revealFrames.length * REVEAL_FRAME_MS) + NEXT_ROUND_DELAY_MS);
   }, [clearTimers, onAnimalPositionsChange, onGameComplete, playSequence, roundIndex, schedule, showFeedback, speak, stopAudio]);
 
-  const handleSourceTap = useCallback((source, e) => {
+  const handleZoneTap = useCallback((zoneId, e) => {
     e.stopPropagation();
     if (debugMode || !round || phase !== PHASE.CHOOSING) return;
 
-    if (source.id !== round.targetSourceId) {
-      setWrongSourceId(source.id);
+    if (zoneId !== round.targetZoneId) {
+      setWrongZoneId(zoneId);
       showFeedback(VO_TEXTS.neutral);
       speak(VO_TEXTS.neutral);
-      schedule(() => setWrongSourceId(null), 520);
+      schedule(() => setWrongZoneId(null), 520);
       return;
     }
 
     setCompletedRounds((prev) => [...prev, round.id]);
-    showFeedback(`${round.label} found.`);
+    showFeedback(VO_TEXTS[round.id]);
     startReveal(round);
   }, [debugMode, phase, round, schedule, showFeedback, speak, startReveal]);
 
   if (hideElements || !isActive) return null;
+
+  const elephantSolved = completedIds.has('elephant');
+  const cowSolved = completedIds.has('cow');
+  const cowIsFocal = round?.id === 'cow' || cowSolved;
+
+  const elephantFrame = elephantSolved
+    ? ROUNDS[0].revealFrames[revealFrameByAnimal.elephant ?? ROUNDS[0].revealFrames.length - 1]
+    : ROUNDS[0].idleImg;
+  const elephantOpacityClass = elephantSolved ? 'ears-sprite-softened' : 'ears-sprite-active';
+
+  const cowFrame = cowSolved
+    ? ROUNDS[1].revealFrames[revealFrameByAnimal.cow ?? ROUNDS[1].revealFrames.length - 1]
+    : cowIsFocal
+      ? ROUNDS[1].idleImg
+      : cowTiredImg;
+  const cowOpacityClass = cowSolved || cowIsFocal ? 'ears-sprite-active' : 'ears-sprite-waiting';
 
   return (
     <div
@@ -567,6 +577,23 @@ const EarsSoundMatchGame = ({
     >
       <img className="ears-game-bg" src={bgImg} alt="" draggable={false} />
 
+      <img
+        className={`ears-story-sprite ${elephantOpacityClass} ${debugMode && selectedDebugKey === 'elephantSprite' ? 'is-debug-selected' : ''}`}
+        src={elephantFrame}
+        alt=""
+        draggable={false}
+        style={styleFromLayout(layout.elephantSprite)}
+        onPointerDown={(e) => startDebugDrag(e, 'elephantSprite')}
+      />
+      <img
+        className={`ears-story-sprite ${cowOpacityClass} ${debugMode && selectedDebugKey === 'cowSprite' ? 'is-debug-selected' : ''}`}
+        src={cowFrame}
+        alt=""
+        draggable={false}
+        style={styleFromLayout(layout.cowSprite)}
+        onPointerDown={(e) => startDebugDrag(e, 'cowSprite')}
+      />
+
       <div
         className={`ears-game-prompt ${debugMode && selectedDebugKey === 'prompt' ? 'is-debug-selected' : ''}`}
         style={styleFromLayout(layout.prompt)}
@@ -576,7 +603,7 @@ const EarsSoundMatchGame = ({
           {phase === PHASE.LISTENING
             ? 'Listen to each sound'
             : phase === PHASE.CHOOSING
-              ? 'Choose the animal sound'
+              ? 'Choose the sound that matters'
               : phase === PHASE.REVEALING
                 ? 'You found it'
                 : 'You listened carefully'}
@@ -584,56 +611,29 @@ const EarsSoundMatchGame = ({
         <strong>{completedRounds.length}/{ROUNDS.length}</strong>
       </div>
 
-      {round?.sources.map((source, index) => {
-        const isPlaying = activeSourceId === source.id;
-        const isWrong = wrongSourceId === source.id;
-        const isHinted = hintSourceId === source.id;
+      {Object.values(ZONES).map((zone, index) => {
+        const isPlaying = activeZoneId === zone.id;
+        const isWrong = wrongZoneId === zone.id;
+        const isHinted = hintZoneId === zone.id;
         const locked = phase !== PHASE.CHOOSING;
 
         return (
           <button
-            key={`${round.id}-${source.id}`}
+            key={zone.id}
             type="button"
-            className={`ears-source ${locked ? 'locked' : 'ready'} ${isPlaying ? 'playing' : ''} ${isWrong ? 'wrong' : ''} ${isHinted ? 'hinted' : ''} ${debugMode && selectedDebugKey === source.layoutKey ? 'is-debug-selected' : ''}`}
-            style={{ ...styleFromLayout(layout[source.layoutKey]), '--source-index': index + 1 }}
-            onClick={(e) => handleSourceTap(source, e)}
-            onPointerDown={(e) => debugMode && startDebugDrag(e, source.layoutKey)}
+            className={`ears-source ${locked ? 'locked' : 'ready'} ${isPlaying ? 'playing' : ''} ${isWrong ? 'wrong' : ''} ${isHinted ? 'hinted' : ''} ${debugMode && selectedDebugKey === zone.layoutKey ? 'is-debug-selected' : ''}`}
+            style={{ ...styleFromLayout(layout[zone.layoutKey]), '--source-index': index + 1 }}
+            onClick={(e) => handleZoneTap(zone.id, e)}
+            onPointerDown={(e) => debugMode && startDebugDrag(e, zone.layoutKey)}
             disabled={!debugMode && locked}
-            aria-label={source.label}
+            aria-label={zone.label}
           >
             <span className="ears-source-number">{index + 1}</span>
             <span className="ears-source-pulse" aria-hidden="true" />
-            <img src={source.img} alt="" draggable={false} />
+            <img src={zone.img} alt="" draggable={false} />
           </button>
         );
       })}
-
-      {ROUNDS.map((animalRound) => {
-        if (!completedIds.has(animalRound.id)) return null;
-        const frameIndex = revealFrameByAnimal[animalRound.id] ?? animalRound.frames.length - 1;
-        return (
-          <div
-            key={`reveal-${animalRound.id}`}
-            className={`ears-animal-reveal ${animalRound.id} ${debugMode && selectedDebugKey === animalRound.revealLayoutKey ? 'is-debug-selected' : ''}`}
-            style={styleFromLayout(layout[animalRound.revealLayoutKey])}
-            onPointerDown={(e) => startDebugDrag(e, animalRound.revealLayoutKey)}
-          >
-            <img src={animalRound.frames[frameIndex] || animalRound.frames[animalRound.frames.length - 1]} alt="" draggable={false} />
-            <span className="ears-animal-sparkle" aria-hidden="true" />
-          </div>
-        );
-      })}
-
-      {debugMode && ROUNDS.filter((animalRound) => !completedIds.has(animalRound.id)).map((animalRound) => (
-        <div
-          key={`debug-reveal-${animalRound.id}`}
-          className={`ears-animal-reveal ${animalRound.id} debug-preview ${selectedDebugKey === animalRound.revealLayoutKey ? 'is-debug-selected' : ''}`}
-          style={styleFromLayout(layout[animalRound.revealLayoutKey])}
-          onPointerDown={(e) => startDebugDrag(e, animalRound.revealLayoutKey)}
-        >
-          <img src={animalRound.frames[animalRound.frames.length - 1]} alt="" draggable={false} />
-        </div>
-      ))}
 
       <div
         className={`ears-found-tray ${debugMode && selectedDebugKey === 'tray' ? 'is-debug-selected' : ''}`}
@@ -644,7 +644,7 @@ const EarsSoundMatchGame = ({
         {ROUNDS.map((animalRound) => (
           <div key={animalRound.id} className={`ears-found-slot ${completedIds.has(animalRound.id) ? 'filled' : ''}`}>
             {completedIds.has(animalRound.id) ? (
-              <img src={animalRound.frames[animalRound.frames.length - 1]} alt="" />
+              <img src={animalRound.revealFrames[animalRound.revealFrames.length - 1]} alt="" />
             ) : (
               <span />
             )}
