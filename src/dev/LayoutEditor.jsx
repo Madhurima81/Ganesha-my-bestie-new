@@ -1,6 +1,7 @@
 /**
  * Layout Editor — dev-only visual tool for placing game assets on a scene
- * background and exporting percent-based coordinates.
+ * background, documenting the SHOW → ACTION → AFTER flow for that scene, and
+ * exporting both as JSON to hand back for wiring in.
  *
  * Served by /layout-editor.html. NOT part of the production app.
  *
@@ -8,10 +9,11 @@
  *
  * Why this exists: the in-game "Layout Debug" panels (e.g. KurumedevaGame.jsx)
  * only let you nudge markers that are already wired into the code — they
- * don't let you choose which asset appears in which stage before any code
- * is written. This tool works the other way round: pick a scene/stage, drag
- * any asset from the pack onto the background, resize/rotate it, and export
- * a JSON blob of {src, l, t, w, r} per scene to hand back for wiring in.
+ * don't let you choose which asset appears in which stage, or say what the
+ * child does and what happens next, before any code is written. This tool
+ * works the other way round: pick a scene/stage, drag any asset from the
+ * pack onto the background, resize/rotate/flip it, write down what it shows
+ * and what happens on interaction, and export a JSON blob of both per scene.
  *
  * To add a new asset pack: add an entry to ASSET_SETS below with a
  * import.meta.glob() pointing at its folder, then open with ?set=<key>.
@@ -27,25 +29,118 @@ const bridgeAssets = import.meta.glob(
   { eager: true, query: '?url', import: 'default' }
 );
 
+// Default scene list + the intended SHOW → ACTION → AFTER flow for each —
+// ported from the approved 8-scene design doc so the tool starts pre-filled
+// with the real story, not blank placeholders. Editable per scene in the UI.
+const BRIDGE_SCENES = [
+  {
+    name: '1. Opening — See the problem',
+    goal: 'Beaver wants to reach Baby, but the bridge is broken.',
+    show: [
+      'Broken bridge anchored across the river',
+      'Mother Beaver on LEFT bank',
+      'Baby Beaver on RIGHT bank',
+      '2-log support piece lying on LEFT bank near Beaver',
+      'Elephant visible farther back; Monkey absent',
+    ],
+    action: 'Baby waves. Beaver looks across, then tries to move the heavy support logs.',
+    after: 'The logs barely move. Beaver looks toward Elephant. Prompt: "Ask Elephant for help."',
+  },
+  {
+    name: '2. Ask Elephant',
+    goal: 'The child causes Beaver to ask for appropriate help.',
+    show: [
+      'Broken bridge + support logs still on bank',
+      'Beaver asking-for-help pose',
+      'Elephant available/highlighted',
+      'Baby still waiting across river',
+    ],
+    action: 'Tap Elephant.',
+    after: 'Elephant approaches the logs. Transition to the pulling action.',
+  },
+  {
+    name: '3. Place the support logs',
+    goal: 'Elephant helps with something Beaver cannot move alone.',
+    show: [
+      'Broken bridge',
+      '2-log support piece moving toward central gap',
+      'Elephant pulling pose',
+      'Beaver pushing/guiding pose',
+    ],
+    action: 'Simple drag / press-and-hold to help pull the support piece into the gap.',
+    after: 'Two support logs now bridge the central structural gap. Walking planks are still missing and rope joins are loose.',
+  },
+  {
+    name: '4. Ask Monkey',
+    goal: 'The new support is in place but needs securing.',
+    show: [
+      'Support logs installed',
+      '2–3 middle walking planks still missing',
+      'Loose rope ends at the support joins',
+      'Monkey appears nearby',
+      'Beaver near the unstable bridge',
+    ],
+    action: 'A tiny bridge wobble. Beaver looks toward Monkey. Tap Monkey.',
+    after: 'Monkey moves onto the bridge ready to tie the loose rope.',
+  },
+  {
+    name: '5. Monkey secures the bridge',
+    goal: 'Secure the new support so it is stable.',
+    show: [
+      'Loose-rope bridge state',
+      'Monkey tying pose at ONE join',
+      'Beaver watching nearby',
+    ],
+    action: 'Tap/hold once while Monkey wraps and pulls the rope tight.',
+    after: 'First lashing completes; second lashing appears in a short completion animation. Wobble stops. Middle walking planks are still missing.',
+  },
+  {
+    name: '6. Finish the walking path',
+    goal: 'Complete the surface so Beaver can actually cross.',
+    show: [
+      'Secured support logs',
+      '2–3 missing middle planks',
+      'Beaver placing/guiding plank pose',
+      'Elephant and Monkey nearby as helpers',
+    ],
+    action: 'Place one meaningful plank. Helpers steady/pass pieces; remaining planks complete automatically.',
+    after: 'Swap to the final completed bridge state. No gaps remain.',
+  },
+  {
+    name: '7. Cross the bridge',
+    goal: 'Let the child see the practical result of asking for help.',
+    show: [
+      'Completed bridge',
+      'Baby waiting on RIGHT bank',
+      'Beaver at LEFT entrance',
+      'Elephant + Monkey happy nearby',
+    ],
+    action: 'Automatic short crossing animation using Beaver crossing pose.',
+    after: 'Beaver reaches the right bank.',
+  },
+  {
+    name: '8. Reunion / meaning',
+    goal: 'Emotional payoff first, then connect the experience to Kurume Deva.',
+    show: [
+      'Beaver + baby reunion on RIGHT bank',
+      'Completed bridge still visible',
+      'Happy Elephant + Monkey as restrained end reactions',
+    ],
+    action: 'No puzzle. Let the reunion breathe briefly.',
+    after: 'Then reveal/play Ku → Ru → Me → Deva, full "Kurume Deva", and "I can ask for help when I need it."',
+  },
+];
+
 const ASSET_SETS = {
   bridge: {
     label: 'Kurume Deva — Bridge pack',
     assets: bridgeAssets,
     defaultBackground: Object.entries(bridgeAssets).find(([p]) => p.includes('/Background/'))?.[1] || null,
-    defaultScenes: [
-      'Opening (broken bridge)',
-      'Try & fail (logs)',
-      'Ask Elephant',
-      'Support placed',
-      'Ask Monkey (ropes)',
-      'Ropes tied',
-      'Ask Monkey (planks)',
-      'Bridge complete',
-      'Crossing',
-      'Reunion',
-    ],
+    defaultSceneMeta: BRIDGE_SCENES,
   },
 };
+
+const EMPTY_META = { goal: '', show: [], action: '', after: '' };
 
 function assetLabel(path) {
   const file = path.split('/').pop().replace(/\.png$/, '');
@@ -54,16 +149,35 @@ function assetLabel(path) {
 
 const STORAGE_KEY = (setKey) => `ganeshaLayoutEditor:${setKey}`;
 
-function loadSaved(setKey, fallbackScenes, fallbackBg) {
+// Non-destructive: always includes the pack's default scenes (with their
+// SHOW/ACTION/AFTER flow), then layers in whatever's actually saved —
+// preserving placed items/background, filling in meta only if missing, and
+// keeping any extra scenes you added yourself.
+function loadSaved(setKey, defaultSceneMeta, fallbackBg) {
+  const scenes = {};
+  defaultSceneMeta.forEach(({ name, ...meta }) => {
+    scenes[name] = { background: fallbackBg, items: [], meta };
+  });
+
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY(setKey));
-    if (raw) return JSON.parse(raw);
+    if (raw) {
+      const saved = JSON.parse(raw);
+      Object.entries(saved.scenes || {}).forEach(([name, sceneData]) => {
+        scenes[name] = {
+          background: sceneData.background ?? fallbackBg,
+          items: sceneData.items || [],
+          meta: sceneData.meta || scenes[name]?.meta || { ...EMPTY_META },
+        };
+      });
+      const activeScene = saved.activeScene && scenes[saved.activeScene]
+        ? saved.activeScene
+        : Object.keys(scenes)[0];
+      return { activeScene, scenes };
+    }
   } catch { /* ignore */ }
-  const scenes = {};
-  fallbackScenes.forEach((name) => {
-    scenes[name] = { background: fallbackBg, items: [] };
-  });
-  return { activeScene: fallbackScenes[0], scenes };
+
+  return { activeScene: defaultSceneMeta[0]?.name, scenes };
 }
 
 let nextId = 1;
@@ -74,12 +188,13 @@ export default function LayoutEditor() {
   const setKey = params.get('set') && ASSET_SETS[params.get('set')] ? params.get('set') : 'bridge';
   const set = ASSET_SETS[setKey];
 
-  const [state, setState] = useState(() => loadSaved(setKey, set.defaultScenes, set.defaultBackground));
+  const [state, setState] = useState(() => loadSaved(setKey, set.defaultSceneMeta, set.defaultBackground));
   const [selectedId, setSelectedId] = useState(null);
   const [newSceneName, setNewSceneName] = useState('');
   const [copyStatus, setCopyStatus] = useState('');
   const [importText, setImportText] = useState('');
   const [showImport, setShowImport] = useState(false);
+  const [flowCollapsed, setFlowCollapsed] = useState(false);
 
   const canvasRef = useRef(null);
   const dragRef = useRef(null); // { id, mode: 'move'|'resize', startL, startT, startW, offsetL, offsetT, startX }
@@ -111,7 +226,7 @@ export default function LayoutEditor() {
     if (!name || state.scenes[name]) return;
     setState((s) => ({
       ...s,
-      scenes: { ...s.scenes, [name]: { background: set.defaultBackground, items: [] } },
+      scenes: { ...s.scenes, [name]: { background: set.defaultBackground, items: [], meta: { ...EMPTY_META } } },
       activeScene: name,
     }));
     setNewSceneName('');
@@ -124,7 +239,7 @@ export default function LayoutEditor() {
       delete next[name];
       let names = Object.keys(next);
       if (names.length === 0) {
-        next['Scene 1'] = { background: set.defaultBackground, items: [] };
+        next['Scene 1'] = { background: set.defaultBackground, items: [], meta: { ...EMPTY_META } };
         names = ['Scene 1'];
       }
       return { ...s, scenes: next, activeScene: s.activeScene === name ? names[0] : s.activeScene };
@@ -132,12 +247,33 @@ export default function LayoutEditor() {
     setSelectedId(null);
   };
 
+  const updateActiveSceneMeta = useCallback((patch) => {
+    setState((s) => {
+      const scene = s.scenes[s.activeScene];
+      return {
+        ...s,
+        scenes: { ...s.scenes, [s.activeScene]: { ...scene, meta: { ...(scene.meta || EMPTY_META), ...patch } } },
+      };
+    });
+  }, []);
+
   const addAsset = (src) => {
     const id = newId();
     updateActiveSceneItems((items) => [
       ...items,
-      { id, src, l: 50 + (items.length % 5) * 3, t: 50 + (items.length % 5) * 3, w: 14, r: 0 },
+      { id, src, l: 50 + (items.length % 5) * 3, t: 50 + (items.length % 5) * 3, w: 14, r: 0, flip: 1, opacity: 100 },
     ]);
+    setSelectedId(id);
+  };
+
+  const duplicateSelected = () => {
+    if (!selectedId) return;
+    const id = newId();
+    updateActiveSceneItems((items) => {
+      const src = items.find((it) => it.id === selectedId);
+      if (!src) return items;
+      return [...items, { ...src, id, l: Math.min(96, src.l + 4), t: Math.min(96, src.t + 4) }];
+    });
     setSelectedId(id);
   };
 
@@ -336,6 +472,50 @@ export default function LayoutEditor() {
 
         {/* Canvas */}
         <div style={styles.canvasWrap}>
+          <div style={styles.flowPanel}>
+            <div style={styles.flowHeader} onClick={() => setFlowCollapsed((v) => !v)}>
+              <span style={styles.panelTitle}>Scene flow — SHOW → ACTION → AFTER</span>
+              <button style={styles.btn}>{flowCollapsed ? 'Expand' : 'Collapse'}</button>
+            </div>
+            {!flowCollapsed && (
+              <div style={styles.flowBody}>
+                <label style={styles.flowField}>
+                  <span>Goal</span>
+                  <input
+                    value={activeScene.meta?.goal || ''}
+                    onChange={(e) => updateActiveSceneMeta({ goal: e.target.value })}
+                    placeholder="What is this scene trying to teach or set up?"
+                    style={styles.input}
+                  />
+                </label>
+                <label style={styles.flowField}>
+                  <span>Show (one per line)</span>
+                  <textarea
+                    value={(activeScene.meta?.show || []).join('\n')}
+                    onChange={(e) => updateActiveSceneMeta({ show: e.target.value.split('\n') })}
+                    placeholder={'Broken bridge across the river\nMother Beaver on left bank\n...'}
+                    style={styles.flowTextarea}
+                  />
+                </label>
+                <label style={styles.flowField}>
+                  <span>Action (what the child does)</span>
+                  <textarea
+                    value={activeScene.meta?.action || ''}
+                    onChange={(e) => updateActiveSceneMeta({ action: e.target.value })}
+                    style={styles.flowTextareaSmall}
+                  />
+                </label>
+                <label style={styles.flowField}>
+                  <span>After (what happens next)</span>
+                  <textarea
+                    value={activeScene.meta?.after || ''}
+                    onChange={(e) => updateActiveSceneMeta({ after: e.target.value })}
+                    style={styles.flowTextareaSmall}
+                  />
+                </label>
+              </div>
+            )}
+          </div>
           <div
             ref={canvasRef}
             style={{
@@ -353,7 +533,8 @@ export default function LayoutEditor() {
                   left: `${item.l}%`,
                   top: `${item.t}%`,
                   width: `${item.w}%`,
-                  transform: `translate(-50%, -50%) rotate(${item.r || 0}deg)`,
+                  opacity: (item.opacity ?? 100) / 100,
+                  transform: `translate(-50%, -50%) rotate(${item.r || 0}deg) scaleX(${item.flip ?? 1})`,
                   cursor: 'grab',
                   outline: item.id === selectedId ? '2px solid #4fc3f7' : 'none',
                   outlineOffset: 2,
@@ -410,7 +591,16 @@ export default function LayoutEditor() {
                 <input type="number" value={selectedItem.r || 0}
                   onChange={(e) => updateSelected({ r: Number(e.target.value) })} style={styles.numInput} />
               </label>
+              <label style={styles.sliderRow}>
+                <span>opacity</span>
+                <input type="range" min={20} max={100} step={1} value={selectedItem.opacity ?? 100}
+                  onChange={(e) => updateSelected({ opacity: Number(e.target.value) })} />
+                <input type="number" value={selectedItem.opacity ?? 100}
+                  onChange={(e) => updateSelected({ opacity: Number(e.target.value) })} style={styles.numInput} />
+              </label>
               <div style={styles.inspectorActions}>
+                <button style={styles.btn} onClick={() => updateSelected({ flip: (selectedItem.flip ?? 1) * -1 })}>Flip</button>
+                <button style={styles.btn} onClick={duplicateSelected}>Duplicate</button>
                 <button style={styles.btn} onClick={() => reorderSelected('back')}>Send back</button>
                 <button style={styles.btn} onClick={() => reorderSelected('front')}>Bring front</button>
                 <button style={styles.btnDanger} onClick={removeSelected}>Delete</button>
@@ -472,6 +662,12 @@ const styles = {
   addSceneRow: { display: 'flex', gap: 6, marginTop: 10 },
   input: { flex: 1, minWidth: 0, padding: '6px 8px', borderRadius: 6, border: '1px solid #ccc', fontSize: 12.5 },
   canvasWrap: { flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, padding: 12, gap: 8 },
+  flowPanel: { background: '#fff', border: '1px solid #e3d9fb', borderRadius: 10, padding: '10px 12px', flexShrink: 0 },
+  flowHeader: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' },
+  flowBody: { display: 'flex', flexDirection: 'column', gap: 8, marginTop: 8 },
+  flowField: { display: 'flex', flexDirection: 'column', gap: 3, fontSize: 12, fontWeight: 700, color: '#5b3fa0' },
+  flowTextarea: { fontFamily: "'Nunito', sans-serif", fontWeight: 400, fontSize: 12.5, color: '#2c2350', padding: 8, borderRadius: 6, border: '1px solid #ccc', minHeight: 70, resize: 'vertical' },
+  flowTextareaSmall: { fontFamily: "'Nunito', sans-serif", fontWeight: 400, fontSize: 12.5, color: '#2c2350', padding: 8, borderRadius: 6, border: '1px solid #ccc', minHeight: 40, resize: 'vertical' },
   canvas: {
     flex: 1, position: 'relative', backgroundColor: '#cfd8dc', backgroundSize: 'cover',
     backgroundPosition: 'center', borderRadius: 12, overflow: 'hidden', border: '1px solid #ccc',
