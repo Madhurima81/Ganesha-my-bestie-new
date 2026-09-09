@@ -6,9 +6,8 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import './EarsSoundMatchGame.css';
 
-// TODO: swap back to the ears-game-v2 background once a clean version is
-// supplied — the delivered ear_game_background.png is a captured screenshot
-// of the Eyes-game dev harness (toolbar/debug UI baked into the pixels).
+// Reuses the Eyes game's background (the delivered ear_game_background.png
+// was a captured screenshot of the Eyes-game dev harness, not usable art).
 import bgImg from './assets/images/ears-game/symbol_mountain_3_bg.png';
 import leafyBushImg from './assets/images/ears-game-v2/leafy_bush.png';
 import modularRockImg from './assets/images/ears-game-v2/modular_rock.png';
