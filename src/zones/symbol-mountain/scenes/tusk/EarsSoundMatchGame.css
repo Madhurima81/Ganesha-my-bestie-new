@@ -179,6 +179,13 @@
   animation: ears-source-wrong 520ms ease;
 }
 
+.ears-source.resolving {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.7);
+  transition: opacity 620ms ease, transform 620ms ease;
+  pointer-events: none;
+}
+
 .ears-animal-reveal {
   position: absolute;
   z-index: 30;
