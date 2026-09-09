@@ -451,6 +451,11 @@
   grid-column: 2 / 4;
 }
 
+.eyes-debug-row select option {
+  background: #1d2d32;
+  color: #fff8dc;
+}
+
 .eyes-debug-row input[type='range'] {
   width: 100%;
 }

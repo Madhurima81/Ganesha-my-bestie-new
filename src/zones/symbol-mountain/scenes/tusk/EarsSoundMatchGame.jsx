@@ -607,7 +607,6 @@ const EarsSoundMatchGame = ({
                 ? 'You found it'
                 : 'You listened carefully'}
         </span>
-        <strong>{completedRounds.length}/{ROUNDS.length}</strong>
       </div>
 
       {Object.values(ZONES).map((zone, index) => {
@@ -634,22 +633,6 @@ const EarsSoundMatchGame = ({
         );
       })}
 
-      <div
-        className={`ears-found-tray ${debugMode && selectedDebugKey === 'tray' ? 'is-debug-selected' : ''}`}
-        style={styleFromLayout(layout.tray)}
-        aria-hidden="true"
-        onPointerDown={(e) => startDebugDrag(e, 'tray')}
-      >
-        {ROUNDS.map((animalRound) => (
-          <div key={animalRound.id} className={`ears-found-slot ${completedIds.has(animalRound.id) ? 'filled' : ''}`}>
-            {completedIds.has(animalRound.id) ? (
-              <img src={animalRound.revealFrames[animalRound.revealFrames.length - 1]} alt="" />
-            ) : (
-              <span />
-            )}
-          </div>
-        ))}
-      </div>
 
       {(feedback || debugMode) && (
         <div

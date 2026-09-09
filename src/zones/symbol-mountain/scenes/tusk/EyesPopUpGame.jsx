@@ -164,7 +164,6 @@ const EyesPopUpGame = ({
   const debugPanelDragRef = useRef(null);
 
   const foundIds = useMemo(() => new Set(foundTargets), [foundTargets]);
-  const progressFound = foundTargets.length;
   const selectedDebugLayout = layout[selectedDebugKey] || DEFAULT_LAYOUT[selectedDebugKey];
 
   const stopTimers = useCallback(() => {
@@ -436,7 +435,6 @@ const EyesPopUpGame = ({
         <span>
           {flow === FLOW.SEARCH ? 'Look closely. Find what they need.' : 'You connected the clues'}
         </span>
-        <strong>{progressFound}/{SEARCH_TARGETS.length}</strong>
       </div>
 
       <img
@@ -489,18 +487,6 @@ const EyesPopUpGame = ({
         </button>
       ))}
 
-      <div
-        className={`eyes-clue-tray ${debugMode && selectedDebugKey === 'tray' ? 'is-debug-selected' : ''}`}
-        style={styleFromLayout(layout.tray)}
-        aria-hidden="true"
-        onPointerDown={(e) => startDebugDrag(e, 'tray')}
-      >
-        {SEARCH_TARGETS.map((target) => (
-          <div key={target.id} className={`eyes-clue-slot ${foundIds.has(target.id) ? 'filled' : ''}`}>
-            {foundIds.has(target.id) ? <img src={target.foundImg} alt="" /> : <span />}
-          </div>
-        ))}
-      </div>
 
       {(feedback || debugMode) && (
         <div
