@@ -27,6 +27,7 @@ import bridgeCompleteImg from './assets/images/bridge/Bridge/bridge-complete.png
 
 import beaverAskingImg from './assets/images/bridge/Characters/beaver-asking.png';
 import beaverIdleWorriedImg from './assets/images/bridge/Characters/beaver-idle-worried.png';
+import beaverTryingPushImg from './assets/images/bridge/Characters/beaver-trying-push.png';
 import beaverPlacingPlankImg from './assets/images/bridge/Characters/beaver-placing-plank.png';
 import beaverCrossingImg from './assets/images/bridge/Characters/beaver-crossing.png';
 import babyBeaverWavingImg from './assets/images/bridge/Characters/baby-beaver-waving.png';
@@ -132,6 +133,9 @@ const WALK_BACK_MS = 1050; // amble to the bank line
 // row is a parallel array of 3. Coords seeded from the Canva bridge SVG
 // (canvas 1577x1183) — fine-tune per phase in the debug panel.
 const LOG_PILE = { l: 30.81, t: 66.22 };
+// Where the logs rest before anyone's been asked — Beaver's own side of the
+// gap, clear of Elephant's start spot (which sits right on top of LOG_PILE).
+const TRY_LOG_SPOT = { l: 66, t: 68 };
 // 3 logs — tuned in the debug panel (these were fine; leave them).
 const LOG_SLOTS = [
   { l: 59.9, t: 73, r: 0 },
@@ -333,6 +337,12 @@ export default function KurumedevaGame({
   const [bridgeStep, setBridgeStep] = useState(0);
   const [phase, setPhase] = useState('play');
   const [beaverPos, setBeaverPos] = useState(BEAVER_PATH[0]);
+  // Beaver tries to move the support logs alone first and fails — only then
+  // does the "ask for help" bubble unlock. Matches the asset pack's README
+  // ("Mother Beaver tries to move the heavy two-log support piece and
+  // cannot do it alone") and the approved game-flow doc's step 2.
+  const [triedPush, setTriedPush] = useState(false);
+  const [tryShake, setTryShake] = useState(false);
   const [litCount, setLitCount] = useState(0);
   const [tappedId, setTappedId] = useState(null);
   const [friendImgStates, setFriendImgStates] = useState(() => FRIENDS.map(() => 'carry'));
@@ -388,6 +398,9 @@ export default function KurumedevaGame({
     level3Delay: 22000,
   });
   const currentFriend = friendStep < FRIENDS.length ? FRIENDS[friendStep] : null;
+  // Elephant's round is gated behind the "try and fail" beat; the later
+  // helpers can be asked as soon as it's their turn.
+  const canAsk = friendStep > 0 || triedPush;
 
   // Keep the selected debug marker inside the current phase's group.
   useEffect(() => {
@@ -432,6 +445,8 @@ export default function KurumedevaGame({
       setBridgeStep(0);
       setPhase('play');
       setBeaverPos(BEAVER_PATH[0]);
+      setTriedPush(false);
+      setTryShake(false);
       setLitCount(0);
       setTappedId(null);
       setFriendImgStates(FRIENDS.map(() => 'carry'));
@@ -498,10 +513,25 @@ export default function KurumedevaGame({
     };
   }, []);
 
+  // Beat 0: Beaver tries the logs herself first — they don't budge, and only
+  // then does asking for help make sense. A no-op once already tried.
+  const handleTryPushLogs = useCallback((event) => {
+    if (isPaused || phaseRef.current !== 'play' || friendStep !== 0 || placeActive) return;
+    event?.preventDefault?.();
+    markInteraction();
+    stopSceneVoice?.();
+    setTryShake(true);
+    safeAfter(700, () => {
+      setTryShake(false);
+      setTriedPush(true);
+    });
+  }, [friendStep, isPaused, markInteraction, placeActive, safeAfter, stopSceneVoice]);
+
   const askFriendForHelp = useCallback((friendIndex) => {
     if (isPaused || phaseRef.current !== 'play') return;
     if (placeActive) return;
     if (friendIndex !== friendStep) return;
+    if (friendIndex === 0 && !triedPush) return;
     if (friendImgStates[friendIndex] !== 'carry') return;
     stopSceneVoice?.();
     markInteraction();
@@ -612,7 +642,7 @@ export default function KurumedevaGame({
       setHelpTokenPos(HELP_TOKEN_HOME);
       setIsRoundSettling(false);
     });
-  }, [friendPositions, friendStep, friendImgStates, isPaused, markInteraction, moveFriendToWait, onMicroWin, placeActive, safeAfter, stopSceneVoice]);
+  }, [friendPositions, friendStep, friendImgStates, isPaused, markInteraction, moveFriendToWait, onMicroWin, placeActive, safeAfter, stopSceneVoice, triedPush]);
 
   // --- Per-piece drag handlers: pull a piece from the pile into the gap ------
   const placeNextPiece = useCallback(() => {
@@ -1085,9 +1115,12 @@ export default function KurumedevaGame({
         return { type: 'scratch', from: { x: a.l, y: a.t }, to: { x: b.l, y: b.t }, k: `trace-${placedCount}` };
       }
     }
-    if (currentFriend && !placeActive) {
+    if (currentFriend && !placeActive && canAsk) {
       const fp = friendPositions[friendStep] || currentFriend;
       return { type: 'drag', from: { x: HELP_TOKEN_HOME.l, y: HELP_TOKEN_HOME.t }, to: { x: fp.l, y: fp.t }, k: `ask-${friendStep}` };
+    }
+    if (friendStep === 0 && !placeActive && !canAsk) {
+      return { type: 'tap', from: { x: TRY_LOG_SPOT.l, y: TRY_LOG_SPOT.t }, to: { x: TRY_LOG_SPOT.l, y: TRY_LOG_SPOT.t }, k: 'try-logs' };
     }
     return null;
   })();
@@ -1097,7 +1130,11 @@ export default function KurumedevaGame({
       ? beaverCrossingImg
       : (placeActive && friendStep === 2)
         ? beaverPlacingPlankImg
-        : beaverIdleWorriedImg;
+        : tryShake
+          ? beaverTryingPushImg
+          : (phase === 'play' && !placeActive && canAsk)
+            ? beaverAskingImg
+            : beaverIdleWorriedImg;
 
   return (
     <div className={`kuru-game${hideElements ? ' is-hidden' : ''}${debugMode ? ' is-debugging' : ''}`}>
@@ -1125,10 +1162,32 @@ export default function KurumedevaGame({
 
         {phase === 'play' && currentFriend && !isRoundSettling && !debugMode && !placeActive && (
           <p className="kuru-hint">
-            {(hintLevel === 0 || hintLevel === 1) && 'Who can Beaver ask for help?'}
-            {hintLevel === 2 && `Ask ${currentFriend.label} for help.`}
-            {hintLevel >= 3 && `Drag the help bubble to ${currentFriend.label}.`}
+            {!canAsk
+              ? 'Beaver is trying to move the logs. Tap them to help her try!'
+              : <>
+                  {(hintLevel === 0 || hintLevel === 1) && 'Who can Beaver ask for help?'}
+                  {hintLevel === 2 && `Ask ${currentFriend.label} for help.`}
+                  {hintLevel >= 3 && `Drag the help bubble to ${currentFriend.label}.`}
+                </>}
           </p>
+        )}
+
+        {/* Beat 0: the resting pile of support logs, tappable so Beaver can
+            try (and fail) to move them before asking Elephant for help. */}
+        {phase === 'play' && friendStep === 0 && !placeActive && !debugMode && (
+          <button
+            type="button"
+            className={`kuru-log-piece is-log is-top${tryShake ? ' is-shake' : ''}${!triedPush && hintLevel >= 1 ? ' pulse' : ''}`}
+            style={{
+              left: `${TRY_LOG_SPOT.l}%`,
+              top: `${TRY_LOG_SPOT.t}%`,
+              width: `${LOG_SLOT_W * 0.6}%`,
+            }}
+            aria-label="Try to move the logs"
+            onPointerDown={handleTryPushLogs}
+          >
+            <img src={supportLogsObj} alt="" draggable={false} />
+          </button>
         )}
 
         {phase === 'done' && (
@@ -1417,7 +1476,7 @@ export default function KurumedevaGame({
           );
         })}
 
-        {phase === 'play' && currentFriend && !debugMode && !placeActive && (
+        {phase === 'play' && currentFriend && !debugMode && !placeActive && canAsk && (
           <>
             <button
               type="button"
