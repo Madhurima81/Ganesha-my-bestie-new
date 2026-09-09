@@ -170,6 +170,7 @@ const EarsSoundMatchGame = ({
   const [feedback, setFeedback] = useState('');
   const [revealFrameByAnimal, setRevealFrameByAnimal] = useState({});
   const [hintZoneId, setHintZoneId] = useState(null);
+  const [zonesHidden, setZonesHidden] = useState(false);
   const [layout, setLayout] = useState(loadSavedLayout);
   const [debugMode, setDebugMode] = useState(false);
   const [selectedDebugKey, setSelectedDebugKey] = useState('leftBush');
@@ -433,6 +434,7 @@ const EarsSoundMatchGame = ({
     setFeedback('');
     setRevealFrameByAnimal({});
     setHintZoneId(null);
+    setZonesHidden(false);
     chooseStartedAtRef.current = Date.now();
     hintStageRef.current = 0;
   }, [clearTimers, stopAudio]);
@@ -507,6 +509,9 @@ const EarsSoundMatchGame = ({
         setPhase(PHASE.COMPLETE);
         showFeedback(VO_TEXTS.complete);
         speak(VO_TEXTS.complete);
+        // Let the listening zones fade, then remove them so the payoff is
+        // just the two resolved, happy animals — no leftover clutter.
+        schedule(() => setZonesHidden(true), 700);
 
         const positions = {
           elephant: ANIMAL_POSITIONS.elephant,
@@ -593,34 +598,19 @@ const EarsSoundMatchGame = ({
         onPointerDown={(e) => startDebugDrag(e, 'cowSprite')}
       />
 
-      <div
-        className={`ears-game-prompt ${debugMode && selectedDebugKey === 'prompt' ? 'is-debug-selected' : ''}`}
-        style={styleFromLayout(layout.prompt)}
-        onPointerDown={(e) => startDebugDrag(e, 'prompt')}
-      >
-        <span>
-          {phase === PHASE.LISTENING
-            ? 'Listen to each sound'
-            : phase === PHASE.CHOOSING
-              ? 'Choose the sound that matters'
-              : phase === PHASE.REVEALING
-                ? 'You found it'
-                : 'You listened carefully'}
-        </span>
-        <strong>{completedRounds.length}/{ROUNDS.length}</strong>
-      </div>
 
-      {Object.values(ZONES).map((zone, index) => {
+      {!zonesHidden && Object.values(ZONES).map((zone, index) => {
         const isPlaying = activeZoneId === zone.id;
         const isWrong = wrongZoneId === zone.id;
         const isHinted = hintZoneId === zone.id;
         const locked = phase !== PHASE.CHOOSING;
+        const isComplete = phase === PHASE.COMPLETE;
 
         return (
           <button
             key={zone.id}
             type="button"
-            className={`ears-source ${locked ? 'locked' : 'ready'} ${isPlaying ? 'playing' : ''} ${isWrong ? 'wrong' : ''} ${isHinted ? 'hinted' : ''} ${debugMode && selectedDebugKey === zone.layoutKey ? 'is-debug-selected' : ''}`}
+            className={`ears-source ${locked ? 'locked' : 'ready'} ${isPlaying ? 'playing' : ''} ${isWrong ? 'wrong' : ''} ${isHinted ? 'hinted' : ''} ${isComplete ? 'resolving' : ''} ${debugMode && selectedDebugKey === zone.layoutKey ? 'is-debug-selected' : ''}`}
             style={{ ...styleFromLayout(layout[zone.layoutKey]), '--source-index': index + 1 }}
             onClick={(e) => handleZoneTap(zone.id, e)}
             onPointerDown={(e) => debugMode && startDebugDrag(e, zone.layoutKey)}
@@ -634,22 +624,6 @@ const EarsSoundMatchGame = ({
         );
       })}
 
-      <div
-        className={`ears-found-tray ${debugMode && selectedDebugKey === 'tray' ? 'is-debug-selected' : ''}`}
-        style={styleFromLayout(layout.tray)}
-        aria-hidden="true"
-        onPointerDown={(e) => startDebugDrag(e, 'tray')}
-      >
-        {ROUNDS.map((animalRound) => (
-          <div key={animalRound.id} className={`ears-found-slot ${completedIds.has(animalRound.id) ? 'filled' : ''}`}>
-            {completedIds.has(animalRound.id) ? (
-              <img src={animalRound.revealFrames[animalRound.revealFrames.length - 1]} alt="" />
-            ) : (
-              <span />
-            )}
-          </div>
-        ))}
-      </div>
 
       {(feedback || debugMode) && (
         <div
