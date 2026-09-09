@@ -913,9 +913,12 @@
   touch-action: none;
 }
 
-/* Friend stays and helps with the one cooperative action (not just delivery). */
+/* Friend stays and helps with the one cooperative action (not just delivery).
+   Decorative only while helping — never a tap/drop target itself — so it
+   can't sit above and block the tap/drag piece it's standing next to. */
 .kuru-friend--helping {
   z-index: 32;
+  pointer-events: none;
 }
 
 .kuru-friend--helping img {

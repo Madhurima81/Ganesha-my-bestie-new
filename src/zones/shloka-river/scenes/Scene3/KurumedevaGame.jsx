@@ -6,28 +6,31 @@ import './KurumedevaGame.css';
 
 import bgImg from './assets/images/nirvighnam/bg.png';
 
-import turtleCarryImg from './assets/images/Kurumedeva/turtle.png';
-import birdCarryImg from './assets/images/Kurumedeva/bird.png';
-import squirrelCarryImg from './assets/images/Kurumedeva/squirrel.png';
-import bunnyCarryImg from './assets/images/Kurumedeva/bunny.png';
+// Bridge redesign (Kurume Deva asset pack) — "asking for help" told through
+// 3 helper moments: Elephant pulls the heavy support logs, Monkey ties the
+// ropes, then Monkey helps again while Beaver herself lays the planks.
+import elephantPullImg from './assets/images/bridge/Characters/elephant-pulling.png';
+import elephantHappyImg from './assets/images/bridge/Characters/elephant-happy.png';
+import monkeyTyingImg from './assets/images/bridge/Characters/monkey-tying.png';
+import monkeyHappyImg from './assets/images/bridge/Characters/monkey-happy.png';
 
-import turtleEmptyImg from './assets/images/Kurumedeva/turtle-empty.png';
-import birdEmptyImg from './assets/images/Kurumedeva/bird-empty.png';
-import squirrelEmptyImg from './assets/images/Kurumedeva/squirrel-empty.png';
-import bunnyEmptyImg from './assets/images/Kurumedeva/bunny-empty.png';
+import supportLogsObj from './assets/images/bridge/Bridge/bridge-support-logs.png';
+// Cropped from the broken-bridge asset's own loose rope tail — the pack has
+// no standalone rope glyph, and using the Monkey sprite here duplicated him
+// mid-river during the trace.
+import ropeObj from './assets/images/bridge/Bridge/rope-knot.png';
+import plankObj from './assets/images/bridge/Bridge/bridge-single-plank.png';
 
-import logObj from './assets/images/Kurumedeva/log-turtle.png';
-import vineObj from './assets/images/Kurumedeva/vine.png';
-import pegObj from './assets/images/Kurumedeva/peg-squirrel.png';
-import plankObj from './assets/images/Kurumedeva/plank-bunny.png';
+import bridgeBrokenImg from './assets/images/bridge/Bridge/bridge-broken.png';
+import bridgeSupportedImg from './assets/images/bridge/Bridge/bridge-before-tying.png';
+import bridgeCompleteImg from './assets/images/bridge/Bridge/bridge-complete.png';
 
-import step1Img from './assets/images/Kurumedeva/step1.png';
-import step2Img from './assets/images/Kurumedeva/step2.png';
-import step3Img from './assets/images/Kurumedeva/step3.png';
-import step4Img from './assets/images/Kurumedeva/step4.png';
-import beaverHappyImg from './assets/images/Kurumedeva/beaver-happy.png';
-import beaverSadImg from './assets/images/Kurumedeva/beaver-sad.png';
-import beaverBabyImg from './assets/images/Kurumedeva/beaver-baby.png';
+import beaverAskingImg from './assets/images/bridge/Characters/beaver-asking.png';
+import beaverIdleWorriedImg from './assets/images/bridge/Characters/beaver-idle-worried.png';
+import beaverPlacingPlankImg from './assets/images/bridge/Characters/beaver-placing-plank.png';
+import beaverCrossingImg from './assets/images/bridge/Characters/beaver-crossing.png';
+import babyBeaverWavingImg from './assets/images/bridge/Characters/baby-beaver-waving.png';
+import beaverBabyReunionImg from './assets/images/bridge/Characters/beaver-baby-reunion.png';
 import helpHandIconImg from './assets/images/Kurumedeva/help-hand-icon.png';
 
 import { KURUMEDEVA_LAYOUT } from './scene3LayoutConfig';
@@ -39,70 +42,65 @@ const BRIDGE_TARGET = {
 };
 const HELP_TOKEN_HOME = { l: 77.2, t: 60.7 };
 
-// Play order = build order: logs span the gap, planks deck it, pegs lock the
-// posts, vines lash it all. `bridgeImg` (step1-4) is POSITIONAL — it matches the
-// slot in this array, not the animal. The `...KURUMEDEVA_LAYOUT.friends[N]`
-// spread still points each animal at its own start position.
+// Play order = build order: Elephant's logs span the gap, Monkey ties the
+// ropes, then Monkey (with Beaver herself) lays the planks. `bridgeImg` is
+// POSITIONAL — it matches the slot in this array, not the animal. The
+// `...KURUMEDEVA_LAYOUT.friends[N]` spread points each helper at its own
+// start position.
 const FRIENDS = [
   {
     ...KURUMEDEVA_LAYOUT.friends[0],
-    label: 'Turtle',
-    brings: 'log',
-    carryImg: turtleCarryImg,
-    helpingImg: turtleEmptyImg, // TODO: swap for a real "helping" pose
-    emptyImg: turtleEmptyImg,
-    objectImg: logObj,
-    bridgeImg: step1Img,
+    label: 'Elephant',
+    brings: 'support',
+    carryImg: elephantPullImg,
+    helpingImg: elephantPullImg,
+    emptyImg: elephantHappyImg,
+    objectImg: supportLogsObj,
+    bridgeImg: bridgeSupportedImg,
     objectAnim: 'kuru-obj-roll',
-    objectW: 8,
+    objectW: 9,
     objectOffset: { l: 3.2, t: 1.8 },
     doneSpot: { l: 76, t: 70 },
   },
   {
-    ...KURUMEDEVA_LAYOUT.friends[3],
-    label: 'Bunny',
+    ...KURUMEDEVA_LAYOUT.friends[1],
+    label: 'Monkey',
+    brings: 'ropes',
+    carryImg: monkeyTyingImg,
+    helpingImg: monkeyTyingImg,
+    emptyImg: monkeyHappyImg,
+    objectImg: ropeObj,
+    // No dedicated "just tied" bridge state in the asset pack — the support
+    // art stands until the planks stage supplies the next visible change.
+    bridgeImg: bridgeSupportedImg,
+    objectAnim: 'kuru-obj-swoop',
+    objectW: 6,
+    objectOffset: { l: 4.4, t: -4.4 },
+    doneSpot: { l: 82, t: 59 },
+  },
+  {
+    ...KURUMEDEVA_LAYOUT.friends[2],
+    label: 'Monkey',
     brings: 'planks',
-    carryImg: bunnyCarryImg,
-    helpingImg: bunnyEmptyImg, // TODO: swap for a real "helping" pose
-    emptyImg: bunnyEmptyImg,
+    carryImg: monkeyHappyImg,
+    helpingImg: monkeyHappyImg,
+    emptyImg: monkeyHappyImg,
     objectImg: plankObj,
-    bridgeImg: step2Img,
+    // bridge-three-planks.png is loose plank *pieces*, not a full-bridge
+    // state — the only other full-bridge art the pack ships is the final one.
+    bridgeImg: bridgeCompleteImg,
     objectAnim: 'kuru-obj-flip',
     objectW: 7,
     objectOffset: { l: 4.8, t: 1.3 },
     doneSpot: { l: 87, t: 63 },
   },
-  {
-    ...KURUMEDEVA_LAYOUT.friends[2],
-    label: 'Squirrel',
-    brings: 'pegs',
-    carryImg: squirrelCarryImg,
-    helpingImg: squirrelEmptyImg, // TODO: swap for a real "helping" pose
-    emptyImg: squirrelEmptyImg,
-    objectImg: pegObj,
-    bridgeImg: step3Img,
-    objectAnim: 'kuru-obj-tumble',
-    objectW: 6,
-    objectOffset: { l: 5.5, t: 1.4 },
-    doneSpot: { l: 82, t: 79 },
-  },
-  {
-    ...KURUMEDEVA_LAYOUT.friends[1],
-    label: 'Bird',
-    brings: 'vine',
-    carryImg: birdCarryImg,
-    helpingImg: birdEmptyImg, // TODO: swap for a real "helping" pose
-    emptyImg: birdEmptyImg,
-    objectImg: vineObj,
-    bridgeImg: step4Img,
-    objectAnim: 'kuru-obj-swoop',
-    objectW: 5,
-    objectOffset: { l: 4.4, t: -4.4 },
-    doneSpot: { l: 82, t: 59 },
-  },
 ];
 
 const AUDIO = { syllables: ['ku', 'ru', 'me', 'deva'] };
+// 4 syllables spread across 3 helper moments (per the asset pack's own
+// note: "syllables can be attached across the successful help moments
+// without changing the physical logic") — Elephant's support lights 2.
+const SYLLABLES_LIT_AFTER_STEP = [2, 3, 4];
 const BEAVER_PATH = KURUMEDEVA_LAYOUT.beaverPath;
 const TURTLE_RIVER_SHIFT = 0;
 // Friend tap hitbox is enlarged vs. the visible sprite for touch forgiveness —
@@ -112,7 +110,6 @@ const WAIT_SPOTS = [
   { l: 18, t: 62 },
   { l: 24, t: 68 },
   { l: 14, t: 70 },
-  { l: 20.5, t: 56.1 },
 ];
 // When a friend is asked, it walks from its start spot to a delivery spot at the
 // near (left) end of the bridge gap, sets its material down, then walks to the
@@ -120,7 +117,6 @@ const WAIT_SPOTS = [
 const DELIVERY_SPOTS = [
   { l: 30.8, t: 73.6 },
   { l: 47, t: 66.5 },
-  { l: 87.5, t: 84.7 },
   { l: 34.6, t: 67.9 },
 ];
 const WALK_TO_MS = 1000; // amble to the gap
@@ -153,28 +149,15 @@ const PLANK_SLOTS = [
 ];
 const PLANK_SLOT_W = 18.9;
 
-// Pegs — 3 taps, each drives a GROUP OF 4 (2 near + 2 far) → 12 posts.
-// Seeded from 3 Canva peg-groups: box X/Y/W/H
-//   G1 603.4/925.6/479.1/344.1 · G2 904.9/967.8/508.6/372.9 · G3 1182.6/1026.5/513.5/342.3
-const PEG_ROWS = [
-  [{ l: 33.8, t: 75.1, r: 0 }, { l: 50.0, t: 78.2, r: 0 }, { l: 63.3, t: 80.7, r: 0 }], // near-left of each group (tap target)
-  [{ l: 40.8, t: 76.7, r: 0 }, { l: 56.6, t: 80.2, r: 0 }, { l: 70.9, t: 82.8, r: 0 }], // near-right
-  [{ l: 41.0, t: 66.0, r: 0 }, { l: 57.2, t: 68.7, r: 0 }, { l: 71.8, t: 71.7, r: 0 }], // far-left
-  [{ l: 46.9, t: 68.0, r: 0 }, { l: 63.5, t: 70.5, r: 0 }, { l: 77.8, t: 73.4, r: 0 }], // far-right
-];
-const PEG_SLOTS = PEG_ROWS[0];
-const PEG_SLOT_W = 2.5;
-
-// Vines — 3 trace strokes, each lays a near + far wrap → 6 segments. One wrap
-// per peg-group, centred on that group's near / far post pair.
-const VINE_ROWS = [
+// Rope ties — one trace stroke from post to post lashes the joins Monkey
+// is working on (reuses the same rail geometry the old vine step tuned).
+const ROPE_ROWS = [
   [{ l: 39.9, t: 78.1, r: 0 }, { l: 51.6, t: 81.2, r: 0 }, { l: 64.7, t: 83.4, r: 0 }], // near (trace path)
   [{ l: 47.4, t: 67.1, r: 0 }, { l: 59.1, t: 68.3, r: 0 }, { l: 69.7, t: 71.3, r: 0 }], // far
 ];
-const VINE_SLOTS = VINE_ROWS[0];
-const VINE_SLOT_W = 13;
-const VINE_TRACE_START = VINE_ROWS[0][0];
-const VINE_TRACE_END = VINE_ROWS[0][2];
+const ROPE_SLOT_W = 13;
+const ROPE_TRACE_START = ROPE_ROWS[0][0];
+const ROPE_TRACE_END = ROPE_ROWS[0][2];
 const TRACE_BAND_T = 9; // vertical tolerance (% of stage) around the rail
 const TRACE_LEAD = 2; // wrap snaps on slightly before the finger reaches it
 
@@ -182,42 +165,34 @@ const LOG_DROP_RADIUS = 18; // forgiving snap to the active slot
 // Anywhere over the gap counts as "close enough" for little hands.
 const GAP_ZONE = { l0: 40, l1: 84, t0: 58, t1: 84 };
 
-// friendStep -> piece-placing config. Simplified pass: ONE cooperative action
-// per helper (not three) — ask, friend comes and helps, one action, bridge
-// advances. `helperSpot` is where the friend stands while helping (beside the
-// piece, not just "at the gap"); `farExit` is where it goes once done.
+// friendStep -> piece-placing config. ONE cooperative action per helper —
+// ask, friend comes and helps, one action, bridge advances. `helperSpot` is
+// where the friend stands while helping (beside the piece, not just "at the
+// gap"); `farExit` is where it goes once done.
 const PLACE_ROUNDS = {
-  // mode 'drag' — pull the one log from the pile into its slot.
+  // mode 'drag' — Elephant: pull the support-log piece from the pile into its slot.
   0: {
-    kind: 'log', mode: 'drag', img: logObj,
+    kind: 'log', mode: 'drag', img: supportLogsObj,
     slots: [LOG_SLOTS[1]], pile: LOG_PILE, slotW: LOG_SLOT_W,
     helperSpot: { l: LOG_SLOTS[1].l - 10, t: LOG_SLOTS[1].t - 5 },
   },
-  // mode 'tap' — tap the one glowing slot and the plank drops in.
+  // mode 'trace' — Monkey: one sweep from post to post lashes the rope.
   1: {
+    kind: 'rope', mode: 'trace', img: ropeObj,
+    slots: [{ ...ROPE_TRACE_END, r: 0 }], farSlots: [[ROPE_ROWS[1][1]]],
+    traceStart: ROPE_TRACE_START, traceEnd: ROPE_TRACE_END,
+    slotW: ROPE_SLOT_W,
+    helperSpot: { l: ROPE_TRACE_END.l + 5, t: ROPE_TRACE_END.t - 14 },
+  },
+  // mode 'tap' — Monkey + Beaver: tap the glowing slot and the plank drops in.
+  2: {
     kind: 'plank', mode: 'tap', img: plankObj,
     slots: [PLANK_SLOTS[1]], pile: PLANK_PILE, slotW: PLANK_SLOT_W,
     helperSpot: { l: PLANK_SLOTS[1].l - 8, t: PLANK_SLOTS[1].t - 7 },
     farExit: { l: 88, t: 70.2 },
   },
-  // mode 'tap' — one tap drives the whole GROUP: the slot + every extra row → 4 posts.
-  2: {
-    kind: 'peg', mode: 'tap', img: pegObj,
-    slots: [PEG_ROWS[0][1]], farSlots: PEG_ROWS.slice(1).map((row) => [row[1]]),
-    slotW: PEG_SLOT_W,
-    helperSpot: { l: PEG_ROWS[0][1].l - 6, t: PEG_ROWS[0][1].t - 5 },
-    farExit: { l: 78.7, t: 58.2 },
-  },
-  // mode 'trace' — one sweep from the start post to the end post lays both wraps.
-  3: {
-    kind: 'vine', mode: 'trace', img: vineObj,
-    slots: [{ ...VINE_TRACE_END, r: 0 }], farSlots: [[VINE_ROWS[1][1]]],
-    traceStart: VINE_TRACE_START, traceEnd: VINE_TRACE_END,
-    slotW: VINE_SLOT_W,
-    helperSpot: { l: VINE_TRACE_END.l + 5, t: VINE_TRACE_END.t - 14 },
-  },
 };
-const LAST_PLACE_ROUND = 3; // highest friendStep that uses PLACE_ROUNDS
+const LAST_PLACE_ROUND = 2; // highest friendStep that uses PLACE_ROUNDS
 const getRoundActionCount = (step) => PLACE_ROUNDS[step]?.slots?.length || 0;
 
 // ---------------------------------------------------------------------------
@@ -226,37 +201,29 @@ const getRoundActionCount = (step) => PLACE_ROUNDS[step]?.slots?.length || 0;
 // paste the values back into scene3LayoutConfig.js / the consts above.
 // ---------------------------------------------------------------------------
 const DEBUG_PANEL_KEYS = [
-  ['friend0', 'Turtle (start)'],
-  ['friend1', 'Bunny (start)'],
-  ['friend2', 'Squirrel (start)'],
-  ['friend3', 'Bird (start)'],
+  ['friend0', 'Elephant (start)'],
+  ['friend1', 'Monkey (start, ropes)'],
+  ['friend2', 'Monkey (start, planks)'],
   ['helpTokenHome', 'Help bubble home'],
-  ['wait0', 'Turtle wait spot'],
-  ['wait1', 'Bunny wait spot'],
-  ['wait2', 'Squirrel wait spot'],
-  ['wait3', 'Bird wait spot'],
-  ['farExit1', 'Bunny final spot'],
-  ['farExit2', 'Squirrel final spot'],
-  ['delivery0', 'Turtle walk-to (round 1)'],
-  ['delivery1', 'Bunny walk-to (round 2)'],
-  ['delivery2', 'Squirrel walk-to (round 3)'],
-  ['delivery3', 'Bird walk-to (round 4)'],
+  ['wait0', 'Elephant wait spot'],
+  ['wait1', 'Monkey wait spot (ropes)'],
+  ['wait2', 'Monkey wait spot (planks)'],
+  ['farExit2', 'Monkey final spot (planks)'],
+  ['delivery0', 'Elephant walk-to (round 1)'],
+  ['delivery1', 'Monkey walk-to (round 2, ropes)'],
+  ['delivery2', 'Monkey walk-to (round 3, planks)'],
   ['bridge', 'Bridge'],
   ['beaverBaby', 'Baby beaver'],
   ['logPile', 'Log pile (round 1)'],
   ['logSlot0', 'Log slot 1  (+ log size)'],
   ['logSlot1', 'Log slot 2'],
   ['logSlot2', 'Log slot 3'],
-  ['plankPile', 'Plank pile (round 2)'],
+  ['plankPile', 'Plank pile (round 3)'],
   ['plankSlot0', 'Plank slot 1  (+ plank size)'],
   ['plankSlot1', 'Plank slot 2'],
   ['plankSlot2', 'Plank slot 3'],
-  ['peg0_0', 'Peg grp1·a  (+ peg size)'], ['peg0_1', 'Peg grp2·a'], ['peg0_2', 'Peg grp3·a'],
-  ['peg1_0', 'Peg grp1·b'], ['peg1_1', 'Peg grp2·b'], ['peg1_2', 'Peg grp3·b'],
-  ['peg2_0', 'Peg grp1·c'], ['peg2_1', 'Peg grp2·c'], ['peg2_2', 'Peg grp3·c'],
-  ['peg3_0', 'Peg grp1·d'], ['peg3_1', 'Peg grp2·d'], ['peg3_2', 'Peg grp3·d'],
-  ['vine0_0', 'Vine near 1  (+ vine size)'], ['vine0_1', 'Vine near 2'], ['vine0_2', 'Vine near 3'],
-  ['vine1_0', 'Vine far 1'], ['vine1_1', 'Vine far 2'], ['vine1_2', 'Vine far 3'],
+  ['rope0_0', 'Rope near 1  (+ rope size)'], ['rope0_1', 'Rope near 2'], ['rope0_2', 'Rope near 3'],
+  ['rope1_0', 'Rope far 1'], ['rope1_1', 'Rope far 2'], ['rope1_2', 'Rope far 3'],
   ['beaverPath0', 'Beaver path 0'],
   ['beaverPath1', 'Beaver path 1'],
   ['beaverPath2', 'Beaver path 2'],
@@ -279,23 +246,22 @@ function debugArtFor(key, pos, layout) {
   if (key.startsWith('farExit')) return { src: FRIENDS[tail]?.emptyImg, w: 10, r: 0 };
   if (key.startsWith('delivery')) return { src: FRIENDS[tail]?.carryImg, w: 10, r: 0 };
   if (key === 'helpTokenHome') return { src: helpHandIconImg, w: 8, r: 0 };
-  if (key === 'beaverBaby') return { src: beaverBabyImg, w: KURUMEDEVA_LAYOUT.beaverBaby.w, r: 0 };
-  if (key.startsWith('beaverPath')) return { src: beaverSadImg, w: KURUMEDEVA_LAYOUT.beaver.w, r: 0 };
-  if (key === 'logPile' || key.startsWith('logSlot')) return { src: logObj, w: wOf('logSlot0', LOG_SLOT_W), r };
+  if (key === 'beaverBaby') return { src: babyBeaverWavingImg, w: KURUMEDEVA_LAYOUT.beaverBaby.w, r: 0 };
+  if (key.startsWith('beaverPath')) return { src: beaverIdleWorriedImg, w: KURUMEDEVA_LAYOUT.beaver.w, r: 0 };
+  if (key === 'logPile' || key.startsWith('logSlot')) return { src: supportLogsObj, w: wOf('logSlot0', LOG_SLOT_W), r };
   if (key === 'plankPile' || key.startsWith('plankSlot')) return { src: plankObj, w: wOf('plankSlot0', PLANK_SLOT_W), r };
-  if (key.startsWith('peg')) return { src: pegObj, w: wOf('peg0_0', PEG_SLOT_W), r };
-  if (key.startsWith('vine')) return { src: vineObj, w: wOf('vine0_0', VINE_SLOT_W), r };
-  return null; // bridge anchor etc. → dot
+  if (key.startsWith('rope')) return { src: ropeObj, w: wOf('rope0_0', ROPE_SLOT_W), r };
+  if (key === 'bridge') return { src: bridgeBrokenImg, w: KURUMEDEVA_LAYOUT.bridge.w, r: 0 };
+  return null; // other anchors → dot
 }
 
 // Only the markers for one phase show at a time — keeps the scene readable.
 const DEBUG_PHASES = [
-  { label: 'Phase 0 — Setup', keys: ['friend0', 'friend1', 'friend2', 'friend3', 'helpTokenHome', 'beaverBaby', 'bridge'] },
-  { label: 'Phase 1 — Logs (Turtle)', keys: ['delivery0', 'wait0', 'logPile', 'logSlot0', 'logSlot1', 'logSlot2'] },
-  { label: 'Phase 2 — Planks (Bunny)', keys: ['delivery1', 'farExit1', 'plankPile', 'plankSlot0', 'plankSlot1', 'plankSlot2'] },
-  { label: 'Phase 3 — Pegs (Squirrel)', keys: ['delivery2', 'farExit2', 'peg0_0', 'peg0_1', 'peg0_2', 'peg1_0', 'peg1_1', 'peg1_2', 'peg2_0', 'peg2_1', 'peg2_2', 'peg3_0', 'peg3_1', 'peg3_2'] },
-  { label: 'Phase 4 — Vines (Bird)', keys: ['delivery3', 'wait3', 'vine0_0', 'vine0_1', 'vine0_2', 'vine1_0', 'vine1_1', 'vine1_2'] },
-  { label: 'Phase 5 — Crossing', keys: ['beaverPath0', 'beaverPath1', 'beaverPath2', 'beaverPath3', 'beaverPath4', 'beaverPath5', 'beaverPath6'] },
+  { label: 'Phase 0 — Setup', keys: ['friend0', 'friend1', 'friend2', 'helpTokenHome', 'beaverBaby', 'bridge'] },
+  { label: 'Phase 1 — Support (Elephant)', keys: ['delivery0', 'wait0', 'logPile', 'logSlot0', 'logSlot1', 'logSlot2'] },
+  { label: 'Phase 2 — Ropes (Monkey)', keys: ['delivery1', 'wait1', 'rope0_0', 'rope0_1', 'rope0_2', 'rope1_0', 'rope1_1', 'rope1_2'] },
+  { label: 'Phase 3 — Planks (Monkey + Beaver)', keys: ['delivery2', 'farExit2', 'plankPile', 'plankSlot0', 'plankSlot1', 'plankSlot2'] },
+  { label: 'Phase 4 — Crossing', keys: ['beaverPath0', 'beaverPath1', 'beaverPath2', 'beaverPath3', 'beaverPath4', 'beaverPath5', 'beaverPath6'] },
 ];
 
 function buildDebugLayout() {
@@ -340,14 +306,9 @@ function buildDebugLayout() {
       ? { l: slot.l, t: slot.t, w: PLANK_SLOT_W, r: slot.r ?? 0 }
       : { l: slot.l, t: slot.t, r: slot.r ?? 0 };
   });
-  PEG_ROWS.forEach((row, r) => row.forEach((slot, index) => {
-    layout[`peg${r}_${index}`] = r === 0 && index === 0
-      ? { l: slot.l, t: slot.t, w: PEG_SLOT_W, r: slot.r ?? 0 }
-      : { l: slot.l, t: slot.t, r: slot.r ?? 0 };
-  }));
-  VINE_ROWS.forEach((row, r) => row.forEach((slot, index) => {
-    layout[`vine${r}_${index}`] = r === 0 && index === 0
-      ? { l: slot.l, t: slot.t, w: VINE_SLOT_W, r: slot.r ?? 0 }
+  ROPE_ROWS.forEach((row, r) => row.forEach((slot, index) => {
+    layout[`rope${r}_${index}`] = r === 0 && index === 0
+      ? { l: slot.l, t: slot.t, w: ROPE_SLOT_W, r: slot.r ?? 0 }
       : { l: slot.l, t: slot.t, r: slot.r ?? 0 };
   }));
   KURUMEDEVA_LAYOUT.beaverPath.forEach((point, index) => {
@@ -622,7 +583,7 @@ export default function KurumedevaGame({
       });
       setBridgeStep(friendIndex + 1);
       window.setTimeout(() => onMicroWin?.(), 0);
-      setLitCount(friendIndex + 1);
+      setLitCount(SYLLABLES_LIT_AFTER_STEP[friendIndex] ?? friendIndex + 1);
     });
 
     // 4) Friend walks back to the bank line.
@@ -642,7 +603,7 @@ export default function KurumedevaGame({
           setIsRoundSettling(false);
           setPhase('crossing');
           phaseRef.current = 'crossing';
-          setLitCount(4);
+          setLitCount(SYLLABLES.length);
         });
         return;
       }
@@ -761,7 +722,7 @@ export default function KurumedevaGame({
     placeDoneRef.current = true;
 
     const idx = friendStep;
-    setLitCount(idx + 1);
+    setLitCount(SYLLABLES_LIT_AFTER_STEP[idx] ?? idx + 1);
     window.setTimeout(() => onMicroWin?.(), 0);
     setBridgeStep(idx + 1);
     setPlaceActive(false);
@@ -792,7 +753,7 @@ export default function KurumedevaGame({
         safeAfter(420, () => {
           setPhase('crossing');
           phaseRef.current = 'crossing';
-          setLitCount(FRIENDS.length);
+          setLitCount(SYLLABLES.length);
         });
         return;
       }
@@ -888,10 +849,13 @@ export default function KurumedevaGame({
       safeAfter(index * 950, () => {
         setBeaverPos(pos);
         if (index === BEAVER_PATH.length - 1) {
-          // Off the bridge — one last step to reunite with the baby.
+          // Off the bridge — one last step to reunite with the baby. Lands
+          // exactly on the baby's spot: the reunion art already draws both
+          // beavers together, so the baby's own sprite is hidden at 'done'
+          // (see the `phase === 'done'` check below) rather than doubling up.
           safeAfter(700, () => {
             setBeaverPos({
-              l: KURUMEDEVA_LAYOUT.beaverBaby.l + 5,
+              l: KURUMEDEVA_LAYOUT.beaverBaby.l,
               t: KURUMEDEVA_LAYOUT.beaverBaby.t,
             });
           });
@@ -1003,18 +967,13 @@ export default function KurumedevaGame({
           l: round1(debugLayout[`delivery${index}`].l),
           t: round1(debugLayout[`delivery${index}`].t),
         })),
-        BUNNY_FAR_EXIT: debugLayout.farExit1 && {
-          l: round1(debugLayout.farExit1.l),
-          t: round1(debugLayout.farExit1.t),
-        },
-        SQUIRREL_FAR_EXIT: debugLayout.farExit2 && {
+        MONKEY_PLANKS_FAR_EXIT: debugLayout.farExit2 && {
           l: round1(debugLayout.farExit2.l),
           t: round1(debugLayout.farExit2.t),
         },
         LOG_SLOT_W: round1(debugLayout.logSlot0.w),
         PLANK_SLOT_W: round1(debugLayout.plankSlot0.w),
-        PEG_SLOT_W: round1(debugLayout.peg0_0.w),
-        VINE_SLOT_W: round1(debugLayout.vine0_0.w),
+        ROPE_SLOT_W: round1(debugLayout.rope0_0.w),
         LOG_PILE: {
           l: round1(debugLayout.logPile.l),
           t: round1(debugLayout.logPile.t),
@@ -1033,15 +992,10 @@ export default function KurumedevaGame({
           t: round1(debugLayout[`plankSlot${index}`].t),
           r: round1(debugLayout[`plankSlot${index}`].r ?? 0),
         })),
-        PEG_ROWS: PEG_ROWS.map((row, r) => row.map((slot, index) => ({
-          l: round1(debugLayout[`peg${r}_${index}`].l),
-          t: round1(debugLayout[`peg${r}_${index}`].t),
-          r: round1(debugLayout[`peg${r}_${index}`].r ?? 0),
-        }))),
-        VINE_ROWS: VINE_ROWS.map((row, r) => row.map((slot, index) => ({
-          l: round1(debugLayout[`vine${r}_${index}`].l),
-          t: round1(debugLayout[`vine${r}_${index}`].t),
-          r: round1(debugLayout[`vine${r}_${index}`].r ?? 0),
+        ROPE_ROWS: ROPE_ROWS.map((row, r) => row.map((slot, index) => ({
+          l: round1(debugLayout[`rope${r}_${index}`].l),
+          t: round1(debugLayout[`rope${r}_${index}`].t),
+          r: round1(debugLayout[`rope${r}_${index}`].r ?? 0),
         }))),
       },
       null,
@@ -1100,9 +1054,14 @@ export default function KurumedevaGame({
 
   if (!isActive) return null;
 
-  // Each round's success swaps in that stage's bridge artwork (step1-4,
-  // cumulative): Turtle -> step1, Bunny -> step2, Squirrel -> step3, Bird -> step4.
-  const bridgeImg = bridgeStep > 0 ? FRIENDS[bridgeStep - 1]?.bridgeImg : null;
+  // Each round's success swaps in that stage's bridge artwork, cumulative:
+  // Elephant -> support logs, Monkey -> ropes (no dedicated art), Monkey +
+  // Beaver -> planks. Once the bridge is fully built the crossing begins on the crisp final
+  // art (matches the asset pack's "transition to 06_final_completed_bridge"
+  // beat) rather than the last round's in-progress state.
+  const bridgeImg = (phase === 'crossing' || phase === 'done')
+    ? bridgeCompleteImg
+    : bridgeStep > 0 ? FRIENDS[bridgeStep - 1]?.bridgeImg : null;
   // The loose piece only shows for the round currently being helped with — once
   // it succeeds, the bridge artwork above represents it instead (no clutter).
   const showPlacedPieces = debugMode || placeActive;
@@ -1132,7 +1091,13 @@ export default function KurumedevaGame({
     }
     return null;
   })();
-  const beaverImg = phase === 'crossing' || phase === 'done' ? beaverHappyImg : beaverSadImg;
+  const beaverImg = phase === 'done'
+    ? beaverBabyReunionImg
+    : phase === 'crossing'
+      ? beaverCrossingImg
+      : (placeActive && friendStep === 2)
+        ? beaverPlacingPlankImg
+        : beaverIdleWorriedImg;
 
   return (
     <div className={`kuru-game${hideElements ? ' is-hidden' : ''}${debugMode ? ' is-debugging' : ''}`}>
@@ -1348,17 +1313,21 @@ export default function KurumedevaGame({
         )}
 
         <div
-          className={`kuru-beaver${phase === 'crossing' || phase === 'done' ? ' is-walking' : ''}`}
+          className={`kuru-beaver${phase === 'crossing' ? ' is-walking' : ''}`}
           style={{
             left: `${beaverPos.l}%`,
             top: `${beaverPos.t}%`,
-            width: `${KURUMEDEVA_LAYOUT.beaver.w}%`,
-            scale: KURUMEDEVA_LAYOUT.beaver.flip ? '-1 1' : '1 1',
+            // beaver-baby-reunion.png already draws both beavers hugging —
+            // render it a little larger, unmirrored, and drop the baby's own
+            // sprite below so the pair don't double up.
+            width: `${phase === 'done' ? KURUMEDEVA_LAYOUT.beaverBaby.w * 1.3 : KURUMEDEVA_LAYOUT.beaver.w}%`,
+            scale: (phase !== 'done' && KURUMEDEVA_LAYOUT.beaver.flip) ? '-1 1' : '1 1',
           }}
         >
           <img src={beaverImg} alt="Beaver" draggable={false} />
         </div>
 
+        {phase !== 'done' && (
         <div
           className="kuru-beaver-baby"
           style={{
@@ -1368,8 +1337,9 @@ export default function KurumedevaGame({
             scale: KURUMEDEVA_LAYOUT.beaverBaby.flip ? '-1 1' : '1 1',
           }}
         >
-          <img src={beaverBabyImg} alt="Baby beaver" draggable={false} />
+          <img src={babyBeaverWavingImg} alt="Baby beaver" draggable={false} />
         </div>
+        )}
 
         {FRIENDS.map((friend, index) => {
           const objPhase = objectPhases[index];
