@@ -1061,7 +1061,7 @@ export default function KurumedevaGame({
   // beat) rather than the last round's in-progress state.
   const bridgeImg = (phase === 'crossing' || phase === 'done')
     ? bridgeCompleteImg
-    : bridgeStep > 0 ? FRIENDS[bridgeStep - 1]?.bridgeImg : null;
+    : bridgeStep > 0 ? FRIENDS[bridgeStep - 1]?.bridgeImg : bridgeBrokenImg;
   // The loose piece only shows for the round currently being helped with — once
   // it succeeds, the bridge artwork above represents it instead (no clutter).
   const showPlacedPieces = debugMode || placeActive;
