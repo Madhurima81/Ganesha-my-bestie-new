@@ -92,7 +92,7 @@
 
 .clue-target {
   opacity: 0.78;
-  transition: opacity 260ms ease, transform 260ms ease, filter 260ms ease;
+  transition: opacity 260ms ease, transform 260ms ease, filter 260ms ease, left 420ms ease, top 420ms ease, width 420ms ease;
 }
 
 .clue-target.found {

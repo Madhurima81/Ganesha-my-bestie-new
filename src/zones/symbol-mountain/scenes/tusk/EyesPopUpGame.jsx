@@ -39,7 +39,9 @@ const DEFAULT_LAYOUT = {
   monkeyCharacter: { x: 14, y: 60, w: 20, z: 15 },
   peacockCharacter: { x: 86, y: 55, w: 24, z: 15 },
   targetFeather: { x: 68, y: 70, w: 20, z: 12 },
+  targetFeatherFound: { x: 68, y: 70, w: 11, z: 12 },
   targetMango: { x: 40, y: 68, w: 16, z: 12 },
+  targetMangoFound: { x: 40, y: 68, w: 10, z: 12 },
   distractorButterfly: { x: 55, y: 40, w: 9, z: 11 },
   distractorYellowFlowers: { x: 30, y: 82, w: 16, z: 11 },
   distractorCreamFlowers: { x: 78, y: 30, w: 15, z: 11 }
@@ -52,7 +54,9 @@ const DEBUG_KEYS = [
   { key: 'monkeyCharacter', label: 'Monkey (worried)' },
   { key: 'peacockCharacter', label: 'Peacock (worried)' },
   { key: 'targetFeather', label: 'Target - feather in bush' },
+  { key: 'targetFeatherFound', label: 'Target - feather found (small)' },
   { key: 'targetMango', label: 'Target - mango in flowers' },
+  { key: 'targetMangoFound', label: 'Target - mango found (small)' },
   { key: 'distractorButterfly', label: 'Distractor - butterfly' },
   { key: 'distractorYellowFlowers', label: 'Distractor - yellow flowers' },
   { key: 'distractorCreamFlowers', label: 'Distractor - cream flowers' }
@@ -89,6 +93,7 @@ const SEARCH_TARGETS = [
     hiddenImg: featherHiddenImg,
     foundImg: featherFoundImg,
     layoutKey: 'targetFeather',
+    foundLayoutKey: 'targetFeatherFound',
     prompt: 'Feather found! Peacock will be so happy.'
   },
   {
@@ -97,6 +102,7 @@ const SEARCH_TARGETS = [
     hiddenImg: mangoHiddenImg,
     foundImg: mangoFoundImg,
     layoutKey: 'targetMango',
+    foundLayoutKey: 'targetMangoFound',
     prompt: 'Mango found! Monkey is hungry no more.'
   }
 ];
@@ -452,14 +458,15 @@ const EyesPopUpGame = ({
 
       {SEARCH_TARGETS.map((target) => {
         const isFound = foundIds.has(target.id);
+        const activeLayoutKey = isFound ? target.foundLayoutKey : target.layoutKey;
         return (
           <button
             key={target.id}
             type="button"
-            className={`eyes-hidden-target clue-target ${isFound ? 'found' : ''} ${hintId === target.id ? 'hinting' : ''} ${softPulse === target.id ? 'soft-pulse' : ''} ${debugMode && selectedDebugKey === target.layoutKey ? 'is-debug-selected' : ''}`}
-            style={styleFromLayout(layout[target.layoutKey])}
+            className={`eyes-hidden-target clue-target ${isFound ? 'found' : ''} ${hintId === target.id ? 'hinting' : ''} ${softPulse === target.id ? 'soft-pulse' : ''} ${debugMode && selectedDebugKey === activeLayoutKey ? 'is-debug-selected' : ''}`}
+            style={styleFromLayout(layout[activeLayoutKey])}
             onClick={(e) => handleTargetTap(target, e)}
-            onPointerDown={(e) => debugMode && startDebugDrag(e, target.layoutKey)}
+            onPointerDown={(e) => debugMode && startDebugDrag(e, activeLayoutKey)}
             aria-label={`Find ${target.label}`}
             disabled={!debugMode && isFound}
           >
