@@ -31,7 +31,7 @@ const CLUE_META = [
 const SAMA_DEFAULT_LAYOUT = {
   fawnStart: { l: 20, t: 69 },
   fawnWalk: { l: 40, t: 63 },
-  shadow: { l: 58, t: 63 },
+  shadow: { l: 58, t: 63, w: 28, rotate: 0, scaleX: 1, scaleY: 1, skewX: 0 },
   mystery: { l: 72, t: 58 },
   clues: [
     { cx: 75, cy: 47, rx: 11, ry: 9 },
@@ -53,10 +53,20 @@ const DEBUG_PHASE_OPTIONS = [
   { value: 6, label: 'Done' },
 ];
 
+const SAMA_DEBUG_FIELD_RANGE = {
+  rx: { min: 1, max: 30, step: 0.1 },
+  ry: { min: 1, max: 30, step: 0.1 },
+  w: { min: 10, max: 60, step: 0.5 },
+  rotate: { min: -45, max: 45, step: 0.5 },
+  scaleX: { min: 0.3, max: 2, step: 0.02 },
+  scaleY: { min: 0.3, max: 2, step: 0.02 },
+  skewX: { min: -30, max: 30, step: 0.5 },
+};
+
 const samaDebugOptions = [
   { type: 'object', key: 'fawnStart', label: 'Fawn Start', fields: ['l', 't'] },
   { type: 'object', key: 'fawnWalk', label: 'Fawn Walk Target', fields: ['l', 't'] },
-  { type: 'object', key: 'shadow', label: 'Shadow', fields: ['l', 't'] },
+  { type: 'object', key: 'shadow', label: 'Shadow', fields: ['l', 't', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX'] },
   { type: 'object', key: 'mystery', label: 'Mystery Object', fields: ['l', 't'] },
   { type: 'clue', index: 0, key: 'clue-0', label: 'Clue: Branch', fields: ['cx', 'cy', 'rx', 'ry'] },
   { type: 'clue', index: 1, key: 'clue-1', label: 'Clue: Reeds/Leaves', fields: ['cx', 'cy', 'rx', 'ry'] },
@@ -632,7 +642,12 @@ export default function SamaprabhaGame({
 
         <div
           className={`sama-shadow${effUnderstood ? ' is-understood' : ''}`}
-          style={{ left: `${activeLayout.shadow.l}%`, top: `${activeLayout.shadow.t}%` }}
+          style={{
+            left: `${activeLayout.shadow.l}%`,
+            top: `${activeLayout.shadow.t}%`,
+            width: `${activeLayout.shadow.w}vw`,
+            transform: `translate(-50%, -50%) rotate(${activeLayout.shadow.rotate}deg) scaleX(${activeLayout.shadow.scaleX}) scaleY(${activeLayout.shadow.scaleY}) skewX(${activeLayout.shadow.skewX}deg)`,
+          }}
           aria-hidden="true"
         >
           <img src={shadowImg} alt="" draggable={false} />
@@ -790,9 +805,9 @@ export default function SamaprabhaGame({
                     <span>{field}</span>
                     <input
                       type="range"
-                      min={field === 'rx' || field === 'ry' ? 1 : 0}
-                      max={field === 'rx' || field === 'ry' ? 30 : 100}
-                      step="0.1"
+                      min={SAMA_DEBUG_FIELD_RANGE[field]?.min ?? 0}
+                      max={SAMA_DEBUG_FIELD_RANGE[field]?.max ?? 100}
+                      step={SAMA_DEBUG_FIELD_RANGE[field]?.step ?? 0.1}
                       value={getDebugValue(field)}
                       onChange={(event) => updateDebugValue(field, event.target.value)}
                     />
