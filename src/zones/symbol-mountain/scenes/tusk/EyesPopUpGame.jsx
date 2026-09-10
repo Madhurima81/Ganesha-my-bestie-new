@@ -28,7 +28,7 @@ const DEBUG_UI_ENABLED =
   (window.location.pathname.includes('game-test') ||
     new URLSearchParams(window.location.search).has('debugEyes'));
 const LAYOUT_STORAGE_KEY = 'symbol_mountain_eyes_layout_v2';
-const LAYOUT_PRESET_VERSION = '2026-09-10-eyes-visual-flow-editor-layout-5';
+const LAYOUT_PRESET_VERSION = '2026-09-10-eyes-visual-flow-editor-layout-6';
 
 const DEFAULT_LAYOUT = {
   prompt: { x: 50, y: 5.6, w: 52, z: 40 },
@@ -52,9 +52,9 @@ const DEFAULT_LAYOUT = {
   targetFeatherBush1: { x: 62.08, y: 66.76, w: 24, z: 12 },
   targetFeatherBush2: { x: 71.32, y: 66.9, w: 21.6, z: 13 },
   targetMangoBush: { x: 45.48, y: 45.81, w: 24, z: 12 },
-  targetFeather: { x: 62.08, y: 66.76, w: 24, z: 14 },
+  targetFeather: { x: 62.08, y: 66.76, w: 9.84, z: 14 },
   targetFeatherFound: { x: 62.08, y: 66.76, w: 9.84, z: 14 },
-  targetMango: { x: 45.48, y: 45.81, w: 24, z: 14 },
+  targetMango: { x: 45.48, y: 45.81, w: 6, z: 14 },
   targetMangoFound: { x: 45.48, y: 45.81, w: 6, z: 14 },
   distractorYellowFlowers: { x: 46.07, y: 48.95, w: 11.28, z: 11 }
 };
@@ -103,9 +103,10 @@ const SEARCH_TARGETS = [
   {
     id: 'feather',
     label: 'Feather',
-    // No hiddenImg — the bush is permanent scenery rendered separately.
-    // The tap target itself is invisible until found.
-    hiddenImg: null,
+    // A small peek of the feather shows against the (permanent) bush — kids
+    // need that visual cue to know where to look. Same art before and after
+    // tap; only its size/position change (small-in-bush -> flying to Peacock).
+    hiddenImg: featherFoundImg,
     foundImg: featherFoundImg,
     layoutKey: 'targetFeather',
     foundLayoutKey: 'targetFeatherFound',
@@ -115,8 +116,8 @@ const SEARCH_TARGETS = [
   {
     id: 'mango',
     label: 'Mango',
-    // No hiddenImg — the bush is permanent scenery rendered separately.
-    hiddenImg: null,
+    // Same idea — a small peek of the mango shows against its (permanent) bush.
+    hiddenImg: mangoFoundImg,
     foundImg: mangoFoundImg,
     layoutKey: 'targetMango',
     foundLayoutKey: 'targetMangoFound',
