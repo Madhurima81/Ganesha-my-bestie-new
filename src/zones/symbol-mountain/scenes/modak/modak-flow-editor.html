@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modak — Flower Journey — Visual Flow Editor</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Nunito',sans-serif; background:#12100c; color:#fff; overflow:hidden; height:100vh; }
+  h1,h2,h3,button { font-family:'Baloo 2','Nunito',sans-serif; }
+
+  #app { display:flex; height:100vh; }
+
+  /* ---------- Beats sidebar ---------- */
+  #beats { width:150px; background:#1f1a12; border-right:2px solid #3a2f1c; overflow-y:auto; flex:0 0 auto; }
+  .beat-item { padding:10px 8px; font-size:12px; border-bottom:1px solid #2c2417; cursor:pointer; color:#d8c9a3; }
+  .beat-item.active { background:#5a3d0f; color:#ffd700; font-weight:700; }
+  .beat-item small { display:block; color:#9a8b6a; font-size:10px; }
+
+  /* ---------- Stage ---------- */
+  #stageWrap { flex:1; display:flex; flex-direction:column; min-width:0; }
+  #stateTabs { display:flex; background:#241d12; border-bottom:2px solid #3a2f1c; }
+  .state-tab { flex:1; text-align:center; padding:8px; font-size:12px; font-weight:700; cursor:pointer; color:#9a8b6a; }
+  .state-tab.active { color:#ffd700; background:#332711; }
+  .state-tab.inherited { position:relative; }
+
+  #linkBanner { display:none; background:#2f4a2f; color:#9fe89f; font-size:11px; padding:4px 10px; text-align:center; }
+  #linkBanner.show { display:block; }
+
+  #stage { position:relative; flex:1; overflow:hidden; background:#000; background-size:cover; background-position:center; }
+  .item {
+    position:absolute; transform-origin:center center; cursor:grab; touch-action:none;
+  }
+  .item img { width:100%; height:100%; object-fit:contain; pointer-events:none; user-select:none; display:block; }
+  .item.selected { outline:2px dashed #ffd700; outline-offset:3px; }
+  .item.locked { cursor:not-allowed; }
+  .item-tag {
+    position:absolute; top:-16px; left:0; font-size:9px; background:rgba(0,0,0,.7); color:#8be9fd;
+    padding:1px 5px; border-radius:6px; white-space:nowrap; pointer-events:none;
+  }
+
+  /* ---------- Right panel ---------- */
+  #panel { width:300px; background:#1a1610; border-left:2px solid #3a2f1c; overflow-y:auto; flex:0 0 auto; padding:10px; }
+  #panel h3 { font-size:13px; color:#ffd700; margin:10px 0 6px; border-bottom:1px solid #3a2f1c; padding-bottom:4px; }
+  #panel h3:first-child { margin-top:0; }
+
+  .lib-item { display:inline-flex; flex-direction:column; align-items:center; width:64px; margin:3px; cursor:pointer; }
+  .lib-item img { width:52px; height:52px; object-fit:contain; background:#000; border:1px solid #3a2f1c; border-radius:6px; }
+  .lib-item span { font-size:8px; color:#9a8b6a; text-align:center; word-break:break-word; line-height:1.1; margin-top:2px; }
+  .lib-item:hover img { border-color:#ffd700; }
+
+  label { display:block; font-size:11px; color:#aaa; margin:6px 0 2px; }
+  select, input[type=text], input[type=number], textarea {
+    width:100%; padding:4px 6px; font-size:12px; background:#0f0d09; color:#fff;
+    border:1px solid #555; border-radius:5px;
+  }
+  input[type=range] { width:100%; }
+  textarea { resize:vertical; min-height:40px; font-family:'Nunito',sans-serif; }
+
+  .row { display:flex; gap:6px; }
+  .row > * { flex:1; }
+
+  .btn { padding:6px 8px; border:none; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer; }
+  .btn-gold { background:#ffd700; color:#000; }
+  .btn-purple { background:#6a1b9a; color:#fff; }
+  .btn-green { background:#2ecc71; color:#000; }
+  .btn-red { background:#e05656; color:#fff; }
+  .btn-gray { background:#444; color:#fff; }
+  .btn-row { display:flex; flex-wrap:wrap; gap:4px; margin-top:4px; }
+  .btn-row .btn { flex:1 1 30%; }
+
+  #layers { max-height:150px; overflow-y:auto; }
+  .layer-row {
+    display:flex; align-items:center; gap:6px; padding:4px 6px; font-size:11px;
+    border-bottom:1px solid #2c2417; cursor:pointer;
+  }
+  .layer-row.active { background:#332711; color:#ffd700; }
+  .layer-row .lock { cursor:pointer; }
+
+  #exportOut { width:100%; height:140px; font-family:monospace; font-size:10px; background:#0a0906; color:#8be9fd; border:1px solid #555; }
+
+  .toast {
+    position:fixed; top:14px; left:50%; transform:translateX(-50%); background:#2ecc71; color:#000;
+    padding:6px 16px; border-radius:8px; font-weight:700; font-size:12px; z-index:999;
+    animation:fadeOut 1.8s ease forwards;
+  }
+  @keyframes fadeOut { 0%,70%{opacity:1;} 100%{opacity:0;} }
+
+  #topbar { display:flex; align-items:center; gap:8px; background:#241d12; padding:6px 10px; border-bottom:2px solid #3a2f1c; }
+  #topbar h1 { font-size:13px; color:#ffd700; flex:1; }
+  #topbar .btn { font-size:10px; padding:4px 8px; }
+</style>
+</head>
+<body>
+<div id="topbar">
+  <h1>Modak — Flower Journey — Visual Flow Editor</h1>
+  <button class="btn btn-gray" id="btnUndo">Undo</button>
+  <button class="btn btn-gray" id="btnReloadDraft">Reload from draft</button>
+  <span id="schemaStatus" style="font-size:10px;color:#9a8b6a;"></span>
+</div>
+<div id="app">
+  <div id="beats"></div>
+  <div id="stageWrap">
+    <div id="stateTabs"></div>
+    <div id="linkBanner">🔗 BEFORE inherits the previous beat's AFTER — switch to MOVEMENT or AFTER to edit</div>
+    <div id="stage"></div>
+  </div>
+  <div id="panel">
+    <h3>Asset Library (real Modak files)</h3>
+    <div id="assetLibrary"></div>
+
+    <h3>Selected Item</h3>
+    <div id="itemInspector"><em style="font-size:11px;color:#666;">Click an item on stage, or drag one in from the library</em></div>
+
+    <h3>Layers</h3>
+    <div id="layers"></div>
+
+    <h3>VO / Audio timing (this state)</h3>
+    <label>VO key (from MODAK_VO)</label>
+    <select id="voKey"></select>
+    <label>Timing note</label>
+    <textarea id="voTiming" placeholder="e.g. plays on state-enter, gap 500ms before reveal"></textarea>
+
+    <h3>Export</h3>
+    <div class="btn-row">
+      <button class="btn btn-green" id="btnExport">Export Game Code</button>
+      <button class="btn btn-gray" id="btnCopyExport">Copy</button>
+    </div>
+    <textarea id="exportOut" readonly></textarea>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   REAL GAME DATA — pulled directly from NewModakSceneV7.jsx
+   ===================================================================== */
+const ASSET_BASE = './assets/images/';
+const REAL_ASSETS = {
+  'forest-background': ASSET_BASE + 'modak-fj-bg.webp',
+  'mooshika-active': ASSET_BASE + 'mushika-active-game2.webp',
+  'mooshika-calm': ASSET_BASE + 'mushika-calm-game2.webp',
+  'journey-feather': ASSET_BASE + 'journey-feather.webp',
+  'journey-berry': ASSET_BASE + 'journey-berry.webp',
+  'journey-acorn': ASSET_BASE + 'journey-acorn.webp',
+  'emotion-worried': ASSET_BASE + 'emotion-worried-game3.webp',
+  'emotion-sad': ASSET_BASE + 'emotion-sad-game3.webp',
+  'emotion-angry': ASSET_BASE + 'emotion-angry-game3.webp',
+  'emotion-happy': ASSET_BASE + 'emotion-happy-game3.webp',
+  'ganesha': ASSET_BASE + 'ganesha-game3-new.webp',
+  'fj-mud-crossing': ASSET_BASE + 'fj-mud-crossing.webp',
+  'fj-leafy-closed': ASSET_BASE + 'fj-leafy-closed.webp',
+  'fj-leafy-opened': ASSET_BASE + 'fj-leafy-opened.webp',
+  'fj-tree': ASSET_BASE + 'fj-tree.webp',
+  'fj-branch': ASSET_BASE + 'fj-branch.webp',
+  'fj-flower-coral': ASSET_BASE + 'fj-flower-coral.webp',
+  'fj-flower-cream': ASSET_BASE + 'fj-flower-cream.webp',
+  'fj-garland-empty': ASSET_BASE + 'fj-garland-empty.webp',
+  'fj-garland-knot': ASSET_BASE + 'fj-garland-knot.webp',
+  'fj-garland-complete': ASSET_BASE + 'fj-garland-complete.webp',
+  'symbol-mooshika': ASSET_BASE + 'mooshika-new.webp',
+  'symbol-modak': ASSET_BASE + 'modak-new.webp',
+  'symbol-belly': ASSET_BASE + 'belly.png'
+};
+
+// DEFAULT_FJ_LAYOUT keys from the real file — the "Game layout key" dropdown
+// only ever offers these, so exported items map 1:1 onto real state fields.
+const LAYOUT_KEYS = [
+  '', 'calmSettle', 'mud', 'mudStart', 'mudS1', 'mudS2', 'mudS3',
+  'leaves', 'branch', 'carryStart', 'carryEnd',
+  'mudF1', 'mudF2', 'leafF1', 'leafF2', 'branchF1', 'branchF2',
+  'garlandF1', 'garlandF2', 'garlandF3', 'garlandF4', 'garlandF5', 'garlandF6'
+];
+
+const VO_KEYS = [
+  '', 'calmMooshika', 'calmMooshikaIdle', 'mooshikaCalmed', 'guidePower',
+  'mudStart', 'mudIdle', 'leavesStart', 'leavesIdle', 'branchStart', 'branchIdle',
+  'garlandStart', 'garlandIdle', 'garlandDone', 'carryStart', 'carryIdle',
+  'bellyPower', 'modakPower', 'sceneComplete'
+];
+
+// 7 beats from the file header comment (HOLD / GUIDE / SWIPE / PULL+HOLD / DRAG+SNAP / GUIDE / REVEAL)
+const BEATS = [
+  { id:'calm',    label:'1. Calm Mooshika',   sub:'HOLD',        bg:'forest-background' },
+  { id:'mud',     label:'2. Mud Crossing',    sub:'GUIDE',       bg:'forest-background' },
+  { id:'leaves',  label:'3. Leafy Cluster',   sub:'SWIPE',       bg:'forest-background' },
+  { id:'branch',  label:'4. Branch Pull',     sub:'PULL+HOLD',   bg:'forest-background' },
+  { id:'garland', label:'5. Garland Making',  sub:'DRAG+SNAP',   bg:'forest-background' },
+  { id:'carry',   label:'6. Carry to Ganesha',sub:'GUIDE',       bg:'forest-background' },
+  { id:'reveal',  label:'7. Modak Reveal',    sub:'REVEAL',      bg:'forest-background' }
+];
+const STATES = ['BEFORE', 'MOVEMENT', 'AFTER'];
+
+/* =====================================================================
+   PERSISTENCE — schema-versioned, falls back to bundled draft on mismatch
+   ===================================================================== */
+const SCHEMA_VERSION = 1;
+const STORAGE_KEY = 'modak_flow_editor_v1';
+
+function bundledDraft() {
+  const draft = {};
+  BEATS.forEach((b) => {
+    draft[b.id] = { BEFORE: [], MOVEMENT: [], AFTER: [] };
+  });
+  // Seed a couple of beats with real positions so the tool opens non-empty
+  draft.calm.AFTER = [
+    mkItem('mooshika-calm', 'calmSettle', 32, 58, 90),
+  ];
+  draft.mud.MOVEMENT = [
+    mkItem('fj-mud-crossing', 'mud', 50, 74, 260),
+    mkItem('mooshika-active', 'mudStart', 26, 74, 90)
+  ];
+  draft.mud.AFTER = [
+    mkItem('fj-mud-crossing', 'mud', 50, 74, 260),
+    mkItem('fj-flower-coral', 'mudF1', 70, 56, 46),
+    mkItem('fj-flower-cream', 'mudF2', 77, 58, 46)
+  ];
+  draft.leaves.AFTER = [
+    mkItem('fj-leafy-opened', 'leaves', 50, 52, 200),
+    mkItem('fj-flower-coral', 'leafF1', 46, 50, 46),
+    mkItem('fj-flower-cream', 'leafF2', 54, 50, 46)
+  ];
+  draft.branch.AFTER = [
+    mkItem('fj-branch', 'branch', 70, 34, 180),
+    mkItem('fj-flower-coral', 'branchF1', 66, 40, 46),
+    mkItem('fj-flower-cream', 'branchF2', 73, 41, 46)
+  ];
+  draft.garland.AFTER = [
+    mkItem('fj-garland-complete', '', 50, 50, 260)
+  ];
+  draft.carry.AFTER = [
+    mkItem('ganesha', 'carryEnd', 74, 52, 220)
+  ];
+  draft.reveal.AFTER = [
+    mkItem('symbol-modak', '', 50, 45, 140)
+  ];
+  return draft;
+}
+
+let idCounter = 1;
+function mkItem(asset, layoutKey, x, y, w, h) {
+  return {
+    id: 'it' + (idCounter++), asset, layoutKey: layoutKey || '',
+    x, y, w: w, h: h || w, rot: 0, flip: false, front: false, locked: false
+  };
+}
+
+function load() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return { fresh: bundledDraft(), fallback: false };
+    const parsed = JSON.parse(raw);
+    if (parsed.__v !== SCHEMA_VERSION) return { fresh: bundledDraft(), fallback: true };
+    return { fresh: parsed.data, fallback: false };
+  } catch {
+    return { fresh: bundledDraft(), fallback: true };
+  }
+}
+function persist() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ __v: SCHEMA_VERSION, data: beatData, vo: voData }));
+}
+
+const loaded = load();
+let beatData = loaded.fresh;
+let voData = {}; // beatId -> { voKey, timing }
+BEATS.forEach((b) => { if (!voData[b.id]) voData[b.id] = { voKey: '', timing: '' }; });
+
+document.getElementById('schemaStatus').textContent = loaded.fallback
+  ? 'stale save discarded — loaded bundled draft' : 'save v' + SCHEMA_VERSION + ' loaded';
+
+/* =====================================================================
+   STATE
+   ===================================================================== */
+let currentBeat = BEATS[0].id;
+let currentState = 'BEFORE';
+let selectedItemId = null;
+let undoStack = [];
+const MAX_UNDO = 30;
+
+function snapshot() {
+  undoStack.push(JSON.stringify(beatData));
+  if (undoStack.length > MAX_UNDO) undoStack.shift();
+}
+function undo() {
+  if (!undoStack.length) return;
+  beatData = JSON.parse(undoStack.pop());
+  persist();
+  renderAll();
+}
+
+function beatIndex(id) { return BEATS.findIndex((b) => b.id === id); }
+
+// BEFORE auto-inherits previous beat's AFTER (read-only)
+function itemsFor(beatId, state) {
+  if (state === 'BEFORE') {
+    const idx = beatIndex(beatId);
+    if (idx === 0) return beatData[beatId].BEFORE; // first beat has its own BEFORE
+    const prev = BEATS[idx - 1].id;
+    return beatData[prev].AFTER;
+  }
+  return beatData[beatId][state];
+}
+function isInherited(beatId, state) {
+  return state === 'BEFORE' && beatIndex(beatId) > 0;
+}
+function mutableList(beatId, state) {
+  // Only MOVEMENT/AFTER (and beat-0 BEFORE) are ever independently authored.
+  if (isInherited(beatId, state)) return null;
+  return beatData[beatId][state];
+}
+
+/* =====================================================================
+   RENDER: beats sidebar
+   ===================================================================== */
+function renderBeats() {
+  const el = document.getElementById('beats');
+  el.innerHTML = '';
+  BEATS.forEach((b) => {
+    const div = document.createElement('div');
+    div.className = 'beat-item' + (b.id === currentBeat ? ' active' : '');
+    div.innerHTML = `${b.label}<small>${b.sub}</small>`;
+    div.onclick = () => { currentBeat = b.id; selectedItemId = null; renderAll(); };
+    el.appendChild(div);
+  });
+}
+
+/* =====================================================================
+   RENDER: state tabs
+   ===================================================================== */
+function renderStateTabs() {
+  const el = document.getElementById('stateTabs');
+  el.innerHTML = '';
+  STATES.forEach((s) => {
+    const div = document.createElement('div');
+    const inherited = isInherited(currentBeat, s);
+    div.className = 'state-tab' + (s === currentState ? ' active' : '') + (inherited ? ' inherited' : '');
+    div.textContent = s + (inherited ? ' 🔗' : '');
+    div.onclick = () => { currentState = s; selectedItemId = null; renderAll(); };
+    el.appendChild(div);
+  });
+  document.getElementById('linkBanner').classList.toggle('show', isInherited(currentBeat, currentState));
+}
+
+/* =====================================================================
+   RENDER: stage
+   ===================================================================== */
+function renderStage() {
+  const stage = document.getElementById('stage');
+  stage.innerHTML = '';
+  const beat = BEATS.find((b) => b.id === currentBeat);
+  stage.style.backgroundImage = `url(${REAL_ASSETS[beat.bg]})`;
+
+  const items = itemsFor(currentBeat, currentState);
+  const readOnly = isInherited(currentBeat, currentState);
+
+  // stable z-order: back items first, front items last
+  const ordered = [...items].sort((a, b) => (a.front === b.front ? 0 : a.front ? 1 : -1));
+
+  ordered.forEach((item) => {
+    const div = document.createElement('div');
+    div.className = 'item' + (item.id === selectedItemId ? ' selected' : '') + (item.locked ? ' locked' : '');
+    div.style.left = item.x + '%';
+    div.style.top = item.y + '%';
+    div.style.width = item.w + 'px';
+    div.style.height = item.h + 'px';
+    div.style.transform = `translate(-50%, -50%) rotate(${item.rot}deg) scaleX(${item.flip ? -1 : 1})`;
+    div.style.zIndex = item.front ? 20 : 10;
+
+    const img = document.createElement('img');
+    img.src = REAL_ASSETS[item.asset] || '';
+    div.appendChild(img);
+
+    const tag = document.createElement('div');
+    tag.className = 'item-tag';
+    tag.textContent = item.layoutKey ? `#${item.layoutKey}` : item.asset;
+    div.appendChild(tag);
+
+    if (!readOnly) {
+      div.addEventListener('pointerdown', (e) => onItemPointerDown(e, item));
+    }
+    div.addEventListener('click', (e) => { e.stopPropagation(); selectedItemId = item.id; renderAll(); });
+    stage.appendChild(div);
+  });
+
+  stage.onclick = () => { selectedItemId = null; renderAll(); };
+}
+
+let dragCtx = null;
+function onItemPointerDown(e, item) {
+  if (item.locked) return;
+  e.preventDefault(); e.stopPropagation();
+  selectedItemId = item.id;
+  snapshot();
+  const stage = document.getElementById('stage');
+  const rect = stage.getBoundingClientRect();
+  dragCtx = { item, rect };
+  const move = (ev) => {
+    let x = ((ev.clientX - rect.left) / rect.width) * 100;
+    let y = ((ev.clientY - rect.top) / rect.height) * 100;
+    x = Math.max(0, Math.min(100, x));
+    y = Math.max(0, Math.min(100, y));
+    item.x = Math.round(x * 10) / 10;
+    item.y = Math.round(y * 10) / 10;
+    persist();
+    renderStage();
+    renderInspector();
+  };
+  const up = () => {
+    document.removeEventListener('pointermove', move);
+    document.removeEventListener('pointerup', up);
+  };
+  document.addEventListener('pointermove', move);
+  document.addEventListener('pointerup', up);
+}
+
+/* =====================================================================
+   RENDER: asset library (drag-in add)
+   ===================================================================== */
+function renderLibrary() {
+  const el = document.getElementById('assetLibrary');
+  el.innerHTML = '';
+  Object.keys(REAL_ASSETS).forEach((key) => {
+    const div = document.createElement('div');
+    div.className = 'lib-item';
+    div.draggable = true;
+    div.innerHTML = `<img src="${REAL_ASSETS[key]}"><span>${key}</span>`;
+    div.ondragstart = (e) => e.dataTransfer.setData('text/asset', key);
+    div.onclick = () => addItem(key);
+    el.appendChild(div);
+  });
+  const stage = document.getElementById('stage');
+  stage.ondragover = (e) => e.preventDefault();
+  stage.ondrop = (e) => {
+    e.preventDefault();
+    const key = e.dataTransfer.getData('text/asset');
+    if (!key) return;
+    const rect = stage.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    addItem(key, x, y);
+  };
+}
+
+function addItem(asset, x, y) {
+  if (isInherited(currentBeat, currentState)) {
+    alert('BEFORE is inherited from the previous beat\'s AFTER — switch to MOVEMENT or AFTER to add items.');
+    return;
+  }
+  snapshot();
+  const list = mutableList(currentBeat, currentState);
+  const item = mkItem(asset, '', x ?? 50, y ?? 50, 100);
+  list.push(item);
+  selectedItemId = item.id;
+  persist();
+  renderAll();
+}
+
+/* =====================================================================
+   RENDER: inspector
+   ===================================================================== */
+function selectedItem() {
+  const items = itemsFor(currentBeat, currentState);
+  return items.find((i) => i.id === selectedItemId) || null;
+}
+
+function renderInspector() {
+  const el = document.getElementById('itemInspector');
+  const item = selectedItem();
+  const readOnly = isInherited(currentBeat, currentState);
+  if (!item) {
+    el.innerHTML = '<em style="font-size:11px;color:#666;">Click an item on stage, or drag one in from the library</em>';
+    return;
+  }
+  el.innerHTML = `
+    <label>Asset</label>
+    <div style="font-size:11px;color:#8be9fd;">${item.asset}</div>
+    <label>Game layout key</label>
+    <select id="fLayoutKey" ${readOnly ? 'disabled' : ''}>
+      ${LAYOUT_KEYS.map((k) => `<option value="${k}" ${k === item.layoutKey ? 'selected' : ''}>${k || '(none)'}</option>`).join('')}
+    </select>
+    <div class="row">
+      <div><label>X %</label><input type="number" id="fX" value="${item.x}" ${readOnly?'disabled':''}></div>
+      <div><label>Y %</label><input type="number" id="fY" value="${item.y}" ${readOnly?'disabled':''}></div>
+    </div>
+    <div class="row">
+      <div><label>W px</label><input type="number" id="fW" value="${item.w}" ${readOnly?'disabled':''}></div>
+      <div><label>H px</label><input type="number" id="fH" value="${item.h}" ${readOnly?'disabled':''}></div>
+    </div>
+    <label>Rotate</label>
+    <input type="range" id="fRot" min="-180" max="180" value="${item.rot}" ${readOnly?'disabled':''}>
+    <div class="btn-row">
+      <button class="btn btn-gray" id="fFlip">Flip</button>
+      <button class="btn btn-gray" id="fFront">${item.front ? 'Send Back' : 'Bring Front'}</button>
+      <button class="btn btn-gray" id="fDup">Duplicate</button>
+      <button class="btn btn-gray" id="fLock">${item.locked ? 'Unlock' : 'Lock'}</button>
+      <button class="btn btn-red" id="fDel">Delete</button>
+    </div>
+  `;
+  if (readOnly) return;
+
+  document.getElementById('fLayoutKey').onchange = (e) => { snapshot(); item.layoutKey = e.target.value; persist(); renderStage(); };
+  document.getElementById('fX').onchange = (e) => { snapshot(); item.x = Number(e.target.value); persist(); renderStage(); };
+  document.getElementById('fY').onchange = (e) => { snapshot(); item.y = Number(e.target.value); persist(); renderStage(); };
+  document.getElementById('fW').onchange = (e) => { snapshot(); item.w = Number(e.target.value); persist(); renderStage(); };
+  document.getElementById('fH').onchange = (e) => { snapshot(); item.h = Number(e.target.value); persist(); renderStage(); };
+  document.getElementById('fRot').oninput = (e) => { item.rot = Number(e.target.value); persist(); renderStage(); };
+  document.getElementById('fFlip').onclick = () => { snapshot(); item.flip = !item.flip; persist(); renderAll(); };
+  document.getElementById('fFront').onclick = () => { snapshot(); item.front = !item.front; persist(); renderAll(); };
+  document.getElementById('fLock').onclick = () => { snapshot(); item.locked = !item.locked; persist(); renderAll(); };
+  document.getElementById('fDup').onclick = () => {
+    snapshot();
+    const list = mutableList(currentBeat, currentState);
+    const copy = { ...item, id: 'it' + (idCounter++), x: item.x + 3, y: item.y + 3 };
+    list.push(copy);
+    selectedItemId = copy.id;
+    persist();
+    renderAll();
+  };
+  document.getElementById('fDel').onclick = () => {
+    snapshot();
+    const list = mutableList(currentBeat, currentState);
+    const idx = list.findIndex((i) => i.id === item.id);
+    if (idx >= 0) list.splice(idx, 1);
+    selectedItemId = null;
+    persist();
+    renderAll();
+  };
+}
+
+/* =====================================================================
+   RENDER: layers panel
+   ===================================================================== */
+function renderLayers() {
+  const el = document.getElementById('layers');
+  el.innerHTML = '';
+  const items = itemsFor(currentBeat, currentState);
+  const readOnly = isInherited(currentBeat, currentState);
+  [...items].reverse().forEach((item) => {
+    const row = document.createElement('div');
+    row.className = 'layer-row' + (item.id === selectedItemId ? ' active' : '');
+    row.innerHTML = `<span class="lock">${item.locked ? '🔒' : '🔓'}</span><span style="flex:1;">${item.layoutKey || item.asset}</span>`;
+    row.querySelector('span.lock').onclick = (e) => {
+      e.stopPropagation();
+      if (readOnly) return;
+      snapshot(); item.locked = !item.locked; persist(); renderAll();
+    };
+    row.onclick = () => { selectedItemId = item.id; renderAll(); };
+    el.appendChild(row);
+  });
+}
+
+/* =====================================================================
+   RENDER: VO panel (auto-saves on every keystroke)
+   ===================================================================== */
+function renderVoPanel() {
+  const sel = document.getElementById('voKey');
+  sel.innerHTML = VO_KEYS.map((k) => `<option value="${k}">${k || '(none)'}</option>`).join('');
+  const key = currentBeat + ':' + currentState;
+  if (!voData[key]) voData[key] = { voKey: '', timing: '' };
+  sel.value = voData[key].voKey;
+  document.getElementById('voTiming').value = voData[key].timing;
+
+  sel.onchange = (e) => { voData[key].voKey = e.target.value; persist(); };
+  document.getElementById('voTiming').oninput = (e) => { voData[key].timing = e.target.value; persist(); };
+}
+
+/* =====================================================================
+   EXPORT — object literal matching DEFAULT_FJ_LAYOUT shape (x/y percent,
+   center-anchored per the real CSS's translate(-50%,-50%) convention)
+   ===================================================================== */
+function exportGameCode() {
+  const out = {};
+  BEATS.forEach((b) => {
+    ['BEFORE', 'MOVEMENT', 'AFTER'].forEach((s) => {
+      const items = itemsFor(b.id, s);
+      items.filter((i) => i.layoutKey).forEach((i) => {
+        out[i.layoutKey] = { x: Math.round(i.x), y: Math.round(i.y), w: Math.round(i.w) };
+      });
+    });
+  });
+  const code = `// Generated by modak-flow-editor.html — paste into DEFAULT_FJ_LAYOUT\nconst DEFAULT_FJ_LAYOUT = ${JSON.stringify(out, null, 2)};`;
+  document.getElementById('exportOut').value = code;
+  return code;
+}
+
+/* =====================================================================
+   TOP BAR
+   ===================================================================== */
+document.getElementById('btnUndo').onclick = undo;
+document.getElementById('btnReloadDraft').onclick = () => {
+  if (!confirm('Discard current save and reload the bundled draft?')) return;
+  beatData = bundledDraft();
+  persist();
+  renderAll();
+  showToast('Reloaded from draft');
+};
+document.getElementById('btnExport').onclick = () => { exportGameCode(); showToast('Exported — see box below'); };
+document.getElementById('btnCopyExport').onclick = () => {
+  const code = exportGameCode();
+  navigator.clipboard?.writeText(code).then(() => showToast('Copied to clipboard')).catch(() => showToast('Copy failed — select manually'));
+};
+
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.className = 'toast'; t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 1800);
+}
+
+/* =====================================================================
+   BOOT
+   ===================================================================== */
+function renderAll() {
+  renderBeats();
+  renderStateTabs();
+  renderStage();
+  renderLibrary();
+  renderInspector();
+  renderLayers();
+  renderVoPanel();
+}
+renderAll();
+</script>
+</body>
+</html>
