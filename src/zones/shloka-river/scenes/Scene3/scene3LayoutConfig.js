@@ -48,15 +48,13 @@ export const KURUMEDEVA_LAYOUT = {
     w: 8.5,
     flip: false,
   },
-  // Bridge redesign (Kurume Deva asset pack): 3 helper moments —
-  // Elephant (support logs), Monkey (tie the ropes), Monkey again for the
-  // final planks (Beaver herself places them; see KurumedevaGame.jsx).
-  // Positions adapted from the asset pack's suggested zones (elephant
-  // back-left, monkey left-mid), fitted to this scene's existing bank side.
+  // Bridge redesign (GMB_KurumeDeva_New_Assets pack): exactly 2 ask-for-help
+  // loops — Elephant (support logs), Monkey (rope) — then Beaver lays the
+  // planks alone, no third helper. Positions adapted from the asset pack's
+  // suggested zones, fitted to this scene's existing bank side.
   friends: [
     { id: 'elephant', label: 'Elephant', brings: 'support', l: 30.1, t: 63.3, w: 13, flip: false },
     { id: 'monkey', label: 'Monkey', brings: 'ropes', l: 21.7, t: 39.7, w: 10, flip: false },
-    { id: 'monkey2', label: 'Monkey', brings: 'planks', l: 38.7, t: 47.7, w: 10, flip: false },
   ],
   beaverPath: [
     { l: 73.9, t: 69.9 },
