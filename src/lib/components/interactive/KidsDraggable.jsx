@@ -70,6 +70,10 @@ export const KidsDraggable = ({
       document.body.appendChild(clone);
       cloneRef.current = clone;
 
+      // Dim the original so only the floating clone reads as "the" dragged
+      // item - otherwise both are visible at once (a "ghost" duplicate).
+      el.style.opacity = '0.35';
+
       // Capture pointer so we get move/up even outside element
       el.setPointerCapture(e.pointerId);
     };

@@ -56,7 +56,7 @@ export const GAME_CONFIGS = {
         'tun': 'vakratunda-tun',
         'da': 'vakratunda-da'
       },
-      completeWordFile: '/audio/words/Vakratunda.mp3'
+      completeWordFile: '/audio/words/vakratunda.mp3'
     },
     
     waterSpray: {
@@ -125,7 +125,7 @@ export const GAME_CONFIGS = {
         'ka': 'mahakaya-ka',
         'ya': 'mahakaya-ya'
       },
-      completeWordFile: '/audio/words/Mahakaya.mp3'
+      completeWordFile: '/audio/words/mahakaya.mp3'
     },
     
     waterSpray: {
@@ -193,7 +193,7 @@ export const GAME_CONFIGS = {
         'ko': 'suryakoti-ko',
         'ti': 'suryakoti-ti'
       },
-      completeWordFile: '/audio/words/Suryakoti.mp3'
+      completeWordFile: '/audio/words/suryakoti.mp3'
     },
     
     waterSpray: {
@@ -261,7 +261,7 @@ export const GAME_CONFIGS = {
         'pra': 'samaprabha-pra',
         'bha': 'samaprabha-bha'
       },
-      completeWordFile: '/audio/words/Samaprabha.mp3'
+      completeWordFile: '/audio/words/samaprabha.mp3'
     },
     
     waterSpray: {
@@ -355,7 +355,7 @@ export const GAME_CONFIGS = {
         'vigh': 'nirvighnam-vigh',
         'nam': 'nirvighnam-nam'
       },
-      completeWordFile: '/audio/words/Nirvighnam.mp3'
+      completeWordFile: '/audio/words/nirvighnam.mp3'
     },
     
     waterSpray: {
@@ -438,7 +438,7 @@ assetGettersReward: {
         'me': 'kurumedeva-me',
         'va': 'kurumedeva-va' 
       },
-      completeWordFile: '/audio/words/Kurumedeva.mp3'
+      completeWordFile: '/audio/words/kurumedeva.mp3'
     },
     
     waterSpray: {
@@ -505,7 +505,7 @@ assetGettersReward: {
         'kar': 'sarvakaryeshu-kar',
         'yeshu': 'sarvakaryeshu-yeshu'
       },
-      completeWordFile: '/audio/words/Sarvakaryeshu.mp3'
+      completeWordFile: '/audio/words/sarvakaryeshu.mp3'
     },
     
     waterSpray: {
@@ -569,7 +569,7 @@ assetGettersReward: {
         'va': 'sarvada-va',
         'da': 'sarvada-da'
       },
-      completeWordFile: '/audio/words/Sarvada.mp3'
+      completeWordFile: '/audio/words/sarvada.mp3'
     },
     
     waterSpray: {

@@ -92,7 +92,7 @@
 
 .clue-target {
   opacity: 0.78;
-  transition: opacity 260ms ease, transform 260ms ease, filter 260ms ease;
+  transition: opacity 260ms ease, transform 260ms ease, filter 260ms ease, left 420ms ease, top 420ms ease, width 420ms ease;
 }
 
 .clue-target.found {
@@ -101,6 +101,14 @@
   transform: translate(-50%, -50%) scale(1.08);
   filter: drop-shadow(0 0 14px rgba(255, 221, 89, 0.8));
   animation: eyes-found-pop 620ms ease-out;
+}
+
+.clue-target.carried {
+  z-index: 30;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0.35);
+  transition: opacity 560ms ease, transform 560ms ease, filter 260ms ease, left 600ms ease, top 600ms ease, width 600ms ease;
 }
 
 .distractor-target {
@@ -147,6 +155,20 @@
   pointer-events: none;
   user-select: none;
   filter: drop-shadow(0 10px 14px rgba(30, 49, 35, 0.2));
+}
+
+.eyes-story-character {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  user-select: none;
+  filter: drop-shadow(0 10px 14px rgba(30, 49, 35, 0.2));
+  transition: filter 420ms ease;
+}
+
+.eyes-story-character.is-debug-selected {
+  outline: 3px solid rgba(255, 80, 80, 0.95);
+  outline-offset: 4px;
 }
 
 .eyes-clue-tray {
@@ -333,6 +355,7 @@
 
 .eyes-popup-game.is-debugging .eyes-hidden-target,
 .eyes-popup-game.is-debugging .eyes-hiding-prop,
+.eyes-popup-game.is-debugging .eyes-story-character,
 .eyes-popup-game.is-debugging .eyes-game-prompt,
 .eyes-popup-game.is-debugging .eyes-clue-tray,
 .eyes-popup-game.is-debugging .eyes-soft-feedback {
@@ -434,6 +457,11 @@
 
 .eyes-debug-row select {
   grid-column: 2 / 4;
+}
+
+.eyes-debug-row select option {
+  background: #1d2d32;
+  color: #fff8dc;
 }
 
 .eyes-debug-row input[type='range'] {

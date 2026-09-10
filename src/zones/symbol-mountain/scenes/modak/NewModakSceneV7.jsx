@@ -225,6 +225,10 @@ const TRAVELLING_EMOTIONS = [
   { id: 'angry', image: emotionAngry },
   { id: 'sad', image: emotionSad }
 ];
+// The 3 feelings actually earned during the mud/leaves/branch challenges -
+// 'happy' is not earned until the modak reveal, so it's excluded from the
+// "feelings travelling with Mooshika" badges shown before that.
+const EARNED_TRAVELLING_EMOTIONS = TRAVELLING_EMOTIONS.filter((e) => e.id !== 'happy');
 
 const MINI_GESTURE_ANCHORS = {
   calm: { x: 30, y: 52 },
@@ -841,7 +845,9 @@ const NewModakSceneMVPContent = ({
     if (mudLockRef.current) return;
     mudLockRef.current = true;
     setDragActive(false);
-    setActiveEmotion(null);
+    // Let the "worried" feeling linger briefly (fading) rather than vanish
+    // the instant the crossing is won - it travels with him, not "cleared".
+    safeSetTimeout(() => setActiveEmotion(null), 900);
     triggerMiniGesture('thumbsup', 'anchored', 1500, MINI_GESTURE_ANCHORS.mud);
     if (idleHintsEnabled) stopIdleTimer();
     safeSetTimeout(() => {
@@ -909,7 +915,8 @@ const NewModakSceneMVPContent = ({
 
     if (next >= LEAVES_SWIPES_NEEDED) {
       leavesLockRef.current = true;
-      setActiveEmotion(null);
+      // Let "angry" fade briefly instead of clearing the instant leaves open.
+      safeSetTimeout(() => setActiveEmotion(null), 900);
       playDiscovery();
       playPlace();
       triggerMiniGesture('thumbsup', 'anchored', 1500, MINI_GESTURE_ANCHORS.leaves);
@@ -962,7 +969,8 @@ const NewModakSceneMVPContent = ({
     clearBranchHoldTimer();
     branchDragRef.current.active = false;
     setBranchPull(1);
-    setActiveEmotion(null);
+    // Let "sad" fade briefly instead of clearing the instant the branch bends.
+    safeSetTimeout(() => setActiveEmotion(null), 900);
     playPlace();
     playDiscovery();
     launchFlowers(4, [fjLayout.branchF1, fjLayout.branchF2]);
@@ -1656,6 +1664,13 @@ const NewModakSceneMVPContent = ({
 
   const mooshikaImg = sceneState.mooshikaCalm ? mooshikaCalm : mooshikaActive;
 
+  // Once Mooshika is calmed (beat 1 done), all three flower-source props
+  // (mud patch, leafy bush, branch/tree) stay visible in the environment for
+  // the rest of the journey - the child sees the whole layout upfront instead
+  // of props popping in one at a time. The interactions themselves (guiding,
+  // swiping, pulling) still stay locked to their own phase and order.
+  const showChallengeProps = !!sceneState.welcomeShown && sceneState.phase !== PHASES.CALM_SEARCH;
+
   const emotionImageFor = (id) => {
     const found = TRAVELLING_EMOTIONS.find(e => e.id === id);
     return found ? found.image : null;
@@ -1805,25 +1820,38 @@ const NewModakSceneMVPContent = ({
                     />
                   )}
 
-                  {/* FLOWER COUNTER */}
-                  {sceneState.welcomeShown && !isFinalTransitionView && sceneState.phase !== PHASES.GARLAND_MAKING && (
-                    <div className="modak-fj-flower-tray" aria-label={`${flowers} of 6 flowers gathered`}>
-                      {Array.from({ length: 6 }).map((_, i) => (
-                        <span
-                          key={`ft-${i}`}
-                          className={`modak-fj-flower-slot ${i < flowers ? 'filled' : ''} ${i === flowers - 1 && showSparkle?.startsWith('flowers-') ? 'pop' : ''}`}
-                        >
-                          {i < flowers && (
-                            <img src={garlandFlowerImage(GARLAND_FLOWER_TYPES[i])} alt="" />
-                          )}
-                        </span>
-                      ))}
-                    </div>
-                  )}
+                  {/* FLOWER TRAY - docked beside Mooshika's current spot, not a fixed top counter */}
+                  {sceneState.welcomeShown && !isFinalTransitionView && sceneState.phase !== PHASES.GARLAND_MAKING && (() => {
+                    const mPos = sceneState.mooshikaPosition || CALM_SETTLE_POSITION;
+                    const trayTop = Math.max(6, parsePercentValue(mPos.top, 50) - 13);
+                    const trayLeft = Math.min(88, parsePercentValue(mPos.left, 50) + 12);
+                    return (
+                      <div
+                        className="modak-fj-flower-tray modak-fj-flower-tray--follow"
+                        style={{ top: `${trayTop}%`, left: `${trayLeft}%` }}
+                        aria-label={`${flowers} of 6 flowers gathered`}
+                      >
+                        {Array.from({ length: 6 }).map((_, i) => (
+                          <span
+                            key={`ft-${i}`}
+                            className={`modak-fj-flower-slot ${i < flowers ? 'filled' : ''} ${i === flowers - 1 && showSparkle?.startsWith('flowers-') ? 'pop' : ''}`}
+                          >
+                            {i < flowers && (
+                              <img src={garlandFlowerImage(GARLAND_FLOWER_TYPES[i])} alt="" />
+                            )}
+                          </span>
+                        ))}
+                      </div>
+                    );
+                  })()}
 
                   {/* ============ BEAT 1: CALM (hold) ============ */}
+                  {/* Only one Mooshika image is ever on screen at a time - this
+                      static/live-position render is strictly beat-1-only so it
+                      never overlaps the beat-2 draggable Mooshika (#fj-mooshika). */}
                   {sceneState.welcomeShown &&
-                    [PHASES.CALM_SEARCH, PHASES.CALM_REVEAL].includes(sceneState.phase) && (
+                    [PHASES.CALM_SEARCH, PHASES.CALM_REVEAL].includes(sceneState.phase) &&
+                    sceneState.phase !== PHASES.MUD_CROSS && (
                       <>
                         {CALM_DISTRACTIONS.map((item) => {
                           const isActive =
@@ -1879,11 +1907,33 @@ const NewModakSceneMVPContent = ({
                     )}
 
                   {/* ============ BEAT 2: MUD CROSSING (guide) ============ */}
-                  {(sceneState.phase === PHASES.MUD_CROSS || dbgShowAll) && (
+                  {/* Backdrop art + stepping-stone markers stay visible from the
+                      moment the challenges begin, so the child sees the whole
+                      layout upfront - only the interaction itself (below) is
+                      locked to the MUD_CROSS phase. */}
+                  {(showChallengeProps || dbgShowAll) && (
                     <>
                       <img src={fjMudCrossing} alt="" className="modak-fj-mud" data-fj-el aria-hidden="true"
                         style={{ ...asPos(L.mud), width: `${L.mud.w}vw` }} />
 
+                      {/* Visual-only stepping-stone markers along the path */}
+                      {MUD_STONE_KEYS.map((key, i) => {
+                        const done = i < (sceneState.mudStoneIndex || 0);
+                        const next = i === (sceneState.mudStoneIndex || 0);
+                        return (
+                          <span
+                            key={key}
+                            data-fj-el
+                            className={`modak-fj-stone-marker ${done ? 'done' : ''} ${next ? 'active' : ''}`}
+                            style={{ left: `${L[key].x}%`, top: `${L[key].y}%` }}
+                          />
+                        );
+                      })}
+                    </>
+                  )}
+
+                  {(sceneState.phase === PHASES.MUD_CROSS || dbgShowAll) && (
+                    <>
                       {/* One forgiving drop zone over the mud; each drop = one step */}
                       <KidsDropZone
                         id="mud-cross-zone"
@@ -1901,20 +1951,6 @@ const NewModakSceneMVPContent = ({
                       >
                         <div className="modak-fj-mud-zone" />
                       </KidsDropZone>
-
-                      {/* Visual-only stepping-stone markers along the path */}
-                      {MUD_STONE_KEYS.map((key, i) => {
-                        const done = i < (sceneState.mudStoneIndex || 0);
-                        const next = i === (sceneState.mudStoneIndex || 0);
-                        return (
-                          <span
-                            key={key}
-                            data-fj-el
-                            className={`modak-fj-stone-marker ${done ? 'done' : ''} ${next ? 'active' : ''}`}
-                            style={{ left: `${L[key].x}%`, top: `${L[key].y}%` }}
-                          />
-                        );
-                      })}
 
                       <KidsDraggable
                         id="fj-mooshika"
@@ -1945,7 +1981,10 @@ const NewModakSceneMVPContent = ({
                   )}
 
                   {/* ============ BEAT 3: LEAVES (swipe apart) ============ */}
-                  {(sceneState.phase === PHASES.LEAVES_OPEN || dbgShowAll) && (
+                  {/* Visible from the start of the challenge sequence - swiping
+                      only registers once phase === LEAVES_OPEN (guarded inside
+                      registerLeafSwipe/handleLeavesPointerDown). */}
+                  {(showChallengeProps || dbgShowAll) && (
                     <div
                       className="modak-fj-leaves-stage"
                       data-fj-el
@@ -1959,7 +1998,7 @@ const NewModakSceneMVPContent = ({
                         onPointerUp={handleLeavesPointerUp}
                         draggable={false}
                       />
-                      {!sceneState.leavesOpen && activeEmotion === 'angry' && (
+                      {activeEmotion === 'angry' && (
                         <img src={emotionImageFor('angry')} alt="" className="modak-fj-emotion modak-fj-emotion--tl" aria-hidden="true" />
                       )}
                       {sceneState.leavesOpen && (
@@ -1969,7 +2008,10 @@ const NewModakSceneMVPContent = ({
                   )}
 
                   {/* ============ BEAT 4: BRANCH (pull + hold) ============ */}
-                  {(sceneState.phase === PHASES.BRANCH_PULL || dbgShowAll) && (
+                  {/* Visible from the start of the challenge sequence - pulling
+                      only registers once phase === BRANCH_PULL (guarded inside
+                      handleBranchPointerDown/Move). */}
+                  {(showChallengeProps || dbgShowAll) && (
                     <div
                       className="modak-fj-branch-stage"
                       data-fj-el
@@ -1992,20 +2034,24 @@ const NewModakSceneMVPContent = ({
                       {branchPull >= BRANCH_PULL_TRIGGER && !sceneState.branchDone && (
                         <span className="modak-fj-branch-hold-ring" aria-hidden="true" />
                       )}
-                      {activeEmotion === 'sad' && !sceneState.branchDone && (
+                      {activeEmotion === 'sad' && (
                         <img src={emotionImageFor('sad')} alt="" className="modak-fj-emotion modak-fj-emotion--bl" aria-hidden="true" />
                       )}
                     </div>
                   )}
 
-                  {/* Real pickup flowers - 2 per challenge, positioned via the debug panel */}
+                  {/* Real pickup flowers - 2 per challenge, positioned via the debug panel.
+                      All three pairs are visible from the start of the challenge
+                      sequence (not sequentially revealed phase-by-phase) so the
+                      child sees the whole layout upfront; each pair still
+                      disappears once its own 2 flowers are actually collected. */}
                   {[
-                    { key: 'mudF1', idx: 0, show: (sceneState.phase === PHASES.MUD_CROSS || dbgShowAll) && flowers < 2 },
-                    { key: 'mudF2', idx: 1, show: (sceneState.phase === PHASES.MUD_CROSS || dbgShowAll) && flowers < 2 },
-                    { key: 'leafF1', idx: 2, show: ((sceneState.phase === PHASES.LEAVES_OPEN && sceneState.leavesOpen) || dbgShowAll) && flowers < 4 },
-                    { key: 'leafF2', idx: 3, show: ((sceneState.phase === PHASES.LEAVES_OPEN && sceneState.leavesOpen) || dbgShowAll) && flowers < 4 },
-                    { key: 'branchF1', idx: 4, show: (sceneState.phase === PHASES.BRANCH_PULL || dbgShowAll) && flowers < 6 },
-                    { key: 'branchF2', idx: 5, show: (sceneState.phase === PHASES.BRANCH_PULL || dbgShowAll) && flowers < 6 }
+                    { key: 'mudF1', idx: 0, show: (showChallengeProps || dbgShowAll) && flowers < 2 },
+                    { key: 'mudF2', idx: 1, show: (showChallengeProps || dbgShowAll) && flowers < 2 },
+                    { key: 'leafF1', idx: 2, show: (showChallengeProps || dbgShowAll) && flowers < 4 },
+                    { key: 'leafF2', idx: 3, show: (showChallengeProps || dbgShowAll) && flowers < 4 },
+                    { key: 'branchF1', idx: 4, show: (showChallengeProps || dbgShowAll) && flowers < 6 },
+                    { key: 'branchF2', idx: 5, show: (showChallengeProps || dbgShowAll) && flowers < 6 }
                   ].map(({ key, idx, show }) => (show ? (
                     <img
                       key={key}
@@ -2017,21 +2063,26 @@ const NewModakSceneMVPContent = ({
                     />
                   ) : null))}
 
-                  {/* pickup flowers flying up into the counter */}
-                  {flyers.map((f) => (
-                    <img
-                      key={f.id}
-                      src={garlandFlowerImage(f.type)}
-                      alt=""
-                      className="modak-fj-flyer"
-                      style={{
-                        left: f.go ? '50%' : `${f.x}%`,
-                        top: f.go ? '5%' : `${f.y}%`,
-                        opacity: f.go ? 0 : 1,
-                        transform: `translate(-50%, -50%) scale(${f.go ? 0.35 : 1})`
-                      }}
-                    />
-                  ))}
+                  {/* pickup flowers flying into the tray beside Mooshika */}
+                  {flyers.map((f) => {
+                    const mPos = sceneState.mooshikaPosition || CALM_SETTLE_POSITION;
+                    const trayTop = Math.max(6, parsePercentValue(mPos.top, 50) - 13);
+                    const trayLeft = Math.min(88, parsePercentValue(mPos.left, 50) + 12);
+                    return (
+                      <img
+                        key={f.id}
+                        src={garlandFlowerImage(f.type)}
+                        alt=""
+                        className="modak-fj-flyer"
+                        style={{
+                          left: f.go ? `${trayLeft}%` : `${f.x}%`,
+                          top: f.go ? `${trayTop}%` : `${f.y}%`,
+                          opacity: f.go ? 0 : 1,
+                          transform: `translate(-50%, -50%) scale(${f.go ? 0.35 : 1})`
+                        }}
+                      />
+                    );
+                  })}
 
                   {/* ============ BEAT 6: CARRY to Ganesha (guide) ============ */}
                   {sceneState.phase === PHASES.CARRY || sceneState.phase === PHASES.CARRY_REVEAL ||
@@ -2060,7 +2111,7 @@ const NewModakSceneMVPContent = ({
                             <img src={mooshikaCalm} alt="Mooshika" style={{ width: '100%', height: '100%', pointerEvents: 'none' }} />
                             <img src={fjGarlandComplete} alt="" className="modak-fj-carry-garland" aria-hidden="true" />
                             <div className="modak-game-belly-feelings" aria-hidden="true">
-                              {TRAVELLING_EMOTIONS.map((emotion) => (
+                              {EARNED_TRAVELLING_EMOTIONS.map((emotion) => (
                                 <img
                                   key={emotion.id}
                                   src={emotion.image}
@@ -2103,7 +2154,7 @@ const NewModakSceneMVPContent = ({
                             <div className="modak-game-belly-completion-halo" aria-hidden="true" />
                             <img src={fjGarlandComplete} alt="" className="modak-fj-garland-on-ganesha" aria-hidden="true" />
                             <div className="modak-game-belly-arrived-feelings" aria-hidden="true">
-                              {TRAVELLING_EMOTIONS.map((emotion) => (
+                              {EARNED_TRAVELLING_EMOTIONS.map((emotion) => (
                                 <img
                                   key={`arrived-${emotion.id}`}
                                   src={emotion.image}
