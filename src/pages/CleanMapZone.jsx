@@ -675,7 +675,7 @@ const MAP_ZONE_ART_DEFAULTS = {
   symbol: {
     id: 'symbol',
     label: 'Modak Mountain',
-    src: '/images/map/modakmtn-shell.png',
+    src: '/images/map/modakmtn-shell.webp',
     left: 3.8,
     top: 17,
     w: 38.5,
@@ -688,7 +688,7 @@ const MAP_ZONE_ART_DEFAULTS = {
   river: {
     id: 'river',
     label: 'River',
-    src: '/images/map/shlokariver-falls.png',
+    src: '/images/map/shlokariver-falls.webp',
     left: 44.3,
     top: 51.8,
     w: 125,
@@ -1345,14 +1345,10 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
       if (onZoneSelect) onZoneSelect(zone.id);
       return;
     }
-    // Symbol Mountain: skip welcome, go straight to first scene (modak)
-    if (state === 'active' && zone.id === ZONE_IDS.SYMBOL) {
-      const firstScene = ZONE_FIRST_SCENES[zone.id];
-      if (onZoneSelect) onZoneSelect(zone.id, firstScene);
-      return;
-    }
-    // All other zones: open zone welcome screen
-    if (onZoneSelect) onZoneSelect(zone.id);
+    // Every zone: skip the welcome screen, go straight to its first scene.
+    // Keeps the finish -> return -> discover -> play rhythm unbroken.
+    const firstScene = ZONE_FIRST_SCENES[zone.id];
+    if (onZoneSelect) onZoneSelect(zone.id, firstScene);
   };
 
   const handleZoneClick = (zone, state) => {
@@ -1395,12 +1391,12 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
 
       {/* Background image */}
       <img
-        src="/images/map/mapbg-meadow.png"
+        src="/images/map/mapbg-meadow.webp"
         alt="Map"
         className="map-bg-img"
       />
       <img
-        src="/images/map/modakmtn-shell.png"
+        src="/images/map/modakmtn-shell.webp"
         alt=""
         className="map-zone-art map-zone-art-symbol"
         onClick={() => handleZoneClick(ZONES_DATA.find((zone) => zone.id === 'symbol-mountain'), getZoneState('symbol-mountain', zoneProgress))}
@@ -1416,7 +1412,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         style={getZoneArtStyle('symbol', { cursor: 'pointer', pointerEvents: 'auto' })}
       />
       <img
-        src="/images/map/shlokariver-falls.png"
+        src="/images/map/shlokariver-falls.webp"
         alt=""
         className="map-zone-art map-zone-art-river"
         aria-hidden="true"
