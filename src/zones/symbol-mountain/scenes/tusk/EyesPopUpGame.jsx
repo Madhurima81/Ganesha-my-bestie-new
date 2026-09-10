@@ -49,14 +49,17 @@ const DEFAULT_LAYOUT = {
   // feather/mango icon itself (rendered separately, invisible until tapped)
   // flies out to the peacock/monkey. targetFeather/targetMango below are
   // just the invisible tap hit-areas, sized to cover their bush.
+  // Layering (back to front): bush1 (z12) -> the item itself (z13) -> the
+  // front bush/flower (z14) that partially covers it. bush2/yellow-flowers
+  // are pointer-events:none, so this doesn't block tapping the item.
   targetFeatherBush1: { x: 62.08, y: 66.76, w: 24, z: 12 },
-  targetFeatherBush2: { x: 71.32, y: 66.9, w: 21.6, z: 13 },
+  targetFeatherBush2: { x: 71.32, y: 66.9, w: 21.6, z: 14 },
   targetMangoBush: { x: 45.48, y: 45.81, w: 24, z: 12 },
-  targetFeather: { x: 62.08, y: 66.76, w: 9.84, z: 14 },
-  targetFeatherFound: { x: 62.08, y: 66.76, w: 9.84, z: 14 },
-  targetMango: { x: 45.48, y: 45.81, w: 6, z: 14 },
-  targetMangoFound: { x: 45.48, y: 45.81, w: 6, z: 14 },
-  distractorYellowFlowers: { x: 46.07, y: 48.95, w: 11.28, z: 11 }
+  targetFeather: { x: 62.08, y: 66.76, w: 9.84, z: 13 },
+  targetFeatherFound: { x: 62.08, y: 66.76, w: 9.84, z: 13 },
+  targetMango: { x: 45.48, y: 45.81, w: 6, z: 13 },
+  targetMangoFound: { x: 45.48, y: 45.81, w: 6, z: 13 },
+  distractorYellowFlowers: { x: 46.07, y: 48.95, w: 11.28, z: 15 }
 };
 
 const DEBUG_KEYS = [
@@ -164,7 +167,9 @@ const EyesPopUpGame = ({
 }) => {
   const [flow, setFlow] = useState(FLOW.SEARCH);
   const [foundTargets, setFoundTargets] = useState([]);
+  const [centeredTargets, setCenteredTargets] = useState([]);
   const [carriedTargets, setCarriedTargets] = useState([]);
+  const [deliveredTargets, setDeliveredTargets] = useState([]);
   const [goneTargets, setGoneTargets] = useState([]);
   const [feedback, setFeedback] = useState('');
   const [softPulse, setSoftPulse] = useState(null);
@@ -186,7 +191,9 @@ const EyesPopUpGame = ({
   const debugPanelDragRef = useRef(null);
 
   const foundIds = useMemo(() => new Set(foundTargets), [foundTargets]);
+  const centeredIds = useMemo(() => new Set(centeredTargets), [centeredTargets]);
   const carriedIds = useMemo(() => new Set(carriedTargets), [carriedTargets]);
+  const deliveredIds = useMemo(() => new Set(deliveredTargets), [deliveredTargets]);
   const goneIds = useMemo(() => new Set(goneTargets), [goneTargets]);
   const selectedDebugLayout = layout[selectedDebugKey] || DEFAULT_LAYOUT[selectedDebugKey];
 
@@ -356,7 +363,9 @@ const EyesPopUpGame = ({
     completedRef.current = false;
     setFlow(FLOW.SEARCH);
     setFoundTargets([]);
+    setCenteredTargets([]);
     setCarriedTargets([]);
+    setDeliveredTargets([]);
     setGoneTargets([]);
     setFeedback('');
     setSoftPulse(null);
@@ -447,16 +456,22 @@ const EyesPopUpGame = ({
     showFeedback(target.prompt, target.id);
     speak(VO_TEXTS[target.id] || target.label);
 
-    // Let the child see it found in place briefly, then carry it to the
-    // animal, then remove it so only the resolved animal state remains.
-    schedule(() => setCarriedTargets((prev) => [...prev, target.id]), 550);
-    schedule(() => setGoneTargets((prev) => [...prev, target.id]), 1150);
+    // Slower, staged journey so kids can actually follow it: hold in place
+    // to register the find -> glide to the center of the scene (900ms,
+    // matches the CSS transition) -> pause there -> glide to the animal
+    // (another 900ms) -> only once it's actually ARRIVED does the animal's
+    // pose change -> brief hold -> icon disappears, leaving just the
+    // resolved animal.
+    schedule(() => setCenteredTargets((prev) => [...prev, target.id]), 700); // hold, then start gliding to center
+    schedule(() => setCarriedTargets((prev) => [...prev, target.id]), 2100); // 700 + 900 glide + 500 pause at center
+    schedule(() => setDeliveredTargets((prev) => [...prev, target.id]), 3000); // 2100 + 900 glide to animal
+    schedule(() => setGoneTargets((prev) => [...prev, target.id]), 3600); // 3000 + 600 hold after pose change
   }, [debugMode, flow, foundIds, resetIdle, schedule, showFeedback, speak]);
 
   if (hideElements || !isActive) return null;
 
-  const monkeyImg = foundIds.has('mango') ? monkeyHappyImg : monkeyWorriedImg;
-  const peacockImg = foundIds.has('feather') ? peacockHappyImg : peacockWorriedImg;
+  const monkeyImg = deliveredIds.has('mango') ? monkeyHappyImg : monkeyWorriedImg;
+  const peacockImg = deliveredIds.has('feather') ? peacockHappyImg : peacockWorriedImg;
 
   return (
     <div
@@ -515,24 +530,36 @@ const EyesPopUpGame = ({
 
       {SEARCH_TARGETS.map((target) => {
         const isFound = foundIds.has(target.id);
+        const isCentered = centeredIds.has(target.id);
         const isCarried = carriedIds.has(target.id);
         const isGone = goneIds.has(target.id);
         if (isGone) return null;
 
-        const activeLayoutKey = isCarried
-          ? target.carryLayoutKey
-          : isFound
-            ? target.foundLayoutKey
-            : target.layoutKey;
+        // Width/z always come from the found-or-hidden size; only the
+        // x/y differ across the found -> centered -> carried journey, so
+        // the icon doesn't jump size mid-flight.
+        const sizeKey = isFound ? target.foundLayoutKey : target.layoutKey;
+        const sizeLayout = layout[sizeKey];
+        const pos = isCarried
+          ? layout[target.carryLayoutKey]
+          : isCentered
+            ? { x: 50, y: 46 }
+            : sizeLayout;
 
         return (
           <button
             key={target.id}
             type="button"
-            className={`eyes-hidden-target clue-target ${isFound ? 'found' : ''} ${isCarried ? 'carried' : ''} ${hintId === target.id ? 'hinting' : ''} ${softPulse === target.id ? 'soft-pulse' : ''} ${debugMode && selectedDebugKey === activeLayoutKey ? 'is-debug-selected' : ''}`}
-            style={{ ...styleFromLayout(layout[activeLayoutKey]), aspectRatio: '1 / 1' }}
+            className={`eyes-hidden-target clue-target ${isFound ? 'found' : ''} ${isCarried ? 'carried' : ''} ${hintId === target.id ? 'hinting' : ''} ${softPulse === target.id ? 'soft-pulse' : ''} ${debugMode && selectedDebugKey === sizeKey ? 'is-debug-selected' : ''}`}
+            style={{
+              left: `${pos.x}%`,
+              top: `${pos.y}%`,
+              width: `${sizeLayout.w}%`,
+              zIndex: sizeLayout.z,
+              aspectRatio: '1 / 1'
+            }}
             onClick={(e) => handleTargetTap(target, e)}
-            onPointerDown={(e) => debugMode && startDebugDrag(e, activeLayoutKey)}
+            onPointerDown={(e) => debugMode && startDebugDrag(e, sizeKey)}
             aria-label={`Find ${target.label}`}
             disabled={!debugMode && isFound}
           >
