@@ -143,9 +143,11 @@ const VO_TEXTS = {
 
 const BETWEEN_SOUND_MS = 560;
 const INTRO_DELAY_MS = 700;
-const REVEAL_FRAME_MS = 480;
-const NEXT_ROUND_DELAY_MS = 1350;
-const COMPLETE_DELAY_MS = 1500;
+// Slower reveal pacing — kids need time to actually see each pose before it
+// swaps to the next, and a real pause before the next round begins.
+const REVEAL_FRAME_MS = 950;
+const NEXT_ROUND_DELAY_MS = 2000;
+const COMPLETE_DELAY_MS = 1900;
 const HINT_REPLAY_MS = 10000;
 const HINT_TEXT_MS = 18000;
 const HINT_TARGET_MS = 26000;
@@ -591,6 +593,7 @@ const EarsSoundMatchGame = ({
       <img className="ears-game-bg" src={bgImg} alt="" draggable={false} />
 
       <img
+        key={elephantFrame}
         className={`ears-story-sprite ${elephantOpacityClass} ${debugMode && selectedDebugKey === 'elephantSprite' ? 'is-debug-selected' : ''}`}
         src={elephantFrame}
         alt=""
@@ -599,6 +602,7 @@ const EarsSoundMatchGame = ({
         onPointerDown={(e) => startDebugDrag(e, 'elephantSprite')}
       />
       <img
+        key={cowFrame}
         className={`ears-story-sprite ${cowOpacityClass} ${debugMode && selectedDebugKey === 'cowSprite' ? 'is-debug-selected' : ''}`}
         src={cowFrame}
         alt=""
@@ -636,7 +640,7 @@ const EarsSoundMatchGame = ({
           >
             <span className="ears-source-number">{index + 1}</span>
             <span className="ears-source-pulse" aria-hidden="true" />
-            <img src={zoneImg} alt="" draggable={false} />
+            <img key={zoneImg} src={zoneImg} alt="" draggable={false} />
           </button>
         );
       })}
