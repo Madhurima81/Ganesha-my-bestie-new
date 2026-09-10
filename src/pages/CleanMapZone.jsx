@@ -1345,10 +1345,14 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
       if (onZoneSelect) onZoneSelect(zone.id);
       return;
     }
-    // Every zone: skip the welcome screen, go straight to its first scene.
-    // Keeps the finish -> return -> discover -> play rhythm unbroken.
-    const firstScene = ZONE_FIRST_SCENES[zone.id];
-    if (onZoneSelect) onZoneSelect(zone.id, firstScene);
+    // Symbol Mountain: skip welcome, go straight to first scene (modak)
+    if (state === 'active' && zone.id === ZONE_IDS.SYMBOL) {
+      const firstScene = ZONE_FIRST_SCENES[zone.id];
+      if (onZoneSelect) onZoneSelect(zone.id, firstScene);
+      return;
+    }
+    // All other zones: open zone welcome screen
+    if (onZoneSelect) onZoneSelect(zone.id);
   };
 
   const handleZoneClick = (zone, state) => {
