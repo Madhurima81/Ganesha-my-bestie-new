@@ -28,7 +28,7 @@ const DEBUG_UI_ENABLED =
   (window.location.pathname.includes('game-test') ||
     new URLSearchParams(window.location.search).has('debugEyes'));
 const LAYOUT_STORAGE_KEY = 'symbol_mountain_eyes_layout_v2';
-const LAYOUT_PRESET_VERSION = '2026-09-10-eyes-visual-flow-editor-layout-4';
+const LAYOUT_PRESET_VERSION = '2026-09-10-eyes-visual-flow-editor-layout-5';
 
 const DEFAULT_LAYOUT = {
   prompt: { x: 50, y: 5.6, w: 52, z: 40 },
@@ -45,15 +45,17 @@ const DEFAULT_LAYOUT = {
   // removed below rather than kept in their old spots.
   monkeyCharacter: { x: 17.58, y: 38.74, w: 12, z: 15 },
   peacockCharacter: { x: 67.78, y: 43.58, w: 20.16, z: 15 },
-  targetFeather: { x: 62.08, y: 66.76, w: 24, z: 12 },
-  targetFeatherFound: { x: 62.08, y: 66.76, w: 9.84, z: 12 },
-  // Decorative second bush — purely visual, not tappable — layered with
-  // targetFeather per the editor's design so the feather reads as more
-  // fully hidden. Hides itself once the feather is found, same as the
-  // interactive bush.
+  // The bushes are permanent scenery — they never disappear. Only the
+  // feather/mango icon itself (rendered separately, invisible until tapped)
+  // flies out to the peacock/monkey. targetFeather/targetMango below are
+  // just the invisible tap hit-areas, sized to cover their bush.
+  targetFeatherBush1: { x: 62.08, y: 66.76, w: 24, z: 12 },
   targetFeatherBush2: { x: 71.32, y: 66.9, w: 21.6, z: 13 },
-  targetMango: { x: 45.48, y: 45.81, w: 24, z: 12 },
-  targetMangoFound: { x: 45.48, y: 45.81, w: 6, z: 12 },
+  targetMangoBush: { x: 45.48, y: 45.81, w: 24, z: 12 },
+  targetFeather: { x: 62.08, y: 66.76, w: 24, z: 14 },
+  targetFeatherFound: { x: 62.08, y: 66.76, w: 9.84, z: 14 },
+  targetMango: { x: 45.48, y: 45.81, w: 24, z: 14 },
+  targetMangoFound: { x: 45.48, y: 45.81, w: 6, z: 14 },
   distractorYellowFlowers: { x: 46.07, y: 48.95, w: 11.28, z: 11 }
 };
 
@@ -63,10 +65,12 @@ const DEBUG_KEYS = [
   { key: 'tray', label: 'Found tray' },
   { key: 'monkeyCharacter', label: 'Monkey (worried)' },
   { key: 'peacockCharacter', label: 'Peacock (worried)' },
-  { key: 'targetFeather', label: 'Target - feather in bush' },
+  { key: 'targetFeatherBush1', label: 'Feather bush (permanent)' },
+  { key: 'targetFeatherBush2', label: 'Feather bush 2 (permanent)' },
+  { key: 'targetFeather', label: 'Target - feather tap area (invisible)' },
   { key: 'targetFeatherFound', label: 'Target - feather found (small)' },
-  { key: 'targetFeatherBush2', label: 'Decorative second feather bush' },
-  { key: 'targetMango', label: 'Target - mango in flowers' },
+  { key: 'targetMangoBush', label: 'Mango bush (permanent)' },
+  { key: 'targetMango', label: 'Target - mango tap area (invisible)' },
   { key: 'targetMangoFound', label: 'Target - mango found (small)' },
   { key: 'distractorYellowFlowers', label: 'Distractor - yellow flowers' }
 ];
@@ -99,7 +103,9 @@ const SEARCH_TARGETS = [
   {
     id: 'feather',
     label: 'Feather',
-    hiddenImg: newFeatherBushImg,
+    // No hiddenImg — the bush is permanent scenery rendered separately.
+    // The tap target itself is invisible until found.
+    hiddenImg: null,
     foundImg: featherFoundImg,
     layoutKey: 'targetFeather',
     foundLayoutKey: 'targetFeatherFound',
@@ -109,7 +115,8 @@ const SEARCH_TARGETS = [
   {
     id: 'mango',
     label: 'Mango',
-    hiddenImg: newMangoBushImg,
+    // No hiddenImg — the bush is permanent scenery rendered separately.
+    hiddenImg: null,
     foundImg: mangoFoundImg,
     layoutKey: 'targetMango',
     foundLayoutKey: 'targetMangoFound',
@@ -478,19 +485,32 @@ const EyesPopUpGame = ({
         onPointerDown={(e) => startDebugDrag(e, 'peacockCharacter')}
       />
 
-      {/* Purely decorative — layered with the feather's own bush so it reads
-          as more fully hidden, per the editor's two-bush design. Not
-          tappable; disappears once the feather is found. */}
-      {!foundIds.has('feather') && (
-        <img
-          className={`eyes-hiding-prop ${debugMode && selectedDebugKey === 'targetFeatherBush2' ? 'is-debug-selected' : ''}`}
-          src={newFeatherBushImg}
-          alt=""
-          draggable={false}
-          style={styleFromLayout(layout.targetFeatherBush2)}
-          onPointerDown={(e) => debugMode && startDebugDrag(e, 'targetFeatherBush2')}
-        />
-      )}
+      {/* Permanent scenery — the bushes never disappear. Only the feather/
+          mango icon itself flies out to the peacock/monkey once tapped. */}
+      <img
+        className={`eyes-hiding-prop ${debugMode && selectedDebugKey === 'targetFeatherBush1' ? 'is-debug-selected' : ''}`}
+        src={newFeatherBushImg}
+        alt=""
+        draggable={false}
+        style={styleFromLayout(layout.targetFeatherBush1)}
+        onPointerDown={(e) => debugMode && startDebugDrag(e, 'targetFeatherBush1')}
+      />
+      <img
+        className={`eyes-hiding-prop ${debugMode && selectedDebugKey === 'targetFeatherBush2' ? 'is-debug-selected' : ''}`}
+        src={newFeatherBushImg}
+        alt=""
+        draggable={false}
+        style={styleFromLayout(layout.targetFeatherBush2)}
+        onPointerDown={(e) => debugMode && startDebugDrag(e, 'targetFeatherBush2')}
+      />
+      <img
+        className={`eyes-hiding-prop ${debugMode && selectedDebugKey === 'targetMangoBush' ? 'is-debug-selected' : ''}`}
+        src={newMangoBushImg}
+        alt=""
+        draggable={false}
+        style={styleFromLayout(layout.targetMangoBush)}
+        onPointerDown={(e) => debugMode && startDebugDrag(e, 'targetMangoBush')}
+      />
 
       {SEARCH_TARGETS.map((target) => {
         const isFound = foundIds.has(target.id);
@@ -509,13 +529,15 @@ const EyesPopUpGame = ({
             key={target.id}
             type="button"
             className={`eyes-hidden-target clue-target ${isFound ? 'found' : ''} ${isCarried ? 'carried' : ''} ${hintId === target.id ? 'hinting' : ''} ${softPulse === target.id ? 'soft-pulse' : ''} ${debugMode && selectedDebugKey === activeLayoutKey ? 'is-debug-selected' : ''}`}
-            style={styleFromLayout(layout[activeLayoutKey])}
+            style={{ ...styleFromLayout(layout[activeLayoutKey]), aspectRatio: '1 / 1' }}
             onClick={(e) => handleTargetTap(target, e)}
             onPointerDown={(e) => debugMode && startDebugDrag(e, activeLayoutKey)}
             aria-label={`Find ${target.label}`}
             disabled={!debugMode && isFound}
           >
-            <img src={isFound ? target.foundImg : target.hiddenImg} alt="" draggable={false} />
+            {(isFound ? target.foundImg : target.hiddenImg) && (
+              <img src={isFound ? target.foundImg : target.hiddenImg} alt="" draggable={false} />
+            )}
           </button>
         );
       })}
