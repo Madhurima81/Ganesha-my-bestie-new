@@ -210,79 +210,46 @@
    Dimmed, desaturated, no pointer events
 ──────────────────────────────────────────────── */
 .zone.zone-state-locked {
-  opacity: 0.6;
-  filter: none;
-  pointer-events: auto;
-  cursor: pointer;
-}
-
-/* Locked non-primary zones recede in opacity only — no desaturation */
-.cave-secrets.zone.zone-state-locked,
-.festival-square.zone.zone-state-locked,
-.cave-secrets.zone.zone-state-coming-soon,
-.festival-square.zone.zone-state-coming-soon {
   opacity: 0.45;
-  filter: none;
+  pointer-events: none;
+  cursor: default;
 }
 
 /* ── UNLOCKING STATE ──────────────────────────────
-   Brief glow + scale settle when a zone opens
+   One-shot glow — the only map glow effect.
 ──────────────────────────────────────────────── */
 .zone.zone-state-unlocking {
   pointer-events: none;
-  animation: zoneUnlockPulse 1.2s ease-out forwards;
 }
 
 .zone.zone-state-unlocking::after {
   content: "";
   position: absolute;
-  inset: -14px;
-  border-radius: 28px;
+  inset: -12px;
+  border-radius: 26px;
   background: radial-gradient(
     circle,
-    rgba(255, 215, 120, 0.6) 0%,
-    rgba(255, 215, 120, 0.35) 35%,
-    rgba(255, 215, 120, 0.15) 60%,
-    transparent 75%
+    rgba(255, 196, 80, 0.34) 0%,
+    rgba(255, 196, 80, 0.16) 45%,
+    transparent 72%
   );
-  animation: zoneUnlockGlow 1.2s ease-out forwards;
   pointer-events: none;
-  z-index: -1;
+  animation: simpleZoneReveal 1.4s ease-out forwards;
 }
 
-.zone.zone-state-unlocking.zone-unlock-master::after {
-  inset: -18px;
-  border-radius: 32px;
-  background: radial-gradient(
-    circle,
-    rgba(255, 210, 90, 0.82) 0%,
-    rgba(255, 210, 90, 0.48) 38%,
-    rgba(255, 210, 90, 0.2) 64%,
-    transparent 80%
-  );
-}
-
-@keyframes zoneUnlockPulse {
+@keyframes simpleZoneReveal {
   0% {
-    transform: scale(0.92);
-    opacity: 0.7;
+    opacity: 0;
+    transform: scale(0.96);
   }
-  40% {
-    transform: scale(1.08);
+  35% {
     opacity: 1;
-  }
-  70% {
-    transform: scale(1.03);
+    transform: scale(1.025);
   }
   100% {
+    opacity: 0;
     transform: scale(1);
   }
-}
-
-@keyframes zoneUnlockGlow {
-  0% { opacity: 0; }
-  30% { opacity: 1; }
-  100% { opacity: 0; }
 }
 
 /* =========================
@@ -290,18 +257,22 @@
 ========================= */
 .label {
   position: absolute;
+  display: inline-block;
   font-family: 'Baloo 2', 'Nunito', sans-serif;
   font-weight: 800;
-  letter-spacing: 1px;
+  letter-spacing: 0.4px;
   white-space: nowrap;
-  color: #6b56b3;
-  text-shadow: 0 1px 4px rgba(255, 255, 255, 0.45);
+  color: #ffffff;
+  background: linear-gradient(180deg, #8A6FD6 0%, #6C4FB6 100%);
+  padding: clamp(6px, 0.8vw, 10px) clamp(16px, 1.8vw, 26px);
+  border-radius: 999px;
+  box-shadow: 0 4px 10px rgba(80, 50, 150, 0.35);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
   line-height: 1.2;
   text-align: center;
   pointer-events: auto;
   z-index: 10;
-  transition: color 0.3s ease, opacity 0.3s ease;
-  animation: spiritualBreath 6s ease-in-out infinite; /* no idle glow — only in-progress gets textPulseGold */
+  transition: color 0.3s ease, opacity 0.3s ease, background 0.3s ease;
   cursor: pointer;
 }
 
@@ -328,38 +299,19 @@
 .label.label-state-active,
 .label.label-state-in-progress,
 .label.label-state-completed {
-  color: var(--color-title-purple, #7B6D9E);
+  color: #ffffff;
   opacity: 1;
 }
 
-/* In-progress: same breath as other states — no permanent glow */
-.label.label-state-in-progress {
-  animation: spiritualBreath 6s ease-in-out infinite;
-}
-
-/* Locked: muted purple, slightly dim */
+/* Locked: dimmed pill, not tappable */
 .label.label-state-locked {
-  color: #8e82c9;
-  opacity: 0.75;
+  color: #ffffff;
+  opacity: 0.45;
+  box-shadow: none;
   animation: none;
   text-shadow: none;
-}
-
-/* Unlock note under locked label */
-.unlock-note {
-  display: block;
-  font-family: 'Nunito', sans-serif;
-  font-size: clamp(10px, 1vw, 14px);
-  font-weight: 500;
-  margin-top: 6px;
-  color: #8e82c9;
-  letter-spacing: 0.3px;
-}
-
-@keyframes spiritualBreath {
-  0%   { opacity: 0.8; }
-  50%  { opacity: 1;   }
-  100% { opacity: 0.8; }
+  pointer-events: none;
+  cursor: default;
 }
 
 @keyframes textPulse {
@@ -955,26 +907,6 @@
   .map-back-button       { font-size: 12px; padding: 6px 14px; }
 }
 
-/* ── Zone Progress Dots ── */
-.zone-progress {
-  display: flex;
-  justify-content: center;
-  gap: 9px;
-  margin-top: 8px;
-}
-
-.zone-progress-dot {
-  width: 11px;
-  height: 11px;
-  border-radius: 50%;
-  background: rgba(140, 120, 200, 0.4);
-}
-
-.zone-progress-dot.completed {
-  background: #f4c430;
-  box-shadow: 0 0 8px rgba(244, 196, 48, 0.75), 0 0 3px rgba(244, 196, 48, 0.5);
-}
-
 /* =========================
    GANESHA GUIDE
 ========================= */
@@ -1131,285 +1063,24 @@
   50% { transform: translateX(-50%) translateY(-3px) scale(0.9); }
 }
 
-/* ── COMING SOON STATE ────────────────────────────
-   Inviting, not punishing — content exists, just not yet wired.
-   Tappable so child gets a friendly Mushika + Ganesha VO response.
+/* ── COMING SOON / FUTURE STATE ───────────────────
+   Quiet and untappable — the destination being subdued
+   is enough to mean "not available yet."
 ──────────────────────────────────────────────── */
 .zone.zone-state-coming-soon {
-  opacity: 1;
-  filter: none;
-  pointer-events: auto;
-  cursor: pointer;
-  transition: opacity 0.3s ease, filter 0.3s ease;
-}
-
-.zone.zone-state-coming-soon:hover,
-.zone.zone-state-coming-soon:active {
-  opacity: 1;
-  filter: saturate(1);
-}
-
-/* "Coming Soon" pill under the zone label */
-.coming-soon-pill {
-  display: inline-block;
-  margin-top: 6px;
-  padding: 4px 8px;
-  background: rgba(255, 220, 120, 0.6);
-  color: #6b5bb3;
-  font-family: 'Baloo 2', cursive;
-  font-weight: 700;
-  font-size: 11px;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
-  letter-spacing: 0.3px;
-  white-space: nowrap;
-}
-
-/* Cave as discovery, not primary CTA */
-.cave-label.label-state-coming-soon {
-  opacity: 0.8;
-  filter: saturate(0.88);
-}
-
-.cave-label.label-state-coming-soon .coming-soon-pill {
-  opacity: 0.7;
-}
-
-.festival-label.label-state-coming-soon {
-  opacity: 0.8;
-  filter: saturate(0.88);
-}
-
-.festival-label.label-state-coming-soon .coming-soon-pill {
-  opacity: 0.7;
-}
-
-/* Coming-soon labels stay full-color (unlike locked, which is muted) */
-.label.label-state-coming-soon {
-  opacity: 1;
-}
-
-/* —— FIRST-TIME ACTIVE ——————————————————————————————
-   Symbol Mountain on very first map load — extra invitation.
-   Gentle breathing scale + brightness lift to draw the eye.
-———————————————————————————————————————————————————————— */
-.zone.zone-state-first-time {
-  animation: firstTimeBreathing 2.4s ease-in-out infinite;
-}
-
-@keyframes firstTimeBreathing {
-  0%, 100% { transform: scale(1);    filter: brightness(1); }
-  50%      { transform: scale(1.04); filter: brightness(1.08); }
-}
-
-/* Gentle feedback on locked/coming-soon taps */
-.zone.zone-tap-shake {
-  animation: mapZoneGentleShake 0.34s ease-in-out;
-}
-
-@keyframes mapZoneGentleShake {
-  0% { transform: translateX(0); }
-  25% { transform: translateX(-2px); }
-  50% { transform: translateX(2px); }
-  75% { transform: translateX(-1px); }
-  100% { transform: translateX(0); }
-}
-
-/* Primary CTA: Symbol Mountain only */
-.symbol-mountain-door.zone.zone-state-active,
-.symbol-mountain-door.zone.zone-state-in-progress {
-  animation: softPulse 2.8s ease-in-out infinite;
-}
-
-.symbol-mountain-door.zone.zone-state-first-time {
-  animation: firstTimeBreathing 2.4s ease-in-out infinite;
-}
-
-.symbol-mountain-door.zone.zone-state-active::after,
-.symbol-mountain-door.zone.zone-state-in-progress::after {
-  content: "";
-  position: absolute;
-  inset: -6px;
-  border-radius: 20px;
-  background: radial-gradient(
-    rgba(140, 120, 220, 0.18),
-    transparent 70%
-  );
-  opacity: 0.6;
+  opacity: 0.4;
   pointer-events: none;
+  cursor: default;
 }
 
-.symbol-mountain-door.zone.zone-state-first-time::after {
-  content: "";
-  position: absolute;
-  inset: -12px;
-  border-radius: 24px;
-  background: radial-gradient(
-    rgba(255, 201, 89, 0.34),
-    rgba(180, 128, 255, 0.18) 42%,
-    transparent 74%
-  );
-  box-shadow:
-    0 0 22px rgba(255, 201, 89, 0.22),
-    0 0 42px rgba(180, 128, 255, 0.16);
-  opacity: 0.95;
-  pointer-events: none;
-  animation: firstTimeZoneAura 2.4s ease-in-out infinite;
-}
-
-@keyframes softPulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.015); }
-}
-
-@keyframes firstTimeZoneAura {
-  0%, 100% {
-    transform: scale(0.98);
-    opacity: 0.8;
-  }
-  50% {
-    transform: scale(1.04);
-    opacity: 1;
-  }
-}
-
-
-
-/* =========================
-   ZONE GLOW � saffron radial glow sits behind the zone PNG
-========================= */
-.zone-glow {
-  position: absolute;
-  inset: -18px;
-  border-radius: 30%;
-  background: radial-gradient(
-    circle,
-    rgba(255, 153, 51, 0.38) 0%,
-    rgba(255, 200, 80, 0.18) 45%,
-    transparent 72%
-  );
-  pointer-events: none;
-  z-index: 0;
-  animation: zoneGlowPulse 2.6s ease-in-out infinite;
-}
-
-@keyframes zoneGlowPulse {
-  0%, 100% { opacity: 0.7; transform: scale(1);    }
-  50%       { opacity: 1;   transform: scale(1.08); }
-}
-
-/* Active (not first-time) gets a softer, slower glow */
-.zone-state-active .zone-glow {
-  animation-duration: 3.4s;
-  opacity: 0.55;
-}
-
-.zone-state-first-time .zone-glow {
-  animation-duration: 2s;
-  opacity: 0.98;
-  background: radial-gradient(
-    circle,
-    rgba(255, 184, 56, 0.52) 0%,
-    rgba(194, 149, 255, 0.26) 44%,
-    transparent 72%
-  );
-}
-
-/* In-progress gets full saffron pulse */
-.zone-state-in-progress .zone-glow {
-  animation-duration: 2.2s;
-  background: radial-gradient(
-    circle,
-    rgba(255, 165, 0, 0.48) 0%,
-    rgba(255, 200, 80, 0.22) 45%,
-    transparent 70%
-  );
-}
-
-/* =========================
-   BUILDING SIGN — coming-soon zones
-========================= */
-.zone-building-sign {
-  position: absolute;
-  transform: translate(-50%, -100%);
-  width: clamp(90px, 10vw, 160px);
-  pointer-events: none;
-  z-index: 12;
-  animation: buildingBob 3s ease-in-out infinite;
-  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.18));
-}
-
-@keyframes buildingBob {
-  0%, 100% { transform: translate(-50%, -100%) translateY(0);    }
-  50%       { transform: translate(-50%, -100%) translateY(-6px); }
-}
-
-/* coming-soon zones: full color, no dimming */
-.zone.zone-state-coming-soon {
-  opacity: 1;
-  filter: none;
-}
-
-.zone.zone-state-coming-soon:hover,
-.zone.zone-state-coming-soon:active {
-  opacity: 1;
-  filter: none;
-}
-
-/* Coming-soon zone title � faded */
+.label.label-state-coming-soon,
 .label-coming-soon {
-  opacity: .55;
-  color: #8f86b8;
-}
-
-/* =========================
-   ZONE LOCK ICON
-========================= */
-.zone-lock {
-  position: absolute;
-  width: 52px;
-  height: 52px;
-  transform: translate(-50%, -50%);
-  top: -8px;
-  right: -8px;
+  opacity: 0.45;
+  color: #8e82c9;
   pointer-events: none;
-  z-index: 9;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
-  animation: lockWiggle 4s ease-in-out infinite;
-}
-
-@keyframes lockWiggle {
-  0%,90%,100% { transform: rotate(0deg);  }
-  93%          { transform: rotate(-8deg); }
-  96%          { transform: rotate(8deg);  }
-}
-
-/* Lock scales out when zone unlocks */
-.zone-lock--out {
-  animation: lockOut 0.3s ease-in forwards;
-}
-
-@keyframes lockOut {
-  to { transform: scale(0); opacity: 0; }
-}
-
-/* Unlock flash � brief open-lock during transition */
-.zone-unlock-flash {
-  position: absolute;
-  width: 52px;
-  height: 52px;
-  transform: translate(-50%, -50%);
-  right: -8px;
-  pointer-events: none;
-  z-index: 9;
-  animation: unlockFlash 1.0s ease-out forwards;
-}
-
-@keyframes unlockFlash {
-  0%   { transform: scale(0.4); opacity: 0; }
-  30%  { transform: scale(1.2); opacity: 1; }
-  70%  { transform: scale(1.0); opacity: 1; }
-  100% { transform: scale(1.0); opacity: 0; }
+  cursor: default;
+  animation: none;
+  text-shadow: none;
 }
 
 /* =========================
