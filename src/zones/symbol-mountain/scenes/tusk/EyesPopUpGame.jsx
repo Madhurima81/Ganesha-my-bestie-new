@@ -15,9 +15,7 @@ import featherHiddenImg from './assets/images/eyes-game-v2/feather_hidden_in_lea
 import mangoHiddenImg from './assets/images/eyes-game-v2/mango_hidden_in_yellow_flower_bush.png';
 import featherFoundImg from './assets/images/eyes-game-v2/peacock_feather_single.png';
 import mangoFoundImg from './assets/images/eyes-game/mango.png';
-import butterflyImg from './assets/images/eyes-game-v2/golden_butterfly.png';
 import yellowFlowerClusterImg from './assets/images/eyes-game-v2/yellow_flower_cluster.png';
-import creamFlowerClusterImg from './assets/images/eyes-game-v2/cream_flower_cluster.png';
 import { ANIMAL_POSITIONS } from './animalPositions';
 
 const FLOW = {
@@ -30,7 +28,7 @@ const DEBUG_UI_ENABLED =
   (window.location.pathname.includes('game-test') ||
     new URLSearchParams(window.location.search).has('debugEyes'));
 const LAYOUT_STORAGE_KEY = 'symbol_mountain_eyes_layout_v2';
-const LAYOUT_PRESET_VERSION = '2026-09-10-eyes-visual-flow-editor-layout-2';
+const LAYOUT_PRESET_VERSION = '2026-09-10-eyes-visual-flow-editor-layout-3';
 
 const DEFAULT_LAYOUT = {
   prompt: { x: 50, y: 5.6, w: 52, z: 40 },
@@ -40,17 +38,18 @@ const DEFAULT_LAYOUT = {
   // Madhurima's Visual Flow Editor layout (Beat 1 — "Search begins"). Both the
   // editor and this game center-anchor sprites (translate(-50%,-50%)), so the
   // editor's x/y/effective-width copy over directly — no top-left conversion
-  // needed. Butterfly and cream-flowers distractors were not part of that
-  // layout, so they keep their previous positions.
+  // needed. The hidden-state (bush) sizes use the editor's "New feather/mango
+  // bush" item widths, NOT the tiny "found" item widths — that mismatch is
+  // what made the bushes render too small the first time. Butterfly and
+  // cream-flowers were dropped from the authored layout entirely, so they're
+  // removed below rather than kept in their old spots.
   monkeyCharacter: { x: 17.58, y: 38.74, w: 12, z: 15 },
   peacockCharacter: { x: 67.78, y: 43.58, w: 20.16, z: 15 },
-  targetFeather: { x: 62.08, y: 66.76, w: 9.84, z: 12 },
-  targetFeatherFound: { x: 62.08, y: 66.76, w: 5.41, z: 12 },
-  targetMango: { x: 45.48, y: 45.81, w: 6, z: 12 },
-  targetMangoFound: { x: 45.48, y: 45.81, w: 3.75, z: 12 },
-  distractorButterfly: { x: 55, y: 40, w: 9, z: 11 },
-  distractorYellowFlowers: { x: 46.07, y: 48.95, w: 11.28, z: 11 },
-  distractorCreamFlowers: { x: 78, y: 30, w: 15, z: 11 }
+  targetFeather: { x: 62.08, y: 66.76, w: 24, z: 12 },
+  targetFeatherFound: { x: 62.08, y: 66.76, w: 9.84, z: 12 },
+  targetMango: { x: 45.48, y: 45.81, w: 24, z: 12 },
+  targetMangoFound: { x: 45.48, y: 45.81, w: 6, z: 12 },
+  distractorYellowFlowers: { x: 46.07, y: 48.95, w: 11.28, z: 11 }
 };
 
 const DEBUG_KEYS = [
@@ -63,9 +62,7 @@ const DEBUG_KEYS = [
   { key: 'targetFeatherFound', label: 'Target - feather found (small)' },
   { key: 'targetMango', label: 'Target - mango in flowers' },
   { key: 'targetMangoFound', label: 'Target - mango found (small)' },
-  { key: 'distractorButterfly', label: 'Distractor - butterfly' },
-  { key: 'distractorYellowFlowers', label: 'Distractor - yellow flowers' },
-  { key: 'distractorCreamFlowers', label: 'Distractor - cream flowers' }
+  { key: 'distractorYellowFlowers', label: 'Distractor - yellow flowers' }
 ];
 
 const loadSavedLayout = () => {
@@ -115,10 +112,10 @@ const SEARCH_TARGETS = [
   }
 ];
 
+// Only the yellow-flowers distractor is part of the authored Beat 1 layout —
+// butterfly and cream-flowers were dropped from that design, not just moved.
 const DISTRACTORS = [
-  { id: 'butterfly', label: 'Butterfly', img: butterflyImg, layoutKey: 'distractorButterfly' },
-  { id: 'yellow-flowers', label: 'Flowers', img: yellowFlowerClusterImg, layoutKey: 'distractorYellowFlowers' },
-  { id: 'cream-flowers', label: 'Flowers', img: creamFlowerClusterImg, layoutKey: 'distractorCreamFlowers' }
+  { id: 'yellow-flowers', label: 'Flowers', img: yellowFlowerClusterImg, layoutKey: 'distractorYellowFlowers' }
 ];
 
 const VO_TEXTS = {
