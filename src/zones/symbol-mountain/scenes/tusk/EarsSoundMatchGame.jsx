@@ -10,8 +10,10 @@ import './EarsSoundMatchGame.css';
 // was a captured screenshot of the Eyes-game dev harness, not usable art).
 import bgImg from './assets/images/ears-game/symbol_mountain_3_bg.png';
 import leafyBushImg from './assets/images/ears-game-v2/leafy_bush.png';
-import modularRockImg from './assets/images/ears-game-v2/modular_rock.png';
-import waterPatchImg from './assets/images/ears-game-v2/water_patch.png';
+import hiddenSpringImg from './assets/images/ears-game-v2/hidden_spring.png';
+import revealedSpringImg from './assets/images/ears-game-v2/revealed_spring.png';
+import hiddenGrassBushImg from './assets/images/ears-game-v2/hidden_grass_bush.png';
+import revealedGrassBushImg from './assets/images/ears-game-v2/revealed_grass_bush.png';
 import elephantThirstyImg from './assets/images/ears-game-v2/elephant_thirsty.png';
 import elephantDrinkingImg from './assets/images/ears-game-v2/elephant_drinking.png';
 import elephantHappyWaterImg from './assets/images/ears-game-v2/elephant_happy_water.png';
@@ -38,17 +40,22 @@ const DEBUG_UI_ENABLED =
   (window.location.pathname.includes('game-test') ||
     new URLSearchParams(window.location.search).has('debugEars'));
 const LAYOUT_STORAGE_KEY = 'symbol_mountain_ears_layout_v2';
-const LAYOUT_PRESET_VERSION = '2026-09-09-ear-continuous-layout-1';
+const LAYOUT_PRESET_VERSION = '2026-09-10-ears-visual-flow-editor-layout';
 
 const DEFAULT_LAYOUT = {
   prompt: { x: 50, y: 5.6, w: 52 },
   feedback: { x: 50, y: 84, w: 42 },
   tray: { x: 50, y: 93, w: 18 },
-  leftBush: { x: 24, y: 55, w: 22, z: 16 },
-  centerRock: { x: 50, y: 68, w: 20, z: 16 },
-  rightSource: { x: 78, y: 52, w: 22, z: 16 },
-  elephantSprite: { x: 14, y: 74, w: 24, z: 20 },
-  cowSprite: { x: 88, y: 78, w: 20, z: 20 }
+  // Positions ported from Madhurima's Visual Flow Editor layout (tagged
+  // items). Cow's position varies noticeably across its 3 poses in the
+  // editor (tired/eating/happy) but this game only supports one fixed spot
+  // per sprite (poses swap in place, not travel) — used the eating-grass
+  // spot as the representative middle-ground; flag if it needs adjusting.
+  leftBush: { x: 23.08, y: 46.99, w: 24, z: 16 },
+  centerRock: { x: 58.94, y: 55.5, w: 24, z: 16 },
+  rightSource: { x: 83.69, y: 66.11, w: 24, z: 16 },
+  elephantSprite: { x: 35.17, y: 61.53, w: 24, z: 20 },
+  cowSprite: { x: 76.03, y: 65.72, w: 24, z: 20 }
 };
 
 const DEBUG_KEYS = [
@@ -86,11 +93,13 @@ const styleFromLayout = (layoutItem) => ({
   zIndex: layoutItem.z
 });
 
-// Same 3 zones/art for both rounds — only the sound behind each changes.
+// Left stays a plain decorative bush throughout — no hidden/revealed swap.
+// Center and right swap from a hidden to a revealed source once that
+// round's animal is solved, per Madhurima's Visual Flow Editor design.
 const ZONES = {
   left: { id: 'left', label: 'Bush', img: leafyBushImg, layoutKey: 'leftBush' },
-  center: { id: 'center', label: 'Rock', img: modularRockImg, layoutKey: 'centerRock' },
-  right: { id: 'right', label: 'Water', img: waterPatchImg, layoutKey: 'rightSource' }
+  center: { id: 'center', label: 'Spring', hiddenImg: hiddenSpringImg, revealedImg: revealedSpringImg, layoutKey: 'centerRock' },
+  right: { id: 'right', label: 'Grass', hiddenImg: hiddenGrassBushImg, revealedImg: revealedGrassBushImg, layoutKey: 'rightSource' }
 };
 
 const ROUNDS = [
@@ -98,11 +107,11 @@ const ROUNDS = [
     id: 'elephant',
     label: 'Elephant',
     prompt: 'Listen for the water.',
-    targetZoneId: 'right',
+    targetZoneId: 'center',
     sounds: {
       left: decoyRustle,
-      center: soundBirdAmbient,
-      right: soundWaterDrip
+      center: soundWaterDrip,
+      right: soundBirdAmbient
     },
     idleImg: elephantThirstyImg,
     revealFrames: [elephantDrinkingImg, elephantHappyWaterImg]
@@ -605,6 +614,14 @@ const EarsSoundMatchGame = ({
         const isHinted = hintZoneId === zone.id;
         const locked = phase !== PHASE.CHOOSING;
         const isComplete = phase === PHASE.COMPLETE;
+        // left has no hidden/revealed pair — it's plain decoration throughout.
+        // center (spring) reveals once Elephant is solved; right (grass)
+        // reveals once Cow is solved.
+        const zoneImg = !zone.hiddenImg
+          ? zone.img
+          : (zone.id === 'center' ? elephantSolved : cowSolved)
+            ? zone.revealedImg
+            : zone.hiddenImg;
 
         return (
           <button
@@ -619,7 +636,7 @@ const EarsSoundMatchGame = ({
           >
             <span className="ears-source-number">{index + 1}</span>
             <span className="ears-source-pulse" aria-hidden="true" />
-            <img src={zone.img} alt="" draggable={false} />
+            <img src={zoneImg} alt="" draggable={false} />
           </button>
         );
       })}
