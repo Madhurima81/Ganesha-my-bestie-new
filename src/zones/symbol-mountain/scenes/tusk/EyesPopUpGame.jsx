@@ -11,8 +11,8 @@ import monkeyWorriedImg from './assets/images/eyes-game-v2/monkey_hungry_worried
 import peacockWorriedImg from './assets/images/eyes-game-v2/peacock_worried_missing_feather.png';
 import monkeyHappyImg from './assets/images/eyes-game/monkey_04_smiles_holds_close.png';
 import peacockHappyImg from './assets/images/eyes-game/peacock_04_feather_highlight.png';
-import featherHiddenImg from './assets/images/eyes-game-v2/feather_hidden_in_leafy_bush.png';
-import mangoHiddenImg from './assets/images/eyes-game-v2/mango_hidden_in_yellow_flower_bush.png';
+import newFeatherBushImg from './assets/images/eyes-game-v2/new_feather_bush.png';
+import newMangoBushImg from './assets/images/eyes-game-v2/new_mango_bush.png';
 import featherFoundImg from './assets/images/eyes-game-v2/peacock_feather_single.png';
 import mangoFoundImg from './assets/images/eyes-game/mango.png';
 import yellowFlowerClusterImg from './assets/images/eyes-game-v2/yellow_flower_cluster.png';
@@ -28,7 +28,7 @@ const DEBUG_UI_ENABLED =
   (window.location.pathname.includes('game-test') ||
     new URLSearchParams(window.location.search).has('debugEyes'));
 const LAYOUT_STORAGE_KEY = 'symbol_mountain_eyes_layout_v2';
-const LAYOUT_PRESET_VERSION = '2026-09-10-eyes-visual-flow-editor-layout-3';
+const LAYOUT_PRESET_VERSION = '2026-09-10-eyes-visual-flow-editor-layout-4';
 
 const DEFAULT_LAYOUT = {
   prompt: { x: 50, y: 5.6, w: 52, z: 40 },
@@ -47,6 +47,11 @@ const DEFAULT_LAYOUT = {
   peacockCharacter: { x: 67.78, y: 43.58, w: 20.16, z: 15 },
   targetFeather: { x: 62.08, y: 66.76, w: 24, z: 12 },
   targetFeatherFound: { x: 62.08, y: 66.76, w: 9.84, z: 12 },
+  // Decorative second bush — purely visual, not tappable — layered with
+  // targetFeather per the editor's design so the feather reads as more
+  // fully hidden. Hides itself once the feather is found, same as the
+  // interactive bush.
+  targetFeatherBush2: { x: 71.32, y: 66.9, w: 21.6, z: 13 },
   targetMango: { x: 45.48, y: 45.81, w: 24, z: 12 },
   targetMangoFound: { x: 45.48, y: 45.81, w: 6, z: 12 },
   distractorYellowFlowers: { x: 46.07, y: 48.95, w: 11.28, z: 11 }
@@ -60,6 +65,7 @@ const DEBUG_KEYS = [
   { key: 'peacockCharacter', label: 'Peacock (worried)' },
   { key: 'targetFeather', label: 'Target - feather in bush' },
   { key: 'targetFeatherFound', label: 'Target - feather found (small)' },
+  { key: 'targetFeatherBush2', label: 'Decorative second feather bush' },
   { key: 'targetMango', label: 'Target - mango in flowers' },
   { key: 'targetMangoFound', label: 'Target - mango found (small)' },
   { key: 'distractorYellowFlowers', label: 'Distractor - yellow flowers' }
@@ -93,7 +99,7 @@ const SEARCH_TARGETS = [
   {
     id: 'feather',
     label: 'Feather',
-    hiddenImg: featherHiddenImg,
+    hiddenImg: newFeatherBushImg,
     foundImg: featherFoundImg,
     layoutKey: 'targetFeather',
     foundLayoutKey: 'targetFeatherFound',
@@ -103,7 +109,7 @@ const SEARCH_TARGETS = [
   {
     id: 'mango',
     label: 'Mango',
-    hiddenImg: mangoHiddenImg,
+    hiddenImg: newMangoBushImg,
     foundImg: mangoFoundImg,
     layoutKey: 'targetMango',
     foundLayoutKey: 'targetMangoFound',
@@ -471,6 +477,20 @@ const EyesPopUpGame = ({
         style={styleFromLayout(layout.peacockCharacter)}
         onPointerDown={(e) => startDebugDrag(e, 'peacockCharacter')}
       />
+
+      {/* Purely decorative — layered with the feather's own bush so it reads
+          as more fully hidden, per the editor's two-bush design. Not
+          tappable; disappears once the feather is found. */}
+      {!foundIds.has('feather') && (
+        <img
+          className={`eyes-hiding-prop ${debugMode && selectedDebugKey === 'targetFeatherBush2' ? 'is-debug-selected' : ''}`}
+          src={newFeatherBushImg}
+          alt=""
+          draggable={false}
+          style={styleFromLayout(layout.targetFeatherBush2)}
+          onPointerDown={(e) => debugMode && startDebugDrag(e, 'targetFeatherBush2')}
+        />
+      )}
 
       {SEARCH_TARGETS.map((target) => {
         const isFound = foundIds.has(target.id);
