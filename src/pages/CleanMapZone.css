@@ -258,6 +258,11 @@
 .label {
   position: absolute;
   display: inline-block;
+  /* Pill must size to its own text — the map-prop editor still writes
+     stale w/h overlay values sized for the old plain-text label (no
+     background pill), which would otherwise clip this pill's edges. */
+  width: auto !important;
+  height: auto !important;
   font-family: 'Baloo 2', 'Nunito', sans-serif;
   font-weight: 800;
   letter-spacing: 0.4px;
