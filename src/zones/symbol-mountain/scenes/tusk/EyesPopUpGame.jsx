@@ -30,20 +30,24 @@ const DEBUG_UI_ENABLED =
   (window.location.pathname.includes('game-test') ||
     new URLSearchParams(window.location.search).has('debugEyes'));
 const LAYOUT_STORAGE_KEY = 'symbol_mountain_eyes_layout_v2';
-const LAYOUT_PRESET_VERSION = '2026-09-09-eyes-single-search-layout-1';
+const LAYOUT_PRESET_VERSION = '2026-09-10-eyes-visual-flow-editor-layout';
 
 const DEFAULT_LAYOUT = {
   prompt: { x: 50, y: 5.6, w: 52, z: 40 },
   feedback: { x: 50, y: 84, w: 40, z: 44 },
   tray: { x: 50, y: 93, w: 22, z: 42 },
-  monkeyCharacter: { x: 14, y: 60, w: 20, z: 15 },
-  peacockCharacter: { x: 86, y: 55, w: 24, z: 15 },
-  targetFeather: { x: 68, y: 70, w: 20, z: 12 },
-  targetFeatherFound: { x: 68, y: 70, w: 11, z: 12 },
-  targetMango: { x: 40, y: 68, w: 16, z: 12 },
-  targetMangoFound: { x: 40, y: 68, w: 10, z: 12 },
+  // Positions below (monkey/peacock/feather/mango/yellow-flowers) ported from
+  // Madhurima's Visual Flow Editor layout (Beat 1 — "Search begins"). Butterfly
+  // and cream-flowers distractors were not part of that layout, so they keep
+  // their previous positions.
+  monkeyCharacter: { x: 11.58, y: 30.74, w: 12, z: 15 },
+  peacockCharacter: { x: 57.7, y: 30.14, w: 20.16, z: 15 },
+  targetFeather: { x: 57.16, y: 60.21, w: 9.84, z: 12 },
+  targetFeatherFound: { x: 57.16, y: 60.21, w: 5.41, z: 12 },
+  targetMango: { x: 42.48, y: 42.11, w: 6, z: 12 },
+  targetMangoFound: { x: 42.48, y: 42.11, w: 3.75, z: 12 },
   distractorButterfly: { x: 55, y: 40, w: 9, z: 11 },
-  distractorYellowFlowers: { x: 30, y: 82, w: 16, z: 11 },
+  distractorYellowFlowers: { x: 40.43, y: 41.43, w: 11.28, z: 11 },
   distractorCreamFlowers: { x: 78, y: 30, w: 15, z: 11 }
 };
 
