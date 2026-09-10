@@ -91,7 +91,10 @@
 }
 
 .clue-target {
-  opacity: 0.78;
+  /* Was 0.78 — meant to blend camouflage art into the scene, but now that
+     the un-found state is a small, deliberately-visible peek (not a full
+     hiding image), dimming it just looks like a washed-out ghost. */
+  opacity: 1;
   transition: opacity 260ms ease, transform 260ms ease, filter 260ms ease, left 900ms ease, top 900ms ease, width 900ms ease;
 }
 

@@ -75,7 +75,7 @@ const DEBUG_KEYS = [
   { key: 'targetMangoBush', label: 'Mango bush (permanent)' },
   { key: 'targetMango', label: 'Target - mango tap area (invisible)' },
   { key: 'targetMangoFound', label: 'Target - mango found (small)' },
-  { key: 'distractorYellowFlowers', label: 'Distractor - yellow flowers' }
+  { key: 'distractorYellowFlowers', label: 'Yellow flowers cover (permanent)' }
 ];
 
 const loadSavedLayout = () => {
@@ -129,11 +129,12 @@ const SEARCH_TARGETS = [
   }
 ];
 
-// Only the yellow-flowers distractor is part of the authored Beat 1 layout —
-// butterfly and cream-flowers were dropped from that design, not just moved.
-const DISTRACTORS = [
-  { id: 'yellow-flowers', label: 'Flowers', img: yellowFlowerClusterImg, layoutKey: 'distractorYellowFlowers' }
-];
+// Yellow-flowers is decorative cover for the mango (same role as the
+// feather's second bush) — NOT a tappable distractor. It used to be
+// interactive, which meant raising it in front of the mango made it
+// swallow taps meant for the mango underneath. Rendered separately below,
+// pointer-events:none, like the bush props.
+const DISTRACTORS = [];
 
 const VO_TEXTS = {
   intro: 'Monkey is hungry, and Peacock has lost a special feather. Look carefully. Can you find what they need?',
@@ -526,6 +527,16 @@ const EyesPopUpGame = ({
         draggable={false}
         style={styleFromLayout(layout.targetMangoBush)}
         onPointerDown={(e) => debugMode && startDebugDrag(e, 'targetMangoBush')}
+      />
+      {/* Decorative flower cover over the mango — pointer-events:none like the
+          bushes, so it can sit visually in front without blocking the tap. */}
+      <img
+        className={`eyes-hiding-prop ${debugMode && selectedDebugKey === 'distractorYellowFlowers' ? 'is-debug-selected' : ''}`}
+        src={yellowFlowerClusterImg}
+        alt=""
+        draggable={false}
+        style={styleFromLayout(layout.distractorYellowFlowers)}
+        onPointerDown={(e) => debugMode && startDebugDrag(e, 'distractorYellowFlowers')}
       />
 
       {SEARCH_TARGETS.map((target) => {
