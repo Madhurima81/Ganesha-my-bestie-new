@@ -28,7 +28,7 @@ const DEBUG_UI_ENABLED =
   (window.location.pathname.includes('game-test') ||
     new URLSearchParams(window.location.search).has('debugEyes'));
 const LAYOUT_STORAGE_KEY = 'symbol_mountain_eyes_layout_v2';
-const LAYOUT_PRESET_VERSION = '2026-09-10-eyes-visual-flow-editor-layout-6';
+const LAYOUT_PRESET_VERSION = '2026-09-10-eyes-visual-flow-editor-layout-7';
 
 const DEFAULT_LAYOUT = {
   prompt: { x: 50, y: 5.6, w: 52, z: 40 },
@@ -59,7 +59,11 @@ const DEFAULT_LAYOUT = {
   targetFeatherFound: { x: 62.08, y: 66.76, w: 9.84, z: 13 },
   targetMango: { x: 45.48, y: 45.81, w: 6, z: 13 },
   targetMangoFound: { x: 45.48, y: 45.81, w: 6, z: 13 },
-  distractorYellowFlowers: { x: 46.07, y: 48.95, w: 11.28, z: 15 }
+  distractorYellowFlowers: { x: 46.07, y: 48.95, w: 11.28, z: 15 },
+  // Open path space between monkey and peacock — NOT the mango bush's own
+  // spot, which is what it overlapped before. Tunable so it can be nudged
+  // to wherever reads as clearly "empty" on the actual background art.
+  travelCenter: { x: 50, y: 64, w: 0, z: 29 }
 };
 
 const DEBUG_KEYS = [
@@ -75,7 +79,8 @@ const DEBUG_KEYS = [
   { key: 'targetMangoBush', label: 'Mango bush (permanent)' },
   { key: 'targetMango', label: 'Target - mango tap area (invisible)' },
   { key: 'targetMangoFound', label: 'Target - mango found (small)' },
-  { key: 'distractorYellowFlowers', label: 'Yellow flowers cover (permanent)' }
+  { key: 'distractorYellowFlowers', label: 'Yellow flowers cover (permanent)' },
+  { key: 'travelCenter', label: 'Travel pause point (open space)' }
 ];
 
 const loadSavedLayout = () => {
@@ -554,7 +559,7 @@ const EyesPopUpGame = ({
         const pos = isCarried
           ? layout[target.carryLayoutKey]
           : isCentered
-            ? { x: 50, y: 46 }
+            ? layout.travelCenter
             : sizeLayout;
 
         return (
