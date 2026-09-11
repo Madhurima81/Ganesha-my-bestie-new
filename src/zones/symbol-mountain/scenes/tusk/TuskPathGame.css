@@ -244,6 +244,13 @@
   filter: drop-shadow(0 0 10px rgba(255, 203, 74, 0.75));
 }
 
+.draggable-item.is-dragging {
+  cursor: grabbing;
+  transition: none;
+  filter: drop-shadow(0 8px 10px rgba(35, 25, 40, 0.28));
+  transform: translate(-50%, -50%) scale(1.08);
+}
+
 .mango-item {
   left: 19.25%;
   top: 46.2%;
@@ -290,20 +297,6 @@
   left: 53.73%;
   top: 59.69%;
   width: 5.28%;
-}
-
-.drag-ghost {
-  position: absolute;
-  z-index: 60;
-  width: 9%;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  filter: drop-shadow(0 8px 6px rgba(35, 25, 40, 0.18));
-}
-
-.drag-ghost img {
-  width: 100%;
-  display: block;
 }
 
 .gesture-path {

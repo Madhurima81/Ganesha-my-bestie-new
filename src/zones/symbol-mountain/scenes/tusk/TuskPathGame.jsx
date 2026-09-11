@@ -43,21 +43,22 @@ const PHASES = {
 };
 
 const VO = {
-  intro: 'Someone on the mountain needs help.',
-  mango: 'Monkey has something he really likes. Can he share it?',
-  mangoHint: 'Bring the mango to the bunny.',
-  mangoDone: 'That helped!',
+  introHappy: 'Everyone on the mountain is happy today!',
+  introListen: "But wait... do you hear that? It's a bunny sound.",
+  mango: 'Drag the mango to the bunny.',
+  mangoHint: 'Drag the mango to the bunny.',
+  mangoDone: 'Munch, munch! Thank you!',
 
-  water: 'Elephant can help too. Drag water from his trunk to the bowl.',
-  waterHint: 'Drag from the elephant to the bowl.',
-  waterDone: 'Now the bunny is not thirsty.',
+  water: 'Drag the water to the bowl.',
+  waterHint: 'Drag the water to the bowl.',
+  waterDone: 'Slurp! Now the bunny is not thirsty.',
 
-  grass: 'Cow has soft grass. Can it make a comfortable place to rest?',
-  grassHint: 'Bring the grass to the resting spot.',
+  grass: 'Drag the grass to the resting spot.',
+  grassHint: 'Drag the grass to the resting spot.',
   grassDone: 'That feels much better.',
 
-  feather: 'Peacock has a special feather. Can he give it for comfort?',
-  featherHint: 'Bring the feather to the bunny.',
+  feather: 'Drag the feather to the bunny.',
+  featherHint: 'Drag the feather to the bunny.',
   featherDone: 'Everyone gave something they valued to help.',
 
   reveal: "Ganesha's tusk reminds us that sometimes we give something up for what matters.",
@@ -102,12 +103,13 @@ const DEFAULT_LAYOUT = {
   bowlItem: { x: 66.9, y: 65.85, w: 5.52, z: 16 },
   grassBedItem: { x: 55.7, y: 59.82, w: 19.92, z: 14 },
   featherRestItem: { x: 53.73, y: 59.69, w: 5.28, z: 22 },
-  // Need bubbles — one shows at a time, per the asset pack's own rule.
-  // Positioned just above each animal's current spot (above).
-  needBubbleMango: { x: 19, y: 25, w: 8, z: 30 },
-  needBubbleWater: { x: 40, y: 45, w: 8, z: 30 },
-  needBubbleGrass: { x: 70, y: 25, w: 8, z: 30 },
-  needBubbleFeather: { x: 81, y: 48, w: 8, z: 30 }
+  // Need bubbles — one shows at a time. These are the BUNNY's needs (hungry,
+  // thirsty, wants rest, wants comfort), so they sit just above the bunny —
+  // not above whichever helper animal will answer them.
+  needBubbleMango: { x: 51.7, y: 33, w: 9, z: 30 },
+  needBubbleWater: { x: 51.7, y: 33, w: 9, z: 30 },
+  needBubbleGrass: { x: 51.7, y: 33, w: 9, z: 30 },
+  needBubbleFeather: { x: 51.7, y: 33, w: 9, z: 30 }
 };
 
 const DEBUG_KEYS = [
@@ -152,6 +154,22 @@ const styleFromLayout = (layoutItem) => ({
   zIndex: layoutItem.z
 });
 
+// While an item is being dragged, move the SAME element with the pointer at
+// its own configured width instead of swapping in a separate "ghost" node —
+// that's what was making the mango visibly change size the instant you
+// picked it up (the old ghost used a fixed width instead of the item's own).
+const draggableItemStyle = (layoutItem, drag, id) => {
+  if (drag && drag.id === id) {
+    return {
+      left: `${drag.x}%`,
+      top: `${drag.y}%`,
+      width: `${layoutItem.w}%`,
+      zIndex: 60
+    };
+  }
+  return styleFromLayout(layoutItem);
+};
+
 const speak = (text, enabled = true) => {
   if (!enabled || !text || typeof window === 'undefined' || !window.speechSynthesis) return;
   try {
@@ -180,6 +198,7 @@ function TuskPathGame({
   const advanceTimer = useRef(null);
 
   const [phase, setPhase] = useState(PHASES.INTRO);
+  const [introBunnySoundHeard, setIntroBunnySoundHeard] = useState(false);
   const [hintLevel, setHintLevel] = useState(0);
   const [selectedItem, setSelectedItem] = useState(null);
   const [drag, setDrag] = useState(null);
@@ -270,7 +289,7 @@ function TuskPathGame({
   }, []);
 
   const phaseVoice = useMemo(() => ({
-    [PHASES.INTRO]: VO.intro,
+    [PHASES.INTRO]: VO.introHappy,
     [PHASES.MANGO]: VO.mango,
     [PHASES.WATER]: VO.water,
     [PHASES.GRASS]: VO.grass,
@@ -301,13 +320,26 @@ function TuskPathGame({
 
   useEffect(() => {
     if (!isActive) return;
-    speak(phaseVoice[phase], isAudioOn);
     scheduleHints(phase);
 
     if (phase === PHASES.INTRO) {
-      advanceTimer.current = setTimeout(() => setPhase(PHASES.MANGO), 1700);
+      // Beat 1: everyone on the mountain is happy. Beat 2 (after a pause):
+      // the child hears a bunny sound and the bunny's need bubble appears —
+      // only then do we hand control over to the mango-drag interaction.
+      setIntroBunnySoundHeard(false);
+      speak(VO.introHappy, isAudioOn);
+      const listenTimer = setTimeout(() => {
+        speak(VO.introListen, isAudioOn);
+        setIntroBunnySoundHeard(true);
+      }, 1900);
+      advanceTimer.current = setTimeout(() => setPhase(PHASES.MANGO), 3600);
+      return () => {
+        clearTimeout(listenTimer);
+        clearTimers();
+      };
     }
 
+    speak(phaseVoice[phase], isAudioOn);
     return clearTimers;
   }, [phase, isActive, isAudioOn, phaseVoice, scheduleHints, clearTimers]);
 
@@ -338,7 +370,7 @@ function TuskPathGame({
     advanceTimer.current = setTimeout(() => {
       setBunnyState('tired');
       nextPhase(250);
-    }, 850);
+    }, 1600);
   }, [completed.mango, phase, isAudioOn, nextPhase]);
 
   const completeWater = useCallback(() => {
@@ -483,20 +515,25 @@ function TuskPathGame({
     >
       <img className="tusk-bg" src={bgImg} alt="" />
 
-      {!hideElements && phase !== PHASES.COMPLETE && (
+      {!hideElements && phase !== PHASES.COMPLETE && phase !== PHASES.INTRO && (
         <div className="tusk-instruction" aria-live="polite">
-          {phase === PHASES.MANGO && 'Help Monkey share his mango.'}
-          {phase === PHASES.WATER && 'Help Elephant give water.'}
-          {phase === PHASES.GRASS && 'Help Cow make a soft resting place.'}
-          {phase === PHASES.FEATHER && 'Help Peacock give his special feather.'}
+          {phase === PHASES.MANGO && 'Drag the mango to the bunny.'}
+          {phase === PHASES.WATER && 'Drag the water to the bowl.'}
+          {phase === PHASES.GRASS && 'Drag the grass to the resting spot.'}
+          {phase === PHASES.FEATHER && 'Drag the feather to the bunny.'}
         </div>
       )}
 
       {/* Only one need bubble at a time, per the asset pack's rule — shows
           for the current phase, disappears the moment that need is met
-          (not waiting for the phase transition delay). */}
+          (not waiting for the phase transition delay). The very first one
+          (mango/hungry) appears early, during the intro's "bunny sound"
+          beat, next to the bunny — not next to whichever animal helps. */}
       {(() => {
         const needBubble = {
+          [PHASES.INTRO]: introBunnySoundHeard
+            ? { key: 'needBubbleMango', img: needBubbleMangoImg, met: false }
+            : null,
           [PHASES.MANGO]: { key: 'needBubbleMango', img: needBubbleMangoImg, met: completed.mango },
           [PHASES.WATER]: { key: 'needBubbleWater', img: needBubbleWaterImg, met: completed.water },
           [PHASES.GRASS]: { key: 'needBubbleGrass', img: needBubbleGrassImg, met: completed.grass },
@@ -549,8 +586,8 @@ function TuskPathGame({
       {(phase === PHASES.WATER && !completed.water) && (
         <button
           type="button"
-          className={`draggable-item water-item ${selectedItem === 'water' ? 'selected' : ''}${debugMode && selectedDebugKey === 'waterPileItem' ? ' is-debug-selected' : ''}`}
-          style={styleFromLayout(layout.waterPileItem)}
+          className={`draggable-item water-item ${selectedItem === 'water' ? 'selected' : ''}${debugMode && selectedDebugKey === 'waterPileItem' ? ' is-debug-selected' : ''}${drag?.id === 'water' ? ' is-dragging' : ''}`}
+          style={draggableItemStyle(layout.waterPileItem, drag, 'water')}
           onPointerDown={debugMode ? (e) => startDebugDrag(e, 'waterPileItem') : (e) => onPointerDown(e, 'water')}
           onClick={() => setSelectedItem('water')}
           aria-label="Water from the elephant's trunk. Drag it to the bowl, or tap it then tap the bowl."
@@ -620,8 +657,8 @@ function TuskPathGame({
       {(phase === PHASES.MANGO && !completed.mango) && (
         <button
           type="button"
-          className={`draggable-item mango-item ${selectedItem === 'mango' ? 'selected' : ''}${debugMode && selectedDebugKey === 'mangoPileItem' ? ' is-debug-selected' : ''}`}
-          style={styleFromLayout(layout.mangoPileItem)}
+          className={`draggable-item mango-item ${selectedItem === 'mango' ? 'selected' : ''}${debugMode && selectedDebugKey === 'mangoPileItem' ? ' is-debug-selected' : ''}${drag?.id === 'mango' ? ' is-dragging' : ''}`}
+          style={draggableItemStyle(layout.mangoPileItem, drag, 'mango')}
           onPointerDown={debugMode ? (e) => startDebugDrag(e, 'mangoPileItem') : (e) => onPointerDown(e, 'mango')}
           onClick={() => setSelectedItem('mango')}
           aria-label="Mango. Drag it to the bunny, or tap it then tap the bunny."
@@ -637,8 +674,8 @@ function TuskPathGame({
       {(phase === PHASES.GRASS && !completed.grass) && (
         <button
           type="button"
-          className={`draggable-item grass-item ${selectedItem === 'grass' ? 'selected' : ''}${debugMode && selectedDebugKey === 'grassPileItem' ? ' is-debug-selected' : ''}`}
-          style={styleFromLayout(layout.grassPileItem)}
+          className={`draggable-item grass-item ${selectedItem === 'grass' ? 'selected' : ''}${debugMode && selectedDebugKey === 'grassPileItem' ? ' is-debug-selected' : ''}${drag?.id === 'grass' ? ' is-dragging' : ''}`}
+          style={draggableItemStyle(layout.grassPileItem, drag, 'grass')}
           onPointerDown={debugMode ? (e) => startDebugDrag(e, 'grassPileItem') : (e) => onPointerDown(e, 'grass')}
           onClick={() => setSelectedItem('grass')}
           aria-label="Grass bundle. Drag it to the resting spot, or tap it then tap the spot."
@@ -650,8 +687,8 @@ function TuskPathGame({
       {(phase === PHASES.FEATHER && !completed.feather) && (
         <button
           type="button"
-          className={`draggable-item feather-item ${selectedItem === 'feather' ? 'selected' : ''}${debugMode && selectedDebugKey === 'featherPileItem' ? ' is-debug-selected' : ''}`}
-          style={styleFromLayout(layout.featherPileItem)}
+          className={`draggable-item feather-item ${selectedItem === 'feather' ? 'selected' : ''}${debugMode && selectedDebugKey === 'featherPileItem' ? ' is-debug-selected' : ''}${drag?.id === 'feather' ? ' is-dragging' : ''}`}
+          style={draggableItemStyle(layout.featherPileItem, drag, 'feather')}
           onPointerDown={debugMode ? (e) => startDebugDrag(e, 'featherPileItem') : (e) => onPointerDown(e, 'feather')}
           onClick={() => setSelectedItem('feather')}
           aria-label="Peacock feather. Drag it to the bunny, or tap it then tap the bunny."
@@ -667,27 +704,6 @@ function TuskPathGame({
           src={featherPlaced}
           alt=""
         />
-      )}
-
-      {drag && (
-        <div
-          className="drag-ghost"
-          style={{ left: `${drag.x}%`, top: `${drag.y}%` }}
-          aria-hidden="true"
-        >
-          <img
-            src={
-              drag.id === 'mango'
-                ? mango
-                : drag.id === 'water'
-                  ? waterPour
-                  : drag.id === 'grass'
-                    ? grassBundle
-                    : feather
-            }
-            alt=""
-          />
-        </div>
       )}
 
       {hintLevel >= 3 && phase !== PHASES.COMPLETE && (
