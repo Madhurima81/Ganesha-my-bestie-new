@@ -66,27 +66,27 @@
 }
 
 .peacock {
-  left: 16%;
-  top: 62%;
-  width: 16%;
+  left: 81.43%;
+  top: 67.16%;
+  width: 19.2%;
 }
 
 .monkey {
-  left: 31%;
-  top: 60%;
-  width: 14%;
+  left: 13.85%;
+  top: 39.13%;
+  width: 13.2%;
 }
 
 .cow {
-  left: 69%;
-  top: 61%;
-  width: 19%;
+  left: 70.14%;
+  top: 43.06%;
+  width: 18.72%;
 }
 
 .elephant {
-  left: 84%;
-  top: 58%;
-  width: 18%;
+  left: 30.35%;
+  top: 65.19%;
+  width: 30.72%;
 }
 
 .animal-button {
@@ -107,8 +107,8 @@
 .bunny-zone {
   position: absolute;
   z-index: 17;
-  left: 50%;
-  top: 65%;
+  left: 51.7%;
+  top: 56%;
   width: 16%;
   transform: translate(-50%, -50%);
   border: 0;
@@ -164,9 +164,9 @@
 .water-zone {
   position: absolute;
   z-index: 16;
-  left: 58%;
-  top: 72%;
-  width: 10%;
+  left: 66.9%;
+  top: 65.85%;
+  width: 5.52%;
   transform: translate(-50%, -50%);
   border: 0;
   padding: 0;
@@ -198,9 +198,9 @@
 .grass-bed-zone {
   position: absolute;
   z-index: 14;
-  left: 50%;
-  top: 76%;
-  width: 22%;
+  left: 55.7%;
+  top: 59.82%;
+  width: 19.92%;
   height: 13%;
   transform: translate(-50%, -50%);
   border: 0;
@@ -244,25 +244,25 @@
 }
 
 .mango-item {
-  left: 34%;
-  top: 60%;
-  width: 8%;
+  left: 19.25%;
+  top: 46.2%;
+  width: 6.24%;
 }
 
 .grass-item {
-  left: 68%;
-  top: 61%;
-  width: 9%;
+  left: 70.43%;
+  top: 54.85%;
+  width: 7.92%;
 }
 
 .feather-item {
-  left: 19%;
-  top: 61%;
-  width: 9%;
+  left: 83.2%;
+  top: 65.46%;
+  width: 5.28%;
 }
 
 .water-item {
-  left: 76%;
+  left: 42%;
   top: 62%;
   width: 8%;
 }
@@ -285,9 +285,9 @@
 }
 
 .feather-result {
-  left: 42%;
-  top: 72%;
-  width: 12%;
+  left: 53.73%;
+  top: 59.69%;
+  width: 5.28%;
 }
 
 .drag-ghost {
