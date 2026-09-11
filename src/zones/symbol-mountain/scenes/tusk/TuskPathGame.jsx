@@ -11,7 +11,7 @@ import bunnyFeather from './assets/images/tusk-giving/bunny_05_comforted_with_fe
 import bunnyHappy from './assets/images/tusk-giving/bunny_06_happy_recovered.webp';
 
 import monkeyHold from './assets/images/tusk-giving/tusk_monkey_holding_mango.webp';
-import monkeyOffer from './assets/images/tusk-giving/tusk_monkey_offering_mango.webp';
+import monkeyIdleShared from './assets/images/monkey-new.webp';
 import elephantWater from './assets/images/tusk-giving/tusk_elephant_with_water_in_trunk.webp';
 import elephantPour from './assets/images/tusk-giving/tusk_elephant_pouring_water_into_bowl.webp';
 import elephantIdleShared from './assets/images/elephant-new1.webp';
@@ -19,7 +19,7 @@ import cowGrass from './assets/images/tusk-giving/tusk_cow_idle_with_grass.webp'
 import cowIdleShared from './assets/images/cow-new.webp';
 import peacockIdle from './assets/images/tusk-giving/tusk_peacock_idle.webp';
 import peacockHighlight from './assets/images/tusk-giving/tusk_peacock_highlighted_feather.webp';
-import peacockOffer from './assets/images/tusk-giving/tusk_peacock_offering_feather.webp';
+import peacockIdleShared from './assets/images/peacock-new.webp';
 
 import mango from './assets/images/tusk-giving/mango_standalone.webp';
 import mangoBitten from './assets/images/tusk-giving/mango_bitten.webp';
@@ -491,9 +491,9 @@ function TuskPathGame({
       <div className={`animal peacock ${activeAnimal === 'peacock' ? 'active' : 'dimmed'}`}>
         <img
           src={
-            phase === PHASES.FEATHER
-              ? (actionState === 'success' ? peacockOffer : peacockHighlight)
-              : peacockIdle
+            completed.feather
+              ? peacockIdleShared
+              : phase === PHASES.FEATHER ? peacockHighlight : peacockIdle
           }
           alt="Peacock"
         />
@@ -501,7 +501,7 @@ function TuskPathGame({
 
       <div className={`animal monkey ${activeAnimal === 'monkey' ? 'active' : 'dimmed'}`}>
         <img
-          src={phase === PHASES.MANGO && actionState === 'success' ? monkeyOffer : monkeyHold}
+          src={completed.mango ? monkeyIdleShared : monkeyHold}
           alt="Monkey"
         />
       </div>
