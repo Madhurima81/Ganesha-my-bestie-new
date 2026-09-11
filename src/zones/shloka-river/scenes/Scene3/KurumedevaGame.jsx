@@ -167,6 +167,11 @@ const ROPE_TRACE_START = ROPE_ROWS[0][0];
 const ROPE_TRACE_END = ROPE_ROWS[0][2];
 const TRACE_BAND_T = 9; // vertical tolerance (% of stage) around the rail
 const TRACE_LEAD = 2; // wrap snaps on slightly before the finger reaches it
+// One end of the rope is fixed to the near post; the child drags the loose
+// end across to the knot at the far post — a real bendable SVG curve, not a
+// PNG dragged around like a rigid noodle (matches the Mahakaya rope rig).
+const ROPE_FIXED_POINT = ROPE_ROWS[0][0];
+const ROPE_KNOT_TARGET = ROPE_TRACE_END;
 
 const LOG_DROP_RADIUS = 18; // forgiving snap to the active slot
 // Anywhere over the gap counts as "close enough" for little hands.
@@ -185,12 +190,14 @@ const PLACE_ROUNDS = {
     slots: [LOG_SLOTS[1]], farSlots: [[LOG_SLOTS[2]]], pile: LOG_PILE, slotW: LOG_SLOT_W,
     helperSpot: { l: LOG_SLOTS[1].l - 10, t: LOG_SLOTS[1].t - 5 },
   },
-  // mode 'tap' — Monkey secures the knot in one simple, mostly-automatic tap
-  // (no manual knot-tying) — tap the glowing spot and the rope pulls taut.
+  // mode 'ropeDrag' — with Monkey's help, drag the same rope's free end (now
+  // starting from its loose resting spot) across to the knot; it snaps taut
+  // instead of slipping this time.
   1: {
-    kind: 'rope', mode: 'tap', img: ropeObj,
-    slots: [{ ...ROPE_TRACE_END, r: 0 }], farSlots: [[ROPE_ROWS[1][1]]],
-    pile: ROPE_TRACE_START,
+    kind: 'rope', mode: 'ropeDrag', img: ropeObj,
+    fixedPoint: ROPE_FIXED_POINT, start: TRY_ROPE_SPOT, target: ROPE_KNOT_TARGET,
+    slots: [{ ...ROPE_KNOT_TARGET, r: 0 }], farSlots: [[ROPE_ROWS[1][1]]],
+    pile: TRY_ROPE_SPOT,
     slotW: ROPE_SLOT_W,
     helperSpot: { l: ROPE_TRACE_END.l + 5, t: ROPE_TRACE_END.t - 14 },
   },
@@ -322,6 +329,42 @@ function buildDebugLayout() {
 
 const round1 = (n) => Number(Number(n).toFixed(1));
 
+// One bendable SVG rope, reused for both the failed solo try and the
+// Monkey-assisted tie — a real curve between a fixed post and the child's
+// dragged finger, not a rigid PNG. `state` only changes the stroke color/
+// thickness (loose vs. mid-pull vs. tied); the curve math is the same.
+function KuruRopeSvg({ x1, y1, x2, y2, state = 'loose' }) {
+  const midX = (x1 + x2) / 2;
+  const midY = (y1 + y2) / 2;
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const dist = Math.hypot(dx, dy);
+  // Bow the curve perpendicular to the fixed->free line so it reads as rope
+  // sag/tension rather than a straight rubber band.
+  const bow = Math.min(16, Math.max(6, dist * 0.22));
+  const nx = dist ? -dy / dist : 0;
+  const ny = dist ? dx / dist : 1;
+  const controlX = midX + nx * bow;
+  const controlY = midY + ny * bow;
+  const d = `M ${x1} ${y1} Q ${controlX} ${controlY} ${x2} ${y2}`;
+  const outer = state === 'tied' ? '#7a4a22' : state === 'slipping' ? '#8a5a30' : '#9a6735';
+  const inner = state === 'tied' ? '#f0c98a' : state === 'slipping' ? '#e2ac72' : '#e6b873';
+  const outerW = state === 'pulling' ? 3.2 : 2.8;
+  const innerW = state === 'pulling' ? 2.2 : 2;
+
+  return (
+    <svg
+      className={`kuru-rope-svg is-${state}`}
+      viewBox="0 0 100 100"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+    >
+      <path d={d} fill="none" stroke={outer} strokeWidth={outerW} strokeLinecap="round" vectorEffect="non-scaling-stroke" />
+      <path d={d} fill="none" stroke={inner} strokeWidth={innerW} strokeLinecap="round" vectorEffect="non-scaling-stroke" />
+    </svg>
+  );
+}
+
 export default function KurumedevaGame({
   isActive = false,
   hideElements = false,
@@ -351,6 +394,11 @@ export default function KurumedevaGame({
   // knot it herself, it slips, and only then can she ask Monkey.
   const [triedRope, setTriedRope] = useState(false);
   const [tryRopeShake, setTryRopeShake] = useState(false);
+  // Beat 5: the rope's free end during the solo try — a real SVG drag, not a
+  // tap. Always slips on release (before Monkey is asked) into the shake+fail.
+  const [ropeTryDragPos, setRopeTryDragPos] = useState(null);
+  const [ropeTryDragActive, setRopeTryDragActive] = useState(false);
+  const ropeTryDragRef = useRef(null);
   const [litCount, setLitCount] = useState(0);
   const [tappedId, setTappedId] = useState(null);
   const [friendImgStates, setFriendImgStates] = useState(() => FRIENDS.map(() => 'carry'));
@@ -461,6 +509,9 @@ export default function KurumedevaGame({
       pushHoldPointerRef.current = null;
       setTriedRope(false);
       setTryRopeShake(false);
+      setRopeTryDragActive(false);
+      setRopeTryDragPos(null);
+      ropeTryDragRef.current = null;
       setLitCount(0);
       setTappedId(null);
       setFriendImgStates(FRIENDS.map(() => 'carry'));
@@ -567,19 +618,40 @@ export default function KurumedevaGame({
     cancelPushHold();
   }, [cancelPushHold]);
 
-  // Beat 5: Beaver tries to knot the rope herself first — it slips, and only
-  // then does asking Monkey for help make sense. A no-op once already tried.
-  const handleTryRope = useCallback((event) => {
-    if (isPaused || phaseRef.current !== 'play' || friendStep !== 1 || placeActive) return;
-    event?.preventDefault?.();
+  // Beat 5: Beaver tries to knot the rope herself first — drag the free end
+  // toward the post; no matter where it's released it slips (the "try and
+  // fail" beat), and only then does asking Monkey for help make sense.
+  const handleRopeTryPointerDown = useCallback((event) => {
+    if (isPaused || phaseRef.current !== 'play' || friendStep !== 1 || placeActive || triedRope) return;
+    event.preventDefault();
+    event.stopPropagation();
     markInteraction();
     stopSceneVoice?.();
+    ropeTryDragRef.current = event.pointerId;
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+    setRopeTryDragActive(true);
+    setRopeTryDragPos(getStagePoint(event));
+  }, [friendStep, getStagePoint, isPaused, markInteraction, placeActive, stopSceneVoice, triedRope]);
+
+  const handleRopeTryPointerMove = useCallback((event) => {
+    if (ropeTryDragRef.current !== event.pointerId || !ropeTryDragActive) return;
+    event.preventDefault();
+    setRopeTryDragPos(getStagePoint(event));
+  }, [getStagePoint, ropeTryDragActive]);
+
+  const handleRopeTryPointerUp = useCallback((event) => {
+    if (ropeTryDragRef.current !== event.pointerId) return;
+    event.preventDefault();
+    event.currentTarget.releasePointerCapture?.(event.pointerId);
+    ropeTryDragRef.current = null;
+    setRopeTryDragActive(false);
+    setRopeTryDragPos(null);
     setTryRopeShake(true);
     safeAfter(700, () => {
       setTryRopeShake(false);
       setTriedRope(true);
     });
-  }, [friendStep, isPaused, markInteraction, placeActive, safeAfter, stopSceneVoice]);
+  }, [safeAfter]);
 
   const askFriendForHelp = useCallback((friendIndex) => {
     if (isPaused || phaseRef.current !== 'play') return;
@@ -1168,6 +1240,9 @@ export default function KurumedevaGame({
       if (placeCfg.mode === 'drag') {
         return { type: 'drag', from: { x: placeCfg.pile.l, y: placeCfg.pile.t }, to: { x: s.l, y: s.t }, k: `drag-${placedCount}` };
       }
+      if (placeCfg.mode === 'ropeDrag') {
+        return { type: 'drag', from: { x: placeCfg.start.l, y: placeCfg.start.t }, to: { x: placeCfg.target.l, y: placeCfg.target.t }, k: `rope-${placedCount}` };
+      }
       if (placeCfg.mode === 'tap') {
         return { type: 'tap', from: { x: s.l, y: s.t }, to: { x: s.l, y: s.t }, k: `tap-${placedCount}` };
       }
@@ -1185,7 +1260,7 @@ export default function KurumedevaGame({
       return { type: 'hold', from: { x: TRY_LOG_SPOT.l, y: TRY_LOG_SPOT.t }, to: { x: TRY_LOG_SPOT.l, y: TRY_LOG_SPOT.t }, k: 'try-logs' };
     }
     if (friendStep === 1 && !placeActive && !canAsk) {
-      return { type: 'tap', from: { x: TRY_ROPE_SPOT.l, y: TRY_ROPE_SPOT.t }, to: { x: TRY_ROPE_SPOT.l, y: TRY_ROPE_SPOT.t }, k: 'try-rope' };
+      return { type: 'drag', from: { x: TRY_ROPE_SPOT.l, y: TRY_ROPE_SPOT.t }, to: { x: ROPE_FIXED_POINT.l, y: ROPE_FIXED_POINT.t }, k: 'try-rope' };
     }
     return null;
   })();
@@ -1230,7 +1305,7 @@ export default function KurumedevaGame({
             {!canAsk
               ? (friendStep === 0
                 ? 'Beaver is trying to move the logs. Press and hold them to help her try!'
-                : 'The bridge is still loose. Tap the rope to help her try!')
+                : 'The bridge is still loose. Drag the rope to help her try!')
               : <>
                   {(hintLevel === 0 || hintLevel === 1) && 'Who can Beaver ask for help?'}
                   {hintLevel === 2 && `Ask ${currentFriend.label} for help.`}
@@ -1260,22 +1335,32 @@ export default function KurumedevaGame({
           </button>
         )}
 
-        {/* Beat 5: the loose rope, tappable so Beaver can try (and fail) to
-            knot it before asking Monkey for help. */}
+        {/* Beat 5: the loose rope's free end, draggable so Beaver can try
+            (and fail) to knot it before asking Monkey for help. One end is
+            fixed to the post; the other follows the child's finger. */}
         {phase === 'play' && friendStep === 1 && !placeActive && !debugMode && (
-          <button
-            type="button"
-            className={`kuru-log-piece is-rope is-top${tryRopeShake ? ' is-shake' : ''}${!triedRope && hintLevel >= 1 ? ' pulse' : ''}`}
-            style={{
-              left: `${TRY_ROPE_SPOT.l}%`,
-              top: `${TRY_ROPE_SPOT.t}%`,
-              width: `${ROPE_SLOT_W * 0.7}%`,
-            }}
-            aria-label="Try to knot the rope"
-            onPointerDown={handleTryRope}
-          >
-            <img src={ropeObj} alt="" draggable={false} />
-          </button>
+          <>
+            <KuruRopeSvg
+              x1={ROPE_FIXED_POINT.l}
+              y1={ROPE_FIXED_POINT.t}
+              x2={ropeTryDragActive && ropeTryDragPos ? ropeTryDragPos.l : TRY_ROPE_SPOT.l}
+              y2={ropeTryDragActive && ropeTryDragPos ? ropeTryDragPos.t : TRY_ROPE_SPOT.t}
+              state={tryRopeShake ? 'slipping' : ropeTryDragActive ? 'pulling' : 'loose'}
+            />
+            <button
+              type="button"
+              className={`kuru-rope-handle${tryRopeShake ? ' is-shake' : ''}${!triedRope && hintLevel >= 1 ? ' pulse' : ''}`}
+              style={{
+                left: `${ropeTryDragActive && ropeTryDragPos ? ropeTryDragPos.l : TRY_ROPE_SPOT.l}%`,
+                top: `${ropeTryDragActive && ropeTryDragPos ? ropeTryDragPos.t : TRY_ROPE_SPOT.t}%`,
+              }}
+              aria-label="Drag to help Beaver try tying the rope"
+              onPointerDown={handleRopeTryPointerDown}
+              onPointerMove={handleRopeTryPointerMove}
+              onPointerUp={handleRopeTryPointerUp}
+              onPointerCancel={handleRopeTryPointerUp}
+            />
+          </>
         )}
 
         {phase === 'done' && (
@@ -1408,6 +1493,43 @@ export default function KurumedevaGame({
               onPointerDown={handleTracePointerDown}
               onPointerMove={handleTracePointerMove}
               onPointerUp={endPieceDrag}
+              onPointerCancel={endPieceDrag}
+            />
+          </>
+        )}
+
+        {/* Active round, ROPE DRAG mode — same bendable SVG rope as the solo
+            try, now anchored + reused: drag the free end to the knot and it
+            snaps taut. Reuses the generic piece drag handlers verbatim. */}
+        {placeActive && placeCfg && placeCfg.mode === 'ropeDrag' && phase === 'play' && placedCount < placeCfg.slots.length && (
+          <>
+            <div
+              className="kuru-drop-zone"
+              style={{
+                left: `${placeCfg.target.l}%`,
+                top: `${placeCfg.target.t}%`,
+                width: `${placeCfg.slotW * 1.35}%`,
+              }}
+              aria-hidden="true"
+            />
+            <KuruRopeSvg
+              x1={placeCfg.fixedPoint.l}
+              y1={placeCfg.fixedPoint.t}
+              x2={pieceDragActive && pieceDragPos ? pieceDragPos.l : placeCfg.start.l}
+              y2={pieceDragActive && pieceDragPos ? pieceDragPos.t : placeCfg.start.t}
+              state={pieceDragActive ? 'pulling' : 'loose'}
+            />
+            <button
+              type="button"
+              className={`kuru-rope-handle is-tie${pieceDragActive ? ' is-dragging' : ''}${hintLevel >= 1 && !pieceDragActive ? ' pulse' : ''}`}
+              style={{
+                left: `${pieceDragActive && pieceDragPos ? pieceDragPos.l : placeCfg.start.l}%`,
+                top: `${pieceDragActive && pieceDragPos ? pieceDragPos.t : placeCfg.start.t}%`,
+              }}
+              aria-label="Drag the rope end to tie the knot"
+              onPointerDown={handlePiecePointerDown}
+              onPointerMove={handlePiecePointerMove}
+              onPointerUp={handlePiecePointerUp}
               onPointerCancel={endPieceDrag}
             />
           </>

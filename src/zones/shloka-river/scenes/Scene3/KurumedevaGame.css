@@ -802,6 +802,52 @@
   animation: kuruLogTryShake 0.5s ease-in-out !important;
 }
 
+/* Beat 5 — bendable SVG rope (Mahakaya-style): one end fixed to the post,
+   the other a draggable handle the child pulls toward the knot. */
+.kuru-rope-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 26;
+}
+
+.kuru-rope-svg path {
+  transition: stroke 0.15s ease;
+}
+
+.kuru-rope-handle {
+  position: absolute;
+  width: clamp(40px, 7vw, 64px);
+  height: clamp(40px, 7vw, 64px);
+  transform: translate(-50%, -50%);
+  z-index: 28;
+  border: 2px solid rgba(154, 103, 53, 0.65);
+  border-radius: 50%;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  padding: 0;
+  background:
+    radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.08) 60%, transparent 70%),
+    rgba(230, 184, 115, 0.4);
+  touch-action: none;
+  cursor: grab;
+}
+
+.kuru-rope-handle.is-dragging {
+  cursor: grabbing;
+  transform: translate(-50%, -50%) scale(1.18);
+}
+
+.kuru-rope-handle.pulse {
+  animation: stageHintPulse 1.15s ease-in-out infinite !important;
+}
+
+.kuru-rope-handle.is-shake {
+  animation: kuruLogTryShake 0.5s ease-in-out !important;
+}
+
 @keyframes kuruLogTryShake {
   0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
   20% { transform: translate(-52%, -50%) rotate(-4deg); }
