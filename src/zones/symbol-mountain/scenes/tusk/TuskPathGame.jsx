@@ -14,8 +14,9 @@ import monkeyHold from './assets/images/tusk-giving/tusk_monkey_holding_mango.we
 import monkeyOffer from './assets/images/tusk-giving/tusk_monkey_offering_mango.webp';
 import elephantWater from './assets/images/tusk-giving/tusk_elephant_with_water_in_trunk.webp';
 import elephantPour from './assets/images/tusk-giving/tusk_elephant_pouring_water_into_bowl.webp';
+import elephantIdleShared from './assets/images/elephant-new1.webp';
 import cowGrass from './assets/images/tusk-giving/tusk_cow_idle_with_grass.webp';
-import cowOffer from './assets/images/tusk-giving/tusk_cow_offering_grass.webp';
+import cowIdleShared from './assets/images/cow-new.webp';
 import peacockIdle from './assets/images/tusk-giving/tusk_peacock_idle.webp';
 import peacockHighlight from './assets/images/tusk-giving/tusk_peacock_highlighted_feather.webp';
 import peacockOffer from './assets/images/tusk-giving/tusk_peacock_offering_feather.webp';
@@ -507,7 +508,11 @@ function TuskPathGame({
 
       <div className={`animal elephant ${activeAnimal === 'elephant' ? 'active' : 'dimmed'}`}>
         <img
-          src={phase === PHASES.WATER && actionState === 'pouring' ? elephantPour : elephantWater}
+          src={
+            phase === PHASES.WATER && actionState === 'pouring'
+              ? elephantPour
+              : completed.water ? elephantIdleShared : elephantWater
+          }
           alt="Elephant"
         />
       </div>
@@ -526,7 +531,7 @@ function TuskPathGame({
 
       <div className={`animal cow ${activeAnimal === 'cow' ? 'active' : 'dimmed'}`}>
         <img
-          src={phase === PHASES.GRASS && actionState === 'success' ? cowOffer : cowGrass}
+          src={completed.grass ? cowIdleShared : cowGrass}
           alt="Cow"
         />
       </div>
