@@ -4,9 +4,9 @@ import './TuskPathGame.css';
 import bgImg from './assets/images/tusk-giving/symbol_mountain_3_bg.webp';
 
 import bunnyTired from './assets/images/tusk-giving/bunny_01_tired.webp';
-import bunnyHungry from './assets/images/tusk-giving/bunny_02_hungry.webp';
-import bunnyDrink from './assets/images/tusk-giving/bunny_03_drinks_water.webp';
-import bunnyGrass from './assets/images/tusk-giving/bunny_04_resting_on_grass.webp';
+import bunnyHungry from './assets/images/tusk-giving/bunny_eat_mango.png';
+import bunnyDrink from './assets/images/tusk-giving/bunny_drink_water.png';
+import bunnyGrass from './assets/images/tusk-giving/bunny_rest_on_grass.png';
 import bunnyFeather from './assets/images/tusk-giving/bunny_05_comforted_with_feather.webp';
 import bunnyHappy from './assets/images/tusk-giving/bunny_06_happy_recovered.webp';
 
