@@ -50,8 +50,8 @@ const VO = {
   mangoHint: 'Bring the mango to the bunny.',
   mangoDone: 'That helped!',
 
-  water: 'Elephant can help too. Tap the elephant to pour some water.',
-  waterHint: 'Tap the elephant.',
+  water: 'Elephant can help too. Drag water from his trunk to the bowl.',
+  waterHint: 'Drag from the elephant to the bowl.',
   waterDone: 'Now the bunny is not thirsty.',
 
   grass: 'Cow has soft grass. Can it make a comfortable place to rest?',
@@ -358,6 +358,7 @@ function TuskPathGame({
 
   const phaseTarget = {
     [PHASES.MANGO]: 'bunny',
+    [PHASES.WATER]: 'bowl',
     [PHASES.GRASS]: 'grass-bed',
     [PHASES.FEATHER]: 'bunny',
   }[phase];
@@ -382,12 +383,13 @@ function TuskPathGame({
     }
 
     if (phase === PHASES.MANGO) completeMango();
+    if (phase === PHASES.WATER) completeWater();
     if (phase === PHASES.GRASS) completeGrass();
     if (phase === PHASES.FEATHER) completeFeather();
-  }, [drag, phaseTarget, hitTest, phase, completeMango, completeGrass, completeFeather]);
+  }, [drag, phaseTarget, hitTest, phase, completeMango, completeWater, completeGrass, completeFeather]);
 
   const onPointerDown = (e, id) => {
-    if (![PHASES.MANGO, PHASES.GRASS, PHASES.FEATHER].includes(phase)) return;
+    if (![PHASES.MANGO, PHASES.WATER, PHASES.GRASS, PHASES.FEATHER].includes(phase)) return;
     e.currentTarget.setPointerCapture?.(e.pointerId);
     const rect = sceneRef.current?.getBoundingClientRect();
     if (!rect) return;
@@ -418,6 +420,7 @@ function TuskPathGame({
   const onTapTarget = (targetId) => {
     if (!selectedItem || targetId !== phaseTarget) return;
     if (phase === PHASES.MANGO) completeMango();
+    if (phase === PHASES.WATER) completeWater();
     if (phase === PHASES.GRASS) completeGrass();
     if (phase === PHASES.FEATHER) completeFeather();
   };
@@ -502,19 +505,24 @@ function TuskPathGame({
         />
       </div>
 
-      <button
-        type="button"
-        className={`animal elephant animal-button ${activeAnimal === 'elephant' ? 'active' : 'dimmed'}`}
-        onClick={() => {
-          if (phase === PHASES.WATER) completeWater();
-        }}
-        aria-label={phase === PHASES.WATER ? 'Tap Elephant to pour water' : 'Elephant'}
-      >
+      <div className={`animal elephant ${activeAnimal === 'elephant' ? 'active' : 'dimmed'}`}>
         <img
           src={phase === PHASES.WATER && actionState === 'pouring' ? elephantPour : elephantWater}
-          alt=""
+          alt="Elephant"
         />
-      </button>
+      </div>
+
+      {(phase === PHASES.WATER && !completed.water) && (
+        <button
+          type="button"
+          className={`draggable-item water-item ${selectedItem === 'water' ? 'selected' : ''}`}
+          onPointerDown={(e) => onPointerDown(e, 'water')}
+          onClick={() => setSelectedItem('water')}
+          aria-label="Water from the elephant's trunk. Drag it to the bowl, or tap it then tap the bowl."
+        >
+          <img src={waterPour} alt="" />
+        </button>
+      )}
 
       <div className={`animal cow ${activeAnimal === 'cow' ? 'active' : 'dimmed'}`}>
         <img
@@ -534,7 +542,13 @@ function TuskPathGame({
       </button>
 
       {(phase === PHASES.WATER || completed.water) && (
-        <div className="water-zone">
+        <button
+          type="button"
+          data-drop-target="bowl"
+          className={`water-zone ${phase === PHASES.WATER ? 'is-target' : ''}`}
+          onClick={() => onTapTarget('bowl')}
+          aria-label="Bowl"
+        >
           <img
             className="bowl"
             src={completed.water || actionState === 'success' ? bowlFilled : bowlEmpty}
@@ -543,7 +557,7 @@ function TuskPathGame({
           {actionState === 'pouring' && (
             <img className="water-pour" src={waterPour} alt="" />
           )}
-        </div>
+        </button>
       )}
 
       {(phase === PHASES.GRASS || completed.grass) && (
@@ -612,16 +626,18 @@ function TuskPathGame({
             src={
               drag.id === 'mango'
                 ? mango
-                : drag.id === 'grass'
-                  ? grassBundle
-                  : feather
+                : drag.id === 'water'
+                  ? waterPour
+                  : drag.id === 'grass'
+                    ? grassBundle
+                    : feather
             }
             alt=""
           />
         </div>
       )}
 
-      {hintLevel >= 3 && phase !== PHASES.WATER && phase !== PHASES.COMPLETE && (
+      {hintLevel >= 3 && phase !== PHASES.COMPLETE && (
         <div className={`gesture-path gesture-${phase}`} aria-hidden="true">
           <span className="gesture-dot" />
         </div>
