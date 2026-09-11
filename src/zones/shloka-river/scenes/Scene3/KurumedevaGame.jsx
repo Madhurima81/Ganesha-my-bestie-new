@@ -342,6 +342,11 @@ export default function KurumedevaGame({
   // cannot do it alone") and the approved game-flow doc's step 2.
   const [triedPush, setTriedPush] = useState(false);
   const [tryShake, setTryShake] = useState(false);
+  // Beat 0: the logs wiggle while Beaver is pressing-and-holding them, before
+  // the hold completes into the "can't budge them" shake+fail.
+  const [isPushingLogs, setIsPushingLogs] = useState(false);
+  const pushHoldTimerRef = useRef(null);
+  const pushHoldPointerRef = useRef(null);
   // Beat 5-6: mirrors triedPush/tryShake for the rope loop — Beaver tries to
   // knot it herself, it slips, and only then can she ask Monkey.
   const [triedRope, setTriedRope] = useState(false);
@@ -451,6 +456,9 @@ export default function KurumedevaGame({
       setBeaverPos(BEAVER_PATH[0]);
       setTriedPush(false);
       setTryShake(false);
+      setIsPushingLogs(false);
+      pushHoldTimerRef.current = null;
+      pushHoldPointerRef.current = null;
       setTriedRope(false);
       setTryRopeShake(false);
       setLitCount(0);
@@ -519,19 +527,45 @@ export default function KurumedevaGame({
     };
   }, []);
 
-  // Beat 0: Beaver tries the logs herself first — they don't budge, and only
-  // then does asking for help make sense. A no-op once already tried.
-  const handleTryPushLogs = useCallback((event) => {
-    if (isPaused || phaseRef.current !== 'play' || friendStep !== 0 || placeActive) return;
+  // Beat 0: Beaver tries the logs herself first — press and hold them; they
+  // wiggle while held, then don't budge (shake+fail) once the hold lands.
+  // Letting go early just stops the wiggle — no penalty, try again anytime.
+  const PUSH_HOLD_MS = 900;
+
+  const cancelPushHold = useCallback(() => {
+    if (pushHoldTimerRef.current) {
+      clearTimeout(pushHoldTimerRef.current);
+      pushHoldTimerRef.current = null;
+    }
+    pushHoldPointerRef.current = null;
+    setIsPushingLogs(false);
+  }, []);
+
+  const handleTryPushLogsDown = useCallback((event) => {
+    if (isPaused || phaseRef.current !== 'play' || friendStep !== 0 || placeActive || triedPush) return;
     event?.preventDefault?.();
     markInteraction();
     stopSceneVoice?.();
-    setTryShake(true);
-    safeAfter(700, () => {
-      setTryShake(false);
-      setTriedPush(true);
+    pushHoldPointerRef.current = event.pointerId;
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+    setIsPushingLogs(true);
+    pushHoldTimerRef.current = safeAfter(PUSH_HOLD_MS, () => {
+      pushHoldTimerRef.current = null;
+      setIsPushingLogs(false);
+      setTryShake(true);
+      safeAfter(700, () => {
+        setTryShake(false);
+        setTriedPush(true);
+      });
     });
-  }, [friendStep, isPaused, markInteraction, placeActive, safeAfter, stopSceneVoice]);
+  }, [friendStep, isPaused, markInteraction, placeActive, safeAfter, stopSceneVoice, triedPush]);
+
+  const handleTryPushLogsUp = useCallback((event) => {
+    if (pushHoldPointerRef.current !== event.pointerId) return;
+    event?.preventDefault?.();
+    event.currentTarget.releasePointerCapture?.(event.pointerId);
+    cancelPushHold();
+  }, [cancelPushHold]);
 
   // Beat 5: Beaver tries to knot the rope herself first — it slips, and only
   // then does asking Monkey for help make sense. A no-op once already tried.
@@ -1148,7 +1182,7 @@ export default function KurumedevaGame({
       return { type: 'drag', from: { x: HELP_TOKEN_HOME.l, y: HELP_TOKEN_HOME.t }, to: { x: fp.l, y: fp.t }, k: `ask-${friendStep}` };
     }
     if (friendStep === 0 && !placeActive && !canAsk) {
-      return { type: 'tap', from: { x: TRY_LOG_SPOT.l, y: TRY_LOG_SPOT.t }, to: { x: TRY_LOG_SPOT.l, y: TRY_LOG_SPOT.t }, k: 'try-logs' };
+      return { type: 'hold', from: { x: TRY_LOG_SPOT.l, y: TRY_LOG_SPOT.t }, to: { x: TRY_LOG_SPOT.l, y: TRY_LOG_SPOT.t }, k: 'try-logs' };
     }
     if (friendStep === 1 && !placeActive && !canAsk) {
       return { type: 'tap', from: { x: TRY_ROPE_SPOT.l, y: TRY_ROPE_SPOT.t }, to: { x: TRY_ROPE_SPOT.l, y: TRY_ROPE_SPOT.t }, k: 'try-rope' };
@@ -1195,7 +1229,7 @@ export default function KurumedevaGame({
           <p className="kuru-hint">
             {!canAsk
               ? (friendStep === 0
-                ? 'Beaver is trying to move the logs. Tap them to help her try!'
+                ? 'Beaver is trying to move the logs. Press and hold them to help her try!'
                 : 'The bridge is still loose. Tap the rope to help her try!')
               : <>
                   {(hintLevel === 0 || hintLevel === 1) && 'Who can Beaver ask for help?'}
@@ -1210,14 +1244,17 @@ export default function KurumedevaGame({
         {phase === 'play' && friendStep === 0 && !placeActive && !debugMode && (
           <button
             type="button"
-            className={`kuru-log-piece is-log is-top${tryShake ? ' is-shake' : ''}${!triedPush && hintLevel >= 1 ? ' pulse' : ''}`}
+            className={`kuru-log-piece is-log is-top${tryShake ? ' is-shake' : ''}${isPushingLogs ? ' is-holding' : ''}${!triedPush && hintLevel >= 1 ? ' pulse' : ''}`}
             style={{
               left: `${TRY_LOG_SPOT.l}%`,
               top: `${TRY_LOG_SPOT.t}%`,
               width: `${LOG_SLOT_W * 0.6}%`,
             }}
-            aria-label="Try to move the logs"
-            onPointerDown={handleTryPushLogs}
+            aria-label="Press and hold to help Beaver try the logs"
+            onPointerDown={handleTryPushLogsDown}
+            onPointerUp={handleTryPushLogsUp}
+            onPointerCancel={handleTryPushLogsUp}
+            onPointerLeave={handleTryPushLogsUp}
           >
             <img src={supportLogsObj} alt="" draggable={false} />
           </button>

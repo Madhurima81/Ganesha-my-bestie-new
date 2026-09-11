@@ -766,6 +766,17 @@
   animation: stageHintPulse 1.15s ease-in-out infinite !important;
 }
 
+/* Beat 0 — Beaver presses and holds the logs; a small wiggle while held,
+   confirming the press before the hold lands into the try-and-fail shake. */
+.kuru-log-piece.is-holding {
+  animation: kuruLogHoldWiggle 0.35s ease-in-out infinite !important;
+}
+
+@keyframes kuruLogHoldWiggle {
+  0%, 100% { transform: translate(-50%, -50%) rotate(0deg) scale(1.03); }
+  50% { transform: translate(-50%, -50%) rotate(-2deg) scale(1.03); }
+}
+
 /* Beat 0 — Beaver tries to push the logs alone; they wobble but don't move. */
 .kuru-log-piece.is-shake {
   animation: kuruLogTryShake 0.5s ease-in-out !important;
