@@ -254,18 +254,19 @@ const DEBUG_LABELS = Object.fromEntries(DEBUG_PANEL_KEYS);
 function debugArtFor(key, pos, layout) {
   const tail = Number(key.replace(/^\D+/, ''));
   const r = pos.r || 0;
+  const flip = !!pos.flip;
   const wOf = (k, fallback) => (layout && layout[k] && layout[k].w != null ? layout[k].w : fallback);
-  if (key.startsWith('friend')) return { src: FRIENDS[tail]?.carryImg, w: pos.w || 10, r: 0 };
-  if (key.startsWith('wait')) return { src: FRIENDS[tail]?.emptyImg, w: 10, r: 0 };
-  if (key.startsWith('farExit')) return { src: FRIENDS[tail]?.emptyImg, w: 10, r: 0 };
-  if (key.startsWith('delivery')) return { src: FRIENDS[tail]?.carryImg, w: 10, r: 0 };
+  if (key.startsWith('friend')) return { src: FRIENDS[tail]?.carryImg, w: pos.w || 10, r: 0, flip };
+  if (key.startsWith('wait')) return { src: FRIENDS[tail]?.emptyImg, w: 10, r: 0, flip };
+  if (key.startsWith('farExit')) return { src: FRIENDS[tail]?.emptyImg, w: 10, r: 0, flip };
+  if (key.startsWith('delivery')) return { src: FRIENDS[tail]?.carryImg, w: 10, r: 0, flip };
   if (key === 'helpTokenHome') return { src: helpHandIconImg, w: 8, r: 0 };
-  if (key === 'beaverBaby') return { src: babyBeaverWavingImg, w: KURUMEDEVA_LAYOUT.beaverBaby.w, r: 0 };
-  if (key.startsWith('beaverPath')) return { src: beaverIdleWorriedImg, w: KURUMEDEVA_LAYOUT.beaver.w, r: 0 };
+  if (key === 'beaverBaby') return { src: babyBeaverWavingImg, w: KURUMEDEVA_LAYOUT.beaverBaby.w, r: 0, flip };
+  if (key.startsWith('beaverPath')) return { src: beaverIdleWorriedImg, w: KURUMEDEVA_LAYOUT.beaver.w, r: 0, flip };
   if (key === 'logPile' || key.startsWith('logSlot')) return { src: supportLogsObj, w: wOf('logSlot0', LOG_SLOT_W), r };
   if (key === 'plankPile' || key.startsWith('plankSlot')) return { src: plankObj, w: wOf('plankSlot0', PLANK_SLOT_W), r };
   if (key.startsWith('rope')) return { src: ropeObj, w: wOf('rope0_0', ROPE_SLOT_W), r };
-  if (key === 'bridge') return { src: bridgeBrokenImg, w: KURUMEDEVA_LAYOUT.bridge.w, r: 0 };
+  if (key === 'bridge') return { src: bridgeBrokenImg, w: KURUMEDEVA_LAYOUT.bridge.w, r: 0, flip };
   return null; // other anchors → dot
 }
 
@@ -281,7 +282,7 @@ const DEBUG_PHASES = [
 function buildDebugLayout() {
   const layout = {};
   FRIENDS.forEach((friend, index) => {
-    layout[`friend${index}`] = { l: friend.l, t: friend.t, w: friend.w };
+    layout[`friend${index}`] = { l: friend.l, t: friend.t, w: friend.w, flip: !!friend.flip };
   });
   WAIT_SPOTS.forEach((spot, index) => {
     layout[`wait${index}`] = { l: spot.l, t: spot.t };
@@ -294,11 +295,13 @@ function buildDebugLayout() {
     l: KURUMEDEVA_LAYOUT.bridge.l,
     t: KURUMEDEVA_LAYOUT.bridge.t,
     w: KURUMEDEVA_LAYOUT.bridge.w,
+    flip: !!KURUMEDEVA_LAYOUT.bridge.flip,
   };
   layout.beaverBaby = {
     l: KURUMEDEVA_LAYOUT.beaverBaby.l,
     t: KURUMEDEVA_LAYOUT.beaverBaby.t,
     w: KURUMEDEVA_LAYOUT.beaverBaby.w,
+    flip: !!KURUMEDEVA_LAYOUT.beaverBaby.flip,
   };
   // Slot 0 of each round also carries `w` = that piece's on-screen size, so the
   // panel exposes a width slider for it.
@@ -1095,6 +1098,13 @@ export default function KurumedevaGame({
     }));
   };
 
+  const toggleDebugFlip = () => {
+    setDebugLayout((current) => ({
+      ...current,
+      [selectedDebugKey]: { ...current[selectedDebugKey], flip: !current[selectedDebugKey].flip },
+    }));
+  };
+
   const copyLayoutJson = async () => {
     const payload = JSON.stringify(
       {
@@ -1105,7 +1115,7 @@ export default function KurumedevaGame({
           l: round1(debugLayout[`friend${index}`].l),
           t: round1(debugLayout[`friend${index}`].t),
           w: round1(debugLayout[`friend${index}`].w),
-          flip: friend.flip,
+          flip: !!debugLayout[`friend${index}`].flip,
         })),
         beaverPath: KURUMEDEVA_LAYOUT.beaverPath.map((_, index) => ({
           l: round1(debugLayout[`beaverPath${index}`].l),
@@ -1116,12 +1126,14 @@ export default function KurumedevaGame({
           l: round1(debugLayout.bridge.l),
           t: round1(debugLayout.bridge.t),
           w: round1(debugLayout.bridge.w),
+          flip: !!debugLayout.bridge.flip,
         },
         beaverBaby: {
           ...KURUMEDEVA_LAYOUT.beaverBaby,
           l: round1(debugLayout.beaverBaby.l),
           t: round1(debugLayout.beaverBaby.t),
           w: round1(debugLayout.beaverBaby.w),
+          flip: !!debugLayout.beaverBaby.flip,
         },
         HELP_TOKEN_HOME: {
           l: round1(debugLayout.helpTokenHome.l),
@@ -1750,7 +1762,7 @@ export default function KurumedevaGame({
                     left: `${pos.l}%`,
                     top: `${pos.t}%`,
                     width: art ? `${art.w}%` : undefined,
-                    transform: art ? `translate(-50%, -50%) rotate(${art.r || 0}deg)` : undefined,
+                    transform: art ? `translate(-50%, -50%) rotate(${art.r || 0}deg) scaleX(${art.flip ? -1 : 1})` : undefined,
                   }}
                   onPointerDown={(event) => startDebugDrag(event, key)}
                 >
@@ -1862,6 +1874,14 @@ export default function KurumedevaGame({
               <div className="kuru-debug-grid">
                 <button type="button" onClick={() => nudgeDebug('r', -5)}>rot −5°</button>
                 <button type="button" onClick={() => nudgeDebug('r', 5)}>rot +5°</button>
+              </div>
+            )}
+
+            {debugLayout[selectedDebugKey].flip !== undefined && (
+              <div className="kuru-debug-grid">
+                <button type="button" onClick={toggleDebugFlip}>
+                  {debugLayout[selectedDebugKey].flip ? 'Un-flip' : 'Flip horizontal'}
+                </button>
               </div>
             )}
 
