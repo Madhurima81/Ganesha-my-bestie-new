@@ -43,7 +43,11 @@ import { getSceneResetConfig } from '../../../../lib/config/SceneResetConfigs';
 // Import game components
 import EyesPopUpGame from './EyesPopUpGame';
 import EarsSoundMatchGame from './EarsSoundMatchGame';
-import TuskPathGame from './TuskPathGame';
+// TuskPathGame (hand-coded) replaced by TuskBeatPlayerLive (data-driven,
+// reads positions/poses/VO straight from the visual editor's export) — see
+// src/lib/beatPlayer/BeatPlayerGame.jsx. Old file kept intact and still
+// reachable via game-test's `sm-tusk` key as a rollback path.
+import TuskBeatPlayerLive from './TuskBeatPlayerLive';
 
 // UI Components
 import FireworksCompletion from '../../../../lib/components/feedback/FireworksCompletion';
@@ -926,7 +930,7 @@ const SymbolMountainSceneContent = ({
               {sceneState.showTuskAssemblyGame &&
                !isEarRevealActive &&
                !sceneState.discoveredSymbols?.tusk && (
-                <TuskPathGame
+                <TuskBeatPlayerLive
                   key={`tusk-${tuskTestRunKey}`}
                   isActive={sceneState.showTuskAssemblyGame}
                   isAudioOn={isAudioOn}

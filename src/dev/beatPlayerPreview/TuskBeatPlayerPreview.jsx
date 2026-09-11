@@ -61,15 +61,12 @@ const ASSET_MAP = {
   'upload://12': bunnyRest,
 };
 
-// Interaction wiring — this is exactly what a future editor "mechanic"
-// dropdown would write directly into the beat JSON as `beat.interaction`.
-// Keyed by beat index (string, matches flowJson.beats keys).
-const INTERACTIONS = {
-  '1': { type: 'drag-drop', drag: 'mangoItem', target: 'bunnySprite' },
-  '2': { type: 'drag-drop', drag: 'elephantSprite', target: 'bowlItem' },
-  '3': { type: 'drag-drop', drag: 'grassItem', target: { x: 55.7, y: 59.82, w: 20 } },
-  '4': { type: 'drag-drop', drag: 'featherItem', target: 'bunnySprite' },
-};
+// Interaction is now baked directly into tuskFlowSample.json as
+// `beat.interaction` (added by hand here — a real editor "mechanic"
+// dropdown would write the same shape). No separate interactions prop
+// needed; this proves the JSON-only path end to end.
+
+export { ASSET_MAP, flowJson, bgImg };
 
 function TuskBeatPlayerPreview(props) {
   const missing = useMemo(() => new Set(), []);
@@ -80,7 +77,6 @@ function TuskBeatPlayerPreview(props) {
         {...props}
         flowJson={flowJson}
         assetMap={ASSET_MAP}
-        interactions={INTERACTIONS}
         onMissingAsset={(path) => missing.add(path)}
       />
     </div>

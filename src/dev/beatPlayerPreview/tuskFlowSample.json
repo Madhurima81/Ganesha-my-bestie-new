@@ -6,7 +6,7 @@
       "before": {
         "items": [
           {
-            "name": "Monkey — idle (shared, from Eyes/Ears)",
+            "name": "Monkey \u2014 idle (shared, from Eyes/Ears)",
             "path": "Characters/monkey-new.webp",
             "x": 13.850682710878182,
             "y": 39.12901513000368,
@@ -76,7 +76,7 @@
             "gameKey": "cowSprite"
           },
           {
-            "name": "Grass — bundle",
+            "name": "Grass \u2014 bundle",
             "path": "Interactions/grass_bundle.webp",
             "x": 70.43221343118144,
             "y": 54.846101472326254,
@@ -104,7 +104,7 @@
             "gameKey": "elephantSprite"
           },
           {
-            "name": "Bunny — tired",
+            "name": "Bunny \u2014 tired",
             "path": "Characters/bunny_01_tired.webp",
             "x": 50.589372958218945,
             "y": 59.954150486554525,
@@ -118,7 +118,7 @@
             "gameKey": "bunnySprite"
           },
           {
-            "name": "Bowl — empty",
+            "name": "Bowl \u2014 empty",
             "path": "Interactions/bowl_empty.webp",
             "x": 57.36737781914738,
             "y": 63.75245579567779,
@@ -138,7 +138,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "",
+          "voText": "Everyone on the mountain is happy today!",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -149,7 +149,7 @@
       "movement": {
         "items": [
           {
-            "name": "Monkey — idle (shared, from Eyes/Ears)",
+            "name": "Monkey \u2014 idle (shared, from Eyes/Ears)",
             "path": "Characters/monkey-new.webp",
             "x": 13.850682710878182,
             "y": 39.12901513000368,
@@ -219,7 +219,7 @@
             "gameKey": "cowSprite"
           },
           {
-            "name": "Grass — bundle",
+            "name": "Grass \u2014 bundle",
             "path": "Interactions/grass_bundle.webp",
             "x": 70.43221343118144,
             "y": 54.846101472326254,
@@ -247,7 +247,7 @@
             "gameKey": "elephantSprite"
           },
           {
-            "name": "Bunny — tired",
+            "name": "Bunny \u2014 tired",
             "path": "Characters/bunny_01_tired.webp",
             "x": 50.589372958218945,
             "y": 59.954150486554525,
@@ -261,7 +261,7 @@
             "gameKey": "bunnySprite"
           },
           {
-            "name": "Bowl — empty",
+            "name": "Bowl \u2014 empty",
             "path": "Interactions/bowl_empty.webp",
             "x": 57.36737781914738,
             "y": 63.75245579567779,
@@ -292,7 +292,7 @@
       "after": {
         "items": [
           {
-            "name": "Monkey — idle (shared, from Eyes/Ears)",
+            "name": "Monkey \u2014 idle (shared, from Eyes/Ears)",
             "path": "Characters/monkey-new.webp",
             "x": 13.850682710878182,
             "y": 39.12901513000368,
@@ -362,7 +362,7 @@
             "gameKey": "cowSprite"
           },
           {
-            "name": "Grass — bundle",
+            "name": "Grass \u2014 bundle",
             "path": "Interactions/grass_bundle.webp",
             "x": 70.43221343118144,
             "y": 54.846101472326254,
@@ -390,7 +390,7 @@
             "gameKey": "elephantSprite"
           },
           {
-            "name": "Bunny — tired",
+            "name": "Bunny \u2014 tired",
             "path": "Characters/bunny_01_tired.webp",
             "x": 50.589372958218945,
             "y": 59.954150486554525,
@@ -404,7 +404,7 @@
             "gameKey": "bunnySprite"
           },
           {
-            "name": "Bowl — empty",
+            "name": "Bowl \u2014 empty",
             "path": "Interactions/bowl_empty.webp",
             "x": 57.36737781914738,
             "y": 63.75245579567779,
@@ -424,7 +424,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "",
+          "voText": "But wait... do you hear that? It's a bunny sound.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -437,7 +437,7 @@
       "before": {
         "items": [
           {
-            "name": "Monkey — idle (shared, from Eyes/Ears)",
+            "name": "Monkey \u2014 idle (shared, from Eyes/Ears)",
             "path": "Characters/monkey-new.webp",
             "x": 13.850682710878182,
             "y": 39.12901513000368,
@@ -507,7 +507,7 @@
             "gameKey": "cowSprite"
           },
           {
-            "name": "Grass — bundle",
+            "name": "Grass \u2014 bundle",
             "path": "Interactions/grass_bundle.webp",
             "x": 70.43221343118144,
             "y": 54.846101472326254,
@@ -535,7 +535,7 @@
             "gameKey": "elephantSprite"
           },
           {
-            "name": "Bunny — tired",
+            "name": "Bunny \u2014 tired",
             "path": "Characters/bunny_01_tired.webp",
             "x": 50.589372958218945,
             "y": 59.954150486554525,
@@ -549,7 +549,7 @@
             "gameKey": "bunnySprite"
           },
           {
-            "name": "Bowl — empty",
+            "name": "Bowl \u2014 empty",
             "path": "Interactions/bowl_empty.webp",
             "x": 57.36737781914738,
             "y": 63.75245579567779,
@@ -563,7 +563,7 @@
             "gameKey": "bowlItem"
           },
           {
-            "name": "Need bubble — hungry (mango)",
+            "name": "Need bubble \u2014 hungry (mango)",
             "path": "Bubbles/need_bubble_hungry_mango.png",
             "x": 44.49901185104245,
             "y": 52.881470925681484,
@@ -583,19 +583,19 @@
           "targets": []
         },
         "audio": {
-          "voText": "",
+          "voText": "Drag the mango to the bunny.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
           "nextVisual": 0,
           "sfx": ""
         },
-        "__syncedSnapshot": "[{\"name\":\"Monkey — idle (shared, from Eyes/Ears)\",\"path\":\"Characters/monkey-new.webp\",\"x\":13.850682710878182,\"y\":39.12901513000368,\"scale\":55,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"mango new\",\"path\":\"upload://5\",\"x\":19.253436037871175,\"y\":46.20170068647163,\"scale\":26,\"rotation\":17,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"mangoItem\"},{\"name\":\"peacock new\",\"path\":\"upload://8\",\"x\":81.43418073570444,\"y\":67.15782780075823,\"scale\":80,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"peacockSprite\"},{\"name\":\"feather found\",\"path\":\"upload://9\",\"x\":83.20236256410602,\"y\":65.45513880042056,\"scale\":22,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"featherItem\"},{\"name\":\"cow eating grass\",\"path\":\"upload://7\",\"x\":69.84282248617828,\"y\":43.32023575638507,\"scale\":100,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"cowSprite\"},{\"name\":\"Grass — bundle\",\"path\":\"Interactions/grass_bundle.webp\",\"x\":70.43221343118144,\"y\":54.846101472326254,\"scale\":33,\"rotation\":-88,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"grassItem\"},{\"name\":\"elephant drinking\",\"path\":\"upload://6\",\"x\":23.18270750566022,\"y\":65.45513880042054,\"scale\":89,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"elephantSprite\"},{\"name\":\"Bunny — tired\",\"path\":\"Characters/bunny_01_tired.webp\",\"x\":50.589372958218945,\"y\":59.954150486554525,\"scale\":78,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bunnySprite\"},{\"name\":\"Bowl — empty\",\"path\":\"Interactions/bowl_empty.webp\",\"x\":57.36737781914738,\"y\":63.75245579567779,\"scale\":47,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bowlItem\"}]"
+        "__syncedSnapshot": "[{\"name\":\"Monkey \u2014 idle (shared, from Eyes/Ears)\",\"path\":\"Characters/monkey-new.webp\",\"x\":13.850682710878182,\"y\":39.12901513000368,\"scale\":55,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"mango new\",\"path\":\"upload://5\",\"x\":19.253436037871175,\"y\":46.20170068647163,\"scale\":26,\"rotation\":17,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"mangoItem\"},{\"name\":\"peacock new\",\"path\":\"upload://8\",\"x\":81.43418073570444,\"y\":67.15782780075823,\"scale\":80,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"peacockSprite\"},{\"name\":\"feather found\",\"path\":\"upload://9\",\"x\":83.20236256410602,\"y\":65.45513880042056,\"scale\":22,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"featherItem\"},{\"name\":\"cow eating grass\",\"path\":\"upload://7\",\"x\":69.84282248617828,\"y\":43.32023575638507,\"scale\":100,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"cowSprite\"},{\"name\":\"Grass \u2014 bundle\",\"path\":\"Interactions/grass_bundle.webp\",\"x\":70.43221343118144,\"y\":54.846101472326254,\"scale\":33,\"rotation\":-88,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"grassItem\"},{\"name\":\"elephant drinking\",\"path\":\"upload://6\",\"x\":23.18270750566022,\"y\":65.45513880042054,\"scale\":89,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"elephantSprite\"},{\"name\":\"Bunny \u2014 tired\",\"path\":\"Characters/bunny_01_tired.webp\",\"x\":50.589372958218945,\"y\":59.954150486554525,\"scale\":78,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bunnySprite\"},{\"name\":\"Bowl \u2014 empty\",\"path\":\"Interactions/bowl_empty.webp\",\"x\":57.36737781914738,\"y\":63.75245579567779,\"scale\":47,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bowlItem\"}]"
       },
       "movement": {
         "items": [
           {
-            "name": "Monkey — idle (shared, from Eyes/Ears)",
+            "name": "Monkey \u2014 idle (shared, from Eyes/Ears)",
             "path": "Characters/monkey-new.webp",
             "x": 13.850682710878182,
             "y": 39.12901513000368,
@@ -665,7 +665,7 @@
             "gameKey": "cowSprite"
           },
           {
-            "name": "Grass — bundle",
+            "name": "Grass \u2014 bundle",
             "path": "Interactions/grass_bundle.webp",
             "x": 70.43221343118144,
             "y": 54.846101472326254,
@@ -693,7 +693,7 @@
             "gameKey": "elephantSprite"
           },
           {
-            "name": "Bunny — tired",
+            "name": "Bunny \u2014 tired",
             "path": "Characters/bunny_01_tired.webp",
             "x": 51.66993801304491,
             "y": 53.143418467583494,
@@ -707,7 +707,7 @@
             "gameKey": "bunnySprite"
           },
           {
-            "name": "Bowl — empty",
+            "name": "Bowl \u2014 empty",
             "path": "Interactions/bowl_empty.webp",
             "x": 57.17091716861036,
             "y": 60.21611001964636,
@@ -721,7 +721,7 @@
             "gameKey": "bowlItem"
           },
           {
-            "name": "Need bubble — hungry (mango)",
+            "name": "Need bubble \u2014 hungry (mango)",
             "path": "Bubbles/need_bubble_hungry_mango.png",
             "x": 59.43026411344265,
             "y": 51.30975569629482,
@@ -760,7 +760,7 @@
       "after": {
         "items": [
           {
-            "name": "Monkey — idle (shared, from Eyes/Ears)",
+            "name": "Monkey \u2014 idle (shared, from Eyes/Ears)",
             "path": "Characters/monkey-new.webp",
             "x": 13.850682710878182,
             "y": 39.12901513000368,
@@ -816,7 +816,7 @@
             "gameKey": "cowSprite"
           },
           {
-            "name": "Grass — bundle",
+            "name": "Grass \u2014 bundle",
             "path": "Interactions/grass_bundle.webp",
             "x": 70.43221343118144,
             "y": 54.846101472326254,
@@ -844,7 +844,7 @@
             "gameKey": "elephantSprite"
           },
           {
-            "name": "Bunny — tired",
+            "name": "Bunny \u2014 tired",
             "path": "Characters/bunny_01_tired.webp",
             "x": 51.66993801304491,
             "y": 53.143418467583494,
@@ -858,7 +858,7 @@
             "gameKey": "bunnySprite"
           },
           {
-            "name": "Bowl — empty",
+            "name": "Bowl \u2014 empty",
             "path": "Interactions/bowl_empty.webp",
             "x": 57.17091716861036,
             "y": 60.21611001964636,
@@ -900,20 +900,25 @@
           "targets": []
         },
         "audio": {
-          "voText": "",
+          "voText": "Munch, munch! Thank you!",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
           "nextVisual": 0,
           "sfx": ""
         }
+      },
+      "interaction": {
+        "type": "drag-drop",
+        "drag": "mangoItem",
+        "target": "bunnySprite"
       }
     },
     "2": {
       "before": {
         "items": [
           {
-            "name": "Monkey — idle (shared, from Eyes/Ears)",
+            "name": "Monkey \u2014 idle (shared, from Eyes/Ears)",
             "path": "Characters/monkey-new.webp",
             "x": 13.850682710878182,
             "y": 39.12901513000368,
@@ -969,7 +974,7 @@
             "gameKey": "cowSprite"
           },
           {
-            "name": "Grass — bundle",
+            "name": "Grass \u2014 bundle",
             "path": "Interactions/grass_bundle.webp",
             "x": 70.43221343118144,
             "y": 54.846101472326254,
@@ -997,7 +1002,7 @@
             "gameKey": "elephantSprite"
           },
           {
-            "name": "Bunny — tired",
+            "name": "Bunny \u2014 tired",
             "path": "Characters/bunny_01_tired.webp",
             "x": 51.66993801304491,
             "y": 53.143418467583494,
@@ -1011,7 +1016,7 @@
             "gameKey": "bunnySprite"
           },
           {
-            "name": "Bowl — empty",
+            "name": "Bowl \u2014 empty",
             "path": "Interactions/bowl_empty.webp",
             "x": 57.17091716861036,
             "y": 60.21611001964636,
@@ -1039,7 +1044,7 @@
             "gameKey": "bunnySprite"
           },
           {
-            "name": "Need bubble — thirsty (water)",
+            "name": "Need bubble \u2014 thirsty (water)",
             "path": "Bubbles/need_bubble_thirsty_water.png",
             "x": 44.99017696747315,
             "y": 43.451209527336076,
@@ -1059,19 +1064,19 @@
           "targets": []
         },
         "audio": {
-          "voText": "",
+          "voText": "Drag the water to the bowl.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
           "nextVisual": 0,
           "sfx": ""
         },
-        "__syncedSnapshot": "[{\"name\":\"Monkey — idle (shared, from Eyes/Ears)\",\"path\":\"Characters/monkey-new.webp\",\"x\":13.850682710878182,\"y\":39.12901513000368,\"scale\":55,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"peacock new\",\"path\":\"upload://8\",\"x\":81.43418073570444,\"y\":67.15782780075823,\"scale\":80,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"peacockSprite\"},{\"name\":\"feather found\",\"path\":\"upload://9\",\"x\":83.20236256410602,\"y\":65.45513880042056,\"scale\":22,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"featherItem\"},{\"name\":\"cow eating grass\",\"path\":\"upload://7\",\"x\":69.84282248617828,\"y\":43.32023575638507,\"scale\":100,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"cowSprite\"},{\"name\":\"Grass — bundle\",\"path\":\"Interactions/grass_bundle.webp\",\"x\":70.43221343118144,\"y\":54.846101472326254,\"scale\":33,\"rotation\":-88,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"grassItem\"},{\"name\":\"elephant drinking\",\"path\":\"upload://6\",\"x\":27.897835065685488,\"y\":66.50294695481335,\"scale\":100,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"elephantSprite\"},{\"name\":\"Bunny — tired\",\"path\":\"Characters/bunny_01_tired.webp\",\"x\":51.66993801304491,\"y\":53.143418467583494,\"scale\":78,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bunnySprite\"},{\"name\":\"Bowl — empty\",\"path\":\"Interactions/bowl_empty.webp\",\"x\":57.17091716861036,\"y\":60.21611001964636,\"scale\":47,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bowlItem\"},{\"name\":\"bunny eat\",\"path\":\"upload://10\",\"x\":51.86640765697404,\"y\":53.143418467583494,\"scale\":46,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bunnySprite\"}]"
+        "__syncedSnapshot": "[{\"name\":\"Monkey \u2014 idle (shared, from Eyes/Ears)\",\"path\":\"Characters/monkey-new.webp\",\"x\":13.850682710878182,\"y\":39.12901513000368,\"scale\":55,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"peacock new\",\"path\":\"upload://8\",\"x\":81.43418073570444,\"y\":67.15782780075823,\"scale\":80,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"peacockSprite\"},{\"name\":\"feather found\",\"path\":\"upload://9\",\"x\":83.20236256410602,\"y\":65.45513880042056,\"scale\":22,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"featherItem\"},{\"name\":\"cow eating grass\",\"path\":\"upload://7\",\"x\":69.84282248617828,\"y\":43.32023575638507,\"scale\":100,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"cowSprite\"},{\"name\":\"Grass \u2014 bundle\",\"path\":\"Interactions/grass_bundle.webp\",\"x\":70.43221343118144,\"y\":54.846101472326254,\"scale\":33,\"rotation\":-88,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"grassItem\"},{\"name\":\"elephant drinking\",\"path\":\"upload://6\",\"x\":27.897835065685488,\"y\":66.50294695481335,\"scale\":100,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"elephantSprite\"},{\"name\":\"Bunny \u2014 tired\",\"path\":\"Characters/bunny_01_tired.webp\",\"x\":51.66993801304491,\"y\":53.143418467583494,\"scale\":78,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bunnySprite\"},{\"name\":\"Bowl \u2014 empty\",\"path\":\"Interactions/bowl_empty.webp\",\"x\":57.17091716861036,\"y\":60.21611001964636,\"scale\":47,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bowlItem\"},{\"name\":\"bunny eat\",\"path\":\"upload://10\",\"x\":51.86640765697404,\"y\":53.143418467583494,\"scale\":46,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bunnySprite\"}]"
       },
       "movement": {
         "items": [
           {
-            "name": "Monkey — idle (shared, from Eyes/Ears)",
+            "name": "Monkey \u2014 idle (shared, from Eyes/Ears)",
             "path": "Characters/monkey-new.webp",
             "x": 13.850682710878182,
             "y": 39.12901513000368,
@@ -1127,7 +1132,7 @@
             "gameKey": "cowSprite"
           },
           {
-            "name": "Grass — bundle",
+            "name": "Grass \u2014 bundle",
             "path": "Interactions/grass_bundle.webp",
             "x": 70.43221343118144,
             "y": 54.846101472326254,
@@ -1141,7 +1146,7 @@
             "gameKey": "grassItem"
           },
           {
-            "name": "Bunny — tired",
+            "name": "Bunny \u2014 tired",
             "path": "Characters/bunny_01_tired.webp",
             "x": 51.66993801304491,
             "y": 53.143418467583494,
@@ -1155,7 +1160,7 @@
             "gameKey": "bunnySprite"
           },
           {
-            "name": "Bowl — empty",
+            "name": "Bowl \u2014 empty",
             "path": "Interactions/bowl_empty.webp",
             "x": 57.17091716861036,
             "y": 60.21611001964636,
@@ -1183,7 +1188,7 @@
             "gameKey": "bunnySprite"
           },
           {
-            "name": "Need bubble — thirsty (water)",
+            "name": "Need bubble \u2014 thirsty (water)",
             "path": "Bubbles/need_bubble_thirsty_water.png",
             "x": 44.99017696747315,
             "y": 43.451209527336076,
@@ -1197,7 +1202,7 @@
             "gameKey": "needBubbleWater"
           },
           {
-            "name": "Elephant — FINAL (from Ears game)",
+            "name": "Elephant \u2014 FINAL (from Ears game)",
             "path": "Characters/elephant_final_sprays_water.png",
             "x": 30.84478979070128,
             "y": 61.39489194499018,
@@ -1211,7 +1216,7 @@
             "gameKey": "elephantSprite"
           },
           {
-            "name": "Bowl — filled",
+            "name": "Bowl \u2014 filled",
             "path": "Interactions/bowl_filled.webp",
             "x": 57.367386812539486,
             "y": 60.216110019646365,
@@ -1238,12 +1243,12 @@
           "nextVisual": 0,
           "sfx": ""
         },
-        "__syncedSnapshot": "[{\"name\":\"Monkey — idle (shared, from Eyes/Ears)\",\"path\":\"Characters/monkey-new.webp\",\"x\":13.850682710878182,\"y\":39.12901513000368,\"scale\":55,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"peacock new\",\"path\":\"upload://8\",\"x\":81.43418073570444,\"y\":67.15782780075823,\"scale\":80,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"peacockSprite\"},{\"name\":\"feather found\",\"path\":\"upload://9\",\"x\":83.20236256410602,\"y\":65.45513880042056,\"scale\":22,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"featherItem\"},{\"name\":\"cow eating grass\",\"path\":\"upload://7\",\"x\":69.84282248617828,\"y\":43.32023575638507,\"scale\":100,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"cowSprite\"},{\"name\":\"Grass — bundle\",\"path\":\"Interactions/grass_bundle.webp\",\"x\":70.43221343118144,\"y\":54.846101472326254,\"scale\":33,\"rotation\":-88,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"grassItem\"},{\"name\":\"elephant drinking\",\"path\":\"upload://6\",\"x\":27.897835065685488,\"y\":66.50294695481335,\"scale\":100,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"elephantSprite\"},{\"name\":\"Bunny — tired\",\"path\":\"Characters/bunny_01_tired.webp\",\"x\":51.66993801304491,\"y\":53.143418467583494,\"scale\":78,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bunnySprite\"},{\"name\":\"Bowl — empty\",\"path\":\"Interactions/bowl_empty.webp\",\"x\":57.17091716861036,\"y\":60.21611001964636,\"scale\":47,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bowlItem\"},{\"name\":\"bunny eat\",\"path\":\"upload://10\",\"x\":51.86640765697404,\"y\":53.143418467583494,\"scale\":46,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bunnySprite\"}]"
+        "__syncedSnapshot": "[{\"name\":\"Monkey \u2014 idle (shared, from Eyes/Ears)\",\"path\":\"Characters/monkey-new.webp\",\"x\":13.850682710878182,\"y\":39.12901513000368,\"scale\":55,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"peacock new\",\"path\":\"upload://8\",\"x\":81.43418073570444,\"y\":67.15782780075823,\"scale\":80,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"peacockSprite\"},{\"name\":\"feather found\",\"path\":\"upload://9\",\"x\":83.20236256410602,\"y\":65.45513880042056,\"scale\":22,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"featherItem\"},{\"name\":\"cow eating grass\",\"path\":\"upload://7\",\"x\":69.84282248617828,\"y\":43.32023575638507,\"scale\":100,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"cowSprite\"},{\"name\":\"Grass \u2014 bundle\",\"path\":\"Interactions/grass_bundle.webp\",\"x\":70.43221343118144,\"y\":54.846101472326254,\"scale\":33,\"rotation\":-88,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"grassItem\"},{\"name\":\"elephant drinking\",\"path\":\"upload://6\",\"x\":27.897835065685488,\"y\":66.50294695481335,\"scale\":100,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"elephantSprite\"},{\"name\":\"Bunny \u2014 tired\",\"path\":\"Characters/bunny_01_tired.webp\",\"x\":51.66993801304491,\"y\":53.143418467583494,\"scale\":78,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bunnySprite\"},{\"name\":\"Bowl \u2014 empty\",\"path\":\"Interactions/bowl_empty.webp\",\"x\":57.17091716861036,\"y\":60.21611001964636,\"scale\":47,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bowlItem\"},{\"name\":\"bunny eat\",\"path\":\"upload://10\",\"x\":51.86640765697404,\"y\":53.143418467583494,\"scale\":46,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bunnySprite\"}]"
       },
       "after": {
         "items": [
           {
-            "name": "Monkey — idle (shared, from Eyes/Ears)",
+            "name": "Monkey \u2014 idle (shared, from Eyes/Ears)",
             "path": "Characters/monkey-new.webp",
             "x": 13.850682710878182,
             "y": 39.12901513000368,
@@ -1299,7 +1304,7 @@
             "gameKey": "cowSprite"
           },
           {
-            "name": "Grass — bundle",
+            "name": "Grass \u2014 bundle",
             "path": "Interactions/grass_bundle.webp",
             "x": 70.43221343118144,
             "y": 54.846101472326254,
@@ -1313,7 +1318,7 @@
             "gameKey": "grassItem"
           },
           {
-            "name": "Bowl — empty",
+            "name": "Bowl \u2014 empty",
             "path": "Interactions/bowl_empty.webp",
             "x": 57.17091716861036,
             "y": 60.21611001964636,
@@ -1327,7 +1332,7 @@
             "gameKey": "bowlItem"
           },
           {
-            "name": "Bowl — filled",
+            "name": "Bowl \u2014 filled",
             "path": "Interactions/bowl_filled.webp",
             "x": 57.367386812539486,
             "y": 60.216110019646365,
@@ -1355,7 +1360,7 @@
             "gameKey": ""
           },
           {
-            "name": "Elephant — idle (shared, from Eyes/Ears)",
+            "name": "Elephant \u2014 idle (shared, from Eyes/Ears)",
             "path": "Characters/elephant-new1.webp",
             "x": 30.353633667662685,
             "y": 65.19319125851854,
@@ -1375,21 +1380,26 @@
           "targets": []
         },
         "audio": {
-          "voText": "",
+          "voText": "Slurp! Now the bunny is not thirsty.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
           "nextVisual": 0,
           "sfx": ""
         },
-        "__syncedSnapshot": "[{\"name\":\"Monkey — idle (shared, from Eyes/Ears)\",\"path\":\"Characters/monkey-new.webp\",\"x\":13.850682710878182,\"y\":39.12901513000368,\"scale\":55,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"peacock new\",\"path\":\"upload://8\",\"x\":81.43418073570444,\"y\":67.15782780075823,\"scale\":80,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"peacockSprite\"},{\"name\":\"feather found\",\"path\":\"upload://9\",\"x\":83.20236256410602,\"y\":65.45513880042056,\"scale\":22,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"featherItem\"},{\"name\":\"cow eating grass\",\"path\":\"upload://7\",\"x\":69.84282248617828,\"y\":43.32023575638507,\"scale\":100,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"cowSprite\"},{\"name\":\"Grass — bundle\",\"path\":\"Interactions/grass_bundle.webp\",\"x\":70.43221343118144,\"y\":54.846101472326254,\"scale\":33,\"rotation\":-88,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"grassItem\"},{\"name\":\"elephant drinking\",\"path\":\"upload://6\",\"x\":27.897835065685488,\"y\":66.50294695481335,\"scale\":100,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"elephantSprite\"},{\"name\":\"Bunny — tired\",\"path\":\"Characters/bunny_01_tired.webp\",\"x\":51.66993801304491,\"y\":53.143418467583494,\"scale\":78,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bunnySprite\"},{\"name\":\"Bowl — empty\",\"path\":\"Interactions/bowl_empty.webp\",\"x\":57.17091716861036,\"y\":60.21611001964636,\"scale\":47,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bowlItem\"},{\"name\":\"bunny eat\",\"path\":\"upload://10\",\"x\":51.86640765697404,\"y\":53.143418467583494,\"scale\":46,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bunnySprite\"}]"
+        "__syncedSnapshot": "[{\"name\":\"Monkey \u2014 idle (shared, from Eyes/Ears)\",\"path\":\"Characters/monkey-new.webp\",\"x\":13.850682710878182,\"y\":39.12901513000368,\"scale\":55,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"peacock new\",\"path\":\"upload://8\",\"x\":81.43418073570444,\"y\":67.15782780075823,\"scale\":80,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"peacockSprite\"},{\"name\":\"feather found\",\"path\":\"upload://9\",\"x\":83.20236256410602,\"y\":65.45513880042056,\"scale\":22,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"featherItem\"},{\"name\":\"cow eating grass\",\"path\":\"upload://7\",\"x\":69.84282248617828,\"y\":43.32023575638507,\"scale\":100,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"cowSprite\"},{\"name\":\"Grass \u2014 bundle\",\"path\":\"Interactions/grass_bundle.webp\",\"x\":70.43221343118144,\"y\":54.846101472326254,\"scale\":33,\"rotation\":-88,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"grassItem\"},{\"name\":\"elephant drinking\",\"path\":\"upload://6\",\"x\":27.897835065685488,\"y\":66.50294695481335,\"scale\":100,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"elephantSprite\"},{\"name\":\"Bunny \u2014 tired\",\"path\":\"Characters/bunny_01_tired.webp\",\"x\":51.66993801304491,\"y\":53.143418467583494,\"scale\":78,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bunnySprite\"},{\"name\":\"Bowl \u2014 empty\",\"path\":\"Interactions/bowl_empty.webp\",\"x\":57.17091716861036,\"y\":60.21611001964636,\"scale\":47,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bowlItem\"},{\"name\":\"bunny eat\",\"path\":\"upload://10\",\"x\":51.86640765697404,\"y\":53.143418467583494,\"scale\":46,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bunnySprite\"}]"
+      },
+      "interaction": {
+        "type": "drag-drop",
+        "drag": "elephantSprite",
+        "target": "bowlItem"
       }
     },
     "3": {
       "before": {
         "items": [
           {
-            "name": "Monkey — idle (shared, from Eyes/Ears)",
+            "name": "Monkey \u2014 idle (shared, from Eyes/Ears)",
             "path": "Characters/monkey-new.webp",
             "x": 13.850682710878182,
             "y": 39.12901513000368,
@@ -1445,7 +1455,7 @@
             "gameKey": "cowSprite"
           },
           {
-            "name": "Grass — bundle",
+            "name": "Grass \u2014 bundle",
             "path": "Interactions/grass_bundle.webp",
             "x": 70.43221343118144,
             "y": 54.846101472326254,
@@ -1459,7 +1469,7 @@
             "gameKey": "grassItem"
           },
           {
-            "name": "Bowl — empty",
+            "name": "Bowl \u2014 empty",
             "path": "Interactions/bowl_empty.webp",
             "x": 57.17091716861036,
             "y": 60.21611001964636,
@@ -1473,7 +1483,7 @@
             "gameKey": "bowlItem"
           },
           {
-            "name": "Bowl — filled",
+            "name": "Bowl \u2014 filled",
             "path": "Interactions/bowl_filled.webp",
             "x": 57.367386812539486,
             "y": 60.216110019646365,
@@ -1501,7 +1511,7 @@
             "gameKey": ""
           },
           {
-            "name": "Elephant — idle (shared, from Eyes/Ears)",
+            "name": "Elephant \u2014 idle (shared, from Eyes/Ears)",
             "path": "Characters/elephant-new1.webp",
             "x": 30.353633667662685,
             "y": 65.19319125851854,
@@ -1515,7 +1525,7 @@
             "gameKey": ""
           },
           {
-            "name": "Need bubble — soft rest (grass)",
+            "name": "Need bubble \u2014 soft rest (grass)",
             "path": "Bubbles/need_bubble_soft_rest_grass.png",
             "x": 46.95481944641175,
             "y": 47.511456382766454,
@@ -1535,19 +1545,19 @@
           "targets": []
         },
         "audio": {
-          "voText": "",
+          "voText": "Drag the grass to the resting spot.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
           "nextVisual": 0,
           "sfx": ""
         },
-        "__syncedSnapshot": "[{\"name\":\"Monkey — idle (shared, from Eyes/Ears)\",\"path\":\"Characters/monkey-new.webp\",\"x\":13.850682710878182,\"y\":39.12901513000368,\"scale\":55,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"peacock new\",\"path\":\"upload://8\",\"x\":81.43418073570444,\"y\":67.15782780075823,\"scale\":80,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"peacockSprite\"},{\"name\":\"feather found\",\"path\":\"upload://9\",\"x\":83.20236256410602,\"y\":65.45513880042056,\"scale\":22,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"featherItem\"},{\"name\":\"cow eating grass\",\"path\":\"upload://7\",\"x\":69.84282248617828,\"y\":43.32023575638507,\"scale\":100,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"cowSprite\"},{\"name\":\"Grass — bundle\",\"path\":\"Interactions/grass_bundle.webp\",\"x\":70.43221343118144,\"y\":54.846101472326254,\"scale\":33,\"rotation\":-88,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"grassItem\"},{\"name\":\"Bowl — empty\",\"path\":\"Interactions/bowl_empty.webp\",\"x\":57.17091716861036,\"y\":60.21611001964636,\"scale\":47,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bowlItem\"},{\"name\":\"Bowl — filled\",\"path\":\"Interactions/bowl_filled.webp\",\"x\":57.367386812539486,\"y\":60.216110019646365,\"scale\":23,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bowlItem\"},{\"name\":\"bunny drink\",\"path\":\"upload://11\",\"x\":53.53635466341105,\"y\":54.846107467921165,\"scale\":46,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"Elephant — idle (shared, from Eyes/Ears)\",\"path\":\"Characters/elephant-new1.webp\",\"x\":30.353633667662685,\"y\":65.19319125851854,\"scale\":128,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"}]"
+        "__syncedSnapshot": "[{\"name\":\"Monkey \u2014 idle (shared, from Eyes/Ears)\",\"path\":\"Characters/monkey-new.webp\",\"x\":13.850682710878182,\"y\":39.12901513000368,\"scale\":55,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"peacock new\",\"path\":\"upload://8\",\"x\":81.43418073570444,\"y\":67.15782780075823,\"scale\":80,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"peacockSprite\"},{\"name\":\"feather found\",\"path\":\"upload://9\",\"x\":83.20236256410602,\"y\":65.45513880042056,\"scale\":22,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"featherItem\"},{\"name\":\"cow eating grass\",\"path\":\"upload://7\",\"x\":69.84282248617828,\"y\":43.32023575638507,\"scale\":100,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"cowSprite\"},{\"name\":\"Grass \u2014 bundle\",\"path\":\"Interactions/grass_bundle.webp\",\"x\":70.43221343118144,\"y\":54.846101472326254,\"scale\":33,\"rotation\":-88,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"grassItem\"},{\"name\":\"Bowl \u2014 empty\",\"path\":\"Interactions/bowl_empty.webp\",\"x\":57.17091716861036,\"y\":60.21611001964636,\"scale\":47,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bowlItem\"},{\"name\":\"Bowl \u2014 filled\",\"path\":\"Interactions/bowl_filled.webp\",\"x\":57.367386812539486,\"y\":60.216110019646365,\"scale\":23,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bowlItem\"},{\"name\":\"bunny drink\",\"path\":\"upload://11\",\"x\":53.53635466341105,\"y\":54.846107467921165,\"scale\":46,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"Elephant \u2014 idle (shared, from Eyes/Ears)\",\"path\":\"Characters/elephant-new1.webp\",\"x\":30.353633667662685,\"y\":65.19319125851854,\"scale\":128,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"}]"
       },
       "movement": {
         "items": [
           {
-            "name": "Monkey — idle (shared, from Eyes/Ears)",
+            "name": "Monkey \u2014 idle (shared, from Eyes/Ears)",
             "path": "Characters/monkey-new.webp",
             "x": 13.850682710878182,
             "y": 39.12901513000368,
@@ -1603,7 +1613,7 @@
             "gameKey": "cowSprite"
           },
           {
-            "name": "Grass — bundle",
+            "name": "Grass \u2014 bundle",
             "path": "Interactions/grass_bundle.webp",
             "x": 52.750485081086666,
             "y": 61.918793024389124,
@@ -1617,7 +1627,7 @@
             "gameKey": "grassItem"
           },
           {
-            "name": "Bowl — empty",
+            "name": "Bowl \u2014 empty",
             "path": "Interactions/bowl_empty.webp",
             "x": 57.17091716861036,
             "y": 60.21611001964636,
@@ -1631,7 +1641,7 @@
             "gameKey": "bowlItem"
           },
           {
-            "name": "Bowl — filled",
+            "name": "Bowl \u2014 filled",
             "path": "Interactions/bowl_filled.webp",
             "x": 57.367386812539486,
             "y": 60.216110019646365,
@@ -1659,7 +1669,7 @@
             "gameKey": ""
           },
           {
-            "name": "Elephant — idle (shared, from Eyes/Ears)",
+            "name": "Elephant \u2014 idle (shared, from Eyes/Ears)",
             "path": "Characters/elephant-new1.webp",
             "x": 30.353633667662685,
             "y": 65.19319125851854,
@@ -1673,7 +1683,7 @@
             "gameKey": ""
           },
           {
-            "name": "Need bubble — soft rest (grass)",
+            "name": "Need bubble \u2014 soft rest (grass)",
             "path": "Bubbles/need_bubble_soft_rest_grass.png",
             "x": 46.95481944641175,
             "y": 47.511456382766454,
@@ -1687,7 +1697,7 @@
             "gameKey": "needBubbleGrass"
           },
           {
-            "name": "Grass — bed spread",
+            "name": "Grass \u2014 bed spread",
             "path": "Interactions/grass_bed_spread.webp",
             "x": 55.69743980610247,
             "y": 59.823176715603516,
@@ -1709,7 +1719,7 @@
               "y1": 54.846101472326254,
               "x2": 52.750485081086666,
               "y2": 61.918793024389124,
-              "label": "Grass — bundle"
+              "label": "Grass \u2014 bundle"
             }
           ],
           "targets": []
@@ -1722,12 +1732,12 @@
           "nextVisual": 0,
           "sfx": ""
         },
-        "__syncedSnapshot": "[{\"name\":\"Monkey — idle (shared, from Eyes/Ears)\",\"path\":\"Characters/monkey-new.webp\",\"x\":13.850682710878182,\"y\":39.12901513000368,\"scale\":55,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"peacock new\",\"path\":\"upload://8\",\"x\":81.43418073570444,\"y\":67.15782780075823,\"scale\":80,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"peacockSprite\"},{\"name\":\"feather found\",\"path\":\"upload://9\",\"x\":83.20236256410602,\"y\":65.45513880042056,\"scale\":22,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"featherItem\"},{\"name\":\"cow eating grass\",\"path\":\"upload://7\",\"x\":69.84282248617828,\"y\":43.32023575638507,\"scale\":100,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"cowSprite\"},{\"name\":\"Grass — bundle\",\"path\":\"Interactions/grass_bundle.webp\",\"x\":70.43221343118144,\"y\":54.846101472326254,\"scale\":33,\"rotation\":-88,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"grassItem\"},{\"name\":\"Bowl — empty\",\"path\":\"Interactions/bowl_empty.webp\",\"x\":57.17091716861036,\"y\":60.21611001964636,\"scale\":47,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bowlItem\"},{\"name\":\"Bowl — filled\",\"path\":\"Interactions/bowl_filled.webp\",\"x\":57.367386812539486,\"y\":60.216110019646365,\"scale\":23,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bowlItem\"},{\"name\":\"bunny drink\",\"path\":\"upload://11\",\"x\":53.53635466341105,\"y\":54.846107467921165,\"scale\":46,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"Elephant — idle (shared, from Eyes/Ears)\",\"path\":\"Characters/elephant-new1.webp\",\"x\":30.353633667662685,\"y\":65.19319125851854,\"scale\":128,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"}]"
+        "__syncedSnapshot": "[{\"name\":\"Monkey \u2014 idle (shared, from Eyes/Ears)\",\"path\":\"Characters/monkey-new.webp\",\"x\":13.850682710878182,\"y\":39.12901513000368,\"scale\":55,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"peacock new\",\"path\":\"upload://8\",\"x\":81.43418073570444,\"y\":67.15782780075823,\"scale\":80,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"peacockSprite\"},{\"name\":\"feather found\",\"path\":\"upload://9\",\"x\":83.20236256410602,\"y\":65.45513880042056,\"scale\":22,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"featherItem\"},{\"name\":\"cow eating grass\",\"path\":\"upload://7\",\"x\":69.84282248617828,\"y\":43.32023575638507,\"scale\":100,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"cowSprite\"},{\"name\":\"Grass \u2014 bundle\",\"path\":\"Interactions/grass_bundle.webp\",\"x\":70.43221343118144,\"y\":54.846101472326254,\"scale\":33,\"rotation\":-88,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"grassItem\"},{\"name\":\"Bowl \u2014 empty\",\"path\":\"Interactions/bowl_empty.webp\",\"x\":57.17091716861036,\"y\":60.21611001964636,\"scale\":47,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bowlItem\"},{\"name\":\"Bowl \u2014 filled\",\"path\":\"Interactions/bowl_filled.webp\",\"x\":57.367386812539486,\"y\":60.216110019646365,\"scale\":23,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bowlItem\"},{\"name\":\"bunny drink\",\"path\":\"upload://11\",\"x\":53.53635466341105,\"y\":54.846107467921165,\"scale\":46,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"Elephant \u2014 idle (shared, from Eyes/Ears)\",\"path\":\"Characters/elephant-new1.webp\",\"x\":30.353633667662685,\"y\":65.19319125851854,\"scale\":128,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"}]"
       },
       "after": {
         "items": [
           {
-            "name": "Monkey — idle (shared, from Eyes/Ears)",
+            "name": "Monkey \u2014 idle (shared, from Eyes/Ears)",
             "path": "Characters/monkey-new.webp",
             "x": 13.850682710878182,
             "y": 39.12901513000368,
@@ -1769,7 +1779,7 @@
             "gameKey": "featherItem"
           },
           {
-            "name": "Bowl — filled",
+            "name": "Bowl \u2014 filled",
             "path": "Interactions/bowl_filled.webp",
             "x": 66.89587675455459,
             "y": 65.8480661088685,
@@ -1783,7 +1793,7 @@
             "gameKey": "bowlItem"
           },
           {
-            "name": "Elephant — idle (shared, from Eyes/Ears)",
+            "name": "Elephant \u2014 idle (shared, from Eyes/Ears)",
             "path": "Characters/elephant-new1.webp",
             "x": 30.353633667662685,
             "y": 65.19319125851854,
@@ -1797,7 +1807,7 @@
             "gameKey": ""
           },
           {
-            "name": "Grass — bed spread",
+            "name": "Grass \u2014 bed spread",
             "path": "Interactions/grass_bed_spread.webp",
             "x": 55.69743980610247,
             "y": 59.823176715603516,
@@ -1825,7 +1835,7 @@
             "gameKey": ""
           },
           {
-            "name": "Cow — idle (shared, from Eyes/Ears)",
+            "name": "Cow \u2014 idle (shared, from Eyes/Ears)",
             "path": "Characters/cow-new.webp",
             "x": 70.13752695207197,
             "y": 43.05828221888814,
@@ -1847,27 +1857,36 @@
               "y1": 54.846101472326254,
               "x2": 52.750485081086666,
               "y2": 61.918793024389124,
-              "label": "Grass — bundle"
+              "label": "Grass \u2014 bundle"
             }
           ],
           "targets": []
         },
         "audio": {
-          "voText": "",
+          "voText": "That feels much better.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
           "nextVisual": 0,
           "sfx": ""
         },
-        "__syncedSnapshot": "[{\"name\":\"Monkey — idle (shared, from Eyes/Ears)\",\"path\":\"Characters/monkey-new.webp\",\"x\":13.850682710878182,\"y\":39.12901513000368,\"scale\":55,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"peacock new\",\"path\":\"upload://8\",\"x\":81.43418073570444,\"y\":67.15782780075823,\"scale\":80,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"peacockSprite\"},{\"name\":\"feather found\",\"path\":\"upload://9\",\"x\":83.20236256410602,\"y\":65.45513880042056,\"scale\":22,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"featherItem\"},{\"name\":\"cow eating grass\",\"path\":\"upload://7\",\"x\":69.84282248617828,\"y\":43.32023575638507,\"scale\":100,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"cowSprite\"},{\"name\":\"Grass — bundle\",\"path\":\"Interactions/grass_bundle.webp\",\"x\":70.43221343118144,\"y\":54.846101472326254,\"scale\":33,\"rotation\":-88,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"grassItem\"},{\"name\":\"Bowl — empty\",\"path\":\"Interactions/bowl_empty.webp\",\"x\":57.17091716861036,\"y\":60.21611001964636,\"scale\":47,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bowlItem\"},{\"name\":\"Bowl — filled\",\"path\":\"Interactions/bowl_filled.webp\",\"x\":57.367386812539486,\"y\":60.216110019646365,\"scale\":23,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bowlItem\"},{\"name\":\"bunny drink\",\"path\":\"upload://11\",\"x\":53.53635466341105,\"y\":54.846107467921165,\"scale\":46,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"Elephant — idle (shared, from Eyes/Ears)\",\"path\":\"Characters/elephant-new1.webp\",\"x\":30.353633667662685,\"y\":65.19319125851854,\"scale\":128,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"}]"
+        "__syncedSnapshot": "[{\"name\":\"Monkey \u2014 idle (shared, from Eyes/Ears)\",\"path\":\"Characters/monkey-new.webp\",\"x\":13.850682710878182,\"y\":39.12901513000368,\"scale\":55,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"peacock new\",\"path\":\"upload://8\",\"x\":81.43418073570444,\"y\":67.15782780075823,\"scale\":80,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"peacockSprite\"},{\"name\":\"feather found\",\"path\":\"upload://9\",\"x\":83.20236256410602,\"y\":65.45513880042056,\"scale\":22,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"featherItem\"},{\"name\":\"cow eating grass\",\"path\":\"upload://7\",\"x\":69.84282248617828,\"y\":43.32023575638507,\"scale\":100,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"cowSprite\"},{\"name\":\"Grass \u2014 bundle\",\"path\":\"Interactions/grass_bundle.webp\",\"x\":70.43221343118144,\"y\":54.846101472326254,\"scale\":33,\"rotation\":-88,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"grassItem\"},{\"name\":\"Bowl \u2014 empty\",\"path\":\"Interactions/bowl_empty.webp\",\"x\":57.17091716861036,\"y\":60.21611001964636,\"scale\":47,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bowlItem\"},{\"name\":\"Bowl \u2014 filled\",\"path\":\"Interactions/bowl_filled.webp\",\"x\":57.367386812539486,\"y\":60.216110019646365,\"scale\":23,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bowlItem\"},{\"name\":\"bunny drink\",\"path\":\"upload://11\",\"x\":53.53635466341105,\"y\":54.846107467921165,\"scale\":46,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"Elephant \u2014 idle (shared, from Eyes/Ears)\",\"path\":\"Characters/elephant-new1.webp\",\"x\":30.353633667662685,\"y\":65.19319125851854,\"scale\":128,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"}]"
+      },
+      "interaction": {
+        "type": "drag-drop",
+        "drag": "grassItem",
+        "target": {
+          "x": 55.7,
+          "y": 59.82,
+          "w": 20
+        }
       }
     },
     "4": {
       "before": {
         "items": [
           {
-            "name": "Monkey — idle (shared, from Eyes/Ears)",
+            "name": "Monkey \u2014 idle (shared, from Eyes/Ears)",
             "path": "Characters/monkey-new.webp",
             "x": 13.850682710878182,
             "y": 39.12901513000368,
@@ -1909,7 +1928,7 @@
             "gameKey": "featherItem"
           },
           {
-            "name": "Bowl — filled",
+            "name": "Bowl \u2014 filled",
             "path": "Interactions/bowl_filled.webp",
             "x": 66.89587675455459,
             "y": 65.8480661088685,
@@ -1923,7 +1942,7 @@
             "gameKey": "bowlItem"
           },
           {
-            "name": "Elephant — idle (shared, from Eyes/Ears)",
+            "name": "Elephant \u2014 idle (shared, from Eyes/Ears)",
             "path": "Characters/elephant-new1.webp",
             "x": 30.353633667662685,
             "y": 65.19319125851854,
@@ -1937,7 +1956,7 @@
             "gameKey": ""
           },
           {
-            "name": "Grass — bed spread",
+            "name": "Grass \u2014 bed spread",
             "path": "Interactions/grass_bed_spread.webp",
             "x": 55.69743980610247,
             "y": 59.823176715603516,
@@ -1965,7 +1984,7 @@
             "gameKey": ""
           },
           {
-            "name": "Cow — idle (shared, from Eyes/Ears)",
+            "name": "Cow \u2014 idle (shared, from Eyes/Ears)",
             "path": "Characters/cow-new.webp",
             "x": 70.13752695207197,
             "y": 43.05828221888814,
@@ -1979,7 +1998,7 @@
             "gameKey": "cowSprite"
           },
           {
-            "name": "Need bubble — comfort (feather)",
+            "name": "Need bubble \u2014 comfort (feather)",
             "path": "Bubbles/need_bubble_comfort_feather.png",
             "x": 52.75049407447878,
             "y": 50.916828387846884,
@@ -1999,19 +2018,19 @@
           "targets": []
         },
         "audio": {
-          "voText": "",
+          "voText": "Drag the feather to the bunny.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
           "nextVisual": 0,
           "sfx": ""
         },
-        "__syncedSnapshot": "[{\"name\":\"Monkey — idle (shared, from Eyes/Ears)\",\"path\":\"Characters/monkey-new.webp\",\"x\":13.850682710878182,\"y\":39.12901513000368,\"scale\":55,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"peacock new\",\"path\":\"upload://8\",\"x\":81.43418073570444,\"y\":67.15782780075823,\"scale\":80,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"peacockSprite\"},{\"name\":\"feather found\",\"path\":\"upload://9\",\"x\":83.20236256410602,\"y\":65.45513880042056,\"scale\":22,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"featherItem\"},{\"name\":\"Bowl — filled\",\"path\":\"Interactions/bowl_filled.webp\",\"x\":66.89587675455459,\"y\":65.8480661088685,\"scale\":23,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bowlItem\"},{\"name\":\"Elephant — idle (shared, from Eyes/Ears)\",\"path\":\"Characters/elephant-new1.webp\",\"x\":30.353633667662685,\"y\":65.19319125851854,\"scale\":128,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"Grass — bed spread\",\"path\":\"Interactions/grass_bed_spread.webp\",\"x\":55.69743980610247,\"y\":59.823176715603516,\"scale\":83,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":1,\"w\":24,\"locked\":0,\"gameKey\":\"grassItem\"},{\"name\":\"resting bunny\",\"path\":\"upload://12\",\"x\":56.18860492253317,\"y\":58.644400785854614,\"scale\":44,\"rotation\":0,\"opacity\":100,\"flip\":-1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"Cow — idle (shared, from Eyes/Ears)\",\"path\":\"Characters/cow-new.webp\",\"x\":70.13752695207197,\"y\":43.05828221888814,\"scale\":78,\"rotation\":0,\"opacity\":100,\"flip\":-1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"cowSprite\"}]"
+        "__syncedSnapshot": "[{\"name\":\"Monkey \u2014 idle (shared, from Eyes/Ears)\",\"path\":\"Characters/monkey-new.webp\",\"x\":13.850682710878182,\"y\":39.12901513000368,\"scale\":55,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"peacock new\",\"path\":\"upload://8\",\"x\":81.43418073570444,\"y\":67.15782780075823,\"scale\":80,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"peacockSprite\"},{\"name\":\"feather found\",\"path\":\"upload://9\",\"x\":83.20236256410602,\"y\":65.45513880042056,\"scale\":22,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"featherItem\"},{\"name\":\"Bowl \u2014 filled\",\"path\":\"Interactions/bowl_filled.webp\",\"x\":66.89587675455459,\"y\":65.8480661088685,\"scale\":23,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bowlItem\"},{\"name\":\"Elephant \u2014 idle (shared, from Eyes/Ears)\",\"path\":\"Characters/elephant-new1.webp\",\"x\":30.353633667662685,\"y\":65.19319125851854,\"scale\":128,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"Grass \u2014 bed spread\",\"path\":\"Interactions/grass_bed_spread.webp\",\"x\":55.69743980610247,\"y\":59.823176715603516,\"scale\":83,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":1,\"w\":24,\"locked\":0,\"gameKey\":\"grassItem\"},{\"name\":\"resting bunny\",\"path\":\"upload://12\",\"x\":56.18860492253317,\"y\":58.644400785854614,\"scale\":44,\"rotation\":0,\"opacity\":100,\"flip\":-1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"Cow \u2014 idle (shared, from Eyes/Ears)\",\"path\":\"Characters/cow-new.webp\",\"x\":70.13752695207197,\"y\":43.05828221888814,\"scale\":78,\"rotation\":0,\"opacity\":100,\"flip\":-1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"cowSprite\"}]"
       },
       "movement": {
         "items": [
           {
-            "name": "Monkey — idle (shared, from Eyes/Ears)",
+            "name": "Monkey \u2014 idle (shared, from Eyes/Ears)",
             "path": "Characters/monkey-new.webp",
             "x": 13.850682710878182,
             "y": 39.12901513000368,
@@ -2053,7 +2072,7 @@
             "gameKey": "featherItem"
           },
           {
-            "name": "Bowl — filled",
+            "name": "Bowl \u2014 filled",
             "path": "Interactions/bowl_filled.webp",
             "x": 66.89587675455459,
             "y": 65.8480661088685,
@@ -2067,7 +2086,7 @@
             "gameKey": "bowlItem"
           },
           {
-            "name": "Elephant — idle (shared, from Eyes/Ears)",
+            "name": "Elephant \u2014 idle (shared, from Eyes/Ears)",
             "path": "Characters/elephant-new1.webp",
             "x": 30.353633667662685,
             "y": 65.19319125851854,
@@ -2081,7 +2100,7 @@
             "gameKey": ""
           },
           {
-            "name": "Grass — bed spread",
+            "name": "Grass \u2014 bed spread",
             "path": "Interactions/grass_bed_spread.webp",
             "x": 55.69743980610247,
             "y": 59.823176715603516,
@@ -2109,7 +2128,7 @@
             "gameKey": ""
           },
           {
-            "name": "Cow — idle (shared, from Eyes/Ears)",
+            "name": "Cow \u2014 idle (shared, from Eyes/Ears)",
             "path": "Characters/cow-new.webp",
             "x": 70.13752695207197,
             "y": 43.05828221888814,
@@ -2123,7 +2142,7 @@
             "gameKey": "cowSprite"
           },
           {
-            "name": "Need bubble — comfort (feather)",
+            "name": "Need bubble \u2014 comfort (feather)",
             "path": "Bubbles/need_bubble_comfort_feather.png",
             "x": 52.75049407447878,
             "y": 50.916828387846884,
@@ -2158,12 +2177,12 @@
           "nextVisual": 0,
           "sfx": ""
         },
-        "__syncedSnapshot": "[{\"name\":\"Monkey — idle (shared, from Eyes/Ears)\",\"path\":\"Characters/monkey-new.webp\",\"x\":13.850682710878182,\"y\":39.12901513000368,\"scale\":55,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"peacock new\",\"path\":\"upload://8\",\"x\":81.43418073570444,\"y\":67.15782780075823,\"scale\":80,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"peacockSprite\"},{\"name\":\"feather found\",\"path\":\"upload://9\",\"x\":83.20236256410602,\"y\":65.45513880042056,\"scale\":22,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"featherItem\"},{\"name\":\"Bowl — filled\",\"path\":\"Interactions/bowl_filled.webp\",\"x\":66.89587675455459,\"y\":65.8480661088685,\"scale\":23,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bowlItem\"},{\"name\":\"Elephant — idle (shared, from Eyes/Ears)\",\"path\":\"Characters/elephant-new1.webp\",\"x\":30.353633667662685,\"y\":65.19319125851854,\"scale\":128,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"Grass — bed spread\",\"path\":\"Interactions/grass_bed_spread.webp\",\"x\":55.69743980610247,\"y\":59.823176715603516,\"scale\":83,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":1,\"w\":24,\"locked\":0,\"gameKey\":\"grassItem\"},{\"name\":\"resting bunny\",\"path\":\"upload://12\",\"x\":56.18860492253317,\"y\":58.644400785854614,\"scale\":44,\"rotation\":0,\"opacity\":100,\"flip\":-1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"Cow — idle (shared, from Eyes/Ears)\",\"path\":\"Characters/cow-new.webp\",\"x\":70.13752695207197,\"y\":43.05828221888814,\"scale\":78,\"rotation\":0,\"opacity\":100,\"flip\":-1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"cowSprite\"}]"
+        "__syncedSnapshot": "[{\"name\":\"Monkey \u2014 idle (shared, from Eyes/Ears)\",\"path\":\"Characters/monkey-new.webp\",\"x\":13.850682710878182,\"y\":39.12901513000368,\"scale\":55,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"peacock new\",\"path\":\"upload://8\",\"x\":81.43418073570444,\"y\":67.15782780075823,\"scale\":80,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"peacockSprite\"},{\"name\":\"feather found\",\"path\":\"upload://9\",\"x\":83.20236256410602,\"y\":65.45513880042056,\"scale\":22,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"featherItem\"},{\"name\":\"Bowl \u2014 filled\",\"path\":\"Interactions/bowl_filled.webp\",\"x\":66.89587675455459,\"y\":65.8480661088685,\"scale\":23,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bowlItem\"},{\"name\":\"Elephant \u2014 idle (shared, from Eyes/Ears)\",\"path\":\"Characters/elephant-new1.webp\",\"x\":30.353633667662685,\"y\":65.19319125851854,\"scale\":128,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"Grass \u2014 bed spread\",\"path\":\"Interactions/grass_bed_spread.webp\",\"x\":55.69743980610247,\"y\":59.823176715603516,\"scale\":83,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":1,\"w\":24,\"locked\":0,\"gameKey\":\"grassItem\"},{\"name\":\"resting bunny\",\"path\":\"upload://12\",\"x\":56.18860492253317,\"y\":58.644400785854614,\"scale\":44,\"rotation\":0,\"opacity\":100,\"flip\":-1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"Cow \u2014 idle (shared, from Eyes/Ears)\",\"path\":\"Characters/cow-new.webp\",\"x\":70.13752695207197,\"y\":43.05828221888814,\"scale\":78,\"rotation\":0,\"opacity\":100,\"flip\":-1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"cowSprite\"}]"
       },
       "after": {
         "items": [
           {
-            "name": "Monkey — idle (shared, from Eyes/Ears)",
+            "name": "Monkey \u2014 idle (shared, from Eyes/Ears)",
             "path": "Characters/monkey-new.webp",
             "x": 13.850682710878182,
             "y": 39.12901513000368,
@@ -2205,7 +2224,7 @@
             "gameKey": "featherItem"
           },
           {
-            "name": "Bowl — filled",
+            "name": "Bowl \u2014 filled",
             "path": "Interactions/bowl_filled.webp",
             "x": 66.89587675455459,
             "y": 65.8480661088685,
@@ -2219,7 +2238,7 @@
             "gameKey": "bowlItem"
           },
           {
-            "name": "Elephant — idle (shared, from Eyes/Ears)",
+            "name": "Elephant \u2014 idle (shared, from Eyes/Ears)",
             "path": "Characters/elephant-new1.webp",
             "x": 30.353633667662685,
             "y": 65.19319125851854,
@@ -2233,7 +2252,7 @@
             "gameKey": ""
           },
           {
-            "name": "Grass — bed spread",
+            "name": "Grass \u2014 bed spread",
             "path": "Interactions/grass_bed_spread.webp",
             "x": 55.69743980610247,
             "y": 59.823176715603516,
@@ -2261,7 +2280,7 @@
             "gameKey": ""
           },
           {
-            "name": "Cow — idle (shared, from Eyes/Ears)",
+            "name": "Cow \u2014 idle (shared, from Eyes/Ears)",
             "path": "Characters/cow-new.webp",
             "x": 70.13752695207197,
             "y": 43.05828221888814,
@@ -2289,21 +2308,30 @@
           "targets": []
         },
         "audio": {
-          "voText": "",
+          "voText": "Everyone gave something they valued to help.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
           "nextVisual": 0,
           "sfx": ""
         },
-        "__syncedSnapshot": "[{\"name\":\"Monkey — idle (shared, from Eyes/Ears)\",\"path\":\"Characters/monkey-new.webp\",\"x\":13.850682710878182,\"y\":39.12901513000368,\"scale\":55,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"peacock new\",\"path\":\"upload://8\",\"x\":81.43418073570444,\"y\":67.15782780075823,\"scale\":80,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"peacockSprite\"},{\"name\":\"feather found\",\"path\":\"upload://9\",\"x\":83.20236256410602,\"y\":65.45513880042056,\"scale\":22,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"featherItem\"},{\"name\":\"Bowl — filled\",\"path\":\"Interactions/bowl_filled.webp\",\"x\":66.89587675455459,\"y\":65.8480661088685,\"scale\":23,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bowlItem\"},{\"name\":\"Elephant — idle (shared, from Eyes/Ears)\",\"path\":\"Characters/elephant-new1.webp\",\"x\":30.353633667662685,\"y\":65.19319125851854,\"scale\":128,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"Grass — bed spread\",\"path\":\"Interactions/grass_bed_spread.webp\",\"x\":55.69743980610247,\"y\":59.823176715603516,\"scale\":83,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":1,\"w\":24,\"locked\":0,\"gameKey\":\"grassItem\"},{\"name\":\"resting bunny\",\"path\":\"upload://12\",\"x\":56.18860492253317,\"y\":58.644400785854614,\"scale\":44,\"rotation\":0,\"opacity\":100,\"flip\":-1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"Cow — idle (shared, from Eyes/Ears)\",\"path\":\"Characters/cow-new.webp\",\"x\":70.13752695207197,\"y\":43.05828221888814,\"scale\":78,\"rotation\":0,\"opacity\":100,\"flip\":-1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"cowSprite\"}]"
+        "__syncedSnapshot": "[{\"name\":\"Monkey \u2014 idle (shared, from Eyes/Ears)\",\"path\":\"Characters/monkey-new.webp\",\"x\":13.850682710878182,\"y\":39.12901513000368,\"scale\":55,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"peacock new\",\"path\":\"upload://8\",\"x\":81.43418073570444,\"y\":67.15782780075823,\"scale\":80,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"peacockSprite\"},{\"name\":\"feather found\",\"path\":\"upload://9\",\"x\":83.20236256410602,\"y\":65.45513880042056,\"scale\":22,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"featherItem\"},{\"name\":\"Bowl \u2014 filled\",\"path\":\"Interactions/bowl_filled.webp\",\"x\":66.89587675455459,\"y\":65.8480661088685,\"scale\":23,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bowlItem\"},{\"name\":\"Elephant \u2014 idle (shared, from Eyes/Ears)\",\"path\":\"Characters/elephant-new1.webp\",\"x\":30.353633667662685,\"y\":65.19319125851854,\"scale\":128,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"Grass \u2014 bed spread\",\"path\":\"Interactions/grass_bed_spread.webp\",\"x\":55.69743980610247,\"y\":59.823176715603516,\"scale\":83,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":1,\"w\":24,\"locked\":0,\"gameKey\":\"grassItem\"},{\"name\":\"resting bunny\",\"path\":\"upload://12\",\"x\":56.18860492253317,\"y\":58.644400785854614,\"scale\":44,\"rotation\":0,\"opacity\":100,\"flip\":-1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"Cow \u2014 idle (shared, from Eyes/Ears)\",\"path\":\"Characters/cow-new.webp\",\"x\":70.13752695207197,\"y\":43.05828221888814,\"scale\":78,\"rotation\":0,\"opacity\":100,\"flip\":-1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"cowSprite\"}]"
+      },
+      "interaction": {
+        "type": "drag-drop",
+        "drag": "featherItem",
+        "target": {
+          "x": 51.87,
+          "y": 53.14,
+          "w": 18
+        }
       }
     },
     "5": {
       "before": {
         "items": [
           {
-            "name": "Monkey — idle (shared, from Eyes/Ears)",
+            "name": "Monkey \u2014 idle (shared, from Eyes/Ears)",
             "path": "Characters/monkey-new.webp",
             "x": 13.850682710878182,
             "y": 39.12901513000368,
@@ -2345,7 +2373,7 @@
             "gameKey": "featherItem"
           },
           {
-            "name": "Bowl — filled",
+            "name": "Bowl \u2014 filled",
             "path": "Interactions/bowl_filled.webp",
             "x": 66.89587675455459,
             "y": 65.8480661088685,
@@ -2359,7 +2387,7 @@
             "gameKey": "bowlItem"
           },
           {
-            "name": "Elephant — idle (shared, from Eyes/Ears)",
+            "name": "Elephant \u2014 idle (shared, from Eyes/Ears)",
             "path": "Characters/elephant-new1.webp",
             "x": 30.353633667662685,
             "y": 65.19319125851854,
@@ -2373,7 +2401,7 @@
             "gameKey": ""
           },
           {
-            "name": "Grass — bed spread",
+            "name": "Grass \u2014 bed spread",
             "path": "Interactions/grass_bed_spread.webp",
             "x": 55.69743980610247,
             "y": 59.823176715603516,
@@ -2401,7 +2429,7 @@
             "gameKey": ""
           },
           {
-            "name": "Cow — idle (shared, from Eyes/Ears)",
+            "name": "Cow \u2014 idle (shared, from Eyes/Ears)",
             "path": "Characters/cow-new.webp",
             "x": 70.13752695207197,
             "y": 43.05828221888814,
@@ -2421,14 +2449,14 @@
           "targets": []
         },
         "audio": {
-          "voText": "",
+          "voText": "Ganesha's tusk reminds us that sometimes we give something up for what matters.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
           "nextVisual": 0,
           "sfx": ""
         },
-        "__syncedSnapshot": "[{\"name\":\"Monkey — idle (shared, from Eyes/Ears)\",\"path\":\"Characters/monkey-new.webp\",\"x\":13.850682710878182,\"y\":39.12901513000368,\"scale\":55,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"peacock new\",\"path\":\"upload://8\",\"x\":81.43418073570444,\"y\":67.15782780075823,\"scale\":80,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"peacockSprite\"},{\"name\":\"feather found\",\"path\":\"upload://9\",\"x\":53.73281531394808,\"y\":59.69220294465251,\"scale\":22,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":99,\"w\":24,\"locked\":0,\"gameKey\":\"featherItem\"},{\"name\":\"Bowl — filled\",\"path\":\"Interactions/bowl_filled.webp\",\"x\":66.89587675455459,\"y\":65.8480661088685,\"scale\":23,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bowlItem\"},{\"name\":\"Elephant — idle (shared, from Eyes/Ears)\",\"path\":\"Characters/elephant-new1.webp\",\"x\":30.353633667662685,\"y\":65.19319125851854,\"scale\":128,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"Grass — bed spread\",\"path\":\"Interactions/grass_bed_spread.webp\",\"x\":55.69743980610247,\"y\":59.823176715603516,\"scale\":83,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":1,\"w\":24,\"locked\":0,\"gameKey\":\"grassItem\"},{\"name\":\"resting bunny\",\"path\":\"upload://12\",\"x\":56.18860492253317,\"y\":58.644400785854614,\"scale\":44,\"rotation\":0,\"opacity\":100,\"flip\":-1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"Cow — idle (shared, from Eyes/Ears)\",\"path\":\"Characters/cow-new.webp\",\"x\":70.13752695207197,\"y\":43.05828221888814,\"scale\":78,\"rotation\":0,\"opacity\":100,\"flip\":-1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"cowSprite\"}]"
+        "__syncedSnapshot": "[{\"name\":\"Monkey \u2014 idle (shared, from Eyes/Ears)\",\"path\":\"Characters/monkey-new.webp\",\"x\":13.850682710878182,\"y\":39.12901513000368,\"scale\":55,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"peacock new\",\"path\":\"upload://8\",\"x\":81.43418073570444,\"y\":67.15782780075823,\"scale\":80,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"peacockSprite\"},{\"name\":\"feather found\",\"path\":\"upload://9\",\"x\":53.73281531394808,\"y\":59.69220294465251,\"scale\":22,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":99,\"w\":24,\"locked\":0,\"gameKey\":\"featherItem\"},{\"name\":\"Bowl \u2014 filled\",\"path\":\"Interactions/bowl_filled.webp\",\"x\":66.89587675455459,\"y\":65.8480661088685,\"scale\":23,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bowlItem\"},{\"name\":\"Elephant \u2014 idle (shared, from Eyes/Ears)\",\"path\":\"Characters/elephant-new1.webp\",\"x\":30.353633667662685,\"y\":65.19319125851854,\"scale\":128,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"Grass \u2014 bed spread\",\"path\":\"Interactions/grass_bed_spread.webp\",\"x\":55.69743980610247,\"y\":59.823176715603516,\"scale\":83,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":1,\"w\":24,\"locked\":0,\"gameKey\":\"grassItem\"},{\"name\":\"resting bunny\",\"path\":\"upload://12\",\"x\":56.18860492253317,\"y\":58.644400785854614,\"scale\":44,\"rotation\":0,\"opacity\":100,\"flip\":-1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"Cow \u2014 idle (shared, from Eyes/Ears)\",\"path\":\"Characters/cow-new.webp\",\"x\":70.13752695207197,\"y\":43.05828221888814,\"scale\":78,\"rotation\":0,\"opacity\":100,\"flip\":-1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"cowSprite\"}]"
       },
       "movement": {
         "items": [],
