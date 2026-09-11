@@ -34,17 +34,41 @@ import './BeatPlayerGame.css';
 
 const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
 
-const speak = (text, enabled = true) => {
-  if (!enabled || !text || typeof window === 'undefined' || !window.speechSynthesis) return;
-  try {
-    window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    u.rate = 0.94;
-    u.pitch = 1.02;
-    window.speechSynthesis.speak(u);
-  } catch {
-    // Speech synthesis is optional.
-  }
+const speakAndWait = (text, enabled = true) => {
+  return new Promise((resolve) => {
+    if (
+      !enabled ||
+      !text ||
+      typeof window === 'undefined' ||
+      !window.speechSynthesis
+    ) {
+      resolve();
+      return;
+    }
+
+    try {
+      window.speechSynthesis.cancel();
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 0.94;
+      utterance.pitch = 1.02;
+
+      let finished = false;
+
+      const finish = () => {
+        if (finished) return;
+        finished = true;
+        resolve();
+      };
+
+      utterance.onend = finish;
+      utterance.onerror = finish;
+
+      window.speechSynthesis.speak(utterance);
+    } catch {
+      resolve();
+    }
+  });
 };
 
 // Editor convention: rendered width % = item.w * (item.scale / 100).
@@ -65,7 +89,9 @@ function BeatPlayerGame({
   flowJson,
   assetMap,
   interactions = {},
-  autoAdvanceMs = 1600,
+  autoAdvanceMs = 700,
+  movementMs = 450,
+  reactionPauseMs = 550,
   isActive = true,
   isAudioOn = true,
   hideElements = false,
@@ -163,24 +189,76 @@ function BeatPlayerGame({
   // Beats with an interaction wait at "before" for the child; everything
   // else (including every beat once its need is met) advances on a timer.
   useEffect(() => {
-    if (!isActive || !beat) return;
-    speak(stateBlock?.audio?.voText, isAudioOn);
+    if (!isActive || !beat) return undefined;
 
-    if (needsInput(stateName)) return undefined; // wait for the drag/tap/hold
+    let cancelled = false;
 
-    const holdFor = stateName === 'before' ? autoAdvanceMs
-      : stateName === 'movement' ? Math.min(700, autoAdvanceMs)
-      : autoAdvanceMs;
+    const runState = async () => {
+      const voText = stateBlock?.audio?.voText || '';
 
-    advanceTimer.current = setTimeout(() => {
-      if (stateName === 'before') goToState('movement');
-      else if (stateName === 'movement') goToState('after');
-      else advanceBeat();
-    }, holdFor);
+      // Let the narration finish before progressing.
+      await speakAndWait(voText, isAudioOn);
 
-    return () => clearTimeout(advanceTimer.current);
+      if (cancelled) return;
+
+      // Interactive "before" states now stay on screen after the story VO.
+      // The child acts when ready.
+      if (needsInput(stateName)) return;
+
+      let holdFor = autoAdvanceMs;
+
+      if (stateName === 'movement') {
+        holdFor = movementMs;
+      }
+
+      if (stateName === 'after') {
+        // Small breathing space after the reaction/narration
+        // before introducing the next story beat.
+        holdFor = reactionPauseMs;
+      }
+
+      advanceTimer.current = setTimeout(() => {
+        if (cancelled) return;
+
+        if (stateName === 'before') {
+          goToState('movement');
+        } else if (stateName === 'movement') {
+          goToState('after');
+        } else {
+          advanceBeat();
+        }
+      }, holdFor);
+    };
+
+    runState();
+
+    return () => {
+      cancelled = true;
+
+      if (advanceTimer.current) {
+        clearTimeout(advanceTimer.current);
+        advanceTimer.current = null;
+      }
+
+      // Only cancel speech when we're genuinely leaving this state.
+      if (
+        typeof window !== 'undefined' &&
+        window.speechSynthesis
+      ) {
+        window.speechSynthesis.cancel();
+      }
+    };
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isActive, beatIndex, stateName, isAudioOn]);
+  }, [
+    isActive,
+    beatIndex,
+    stateName,
+    isAudioOn,
+    autoAdvanceMs,
+    movementMs,
+    reactionPauseMs,
+  ]);
 
   useEffect(() => clearTimers, [clearTimers]);
 
@@ -347,7 +425,12 @@ function BeatPlayerGame({
   return (
     <div
       ref={sceneRef}
-      className={`beat-player-stage ${className} ${feedback === 'wrong' ? 'beat-player-wrong' : ''}`}
+      className={`
+        beat-player-stage
+        beat-player-state-${stateName}
+        ${className}
+        ${feedback === 'wrong' ? 'beat-player-wrong' : ''}
+      `}
       onPointerMove={(e) => { onPointerMove(e); onDropPointerMove(e); }}
       onPointerUp={(e) => { onPointerUp(e); onDropPointerUp(); }}
       onPointerCancel={() => { setDrag(null); onDropPointerUp(); }}

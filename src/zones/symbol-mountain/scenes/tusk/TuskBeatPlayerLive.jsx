@@ -19,6 +19,9 @@ function TuskBeatPlayerLive({ isActive = true, isAudioOn = true, onGameComplete,
         assetMap={ASSET_MAP}
         isActive={isActive}
         isAudioOn={isAudioOn}
+        autoAdvanceMs={650}
+        movementMs={400}
+        reactionPauseMs={550}
         onComplete={onGameComplete}
       />
     </div>

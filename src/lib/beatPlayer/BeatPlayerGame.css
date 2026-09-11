@@ -15,6 +15,28 @@
   min-width: 44px;
   min-height: 44px;
   cursor: default;
+
+  transition:
+    left 280ms ease,
+    top 280ms ease,
+    width 280ms ease,
+    opacity 220ms ease,
+    filter 220ms ease;
+}
+
+.beat-player-state-movement .beat-player-item,
+.beat-player-state-after .beat-player-item {
+  animation: beatPlayerSoftEnter 260ms ease-out both;
+}
+
+@keyframes beatPlayerSoftEnter {
+  from {
+    opacity: 0.72;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .beat-player-item img {
@@ -91,7 +113,9 @@
 @media (prefers-reduced-motion: reduce) {
   .beat-player-item,
   .beat-player-drop,
-  .beat-player-stage.beat-player-wrong .beat-player-item.is-interactive {
+  .beat-player-stage.beat-player-wrong .beat-player-item,
+  .beat-player-state-movement .beat-player-item,
+  .beat-player-state-after .beat-player-item {
     animation: none !important;
     transition: none !important;
   }

@@ -138,7 +138,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "Everyone on the mountain is happy today!",
+          "voText": "It's a busy morning on the mountain.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -424,7 +424,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "But wait... do you hear that? It's a bunny sound.",
+          "voText": "Oh! Bunny doesn't look very happy.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -583,7 +583,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "Drag the mango to the bunny.",
+          "voText": "His tummy is rumbling... and Monkey has a juicy mango.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -900,7 +900,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "Munch, munch! Thank you!",
+          "voText": "Munch, munch! That was just what Bunny needed.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -1064,7 +1064,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "Tap the elephant, then drag the water drop to the bowl.",
+          "voText": "But Bunny is still thirsty. Elephant has plenty of water.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -1380,7 +1380,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "Slurp! Now the bunny is not thirsty.",
+          "voText": "Slurp, slurp. Much better.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -1563,7 +1563,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "Drag the grass to the resting spot.",
+          "voText": "Now Bunny looks tired. Cow's soft grass could make a cosy place to rest.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -1881,7 +1881,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "That feels much better.",
+          "voText": "Ahh... Bunny can finally rest.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -2036,7 +2036,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "Drag the feather to the bunny.",
+          "voText": "Peacock notices Bunny settling down... and has something soft to share.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -2326,7 +2326,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "Everyone gave something they valued to help.",
+          "voText": "Each friend gave up a little something that mattered to them.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -2467,7 +2467,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "Ganesha's tusk reminds us that sometimes we give something up for what matters.",
+          "voText": "Ganesha's tusk reminds us: sometimes we give up something small for something that matters more.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
