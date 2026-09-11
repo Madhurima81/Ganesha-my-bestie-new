@@ -223,6 +223,7 @@
 .draggable-item {
   position: absolute;
   z-index: 28;
+  transform: translate(-50%, -50%);
   border: 0;
   background: transparent;
   padding: 0;
@@ -275,6 +276,7 @@
 .result-prop {
   position: absolute;
   z-index: 22;
+  transform: translate(-50%, -50%);
   pointer-events: none;
 }
 

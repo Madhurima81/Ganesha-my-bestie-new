@@ -77,25 +77,55 @@ const PHASE_ORDER = [
 
 const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
 
-// Need bubbles are the one part of this scene positioned via the same
-// x/y/w DEFAULT_LAYOUT + debug-panel pattern used in Eyes/Ears/Kurume Deva —
-// everything else here still uses TuskPathGame.css fixed classes. Only one
-// bubble shows at a time, per the asset pack's own rule.
+// Full x/y/w DEFAULT_LAYOUT + debug-panel pattern, same as Eyes/Ears/Kurume
+// Deva — every positioned element in this scene (animals, draggable items,
+// drop targets, need bubbles) lives here so a fresh export from the visual
+// editor can be pasted in directly as one object, with no manual per-element
+// CSS transcription (that's what caused the repeated position drift).
 const DEBUG_UI_ENABLED =
   typeof window !== 'undefined' &&
   (window.location.pathname.includes('game-test') ||
     new URLSearchParams(window.location.search).has('debugTusk'));
-const LAYOUT_STORAGE_KEY = 'symbol_mountain_tusk_need_bubble_layout_v1';
-const LAYOUT_PRESET_VERSION = '2026-09-10-tusk-need-bubbles-1';
+const LAYOUT_STORAGE_KEY = 'symbol_mountain_tusk_full_layout_v1';
+const LAYOUT_PRESET_VERSION = '2026-09-11-tusk-full-layout-1';
 
 const DEFAULT_LAYOUT = {
-  needBubbleMango: { x: 31, y: 42, w: 12, z: 30 },
-  needBubbleWater: { x: 84, y: 40, w: 12, z: 30 },
-  needBubbleGrass: { x: 69, y: 42, w: 12, z: 30 },
-  needBubbleFeather: { x: 16, y: 42, w: 12, z: 30 }
+  // Animals — from the visual editor's "Export Game Code" output.
+  monkeySprite: { x: 13.85, y: 39.13, w: 13.2, z: 12 },
+  peacockSprite: { x: 81.43, y: 67.16, w: 19.2, z: 12 },
+  elephantSprite: { x: 30.35, y: 65.19, w: 30.72, z: 12 },
+  cowSprite: { x: 70.14, y: 43.06, w: 18.72, z: 12 },
+  bunnySprite: { x: 51.7, y: 56, w: 16, z: 17 },
+  // Draggable items — home ("pile") spot before the child picks them up.
+  mangoPileItem: { x: 19.25, y: 46.2, w: 6.24, z: 20 },
+  waterPileItem: { x: 42, y: 62, w: 8, z: 20 },
+  grassPileItem: { x: 70.43, y: 54.85, w: 7.92, z: 20 },
+  featherPileItem: { x: 83.2, y: 65.46, w: 5.28, z: 20 },
+  // Drop targets / result art.
+  bowlItem: { x: 66.9, y: 65.85, w: 5.52, z: 16 },
+  grassBedItem: { x: 55.7, y: 59.82, w: 19.92, z: 14 },
+  featherRestItem: { x: 53.73, y: 59.69, w: 5.28, z: 22 },
+  // Need bubbles — one shows at a time, per the asset pack's own rule.
+  // Positioned just above each animal's current spot (above).
+  needBubbleMango: { x: 19, y: 25, w: 12, z: 30 },
+  needBubbleWater: { x: 40, y: 45, w: 12, z: 30 },
+  needBubbleGrass: { x: 70, y: 25, w: 12, z: 30 },
+  needBubbleFeather: { x: 81, y: 48, w: 12, z: 30 }
 };
 
 const DEBUG_KEYS = [
+  { key: 'monkeySprite', label: 'Monkey' },
+  { key: 'peacockSprite', label: 'Peacock' },
+  { key: 'elephantSprite', label: 'Elephant' },
+  { key: 'cowSprite', label: 'Cow' },
+  { key: 'bunnySprite', label: 'Bunny' },
+  { key: 'mangoPileItem', label: 'Mango — home spot' },
+  { key: 'waterPileItem', label: 'Water drop — home spot (near trunk)' },
+  { key: 'grassPileItem', label: 'Grass bundle — home spot' },
+  { key: 'featherPileItem', label: 'Feather — home spot' },
+  { key: 'bowlItem', label: 'Bowl' },
+  { key: 'grassBedItem', label: 'Grass bed (drop target)' },
+  { key: 'featherRestItem', label: 'Feather rest spot (drop target)' },
   { key: 'needBubbleMango', label: 'Need bubble - hungry/mango' },
   { key: 'needBubbleWater', label: 'Need bubble - thirsty/water' },
   { key: 'needBubbleGrass', label: 'Need bubble - soft rest/grass' },
@@ -488,7 +518,11 @@ function TuskPathGame({
         );
       })()}
 
-      <div className={`animal peacock ${activeAnimal === 'peacock' ? 'active' : 'dimmed'}`}>
+      <div
+        className={`animal peacock ${activeAnimal === 'peacock' ? 'active' : 'dimmed'}${debugMode && selectedDebugKey === 'peacockSprite' ? ' is-debug-selected' : ''}`}
+        style={{ ...styleFromLayout(layout.peacockSprite), pointerEvents: debugMode ? 'auto' : 'none' }}
+        onPointerDown={debugMode ? (e) => startDebugDrag(e, 'peacockSprite') : undefined}
+      >
         <img
           src={
             completed.feather
@@ -499,14 +533,22 @@ function TuskPathGame({
         />
       </div>
 
-      <div className={`animal monkey ${activeAnimal === 'monkey' ? 'active' : 'dimmed'}`}>
+      <div
+        className={`animal monkey ${activeAnimal === 'monkey' ? 'active' : 'dimmed'}${debugMode && selectedDebugKey === 'monkeySprite' ? ' is-debug-selected' : ''}`}
+        style={{ ...styleFromLayout(layout.monkeySprite), pointerEvents: debugMode ? 'auto' : 'none' }}
+        onPointerDown={debugMode ? (e) => startDebugDrag(e, 'monkeySprite') : undefined}
+      >
         <img
           src={completed.mango ? monkeyIdleShared : monkeyHold}
           alt="Monkey"
         />
       </div>
 
-      <div className={`animal elephant ${activeAnimal === 'elephant' ? 'active' : 'dimmed'}`}>
+      <div
+        className={`animal elephant ${activeAnimal === 'elephant' ? 'active' : 'dimmed'}${debugMode && selectedDebugKey === 'elephantSprite' ? ' is-debug-selected' : ''}`}
+        style={{ ...styleFromLayout(layout.elephantSprite), pointerEvents: debugMode ? 'auto' : 'none' }}
+        onPointerDown={debugMode ? (e) => startDebugDrag(e, 'elephantSprite') : undefined}
+      >
         <img
           src={
             phase === PHASES.WATER && actionState === 'pouring'
@@ -520,8 +562,9 @@ function TuskPathGame({
       {(phase === PHASES.WATER && !completed.water) && (
         <button
           type="button"
-          className={`draggable-item water-item ${selectedItem === 'water' ? 'selected' : ''}`}
-          onPointerDown={(e) => onPointerDown(e, 'water')}
+          className={`draggable-item water-item ${selectedItem === 'water' ? 'selected' : ''}${debugMode && selectedDebugKey === 'waterPileItem' ? ' is-debug-selected' : ''}`}
+          style={styleFromLayout(layout.waterPileItem)}
+          onPointerDown={debugMode ? (e) => startDebugDrag(e, 'waterPileItem') : (e) => onPointerDown(e, 'water')}
           onClick={() => setSelectedItem('water')}
           aria-label="Water from the elephant's trunk. Drag it to the bowl, or tap it then tap the bowl."
         >
@@ -529,7 +572,11 @@ function TuskPathGame({
         </button>
       )}
 
-      <div className={`animal cow ${activeAnimal === 'cow' ? 'active' : 'dimmed'}`}>
+      <div
+        className={`animal cow ${activeAnimal === 'cow' ? 'active' : 'dimmed'}${debugMode && selectedDebugKey === 'cowSprite' ? ' is-debug-selected' : ''}`}
+        style={{ ...styleFromLayout(layout.cowSprite), pointerEvents: debugMode ? 'auto' : 'none' }}
+        onPointerDown={debugMode ? (e) => startDebugDrag(e, 'cowSprite') : undefined}
+      >
         <img
           src={completed.grass ? cowIdleShared : cowGrass}
           alt="Cow"
@@ -539,7 +586,9 @@ function TuskPathGame({
       <button
         type="button"
         data-drop-target="bunny"
-        className={`bunny-zone ${phaseTarget === 'bunny' ? 'is-target' : ''}`}
+        className={`bunny-zone ${phaseTarget === 'bunny' ? 'is-target' : ''}${debugMode && selectedDebugKey === 'bunnySprite' ? ' is-debug-selected' : ''}`}
+        style={styleFromLayout(layout.bunnySprite)}
+        onPointerDown={debugMode ? (e) => startDebugDrag(e, 'bunnySprite') : undefined}
         onClick={() => onTapTarget('bunny')}
         aria-label="Bunny traveller"
       >
@@ -550,7 +599,9 @@ function TuskPathGame({
         <button
           type="button"
           data-drop-target="bowl"
-          className={`water-zone ${phase === PHASES.WATER ? 'is-target' : ''}`}
+          className={`water-zone ${phase === PHASES.WATER ? 'is-target' : ''}${debugMode && selectedDebugKey === 'bowlItem' ? ' is-debug-selected' : ''}`}
+          style={styleFromLayout(layout.bowlItem)}
+          onPointerDown={debugMode ? (e) => startDebugDrag(e, 'bowlItem') : undefined}
           onClick={() => onTapTarget('bowl')}
           aria-label="Bowl"
         >
@@ -569,7 +620,9 @@ function TuskPathGame({
         <button
           type="button"
           data-drop-target="grass-bed"
-          className={`grass-bed-zone ${phase === PHASES.GRASS ? 'is-target' : ''}`}
+          className={`grass-bed-zone ${phase === PHASES.GRASS ? 'is-target' : ''}${debugMode && selectedDebugKey === 'grassBedItem' ? ' is-debug-selected' : ''}`}
+          style={styleFromLayout(layout.grassBedItem)}
+          onPointerDown={debugMode ? (e) => startDebugDrag(e, 'grassBedItem') : undefined}
           onClick={() => onTapTarget('grass-bed')}
           aria-label="Resting spot"
         >
@@ -580,8 +633,9 @@ function TuskPathGame({
       {(phase === PHASES.MANGO && !completed.mango) && (
         <button
           type="button"
-          className={`draggable-item mango-item ${selectedItem === 'mango' ? 'selected' : ''}`}
-          onPointerDown={(e) => onPointerDown(e, 'mango')}
+          className={`draggable-item mango-item ${selectedItem === 'mango' ? 'selected' : ''}${debugMode && selectedDebugKey === 'mangoPileItem' ? ' is-debug-selected' : ''}`}
+          style={styleFromLayout(layout.mangoPileItem)}
+          onPointerDown={debugMode ? (e) => startDebugDrag(e, 'mangoPileItem') : (e) => onPointerDown(e, 'mango')}
           onClick={() => setSelectedItem('mango')}
           aria-label="Mango. Drag it to the bunny, or tap it then tap the bunny."
         >
@@ -596,8 +650,9 @@ function TuskPathGame({
       {(phase === PHASES.GRASS && !completed.grass) && (
         <button
           type="button"
-          className={`draggable-item grass-item ${selectedItem === 'grass' ? 'selected' : ''}`}
-          onPointerDown={(e) => onPointerDown(e, 'grass')}
+          className={`draggable-item grass-item ${selectedItem === 'grass' ? 'selected' : ''}${debugMode && selectedDebugKey === 'grassPileItem' ? ' is-debug-selected' : ''}`}
+          style={styleFromLayout(layout.grassPileItem)}
+          onPointerDown={debugMode ? (e) => startDebugDrag(e, 'grassPileItem') : (e) => onPointerDown(e, 'grass')}
           onClick={() => setSelectedItem('grass')}
           aria-label="Grass bundle. Drag it to the resting spot, or tap it then tap the spot."
         >
@@ -608,8 +663,9 @@ function TuskPathGame({
       {(phase === PHASES.FEATHER && !completed.feather) && (
         <button
           type="button"
-          className={`draggable-item feather-item ${selectedItem === 'feather' ? 'selected' : ''}`}
-          onPointerDown={(e) => onPointerDown(e, 'feather')}
+          className={`draggable-item feather-item ${selectedItem === 'feather' ? 'selected' : ''}${debugMode && selectedDebugKey === 'featherPileItem' ? ' is-debug-selected' : ''}`}
+          style={styleFromLayout(layout.featherPileItem)}
+          onPointerDown={debugMode ? (e) => startDebugDrag(e, 'featherPileItem') : (e) => onPointerDown(e, 'feather')}
           onClick={() => setSelectedItem('feather')}
           aria-label="Peacock feather. Drag it to the bunny, or tap it then tap the bunny."
         >
@@ -618,7 +674,12 @@ function TuskPathGame({
       )}
 
       {completed.feather && (
-        <img className="result-prop feather-result" src={featherPlaced} alt="" />
+        <img
+          className={`result-prop feather-result${debugMode && selectedDebugKey === 'featherRestItem' ? ' is-debug-selected' : ''}`}
+          style={styleFromLayout(layout.featherRestItem)}
+          src={featherPlaced}
+          alt=""
+        />
       )}
 
       {drag && (
@@ -661,13 +722,13 @@ function TuskPathGame({
       {DEBUG_UI_ENABLED && (
         <div className="tusk-debug-panel" style={{ position: 'absolute', left: 12, bottom: 12, zIndex: 999, background: '#2d173b', color: '#fff', borderRadius: 10, padding: 8, fontSize: 12, maxWidth: 280 }}>
           <button type="button" onClick={() => setDebugMode((v) => !v)} style={{ width: '100%', padding: '6px 8px', borderRadius: 8, border: 0, background: '#6d42a8', color: '#fff', fontWeight: 700, cursor: 'pointer' }}>
-            {debugMode ? 'Hide Need-Bubble Debug' : 'Need-Bubble Layout Debug'}
+            {debugMode ? 'Hide Layout Debug' : 'Layout Debug'}
           </button>
           {debugMode && (
             <div style={{ marginTop: 8 }}>
-              <p style={{ margin: '0 0 6px', opacity: 0.85 }}>Drag a bubble on the scene, or tune it here.</p>
+              <p style={{ margin: '0 0 6px', opacity: 0.85 }}>Drag anything on the scene, or tune it here.</p>
               <label style={{ display: 'flex', gap: 6, alignItems: 'center', marginBottom: 6 }}>
-                <span>Bubble</span>
+                <span>Element</span>
                 <select value={selectedDebugKey} onChange={(e) => setSelectedDebugKey(e.target.value)} style={{ flex: 1 }}>
                   {DEBUG_KEYS.map((item) => (
                     <option key={item.key} value={item.key}>{item.label}</option>
@@ -694,6 +755,28 @@ function TuskPathGame({
                   />
                 </label>
               ))}
+              <button
+                type="button"
+                onClick={async () => {
+                  const payload = JSON.stringify(layout, null, 2);
+                  try {
+                    if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(payload);
+                    else window.prompt('Copy full layout JSON', payload);
+                  } catch {
+                    window.prompt('Copy full layout JSON', payload);
+                  }
+                }}
+                style={{ width: '100%', marginTop: 6, padding: '5px 8px', borderRadius: 8, border: 0, background: '#3f9142', color: '#fff', fontWeight: 700, cursor: 'pointer' }}
+              >
+                Copy full layout JSON
+              </button>
+              <button
+                type="button"
+                onClick={() => { setLayout(DEFAULT_LAYOUT); saveLayout(DEFAULT_LAYOUT); }}
+                style={{ width: '100%', marginTop: 4, padding: '5px 8px', borderRadius: 8, border: 0, background: '#8a3a3a', color: '#fff', fontWeight: 700, cursor: 'pointer' }}
+              >
+                Reset all to default
+              </button>
               <pre style={{ margin: '6px 0 0', fontSize: 10, whiteSpace: 'pre-wrap' }}>{JSON.stringify({ [selectedDebugKey]: selectedDebugLayout }, null, 2)}</pre>
             </div>
           )}
