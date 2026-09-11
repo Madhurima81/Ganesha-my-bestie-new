@@ -1416,6 +1416,17 @@ export default function KurumedevaGame({
         {/* Active round, DRAG mode — ghost slot + draggable pile at the friend's feet. */}
         {placeActive && placeCfg && placeCfg.mode === 'drag' && phase === 'play' && placedCount < placeCfg.slots.length && (
           <>
+            {/* Drop zone — a clear dashed landing pad, not just the faint ghost
+                piece, so little hands can see exactly where to drag to. */}
+            <div
+              className="kuru-drop-zone"
+              style={{
+                left: `${placeCfg.slots[placedCount].l}%`,
+                top: `${placeCfg.slots[placedCount].t}%`,
+                width: `${placeCfg.slotW * 1.35}%`,
+              }}
+              aria-hidden="true"
+            />
             <div
               className={`kuru-span-log is-${placeCfg.kind} is-ghost`}
               style={{

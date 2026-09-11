@@ -690,6 +690,26 @@
   animation: kuruGhostPulse 1.5s ease-in-out infinite;
 }
 
+/* Drag mode drop zone — a plain dashed landing pad under the ghost piece,
+   so the target is obvious even to a child who hasn't spotted the ghost
+   image yet. Sits just below the ghost's z-index. */
+.kuru-drop-zone {
+  position: absolute;
+  aspect-ratio: 2.6 / 1;
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+  border: 3px dashed rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.16);
+  z-index: 19;
+  pointer-events: none;
+  animation: kuruDropZonePulse 1.5s ease-in-out infinite;
+}
+
+@keyframes kuruDropZonePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.35); }
+  50% { box-shadow: 0 0 0 8px rgba(255, 255, 255, 0); }
+}
+
 .kuru-span-log.is-ghost img {
   filter: grayscale(0.3);
 }
