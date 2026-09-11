@@ -65,6 +65,7 @@ const GAMES = {
   'sm-eyes':     { label: 'Symbol Mtn — Eyes Clue Game',            Comp: lazy(() => import('../zones/symbol-mountain/scenes/tusk/EyesPopUpGame')) },
   'sm-ears':     { label: 'Symbol Mtn — Ear Listening Game',         Comp: lazy(() => import('../zones/symbol-mountain/scenes/tusk/EarsSoundMatchGame')) },
   'sm-tusk':     { label: 'Symbol Mtn — Tusk Giving Game',           Comp: lazy(() => import('../zones/symbol-mountain/scenes/tusk/TuskPathGame')) },
+  'sm-tusk-beatplayer': { label: 'DEV — Tusk via BeatPlayerGame (not live)', Comp: lazy(() => import('./beatPlayerPreview/TuskBeatPlayerPreview')) },
 };
 
 // Full scenes — self-contained (they wire their own SceneManager / useVoiceGuidance /
