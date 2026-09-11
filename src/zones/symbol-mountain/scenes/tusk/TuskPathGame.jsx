@@ -10,25 +10,22 @@ import bunnyGrass from './assets/images/tusk-giving/bunny_04_resting_on_grass.we
 import bunnyFeather from './assets/images/tusk-giving/bunny_05_comforted_with_feather.webp';
 import bunnyHappy from './assets/images/tusk-giving/bunny_06_happy_recovered.webp';
 
-import monkeyHold from './assets/images/tusk-giving/tusk_monkey_holding_mango.webp';
 import monkeyIdleShared from './assets/images/monkey-new.webp';
-import elephantWater from './assets/images/tusk-giving/tusk_elephant_with_water_in_trunk.webp';
-import elephantPour from './assets/images/tusk-giving/tusk_elephant_pouring_water_into_bowl.webp';
+import elephantDrinking from './assets/images/ears-game-v2/elephant_drinking.png';
+import elephantSpraying from './assets/images/ears-game/elephant_04_sprays_water.png';
 import elephantIdleShared from './assets/images/elephant-new1.webp';
-import cowGrass from './assets/images/tusk-giving/tusk_cow_idle_with_grass.webp';
+import cowEatingGrass from './assets/images/ears-game-v2/cow_eating_grass.png';
 import cowIdleShared from './assets/images/cow-new.webp';
-import peacockIdle from './assets/images/tusk-giving/tusk_peacock_idle.webp';
-import peacockHighlight from './assets/images/tusk-giving/tusk_peacock_highlighted_feather.webp';
 import peacockIdleShared from './assets/images/peacock-new.webp';
 
-import mango from './assets/images/tusk-giving/mango_standalone.webp';
+import mango from './assets/images/eyes-game/mango.png';
 import mangoBitten from './assets/images/tusk-giving/mango_bitten.webp';
 import grassBundle from './assets/images/tusk-giving/grass_bundle.webp';
 import grassBed from './assets/images/tusk-giving/grass_bed_spread.webp';
 import bowlEmpty from './assets/images/tusk-giving/bowl_empty.webp';
 import bowlFilled from './assets/images/tusk-giving/bowl_filled.webp';
 import waterPour from './assets/images/tusk-giving/water_pour_splash.webp';
-import feather from './assets/images/tusk-giving/peacock_feather_standalone.webp';
+import feather from './assets/images/eyes-game/peacock_feather.png';
 import featherPlaced from './assets/images/tusk-giving/feather_placed_state.webp';
 
 import needBubbleMangoImg from './assets/images/tusk-giving/need_bubble_hungry_mango.png';
@@ -107,10 +104,10 @@ const DEFAULT_LAYOUT = {
   featherRestItem: { x: 53.73, y: 59.69, w: 5.28, z: 22 },
   // Need bubbles — one shows at a time, per the asset pack's own rule.
   // Positioned just above each animal's current spot (above).
-  needBubbleMango: { x: 19, y: 25, w: 12, z: 30 },
-  needBubbleWater: { x: 40, y: 45, w: 12, z: 30 },
-  needBubbleGrass: { x: 70, y: 25, w: 12, z: 30 },
-  needBubbleFeather: { x: 81, y: 48, w: 12, z: 30 }
+  needBubbleMango: { x: 19, y: 25, w: 8, z: 30 },
+  needBubbleWater: { x: 40, y: 45, w: 8, z: 30 },
+  needBubbleGrass: { x: 70, y: 25, w: 8, z: 30 },
+  needBubbleFeather: { x: 81, y: 48, w: 8, z: 30 }
 };
 
 const DEBUG_KEYS = [
@@ -523,14 +520,7 @@ function TuskPathGame({
         style={{ ...styleFromLayout(layout.peacockSprite), pointerEvents: debugMode ? 'auto' : 'none' }}
         onPointerDown={debugMode ? (e) => startDebugDrag(e, 'peacockSprite') : undefined}
       >
-        <img
-          src={
-            completed.feather
-              ? peacockIdleShared
-              : phase === PHASES.FEATHER ? peacockHighlight : peacockIdle
-          }
-          alt="Peacock"
-        />
+        <img src={peacockIdleShared} alt="Peacock" />
       </div>
 
       <div
@@ -538,10 +528,7 @@ function TuskPathGame({
         style={{ ...styleFromLayout(layout.monkeySprite), pointerEvents: debugMode ? 'auto' : 'none' }}
         onPointerDown={debugMode ? (e) => startDebugDrag(e, 'monkeySprite') : undefined}
       >
-        <img
-          src={completed.mango ? monkeyIdleShared : monkeyHold}
-          alt="Monkey"
-        />
+        <img src={monkeyIdleShared} alt="Monkey" />
       </div>
 
       <div
@@ -552,8 +539,8 @@ function TuskPathGame({
         <img
           src={
             phase === PHASES.WATER && actionState === 'pouring'
-              ? elephantPour
-              : completed.water ? elephantIdleShared : elephantWater
+              ? elephantSpraying
+              : completed.water ? elephantIdleShared : elephantDrinking
           }
           alt="Elephant"
         />
@@ -578,7 +565,7 @@ function TuskPathGame({
         onPointerDown={debugMode ? (e) => startDebugDrag(e, 'cowSprite') : undefined}
       >
         <img
-          src={completed.grass ? cowIdleShared : cowGrass}
+          src={completed.grass ? cowIdleShared : cowEatingGrass}
           alt="Cow"
         />
       </div>
