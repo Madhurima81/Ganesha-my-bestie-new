@@ -83,7 +83,22 @@ function BeatPlayerGame({
   const beatIndex = beatKeys[beatPos];
   const beat = flowJson?.beats?.[beatIndex];
   const stateBlock = beat?.[stateName];
-  const items = stateBlock?.items || [];
+
+  // A beat's items list can end up with two items sharing the same
+  // gameKey — e.g. an old pose left in place when a new one was added on
+  // top while editing (this happened for real: beat 2 of the Tusk sample
+  // has both "Bunny — tired" and a leftover "bunny eat" both tagged
+  // bunnySprite). Rather than render both, keep only the LAST occurrence
+  // of each non-empty gameKey — that's the one actually meant to be there.
+  const items = useMemo(() => {
+    const raw = stateBlock?.items || [];
+    const lastIndexForKey = new Map();
+    raw.forEach((item, i) => {
+      if (item.gameKey) lastIndexForKey.set(item.gameKey, i);
+    });
+    return raw.filter((item, i) => !item.gameKey || lastIndexForKey.get(item.gameKey) === i);
+  }, [stateBlock]);
+
   const interaction = interactions[beatIndex] || beat?.interaction || null;
   const isLastBeat = beatPos === beatKeys.length - 1;
 
