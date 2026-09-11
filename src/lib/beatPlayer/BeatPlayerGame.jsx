@@ -21,6 +21,15 @@ import './BeatPlayerGame.css';
  *   - 'tap-select-tap-target' — same pairing, but by two taps (a11y/no-drag fallback,
  *                                also always available alongside drag-drop)
  *   - 'press-hold'         — press and hold the `drag` gameKey for `holdMs`
+ *   - 'drag-path'          — tap `trigger` (e.g. the elephant) to reveal a
+ *                            drop at `spawnAt`, then drag it through `path`
+ *                            waypoints in order, snapping forward within
+ *                            `snapRadius` of each; reaching the last one
+ *                            completes the beat. Straying too far off every
+ *                            waypoint resets the drop back to `spawnAt`.
+ *                            Matches the real "drag water along the petal
+ *                            path to the golden lotus" mechanic from the
+ *                            Pond scene (prod commit 40f987a).
  */
 
 const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
@@ -80,6 +89,14 @@ function BeatPlayerGame({
   const [selectedGameKey, setSelectedGameKey] = useState(null);
   const [feedback, setFeedback] = useState('idle'); // idle | wrong | holding
 
+  // drag-path interaction state (tap trigger -> reveal drop -> drag through
+  // waypoints). Kept separate from the single-target `drag` state above
+  // since the shapes differ (a running waypoint index, not a hit-test).
+  const [dropRevealed, setDropRevealed] = useState(false);
+  const [dropPos, setDropPos] = useState(null); // {x,y} in %
+  const [pathIndex, setPathIndex] = useState(-1);
+  const [dropDragging, setDropDragging] = useState(false);
+
   const beatIndex = beatKeys[beatPos];
   const beat = flowJson?.beats?.[beatIndex];
   const stateBlock = beat?.[stateName];
@@ -124,6 +141,10 @@ function BeatPlayerGame({
     setDrag(null);
     setSelectedGameKey(null);
     setFeedback('idle');
+    setDropRevealed(false);
+    setDropPos(null);
+    setPathIndex(-1);
+    setDropDragging(false);
     setStateName(next);
   }, []);
 
@@ -258,27 +279,91 @@ function BeatPlayerGame({
     setFeedback((f) => (f === 'holding' ? 'idle' : f));
   }, []);
 
+  // ---- drag-path: tap trigger -> reveal drop -> drag through waypoints ----
+  const pctDistance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+
+  const onTriggerTap = useCallback((gameKey) => {
+    if (!needsInput(stateName) || interaction.type !== 'drag-path') return;
+    if (gameKey !== interaction.trigger || dropRevealed) return;
+    setDropRevealed(true);
+    setPathIndex(-1);
+    setDropPos({ x: interaction.spawnAt.x, y: interaction.spawnAt.y });
+  }, [stateName, interaction, dropRevealed]);
+
+  const onDropPointerDown = useCallback((e) => {
+    if (!needsInput(stateName) || interaction.type !== 'drag-path' || !dropRevealed) return;
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+    setDropDragging(true);
+  }, [stateName, interaction, dropRevealed]);
+
+  const onDropPointerMove = useCallback((e) => {
+    if (!dropDragging || !sceneRef.current) return;
+    const rect = sceneRef.current.getBoundingClientRect();
+    const pct = {
+      x: clamp(((e.clientX - rect.left) / rect.width) * 100, 0, 100),
+      y: clamp(((e.clientY - rect.top) / rect.height) * 100, 0, 100),
+    };
+    setDropPos(pct);
+
+    const path = interaction.path || [];
+    const snapRadius = interaction.snapRadius ?? 8;
+    const nextIdx = pathIndex + 1;
+
+    if (nextIdx < path.length && pctDistance(pct, path[nextIdx]) < snapRadius) {
+      setPathIndex(nextIdx);
+      setDropPos({ x: path[nextIdx].x, y: path[nextIdx].y });
+      if (nextIdx === path.length - 1) {
+        completeInteraction();
+      }
+      return;
+    }
+
+    // Off-path: too far from the spawn point and every waypoint -> reset.
+    const allPoints = [interaction.spawnAt, ...path];
+    const minDist = Math.min(...allPoints.map((p) => pctDistance(pct, p)));
+    if (minDist > snapRadius * 2.5) {
+      setDropDragging(false);
+      setPathIndex(-1);
+      setDropPos({ x: interaction.spawnAt.x, y: interaction.spawnAt.y });
+    }
+  }, [dropDragging, interaction, pathIndex, completeInteraction]);
+
+  const onDropPointerUp = useCallback(() => {
+    if (!dropDragging) return;
+    setDropDragging(false);
+    const path = interaction.path || [];
+    if (pathIndex === path.length - 1) {
+      completeInteraction();
+    } else {
+      setPathIndex(-1);
+      setDropPos({ x: interaction.spawnAt.x, y: interaction.spawnAt.y });
+    }
+  }, [dropDragging, interaction, pathIndex, completeInteraction]);
+
   if (hideElements || !isActive || !beat) return null;
+
+  const isDragPath = interaction?.type === 'drag-path';
 
   return (
     <div
       ref={sceneRef}
       className={`beat-player-stage ${className} ${feedback === 'wrong' ? 'beat-player-wrong' : ''}`}
-      onPointerMove={onPointerMove}
-      onPointerUp={onPointerUp}
-      onPointerCancel={() => setDrag(null)}
+      onPointerMove={(e) => { onPointerMove(e); onDropPointerMove(e); }}
+      onPointerUp={(e) => { onPointerUp(e); onDropPointerUp(); }}
+      onPointerCancel={() => { setDrag(null); onDropPointerUp(); }}
     >
       {items.map((item, i) => {
         const src = resolveSrc(item.path);
         if (!src) return null;
         const isDragKey = interaction?.drag === item.gameKey;
         const isTargetKey = interaction?.target === item.gameKey;
+        const isTriggerKey = isDragPath && interaction?.trigger === item.gameKey && !dropRevealed;
         const isBeingDragged = drag?.gameKey === item.gameKey;
         const style = isBeingDragged
           ? styleFromItem(item, { left: `${drag.x}%`, top: `${drag.y}%`, zIndex: 60 })
           : styleFromItem(item);
 
-        const interactive = needsInput(stateName) && (isDragKey || isTargetKey);
+        const interactive = needsInput(stateName) && (isDragKey || isTargetKey || isTriggerKey);
 
         return (
           <button
@@ -292,12 +377,39 @@ function BeatPlayerGame({
             onPointerDown={isDragKey ? (e) => { onPointerDown(e, item.gameKey); startHold(item.gameKey); } : undefined}
             onPointerUp={isDragKey ? cancelHold : undefined}
             onPointerLeave={isDragKey ? cancelHold : undefined}
-            onClick={interactive ? () => onTapItem(item.gameKey) : undefined}
+            onClick={isTriggerKey ? () => onTriggerTap(item.gameKey) : interactive ? () => onTapItem(item.gameKey) : undefined}
           >
             <img src={src} alt="" draggable={false} />
           </button>
         );
       })}
+
+      {/* drag-path's draggable drop — an SVG shape (matching the real Pond
+          scene mechanic this was modeled on), not an image asset. */}
+      {isDragPath && dropRevealed && dropPos && (
+        <div
+          className={`beat-player-drop${dropDragging ? ' is-dragging' : ''}`}
+          style={{ left: `${dropPos.x}%`, top: `${dropPos.y}%` }}
+          onPointerDown={onDropPointerDown}
+        >
+          <svg viewBox="0 0 46 52" className="beat-player-drop-svg">
+            <path
+              d="M 23 4 C 23 4, 8 22, 8 34 C 8 44, 15 50, 23 50 C 31 50, 38 44, 38 34 C 38 22, 23 4, 23 4 Z"
+              fill="url(#beatPlayerDropGradient)"
+              stroke="#5BB3E8"
+              strokeWidth="1.5"
+            />
+            <ellipse cx="18" cy="22" rx="4" ry="6" fill="#FFFFFF" opacity="0.7" />
+            <defs>
+              <radialGradient id="beatPlayerDropGradient" cx="35%" cy="30%" r="70%">
+                <stop offset="0%" stopColor="#B8E5FB" />
+                <stop offset="60%" stopColor="#5BB3E8" />
+                <stop offset="100%" stopColor="#3A8FCB" />
+              </radialGradient>
+            </defs>
+          </svg>
+        </div>
+      )}
     </div>
   );
 }

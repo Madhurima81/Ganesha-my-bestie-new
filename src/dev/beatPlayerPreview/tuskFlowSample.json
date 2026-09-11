@@ -1064,7 +1064,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "Drag the water to the bowl.",
+          "voText": "Tap the elephant, then drag the water drop to the bowl.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -1390,9 +1390,27 @@
         "__syncedSnapshot": "[{\"name\":\"Monkey \u2014 idle (shared, from Eyes/Ears)\",\"path\":\"Characters/monkey-new.webp\",\"x\":13.850682710878182,\"y\":39.12901513000368,\"scale\":55,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"peacock new\",\"path\":\"upload://8\",\"x\":81.43418073570444,\"y\":67.15782780075823,\"scale\":80,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"peacockSprite\"},{\"name\":\"feather found\",\"path\":\"upload://9\",\"x\":83.20236256410602,\"y\":65.45513880042056,\"scale\":22,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"featherItem\"},{\"name\":\"cow eating grass\",\"path\":\"upload://7\",\"x\":69.84282248617828,\"y\":43.32023575638507,\"scale\":100,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"cowSprite\"},{\"name\":\"Grass \u2014 bundle\",\"path\":\"Interactions/grass_bundle.webp\",\"x\":70.43221343118144,\"y\":54.846101472326254,\"scale\":33,\"rotation\":-88,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"grassItem\"},{\"name\":\"elephant drinking\",\"path\":\"upload://6\",\"x\":27.897835065685488,\"y\":66.50294695481335,\"scale\":100,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"elephantSprite\"},{\"name\":\"Bunny \u2014 tired\",\"path\":\"Characters/bunny_01_tired.webp\",\"x\":51.66993801304491,\"y\":53.143418467583494,\"scale\":78,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bunnySprite\"},{\"name\":\"Bowl \u2014 empty\",\"path\":\"Interactions/bowl_empty.webp\",\"x\":57.17091716861036,\"y\":60.21611001964636,\"scale\":47,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bowlItem\"},{\"name\":\"bunny eat\",\"path\":\"upload://10\",\"x\":51.86640765697404,\"y\":53.143418467583494,\"scale\":46,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bunnySprite\"}]"
       },
       "interaction": {
-        "type": "drag-drop",
-        "drag": "elephantSprite",
-        "target": "bowlItem"
+        "type": "drag-path",
+        "trigger": "elephantSprite",
+        "spawnAt": {
+          "x": 35,
+          "y": 58
+        },
+        "path": [
+          {
+            "x": 42,
+            "y": 52
+          },
+          {
+            "x": 50,
+            "y": 55
+          },
+          {
+            "x": 56.5,
+            "y": 59.5
+          }
+        ],
+        "snapRadius": 8
       }
     },
     "3": {
