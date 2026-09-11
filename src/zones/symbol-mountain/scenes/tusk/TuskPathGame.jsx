@@ -85,7 +85,7 @@ const DEBUG_UI_ENABLED =
   (window.location.pathname.includes('game-test') ||
     new URLSearchParams(window.location.search).has('debugTusk'));
 const LAYOUT_STORAGE_KEY = 'symbol_mountain_tusk_full_layout_v1';
-const LAYOUT_PRESET_VERSION = '2026-09-11-tusk-full-layout-1';
+const LAYOUT_PRESET_VERSION = '2026-09-11-tusk-full-layout-2';
 
 const DEFAULT_LAYOUT = {
   // Animals — from the visual editor's "Export Game Code" output.
