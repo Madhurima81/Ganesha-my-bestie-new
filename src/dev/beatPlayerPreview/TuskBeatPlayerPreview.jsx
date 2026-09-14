@@ -32,12 +32,33 @@ import needBubbleWater from '../../zones/symbol-mountain/scenes/tusk/assets/imag
 import needBubbleGrass from '../../zones/symbol-mountain/scenes/tusk/assets/images/tusk-giving/need_bubble_soft_rest_grass.png';
 import needBubbleFeather from '../../zones/symbol-mountain/scenes/tusk/assets/images/tusk-giving/need_bubble_comfort_feather.png';
 
+// Water is now a plain drag-drop item like mango/grass/feather (dragging
+// the whole elephant was rejected earlier this session as a worse pattern;
+// the tap-then-drag-path mechanic was rejected next for breaking rhythm
+// with the other 3 beats). Its icon is the same droplet SVG used for
+// drag-path — not a raster image — so it stays visually consistent with
+// that mechanic's look even though the interaction itself is now simple.
+const WATER_DROP_SVG = `data:image/svg+xml;utf8,${encodeURIComponent(`
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 46 52">
+    <defs>
+      <radialGradient id="g" cx="35%" cy="30%" r="70%">
+        <stop offset="0%" stop-color="#B8E5FB" />
+        <stop offset="60%" stop-color="#5BB3E8" />
+        <stop offset="100%" stop-color="#3A8FCB" />
+      </radialGradient>
+    </defs>
+    <path d="M 23 4 C 23 4, 8 22, 8 34 C 8 44, 15 50, 23 50 C 31 50, 38 44, 38 34 C 38 22, 23 4, 23 4 Z" fill="url(#g)" stroke="#5BB3E8" stroke-width="1.5" />
+    <ellipse cx="18" cy="22" rx="4" ry="6" fill="#FFFFFF" opacity="0.7" />
+  </svg>
+`)}`;
+
 // One-time "which asset is this" lookup, keyed by the editor's own path
 // strings (repo-relative paths kept as-is; upload://N resolved to the real
 // file we tracked down earlier this session). This is the only manual
 // per-game step this architecture still needs — no positions, no re-coding
 // per beat.
 const ASSET_MAP = {
+  'synthetic/water-drop.svg': WATER_DROP_SVG,
   'Characters/monkey-new.webp': monkeyIdleShared,
   'Characters/bunny_01_tired.webp': bunnyTired,
   'Characters/cow-new.webp': cowIdleShared,
