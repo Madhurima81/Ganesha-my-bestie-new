@@ -67,6 +67,7 @@ const GAMES = {
   'sm-tusk':     { label: 'Symbol Mtn — Tusk Giving Game',           Comp: lazy(() => import('../zones/symbol-mountain/scenes/tusk/TuskPathGame')) },
   'sm-tusk-beatplayer': { label: 'DEV — Tusk via BeatPlayerGame (not live)', Comp: lazy(() => import('./beatPlayerPreview/TuskBeatPlayerPreview')) },
   'sm-tusk-live-v2': { label: 'Symbol Mtn — Tusk (BeatPlayerGame, pilot)', Comp: lazy(() => import('../zones/symbol-mountain/scenes/tusk/TuskBeatPlayerLive')) },
+  'kurumedeva-beatplayer': { label: 'DEV — KurumeDeva via BeatPlayerGame (not live)', Comp: lazy(() => import('./beatPlayerPreview/kurumedeva/KurumeDevaBeatPlayerPreview')) },
 };
 
 // Full scenes — self-contained (they wire their own SceneManager / useVoiceGuidance /

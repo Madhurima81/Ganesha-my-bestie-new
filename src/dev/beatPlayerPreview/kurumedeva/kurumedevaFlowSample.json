@@ -1,0 +1,272 @@
+{
+  "version": 2,
+  "type": "gmb-kurumedeva-visual-flow-v1",
+  "beats": {
+    "0": {
+      "before": {
+        "items": [
+          {
+            "name": "Bridge — broken",
+            "path": "Bridge/bridge-broken.png",
+            "x": 58.14331253499084,
+            "y": 68.9648954410118,
+            "scale": 205,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "bridgeSprite"
+          },
+          {
+            "name": "Monkey — playing with twig",
+            "path": "Characters/monkey-playing-twig.png",
+            "x": 11.346365962820641,
+            "y": 61.002537896138705,
+            "scale": 41,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "monkeySprite"
+          },
+          {
+            "name": "Beaver — idle worried",
+            "path": "Characters/beaver-idle-worried.png",
+            "x": 29.913131266541125,
+            "y": 63.897937024972855,
+            "scale": 52,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "beaverSprite"
+          },
+          {
+            "name": "Baby beaver — waving",
+            "path": "Characters/baby-beaver-waving.png",
+            "x": 86.15635179153094,
+            "y": 65.77995374847313,
+            "scale": 30,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "babyBeaverSprite"
+          },
+          {
+            "name": "Elephant — idle with banana",
+            "path": "Characters/elephant-idle-banana.png",
+            "x": 35.77633338953074,
+            "y": 46.38074777543092,
+            "scale": 64,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "elephantSprite"
+          }
+        ],
+        "notes": "",
+        "annotations": {
+          "arrows": [],
+          "targets": []
+        },
+        "audio": {
+          "voText": "",
+          "trigger": "state-enter",
+          "start": 0,
+          "duration": 0,
+          "nextVisual": 0,
+          "sfx": ""
+        }
+      },
+      "movement": {
+        "items": [
+          {
+            "name": "Bridge — broken",
+            "path": "Bridge/bridge-broken.png",
+            "x": 58.14331253499084,
+            "y": 68.9648954410118,
+            "scale": 205,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "bridgeSprite"
+          },
+          {
+            "name": "Monkey — playing with twig",
+            "path": "Characters/monkey-playing-twig.png",
+            "x": 11.346365962820641,
+            "y": 61.002537896138705,
+            "scale": 41,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "monkeySprite"
+          },
+          {
+            "name": "Beaver — idle worried",
+            "path": "Characters/beaver-idle-worried.png",
+            "x": 29.913131266541125,
+            "y": 63.897937024972855,
+            "scale": 52,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "beaverSprite"
+          },
+          {
+            "name": "Baby beaver — waving",
+            "path": "Characters/baby-beaver-waving.png",
+            "x": 86.15635179153094,
+            "y": 65.77995374847313,
+            "scale": 30,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "babyBeaverSprite"
+          },
+          {
+            "name": "Elephant — idle with banana",
+            "path": "Characters/elephant-idle-banana.png",
+            "x": 35.77633338953074,
+            "y": 46.38074777543092,
+            "scale": 64,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "elephantSprite"
+          }
+        ],
+        "notes": "",
+        "annotations": {
+          "arrows": [],
+          "targets": []
+        },
+        "audio": {
+          "voText": "",
+          "trigger": "state-enter",
+          "start": 0,
+          "duration": 0,
+          "nextVisual": 0,
+          "sfx": ""
+        }
+      },
+      "after": {
+        "items": [
+          {
+            "name": "Bridge — broken",
+            "path": "Bridge/bridge-broken.png",
+            "x": 58.14331253499084,
+            "y": 68.9648954410118,
+            "scale": 205,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "bridgeSprite"
+          },
+          {
+            "name": "Monkey — playing with twig",
+            "path": "Characters/monkey-playing-twig.png",
+            "x": 11.346365962820641,
+            "y": 61.002537896138705,
+            "scale": 41,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "monkeySprite"
+          },
+          {
+            "name": "Beaver — idle worried",
+            "path": "Characters/beaver-idle-worried.png",
+            "x": 29.913131266541125,
+            "y": 63.897937024972855,
+            "scale": 52,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "beaverSprite"
+          },
+          {
+            "name": "Baby beaver — waving",
+            "path": "Characters/baby-beaver-waving.png",
+            "x": 86.15635179153094,
+            "y": 65.77995374847313,
+            "scale": 30,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "babyBeaverSprite"
+          },
+          {
+            "name": "Elephant — idle with banana",
+            "path": "Characters/elephant-idle-banana.png",
+            "x": 35.77633338953074,
+            "y": 46.38074777543092,
+            "scale": 64,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "elephantSprite"
+          }
+        ],
+        "notes": "",
+        "annotations": {
+          "arrows": [],
+          "targets": []
+        },
+        "audio": {
+          "voText": "",
+          "trigger": "state-enter",
+          "start": 0,
+          "duration": 0,
+          "nextVisual": 0,
+          "sfx": ""
+        }
+      },
+      "interaction": {
+        "type": "none"
+      }
+    }
+  }
+}
