@@ -583,7 +583,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "His tummy is rumbling... and Monkey has a juicy mango. Can you see it? Drag it to Bunny.",
+          "voText": "His tummy is rumbling... there's a juicy mango nearby. Drag it to Bunny.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -1064,7 +1064,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "But Bunny is still thirsty. Elephant has plenty of water. Tap the elephant, then drag the water drop to Bunny's bowl.",
+          "voText": "But Bunny is still thirsty. There's water nearby. Tap it, then drag the water drop to Bunny's bowl.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -1563,7 +1563,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "Now Bunny looks tired. Cow's soft grass could make a cosy place to rest. Drag it to Bunny's resting spot.",
+          "voText": "Now Bunny looks tired. There's some soft grass nearby. Drag it to Bunny's resting spot.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -2036,7 +2036,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "Peacock notices Bunny settling down... and has a fluffy feather to share. Drag it to Bunny.",
+          "voText": "Bunny is settling down... there's a fluffy feather nearby. Drag it to Bunny.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
