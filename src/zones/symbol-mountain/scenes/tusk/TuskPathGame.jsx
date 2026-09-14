@@ -4,34 +4,34 @@ import './TuskPathGame.css';
 import bgImg from './assets/images/tusk-giving/symbol_mountain_3_bg.webp';
 
 import bunnyTired from './assets/images/tusk-giving/bunny_01_tired.webp';
-import bunnyHungry from './assets/images/tusk-giving/bunny_eat_mango.png';
-import bunnyDrink from './assets/images/tusk-giving/bunny_drink_water.png';
-import bunnyGrass from './assets/images/tusk-giving/bunny_rest_on_grass.png';
+import bunnyHungry from './assets/images/tusk-giving/bunny_eat_mango.webp';
+import bunnyDrink from './assets/images/tusk-giving/bunny_drink_water.webp';
+import bunnyGrass from './assets/images/tusk-giving/bunny_rest_on_grass.webp';
 import bunnyFeather from './assets/images/tusk-giving/bunny_05_comforted_with_feather.webp';
 import bunnyHappy from './assets/images/tusk-giving/bunny_06_happy_recovered.webp';
 
 import monkeyIdleShared from './assets/images/monkey-new.webp';
-import elephantDrinking from './assets/images/ears-game-v2/elephant_drinking.png';
-import elephantSpraying from './assets/images/ears-game/elephant_04_sprays_water.png';
+import elephantDrinking from './assets/images/ears-game-v2/elephant_drinking.webp';
+import elephantSpraying from './assets/images/ears-game/elephant_04_sprays_water.webp';
 import elephantIdleShared from './assets/images/elephant-new1.webp';
-import cowEatingGrass from './assets/images/ears-game-v2/cow_eating_grass.png';
+import cowEatingGrass from './assets/images/ears-game-v2/cow_eating_grass.webp';
 import cowIdleShared from './assets/images/cow-new.webp';
 import peacockIdleShared from './assets/images/peacock-new.webp';
 
-import mango from './assets/images/eyes-game/mango.png';
+import mango from './assets/images/eyes-game/mango.webp';
 import mangoBitten from './assets/images/tusk-giving/mango_bitten.webp';
 import grassBundle from './assets/images/tusk-giving/grass_bundle.webp';
 import grassBed from './assets/images/tusk-giving/grass_bed_spread.webp';
 import bowlEmpty from './assets/images/tusk-giving/bowl_empty.webp';
 import bowlFilled from './assets/images/tusk-giving/bowl_filled.webp';
 import waterPour from './assets/images/tusk-giving/water_pour_splash.webp';
-import feather from './assets/images/eyes-game/peacock_feather.png';
+import feather from './assets/images/eyes-game/peacock_feather.webp';
 import featherPlaced from './assets/images/tusk-giving/feather_placed_state.webp';
 
-import needBubbleMangoImg from './assets/images/tusk-giving/need_bubble_hungry_mango.png';
-import needBubbleWaterImg from './assets/images/tusk-giving/need_bubble_thirsty_water.png';
-import needBubbleGrassImg from './assets/images/tusk-giving/need_bubble_soft_rest_grass.png';
-import needBubbleFeatherImg from './assets/images/tusk-giving/need_bubble_comfort_feather.png';
+import needBubbleMangoImg from './assets/images/tusk-giving/need_bubble_hungry_mango.webp';
+import needBubbleWaterImg from './assets/images/tusk-giving/need_bubble_thirsty_water.webp';
+import needBubbleGrassImg from './assets/images/tusk-giving/need_bubble_soft_rest_grass.webp';
+import needBubbleFeatherImg from './assets/images/tusk-giving/need_bubble_comfort_feather.webp';
 
 const PHASES = {
   INTRO: 'intro',

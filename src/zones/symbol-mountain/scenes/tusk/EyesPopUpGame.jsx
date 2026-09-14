@@ -6,16 +6,16 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import useAppVisibility from '../../../../lib/hooks/useAppVisibility';
 import './EyesPopUpGame.css';
 
-import bgImg from './assets/images/eyes-game/symbol_mountain_3_bg.png';
-import monkeyWorriedImg from './assets/images/eyes-game-v2/monkey_hungry_worried.png';
-import peacockWorriedImg from './assets/images/eyes-game-v2/peacock_worried_missing_feather.png';
-import monkeyHappyImg from './assets/images/eyes-game/monkey_04_smiles_holds_close.png';
-import peacockHappyImg from './assets/images/eyes-game/peacock_04_feather_highlight.png';
-import newFeatherBushImg from './assets/images/eyes-game-v2/new_feather_bush.png';
-import newMangoBushImg from './assets/images/eyes-game-v2/new_mango_bush.png';
-import featherFoundImg from './assets/images/eyes-game-v2/peacock_feather_single.png';
-import mangoFoundImg from './assets/images/eyes-game/mango.png';
-import yellowFlowerClusterImg from './assets/images/eyes-game-v2/yellow_flower_cluster.png';
+import bgImg from './assets/images/eyes-game/symbol_mountain_3_bg.webp';
+import monkeyWorriedImg from './assets/images/eyes-game-v2/monkey_hungry_worried.webp';
+import peacockWorriedImg from './assets/images/eyes-game-v2/peacock_worried_missing_feather.webp';
+import monkeyHappyImg from './assets/images/eyes-game/monkey_04_smiles_holds_close.webp';
+import peacockHappyImg from './assets/images/eyes-game/peacock_04_feather_highlight.webp';
+import newFeatherBushImg from './assets/images/eyes-game-v2/new_feather_bush.webp';
+import newMangoBushImg from './assets/images/eyes-game-v2/new_mango_bush.webp';
+import featherFoundImg from './assets/images/eyes-game-v2/peacock_feather_single.webp';
+import mangoFoundImg from './assets/images/eyes-game/mango.webp';
+import yellowFlowerClusterImg from './assets/images/eyes-game-v2/yellow_flower_cluster.webp';
 import { ANIMAL_POSITIONS } from './animalPositions';
 
 const FLOW = {

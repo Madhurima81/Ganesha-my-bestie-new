@@ -417,7 +417,6 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const [wish3Sparkle, setWish3Sparkle] = useState({ type: null, key: 0 });
   const [discoveryFly, setDiscoveryFly] = useState(null);
   const discoveryFlyTimeoutRef = useRef(null);
-  const lastCheerIndexRef = useRef(-1);
   const DISCOVERY_FLY_TOTAL_MS = 2200;
   const DISCOVERY_FLY_START_DELAY_MS = 800;
   const DISCOVERY_CENTER_REACH_MS = 900;
@@ -598,24 +597,12 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     return items;
   };
 
-  const getCompletionCheer = useCallback(() => {
-    const cheers = ['Awesome!', 'Amazing!', 'Great job!', 'Wonderful!', 'Fantastic!', 'Brilliant!'];
-    const pool =
-      cheers.length > 1
-        ? cheers.filter((_, idx) => idx !== lastCheerIndexRef.current)
-        : cheers;
-    const picked = pool[Math.floor(Math.random() * pool.length)];
-    lastCheerIndexRef.current = cheers.indexOf(picked);
-    return picked;
-  }, []);
-
-  const queueCompletionWithCheer = useCallback((completionLine, options = {}) => {
+  const queueCompletionLine = useCallback((completionLine, options = {}) => {
     const { startDelayMs = COMPLETION_CHEER_DELAY_MS } = options;
-    const cheer = getCompletionCheer();
     safeSetTimeout(() => {
-      speakLine(`${cheer} ${completionLine}`, { moment: 'celebration' });
+      speakLine(completionLine, { moment: 'celebration' });
     }, startDelayMs);
-  }, [getCompletionCheer, safeSetTimeout, speakLine]);
+  }, [safeSetTimeout, speakLine]);
 
   // --- RELOAD DETECTION & RESTORATION ---
   // Runs once on mount. For each saved phase: reset any partial state,
@@ -801,7 +788,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     }
     if (sceneState.gamePhase === 'wish1-complete' && !phaseVoiceRef.current.wish1Complete) {
       phaseVoiceRef.current.wish1Complete = true;
-      queueCompletionWithCheer(VOICE_LINES.wish1Complete, { startDelayMs: 0 });
+      queueCompletionLine(VOICE_LINES.wish1Complete, { startDelayMs: 0 });
     }
 
     // Wish 2
@@ -865,7 +852,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       phaseVoiceRef.current.ending = true;
       speakLine(VOICE_LINES.ending, { moment: 'closing' });
     }
-  }, [sceneState.gamePhase, sceneState.dreamRevealed, isAudioOn, playVoice]);
+  }, [sceneState.gamePhase, sceneState.dreamRevealed, isAudioOn, playVoice, queueCompletionLine]);
 
   const prevPhaseRef = useRef(sceneState.gamePhase);
   useEffect(() => {
@@ -905,32 +892,32 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   useEffect(() => {
     if (sceneState.wish1FinalMoment && !phaseVoiceRef.current.wish1FinalMomentVo) {
       phaseVoiceRef.current.wish1FinalMomentVo = true;
-      queueCompletionWithCheer(VOICE_LINES.wish1Complete, { startDelayMs: 0 });
+      queueCompletionLine(VOICE_LINES.wish1Complete, { startDelayMs: 0 });
     }
     if (!sceneState.wish1FinalMoment) {
       phaseVoiceRef.current.wish1FinalMomentVo = false;
     }
-  }, [sceneState.wish1FinalMoment, isAudioOn]);
+  }, [sceneState.wish1FinalMoment, isAudioOn, queueCompletionLine]);
 
   useEffect(() => {
     if (sceneState.wish2FinalMoment && !phaseVoiceRef.current.wish2FinalMomentVo) {
       phaseVoiceRef.current.wish2FinalMomentVo = true;
-      queueCompletionWithCheer(VOICE_LINES.wish2Complete, { startDelayMs: 0 });
+      queueCompletionLine(VOICE_LINES.wish2Complete, { startDelayMs: 0 });
     }
     if (!sceneState.wish2FinalMoment) {
       phaseVoiceRef.current.wish2FinalMomentVo = false;
     }
-  }, [sceneState.wish2FinalMoment, isAudioOn]);
+  }, [sceneState.wish2FinalMoment, isAudioOn, queueCompletionLine]);
 
   useEffect(() => {
     if (sceneState.wish3FinalMoment && !phaseVoiceRef.current.wish3FinalMomentVo) {
       phaseVoiceRef.current.wish3FinalMomentVo = true;
-      queueCompletionWithCheer(VOICE_LINES.wish3Complete, { startDelayMs: 0 });
+      queueCompletionLine(VOICE_LINES.wish3Complete, { startDelayMs: 0 });
     }
     if (!sceneState.wish3FinalMoment) {
       phaseVoiceRef.current.wish3FinalMomentVo = false;
     }
-  }, [sceneState.wish3FinalMoment, isAudioOn]);
+  }, [sceneState.wish3FinalMoment, isAudioOn, queueCompletionLine]);
 
   useEffect(() => () => {
     // On unmount (navigation away), stop all voice + pending reload VO timeouts
@@ -1169,7 +1156,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
           storyDiscoveries: appendUniqueDiscovery(currentState.storyDiscoveries, discovery)
         });
       }, (fromBubble ? WISH1_FINAL_ICON_DELAY_MS : DISCOVERY_FLY_START_DELAY_MS) + DISCOVERY_CENTER_REACH_MS);
-      queueCompletionWithCheer(VOICE_LINES.wish1Complete, {
+      queueCompletionLine(VOICE_LINES.wish1Complete, {
         startDelayMs: fromBubble ? WISH1_FINAL_CHEER_DELAY_MS : COMPLETION_CHEER_DELAY_MS
       });
       safeSetTimeout(() => {
@@ -1209,7 +1196,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     } else {
       // Unkind action: shake, dim, and redirect gently without repeating the harmful word.
       setShakingBubbleId(bubble.id);
-      speakLine("Oh no, that's not kind. Look for a helping bubble.", { moment: 'encouragement' });
+      speakLine("Try another one. Look for a kind action.", { moment: 'encouragement' });
 
       // Remove shake class after 200ms (animation + dim duration)
       safeSetTimeout(() => {
@@ -1444,7 +1431,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       playChime();
       // Trigger completion VO immediately on final tap (more reliable than waiting for effect timing).
       phaseVoiceRef.current.wish2FinalMomentVo = true;
-      queueCompletionWithCheer(VOICE_LINES.wish2Complete, { startDelayMs: COMPLETION_CHEER_DELAY_MS });
+      queueCompletionLine(VOICE_LINES.wish2Complete, { startDelayMs: COMPLETION_CHEER_DELAY_MS });
       sceneActions.updateState({
         wish2FinalMoment: true
       });
@@ -1492,7 +1479,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       playChime();
       // Trigger completion VO immediately on final tap (prevents missed/cut playback).
       phaseVoiceRef.current.wish3FinalMomentVo = true;
-      queueCompletionWithCheer(VOICE_LINES.wish3Complete, { startDelayMs: COMPLETION_CHEER_DELAY_MS });
+      queueCompletionLine(VOICE_LINES.wish3Complete, { startDelayMs: COMPLETION_CHEER_DELAY_MS });
       sceneActions.updateState({
         wish3FinalMoment: true
       });
@@ -1531,7 +1518,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       playChime();
       // Ensure completion VO is spoken before advancing to drawing intro.
       phaseVoiceRef.current.wish3FinalMomentVo = true;
-      queueCompletionWithCheer(VOICE_LINES.wish3Complete, { startDelayMs: COMPLETION_CHEER_DELAY_MS });
+      queueCompletionLine(VOICE_LINES.wish3Complete, { startDelayMs: COMPLETION_CHEER_DELAY_MS });
       sceneActions.updateState({
         wish3FinalMoment: true
       });
@@ -1645,8 +1632,8 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
         <div className="intro-overlay wish1-intro-layout">
           <img src={babyGaneshaImg} alt="Baby Ganesha" className="intro-ganesha bounce" />
           <div className="wish-intro-card">
-            <p className="wish-intro-text">I have three giant wishes for the whole world.</p>
-            <p className="wish-intro-text">Will you help me make them come true?</p>
+            <p className="wish-intro-text">I have three wishes for the world.</p>
+            <p className="wish-intro-text">Want to help?</p>
             <Button
               variant="primary"
               size="large"
@@ -1657,7 +1644,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 sceneActions.updateState({ gamePhase: 'wish1-active' });
               }}
             >
-              Let's Make Them Smile!
+              Let's Help!
             </Button>
           </div>
         </div>
@@ -1666,21 +1653,6 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Wish 1 Active */}
       {sceneState.gamePhase === 'wish1-active' && (
         <div className="wish-screen">
-          <div className="game-header-hud">
-            {/* Header instruction commented out - using progress header instead */}
-            {/* <div className="wish-instruction-bubble">Tap the earth 3 times to send smiles! ({sceneState.wish1Taps}/3)</div> */}
-            <div className="wish-progress-header">
-              <div className="wish-progress-title">Wish 1: Make Earth Smile</div>
-              <div className="wish-smiley-row">
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <span key={i} className={`wish-smiley-icon ${i < sceneState.wish1Taps ? 'filled' : ''}`}>
-                    {i < sceneState.wish1Taps ? '😊' : '😶'}
-                  </span>
-                ))}
-              </div>
-              <div className="wish-progress-count">{sceneState.wish1Taps}/3</div>
-            </div>
-          </div>
           <div className="wish-interactive-container">
             <div className="earth-container earth-readonly" style={{ width: '252px', height: '252px' }}>
               <img src={wishEarthSad} alt="Sad" className="earth-image sad" style={{ opacity: sceneState.wish1Taps === 0 ? 1 : sceneState.wish1Taps === 1 ? 0.6 : sceneState.wish1Taps === 2 ? 0.3 : 0 }} />
@@ -1880,19 +1852,6 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Wish 3 Active */}
       {sceneState.gamePhase === 'wish3-active' && (
         <div className="wish-screen">
-          <div className="game-header-hud">
-            <div className="wish-progress-header">
-              <div className="wish-progress-title">Wish 3: Grow The Forest</div>
-              <div className="wish-smiley-row">
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <span key={i} className={`wish-smiley-icon ${i < sceneState.wish3Taps ? 'filled' : ''}`}>
-                    {i < sceneState.wish3Taps ? '😊' : '😶'}
-                  </span>
-                ))}
-              </div>
-              <div className="wish-progress-count">{sceneState.wish3Taps}/3</div>
-            </div>
-          </div>
           <div className="wish-interactive-container">
             <div className="park-scene" style={{ position: 'relative', overflow: 'hidden' }}>
               {/* Base landscape image */}
@@ -2049,8 +2008,8 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
         <div className="intro-overlay">
           <img src={babyGaneshaSit} alt="Baby Ganesha" className="intro-ganesha celebrate-scale" />
           <div className="wish-intro-card">
-            <p className="wish-intro-text">You made the world brighter!</p>
-            <p className="wish-intro-text">Now it's your turn.<br />Draw your happy wish on this magic canvas!</p>
+            <p className="wish-intro-text">Now it's your turn.</p>
+            <p className="wish-intro-text">Draw something you hope for or dream about.</p>
             <Button
               variant="primary"
               size="large"
@@ -2186,8 +2145,8 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
             duration={3000}
             area="full"
           />
-          <h1 className="friendship-title">Dreams Come Together</h1>
-          <p className="friendship-subtitle">Helping others makes dreams grow.</p>
+          <h1 className="friendship-title">We Both Have Wishes</h1>
+          <p className="friendship-subtitle">Everyone can dream about something different.</p>
           <div className="friendship-grid">
             <div className="friend-column ganesha-card">
               <img src={babyGaneshaSit} alt="Ganesha" className="column-header-image" />
@@ -2196,7 +2155,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 <div className="friend-item">
                   <div className="friend-item-label">Wish 1</div>
                   <img src={kindnessHeaderIcon} alt="Kindness wish" className="friend-item-img" />
-                  <div className="friend-item-text">Happiness</div>
+                  <div className="friend-item-text">Kindness</div>
                 </div>
                 <div className="friend-item">
                   <div className="friend-item-label">Wish 2</div>

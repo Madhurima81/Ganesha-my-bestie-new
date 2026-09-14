@@ -195,23 +195,23 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
   const VOICE_LINES = {
     // Opening Screen
-    opening: "Let's find out what I like, then you can choose your favorites.",
+    opening: "Let's find out what I like — then I want to learn about you.",
 
     // Ganesha Section - Food
-    foodQuestion: "Which food is my favorite? Tap your guess.",
-    foodCorrect: "Yes — I love modak!",
+    foodQuestion: "Can you guess my favorite food?",
+    foodCorrect: "You got it — modak!",
 
     // Ganesha Section - Color
-    colorQuestion: "Which color do I like best?",
-    colorCorrect: "Yes — red!",
+    colorQuestion: "Can you guess my favorite color?",
+    colorCorrect: "You got it — red!",
 
     // Ganesha Section - Activity
-    activityQuestion: "What do I love to do?",
-    activityCorrect: "Yes — I love to dance!",
+    activityQuestion: "What do you think I love doing?",
+    activityCorrect: "You got it — dancing!",
 
     // Ganesha Section - Friend
-    friendQuestion: "Who is my friend?",
-    friendCorrect: "Yes — Mooshika!",
+    friendQuestion: "Who do you think my friend is?",
+    friendCorrect: "You got it — Mooshika!",
 
     // Transition to Child Section
     transition: "Now I want to know your favorites.",
@@ -233,11 +233,11 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     childFriendQuestion: "Add the name of a friend you care about.",
     childFriendCorrect: "Nice choice!",
 
-    // Connection Moment (emotional beat)
+    // Connection Moment
     friendCelebration: "Now we know some things we each enjoy.",
     completionCelebration: "We learned a little more about each other.",
 
-    // Idle Hints (Ganesha Section)
+    // Idle Hints
     foodHint: "Look for the sweet I love.",
     colorHint: "Which one is bright red?",
     activityHint: "What lets me move to music?",
@@ -300,7 +300,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       onReturnHint                     // ← Called when child returns
     }
   );
-  const { playUiTap, playWrongTap, playSparkle, playChime, playGlow, setGlobalVolume } = useGameSounds();
+  const { playUiTap, playSparkle, playChime, playGlow, setGlobalVolume } = useGameSounds();
   const { speak, stop: stopSpokenVoice } = useGaneshaVoice();
   useEffect(() => { startIdleTimer(); return () => stopIdleTimer(); }, [startIdleTimer, stopIdleTimer]);
   useEffect(() => { setCurrentPhase(sceneState?.gamePhase ?? null); }, [sceneState?.gamePhase, setCurrentPhase]);
@@ -1332,8 +1332,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     const food = foods.find(f => f.id === foodId);
     if (food.correct) {
       playSparkle();
-      triggerMiniGesture('food', 1500);
-      triggerSparkleFx('all', 1700);
+      triggerSparkleFx('single', 1200);
       sceneActions.updateState({ correctChoiceId: foodId });
       safeSetTimeout(() => {
         triggerDiscoveryFly({ image: modakImg, name: 'Modak' }, { isModak: true, durationMs: GANESHA_FOOD_CORRECT_ADVANCE_DELAY_MS });
@@ -1350,11 +1349,12 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
         }, DISCOVERY_CENTER_REACH_MS);
       }, 1000);
     } else {
-      playWrongTap();
-      speakOptionName(food?.name);
+      speakLine("Not that one. Try another!", { moment: 'encouragement' });
       setShowShake(foodId);
-      sceneActions.updateState({ wrongChoices: [...sceneState.wrongChoices, foodId] });
-      safeSetTimeout(() => setShowShake(null), 500);
+      sceneActions.updateState({
+        wrongChoices: [...sceneState.wrongChoices, foodId]
+      });
+      safeSetTimeout(() => setShowShake(null), 350);
     }
   };
 
@@ -1366,8 +1366,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     const color = colors.find(c => c.id === colorId);
     if (color.correct) {
       playSparkle();
-      triggerMiniGesture('color', 1500);
-      triggerSparkleFx('all', 1700);
+      triggerSparkleFx('single', 1200);
       triggerDiscoveryFly({ image: redImg, name: 'Red' }, { durationMs: GANESHA_CORRECT_ADVANCE_DELAY_MS });
       sceneActions.updateState({
         correctChoiceId: colorId,
@@ -1380,11 +1379,12 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
         });
       }, DISCOVERY_CENTER_REACH_MS);
     } else {
-      playWrongTap();
-      speakOptionName(color?.name);
+      speakLine("Not that one. Try another!", { moment: 'encouragement' });
       setShowShake(colorId);
-      sceneActions.updateState({ wrongChoices: [...sceneState.wrongChoices, colorId] });
-      safeSetTimeout(() => setShowShake(null), 500);
+      sceneActions.updateState({
+        wrongChoices: [...sceneState.wrongChoices, colorId]
+      });
+      safeSetTimeout(() => setShowShake(null), 350);
     }
   };
 
@@ -1396,8 +1396,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     const activity = activities.find(a => a.id === activityId);
     if (activity.correct) {
       playSparkle();
-      triggerMiniGesture('activity', 1500);
-      triggerSparkleFx('all', 1700);
+      triggerSparkleFx('single', 1200);
       triggerDiscoveryFly({ image: activity.image, name: activity.name }, { durationMs: GANESHA_CORRECT_ADVANCE_DELAY_MS });
       sceneActions.updateState({
         correctChoiceId: activityId,
@@ -1410,11 +1409,12 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
         });
       }, DISCOVERY_CENTER_REACH_MS);
     } else {
-      playWrongTap();
-      speakOptionName(activity?.name);
+      speakLine("Not that one. Try another!", { moment: 'encouragement' });
       setShowShake(activityId);
-      sceneActions.updateState({ wrongChoices: [...sceneState.wrongChoices, activityId] });
-      safeSetTimeout(() => setShowShake(null), 500);
+      sceneActions.updateState({
+        wrongChoices: [...sceneState.wrongChoices, activityId]
+      });
+      safeSetTimeout(() => setShowShake(null), 350);
     }
   };
 
@@ -1426,8 +1426,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     const friend = friends.find(f => f.id === friendId);
     if (friend.correct) {
       playSparkle();
-      triggerMiniGesture('friend', 1500);
-      triggerSparkleFx('all', 1700);
+      triggerSparkleFx('single', 1200);
       triggerDiscoveryFly({ image: mouseImg, name: 'Mooshika' }, { durationMs: GANESHA_FRIEND_CORRECT_ADVANCE_DELAY_MS });
       sceneActions.updateState({
         correctChoiceId: friendId,
@@ -1441,11 +1440,12 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
         });
       }, DISCOVERY_CENTER_REACH_MS);
     } else {
-      playWrongTap();
-      speakOptionName(friend?.name);
+      speakLine("Not that one. Try another!", { moment: 'encouragement' });
       setShowShake(friendId);
-      sceneActions.updateState({ wrongChoices: [...sceneState.wrongChoices, friendId] });
-      safeSetTimeout(() => setShowShake(null), 500);
+      sceneActions.updateState({
+        wrongChoices: [...sceneState.wrongChoices, friendId]
+      });
+      safeSetTimeout(() => setShowShake(null), 350);
     }
   };
 

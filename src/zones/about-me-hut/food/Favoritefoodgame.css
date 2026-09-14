@@ -259,7 +259,7 @@
 .favorite-food-game .choice-card.wrong {
   will-change: transform;
   transition: none !important;
-  animation: choiceShake 0.52s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+  animation: choiceShake 0.32s ease-out;
 }
 .favorite-food-game .choice-card.wrong:hover,
 .favorite-food-game .choice-card.wrong:active {
@@ -1520,8 +1520,8 @@
 .bounce-gentle { animation: bounceGentle 2s ease-in-out infinite; }
 @keyframes choiceShake {
   0%, 100% { transform: translateX(0); }
-  25%      { transform: translateX(-4px); }
-  75%      { transform: translateX(4px); }
+  25%      { transform: translateX(-2px); }
+  75%      { transform: translateX(2px); }
 }
 @keyframes correctPop {
   0% { transform: scale(1); filter: brightness(1); }

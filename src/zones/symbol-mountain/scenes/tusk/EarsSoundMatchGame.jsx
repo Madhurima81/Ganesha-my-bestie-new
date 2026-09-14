@@ -8,19 +8,19 @@ import './EarsSoundMatchGame.css';
 
 // Reuses the Eyes game's background (the delivered ear_game_background.png
 // was a captured screenshot of the Eyes-game dev harness, not usable art).
-import bgImg from './assets/images/ears-game/symbol_mountain_3_bg.png';
-import leafyBushImg from './assets/images/ears-game-v2/leafy_bush.png';
-import hiddenSpringImg from './assets/images/ears-game-v2/hidden_spring.png';
-import revealedSpringImg from './assets/images/ears-game-v2/revealed_spring.png';
-import hiddenGrassBushImg from './assets/images/ears-game-v2/hidden_grass_bush.png';
-import revealedGrassBushImg from './assets/images/ears-game-v2/revealed_grass_bush.png';
-import elephantThirstyImg from './assets/images/ears-game-v2/elephant_thirsty.png';
-import elephantDrinkingImg from './assets/images/ears-game-v2/elephant_drinking.png';
-import elephantHappyWaterImg from './assets/images/ears-game-v2/elephant_happy_water.png';
-import cowTiredImg from './assets/images/ears-game-v2/cow_tired.png';
-import cowHungryImg from './assets/images/ears-game-v2/cow_hungry.png';
-import cowEatingGrassImg from './assets/images/ears-game-v2/cow_eating_grass.png';
-import cowHappyChewingImg from './assets/images/ears-game-v2/cow_happy_chewing.png';
+import bgImg from './assets/images/ears-game/symbol_mountain_3_bg.webp';
+import leafyBushImg from './assets/images/ears-game-v2/leafy_bush.webp';
+import hiddenSpringImg from './assets/images/ears-game-v2/hidden_spring.webp';
+import revealedSpringImg from './assets/images/ears-game-v2/revealed_spring.webp';
+import hiddenGrassBushImg from './assets/images/ears-game-v2/hidden_grass_bush.webp';
+import revealedGrassBushImg from './assets/images/ears-game-v2/revealed_grass_bush.webp';
+import elephantThirstyImg from './assets/images/ears-game-v2/elephant_thirsty.webp';
+import elephantDrinkingImg from './assets/images/ears-game-v2/elephant_drinking.webp';
+import elephantHappyWaterImg from './assets/images/ears-game-v2/elephant_happy_water.webp';
+import cowTiredImg from './assets/images/ears-game-v2/cow_tired.webp';
+import cowHungryImg from './assets/images/ears-game-v2/cow_hungry.webp';
+import cowEatingGrassImg from './assets/images/ears-game-v2/cow_eating_grass.webp';
+import cowHappyChewingImg from './assets/images/ears-game-v2/cow_happy_chewing.webp';
 import soundWaterDrip from './assets/audio/ear_water_drip.wav';
 import soundGrassRustle from './assets/audio/ear_grass_rustle.wav';
 import soundBirdAmbient from './assets/audio/ear_bird_forest_ambient.wav';

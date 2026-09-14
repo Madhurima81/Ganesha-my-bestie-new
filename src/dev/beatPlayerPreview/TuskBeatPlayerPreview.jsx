@@ -11,26 +11,26 @@ import flowJson from './tuskFlowSample.json';
 
 import monkeyIdleShared from '../../zones/symbol-mountain/scenes/tusk/assets/images/monkey-new.webp';
 import elephantIdleShared from '../../zones/symbol-mountain/scenes/tusk/assets/images/elephant-new1.webp';
-import elephantSpraying from '../../zones/symbol-mountain/scenes/tusk/assets/images/ears-game/elephant_04_sprays_water.png';
-import elephantDrinking from '../../zones/symbol-mountain/scenes/tusk/assets/images/ears-game-v2/elephant_drinking.png';
+import elephantSpraying from '../../zones/symbol-mountain/scenes/tusk/assets/images/ears-game/elephant_04_sprays_water.webp';
+import elephantDrinking from '../../zones/symbol-mountain/scenes/tusk/assets/images/ears-game-v2/elephant_drinking.webp';
 import cowIdleShared from '../../zones/symbol-mountain/scenes/tusk/assets/images/cow-new.webp';
-import cowEatingGrass from '../../zones/symbol-mountain/scenes/tusk/assets/images/ears-game-v2/cow_eating_grass.png';
+import cowEatingGrass from '../../zones/symbol-mountain/scenes/tusk/assets/images/ears-game-v2/cow_eating_grass.webp';
 import peacockIdleShared from '../../zones/symbol-mountain/scenes/tusk/assets/images/peacock-new.webp';
-import mango from '../../zones/symbol-mountain/scenes/tusk/assets/images/eyes-game/mango.png';
-import feather from '../../zones/symbol-mountain/scenes/tusk/assets/images/eyes-game/peacock_feather.png';
+import mango from '../../zones/symbol-mountain/scenes/tusk/assets/images/eyes-game/mango.webp';
+import feather from '../../zones/symbol-mountain/scenes/tusk/assets/images/eyes-game/peacock_feather.webp';
 import grassBundle from '../../zones/symbol-mountain/scenes/tusk/assets/images/tusk-giving/grass_bundle.webp';
 import grassBed from '../../zones/symbol-mountain/scenes/tusk/assets/images/tusk-giving/grass_bed_spread.webp';
 import bowlEmpty from '../../zones/symbol-mountain/scenes/tusk/assets/images/tusk-giving/bowl_empty.webp';
 import bowlFilled from '../../zones/symbol-mountain/scenes/tusk/assets/images/tusk-giving/bowl_filled.webp';
 import bunnyTired from '../../zones/symbol-mountain/scenes/tusk/assets/images/tusk-giving/bunny_01_tired.webp';
-import bunnyEat from '../../zones/symbol-mountain/scenes/tusk/assets/images/tusk-giving/bunny_eat_mango.png';
-import bunnyDrink from '../../zones/symbol-mountain/scenes/tusk/assets/images/tusk-giving/bunny_drink_water.png';
-import bunnyRest from '../../zones/symbol-mountain/scenes/tusk/assets/images/tusk-giving/bunny_rest_on_grass.png';
+import bunnyEat from '../../zones/symbol-mountain/scenes/tusk/assets/images/tusk-giving/bunny_eat_mango.webp';
+import bunnyDrink from '../../zones/symbol-mountain/scenes/tusk/assets/images/tusk-giving/bunny_drink_water.webp';
+import bunnyRest from '../../zones/symbol-mountain/scenes/tusk/assets/images/tusk-giving/bunny_rest_on_grass.webp';
 import bgImg from '../../zones/symbol-mountain/scenes/tusk/assets/images/tusk-giving/symbol_mountain_3_bg.webp';
-import needBubbleMango from '../../zones/symbol-mountain/scenes/tusk/assets/images/tusk-giving/need_bubble_hungry_mango.png';
-import needBubbleWater from '../../zones/symbol-mountain/scenes/tusk/assets/images/tusk-giving/need_bubble_thirsty_water.png';
-import needBubbleGrass from '../../zones/symbol-mountain/scenes/tusk/assets/images/tusk-giving/need_bubble_soft_rest_grass.png';
-import needBubbleFeather from '../../zones/symbol-mountain/scenes/tusk/assets/images/tusk-giving/need_bubble_comfort_feather.png';
+import needBubbleMango from '../../zones/symbol-mountain/scenes/tusk/assets/images/tusk-giving/need_bubble_hungry_mango.webp';
+import needBubbleWater from '../../zones/symbol-mountain/scenes/tusk/assets/images/tusk-giving/need_bubble_thirsty_water.webp';
+import needBubbleGrass from '../../zones/symbol-mountain/scenes/tusk/assets/images/tusk-giving/need_bubble_soft_rest_grass.webp';
+import needBubbleFeather from '../../zones/symbol-mountain/scenes/tusk/assets/images/tusk-giving/need_bubble_comfort_feather.webp';
 
 // One-time "which asset is this" lookup, keyed by the editor's own path
 // strings (repo-relative paths kept as-is; upload://N resolved to the real
