@@ -583,7 +583,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "His tummy is rumbling... there's a juicy mango nearby. Drag it to Bunny.",
+          "voText": "His tummy is rumbling. Can you find something for him to eat?",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -1064,7 +1064,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "But Bunny is still thirsty. There's water nearby. Tap it, then drag the water drop to Bunny's bowl.",
+          "voText": "He's still thirsty. Can you find something to drink? Tap it, then drag it to his bowl.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -1563,7 +1563,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "Now Bunny looks tired. There's some soft grass nearby. Drag it to Bunny's resting spot.",
+          "voText": "Now he looks tired. Can you find something soft to rest on?",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -2036,7 +2036,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "Bunny is settling down... there's a fluffy feather nearby. Drag it to Bunny.",
+          "voText": "He's settling in now. Can you find something fluffy to snuggle with?",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
