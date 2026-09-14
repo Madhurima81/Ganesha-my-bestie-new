@@ -30,6 +30,14 @@ import './BeatPlayerGame.css';
  *                            Matches the real "drag water along the petal
  *                            path to the golden lotus" mechanic from the
  *                            Pond scene (prod commit 40f987a).
+ *   - 'rope-drag'          — drag the `drag` gameKey (its own item — no
+ *                            separate visual) onto `target`; while dragging
+ *                            (and at rest), a bendable rope curve renders
+ *                            from `fixedPoint` to the item's current
+ *                            position, using the exact same quadratic-
+ *                            bezier sag formula as MahakayaRescueGame's
+ *                            RopeLine. Pointer/hit-test logic is identical
+ *                            to drag-drop — only the visual differs.
  */
 
 const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
@@ -421,6 +429,28 @@ function BeatPlayerGame({
   if (hideElements || !isActive || !beat) return null;
 
   const isDragPath = interaction?.type === 'drag-path';
+  const isRopeDrag = interaction?.type === 'rope-drag';
+
+  // rope-drag's curve: identical quadratic-bezier sag formula to the real
+  // game's RopeLine (src/zones/shloka-river/scenes/Scene1/MahakayaRescueGame.jsx)
+  // — drawn from the fixed anchor to the drag item's current position
+  // (its resting spot, or live drag.x/drag.y while the child is dragging it).
+  const ropeCurveD = (x1, y1, x2, y2) => {
+    const midX = (x1 + x2) / 2, midY = (y1 + y2) / 2;
+    const distance = Math.hypot(x2 - x1, y2 - y1);
+    const controlX = midX + (x2 - x1) * 0.04;
+    const controlY = midY + Math.min(14, Math.max(4, distance * 0.12));
+    return `M ${x1} ${y1} Q ${controlX} ${controlY} ${x2} ${y2}`;
+  };
+  let ropeCurrentEnd = null;
+  if (isRopeDrag && interaction.fixedPoint) {
+    if (drag?.gameKey === interaction.drag) {
+      ropeCurrentEnd = { x: drag.x, y: drag.y };
+    } else {
+      const dragItem = findItem(interaction.drag);
+      if (dragItem) ropeCurrentEnd = { x: dragItem.x, y: dragItem.y };
+    }
+  }
 
   return (
     <div
@@ -466,6 +496,19 @@ function BeatPlayerGame({
           </button>
         );
       })}
+
+      {isRopeDrag && ropeCurrentEnd && (
+        <svg viewBox="0 0 100 100" preserveAspectRatio="none" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 55 }}>
+          <path
+            d={ropeCurveD(interaction.fixedPoint.x, interaction.fixedPoint.y, ropeCurrentEnd.x, ropeCurrentEnd.y)}
+            fill="none" stroke="#d19159" strokeWidth="0.95" strokeLinecap="round"
+          />
+          <path
+            d={ropeCurveD(interaction.fixedPoint.x, interaction.fixedPoint.y, ropeCurrentEnd.x, ropeCurrentEnd.y)}
+            fill="none" stroke="#efc392" strokeWidth="0.48" strokeLinecap="round" strokeDasharray="0.01 2.2" opacity="0.82"
+          />
+        </svg>
+      )}
 
       {/* drag-path's draggable drop — an SVG shape (matching the real Pond
           scene mechanic this was modeled on), not an image asset. */}
