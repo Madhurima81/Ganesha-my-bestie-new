@@ -583,7 +583,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "His tummy is rumbling. Can you find something for him to eat?",
+          "voText": "His tummy is rumbling. Can you find something for him to eat? Drag it to Bunny.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
