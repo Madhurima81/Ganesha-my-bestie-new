@@ -75,8 +75,18 @@ const speakAndWait = (text, enabled = true) => {
       const finish = () => {
         if (finished) return;
         finished = true;
+        clearTimeout(safetyTimer);
         resolve();
       };
+
+      // Real-device speechSynthesis doesn't reliably fire onend/onerror —
+      // voices not loaded yet, the tab losing focus, a rapid cancel() right
+      // before speak(), etc. Without a fallback, a dropped event freezes the
+      // whole beat forever (the timeline awaits this promise before it's
+      // allowed to move on). Cap the wait at a generous estimate of how long
+      // the line could take to say, plus headroom, so a flaky event can
+      // never permanently stall the story.
+      const safetyTimer = setTimeout(finish, Math.max(4000, text.length * 110));
 
       utterance.onend = finish;
       utterance.onerror = finish;
