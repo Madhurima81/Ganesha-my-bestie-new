@@ -564,7 +564,11 @@ function BeatPlayerGame({
     return `M ${x1} ${y1} Q ${controlX} ${controlY} ${x2} ${y2}`;
   };
   // True the instant any hold/drag is in flight — only one can be at once.
-  const isInteracting = feedback === 'holding' || !!drag;
+  // 'wrong' is included so a try-fail's shake window doesn't drop the pose
+  // back to idle before the state actually advances — without it, the
+  // active pose flickered off for the ~420ms between the hold completing
+  // and failThenAdvance's setTimeout actually calling completeInteraction.
+  const isInteracting = feedback === 'holding' || feedback === 'wrong' || !!drag;
 
   let ropeCurrentEnd = null;
   if (isRopeDrag && interaction.fixedPoint) {
