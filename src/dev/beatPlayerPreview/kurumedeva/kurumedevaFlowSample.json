@@ -1018,8 +1018,8 @@
             "gameKey": "monkeySprite"
           },
           {
-            "name": "Beaver \u2014 idle worried",
-            "path": "Characters/beaver-idle-worried.png",
+            "name": "Beaver \u2014 tired",
+            "path": "Characters/beaver-tired.png",
             "x": 19.38110749185668,
             "y": 61.58162302354778,
             "scale": 52,
