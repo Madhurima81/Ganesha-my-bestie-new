@@ -46,7 +46,11 @@ import './BeatPlayerGame.css';
  *                            of the beat is the fail, then the story moves
  *                            on to the next beat on its own. Matches the
  *                            real "solo rope try always slips" behavior
- *                            that used to be hand-coded per game.
+ *                            that used to be hand-coded per game. Add a
+ *                            `fixedPoint` (same shape as rope-drag) to get
+ *                            the same bendable rope-curve visual on a
+ *                            gesture:'drag' try-fail — no separate rope
+ *                            image needed, it's the same procedural curve.
  */
 
 const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
@@ -469,7 +473,11 @@ function BeatPlayerGame({
   if (hideElements || !isActive || !beat) return null;
 
   const isDragPath = interaction?.type === 'drag-path';
-  const isRopeDrag = interaction?.type === 'rope-drag';
+  // Any interaction with a fixedPoint gets the rope-curve visual — this
+  // covers the real 'rope-drag' mechanic AND a 'try-fail' drag that should
+  // *look* like a rope being pulled even though it always slips back
+  // (e.g. "try to tie it alone" before help arrives).
+  const isRopeDrag = interaction?.type === 'rope-drag' || (interaction?.type === 'try-fail' && interaction?.fixedPoint);
 
   // rope-drag's curve: identical quadratic-bezier sag formula to the real
   // game's RopeLine (src/zones/shloka-river/scenes/Scene1/MahakayaRescueGame.jsx)

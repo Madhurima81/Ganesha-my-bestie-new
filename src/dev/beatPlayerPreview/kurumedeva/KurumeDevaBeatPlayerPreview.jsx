@@ -14,20 +14,36 @@ import beaverAsking from '../../../zones/shloka-river/scenes/Scene3/assets/image
 import babyBeaverWaving from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Characters/baby-beaver-waving.png';
 import elephantIdleBanana from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Characters/elephant-idle-banana.png';
 import helpBubbleElephantLogs from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Characters/help-bubble-elephant-logs.png';
+import helpBubbleMonkeyKnot from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Characters/help-bubble-monkey-knot.png';
+import ropeKnot from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Bridge/rope-knot.png';
+import beaverCrossing from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Characters/beaver-crossing.png';
+import beaverPlacingPlank from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Characters/beaver-placing-plank.png';
 import beaverLiftUpload from './uploads/beaver-lift.png';
 import elephantLiftUpload from './uploads/elephant-lift.png';
+import beaverTieUpload from './uploads/beaver-tie.png';
+import monkeyTieUpload from './uploads/monkey-tie.png';
+import logTieUpload from './uploads/log-tie.png';
+import plankUpload from './uploads/plank.png';
 
 const ASSET_MAP = {
   'Bridge/bridge-broken.png': bridgeBroken,
   'Bridge/short-single-support-log.png': shortLog,
+  'Bridge/rope-knot.png': ropeKnot,
   'Characters/monkey-playing-twig.png': monkeyPlayingTwig,
   'Characters/beaver-idle-worried.png': beaverIdleWorried,
   'Characters/beaver-asking.png': beaverAsking,
+  'Characters/beaver-crossing.png': beaverCrossing,
+  'Characters/beaver-placing-plank.png': beaverPlacingPlank,
   'Characters/baby-beaver-waving.png': babyBeaverWaving,
   'Characters/elephant-idle-banana.png': elephantIdleBanana,
   'Characters/help-bubble-elephant-logs.png': helpBubbleElephantLogs,
+  'Characters/help-bubble-monkey-knot.png': helpBubbleMonkeyKnot,
   'assets/upload_1.png': beaverLiftUpload,
   'assets/upload_2.png': elephantLiftUpload,
+  'assets/upload_3.png': beaverTieUpload,
+  'assets/upload_4.png': monkeyTieUpload,
+  'assets/upload_6.png': logTieUpload,
+  'assets/upload_7.png': plankUpload,
 };
 
 function KurumeDevaBeatPlayerPreview(props) {
