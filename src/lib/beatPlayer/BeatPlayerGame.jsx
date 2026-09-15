@@ -316,7 +316,16 @@ function BeatPlayerGame({
       const el = sceneRef.current.querySelector(`[data-beat-key="${target}"]`);
       if (!el) return false;
       const r = el.getBoundingClientRect();
-      return clientX >= r.left && clientX <= r.right && clientY >= r.top && clientY <= r.bottom;
+      // A little forgiveness on either side — a child's finger dropping a few
+      // pixels short of a character shouldn't read as a miss. Zone targets
+      // already get their own tolerance via `w`; this gives gameKey targets
+      // the same courtesy.
+      const padX = r.width * 0.2;
+      const padY = r.height * 0.2;
+      return (
+        clientX >= r.left - padX && clientX <= r.right + padX &&
+        clientY >= r.top - padY && clientY <= r.bottom + padY
+      );
     }
 
     const cx = stageRect.left + (target.x / 100) * stageRect.width;
