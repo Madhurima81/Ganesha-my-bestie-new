@@ -66,17 +66,21 @@
   transform: translate(-50%, -50%) scale(1.08) !important;
 }
 
-.beat-player-item.is-holding {
-  animation: beatPlayerHoldPulse 900ms ease-in-out infinite;
-}
-
 .beat-player-stage.beat-player-wrong .beat-player-item.is-interactive {
   animation: beatPlayerShake 380ms ease-in-out;
 }
 
-@keyframes beatPlayerHoldPulse {
-  0%, 100% { filter: drop-shadow(0 0 0 rgba(255, 203, 74, 0)); }
-  50% { filter: drop-shadow(0 0 14px rgba(255, 203, 74, 0.85)); }
+/* Press-hold progress ring — same fill-as-you-hold pattern as the Pond
+   scene's lotus/rock hold, so a press-hold reads as "something is
+   happening" instead of a vague pulse. Drawn on top of the held item,
+   sized a little larger than it so the ring doesn't clip the art. */
+.beat-player-hold-ring {
+  position: absolute;
+  inset: -14%;
+  width: 128%;
+  height: 128%;
+  pointer-events: none;
+  z-index: 61;
 }
 
 @keyframes beatPlayerShake {

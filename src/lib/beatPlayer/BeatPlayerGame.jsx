@@ -146,12 +146,19 @@ function BeatPlayerGame({
   const sceneRef = useRef(null);
   const advanceTimer = useRef(null);
   const holdTimer = useRef(null);
+  const holdRaf = useRef(null);
+  const holdReleaseRaf = useRef(null);
+  const holdProgressRef = useRef(0);
   const warnedPaths = useRef(new Set());
 
   const [beatPos, setBeatPos] = useState(0);
   const [stateName, setStateName] = useState('before');
   const [drag, setDrag] = useState(null); // { gameKey, x, y }
   const [selectedGameKey, setSelectedGameKey] = useState(null);
+  // 0-1 fill for the press-hold progress ring — same pattern as the Pond
+  // scene's lotus/rock hold (rAF-driven fill while held, quick decay on
+  // release) so a press-hold reads as "something is happening", not vague.
+  const [holdProgress, setHoldProgress] = useState(0);
   const [feedback, setFeedback] = useState('idle'); // idle | wrong | holding
 
   // drag-path interaction state (tap trigger -> reveal drop -> drag through
@@ -200,6 +207,8 @@ function BeatPlayerGame({
   const clearTimers = useCallback(() => {
     if (advanceTimer.current) clearTimeout(advanceTimer.current);
     if (holdTimer.current) clearTimeout(holdTimer.current);
+    if (holdRaf.current) cancelAnimationFrame(holdRaf.current);
+    if (holdReleaseRaf.current) cancelAnimationFrame(holdReleaseRaf.current);
   }, []);
 
   const goToState = useCallback((next) => {
@@ -411,19 +420,66 @@ function BeatPlayerGame({
     if (!needsInput(stateName) || interaction.drag !== gameKey) return;
     if (interaction.type !== 'press-hold' && !isTryFailHold(interaction)) return;
     setFeedback('holding');
-    holdTimer.current = setTimeout(() => {
-      if (isTryFailHold(interaction)) {
-        failThenAdvance();
-      } else {
-        setFeedback('idle');
-        completeInteraction();
+
+    if (holdReleaseRaf.current) {
+      cancelAnimationFrame(holdReleaseRaf.current);
+      holdReleaseRaf.current = null;
+    }
+
+    const holdMs = interaction.holdMs || 900;
+    const startProgress = holdProgressRef.current; // resume from wherever it decayed to
+    const startTime = performance.now();
+
+    const tick = (now) => {
+      const elapsed = now - startTime;
+      const next = Math.min(1, startProgress + elapsed / holdMs);
+      holdProgressRef.current = next;
+      setHoldProgress(next);
+
+      if (next >= 1) {
+        holdRaf.current = null;
+        if (isTryFailHold(interaction)) {
+          failThenAdvance();
+        } else {
+          setFeedback('idle');
+          completeInteraction();
+        }
+        setTimeout(() => {
+          holdProgressRef.current = 0;
+          setHoldProgress(0);
+        }, 300);
+        return;
       }
-    }, interaction.holdMs || 900);
+      holdRaf.current = requestAnimationFrame(tick);
+    };
+    holdRaf.current = requestAnimationFrame(tick);
   }, [stateName, interaction, completeInteraction, failThenAdvance]);
 
   const cancelHold = useCallback(() => {
     if (holdTimer.current) clearTimeout(holdTimer.current);
+    if (holdRaf.current) {
+      cancelAnimationFrame(holdRaf.current);
+      holdRaf.current = null;
+    }
     setFeedback((f) => (f === 'holding' ? 'idle' : f));
+
+    // Quick decay back to 0 instead of snapping, matching the Pond hold ring.
+    const startProgress = holdProgressRef.current;
+    if (startProgress <= 0) return;
+    const decayMs = 250;
+    const startTime = performance.now();
+    const decayTick = (now) => {
+      const elapsed = now - startTime;
+      const next = Math.max(0, startProgress * (1 - elapsed / decayMs));
+      holdProgressRef.current = next;
+      setHoldProgress(next);
+      if (next <= 0) {
+        holdReleaseRaf.current = null;
+        return;
+      }
+      holdReleaseRaf.current = requestAnimationFrame(decayTick);
+    };
+    holdReleaseRaf.current = requestAnimationFrame(decayTick);
   }, []);
 
   // ---- drag-path: tap trigger -> reveal drop -> drag through waypoints ----
@@ -568,6 +624,19 @@ function BeatPlayerGame({
             onClick={isTriggerKey ? () => onTriggerTap(item.gameKey) : interactive ? () => onTapItem(item.gameKey) : undefined}
           >
             <img src={src} alt="" draggable={false} />
+            {isDragKey && holdProgress > 0 && (
+              <svg viewBox="0 0 100 100" className="beat-player-hold-ring" aria-hidden="true">
+                <circle
+                  cx="50" cy="50" r="46" fill="none" stroke="#FFD86B" strokeWidth="6" strokeLinecap="round"
+                  strokeDasharray={2 * Math.PI * 46}
+                  strokeDashoffset={2 * Math.PI * 46 * (1 - holdProgress)}
+                  transform="rotate(-90 50 50)"
+                  style={{
+                    filter: `drop-shadow(0 0 ${4 + holdProgress * 8}px rgba(255, 216, 107, ${0.5 + holdProgress * 0.4}))`,
+                  }}
+                />
+              </svg>
+            )}
           </button>
         );
       })}
