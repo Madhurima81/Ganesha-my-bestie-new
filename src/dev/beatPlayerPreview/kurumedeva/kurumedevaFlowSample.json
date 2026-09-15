@@ -399,7 +399,8 @@
             "z": 10,
             "w": 24,
             "locked": 0,
-            "gameKey": "beaverSprite"
+            "gameKey": "beaverSprite",
+            "activePath": "assets/upload_1.png"
           },
           {
             "name": "Baby beaver \u2014 waving",
@@ -2458,7 +2459,8 @@
             "z": 10,
             "w": 24,
             "locked": 0,
-            "gameKey": "beaverSprite"
+            "gameKey": "beaverSprite",
+            "activePath": "assets/upload_1.png"
           },
           {
             "name": "Baby beaver \u2014 waving",
@@ -2486,7 +2488,8 @@
             "z": 10,
             "w": 24,
             "locked": 0,
-            "gameKey": "elephantSprite"
+            "gameKey": "elephantSprite",
+            "activePath": "assets/upload_2.png"
           },
           {
             "name": "Support log \u2014 pile/short",
