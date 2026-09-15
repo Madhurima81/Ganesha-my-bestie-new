@@ -730,391 +730,30 @@
         "goal": "Child presses and holds the log pile alone \u2014 it does not budge. Elephant idle, not yet involved."
       }
     },
-    "2": {
+    "9": {
       "meta": {
-        "title": "3. Logs \u2014 help arrives, push together",
-        "goal": "Elephant notices (help bubble) and walks over. Child holds again with Elephant helping \u2014 log(s) slide into their support slot(s), repeating until all slots are filled. Bridge reads \"supported.\""
-      },
-      "before": {
-        "items": [
-          {
-            "name": "Bridge \u2014 broken",
-            "path": "Bridge/bridge-broken.png",
-            "x": 58.14331253499084,
-            "y": 68.9648954410118,
-            "scale": 205,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "bridgeSprite"
-          },
-          {
-            "name": "Monkey \u2014 playing with twig",
-            "path": "Characters/monkey-playing-twig.png",
-            "x": 4.071661237785015,
-            "y": 55.211719757312025,
-            "scale": 29,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "monkeySprite"
-          },
-          {
-            "name": "Beaver \u2014 idle worried",
-            "path": "Characters/beaver-idle-worried.png",
-            "x": 19.38110749185668,
-            "y": 61.58162302354778,
-            "scale": 52,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "beaverSprite"
-          },
-          {
-            "name": "Baby beaver \u2014 waving",
-            "path": "Characters/baby-beaver-waving.png",
-            "x": 86.15635179153094,
-            "y": 65.77995374847313,
-            "scale": 30,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": -1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "babyBeaverSprite"
-          },
-          {
-            "name": "Elephant \u2014 idle with banana",
-            "path": "Characters/elephant-idle-banana.png",
-            "x": 35.77633338953074,
-            "y": 46.38074777543092,
-            "scale": 64,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "elephantSprite"
-          },
-          {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
-            "x": 28.610199670449916,
-            "y": 66.93810412213287,
-            "scale": 53,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "logPileItem"
-          },
-          {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
-            "x": 29.004336478267504,
-            "y": 64.58160976944218,
-            "scale": 53,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": ""
-          },
-          {
-            "name": "Help bubble \u2014 elephant/logs",
-            "path": "Characters/help-bubble-elephant-logs.png",
-            "x": 27.415849020892715,
-            "y": 56.36988338507736,
-            "scale": 38,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "helpBubbleLogs"
-          }
-        ],
-        "notes": "",
-        "annotations": {
-          "arrows": [],
-          "targets": []
-        },
-        "audio": {
-          "voText": "",
-          "trigger": "state-enter",
-          "start": 0,
-          "duration": 0,
-          "nextVisual": 0,
-          "sfx": ""
-        },
-        "__syncedSnapshot": "[{\"name\":\"Bridge \u2014 broken\",\"path\":\"Bridge/bridge-broken.png\",\"x\":58.14331253499084,\"y\":68.9648954410118,\"scale\":205,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bridgeSprite\"},{\"name\":\"Monkey \u2014 playing with twig\",\"path\":\"Characters/monkey-playing-twig.png\",\"x\":4.071661237785015,\"y\":55.211719757312025,\"scale\":29,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"monkeySprite\"},{\"name\":\"Beaver \u2014 idle worried\",\"path\":\"Characters/beaver-idle-worried.png\",\"x\":19.38110749185668,\"y\":61.58162302354778,\"scale\":52,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"beaverSprite\"},{\"name\":\"Baby beaver \u2014 waving\",\"path\":\"Characters/baby-beaver-waving.png\",\"x\":86.15635179153094,\"y\":65.77995374847313,\"scale\":30,\"rotation\":0,\"opacity\":100,\"flip\":-1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"babyBeaverSprite\"},{\"name\":\"Elephant \u2014 idle with banana\",\"path\":\"Characters/elephant-idle-banana.png\",\"x\":35.77633338953074,\"y\":46.38074777543092,\"scale\":64,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"elephantSprite\"},{\"name\":\"Support log \u2014 pile/short\",\"path\":\"Bridge/short-single-support-log.png\",\"x\":28.610199670449916,\"y\":66.93810412213287,\"scale\":53,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"plankPileItem\"},{\"name\":\"Support log \u2014 pile/short\",\"path\":\"Bridge/short-single-support-log.png\",\"x\":29.004336478267504,\"y\":64.58160976944218,\"scale\":53,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"plankPileItem\"},{\"name\":\"Help bubble \u2014 elephant/logs\",\"path\":\"Characters/help-bubble-elephant-logs.png\",\"x\":27.415849020892715,\"y\":56.36988338507736,\"scale\":38,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"helpBubbleLogs\"}]"
-      },
-      "movement": {
-        "items": [
-          {
-            "name": "Bridge \u2014 broken",
-            "path": "Bridge/bridge-broken.png",
-            "x": 58.14331253499084,
-            "y": 68.9648954410118,
-            "scale": 205,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "bridgeSprite"
-          },
-          {
-            "name": "Monkey \u2014 playing with twig",
-            "path": "Characters/monkey-playing-twig.png",
-            "x": 4.071661237785015,
-            "y": 55.211719757312025,
-            "scale": 29,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "monkeySprite"
-          },
-          {
-            "name": "Baby beaver \u2014 waving",
-            "path": "Characters/baby-beaver-waving.png",
-            "x": 86.15635179153094,
-            "y": 65.77995374847313,
-            "scale": 30,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": -1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "babyBeaverSprite"
-          },
-          {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
-            "x": 28.610199670449916,
-            "y": 66.93810412213287,
-            "scale": 53,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "logPileItem"
-          },
-          {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
-            "x": 29.004336478267504,
-            "y": 64.58160976944218,
-            "scale": 53,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": ""
-          },
-          {
-            "name": "elephant lift",
-            "path": "assets/upload_2.png",
-            "x": 21.118347963215086,
-            "y": 58.8309852359867,
-            "scale": 64,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 1,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "elephantSprite"
-          },
-          {
-            "name": "beaver lift new",
-            "path": "assets/upload_1.png",
-            "x": 20.141144295857085,
-            "y": 61.14730586446458,
-            "scale": 52,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "beaverSprite"
-          }
-        ],
-        "notes": "",
-        "annotations": {
-          "arrows": [],
-          "targets": []
-        },
-        "audio": {
-          "voText": "",
-          "trigger": "state-enter",
-          "start": 0,
-          "duration": 0,
-          "nextVisual": 0,
-          "sfx": ""
-        },
-        "__syncedSnapshot": "[{\"name\":\"Bridge \u2014 broken\",\"path\":\"Bridge/bridge-broken.png\",\"x\":58.14331253499084,\"y\":68.9648954410118,\"scale\":205,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bridgeSprite\"},{\"name\":\"Monkey \u2014 playing with twig\",\"path\":\"Characters/monkey-playing-twig.png\",\"x\":4.071661237785015,\"y\":55.211719757312025,\"scale\":29,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"monkeySprite\"},{\"name\":\"Beaver \u2014 idle worried\",\"path\":\"Characters/beaver-idle-worried.png\",\"x\":19.38110749185668,\"y\":61.58162302354778,\"scale\":52,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"beaverSprite\"},{\"name\":\"Baby beaver \u2014 waving\",\"path\":\"Characters/baby-beaver-waving.png\",\"x\":86.15635179153094,\"y\":65.77995374847313,\"scale\":30,\"rotation\":0,\"opacity\":100,\"flip\":-1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"babyBeaverSprite\"},{\"name\":\"Elephant \u2014 idle with banana\",\"path\":\"Characters/elephant-idle-banana.png\",\"x\":35.77633338953074,\"y\":46.38074777543092,\"scale\":64,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"elephantSprite\"},{\"name\":\"Support log \u2014 pile/short\",\"path\":\"Bridge/short-single-support-log.png\",\"x\":28.610199670449916,\"y\":66.93810412213287,\"scale\":53,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"plankPileItem\"},{\"name\":\"Support log \u2014 pile/short\",\"path\":\"Bridge/short-single-support-log.png\",\"x\":29.004336478267504,\"y\":64.58160976944218,\"scale\":53,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"plankPileItem\"},{\"name\":\"Help bubble \u2014 elephant/logs\",\"path\":\"Characters/help-bubble-elephant-logs.png\",\"x\":27.415849020892715,\"y\":56.36988338507736,\"scale\":38,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"helpBubbleLogs\"}]"
-      },
-      "after": {
-        "items": [
-          {
-            "name": "Bridge \u2014 broken",
-            "path": "Bridge/bridge-broken.png",
-            "x": 58.14331253499084,
-            "y": 68.9648954410118,
-            "scale": 205,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "bridgeSprite"
-          },
-          {
-            "name": "Monkey \u2014 playing with twig",
-            "path": "Characters/monkey-playing-twig.png",
-            "x": 4.071661237785015,
-            "y": 55.211719757312025,
-            "scale": 29,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "monkeySprite"
-          },
-          {
-            "name": "Baby beaver \u2014 waving",
-            "path": "Characters/baby-beaver-waving.png",
-            "x": 86.15635179153094,
-            "y": 65.77995374847313,
-            "scale": 30,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": -1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "babyBeaverSprite"
-          },
-          {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
-            "x": 58.57762638054764,
-            "y": 72.00505591111903,
-            "scale": 53,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "logPileItem"
-          },
-          {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
-            "x": 59.406077033922024,
-            "y": 68.63517915309446,
-            "scale": 53,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": ""
-          },
-          {
-            "name": "elephant lift",
-            "path": "assets/upload_2.png",
-            "x": 21.118347963215086,
-            "y": 58.8309852359867,
-            "scale": 64,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 1,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "elephantSprite"
-          },
-          {
-            "name": "beaver lift new",
-            "path": "assets/upload_1.png",
-            "x": 19.38110749185668,
-            "y": 61.58162302354778,
-            "scale": 52,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "beaverSprite"
-          }
-        ],
-        "notes": "",
-        "annotations": {
-          "arrows": [],
-          "targets": []
-        },
-        "audio": {
-          "voText": "",
-          "trigger": "state-enter",
-          "start": 0,
-          "duration": 0,
-          "nextVisual": 0,
-          "sfx": ""
-        },
-        "__syncedSnapshot": "[{\"name\":\"Bridge \u2014 broken\",\"path\":\"Bridge/bridge-broken.png\",\"x\":58.14331253499084,\"y\":68.9648954410118,\"scale\":205,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bridgeSprite\"},{\"name\":\"Monkey \u2014 playing with twig\",\"path\":\"Characters/monkey-playing-twig.png\",\"x\":4.071661237785015,\"y\":55.211719757312025,\"scale\":29,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"monkeySprite\"},{\"name\":\"Beaver \u2014 idle worried\",\"path\":\"Characters/beaver-idle-worried.png\",\"x\":19.38110749185668,\"y\":61.58162302354778,\"scale\":52,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"beaverSprite\"},{\"name\":\"Baby beaver \u2014 waving\",\"path\":\"Characters/baby-beaver-waving.png\",\"x\":86.15635179153094,\"y\":65.77995374847313,\"scale\":30,\"rotation\":0,\"opacity\":100,\"flip\":-1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"babyBeaverSprite\"},{\"name\":\"Elephant \u2014 idle with banana\",\"path\":\"Characters/elephant-idle-banana.png\",\"x\":35.77633338953074,\"y\":46.38074777543092,\"scale\":64,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"elephantSprite\"},{\"name\":\"Support log \u2014 pile/short\",\"path\":\"Bridge/short-single-support-log.png\",\"x\":28.610199670449916,\"y\":66.93810412213287,\"scale\":53,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"plankPileItem\"},{\"name\":\"Support log \u2014 pile/short\",\"path\":\"Bridge/short-single-support-log.png\",\"x\":29.004336478267504,\"y\":64.58160976944218,\"scale\":53,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"plankPileItem\"},{\"name\":\"Help bubble \u2014 elephant/logs\",\"path\":\"Characters/help-bubble-elephant-logs.png\",\"x\":27.415849020892715,\"y\":56.36988338507736,\"scale\":38,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"helpBubbleLogs\"}]"
-      },
-      "interaction": {
-        "type": "drag-drop",
-        "drag": "logPileItem",
-        "target": "bridgeSprite"
+        "title": "10. Symbol reveal",
+        "goal": "Warm pause, then the Kurumedeva symbol appears with its affirmation line."
       }
     },
-    "3": {
+    "8": {
       "meta": {
-        "title": "4. Ropes \u2014 try alone",
-        "goal": "Rope hangs loose at a fixed point. Child drags it alone \u2014 it always slips and resets. Monkey nearby playing with a twig, not helping yet."
+        "title": "9. Reunion",
+        "goal": "Beaver reaches Baby Beaver \u2014 reunion/hug animation. Hold \u2014 no interaction."
+      }
+    },
+    "7": {
+      "meta": {
+        "title": "8. Crossing",
+        "goal": "Beaver auto-walks the finished bridge to the far side. Hold \u2014 no interaction."
       },
       "before": {
         "items": [
           {
             "name": "Bridge \u2014 broken",
             "path": "Bridge/bridge-broken.png",
-            "x": 58.14331253499084,
-            "y": 68.9648954410118,
+            "x": 58.25189348152484,
+            "y": 65.77995374847312,
             "scale": 205,
             "rotation": 0,
             "opacity": 100,
@@ -1153,34 +792,6 @@
             "gameKey": "babyBeaverSprite"
           },
           {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
-            "x": 58.57762638054764,
-            "y": 72.00505591111903,
-            "scale": 53,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "plankPileItem"
-          },
-          {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
-            "x": 59.406077033922024,
-            "y": 68.63517915309446,
-            "scale": 53,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "plankPileItem"
-          },
-          {
             "name": "elephant lift",
             "path": "assets/upload_2.png",
             "x": 31.65037670818913,
@@ -1195,284 +806,24 @@
             "gameKey": "elephantSprite"
           },
           {
-            "name": "beaver tie",
-            "path": "assets/upload_3.png",
-            "x": 53.14874804369401,
-            "y": 65.20086862106406,
-            "scale": 52,
+            "name": "log tie",
+            "path": "assets/upload_6.png",
+            "x": 58.14333241614923,
+            "y": 71.13644810116382,
+            "scale": 68,
             "rotation": 0,
             "opacity": 100,
             "flip": 1,
             "z": 10,
             "w": 24,
             "locked": 0,
-            "gameKey": "beaverSprite"
+            "gameKey": ""
           },
           {
-            "name": "Rope knot",
-            "path": "Bridge/rope-knot.png",
-            "scale": 32,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 12,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "ropeItem",
-            "x": 48.0,
-            "y": 63.0
-          }
-        ],
-        "notes": "",
-        "annotations": {
-          "arrows": [],
-          "targets": []
-        },
-        "audio": {
-          "voText": "Beaver tries to pull the rope tight... but it keeps slipping loose.",
-          "trigger": "state-enter",
-          "start": 0,
-          "duration": 0,
-          "nextVisual": 0,
-          "sfx": ""
-        },
-        "__syncedSnapshot": "[{\"name\":\"Bridge \u2014 broken\",\"path\":\"Bridge/bridge-broken.png\",\"x\":58.14331253499084,\"y\":68.9648954410118,\"scale\":205,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bridgeSprite\"},{\"name\":\"Monkey \u2014 playing with twig\",\"path\":\"Characters/monkey-playing-twig.png\",\"x\":4.071661237785015,\"y\":55.211719757312025,\"scale\":29,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"monkeySprite\"},{\"name\":\"Baby beaver \u2014 waving\",\"path\":\"Characters/baby-beaver-waving.png\",\"x\":86.15635179153094,\"y\":65.77995374847313,\"scale\":30,\"rotation\":0,\"opacity\":100,\"flip\":-1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"babyBeaverSprite\"},{\"name\":\"Support log \u2014 pile/short\",\"path\":\"Bridge/short-single-support-log.png\",\"x\":58.57762638054764,\"y\":72.00505591111903,\"scale\":53,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"plankPileItem\"},{\"name\":\"Support log \u2014 pile/short\",\"path\":\"Bridge/short-single-support-log.png\",\"x\":59.406077033922024,\"y\":68.63517915309446,\"scale\":53,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"plankPileItem\"},{\"name\":\"elephant lift\",\"path\":\"upload://2\",\"x\":21.118347963215086,\"y\":58.8309852359867,\"scale\":69,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":1,\"w\":24,\"locked\":0,\"gameKey\":\"elephantSprite\"}]"
-      },
-      "movement": {
-        "items": [
-          {
-            "name": "Bridge \u2014 broken",
-            "path": "Bridge/bridge-broken.png",
-            "x": 58.14331253499084,
-            "y": 68.9648954410118,
-            "scale": 205,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "bridgeSprite"
-          },
-          {
-            "name": "Monkey \u2014 playing with twig",
-            "path": "Characters/monkey-playing-twig.png",
-            "x": 4.071661237785015,
-            "y": 55.211719757312025,
-            "scale": 29,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "monkeySprite"
-          },
-          {
-            "name": "Baby beaver \u2014 waving",
-            "path": "Characters/baby-beaver-waving.png",
-            "x": 86.15635179153094,
-            "y": 65.77995374847313,
-            "scale": 30,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": -1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "babyBeaverSprite"
-          },
-          {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
-            "x": 58.57762638054764,
-            "y": 72.00505591111903,
-            "scale": 53,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "plankPileItem"
-          },
-          {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
-            "x": 59.406077033922024,
-            "y": 68.63517915309446,
-            "scale": 53,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "plankPileItem"
-          },
-          {
-            "name": "elephant lift",
-            "path": "assets/upload_2.png",
-            "x": 31.65037670818913,
-            "y": 49.565689467969605,
-            "scale": 64,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 1,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "elephantSprite"
-          },
-          {
-            "name": "beaver tie",
-            "path": "assets/upload_3.png",
-            "x": 53.14874804369401,
-            "y": 65.20086862106406,
-            "scale": 52,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "beaverSprite"
-          },
-          {
-            "name": "Rope knot",
-            "path": "Bridge/rope-knot.png",
-            "scale": 32,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 12,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "ropeItem",
-            "x": 48.0,
-            "y": 63.0
-          }
-        ],
-        "notes": "",
-        "annotations": {
-          "arrows": [],
-          "targets": []
-        },
-        "audio": {
-          "voText": "",
-          "trigger": "state-enter",
-          "start": 0,
-          "duration": 0,
-          "nextVisual": 0,
-          "sfx": ""
-        },
-        "__syncedSnapshot": "[{\"name\":\"Bridge \u2014 broken\",\"path\":\"Bridge/bridge-broken.png\",\"x\":58.14331253499084,\"y\":68.9648954410118,\"scale\":205,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bridgeSprite\"},{\"name\":\"Monkey \u2014 playing with twig\",\"path\":\"Characters/monkey-playing-twig.png\",\"x\":4.071661237785015,\"y\":55.211719757312025,\"scale\":29,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"monkeySprite\"},{\"name\":\"Baby beaver \u2014 waving\",\"path\":\"Characters/baby-beaver-waving.png\",\"x\":86.15635179153094,\"y\":65.77995374847313,\"scale\":30,\"rotation\":0,\"opacity\":100,\"flip\":-1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"babyBeaverSprite\"},{\"name\":\"Support log \u2014 pile/short\",\"path\":\"Bridge/short-single-support-log.png\",\"x\":58.57762638054764,\"y\":72.00505591111903,\"scale\":53,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"plankPileItem\"},{\"name\":\"Support log \u2014 pile/short\",\"path\":\"Bridge/short-single-support-log.png\",\"x\":59.406077033922024,\"y\":68.63517915309446,\"scale\":53,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"plankPileItem\"},{\"name\":\"elephant lift\",\"path\":\"upload://2\",\"x\":21.118347963215086,\"y\":58.8309852359867,\"scale\":69,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":1,\"w\":24,\"locked\":0,\"gameKey\":\"elephantSprite\"}]"
-      },
-      "after": {
-        "items": [
-          {
-            "name": "Bridge \u2014 broken",
-            "path": "Bridge/bridge-broken.png",
-            "x": 58.14331253499084,
-            "y": 68.9648954410118,
-            "scale": 205,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "bridgeSprite"
-          },
-          {
-            "name": "Monkey \u2014 playing with twig",
-            "path": "Characters/monkey-playing-twig.png",
-            "x": 4.071661237785015,
-            "y": 55.211719757312025,
-            "scale": 29,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "monkeySprite"
-          },
-          {
-            "name": "Baby beaver \u2014 waving",
-            "path": "Characters/baby-beaver-waving.png",
-            "x": 86.15635179153094,
-            "y": 65.77995374847313,
-            "scale": 30,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": -1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "babyBeaverSprite"
-          },
-          {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
-            "x": 58.57762638054764,
-            "y": 72.00505591111903,
-            "scale": 53,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "plankPileItem"
-          },
-          {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
-            "x": 59.406077033922024,
-            "y": 68.63517915309446,
-            "scale": 53,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "plankPileItem"
-          },
-          {
-            "name": "elephant lift",
-            "path": "assets/upload_2.png",
-            "x": 31.65037670818913,
-            "y": 49.565689467969605,
-            "scale": 64,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 1,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "elephantSprite"
-          },
-          {
-            "name": "beaver tie",
-            "path": "assets/upload_3.png",
-            "x": 53.14874804369401,
-            "y": 65.20086862106406,
-            "scale": 52,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "beaverSprite"
-          },
-          {
-            "name": "Help bubble \u2014 monkey/knot",
-            "path": "Characters/help-bubble-monkey-knot.png",
-            "x": 60.74918566775244,
-            "y": 55.06695841603895,
+            "name": "plank",
+            "path": "assets/upload_7.png",
+            "x": 59.01194022610444,
+            "y": 70.99168013283796,
             "scale": 44,
             "rotation": 0,
             "opacity": 100,
@@ -1483,18 +834,32 @@
             "gameKey": ""
           },
           {
-            "name": "Rope knot",
-            "path": "Bridge/rope-knot.png",
-            "scale": 32,
+            "name": "plank",
+            "path": "assets/upload_7.png",
+            "x": 52.999995029710405,
+            "y": 70.66195721786781,
+            "scale": 44,
             "rotation": 0,
             "opacity": 100,
             "flip": 1,
-            "z": 12,
+            "z": 10,
             "w": 24,
             "locked": 0,
-            "gameKey": "ropeItem",
-            "x": 48.0,
-            "y": 63.0
+            "gameKey": "plankPileItem"
+          },
+          {
+            "name": "Beaver \u2014 crossing",
+            "path": "Characters/beaver-crossing.png",
+            "x": 28.93594251005191,
+            "y": 62.30546286517712,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": ""
           }
         ],
         "notes": "",
@@ -1503,28 +868,682 @@
           "targets": []
         },
         "audio": {
-          "voText": "It won't hold by itself.",
+          "voText": "The bridge is ready! Beaver crosses to the other side at last.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
           "nextVisual": 0,
           "sfx": ""
         },
-        "__syncedSnapshot": "[{\"name\":\"Bridge \u2014 broken\",\"path\":\"Bridge/bridge-broken.png\",\"x\":58.14331253499084,\"y\":68.9648954410118,\"scale\":205,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bridgeSprite\"},{\"name\":\"Monkey \u2014 playing with twig\",\"path\":\"Characters/monkey-playing-twig.png\",\"x\":4.071661237785015,\"y\":55.211719757312025,\"scale\":29,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"monkeySprite\"},{\"name\":\"Baby beaver \u2014 waving\",\"path\":\"Characters/baby-beaver-waving.png\",\"x\":86.15635179153094,\"y\":65.77995374847313,\"scale\":30,\"rotation\":0,\"opacity\":100,\"flip\":-1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"babyBeaverSprite\"},{\"name\":\"Support log \u2014 pile/short\",\"path\":\"Bridge/short-single-support-log.png\",\"x\":58.57762638054764,\"y\":72.00505591111903,\"scale\":53,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"plankPileItem\"},{\"name\":\"Support log \u2014 pile/short\",\"path\":\"Bridge/short-single-support-log.png\",\"x\":59.406077033922024,\"y\":68.63517915309446,\"scale\":53,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"plankPileItem\"},{\"name\":\"elephant lift\",\"path\":\"upload://2\",\"x\":21.118347963215086,\"y\":58.8309852359867,\"scale\":69,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":1,\"w\":24,\"locked\":0,\"gameKey\":\"elephantSprite\"}]"
+        "__syncedSnapshot": "[{\"name\":\"Bridge \u2014 broken\",\"path\":\"Bridge/bridge-broken.png\",\"x\":58.25189348152484,\"y\":65.77995374847312,\"scale\":205,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bridgeSprite\"},{\"name\":\"Monkey \u2014 playing with twig\",\"path\":\"Characters/monkey-playing-twig.png\",\"x\":4.071661237785015,\"y\":55.211719757312025,\"scale\":29,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"monkeySprite\"},{\"name\":\"Baby beaver \u2014 waving\",\"path\":\"Characters/baby-beaver-waving.png\",\"x\":86.15635179153094,\"y\":65.77995374847313,\"scale\":30,\"rotation\":0,\"opacity\":100,\"flip\":-1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"babyBeaverSprite\"},{\"name\":\"elephant lift\",\"path\":\"upload://2\",\"x\":31.65037670818913,\"y\":49.565689467969605,\"scale\":69,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":1,\"w\":24,\"locked\":0,\"gameKey\":\"elephantSprite\"},{\"name\":\"log tie\",\"path\":\"upload://6\",\"x\":58.14333241614923,\"y\":71.13644810116382,\"scale\":68,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"plank\",\"path\":\"upload://7\",\"x\":59.01194022610444,\"y\":70.99168013283796,\"scale\":44,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"plank\",\"path\":\"upload://7\",\"x\":52.999995029710405,\"y\":70.66195721786781,\"scale\":44,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"plankPileItem\"},{\"name\":\"Beaver \u2014 crossing\",\"path\":\"Characters/beaver-crossing.png\",\"x\":28.93594251005191,\"y\":62.30546286517712,\"scale\":53,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"}]"
+      },
+      "movement": {
+        "items": [
+          {
+            "name": "Bridge \u2014 broken",
+            "path": "Bridge/bridge-broken.png",
+            "x": 58.360464487479646,
+            "y": 68.82012747268593,
+            "scale": 205,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "bridgeSprite"
+          },
+          {
+            "name": "Monkey \u2014 playing with twig",
+            "path": "Characters/monkey-playing-twig.png",
+            "x": 4.071661237785015,
+            "y": 55.211719757312025,
+            "scale": 29,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "monkeySprite"
+          },
+          {
+            "name": "Baby beaver \u2014 waving",
+            "path": "Characters/baby-beaver-waving.png",
+            "x": 94.62540716612378,
+            "y": 60.71299533243418,
+            "scale": 30,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "babyBeaverSprite"
+          },
+          {
+            "name": "elephant lift",
+            "path": "assets/upload_2.png",
+            "x": 31.65037670818913,
+            "y": 49.565689467969605,
+            "scale": 64,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 1,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "elephantSprite"
+          },
+          {
+            "name": "log tie",
+            "path": "assets/upload_6.png",
+            "x": 58.14333241614923,
+            "y": 71.13644810116382,
+            "scale": 68,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": ""
+          },
+          {
+            "name": "plank",
+            "path": "assets/upload_7.png",
+            "x": 59.01194022610444,
+            "y": 70.99168013283796,
+            "scale": 44,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": ""
+          },
+          {
+            "name": "plank",
+            "path": "assets/upload_7.png",
+            "x": 52.999995029710405,
+            "y": 70.66195721786781,
+            "scale": 44,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "plankPileItem"
+          },
+          {
+            "name": "Beaver \u2014 crossing",
+            "path": "Characters/beaver-crossing.png",
+            "x": 28.82736156351791,
+            "y": 62.30546286517712,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "beaverSprite"
+          }
+        ],
+        "notes": "",
+        "annotations": {
+          "arrows": [],
+          "targets": []
+        },
+        "audio": {
+          "voText": "",
+          "trigger": "state-enter",
+          "start": 0,
+          "duration": 0,
+          "nextVisual": 0,
+          "sfx": ""
+        },
+        "__syncedSnapshot": "[{\"name\":\"Bridge \u2014 broken\",\"path\":\"Bridge/bridge-broken.png\",\"x\":58.25189348152484,\"y\":65.77995374847312,\"scale\":205,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bridgeSprite\"},{\"name\":\"Monkey \u2014 playing with twig\",\"path\":\"Characters/monkey-playing-twig.png\",\"x\":4.071661237785015,\"y\":55.211719757312025,\"scale\":29,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"monkeySprite\"},{\"name\":\"Baby beaver \u2014 waving\",\"path\":\"Characters/baby-beaver-waving.png\",\"x\":86.15635179153094,\"y\":65.77995374847313,\"scale\":30,\"rotation\":0,\"opacity\":100,\"flip\":-1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"babyBeaverSprite\"},{\"name\":\"elephant lift\",\"path\":\"upload://2\",\"x\":31.65037670818913,\"y\":49.565689467969605,\"scale\":69,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":1,\"w\":24,\"locked\":0,\"gameKey\":\"elephantSprite\"},{\"name\":\"log tie\",\"path\":\"upload://6\",\"x\":58.14333241614923,\"y\":71.13644810116382,\"scale\":68,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"plank\",\"path\":\"upload://7\",\"x\":59.01194022610444,\"y\":70.99168013283796,\"scale\":44,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"plank\",\"path\":\"upload://7\",\"x\":52.999995029710405,\"y\":70.66195721786781,\"scale\":44,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"plankPileItem\"},{\"name\":\"Beaver \u2014 crossing\",\"path\":\"Characters/beaver-crossing.png\",\"x\":28.93594251005191,\"y\":62.30546286517712,\"scale\":53,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"}]"
+      },
+      "after": {
+        "items": [
+          {
+            "name": "Bridge \u2014 broken",
+            "path": "Bridge/bridge-broken.png",
+            "x": 58.360464487479646,
+            "y": 68.82012747268593,
+            "scale": 205,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "bridgeSprite"
+          },
+          {
+            "name": "Monkey \u2014 playing with twig",
+            "path": "Characters/monkey-playing-twig.png",
+            "x": 4.071661237785015,
+            "y": 55.211719757312025,
+            "scale": 29,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "monkeySprite"
+          },
+          {
+            "name": "Baby beaver \u2014 waving",
+            "path": "Characters/baby-beaver-waving.png",
+            "x": 94.62540716612378,
+            "y": 60.71299533243418,
+            "scale": 30,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "babyBeaverSprite"
+          },
+          {
+            "name": "elephant lift",
+            "path": "assets/upload_2.png",
+            "x": 31.65037670818913,
+            "y": 49.565689467969605,
+            "scale": 64,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 1,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "elephantSprite"
+          },
+          {
+            "name": "log tie",
+            "path": "assets/upload_6.png",
+            "x": 58.14333241614923,
+            "y": 71.13644810116382,
+            "scale": 68,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": ""
+          },
+          {
+            "name": "plank",
+            "path": "assets/upload_7.png",
+            "x": 59.01194022610444,
+            "y": 70.99168013283796,
+            "scale": 44,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": ""
+          },
+          {
+            "name": "plank",
+            "path": "assets/upload_7.png",
+            "x": 52.999995029710405,
+            "y": 70.66195721786781,
+            "scale": 44,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "plankPileItem"
+          },
+          {
+            "name": "Beaver \u2014 crossing",
+            "path": "Characters/beaver-crossing.png",
+            "x": 28.82736156351791,
+            "y": 62.30546286517712,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "beaverSprite"
+          }
+        ],
+        "notes": "",
+        "annotations": {
+          "arrows": [],
+          "targets": []
+        },
+        "audio": {
+          "voText": "",
+          "trigger": "state-enter",
+          "start": 0,
+          "duration": 0,
+          "nextVisual": 0,
+          "sfx": ""
+        }
       },
       "interaction": {
-        "type": "try-fail",
-        "gesture": "drag",
-        "drag": "ropeItem",
-        "fixedPoint": {
-          "x": 58.0,
-          "y": 58.0
-        }
+        "type": "none"
       }
     },
-    "4": {
+    "6": {
       "meta": {
-        "title": "5. Ropes \u2014 help arrives, tie together",
+        "title": "7. Planks \u2014 lay (Beaver alone)",
+        "goal": "No helper needed. Child drags the plank pair from the pile onto the bridge \u2014 bridge reads fully complete."
+      },
+      "before": {
+        "items": [
+          {
+            "name": "Bridge \u2014 broken",
+            "path": "Bridge/bridge-broken.png",
+            "x": 58.14331253499084,
+            "y": 68.9648954410118,
+            "scale": 205,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "bridgeSprite"
+          },
+          {
+            "name": "Monkey \u2014 playing with twig",
+            "path": "Characters/monkey-playing-twig.png",
+            "x": 4.071661237785015,
+            "y": 55.211719757312025,
+            "scale": 29,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "monkeySprite"
+          },
+          {
+            "name": "Baby beaver \u2014 waving",
+            "path": "Characters/baby-beaver-waving.png",
+            "x": 86.15635179153094,
+            "y": 65.77995374847313,
+            "scale": 30,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "babyBeaverSprite"
+          },
+          {
+            "name": "elephant lift",
+            "path": "assets/upload_2.png",
+            "x": 31.65037670818913,
+            "y": 49.565689467969605,
+            "scale": 64,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 1,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "elephantSprite"
+          },
+          {
+            "name": "log tie",
+            "path": "assets/upload_6.png",
+            "x": 58.14333241614923,
+            "y": 71.13644810116382,
+            "scale": 68,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": ""
+          },
+          {
+            "name": "plank",
+            "path": "assets/upload_7.png",
+            "x": 17.31812915118587,
+            "y": 72.29461172892915,
+            "scale": 44,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "plankPileItem"
+          },
+          {
+            "name": "plank",
+            "path": "assets/upload_7.png",
+            "x": 19.44950643036187,
+            "y": 73.70213094208061,
+            "scale": 44,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "plankPileItem"
+          },
+          {
+            "name": "Beaver \u2014 placing plank",
+            "path": "Characters/beaver-placing-plank.png",
+            "x": 26.221498371335503,
+            "y": 66.50380684420806,
+            "scale": 50,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": ""
+          }
+        ],
+        "notes": "",
+        "annotations": {
+          "arrows": [],
+          "targets": []
+        },
+        "audio": {
+          "voText": "",
+          "trigger": "state-enter",
+          "start": 0,
+          "duration": 0,
+          "nextVisual": 0,
+          "sfx": ""
+        },
+        "__syncedSnapshot": "[{\"name\":\"Bridge \u2014 broken\",\"path\":\"Bridge/bridge-broken.png\",\"x\":58.14331253499084,\"y\":68.9648954410118,\"scale\":205,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bridgeSprite\"},{\"name\":\"Monkey \u2014 playing with twig\",\"path\":\"Characters/monkey-playing-twig.png\",\"x\":4.071661237785015,\"y\":55.211719757312025,\"scale\":29,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"monkeySprite\"},{\"name\":\"Baby beaver \u2014 waving\",\"path\":\"Characters/baby-beaver-waving.png\",\"x\":86.15635179153094,\"y\":65.77995374847313,\"scale\":30,\"rotation\":0,\"opacity\":100,\"flip\":-1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"babyBeaverSprite\"},{\"name\":\"elephant lift\",\"path\":\"upload://2\",\"x\":31.65037670818913,\"y\":49.565689467969605,\"scale\":69,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":1,\"w\":24,\"locked\":0,\"gameKey\":\"elephantSprite\"},{\"name\":\"log tie\",\"path\":\"upload://6\",\"x\":58.14333241614923,\"y\":71.13644810116382,\"scale\":68,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"Beaver \u2014 idle worried\",\"path\":\"Characters/beaver-idle-worried.png\",\"x\":29.804555290296722,\"y\":65.4904111847686,\"scale\":49,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"beaverSprite\"},{\"name\":\"plank\",\"path\":\"upload://7\",\"x\":17.31812915118587,\"y\":72.29461172892915,\"scale\":44,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"plank\",\"path\":\"upload://7\",\"x\":19.44950643036187,\"y\":73.70213094208061,\"scale\":44,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"}]"
+      },
+      "movement": {
+        "items": [
+          {
+            "name": "Bridge \u2014 broken",
+            "path": "Bridge/bridge-broken.png",
+            "x": 58.14331253499084,
+            "y": 68.9648954410118,
+            "scale": 205,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "bridgeSprite"
+          },
+          {
+            "name": "Monkey \u2014 playing with twig",
+            "path": "Characters/monkey-playing-twig.png",
+            "x": 4.071661237785015,
+            "y": 55.211719757312025,
+            "scale": 29,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "monkeySprite"
+          },
+          {
+            "name": "Baby beaver \u2014 waving",
+            "path": "Characters/baby-beaver-waving.png",
+            "x": 86.15635179153094,
+            "y": 65.77995374847313,
+            "scale": 30,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "babyBeaverSprite"
+          },
+          {
+            "name": "elephant lift",
+            "path": "assets/upload_2.png",
+            "x": 31.65037670818913,
+            "y": 49.565689467969605,
+            "scale": 64,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 1,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "elephantSprite"
+          },
+          {
+            "name": "log tie",
+            "path": "assets/upload_6.png",
+            "x": 58.14333241614923,
+            "y": 71.13644810116382,
+            "scale": 68,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": ""
+          },
+          {
+            "name": "plank",
+            "path": "assets/upload_7.png",
+            "x": 17.31812915118587,
+            "y": 72.29461172892915,
+            "scale": 44,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "plankPileItem"
+          },
+          {
+            "name": "plank",
+            "path": "assets/upload_7.png",
+            "x": 19.44950643036187,
+            "y": 73.70213094208061,
+            "scale": 44,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "plankPileItem"
+          },
+          {
+            "name": "Beaver \u2014 placing plank",
+            "path": "Characters/beaver-placing-plank.png",
+            "x": 25.5700325732899,
+            "y": 66.21427090755633,
+            "scale": 50,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "beaverSprite"
+          }
+        ],
+        "notes": "",
+        "annotations": {
+          "arrows": [],
+          "targets": []
+        },
+        "audio": {
+          "voText": "",
+          "trigger": "state-enter",
+          "start": 0,
+          "duration": 0,
+          "nextVisual": 0,
+          "sfx": ""
+        },
+        "__syncedSnapshot": "[{\"name\":\"Bridge \u2014 broken\",\"path\":\"Bridge/bridge-broken.png\",\"x\":58.14331253499084,\"y\":68.9648954410118,\"scale\":205,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bridgeSprite\"},{\"name\":\"Monkey \u2014 playing with twig\",\"path\":\"Characters/monkey-playing-twig.png\",\"x\":4.071661237785015,\"y\":55.211719757312025,\"scale\":29,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"monkeySprite\"},{\"name\":\"Baby beaver \u2014 waving\",\"path\":\"Characters/baby-beaver-waving.png\",\"x\":86.15635179153094,\"y\":65.77995374847313,\"scale\":30,\"rotation\":0,\"opacity\":100,\"flip\":-1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"babyBeaverSprite\"},{\"name\":\"elephant lift\",\"path\":\"upload://2\",\"x\":31.65037670818913,\"y\":49.565689467969605,\"scale\":69,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":1,\"w\":24,\"locked\":0,\"gameKey\":\"elephantSprite\"},{\"name\":\"log tie\",\"path\":\"upload://6\",\"x\":58.14333241614923,\"y\":71.13644810116382,\"scale\":68,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"Beaver \u2014 idle worried\",\"path\":\"Characters/beaver-idle-worried.png\",\"x\":29.804555290296722,\"y\":65.4904111847686,\"scale\":49,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"beaverSprite\"},{\"name\":\"plank\",\"path\":\"upload://7\",\"x\":17.31812915118587,\"y\":72.29461172892915,\"scale\":44,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"plank\",\"path\":\"upload://7\",\"x\":19.44950643036187,\"y\":73.70213094208061,\"scale\":44,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"}]"
+      },
+      "after": {
+        "items": [
+          {
+            "name": "Bridge \u2014 broken",
+            "path": "Bridge/bridge-broken.png",
+            "x": 58.25189348152484,
+            "y": 65.77995374847312,
+            "scale": 205,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "bridgeSprite"
+          },
+          {
+            "name": "Monkey \u2014 playing with twig",
+            "path": "Characters/monkey-playing-twig.png",
+            "x": 4.071661237785015,
+            "y": 55.211719757312025,
+            "scale": 29,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "monkeySprite"
+          },
+          {
+            "name": "Baby beaver \u2014 waving",
+            "path": "Characters/baby-beaver-waving.png",
+            "x": 86.15635179153094,
+            "y": 65.77995374847313,
+            "scale": 30,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "babyBeaverSprite"
+          },
+          {
+            "name": "elephant lift",
+            "path": "assets/upload_2.png",
+            "x": 31.65037670818913,
+            "y": 49.565689467969605,
+            "scale": 64,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 1,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "elephantSprite"
+          },
+          {
+            "name": "log tie",
+            "path": "assets/upload_6.png",
+            "x": 58.14333241614923,
+            "y": 71.13644810116382,
+            "scale": 68,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": ""
+          },
+          {
+            "name": "plank",
+            "path": "assets/upload_7.png",
+            "x": 59.01194022610444,
+            "y": 70.99168013283796,
+            "scale": 44,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "plankPileItem"
+          },
+          {
+            "name": "plank",
+            "path": "assets/upload_7.png",
+            "x": 52.999995029710405,
+            "y": 70.66195721786781,
+            "scale": 44,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "plankPileItem"
+          },
+          {
+            "name": "Beaver \u2014 crossing",
+            "path": "Characters/beaver-crossing.png",
+            "x": 28.93594251005191,
+            "y": 62.30546286517712,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": ""
+          }
+        ],
+        "notes": "",
+        "annotations": {
+          "arrows": [],
+          "targets": []
+        },
+        "audio": {
+          "voText": "",
+          "trigger": "state-enter",
+          "start": 0,
+          "duration": 0,
+          "nextVisual": 0,
+          "sfx": ""
+        },
+        "__syncedSnapshot": "[{\"name\":\"Bridge \u2014 broken\",\"path\":\"Bridge/bridge-broken.png\",\"x\":58.14331253499084,\"y\":68.9648954410118,\"scale\":205,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bridgeSprite\"},{\"name\":\"Monkey \u2014 playing with twig\",\"path\":\"Characters/monkey-playing-twig.png\",\"x\":4.071661237785015,\"y\":55.211719757312025,\"scale\":29,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"monkeySprite\"},{\"name\":\"Baby beaver \u2014 waving\",\"path\":\"Characters/baby-beaver-waving.png\",\"x\":86.15635179153094,\"y\":65.77995374847313,\"scale\":30,\"rotation\":0,\"opacity\":100,\"flip\":-1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"babyBeaverSprite\"},{\"name\":\"elephant lift\",\"path\":\"upload://2\",\"x\":31.65037670818913,\"y\":49.565689467969605,\"scale\":69,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":1,\"w\":24,\"locked\":0,\"gameKey\":\"elephantSprite\"},{\"name\":\"log tie\",\"path\":\"upload://6\",\"x\":58.14333241614923,\"y\":71.13644810116382,\"scale\":68,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"Beaver \u2014 idle worried\",\"path\":\"Characters/beaver-idle-worried.png\",\"x\":29.804555290296722,\"y\":65.4904111847686,\"scale\":49,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"beaverSprite\"},{\"name\":\"plank\",\"path\":\"upload://7\",\"x\":17.31812915118587,\"y\":72.29461172892915,\"scale\":44,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"plank\",\"path\":\"upload://7\",\"x\":19.44950643036187,\"y\":73.70213094208061,\"scale\":44,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"}]"
+      },
+      "interaction": {
+        "type": "drag-drop",
+        "drag": "plankPileItem",
+        "target": "bridgeSprite"
+      }
+    },
+    "5": {
+      "meta": {
+        "title": "6. Ropes \u2014 help arrives, tie together",
         "goal": "Monkey notices (help bubble) and walks over. Child drags the rope with Monkey\u2019s help into the knot target \u2014 ties successfully, repeating for the second rope. Bridge structurally complete underneath."
       },
       "before": {
@@ -1973,10 +1992,10 @@
         }
       }
     },
-    "5": {
+    "4": {
       "meta": {
-        "title": "6. Planks \u2014 lay (Beaver alone)",
-        "goal": "No helper needed. Child drags the plank pair from the pile onto the bridge \u2014 bridge reads fully complete."
+        "title": "5. Ropes \u2014 try alone",
+        "goal": "Rope hangs loose at a fixed point. Child drags it alone \u2014 it always slips and resets. Monkey nearby playing with a twig, not helping yet."
       },
       "before": {
         "items": [
@@ -2023,6 +2042,34 @@
             "gameKey": "babyBeaverSprite"
           },
           {
+            "name": "Support log \u2014 pile/short",
+            "path": "Bridge/short-single-support-log.png",
+            "x": 58.57762638054764,
+            "y": 72.00505591111903,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "plankPileItem"
+          },
+          {
+            "name": "Support log \u2014 pile/short",
+            "path": "Bridge/short-single-support-log.png",
+            "x": 59.406077033922024,
+            "y": 68.63517915309446,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "plankPileItem"
+          },
+          {
             "name": "elephant lift",
             "path": "assets/upload_2.png",
             "x": 31.65037670818913,
@@ -2037,60 +2084,32 @@
             "gameKey": "elephantSprite"
           },
           {
-            "name": "log tie",
-            "path": "assets/upload_6.png",
-            "x": 58.14333241614923,
-            "y": 71.13644810116382,
-            "scale": 68,
+            "name": "beaver tie",
+            "path": "assets/upload_3.png",
+            "x": 53.14874804369401,
+            "y": 65.20086862106406,
+            "scale": 52,
             "rotation": 0,
             "opacity": 100,
             "flip": 1,
             "z": 10,
             "w": 24,
             "locked": 0,
-            "gameKey": ""
+            "gameKey": "beaverSprite"
           },
           {
-            "name": "plank",
-            "path": "assets/upload_7.png",
-            "x": 17.31812915118587,
-            "y": 72.29461172892915,
-            "scale": 44,
+            "name": "Rope knot",
+            "path": "Bridge/rope-knot.png",
+            "scale": 32,
             "rotation": 0,
             "opacity": 100,
             "flip": 1,
-            "z": 10,
+            "z": 12,
             "w": 24,
             "locked": 0,
-            "gameKey": "plankPileItem"
-          },
-          {
-            "name": "plank",
-            "path": "assets/upload_7.png",
-            "x": 19.44950643036187,
-            "y": 73.70213094208061,
-            "scale": 44,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "plankPileItem"
-          },
-          {
-            "name": "Beaver \u2014 placing plank",
-            "path": "Characters/beaver-placing-plank.png",
-            "x": 26.221498371335503,
-            "y": 66.50380684420806,
-            "scale": 50,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": ""
+            "gameKey": "ropeItem",
+            "x": 48.0,
+            "y": 63.0
           }
         ],
         "notes": "",
@@ -2099,14 +2118,14 @@
           "targets": []
         },
         "audio": {
-          "voText": "",
+          "voText": "Beaver tries to pull the rope tight... but it keeps slipping loose.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
           "nextVisual": 0,
           "sfx": ""
         },
-        "__syncedSnapshot": "[{\"name\":\"Bridge \u2014 broken\",\"path\":\"Bridge/bridge-broken.png\",\"x\":58.14331253499084,\"y\":68.9648954410118,\"scale\":205,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bridgeSprite\"},{\"name\":\"Monkey \u2014 playing with twig\",\"path\":\"Characters/monkey-playing-twig.png\",\"x\":4.071661237785015,\"y\":55.211719757312025,\"scale\":29,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"monkeySprite\"},{\"name\":\"Baby beaver \u2014 waving\",\"path\":\"Characters/baby-beaver-waving.png\",\"x\":86.15635179153094,\"y\":65.77995374847313,\"scale\":30,\"rotation\":0,\"opacity\":100,\"flip\":-1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"babyBeaverSprite\"},{\"name\":\"elephant lift\",\"path\":\"upload://2\",\"x\":31.65037670818913,\"y\":49.565689467969605,\"scale\":69,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":1,\"w\":24,\"locked\":0,\"gameKey\":\"elephantSprite\"},{\"name\":\"log tie\",\"path\":\"upload://6\",\"x\":58.14333241614923,\"y\":71.13644810116382,\"scale\":68,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"Beaver \u2014 idle worried\",\"path\":\"Characters/beaver-idle-worried.png\",\"x\":29.804555290296722,\"y\":65.4904111847686,\"scale\":49,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"beaverSprite\"},{\"name\":\"plank\",\"path\":\"upload://7\",\"x\":17.31812915118587,\"y\":72.29461172892915,\"scale\":44,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"plank\",\"path\":\"upload://7\",\"x\":19.44950643036187,\"y\":73.70213094208061,\"scale\":44,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"}]"
+        "__syncedSnapshot": "[{\"name\":\"Bridge \u2014 broken\",\"path\":\"Bridge/bridge-broken.png\",\"x\":58.14331253499084,\"y\":68.9648954410118,\"scale\":205,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bridgeSprite\"},{\"name\":\"Monkey \u2014 playing with twig\",\"path\":\"Characters/monkey-playing-twig.png\",\"x\":4.071661237785015,\"y\":55.211719757312025,\"scale\":29,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"monkeySprite\"},{\"name\":\"Baby beaver \u2014 waving\",\"path\":\"Characters/baby-beaver-waving.png\",\"x\":86.15635179153094,\"y\":65.77995374847313,\"scale\":30,\"rotation\":0,\"opacity\":100,\"flip\":-1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"babyBeaverSprite\"},{\"name\":\"Support log \u2014 pile/short\",\"path\":\"Bridge/short-single-support-log.png\",\"x\":58.57762638054764,\"y\":72.00505591111903,\"scale\":53,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"plankPileItem\"},{\"name\":\"Support log \u2014 pile/short\",\"path\":\"Bridge/short-single-support-log.png\",\"x\":59.406077033922024,\"y\":68.63517915309446,\"scale\":53,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"plankPileItem\"},{\"name\":\"elephant lift\",\"path\":\"upload://2\",\"x\":21.118347963215086,\"y\":58.8309852359867,\"scale\":69,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":1,\"w\":24,\"locked\":0,\"gameKey\":\"elephantSprite\"}]"
       },
       "movement": {
         "items": [
@@ -2153,6 +2172,34 @@
             "gameKey": "babyBeaverSprite"
           },
           {
+            "name": "Support log \u2014 pile/short",
+            "path": "Bridge/short-single-support-log.png",
+            "x": 58.57762638054764,
+            "y": 72.00505591111903,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "plankPileItem"
+          },
+          {
+            "name": "Support log \u2014 pile/short",
+            "path": "Bridge/short-single-support-log.png",
+            "x": 59.406077033922024,
+            "y": 68.63517915309446,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "plankPileItem"
+          },
+          {
             "name": "elephant lift",
             "path": "assets/upload_2.png",
             "x": 31.65037670818913,
@@ -2167,53 +2214,11 @@
             "gameKey": "elephantSprite"
           },
           {
-            "name": "log tie",
-            "path": "assets/upload_6.png",
-            "x": 58.14333241614923,
-            "y": 71.13644810116382,
-            "scale": 68,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": ""
-          },
-          {
-            "name": "plank",
-            "path": "assets/upload_7.png",
-            "x": 17.31812915118587,
-            "y": 72.29461172892915,
-            "scale": 44,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "plankPileItem"
-          },
-          {
-            "name": "plank",
-            "path": "assets/upload_7.png",
-            "x": 19.44950643036187,
-            "y": 73.70213094208061,
-            "scale": 44,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "plankPileItem"
-          },
-          {
-            "name": "Beaver \u2014 placing plank",
-            "path": "Characters/beaver-placing-plank.png",
-            "x": 25.5700325732899,
-            "y": 66.21427090755633,
-            "scale": 50,
+            "name": "beaver tie",
+            "path": "assets/upload_3.png",
+            "x": 53.14874804369401,
+            "y": 65.20086862106406,
+            "scale": 52,
             "rotation": 0,
             "opacity": 100,
             "flip": 1,
@@ -2221,6 +2226,20 @@
             "w": 24,
             "locked": 0,
             "gameKey": "beaverSprite"
+          },
+          {
+            "name": "Rope knot",
+            "path": "Bridge/rope-knot.png",
+            "scale": 32,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "ropeItem",
+            "x": 48.0,
+            "y": 63.0
           }
         ],
         "notes": "",
@@ -2236,15 +2255,15 @@
           "nextVisual": 0,
           "sfx": ""
         },
-        "__syncedSnapshot": "[{\"name\":\"Bridge \u2014 broken\",\"path\":\"Bridge/bridge-broken.png\",\"x\":58.14331253499084,\"y\":68.9648954410118,\"scale\":205,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bridgeSprite\"},{\"name\":\"Monkey \u2014 playing with twig\",\"path\":\"Characters/monkey-playing-twig.png\",\"x\":4.071661237785015,\"y\":55.211719757312025,\"scale\":29,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"monkeySprite\"},{\"name\":\"Baby beaver \u2014 waving\",\"path\":\"Characters/baby-beaver-waving.png\",\"x\":86.15635179153094,\"y\":65.77995374847313,\"scale\":30,\"rotation\":0,\"opacity\":100,\"flip\":-1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"babyBeaverSprite\"},{\"name\":\"elephant lift\",\"path\":\"upload://2\",\"x\":31.65037670818913,\"y\":49.565689467969605,\"scale\":69,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":1,\"w\":24,\"locked\":0,\"gameKey\":\"elephantSprite\"},{\"name\":\"log tie\",\"path\":\"upload://6\",\"x\":58.14333241614923,\"y\":71.13644810116382,\"scale\":68,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"Beaver \u2014 idle worried\",\"path\":\"Characters/beaver-idle-worried.png\",\"x\":29.804555290296722,\"y\":65.4904111847686,\"scale\":49,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"beaverSprite\"},{\"name\":\"plank\",\"path\":\"upload://7\",\"x\":17.31812915118587,\"y\":72.29461172892915,\"scale\":44,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"plank\",\"path\":\"upload://7\",\"x\":19.44950643036187,\"y\":73.70213094208061,\"scale\":44,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"}]"
+        "__syncedSnapshot": "[{\"name\":\"Bridge \u2014 broken\",\"path\":\"Bridge/bridge-broken.png\",\"x\":58.14331253499084,\"y\":68.9648954410118,\"scale\":205,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bridgeSprite\"},{\"name\":\"Monkey \u2014 playing with twig\",\"path\":\"Characters/monkey-playing-twig.png\",\"x\":4.071661237785015,\"y\":55.211719757312025,\"scale\":29,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"monkeySprite\"},{\"name\":\"Baby beaver \u2014 waving\",\"path\":\"Characters/baby-beaver-waving.png\",\"x\":86.15635179153094,\"y\":65.77995374847313,\"scale\":30,\"rotation\":0,\"opacity\":100,\"flip\":-1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"babyBeaverSprite\"},{\"name\":\"Support log \u2014 pile/short\",\"path\":\"Bridge/short-single-support-log.png\",\"x\":58.57762638054764,\"y\":72.00505591111903,\"scale\":53,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"plankPileItem\"},{\"name\":\"Support log \u2014 pile/short\",\"path\":\"Bridge/short-single-support-log.png\",\"x\":59.406077033922024,\"y\":68.63517915309446,\"scale\":53,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"plankPileItem\"},{\"name\":\"elephant lift\",\"path\":\"upload://2\",\"x\":21.118347963215086,\"y\":58.8309852359867,\"scale\":69,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":1,\"w\":24,\"locked\":0,\"gameKey\":\"elephantSprite\"}]"
       },
       "after": {
         "items": [
           {
             "name": "Bridge \u2014 broken",
             "path": "Bridge/bridge-broken.png",
-            "x": 58.25189348152484,
-            "y": 65.77995374847312,
+            "x": 58.14331253499084,
+            "y": 68.9648954410118,
             "scale": 205,
             "rotation": 0,
             "opacity": 100,
@@ -2283,6 +2302,34 @@
             "gameKey": "babyBeaverSprite"
           },
           {
+            "name": "Support log \u2014 pile/short",
+            "path": "Bridge/short-single-support-log.png",
+            "x": 58.57762638054764,
+            "y": 72.00505591111903,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "plankPileItem"
+          },
+          {
+            "name": "Support log \u2014 pile/short",
+            "path": "Bridge/short-single-support-log.png",
+            "x": 59.406077033922024,
+            "y": 68.63517915309446,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "plankPileItem"
+          },
+          {
             "name": "elephant lift",
             "path": "assets/upload_2.png",
             "x": 31.65037670818913,
@@ -2297,11 +2344,25 @@
             "gameKey": "elephantSprite"
           },
           {
-            "name": "log tie",
-            "path": "assets/upload_6.png",
-            "x": 58.14333241614923,
-            "y": 71.13644810116382,
-            "scale": 68,
+            "name": "beaver tie",
+            "path": "assets/upload_3.png",
+            "x": 53.14874804369401,
+            "y": 65.20086862106406,
+            "scale": 52,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "beaverSprite"
+          },
+          {
+            "name": "Help bubble \u2014 monkey/knot",
+            "path": "Characters/help-bubble-monkey-knot.png",
+            "x": 60.74918566775244,
+            "y": 55.06695841603895,
+            "scale": 44,
             "rotation": 0,
             "opacity": 100,
             "flip": 1,
@@ -2311,38 +2372,141 @@
             "gameKey": ""
           },
           {
-            "name": "plank",
-            "path": "assets/upload_7.png",
-            "x": 59.01194022610444,
-            "y": 70.99168013283796,
-            "scale": 44,
+            "name": "Rope knot",
+            "path": "Bridge/rope-knot.png",
+            "scale": 32,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "ropeItem",
+            "x": 48.0,
+            "y": 63.0
+          }
+        ],
+        "notes": "",
+        "annotations": {
+          "arrows": [],
+          "targets": []
+        },
+        "audio": {
+          "voText": "It won't hold by itself.",
+          "trigger": "state-enter",
+          "start": 0,
+          "duration": 0,
+          "nextVisual": 0,
+          "sfx": ""
+        },
+        "__syncedSnapshot": "[{\"name\":\"Bridge \u2014 broken\",\"path\":\"Bridge/bridge-broken.png\",\"x\":58.14331253499084,\"y\":68.9648954410118,\"scale\":205,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bridgeSprite\"},{\"name\":\"Monkey \u2014 playing with twig\",\"path\":\"Characters/monkey-playing-twig.png\",\"x\":4.071661237785015,\"y\":55.211719757312025,\"scale\":29,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"monkeySprite\"},{\"name\":\"Baby beaver \u2014 waving\",\"path\":\"Characters/baby-beaver-waving.png\",\"x\":86.15635179153094,\"y\":65.77995374847313,\"scale\":30,\"rotation\":0,\"opacity\":100,\"flip\":-1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"babyBeaverSprite\"},{\"name\":\"Support log \u2014 pile/short\",\"path\":\"Bridge/short-single-support-log.png\",\"x\":58.57762638054764,\"y\":72.00505591111903,\"scale\":53,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"plankPileItem\"},{\"name\":\"Support log \u2014 pile/short\",\"path\":\"Bridge/short-single-support-log.png\",\"x\":59.406077033922024,\"y\":68.63517915309446,\"scale\":53,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"plankPileItem\"},{\"name\":\"elephant lift\",\"path\":\"upload://2\",\"x\":21.118347963215086,\"y\":58.8309852359867,\"scale\":69,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":1,\"w\":24,\"locked\":0,\"gameKey\":\"elephantSprite\"}]"
+      },
+      "interaction": {
+        "type": "try-fail",
+        "gesture": "drag",
+        "drag": "ropeItem",
+        "fixedPoint": {
+          "x": 58.0,
+          "y": 58.0
+        }
+      }
+    },
+    "3": {
+      "meta": {
+        "title": "4. Logs \u2014 help arrives, push together",
+        "goal": "Elephant notices (help bubble) and walks over. Child holds again with Elephant helping \u2014 log(s) slide into their support slot(s), repeating until all slots are filled. Bridge reads \"supported.\""
+      },
+      "before": {
+        "items": [
+          {
+            "name": "Bridge \u2014 broken",
+            "path": "Bridge/bridge-broken.png",
+            "x": 58.14331253499084,
+            "y": 68.9648954410118,
+            "scale": 205,
             "rotation": 0,
             "opacity": 100,
             "flip": 1,
             "z": 10,
             "w": 24,
             "locked": 0,
-            "gameKey": "plankPileItem"
+            "gameKey": "bridgeSprite"
           },
           {
-            "name": "plank",
-            "path": "assets/upload_7.png",
-            "x": 52.999995029710405,
-            "y": 70.66195721786781,
-            "scale": 44,
+            "name": "Monkey \u2014 playing with twig",
+            "path": "Characters/monkey-playing-twig.png",
+            "x": 4.071661237785015,
+            "y": 55.211719757312025,
+            "scale": 29,
             "rotation": 0,
             "opacity": 100,
             "flip": 1,
             "z": 10,
             "w": 24,
             "locked": 0,
-            "gameKey": "plankPileItem"
+            "gameKey": "monkeySprite"
           },
           {
-            "name": "Beaver \u2014 crossing",
-            "path": "Characters/beaver-crossing.png",
-            "x": 28.93594251005191,
-            "y": 62.30546286517712,
+            "name": "Beaver \u2014 idle worried",
+            "path": "Characters/beaver-idle-worried.png",
+            "x": 19.38110749185668,
+            "y": 61.58162302354778,
+            "scale": 52,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "beaverSprite"
+          },
+          {
+            "name": "Baby beaver \u2014 waving",
+            "path": "Characters/baby-beaver-waving.png",
+            "x": 86.15635179153094,
+            "y": 65.77995374847313,
+            "scale": 30,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "babyBeaverSprite"
+          },
+          {
+            "name": "Elephant \u2014 idle with banana",
+            "path": "Characters/elephant-idle-banana.png",
+            "x": 35.77633338953074,
+            "y": 46.38074777543092,
+            "scale": 64,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "elephantSprite"
+          },
+          {
+            "name": "Support log \u2014 pile/short",
+            "path": "Bridge/short-single-support-log.png",
+            "x": 28.610199670449916,
+            "y": 66.93810412213287,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "logPileItem"
+          },
+          {
+            "name": "Support log \u2014 pile/short",
+            "path": "Bridge/short-single-support-log.png",
+            "x": 29.004336478267504,
+            "y": 64.58160976944218,
             "scale": 53,
             "rotation": 0,
             "opacity": 100,
@@ -2351,6 +2515,20 @@
             "w": 24,
             "locked": 0,
             "gameKey": ""
+          },
+          {
+            "name": "Help bubble \u2014 elephant/logs",
+            "path": "Characters/help-bubble-elephant-logs.png",
+            "x": 27.415849020892715,
+            "y": 56.36988338507736,
+            "scale": 38,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "helpBubbleLogs"
           }
         ],
         "notes": "",
@@ -2366,26 +2544,254 @@
           "nextVisual": 0,
           "sfx": ""
         },
-        "__syncedSnapshot": "[{\"name\":\"Bridge \u2014 broken\",\"path\":\"Bridge/bridge-broken.png\",\"x\":58.14331253499084,\"y\":68.9648954410118,\"scale\":205,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bridgeSprite\"},{\"name\":\"Monkey \u2014 playing with twig\",\"path\":\"Characters/monkey-playing-twig.png\",\"x\":4.071661237785015,\"y\":55.211719757312025,\"scale\":29,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"monkeySprite\"},{\"name\":\"Baby beaver \u2014 waving\",\"path\":\"Characters/baby-beaver-waving.png\",\"x\":86.15635179153094,\"y\":65.77995374847313,\"scale\":30,\"rotation\":0,\"opacity\":100,\"flip\":-1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"babyBeaverSprite\"},{\"name\":\"elephant lift\",\"path\":\"upload://2\",\"x\":31.65037670818913,\"y\":49.565689467969605,\"scale\":69,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":1,\"w\":24,\"locked\":0,\"gameKey\":\"elephantSprite\"},{\"name\":\"log tie\",\"path\":\"upload://6\",\"x\":58.14333241614923,\"y\":71.13644810116382,\"scale\":68,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"Beaver \u2014 idle worried\",\"path\":\"Characters/beaver-idle-worried.png\",\"x\":29.804555290296722,\"y\":65.4904111847686,\"scale\":49,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"beaverSprite\"},{\"name\":\"plank\",\"path\":\"upload://7\",\"x\":17.31812915118587,\"y\":72.29461172892915,\"scale\":44,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"plank\",\"path\":\"upload://7\",\"x\":19.44950643036187,\"y\":73.70213094208061,\"scale\":44,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"}]"
+        "__syncedSnapshot": "[{\"name\":\"Bridge \u2014 broken\",\"path\":\"Bridge/bridge-broken.png\",\"x\":58.14331253499084,\"y\":68.9648954410118,\"scale\":205,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bridgeSprite\"},{\"name\":\"Monkey \u2014 playing with twig\",\"path\":\"Characters/monkey-playing-twig.png\",\"x\":4.071661237785015,\"y\":55.211719757312025,\"scale\":29,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"monkeySprite\"},{\"name\":\"Beaver \u2014 idle worried\",\"path\":\"Characters/beaver-idle-worried.png\",\"x\":19.38110749185668,\"y\":61.58162302354778,\"scale\":52,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"beaverSprite\"},{\"name\":\"Baby beaver \u2014 waving\",\"path\":\"Characters/baby-beaver-waving.png\",\"x\":86.15635179153094,\"y\":65.77995374847313,\"scale\":30,\"rotation\":0,\"opacity\":100,\"flip\":-1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"babyBeaverSprite\"},{\"name\":\"Elephant \u2014 idle with banana\",\"path\":\"Characters/elephant-idle-banana.png\",\"x\":35.77633338953074,\"y\":46.38074777543092,\"scale\":64,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"elephantSprite\"},{\"name\":\"Support log \u2014 pile/short\",\"path\":\"Bridge/short-single-support-log.png\",\"x\":28.610199670449916,\"y\":66.93810412213287,\"scale\":53,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"plankPileItem\"},{\"name\":\"Support log \u2014 pile/short\",\"path\":\"Bridge/short-single-support-log.png\",\"x\":29.004336478267504,\"y\":64.58160976944218,\"scale\":53,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"plankPileItem\"},{\"name\":\"Help bubble \u2014 elephant/logs\",\"path\":\"Characters/help-bubble-elephant-logs.png\",\"x\":27.415849020892715,\"y\":56.36988338507736,\"scale\":38,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"helpBubbleLogs\"}]"
+      },
+      "movement": {
+        "items": [
+          {
+            "name": "Bridge \u2014 broken",
+            "path": "Bridge/bridge-broken.png",
+            "x": 58.14331253499084,
+            "y": 68.9648954410118,
+            "scale": 205,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "bridgeSprite"
+          },
+          {
+            "name": "Monkey \u2014 playing with twig",
+            "path": "Characters/monkey-playing-twig.png",
+            "x": 4.071661237785015,
+            "y": 55.211719757312025,
+            "scale": 29,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "monkeySprite"
+          },
+          {
+            "name": "Baby beaver \u2014 waving",
+            "path": "Characters/baby-beaver-waving.png",
+            "x": 86.15635179153094,
+            "y": 65.77995374847313,
+            "scale": 30,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "babyBeaverSprite"
+          },
+          {
+            "name": "Support log \u2014 pile/short",
+            "path": "Bridge/short-single-support-log.png",
+            "x": 28.610199670449916,
+            "y": 66.93810412213287,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "logPileItem"
+          },
+          {
+            "name": "Support log \u2014 pile/short",
+            "path": "Bridge/short-single-support-log.png",
+            "x": 29.004336478267504,
+            "y": 64.58160976944218,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": ""
+          },
+          {
+            "name": "elephant lift",
+            "path": "assets/upload_2.png",
+            "x": 21.118347963215086,
+            "y": 58.8309852359867,
+            "scale": 64,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 1,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "elephantSprite"
+          },
+          {
+            "name": "beaver lift new",
+            "path": "assets/upload_1.png",
+            "x": 20.141144295857085,
+            "y": 61.14730586446458,
+            "scale": 52,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "beaverSprite"
+          }
+        ],
+        "notes": "",
+        "annotations": {
+          "arrows": [],
+          "targets": []
+        },
+        "audio": {
+          "voText": "",
+          "trigger": "state-enter",
+          "start": 0,
+          "duration": 0,
+          "nextVisual": 0,
+          "sfx": ""
+        },
+        "__syncedSnapshot": "[{\"name\":\"Bridge \u2014 broken\",\"path\":\"Bridge/bridge-broken.png\",\"x\":58.14331253499084,\"y\":68.9648954410118,\"scale\":205,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bridgeSprite\"},{\"name\":\"Monkey \u2014 playing with twig\",\"path\":\"Characters/monkey-playing-twig.png\",\"x\":4.071661237785015,\"y\":55.211719757312025,\"scale\":29,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"monkeySprite\"},{\"name\":\"Beaver \u2014 idle worried\",\"path\":\"Characters/beaver-idle-worried.png\",\"x\":19.38110749185668,\"y\":61.58162302354778,\"scale\":52,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"beaverSprite\"},{\"name\":\"Baby beaver \u2014 waving\",\"path\":\"Characters/baby-beaver-waving.png\",\"x\":86.15635179153094,\"y\":65.77995374847313,\"scale\":30,\"rotation\":0,\"opacity\":100,\"flip\":-1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"babyBeaverSprite\"},{\"name\":\"Elephant \u2014 idle with banana\",\"path\":\"Characters/elephant-idle-banana.png\",\"x\":35.77633338953074,\"y\":46.38074777543092,\"scale\":64,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"elephantSprite\"},{\"name\":\"Support log \u2014 pile/short\",\"path\":\"Bridge/short-single-support-log.png\",\"x\":28.610199670449916,\"y\":66.93810412213287,\"scale\":53,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"plankPileItem\"},{\"name\":\"Support log \u2014 pile/short\",\"path\":\"Bridge/short-single-support-log.png\",\"x\":29.004336478267504,\"y\":64.58160976944218,\"scale\":53,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"plankPileItem\"},{\"name\":\"Help bubble \u2014 elephant/logs\",\"path\":\"Characters/help-bubble-elephant-logs.png\",\"x\":27.415849020892715,\"y\":56.36988338507736,\"scale\":38,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"helpBubbleLogs\"}]"
+      },
+      "after": {
+        "items": [
+          {
+            "name": "Bridge \u2014 broken",
+            "path": "Bridge/bridge-broken.png",
+            "x": 58.14331253499084,
+            "y": 68.9648954410118,
+            "scale": 205,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "bridgeSprite"
+          },
+          {
+            "name": "Monkey \u2014 playing with twig",
+            "path": "Characters/monkey-playing-twig.png",
+            "x": 4.071661237785015,
+            "y": 55.211719757312025,
+            "scale": 29,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "monkeySprite"
+          },
+          {
+            "name": "Baby beaver \u2014 waving",
+            "path": "Characters/baby-beaver-waving.png",
+            "x": 86.15635179153094,
+            "y": 65.77995374847313,
+            "scale": 30,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "babyBeaverSprite"
+          },
+          {
+            "name": "Support log \u2014 pile/short",
+            "path": "Bridge/short-single-support-log.png",
+            "x": 58.57762638054764,
+            "y": 72.00505591111903,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "logPileItem"
+          },
+          {
+            "name": "Support log \u2014 pile/short",
+            "path": "Bridge/short-single-support-log.png",
+            "x": 59.406077033922024,
+            "y": 68.63517915309446,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": ""
+          },
+          {
+            "name": "elephant lift",
+            "path": "assets/upload_2.png",
+            "x": 21.118347963215086,
+            "y": 58.8309852359867,
+            "scale": 64,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 1,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "elephantSprite"
+          },
+          {
+            "name": "beaver lift new",
+            "path": "assets/upload_1.png",
+            "x": 19.38110749185668,
+            "y": 61.58162302354778,
+            "scale": 52,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "beaverSprite"
+          }
+        ],
+        "notes": "",
+        "annotations": {
+          "arrows": [],
+          "targets": []
+        },
+        "audio": {
+          "voText": "",
+          "trigger": "state-enter",
+          "start": 0,
+          "duration": 0,
+          "nextVisual": 0,
+          "sfx": ""
+        },
+        "__syncedSnapshot": "[{\"name\":\"Bridge \u2014 broken\",\"path\":\"Bridge/bridge-broken.png\",\"x\":58.14331253499084,\"y\":68.9648954410118,\"scale\":205,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bridgeSprite\"},{\"name\":\"Monkey \u2014 playing with twig\",\"path\":\"Characters/monkey-playing-twig.png\",\"x\":4.071661237785015,\"y\":55.211719757312025,\"scale\":29,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"monkeySprite\"},{\"name\":\"Beaver \u2014 idle worried\",\"path\":\"Characters/beaver-idle-worried.png\",\"x\":19.38110749185668,\"y\":61.58162302354778,\"scale\":52,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"beaverSprite\"},{\"name\":\"Baby beaver \u2014 waving\",\"path\":\"Characters/baby-beaver-waving.png\",\"x\":86.15635179153094,\"y\":65.77995374847313,\"scale\":30,\"rotation\":0,\"opacity\":100,\"flip\":-1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"babyBeaverSprite\"},{\"name\":\"Elephant \u2014 idle with banana\",\"path\":\"Characters/elephant-idle-banana.png\",\"x\":35.77633338953074,\"y\":46.38074777543092,\"scale\":64,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"elephantSprite\"},{\"name\":\"Support log \u2014 pile/short\",\"path\":\"Bridge/short-single-support-log.png\",\"x\":28.610199670449916,\"y\":66.93810412213287,\"scale\":53,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"plankPileItem\"},{\"name\":\"Support log \u2014 pile/short\",\"path\":\"Bridge/short-single-support-log.png\",\"x\":29.004336478267504,\"y\":64.58160976944218,\"scale\":53,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"plankPileItem\"},{\"name\":\"Help bubble \u2014 elephant/logs\",\"path\":\"Characters/help-bubble-elephant-logs.png\",\"x\":27.415849020892715,\"y\":56.36988338507736,\"scale\":38,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"helpBubbleLogs\"}]"
       },
       "interaction": {
         "type": "drag-drop",
-        "drag": "plankPileItem",
+        "drag": "logPileItem",
         "target": "bridgeSprite"
       }
     },
-    "6": {
-      "meta": {
-        "title": "7. Crossing",
-        "goal": "Beaver auto-walks the finished bridge to the far side. Hold \u2014 no interaction."
-      },
+    "2": {
       "before": {
         "items": [
           {
             "name": "Bridge \u2014 broken",
             "path": "Bridge/bridge-broken.png",
-            "x": 58.25189348152484,
-            "y": 65.77995374847312,
+            "x": 58.14331253499084,
+            "y": 68.9648954410118,
             "scale": 205,
             "rotation": 0,
             "opacity": 100,
@@ -2424,66 +2830,38 @@
             "gameKey": "babyBeaverSprite"
           },
           {
-            "name": "elephant lift",
-            "path": "assets/upload_2.png",
-            "x": 31.65037670818913,
-            "y": 49.565689467969605,
+            "name": "Elephant \u2014 idle with banana",
+            "path": "Characters/elephant-idle-banana.png",
+            "x": 35.77633338953074,
+            "y": 46.38074777543092,
             "scale": 64,
             "rotation": 0,
             "opacity": 100,
             "flip": 1,
-            "z": 1,
+            "z": 10,
             "w": 24,
             "locked": 0,
             "gameKey": "elephantSprite"
           },
           {
-            "name": "log tie",
-            "path": "assets/upload_6.png",
-            "x": 58.14333241614923,
-            "y": 71.13644810116382,
-            "scale": 68,
+            "name": "Support log \u2014 pile/short",
+            "path": "Bridge/short-single-support-log.png",
+            "x": 28.610199670449916,
+            "y": 66.93810412213287,
+            "scale": 53,
             "rotation": 0,
             "opacity": 100,
             "flip": 1,
             "z": 10,
             "w": 24,
             "locked": 0,
-            "gameKey": ""
+            "gameKey": "logPileItem"
           },
           {
-            "name": "plank",
-            "path": "assets/upload_7.png",
-            "x": 59.01194022610444,
-            "y": 70.99168013283796,
-            "scale": 44,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": ""
-          },
-          {
-            "name": "plank",
-            "path": "assets/upload_7.png",
-            "x": 52.999995029710405,
-            "y": 70.66195721786781,
-            "scale": 44,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "plankPileItem"
-          },
-          {
-            "name": "Beaver \u2014 crossing",
-            "path": "Characters/beaver-crossing.png",
-            "x": 28.93594251005191,
-            "y": 62.30546286517712,
+            "name": "Support log \u2014 pile/short",
+            "path": "Bridge/short-single-support-log.png",
+            "x": 29.004336478267504,
+            "y": 64.58160976944218,
             "scale": 53,
             "rotation": 0,
             "opacity": 100,
@@ -2492,6 +2870,34 @@
             "w": 24,
             "locked": 0,
             "gameKey": ""
+          },
+          {
+            "name": "Beaver \u2014 asking",
+            "path": "Characters/beaver-asking.png",
+            "x": 19.38110749185668,
+            "y": 61.58162302354778,
+            "scale": 52,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": ""
+          },
+          {
+            "name": "Help bubble \u2014 elephant/logs",
+            "path": "Characters/help-bubble-elephant-logs.png",
+            "x": 21.552656838482285,
+            "y": 60.13391020502511,
+            "scale": 38,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "helpBubbleLogs"
           }
         ],
         "notes": "",
@@ -2500,22 +2906,21 @@
           "targets": []
         },
         "audio": {
-          "voText": "The bridge is ready! Beaver crosses to the other side at last.",
+          "voText": "He needs help! Can you carry his message to Elephant?",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
           "nextVisual": 0,
           "sfx": ""
-        },
-        "__syncedSnapshot": "[{\"name\":\"Bridge \u2014 broken\",\"path\":\"Bridge/bridge-broken.png\",\"x\":58.25189348152484,\"y\":65.77995374847312,\"scale\":205,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bridgeSprite\"},{\"name\":\"Monkey \u2014 playing with twig\",\"path\":\"Characters/monkey-playing-twig.png\",\"x\":4.071661237785015,\"y\":55.211719757312025,\"scale\":29,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"monkeySprite\"},{\"name\":\"Baby beaver \u2014 waving\",\"path\":\"Characters/baby-beaver-waving.png\",\"x\":86.15635179153094,\"y\":65.77995374847313,\"scale\":30,\"rotation\":0,\"opacity\":100,\"flip\":-1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"babyBeaverSprite\"},{\"name\":\"elephant lift\",\"path\":\"upload://2\",\"x\":31.65037670818913,\"y\":49.565689467969605,\"scale\":69,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":1,\"w\":24,\"locked\":0,\"gameKey\":\"elephantSprite\"},{\"name\":\"log tie\",\"path\":\"upload://6\",\"x\":58.14333241614923,\"y\":71.13644810116382,\"scale\":68,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"plank\",\"path\":\"upload://7\",\"x\":59.01194022610444,\"y\":70.99168013283796,\"scale\":44,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"plank\",\"path\":\"upload://7\",\"x\":52.999995029710405,\"y\":70.66195721786781,\"scale\":44,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"plankPileItem\"},{\"name\":\"Beaver \u2014 crossing\",\"path\":\"Characters/beaver-crossing.png\",\"x\":28.93594251005191,\"y\":62.30546286517712,\"scale\":53,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"}]"
+        }
       },
       "movement": {
         "items": [
           {
             "name": "Bridge \u2014 broken",
             "path": "Bridge/bridge-broken.png",
-            "x": 58.360464487479646,
-            "y": 68.82012747268593,
+            "x": 58.14331253499084,
+            "y": 68.9648954410118,
             "scale": 205,
             "rotation": 0,
             "opacity": 100,
@@ -2542,8 +2947,8 @@
           {
             "name": "Baby beaver \u2014 waving",
             "path": "Characters/baby-beaver-waving.png",
-            "x": 94.62540716612378,
-            "y": 60.71299533243418,
+            "x": 86.15635179153094,
+            "y": 65.77995374847313,
             "scale": 30,
             "rotation": 0,
             "opacity": 100,
@@ -2554,66 +2959,24 @@
             "gameKey": "babyBeaverSprite"
           },
           {
-            "name": "elephant lift",
-            "path": "assets/upload_2.png",
-            "x": 31.65037670818913,
-            "y": 49.565689467969605,
+            "name": "Elephant \u2014 idle with banana",
+            "path": "Characters/elephant-idle-banana.png",
+            "x": 35.77633338953074,
+            "y": 46.38074777543092,
             "scale": 64,
             "rotation": 0,
             "opacity": 100,
             "flip": 1,
-            "z": 1,
+            "z": 10,
             "w": 24,
             "locked": 0,
             "gameKey": "elephantSprite"
           },
           {
-            "name": "log tie",
-            "path": "assets/upload_6.png",
-            "x": 58.14333241614923,
-            "y": 71.13644810116382,
-            "scale": 68,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": ""
-          },
-          {
-            "name": "plank",
-            "path": "assets/upload_7.png",
-            "x": 59.01194022610444,
-            "y": 70.99168013283796,
-            "scale": 44,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": ""
-          },
-          {
-            "name": "plank",
-            "path": "assets/upload_7.png",
-            "x": 52.999995029710405,
-            "y": 70.66195721786781,
-            "scale": 44,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "plankPileItem"
-          },
-          {
-            "name": "Beaver \u2014 crossing",
-            "path": "Characters/beaver-crossing.png",
-            "x": 28.82736156351791,
-            "y": 62.30546286517712,
+            "name": "Support log \u2014 pile/short",
+            "path": "Bridge/short-single-support-log.png",
+            "x": 28.610199670449916,
+            "y": 66.93810412213287,
             "scale": 53,
             "rotation": 0,
             "opacity": 100,
@@ -2621,129 +2984,13 @@
             "z": 10,
             "w": 24,
             "locked": 0,
-            "gameKey": "beaverSprite"
-          }
-        ],
-        "notes": "",
-        "annotations": {
-          "arrows": [],
-          "targets": []
-        },
-        "audio": {
-          "voText": "",
-          "trigger": "state-enter",
-          "start": 0,
-          "duration": 0,
-          "nextVisual": 0,
-          "sfx": ""
-        },
-        "__syncedSnapshot": "[{\"name\":\"Bridge \u2014 broken\",\"path\":\"Bridge/bridge-broken.png\",\"x\":58.25189348152484,\"y\":65.77995374847312,\"scale\":205,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bridgeSprite\"},{\"name\":\"Monkey \u2014 playing with twig\",\"path\":\"Characters/monkey-playing-twig.png\",\"x\":4.071661237785015,\"y\":55.211719757312025,\"scale\":29,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"monkeySprite\"},{\"name\":\"Baby beaver \u2014 waving\",\"path\":\"Characters/baby-beaver-waving.png\",\"x\":86.15635179153094,\"y\":65.77995374847313,\"scale\":30,\"rotation\":0,\"opacity\":100,\"flip\":-1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"babyBeaverSprite\"},{\"name\":\"elephant lift\",\"path\":\"upload://2\",\"x\":31.65037670818913,\"y\":49.565689467969605,\"scale\":69,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":1,\"w\":24,\"locked\":0,\"gameKey\":\"elephantSprite\"},{\"name\":\"log tie\",\"path\":\"upload://6\",\"x\":58.14333241614923,\"y\":71.13644810116382,\"scale\":68,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"plank\",\"path\":\"upload://7\",\"x\":59.01194022610444,\"y\":70.99168013283796,\"scale\":44,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"},{\"name\":\"plank\",\"path\":\"upload://7\",\"x\":52.999995029710405,\"y\":70.66195721786781,\"scale\":44,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"plankPileItem\"},{\"name\":\"Beaver \u2014 crossing\",\"path\":\"Characters/beaver-crossing.png\",\"x\":28.93594251005191,\"y\":62.30546286517712,\"scale\":53,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"}]"
-      },
-      "after": {
-        "items": [
-          {
-            "name": "Bridge \u2014 broken",
-            "path": "Bridge/bridge-broken.png",
-            "x": 58.360464487479646,
-            "y": 68.82012747268593,
-            "scale": 205,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "bridgeSprite"
+            "gameKey": "logPileItem"
           },
           {
-            "name": "Monkey \u2014 playing with twig",
-            "path": "Characters/monkey-playing-twig.png",
-            "x": 4.071661237785015,
-            "y": 55.211719757312025,
-            "scale": 29,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "monkeySprite"
-          },
-          {
-            "name": "Baby beaver \u2014 waving",
-            "path": "Characters/baby-beaver-waving.png",
-            "x": 94.62540716612378,
-            "y": 60.71299533243418,
-            "scale": 30,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": -1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "babyBeaverSprite"
-          },
-          {
-            "name": "elephant lift",
-            "path": "assets/upload_2.png",
-            "x": 31.65037670818913,
-            "y": 49.565689467969605,
-            "scale": 64,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 1,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "elephantSprite"
-          },
-          {
-            "name": "log tie",
-            "path": "assets/upload_6.png",
-            "x": 58.14333241614923,
-            "y": 71.13644810116382,
-            "scale": 68,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": ""
-          },
-          {
-            "name": "plank",
-            "path": "assets/upload_7.png",
-            "x": 59.01194022610444,
-            "y": 70.99168013283796,
-            "scale": 44,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": ""
-          },
-          {
-            "name": "plank",
-            "path": "assets/upload_7.png",
-            "x": 52.999995029710405,
-            "y": 70.66195721786781,
-            "scale": 44,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "plankPileItem"
-          },
-          {
-            "name": "Beaver \u2014 crossing",
-            "path": "Characters/beaver-crossing.png",
-            "x": 28.82736156351791,
-            "y": 62.30546286517712,
+            "name": "Support log \u2014 pile/short",
+            "path": "Bridge/short-single-support-log.png",
+            "x": 29.004336478267504,
+            "y": 64.58160976944218,
             "scale": 53,
             "rotation": 0,
             "opacity": 100,
@@ -2751,7 +2998,21 @@
             "z": 10,
             "w": 24,
             "locked": 0,
-            "gameKey": "beaverSprite"
+            "gameKey": ""
+          },
+          {
+            "name": "Beaver \u2014 asking",
+            "path": "Characters/beaver-asking.png",
+            "x": 19.38110749185668,
+            "y": 61.58162302354778,
+            "scale": 52,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": ""
           }
         ],
         "notes": "",
@@ -2768,20 +3029,129 @@
           "sfx": ""
         }
       },
+      "after": {
+        "items": [
+          {
+            "name": "Bridge \u2014 broken",
+            "path": "Bridge/bridge-broken.png",
+            "x": 58.14331253499084,
+            "y": 68.9648954410118,
+            "scale": 205,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "bridgeSprite"
+          },
+          {
+            "name": "Monkey \u2014 playing with twig",
+            "path": "Characters/monkey-playing-twig.png",
+            "x": 4.071661237785015,
+            "y": 55.211719757312025,
+            "scale": 29,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "monkeySprite"
+          },
+          {
+            "name": "Baby beaver \u2014 waving",
+            "path": "Characters/baby-beaver-waving.png",
+            "x": 86.15635179153094,
+            "y": 65.77995374847313,
+            "scale": 30,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "babyBeaverSprite"
+          },
+          {
+            "name": "Elephant \u2014 idle with banana",
+            "path": "Characters/elephant-idle-banana.png",
+            "x": 35.77633338953074,
+            "y": 46.38074777543092,
+            "scale": 64,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "elephantSprite"
+          },
+          {
+            "name": "Support log \u2014 pile/short",
+            "path": "Bridge/short-single-support-log.png",
+            "x": 28.610199670449916,
+            "y": 66.93810412213287,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "logPileItem"
+          },
+          {
+            "name": "Support log \u2014 pile/short",
+            "path": "Bridge/short-single-support-log.png",
+            "x": 29.004336478267504,
+            "y": 64.58160976944218,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": ""
+          },
+          {
+            "name": "Beaver \u2014 asking",
+            "path": "Characters/beaver-asking.png",
+            "x": 19.38110749185668,
+            "y": 61.58162302354778,
+            "scale": 52,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": ""
+          }
+        ],
+        "notes": "",
+        "annotations": {
+          "arrows": [],
+          "targets": []
+        },
+        "audio": {
+          "voText": "Elephant hears it and comes right over.",
+          "trigger": "state-enter",
+          "start": 0,
+          "duration": 0,
+          "nextVisual": 0,
+          "sfx": ""
+        }
+      },
       "interaction": {
-        "type": "none"
-      }
-    },
-    "7": {
+        "type": "drag-drop",
+        "drag": "helpBubbleLogs",
+        "target": "elephantSprite"
+      },
       "meta": {
-        "title": "8. Reunion",
-        "goal": "Beaver reaches Baby Beaver \u2014 reunion/hug animation. Hold \u2014 no interaction."
-      }
-    },
-    "8": {
-      "meta": {
-        "title": "9. Symbol reveal",
-        "goal": "Warm pause, then the Kurumedeva symbol appears with its affirmation line."
+        "title": "3. Logs \u2014 call for help",
+        "goal": "Beaver failed alone. A help bubble appears \u2014 child drags it onto Elephant to summon him."
       }
     }
   }
