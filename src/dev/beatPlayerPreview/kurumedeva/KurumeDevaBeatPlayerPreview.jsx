@@ -66,7 +66,14 @@ function KurumeDevaBeatPlayerPreview(props) {
       >
         {isAudioOn ? '🔊' : '🔇'}
       </button>
-      <BeatPlayerGame {...props} flowJson={flowJson} assetMap={ASSET_MAP} isAudioOn={isAudioOn} />
+      <BeatPlayerGame
+        {...props}
+        flowJson={flowJson}
+        assetMap={ASSET_MAP}
+        isAudioOn={isAudioOn}
+        movementMs={1000}
+        reactionPauseMs={900}
+      />
     </div>
   );
 }
