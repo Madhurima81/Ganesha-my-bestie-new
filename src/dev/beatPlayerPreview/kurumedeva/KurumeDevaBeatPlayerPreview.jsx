@@ -6,24 +6,24 @@ import flowJson from './kurumedevaFlowSample.json';
 // Not wired into any live scene.
 
 import bg from '../../../zones/shloka-river/scenes/Scene3/assets/images/nirvighnam/bg.png';
-import bridgeBroken from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Bridge/bridge-broken.png';
-import shortLog from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Bridge/short-single-support-log.png';
-import monkeyPlayingTwig from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Characters/monkey-playing-twig.png';
-import beaverIdleWorried from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Characters/beaver-idle-worried.png';
-import beaverAsking from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Characters/beaver-asking.png';
-import babyBeaverWaving from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Characters/baby-beaver-waving.png';
-import elephantIdleBanana from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Characters/elephant-idle-banana.png';
-import helpBubbleElephantLogs from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Characters/help-bubble-elephant-logs.png';
-import helpBubbleMonkeyKnot from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Characters/help-bubble-monkey-knot.png';
-import ropeKnot from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Bridge/rope-knot.png';
-import beaverCrossing from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Characters/beaver-crossing.png';
-import beaverPlacingPlank from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Characters/beaver-placing-plank.png';
-import beaverLiftUpload from './uploads/beaver-lift.png';
-import elephantLiftUpload from './uploads/elephant-lift.png';
-import beaverTieUpload from './uploads/beaver-tie.png';
-import monkeyTieUpload from './uploads/monkey-tie.png';
-import logTieUpload from './uploads/log-tie.png';
-import plankUpload from './uploads/plank.png';
+import bridgeBroken from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Bridge/bridge-broken.webp';
+import shortLog from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Bridge/short-single-support-log.webp';
+import monkeyPlayingTwig from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Characters/monkey-playing-twig.webp';
+import beaverIdleWorried from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Characters/beaver-idle-worried.webp';
+import beaverAsking from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Characters/beaver-asking.webp';
+import babyBeaverWaving from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Characters/baby-beaver-waving.webp';
+import elephantIdleBanana from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Characters/elephant-idle-banana.webp';
+import helpBubbleElephantLogs from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Characters/help-bubble-elephant-logs.webp';
+import helpBubbleMonkeyKnot from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Characters/help-bubble-monkey-knot.webp';
+import ropeKnot from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Bridge/rope-knot.webp';
+import beaverCrossing from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Characters/beaver-crossing.webp';
+import beaverPlacingPlank from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Characters/beaver-placing-plank.webp';
+import beaverLiftUpload from './uploads/beaver-lift.webp';
+import elephantLiftUpload from './uploads/elephant-lift.webp';
+import beaverTieUpload from './uploads/beaver-tie.webp';
+import monkeyTieUpload from './uploads/monkey-tie.webp';
+import logTieUpload from './uploads/log-tie.webp';
+import plankUpload from './uploads/plank.webp';
 
 const ASSET_MAP = {
   'Bridge/bridge-broken.png': bridgeBroken,

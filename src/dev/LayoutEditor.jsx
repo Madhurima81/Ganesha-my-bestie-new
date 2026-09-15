@@ -25,7 +25,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 // import.meta.glob with eager:true resolves each match to its dev-server URL.
 // ---------------------------------------------------------------------------
 const bridgeAssets = import.meta.glob(
-  '../zones/shloka-river/scenes/Scene3/assets/images/bridge/**/*.png',
+  '../zones/shloka-river/scenes/Scene3/assets/images/bridge/**/*.webp',
   { eager: true, query: '?url', import: 'default' }
 );
 

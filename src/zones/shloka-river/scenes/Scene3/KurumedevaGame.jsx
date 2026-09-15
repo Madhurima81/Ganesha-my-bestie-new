@@ -9,36 +9,36 @@ import bgImg from './assets/images/nirvighnam/bg.png';
 // Bridge redesign (Kurume Deva asset pack) — "asking for help" told through
 // 3 helper moments: Elephant pulls the heavy support logs, Monkey ties the
 // ropes, then Monkey helps again while Beaver herself lays the planks.
-import elephantPullImg from './assets/images/bridge/Characters/elephant-pulling.png';
-import elephantHappyImg from './assets/images/bridge/Characters/elephant-happy.png';
-import elephantIdleBananaImg from './assets/images/bridge/Characters/elephant-idle-banana.png';
-import elephantApproachingImg from './assets/images/bridge/Characters/elephant-approaching-walking.png';
-import helpBubbleElephantImg from './assets/images/bridge/Characters/help-bubble-elephant-logs.png';
-import monkeyTyingImg from './assets/images/bridge/Characters/monkey-tying.png';
-import monkeyHappyImg from './assets/images/bridge/Characters/monkey-happy.png';
-import monkeyPlayingTwigImg from './assets/images/bridge/Characters/monkey-playing-twig.png';
-import monkeyIdleImg from './assets/images/bridge/Characters/monkey-idle.png';
-import helpBubbleMonkeyImg from './assets/images/bridge/Characters/help-bubble-monkey-knot.png';
+import elephantPullImg from './assets/images/bridge/Characters/elephant-pulling.webp';
+import elephantHappyImg from './assets/images/bridge/Characters/elephant-happy.webp';
+import elephantIdleBananaImg from './assets/images/bridge/Characters/elephant-idle-banana.webp';
+import elephantApproachingImg from './assets/images/bridge/Characters/elephant-approaching-walking.webp';
+import helpBubbleElephantImg from './assets/images/bridge/Characters/help-bubble-elephant-logs.webp';
+import monkeyTyingImg from './assets/images/bridge/Characters/monkey-tying.webp';
+import monkeyHappyImg from './assets/images/bridge/Characters/monkey-happy.webp';
+import monkeyPlayingTwigImg from './assets/images/bridge/Characters/monkey-playing-twig.webp';
+import monkeyIdleImg from './assets/images/bridge/Characters/monkey-idle.webp';
+import helpBubbleMonkeyImg from './assets/images/bridge/Characters/help-bubble-monkey-knot.webp';
 
-import supportLogsObj from './assets/images/bridge/Bridge/bridge-support-logs.png';
-import shortLogObj from './assets/images/bridge/Bridge/short-single-support-log.png';
+import supportLogsObj from './assets/images/bridge/Bridge/bridge-support-logs.webp';
+import shortLogObj from './assets/images/bridge/Bridge/short-single-support-log.webp';
 // Cropped from the broken-bridge asset's own loose rope tail — the pack has
 // no standalone rope glyph, and using the Monkey sprite here duplicated him
 // mid-river during the trace.
-import ropeObj from './assets/images/bridge/Bridge/rope-knot.png';
-import plankObj from './assets/images/bridge/Bridge/bridge-single-plank.png';
+import ropeObj from './assets/images/bridge/Bridge/rope-knot.webp';
+import plankObj from './assets/images/bridge/Bridge/bridge-single-plank.webp';
 
-import bridgeBrokenImg from './assets/images/bridge/Bridge/bridge-broken.png';
-import bridgeSupportedImg from './assets/images/bridge/Bridge/bridge-before-tying.png';
-import bridgeCompleteImg from './assets/images/bridge/Bridge/bridge-complete.png';
+import bridgeBrokenImg from './assets/images/bridge/Bridge/bridge-broken.webp';
+import bridgeSupportedImg from './assets/images/bridge/Bridge/bridge-before-tying.webp';
+import bridgeCompleteImg from './assets/images/bridge/Bridge/bridge-complete.webp';
 
-import beaverAskingImg from './assets/images/bridge/Characters/beaver-asking.png';
-import beaverIdleWorriedImg from './assets/images/bridge/Characters/beaver-idle-worried.png';
-import beaverTryingPushImg from './assets/images/bridge/Characters/beaver-trying-push.png';
-import beaverPlacingPlankImg from './assets/images/bridge/Characters/beaver-placing-plank.png';
-import beaverCrossingImg from './assets/images/bridge/Characters/beaver-crossing.png';
-import babyBeaverWavingImg from './assets/images/bridge/Characters/baby-beaver-waving.png';
-import beaverBabyReunionImg from './assets/images/bridge/Characters/beaver-baby-reunion.png';
+import beaverAskingImg from './assets/images/bridge/Characters/beaver-asking.webp';
+import beaverIdleWorriedImg from './assets/images/bridge/Characters/beaver-idle-worried.webp';
+import beaverTryingPushImg from './assets/images/bridge/Characters/beaver-trying-push.webp';
+import beaverPlacingPlankImg from './assets/images/bridge/Characters/beaver-placing-plank.webp';
+import beaverCrossingImg from './assets/images/bridge/Characters/beaver-crossing.webp';
+import babyBeaverWavingImg from './assets/images/bridge/Characters/baby-beaver-waving.webp';
+import beaverBabyReunionImg from './assets/images/bridge/Characters/beaver-baby-reunion.webp';
 import helpHandIconImg from './assets/images/Kurumedeva/help-hand-icon.png';
 
 import { KURUMEDEVA_LAYOUT } from './scene3LayoutConfig';
