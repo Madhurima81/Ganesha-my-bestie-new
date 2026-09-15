@@ -38,6 +38,15 @@ import './BeatPlayerGame.css';
  *                            bezier sag formula as MahakayaRescueGame's
  *                            RopeLine. Pointer/hit-test logic is identical
  *                            to drag-drop — only the visual differs.
+ *   - 'try-fail'           — a "child tries alone and it doesn't work" beat.
+ *                            `gesture` picks press-hold or drag on the
+ *                            `drag` gameKey (holdMs for press-hold); the
+ *                            attempt ALWAYS ends in the gentle "wrong"
+ *                            shake, never a hit-test or success — the point
+ *                            of the beat is the fail, then the story moves
+ *                            on to the next beat on its own. Matches the
+ *                            real "solo rope try always slips" behavior
+ *                            that used to be hand-coded per game.
  */
 
 const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
@@ -306,8 +315,20 @@ function BeatPlayerGame({
     setTimeout(() => setFeedback('idle'), 420);
   }, []);
 
+  const isTryFailHold = (it) => it?.type === 'try-fail' && it?.gesture === 'press-hold';
+  const isTryFailDrag = (it) => it?.type === 'try-fail' && it?.gesture !== 'press-hold';
+
+  const failThenAdvance = useCallback(() => {
+    setDrag(null);
+    setFeedback('wrong');
+    setTimeout(() => {
+      setFeedback('idle');
+      completeInteraction();
+    }, 420);
+  }, [completeInteraction]);
+
   const onPointerDown = useCallback((e, gameKey) => {
-    if (!needsInput(stateName) || interaction.type === 'press-hold') return;
+    if (!needsInput(stateName) || interaction.type === 'press-hold' || isTryFailHold(interaction)) return;
     if (interaction.drag !== gameKey) return;
     e.currentTarget.setPointerCapture?.(e.pointerId);
     const rect = sceneRef.current?.getBoundingClientRect();
@@ -332,16 +353,20 @@ function BeatPlayerGame({
 
   const onPointerUp = useCallback((e) => {
     if (!drag) return;
+    if (isTryFailDrag(interaction)) {
+      failThenAdvance();
+      return;
+    }
     const ok = hitTest(e.clientX, e.clientY, interaction.target);
     if (ok) completeInteraction();
     else rejectInteraction();
-  }, [drag, interaction, hitTest, completeInteraction, rejectInteraction]);
+  }, [drag, interaction, hitTest, completeInteraction, rejectInteraction, failThenAdvance]);
 
   // Tap-to-select-then-tap-target — always available as an accessibility
   // fallback for drag-drop, and the primary path for tap-select-tap-target.
   const onTapItem = useCallback((gameKey) => {
     if (!needsInput(stateName)) return;
-    if (interaction.type === 'press-hold') return;
+    if (interaction.type === 'press-hold' || interaction.type === 'try-fail') return;
     if (gameKey === interaction.drag) {
       setSelectedGameKey(gameKey);
       return;
@@ -352,13 +377,18 @@ function BeatPlayerGame({
   }, [stateName, interaction, selectedGameKey, completeInteraction]);
 
   const startHold = useCallback((gameKey) => {
-    if (!needsInput(stateName) || interaction.type !== 'press-hold' || interaction.drag !== gameKey) return;
+    if (!needsInput(stateName) || interaction.drag !== gameKey) return;
+    if (interaction.type !== 'press-hold' && !isTryFailHold(interaction)) return;
     setFeedback('holding');
     holdTimer.current = setTimeout(() => {
-      setFeedback('idle');
-      completeInteraction();
+      if (isTryFailHold(interaction)) {
+        failThenAdvance();
+      } else {
+        setFeedback('idle');
+        completeInteraction();
+      }
     }, interaction.holdMs || 900);
-  }, [stateName, interaction, completeInteraction]);
+  }, [stateName, interaction, completeInteraction, failThenAdvance]);
 
   const cancelHold = useCallback(() => {
     if (holdTimer.current) clearTimeout(holdTimer.current);
