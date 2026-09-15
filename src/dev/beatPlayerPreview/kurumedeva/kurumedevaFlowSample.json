@@ -77,7 +77,7 @@
           },
           {
             "name": "Support logs \u2014 pair",
-            "path": "Bridge/bridge-support-logs.png",
+            "path": "Bridge/logs-bare.png",
             "x": 28.610199670449916,
             "y": 66.93810412213287,
             "scale": 53,
@@ -178,7 +178,7 @@
           },
           {
             "name": "Support logs \u2014 pair",
-            "path": "Bridge/bridge-support-logs.png",
+            "path": "Bridge/logs-bare.png",
             "x": 28.610199670449916,
             "y": 66.93810412213287,
             "scale": 53,
@@ -279,7 +279,7 @@
           },
           {
             "name": "Support logs \u2014 pair",
-            "path": "Bridge/bridge-support-logs.png",
+            "path": "Bridge/logs-bare.png",
             "x": 28.610199670449916,
             "y": 66.93810412213287,
             "scale": 53,
@@ -390,7 +390,7 @@
           },
           {
             "name": "Support logs \u2014 pair",
-            "path": "Bridge/bridge-support-logs.png",
+            "path": "Bridge/logs-bare.png",
             "x": 28.610199670449916,
             "y": 66.93810412213287,
             "scale": 53,
@@ -492,7 +492,7 @@
           },
           {
             "name": "Support logs \u2014 pair",
-            "path": "Bridge/bridge-support-logs.png",
+            "path": "Bridge/logs-bare.png",
             "x": 28.610199670449916,
             "y": 66.93810412213287,
             "scale": 53,
@@ -551,8 +551,8 @@
             "gameKey": "monkeySprite"
           },
           {
-            "name": "Beaver \u2014 asking",
-            "path": "Characters/beaver-asking.png",
+            "name": "Beaver \u2014 tired",
+            "path": "Characters/beaver-tired.png",
             "x": 19.38110749185668,
             "y": 61.58162302354778,
             "scale": 52,
@@ -608,7 +608,7 @@
           },
           {
             "name": "Support logs \u2014 pair",
-            "path": "Bridge/bridge-support-logs.png",
+            "path": "Bridge/logs-bare.png",
             "x": 28.610199670449916,
             "y": 66.93810412213287,
             "scale": 53,
@@ -1063,7 +1063,7 @@
           },
           {
             "name": "Support logs \u2014 pair",
-            "path": "Bridge/bridge-support-logs.png",
+            "path": "Bridge/logs-bare.png",
             "x": 28.610199670449916,
             "y": 66.93810412213287,
             "scale": 53,
@@ -1165,7 +1165,7 @@
           },
           {
             "name": "Support logs \u2014 pair",
-            "path": "Bridge/bridge-support-logs.png",
+            "path": "Bridge/logs-bare.png",
             "x": 28.610199670449916,
             "y": 66.93810412213287,
             "scale": 53,
@@ -1267,7 +1267,7 @@
           },
           {
             "name": "Support logs \u2014 pair",
-            "path": "Bridge/bridge-support-logs.png",
+            "path": "Bridge/logs-bare.png",
             "x": 58.57762638054764,
             "y": 72.00505591111903,
             "scale": 53,
@@ -1389,8 +1389,8 @@
             "gameKey": ""
           },
           {
-            "name": "Beaver \u2014 asking",
-            "path": "Characters/beaver-asking.png",
+            "name": "Beaver \u2014 tired",
+            "path": "Characters/beaver-tired.png",
             "x": 19.38110749185668,
             "y": 61.58162302354778,
             "scale": 52,
@@ -1518,8 +1518,8 @@
             "gameKey": ""
           },
           {
-            "name": "Beaver \u2014 asking",
-            "path": "Characters/beaver-asking.png",
+            "name": "Beaver \u2014 tired",
+            "path": "Characters/beaver-tired.png",
             "x": 19.38110749185668,
             "y": 61.58162302354778,
             "scale": 52,
@@ -1633,8 +1633,8 @@
             "gameKey": ""
           },
           {
-            "name": "Beaver \u2014 asking",
-            "path": "Characters/beaver-asking.png",
+            "name": "Beaver \u2014 tired",
+            "path": "Characters/beaver-tired.png",
             "x": 19.38110749185668,
             "y": 61.58162302354778,
             "scale": 52,

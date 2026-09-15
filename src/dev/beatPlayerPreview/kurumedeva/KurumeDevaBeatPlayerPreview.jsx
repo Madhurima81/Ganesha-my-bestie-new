@@ -9,9 +9,11 @@ import bg from '../../../zones/shloka-river/scenes/Scene3/assets/images/nirvighn
 import bridgeBroken from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Bridge/bridge-broken.webp';
 import shortLog from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Bridge/short-single-support-log.webp';
 import supportLogsPair from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Bridge/bridge-support-logs.webp';
+import logsBare from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Bridge/logs-bare.webp';
 import monkeyPlayingTwig from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Characters/monkey-playing-twig.webp';
 import beaverIdleWorried from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Characters/beaver-idle-worried.webp';
 import beaverAsking from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Characters/beaver-asking.webp';
+import beaverTired from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Characters/beaver-tired.webp';
 import babyBeaverWaving from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Characters/baby-beaver-waving.webp';
 import elephantIdleBanana from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Characters/elephant-idle-banana.webp';
 import helpBubbleElephantLogs from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Characters/help-bubble-elephant-logs.webp';
@@ -30,10 +32,12 @@ const ASSET_MAP = {
   'Bridge/bridge-broken.png': bridgeBroken,
   'Bridge/short-single-support-log.png': shortLog,
   'Bridge/bridge-support-logs.png': supportLogsPair,
+  'Bridge/logs-bare.png': logsBare,
   'Bridge/rope-knot.png': ropeKnot,
   'Characters/monkey-playing-twig.png': monkeyPlayingTwig,
   'Characters/beaver-idle-worried.png': beaverIdleWorried,
   'Characters/beaver-asking.png': beaverAsking,
+  'Characters/beaver-tired.png': beaverTired,
   'Characters/beaver-crossing.png': beaverCrossing,
   'Characters/beaver-placing-plank.png': beaverPlacingPlank,
   'Characters/baby-beaver-waving.png': babyBeaverWaving,
