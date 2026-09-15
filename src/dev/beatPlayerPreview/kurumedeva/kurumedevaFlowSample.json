@@ -781,34 +781,6 @@
             "gameKey": "babyBeaverSprite"
           },
           {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
-            "x": 58.57762638054764,
-            "y": 72.00505591111903,
-            "scale": 53,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "plankPileItem"
-          },
-          {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
-            "x": 59.406077033922024,
-            "y": 68.63517915309446,
-            "scale": 53,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "plankPileItem"
-          },
-          {
             "name": "elephant lift",
             "path": "assets/upload_2.png",
             "x": 31.65037670818913,
@@ -911,34 +883,6 @@
             "gameKey": "babyBeaverSprite"
           },
           {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
-            "x": 58.57762638054764,
-            "y": 72.00505591111903,
-            "scale": 53,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "plankPileItem"
-          },
-          {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
-            "x": 59.406077033922024,
-            "y": 68.63517915309446,
-            "scale": 53,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "plankPileItem"
-          },
-          {
             "name": "elephant lift",
             "path": "assets/upload_2.png",
             "x": 31.65037670818913,
@@ -1039,34 +983,6 @@
             "w": 24,
             "locked": 0,
             "gameKey": "babyBeaverSprite"
-          },
-          {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
-            "x": 58.57762638054764,
-            "y": 72.00505591111903,
-            "scale": 53,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "plankPileItem"
-          },
-          {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
-            "x": 59.406077033922024,
-            "y": 68.63517915309446,
-            "scale": 53,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "plankPileItem"
           },
           {
             "name": "elephant lift",
@@ -2743,34 +2659,6 @@
             "gameKey": "babyBeaverSprite"
           },
           {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
-            "x": 58.57762638054764,
-            "y": 72.00505591111903,
-            "scale": 53,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "plankPileItem"
-          },
-          {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
-            "x": 59.406077033922024,
-            "y": 68.63517915309446,
-            "scale": 53,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "plankPileItem"
-          },
-          {
             "name": "elephant lift",
             "path": "assets/upload_2.png",
             "x": 31.65037670818913,
@@ -2871,34 +2759,6 @@
             "w": 24,
             "locked": 0,
             "gameKey": "babyBeaverSprite"
-          },
-          {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
-            "x": 58.57762638054764,
-            "y": 72.00505591111903,
-            "scale": 53,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "plankPileItem"
-          },
-          {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
-            "x": 59.406077033922024,
-            "y": 68.63517915309446,
-            "scale": 53,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "plankPileItem"
           },
           {
             "name": "elephant lift",
@@ -3176,34 +3036,6 @@
             "gameKey": "babyBeaverSprite"
           },
           {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
-            "x": 58.57762638054764,
-            "y": 72.00505591111903,
-            "scale": 53,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "plankPileItem"
-          },
-          {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
-            "x": 59.406077033922024,
-            "y": 68.63517915309446,
-            "scale": 53,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "plankPileItem"
-          },
-          {
             "name": "elephant lift",
             "path": "assets/upload_2.png",
             "x": 31.65037670818913,
@@ -3319,34 +3151,6 @@
             "gameKey": "babyBeaverSprite"
           },
           {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
-            "x": 58.57762638054764,
-            "y": 72.00505591111903,
-            "scale": 53,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "plankPileItem"
-          },
-          {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
-            "x": 59.406077033922024,
-            "y": 68.63517915309446,
-            "scale": 53,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "plankPileItem"
-          },
-          {
             "name": "elephant lift",
             "path": "assets/upload_2.png",
             "x": 31.65037670818913,
@@ -3446,34 +3250,6 @@
             "w": 24,
             "locked": 0,
             "gameKey": "babyBeaverSprite"
-          },
-          {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
-            "x": 58.57762638054764,
-            "y": 72.00505591111903,
-            "scale": 53,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "plankPileItem"
-          },
-          {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
-            "x": 59.406077033922024,
-            "y": 68.63517915309446,
-            "scale": 53,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "plankPileItem"
           },
           {
             "name": "elephant lift",
