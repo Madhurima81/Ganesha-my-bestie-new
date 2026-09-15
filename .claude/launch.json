@@ -7,6 +7,12 @@
       "runtimeArgs": ["/c", "npm", "run", "dev"],
       "port": 5173,
       "autoPort": true
+    },
+    {
+      "name": "modak-flow-editor",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "4747", "--directory", "src/zones/symbol-mountain/scenes/modak"],
+      "port": 4747
     }
   ],
   "autoVerify": false

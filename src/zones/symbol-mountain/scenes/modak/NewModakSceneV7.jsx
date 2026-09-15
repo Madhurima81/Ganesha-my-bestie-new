@@ -349,7 +349,8 @@ const NewModakSceneMVP = ({
   onComplete,
   onNavigate,
   zoneId = 'symbol-mountain',
-  sceneId = 'modak'
+  sceneId = 'modak',
+  debugStartGame // dev-only: 1 | 2 | 3 — auto-jumps to that game on mount (see jumpToDebugPhase)
 }) => {
   return (
     <ErrorBoundary>
@@ -405,6 +406,7 @@ const NewModakSceneMVP = ({
             onNavigate={onNavigate}
             zoneId={zoneId}
             sceneId={sceneId}
+            debugStartGame={debugStartGame}
           />
         )}
       </SceneManager>
@@ -419,7 +421,8 @@ const NewModakSceneMVPContent = ({
   onComplete,
   onNavigate,
   zoneId,
-  sceneId
+  sceneId,
+  debugStartGame
 }) => {
   if (!sceneState || !sceneActions) {
     return <div>Loading scene...</div>;
@@ -1622,6 +1625,28 @@ const NewModakSceneMVPContent = ({
         progress: { percentage: 0 }
       });
     } else if (n === 2) {
+      // Game 2: Belly Feeding (Mud Crossing -> Leafy Cluster -> Branch Pull) —
+      // the flower-collecting arc. Mooshika card already earned.
+      sceneActions.updateState({
+        ...base,
+        phase: PHASES.MUD_CROSS,
+        mooshikaVisible: true,
+        mooshikaPosition: MUD_START_POSITION,
+        activeDistractionId: null,
+        flowers: 0,
+        mudStoneIndex: 0,
+        leafSwipes: 0,
+        leavesOpen: false,
+        branchDone: false,
+        placedGarlandFlowers: [],
+        garlandComplete: false,
+        carryComplete: false,
+        discoveredSymbols: { mooshika: true },
+        progress: { percentage: 15 }
+      });
+    } else {
+      // Game 3: Modak card (Garland Making -> Carry to Ganesha). Flowers
+      // already gathered from Game 2.
       sceneActions.updateState({
         ...base,
         phase: PHASES.GARLAND_MAKING,
@@ -1637,24 +1662,18 @@ const NewModakSceneMVPContent = ({
         discoveredSymbols: { mooshika: true },
         progress: { percentage: 55 }
       });
-    } else {
-      sceneActions.updateState({
-        ...base,
-        phase: PHASES.CARRY,
-        mooshikaPosition: CARRY_START_POSITION,
-        activeDistractionId: null,
-        flowers: 6,
-        leafSwipes: LEAVES_SWIPES_NEEDED,
-        leavesOpen: true,
-        branchDone: true,
-        placedGarlandFlowers: [0, 1, 2, 3, 4, 5],
-        garlandComplete: true,
-        carryComplete: false,
-        discoveredSymbols: { mooshika: true },
-        progress: { percentage: 80 }
-      });
     }
   }, [clearMushikaDartTimer, clearMushikaHoldLoop, idleHintsEnabled, sceneActions, stopIdleTimer, stopVoice]);
+
+  // Dev harness support: mount straight into one of the 3 games instead of
+  // always starting at Game 1. Fires once per mount (game-test.html passes a
+  // fresh key per game so this only ever runs on a clean mount).
+  const debugStartAppliedRef = useRef(false);
+  useEffect(() => {
+    if (!debugStartGame || debugStartAppliedRef.current) return;
+    debugStartAppliedRef.current = true;
+    jumpToDebugPhase(debugStartGame);
+  }, [debugStartGame, jumpToDebugPhase]);
 
   // ------------------------------------------------------------------
   // Derived view helpers
@@ -1712,7 +1731,7 @@ const NewModakSceneMVPContent = ({
             cursor: 'pointer'
           }}
         >
-          {n === 1 ? 'Beat 1: Calm' : n === 2 ? 'Beat 5: Garland' : 'Beat 6: Carry'}
+          {n === 1 ? 'Game 1: Mooshika' : n === 2 ? 'Game 2: Belly Feeding' : 'Game 3: Modak'}
         </button>
       ))}
 

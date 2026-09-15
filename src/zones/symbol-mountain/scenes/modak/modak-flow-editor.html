@@ -1,624 +1,822 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Modak — Flower Journey — Visual Flow Editor</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>GMB Modak Game Visual Flow Editor</title>
 <style>
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:'Nunito',sans-serif; background:#12100c; color:#fff; overflow:hidden; height:100vh; }
-  h1,h2,h3,button { font-family:'Baloo 2','Nunito',sans-serif; }
-
-  #app { display:flex; height:100vh; }
-
-  /* ---------- Beats sidebar ---------- */
-  #beats { width:150px; background:#1f1a12; border-right:2px solid #3a2f1c; overflow-y:auto; flex:0 0 auto; }
-  .beat-item { padding:10px 8px; font-size:12px; border-bottom:1px solid #2c2417; cursor:pointer; color:#d8c9a3; }
-  .beat-item.active { background:#5a3d0f; color:#ffd700; font-weight:700; }
-  .beat-item small { display:block; color:#9a8b6a; font-size:10px; }
-
-  /* ---------- Stage ---------- */
-  #stageWrap { flex:1; display:flex; flex-direction:column; min-width:0; }
-  #stateTabs { display:flex; background:#241d12; border-bottom:2px solid #3a2f1c; }
-  .state-tab { flex:1; text-align:center; padding:8px; font-size:12px; font-weight:700; cursor:pointer; color:#9a8b6a; }
-  .state-tab.active { color:#ffd700; background:#332711; }
-  .state-tab.inherited { position:relative; }
-
-  #linkBanner { display:none; background:#2f4a2f; color:#9fe89f; font-size:11px; padding:4px 10px; text-align:center; }
-  #linkBanner.show { display:block; }
-
-  #stage { position:relative; flex:1; overflow:hidden; background:#000; background-size:cover; background-position:center; }
-  .item {
-    position:absolute; transform-origin:center center; cursor:grab; touch-action:none;
-  }
-  .item img { width:100%; height:100%; object-fit:contain; pointer-events:none; user-select:none; display:block; }
-  .item.selected { outline:2px dashed #ffd700; outline-offset:3px; }
-  .item.locked { cursor:not-allowed; }
-  .item-tag {
-    position:absolute; top:-16px; left:0; font-size:9px; background:rgba(0,0,0,.7); color:#8be9fd;
-    padding:1px 5px; border-radius:6px; white-space:nowrap; pointer-events:none;
-  }
-
-  /* ---------- Right panel ---------- */
-  #panel { width:300px; background:#1a1610; border-left:2px solid #3a2f1c; overflow-y:auto; flex:0 0 auto; padding:10px; }
-  #panel h3 { font-size:13px; color:#ffd700; margin:10px 0 6px; border-bottom:1px solid #3a2f1c; padding-bottom:4px; }
-  #panel h3:first-child { margin-top:0; }
-
-  .lib-item { display:inline-flex; flex-direction:column; align-items:center; width:64px; margin:3px; cursor:pointer; }
-  .lib-item img { width:52px; height:52px; object-fit:contain; background:#000; border:1px solid #3a2f1c; border-radius:6px; }
-  .lib-item span { font-size:8px; color:#9a8b6a; text-align:center; word-break:break-word; line-height:1.1; margin-top:2px; }
-  .lib-item:hover img { border-color:#ffd700; }
-
-  label { display:block; font-size:11px; color:#aaa; margin:6px 0 2px; }
-  select, input[type=text], input[type=number], textarea {
-    width:100%; padding:4px 6px; font-size:12px; background:#0f0d09; color:#fff;
-    border:1px solid #555; border-radius:5px;
-  }
-  input[type=range] { width:100%; }
-  textarea { resize:vertical; min-height:40px; font-family:'Nunito',sans-serif; }
-
-  .row { display:flex; gap:6px; }
-  .row > * { flex:1; }
-
-  .btn { padding:6px 8px; border:none; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer; }
-  .btn-gold { background:#ffd700; color:#000; }
-  .btn-purple { background:#6a1b9a; color:#fff; }
-  .btn-green { background:#2ecc71; color:#000; }
-  .btn-red { background:#e05656; color:#fff; }
-  .btn-gray { background:#444; color:#fff; }
-  .btn-row { display:flex; flex-wrap:wrap; gap:4px; margin-top:4px; }
-  .btn-row .btn { flex:1 1 30%; }
-
-  #layers { max-height:150px; overflow-y:auto; }
-  .layer-row {
-    display:flex; align-items:center; gap:6px; padding:4px 6px; font-size:11px;
-    border-bottom:1px solid #2c2417; cursor:pointer;
-  }
-  .layer-row.active { background:#332711; color:#ffd700; }
-  .layer-row .lock { cursor:pointer; }
-
-  #exportOut { width:100%; height:140px; font-family:monospace; font-size:10px; background:#0a0906; color:#8be9fd; border:1px solid #555; }
-
-  .toast {
-    position:fixed; top:14px; left:50%; transform:translateX(-50%); background:#2ecc71; color:#000;
-    padding:6px 16px; border-radius:8px; font-weight:700; font-size:12px; z-index:999;
-    animation:fadeOut 1.8s ease forwards;
-  }
-  @keyframes fadeOut { 0%,70%{opacity:1;} 100%{opacity:0;} }
-
-  #topbar { display:flex; align-items:center; gap:8px; background:#241d12; padding:6px 10px; border-bottom:2px solid #3a2f1c; }
-  #topbar h1 { font-size:13px; color:#ffd700; flex:1; }
-  #topbar .btn { font-size:10px; padding:4px 8px; }
+:root{--purple:#795548;--lav:#FBE9E7;--ink:#4a342c;--cream:#fffaf0;--line:#e0c9be;--accent:#FF6B6B;--green:#2e7d32}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f8f4f2;color:var(--ink)}
+header{height:58px;background:#3d2a22;color:#fff;display:flex;align-items:center;gap:14px;padding:0 16px;position:sticky;top:0;z-index:30}
+header strong{font-size:16px}header span{font-size:12px;opacity:.8}#saveIndicator{margin-left:auto;font-size:12px;opacity:.85;background:rgba(255,255,255,.12);padding:4px 10px;border-radius:999px;white-space:nowrap}
+.app{display:grid;grid-template-columns:248px minmax(0,1fr) 320px;min-height:calc(100vh - 58px)}
+aside{background:#fff;border-right:1px solid #eee0da;padding:12px;overflow:auto;max-height:calc(100vh - 58px);position:sticky;top:58px}
+aside.right{border-right:0;border-left:1px solid #eee0da}
+main{padding:14px;overflow:auto}h3{font-size:13px;margin:14px 0 8px}
+button{border:0;border-radius:9px;padding:8px 10px;cursor:pointer;font-weight:700;background:#f3e7e2;color:#6b4a3d}button.active{background:#a8664a;color:#fff}.danger{background:#ffe7e7;color:#8b1e1e}.good{background:#e9f6eb;color:#226d2b}
+.scenes{display:grid;grid-template-columns:1fr 1fr;gap:7px}.asset-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.asset{border:1px solid #ebdcd6;border-radius:10px;background:#faf6f4;padding:6px;cursor:grab;text-align:center;font-size:10px}.asset img{width:100%;height:78px;object-fit:contain;display:block}.asset small{display:block;line-height:1.15;margin-top:3px}
+.flow-head{max-width:1200px;margin:0 auto 10px;display:flex;justify-content:space-between;gap:10px;align-items:center}.state-tabs{display:flex;gap:7px;flex-wrap:wrap}.state-tabs button{min-width:96px}.muted{font-size:11px;color:#8a7a72}
+.canvas-wrap{max-width:1200px;margin:auto}.scene-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:12px}
+#stage{position:relative;width:100%;aspect-ratio:4/3;background:#ddd center/cover no-repeat;border:2px solid #d2a68e;border-radius:10px;overflow:hidden;box-shadow:0 8px 25px rgba(70,40,20,.12)}
+#stage.grid:after{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(to right,rgba(100,60,30,.12) 1px,transparent 1px),linear-gradient(to bottom,rgba(100,60,30,.12) 1px,transparent 1px);background-size:10% 10%}
+#stage.picking-waypoints{cursor:crosshair}
+.placed{position:absolute;touch-action:none;cursor:move;transform-origin:center center;user-select:none}.placed.selected{outline:2px dashed #d2691e;outline-offset:4px}.placed img{width:100%;height:100%;object-fit:contain;pointer-events:none;display:block}
+.path-arrow{position:absolute;pointer-events:none;z-index:250}.path-arrow svg{overflow:visible}.target-box{position:absolute;border:3px dashed #f59e0b;background:rgba(245,158,11,.08);z-index:240;pointer-events:none}.target-box span{position:absolute;top:-24px;left:0;background:#fff4cf;color:#6b4b00;font-size:11px;font-weight:700;padding:3px 6px;border-radius:6px}
+.waypoint-dot{position:absolute;width:22px;height:22px;border-radius:50%;background:#FF6B6B;border:2px solid #fff;transform:translate(-50%,-50%);z-index:260;font:11px/22px Arial;color:#fff;text-align:center;font-weight:700;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+.spawn-dot{background:#f59e0b}
+.panel{background:#faf6f4;border:1px solid #efe1db;border-radius:10px;padding:10px;margin-bottom:10px}.panel p,.panel li{font-size:12px;line-height:1.4}.panel ul{padding-left:18px;margin:6px 0}
+label{display:block;font-size:11px;font-weight:700;margin:7px 0 3px}input[type=range]{width:100%}.row{display:flex;gap:6px}.row button{flex:1;font-size:11px;padding:7px}textarea{width:100%;height:76px;border:1px solid #e3d0c8;border-radius:8px;padding:8px;font:12px Arial}
+select{width:100%;border:1px solid #e3d0c8;border-radius:8px;padding:7px 8px;font:12px Arial;background:#fff}
+.audio-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.audio-grid input,.audio-grid select{width:100%;border:1px solid #e3d0c8;border-radius:8px;padding:7px 8px;font:12px Arial;background:#fff}
+.audio-grid .full{grid-column:1 / -1}
+.timeline-preview{margin-top:8px;padding:8px;border-radius:8px;background:#f7ece7;font-size:11px;line-height:1.5}
+.drop-hint{position:absolute;right:12px;bottom:12px;background:rgba(255,255,255,.86);padding:6px 9px;border-radius:8px;font-size:11px;pointer-events:none;z-index:5}.badge{display:inline-block;padding:3px 7px;border-radius:999px;background:#f3e7e2;font-size:10px;font-weight:700}.summary-line{font-size:11px;line-height:1.4;margin:4px 0}
+.flow-strip{max-width:1200px;margin:12px auto 0;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.flow-card{border:1px solid #e8d6cd;background:#fff;border-radius:9px;padding:8px;min-width:0}.flow-card b{font-size:11px}.flow-card p{font-size:10px;color:#8a7a72;margin:4px 0 0}
+@media(max-width:980px){.app{grid-template-columns:1fr}.app aside{position:static;max-height:none;border:0}.app main{order:-1}.flow-strip{grid-template-columns:1fr}}
+.inherit-notice{padding:7px 10px;border-radius:8px;background:#f7ece7;color:#7a4a30;font-size:12px;font-weight:600;border:1px solid #e6cdbe;margin-right:8px}
+.layer-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 8px;border-radius:7px;font-size:12px;background:#faf6f4;border:1px solid #f0e4de;margin-bottom:5px}.layer-row.is-selected{border-color:#d2691e;background:#fbeee6}.layer-name{cursor:pointer;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.layer-lock{background:transparent;padding:2px 6px;font-size:14px}.placed[data-locked="1"]{cursor:default}.placed[data-locked="1"].selected{outline-color:#c0a090}
+.layer-name.has-tag{color:#795548;font-weight:700}
+.mech-fields{margin-top:8px;padding:8px;background:#fff;border:1px solid #efe1db;border-radius:8px}
+.mech-fields label{margin-top:6px}
+.mech-hint{font-size:10px;color:#9a8a82;margin:2px 0 0}
 </style>
 </head>
 <body>
-<div id="topbar">
-  <h1>Modak — Flower Journey — Visual Flow Editor</h1>
-  <button class="btn btn-gray" id="btnUndo">Undo</button>
-  <button class="btn btn-gray" id="btnReloadDraft">Reload from draft</button>
-  <span id="schemaStatus" style="font-size:10px;color:#9a8b6a;"></span>
-</div>
-<div id="app">
-  <div id="beats"></div>
-  <div id="stageWrap">
-    <div id="stateTabs"></div>
-    <div id="linkBanner">🔗 BEFORE inherits the previous beat's AFTER — switch to MOVEMENT or AFTER to edit</div>
-    <div id="stage"></div>
+<header><strong>GMB Modak Game — Visual Flow Editor</strong><span>Design BEFORE → MOVEMENT → AFTER for each beat, then pick its Mechanic so Claude Code wires the interaction directly from this file.</span><span id="saveIndicator">Not saved yet</span></header>
+<div class="app">
+<aside>
+  <h3>Beats</h3><div class="scenes" id="sceneButtons"></div>
+  <div class="row" style="margin-top:6px"><button id="addBeatBtn" class="good">+ Add beat</button><button id="deleteBeatBtn" class="danger">Delete this beat</button></div>
+  <p class="muted" style="margin:6px 0 0">Add as many beats as your design needs. Nothing is capped.</p>
+  <h3>Characters</h3><div class="asset-grid" id="characterAssets"></div>
+  <h3>Props &amp; Flower Journey</h3><div class="asset-grid" id="targetAssets"></div>
+  <h3>Your uploads</h3>
+  <p class="muted" style="margin:0 0 6px">Add a PNG/WEBP straight from your computer — no zip round-trip. It's saved in this browser and appears here every time you reopen this file.</p>
+  <div class="asset-grid" id="uploadedAssets"></div>
+  <div class="row"><button id="uploadAssetBtn">+ Add asset</button></div>
+  <input id="uploadAssetFile" type="file" accept="image/*" multiple hidden>
+  <h3>Add from top-left layout</h3>
+  <p class="muted" style="margin:0 0 6px">If your game code stores positions as top-left corner + width (not center), enter them here — the real loaded image size and stage box are used to compute the exact center. No guessing.</p>
+  <label>Asset</label>
+  <select id="tlAsset"></select>
+  <div class="row">
+    <div style="flex:1"><label>Top X %</label><input id="tlX" type="number" step="0.1" value="50"></div>
+    <div style="flex:1"><label>Top Y %</label><input id="tlY" type="number" step="0.1" value="50"></div>
+    <div style="flex:1"><label>Width %</label><input id="tlW" type="number" step="0.1" value="20"></div>
   </div>
-  <div id="panel">
-    <h3>Asset Library (real Modak files)</h3>
-    <div id="assetLibrary"></div>
-
-    <h3>Selected Item</h3>
-    <div id="itemInspector"><em style="font-size:11px;color:#666;">Click an item on stage, or drag one in from the library</em></div>
-
-    <h3>Layers</h3>
-    <div id="layers"></div>
-
-    <h3>VO / Audio timing (this state)</h3>
-    <label>VO key (from MODAK_VO)</label>
-    <select id="voKey"></select>
-    <label>Timing note</label>
-    <textarea id="voTiming" placeholder="e.g. plays on state-enter, gap 500ms before reveal"></textarea>
-
-    <h3>Export</h3>
-    <div class="btn-row">
-      <button class="btn btn-green" id="btnExport">Export Game Code</button>
-      <button class="btn btn-gray" id="btnCopyExport">Copy</button>
+  <button id="tlAddBtn" style="width:100%;margin-top:6px">Add (auto-center)</button>
+</aside>
+<main>
+  <div class="flow-head">
+    <div class="state-tabs" id="stateTabs">
+      <button data-state="before">BEFORE</button><button data-state="movement">MOVEMENT</button><button data-state="after">AFTER</button>
     </div>
-    <textarea id="exportOut" readonly></textarea>
+    <div id="inheritNotice" class="inherit-notice" hidden>🔗 Seeded from the previous beat's AFTER — edit freely (add/remove/move); once you do it stops auto-following. Click "Copy previous state" to force a fresh resync.</div><div class="row" style="max-width:440px;width:100%">
+      <button id="copyPrevBtn">Copy previous state</button>
+      <button id="afterToNextBtn" class="good">Go to next beat</button>
+    </div>
   </div>
-</div>
-
-<script>
-/* =====================================================================
-   REAL GAME DATA — pulled directly from NewModakSceneV7.jsx
-   ===================================================================== */
-const ASSET_BASE = './assets/images/';
-const REAL_ASSETS = {
-  'forest-background': ASSET_BASE + 'modak-fj-bg.webp',
-  'mooshika-active': ASSET_BASE + 'mushika-active-game2.webp',
-  'mooshika-calm': ASSET_BASE + 'mushika-calm-game2.webp',
-  'journey-feather': ASSET_BASE + 'journey-feather.webp',
-  'journey-berry': ASSET_BASE + 'journey-berry.webp',
-  'journey-acorn': ASSET_BASE + 'journey-acorn.webp',
-  'emotion-worried': ASSET_BASE + 'emotion-worried-game3.webp',
-  'emotion-sad': ASSET_BASE + 'emotion-sad-game3.webp',
-  'emotion-angry': ASSET_BASE + 'emotion-angry-game3.webp',
-  'emotion-happy': ASSET_BASE + 'emotion-happy-game3.webp',
-  'ganesha': ASSET_BASE + 'ganesha-game3-new.webp',
-  'fj-mud-crossing': ASSET_BASE + 'fj-mud-crossing.webp',
-  'fj-leafy-closed': ASSET_BASE + 'fj-leafy-closed.webp',
-  'fj-leafy-opened': ASSET_BASE + 'fj-leafy-opened.webp',
-  'fj-tree': ASSET_BASE + 'fj-tree.webp',
-  'fj-branch': ASSET_BASE + 'fj-branch.webp',
-  'fj-flower-coral': ASSET_BASE + 'fj-flower-coral.webp',
-  'fj-flower-cream': ASSET_BASE + 'fj-flower-cream.webp',
-  'fj-garland-empty': ASSET_BASE + 'fj-garland-empty.webp',
-  'fj-garland-knot': ASSET_BASE + 'fj-garland-knot.webp',
-  'fj-garland-complete': ASSET_BASE + 'fj-garland-complete.webp',
-  'symbol-mooshika': ASSET_BASE + 'mooshika-new.webp',
-  'symbol-modak': ASSET_BASE + 'modak-new.webp',
-  'symbol-belly': ASSET_BASE + 'belly.png'
-};
-
-// DEFAULT_FJ_LAYOUT keys from the real file — the "Game layout key" dropdown
-// only ever offers these, so exported items map 1:1 onto real state fields.
-const LAYOUT_KEYS = [
-  '', 'calmSettle', 'mud', 'mudStart', 'mudS1', 'mudS2', 'mudS3',
-  'leaves', 'branch', 'carryStart', 'carryEnd',
-  'mudF1', 'mudF2', 'leafF1', 'leafF2', 'branchF1', 'branchF2',
-  'garlandF1', 'garlandF2', 'garlandF3', 'garlandF4', 'garlandF5', 'garlandF6'
-];
-
-const VO_KEYS = [
-  '', 'calmMooshika', 'calmMooshikaIdle', 'mooshikaCalmed', 'guidePower',
-  'mudStart', 'mudIdle', 'leavesStart', 'leavesIdle', 'branchStart', 'branchIdle',
-  'garlandStart', 'garlandIdle', 'garlandDone', 'carryStart', 'carryIdle',
-  'bellyPower', 'modakPower', 'sceneComplete'
-];
-
-// 7 beats from the file header comment (HOLD / GUIDE / SWIPE / PULL+HOLD / DRAG+SNAP / GUIDE / REVEAL)
-const BEATS = [
-  { id:'calm',    label:'1. Calm Mooshika',   sub:'HOLD',        bg:'forest-background' },
-  { id:'mud',     label:'2. Mud Crossing',    sub:'GUIDE',       bg:'forest-background' },
-  { id:'leaves',  label:'3. Leafy Cluster',   sub:'SWIPE',       bg:'forest-background' },
-  { id:'branch',  label:'4. Branch Pull',     sub:'PULL+HOLD',   bg:'forest-background' },
-  { id:'garland', label:'5. Garland Making',  sub:'DRAG+SNAP',   bg:'forest-background' },
-  { id:'carry',   label:'6. Carry to Ganesha',sub:'GUIDE',       bg:'forest-background' },
-  { id:'reveal',  label:'7. Modak Reveal',    sub:'REVEAL',      bg:'forest-background' }
-];
-const STATES = ['BEFORE', 'MOVEMENT', 'AFTER'];
-
-/* =====================================================================
-   PERSISTENCE — schema-versioned, falls back to bundled draft on mismatch
-   ===================================================================== */
-const SCHEMA_VERSION = 1;
-const STORAGE_KEY = 'modak_flow_editor_v1';
-
-function bundledDraft() {
-  const draft = {};
-  BEATS.forEach((b) => {
-    draft[b.id] = { BEFORE: [], MOVEMENT: [], AFTER: [] };
-  });
-  // Seed a couple of beats with real positions so the tool opens non-empty
-  draft.calm.AFTER = [
-    mkItem('mooshika-calm', 'calmSettle', 32, 58, 90),
-  ];
-  draft.mud.MOVEMENT = [
-    mkItem('fj-mud-crossing', 'mud', 50, 74, 260),
-    mkItem('mooshika-active', 'mudStart', 26, 74, 90)
-  ];
-  draft.mud.AFTER = [
-    mkItem('fj-mud-crossing', 'mud', 50, 74, 260),
-    mkItem('fj-flower-coral', 'mudF1', 70, 56, 46),
-    mkItem('fj-flower-cream', 'mudF2', 77, 58, 46)
-  ];
-  draft.leaves.AFTER = [
-    mkItem('fj-leafy-opened', 'leaves', 50, 52, 200),
-    mkItem('fj-flower-coral', 'leafF1', 46, 50, 46),
-    mkItem('fj-flower-cream', 'leafF2', 54, 50, 46)
-  ];
-  draft.branch.AFTER = [
-    mkItem('fj-branch', 'branch', 70, 34, 180),
-    mkItem('fj-flower-coral', 'branchF1', 66, 40, 46),
-    mkItem('fj-flower-cream', 'branchF2', 73, 41, 46)
-  ];
-  draft.garland.AFTER = [
-    mkItem('fj-garland-complete', '', 50, 50, 260)
-  ];
-  draft.carry.AFTER = [
-    mkItem('ganesha', 'carryEnd', 74, 52, 220)
-  ];
-  draft.reveal.AFTER = [
-    mkItem('symbol-modak', '', 50, 45, 140)
-  ];
-  return draft;
-}
-
-let idCounter = 1;
-function mkItem(asset, layoutKey, x, y, w, h) {
-  return {
-    id: 'it' + (idCounter++), asset, layoutKey: layoutKey || '',
-    x, y, w: w, h: h || w, rot: 0, flip: false, front: false, locked: false
-  };
-}
-
-function load() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return { fresh: bundledDraft(), fallback: false };
-    const parsed = JSON.parse(raw);
-    if (parsed.__v !== SCHEMA_VERSION) return { fresh: bundledDraft(), fallback: true };
-    return { fresh: parsed.data, fallback: false };
-  } catch {
-    return { fresh: bundledDraft(), fallback: true };
-  }
-}
-function persist() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({ __v: SCHEMA_VERSION, data: beatData, vo: voData }));
-}
-
-const loaded = load();
-let beatData = loaded.fresh;
-let voData = {}; // beatId -> { voKey, timing }
-BEATS.forEach((b) => { if (!voData[b.id]) voData[b.id] = { voKey: '', timing: '' }; });
-
-document.getElementById('schemaStatus').textContent = loaded.fallback
-  ? 'stale save discarded — loaded bundled draft' : 'save v' + SCHEMA_VERSION + ' loaded';
-
-/* =====================================================================
-   STATE
-   ===================================================================== */
-let currentBeat = BEATS[0].id;
-let currentState = 'BEFORE';
-let selectedItemId = null;
-let undoStack = [];
-const MAX_UNDO = 30;
-
-function snapshot() {
-  undoStack.push(JSON.stringify(beatData));
-  if (undoStack.length > MAX_UNDO) undoStack.shift();
-}
-function undo() {
-  if (!undoStack.length) return;
-  beatData = JSON.parse(undoStack.pop());
-  persist();
-  renderAll();
-}
-
-function beatIndex(id) { return BEATS.findIndex((b) => b.id === id); }
-
-// BEFORE auto-inherits previous beat's AFTER (read-only)
-function itemsFor(beatId, state) {
-  if (state === 'BEFORE') {
-    const idx = beatIndex(beatId);
-    if (idx === 0) return beatData[beatId].BEFORE; // first beat has its own BEFORE
-    const prev = BEATS[idx - 1].id;
-    return beatData[prev].AFTER;
-  }
-  return beatData[beatId][state];
-}
-function isInherited(beatId, state) {
-  return state === 'BEFORE' && beatIndex(beatId) > 0;
-}
-function mutableList(beatId, state) {
-  // Only MOVEMENT/AFTER (and beat-0 BEFORE) are ever independently authored.
-  if (isInherited(beatId, state)) return null;
-  return beatData[beatId][state];
-}
-
-/* =====================================================================
-   RENDER: beats sidebar
-   ===================================================================== */
-function renderBeats() {
-  const el = document.getElementById('beats');
-  el.innerHTML = '';
-  BEATS.forEach((b) => {
-    const div = document.createElement('div');
-    div.className = 'beat-item' + (b.id === currentBeat ? ' active' : '');
-    div.innerHTML = `${b.label}<small>${b.sub}</small>`;
-    div.onclick = () => { currentBeat = b.id; selectedItemId = null; renderAll(); };
-    el.appendChild(div);
-  });
-}
-
-/* =====================================================================
-   RENDER: state tabs
-   ===================================================================== */
-function renderStateTabs() {
-  const el = document.getElementById('stateTabs');
-  el.innerHTML = '';
-  STATES.forEach((s) => {
-    const div = document.createElement('div');
-    const inherited = isInherited(currentBeat, s);
-    div.className = 'state-tab' + (s === currentState ? ' active' : '') + (inherited ? ' inherited' : '');
-    div.textContent = s + (inherited ? ' 🔗' : '');
-    div.onclick = () => { currentState = s; selectedItemId = null; renderAll(); };
-    el.appendChild(div);
-  });
-  document.getElementById('linkBanner').classList.toggle('show', isInherited(currentBeat, currentState));
-}
-
-/* =====================================================================
-   RENDER: stage
-   ===================================================================== */
-function renderStage() {
-  const stage = document.getElementById('stage');
-  stage.innerHTML = '';
-  const beat = BEATS.find((b) => b.id === currentBeat);
-  stage.style.backgroundImage = `url(${REAL_ASSETS[beat.bg]})`;
-
-  const items = itemsFor(currentBeat, currentState);
-  const readOnly = isInherited(currentBeat, currentState);
-
-  // stable z-order: back items first, front items last
-  const ordered = [...items].sort((a, b) => (a.front === b.front ? 0 : a.front ? 1 : -1));
-
-  ordered.forEach((item) => {
-    const div = document.createElement('div');
-    div.className = 'item' + (item.id === selectedItemId ? ' selected' : '') + (item.locked ? ' locked' : '');
-    div.style.left = item.x + '%';
-    div.style.top = item.y + '%';
-    div.style.width = item.w + 'px';
-    div.style.height = item.h + 'px';
-    div.style.transform = `translate(-50%, -50%) rotate(${item.rot}deg) scaleX(${item.flip ? -1 : 1})`;
-    div.style.zIndex = item.front ? 20 : 10;
-
-    const img = document.createElement('img');
-    img.src = REAL_ASSETS[item.asset] || '';
-    div.appendChild(img);
-
-    const tag = document.createElement('div');
-    tag.className = 'item-tag';
-    tag.textContent = item.layoutKey ? `#${item.layoutKey}` : item.asset;
-    div.appendChild(tag);
-
-    if (!readOnly) {
-      div.addEventListener('pointerdown', (e) => onItemPointerDown(e, item));
-    }
-    div.addEventListener('click', (e) => { e.stopPropagation(); selectedItemId = item.id; renderAll(); });
-    stage.appendChild(div);
-  });
-
-  stage.onclick = () => { selectedItemId = null; renderAll(); };
-}
-
-let dragCtx = null;
-function onItemPointerDown(e, item) {
-  if (item.locked) return;
-  e.preventDefault(); e.stopPropagation();
-  selectedItemId = item.id;
-  snapshot();
-  const stage = document.getElementById('stage');
-  const rect = stage.getBoundingClientRect();
-  dragCtx = { item, rect };
-  const move = (ev) => {
-    let x = ((ev.clientX - rect.left) / rect.width) * 100;
-    let y = ((ev.clientY - rect.top) / rect.height) * 100;
-    x = Math.max(0, Math.min(100, x));
-    y = Math.max(0, Math.min(100, y));
-    item.x = Math.round(x * 10) / 10;
-    item.y = Math.round(y * 10) / 10;
-    persist();
-    renderStage();
-    renderInspector();
-  };
-  const up = () => {
-    document.removeEventListener('pointermove', move);
-    document.removeEventListener('pointerup', up);
-  };
-  document.addEventListener('pointermove', move);
-  document.addEventListener('pointerup', up);
-}
-
-/* =====================================================================
-   RENDER: asset library (drag-in add)
-   ===================================================================== */
-function renderLibrary() {
-  const el = document.getElementById('assetLibrary');
-  el.innerHTML = '';
-  Object.keys(REAL_ASSETS).forEach((key) => {
-    const div = document.createElement('div');
-    div.className = 'lib-item';
-    div.draggable = true;
-    div.innerHTML = `<img src="${REAL_ASSETS[key]}"><span>${key}</span>`;
-    div.ondragstart = (e) => e.dataTransfer.setData('text/asset', key);
-    div.onclick = () => addItem(key);
-    el.appendChild(div);
-  });
-  const stage = document.getElementById('stage');
-  stage.ondragover = (e) => e.preventDefault();
-  stage.ondrop = (e) => {
-    e.preventDefault();
-    const key = e.dataTransfer.getData('text/asset');
-    if (!key) return;
-    const rect = stage.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
-    addItem(key, x, y);
-  };
-}
-
-function addItem(asset, x, y) {
-  if (isInherited(currentBeat, currentState)) {
-    alert('BEFORE is inherited from the previous beat\'s AFTER — switch to MOVEMENT or AFTER to add items.');
-    return;
-  }
-  snapshot();
-  const list = mutableList(currentBeat, currentState);
-  const item = mkItem(asset, '', x ?? 50, y ?? 50, 100);
-  list.push(item);
-  selectedItemId = item.id;
-  persist();
-  renderAll();
-}
-
-/* =====================================================================
-   RENDER: inspector
-   ===================================================================== */
-function selectedItem() {
-  const items = itemsFor(currentBeat, currentState);
-  return items.find((i) => i.id === selectedItemId) || null;
-}
-
-function renderInspector() {
-  const el = document.getElementById('itemInspector');
-  const item = selectedItem();
-  const readOnly = isInherited(currentBeat, currentState);
-  if (!item) {
-    el.innerHTML = '<em style="font-size:11px;color:#666;">Click an item on stage, or drag one in from the library</em>';
-    return;
-  }
-  el.innerHTML = `
-    <label>Asset</label>
-    <div style="font-size:11px;color:#8be9fd;">${item.asset}</div>
-    <label>Game layout key</label>
-    <select id="fLayoutKey" ${readOnly ? 'disabled' : ''}>
-      ${LAYOUT_KEYS.map((k) => `<option value="${k}" ${k === item.layoutKey ? 'selected' : ''}>${k || '(none)'}</option>`).join('')}
+  <div class="canvas-wrap">
+    <div class="scene-label"><div style="flex:1"><input id="sceneTitle" style="font-weight:700;font-size:14px;border:1px solid #e3d0c8;border-radius:6px;padding:4px 7px;width:100%;margin-bottom:4px" placeholder="Beat title (e.g. '2. Mud Crossing')"><input id="sceneGoal" class="muted" style="border:1px solid #e3d0c8;border-radius:6px;padding:4px 7px;width:100%;font-size:11px" placeholder="What's this beat for? (one line)"></div><button id="gridBtn">Grid</button></div>
+    <div id="stage"><div class="drop-hint">Drag from asset library →</div></div>
+  </div>
+  <div class="flow-strip">
+    <div class="flow-card"><b>BEFORE</b><p id="beforeMini"></p></div>
+    <div class="flow-card"><b>MOVEMENT</b><p id="moveMini"></p></div>
+    <div class="flow-card"><b>AFTER</b><p id="afterMini"></p></div>
+  </div>
+</main>
+<aside class="right">
+  <div class="panel"><h3 style="margin-top:0">Visual choreography</h3><div id="instructions"></div></div>
+  <div class="panel"><h3 style="margin-top:0">Selected asset</h3><div id="noSelection" class="muted">Click an asset on the canvas.</div><div id="controls" hidden>
+    <label>Scale</label><div class="row"><input id="scale" type="range" min="15" max="500" value="100" style="flex:1" /><input id="scaleNum" type="number" min="15" max="500" value="100" style="width:64px;flex:0 0 64px" /></div>
+    <label>Rotation</label><div class="row"><input id="rotation" type="range" min="-180" max="180" value="0" style="flex:1" /><input id="rotationNum" type="number" min="-180" max="180" value="0" style="width:64px;flex:0 0 64px" /></div>
+    <label>Opacity</label><div class="row"><input id="opacity" type="range" min="10" max="100" value="100" style="flex:1" /><input id="opacityNum" type="number" min="10" max="100" value="100" style="width:64px;flex:0 0 64px" /></div>
+    <div class="row" style="margin-top:8px"><button id="flipBtn">Flip</button><button id="frontBtn">Front</button><button id="backBtn">Back</button></div>
+    <label style="margin-top:8px">Game layout key</label><select id="gameKeySelect"></select><p class="muted" style="margin:4px 0 0">Tag this item with the exact key it maps to in DEFAULT_FJ_LAYOUT, so "Export Game Code" and the Mechanic panel below both know what to call it.</p><div class="row" style="margin-top:6px"><button id="dupBtn">Duplicate</button><button class="danger" id="deleteBtn">Delete</button></div>
+  </div></div>
+  <div class="panel"><h3 style="margin-top:0">Mechanic</h3>
+    <p class="muted" style="margin:0 0 6px">What does the child DO in this beat's BEFORE state? This is written directly into the exported JSON as <code>beat.interaction</code> — Claude Code's BeatPlayerGame engine reads it straight, no re-coding needed.</p>
+    <label>Type</label>
+    <select id="mechType">
+      <option value="none">None — auto-advance, no input</option>
+      <option value="drag-drop">Drag-drop — drag one item onto another (or a zone)</option>
+      <option value="tap-select-tap-target">Tap-select, tap-target — two taps instead of a drag</option>
+      <option value="press-hold">Press-hold — hold an item down for a duration</option>
+      <option value="drag-path">Drag-path — tap to reveal an item, then drag it through waypoints</option>
     </select>
-    <div class="row">
-      <div><label>X %</label><input type="number" id="fX" value="${item.x}" ${readOnly?'disabled':''}></div>
-      <div><label>Y %</label><input type="number" id="fY" value="${item.y}" ${readOnly?'disabled':''}></div>
+    <div id="mechFieldsDragDrop" class="mech-fields" hidden>
+      <label>Drag item</label><select id="mechDragKey"></select>
+      <label>Target</label><select id="mechTargetKey"></select>
+      <p class="mech-hint">Pick "— draw a zone on canvas —" for Target to use a raw {x,y,w} point instead of a tagged item. Click "Set target zone" then click the stage.</p>
+      <div class="row" style="margin-top:6px"><button id="mechSetZoneBtn">Set target zone (click stage)</button></div>
     </div>
-    <div class="row">
-      <div><label>W px</label><input type="number" id="fW" value="${item.w}" ${readOnly?'disabled':''}></div>
-      <div><label>H px</label><input type="number" id="fH" value="${item.h}" ${readOnly?'disabled':''}></div>
+    <div id="mechFieldsHold" class="mech-fields" hidden>
+      <label>Item to hold</label><select id="mechHoldKey"></select>
+      <label>Hold duration (ms)</label><input id="mechHoldMs" type="number" min="200" step="100" value="900">
     </div>
-    <label>Rotate</label>
-    <input type="range" id="fRot" min="-180" max="180" value="${item.rot}" ${readOnly?'disabled':''}>
-    <div class="btn-row">
-      <button class="btn btn-gray" id="fFlip">Flip</button>
-      <button class="btn btn-gray" id="fFront">${item.front ? 'Send Back' : 'Bring Front'}</button>
-      <button class="btn btn-gray" id="fDup">Duplicate</button>
-      <button class="btn btn-gray" id="fLock">${item.locked ? 'Unlock' : 'Lock'}</button>
-      <button class="btn btn-red" id="fDel">Delete</button>
+    <div id="mechFieldsPath" class="mech-fields" hidden>
+      <label>Trigger item (tap to reveal)</label><select id="mechTriggerKey"></select>
+      <p class="mech-hint">Click "Pick waypoints" then click the stage 2-4 times in order (spawn point first, then each stepping stone). Click "Done picking" when finished.</p>
+      <div class="row" style="margin-top:6px"><button id="mechPickWaypointsBtn">Pick waypoints</button><button id="mechClearWaypointsBtn" class="danger">Clear waypoints</button></div>
+      <div id="mechWaypointsSummary" class="mech-hint" style="margin-top:4px"></div>
     </div>
-  `;
-  if (readOnly) return;
+  </div>
+  <div class="panel"><h3 style="margin-top:0">Layers</h3><p class="muted" style="margin:0 0 6px">Overlapping assets? Pick the exact one here instead of clicking the stage, or lock it so it can't be dragged by accident.</p><div id="layersList"></div></div>
+  <div class="panel"><h3 style="margin-top:0">Movement annotations</h3>
+    <div class="row"><button id="markStartBtn">Mark start</button><button id="markEndBtn">Mark end</button></div>
+    <div class="row" style="margin-top:6px"><button id="targetBtn">Add target box</button><button id="clearAnnoBtn" class="danger">Clear annotations</button></div>
+    <p class="muted">For MOVEMENT: select an asset, mark its start, move it, then mark its end. A direction arrow appears automatically.</p>
+  </div>
+  <div class="panel"><h3 style="margin-top:0">State notes</h3><textarea id="notes" placeholder="Show / move / swap / remove / add..."></textarea></div>
+  <div class="panel">
+    <h3 style="margin-top:0">VO / Audio timing</h3>
+    <label>Voiceover text</label>
+    <textarea id="voText" placeholder="What is heard in this state?"></textarea>
+    <div class="audio-grid">
+      <div>
+        <label>VO starts</label>
+        <select id="voTrigger">
+          <option value="state-enter">On state enter</option>
+          <option value="action-start">On action start</option>
+          <option value="action-complete">On action complete</option>
+          <option value="manual">Custom timing</option>
+        </select>
+      </div>
+      <div><label>Start time (sec)</label><input id="voStart" type="number" min="0" step="0.1" value="0"></div>
+      <div><label>VO duration (sec)</label><input id="voDuration" type="number" min="0" step="0.1" value="0"></div>
+      <div><label>Next visual change (sec)</label><input id="nextVisual" type="number" min="0" step="0.1" value="0"></div>
+      <div class="full"><label>SFX / audio note</label><input id="sfxNote" type="text" placeholder="e.g. rustling leaves, soft chime, water splash"></div>
+    </div>
+    <div class="timeline-preview" id="timelinePreview">No audio timing added yet.</div>
+  </div>
+  <div class="panel"><div class="row"><button id="saveBtn">Save</button><button id="undoBtn" disabled>Undo</button><button id="resetBtn" class="danger">Reset state</button></div><div class="row" style="margin-top:6px"><button id="exportBtn">Export JSON</button><button id="importBtn">Import JSON</button><button id="reloadDraftBtn" class="danger">Reload from draft</button></div><div class="row" style="margin-top:6px"><button id="exportGameCodeBtn" class="good">Export Game Code</button></div><div class="row" style="margin-top:6px"><button id="exportBundleBtn" class="good">Export Bundle (JSON + images .zip)</button></div><input id="importFile" type="file" accept="application/json" hidden><p class="muted">Export contains every beat, BEFORE/MOVEMENT/AFTER state, movement arrows/target boxes, and each beat's Mechanic.</p><p class="muted">"Export Bundle" is what Claude Code needs: it writes every "+ Add asset" upload out as a real image file (in an <code>assets/</code> folder) and rewrites the JSON to point at those files instead of <code>upload://N</code> — so no asset ever has to be re-uploaded by hand again.</p></div>
+</aside>
+</div>
+<script>
+const BG='assets/images/modak-fj-bg.webp';
+const assets={characters:[
+  ['Mooshika — calm','assets/images/mushika-calm-game2.webp'],
+  ['Mooshika — active','assets/images/mushika-active-game2.webp'],
+  ['Ganesha','assets/images/ganesha-game3-new.webp'],
+  ['Emotion — worried','assets/images/emotion-worried-game3.webp'],
+  ['Emotion — sad','assets/images/emotion-sad-game3.webp'],
+  ['Emotion — angry','assets/images/emotion-angry-game3.webp'],
+  ['Emotion — happy','assets/images/emotion-happy-game3.webp']
+],targets:[
+  ['Mud crossing','assets/images/fj-mud-crossing.webp'],
+  ['Leafy cluster — closed','assets/images/fj-leafy-closed.webp'],
+  ['Leafy cluster — opened','assets/images/fj-leafy-opened.webp'],
+  ['Tree','assets/images/fj-tree.webp'],
+  ['Branch','assets/images/fj-branch.webp'],
+  ['Flower — coral','assets/images/fj-flower-coral.webp'],
+  ['Flower — cream','assets/images/fj-flower-cream.webp'],
+  ['Garland — empty','assets/images/fj-garland-empty.webp'],
+  ['Garland — knot','assets/images/fj-garland-knot.webp'],
+  ['Garland — complete','assets/images/fj-garland-complete.webp'],
+  ['Journey — feather','assets/images/journey-feather.webp'],
+  ['Journey — berry','assets/images/journey-berry.webp'],
+  ['Journey — acorn','assets/images/journey-acorn.webp'],
+  ['Symbol — mooshika','assets/images/mooshika-new.webp'],
+  ['Symbol — modak','assets/images/modak-new.webp'],
+  ['Symbol — belly','assets/images/belly.png']
+]};
+// Seed titles/goals for a first-time load only — beats are otherwise fully
+// dynamic (add/delete/edit freely in the tool; see addBeatBtn/deleteBeatBtn
+// and the editable title/goal fields above the canvas). The 7-beat structure
+// matches the header comment in NewModakSceneV7.jsx (HOLD / GUIDE / SWIPE /
+// PULL+HOLD / DRAG+SNAP / GUIDE / REVEAL).
+const SEED_BEAT0_DATA={"before": {"items": [{"name": "Mooshika — calm", "path": "assets/images/mushika-calm-game2.webp", "x": 32, "y": 58, "scale": 100, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 14, "locked": 0, "gameKey": "calmSettle"}], "notes": "", "annotations": {"arrows": [], "targets": []}, "audio": {"voText": "", "trigger": "state-enter", "start": 0, "duration": 0, "nextVisual": 0, "sfx": ""}}, "movement": {"items": [{"name": "Mooshika — calm", "path": "assets/images/mushika-calm-game2.webp", "x": 32, "y": 58, "scale": 100, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 14, "locked": 0, "gameKey": "calmSettle"}], "notes": "", "annotations": {"arrows": [], "targets": []}, "audio": {"voText": "", "trigger": "state-enter", "start": 0, "duration": 0, "nextVisual": 0, "sfx": ""}}, "after": {"items": [{"name": "Mooshika — calm", "path": "assets/images/mushika-calm-game2.webp", "x": 32, "y": 58, "scale": 100, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 14, "locked": 0, "gameKey": "calmSettle"}], "notes": "", "annotations": {"arrows": [], "targets": []}, "audio": {"voText": "", "trigger": "state-enter", "start": 0, "duration": 0, "nextVisual": 0, "sfx": ""}}, "interaction": {"type": "press-hold", "drag": "calmSettle", "holdMs": 900}, "meta": {"title": "1. Calm Mooshika", "goal": "Child holds the anxious mooshika until it settles down, ready for the journey."}};
+const SEED_BEAT_META=[
+  {title:'1. Calm Mooshika',goal:'Child holds the anxious mooshika until it settles down, ready for the journey.'},
+  {title:'2. Mud Crossing',goal:'Mooshika needs guiding across the mud — child drags/guides it over the stepping stones.'},
+  {title:'3. Leafy Cluster',goal:'Child swipes through the leafy cluster, revealing hidden flowers underneath.'},
+  {title:'4. Branch Pull',goal:'Child pulls and holds the branch down to gather the flowers growing on it.'},
+  {title:'5. Garland Making',goal:'Child drags each gathered flower onto the garland — it snaps into place, repeating until complete.'},
+  {title:'6. Carry to Ganesha',goal:'Mooshika carries the finished garland across to Ganesha — guided movement, building anticipation.'},
+  {title:'7. Modak Reveal',goal:'Ganesha receives the garland and reveals the modak as a reward. Hold — no interaction.'}
+];
+const states=['before','movement','after'];let beatIndex=0,currentState='before',selected=null,markStart=null;
+let data={};
+let dataReady=false;
+const GAME_LAYOUT_KEYS=[
+  ['', '— none —'],
+  ['calmSettle', 'Mooshika calm settle'],
+  ['mud', 'Mud crossing (state art)'],
+  ['mudStart', 'Mooshika at mud start'],
+  ['mudS1', 'Mud stepping stone 1'],
+  ['mudS2', 'Mud stepping stone 2'],
+  ['mudS3', 'Mud stepping stone 3'],
+  ['leaves', 'Leafy cluster (state art)'],
+  ['branch', 'Branch (state art)'],
+  ['carryStart', 'Carry start'],
+  ['carryEnd', 'Carry end (Ganesha)'],
+  ['mudF1', 'Mud flower 1'],
+  ['mudF2', 'Mud flower 2'],
+  ['leafF1', 'Leaf flower 1'],
+  ['leafF2', 'Leaf flower 2'],
+  ['branchF1', 'Branch flower 1'],
+  ['branchF2', 'Branch flower 2'],
+  ['garlandF1', 'Garland flower 1'],
+  ['garlandF2', 'Garland flower 2'],
+  ['garlandF3', 'Garland flower 3'],
+  ['garlandF4', 'Garland flower 4'],
+  ['garlandF5', 'Garland flower 5'],
+  ['garlandF6', 'Garland flower 6']
+];
+gameKeySelect.innerHTML=GAME_LAYOUT_KEYS.map(([k,label])=>`<option value="${k}">${label}</option>`).join('');
+gameKeySelect.onchange=()=>{if(selected){selected.dataset.gameKey=gameKeySelect.value;saveState();renderLayers();refreshMechKeyOptions()}};
 
-  document.getElementById('fLayoutKey').onchange = (e) => { snapshot(); item.layoutKey = e.target.value; persist(); renderStage(); };
-  document.getElementById('fX').onchange = (e) => { snapshot(); item.x = Number(e.target.value); persist(); renderStage(); };
-  document.getElementById('fY').onchange = (e) => { snapshot(); item.y = Number(e.target.value); persist(); renderStage(); };
-  document.getElementById('fW').onchange = (e) => { snapshot(); item.w = Number(e.target.value); persist(); renderStage(); };
-  document.getElementById('fH').onchange = (e) => { snapshot(); item.h = Number(e.target.value); persist(); renderStage(); };
-  document.getElementById('fRot').oninput = (e) => { item.rot = Number(e.target.value); persist(); renderStage(); };
-  document.getElementById('fFlip').onclick = () => { snapshot(); item.flip = !item.flip; persist(); renderAll(); };
-  document.getElementById('fFront').onclick = () => { snapshot(); item.front = !item.front; persist(); renderAll(); };
-  document.getElementById('fLock').onclick = () => { snapshot(); item.locked = !item.locked; persist(); renderAll(); };
-  document.getElementById('fDup').onclick = () => {
-    snapshot();
-    const list = mutableList(currentBeat, currentState);
-    const copy = { ...item, id: 'it' + (idCounter++), x: item.x + 3, y: item.y + 3 };
-    list.push(copy);
-    selectedItemId = copy.id;
-    persist();
-    renderAll();
-  };
-  document.getElementById('fDel').onclick = () => {
-    snapshot();
-    const list = mutableList(currentBeat, currentState);
-    const idx = list.findIndex((i) => i.id === item.id);
-    if (idx >= 0) list.splice(idx, 1);
-    selectedItemId = null;
-    persist();
-    renderAll();
-  };
+const SCHEMA_VERSION=2;
+function persist(){data.__v=SCHEMA_VERSION;try{localStorage.setItem('gmb-modak-visual-flow-v1',JSON.stringify(data))}catch(e){const si=document.getElementById('saveIndicator');if(si)si.textContent='⚠ Autosave failed — storage full';console.warn('persist() failed:',e)}}
+let undoStack=[];const UNDO_LIMIT=25;
+function pushUndo(){undoStack.push(JSON.stringify(data));if(undoStack.length>UNDO_LIMIT)undoStack.shift();const ub=document.getElementById('undoBtn');if(ub)ub.disabled=false}
+
+const stage=document.getElementById('stage');stage.style.backgroundImage=`url('${BG}')`;
+const voText=document.getElementById('voText');
+const voTrigger=document.getElementById('voTrigger');
+const voStart=document.getElementById('voStart');
+const voDuration=document.getElementById('voDuration');
+const nextVisual=document.getElementById('nextVisual');
+const sfxNote=document.getElementById('sfxNote');
+const timelinePreview=document.getElementById('timelinePreview');
+function ensureAudio(state){
+  if(!state.audio){
+    state.audio={voText:'',trigger:'state-enter',start:0,duration:0,nextVisual:0,sfx:''};
+  }
+  return state.audio;
 }
-
-/* =====================================================================
-   RENDER: layers panel
-   ===================================================================== */
-function renderLayers() {
-  const el = document.getElementById('layers');
-  el.innerHTML = '';
-  const items = itemsFor(currentBeat, currentState);
-  const readOnly = isInherited(currentBeat, currentState);
-  [...items].reverse().forEach((item) => {
-    const row = document.createElement('div');
-    row.className = 'layer-row' + (item.id === selectedItemId ? ' active' : '');
-    row.innerHTML = `<span class="lock">${item.locked ? '🔒' : '🔓'}</span><span style="flex:1;">${item.layoutKey || item.asset}</span>`;
-    row.querySelector('span.lock').onclick = (e) => {
-      e.stopPropagation();
-      if (readOnly) return;
-      snapshot(); item.locked = !item.locked; persist(); renderAll();
-    };
-    row.onclick = () => { selectedItemId = item.id; renderAll(); };
-    el.appendChild(row);
+function updateTimelinePreview(){
+  const start=Number(voStart.value)||0;
+  const duration=Number(voDuration.value)||0;
+  const end=(start+duration).toFixed(1);
+  const next=Number(nextVisual.value)||0;
+  const parts=[];
+  if(voText.value.trim()){
+    parts.push(`${start.toFixed(1)}s VO starts`);
+    if(duration>0) parts.push(`${end}s VO ends`);
+  }
+  if(next>0){parts.push(`${next.toFixed(1)}s next visual change`)}
+  if(sfxNote.value.trim()){parts.push(`SFX: ${sfxNote.value.trim()}`)}
+  timelinePreview.textContent=parts.length?parts.join('  →  '):'No audio timing added yet.';
+}
+[voText,voTrigger,voStart,voDuration,nextVisual,sfxNote].forEach(el=>{
+  el.addEventListener('input',()=>{updateTimelinePreview();saveState()});
+  el.addEventListener('change',()=>{updateTimelinePreview();saveState()});
+});
+function emptyState(){return{items:[],notes:'',annotations:{arrows:[],targets:[]},audio:{voText:'',trigger:'state-enter',start:0,duration:0,nextVisual:0,sfx:''}}}
+function syncBeforeFromPrevious(idx){
+  if(idx<=0)return;
+  const prevAfter=data[idx-1]&&data[idx-1].after;
+  if(!prevAfter)return;
+  if(!data[idx])data[idx]={};
+  if(!data[idx].before)data[idx].before=emptyState();
+  const before=data[idx].before;
+  const prevSnapshot=JSON.stringify(prevAfter.items||[]);
+  const currentSnapshot=JSON.stringify(before.items||[]);
+  if(before.__syncedSnapshot===undefined||currentSnapshot===before.__syncedSnapshot){
+    if(currentSnapshot!==prevSnapshot)before.items=JSON.parse(JSON.stringify(prevAfter.items||[]));
+    before.__syncedSnapshot=prevSnapshot;
+  }
+}
+function beatKeysSorted(){return Object.keys(data).filter(k=>k!=='__v').map(Number).sort((a,b)=>a-b)}
+function ensureBeat(){
+  if(!data[beatIndex])data[beatIndex]={};
+  states.forEach(stateName=>{if(!data[beatIndex][stateName])data[beatIndex][stateName]=emptyState()});
+  if(!data[beatIndex].interaction)data[beatIndex].interaction={type:'none'};
+  if(!data[beatIndex].meta){
+    const seed=SEED_BEAT_META[beatIndex];
+    data[beatIndex].meta=seed?{...seed}:{title:`Beat ${beatIndex+1}`,goal:''};
+  }
+  syncBeforeFromPrevious(beatIndex);
+}
+function renderBeatButtons(){
+  sceneButtons.innerHTML='';
+  beatKeysSorted().forEach(i=>{
+    const btn=document.createElement('button');
+    btn.textContent=(data[i]&&data[i].meta&&data[i].meta.title)?data[i].meta.title.replace(/^\d+\.\s*/,'').slice(0,18)||`Beat ${i+1}`:`Beat ${i+1}`;
+    btn.title=data[i]&&data[i].meta?data[i].meta.title:`Beat ${i+1}`;
+    btn.addEventListener('click',()=>switchBeat(i));
+    sceneButtons.appendChild(btn);
   });
 }
+addBeatBtn.onclick=()=>{
+  saveState();
+  const keys=beatKeysSorted();
+  const nextIndex=keys.length?keys[keys.length-1]+1:0;
+  switchBeat(nextIndex);
+};
+deleteBeatBtn.onclick=()=>{
+  const keys=beatKeysSorted();
+  if(keys.length<=1){alert('Cannot delete the only beat.');return}
+  if(!confirm(`Delete "${(data[beatIndex]&&data[beatIndex].meta&&data[beatIndex].meta.title)||('Beat '+(beatIndex+1))}"? This cannot be undone (but Undo in the panel below still works for one step).`))return;
+  pushUndo();
+  delete data[beatIndex];
+  persist();
+  const remaining=beatKeysSorted();
+  beatIndex=remaining[0];
+  currentState='before';
+  loadState();
+};
+function isInheritedBefore(){return currentState==='before'&&beatIndex>0}
+function getVisibleState(){ensureBeat();return data[beatIndex][currentState]}
+function assetCard(name,path,onDelete,storedPath){const storeAs=storedPath||path;const d=document.createElement('div');d.className='asset';d.draggable=true;d.innerHTML=`<img src="${path}"><small>${name}</small>`;d.addEventListener('dragstart',e=>e.dataTransfer.setData('text/plain',JSON.stringify({name,path:storeAs})));d.addEventListener('click',()=>{addAsset({name,path:storeAs},50,50);saveState()});if(onDelete){const del=document.createElement('button');del.textContent='×';del.title='Remove this upload';del.style.cssText='position:absolute;top:2px;right:2px;width:18px;height:18px;line-height:16px;padding:0;border-radius:50%;font-size:12px';del.addEventListener('click',(e)=>{e.stopPropagation();if(confirm('Remove "'+name+'" from your uploads? Any copies already placed on a beat stay as-is.'))onDelete()});d.style.position='relative';d.appendChild(del)}return d}
+assets.characters.forEach(a=>characterAssets.appendChild(assetCard(...a)));assets.targets.forEach(a=>targetAssets.appendChild(assetCard(...a)));
 
-/* =====================================================================
-   RENDER: VO panel (auto-saves on every keystroke)
-   ===================================================================== */
-function renderVoPanel() {
-  const sel = document.getElementById('voKey');
-  sel.innerHTML = VO_KEYS.map((k) => `<option value="${k}">${k || '(none)'}</option>`).join('');
-  const key = currentBeat + ':' + currentState;
-  if (!voData[key]) voData[key] = { voKey: '', timing: '' };
-  sel.value = voData[key].voKey;
-  document.getElementById('voTiming').value = voData[key].timing;
-
-  sel.onchange = (e) => { voData[key].voKey = e.target.value; persist(); };
-  document.getElementById('voTiming').oninput = (e) => { voData[key].timing = e.target.value; persist(); };
+const UPLOADS_DB_NAME='gmb-modak-visual-flow-uploads';
+let uploadsDbPromise=null;
+function openUploadsDb(){
+  if(uploadsDbPromise)return uploadsDbPromise;
+  uploadsDbPromise=new Promise((resolve,reject)=>{
+    const req=indexedDB.open(UPLOADS_DB_NAME,1);
+    req.onupgradeneeded=()=>{req.result.createObjectStore('uploads',{keyPath:'id',autoIncrement:true})};
+    req.onsuccess=()=>resolve(req.result);
+    req.onerror=()=>reject(req.error);
+  });
+  return uploadsDbPromise;
 }
+async function loadUploads(){
+  try{
+    const db=await openUploadsDb();
+    return await new Promise((resolve,reject)=>{
+      const tx=db.transaction('uploads','readonly');
+      const req=tx.objectStore('uploads').getAll();
+      req.onsuccess=()=>resolve(req.result||[]);
+      req.onerror=()=>reject(req.error);
+    });
+  }catch{return[]}
+}
+async function addUpload(name,path){
+  const db=await openUploadsDb();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction('uploads','readwrite');
+    const req=tx.objectStore('uploads').add({name,path});
+    req.onsuccess=()=>resolve(req.result);
+    tx.onerror=()=>reject(tx.error);
+  });
+}
+async function deleteUpload(id){
+  const db=await openUploadsDb();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction('uploads','readwrite');
+    tx.objectStore('uploads').delete(id);
+    tx.oncomplete=()=>resolve();
+    tx.onerror=()=>reject(tx.error);
+  });
+}
+let uploadsCache=[];
+function resolveAssetSrc(path){
+  if(typeof path==='string'&&path.startsWith('upload://')){
+    const id=Number(path.slice(9));
+    const u=uploadsCache.find(x=>x.id===id);
+    return u?u.path:'';
+  }
+  return path;
+}
+async function refreshUploadsCache(){try{uploadsCache=await loadUploads()}catch{uploadsCache=[]}}
+async function renderUploads(){
+  await refreshUploadsCache();
+  uploadedAssets.innerHTML='';
+  if(!uploadsCache.length){uploadedAssets.innerHTML='<p class="muted" style="margin:0">No uploads yet — click "+ Add asset" below.</p>';return}
+  uploadsCache.forEach(u=>uploadedAssets.appendChild(assetCard(u.name,u.path,async()=>{
+    if(!confirm('Remove "'+u.name+'" from your uploads? Any copies already placed on a beat stay as-is.'))return;
+    await deleteUpload(u.id);
+    renderUploads();
+  },'upload://'+u.id)));
+}
+uploadAssetBtn.onclick=()=>uploadAssetFile.click();
+uploadAssetFile.onchange=()=>{
+  const files=[...uploadAssetFile.files];
+  if(!files.length)return;
+  let pending=files.length;
+  files.forEach(file=>{
+    const reader=new FileReader();
+    reader.onload=async()=>{
+      const defaultName=file.name.replace(/\.[a-zA-Z0-9]+$/,'').replace(/[_-]+/g,' ');
+      const name=window.prompt('Label for this asset:',defaultName)||defaultName;
+      try{await addUpload(name,reader.result)}catch(e){alert('Could not save "'+name+'" — '+(e&&e.message?e.message:'storage error'))}
+      if(--pending===0){renderUploads();uploadAssetFile.value=''}
+    };
+    reader.onerror=()=>{alert('Could not read '+file.name);if(--pending===0){renderUploads();uploadAssetFile.value=''}};
+    reader.readAsDataURL(file);
+  });
+};
+renderUploads();
 
-/* =====================================================================
-   EXPORT — object literal matching DEFAULT_FJ_LAYOUT shape (x/y percent,
-   center-anchored per the real CSS's translate(-50%,-50%) convention)
-   ===================================================================== */
-function exportGameCode() {
-  const out = {};
-  BEATS.forEach((b) => {
-    ['BEFORE', 'MOVEMENT', 'AFTER'].forEach((s) => {
-      const items = itemsFor(b.id, s);
-      items.filter((i) => i.layoutKey).forEach((i) => {
-        out[i.layoutKey] = { x: Math.round(i.x), y: Math.round(i.y), w: Math.round(i.w) };
-      });
+const ALL_ASSETS = [].concat(assets.characters||[], assets.targets||[]);
+const tlAssetSelect=document.getElementById('tlAsset');
+ALL_ASSETS.forEach(([name,path])=>{
+  const opt=document.createElement('option');
+  opt.value=path; opt.textContent=name;
+  tlAssetSelect.appendChild(opt);
+});
+document.getElementById('tlAddBtn').onclick=()=>{
+  const path=tlAssetSelect.value;
+  const name=(ALL_ASSETS.find(a=>a[1]===path)||[path])[0];
+  const topX=Number(document.getElementById('tlX').value)||0;
+  const topY=Number(document.getElementById('tlY').value)||0;
+  const w=Number(document.getElementById('tlW').value)||10;
+  const probe=new Image();
+  probe.onload=()=>{
+    const rect=stage.getBoundingClientRect();
+    const stageAspect=rect.width/rect.height;
+    const imgHoverW=probe.naturalHeight/probe.naturalWidth;
+    const heightPct=w*stageAspect*imgHoverW;
+    const centerX=topX+w/2;
+    const centerY=topY+heightPct/2;
+    addAsset({name,path},centerX,centerY,{w});
+    saveState();
+  };
+  probe.onerror=()=>alert('Could not load that image to measure it: '+path);
+  probe.src=path;
+};
+[...document.querySelectorAll('#stateTabs button')].forEach(btn=>btn.addEventListener('click',()=>switchState(btn.dataset.state)));
+function itemsSummary(stateName){
+  const items=(data[beatIndex]&&data[beatIndex][stateName]&&data[beatIndex][stateName].items)||[];
+  if(!items.length)return 'No items placed yet.';
+  return items.map(it=>it.gameKey||it.name).join(', ');
+}
+function renderMeta(){
+  ensureBeat();
+  const meta=data[beatIndex].meta;
+  sceneTitle.value=meta.title||'';
+  sceneGoal.value=meta.goal||'';
+  beforeMini.textContent=itemsSummary('before');
+  moveMini.textContent=itemsSummary('movement');
+  afterMini.textContent=itemsSummary('after');
+  instructions.innerHTML=`<p><span class="badge">BEFORE</span></p><p>${itemsSummary('before')}</p><p><span class="badge">MOVEMENT</span></p><p>${itemsSummary('movement')}</p><p><span class="badge">AFTER</span></p><p>${itemsSummary('after')}</p>`;
+  renderBeatButtons();
+  [...sceneButtons.children].forEach((x,i)=>x.classList.toggle('active',beatKeysSorted()[i]===beatIndex));
+  [...document.querySelectorAll('#stateTabs button')].forEach(x=>x.classList.toggle('active',x.dataset.state===currentState));
+  notes.value=getVisibleState().notes||'';
+  const inheritNotice=document.getElementById('inheritNotice');if(inheritNotice)inheritNotice.hidden=!isInheritedBefore();
+}
+sceneTitle.addEventListener('input',()=>{ensureBeat();data[beatIndex].meta.title=sceneTitle.value;persist();renderBeatButtons()});
+sceneGoal.addEventListener('input',()=>{ensureBeat();data[beatIndex].meta.goal=sceneGoal.value;persist()});
+function addAsset(a,x=50,y=50,state={}){const el=document.createElement('div');el.className='placed';el.dataset.name=a.name;el.dataset.path=a.path;el.dataset.x=state.x??x;el.dataset.y=state.y??y;el.dataset.scale=state.scale??100;el.dataset.rotation=state.rotation??0;el.dataset.opacity=state.opacity??100;el.dataset.flip=state.flip??1;el.dataset.z=state.z??10;el.dataset.locked=state.locked??0;el.dataset.gameKey=state.gameKey||'';el.style.width=(state.w??24)+'%';const displaySrc=resolveAssetSrc(a.path);el.innerHTML=`<img src="${displaySrc}" onerror="this.style.cssText='width:100%;height:60px;background:#ffd6d6;border:2px dashed #c00;box-sizing:border-box';this.title='Broken image: '+this.getAttribute('src');this.after(Object.assign(document.createElement('div'),{textContent:'⚠ missing: '+this.getAttribute('src'),style:'font-size:9px;color:#c00;text-align:center;word-break:break-all'}))">`;stage.appendChild(el);apply(el);makeDraggable(el);select(el);return el}
+function apply(el){el.style.left=el.dataset.x+'%';el.style.top=el.dataset.y+'%';el.style.zIndex=el.dataset.z;el.style.opacity=el.dataset.opacity/100;el.style.transform=`translate(-50%,-50%) rotate(${el.dataset.rotation}deg) scale(${el.dataset.scale/100*el.dataset.flip},${el.dataset.scale/100})`}
+function isLocked(el){return el.dataset.locked==='1'}
+function makeDraggable(el){let sx,sy,ox,oy;el.addEventListener('pointerdown',e=>{if(pickMode)return;select(el);if(isLocked(el))return;sx=e.clientX;sy=e.clientY;ox=+el.dataset.x;oy=+el.dataset.y;el.setPointerCapture(e.pointerId)});el.addEventListener('pointermove',e=>{if(pickMode)return;if(isLocked(el))return;if(!el.hasPointerCapture(e.pointerId))return;const r=stage.getBoundingClientRect();el.dataset.x=Math.max(0,Math.min(100,ox+(e.clientX-sx)/r.width*100));el.dataset.y=Math.max(0,Math.min(100,oy+(e.clientY-sy)/r.height*100));apply(el)});el.addEventListener('pointerup',e=>{if(pickMode)return;if(isLocked(el))return;try{el.releasePointerCapture(e.pointerId)}catch{};saveState()})}
+stage.addEventListener('dragover',e=>e.preventDefault());stage.addEventListener('drop',e=>{e.preventDefault();if(pickMode)return;const a=JSON.parse(e.dataTransfer.getData('text/plain'));const r=stage.getBoundingClientRect();addAsset(a,(e.clientX-r.left)/r.width*100,(e.clientY-r.top)/r.height*100);saveState()});
+function select(el){if(selected)selected.classList.remove('selected');selected=el;if(el){el.classList.add('selected');noSelection.hidden=true;controls.hidden=false;scale.value=el.dataset.scale;scaleNum.value=el.dataset.scale;rotation.value=el.dataset.rotation;rotationNum.value=el.dataset.rotation;opacity.value=el.dataset.opacity;opacityNum.value=el.dataset.opacity;gameKeySelect.value=el.dataset.gameKey||''}else{noSelection.hidden=false;controls.hidden=true}renderLayers()}
+function renderLayers(){const panel=document.getElementById('layersList');if(!panel)return;const items=[...stage.querySelectorAll('.placed')].sort((a,b)=>(+b.dataset.z)-(+a.dataset.z));panel.innerHTML='';if(!items.length){panel.innerHTML='<p class="muted" style="margin:0">No assets placed yet.</p>';return}items.forEach(el=>{const row=document.createElement('div');row.className='layer-row'+(el===selected?' is-selected':'');const label=document.createElement('span');const tag=el.dataset.gameKey;label.textContent=el.dataset.name+(tag?' → '+tag:'');label.className='layer-name'+(tag?' has-tag':'');label.onclick=()=>select(el);const locked=el.dataset.locked==='1';const lockBtn=document.createElement('button');lockBtn.type='button';lockBtn.className='layer-lock';lockBtn.textContent=locked?'🔒':'🔓';lockBtn.title=locked?'Locked — click to unlock':'Unlocked — click to lock';lockBtn.onclick=(e)=>{e.stopPropagation();el.dataset.locked=locked?'0':'1';saveState();renderLayers()};row.appendChild(label);row.appendChild(lockBtn);panel.appendChild(row)})}
+scale.oninput=()=>{if(selected){selected.dataset.scale=scale.value;scaleNum.value=scale.value;apply(selected)}};rotation.oninput=()=>{if(selected){selected.dataset.rotation=rotation.value;rotationNum.value=rotation.value;apply(selected)}};opacity.oninput=()=>{if(selected){selected.dataset.opacity=opacity.value;opacityNum.value=opacity.value;apply(selected)}};
+function clampNum(v,min,max){v=Number(v);if(isNaN(v))return min;return Math.max(min,Math.min(max,v))}
+scaleNum.oninput=()=>{if(selected){const v=clampNum(scaleNum.value,15,500);selected.dataset.scale=v;scale.value=v;apply(selected)}};
+scaleNum.onchange=()=>{if(selected){scaleNum.value=clampNum(scaleNum.value,15,500);selected.dataset.scale=scaleNum.value;scale.value=scaleNum.value;apply(selected);saveState()}};
+rotationNum.oninput=()=>{if(selected){const v=clampNum(rotationNum.value,-180,180);selected.dataset.rotation=v;rotation.value=v;apply(selected)}};
+rotationNum.onchange=()=>{if(selected){rotationNum.value=clampNum(rotationNum.value,-180,180);selected.dataset.rotation=rotationNum.value;rotation.value=rotationNum.value;apply(selected);saveState()}};
+opacityNum.oninput=()=>{if(selected){const v=clampNum(opacityNum.value,10,100);selected.dataset.opacity=v;opacity.value=v;apply(selected)}};
+opacityNum.onchange=()=>{if(selected){opacityNum.value=clampNum(opacityNum.value,10,100);selected.dataset.opacity=opacityNum.value;opacity.value=opacityNum.value;apply(selected);saveState()}};
+flipBtn.onclick=()=>{if(selected){selected.dataset.flip=-(+selected.dataset.flip);apply(selected);saveState()}};frontBtn.onclick=()=>{if(selected){selected.dataset.z=99;apply(selected);saveState()}};backBtn.onclick=()=>{if(selected){selected.dataset.z=1;apply(selected);saveState()}};deleteBtn.onclick=()=>{if(selected){selected.remove();select(null);saveState()}};dupBtn.onclick=()=>{if(selected){const st=serializeEl(selected);st.x+=3;st.y+=3;addAsset({name:st.name,path:st.path},st.x,st.y,st);saveState()}};
+function serializeEl(el){return{name:el.dataset.name,path:el.dataset.path,x:+el.dataset.x,y:+el.dataset.y,scale:+el.dataset.scale,rotation:+el.dataset.rotation,opacity:+el.dataset.opacity,flip:+el.dataset.flip,z:+el.dataset.z,w:parseFloat(el.style.width)||24,locked:+el.dataset.locked||0,gameKey:el.dataset.gameKey||''}}
+function saveState(){if(!dataReady)return;ensureBeat();pushUndo();const state=data[beatIndex][currentState];state.items=[...stage.querySelectorAll('.placed')].map(serializeEl);state.notes=notes.value;state.annotations=collectAnnotations();state.audio={voText:voText.value,trigger:voTrigger.value,start:Number(voStart.value)||0,duration:Number(voDuration.value)||0,nextVisual:Number(nextVisual.value)||0,sfx:sfxNote.value};persist();const _si=document.getElementById('saveIndicator');if(_si)_si.textContent='Saved '+new Date().toLocaleTimeString()}
+function clearStage(){[...stage.querySelectorAll('.placed,.path-arrow,.target-box')].forEach(e=>e.remove());select(null);markStart=null}
+function loadState(){ensureBeat();clearStage();const s=getVisibleState();(s.items||[]).forEach(st=>addAsset({name:st.name,path:st.path},st.x,st.y,st));renderAnnotations(s.annotations||{arrows:[],targets:[]});const audio=ensureAudio(s);voText.value=audio.voText||'';voTrigger.value=audio.trigger||'state-enter';voStart.value=audio.start||0;voDuration.value=audio.duration||0;nextVisual.value=audio.nextVisual||0;sfxNote.value=audio.sfx||'';updateTimelinePreview();renderMeta();loadMechanicUI()}
+function switchState(nextState){saveState();if(nextState==='movement'&&currentState==='before'){const source=getVisibleState();const movement=data[beatIndex].movement;if(!movement.items||movement.items.length===0){data[beatIndex].movement=JSON.parse(JSON.stringify(source))}}if(nextState==='after'&&currentState==='movement'){const after=data[beatIndex].after;if(!after.items||after.items.length===0){data[beatIndex].after=JSON.parse(JSON.stringify(data[beatIndex].movement))}}currentState=nextState;persist();loadState()}
+function switchBeat(i){saveState();beatIndex=i;currentState='before';loadState()}
+notes.addEventListener('input',saveState);voText.addEventListener('input',saveState);voTrigger.addEventListener('change',saveState);voStart.addEventListener('input',saveState);voDuration.addEventListener('input',saveState);nextVisual.addEventListener('input',saveState);sfxNote.addEventListener('input',saveState);undoBtn.onclick=()=>{if(!undoStack.length)return;data=JSON.parse(undoStack.pop());if(!undoStack.length)undoBtn.disabled=true;loadState()};saveBtn.onclick=()=>{saveState();const _t=saveBtn.textContent;saveBtn.textContent='Saved ✓';setTimeout(()=>saveBtn.textContent=_t,900)};reloadDraftBtn.onclick=async()=>{if(!confirm('This wipes every saved edit in this tool and reloads a blank slate. Continue?'))return;try{localStorage.removeItem('gmb-modak-visual-flow-v1')}catch{};location.reload()};resetBtn.onclick=()=>{if(confirm('Clear this state?')){ensureBeat();data[beatIndex][currentState]={items:[],notes:'',annotations:{arrows:[],targets:[]},audio:{voText:'',trigger:'state-enter',start:0,duration:0,nextVisual:0,sfx:''}};saveState();loadState()}};gridBtn.onclick=()=>stage.classList.toggle('grid');
+copyPrevBtn.onclick=()=>{saveState();const idx=states.indexOf(currentState);let src=null;if(idx>0)src=data[beatIndex][states[idx-1]];else if(beatIndex>0)src=data[beatIndex-1].after;if(!src)return alert('No previous state available.');const clone=JSON.parse(JSON.stringify(src));if(isInheritedBefore())clone.__syncedSnapshot=JSON.stringify(clone.items||[]);data[beatIndex][currentState]=clone;persist();loadState()};
+afterToNextBtn.onclick=()=>{
+  saveState();
+  const keys=beatKeysSorted();
+  const nextExisting=keys.find(k=>k>beatIndex);
+  switchBeat(nextExisting!==undefined?nextExisting:beatIndex+1);
+};
+function addArrow(x1,y1,x2,y2,label='move'){const d=document.createElement('div');d.className='path-arrow';d.dataset.x1=x1;d.dataset.y1=y1;d.dataset.x2=x2;d.dataset.y2=y2;d.dataset.label=label;positionArrow(d);stage.appendChild(d)}
+function positionArrow(d){const x1=+d.dataset.x1,y1=+d.dataset.y1,x2=+d.dataset.x2,y2=+d.dataset.y2;const left=Math.min(x1,x2),top=Math.min(y1,y2),w=Math.max(1,Math.abs(x2-x1)),h=Math.max(1,Math.abs(y2-y1));d.style.left=left+'%';d.style.top=top+'%';d.style.width=w+'%';d.style.height=h+'%';const sx=x1<=x2?0:100,sy=y1<=y2?0:100,ex=x1<=x2?100:0,ey=y1<=y2?100:0;d.innerHTML=`<svg viewBox="0 0 100 100" preserveAspectRatio="none" width="100%" height="100%"><defs><marker id="arrowhead" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><polygon points="0 0, 6 3, 0 6" fill="#f59e0b"/></marker></defs><line x1="${sx}" y1="${sy}" x2="${ex}" y2="${ey}" stroke="#f59e0b" stroke-width="3" stroke-dasharray="7 5" marker-end="url(#arrowhead)" vector-effect="non-scaling-stroke"/></svg>`}
+markStartBtn.onclick=()=>{if(currentState!=='movement')return alert('Use movement arrows in the MOVEMENT state.');if(!selected)return alert('Select the moving asset first.');markStart={x:+selected.dataset.x,y:+selected.dataset.y,name:selected.dataset.name};alert('Start marked. Move the asset to its destination, then click “Mark end”.')};
+markEndBtn.onclick=()=>{if(!markStart)return alert('Mark a start first.');if(!selected)return alert('Select the moved asset.');addArrow(markStart.x,markStart.y,+selected.dataset.x,+selected.dataset.y,markStart.name);markStart=null;saveState()};
+targetBtn.onclick=()=>{if(currentState!=='movement')return alert('Target boxes belong in the MOVEMENT state.');const d=document.createElement('div');d.className='target-box';d.dataset.x=50;d.dataset.y=50;d.dataset.w=18;d.dataset.h=14;d.style.left='41%';d.style.top='43%';d.style.width='18%';d.style.height='14%';d.innerHTML='<span>TARGET</span>';stage.appendChild(d);makeBoxDraggable(d);saveState()};
+function makeBoxDraggable(el){let sx,sy,ox,oy;el.style.pointerEvents='auto';el.style.cursor='move';el.addEventListener('pointerdown',e=>{sx=e.clientX;sy=e.clientY;ox=+el.dataset.x;oy=+el.dataset.y;el.setPointerCapture(e.pointerId)});el.addEventListener('pointermove',e=>{if(!el.hasPointerCapture(e.pointerId))return;const r=stage.getBoundingClientRect();el.dataset.x=Math.max(0,Math.min(100,ox+(e.clientX-sx)/r.width*100));el.dataset.y=Math.max(0,Math.min(100,oy+(e.clientY-sy)/r.height*100));el.style.left=(el.dataset.x-(+el.dataset.w)/2)+'%';el.style.top=(el.dataset.y-(+el.dataset.h)/2)+'%'});el.addEventListener('pointerup',e=>{try{el.releasePointerCapture(e.pointerId)}catch{};saveState()})}
+clearAnnoBtn.onclick=()=>{[...stage.querySelectorAll('.path-arrow,.target-box')].forEach(e=>e.remove());saveState()};
+function collectAnnotations(){return{arrows:[...stage.querySelectorAll('.path-arrow')].map(d=>({x1:+d.dataset.x1,y1:+d.dataset.y1,x2:+d.dataset.x2,y2:+d.dataset.y2,label:d.dataset.label})),targets:[...stage.querySelectorAll('.target-box')].map(d=>({x:+d.dataset.x,y:+d.dataset.y,w:+d.dataset.w,h:+d.dataset.h}))}}
+function renderAnnotations(a){(a.arrows||[]).forEach(x=>addArrow(x.x1,x.y1,x.x2,x.y2,x.label));(a.targets||[]).forEach(t=>{const d=document.createElement('div');d.className='target-box';Object.assign(d.dataset,{x:t.x,y:t.y,w:t.w,h:t.h});d.style.left=(t.x-t.w/2)+'%';d.style.top=(t.y-t.h/2)+'%';d.style.width=t.w+'%';d.style.height=t.h+'%';d.innerHTML='<span>TARGET</span>';stage.appendChild(d);makeBoxDraggable(d)})}
+
+// ---- Mechanic panel: writes beat.interaction directly, matching the exact
+// vocabulary BeatPlayerGame.jsx implements (src/lib/beatPlayer/BeatPlayerGame.jsx) ----
+const mechType=document.getElementById('mechType');
+const mechFieldsDragDrop=document.getElementById('mechFieldsDragDrop');
+const mechFieldsHold=document.getElementById('mechFieldsHold');
+const mechFieldsPath=document.getElementById('mechFieldsPath');
+const mechDragKey=document.getElementById('mechDragKey');
+const mechTargetKey=document.getElementById('mechTargetKey');
+const mechHoldKey=document.getElementById('mechHoldKey');
+const mechHoldMs=document.getElementById('mechHoldMs');
+const mechTriggerKey=document.getElementById('mechTriggerKey');
+const mechSetZoneBtn=document.getElementById('mechSetZoneBtn');
+const mechPickWaypointsBtn=document.getElementById('mechPickWaypointsBtn');
+const mechClearWaypointsBtn=document.getElementById('mechClearWaypointsBtn');
+const mechWaypointsSummary=document.getElementById('mechWaypointsSummary');
+const ZONE_TARGET_VALUE='__zone__';
+let pickMode=null; // null | 'zone' | 'waypoints'
+let waypointDraft=[]; // [{x,y}, ...] first is spawn point
+
+function taggedKeysInCurrentBeforeState(){
+  // Mechanics are always about the BEFORE state's items (that's when the
+  // child acts), regardless of which tab is currently open.
+  ensureBeat();
+  const items=data[beatIndex].before.items||[];
+  const seen=new Map();
+  items.forEach(it=>{if(it.gameKey)seen.set(it.gameKey,it.name)});
+  return [...seen.entries()];
+}
+function refreshMechKeyOptions(){
+  const opts=taggedKeysInCurrentBeforeState();
+  const fill=(sel,extra)=>{
+    const current=sel.value;
+    sel.innerHTML=(extra||[]).map(([v,l])=>`<option value="${v}">${l}</option>`).join('')
+      +opts.map(([k,name])=>`<option value="${k}">${name} (${k})</option>`).join('');
+    if([...sel.options].some(o=>o.value===current))sel.value=current;
+  };
+  fill(mechDragKey);
+  fill(mechTargetKey,[[ZONE_TARGET_VALUE,'— draw a zone on canvas —']]);
+  fill(mechHoldKey);
+  fill(mechTriggerKey);
+}
+function clearWaypointDots(){[...stage.querySelectorAll('.waypoint-dot')].forEach(d=>d.remove())}
+function drawWaypointDots(spawnAt,path){
+  clearWaypointDots();
+  if(spawnAt){
+    const d=document.createElement('div');d.className='waypoint-dot spawn-dot';d.style.left=spawnAt.x+'%';d.style.top=spawnAt.y+'%';d.textContent='S';stage.appendChild(d);
+  }
+  (path||[]).forEach((p,i)=>{
+    const d=document.createElement('div');d.className='waypoint-dot';d.style.left=p.x+'%';d.style.top=p.y+'%';d.textContent=String(i+1);stage.appendChild(d);
+  });
+}
+function drawZoneMarker(zone){
+  [...stage.querySelectorAll('.target-box[data-mech-zone]')].forEach(d=>d.remove());
+  if(!zone)return;
+  const d=document.createElement('div');d.className='target-box';d.dataset.mechZone='1';const w=zone.w||12;d.style.left=(zone.x-w/2)+'%';d.style.top=(zone.y-w/2)+'%';d.style.width=w+'%';d.style.height=w+'%';d.innerHTML='<span>MECH TARGET</span>';d.style.pointerEvents='none';stage.appendChild(d);
+}
+function getInteraction(){ensureBeat();return data[beatIndex].interaction}
+function setInteraction(next){ensureBeat();data[beatIndex].interaction=next;saveState()}
+function loadMechanicUI(){
+  refreshMechKeyOptions();
+  const it=getInteraction();
+  mechType.value=it.type||'none';
+  showMechFields(mechType.value);
+  clearWaypointDots();
+  [...stage.querySelectorAll('.target-box[data-mech-zone]')].forEach(d=>d.remove());
+  if(it.type==='drag-drop'){
+    mechDragKey.value=it.drag||'';
+    if(typeof it.target==='object'&&it.target){mechTargetKey.value=ZONE_TARGET_VALUE;drawZoneMarker(it.target)}
+    else mechTargetKey.value=it.target||'';
+  }else if(it.type==='press-hold'){
+    mechHoldKey.value=it.drag||'';
+    mechHoldMs.value=it.holdMs||900;
+  }else if(it.type==='drag-path'){
+    mechTriggerKey.value=it.trigger||'';
+    drawWaypointDots(it.spawnAt,it.path);
+    mechWaypointsSummary.textContent=it.spawnAt?`Spawn + ${(it.path||[]).length} waypoint(s) set.`:'No waypoints set yet.';
+  }
+}
+function showMechFields(type){
+  mechFieldsDragDrop.hidden=type!=='drag-drop';
+  mechFieldsHold.hidden=type!=='press-hold';
+  mechFieldsPath.hidden=type!=='drag-path';
+}
+mechType.onchange=()=>{
+  const type=mechType.value;
+  showMechFields(type);
+  if(type==='none')setInteraction({type:'none'});
+  else if(type==='drag-drop')setInteraction({type,drag:mechDragKey.value||'',target:mechTargetKey.value&&mechTargetKey.value!==ZONE_TARGET_VALUE?mechTargetKey.value:undefined});
+  else if(type==='tap-select-tap-target')setInteraction({type,drag:mechDragKey.value||'',target:mechTargetKey.value||''});
+  else if(type==='press-hold')setInteraction({type,drag:mechHoldKey.value||'',holdMs:Number(mechHoldMs.value)||900});
+  else if(type==='drag-path')setInteraction({type,trigger:mechTriggerKey.value||'',spawnAt:getInteraction().spawnAt,path:getInteraction().path||[],snapRadius:8});
+  loadMechanicUI();
+};
+function updateDragDropInteraction(){
+  const target=mechTargetKey.value===ZONE_TARGET_VALUE?(getInteraction().target&&typeof getInteraction().target==='object'?getInteraction().target:{x:50,y:50,w:12}):mechTargetKey.value;
+  setInteraction({type:mechType.value,drag:mechDragKey.value||'',target});
+  loadMechanicUI();
+}
+mechDragKey.onchange=updateDragDropInteraction;
+mechTargetKey.onchange=()=>{
+  if(mechTargetKey.value===ZONE_TARGET_VALUE){
+    alert('Click "Set target zone" then click a spot on the stage to place it.');
+  }
+  updateDragDropInteraction();
+};
+mechSetZoneBtn.onclick=()=>{
+  pickMode='zone';
+  stage.classList.add('picking-waypoints');
+  mechSetZoneBtn.textContent='Click the stage now…';
+};
+mechHoldKey.onchange=()=>{setInteraction({type:'press-hold',drag:mechHoldKey.value||'',holdMs:Number(mechHoldMs.value)||900})};
+mechHoldMs.onchange=()=>{setInteraction({type:'press-hold',drag:mechHoldKey.value||'',holdMs:Number(mechHoldMs.value)||900})};
+mechTriggerKey.onchange=()=>{const it=getInteraction();setInteraction({type:'drag-path',trigger:mechTriggerKey.value||'',spawnAt:it.spawnAt,path:it.path||[],snapRadius:8})};
+mechPickWaypointsBtn.onclick=()=>{
+  pickMode='waypoints';
+  waypointDraft=[];
+  stage.classList.add('picking-waypoints');
+  mechPickWaypointsBtn.textContent='Click stage: spawn point, then each waypoint. Click here when done.';
+  mechPickWaypointsBtn.onclick=finishPickingWaypoints;
+};
+function finishPickingWaypoints(){
+  pickMode=null;
+  stage.classList.remove('picking-waypoints');
+  mechPickWaypointsBtn.textContent='Pick waypoints';
+  mechPickWaypointsBtn.onclick=()=>{pickMode='waypoints';waypointDraft=[];stage.classList.add('picking-waypoints');mechPickWaypointsBtn.textContent='Click stage: spawn point, then each waypoint. Click here when done.';mechPickWaypointsBtn.onclick=finishPickingWaypoints};
+  if(waypointDraft.length>=2){
+    const [spawnAt,...path]=waypointDraft;
+    const it=getInteraction();
+    setInteraction({type:'drag-path',trigger:it.trigger||'',spawnAt,path,snapRadius:8});
+  }
+  loadMechanicUI();
+}
+mechClearWaypointsBtn.onclick=()=>{
+  const it=getInteraction();
+  setInteraction({type:'drag-path',trigger:it.trigger||'',spawnAt:undefined,path:[],snapRadius:8});
+  waypointDraft=[];
+};
+stage.addEventListener('pointerdown',e=>{
+  if(pickMode==='zone'){
+    const r=stage.getBoundingClientRect();
+    const x=Math.max(0,Math.min(100,(e.clientX-r.left)/r.width*100));
+    const y=Math.max(0,Math.min(100,(e.clientY-r.top)/r.height*100));
+    setInteraction({type:'drag-drop',drag:mechDragKey.value||'',target:{x:Number(x.toFixed(2)),y:Number(y.toFixed(2)),w:12}});
+    pickMode=null;
+    stage.classList.remove('picking-waypoints');
+    mechSetZoneBtn.textContent='Set target zone (click stage)';
+    loadMechanicUI();
+    return;
+  }
+  if(pickMode==='waypoints'){
+    const r=stage.getBoundingClientRect();
+    const x=Math.max(0,Math.min(100,(e.clientX-r.left)/r.width*100));
+    const y=Math.max(0,Math.min(100,(e.clientY-r.top)/r.height*100));
+    waypointDraft.push({x:Number(x.toFixed(2)),y:Number(y.toFixed(2))});
+    drawWaypointDots(waypointDraft[0],waypointDraft.slice(1));
+    return;
+  }
+  if(e.target===stage)select(null);
+});
+
+exportBtn.onclick=()=>{saveState();const beatsOut={...data};delete beatsOut.__v;const blob=new Blob([JSON.stringify({version:2,type:'gmb-modak-visual-flow-v1',beats:beatsOut},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='modak-game-visual-flow.json';a.click();URL.revokeObjectURL(a.href)};importBtn.onclick=()=>importFile.click();importFile.onchange=async()=>{const f=importFile.files[0];if(!f)return;const d=JSON.parse(await f.text());data=d.beats||d;persist();loadState()};async function exportGameCode(){saveState();const tagged=[...stage.querySelectorAll('.placed')].filter(el=>el.dataset.gameKey);if(!tagged.length){alert('No items are tagged with a Game layout key yet. Select an item, then choose its key under "Game layout key" in the Selected asset panel.');return}const lines=tagged.map(el=>{const st=serializeEl(el);const tag=el.dataset.gameKey;const w=Number((st.w*st.scale/100).toFixed(2));return `  ${tag}: { x: ${Number(st.x.toFixed(2))}, y: ${Number(st.y.toFixed(2))}, w: ${w} },`;});const payload='{\n'+lines.join('\n')+'\n}';try{if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(payload);alert('Copied to clipboard — paste into DEFAULT_FJ_LAYOUT.')}else if(window.prompt){window.prompt('Copy game layout code',payload)}}catch{if(window.prompt){window.prompt('Copy game layout code',payload)}else{console.log('Game layout code:',payload)}}}exportGameCodeBtn.onclick=exportGameCode;
+
+// ---- "Export Bundle": JSON + every "+ Add asset" upload as a real file ----
+function crc32(buf) {
+  const table = crc32.table || (crc32.table = (() => {
+    const t = [];
+    for (let n = 0; n < 256; n++) {
+      let c = n;
+      for (let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+      t[n] = c;
+    }
+    return t;
+  })());
+  let crc = -1;
+  for (let i = 0; i < buf.length; i++) crc = (crc >>> 8) ^ table[(crc ^ buf[i]) & 0xFF];
+  return (crc ^ -1) >>> 0;
+}
+function buildZip(files) {
+  const encoder = new TextEncoder();
+  let offset = 0;
+  const localParts = [];
+  const centralParts = [];
+  files.forEach((file) => {
+    const nameBytes = encoder.encode(file.name);
+    const data = file.data;
+    const crc = crc32(data);
+    const size = data.length;
+    const local = new DataView(new ArrayBuffer(30));
+    local.setUint32(0, 0x04034b50, true);
+    local.setUint16(4, 20, true);
+    local.setUint16(6, 0, true);
+    local.setUint16(8, 0, true);
+    local.setUint16(10, 0, true);
+    local.setUint16(12, 0, true);
+    local.setUint32(14, crc, true);
+    local.setUint32(18, size, true);
+    local.setUint32(22, size, true);
+    local.setUint16(26, nameBytes.length, true);
+    local.setUint16(28, 0, true);
+    localParts.push(new Uint8Array(local.buffer), nameBytes, data);
+    const central = new DataView(new ArrayBuffer(46));
+    central.setUint32(0, 0x02014b50, true);
+    central.setUint16(4, 20, true);
+    central.setUint16(6, 20, true);
+    central.setUint16(8, 0, true);
+    central.setUint16(10, 0, true);
+    central.setUint16(12, 0, true);
+    central.setUint16(14, 0, true);
+    central.setUint32(16, crc, true);
+    central.setUint32(20, size, true);
+    central.setUint32(24, size, true);
+    central.setUint16(28, nameBytes.length, true);
+    central.setUint16(30, 0, true);
+    central.setUint16(32, 0, true);
+    central.setUint16(34, 0, true);
+    central.setUint16(36, 0, true);
+    central.setUint32(38, 0, true);
+    central.setUint32(42, offset, true);
+    centralParts.push(new Uint8Array(central.buffer), nameBytes);
+    offset += 30 + nameBytes.length + size;
+  });
+  const centralSize = centralParts.reduce((a, p) => a + p.length, 0);
+  const centralOffset = offset;
+  const end = new DataView(new ArrayBuffer(22));
+  end.setUint32(0, 0x06054b50, true);
+  end.setUint16(4, 0, true);
+  end.setUint16(6, 0, true);
+  end.setUint16(8, files.length, true);
+  end.setUint16(10, files.length, true);
+  end.setUint32(12, centralSize, true);
+  end.setUint32(16, centralOffset, true);
+  end.setUint16(20, 0, true);
+  return new Blob([...localParts, ...centralParts, new Uint8Array(end.buffer)], { type: 'application/zip' });
+}
+function dataUrlToBytes(dataUrl) {
+  const [meta, b64] = dataUrl.split(',');
+  const mime = (/data:([^;]+)/.exec(meta) || [])[1] || 'application/octet-stream';
+  const binary = atob(b64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return { bytes, mime };
+}
+function extFromMime(mime) {
+  if (mime.includes('png')) return 'png';
+  if (mime.includes('webp')) return 'webp';
+  if (mime.includes('jpeg') || mime.includes('jpg')) return 'jpg';
+  if (mime.includes('gif')) return 'gif';
+  if (mime.includes('svg')) return 'svg';
+  return 'bin';
+}
+function forEachItem(beatsObj, fn) {
+  Object.values(beatsObj).forEach((beat) => {
+    ['before', 'movement', 'after'].forEach((stateName) => {
+      (beat[stateName] && beat[stateName].items || []).forEach(fn);
     });
   });
-  const code = `// Generated by modak-flow-editor.html — paste into DEFAULT_FJ_LAYOUT\nconst DEFAULT_FJ_LAYOUT = ${JSON.stringify(out, null, 2)};`;
-  document.getElementById('exportOut').value = code;
-  return code;
 }
-
-/* =====================================================================
-   TOP BAR
-   ===================================================================== */
-document.getElementById('btnUndo').onclick = undo;
-document.getElementById('btnReloadDraft').onclick = () => {
-  if (!confirm('Discard current save and reload the bundled draft?')) return;
-  beatData = bundledDraft();
-  persist();
-  renderAll();
-  showToast('Reloaded from draft');
-};
-document.getElementById('btnExport').onclick = () => { exportGameCode(); showToast('Exported — see box below'); };
-document.getElementById('btnCopyExport').onclick = () => {
-  const code = exportGameCode();
-  navigator.clipboard?.writeText(code).then(() => showToast('Copied to clipboard')).catch(() => showToast('Copy failed — select manually'));
-};
-
-function showToast(msg) {
-  const t = document.createElement('div');
-  t.className = 'toast'; t.textContent = msg;
-  document.body.appendChild(t);
-  setTimeout(() => t.remove(), 1800);
+async function exportBundle() {
+  saveState();
+  await refreshUploadsCache();
+  const beatsOut = JSON.parse(JSON.stringify(data));
+  delete beatsOut.__v;
+  const usedUploadIds = new Set();
+  forEachItem(beatsOut, (item) => {
+    if (typeof item.path === 'string' && item.path.startsWith('upload://')) {
+      usedUploadIds.add(Number(item.path.slice('upload://'.length)));
+    }
+  });
+  const assetFiles = [];
+  const idToFilename = {};
+  usedUploadIds.forEach((id) => {
+    const upload = uploadsCache.find((u) => u.id === id);
+    if (!upload) return;
+    const { bytes, mime } = dataUrlToBytes(upload.path);
+    const filename = `assets/upload_${id}.${extFromMime(mime)}`;
+    idToFilename[id] = filename;
+    assetFiles.push({ name: filename, data: bytes });
+  });
+  forEachItem(beatsOut, (item) => {
+    if (typeof item.path === 'string' && item.path.startsWith('upload://')) {
+      const id = Number(item.path.slice('upload://'.length));
+      if (idToFilename[id]) item.path = idToFilename[id];
+    }
+  });
+  const jsonBytes = new TextEncoder().encode(
+    JSON.stringify({ version: 2, type: 'gmb-modak-visual-flow-v1', beats: beatsOut }, null, 2)
+  );
+  const zipBlob = buildZip([
+    { name: 'modak-game-visual-flow.json', data: jsonBytes },
+    ...assetFiles
+  ]);
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(zipBlob);
+  a.download = 'modak-game-visual-flow-bundle.zip';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  if (usedUploadIds.size && assetFiles.length < usedUploadIds.size) {
+    alert('Some placed uploads were not found in "Your uploads" (removed after being placed) — those items kept their upload:// reference and will need to be re-added by hand.');
+  }
 }
+exportBundleBtn.onclick = exportBundle;
 
-/* =====================================================================
-   BOOT
-   ===================================================================== */
-function renderAll() {
-  renderBeats();
-  renderStateTabs();
-  renderStage();
-  renderLibrary();
-  renderInspector();
-  renderLayers();
-  renderVoPanel();
+async function bootstrapData(){
+  await refreshUploadsCache();
+  try{
+    const saved=localStorage.getItem('gmb-modak-visual-flow-v1');
+    if(saved){
+      const parsed=JSON.parse(saved);
+      if(parsed && parsed.__v===SCHEMA_VERSION && Object.keys(parsed).length>0){ data=parsed; }
+    }
+  }catch{}
+  // Pre-create any seeded beat that doesn't exist yet — on a fresh load
+  // this fills in all 7 at once; on a returning session (existing saved
+  // work) it only adds the ones you haven't reached yet, never touching
+  // a beat you've already started designing.
+  if(!data[0])data[0]=JSON.parse(JSON.stringify(SEED_BEAT0_DATA));
+  SEED_BEAT_META.forEach((meta,i)=>{
+    if(!data[i])data[i]={meta:{...meta}};
+  });
+  loadState();
+  dataReady=true;
 }
-renderAll();
+bootstrapData();
 </script>
 </body>
 </html>
