@@ -874,9 +874,9 @@
           {
             "name": "bunny eat",
             "path": "upload://10",
-            "x": 51.86640765697404,
-            "y": 53.143418467583494,
-            "scale": 46,
+            "x": 51.67,
+            "y": 53.14,
+            "scale": 78,
             "rotation": 0,
             "opacity": 100,
             "flip": 1,
@@ -1030,20 +1030,6 @@
             "gameKey": "bowlItem"
           },
           {
-            "name": "bunny eat",
-            "path": "upload://10",
-            "x": 51.86640765697404,
-            "y": 53.143418467583494,
-            "scale": 46,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "bunnySprite"
-          },
-          {
             "name": "Need bubble \u2014 thirsty (water)",
             "path": "Bubbles/need_bubble_thirsty_water.png",
             "x": 44.99017696747315,
@@ -1186,20 +1172,6 @@
             "w": 24,
             "locked": 0,
             "gameKey": "bowlItem"
-          },
-          {
-            "name": "bunny eat",
-            "path": "upload://10",
-            "x": 51.86640765697404,
-            "y": 53.143418467583494,
-            "scale": 46,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "bunnySprite"
           },
           {
             "name": "Need bubble \u2014 thirsty (water)",
