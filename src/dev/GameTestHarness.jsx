@@ -78,7 +78,10 @@ const SCENES = {
   'sr-finale':   { label: 'Shloka River — Finale',       isScene: true, zoneId: 'shloka-river',    sceneId: 'shloka-river-finale', Comp: lazy(() => import('../zones/shloka-river/scenes/scene5/ShlokaRiverFinale')) },
   'cel-sm':      { label: 'Closing modal — Symbol Mtn',   isScene: true, zoneId: 'symbol-mountain', sceneId: 'modak',           Comp: lazy(() => import('./CelebrationPreview')) },
   'cel-sr':      { label: 'Closing modal — Shloka River', isScene: true, zoneId: 'shloka-river',    sceneId: 'vakratunda-grove', Comp: lazy(() => import('./CelebrationPreview')) },
-  'sm-modak':    { label: 'Symbol Mtn 1 — Modak',        isScene: true, zoneId: 'symbol-mountain', sceneId: 'modak',       Comp: lazy(() => import('../zones/symbol-mountain/scenes/modak/NewModakSceneV7')) },
+  'sm-modak':    { label: 'Symbol Mtn 1 — Modak (full, all 3 games)', isScene: true, zoneId: 'symbol-mountain', sceneId: 'modak', Comp: lazy(() => import('../zones/symbol-mountain/scenes/modak/NewModakSceneV7')) },
+  'sm-modak-game1': { label: 'Modak — Game 1: Mooshika',       isScene: true, zoneId: 'symbol-mountain', sceneId: 'modak', Comp: lazy(() => import('../zones/symbol-mountain/scenes/modak/NewModakSceneV7')), extraProps: { debugStartGame: 1 } },
+  'sm-modak-game2': { label: 'Modak — Game 2: Belly Feeding',  isScene: true, zoneId: 'symbol-mountain', sceneId: 'modak', Comp: lazy(() => import('../zones/symbol-mountain/scenes/modak/NewModakSceneV7')), extraProps: { debugStartGame: 2 } },
+  'sm-modak-game3': { label: 'Modak — Game 3: Modak',          isScene: true, zoneId: 'symbol-mountain', sceneId: 'modak', Comp: lazy(() => import('../zones/symbol-mountain/scenes/modak/NewModakSceneV7')), extraProps: { debugStartGame: 3 } },
   'sm-pond':     { label: 'Symbol Mtn 2 — Pond',         isScene: true, zoneId: 'symbol-mountain', sceneId: 'pond',        Comp: lazy(() => import('../zones/symbol-mountain/scenes/pond/PondSceneSimplifiedV4')) },
   'sm-symbol':   { label: 'Symbol Mtn 3 — Symbol',       isScene: true, zoneId: 'symbol-mountain', sceneId: 'symbol',      Comp: lazy(() => import('../zones/symbol-mountain/scenes/tusk/SymbolMountainSceneV3')) },
   'sm-final':    { label: 'Symbol Mtn 4 — Sacred Assembly', isScene: true, zoneId: 'symbol-mountain', sceneId: 'final-scene', Comp: lazy(() => import('../zones/symbol-mountain/scenes/final scene/SacredAssemblySceneV8')) },
@@ -385,6 +388,7 @@ export default function GameTestHarness() {
                 sceneId={entry.sceneId}
                 onNavigate={(dest) => setBanner(`scene → onNavigate(${dest}) — ignored`)}
                 onComplete={() => setBanner('✅ scene onComplete')}
+                {...(entry.extraProps || {})}
               />
             </Suspense>
           )}
