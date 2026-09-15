@@ -13,6 +13,14 @@ import './BeatPlayerGame.css';
  * everything else (layout math, cross-fading before/movement/after, timing,
  * VO) is handled once, here.
  *
+ * Per-item `activePath` (optional): a second pose that swaps in the instant
+ * the child starts touching that item — pressed-and-holding for press-hold,
+ * or mid-drag for any drag mechanic — instead of waiting for the gesture to
+ * resolve into the next state. `path` stays the item's resting/idle pose;
+ * `activePath` is what it becomes the moment they touch it. Skip it and the
+ * item just keeps showing `path` throughout, same as before this existed.
+ *
+
  * Interaction types (this is the fixed vocabulary a future editor "mechanic"
  * dropdown should write into beat.interaction.type — adding a new type here
  * is the only code change a new dropdown option needs):
@@ -490,6 +498,9 @@ function BeatPlayerGame({
     const controlY = midY + Math.min(14, Math.max(4, distance * 0.12));
     return `M ${x1} ${y1} Q ${controlX} ${controlY} ${x2} ${y2}`;
   };
+  // True the instant any hold/drag is in flight — only one can be at once.
+  const isInteracting = feedback === 'holding' || !!drag;
+
   let ropeCurrentEnd = null;
   if (isRopeDrag && interaction.fixedPoint) {
     if (drag?.gameKey === interaction.drag) {
@@ -514,12 +525,19 @@ function BeatPlayerGame({
       onPointerCancel={() => { setDrag(null); onDropPointerUp(); }}
     >
       {items.map((item, i) => {
-        const src = resolveSrc(item.path);
-        if (!src) return null;
         const isDragKey = interaction?.drag === item.gameKey;
         const isTargetKey = interaction?.target === item.gameKey;
         const isTriggerKey = isDragPath && interaction?.trigger === item.gameKey && !dropRevealed;
         const isBeingDragged = drag?.gameKey === item.gameKey;
+        // Optional per-item "active" pose (item.activePath) swaps in the instant
+        // ANY interaction starts — pressed-and-holding, or mid-drag — instead of
+        // waiting for the gesture to resolve into the next state. Not limited to
+        // the touched item itself: a bystander (e.g. the beaver reacting the
+        // moment the child grabs the log) can carry activePath too, since only
+        // one hold/drag can be in flight at once. Makes the scene feel
+        // responsive rather than a slideshow.
+        const src = resolveSrc(isInteracting && item.activePath ? item.activePath : item.path);
+        if (!src) return null;
         const style = isBeingDragged
           ? styleFromItem(item, { left: `${drag.x}%`, top: `${drag.y}%`, zIndex: 60 })
           : styleFromItem(item);
