@@ -8,6 +8,7 @@ import flowJson from './kurumedevaFlowSample.json';
 import bg from '../../../zones/shloka-river/scenes/Scene3/assets/images/nirvighnam/bg.png';
 import bridgeBroken from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Bridge/bridge-broken.webp';
 import shortLog from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Bridge/short-single-support-log.webp';
+import supportLogsPair from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Bridge/bridge-support-logs.webp';
 import monkeyPlayingTwig from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Characters/monkey-playing-twig.webp';
 import beaverIdleWorried from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Characters/beaver-idle-worried.webp';
 import beaverAsking from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Characters/beaver-asking.webp';
@@ -28,6 +29,7 @@ import plankUpload from './uploads/plank.webp';
 const ASSET_MAP = {
   'Bridge/bridge-broken.png': bridgeBroken,
   'Bridge/short-single-support-log.png': shortLog,
+  'Bridge/bridge-support-logs.png': supportLogsPair,
   'Bridge/rope-knot.png': ropeKnot,
   'Characters/monkey-playing-twig.png': monkeyPlayingTwig,
   'Characters/beaver-idle-worried.png': beaverIdleWorried,

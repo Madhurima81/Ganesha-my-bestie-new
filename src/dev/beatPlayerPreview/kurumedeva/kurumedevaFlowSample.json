@@ -76,8 +76,8 @@
             "gameKey": "elephantSprite"
           },
           {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
+            "name": "Support logs \u2014 pair",
+            "path": "Bridge/bridge-support-logs.png",
             "x": 28.610199670449916,
             "y": 66.93810412213287,
             "scale": 53,
@@ -88,20 +88,6 @@
             "w": 24,
             "locked": 0,
             "gameKey": "logPileItem"
-          },
-          {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
-            "x": 29.004336478267504,
-            "y": 64.58160976944218,
-            "scale": 53,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": ""
           }
         ],
         "notes": "",
@@ -191,8 +177,8 @@
             "gameKey": "elephantSprite"
           },
           {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
+            "name": "Support logs \u2014 pair",
+            "path": "Bridge/bridge-support-logs.png",
             "x": 28.610199670449916,
             "y": 66.93810412213287,
             "scale": 53,
@@ -203,20 +189,6 @@
             "w": 24,
             "locked": 0,
             "gameKey": "logPileItem"
-          },
-          {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
-            "x": 29.004336478267504,
-            "y": 64.58160976944218,
-            "scale": 53,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": ""
           }
         ],
         "notes": "",
@@ -306,8 +278,8 @@
             "gameKey": "elephantSprite"
           },
           {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
+            "name": "Support logs \u2014 pair",
+            "path": "Bridge/bridge-support-logs.png",
             "x": 28.610199670449916,
             "y": 66.93810412213287,
             "scale": 53,
@@ -318,20 +290,6 @@
             "w": 24,
             "locked": 0,
             "gameKey": "logPileItem"
-          },
-          {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
-            "x": 29.004336478267504,
-            "y": 64.58160976944218,
-            "scale": 53,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": ""
           }
         ],
         "notes": "",
@@ -431,8 +389,8 @@
             "gameKey": "elephantSprite"
           },
           {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
+            "name": "Support logs \u2014 pair",
+            "path": "Bridge/bridge-support-logs.png",
             "x": 28.610199670449916,
             "y": 66.93810412213287,
             "scale": 53,
@@ -443,20 +401,6 @@
             "w": 24,
             "locked": 0,
             "gameKey": "logPileItem"
-          },
-          {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
-            "x": 29.004336478267504,
-            "y": 64.58160976944218,
-            "scale": 53,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": ""
           }
         ],
         "notes": "",
@@ -533,34 +477,6 @@
             "gameKey": "elephantSprite"
           },
           {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
-            "x": 28.610199670449916,
-            "y": 66.93810412213287,
-            "scale": 53,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "logPileItem"
-          },
-          {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
-            "x": 29.004336478267504,
-            "y": 64.58160976944218,
-            "scale": 53,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": ""
-          },
-          {
             "name": "beaver lift new",
             "path": "assets/upload_1.png",
             "x": 19.81541139683428,
@@ -573,6 +489,20 @@
             "w": 24,
             "locked": 0,
             "gameKey": "beaverSprite"
+          },
+          {
+            "name": "Support logs \u2014 pair",
+            "path": "Bridge/bridge-support-logs.png",
+            "x": 28.610199670449916,
+            "y": 66.93810412213287,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "logPileItem"
           }
         ],
         "notes": "",
@@ -663,34 +593,6 @@
             "gameKey": "elephantSprite"
           },
           {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
-            "x": 28.610199670449916,
-            "y": 66.93810412213287,
-            "scale": 53,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "logPileItem"
-          },
-          {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
-            "x": 29.004336478267504,
-            "y": 64.58160976944218,
-            "scale": 53,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": ""
-          },
-          {
             "name": "Help bubble \u2014 elephant/logs",
             "path": "Characters/help-bubble-elephant-logs.png",
             "x": 22.0,
@@ -703,6 +605,20 @@
             "w": 24,
             "locked": 0,
             "gameKey": "helpBubbleLogs"
+          },
+          {
+            "name": "Support logs \u2014 pair",
+            "path": "Bridge/bridge-support-logs.png",
+            "x": 28.610199670449916,
+            "y": 66.93810412213287,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "logPileItem"
           }
         ],
         "notes": "",
@@ -1146,8 +1062,8 @@
             "activePath": "assets/upload_2.png"
           },
           {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
+            "name": "Support logs \u2014 pair",
+            "path": "Bridge/bridge-support-logs.png",
             "x": 28.610199670449916,
             "y": 66.93810412213287,
             "scale": 53,
@@ -1158,20 +1074,6 @@
             "w": 24,
             "locked": 0,
             "gameKey": "logPileItem"
-          },
-          {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
-            "x": 29.004336478267504,
-            "y": 64.58160976944218,
-            "scale": 53,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": ""
           }
         ],
         "notes": "",
@@ -1234,34 +1136,6 @@
             "gameKey": "babyBeaverSprite"
           },
           {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
-            "x": 28.610199670449916,
-            "y": 66.93810412213287,
-            "scale": 53,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "logPileItem"
-          },
-          {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
-            "x": 29.004336478267504,
-            "y": 64.58160976944218,
-            "scale": 53,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": ""
-          },
-          {
             "name": "elephant lift",
             "path": "assets/upload_2.png",
             "x": 21.118347963215086,
@@ -1288,6 +1162,20 @@
             "w": 24,
             "locked": 0,
             "gameKey": "beaverSprite"
+          },
+          {
+            "name": "Support logs \u2014 pair",
+            "path": "Bridge/bridge-support-logs.png",
+            "x": 28.610199670449916,
+            "y": 66.93810412213287,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "logPileItem"
           }
         ],
         "notes": "",
@@ -1350,34 +1238,6 @@
             "gameKey": "babyBeaverSprite"
           },
           {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
-            "x": 58.57762638054764,
-            "y": 72.00505591111903,
-            "scale": 53,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": "logPileItem"
-          },
-          {
-            "name": "Support log \u2014 pile/short",
-            "path": "Bridge/short-single-support-log.png",
-            "x": 59.406077033922024,
-            "y": 68.63517915309446,
-            "scale": 53,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": ""
-          },
-          {
             "name": "elephant lift",
             "path": "assets/upload_2.png",
             "x": 21.118347963215086,
@@ -1404,6 +1264,20 @@
             "w": 24,
             "locked": 0,
             "gameKey": "beaverSprite"
+          },
+          {
+            "name": "Support logs \u2014 pair",
+            "path": "Bridge/bridge-support-logs.png",
+            "x": 58.57762638054764,
+            "y": 72.00505591111903,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "logPileItem"
           }
         ],
         "notes": "",

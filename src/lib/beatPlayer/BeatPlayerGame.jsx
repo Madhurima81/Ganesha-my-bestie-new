@@ -570,6 +570,25 @@ function BeatPlayerGame({
   // and failThenAdvance's setTimeout actually calling completeInteraction.
   const isInteracting = feedback === 'holding' || feedback === 'wrong' || !!drag;
 
+  // Ghost preview of the drop target while a plain drag-drop is in flight —
+  // a translucent copy of the dragged item's own art sitting at its actual
+  // destination, so the child sees exactly where to align it instead of
+  // dropping roughly nearby and watching it snap somewhere else.
+  let dropGhost = null;
+  if (drag && interaction?.type === 'drag-drop') {
+    const draggedItem = findItem(interaction.drag);
+    if (draggedItem) {
+      let ghostPos = null;
+      if (typeof interaction.target === 'string') {
+        const targetItem = findItem(interaction.target);
+        if (targetItem) ghostPos = { x: targetItem.x, y: targetItem.y };
+      } else if (interaction.target) {
+        ghostPos = { x: interaction.target.x, y: interaction.target.y };
+      }
+      if (ghostPos) dropGhost = { item: draggedItem, pos: ghostPos };
+    }
+  }
+
   let ropeCurrentEnd = null;
   if (isRopeDrag && interaction.fixedPoint) {
     if (drag?.gameKey === interaction.drag) {
@@ -593,6 +612,20 @@ function BeatPlayerGame({
       onPointerUp={(e) => { onPointerUp(e); onDropPointerUp(); }}
       onPointerCancel={() => { setDrag(null); onDropPointerUp(); }}
     >
+      {dropGhost && (() => {
+        const src = resolveSrc(dropGhost.item.path);
+        if (!src) return null;
+        return (
+          <div
+            className="beat-player-drop-ghost"
+            aria-hidden="true"
+            style={styleFromItem({ ...dropGhost.item, x: dropGhost.pos.x, y: dropGhost.pos.y }, { zIndex: 5 })}
+          >
+            <img src={src} alt="" draggable={false} />
+          </div>
+        );
+      })()}
+
       {items.map((item, i) => {
         const isDragKey = interaction?.drag === item.gameKey;
         const isTargetKey = interaction?.target === item.gameKey;

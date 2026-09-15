@@ -115,6 +115,26 @@
   pointer-events: none;
 }
 
+/* Translucent preview of where a dragged item will land — shown at the
+   drop target while dragging, so the destination is obvious instead of
+   the item just snapping there after release. */
+.beat-player-drop-ghost {
+  pointer-events: none;
+  animation: beatPlayerGhostPulse 1.2s ease-in-out infinite;
+}
+
+.beat-player-drop-ghost img {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: brightness(1.4) saturate(0.6);
+}
+
+@keyframes beatPlayerGhostPulse {
+  0%, 100% { opacity: 0.28; }
+  50% { opacity: 0.5; }
+}
+
 @keyframes beatPlayerDropPulse {
   0%, 100% { transform: translate(-50%, -50%) scale(1); }
   50% { transform: translate(-50%, -50%) scale(1.08); }
