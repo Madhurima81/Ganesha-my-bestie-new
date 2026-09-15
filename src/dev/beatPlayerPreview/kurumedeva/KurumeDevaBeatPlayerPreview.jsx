@@ -31,10 +31,26 @@ const ASSET_MAP = {
 };
 
 function KurumeDevaBeatPlayerPreview(props) {
+  const [isAudioOn, setIsAudioOn] = React.useState(true);
+
   return (
     <div style={{ position: 'relative', width: '100%', aspectRatio: '4 / 3', overflow: 'hidden', background: '#333' }}>
       <img src={bg} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
-      <BeatPlayerGame {...props} flowJson={flowJson} assetMap={ASSET_MAP} />
+      <button
+        type="button"
+        onClick={() => setIsAudioOn((v) => !v)}
+        style={{
+          position: 'absolute', top: 10, right: 10, zIndex: 100,
+          width: 44, height: 44, borderRadius: '50%', border: 'none',
+          background: 'rgba(0,0,0,0.55)', color: '#fff', fontSize: 20,
+          cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}
+        aria-label={isAudioOn ? 'Mute' : 'Unmute'}
+        title={isAudioOn ? 'Mute' : 'Unmute'}
+      >
+        {isAudioOn ? '🔊' : '🔇'}
+      </button>
+      <BeatPlayerGame {...props} flowJson={flowJson} assetMap={ASSET_MAP} isAudioOn={isAudioOn} />
     </div>
   );
 }
