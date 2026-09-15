@@ -101,7 +101,7 @@
             "z": 10,
             "w": 24,
             "locked": 0,
-            "gameKey": "logPileItem"
+            "gameKey": ""
           }
         ],
         "notes": "",
@@ -110,7 +110,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "",
+          "voText": "The bridge is broken, and the little beaver on the other side is waiting to come home.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -216,7 +216,7 @@
             "z": 10,
             "w": 24,
             "locked": 0,
-            "gameKey": "logPileItem"
+            "gameKey": ""
           }
         ],
         "notes": "",
@@ -331,7 +331,7 @@
             "z": 10,
             "w": 24,
             "locked": 0,
-            "gameKey": "logPileItem"
+            "gameKey": ""
           }
         ],
         "notes": "",
@@ -455,7 +455,7 @@
             "z": 10,
             "w": 24,
             "locked": 0,
-            "gameKey": "logPileItem"
+            "gameKey": ""
           }
         ],
         "notes": "",
@@ -464,7 +464,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "",
+          "voText": "Beaver tries to push a log into place... but it won't budge.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -557,7 +557,7 @@
             "z": 10,
             "w": 24,
             "locked": 0,
-            "gameKey": "logPileItem"
+            "gameKey": ""
           },
           {
             "name": "beaver lift new",
@@ -681,7 +681,7 @@
             "z": 10,
             "w": 24,
             "locked": 0,
-            "gameKey": "logPileItem"
+            "gameKey": ""
           },
           {
             "name": "Beaver \u2014 asking",
@@ -726,7 +726,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "",
+          "voText": "It's too heavy to move alone.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -835,7 +835,7 @@
             "z": 10,
             "w": 24,
             "locked": 0,
-            "gameKey": "logPileItem"
+            "gameKey": ""
           },
           {
             "name": "Beaver \u2014 asking",
@@ -872,7 +872,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "",
+          "voText": "Luckily, Elephant is strong. He comes over to help.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -951,7 +951,7 @@
             "z": 10,
             "w": 24,
             "locked": 0,
-            "gameKey": "logPileItem"
+            "gameKey": ""
           },
           {
             "name": "elephant lift",
@@ -1067,7 +1067,7 @@
             "z": 10,
             "w": 24,
             "locked": 0,
-            "gameKey": "logPileItem"
+            "gameKey": ""
           },
           {
             "name": "elephant lift",
@@ -1104,7 +1104,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "",
+          "voText": "Together, they push the log into place. The bridge is getting stronger.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
