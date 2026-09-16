@@ -1466,7 +1466,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "Take Beaver's help bubble to Elephant.",
+          "voText": "Who can Beaver ask for help?",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -3419,7 +3419,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "Take Beaver's help bubble to Monkey.",
+          "voText": "Who can Beaver ask for help?",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
