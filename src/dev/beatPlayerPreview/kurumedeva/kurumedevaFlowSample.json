@@ -2766,20 +2766,6 @@
             "gameKey": "elephantSprite"
           },
           {
-            "name": "log tie",
-            "path": "assets/upload_6.png",
-            "x": 58.14333241614923,
-            "y": 71.13644810116382,
-            "scale": 68,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": ""
-          },
-          {
             "name": "Beaver \u2014 idle worried",
             "path": "Characters/beaver-idle-worried.png",
             "x": 29.804555290296722,
@@ -2792,34 +2778,6 @@
             "w": 24,
             "locked": 0,
             "gameKey": "beaverSprite"
-          },
-          {
-            "name": "plank",
-            "path": "assets/upload_7.png",
-            "x": 17.31812915118587,
-            "y": 72.29461172892915,
-            "scale": 44,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": ""
-          },
-          {
-            "name": "plank",
-            "path": "assets/upload_7.png",
-            "x": 19.44950643036187,
-            "y": 73.70213094208061,
-            "scale": 44,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": ""
           },
           {
             "name": "Rope knot",
