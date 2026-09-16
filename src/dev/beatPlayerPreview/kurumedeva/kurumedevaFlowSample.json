@@ -730,7 +730,7 @@
             "path": "Bridge/rope-knot.png",
             "scale": 32,
             "rotation": 0,
-            "opacity": 100,
+            "opacity": 0,
             "flip": 1,
             "z": 12,
             "w": 24,
@@ -738,6 +738,20 @@
             "gameKey": "ropeItem",
             "x": 48.0,
             "y": 63.0
+          },
+          {
+            "name": "Support logs \u2014 pair",
+            "path": "Bridge/logs-bare.png",
+            "x": 58.57762638054764,
+            "y": 72.00505591111903,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 9,
+            "w": 24,
+            "locked": 0,
+            "gameKey": ""
           }
         ],
         "notes": "",
@@ -832,7 +846,7 @@
             "path": "Bridge/rope-knot.png",
             "scale": 32,
             "rotation": 0,
-            "opacity": 100,
+            "opacity": 0,
             "flip": 1,
             "z": 12,
             "w": 24,
@@ -840,6 +854,20 @@
             "gameKey": "ropeItem",
             "x": 48.0,
             "y": 63.0
+          },
+          {
+            "name": "Support logs \u2014 pair",
+            "path": "Bridge/logs-bare.png",
+            "x": 58.57762638054764,
+            "y": 72.00505591111903,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 9,
+            "w": 24,
+            "locked": 0,
+            "gameKey": ""
           }
         ],
         "notes": "",
@@ -948,7 +976,7 @@
             "path": "Bridge/rope-knot.png",
             "scale": 32,
             "rotation": 0,
-            "opacity": 100,
+            "opacity": 0,
             "flip": 1,
             "z": 12,
             "w": 24,
@@ -956,6 +984,20 @@
             "gameKey": "ropeItem",
             "x": 48.0,
             "y": 63.0
+          },
+          {
+            "name": "Support logs \u2014 pair",
+            "path": "Bridge/logs-bare.png",
+            "x": 58.57762638054764,
+            "y": 72.00505591111903,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 9,
+            "w": 24,
+            "locked": 0,
+            "gameKey": ""
           }
         ],
         "notes": "",
@@ -2566,7 +2608,7 @@
             "path": "Bridge/rope-knot.png",
             "scale": 32,
             "rotation": 0,
-            "opacity": 100,
+            "opacity": 0,
             "flip": 1,
             "z": 12,
             "w": 24,
@@ -2574,6 +2616,20 @@
             "gameKey": "ropeItem",
             "x": 48.0,
             "y": 63.0
+          },
+          {
+            "name": "Support logs \u2014 pair",
+            "path": "Bridge/logs-bare.png",
+            "x": 58.57762638054764,
+            "y": 72.00505591111903,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 9,
+            "w": 24,
+            "locked": 0,
+            "gameKey": ""
           }
         ],
         "notes": "",
@@ -2682,7 +2738,7 @@
             "path": "Bridge/rope-knot.png",
             "scale": 32,
             "rotation": 0,
-            "opacity": 100,
+            "opacity": 0,
             "flip": 1,
             "z": 12,
             "w": 24,
@@ -2690,6 +2746,20 @@
             "gameKey": "ropeItem",
             "x": 48.0,
             "y": 63.0
+          },
+          {
+            "name": "Support logs \u2014 pair",
+            "path": "Bridge/logs-bare.png",
+            "x": 58.57762638054764,
+            "y": 72.00505591111903,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 9,
+            "w": 24,
+            "locked": 0,
+            "gameKey": ""
           }
         ],
         "notes": "",
@@ -2784,7 +2854,7 @@
             "path": "Bridge/rope-knot.png",
             "scale": 32,
             "rotation": 0,
-            "opacity": 100,
+            "opacity": 0,
             "flip": 1,
             "z": 12,
             "w": 24,
@@ -2792,6 +2862,20 @@
             "gameKey": "ropeItem",
             "x": 58.0,
             "y": 58.0
+          },
+          {
+            "name": "Support logs \u2014 pair",
+            "path": "Bridge/logs-bare.png",
+            "x": 58.57762638054764,
+            "y": 72.00505591111903,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 9,
+            "w": 24,
+            "locked": 0,
+            "gameKey": ""
           }
         ],
         "notes": "",
@@ -2901,7 +2985,7 @@
             "path": "Bridge/rope-knot.png",
             "scale": 32,
             "rotation": 0,
-            "opacity": 100,
+            "opacity": 0,
             "flip": 1,
             "z": 12,
             "w": 24,
@@ -2923,6 +3007,20 @@
             "w": 24,
             "locked": 0,
             "gameKey": "helpBubbleKnot"
+          },
+          {
+            "name": "Support logs \u2014 pair",
+            "path": "Bridge/logs-bare.png",
+            "x": 58.57762638054764,
+            "y": 72.00505591111903,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 9,
+            "w": 24,
+            "locked": 0,
+            "gameKey": ""
           }
         ],
         "notes": "",
@@ -3016,7 +3114,7 @@
             "path": "Bridge/rope-knot.png",
             "scale": 32,
             "rotation": 0,
-            "opacity": 100,
+            "opacity": 0,
             "flip": 1,
             "z": 12,
             "w": 24,
@@ -3024,6 +3122,20 @@
             "gameKey": "ropeItem",
             "x": 48.0,
             "y": 63.0
+          },
+          {
+            "name": "Support logs \u2014 pair",
+            "path": "Bridge/logs-bare.png",
+            "x": 58.57762638054764,
+            "y": 72.00505591111903,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 9,
+            "w": 24,
+            "locked": 0,
+            "gameKey": ""
           }
         ],
         "notes": "",
@@ -3117,7 +3229,7 @@
             "path": "Bridge/rope-knot.png",
             "scale": 32,
             "rotation": 0,
-            "opacity": 100,
+            "opacity": 0,
             "flip": 1,
             "z": 12,
             "w": 24,
@@ -3125,6 +3237,20 @@
             "gameKey": "ropeItem",
             "x": 48.0,
             "y": 63.0
+          },
+          {
+            "name": "Support logs \u2014 pair",
+            "path": "Bridge/logs-bare.png",
+            "x": 58.57762638054764,
+            "y": 72.00505591111903,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 9,
+            "w": 24,
+            "locked": 0,
+            "gameKey": ""
           }
         ],
         "notes": "",
