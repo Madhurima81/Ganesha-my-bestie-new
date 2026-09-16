@@ -54,6 +54,7 @@ const ASSET_MAP = {
 
 function KurumeDevaBeatPlayerPreview(props) {
   const [isAudioOn, setIsAudioOn] = React.useState(true);
+  const [layoutDebug, setLayoutDebug] = React.useState(false);
 
   return (
     <div style={{ position: 'relative', width: '100%', aspectRatio: '4 / 3', overflow: 'hidden', background: '#333' }}>
@@ -72,11 +73,25 @@ function KurumeDevaBeatPlayerPreview(props) {
       >
         {isAudioOn ? '🔊' : '🔇'}
       </button>
+      <button
+        type="button"
+        onClick={() => setLayoutDebug((v) => !v)}
+        style={{
+          position: 'absolute', top: 10, right: 62, zIndex: 100,
+          height: 44, borderRadius: 22, border: 'none', padding: '0 14px',
+          background: layoutDebug ? '#03A9F4' : 'rgba(0,0,0,0.55)', color: '#fff', fontSize: 13,
+          fontFamily: 'Nunito, sans-serif', cursor: 'pointer',
+        }}
+        title="Toggle Layout Debug — drag elements, edit exact position/scale, copy JSON"
+      >
+        {layoutDebug ? '📐 layout on' : '📐 layout'}
+      </button>
       <BeatPlayerGame
         {...props}
         flowJson={flowJson}
         assetMap={ASSET_MAP}
         isAudioOn={isAudioOn}
+        layoutDebug={layoutDebug}
         movementMs={1000}
         reactionPauseMs={900}
       />
