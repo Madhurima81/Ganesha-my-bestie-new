@@ -28,6 +28,48 @@
 }
 .mg2-hud-phase { color: #ffd700; }
 
+.mg2-mute-btn {
+  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.mg2-mute-btn--floating {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 50;
+  width: 34px;
+  height: 34px;
+  background: rgba(0, 0, 0, 0.55);
+  font-size: 16px;
+}
+
+/* ---------------------------------------------------------
+   PROGRESSIVE REVEAL — objects fade/settle in once revealed,
+   then stay fully visible (not greyed out) as "complete" scenery.
+   --------------------------------------------------------- */
+.mg2-bush-area, .mg2-tree-area, .mg2-marsh-area {
+  animation: mg2ChallengeReveal 420ms ease-out both;
+}
+@keyframes mg2ChallengeReveal {
+  from { opacity: 0; transform: translateY(8px) scale(.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.mg2-tree-area.is-complete .mg2-branch,
+.mg2-bush-area.is-complete .mg2-bush,
+.mg2-marsh-area.is-complete .mg2-marsh-mooshika {
+  pointer-events: none;
+}
+
 /* ---------------------------------------------------------
    SHARED EMOTION BUBBLE
    --------------------------------------------------------- */
@@ -88,7 +130,6 @@
   pointer-events: none;
 }
 .mg2-bush-flowers img { width: 42%; height: auto; }
-.mg2-emotion--bush { right: -9%; top: -12%; }
 
 /* ---------------------------------------------------------
    2 — TREE + BRANCH
@@ -119,24 +160,28 @@
 .mg2-branch-flower--1 { left: 58%; top: 26%; }
 .mg2-branch-flower--2 { left: 79%; top: 39%; }
 
-.mg2-branch-mooshika {
+/* ---------------------------------------------------------
+   SHARED WALKING MOOSHIKA (Bush + Branch phases) — moves between
+   fixed spots via CSS transition instead of jump-cutting.
+   --------------------------------------------------------- */
+.mg2-mooshika-shared {
   position: absolute;
-  left: 70%;
-  top: 61%;
-  width: clamp(100px, 9vw, 145px);
   transform: translate(-50%, -50%);
-  pointer-events: none;
-  z-index: 16;
+  z-index: 20;
+  transition: left 650ms ease, top 650ms ease;
 }
-.mg2-branch-mooshika img { width: 100%; height: auto; }
-.mg2-branch-mooshika--failed { animation: mg2ReachFail 800ms ease-out; }
+.mg2-mooshika-shared--failed { animation: mg2ReachFail 800ms ease-out; }
 @keyframes mg2ReachFail {
   0%, 100% { transform: translate(-50%, -50%); }
   30% { transform: translate(-50%, -58%) rotate(-3deg); }
   52% { transform: translate(-50%, -60%) rotate(3deg); }
   75% { transform: translate(-50%, -50%); }
 }
-.mg2-emotion--branch { left: 74%; top: 53%; }
+
+/* Emotion bubble anchored to whichever Mooshika wrapper it's inside —
+   always reads as "this is how Mooshika feels right now", never floats
+   off near the mountain. */
+.mg2-emotion--anchored { right: -22%; top: -38%; }
 
 /* ---------------------------------------------------------
    3 — MUD / MARSH

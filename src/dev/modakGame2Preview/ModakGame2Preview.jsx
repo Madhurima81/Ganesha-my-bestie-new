@@ -52,11 +52,13 @@ const MARSH_STOPS = [
 // ---------------------------------------------------------------------
 const LAYOUT_STORAGE_KEY = 'modakGame2PreviewLayout';
 const LAYOUT_DEFAULTS = {
-  bush: { l: 25, t: 49 },
-  tree: { l: 78, t: 40 },
+  bush: { l: 25, t: 48 },
+  tree: { l: 80, t: 41 },
   branch: { l: 82, t: 53 },
-  marsh: { l: 50, t: 31 },
-  idleMooshika: { l: 12, t: 68 },
+  marsh: { l: 61, t: 35 },
+  mooshikaBush: { l: 17, t: 61 },
+  mooshikaBranch: { l: 68, t: 57 },
+  mooshikaBelly: { l: 50, t: 56 },
   marshStart: { l: MARSH_START.x, t: MARSH_START.y },
   marshStop1: { l: MARSH_STOPS[0].x, t: MARSH_STOPS[0].y },
   marshStop2: { l: MARSH_STOPS[1].x, t: MARSH_STOPS[1].y },
@@ -65,7 +67,9 @@ const LAYOUT_DEFAULTS = {
 };
 const LAYOUT_LABELS = {
   bush: 'Bush', tree: 'Tree', branch: 'Branch', marsh: 'Marsh area',
-  idleMooshika: 'Idle Mooshika (bush phase)',
+  mooshikaBush: 'Mooshika (bush phase)',
+  mooshikaBranch: 'Mooshika (branch phase)',
+  mooshikaBelly: 'Mooshika (belly phase)',
   marshStart: 'Marsh start', marshStop1: 'Marsh stone 1', marshStop2: 'Marsh stone 2',
   marshStop3: 'Marsh stone 3', marshStop4: 'Marsh stone 4',
 };
@@ -101,8 +105,10 @@ const VO = {
   bellyMeaning: "Ganesha's big belly reminds us — there's room for every feeling.",
 };
 
+let VO_MUTED = false;
 function speak(text) {
   try {
+    if (VO_MUTED) return;
     if (typeof window === 'undefined' || !window.speechSynthesis) return;
     window.speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
@@ -142,6 +148,10 @@ export default function ModakGame2Preview({ isActive = true, isPaused = false, h
 
   // ---- belly recognition ----
   const [bellyBeat, setBellyBeat] = useState(0);
+
+  // ---- mute ----
+  const [muted, setMuted] = useState(false);
+  useEffect(() => { VO_MUTED = muted; }, [muted]);
 
   // ---- layout debug ----
   const [debugMode, setDebugMode] = useState(false);
@@ -452,7 +462,26 @@ export default function ModakGame2Preview({ isActive = true, isPaused = false, h
 
   if (!isActive) return null;
 
-  const bushBranchMarshVisible = phase === PHASES.FLOWER_BUSH || phase === PHASES.FLOWER_BRANCH || phase === PHASES.FLOWER_MARSH || phase === PHASES.BELLY_RECOGNITION;
+  const isBushPhase = phase === PHASES.FLOWER_BUSH;
+  const isBranchPhase = phase === PHASES.FLOWER_BRANCH;
+  const isMarshPhase = phase === PHASES.FLOWER_MARSH;
+  const isBellyPhase = phase === PHASES.BELLY_RECOGNITION;
+  const isDonePhase = phase === PHASES.DONE;
+
+  // Progressive reveal: once shown, an object stays as completed scenery
+  // instead of unmounting — so the world visibly builds up (Bush alone ->
+  // Bush+Tree -> Bush+Tree+Marsh -> all three as backdrop for Belly).
+  const showBush = !isDonePhase;
+  const showTree = isBranchPhase || isMarshPhase || isBellyPhase;
+  const showMarsh = isMarshPhase || isBellyPhase;
+  const bushSceneryComplete = showBush && !isBushPhase;
+  const treeSceneryComplete = showTree && !isBranchPhase;
+  const marshSceneryComplete = showMarsh && !isMarshPhase;
+
+  // The shared, walking Mooshika — used for Bush and Branch (Marsh has its
+  // own draggable sprite; Belly Recognition renders its own too).
+  const mooshikaPhaseKey = isBushPhase ? 'mooshikaBush' : isBranchPhase ? 'mooshikaBranch' : null;
+  const showSharedMooshika = !!mooshikaPhaseKey;
 
   return (
     <div
@@ -464,30 +493,37 @@ export default function ModakGame2Preview({ isActive = true, isPaused = false, h
       onPointerCancel={debugMode ? endLayoutDrag : undefined}
     >
 
-      {!hideElements && phase !== PHASES.BELLY_RECOGNITION && phase !== PHASES.DONE && (
+      {!hideElements && !isBellyPhase && !isDonePhase && (
         <div className="mg2-hud">
           <span>Flowers: {flowerCount} / 6</span>
           <span className="mg2-hud-phase">{phase.replace('flower_', '').toUpperCase()}</span>
+          <button type="button" className="mg2-mute-btn" onClick={() => setMuted((v) => !v)} aria-label={muted ? 'Unmute' : 'Mute'} title={muted ? 'Unmute' : 'Mute'}>
+            {muted ? '🔇' : '🔊'}
+          </button>
         </div>
+      )}
+      {(isBellyPhase || isDonePhase) && (
+        <button type="button" className="mg2-mute-btn mg2-mute-btn--floating" onClick={() => setMuted((v) => !v)} aria-label={muted ? 'Unmute' : 'Mute'} title={muted ? 'Unmute' : 'Mute'}>
+          {muted ? '🔇' : '🔊'}
+        </button>
       )}
 
       {/* ---------------- BUSH ---------------- */}
-      {bushBranchMarshVisible && (
-        <div className="mg2-bush-area" style={{ left: `${layout.bush.l}%`, top: `${layout.bush.t}%` }}>
+      {showBush && (
+        <div
+          className={`mg2-bush-area ${isBushPhase ? 'is-active' : ''} ${bushSceneryComplete ? 'is-complete' : ''}`}
+          style={{ left: `${layout.bush.l}%`, top: `${layout.bush.t}%` }}
+        >
           <button
             type="button"
             className={`mg2-bush ${bushSpringing ? 'mg2-bush--springing' : ''} ${bushOpenState ? 'mg2-bush--open' : ''}`}
-            onPointerDown={handleBushPointerDown}
-            onPointerUp={handleBushPointerUp}
+            onPointerDown={isBushPhase ? handleBushPointerDown : undefined}
+            onPointerUp={isBushPhase ? handleBushPointerUp : undefined}
             onPointerCancel={() => { bushSwipeStartRef.current = null; }}
-            disabled={phase !== PHASES.FLOWER_BUSH}
+            disabled={!isBushPhase}
           >
             <img src={bushOpenState ? bushOpen : bushClosed} alt="" />
           </button>
-
-          {phase === PHASES.FLOWER_BUSH && emotion === 'angry' && (
-            <img src={emotionAngry} alt="Frustrated" className="mg2-emotion mg2-emotion--bush" />
-          )}
 
           {bushOpenState && flowerCount < 2 && (
             <div className="mg2-bush-flowers">
@@ -499,19 +535,19 @@ export default function ModakGame2Preview({ isActive = true, isPaused = false, h
       )}
 
       {/* ---------------- BRANCH / TREE ---------------- */}
-      {(phase === PHASES.FLOWER_BRANCH || phase === PHASES.FLOWER_MARSH || phase === PHASES.BELLY_RECOGNITION) && (
-        <div className="mg2-tree-area">
+      {showTree && (
+        <div className={`mg2-tree-area ${isBranchPhase ? 'is-active' : ''} ${treeSceneryComplete ? 'is-complete' : ''}`}>
           <img src={treeArt} alt="" className="mg2-tree" style={{ left: `${layout.tree.l}%`, top: `${layout.tree.t}%` }} />
 
           <button
             type="button"
             className="mg2-branch"
-            style={{ '--pull': branchPull, left: `${layout.branch.l}%`, top: `${layout.branch.t}%` }}
-            onPointerDown={handleBranchPointerDown}
-            onPointerMove={handleBranchPointerMove}
-            onPointerUp={handleBranchPointerEnd}
-            onPointerCancel={handleBranchPointerEnd}
-            disabled={phase !== PHASES.FLOWER_BRANCH}
+            style={{ '--pull': branchComplete ? 1 : branchPull, left: `${layout.branch.l}%`, top: `${layout.branch.t}%` }}
+            onPointerDown={isBranchPhase ? handleBranchPointerDown : undefined}
+            onPointerMove={isBranchPhase ? handleBranchPointerMove : undefined}
+            onPointerUp={isBranchPhase ? handleBranchPointerEnd : undefined}
+            onPointerCancel={isBranchPhase ? handleBranchPointerEnd : undefined}
+            disabled={!isBranchPhase}
           >
             <img src={branchArt} alt="" />
             {!branchComplete && flowerCount < 4 && (
@@ -521,28 +557,22 @@ export default function ModakGame2Preview({ isActive = true, isPaused = false, h
               </>
             )}
           </button>
-
-          {phase === PHASES.FLOWER_BRANCH && (
-            <div className={`mg2-branch-mooshika ${branchIntroFailed ? 'mg2-branch-mooshika--failed' : ''}`}>
-              <MooshikaWithBasket flowerCount={flowerCount} basketRef={basketTargetRef} />
-            </div>
-          )}
-
-          {phase === PHASES.FLOWER_BRANCH && emotion === 'sad' && (
-            <img src={emotionSad} alt="Disappointed" className="mg2-emotion mg2-emotion--branch" />
-          )}
         </div>
       )}
 
       {/* ---------------- MARSH ---------------- */}
-      {(phase === PHASES.FLOWER_MARSH || phase === PHASES.BELLY_RECOGNITION) && (
-        <div ref={marshRef} className="mg2-marsh-area" style={{ left: `${layout.marsh.l}%`, top: `${layout.marsh.t}%` }}>
+      {showMarsh && (
+        <div
+          ref={marshRef}
+          className={`mg2-marsh-area ${isMarshPhase ? 'is-active' : ''} ${marshSceneryComplete ? 'is-complete' : ''}`}
+          style={{ left: `${layout.marsh.l}%`, top: `${layout.marsh.t}%` }}
+        >
           <img src={marshArt} alt="" className="mg2-marsh" />
 
           {flowerCount < 5 && <img ref={marshFlowerOneRef} src={flowerPink} alt="" className="mg2-marsh-flower mg2-marsh-flower--1" />}
           {flowerCount < 6 && <img ref={marshFlowerTwoRef} src={flowerCream} alt="" className="mg2-marsh-flower mg2-marsh-flower--2" />}
 
-          {phase === PHASES.FLOWER_MARSH && (() => {
+          {isMarshPhase && (() => {
             const safePosition = getCurrentMarshPosition();
             const position = marshDrag.active ? marshDrag : safePosition;
             return (
@@ -556,21 +586,30 @@ export default function ModakGame2Preview({ isActive = true, isPaused = false, h
                 onPointerCancel={handleMarshPointerEnd}
               >
                 <MooshikaWithBasket flowerCount={flowerCount} basketRef={basketTargetRef} />
+                {emotion === 'worried' && (
+                  <img src={emotionWorried} alt="Worried" className="mg2-emotion mg2-emotion--anchored" />
+                )}
               </button>
             );
           })()}
-
-          {phase === PHASES.FLOWER_MARSH && emotion === 'worried' && (
-            <img src={emotionWorried} alt="Worried" className="mg2-emotion mg2-emotion--marsh" />
-          )}
         </div>
       )}
 
-      {/* ---------------- Mooshika + basket (bush phase has no acting sprite of
-          its own yet, so this is the only Mooshika shown there) ---------------- */}
-      {(phase === PHASES.FLOWER_BUSH) && (
-        <div className="mg2-mooshika-idle" style={{ left: `${layout.idleMooshika.l}%`, top: `${layout.idleMooshika.t}%` }}>
+      {/* ---------------- Shared Mooshika (Bush + Branch phases) — walks
+          between fixed spots instead of standing in one corner all game.
+          Emotion bubbles live right on it, not floating off in the scenery. ---------------- */}
+      {showSharedMooshika && (
+        <div
+          className={`mg2-mooshika-shared ${branchIntroFailed && isBranchPhase ? 'mg2-mooshika-shared--failed' : ''}`}
+          style={{ left: `${layout[mooshikaPhaseKey].l}%`, top: `${layout[mooshikaPhaseKey].t}%` }}
+        >
           <MooshikaWithBasket flowerCount={flowerCount} basketRef={basketTargetRef} />
+          {isBushPhase && emotion === 'angry' && (
+            <img src={emotionAngry} alt="Frustrated" className="mg2-emotion mg2-emotion--anchored" />
+          )}
+          {isBranchPhase && emotion === 'sad' && (
+            <img src={emotionSad} alt="Disappointed" className="mg2-emotion mg2-emotion--anchored" />
+          )}
         </div>
       )}
 
