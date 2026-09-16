@@ -140,6 +140,70 @@
   50% { transform: translate(-50%, -50%) scale(1.08); }
 }
 
+.beat-player-item.is-debug-selected {
+  cursor: grab;
+}
+
+/* Layout Debug side panel — same drag-then-type-exact-numbers pattern as
+   the live scenes' "Layout Debug" panel (KurumedevaGame.jsx etc.), ported
+   here so a BeatPlayerGame beat can be nudged visually too. Fixed position
+   so it's never clipped by the stage's own overflow:hidden. */
+.beat-player-debug-panel {
+  position: fixed;
+  right: 12px;
+  bottom: 12px;
+  z-index: 100000;
+  width: 220px;
+  background: rgba(20, 15, 30, 0.92);
+  color: #fff;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-family: Nunito, sans-serif;
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+.beat-player-debug-panel-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.beat-player-debug-panel label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.beat-player-debug-panel input[type="number"] {
+  width: 72px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  border: 1px solid #555;
+  background: #111;
+  color: #fff;
+}
+
+.beat-player-debug-panel-actions {
+  margin-top: 4px;
+  justify-content: space-between;
+}
+
+.beat-player-debug-panel button {
+  background: #6A1B9A;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-family: Nunito, sans-serif;
+  font-size: 12px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .beat-player-item,
   .beat-player-drop,

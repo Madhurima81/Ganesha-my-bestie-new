@@ -20,6 +20,12 @@ import './BeatPlayerGame.css';
  * `activePath` is what it becomes the moment they touch it. Skip it and the
  * item just keeps showing `path` throughout, same as before this existed.
  *
+ * Per-item `appearDelayMs` (optional): keeps that item invisible and
+ * non-interactive for N ms after this state is entered, then fades it in.
+ * For a beat where two things shouldn't appear in the exact same instant —
+ * e.g. a help bubble popping in a beat after the pose it's reacting to,
+ * not simultaneously with it.
+ *
 
  * Interaction types (this is the fixed vocabulary a future editor "mechanic"
  * dropdown should write into beat.interaction.type — adding a new type here
@@ -132,11 +138,20 @@ function BeatPlayerGame({
   movementMs = 450,
   reactionPauseMs = 550,
   isActive = true,
+  isPaused = false,
   isAudioOn = true,
   hideElements = false,
   className = '',
   onComplete,
   onMissingAsset,
+  // Layout Debug — same drag-to-reposition + numeric-field + "copy JSON"
+  // pattern already used in the hand-coded live scenes (KurumedevaGame.jsx,
+  // MahakayaRescueGame.jsx, NewModakSceneV7.jsx etc.), ported here so a
+  // BeatPlayerGame-driven beat can be nudged visually too instead of only
+  // through the external Visual Flow Editor or hand-edited JSON. Purely
+  // additive and local (React state, never mutates flowJson) — turning it
+  // off leaves the beat exactly as authored.
+  layoutDebug = false,
 }) {
   const beatKeys = useMemo(
     () => Object.keys(flowJson?.beats || {}).sort((a, b) => Number(a) - Number(b)),
@@ -169,6 +184,16 @@ function BeatPlayerGame({
   const [pathIndex, setPathIndex] = useState(-1);
   const [dropDragging, setDropDragging] = useState(false);
 
+  // Layout Debug — local-only overrides, never written back to flowJson.
+  // Keyed [beatIndex][stateName][itemKey] = {x,y,scale,rotation,flip}, plus
+  // [beatIndex].fixedPoint = {x,y} for the rope anchor. itemKey is the
+  // item's gameKey when it has one, else `${name}#${index}` (two items can
+  // share a blank gameKey — e.g. the decorative duplicate in a dedup pair).
+  const [debugOverrides, setDebugOverrides] = useState({});
+  const [debugSelectedKey, setDebugSelectedKey] = useState(null);
+  const [debugCopyStatus, setDebugCopyStatus] = useState('');
+  const debugDragRef = useRef(null); // { mode: 'item' | 'fixedPoint', key, offsetX, offsetY }
+
   const beatIndex = beatKeys[beatPos];
   const beat = flowJson?.beats?.[beatIndex];
   const stateBlock = beat?.[stateName];
@@ -190,6 +215,35 @@ function BeatPlayerGame({
 
   const interaction = interactions[beatIndex] || beat?.interaction || null;
   const isLastBeat = beatPos === beatKeys.length - 1;
+
+  // Clear the layout-debug panel's selection when switching beats — a
+  // selected key from one beat has no guaranteed match in the next.
+  useEffect(() => { setDebugSelectedKey(null); }, [beatIndex]);
+
+  // Per-item `appearDelayMs` (optional): hides that item until N ms after
+  // this state is entered, then fades it in — e.g. a help bubble that
+  // shouldn't appear in the same instant as the pose it's reacting to.
+  // Re-armed on every state/beat entry.
+  const [pendingReveal, setPendingReveal] = useState(() => new Set());
+  useEffect(() => {
+    const delayed = items.filter((it) => it.appearDelayMs > 0);
+    if (!delayed.length) {
+      setPendingReveal(new Set());
+      return undefined;
+    }
+    const keyOf = (it) => it.gameKey || it.name;
+    setPendingReveal(new Set(delayed.map(keyOf)));
+    const timers = delayed.map((it) => setTimeout(() => {
+      setPendingReveal((prev) => {
+        if (!prev.has(keyOf(it))) return prev;
+        const next = new Set(prev);
+        next.delete(keyOf(it));
+        return next;
+      });
+    }, it.appearDelayMs));
+    return () => timers.forEach(clearTimeout);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items]);
 
   const resolveSrc = useCallback((path) => {
     const src = assetMap?.[path];
@@ -237,7 +291,9 @@ function BeatPlayerGame({
   // Beats with an interaction wait at "before" for the child; everything
   // else (including every beat once its need is met) advances on a timer.
   useEffect(() => {
-    if (!isActive || !beat) return undefined;
+    // layoutDebug freezes the timeline too — nothing should keep advancing
+    // out from under a beat you're actively repositioning.
+    if (!isActive || isPaused || layoutDebug || !beat) return undefined;
 
     let cancelled = false;
 
@@ -300,6 +356,8 @@ function BeatPlayerGame({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     isActive,
+    isPaused,
+    layoutDebug,
     beatIndex,
     stateName,
     isAudioOn,
@@ -311,6 +369,158 @@ function BeatPlayerGame({
   useEffect(() => clearTimers, [clearTimers]);
 
   const findItem = useCallback((gameKey) => items.find((it) => it.gameKey === gameKey), [items]);
+
+  // ---- Layout Debug ---------------------------------------------------
+  const itemKeyOf = (item, i) => item.gameKey || `${item.name}#${i}`;
+
+  const debugItemOverride = useCallback(
+    (key) => debugOverrides[beatIndex]?.[stateName]?.[key],
+    [debugOverrides, beatIndex, stateName]
+  );
+
+  const withDebugOverride = (item, key) => {
+    const ov = debugItemOverride(key);
+    return ov ? { ...item, ...ov } : item;
+  };
+
+  const debugFixedPoint = debugOverrides[beatIndex]?.fixedPoint;
+
+  const stagePctFromEvent = (e) => {
+    const rect = sceneRef.current?.getBoundingClientRect();
+    if (!rect) return null;
+    return {
+      x: clamp(((e.clientX - rect.left) / rect.width) * 100, 0, 100),
+      y: clamp(((e.clientY - rect.top) / rect.height) * 100, 0, 100),
+    };
+  };
+
+  const startDebugItemDrag = useCallback((e, key, item) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+    const pt = stagePctFromEvent(e);
+    if (!pt) return;
+    debugDragRef.current = { mode: 'item', key, offsetX: pt.x - item.x, offsetY: pt.y - item.y };
+    setDebugSelectedKey(key);
+  }, []);
+
+  const startDebugFixedPointDrag = useCallback((e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+    const pt = stagePctFromEvent(e);
+    const fp = debugFixedPoint || interaction?.fixedPoint;
+    if (!pt || !fp) return;
+    debugDragRef.current = { mode: 'fixedPoint', offsetX: pt.x - fp.x, offsetY: pt.y - fp.y };
+    setDebugSelectedKey('__fixedPoint__');
+  }, [debugFixedPoint, interaction]);
+
+  const onDebugPointerMove = useCallback((e) => {
+    const d = debugDragRef.current;
+    if (!d) return;
+    const pt = stagePctFromEvent(e);
+    if (!pt) return;
+    const x = Number((pt.x - d.offsetX).toFixed(2));
+    const y = Number((pt.y - d.offsetY).toFixed(2));
+    if (d.mode === 'fixedPoint') {
+      setDebugOverrides((cur) => ({
+        ...cur,
+        [beatIndex]: { ...cur[beatIndex], fixedPoint: { x, y } },
+      }));
+      return;
+    }
+    setDebugOverrides((cur) => ({
+      ...cur,
+      [beatIndex]: {
+        ...cur[beatIndex],
+        [stateName]: {
+          ...cur[beatIndex]?.[stateName],
+          [d.key]: { ...cur[beatIndex]?.[stateName]?.[d.key], x, y },
+        },
+      },
+    }));
+  }, [beatIndex, stateName]);
+
+  const endDebugDrag = useCallback(() => { debugDragRef.current = null; }, []);
+
+  const updateDebugField = (field, value) => {
+    if (!debugSelectedKey) return;
+    const next = field === 'flip' ? value : Number(value);
+    if (field !== 'flip' && Number.isNaN(next)) return;
+    if (debugSelectedKey === '__fixedPoint__') {
+      if (field !== 'x' && field !== 'y') return;
+      setDebugOverrides((cur) => ({
+        ...cur,
+        [beatIndex]: {
+          ...cur[beatIndex],
+          fixedPoint: { ...(cur[beatIndex]?.fixedPoint || interaction?.fixedPoint), [field]: next },
+        },
+      }));
+      return;
+    }
+    setDebugOverrides((cur) => ({
+      ...cur,
+      [beatIndex]: {
+        ...cur[beatIndex],
+        [stateName]: {
+          ...cur[beatIndex]?.[stateName],
+          [debugSelectedKey]: { ...cur[beatIndex]?.[stateName]?.[debugSelectedKey], [field]: next },
+        },
+      },
+    }));
+  };
+
+  const resetDebugForBeat = () => {
+    setDebugOverrides((cur) => {
+      const next = { ...cur };
+      delete next[beatIndex];
+      return next;
+    });
+    setDebugSelectedKey(null);
+  };
+
+  // Exports the CURRENT beat's before/movement/after (all items, overrides
+  // merged in) as JSON matching the flow-editor schema — paste back into
+  // the sample JSON or the external Visual Flow Editor.
+  const copyDebugBeatJson = async () => {
+    const beatOverrides = debugOverrides[beatIndex] || {};
+    const mergeState = (name) => {
+      const raw = beat?.[name]?.items || [];
+      const stateOv = beatOverrides[name] || {};
+      return {
+        ...beat[name],
+        items: raw.map((it, i) => {
+          const ov = stateOv[itemKeyOf(it, i)];
+          return ov ? { ...it, ...ov } : it;
+        }),
+      };
+    };
+    const payload = {
+      meta: beat.meta,
+      before: mergeState('before'),
+      movement: mergeState('movement'),
+      after: mergeState('after'),
+      interaction: beatOverrides.fixedPoint
+        ? { ...interaction, fixedPoint: beatOverrides.fixedPoint }
+        : interaction,
+    };
+    const text = JSON.stringify(payload, null, 2);
+    try {
+      if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+        setDebugCopyStatus('Copied');
+      } else if (typeof window !== 'undefined' && window.prompt) {
+        window.prompt('Copy beat JSON', text);
+        setDebugCopyStatus('Shown');
+      }
+    } catch {
+      if (typeof window !== 'undefined' && window.prompt) {
+        window.prompt('Copy beat JSON', text);
+        setDebugCopyStatus('Shown');
+      }
+    }
+    setTimeout(() => setDebugCopyStatus(''), 2000);
+  };
 
   // `target` is usually another rendered item's gameKey (drag mango onto the
   // bunny), but some beats have no separate target object — the grass beat's
@@ -589,17 +799,29 @@ function BeatPlayerGame({
     }
   }
 
+  const effectiveFixedPoint = debugFixedPoint || interaction?.fixedPoint;
+
   let ropeCurrentEnd = null;
-  if (isRopeDrag && interaction.fixedPoint) {
-    if (drag?.gameKey === interaction.drag) {
+  if (isRopeDrag && effectiveFixedPoint) {
+    if (!layoutDebug && drag?.gameKey === interaction.drag) {
       ropeCurrentEnd = { x: drag.x, y: drag.y };
     } else {
       const dragItem = findItem(interaction.drag);
-      if (dragItem) ropeCurrentEnd = { x: dragItem.x, y: dragItem.y };
+      if (dragItem) {
+        const i = items.indexOf(dragItem);
+        const effDragItem = layoutDebug ? withDebugOverride(dragItem, itemKeyOf(dragItem, i)) : dragItem;
+        ropeCurrentEnd = { x: effDragItem.x, y: effDragItem.y };
+      }
     }
   }
 
+  const debugSelectedItem = layoutDebug && debugSelectedKey && debugSelectedKey !== '__fixedPoint__'
+    ? withDebugOverride(items.find((it, i) => itemKeyOf(it, i) === debugSelectedKey) || {}, debugSelectedKey)
+    : null;
+  const debugSelectedFixedPoint = layoutDebug && debugSelectedKey === '__fixedPoint__' ? effectiveFixedPoint : null;
+
   return (
+    <>
     <div
       ref={sceneRef}
       className={`
@@ -608,9 +830,9 @@ function BeatPlayerGame({
         ${className}
         ${feedback === 'wrong' ? 'beat-player-wrong' : ''}
       `}
-      onPointerMove={(e) => { onPointerMove(e); onDropPointerMove(e); }}
-      onPointerUp={(e) => { onPointerUp(e); onDropPointerUp(); }}
-      onPointerCancel={() => { setDrag(null); onDropPointerUp(); }}
+      onPointerMove={(e) => { onPointerMove(e); onDropPointerMove(e); onDebugPointerMove(e); }}
+      onPointerUp={(e) => { onPointerUp(e); onDropPointerUp(); endDebugDrag(); }}
+      onPointerCancel={() => { setDrag(null); onDropPointerUp(); endDebugDrag(); }}
     >
       {dropGhost && (() => {
         const src = resolveSrc(dropGhost.item.path);
@@ -627,10 +849,21 @@ function BeatPlayerGame({
       })()}
 
       {items.map((item, i) => {
-        const isDragKey = interaction?.drag === item.gameKey;
-        const isTargetKey = interaction?.target === item.gameKey;
-        const isTriggerKey = isDragPath && interaction?.trigger === item.gameKey && !dropRevealed;
-        const isBeingDragged = drag?.gameKey === item.gameKey;
+        const debugKey = itemKeyOf(item, i);
+        const rawItem = item;
+        item = layoutDebug ? withDebugOverride(item, debugKey) : item;
+        const isDragKey = interaction?.drag === rawItem.gameKey;
+        const isTargetKey = interaction?.target === rawItem.gameKey;
+        const isTriggerKey = isDragPath && interaction?.trigger === rawItem.gameKey && !dropRevealed;
+        const isBeingDragged = !layoutDebug && drag?.gameKey === rawItem.gameKey;
+        // rope-drag's own drag item has no static image at all — it's
+        // purely the SVG curve's draggable endpoint circle, rendered
+        // separately below. The item still exists in the data as the
+        // rope's authored resting position (findItem needs it), it just
+        // never renders as a generic image button. In layoutDebug mode it
+        // still renders (as a plain draggable item) so its resting spot
+        // can be repositioned like anything else.
+        if (!layoutDebug && isRopeDrag && isDragKey) return null;
         // Optional per-item "active" pose (item.activePath) swaps in the instant
         // ANY interaction starts — pressed-and-holding, or mid-drag — instead of
         // waiting for the gesture to resolve into the next state. Not limited to
@@ -644,24 +877,28 @@ function BeatPlayerGame({
           ? styleFromItem(item, { left: `${drag.x}%`, top: `${drag.y}%`, zIndex: 60 })
           : styleFromItem(item);
 
-        const interactive = needsInput(stateName) && (isDragKey || isTargetKey || isTriggerKey);
+        const isPendingReveal = !layoutDebug && item.appearDelayMs > 0 && pendingReveal.has(item.gameKey || item.name);
+        const interactive = layoutDebug || (!isPendingReveal && needsInput(stateName) && (isDragKey || isTargetKey || isTriggerKey));
+        const isDebugSelected = layoutDebug && debugSelectedKey === debugKey;
 
         return (
           <button
             key={`${item.gameKey || item.name}-${i}`}
             type="button"
             data-beat-key={item.gameKey || undefined}
-            className={`beat-player-item${interactive ? ' is-interactive' : ''}${isDragKey && selectedGameKey === item.gameKey ? ' is-selected' : ''}${isBeingDragged ? ' is-dragging' : ''}${isDragKey && feedback === 'holding' ? ' is-holding' : ''}`}
-            style={{ ...style, pointerEvents: interactive ? 'auto' : 'none' }}
+            className={`beat-player-item${interactive ? ' is-interactive' : ''}${isDragKey && selectedGameKey === item.gameKey ? ' is-selected' : ''}${isBeingDragged ? ' is-dragging' : ''}${isDragKey && feedback === 'holding' ? ' is-holding' : ''}${isDebugSelected ? ' is-debug-selected' : ''}`}
+            style={{ ...style, pointerEvents: interactive ? 'auto' : 'none', opacity: isPendingReveal ? 0 : style.opacity, outline: isDebugSelected ? '2px dashed #03A9F4' : undefined }}
             tabIndex={interactive ? 0 : -1}
             aria-hidden={!interactive}
-            onPointerDown={isDragKey ? (e) => { onPointerDown(e, item.gameKey); startHold(item.gameKey); } : undefined}
-            onPointerUp={isDragKey ? cancelHold : undefined}
-            onPointerLeave={isDragKey ? cancelHold : undefined}
-            onClick={isTriggerKey ? () => onTriggerTap(item.gameKey) : interactive ? () => onTapItem(item.gameKey) : undefined}
+            onPointerDown={layoutDebug
+              ? (e) => startDebugItemDrag(e, debugKey, item)
+              : (isDragKey ? (e) => { onPointerDown(e, item.gameKey); startHold(item.gameKey); } : undefined)}
+            onPointerUp={!layoutDebug && isDragKey ? cancelHold : undefined}
+            onPointerLeave={!layoutDebug && isDragKey ? cancelHold : undefined}
+            onClick={layoutDebug ? undefined : (isTriggerKey ? () => onTriggerTap(item.gameKey) : interactive ? () => onTapItem(item.gameKey) : undefined)}
           >
             <img src={src} alt="" draggable={false} />
-            {isDragKey && holdProgress > 0 && (
+            {!layoutDebug && isDragKey && holdProgress > 0 && (
               <svg viewBox="0 0 100 100" className="beat-player-hold-ring" aria-hidden="true">
                 <circle
                   cx="50" cy="50" r="46" fill="none" stroke="#FFD86B" strokeWidth="6" strokeLinecap="round"
@@ -681,13 +918,53 @@ function BeatPlayerGame({
       {isRopeDrag && ropeCurrentEnd && (
         <svg viewBox="0 0 100 100" preserveAspectRatio="none" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 55 }}>
           <path
-            d={ropeCurveD(interaction.fixedPoint.x, interaction.fixedPoint.y, ropeCurrentEnd.x, ropeCurrentEnd.y)}
+            d={ropeCurveD(effectiveFixedPoint.x, effectiveFixedPoint.y, ropeCurrentEnd.x, ropeCurrentEnd.y)}
             fill="none" stroke="#d19159" strokeWidth="0.95" strokeLinecap="round"
           />
           <path
-            d={ropeCurveD(interaction.fixedPoint.x, interaction.fixedPoint.y, ropeCurrentEnd.x, ropeCurrentEnd.y)}
+            d={ropeCurveD(effectiveFixedPoint.x, effectiveFixedPoint.y, ropeCurrentEnd.x, ropeCurrentEnd.y)}
             fill="none" stroke="#efc392" strokeWidth="0.48" strokeLinecap="round" strokeDasharray="0.01 2.2" opacity="0.82"
           />
+          {/* The rope's loose end IS the drag target — no separate image
+              needed, this circle is grabbed directly. It's an ellipse
+              because the viewBox is a 100x100 square stretched with
+              preserveAspectRatio="none" onto a 4:3 stage — a plain circle
+              here would render visibly egg-shaped. Hidden in layoutDebug:
+              the rope item itself renders as a plain draggable button then
+              (see items.map), so this would just be a second overlapping
+              handle for the same point. */}
+          {!layoutDebug && needsInput(stateName) && (
+            <ellipse
+              cx={ropeCurrentEnd.x}
+              cy={ropeCurrentEnd.y}
+              rx="1.8"
+              ry="2.4"
+              fill="#efc392"
+              stroke="#8b5a31"
+              strokeWidth="0.35"
+              style={{ pointerEvents: 'auto', cursor: drag ? 'grabbing' : 'grab' }}
+              onPointerDown={(e) => {
+                e.currentTarget.setPointerCapture?.(e.pointerId);
+                onPointerDown(e, interaction.drag);
+              }}
+            />
+          )}
+          {/* Layout Debug: the rope's fixed anchor (interaction.fixedPoint)
+              has no item of its own to grab, so give it a dedicated handle
+              here — dragging it updates debugOverrides[beatIndex].fixedPoint,
+              included in the "copy JSON" export. */}
+          {layoutDebug && (
+            <circle
+              cx={effectiveFixedPoint.x}
+              cy={effectiveFixedPoint.y}
+              r="2"
+              fill="#FF5722"
+              stroke="#fff"
+              strokeWidth="0.4"
+              style={{ pointerEvents: 'auto', cursor: 'grab' }}
+              onPointerDown={startDebugFixedPointDrag}
+            />
+          )}
         </svg>
       )}
 
@@ -718,6 +995,42 @@ function BeatPlayerGame({
         </div>
       )}
     </div>
+
+    {layoutDebug && (
+      <div className="beat-player-debug-panel">
+        <div className="beat-player-debug-panel-row">
+          <strong>Layout Debug</strong> — beat {beatIndex} / {stateName}
+        </div>
+        {debugSelectedItem ? (
+          <>
+            <div className="beat-player-debug-panel-row">{debugSelectedItem.gameKey || debugSelectedItem.name}</div>
+            <label>X<input type="number" step="0.1" value={debugSelectedItem.x} onChange={(e) => updateDebugField('x', e.target.value)} /></label>
+            <label>Y<input type="number" step="0.1" value={debugSelectedItem.y} onChange={(e) => updateDebugField('y', e.target.value)} /></label>
+            <label>Scale<input type="number" step="1" value={debugSelectedItem.scale} onChange={(e) => updateDebugField('scale', e.target.value)} /></label>
+            <label>Rotation<input type="number" step="1" value={debugSelectedItem.rotation || 0} onChange={(e) => updateDebugField('rotation', e.target.value)} /></label>
+            <label>
+              Flip
+              <button type="button" onClick={() => updateDebugField('flip', (debugSelectedItem.flip ?? 1) * -1)}>
+                {(debugSelectedItem.flip ?? 1) === 1 ? 'normal' : 'flipped'}
+              </button>
+            </label>
+          </>
+        ) : debugSelectedFixedPoint ? (
+          <>
+            <div className="beat-player-debug-panel-row">rope fixedPoint</div>
+            <label>X<input type="number" step="0.1" value={debugSelectedFixedPoint.x} onChange={(e) => updateDebugField('x', e.target.value)} /></label>
+            <label>Y<input type="number" step="0.1" value={debugSelectedFixedPoint.y} onChange={(e) => updateDebugField('y', e.target.value)} /></label>
+          </>
+        ) : (
+          <div className="beat-player-debug-panel-row">Drag any element to select it.</div>
+        )}
+        <div className="beat-player-debug-panel-row beat-player-debug-panel-actions">
+          <button type="button" onClick={copyDebugBeatJson}>{debugCopyStatus || 'Copy beat JSON'}</button>
+          <button type="button" onClick={resetDebugForBeat}>Reset beat</button>
+        </div>
+      </div>
+    )}
+    </>
   );
 }
 

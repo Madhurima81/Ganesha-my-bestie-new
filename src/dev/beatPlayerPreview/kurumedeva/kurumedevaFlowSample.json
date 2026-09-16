@@ -96,7 +96,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "The bridge is broken, and the little beaver on the other side is waiting to come home.",
+          "voText": "The bridge is broken. Baby Beaver is waiting on the other side.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -409,7 +409,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "Beaver tries to push a log into place... but it won't budge.",
+          "voText": "Press and hold the heavy log.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -595,8 +595,8 @@
           {
             "name": "Help bubble \u2014 elephant/logs",
             "path": "Characters/help-bubble-elephant-logs.png",
-            "x": 22.0,
-            "y": 52.0,
+            "x": 16.0,
+            "y": 40.0,
             "scale": 38,
             "rotation": 0,
             "opacity": 100,
@@ -604,7 +604,8 @@
             "z": 10,
             "w": 24,
             "locked": 0,
-            "gameKey": "helpBubbleLogs"
+            "gameKey": "helpBubbleLogs",
+            "appearDelayMs": 1000
           },
           {
             "name": "Support logs \u2014 pair",
@@ -627,7 +628,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "It's too heavy to move alone.",
+          "voText": "Oof! It's too heavy.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -737,6 +738,20 @@
             "gameKey": "ropeItem",
             "x": 48.0,
             "y": 63.0
+          },
+          {
+            "name": "Support logs \u2014 pair",
+            "path": "Bridge/logs-bare.png",
+            "x": 58.57762638054764,
+            "y": 72.00505591111903,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 9,
+            "w": 24,
+            "locked": 0,
+            "gameKey": ""
           }
         ],
         "notes": "",
@@ -745,7 +760,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "Beaver tries to pull the rope tight... but it keeps slipping loose.",
+          "voText": "Drag the rope around the logs.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -839,6 +854,20 @@
             "gameKey": "ropeItem",
             "x": 48.0,
             "y": 63.0
+          },
+          {
+            "name": "Support logs \u2014 pair",
+            "path": "Bridge/logs-bare.png",
+            "x": 58.57762638054764,
+            "y": 72.00505591111903,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 9,
+            "w": 24,
+            "locked": 0,
+            "gameKey": ""
           }
         ],
         "notes": "",
@@ -955,6 +984,20 @@
             "gameKey": "ropeItem",
             "x": 48.0,
             "y": 63.0
+          },
+          {
+            "name": "Support logs \u2014 pair",
+            "path": "Bridge/logs-bare.png",
+            "x": 58.57762638054764,
+            "y": 72.00505591111903,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 9,
+            "w": 24,
+            "locked": 0,
+            "gameKey": ""
           }
         ],
         "notes": "",
@@ -963,7 +1006,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "It won't hold by itself.",
+          "voText": "Oops! It keeps slipping.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -1018,8 +1061,8 @@
             "gameKey": "monkeySprite"
           },
           {
-            "name": "Beaver \u2014 idle worried",
-            "path": "Characters/beaver-idle-worried.png",
+            "name": "Beaver \u2014 tired",
+            "path": "Characters/beaver-tired.png",
             "x": 19.38110749185668,
             "y": 61.58162302354778,
             "scale": 52,
@@ -1082,7 +1125,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "",
+          "voText": "Move the log with Elephant.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -1166,8 +1209,8 @@
           {
             "name": "Support logs \u2014 pair",
             "path": "Bridge/logs-bare.png",
-            "x": 28.610199670449916,
-            "y": 66.93810412213287,
+            "x": 58.57762638054764,
+            "y": 72.00505591111903,
             "scale": 53,
             "rotation": 0,
             "opacity": 100,
@@ -1286,7 +1329,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "Together, they push the log into place. The bridge is getting stronger.",
+          "voText": "Together, they moved it!",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -1405,8 +1448,8 @@
           {
             "name": "Help bubble \u2014 elephant/logs",
             "path": "Characters/help-bubble-elephant-logs.png",
-            "x": 22.0,
-            "y": 52.0,
+            "x": 16.0,
+            "y": 40.0,
             "scale": 38,
             "rotation": 0,
             "opacity": 100,
@@ -1423,7 +1466,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "He needs help! Can you carry his message to Elephant?",
+          "voText": "Take Beaver's help bubble to Elephant.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -1653,7 +1696,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "Elephant hears it and comes right over.",
+          "voText": "Elephant is coming to help.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -1681,6 +1724,396 @@
       "meta": {
         "title": "10. Reunion",
         "goal": "Beaver reaches Baby Beaver \u2014 reunion/hug animation. Hold \u2014 no interaction."
+      },
+      "before": {
+        "items": [
+          {
+            "name": "Bridge \u2014 broken",
+            "path": "Bridge/bridge-broken.png",
+            "x": 58.360464487479646,
+            "y": 68.82012747268593,
+            "scale": 205,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "bridgeSprite"
+          },
+          {
+            "name": "Monkey \u2014 playing with twig",
+            "path": "Characters/monkey-playing-twig.png",
+            "x": 4.071661237785015,
+            "y": 55.211719757312025,
+            "scale": 29,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "monkeySprite"
+          },
+          {
+            "name": "Baby beaver \u2014 waving",
+            "path": "Characters/baby-beaver-waving.png",
+            "x": 94.62540716612378,
+            "y": 60.71299533243418,
+            "scale": 30,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "babyBeaverSprite"
+          },
+          {
+            "name": "elephant lift",
+            "path": "assets/upload_2.png",
+            "x": 31.65037670818913,
+            "y": 49.565689467969605,
+            "scale": 64,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 1,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "elephantSprite"
+          },
+          {
+            "name": "log tie",
+            "path": "assets/upload_6.png",
+            "x": 58.14333241614923,
+            "y": 71.13644810116382,
+            "scale": 68,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": ""
+          },
+          {
+            "name": "plank",
+            "path": "assets/upload_7.png",
+            "x": 59.01194022610444,
+            "y": 70.99168013283796,
+            "scale": 44,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": ""
+          },
+          {
+            "name": "plank",
+            "path": "assets/upload_7.png",
+            "x": 52.999995029710405,
+            "y": 70.66195721786781,
+            "scale": 44,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "plankPileItem"
+          },
+          {
+            "name": "Beaver \u2014 crossing",
+            "path": "Characters/beaver-crossing.png",
+            "x": 85,
+            "y": 62.30546286517712,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "beaverSprite"
+          }
+        ],
+        "notes": "",
+        "annotations": {
+          "arrows": [],
+          "targets": []
+        },
+        "audio": {
+          "voText": "Beaver asked for help \u2014 and made it to Baby Beaver.",
+          "trigger": "state-enter",
+          "start": 0,
+          "duration": 0,
+          "nextVisual": 0,
+          "sfx": ""
+        }
+      },
+      "movement": {
+        "items": [
+          {
+            "name": "Bridge \u2014 broken",
+            "path": "Bridge/bridge-broken.png",
+            "x": 58.360464487479646,
+            "y": 68.82012747268593,
+            "scale": 205,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "bridgeSprite"
+          },
+          {
+            "name": "Monkey \u2014 playing with twig",
+            "path": "Characters/monkey-playing-twig.png",
+            "x": 4.071661237785015,
+            "y": 55.211719757312025,
+            "scale": 29,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "monkeySprite"
+          },
+          {
+            "name": "Baby beaver \u2014 waving",
+            "path": "Characters/baby-beaver-waving.png",
+            "x": 94.62540716612378,
+            "y": 60.71299533243418,
+            "scale": 30,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "babyBeaverSprite"
+          },
+          {
+            "name": "elephant lift",
+            "path": "assets/upload_2.png",
+            "x": 31.65037670818913,
+            "y": 49.565689467969605,
+            "scale": 64,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 1,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "elephantSprite"
+          },
+          {
+            "name": "log tie",
+            "path": "assets/upload_6.png",
+            "x": 58.14333241614923,
+            "y": 71.13644810116382,
+            "scale": 68,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": ""
+          },
+          {
+            "name": "plank",
+            "path": "assets/upload_7.png",
+            "x": 59.01194022610444,
+            "y": 70.99168013283796,
+            "scale": 44,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": ""
+          },
+          {
+            "name": "plank",
+            "path": "assets/upload_7.png",
+            "x": 52.999995029710405,
+            "y": 70.66195721786781,
+            "scale": 44,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "plankPileItem"
+          },
+          {
+            "name": "Beaver \u2014 crossing",
+            "path": "Characters/beaver-crossing.png",
+            "x": 90.5,
+            "y": 61.5,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "beaverSprite"
+          }
+        ],
+        "notes": "",
+        "annotations": {
+          "arrows": [],
+          "targets": []
+        },
+        "audio": {
+          "voText": "",
+          "trigger": "state-enter",
+          "start": 0,
+          "duration": 0,
+          "nextVisual": 0,
+          "sfx": ""
+        }
+      },
+      "after": {
+        "items": [
+          {
+            "name": "Bridge \u2014 broken",
+            "path": "Bridge/bridge-broken.png",
+            "x": 58.360464487479646,
+            "y": 68.82012747268593,
+            "scale": 205,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "bridgeSprite"
+          },
+          {
+            "name": "Monkey \u2014 playing with twig",
+            "path": "Characters/monkey-playing-twig.png",
+            "x": 4.071661237785015,
+            "y": 55.211719757312025,
+            "scale": 29,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "monkeySprite"
+          },
+          {
+            "name": "Baby beaver \u2014 waving",
+            "path": "Characters/baby-beaver-waving.png",
+            "x": 94.62540716612378,
+            "y": 60.71299533243418,
+            "scale": 30,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "babyBeaverSprite"
+          },
+          {
+            "name": "elephant lift",
+            "path": "assets/upload_2.png",
+            "x": 31.65037670818913,
+            "y": 49.565689467969605,
+            "scale": 64,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 1,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "elephantSprite"
+          },
+          {
+            "name": "log tie",
+            "path": "assets/upload_6.png",
+            "x": 58.14333241614923,
+            "y": 71.13644810116382,
+            "scale": 68,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": ""
+          },
+          {
+            "name": "plank",
+            "path": "assets/upload_7.png",
+            "x": 59.01194022610444,
+            "y": 70.99168013283796,
+            "scale": 44,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": ""
+          },
+          {
+            "name": "plank",
+            "path": "assets/upload_7.png",
+            "x": 52.999995029710405,
+            "y": 70.66195721786781,
+            "scale": 44,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "plankPileItem"
+          },
+          {
+            "name": "Beaver \u2014 crossing",
+            "path": "Characters/beaver-crossing.png",
+            "x": 90.5,
+            "y": 61.5,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "beaverSprite"
+          }
+        ],
+        "notes": "",
+        "annotations": {
+          "arrows": [],
+          "targets": []
+        },
+        "audio": {
+          "voText": "",
+          "trigger": "state-enter",
+          "start": 0,
+          "duration": 0,
+          "nextVisual": 0,
+          "sfx": ""
+        }
+      },
+      "interaction": {
+        "type": "none"
       }
     },
     "8": {
@@ -1809,7 +2242,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "The bridge is ready! Beaver crosses to the other side at last.",
+          "voText": "The bridge is ready!",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -1921,7 +2354,7 @@
           {
             "name": "Beaver \u2014 crossing",
             "path": "Characters/beaver-crossing.png",
-            "x": 28.82736156351791,
+            "x": 85,
             "y": 62.30546286517712,
             "scale": 53,
             "rotation": 0,
@@ -1939,7 +2372,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "",
+          "voText": "Go, Beaver!",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -2051,7 +2484,7 @@
           {
             "name": "Beaver \u2014 crossing",
             "path": "Characters/beaver-crossing.png",
-            "x": 28.82736156351791,
+            "x": 85,
             "y": 62.30546286517712,
             "scale": 53,
             "rotation": 0,
@@ -2184,7 +2617,7 @@
             "z": 10,
             "w": 24,
             "locked": 0,
-            "gameKey": "plankPileItem"
+            "gameKey": ""
           },
           {
             "name": "Beaver \u2014 placing plank",
@@ -2207,7 +2640,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "",
+          "voText": "Drag the planks into place.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -2291,8 +2724,8 @@
           {
             "name": "plank",
             "path": "assets/upload_7.png",
-            "x": 17.31812915118587,
-            "y": 72.29461172892915,
+            "x": 59.01194022610444,
+            "y": 70.99168013283796,
             "scale": 44,
             "rotation": 0,
             "opacity": 100,
@@ -2305,8 +2738,8 @@
           {
             "name": "plank",
             "path": "assets/upload_7.png",
-            "x": 19.44950643036187,
-            "y": 73.70213094208061,
+            "x": 52.999995029710405,
+            "y": 70.66195721786781,
             "scale": 44,
             "rotation": 0,
             "opacity": 100,
@@ -2314,7 +2747,7 @@
             "z": 10,
             "w": 24,
             "locked": 0,
-            "gameKey": "plankPileItem"
+            "gameKey": ""
           },
           {
             "name": "Beaver \u2014 placing plank",
@@ -2444,13 +2877,13 @@
             "z": 10,
             "w": 24,
             "locked": 0,
-            "gameKey": "plankPileItem"
+            "gameKey": ""
           },
           {
             "name": "Beaver \u2014 crossing",
             "path": "Characters/beaver-crossing.png",
-            "x": 28.93594251005191,
-            "y": 62.30546286517712,
+            "x": 25.5700325732899,
+            "y": 66.21427090755633,
             "scale": 53,
             "rotation": 0,
             "opacity": 100,
@@ -2573,6 +3006,20 @@
             "gameKey": "ropeItem",
             "x": 48.0,
             "y": 63.0
+          },
+          {
+            "name": "Support logs \u2014 pair",
+            "path": "Bridge/logs-bare.png",
+            "x": 58.57762638054764,
+            "y": 72.00505591111903,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 9,
+            "w": 24,
+            "locked": 0,
+            "gameKey": ""
           }
         ],
         "notes": "",
@@ -2581,7 +3028,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "",
+          "voText": "Pull with Monkey.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -2689,6 +3136,20 @@
             "gameKey": "ropeItem",
             "x": 48.0,
             "y": 63.0
+          },
+          {
+            "name": "Support logs \u2014 pair",
+            "path": "Bridge/logs-bare.png",
+            "x": 58.57762638054764,
+            "y": 72.00505591111903,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 9,
+            "w": 24,
+            "locked": 0,
+            "gameKey": ""
           }
         ],
         "notes": "",
@@ -2765,20 +3226,6 @@
             "gameKey": "elephantSprite"
           },
           {
-            "name": "log tie",
-            "path": "assets/upload_6.png",
-            "x": 58.14333241614923,
-            "y": 71.13644810116382,
-            "scale": 68,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": ""
-          },
-          {
             "name": "Beaver \u2014 idle worried",
             "path": "Characters/beaver-idle-worried.png",
             "x": 29.804555290296722,
@@ -2793,34 +3240,6 @@
             "gameKey": "beaverSprite"
           },
           {
-            "name": "plank",
-            "path": "assets/upload_7.png",
-            "x": 17.31812915118587,
-            "y": 72.29461172892915,
-            "scale": 44,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": ""
-          },
-          {
-            "name": "plank",
-            "path": "assets/upload_7.png",
-            "x": 19.44950643036187,
-            "y": 73.70213094208061,
-            "scale": 44,
-            "rotation": 0,
-            "opacity": 100,
-            "flip": 1,
-            "z": 10,
-            "w": 24,
-            "locked": 0,
-            "gameKey": ""
-          },
-          {
             "name": "Rope knot",
             "path": "Bridge/rope-knot.png",
             "scale": 32,
@@ -2833,6 +3252,20 @@
             "gameKey": "ropeItem",
             "x": 58.0,
             "y": 58.0
+          },
+          {
+            "name": "Support logs \u2014 pair",
+            "path": "Bridge/logs-bare.png",
+            "x": 58.57762638054764,
+            "y": 72.00505591111903,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 9,
+            "w": 24,
+            "locked": 0,
+            "gameKey": ""
           }
         ],
         "notes": "",
@@ -2841,7 +3274,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "Together they pull it tight. The rope holds!",
+          "voText": "Together, they pulled it tight!",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -2964,6 +3397,20 @@
             "w": 24,
             "locked": 0,
             "gameKey": "helpBubbleKnot"
+          },
+          {
+            "name": "Support logs \u2014 pair",
+            "path": "Bridge/logs-bare.png",
+            "x": 58.57762638054764,
+            "y": 72.00505591111903,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 9,
+            "w": 24,
+            "locked": 0,
+            "gameKey": ""
           }
         ],
         "notes": "",
@@ -2972,7 +3419,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "He needs help! Can you carry his message to Monkey?",
+          "voText": "Take Beaver's help bubble to Monkey.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -3065,6 +3512,20 @@
             "gameKey": "ropeItem",
             "x": 48.0,
             "y": 63.0
+          },
+          {
+            "name": "Support logs \u2014 pair",
+            "path": "Bridge/logs-bare.png",
+            "x": 58.57762638054764,
+            "y": 72.00505591111903,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 9,
+            "w": 24,
+            "locked": 0,
+            "gameKey": ""
           }
         ],
         "notes": "",
@@ -3166,6 +3627,20 @@
             "gameKey": "ropeItem",
             "x": 48.0,
             "y": 63.0
+          },
+          {
+            "name": "Support logs \u2014 pair",
+            "path": "Bridge/logs-bare.png",
+            "x": 58.57762638054764,
+            "y": 72.00505591111903,
+            "scale": 53,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 9,
+            "w": 24,
+            "locked": 0,
+            "gameKey": ""
           }
         ],
         "notes": "",
@@ -3174,7 +3649,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "Monkey hears it and hurries over.",
+          "voText": "Monkey is coming to help.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
