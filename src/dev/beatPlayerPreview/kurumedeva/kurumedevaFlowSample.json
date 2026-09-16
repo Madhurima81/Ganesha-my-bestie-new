@@ -409,7 +409,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "Press and hold the heavy log.",
+          "voText": "Help Beaver move this heavy log!",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
