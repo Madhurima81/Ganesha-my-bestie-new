@@ -153,10 +153,14 @@ export default function ModakGame2Preview({ isActive = true, isPaused = false, h
   const [muted, setMuted] = useState(false);
   useEffect(() => { VO_MUTED = muted; }, [muted]);
 
-  // ---- layout debug ----
+  // ---- layout debug — BeatPlayerGame-style: click/drag the REAL element
+  // directly to select + move it (no separate ghost markers), with a small
+  // fixed readout panel bottom-right (matches the "DEV — KurumeDeva via
+  // BeatPlayerGame" pattern, not the older marker-overlay one). ----
   const [debugMode, setDebugMode] = useState(false);
   const [layout, setLayout] = useState(loadLayout);
-  const [selectedLayoutKey, setSelectedLayoutKey] = useState('bush');
+  const [selectedLayoutKey, setSelectedLayoutKey] = useState(null);
+  const [debugCopyStatus, setDebugCopyStatus] = useState('');
   const stageRef = useRef(null);
   const layoutDragRef = useRef(null);
 
@@ -183,14 +187,30 @@ export default function ModakGame2Preview({ isActive = true, isPaused = false, h
 
   const onStagePointerMove = useCallback((e) => {
     const key = layoutDragRef.current;
-    if (!key || !stageRef.current) return;
-    const rect = stageRef.current.getBoundingClientRect();
+    if (!key) return;
+    // Marsh waypoints are percent-of-the-marsh-box (that's how the real
+    // marsh mechanic reads them), everything else is percent-of-the-stage.
+    const isMarshWaypoint = key === 'marshStart' || key.startsWith('marshStop');
+    const container = isMarshWaypoint ? marshRef.current : stageRef.current;
+    if (!container) return;
+    const rect = container.getBoundingClientRect();
     const l = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
     const t = Math.max(0, Math.min(100, ((e.clientY - rect.top) / rect.height) * 100));
     updateLayoutKey(key, { l: Math.round(l * 10) / 10, t: Math.round(t * 10) / 10 });
   }, [updateLayoutKey]);
 
   const endLayoutDrag = useCallback(() => { layoutDragRef.current = null; }, []);
+
+  const copyLayoutJson = useCallback(async () => {
+    const text = JSON.stringify(layout, null, 2);
+    try {
+      if (navigator.clipboard?.writeText) { await navigator.clipboard.writeText(text); setDebugCopyStatus('Copied'); }
+      else { window.prompt('Copy layout JSON', text); setDebugCopyStatus('Shown'); }
+    } catch { window.prompt('Copy layout JSON', text); setDebugCopyStatus('Shown'); }
+    setTimeout(() => setDebugCopyStatus(''), 2000);
+  }, [layout]);
+
+  const resetLayout = useCallback(() => { setLayout({ ...LAYOUT_DEFAULTS }); setSelectedLayoutKey(null); }, []);
 
   // Jump directly into a phase for testing, seeding whatever state that
   // phase's render depends on (mirrors jumpToDebugPhase in NewModakSceneV7).
@@ -517,10 +537,11 @@ export default function ModakGame2Preview({ isActive = true, isPaused = false, h
           <button
             type="button"
             className={`mg2-bush ${bushSpringing ? 'mg2-bush--springing' : ''} ${bushOpenState ? 'mg2-bush--open' : ''}`}
-            onPointerDown={isBushPhase ? handleBushPointerDown : undefined}
-            onPointerUp={isBushPhase ? handleBushPointerUp : undefined}
+            style={debugMode && selectedLayoutKey === 'bush' ? { outline: '2px dashed #03A9F4', outlineOffset: 3 } : undefined}
+            onPointerDown={debugMode ? (e) => startLayoutDrag(e, 'bush') : (isBushPhase ? handleBushPointerDown : undefined)}
+            onPointerUp={!debugMode && isBushPhase ? handleBushPointerUp : undefined}
             onPointerCancel={() => { bushSwipeStartRef.current = null; }}
-            disabled={!isBushPhase}
+            disabled={!debugMode && !isBushPhase}
           >
             <img src={bushOpenState ? bushOpen : bushClosed} alt="" />
           </button>
@@ -537,17 +558,21 @@ export default function ModakGame2Preview({ isActive = true, isPaused = false, h
       {/* ---------------- BRANCH / TREE ---------------- */}
       {showTree && (
         <div className={`mg2-tree-area ${isBranchPhase ? 'is-active' : ''} ${treeSceneryComplete ? 'is-complete' : ''}`}>
-          <img src={treeArt} alt="" className="mg2-tree" style={{ left: `${layout.tree.l}%`, top: `${layout.tree.t}%` }} />
+          <img
+            src={treeArt} alt="" className="mg2-tree"
+            style={{ left: `${layout.tree.l}%`, top: `${layout.tree.t}%`, outline: debugMode && selectedLayoutKey === 'tree' ? '2px dashed #03A9F4' : undefined, cursor: debugMode ? 'grab' : undefined, pointerEvents: debugMode ? 'auto' : 'none' }}
+            onPointerDown={debugMode ? (e) => startLayoutDrag(e, 'tree') : undefined}
+          />
 
           <button
             type="button"
             className="mg2-branch"
-            style={{ '--pull': branchComplete ? 1 : branchPull, left: `${layout.branch.l}%`, top: `${layout.branch.t}%` }}
-            onPointerDown={isBranchPhase ? handleBranchPointerDown : undefined}
-            onPointerMove={isBranchPhase ? handleBranchPointerMove : undefined}
-            onPointerUp={isBranchPhase ? handleBranchPointerEnd : undefined}
-            onPointerCancel={isBranchPhase ? handleBranchPointerEnd : undefined}
-            disabled={!isBranchPhase}
+            style={{ '--pull': branchComplete ? 1 : branchPull, left: `${layout.branch.l}%`, top: `${layout.branch.t}%`, outline: debugMode && selectedLayoutKey === 'branch' ? '2px dashed #03A9F4' : undefined, outlineOffset: debugMode && selectedLayoutKey === 'branch' ? 3 : undefined }}
+            onPointerDown={debugMode ? (e) => startLayoutDrag(e, 'branch') : (isBranchPhase ? handleBranchPointerDown : undefined)}
+            onPointerMove={!debugMode && isBranchPhase ? handleBranchPointerMove : undefined}
+            onPointerUp={!debugMode && isBranchPhase ? handleBranchPointerEnd : undefined}
+            onPointerCancel={!debugMode && isBranchPhase ? handleBranchPointerEnd : undefined}
+            disabled={!debugMode && !isBranchPhase}
           >
             <img src={branchArt} alt="" />
             {!branchComplete && flowerCount < 4 && (
@@ -565,7 +590,8 @@ export default function ModakGame2Preview({ isActive = true, isPaused = false, h
         <div
           ref={marshRef}
           className={`mg2-marsh-area ${isMarshPhase ? 'is-active' : ''} ${marshSceneryComplete ? 'is-complete' : ''}`}
-          style={{ left: `${layout.marsh.l}%`, top: `${layout.marsh.t}%` }}
+          style={{ left: `${layout.marsh.l}%`, top: `${layout.marsh.t}%`, outline: debugMode && selectedLayoutKey === 'marsh' ? '2px dashed #03A9F4' : undefined, cursor: debugMode ? 'grab' : undefined, pointerEvents: debugMode ? 'auto' : undefined }}
+          onPointerDown={debugMode ? (e) => startLayoutDrag(e, 'marsh') : undefined}
         >
           <img src={marshArt} alt="" className="mg2-marsh" />
 
@@ -580,10 +606,10 @@ export default function ModakGame2Preview({ isActive = true, isPaused = false, h
                 type="button"
                 className={`mg2-marsh-mooshika ${marshWobble ? 'mg2-marsh-mooshika--wobble' : ''} ${marshSlip ? 'mg2-marsh-mooshika--slip' : ''}`}
                 style={{ left: `${position.x}%`, top: `${position.y}%` }}
-                onPointerDown={handleMarshPointerDown}
-                onPointerMove={handleMarshPointerMove}
-                onPointerUp={handleMarshPointerEnd}
-                onPointerCancel={handleMarshPointerEnd}
+                onPointerDown={debugMode ? undefined : handleMarshPointerDown}
+                onPointerMove={debugMode ? undefined : handleMarshPointerMove}
+                onPointerUp={debugMode ? undefined : handleMarshPointerEnd}
+                onPointerCancel={debugMode ? undefined : handleMarshPointerEnd}
               >
                 <MooshikaWithBasket flowerCount={flowerCount} basketRef={basketTargetRef} />
                 {emotion === 'worried' && (
@@ -592,6 +618,16 @@ export default function ModakGame2Preview({ isActive = true, isPaused = false, h
               </button>
             );
           })()}
+
+          {debugMode && ['marshStart', 'marshStop1', 'marshStop2', 'marshStop3', 'marshStop4'].map((key) => (
+            <div
+              key={key}
+              className={`mg2-debug-waypoint ${selectedLayoutKey === key ? 'is-selected' : ''}`}
+              style={{ left: `${layout[key].l}%`, top: `${layout[key].t}%` }}
+              onPointerDown={(e) => startLayoutDrag(e, key)}
+              title={LAYOUT_LABELS[key]}
+            />
+          ))}
         </div>
       )}
 
@@ -601,7 +637,12 @@ export default function ModakGame2Preview({ isActive = true, isPaused = false, h
       {showSharedMooshika && (
         <div
           className={`mg2-mooshika-shared ${branchIntroFailed && isBranchPhase ? 'mg2-mooshika-shared--failed' : ''}`}
-          style={{ left: `${layout[mooshikaPhaseKey].l}%`, top: `${layout[mooshikaPhaseKey].t}%` }}
+          style={{
+            left: `${layout[mooshikaPhaseKey].l}%`, top: `${layout[mooshikaPhaseKey].t}%`,
+            outline: debugMode && selectedLayoutKey === mooshikaPhaseKey ? '2px dashed #03A9F4' : undefined,
+            outlineOffset: 3, cursor: debugMode ? 'grab' : undefined, pointerEvents: debugMode ? 'auto' : undefined,
+          }}
+          onPointerDown={debugMode ? (e) => startLayoutDrag(e, mooshikaPhaseKey) : undefined}
         >
           <MooshikaWithBasket flowerCount={flowerCount} basketRef={basketTargetRef} />
           {isBushPhase && emotion === 'angry' && (
@@ -621,7 +662,15 @@ export default function ModakGame2Preview({ isActive = true, isPaused = false, h
             {bellyBeat >= 4 && <div className={`mg2-belly-glow ${bellyBeat >= 5 ? 'mg2-belly-glow--strong' : ''}`} aria-hidden="true" />}
           </div>
 
-          <div className="mg2-belly-mooshika">
+          <div
+            className="mg2-belly-mooshika"
+            style={{
+              left: `${layout.mooshikaBelly.l}%`, top: `${layout.mooshikaBelly.t}%`,
+              outline: debugMode && selectedLayoutKey === 'mooshikaBelly' ? '2px dashed #03A9F4' : undefined,
+              outlineOffset: 3, cursor: debugMode ? 'grab' : undefined,
+            }}
+            onPointerDown={debugMode ? (e) => startLayoutDrag(e, 'mooshikaBelly') : undefined}
+          >
             <img src={mooshikaCalm} alt="Mooshika" />
             {bellyBeat >= 1 && bellyBeat < 6 && <img src={emotionAngry} alt="Frustrated" className="mg2-belly-emotion mg2-belly-emotion--angry" />}
             {bellyBeat >= 2 && bellyBeat < 6 && <img src={emotionSad} alt="Disappointed" className="mg2-belly-emotion mg2-belly-emotion--sad" />}
@@ -669,83 +718,46 @@ export default function ModakGame2Preview({ isActive = true, isPaused = false, h
         ))}
       </div>
 
-      {/* ---------------- LAYOUT DEBUG ---------------- */}
+      {/* ---------------- LAYOUT DEBUG — BeatPlayerGame style: toggle pill
+          top-right, click/drag the real sprites directly to select+move
+          them, small readout panel bottom-right. ---------------- */}
+      <button type="button" className={`mg2-debug-pill ${debugMode ? 'is-on' : ''}`} onClick={() => { setDebugMode((v) => !v); setSelectedLayoutKey(null); }}>
+        {debugMode ? 'layout on' : 'layout off'}
+      </button>
+
       {debugMode && (
-        <div className="mg2-debug-overlay">
-          {Object.keys(layout).map((key) => (
-            <div
-              key={key}
-              className={`mg2-debug-marker ${selectedLayoutKey === key ? 'is-selected' : ''}`}
-              style={{ left: `${layout[key].l}%`, top: `${layout[key].t}%` }}
-              onPointerDown={(e) => startLayoutDrag(e, key)}
-            >
-              <span className="mg2-debug-dot" />
-              <span className="mg2-debug-label">{LAYOUT_LABELS[key]}</span>
-            </div>
-          ))}
+        <div className="mg2-debug-panel">
+          <div className="mg2-debug-panel-row">
+            <strong>Layout Debug</strong> — {phase.replace('flower_', '')}
+          </div>
+
+          <label className="mg2-debug-row">
+            <span>Jump to</span>
+            <select onChange={(e) => { if (e.target.value) jumpToPhase(e.target.value); e.target.value = ''; }} defaultValue="">
+              <option value="" disabled>pick a phase…</option>
+              <option value={PHASES.FLOWER_BUSH}>1. Bush</option>
+              <option value={PHASES.FLOWER_BRANCH}>2. Branch</option>
+              <option value={PHASES.FLOWER_MARSH}>3. Marsh</option>
+              <option value={PHASES.BELLY_RECOGNITION}>4. Belly Recognition</option>
+            </select>
+          </label>
+
+          {selectedLayoutKey ? (
+            <>
+              <div className="mg2-debug-panel-row">{LAYOUT_LABELS[selectedLayoutKey]}</div>
+              <label>X <input type="number" step="0.5" value={layout[selectedLayoutKey].l} onChange={(e) => updateLayoutKey(selectedLayoutKey, { l: Number(e.target.value) })} /></label>
+              <label>Y <input type="number" step="0.5" value={layout[selectedLayoutKey].t} onChange={(e) => updateLayoutKey(selectedLayoutKey, { t: Number(e.target.value) })} /></label>
+            </>
+          ) : (
+            <div className="mg2-debug-panel-row">Drag any element to select it.</div>
+          )}
+
+          <div className="mg2-debug-panel-row mg2-debug-panel-actions">
+            <button type="button" onClick={copyLayoutJson}>{debugCopyStatus || 'Copy layout JSON'}</button>
+            <button type="button" onClick={resetLayout}>Reset layout</button>
+          </div>
         </div>
       )}
-
-      <div className={`mg2-debug-panel ${debugMode ? 'is-open' : ''}`}>
-        <button type="button" className="mg2-debug-toggle" onClick={() => setDebugMode((v) => !v)}>
-          {debugMode ? 'Hide Layout Debug' : 'Layout Debug'}
-        </button>
-        {debugMode && (
-          <div className="mg2-debug-body">
-            <p className="mg2-debug-note">Drag any dot on the stage, or edit numbers below. Saved to this browser automatically.</p>
-
-            <label className="mg2-debug-row">
-              <span>Jump to</span>
-              <select onChange={(e) => { if (e.target.value) jumpToPhase(e.target.value); e.target.value = ''; }} defaultValue="">
-                <option value="" disabled>pick a phase…</option>
-                <option value={PHASES.FLOWER_BUSH}>1. Bush</option>
-                <option value={PHASES.FLOWER_BRANCH}>2. Branch</option>
-                <option value={PHASES.FLOWER_MARSH}>3. Marsh</option>
-                <option value={PHASES.BELLY_RECOGNITION}>4. Belly Recognition</option>
-              </select>
-            </label>
-
-            <label className="mg2-debug-row">
-              <span>Marker</span>
-              <select value={selectedLayoutKey} onChange={(e) => setSelectedLayoutKey(e.target.value)}>
-                {Object.keys(layout).map((key) => (
-                  <option key={key} value={key}>{LAYOUT_LABELS[key]}</option>
-                ))}
-              </select>
-            </label>
-
-            <label className="mg2-debug-row">
-              <span>X %</span>
-              <input
-                type="number" step="0.5"
-                value={layout[selectedLayoutKey].l}
-                onChange={(e) => updateLayoutKey(selectedLayoutKey, { l: Number(e.target.value) })}
-              />
-            </label>
-            <label className="mg2-debug-row">
-              <span>Y %</span>
-              <input
-                type="number" step="0.5"
-                value={layout[selectedLayoutKey].t}
-                onChange={(e) => updateLayoutKey(selectedLayoutKey, { t: Number(e.target.value) })}
-              />
-            </label>
-
-            <div className="mg2-debug-grid">
-              <button type="button" onClick={() => updateLayoutKey(selectedLayoutKey, { t: layout[selectedLayoutKey].t - 0.5 })}>up</button>
-              <button type="button" onClick={() => updateLayoutKey(selectedLayoutKey, { l: layout[selectedLayoutKey].l - 0.5 })}>left</button>
-              <button type="button" onClick={() => updateLayoutKey(selectedLayoutKey, { l: layout[selectedLayoutKey].l + 0.5 })}>right</button>
-              <button type="button" onClick={() => updateLayoutKey(selectedLayoutKey, { t: layout[selectedLayoutKey].t + 0.5 })}>down</button>
-            </div>
-
-            <div className="mg2-debug-grid">
-              <button type="button" onClick={() => setLayout({ ...LAYOUT_DEFAULTS })}>reset all</button>
-            </div>
-
-            <pre className="mg2-debug-readout">{JSON.stringify(layout, null, 1)}</pre>
-          </div>
-        )}
-      </div>
     </div>
   );
 }
