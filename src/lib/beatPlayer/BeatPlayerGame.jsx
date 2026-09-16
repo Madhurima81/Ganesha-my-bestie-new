@@ -1005,25 +1005,39 @@ function BeatPlayerGame({
             const dragItem = findItem(interaction.drag);
             const i = dragItem ? items.indexOf(dragItem) : -1;
             const debugKey = dragItem ? itemKeyOf(dragItem, i) : null;
+            const onGrab = (e) => {
+              e.currentTarget.setPointerCapture?.(e.pointerId);
+              if (layoutDebug) {
+                if (dragItem) startDebugItemDrag(e, debugKey, withDebugOverride(dragItem, debugKey));
+                return;
+              }
+              onPointerDown(e, interaction.drag);
+            };
             return (
-              <ellipse
-                cx={ropeCurrentEnd.x}
-                cy={ropeCurrentEnd.y}
-                rx="1.8"
-                ry="2.4"
-                fill="#efc392"
-                stroke="#8b5a31"
-                strokeWidth="0.35"
-                style={{ pointerEvents: 'auto', cursor: drag ? 'grabbing' : 'grab' }}
-                onPointerDown={(e) => {
-                  e.currentTarget.setPointerCapture?.(e.pointerId);
-                  if (layoutDebug) {
-                    if (dragItem) startDebugItemDrag(e, debugKey, withDebugOverride(dragItem, debugKey));
-                    return;
-                  }
-                  onPointerDown(e, interaction.drag);
-                }}
-              />
+              <React.Fragment>
+                {/* Invisible larger hit-area so the visual knot can stay
+                    small while the actual tap target still meets the
+                    project's 60px-minimum touch target rule. */}
+                <ellipse
+                  cx={ropeCurrentEnd.x}
+                  cy={ropeCurrentEnd.y}
+                  rx="3.6"
+                  ry="4.2"
+                  fill="transparent"
+                  style={{ pointerEvents: 'auto', cursor: drag ? 'grabbing' : 'grab' }}
+                  onPointerDown={onGrab}
+                />
+                <ellipse
+                  cx={ropeCurrentEnd.x}
+                  cy={ropeCurrentEnd.y}
+                  rx="1.05"
+                  ry="1.4"
+                  fill="#efc392"
+                  stroke="#8b5a31"
+                  strokeWidth="0.35"
+                  style={{ pointerEvents: 'none' }}
+                />
+              </React.Fragment>
             );
           })()}
           {/* Layout Debug: the rope's fixed anchor (interaction.fixedPoint)
