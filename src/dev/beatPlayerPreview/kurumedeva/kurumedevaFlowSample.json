@@ -2640,7 +2640,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "",
+          "voText": "Now for the planks \u2014 Beaver can lay these all by himself!",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -2900,7 +2900,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "",
+          "voText": "The planks are down. The bridge is almost ready!",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
