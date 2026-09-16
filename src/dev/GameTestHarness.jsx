@@ -68,6 +68,7 @@ const GAMES = {
   'sm-tusk-beatplayer': { label: 'DEV — Tusk via BeatPlayerGame (not live)', Comp: lazy(() => import('./beatPlayerPreview/TuskBeatPlayerPreview')) },
   'sm-tusk-live-v2': { label: 'Symbol Mtn — Tusk (BeatPlayerGame, pilot)', Comp: lazy(() => import('../zones/symbol-mountain/scenes/tusk/TuskBeatPlayerLive')) },
   'kurumedeva-beatplayer': { label: 'DEV — KurumeDeva via BeatPlayerGame (not live)', Comp: lazy(() => import('./beatPlayerPreview/kurumedeva/KurumeDevaBeatPlayerPreview')) },
+  'modak-game2-new': { label: 'DEV — Modak Game 2 redesign: Bush/Branch/Marsh/Belly (not live)', Comp: lazy(() => import('./modakGame2Preview/ModakGame2Preview')) },
 };
 
 // Full scenes — self-contained (they wire their own SceneManager / useVoiceGuidance /

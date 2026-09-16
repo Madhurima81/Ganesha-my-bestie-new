@@ -1,0 +1,406 @@
+/* DEV-ONLY styles for the Game 2 (Belly Feeding / Lambodara) preview.
+   Isolated from ModakScene.css on purpose — nothing here is loaded by the
+   live scene until this gets ported over. */
+
+.mg2 {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  font-family: 'Nunito', sans-serif;
+}
+.mg2--paused { filter: grayscale(0.4); }
+
+.mg2-hud {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 50;
+  display: flex;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.mg2-hud-phase { color: #ffd700; }
+
+/* ---------------------------------------------------------
+   SHARED EMOTION BUBBLE
+   --------------------------------------------------------- */
+.mg2-emotion {
+  position: absolute;
+  width: clamp(48px, 4.5vw, 72px);
+  height: auto;
+  z-index: 30;
+  pointer-events: none;
+  animation: mg2EmotionIn 360ms cubic-bezier(.2, 1.3, .45, 1) both;
+}
+@keyframes mg2EmotionIn {
+  from { opacity: 0; transform: translateY(8px) scale(.75); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ---------------------------------------------------------
+   1 — BUSH
+   --------------------------------------------------------- */
+.mg2-bush-area {
+  position: absolute;
+  left: 25%;
+  top: 49%;
+  width: clamp(190px, 21vw, 320px);
+  transform: translate(-50%, -50%);
+  z-index: 12;
+}
+.mg2-bush {
+  position: relative;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  touch-action: none;
+}
+.mg2-bush img { display: block; width: 100%; height: auto; pointer-events: none; user-select: none; }
+.mg2-bush--springing { animation: mg2BushResist 650ms ease-in-out; }
+@keyframes mg2BushResist {
+  0% { transform: scaleX(1); }
+  35% { transform: scaleX(1.13); }
+  68% { transform: scaleX(.96); }
+  100% { transform: scaleX(1); }
+}
+.mg2-bush--open { animation: mg2BushOpen 420ms ease-out both; }
+@keyframes mg2BushOpen { from { transform: scaleX(.92); } to { transform: scaleX(1); } }
+
+.mg2-bush-flowers {
+  position: absolute;
+  left: 50%;
+  top: 51%;
+  width: 55%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 14;
+  pointer-events: none;
+}
+.mg2-bush-flowers img { width: 42%; height: auto; }
+.mg2-emotion--bush { right: -9%; top: -12%; }
+
+/* ---------------------------------------------------------
+   2 — TREE + BRANCH
+   --------------------------------------------------------- */
+.mg2-tree-area { position: absolute; inset: 0; pointer-events: none; z-index: 10; }
+.mg2-tree { position: absolute; left: 67%; top: 29%; width: 23%; pointer-events: none; }
+
+.mg2-branch {
+  position: absolute;
+  left: 71%;
+  top: 42%;
+  width: 23%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  pointer-events: auto;
+  touch-action: none;
+  cursor: grab;
+  transform-origin: 8% 22%;
+  transform: rotate(calc(var(--pull, 0) * 18deg)) translateY(calc(var(--pull, 0) * 35px));
+  transition: transform 160ms ease-out;
+  z-index: 14;
+}
+.mg2-branch:active { cursor: grabbing; }
+.mg2-branch > img:first-child { display: block; width: 100%; height: auto; pointer-events: none; }
+
+.mg2-branch-flower { position: absolute; width: 19%; height: auto; pointer-events: none; }
+.mg2-branch-flower--1 { left: 58%; top: 26%; }
+.mg2-branch-flower--2 { left: 79%; top: 39%; }
+
+.mg2-branch-mooshika {
+  position: absolute;
+  left: 70%;
+  top: 61%;
+  width: clamp(100px, 9vw, 145px);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 16;
+}
+.mg2-branch-mooshika img { width: 100%; height: auto; }
+.mg2-branch-mooshika--failed { animation: mg2ReachFail 800ms ease-out; }
+@keyframes mg2ReachFail {
+  0%, 100% { transform: translate(-50%, -50%); }
+  30% { transform: translate(-50%, -58%) rotate(-3deg); }
+  52% { transform: translate(-50%, -60%) rotate(3deg); }
+  75% { transform: translate(-50%, -50%); }
+}
+.mg2-emotion--branch { left: 74%; top: 53%; }
+
+/* ---------------------------------------------------------
+   3 — MUD / MARSH
+   --------------------------------------------------------- */
+.mg2-marsh-area {
+  position: absolute;
+  left: 50%;
+  top: 31%;
+  width: 31%;
+  aspect-ratio: 1.85 / 1;
+  transform: translate(-50%, -50%);
+  z-index: 13;
+}
+.mg2-marsh { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+
+.mg2-marsh-flower {
+  position: absolute;
+  width: 14%;
+  height: auto;
+  transform: translate(-50%, -50%);
+  z-index: 12;
+  pointer-events: none;
+}
+.mg2-marsh-flower--1 { left: 66%; top: 48%; }
+.mg2-marsh-flower--2 { left: 87%; top: 31%; }
+
+.mg2-marsh-mooshika {
+  position: absolute;
+  width: clamp(78px, 7vw, 110px);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  transform: translate(-50%, -50%);
+  cursor: grab;
+  touch-action: none;
+  z-index: 18;
+}
+.mg2-marsh-mooshika:active { cursor: grabbing; }
+.mg2-marsh-mooshika img { display: block; width: 100%; height: auto; pointer-events: none; user-select: none; }
+.mg2-marsh-mooshika--wobble { animation: mg2MarshWobble 650ms ease-in-out; }
+@keyframes mg2MarshWobble {
+  0%, 100% { transform: translate(-50%, -50%) rotate(0); }
+  25% { transform: translate(-50%, -50%) rotate(-5deg); }
+  55% { transform: translate(-50%, -50%) rotate(5deg); }
+  78% { transform: translate(-50%, -50%) rotate(-2deg); }
+}
+.mg2-marsh-mooshika--slip { animation: mg2MarshSlip 450ms ease-out; }
+@keyframes mg2MarshSlip {
+  0%, 100% { transform: translate(-50%, -50%); }
+  35% { transform: translate(calc(-50% - 6px), -50%); }
+  68% { transform: translate(calc(-50% + 5px), -50%); }
+}
+.mg2-emotion--marsh { left: 6%; top: 22%; }
+
+/* ---------------------------------------------------------
+   Mooshika + basket (used during bush/branch/marsh + belly)
+   --------------------------------------------------------- */
+.mg2-mooshika-idle {
+  position: absolute;
+  left: 12%;
+  top: 68%;
+  transform: translate(-50%, -50%);
+  z-index: 15;
+  pointer-events: none;
+}
+.mg2-mooshika-idle--corner { left: 10%; top: 78%; }
+
+.mg2-basket-character { position: relative; width: clamp(90px, 9vw, 145px); pointer-events: none; }
+.mg2-basket-character--standalone { width: clamp(80px, 7vw, 120px); }
+.mg2-basket-character__mouse { position: relative; display: block; width: 100%; height: auto; z-index: 3; }
+
+.mg2-basket-flowers { position: absolute; left: 12%; top: 40%; width: 30%; height: 26%; z-index: 4; pointer-events: none; }
+
+.mg2-basket-flower {
+  position: absolute;
+  width: 56%;
+  height: auto;
+  transform-origin: 50% 100%;
+  animation: mg2BasketFlowerAppear 320ms cubic-bezier(.2, 1.25, .4, 1) both;
+}
+@keyframes mg2BasketFlowerAppear { from { opacity: 0; transform: translateY(10px) scale(.7); } to { opacity: 1; } }
+.mg2-basket-flower--1 { left: 4%; top: 16%; transform: rotate(-15deg); }
+.mg2-basket-flower--2 { right: 0; top: 10%; transform: rotate(12deg); }
+.mg2-basket-flower--3 { left: 28%; top: -6%; width: 60%; transform: rotate(1deg); }
+.mg2-basket-flower--4 { left: -5%; top: -10%; width: 53%; transform: rotate(-23deg); }
+.mg2-basket-flower--5 { right: -9%; top: -14%; width: 54%; transform: rotate(22deg); }
+.mg2-basket-flowers--6 { transform: translateY(-2px) scale(1.05); }
+
+/* ---------------------------------------------------------
+   FLOWER COLLECTION FLIGHT
+   --------------------------------------------------------- */
+.mg2-flight-layer { position: fixed; inset: 0; z-index: 999; pointer-events: none; }
+.mg2-flying-flower {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: clamp(34px, 4vw, 58px);
+  height: auto;
+  pointer-events: none;
+  animation: mg2FlowerToBasket 760ms cubic-bezier(.28, .75, .35, 1) var(--delay) forwards;
+}
+@keyframes mg2FlowerToBasket {
+  0% { opacity: 1; transform: translate(calc(var(--start-x) - 50%), calc(var(--start-y) - 50%)) scale(1) rotate(0deg); }
+  45% { opacity: 1; transform: translate(calc(var(--mid-x) - 50%), calc(var(--mid-y) - 50%)) scale(.9) rotate(10deg); }
+  100% { opacity: 0; transform: translate(calc(var(--end-x) - 50%), calc(var(--end-y) - 50%)) scale(.5) rotate(18deg); }
+}
+
+/* ---------------------------------------------------------
+   BELLY RECOGNITION
+   --------------------------------------------------------- */
+.mg2-belly { position: absolute; inset: 0; z-index: 40; }
+
+.mg2-belly-ganesha {
+  position: absolute;
+  left: 50%;
+  top: 27%;
+  width: clamp(140px, 15vw, 220px);
+  transform: translate(-50%, -50%);
+}
+.mg2-belly-ganesha img { width: 100%; height: auto; display: block; }
+.mg2-belly-glow {
+  position: absolute;
+  left: 50%;
+  top: 62%;
+  width: 46%;
+  height: 30%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.55) 0%, rgba(255, 215, 0, 0) 72%);
+  animation: mg2GlowPulse 1600ms ease-in-out infinite;
+}
+.mg2-belly-glow--strong { background: radial-gradient(circle, rgba(255, 215, 0, 0.85) 0%, rgba(255, 215, 0, 0) 75%); }
+@keyframes mg2GlowPulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+
+.mg2-belly-mooshika {
+  position: absolute;
+  left: 50%;
+  top: 52%;
+  width: clamp(90px, 8vw, 130px);
+  transform: translate(-50%, -50%);
+}
+.mg2-belly-mooshika > img:first-child { width: 100%; height: auto; display: block; }
+
+.mg2-belly-emotion { position: absolute; width: clamp(46px, 4.2vw, 68px); height: auto; animation: mg2EmotionIn 400ms ease both; }
+.mg2-belly-emotion--angry { left: -60%; top: -55%; }
+.mg2-belly-emotion--worried { right: -60%; top: -55%; }
+.mg2-belly-emotion--sad { left: 30%; top: 90%; }
+
+.mg2-belly-basket { position: absolute; left: 105%; top: 60%; }
+
+.mg2-belly-symbol {
+  position: absolute;
+  left: 50%;
+  top: 12%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  animation: mg2EmotionIn 500ms ease both;
+}
+.mg2-belly-symbol img { width: clamp(48px, 5vw, 72px); height: auto; filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.8)); }
+.mg2-belly-symbol span { display: block; font-family: 'Baloo 2', sans-serif; font-weight: 800; color: #6b3a1a; font-size: 14px; }
+
+/* ---------------------------------------------------------
+   LAYOUT DEBUG (pattern matches KurumedevaGame.jsx / NewModakSceneV7)
+   --------------------------------------------------------- */
+.mg2--debugging { cursor: crosshair; }
+
+.mg2-debug-overlay { position: absolute; inset: 0; z-index: 500; }
+.mg2-debug-marker {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  cursor: grab;
+  touch-action: none;
+  z-index: 501;
+}
+.mg2-debug-marker:active { cursor: grabbing; }
+.mg2-debug-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #ff3860;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+.mg2-debug-marker.is-selected .mg2-debug-dot { background: #ffd700; }
+.mg2-debug-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 1px 5px;
+  border-radius: 5px;
+  white-space: nowrap;
+}
+
+.mg2-debug-panel {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  z-index: 900;
+  background: #fff;
+  border: 1px solid #d9cce5;
+  border-radius: 10px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+  font-size: 12px;
+  max-width: 260px;
+}
+.mg2-debug-toggle {
+  width: 100%;
+  border: 0;
+  background: #6d42a8;
+  color: #fff;
+  font-weight: 700;
+  padding: 8px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.mg2-debug-panel.is-open .mg2-debug-toggle { border-radius: 10px 10px 0 0; }
+.mg2-debug-body { padding: 8px 10px; max-height: 60vh; overflow-y: auto; }
+.mg2-debug-note { font-size: 10px; color: #7d7087; margin: 0 0 6px; }
+.mg2-debug-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-bottom: 6px; font-weight: 700; }
+.mg2-debug-row select, .mg2-debug-row input {
+  flex: 1;
+  border: 1px solid #d9cce5;
+  border-radius: 6px;
+  padding: 3px 5px;
+  font-size: 11px;
+}
+.mg2-debug-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 6px; }
+.mg2-debug-grid button {
+  border: 0;
+  background: #eee7f7;
+  color: #4b2b66;
+  border-radius: 6px;
+  padding: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.mg2-debug-readout {
+  background: #f4eef9;
+  border-radius: 6px;
+  padding: 6px;
+  font-size: 9px;
+  max-height: 140px;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.mg2-done {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.85);
+  text-align: center;
+  padding: 24px;
+  font-family: 'Baloo 2', sans-serif;
+  color: #4a342c;
+}
