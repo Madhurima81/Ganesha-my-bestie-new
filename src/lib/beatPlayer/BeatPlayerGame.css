@@ -24,6 +24,7 @@
     filter 220ms ease;
 }
 
+.beat-player-state-before .beat-player-item,
 .beat-player-state-movement .beat-player-item,
 .beat-player-state-after .beat-player-item {
   animation: beatPlayerSoftEnter 260ms ease-out both;
@@ -208,6 +209,7 @@
   .beat-player-item,
   .beat-player-drop,
   .beat-player-stage.beat-player-wrong .beat-player-item,
+  .beat-player-state-before .beat-player-item,
   .beat-player-state-movement .beat-player-item,
   .beat-player-state-after .beat-player-item {
     animation: none !important;
