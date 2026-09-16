@@ -605,33 +605,6 @@ function BeatPlayerGame({
   const isTryFailHold = (it) => it?.type === 'try-fail' && it?.gesture === 'press-hold';
   const isTryFailDrag = (it) => it?.type === 'try-fail' && it?.gesture !== 'press-hold';
 
-  // The rope's loose end (an SVG ellipse, not a `.beat-player-item`) never
-  // got the shared beatPlayerShake animation, and its position recalculates
-  // straight from `drag`/the item's rest x,y with no transition — so on
-  // release it used to just teleport back instantly instead of visibly
-  // slipping. This animates an eased slide from the release point back to
-  // rest over ~320ms; ropeCurrentEnd (below) prefers this value while set.
-  const ropeSnapRaf = useRef(null);
-  const [ropeSnapPos, setRopeSnapPos] = useState(null);
-
-  const animateRopeSnapBack = useCallback((fromX, fromY, toX, toY) => {
-    if (ropeSnapRaf.current) cancelAnimationFrame(ropeSnapRaf.current);
-    const duration = 320;
-    const start = performance.now();
-    const tick = (now) => {
-      const t = Math.min(1, (now - start) / duration);
-      const eased = 1 - (1 - t) ** 3; // ease-out cubic
-      setRopeSnapPos({ x: fromX + (toX - fromX) * eased, y: fromY + (toY - fromY) * eased });
-      if (t < 1) {
-        ropeSnapRaf.current = requestAnimationFrame(tick);
-      } else {
-        ropeSnapRaf.current = null;
-        setRopeSnapPos(null);
-      }
-    };
-    ropeSnapRaf.current = requestAnimationFrame(tick);
-  }, []);
-
   const failThenAdvance = useCallback(() => {
     setDrag(null);
     setFeedback('wrong');
@@ -668,19 +641,13 @@ function BeatPlayerGame({
   const onPointerUp = useCallback((e) => {
     if (!drag) return;
     if (isTryFailDrag(interaction)) {
-      // A try-fail with a fixedPoint gets the rope-curve visual — animate
-      // its loose end sliding back to rest instead of the instant snap.
-      if (interaction?.fixedPoint) {
-        const restItem = findItem(interaction.drag);
-        if (restItem) animateRopeSnapBack(drag.x, drag.y, restItem.x, restItem.y);
-      }
       failThenAdvance();
       return;
     }
     const ok = hitTest(e.clientX, e.clientY, interaction.target);
     if (ok) completeInteraction();
     else rejectInteraction();
-  }, [drag, interaction, hitTest, completeInteraction, rejectInteraction, failThenAdvance, findItem, animateRopeSnapBack]);
+  }, [drag, interaction, hitTest, completeInteraction, rejectInteraction, failThenAdvance]);
 
   // Tap-to-select-then-tap-target — always available as an accessibility
   // fallback for drag-drop, and the primary path for tap-select-tap-target.
@@ -695,6 +662,33 @@ function BeatPlayerGame({
       completeInteraction();
     }
   }, [stateName, interaction, selectedGameKey, completeInteraction]);
+
+  // Eases holdProgress back down to 0 instead of snapping — used both when
+  // the child releases early (cancelHold) and when a try-fail-hold reaches
+  // full and has to spring back open (e.g. the tie-knot visual: snapping
+  // the gap shut then instantly popping it back open read as a glitch, not
+  // a fail; this makes it visibly "spring loose" instead).
+  const decayHoldProgress = useCallback((decayMs = 250) => {
+    if (holdReleaseRaf.current) {
+      cancelAnimationFrame(holdReleaseRaf.current);
+      holdReleaseRaf.current = null;
+    }
+    const startProgress = holdProgressRef.current;
+    if (startProgress <= 0) return;
+    const startTime = performance.now();
+    const decayTick = (now) => {
+      const elapsed = now - startTime;
+      const next = Math.max(0, startProgress * (1 - elapsed / decayMs));
+      holdProgressRef.current = next;
+      setHoldProgress(next);
+      if (next <= 0) {
+        holdReleaseRaf.current = null;
+        return;
+      }
+      holdReleaseRaf.current = requestAnimationFrame(decayTick);
+    };
+    holdReleaseRaf.current = requestAnimationFrame(decayTick);
+  }, []);
 
   const startHold = useCallback((gameKey) => {
     if (!needsInput(stateName) || interaction.drag !== gameKey) return;
@@ -720,20 +714,23 @@ function BeatPlayerGame({
         holdRaf.current = null;
         if (isTryFailHold(interaction)) {
           failThenAdvance();
+          // Hold the full pose for a beat so the child sees it "almost
+          // worked", then spring the gap back open before the shake ends.
+          setTimeout(() => decayHoldProgress(220), 120);
         } else {
           setFeedback('idle');
           completeInteraction();
+          setTimeout(() => {
+            holdProgressRef.current = 0;
+            setHoldProgress(0);
+          }, 300);
         }
-        setTimeout(() => {
-          holdProgressRef.current = 0;
-          setHoldProgress(0);
-        }, 300);
         return;
       }
       holdRaf.current = requestAnimationFrame(tick);
     };
     holdRaf.current = requestAnimationFrame(tick);
-  }, [stateName, interaction, completeInteraction, failThenAdvance]);
+  }, [stateName, interaction, completeInteraction, failThenAdvance, decayHoldProgress]);
 
   const cancelHold = useCallback(() => {
     if (holdTimer.current) clearTimeout(holdTimer.current);
@@ -742,25 +739,8 @@ function BeatPlayerGame({
       holdRaf.current = null;
     }
     setFeedback((f) => (f === 'holding' ? 'idle' : f));
-
-    // Quick decay back to 0 instead of snapping, matching the Pond hold ring.
-    const startProgress = holdProgressRef.current;
-    if (startProgress <= 0) return;
-    const decayMs = 250;
-    const startTime = performance.now();
-    const decayTick = (now) => {
-      const elapsed = now - startTime;
-      const next = Math.max(0, startProgress * (1 - elapsed / decayMs));
-      holdProgressRef.current = next;
-      setHoldProgress(next);
-      if (next <= 0) {
-        holdReleaseRaf.current = null;
-        return;
-      }
-      holdReleaseRaf.current = requestAnimationFrame(decayTick);
-    };
-    holdReleaseRaf.current = requestAnimationFrame(decayTick);
-  }, []);
+    decayHoldProgress(250);
+  }, [decayHoldProgress]);
 
   // ---- drag-path: tap trigger -> reveal drop -> drag through waypoints ----
   const pctDistance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
@@ -826,23 +806,15 @@ function BeatPlayerGame({
   if (hideElements || !isActive || !beat) return null;
 
   const isDragPath = interaction?.type === 'drag-path';
-  // Any interaction with a fixedPoint gets the rope-curve visual — this
-  // covers the real 'rope-drag' mechanic AND a 'try-fail' drag that should
-  // *look* like a rope being pulled even though it always slips back
-  // (e.g. "try to tie it alone" before help arrives).
-  const isRopeDrag = interaction?.type === 'rope-drag' || (interaction?.type === 'try-fail' && interaction?.fixedPoint);
-
-  // rope-drag's curve: identical quadratic-bezier sag formula to the real
-  // game's RopeLine (src/zones/shloka-river/scenes/Scene1/MahakayaRescueGame.jsx)
-  // — drawn from the fixed anchor to the drag item's current position
-  // (its resting spot, or live drag.x/drag.y while the child is dragging it).
-  const ropeCurveD = (x1, y1, x2, y2) => {
-    const midX = (x1 + x2) / 2, midY = (y1 + y2) / 2;
-    const distance = Math.hypot(x2 - x1, y2 - y1);
-    const controlX = midX + (x2 - x1) * 0.04;
-    const controlY = midY + Math.min(14, Math.max(4, distance * 0.12));
-    return `M ${x1} ${y1} Q ${controlX} ${controlY} ${x2} ${y2}`;
-  };
+  // A tie-knot beat: the child presses and holds (never drags across a
+  // distance — there was never actually a "drag the rope" gesture; tying a
+  // rope is a squeeze-and-hold action). Rendered as two clamp/bracket
+  // shapes closing toward each other at `fixedPoint` as holdProgress goes
+  // 0->1 — replaces the earlier curve-you-drag-across-the-bridge visual,
+  // which read as "dragging a rope" rather than "tying" it. Works for both
+  // a 'try-fail' press-hold (springs back open, see isTryFailHold) and a
+  // plain 'press-hold' success (stays fully closed once done).
+  const isTieKnot = !!interaction?.fixedPoint;
   // True the instant any hold/drag is in flight — only one can be at once.
   // 'wrong' is included so a try-fail's shake window doesn't drop the pose
   // back to idle before the state actually advances — without it, the
@@ -873,22 +845,6 @@ function BeatPlayerGame({
   const effectiveFixedPoint = debugFixedPoint || interaction?.fixedPoint;
   const effectiveTargetZone = debugTargetZone
     || (interaction?.target && typeof interaction.target === 'object' ? interaction.target : null);
-
-  let ropeCurrentEnd = null;
-  if (isRopeDrag && effectiveFixedPoint) {
-    if (ropeSnapPos) {
-      ropeCurrentEnd = ropeSnapPos;
-    } else if (!layoutDebug && drag?.gameKey === interaction.drag) {
-      ropeCurrentEnd = { x: drag.x, y: drag.y };
-    } else {
-      const dragItem = findItem(interaction.drag);
-      if (dragItem) {
-        const i = items.indexOf(dragItem);
-        const effDragItem = layoutDebug ? withDebugOverride(dragItem, itemKeyOf(dragItem, i)) : dragItem;
-        ropeCurrentEnd = { x: effDragItem.x, y: effDragItem.y };
-      }
-    }
-  }
 
   const debugSelectedItem = layoutDebug && debugSelectedKey
     && debugSelectedKey !== '__fixedPoint__' && debugSelectedKey !== '__targetZone__'
@@ -959,14 +915,12 @@ function BeatPlayerGame({
         const isTargetKey = interaction?.target === rawItem.gameKey;
         const isTriggerKey = isDragPath && interaction?.trigger === rawItem.gameKey && !dropRevealed;
         const isBeingDragged = !layoutDebug && drag?.gameKey === rawItem.gameKey;
-        // rope-drag's own drag item has no static image at all, ever — it's
-        // purely the SVG curve's draggable endpoint ellipse, rendered
-        // separately below (which also becomes the layoutDebug handle for
-        // this item's resting position — see the rope SVG block). The item
-        // still exists in the data as the rope's authored resting position
-        // (findItem needs it), it just never renders as a generic image
-        // button in either mode.
-        if (isRopeDrag && isDragKey) return null;
+        // A tie-knot's drag item has no static image at all, ever — it's
+        // purely the clamp-bracket SVG rendered separately below (which
+        // also becomes the layoutDebug handle, via the fixedPoint anchor).
+        // The item still exists in the data purely for findItem/isDragKey
+        // bookkeeping, it just never renders as a generic image button.
+        if (isTieKnot && isDragKey) return null;
         // Optional per-item "active" pose (item.activePath) swaps in the instant
         // ANY interaction starts — pressed-and-holding, or mid-drag — instead of
         // waiting for the gesture to resolve into the next state. Not limited to
@@ -1018,84 +972,75 @@ function BeatPlayerGame({
         );
       })}
 
-      {isRopeDrag && ropeCurrentEnd && (
-        <svg viewBox="0 0 100 100" preserveAspectRatio="none" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 55 }}>
-          {/* "wrong" tints the rope red for the fail window (matches the
-              420ms shake other items get) — without this the rope's own
-              try-fail gave no failure cue at all, just a slide back. */}
-          <path
-            d={ropeCurveD(effectiveFixedPoint.x, effectiveFixedPoint.y, ropeCurrentEnd.x, ropeCurrentEnd.y)}
-            fill="none" stroke={feedback === 'wrong' ? '#c2564a' : '#d19159'} strokeWidth="0.95" strokeLinecap="round"
-          />
-          <path
-            d={ropeCurveD(effectiveFixedPoint.x, effectiveFixedPoint.y, ropeCurrentEnd.x, ropeCurrentEnd.y)}
-            fill="none" stroke={feedback === 'wrong' ? '#e8a599' : '#efc392'} strokeWidth="0.48" strokeLinecap="round" strokeDasharray="0.01 2.2" opacity="0.82"
-          />
-          {/* The rope's loose end IS the drag target — no separate image
-              needed, this circle is grabbed directly. It's an ellipse
-              because the viewBox is a 100x100 square stretched with
-              preserveAspectRatio="none" onto a 4:3 stage — a plain circle
-              here would render visibly egg-shaped. Doubles as the
-              layoutDebug handle for this item's resting position (its
-              underlying item never gets a real image button — see
-              items.map — so this ellipse is its only visual in any mode). */}
-          {(layoutDebug || needsInput(stateName)) && (() => {
-            const dragItem = findItem(interaction.drag);
-            const i = dragItem ? items.indexOf(dragItem) : -1;
-            const debugKey = dragItem ? itemKeyOf(dragItem, i) : null;
-            const onGrab = (e) => {
-              e.currentTarget.setPointerCapture?.(e.pointerId);
-              if (layoutDebug) {
-                if (dragItem) startDebugItemDrag(e, debugKey, withDebugOverride(dragItem, debugKey));
-                return;
-              }
-              onPointerDown(e, interaction.drag);
-            };
-            return (
-              <React.Fragment>
-                {/* Invisible larger hit-area so the visual knot can stay
-                    small while the actual tap target still meets the
-                    project's 60px-minimum touch target rule. */}
-                <ellipse
-                  cx={ropeCurrentEnd.x}
-                  cy={ropeCurrentEnd.y}
-                  rx="3.6"
-                  ry="4.2"
-                  fill="transparent"
-                  style={{ pointerEvents: 'auto', cursor: drag ? 'grabbing' : 'grab' }}
-                  onPointerDown={onGrab}
-                />
-                <ellipse
-                  cx={ropeCurrentEnd.x}
-                  cy={ropeCurrentEnd.y}
-                  rx="1.05"
-                  ry="1.4"
-                  fill={feedback === 'wrong' ? '#e8a599' : '#efc392'}
-                  stroke={feedback === 'wrong' ? '#c2564a' : '#8b5a31'}
-                  strokeWidth="0.35"
-                  style={{ pointerEvents: 'none' }}
-                />
-              </React.Fragment>
-            );
-          })()}
-          {/* Layout Debug: the rope's fixed anchor (interaction.fixedPoint)
-              has no item of its own to grab, so give it a dedicated handle
-              here — dragging it updates debugOverrides[beatIndex].fixedPoint,
-              included in the "copy JSON" export. */}
-          {layoutDebug && (
-            <circle
-              cx={effectiveFixedPoint.x}
-              cy={effectiveFixedPoint.y}
-              r="2"
-              fill="#FF5722"
-              stroke="#fff"
-              strokeWidth="0.4"
-              style={{ pointerEvents: 'auto', cursor: 'grab' }}
-              onPointerDown={startDebugFixedPointDrag}
-            />
-          )}
-        </svg>
-      )}
+      {isTieKnot && effectiveFixedPoint && (() => {
+        const cx = effectiveFixedPoint.x;
+        const cy = effectiveFixedPoint.y;
+        // While the child is actively holding (or has just released into
+        // the shake/reset window), the gap is live-driven by holdProgress.
+        // Once the beat has resolved (movement/after), holdProgress itself
+        // resets to 0 for bookkeeping — so show the RESULT instead: fully
+        // closed for a beat that succeeded, still open for one that failed
+        // (a try-fail's rope never actually gets tied).
+        const resolved = !needsInput(stateName);
+        const maxGap = 3.0;
+        const minGap = 0.35;
+        const gap = resolved
+          ? (isTryFailHold(interaction) ? maxGap : minGap)
+          : maxGap - (maxGap - minGap) * holdProgress;
+        const armReach = 4.6;
+        const armLen = 3.2;
+        const color = feedback === 'wrong' ? '#c2564a' : '#d19159';
+        const highlight = feedback === 'wrong' ? '#e8a599' : '#efc392';
+        const topD = `M ${cx - armReach} ${cy - gap - armLen} Q ${cx - armReach} ${cy - gap} ${cx - 0.25} ${cy - gap}`;
+        const botD = `M ${cx - armReach} ${cy + gap + armLen} Q ${cx - armReach} ${cy + gap} ${cx - 0.25} ${cy + gap}`;
+        const canGrab = !layoutDebug && !resolved && needsInput(stateName);
+        const onGrab = (e) => {
+          e.currentTarget.setPointerCapture?.(e.pointerId);
+          onPointerDown(e, interaction.drag);
+          startHold(interaction.drag);
+        };
+        return (
+          <svg viewBox="0 0 100 100" preserveAspectRatio="none" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 55 }}>
+            {/* Two clamp/bracket arms hugging the log from each side —
+                closing toward each other as the child holds, instead of a
+                rope being dragged across a distance (which was never the
+                actual mechanic: tying a rope is a squeeze-and-hold).
+                Two-tone stroke (dark outline + light core) for contrast
+                against the log art, same technique the old rope curve
+                used. */}
+            <path d={topD} fill="none" stroke={color} strokeWidth="2.1" strokeLinecap="round" />
+            <path d={botD} fill="none" stroke={color} strokeWidth="2.1" strokeLinecap="round" />
+            <path d={topD} fill="none" stroke={highlight} strokeWidth="0.9" strokeLinecap="round" />
+            <path d={botD} fill="none" stroke={highlight} strokeWidth="0.9" strokeLinecap="round" />
+            {/* The knot itself — where the two arms meet as the gap closes. */}
+            <circle cx={cx - 0.25} cy={cy} r={1.1 + (1 - gap / maxGap) * 0.7} fill={color} stroke={highlight} strokeWidth="0.4" opacity="0.98" />
+            {canGrab && (
+              // Invisible larger hit-area so the visual can stay small
+              // while the tap target still meets the project's 60px
+              // touch-target minimum.
+              <ellipse
+                cx={cx} cy={cy} rx="3.6" ry="4.2"
+                fill="transparent"
+                style={{ pointerEvents: 'auto', cursor: feedback === 'holding' ? 'grabbing' : 'grab' }}
+                onPointerDown={onGrab}
+                onPointerUp={cancelHold}
+                onPointerLeave={cancelHold}
+              />
+            )}
+            {/* Layout Debug: fixedPoint has no item of its own to grab, so
+                give it a dedicated handle — dragging it repositions the
+                whole clamp visual, included in the "copy JSON" export. */}
+            {layoutDebug && (
+              <circle
+                cx={cx} cy={cy} r="2"
+                fill="#FF5722" stroke="#fff" strokeWidth="0.4"
+                style={{ pointerEvents: 'auto', cursor: 'grab' }}
+                onPointerDown={startDebugFixedPointDrag}
+              />
+            )}
+          </svg>
+        );
+      })()}
 
       {/* drag-path's draggable drop — an SVG shape (matching the real Pond
           scene mechanic this was modeled on), not an image asset. */}
