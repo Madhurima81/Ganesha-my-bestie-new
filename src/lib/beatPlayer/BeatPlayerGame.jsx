@@ -662,6 +662,12 @@ function BeatPlayerGame({
         const isTargetKey = interaction?.target === item.gameKey;
         const isTriggerKey = isDragPath && interaction?.trigger === item.gameKey && !dropRevealed;
         const isBeingDragged = drag?.gameKey === item.gameKey;
+        // rope-drag's own drag item has no static image at all — it's
+        // purely the SVG curve's draggable endpoint circle, rendered
+        // separately below. The item still exists in the data as the
+        // rope's authored resting position (findItem needs it), it just
+        // never renders as a generic image button.
+        if (isRopeDrag && isDragKey) return null;
         // Optional per-item "active" pose (item.activePath) swaps in the instant
         // ANY interaction starts — pressed-and-holding, or mid-drag — instead of
         // waiting for the gesture to resolve into the next state. Not limited to
@@ -720,6 +726,27 @@ function BeatPlayerGame({
             d={ropeCurveD(interaction.fixedPoint.x, interaction.fixedPoint.y, ropeCurrentEnd.x, ropeCurrentEnd.y)}
             fill="none" stroke="#efc392" strokeWidth="0.48" strokeLinecap="round" strokeDasharray="0.01 2.2" opacity="0.82"
           />
+          {/* The rope's loose end IS the drag target — no separate image
+              needed, this circle is grabbed directly. It's an ellipse
+              because the viewBox is a 100x100 square stretched with
+              preserveAspectRatio="none" onto a 4:3 stage — a plain circle
+              here would render visibly egg-shaped. */}
+          {needsInput(stateName) && (
+            <ellipse
+              cx={ropeCurrentEnd.x}
+              cy={ropeCurrentEnd.y}
+              rx="1.8"
+              ry="2.4"
+              fill="#efc392"
+              stroke="#8b5a31"
+              strokeWidth="0.35"
+              style={{ pointerEvents: 'auto', cursor: drag ? 'grabbing' : 'grab' }}
+              onPointerDown={(e) => {
+                e.currentTarget.setPointerCapture?.(e.pointerId);
+                onPointerDown(e, interaction.drag);
+              }}
+            />
+          )}
         </svg>
       )}
 
