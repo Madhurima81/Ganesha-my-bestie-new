@@ -605,6 +605,33 @@ function BeatPlayerGame({
   const isTryFailHold = (it) => it?.type === 'try-fail' && it?.gesture === 'press-hold';
   const isTryFailDrag = (it) => it?.type === 'try-fail' && it?.gesture !== 'press-hold';
 
+  // The rope's loose end (an SVG ellipse, not a `.beat-player-item`) never
+  // got the shared beatPlayerShake animation, and its position recalculates
+  // straight from `drag`/the item's rest x,y with no transition — so on
+  // release it used to just teleport back instantly instead of visibly
+  // slipping. This animates an eased slide from the release point back to
+  // rest over ~320ms; ropeCurrentEnd (below) prefers this value while set.
+  const ropeSnapRaf = useRef(null);
+  const [ropeSnapPos, setRopeSnapPos] = useState(null);
+
+  const animateRopeSnapBack = useCallback((fromX, fromY, toX, toY) => {
+    if (ropeSnapRaf.current) cancelAnimationFrame(ropeSnapRaf.current);
+    const duration = 320;
+    const start = performance.now();
+    const tick = (now) => {
+      const t = Math.min(1, (now - start) / duration);
+      const eased = 1 - (1 - t) ** 3; // ease-out cubic
+      setRopeSnapPos({ x: fromX + (toX - fromX) * eased, y: fromY + (toY - fromY) * eased });
+      if (t < 1) {
+        ropeSnapRaf.current = requestAnimationFrame(tick);
+      } else {
+        ropeSnapRaf.current = null;
+        setRopeSnapPos(null);
+      }
+    };
+    ropeSnapRaf.current = requestAnimationFrame(tick);
+  }, []);
+
   const failThenAdvance = useCallback(() => {
     setDrag(null);
     setFeedback('wrong');
@@ -641,13 +668,19 @@ function BeatPlayerGame({
   const onPointerUp = useCallback((e) => {
     if (!drag) return;
     if (isTryFailDrag(interaction)) {
+      // A try-fail with a fixedPoint gets the rope-curve visual — animate
+      // its loose end sliding back to rest instead of the instant snap.
+      if (interaction?.fixedPoint) {
+        const restItem = findItem(interaction.drag);
+        if (restItem) animateRopeSnapBack(drag.x, drag.y, restItem.x, restItem.y);
+      }
       failThenAdvance();
       return;
     }
     const ok = hitTest(e.clientX, e.clientY, interaction.target);
     if (ok) completeInteraction();
     else rejectInteraction();
-  }, [drag, interaction, hitTest, completeInteraction, rejectInteraction, failThenAdvance]);
+  }, [drag, interaction, hitTest, completeInteraction, rejectInteraction, failThenAdvance, findItem, animateRopeSnapBack]);
 
   // Tap-to-select-then-tap-target — always available as an accessibility
   // fallback for drag-drop, and the primary path for tap-select-tap-target.
@@ -843,7 +876,9 @@ function BeatPlayerGame({
 
   let ropeCurrentEnd = null;
   if (isRopeDrag && effectiveFixedPoint) {
-    if (!layoutDebug && drag?.gameKey === interaction.drag) {
+    if (ropeSnapPos) {
+      ropeCurrentEnd = ropeSnapPos;
+    } else if (!layoutDebug && drag?.gameKey === interaction.drag) {
       ropeCurrentEnd = { x: drag.x, y: drag.y };
     } else {
       const dragItem = findItem(interaction.drag);
@@ -985,13 +1020,16 @@ function BeatPlayerGame({
 
       {isRopeDrag && ropeCurrentEnd && (
         <svg viewBox="0 0 100 100" preserveAspectRatio="none" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 55 }}>
+          {/* "wrong" tints the rope red for the fail window (matches the
+              420ms shake other items get) — without this the rope's own
+              try-fail gave no failure cue at all, just a slide back. */}
           <path
             d={ropeCurveD(effectiveFixedPoint.x, effectiveFixedPoint.y, ropeCurrentEnd.x, ropeCurrentEnd.y)}
-            fill="none" stroke="#d19159" strokeWidth="0.95" strokeLinecap="round"
+            fill="none" stroke={feedback === 'wrong' ? '#c2564a' : '#d19159'} strokeWidth="0.95" strokeLinecap="round"
           />
           <path
             d={ropeCurveD(effectiveFixedPoint.x, effectiveFixedPoint.y, ropeCurrentEnd.x, ropeCurrentEnd.y)}
-            fill="none" stroke="#efc392" strokeWidth="0.48" strokeLinecap="round" strokeDasharray="0.01 2.2" opacity="0.82"
+            fill="none" stroke={feedback === 'wrong' ? '#e8a599' : '#efc392'} strokeWidth="0.48" strokeLinecap="round" strokeDasharray="0.01 2.2" opacity="0.82"
           />
           {/* The rope's loose end IS the drag target — no separate image
               needed, this circle is grabbed directly. It's an ellipse
@@ -1032,8 +1070,8 @@ function BeatPlayerGame({
                   cy={ropeCurrentEnd.y}
                   rx="1.05"
                   ry="1.4"
-                  fill="#efc392"
-                  stroke="#8b5a31"
+                  fill={feedback === 'wrong' ? '#e8a599' : '#efc392'}
+                  stroke={feedback === 'wrong' ? '#c2564a' : '#8b5a31'}
                   strokeWidth="0.35"
                   style={{ pointerEvents: 'none' }}
                 />
