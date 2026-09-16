@@ -856,14 +856,14 @@ function BeatPlayerGame({
         const isTargetKey = interaction?.target === rawItem.gameKey;
         const isTriggerKey = isDragPath && interaction?.trigger === rawItem.gameKey && !dropRevealed;
         const isBeingDragged = !layoutDebug && drag?.gameKey === rawItem.gameKey;
-        // rope-drag's own drag item has no static image at all — it's
-        // purely the SVG curve's draggable endpoint circle, rendered
-        // separately below. The item still exists in the data as the
-        // rope's authored resting position (findItem needs it), it just
-        // never renders as a generic image button. In layoutDebug mode it
-        // still renders (as a plain draggable item) so its resting spot
-        // can be repositioned like anything else.
-        if (!layoutDebug && isRopeDrag && isDragKey) return null;
+        // rope-drag's own drag item has no static image at all, ever — it's
+        // purely the SVG curve's draggable endpoint ellipse, rendered
+        // separately below (which also becomes the layoutDebug handle for
+        // this item's resting position — see the rope SVG block). The item
+        // still exists in the data as the rope's authored resting position
+        // (findItem needs it), it just never renders as a generic image
+        // button in either mode.
+        if (isRopeDrag && isDragKey) return null;
         // Optional per-item "active" pose (item.activePath) swaps in the instant
         // ANY interaction starts — pressed-and-holding, or mid-drag — instead of
         // waiting for the gesture to resolve into the next state. Not limited to
@@ -929,26 +929,35 @@ function BeatPlayerGame({
               needed, this circle is grabbed directly. It's an ellipse
               because the viewBox is a 100x100 square stretched with
               preserveAspectRatio="none" onto a 4:3 stage — a plain circle
-              here would render visibly egg-shaped. Hidden in layoutDebug:
-              the rope item itself renders as a plain draggable button then
-              (see items.map), so this would just be a second overlapping
-              handle for the same point. */}
-          {!layoutDebug && needsInput(stateName) && (
-            <ellipse
-              cx={ropeCurrentEnd.x}
-              cy={ropeCurrentEnd.y}
-              rx="1.8"
-              ry="2.4"
-              fill="#efc392"
-              stroke="#8b5a31"
-              strokeWidth="0.35"
-              style={{ pointerEvents: 'auto', cursor: drag ? 'grabbing' : 'grab' }}
-              onPointerDown={(e) => {
-                e.currentTarget.setPointerCapture?.(e.pointerId);
-                onPointerDown(e, interaction.drag);
-              }}
-            />
-          )}
+              here would render visibly egg-shaped. Doubles as the
+              layoutDebug handle for this item's resting position (its
+              underlying item never gets a real image button — see
+              items.map — so this ellipse is its only visual in any mode). */}
+          {(layoutDebug || needsInput(stateName)) && (() => {
+            const dragItem = findItem(interaction.drag);
+            const i = dragItem ? items.indexOf(dragItem) : -1;
+            const debugKey = dragItem ? itemKeyOf(dragItem, i) : null;
+            return (
+              <ellipse
+                cx={ropeCurrentEnd.x}
+                cy={ropeCurrentEnd.y}
+                rx="1.8"
+                ry="2.4"
+                fill="#efc392"
+                stroke="#8b5a31"
+                strokeWidth="0.35"
+                style={{ pointerEvents: 'auto', cursor: drag ? 'grabbing' : 'grab' }}
+                onPointerDown={(e) => {
+                  e.currentTarget.setPointerCapture?.(e.pointerId);
+                  if (layoutDebug) {
+                    if (dragItem) startDebugItemDrag(e, debugKey, withDebugOverride(dragItem, debugKey));
+                    return;
+                  }
+                  onPointerDown(e, interaction.drag);
+                }}
+              />
+            );
+          })()}
           {/* Layout Debug: the rope's fixed anchor (interaction.fixedPoint)
               has no item of its own to grab, so give it a dedicated handle
               here — dragging it updates debugOverrides[beatIndex].fixedPoint,
