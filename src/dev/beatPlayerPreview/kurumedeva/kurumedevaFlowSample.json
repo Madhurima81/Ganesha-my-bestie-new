@@ -595,8 +595,8 @@
           {
             "name": "Help bubble \u2014 elephant/logs",
             "path": "Characters/help-bubble-elephant-logs.png",
-            "x": 22.0,
-            "y": 52.0,
+            "x": 16.0,
+            "y": 40.0,
             "scale": 38,
             "rotation": 0,
             "opacity": 100,
@@ -604,7 +604,8 @@
             "z": 10,
             "w": 24,
             "locked": 0,
-            "gameKey": "helpBubbleLogs"
+            "gameKey": "helpBubbleLogs",
+            "appearDelayMs": 1000
           },
           {
             "name": "Support logs \u2014 pair",
@@ -1166,8 +1167,8 @@
           {
             "name": "Support logs \u2014 pair",
             "path": "Bridge/logs-bare.png",
-            "x": 28.610199670449916,
-            "y": 66.93810412213287,
+            "x": 58.57762638054764,
+            "y": 72.00505591111903,
             "scale": 53,
             "rotation": 0,
             "opacity": 100,
@@ -1405,8 +1406,8 @@
           {
             "name": "Help bubble \u2014 elephant/logs",
             "path": "Characters/help-bubble-elephant-logs.png",
-            "x": 22.0,
-            "y": 52.0,
+            "x": 16.0,
+            "y": 40.0,
             "scale": 38,
             "rotation": 0,
             "opacity": 100,

@@ -20,6 +20,12 @@ import './BeatPlayerGame.css';
  * `activePath` is what it becomes the moment they touch it. Skip it and the
  * item just keeps showing `path` throughout, same as before this existed.
  *
+ * Per-item `appearDelayMs` (optional): keeps that item invisible and
+ * non-interactive for N ms after this state is entered, then fades it in.
+ * For a beat where two things shouldn't appear in the exact same instant —
+ * e.g. a help bubble popping in a beat after the pose it's reacting to,
+ * not simultaneously with it.
+ *
 
  * Interaction types (this is the fixed vocabulary a future editor "mechanic"
  * dropdown should write into beat.interaction.type — adding a new type here
@@ -190,6 +196,31 @@ function BeatPlayerGame({
 
   const interaction = interactions[beatIndex] || beat?.interaction || null;
   const isLastBeat = beatPos === beatKeys.length - 1;
+
+  // Per-item `appearDelayMs` (optional): hides that item until N ms after
+  // this state is entered, then fades it in — e.g. a help bubble that
+  // shouldn't appear in the same instant as the pose it's reacting to.
+  // Re-armed on every state/beat entry.
+  const [pendingReveal, setPendingReveal] = useState(() => new Set());
+  useEffect(() => {
+    const delayed = items.filter((it) => it.appearDelayMs > 0);
+    if (!delayed.length) {
+      setPendingReveal(new Set());
+      return undefined;
+    }
+    const keyOf = (it) => it.gameKey || it.name;
+    setPendingReveal(new Set(delayed.map(keyOf)));
+    const timers = delayed.map((it) => setTimeout(() => {
+      setPendingReveal((prev) => {
+        if (!prev.has(keyOf(it))) return prev;
+        const next = new Set(prev);
+        next.delete(keyOf(it));
+        return next;
+      });
+    }, it.appearDelayMs));
+    return () => timers.forEach(clearTimeout);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items]);
 
   const resolveSrc = useCallback((path) => {
     const src = assetMap?.[path];
@@ -644,7 +675,8 @@ function BeatPlayerGame({
           ? styleFromItem(item, { left: `${drag.x}%`, top: `${drag.y}%`, zIndex: 60 })
           : styleFromItem(item);
 
-        const interactive = needsInput(stateName) && (isDragKey || isTargetKey || isTriggerKey);
+        const isPendingReveal = item.appearDelayMs > 0 && pendingReveal.has(item.gameKey || item.name);
+        const interactive = !isPendingReveal && needsInput(stateName) && (isDragKey || isTargetKey || isTriggerKey);
 
         return (
           <button
@@ -652,7 +684,7 @@ function BeatPlayerGame({
             type="button"
             data-beat-key={item.gameKey || undefined}
             className={`beat-player-item${interactive ? ' is-interactive' : ''}${isDragKey && selectedGameKey === item.gameKey ? ' is-selected' : ''}${isBeingDragged ? ' is-dragging' : ''}${isDragKey && feedback === 'holding' ? ' is-holding' : ''}`}
-            style={{ ...style, pointerEvents: interactive ? 'auto' : 'none' }}
+            style={{ ...style, pointerEvents: interactive ? 'auto' : 'none', opacity: isPendingReveal ? 0 : style.opacity }}
             tabIndex={interactive ? 0 : -1}
             aria-hidden={!interactive}
             onPointerDown={isDragKey ? (e) => { onPointerDown(e, item.gameKey); startHold(item.gameKey); } : undefined}
