@@ -102,9 +102,14 @@ select{width:100%;border:1px solid #e3d0c8;border-radius:8px;padding:7px 8px;fon
     <select id="mechType">
       <option value="none">None — auto-advance, no input</option>
       <option value="drag-drop">Drag-drop — drag one item onto another (or a zone)</option>
-      <option value="tap-select-tap-target">Tap-select, tap-target — two taps instead of a drag</option>
+      <option value="tap">Tap — tap a single item</option>
+      <option value="tap-select-target">Tap-select, tap-target — two taps instead of a drag</option>
       <option value="press-hold">Press-hold — hold an item down for a duration</option>
+      <option value="swipe">Swipe — swipe an item to open/reveal it (repeatable)</option>
       <option value="drag-path">Drag-path — tap to reveal an item, then drag it through waypoints</option>
+      <option value="sequence">Sequence — tap/hold several items in a specific order</option>
+      <option value="choice">Choice — pick the correct item(s) out of several options</option>
+      <option value="trace">Trace — drag a finger along a path (not dropping a single item)</option>
     </select>
     <div id="mechFieldsDragDrop" class="mech-fields" hidden>
       <label>Drag item</label><select id="mechDragKey"></select>
@@ -112,15 +117,55 @@ select{width:100%;border:1px solid #e3d0c8;border-radius:8px;padding:7px 8px;fon
       <p class="mech-hint">Pick "— draw a zone on canvas —" for Target to use a raw {x,y,w} point instead of a tagged item. Click "Set target zone" then click the stage.</p>
       <div class="row" style="margin-top:6px"><button id="mechSetZoneBtn">Set target zone (click stage)</button></div>
     </div>
+    <div id="mechFieldsTap" class="mech-fields" hidden>
+      <label>Item to tap</label><select id="mechTapKey"></select>
+    </div>
+    <div id="mechFieldsTapSelect" class="mech-fields" hidden>
+      <label>First tap item</label><select id="mechTapFirstKey"></select>
+      <label>Second tap (target) item</label><select id="mechTapTargetKey"></select>
+    </div>
     <div id="mechFieldsHold" class="mech-fields" hidden>
       <label>Item to hold</label><select id="mechHoldKey"></select>
       <label>Hold duration (ms)</label><input id="mechHoldMs" type="number" min="200" step="100" value="900">
+    </div>
+    <div id="mechFieldsSwipe" class="mech-fields" hidden>
+      <label>Item to swipe</label><select id="mechSwipeKey"></select>
+      <label>Direction</label>
+      <select id="mechSwipeDir">
+        <option value="any-horizontal">Any horizontal</option>
+        <option value="left">Left</option>
+        <option value="right">Right</option>
+        <option value="any-vertical">Any vertical</option>
+        <option value="up">Up</option>
+        <option value="down">Down</option>
+      </select>
+      <div class="row">
+        <div><label>Swipes needed</label><input id="mechSwipeCount" type="number" min="1" step="1" value="2"></div>
+        <div><label>Distance (px)</label><input id="mechSwipeDist" type="number" min="10" step="5" value="55"></div>
+      </div>
     </div>
     <div id="mechFieldsPath" class="mech-fields" hidden>
       <label>Trigger item (tap to reveal)</label><select id="mechTriggerKey"></select>
       <p class="mech-hint">Click "Pick waypoints" then click the stage 2-4 times in order (spawn point first, then each stepping stone). Click "Done picking" when finished.</p>
       <div class="row" style="margin-top:6px"><button id="mechPickWaypointsBtn">Pick waypoints</button><button id="mechClearWaypointsBtn" class="danger">Clear waypoints</button></div>
       <div id="mechWaypointsSummary" class="mech-hint" style="margin-top:4px"></div>
+    </div>
+    <div id="mechFieldsSequence" class="mech-fields" hidden>
+      <p class="mech-hint">Each step is one item, tapped or held in order. The child must complete them in this sequence.</p>
+      <div id="mechSequenceList"></div>
+      <div class="row" style="margin-top:6px"><button id="mechAddStepBtn">+ Add step</button></div>
+    </div>
+    <div id="mechFieldsChoice" class="mech-fields" hidden>
+      <p class="mech-hint">Tick "option" for every item shown as a choice, and "correct" for the one(s) that count as the right answer.</p>
+      <div id="mechChoiceList"></div>
+      <label style="margin-top:6px"><input type="checkbox" id="mechChoiceMulti" style="width:auto;display:inline-block;margin-right:6px;"> Allow multiple correct answers</label>
+    </div>
+    <div id="mechFieldsTrace" class="mech-fields" hidden>
+      <label>Item being traced (e.g. the shape/outline)</label><select id="mechTraceKey"></select>
+      <p class="mech-hint">Click "Pick waypoints" then click the stage 2-6 times to lay out the path the finger must trace. Click "Done picking" when finished.</p>
+      <div class="row" style="margin-top:6px"><button id="mechTracePickBtn">Pick waypoints</button><button id="mechTraceClearBtn" class="danger">Clear waypoints</button></div>
+      <div id="mechTraceSummary" class="mech-hint" style="margin-top:4px"></div>
+      <label style="margin-top:6px">Tolerance (px)</label><input id="mechTraceTolerance" type="number" min="5" step="5" value="30">
     </div>
   </div>
   <div class="panel"><h3 style="margin-top:0">Layers</h3><p class="muted" style="margin:0 0 6px">Overlapping assets? Pick the exact one here instead of clicking the stage, or lock it so it can't be dragged by accident.</p><div id="layersList"></div></div>
@@ -197,6 +242,12 @@ const SEED_BEAT_META=[
   {title:'6. Carry to Ganesha',goal:'Mooshika carries the finished garland across to Ganesha — guided movement, building anticipation.'},
   {title:'7. Modak Reveal',goal:'Ganesha receives the garland and reveals the modak as a reward. Hold — no interaction.'}
 ];
+// Beat index -> default Mechanic, pre-filled to match what the real
+// NewModakSceneV7.jsx code already does for that beat (see its handler
+// functions). Only used the first time a beat is created; edit freely after.
+const SEED_BEAT_INTERACTIONS={
+  2:{type:'swipe',item:'leaves',direction:'any-horizontal',swipesNeeded:2,distancePx:55}
+};
 const states=['before','movement','after'];let beatIndex=0,currentState='before',selected=null,markStart=null;
 let data={};
 let dataReady=false;
@@ -291,9 +342,20 @@ function ensureBeat(){
   }
   syncBeforeFromPrevious(beatIndex);
 }
+// Beat index -> which of the 3 real games it belongs to (fixed 7-beat seed
+// structure: Game 1 = beat 0, Game 2 = beats 1-3, Game 3 = beats 4-6).
+// Purely a visual grouping label in the sidebar — doesn't affect data.
+const GAME_GROUP_STARTS={0:'Game 1 — Mooshika',1:'Game 2 — Belly Feeding',4:'Game 3 — Modak'};
 function renderBeatButtons(){
   sceneButtons.innerHTML='';
   beatKeysSorted().forEach(i=>{
+    if(GAME_GROUP_STARTS[i]){
+      const header=document.createElement('div');
+      header.textContent=GAME_GROUP_STARTS[i];
+      header.style.cssText='grid-column:1 / -1;font-size:10px;font-weight:800;letter-spacing:.3px;text-transform:uppercase;color:#a8664a;margin:6px 0 2px;padding-top:6px;border-top:1px solid #eee0da;';
+      if(i===0)header.style.borderTop='none';
+      sceneButtons.appendChild(header);
+    }
     const btn=document.createElement('button');
     btn.textContent=(data[i]&&data[i].meta&&data[i].meta.title)?data[i].meta.title.replace(/^\d+\.\s*/,'').slice(0,18)||`Beat ${i+1}`:`Beat ${i+1}`;
     btn.title=data[i]&&data[i].meta?data[i].meta.title:`Beat ${i+1}`;
@@ -447,7 +509,7 @@ function renderMeta(){
   afterMini.textContent=itemsSummary('after');
   instructions.innerHTML=`<p><span class="badge">BEFORE</span></p><p>${itemsSummary('before')}</p><p><span class="badge">MOVEMENT</span></p><p>${itemsSummary('movement')}</p><p><span class="badge">AFTER</span></p><p>${itemsSummary('after')}</p>`;
   renderBeatButtons();
-  [...sceneButtons.children].forEach((x,i)=>x.classList.toggle('active',beatKeysSorted()[i]===beatIndex));
+  [...sceneButtons.querySelectorAll('button')].forEach((x,i)=>x.classList.toggle('active',beatKeysSorted()[i]===beatIndex));
   [...document.querySelectorAll('#stateTabs button')].forEach(x=>x.classList.toggle('active',x.dataset.state===currentState));
   notes.value=getVisibleState().notes||'';
   const inheritNotice=document.getElementById('inheritNotice');if(inheritNotice)inheritNotice.hidden=!isInheritedBefore();
@@ -494,24 +556,48 @@ clearAnnoBtn.onclick=()=>{[...stage.querySelectorAll('.path-arrow,.target-box')]
 function collectAnnotations(){return{arrows:[...stage.querySelectorAll('.path-arrow')].map(d=>({x1:+d.dataset.x1,y1:+d.dataset.y1,x2:+d.dataset.x2,y2:+d.dataset.y2,label:d.dataset.label})),targets:[...stage.querySelectorAll('.target-box')].map(d=>({x:+d.dataset.x,y:+d.dataset.y,w:+d.dataset.w,h:+d.dataset.h}))}}
 function renderAnnotations(a){(a.arrows||[]).forEach(x=>addArrow(x.x1,x.y1,x.x2,x.y2,x.label));(a.targets||[]).forEach(t=>{const d=document.createElement('div');d.className='target-box';Object.assign(d.dataset,{x:t.x,y:t.y,w:t.w,h:t.h});d.style.left=(t.x-t.w/2)+'%';d.style.top=(t.y-t.h/2)+'%';d.style.width=t.w+'%';d.style.height=t.h+'%';d.innerHTML='<span>TARGET</span>';stage.appendChild(d);makeBoxDraggable(d)})}
 
-// ---- Mechanic panel: writes beat.interaction directly, matching the exact
-// vocabulary BeatPlayerGame.jsx implements (src/lib/beatPlayer/BeatPlayerGame.jsx) ----
+// ---- Mechanic panel: writes beat.interaction directly. Reusable mechanic
+// vocabulary (matches what BeatPlayerGame.jsx / other scene players implement):
+// drag-drop, tap, tap-select-target, press-hold, swipe, drag-path, sequence,
+// choice, trace. Each scene's exported JSON just says which one a beat needs. ----
 const mechType=document.getElementById('mechType');
 const mechFieldsDragDrop=document.getElementById('mechFieldsDragDrop');
+const mechFieldsTap=document.getElementById('mechFieldsTap');
+const mechFieldsTapSelect=document.getElementById('mechFieldsTapSelect');
 const mechFieldsHold=document.getElementById('mechFieldsHold');
+const mechFieldsSwipe=document.getElementById('mechFieldsSwipe');
 const mechFieldsPath=document.getElementById('mechFieldsPath');
+const mechFieldsSequence=document.getElementById('mechFieldsSequence');
+const mechFieldsChoice=document.getElementById('mechFieldsChoice');
+const mechFieldsTrace=document.getElementById('mechFieldsTrace');
 const mechDragKey=document.getElementById('mechDragKey');
 const mechTargetKey=document.getElementById('mechTargetKey');
+const mechTapKey=document.getElementById('mechTapKey');
+const mechTapFirstKey=document.getElementById('mechTapFirstKey');
+const mechTapTargetKey=document.getElementById('mechTapTargetKey');
 const mechHoldKey=document.getElementById('mechHoldKey');
 const mechHoldMs=document.getElementById('mechHoldMs');
+const mechSwipeKey=document.getElementById('mechSwipeKey');
+const mechSwipeDir=document.getElementById('mechSwipeDir');
+const mechSwipeCount=document.getElementById('mechSwipeCount');
+const mechSwipeDist=document.getElementById('mechSwipeDist');
 const mechTriggerKey=document.getElementById('mechTriggerKey');
 const mechSetZoneBtn=document.getElementById('mechSetZoneBtn');
 const mechPickWaypointsBtn=document.getElementById('mechPickWaypointsBtn');
 const mechClearWaypointsBtn=document.getElementById('mechClearWaypointsBtn');
 const mechWaypointsSummary=document.getElementById('mechWaypointsSummary');
+const mechSequenceList=document.getElementById('mechSequenceList');
+const mechAddStepBtn=document.getElementById('mechAddStepBtn');
+const mechChoiceList=document.getElementById('mechChoiceList');
+const mechChoiceMulti=document.getElementById('mechChoiceMulti');
+const mechTraceKey=document.getElementById('mechTraceKey');
+const mechTracePickBtn=document.getElementById('mechTracePickBtn');
+const mechTraceClearBtn=document.getElementById('mechTraceClearBtn');
+const mechTraceSummary=document.getElementById('mechTraceSummary');
+const mechTraceTolerance=document.getElementById('mechTraceTolerance');
 const ZONE_TARGET_VALUE='__zone__';
-let pickMode=null; // null | 'zone' | 'waypoints'
-let waypointDraft=[]; // [{x,y}, ...] first is spawn point
+let pickMode=null; // null | 'zone' | 'waypoints' | 'trace-waypoints'
+let waypointDraft=[]; // [{x,y}, ...] first is spawn point (drag-path) or first trace point
 
 function taggedKeysInCurrentBeforeState(){
   // Mechanics are always about the BEFORE state's items (that's when the
@@ -532,8 +618,13 @@ function refreshMechKeyOptions(){
   };
   fill(mechDragKey);
   fill(mechTargetKey,[[ZONE_TARGET_VALUE,'— draw a zone on canvas —']]);
+  fill(mechTapKey);
+  fill(mechTapFirstKey);
+  fill(mechTapTargetKey);
   fill(mechHoldKey);
+  fill(mechSwipeKey);
   fill(mechTriggerKey);
+  fill(mechTraceKey);
 }
 function clearWaypointDots(){[...stage.querySelectorAll('.waypoint-dot')].forEach(d=>d.remove())}
 function drawWaypointDots(spawnAt,path){
@@ -552,6 +643,97 @@ function drawZoneMarker(zone){
 }
 function getInteraction(){ensureBeat();return data[beatIndex].interaction}
 function setInteraction(next){ensureBeat();data[beatIndex].interaction=next;saveState()}
+
+// ---- sequence (ordered list of tap/hold steps) ----
+function renderSequenceList(){
+  const it=getInteraction();
+  const steps=it.steps||[];
+  const opts=taggedKeysInCurrentBeforeState();
+  const optHtml=(sel)=>`<option value="">(select)</option>`+opts.map(([k,name])=>`<option value="${k}" ${k===sel?'selected':''}>${name} (${k})</option>`).join('');
+  mechSequenceList.innerHTML=steps.length?steps.map((s,i)=>`
+    <div class="row" style="align-items:center;margin-bottom:4px;">
+      <span style="flex:0 0 16px;font-size:11px;color:#8a7a72;">${i+1}.</span>
+      <select data-seq="${i}" data-field="item" style="flex:2">${optHtml(s.item)}</select>
+      <select data-seq="${i}" data-field="mode" style="flex:1">
+        <option value="tap" ${s.mode!=='hold'?'selected':''}>tap</option>
+        <option value="hold" ${s.mode==='hold'?'selected':''}>hold</option>
+      </select>
+      ${s.mode==='hold'?`<input type="number" data-seq="${i}" data-field="holdMs" value="${s.holdMs||900}" min="100" step="100" style="flex:0 0 64px">`:''}
+      <button data-seq-del="${i}" class="danger" style="flex:0 0 auto;padding:4px 8px;">×</button>
+    </div>
+  `).join(''):'<p class="muted" style="margin:0">No steps yet — click "+ Add step".</p>';
+  mechSequenceList.querySelectorAll('select,input').forEach(el=>{
+    el.onchange=()=>{
+      const idx=Number(el.dataset.seq);
+      const field=el.dataset.field;
+      const cur=getInteraction();
+      const next=(cur.steps||[]).map((s,i)=>i===idx?{...s,[field]:field==='holdMs'?Number(el.value)||900:el.value}:s);
+      setInteraction({type:'sequence',steps:next});
+      renderSequenceList();
+    };
+  });
+  mechSequenceList.querySelectorAll('[data-seq-del]').forEach(btn=>{
+    btn.onclick=()=>{
+      const idx=Number(btn.dataset.seqDel);
+      const cur=getInteraction();
+      const next=(cur.steps||[]).filter((_,i)=>i!==idx);
+      setInteraction({type:'sequence',steps:next});
+      renderSequenceList();
+    };
+  });
+}
+mechAddStepBtn.onclick=()=>{
+  const cur=getInteraction();
+  const steps=[...(cur.steps||[]),{item:'',mode:'tap'}];
+  setInteraction({type:'sequence',steps});
+  renderSequenceList();
+};
+
+// ---- choice (multiple options, one or more correct) ----
+function renderChoiceList(){
+  const it=getInteraction();
+  const options=it.options||[];
+  const correct=it.correct||[];
+  const tagged=taggedKeysInCurrentBeforeState();
+  mechChoiceMulti.checked=!!it.multi;
+  mechChoiceList.innerHTML=tagged.length?tagged.map(([k,name])=>`
+    <div class="row" style="align-items:center;margin-bottom:4px;font-size:12px;">
+      <span style="flex:1;">${name} <code>(${k})</code></span>
+      <label style="width:auto;margin:0;"><input type="checkbox" data-choice-opt="${k}" ${options.includes(k)?'checked':''} style="width:auto;"> option</label>
+      <label style="width:auto;margin:0;"><input type="checkbox" data-choice-correct="${k}" ${correct.includes(k)?'checked':''} style="width:auto;"> correct</label>
+    </div>
+  `).join(''):'<p class="muted" style="margin:0">No tagged items in this beat yet.</p>';
+  mechChoiceList.querySelectorAll('[data-choice-opt]').forEach(cb=>{
+    cb.onchange=()=>{
+      const k=cb.dataset.choiceOpt;
+      const cur=getInteraction();
+      let options=[...(cur.options||[])];
+      let correct=[...(cur.correct||[])];
+      if(cb.checked){ if(!options.includes(k))options.push(k); }
+      else{ options=options.filter(x=>x!==k); correct=correct.filter(x=>x!==k); }
+      setInteraction({type:'choice',options,correct,multi:!!cur.multi});
+      renderChoiceList();
+    };
+  });
+  mechChoiceList.querySelectorAll('[data-choice-correct]').forEach(cb=>{
+    cb.onchange=()=>{
+      const k=cb.dataset.choiceCorrect;
+      const cur=getInteraction();
+      let correct=[...(cur.correct||[])];
+      if(cur.multi){ if(cb.checked){ if(!correct.includes(k))correct.push(k); } else correct=correct.filter(x=>x!==k); }
+      else{ correct=cb.checked?[k]:[]; }
+      setInteraction({type:'choice',options:cur.options||[],correct,multi:!!cur.multi});
+      renderChoiceList();
+    };
+  });
+}
+mechChoiceMulti.onchange=()=>{
+  const cur=getInteraction();
+  const correct=mechChoiceMulti.checked?(cur.correct||[]):(cur.correct||[]).slice(0,1);
+  setInteraction({type:'choice',options:cur.options||[],correct,multi:mechChoiceMulti.checked});
+  renderChoiceList();
+};
+
 function loadMechanicUI(){
   refreshMechKeyOptions();
   const it=getInteraction();
@@ -563,28 +745,58 @@ function loadMechanicUI(){
     mechDragKey.value=it.drag||'';
     if(typeof it.target==='object'&&it.target){mechTargetKey.value=ZONE_TARGET_VALUE;drawZoneMarker(it.target)}
     else mechTargetKey.value=it.target||'';
+  }else if(it.type==='tap'){
+    mechTapKey.value=it.item||'';
+  }else if(it.type==='tap-select-target'){
+    mechTapFirstKey.value=it.first||'';
+    mechTapTargetKey.value=it.target||'';
   }else if(it.type==='press-hold'){
     mechHoldKey.value=it.drag||'';
     mechHoldMs.value=it.holdMs||900;
+  }else if(it.type==='swipe'){
+    mechSwipeKey.value=it.item||'';
+    mechSwipeDir.value=it.direction||'any-horizontal';
+    mechSwipeCount.value=it.swipesNeeded||2;
+    mechSwipeDist.value=it.distancePx||55;
   }else if(it.type==='drag-path'){
     mechTriggerKey.value=it.trigger||'';
     drawWaypointDots(it.spawnAt,it.path);
     mechWaypointsSummary.textContent=it.spawnAt?`Spawn + ${(it.path||[]).length} waypoint(s) set.`:'No waypoints set yet.';
+  }else if(it.type==='sequence'){
+    renderSequenceList();
+  }else if(it.type==='choice'){
+    renderChoiceList();
+  }else if(it.type==='trace'){
+    mechTraceKey.value=it.item||'';
+    drawWaypointDots(null,it.waypoints);
+    mechTraceSummary.textContent=(it.waypoints||[]).length?`${it.waypoints.length} waypoint(s) set.`:'No waypoints set yet.';
+    mechTraceTolerance.value=it.tolerancePx||30;
   }
 }
 function showMechFields(type){
   mechFieldsDragDrop.hidden=type!=='drag-drop';
+  mechFieldsTap.hidden=type!=='tap';
+  mechFieldsTapSelect.hidden=type!=='tap-select-target';
   mechFieldsHold.hidden=type!=='press-hold';
+  mechFieldsSwipe.hidden=type!=='swipe';
   mechFieldsPath.hidden=type!=='drag-path';
+  mechFieldsSequence.hidden=type!=='sequence';
+  mechFieldsChoice.hidden=type!=='choice';
+  mechFieldsTrace.hidden=type!=='trace';
 }
 mechType.onchange=()=>{
   const type=mechType.value;
   showMechFields(type);
   if(type==='none')setInteraction({type:'none'});
   else if(type==='drag-drop')setInteraction({type,drag:mechDragKey.value||'',target:mechTargetKey.value&&mechTargetKey.value!==ZONE_TARGET_VALUE?mechTargetKey.value:undefined});
-  else if(type==='tap-select-tap-target')setInteraction({type,drag:mechDragKey.value||'',target:mechTargetKey.value||''});
+  else if(type==='tap')setInteraction({type,item:mechTapKey.value||''});
+  else if(type==='tap-select-target')setInteraction({type,first:mechTapFirstKey.value||'',target:mechTapTargetKey.value||''});
   else if(type==='press-hold')setInteraction({type,drag:mechHoldKey.value||'',holdMs:Number(mechHoldMs.value)||900});
+  else if(type==='swipe')setInteraction({type,item:mechSwipeKey.value||'',direction:mechSwipeDir.value,swipesNeeded:Number(mechSwipeCount.value)||2,distancePx:Number(mechSwipeDist.value)||55});
   else if(type==='drag-path')setInteraction({type,trigger:mechTriggerKey.value||'',spawnAt:getInteraction().spawnAt,path:getInteraction().path||[],snapRadius:8});
+  else if(type==='sequence')setInteraction({type,steps:getInteraction().steps||[]});
+  else if(type==='choice')setInteraction({type,options:getInteraction().options||[],correct:getInteraction().correct||[],multi:!!getInteraction().multi});
+  else if(type==='trace')setInteraction({type,item:getInteraction().item||'',waypoints:getInteraction().waypoints||[],tolerancePx:getInteraction().tolerancePx||30});
   loadMechanicUI();
 };
 function updateDragDropInteraction(){
@@ -604,8 +816,18 @@ mechSetZoneBtn.onclick=()=>{
   stage.classList.add('picking-waypoints');
   mechSetZoneBtn.textContent='Click the stage now…';
 };
+mechTapKey.onchange=()=>{setInteraction({type:'tap',item:mechTapKey.value||''})};
+mechTapFirstKey.onchange=()=>{setInteraction({type:'tap-select-target',first:mechTapFirstKey.value||'',target:mechTapTargetKey.value||''})};
+mechTapTargetKey.onchange=()=>{setInteraction({type:'tap-select-target',first:mechTapFirstKey.value||'',target:mechTapTargetKey.value||''})};
 mechHoldKey.onchange=()=>{setInteraction({type:'press-hold',drag:mechHoldKey.value||'',holdMs:Number(mechHoldMs.value)||900})};
 mechHoldMs.onchange=()=>{setInteraction({type:'press-hold',drag:mechHoldKey.value||'',holdMs:Number(mechHoldMs.value)||900})};
+function updateSwipeInteraction(){
+  setInteraction({type:'swipe',item:mechSwipeKey.value||'',direction:mechSwipeDir.value,swipesNeeded:Number(mechSwipeCount.value)||2,distancePx:Number(mechSwipeDist.value)||55});
+}
+mechSwipeKey.onchange=updateSwipeInteraction;
+mechSwipeDir.onchange=updateSwipeInteraction;
+mechSwipeCount.onchange=updateSwipeInteraction;
+mechSwipeDist.onchange=updateSwipeInteraction;
 mechTriggerKey.onchange=()=>{const it=getInteraction();setInteraction({type:'drag-path',trigger:mechTriggerKey.value||'',spawnAt:it.spawnAt,path:it.path||[],snapRadius:8})};
 mechPickWaypointsBtn.onclick=()=>{
   pickMode='waypoints';
@@ -631,6 +853,32 @@ mechClearWaypointsBtn.onclick=()=>{
   setInteraction({type:'drag-path',trigger:it.trigger||'',spawnAt:undefined,path:[],snapRadius:8});
   waypointDraft=[];
 };
+
+// ---- trace (drag along a multi-point path, no single item dropped) ----
+mechTraceKey.onchange=()=>{const it=getInteraction();setInteraction({type:'trace',item:mechTraceKey.value||'',waypoints:it.waypoints||[],tolerancePx:Number(mechTraceTolerance.value)||30})};
+mechTraceTolerance.onchange=()=>{const it=getInteraction();setInteraction({type:'trace',item:it.item||'',waypoints:it.waypoints||[],tolerancePx:Number(mechTraceTolerance.value)||30})};
+mechTracePickBtn.onclick=()=>{
+  pickMode='trace-waypoints';
+  waypointDraft=[];
+  stage.classList.add('picking-waypoints');
+  mechTracePickBtn.textContent='Click stage 2-6 times to lay the path. Click here when done.';
+  mechTracePickBtn.onclick=finishPickingTraceWaypoints;
+};
+function finishPickingTraceWaypoints(){
+  pickMode=null;
+  stage.classList.remove('picking-waypoints');
+  mechTracePickBtn.textContent='Pick waypoints';
+  mechTracePickBtn.onclick=()=>{pickMode='trace-waypoints';waypointDraft=[];stage.classList.add('picking-waypoints');mechTracePickBtn.textContent='Click stage 2-6 times to lay the path. Click here when done.';mechTracePickBtn.onclick=finishPickingTraceWaypoints};
+  const it=getInteraction();
+  setInteraction({type:'trace',item:it.item||'',waypoints:waypointDraft.length>=2?waypointDraft:(it.waypoints||[]),tolerancePx:it.tolerancePx||30});
+  loadMechanicUI();
+}
+mechTraceClearBtn.onclick=()=>{
+  const it=getInteraction();
+  setInteraction({type:'trace',item:it.item||'',waypoints:[],tolerancePx:it.tolerancePx||30});
+  waypointDraft=[];
+};
+
 stage.addEventListener('pointerdown',e=>{
   if(pickMode==='zone'){
     const r=stage.getBoundingClientRect();
@@ -643,12 +891,13 @@ stage.addEventListener('pointerdown',e=>{
     loadMechanicUI();
     return;
   }
-  if(pickMode==='waypoints'){
+  if(pickMode==='waypoints'||pickMode==='trace-waypoints'){
     const r=stage.getBoundingClientRect();
     const x=Math.max(0,Math.min(100,(e.clientX-r.left)/r.width*100));
     const y=Math.max(0,Math.min(100,(e.clientY-r.top)/r.height*100));
     waypointDraft.push({x:Number(x.toFixed(2)),y:Number(y.toFixed(2))});
-    drawWaypointDots(waypointDraft[0],waypointDraft.slice(1));
+    if(pickMode==='waypoints')drawWaypointDots(waypointDraft[0],waypointDraft.slice(1));
+    else drawWaypointDots(null,waypointDraft);
     return;
   }
   if(e.target===stage)select(null);
@@ -811,7 +1060,7 @@ async function bootstrapData(){
   // a beat you've already started designing.
   if(!data[0])data[0]=JSON.parse(JSON.stringify(SEED_BEAT0_DATA));
   SEED_BEAT_META.forEach((meta,i)=>{
-    if(!data[i])data[i]={meta:{...meta}};
+    if(!data[i])data[i]={meta:{...meta},interaction:SEED_BEAT_INTERACTIONS[i]?{...SEED_BEAT_INTERACTIONS[i]}:{type:'none'}};
   });
   loadState();
   dataReady=true;
