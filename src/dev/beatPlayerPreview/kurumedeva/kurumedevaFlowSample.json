@@ -2227,7 +2227,7 @@
             "z": 10,
             "w": 24,
             "locked": 0,
-            "gameKey": "plankPileItem"
+            "gameKey": ""
           },
           {
             "name": "Beaver \u2014 placing plank",
@@ -2334,8 +2334,8 @@
           {
             "name": "plank",
             "path": "assets/upload_7.png",
-            "x": 17.31812915118587,
-            "y": 72.29461172892915,
+            "x": 59.01194022610444,
+            "y": 70.99168013283796,
             "scale": 44,
             "rotation": 0,
             "opacity": 100,
@@ -2348,8 +2348,8 @@
           {
             "name": "plank",
             "path": "assets/upload_7.png",
-            "x": 19.44950643036187,
-            "y": 73.70213094208061,
+            "x": 52.999995029710405,
+            "y": 70.66195721786781,
             "scale": 44,
             "rotation": 0,
             "opacity": 100,
@@ -2357,7 +2357,7 @@
             "z": 10,
             "w": 24,
             "locked": 0,
-            "gameKey": "plankPileItem"
+            "gameKey": ""
           },
           {
             "name": "Beaver \u2014 placing plank",
@@ -2487,13 +2487,13 @@
             "z": 10,
             "w": 24,
             "locked": 0,
-            "gameKey": "plankPileItem"
+            "gameKey": ""
           },
           {
             "name": "Beaver \u2014 crossing",
             "path": "Characters/beaver-crossing.png",
-            "x": 28.93594251005191,
-            "y": 62.30546286517712,
+            "x": 25.5700325732899,
+            "y": 66.21427090755633,
             "scale": 53,
             "rotation": 0,
             "opacity": 100,
