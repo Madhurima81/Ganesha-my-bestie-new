@@ -96,7 +96,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "The bridge is broken, and the little beaver on the other side is waiting to come home.",
+          "voText": "The bridge is broken. Baby Beaver is waiting on the other side.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -409,7 +409,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "Beaver tries to push a log into place... but it won't budge.",
+          "voText": "Press and hold the heavy log.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -628,7 +628,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "It's too heavy to move alone.",
+          "voText": "Oof! It's too heavy.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -760,7 +760,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "Beaver tries to pull the rope tight... but it keeps slipping loose.",
+          "voText": "Drag the rope around the logs.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -1006,7 +1006,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "It won't hold by itself.",
+          "voText": "Oops! It keeps slipping.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -1125,7 +1125,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "",
+          "voText": "Move the log with Elephant.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -1329,7 +1329,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "Together, they push the log into place. The bridge is getting stronger.",
+          "voText": "Together, they moved it!",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -1466,7 +1466,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "He needs help! Can you carry his message to Elephant?",
+          "voText": "Take Beaver's help bubble to Elephant.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -1696,7 +1696,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "Elephant hears it and comes right over.",
+          "voText": "Elephant is coming to help.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -1846,7 +1846,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "Almost there, little one!",
+          "voText": "Beaver asked for help \u2014 and made it to Baby Beaver.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -2104,7 +2104,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "We made it home together \u2014 my family is safe!",
+          "voText": "",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -2242,7 +2242,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "The bridge is ready! Beaver crosses to the other side at last.",
+          "voText": "The bridge is ready!",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -2372,7 +2372,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "",
+          "voText": "Go, Beaver!",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -2640,7 +2640,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "Now for the planks \u2014 Beaver can lay these all by himself!",
+          "voText": "Drag the planks into place.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -2900,7 +2900,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "The planks are down. The bridge is almost ready!",
+          "voText": "",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -3028,7 +3028,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "",
+          "voText": "Pull with Monkey.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -3274,7 +3274,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "Together they pull it tight. The rope holds!",
+          "voText": "Together, they pulled it tight!",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -3419,7 +3419,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "He needs help! Can you carry his message to Monkey?",
+          "voText": "Take Beaver's help bubble to Monkey.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
@@ -3649,7 +3649,7 @@
           "targets": []
         },
         "audio": {
-          "voText": "Monkey hears it and hurries over.",
+          "voText": "Monkey is coming to help.",
           "trigger": "state-enter",
           "start": 0,
           "duration": 0,
