@@ -384,6 +384,10 @@ function BeatPlayerGame({
   };
 
   const debugFixedPoint = debugOverrides[beatIndex]?.fixedPoint;
+  // Same idea as fixedPoint, for a drag-drop `target` authored as a raw
+  // {x,y,w} zone instead of another item's gameKey — that zone has no
+  // item of its own to grab either, so it gets its own debug handle.
+  const debugTargetZone = debugOverrides[beatIndex]?.targetZone;
 
   const stagePctFromEvent = (e) => {
     const rect = sceneRef.current?.getBoundingClientRect();
@@ -415,6 +419,17 @@ function BeatPlayerGame({
     setDebugSelectedKey('__fixedPoint__');
   }, [debugFixedPoint, interaction]);
 
+  const startDebugTargetZoneDrag = useCallback((e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+    const pt = stagePctFromEvent(e);
+    const zone = debugTargetZone || interaction?.target;
+    if (!pt || !zone) return;
+    debugDragRef.current = { mode: 'targetZone', offsetX: pt.x - zone.x, offsetY: pt.y - zone.y };
+    setDebugSelectedKey('__targetZone__');
+  }, [debugTargetZone, interaction]);
+
   const onDebugPointerMove = useCallback((e) => {
     const d = debugDragRef.current;
     if (!d) return;
@@ -429,6 +444,16 @@ function BeatPlayerGame({
       }));
       return;
     }
+    if (d.mode === 'targetZone') {
+      setDebugOverrides((cur) => ({
+        ...cur,
+        [beatIndex]: {
+          ...cur[beatIndex],
+          targetZone: { ...(cur[beatIndex]?.targetZone || interaction?.target), x, y },
+        },
+      }));
+      return;
+    }
     setDebugOverrides((cur) => ({
       ...cur,
       [beatIndex]: {
@@ -439,7 +464,7 @@ function BeatPlayerGame({
         },
       },
     }));
-  }, [beatIndex, stateName]);
+  }, [beatIndex, stateName, interaction]);
 
   const endDebugDrag = useCallback(() => { debugDragRef.current = null; }, []);
 
@@ -454,6 +479,17 @@ function BeatPlayerGame({
         [beatIndex]: {
           ...cur[beatIndex],
           fixedPoint: { ...(cur[beatIndex]?.fixedPoint || interaction?.fixedPoint), [field]: next },
+        },
+      }));
+      return;
+    }
+    if (debugSelectedKey === '__targetZone__') {
+      if (field !== 'x' && field !== 'y' && field !== 'w') return;
+      setDebugOverrides((cur) => ({
+        ...cur,
+        [beatIndex]: {
+          ...cur[beatIndex],
+          targetZone: { ...(cur[beatIndex]?.targetZone || interaction?.target), [field]: next },
         },
       }));
       return;
@@ -495,14 +531,15 @@ function BeatPlayerGame({
         }),
       };
     };
+    let mergedInteraction = interaction;
+    if (beatOverrides.fixedPoint) mergedInteraction = { ...mergedInteraction, fixedPoint: beatOverrides.fixedPoint };
+    if (beatOverrides.targetZone) mergedInteraction = { ...mergedInteraction, target: beatOverrides.targetZone };
     const payload = {
       meta: beat.meta,
       before: mergeState('before'),
       movement: mergeState('movement'),
       after: mergeState('after'),
-      interaction: beatOverrides.fixedPoint
-        ? { ...interaction, fixedPoint: beatOverrides.fixedPoint }
-        : interaction,
+      interaction: mergedInteraction,
     };
     const text = JSON.stringify(payload, null, 2);
     try {
@@ -793,13 +830,16 @@ function BeatPlayerGame({
         const targetItem = findItem(interaction.target);
         if (targetItem) ghostPos = { x: targetItem.x, y: targetItem.y };
       } else if (interaction.target) {
-        ghostPos = { x: interaction.target.x, y: interaction.target.y };
+        const zone = debugTargetZone || interaction.target;
+        ghostPos = { x: zone.x, y: zone.y };
       }
       if (ghostPos) dropGhost = { item: draggedItem, pos: ghostPos };
     }
   }
 
   const effectiveFixedPoint = debugFixedPoint || interaction?.fixedPoint;
+  const effectiveTargetZone = debugTargetZone
+    || (interaction?.target && typeof interaction.target === 'object' ? interaction.target : null);
 
   let ropeCurrentEnd = null;
   if (isRopeDrag && effectiveFixedPoint) {
@@ -815,10 +855,12 @@ function BeatPlayerGame({
     }
   }
 
-  const debugSelectedItem = layoutDebug && debugSelectedKey && debugSelectedKey !== '__fixedPoint__'
+  const debugSelectedItem = layoutDebug && debugSelectedKey
+    && debugSelectedKey !== '__fixedPoint__' && debugSelectedKey !== '__targetZone__'
     ? withDebugOverride(items.find((it, i) => itemKeyOf(it, i) === debugSelectedKey) || {}, debugSelectedKey)
     : null;
   const debugSelectedFixedPoint = layoutDebug && debugSelectedKey === '__fixedPoint__' ? effectiveFixedPoint : null;
+  const debugSelectedTargetZone = layoutDebug && debugSelectedKey === '__targetZone__' ? effectiveTargetZone : null;
 
   return (
     <>
@@ -847,6 +889,32 @@ function BeatPlayerGame({
           </div>
         );
       })()}
+
+      {/* Layout Debug: a drag-drop `target` authored as a raw {x,y,w} zone
+          (not another item's gameKey) has no item of its own to grab or see
+          — give it a persistent visible/draggable marker here so it can be
+          positioned independently of whatever item happens to share that
+          area (e.g. the bridge image, which a plank drop zone sits on top
+          of but isn't actually the same point as). */}
+      {layoutDebug && effectiveTargetZone && (
+        <div
+          className="beat-player-debug-target-zone"
+          style={{
+            position: 'absolute',
+            left: `${effectiveTargetZone.x}%`,
+            top: `${effectiveTargetZone.y}%`,
+            width: `${effectiveTargetZone.w ?? 12}%`,
+            aspectRatio: '1 / 1',
+            transform: 'translate(-50%, -50%)',
+            borderRadius: '50%',
+            border: '2px dashed #FF5722',
+            background: 'rgba(255, 87, 34, 0.18)',
+            zIndex: 56,
+            cursor: 'grab',
+          }}
+          onPointerDown={startDebugTargetZoneDrag}
+        />
+      )}
 
       {items.map((item, i) => {
         const debugKey = itemKeyOf(item, i);
@@ -1029,6 +1097,13 @@ function BeatPlayerGame({
             <div className="beat-player-debug-panel-row">rope fixedPoint</div>
             <label>X<input type="number" step="0.1" value={debugSelectedFixedPoint.x} onChange={(e) => updateDebugField('x', e.target.value)} /></label>
             <label>Y<input type="number" step="0.1" value={debugSelectedFixedPoint.y} onChange={(e) => updateDebugField('y', e.target.value)} /></label>
+          </>
+        ) : debugSelectedTargetZone ? (
+          <>
+            <div className="beat-player-debug-panel-row">drop target zone</div>
+            <label>X<input type="number" step="0.1" value={debugSelectedTargetZone.x} onChange={(e) => updateDebugField('x', e.target.value)} /></label>
+            <label>Y<input type="number" step="0.1" value={debugSelectedTargetZone.y} onChange={(e) => updateDebugField('y', e.target.value)} /></label>
+            <label>W<input type="number" step="0.5" value={debugSelectedTargetZone.w ?? 12} onChange={(e) => updateDebugField('w', e.target.value)} /></label>
           </>
         ) : (
           <div className="beat-player-debug-panel-row">Drag any element to select it.</div>

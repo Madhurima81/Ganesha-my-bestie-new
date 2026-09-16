@@ -2912,7 +2912,11 @@
       "interaction": {
         "type": "drag-drop",
         "drag": "plankPileItem",
-        "target": "bridgeSprite"
+        "target": {
+          "x": 58.14,
+          "y": 68.96,
+          "w": 20
+        }
       }
     },
     "6": {
