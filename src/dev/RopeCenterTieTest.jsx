@@ -154,7 +154,15 @@ function CenterTieStage({ mode }) {
         <RopeEnd side="left" pos={pos.left} anchor={SIDES.left.anchor} locked={locked.left} onPointerDown={onDown} glow={glowSide === 'left' ? 1 : 0} />
         <RopeEnd side="right" pos={pos.right} anchor={SIDES.right.anchor} locked={locked.right} onPointerDown={onDown} glow={glowSide === 'right' ? 1 : 0} />
         {status === 'tied' && (
-          <circle cx={TARGET.x} cy={TARGET.y} r="16" fill="#d19159" stroke="#efc392" strokeWidth="3.5" />
+          // Exact knot artwork from Madhurima's center-tie prototype — a
+          // bow-shaped loop plus two short hanging tails, not a plain dot.
+          <g>
+            <path d="M472 292 C492 267 522 269 538 292 C551 312 532 332 505 326 C477 320 462 305 472 292" fill="none" stroke="#976239" strokeWidth="15" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M472 292 C492 267 522 269 538 292 C551 312 532 332 505 326 C477 320 462 305 472 292" fill="none" stroke="#e9b86e" strokeWidth="9.5" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M479 290 C494 276 516 277 530 292" fill="none" stroke="#f4cf93" strokeWidth="3.5" strokeLinecap="round" opacity="0.85" />
+            <path d="M490 321 L476 348 M516 321 L530 348" fill="none" stroke="#976239" strokeWidth="15" strokeLinecap="round" />
+            <path d="M490 321 L476 348 M516 321 L530 348" fill="none" stroke="#e9b86e" strokeWidth="9.5" strokeLinecap="round" />
+          </g>
         )}
       </svg>
       {vo && (
