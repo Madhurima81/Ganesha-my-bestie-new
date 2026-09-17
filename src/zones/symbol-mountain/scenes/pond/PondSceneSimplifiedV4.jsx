@@ -62,13 +62,13 @@ import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOv
 import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal';
 
 // Images
-import trunkPondBg from './assets/images/trunk-pond-bg-new.webp';
-import trunkRock from './assets/images/trunk-rock-new.webp';
-import trunkReedsLeft from './assets/images/trunk-reeds-left.webp';
-import trunkReedsRight from './assets/images/trunk-reeds-right.webp';
+import pondBgFixed from './assets/images/pond-bg-fixed.png';
 import lotusDormant from './assets/images/trunk-lotus-dormant-new.webp';
 import lotusUpright from './assets/images/trunk-lotus-upright-new.webp';
 import lotusBloomedImg from './assets/images/trunk-lotus-bloomed-new.webp';
+import pondBigRock from './assets/images/pond-big-rock.png';
+import pondPebble from './assets/images/pond-pebble.png';
+import pondFlower from './assets/images/pond-flower.png';
 import mooshikaCoach from "./assets/images/mooshika-coach.webp";
 import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-new.webp';
 import symbolModakColored from '../../shared/images/icons/symbol-modak-new.webp';
@@ -139,9 +139,9 @@ const missionImages = {
 // ==================== V6 GAMEPLAY CONFIG ====================
 // Coordinates are % of the background container.
 const ROCK_HOLD_MS = 1600;
-const REEDS_START_POINT = { x: 55, y: 51 };
+const REEDS_START_POINT = { x: 58, y: 70 };
 const REEDS_DRAG_DISTANCE = 90;
-const LOTUS_HOLD_POINT = { x: 78.5, y: 53.5 };
+const LOTUS_HOLD_POINT = { x: 80, y: 68 };
 
 // Lotus phase: press-and-hold to bloom. Same forgiving-release feel as before.
 const LOTUS_HOLD_MS = 1800;
@@ -278,6 +278,22 @@ const PondSceneContent = ({
   const [showCulturalCelebration, setShowCulturalCelebration] = useState(false);
   const [isSymbolPopupOpen, setIsSymbolPopupOpen] = useState(false);
   const [fireworksFinished, setFireworksFinished] = useState(false);
+  const [layoutOpen, setLayoutOpen] = useState(false);
+  const [layoutKey, setLayoutKey] = useState('rock');
+  const [pondLayout, setPondLayout] = useState({
+    rock: { x: 36, y: 64, size: 15 },
+    flowers: { x: 55.5, y: 62.5, size: 10.5 },
+    lotus: { x: 76.5, y: 59.5, size: 8.5 },
+    reflection: { x: 76, y: 66, size: 20 },
+    water: { x: 0, y: 67.8, size: 78 },
+  });
+
+  const updatePondLayout = (field, value) => {
+    setPondLayout((current) => ({
+      ...current,
+      [layoutKey]: { ...current[layoutKey], [field]: Number(value) },
+    }));
+  };
 
   // Discovery overlay states
 
@@ -1192,7 +1208,24 @@ const PondSceneContent = ({
             <HomeButton onNavigate={onNavigate} />
             <div
               className="pond-background"
-              style={{ backgroundImage: `url(${trunkPondBg})` }}
+              style={{
+                backgroundImage: `url(${pondBgFixed})`,
+                '--pond-rock-x': `${pondLayout.rock.x}%`,
+                '--pond-rock-y': `${pondLayout.rock.y}%`,
+                '--pond-rock-size': `${pondLayout.rock.size}vw`,
+                '--pond-flowers-x': `${pondLayout.flowers.x}%`,
+                '--pond-flowers-y': `${pondLayout.flowers.y}%`,
+                '--pond-flowers-size': `${pondLayout.flowers.size}vw`,
+                '--pond-lotus-x': `${pondLayout.lotus.x}%`,
+                '--pond-lotus-y': `${pondLayout.lotus.y}%`,
+                '--pond-lotus-size': `${pondLayout.lotus.size}vw`,
+                '--pond-reflection-x': `${pondLayout.reflection.x}%`,
+                '--pond-reflection-y': `${pondLayout.reflection.y}%`,
+                '--pond-reflection-size': `${pondLayout.reflection.size}%`,
+                '--pond-water-x': `${pondLayout.water.x}%`,
+                '--pond-water-y': `${pondLayout.water.y}%`,
+                '--pond-water-size': `${pondLayout.water.size}%`,
+              }}
               onContextMenu={(e) => e.preventDefault()}
             >
               {!isCompletionView && !isFinalFireworksView && (
@@ -1228,7 +1261,7 @@ const PondSceneContent = ({
 
               <GestureDemo
                 type="hold"
-                from={{ x: 40, y: 51 }}
+                from={{ x: 40, y: 69 }}
                 active={
                   idleHintLevel >= 3 &&
                   (
@@ -1262,7 +1295,7 @@ const PondSceneContent = ({
                 onPointerCancel={handleRockHoldEnd}
               >
                 <img
-                  src={trunkRock}
+                  src={pondBigRock}
                   alt=""
                   aria-hidden="true"
                   className="pond-trunk-rock"
@@ -1291,10 +1324,36 @@ const PondSceneContent = ({
                 )}
               </div>
 
+              <div className="pond-layout-panel" aria-label="Pond layout controls">
+                <button type="button" onClick={() => setLayoutOpen((open) => !open)}>
+                  {layoutOpen ? 'Hide layout' : 'Layout'}
+                </button>
+                {layoutOpen && (
+                  <div className="pond-layout-panel__body">
+                    <label>Element
+                      <select value={layoutKey} onChange={(e) => setLayoutKey(e.target.value)}>
+                        <option value="rock">Rock</option>
+                        <option value="flowers">Flowers</option>
+                        <option value="lotus">Lotus</option>
+                        <option value="reflection">Reflection</option>
+                        <option value="water">Water</option>
+                      </select>
+                    </label>
+                    {['x', 'y', 'size'].map((field) => (
+                      <label key={field}>{field.toUpperCase()}
+                        <input type="range" min="0" max="100" step="0.5" value={pondLayout[layoutKey][field]} onChange={(e) => updatePondLayout(field, e.target.value)} />
+                        <input type="number" min="0" max="100" step="0.5" value={pondLayout[layoutKey][field]} onChange={(e) => updatePondLayout(field, e.target.value)} />
+                      </label>
+                    ))}
+                    <button type="button" onClick={() => setPondLayout({ rock: { x: 36, y: 64, size: 15 }, flowers: { x: 55.5, y: 62.5, size: 10.5 }, lotus: { x: 76.5, y: 59.5, size: 8.5 }, reflection: { x: 76, y: 66, size: 20 }, water: { x: 0, y: 67.8, size: 78 } })}>Reset</button>
+                  </div>
+                )}
+              </div>
+
               <GestureDemo
                 type="drag"
                 from={REEDS_START_POINT}
-                to={{ x: 61, y: 51 }}
+                to={{ x: 63, y: 70 }}
                 active={
                   idleHintLevel >= 3 &&
                   sceneState.phase === PHASES.REEDS_ACTIVE &&
@@ -1320,20 +1379,17 @@ const PondSceneContent = ({
                   onPointerLeave={handleReedsPointerUp}
                   style={{ '--reeds-progress': reedsProgress }}
                 >
-                  <img
-                    src={trunkReedsLeft}
-                    className="pond-reeds-half pond-reeds-half--left"
-                    alt=""
-                    aria-hidden="true"
-                    draggable={false}
-                  />
-                  <img
-                    src={trunkReedsRight}
-                    className="pond-reeds-half pond-reeds-half--right"
-                    alt=""
-                    aria-hidden="true"
-                    draggable={false}
-                  />
+                  <div className="pond-flower-bank pond-flower-bank--left" aria-hidden="true">
+                    <img src={pondFlower} className="pond-flower pond-flower--one" alt="" draggable={false} />
+                    <img src={pondFlower} className="pond-flower pond-flower--two" alt="" draggable={false} />
+                  </div>
+                  <div className="pond-flower-channel" aria-hidden="true">
+                    <img src={pondPebble} className="pond-channel-pebble" alt="" draggable={false} />
+                  </div>
+                  <div className="pond-flower-bank pond-flower-bank--right" aria-hidden="true">
+                    <img src={pondFlower} className="pond-flower pond-flower--three" alt="" draggable={false} />
+                    <img src={pondFlower} className="pond-flower pond-flower--four" alt="" draggable={false} />
+                  </div>
                 </div>
               )}
 
