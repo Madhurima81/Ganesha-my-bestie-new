@@ -23,10 +23,11 @@ import beaverCrossing from '../../../zones/shloka-river/scenes/Scene3/assets/ima
 import beaverPlacingPlank from '../../../zones/shloka-river/scenes/Scene3/assets/images/bridge/Characters/beaver-placing-plank.webp';
 import beaverLiftUpload from './uploads/beaver-lift.webp';
 import elephantLiftUpload from './uploads/elephant-lift.webp';
-import beaverTieUpload from './uploads/beaver-tie.webp';
 import monkeyTieUpload from './uploads/monkey-tie.webp';
 import logTieUpload from './uploads/log-tie.webp';
 import plankUpload from './uploads/plank.webp';
+import beaverTyingNoRope from './uploads/beaver-tying-notrope.webp';
+import beaverFailTie from './uploads/beaver-fail-tie.webp';
 
 const ASSET_MAP = {
   'Bridge/bridge-broken.png': bridgeBroken,
@@ -46,10 +47,11 @@ const ASSET_MAP = {
   'Characters/help-bubble-monkey-knot.png': helpBubbleMonkeyKnot,
   'assets/upload_1.png': beaverLiftUpload,
   'assets/upload_2.png': elephantLiftUpload,
-  'assets/upload_3.png': beaverTieUpload,
+  'assets/upload_3.png': beaverTyingNoRope,
   'assets/upload_4.png': monkeyTieUpload,
   'assets/upload_6.png': logTieUpload,
   'assets/upload_7.png': plankUpload,
+  'assets/upload_8.png': beaverFailTie,
 };
 
 function KurumeDevaBeatPlayerPreview(props) {
