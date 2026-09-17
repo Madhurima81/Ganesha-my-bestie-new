@@ -175,6 +175,9 @@ function BeatPlayerGame({
   // release) so a press-hold reads as "something is happening", not vague.
   const [holdProgress, setHoldProgress] = useState(0);
   const [feedback, setFeedback] = useState('idle'); // idle | wrong | holding
+  // center-tie: which of the two rope ends (left/right) has reached the
+  // shared target and locked there. Reset whenever the beat/state changes.
+  const [centerTieLocked, setCenterTieLocked] = useState({});
 
   // drag-path interaction state (tap trigger -> reveal drop -> drag through
   // waypoints). Kept separate from the single-target `drag` state above
@@ -273,6 +276,7 @@ function BeatPlayerGame({
     setDropPos(null);
     setPathIndex(-1);
     setDropDragging(false);
+    setCenterTieLocked({});
     setStateName(next);
   }, []);
 
@@ -383,10 +387,15 @@ function BeatPlayerGame({
     return ov ? { ...item, ...ov } : item;
   };
 
-  const debugFixedPoint = debugOverrides[beatIndex]?.fixedPoint;
-  // Same idea as fixedPoint, for a drag-drop `target` authored as a raw
-  // {x,y,w} zone instead of another item's gameKey — that zone has no
-  // item of its own to grab either, so it gets its own debug handle.
+  // Generic named-point overrides — for any interaction field that's a raw
+  // {x,y} authored point with no item of its own to grab (a rope anchor, a
+  // lock position, etc). Keyed by field name so any number of these can
+  // coexist per beat (e.g. center-tie's anchorLeft/anchorRight/lockLeft/
+  // lockRight all use this same mechanism).
+  const debugPoint = (name) => debugOverrides[beatIndex]?.points?.[name];
+  // Same idea, for a drag-drop `target` authored as a raw {x,y,w} zone
+  // instead of another item's gameKey — that zone has no item of its own
+  // to grab either, so it gets its own debug handle.
   const debugTargetZone = debugOverrides[beatIndex]?.targetZone;
 
   const stagePctFromEvent = (e) => {
@@ -408,16 +417,15 @@ function BeatPlayerGame({
     setDebugSelectedKey(key);
   }, []);
 
-  const startDebugFixedPointDrag = useCallback((e) => {
+  const startDebugPointDrag = useCallback((e, name, currentPoint) => {
     e.preventDefault();
     e.stopPropagation();
     e.currentTarget.setPointerCapture?.(e.pointerId);
     const pt = stagePctFromEvent(e);
-    const fp = debugFixedPoint || interaction?.fixedPoint;
-    if (!pt || !fp) return;
-    debugDragRef.current = { mode: 'fixedPoint', offsetX: pt.x - fp.x, offsetY: pt.y - fp.y };
-    setDebugSelectedKey('__fixedPoint__');
-  }, [debugFixedPoint, interaction]);
+    if (!pt || !currentPoint) return;
+    debugDragRef.current = { mode: 'point', name, offsetX: pt.x - currentPoint.x, offsetY: pt.y - currentPoint.y };
+    setDebugSelectedKey(`__point_${name}__`);
+  }, []);
 
   const startDebugTargetZoneDrag = useCallback((e) => {
     e.preventDefault();
@@ -437,10 +445,13 @@ function BeatPlayerGame({
     if (!pt) return;
     const x = Number((pt.x - d.offsetX).toFixed(2));
     const y = Number((pt.y - d.offsetY).toFixed(2));
-    if (d.mode === 'fixedPoint') {
+    if (d.mode === 'point') {
       setDebugOverrides((cur) => ({
         ...cur,
-        [beatIndex]: { ...cur[beatIndex], fixedPoint: { x, y } },
+        [beatIndex]: {
+          ...cur[beatIndex],
+          points: { ...cur[beatIndex]?.points, [d.name]: { x, y } },
+        },
       }));
       return;
     }
@@ -472,13 +483,17 @@ function BeatPlayerGame({
     if (!debugSelectedKey) return;
     const next = field === 'flip' ? value : Number(value);
     if (field !== 'flip' && Number.isNaN(next)) return;
-    if (debugSelectedKey === '__fixedPoint__') {
+    if (debugSelectedKey.startsWith('__point_')) {
       if (field !== 'x' && field !== 'y') return;
+      const name = debugSelectedKey.slice('__point_'.length, -2);
       setDebugOverrides((cur) => ({
         ...cur,
         [beatIndex]: {
           ...cur[beatIndex],
-          fixedPoint: { ...(cur[beatIndex]?.fixedPoint || interaction?.fixedPoint), [field]: next },
+          points: {
+            ...cur[beatIndex]?.points,
+            [name]: { ...(cur[beatIndex]?.points?.[name] || interaction?.[name]), [field]: next },
+          },
         },
       }));
       return;
@@ -532,7 +547,7 @@ function BeatPlayerGame({
       };
     };
     let mergedInteraction = interaction;
-    if (beatOverrides.fixedPoint) mergedInteraction = { ...mergedInteraction, fixedPoint: beatOverrides.fixedPoint };
+    if (beatOverrides.points) mergedInteraction = { ...mergedInteraction, ...beatOverrides.points };
     if (beatOverrides.targetZone) mergedInteraction = { ...mergedInteraction, target: beatOverrides.targetZone };
     const payload = {
       meta: beat.meta,
@@ -604,6 +619,12 @@ function BeatPlayerGame({
 
   const isTryFailHold = (it) => it?.type === 'try-fail' && it?.gesture === 'press-hold';
   const isTryFailDrag = (it) => it?.type === 'try-fail' && it?.gesture !== 'press-hold';
+  const isCenterTieInteraction = (it) => it?.type === 'center-tie'
+    || (it?.type === 'try-fail' && it?.gesture === 'center-tie');
+  const isTryFailCenterTieInteraction = (it) => it?.type === 'try-fail' && it?.gesture === 'center-tie';
+  const centerTieSideFor = (it, gameKey) => (
+    gameKey === it?.dragLeft ? 'left' : gameKey === it?.dragRight ? 'right' : null
+  );
 
   const failThenAdvance = useCallback(() => {
     setDrag(null);
@@ -616,7 +637,10 @@ function BeatPlayerGame({
 
   const onPointerDown = useCallback((e, gameKey) => {
     if (!needsInput(stateName) || interaction.type === 'press-hold' || isTryFailHold(interaction)) return;
-    if (interaction.drag !== gameKey) return;
+    if (isCenterTieInteraction(interaction)) {
+      const side = centerTieSideFor(interaction, gameKey);
+      if (!side || centerTieLocked[side]) return;
+    } else if (interaction.drag !== gameKey) return;
     e.currentTarget.setPointerCapture?.(e.pointerId);
     const rect = sceneRef.current?.getBoundingClientRect();
     if (!rect) return;
@@ -626,7 +650,7 @@ function BeatPlayerGame({
       x: ((e.clientX - rect.left) / rect.width) * 100,
       y: ((e.clientY - rect.top) / rect.height) * 100,
     });
-  }, [stateName, interaction]);
+  }, [stateName, interaction, centerTieLocked]);
 
   const onPointerMove = useCallback((e) => {
     if (!drag || !sceneRef.current) return;
@@ -640,6 +664,33 @@ function BeatPlayerGame({
 
   const onPointerUp = useCallback((e) => {
     if (!drag) return;
+    if (isCenterTieInteraction(interaction)) {
+      const side = centerTieSideFor(interaction, drag.gameKey);
+      const ok = side && hitTest(e.clientX, e.clientY, interaction.target);
+      setDrag(null);
+      if (!ok) return; // misses just spring back to start (no lock, no fail)
+      setCenterTieLocked((cur) => {
+        const next = { ...cur, [side]: true };
+        if (next.left && next.right) {
+          // Both arrived — hold briefly so the child sees it "almost
+          // worked" before resolving, matching the locked spec's timing.
+          setTimeout(() => {
+            if (isTryFailCenterTieInteraction(interaction)) {
+              setFeedback('wrong');
+              setCenterTieLocked({});
+              setTimeout(() => {
+                setFeedback('idle');
+                completeInteraction();
+              }, 450);
+            } else {
+              setTimeout(() => completeInteraction(), 300);
+            }
+          }, 250);
+        }
+        return next;
+      });
+      return;
+    }
     if (isTryFailDrag(interaction)) {
       failThenAdvance();
       return;
@@ -805,16 +856,24 @@ function BeatPlayerGame({
 
   if (hideElements || !isActive || !beat) return null;
 
+  // center-tie's rope-end curve: from a fixed anchor near the log to the
+  // end's current point (its rest/lock position, or live drag.x/y).
+  const ropeEndCurveD = (anchor, pt) => {
+    const dir = pt.x > anchor.x ? 1 : -1;
+    const c1x = anchor.x + dir * 4.6, c1y = anchor.y + 4.6;
+    const c2x = pt.x - dir * 4.0, c2y = pt.y + 2.2;
+    return `M ${anchor.x} ${anchor.y} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${pt.x} ${pt.y}`;
+  };
+
   const isDragPath = interaction?.type === 'drag-path';
-  // A tie-knot beat: the child presses and holds (never drags across a
-  // distance — there was never actually a "drag the rope" gesture; tying a
-  // rope is a squeeze-and-hold action). Rendered as two clamp/bracket
-  // shapes closing toward each other at `fixedPoint` as holdProgress goes
-  // 0->1 — replaces the earlier curve-you-drag-across-the-bridge visual,
-  // which read as "dragging a rope" rather than "tying" it. Works for both
-  // a 'try-fail' press-hold (springs back open, see isTryFailHold) and a
-  // plain 'press-hold' success (stays fully closed once done).
-  const isTieKnot = !!interaction?.fixedPoint;
+  // Center-tie: two rope ends (dragLeft/dragRight), each dragged
+  // independently toward a shared `target` zone. Locked positions
+  // (lockLeft/lockRight) and visual anchors (anchorLeft/anchorRight) are
+  // named points — see the generic debugPoint/startDebugPointDrag system.
+  // A 'try-fail' center-tie locks both briefly then springs apart; a plain
+  // 'center-tie' locks and stays, resolving into the knot artwork.
+  const isCenterTie = isCenterTieInteraction(interaction);
+  const isTryFailCenterTie = isTryFailCenterTieInteraction(interaction);
   // True the instant any hold/drag is in flight — only one can be at once.
   // 'wrong' is included so a try-fail's shake window doesn't drop the pose
   // back to idle before the state actually advances — without it, the
@@ -842,15 +901,17 @@ function BeatPlayerGame({
     }
   }
 
-  const effectiveFixedPoint = debugFixedPoint || interaction?.fixedPoint;
+  const effectivePoint = (name) => debugPoint(name) || interaction?.[name];
   const effectiveTargetZone = debugTargetZone
     || (interaction?.target && typeof interaction.target === 'object' ? interaction.target : null);
 
   const debugSelectedItem = layoutDebug && debugSelectedKey
-    && debugSelectedKey !== '__fixedPoint__' && debugSelectedKey !== '__targetZone__'
+    && !debugSelectedKey.startsWith('__point_') && debugSelectedKey !== '__targetZone__'
     ? withDebugOverride(items.find((it, i) => itemKeyOf(it, i) === debugSelectedKey) || {}, debugSelectedKey)
     : null;
-  const debugSelectedFixedPoint = layoutDebug && debugSelectedKey === '__fixedPoint__' ? effectiveFixedPoint : null;
+  const debugSelectedPointName = layoutDebug && debugSelectedKey?.startsWith('__point_')
+    ? debugSelectedKey.slice('__point_'.length, -2) : null;
+  const debugSelectedPoint = debugSelectedPointName ? effectivePoint(debugSelectedPointName) : null;
   const debugSelectedTargetZone = layoutDebug && debugSelectedKey === '__targetZone__' ? effectiveTargetZone : null;
 
   return (
@@ -912,15 +973,17 @@ function BeatPlayerGame({
         const rawItem = item;
         item = layoutDebug ? withDebugOverride(item, debugKey) : item;
         const isDragKey = interaction?.drag === rawItem.gameKey;
+        const isCenterTieDragKey = isCenterTie
+          && (rawItem.gameKey === interaction?.dragLeft || rawItem.gameKey === interaction?.dragRight);
         const isTargetKey = interaction?.target === rawItem.gameKey;
         const isTriggerKey = isDragPath && interaction?.trigger === rawItem.gameKey && !dropRevealed;
         const isBeingDragged = !layoutDebug && drag?.gameKey === rawItem.gameKey;
-        // A tie-knot's drag item has no static image at all, ever — it's
-        // purely the clamp-bracket SVG rendered separately below (which
-        // also becomes the layoutDebug handle, via the fixedPoint anchor).
-        // The item still exists in the data purely for findItem/isDragKey
-        // bookkeeping, it just never renders as a generic image button.
-        if (isTieKnot && isDragKey) return null;
+        // A center-tie rope end has no static image at all, ever — it's
+        // purely the SVG rope curve + handle rendered separately below.
+        // The item still exists in the data purely for findItem/gameKey
+        // bookkeeping (start position), it just never renders as a
+        // generic image button.
+        if (isCenterTieDragKey) return null;
         // Optional per-item "active" pose (item.activePath) swaps in the instant
         // ANY interaction starts — pressed-and-holding, or mid-drag — instead of
         // waiting for the gesture to resolve into the next state. Not limited to
@@ -972,72 +1035,96 @@ function BeatPlayerGame({
         );
       })}
 
-      {isTieKnot && effectiveFixedPoint && (() => {
-        const cx = effectiveFixedPoint.x;
-        const cy = effectiveFixedPoint.y;
-        // While the child is actively holding (or has just released into
-        // the shake/reset window), the gap is live-driven by holdProgress.
-        // Once the beat has resolved (movement/after), holdProgress itself
-        // resets to 0 for bookkeeping — so show the RESULT instead: fully
-        // closed for a beat that succeeded, still open for one that failed
-        // (a try-fail's rope never actually gets tied).
-        const resolved = !needsInput(stateName);
-        const maxGap = 3.0;
-        const minGap = 0.35;
-        const gap = resolved
-          ? (isTryFailHold(interaction) ? maxGap : minGap)
-          : maxGap - (maxGap - minGap) * holdProgress;
-        const armReach = 4.6;
-        const armLen = 3.2;
-        const color = feedback === 'wrong' ? '#c2564a' : '#d19159';
-        const highlight = feedback === 'wrong' ? '#e8a599' : '#efc392';
-        const topD = `M ${cx - armReach} ${cy - gap - armLen} Q ${cx - armReach} ${cy - gap} ${cx - 0.25} ${cy - gap}`;
-        const botD = `M ${cx - armReach} ${cy + gap + armLen} Q ${cx - armReach} ${cy + gap} ${cx - 0.25} ${cy + gap}`;
-        const canGrab = !layoutDebug && !resolved && needsInput(stateName);
-        const onGrab = (e) => {
-          e.currentTarget.setPointerCapture?.(e.pointerId);
-          onPointerDown(e, interaction.drag);
-          startHold(interaction.drag);
+      {isCenterTie && (() => {
+        const leftItem = findItem(interaction.dragLeft);
+        const rightItem = findItem(interaction.dragRight);
+        if (!leftItem || !rightItem) return null;
+        const leftKey = itemKeyOf(leftItem, items.indexOf(leftItem));
+        const rightKey = itemKeyOf(rightItem, items.indexOf(rightItem));
+        const effLeftStart = layoutDebug ? withDebugOverride(leftItem, leftKey) : leftItem;
+        const effRightStart = layoutDebug ? withDebugOverride(rightItem, rightKey) : rightItem;
+        const anchorLeft = effectivePoint('anchorLeft') || effLeftStart;
+        const anchorRight = effectivePoint('anchorRight') || effRightStart;
+        const lockLeft = effectivePoint('lockLeft') || effectiveTargetZone || effLeftStart;
+        const lockRight = effectivePoint('lockRight') || effectiveTargetZone || effRightStart;
+
+        const posFor = (side, start, key, lockPos) => {
+          if (drag?.gameKey === key) return { x: drag.x, y: drag.y };
+          if (centerTieLocked[side]) return lockPos;
+          return start;
         };
+        const leftPos = posFor('left', effLeftStart, leftKey, lockLeft);
+        const rightPos = posFor('right', effRightStart, rightKey, lockRight);
+
+        const resolved = !needsInput(stateName);
+        const showKnot = resolved && !isTryFailCenterTie;
+        const nearGlow = drag && effectiveTargetZone
+          && pctDistance({ x: drag.x, y: drag.y }, effectiveTargetZone) < (effectiveTargetZone.w ?? 10) * 1.6;
+
+        const dark = feedback === 'wrong' ? '#c2564a' : '#976239';
+        const main = feedback === 'wrong' ? '#e8a599' : '#e9b86e';
+        const canGrab = (side) => !layoutDebug && needsInput(stateName) && !centerTieLocked[side];
+        const easeStyle = { transition: 'd 380ms cubic-bezier(.2,.8,.3,1)' };
+
         return (
           <svg viewBox="0 0 100 100" preserveAspectRatio="none" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 55 }}>
-            {/* Two clamp/bracket arms hugging the log from each side —
-                closing toward each other as the child holds, instead of a
-                rope being dragged across a distance (which was never the
-                actual mechanic: tying a rope is a squeeze-and-hold).
-                Two-tone stroke (dark outline + light core) for contrast
-                against the log art, same technique the old rope curve
-                used. */}
-            <path d={topD} fill="none" stroke={color} strokeWidth="2.1" strokeLinecap="round" />
-            <path d={botD} fill="none" stroke={color} strokeWidth="2.1" strokeLinecap="round" />
-            <path d={topD} fill="none" stroke={highlight} strokeWidth="0.9" strokeLinecap="round" />
-            <path d={botD} fill="none" stroke={highlight} strokeWidth="0.9" strokeLinecap="round" />
-            {/* The knot itself — where the two arms meet as the gap closes. */}
-            <circle cx={cx - 0.25} cy={cy} r={1.1 + (1 - gap / maxGap) * 0.7} fill={color} stroke={highlight} strokeWidth="0.4" opacity="0.98" />
-            {canGrab && (
-              // Invisible larger hit-area so the visual can stay small
-              // while the tap target still meets the project's 60px
-              // touch-target minimum.
+            {/* No permanent target marker — a glow only while a rope end is
+                actively near the center, strengthening on approach. On the
+                successful beat it resolves into the knot instead of fading. */}
+            {nearGlow && effectiveTargetZone && (
+              <circle cx={effectiveTargetZone.x} cy={effectiveTargetZone.y} r={(effectiveTargetZone.w ?? 10) * 0.9} fill="rgba(233,184,110,0.35)" />
+            )}
+            {!showKnot && (
+              <>
+                <path d={ropeEndCurveD(anchorLeft, leftPos)} fill="none" stroke={dark} strokeWidth="1.5" strokeLinecap="round" style={easeStyle} />
+                <path d={ropeEndCurveD(anchorLeft, leftPos)} fill="none" stroke={main} strokeWidth="0.95" strokeLinecap="round" style={easeStyle} />
+                <path d={ropeEndCurveD(anchorRight, rightPos)} fill="none" stroke={dark} strokeWidth="1.5" strokeLinecap="round" style={easeStyle} />
+                <path d={ropeEndCurveD(anchorRight, rightPos)} fill="none" stroke={main} strokeWidth="0.95" strokeLinecap="round" style={easeStyle} />
+              </>
+            )}
+            {showKnot && effectiveTargetZone && (
+              // Exact knot artwork from the locked center-tie prototype —
+              // authored in 1000x560 local coords, scaled+placed at the
+              // target. A bow loop + two hanging tails, not a plain dot.
+              <g transform={`translate(${effectiveTargetZone.x - 50.5}, ${effectiveTargetZone.y - 30.2}) scale(0.1)`}>
+                <path d="M472 292 C492 267 522 269 538 292 C551 312 532 332 505 326 C477 320 462 305 472 292" fill="none" stroke="#976239" strokeWidth="15" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M472 292 C492 267 522 269 538 292 C551 312 532 332 505 326 C477 320 462 305 472 292" fill="none" stroke="#e9b86e" strokeWidth="9.5" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M479 290 C494 276 516 277 530 292" fill="none" stroke="#f4cf93" strokeWidth="3.5" strokeLinecap="round" opacity="0.85" />
+                <path d="M490 321 L476 348 M516 321 L530 348" fill="none" stroke="#976239" strokeWidth="15" strokeLinecap="round" />
+                <path d="M490 321 L476 348 M516 321 L530 348" fill="none" stroke="#e9b86e" strokeWidth="9.5" strokeLinecap="round" />
+              </g>
+            )}
+            {canGrab('left') && (
               <ellipse
-                cx={cx} cy={cy} rx="3.6" ry="4.2"
-                fill="transparent"
-                style={{ pointerEvents: 'auto', cursor: feedback === 'holding' ? 'grabbing' : 'grab' }}
-                onPointerDown={onGrab}
-                onPointerUp={cancelHold}
-                onPointerLeave={cancelHold}
+                cx={leftPos.x} cy={leftPos.y} rx="2.6" ry="3.0"
+                fill="#f4c477" stroke="#8f5b33" strokeWidth="0.35"
+                style={{ pointerEvents: 'auto', cursor: drag?.gameKey === leftKey ? 'grabbing' : 'grab' }}
+                onPointerDown={(e) => { e.currentTarget.setPointerCapture?.(e.pointerId); onPointerDown(e, leftKey); }}
               />
             )}
-            {/* Layout Debug: fixedPoint has no item of its own to grab, so
-                give it a dedicated handle — dragging it repositions the
-                whole clamp visual, included in the "copy JSON" export. */}
-            {layoutDebug && (
-              <circle
-                cx={cx} cy={cy} r="2"
-                fill="#FF5722" stroke="#fff" strokeWidth="0.4"
-                style={{ pointerEvents: 'auto', cursor: 'grab' }}
-                onPointerDown={startDebugFixedPointDrag}
+            {canGrab('right') && (
+              <ellipse
+                cx={rightPos.x} cy={rightPos.y} rx="2.6" ry="3.0"
+                fill="#f4c477" stroke="#8f5b33" strokeWidth="0.35"
+                style={{ pointerEvents: 'auto', cursor: drag?.gameKey === rightKey ? 'grabbing' : 'grab' }}
+                onPointerDown={(e) => { e.currentTarget.setPointerCapture?.(e.pointerId); onPointerDown(e, rightKey); }}
               />
             )}
+            {/* Layout Debug: anchors and lock points have no item of their
+                own to grab, so each gets a dedicated handle via the
+                generic named-point system. */}
+            {layoutDebug && ['anchorLeft', 'anchorRight', 'lockLeft', 'lockRight'].map((name) => {
+              const p = effectivePoint(name);
+              if (!p) return null;
+              return (
+                <circle
+                  key={name} cx={p.x} cy={p.y} r="1.6"
+                  fill="#FF5722" stroke="#fff" strokeWidth="0.3"
+                  style={{ pointerEvents: 'auto', cursor: 'grab' }}
+                  onPointerDown={(e) => startDebugPointDrag(e, name, p)}
+                />
+              );
+            })}
           </svg>
         );
       })()}
@@ -1089,11 +1176,11 @@ function BeatPlayerGame({
               </button>
             </label>
           </>
-        ) : debugSelectedFixedPoint ? (
+        ) : debugSelectedPoint ? (
           <>
-            <div className="beat-player-debug-panel-row">rope fixedPoint</div>
-            <label>X<input type="number" step="0.1" value={debugSelectedFixedPoint.x} onChange={(e) => updateDebugField('x', e.target.value)} /></label>
-            <label>Y<input type="number" step="0.1" value={debugSelectedFixedPoint.y} onChange={(e) => updateDebugField('y', e.target.value)} /></label>
+            <div className="beat-player-debug-panel-row">{debugSelectedPointName}</div>
+            <label>X<input type="number" step="0.1" value={debugSelectedPoint.x} onChange={(e) => updateDebugField('x', e.target.value)} /></label>
+            <label>Y<input type="number" step="0.1" value={debugSelectedPoint.y} onChange={(e) => updateDebugField('y', e.target.value)} /></label>
           </>
         ) : debugSelectedTargetZone ? (
           <>

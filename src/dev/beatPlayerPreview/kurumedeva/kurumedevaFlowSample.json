@@ -723,21 +723,36 @@
             "z": 10,
             "w": 24,
             "locked": 0,
-            "gameKey": "beaverSprite"
+            "gameKey": "beaverSprite",
+            "activePath": "Characters/beaver-idle-worried.png"
           },
           {
-            "name": "Rope knot",
+            "name": "Rope \u2014 left end",
             "path": "Bridge/rope-knot.png",
-            "scale": 32,
+            "x": 50.0,
+            "y": 76.0,
+            "scale": 20,
             "rotation": 0,
             "opacity": 100,
             "flip": 1,
             "z": 12,
             "w": 24,
             "locked": 0,
-            "gameKey": "ropeItem",
-            "x": 48.0,
-            "y": 63.0
+            "gameKey": "ropeLeftEnd"
+          },
+          {
+            "name": "Rope \u2014 right end",
+            "path": "Bridge/rope-knot.png",
+            "x": 67.0,
+            "y": 76.0,
+            "scale": 20,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "ropeRightEnd"
           },
           {
             "name": "Support logs \u2014 pair",
@@ -839,21 +854,36 @@
             "z": 10,
             "w": 24,
             "locked": 0,
-            "gameKey": "beaverSprite"
+            "gameKey": "beaverSprite",
+            "activePath": "Characters/beaver-idle-worried.png"
           },
           {
-            "name": "Rope knot",
+            "name": "Rope \u2014 left end",
             "path": "Bridge/rope-knot.png",
-            "scale": 32,
+            "x": 50.0,
+            "y": 76.0,
+            "scale": 20,
             "rotation": 0,
             "opacity": 100,
             "flip": 1,
             "z": 12,
             "w": 24,
             "locked": 0,
-            "gameKey": "ropeItem",
-            "x": 48.0,
-            "y": 63.0
+            "gameKey": "ropeLeftEnd"
+          },
+          {
+            "name": "Rope \u2014 right end",
+            "path": "Bridge/rope-knot.png",
+            "x": 67.0,
+            "y": 76.0,
+            "scale": 20,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "ropeRightEnd"
           },
           {
             "name": "Support logs \u2014 pair",
@@ -955,7 +985,8 @@
             "z": 10,
             "w": 24,
             "locked": 0,
-            "gameKey": "beaverSprite"
+            "gameKey": "beaverSprite",
+            "activePath": "Characters/beaver-idle-worried.png"
           },
           {
             "name": "Help bubble \u2014 monkey/knot",
@@ -972,18 +1003,32 @@
             "gameKey": ""
           },
           {
-            "name": "Rope knot",
+            "name": "Rope \u2014 left end",
             "path": "Bridge/rope-knot.png",
-            "scale": 32,
+            "x": 50.0,
+            "y": 76.0,
+            "scale": 20,
             "rotation": 0,
             "opacity": 100,
             "flip": 1,
             "z": 12,
             "w": 24,
             "locked": 0,
-            "gameKey": "ropeItem",
-            "x": 48.0,
-            "y": 63.0
+            "gameKey": "ropeLeftEnd"
+          },
+          {
+            "name": "Rope \u2014 right end",
+            "path": "Bridge/rope-knot.png",
+            "x": 67.0,
+            "y": 76.0,
+            "scale": 20,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "ropeRightEnd"
           },
           {
             "name": "Support logs \u2014 pair",
@@ -1017,12 +1062,29 @@
       },
       "interaction": {
         "type": "try-fail",
-        "gesture": "press-hold",
-        "drag": "ropeItem",
-        "holdMs": 900,
-        "fixedPoint": {
-          "x": 58.0,
-          "y": 70.0
+        "gesture": "center-tie",
+        "dragLeft": "ropeLeftEnd",
+        "dragRight": "ropeRightEnd",
+        "target": {
+          "x": 58.5,
+          "y": 71.0,
+          "w": 8
+        },
+        "lockLeft": {
+          "x": 56.0,
+          "y": 71.0
+        },
+        "lockRight": {
+          "x": 61.0,
+          "y": 71.0
+        },
+        "anchorLeft": {
+          "x": 52.0,
+          "y": 68.0
+        },
+        "anchorRight": {
+          "x": 65.0,
+          "y": 68.0
         }
       }
     },
@@ -2999,18 +3061,32 @@
             "gameKey": "beaverSprite"
           },
           {
-            "name": "Rope knot",
+            "name": "Rope \u2014 left end",
             "path": "Bridge/rope-knot.png",
-            "scale": 32,
+            "x": 50.0,
+            "y": 76.0,
+            "scale": 20,
             "rotation": 0,
             "opacity": 100,
             "flip": 1,
             "z": 12,
             "w": 24,
             "locked": 0,
-            "gameKey": "ropeItem",
-            "x": 48.0,
-            "y": 63.0
+            "gameKey": "ropeLeftEnd"
+          },
+          {
+            "name": "Rope \u2014 right end",
+            "path": "Bridge/rope-knot.png",
+            "x": 67.0,
+            "y": 76.0,
+            "scale": 20,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "ropeRightEnd"
           },
           {
             "name": "Support logs \u2014 pair",
@@ -3129,18 +3205,32 @@
             "gameKey": "monkeySprite"
           },
           {
-            "name": "Rope knot",
+            "name": "Rope \u2014 left end",
             "path": "Bridge/rope-knot.png",
-            "scale": 32,
+            "x": 50.0,
+            "y": 76.0,
+            "scale": 20,
             "rotation": 0,
             "opacity": 100,
             "flip": 1,
             "z": 12,
             "w": 24,
             "locked": 0,
-            "gameKey": "ropeItem",
-            "x": 48.0,
-            "y": 63.0
+            "gameKey": "ropeLeftEnd"
+          },
+          {
+            "name": "Rope \u2014 right end",
+            "path": "Bridge/rope-knot.png",
+            "x": 67.0,
+            "y": 76.0,
+            "scale": 20,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "ropeRightEnd"
           },
           {
             "name": "Support logs \u2014 pair",
@@ -3245,18 +3335,32 @@
             "gameKey": "beaverSprite"
           },
           {
-            "name": "Rope knot",
+            "name": "Rope \u2014 left end",
             "path": "Bridge/rope-knot.png",
-            "scale": 32,
+            "x": 50.0,
+            "y": 76.0,
+            "scale": 20,
             "rotation": 0,
             "opacity": 100,
             "flip": 1,
             "z": 12,
             "w": 24,
             "locked": 0,
-            "gameKey": "ropeItem",
-            "x": 58.0,
-            "y": 58.0
+            "gameKey": "ropeLeftEnd"
+          },
+          {
+            "name": "Rope \u2014 right end",
+            "path": "Bridge/rope-knot.png",
+            "x": 67.0,
+            "y": 76.0,
+            "scale": 20,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 24,
+            "locked": 0,
+            "gameKey": "ropeRightEnd"
           },
           {
             "name": "Support logs \u2014 pair",
@@ -3289,12 +3393,29 @@
         "__syncedSnapshot": "[{\"name\":\"Bridge \u2014 broken\",\"path\":\"Bridge/bridge-broken.png\",\"x\":58.14331253499084,\"y\":68.9648954410118,\"scale\":205,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"bridgeSprite\"},{\"name\":\"Monkey \u2014 playing with twig\",\"path\":\"Characters/monkey-playing-twig.png\",\"x\":4.071661237785015,\"y\":55.211719757312025,\"scale\":29,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"monkeySprite\"},{\"name\":\"Baby beaver \u2014 waving\",\"path\":\"Characters/baby-beaver-waving.png\",\"x\":86.15635179153094,\"y\":65.77995374847313,\"scale\":30,\"rotation\":0,\"opacity\":100,\"flip\":-1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"babyBeaverSprite\"},{\"name\":\"Support log \u2014 pile/short\",\"path\":\"Bridge/short-single-support-log.png\",\"x\":58.57762638054764,\"y\":72.00505591111903,\"scale\":53,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"plankPileItem\"},{\"name\":\"Support log \u2014 pile/short\",\"path\":\"Bridge/short-single-support-log.png\",\"x\":59.406077033922024,\"y\":68.63517915309446,\"scale\":53,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"plankPileItem\"},{\"name\":\"elephant lift\",\"path\":\"upload://2\",\"x\":31.65037670818913,\"y\":49.565689467969605,\"scale\":69,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":1,\"w\":24,\"locked\":0,\"gameKey\":\"elephantSprite\"},{\"name\":\"beaver tie\",\"path\":\"upload://3\",\"x\":53.14874804369401,\"y\":65.20086862106406,\"scale\":50,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"beaverSprite\"},{\"name\":\"Help bubble \u2014 monkey/knot\",\"path\":\"Characters/help-bubble-monkey-knot.png\",\"x\":60.74918566775244,\"y\":55.06695841603895,\"scale\":44,\"rotation\":0,\"opacity\":100,\"flip\":1,\"z\":10,\"w\":24,\"locked\":0,\"gameKey\":\"\"}]"
       },
       "interaction": {
-        "type": "press-hold",
-        "drag": "ropeItem",
-        "holdMs": 1100,
-        "fixedPoint": {
-          "x": 58.0,
-          "y": 70.0
+        "type": "center-tie",
+        "dragLeft": "ropeLeftEnd",
+        "dragRight": "ropeRightEnd",
+        "target": {
+          "x": 58.5,
+          "y": 71.0,
+          "w": 8
+        },
+        "lockLeft": {
+          "x": 56.0,
+          "y": 71.0
+        },
+        "lockRight": {
+          "x": 61.0,
+          "y": 71.0
+        },
+        "anchorLeft": {
+          "x": 52.0,
+          "y": 68.0
+        },
+        "anchorRight": {
+          "x": 65.0,
+          "y": 68.0
         }
       }
     },
