@@ -1063,7 +1063,12 @@ function BeatPlayerGame({
 
         const dark = feedback === 'wrong' ? '#c2564a' : '#976239';
         const main = feedback === 'wrong' ? '#e8a599' : '#e9b86e';
-        const canGrab = (side) => !layoutDebug && needsInput(stateName) && !centerTieLocked[side];
+        // Visible/grabbable during normal play (while the beat needs input
+        // and that side isn't already locked) AND in Layout Debug — the
+        // rope-end's own rest position ("where the loose end starts,
+        // controlling how long the dangling rope looks") had no handle in
+        // debug mode at all before this, only the anchor/lock points did.
+        const canGrab = (side) => layoutDebug || (needsInput(stateName) && !centerTieLocked[side]);
         const easeStyle = { transition: 'd 380ms cubic-bezier(.2,.8,.3,1)' };
 
         return (
@@ -1099,7 +1104,11 @@ function BeatPlayerGame({
                 cx={leftPos.x} cy={leftPos.y} rx="2.6" ry="3.0"
                 fill="#f4c477" stroke="#8f5b33" strokeWidth="0.35"
                 style={{ pointerEvents: 'auto', cursor: drag?.gameKey === leftKey ? 'grabbing' : 'grab' }}
-                onPointerDown={(e) => { e.currentTarget.setPointerCapture?.(e.pointerId); onPointerDown(e, leftKey); }}
+                onPointerDown={(e) => {
+                  e.currentTarget.setPointerCapture?.(e.pointerId);
+                  if (layoutDebug) { startDebugItemDrag(e, leftKey, effLeftStart); return; }
+                  onPointerDown(e, leftKey);
+                }}
               />
             )}
             {canGrab('right') && (
@@ -1107,7 +1116,11 @@ function BeatPlayerGame({
                 cx={rightPos.x} cy={rightPos.y} rx="2.6" ry="3.0"
                 fill="#f4c477" stroke="#8f5b33" strokeWidth="0.35"
                 style={{ pointerEvents: 'auto', cursor: drag?.gameKey === rightKey ? 'grabbing' : 'grab' }}
-                onPointerDown={(e) => { e.currentTarget.setPointerCapture?.(e.pointerId); onPointerDown(e, rightKey); }}
+                onPointerDown={(e) => {
+                  e.currentTarget.setPointerCapture?.(e.pointerId);
+                  if (layoutDebug) { startDebugItemDrag(e, rightKey, effRightStart); return; }
+                  onPointerDown(e, rightKey);
+                }}
               />
             )}
             {/* Layout Debug: anchors and lock points have no item of their
