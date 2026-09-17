@@ -269,6 +269,14 @@ function BeatPlayerGame({
   }, []);
 
   const goToState = useCallback((next) => {
+    // A state change can turn a currently-focused item non-interactive
+    // (aria-hidden on the next render) — e.g. right after completing a
+    // drag, the item that was just grabbed still holds keyboard focus.
+    // Browsers block aria-hidden on an element with retained focus and
+    // log a console warning; blur first so the transition is clean.
+    if (typeof document !== 'undefined' && sceneRef.current?.contains(document.activeElement)) {
+      document.activeElement.blur();
+    }
     setDrag(null);
     setSelectedGameKey(null);
     setFeedback('idle');
