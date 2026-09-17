@@ -216,6 +216,19 @@ function BeatPlayerGame({
     return raw.filter((item, i) => !item.gameKey || lastIndexForKey.get(item.gameKey) === i);
   }, [stateBlock]);
 
+  // Scenery must keep its DOM node when unrelated items enter or leave.
+  // Count only matching unkeyed artwork, rather than using its list position.
+  const renderKeys = useMemo(() => {
+    const occurrences = new Map();
+    return items.map((item) => {
+      if (item.gameKey) return `game:${item.gameKey}`;
+      const identity = JSON.stringify([item.name, item.path]);
+      const occurrence = occurrences.get(identity) || 0;
+      occurrences.set(identity, occurrence + 1);
+      return `scenery:${identity}:${occurrence}`;
+    });
+  }, [items]);
+
   const interaction = interactions[beatIndex] || beat?.interaction || null;
   const isLastBeat = beatPos === beatKeys.length - 1;
 
@@ -1022,7 +1035,7 @@ function BeatPlayerGame({
 
         return (
           <button
-            key={`${item.gameKey || item.name}-${i}`}
+            key={renderKeys[i]}
             type="button"
             data-beat-key={item.gameKey || undefined}
             className={`beat-player-item${interactive ? ' is-interactive' : ''}${isDragKey && selectedGameKey === item.gameKey ? ' is-selected' : ''}${isBeingDragged ? ' is-dragging' : ''}${isDragKey && feedback === 'holding' ? ' is-holding' : ''}${isDebugSelected ? ' is-debug-selected' : ''}`}
