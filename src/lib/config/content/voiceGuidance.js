@@ -502,7 +502,7 @@ export const VOICE_SCRIPTS = {
       // GANESHA PHASE - INSTRUCTIONS
       // ========================================
       tapCircle: {
-        text: "Tap a circle, then drag each family member to where they belong."
+        text: "Tap a circle to meet someone in my family."
       },
 
       // ========================================

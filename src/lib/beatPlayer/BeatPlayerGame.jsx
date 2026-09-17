@@ -521,6 +521,21 @@ function BeatPlayerGame({
     }));
   };
 
+  const updateDebugInteractionField = (field, value) => {
+    const next = Number(value);
+    if (Number.isNaN(next)) return;
+    setDebugOverrides((cur) => ({
+      ...cur,
+      [beatIndex]: {
+        ...cur[beatIndex],
+        interaction: {
+          ...cur[beatIndex]?.interaction,
+          [field]: next,
+        },
+      },
+    }));
+  };
+
   const resetDebugForBeat = () => {
     setDebugOverrides((cur) => {
       const next = { ...cur };
@@ -549,6 +564,7 @@ function BeatPlayerGame({
     let mergedInteraction = interaction;
     if (beatOverrides.points) mergedInteraction = { ...mergedInteraction, ...beatOverrides.points };
     if (beatOverrides.targetZone) mergedInteraction = { ...mergedInteraction, target: beatOverrides.targetZone };
+    if (beatOverrides.interaction) mergedInteraction = { ...mergedInteraction, ...beatOverrides.interaction };
     const payload = {
       meta: beat.meta,
       before: mergeState('before'),
@@ -874,6 +890,9 @@ function BeatPlayerGame({
   // 'center-tie' locks and stays, resolving into the knot artwork.
   const isCenterTie = isCenterTieInteraction(interaction);
   const isTryFailCenterTie = isTryFailCenterTieInteraction(interaction);
+  const debugInteraction = debugOverrides[beatIndex]?.interaction || {};
+  const ropeEndWidth = debugInteraction.ropeEndWidth ?? interaction?.ropeEndWidth ?? 5.2;
+  const ropeEndHeight = debugInteraction.ropeEndHeight ?? interaction?.ropeEndHeight ?? 6;
   // True the instant any hold/drag is in flight — only one can be at once.
   // 'wrong' is included so a try-fail's shake window doesn't drop the pose
   // back to idle before the state actually advances — without it, the
@@ -1009,7 +1028,10 @@ function BeatPlayerGame({
             className={`beat-player-item${interactive ? ' is-interactive' : ''}${isDragKey && selectedGameKey === item.gameKey ? ' is-selected' : ''}${isBeingDragged ? ' is-dragging' : ''}${isDragKey && feedback === 'holding' ? ' is-holding' : ''}${isDebugSelected ? ' is-debug-selected' : ''}`}
             style={{ ...style, pointerEvents: interactive ? 'auto' : 'none', opacity: isPendingReveal ? 0 : style.opacity, outline: isDebugSelected ? '2px dashed #03A9F4' : undefined }}
             tabIndex={interactive ? 0 : -1}
-            aria-hidden={!interactive}
+            // Inactive artwork must also stop accepting focus. aria-hidden
+            // alone leaves a previously clicked button focused and causes
+            // Chrome's "Blocked aria-hidden" accessibility warning.
+            inert={!interactive}
             onPointerDown={layoutDebug
               ? (e) => startDebugItemDrag(e, debugKey, item)
               : (isDragKey ? (e) => { onPointerDown(e, item.gameKey); startHold(item.gameKey); } : undefined)}
@@ -1101,7 +1123,7 @@ function BeatPlayerGame({
             )}
             {canGrab('left') && (
               <ellipse
-                cx={leftPos.x} cy={leftPos.y} rx="2.6" ry="3.0"
+                cx={leftPos.x} cy={leftPos.y} rx={ropeEndWidth / 2} ry={ropeEndHeight / 2}
                 fill="#f4c477" stroke="#8f5b33" strokeWidth="0.35"
                 style={{ pointerEvents: 'auto', cursor: drag?.gameKey === leftKey ? 'grabbing' : 'grab' }}
                 onPointerDown={(e) => {
@@ -1113,7 +1135,7 @@ function BeatPlayerGame({
             )}
             {canGrab('right') && (
               <ellipse
-                cx={rightPos.x} cy={rightPos.y} rx="2.6" ry="3.0"
+                cx={rightPos.x} cy={rightPos.y} rx={ropeEndWidth / 2} ry={ropeEndHeight / 2}
                 fill="#f4c477" stroke="#8f5b33" strokeWidth="0.35"
                 style={{ pointerEvents: 'auto', cursor: drag?.gameKey === rightKey ? 'grabbing' : 'grab' }}
                 onPointerDown={(e) => {
@@ -1182,6 +1204,12 @@ function BeatPlayerGame({
             <label>Y<input type="number" step="0.1" value={debugSelectedItem.y} onChange={(e) => updateDebugField('y', e.target.value)} /></label>
             <label>Scale<input type="number" step="1" value={debugSelectedItem.scale} onChange={(e) => updateDebugField('scale', e.target.value)} /></label>
             <label>Rotation<input type="number" step="1" value={debugSelectedItem.rotation || 0} onChange={(e) => updateDebugField('rotation', e.target.value)} /></label>
+            {isCenterTie && (debugSelectedItem.gameKey === interaction?.dragLeft || debugSelectedItem.gameKey === interaction?.dragRight) && (
+              <>
+                <label>Oval width<input type="number" min="0.5" step="0.1" value={ropeEndWidth} onChange={(e) => updateDebugInteractionField('ropeEndWidth', e.target.value)} /></label>
+                <label>Oval height<input type="number" min="0.5" step="0.1" value={ropeEndHeight} onChange={(e) => updateDebugInteractionField('ropeEndHeight', e.target.value)} /></label>
+              </>
+            )}
             <label>
               Flip
               <button type="button" onClick={() => updateDebugField('flip', (debugSelectedItem.flip ?? 1) * -1)}>

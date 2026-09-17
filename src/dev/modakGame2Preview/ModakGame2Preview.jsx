@@ -8,15 +8,18 @@
 // Spec source: Madhurima's Game 2 dev brief (2026-09-16) + game 2 start/end
 // layout references. Locked interaction vocabulary: swipe, pull+hold, guide.
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import GestureDemo from '../../lib/components/feedback/GestureDemo';
 import './ModakGame2Preview.css';
 
 import forestBackground from '../../zones/symbol-mountain/scenes/modak/assets/images/modak-fj-bg.webp';
 import mooshikaCalm from '../../zones/symbol-mountain/scenes/modak/assets/images/mushika-calm-game2.webp';
+import mooshikaTurned from '../../zones/symbol-mountain/scenes/modak/assets/images/mooshika-turned-game2.webp';
 import bushClosed from '../../zones/symbol-mountain/scenes/modak/assets/images/fj-bush-closed-new.webp';
 import bushOpen from '../../zones/symbol-mountain/scenes/modak/assets/images/fj-bush-open-new.webp';
 import branchArt from '../../zones/symbol-mountain/scenes/modak/assets/images/fj-branch-new.webp';
 import treeArt from '../../zones/symbol-mountain/scenes/modak/assets/images/fj-tree-new.webp';
-import marshArt from '../../zones/symbol-mountain/scenes/modak/assets/images/fj-mud-crossing.webp';
+import marshArt from '../../zones/symbol-mountain/scenes/modak/assets/images/fj-mud-plain.webp';
+import marshClumpArt from '../../zones/symbol-mountain/scenes/modak/assets/images/fj-marsh-clump.webp';
 import flowerPink from '../../zones/symbol-mountain/scenes/modak/assets/images/fj-flower-coral.webp';
 import flowerCream from '../../zones/symbol-mountain/scenes/modak/assets/images/fj-flower-cream.webp';
 import emotionAngry from '../../zones/symbol-mountain/scenes/modak/assets/images/emotion-angry-game3.webp';
@@ -36,12 +39,12 @@ const PHASES = {
 // Marsh stepping-stone waypoints, percent within the marsh wrapper. These
 // are the *live* (debug-tunable) defaults — see LAYOUT_DEFAULTS below, which
 // duplicates them as the debug panel's starting point.
-const MARSH_START = { x: 4, y: 67 };
+const MARSH_START = { x: 2, y: 80 };
 const MARSH_STOPS = [
-  { x: 20, y: 57 },
-  { x: 42, y: 39 },
-  { x: 66, y: 56 },
-  { x: 87, y: 39 },
+  { x: 19.8, y: 47.2 },
+  { x: 41.8, y: 39.2 },
+  { x: 56, y: 57 },
+  { x: 84.9, y: 55.4 },
 ];
 
 // ---------------------------------------------------------------------
@@ -52,26 +55,43 @@ const MARSH_STOPS = [
 // ---------------------------------------------------------------------
 const LAYOUT_STORAGE_KEY = 'modakGame2PreviewLayout';
 const LAYOUT_DEFAULTS = {
-  bush: { l: 25, t: 48 },
-  tree: { l: 80, t: 41 },
-  branch: { l: 82, t: 53 },
-  marsh: { l: 61, t: 35 },
-  mooshikaBush: { l: 17, t: 61 },
-  mooshikaBranch: { l: 68, t: 57 },
-  mooshikaBelly: { l: 50, t: 56 },
-  marshStart: { l: MARSH_START.x, t: MARSH_START.y },
-  marshStop1: { l: MARSH_STOPS[0].x, t: MARSH_STOPS[0].y },
-  marshStop2: { l: MARSH_STOPS[1].x, t: MARSH_STOPS[1].y },
-  marshStop3: { l: MARSH_STOPS[2].x, t: MARSH_STOPS[2].y },
-  marshStop4: { l: MARSH_STOPS[3].x, t: MARSH_STOPS[3].y },
+  marshExit: { l: 86.3, t: 4.1 },
+  ganesha: { l: 55.9, t: 30.4, s: 100 },
+  emojiBush: { l: 80, t: -38, s: 100 },
+  emojiBranch: { l: 80, t: -38, s: 100 },
+  emojiMarsh: { l: 80, t: -38, s: 100 },
+  emojiAngry: { l: -1.9, t: -30.8, s: 100 },
+  emojiSad: { l: 86.9, t: 59.2, s: 100 },
+  emojiWorried: { l: 90.2, t: -18.7, s: 100 },
+  bush: { l: 27, t: 75.3, s: 100 },
+  tree: { l: 74.8, t: 52.5, s: 100 },
+  branch: { l: 62, t: 54.2, s: 100 },
+  marsh: { l: 61, t: 35, s: 100 },
+  mooshikaBush: { l: 26, t: 75, s: 100 },
+  mooshikaBranch: { l: 61.4, t: 83.5, s: 100 },
+  mooshikaBelly: { l: 67.6, t: 40.4, s: 100 },
+  branchFlower1: { l: 49.1, t: 34.4, s: 100 },
+  branchFlower2: { l: 20.3, t: 48.1, s: 100 },
+  marshFlower1: { l: 66, t: 48, s: 100 },
+  marshFlower2: { l: 87, t: 31, s: 100 },
+  marshStart: { l: 4, t: 67 },
+  marshStop1: { l: 20, t: 57, s: 100 },
+  marshStop2: { l: 42, t: 39, s: 100 },
+  marshStop3: { l: 66, t: 56, s: 100 },
+  marshStop4: { l: 87, t: 39, s: 100 },
 };
 const LAYOUT_LABELS = {
+  marshExit: 'Mooshika (dry-bank finish)', ganesha: 'Ganesha',
+  emojiBush: 'Bush emoji', emojiBranch: 'Branch emoji', emojiMarsh: 'Marsh emoji',
+  emojiAngry: 'Belly angry emoji', emojiSad: 'Belly sad emoji', emojiWorried: 'Belly worried emoji',
   bush: 'Bush', tree: 'Tree', branch: 'Branch', marsh: 'Marsh area',
   mooshikaBush: 'Mooshika (bush phase)',
   mooshikaBranch: 'Mooshika (branch phase)',
   mooshikaBelly: 'Mooshika (belly phase)',
   marshStart: 'Marsh start', marshStop1: 'Marsh stone 1', marshStop2: 'Marsh stone 2',
   marshStop3: 'Marsh stone 3', marshStop4: 'Marsh stone 4',
+  branchFlower1: 'Branch flower (pink)', branchFlower2: 'Branch flower (cream)',
+  marshFlower1: 'Marsh flower (pink)', marshFlower2: 'Marsh flower (cream)',
 };
 function loadLayout() {
   try {
@@ -93,6 +113,7 @@ const VO = {
   branchGesture: 'Pull the branch down, and hold it.',
   branchEarly: 'Almost! Keep holding.',
   branchSuccess: 'You stayed with it!',
+  branchNearMiss: 'So close! Try once more.',
   marshStart: 'The last flowers are across the mud. Guide Mooshika over the grass.',
   marshWobble: 'Ooh, it feels wobbly.',
   marshWrong: 'Back to the safe spot. Try again.',
@@ -103,6 +124,7 @@ const VO = {
   bellyKeptGoing: 'And he kept going.',
   bellyReveal: 'Lambodara!',
   bellyMeaning: "Ganesha's big belly reminds us — there's room for every feeling.",
+  bellyAffirmation: 'I can make room for my feelings and keep going.',
 };
 
 let VO_MUTED = false;
@@ -117,10 +139,95 @@ function speak(text) {
   } catch { /* no-op in unsupported browsers */ }
 }
 
+// Sequenced VO: waits for the line to actually finish before resolving, so
+// scripted sequences (opening, branch intro, belly recognition) can't have
+// one line cut off the last one. Falls back to a length-based timer when
+// muted / speechSynthesis is unavailable, so dev/mute testing still paces.
+function speakAsync(text) {
+  return new Promise((resolve) => {
+    try {
+      if (VO_MUTED || typeof window === 'undefined' || !window.speechSynthesis) {
+        window.setTimeout(resolve, Math.max(700, text.length * 45));
+        return;
+      }
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.rate = 0.95;
+      u.onend = resolve;
+      u.onerror = resolve;
+      window.speechSynthesis.speak(u);
+    } catch { resolve(); }
+  });
+}
+function wait(ms) {
+  return new Promise((resolve) => window.setTimeout(resolve, ms));
+}
+
 export default function ModakGame2Preview({ isActive = true, isPaused = false, hideElements = false, onPhaseComplete, onMicroWin }) {
   const [phase, setPhase] = useState(PHASES.FLOWER_BUSH);
   const [flowerCount, setFlowerCount] = useState(0);
   const [emotion, setEmotion] = useState(null);
+
+  // ---- IDLE HINT LADDER (ported from NewModakSceneV7.jsx) ----
+  // introGesture: shown briefly (6s) whenever a new working phase begins,
+  // regardless of idle. idleHintLevel escalates 0->1->2->3 the longer the
+  // child doesn't interact: L1 = subtle glow on the target (.hint CSS class),
+  // L2 = one-time nudge VO, L3 = full animated-hand GestureDemo. Any pointer
+  // interaction resets the whole ladder back to 0.
+  const WORKING_PHASES = [PHASES.FLOWER_BUSH, PHASES.FLOWER_BRANCH, PHASES.FLOWER_MARSH];
+  const IDLE_HINT_L1_MS = 10000;
+  const IDLE_HINT_L2_MS = 18000;
+  const IDLE_HINT_L3_MS = 26000;
+  const [introGesture, setIntroGesture] = useState(false);
+  const [idleHintLevel, setIdleHintLevel] = useState(0);
+  const [showIdleGestureHint, setShowIdleGestureHint] = useState(false);
+  const lastIdleInteractionAtRef = useRef(Date.now());
+  const idleVoPlayedRef = useRef({});
+
+  const noteInteraction = useCallback(() => {
+    lastIdleInteractionAtRef.current = Date.now();
+    setIdleHintLevel(0);
+    setShowIdleGestureHint(false);
+    setIntroGesture(false);
+  }, []);
+
+  // Intro gesture: 6s window on every phase entry.
+  useEffect(() => {
+    if (!WORKING_PHASES.includes(phase)) { setIntroGesture(false); return undefined; }
+    setIntroGesture(true);
+    lastIdleInteractionAtRef.current = Date.now();
+    const t = window.setTimeout(() => setIntroGesture(false), 6000);
+    return () => window.clearTimeout(t);
+  }, [phase]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Deterministic idle ladder — ticks every 250ms while in a working phase.
+  useEffect(() => {
+    if (!WORKING_PHASES.includes(phase)) { setIdleHintLevel(0); setShowIdleGestureHint(false); return undefined; }
+    const tick = window.setInterval(() => {
+      const idleFor = Date.now() - lastIdleInteractionAtRef.current;
+      let nextLevel = 0;
+      if (idleFor >= IDLE_HINT_L3_MS) nextLevel = 3;
+      else if (idleFor >= IDLE_HINT_L2_MS) nextLevel = 2;
+      else if (idleFor >= IDLE_HINT_L1_MS) nextLevel = 1;
+      setIdleHintLevel((prev) => (prev === nextLevel ? prev : nextLevel));
+    }, 250);
+    return () => window.clearInterval(tick);
+  }, [phase]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    setShowIdleGestureHint(WORKING_PHASES.includes(phase) && idleHintLevel >= 3);
+  }, [idleHintLevel, phase]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Idle nudge VO once per phase at level >= 2.
+  useEffect(() => {
+    if (idleHintLevel < 2 || idleVoPlayedRef.current[phase]) return;
+    idleVoPlayedRef.current[phase] = true;
+    const line = phase === PHASES.FLOWER_BUSH ? VO.bushStart
+      : phase === PHASES.FLOWER_BRANCH ? VO.branchGesture
+      : phase === PHASES.FLOWER_MARSH ? VO.marshStart
+      : null;
+    if (line) speak(line);
+  }, [idleHintLevel, phase]);
 
   // ---- BUSH ----
   const [bushAttempted, setBushAttempted] = useState(false);
@@ -134,10 +241,14 @@ export default function ModakGame2Preview({ isActive = true, isPaused = false, h
   const [branchPull, setBranchPull] = useState(0);
   const branchDragRef = useRef({ active: false, startY: 0 });
   const branchHoldTimerRef = useRef(null);
+  const branchEarlyWarnedRef = useRef(false);
+  const branchAttemptedRef = useRef(false);
 
   // ---- MARSH ----
   const marshRef = useRef(null);
   const [marshStep, setMarshStep] = useState(0);
+  const [marshExiting, setMarshExiting] = useState(false);
+  useEffect(() => { setMarshExiting(false); }, [phase]);
   const [marshDrag, setMarshDrag] = useState({ active: false, x: 0, y: 0 });
   const [marshWobble, setMarshWobble] = useState(false);
   const [marshSlip, setMarshSlip] = useState(false);
@@ -178,28 +289,43 @@ export default function ModakGame2Preview({ isActive = true, isPaused = false, h
   }, []);
 
   const startLayoutDrag = useCallback((e, key) => {
-    if (!debugMode) return;
+    if (!debugMode || layoutDragRef.current) return;
     e.preventDefault();
     e.stopPropagation();
-    setSelectedLayoutKey(key);
-    layoutDragRef.current = key;
-  }, [debugMode]);
-
-  const onStagePointerMove = useCallback((e) => {
-    const key = layoutDragRef.current;
-    if (!key) return;
-    // Marsh waypoints are percent-of-the-marsh-box (that's how the real
-    // marsh mechanic reads them), everything else is percent-of-the-stage.
-    const isMarshWaypoint = key === 'marshStart' || key.startsWith('marshStop');
-    const container = isMarshWaypoint ? marshRef.current : stageRef.current;
+    const container = key.startsWith('emoji') ? e.currentTarget.parentElement : key === 'marshExit' || key === 'marshStart' || key.startsWith('marshStop') || key.startsWith('marshFlower')
+      ? marshRef.current : key.startsWith('branchFlower') ? branchRef.current : stageRef.current;
     if (!container) return;
     const rect = container.getBoundingClientRect();
-    const l = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
-    const t = Math.max(0, Math.min(100, ((e.clientY - rect.top) / rect.height) * 100));
-    updateLayoutKey(key, { l: Math.round(l * 10) / 10, t: Math.round(t * 10) / 10 });
+    if (!rect.width || !rect.height) return;
+    setSelectedLayoutKey(key);
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+    // Preserve the grab point, regardless of the sprite's CSS anchor or scale.
+    layoutDragRef.current = {
+      key, pointerId: e.pointerId, clientX: e.clientX, clientY: e.clientY,
+      l: layout[key].l, t: layout[key].t, width: rect.width, height: rect.height,
+    };
+  }, [debugMode, layout]);
+
+  const onStagePointerMove = useCallback((e) => {
+    const drag = layoutDragRef.current;
+    if (!drag || drag.pointerId !== e.pointerId) return;
+    const l = Math.max(drag.key.startsWith('emoji') ? -100 : 0, Math.min(drag.key === 'marshExit' || drag.key.startsWith('emoji') ? 200 : 100, drag.l + (e.clientX - drag.clientX) / drag.width * 100));
+    const t = Math.max(drag.key.startsWith('emoji') ? -100 : 0, Math.min(drag.key.startsWith('emoji') ? 200 : 100, drag.t + (e.clientY - drag.clientY) / drag.height * 100));
+    updateLayoutKey(drag.key, { l: Math.round(l * 10) / 10, t: Math.round(t * 10) / 10 });
   }, [updateLayoutKey]);
 
-  const endLayoutDrag = useCallback(() => { layoutDragRef.current = null; }, []);
+  const endLayoutDrag = useCallback((e) => {
+    if (!e || layoutDragRef.current?.pointerId === e.pointerId) layoutDragRef.current = null;
+  }, []);
+
+  useEffect(() => { if (!debugMode) layoutDragRef.current = null; }, [debugMode]);
+
+  const emojiProps = (key) => ({
+    style: { left: `${layout[key].l}%`, top: `${layout[key].t}%`, right: 'auto',
+      transform: `scale(${layout[key].s / 100})`, animation: debugMode ? 'none' : undefined,
+      pointerEvents: debugMode ? 'auto' : 'none', cursor: debugMode ? 'grab' : undefined },
+    onPointerDown: debugMode ? (e) => startLayoutDrag(e, key) : undefined,
+  });
 
   const copyLayoutJson = useCallback(async () => {
     const text = JSON.stringify(layout, null, 2);
@@ -215,6 +341,7 @@ export default function ModakGame2Preview({ isActive = true, isPaused = false, h
   // Jump directly into a phase for testing, seeding whatever state that
   // phase's render depends on (mirrors jumpToDebugPhase in NewModakSceneV7).
   const jumpToPhase = useCallback((target) => {
+    branchAttemptedRef.current = false;
     if (target === PHASES.FLOWER_BUSH) {
       setPhase(PHASES.FLOWER_BUSH); setFlowerCount(0); setEmotion(null);
       setBushAttempted(false); setBushOpenState(false); setBushSpringing(false);
@@ -226,11 +353,13 @@ export default function ModakGame2Preview({ isActive = true, isPaused = false, h
       setBranchIntroFailed(false); setBranchComplete(false); setBranchPull(0);
       setMarshStep(0); setBellyBeat(0);
     } else if (target === PHASES.FLOWER_MARSH) {
+      branchAttemptedRef.current = true;
       setPhase(PHASES.FLOWER_MARSH); setFlowerCount(4); setEmotion(null);
       setBushAttempted(true); setBushOpenState(true);
       setBranchIntroFailed(true); setBranchComplete(true); setBranchPull(1);
       setMarshStep(0); setMarshDrag({ active: false, x: 0, y: 0 }); setBellyBeat(0);
     } else if (target === PHASES.BELLY_RECOGNITION) {
+      branchAttemptedRef.current = true;
       setPhase(PHASES.BELLY_RECOGNITION); setFlowerCount(6); setEmotion(null);
       setBushAttempted(true); setBushOpenState(true);
       setBranchIntroFailed(true); setBranchComplete(true); setBranchPull(1);
@@ -238,7 +367,18 @@ export default function ModakGame2Preview({ isActive = true, isPaused = false, h
     }
   }, []);
 
-  useEffect(() => { if (phase === PHASES.FLOWER_BUSH) speak(VO.open); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (phase !== PHASES.FLOWER_BUSH || bushAttempted) return undefined;
+    let cancelled = false;
+    (async () => {
+      await speakAsync(VO.open);
+      if (cancelled) return;
+      await wait(400);
+      if (cancelled) return;
+      await speakAsync(VO.bushStart);
+    })();
+    return () => { cancelled = true; };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // -----------------------------------------------------------------
   // Flying-flower animation -> updates flowerCount once flowers "arrive"
@@ -279,8 +419,9 @@ export default function ModakGame2Preview({ isActive = true, isPaused = false, h
   const handleBushPointerDown = useCallback((e) => {
     if (phase !== PHASES.FLOWER_BUSH) return;
     e.preventDefault();
+    noteInteraction();
     bushSwipeStartRef.current = { x: e.clientX, y: e.clientY };
-  }, [phase]);
+  }, [phase, noteInteraction]);
 
   const handleBushPointerUp = useCallback((e) => {
     if (phase !== PHASES.FLOWER_BUSH) return;
@@ -309,8 +450,8 @@ export default function ModakGame2Preview({ isActive = true, isPaused = false, h
       safeTimeout(() => {
         setPhase(PHASES.FLOWER_BRANCH);
         onPhaseComplete?.(PHASES.FLOWER_BUSH);
-      }, 800);
-    }, 500);
+      }, 2200);
+    }, 700);
   }, [phase, bushAttempted, collectChallengeFlowers, onPhaseComplete, safeTimeout]);
 
   // -----------------------------------------------------------------
@@ -318,17 +459,29 @@ export default function ModakGame2Preview({ isActive = true, isPaused = false, h
   // -----------------------------------------------------------------
   const branchFlowerOneRef = useRef(null);
   const branchFlowerTwoRef = useRef(null);
+  const branchRef = useRef(null);
 
   useEffect(() => {
-    if (phase !== PHASES.FLOWER_BRANCH || branchIntroFailed) return;
-    speak(VO.branchStart);
-    const t = safeTimeout(() => {
+    if (phase !== PHASES.FLOWER_BRANCH || branchIntroFailed) return undefined;
+    let cancelled = false;
+    (async () => {
+      // let Mooshika visibly arrive at the branch before anything happens.
+      // No emotion bubble here — this is a scripted story beat, not a real
+      // failed attempt by the child. Emotion only shows on an actual early
+      // release (see handleBranchPointerEnd), matching Bush's pattern.
+      await wait(850);
+      if (cancelled) return;
       setBranchIntroFailed(true);
-      setEmotion('sad');
-      safeTimeout(() => speak(VO.branchGesture), 600);
-    }, 850);
-    return () => clearTimeout(t);
-  }, [phase, branchIntroFailed, safeTimeout]);
+      await wait(300);
+      if (cancelled) return;
+      await speakAsync(VO.branchStart);
+      if (cancelled) return;
+      await wait(400);
+      if (cancelled) return;
+      await speakAsync(VO.branchGesture);
+    })();
+    return () => { cancelled = true; };
+  }, [phase, branchIntroFailed]);
 
   const clearBranchHold = useCallback(() => {
     if (branchHoldTimerRef.current) { clearTimeout(branchHoldTimerRef.current); branchHoldTimerRef.current = null; }
@@ -336,6 +489,18 @@ export default function ModakGame2Preview({ isActive = true, isPaused = false, h
 
   const finishBranchChallenge = useCallback(() => {
     clearBranchHold();
+    // Mirror Bush's pattern: the first successful hold doesn't actually
+    // complete the challenge — it springs back with a "so close" beat, and
+    // only the second attempt succeeds. Emotion only shows here, after a
+    // real (if scripted) failed attempt, not automatically on phase entry.
+    if (!branchAttemptedRef.current) {
+      branchAttemptedRef.current = true;
+      setEmotion('sad');
+      speak(VO.branchNearMiss);
+      setBranchPull(0.3);
+      safeTimeout(() => setBranchPull(0), 450);
+      return;
+    }
     setBranchPull(1);
     setBranchComplete(true);
     setEmotion(null);
@@ -345,17 +510,18 @@ export default function ModakGame2Preview({ isActive = true, isPaused = false, h
       safeTimeout(() => {
         setPhase(PHASES.FLOWER_MARSH);
         onPhaseComplete?.(PHASES.FLOWER_BRANCH);
-      }, 800);
-    }, 400);
+      }, 2200);
+    }, 700);
   }, [clearBranchHold, collectChallengeFlowers, onPhaseComplete, safeTimeout]);
 
   const handleBranchPointerDown = useCallback((e) => {
     if (phase !== PHASES.FLOWER_BRANCH || branchComplete) return;
     e.preventDefault();
+    noteInteraction();
     e.currentTarget.setPointerCapture?.(e.pointerId);
     branchDragRef.current = { active: true, startY: e.clientY };
     clearBranchHold();
-  }, [phase, branchComplete, clearBranchHold]);
+  }, [phase, branchComplete, clearBranchHold, noteInteraction]);
 
   const handleBranchPointerMove = useCallback((e) => {
     if (!branchDragRef.current.active) return;
@@ -376,7 +542,10 @@ export default function ModakGame2Preview({ isActive = true, isPaused = false, h
     clearBranchHold();
     if (branchPull > 0.15) {
       setEmotion('sad');
-      speak(VO.branchEarly);
+      if (!branchEarlyWarnedRef.current) {
+        branchEarlyWarnedRef.current = true;
+        speak(VO.branchEarly);
+      }
     }
     setBranchPull(0);
   }, [branchComplete, branchPull, clearBranchHold]);
@@ -395,36 +564,72 @@ export default function ModakGame2Preview({ isActive = true, isPaused = false, h
     if (phase === PHASES.FLOWER_MARSH && marshStep === 0) speak(VO.marshStart);
   }, [phase, marshStep]);
 
+  const marshPointerRef = useRef(null);
+  const marshPointFromEvent = (e) => {
+    const rect = marshRef.current?.getBoundingClientRect();
+    if (!rect?.width || !rect?.height) return null;
+    return { x: (e.clientX - rect.left) / rect.width * 100, y: (e.clientY - rect.top) / rect.height * 100 };
+  };
+  const marshLandingFromEvent = (e) => {
+    const point = marshPointFromEvent(e);
+    const gesture = marshPointerRef.current;
+    if (!point || !gesture || gesture.id !== e.pointerId) return null;
+    return { x: point.x + gesture.offsetX, y: point.y + gesture.offsetY };
+  };
+
   const handleMarshPointerDown = useCallback((e) => {
-    if (phase !== PHASES.FLOWER_MARSH) return;
+    if (phase !== PHASES.FLOWER_MARSH || marshStep >= 4 || marshPointerRef.current) return;
     e.preventDefault();
-    if (!marshRef.current) return;
+    const point = marshPointFromEvent(e);
+    if (!point) return;
+    noteInteraction();
     const current = getCurrentMarshPosition();
+    marshPointerRef.current = { id: e.pointerId, offsetX: current.x - point.x, offsetY: current.y - point.y };
+    e.currentTarget.setPointerCapture?.(e.pointerId);
     setMarshDrag({ active: true, x: current.x, y: current.y });
-  }, [phase, getCurrentMarshPosition]);
+  }, [phase, marshStep, getCurrentMarshPosition, noteInteraction]);
 
   const handleMarshPointerMove = useCallback((e) => {
-    if (!marshDrag.active) return;
-    const rect = marshRef.current.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
-    setMarshDrag({ active: true, x: Math.max(0, Math.min(100, x)), y: Math.max(0, Math.min(100, y)) });
-  }, [marshDrag.active]);
+    const position = marshLandingFromEvent(e);
+    if (position) setMarshDrag({ active: true, ...position });
+  }, []);
+
+  const handleMarshPointerCancel = useCallback(() => {
+    marshPointerRef.current = null;
+    setMarshDrag({ active: false, ...getCurrentMarshPosition() });
+  }, [getCurrentMarshPosition]);
 
   const marshFlowerOneRef = useRef(null);
   const marshFlowerTwoRef = useRef(null);
+  const marshWrongWarnedRef = useRef(false);
 
-  const handleMarshPointerEnd = useCallback(() => {
-    if (!marshDrag.active) return;
+  const flyOneFlowerToBasket = useCallback((el, src, newFlowerCount) => {
+    if (!el) { setFlowerCount(newFlowerCount); return; }
+    const r = el.getBoundingClientRect();
+    flyFlowerToBasket({ src, startX: r.left + r.width / 2, startY: r.top + r.height / 2, delay: 0 });
+    window.setTimeout(() => {
+      setFlowerCount(newFlowerCount);
+      onMicroWin?.(`flowers-${newFlowerCount}`);
+    }, 600);
+  }, [flyFlowerToBasket, onMicroWin]);
+
+  const handleMarshPointerEnd = useCallback((e) => {
+    const position = marshLandingFromEvent(e);
+    if (!position) return;
+    marshPointerRef.current = null;
+    e.currentTarget.releasePointerCapture?.(e.pointerId);
     const target = marshStopsLive[marshStep];
     if (!target) { setMarshDrag((d) => ({ ...d, active: false })); return; }
-    const dx = marshDrag.x - target.x;
-    const dy = marshDrag.y - target.y;
+    const dx = position.x - target.x;
+    const dy = position.y - target.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
 
-    if (distance <= 13) {
+    if (distance <= 22) {
       const nextStep = marshStep + 1;
-      if (nextStep === 1) {
+      if (nextStep === 2) {
+        // Scripted "ooh, wobbly" beat once the crossing is underway (after
+        // the 2nd stone) — shows the worried bubble here, same as Branch's
+        // near-miss: a real story beat, not on the very first step.
         setMarshWobble(true);
         setEmotion('worried');
         speak(VO.marshWobble);
@@ -434,28 +639,36 @@ export default function ModakGame2Preview({ isActive = true, isPaused = false, h
       setMarshDrag({ active: false, x: target.x, y: target.y });
 
       if (nextStep === 3) {
-        safeTimeout(() => collectChallengeFlowers({ firstEl: marshFlowerOneRef.current, secondEl: marshFlowerTwoRef.current, newFlowerCount: 5 }), 100);
+        safeTimeout(() => flyOneFlowerToBasket(marshFlowerOneRef.current, flowerPink, 5), 100);
       }
       if (nextStep === 4) {
-        speak(VO.marshDone);
-        safeTimeout(() => {
-          setFlowerCount(6);
+        safeTimeout(async () => {
+          flyOneFlowerToBasket(marshFlowerTwoRef.current, flowerCream, 6);
           setEmotion(null);
+          await wait(600);
+          setMarshExiting(true);
+          await wait(1400);
+          await speakAsync(VO.marshDone);
+          await wait(700);
           onPhaseComplete?.(PHASES.FLOWER_MARSH);
-          safeTimeout(() => setPhase(PHASES.BELLY_RECOGNITION), 700);
-        }, 500);
+          setPhase(PHASES.BELLY_RECOGNITION);
+        }, 100);
       }
       return;
     }
 
-    // wrong drop — soft fail, snap back to last safe stone
+    // wrong drop — soft fail, snap back to last safe stone. Only speak the
+    // "back to safe spot" line the first time; repeats just snap back quietly.
     setMarshSlip(true);
     setEmotion('worried');
-    speak(VO.marshWrong);
+    if (!marshWrongWarnedRef.current) {
+      marshWrongWarnedRef.current = true;
+      speak(VO.marshWrong);
+    }
     const safePosition = getCurrentMarshPosition();
     setMarshDrag({ active: false, x: safePosition.x, y: safePosition.y });
     safeTimeout(() => setMarshSlip(false), 500);
-  }, [marshDrag, marshStep, marshStopsLive, collectChallengeFlowers, getCurrentMarshPosition, onPhaseComplete, safeTimeout]);
+  }, [marshDrag, marshStep, marshStopsLive, flyOneFlowerToBasket, getCurrentMarshPosition, onPhaseComplete, safeTimeout]);
 
   // -----------------------------------------------------------------
   // BELLY RECOGNITION — non-interactive payoff.
@@ -464,21 +677,54 @@ export default function ModakGame2Preview({ isActive = true, isPaused = false, h
   // -----------------------------------------------------------------
   useEffect(() => {
     if (phase !== PHASES.BELLY_RECOGNITION) { setBellyBeat(0); return undefined; }
-    const timers = [];
-    timers.push(safeTimeout(() => setBellyBeat(1), 350));
-    timers.push(safeTimeout(() => { setBellyBeat(2); speak(VO.bellyFrustrated); }, 750));
-    timers.push(safeTimeout(() => { setBellyBeat(3); speak(VO.bellyDisappointed); }, 1150));
-    timers.push(safeTimeout(() => { setBellyBeat(4); speak(VO.bellyWorried); safeTimeout(() => speak(VO.bellyKeptGoing), 700); }, 1650));
-    timers.push(safeTimeout(() => { setBellyBeat(5); speak(VO.bellyReveal); safeTimeout(() => speak(VO.bellyMeaning), 700); }, 2900));
-    timers.push(safeTimeout(() => {
+    let cancelled = false;
+    (async () => {
+      await wait(600);
+      if (cancelled) return;
+      setBellyBeat(1);
+      await speakAsync(VO.bellyFrustrated);
+
+      await wait(300);
+      if (cancelled) return;
+      setBellyBeat(2);
+      await speakAsync(VO.bellyDisappointed);
+
+      await wait(300);
+      if (cancelled) return;
+      setBellyBeat(3);
+      await speakAsync(VO.bellyWorried);
+
+      await wait(450);
+      if (cancelled) return;
+      await speakAsync(VO.bellyKeptGoing);
+
+      if (cancelled) return;
+      setBellyBeat(4);
+      await wait(750);
+
+      if (cancelled) return;
+      setBellyBeat(5);
+      await speakAsync(VO.bellyReveal);
+
+      await wait(350);
+      if (cancelled) return;
+      await speakAsync(VO.bellyMeaning);
+
+      await wait(350);
+      if (cancelled) return;
+      await speakAsync(VO.bellyAffirmation);
+
+      await wait(700);
+      if (cancelled) return;
       setBellyBeat(6);
       onPhaseComplete?.(PHASES.BELLY_RECOGNITION);
-    }, 4700));
-    timers.push(safeTimeout(() => {
+
+      await wait(800);
+      if (cancelled) return;
       setPhase(PHASES.DONE);
-    }, 5500));
-    return () => timers.forEach(clearTimeout);
-  }, [phase, onPhaseComplete, safeTimeout]);
+    })();
+    return () => { cancelled = true; };
+  }, [phase, onPhaseComplete]);
 
   if (!isActive) return null;
 
@@ -532,11 +778,11 @@ export default function ModakGame2Preview({ isActive = true, isPaused = false, h
       {showBush && (
         <div
           className={`mg2-bush-area ${isBushPhase ? 'is-active' : ''} ${bushSceneryComplete ? 'is-complete' : ''}`}
-          style={{ left: `${layout.bush.l}%`, top: `${layout.bush.t}%` }}
+          style={{ left: `${layout.bush.l}%`, top: `${layout.bush.t}%`, '--layout-scale': (layout.bush.s || 100) / 100 }}
         >
           <button
             type="button"
-            className={`mg2-bush ${bushSpringing ? 'mg2-bush--springing' : ''} ${bushOpenState ? 'mg2-bush--open' : ''}`}
+            className={`mg2-bush ${bushSpringing ? 'mg2-bush--springing' : ''} ${bushOpenState ? 'mg2-bush--open' : ''} ${isBushPhase && idleHintLevel >= 1 ? 'hint' : ''}`}
             style={debugMode && selectedLayoutKey === 'bush' ? { outline: '2px dashed #03A9F4', outlineOffset: 3 } : undefined}
             onPointerDown={debugMode ? (e) => startLayoutDrag(e, 'bush') : (isBushPhase ? handleBushPointerDown : undefined)}
             onPointerUp={!debugMode && isBushPhase ? handleBushPointerUp : undefined}
@@ -560,14 +806,15 @@ export default function ModakGame2Preview({ isActive = true, isPaused = false, h
         <div className={`mg2-tree-area ${isBranchPhase ? 'is-active' : ''} ${treeSceneryComplete ? 'is-complete' : ''}`}>
           <img
             src={treeArt} alt="" className="mg2-tree"
-            style={{ left: `${layout.tree.l}%`, top: `${layout.tree.t}%`, outline: debugMode && selectedLayoutKey === 'tree' ? '2px dashed #03A9F4' : undefined, cursor: debugMode ? 'grab' : undefined, pointerEvents: debugMode ? 'auto' : 'none' }}
+            style={{ left: `${layout.tree.l}%`, top: `${layout.tree.t}%`, '--layout-scale': (layout.tree.s || 100) / 100, outline: debugMode && selectedLayoutKey === 'tree' ? '2px dashed #03A9F4' : undefined, cursor: debugMode ? 'grab' : undefined, pointerEvents: debugMode ? 'auto' : 'none' }}
             onPointerDown={debugMode ? (e) => startLayoutDrag(e, 'tree') : undefined}
           />
 
           <button
+            ref={branchRef}
             type="button"
-            className="mg2-branch"
-            style={{ '--pull': branchComplete ? 1 : branchPull, left: `${layout.branch.l}%`, top: `${layout.branch.t}%`, outline: debugMode && selectedLayoutKey === 'branch' ? '2px dashed #03A9F4' : undefined, outlineOffset: debugMode && selectedLayoutKey === 'branch' ? 3 : undefined }}
+            className={`mg2-branch ${isBranchPhase && branchIntroFailed && !branchComplete && idleHintLevel >= 1 ? 'hint' : ''}`}
+            style={{ '--pull': branchComplete ? 1 : branchPull, '--layout-scale': (layout.branch.s || 100) / 100, left: `${layout.branch.l}%`, top: `${layout.branch.t}%`, outline: debugMode && selectedLayoutKey === 'branch' ? '2px dashed #03A9F4' : undefined, outlineOffset: debugMode && selectedLayoutKey === 'branch' ? 3 : undefined }}
             onPointerDown={debugMode ? (e) => startLayoutDrag(e, 'branch') : (isBranchPhase ? handleBranchPointerDown : undefined)}
             onPointerMove={!debugMode && isBranchPhase ? handleBranchPointerMove : undefined}
             onPointerUp={!debugMode && isBranchPhase ? handleBranchPointerEnd : undefined}
@@ -577,8 +824,26 @@ export default function ModakGame2Preview({ isActive = true, isPaused = false, h
             <img src={branchArt} alt="" />
             {!branchComplete && flowerCount < 4 && (
               <>
-                <img ref={branchFlowerOneRef} src={flowerPink} alt="" className="mg2-branch-flower mg2-branch-flower--1" />
-                <img ref={branchFlowerTwoRef} src={flowerCream} alt="" className="mg2-branch-flower mg2-branch-flower--2" />
+                <img
+                  ref={branchFlowerOneRef} src={flowerPink} alt="" className="mg2-branch-flower"
+                  style={{
+                    left: `${layout.branchFlower1.l}%`, top: `${layout.branchFlower1.t}%`,
+                    '--layout-scale': (layout.branchFlower1.s || 100) / 100,
+                    outline: debugMode && selectedLayoutKey === 'branchFlower1' ? '2px dashed #03A9F4' : undefined,
+                    pointerEvents: debugMode ? 'auto' : 'none', cursor: debugMode ? 'grab' : undefined,
+                  }}
+                  onPointerDown={debugMode ? (e) => startLayoutDrag(e, 'branchFlower1') : undefined}
+                />
+                <img
+                  ref={branchFlowerTwoRef} src={flowerCream} alt="" className="mg2-branch-flower"
+                  style={{
+                    left: `${layout.branchFlower2.l}%`, top: `${layout.branchFlower2.t}%`,
+                    '--layout-scale': (layout.branchFlower2.s || 100) / 100,
+                    outline: debugMode && selectedLayoutKey === 'branchFlower2' ? '2px dashed #03A9F4' : undefined,
+                    pointerEvents: debugMode ? 'auto' : 'none', cursor: debugMode ? 'grab' : undefined,
+                  }}
+                  onPointerDown={debugMode ? (e) => startLayoutDrag(e, 'branchFlower2') : undefined}
+                />
               </>
             )}
           </button>
@@ -590,36 +855,81 @@ export default function ModakGame2Preview({ isActive = true, isPaused = false, h
         <div
           ref={marshRef}
           className={`mg2-marsh-area ${isMarshPhase ? 'is-active' : ''} ${marshSceneryComplete ? 'is-complete' : ''}`}
-          style={{ left: `${layout.marsh.l}%`, top: `${layout.marsh.t}%`, outline: debugMode && selectedLayoutKey === 'marsh' ? '2px dashed #03A9F4' : undefined, cursor: debugMode ? 'grab' : undefined, pointerEvents: debugMode ? 'auto' : undefined }}
+          style={{ left: `${layout.marsh.l}%`, top: `${layout.marsh.t}%`, '--layout-scale': (layout.marsh.s || 100) / 100, outline: debugMode && selectedLayoutKey === 'marsh' ? '2px dashed #03A9F4' : undefined, cursor: debugMode ? 'grab' : undefined, pointerEvents: debugMode ? 'auto' : undefined }}
           onPointerDown={debugMode ? (e) => startLayoutDrag(e, 'marsh') : undefined}
         >
           <img src={marshArt} alt="" className="mg2-marsh" />
 
-          {flowerCount < 5 && <img ref={marshFlowerOneRef} src={flowerPink} alt="" className="mg2-marsh-flower mg2-marsh-flower--1" />}
-          {flowerCount < 6 && <img ref={marshFlowerTwoRef} src={flowerCream} alt="" className="mg2-marsh-flower mg2-marsh-flower--2" />}
+          {['marshStop1', 'marshStop2', 'marshStop3', 'marshStop4'].map((key) => (
+            <img
+              key={key}
+              src={marshClumpArt} alt="" className="mg2-marsh-clump"
+              style={{
+                left: `${layout[key].l}%`, top: `${layout[key].t}%`,
+                '--layout-scale': (layout[key].s || 100) / 100,
+                outline: debugMode && selectedLayoutKey === key ? '2px dashed #03A9F4' : undefined,
+                pointerEvents: debugMode ? 'auto' : 'none', cursor: debugMode ? 'grab' : undefined,
+              }}
+              onPointerDown={debugMode ? (e) => startLayoutDrag(e, key) : undefined}
+            />
+          ))}
+
+          {debugMode && ['marshStop1', 'marshStop2', 'marshStop3', 'marshStop4'].map((key) => (
+            <div
+              key={`${key}-dropzone`}
+              className="mg2-debug-dropzone"
+              style={{ left: `${layout[key].l}%`, top: `${layout[key].t}%` }}
+              title={`${LAYOUT_LABELS[key]} — drop zone (matches the game's actual snap radius)`}
+            />
+          ))}
+
+          {flowerCount < 5 && (
+            <img
+              ref={marshFlowerOneRef} src={flowerPink} alt="" className="mg2-marsh-flower"
+              style={{
+                left: `${layout.marshFlower1.l}%`, top: `${layout.marshFlower1.t}%`,
+                '--layout-scale': (layout.marshFlower1.s || 100) / 100,
+                outline: debugMode && selectedLayoutKey === 'marshFlower1' ? '2px dashed #03A9F4' : undefined,
+                pointerEvents: debugMode ? 'auto' : 'none', cursor: debugMode ? 'grab' : undefined,
+              }}
+              onPointerDown={debugMode ? (e) => startLayoutDrag(e, 'marshFlower1') : undefined}
+            />
+          )}
+          {flowerCount < 6 && (
+            <img
+              ref={marshFlowerTwoRef} src={flowerCream} alt="" className="mg2-marsh-flower"
+              style={{
+                left: `${layout.marshFlower2.l}%`, top: `${layout.marshFlower2.t}%`,
+                '--layout-scale': (layout.marshFlower2.s || 100) / 100,
+                outline: debugMode && selectedLayoutKey === 'marshFlower2' ? '2px dashed #03A9F4' : undefined,
+                pointerEvents: debugMode ? 'auto' : 'none', cursor: debugMode ? 'grab' : undefined,
+              }}
+              onPointerDown={debugMode ? (e) => startLayoutDrag(e, 'marshFlower2') : undefined}
+            />
+          )}
 
           {isMarshPhase && (() => {
             const safePosition = getCurrentMarshPosition();
-            const position = marshDrag.active ? marshDrag : safePosition;
+            const position = marshExiting ? { x: layout.marshExit.l, y: layout.marshExit.t } : marshDrag.active ? marshDrag : safePosition;
             return (
               <button
                 type="button"
-                className={`mg2-marsh-mooshika ${marshWobble ? 'mg2-marsh-mooshika--wobble' : ''} ${marshSlip ? 'mg2-marsh-mooshika--slip' : ''}`}
+                className={`mg2-marsh-mooshika ${marshExiting ? 'mg2-marsh-mooshika--exiting' : ''} ${marshWobble ? 'mg2-marsh-mooshika--wobble' : ''} ${marshSlip ? 'mg2-marsh-mooshika--slip' : ''} ${idleHintLevel >= 1 ? 'hint' : ''}`}
                 style={{ left: `${position.x}%`, top: `${position.y}%` }}
                 onPointerDown={debugMode ? undefined : handleMarshPointerDown}
                 onPointerMove={debugMode ? undefined : handleMarshPointerMove}
                 onPointerUp={debugMode ? undefined : handleMarshPointerEnd}
-                onPointerCancel={debugMode ? undefined : handleMarshPointerEnd}
+                onPointerCancel={debugMode ? undefined : handleMarshPointerCancel}
               >
-                <MooshikaWithBasket flowerCount={flowerCount} basketRef={basketTargetRef} />
-                {emotion === 'worried' && (
-                  <img src={emotionWorried} alt="Worried" className="mg2-emotion mg2-emotion--anchored" />
+                <MooshikaWithBasket flowerCount={flowerCount} basketRef={basketTargetRef} pose="turned" />
+                {(debugMode || emotion === 'worried') && (
+                  <img src={emotionWorried} alt="Worried" {...emojiProps('emojiMarsh')} className="mg2-emotion mg2-emotion--anchored" />
                 )}
               </button>
             );
           })()}
 
-          {debugMode && ['marshStart', 'marshStop1', 'marshStop2', 'marshStop3', 'marshStop4'].map((key) => (
+          {debugMode && ['marshStart', 'marshExit'].map((key) => (
             <div
               key={key}
               className={`mg2-debug-waypoint ${selectedLayoutKey === key ? 'is-selected' : ''}`}
@@ -628,6 +938,21 @@ export default function ModakGame2Preview({ isActive = true, isPaused = false, h
               title={LAYOUT_LABELS[key]}
             />
           ))}
+
+          {isMarshPhase && (() => {
+            const from = getCurrentMarshPosition();
+            const to = marshStopsLive[marshStep] || from;
+            return (
+              <GestureDemo
+                type="drag"
+                from={{ x: from.x, y: from.y }}
+                to={{ x: to.x, y: to.y }}
+                active={(introGesture || showIdleGestureHint) && !marshDrag.active}
+                idleDelay={120}
+                zIndex={30}
+              />
+            );
+          })()}
         </div>
       )}
 
@@ -639,25 +964,44 @@ export default function ModakGame2Preview({ isActive = true, isPaused = false, h
           className={`mg2-mooshika-shared ${branchIntroFailed && isBranchPhase ? 'mg2-mooshika-shared--failed' : ''}`}
           style={{
             left: `${layout[mooshikaPhaseKey].l}%`, top: `${layout[mooshikaPhaseKey].t}%`,
+            '--layout-scale': (layout[mooshikaPhaseKey].s || 100) / 100,
             outline: debugMode && selectedLayoutKey === mooshikaPhaseKey ? '2px dashed #03A9F4' : undefined,
             outlineOffset: 3, cursor: debugMode ? 'grab' : undefined, pointerEvents: debugMode ? 'auto' : undefined,
           }}
           onPointerDown={debugMode ? (e) => startLayoutDrag(e, mooshikaPhaseKey) : undefined}
         >
-          <MooshikaWithBasket flowerCount={flowerCount} basketRef={basketTargetRef} />
-          {isBushPhase && emotion === 'angry' && (
-            <img src={emotionAngry} alt="Frustrated" className="mg2-emotion mg2-emotion--anchored" />
+          <MooshikaWithBasket flowerCount={flowerCount} basketRef={basketTargetRef} pose="turned" />
+          {isBushPhase && (debugMode || emotion === 'angry') && (
+            <img src={emotionAngry} alt="Frustrated" {...emojiProps('emojiBush')} className="mg2-emotion mg2-emotion--anchored" />
           )}
-          {isBranchPhase && emotion === 'sad' && (
-            <img src={emotionSad} alt="Disappointed" className="mg2-emotion mg2-emotion--anchored" />
+          {isBranchPhase && (debugMode || emotion === 'sad') && (
+            <img src={emotionSad} alt="Disappointed" {...emojiProps('emojiBranch')} className="mg2-emotion mg2-emotion--anchored" />
           )}
         </div>
       )}
 
+      {/* ---------------- GESTURE DEMOS (Bush + Branch) — stage-relative,
+          same show-what-to-do pattern as NewModakSceneV7.jsx. ---------------- */}
+      <GestureDemo
+        type="swipe-left"
+        from={{ x: layout.bush.l, y: layout.bush.t }}
+        active={(introGesture || showIdleGestureHint) && isBushPhase && !bushOpenState}
+        idleDelay={120}
+        zIndex={30}
+      />
+      <GestureDemo
+        type="pull-down"
+        from={{ x: layout.branch.l, y: layout.branch.t }}
+        to={{ x: layout.branch.l, y: layout.branch.t + 15 }}
+        active={(introGesture || showIdleGestureHint) && isBranchPhase && branchIntroFailed && !branchComplete}
+        idleDelay={120}
+        zIndex={30}
+      />
+
       {/* ---------------- BELLY RECOGNITION ---------------- */}
       {phase === PHASES.BELLY_RECOGNITION && (
         <div className="mg2-belly">
-          <div className="mg2-belly-ganesha">
+          <div className="mg2-belly-ganesha" style={{ left: `${layout.ganesha.l}%`, top: `${layout.ganesha.t}%`, transform: `translate(-50%, -50%) scale(${layout.ganesha.s / 100})`, cursor: debugMode ? 'grab' : undefined }} onPointerDown={debugMode ? (e) => startLayoutDrag(e, 'ganesha') : undefined}>
             <img src={ganeshaArt} alt="Ganesha" />
             {bellyBeat >= 4 && <div className={`mg2-belly-glow ${bellyBeat >= 5 ? 'mg2-belly-glow--strong' : ''}`} aria-hidden="true" />}
           </div>
@@ -666,25 +1010,22 @@ export default function ModakGame2Preview({ isActive = true, isPaused = false, h
             className="mg2-belly-mooshika"
             style={{
               left: `${layout.mooshikaBelly.l}%`, top: `${layout.mooshikaBelly.t}%`,
+              '--layout-scale': (layout.mooshikaBelly.s || 100) / 100,
               outline: debugMode && selectedLayoutKey === 'mooshikaBelly' ? '2px dashed #03A9F4' : undefined,
               outlineOffset: 3, cursor: debugMode ? 'grab' : undefined,
             }}
             onPointerDown={debugMode ? (e) => startLayoutDrag(e, 'mooshikaBelly') : undefined}
           >
-            <img src={mooshikaCalm} alt="Mooshika" />
-            {bellyBeat >= 1 && bellyBeat < 6 && <img src={emotionAngry} alt="Frustrated" className="mg2-belly-emotion mg2-belly-emotion--angry" />}
-            {bellyBeat >= 2 && bellyBeat < 6 && <img src={emotionSad} alt="Disappointed" className="mg2-belly-emotion mg2-belly-emotion--sad" />}
-            {bellyBeat >= 3 && bellyBeat < 6 && <img src={emotionWorried} alt="Worried" className="mg2-belly-emotion mg2-belly-emotion--worried" />}
-
-            <div className="mg2-belly-basket">
-              <MooshikaWithBasket flowerCount={6} basketRef={basketTargetRef} standalone />
-            </div>
+            <MooshikaWithBasket flowerCount={6} basketRef={basketTargetRef} pose="turned" />
+            {(debugMode || (bellyBeat >= 1 && bellyBeat < 6)) && <img src={emotionAngry} alt="Frustrated" {...emojiProps('emojiAngry')} className="mg2-belly-emotion mg2-belly-emotion--angry" />}
+            {(debugMode || (bellyBeat >= 2 && bellyBeat < 6)) && <img src={emotionSad} alt="Disappointed" {...emojiProps('emojiSad')} className="mg2-belly-emotion mg2-belly-emotion--sad" />}
+            {(debugMode || (bellyBeat >= 3 && bellyBeat < 6)) && <img src={emotionWorried} alt="Worried" {...emojiProps('emojiWorried')} className="mg2-belly-emotion mg2-belly-emotion--worried" />}
           </div>
 
           {bellyBeat >= 5 && (
             <div className="mg2-belly-symbol">
               <img src={bellySymbol} alt="" />
-              <span>Belly</span>
+              <span>Lambodara</span>
             </div>
           )}
         </div>
@@ -742,11 +1083,20 @@ export default function ModakGame2Preview({ isActive = true, isPaused = false, h
             </select>
           </label>
 
+          <label className="mg2-debug-row">Item
+            <select value={selectedLayoutKey || ''} onChange={(e) => setSelectedLayoutKey(e.target.value)}>
+              <option value="">Select item…</option>
+              {Object.entries(LAYOUT_LABELS).map(([key, label]) => <option key={key} value={key}>{label}</option>)}
+            </select>
+          </label>
           {selectedLayoutKey ? (
             <>
               <div className="mg2-debug-panel-row">{LAYOUT_LABELS[selectedLayoutKey]}</div>
               <label>X <input type="number" step="0.5" value={layout[selectedLayoutKey].l} onChange={(e) => updateLayoutKey(selectedLayoutKey, { l: Number(e.target.value) })} /></label>
               <label>Y <input type="number" step="0.5" value={layout[selectedLayoutKey].t} onChange={(e) => updateLayoutKey(selectedLayoutKey, { t: Number(e.target.value) })} /></label>
+              {layout[selectedLayoutKey].s !== undefined && (
+                <label>Scale % <input type="number" step="5" min="10" value={layout[selectedLayoutKey].s} onChange={(e) => updateLayoutKey(selectedLayoutKey, { s: Number(e.target.value) })} /></label>
+              )}
             </>
           ) : (
             <div className="mg2-debug-panel-row">Drag any element to select it.</div>
@@ -762,10 +1112,10 @@ export default function ModakGame2Preview({ isActive = true, isPaused = false, h
   );
 }
 
-function MooshikaWithBasket({ flowerCount = 0, basketRef, standalone }) {
+function MooshikaWithBasket({ flowerCount = 0, basketRef, standalone, pose = 'calm' }) {
   return (
     <div className={`mg2-basket-character ${standalone ? 'mg2-basket-character--standalone' : ''}`}>
-      <img src={mooshikaCalm} alt="Mooshika" className="mg2-basket-character__mouse" />
+      <img src={pose === 'turned' ? mooshikaTurned : mooshikaCalm} alt="Mooshika" className="mg2-basket-character__mouse" />
       <div ref={basketRef} className={`mg2-basket-flowers mg2-basket-flowers--${flowerCount}`} aria-hidden="true">
         {flowerCount >= 2 && (
           <>

@@ -3918,6 +3918,11 @@
   cursor: not-allowed;
 }
 
+.circle-spot-with-label.self-waiting {
+  cursor: default;
+  pointer-events: none;
+}
+
 /* ========================================
    BIG FLIP CARD OVERLAY
    ======================================== */

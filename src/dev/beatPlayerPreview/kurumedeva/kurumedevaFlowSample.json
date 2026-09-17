@@ -713,9 +713,9 @@
           },
           {
             "name": "beaver tie",
-            "path": "assets/upload_8.png",
-            "x": 53.14874804369401,
-            "y": 65.20086862106406,
+            "path": "assets/upload_3.png",
+            "x": 51.67,
+            "y": 64.94,
             "scale": 52,
             "rotation": 0,
             "opacity": 100,
@@ -724,13 +724,13 @@
             "w": 24,
             "locked": 0,
             "gameKey": "beaverSprite",
-            "activePath": "assets/upload_3.png"
+            "activePath": "assets/upload_8.png"
           },
           {
             "name": "Rope \u2014 left end",
             "path": "Bridge/rope-knot.png",
-            "x": 50.0,
-            "y": 76.0,
+            "x": 58.01,
+            "y": 72.57,
             "scale": 20,
             "rotation": 0,
             "opacity": 100,
@@ -743,8 +743,8 @@
           {
             "name": "Rope \u2014 right end",
             "path": "Bridge/rope-knot.png",
-            "x": 67.0,
-            "y": 76.0,
+            "x": 63.24,
+            "y": 72.57,
             "scale": 20,
             "rotation": 0,
             "opacity": 100,
@@ -844,7 +844,7 @@
           },
           {
             "name": "beaver tie",
-            "path": "assets/upload_8.png",
+            "path": "assets/upload_3.png",
             "x": 53.14874804369401,
             "y": 65.20086862106406,
             "scale": 52,
@@ -855,7 +855,7 @@
             "w": 24,
             "locked": 0,
             "gameKey": "beaverSprite",
-            "activePath": "assets/upload_3.png"
+            "activePath": "assets/upload_8.png"
           },
           {
             "name": "Rope \u2014 left end",
@@ -975,7 +975,7 @@
           },
           {
             "name": "beaver tie",
-            "path": "assets/upload_8.png",
+            "path": "assets/upload_3.png",
             "x": 53.14874804369401,
             "y": 65.20086862106406,
             "scale": 52,
@@ -986,7 +986,7 @@
             "w": 24,
             "locked": 0,
             "gameKey": "beaverSprite",
-            "activePath": "assets/upload_3.png"
+            "activePath": "assets/upload_8.png"
           },
           {
             "name": "Help bubble \u2014 monkey/knot",
@@ -1067,8 +1067,8 @@
         "dragLeft": "ropeLeftEnd",
         "dragRight": "ropeRightEnd",
         "target": {
-          "x": 58.5,
-          "y": 71.0,
+          "x": 59.98,
+          "y": 71.26,
           "w": 8
         },
         "lockLeft": {
@@ -1080,12 +1080,12 @@
           "y": 71.0
         },
         "anchorLeft": {
-          "x": 52.0,
-          "y": 68.0
+          "x": 59.91,
+          "y": 69.05
         },
         "anchorRight": {
-          "x": 65.0,
-          "y": 68.0
+          "x": 59.46,
+          "y": 73.67
         }
       }
     },
@@ -3005,19 +3005,18 @@
             "gameKey": "bridgeSprite"
           },
           {
-            "name": "Monkey \u2014 playing with twig",
-            "path": "Characters/monkey-playing-twig.png",
-            "x": 4.071661237785015,
-            "y": 55.211719757312025,
+            "name": "monkey tie",
+            "path": "assets/upload_4.png",
+            "x": 60.532033715263644,
+            "y": 65.05609402568538,
             "scale": 29,
             "rotation": 0,
             "opacity": 100,
-            "flip": 1,
-            "z": 10,
+            "flip": -1,
+            "z": 12,
             "w": 24,
             "locked": 0,
-            "gameKey": "monkeySprite",
-            "activePath": "assets/upload_4.png"
+            "gameKey": "monkeySprite"
           },
           {
             "name": "Baby beaver \u2014 waving",
@@ -3200,7 +3199,7 @@
             "rotation": 0,
             "opacity": 100,
             "flip": -1,
-            "z": 10,
+            "z": 12,
             "w": 24,
             "locked": 0,
             "gameKey": "monkeySprite"
@@ -3280,15 +3279,15 @@
             "gameKey": "bridgeSprite"
           },
           {
-            "name": "Monkey \u2014 playing with twig",
-            "path": "Characters/monkey-playing-twig.png",
-            "x": 4.071661237785015,
-            "y": 55.211719757312025,
+            "name": "monkey tie",
+            "path": "assets/upload_4.png",
+            "x": 60.532033715263644,
+            "y": 65.05609402568538,
             "scale": 29,
             "rotation": 0,
             "opacity": 100,
-            "flip": 1,
-            "z": 10,
+            "flip": -1,
+            "z": 12,
             "w": 24,
             "locked": 0,
             "gameKey": "monkeySprite"

@@ -1,0 +1,230 @@
+/* DEV-ONLY styles for the Game 3 (Garland Build -> Offer) preview.
+   Isolated from ModakScene.css on purpose. */
+
+.g3 { position: absolute; inset: 0; overflow: hidden; background-size: cover; background-position: center; font-family: 'Nunito', sans-serif; }
+.g3--paused { filter: grayscale(0.4); }
+.g3--debugging { cursor: crosshair; }
+
+.g3-hud {
+  position: absolute; top: 8px; left: 8px; z-index: 50;
+  display: flex; gap: 10px; align-items: center;
+  background: rgba(0, 0, 0, 0.55); color: #fff;
+  padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700;
+}
+.g3-hud-phase { color: #ffd700; }
+.g3-mute-btn {
+  border: none; background: rgba(255, 255, 255, 0.15); color: #fff;
+  width: 22px; height: 22px; border-radius: 50%; font-size: 12px; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+
+/* ========================================================
+   GANESHA
+   ======================================================== */
+.g3-ganesha {
+  position: absolute;
+  width: clamp(125px, 13vw, 200px);
+  transform: translate(-50%, -50%);
+  z-index: 8;
+}
+.g3-ganesha img { display: block; width: 100%; height: auto; }
+.g3-ganesha--happy { animation: g3GaneshaHappy 700ms ease-out; }
+@keyframes g3GaneshaHappy {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.035); }
+}
+
+/* ========================================================
+   MOOSHIKA
+   ======================================================== */
+.g3-mooshika {
+  position: absolute;
+  width: clamp(82px, 8vw, 125px);
+  transform: translate(-50%, -50%);
+  z-index: 18;
+}
+.g3-mooshika img { display: block; width: 100%; height: auto; }
+
+/* ========================================================
+   GARLAND WORKSPACE
+   ======================================================== */
+.garland-workspace {
+  position: absolute;
+  width: 58%;
+  height: auto;
+  aspect-ratio: 2.15;
+  box-sizing: border-box;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(ellipse at 50% 35%, #b99bdd, #9d7ac7);
+  border: 3px solid #dcc7ef;
+  border-radius: 45% 40% 46% 42% / 35% 43% 38% 44%;
+  box-shadow: inset 0 0 0 7px rgba(255, 255, 255, 0.08), 0 10px 24px rgba(62, 36, 77, 0.22);
+  z-index: 20;
+  animation: g3WorkspaceAppear 450ms ease-out both;
+}
+@keyframes g3WorkspaceAppear {
+  from { opacity: 0; transform: translate(-50%, -44%) scale(.97); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+.garland-string {
+  position: absolute; left: 50%; top: 48%; width: 56%; height: auto;
+  transform: translate(-50%, -50%); pointer-events: none; z-index: 2;
+}
+
+/* ========================================================
+   LOOSE FLOWERS — fly out from the basket on entry, then are
+   freely draggable onto the string.
+   ======================================================== */
+.garland-loose-flower {
+  position: absolute;
+  width: clamp(54px, 5.8vw, 84px);
+  padding: 7px; border: 0; background: transparent;
+  transform: translate(-50%, -50%);
+  cursor: grab; touch-action: none; z-index: 8;
+  opacity: 0;
+}
+.garland-loose-flower.has-arrived {
+  opacity: 1;
+  transition: left 550ms cubic-bezier(.22, .85, .35, 1) var(--flower-delay),
+              top 550ms cubic-bezier(.22, .85, .35, 1) var(--flower-delay),
+              opacity 300ms ease var(--flower-delay);
+}
+.garland-loose-flower img { display: block; width: 100%; height: auto; pointer-events: none; user-select: none; }
+.garland-loose-flower.is-dragging { transform: translate(-50%, -50%) scale(1.1); cursor: grabbing; z-index: 30; transition: none; }
+
+/* ========================================================
+   FLOWER SNAPPED ONTO GARLAND
+   ======================================================== */
+.garland-placed-flower {
+  position: absolute;
+  width: clamp(50px, 5.2vw, 76px);
+  transform: translate(-50%, -50%);
+  pointer-events: none; z-index: 5;
+  animation: g3FlowerSnap 300ms cubic-bezier(.2, 1.25, .4, 1) both;
+}
+@keyframes g3FlowerSnap {
+  0% { opacity: .8; transform: translate(-50%, -50%) scale(.72); }
+  70% { transform: translate(-50%, -50%) scale(1.08); }
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+/* ========================================================
+   COMPLETED GARLAND
+   ======================================================== */
+.completed-garland-stage { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+.completed-garland {
+  width: 54%; padding: 0; border: 0; background: transparent;
+  cursor: grab; touch-action: none;
+  animation: g3GarlandAppear 450ms cubic-bezier(.2, 1.2, .4, 1) both, g3GarlandReady 1.6s ease-in-out infinite 450ms;
+}
+.completed-garland img { display: block; width: 100%; height: auto; pointer-events: none; }
+@keyframes g3GarlandAppear { from { opacity: 0; transform: scale(.88); } to { opacity: 1; transform: scale(1); } }
+@keyframes g3GarlandReady {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-4px) scale(1.02); }
+}
+
+/* ========================================================
+   GARLAND WHILE DRAGGING THROUGH WORLD
+   ======================================================== */
+.garland-world-drag {
+  position: absolute; width: clamp(150px, 17vw, 260px);
+  padding: 0; border: 0; background: transparent;
+  transform: translate(-50%, -50%); z-index: 50; cursor: grabbing; touch-action: none;
+}
+.garland-world-drag img { display: block; width: 100%; height: auto; pointer-events: none; }
+
+/* ========================================================
+   GARLAND AFTER OFFER
+   ======================================================== */
+.garland-on-ganesha {
+  position: absolute; left: 50%; top: 34%;
+  width: clamp(90px, 10vw, 145px);
+  transform: translate(-50%, -50%); z-index: 10; pointer-events: none;
+  animation: g3GarlandSettle 600ms ease-out both;
+}
+@keyframes g3GarlandSettle {
+  from { opacity: .8; transform: translate(-50%, -68%) scale(1.08); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+.g3-done {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 8px;
+  background: rgba(255, 255, 255, 0.85); text-align: center; padding: 24px;
+  font-family: 'Baloo 2', sans-serif; color: #4a342c; z-index: 60;
+}
+
+/* ========================================================
+   LAYOUT DEBUG — same pattern as Game 2's preview
+   ======================================================== */
+.g3-debug-pill {
+  position: absolute; top: 8px; right: 8px; z-index: 900;
+  border: 0; border-radius: 999px; padding: 6px 12px; font-size: 11px; font-weight: 700;
+  background: rgba(255, 255, 255, 0.85); color: #4b2b66; cursor: pointer;
+}
+.g3-debug-pill.is-on { background: #03a9f4; color: #fff; }
+
+.g3-debug-panel {
+  position: absolute; right: 8px; bottom: 8px; z-index: 900;
+  background: rgba(20, 12, 30, 0.92); color: #fff;
+  border-radius: 10px; padding: 8px 10px; font-size: 11px; width: 190px;
+}
+.g3-debug-panel-row { margin-bottom: 6px; }
+.g3-debug-panel label, .g3-debug-row {
+  display: flex; align-items: center; gap: 6px; margin-bottom: 6px; font-weight: 700;
+}
+.g3-debug-panel label input, .g3-debug-row select {
+  flex: 1; min-width: 0; border: 1px solid #5a4a6a; background: #241830; color: #fff;
+  border-radius: 6px; padding: 3px 5px; font-size: 11px;
+}
+.g3-debug-panel-actions { display: flex; gap: 4px; }
+.g3-debug-panel-actions button {
+  flex: 1; border: 0; background: #6d42a8; color: #fff; border-radius: 6px;
+  padding: 5px; font-size: 10px; font-weight: 700; cursor: pointer;
+}
+
+/* ========================================================
+   TABLET / SMALL SCREEN
+   ======================================================== */
+@media (max-width: 760px) {
+  .g3-ganesha { width: 21vw; }
+  .g3-mooshika { width: 14vw; }
+  .garland-workspace { width: 76%; }
+  .garland-string { width: 58%; }
+  .completed-garland { width: 58%; }
+}
+
+/* Keep cream petals readable both loose and on the string. */
+.garland-loose-flower img, .garland-placed-flower {
+  filter: drop-shadow(0 2px 2px rgba(39, 19, 50, .5));
+}
+.garland-loose-flower:focus-visible {
+  outline: 3px solid #ffe69a;
+  border-radius: 50%;
+}
+
+/* Tap-to-thread: the same flower glides from the mat onto the string. */
+.garland-loose-flower { cursor: pointer; }
+.garland-loose-flower.is-threading {
+  z-index: 30;
+  transition: left 600ms cubic-bezier(.22,.85,.35,1), top 600ms cubic-bezier(.22,.85,.35,1);
+}
+.garland-loose-flower:disabled { cursor: default; }
+.garland-instruction {
+  position: absolute; top: 1%; left: 15%; width: 70%; margin: 0;
+  text-align: center; color: #fff4d4; font-size: clamp(12px, 1.4vw, 19px);
+  font-weight: 800; pointer-events: none;
+}
+
+/* These landing handles only appear in layout mode. */
+.garland-slot-handle {
+  position: absolute; width: clamp(50px, 5.2vw, 76px); padding: 0;
+  border: 1px dashed #fff4d4; background: #62447655; border-radius: 50%;
+  transform: translate(-50%, -50%); z-index: 40; cursor: grab; touch-action: none;
+}
+.garland-slot-handle img { display: block; width: 100%; pointer-events: none; }
+.garland-slot-handle span { position: absolute; top: -8px; right: -4px; background: #4b2b66; color: white; border-radius: 50%; padding: 2px 6px; font-size: 12px; }
+
+.g3--debugging { touch-action: none; }

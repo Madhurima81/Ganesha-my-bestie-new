@@ -1,0 +1,269 @@
+{
+  "version": 2,
+  "type": "gmb-kurumedeva-visual-flow-v1",
+  "beats": {
+    "0": {
+      "before": {
+        "items": [
+          { "name": "Bridge — broken", "path": "Bridge/bridge-broken.png", "x": 57.7, "y": 71.1, "scale": 100, "rotation": 5, "opacity": 100, "flip": 1, "z": 5, "w": 46.5, "locked": 0, "gameKey": "bridgeArt" },
+          { "name": "Beaver — worried", "path": "Characters/beaver-idle-worried.png", "x": 73.9, "y": 69.9, "scale": 100, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 8, "locked": 0, "gameKey": "beaverSprite" },
+          { "name": "Baby beaver — waving", "path": "Characters/baby-beaver-waving.png", "x": 10.6, "y": 66.7, "scale": 100, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 8.5, "locked": 0, "gameKey": "babyBeaverSprite" },
+          { "name": "Elephant — idle (banana)", "path": "Characters/elephant-idle-banana.png", "x": 30.1, "y": 63.3, "scale": 100, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 13, "locked": 0, "gameKey": "elephantSprite" },
+          { "name": "Monkey — playing twig", "path": "Characters/monkey-playing-twig.png", "x": 21.7, "y": 39.7, "scale": 100, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 10, "locked": 0, "gameKey": "monkeySprite" }
+        ],
+        "notes": "",
+        "annotations": { "arrows": [], "targets": [] },
+        "audio": { "voText": "Oh no! The bridge is broken, and Beaver can't get home to her baby.", "trigger": "state-enter", "start": 0, "duration": 0, "nextVisual": 0, "sfx": "" }
+      },
+      "movement": {
+        "items": [],
+        "notes": "no movement — intro beat, auto-advances into the try-logs beat",
+        "annotations": { "arrows": [], "targets": [] },
+        "audio": { "voText": "", "trigger": "state-enter", "start": 0, "duration": 0, "nextVisual": 0, "sfx": "" }
+      },
+      "after": {
+        "items": [],
+        "notes": "",
+        "annotations": { "arrows": [], "targets": [] },
+        "audio": { "voText": "Let's see if she can fix it herself.", "trigger": "state-enter", "start": 0, "duration": 0, "nextVisual": 0, "sfx": "" }
+      }
+    },
+    "1": {
+      "before": {
+        "items": [
+          { "name": "Support logs — resting", "path": "Bridge/bridge-support-logs.png", "x": 66, "y": 68, "scale": 100, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22.9, "locked": 0, "gameKey": "logTryItem" },
+          { "name": "Beaver — worried", "path": "Characters/beaver-idle-worried.png", "x": 73.9, "y": 69.9, "scale": 100, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 8, "locked": 0, "gameKey": "beaverSprite" }
+        ],
+        "notes": "child presses and holds the log pile to help Beaver try",
+        "annotations": { "arrows": [], "targets": [] },
+        "audio": { "voText": "Beaver is trying to move the logs. Press and hold to help her try!", "trigger": "state-enter", "start": 0, "duration": 0, "nextVisual": 0, "sfx": "" }
+      },
+      "movement": {
+        "items": [
+          { "name": "Support logs — resting", "path": "Bridge/bridge-support-logs.png", "x": 66, "y": 68, "scale": 100, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22.9, "locked": 0, "gameKey": "logTryItem" },
+          { "name": "Beaver — trying to push", "path": "Characters/beaver-trying-push.png", "x": 73.9, "y": 69.9, "scale": 100, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 8, "locked": 0, "gameKey": "beaverSprite" }
+        ],
+        "notes": "logs wiggle while held (CSS shake class on hold)",
+        "annotations": { "arrows": [], "targets": [] },
+        "audio": { "voText": "", "trigger": "state-enter", "start": 0, "duration": 0, "nextVisual": 0, "sfx": "" }
+      },
+      "after": {
+        "items": [
+          { "name": "Support logs — resting", "path": "Bridge/bridge-support-logs.png", "x": 66, "y": 68, "scale": 100, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22.9, "locked": 0, "gameKey": "logTryItem" },
+          { "name": "Beaver — worried", "path": "Characters/beaver-idle-worried.png", "x": 73.9, "y": 69.9, "scale": 100, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 8, "locked": 0, "gameKey": "beaverSprite" }
+        ],
+        "notes": "always fails — logs don't budge, sets up the ask-for-help beat next",
+        "annotations": { "arrows": [], "targets": [] },
+        "audio": { "voText": "They just won't budge. Beaver needs some help.", "trigger": "state-enter", "start": 0, "duration": 0, "nextVisual": 0, "sfx": "" }
+      },
+      "interaction": { "type": "press-hold", "drag": "logTryItem", "holdMs": 900 }
+    },
+    "2": {
+      "before": {
+        "items": [
+          { "name": "Beaver — asking", "path": "Characters/beaver-asking.png", "x": 73.9, "y": 69.9, "scale": 100, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 8, "locked": 0, "gameKey": "beaverSprite" },
+          { "name": "Elephant — idle (banana)", "path": "Characters/elephant-idle-banana.png", "x": 30.1, "y": 63.3, "scale": 100, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 13, "locked": 0, "gameKey": "elephantSprite" },
+          { "name": "Help bubble — Elephant", "path": "Characters/help-bubble-elephant-logs.png", "x": 44.5, "y": 66, "scale": 100, "rotation": 0, "opacity": 100, "flip": 1, "z": 20, "w": 8, "locked": 0, "gameKey": "helpToken" }
+        ],
+        "notes": "drag the help bubble onto Elephant",
+        "annotations": { "arrows": [], "targets": [] },
+        "audio": { "voText": "Who can Beaver ask for help? Drag the help bubble to Elephant.", "trigger": "state-enter", "start": 0, "duration": 0, "nextVisual": 0, "sfx": "" }
+      },
+      "movement": {
+        "items": [
+          { "name": "Elephant — approaching", "path": "Characters/elephant-approaching-walking.png", "x": 47, "y": 66.5, "scale": 100, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 13, "locked": 0, "gameKey": "elephantSprite" }
+        ],
+        "notes": "Elephant walks over to help",
+        "annotations": { "arrows": [], "targets": [] },
+        "audio": { "voText": "", "trigger": "state-enter", "start": 0, "duration": 0, "nextVisual": 0, "sfx": "" }
+      },
+      "after": {
+        "items": [
+          { "name": "Elephant — pulling", "path": "Characters/elephant-pulling.png", "x": 47, "y": 66.5, "scale": 100, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 13, "locked": 0, "gameKey": "elephantSprite" }
+        ],
+        "notes": "Elephant is in place, ready to help place the logs",
+        "annotations": { "arrows": [], "targets": [] },
+        "audio": { "voText": "Elephant is strong! Now let's carry the logs across together.", "trigger": "state-enter", "start": 0, "duration": 0, "nextVisual": 0, "sfx": "" }
+      },
+      "interaction": { "type": "drag-drop", "drag": "helpToken", "target": "elephantSprite" }
+    },
+    "3": {
+      "before": {
+        "items": [
+          { "name": "Log pile", "path": "Bridge/short-single-support-log.png", "x": 30.81, "y": 66.22, "scale": 100, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 15.3, "locked": 0, "gameKey": "logPileItem" }
+        ],
+        "notes": "tap the pile to grab a log, then drag it through all 3 slots in one continuous motion",
+        "annotations": { "arrows": [], "targets": [] },
+        "audio": { "voText": "Drag the logs across the gap, one by one.", "trigger": "state-enter", "start": 0, "duration": 0, "nextVisual": 0, "sfx": "" }
+      },
+      "movement": {
+        "items": [
+          { "name": "Log pile", "path": "Bridge/short-single-support-log.png", "x": 30.81, "y": 66.22, "scale": 100, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 15.3, "locked": 0, "gameKey": "logPileItem" }
+        ],
+        "notes": "",
+        "annotations": { "arrows": [], "targets": [] },
+        "audio": { "voText": "", "trigger": "state-enter", "start": 0, "duration": 0, "nextVisual": 0, "sfx": "" }
+      },
+      "after": {
+        "items": [
+          { "name": "Bridge — logs placed", "path": "Bridge/bridge-before-tying.png", "x": 57.7, "y": 71.1, "scale": 100, "rotation": 5, "opacity": 100, "flip": 1, "z": 5, "w": 46.5, "locked": 0, "gameKey": "bridgeArt" }
+        ],
+        "notes": "3 logs land, bridge art swaps to the supported state",
+        "annotations": { "arrows": [], "targets": [] },
+        "audio": { "voText": "Well done! The logs are in place.", "trigger": "state-enter", "start": 0, "duration": 0, "nextVisual": 0, "sfx": "" }
+      },
+      "interaction": {
+        "type": "drag-path",
+        "trigger": "logPileItem",
+        "spawnAt": { "x": 30.81, "y": 66.22 },
+        "path": [
+          { "x": 59.9, "y": 73 },
+          { "x": 57.9, "y": 77.1 },
+          { "x": 54.1, "y": 79.9 }
+        ],
+        "snapRadius": 8
+      }
+    },
+    "4": {
+      "before": {
+        "items": [
+          { "name": "Rope — loose end", "path": "Bridge/rope-knot.png", "x": 70, "y": 74, "scale": 100, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 8, "locked": 0, "gameKey": "ropeTryItem" },
+          { "name": "Beaver — worried", "path": "Characters/beaver-idle-worried.png", "x": 73.9, "y": 69.9, "scale": 100, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 8, "locked": 0, "gameKey": "beaverSprite" }
+        ],
+        "notes": "SIMPLIFICATION vs. live game: original mechanic is a free drag that always slips no matter where it's released. Modeled here as press-hold on the rope end for the same 'try and fail' beat shape as beat 1 — visually close enough (rope shown mid-pull while held) without a new interaction type. Revisit if Madhurima wants the exact drag-that-always-fails feel.",
+        "annotations": { "arrows": [], "targets": [] },
+        "audio": { "voText": "The bridge is still loose. Press and hold the rope to help her try!", "trigger": "state-enter", "start": 0, "duration": 0, "nextVisual": 0, "sfx": "" }
+      },
+      "movement": {
+        "items": [
+          { "name": "Rope — loose end", "path": "Bridge/rope-knot.png", "x": 70, "y": 74, "scale": 100, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 8, "locked": 0, "gameKey": "ropeTryItem" },
+          { "name": "Beaver — trying to push", "path": "Characters/beaver-trying-push.png", "x": 73.9, "y": 69.9, "scale": 100, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 8, "locked": 0, "gameKey": "beaverSprite" }
+        ],
+        "notes": "",
+        "annotations": { "arrows": [], "targets": [] },
+        "audio": { "voText": "", "trigger": "state-enter", "start": 0, "duration": 0, "nextVisual": 0, "sfx": "" }
+      },
+      "after": {
+        "items": [
+          { "name": "Rope — loose end", "path": "Bridge/rope-knot.png", "x": 70, "y": 74, "scale": 100, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 8, "locked": 0, "gameKey": "ropeTryItem" },
+          { "name": "Beaver — worried", "path": "Characters/beaver-idle-worried.png", "x": 73.9, "y": 69.9, "scale": 100, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 8, "locked": 0, "gameKey": "beaverSprite" }
+        ],
+        "notes": "always fails — the knot slips",
+        "annotations": { "arrows": [], "targets": [] },
+        "audio": { "voText": "It keeps slipping. She needs a helping hand.", "trigger": "state-enter", "start": 0, "duration": 0, "nextVisual": 0, "sfx": "" }
+      },
+      "interaction": { "type": "press-hold", "drag": "ropeTryItem", "holdMs": 900 }
+    },
+    "5": {
+      "before": {
+        "items": [
+          { "name": "Beaver — asking", "path": "Characters/beaver-asking.png", "x": 73.9, "y": 69.9, "scale": 100, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 8, "locked": 0, "gameKey": "beaverSprite" },
+          { "name": "Monkey — playing twig", "path": "Characters/monkey-playing-twig.png", "x": 21.7, "y": 39.7, "scale": 100, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 10, "locked": 0, "gameKey": "monkeySprite" },
+          { "name": "Help bubble — Monkey", "path": "Characters/help-bubble-monkey-knot.png", "x": 44.5, "y": 43, "scale": 100, "rotation": 0, "opacity": 100, "flip": 1, "z": 20, "w": 8, "locked": 0, "gameKey": "helpToken" }
+        ],
+        "notes": "drag the help bubble onto Monkey",
+        "annotations": { "arrows": [], "targets": [] },
+        "audio": { "voText": "Who can help tie the rope? Drag the help bubble to Monkey.", "trigger": "state-enter", "start": 0, "duration": 0, "nextVisual": 0, "sfx": "" }
+      },
+      "movement": {
+        "items": [
+          { "name": "Monkey — idle (walking over)", "path": "Characters/monkey-idle.png", "x": 59.1, "y": 68.3, "scale": 100, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 10, "locked": 0, "gameKey": "monkeySprite" }
+        ],
+        "notes": "Monkey walks over to help",
+        "annotations": { "arrows": [], "targets": [] },
+        "audio": { "voText": "", "trigger": "state-enter", "start": 0, "duration": 0, "nextVisual": 0, "sfx": "" }
+      },
+      "after": {
+        "items": [
+          { "name": "Monkey — tying", "path": "Characters/monkey-tying.png", "x": 59.1, "y": 68.3, "scale": 100, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 10, "locked": 0, "gameKey": "monkeySprite" }
+        ],
+        "notes": "Monkey is in place, ready to tie the rope",
+        "annotations": { "arrows": [], "targets": [] },
+        "audio": { "voText": "Monkey is quick with knots! Let's tie the rope together.", "trigger": "state-enter", "start": 0, "duration": 0, "nextVisual": 0, "sfx": "" }
+      },
+      "interaction": { "type": "drag-drop", "drag": "helpToken", "target": "monkeySprite" }
+    },
+    "6": {
+      "before": {
+        "items": [
+          { "name": "Rope — free end", "path": "Bridge/rope-knot.png", "x": 39.9, "y": 78.1, "scale": 100, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 8, "locked": 0, "gameKey": "ropePieceItem" }
+        ],
+        "notes": "drag the rope's free end across to the knot — this time it holds",
+        "annotations": { "arrows": [], "targets": [] },
+        "audio": { "voText": "Drag the rope to the post to tie the knot.", "trigger": "state-enter", "start": 0, "duration": 0, "nextVisual": 0, "sfx": "" }
+      },
+      "movement": {
+        "items": [
+          { "name": "Rope — free end", "path": "Bridge/rope-knot.png", "x": 39.9, "y": 78.1, "scale": 100, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 8, "locked": 0, "gameKey": "ropePieceItem" }
+        ],
+        "notes": "",
+        "annotations": { "arrows": [], "targets": [] },
+        "audio": { "voText": "", "trigger": "state-enter", "start": 0, "duration": 0, "nextVisual": 0, "sfx": "" }
+      },
+      "after": {
+        "items": [
+          { "name": "Bridge — roped", "path": "Bridge/bridge-before-tying.png", "x": 57.7, "y": 71.1, "scale": 100, "rotation": 5, "opacity": 100, "flip": 1, "z": 5, "w": 46.5, "locked": 0, "gameKey": "bridgeArt" }
+        ],
+        "notes": "knot ties fast this time",
+        "annotations": { "arrows": [], "targets": [] },
+        "audio": { "voText": "Tied tight! Great teamwork.", "trigger": "state-enter", "start": 0, "duration": 0, "nextVisual": 0, "sfx": "" }
+      },
+      "interaction": { "type": "drag-drop", "drag": "ropePieceItem", "target": { "x": 64.7, "y": 83.4, "w": 13 } }
+    },
+    "7": {
+      "before": {
+        "items": [
+          { "name": "Beaver — placing plank", "path": "Characters/beaver-placing-plank.png", "x": 73.9, "y": 69.9, "scale": 100, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 8, "locked": 0, "gameKey": "beaverSprite" },
+          { "name": "Plank pile", "path": "Bridge/bridge-single-plank.png", "x": 31.7, "y": 56.9, "scale": 100, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 18.9, "locked": 0, "gameKey": "plankPileItem" }
+        ],
+        "notes": "no ask-for-help gate — Beaver just needs the child's hand to lay the last plank",
+        "annotations": { "arrows": [], "targets": [] },
+        "audio": { "voText": "Just one more piece. Drag the plank into place.", "trigger": "state-enter", "start": 0, "duration": 0, "nextVisual": 0, "sfx": "" }
+      },
+      "movement": {
+        "items": [
+          { "name": "Plank pile", "path": "Bridge/bridge-single-plank.png", "x": 31.7, "y": 56.9, "scale": 100, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 18.9, "locked": 0, "gameKey": "plankPileItem" }
+        ],
+        "notes": "",
+        "annotations": { "arrows": [], "targets": [] },
+        "audio": { "voText": "", "trigger": "state-enter", "start": 0, "duration": 0, "nextVisual": 0, "sfx": "" }
+      },
+      "after": {
+        "items": [
+          { "name": "Bridge — complete", "path": "Bridge/bridge-complete.png", "x": 57.7, "y": 71.1, "scale": 100, "rotation": 5, "opacity": 100, "flip": 1, "z": 5, "w": 46.5, "locked": 0, "gameKey": "bridgeArt" }
+        ],
+        "notes": "bridge is fully built",
+        "annotations": { "arrows": [], "targets": [] },
+        "audio": { "voText": "The bridge is finished! Beaver can cross now.", "trigger": "state-enter", "start": 0, "duration": 0, "nextVisual": 0, "sfx": "" }
+      },
+      "interaction": { "type": "drag-drop", "drag": "plankPileItem", "target": { "x": 56.6, "y": 75.5, "w": 18.9 } }
+    },
+    "8": {
+      "before": {
+        "items": [
+          { "name": "Bridge — complete", "path": "Bridge/bridge-complete.png", "x": 57.7, "y": 71.1, "scale": 100, "rotation": 5, "opacity": 100, "flip": 1, "z": 5, "w": 46.5, "locked": 0, "gameKey": "bridgeArt" },
+          { "name": "Beaver — crossing (start)", "path": "Characters/beaver-crossing.png", "x": 73.9, "y": 69.9, "scale": 100, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 8, "locked": 0, "gameKey": "beaverSprite" }
+        ],
+        "notes": "SIMPLIFICATION vs. live game: original animates Beaver across all 7 beaverPath waypoints (KURUMEDEVA_LAYOUT.beaverPath). This engine has no multi-waypoint idle-walk primitive yet (drag-path is child-driven, not automatic) — collapsed to a single before->movement->after crossing here. Revisit if the full 7-point walk needs to be preserved beat-for-beat.",
+        "annotations": { "arrows": [], "targets": [] },
+        "audio": { "voText": "kurumedeva", "trigger": "state-enter", "start": 0, "duration": 0, "nextVisual": 0, "sfx": "" }
+      },
+      "movement": {
+        "items": [
+          { "name": "Beaver — crossing (midway)", "path": "Characters/beaver-crossing.png", "x": 41.9, "y": 65.5, "scale": 100, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 8, "locked": 0, "gameKey": "beaverSprite" }
+        ],
+        "notes": "",
+        "annotations": { "arrows": [], "targets": [] },
+        "audio": { "voText": "", "trigger": "state-enter", "start": 0, "duration": 0, "nextVisual": 0, "sfx": "" }
+      },
+      "after": {
+        "items": [
+          { "name": "Beaver + baby — reunion", "path": "Characters/beaver-baby-reunion.png", "x": 10.6, "y": 66.7, "scale": 100, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 11, "locked": 0, "gameKey": "beaverSprite" }
+        ],
+        "notes": "",
+        "annotations": { "arrows": [], "targets": [] },
+        "audio": { "voText": "You asked for help. Together, you made a way!", "trigger": "state-enter", "start": 0, "duration": 0, "nextVisual": 0, "sfx": "" }
+      }
+    }
+  }
+}

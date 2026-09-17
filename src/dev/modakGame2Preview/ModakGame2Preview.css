@@ -61,8 +61,20 @@
   animation: mg2ChallengeReveal 420ms ease-out both;
 }
 @keyframes mg2ChallengeReveal {
-  from { opacity: 0; transform: translateY(8px) scale(.97); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ---------------------------------------------------------
+   IDLE HINT LEVEL 1 — subtle glow pulse on the target element,
+   ported from NewModakSceneV7.jsx's .hint pattern.
+   --------------------------------------------------------- */
+.mg2-bush.hint, .mg2-branch.hint, .mg2-marsh-mooshika.hint {
+  animation: mg2IdleHint 1.6s ease-in-out infinite;
+}
+@keyframes mg2IdleHint {
+  0%, 100% { filter: drop-shadow(0 0 0 rgba(255, 215, 100, 0)); }
+  50% { filter: drop-shadow(0 0 14px rgba(255, 215, 100, 0.85)); }
 }
 .mg2-tree-area.is-complete .mg2-branch,
 .mg2-bush-area.is-complete .mg2-bush,
@@ -94,7 +106,7 @@
   left: 25%;
   top: 49%;
   width: clamp(190px, 21vw, 320px);
-  transform: translate(-50%, -50%);
+  transform: translate(-55%, -90%) scale(var(--layout-scale, 1));
   z-index: 12;
 }
 .mg2-bush {
@@ -122,7 +134,7 @@
   left: 50%;
   top: 51%;
   width: 55%;
-  transform: translate(-50%, -50%);
+  transform: translate(-55%, -90%);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -135,7 +147,7 @@
    2 — TREE + BRANCH
    --------------------------------------------------------- */
 .mg2-tree-area { position: absolute; inset: 0; pointer-events: none; z-index: 10; }
-.mg2-tree { position: absolute; left: 67%; top: 29%; width: 23%; pointer-events: none; }
+.mg2-tree { position: absolute; left: 67%; top: 29%; width: 23%; pointer-events: none; transform: scale(var(--layout-scale, 1)); transform-origin: center; }
 
 .mg2-branch {
   position: absolute;
@@ -149,16 +161,14 @@
   touch-action: none;
   cursor: grab;
   transform-origin: 8% 22%;
-  transform: rotate(calc(var(--pull, 0) * 18deg)) translateY(calc(var(--pull, 0) * 35px));
+  transform: rotate(calc(var(--pull, 0) * 18deg)) translateY(calc(var(--pull, 0) * 35px)) scale(var(--layout-scale, 1));
   transition: transform 160ms ease-out;
   z-index: 14;
 }
 .mg2-branch:active { cursor: grabbing; }
 .mg2-branch > img:first-child { display: block; width: 100%; height: auto; pointer-events: none; }
 
-.mg2-branch-flower { position: absolute; width: 19%; height: auto; pointer-events: none; }
-.mg2-branch-flower--1 { left: 58%; top: 26%; }
-.mg2-branch-flower--2 { left: 79%; top: 39%; }
+.mg2-branch-flower { position: absolute; width: 19%; height: auto; pointer-events: none; transform: scale(var(--layout-scale, 1)); transform-origin: center; }
 
 /* ---------------------------------------------------------
    SHARED WALKING MOOSHIKA (Bush + Branch phases) — moves between
@@ -166,16 +176,16 @@
    --------------------------------------------------------- */
 .mg2-mooshika-shared {
   position: absolute;
-  transform: translate(-50%, -50%);
+  transform: translate(-55%, -90%) scale(var(--layout-scale, 1));
   z-index: 20;
   transition: left 650ms ease, top 650ms ease;
 }
 .mg2-mooshika-shared--failed { animation: mg2ReachFail 800ms ease-out; }
 @keyframes mg2ReachFail {
-  0%, 100% { transform: translate(-50%, -50%); }
+  0%, 100% { transform: translate(-55%, -90%); }
   30% { transform: translate(-50%, -58%) rotate(-3deg); }
   52% { transform: translate(-50%, -60%) rotate(3deg); }
-  75% { transform: translate(-50%, -50%); }
+  75% { transform: translate(-55%, -90%); }
 }
 
 /* Emotion bubble anchored to whichever Mooshika wrapper it's inside —
@@ -191,22 +201,46 @@
   left: 50%;
   top: 31%;
   width: 31%;
-  aspect-ratio: 1.85 / 1;
-  transform: translate(-50%, -50%);
+  aspect-ratio: 1774 / 887;
+  transform: translate(-55%, -90%);
   z-index: 13;
 }
-.mg2-marsh { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+.mg2-marsh { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; pointer-events: none; transform: scale(var(--layout-scale, 1)); }
+
+.mg2-marsh-clump {
+  position: absolute;
+  width: 24%;
+  height: auto;
+  /* Put the broad leafy platform beneath the shared foot/drop anchor. */
+  transform: translate(-50%, -65%) scale(var(--layout-scale, 1));
+  transform-origin: 50% 65%;
+  z-index: 3;
+  user-select: none;
+}
+
+/* Debug-only: shows the ACTUAL snap-hit zone (matches the 22%-distance
+   check in handleMarshPointerEnd exactly — width/height % is relative to
+   the marsh box's own width/height, which correctly reproduces the
+   ellipse shape from the mixed-unit distance check). */
+.mg2-debug-dropzone {
+  position: absolute;
+  width: 44%;
+  height: 44%;
+  transform: translate(-55%, -90%);
+  border-radius: 50%;
+  border: 2px dashed rgba(3, 169, 244, 0.85);
+  background: rgba(3, 169, 244, 0.15);
+  pointer-events: none;
+  z-index: 4;
+}
 
 .mg2-marsh-flower {
   position: absolute;
   width: 14%;
   height: auto;
-  transform: translate(-50%, -50%);
+  transform: translate(-55%, -90%) scale(var(--layout-scale, 1));
   z-index: 12;
-  pointer-events: none;
 }
-.mg2-marsh-flower--1 { left: 66%; top: 48%; }
-.mg2-marsh-flower--2 { left: 87%; top: 31%; }
 
 .mg2-marsh-mooshika {
   position: absolute;
@@ -214,7 +248,7 @@
   padding: 0;
   border: 0;
   background: transparent;
-  transform: translate(-50%, -50%);
+  transform: translate(-55%, -90%);
   cursor: grab;
   touch-action: none;
   z-index: 18;
@@ -223,17 +257,19 @@
 .mg2-marsh-mooshika img { display: block; width: 100%; height: auto; pointer-events: none; user-select: none; }
 .mg2-marsh-mooshika--wobble { animation: mg2MarshWobble 650ms ease-in-out; }
 @keyframes mg2MarshWobble {
-  0%, 100% { transform: translate(-50%, -50%) rotate(0); }
-  25% { transform: translate(-50%, -50%) rotate(-5deg); }
-  55% { transform: translate(-50%, -50%) rotate(5deg); }
-  78% { transform: translate(-50%, -50%) rotate(-2deg); }
+  0%, 100% { transform: translate(-55%, -90%) rotate(0); }
+  25% { transform: translate(-55%, -90%) rotate(-5deg); }
+  55% { transform: translate(-55%, -90%) rotate(5deg); }
+  78% { transform: translate(-55%, -90%) rotate(-2deg); }
 }
 .mg2-marsh-mooshika--slip { animation: mg2MarshSlip 450ms ease-out; }
 @keyframes mg2MarshSlip {
-  0%, 100% { transform: translate(-50%, -50%); }
-  35% { transform: translate(calc(-50% - 6px), -50%); }
-  68% { transform: translate(calc(-50% + 5px), -50%); }
+  0%, 100% { transform: translate(-55%, -90%); }
+  35% { transform: translate(calc(-55% - 6px), -90%); }
+  68% { transform: translate(calc(-55% + 5px), -90%); }
 }
+/* Anchor the turned artwork at its feet, including its transparent padding. */
+.mg2-marsh-mooshika .mg2-basket-character { width: 100%; }
 .mg2-emotion--marsh { left: 6%; top: 22%; }
 
 /* ---------------------------------------------------------
@@ -321,7 +357,7 @@
   left: 50%;
   top: 52%;
   width: clamp(90px, 8vw, 130px);
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) scale(var(--layout-scale, 1));
 }
 .mg2-belly-mooshika > img:first-child { width: 100%; height: auto; display: block; }
 
@@ -329,8 +365,6 @@
 .mg2-belly-emotion--angry { left: -60%; top: -55%; }
 .mg2-belly-emotion--worried { right: -60%; top: -55%; }
 .mg2-belly-emotion--sad { left: 30%; top: 90%; }
-
-.mg2-belly-basket { position: absolute; left: 105%; top: 60%; }
 
 .mg2-belly-symbol {
   position: absolute;
@@ -439,3 +473,11 @@
   font-family: 'Baloo 2', sans-serif;
   color: #4a342c;
 }
+
+/* Walk to the dry bank after collecting the final marsh flower. */
+.mg2-marsh-mooshika--exiting {
+  transition: left 1300ms ease-in-out, top 1300ms ease-in-out;
+  pointer-events: none;
+}
+
+.mg2--debugging { touch-action: none; }

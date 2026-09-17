@@ -38,25 +38,14 @@ import { getVoiceScript } from '../../../lib/config/content/voiceGuidance';
 // Shared Components
 import OpeningModal from '../../shared/components/OpeningModal';
 
-// --- IMPORT ASSETS (Ganesha's Family & Distractors) ---
+// --- IMPORT ASSETS (Ganesha's Family) ---
 import familyTreeBg from './assets/images/family_background.webp';
 import familyTree from './assets/images/family_tree.webp';
 
-// Correct Answers
 import babyGaneshaImg from '/images/ganesha-final-new.svg';
 import shivaImg from './assets/images/ganesha/family-shiva.webp';
 import parvatiImg from './assets/images/ganesha/family-parvati.webp';
 import kartikeyaImg from './assets/images/ganesha/family-kartkeya.webp';
-
-// Incorrect Answers (Distractors)
-import brahmaImg from './assets/images/ganesha/family-brahma.webp';
-import vishnuImg from './assets/images/ganesha/family-vishnu.webp';
-import lakshmiImg from './assets/images/ganesha/family-lakshmi.webp';
-import saraswatiImg from './assets/images/ganesha/family-saraswati.webp';
-import hanumanImg from './assets/images/ganesha/family-hanuman.webp';
-import krishnaImg from './assets/images/ganesha/family-krishna.webp';
-import mouseImg from './assets/images/ganesha/family-mouse.webp';
-import nandiImg from './assets/images/ganesha/family-nandi.webp';
 
 // --- IMPORT ASSETS (Child's Family) ---
 import childDadImg from './assets/images/child/family-dad.webp';
@@ -149,19 +138,11 @@ const FamilyTreeGame = ({
  placedGaneshaMembers: [],
  tappedMembers: [],
 
- // Selection State
- selectedCircle: null,
- showChoiceModal: false,
- currentChoices: [],
- disabledChoices: [],
- wrongChoice: null,
- correctChoiceId: null,
  justPlacedId: null,
 
  // Modals & Popups
  showFunFactModal: null,
  flippedMember: null,
- showYouGotIt: null,
  showTreeSparkles: false,
  showCelebration: null,
 
@@ -258,10 +239,6 @@ const FamilyTreeGameContent = ({
  setVoiceVolume,
  playSfx,
  playTap,
- playCorrect,
- playWrong,
- playCelebration,
- playPowerUnlock,
  startMusic,
  stopMusic,
  startIdleTimer,
@@ -279,7 +256,7 @@ const FamilyTreeGameContent = ({
  });
  setCurrentPhaseRef.current = setCurrentPhase;
 
- const { playUiTap, playWrongTap, playSparkle, playBloom, playChime, playGlow, playTwinkle } = useGameSounds();
+ const { playSparkle, playChime, playGlow, playTwinkle } = useGameSounds();
 
  // Web Speech API for idle hint VO (arbitrary text)
  const { speak: speakHint, stop: stopSpokenVoice } = useGaneshaVoice();
@@ -344,11 +321,6 @@ const FamilyTreeGameContent = ({
  const [showVoiceOffPill, setShowVoiceOffPill] = useState(false);
 
  // ========================================
- // GANESHA PHASE VO STATE
- // ========================================
- const [isPlayingWrongVO, setIsPlayingWrongVO] = useState(false); // Block taps during wrong choice animation
-
- // ========================================
  // TRANSITION & CHILD PHASE VO STATE
  // ========================================
  const [transitionButtonVisible, setTransitionButtonVisible] = useState(false);
@@ -387,48 +359,11 @@ const FamilyTreeGameContent = ({
  // Mini gesture (thumbs up) on successful taps
  const { miniGesture, triggerMiniGesture } = useMiniGesture();
 
- // Idle hint system (choice modal)
- const [idleHintLevel, setIdleHintLevel] = useState(0); // 0=none, 1=hint, 2=hint-strong, 3=hint-final
- const idleHintTimersRef = useRef([]);
  // Idle hint system (tree circles)
  const [treeIdleHintLevel, setTreeIdleHintLevel] = useState(0); // 0=none, 1=hint, 2=hint-strong, 3=hint-final
  const treeIdleHintTimersRef = useRef([]);
- // Mirror refs so usePauseAwareTimeout callbacks can read current state without stale closures
- const showChoiceModalRef = useRef(sceneState.showChoiceModal);
- showChoiceModalRef.current = sceneState.showChoiceModal;
- const selectedCircleRef = useRef(sceneState.selectedCircle);
- selectedCircleRef.current = sceneState.selectedCircle;
- // Track if wrong answer VO is currently playing block replay on tab return
- const isPlayingWrongVORef = useRef(false);
- isPlayingWrongVORef.current = isPlayingWrongVO;
  const IDLE_HINT_FIRST_DELAY_MS = 10000;
  const IDLE_HINT_STEP_MS = 8000;
-
- const startChoiceIdleHintFlow = (circleId) => {
- if (!circleId) return;
-
- idleHintTimersRef.current.forEach(id => clearTimeout(id));
- idleHintTimersRef.current = [];
- setIdleHintLevel(0);
-
- const level1Timer = setTimeout(() => {
- setIdleHintLevel(1);
- }, IDLE_HINT_FIRST_DELAY_MS);
-
- const level2Timer = setTimeout(() => {
- setIdleHintLevel(2);
- if (audioEnabledRef.current && IDLE_HINT_VO[circleId]) {
- stopSpokenVoice();
- speakHint(IDLE_HINT_VO[circleId], { age: 7, style: 'child', moment: 'encouragement' });
- }
- }, IDLE_HINT_FIRST_DELAY_MS + IDLE_HINT_STEP_MS);
-
- const level3Timer = setTimeout(() => {
- setIdleHintLevel(3);
- }, IDLE_HINT_FIRST_DELAY_MS + (2 * IDLE_HINT_STEP_MS));
-
- idleHintTimersRef.current = [level1Timer, level2Timer, level3Timer];
- };
 
  // Resume Countdown & Pause-Aware Timeout
  const { countdownValue } = useResumeCountdown(RESUME_DELAY_MS / 1000);
@@ -440,9 +375,6 @@ const FamilyTreeGameContent = ({
  stopSpokenVoice();
  setShowReturnHint(false);
  // Clear idle hint timers and hide glow
- idleHintTimersRef.current.forEach(id => clearTimeout(id));
- idleHintTimersRef.current = [];
- setIdleHintLevel(0);
  treeIdleHintTimersRef.current.forEach(id => clearTimeout(id));
  treeIdleHintTimersRef.current = [];
  setTreeIdleHintLevel(0);
@@ -453,20 +385,9 @@ const FamilyTreeGameContent = ({
  sceneActions.updateState({ flippedMember: null });
  },
  onShow: () => {
- // If still in wrong answer feedback phase, stop it and don't trigger other VOs
- if (isPlayingWrongVORef.current) {
- stopVoice();
- stopSpokenVoice();
- return; // Don't trigger return hint wait for wrong answer phase to end
- }
-
  // IMPORTANT: Do NOT call onReturnHint here.
  // useVoiceGuidance already invokes onReturnHint after resumeDelay when
  // no VO is queued. Calling it here too can double-trigger return logic.
- // Restart idle hints if choice modal is still open when child returns
- if (showChoiceModalRef.current && selectedCircleRef.current) {
- startChoiceIdleHintFlow(selectedCircleRef.current);
- }
  },
  resumeDelay: RESUME_DELAY_MS
  });
@@ -481,7 +402,6 @@ const FamilyTreeGameContent = ({
  sceneState.placedGaneshaMembers.length < 4 &&
 !sceneState.isSequencePlaying &&
 !sceneState.showFunFactModal &&
-!sceneState.showChoiceModal &&
 !sceneState.flippedMember;
 
  if (canShowHint) {
@@ -503,7 +423,6 @@ const FamilyTreeGameContent = ({
  sceneState.placedGaneshaMembers.length,
  sceneState.isSequencePlaying,
  sceneState.showFunFactModal,
- sceneState.showChoiceModal,
  sceneState.flippedMember,
  isAudioOn
  ]);
@@ -520,89 +439,49 @@ const FamilyTreeGameContent = ({
  }, [sceneActions, sceneState?.gamePhase]);
 
 
- // --- IDLE HINT VO CLUES (spoken via Web Speech API) ---
- const IDLE_HINT_VO = {
- father: "My father carries a trident.",
- mother: "My mother wears a beautiful golden sari.",
- brother: "My brother rides a peacock.",
- myself: "I have an elephant head."
- };
-
  // --- DATA DEFINITIONS ---
  const ganeshaFamily = [
  {
- id: 'father', role: 'Father', correctAnswer: 'shiva',
+ id: 'father',
+ role: 'Father',
+ name: 'Shiva',
+ image: shivaImg,
  position: { top: '32%', left: '40%' },
- // Centered on left foliage lobe
- introTitle: 'My Father', introText: 'He is calm and strong',
- flipTitle: 'My Father', funFact: 'My father is calm and strong. He sits in deep meditation high in the mountains.'
+ voiceLine: 'This is my father, Shiva.',
+ flipTitle: 'My Father',
+ funFact: 'My father is calm and strong. He sits in deep meditation high in the mountains.'
  },
  {
- id: 'mother', role: 'Mother', correctAnswer: 'parvati',
+ id: 'mother',
+ role: 'Mother',
+ name: 'Parvati',
+ image: parvatiImg,
  position: { top: '32%', right: '30%' },
- // Centered on right foliage lobe
- introTitle: 'My Mother', introText: 'She is kind and loving',
- flipTitle: 'My Mother', funFact: 'My mother is kind and loving. She cares for everyone and fills our home with warmth.'
+ voiceLine: 'This is my mother, Parvati.',
+ flipTitle: 'My Mother',
+ funFact: 'My mother is kind and loving. She cares for everyone and fills our home with warmth.'
  },
  {
- id: 'brother', role: 'Brother', correctAnswer: 'kartikeya',
+ id: 'brother',
+ role: 'Brother',
+ name: 'Kartikeya',
+ image: kartikeyaImg,
  position: { top: '60%', left: '41%' },
- // Lower left area near trunk
- introTitle: 'My Brother', introText: 'He is brave and fast',
- flipTitle: 'My Brother', funFact: 'My brother is very brave. He travels the world on his peacock'
+ voiceLine: 'This is my brother, Kartikeya.',
+ flipTitle: 'My Brother',
+ funFact: 'My brother is brave and travels on his peacock.'
  },
  {
- id: 'myself', role: 'Me', correctAnswer: 'ganesha',
+ id: 'myself',
+ role: 'Me',
+ name: 'Ganesha',
+ image: babyGaneshaImg,
  position: { top: '60%', right: '30%' },
- // Lower right area near trunk
- introTitle: "That's Me", introText: 'I love modaks',
- flipTitle: 'Me', funFact: "That's me! I love modaks and helping my friends"
+ voiceLine: "And that's me!",
+ flipTitle: 'Me',
+ funFact: "That's me! I love modaks and helping my friends."
  }
  ];
-
- const deityChoices = {
- father: [
- { id: 'shiva', name: 'Shiva', image: shivaImg, type: 'img', isCorrect: true },
- { id: 'vishnu', name: 'Vishnu', image: vishnuImg, type: 'img', isCorrect: false },
- { id: 'brahma', name: 'Brahma', image: brahmaImg, type: 'img', isCorrect: false }
- ],
- mother: [
- { id: 'parvati', name: 'Parvati Ma', image: parvatiImg, type: 'img', isCorrect: true },
- { id: 'lakshmi', name: 'Lakshmi Ma', image: lakshmiImg, type: 'img', isCorrect: false },
- { id: 'saraswati', name: 'Saraswati Ma', image: saraswatiImg, type: 'img', isCorrect: false }
- ],
- brother: [
- { id: 'kartikeya', name: 'Kartikeya', image: kartikeyaImg, type: 'img', isCorrect: true },
- { id: 'hanuman', name: 'Hanuman', image: hanumanImg, type: 'img', isCorrect: false },
- { id: 'krishna', name: 'Krishna', image: krishnaImg, type: 'img', isCorrect: false }
- ],
- myself: [
- { id: 'ganesha', name: 'Ganesha', image: babyGaneshaImg, type: 'img', isCorrect: true },
- { id: 'mushak', name: 'Mooshak', image: mouseImg, type: 'img', isCorrect: false },
- { id: 'kartikeya', name: 'Kartikeya', image: kartikeyaImg, type: 'img', isCorrect: false }
- ]
- };
-
- const discoveredDeityLabelByMemberId = {
- father: 'father-shiva',
- mother: 'mother-parvati',
- brother: 'brother-kartikeya',
- myself: 'me-ganesha'
- };
-
- const deityNameVoiceKeyMap = {
- shiva: 'shiva',
- parvati: 'parvati',
- kartikeya: 'kartikeya',
- ganesha: 'ganesha',
- vishnu: 'vishnu',
- brahma: 'brahma',
- lakshmi: 'lakshmi',
- saraswati: 'saraswati',
- hanuman: 'hanuman',
- krishna: 'krishna',
- mushak: 'mushak'
- };
 
  const familyMemberTypes = [
  { id: 'dad', label: 'Dad', image: childDadImg, color: '#6BB6FF', row: 2 },
@@ -612,6 +491,7 @@ const FamilyTreeGameContent = ({
  { id: 'brother', label: 'Brother', image: childBrotherImg, color: '#7EDC9A', row: 3 },
  { id: 'sister', label: 'Sister', image: childSisterImg, color: '#FFA6C9', row: 3 },
  { id: 'myself', label: 'Myself', image: childMyselfImg, color: '#FFD966', row: 3 },
+ { id: 'someone-else', label: 'Someone Else', image: childDadImg, color: '#D8C7E8', row: 2 },
  { id: 'pet', label: 'Pet', image: childPetImg, color: '#F2D3A2', row: 3 }
  ];
 
@@ -630,12 +510,6 @@ const FamilyTreeGameContent = ({
 
  // Always clear transient modal/overlay states on reload never restore mid-modal
 sceneActions.updateState({
-showChoiceModal: false,
-selectedCircle: null,
-currentChoices: [],
- wrongChoice: null,
- disabledChoices: [],
- correctChoiceId: null,
  showFunFactModal: null,
  isSequencePlaying: false,
  flippedMember: null,
@@ -690,19 +564,8 @@ showTreeSparkles: false,
  }, []);
 
  // --- HELPER FUNCTIONS ---
- const shuffleArray = (array) => {
- const shuffled = [...array];
- for (let i = shuffled.length - 1; i > 0; i--) {
- const j = Math.floor(Math.random() * (i + 1));
- [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
- }
- return shuffled;
- };
-
  const getPlacedDeityImage = (memberId) => {
- const choices = deityChoices[memberId];
- if (!choices) return null;
- return choices.find(d => d.isCorrect);
+ return ganeshaFamily.find(member => member.id === memberId) || null;
  };
 
  const getFamilyByRow = (rowNumber) => {
@@ -711,11 +574,12 @@ showTreeSparkles: false,
 
  const getNamePromptQuestion = (typeId, fallbackLabel) => {
  const promptMap = {
- dad: 'What do you call your Dad/Uncle?',
- mom: 'What do you call your Mom/Aunt?',
- brother: 'What do you call your Brother/Cousin?',
- sister: 'What do you call your Sister/Cousin?',
- myself: 'What do you call yourself?'
+ dad: 'What do you call your Dad?',
+ mom: 'What do you call your Mom?',
+ brother: 'What do you call your Brother?',
+ sister: 'What do you call your Sister?',
+ myself: 'What do you call yourself?',
+ 'someone-else': 'What do you call them?'
  };
  return promptMap[typeId] || `What do you call your ${fallbackLabel}?`;
  };
@@ -821,7 +685,6 @@ showTreeSparkles: false,
  if (sceneState.gamePhase!== 'ganeshaTree' ||!sceneState.flippedMember) return;
 
  setShowReturnHint(false);
- setIdleHintLevel(0);
  setTreeIdleHintLevel(0);
 
  if (tapCircleTimerRef.current) {
@@ -833,8 +696,6 @@ showTreeSparkles: false,
  repeatTapHintTimerRef.current = null;
  }
 
- idleHintTimersRef.current.forEach(id => clearTimeout(id));
- idleHintTimersRef.current = [];
  treeIdleHintTimersRef.current.forEach(id => clearTimeout(id));
  treeIdleHintTimersRef.current = [];
 
@@ -928,7 +789,6 @@ sceneState.isSequencePlaying,
  const canPlayTapHint =
  sceneState.gamePhase === 'ganeshaTree' &&
  sceneState.placedGaneshaMembers.length === 0 &&
-!sceneState.showChoiceModal &&
 !sceneState.showFunFactModal &&
 !sceneState.flippedMember &&
 !sceneState.isSequencePlaying;
@@ -949,7 +809,6 @@ sceneState.isSequencePlaying,
  }, [
  sceneState.gamePhase,
  sceneState.placedGaneshaMembers.length,
- sceneState.showChoiceModal,
  sceneState.showFunFactModal,
  sceneState.flippedMember,
  sceneState.isSequencePlaying
@@ -974,7 +833,6 @@ sceneState.isSequencePlaying,
  const shouldPlayRepeatHint =
  sceneState.gamePhase === 'ganeshaTree' &&
  (placedCount === 1 || placedCount === 2 || placedCount === 3) &&
-!sceneState.showChoiceModal &&
 !sceneState.showFunFactModal &&
 !sceneState.flippedMember &&
 !sceneState.isSequencePlaying;
@@ -1006,28 +864,7 @@ sceneState.isSequencePlaying,
  treeIdleHintTimersRef.current = [];
  setTreeIdleHintLevel(0);
  };
- }, [sceneState.placedGaneshaMembers.length, sceneState.gamePhase, sceneState.showChoiceModal, sceneState.showFunFactModal, sceneState.flippedMember, sceneState.isSequencePlaying]);
-
- // ========================================
- // CHOICE MODAL: Stop voice + run idle hint progression
- // 10s hint 18s hint+VO 26s stronger hint (aligned with Scene 22)
- // ========================================
- useEffect(() => {
- // Always clear running hint timers first
- idleHintTimersRef.current.forEach(id => clearTimeout(id));
- idleHintTimersRef.current = [];
- setIdleHintLevel(0);
-
- if (sceneState.showChoiceModal && sceneState.selectedCircle) {
- stopVoice();
- startChoiceIdleHintFlow(sceneState.selectedCircle);
- }
-
- return () => {
- idleHintTimersRef.current.forEach(id => clearTimeout(id));
- idleHintTimersRef.current = [];
- };
- }, [sceneState.showChoiceModal, sceneState.selectedCircle]);
+ }, [sceneState.placedGaneshaMembers.length, sceneState.gamePhase, sceneState.showFunFactModal, sceneState.flippedMember, sceneState.isSequencePlaying]);
 
  // ========================================
  // CHILD PHASE: Play childStart VO 3.5s after phase begins (fresh start only)
@@ -1138,8 +975,15 @@ sceneState.isSequencePlaying,
  }
 
  if (sceneState.isSequencePlaying) return;
- if (sceneState.showFunFactModal || sceneState.showChoiceModal) return;
+ if (sceneState.flippedMember) return;
  setShowReturnHint(false);
+ stopVoice();
+ stopSpokenVoice();
+ playTap();
+ recordInteraction();
+
+ const member = ganeshaFamily.find(m => m.id === circleId);
+ if (!member) return;
 
  // Check if already placed flip card (no VO)
  if (sceneState.placedGaneshaMembers.includes(circleId)) {
@@ -1152,133 +996,88 @@ sceneState.isSequencePlaying,
  return;
  }
 
- // Stop any playing VO and play tap sound
- stopVoice();
- playTap();
- recordInteraction();
+ // Ganesha fills himself automatically after the other three are found.
+ if (circleId === 'myself') return;
 
- // Open modal and play voice guidance
- const member = ganeshaFamily.find(m => m.id === circleId);
+ const updatedMembers = [
+ ...sceneState.placedGaneshaMembers,
+ circleId
+ ];
+
  sceneActions.updateState({
- disabledChoices: [],
- selectedCircle: circleId,
- currentChoices: shuffleArray(deityChoices[circleId]),
- showChoiceModal: true,
- wrongChoice: null
+ placedGaneshaMembers: updatedMembers,
+ justPlacedId: circleId,
+ isSequencePlaying: true
  });
 
- // Play Web Speech guidance when choice cards open.
- if (isAudioOn && member) {
- scheduleTimeout(() => {
- stopSpokenVoice();
- const guidanceText = member.id === 'myself'
-? "Tap to choose me."
-: `Tap to choose my ${member.role.toLowerCase()}.`;
- speakHint(guidanceText, { age: 7, style: 'child', moment: 'thinking' });
- }, 300);
- }
-
- };
-
- const handleChoiceSelection = (choice) => {
- // Block if wrong VO is currently playing
- if (isPlayingWrongVO) return;
- // Prevent duplicate success sequence triggers while keeping cards visually clickable.
- if (sceneState.correctChoiceId!== null || sceneState.showYouGotIt!== null || sceneState.isSequencePlaying) return;
-
- // Stop any playing VO
- stopVoice();
- stopSpokenVoice();
- playTap();
- recordInteraction();
-
- if (choice.isCorrect) {
  playSparkle();
- const selectedCircle = sceneState.selectedCircle;
- const placementRevealDelayMs = 1600;
- const preFunFactSparkleMs = 1200;
- const funFactOpenDelayMs = placementRevealDelayMs + preFunFactSparkleMs;
- const sequenceFailsafeDelayMs = placementRevealDelayMs + 900;
- const correctSpeechMap = {
- father: "Shiva, my father. He's calm and strong.",
- mother: "Parvati, my mother. She's kind and loving.",
- brother: "Kartikeya, my brother. He's very brave.",
- myself: "That's me, Ganesha! I love to help."
- };
- if (isAudioOn && correctSpeechMap[selectedCircle]) {
- scheduleTimeout(() => {
- speakHint(correctSpeechMap[selectedCircle], { age: 7, style: 'child', moment: 'encouragement' });
- }, 120);
- }
-
- triggerMiniGesture('thumbsup', 'center', 1500);
- sceneActions.updateState({ isSequencePlaying: true, showYouGotIt: choice.id });
- scheduleTimeout(() => sceneActions.updateState({ correctChoiceId: choice.id }), 800);
- scheduleTimeout(() => sceneActions.updateState({ showYouGotIt: null }), 1400);
- scheduleTimeout(() => {
- sceneActions.updateState({
- showChoiceModal: false,
- placedGaneshaMembers: [...sceneState.placedGaneshaMembers, selectedCircle],
- correctChoiceId: null,
- justPlacedId: selectedCircle,
- isSequencePlaying: false // Unlock taps visible placement animation is done
- });
- }, placementRevealDelayMs);
-scheduleTimeout(() => {
-playChime();
-sceneActions.updateState({
-justPlacedId: null
-});
-}, placementRevealDelayMs + 1200);
-
- // FAILSAFE: Reset isSequencePlaying after fun fact modal opens to prevent click-blocking
- scheduleTimeout(() => {
- sceneActions.updateState({ isSequencePlaying: false });
- }, sequenceFailsafeDelayMs);
- } else {
- // WRONG CHOICE - Shake only (match Scene 22)
- playWrongTap();
- stopSpokenVoice();
- setIsPlayingWrongVO(true);
-
- // RESET IDLE HINTS on wrong choice
- idleHintTimersRef.current.forEach(id => clearTimeout(id));
- idleHintTimersRef.current = [];
- setIdleHintLevel(0);
-
- // Speak tapped deity name on wrong click:
- // use recorded VO key when available, otherwise fallback to Web Speech.
  if (isAudioOn) {
- const nameVoiceKey = deityNameVoiceKeyMap[choice.id] || choice.id;
- const hasRecordedName =!!getVoiceScript('about-me-hut', 'family-tree', nameVoiceKey);
- if (hasRecordedName) {
- playVoice(nameVoiceKey);
- } else {
- speakHint(choice.name, { age: 7, style: 'child', moment: 'thinking' });
- }
- }
-
- // Shake only no fade/lock (like Scene 22)
- sceneActions.updateState({
- wrongChoice: choice.id
+ speakHint(member.voiceLine, {
+ age: 7,
+ style: 'child',
+ moment: 'story'
  });
+ }
 
- // Clear shake marker and unblock taps after feedback.
+ triggerMiniGesture('thumbsup', 'center', 1100);
  scheduleTimeout(() => {
+ playChime();
  sceneActions.updateState({
- wrongChoice: null
+ justPlacedId: null,
+ isSequencePlaying: false
  });
- setIsPlayingWrongVO(false);
-
- // Restart idle hint timers modal is still open after wrong choice,
- // but the useEffect won't re-fire because showChoiceModal/selectedCircle didn't change.
- const circle = selectedCircleRef.current;
- if (circle) {
- startChoiceIdleHintFlow(circle);
- }
- }, 1200);
- }
+ }, 1400);
  };
+
+ useEffect(() => {
+ if (sceneState.gamePhase !== 'ganeshaTree') return;
+ if (sceneState.isSequencePlaying || sceneState.flippedMember) return;
+
+ const hasFather = sceneState.placedGaneshaMembers.includes('father');
+ const hasMother = sceneState.placedGaneshaMembers.includes('mother');
+ const hasBrother = sceneState.placedGaneshaMembers.includes('brother');
+ const hasMe = sceneState.placedGaneshaMembers.includes('myself');
+
+ if (!hasFather || !hasMother || !hasBrother || hasMe) return;
+
+ const cancel = scheduleTimeout(() => {
+ sceneActions.updateState({
+ placedGaneshaMembers: [
+ ...sceneState.placedGaneshaMembers,
+ 'myself'
+ ],
+ justPlacedId: 'myself',
+ isSequencePlaying: true
+ });
+
+ playSparkle();
+
+ if (isAudioOn) {
+ speakHint("And that's me, Ganesha!", {
+ age: 7,
+ style: 'child',
+ moment: 'story'
+ });
+ }
+
+ scheduleTimeout(() => {
+ playChime();
+
+ sceneActions.updateState({
+ justPlacedId: null,
+ isSequencePlaying: false
+ });
+ }, 1400);
+ }, 900);
+
+ return () => cancel?.();
+ }, [
+ sceneState.gamePhase,
+ sceneState.placedGaneshaMembers,
+ sceneState.isSequencePlaying,
+ sceneState.flippedMember,
+ isAudioOn
+ ]);
 
  const handleGaneshaTreeDone = () => {
  if (ganeshaTreeDoneClickedRef.current) return;
@@ -1500,13 +1299,20 @@ sceneActions.updateState({ gamePhase: 'transition' });
  <img src={familyTree} alt="Family Tree" className="tree-overlay ganesha-tree-overlay" />
 
  {(() => {
- const firstUnplacedId = ganeshaFamily.find(m =>!sceneState.placedGaneshaMembers.includes(m.id))?.id;
  return ganeshaFamily.map(member => (
  <div
  key={member.id}
- className={`circle-spot-with-label ${sceneState.isSequencePlaying? 'blocked': ''}`}
+ className={[
+ 'circle-spot-with-label',
+ sceneState.isSequencePlaying? 'blocked': '',
+ member.id === 'myself' && !sceneState.placedGaneshaMembers.includes('myself')? 'self-waiting': ''
+ ].filter(Boolean).join(' ')}
  style={member.position}
- onClick={() => handleClickCircle(member.id)}
+ onClick={() => {
+ if (member.id !== 'myself' || sceneState.placedGaneshaMembers.includes('myself')) {
+ handleClickCircle(member.id);
+ }
+ }}
  >
  {!sceneState.placedGaneshaMembers.includes(member.id)? (
  <div className="tap-hitbox" aria-hidden="true">
@@ -1536,55 +1342,13 @@ sceneActions.updateState({ gamePhase: 'transition' });
  )}
  <div className="circle-label">
  {sceneState.placedGaneshaMembers.includes(member.id)
-? discoveredDeityLabelByMemberId[member.id]
+? member.name
 : member.role}
  </div>
  </div>
  ));
  })()}
  </div>
-
- {sceneState.showChoiceModal && (
- <div className="choice-screen-integrated">
- <div className="choice-screen-container">
- <h2 className="choice-title-screen">
- {ganeshaFamily.find(m => m.id === sceneState.selectedCircle)?.id === 'myself'
-? "Who is Ganesha?"
-: `Who is Ganesha's ${ganeshaFamily.find(m => m.id === sceneState.selectedCircle)?.role}?`
- }
- </h2>
- <div className="choices-container-integrated">
- {sceneState.currentChoices.map((choice, index) => (
- <button
- key={choice.id}
- className={[
- 'choice-card-integrated',
- sceneState.wrongChoice === choice.id? 'wrong-shake': '',
- sceneState.correctChoiceId === choice.id && choice.isCorrect? 'scene19-correct-hit': '',
- choice.isCorrect && idleHintLevel === 1? 'hint': '',
- choice.isCorrect && idleHintLevel === 2? 'hint-strong': '',
- choice.isCorrect && idleHintLevel >= 3? 'hint-final': ''
- ].filter(Boolean).join(' ')}
- onClick={() => handleChoiceSelection(choice)}
- style={{ animationDelay: `${index * 0.15}s` }}
- >
- <div className="choice-image-integrated">
- <img src={choice.image} alt={choice.name} />
- </div>
- <div className="choice-name-integrated">{choice.name}</div>
- {sceneState.correctChoiceId === choice.id && choice.isCorrect && (
- <div className="choice-soft-sparkles" aria-hidden="true">
- <SparkleAnimation type="star" count={10} color="#FFE1A0" size={9} duration={900} fadeOut={true} area="full" />
- </div>
- )}
- </button>
- ))}
- </div>
-
- </div>
- </div>
- )}
-
 
  {sceneState.placedGaneshaMembers.length === ganeshaFamily.length &&!sceneState.showFunFactModal &&!sceneState.isSequencePlaying && (
  <button
@@ -1712,7 +1476,7 @@ sceneActions.updateState({ gamePhase: 'transition' });
  </div>
 
  {/* FLOATING DONE BUTTON (Moved Above Tray) */}
- {sceneState.childFamily.length >= 2 && (
+ {sceneState.childFamily.length >= 1 && (
  <button
  className={`tray-done-btn ${sceneState.childFamily.length >= 21? 'tray-done-btn-attention': ''}`}
  onClick={() => {
@@ -2002,16 +1766,9 @@ justifyContent: 'center',
  showBottomTray: false,
  stars: 0,
  completed: false,
- showChoiceModal: false,
- selectedCircle: null,
- currentChoices: [],
- disabledChoices: [],
- wrongChoice: null,
- correctChoiceId: null,
  justPlacedId: null,
  showFunFactModal: null,
  flippedMember: null,
- showYouGotIt: null,
  showTreeSparkles: false,
  showCelebration: null,
  isSequencePlaying: false,
