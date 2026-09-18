@@ -1,3 +1,4 @@
+import { usePreloadPoses } from '../../../lib/components/animation/PoseImage';
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useGameSounds } from '../../../lib/hooks/useGameSounds';
 import './Familytreegame.css';
@@ -181,6 +182,27 @@ const FamilyTreeGame = ({
 // =========================================================
 // 2. CONTENT COMPONENT (Logic & UI)
 // =========================================================
+const SCENE_IMAGES = [
+  familyTreeBg,
+  familyTree,
+  babyGaneshaImg,
+  shivaImg,
+  parvatiImg,
+  kartikeyaImg,
+  childDadImg,
+  childMomImg,
+  childGrandpaImg,
+  childGrandmaImg,
+  childBrotherImg,
+  childSisterImg,
+  childMyselfImg,
+  childPetImg,
+  familyIconImg,
+  heartIconImg,
+  purpleHeartIconImg,
+  homeIconImg,
+];
+
 const FamilyTreeGameContent = ({
  sceneState,
  sceneActions,
@@ -189,6 +211,7 @@ const FamilyTreeGameContent = ({
  onNavigate,
  onBack
 }) => {
+  usePreloadPoses(SCENE_IMAGES);
  const { modalStyle: kbStyle } = useKeyboardAwareModal();
 
  useEffect(() => {
@@ -200,7 +223,7 @@ const FamilyTreeGameContent = ({
  // Get content from configs
  const openingModalContent = getOpeningModal('about-me-hut', 'family-tree');
  const completionModalContent = getCompletionModal('about-me-hut', 'family-tree');
- const completionIcons = openingModalContent?.icons || ['home', 'heart', 'family'];
+ const completionIcons = ['home', 'heart', 'family'];
  const activeProfile = GameStateManager.getCurrentProfile?.() || null;
  const profileDisplayName = (activeProfile?.name || 'Friend').trim();
  const rawProfileAvatar = activeProfile?.avatar;
@@ -923,6 +946,12 @@ sceneState.isSequencePlaying,
  }
  }, [sceneState.gamePhase]);
 
+ // This scene mixes TWO speech sources - useVoiceGuidance's playVoice/stopVoice
+ // AND a separate useGaneshaVoice() instance's speakHint/stopSpokenVoice - both
+ // ultimately call the shared speechSynthesis.cancel()+speak(). Every speakHint
+ // call below is preceded by BOTH stopVoice() and stopSpokenVoice() on purpose -
+ // if you add a new speakHint/playVoice call near here, keep that pairing or the
+ // two hooks will cut each other off mid-line (see the Modak/Pond VO fix).
  useEffect(() => {
  if (sceneState.gamePhase === 'sideBySide' &&!sceneState.showingCompletionScreen &&!finalRevealPlayed) {
  setFinalRevealPlayed(true);

@@ -1,3 +1,4 @@
+import { usePreloadPoses } from '../../../lib/components/animation/PoseImage';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import './MyIndianStoryGame.css';
 import '../../shared/components/OpeningModal.css';
@@ -282,7 +283,54 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
 // =========================================================
 // 2. CONTENT COMPONENT
 // =========================================================
+const SCENE_IMAGES = [
+  bgImage,
+  babyGaneshaImg,
+  storyHouseIcon,
+  storyLanguageIcon,
+  storyFestivalIcon,
+  indiaMapImage,
+  mglass,
+  mumbaiIcon,
+  varansiIcon,
+  tamilNaduIcon,
+  northIcon,
+  northEastIcon,
+  westIcon,
+  centralIcon,
+  eastIcon,
+  southIcon,
+  desertIcon,
+  hindiLangIcon,
+  tamilLangIcon,
+  sanskritLangIcon,
+  teluguLangIcon,
+  marathiLangIcon,
+  gujaratiLangIcon,
+  bengaliLangIcon,
+  kannadaLangIcon,
+  malayalamLangIcon,
+  punjabiLangIcon,
+  englishLangIcon,
+  otherLangIcon,
+  playLangIcon,
+  pongalIcon,
+  holiIcon,
+  janmashtamiIcon,
+  chaturthiIcon,
+  navratriIcon,
+  diwaliIcon,
+  onamIcon,
+  eidIcon,
+  christmasIcon,
+  durga_pujaIcon,
+  dussehra_Icon,
+  rakhi_Icon,
+  modakImage,
+];
+
 function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComplete, onNavigate, onBack, childName = 'friend', childAge = 8, sceneId = 'my-indian-story' }) {
+  usePreloadPoses(SCENE_IMAGES);
   // ─── PHASE (from SceneManager - single source of truth) ───────────
   const phase = sceneState.phase || STEPS.OPENING;
 
@@ -583,7 +631,14 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     }
   }, [phase, isAudioOn, playVoice, setVoiceVolume]);
 
-  // LANGUAGE_GANESHA: Play reminder VO when cards are revealed
+  // LANGUAGE_GANESHA: Play reminder VO when cards are revealed.
+  // NOTE: this races the entry-VO effect above (VOICE.language_play_first)
+  // if showLanguageCards ever flips true within ~0-2s of phase entry - today
+  // it's safe because showLanguageCards is only set after explicit user
+  // action (Play tap / mantra finish), never synchronously on phase entry.
+  // speak() cancels any in-flight utterance (see useGaneshaVoice.js), so if
+  // that timing ever changes, this line and language_play_first will cut
+  // each other off (same class of bug as the Modak/Pond VO fix).
   useEffect(() => {
     if (phase !== STEPS.LANGUAGE_GANESHA || !showLanguageCards) return;
     const reminderKey = `about-me-hut:my-indian-story:${phase}:cards-revealed:${VOICE.language_guess}`;

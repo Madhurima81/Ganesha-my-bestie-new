@@ -1,3 +1,4 @@
+import { usePreloadPoses } from '../../../lib/components/animation/PoseImage';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './Favoritefoodgame.css';
 import SceneCompletionCelebration from "../../../lib/components/celebration/SceneCompletionCelebration";
@@ -187,7 +188,54 @@ const FavoriteFoodGame = ({ onComplete, onBack, onNavigate, zoneId = 'about-me-h
 // =========================================================
 // 2. CONTENT COMPONENT
 // =========================================================
+const SCENE_IMAGES = [
+  foodBg,
+  babyGaneshaImg,
+  babyGaneshaSit,
+  modakImg,
+  ladooImg,
+  barfiImg,
+  mouseImg,
+  cowImg,
+  peacockImg,
+  favIconFood,
+  favIconColor,
+  favIconActivity,
+  pencilImg,
+  redImg,
+  orangeImg,
+  yellowImg,
+  greenImg,
+  blueImg,
+  purpleImg,
+  pinkImg,
+  brownImg,
+  actEatingImg,
+  actDancingImg,
+  actReadingImg,
+  actPlayingImg,
+  actTvImg,
+  actDrawImg,
+  kidActSportsImg,
+  kidActReadImg,
+  kidActArtImg,
+  kidActSingImg,
+  kidActCookImg,
+  kidActNatureImg,
+  kidActStemImg,
+  kidActGameImg,
+  pizzaImg,
+  burgerImg,
+  icecreamImg,
+  noodlesImg,
+  fruitImg,
+  dosaImg,
+  riceImg,
+  friendsImg,
+];
+
 const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplete, onNavigate, onBack }) => {
+  usePreloadPoses(SCENE_IMAGES);
 
   useEffect(() => {
     SimpleSceneManager.setCurrentScene('about-me-hut', 'favorite-food', false, false);
@@ -249,7 +297,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   // Get content from configs
   const openingModalContent = getOpeningModal('about-me-hut', 'favorite-food');
   const completionModalContent = getCompletionModal('about-me-hut', 'favorite-food');
-  const completionIcons = openingModalContent?.icons || ['food', 'color', 'activity'];
+  const completionIcons = ['food', 'color', 'activity'];
   const activeProfile = GameStateManager.getCurrentProfile?.() || null;
   const profileDisplayName = (activeProfile?.name || sceneState.childFriendName || 'You').trim();
   const rawProfileAvatar = activeProfile?.avatar;

@@ -1,3 +1,4 @@
+import { usePreloadPoses, preparePose } from '../../../lib/components/animation/PoseImage';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './DreamsWishesGame.css';
 import SceneCompletionCelebration from "../../../lib/components/celebration/SceneCompletionCelebration";
@@ -164,7 +165,65 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate, zoneId = 'about-me-h
 // =========================================================
 // 2. CONTENT COMPONENT
 // =========================================================
+const SCENE_IMAGES = [
+  babyGaneshaImg,
+  babyGaneshaSit,
+  dreamsBg,
+  wishIconEarth,
+  wishIconFlower,
+  wishIconShare,
+  wishHeartIcon,
+  wishStarIcon,
+  wishWorldIcon,
+  wishEarthSad,
+  wishEarthHappy,
+  wishBowlEmpty,
+  wishBowlFull,
+  plateImg,
+  cowImg,
+  mouseImg,
+  peacockImg,
+  appleImg,
+  bananaImg,
+  breadImg,
+  brocolliImg,
+  carrotImg,
+  milkImg,
+  riceImg,
+  wishForest1,
+  wishForest2,
+  wishForest3,
+  wishForest4,
+  baseImg,
+  flowerImg,
+  bushImg,
+  treeImg,
+  butterflyImg,
+  birdImg,
+  helpingImg,
+  sharingImg,
+  huggingImg,
+  giftingImg,
+  angryImg,
+  fightImg,
+  hitImg,
+  teasingImg,
+  cloudImg,
+  kindnessHeaderIcon,
+  sharingHeaderIcon,
+  natureHeaderIcon,
+];
+
 const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplete, onNavigate, onBack }) => {
+  usePreloadPoses(SCENE_IMAGES);
+  const [earthHappyReady, setEarthHappyReady] = useState(false);
+  useEffect(() => {
+    let cancelled = false;
+    preparePose(wishEarthHappy).then(() => {
+      if (!cancelled) setEarthHappyReady(true);
+    }).catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
   useEffect(() => {
     SimpleSceneManager.setCurrentScene('about-me-hut', 'dreams-wishes', false, false);
   }, []);
@@ -255,7 +314,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   // Get content from configs
   const openingModalContent = getOpeningModal('about-me-hut', 'dreams-wishes');
   const completionModalContent = getCompletionModal('about-me-hut', 'dreams-wishes');
-  const completionIcons = openingModalContent?.icons || ['wish-heart', 'wish-star', 'wish-world'];
+  const completionIcons = ['wish-heart', 'wish-star', 'wish-world'];
 
   // --- LOCAL UI STATE (Not saved in DB) ---
   // ── Resume Delay (shared across pause/resume logic) ──────────────────────────
@@ -1683,8 +1742,8 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
           </div>
           <div className="wish-interactive-container">
             <div className="earth-container earth-readonly" style={{ width: '252px', height: '252px' }}>
-              <img src={wishEarthSad} alt="Sad" className="earth-image sad" style={{ opacity: sceneState.wish1Taps === 0 ? 1 : sceneState.wish1Taps === 1 ? 0.6 : sceneState.wish1Taps === 2 ? 0.3 : 0 }} />
-              <img src={wishEarthHappy} alt="Happy" className={`earth-image happy ${sceneState.wish1Taps >= 3 ? 'complete-glow-pulse' : ''}`} style={{ opacity: sceneState.wish1Taps === 0 ? 0 : sceneState.wish1Taps === 1 ? 0.4 : sceneState.wish1Taps === 2 ? 0.7 : 1 }} />
+              <img src={wishEarthSad} alt="Sad" className="earth-image sad" style={{ opacity: !earthHappyReady || sceneState.wish1Taps === 0 ? 1 : sceneState.wish1Taps === 1 ? 0.6 : sceneState.wish1Taps === 2 ? 0.3 : 0 }} />
+              <img src={wishEarthHappy} alt="Happy" className={`earth-image happy ${sceneState.wish1Taps >= 3 ? 'complete-glow-pulse' : ''}`} style={{ opacity: !earthHappyReady || sceneState.wish1Taps === 0 ? 0 : sceneState.wish1Taps === 1 ? 0.4 : sceneState.wish1Taps === 2 ? 0.7 : 1 }} />
               {wish1Sparkle.type === 'single' && (
                 <div style={{ position: 'absolute', inset: 0, zIndex: 40, pointerEvents: 'none' }}>
                   <SparkleAnimation
