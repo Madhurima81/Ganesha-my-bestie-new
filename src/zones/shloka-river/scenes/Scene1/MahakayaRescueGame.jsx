@@ -476,7 +476,7 @@ export default function MahakayaRescueGame({
         window.prompt('Copy layout JSON', payload);
         setLayoutCopyStatus('Shown');
       } else {
-        console.log('Mahakaya layout JSON:', payload);
+        if (import.meta.env.DEV) console.log('Mahakaya layout JSON:', payload);
         setLayoutCopyStatus('Logged');
       }
     }

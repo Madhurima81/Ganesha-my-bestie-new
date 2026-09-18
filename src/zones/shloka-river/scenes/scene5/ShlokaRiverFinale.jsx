@@ -19,6 +19,7 @@ import { useGameSounds } from '../../../../lib/hooks/useGameSounds';
 import TocaBocaNav from '../../../../lib/components/navigation/TocaBocaNav';
 import HomeButton from '../../../../lib/components/ui/HomeButton/HomeButton';
 import AudioToggle from '../../../../lib/components/ui/AudioToggle/AudioToggle';
+import VOReplayButton from '../../../../lib/components/feedback/VOReplayButton';
 import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
 import ZoneCompletionFireworks from '../../../../lib/components/feedback/ZoneCompletionFireworks';
@@ -375,11 +376,11 @@ const ShlokaRiverFinaleContent = ({
       safeSetTimeout(() => {
         setHintLevel(2);
         playVoice?.('hintBoatL2', undefined, { replayOnReturn: false });
-      }, 20000),
+      }, 18000),
       safeSetTimeout(() => {
         setHintLevel(3);
         playVoice?.('hintBoatL3', undefined, { replayOnReturn: false });
-      }, 35000),
+      }, 26000),
     ];
   }, [clearHintTimers, phase, playVoice, safeSetTimeout]);
 
@@ -611,6 +612,26 @@ const ShlokaRiverFinaleContent = ({
     }
   }, [phase]);
 
+  // Re-plays whatever line belongs to the current phase — same "one replay
+  // button per scene" pattern as every other live scene. RECAP replays just
+  // its intro line rather than restarting the full word-by-word sequence
+  // (which is already playing/has its own completion timers, so re-firing it
+  // could double up audio and finale transitions).
+  const replayCurrentVoice = useCallback(() => {
+    if (!isAudioOn) return;
+    if (phase === PHASES.INITIAL) {
+      playVoice?.('openingModalPrompt', undefined, { replayOnReturn: false });
+    } else if (phase === PHASES.ARRANGE) {
+      playVoice?.('arrangeStart', undefined, { replayOnReturn: false });
+    } else if (phase === PHASES.SUCCESS) {
+      playVoice?.('sceneComplete', undefined, { replayOnReturn: false });
+    } else if (phase === PHASES.RECAP) {
+      playVoice?.('recapStart', undefined, { replayOnReturn: false });
+    } else if (phase === PHASES.FINALE || phase === PHASES.COMPLETE) {
+      playVoice?.('finalCelebration', undefined, { replayOnReturn: false });
+    }
+  }, [isAudioOn, phase, playVoice]);
+
   const handleOrbsComplete = useCallback(() => {
     setShowOrbsCelebration(false);
     playVoice?.('finalCelebration', undefined, { replayOnReturn: false });
@@ -659,6 +680,7 @@ const ShlokaRiverFinaleContent = ({
           <HomeButton onNavigate={onNavigate} />
           <ZoneBadgeButton zoneId="shloka-river" onBack={() => onNavigate?.('zone-welcome')} />
           <AudioToggle isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
+          <VOReplayButton onReplay={replayCurrentVoice} disabled={!isAudioOn} />
 
           {phase === PHASES.INITIAL && (
             <OpeningModal

@@ -697,7 +697,7 @@ export default function VakratundaRescueGame({
         window.prompt('Copy layout JSON', payload);
         setLayoutCopyStatus('Shown');
       } else {
-        console.log('Vakratunda layout JSON:', payload);
+        if (import.meta.env.DEV) console.log('Vakratunda layout JSON:', payload);
         setLayoutCopyStatus('Logged');
       }
     }

@@ -654,11 +654,11 @@
 @media (max-width: 768px) {
   .eyes-symbol-container {
     width: 60px;
-    height: 45px;
+    height: 60px;
     top: 20%;
     left: 15%;
   }
-  
+
   .ears-symbol-container {
     width: 75px;
     height: 60px;
@@ -678,13 +678,13 @@
 
 @media (max-width: 480px) {
   .eyes-symbol-container {
-    width: 50px;
-    height: 35px;
+    width: 60px;
+    height: 60px;
   }
-  
+
   .ears-symbol-container {
     width: 60px;
-    height: 50px;
+    height: 60px;
   }
   
   .instruments-found-counter {
@@ -788,7 +788,7 @@
   height: var(--app-height, 100vh);
   padding: 20px;
   background-color: #f8f9fa;
-  font-family: Arial, sans-serif;
+  font-family: 'Nunito', sans-serif;
 }
 
 .error-boundary h2 {

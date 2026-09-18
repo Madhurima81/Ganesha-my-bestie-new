@@ -50,6 +50,7 @@ const LAYOUT = {
 const VO = {
   open: 'You found six flowers. Let’s make Ganesha a garland. Tap a flower to thread it.',
   ready: 'You made it! Take the garland to Ganesha.',
+  carry: 'Carry the garland to Ganesha!',
 };
 
 const SCENE_IMAGES = [
@@ -104,14 +105,43 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
   const isOffered = phase === PHASES.OFFERED;
 
   // Carrying the finished garland to Ganesha is a drag, not the tap used to
-  // thread flowers — show the gesture demo right away when this phase starts.
-  const [garlandIntroGesture, setGarlandIntroGesture] = useState(false);
+  // thread flowers — same 9s/16s/24s idle-hint ladder used across the app
+  // (useRepeatedHintCycle): L1 pulse, L2 stronger pulse + one-time VO, L3
+  // re-shows the gesture demo. Restarts on each attempt (drag start, or a
+  // failed drop) so it doesn't nag right after the child just tried.
+  const [garlandHintLevel, setGarlandHintLevel] = useState(0);
+  const garlandHintVoPlayedRef = useRef(false);
+  const garlandReadyAtRef = useRef(Date.now());
+
+  const restartGarlandHintClock = useCallback(() => {
+    garlandReadyAtRef.current = Date.now();
+    setGarlandHintLevel(0);
+    garlandHintVoPlayedRef.current = false;
+  }, []);
+
   useEffect(() => {
-    if (!isReady) { setGarlandIntroGesture(false); return undefined; }
-    setGarlandIntroGesture(true);
-    const t = window.setTimeout(() => setGarlandIntroGesture(false), 6000);
-    return () => window.clearTimeout(t);
-  }, [isReady]);
+    if (!isReady) { setGarlandHintLevel(0); garlandHintVoPlayedRef.current = false; return undefined; }
+    restartGarlandHintClock();
+  }, [isReady, restartGarlandHintClock]);
+
+  useEffect(() => {
+    if (!isReady || garlandPosition.active) return undefined;
+    const tick = window.setInterval(() => {
+      const idleMs = Date.now() - garlandReadyAtRef.current;
+      if (idleMs >= 24000) {
+        setGarlandHintLevel(3);
+      } else if (idleMs >= 16000) {
+        setGarlandHintLevel(2);
+        if (!garlandHintVoPlayedRef.current) {
+          garlandHintVoPlayedRef.current = true;
+          speak(VO.carry);
+        }
+      } else if (idleMs >= 9000) {
+        setGarlandHintLevel(1);
+      }
+    }, 1000);
+    return () => window.clearInterval(tick);
+  }, [isReady, garlandPosition.active, speak]);
 
   const liveSlots = GARLAND_SLOTS;
   const placedIds = useMemo(() => new Set(placedFlowers.map((item) => item.id)), [placedFlowers]);
@@ -178,6 +208,7 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
     if (!isReady || isPaused) return;
     event.preventDefault();
     event.currentTarget.setPointerCapture?.(event.pointerId);
+    restartGarlandHintClock();
     setGarlandPosition((prev) => ({ ...prev, active: true }));
   };
   const moveGarland = (event) => {
@@ -193,7 +224,11 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
     const rect = target.getBoundingClientRect();
     const droppedOnGanesha = event.clientX >= rect.left - 35 && event.clientX <= rect.right + 35 && event.clientY >= rect.top - 35 && event.clientY <= rect.bottom + 45;
 
-    if (!droppedOnGanesha) { setGarlandPosition({ x: 50, y: 55, active: false }); return; }
+    if (!droppedOnGanesha) {
+      setGarlandPosition({ x: 50, y: 55, active: false });
+      restartGarlandHintClock();
+      return;
+    }
 
     setGarlandPosition((prev) => ({ ...prev, active: false }));
     setPhase(PHASES.OFFERED);
@@ -217,7 +252,7 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
         type="drag"
         from={{ x: LAYOUT.workspace.l, y: LAYOUT.workspace.t }}
         to={{ x: LAYOUT.ganesha.l, y: LAYOUT.ganesha.t }}
-        active={garlandIntroGesture && !garlandPosition.active}
+        active={garlandHintLevel >= 3 && !garlandPosition.active}
         idleDelay={150}
         zIndex={30}
       />
@@ -288,11 +323,11 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
             <div className="g3g-completed-garland-stage">
               <button
                 type="button"
-                className="g3g-completed-garland"
+                className={`g3g-completed-garland ${garlandHintLevel === 1 ? 'g3g-hint-pulse' : ''} ${garlandHintLevel >= 2 ? 'g3g-hint-strong' : ''}`}
                 onPointerDown={startGarlandDrag}
                 onPointerMove={moveGarland}
                 onPointerUp={endGarlandDrag}
-                onPointerCancel={() => setGarlandPosition({ x: 50, y: 55, active: false })}
+                onPointerCancel={() => { setGarlandPosition({ x: 50, y: 55, active: false }); restartGarlandHintClock(); }}
                 aria-label="Carry the garland to Ganesha"
               >
                 <img src={completedGarland} alt="Garland" />

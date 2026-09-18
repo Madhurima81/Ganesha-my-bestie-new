@@ -37,6 +37,19 @@ Before every task, Claude Code must:
 - [ ] T15 · New SFX audio files — need to finalise
 - [ ] T16 · New Ambient Sounds audio files — need to create or search — one per zone
 - [ ] T36 · when to use V/o vs web speech
+- [x] T55 · Voice mute + VOReplayButton audit — checked AudioToggle (mute) and VOReplayButton
+  presence/wiring across all 13 live scenes. Mute present + correctly wired everywhere; found it
+  only ever silences narration/music, never SFX (`useVoiceGuidance.js`/`AudioService.js` have no
+  mute-awareness by existing deliberate design — "game audio, never muted by toggle"). Decided
+  with Madhurima to keep this **voice-only** (it's an in-game control for repeat players skipping
+  heard narration, not a whole-app silence button — muting SFX too would flatten the replay
+  feedback loop). Relabeled AudioToggle's aria-label/title from "Mute"/"Turn off sound" to
+  "Turn off voice narration"/"Turn off voice" so it stops implying whole-app mute, and documented
+  the voice-only decision in a code comment. Found `VOReplayButton` genuinely missing from
+  ShlokaRiverFinale (12 of 13 had it) — added it, wired to a new `replayCurrentVoice` mapping all
+  6 of that scene's phases to their correct VO line. See CHANGELOG 2026-09-18.
+  Not yet visually verified in-browser. Possible future add (not built): a "voice on by default"
+  preference in Parent Dashboard for first launch.
 
 
 ### Scene Behaviour & Hooks
@@ -57,6 +70,24 @@ Before every task, Claude Code must:
   EarsSoundMatchGame. Confirmed dead code, left alone: EarsRhythmGame, TuskAssemblyGame,
   TuskPathGame (not wired into SymbolMountainSceneV3.jsx). See CHANGELOG 2026-09-18.
   Not yet visually verified in-browser — Madhurima to spot-check on next playthrough.
+- [x] T54 · 3-level idle-hint audit — audited the L1(~9s pulse)→L2(~16s stronger+VO)→L3(~24s
+  most explicit) ladder across all 13 live scenes. Most already correct (shared
+  `useRepeatedHintCycle` hook or an equivalent hand-rolled ladder on the same timing) —
+  confirmed clean: Suryakoti/Samaprabha/Nirvighnam/Kurumedeva/Sarvakaryeshu/Sarvada games,
+  Familytreegame, Favoritefoodgame, ObstacleRemoverGame, MyIndianStoryGame, Pond, Modak main
+  phase, Sacred Assembly, EarsSoundMatchGame (already complete, first audit pass missed it).
+  Fixed the real "zero guidance if stuck" gaps: EyesPopUpGame (was single-level, added L2 VO +
+  L3 strong pulse), Tusk's shared BeatPlayerGame engine (gesture demo previously died after the
+  first 2 beats — added L1/L2 pulse + L3 re-shows the demo for any later beat), GarlandGame3
+  (was a single one-shot 6s intro — added a full L1/L2/L3 ladder that resets on drag attempt or
+  failed drop). Removed SymbolMountainSceneV3's dead `showIdleGestureHint` state (computed,
+  never rendered). See CHANGELOG 2026-09-18.
+  **Follow-up (2026-09-18) — closed 2 of 3 open items:** ShlokaRiverFinale's ladder retimed to
+  18s/26s to match the app norm (was 20s/35s). Deleted the orphan `enjoy/Wish2PlateDropGame.jsx`
+  duplicate — confirmed `ObstacleRemoverGame.jsx` only ever imported the live copy under
+  `enjoy/components/`. **VakratundaRescueGame's failed-attempt-count model left as-is —
+  Madhurima confirmed it's intentionally different, not a bug.** See CHANGELOG 2026-09-18.
+  Not yet visually verified in-browser.
 
 ### Ganesha & Mooshika Presence
 - [ ] T18 · Ganesha Gestures — map which gesture per scene phase — Symbol Mountain, Cave of Secrets, Shloka River (zones 1–3)
@@ -68,6 +99,18 @@ Before every task, Claude Code must:
 - [ ] T29 · Ganesha expressions
 - [ ] T30 · Ganesha blinking eyes
 - [ ] T31 · Mooshika expressions & blinking eyes
+- [x] T56 · Sparkle + Ganesha gesture audit — checked "does sparkle AND a Ganesha gesture
+  (thumbs-up/etc.) show on completion" across all 13 live scenes. 10 of 13 already correct via
+  shared `useMiniGesture`/`GaneshaGestureCue`. The 2 finale scenes (SacredAssemblySceneV8,
+  ShlokaRiverFinale) intentionally skip the small per-round gesture for their bigger
+  `SceneCompletionCelebration` + fireworks instead (has its own Ganesha pose) — confirmed by
+  design. Found a real bug: **SymbolMountainSceneV3 (Tusk zone)** called `triggerMiniGesture()`
+  5 times on eyes/ears/tusk completions into a local hand-rolled state that was never rendered
+  anywhere — `GaneshaGestureCue`'s import was even commented out ("inline gesture used") with no
+  actual inline render either. Sparkles fired; Ganesha's gesture never did. Fixed by switching to
+  the real shared hook + component (same pattern as the other 10 scenes), converting all 5 call
+  sites to the shared signature. See CHANGELOG 2026-09-18.
+  Not yet visually verified in-browser — Madhurima to spot-check Eyes/Ears/Tusk completions.
 
 
 ### Quality & Audit

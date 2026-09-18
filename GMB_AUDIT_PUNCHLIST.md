@@ -130,6 +130,141 @@ Tusk's Arial font, Tusk's sub-60px mobile touch targets, Suryakoti Bank's off-pa
 
 **Still not re-checked this pass:** `PondScene.css:869,970` (`.pond-trunk-reeds`/`.pond-trunk-lotus` sub-60px drag targets) — flagged in round 1, not yet verified as fixed or still open in round 2.
 
+## About Me Hut — Group A audit (Sections 1, 2, 3, 16)
+_Audited 2026-09-18 against `GMB_SCENE_LAUNCH_CHECKLIST.md`. Scope was limited to the four live About Me Hut scenes imported by `src/App.jsx`: `Familytreegame.jsx`, `Favoritefoodgame.jsx`, `ObstacleRemoverGame.jsx`, and `MyIndianStoryGame.jsx`. Group B and Group C were not audited in this pass._
+
+### New actionable bug
+- **Section 2 — Completion next-scene text:** `SceneCompletionCelebration.jsx` accepts a `nextSceneName` prop but does not render it; the primary CTA is hardcoded to `Next Adventure` (`SceneCompletionCelebration.jsx:21,325-340`). This affects the three non-final About Me Hut scenes. Two callers also supply stale values: Family Tree says `Let's Be Friends` but routes to `favorite-food` (`Familytreegame.jsx:1773,1781-1782`), and Dreams & Wishes says `About Me Hut Complete` but routes to `my-indian-story` (`ObstacleRemoverGame.jsx:2391,2408-2409`). Favorite Food's supplied `Dream Big Together` value matches its next scene but is also ignored (`Favoritefoodgame.jsx:2473,2488-2490`). Cross-check: `NewModakSceneV7.jsx:1694` also supplies `nextSceneName`, confirming that the prop belongs to the shared completion interface.
+
+### Known punchlist item still present
+- **Sections 2/3 — About Me metadata:** `ProgressManager.SCENE_METADATA` still uses `game1`-`game4` instead of the live scene IDs (`ProgressManager.jsx:62-65`). Live About Me scene lookups therefore use the fallback raw ID and `maxStars: 5` (`ProgressManager.jsx:107-109,138-140`). This remains a documented content/design decision until the four canonical scene names and maximum-star values are confirmed. The live scene order itself is correct at `ProgressManager.jsx:40-44`.
+
+### Manual/device-only follow-ups
+- Recheck Favorite Food's previously un-reproduced tray-on-reload and emoji-rendering reports on a real device.
+- Check `AboutMeComparisonCard` on iPad landscape; its columns still use fixed `min-width: 340px` and `max-width: 480px` (`AboutMeComparisonCard.css:48-52`).
+- Sections 8, 14, 15, and 18 were intentionally skipped; phone/iPad layout, content judgment, accessibility, real-finger interaction, iOS audio, interruption behavior, and child comprehension remain manual gates.
+
+### Checklist status summary
+| Section | Checklist item | Status |
+|---|---|---|
+| 1 | Live scene files confirmed from `src/App.jsx` | PASS |
+| 1 | Child mini-games/components used by each live scene confirmed | PASS |
+| 1 | CSS files imported by live scenes/children confirmed | PASS |
+| 2 | `HomeButton` present | PASS |
+| 2 | `ZoneBadgeButton` / back-to-zone control present | PASS |
+| 2 | `AudioToggle` present | PASS |
+| 2 | `VOReplayButton` present | PASS |
+| 2 | `SceneCompletionCelebration` present | PASS |
+| 2 | Completion scene name, symbols, stars, and next-scene text | FINDING — next-scene text issue above; name/star authority remains KNOWN |
+| 3 | Completion saves immediately and only once | PASS |
+| 3 | Persistence path present | PASS |
+| 3 | `ProgressManager.updateSceneCompletion` or equivalent update occurs | PASS |
+| 3 | Map/zone unlock updates | PASS |
+| 3 | Replay resets cleanly | PASS |
+| 3 | Continue routes correctly | PASS |
+| 3 | Reload after completion restores completion state | PASS |
+| 3 | Missing direct saves checked against shared/benchmark persistence | PASS |
+| 16 | Fresh profile can enter each scene | PASS |
+| 16 | Opening modal appears at the correct phase | PASS |
+| 16 | Scene does not require stale localStorage | PASS |
+| 16 | Saved profile resume/start path is present | PASS (device smoke test remains) |
+| 16 | Malformed scene localStorage falls back to initial state | PASS |
+
+## Shloka River — Group A audit (Sections 1, 2, 3, 16)
+_Audited 2026-09-18 against `GMB_SCENE_LAUNCH_CHECKLIST.md`. Scope was limited to the five live Shloka River scenes imported by `src/App.jsx`: `VakratundaGroveSimplified.jsx`, `SuryakotiBankSimplified.jsx`, `NirvighnamChantSimplified.jsx`, `SarvakaryeshuChantSimplified.jsx`, and `ShlokaRiverFinale.jsx`, plus their directly imported child mini-games and CSS. Group B and Group C were not audited in this pass._
+
+### New actionable bug
+- **Sections 2/3 — Finale star metadata mismatch:** the live finale saves and reports 8 stars (`ShlokaRiverFinale.jsx:643-652,658-662`), but `ProgressManager.SCENE_METADATA` declares `maxStars: 6` for `shloka-river-finale` (`ProgressManager.jsx:75`). `calculateZoneProgress()` exposes the saved star count alongside that metadata maximum and derives the zone maximum from the same table (`ProgressManager.jsx:107-140`), so a fully completed Shloka River can report 28 earned stars against a 26-star maximum. The finale award and metadata need to be aligned.
+
+### Known punchlist item still present
+- **Section 2 — Shared completion next-scene text:** the About Me Hut Group A entry above documents that `SceneCompletionCelebration.jsx` accepts but does not render `nextSceneName`, instead showing the generic `Next Adventure` CTA (`SceneCompletionCelebration.jsx:21,325-340`). The same shared behavior affects the four non-final Shloka River completion screens. Their supplied values are `Suryakoti Bank` (`VakratundaGroveSimplified.jsx:1231`), `Next Scene` (`SuryakotiBankSimplified.jsx:856`), `Next Scene` (`NirvighnamChantSimplified.jsx:749`), and `Final Scene` (`SarvakaryeshuChantSimplified.jsx:813`). This is recorded here as the already-documented shared issue, not a second new bug.
+
+### Manual/device-only follow-ups
+- Visually confirm completion titles, subtitles, discovered symbols, and child-facing CTA wording on phone and iPad.
+- Sections 8, 14, 15, and 18 were intentionally skipped; viewport/safe-area behavior, Sanskrit/caption/content judgment, accessibility, real-finger interaction, iOS audio, interruption behavior, performance, and child comprehension remain manual gates.
+
+### Checklist status summary
+| Section | Checklist item | Status |
+|---|---|---|
+| 1 | Live scene files confirmed from `src/App.jsx` | PASS |
+| 1 | Child mini-games used by each live scene confirmed | PASS |
+| 1 | CSS files imported by live scenes/children confirmed | PASS |
+| 2 | `HomeButton` present | PASS |
+| 2 | `ZoneBadgeButton` / back-to-zone control present | PASS |
+| 2 | `AudioToggle` present | PASS |
+| 2 | `VOReplayButton` present | PASS |
+| 2 | `SceneCompletionCelebration` present | PASS |
+| 2 | Completion scene name, symbols, stars, and next-scene text | KNOWN — shared CTA ignores `nextSceneName`; static title/symbol wiring passes; final visual/content check remains MANUAL |
+| 3 | Completion saves immediately and only once | PASS |
+| 3 | Persistence path present | PASS |
+| 3 | `ProgressManager.updateSceneCompletion` or equivalent update occurs | FINDING — finale writes 8 stars against `maxStars: 6` |
+| 3 | Map/zone unlock updates | PASS |
+| 3 | Replay resets cleanly | PASS |
+| 3 | Continue routes correctly | PASS |
+| 3 | Reload after completion restores completion state | PASS |
+| 3 | Missing direct saves checked against shared/benchmark persistence | N/A — all five live containers have a direct completion persistence path |
+| 16 | Fresh profile can enter each scene | PASS |
+| 16 | Opening modal appears at the correct phase | PASS |
+| 16 | Scene does not require stale localStorage | PASS |
+| 16 | Saved profile resume/start path is present | PASS (device smoke test remains) |
+| 16 | Malformed scene localStorage falls back to initial state | PASS |
+
+## Symbol Mountain — Group A (Sections 1, 2, 3, 16)
+
+_Audited 2026-09-18 against `GMB_SCENE_LAUNCH_CHECKLIST.md`. Scope is limited to the four live Symbol Mountain scenes imported by `src/App.jsx:129-135`: `NewModakSceneV7.jsx`, `PondSceneSimplifiedV4.jsx`, `SymbolMountainSceneV3.jsx`, and `SacredAssemblySceneV8.jsx`, plus their live child games and shared completion/persistence components. Backup/V1/old/copy files were excluded._
+
+### New actionable bugs
+
+| Status | Checklist item | Finding | Location |
+|---|---|---|---|
+| **FINDING** | 2.6 — Completion modal content | The scenes pass `starsEarned`, `totalStars`, and `nextSceneName`, but `SceneCompletionCelebration` does not accept/render the star props and ignores `nextSceneName`, rendering the fixed label `Next Adventure`. Pond also still supplies the obsolete label `Temple Discovery`; the live next scene is `symbol`. | `SceneCompletionCelebration.jsx:12-24,325-383`; `PondSceneSimplifiedV4.jsx:1817-1848`; `App.jsx:1134-1184` |
+| **FINDING** | 3.1 — Completion saves immediately and only once | Completion persistence/unlocking runs through overlapping paths. `SceneCompletionCelebration` saves through `GameStateManager`, then its CTA calls the app completion handler, which updates `ProgressManager` and unlocks again. Pond and Sacred additionally write through both managers locally; Tusk also saves directly. This is separate from the fixed Pond two-call-site bug: the local ref guard exists, but shared/app paths bypass it. | `SceneCompletionCelebration.jsx:123-166`; `App.jsx:1355-1379`; `PondSceneSimplifiedV4.jsx:891-916`; `SymbolMountainSceneV3.jsx:793-808,1130-1141`; `SacredAssemblySceneV8.jsx:257-277,1461-1487` |
+| **FINDING** | 3.5 / 16.4 — Replay and saved-profile integrity | Sacred Assembly's Play Again path calls `hardResetSceneState()`, which clears the permanent `final-scene` completion record. Exiting before finishing the replay can therefore leave the saved profile no longer marked complete. The Modak benchmark resets playback/UI state without clearing permanent completion. | `SacredAssemblySceneV8.jsx:924-993,2196-2198`; `NewModakSceneV7.jsx:1225-1263` |
+| **FINDING** | 3.7 / 16.4 — Reload after completion | Pond and Tusk delete their temp session before the final fireworks/mandala transition has stamped `showingCompletionScreen`. Reloading in that gap can return the scene to initial state: `SceneManager` only enters its completed-scene replay branch when `!isActualReload`, and otherwise falls back to `initialState` when no temp session exists. | `PondSceneSimplifiedV4.jsx:891-916,1275-1295,1790-1797`; `SymbolMountainSceneV3.jsx:793-812,1045-1091`; `SceneManager.jsx:60-131` |
+
+### Known punchlist / judgment items
+
+| Status | Item | Current audit result | Location |
+|---|---|---|---|
+| **KNOWN** | Pond art/emoji positioning | Still a visual judgment call; no new static bug asserted. Confirm on the target phone/iPad layouts. | `PondSceneSimplifiedV4.jsx:1321-1335` |
+| **PASS** | Sacred Assembly card order | Current code enters the side/slide phase, waits 1350ms for the 1.1s slide, and only then flips. The older consolidated “flips before sliding” entry did not reproduce in the current source. | `SacredAssemblySceneV8.jsx:822-851,1677-1707` |
+
+### Manual/device-only follow-ups
+
+| Status | Follow-up |
+|---|---|
+| **MANUAL** | After the completion-modal contract is corrected, visually confirm scene identity, symbols, stars, and next-scene wording. |
+| **MANUAL** | Resolve the documented Pond positioning judgment on the target phone and iPad layouts. |
+| **MANUAL** | Sections 8 and 18 remain deferred: viewport screenshots, real-finger interaction, app switching, Safari/iOS behavior, and device performance. |
+| **MANUAL** | Section 14 human content/child-comprehension checks remain deferred. |
+
+### Complete Group A checklist ledger
+
+| Section | Checklist item | Status | Evidence / note |
+|---|---|---|---|
+| 1 | Confirm live scene file from `src/App.jsx` | **PASS** | Four live imports confirmed at `src/App.jsx:129-135`. |
+| 1 | Confirm child mini-games used by the live scene | **PASS** | Modak: `FlowerJourneyGame2`, `GarlandGame3`; Tusk: `EyesPopUpGame`, `EarsSoundMatchGame`, `TuskBeatPlayerLive`/`BeatPlayerGame`; Sacred: `GaneshaIllustration`; Pond mechanics are inline. |
+| 1 | Confirm CSS files actually imported by live scenes/children | **PASS** | Scene and live-child CSS imports traced; no backup/old/copy stylesheet is in the live import graph. |
+| 2 | `HomeButton` present or intentionally replaced | **PASS** | Present in all four live scene control blocks. |
+| 2 | `ZoneBadgeButton` / back-to-zone control present | **PASS** | Present in all four live scene control blocks. |
+| 2 | `AudioToggle` present if scene has audio | **PASS** | Present in all four audio-enabled scenes. |
+| 2 | `VOReplayButton` present where VO guidance is used | **PASS** | Present in all four live scenes. |
+| 2 | `SceneCompletionCelebration` appears on completion | **PASS** | Present in Modak `:1664`, Pond `:1817`, Tusk `:1096`, Sacred `:2157`. |
+| 2 | Completion modal has correct scene name, symbols, stars, and next-scene text | **FINDING** | Stars and scene-specific next text are not rendered; see actionable finding above. |
+| 3 | Completion saves immediately and only once | **FINDING** | Overlapping shared, app, and scene-local writes/unlocks; see actionable finding above. |
+| 3 | Persistence path is present | **PASS** | All four scenes have shared or direct persistence. |
+| 3 | `ProgressManager.updateSceneCompletion` or equivalent happens | **PASS** | App completion handler covers every scene; Pond and Sacred also call it directly. Duplication is tracked separately. |
+| 3 | Map/zone unlock state updates correctly | **PASS** | Completion reaches `GameStateManager.unlockNextScene`; duplication is tracked separately. |
+| 3 | Replay resets the scene cleanly | **FINDING** | Sacred replay clears permanent completion; see actionable finding above. |
+| 3 | Continue routes to the correct next scene | **PASS** | Live App progression is `modak -> pond -> symbol -> final-scene`; `scene-complete-continue` uses that helper. Pond's stale `temple` tracking call does not control the live App route. |
+| 3 | Reload after completion restores completion state correctly | **FINDING** | Pond/Tusk have a final-transition temp-session gap; see actionable finding above. |
+| 3 | Absence of direct save calls checked against benchmark/shared persistence | **PASS** | Modak's lack of a scene-local completion save is covered by `SceneCompletionCelebration`; it was not treated as missing. |
+| 16 | Fresh profile can enter scene cleanly | **PASS** | Every live scene supplies a complete `SceneManager` initial state. |
+| 16 | Opening modal appears at the right time | **PASS** | Each scene starts with `welcomeShown: false` and gates `OpeningModal` on that state. |
+| 16 | Scene does not depend on stale localStorage | **PASS** | Saved state is merged over defaults; malformed state falls back to the scene's initial state. |
+| 16 | Saved profile resumes/starts scene as intended | **FINDING** | Sacred replay and the Pond/Tusk completion-transition reload gap can damage/lose the intended saved-profile state; see findings above. |
+| 16 | Malformed localStorage does not break scene entry | **PASS** | `SceneManager.jsx:60-131` catches parse failures; `CleanGameWelcomeScreen.jsx:228-267` ignores malformed temp sessions. |
+
 ## Repo hygiene note (not a bug, just noise)
 Several zones turned up dead/decoy duplicate files that could confuse future audits or edits:
 - Shloka River: `Scene3/components/*`, `scene4/components/*`, `SamaprabhaRainbowGame.jsx` — unused variants, containers import siblings one level up instead

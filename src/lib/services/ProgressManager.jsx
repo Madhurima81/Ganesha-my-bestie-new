@@ -39,7 +39,7 @@ class ProgressManager {
 },
     'about-me-hut': {
       name: 'About Me Hut',
-      scenes: ['game1', 'game2', 'game3', 'game4'],
+      scenes: ['family-tree', 'favorite-food', 'dreams-wishes', 'my-indian-story'],
       totalScenes: 4,
       order: 5
     }

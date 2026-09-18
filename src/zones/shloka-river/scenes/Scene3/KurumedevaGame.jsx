@@ -1254,7 +1254,7 @@ export default function KurumedevaGame({
         window.prompt('Copy layout JSON', payload);
         setLayoutCopyStatus('Shown');
       } else {
-        console.log('Kurumedeva layout JSON:', payload);
+        if (import.meta.env.DEV) console.log('Kurumedeva layout JSON:', payload);
         setLayoutCopyStatus('Logged');
       }
     }

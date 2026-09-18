@@ -36,8 +36,8 @@ import useSceneReset from '../../../../lib/hooks/useSceneReset';
 import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
 import useVoiceGuidance from '../../../../lib/hooks/useVoiceGuidance';
 import { useGaneshaVoice } from '../../../../lib/hooks/useGaneshaVoice';
-// import GaneshaGestureCue from '../../../../lib/components/gesture/GaneshaGestureCue'; // commented out â€” inline gesture used
-// import { useMiniGesture } from '../../../../lib/hooks/useMiniGesture';               // commented out â€” inline implementation
+import GaneshaGestureCue from '../../../../lib/components/gesture/GaneshaGestureCue';
+import { useMiniGesture } from '../../../../lib/hooks/useMiniGesture';
 // import BackToMapButton from '../../../../lib/components/navigation/BackToMapButton';  // commented out â€” nav removed
 import { getSceneResetConfig } from '../../../../lib/config/SceneResetConfigs';
 
@@ -83,11 +83,6 @@ import symbolTrunkColored from '../../shared/images/icons/symbol-trunk-new.webp'
 // Shared countdown duration â€” must match across useResumeCountdown + usePauseAwareTimeout
 const RESUME_DELAY_MS = 3000;
 const GANESHA_REVEAL_IMAGE = '/images/ganesha-sit.svg';
-
-// Mini gesture icons (same pattern as Pond / Modak)
-const MINI_THUMBS_UP_ICON = '/images/hand-thumbsup.svg';
-const MINI_VICTORY_ICON = '/images/hand-victory.svg';
-const MINI_OK_ICON = '/images/hand-ok.svg';
 
 const VOICE_LINES = {
   opening: "Let's explore... look and listen.",
@@ -266,26 +261,11 @@ const SymbolMountainSceneContent = ({
     sceneState?.welcomeShown
   ]);
 
-  // -- Inline mini-gesture (same pattern as NewModakSceneV7) -----------------
-  const miniGestureTimerRef = useRef(null);
-  const [miniGesture, setMiniGesture] = useState({
-    show: false,
-    target: 'center',
-    durationMs: 1500,
-    key: 0,
-    icon: MINI_THUMBS_UP_ICON
-  });
-  const triggerMiniGesture = useCallback((target = 'center', durationMs = 1500, icon = MINI_THUMBS_UP_ICON) => {
-    if (miniGestureTimerRef.current) {
-      clearTimeout(miniGestureTimerRef.current);
-      miniGestureTimerRef.current = null;
-    }
-    setMiniGesture(prev => ({ show: true, target, durationMs, key: prev.key + 1, icon }));
-    miniGestureTimerRef.current = setTimeout(() => {
-      setMiniGesture(prev => ({ ...prev, show: false }));
-      miniGestureTimerRef.current = null;
-    }, durationMs);
-  }, []);
+  // Ganesha micro-reward gesture — was a hand-rolled reimplementation whose
+  // resulting state was never rendered (dead code, no gesture ever showed on
+  // eyes/ears/tusk completion). Switched to the shared hook + component used
+  // by every other live scene.
+  const { miniGesture, triggerMiniGesture, hideMiniGesture } = useMiniGesture();
 
   // -- Inline hint cadence state (same pattern as NewModakSceneV7) ------------
   const idleHintsEnabled = true;
@@ -397,15 +377,12 @@ const SymbolMountainSceneContent = ({
     return () => {
       clearAllTimeouts();
       if (resumePopupTimeoutRef.current) clearTimeout(resumePopupTimeoutRef.current);
-      if (miniGestureTimerRef.current) {
-        clearTimeout(miniGestureTimerRef.current);
-        miniGestureTimerRef.current = null;
-      }
+      hideMiniGesture();
       stopSpokenVoice();
       stopMusic();
       reloadHandledRef.current = false;
     };
-  }, [clearAllTimeouts, stopMusic, stopSpokenVoice]);
+  }, [clearAllTimeouts, stopMusic, stopSpokenVoice, hideMiniGesture]);
 
   useEffect(() => {
     if (isAudioOn) return;
@@ -719,7 +696,7 @@ const SymbolMountainSceneContent = ({
       phase: PHASES.EYES_COMPLETE
     });
     setShowSparkle('eyes-complete-final');
-    triggerMiniGesture('center', 2000, MINI_VICTORY_ICON);
+    triggerMiniGesture('victory', 'center', 2000);
     safeSetTimeout(() => {
       setShowSparkle(null);
       setRevealConfig({ symbolId: 'eyes', symbolImage: symbolEyesColored, symbolName: 'Eyes', affirmation: "I notice what's around me.", sidebarTarget: getSidebarTarget('eyes'), sayWithMeDelayMs: 3200 });
@@ -737,7 +714,7 @@ const SymbolMountainSceneContent = ({
       tuskGameActive: false,
       phase: PHASES.TUSK_COMPLETE
     });
-    triggerMiniGesture('center', 2200, MINI_VICTORY_ICON);
+    triggerMiniGesture('victory', 'center', 2200);
     safeSetTimeout(() => {
       setShowGoldenAura(true);
     }, 450);
@@ -797,7 +774,7 @@ const SymbolMountainSceneContent = ({
           activeGame: 'ears',
           currentFocus: 'ears'
         });
-        triggerMiniGesture('ears', 1400, MINI_OK_ICON);
+        triggerMiniGesture('ok', 'center', 1400);
         setTimeout(() => setShowSparkle('ears-materialize'), 0);
         setTimeout(() => setShowSparkle(null), 2000);
       }, 950);
@@ -811,7 +788,7 @@ const SymbolMountainSceneContent = ({
           activeGame: 'tusk',
           currentFocus: 'tusk'
         });
-        triggerMiniGesture('center', 1400, MINI_OK_ICON);
+        triggerMiniGesture('ok', 'center', 1400);
       }, 950);
     } else if (symbolId === 'tusk') {
       safeSetTimeout(() => {
@@ -916,7 +893,7 @@ const SymbolMountainSceneContent = ({
                       });
                       playChime();
                       setShowSparkle('ears-complete-final');
-                      triggerMiniGesture('center', 2000, MINI_VICTORY_ICON);
+                      triggerMiniGesture('victory', 'center', 2000);
                       safeSetTimeout(() => {
                         setShowSparkle(null);
                         setRevealConfig({
@@ -1009,6 +986,9 @@ const SymbolMountainSceneContent = ({
                 />
               )}
 
+              {miniGesture.show && (
+                <GaneshaGestureCue key={miniGesture.key} gestureType={miniGesture.type} position={miniGesture.position} size={120} />
+              )}
 
               {/* REMOVED MANUAL NAV & BACK BUTTON (Handled by GameLayout) */}
 

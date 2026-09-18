@@ -1,6 +1,142 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
 
+## [2026-09-18] — Tusk zone: Ganesha gesture cue was dead code, fixed
+**Touched:** src/zones/symbol-mountain/scenes/tusk/SymbolMountainSceneV3.jsx
+**Changed:** Follow-up to "does sparkle + Ganesha gesture show on completion"
+check across all 13 live scenes. 10 of 13 already correctly fire both
+together via the shared `useMiniGesture`/`GaneshaGestureCue`. The two
+"finale" scenes (SacredAssemblySceneV8, ShlokaRiverFinale) intentionally skip
+the small per-round gesture in favor of their bigger end-of-zone
+`SceneCompletionCelebration` + fireworks (which has its own Ganesha pose) —
+confirmed as by-design, not a gap.
+Found a real bug in the Tusk zone (Eyes/Ears/Tusk mini-games):
+`triggerMiniGesture(...)` was called 5 times (on eyes-complete, ears-complete,
+tusk-reveal) into a local hand-rolled `miniGesture` state — but that state was
+never rendered anywhere in the file. The shared `GaneshaGestureCue` import
+was even commented out ("inline gesture used") but no inline render existed
+either — confirmed dead via ESLint flagging `miniGesture` as unused. Sparkles
+fired correctly on these moments; Ganesha's gesture never did.
+Fix: replaced the local state/callback with the real shared `useMiniGesture`
+hook + `GaneshaGestureCue` component (same pattern as every other live
+scene), converted all 5 call sites to the shared `(type, position,
+durationMs)` signature — `victory` for tusk/ears-complete, `ok` for the
+eyes→ears and ears→tusk transitions (the icons already chosen, hand-victory/
+hand-ok, map 1:1 to the shared component's icon set) — and removed the
+now-orphaned icon-path constants and manual timer cleanup.
+**Open:** Not yet visually verified in-browser — Madhurima should spot-check
+the Eyes/Ears/Tusk completions next playthrough.
+
+## [2026-09-18] — Voice-mute clarity + ShlokaRiverFinale replay button
+**Touched:** src/lib/components/ui/AudioToggle/AudioToggle.jsx,
+src/zones/shloka-river/scenes/scene5/ShlokaRiverFinale.jsx
+**Changed:** Follow-up to "check mute/replay across all 13 scenes." Findings:
+`AudioToggle` (mute) present and correctly wired in all 13; `VOReplayButton`
+present in 12 of 13, missing entirely from `ShlokaRiverFinale`. Also found
+mute only ever silences narration/music, never SFX (`useVoiceGuidance.js`'s
+`playSfx` and `AudioService.js` have no mute-awareness at all, by an existing
+deliberate comment — "always full volume — game audio, never muted by
+toggle"). Discussed with Madhurima: since this app-wide mute button lives
+in-game specifically for repeat players skipping narration they've already
+heard (not a general "silence everything" control, and there's no separate
+parent-settings mute), decided to keep it **voice-only** — muting SFX too
+would flatten the fun feedback loop (taps/chimes/sparkles) that makes replay
+still enjoyable. No SFX-gating code changed as a result.
+What WAS changed:
+1. `AudioToggle.jsx` — the icon is a generic speaker/soundwave glyph and the
+   old labels ("Mute" / "Turn off sound") implied a whole-app mute, which
+   doesn't match the actual voice-only behavior. Relabeled aria-label/title
+   to "Turn off voice narration" / "Turn off voice", and added a doc comment
+   explaining the voice-only decision so a future pass doesn't "fix" this
+   into muting SFX by mistake.
+2. `ShlokaRiverFinale.jsx` — added the missing `VOReplayButton`, wired to a
+   new `replayCurrentVoice` callback that maps each of the scene's 6 phases
+   (INITIAL/ARRANGE/SUCCESS/RECAP/FINALE/COMPLETE) to its correct VO line,
+   matching the "one replay button per scene" pattern used everywhere else.
+   RECAP replays just its intro line rather than restarting the full
+   word-by-word shloka sequence (which has its own completion timers already
+   running — re-firing it risked overlapping audio and duplicate finale
+   transitions).
+**Open:** Not yet visually verified in-browser. A future ask could be a
+"voice on by default" preference in Parent Dashboard for first launch,
+without removing the in-scene toggle — discussed but not built.
+
+## [2026-09-18] — Idle-hint timing fix + orphan file cleanup
+**Touched:** src/zones/shloka-river/scenes/scene5/ShlokaRiverFinale.jsx
+**Deleted:** src/zones/about-me-hut/enjoy/Wish2PlateDropGame.jsx (orphan duplicate)
+**Changed:** Follow-up to the idle-hint audit two entries below — fixed the
+two remaining flagged inconsistencies (the third, VakratundaRescueGame's
+failed-attempt-triggered model, is confirmed intentional by Madhurima and
+left as-is):
+1. `ShlokaRiverFinale`'s hint ladder escalated at 20s/35s instead of the
+   ~16-18s/24-26s norm used everywhere else in the app — changed to 18000ms/
+   26000ms to match.
+2. Confirmed via `ObstacleRemoverGame.jsx`'s actual import
+   (`./components/Wish2PlateDropGame`) that only the copy under
+   `enjoy/components/Wish2PlateDropGame.jsx` is live; the other copy at
+   `enjoy/Wish2PlateDropGame.jsx` (last touched 2026-04-20, only referenced
+   by dead backup/copy scene files, not by anything in sceneRegistry.js) was
+   an orphan duplicate. Verified it was already committed/clean in git
+   before deleting, per the "commit before deletion" rule.
+**Open:** Not visually verified in-browser.
+
+## [2026-09-18] — 3-level idle-hint audit + fixes: closed every "no hint at all" gap
+**Touched:** src/zones/symbol-mountain/scenes/tusk/EyesPopUpGame.jsx,
+src/zones/symbol-mountain/scenes/tusk/EyesPopUpGame.css,
+src/zones/symbol-mountain/scenes/tusk/SymbolMountainSceneV3.jsx,
+src/lib/beatPlayer/BeatPlayerGame.jsx (shared engine),
+src/lib/beatPlayer/BeatPlayerGame.css,
+src/zones/symbol-mountain/scenes/modak/GarlandGame3.jsx,
+src/zones/symbol-mountain/scenes/modak/GarlandGame3.css
+**Changed:** Audited the "3-level idle hint" ladder (the app-wide pattern of
+L1 gentle pulse ~9s → L2 stronger pulse/VO ~16s → L3 most explicit hint
+~24s, canonicalized in `useRepeatedHintCycle.js`) across all 13 live scenes
+and their mini-games. Most already implement this correctly (either via the
+shared hook or a hand-rolled equivalent with the same 9-10s/16-18s/24-26s
+timing) — confirmed clean: SuryakotiGame, SamaprabhaGame, NirvighnamGame,
+KurumedevaGame, SarvakaryeshuGame, SarvadaGame, Familytreegame,
+Favoritefoodgame, ObstacleRemoverGame (4 parallel ladders), MyIndianStoryGame
+(3 parallel ladders), Pond, Modak's main phase, Sacred Assembly,
+EarsSoundMatchGame (already had a complete replay→text-hint→highlight-target
+ladder the first audit pass had missed).
+Fixed the genuine "zero guidance if stuck" gaps found in Tusk + Modak:
+1. **EyesPopUpGame** (tap, find-the-hidden-object) — had only a single-level
+   hint (pulse at 9s, no escalation). Added L2 (~17s: pulse continues + one-
+   time VO "Look near the bushes — something is hiding there.") and L3
+   (~25s: stronger/faster glow-pulse via new `.hinting-strong` class). Tap
+   mechanic, so no gesture demo needed.
+2. **BeatPlayerGame** (shared engine behind Tusk's `TuskBeatPlayerLive`,
+   drag/hold) — previously only showed its gesture demo for the first 2
+   interactive beats, then went completely silent for the rest of the flow.
+   Added a real per-beat idle ladder: L1/L2 pulse the interactive item
+   (9s/16s, new `.beat-player-hint-pulse`/`.beat-player-hint-strong`
+   classes, glow-only so they don't clobber an item's own rotation/flip
+   transform), L3 (24s) re-shows the same GestureDemo regardless of beat
+   count.
+3. **GarlandGame3** (drag the finished garland to Ganesha) — previously a
+   single one-shot 6s intro demo with nothing after. Replaced with a real
+   ladder: L1 pulse (9s, new `.g3g-hint-pulse`), L2 stronger pulse + one-time
+   VO "Carry the garland to Ganesha!" (16s, new `.g3g-hint-strong`), L3
+   re-shows the drag demo (24s). Resets on drag start or a failed drop (not
+   dropped on Ganesha) so it doesn't immediately nag right after a try.
+4. **SymbolMountainSceneV3** — removed the dead `showIdleGestureHint` state:
+   it computed a level-3 flag that was never rendered anywhere (no
+   `GestureDemo` in that file) — pure cleanup, no behavior change.
+**Open — NOT all 13 scenes are fully consistent, only the "zero hint" gaps
+are closed:**
+- `ShlokaRiverFinale` — its own hint ladder escalates at 20s/35s instead of
+  the ~16s/24s norm everywhere else in the app. Not touched this pass.
+- `VakratundaRescueGame` — uses a different model entirely (3 failed drag
+  attempts trigger the ladder, not idle time). Possibly intentional
+  ("frustration"-triggered vs. idle-triggered), left as-is pending a call.
+- Two files named `Wish2PlateDropGame.jsx` exist
+  (`enjoy/Wish2PlateDropGame.jsx` and the live one at
+  `enjoy/components/Wish2PlateDropGame.jsx`) — the orphan hasn't been
+  deleted yet.
+None of this was visually confirmed in-browser — Madhurima should spot-check
+Tusk's Eyes game and Modak's garland-carry step, plus Tusk's beat-player
+sub-games generally, on next playthrough.
+
 ## [2026-09-18] — GestureDemo coverage pass: every non-tap mini-game now shows its demo at the start
 **Touched:** src/lib/beatPlayer/BeatPlayerGame.jsx (shared engine),
 src/zones/symbol-mountain/scenes/pond/PondSceneSimplifiedV4.jsx,

@@ -163,6 +163,19 @@
   50% { transform: translateY(-4px) scale(1.02); }
 }
 
+/* Idle-hint ladder (L1/L2) — glow only, layered on top of the permanent
+   bob animation above rather than replacing its transform. */
+.g3g-completed-garland.g3g-hint-pulse {
+  animation: g3gGarlandAppear 450ms cubic-bezier(.2, 1.2, .4, 1) both, g3gGarlandReady 1.6s ease-in-out infinite 450ms, g3gHintGlow 1.4s ease-in-out infinite;
+}
+.g3g-completed-garland.g3g-hint-strong {
+  animation: g3gGarlandAppear 450ms cubic-bezier(.2, 1.2, .4, 1) both, g3gGarlandReady 1.6s ease-in-out infinite 450ms, g3gHintGlow 0.9s ease-in-out infinite;
+}
+@keyframes g3gHintGlow {
+  0%, 100% { filter: drop-shadow(0 0 0 rgba(255, 193, 7, 0)); }
+  50% { filter: drop-shadow(0 0 16px rgba(255, 193, 7, 0.85)); }
+}
+
 /* ========================================================
    GARLAND WHILE DRAGGING THROUGH WORLD
    ======================================================== */

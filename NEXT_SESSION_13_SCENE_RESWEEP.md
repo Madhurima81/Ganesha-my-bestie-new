@@ -79,8 +79,18 @@ Ran 3 background agents, one per zone, each covering Structure & UI (§1,2,3,16)
 Runtime safety (§4,5,6,7), and Static hygiene (§9,10,11,12,13) against
 `GMB_SCENE_LAUNCH_CHECKLIST.md`. Findings-only pass, fixes applied afterward by hand
 (not by the agents) once confirmed:
-- Symbol Mountain: clean, no new bugs. Confirmed Pond drag/hold pointercancel coverage
-  and uncommitted `GarlandGame3.jsx/.css` changes compliant.
+- Symbol Mountain: agent reported "clean, no new bugs" — **this was misleading, not
+  wrong about what it checked but silent on what it didn't.** Direct spot-check (by
+  Madhurima's request) found 3 previously-flagged Symbol Mountain items from round 1
+  were still unfixed and simply unmentioned: Tusk's Arial font, Tusk's sub-60px mobile
+  touch targets, and Sacred Assembly's fixed-px `!important` overrides. The first two
+  are now fixed (round 2, see punch-list). Sacred Assembly's `!important` overrides and
+  dead GameCoach state are still open — held deliberately, see punch-list "New findings"
+  table for why. **Lesson: a zone agent's "no new bugs" summary only covers what it
+  actively found — it does not mean previously-flagged items were re-verified.** Always
+  spot-check a sample of pre-existing findings against a "clean" report before trusting it.
+  Confirmed Pond drag/hold pointercancel coverage and uncommitted `GarlandGame3.jsx/.css`
+  changes compliant (this part of the report held up).
 - Shloka River: fixed `SamaprabhaGame.jsx`'s 2 ungated debug-panel console calls
   (lines 111, 584) — DEV-gated. **False positive caught and corrected:** the agent's
   "ungated console.log in SarvakaryeshuGame.jsx/SarvadaGame.jsx" finding was against
@@ -98,8 +108,15 @@ Group D (live-browser pass, checklist §17) not yet run — do that as a second 
 once any further Group A/B/C fixes are approved and committed.
 
 ## Known-open items carried forward from the 2026-09-18 pass (see `GMB_AUDIT_PUNCHLIST.md` for full detail)
-- New static findings not yet fixed (Arial font in Tusk, sub-60px touch targets in Tusk/Pond, Sacred Assembly's fixed-px `!important` overrides + dead GameCoach state, Vakratunda's stale CSS vars + fixed-px overrides, off-palette backgrounds in Shloka Scenes 2 & 4)
-- 6 design/content judgment calls awaiting Madhurima's decision (Sacred Assembly card-flip order, Pond emoji positioning, Sarvakaryeshu subtitle, Sarvada hide-and-seek redesign, Vakratunda re-check, opening unlock-dot threshold)
+- Only 3 static findings remain genuinely open (round 2 fixed the rest — Arial font,
+  Tusk touch targets, Vakratunda stale vars, off-palette backgrounds in Shloka Scenes 2 & 4,
+  and 5 debug-panel console.logs across Vakratunda/Mahakaya/Nirvighnam/Kurumedeva/Samaprabha
+  are all fixed):
+  1. Sacred Assembly's fixed-px `!important` overrides on symbol images (`SacredAssemblyScene.css:590-639,840-841,863-864`) — held because each width pairs with a hand-tuned `translate()` offset; needs visual verification after a `clamp()` conversion, not just a build check.
+  2. Sacred Assembly's dead GameCoach state (`SacredAssemblySceneV8.jsx`, ~12 sites) — held as non-functional, low-priority cleanup.
+  3. Vakratunda's fixed-px breakpoint overrides (`VakratundaGroveSimplified.css:300-357`) — same visual-verification caveat as #1.
+  4. `PondScene.css:869,970` sub-60px `.pond-trunk-reeds`/`.pond-trunk-lotus` — **not re-verified in round 2**, status unknown, check fresh.
+- 6 design/content judgment calls awaiting Madhurima's decision (Sacred Assembly card-flip order, Pond emoji positioning, Sarvakaryeshu subtitle, Sarvada hide-and-seek redesign, Vakratunda re-check, opening unlock-dot threshold), plus a 7th added this pass: Dreams & Wishes (`DreamsWishesGame.css`) background palette doesn't match About Me Hut's zone colors — could be an intentional "dusk sky" sub-theme, needs Madhurima's call.
 - Live-device-only items that can't be resolved by reading code (ghost-gesture on Pond/Ears/Eyes beyond what was fixed, About Me Hut's 2 unreproducible items, `AboutMeComparisonCard` clamp() conversion)
 - `ObstacleRemoverGame.jsx` and `MyIndianStoryGame.jsx` flagged in the original punch-list as under-audited due to size — worth a dedicated full pass
 - Repo-hygiene dead-file list — never deleted, still sitting in the repo (see punch-list bottom section)

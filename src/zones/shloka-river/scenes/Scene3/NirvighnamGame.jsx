@@ -76,7 +76,7 @@ const loadDebugLayout = () => {
       pathLine: { ...fallback.pathLine, ...parsed.pathLine },
     };
   } catch (error) {
-    console.warn('Unable to load Nirvighnam layout debug values:', error);
+    if (import.meta.env.DEV) console.warn('Unable to load Nirvighnam layout debug values:', error);
     return fallback;
   }
 };
@@ -688,7 +688,7 @@ export default function NirvighnamGame({
       pathLine: activeLayout.pathLine,
     }, null, 2) + ';';
 
-    console.log('Nirvighnam layout JSON:', payload);
+    if (import.meta.env.DEV) console.log('Nirvighnam layout JSON:', payload);
     window.prompt('Copy Nirvighnam layout', payload);
   };
 

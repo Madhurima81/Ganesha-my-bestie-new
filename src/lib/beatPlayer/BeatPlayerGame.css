@@ -71,6 +71,23 @@
   animation: beatPlayerShake 380ms ease-in-out;
 }
 
+/* Idle-hint ladder: base .is-interactive already has a gentle permanent
+   beckon glow; these ramp it up the longer a beat waits for input. */
+.beat-player-item.beat-player-hint-pulse {
+  animation: beatPlayerBeckon 1s ease-in-out infinite;
+}
+
+.beat-player-item.beat-player-hint-strong {
+  animation: beatPlayerHintStrong 0.9s ease-in-out infinite;
+}
+
+/* Glow only (no transform/scale) — items may carry their own rotation/flip
+   via inline style, and animating transform here would clobber that. */
+@keyframes beatPlayerHintStrong {
+  0%, 100% { filter: drop-shadow(0 0 0 rgba(255, 152, 0, 0)); }
+  50% { filter: drop-shadow(0 0 18px rgba(255, 152, 0, 0.9)); }
+}
+
 /* Press-hold progress ring — same fill-as-you-hold pattern as the Pond
    scene's lotus/rock hold, so a press-hold reads as "something is
    happening" instead of a vague pulse. Drawn on top of the held item,
