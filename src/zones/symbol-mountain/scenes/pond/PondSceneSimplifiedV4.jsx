@@ -1,3 +1,4 @@
+import PoseImage, { usePreloadPoses } from '../../../../lib/components/animation/PoseImage';
 // zones/symbol-mountain/scenes/pond/PondSceneSimplifiedV6.jsx
 // V6 GAMEPLAY UPDATE — "Find a Way, Rise Anyway" (locked spec):
 //   Phase 1 (Trunk, first) — Blocked stream + rock obstacle. Child free-drags
@@ -62,13 +63,14 @@ import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOv
 import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal';
 
 // Images
-import pondBgFixed from './assets/images/pond-bg-fixed.png';
+import pondBgFixed from './assets/images/pond-bg-fixed.webp';
+import pondStreamOverlay from './assets/images/pond-stream-overlay.webp';
 import lotusDormant from './assets/images/trunk-lotus-dormant-new.webp';
 import lotusUpright from './assets/images/trunk-lotus-upright-new.webp';
 import lotusBloomedImg from './assets/images/trunk-lotus-bloomed-new.webp';
-import pondBigRock from './assets/images/pond-big-rock.png';
-import pondPebble from './assets/images/pond-pebble.png';
-import pondFlower from './assets/images/pond-flower.png';
+import pondBigRock from './assets/images/pond-big-rock.webp';
+import pondPebble from './assets/images/pond-pebble.webp';
+import pondFlower from './assets/images/pond-flower.webp';
 import mooshikaCoach from "./assets/images/mooshika-coach.webp";
 import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-new.webp';
 import symbolModakColored from '../../shared/images/icons/symbol-modak-new.webp';
@@ -258,6 +260,29 @@ const PondSceneSimplifiedV5 = ({
   );
 };
 
+const SCENE_IMAGES = [
+  GANESHA_REFLECTION_IMAGE,
+  pondBgFixed,
+  pondStreamOverlay,
+  lotusDormant,
+  lotusUpright,
+  lotusBloomedImg,
+  pondBigRock,
+  pondPebble,
+  pondFlower,
+  mooshikaCoach,
+  symbolMooshikaColored,
+  symbolModakColored,
+  symbolBellyColored,
+  symbolLotusColored,
+  symbolTrunkColored,
+  lotusBefore,
+  lotusAfter,
+  trunkBefore,
+  trunkAfter,
+  ganeshaCharacter,
+];
+
 const PondSceneContent = ({
   sceneState,
   sceneActions,
@@ -267,6 +292,7 @@ const PondSceneContent = ({
   zoneId,
   sceneId
 }) => {
+  usePreloadPoses(SCENE_IMAGES);
   const { resetScene } = useSceneReset(sceneActions, 'symbol-mountain', 'pond', getSceneResetConfig('pond'));
   const completionModalContent = getCompletionModal(zoneId, sceneId);
   const activeProfile = GameStateManager.getActiveProfile();
@@ -280,13 +306,88 @@ const PondSceneContent = ({
   const [fireworksFinished, setFireworksFinished] = useState(false);
   const [layoutOpen, setLayoutOpen] = useState(false);
   const [layoutKey, setLayoutKey] = useState('rock');
-  const [pondLayout, setPondLayout] = useState({
-    rock: { x: 36, y: 64, size: 15 },
+  const [layoutCopyMsg, setLayoutCopyMsg] = useState('');
+  const [layoutPanelPos, setLayoutPanelPos] = useState(null); // {x, y} px, null = default top-right
+  const layoutDragRef = useRef(null); // { pointerId, offsetX, offsetY }
+
+  const handleLayoutDragStart = useCallback((e) => {
+    const panelEl = e.currentTarget.closest('.pond-layout-panel');
+    if (!panelEl) return;
+    const rect = panelEl.getBoundingClientRect();
+    layoutDragRef.current = {
+      pointerId: e.pointerId,
+      offsetX: e.clientX - rect.left,
+      offsetY: e.clientY - rect.top
+    };
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+  }, []);
+
+  const handleLayoutDragMove = useCallback((e) => {
+    const drag = layoutDragRef.current;
+    if (!drag || drag.pointerId !== e.pointerId) return;
+    setLayoutPanelPos({ x: e.clientX - drag.offsetX, y: e.clientY - drag.offsetY });
+  }, []);
+
+  const handleLayoutDragEnd = useCallback((e) => {
+    if (layoutDragRef.current?.pointerId === e.pointerId) {
+      layoutDragRef.current = null;
+    }
+  }, []);
+  const DEFAULT_POND_LAYOUT = {
+    rock: { x: 32.5, y: 53, size: 26.5 },
     flowers: { x: 55.5, y: 62.5, size: 10.5 },
     lotus: { x: 76.5, y: 59.5, size: 8.5 },
     reflection: { x: 76, y: 66, size: 20 },
     water: { x: 0, y: 67.8, size: 78 },
-  });
+    streamOverlay: { x: 0, y: 41, size: 90.5 },
+    // Each flower and pebble is now a fully independent stage-positioned
+    // element (own x/y/size) — NOT nested inside the reeds-swipe group, so
+    // dragging one never drags the others as a group.
+    flower1: { x: 48, y: 60, size: 6 },
+    flower2: { x: 51, y: 65, size: 5 },
+    flower3: { x: 63, y: 60, size: 6 },
+    flower4: { x: 60, y: 65, size: 5 },
+    pebble1: { x: 55, y: 69, size: 3.5 },
+    pebble2: { x: 59, y: 66, size: 2.5 },
+    pebble3: { x: 51, y: 71, size: 2.8 },
+    pebble4: { x: 57, y: 73, size: 2.2 },
+  };
+  const [pondLayout, setPondLayout] = useState(DEFAULT_POND_LAYOUT);
+  const pondStageRef = useRef(null);
+  const elementDragRef = useRef(null); // { key, offsetX, offsetY }
+
+  const stagePctFromEvent = useCallback((e, el) => {
+    const rect = el?.getBoundingClientRect();
+    if (!rect || !rect.width || !rect.height) return null;
+    return {
+      x: ((e.clientX - rect.left) / rect.width) * 100,
+      y: ((e.clientY - rect.top) / rect.height) * 100,
+    };
+  }, []);
+
+  const startMainDrag = useCallback((key, e) => {
+    if (!layoutOpen) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const pt = stagePctFromEvent(e, pondStageRef.current);
+    if (!pt) return;
+    const current = pondLayout[key];
+    elementDragRef.current = { key, offsetX: pt.x - current.x, offsetY: pt.y - current.y };
+    setLayoutKey(key);
+    try { e.currentTarget.setPointerCapture?.(e.pointerId); } catch { /* synthetic/inactive pointer — safe to ignore */ }
+  }, [layoutOpen, pondLayout, stagePctFromEvent]);
+
+  const onElementDragMove = useCallback((e) => {
+    const d = elementDragRef.current;
+    if (!d) return;
+    const pt = stagePctFromEvent(e, pondStageRef.current);
+    if (!pt) return;
+    const x = Number(Math.max(0, Math.min(100, pt.x - d.offsetX)).toFixed(1));
+    const y = Number(Math.max(0, Math.min(100, pt.y - d.offsetY)).toFixed(1));
+    setPondLayout((cur) => ({ ...cur, [d.key]: { ...cur[d.key], x, y } }));
+  }, [stagePctFromEvent]);
+
+  const endElementDrag = useCallback(() => { elementDragRef.current = null; }, []);
 
   const updatePondLayout = (field, value) => {
     setPondLayout((current) => ({
@@ -366,6 +467,7 @@ const PondSceneContent = ({
 
   const progressiveHintRef = useRef(null);
   const reloadHandledRef = useRef(false);
+  const pondCompletionSavedRef = useRef(false);
 
   const lastAnnouncedPromptRef = useRef(null);
   const resumePromptPlayedRef = useRef(false);
@@ -386,6 +488,18 @@ const PondSceneContent = ({
   const rearmIdleHints = useCallback(() => {
     setHintResetKey(k => k + 1);
   }, []);
+
+  // Show the gesture demo (rock hold / reeds drag / lotus hold) right away
+  // when each phase starts, same "introGesture" pattern as FlowerJourneyGame2 —
+  // not just after the idle-hint ladder escalates. Auto-clears after 6s (or
+  // instantly on any touch, via GestureDemo's own dismiss-on-pointerdown).
+  const [pondIntroGesture, setPondIntroGesture] = useState(false);
+  useEffect(() => {
+    if (!sceneState?.phase) return undefined;
+    setPondIntroGesture(true);
+    const t = window.setTimeout(() => setPondIntroGesture(false), 6000);
+    return () => window.clearTimeout(t);
+  }, [sceneState?.phase]);
 
   const speakPondPrompt = useCallback((key) => {
     if (!isAudioOn || !VOICE_LINES[key]) return;
@@ -755,19 +869,10 @@ const PondSceneContent = ({
   };
 
   // -- SymbolAutoReveal helpers -----------------------------------------------
-  // Play power VO when the reveal card appears (Scene 1 parity).
-  useEffect(() => {
-    if (!revealConfig) return;
-    if (!isAudioOn) return;
-    const voMap = {
-      lotus: 'lotusBloomPower',
-      trunk: 'waterPathPower'
-    };
-    const voKey = voMap[revealConfig.symbolId];
-    if (!voKey) return;
-    const id = setTimeout(() => speakPondPrompt(voKey), 400);
-    return () => clearTimeout(id);
-  }, [revealConfig, isAudioOn, speakPondPrompt]);
+  // SymbolAutoReveal owns the reveal-card VO ("Say with me, <affirmation>")
+  // for all 13 scenes - no separate speakPondPrompt call here, or the two
+  // would race and speechSynthesis.cancel() would cut the first one off
+  // mid-line.
 
   const getSidebarTarget = useCallback((symbolId) => {
     const el = document.getElementById(`sidebar-${symbolId}`);
@@ -784,6 +889,11 @@ const PondSceneContent = ({
   };
 
   const persistPondCompletion = useCallback(() => {
+    // Called from both the fireworks-finish effect and the Continue button —
+    // guard so a normal playthrough doesn't double-save/double-unlock.
+    if (pondCompletionSavedRef.current) return;
+    pondCompletionSavedRef.current = true;
+
     const profileId = localStorage.getItem('activeProfileId');
     if (!profileId) return;
 
@@ -1197,7 +1307,7 @@ const PondSceneContent = ({
       helpConfig={pondHelpConfig}
       sceneState={sceneState}
       onHome={() => onNavigate?.('home')}
-      onReplay={resetScene}
+      onReplay={() => { pondCompletionSavedRef.current = false; resetScene(); }}
       isAudioOn={isAudioOn}
       onAudioToggle={toggleAudio}
       showMenu={false}
@@ -1205,8 +1315,9 @@ const PondSceneContent = ({
       <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
         <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
           <div className="pond-scene-container">
-            <HomeButton onNavigate={onNavigate} />
+            <HomeButton onNavigate={(...args) => { stopSpokenVoice(); onNavigate?.(...args); }} />
             <div
+              ref={pondStageRef}
               className="pond-background"
               style={{
                 backgroundImage: `url(${pondBgFixed})`,
@@ -1225,7 +1336,37 @@ const PondSceneContent = ({
                 '--pond-water-x': `${pondLayout.water.x}%`,
                 '--pond-water-y': `${pondLayout.water.y}%`,
                 '--pond-water-size': `${pondLayout.water.size}%`,
+                '--pond-stream-overlay-x': `${pondLayout.streamOverlay.x}%`,
+                '--pond-stream-overlay-y': `${pondLayout.streamOverlay.y}%`,
+                '--pond-stream-overlay-size': `${pondLayout.streamOverlay.size}%`,
+                '--pond-flower1-x': `${pondLayout.flower1.x}%`,
+                '--pond-flower1-y': `${pondLayout.flower1.y}%`,
+                '--pond-flower1-size': `${pondLayout.flower1.size}vw`,
+                '--pond-flower2-x': `${pondLayout.flower2.x}%`,
+                '--pond-flower2-y': `${pondLayout.flower2.y}%`,
+                '--pond-flower2-size': `${pondLayout.flower2.size}vw`,
+                '--pond-flower3-x': `${pondLayout.flower3.x}%`,
+                '--pond-flower3-y': `${pondLayout.flower3.y}%`,
+                '--pond-flower3-size': `${pondLayout.flower3.size}vw`,
+                '--pond-flower4-x': `${pondLayout.flower4.x}%`,
+                '--pond-flower4-y': `${pondLayout.flower4.y}%`,
+                '--pond-flower4-size': `${pondLayout.flower4.size}vw`,
+                '--pond-pebble1-x': `${pondLayout.pebble1.x}%`,
+                '--pond-pebble1-y': `${pondLayout.pebble1.y}%`,
+                '--pond-pebble1-size': `${pondLayout.pebble1.size}vw`,
+                '--pond-pebble2-x': `${pondLayout.pebble2.x}%`,
+                '--pond-pebble2-y': `${pondLayout.pebble2.y}%`,
+                '--pond-pebble2-size': `${pondLayout.pebble2.size}vw`,
+                '--pond-pebble3-x': `${pondLayout.pebble3.x}%`,
+                '--pond-pebble3-y': `${pondLayout.pebble3.y}%`,
+                '--pond-pebble3-size': `${pondLayout.pebble3.size}vw`,
+                '--pond-pebble4-x': `${pondLayout.pebble4.x}%`,
+                '--pond-pebble4-y': `${pondLayout.pebble4.y}%`,
+                '--pond-pebble4-size': `${pondLayout.pebble4.size}vw`,
               }}
+              onPointerMoveCapture={layoutOpen ? onElementDragMove : undefined}
+              onPointerUpCapture={layoutOpen ? endElementDrag : undefined}
+              onPointerCancelCapture={layoutOpen ? endElementDrag : undefined}
               onContextMenu={(e) => e.preventDefault()}
             >
               {!isCompletionView && !isFinalFireworksView && (
@@ -1252,10 +1393,28 @@ const PondSceneContent = ({
               )}
 
               <div
-                className={`
-                  pond-trunk-water-flow
-                  pond-trunk-water-flow--${waterStage}
-                `}
+                className="pond-water-stream"
+                aria-hidden="true"
+                onPointerDown={layoutOpen ? (e) => startMainDrag('streamOverlay', e) : undefined}
+                style={layoutOpen ? { pointerEvents: 'auto', cursor: 'move' } : undefined}
+              >
+                <img
+                  src={pondStreamOverlay}
+                  alt=""
+                  className="pond-water-stream__img"
+                  draggable={false}
+                />
+                {waterStage > 0 && (
+                  <div className="pond-water-ripples" aria-hidden="true">
+                    <span className="pond-ripple pond-ripple--1" />
+                    <span className="pond-ripple pond-ripple--2" />
+                    <span className="pond-ripple pond-ripple--3" />
+                  </div>
+                )}
+              </div>
+
+              <div
+                className={`pond-mud-pool ${waterStage >= 2 ? 'pond-mud-pool--filled' : ''}`}
                 aria-hidden="true"
               />
 
@@ -1263,7 +1422,7 @@ const PondSceneContent = ({
                 type="hold"
                 from={{ x: 40, y: 69 }}
                 active={
-                  idleHintLevel >= 3 &&
+                  (pondIntroGesture || idleHintLevel >= 3) &&
                   (
                     sceneState.phase === PHASES.INITIAL ||
                     sceneState.phase === PHASES.ROCK_MOVING
@@ -1289,10 +1448,11 @@ const PondSceneContent = ({
                       : ''
                   }
                 `}
-                onPointerDown={handleRockHoldStart}
-                onPointerUp={handleRockHoldEnd}
-                onPointerLeave={handleRockHoldEnd}
-                onPointerCancel={handleRockHoldEnd}
+                onPointerDown={layoutOpen ? (e) => startMainDrag('rock', e) : handleRockHoldStart}
+                onPointerUp={layoutOpen ? undefined : handleRockHoldEnd}
+                onPointerLeave={layoutOpen ? undefined : handleRockHoldEnd}
+                onPointerCancel={layoutOpen ? undefined : handleRockHoldEnd}
+                style={layoutOpen ? { cursor: 'move' } : undefined}
               >
                 <img
                   src={pondBigRock}
@@ -1324,19 +1484,51 @@ const PondSceneContent = ({
                 )}
               </div>
 
-              <div className="pond-layout-panel" aria-label="Pond layout controls">
+              <div
+                className="pond-layout-panel"
+                aria-label="Pond layout controls"
+                style={layoutPanelPos ? { top: layoutPanelPos.y, left: layoutPanelPos.x, right: 'auto' } : undefined}
+              >
+                <div
+                  className="pond-layout-panel__drag-handle"
+                  onPointerDown={handleLayoutDragStart}
+                  onPointerMove={handleLayoutDragMove}
+                  onPointerUp={handleLayoutDragEnd}
+                  onPointerCancel={handleLayoutDragEnd}
+                  title="Drag to move"
+                >
+                  ⠿
+                </div>
                 <button type="button" onClick={() => setLayoutOpen((open) => !open)}>
                   {layoutOpen ? 'Hide layout' : 'Layout'}
                 </button>
                 {layoutOpen && (
                   <div className="pond-layout-panel__body">
+                    <p style={{ margin: 0, fontWeight: 400, fontSize: 11 }}>
+                      Drag any element directly on the scene to place it — the fields below are for fine-tuning.
+                    </p>
                     <label>Element
                       <select value={layoutKey} onChange={(e) => setLayoutKey(e.target.value)}>
-                        <option value="rock">Rock</option>
-                        <option value="flowers">Flowers</option>
-                        <option value="lotus">Lotus</option>
-                        <option value="reflection">Reflection</option>
-                        <option value="water">Water</option>
+                        <optgroup label="Main">
+                          <option value="rock">Rock</option>
+                          <option value="flowers">Reeds hit-zone (invisible)</option>
+                          <option value="lotus">Lotus</option>
+                          <option value="reflection">Reflection</option>
+                          <option value="water">Water</option>
+                          <option value="streamOverlay">Stream overlay</option>
+                        </optgroup>
+                        <optgroup label="Flowers (independent)">
+                          <option value="flower1">Flower 1</option>
+                          <option value="flower2">Flower 2</option>
+                          <option value="flower3">Flower 3</option>
+                          <option value="flower4">Flower 4</option>
+                        </optgroup>
+                        <optgroup label="Pebbles (independent)">
+                          <option value="pebble1">Pebble 1</option>
+                          <option value="pebble2">Pebble 2</option>
+                          <option value="pebble3">Pebble 3</option>
+                          <option value="pebble4">Pebble 4</option>
+                        </optgroup>
                       </select>
                     </label>
                     {['x', 'y', 'size'].map((field) => (
@@ -1345,7 +1537,31 @@ const PondSceneContent = ({
                         <input type="number" min="0" max="100" step="0.5" value={pondLayout[layoutKey][field]} onChange={(e) => updatePondLayout(field, e.target.value)} />
                       </label>
                     ))}
-                    <button type="button" onClick={() => setPondLayout({ rock: { x: 36, y: 64, size: 15 }, flowers: { x: 55.5, y: 62.5, size: 10.5 }, lotus: { x: 76.5, y: 59.5, size: 8.5 }, reflection: { x: 76, y: 66, size: 20 }, water: { x: 0, y: 67.8, size: 78 } })}>Reset</button>
+                    <button type="button" onClick={() => setPondLayout(DEFAULT_POND_LAYOUT)}>Reset</button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const json = JSON.stringify(pondLayout, null, 2);
+                        if (navigator.clipboard?.writeText) {
+                          navigator.clipboard.writeText(json)
+                            .then(() => setLayoutCopyMsg('Copied!'))
+                            .catch(() => setLayoutCopyMsg('Copy failed — see textarea below'));
+                        } else {
+                          setLayoutCopyMsg('Copy from textarea below');
+                        }
+                        safeSetTimeout(() => setLayoutCopyMsg(''), 2500);
+                      }}
+                    >
+                      Copy layout JSON
+                    </button>
+                    {layoutCopyMsg && <span style={{ fontSize: 11 }}>{layoutCopyMsg}</span>}
+                    <textarea
+                      readOnly
+                      value={JSON.stringify(pondLayout, null, 2)}
+                      onFocus={(e) => e.target.select()}
+                      rows={8}
+                      style={{ width: '100%', fontFamily: 'monospace', fontSize: 11 }}
+                    />
                   </div>
                 )}
               </div>
@@ -1355,7 +1571,7 @@ const PondSceneContent = ({
                 from={REEDS_START_POINT}
                 to={{ x: 63, y: 70 }}
                 active={
-                  idleHintLevel >= 3 &&
+                  (pondIntroGesture || idleHintLevel >= 3) &&
                   sceneState.phase === PHASES.REEDS_ACTIVE &&
                   !sceneState.reedsParted &&
                   !reedsDragActive
@@ -1364,33 +1580,60 @@ const PondSceneContent = ({
                 zIndex={28}
               />
 
-              {sceneState.rockMoved && !sceneState.reedsParted && (
-                <div
-                  role="button"
-                  aria-label="Gently part the soft reeds"
-                  className={`
-                    pond-trunk-reeds
-                    ${sceneState.phase === PHASES.REEDS_ACTIVE ? hintClassName : ''}
-                  `}
-                  onPointerDown={handleReedsPointerDown}
-                  onPointerMove={handleReedsPointerMove}
-                  onPointerUp={handleReedsPointerUp}
-                  onPointerCancel={handleReedsPointerUp}
-                  onPointerLeave={handleReedsPointerUp}
-                  style={{ '--reeds-progress': reedsProgress }}
-                >
-                  <div className="pond-flower-bank pond-flower-bank--left" aria-hidden="true">
-                    <img src={pondFlower} className="pond-flower pond-flower--one" alt="" draggable={false} />
-                    <img src={pondFlower} className="pond-flower pond-flower--two" alt="" draggable={false} />
-                  </div>
-                  <div className="pond-flower-channel" aria-hidden="true">
-                    <img src={pondPebble} className="pond-channel-pebble" alt="" draggable={false} />
-                  </div>
-                  <div className="pond-flower-bank pond-flower-bank--right" aria-hidden="true">
-                    <img src={pondFlower} className="pond-flower pond-flower--three" alt="" draggable={false} />
-                    <img src={pondFlower} className="pond-flower pond-flower--four" alt="" draggable={false} />
-                  </div>
-                </div>
+              {!sceneState.reedsParted && (
+                <>
+                  <div
+                    role="button"
+                    aria-label="Gently part the soft reeds"
+                    className={`
+                      pond-trunk-reeds
+                      ${sceneState.phase === PHASES.REEDS_ACTIVE ? hintClassName : ''}
+                    `}
+                    onPointerDown={layoutOpen ? undefined : handleReedsPointerDown}
+                    onPointerMove={layoutOpen ? undefined : handleReedsPointerMove}
+                    onPointerUp={layoutOpen ? undefined : handleReedsPointerUp}
+                    onPointerCancel={layoutOpen ? undefined : handleReedsPointerUp}
+                    onPointerLeave={layoutOpen ? undefined : handleReedsPointerUp}
+                    style={{ '--reeds-progress': reedsProgress, pointerEvents: layoutOpen ? 'none' : undefined }}
+                  />
+
+                  {/* Flowers and pebbles — each fully independent, own x/y/size,
+                      dragged directly (not nested inside the reeds group above). */}
+                  {['flower1', 'flower2', 'flower3', 'flower4'].map((key) => (
+                    <img
+                      key={key}
+                      src={pondFlower}
+                      className="pond-flower-item"
+                      alt=""
+                      draggable={false}
+                      style={{
+                        left: `var(--pond-${key}-x)`,
+                        top: `var(--pond-${key}-y)`,
+                        width: `var(--pond-${key}-size)`,
+                        cursor: layoutOpen ? 'move' : undefined,
+                        pointerEvents: layoutOpen ? 'auto' : 'none',
+                      }}
+                      onPointerDown={layoutOpen ? (e) => startMainDrag(key, e) : undefined}
+                    />
+                  ))}
+                  {['pebble1', 'pebble2', 'pebble3', 'pebble4'].map((key) => (
+                    <img
+                      key={key}
+                      src={pondPebble}
+                      className="pond-pebble-item"
+                      alt=""
+                      draggable={false}
+                      style={{
+                        left: `var(--pond-${key}-x)`,
+                        top: `var(--pond-${key}-y)`,
+                        width: `var(--pond-${key}-size)`,
+                        cursor: layoutOpen ? 'move' : undefined,
+                        pointerEvents: layoutOpen ? 'auto' : 'none',
+                      }}
+                      onPointerDown={layoutOpen ? (e) => startMainDrag(key, e) : undefined}
+                    />
+                  ))}
+                </>
               )}
 
               {/* Lotus — dormant → upright (Trunk success) → bloomed (Lotus success) */}
@@ -1398,7 +1641,7 @@ const PondSceneContent = ({
                 type="hold"
                 from={LOTUS_HOLD_POINT}
                 active={
-                  idleHintLevel >= 3 &&
+                  (pondIntroGesture || idleHintLevel >= 3) &&
                   sceneState.phase === PHASES.LOTUS_ACTIVE &&
                   !sceneState.lotusBloomed &&
                   holdProgress <= 0
@@ -1409,10 +1652,12 @@ const PondSceneContent = ({
 
               <div
                 className={`pond-trunk-lotus ${sceneState.phase === PHASES.LOTUS_ACTIVE && !sceneState.lotusBloomed ? hintClassName : ''}`}
+                onPointerDown={layoutOpen ? (e) => startMainDrag('lotus', e) : undefined}
+                style={layoutOpen ? { cursor: 'move' } : undefined}
               >
                 {showSparkle === 'lotus-wake' && (
                   <div className="pond-lotus-wake-glow" aria-hidden="true">
-                    <SparkleAnimation type="magic" count={18} color="#FFD86B" size={10} duration={LOTUS_GLOW_MS} fadeOut={true} area="full" />
+                    <SparkleAnimation type="star" count={18} color="#FFD86B" size={10} duration={LOTUS_GLOW_MS} fadeOut={true} area="full" />
                   </div>
                 )}
                 {sceneState.phase === PHASES.LOTUS_ACTIVE && !sceneState.lotusBloomed && holdProgress > 0 && (
@@ -1432,17 +1677,18 @@ const PondSceneContent = ({
                 <div
                   role="button"
                   aria-label="Press and hold the lotus to let it bloom"
-                  onPointerDown={(e) => {
+                  onPointerDown={layoutOpen ? undefined : (e) => {
                     e.preventDefault?.();
                     handleLotusHoldStart();
                   }}
-                  onPointerUp={handleLotusHoldEnd}
-                  onPointerLeave={handleLotusHoldEnd}
-                  onPointerCancel={handleLotusHoldEnd}
+                  onPointerUp={layoutOpen ? undefined : handleLotusHoldEnd}
+                  onPointerLeave={layoutOpen ? undefined : handleLotusHoldEnd}
+                  onPointerCancel={layoutOpen ? undefined : handleLotusHoldEnd}
                   className="pond-lotus-hold-target"
-                  style={{ cursor: sceneState.phase === PHASES.LOTUS_ACTIVE && !sceneState.lotusBloomed ? 'pointer' : 'default' }}
+                  style={{ cursor: layoutOpen ? 'move' : (sceneState.phase === PHASES.LOTUS_ACTIVE && !sceneState.lotusBloomed ? 'pointer' : 'default'), pointerEvents: layoutOpen ? 'none' : undefined }}
                 >
-                  <img
+                  <PoseImage
+                    imageStyle={{ height: '100%' }}
                     src={getLotusImage()}
                     alt="Lotus"
                     className={`pond-lotus-image ${sceneState.lotusBloomed && showSparkle === 'lotus-bloom' ? 'pond-lotus-bloom-pop' : ''}`}
@@ -1571,7 +1817,7 @@ const PondSceneContent = ({
               <SceneCompletionCelebration
                 show={isCompletionView}
                 zoneId={zoneId}
-                sceneName="Pond Adventure"
+                sceneName="Find a Way to the Lotus"
                 completionTitle={completionModalContent?.title}
                 completionSubtitle={completionModalContent?.subtitle}
                 sceneNumber={2}
@@ -1593,7 +1839,7 @@ const PondSceneContent = ({
                     description: "The lotus grows through muddy water and still blooms. It reminds us that we can keep growing through difficult things."
                   }
                 }}
-                nextSceneName="Temple Discovery"
+                nextSceneName="Ganesha's Eyes, Ears & Tusk"
                 sceneId="pond"
                 completionData={{
                   stars: 5,
@@ -1604,9 +1850,11 @@ const PondSceneContent = ({
                 onComplete={onComplete}
                 onReplay={() => {
                   setShowSceneCompletion(false);
+                  pondCompletionSavedRef.current = false;
                   resetScene();
                 }}
                 onContinue={() => {
+                  stopSpokenVoice();
                   persistPondCompletion();
 
                   setTimeout(() => {
@@ -1658,7 +1906,7 @@ const PondSceneContent = ({
         </MessageManager>
       </InteractionManager>
 
-      <ZoneBadgeButton zoneId="symbol-mountain" onBack={() => onNavigate?.('zone-welcome')} />
+      <ZoneBadgeButton zoneId="symbol-mountain" onBack={() => { stopSpokenVoice(); onNavigate?.('zone-welcome'); }} />
       <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
       <VOReplayButton
         onReplay={replayCurrentVoice}

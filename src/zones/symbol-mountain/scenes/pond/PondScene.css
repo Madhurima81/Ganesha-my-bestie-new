@@ -745,45 +745,84 @@
 }
 
 /* ==================== V6 TRUNK/LOTUS FLOW (strength + gentleness + single lotus) ==================== */
-.pond-trunk-water-flow {
+.pond-water-stream {
   position: absolute;
-  left: var(--pond-water-x, 0%);
-  top: var(--pond-water-y, 67.8%);
-  height: clamp(5px, 0.8vw, 9px);
-  border-radius: 999px;
-  background:
-    linear-gradient(90deg, rgba(91, 179, 232, 0), rgba(91, 179, 232, 0.88) 18%, rgba(199, 240, 255, 0.9) 52%, rgba(91, 179, 232, 0.72)),
-    linear-gradient(90deg, rgba(141, 101, 57, 0.28), rgba(141, 101, 57, 0.05) 20%, rgba(141, 101, 57, 0.16));
-  box-shadow:
-    0 -4px 0 rgba(177, 125, 61, 0.18),
-    0 4px 0 rgba(132, 91, 43, 0.14),
-    0 0 8px rgba(91, 179, 232, 0.28);
-  transform-origin: left center;
-  transform: rotate(4deg);
-  transition:
-    width 900ms ease,
-    opacity 300ms ease;
+  left: var(--pond-stream-overlay-x, 0%);
+  top: var(--pond-stream-overlay-y, 46%);
+  width: var(--pond-stream-overlay-size, 85%);
   pointer-events: none;
   z-index: 12;
 }
 
-.pond-trunk-water-flow--0 {
-  width: 38%;
+.pond-water-stream__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 2px 4px rgba(46, 123, 178, 0.2));
 }
 
-.pond-trunk-water-flow--1 {
-  width: 58%;
+.pond-water-ripples {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
 }
 
-.pond-trunk-water-flow--2 {
-  width: var(--pond-water-size, 78%);
+.pond-ripple {
+  position: absolute;
+  top: 45%;
+  width: clamp(6px, 0.9vw, 11px);
+  height: clamp(6px, 0.9vw, 11px);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.75);
+  opacity: 0;
+  animation: pondRippleFlow 2200ms linear infinite;
+}
+
+.pond-ripple--1 { left: 8%; animation-delay: 0ms; }
+.pond-ripple--2 { left: 8%; animation-delay: 750ms; }
+.pond-ripple--3 { left: 8%; animation-delay: 1500ms; }
+
+@keyframes pondRippleFlow {
+  0% { transform: translate(0, 0) scale(0.6); opacity: 0; }
+  15% { opacity: 0.85; }
+  85% { opacity: 0.5; }
+  100% { transform: translate(68vw, -6px) scale(1); opacity: 0; }
+}
+
+@media (max-width: 900px) {
+  @keyframes pondRippleFlow {
+    0% { transform: translate(0, 0) scale(0.6); opacity: 0; }
+    15% { opacity: 0.85; }
+    85% { opacity: 0.5; }
+    100% { transform: translate(240px, -6px) scale(1); opacity: 0; }
+  }
+}
+
+.pond-mud-pool {
+  position: absolute;
+  left: calc(var(--pond-lotus-x, 76.5%) - 3%);
+  top: calc(var(--pond-lotus-y, 59.5%) + 7%);
+  width: clamp(60px, 11vw, 120px);
+  height: clamp(24px, 4.4vw, 48px);
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(141, 101, 57, 0.55), rgba(141, 101, 57, 0.18) 70%, transparent 100%);
+  transform: scale(1);
+  transition: background 900ms ease 700ms, transform 900ms ease 700ms, box-shadow 900ms ease 700ms;
+  pointer-events: none;
+  z-index: 11;
+}
+
+.pond-mud-pool--filled {
+  background: radial-gradient(ellipse at 35% 35%, rgba(216, 245, 255, 0.85), rgba(91, 179, 232, 0.75) 45%, rgba(46, 123, 178, 0.6) 100%);
+  box-shadow: 0 0 14px rgba(91, 179, 232, 0.4), inset 0 2px 6px rgba(255, 255, 255, 0.5);
+  transform: scale(1.2);
 }
 
 .pond-strength-rock-wrap {
   position: absolute;
   left: var(--pond-rock-x, 36%);
   top: var(--pond-rock-y, 64%);
-  width: clamp(118px, var(--pond-rock-size, 15vw), 220px);
+  width: clamp(60px, var(--pond-rock-size, 15vw), 480px);
   height: auto;
   z-index: 20;
   touch-action: none;
@@ -826,8 +865,8 @@
   position: absolute;
   left: var(--pond-flowers-x, 55.5%);
   top: var(--pond-flowers-y, 62.5%);
-  width: clamp(84px, var(--pond-flowers-size, 10.5vw), 160px);
-  min-width: 84px;
+  width: clamp(60px, var(--pond-flowers-size, 10.5vw), 400px);
+  min-width: 60px;
   aspect-ratio: 1 / 1;
   z-index: 20;
   touch-action: none;
@@ -872,42 +911,32 @@
   transform-origin: bottom left;
 }
 
-.pond-flower-bank,
-.pond-flower-channel {
+/* Flowers and pebbles — each an independent, individually-draggable stage
+   element (own --pond-<key>-x/y/size), not nested inside any group. */
+.pond-flower-item {
   position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.pond-flower {
-  position: absolute;
-  width: 58%;
+  width: clamp(30px, 6vw, 90px);
   height: auto;
   object-fit: contain;
   filter: drop-shadow(0 4px 5px rgba(50, 88, 32, 0.22));
   transform-origin: bottom center;
+  z-index: 19;
 }
 
-.pond-flower--one { left: -12%; top: 8%; transform: rotate(-18deg); }
-.pond-flower--two { left: 8%; top: 30%; transform: rotate(12deg) scale(0.82); }
-.pond-flower--three { right: -12%; top: 8%; transform: rotate(18deg) scaleX(-1); }
-.pond-flower--four { right: 8%; top: 30%; transform: rotate(-12deg) scale(0.82) scaleX(-1); }
-
-.pond-channel-pebble {
+.pond-pebble-item {
   position: absolute;
-  left: 42%;
-  bottom: 2%;
-  width: 23%;
+  width: clamp(16px, 3vw, 50px);
   height: auto;
   filter: drop-shadow(0 4px 4px rgba(60, 45, 70, 0.22));
+  z-index: 19;
 }
 
 .pond-trunk-lotus {
   position: absolute;
   left: var(--pond-lotus-x, 76.5%);
   top: var(--pond-lotus-y, 59.5%);
-  width: clamp(70px, var(--pond-lotus-size, 8.5vw), 130px);
-  min-width: 70px;
+  width: clamp(60px, var(--pond-lotus-size, 8.5vw), 350px);
+  min-width: 60px;
   min-height: 70px;
   z-index: 21;
 }
@@ -919,6 +948,26 @@
   z-index: 100;
   width: 210px;
   font: 600 12px/1.2 sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.pond-layout-panel__drag-handle {
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  background: #3d3155;
+  color: #fff;
+  border-radius: 6px;
+  padding: 7px 8px;
+  line-height: 1;
+}
+.pond-layout-panel__drag-handle:active {
+  cursor: grabbing;
+}
+.pond-layout-panel__body {
+  flex-basis: 100%;
 }
 .pond-layout-panel > button,
 .pond-layout-panel__body button {
