@@ -256,7 +256,7 @@ function readTempSceneData(profileId, zoneId, sceneId) {
   try {
     return JSON.parse(localStorage.getItem(tempKey) || '{}');
   } catch (error) {
-    console.warn('Failed to parse temp scene data:', { tempKey, error });
+    if (import.meta.env.DEV) console.warn('Failed to parse temp scene data:', { tempKey, error });
     return {};
   }
 }
@@ -438,8 +438,8 @@ useEffect(() => {
     sceneAnalytics.recordEntry(profileId, currentScene, '_scene');
   }, [currentZone, currentScene]);
 
-  console.log('🌟 Clean App rendering - current view:', currentView);
-  console.log('🎯 Current zone:', currentZone, 'Current scene:', currentScene);
+  if (import.meta.env.DEV) console.log('🌟 Clean App rendering - current view:', currentView);
+  if (import.meta.env.DEV) console.log('🎯 Current zone:', currentZone, 'Current scene:', currentScene);
   
   // 🎯 DYNAMIC SCENE LOADER: cached so React.lazy() is never called twice for the same scene
   const _sceneCache = useRef({});
@@ -459,7 +459,7 @@ useEffect(() => {
       return null;
     }
 
-    console.log(`🎯 Loading scene: ${zoneId}/${sceneId}`);
+    if (import.meta.env.DEV) console.log(`🎯 Loading scene: ${zoneId}/${sceneId}`);
     const Component = lazy(sceneLoader);
     _sceneCache.current[key] = Component;
     return Component;
@@ -529,7 +529,7 @@ useEffect(() => {
     const SceneComponent = loadSceneComponent(zoneId, sceneId);
 
     if (!SceneComponent) {
-      console.log(`🎯 Scene ${zoneId}/${sceneId} not implemented, showing placeholder`);
+      if (import.meta.env.DEV) console.log(`🎯 Scene ${zoneId}/${sceneId} not implemented, showing placeholder`);
       return (
         <PlaceholderScene
           zoneId={zoneId}
@@ -567,12 +567,12 @@ useEffect(() => {
 
   // Initialize app and check for profiles/saves
   useEffect(() => {
-    console.log('🌟 Clean App mounting, initializing...');
+    if (import.meta.env.DEV) console.log('🌟 Clean App mounting, initializing...');
     initializeApp();
     
     // Cleanup function
     return () => {
-      console.log('🧹 Clean App cleanup');
+      if (import.meta.env.DEV) console.log('🧹 Clean App cleanup');
       // Clean up any persistent styles when app unmounts
       document.body.style.cssText = '';
       const root = document.getElementById('root');
@@ -592,8 +592,8 @@ useEffect(() => {
     const loader = SCENE_MAPPING[currentZone]?.[nextScene];
     if (loader) {
       loader()
-        .then(() => console.log(`✅ Preloaded next scene: ${nextScene}`))
-        .catch(err => console.warn(`⚠️ Preload failed: ${nextScene}`, err));
+        .then(() => { if (import.meta.env.DEV) console.log(`✅ Preloaded next scene: ${nextScene}`); })
+        .catch(err => { if (import.meta.env.DEV) console.warn(`⚠️ Preload failed: ${nextScene}`, err); });
     }
     preloadSceneImages(currentZone, nextScene);
   }
@@ -764,7 +764,7 @@ const initializeApp = async () => {
   const isLandingBoot =
     new URLSearchParams(window.location.search).get('view') === 'landing';
   try {
-    console.log('🌟 Initializing app...');
+    if (import.meta.env.DEV) console.log('🌟 Initializing app...');
     setCurrentView(isLandingBoot ? 'landing' : 'loading');
     setLoadingProgress(0);
     setLoadingStep('Just a moment… let\'s get ready.');
@@ -777,7 +777,7 @@ const initializeApp = async () => {
     await new Promise(resolve => setTimeout(resolve, 150));
     
     // Step 2: Verify managers are loaded (40%)
-    console.log('📦 Managers loaded and ready');
+    if (import.meta.env.DEV) console.log('📦 Managers loaded and ready');
     setLoadingProgress(40);
     setLoadingStep('Getting our world ready…');
     await new Promise(resolve => setTimeout(resolve, 150));
@@ -794,11 +794,11 @@ const initializeApp = async () => {
       return new Promise((resolve) => {
         const img = new Image();
         img.onload = () => {
-          console.log(`✅ Loaded: ${src}`);
+          if (import.meta.env.DEV) console.log(`✅ Loaded: ${src}`);
           resolve();
         };
         img.onerror = () => {
-          console.warn(`⚠️ Failed to load: ${src}`);
+          if (import.meta.env.DEV) console.warn(`⚠️ Failed to load: ${src}`);
           resolve(); // Continue even if image fails
         };
         img.src = src;
@@ -818,19 +818,19 @@ const initializeApp = async () => {
     await new Promise(resolve => setTimeout(resolve, 150));
     
     // Step 3: Check for active profile (60%)
-    console.log('📊 Checking for active profile...');
+    if (import.meta.env.DEV) console.log('📊 Checking for active profile...');
     const activeProfileId = localStorage.getItem('activeProfileId');
     if (activeProfileId) {
-      console.log('👤 Active profile ID:', activeProfileId);
+      if (import.meta.env.DEV) console.log('👤 Active profile ID:', activeProfileId);
       // Try to get profile safely
       try {
         const profile = GameStateManager.getProfile?.(activeProfileId);
         if (profile) {
           setCurrentProfile(profile);
-          console.log('👤 Active profile loaded:', profile);
+          if (import.meta.env.DEV) console.log('👤 Active profile loaded:', profile);
         }
       } catch (err) {
-        console.warn('⚠️ Could not load profile:', err);
+        if (import.meta.env.DEV) console.warn('⚠️ Could not load profile:', err);
       }
     }
     setLoadingProgress(60);
@@ -838,7 +838,7 @@ const initializeApp = async () => {
     await new Promise(resolve => setTimeout(resolve, 150));
     
     // Step 4: Scene Manager ready (80%)
-    console.log('🎬 Scene Manager ready');
+    if (import.meta.env.DEV) console.log('🎬 Scene Manager ready');
     setLoadingProgress(80);
     setLoadingStep('Setting up your adventure…');
     await new Promise(resolve => setTimeout(resolve, 150));
@@ -849,9 +849,9 @@ const initializeApp = async () => {
       // Read the actual profile store, not incidental key-name patterns
       const stored = GameStateManager.getProfiles?.();
       hasExistingProfiles = !!stored?.profiles && Object.keys(stored.profiles).length > 0;
-      console.log('👥 Found profiles:', stored?.profiles ? Object.keys(stored.profiles).length : 0);
+      if (import.meta.env.DEV) console.log('👥 Found profiles:', stored?.profiles ? Object.keys(stored.profiles).length : 0);
     } catch (err) {
-      console.warn('⚠️ Could not check profiles:', err);
+      if (import.meta.env.DEV) console.warn('⚠️ Could not check profiles:', err);
     }
     setLoadingProgress(90);
     setLoadingStep('Almost ready, bestie…');
@@ -866,8 +866,8 @@ const initializeApp = async () => {
       await new Promise(resolve => setTimeout(resolve, 500));
     }
 
-    console.log('⏱️ Load time:', performance.now().toFixed(0), 'ms');
-    console.log('✅ App initialization complete');
+    if (import.meta.env.DEV) console.log('⏱️ Load time:', performance.now().toFixed(0), 'ms');
+    if (import.meta.env.DEV) console.log('✅ App initialization complete');
     setIsInitialized(true);
 
     const params = new URLSearchParams(window.location.search);
@@ -905,10 +905,10 @@ const initializeApp = async () => {
     if (hasExistingProfiles && activeProfileId) {
       setCurrentView('profile-welcome');
     } else if (hasExistingProfiles) {
-      console.log('👤 Profiles exist but none active, going to profile selection');
+      if (import.meta.env.DEV) console.log('👤 Profiles exist but none active, going to profile selection');
       setCurrentView('profile-welcome');
     } else {
-      console.log('🆕 No profiles found, showing main welcome');
+      if (import.meta.env.DEV) console.log('🆕 No profiles found, showing main welcome');
       setCurrentView('main-welcome');
     }
     
@@ -937,7 +937,7 @@ const initializeApp = async () => {
   
   // Handle main welcome "New Adventure" click
   const handleStartAdventure = () => {
-    console.log('🌟 Start Adventure clicked from main welcome');
+    if (import.meta.env.DEV) console.log('🌟 Start Adventure clicked from main welcome');
     try { window.speechSynthesis.speak(new SpeechSynthesisUtterance('')); } catch(e) {}
     restoreDefaultStyles();
 
@@ -1013,7 +1013,7 @@ const handleContinue = (targetZone, targetScene) => {
   
   // Handle new game - Start with map for zone selection
   const handleNewGame = () => {
-    console.log('🚀 Choose scene clicked - clean handoff');
+    if (import.meta.env.DEV) console.log('🚀 Choose scene clicked - clean handoff');
     //restoreDefaultStyles(); // Clean styles before navigation
     try { window.speechSynthesis.speak(new SpeechSynthesisUtterance('')); } catch (e) {}
 
@@ -1054,7 +1054,7 @@ const handleContinue = (targetZone, targetScene) => {
   };*/
 
   const handleZoneSelect = (zoneId, sceneId = null) => {
-  console.log('🎯 Zone selected:', zoneId, sceneId ? `Scene: ${sceneId}` : 'No scene');
+  if (import.meta.env.DEV) console.log('🎯 Zone selected:', zoneId, sceneId ? `Scene: ${sceneId}` : 'No scene');
 
   // TWG is not a regular zone — go to its full-screen hub
   if (zoneId === 'twg') {
@@ -1092,7 +1092,7 @@ const handleContinue = (targetZone, targetScene) => {
 };
 
 const handleSceneSelect = (sceneId, options = {}) => {
-  console.log('🎯 Scene selected:', sceneId, 'Options:', options);
+  if (import.meta.env.DEV) console.log('🎯 Scene selected:', sceneId, 'Options:', options);
   
   if (sceneId === '__replay_intro_story__') {
     const replayProfileId = localStorage.getItem('activeProfileId');
@@ -1117,7 +1117,7 @@ const handleSceneSelect = (sceneId, options = {}) => {
   
   // ✅ ONLY FOR REPLAY/RESTART: Clear storage
   if (mode === 'restart' || mode === 'replay') {
-    console.log('🔄 CLEARING: Storage for fresh start');
+    if (import.meta.env.DEV) console.log('🔄 CLEARING: Storage for fresh start');
     
     const sceneStateKey = `${profileId}_${currentZone}_${normalizedSceneId}_state`;
     const tempKey = `temp_session_${profileId}_${currentZone}_${normalizedSceneId}`;
@@ -1127,7 +1127,7 @@ const handleSceneSelect = (sceneId, options = {}) => {
     sessionStorage.removeItem(sceneStateKey);
     sessionStorage.removeItem(tempKey);
     
-    console.log('✅ Storage cleared for:', sceneId);
+    if (import.meta.env.DEV) console.log('✅ Storage cleared for:', sceneId);
   }
 };
 
@@ -1159,34 +1159,34 @@ const getNextScene = (zoneId, currentSceneId) => {
   const scenes = sceneProgression[zoneId];
   const normalizedCurrentSceneId = normalizeSceneId(zoneId, currentSceneId);
   if (!scenes) {
-    console.log(`🎯 HELPER: No progression defined for zone: ${zoneId}`);
+    if (import.meta.env.DEV) console.log(`🎯 HELPER: No progression defined for zone: ${zoneId}`);
     return null;
   }
 
   const currentIndex = scenes.indexOf(normalizedCurrentSceneId);
   if (currentIndex === -1) {
-    console.log(`🎯 HELPER: Scene ${currentSceneId} not found in ${zoneId}`);
+    if (import.meta.env.DEV) console.log(`🎯 HELPER: Scene ${currentSceneId} not found in ${zoneId}`);
     return null;
   }
 
   if (currentIndex === scenes.length - 1) {
     // ✅ Festival Square: circular — loop back to first scene
     if (zoneId === 'festival-square') {
-      console.log(`🔄 CIRCULAR: ${currentSceneId} → ${scenes[0]} in ${zoneId}`);
+      if (import.meta.env.DEV) console.log(`🔄 CIRCULAR: ${currentSceneId} → ${scenes[0]} in ${zoneId}`);
       return scenes[0];
     }
-    console.log(`🎯 HELPER: ${currentSceneId} is last scene in ${zoneId}`);
+    if (import.meta.env.DEV) console.log(`🎯 HELPER: ${currentSceneId} is last scene in ${zoneId}`);
     return null; // Last scene in zone → zone-welcome
   }
 
   const nextScene = scenes[currentIndex + 1];
-  console.log(`🎯 HELPER: ${currentSceneId} → ${nextScene} in ${zoneId}`);
+  if (import.meta.env.DEV) console.log(`🎯 HELPER: ${currentSceneId} → ${nextScene} in ${zoneId}`);
   return nextScene;
 };
 
   // Handle navigation from scenes and zone welcome
   const handleNavigate = (destination) => {
-    console.log('🎯 Navigate to:', destination);
+    if (import.meta.env.DEV) console.log('🎯 Navigate to:', destination);
     //restoreDefaultStyles(); // Always restore styles when navigating
 
     // Allow scenes to navigate directly by sceneId (e.g. "favorite-food", "dreams-wishes").
@@ -1246,18 +1246,18 @@ const getNextScene = (zoneId, currentSceneId) => {
         break;
         case 'scene-complete-continue':
   // ✅ FINAL VERSION: Use helper function for scene progression
-  console.log('✅ CONTINUE: Going to next scene - resume tracking already updated');
+  if (import.meta.env.DEV) console.log('✅ CONTINUE: Going to next scene - resume tracking already updated');
   
   const nextScene = getNextScene(currentZone, currentScene);
   
   if (nextScene) {
     // Go to next scene
-    console.log(`🎯 CONTINUE: ${currentScene} → ${nextScene} in ${currentZone}`);
+    if (import.meta.env.DEV) console.log(`🎯 CONTINUE: ${currentScene} → ${nextScene} in ${currentZone}`);
     setCurrentScene(nextScene);
     setCurrentView('scene');
   } else {
     // Last scene in zone - go to zone welcome
-    console.log(`🎯 CONTINUE: ${currentScene} is last scene - going to zone welcome`);
+    if (import.meta.env.DEV) console.log(`🎯 CONTINUE: ${currentScene} is last scene - going to zone welcome`);
     setCurrentScene(null);
     setCurrentView('zone-welcome');
   }
@@ -1265,13 +1265,13 @@ const getNextScene = (zoneId, currentSceneId) => {
 
 case 'scene-complete-replay':
   // ✅ REPLAY: Stay in same scene (already reset by scene)
-  console.log('✅ REPLAY: Staying in scene - content reset already handled');
+  if (import.meta.env.DEV) console.log('✅ REPLAY: Staying in scene - content reset already handled');
   // Don't navigate anywhere - scene handles its own reset
   break;
 
 case 'scene-complete-map':
   // ✅ MAP: Go to map - CLEAR navigation state  
-  console.log('✅ MAP: Going to map - clearing scene tracking');
+  if (import.meta.env.DEV) console.log('✅ MAP: Going to map - clearing scene tracking');
   SimpleSceneManager.clearCurrentScene();
   setCurrentZone(null);
   setCurrentScene(null);
@@ -1308,14 +1308,14 @@ case 'scene-complete-map':
 
   // In App.jsx, add this to your handleNavigate function:
 case 'direct-to-map':
-  console.log('🗺️ DIRECT MAP: Bypassing profile welcome, going straight to map');
+  if (import.meta.env.DEV) console.log('🗺️ DIRECT MAP: Bypassing profile welcome, going straight to map');
   SimpleSceneManager.clearCurrentScene();
   setCurrentZone(null);
   setCurrentScene(null);
   setCurrentView('map');
   break;
       default:
-        console.log('Unknown navigation:', destination);
+        if (import.meta.env.DEV) console.log('Unknown navigation:', destination);
               SimpleSceneManager.clearCurrentScene(); // ✅ ADD THIS LINE
         setCurrentView('map');
     }
@@ -1327,30 +1327,30 @@ case 'direct-to-map':
 // ✅ ADD THIS DEBUG VERSION to App.jsx handleSceneComplete function
 const handleSceneComplete = (sceneId, result) => {
   const normalizedSceneId = normalizeSceneId(currentZone, sceneId);
-  console.log('🎯 APP: Scene completed:', sceneId, result);
+  if (import.meta.env.DEV) console.log('🎯 APP: Scene completed:', sceneId, result);
   
   // ✅ DEBUG: Check if symbols are being passed
-  console.log('🔍 APP DEBUG: Checking completion result...');
-  console.log('🔍 result?.symbols:', result?.symbols);
-  console.log('🔍 Object.keys(result?.symbols || {}):', Object.keys(result?.symbols || {}));
+  if (import.meta.env.DEV) console.log('🔍 APP DEBUG: Checking completion result...');
+  if (import.meta.env.DEV) console.log('🔍 result?.symbols:', result?.symbols);
+  if (import.meta.env.DEV) console.log('🔍 Object.keys(result?.symbols || {}):', Object.keys(result?.symbols || {}));
   
   if (!result?.symbols || Object.keys(result?.symbols || {}).length === 0) {
-    console.log('❌ APP DEBUG: NO SYMBOLS in completion result!');
-    console.log('❌ Scene must pass discoveredSymbols in completion result');
-    console.log('❌ Add props.onComplete call to scene fireworks completion');
+    if (import.meta.env.DEV) console.log('❌ APP DEBUG: NO SYMBOLS in completion result!');
+    if (import.meta.env.DEV) console.log('❌ Scene must pass discoveredSymbols in completion result');
+    if (import.meta.env.DEV) console.log('❌ Add props.onComplete call to scene fireworks completion');
   } else {
-    console.log('✅ APP DEBUG: Symbols found in completion result:', result.symbols);
+    if (import.meta.env.DEV) console.log('✅ APP DEBUG: Symbols found in completion result:', result.symbols);
   }
   
   try {
     const activeProfileId = localStorage.getItem('activeProfileId');
     if (activeProfileId && currentZone && result?.stars != null) {
       
-      console.log('🧪 APP: About to call ProgressManager.updateSceneCompletion with:');
-console.log('🧪 symbols:', result?.symbols || {});
-console.log('🧪 chants:', result?.chants);
-console.log('🧪 chantedVerses:', result?.chantedVerses);
-console.log('🧪 WILL SAVE chants as:', result?.chants || result?.chantedVerses || {});
+      if (import.meta.env.DEV) console.log('🧪 APP: About to call ProgressManager.updateSceneCompletion with:');
+if (import.meta.env.DEV) console.log('🧪 symbols:', result?.symbols || {});
+if (import.meta.env.DEV) console.log('🧪 chants:', result?.chants);
+if (import.meta.env.DEV) console.log('🧪 chantedVerses:', result?.chantedVerses);
+if (import.meta.env.DEV) console.log('🧪 WILL SAVE chants as:', result?.chants || result?.chantedVerses || {});
       
       const updatedZoneProgress = ProgressManager.updateSceneCompletion(
         activeProfileId, 
@@ -1369,14 +1369,14 @@ chants: result?.chants || result?.chantedVerses || {},
         }
       );
       
-      console.log('✅ APP: Scene completion saved to ProgressManager');
-      console.log('📊 APP: Updated zone progress:', updatedZoneProgress);
+      if (import.meta.env.DEV) console.log('✅ APP: Scene completion saved to ProgressManager');
+      if (import.meta.env.DEV) console.log('📊 APP: Updated zone progress:', updatedZoneProgress);
       
       const unlockedScene = GameStateManager.unlockNextScene(currentZone, normalizedSceneId);
       if (unlockedScene) {
-        console.log('🎉 APP: Next scene auto-unlocked:', unlockedScene);
+        if (import.meta.env.DEV) console.log('🎉 APP: Next scene auto-unlocked:', unlockedScene);
       } else {
-        console.log('🏁 APP: Last scene in zone completed');
+        if (import.meta.env.DEV) console.log('🏁 APP: Last scene in zone completed');
       }
     } else {
       console.error('❌ APP: Missing required data for scene completion', {
@@ -1829,8 +1829,8 @@ chants: result?.chants || result?.chantedVerses || {},
       
       {/* 🎯 DYNAMIC SCENE RENDERING: Replaces all hardcoded scene logic */}
       {false && currentView === 'scene' && currentZone && currentScene && (() => {
-        console.log('🎯 Rendering scene view');
-        console.log('🎯 Zone:', currentZone, 'Scene:', currentScene); 
+        if (import.meta.env.DEV) console.log('🎯 Rendering scene view');
+        if (import.meta.env.DEV) console.log('🎯 Zone:', currentZone, 'Scene:', currentScene); 
 
   // ✅ REPLACE the existing clearing logic:
 // ✅ UPDATED: Check if we should start fresh
@@ -1857,7 +1857,7 @@ const tempData = JSON.parse(localStorage.getItem(tempKey) || '{}');
 
 // Only clear if explicit play again flag is set
 if (tempData.playAgainRequested) {
-  console.log('🔄 APP: Play Again detected - clearing all scene storage');
+  if (import.meta.env.DEV) console.log('🔄 APP: Play Again detected - clearing all scene storage');
   localStorage.removeItem(tempKey);
   const sceneStateKey = `${profileId}_${currentZone}_${currentScene}_state`;
   localStorage.removeItem(sceneStateKey);

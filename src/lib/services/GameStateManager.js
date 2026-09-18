@@ -100,7 +100,7 @@ scenes: ['family-tree', 'favorite-food', 'dreams-wishes', 'my-indian-story']
 
   // 🔧 FIXED: Create a new profile - now accepts direct avatar and color values
   createProfile(name, avatar, color, age) {
-    console.log('🎯 GameStateManager.createProfile called with:', { name, avatar, color, age });
+    if (import.meta.env.DEV) console.log('🎯 GameStateManager.createProfile called with:', { name, avatar, color, age });
     
     let profiles = this.getProfiles();
     
@@ -138,7 +138,7 @@ scenes: ['family-tree', 'favorite-food', 'dreams-wishes', 'my-indian-story']
       currentScene: 'modak'  // ✅ FIXED: Start with modak (first scene)
     };
 
-    console.log('🎯 Creating new profile:', newProfile);
+    if (import.meta.env.DEV) console.log('🎯 Creating new profile:', newProfile);
 
     // Add to profiles
     profiles.profiles[profileId] = newProfile;
@@ -146,7 +146,7 @@ scenes: ['family-tree', 'favorite-food', 'dreams-wishes', 'my-indian-story']
     
     // Save
     safeSetItem('gameProfiles', JSON.stringify(profiles));
-    console.log('🎯 Profile saved to localStorage');
+    if (import.meta.env.DEV) console.log('🎯 Profile saved to localStorage');
     
     // Set as active profile
     this.setActiveProfile(profileId);
@@ -157,7 +157,7 @@ scenes: ['family-tree', 'favorite-food', 'dreams-wishes', 'my-indian-story']
     // Sync to cloud (async, non-blocking)
     cloudSync.pushProfiles();
 
-    console.log('🎯 Profile creation complete, returning:', newProfile);
+    if (import.meta.env.DEV) console.log('🎯 Profile creation complete, returning:', newProfile);
     return newProfile;
   }
 
@@ -196,13 +196,13 @@ scenes: ['family-tree', 'favorite-food', 'dreams-wishes', 'my-indian-story']
 
   // ✅ NEW: Disney/PBS Auto-Unlock System
   unlockNextScene(zoneId, completedSceneId) {
-    console.log('🔓 DISNEY AUTO-UNLOCK: Unlocking next scene after', completedSceneId);
+    if (import.meta.env.DEV) console.log('🔓 DISNEY AUTO-UNLOCK: Unlocking next scene after', completedSceneId);
     
     const progress = this.getGameProgress();
     const zone = GameStateManager.ZONES[zoneId];
     
     if (!zone || !zone.scenes) {
-      console.log('❌ Zone not found:', zoneId);
+      if (import.meta.env.DEV) console.log('❌ Zone not found:', zoneId);
       return null;
     }
     
@@ -227,10 +227,10 @@ scenes: ['family-tree', 'favorite-food', 'dreams-wishes', 'my-indian-story']
       // Save updated progress
       safeSetItem(`${this.activeProfileId}_gameProgress`, JSON.stringify(progress));
       
-      console.log('✅ DISNEY: Next scene unlocked:', nextSceneId);
+      if (import.meta.env.DEV) console.log('✅ DISNEY: Next scene unlocked:', nextSceneId);
       return nextSceneId;
     } else {
-      console.log('🏁 DISNEY: Last scene in zone completed - no next scene');
+      if (import.meta.env.DEV) console.log('🏁 DISNEY: Last scene in zone completed - no next scene');
       
       // ✅ BONUS: Check if we should unlock next zone
       const allZones = Object.keys(GameStateManager.ZONES);
@@ -245,7 +245,7 @@ scenes: ['family-tree', 'favorite-food', 'dreams-wishes', 'my-indian-story']
         });
         
         if (allCompleted) {
-          console.log('🎉 DISNEY: Unlocking next zone:', nextZoneId);
+          if (import.meta.env.DEV) console.log('🎉 DISNEY: Unlocking next zone:', nextZoneId);
 
           // Freemium extension point: Zone 1 (symbol-mountain) is the free zone, so
           // completing it is the first paywall-trigger moment. See PaywallManager.js —
@@ -289,7 +289,7 @@ scenes: ['family-tree', 'favorite-food', 'dreams-wishes', 'my-indian-story']
     // Check explicit unlock flag (Disney system)
     const sceneData = zone.scenes && zone.scenes[sceneId];
     if (sceneData && sceneData.unlocked === true) {
-      console.log(`🔓 DISNEY: Scene ${sceneId} explicitly unlocked`);
+      if (import.meta.env.DEV) console.log(`🔓 DISNEY: Scene ${sceneId} explicitly unlocked`);
       return true;
     }
     
@@ -299,7 +299,7 @@ scenes: ['family-tree', 'favorite-food', 'dreams-wishes', 'my-indian-story']
       const previousScene = zoneScenes[sceneIndex - 1];
       const previousCompleted = zone.scenes && zone.scenes[previousScene] && zone.scenes[previousScene].completed;
       
-      console.log(`🔍 DISNEY: Checking ${sceneId} unlock via previous scene ${previousScene}:`, previousCompleted);
+      if (import.meta.env.DEV) console.log(`🔍 DISNEY: Checking ${sceneId} unlock via previous scene ${previousScene}:`, previousCompleted);
       return previousCompleted || false;
     }
     
@@ -372,7 +372,7 @@ clearReplaySession(zoneId, sceneId) {
   
   const replaySessionKey = `replay_session_${this.activeProfileId}_${zoneId}_${sceneId}`;
   localStorage.removeItem(replaySessionKey);
-  console.log('🧹 HYBRID: Cleared replay session for fresh start');
+  if (import.meta.env.DEV) console.log('🧹 HYBRID: Cleared replay session for fresh start');
 }
 
   // Update profile stats - FIXED null checks
@@ -392,7 +392,7 @@ clearReplaySession(zoneId, sceneId) {
 
   saveGameState(zoneId, sceneId, sceneState) {
  // 🔍 ENHANCED DEBUG - Track all calls and detect overwrites
-  console.log('🔍 SAVESTATE CALL:', { 
+  if (import.meta.env.DEV) console.log('🔍 SAVESTATE CALL:', { 
     zoneId, 
     sceneId, 
     sceneState,
@@ -403,7 +403,7 @@ clearReplaySession(zoneId, sceneId) {
   
   // 🚨 DETECT OVERWRITES - Alert if someone tries to save with 0 stars after completion
   if (sceneState.stars === 0 && sceneState.completed === false) {
-    console.warn('🚨 POTENTIAL OVERWRITE DETECTED:', {
+    if (import.meta.env.DEV) console.warn('🚨 POTENTIAL OVERWRITE DETECTED:', {
       scene: `${zoneId}/${sceneId}`,
       data: sceneState,
       caller: new Error().stack.split('\n')[2]?.trim()
@@ -415,7 +415,7 @@ clearReplaySession(zoneId, sceneId) {
     return;
   }
   
-  console.log('💾 SAVING GAME STATE:', { zoneId, sceneId, sceneState });
+  if (import.meta.env.DEV) console.log('💾 SAVING GAME STATE:', { zoneId, sceneId, sceneState });
   
   const gameProgress = this.getGameProgress();
   // 🚫 OVERWRITE PROTECTION: Check if we're trying to overwrite a completed scene
@@ -423,7 +423,7 @@ const existingScene = gameProgress.zones?.[zoneId]?.scenes?.[sceneId];
 
 if (existingScene && existingScene.completed && 
     (!sceneState.completed || sceneState.stars === 0)) {
-  console.warn('🚫 BLOCKED OVERWRITE: Preventing overwrite of completed scene:', {
+  if (import.meta.env.DEV) console.warn('🚫 BLOCKED OVERWRITE: Preventing overwrite of completed scene:', {
     scene: `${zoneId}/${sceneId}`,
     existing: { completed: existingScene.completed, stars: existingScene.stars },
     attempted: { completed: sceneState.completed, stars: sceneState.stars }
@@ -496,7 +496,7 @@ gameProgress.zones[zoneId].scenes[sceneId] = {
   // Phase tracking
   phase: sceneState.phase || null
 };
-  console.log('💾 CUMULATIVE: Scene data updated:', gameProgress.zones[zoneId].scenes[sceneId]);
+  if (import.meta.env.DEV) console.log('💾 CUMULATIVE: Scene data updated:', gameProgress.zones[zoneId].scenes[sceneId]);
   
   // ✅ 4. FIXED: Calculate totals for ALL zones (not just current zone)
   let totalStars = 0;
@@ -524,7 +524,7 @@ gameProgress.zones[zoneId].scenes[sceneId] = {
     totalStars += zoneStars;
     totalCompletedScenes += zoneCompletedScenes;
     
-    console.log(`📊 CUMULATIVE: Zone ${currentZoneId} totals:`, {
+    if (import.meta.env.DEV) console.log(`📊 CUMULATIVE: Zone ${currentZoneId} totals:`, {
       stars: zoneStars,
       completedScenes: zoneCompletedScenes,
       totalScenes: Object.keys(zone.scenes).length
@@ -535,7 +535,7 @@ gameProgress.zones[zoneId].scenes[sceneId] = {
   gameProgress.totalStars = totalStars;
   gameProgress.completedScenes = totalCompletedScenes;
   
-  console.log('✅ CUMULATIVE SAVE SUCCESS:', {
+  if (import.meta.env.DEV) console.log('✅ CUMULATIVE SAVE SUCCESS:', {
     scene: `${zoneId}/${sceneId}`,
     sceneStars: sceneState.stars || 0,
     zoneTotalStars: gameProgress.zones[zoneId].stars,
@@ -545,7 +545,7 @@ gameProgress.zones[zoneId].scenes[sceneId] = {
   
   // ✅ 6. Auto-unlock next scene if this scene was completed
   if (sceneState.completed) {
-    console.log('🔓 Scene completed, checking auto-unlock...');
+    if (import.meta.env.DEV) console.log('🔓 Scene completed, checking auto-unlock...');
     this.unlockNextScene(zoneId, sceneId);
   }
   
@@ -584,7 +584,7 @@ if (sceneState.completed && sceneState.stars > 0) {
 
 // ✅ BULLETPROOF: Progress validation for 20+ scenes
 validateProgress() {
-  console.log('🔍 VALIDATION: Checking progress integrity...');
+  if (import.meta.env.DEV) console.log('🔍 VALIDATION: Checking progress integrity...');
   
   const progress = this.getGameProgress();
   const issues = [];
@@ -655,7 +655,7 @@ validateProgress() {
   
   const isValid = issues.length === 0;
   
-  console.log(`🔍 VALIDATION RESULT:`, {
+  if (import.meta.env.DEV) console.log(`🔍 VALIDATION RESULT:`, {
     valid: isValid,
     issues: issues.length,
     warnings: warnings.length,
@@ -668,7 +668,7 @@ validateProgress() {
   }
   
   if (warnings.length > 0) {
-    console.warn('⚠️ VALIDATION WARNINGS:', warnings);
+    if (import.meta.env.DEV) console.warn('⚠️ VALIDATION WARNINGS:', warnings);
   }
   
   return {
@@ -694,7 +694,7 @@ backupProgress() {
     };
     
     safeSetItem(`${this.activeProfileId}_backup`, JSON.stringify(backup));
-    console.log('💾 BACKUP: Progress backed up successfully');
+    if (import.meta.env.DEV) console.log('💾 BACKUP: Progress backed up successfully');
     return true;
   } catch (error) {
     console.error('🚨 BACKUP ERROR:', error);
@@ -707,20 +707,20 @@ restoreFromBackup() {
   try {
     const backupData = localStorage.getItem(`${this.activeProfileId}_backup`);
     if (!backupData) {
-      console.warn('⚠️ RESTORE: No backup found');
+      if (import.meta.env.DEV) console.warn('⚠️ RESTORE: No backup found');
       return null;
     }
     
     const backup = JSON.parse(backupData);
     if (!backup.data || !backup.timestamp) {
-      console.warn('⚠️ RESTORE: Invalid backup format');
+      if (import.meta.env.DEV) console.warn('⚠️ RESTORE: Invalid backup format');
       return null;
     }
     
     // Restore the backup
     safeSetItem(`${this.activeProfileId}_gameProgress`, JSON.stringify(backup.data));
     
-    console.log('🔄 RESTORE: Progress restored from backup:', {
+    if (import.meta.env.DEV) console.log('🔄 RESTORE: Progress restored from backup:', {
       timestamp: new Date(backup.timestamp).toLocaleString(),
       stars: backup.data.totalStars,
       completed: backup.data.completedScenes
@@ -735,7 +735,7 @@ restoreFromBackup() {
 
 // ✅ BULLETPROOF: Auto-recovery system
 autoRecovery(validationResult) {
-  console.log('🔧 AUTO-RECOVERY: Attempting to fix corruption...');
+  if (import.meta.env.DEV) console.log('🔧 AUTO-RECOVERY: Attempting to fix corruption...');
   
   // Try to restore from backup first
   const backupRestored = this.restoreFromBackup();
@@ -743,13 +743,13 @@ autoRecovery(validationResult) {
     // Validate the restored backup
     const revalidation = this.validateProgress();
     if (revalidation.valid) {
-      console.log('✅ AUTO-RECOVERY: Successfully restored from backup');
+      if (import.meta.env.DEV) console.log('✅ AUTO-RECOVERY: Successfully restored from backup');
       return true;
     }
   }
   
   // If backup fails, try to recalculate totals
-  console.log('🔧 AUTO-RECOVERY: Attempting to recalculate totals...');
+  if (import.meta.env.DEV) console.log('🔧 AUTO-RECOVERY: Attempting to recalculate totals...');
   const progress = this.getGameProgress();
   this.recalculateTotals(progress);
   safeSetItem(`${this.activeProfileId}_gameProgress`, JSON.stringify(progress));
@@ -757,7 +757,7 @@ autoRecovery(validationResult) {
   // Validate again
   const finalValidation = this.validateProgress();
   if (finalValidation.valid) {
-    console.log('✅ AUTO-RECOVERY: Successfully recalculated totals');
+    if (import.meta.env.DEV) console.log('✅ AUTO-RECOVERY: Successfully recalculated totals');
     return true;
   }
   
@@ -792,7 +792,7 @@ logCompletion(zoneId, sceneId, stars, symbols = {}) {
     
     safeSetItem('completionLog', JSON.stringify(log));
     
-    console.log('📊 COMPLETION LOGGED:', {
+    if (import.meta.env.DEV) console.log('📊 COMPLETION LOGGED:', {
       scene: `${zoneId}/${sceneId}`,
       stars,
       totalCompletions: log.length,
@@ -841,7 +841,7 @@ getCompletionHistory(profileId = null) {
     zone.stars = zoneStars;
     zone.completed = zoneCompletedScenes === totalScenesInZone && totalScenesInZone > 0;
     
-    console.log(`📊 Zone ${zoneId} totals recalculated:`, {
+    if (import.meta.env.DEV) console.log(`📊 Zone ${zoneId} totals recalculated:`, {
       stars: zoneStars,
       completedScenes: zoneCompletedScenes,
       totalScenes: totalScenesInZone,
@@ -852,7 +852,7 @@ getCompletionHistory(profileId = null) {
   // Updated get progress method with profile support
   getGameProgress() {
     if (!this.activeProfileId) {
-      console.warn('No active profile, returning empty progress');
+      if (import.meta.env.DEV) console.warn('No active profile, returning empty progress');
       return this.initializeEmptyProgress();
     }
     
@@ -903,7 +903,7 @@ getCompletionHistory(profileId = null) {
     if (activeProfileId) {
       const locationKey = `${activeProfileId}_lastLocation`;
       localStorage.removeItem(locationKey);
-      console.log('🧹 Cleared current scene tracking for map navigation');
+      if (import.meta.env.DEV) console.log('🧹 Cleared current scene tracking for map navigation');
     }
   }
 
@@ -963,11 +963,11 @@ clearSceneState(zoneId, sceneId) {
   sessionStorage.removeItem(tempSessionKey);
   sessionStorage.removeItem(replaySessionKey);
   
-  console.log(`🔄 Cleared ALL scene states for fresh start: ${zoneId}/${sceneId}`);
-  console.log(`   - Cleared: ${sceneKey}`);
-  console.log(`   - Cleared: ${tempKey}`);
-  console.log(`   - Cleared: ${tempSessionKey}`);
-  console.log(`   - Cleared: ${replaySessionKey}`);
+  if (import.meta.env.DEV) console.log(`🔄 Cleared ALL scene states for fresh start: ${zoneId}/${sceneId}`);
+  if (import.meta.env.DEV) console.log(`   - Cleared: ${sceneKey}`);
+  if (import.meta.env.DEV) console.log(`   - Cleared: ${tempKey}`);
+  if (import.meta.env.DEV) console.log(`   - Cleared: ${tempSessionKey}`);
+  if (import.meta.env.DEV) console.log(`   - Cleared: ${replaySessionKey}`);
   
   // NOTE: This does NOT clear completion status from gameProgress
   // Scene will still show as completed in zone map, but will start fresh when opened
@@ -1042,7 +1042,7 @@ clearSceneState(zoneId, sceneId) {
     let totalStars = 0;
     let completedScenes = 0;
     
-    console.log('🧮 Recalculating totals for all zones...');
+    if (import.meta.env.DEV) console.log('🧮 Recalculating totals for all zones...');
     
     if (progress.zones) {
       Object.entries(progress.zones).forEach(([zoneId, zone]) => {
@@ -1066,7 +1066,7 @@ clearSceneState(zoneId, sceneId) {
         zone.stars = zoneStars;
         zone.completed = zoneCompleted === Object.keys(zone.scenes || {}).length && Object.keys(zone.scenes || {}).length > 0;
         
-        console.log(`📊 Zone ${zoneId}:`, {
+        if (import.meta.env.DEV) console.log(`📊 Zone ${zoneId}:`, {
           stars: zoneStars,
           completed: zoneCompleted,
           total: Object.keys(zone.scenes || {}).length
@@ -1077,7 +1077,7 @@ clearSceneState(zoneId, sceneId) {
     progress.totalStars = totalStars;
     progress.completedScenes = completedScenes;
     
-    console.log('✅ Final totals:', {
+    if (import.meta.env.DEV) console.log('✅ Final totals:', {
       totalStars,
       completedScenes,
       zones: Object.keys(progress.zones || {}).length
@@ -1115,20 +1115,20 @@ clearSceneState(zoneId, sceneId) {
     if (activeProfileId) {
       const locationKey = `${activeProfileId}_lastLocation`;
       localStorage.removeItem(locationKey);
-      console.log('🧹 Cleared last location for reload');
+      if (import.meta.env.DEV) console.log('🧹 Cleared last location for reload');
     }
   }
 
   // ✅ NEW: Debug method for troubleshooting zone progress
   debugZoneProgress(profileId, zoneId) {
-    console.log('🔍 DEBUG ZONE PROGRESS:', { profileId, zoneId });
+    if (import.meta.env.DEV) console.log('🔍 DEBUG ZONE PROGRESS:', { profileId, zoneId });
     
     const progressKey = `${profileId}_gameProgress`;
     const progressData = JSON.parse(localStorage.getItem(progressKey) || '{}');
     
-    console.log('📊 Raw progress data:', progressData);
-    console.log('📊 Zone data:', progressData.zones?.[zoneId]);
-    console.log('📊 Scene data:', progressData.zones?.[zoneId]?.scenes);
+    if (import.meta.env.DEV) console.log('📊 Raw progress data:', progressData);
+    if (import.meta.env.DEV) console.log('📊 Zone data:', progressData.zones?.[zoneId]);
+    if (import.meta.env.DEV) console.log('📊 Scene data:', progressData.zones?.[zoneId]?.scenes);
     
     // Check individual scene states
     if (progressData.zones?.[zoneId]?.scenes) {
@@ -1136,7 +1136,7 @@ clearSceneState(zoneId, sceneId) {
         const sceneStateKey = `${profileId}_${zoneId}_${sceneId}_state`;
         const sceneState = JSON.parse(localStorage.getItem(sceneStateKey) || '{}');
         
-        console.log(`🎬 Scene ${sceneId}:`, {
+        if (import.meta.env.DEV) console.log(`🎬 Scene ${sceneId}:`, {
           progressData: sceneData,
           sceneState: sceneState
         });
@@ -1168,7 +1168,7 @@ clearSceneState(zoneId, sceneId) {
     const activeProfileId = this.activeProfileId || localStorage.getItem('activeProfileId');
     
     if (!activeProfileId) {
-      console.log('No active profile ID found');
+      if (import.meta.env.DEV) console.log('No active profile ID found');
       return null;
     }
     
@@ -1176,7 +1176,7 @@ clearSceneState(zoneId, sceneId) {
     const gameProfiles = this.getProfiles(); // Uses existing working method
     
     if (!gameProfiles || !gameProfiles.profiles) {
-      console.log('No profiles data found');
+      if (import.meta.env.DEV) console.log('No profiles data found');
       return null;
     }
     
@@ -1184,7 +1184,7 @@ clearSceneState(zoneId, sceneId) {
     const activeProfile = gameProfiles.profiles[activeProfileId];
     
     if (!activeProfile) {
-      console.log(`Profile with ID ${activeProfileId} not found`);
+      if (import.meta.env.DEV) console.log(`Profile with ID ${activeProfileId} not found`);
       return null;
     }
     

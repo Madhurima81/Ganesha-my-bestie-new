@@ -31,10 +31,23 @@ introduced here. Committed on `staging`.
 **Open:** Step 4 resolved by Madhurima — replay always starts fresh, map/ZoneWelcome
 keep showing done; verified that is already the behaviour, so the Continue-clears-
 next-scene `_state` item is downgraded to internal inconsistency, no child-visible
-effect, no change. Step 5 (DEV-gate
-~135 ungated console calls in App.jsx / GameStateManager.js / ProgressManager.jsx)
-awaiting approval for a bulk pass. Full findings + checklist gaps list in the
-session transcript, not yet folded into GMB_AUDIT_PUNCHLIST.md.
+effect, no change. Step 5 done — see next entry. Full findings + checklist gaps
+list in the session transcript, not yet folded into GMB_AUDIT_PUNCHLIST.md.
+
+## [2026-09-18] — DEV-gate console output in the 3 shared files the scene sweeps missed
+**Touched:** src/App.jsx, src/lib/services/GameStateManager.js,
+src/lib/services/ProgressManager.jsx
+**Changed:** The "no ungated console.log" checklist rule was applied to the 13
+scene files but never to the shared app/state layer. Prefixed every line-start
+`console.log/warn/debug(` with `if (import.meta.env.DEV)` via a one-off script
+(App.jsx 61, GameStateManager.js 52, ProgressManager.jsx 12) and hand-gated the
+2 mid-line calls in App.jsx's next-scene preloader (:595-596). The 10 remaining
+matches in App.jsx are inside commented-out code blocks (:732, :951, :1031,
+:1837) and were correctly left alone. `console.error` untouched by design.
+Side benefit: `GameStateManager.saveGameState`'s `new Error().stack` caller
+trace (:395-410) now only runs in dev instead of on every progress write.
+No behaviour change. Build-verified.
+**Open:** Not yet pushed. Live-browser pass (checklist §17) still to run.
 
 ## [2026-09-18] — Tusk zone: Ganesha gesture cue was dead code, fixed
 **Touched:** src/zones/symbol-mountain/scenes/tusk/SymbolMountainSceneV3.jsx

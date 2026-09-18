@@ -83,7 +83,7 @@ static SCENE_METADATA = {
 
   // 📊 GET ZONE PROGRESS - Primary function for Zone Welcome screens
   static calculateZoneProgress(profileId, zoneId) {
-    console.log(`📊 ProgressManager: Calculating zone progress for ${profileId}/${zoneId}`);
+    if (import.meta.env.DEV) console.log(`📊 ProgressManager: Calculating zone progress for ${profileId}/${zoneId}`);
     
     
     try {
@@ -142,7 +142,7 @@ static SCENE_METADATA = {
         completionPercentage: Math.round((completedScenes / zoneConfig.totalScenes) * 100)
       };
       
-      console.log(`✅ Zone progress calculated:`, result);
+      if (import.meta.env.DEV) console.log(`✅ Zone progress calculated:`, result);
       return result;
       
     } catch (error) {
@@ -155,7 +155,7 @@ static SCENE_METADATA = {
 
   // 👤 GET PROFILE STATS - Primary function for Personal Dashboard
   static getProfileStats(profileId) {
-    console.log(`👤 ProgressManager: Calculating profile stats for ${profileId}`);
+    if (import.meta.env.DEV) console.log(`👤 ProgressManager: Calculating profile stats for ${profileId}`);
     
     try {
       // Get profile basic info
@@ -234,7 +234,7 @@ static SCENE_METADATA = {
         }
       };
       
-      console.log(`✅ Profile stats calculated:`, result);
+      if (import.meta.env.DEV) console.log(`✅ Profile stats calculated:`, result);
       return result;
       
     } catch (error) {
@@ -245,7 +245,7 @@ static SCENE_METADATA = {
 
   // 💾 UPDATE SCENE COMPLETION - Unified save function
   static updateSceneCompletion(profileId, zoneId, sceneId, completionData) {
-    console.log(`💾 ProgressManager: Updating scene completion`, {
+    if (import.meta.env.DEV) console.log(`💾 ProgressManager: Updating scene completion`, {
       profileId, zoneId, sceneId, completionData
     });
     
@@ -291,7 +291,7 @@ static SCENE_METADATA = {
         
         if (nextSceneId && !progressData.zones[zoneId].scenes[nextSceneId]) {
           progressData.zones[zoneId].scenes[nextSceneId] = { unlocked: true };
-          console.log(`🔓 Auto-unlocked next scene: ${nextSceneId}`);
+          if (import.meta.env.DEV) console.log(`🔓 Auto-unlocked next scene: ${nextSceneId}`);
         }
       }
       
@@ -351,7 +351,7 @@ if (!profileProgress.zones[zoneId]) profileProgress.zones[zoneId] = { scenes: {}
 if (!profileProgress.zones[zoneId].scenes) profileProgress.zones[zoneId].scenes = {};
 
 // Add this line BEFORE line 352
-console.log('🔥 PROGRESS MANAGER RECEIVED:', {
+if (import.meta.env.DEV) console.log('🔥 PROGRESS MANAGER RECEIVED:', {
   zoneId,
   sceneId,
   chantedVerses: completionData.chantedVerses
@@ -381,9 +381,9 @@ profileProgress.zones[zoneId].scenes[sceneId] = {
 
 // Save the updated profile progress
 safeSetItem(profileProgressKey, JSON.stringify(profileProgress));
-console.log(`✅ DUAL SAVE: Scene completion saved to both ${sceneStateKey} AND ${profileProgressKey}`);
+if (import.meta.env.DEV) console.log(`✅ DUAL SAVE: Scene completion saved to both ${sceneStateKey} AND ${profileProgressKey}`);
       
-      console.log(`✅ Scene completion saved successfully`);
+      if (import.meta.env.DEV) console.log(`✅ Scene completion saved successfully`);
       
       // Return updated zone progress for immediate UI updates
       return this.calculateZoneProgress(profileId, zoneId);
@@ -408,7 +408,7 @@ console.log(`✅ DUAL SAVE: Scene completion saved to both ${sceneStateKey} AND 
 
   // 🔄 SYNC PROFILE DATA - Fix any inconsistencies
   static syncProfileData(profileId) {
-    console.log(`🔄 ProgressManager: Syncing profile data for ${profileId}`);
+    if (import.meta.env.DEV) console.log(`🔄 ProgressManager: Syncing profile data for ${profileId}`);
     
     try {
       // Recalculate all stats and ensure consistency
@@ -422,7 +422,7 @@ console.log(`✅ DUAL SAVE: Scene completion saved to both ${sceneStateKey} AND 
         safeSetItem('gameProfiles', JSON.stringify(gameProfiles));
       }
       
-      console.log(`✅ Profile data synced successfully`);
+      if (import.meta.env.DEV) console.log(`✅ Profile data synced successfully`);
       return profileStats;
       
     } catch (error) {
@@ -462,7 +462,7 @@ console.log(`✅ DUAL SAVE: Scene completion saved to both ${sceneStateKey} AND 
 
   // 🧹 UTILITY: Clear all progress (for testing)
   static clearAllProgress(profileId) {
-    console.warn(`🧹 Clearing all progress for ${profileId}`);
+    if (import.meta.env.DEV) console.warn(`🧹 Clearing all progress for ${profileId}`);
     
     const progressKey = `${profileId}_gameProgress`;
     localStorage.removeItem(progressKey);
