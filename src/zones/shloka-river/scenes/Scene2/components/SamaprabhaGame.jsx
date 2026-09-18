@@ -108,7 +108,9 @@ const loadDebugLayout = () => {
       })),
     };
   } catch (error) {
-    console.warn('Unable to load Samaprabha layout debug values:', error);
+    if (import.meta.env.DEV) {
+      console.warn('Unable to load Samaprabha layout debug values:', error);
+    }
     return fallback;
   }
 };
@@ -581,7 +583,9 @@ export default function SamaprabhaGame({
 
   const copyDebugLayout = () => {
     const payload = 'const SAMA_DEFAULT_LAYOUT = ' + JSON.stringify(activeLayout, null, 2) + ';';
-    console.log('Samaprabha layout JSON:', payload);
+    if (import.meta.env.DEV) {
+      console.log('Samaprabha layout JSON:', payload);
+    }
     window.prompt('Copy Samaprabha layout', payload);
   };
 

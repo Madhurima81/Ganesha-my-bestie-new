@@ -190,25 +190,47 @@ const FreeDraggableItem = ({
     handleDragEnd();
   }, [handleDragEnd]);
 
+  const handleTouchCancel = useCallback((event) => {
+    // Interrupted touch sequence (incoming call, notification, app switch) - end drag same as touchend
+    handleDragEnd();
+  }, [handleDragEnd]);
+
   // FIXED: Event listeners with proper passive options
   useEffect(() => {
     if (isDragging || dragDataRef.current.dragTimer) {
       // Mouse events
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
-      
+
       // Touch events - explicitly set as non-passive only when needed
       document.addEventListener('touchmove', handleTouchMove, { passive: true });
       document.addEventListener('touchend', handleTouchEnd, { passive: true });
+      document.addEventListener('touchcancel', handleTouchCancel, { passive: true });
 
       return () => {
         document.removeEventListener('mousemove', handleMouseMove);
         document.removeEventListener('mouseup', handleMouseUp);
         document.removeEventListener('touchmove', handleTouchMove);
         document.removeEventListener('touchend', handleTouchEnd);
+        document.removeEventListener('touchcancel', handleTouchCancel);
       };
     }
-  }, [isDragging, handleMouseMove, handleMouseUp, handleTouchMove, handleTouchEnd]);
+  }, [isDragging, handleMouseMove, handleMouseUp, handleTouchMove, handleTouchEnd, handleTouchCancel]);
+
+  // Self-terminate an in-progress drag the moment the caller disables the item mid-drag
+  // (no call site currently wraps this with its own pause/interrupt handling).
+  useEffect(() => {
+    if (disabled && (isDragging || dragStarted)) {
+      if (dragDataRef.current.dragTimer) {
+        clearTimeout(dragDataRef.current.dragTimer);
+        dragDataRef.current.dragTimer = null;
+      }
+      setIsDragging(false);
+      setDragStarted(false);
+      dragDataRef.current.hasMoved = false;
+      onDragEnd?.();
+    }
+  }, [disabled, isDragging, dragStarted, onDragEnd]);
 
   return (
     <div
