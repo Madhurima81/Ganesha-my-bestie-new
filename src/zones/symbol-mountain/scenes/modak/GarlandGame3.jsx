@@ -79,6 +79,13 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
   const [basketPct, setBasketPct] = useState(null);
   const [showModakGlow, setShowModakGlow] = useState(false);
 
+  // Defensive: if the scene pauses (tab-hide) mid-carry, drop the stuck
+  // world-drag garland back to its rest position instead of leaving it
+  // floating under a pointer that will never fire up/cancel again.
+  useEffect(() => {
+    if (isPaused) setGarlandPosition((prev) => (prev.active ? { x: 50, y: 55, active: false } : prev));
+  }, [isPaused]);
+
   const mutedRef = useRef(!isAudioOn);
   useEffect(() => { mutedRef.current = !isAudioOn; }, [isAudioOn]);
   const speak = useCallback((text) => {
@@ -283,6 +290,7 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
           style={{ left: `${garlandPosition.x}%`, top: `${garlandPosition.y}%` }}
           onPointerMove={moveGarland}
           onPointerUp={endGarlandDrag}
+          onPointerCancel={() => setGarlandPosition({ x: 50, y: 55, active: false })}
         >
           <img src={completedGarland} alt="" />
         </button>

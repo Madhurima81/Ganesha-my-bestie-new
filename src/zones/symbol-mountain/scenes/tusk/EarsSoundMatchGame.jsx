@@ -1,3 +1,4 @@
+import PoseImage, { usePreloadPoses } from '../../../../lib/components/animation/PoseImage';
 // zones/symbol-mountain/scenes/tusk/EarsSoundMatchGame.jsx
 // Ear listening game: one continuous scene. Elephant (thirsty) is active
 // first while Cow (hungry) waits faded; after Elephant is solved, Cow
@@ -6,21 +7,20 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import './EarsSoundMatchGame.css';
 
-// Reuses the Eyes game's background (the delivered ear_game_background.png
-// was a captured screenshot of the Eyes-game dev harness, not usable art).
-import bgImg from './assets/images/ears-game/symbol_mountain_3_bg.png';
-import leafyBushImg from './assets/images/ears-game-v2/leafy_bush.png';
-import hiddenSpringImg from './assets/images/ears-game-v2/hidden_spring.png';
-import revealedSpringImg from './assets/images/ears-game-v2/revealed_spring.png';
-import hiddenGrassBushImg from './assets/images/ears-game-v2/hidden_grass_bush.png';
-import revealedGrassBushImg from './assets/images/ears-game-v2/revealed_grass_bush.png';
-import elephantThirstyImg from './assets/images/ears-game-v2/elephant_thirsty.png';
-import elephantDrinkingImg from './assets/images/ears-game-v2/elephant_drinking.png';
-import elephantHappyWaterImg from './assets/images/ears-game-v2/elephant_happy_water.png';
-import cowTiredImg from './assets/images/ears-game-v2/cow_tired.png';
-import cowHungryImg from './assets/images/ears-game-v2/cow_hungry.png';
-import cowEatingGrassImg from './assets/images/ears-game-v2/cow_eating_grass.png';
-import cowHappyChewingImg from './assets/images/ears-game-v2/cow_happy_chewing.png';
+// Reuse the shared scene-3 Symbol Mountain background across Eyes, Ears, and Tusk.
+import bgImg from './assets/images/eyes-game/symbol_mountain_3_bg.webp';
+import leafyBushImg from './assets/images/ears-game-v2/leafy_bush.webp';
+import hiddenSpringImg from './assets/images/ears-game-v2/hidden_spring.webp';
+import revealedSpringImg from './assets/images/ears-game-v2/revealed_spring.webp';
+import hiddenGrassBushImg from './assets/images/ears-game-v2/hidden_grass_bush.webp';
+import revealedGrassBushImg from './assets/images/ears-game-v2/revealed_grass_bush.webp';
+import elephantThirstyImg from './assets/images/ears-game-v2/elephant_thirsty.webp';
+import elephantDrinkingImg from './assets/images/ears-game-v2/elephant_drinking.webp';
+import elephantHappyWaterImg from './assets/images/ears-game-v2/elephant_happy_water.webp';
+import cowTiredImg from './assets/images/ears-game-v2/cow_tired.webp';
+import cowHungryImg from './assets/images/ears-game-v2/cow_hungry.webp';
+import cowEatingGrassImg from './assets/images/ears-game-v2/cow_eating_grass.webp';
+import cowHappyChewingImg from './assets/images/ears-game-v2/cow_happy_chewing.webp';
 import soundWaterDrip from './assets/audio/ear_water_drip.wav';
 import soundGrassRustle from './assets/audio/ear_grass_rustle.wav';
 import soundBirdAmbient from './assets/audio/ear_bird_forest_ambient.wav';
@@ -165,6 +165,8 @@ const speakFallback = (text) => {
   }
 };
 
+const POSE_ASSETS = [bgImg, leafyBushImg, hiddenSpringImg, revealedSpringImg, hiddenGrassBushImg, revealedGrassBushImg, elephantThirstyImg, elephantDrinkingImg, elephantHappyWaterImg, cowTiredImg, cowHungryImg, cowEatingGrassImg, cowHappyChewingImg];
+
 const EarsSoundMatchGame = ({
   isActive = true,
   isAudioOn = true,
@@ -173,6 +175,7 @@ const EarsSoundMatchGame = ({
   hideElements = false,
   className = ''
 }) => {
+  usePreloadPoses(POSE_ASSETS);
   const [roundIndex, setRoundIndex] = useState(0);
   const [phase, setPhase] = useState(PHASE.LISTENING);
   const [activeZoneId, setActiveZoneId] = useState(null);
@@ -326,7 +329,7 @@ const EarsSoundMatchGame = ({
       window.prompt?.('Copy Ear layout JSON', payload);
       setLayoutCopyStatus('Shown');
     }
-    console.log('Ear layout JSON:', payload);
+    if (import.meta.env.DEV) console.log('Ear layout JSON:', payload);
     schedule(() => setLayoutCopyStatus(''), 1500);
   }, [layout, schedule]);
 
@@ -573,7 +576,7 @@ const EarsSoundMatchGame = ({
   const elephantFrame = elephantSolved
     ? ROUNDS[0].revealFrames[revealFrameByAnimal.elephant ?? ROUNDS[0].revealFrames.length - 1]
     : ROUNDS[0].idleImg;
-  const elephantOpacityClass = elephantSolved ? 'ears-sprite-softened' : 'ears-sprite-active';
+  const elephantOpacityClass = elephantSolved && cowIsFocal ? 'ears-sprite-softened' : 'ears-sprite-active';
 
   const cowFrame = cowSolved
     ? ROUNDS[1].revealFrames[revealFrameByAnimal.cow ?? ROUNDS[1].revealFrames.length - 1]
@@ -592,8 +595,7 @@ const EarsSoundMatchGame = ({
     >
       <img className="ears-game-bg" src={bgImg} alt="" draggable={false} />
 
-      <img
-        key={elephantFrame}
+      <PoseImage
         className={`ears-story-sprite ${elephantOpacityClass} ${debugMode && selectedDebugKey === 'elephantSprite' ? 'is-debug-selected' : ''}`}
         src={elephantFrame}
         alt=""
@@ -601,8 +603,7 @@ const EarsSoundMatchGame = ({
         style={styleFromLayout(layout.elephantSprite)}
         onPointerDown={(e) => startDebugDrag(e, 'elephantSprite')}
       />
-      <img
-        key={cowFrame}
+      <PoseImage
         className={`ears-story-sprite ${cowOpacityClass} ${debugMode && selectedDebugKey === 'cowSprite' ? 'is-debug-selected' : ''}`}
         src={cowFrame}
         alt=""
@@ -640,7 +641,7 @@ const EarsSoundMatchGame = ({
           >
             <span className="ears-source-number">{index + 1}</span>
             <span className="ears-source-pulse" aria-hidden="true" />
-            <img key={zoneImg} src={zoneImg} alt="" draggable={false} />
+            <PoseImage src={zoneImg} alt="" draggable={false} />
           </button>
         );
       })}

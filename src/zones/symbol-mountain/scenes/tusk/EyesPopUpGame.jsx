@@ -1,3 +1,4 @@
+import PoseImage, { usePreloadPoses } from '../../../../lib/components/animation/PoseImage';
 // zones/symbol-mountain/scenes/tusk/EyesPopUpGame.jsx
 // Eyes investigation game: a single story-led search — Monkey is hungry,
 // Peacock is missing a feather. Find both camouflaged things at once.
@@ -6,16 +7,16 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import useAppVisibility from '../../../../lib/hooks/useAppVisibility';
 import './EyesPopUpGame.css';
 
-import bgImg from './assets/images/eyes-game/symbol_mountain_3_bg.png';
-import monkeyWorriedImg from './assets/images/eyes-game-v2/monkey_hungry_worried.png';
-import peacockWorriedImg from './assets/images/eyes-game-v2/peacock_worried_missing_feather.png';
-import monkeyHappyImg from './assets/images/eyes-game/monkey_04_smiles_holds_close.png';
-import peacockHappyImg from './assets/images/eyes-game/peacock_04_feather_highlight.png';
-import newFeatherBushImg from './assets/images/eyes-game-v2/new_feather_bush.png';
-import newMangoBushImg from './assets/images/eyes-game-v2/new_mango_bush.png';
-import featherFoundImg from './assets/images/eyes-game-v2/peacock_feather_single.png';
-import mangoFoundImg from './assets/images/eyes-game/mango.png';
-import yellowFlowerClusterImg from './assets/images/eyes-game-v2/yellow_flower_cluster.png';
+import bgImg from './assets/images/eyes-game/symbol_mountain_3_bg.webp';
+import monkeyWorriedImg from './assets/images/eyes-game-v2/monkey_hungry_worried.webp';
+import peacockWorriedImg from './assets/images/eyes-game-v2/peacock_worried_missing_feather.webp';
+import monkeyHappyImg from './assets/images/eyes-game/monkey_04_smiles_holds_close.webp';
+import peacockHappyImg from './assets/images/eyes-game/peacock_04_feather_highlight.webp';
+import newFeatherBushImg from './assets/images/eyes-game-v2/new_feather_bush.webp';
+import newMangoBushImg from './assets/images/eyes-game-v2/new_mango_bush.webp';
+import featherFoundImg from './assets/images/eyes-game-v2/peacock_feather_single.webp';
+import mangoFoundImg from './assets/images/eyes-game/mango.webp';
+import yellowFlowerClusterImg from './assets/images/eyes-game-v2/yellow_flower_cluster.webp';
 import { ANIMAL_POSITIONS } from './animalPositions';
 
 const FLOW = {
@@ -164,6 +165,8 @@ const speakFallback = (text) => {
   }
 };
 
+const POSE_ASSETS = [bgImg, monkeyWorriedImg, peacockWorriedImg, monkeyHappyImg, peacockHappyImg, newFeatherBushImg, newMangoBushImg, featherFoundImg, mangoFoundImg, yellowFlowerClusterImg];
+
 const EyesPopUpGame = ({
   isActive = true,
   isAudioOn = true,
@@ -171,6 +174,7 @@ const EyesPopUpGame = ({
   hideElements = false,
   className = ''
 }) => {
+  usePreloadPoses(POSE_ASSETS);
   const [flow, setFlow] = useState(FLOW.SEARCH);
   const [foundTargets, setFoundTargets] = useState([]);
   const [centeredTargets, setCenteredTargets] = useState([]);
@@ -295,7 +299,7 @@ const EyesPopUpGame = ({
       window.prompt?.('Copy Eyes layout JSON', payload);
       setLayoutCopyStatus('Shown');
     }
-    console.log('Eyes layout JSON:', payload);
+    if (import.meta.env.DEV) console.log('Eyes layout JSON:', payload);
     if (feedbackTimerRef.current) clearTimeout(feedbackTimerRef.current);
     feedbackTimerRef.current = setTimeout(() => setLayoutCopyStatus(''), 1500);
   }, [layout]);
@@ -490,7 +494,7 @@ const EyesPopUpGame = ({
     >
       <img className="eyes-game-bg" src={bgImg} alt="" draggable={false} />
 
-      <img
+      <PoseImage
         className={`eyes-story-character ${debugMode && selectedDebugKey === 'monkeyCharacter' ? 'is-debug-selected' : ''}`}
         src={monkeyImg}
         alt=""
@@ -498,7 +502,7 @@ const EyesPopUpGame = ({
         style={styleFromLayout(layout.monkeyCharacter)}
         onPointerDown={(e) => startDebugDrag(e, 'monkeyCharacter')}
       />
-      <img
+      <PoseImage
         className={`eyes-story-character ${debugMode && selectedDebugKey === 'peacockCharacter' ? 'is-debug-selected' : ''}`}
         src={peacockImg}
         alt=""
@@ -580,7 +584,7 @@ const EyesPopUpGame = ({
             disabled={!debugMode && isFound}
           >
             {(isFound ? target.foundImg : target.hiddenImg) && (
-              <img src={isFound ? target.foundImg : target.hiddenImg} alt="" draggable={false} />
+              <PoseImage src={isFound ? target.foundImg : target.hiddenImg} alt="" draggable={false} />
             )}
           </button>
         );
