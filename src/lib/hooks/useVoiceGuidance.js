@@ -85,6 +85,13 @@ const useVoiceGuidance = (zoneId, sceneId, {
   const audioVisibilityCleanupRef = useRef(null);
   // Called from handleShow when no VO is replayed — scene provides context-aware hint
   const onReturnHintRef = useRef(null);
+  // The in-flight SpeechSynthesisUtterance on the TTS fallback path. voiceRef stays
+  // null for TTS, so hide/stop paths need this to cancel speech and detach its
+  // onend/onerror before cancel() fires them (which would advance the phase).
+  const ttsUtteranceRef = useRef(null);
+  // The 2s tab-return replay timer. Must be cleared on stop/unmount so an old
+  // scene's VO can't start over Zone Welcome after a quick Home tap.
+  const replayTimeoutRef = useRef(null);
 
   // Refs for idle timer to access current values
   const isPlayingRef = useRef(isPlaying);
@@ -171,6 +178,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
         };
 
         const cleanupAndClear = () => {
+          if (ttsUtteranceRef.current === utterance) ttsUtteranceRef.current = null;
           voiceRef.current = null;
           activeVoiceKeyRef.current = null;
           activeVoiceCallbackRef.current = null;
@@ -184,6 +192,13 @@ const useVoiceGuidance = (zoneId, sceneId, {
         utterance.onend = () => { cleanupAndClear(); fireCallback(); };
         utterance.onerror = () => { cleanupAndClear(); fireCallback(); };
 
+        // Detach the previous utterance's handlers before cancel() so its
+        // onend/onerror can't fire the old callback on top of this one.
+        if (ttsUtteranceRef.current) {
+          ttsUtteranceRef.current.onend = null;
+          ttsUtteranceRef.current.onerror = null;
+        }
+        ttsUtteranceRef.current = utterance;
         voiceRef.current = null;
         activeVoiceKeyRef.current = key;
         activeVoiceCallbackRef.current = onEnded ?? null;
@@ -280,6 +295,23 @@ const useVoiceGuidance = (zoneId, sceneId, {
 
   // Stop voice
   const stopVoice = useCallback(() => {
+    if (replayTimeoutRef.current) {
+      clearTimeout(replayTimeoutRef.current);
+      replayTimeoutRef.current = null;
+    }
+    // TTS path: detach handlers first so cancel() doesn't fire onEnded.
+    if (ttsUtteranceRef.current) {
+      ttsUtteranceRef.current.onend = null;
+      ttsUtteranceRef.current.onerror = null;
+      ttsUtteranceRef.current = null;
+      activeVoiceKeyRef.current = null;
+      activeVoiceCallbackRef.current = null;
+      activeVoiceReplayRef.current = true;
+      activeVoiceTextOverrideRef.current = null;
+      activeVoiceStripLeadingTextRef.current = null;
+      setIsPlaying(false);
+      clearVoDuck();
+    }
     if (typeof window !== 'undefined' && window.speechSynthesis) {
       window.speechSynthesis.cancel();
     }
@@ -637,8 +669,9 @@ const useVoiceGuidance = (zoneId, sceneId, {
 
     musicWasPlayingRef.current = !!(musicRef.current && !musicRef.current.paused);
 
-    // Store interrupted voice — include replayOnReturn so handleShow knows whether to replay
-    if (voiceRef.current && activeVoiceKeyRef.current) {
+    // Store interrupted voice — include replayOnReturn so handleShow knows whether to replay.
+    // Covers both the MP3 path (voiceRef set) and the TTS path (ttsUtteranceRef set).
+    if ((voiceRef.current || ttsUtteranceRef.current) && activeVoiceKeyRef.current) {
       interruptedVoiceRef.current = {
         key: activeVoiceKeyRef.current,
         onEnded: activeVoiceCallbackRef.current,
@@ -646,6 +679,15 @@ const useVoiceGuidance = (zoneId, sceneId, {
         textOverride: activeVoiceTextOverrideRef.current,
         stripLeadingText: activeVoiceStripLeadingTextRef.current,
       };
+    }
+
+    // TTS path: stop speaking in the background. Detach handlers first so the
+    // cancel-triggered onend/onerror can't advance the scene while hidden.
+    if (ttsUtteranceRef.current) {
+      ttsUtteranceRef.current.onend = null;
+      ttsUtteranceRef.current.onerror = null;
+      ttsUtteranceRef.current = null;
+      try { window.speechSynthesis?.cancel(); } catch { /* no-op */ }
     }
 
     if (musicRef.current) musicRef.current.pause();
@@ -688,7 +730,9 @@ const useVoiceGuidance = (zoneId, sceneId, {
       interruptedVoiceRef.current = null;
       if (replayOnReturn) {
         // 2-second pause before replay to avoid collision with hint reset
-        setTimeout(() => {
+        if (replayTimeoutRef.current) clearTimeout(replayTimeoutRef.current);
+        replayTimeoutRef.current = setTimeout(() => {
+          replayTimeoutRef.current = null;
           playVoice(key, onEnded, { replayOnReturn, textOverride, stripLeadingText });
         }, 2000);
         voiceWillPlay = true;
@@ -697,7 +741,9 @@ const useVoiceGuidance = (zoneId, sceneId, {
       const { key, onEnded, options } = pendingVoiceRef.current;
       pendingVoiceRef.current = null;
       // 2-second pause before replay to avoid collision with hint reset
-      setTimeout(() => {
+      if (replayTimeoutRef.current) clearTimeout(replayTimeoutRef.current);
+      replayTimeoutRef.current = setTimeout(() => {
+        replayTimeoutRef.current = null;
         playVoice(key, onEnded, options);
       }, 2000);
       voiceWillPlay = true;
@@ -720,6 +766,12 @@ const useVoiceGuidance = (zoneId, sceneId, {
   // Cleanup on unmount
   useEffect(() => {
     return () => {
+      if (replayTimeoutRef.current) {
+        clearTimeout(replayTimeoutRef.current);
+        replayTimeoutRef.current = null;
+      }
+      pendingVoiceRef.current = null;
+      interruptedVoiceRef.current = null;
       stopVoice();
       stopMusic();
       stopIdleTimer();

@@ -1,6 +1,41 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
 
+## [2026-09-18] — Shared-layer audio fixes from checklist review
+**Touched:** src/lib/hooks/useVoiceGuidance.js, src/lib/audio/SoundManager.js,
+src/lib/components/celebration/SceneCompletionCelebration.jsx
+**Changed:** Review of GMB_SCENE_LAUNCH_CHECKLIST.md against the shared layers
+(not the 13 scene files) found bugs the per-scene sweeps could not see. Fixed 4:
+0. `SceneCompletionCelebration` — no double-tap guard on any action button; a
+   fast second tap on the next-scene pill during the 700ms exit animation
+   queued a second `onComplete` + navigation. Added `actionLockRef` (mirrors
+   HomeButton's `isNavigating`): first action wins, lock resets when `show`
+   flips back on. Covers next-scene pill, Home, Play Again, and primaryAction.
+1. `useVoiceGuidance` — the 2s tab-return replay timer was a bare setTimeout,
+   never cleared on stop/unmount, so a quick Home tap after returning to the
+   tab let the old scene's VO start over Zone Welcome. Now tracked in
+   `replayTimeoutRef`, cleared by `stopVoice()` and on unmount (pending/
+   interrupted refs also nulled on unmount).
+2. `useVoiceGuidance` — TTS fallback path left `voiceRef` null, so `handleHide`
+   never cancelled speech nor stored it for replay; TTS kept talking in a hidden
+   tab and its onend advanced the phase while hidden. Added `ttsUtteranceRef`;
+   hide/stop now detach onend/onerror before `speechSynthesis.cancel()` and the
+   interrupted line is stored for the normal replay-on-return.
+3. `SoundManager.getCtx()` — only resumed a `suspended` AudioContext; iOS Safari
+   reports `interrupted` after Siri/phone-call/Control Center, with no
+   visibilitychange, so all Web Audio SFX stayed silent until reload. Now
+   resumes on either state.
+Build-verified (`vite build` clean). Lint: 1 pre-existing error (`sfxRef`
+unused) and 1 pre-existing hook-deps warning in useVoiceGuidance.js, not
+introduced here. Committed on `staging`.
+**Open:** Step 4 resolved by Madhurima — replay always starts fresh, map/ZoneWelcome
+keep showing done; verified that is already the behaviour, so the Continue-clears-
+next-scene `_state` item is downgraded to internal inconsistency, no child-visible
+effect, no change. Step 5 (DEV-gate
+~135 ungated console calls in App.jsx / GameStateManager.js / ProgressManager.jsx)
+awaiting approval for a bulk pass. Full findings + checklist gaps list in the
+session transcript, not yet folded into GMB_AUDIT_PUNCHLIST.md.
+
 ## [2026-09-18] — Tusk zone: Ganesha gesture cue was dead code, fixed
 **Touched:** src/zones/symbol-mountain/scenes/tusk/SymbolMountainSceneV3.jsx
 **Changed:** Follow-up to "does sparkle + Ganesha gesture show on completion"

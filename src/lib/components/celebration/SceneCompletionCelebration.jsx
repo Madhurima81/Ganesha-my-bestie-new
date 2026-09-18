@@ -86,9 +86,21 @@ const SceneCompletionCelebration = ({
     }
   }, [selectedApp, resolvedZoneId]);
 
+  // Double-tap guard (mirrors HomeButton's isNavigating flag). Once any action
+  // button fires, further taps are ignored until the celebration is hidden
+  // again — otherwise a fast second tap on the next-scene pill during the
+  // 700ms exit animation queued a second onComplete + navigation.
+  const actionLockRef = useRef(false);
+  const acquireActionLock = () => {
+    if (actionLockRef.current) return false;
+    actionLockRef.current = true;
+    return true;
+  };
+
   useEffect(() => {
     if (show) {
       setIsExiting(false);
+      actionLockRef.current = false;
     }
   }, [show]);
 
@@ -151,7 +163,10 @@ const SceneCompletionCelebration = ({
     } catch (e) {}
   }, [show, sceneId, resolvedZoneId, completionData]);
 
-  const handleAction = (callback, skipComplete = false) => {
+  // `alreadyLocked` is passed by handleContinueWithAnimation, which takes the
+  // lock itself before its 700ms delay so the deferred handleAction still runs.
+  const handleAction = (callback, skipComplete = false, alreadyLocked = false) => {
+    if (!alreadyLocked && !acquireActionLock()) return;
     if (!skipComplete && onComplete && completionData) {
       onComplete(sceneId, completionData);
     }
@@ -159,6 +174,7 @@ const SceneCompletionCelebration = ({
   };
 
   const handleContinueWithAnimation = (callback) => {
+    if (!acquireActionLock()) return;
     setIsExiting(true);
     setTimeout(() => {
       setIsExiting(false);
@@ -327,7 +343,7 @@ const SceneCompletionCelebration = ({
                   <ProfilePillBtn
                     onClick={() => {
                       if (isFinalScene) {
-                        handleContinueWithAnimation(() => handleAction(onHome || onContinue || handleExplore));
+                        handleContinueWithAnimation(() => handleAction(onHome || onContinue || handleExplore, false, true));
                         return;
                       }
                       const currentZone = resolvedZoneId || GameStateManager.currentZone || 'symbol-mountain';
@@ -335,7 +351,7 @@ const SceneCompletionCelebration = ({
                       if (nextSceneInfo) {
                         GameStateManager.clearSceneState(nextSceneInfo.zone, nextSceneInfo.scene);
                       }
-                      handleContinueWithAnimation(() => handleAction(onContinue));
+                      handleContinueWithAnimation(() => handleAction(onContinue, false, true));
                     }}
                     label={isFinalScene ? 'Home' : nextSceneName}
                     size="md"

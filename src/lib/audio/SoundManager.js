@@ -29,8 +29,11 @@ function getCtx() {
       }
     });
   }
-  // Only resume on explicit user-visible call (not when page is hidden)
-  if (_ctx.state === 'suspended' && !document.hidden) _ctx.resume();
+  // Only resume on explicit user-visible call (not when page is hidden).
+  // iOS Safari reports 'interrupted' (not 'suspended') after a Siri / phone-call /
+  // Control Center interruption, and fires no visibilitychange for it — without
+  // this check every Web Audio SFX stayed silent until reload.
+  if ((_ctx.state === 'suspended' || _ctx.state === 'interrupted') && !document.hidden) _ctx.resume();
   return _ctx;
 }
 
