@@ -2376,7 +2376,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
             show={sceneState.showingCompletionScreen}
             zoneId="about-me-hut"
             sceneId="dreams-wishes"
-            sceneName="Dreams & Wishes"
+            sceneName="Our Wishes & Dreams"
             completionTitle={completionModalContent?.title}
             completionSubtitle={completionModalContent?.subtitle}
             discoveredSymbols={completionIcons}
@@ -2390,7 +2390,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
             }}
             starsEarned={sceneState.stars}
             totalStars={3}
-            nextSceneName="About Me Hut Complete"
+            nextSceneName="My Indian Story"
             childName={profileDisplayName}
             isFinalScene={false}
             completionData={{

@@ -856,7 +856,7 @@ const ShlokaRiverFinaleContent = ({
           <SceneCompletionCelebration
             show={showSceneCompletion}
             zoneId={zoneId}
-            sceneName="Shloka River"
+            sceneName="Build the Shloka!"
             completionTitle="The Shloka River Is Complete!"
             completionSubtitle="Vakratunda Mahakaya Suryakoti Samaprabha · Nirvighnam Kurumedeva Sarvakaryeshu Sarvada"
             sceneNumber={5}

@@ -1095,7 +1095,7 @@ const SymbolMountainSceneContent = ({
             {isCompletionView && !showMandala && (
               <SceneCompletionCelebration
                 show={isCompletionView}
-                sceneName="Musical Mountain Adventure"
+                sceneName="Ganesha's Eyes, Ears & Tusk"
                 completionTitle={completionModalContent?.title}
                 completionSubtitle={completionModalContent?.subtitle}
                 sceneNumber={3}
@@ -1122,7 +1122,7 @@ const SymbolMountainSceneContent = ({
                     description: "Ganesha broke his own tusk to write a great story! It shows us that we can turn any challenge into something amazing."
                   }
                 }}
-                nextSceneName="Final Assembly"
+                nextSceneName="Ganesha's Symbol Challenge"
                 sceneId="symbol"
                 completionData={{ stars: 9, symbols: { eyes: true, ears: true, tusk: true }, completed: true, totalStars: 9 }}
                 onComplete={onComplete}

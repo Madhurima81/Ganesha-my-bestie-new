@@ -731,7 +731,7 @@ const NirvighnamChantContent = ({
             <SceneCompletionCelebration
               show={showSceneCompletion && !showMandala}
               zoneId={zoneId}
-              sceneName="Nirvighnam Chant"
+              sceneName="Clear the Way Together!"
               completionTitle={completionModalContent?.title}
               completionSubtitle={completionModalContent?.subtitle}
               sceneNumber={3}
@@ -746,7 +746,7 @@ const NirvighnamChantContent = ({
                 kurumedeva:  { title: 'Kurumedeva - Please Help Me',  description: 'Ask and help arrives. Chant: KU-RU-ME-DE-VA' },
               }}
               savedRecordings={savedRecordings}
-              nextSceneName="Next Scene"
+              nextSceneName="Ganesha All Day"
               sceneId="nirvighnam-chant"
               completionData={{ stars: 5, syllables: sceneState.learnedSyllables, words: sceneState.learnedWords, completed: true }}
               onComplete={() => onNavigate?.('zone-welcome')}

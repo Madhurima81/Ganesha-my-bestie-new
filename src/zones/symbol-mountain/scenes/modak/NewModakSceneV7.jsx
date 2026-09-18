@@ -1664,7 +1664,7 @@ const NewModakSceneMVPContent = ({
               <SceneCompletionCelebration
                 show={isCompletionView}
                 zoneId={zoneId}
-                sceneName="Mooshika's Modak Mission"
+                sceneName="Keep Going, Mooshika!"
                 completionTitle={completionModalContent?.title}
                 completionSubtitle={completionModalContent?.subtitle}
                 sceneNumber={1}
@@ -1691,7 +1691,7 @@ const NewModakSceneMVPContent = ({
                     description: "It reminds us we can feel many things at once and still stay steady."
                   }
                 }}
-                nextSceneName="Next Symbol Mountain Adventure"
+                nextSceneName="Find a Way to the Lotus"
                 sceneId="modak"
                 completionData={{
                   stars: 3,

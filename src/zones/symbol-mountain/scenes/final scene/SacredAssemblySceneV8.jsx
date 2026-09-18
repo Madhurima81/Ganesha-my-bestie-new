@@ -2156,7 +2156,7 @@ const SacredAssemblyContent = ({
           {/* Scene Completion */}
           <SceneCompletionCelebration
             show={showSceneCompletion}
-            sceneName="Symbol Mountain"
+            sceneName="Ganesha's Symbol Challenge"
             completionTitle={completionModalContent?.title}
             completionSubtitle={completionModalContent?.subtitle}
             sceneNumber={4}

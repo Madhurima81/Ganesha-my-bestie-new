@@ -1204,7 +1204,7 @@ const VakratundaGroveContent = ({
             <SceneCompletionCelebration
               show={showSceneCompletion && !showMandala}
               zoneId={zoneId}
-              sceneName="Vakratunda Grove"
+              sceneName="Make Way for Everyone"
               completionTitle={completionModalContent?.title}
               completionSubtitle={completionModalContent?.subtitle}
               sceneNumber={1}
@@ -1228,7 +1228,7 @@ const VakratundaGroveContent = ({
                 }
               }}
               savedRecordings={savedRecordings}
-              nextSceneName="Suryakoti Bank"
+              nextSceneName="Bring Back the Light!"
               sceneId="vakratunda-grove"
               completionData={completionData}
               onComplete={() => onNavigate?.('zone-welcome')}

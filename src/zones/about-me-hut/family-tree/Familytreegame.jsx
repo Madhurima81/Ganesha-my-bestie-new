@@ -1766,7 +1766,7 @@ justifyContent: 'center',
  <SceneCompletionCelebration
  show={sceneState.showingCompletionScreen}
  zoneId="about-me-hut"
- sceneName="My Family Tree"
+ sceneName="Our Families"
  completionTitle={completionModalContent?.title}
  completionSubtitle={completionModalContent?.subtitle}
  childName="Family Star"
@@ -1778,7 +1778,7 @@ justifyContent: 'center',
  heart: heartIconImg,
  family: familyIconImg
  }}
- nextSceneName="Let's Be Friends"
+ nextSceneName="Our Favorite Things"
  completionData={{
  completed: true,
  stars: 3,

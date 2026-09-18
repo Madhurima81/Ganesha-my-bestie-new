@@ -829,7 +829,7 @@ const SuryakotiBankContent = ({
             <SceneCompletionCelebration
               show={showSceneCompletion && !showMandala}
               zoneId={zoneId}
-              sceneName="Suryakoti Bank"
+              sceneName="Bring Back the Light!"
               completionTitle={completionModalContent?.title}
               completionSubtitle={completionModalContent?.subtitle}
               sceneNumber={2}
@@ -853,7 +853,7 @@ const SuryakotiBankContent = ({
                 },
               }}
               savedRecordings={savedRecordings}
-              nextSceneName="Next Scene"
+              nextSceneName="Clear the Way Together!"
               sceneId="suryakoti-bank"
               completionData={completionData}
               onComplete={() => onNavigate?.('zone-welcome')}

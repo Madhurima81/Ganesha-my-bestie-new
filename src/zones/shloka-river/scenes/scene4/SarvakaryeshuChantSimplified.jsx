@@ -789,7 +789,7 @@ const SarvakaryeshuChantContent = ({
             <SceneCompletionCelebration
               show={showSceneCompletion && !showMandala}
               zoneId={zoneId}
-              sceneName="Sarvakaryeshu Chant"
+              sceneName="Ganesha All Day"
               completionTitle={completionModalContent?.title}
               completionSubtitle={completionModalContent?.subtitle}
               sceneNumber={4}
@@ -810,7 +810,7 @@ const SarvakaryeshuChantContent = ({
                 },
               }}
               savedRecordings={savedRecordings}
-              nextSceneName="Final Scene"
+              nextSceneName="Build the Shloka!"
               sceneId="sarvakaryeshu-chant"
               completionData={{
                 stars: 5,

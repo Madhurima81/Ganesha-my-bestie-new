@@ -15,7 +15,7 @@ export const ZONE_CONFIGS = {
     scenes: [
       {
         id: 'modak',
-        name: 'Calm Mooshika',
+        name: 'Keep Going, Mooshika!',
         emoji: '🍯',
         iconImage: '/images/zones/symbol-mountain/modak-icon.png',
         description: 'Help busy Mooshika settle, gather the offerings, and discover what comes next.',
@@ -35,7 +35,7 @@ export const ZONE_CONFIGS = {
       },
       {
         id: 'symbol',
-        name: 'Look, Listen, Choose',
+        name: "Ganesha's Eyes, Ears & Tusk",
         emoji: '😀',
         iconImage: '/images/symbols-symbolmountain/broken-tusk-symbol.png',
         description: 'Spot hidden friends, follow their sounds, then choose who can clear each obstacle.',
@@ -45,7 +45,7 @@ export const ZONE_CONFIGS = {
       },
       {
         id: 'final-scene',
-        name: 'All Symbols Together',
+        name: "Ganesha's Symbol Challenge",
         emoji: '🕉️',
         iconImage: '/images/zones/symbol-mountain/assembly-icon.png',
         description: "Every symbol is ready. Let's bring them together.",
@@ -133,15 +133,15 @@ export const ZONE_CONFIGS = {
     scenes: [
       {
         id: 'vakratunda-grove',
-        name: 'Your Journey Begins!',
+        name: 'Make Way for Everyone',
         emoji: '🌳',
         iconImage: '/images/zones/shloka-river/vakratunda-grove-icon.png',
         order: 1,
         description: 'The river has two surprises waiting for you.'
       },
       {
-        id: 'suryakoti-bank', 
-        name: 'Bring Back the Light!',
+        id: 'suryakoti-bank',
+        name: 'Bring Back the Light!', // unchanged
         emoji: '☀️',
         iconImage: '/images/zones/shloka-river/suryakoti-bank-icon.png',
         order: 2,
@@ -149,7 +149,7 @@ export const ZONE_CONFIGS = {
       },
       {
         id: 'nirvighnam-chant',
-        name: 'The River Needs You!',
+        name: 'Clear the Way Together!',
         emoji: '🎵',
         iconImage: '/images/zones/shloka-river/nirvighnam-chant-icon.png',
         order: 3,
@@ -157,7 +157,7 @@ export const ZONE_CONFIGS = {
       },
       {
         id: 'sarvakaryeshu-chant',
-        name: 'River Memories!',
+        name: 'Ganesha All Day',
         emoji: '🕉️',
         iconImage: '/images/zones/shloka-river/sarvakaryeshu-chant-icon.png',
         order: 4,
@@ -165,7 +165,7 @@ export const ZONE_CONFIGS = {
       },
       {
         id: 'shloka-river-finale',
-        name: 'Complete the Shloka!',
+        name: 'Build the Shloka!',
         emoji: '🎊',
         iconImage: '/images/zones/shloka-river/finale-icon.png',
         order: 5, 
@@ -245,7 +245,7 @@ export const ZONE_CONFIGS = {
     scenes: [
       {
     id: 'family-tree',
-    name: "Our families",
+    name: "Our Families",
         emoji: '👨‍👩‍👦',
         iconImage: '/images/zones/about-me-hut/family-tree-icon.png',
         description: 'Help Ganesha complete his family tree',
@@ -267,7 +267,7 @@ export const ZONE_CONFIGS = {
       },
       {
         id: 'favorite-food',
-        name: 'Our Favorite Things',
+        name: 'Our Favorite Things', // unchanged
         emoji: '🍕',
         iconImage: '/images/zones/about-me-hut/favorite-things-icon.png',
         description: 'Find Ganesha\'s favorite food and best friend',
@@ -278,7 +278,7 @@ export const ZONE_CONFIGS = {
       },
       {
         id: 'dreams-wishes',
-        name: 'Dream Big Together',
+        name: 'Our Wishes & Dreams',
         emoji: '🪔',
         iconImage: '/images/zones/about-me-hut/obstacle-remover-icon.png',
         description: 'Clear obstacles with joy, peace, and love',

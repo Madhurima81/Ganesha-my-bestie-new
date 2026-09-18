@@ -2459,7 +2459,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           show={sceneState.showingCompletionScreen}
           zoneId="about-me-hut"
           sceneId="favorite-food"
-          sceneName="My Favorite Things"
+          sceneName="Our Favorite Things"
           completionTitle={completionModalContent?.title}
           completionSubtitle={completionModalContent?.subtitle}
           discoveredSymbols={completionIcons}
@@ -2470,7 +2470,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           }}
           starsEarned={sceneState.stars}
           totalStars={2}
-          nextSceneName="Dream Big Together"
+          nextSceneName="Our Wishes & Dreams"
           childName={profileDisplayName}
           isFinalScene={false}
           completionData={{
