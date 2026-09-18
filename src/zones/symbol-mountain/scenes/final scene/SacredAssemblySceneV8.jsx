@@ -1621,8 +1621,8 @@ const SacredAssemblyContent = ({
         sceneActions={sceneActions}
       >
         <div className="sacred-assembly-container">
-          <HomeButton onNavigate={onNavigate} />
-          <ZoneBadgeButton zoneId="symbol-mountain" onBack={() => onNavigate?.('zone-welcome')} />
+          <HomeButton onNavigate={(...args) => { stopGaneshaVoice(); onNavigate?.(...args); }} />
+          <ZoneBadgeButton zoneId="symbol-mountain" onBack={() => { stopGaneshaVoice(); onNavigate?.('zone-welcome'); }} />
           <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
           <VOReplayButton
             onReplay={replayVoiceForCurrentPhase}

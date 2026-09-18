@@ -830,8 +830,8 @@ const SymbolMountainSceneContent = ({
       <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
         <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
           <div className="symbol-mountain-scene-v2-container">
-            <HomeButton onNavigate={onNavigate} />
-            <ZoneBadgeButton zoneId="symbol-mountain" onBack={() => onNavigate?.('zone-welcome')} />
+            <HomeButton onNavigate={(...args) => { stopSpokenVoice(); onNavigate?.(...args); }} />
+            <ZoneBadgeButton zoneId="symbol-mountain" onBack={() => { stopSpokenVoice(); onNavigate?.('zone-welcome'); }} />
             <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
             <VOReplayButton
               onReplay={replayCurrentVoice}
@@ -1128,6 +1128,7 @@ const SymbolMountainSceneContent = ({
                 onComplete={onComplete}
                 onReplay={() => { setShowSceneCompletion(false); resetScene(); }}
                 onContinue={() => {
+                  stopSpokenVoice();
                   const profileId = localStorage.getItem('activeProfileId');
                   if (profileId) {
                     ProgressManager.updateSceneCompletion(profileId, 'symbol-mountain', 'symbol', {

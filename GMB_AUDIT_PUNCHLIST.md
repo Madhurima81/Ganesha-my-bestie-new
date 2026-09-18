@@ -173,8 +173,8 @@ _Audited 2026-09-18 against `GMB_SCENE_LAUNCH_CHECKLIST.md`. Scope was limited t
 ## Shloka River — Group A audit (Sections 1, 2, 3, 16)
 _Audited 2026-09-18 against `GMB_SCENE_LAUNCH_CHECKLIST.md`. Scope was limited to the five live Shloka River scenes imported by `src/App.jsx`: `VakratundaGroveSimplified.jsx`, `SuryakotiBankSimplified.jsx`, `NirvighnamChantSimplified.jsx`, `SarvakaryeshuChantSimplified.jsx`, and `ShlokaRiverFinale.jsx`, plus their directly imported child mini-games and CSS. Group B and Group C were not audited in this pass._
 
-### New actionable bug
-- **Sections 2/3 — Finale star metadata mismatch:** the live finale saves and reports 8 stars (`ShlokaRiverFinale.jsx:643-652,658-662`), but `ProgressManager.SCENE_METADATA` declares `maxStars: 6` for `shloka-river-finale` (`ProgressManager.jsx:75`). `calculateZoneProgress()` exposes the saved star count alongside that metadata maximum and derives the zone maximum from the same table (`ProgressManager.jsx:107-140`), so a fully completed Shloka River can report 28 earned stars against a 26-star maximum. The finale award and metadata need to be aligned.
+### Data inconsistency — confirmed NOT user-visible, downgraded from actionable bug
+- **Finale star metadata mismatch (not currently shown to users):** the live finale saves and reports 8 stars (`ShlokaRiverFinale.jsx:643-652,658-662`), but `ProgressManager.SCENE_METADATA` declares `maxStars: 6` for `shloka-river-finale` (`ProgressManager.jsx:75`). `calculateZoneProgress()` is the only place that combines saved stars with this metadata maximum (`ProgressManager.jsx:107-140`) — **but nothing in the live app calls `calculateZoneProgress()`** (confirmed via repo-wide grep: only `ProgressManager.jsx` itself references it). The only live star display is `ZoneWelcome.jsx:1017` (`{status.stars}⭐`), which shows the raw earned count with no "X of Y" comparison against any max at all. So this mismatch exists in dead calculation logic only — real, but currently invisible to any child or parent. Low priority; fix opportunistically if `calculateZoneProgress()` ever gets wired into a real UI, not before.
 
 ### Known punchlist item still present
 - **Section 2 — Shared completion next-scene text:** the About Me Hut Group A entry above documents that `SceneCompletionCelebration.jsx` accepts but does not render `nextSceneName`, instead showing the generic `Next Adventure` CTA (`SceneCompletionCelebration.jsx:21,325-340`). The same shared behavior affects the four non-final Shloka River completion screens. Their supplied values are `Suryakoti Bank` (`VakratundaGroveSimplified.jsx:1231`), `Next Scene` (`SuryakotiBankSimplified.jsx:856`), `Next Scene` (`NirvighnamChantSimplified.jsx:749`), and `Final Scene` (`SarvakaryeshuChantSimplified.jsx:813`). This is recorded here as the already-documented shared issue, not a second new bug.
@@ -264,6 +264,145 @@ _Audited 2026-09-18 against `GMB_SCENE_LAUNCH_CHECKLIST.md`. Scope is limited to
 | 16 | Scene does not depend on stale localStorage | **PASS** | Saved state is merged over defaults; malformed state falls back to the scene's initial state. |
 | 16 | Saved profile resumes/starts scene as intended | **FINDING** | Sacred replay and the Pond/Tusk completion-transition reload gap can damage/lose the intended saved-profile state; see findings above. |
 | 16 | Malformed localStorage does not break scene entry | **PASS** | `SceneManager.jsx:60-131` catches parse failures; `CleanGameWelcomeScreen.jsx:228-267` ignores malformed temp sessions. |
+
+## Shloka River — Group B audit (Sections 4, 5, 6, 7)
+_Audited 2026-09-18 against `GMB_SCENE_LAUNCH_CHECKLIST.md`. Scope: the five live Shloka River scenes and their live child mini-games (`VakratundaRescueGame.jsx`/`MahakayaRescueGame.jsx`, `components/SuryakotiGame.jsx`/`components/SamaprabhaGame.jsx`, `NirvighnamGame.jsx`/`KurumedevaGame.jsx`, `SarvakaryeshuGame.jsx`/`SarvadaGame.jsx`)._
+
+### New actionable bug
+- **Section 6 — HomeButton/ZoneBadgeButton/Continue don't stop scene audio before navigating, in all 5 live scenes.** Benchmark `NewModakSceneV7.jsx:1370-1371,1711` wraps these calls with `stopVoice()`; every Shloka River scene calls them unwrapped instead: `VakratundaGroveSimplified.jsx:891-892,1248`, `SuryakotiBankSimplified.jsx:639-640,870-872`, `NirvighnamChantSimplified.jsx:572-573,763`, `SarvakaryeshuChantSimplified.jsx:614-615,831`, `ShlokaRiverFinale.jsx:680-681,885`. `HomeButton.jsx:74` exposes an unused `onPrepareNavigate` prop for exactly this purpose. `onReplay` is correctly wired with `stopAllVoice()` everywhere — only Home/ZoneBadge/Continue leak audio into Zone Welcome/Map/next scene.
+
+### Known punchlist items — resolved, recommend closing
+- "Hint-gate/dual-flag/voFallback checks incomplete on 4 games (Suryakoti, Kurumedeva, Sarvakaryeshu, Sarvada)" — re-investigated, all four have correct single-fire completion guards (`completionScheduledRef`, `finished`/`advanceCalled`, `completeCalledRef`/`doneCalledRef`) and correct hint-gating via `useRepeatedHintCycle`. No bugs found — closing this line.
+- KurumedevaGame's pause/drag-cleanup fix and MahakayaRescueGame's overall compliance both re-spot-checked, still hold, no regression.
+- **Vakratunda mid-rewrite flagged lines are stale**: `VakratundaRescueGame.jsx:69-76,112-155,142-155,216-221,:9` now hold unrelated obstacle/geometry code post-rewrite. Needs a fresh targeted pass once the rewrite is confirmed settled — don't trust the old line numbers.
+
+### Manual/device-only follow-ups
+- VO-replay-plays-correct-line, no audible overlap on rapid tap, audible confirmation of no cross-scene audio leak (code gap is the finding above).
+- Modal open/close VO stacking — wiring correct in code, audible dedupe needs a live check.
+
+### No-issue confirmations
+- Timers/intervals/RAF cleared on unmount and on pause/`useAppVisibility` tab-hide across all 5 scenes + 8 child mini-games.
+- Drag/hold pointer-capture pairing correct wherever drag exists; tap-only games (Sarvakaryeshu/Sarvada) correctly have no pointercancel to flag.
+- Audio toggle mutes VO/music/SFX consistently in all 5 scenes.
+
+## Symbol Mountain — Group B audit (Sections 4, 5, 6, 7)
+_Audited 2026-09-18. Scope: `NewModakSceneV7.jsx` (benchmark), `PondSceneSimplifiedV4.jsx`, `SymbolMountainSceneV3.jsx` (+ `EyesPopUpGame.jsx`, `EarsSoundMatchGame.jsx`, `TuskBeatPlayerLive.jsx`/`BeatPlayerGame.jsx`), `SacredAssemblySceneV8.jsx`._
+
+### New actionable bugs
+- **Section 6 — same HomeButton/ZoneBadgeButton audio-teardown gap as Shloka River, in Pond, Tusk, and Sacred Assembly** (Modak is the compliant benchmark): `PondSceneSimplifiedV4.jsx:1318,1908`, `SymbolMountainSceneV3.jsx:833-834`, `SacredAssemblySceneV8.jsx:1624-1625` all call `<HomeButton onNavigate={onNavigate} />` / `<ZoneBadgeButton ... onBack={() => onNavigate?.('zone-welcome')} />` unwrapped, vs. benchmark `NewModakSceneV7.jsx:1370-1371`.
+- **Completion `Continue` also skips VO teardown in Pond and Tusk** (`PondSceneSimplifiedV4.jsx:1856-1863`, `SymbolMountainSceneV3.jsx:1130-1142`) — Sacred Assembly's completion path does it correctly (`SacredAssemblySceneV8.jsx:2190-2198`), matching benchmark `NewModakSceneV7.jsx:1710-1714`.
+
+### Known punchlist items — resolved, recommend closing
+- "useAppVisibility missing — Pond/Tusk tab-hide, not re-checked" — resolved via shared `usePauseAwareTimeout` (wires `useAppVisibility` internally, confirmed `usePauseAwareTimeout.js:2,72`); Sacred Assembly also gates directly via `useAppVisibility` (`SacredAssemblySceneV8.jsx:800-808`).
+- "No pointercancel cleanup — Pond/Ears/Eyes, not re-checked" — Pond's rock-hold/reeds-drag/lotus-hold all correctly route `onPointerCancel`/`onPointerLeave` to end handlers (`PondSceneSimplifiedV4.jsx:1451-1454,1592-1596,1686`). Eyes/Ears games are tap-only — Section 7 doesn't apply to their gameplay; their `setPointerCapture` calls are DEV-only debug-layout tools, unrelated to child interaction.
+
+### Manual/device-only follow-ups
+- Rapid-tap VO overlap and audible confirmation of no cross-navigation leak.
+- Modal open/close VO stacking on symbol sidebar/opening/mode-selection modals.
+
+### No-issue confirmations
+- Pond's `onPauseHide`/`onPauseShow` pause/resume handling is a strong reference implementation, arguably cleaner than Modak's for RAF-loop cleanup.
+- Sacred Assembly's card-phase timeline correctly gates all timers on `isPageVisible`.
+
+## About Me Hut — Group B audit (Sections 4, 5, 6, 7)
+_Audited 2026-09-18. Scope: `Familytreegame.jsx`, `Favoritefoodgame.jsx`, `ObstacleRemoverGame.jsx` (Dreams & Wishes), `MyIndianStoryGame.jsx`. These four were previously flagged "not fully audited" for this territory — this pass covers it in full._
+
+### New actionable bugs
+- **Section 6 — HomeButton/ZoneBadgeButton skip voice teardown in 3 of 4 files**: `Familytreegame.jsx:1250-1257`, `ObstacleRemoverGame.jsx:1659-1666` (no `interruptCurrentVoice()`/`hardStopSceneAudio()` despite both existing in-file), `MyIndianStoryGame.jsx:1527-1534`. `Favoritefoodgame.jsx:1656-1665` is the compliant exception (calls `interruptCurrentVoice()` + `clearAllTimeouts()`) — use as the in-zone reference.
+- **Completion `Continue` also skips teardown — Familytreegame, MyIndianStoryGame** (`Familytreegame.jsx:1779-1784`, `MyIndianStoryGame.jsx:1626-1630`); each file's own `onReplay` right next to it does call `stopVoice()` correctly.
+- **New: idle-hint timers not paused on tab-hide — ObstacleRemoverGame, MyIndianStoryGame.** `ObstacleRemoverGame.jsx:1060-1099,1143-1170` — wish1/wish2/wish3 idle-hint ladders use raw `setTimeout` instead of the file's own `safeSetTimeout`; `onHide` (`:428-444`) never clears them, so idle VO can fire while the tab is backgrounded. `MyIndianStoryGame.jsx:430-457` — `onShow` resets only 3 of ~9 idle-timer refs, leaving `childHomeIdleTimerRef`, `childHomeIdleHintTimerRef`, `languageSelectionIdleHintTimerRef`, `festivalSelectionIdleHintTimerRef`, `languagePlayNudgeTimeoutRef`, `childHomePostSelectTimerRef`, and 2 sparkle timers running unreconciled in the background.
+- **Minor — Familytreegame tap-hint timer not covered by `onHide`**: `Familytreegame.jsx:819-823` (`tapCircleTimerRef`) isn't cleared, unlike sibling `treeIdleHintTimersRef` right next to it. Low severity, single VO line.
+
+### Known punchlist items — resolved, recommend closing
+- `ObstacleRemoverGame.jsx`/`MyIndianStoryGame.jsx`/`Familytreegame.jsx` "not fully audited" for pointercancel/visibility-gating — pointercancel resolved as **N/A** (none has a real drag mechanic; Family Tree and Dreams & Wishes are tap-only; `MyIndianStoryGame`'s magnifying-glass drag via `FreeDraggableItem` is already fixed, confirmed still present at `:1965-1988`); visibility-gating is now the confirmed finding above rather than "unaudited."
+
+### Manual/device-only follow-ups
+- No overlapping VO on rapid tapping; modal-reopen VO stacking; audible leak of previous-scene audio into next scene; rapid tap double-complete on the wish2 tap-to-place mechanic.
+
+### No-issue confirmations
+- None of the 4 files use `requestAnimationFrame` or `setInterval` — Section 4's RAF/interval items are structurally N/A here.
+- Section 7 (drag/hold) is largely N/A for this zone, not actually under-audited as previously implied — no real drag/hold mechanic exists outside the already-fixed `FreeDraggableItem` case.
+
+**Cross-zone pattern note:** the Home/ZoneBadge/Continue audio-teardown gap is now confirmed identical across all three zones (Modak and Favoritefoodgame are the only two compliant scenes of the 13). Worth fixing once as a single cross-zone pass rather than zone-by-zone.
+
+## Shloka River — Group C audit (Sections 9, 10, 11, 12, 13)
+_Audited 2026-09-18. Scope: the five live Shloka River scenes and their live child mini-games (`VakratundaRescueGame.jsx`/`MahakayaRescueGame.jsx`, `SuryakotiGame.jsx`/`SamaprabhaGame.jsx`, `NirvighnamGame.jsx`/`KurumedevaGame.jsx`, `SarvakaryeshuGame.jsx`/`SarvadaGame.jsx`) and their CSS._
+
+### New actionable bug
+- **Off-palette background on the live Vakratunda scene root.** `VakratundaGroveSimplified.css:14-21` — `.vakratunda-simplified-container` (the actual root `<div>` rendered at `VakratundaGroveSimplified.jsx:890`) has `background: #f1e7fc` (lavender), not the zone palette's `#E8F5E9`. Same class of bug already fixed this session for `SuryakotiBankSimplified.css:8` and `SarvakaryeshuChantSimplified.css:8` — Scene 1 was missed in that pass. Note: there's a correct `#E8F5E9` at `VakratundaGroveSimplified.css:586`, but it's on the dead leftover class `.grove-scene`, not the live container — don't mistake it for the fix.
+
+### Known punchlist items — still open, confirmed on re-check
+- `VakratundaGroveSimplified.css:296-359` (breakpoint tiers) still pair hand-placed `width/height !important` with hand-placed `left/top` percentages instead of `clamp()`. All sizes ≥80px, so CSS hygiene only, not a touch-target violation — still wants a visual check after any conversion.
+
+### Manual/device-only follow-ups
+- Phone/iPad polish; production-build asset paths and cache-clear/slow-network reload.
+
+### No-issue confirmations
+- Zero non-Baloo-2/Nunito `font-family` declarations across all 13 live CSS files.
+- Every `console.log/warn/debug` across the 13 live files is DEV-gated (including `SamaprabhaGame.jsx:111-113,584-588`).
+- Zero `GameCoach` references in this zone.
+- Every relative image/audio import resolves to a real file — no broken references.
+- PNG (not WebP) usage present but functional: `VakratundaRescueGame.jsx` (2), `MahakayaRescueGame.jsx` (5), `SuryakotiGame.jsx` (5), `SamaprabhaGame.jsx` (6), `NirvighnamGame.jsx` (8), `KurumedevaGame.jsx` (2), `SarvakaryeshuGame.jsx` (6), `SarvadaGame.jsx` (8) — worth a batch WebP pass, not a bug.
+- `SanskritRiverProgress.css`, `GaneshaBlessing.css`, `VakratundaGrove.css` under Scene1 confirmed dead code, not imported anywhere.
+
+## Symbol Mountain — Group C audit (Sections 9, 10, 11, 12, 13)
+_Audited 2026-09-18. Scope: `NewModakSceneV7.jsx` (benchmark), `PondSceneSimplifiedV4.jsx`, `SymbolMountainSceneV3.jsx` (+ Eyes/Ears/Beat games), `SacredAssemblySceneV8.jsx`, and their CSS._
+
+### New actionable bugs
+None beyond what's already tracked below — no new findings this pass.
+
+### Known punchlist items — verification status
+- **`SacredAssemblyScene.css:590-639,840-841,863-864`** fixed-px `!important` symbol overrides paired with hand-tuned `translate()` offsets — **STILL OPEN**, confirmed present.
+- **`SacredAssemblySceneV8.jsx` dead GameCoach state** (`gameCoachState`, `lastGameCoachTime`, `isReloadingGameCoach`, derived `isGameCoachVisible` at :624) — **STILL OPEN**, confirmed present at all cited lines.
+- **`ModakScene.css:1641-1667` possible duplicate breakpoint rules** — **RESOLVED**. File is now only 1625 lines total (verified via `wc -l`); that range no longer exists.
+- **`PondScene.css:869,970` sub-60px drag targets** — **STILL OPEN**, location drifted slightly: `.pond-trunk-reeds` `min-width:50px` confirmed at line 869; `.pond-trunk-lotus` `min-width:40px`/`min-height:70px` confirmed now at line 939 (was 970). Both let `clamp()` shrink below 60px on small viewports.
+
+### Manual/device-only follow-ups
+- Scene polish on phone/iPad; production console errors during live play; broken asset paths/cache-clear reload in production build; disabled-state visuals for Modak/Pond/Sacred buttons (rely on shared component, not confirmable via static read).
+
+### No-issue confirmations
+- No ungated `console.log`/`warn`/`debug` in any of the 9 files scanned.
+- All local image imports across all 4 scenes resolve to real files on disk, including the 5 new Pond `.webp` assets in the current uncommitted working tree.
+- 100% WebP/SVG in these scenes — no PNG/JPG anywhere.
+- Zone palette (`#FF5722`/`#FFD700`/`#FFF8E7`) confirmed applied via `zone-themes.css` plus scene-local overrides.
+- The one `Arial` reference (`SacredAssemblySceneV8.jsx:95`) is inside an offscreen `<canvas>` badge generator, not rendered UI text — not a real font-hygiene violation.
+
+## About Me Hut — Group C audit (Sections 9, 10, 11, 12, 13)
+_Audited 2026-09-18. Scope: `Familytreegame`, `Favoritefoodgame`, `ObstacleRemoverGame` (+ `DreamsWishesGame.css`), `MyIndianStoryGame` (+ `FreeDraggableItem`), `AboutMeComparisonCard`._
+
+### New actionable bugs
+- **Dreams & Wishes intro CTA drops below 60px at tablet/small-desktop width.** `DreamsWishesGame.css:443-446`, inside `@media (max-width: 1024px)`:
+  ```css
+  .wish1-intro-btn {
+    min-width: 400px;
+    min-height: 56px;
+    font-size: 24px !important;
+  }
+  ```
+  Base rule is `min-height: 78px`; this breakpoint drops it to 56px, below the 60px floor.
+- **Family Tree "Continue" button has no min-height on mobile.** `Familytreegame.css:4853-4857`, inside `@media (max-width: 900px)`:
+  ```css
+  .continue-btn-simple {
+    font-size: clamp(0.95rem, 1.8vw, 1.2rem) !important;
+    padding: 12px 32px !important;
+    min-width: clamp(120px, 18vw, 180px) !important;
+  }
+  ```
+  No `min-height` at this breakpoint — computes to roughly 39-43px tall with 12px vertical padding + ~15-19px font, below 60px. Desktop rule stays safe on padding/font alone; mobile-only regression.
+
+### Known punchlist items — confirmed still present, unconverted
+- **`AboutMeComparisonCard.css:50-51`** — `min-width: 340px; max-width: 480px`, still fixed-px, not clamp(). Used by both Favoritefoodgame and MyIndianStoryGame.
+- **Dreams & Wishes off-palette "dusk wishing sky" background** — still intact in `DreamsWishesGame.css`, still diverges from `#795548/#FF6B6B/#FBE9E7`. Not re-flagged as new — still awaiting your yes/no on whether it's an intentional sub-theme (see "Needs YOUR decision" table above).
+
+### Manual/device-only follow-ups
+- Phone/iPad visual polish; production build asset-path integrity, cache-clear/slow-network reload; visually confirm the two new touch-target bugs at their actual breakpoint widths (1024px, 900px) since computed heights are estimated from CSS, not measured live.
+
+### No-issue confirmations
+- Font hygiene clean across all 4 scenes — Baloo 2/Nunito primary everywhere, system-font fallbacks only ever secondary.
+- No `console.warn`/`console.debug` anywhere; every `console.log` DEV-gated (confirmed including `Favoritefoodgame.jsx:800-802`).
+- No `GameCoach` reference in live code (only in a non-live `.backup` file).
+- All local image imports resolve to real files on disk — zero missing assets, 100% WebP.
+- Dead `Obstacleremovergameredesigned.css`'s sub-60px `.handle-circle` is not imported by the live `ObstacleRemoverGame.jsx` — correctly out of scope.
 
 ## Repo hygiene note (not a bug, just noise)
 Several zones turned up dead/decoy duplicate files that could confuse future audits or edits:

@@ -452,6 +452,45 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
         clearTimeout(festGuessIdleTimerRef.current);
         festGuessIdleTimerRef.current = null;
       }
+
+      // Remaining idle/nudge/sparkle timers left running unreconciled after
+      // tab-hide/show — only the 3 above were being reset, so these could
+      // keep ticking (and fire idle VO) in the background after a return.
+      if (childHomeIdleTimerRef.current) {
+        clearTimeout(childHomeIdleTimerRef.current);
+        childHomeIdleTimerRef.current = null;
+      }
+      if (childHomePostSelectTimerRef.current) {
+        clearTimeout(childHomePostSelectTimerRef.current);
+        childHomePostSelectTimerRef.current = null;
+      }
+      childHomeIdleHintVoiceRef.current = false;
+      if (childHomeIdleHintTimerRef.current) {
+        clearTimeout(childHomeIdleHintTimerRef.current);
+        childHomeIdleHintTimerRef.current = null;
+      }
+      languageSelectionIdleHintVoiceRef.current = false;
+      if (languageSelectionIdleHintTimerRef.current) {
+        clearTimeout(languageSelectionIdleHintTimerRef.current);
+        languageSelectionIdleHintTimerRef.current = null;
+      }
+      festivalSelectionIdleHintVoiceRef.current = false;
+      if (festivalSelectionIdleHintTimerRef.current) {
+        clearTimeout(festivalSelectionIdleHintTimerRef.current);
+        festivalSelectionIdleHintTimerRef.current = null;
+      }
+      if (languagePlayNudgeTimeoutRef.current) {
+        clearTimeout(languagePlayNudgeTimeoutRef.current);
+        languagePlayNudgeTimeoutRef.current = null;
+      }
+      if (sparkleCancelRef.current) {
+        clearTimeout(sparkleCancelRef.current);
+        sparkleCancelRef.current = null;
+      }
+      if (phase1SpotSparkleTimerRef.current) {
+        clearTimeout(phase1SpotSparkleTimerRef.current);
+        phase1SpotSparkleTimerRef.current = null;
+      }
     },
     resumeDelay: RESUME_DELAY_MS
   });
@@ -1525,10 +1564,12 @@ const handleComplete = () => {
       <img src={bgImage} alt="Background" className="mis-background" />
       <ResumeCountdown value={countdownValue} />
       <HomeButton onNavigate={(...args) => {
+        stopVoice();
         SimpleSceneManager.clearCurrentScene();
         onNavigate?.(...args);
       }} />
       <ZoneBadgeButton zoneId="about-me-hut" onBack={() => {
+        stopVoice();
         SimpleSceneManager.clearCurrentScene();
         onNavigate?.('zone-welcome');
       }} />
@@ -1624,6 +1665,7 @@ const handleComplete = () => {
             selectedFestivals: selectedFestivals
           }}
           onContinue={() => {
+            stopVoice();
             SimpleSceneManager.clearCurrentScene();
             if (onComplete) onComplete(sceneId, { stars: 3, completed: true });
             if (onNavigate) onNavigate('zone-welcome');

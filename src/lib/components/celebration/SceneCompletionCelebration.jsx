@@ -337,7 +337,7 @@ const SceneCompletionCelebration = ({
                       }
                       handleContinueWithAnimation(() => handleAction(onContinue));
                     }}
-                    label={isFinalScene ? 'Home' : 'Next Adventure'}
+                    label={isFinalScene ? 'Home' : nextSceneName}
                     size="md"
                     fullWidth={true}
                     style={getProfilePillBtnStyle(resolvedZoneId)}
@@ -379,7 +379,7 @@ const SceneCompletionCelebration = ({
                     />
                     <ProfilePillBtn
                       onClick={() => handleAction(isFinalScene ? (onHome || onContinue || handleExplore) : onContinue)}
-                      label={isFinalScene ? 'Home' : 'Next Adventure'}
+                      label={isFinalScene ? 'Home' : nextSceneName}
                       size="sm"
                       fullWidth={false}
                       style={getProfilePillBtnStyle(resolvedZoneId, {

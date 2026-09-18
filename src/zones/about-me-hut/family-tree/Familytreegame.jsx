@@ -401,6 +401,10 @@ const FamilyTreeGameContent = ({
  treeIdleHintTimersRef.current.forEach(id => clearTimeout(id));
  treeIdleHintTimersRef.current = [];
  setTreeIdleHintLevel(0);
+ if (tapCircleTimerRef.current) {
+ clearTimeout(tapCircleTimerRef.current);
+ tapCircleTimerRef.current = null;
+ }
  // Dismiss resume popup on tab hide it's temporary reload feedback
  setShowResumePopup(false);
  cancelTimer(resumePopupTimeoutRef);
@@ -1248,10 +1252,14 @@ sceneActions.updateState({ gamePhase: 'transition' });
 
  {/* Home Button */}
  <HomeButton onNavigate={(...args) => {
+ stopVoice();
+ stopSpokenVoice();
  SimpleSceneManager.clearCurrentScene();
  onNavigate?.(...args);
  }} />
  <ZoneBadgeButton zoneId="about-me-hut" onBack={() => {
+ stopVoice();
+ stopSpokenVoice();
  SimpleSceneManager.clearCurrentScene();
  onNavigate?.('zone-welcome');
  }} />
@@ -1777,6 +1785,8 @@ justifyContent: 'center',
  childFamily: sceneState.childFamily || []
  }}
  onContinue={() => {
+ stopVoice();
+ stopSpokenVoice();
  if (playTap) playTap();
  SimpleSceneManager.setCurrentScene('about-me-hut', 'favorite-food', false, false);
  if (onNavigate) onNavigate('favorite-food');

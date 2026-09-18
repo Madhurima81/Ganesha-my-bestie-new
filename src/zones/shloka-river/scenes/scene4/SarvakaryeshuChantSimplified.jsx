@@ -611,8 +611,8 @@ const SarvakaryeshuChantContent = ({
     <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
       <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
         <div className="sarva-scene-container">
-          <HomeButton onNavigate={onNavigate} />
-          <ZoneBadgeButton zoneId="shloka-river" onBack={() => onNavigate?.('zone-welcome')} />
+          <HomeButton onNavigate={(...args) => { stopAllVoice(); onNavigate?.(...args); }} />
+          <ZoneBadgeButton zoneId="shloka-river" onBack={() => { stopAllVoice(); onNavigate?.('zone-welcome'); }} />
           <AudioToggle isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
           <VOReplayButton onReplay={replayCurrentVoice} disabled={!isAudioOn} />
           <ResumeCountdown value={countdownValue} />
@@ -828,7 +828,7 @@ const SarvakaryeshuChantContent = ({
                 setOpeningButtonVisible(true);
                 resetScene();
               }}
-              onContinue={() => onNavigate?.('scene-complete-continue')}
+              onContinue={() => { stopAllVoice(); onNavigate?.('scene-complete-continue'); }}
             />
 
             {/* ProgressiveHintSystem disabled per request */}

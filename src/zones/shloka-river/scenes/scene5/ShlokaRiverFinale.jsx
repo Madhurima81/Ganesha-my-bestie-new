@@ -677,8 +677,8 @@ const ShlokaRiverFinaleContent = ({
           onPointerCancel={handlePointerUp}
           onContextMenu={(e) => e.preventDefault()}
         >
-          <HomeButton onNavigate={onNavigate} />
-          <ZoneBadgeButton zoneId="shloka-river" onBack={() => onNavigate?.('zone-welcome')} />
+          <HomeButton onNavigate={(...args) => { stopAllVoice(); onNavigate?.(...args); }} />
+          <ZoneBadgeButton zoneId="shloka-river" onBack={() => { stopAllVoice(); onNavigate?.('zone-welcome'); }} />
           <AudioToggle isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
           <VOReplayButton onReplay={replayCurrentVoice} disabled={!isAudioOn} />
 
@@ -882,7 +882,7 @@ const ShlokaRiverFinaleContent = ({
               stopAllVoice();
               resetScene();
             }}
-            onContinue={() => onNavigate?.('scene-complete-continue')}
+            onContinue={() => { stopAllVoice(); onNavigate?.('scene-complete-continue'); }}
           />
 
           <TocaBocaNav

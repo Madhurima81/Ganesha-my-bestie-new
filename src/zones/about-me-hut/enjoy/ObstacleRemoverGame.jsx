@@ -1064,21 +1064,21 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     let t3 = null;
 
     // Level 1 @ 10s — soft pulse once (~2s), then clear
-    t1 = setTimeout(() => {
+    t1 = safeSetTimeout(() => {
       setWish1IdleLevel(1);
-      t1Clear = setTimeout(() => setWish1IdleLevel(0), 2200); // clear after animation finishes
+      t1Clear = safeSetTimeout(() => setWish1IdleLevel(0), 2200); // clear after animation finishes
 
       // Level 2 @ 18s — 3 pulses (~3.6s) + VO hint, then clear
-      t2 = setTimeout(() => {
+      t2 = safeSetTimeout(() => {
         setWish1IdleLevel(2);
         if (!idleVoFlagsRef.current.wish1Level2) {
           speakLine("Look for the kind action bubbles.", { moment: 'encouragement' });
           idleVoFlagsRef.current.wish1Level2 = true;
         }
-        t2Clear = setTimeout(() => setWish1IdleLevel(0), 3800); // clear after animation finishes
+        t2Clear = safeSetTimeout(() => setWish1IdleLevel(0), 3800); // clear after animation finishes
 
         // Level 3 @ 26s — 4 pulses + VO, stays on (child needs max help)
-        t3 = setTimeout(() => {
+        t3 = safeSetTimeout(() => {
           setWish1IdleLevel(3);
           if (!idleVoFlagsRef.current.wish1Level3) {
             speakLine("Tap the bubbles that show helping, sharing, hugging, and gifting.", { moment: 'encouragement' });
@@ -1090,13 +1090,13 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     }, 10000);
 
     return () => {
-      if (t1) clearTimeout(t1);
-      if (t1Clear) clearTimeout(t1Clear);
-      if (t2) clearTimeout(t2);
-      if (t2Clear) clearTimeout(t2Clear);
-      if (t3) clearTimeout(t3);
+      if (t1) t1();
+      if (t1Clear) t1Clear();
+      if (t2) t2();
+      if (t2Clear) t2Clear();
+      if (t3) t3();
     };
-  }, [sceneState.gamePhase, isAudioOn, sceneState.showingCompletionScreen, showDrawingPad]);
+  }, [sceneState.gamePhase, isAudioOn, sceneState.showingCompletionScreen, showDrawingPad, safeSetTimeout]);
 
   // ── Wish 2, 3, dream phases — setTimeout ladders (same pattern as wish1) ────
   // Level fires → class on → animation plays → level resets to 0 → element back to normal.
@@ -1140,21 +1140,21 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     let t3 = null;
 
     // Level 1 @ 10s — soft pulse once (~2s), then clear
-    t1 = setTimeout(() => {
+    t1 = safeSetTimeout(() => {
       setLevel(1);
-      t1Clear = setTimeout(() => setLevel(0), 2200);
+      t1Clear = safeSetTimeout(() => setLevel(0), 2200);
 
       // Level 2 @ 18s — 3 pulses + VO, then clear
-      t2 = setTimeout(() => {
+      t2 = safeSetTimeout(() => {
         setLevel(2);
         if (!idleVoFlagsRef.current[voL2Flag]) {
           speakLine(voL2Line, { moment: 'encouragement' });
           idleVoFlagsRef.current[voL2Flag] = true;
         }
-        t2Clear = setTimeout(() => setLevel(0), 3800);
+        t2Clear = safeSetTimeout(() => setLevel(0), 3800);
 
         // Level 3 @ 26s — 4 pulses + VO (if any), stays on
-        t3 = setTimeout(() => {
+        t3 = safeSetTimeout(() => {
           setLevel(3);
           if (voL3Line && !idleVoFlagsRef.current[voL3Flag]) {
             speakLine(voL3Line, { moment: 'encouragement' });
@@ -1165,13 +1165,13 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     }, 10000);
 
     return () => {
-      if (t1) clearTimeout(t1);
-      if (t1Clear) clearTimeout(t1Clear);
-      if (t2) clearTimeout(t2);
-      if (t2Clear) clearTimeout(t2Clear);
-      if (t3) clearTimeout(t3);
+      if (t1) t1();
+      if (t1Clear) t1Clear();
+      if (t2) t2();
+      if (t2Clear) t2Clear();
+      if (t3) t3();
     };
-  }, [isAudioOn, sceneState.gamePhase, sceneState.dreamRevealed, sceneState.showingCompletionScreen, showDrawingPad]);
+  }, [isAudioOn, sceneState.gamePhase, sceneState.dreamRevealed, sceneState.showingCompletionScreen, showDrawingPad, safeSetTimeout]);
 
   // Reset idle timer on major phase/modal transitions
   useEffect(() => {
@@ -1657,10 +1657,12 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     <div className="dreams-wishes-game" data-zone="about-me-hut">
       <img src={dreamsBg} alt="Background" className="dreams-background" />
       <HomeButton onNavigate={(...args) => {
+        interruptCurrentVoice();
         SimpleSceneManager.clearCurrentScene();
         onNavigate?.(...args);
       }} />
       <ZoneBadgeButton zoneId="about-me-hut" onBack={() => {
+        interruptCurrentVoice();
         SimpleSceneManager.clearCurrentScene();
         onNavigate?.('zone-welcome');
       }} />

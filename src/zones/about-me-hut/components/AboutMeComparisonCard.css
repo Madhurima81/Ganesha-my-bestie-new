@@ -47,8 +47,8 @@
 
 .aboutme-comparison-column {
   flex: 1;
-  min-width: 340px;
-  max-width: 480px;
+  min-width: clamp(260px, 32vw, 340px);
+  max-width: clamp(360px, 42vw, 480px);
   border-radius: 20px;
   padding: 12px 16px 12px;
   background: #FFF6E8;

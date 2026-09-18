@@ -888,8 +888,8 @@ const VakratundaGroveContent = ({
     <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
       <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
         <div className="vakratunda-simplified-container">
-          <HomeButton onNavigate={onNavigate} />
-          <ZoneBadgeButton zoneId="shloka-river" onBack={() => onNavigate?.('zone-welcome')} />
+          <HomeButton onNavigate={(...args) => { stopAllVoice(); onNavigate?.(...args); }} />
+          <ZoneBadgeButton zoneId="shloka-river" onBack={() => { stopAllVoice(); onNavigate?.('zone-welcome'); }} />
           <AudioToggle isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
           <VOReplayButton onReplay={replayCurrentVoice} disabled={!isAudioOn} />
           <ResumeCountdown value={countdownValue} />
@@ -1245,6 +1245,7 @@ const VakratundaGroveContent = ({
                 resetScene();
               }}
               onContinue={() => {
+                stopAllVoice();
                 onNavigate?.('scene-complete-continue');
               }}
             />
