@@ -1,5 +1,5 @@
 # Ganesha My Bestie — Implementation Tasks
-## Reference date: 3rd March 2026
+## Scope cleanup: 2026-09-18 — trimmed to the 13 live scenes per CLAUDE.md (was tracking all 22, including obsolete Cave of Secrets and parked Festival Square)
 
 ---
 
@@ -19,7 +19,7 @@ Before every task, Claude Code must:
 ### Modals & Overlays
 - [x] T01 · Opening Modal — spec TBD (Madhurima will describe separately)
 - [x] T02 · Completion Modal — use NewModakV7 as benchmark
-- [x] T11 · Opening Modal → remove fade out (ONE fix in OpeningModal.css fixes all 22 scenes)
+- [x] T11 · Opening Modal → remove fade out (ONE fix in OpeningModal.css fixes all 13 live scenes)
 - [ ] T12 · Zone Completion Screen — 3 final scenes only
 - [ ] T17 · Zone Completion Modal — 3 final scenes only
 
@@ -44,6 +44,19 @@ Before every task, Claude Code must:
 - [x] T08 · useAppVisibility.js → import and wire up in all scenes
 - [x] T22 · Idle hints — Symbol Mountain, Shloka River, Cave of Secrets
 - [ ] T27 · Idle hints — About Me and Festival Square
+- [x] T53 · GestureDemo coverage — every non-tap mini-game (drag/hold/scratch/swipe/pull-down)
+  across the 13 live scenes now shows its gesture demo at the start of the mini-game, not just
+  after idle-ladder escalation. Tap mechanics intentionally left on idle-hint only (tap is
+  self-explanatory). Added where missing (Tusk's BeatPlayerGame — capped to first 2 interactive
+  beats so it doesn't repeat forever; GarlandGame3's garland-carry step; Drawingpad.jsx shared
+  "draw your dream" component used by Favoritefoodgame + ObstacleRemoverGame). Moved off
+  idle-only gating (Pond scene, KurumedevaGame). Tightened multi-second first-encounter delays
+  down to ~150ms (MahakayaRescueGame, SuryakotiGame, SamaprabhaGame, NirvighnamGame,
+  Wish2PlateDropGame, MyIndianStoryGame). Confirmed tap-only/nothing-to-do: Familytreegame,
+  SacredAssemblySceneV8, SarvakaryeshuGame, SarvadaGame, ShlokaRiverFinale, EyesPopUpGame,
+  EarsSoundMatchGame. Confirmed dead code, left alone: EarsRhythmGame, TuskAssemblyGame,
+  TuskPathGame (not wired into SymbolMountainSceneV3.jsx). See CHANGELOG 2026-09-18.
+  Not yet visually verified in-browser — Madhurima to spot-check on next playthrough.
 
 ### Ganesha & Mooshika Presence
 - [ ] T18 · Ganesha Gestures — map which gesture per scene phase — Symbol Mountain, Cave of Secrets, Shloka River (zones 1–3)
@@ -62,6 +75,10 @@ Before every task, Claude Code must:
 - [ ] T20 · CSS Media Queries audit — check clamp() present, add where missing
 - [ ] T21 · Test Cases + Edge Cases — document in TESTCASES.md
 - [ ] T32 · Content Audit — refer to CONTENT.md
+- [x] T52 · PNG → WebP conversion — all `.png` actually loaded by the 13 live scenes +
+  onboarding/navigation chrome converted to `.webp` and references updated (see
+  CHANGELOG 2026-09-18 and IMAGE_AUDIT.md). Cave-of-secrets/Festival Square PNGs and
+  old backup/copy scene files intentionally left untouched — out of scope.
 
 ### Additional things
 - [ ] T34 · Parent Dashboard
@@ -81,6 +98,14 @@ Before every task, Claude Code must:
 - [~] T20 · CSS media-queries audit — Zone 1 (Symbol Mountain) done: phone-landscape (915×412 / 640×360) audit + fixes in 3 shared components (SymbolSidebar, ZoneWelcome, OpeningModal) via new `@media (max-height: 480px)` blocks; verified in-browser on all 4 SM scenes (Modak, Pond, Symbol, Sacred Assembly). Portrait out of scope (rotate overlay). SceneStage NOT used by SM scenes — see DECISIONS.md #7. Zones 2–3 still pending.
 - [ ] T49 · CleanGameWelcomeScreen (returning-user "Welcome Back / Continue Adventure" screen) — short-landscape (≤412px h) vertical overflow: "Continue Adventure" + Home / Switch Explorer / Start Over buttons sit below the fold, page scrolls. Flagged and deferred by TWO separate 2026-09-02 sweeps (Zone 1 CSS pilot + pre-Zone-1 onboarding). Returning families hit this every session — needs its own `@media (max-height: 480px)` pass (same pattern as ParentGate / ProfileSelector). Do before wider beta.
 - [ ] T50 · Marketing landing page (`src/pages/LandingPage.jsx`, `?view=landing`) — no nav menu yet (hamburger removed until it does something). Add the trigger + a real menu together before wider launch.
+- [x] T52a · SparkleAnimation glow-color bug — shared component only ever wrote `color` to
+  `backgroundColor`, never to the `--sparkle-color` CSS var the glow (`box-shadow`) reads,
+  so glow silently fell back to CSS defaults (gold star / PURPLE magic) regardless of the
+  color prop passed — read as a muddy red blob on Tusk's `type="magic"` gold burst. Fixed
+  in SparkleAnimation.jsx (one-line: set `--sparkle-color` inline) + standardized Tusk,
+  Modak, and Pond's pre-reveal bursts from `type="magic"` to `type="star"` to match
+  Vakratunda's canonical gold star. See CHANGELOG 2026-09-18. Not yet visually verified
+  in-browser — Madhurima to confirm on next Tusk eyes-game playthrough.
 - [ ] T51 · Onboarding install/hand-off scene (`CleanProfileSelector.jsx`, `PwaInstallManager.getInstallGuide`) — device-test the *install* state on real iOS Safari, iOS Chrome and Android (desktop Chrome skips it, so it was never seen live). Also verify the installed-PWA relaunch → Pick Your Friend boot on a real installed PWA. Nudge the beside-card Ganesha up a little if it reads too low.
 
 
@@ -92,6 +117,12 @@ Before every task, Claude Code must:
 ## Progress Tracker
 
 > Legend: [ ] not started · [x] done · [~] partial · [!] blocked · [--] not applicable
+>
+> **Scope: the 13 live scenes only** (Symbol Mountain 4 + Shloka River 5 + About Me Hut 4), per
+> CLAUDE.md. Cave of Secrets (was rows 05–09, "vakratunda-mahakaya" through "final-meaning-scene")
+> and Festival Square (was rows 15–18, "game1-piano" through "game4-mandap") are removed from
+> active tracking — Cave of Secrets is obsolete/dead, Festival Square is parked for later. Their
+> old checkbox history isn't lost, just not tracked here — see git history on this file if needed.
 
 ### Modals & UI Chrome
 
@@ -101,24 +132,15 @@ Before every task, Claude Code must:
 | 02 | pond | PondSceneSimplifiedV4 | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
 | 03 | symbol | SymbolMountainSceneV3 | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
 | 04 | final-scene | SacredAssemblySceneV8 | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
-| 05 | vakratunda-mahakaya | CaveSceneFixedV2 | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
-| 06 | suryakoti-samaprabha | SuryakotiSceneV4 | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
-| 07 | nirvighnam-kurumedeva | NirvighnamSceneV5 | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
-| 08 | sarvakaryeshu-sarvada | SarvakaryeshuSarvadaV7 | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
-| 09 | final-meaning-scene | Cavescene5memoryfinale | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
-| 10 | vakratunda-grove | VakratundaGroveSimplified | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
-| 11 | suryakoti-bank | SuryakotiBankSimplified | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
-| 12 | nirvighnam-chant | NirvighnamChantSimplified | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
-| 13 | sarvakaryeshu-chant | SarvakaryeshuChantSimplified | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
-| 14 | shloka-river-finale | ShlokaRiverFinale | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
-| 15 | game1-piano | FestivalPianoGame | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
-| 16 | game2-rangoli | FestivalRangoliGame | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
-| 17 | game3-cooking | ModakCookingGame | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
-| 18 | game4-mandap | MandapDecorationGame | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
-| 19 | family-tree | Familytreegame | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
-| 20 | favorite-food | Favoritefoodgame | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
-| 21 | dreams-wishes | ObstacleRemoverGame | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
-| 22 | my-indian-story | MyIndianStoryGame | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
+| 05 | vakratunda-grove | VakratundaGroveSimplified | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
+| 06 | suryakoti-bank | SuryakotiBankSimplified | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
+| 07 | nirvighnam-chant | NirvighnamChantSimplified | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
+| 08 | sarvakaryeshu-chant | SarvakaryeshuChantSimplified | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
+| 09 | shloka-river-finale | ShlokaRiverFinale | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
+| 10 | family-tree | Familytreegame | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
+| 11 | favorite-food | Favoritefoodgame | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
+| 12 | dreams-wishes | ObstacleRemoverGame | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
+| 13 | my-indian-story | MyIndianStoryGame | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
 
 ### Voice & Audio
 
@@ -128,30 +150,21 @@ Before every task, Claude Code must:
 | 02 | pond | PondSceneSimplifiedV4 | [x] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
 | 03 | symbol | SymbolMountainSceneV3 | [x] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
 | 04 | final-scene | SacredAssemblySceneV8 | [ ] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
-| 05 | vakratunda-mahakaya | CaveSceneFixedV2 | [x] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
-| 06 | suryakoti-samaprabha | SuryakotiSceneV4 | [x] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
-| 07 | nirvighnam-kurumedeva | NirvighnamSceneV5 | [x] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
-| 08 | sarvakaryeshu-sarvada | SarvakaryeshuSarvadaV7 | [x] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
-| 09 | final-meaning-scene | Cavescene5memoryfinale | [ ] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
-| 10 | vakratunda-grove | VakratundaGroveSimplified | [x] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
-| 11 | suryakoti-bank | SuryakotiBankSimplified | [x] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
-| 12 | nirvighnam-chant | NirvighnamChantSimplified | [x] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
-| 13 | sarvakaryeshu-chant | SarvakaryeshuChantSimplified | [x] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
-| 14 | shloka-river-finale | ShlokaRiverFinale | [ ] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
-| 15 | game1-piano | FestivalPianoGame | [ ] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
-| 16 | game2-rangoli | FestivalRangoliGame | [ ] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
-| 17 | game3-cooking | ModakCookingGame | [ ] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
-| 18 | game4-mandap | MandapDecorationGame | [ ] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
-| 19 | family-tree | Familytreegame | [ ] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
-| 20 | favorite-food | Favoritefoodgame | [ ] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
-| 21 | dreams-wishes | ObstacleRemoverGame | [ ] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
-| 22 | my-indian-story | MyIndianStoryGame | [ ] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
+| 05 | vakratunda-grove | VakratundaGroveSimplified | [x] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
+| 06 | suryakoti-bank | SuryakotiBankSimplified | [x] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
+| 07 | nirvighnam-chant | NirvighnamChantSimplified | [x] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
+| 08 | sarvakaryeshu-chant | SarvakaryeshuChantSimplified | [x] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
+| 09 | shloka-river-finale | ShlokaRiverFinale | [ ] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
+| 10 | family-tree | Familytreegame | [ ] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
+| 11 | favorite-food | Favoritefoodgame | [ ] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
+| 12 | dreams-wishes | ObstacleRemoverGame | [ ] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
+| 13 | my-indian-story | MyIndianStoryGame | [ ] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] |
 
 > T14 · T15 · T16 are content creation tasks — mark [x] once files are recorded/created, not per scene.
 
 ### Scene Behaviour & Hooks
 
-> T22 = zones 1–3 (scenes 01–14) · T27 = zones 4–5 (scenes 15–22)
+> T22 = Symbol Mountain + Shloka River (scenes 01–09) · T27 = About Me Hut (scenes 10–13)
 
 | # | Scene | File | T06 | T08 | T22 | T27 |
 |---|---|---|---|---|---|---|
@@ -159,28 +172,19 @@ Before every task, Claude Code must:
 | 02 | pond | PondSceneSimplifiedV4 | [ ] | [x] | [x] | [--] |
 | 03 | symbol | SymbolMountainSceneV3 | [x] | [x] | [x] | [--] |
 | 04 | final-scene | SacredAssemblySceneV8 | [ ] | [x] | [x] | [--] |
-| 05 | vakratunda-mahakaya | CaveSceneFixedV2 | [x] | [x] | [x] | [--] |
-| 06 | suryakoti-samaprabha | SuryakotiSceneV4 | [x] | [x] | [x] | [--] |
-| 07 | nirvighnam-kurumedeva | NirvighnamSceneV5 | [x] | [x] | [x] | [--] |
-| 08 | sarvakaryeshu-sarvada | SarvakaryeshuSarvadaV7 | [x] | [x] | [x] | [--] |
-| 09 | final-meaning-scene | Cavescene5memoryfinale | [ ] | [x] | [x] | [--] |
-| 10 | vakratunda-grove | VakratundaGroveSimplified | [ ] | [x] | [x] | [--] |
-| 11 | suryakoti-bank | SuryakotiBankSimplified | [x] | [x] | [x] | [--] |
-| 12 | nirvighnam-chant | NirvighnamChantSimplified | [x] | [x] | [x] | [--] |
-| 13 | sarvakaryeshu-chant | SarvakaryeshuChantSimplified | [x] | [x] | [x] | [--] |
-| 14 | shloka-river-finale | ShlokaRiverFinale | [ ] | [x] | [x] | [--] |
-| 15 | game1-piano | FestivalPianoGame | [ ] | [x] | [--] | [ ] |
-| 16 | game2-rangoli | FestivalRangoliGame | [ ] | [x] | [--] | [ ] |
-| 17 | game3-cooking | ModakCookingGame | [ ] | [x] | [--] | [ ] |
-| 18 | game4-mandap | MandapDecorationGame | [ ] | [x] | [--] | [ ] |
-| 19 | family-tree | Familytreegame | [ ] | [x] | [--] | [ ] |
-| 20 | favorite-food | Favoritefoodgame | [ ] | [x] | [--] | [ ] |
-| 21 | dreams-wishes | ObstacleRemoverGame | [ ] | [x] | [--] | [ ] |
-| 22 | my-indian-story | MyIndianStoryGame | [ ] | [x] | [--] | [~] |
+| 05 | vakratunda-grove | VakratundaGroveSimplified | [ ] | [x] | [x] | [--] |
+| 06 | suryakoti-bank | SuryakotiBankSimplified | [x] | [x] | [x] | [--] |
+| 07 | nirvighnam-chant | NirvighnamChantSimplified | [x] | [x] | [x] | [--] |
+| 08 | sarvakaryeshu-chant | SarvakaryeshuChantSimplified | [x] | [x] | [x] | [--] |
+| 09 | shloka-river-finale | ShlokaRiverFinale | [ ] | [x] | [x] | [--] |
+| 10 | family-tree | Familytreegame | [ ] | [x] | [--] | [ ] |
+| 11 | favorite-food | Favoritefoodgame | [ ] | [x] | [--] | [ ] |
+| 12 | dreams-wishes | ObstacleRemoverGame | [ ] | [x] | [--] | [ ] |
+| 13 | my-indian-story | MyIndianStoryGame | [ ] | [x] | [--] | [~] |
 
 ### Ganesha & Mooshika Presence
 
-> T18 = zones 1–3 (scenes 01–14) · T28 = zones 4–5 (scenes 15–22)
+> T18 = Symbol Mountain + Shloka River (scenes 01–09) · T28 = About Me Hut (scenes 10–13)
 > T23 · T24 · T25 · T26 are navigation-level — tracked as global below.
 
 **Global (navigation-level):**
@@ -200,24 +204,15 @@ Before every task, Claude Code must:
 | 02 | pond | PondSceneSimplifiedV4 | [ ] | [--] |
 | 03 | symbol | SymbolMountainSceneV3 | [ ] | [--] |
 | 04 | final-scene | SacredAssemblySceneV8 | [ ] | [--] |
-| 05 | vakratunda-mahakaya | CaveSceneFixedV2 | [ ] | [--] |
-| 06 | suryakoti-samaprabha | SuryakotiSceneV4 | [ ] | [--] |
-| 07 | nirvighnam-kurumedeva | NirvighnamSceneV5 | [ ] | [--] |
-| 08 | sarvakaryeshu-sarvada | SarvakaryeshuSarvadaV7 | [ ] | [--] |
-| 09 | final-meaning-scene | Cavescene5memoryfinale | [ ] | [--] |
-| 10 | vakratunda-grove | VakratundaGroveSimplified | [ ] | [--] |
-| 11 | suryakoti-bank | SuryakotiBankSimplified | [ ] | [--] |
-| 12 | nirvighnam-chant | NirvighnamChantSimplified | [ ] | [--] |
-| 13 | sarvakaryeshu-chant | SarvakaryeshuChantSimplified | [ ] | [--] |
-| 14 | shloka-river-finale | ShlokaRiverFinale | [ ] | [--] |
-| 15 | game1-piano | FestivalPianoGame | [--] | [ ] |
-| 16 | game2-rangoli | FestivalRangoliGame | [--] | [ ] |
-| 17 | game3-cooking | ModakCookingGame | [--] | [ ] |
-| 18 | game4-mandap | MandapDecorationGame | [--] | [ ] |
-| 19 | family-tree | Familytreegame | [--] | [ ] |
-| 20 | favorite-food | Favoritefoodgame | [--] | [ ] |
-| 21 | dreams-wishes | ObstacleRemoverGame | [--] | [ ] |
-| 22 | my-indian-story | MyIndianStoryGame | [--] | [ ] |
+| 05 | vakratunda-grove | VakratundaGroveSimplified | [ ] | [--] |
+| 06 | suryakoti-bank | SuryakotiBankSimplified | [ ] | [--] |
+| 07 | nirvighnam-chant | NirvighnamChantSimplified | [ ] | [--] |
+| 08 | sarvakaryeshu-chant | SarvakaryeshuChantSimplified | [ ] | [--] |
+| 09 | shloka-river-finale | ShlokaRiverFinale | [ ] | [--] |
+| 10 | family-tree | Familytreegame | [--] | [ ] |
+| 11 | favorite-food | Favoritefoodgame | [--] | [ ] |
+| 12 | dreams-wishes | ObstacleRemoverGame | [--] | [ ] |
+| 13 | my-indian-story | MyIndianStoryGame | [--] | [ ] |
 
 ### Quality & Audit
 
@@ -227,24 +222,15 @@ Before every task, Claude Code must:
 | 02 | pond | PondSceneSimplifiedV4 | [ ] | [x] | [ ] |
 | 03 | symbol | SymbolMountainSceneV3 | [ ] | [x] | [ ] |
 | 04 | final-scene | SacredAssemblySceneV8 | [ ] | [x] | [ ] |
-| 05 | vakratunda-mahakaya | CaveSceneFixedV2 | [ ] | [ ] | [ ] |
-| 06 | suryakoti-samaprabha | SuryakotiSceneV4 | [ ] | [ ] | [ ] |
-| 07 | nirvighnam-kurumedeva | NirvighnamSceneV5 | [ ] | [ ] | [ ] |
-| 08 | sarvakaryeshu-sarvada | SarvakaryeshuSarvadaV7 | [ ] | [ ] | [ ] |
-| 09 | final-meaning-scene | Cavescene5memoryfinale | [ ] | [ ] | [ ] |
-| 10 | vakratunda-grove | VakratundaGroveSimplified | [ ] | [ ] | [ ] |
-| 11 | suryakoti-bank | SuryakotiBankSimplified | [ ] | [ ] | [ ] |
-| 12 | nirvighnam-chant | NirvighnamChantSimplified | [ ] | [ ] | [ ] |
-| 13 | sarvakaryeshu-chant | SarvakaryeshuChantSimplified | [ ] | [ ] | [ ] |
-| 14 | shloka-river-finale | ShlokaRiverFinale | [ ] | [ ] | [ ] |
-| 15 | game1-piano | FestivalPianoGame | [ ] | [ ] | [ ] |
-| 16 | game2-rangoli | FestivalRangoliGame | [ ] | [ ] | [ ] |
-| 17 | game3-cooking | ModakCookingGame | [ ] | [ ] | [ ] |
-| 18 | game4-mandap | MandapDecorationGame | [ ] | [ ] | [ ] |
-| 19 | family-tree | Familytreegame | [ ] | [ ] | [ ] |
-| 20 | favorite-food | Favoritefoodgame | [ ] | [ ] | [ ] |
-| 21 | dreams-wishes | ObstacleRemoverGame | [ ] | [ ] | [ ] |
-| 22 | my-indian-story | MyIndianStoryGame | [ ] | [ ] | [ ] |
+| 05 | vakratunda-grove | VakratundaGroveSimplified | [ ] | [ ] | [ ] |
+| 06 | suryakoti-bank | SuryakotiBankSimplified | [ ] | [ ] | [ ] |
+| 07 | nirvighnam-chant | NirvighnamChantSimplified | [ ] | [ ] | [ ] |
+| 08 | sarvakaryeshu-chant | SarvakaryeshuChantSimplified | [ ] | [ ] | [ ] |
+| 09 | shloka-river-finale | ShlokaRiverFinale | [ ] | [ ] | [ ] |
+| 10 | family-tree | Familytreegame | [ ] | [ ] | [ ] |
+| 11 | favorite-food | Favoritefoodgame | [ ] | [ ] | [ ] |
+| 12 | dreams-wishes | ObstacleRemoverGame | [ ] | [ ] | [ ] |
+| 13 | my-indian-story | MyIndianStoryGame | [ ] | [ ] | [ ] |
 
 ---
 
@@ -285,12 +271,8 @@ Use this quick pass before committing. Mark mentally or copy into your review no
 - Scene 3 Symbol: IdleHint on eyes symbol; reset on eyes/ears/note clicks
 - Scene 4 Final: no IdleHint required
 
-**Cave of Secrets (Meaning Cave)**
-- Scene 1 Vakratunda-Mahakaya: IdleHint on Door 1; reset on syllable/stone clicks
-- Scene 2 Suryakoti-Samaprabha: IdleHint on first healing sun; reset on sun + hint btn
-- Scene 3 Nirvighnam-Kurumedeva: IdleHint on first crystal; reset on crystal/fog/rock
-- Scene 4 Sarvakaryeshu-Sarvada: IdleHint on Door 1; reset on char/symbol/helper
-- Scene 5 Final: no IdleHint required
+**Cave of Secrets — OBSOLETE, excluded from all work per CLAUDE.md.** (Old checklist for this
+zone removed here; see git history if it's ever needed for reference.)
 
 **Shloka River**
 - Scene 1 Vakratunda Grove: Idle hints already inline; do not duplicate
@@ -299,8 +281,9 @@ Use this quick pass before committing. Mark mentally or copy into your review no
 - Scene 4 Sarvakaryeshu Chant: IdleHint on AppSidebar; reset on app click
 - Scene 5 Finale: no IdleHint required
 
-**Festival Square**
-- Scenes 1-4: Opening/Completion/Audio/Home/Badge wired
+**Festival Square — PARKED, not in current scope per CLAUDE.md.** Has scene code in the repo but
+is not being built/audited proactively — ask before touching. (Old checklist kept only as a note
+that this section still exists for whenever this zone is picked back up.)
 
 **About Me Hut**
 - Scenes 1-4: Opening/Completion/Audio/Home/Badge wired

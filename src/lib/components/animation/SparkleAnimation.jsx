@@ -124,6 +124,7 @@ const SparkleAnimation = ({
             width: `${sparkle.size}px`,
             height: `${sparkle.size}px`,
             backgroundColor: color,
+            '--sparkle-color': color,
             animationDelay: `${sparkle.delay}ms`,
             animationDuration: `${sparkle.duration}ms`,
             transform: `rotate(${sparkle.rotation}deg)`,

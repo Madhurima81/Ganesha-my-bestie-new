@@ -1,3 +1,4 @@
+import PoseImage, { usePreloadPoses } from '../../../../lib/components/animation/PoseImage';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import SyllableHighlight from '../../shared/SyllableHighlight';
 import useRepeatedHintCycle from '../../../../lib/hooks/useRepeatedHintCycle';
@@ -82,6 +83,23 @@ const PHASES_CONFIG = [
   },
 ];
 
+const POSE_ASSETS = [
+  morningBg,
+  afternoonBg,
+  nightBg,
+  boatImg,
+  ganeshaPopImg,
+  mooshikaSymbolImg,
+  trunkSymbolImg,
+  lotusSymbolImg,
+  morningBubbleImg,
+  afternoonBubbleImg,
+  nightBubbleImg,
+  morningSceneImg,
+  afternoonSceneImg,
+  nightSceneImg,
+];
+
 export default function SarvadaGame({
   isActive = false,
   hideElements = false,
@@ -91,6 +109,7 @@ export default function SarvadaGame({
   isPaused = false,
   voiceGuidance = {},
 }) {
+  usePreloadPoses(POSE_ASSETS);
   const { playVoice: playSceneLine, stopVoice: stopSceneVoice, playWord, playSyllable } = voiceGuidance;
   const [phaseIndex, setPhaseIndex] = useState(0);
   const [bubbleState, setBubbleState] = useState('idle');
@@ -98,8 +117,6 @@ export default function SarvadaGame({
   const [litCount, setLitCount] = useState(0);
   const [revealedSyls, setRevealedSyls] = useState([]);
   const [gamePhase, setGamePhase] = useState('intro');
-  const [prevBgSrc, setPrevBgSrc] = useState(null);
-  const [prevBgOpacity, setPrevBgOpacity] = useState(1);
   const [flash, setFlash] = useState(false);
   const [findMode, setFindMode] = useState(false);
   const [symbolFound, setSymbolFound] = useState(false);
@@ -204,8 +221,6 @@ export default function SarvadaGame({
       setLitCount(0);
       setRevealedSyls([]);
       setGamePhase('intro');
-      setPrevBgSrc(null);
-      setPrevBgOpacity(1);
       setFlash(false);
       setFindMode(false);
       setSymbolFound(false);
@@ -229,14 +244,6 @@ export default function SarvadaGame({
 
   useEffect(() => () => clearTimers(), [clearTimers]);
 
-  // Preload all three phase backgrounds so the morning→afternoon→night
-  // crossfades never flash the base colour while a new image decodes.
-  useEffect(() => {
-    [morningBg, afternoonBg, nightBg].forEach((src) => {
-      const img = new Image();
-      img.src = src;
-    });
-  }, []);
 
   useEffect(() => {
     if (!isActive || gamePhase !== 'intro') return;
@@ -358,16 +365,10 @@ export default function SarvadaGame({
         });
       } else {
         safeAfter(600, () => {
-          const outgoingSrc = PHASES_CONFIG[phaseIndex].bg;
-          setPrevBgSrc(outgoingSrc);
-          setPrevBgOpacity(1);
           setPhaseIndex(nextIndex);
           setGamePhase('transition');
           setBubbleState('idle');
-          safeAfter(16, () => setPrevBgOpacity(0));
           safeAfter(500, () => {
-            setPrevBgSrc(null);
-            setPrevBgOpacity(1);
             setGamePhase('playing');
             startPhase();
             playSceneLine?.(PHASE_VO_KEYS[nextIndex]);
@@ -446,24 +447,15 @@ export default function SarvadaGame({
   const isPlaying = gamePhase === 'playing' || gamePhase === 'transition';
   const showSarvada = gamePhase === 'sarvada' || gamePhase === 'done';
   return (
-    <div className={`sarvada-game${hideElements ? ' is-hidden' : ''}${flash ? ' flash' : ''}`}>
-      {/* Incoming bg — always fully visible */}
-      <div
+    <div className={`sarvada-game${hideElements ? ' is-hidden' : ''}${flash ? ' flash' : ''}`} onContextMenu={(e) => e.preventDefault()}>
+      <PoseImage
         className={`sarvada-bg${gamePhase === 'transition' ? ' zoom-in' : ''}`}
-        style={{ backgroundImage: `url(${cfg.bg})`, opacity: 1, zIndex: 0 }}
+        src={cfg.bg}
+        alt=""
+        aria-hidden="true"
+        style={{ height: '100%', zIndex: 0 }}
+        imageStyle={{ height: '100%', objectFit: 'cover' }}
       />
-      {/* Outgoing bg — only present during crossfade, fades out on top */}
-      {prevBgSrc && (
-        <div
-          className="sarvada-bg"
-          style={{
-            backgroundImage: `url(${prevBgSrc})`,
-            opacity: prevBgOpacity,
-            transition: 'opacity 0.45s ease',
-            zIndex: 1,
-          }}
-        />
-      )}
 
       <div className="sarvada-syl-wrap">
         <SyllableHighlight

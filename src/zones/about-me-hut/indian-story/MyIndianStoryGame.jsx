@@ -1957,7 +1957,7 @@ const handleComplete = () => {
                 discoveredLocations.length < PHASE1_LOCATIONS.length &&
                 !showCelebration
               }
-              idleDelay={1800}
+              idleDelay={300}
               zIndex={19}
             />
 

@@ -92,12 +92,12 @@
     top 0.55s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.nirv-breathe img {
+.nirv-breathe > .pose-image {
   animation: nirv-breathe 2.9s ease-in-out infinite;
   transform-origin: center bottom;
 }
 
-.nirv-turtle.is-swimming img {
+.nirv-turtle.is-swimming > .pose-image {
   animation: nirv-swim 0.6s ease-in-out infinite;
 }
 
@@ -275,8 +275,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .nirv-breathe img,
-  .nirv-turtle.is-swimming img,
+  .nirv-breathe > .pose-image,
+  .nirv-turtle.is-swimming > .pose-image,
   .nirv-rock.is-holding img,
   .pulse,
   .hint-glow {

@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import GestureDemo from '../../../lib/components/feedback/GestureDemo';
 import './Drawingpad.css';
 
 const DrawingPad = ({ 
@@ -13,7 +14,10 @@ const DrawingPad = ({
   const [color, setColor] = useState('#FF6B6B');
   const [brushSize, setBrushSize] = useState(5);
   const [isEraser, setIsEraser] = useState(false);
-  
+  // Drawing is a free-form drag, not a tap — show a quick "move your finger
+  // to draw" demo the first time this pad opens, same as other drag mechanics.
+  const [showDrawIntro, setShowDrawIntro] = useState(true);
+
   // Unused features commented out for cleanliness based on your snippet
   // const [showTextInput, setShowTextInput] = useState(false);
   // const [textToAdd, setTextToAdd] = useState('');
@@ -88,6 +92,7 @@ const DrawingPad = ({
   
   const startDrawing = (e) => {
     e.preventDefault();
+    setShowDrawIntro(false);
     const context = canvasRef.current.getContext('2d');
     const { x, y } = getCoordinates(e);
     context.beginPath();
@@ -212,19 +217,29 @@ const DrawingPad = ({
         </div>
         
         {/* Canvas */}
-        <canvas
-          ref={canvasRef}
-          width={900}
-          height={600}
-          className="simple-canvas"
-          onMouseDown={startDrawing}
-          onMouseMove={draw}
-          onMouseUp={stopDrawing}
-          onMouseLeave={stopDrawing}
-          onTouchStart={startDrawing}
-          onTouchMove={draw}
-          onTouchEnd={stopDrawing}
-        />
+        <div className="simple-canvas-wrap">
+          <canvas
+            ref={canvasRef}
+            width={900}
+            height={600}
+            className="simple-canvas"
+            onMouseDown={startDrawing}
+            onMouseMove={draw}
+            onMouseUp={stopDrawing}
+            onMouseLeave={stopDrawing}
+            onTouchStart={startDrawing}
+            onTouchMove={draw}
+            onTouchEnd={stopDrawing}
+          />
+          <GestureDemo
+            type="drag"
+            from={{ x: 30, y: 60 }}
+            to={{ x: 65, y: 35 }}
+            active={showDrawIntro}
+            idleDelay={300}
+            zIndex={5}
+          />
+        </div>
       </div>
       
       {/* Done Button */}

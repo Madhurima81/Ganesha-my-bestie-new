@@ -69,7 +69,7 @@ const Wish2PlateDropGame = ({
             firstUnfilledBowlIndex !== null &&
             firstUnfilledBowlIndex !== undefined
           }
-          idleDelay={1800}
+          idleDelay={150}
           zIndex={24}
         />
 

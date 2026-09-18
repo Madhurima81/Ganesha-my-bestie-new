@@ -1,3 +1,4 @@
+import PoseImage, { usePreloadPoses } from '../../../../lib/components/animation/PoseImage';
 // FlowerJourneyGame2 — Bush (swipe) -> Branch (pull+hold) -> Marsh (guide
 // across stepping stones) -> Belly-feeling storytelling beat, then hands off
 // to the live scene's existing SymbolAutoReveal for the real "belly" symbol
@@ -44,17 +45,20 @@ const LAYOUT = {
   emojiBush: { l: 80, t: -38, s: 100 },
   emojiBranch: { l: 80, t: -38, s: 100 },
   emojiMarsh: { l: 80, t: -38, s: 100 },
-  bush: { l: 29.5, t: 69.1, s: 100 },
+  emojiAngry: { l: -1.9, t: -30.8, s: 100 },
+  emojiSad: { l: 86.9, t: 59.2, s: 100 },
+  emojiWorried: { l: 90.2, t: -18.7, s: 100 },
+  bush: { l: 26.9, t: 74.3, s: 100 },
   tree: { l: 76, t: 47.9, s: 120 },
   branch: { l: 67.6, t: 44.8, s: 100 },
-  marsh: { l: 56, t: 56, s: 200 },
-  mooshikaBush: { l: 28.5, t: 78.4, s: 100 },
+  marsh: { l: 58.3, t: 63.4, s: 200 },
+  mooshikaBush: { l: 26, t: 75, s: 100 },
   mooshikaBranch: { l: 66.3, t: 72.8, s: 100 },
   mooshikaBelly: { l: 67.6, t: 40.4, s: 100 },
   branchFlower1: { l: 49.1, t: 34.4, s: 100 },
   branchFlower2: { l: 20.3, t: 48.1, s: 100 },
-  marshFlower1: { l: 66, t: 48, s: 100 },
-  marshFlower2: { l: 87, t: 31, s: 100 },
+  marshFlower1: { l: 58, t: 49.9, s: 100 },
+  marshFlower2: { l: 88, t: 43.7, s: 100 },
 };
 const MARSH_START = { x: 2, y: 80 };
 const MARSH_STOPS = [
@@ -90,6 +94,23 @@ const VO = {
   bellyAffirmation: 'I can make room for my feelings and keep going.',
 };
 
+const SCENE_IMAGES = [
+  forestBackground,
+  mooshikaTurned,
+  bushClosed,
+  bushOpen,
+  branchArt,
+  treeArt,
+  marshArt,
+  marshClumpArt,
+  flowerPink,
+  flowerCream,
+  emotionAngry,
+  emotionSad,
+  emotionWorried,
+  ganeshaArt,
+];
+
 export default function FlowerJourneyGame2({
   isActive = true,
   isPaused = false,
@@ -97,6 +118,7 @@ export default function FlowerJourneyGame2({
   onFlowersUpdate,
   onComplete,
 }) {
+  usePreloadPoses(SCENE_IMAGES);
   const [phase, setPhase] = useState(PHASES.FLOWER_BUSH);
   const [flowerCount, setFlowerCount] = useState(0);
   const [emotion, setEmotion] = useState(null);
@@ -580,7 +602,7 @@ export default function FlowerJourneyGame2({
             disabled={!isBushPhase}
             aria-label="Swipe the leaves apart"
           >
-            <img src={bushOpenState ? bushOpen : bushClosed} alt="" />
+            <PoseImage src={bushOpenState ? bushOpen : bushClosed} alt="" />
           </button>
 
           {bushOpenState && flowerCount < 2 && (
@@ -608,6 +630,7 @@ export default function FlowerJourneyGame2({
             onPointerMove={isBranchPhase ? handleBranchPointerMove : undefined}
             onPointerUp={isBranchPhase ? handleBranchPointerEnd : undefined}
             onPointerCancel={isBranchPhase ? handleBranchPointerEnd : undefined}
+            onContextMenu={(e) => e.preventDefault()}
             disabled={!isBranchPhase}
             aria-label="Pull the branch down and hold"
           >
@@ -755,9 +778,24 @@ export default function FlowerJourneyGame2({
             style={{ left: `${LAYOUT.mooshikaBelly.l}%`, top: `${LAYOUT.mooshikaBelly.t}%`, '--layout-scale': (LAYOUT.mooshikaBelly.s || 100) / 100 }}
           >
             <MooshikaWithBasket flowerCount={6} basketRef={basketTargetRef} />
-            {bellyBeat >= 1 && bellyBeat < 6 && <img src={emotionAngry} alt="Frustrated" className="fjg2-belly-emotion fjg2-belly-emotion--angry" />}
-            {bellyBeat >= 2 && bellyBeat < 6 && <img src={emotionSad} alt="Disappointed" className="fjg2-belly-emotion fjg2-belly-emotion--sad" />}
-            {bellyBeat >= 3 && bellyBeat < 6 && <img src={emotionWorried} alt="Worried" className="fjg2-belly-emotion fjg2-belly-emotion--worried" />}
+            {bellyBeat >= 1 && bellyBeat < 6 && (
+              <img
+                src={emotionAngry} alt="Frustrated" className="fjg2-belly-emotion fjg2-belly-emotion--angry"
+                style={{ left: `${LAYOUT.emojiAngry.l}%`, top: `${LAYOUT.emojiAngry.t}%`, right: 'auto', transform: `scale(${LAYOUT.emojiAngry.s / 100})` }}
+              />
+            )}
+            {bellyBeat >= 2 && bellyBeat < 6 && (
+              <img
+                src={emotionSad} alt="Disappointed" className="fjg2-belly-emotion fjg2-belly-emotion--sad"
+                style={{ left: `${LAYOUT.emojiSad.l}%`, top: `${LAYOUT.emojiSad.t}%`, transform: `scale(${LAYOUT.emojiSad.s / 100})` }}
+              />
+            )}
+            {bellyBeat >= 3 && bellyBeat < 6 && (
+              <img
+                src={emotionWorried} alt="Worried" className="fjg2-belly-emotion fjg2-belly-emotion--worried"
+                style={{ left: `${LAYOUT.emojiWorried.l}%`, top: `${LAYOUT.emojiWorried.t}%`, right: 'auto', transform: `scale(${LAYOUT.emojiWorried.s / 100})` }}
+              />
+            )}
           </div>
         </div>
       )}

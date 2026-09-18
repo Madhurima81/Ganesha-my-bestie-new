@@ -43,14 +43,14 @@ import mooshikaCoach from './assets/images/mooshika-coach.webp';
 import sarvadaBg from './assets/images/sarvada/night.webp';
 import sarvakaryeshuBg from './assets/images/sarvakaryeshu-bg.webp';
 
-import symbolVakratunda from '../../../meaning cave/assets/images/symbols/vakratunda-symbol.png';
-import symbolMahakaya from '../../../meaning cave/assets/images/symbols/mahakaya-symbol.png';
-import symbolSuryakoti from '../../../meaning cave/assets/images/symbols/suryakoti-symbol.png';
-import symbolSamaprabha from '../../../meaning cave/assets/images/symbols/samaprabha-symbol.png';
-import symbolNirvighnam from '../../../meaning cave/assets/images/symbols/nirvighnam-symbol.png';
-import symbolKurumedeva from '../../../meaning cave/assets/images/symbols/kurumedeva-symbol.png';
-import symbolSarvakaryeshu from '../../../meaning cave/assets/images/symbols/sarvakaryeshu-symbol.png';
-import symbolSarvada from '../../../meaning cave/assets/images/symbols/sarvada-symbol.png';
+import symbolVakratunda from '../../../meaning cave/assets/images/symbols/vakratunda-symbol.webp';
+import symbolMahakaya from '../../../meaning cave/assets/images/symbols/mahakaya-symbol.webp';
+import symbolSuryakoti from '../../../meaning cave/assets/images/symbols/suryakoti-symbol.webp';
+import symbolSamaprabha from '../../../meaning cave/assets/images/symbols/samaprabha-symbol.webp';
+import symbolNirvighnam from '../../../meaning cave/assets/images/symbols/nirvighnam-symbol.webp';
+import symbolKurumedeva from '../../../meaning cave/assets/images/symbols/kurumedeva-symbol.webp';
+import symbolSarvakaryeshu from '../../../meaning cave/assets/images/symbols/sarvakaryeshu-symbol.webp';
+import symbolSarvada from '../../../meaning cave/assets/images/symbols/sarvada-symbol.webp';
 
 const RESUME_DELAY_MS = 3000;
 const sceneOuterPetalId = SCENE_TO_OUTER_PETAL_ID['River Memories!'];

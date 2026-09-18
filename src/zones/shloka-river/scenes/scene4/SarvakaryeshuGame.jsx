@@ -1,3 +1,4 @@
+import PoseImage, { usePreloadPoses } from '../../../../lib/components/animation/PoseImage';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import SyllableHighlight from '../../shared/SyllableHighlight';
 import useRepeatedHintCycle from '../../../../lib/hooks/useRepeatedHintCycle';
@@ -121,6 +122,25 @@ const POWER_ICONS = {
   eyes: { img: eyesIcon, label: 'Eyes', color: '#57A6D9' },
 };
 
+const POSE_ASSETS = [
+  bgImg,
+  puzzleBeforeImg,
+  puzzleAfterImg,
+  sportsBeforeImg,
+  sportsAfterImg,
+  bikeBeforeImg,
+  bikeAfterImg,
+  grandmaBeforeImg,
+  grandmaAfterImg,
+  boatImg,
+  trunkIcon,
+  tuskIcon,
+  modakIcon,
+  bellyIcon,
+  lotusIcon,
+  eyesIcon,
+];
+
 export default function SarvakaryeshuGame({
   isActive = false,
   hideElements = false,
@@ -130,6 +150,7 @@ export default function SarvakaryeshuGame({
   isPaused = false,
   voiceGuidance = {},
 }) {
+  usePreloadPoses(POSE_ASSETS);
   const { playVoice: playSceneLine, playSyllable, playWord, stopVoice: stopSceneVoice } = voiceGuidance;
   const [cardIndex, setCardIndex] = useState(0);
   const [picked, setPicked] = useState(null);
@@ -454,7 +475,7 @@ export default function SarvakaryeshuGame({
 
   const situation = SITUATIONS[cardIndex];
   return (
-    <div className={`sarva-game${hideElements ? ' is-hidden' : ''}`}>
+    <div className={`sarva-game${hideElements ? ' is-hidden' : ''}`} onContextMenu={(e) => e.preventDefault()}>
       <div className="sarva-stage" style={{ backgroundImage: `url(${bgImg})` }}>
         <div className="sarva-boat" aria-hidden="true">
           <img src={boatImg} alt="" draggable={false} />
@@ -492,8 +513,9 @@ export default function SarvakaryeshuGame({
               className={`sarva-card-img-wrap${imageHit ? ' power-hit' : ''}${showAfter ? ' is-after-reveal' : ''}`}
             >
               {showAfter && <div className="sarva-after-badge">After</div>}
-              <img
-                className={`sarva-card-img${showAfter ? ' is-after' : ''}`}
+              <PoseImage
+                className="sarva-card-img"
+                imageStyle={{ height: '100%', objectFit: 'contain' }}
                 src={showAfter ? situation.after : situation.before}
                 alt={situation.id}
                 draggable={false}

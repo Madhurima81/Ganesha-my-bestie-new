@@ -1,3 +1,5 @@
+import PoseImage, { usePreloadPoses } from '../components/animation/PoseImage';
+import GestureDemo from '../components/feedback/GestureDemo';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import './BeatPlayerGame.css';
 
@@ -153,6 +155,8 @@ function BeatPlayerGame({
   // off leaves the beat exactly as authored.
   layoutDebug = false,
 }) {
+  const sceneImages = useMemo(() => Object.values(assetMap || {}).filter(Boolean), [assetMap]);
+  usePreloadPoses(sceneImages);
   const beatKeys = useMemo(
     () => Object.keys(flowJson?.beats || {}).sort((a, b) => Number(a) - Number(b)),
     [flowJson]
@@ -386,6 +390,65 @@ function BeatPlayerGame({
   useEffect(() => clearTimers, [clearTimers]);
 
   const findItem = useCallback((gameKey) => items.find((it) => it.gameKey === gameKey), [items]);
+
+  // Idle-hint ladder for a stuck beat — same 9s/16s/24s cadence used across
+  // the app's other mini-games (useRepeatedHintCycle). Resets whenever a new
+  // beat starts waiting for input. L1/L2 pulse the interactive item; L3
+  // re-shows the gesture demo even past the "first 2 beats" teaching window
+  // below, so a child stuck on a later beat still gets re-taught the gesture.
+  const [beatHintLevel, setBeatHintLevel] = useState(0);
+  const beatWaitStartedAtRef = useRef(Date.now());
+  useEffect(() => {
+    beatWaitStartedAtRef.current = Date.now();
+    setBeatHintLevel(0);
+  }, [beatIndex, stateName]);
+
+  useEffect(() => {
+    if (!isActive || isPaused || layoutDebug || !needsInput(stateName)) return undefined;
+    const tick = setInterval(() => {
+      const idleMs = Date.now() - beatWaitStartedAtRef.current;
+      if (idleMs >= 24000) setBeatHintLevel(3);
+      else if (idleMs >= 16000) setBeatHintLevel(2);
+      else if (idleMs >= 9000) setBeatHintLevel(1);
+    }, 1000);
+    return () => clearInterval(tick);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [beatIndex, stateName, isActive, isPaused, layoutDebug]);
+
+  // Gesture demo — every interaction type here is a non-tap gesture (drag,
+  // rope-drag, drag-path, press-hold), so a first-timer needs a quick shown
+  // example. Shown for the first 2 beats that ever need input (kids pick up
+  // the mechanic fast, and repeating it every beat would get in the way), and
+  // again for any later beat once the idle ladder reaches L3.
+  const interactiveBeatsSoFar = useMemo(() => {
+    let count = 0;
+    for (let i = 0; i <= beatPos; i++) {
+      const idx = beatKeys[i];
+      const inter = interactions[idx] || flowJson?.beats?.[idx]?.interaction;
+      if (inter && inter.type && inter.type !== 'none') count += 1;
+    }
+    return count;
+  }, [beatPos, beatKeys, interactions, flowJson]);
+
+  const showGestureDemo = needsInput(stateName) && (interactiveBeatsSoFar <= 2 || beatHintLevel >= 3);
+
+  const gestureDemoType = (() => {
+    if (!interaction) return 'drag';
+    if (interaction.type === 'press-hold') return 'hold';
+    if (interaction.type === 'try-fail') return interaction.gesture === 'press-hold' ? 'hold' : 'drag';
+    return 'drag'; // drag-drop, tap-select-tap-target (drag is the primary path), drag-path, rope-drag
+  })();
+
+  const gestureDemoFromTo = useMemo(() => {
+    if (!showGestureDemo || !interaction) return null;
+    const dragItem = findItem(interaction.drag);
+    const targetItem = interaction.target ? findItem(interaction.target) : null;
+    const from = dragItem ? { x: dragItem.x, y: dragItem.y } : { x: 50, y: 60 };
+    const to = targetItem
+      ? { x: targetItem.x, y: targetItem.y }
+      : (interaction.type === 'drag-path' && interaction.path?.length ? interaction.path[0] : from);
+    return { from, to };
+  }, [showGestureDemo, interaction, findItem]);
 
   // ---- Layout Debug ---------------------------------------------------
   const itemKeyOf = (item, i) => item.gameKey || `${item.name}#${i}`;
@@ -822,6 +885,15 @@ function BeatPlayerGame({
     decayHoldProgress(250);
   }, [decayHoldProgress]);
 
+  // A press-hold in progress has its own RAF loop that the beat-advance
+  // effect above (which only guards the timer-driven timeline) never
+  // touches — without this, pausing mid-hold let holdRaf keep ticking and
+  // could fire completeInteraction()/failThenAdvance() after the child had
+  // already stepped away.
+  useEffect(() => {
+    if (isPaused) cancelHold();
+  }, [isPaused, cancelHold]);
+
   // ---- drag-path: tap trigger -> reveal drop -> drag through waypoints ----
   const pctDistance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
 
@@ -903,6 +975,11 @@ function BeatPlayerGame({
   // 'center-tie' locks and stays, resolving into the knot artwork.
   const isCenterTie = isCenterTieInteraction(interaction);
   const isTryFailCenterTie = isTryFailCenterTieInteraction(interaction);
+  // An intervening help beat can retain the previous loose rope as scenery.
+  const ropeSourceBeat = flowJson?.beats?.[beat.ropeVisualFrom];
+  const ropeInteraction = isCenterTie ? interaction : ropeSourceBeat?.interaction;
+  const ropeItems = isCenterTie ? items : ropeSourceBeat?.after?.items;
+  const showRope = isCenterTieInteraction(ropeInteraction);
   const debugInteraction = debugOverrides[beatIndex]?.interaction || {};
   const ropeEndWidth = debugInteraction.ropeEndWidth ?? interaction?.ropeEndWidth ?? 5.2;
   const ropeEndHeight = debugInteraction.ropeEndHeight ?? interaction?.ropeEndHeight ?? 6;
@@ -958,8 +1035,18 @@ function BeatPlayerGame({
       `}
       onPointerMove={(e) => { onPointerMove(e); onDropPointerMove(e); onDebugPointerMove(e); }}
       onPointerUp={(e) => { onPointerUp(e); onDropPointerUp(); endDebugDrag(); }}
-      onPointerCancel={() => { setDrag(null); onDropPointerUp(); endDebugDrag(); }}
+      onPointerCancel={() => { setDrag(null); onDropPointerUp(); endDebugDrag(); cancelHold(); }}
     >
+      {gestureDemoFromTo && (
+        <GestureDemo
+          type={gestureDemoType}
+          from={gestureDemoFromTo.from}
+          to={gestureDemoFromTo.to}
+          active={showGestureDemo}
+          idleDelay={150}
+        />
+      )}
+
       {dropGhost && (() => {
         const src = resolveSrc(dropGhost.item.path);
         if (!src) return null;
@@ -1038,7 +1125,7 @@ function BeatPlayerGame({
             key={renderKeys[i]}
             type="button"
             data-beat-key={item.gameKey || undefined}
-            className={`beat-player-item${interactive ? ' is-interactive' : ''}${isDragKey && selectedGameKey === item.gameKey ? ' is-selected' : ''}${isBeingDragged ? ' is-dragging' : ''}${isDragKey && feedback === 'holding' ? ' is-holding' : ''}${isDebugSelected ? ' is-debug-selected' : ''}`}
+            className={`beat-player-item${interactive ? ' is-interactive' : ''}${isDragKey && selectedGameKey === item.gameKey ? ' is-selected' : ''}${isBeingDragged ? ' is-dragging' : ''}${isDragKey && feedback === 'holding' ? ' is-holding' : ''}${isDebugSelected ? ' is-debug-selected' : ''}${interactive && (isDragKey || isTargetKey) && beatHintLevel === 1 ? ' beat-player-hint-pulse' : ''}${interactive && (isDragKey || isTargetKey) && beatHintLevel >= 2 ? ' beat-player-hint-strong' : ''}`}
             style={{ ...style, pointerEvents: interactive ? 'auto' : 'none', opacity: isPendingReveal ? 0 : style.opacity, outline: isDebugSelected ? '2px dashed #03A9F4' : undefined }}
             tabIndex={interactive ? 0 : -1}
             // Inactive artwork must also stop accepting focus. aria-hidden
@@ -1052,7 +1139,7 @@ function BeatPlayerGame({
             onPointerLeave={!layoutDebug && isDragKey ? cancelHold : undefined}
             onClick={layoutDebug ? undefined : (isTriggerKey ? () => onTriggerTap(item.gameKey) : interactive ? () => onTapItem(item.gameKey) : undefined)}
           >
-            <img src={src} alt="" draggable={false} />
+            <PoseImage src={src} alt="" draggable={false} />
             {!layoutDebug && isDragKey && holdProgress > 0 && (
               <svg viewBox="0 0 100 100" className="beat-player-hold-ring" aria-hidden="true">
                 <circle
@@ -1070,20 +1157,21 @@ function BeatPlayerGame({
         );
       })}
 
-      {isCenterTie && (() => {
-        const leftItem = findItem(interaction.dragLeft);
-        const rightItem = findItem(interaction.dragRight);
+      {showRope && (() => {
+        const leftItem = ropeItems?.find((item) => item.gameKey === ropeInteraction.dragLeft);
+        const rightItem = ropeItems?.find((item) => item.gameKey === ropeInteraction.dragRight);
         if (!leftItem || !rightItem) return null;
         const leftKey = itemKeyOf(leftItem, items.indexOf(leftItem));
         const rightKey = itemKeyOf(rightItem, items.indexOf(rightItem));
-        const effLeftStart = layoutDebug ? withDebugOverride(leftItem, leftKey) : leftItem;
-        const effRightStart = layoutDebug ? withDebugOverride(rightItem, rightKey) : rightItem;
-        const anchorLeft = effectivePoint('anchorLeft') || effLeftStart;
-        const anchorRight = effectivePoint('anchorRight') || effRightStart;
+        const effLeftStart = layoutDebug && isCenterTie ? withDebugOverride(leftItem, leftKey) : leftItem;
+        const effRightStart = layoutDebug && isCenterTie ? withDebugOverride(rightItem, rightKey) : rightItem;
+        const anchorLeft = (isCenterTie ? effectivePoint('anchorLeft') : ropeInteraction.anchorLeft) || effLeftStart;
+        const anchorRight = (isCenterTie ? effectivePoint('anchorRight') : ropeInteraction.anchorRight) || effRightStart;
         const lockLeft = effectivePoint('lockLeft') || effectiveTargetZone || effLeftStart;
         const lockRight = effectivePoint('lockRight') || effectiveTargetZone || effRightStart;
 
         const posFor = (side, start, key, lockPos) => {
+          if (!isCenterTie) return start;
           if (drag?.gameKey === key) return { x: drag.x, y: drag.y };
           if (centerTieLocked[side]) return lockPos;
           return start;
@@ -1092,22 +1180,22 @@ function BeatPlayerGame({
         const rightPos = posFor('right', effRightStart, rightKey, lockRight);
 
         const resolved = !needsInput(stateName);
-        const showKnot = resolved && !isTryFailCenterTie;
-        const nearGlow = drag && effectiveTargetZone
+        const showKnot = isCenterTie && resolved && !isTryFailCenterTie;
+        const nearGlow = isCenterTie && drag && effectiveTargetZone
           && pctDistance({ x: drag.x, y: drag.y }, effectiveTargetZone) < (effectiveTargetZone.w ?? 10) * 1.6;
 
-        const dark = feedback === 'wrong' ? '#c2564a' : '#976239';
-        const main = feedback === 'wrong' ? '#e8a599' : '#e9b86e';
+        const dark = isCenterTie && feedback === 'wrong' ? '#c2564a' : '#976239';
+        const main = isCenterTie && feedback === 'wrong' ? '#e8a599' : '#e9b86e';
         // Visible/grabbable during normal play (while the beat needs input
         // and that side isn't already locked) AND in Layout Debug — the
         // rope-end's own rest position ("where the loose end starts,
         // controlling how long the dangling rope looks") had no handle in
         // debug mode at all before this, only the anchor/lock points did.
-        const canGrab = (side) => layoutDebug || (needsInput(stateName) && !centerTieLocked[side]);
+        const canGrab = (side) => isCenterTie && (layoutDebug || (needsInput(stateName) && !centerTieLocked[side]));
         const easeStyle = { transition: 'd 380ms cubic-bezier(.2,.8,.3,1)' };
 
         return (
-          <svg viewBox="0 0 100 100" preserveAspectRatio="none" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 55 }}>
+          <svg data-beat-rope="" viewBox="0 0 100 100" preserveAspectRatio="none" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 55 }}>
             {/* No permanent target marker — a glow only while a rope end is
                 actively near the center, strengthening on approach. On the
                 successful beat it resolves into the knot instead of fading. */}
@@ -1161,7 +1249,7 @@ function BeatPlayerGame({
             {/* Layout Debug: anchors and lock points have no item of their
                 own to grab, so each gets a dedicated handle via the
                 generic named-point system. */}
-            {layoutDebug && ['anchorLeft', 'anchorRight', 'lockLeft', 'lockRight'].map((name) => {
+            {layoutDebug && isCenterTie && ['anchorLeft', 'anchorRight', 'lockLeft', 'lockRight'].map((name) => {
               const p = effectivePoint(name);
               if (!p) return null;
               return (

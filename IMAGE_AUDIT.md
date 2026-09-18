@@ -3,6 +3,37 @@
 
 ---
 
+## WebP Conversion — 2026-09-18 (done)
+
+Scope: `.png` files actually imported/referenced by the 13 live scenes
+(sceneRegistry.js) plus onboarding/navigation chrome (App.jsx, ParentDashboard,
+ZoneBadgeButton, CleanGameWelcomeScreen). Excluded: Cave of Secrets, Festival
+Square (parked/obsolete per CLAUDE.md), and old backup/copy/VN scene files not
+in the registry.
+
+**Converted to `.webp` (32 files, via `sharp` quality 90), imports updated:**
+| File | Used by |
+|------|---------|
+| pond-bg-fixed, pond-big-rock, pond-pebble, pond-flower | PondSceneSimplifiedV4 (Scene 02) |
+| vakratunda/mahakaya/suryakoti/samaprabha/nirvighnam/kurumedeva/sarvakaryeshu/sarvada-symbol | VakratundaGroveSimplified, SuryakotiBankSimplified, NirvighnamChantSimplified, SarvakaryeshuChantSimplified, ShlokaRiverFinale (Scenes 10–14) — sourced from `src/zones/meaning cave/assets/images/symbols/` |
+| symbol-trunk-new | ShlokaRiverFinale, VakratundaGroveSimplified |
+| modak-icon, vakratunda-grove-icon, family-tree-icon | App.jsx (zone map icons) |
+| meanings-caveofsecrets/* (7 symbols) | CleanGameWelcomeScreen (onboarding) |
+| symbols-symbolmountain/* (8 icons) | ParentDashboard, ParentDashboardV1 |
+| zone-badge/icon-symbolmtn, icon-shlokariver, icon-aboutme | ZoneBadgeButton |
+
+**Flagged, not fixed (out of scope for this pass):**
+- ⚠️ Live Shloka River scenes (in-scope, not obsolete) import their symbol
+  icons from `src/zones/meaning cave/assets/images/symbols/` — the folder
+  CLAUDE.md marks OBSOLETE/dead. This is a real runtime dependency on
+  "dead" code, not unused code. Recommend moving these 8 symbol images to a
+  proper shared location (e.g. `src/lib/assets/symbols/`) in a follow-up.
+- Original `.png` files were left on disk (not deleted) as a safety fallback.
+- Cave of Secrets and Festival Square PNGs untouched (parked/obsolete).
+- Backup/copy/`VN` scene files (not in sceneRegistry.js) still reference `.png` — dead code, not runtime risk.
+
+---
+
 ## How to generate this file
 
 Run this in Claude Code for each scene:

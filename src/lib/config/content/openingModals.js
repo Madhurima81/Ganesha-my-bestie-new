@@ -1,3 +1,16 @@
+import storyHomeIcon from '../../../zones/about-me-hut/indian-story/assets/images/house-icon.webp';
+import storyLanguageIcon from '../../../zones/about-me-hut/indian-story/assets/images/language-icon.webp';
+import storyFestivalIcon from '../../../zones/about-me-hut/indian-story/assets/images/festival-icon.webp';
+import familyHomeIcon from '../../../zones/about-me-hut/family-tree/assets/images/house-icon.webp';
+import familyHeartIcon from '../../../zones/about-me-hut/family-tree/assets/images/heart-icon.webp';
+import familyIcon from '../../../zones/about-me-hut/family-tree/assets/images/family-icon.webp';
+import favoriteFoodIcon from '../../../zones/about-me-hut/food/assets/images/food-icon.webp';
+import favoriteColorIcon from '../../../zones/about-me-hut/food/assets/images/color-icon.webp';
+import favoriteActivityIcon from '../../../zones/about-me-hut/food/assets/images/sports-icon.webp';
+import dreamHeartIcon from '../../../zones/about-me-hut/enjoy/assets/images/heart-icon.webp';
+import dreamStarIcon from '../../../zones/about-me-hut/enjoy/assets/images/shootingstar-icon.webp';
+import dreamWorldIcon from '../../../zones/about-me-hut/enjoy/assets/images/world-icon.webp';
+
 ﻿// Opening Modal Content for All 22 Scenes
 // Organized by zone â†’ scene
 
@@ -203,9 +216,9 @@ export const OPENING_MODALS = {
   title: "My Indian Story",
   description: "Let's explore my Indian story and yours!",
   icons: [
-    '/images/about-me-hut/house-icon.webp',
-    '/images/about-me-hut/language-icon.webp',
-    '/images/about-me-hut/festival-icon.webp'
+    storyHomeIcon,
+    storyLanguageIcon,
+    storyFestivalIcon
   ],
   iconLabels: ['Home', 'Language', 'Festival'],
   buttonText: "Let's Explore",
@@ -215,9 +228,9 @@ export const OPENING_MODALS = {
       title: "Our families",
       description: "Let's meet my family and yours!",
       icons: [
-        '/images/about-me-hut/house-icon.webp',
-        '/images/about-me-hut/heart-icon.webp',
-        '/images/about-me-hut/family-icon.webp'
+        familyHomeIcon,
+        familyHeartIcon,
+        familyIcon
       ],
       iconLabels: ['Home', 'Heart', 'Family'],
       buttonText: "Let's Explore",
@@ -228,9 +241,9 @@ export const OPENING_MODALS = {
       title: "Our Favorite Things",
       description: "Let's find my favorite things and yours!",
       icons: [
-        '/images/about-me-hut/food-icon.webp',
-        '/images/about-me-hut/color-icon.webp',
-        '/images/about-me-hut/sports-icon.webp'
+        favoriteFoodIcon,
+        favoriteColorIcon,
+        favoriteActivityIcon
       ],
       iconLabels: ['Food', 'Color', 'Activity'],
       buttonText: "Let's Explore",
@@ -241,9 +254,9 @@ export const OPENING_MODALS = {
       title: "Dream Together",
       description: "Let's help and dream together!",
       icons: [
-        '/images/about-me-hut/heart-icon.webp',
-        '/images/about-me-hut/shootingstar-icon.webp',
-        '/images/about-me-hut/world-icon.webp'
+        dreamHeartIcon,
+        dreamStarIcon,
+        dreamWorldIcon
       ],
       iconLabels: ['Heart', 'Star', 'World'],
       buttonText: "Let's Start",

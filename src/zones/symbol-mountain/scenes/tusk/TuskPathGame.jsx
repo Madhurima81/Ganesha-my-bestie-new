@@ -1,37 +1,38 @@
+import PoseImage, { usePreloadPoses } from '../../../../lib/components/animation/PoseImage';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import './TuskPathGame.css';
 
-import bgImg from './assets/images/tusk-giving/symbol_mountain_3_bg.webp';
+import bgImg from './assets/images/eyes-game/symbol_mountain_3_bg.webp';
 
 import bunnyTired from './assets/images/tusk-giving/bunny_01_tired.webp';
-import bunnyHungry from './assets/images/tusk-giving/bunny_eat_mango.png';
-import bunnyDrink from './assets/images/tusk-giving/bunny_drink_water.png';
-import bunnyGrass from './assets/images/tusk-giving/bunny_rest_on_grass.png';
+import bunnyHungry from './assets/images/tusk-giving/bunny_eat_mango.webp';
+import bunnyDrink from './assets/images/tusk-giving/bunny_drink_water.webp';
+import bunnyGrass from './assets/images/tusk-giving/bunny_rest_on_grass.webp';
 import bunnyFeather from './assets/images/tusk-giving/bunny_05_comforted_with_feather.webp';
 import bunnyHappy from './assets/images/tusk-giving/bunny_06_happy_recovered.webp';
 
 import monkeyIdleShared from './assets/images/monkey-new.webp';
-import elephantDrinking from './assets/images/ears-game-v2/elephant_drinking.png';
-import elephantSpraying from './assets/images/ears-game/elephant_04_sprays_water.png';
+import elephantDrinking from './assets/images/ears-game-v2/elephant_drinking.webp';
+import elephantSpraying from './assets/images/ears-game/elephant_04_sprays_water.webp';
 import elephantIdleShared from './assets/images/elephant-new1.webp';
-import cowEatingGrass from './assets/images/ears-game-v2/cow_eating_grass.png';
+import cowEatingGrass from './assets/images/ears-game-v2/cow_eating_grass.webp';
 import cowIdleShared from './assets/images/cow-new.webp';
 import peacockIdleShared from './assets/images/peacock-new.webp';
 
-import mango from './assets/images/eyes-game/mango.png';
+import mango from './assets/images/eyes-game/mango.webp';
 import mangoBitten from './assets/images/tusk-giving/mango_bitten.webp';
 import grassBundle from './assets/images/tusk-giving/grass_bundle.webp';
 import grassBed from './assets/images/tusk-giving/grass_bed_spread.webp';
 import bowlEmpty from './assets/images/tusk-giving/bowl_empty.webp';
 import bowlFilled from './assets/images/tusk-giving/bowl_filled.webp';
 import waterPour from './assets/images/tusk-giving/water_pour_splash.webp';
-import feather from './assets/images/eyes-game/peacock_feather.png';
+import feather from './assets/images/eyes-game/peacock_feather.webp';
 import featherPlaced from './assets/images/tusk-giving/feather_placed_state.webp';
 
-import needBubbleMangoImg from './assets/images/tusk-giving/need_bubble_hungry_mango.png';
-import needBubbleWaterImg from './assets/images/tusk-giving/need_bubble_thirsty_water.png';
-import needBubbleGrassImg from './assets/images/tusk-giving/need_bubble_soft_rest_grass.png';
-import needBubbleFeatherImg from './assets/images/tusk-giving/need_bubble_comfort_feather.png';
+import needBubbleMangoImg from './assets/images/tusk-giving/need_bubble_hungry_mango.webp';
+import needBubbleWaterImg from './assets/images/tusk-giving/need_bubble_thirsty_water.webp';
+import needBubbleGrassImg from './assets/images/tusk-giving/need_bubble_soft_rest_grass.webp';
+import needBubbleFeatherImg from './assets/images/tusk-giving/need_bubble_comfort_feather.webp';
 
 const PHASES = {
   INTRO: 'intro',
@@ -183,6 +184,8 @@ const speak = (text, enabled = true) => {
   }
 };
 
+const POSE_ASSETS = [bgImg, bunnyTired, bunnyHungry, bunnyDrink, bunnyGrass, bunnyFeather, bunnyHappy, monkeyIdleShared, elephantDrinking, elephantSpraying, elephantIdleShared, cowEatingGrass, cowIdleShared, peacockIdleShared, mango, mangoBitten, grassBundle, grassBed, bowlEmpty, bowlFilled, waterPour, feather, featherPlaced, needBubbleMangoImg, needBubbleWaterImg, needBubbleGrassImg, needBubbleFeatherImg];
+
 function TuskPathGame({
   isActive = true,
   isAudioOn = true,
@@ -191,6 +194,7 @@ function TuskPathGame({
   onGameComplete,
   className = '',
 }) {
+  usePreloadPoses(POSE_ASSETS);
   const sceneRef = useRef(null);
   const hintTimer1 = useRef(null);
   const hintTimer2 = useRef(null);
@@ -573,7 +577,7 @@ function TuskPathGame({
         style={{ ...styleFromLayout(layout.elephantSprite), pointerEvents: debugMode ? 'auto' : 'none' }}
         onPointerDown={debugMode ? (e) => startDebugDrag(e, 'elephantSprite') : undefined}
       >
-        <img
+        <PoseImage
           src={
             phase === PHASES.WATER && actionState === 'pouring'
               ? elephantSpraying
@@ -601,7 +605,7 @@ function TuskPathGame({
         style={{ ...styleFromLayout(layout.cowSprite), pointerEvents: debugMode ? 'auto' : 'none' }}
         onPointerDown={debugMode ? (e) => startDebugDrag(e, 'cowSprite') : undefined}
       >
-        <img
+        <PoseImage
           src={completed.grass ? cowIdleShared : cowEatingGrass}
           alt="Cow"
         />
@@ -616,7 +620,7 @@ function TuskPathGame({
         onClick={() => onTapTarget('bunny')}
         aria-label="Bunny traveller"
       >
-        <img className="bunny" src={bunnyImg} alt="Bunny traveller" />
+        <PoseImage className="bunny" src={bunnyImg} alt="Bunny traveller" />
       </button>
 
       {(phase === PHASES.WATER || completed.water) && (
@@ -629,7 +633,7 @@ function TuskPathGame({
           onClick={() => onTapTarget('bowl')}
           aria-label="Bowl"
         >
-          <img
+          <PoseImage
             className="bowl"
             src={completed.water || actionState === 'success' ? bowlFilled : bowlEmpty}
             alt=""

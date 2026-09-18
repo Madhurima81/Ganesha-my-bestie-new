@@ -45,7 +45,7 @@ const ZONE_FIRST_SCENE_IMAGES = {
   'symbol-mountain': [
     '/images/symbol-mountain-bg.webp',
     '/images/modakmtn-bg.webp',
-    '/images/zones/symbol-mountain/modak-icon.png',
+    '/images/zones/symbol-mountain/modak-icon.webp',
     '/images/ganesha-poses/sit-modak.webp',
     '/images/ganesha-point.webp',
   ],
@@ -56,7 +56,7 @@ const ZONE_FIRST_SCENE_IMAGES = {
   // ],
   'shloka-river': [
     '/images/shlokariver-bg.webp',
-    '/images/zones/shloka-river/vakratunda-grove-icon.png',
+    '/images/zones/shloka-river/vakratunda-grove-icon.webp',
   ],
   // 'festival-square': [
   //   '/images/festivalsquare-bg.webp',
@@ -66,7 +66,7 @@ const ZONE_FIRST_SCENE_IMAGES = {
   'about-me-hut': [
     '/images/about-me-hut-bg.webp',
     '/images/hut-bg.webp',
-    '/images/zones/about-me-hut/family-tree-icon.png',
+    '/images/zones/about-me-hut/family-tree-icon.webp',
     '/images/ganesha-final-new.svg',
   ],
 };

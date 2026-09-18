@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import BeatPlayerGame from '../../../../lib/beatPlayer/BeatPlayerGame';
+import useAppVisibility from '../../../../lib/hooks/useAppVisibility';
 import { ASSET_MAP, flowJson, bgImg } from '../../../../dev/beatPlayerPreview/TuskBeatPlayerPreview';
 import './TuskPathGame.css'; // reuse the existing stage/background sizing rules
 
@@ -11,6 +12,12 @@ import './TuskPathGame.css'; // reuse the existing stage/background sizing rules
 // against first. TuskPathGame.jsx is kept as-is (still reachable via
 // game-test's `sm-tusk` key) as a rollback path.
 function TuskBeatPlayerLive({ isActive = true, isAudioOn = true, onGameComplete, className = '' }) {
+  const [isPaused, setIsPaused] = useState(false);
+  useAppVisibility(
+    () => setIsPaused(true),
+    () => setIsPaused(false)
+  );
+
   return (
     <div className={`tusk-giving-game ${className}`}>
       <img className="tusk-bg" src={bgImg} alt="" />
@@ -19,6 +26,7 @@ function TuskBeatPlayerLive({ isActive = true, isAudioOn = true, onGameComplete,
         assetMap={ASSET_MAP}
         isActive={isActive}
         isAudioOn={isAudioOn}
+        isPaused={isPaused}
         autoAdvanceMs={650}
         movementMs={400}
         reactionPauseMs={550}

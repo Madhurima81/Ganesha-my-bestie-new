@@ -1,3 +1,4 @@
+import { usePreloadPoses } from '../../../../lib/components/animation/PoseImage';
 // zones/symbol-mountain/scenes/final-scene/SacredAssemblyScene.jsx - V8 DIVINE VERSION
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import './SacredAssemblyScene.css';
@@ -536,6 +537,19 @@ const SacredAssemblyScene = ({
   );
 };
 
+const SCENE_IMAGES = [
+  sacredBackground,
+  purpleHeart,
+  symbolMooshikaColored,
+  symbolModakColored,
+  symbolBellyColored,
+  symbolLotusColored,
+  symbolTrunkColored,
+  symbolEyesColored,
+  symbolEarsColored,
+  symbolTuskColored,
+];
+
 const SacredAssemblyContent = ({
   sceneState,
   sceneActions,
@@ -545,6 +559,7 @@ const SacredAssemblyContent = ({
   zoneId,
   sceneId
 }) => {
+  usePreloadPoses(SCENE_IMAGES);
   const isDevBuild = process.env.NODE_ENV !== 'production';
   const [showSparkle, setShowSparkle] = useState(null);
   const [cardContent, setCardContent] = useState({});

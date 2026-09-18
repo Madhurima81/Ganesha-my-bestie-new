@@ -49,12 +49,12 @@ import nirvighnamBg from './assets/images/nirvighnam/bg.webp';
 import mooshikaCoach from './assets/images/mooshika-coach.webp';
 
 // Symbol icons — TODO: replace with actual nirvighnam/kurumedeva symbols
-import symbolVakratunda from '../../../meaning cave/assets/images/symbols/vakratunda-symbol.png';
-import symbolMahakaya from '../../../meaning cave/assets/images/symbols/mahakaya-symbol.png';
-import symbolSuryakoti from '../../../meaning cave/assets/images/symbols/suryakoti-symbol.png';
-import symbolSamaprabha from '../../../meaning cave/assets/images/symbols/samaprabha-symbol.png';
-import symbolNirvighnam from '../../../meaning cave/assets/images/symbols/nirvighnam-symbol.png';
-import symbolKurumedeva from '../../../meaning cave/assets/images/symbols/kurumedeva-symbol.png';
+import symbolVakratunda from '../../../meaning cave/assets/images/symbols/vakratunda-symbol.webp';
+import symbolMahakaya from '../../../meaning cave/assets/images/symbols/mahakaya-symbol.webp';
+import symbolSuryakoti from '../../../meaning cave/assets/images/symbols/suryakoti-symbol.webp';
+import symbolSamaprabha from '../../../meaning cave/assets/images/symbols/samaprabha-symbol.webp';
+import symbolNirvighnam from '../../../meaning cave/assets/images/symbols/nirvighnam-symbol.webp';
+import symbolKurumedeva from '../../../meaning cave/assets/images/symbols/kurumedeva-symbol.webp';
 
 // ── Local UI ─────────────────────────────────────────────────────────────────
 const VOGatedButton = ({ visible, onClick, children, className = '', style = {} }) => {

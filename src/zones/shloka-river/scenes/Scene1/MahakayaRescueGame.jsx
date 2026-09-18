@@ -1,3 +1,4 @@
+import { usePreloadPoses } from '../../../../lib/components/animation/PoseImage';
 // src/zones/shloka-river/scenes/Scene1/MahakayaRescueGame.jsx
 //
 // MAHAKAYA - attach rope, pull logs into the raft, make room for everyone.
@@ -195,6 +196,14 @@ function RopeLine({ x1, y1, x2, y2, zIndex = 14 }) {
   );
 }
 
+const POSE_ASSETS = [
+  raftLogSingle,
+  elephantCalf,
+  peacockSymbolMountain,
+  cowSymbolMountain,
+  monkeySymbolMountain,
+];
+
 export default function MahakayaRescueGame({
   isActive = false,
   hideElements = false,
@@ -204,6 +213,7 @@ export default function MahakayaRescueGame({
   voiceGuidance = {},
   isPaused = false,
 }) {
+  usePreloadPoses(POSE_ASSETS);
   const { playVoice: playSceneLine, playSfx, playSyllable, playWord, stopVoice } = voiceGuidance;
 
   const [phase, setPhase] = useState('intro');
@@ -743,7 +753,7 @@ export default function MahakayaRescueGame({
     const pos = shouldBeJoined ? withCross(sourceLayout[joinedKey]) : sourceLayout[waitingKey];
     return (
       <div
-        key={`${animal.id}-${shouldBeJoined ? 'raft' : 'wait'}`}
+        key={animal.id}
         className={`maha-layer maha-animal ${shouldBeJoined ? 'is-joined' : 'is-waiting'} ${FLIPPED_ANIMAL_IDS.has(animal.id) ? 'is-flipped' : ''} ${crossing ? 'is-crossing' : ''} ${debugMode && selectedDebugKey === (shouldBeJoined ? joinedKey : waitingKey) ? 'is-debug-selected' : ''}`}
         style={placeStyle(pos, { zIndex: shouldBeJoined ? 22 : 9 })}
         onPointerDown={(e) => startDebugDrag(e, shouldBeJoined ? joinedKey : waitingKey)}
@@ -761,6 +771,7 @@ export default function MahakayaRescueGame({
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
+      onContextMenu={(e) => e.preventDefault()}
     >
       {phase !== 'intro' && (
         <SyllableHighlight
@@ -890,7 +901,7 @@ export default function MahakayaRescueGame({
           !debugMode && phase === 'play' && ropeStage === 'detached'
           && ((needsInitialTeaching && !teachingComplete) || hintLevel >= 3)
         }
-        idleDelay={needsInitialTeaching && !teachingComplete ? 3000 : 0}
+        idleDelay={needsInitialTeaching && !teachingComplete ? 150 : 0}
         iterations={needsInitialTeaching && !teachingComplete ? 2 : 1}
         onComplete={() => {
           if (needsInitialTeaching && !teachingComplete) setTeachingCompleteKey(hintStageKey);
@@ -907,7 +918,7 @@ export default function MahakayaRescueGame({
           !debugMode && phase === 'play' && ropeStage === 'attached'
           && ((needsInitialTeaching && !teachingComplete) || hintLevel >= 3)
         }
-        idleDelay={needsInitialTeaching && !teachingComplete ? 3000 : 0}
+        idleDelay={needsInitialTeaching && !teachingComplete ? 150 : 0}
         iterations={needsInitialTeaching && !teachingComplete ? 2 : 1}
         onComplete={() => {
           if (needsInitialTeaching && !teachingComplete) setTeachingCompleteKey(hintStageKey);

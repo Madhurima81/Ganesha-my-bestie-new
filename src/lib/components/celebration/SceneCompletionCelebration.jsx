@@ -5,6 +5,7 @@ import SanskritVoiceRecorder from '../audio/SanskritVoiceRecorder';
 import { applyCompletionScreenTheme } from "../../theme/CompletionScreenThemeAdapter";
 import { applyRecorderTheme } from "../../theme/RecorderThemeAdapter";
 import { GANESHA_POSE_ASSETS } from '../../config/ganeshaUsageSystem';
+import { preparePose, usePreloadPoses } from '../animation/PoseImage';
 import ProfilePillBtn from '../shared/ProfilePillBtn';
 import { getProfilePillBtnStyle } from '../../config/ZoneThemes';
 
@@ -63,6 +64,17 @@ const SceneCompletionCelebration = ({
     },
   };
 
+  // Warm closing artwork while the scene is still being played.
+  usePreloadPoses([
+    GANESHA_POSE_ASSETS.sitModak, badgeImage,
+    ...Object.values(symbolImages), ...Object.values(appImages),
+    ...(isZoneFinalCompletionBadge ? [finalBadgeConfig[resolvedZoneId].icon] : []),
+  ].filter(Boolean));
+  // Value-based dependencies keep parent rerenders from restarting the reveal.
+  const trophySources = JSON.stringify([...new Set(discoveredSymbols)].map(symbol => [
+    symbol, containerType === 'apps' ? appImages[symbol] : symbolImages[symbol],
+  ]));
+
   useEffect(() => {
     if (!show) return;
     applyCompletionScreenTheme(resolvedZoneId);
@@ -90,19 +102,23 @@ const SceneCompletionCelebration = ({
 
     symbolTimeoutsRef.current.forEach(clearTimeout);
     symbolTimeoutsRef.current = [];
-    const uniqueSymbols = [...new Set(discoveredSymbols)];
-    uniqueSymbols.forEach((symbol, index) => {
+    let cancelled = false;
+    JSON.parse(trophySources).forEach(([symbol, src], index) => {
+      const ready = src ? preparePose(src).catch(() => {}) : Promise.resolve();
       const timeoutId = setTimeout(() => {
-        setSymbolsInContainer(prev => prev.includes(symbol) ? prev : [...prev, symbol]);
+        ready.then(() => {
+          if (!cancelled) setSymbolsInContainer(prev => prev.includes(symbol) ? prev : [...prev, symbol]);
+        });
       }, 500 + (index * 400));
       symbolTimeoutsRef.current.push(timeoutId);
     });
 
     return () => {
+      cancelled = true;
       symbolTimeoutsRef.current.forEach(clearTimeout);
       symbolTimeoutsRef.current = [];
     };
-  }, [show, discoveredSymbols]);
+  }, [show, trophySources]);
 
   // Stamp temp session as completed when celebration shows.
   // This ensures "Continue Journey" navigates to zone-welcome (not back into the scene).
@@ -205,7 +221,7 @@ const SceneCompletionCelebration = ({
                     className="completion-badge completion-badge-img"
                   />
                 </div>
-              ) : containerType === 'backpack' && symbolsInContainer.length > 0 ? (
+              ) : containerType === 'backpack' && discoveredSymbols.length > 0 ? (
                 <>
                   <div className="trophy-symbols-row">
                     {symbolsInContainer.map((symbol, index) => (
@@ -232,7 +248,7 @@ const SceneCompletionCelebration = ({
                 /* App Trophy Row — tapping opens the voice recorder */
                 <>
                   <div className="trophy-symbols-row">
-                    {discoveredSymbols.map((appId, index) => (
+                    {symbolsInContainer.map((appId, index) => (
                       <div
                         key={appId}
                         className="trophy-symbol trophy-symbol-tappable"

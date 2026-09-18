@@ -147,10 +147,13 @@ const VO_TEXTS = {
   complete: 'You looked closely and found them both!',
   neutral: 'That is interesting, but it is not what they are looking for.',
   feather: 'Feather found! Peacock will be so happy.',
-  mango: 'Mango found! Monkey is hungry no more.'
+  mango: 'Mango found! Monkey is hungry no more.',
+  idleHint: 'Look near the bushes — something is hiding there.'
 };
 
 const IDLE_HINT_MS = 9000;
+const IDLE_HINT_L2_MS = 17000;
+const IDLE_HINT_L3_MS = 25000;
 
 const speakFallback = (text) => {
   if (!text || typeof window === 'undefined' || !window.speechSynthesis) return;
@@ -184,6 +187,8 @@ const EyesPopUpGame = ({
   const [feedback, setFeedback] = useState('');
   const [softPulse, setSoftPulse] = useState(null);
   const [hintId, setHintId] = useState(null);
+  const [hintStage, setHintStage] = useState(0);
+  const hintVoPlayedRef = useRef(false);
   const [layout, setLayout] = useState(loadSavedLayout);
   const [debugMode, setDebugMode] = useState(false);
   const [selectedDebugKey, setSelectedDebugKey] = useState('targetFeather');
@@ -245,6 +250,8 @@ const EyesPopUpGame = ({
   const resetIdle = useCallback(() => {
     lastTapTimeRef.current = Date.now();
     setHintId(null);
+    setHintStage(0);
+    hintVoPlayedRef.current = false;
   }, []);
 
   const saveLayout = useCallback((nextLayout) => {
@@ -380,6 +387,8 @@ const EyesPopUpGame = ({
     setFeedback('');
     setSoftPulse(null);
     setHintId(null);
+    setHintStage(0);
+    hintVoPlayedRef.current = false;
     lastTapTimeRef.current = Date.now();
     speak(VO_TEXTS.intro);
   }, [isActive, speak, stopTimers]);
@@ -389,16 +398,32 @@ const EyesPopUpGame = ({
 
     idleTimerRef.current = setInterval(() => {
       const idleMs = Date.now() - lastTapTimeRef.current;
-      if (idleMs < IDLE_HINT_MS) return;
+      if (idleMs < IDLE_HINT_MS) {
+        setHintId(null);
+        setHintStage(0);
+        return;
+      }
       const nextHint = SEARCH_TARGETS.find((target) => !foundIds.has(target.id));
       setHintId(nextHint?.id || null);
+
+      if (idleMs >= IDLE_HINT_L3_MS) {
+        setHintStage(3);
+      } else if (idleMs >= IDLE_HINT_L2_MS) {
+        setHintStage(2);
+        if (!hintVoPlayedRef.current) {
+          hintVoPlayedRef.current = true;
+          speak(VO_TEXTS.idleHint);
+        }
+      } else {
+        setHintStage(1);
+      }
     }, 1000);
 
     return () => {
       if (idleTimerRef.current) clearInterval(idleTimerRef.current);
       idleTimerRef.current = null;
     };
-  }, [foundIds, flow, isActive]);
+  }, [foundIds, flow, isActive, speak]);
 
   useAppVisibility(null, useCallback(() => {
     resetIdle();
@@ -570,7 +595,7 @@ const EyesPopUpGame = ({
           <button
             key={target.id}
             type="button"
-            className={`eyes-hidden-target clue-target ${isFound ? 'found' : ''} ${isCarried ? 'carried' : ''} ${hintId === target.id ? 'hinting' : ''} ${softPulse === target.id ? 'soft-pulse' : ''} ${debugMode && selectedDebugKey === sizeKey ? 'is-debug-selected' : ''}`}
+            className={`eyes-hidden-target clue-target ${isFound ? 'found' : ''} ${isCarried ? 'carried' : ''} ${hintId === target.id ? 'hinting' : ''} ${hintId === target.id && hintStage >= 3 ? 'hinting-strong' : ''} ${softPulse === target.id ? 'soft-pulse' : ''} ${debugMode && selectedDebugKey === sizeKey ? 'is-debug-selected' : ''}`}
             style={{
               left: `${pos.x}%`,
               top: `${pos.y}%`,

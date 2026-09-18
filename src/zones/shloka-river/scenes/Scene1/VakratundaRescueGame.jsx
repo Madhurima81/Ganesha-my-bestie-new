@@ -1,3 +1,4 @@
+import PoseImage, { usePreloadPoses } from '../../../../lib/components/animation/PoseImage';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import SyllableHighlight from '../../shared/SyllableHighlight';
 import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
@@ -191,6 +192,16 @@ function isPointInsideObstacle(point, obstacles) {
   });
 }
 
+const POSE_ASSETS = [
+  frogSwim,
+  frogHappy,
+  frogFamily,
+  lilypad,
+  stoneImg,
+  logPileImg,
+  reedsImg,
+];
+
 export default function VakratundaRescueGame({
   isActive = false,
   hideElements = false,
@@ -201,6 +212,7 @@ export default function VakratundaRescueGame({
   voiceGuidance = {},
   isPaused = false,
 }) {
+  usePreloadPoses(POSE_ASSETS);
   const { playVoice: playSceneLine, playSfx, playSyllable, playWord, stopVoice } = voiceGuidance;
 
   const [phase, setPhase] = useState('intro');
@@ -920,7 +932,7 @@ export default function VakratundaRescueGame({
         onPointerUp={endDebugDrag}
         onPointerCancel={endDebugDrag}
       >
-        <img src={litCount >= 4 ? frogHappy : frogSwim} alt="" />
+        <PoseImage src={litCount >= 4 ? frogHappy : frogSwim} alt="" />
       </div>
 
       <div

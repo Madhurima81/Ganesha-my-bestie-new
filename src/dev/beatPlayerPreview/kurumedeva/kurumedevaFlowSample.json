@@ -3742,6 +3742,7 @@
         "drag": "helpBubbleKnot",
         "target": "monkeySprite"
       },
+      "ropeVisualFrom": "4",
       "meta": {
         "title": "6. Ropes \u2014 call for help",
         "goal": "Beaver failed alone. A help bubble appears \u2014 child drags it onto Monkey to summon him."

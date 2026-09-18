@@ -36,27 +36,46 @@ Never use system fonts or other Google Fonts.
 ---
 
 ## Project Structure
+Corrected 2026-09-18 — the paths below were wrong (claimed a flat `src/components/`,
+`src/hooks/`, `src/config/` layout that doesn't exist; everything actually lives under
+`src/lib/`, nested by kind). Verified against the real repo, not assumed.
 ```
 src/
-├── components/         # Shared components
-│   ├── SceneManager.jsx
-│   ├── GameStateManager.jsx
-│   ├── ProgressManager.jsx
-│   ├── BackToMapButton.jsx
-│   ├── SceneCompletionCelebration.jsx
-│   ├── TocaBocaNav.jsx
-│   └── SimpleDiscoveryOverlay.jsx   ← use this, NOT GameCoach
-├── hooks/
-│   └── useSceneReset.js
-├── config/
-│   └── SceneResetConfigs.js
-└── zones/
-    ├── symbol-mountain/   # live
-    ├── shloka-river/      # live
-    ├── about-me-hut/      # live
-    ├── meaning cave/      # OBSOLETE (Cave of Secrets)
-    └── festival-square/   # parked — coming later
+├── lib/
+│   ├── components/
+│   │   ├── scenes/SceneManager.jsx
+│   │   ├── navigation/BackToMapButton.jsx, ZoneBadgeButton.jsx, TocaBocaNav.jsx
+│   │   ├── ui/HomeButton/HomeButton.jsx, ui/AudioToggle/AudioToggle.jsx
+│   │   ├── celebration/SceneCompletionCelebration.jsx
+│   │   ├── feedback/VOReplayButton.jsx
+│   │   └── animation/PoseImage.jsx        # image preloader, added post-2026-09-01
+│   ├── services/
+│   │   ├── GameStateManager.js
+│   │   ├── ProgressManager.jsx
+│   │   └── sceneAnalytics.js              # internal replay-frequency analytics, added 2026-08-31
+│   ├── hooks/
+│   │   └── useSceneReset.js
+│   ├── config/
+│   │   └── SceneResetConfigs.js
+│   └── beatPlayer/
+│       └── BeatPlayerGame.jsx             # generic data-driven beat-sequence engine, added
+│                                           # ~2026-09-08; live in Symbol Mountain's Tusk scene
+│                                           # (TuskBeatPlayerLive.jsx) via a JSON export in
+│                                           # src/dev/ — flagged as fragile, see TASKS.md
+├── zones/
+│   ├── shared/components/
+│   │   ├── OpeningModal.jsx
+│   │   └── SimpleDiscoveryOverlay.jsx     ← use this, NOT GameCoach
+│   ├── symbol-mountain/   # live
+│   ├── shloka-river/      # live
+│   ├── about-me-hut/      # live
+│   ├── meaning cave/      # OBSOLETE (Cave of Secrets)
+│   └── festival-square/   # parked — coming later
+└── dev/                   # dev-only preview/test harnesses (Preview, Harness, LayoutDebug,
+                            # RopeTieTest in the name) — NOT live, don't audit as production code
 ```
+When in doubt about a shared component's real path, `find src -iname "<name>*"` rather than
+trusting a path written here — this section has gone stale before.
 
 ---
 

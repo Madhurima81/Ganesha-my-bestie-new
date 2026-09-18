@@ -138,6 +138,9 @@
   background: transparent;
   pointer-events: auto;
   touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
   cursor: grab;
   transform-origin: 8% 22%;
   transform: rotate(calc(var(--pull, 0) * 18deg)) translateY(calc(var(--pull, 0) * 35px)) scale(var(--layout-scale, 1));
@@ -145,7 +148,7 @@
   z-index: 14;
 }
 .fjg2-branch:active { cursor: grabbing; }
-.fjg2-branch > img:first-child { display: block; width: 100%; height: auto; pointer-events: none; }
+.fjg2-branch > img:first-child { display: block; width: 100%; height: auto; pointer-events: none; -webkit-user-drag: none; user-drag: none; }
 
 .fjg2-branch-flower { position: absolute; width: 19%; height: auto; pointer-events: none; transform: scale(var(--layout-scale, 1)); transform-origin: center; }
 

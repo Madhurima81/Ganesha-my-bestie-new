@@ -98,7 +98,7 @@
   pointer-events: none;
 }
 
-.surya-breathe img {
+.surya-breathe > .pose-image {
   animation: surya-breathe 2.9s ease-in-out infinite;
   transform-origin: center bottom;
 }
@@ -107,7 +107,7 @@
   z-index: 18;
 }
 
-.surya-bunny.is-hopping img {
+.surya-bunny.is-hopping > .pose-image {
   animation: surya-hop 0.35s ease-out;
 }
 

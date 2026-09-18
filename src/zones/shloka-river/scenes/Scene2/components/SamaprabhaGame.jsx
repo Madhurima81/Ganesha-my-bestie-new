@@ -1,3 +1,4 @@
+import PoseImage, { usePreloadPoses } from '../../../../../lib/components/animation/PoseImage';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import SyllableHighlight from '../../../shared/SyllableHighlight';
 import GestureDemo from '../../../../../lib/components/feedback/GestureDemo';
@@ -131,7 +132,7 @@ function Animal({ animalState, style }) {
 
   return (
     <div className={`sama-animal is-${animalState}`} style={style} aria-hidden="true">
-      <img src={src} alt="" draggable={false} />
+      <PoseImage src={src} alt="" draggable={false} />
     </div>
   );
 }
@@ -153,6 +154,19 @@ function TruthLayer({ clue, isRevealed, isBeingSeen, isNew }) {
   );
 }
 
+const POSE_ASSETS = [
+  bgImg,
+  fawnWorriedImg,
+  fawnHappyImg,
+  fawnWalkImg,
+  shadowImg,
+  mysterySourceFullImg,
+  branchImg,
+  reedsLeavesImg,
+  stumpImg,
+  rocksGrassImg,
+];
+
 export default function SamaprabhaGame({
   isActive = false,
   hideElements = false,
@@ -163,6 +177,7 @@ export default function SamaprabhaGame({
   voiceGuidance = {},
   isPaused = false,
 }) {
+  usePreloadPoses(POSE_ASSETS);
   const { playVoice: playSceneLine, playSyllable, playWord, stopVoice } = voiceGuidance;
 
   const debugEnabled = getDebugEnabled();
@@ -737,7 +752,7 @@ export default function SamaprabhaGame({
           from={START_BEAM}
           to={{ x: 43, y: 50 }}
           active={phase === 'play' && lit === 0 && !hasInteracted}
-          idleDelay={1000}
+          idleDelay={150}
         />
 
         {effShowDoneline && (

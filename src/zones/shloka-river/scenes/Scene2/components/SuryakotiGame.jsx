@@ -1,3 +1,4 @@
+import PoseImage, { usePreloadPoses } from '../../../../../lib/components/animation/PoseImage';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import SyllableHighlight from '../../../shared/SyllableHighlight';
 import useRepeatedHintCycle from '../../../../../lib/hooks/useRepeatedHintCycle';
@@ -42,6 +43,14 @@ const SCRATCH_R = 0.055;    // brush radius, fraction of canvas width
 const SPOT_GRID = 8;        // cells per axis inside each spot
 const SPOT_CLEAR = 0.6;     // fraction of a spot's cells cleared to light its syllable
 
+const POSE_ASSETS = [
+  sharedSceneBg,
+  sunImg,
+  bunnySadImg,
+  bunnyHappyImg,
+  burrowImg,
+];
+
 export default function SuryakotiGame({
   isActive = false,
   hideElements = false,
@@ -52,6 +61,7 @@ export default function SuryakotiGame({
   voiceGuidance = {},
   isPaused = false,
 }) {
+  usePreloadPoses(POSE_ASSETS);
   const { playVoice: playSceneLine, playWord, playSyllable, stopVoice } = voiceGuidance;
   const [phase, setPhase] = useState('play');
   const [litCount, setLitCount] = useState(0);
@@ -511,7 +521,7 @@ export default function SuryakotiGame({
   const cueSpot = SPOTS[Math.min(activeSpot, SPOTS.length - 1)];
 
   return (
-    <div className={`surya-game ${hideElements ? 'is-hidden' : ''}`}>
+    <div className={`surya-game ${hideElements ? 'is-hidden' : ''}`} onContextMenu={(e) => e.preventDefault()}>
       <div className="surya-stage" style={{ backgroundImage: `url(${sharedSceneBg})` }}>
 
         <SyllableHighlight
@@ -561,7 +571,7 @@ export default function SuryakotiGame({
             zIndex: 15,
           }}
         >
-          <img src={phase === 'play' ? bunnySadImg : bunnyHappyImg} alt="bunny" draggable={false} />
+          <PoseImage src={phase === 'play' ? bunnySadImg : bunnyHappyImg} alt="bunny" draggable={false} />
         </div>
 
         <div
@@ -606,7 +616,7 @@ export default function SuryakotiGame({
             from={{ x: cueSpot.cx * 100 - 6, y: cueSpot.cy * 100 - 5 }}
             to={{ x: cueSpot.cx * 100 + 6, y: cueSpot.cy * 100 + 5 }}
             active
-            idleDelay={3000}
+            idleDelay={150}
             iterations={2}
             onComplete={() => setInitialTeachingDone(true)}
             onDismiss={() => setInitialTeachingDone(true)}

@@ -11,6 +11,7 @@ import { usePreloadPoses, preparePose } from '../../../../lib/components/animati
 // invisible (no placement-circle hints), flower colour/order is never a
 // puzzle, flowers auto-thread onto the next spot.
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
 import './GarlandGame3.css';
 
 import flowerPink from './assets/images/fj-flower-coral.webp';
@@ -101,6 +102,16 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
   const isBuild = phase === PHASES.BUILD;
   const isReady = phase === PHASES.READY;
   const isOffered = phase === PHASES.OFFERED;
+
+  // Carrying the finished garland to Ganesha is a drag, not the tap used to
+  // thread flowers — show the gesture demo right away when this phase starts.
+  const [garlandIntroGesture, setGarlandIntroGesture] = useState(false);
+  useEffect(() => {
+    if (!isReady) { setGarlandIntroGesture(false); return undefined; }
+    setGarlandIntroGesture(true);
+    const t = window.setTimeout(() => setGarlandIntroGesture(false), 6000);
+    return () => window.clearTimeout(t);
+  }, [isReady]);
 
   const liveSlots = GARLAND_SLOTS;
   const placedIds = useMemo(() => new Set(placedFlowers.map((item) => item.id)), [placedFlowers]);
@@ -202,6 +213,15 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
       style={{ backgroundImage: `url(${forestBackground})` }}
       onContextMenu={(e) => e.preventDefault()}
     >
+      <GestureDemo
+        type="drag"
+        from={{ x: LAYOUT.workspace.l, y: LAYOUT.workspace.t }}
+        to={{ x: LAYOUT.ganesha.l, y: LAYOUT.ganesha.t }}
+        active={garlandIntroGesture && !garlandPosition.active}
+        idleDelay={150}
+        zIndex={30}
+      />
+
       {/* GANESHA */}
       <div
         ref={ganeshaDropRef}

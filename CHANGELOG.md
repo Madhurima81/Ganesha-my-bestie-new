@@ -1,6 +1,189 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
 
+## [2026-09-18] — GestureDemo coverage pass: every non-tap mini-game now shows its demo at the start
+**Touched:** src/lib/beatPlayer/BeatPlayerGame.jsx (shared engine),
+src/zones/symbol-mountain/scenes/pond/PondSceneSimplifiedV4.jsx,
+src/zones/symbol-mountain/scenes/modak/GarlandGame3.jsx,
+src/zones/shloka-river/scenes/Scene1/MahakayaRescueGame.jsx,
+src/zones/shloka-river/scenes/Scene2/components/SuryakotiGame.jsx,
+src/zones/shloka-river/scenes/Scene2/components/SamaprabhaGame.jsx,
+src/zones/shloka-river/scenes/Scene3/KurumedevaGame.jsx,
+src/zones/shloka-river/scenes/Scene3/NirvighnamGame.jsx,
+src/zones/about-me-hut/indian-story/MyIndianStoryGame.jsx,
+src/zones/about-me-hut/enjoy/components/Wish2PlateDropGame.jsx,
+src/zones/about-me-hut/components/Drawingpad.jsx (shared, used by Favoritefoodgame + ObstacleRemoverGame)
+**Changed:** Audited every mini-game across the 13 live scenes for `GestureDemo`
+(the "animated hand" tutorial overlay) coverage on non-tap mechanics
+(drag/hold/scratch/swipe/pull-down). Madhurima's rule: tap is self-explanatory
+so it stays on the idle-hint ladder only; drag/hold/scratch etc. should show
+the demo immediately at the start of the mini-game, then back off so it
+doesn't repeat forever.
+1. **Missing entirely → added:**
+   - Tusk's `TuskBeatPlayerLive` (drag, via the shared `BeatPlayerGame` engine)
+     had no gesture teaching at all — added a demo derived from each beat's
+     `interaction` (drag-drop/rope-drag/press-hold/drag-path/try-fail all map
+     to drag or hold), shown only for the **first 2 beats that need input**
+     per Madhurima's "let kids get it" note, never again after that.
+   - `GarlandGame3` (Modak) — carrying the finished garland to Ganesha is a
+     drag; the flower-threading step stays tap-only (matches its own "Tap a
+     flower to thread it" VO). Added a drag demo for the carry step only.
+   - `Drawingpad.jsx` (shared "draw your dream" component) had zero drawing
+     guidance — added a one-time "move your finger to draw" demo that
+     dismisses on the first stroke; fixing it once here covers both
+     Favoritefoodgame and ObstacleRemoverGame.
+   - Confirmed tap-only, nothing to add: Familytreegame (no drag mechanic at
+     all), SacredAssemblySceneV8, SarvakaryeshuGame, SarvadaGame,
+     ShlokaRiverFinale, EyesPopUpGame, EarsSoundMatchGame.
+2. **Idle-only → now also shown at start:**
+   - Pond scene (hold-rock / drag-reeds / hold-lotus) was gated on
+     `idleHintLevel >= 3` (real idle escalation only) — added an
+     `introGesture` flag (same pattern as FlowerJourneyGame2) so each phase's
+     demo fires immediately on entry, auto-clears after 6s or on first touch.
+   - `KurumedevaGame` was gated on `hintLevel >= 1` — added a per-step
+     `kuruIntroGesture` flag for its non-tap hints; its `tap`-type hint stays
+     idle-only as intended.
+   - `MyIndianStoryGame`'s magnifying-glass drag demo already fired near the
+     start (no idle-escalation gate) but waited a flat 1800ms — tightened to
+     300ms.
+3. **Shown at start but with a multi-second fixed delay → tightened to ~150ms:**
+   `MahakayaRescueGame` (drag + pull-down, was 3000ms), `SuryakotiGame`
+   (scratch, was 3000ms), `SamaprabhaGame` (drag, was 1000ms),
+   `NirvighnamGame` (drag/hold/swipe, was 1000ms), `Wish2PlateDropGame`
+   (drag, was 1800ms). Each of these keeps its existing "first encounter
+   only" gate and its separate idle-escalation "rescue" demo (`idleDelay=0`)
+   for real later idling — only the first-encounter delay changed.
+**Open:** None of this was visually confirmed in-browser yet (dev-server
+navigation requires playing through onboarding to reach each mini-game) —
+Madhurima should spot-check Tusk, Pond, Garland, and the Shloka River
+rescue/bank/chant scenes on next playthrough. `npx eslint` run on every
+touched file — zero new errors introduced (pre-existing unused-var warnings
+in Pond/MyIndianStoryGame are unrelated to this change).
+
+## [2026-09-18] — PNG → WebP conversion pass (13 live scenes + onboarding)
+**Touched:** src/App.jsx, src/lib/components/navigation/CleanGameWelcomeScreen.jsx,
+src/lib/components/navigation/ParentDashboard.jsx, src/lib/components/navigation/ParentDashboardV1.jsx,
+src/lib/components/navigation/ZoneBadgeButton.jsx,
+src/zones/symbol-mountain/scenes/pond/PondSceneSimplifiedV4.jsx,
+src/zones/shloka-river/scenes/Scene1/VakratundaGroveSimplified.jsx,
+src/zones/shloka-river/scenes/Scene2/SuryakotiBankSimplified.jsx,
+src/zones/shloka-river/scenes/Scene3/NirvighnamChantSimplified.jsx,
+src/zones/shloka-river/scenes/scene4/SarvakaryeshuChantSimplified.jsx,
+src/zones/shloka-river/scenes/scene5/ShlokaRiverFinale.jsx
+**Changed:** Audited all `.png` references actually loaded by the 13 live scenes
+plus onboarding/navigation chrome (App.jsx, ParentDashboard, ZoneBadgeButton,
+CleanGameWelcomeScreen) — excluded the hundreds of PNGs sitting in unused
+backup/copy/`VN` scene files and the obsolete Cave of Secrets / parked Festival
+Square zones. Converted the 32 still-PNG files actually in use to `.webp` via
+`sharp` (quality 90) and updated every import/path to point at the new `.webp`:
+- Pond scene assets (pond-bg-fixed, pond-big-rock, pond-pebble, pond-flower)
+- 8 shloka symbol icons the live Shloka River scenes pull from
+  `src/zones/meaning cave/assets/images/symbols/` — flagged as a dependency on
+  the obsolete Cave of Secrets folder, not fixed (out of scope for this pass)
+- Onboarding/dashboard icons: zone map icons (modak, vakratunda-grove,
+  family-tree), CleanGameWelcomeScreen's 7 "meanings" symbol images,
+  ParentDashboard's 8 symbol icons, and 3 ZoneBadgeButton icons
+Original `.png` files were left in place (not deleted) as a safety fallback.
+**Open:** Cave-of-secrets and Festival Square PNGs left untouched (parked/obsolete,
+per CLAUDE.md scope). Old backup/copy scene files still reference `.png` but
+aren't in sceneRegistry.js so weren't touched. Consider a follow-up to delete
+the now-unused source PNGs once Madhurima confirms the webp swap looks correct
+in-browser, and to move the shloka-river symbol icons out of the obsolete
+`meaning cave` folder into a proper shared location.
+
+## [2026-09-18] — Pre-reveal sparkle: fixed wrong-glow-color bug, standardized to gold star
+**Touched:** src/lib/components/animation/SparkleAnimation.jsx (shared),
+src/zones/symbol-mountain/scenes/tusk/SymbolMountainSceneV3.jsx,
+src/zones/symbol-mountain/scenes/modak/NewModakSceneV7.jsx,
+src/zones/symbol-mountain/scenes/pond/PondSceneSimplifiedV4.jsx
+**Changed:** Madhurima reported "red round sparkles" appearing right before
+the SymbolAutoReveal card in the Eyes mini-game (Tusk scene), vs. the correct
+yellow star sparkle in Vakratunda.
+Root cause found in the SHARED `SparkleAnimation.jsx`/.css component: the
+`color` prop is only ever applied to `backgroundColor` - it's never written
+to the `--sparkle-color` CSS custom property that `.sparkle-star` and
+`.sparkle-magic`'s glow (`box-shadow`) actually read. So the glow silently
+falls back to the CSS defaults (gold for star, PURPLE for magic) no matter
+what color prop the caller passes. Tusk's eyes/ears-complete-final burst used
+`type="magic"` with color="#ffd54f" (gold) - so it rendered as a gold-filled
+circle with a purple glow, which read as a muddy reddish blob to the eye.
+Fix:
+1. SparkleAnimation.jsx now sets `--sparkle-color: color` inline (one-line
+   fix), so every sparkle type correctly picks up whatever color prop is
+   passed, for every scene that uses it - prevents this class of
+   wrong-glow-color bug recurring anywhere else.
+2. Standardized the 3 "before SymbolAutoReveal" celebration bursts that were
+   using the buggy `type="magic"` to `type="star"` (matching Vakratunda's
+   canonical gold star), keeping their existing count/size/duration/color:
+   Tusk (eyes-complete-final/ears-complete-final), Modak (mooshika-calm),
+   Pond (lotus-wake).
+Confirmed already correct, no change needed: Vakratunda Grove (canonical
+reference), Suryakoti Bank, Nirvighnam Chant, Sarvakaryeshu Chant - all
+already used `type="star"` + gold for their pre-reveal burst.
+Out of scope: Sacred Assembly (final scene) doesn't use SymbolAutoReveal at
+all (different "place symbols on Ganesha" mechanic) - its sparkle usage
+(including one deliberate combined star+magic layered "celebration" effect)
+was left untouched. About Me Hut's decorative sparkles (wish-granted, food
+selection, etc.) also left untouched - different mechanic, not part of the
+reported bug.
+**Open:** Not visually verified in-browser (dev server nav requires playing
+through onboarding + the actual eyes mini-game to trigger the moment) -
+Madhurima should confirm the Tusk eyes-game sparkle looks right next time she
+tests. Next up in the plan: still on the VO/visual-consistency work before
+moving to the content pass.
+
+## [2026-09-18] — VO audit across all 13 live scenes + guard comments
+**Touched:** src/zones/about-me-hut/family-tree/Familytreegame.jsx,
+src/zones/about-me-hut/indian-story/MyIndianStoryGame.jsx (comments only, no
+logic changes)
+**Changed:** Kicked off the "rightsizing all 13 scenes" plan (theme-wise, not
+scene-wise: VO pass first, then content, then checklist compliance, then
+CSS/clamp audit, then T21 tests). This session = the VO pass.
+Audited all 13 live scenes for the same class of bug as the Modak/Pond VO fix
+(two `speak()`-family calls landing close enough together that
+`speechSynthesis.cancel()` chops the first one mid-line). Result: no other
+scene has a confirmed live instance of this bug. Two files flagged LOW
+confidence as maintainability risk only (not currently broken) and given
+guard comments so a future edit doesn't reintroduce the bug class:
+1. Familytreegame.jsx - mixes two independent TTS hook instances
+   (useVoiceGuidance's playVoice/stopVoice + a separate useGaneshaVoice()'s
+   speakHint/stopSpokenVoice). Every current call site correctly stops both
+   before speaking, so nothing is broken today - comment flags the pairing
+   that must be preserved.
+2. MyIndianStoryGame.jsx - LANGUAGE_GANESHA phase has two VO effects
+   (language_play_first on phase entry, language_guess on cards-revealed)
+   that are currently safe only because showLanguageCards is gated behind
+   explicit user action - comment flags the race if that timing ever changes.
+**Open:** Next up in the plan is the content pass (opening/completion modal +
+affirmation suggestions for all 13 scenes, per the CLAUDE.md Content
+Generation protocol) - not started yet.
+
+## [2026-09-18] — Symbol reveal VO cutoff/repeat fix (Modak, Pond)
+**Touched:** src/zones/symbol-mountain/scenes/modak/NewModakSceneV7.jsx,
+src/zones/symbol-mountain/scenes/pond/PondSceneSimplifiedV4.jsx
+**Changed:** Madhurima reported the symbol-reveal VO cutting off and repeating
+("I can guide" then "Say with me, I can guide my busy thoughts."). Root cause:
+both scenes fired their own `playVoice`/`speakPondPrompt` call ~400ms after
+the reveal card appeared, speaking the raw affirmation text, while the
+SHARED `SymbolAutoReveal` component (used by all 13 live scenes) independently
+speaks "Say with me, <affirmation>" ~450ms after its own card-ready state.
+Both use the same `useGaneshaVoice` hook, which calls `speechSynthesis.cancel()`
+on every new `speak()` — so the second call always chopped the first mid-line.
+Fix (option 2, chosen by Madhurima): removed the duplicate scene-level VO
+effect in both Modak and Pond; `SymbolAutoReveal`'s own line is now the single
+source of truth for every symbol reveal. `SymbolAutoReveal.jsx` itself needed
+no change - it was already doing the right thing.
+Checked all other live scenes for the same pattern:
+- Tusk (SymbolMountainSceneV3.jsx) - already safe: distinct wording for its
+  eyes/ears setup lines + `sayWithMeDelayMs: 3200` gives enough separation
+  from SymbolAutoReveal's own line. No change needed.
+- All 5 live Shloka River scenes - none had a duplicate reveal-VO effect;
+  already relied solely on SymbolAutoReveal. No change needed.
+- Eyes/Ears subgames (EyesPopUpGame.jsx, EarsSoundMatchGame.jsx) - don't
+  render SymbolAutoReveal themselves, hand off to the parent scene. No
+  duplication.
+**Open:** none - fix is scoped and verified complete for all 13 live scenes.
+
 ## [2026-09-09] — Modak game 2: prop visibility, follow-tray, ghost-drag fix, Belly/Modak sequencing
 **Touched:** src/zones/symbol-mountain/scenes/modak/NewModakSceneV7.jsx,
 src/zones/symbol-mountain/scenes/modak/ModakScene.css,

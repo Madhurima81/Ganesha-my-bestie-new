@@ -68,7 +68,7 @@
 /* Newest stage sits in flow (drives the container height) and fades in. */
 .kuru-bridge-img.is-cur {
   position: relative;
-  animation: kuruBridgeFadeIn 0.55s ease-out;
+  /* PoseImage handles the overlap after the next stage is decoded. */
 }
 
 /* Previous stage is kept underneath for one cross-fade, then fades out. */
@@ -205,7 +205,7 @@
     transform 0.5s ease;
 }
 
-.kuru-friend img {
+.kuru-friend > .pose-image {
   /* 1 / KURU_HIT_SCALE (1.6) — keeps the visible sprite at its original size
      inside the enlarged hit area. */
   width: 62.5%;
@@ -222,7 +222,7 @@
   filter: saturate(0.82);
 }
 
-.kuru-friend--waiting img {
+.kuru-friend--waiting > .pose-image {
   animation: kuruIdleBreathe 3s ease-in-out infinite;
   transform-origin: center bottom;
 }
@@ -243,7 +243,7 @@
   pointer-events: none;
 }
 
-.kuru-friend--helped img {
+.kuru-friend--helped > .pose-image {
   transform-origin: center bottom;
 }
 
@@ -256,7 +256,7 @@
     opacity 0.5s ease;
 }
 
-.kuru-friend.is-walking img {
+.kuru-friend.is-walking > .pose-image {
   animation: kuruWalkBob 0.5s ease-in-out infinite;
   transform-origin: center bottom;
 }
@@ -270,7 +270,7 @@
   pointer-events: none;
 }
 
-.kuru-friend--crossing img {
+.kuru-friend--crossing > .pose-image {
   animation: kuruIdleBreathe 2s ease-in-out infinite;
 }
 

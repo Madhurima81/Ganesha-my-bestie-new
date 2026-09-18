@@ -368,43 +368,43 @@ const CleanGameWelcomeScreen = ({
         },
         { 
           id: 'mahakaya', displayName: "Mahakaya", subtitle: "Mighty Form!", 
-          image: '/images/meanings-caveofsecrets/mahakaya-symbol.png',
+          image: '/images/meanings-caveofsecrets/mahakaya-symbol.webp',
           description: "Ganesha's body is big, strong and steady like a mountain! A powerful protector with a warm, loving heart. ❤️",
           audio: '/audio/meanings/mahakaya.mp3'
         },
         { 
           id: 'suryakoti', displayName: "Suryakoti", subtitle: "Brighter Than Suns!", 
-          image: '/images/meanings-caveofsecrets/suryakoti-symbol.png',
+          image: '/images/meanings-caveofsecrets/suryakoti-symbol.webp',
           description: "Ganesha shines brighter than millions of suns! His light removes fear and fills us with joy. ☀️",
           audio: '/audio/meanings/suryakoti.mp3'
         },
         { 
           id: 'samaprabha', displayName: "Samaprabha", subtitle: "Radiant Glow!", 
-          image: '/images/meanings-caveofsecrets/samaprabha-symbol.png',
+          image: '/images/meanings-caveofsecrets/samaprabha-symbol.webp',
           description: "A divine glow that brightens everything around him! Where Ganesha is, light and happiness follow. ✨",
           audio: '/audio/meanings/samaprabha.mp3'
         },
         { 
           id: 'nirvighnam', displayName: "Sarva-Vighnam", subtitle: "Remove All Obstacles!", 
-          image: '/images/meanings-caveofsecrets/nirvighnam-symbol.png',
+          image: '/images/meanings-caveofsecrets/nirvighnam-symbol.webp',
           description: "Ganesha clears the path when things get tough. Try bravely — he helps us move forward. 🚧➡️✨",
           audio: '/audio/meanings/nirvighnam.mp3'
         },
         { 
           id: 'kurumedeva', displayName: "Kurumedeva", subtitle: "O Lord, Guide Me!", 
-          image: '/images/meanings-caveofsecrets/kurumedeva-symbol.png',
+          image: '/images/meanings-caveofsecrets/kurumedeva-symbol.webp',
           description: "We ask Ganesha to help us learn and move ahead. With effort + blessings, great things happen. 🧡",
           audio: '/audio/meanings/kurumedeva.mp3'
         },
         { 
           id: 'sarvakaryeshu', displayName: "Sarva-Karyeshu", subtitle: "In All Tasks!", 
-          image: '/images/meanings-caveofsecrets/sarvakaryeshu-symbol.png',
+          image: '/images/meanings-caveofsecrets/sarvakaryeshu-symbol.webp',
           description: "For every work — big or small — he is with us. We try with focus, he supports with grace. 🌿",
           audio: '/audio/meanings/sarvakaryeshu.mp3'
         },
         { 
           id: 'sarvada', displayName: "Sarvada", subtitle: "Always!", 
-          image: '/images/meanings-caveofsecrets/sarvada-symbol.png',
+          image: '/images/meanings-caveofsecrets/sarvada-symbol.webp',
           description: "Ganesha's love and blessings stay always with us. Forever guiding, forever protecting. 💛",
           audio: '/audio/meanings/sarvada.mp3'
         }

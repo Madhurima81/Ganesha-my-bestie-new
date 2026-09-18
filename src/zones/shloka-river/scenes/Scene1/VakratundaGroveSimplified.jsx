@@ -60,7 +60,7 @@ import riverBackground from './assets/images/vakratunda-scene-bg.webp';
 import mooshikaCoach from "./assets/images/mooshika-coach.webp";
 import banyanTree from './assets/images/banyan-full-from-download.webp';
 import symbolVakratunda from '../../../symbol-mountain/shared/images/icons/symbol-trunk-new.webp';
-import symbolMahakaya from '../../../meaning cave/assets/images/symbols/mahakaya-symbol.png';
+import symbolMahakaya from '../../../meaning cave/assets/images/symbols/mahakaya-symbol.webp';
 
 // Elephant images for memory game
 import elephantBabyVa from './assets/images/vakratunda/elephant-baby-va.webp';
@@ -563,7 +563,7 @@ const VakratundaGroveContent = ({
       localStorage.removeItem(`temp_session_${profileId}_${zoneId}_${sceneId}`);
       SimpleSceneManager.clearCurrentScene();
     } catch (error) {
-      console.error('Error saving game state:', error);
+      if (import.meta.env.DEV) console.error('Error saving game state:', error);
     }
   }, [sceneId, sceneState.chantedVerses, sceneState.learnedSyllables, sceneState.learnedWords, sceneState.unlockedApps, zoneId]);
 
@@ -720,7 +720,7 @@ const VakratundaGroveContent = ({
   // instead of resuming a potentially frozen mid-game state
   // Memory game completion
   const handlePhaseComplete = (word) => {
-    console.log(`${word} learned!`);
+    if (import.meta.env.DEV) console.log(`${word} learned!`);
 
     // Sanskrit moment — full word learned: one blessing gesture + one Golden Star
     triggerMiniGesture('blessing', 'center', 2500);
@@ -800,13 +800,13 @@ const VakratundaGroveContent = ({
     stopVoice(); // Stop any playing VO
 
     if (currentWord === 'vakratunda') {
-      console.log('?? Moving to Mahakaya Phase');
+      if (import.meta.env.DEV) console.log('Moving to Mahakaya Phase');
       // Go straight to Mahakaya Game
       sceneActions.updateState({
         phase: PHASES.MAHAKAYA_GAME,
       });
     } else {
-      console.log('?? Showing App Discovery screen');
+      if (import.meta.env.DEV) console.log('Showing App Discovery screen');
       // Show App Discovery screen before final celebration
       setShowAppDiscovery(true);
     }
@@ -814,7 +814,7 @@ const VakratundaGroveContent = ({
 
   const handleAppDiscoveryCelebrate = () => {
     setShowAppDiscovery(false);
-    console.log('?? Triggering Final Celebration from App Discovery');
+    if (import.meta.env.DEV) console.log('Triggering Final Celebration from App Discovery');
 
     // Play scene complete VO
     if (isAudioOn) {
@@ -853,14 +853,14 @@ const VakratundaGroveContent = ({
     setShowPowerOverlay(false);
 
     if (currentWord === 'vakratunda') {
-      console.log('?? Replaying Vakratunda Game');
+      if (import.meta.env.DEV) console.log('Replaying Vakratunda Game');
       // Reset vakratunda game state and go back to game phase
       sceneActions.updateState({
         phase: PHASES.VAKRATUNDA_GAME,
         learnedWords: { ...sceneState.learnedWords, vakratunda: false }
       });
     } else if (currentWord === 'mahakaya') {
-      console.log('?? Replaying Mahakaya Game');
+      if (import.meta.env.DEV) console.log('Replaying Mahakaya Game');
       // Reset mahakaya game state and go back to game phase
       sceneActions.updateState({
         phase: PHASES.MAHAKAYA_GAME,
@@ -1131,13 +1131,13 @@ const VakratundaGroveContent = ({
                   onDeleteRecording={handleDeleteRecording}
                   isReload={isReload}
                   onPopupOpen={() => {
-                    console.log("?? Recorder Opening - Pausing Game");
+                    if (import.meta.env.DEV) console.log("Recorder Opening - Pausing Game");
                     stopAllVoice();
                     stopIdleTimer();
                     setIsRecorderOpen(true);
                   }}
                   onPopupClose={() => {
-                    console.log("?? Recorder Closing - Resuming Game");
+                    if (import.meta.env.DEV) console.log("Recorder Closing - Resuming Game");
                     setIsRecorderOpen(false);
                     // Only restart idle timer if we're in an active game phase (not celebration/overlay/complete)
                     const activeGamePhases = [PHASES.VAKRATUNDA_GAME, PHASES.MAHAKAYA_GAME];

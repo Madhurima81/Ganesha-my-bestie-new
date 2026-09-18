@@ -1,3 +1,4 @@
+import { usePreloadPoses } from '../../../../lib/components/animation/PoseImage';
 // zones/symbol-mountain/scenes/symbol/SymbolMountainSceneV3.jsx
 // ?? Complete Musical Mountain Scene - Final Migration V5
 
@@ -65,7 +66,7 @@ import VOReplayButton from '../../../../lib/components/feedback/VOReplayButton';
 import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal';
 
 // Images
-import mountainBackground from '../tusk/assets/images/trail-bg.webp';
+import mountainBackground from '../tusk/assets/images/eyes-game/symbol_mountain_3_bg.webp';
 import ganeshaCharacter from './assets/images/ganesha-character.webp';
 
 // Symbol Icons
@@ -196,6 +197,20 @@ const SymbolMountainSceneV3 = ({
   );
 };
 
+const SCENE_IMAGES = [
+  mountainBackground,
+  ganeshaCharacter,
+  symbolEyesColored,
+  symbolEarColored,
+  symbolTuskColored,
+  symbolMooshikaColored,
+  symbolModakColored,
+  symbolBellyColored,
+  symbolLotusColored,
+  symbolTrunkColored,
+  GANESHA_REVEAL_IMAGE,
+];
+
 const SymbolMountainSceneContent = ({
   sceneState,
   sceneActions,
@@ -205,6 +220,7 @@ const SymbolMountainSceneContent = ({
   zoneId,
   sceneId
 }) => {
+  usePreloadPoses(SCENE_IMAGES);
   const sceneStateRef = useRef(sceneState);
   sceneStateRef.current = sceneState;
 
@@ -272,7 +288,6 @@ const SymbolMountainSceneContent = ({
   }, []);
 
   // -- Inline hint cadence state (same pattern as NewModakSceneV7) ------------
-  const [showIdleGestureHint, setShowIdleGestureHint] = useState(false);
   const idleHintsEnabled = true;
   // Incremented each time child returns from a tab switch â€” resets hint timer
   const [hintResetKey, setHintResetKey] = useState(0);
@@ -337,14 +352,12 @@ const SymbolMountainSceneContent = ({
 
   const resetHintCadence = useCallback(() => {
     setIdleHintLevel(0);
-    setShowIdleGestureHint(false);
     idleVoGateRef.current = false;
     lastIdleInteractionAtRef.current = Date.now();
     setHintResetKey(k => k + 1);
   }, []);
   const resetIdleBaseline = useCallback(() => {
     setIdleHintLevel(0);
-    setShowIdleGestureHint(false);
     idleVoGateRef.current = false;
     lastIdleInteractionAtRef.current = Date.now();
   }, []);
@@ -368,7 +381,6 @@ const SymbolMountainSceneContent = ({
   onTabReturnImplRef.current = () => {
     setHintResetKey(k => k + 1); // restart hint cadence on tab return
     setIdleHintLevel(0);
-    setShowIdleGestureHint(false);
     idleVoGateRef.current = false;
     lastIdleInteractionAtRef.current = Date.now();
     if (sceneState?.welcomeShown) {
@@ -459,7 +471,6 @@ const SymbolMountainSceneContent = ({
 
     if (!isHintPhase) {
       setIdleHintLevel(0);
-      setShowIdleGestureHint(false);
       return;
     }
 
@@ -484,10 +495,6 @@ const SymbolMountainSceneContent = ({
     sceneState?.welcomeShown,
     showSceneCompletion
   ]);
-
-  useEffect(() => {
-    setShowIdleGestureHint(idleHintLevel >= 3);
-  }, [idleHintLevel]);
 
   useEffect(() => {
     if (!sceneState?.welcomeShown || revealConfig || showSceneCompletion || isSymbolPopupOpen) return;
@@ -992,7 +999,7 @@ const SymbolMountainSceneContent = ({
 
               {(showSparkle === 'eyes-complete-final' || showSparkle === 'ears-complete-final') && (
                 <SparkleAnimation
-                  type="magic"
+                  type="star"
                   count={28}
                   color="#ffd54f"
                   size={15}

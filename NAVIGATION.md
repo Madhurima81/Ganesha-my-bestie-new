@@ -3,6 +3,14 @@
 
 ---
 
+**2026-09-18 note:** This session's work (PNG → WebP conversion, sparkle
+glow-color fix — see CHANGELOG and IMAGE_AUDIT.md) touched image assets and a
+shared animation component only, not tab-switch/resume/idle-hint navigation
+logic. No scene rows below were re-scanned or changed as part of this pass —
+left as-is rather than filled in with unverified data.
+
+---
+
 ## How to generate this file
 
 Run this in Claude Code for each scene:

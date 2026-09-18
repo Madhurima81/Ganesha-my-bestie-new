@@ -1,3 +1,4 @@
+import PoseImage, { usePreloadPoses } from '../../../../lib/components/animation/PoseImage';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import SyllableHighlight from '../../shared/SyllableHighlight';
 import useRepeatedHintCycle from '../../../../lib/hooks/useRepeatedHintCycle';
@@ -42,6 +43,11 @@ import beaverBabyReunionImg from './assets/images/bridge/Characters/beaver-baby-
 import helpHandIconImg from './assets/images/Kurumedeva/help-hand-icon.png';
 
 import { KURUMEDEVA_LAYOUT } from './scene3LayoutConfig';
+
+const DEBUG_UI_ENABLED =
+  typeof window !== 'undefined' &&
+  (window.location.pathname.includes('game-test') ||
+    new URLSearchParams(window.location.search).has('debugKuru'));
 
 const SYLLABLES = ['Ku', 'ru', 'me', 'deva'];
 const BRIDGE_TARGET = {
@@ -368,6 +374,35 @@ function KuruRopeSvg({ x1, y1, x2, y2, state = 'loose' }) {
   );
 }
 
+const POSE_ASSETS = [
+  bgImg,
+  elephantPullImg,
+  elephantHappyImg,
+  elephantIdleBananaImg,
+  elephantApproachingImg,
+  helpBubbleElephantImg,
+  monkeyTyingImg,
+  monkeyHappyImg,
+  monkeyPlayingTwigImg,
+  monkeyIdleImg,
+  helpBubbleMonkeyImg,
+  supportLogsObj,
+  shortLogObj,
+  ropeObj,
+  plankObj,
+  bridgeBrokenImg,
+  bridgeSupportedImg,
+  bridgeCompleteImg,
+  beaverAskingImg,
+  beaverIdleWorriedImg,
+  beaverTryingPushImg,
+  beaverPlacingPlankImg,
+  beaverCrossingImg,
+  babyBeaverWavingImg,
+  beaverBabyReunionImg,
+  helpHandIconImg,
+];
+
 export default function KurumedevaGame({
   isActive = false,
   hideElements = false,
@@ -377,6 +412,7 @@ export default function KurumedevaGame({
   voiceGuidance = {},
   isPaused = false,
 }) {
+  usePreloadPoses(POSE_ASSETS);
   const { playVoice: playSceneLine, playSyllable, playWord, stopVoice: stopSceneVoice } = voiceGuidance;
   const [friendStep, setFriendStep] = useState(0);
   const [bridgeStep, setBridgeStep] = useState(0);
@@ -456,6 +492,18 @@ export default function KurumedevaGame({
     level2Delay: 15000,
     level3Delay: 22000,
   });
+
+  // Non-tap gesture hints (drag/hold/scratch) show right away at the start of
+  // each step, not just after the idle ladder escalates — same "introGesture"
+  // pattern used in Pond/FlowerJourneyGame2. Tap hints stay idle-only (hintLevel).
+  const kuruStageKey = phase === 'play' ? (placeActive ? `place-${friendStep}` : `friend-${friendStep}`) : phase;
+  const [kuruIntroGesture, setKuruIntroGesture] = useState(false);
+  useEffect(() => {
+    if (phase !== 'play' || isRoundSettling || debugMode) { setKuruIntroGesture(false); return undefined; }
+    setKuruIntroGesture(true);
+    const t = window.setTimeout(() => setKuruIntroGesture(false), 6000);
+    return () => window.clearTimeout(t);
+  }, [kuruStageKey, phase, isRoundSettling, debugMode]);
   const currentFriend = friendStep < FRIENDS.length ? FRIENDS[friendStep] : null;
   // Each helper loop is gated behind its own "try and fail" beat — Beaver
   // must try (and fail) the logs before asking Elephant, and try (and fail)
@@ -858,6 +906,22 @@ export default function KurumedevaGame({
     setPieceDragActive(false);
     setPieceDragPos(null);
   }, []);
+
+  // Pause-triggered cleanup: unlike every sibling Shloka River mini-game, this
+  // file only cancelled its two drags on a native pointercancel event, not on
+  // the scene's own pause button — a tap-to-pause mid-drag left pieceDragActive
+  // / isDraggingHelp stuck true, so the drag would silently resume from wherever
+  // it left off on unpause. Only clears in-progress drag state, never touches
+  // helpDelivered (a completed help-token delivery must survive a pause).
+  useEffect(() => {
+    if (!isPaused) return;
+    if (pieceDragActive) endPieceDrag();
+    if (isDraggingHelp) {
+      setIsDraggingHelp(false);
+      setHelpTokenPos(HELP_TOKEN_HOME);
+      dragPointerRef.current = null;
+    }
+  }, [isPaused, pieceDragActive, isDraggingHelp, endPieceDrag]);
 
   const handlePiecePointerUp = useCallback((event) => {
     if (pieceDragRef.current !== event.pointerId) return;
@@ -1297,6 +1361,7 @@ export default function KurumedevaGame({
         onPointerMove={debugMode ? applyDebugDrag : undefined}
         onPointerUp={debugMode ? endDebugDrag : undefined}
         onPointerCancel={debugMode ? endDebugDrag : undefined}
+        onContextMenu={(event) => event.preventDefault()}
       >
         <SyllableHighlight
           syllables={SYLLABLES}
@@ -1389,8 +1454,7 @@ export default function KurumedevaGame({
               transform: `translate(-50%, -50%) rotate(${KURUMEDEVA_LAYOUT.bridge.r || 0}deg) scaleX(${KURUMEDEVA_LAYOUT.bridge.flip ? -1 : 1}) scale(1.3)`,
             }}
           >
-            <img
-              key={`bridge-${bridgeStep}`}
+            <PoseImage
               className="kuru-bridge-img is-cur"
               src={bridgeImg}
               alt="bridge"
@@ -1616,7 +1680,7 @@ export default function KurumedevaGame({
             scale: (phase !== 'done' && KURUMEDEVA_LAYOUT.beaver.flip) ? '-1 1' : '1 1',
           }}
         >
-          <img src={beaverImg} alt="Beaver" draggable={false} />
+          <PoseImage src={beaverImg} alt="Beaver" draggable={false} />
         </div>
 
         {phase !== 'done' && (
@@ -1706,7 +1770,7 @@ export default function KurumedevaGame({
                 scale: friend.flip ? '-1 1' : '1 1',
               }}
             >
-              <img
+              <PoseImage
                 src={friendSprite}
                 alt={friend.label}
                 draggable={false}
@@ -1741,7 +1805,7 @@ export default function KurumedevaGame({
             type={gestureHint.type}
             from={gestureHint.from}
             to={gestureHint.to}
-            active={hintLevel >= 1}
+            active={hintLevel >= 1 || (kuruIntroGesture && gestureHint.type !== 'tap')}
             idleDelay={400}
             zIndex={46}
           />
@@ -1779,6 +1843,7 @@ export default function KurumedevaGame({
         )}
       </div>
 
+      {DEBUG_UI_ENABLED && (
       <div
         className={`kuru-debug-panel${debugMode ? ' is-open' : ''}`}
         style={{ left: `${debugPanelPosition.x}px`, top: `${debugPanelPosition.y}px` }}
@@ -1893,6 +1958,7 @@ export default function KurumedevaGame({
           </div>
         )}
       </div>
+      )}
     </div>
   );
 }

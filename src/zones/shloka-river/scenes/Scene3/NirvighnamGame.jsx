@@ -1,3 +1,4 @@
+import PoseImage, { usePreloadPoses } from '../../../../lib/components/animation/PoseImage';
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import SyllableHighlight from '../../shared/SyllableHighlight';
 import useRepeatedHintCycle from '../../../../lib/hooks/useRepeatedHintCycle';
@@ -113,6 +114,17 @@ const debugOptions = [
   { type: 'swimPath', index: 0, key: 'swim-0', label: 'Nest Landing (swim end)', fields: ['l', 't'] },
 ];
 
+const POSE_ASSETS = [
+  sharedSceneBg,
+  turtleSadImg,
+  turtleHappyImg,
+  nestImg,
+  stoneImg,
+  branchImg,
+  reedsClosedImg,
+  reedsOpenImg,
+];
+
 export default function NirvighnamGame({
   isActive = false,
   hideElements = false,
@@ -122,6 +134,7 @@ export default function NirvighnamGame({
   voiceGuidance = {},
   isPaused = false,
 }) {
+  usePreloadPoses(POSE_ASSETS);
   const { playVoice: playSceneLine, playSyllable, playWord, stopVoice: stopSceneVoice } = voiceGuidance;
   const debugEnabled = getDebugEnabled();
   const defaultLayout = useMemo(createDebugLayout, []);
@@ -784,7 +797,7 @@ export default function NirvighnamGame({
             scale: activeLayout.turtleFlip ? '-1 1' : '1 1',
           }}
         >
-          <img src={effPhase === 'play' ? turtleSadImg : turtleHappyImg} alt="turtle" draggable={false} />
+          <PoseImage src={effPhase === 'play' ? turtleSadImg : turtleHappyImg} alt="turtle" draggable={false} />
         </div>
 
         <div
@@ -838,7 +851,7 @@ export default function NirvighnamGame({
           }}
           onPointerDown={handleReedPointerDown}
         >
-          <img
+          <PoseImage
             src={showCleared('reed') || reedSwipeAmount >= REED_SWIPE_REQUIRED ? reedsOpenImg : reedsClosedImg}
             alt="reeds blocking the river"
             draggable={false}
@@ -860,7 +873,7 @@ export default function NirvighnamGame({
             from={gestureConfig.from}
             to={gestureConfig.to}
             active
-            idleDelay={1000}
+            idleDelay={150}
             iterations={2}
             onComplete={() => setTeachingDoneFor(nextObstacleId)}
             onDismiss={() => setTeachingDoneFor(nextObstacleId)}

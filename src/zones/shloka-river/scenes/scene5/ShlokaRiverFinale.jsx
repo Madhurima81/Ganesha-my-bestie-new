@@ -1,3 +1,4 @@
+import { usePreloadPoses } from '../../../../lib/components/animation/PoseImage';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './ShlokaRiverFinale.css';
 
@@ -36,14 +37,14 @@ import nirvighnamRecapBoat from './assets/images/recap-boats/nirvighnam.webp';
 import kurumedevaRecapBoat from './assets/images/recap-boats/kurumedeva.webp';
 import sarvakaryeshuRecapBoat from './assets/images/recap-boats/sarvakaryeshu.webp';
 import sarvadaRecapBoat from './assets/images/recap-boats/sarvada.webp';
-import revealVakratunda from '../../../symbol-mountain/shared/images/icons/symbol-trunk-new.png';
-import revealMahakaya from '../../../meaning cave/assets/images/symbols/mahakaya-symbol.png';
-import revealSuryakoti from '../../../meaning cave/assets/images/symbols/suryakoti-symbol.png';
-import revealSamaprabha from '../../../meaning cave/assets/images/symbols/samaprabha-symbol.png';
-import revealNirvighnam from '../../../meaning cave/assets/images/symbols/nirvighnam-symbol.png';
-import revealKurumedeva from '../../../meaning cave/assets/images/symbols/kurumedeva-symbol.png';
-import revealSarvakaryeshu from '../../../meaning cave/assets/images/symbols/sarvakaryeshu-symbol.png';
-import revealSarvada from '../../../meaning cave/assets/images/symbols/sarvada-symbol.png';
+import revealVakratunda from '../../../symbol-mountain/shared/images/icons/symbol-trunk-new.webp';
+import revealMahakaya from '../../../meaning cave/assets/images/symbols/mahakaya-symbol.webp';
+import revealSuryakoti from '../../../meaning cave/assets/images/symbols/suryakoti-symbol.webp';
+import revealSamaprabha from '../../../meaning cave/assets/images/symbols/samaprabha-symbol.webp';
+import revealNirvighnam from '../../../meaning cave/assets/images/symbols/nirvighnam-symbol.webp';
+import revealKurumedeva from '../../../meaning cave/assets/images/symbols/kurumedeva-symbol.webp';
+import revealSarvakaryeshu from '../../../meaning cave/assets/images/symbols/sarvakaryeshu-symbol.webp';
+import revealSarvada from '../../../meaning cave/assets/images/symbols/sarvada-symbol.webp';
 
 const ORB_APP_IMAGES = {
   vakratunda: revealVakratunda,
@@ -186,6 +187,28 @@ const ShlokaRiverFinale = ({
   </ErrorBoundary>
 );
 
+const SCENE_IMAGES = [
+  riverBg,
+  boatSailImage,
+  vakratundaRecapBoat,
+  mahakayaRecapBoat,
+  suryakotiRecapBoat,
+  samaprabhaRecapBoat,
+  nirvighnamRecapBoat,
+  kurumedevaRecapBoat,
+  sarvakaryeshuRecapBoat,
+  sarvadaRecapBoat,
+  revealVakratunda,
+  revealMahakaya,
+  revealSuryakoti,
+  revealSamaprabha,
+  revealNirvighnam,
+  revealKurumedeva,
+  revealSarvakaryeshu,
+  revealSarvada,
+  OPENING_SCENE_GANESHA,
+];
+
 const ShlokaRiverFinaleContent = ({
   sceneState,
   sceneActions,
@@ -194,6 +217,7 @@ const ShlokaRiverFinaleContent = ({
   zoneId,
   sceneId,
 }) => {
+  usePreloadPoses(SCENE_IMAGES);
   const { resetScene } = useSceneReset(sceneActions, zoneId, sceneId, getSceneResetConfig(sceneId));
   const activeProfile = GameStateManager.getActiveProfile();
   const profileName = activeProfile?.name || 'explorer';
@@ -630,6 +654,7 @@ const ShlokaRiverFinaleContent = ({
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
           onPointerCancel={handlePointerUp}
+          onContextMenu={(e) => e.preventDefault()}
         >
           <HomeButton onNavigate={onNavigate} />
           <ZoneBadgeButton zoneId="shloka-river" onBack={() => onNavigate?.('zone-welcome')} />
