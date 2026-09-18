@@ -830,10 +830,10 @@
 }
 
 .child-food-tool-plus {
-  width: 48px;
-  height: 48px;
-  min-width: 48px;
-  min-height: 48px;
+  width: 60px;
+  height: 60px;
+  min-width: 60px;
+  min-height: 60px;
   border-radius: 50%;
   border: none;
   background: #C7924A;
@@ -854,7 +854,7 @@
 }
 
 .child-food-tool-btn {
-  min-height: 44px;
+  min-height: 60px;
   padding: 0 14px;
   border-radius: 18px;
   border: none;
@@ -1599,14 +1599,14 @@
   }
 
   .child-food-tool-plus {
-    width: 48px;
-    height: 48px;
-    min-width: 48px;
-    min-height: 48px;
+    width: 60px;
+    height: 60px;
+    min-width: 60px;
+    min-height: 60px;
     font-size: 20px;
   }
   .child-food-tool-btn {
-    min-height: 44px;
+    min-height: 60px;
     padding: 0 14px;
     font-size: 13px;
   }
