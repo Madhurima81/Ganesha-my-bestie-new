@@ -1319,7 +1319,9 @@ sceneActions.updateState({ gamePhase: 'transition' });
  Tap a circle to meet my family!
  </div>
  )} */}
- <div className="hud-hearts-row">
+ {/* Hearts progress row removed per Madhurima — clipped at iPad landscape
+ and no longer matches the current (non-quiz) tree-building design. */}
+ {/* <div className="hud-hearts-row">
  {ganeshaFamily.map((m, i) => (
  <img
  key={i}
@@ -1329,7 +1331,7 @@ sceneActions.updateState({ gamePhase: 'transition' });
  className={`heart-icon ${sceneState.placedGaneshaMembers.includes(m.id)? 'filled': ''}`}
  />
  ))}
- </div>
+ </div> */}
  </div>
 
  <div className="tree-and-circles-wrapper">
