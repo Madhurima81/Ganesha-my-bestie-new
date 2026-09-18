@@ -29,7 +29,10 @@
   user-select: none;
   filter: drop-shadow(0 10px 14px rgba(30, 49, 35, 0.2));
   transition: opacity 620ms ease, filter 420ms ease;
-
+  /* Re-keyed on every pose swap so it fades in instead of snapping — must
+     keep the translate(-50%,-50%) positioning intact throughout, unlike the
+     zone reveal animation, since it lives on this element directly. */
+  animation: ears-sprite-reveal 700ms ease-out;
 }
 
 @keyframes ears-sprite-reveal {
@@ -128,7 +131,9 @@
   pointer-events: none;
   user-select: none;
   filter: drop-shadow(0 10px 14px rgba(28, 46, 38, 0.22));
-
+  /* Re-keyed on every src change (hidden -> revealed) so it fades/scales in
+     instead of snapping instantly the moment a zone is solved. */
+  animation: ears-source-reveal 700ms ease-out;
 }
 
 @keyframes ears-source-reveal {
