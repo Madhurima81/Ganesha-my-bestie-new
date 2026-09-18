@@ -1,3 +1,4 @@
+import { usePreloadPoses } from '../../../../lib/components/animation/PoseImage';
 // zones/symbol-mountain/scenes/modak/NewModakSceneV7.jsx
 // Flower Journey + Garland rework (2026-09-06)
 //
@@ -93,8 +94,6 @@ import symbolBellyColored from '../../shared/images/icons/symbol-belly-new.webp'
 // Flower Journey assets - the flower tray (beat-1 only) still needs the two
 // flower colours; the rest (mud/leaves/branch/garland art) now live inside
 // FlowerJourneyGame2 / GarlandGame3, which import their own copies.
-import fjFlowerCoral from './assets/images/fj-flower-coral.webp';
-import fjFlowerCream from './assets/images/fj-flower-cream.webp';
 
 // ========================================
 // PHASES
@@ -215,9 +214,6 @@ const GARLAND_LOOSE_POSITIONS = [
   { left: '90%', top: '72%' },
   { left: '90%', top: '20%' }
 ];
-const GARLAND_FLOWER_TYPES = ['coral', 'cream', 'coral', 'cream', 'coral', 'cream'];
-const garlandFlowerImage = (type) => (type === 'cream' ? fjFlowerCream : fjFlowerCoral);
-
 const TRAVELLING_EMOTIONS = [
   { id: 'happy', image: emotionHappy },
   { id: 'worried', image: emotionWorried },
@@ -415,6 +411,22 @@ const NewModakSceneMVP = ({
   );
 };
 
+const SCENE_IMAGES = [
+  forestBackground,
+  mooshikaTurned,
+  journeyFeather,
+  journeyBerry,
+  journeyAcorn,
+  emotionWorried,
+  emotionSad,
+  emotionAngry,
+  emotionHappy,
+  ganeshaFeeding,
+  symbolMooshikaColored,
+  symbolModakColored,
+  symbolBellyColored,
+];
+
 const NewModakSceneMVPContent = ({
   sceneState,
   sceneActions,
@@ -425,6 +437,7 @@ const NewModakSceneMVPContent = ({
   sceneId,
   debugStartGame
 }) => {
+  usePreloadPoses(SCENE_IMAGES);
   if (!sceneState || !sceneActions) {
     return <div>Loading scene...</div>;
   }
@@ -602,7 +615,7 @@ const NewModakSceneMVPContent = ({
     } catch {
       setDbgCopyStatus('see console');
     }
-    console.log('[modak-fj-layout]\n' + json);
+    if (import.meta.env.DEV) console.log('[modak-fj-layout]\n' + json);
     setTimeout(() => setDbgCopyStatus(''), 1500);
   }, [fjLayout]);
 
@@ -846,16 +859,9 @@ const NewModakSceneMVPContent = ({
   }, [playRevealBloom, safeSetTimeout, sceneActions, sceneState.discoveredSymbols]);
 
   // ------------------------------------------------------------------
-  // SymbolAutoReveal helpers
-  // ------------------------------------------------------------------
-  useEffect(() => {
-    if (!revealConfig || !isAudioOn) return;
-    const voMap = { mooshika: 'guidePower', belly: 'bellyPower', modak: 'modakPower' };
-    const voKey = voMap[revealConfig.symbolId];
-    if (!voKey) return;
-    const id = setTimeout(() => playVoice(voKey, null, { replayOnReturn: true }), 400);
-    return () => clearTimeout(id);
-  }, [revealConfig, isAudioOn, playVoice]);
+  // SymbolAutoReveal owns the reveal-card VO ("Say with me, <affirmation>")
+  // for all 13 scenes - no separate playVoice call here, or the two would
+  // race and speechSynthesis.cancel() would cut the first one off mid-line.
 
   const getSidebarTarget = (symbolId) => {
     const el = document.getElementById(`sidebar-${symbolId}`);
@@ -1355,7 +1361,6 @@ const NewModakSceneMVPContent = ({
   // Derived view helpers
   // ------------------------------------------------------------------
   const isCompletionView = showSceneCompletion || sceneState.showingCompletionScreen;
-  const flowers = sceneState.flowers || 0;
 
   // ------------------------------------------------------------------
   // RENDER
@@ -1501,31 +1506,6 @@ const NewModakSceneMVPContent = ({
                     />
                   )}
 
-                  {/* FLOWER TRAY - docked beside Mooshika's current spot, not a fixed top counter */}
-                  {sceneState.welcomeShown && !isFinalTransitionView && sceneState.phase !== PHASES.GARLAND_MAKING && sceneState.phase !== PHASES.MUD_CROSS && sceneState.phase !== PHASES.CARRY_REVEAL && (() => {
-                    const mPos = sceneState.mooshikaPosition || CALM_SETTLE_POSITION;
-                    const trayTop = Math.max(6, parsePercentValue(mPos.top, 50) - 13);
-                    const trayLeft = Math.min(88, parsePercentValue(mPos.left, 50) + 12);
-                    return (
-                      <div
-                        className="modak-fj-flower-tray modak-fj-flower-tray--follow"
-                        style={{ top: `${trayTop}%`, left: `${trayLeft}%` }}
-                        aria-label={`${flowers} of 6 flowers gathered`}
-                      >
-                        {Array.from({ length: 6 }).map((_, i) => (
-                          <span
-                            key={`ft-${i}`}
-                            className={`modak-fj-flower-slot ${i < flowers ? 'filled' : ''} ${i === flowers - 1 && showSparkle?.startsWith('flowers-') ? 'pop' : ''}`}
-                          >
-                            {i < flowers && (
-                              <img src={garlandFlowerImage(GARLAND_FLOWER_TYPES[i])} alt="" />
-                            )}
-                          </span>
-                        ))}
-                      </div>
-                    );
-                  })()}
-
                   {/* ============ BEAT 1: CALM (hold) ============ */}
                   {/* Only one Mooshika image is ever on screen at a time - this
                       static/live-position render is strictly beat-1-only so it
@@ -1563,6 +1543,7 @@ const NewModakSceneMVPContent = ({
                             onPointerCancel={handleMushikaHoldEnd}
                             onTouchStart={handleMushikaHoldStart}
                             onTouchEnd={handleMushikaHoldEnd}
+                            onContextMenu={(e) => e.preventDefault()}
                           >
                             {sceneState.mushikaHolding && (
                               <span
@@ -1579,7 +1560,7 @@ const NewModakSceneMVPContent = ({
                             {showSparkle === 'mooshika-calm' && (
                               <>
                                 <span className="modak-game-mushika-calm-aura" aria-hidden="true" />
-                                <SparkleAnimation type="magic" count={14} color="#ffd76b" size={10} duration={1200} fadeOut area="full" />
+                                <SparkleAnimation type="star" count={14} color="#ffd76b" size={10} duration={1200} fadeOut area="full" />
                               </>
                             )}
                           </button>
