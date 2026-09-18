@@ -1,3 +1,4 @@
+import { usePreloadPoses, preparePose } from '../../../../lib/components/animation/PoseImage';
 // GarlandGame3 — thread 6 flowers into a garland, then carry/drop it onto
 // Ganesha. Ends by calling the onComplete callback, which hands off to the
 // live scene's existing SymbolAutoReveal for the real "modak" symbol card
@@ -19,6 +20,7 @@ import completedGarland from './assets/images/fj-garland-complete.webp';
 import mooshikaBasket from './assets/images/mooshika-turned-game2.webp';
 import ganesha from './assets/images/ganesha-game3-new.webp';
 import forestBackground from './assets/images/modak-fj-bg.webp';
+import symbolModakColored from '../../shared/images/icons/symbol-modak-new.webp';
 
 const PHASES = { BUILD: 'GARLAND_BUILD', READY: 'GARLAND_READY', OFFERED: 'GARLAND_OFFERED' };
 
@@ -49,7 +51,19 @@ const VO = {
   ready: 'You made it! Take the garland to Ganesha.',
 };
 
+const SCENE_IMAGES = [
+  flowerPink,
+  flowerCream,
+  garlandString,
+  completedGarland,
+  mooshikaBasket,
+  ganesha,
+  forestBackground,
+  symbolModakColored,
+];
+
 export default function GarlandGame3({ isActive = true, isPaused = false, isAudioOn = true, onComplete }) {
+  usePreloadPoses(SCENE_IMAGES);
   const [phase, setPhase] = useState(PHASES.BUILD);
   const sceneRef = useRef(null);
   const workspaceRef = useRef(null);
@@ -63,6 +77,7 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
 
   const [flowersArrived, setFlowersArrived] = useState(false);
   const [basketPct, setBasketPct] = useState(null);
+  const [showModakGlow, setShowModakGlow] = useState(false);
 
   const mutedRef = useRef(!isAudioOn);
   useEffect(() => { mutedRef.current = !isAudioOn; }, [isAudioOn]);
@@ -123,11 +138,16 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
 
   useEffect(() => {
     if (!isBuild || placedFlowers.length !== FLOWERS.length || !isActive || isPaused) return;
+    let cancelled = false;
     const timer = window.setTimeout(() => {
-      setPhase(PHASES.READY);
-      speak(VO.ready);
+      // Keep the assembled flowers visible while the replacement art decodes.
+      preparePose(completedGarland).then(() => {
+        if (cancelled) return;
+        setPhase(PHASES.READY);
+        speak(VO.ready);
+      }).catch(() => {});
     }, 550);
-    return () => window.clearTimeout(timer);
+    return () => { cancelled = true; window.clearTimeout(timer); };
   }, [isBuild, placedFlowers.length, isActive, isPaused, speak]);
 
   const getScenePoint = (event) => {
@@ -159,7 +179,11 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
 
     setGarlandPosition((prev) => ({ ...prev, active: false }));
     setPhase(PHASES.OFFERED);
-    window.setTimeout(() => { onComplete?.(); }, 1400);
+    // Matches the original pre-rework "modak above Mooshika" beat: a short
+    // pause after the offering lands, then the golden Modak glows above
+    // Mooshika for a moment before the real symbol reveal card takes over.
+    window.setTimeout(() => setShowModakGlow(true), 1100);
+    window.setTimeout(() => { onComplete?.(); }, 3200);
   };
 
   if (!isActive) return null;
@@ -169,6 +193,7 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
       ref={sceneRef}
       className={`g3g ${isPaused ? 'g3g--paused' : ''}`}
       style={{ backgroundImage: `url(${forestBackground})` }}
+      onContextMenu={(e) => e.preventDefault()}
     >
       {/* GANESHA */}
       <div
@@ -180,10 +205,17 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
       </div>
 
       {/* MOOSHIKA — basket empties visually once the 6 flowers have moved
-          into the workspace. */}
-      {!isOffered && (
+          into the workspace. Stays on screen through the offering so the
+          golden Modak has somewhere to glow above. */}
+      {(!isOffered || showModakGlow) && (
         <div ref={mooshikaRef} className="g3g-mooshika" style={{ left: `${LAYOUT.mooshika.l}%`, top: `${LAYOUT.mooshika.t}%` }}>
           <img src={mooshikaBasket} alt="Mooshika" />
+          {showModakGlow && (
+            <div className="g3g-modak-satisfaction">
+              <div className="g3g-modak-satisfaction-glow" aria-hidden="true" />
+              <img src={symbolModakColored} alt="Golden Modak" className="g3g-modak-satisfaction-icon" />
+            </div>
+          )}
         </div>
       )}
 
