@@ -3000,10 +3000,10 @@ const handleComplete = () => {
                 label: 'Language',
                 wide: true,
                 custom: (
-                  <div style={{ display: 'flex', gap: '48px', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', gap: 'clamp(16px, 4vw, 48px)', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center' }}>
                     {selectedLanguages.map(lang => (
                       <div key={lang.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
-                        <img src={lang?.icon} alt={lang?.label} style={{ width: '80px', height: '80px', objectFit: 'contain' }} />
+                        <img src={lang?.icon} alt={lang?.label} style={{ width: 'clamp(48px, 8vw, 80px)', height: 'clamp(48px, 8vw, 80px)', objectFit: 'contain' }} />
                         <div style={{ fontFamily: "'Baloo 2', cursive", fontSize: '16px', fontWeight: 700, color: '#3e2723', textAlign: 'center' }}>{lang?.label}</div>
                       </div>
                     ))}
@@ -3015,10 +3015,10 @@ const handleComplete = () => {
                 label: 'Festivals',
                 wide: true,
                 custom: (
-                  <div style={{ display: 'flex', gap: '20px', flexWrap: 'nowrap', justifyContent: 'center', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', gap: 'clamp(10px, 2.5vw, 20px)', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center' }}>
                     {selectedFestivals.map(fest => (
                       <div key={fest.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
-                        <img src={fest?.icon} alt={fest?.label} style={{ width: '56px', height: '56px', objectFit: 'contain' }} />
+                        <img src={fest?.icon} alt={fest?.label} style={{ width: 'clamp(38px, 6vw, 56px)', height: 'clamp(38px, 6vw, 56px)', objectFit: 'contain' }} />
                         <div style={{ fontFamily: "'Baloo 2', cursive", fontSize: '14px', fontWeight: 700, color: '#3e2723', textAlign: 'center', whiteSpace: 'nowrap' }}>{fest?.label}</div>
                       </div>
                     ))}

@@ -495,6 +495,7 @@
     bottom: max(clamp(70px, 9vh, 110px), env(safe-area-inset-bottom)) !important;
     font-size: clamp(1rem, 2vh, 1.4rem) !important;
     padding: clamp(10px, 1.6vh, 14px) clamp(28px, 5vw, 40px) !important;
+    min-height: clamp(60px, 9vh, 72px) !important;
     z-index: 1500;
   }
 }
@@ -5124,6 +5125,7 @@
     bottom: max(clamp(24px, 3vh, 40px), env(safe-area-inset-bottom)) !important;
     font-size: clamp(1rem, 2vh, 1.4rem) !important;
     padding: clamp(10px, 1.6vh, 14px) clamp(28px, 5vw, 40px) !important;
+    min-height: clamp(60px, 9vh, 72px) !important;
     z-index: 1500;
   }
 

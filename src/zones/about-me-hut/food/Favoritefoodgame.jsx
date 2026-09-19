@@ -2389,7 +2389,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                     <div className="aboutme-comparison-item-label">COLOR</div>
                     <div className="aboutme-comparison-item-media">
                       {sceneState.childColor?.startsWith('#') ? (
-                        <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: sceneState.childColor }} />
+                        <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: sceneState.childColor }} />
                       ) : (
                         <img src={sceneState.childColor} alt={sceneState.childColorName} className="aboutme-comparison-item-img" />
                       )}
