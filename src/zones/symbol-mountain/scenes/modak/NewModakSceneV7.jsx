@@ -11,7 +11,7 @@ import { usePreloadPoses } from '../../../../lib/components/animation/PoseImage'
 //   6. GUIDE       -> carry the finished garland to Ganesha
 //   7. REVEAL      -> Modak appears (no mechanic) as the sweet reveal
 //
-// Belly meaning: "I can feel many things and still stay steady."
+// Belly meaning: "I can have lots of feelings and keep going."
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './ModakScene.css';
@@ -115,9 +115,9 @@ const PHASES = {
 
 // beat 1 darting anchors (reused art)
 const CALM_DISTRACTIONS = [
-  { id: 'feather', image: journeyFeather, top: '52%', left: '22%' },
-  { id: 'acorn', image: journeyAcorn, top: '41%', left: '70%' },
-  { id: 'berry', image: journeyBerry, top: '70%', left: '56%' }
+  { id: 'acorn', image: journeyAcorn, top: '56%', left: '18%' },
+  { id: 'feather', image: journeyFeather, top: '30%', left: '82%' },
+  { id: 'grapes', image: journeyBerry, top: '87%', left: '75%' }
 ];
 const CALM_SETTLE_POSITION = { top: '58%', left: '32%' };
 
@@ -245,24 +245,24 @@ function parsePercentValue(value, fallback) {
 // VO (Web Speech scaffolding - MP3s later)
 // ========================================
 const MODAK_VO = {
-  calmMooshika: 'Mooshika is dashing about. Press and hold him gently until his busy mind grows calm.',
-  calmMooshikaIdle: 'Wait for Mooshika to pause, then press and hold him.',
-  mooshikaCalmed: 'You helped Mooshika slow down and feel steady.',
-  guidePower: 'I can guide my busy thoughts.',
-  mudStart: 'Two flowers are waiting across the mud. Guide Mooshika from stone to stone.',
-  mudIdle: 'Keep guiding Mooshika across the stepping stones.',
-  leavesStart: 'Two more flowers are hiding in the leaves. Swipe the leaves apart to open them.',
+  calmMooshika: 'Mooshika’s thoughts are jumping everywhere. Press and hold to help him stay with one thing.',
+  calmMooshikaIdle: 'Catch Mooshika and keep holding.',
+  mooshikaCalmed: 'Mooshika stayed with it and made a little progress.',
+  guidePower: 'I can keep going, one small step at a time.',
+  mudStart: 'The last two flowers are across the mud. Guide Mooshika from safe spot to safe spot.',
+  mudIdle: 'Guide Mooshika to the next safe spot.',
+  leavesStart: 'Two flowers are hiding in the leaves. Swipe them apart.',
   leavesIdle: 'Swipe the leaves apart again.',
-  branchStart: 'The last two flowers are up on the branch. Pull it down gently and hold it there.',
-  branchIdle: 'Keep holding the branch until Mooshika can reach.',
-  garlandStart: 'Six flowers! Drag each one onto the string to make a garland.',
-  garlandIdle: 'Drag another flower onto the string.',
-  garlandDone: 'Look, six flowers became one beautiful garland.',
-  carryStart: 'Carry the garland to Ganesha. Your feelings can travel along with you.',
-  carryIdle: 'Keep guiding Mooshika to Ganesha.',
-  bellyPower: 'I can feel many things and still stay steady.',
-  modakPower: 'When we stay steady through big feelings, something sweet grows inside.',
-  sceneComplete: 'You calmed the busy mind, gathered every flower, and stayed steady all the way to Ganesha.'
+  branchStart: 'These flowers are too high for Mooshika.',
+  branchIdle: 'Pull the branch down and keep holding.',
+  garlandStart: 'Six flowers! Tap each one to make a garland for Ganesha.',
+  garlandIdle: 'Tap another flower.',
+  garlandDone: 'The garland is ready! Drag it to Ganesha.',
+  carryStart: 'You brought the garland all the way to Ganesha.',
+  carryIdle: 'Drag the garland to Ganesha.',
+  bellyPower: 'I can have lots of feelings and keep going.',
+  modakPower: 'I can learn, keep trying, and find joy.',
+  sceneComplete: 'Small steps, big feelings, and lots of trying brought Mooshika to Ganesha.'
 };
 
 const MODAK_VO_MOMENT = {
@@ -678,7 +678,7 @@ const NewModakSceneMVPContent = ({
   const mushikaHoldRafRef = useRef(null);
   const mushikaDartIndexRef = useRef(0);
   const calmRevealFiredRef = useRef(false);
-  const MUSHIKA_DART_INTERVAL_MS = 1100;
+  const MUSHIKA_DART_INTERVAL_MS = 1800;
   const MUSHIKA_HOLD_MS = 1600;
   const CALM_REVEAL_GAP_MS = 500;   // beat after "well done" line ends
   const CALM_REVEAL_FALLBACK_MS = 6500; // safety net if speech onEnd never fires
@@ -703,10 +703,7 @@ const NewModakSceneMVPContent = ({
       sceneStateRef.current?.mushikaHolding
     ) return;
 
-    let nextIndex = Math.floor(Math.random() * CALM_DISTRACTIONS.length);
-    if (CALM_DISTRACTIONS.length > 1 && nextIndex === mushikaDartIndexRef.current) {
-      nextIndex = (nextIndex + 1 + Math.floor(Math.random() * (CALM_DISTRACTIONS.length - 1))) % CALM_DISTRACTIONS.length;
-    }
+    const nextIndex = (mushikaDartIndexRef.current + 1) % CALM_DISTRACTIONS.length;
     mushikaDartIndexRef.current = nextIndex;
     const target = CALM_DISTRACTIONS[nextIndex];
     sceneActions.updateState({
@@ -1525,9 +1522,9 @@ const NewModakSceneMVPContent = ({
                             <img
                               key={item.id}
                               src={item.image}
-                              alt={item.id}
+                              alt=""
                               className={`modak-game-distraction modak-game-distraction--${item.id} ${isActive ? 'active' : ''} ${isFaded ? 'fading' : ''}`}
-                              style={{ top: item.top, left: item.left }}
+                              draggable={false}
                             />
                           );
                         })}
@@ -1680,15 +1677,15 @@ const NewModakSceneMVPContent = ({
                 symbolData={{
                   mooshika: {
                     title: "Mooshika - Ganesha's Clever Friend!",
-                    description: "A tiny mouse with a big heart! Mooshika helps us steer a busy, buzzing mind."
+                    description: "A tiny mouse with a big heart. Mooshika reminds us that small steps can carry us far."
                   },
                   modak: {
                     title: "Modak - Ganesha's Sweet Treat!",
-                    description: "The sweetness that grows inside when we stay steady through big feelings."
+                    description: "A sweet reminder that after learning and trying, we can find joy."
                   },
                   belly: {
                     title: "Ganesha's Big Belly",
-                    description: "It reminds us we can feel many things at once and still stay steady."
+                    description: "It reminds us that happy feelings and hard feelings can all be there."
                   }
                 }}
                 nextSceneName="Find a Way to the Lotus"

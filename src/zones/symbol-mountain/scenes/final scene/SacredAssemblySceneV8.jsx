@@ -19,7 +19,6 @@ import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButt
 import VOReplayButton from '../../../../lib/components/feedback/VOReplayButton';
 import RotatingOrbsEffect from '../../../../lib/components/feedback/RotatingOrbsEffect';
 import ZoneCompletionFireworks from '../../../../lib/components/feedback/ZoneCompletionFireworks';
-// import SimpleGameCoach, { SimpleGameCoachConfigs } from '../../../../lib/components/coach/SimpleGameCoach'; // COMMENTED OUT
 import ProgressManager from '../../../../lib/services/ProgressManager';
 import SimpleSceneManager from '../../../../lib/services/SimpleSceneManager';
 import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
@@ -119,9 +118,9 @@ const SACRED_SYMBOLS = [
     emoji: '???',
     image: symbolEyesColored,
     associationIcon: iconTarget,
-    associationText: "I notice the good around me.",
+    associationText: "I can focus on what matters.",
     bodyPartImage: ganeshaEyes,
-    blessing: "Ganesha's divine eyes awaken! May you see truth in all things.",
+    blessing: "Eyes. I can focus on what matters.",
     bodyPart: 'eyes',
     correctZone: 'eyes',
     wrongZones: ['belly', 'base', 'left-hand', 'trunk']
@@ -132,9 +131,9 @@ const SACRED_SYMBOLS = [
     emoji: '??',
     image: symbolEarsColored,
     associationIcon: iconHeadphones,
-    associationText: "I listen with care.",
+    associationText: "I can listen for what helps me.",
     bodyPartImage: ganeshaEars,
-    blessing: "Ganesha's sacred ears come alive! May you listen with wisdom and compassion.",
+    blessing: "Ears. I can listen for what helps me.",
     bodyPart: 'ears',
     correctZone: 'ears',
     wrongZones: ['trunk', 'right-hand', 'base', 'tusk']
@@ -145,9 +144,9 @@ const SACRED_SYMBOLS = [
     emoji: '??',
     image: symbolTrunkColored,
     associationIcon: iconRoadblock,
-    associationText: "I find my way.",
+    associationText: "I can be strong and gentle.",
     bodyPartImage: ganeshaTrunk,
-    blessing: "Ganesha's mighty trunk awakens! May all obstacles be removed from your path.",
+    blessing: "Trunk. I can be strong and gentle.",
     bodyPart: 'trunk',
     correctZone: 'trunk',
     wrongZones: ['eyes', 'belly', 'right-hand', 'base']
@@ -158,9 +157,9 @@ const SACRED_SYMBOLS = [
     emoji: '??',
     image: symbolTuskColored,
     associationIcon: iconHammer,
-    associationText: "I stay focused on what is true.",
+    associationText: "I can use what I have for something important.",
     bodyPartImage: ganeshaTusk,
-    blessing: "Ganesha's powerful tusk glows! May you break through any challenge with determination.",
+    blessing: "Tusk. I can use what I have for something important.",
     bodyPart: 'tusk',
     correctZone: 'tusk',
     wrongZones: ['ears', 'left-hand', 'belly', 'trunk']
@@ -171,9 +170,9 @@ const SACRED_SYMBOLS = [
     emoji: '??',
     image: symbolModakColored,
     associationIcon: iconHoney,
-    associationText: "I have joy inside me.",
+    associationText: "I can learn, keep trying, and find joy.",
     bodyPartImage: ganeshaLeftHand,
-    blessing: "Ganesha's blessing hand awakens! May sweetness and abundance fill your life.",
+    blessing: "Modak. I can learn, keep trying, and find joy.",
     bodyPart: 'left-hand',
     correctZone: 'left-hand',
     wrongZones: ['right-hand', 'ears', 'base', 'belly']
@@ -184,9 +183,9 @@ const SACRED_SYMBOLS = [
     emoji: '??',
     image: symbolLotusColored,
     associationIcon: iconLightbulb,
-    associationText: "I can stay calm when things get messy.",
+    associationText: "I can keep growing when things are hard.",
     bodyPartImage: ganeshaRightHand,
-    blessing: "Ganesha's wisdom hand comes alive! May purity and enlightenment guide you.",
+    blessing: "Lotus. I can keep growing when things are hard.",
     bodyPart: 'right-hand',
     correctZone: 'right-hand',
     wrongZones: ['left-hand', 'trunk', 'tusk', 'eyes']
@@ -197,9 +196,9 @@ const SACRED_SYMBOLS = [
     emoji: '??',
     image: symbolBellyColored,
     associationIcon: iconUniverse,
-    associationText: "I have room for all my feelings.",
+    associationText: "I can have lots of feelings and keep going.",
     bodyPartImage: ganeshaBelly,
-    blessing: "Ganesha's sacred belly awakens! May you hold the universe's love within you.",
+    blessing: "Big Belly. I can have lots of feelings and keep going.",
     bodyPart: 'belly',
     correctZone: 'belly',
     wrongZones: ['trunk', 'eyes', 'left-hand', 'right-hand']
@@ -210,9 +209,9 @@ const SACRED_SYMBOLS = [
     emoji: '??',
     image: symbolMooshikaColored,
     associationIcon: iconPath,
-    associationText: "I can guide my busy thoughts.",
+    associationText: "I can keep going, one small step at a time.",
     bodyPartImage: ganeshaBase,
-    blessing: "Mooshika, Ganesha's divine vehicle awakens! May wisdom guide your every journey, dear child.",
+    blessing: "Mooshika. I can keep going, one small step at a time.",
     bodyPart: 'base',
     correctZone: 'base',
     wrongZones: ['belly', 'trunk', 'ears', 'eyes']
@@ -621,8 +620,6 @@ const SacredAssemblyContent = ({
   const activeProfile = GameStateManager.getActiveProfile();
   const profileName = activeProfile?.name || 'little explorer';
 
-  const isGameCoachVisible = sceneState?.gameCoachState || sceneState?.isReloadingGameCoach;
-
   const selectedSymbol = sceneState?.selectedSymbol ?
     SACRED_SYMBOLS.find(s => s.id === sceneState.selectedSymbol) : null;
   const highlightedZone = sceneState?.highlightedZone ?
@@ -670,8 +667,8 @@ const SacredAssemblyContent = ({
   const cardVoPlayedForRoundRef = useRef(-1); // tracks which round's card VO has already played
   const finalVoPlayedRef = useRef(false);
   const openingModalVoPlayedRef = useRef(false);
-  const firstSymbolMilestoneVoPlayedRef = useRef(false);
-  const midProgressMilestoneVoPlayedRef = useRef(false);
+  const threeSymbolMilestoneVoPlayedRef = useRef(false);
+  const sixSymbolMilestoneVoPlayedRef = useRef(false);
   const wasAudioOnRef = useRef(isAudioOn);
 
   const CARD_VO_MAP = useMemo(() => ({
@@ -696,7 +693,7 @@ const SacredAssemblyContent = ({
   }), []);
   const getMomentForVoiceKey = useCallback((key) => {
     if (key === 'openingModalPrompt') return 'greeting';
-    if (key === 'firstSymbolPlaced' || key === 'midProgressWonder') return 'celebration';
+    if (key === 'threeSymbolsPlaced' || key === 'sixSymbolsPlaced') return 'celebration';
     if (key.startsWith('wrong') || key.startsWith('hint') || key.startsWith('onboarding')) return 'encouragement';
     if (key.startsWith('final')) return 'closing';
     return 'story';
@@ -950,8 +947,8 @@ const SacredAssemblyContent = ({
     cardVoPlayedForRoundRef.current = -1;
     finalVoPlayedRef.current = false;
     openingModalVoPlayedRef.current = false;
-    firstSymbolMilestoneVoPlayedRef.current = false;
-    midProgressMilestoneVoPlayedRef.current = false;
+    threeSymbolMilestoneVoPlayedRef.current = false;
+    sixSymbolMilestoneVoPlayedRef.current = false;
 
     sceneActions.updateState({
       placedSymbols: {},
@@ -1006,8 +1003,8 @@ const SacredAssemblyContent = ({
       idleNudgePlayedRef.current = false;
       finalVoPlayedRef.current = false;
       openingModalVoPlayedRef.current = false;
-      firstSymbolMilestoneVoPlayedRef.current = false;
-      midProgressMilestoneVoPlayedRef.current = false;
+      threeSymbolMilestoneVoPlayedRef.current = false;
+      sixSymbolMilestoneVoPlayedRef.current = false;
     }
   }, [sceneState?.welcomeShown, sceneState?.placedSymbols]);
 
@@ -1276,12 +1273,12 @@ const SacredAssemblyContent = ({
     const count = Object.keys(newPlacedSymbols).length;
     const percentage = Math.round((count / 8) * 100);
 
-    if (count === 1 && !firstSymbolMilestoneVoPlayedRef.current) {
-      firstSymbolMilestoneVoPlayedRef.current = true;
-      playSceneVoice('firstSymbolPlaced', null, { replayOnReturn: false });
-    } else if ((count === 4 || count === 5) && !midProgressMilestoneVoPlayedRef.current) {
-      midProgressMilestoneVoPlayedRef.current = true;
-      playSceneVoice('midProgressWonder', null, { replayOnReturn: false });
+    if (count === 3 && !threeSymbolMilestoneVoPlayedRef.current) {
+      threeSymbolMilestoneVoPlayedRef.current = true;
+      playSceneVoice('threeSymbolsPlaced', null, { replayOnReturn: false });
+    } else if (count === 6 && !sixSymbolMilestoneVoPlayedRef.current) {
+      sixSymbolMilestoneVoPlayedRef.current = true;
+      playSceneVoice('sixSymbolsPlaced', null, { replayOnReturn: false });
     }
 
     sceneActions.updateState({
@@ -1327,6 +1324,7 @@ const SacredAssemblyContent = ({
     if (!sceneState || !sceneActions) return;
 
     const newWrongAttempts = (sceneState.wrongAttempts || 0) + 1;
+    playSceneVoice('wrongTryAgain', null, { replayOnReturn: false, auto: true });
 
     // Update wrong attempts count
     sceneActions.updateState({
@@ -1336,28 +1334,6 @@ const SacredAssemblyContent = ({
     // Progressive hint disabled in this scene.
   };
 
-
-  // COMMENTED OUT: Auto-welcome trigger
-  /*
-  useEffect(() => {
-    if (sceneState?.phase === 'initial' && 
-        !sceneState?.welcomeShown && 
-        !sceneState?.isReloadingGameCoach) {
-      
-      safeSetTimeout(() => {
-        setShowSparkle('divine-light');
-        
-        safeSetTimeout(() => {
-          setShowSparkle(null);
-          sceneActions.updateState({ 
-            welcomeShown: true,
-            phase: 'initial'
-          });
-        }, 1800);
-      }, 500);
-    }
-  }, [sceneState?.phase, sceneState?.welcomeShown]);
-  */
 
   useEffect(() => {
     if (!isReload || !sceneState) return;
@@ -1710,15 +1686,6 @@ const SacredAssemblyContent = ({
           })()}
 
           {/* Guide arrow removed */}
-
-          {/* SimpleGameCoach COMMENTED OUT 
-          <SimpleGameCoach
-            config={{...}}
-            sceneState={sceneState}
-            sceneActions={sceneActions}
-            profileName={profileName}
-          />
-          */}
 
           {/* Sacred Mountain Background */}
           <div

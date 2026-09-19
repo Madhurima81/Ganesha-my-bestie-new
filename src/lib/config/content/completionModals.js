@@ -4,20 +4,20 @@
 export const COMPLETION_MODALS = {
   'symbol-mountain': {
     modak: {
-      title: 'Mooshika Found His Calm!',
-      subtitle: 'You gathered the offerings and made room for every feeling.'
+      title: 'Mooshika Made It!',
+      subtitle: 'Small steps brought him to Ganesha.'
     },
     pond: {
-      title: 'The Lotus Has Bloomed!',
-      subtitle: 'You found another way and helped it bloom.'
+      title: 'The Lotus Bloomed!',
+      subtitle: 'You helped the water reach the lotus.'
     },
     symbol: {
       title: 'You Looked and Listened Carefully!',
       subtitle: 'Then you stayed focused and chose what each obstacle needed.'
     },
     'final-scene': {
-      title: 'All Eight Symbols Together!',
-      subtitle: 'Every symbol has found its place.'
+      title: 'You Know Ganesha’s Symbols!',
+      subtitle: 'Use his symbols to help you every day.'
     }
   },
   'cave-of-secrets': {
@@ -45,24 +45,24 @@ export const COMPLETION_MODALS = {
 
 'shloka-river': {
   'vakratunda-grove': {
-    title: 'You found another way!',
-    subtitle: 'There is room for everyone.'
+    title: 'Everyone Made It Across!',
+    subtitle: 'You found a way for everyone.'
   },
   'suryakoti-bank': {
-    title: 'The light showed the way!',
-    subtitle: 'Both shine equally now!'
+    title: 'You Brought Back the Light!',
+    subtitle: 'A closer look showed what was really there.'
   },
   'nirvighnam-chant': {
     title: 'The Way Is Clear!',
-    subtitle: 'You asked for help! The bridge is ready!'
+    subtitle: 'You solved what you could and asked for help.'
   },
   'sarvakaryeshu-chant': {
-    title: 'In Everything You Do',
-    subtitle: 'You can use Ganesha’s lessons in many different moments.'
+    title: 'Ganesha Was With You All Day!',
+    subtitle: 'In every moment, from morning to night.'
   },
   'shloka-river-finale': {
     title: 'The Shloka River Is Complete!',
-    subtitle: 'You put the whole shloka together.'
+    subtitle: 'All eight words now flow together.'
   }
 },
 
@@ -88,15 +88,15 @@ export const COMPLETION_MODALS = {
   'about-me-hut': {
   'my-indian-story': {
     title: 'Your Story Is Special!',
-    subtitle: "Your family's story is part of India's many stories."
+    subtitle: 'Families can connect to India in many different ways.'
   },
   'family-tree': {
     title: 'Our Families Are Special!',
-    subtitle: 'Every family is different, and full of love.'
+    subtitle: 'Every family has its own story.'
   },
   'favorite-food': {
     title: 'We Know Each Other!',
-    subtitle: 'Now we know what we both love.'
+    subtitle: 'We learned a little more about each other.'
   },
   'dreams-wishes': {
     title: 'Your Dream Shines!',

@@ -272,6 +272,19 @@ export default function SamaprabhaGame({
     playSceneLine?.('scene11_sama_hint_look', undefined, { replayOnReturn: false });
   }, [hintLevel, isActive, isPaused, lit, phase, playSceneLine, stopVoice]);
 
+  // Level-3 escalation: "Move the light and look closely" — once per clue,
+  // mirrors the rescue dots that appear at the same hintLevel.
+  useEffect(() => {
+    if (!isActive || isPaused || phase !== 'play' || hintLevel < 3) return;
+
+    const onceKey = `${lit}-move`;
+    if (lastHintVoKeyRef.current === onceKey) return;
+
+    lastHintVoKeyRef.current = onceKey;
+    stopVoice?.();
+    playSceneLine?.('scene11_sama_hint', undefined, { replayOnReturn: false });
+  }, [hintLevel, isActive, isPaused, lit, phase, playSceneLine, stopVoice]);
+
   useEffect(() => {
     lastHintVoKeyRef.current = null;
   }, [lit]);

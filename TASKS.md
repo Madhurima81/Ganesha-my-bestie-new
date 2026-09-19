@@ -150,6 +150,7 @@ Before every task, Claude Code must:
   Vakratunda's canonical gold star. See CHANGELOG 2026-09-18. Not yet visually verified
   in-browser — Madhurima to confirm on next Tusk eyes-game playthrough.
 - [ ] T51 · Onboarding install/hand-off scene (`CleanProfileSelector.jsx`, `PwaInstallManager.getInstallGuide`) — device-test the *install* state on real iOS Safari, iOS Chrome and Android (desktop Chrome skips it, so it was never seen live). Also verify the installed-PWA relaunch → Pick Your Friend boot on a real installed PWA. Nudge the beside-card Ganesha up a little if it reads too low.
+- [ ] T53 · Shloka River Scene 3 (Nirvighnam + Kuru Me Deva) granular hint VO — game logic change, not content wiring, deferred from the 2026-09-19 content pass. `NirvighnamGame.jsx` only fires one hint line per obstacle (no "keep holding" / "keep rubbing" idle-progress tier). `KurumedevaGame.jsx` only calls `playSceneLine` once, for `kuru_done` — none of the per-step lines (logs first-try vs. after-fail, idle "who can help", rope first-try vs. after-fail, post-Elephant/post-Monkey confirmations) are wired to any `playSceneLine` call at all, so that copy exists in content only, not in the live scene. Needs new `playSceneLine(...)` calls added at the right interaction points in both game files, plus matching keys in `NirvighnamChantSimplified.jsx`'s local `webSpeechMap`. Can be done later — do before wider beta if audio-guidance completeness matters for launch.
 
 
 

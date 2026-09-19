@@ -289,6 +289,27 @@ export default function NirvighnamGame({
     playSceneLine?.(`nirv_hint_${nextObstacleId}`);
   }, [hintLevel, isPaused, nextObstacleId, phase, playSceneLine, stopSceneVoice]);
 
+  // Level-3 hint: "keep going" idle-progress line — once per obstacle, only
+  // fires if the child has actually started (mirrors Suryakoti's rub/keep pattern).
+  const obstacleHasProgress = nextObstacleId === 'stone'
+    ? (holdingRock || rockProgress > 0)
+    : nextObstacleId === 'branch'
+      ? dragging === 'branch'
+      : nextObstacleId === 'reed'
+        ? reedSwipeAmount > 0
+        : false;
+
+  useEffect(() => {
+    if (phase !== 'play' || hintLevel !== 3 || !nextObstacleId || isPaused || !obstacleHasProgress) return;
+
+    const onceKey = `${nextObstacleId}-nirv_hint_keep_${nextObstacleId}`;
+    if (lastHintVoRef.current === onceKey) return;
+    lastHintVoRef.current = onceKey;
+
+    stopSceneVoice?.();
+    playSceneLine?.(`nirv_hint_keep_${nextObstacleId}`);
+  }, [hintLevel, isPaused, nextObstacleId, obstacleHasProgress, phase, playSceneLine, stopSceneVoice]);
+
   useEffect(() => {
     onPhaseCompleteRef.current = onPhaseComplete;
     onGameCompleteRef.current = onGameComplete;

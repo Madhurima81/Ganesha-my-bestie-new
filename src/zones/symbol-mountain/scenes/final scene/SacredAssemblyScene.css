@@ -835,20 +835,103 @@
     width: 560px;
     height: 640px;
   }
-  
+
   .click-floating-symbol img {
     width: 40px !important;
     height: 40px !important;
   }
-  
+
   .assembly-progress {
     font-size: 0.8rem;
     padding: 6px 12px;
     min-width: 120px;
   }
-  
+
   .progress-text {
     font-size: 0.75rem;
+  }
+
+  /* Placed symbols scaled to the 560/920 container ratio above — the
+     images don't shrink with .ganesha-assembly-container on their own,
+     they need to be scaled explicitly at each breakpoint. */
+  .placed-symbol-v8 img.placed-symbol-img.placed-symbol-mooshika {
+    width: 61px !important;
+    transform: translate(5px, -29px) rotate(0deg) scaleX(-1) !important;
+  }
+  .placed-symbol-v8 img.placed-symbol-img.placed-symbol-modak {
+    width: 37px !important;
+    transform: translate(-9px, -23px) rotate(0deg) !important;
+  }
+  .placed-symbol-v8 img.placed-symbol-img.placed-symbol-belly {
+    width: 85px !important;
+    transform: translate(-48px, -48px) rotate(0deg) !important;
+  }
+  .placed-symbol-v8 img.placed-symbol-img.placed-symbol-lotus {
+    width: 43px !important;
+    transform: translate(-23px, -23px) rotate(0deg) scaleX(-1) !important;
+  }
+  .placed-symbol-v8 img.placed-symbol-img.placed-symbol-trunk {
+    width: 70px !important;
+    transform: translate(-40px, -35px) rotate(0deg) !important;
+  }
+  .placed-symbol-v8 img.placed-symbol-img.placed-symbol-eyes {
+    width: 55px !important;
+    transform: translate(-24px, -29px) rotate(0deg) !important;
+  }
+  .placed-symbol-v8 img.placed-symbol-img.placed-symbol-ears {
+    width: 76px !important;
+    transform: translate(-41px, -17px) rotate(0deg) !important;
+  }
+  .placed-symbol-v8 img.placed-symbol-img.placed-symbol-tusk {
+    width: 30px !important;
+    transform: translate(-17px, -29px) rotate(80deg) !important;
+  }
+}
+
+/* Phone landscape gap: max-width:768px above only fires in portrait widths
+   (blocked by the rotate-device overlay) or on narrow phones like iPhone SE.
+   Common phones (iPhone 14/15, Pixel) land at 769-1023px wide in landscape,
+   which previously matched NO breakpoint and rendered the full 920x1020
+   desktop container — 2-3x taller than the viewport. Same fix pattern as
+   the 1024-1366px iPad landscape rule further down, extended to this gap. */
+@media (min-width: 769px) and (max-width: 1023px) and (orientation: landscape) {
+  .ganesha-assembly-container {
+    width: 560px;
+    height: 640px;
+    top: 47%;
+  }
+
+  .placed-symbol-v8 img.placed-symbol-img.placed-symbol-mooshika {
+    width: 61px !important;
+    transform: translate(5px, -29px) rotate(0deg) scaleX(-1) !important;
+  }
+  .placed-symbol-v8 img.placed-symbol-img.placed-symbol-modak {
+    width: 37px !important;
+    transform: translate(-9px, -23px) rotate(0deg) !important;
+  }
+  .placed-symbol-v8 img.placed-symbol-img.placed-symbol-belly {
+    width: 85px !important;
+    transform: translate(-48px, -48px) rotate(0deg) !important;
+  }
+  .placed-symbol-v8 img.placed-symbol-img.placed-symbol-lotus {
+    width: 43px !important;
+    transform: translate(-23px, -23px) rotate(0deg) scaleX(-1) !important;
+  }
+  .placed-symbol-v8 img.placed-symbol-img.placed-symbol-trunk {
+    width: 70px !important;
+    transform: translate(-40px, -35px) rotate(0deg) !important;
+  }
+  .placed-symbol-v8 img.placed-symbol-img.placed-symbol-eyes {
+    width: 55px !important;
+    transform: translate(-24px, -29px) rotate(0deg) !important;
+  }
+  .placed-symbol-v8 img.placed-symbol-img.placed-symbol-ears {
+    width: 76px !important;
+    transform: translate(-41px, -17px) rotate(0deg) !important;
+  }
+  .placed-symbol-v8 img.placed-symbol-img.placed-symbol-tusk {
+    width: 30px !important;
+    transform: translate(-17px, -29px) rotate(80deg) !important;
   }
 }
 
@@ -858,24 +941,58 @@
     width: 380px;
     height: 460px;
   }
-  
+
   .click-floating-symbol img {
     width: 35px !important;
     height: 35px !important;
   }
-  
+
   .hint-text-v8,
   .tap-here-v8,
   .tap-instruction-v8 {
     font-size: 10px;
   }
-  
+
   .assembly-progress {
     top: 20px;
     left: 20px;
     font-size: 0.7rem;
     padding: 4px 8px;
     min-width: 100px;
+  }
+
+  /* Placed symbols scaled to the 380/920 container ratio above */
+  .placed-symbol-v8 img.placed-symbol-img.placed-symbol-mooshika {
+    width: 41px !important;
+    transform: translate(3px, -20px) rotate(0deg) scaleX(-1) !important;
+  }
+  .placed-symbol-v8 img.placed-symbol-img.placed-symbol-modak {
+    width: 25px !important;
+    transform: translate(-6px, -16px) rotate(0deg) !important;
+  }
+  .placed-symbol-v8 img.placed-symbol-img.placed-symbol-belly {
+    width: 58px !important;
+    transform: translate(-32px, -32px) rotate(0deg) !important;
+  }
+  .placed-symbol-v8 img.placed-symbol-img.placed-symbol-lotus {
+    width: 29px !important;
+    transform: translate(-16px, -16px) rotate(0deg) scaleX(-1) !important;
+  }
+  .placed-symbol-v8 img.placed-symbol-img.placed-symbol-trunk {
+    width: 48px !important;
+    transform: translate(-27px, -24px) rotate(0deg) !important;
+  }
+  .placed-symbol-v8 img.placed-symbol-img.placed-symbol-eyes {
+    width: 37px !important;
+    transform: translate(-17px, -20px) rotate(0deg) !important;
+  }
+  .placed-symbol-v8 img.placed-symbol-img.placed-symbol-ears {
+    width: 52px !important;
+    transform: translate(-28px, -12px) rotate(0deg) !important;
+  }
+  .placed-symbol-v8 img.placed-symbol-img.placed-symbol-tusk {
+    width: 21px !important;
+    transform: translate(-12px, -20px) rotate(80deg) !important;
   }
 }
 

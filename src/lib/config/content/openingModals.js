@@ -11,7 +11,7 @@ import dreamHeartIcon from '../../../zones/about-me-hut/enjoy/assets/images/hear
 import dreamStarIcon from '../../../zones/about-me-hut/enjoy/assets/images/shootingstar-icon.webp';
 import dreamWorldIcon from '../../../zones/about-me-hut/enjoy/assets/images/world-icon.webp';
 
-﻿// Opening Modal Content for All 22 Scenes
+// Opening Modal Content for All 22 Scenes
 // Organized by zone â†’ scene
 
 export const OPENING_MODALS = {
@@ -21,16 +21,17 @@ export const OPENING_MODALS = {
   // ========================================
   'symbol-mountain': {
     'modak': {
-      title: "Share the Modaks",
-      description: "Find Mooshika nearby and share the modaks.",
+      title: "Help Mooshika Keep Going",
+      description: "One small step at a time.",
+      voiceover: "Mooshika has a journey to make. Let’s help him along the way.",
       icons: ['mooshika', 'modak', 'belly'],
       buttonText: "Let's Begin",
       character: 'ganesha-happy'
     },
 
     'pond': {
-      title: "The Golden Lotus",
-      description: "A golden lotus is waiting to bloom.",
+      title: "Help the Lotus Bloom",
+      description: "Clear the way for the water.",
       icons: ['lotus', 'trunk'],
       iconLabels: ['Lotus', 'Trunk'],
       buttonText: "Let's Explore",
@@ -47,8 +48,9 @@ export const OPENING_MODALS = {
     },
 
     'final-scene': {
-      title: "All Symbols Together",
-      description: "Every symbol is ready. Let's bring them together.",
+      title: "Remember Ganesha’s Symbols",
+      description: "Match each symbol and remember what it means.",
+      voiceover: "You’ve discovered all eight symbols. Let’s see what you remember when you look at Ganesha.",
       icons: ['eyes', 'trunk', 'lotus'],
       buttonText: "Let's Begin",
       character: 'ganesha-cave'
@@ -110,8 +112,8 @@ export const OPENING_MODALS = {
   // ========================================
   'shloka-river': {
     'vakratunda-grove': {
-      title: "Your Journey Begins!",
-      description: "The river has two surprises waiting for you.",
+      title: "Make Way for Everyone",
+      description: "Find another way so everyone can come along.",
       icons: ['vakratunda', 'mahakaya'],
       buttonText: "Let's Explore",
       character: 'ganesha-headphones'
@@ -119,23 +121,23 @@ export const OPENING_MODALS = {
 
     'suryakoti-bank': {
       title: "Bring Back the Light!",
-      description: "The river feels a little dark today.",
+      description: "Light the way and see what's really there.",
       icons: ['suryakoti', 'samaprabha'],
       buttonText: "Let's Explore",
       character: 'ganesha-headphones'
     },
 
     'nirvighnam-chant': {
-      title: "The River Needs You!",
-      description: "Some things are standing in the way.",
+      title: "Clear the Way Together!",
+      description: "Can you help our friends through?",
       icons: ['nirvighnam', 'kurumedeva'],
       buttonText: "Let's Explore",
       character: 'ganesha-headphones'
     },
 
     'sarvakaryeshu-chant': {
-      title: "Your Powers in Action!",
-      description: "See where your powers belong - and remember them always.",
+      title: "Ganesha All Day",
+      description: "Find Ganesha in your day.",
       icons: ['sarvakaryeshu', 'sarvada'],
       iconLabels: ['Sarvakaryeshu', 'Sarvada'],
       buttonText: "Let's Explore",
@@ -144,7 +146,7 @@ export const OPENING_MODALS = {
 
     'shloka-river-finale': {
       title: "Complete the Shloka!",
-      description: "Can you put all eight shloka words in the correct order?",
+      description: "Put all eight words in the right order.",
       icons: ['vakratunda', 'nirvighnam', 'sarvada'],
       buttonText: "Let's Explore",
       character: 'ganesha-headphones'
@@ -212,21 +214,23 @@ export const OPENING_MODALS = {
   // ABOUT ME HUT
   // ========================================
   'about-me-hut': {
-'my-indian-story': {
-  title: "My Indian Story",
-  description: "Let's explore my Indian story and yours!",
-  icons: [
-    storyHomeIcon,
-    storyLanguageIcon,
-    storyFestivalIcon
-  ],
-  iconLabels: ['Home', 'Language', 'Festival'],
-  buttonText: "Let's Explore",
-  character: 'baby-ganesha-sit'
-},
+    'my-indian-story': {
+      title: "My Indian Story",
+      description: "Let's explore some parts of my India story, then you can share yours!",
+      voiceover: "Let's explore some parts of my India story, then you can share yours.",
+      icons: [
+        storyHomeIcon,
+        storyLanguageIcon,
+        storyFestivalIcon
+      ],
+      iconLabels: ['Home', 'Language', 'Festival'],
+      buttonText: "Let's Explore",
+      character: 'baby-ganesha-sit'
+    },
     'family-tree': {
       title: "Our families",
       description: "Let's meet my family and yours!",
+      voiceover: "Let's meet my family, then make a tree for yours.",
       icons: [
         familyHomeIcon,
         familyHeartIcon,
@@ -240,6 +244,7 @@ export const OPENING_MODALS = {
     'favorite-food': {
       title: "Our Favorite Things",
       description: "Let's find my favorite things and yours!",
+      voiceover: "Let's find out what I like — then I want to learn about you.",
       icons: [
         favoriteFoodIcon,
         favoriteColorIcon,
@@ -251,8 +256,9 @@ export const OPENING_MODALS = {
     },
 
     'dreams-wishes': {
-      title: "Dream Together",
+      title: "Our Wishes & Dreams",
       description: "Let's help and dream together!",
+      voiceover: "I have a few wishes for the world. Will you help me?",
       icons: [
         dreamHeartIcon,
         dreamStarIcon,

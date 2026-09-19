@@ -6,6 +6,7 @@ import DrawingPad from '../components/Drawingpad';
 import StoryProgressHeader from '../components/StoryProgressHeader';
 import TextInputModal from '../components/Textinputmodal';
 import LetterInputKeyboard from '../components/LetterInputKeyboard';
+import AboutMeGaneshaHost from '../components/AboutMeGaneshaHost';
 import SparkleAnimation from '../../../lib/components/animation/SparkleAnimation';
 import GaneshaGestureCue from '../../../lib/components/gesture/GaneshaGestureCue';
 import { useMiniGesture } from '../../../lib/hooks/useMiniGesture';
@@ -243,22 +244,22 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
   const VOICE_LINES = {
     // Opening Screen
-    opening: "Let's find out what I like, then you can choose your favorites.",
+    opening: "Let's find out what I like — then I want to learn about you.",
 
     // Ganesha Section - Food
-    foodQuestion: "Which food is my favorite? Tap your guess.",
+    foodQuestion: "Can you guess my favorite food?",
     foodCorrect: "Yes — I love modak!",
 
     // Ganesha Section - Color
-    colorQuestion: "Which color do I like best?",
+    colorQuestion: "Can you guess my favorite color?",
     colorCorrect: "Yes — red!",
 
     // Ganesha Section - Activity
-    activityQuestion: "What do I love to do?",
+    activityQuestion: "What do you think I love doing?",
     activityCorrect: "Yes — I love to dance!",
 
     // Ganesha Section - Friend
-    friendQuestion: "Who is my friend?",
+    friendQuestion: "Who do you think my friend is?",
     friendCorrect: "Yes — Mooshika!",
 
     // Transition to Child Section
@@ -279,11 +280,11 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
     // Child Section - Friend
     childFriendQuestion: "Add the name of a friend you care about.",
-    childFriendCorrect: "Nice choice!",
+    childFriendCorrect: "Thanks for telling me!",
 
     // Connection Moment (emotional beat)
     friendCelebration: "Now we know some things we each enjoy.",
-    completionCelebration: "We learned a little more about each other.",
+    completionCelebration: "",
 
     // Idle Hints (Ganesha Section)
     foodHint: "Look for the sweet I love.",
@@ -1737,9 +1738,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Food Choice Screen */}
       {sceneState.gamePhase === 'food-choice' && (
         <div className="choice-screen">
-          <div className="ganesha-waiting">
-            <img src={babyGaneshaImg} alt="Baby Ganesha" className="ganesha-small bounce-gentle" />
-          </div>
+          <AboutMeGaneshaHost image={babyGaneshaImg} className="about-me-ganesha-host--favorite" />
           {/* Tap instruction removed */}
           <div className="choices-container food-scene">
             {sceneState.randomFoods.map((food, index) => (
@@ -1780,9 +1779,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Color Choice */}
       {sceneState.gamePhase === 'color-choice' && (
         <div className="choice-screen">
-          <div className="ganesha-waiting">
-            <img src={babyGaneshaImg} alt="Baby Ganesha" className="ganesha-small bounce-gentle" />
-          </div>
+          <AboutMeGaneshaHost image={babyGaneshaImg} className="about-me-ganesha-host--favorite" />
           {/* Tap instruction removed */}
           <div className="choices-container color-scene">
             {sceneState.randomColors.map((color, index) => (
@@ -1823,9 +1820,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Activity Choice */}
       {sceneState.gamePhase === 'activity-choice' && (
         <div className="choice-screen">
-          <div className="ganesha-waiting">
-            <img src={babyGaneshaImg} alt="Baby Ganesha" className="ganesha-small bounce-gentle" />
-          </div>
+          <AboutMeGaneshaHost image={babyGaneshaImg} className="about-me-ganesha-host--favorite" />
           {/* Tap instruction removed */}
           <div className="choices-container activity-scene">
             {sceneState.randomActivities.map((activity, index) => (
@@ -1877,9 +1872,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Friend Choice */}
       {sceneState.gamePhase === 'friend-choice' && (
         <div className="choice-screen">
-          <div className="ganesha-waiting">
-            <img src={babyGaneshaImg} alt="Baby Ganesha" className="ganesha-small bounce-gentle" />
-          </div>
+          <AboutMeGaneshaHost image={babyGaneshaImg} className="about-me-ganesha-host--favorite" />
           {/* Tap instruction removed */}
           <div className="choices-container friend-scene">
             {sceneState.randomFriends.map((friend, index) => (

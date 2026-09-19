@@ -1,6 +1,81 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
 
+## [2026-09-19] — Shloka River final VO/content pass (all 5 scenes)
+**Touched:** src/lib/config/content/openingModals.js,
+src/lib/config/content/completionModals.js,
+src/lib/config/content/voiceGuidance.js,
+src/lib/config/content/discoveryContent.js,
+src/zones/shloka-river/shared/components/chantCardContent.js,
+src/zones/shloka-river/scenes/Scene2/SuryakotiBankSimplified.jsx,
+src/zones/shloka-river/scenes/Scene3/NirvighnamChantSimplified.jsx,
+src/zones/shloka-river/scenes/scene4/SarvakaryeshuChantSimplified.jsx,
+src/zones/shloka-river/scenes/scene4/SarvadaGame.jsx,
+TASKS.md
+**Changed:** Applied Madhurima's finalized script pass across all 5 live Shloka
+River scenes — Suryakoti Bank, Nirvighnam Chant, Sarvakaryeshu/Sarvada, and the
+Shloka River Finale (Vakratunda Grove content had already landed in an earlier
+session). Every layer of content is now final and wired into the live path:
+1. Opening modal — title, subtitle, and opening VO for each scene.
+2. Closing/completion modal — title and subtitle for each scene's win screen.
+3. Sidebar content (chantCardContent.js) — Ganesha Line 1 & 2, invitation, and
+   gift text for all 8 shloka words.
+4. Affirmations — the auto-reveal "I ..." affirmation for all 8 words
+   (discoveryContent.js).
+5. Voiceover — welcome/opening lines, in-game intros, gameplay hints, success
+   lines, and meaning lines for every word, rewired through voiceGuidance.js
+   and each scene's local VO fallback map where one exists.
+6. Fireworks/finale VO — the finale's `finalCelebration` orbs/fireworks line
+   ("You remembered the whole Ganesha Shloka...").
+**Open:**
+- T53 (new, in TASKS.md): Nirvighnam Chant's per-obstacle hint VO now plays
+  (fixed a real gap — `nirv_hint_stone/branch/reed` had no content before this
+  pass), but the finer idle-progress tier ("Keep holding," "Keep rubbing") and
+  all of Kuru Me Deva's per-step hints (logs vs. rope, before/after
+  Elephant/Monkey) are copy-only — the game components don't yet fire
+  `playSceneLine` at those points. Needs new calls added inside
+  `NirvighnamGame.jsx` / `KurumedevaGame.jsx`, not just content. Deferred,
+  scoped for later.
+- Sarvakaryeshu's "In-Game Opening VO" line ("Let's see which Ganesha symbol
+  can help.") has no dedicated slot in the current wiring — the scene reuses
+  the single `welcome` key for both the opening-modal VO and phase entry, so
+  the opening-modal line was kept there instead. Minor, not blocking.
+
+## [2026-09-19] — About Me Hut final VO/content pass + Ganesha host presentation
+**Touched:** src/lib/config/content/openingModals.js,
+src/lib/config/content/completionModals.js,
+src/lib/config/content/voiceGuidance.js,
+src/zones/about-me-hut/family-tree/Familytreegame.jsx,
+src/zones/about-me-hut/food/Favoritefoodgame.jsx,
+src/zones/about-me-hut/enjoy/ObstacleRemoverGame.jsx,
+src/zones/about-me-hut/indian-story/MyIndianStoryGame.jsx,
+src/zones/about-me-hut/components/AboutMeGaneshaHost.jsx,
+src/zones/about-me-hut/components/AboutMeGaneshaHost.css
+**Changed:** Applied the final Lambodara Lodge / About Me Hut script pass across
+the four current scenes.
+1. Opening modal content now carries the opening VO line alongside title,
+   subtitle, button, icons, and character metadata for Our Families, Our
+   Favorite Things, Our Wishes & Dreams, and My Indian Story.
+2. Closing modal subtitles were aligned to the final sheet: family-story copy
+   for Our Families, "learned a little more" for Favorite Things, existing
+   dream-special copy for Wishes & Dreams, and "Families can connect to India
+   in many different ways" for My Indian Story.
+3. Scene VO constants were updated to the final wording: softer Favorite
+   Things prompts, revised Wishes & Dreams food/dream-cloud lines, My Indian
+   Story festival/comparison wording, and Family Tree relationship reveals
+   ("This is my father, Shiva", etc.).
+4. Final completion-modal VO is now intentionally silent where the script says
+   "Closing VO: None" by guarding empty completion VO strings.
+5. Added reusable `AboutMeGaneshaHost` presentation component and placed baby
+   Ganesha as an in-scene host on Favorite Things choice screens, Wishes &
+   Dreams wish screens, and My Indian Story map/language/festival phases.
+   This keeps the existing GestureDemo/GaneshaGestureCue/idle-hint/sparkle
+   systems intact while making Ganesha visually present during the active
+   tasks.
+**Open:** Not build-verified or visually verified in-browser yet. Current
+working tree also includes pre-existing unrelated dirty docs/CSS from earlier
+passes; commit staging should be path-scoped.
+
 ## [2026-09-18] — Shared-layer audio fixes from checklist review
 **Touched:** src/lib/hooks/useVoiceGuidance.js, src/lib/audio/SoundManager.js,
 src/lib/components/celebration/SceneCompletionCelebration.jsx

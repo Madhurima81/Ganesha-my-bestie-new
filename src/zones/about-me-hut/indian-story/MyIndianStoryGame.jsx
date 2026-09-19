@@ -21,6 +21,7 @@ import ZoneBadgeButton from '../../../lib/components/navigation/ZoneBadgeButton'
 import VOReplayButton from '../../../lib/components/feedback/VOReplayButton';
 import useAudioPreference from '../../../lib/hooks/useAudioPreference';
 import StoryProgressHeader from '../components/StoryProgressHeader';
+import AboutMeGaneshaHost from '../components/AboutMeGaneshaHost';
 import bgImage from './assets/images/name_background.webp';
 import babyGaneshaImg from '/images/ganesha-final-new.svg';
 import OpeningModal from '../../shared/components/OpeningModal';
@@ -596,7 +597,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
 
   // Audio-gated speak
   const speakIfUnmuted = useCallback((text, opts) => {
-    if (isAudioOn) speak(text, opts);
+    if (isAudioOn && text) speak(text, opts);
   }, [isAudioOn, speak]);
 
   // Voice lines
@@ -615,14 +616,14 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     language_wheel:   `Now choose up to three languages you use or hear.`,
     language_confirmed: `These are the languages you chose.`,
     language_child_idle: `Choose the languages that are part of your life.`,
-    festivals_guess:  `Which festival do I love to celebrate?`,
+    festivals_guess:  `Can you find my festival?`,
     festivals_guess_hint: `Look for the festival connected to my favorite sweet.`,
     festivals_wheel:  `Now choose the festivals your family celebrates.`,
     festivals_child_idle: `Which celebrations are part of your family?`,
     festivals_confirmed: `These are the festivals you chose.`,
-    origin_card:      `Your family has its own Indian story.`,
+    origin_card:      `Your places, languages, and celebrations can all be part of that connection.`,
     phase1_complete:  `You found some places connected to my story.`,
-    completion_screen: `You explored my story, and shared some of your family's story too.`,
+    completion_screen: ``,
   };
 
   const activeProfile = GameStateManager.getCurrentProfile?.() || null;
@@ -700,7 +701,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
       case STEPS.FESTIVALS_CHILD:
         return 'Tap the festivals you celebrate.';
       case STEPS.ORIGIN_CARD:
-        return 'Your family has its own Indian story.';
+        return 'Your places, languages, and celebrations can all be part of that connection.';
       default:
         return null;
     }
@@ -1523,7 +1524,7 @@ const discoverLocation = useCallback((index) => {
       };
 
       if (isAudioOn) {
-        speakIfUnmuted('Yes! Ganesh Chaturthi is a special festival for Ganesha.', {
+        speakIfUnmuted('Yes — Ganesh Chaturthi!', {
           age: childAge,
           moment: 'celebration',
           onEnd: goToFestivalChildPhase,
@@ -1646,7 +1647,7 @@ const handleComplete = () => {
           zoneId="about-me-hut"
           sceneName="My Indian Story"
           completionTitle="Your Story Is Special!"
-          completionSubtitle="Your family’s story is part of India’s many stories."
+          completionSubtitle="Families can connect to India in many different ways."
           childName={childName || 'Friend'}
           sceneId="my-indian-story"
           isFinalScene={true}
@@ -1758,6 +1759,8 @@ const handleComplete = () => {
             discoveries={discoveredLocations.length > 0 ? discoveredLocations.map(idx => ({ ...PHASE1_LOCATIONS[idx], image: PHASE1_LOCATIONS[idx].icon })) : []}
             isChildMode={false}
           />
+
+          <AboutMeGaneshaHost image={babyGaneshaImg} className="about-me-ganesha-host--left-bottom" />
 
           {/* India Map Container */}
           <div
@@ -1969,21 +1972,6 @@ const handleComplete = () => {
               }
             `}</style>
 
-            {/* Ganesha appears only after all locations discovered */}
-            {showCelebration && (
-              <div style={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                zIndex: 3,
-                pointerEvents: 'none',
-                animation: 'popIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)',
-              }}>
-                <img src={babyGaneshaImg} alt="Ganesha" style={{ width: 'clamp(160px, 24vw, 280px)', height: 'auto' }} />
-              </div>
-            )}
-
             <GestureDemo
               type="drag"
               from={{
@@ -2191,6 +2179,8 @@ const handleComplete = () => {
       {/* Language Ganesha Phase — 4 Language Guess Game */}
       {phase === STEPS.LANGUAGE_GANESHA && (
         <div style={{ paddingTop: '20px', paddingBottom: '56px', minHeight: 'var(--app-height, 100vh)' }}>
+          <AboutMeGaneshaHost image={babyGaneshaImg} className="about-me-ganesha-host--left-middle" />
+
           {/* Play Button Section */}
           <div style={{ textAlign: 'center', marginTop: 'clamp(20px, 4vh, 90px)', marginBottom: '8px' }}>
             <button
@@ -2551,6 +2541,8 @@ const handleComplete = () => {
           flexDirection: 'column',
           alignItems: 'center',
         }}>
+          <AboutMeGaneshaHost image={babyGaneshaImg} className="about-me-ganesha-host--left-bottom" />
+
           {/* Festival Cards Container — Flexbox for proper centering */}
           <div style={{
             marginTop: 'clamp(24px, 15vh, 160px)',
@@ -2952,8 +2944,8 @@ const handleComplete = () => {
       {phase === STEPS.ORIGIN_CARD && phase !== STEPS.COMPLETE && (
         <AboutMeComparisonCard
           className="aboutme-comparison--story-connect"
-          title="Our Stories Connect!"
-          subtitle={null}
+          title="My Indian Story"
+          subtitle="There are many ways to feel connected to India."
           onContinue={() => {
             playUiTap();
             playChime();

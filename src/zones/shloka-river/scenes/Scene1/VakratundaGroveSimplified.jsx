@@ -372,53 +372,54 @@ const VakratundaGroveContent = ({
 
   const playGuidanceVoice = useCallback((key, onEnded, options = {}) => {
     const webSpeechMap = {
-      welcome: "Let's help our friends by the river.",
+      welcome: "Our river friends need a way across. Let's help them.",
       instructionListen: 'Listen carefully.',
-      instructionTapAndRepeat: "That way's blocked — look for another way around.",
-      instructionTapTheElephant: "That way's blocked — look for another way around.",
-      hintTapElephant: "That way's blocked — look for another way around.",
-      hintLookForGlow: "Try going around — see the open water?",
-      hintKeepBuildingPath: "Keep going — you're finding the way through.",
-      vakratundaSetup: 'The frog made it! He found his family!',
-      vakratundaClaim: 'I find a new way.',
-      mahakayaSetup: 'You chanted… and it grew tall and strong.',
-      mahakayaClaim: 'You have that strength too.',
-      sceneComplete: "You found another way. There's room for everyone. Both powers are yours now.",
+      instructionTapAndRepeat: "That way is blocked. Can you find another way around?",
+      instructionTapTheElephant: "That way is blocked. Can you find another way around?",
+      hintTapElephant: "That way is blocked. Can you find another way around?",
+      hintLookForGlow: 'Look for another way through.',
+      hintKeepBuildingPath: 'Look for another way through.',
+      vakratundaSetup: 'Frog reached his family.',
+      vakratundaClaim: 'I can change my plan and try another way.',
+      mahakayaSetup: 'Everyone could come along.',
+      mahakayaClaim: 'I can make space in my heart for others.',
+      sceneComplete: 'You found another way, and made sure everyone could come along.',
       instructionTapLotusWord: 'Tap the lotus.',
       instructionTapLotus: 'Tap the lotus.',
       instructionTapLotusUnlock: 'Tap the lotus.',
       instructionTapLilyWord: 'Tap the lily.',
       instructionTapLily: 'Tap the lily.',
       instructionTapLilyUnlock: 'Tap the lily.',
-      scene10_vak_intro: 'The frog can see his family, but rocks and logs block the way. Drag the frog to help him find a way around.',
-      scene10_vak_current_too_strong: "The river current is too strong there. Let's try another way.",
-      scene10_vak_hint_another_way: "Can you find another way?",
-      scene10_vak_frog_cross: 'The frog can see his family, but rocks and logs block the way. Drag the frog to help him find a way around.',
-      scene10_vak_tap_logs: "That way's blocked — look for another way around.",
-      scene10_vak_blocked: "That way's blocked — look for another way around.",
-      scene10_vak_choose: "That way's blocked — look for another way around.",
-      scene10_vak_make_path: 'The frog can see his family, but rocks and logs block the way. Drag the frog to help him find a way around.',
-      scene10_vak_drag_leaves: 'Follow the safe water past the rocks.',
-      scene10_vak_drag: 'Follow the safe water past the rocks.',
-      scene10_vak_drag_pieces: 'Follow the safe water past the rocks.',
-      scene10_vak_crossed: 'Vakratunda! You found another way and helped the frog reach his family.',
-      scene10_vak_meaning: 'Vakratunda means finding another way.',
-      scene10_maha_intro: 'Everyone wants to cross, but the raft is too small. Help make room for them all.',
-      scene10_maha_blocking: "The raft's still too small for everyone.",
-      scene10_maha_drag_rope: 'Grab another log so everyone can fit.',
-      scene10_maha_pull_down: '',
+      scene10_vak_intro: 'Frog can see his family, but the way is blocked. Let\'s help him find another way.',
+      scene10_vak_current_too_strong: 'That way is blocked. Can you find another way around?',
+      scene10_vak_hint_another_way: 'Look for another way through.',
+      scene10_vak_frog_cross: 'Frog can see his family, but the way is blocked. Let\'s help him find another way.',
+      scene10_vak_tap_logs: 'That way is blocked. Can you find another way around?',
+      scene10_vak_blocked: 'That way is blocked. Can you find another way around?',
+      scene10_vak_choose: 'That way is blocked. Can you find another way around?',
+      scene10_vak_make_path: 'Frog can see his family, but the way is blocked. Let\'s help him find another way.',
+      scene10_vak_drag_leaves: 'Look for another way through.',
+      scene10_vak_drag: 'Look for another way through.',
+      scene10_vak_drag_pieces: 'Look for another way through.',
+      scene10_vak_crossed: 'Vakratunda! You found another way, and Frog reached his family.',
+      scene10_vak_meaning: 'Vakratunda means curved trunk.',
+      scene10_vak_affirmation: 'I can change my plan and try another way.',
+      scene10_maha_intro: 'The friends are waiting. Let\'s build a raft with space for everyone.',
+      scene10_maha_blocking: 'Bring the rope to the log.',
+      scene10_maha_drag_rope: 'Drag the rope to a log.',
+      scene10_maha_pull_down: 'Now pull down.',
       scene10_maha_log_moving: '',
-      scene10_maha_success: 'Mahakaya! You made the raft bigger, and everyone crossed.',
-      scene10_maha_meaning: 'Mahakaya means great strength.',
-      scene10_maha_strength: 'You have strength inside you too.',
+      scene10_maha_success: 'Mahakaay! You made space so everyone could come along.',
+      scene10_maha_meaning: 'Mahakaay means great form.',
+      scene10_maha_strength: 'I can make space in my heart for others.',
     };
+    if (webSpeechMap[key]) {
+      speakWebSpeech(stripLeadingSpeechText(webSpeechMap[key], options.stripLeadingText), onEnded);
+      return;
+    }
     const script = getVoiceScript(zoneId, sceneId, key);
     if (script) {
       playHookVoice(key, onEnded, options);
-      return;
-    }
-    if (webSpeechMap[key]) {
-      speakWebSpeech(stripLeadingSpeechText(webSpeechMap[key], options.stripLeadingText), onEnded);
       return;
     }
     if (onEnded) onEnded();
@@ -438,7 +439,7 @@ const VakratundaGroveContent = ({
       return;
     }
     if (sceneState.phase === PHASES.MAHAKAYA_GAME) {
-      playGuidanceVoice('scene10_maha_drag_rope');
+      playGuidanceVoice('scene10_maha_blocking');
       return;
     }
     if (showSceneCompletion) {

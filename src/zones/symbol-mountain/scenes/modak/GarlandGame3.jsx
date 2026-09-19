@@ -49,9 +49,12 @@ const LAYOUT = {
 };
 
 const VO = {
-  open: 'You found six flowers. Let’s make Ganesha a garland. Tap a flower to thread it.',
-  ready: 'You made it! Take the garland to Ganesha.',
-  carry: 'Carry the garland to Ganesha!',
+  open: 'Six flowers! Tap each one to make a garland for Ganesha.',
+  tapIdle: 'Tap another flower.',
+  ready: 'The garland is ready! Drag it to Ganesha.',
+  carry: 'Drag the garland to Ganesha.',
+  offered: 'You brought the garland all the way to Ganesha.',
+  modakReveal: 'And look… a sweet Modak!',
 };
 
 const SCENE_IMAGES = [
@@ -167,7 +170,7 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
         setGarlandHintLevel(2);
         if (!garlandHintVoPlayedRef.current) {
           garlandHintVoPlayedRef.current = true;
-          speak(VO.carry);
+          speak(isBuild ? VO.tapIdle : VO.carry);
         }
       } else if (idleMs >= 9000) {
         setGarlandHintLevel(1);
@@ -265,10 +268,14 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
 
     setGarlandPosition((prev) => ({ ...prev, active: false }));
     setPhase(PHASES.OFFERED);
+    speak(VO.offered);
     // Matches the original pre-rework "modak above Mooshika" beat: a short
     // pause after the offering lands, then the golden Modak glows above
     // Mooshika for a moment before the real symbol reveal card takes over.
-    window.setTimeout(() => setShowModakGlow(true), 1100);
+    window.setTimeout(() => {
+      setShowModakGlow(true);
+      speak(VO.modakReveal);
+    }, 1100);
     window.setTimeout(() => { onComplete?.(); }, 3200);
   };
 

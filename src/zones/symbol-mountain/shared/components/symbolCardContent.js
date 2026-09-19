@@ -13,7 +13,7 @@ const eyesCard = {
     'They remind me to notice what is good, beautiful, and worth seeing.',
   ],
   invitation:
-    'Look around slowly. Find one small thing that looks good or beautiful to you. Stay with it for 3 seconds.',
+    'Think of a time lots of things were happening. What did you need to focus on?',
   gift: 'You can choose to notice something good.',
 };
 
@@ -26,7 +26,7 @@ const earCard = {
     'They remind me to listen carefully and notice the sounds and words worth keeping.',
   ],
   invitation:
-    'Close your eyes. Listen for the quietest sound around you. Stay with it for 3 seconds.',
+    'Think of a time you heard lots of things at once. Which voice or sound helped you?',
   gift: 'Careful listening helps you notice more.',
 };
 
@@ -34,66 +34,66 @@ export const symbolCardContent = {
   modak: {
     label: 'Modak',
     icon: '/images/icons/symbol-modak-new.png',
-    affirmation: 'I have joy inside me.',
+    affirmation: 'I can learn, keep trying, and find joy.',
     ganeshaLines: [
-      'There is a reason I love modak.',
-      'Its sweetness reminds us of the happy, peaceful feeling that can grow inside.',
+      'Do you know why I love Modak?',
+      'Its sweetness reminds us of the joy that can come after learning and trying.',
     ],
     invitation:
-      'Think of one small thing you did today that made you feel good inside. Stay with that feeling for a moment.',
-    gift: 'That quiet sweetness can come from inside you.',
+      'Think of something that was hard at first, but you kept trying. How did you feel when you finally did it?',
+    gift: 'Trying and learning can lead to something sweet.',
   },
 
   mooshika: {
     label: 'Mooshika',
     icon: '/images/icons/symbol-mooshika-new.png',
-    affirmation: 'I can guide my busy thoughts.',
+    affirmation: 'I can keep going, one small step at a time.',
     ganeshaLines: [
-      'Did you ever wonder why I ride a mouse?',
-      'Mooshika can be quick and restless, just like our thoughts and little wants. We can learn to guide them.',
+      'Do you know why I ride Mooshika?',
+      'He may be small and restless, but steady little steps can carry big dreams.',
     ],
     invitation:
-      'Pause for a moment. Pick one thing near you and give it all your attention for 3 seconds.',
-    gift: 'When your thoughts run around, you can gently guide them back.',
+      'Think of something big you want to do. What is one tiny step you could take today?',
+    gift: 'Small steps still move you forward.',
   },
 
   belly: {
     label: 'Belly',
     icon: '/images/icons/symbol-belly-new.png',
-    affirmation: 'I have room for all my feelings.',
+    affirmation: 'I can have lots of feelings and keep going.',
     ganeshaLines: [
       'My belly can hold a lot.',
-      'Happy feelings, hard feelings, and everything in between can all have some room.',
+      'Happy feelings and hard feelings can all be there.',
     ],
     invitation:
-      'Put your hand on your belly. Think of two different feelings you had today. Can you make room for both?',
-    gift: "You don't have to push a feeling away. There is room for it.",
+      'Think of one hard feeling and one happy feeling you had today. Can you remember both?',
+    gift: 'You can have lots of feelings and still keep going.',
   },
 
   lotus: {
     label: 'Lotus',
     icon: '/images/icons/symbol-lotus-new.png',
-    affirmation: 'I can stay calm when things get messy.',
+    affirmation: 'I can keep growing when things are hard.',
     ganeshaLines: [
-      'The lotus has a secret.',
-      'It grows in muddy water and still rises peaceful and beautiful.',
+      'The lotus grows up through muddy water.',
+      "The mud doesn't stop it from rising and blooming.",
     ],
     invitation:
-      'Take one slow breath in and out. Notice one calm feeling inside, even if things around you are busy.',
-    gift: "A messy moment doesn't have to take away your calm.",
+      'Think of something hard you kept trying until you could do it. How did that feel?',
+    gift: 'Hard things can help you grow.',
   },
 
   trunk: {
     label: 'Trunk',
     icon: '/images/icons/symbol-trunk-new.png',
-    affirmation: 'I find my way.',
+    affirmation: 'I can be strong and gentle.',
     ganeshaLines: [
-      'My trunk can bend and curve.',
-      "When one way doesn't work, it can twist and find another.",
+      'My trunk can lift something heavy…',
+      '…and gently hold something tiny.',
     ],
     invitation:
-      "Think of something that didn't go your way today. What is one different way you could try?",
-    gift: 'When one way is blocked, another way may be waiting.',
+      'What would you hold with strong hands? What would you hold very gently?',
+    gift: 'You can choose when to be strong and when to be gentle.',
   },
 
   eye: eyesCard,
@@ -111,7 +111,7 @@ export const symbolCardContent = {
       'It reminds me to stay strong and focused on what is true, even when things are difficult.',
     ],
     invitation:
-      'Think of something you know is important to do. What is one small step that keeps you focused on it?',
+      'Think of something old or broken. What could you still use it for?',
     gift: 'You can stay strong and focused on what matters.',
   },
 };

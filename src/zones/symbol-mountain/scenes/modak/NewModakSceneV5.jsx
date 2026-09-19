@@ -90,6 +90,15 @@ const missionImages = {
   belly: { before: bellyBefore, after: bellyAfter }
 };
 
+const MOOSHIKA_VO = {
+  openingModal: "Mooshika has a journey to make. Let’s help him along the way.",
+  inGameOpening: "Mooshika’s thoughts are jumping everywhere. Press and hold to help him stay with one thing.",
+  idle: 'Catch Mooshika and keep holding.',
+  success: 'Mooshika stayed with it and made a little progress.',
+  meaning: 'Mooshika reminds us that small steps can carry us far.',
+  affirmation: 'I can keep going, one small step at a time.',
+};
+
 
 // Error Boundary
 class ErrorBoundary extends React.Component {
@@ -305,6 +314,15 @@ const discoveryConfig = {
     return id;
   };
 
+  const speakMooshikaLine = (text) => {
+    if (!text || typeof window === 'undefined' || !window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 0.92;
+    utterance.pitch = 1;
+    window.speechSynthesis.speak(utterance);
+  };
+
 useEffect(() => {
   return () => {
     timeoutsRef.current.forEach(id => clearTimeout(id));
@@ -462,6 +480,7 @@ useEffect(() => {
     if (moundIndex === sceneState.correctMound) {
       // 1. Immediate visual feedback (Sparkles on mound)
       setShowSparkle('mooshika-found');
+      speakMooshikaLine(MOOSHIKA_VO.success);
       
       // ... (Keep existing moundPositions logic and sceneActions.updateState) ...
       const moundPositions = { 1: { top: '45%', left: '25%' }, 2: { top: '55%', left: '75%' }, 3: { top: '60%', left: '30%' }, 4: { top: '60%', left: '50%' }, 5: { top: '60%', left: '60%' } };
@@ -759,7 +778,7 @@ const completeSymbolLearning = (symbolKey, symbolData) => {
   const getHintConfigs = () => [
     {
       id: 'mooshika-hint',
-      message: 'Click the mounds!', 
+      message: 'Find Mooshika and keep holding.',
       position: { bottom: '60%', left: '30%', transform: 'translateX(-50%)' },
       condition: (sceneState) => sceneState.phase === PHASES.MOOSHIKA_SEARCH && !sceneState.mooshikaFound
     },
@@ -933,11 +952,11 @@ const completeSymbolLearning = (symbolKey, symbolData) => {
                   {/* Card Right */}
                   <div className="game-modal-card">
                     <h1 className="game-modal-title">
-                      Help Ganesha Save the Forest!
+                      Help Mooshika Keep Going
                     </h1>
                     
                     <p className="game-modal-subtitle">
-                      3 magical friends are hiding — let's find them!
+                      One small step at a time.
                     </p>
                     
                     <div className="game-modal-icons">
@@ -966,7 +985,7 @@ const completeSymbolLearning = (symbolKey, symbolData) => {
                         sceneActions.updateState({ welcomeShown: true });
                       }}
                     >
-                      Begin Adventure!
+                      Let's Begin
                     </button>
                   </div>
                 </div>

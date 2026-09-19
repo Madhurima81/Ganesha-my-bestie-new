@@ -237,7 +237,7 @@ const FamilyTreeGameContent = ({
 : profileDisplayName.charAt(0).toUpperCase();
  const FINAL_VO = {
  comparison: "Our family trees are different, and each one tells a story.",
- completion: "Our family trees are different, and each one tells a story."
+ completion: ""
  };
 
  // IMPORTANT: Ensure phase exists (just like Modak code)
@@ -286,7 +286,7 @@ const FamilyTreeGameContent = ({
  const replayCurrentVoice = useCallback(() => {
  if (!isAudioOn) return;
  if (sceneState.showingCompletionScreen) {
- speakHint(FINAL_VO.completion, { age: 7, style: 'child', moment: 'celebration' });
+ if (FINAL_VO.completion) speakHint(FINAL_VO.completion, { age: 7, style: 'child', moment: 'celebration' });
  return;
  }
  if (sceneState.gamePhase === 'intro') {
@@ -984,7 +984,7 @@ sceneState.isSequencePlaying,
  stopSpokenVoice();
  if (isAudioOn) {
  scheduleTimeout(() => {
- speakHint(FINAL_VO.completion, { age: 7, style: 'child', moment: 'celebration' });
+ if (FINAL_VO.completion) speakHint(FINAL_VO.completion, { age: 7, style: 'child', moment: 'celebration' });
  }, 180);
  }
  }, [sceneState.showingCompletionScreen, isAudioOn, stopVoice, stopSpokenVoice, speakHint]);

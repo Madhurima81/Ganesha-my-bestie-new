@@ -286,24 +286,24 @@ const SuryakotiBankContent = ({
 
   const playGuidanceVoice = useCallback((key, onEnded, options = {}) => {
     const webSpeechMap = {
-      welcome: "The river is dark today. Let's bring back the light!",
-      scene11_intro: "The river is dark today. Let's bring back the light!",
-      scene11_surya_intro: "The bunny can't find her way home in the dark. Help light the path for her.",
-      scene11_surya_rub: "The bunny's still lost — light the next spot.",
-      scene11_surya_hint: "The bunny's still lost — light the next spot.",
-      scene11_surya_success: 'Suryakoti! You brought back the light and helped the bunny home.',
-      scene11_surya_done: 'Suryakoti! You brought back the light and helped the bunny home.',
+      welcome: "The river is dark today. Let's see what a little light can do.",
+      scene11_intro: "The river is dark today. Let's see what a little light can do.",
+      scene11_surya_intro: "Bunny can't find her way home in the dark. Rub the glowing spot to brighten the river.",
+      scene11_surya_rub: "Rub the glowing spot.",
+      scene11_surya_hint: "Keep rubbing.",
+      scene11_surya_success: 'Suryakoti! You brought back the light, and Bunny found her way home.',
+      scene11_surya_done: 'Suryakoti! You brought back the light, and Bunny found her way home.',
       scene11_surya_meaning: 'Suryakoti means bright as ten million suns.',
       scene11_sama_intro: 'A little deer sees a strange shadow. Move the light and look closely.',
-      scene11_sama_hint: 'Move the light around the shadow and look closely.',
+      scene11_sama_hint: 'Move the light and look closely.',
       scene11_sama_hint_look: 'Look closely.',
-      scene11_sama_done: 'Samaprabha! You looked closely and found what was really there.',
-      scene11_sama_meaning: 'Samaprabha means equal brightness.',
-      suryakotiSetup: 'The light showed the way.',
+      scene11_sama_done: 'Samaprabha! You looked closely and saw what was really there.',
+      scene11_sama_meaning: 'Samaprabha means steady, equal brilliance.',
+      suryakotiSetup: "Bunny can't find her way home in the dark. Rub the glowing spot to brighten the river.",
       suryakotiClaim: 'Suryakoti lights the way.',
       samaprabhaSetup: "A shadow looks scary until we understand it.",
       samaprabhaClaim: 'Samaprabha helps us see clearly.',
-      sceneComplete: 'The light showed the way. Both shine equally now.',
+      sceneComplete: 'You brought back the light and saw what was really there.',
     };
     if (webSpeechMap[key]) {
       speakWebSpeech(stripLeadingSpeechText(webSpeechMap[key], options.stripLeadingText), onEnded);

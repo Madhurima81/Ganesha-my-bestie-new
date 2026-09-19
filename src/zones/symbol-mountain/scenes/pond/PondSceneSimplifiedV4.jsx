@@ -65,6 +65,7 @@ import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal
 // Images
 import pondBgFixed from './assets/images/pond-bg-fixed.webp';
 import pondStreamOverlay from './assets/images/pond-stream-overlay.webp';
+import pondTurtleSad from './assets/images/pond-turtle-sad.webp';
 import lotusDormant from './assets/images/trunk-lotus-dormant-new.webp';
 import lotusUpright from './assets/images/trunk-lotus-upright-new.webp';
 import lotusBloomedImg from './assets/images/trunk-lotus-bloomed-new.webp';
@@ -102,35 +103,23 @@ const PHASES = {
 
 const VOICE_LINES = {
   // Entry
-  opening: 'A rock is blocking the water.',
+  opening: 'The lotus needs water to bloom. Let\'s help the water reach it.',
 
   // Trunk phase (strength, then gentleness) — first
-  rockRound: 'This heavy rock needs strength. Press and hold it.',
+  rockRound: 'This heavy rock needs strength. Press and hold.',
   idleRock: 'Keep holding. This one needs strength.',
-  reedsRound: 'These reeds are delicate. Gently part them for the water.',
-  idleReeds: 'A gentle touch will move the reeds.',
-  waterPathPower: 'Strong when needed. Gentle when needed.',
+  reedsRound: 'These flowers are delicate. Gently move them aside.',
+  idleReeds: 'A gentle touch will move them.',
+  waterPathPower: 'Ganesha\'s trunk knows when to be strong or gentle.',
 
   // Lotus phase (press-and-hold to bloom) — second
-  lotusRound: 'The lotus is growing through the muddy water. Press and hold the bud.',
-  idleLotus: 'Keep holding the bud.',
-  lotusBloomPower: 'The lotus bloomed, even in the muddy pond.',
+  lotusRound: 'The lotus is growing through the mud. Press and hold the bud.',
+  idleLotus: 'Keep holding.',
+  lotusBloomed: 'Look! The lotus bloomed, even in the muddy pond.',
+  lotusBloomPower: 'The lotus reminds us: we can keep growing when things are hard.',
 
   // Completion
-  complete: 'You used strength, then gentleness, and helped the lotus grow.'
-};
-
-const powerConfig = {
-  lotus: {
-    name: 'Sacred Purity',
-    image: symbolLotusColored,
-    color: '#4ECDC4'
-  },
-  trunk: {
-    name: 'Divine Blessing',
-    image: symbolTrunkColored,
-    color: '#FFD700'
-  }
+  complete: 'You used strength, then gentleness, and helped the lotus bloom.'
 };
 
 const missionImages = {
@@ -157,21 +146,6 @@ const WATER_TO_POND_MS = 1100;
 const POND_OVERLAY_MID = null;
 const POND_OVERLAY_FRONT = '';
 // =============================================================
-
-const discoveryConfig = {
-  trunk: {
-    foundTitle: "The Water Found a Way!",
-    foundSubtitle: "Something magical appears...",
-    powerName: "Divine Blessing",
-    image: symbolTrunkColored
-  },
-  lotus: {
-    foundTitle: "The Lotus Bloomed!",
-    foundSubtitle: "Ganesha's lotus reveals its power...",
-    powerName: "Sacred Purity",
-    image: symbolLotusColored
-  }
-};
 
 // Error Boundary Component
 class ErrorBoundary extends React.Component {
@@ -264,6 +238,7 @@ const SCENE_IMAGES = [
   GANESHA_REFLECTION_IMAGE,
   pondBgFixed,
   pondStreamOverlay,
+  pondTurtleSad,
   lotusDormant,
   lotusUpright,
   lotusBloomedImg,
@@ -351,6 +326,7 @@ const PondSceneContent = ({
     pebble2: { x: 59, y: 66, size: 2.5 },
     pebble3: { x: 51, y: 71, size: 2.8 },
     pebble4: { x: 57, y: 73, size: 2.2 },
+    turtle: { x: 40, y: 70, size: 8 },
   };
   const [pondLayout, setPondLayout] = useState(DEFAULT_POND_LAYOUT);
   const pondStageRef = useRef(null);
@@ -1085,12 +1061,14 @@ const PondSceneContent = ({
         affirmation: 'I can be strong and gentle.',
         symbolImage: symbolTrunkColored
       });
+      speakPondPrompt('waterPathPower');
     }, WATER_TO_POND_MS + LOTUS_GLOW_MS);
   }, [
     playGlow,
     playChime,
     safeSetTimeout,
     sceneActions,
+    speakPondPrompt,
     triggerMiniGesture
   ]);
 
@@ -1141,6 +1119,7 @@ const PondSceneContent = ({
     if (!sceneActions) return;
     playBloom();
     playChime();
+    speakPondPrompt('lotusBloomed');
     triggerMiniGesture('victory', 'center', 2500);
     sceneActions.updateState({
       lotusBloomed: true,
@@ -1152,13 +1131,16 @@ const PondSceneContent = ({
 
     // Give the child a clear moment to see the lotus actually bloom before
     // the reveal card covers the scene.
-    safeSetTimeout(() => setRevealConfig({
-      symbolId: 'lotus',
-      symbolName: 'Lotus',
-      affirmation: 'I can keep growing when things are hard.',
-      symbolImage: symbolLotusColored
-    }), 2400);
-  }, [sceneActions, playBloom, playChime, triggerMiniGesture, safeSetTimeout]);
+    safeSetTimeout(() => {
+      setRevealConfig({
+        symbolId: 'lotus',
+        symbolName: 'Lotus',
+        affirmation: 'I can keep growing when things are hard.',
+        symbolImage: symbolLotusColored
+      });
+      speakPondPrompt('lotusBloomPower');
+    }, 2400);
+  }, [sceneActions, playBloom, playChime, speakPondPrompt, triggerMiniGesture, safeSetTimeout]);
 
   const handleLotusHoldStart = () => {
     rearmIdleHints();
@@ -1252,7 +1234,7 @@ const PondSceneContent = ({
   const getHintConfigs = () => [
     {
       id: 'trunk-hint',
-      message: 'Hold the rock, then gently part the reeds',
+      message: 'Hold the rock, then gently move the flowers',
       position: { bottom: '60%', left: '30%', transform: 'translateX(-50%)' },
       condition: (sceneState) => sceneState?.phase === PHASES.INITIAL
     },
@@ -1363,6 +1345,9 @@ const PondSceneContent = ({
                 '--pond-pebble4-x': `${pondLayout.pebble4.x}%`,
                 '--pond-pebble4-y': `${pondLayout.pebble4.y}%`,
                 '--pond-pebble4-size': `${pondLayout.pebble4.size}vw`,
+                '--pond-turtle-x': `${pondLayout.turtle.x}%`,
+                '--pond-turtle-y': `${pondLayout.turtle.y}%`,
+                '--pond-turtle-size': `${pondLayout.turtle.size}vw`,
               }}
               onPointerMoveCapture={layoutOpen ? onElementDragMove : undefined}
               onPointerUpCapture={layoutOpen ? endElementDrag : undefined}
@@ -1529,6 +1514,9 @@ const PondSceneContent = ({
                           <option value="pebble3">Pebble 3</option>
                           <option value="pebble4">Pebble 4</option>
                         </optgroup>
+                        <optgroup label="Other">
+                          <option value="turtle">Sad turtle</option>
+                        </optgroup>
                       </select>
                     </label>
                     {['x', 'y', 'size'].map((field) => (
@@ -1584,7 +1572,7 @@ const PondSceneContent = ({
                 <>
                   <div
                     role="button"
-                    aria-label="Gently part the soft reeds"
+                    aria-label="Gently move the flowers aside"
                     className={`
                       pond-trunk-reeds
                       ${sceneState.phase === PHASES.REEDS_ACTIVE ? hintClassName : ''}
@@ -1635,6 +1623,22 @@ const PondSceneContent = ({
                   ))}
                 </>
               )}
+
+              {/* Sad turtle — static decorative asset, gentle breathing loop, independently draggable */}
+              <img
+                src={pondTurtleSad}
+                alt=""
+                className="pond-turtle-item"
+                draggable={false}
+                style={{
+                  left: 'var(--pond-turtle-x)',
+                  top: 'var(--pond-turtle-y)',
+                  width: 'var(--pond-turtle-size)',
+                  cursor: layoutOpen ? 'move' : undefined,
+                  pointerEvents: layoutOpen ? 'auto' : 'none',
+                }}
+                onPointerDown={layoutOpen ? (e) => startMainDrag('turtle', e) : undefined}
+              />
 
               {/* Lotus — dormant → upright (Trunk success) → bloomed (Lotus success) */}
               <GestureDemo

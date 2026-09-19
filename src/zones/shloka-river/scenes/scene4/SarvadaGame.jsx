@@ -37,7 +37,7 @@ const PHASES_CONFIG = [
     litCount: 1,
     timeColor: '#FFE066',
     hiddenSymbol: mooshikaSymbolImg,
-    foundLabel: 'Mooshika found!',
+    foundLabel: 'You found Mooshika!',
     clues: [
       'Look for a small friend who can be quick and busy.',
       'He may be hiding near something you take with you in the morning.',
@@ -55,7 +55,7 @@ const PHASES_CONFIG = [
     litCount: 2,
     timeColor: '#FFB347',
     hiddenSymbol: trunkSymbolImg,
-    foundLabel: 'Trunk symbol found!',
+    foundLabel: 'You found the Trunk!',
     clues: [
       'Look for a symbol that can bend and curve.',
       'Something flying in the sky has a long curving shape.',
@@ -73,7 +73,7 @@ const PHASES_CONFIG = [
     litCount: 3,
     timeColor: '#B39DDB',
     hiddenSymbol: lotusSymbolImg,
-    foundLabel: 'Lotus found!',
+    foundLabel: 'You found the Lotus!',
     clues: [
       'Look for a symbol that stays peaceful even when things around it are messy.',
       'A flower shape is hiding somewhere near the bed.',

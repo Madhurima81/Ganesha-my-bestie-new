@@ -67,19 +67,19 @@ export const DISCOVERY_CONTENT = {
     'modak': {
       mooshika: {
         title: "Mooshika",
-        affirmation: "I can guide my busy thoughts.",
+        affirmation: "I can keep going, one small step at a time.",
         icon: 'mooshika-happy'
       },
 
       modak: {
         title: "Modak",
-        affirmation: "I have joy inside me.",
+        affirmation: "I can learn, keep trying, and find joy.",
         icon: 'modak-basket'
       },
 
       belly: {
         title: "Big Belly",
-        affirmation: "I can feel many things and still stay steady.",
+        affirmation: "I can have lots of feelings and keep going.",
         icon: 'belly-full'
       }
     },
@@ -87,13 +87,13 @@ export const DISCOVERY_CONTENT = {
     'pond': {
       lotus: {
         title: "Lotus",
-        affirmation: "I can stay calm when things get messy.",
+        affirmation: "I can keep growing when things are hard.",
         icon: 'golden-lotus'
       },
 
       trunk: {
         title: "Trunk",
-        affirmation: "I find my way.",
+        affirmation: "I can be strong and gentle.",
         icon: 'water-elephant'
       }
     },
@@ -124,13 +124,13 @@ export const DISCOVERY_CONTENT = {
     'vakratunda-grove': {
       vakratunda: {
         title: "Vakratunda",
-        affirmation: "I find a new way.",
+        affirmation: "I can change my plan and try another way.",
         icon: 'vakratunda-complete'
       },
 
       mahakaya: {
-        title: "Mahakaya",
-        affirmation: "I can make room.",
+        title: "Mahakaay",
+        affirmation: "I can make space in my heart for others.",
         icon: 'mahakaya-complete'
       }
     },
@@ -138,13 +138,13 @@ export const DISCOVERY_CONTENT = {
     'suryakoti-bank': {
       suryakoti: {
         title: "Suryakoti",
-        affirmation: "I can see the way.",
+        affirmation: "I can find hope inside me.",
         icon: 'suryakoti-complete'
       },
 
       samaprabha: {
         title: "Samaprabha",
-        affirmation: "I can make the light even.",
+        affirmation: "I can see what is really there.",
         icon: 'samaprabha-complete'
       }
     },
@@ -152,13 +152,13 @@ export const DISCOVERY_CONTENT = {
     'nirvighnam-chant': {
       nirvighnam: {
         title: "Nirvighnam",
-        affirmation: "I clear the way.",
+        affirmation: "I can solve one thing at a time.",
         icon: 'nirvighnam-complete'
       },
 
       kurumedeva: {
         title: "Kuru Me Deva",
-        affirmation: "I ask for help.",
+        affirmation: "I can ask for help when I need it.",
         icon: 'kurumedeva-complete'
       }
     },
@@ -166,13 +166,13 @@ export const DISCOVERY_CONTENT = {
     'sarvakaryeshu-chant': {
       sarvakaryeshu: {
         title: "Sarva Karyeshu",
-        affirmation: "I do every task with care.",
+        affirmation: "I can remember Ganesha in everything I do.",
         icon: 'sarvakaryeshu-complete'
       },
 
       sarvada: {
         title: "Sarvada",
-        affirmation: "What I learn stays with me.",
+        affirmation: "Ganesha is always with me.",
         icon: 'sarvada-complete'
       }
     }

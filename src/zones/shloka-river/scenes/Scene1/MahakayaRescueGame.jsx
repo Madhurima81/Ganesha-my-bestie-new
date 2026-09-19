@@ -275,7 +275,7 @@ export default function MahakayaRescueGame({
       return undefined;
     }
     setShowHintBubble(true);
-    const voiceKey = ropeStage === 'detached' ? 'scene10_maha_drag_rope' : 'scene10_maha_pull_down';
+    const voiceKey = ropeStage === 'detached' ? 'scene10_maha_blocking' : 'scene10_maha_pull_down';
     playSceneLine?.(voiceKey, () => {});
     const hideBubble = window.setTimeout(() => setShowHintBubble(false), 2800);
     return () => window.clearTimeout(hideBubble);
@@ -345,6 +345,7 @@ export default function MahakayaRescueGame({
     playSceneLine?.('scene10_maha_intro', () => {
       setPhase('play');
       phaseRef.current = 'play';
+      playSceneLine?.('scene10_maha_drag_rope');
     });
     return clearTimers;
     // Voice and timer helpers are stable enough for this scene lifecycle.
@@ -683,8 +684,9 @@ export default function MahakayaRescueGame({
         setRopeStage('attached');
         setKnobPos({ l: currentWaitingLog.l, t: currentWaitingLog.t });
         playSfx?.('chime');
-        // "How" (pull the handle down) is taught by the pull-handle glow +
-        // GestureDemo — no spoken gesture line here.
+        if (activeLog === 0) {
+          playSceneLine?.('scene10_maha_pull_down');
+        }
       } else {
         setKnobPos({ l: sharedRigLayout.handleStart.l, t: sharedRigLayout.handleStart.t });
       }

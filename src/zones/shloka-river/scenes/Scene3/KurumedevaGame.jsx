@@ -505,10 +505,43 @@ export default function KurumedevaGame({
     return () => window.clearTimeout(t);
   }, [kuruStageKey, phase, isRoundSettling, debugMode]);
   const currentFriend = friendStep < FRIENDS.length ? FRIENDS[friendStep] : null;
+
+  // Per-round "first try" VO — once when Beaver enters the logs round, once
+  // when she enters the rope round.
+  const lastRoundIntroRef = useRef(null);
+  useEffect(() => {
+    if (phase !== 'play' || isRoundSettling || debugMode) return;
+    const isLogsRound = friendStep === 0 && !triedPush;
+    const isRopeRound = friendStep === 1 && !triedRope;
+    if (!isLogsRound && !isRopeRound) return;
+    const key = isLogsRound ? 'kuru_logs_first' : 'kuru_rope_first';
+    if (lastRoundIntroRef.current === key) return;
+    lastRoundIntroRef.current = key;
+    stopSceneVoice?.();
+    playSceneLine?.(key);
+  }, [friendStep, phase, isRoundSettling, debugMode, triedPush, triedRope, playSceneLine, stopSceneVoice]);
+
   // Each helper loop is gated behind its own "try and fail" beat — Beaver
   // must try (and fail) the logs before asking Elephant, and try (and fail)
   // the rope before asking Monkey.
   const canAsk = (friendStep === 0 && triedPush) || (friendStep === 1 && triedRope);
+
+  // Idle hint VO, once Beaver has tried and failed and can ask for help —
+  // level 2 = "who can help", level 3 = "drag the help bubble to <friend>".
+  const lastKuruHintRef = useRef('');
+  useEffect(() => {
+    if (phase !== 'play' || isRoundSettling || debugMode || !canAsk || helpDelivered) return;
+    if (hintLevel !== 2 && hintLevel !== 3) return;
+    const isLogs = friendStep === 0;
+    const key = hintLevel === 2
+      ? (isLogs ? 'kuru_hint_logs' : 'kuru_hint_rope')
+      : (isLogs ? 'kuru_hint_logs_drag' : 'kuru_hint_rope_drag');
+    const onceKey = `${friendStep}-${key}`;
+    if (lastKuruHintRef.current === onceKey) return;
+    lastKuruHintRef.current = onceKey;
+    stopSceneVoice?.();
+    playSceneLine?.(key);
+  }, [hintLevel, phase, isRoundSettling, debugMode, canAsk, helpDelivered, friendStep, playSceneLine, stopSceneVoice]);
 
   // Keep the selected debug marker inside the current phase's group.
   useEffect(() => {
@@ -655,12 +688,13 @@ export default function KurumedevaGame({
       pushHoldTimerRef.current = null;
       setIsPushingLogs(false);
       setTryShake(true);
+      playSceneLine?.('kuru_logs_fail');
       safeAfter(700, () => {
         setTryShake(false);
         setTriedPush(true);
       });
     });
-  }, [friendStep, isPaused, markInteraction, placeActive, safeAfter, stopSceneVoice, triedPush]);
+  }, [friendStep, isPaused, markInteraction, placeActive, playSceneLine, safeAfter, stopSceneVoice, triedPush]);
 
   const handleTryPushLogsUp = useCallback((event) => {
     if (pushHoldPointerRef.current !== event.pointerId) return;
@@ -698,11 +732,12 @@ export default function KurumedevaGame({
     setRopeTryDragActive(false);
     setRopeTryDragPos(null);
     setTryRopeShake(true);
+    playSceneLine?.('kuru_rope_fail');
     safeAfter(700, () => {
       setTryRopeShake(false);
       setTriedRope(true);
     });
-  }, [safeAfter]);
+  }, [playSceneLine, safeAfter]);
 
   const askFriendForHelp = useCallback((friendIndex) => {
     if (isPaused || phaseRef.current !== 'play') return;
@@ -713,6 +748,7 @@ export default function KurumedevaGame({
     if (friendImgStates[friendIndex] !== 'carry') return;
     stopSceneVoice?.();
     markInteraction();
+    playSceneLine?.(friendIndex === 0 ? 'kuru_logs_after' : 'kuru_rope_after');
     const friend = FRIENDS[friendIndex];
     const friendPos = friendPositions[friendIndex] || friend;
     const targetL = friendPos.l + (friendIndex === 0 ? TURTLE_RIVER_SHIFT : 0);
@@ -820,7 +856,7 @@ export default function KurumedevaGame({
       setHelpTokenPos(HELP_TOKEN_HOME);
       setIsRoundSettling(false);
     });
-  }, [friendPositions, friendStep, friendImgStates, isPaused, markInteraction, moveFriendToWait, onMicroWin, placeActive, safeAfter, stopSceneVoice, triedPush, triedRope]);
+  }, [friendPositions, friendStep, friendImgStates, isPaused, markInteraction, moveFriendToWait, onMicroWin, placeActive, playSceneLine, safeAfter, stopSceneVoice, triedPush, triedRope]);
 
   // --- Per-piece drag handlers: pull a piece from the pile into the gap ------
   const placeNextPiece = useCallback(() => {

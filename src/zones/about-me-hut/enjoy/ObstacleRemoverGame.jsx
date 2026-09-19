@@ -4,6 +4,7 @@ import './DreamsWishesGame.css';
 import SceneCompletionCelebration from "../../../lib/components/celebration/SceneCompletionCelebration";
 import DrawingPad from '../components/Drawingpad';
 import StoryProgressHeader from '../components/StoryProgressHeader';
+import AboutMeGaneshaHost from '../components/AboutMeGaneshaHost';
 import GaneshaGestureCue from '../../../lib/components/gesture/GaneshaGestureCue';
 import { useMiniGesture } from '../../../lib/hooks/useMiniGesture';
 
@@ -265,7 +266,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     wish1Complete: "You found all the kind choices.",
 
     // Wish 2
-    wish2Intro: "My next wish is for everyone to have food.",
+    wish2Intro: "My next wish is for everyone to have enough food.",
     wish2Active: "Drag food to each empty plate.",
     wish2Complete: "Now every plate has food.",
 
@@ -280,16 +281,16 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     // Dream Phases
     // dreamIntro: (REMOVED — merged into allWishesComplete)
     dreamDrawing: "Draw something you hope for or dream about.",
-    dreamClouded: "Your dream is hidden by the clouds. Tap my trunk to clear them.",
+    dreamClouded: "Your dream is hiding behind the clouds. Help me clear them — tap my trunk.",
     dreamClearing: "There are still clouds in the way.",
     dreamRevealed: "There it is — your dream!",
 
     // Comparison Card
     comparison: "Everyone can dream about something different.",
-    completionCelebration: "You helped my wishes grow, and made a dream of your own.",
+    completionCelebration: "",
 
     // Ending
-    ending: "You helped my wishes grow, and made a dream of your own.",
+    ending: "",
 
     // Idle hints
     wish1Hint: "Can you find another kind action?",
@@ -1727,6 +1728,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Wish 1 Active */}
       {sceneState.gamePhase === 'wish1-active' && (
         <div className="wish-screen">
+          <AboutMeGaneshaHost image={babyGaneshaImg} className="about-me-ganesha-host--left-bottom" />
           <div className="game-header-hud">
             {/* Header instruction commented out - using progress header instead */}
             {/* <div className="wish-instruction-bubble">Tap the earth 3 times to send smiles! ({sceneState.wish1Taps}/3)</div> */}
@@ -1881,25 +1883,28 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
       {/* Wish 2 Active */}
       {sceneState.gamePhase === 'wish2-active' && (
-        <Wish2PlateDropGame
-          sceneState={sceneState}
-          wish2IdleLevel={wish2IdleLevel}
-          firstUnfilledBowlIndex={firstUnfilledBowlIndex}
-          selectedWish2FoodKey={selectedWish2FoodKey}
-          setSelectedWish2FoodKey={setSelectedWish2FoodKey}
-          markInteraction={markInteraction}
-          handleWish2FoodDrop={handleWish2FoodDrop}
-          handleWish2PlateClick={handleWish2PlateClick}
-          wish2Sparkle={wish2Sparkle}
-          WISH2_FOOD_KEYS={WISH2_FOOD_KEYS}
-          WISH2_FOOD_ASSETS={WISH2_FOOD_ASSETS}
-          WISH2_FOOD_POSITIONS={WISH2_FOOD_POSITIONS}
-          WISH2_PLATE_POSITIONS={WISH2_PLATE_POSITIONS}
-          plateImg={plateImg}
-          cowImg={cowImg}
-          mouseImg={mouseImg}
-          peacockImg={peacockImg}
-        />
+        <>
+          <AboutMeGaneshaHost image={babyGaneshaImg} className="about-me-ganesha-host--left-bottom" />
+          <Wish2PlateDropGame
+            sceneState={sceneState}
+            wish2IdleLevel={wish2IdleLevel}
+            firstUnfilledBowlIndex={firstUnfilledBowlIndex}
+            selectedWish2FoodKey={selectedWish2FoodKey}
+            setSelectedWish2FoodKey={setSelectedWish2FoodKey}
+            markInteraction={markInteraction}
+            handleWish2FoodDrop={handleWish2FoodDrop}
+            handleWish2PlateClick={handleWish2PlateClick}
+            wish2Sparkle={wish2Sparkle}
+            WISH2_FOOD_KEYS={WISH2_FOOD_KEYS}
+            WISH2_FOOD_ASSETS={WISH2_FOOD_ASSETS}
+            WISH2_FOOD_POSITIONS={WISH2_FOOD_POSITIONS}
+            WISH2_PLATE_POSITIONS={WISH2_PLATE_POSITIONS}
+            plateImg={plateImg}
+            cowImg={cowImg}
+            mouseImg={mouseImg}
+            peacockImg={peacockImg}
+          />
+        </>
       )}
 
       {/* Wish 2 Complete */}
@@ -1941,6 +1946,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       {/* Wish 3 Active */}
       {sceneState.gamePhase === 'wish3-active' && (
         <div className="wish-screen">
+          <AboutMeGaneshaHost image={babyGaneshaImg} className="about-me-ganesha-host--left-bottom" />
           <div className="game-header-hud">
             <div className="wish-progress-header">
               <div className="wish-progress-title">Wish 3: Grow The Forest</div>
@@ -2247,8 +2253,8 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
             duration={3000}
             area="full"
           />
-          <h1 className="friendship-title">Dreams Come Together</h1>
-          <p className="friendship-subtitle">Helping others makes dreams grow.</p>
+          <h1 className="friendship-title">We Both Have Wishes</h1>
+          <p className="friendship-subtitle">Everyone can dream about something different.</p>
           <div className="friendship-grid">
             <div className="friend-column ganesha-card">
               <img src={babyGaneshaSit} alt="Ganesha" className="column-header-image" />

@@ -1,6 +1,46 @@
 # GMB Pre-Launch Audit — Consolidated Punch List
 _Generated from the 4-zone Claude Code audit (Symbol Mountain, Shloka River, About Me Hut, Opening Scenes) run against `CLAUDE_CODE_PROMPT.md` / `GMB_COMPREHENSIVE_CHECKLIST.html`._
 _Updated 2026-09-18 — folded in a fresh 13-scene checklist re-sweep (3 background agents, one per zone) run against this same document. New items are marked "(2026-09-18)"._
+_Updated 2026-09-19 — folded in a shared-layer bug sweep (audited App.jsx/GameStateManager/ProgressManager/useVoiceGuidance/SoundManager/SceneCompletionCelebration instead of just the 13 scene files), item B's remaining touch-target fixes, and a live-browser pass on several scenes. Full detail for each fix lives in `CHANGELOG.md`'s 2026-09-18 entries; this section is the condensed cross-reference. Anything not explicitly listed as fixed/still-open below has not changed since the last update._
+
+## ✅ Shared-layer bugs fixed 2026-09-19 (see CHANGELOG.md for full detail per commit)
+These live in code every one of the 13 scenes inherits from, so the per-scene "13/13 pass" reports on VO teardown/tab-hide/reload were structurally blind to them — a real gap in how the audit was scoped, not just missed bugs.
+
+- **`useVoiceGuidance.js`** — tab-return replay was a bare unstored `setTimeout`; a quick Home tap within ~2s of returning to the tab could start the old scene's VO over Zone Welcome. Now tracked in a ref, cleared on stop/unmount. (commit `ae2c7be`)
+- **`useVoiceGuidance.js`** — the TTS fallback path left `voiceRef` null, so hiding the tab never cancelled speech or recorded it for replay; TTS kept talking in the background and its `onend` could silently advance the scene while hidden. Fixed with a tracked utterance ref. (commit `ae2c7be`)
+- **`SoundManager.js`** — only resumed an AudioContext from `suspended`; iOS Safari reports `interrupted` after Siri/calls/Control Center with no visibilitychange, leaving every Web Audio SFX silent until reload. Now resumes from either state. (commit `ae2c7be`)
+- **`SceneCompletionCelebration.jsx`** — no double-tap guard on any action button; a fast second tap during the 700ms exit animation could queue the completion handler twice. Added an action lock mirroring HomeButton's pattern. (commit `ae2c7be`)
+- **`SceneCompletionCelebration.jsx`** — the completion-save effect keyed on `completionData` identity, and 11 of 13 scenes pass it as a fresh object literal each render, so it re-ran on every parent re-render while the modal was open (fireworks, etc.). Now dedupes on the stringified payload per show cycle. (commit `ecd79a5`)
+- **`GarlandGame3.jsx`, `FlowerJourneyGame2.jsx`, `EarsSoundMatchGame.jsx`** — these three call `window.speechSynthesis` directly instead of going through `useVoiceGuidance`, so the tab-hide fix above didn't reach them. Each now wired into `useAppVisibility` the same way. `TuskPathGame.jsx` also speaks directly but isn't imported by the live Tusk scene — left alone. (commit `ecd79a5`)
+- **App.jsx, GameStateManager.js, ProgressManager.jsx** — the "no ungated console.log" rule had only ever been applied to the 13 scene files. All line-start `console.log/warn/debug` in these 3 shared files now gated behind `import.meta.env.DEV` (71/52/12 lines respectively). Side benefit: `GameStateManager.saveGameState`'s `new Error().stack` caller trace now only runs in dev instead of on every progress write. (commit `0260843`)
+- **`SymbolMountainSceneV3.jsx`** — `triggerMiniGesture` was firing into a local hand-rolled `miniGesture` state that was never rendered anywhere (the shared `GaneshaGestureCue` import was commented out with no inline replacement) — Ganesha's gesture cue never appeared on eyes/ears/tusk completions in the Tusk zone, though sparkles fired correctly. Replaced with the real shared `useMiniGesture`/`GaneshaGestureCue` pattern used everywhere else. Confirmed already committed and present in code.
+- **`AudioToggle.jsx` + `ShlokaRiverFinale.jsx`** — mute button's label/icon implied a whole-app mute, but it only ever silences voice (SFX intentionally stays on by design — discussed with Madhurima, keeping it voice-only so replay still feels rewarding). Relabeled to "Turn off/on voice narration" and documented the decision inline. Separately, `ShlokaRiverFinale` was the one live scene missing a `VOReplayButton` (12 of 13 had it) — added, wired to a 6-phase replay map. Confirmed already committed and present in code.
+
+## 🔧 Downgraded from "bug" to "confirmed non-issue" (2026-09-19)
+- **Completion `Continue` clearing the next scene's `_state` key** (previously listed as an actionable finding) — traced end-to-end with Madhurima. Replaying a scene restarts gameplay from the beginning regardless, which is the intended behavior, and the Map/Zone Welcome screens read a separate completed-flag record that `Continue` never touches — so nothing is actually lost from the child or parent's perspective. What gets cleared is an internal session label only. No fix needed, not re-opening this.
+
+## Item B — touch-target and comparison-card fixes (2026-09-19, commit `9dc6c95`)
+- `Familytreegame.css` — Continue button now keeps a 60px+ touch target in landscape
+- `DreamsWishesGame.css` — intro button's tablet-width min-height raised slightly
+- `Favoritefoodgame.jsx` — color-swatch sizing uses `clamp()` instead of fixed px (was overflowing the comparison-card column on iPad)
+- `MyIndianStoryGame.jsx` — language/festival icon sizing uses `clamp()`, same fix
+- Pond's equivalent reed-drag-target fix is still sitting uncommitted in Madhurima's active `PondScene.css` WIP — not yet landed.
+
+## 🔍 Live-browser pass progress (2026-09-19, checklist §17/§8)
+Spot-checked at the two extreme required viewports (`667×375` and `1366×1024`) via the `game-test.html` harness, real audio on:
+- **Sacred Assembly** — opening modal and in-progress gameplay clean at both extremes. Did not reach the fully-assembled overlay state (debug quick-place controls kept re-showing the same reveal card instead of advancing) — that state still needs a real playthrough check, which will happen naturally when the held `!important`→`clamp()` conversion below gets its required visual verification.
+- **Vakratunda Grove** — clean at both extremes.
+- **Suryakoti Bank** — clean; the only visual artifact was the harness's own dev toolbar eating vertical space at the small viewport, not a real bug.
+- **Shloka River Finale** — clean at `1366×1024` with the full 8-boat word tray visible. At `667×375` the harness showed the tray clipped, but this is very likely the same harness-toolbar overhead (the scene uses a full-height layout that would have that space back in real production) — flagged for a quick real-device/full-flow confirmation rather than treated as a confirmed bug.
+- **Modak** (from an earlier pass) — full flow, all 5 required viewports, clean.
+- **Family Tree** (from an earlier pass) — 2 viewports; found and fixed the progress-hearts clipping at `1024×768` (removed entirely, see below).
+- **Not yet live-tested this pass:** Pond, Tusk/Symbol (functionally spot-checked only, not viewport-verified), Nirvighnam Chant, Sarvakaryeshu Chant, Favorite Food, Dreams & Wishes, My Indian Story.
+
+## ✅ Family Tree hearts progress row removed (2026-09-19, commit `b92872a`)
+Was clipped off-screen at iPad landscape (`1024×768`) and no longer matched the current tree-building design (leftover from an earlier quiz-style version). Removed rather than repositioned, per Madhurima.
+
+## ✅ About Me Hut scene names finalized and wired everywhere (2026-09-19, commits `36bb340`, `e3782bb`, `ecd79a5`)
+Final child-facing names (Our Families → Our Favorite Things → Our Wishes & Dreams → My Indian Story, plus all Symbol Mountain/Shloka River names) are now live in: `ZoneConfig.js` (map cards), each scene's `sceneName`/`nextSceneName` completion props, and `ProgressManager.SCENE_METADATA`'s About Me Hut keys (renamed from stale `game1`-`game4` placeholders to the real scene IDs — this resolves the judgment-call item below). `maxStars` values in that metadata were deliberately left unchanged since they're not displayed anywhere live.
 
 ## ✅ Fixed this session (applied directly to files)
 
@@ -91,7 +131,7 @@ _Updated 2026-09-18 — folded in a fresh 13-scene checklist re-sweep (3 backgro
 | Shloka River | Sarvakaryeshu needs a "meaning subtitle" under each option card — content decision, no copy invented | `scene4/SarvakaryeshuGame.jsx` |
 | Shloka River | Sarvada needs a hide-and-seek redesign requiring new art assets (Ganesha hidden in scene, 8-12% of width) | `scene4/SarvadaGame.jsx` |
 | Shloka River | Vakratunda mid-rewrite — 4 items to re-check once your rewrite settles (hint-gate explicitness, pause/drag cleanup scope, no dual-flag completion guard, 1 PNG→WebP) | `VakratundaRescueGame.jsx:69-76,112-155,142-155,216-221` and `:9` |
-| About Me Hut | (2026-09-18) `ProgressManager.SCENE_METADATA` still keys About Me Hut scenes as `game1`-`game4` with stale display names/star totals from an older scene lineup (`'game4': 'Name & Birthday'` — that scene doesn't exist anymore, real scene 4 is "My Indian Story"). Lookups by real scene ID (`family-tree` etc.) silently miss and fall back to `{name: sceneId, maxStars: 5}`, so About Me Hut scenes likely show a raw ID instead of a proper name and a wrong max-star count wherever this metadata is displayed (Parent Dashboard etc.) — needs Madhurima to confirm the 4 correct names + max-star values before fixing (not inventing copy). Note: the sibling bug in `ZONE_CONFIG['about-me-hut'].scenes` (same stale IDs, broke auto-unlock) was already fixed this session. | `ProgressManager.jsx:62-65` |
+| ~~About Me Hut~~ | ~~`ProgressManager.SCENE_METADATA` stale `game1`-`game4` keys~~ | **RESOLVED 2026-09-19** — see "About Me Hut scene names finalized" section above. |
 
 ## 🔍 Needs a live-device smoke test (not resolvable by reading code alone)
 
@@ -137,11 +177,11 @@ _Audited 2026-09-18 against `GMB_SCENE_LAUNCH_CHECKLIST.md`. Scope was limited t
 - **Section 2 — Completion next-scene text:** `SceneCompletionCelebration.jsx` accepts a `nextSceneName` prop but does not render it; the primary CTA is hardcoded to `Next Adventure` (`SceneCompletionCelebration.jsx:21,325-340`). This affects the three non-final About Me Hut scenes. Two callers also supply stale values: Family Tree says `Let's Be Friends` but routes to `favorite-food` (`Familytreegame.jsx:1773,1781-1782`), and Dreams & Wishes says `About Me Hut Complete` but routes to `my-indian-story` (`ObstacleRemoverGame.jsx:2391,2408-2409`). Favorite Food's supplied `Dream Big Together` value matches its next scene but is also ignored (`Favoritefoodgame.jsx:2473,2488-2490`). Cross-check: `NewModakSceneV7.jsx:1694` also supplies `nextSceneName`, confirming that the prop belongs to the shared completion interface.
 
 ### Known punchlist item still present
-- **Sections 2/3 — About Me metadata:** `ProgressManager.SCENE_METADATA` still uses `game1`-`game4` instead of the live scene IDs (`ProgressManager.jsx:62-65`). Live About Me scene lookups therefore use the fallback raw ID and `maxStars: 5` (`ProgressManager.jsx:107-109,138-140`). This remains a documented content/design decision until the four canonical scene names and maximum-star values are confirmed. The live scene order itself is correct at `ProgressManager.jsx:40-44`.
+- ~~Sections 2/3 — About Me metadata~~ — **RESOLVED 2026-09-19**, see "About Me Hut scene names finalized" section near the top of this file.
 
 ### Manual/device-only follow-ups
 - Recheck Favorite Food's previously un-reproduced tray-on-reload and emoji-rendering reports on a real device.
-- Check `AboutMeComparisonCard` on iPad landscape; its columns still use fixed `min-width: 340px` and `max-width: 480px` (`AboutMeComparisonCard.css:48-52`).
+- ~~Check `AboutMeComparisonCard` on iPad landscape~~ — **RESOLVED**, converted to `clamp()` earlier in the 2026-09-19 sweep (commit `59ad626`). This note and the matching one in the Group C section below were stale.
 - Sections 8, 14, 15, and 18 were intentionally skipped; phone/iPad layout, content judgment, accessibility, real-finger interaction, iOS audio, interruption behavior, and child comprehension remain manual gates.
 
 ### Checklist status summary
@@ -391,7 +431,7 @@ _Audited 2026-09-18. Scope: `Familytreegame`, `Favoritefoodgame`, `ObstacleRemov
   No `min-height` at this breakpoint — computes to roughly 39-43px tall with 12px vertical padding + ~15-19px font, below 60px. Desktop rule stays safe on padding/font alone; mobile-only regression.
 
 ### Known punchlist items — confirmed still present, unconverted
-- **`AboutMeComparisonCard.css:50-51`** — `min-width: 340px; max-width: 480px`, still fixed-px, not clamp(). Used by both Favoritefoodgame and MyIndianStoryGame.
+- ~~`AboutMeComparisonCard.css:50-51`~~ — **RESOLVED**, converted to `clamp()` in commit `59ad626`. This entry was stale.
 - **Dreams & Wishes off-palette "dusk wishing sky" background** — still intact in `DreamsWishesGame.css`, still diverges from `#795548/#FF6B6B/#FBE9E7`. Not re-flagged as new — still awaiting your yes/no on whether it's an intentional sub-theme (see "Needs YOUR decision" table above).
 
 ### Manual/device-only follow-ups
@@ -418,3 +458,10 @@ The flagged items split into two groups:
 2. **Needs live-device testing** — pointercancel/ghost-gesture behavior, tab-visibility, and the two About Me Hut items that couldn't be reproduced in source are the kind of thing that only shows up on an actual iPad/phone
 
 A focused follow-up pass on `ObstacleRemoverGame.jsx` and `MyIndianStoryGame.jsx` (both under-audited due to size/session interruptions) would also be worth doing before calling About Me Hut done.
+
+## Scope note on this fold-in (2026-09-19)
+This update reconciles the punch-list against everything from the 2026-09-18/19 shared-layer sweep and today's live-browser spot-check. `CHANGELOG.md` has a much longer history predating this punch-list (multiple sessions of WIP, checkpoints, and fixes going back further) that was not fully reconciled here — that would be a separate, larger pass. If something looks like it's missing from this file, check `CHANGELOG.md` first before assuming it was never done.
+
+**Currently uncommitted, in progress (not reflected as fixed above):** `SacredAssemblyScene.css`, `SacredAssemblySceneV8.jsx`, `PondScene.css`, `DreamsWishesGame.css`, `ObstacleRemoverGame.jsx`, `Favoritefoodgame.jsx`, `MyIndianStoryGame.jsx`, `DECISIONS.md`, plus a new untracked `AboutMeGaneshaHost.jsx`/`.css` component — active WIP as of this update. Don't treat those items as resolved until a build-verified commit lands.
+
+**New verified-but-uncommitted finding (2026-09-19):** live-device testing of Sacred Assembly at a real phone-landscape size (812×375) turned up a bigger bug than the `!important` cleanup this was meant to verify — the `.ganesha-assembly-container` had zero responsive coverage for the 769-1023px landscape width range (existing breakpoints only covered ≤768px and 1024-1366px), so on phones like an iPhone 14 turned sideways it rendered at full desktop size (920×1020px, ~2.7x the viewport height) instead of scaling down. Fixed in-progress by adding `@media (min-width: 769px) and (max-width: 1023px) and (orientation: landscape)` reusing the proven 560×640 sizing from the 768px breakpoint (`SacredAssemblyScene.css:897-902`) — confirmed via `getComputedStyle` that the container now sizes correctly and the scene plays through without regression. Still needs: a build check, a real screenshot with all 8 symbols placed simultaneously (the completion modal fires almost immediately after the 8th lands, so this was verified via computed styles/math rather than a direct screenshot), and a real-device eyeball pass before treating as done.

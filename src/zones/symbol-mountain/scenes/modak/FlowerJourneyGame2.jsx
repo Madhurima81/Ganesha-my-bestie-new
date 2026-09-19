@@ -74,25 +74,27 @@ const IDLE_HINT_L2_MS = 18000;
 const IDLE_HINT_L3_MS = 26000;
 
 const VO = {
-  open: 'Mooshika wants to bring Ganesha six flowers. But getting there will not be easy.',
+  open: 'Mooshika has more challenges ahead. Let’s help him keep going.',
   bushStart: 'Two flowers are hiding in the leaves. Swipe them apart.',
-  bushFail: 'Oh! They closed again. Try once more.',
-  bushSuccess: 'You kept trying!',
-  branchStart: 'Oh no, Mooshika cannot reach those flowers.',
-  branchGesture: 'Pull the branch down, and hold it.',
+  bushFail: 'Oh no! They closed again. Try once more.',
+  bushIdle: 'Swipe the leaves apart again.',
+  bushSuccess: 'There they are! Two flowers.',
+  branchStart: 'These flowers are too high for Mooshika.',
+  branchGesture: 'Pull the branch down and keep holding.',
   branchEarly: 'Almost! Keep holding.',
-  branchSuccess: 'You stayed with it!',
-  branchNearMiss: 'So close! Try once more.',
-  marshStart: 'The last flowers are across the mud. Guide Mooshika over the grass.',
-  marshWobble: 'Ooh, it feels wobbly.',
+  branchSuccess: 'Got them! Two more flowers.',
+  branchNearMiss: 'Aww… so close. Try once more.',
+  marshStart: 'The last two flowers are across the mud. Guide Mooshika from safe spot to safe spot.',
+  marshIdle: 'Guide Mooshika to the next safe spot.',
+  marshWobble: 'Ooh… that’s wobbly.',
   marshWrong: 'Back to the safe spot. Try again.',
-  marshDone: 'You made it! Six flowers!',
-  bellyFrustrated: 'Mooshika felt frustrated...',
-  bellyDisappointed: '...disappointed...',
-  bellyWorried: '...and worried.',
-  bellyKeptGoing: 'And he kept going.',
-  bellyMeaning: "Ganesha's big belly reminds us — there's room for every feeling.",
-  bellyAffirmation: 'I can make room for my feelings and keep going.',
+  marshDone: 'You made it! All six flowers.',
+  bellyFrustrated: 'Mooshika felt frustrated,',
+  bellyDisappointed: 'proud,',
+  bellyWorried: 'worried, and happy.',
+  bellyKeptGoing: 'Lots of feelings came and went.',
+  bellyMeaning: 'Ganesha’s big belly reminds us: happy feelings and hard feelings can all be there, and we can keep going.',
+  bellyAffirmation: 'I can have lots of feelings and keep going.',
 };
 
 const SCENE_IMAGES = [
@@ -249,9 +251,9 @@ export default function FlowerJourneyGame2({
   useEffect(() => {
     if (idleHintLevel < 2 || idleVoPlayedRef.current[phase]) return;
     idleVoPlayedRef.current[phase] = true;
-    const line = phase === PHASES.FLOWER_BUSH ? VO.bushStart
+    const line = phase === PHASES.FLOWER_BUSH ? VO.bushIdle
       : phase === PHASES.FLOWER_BRANCH ? VO.branchGesture
-      : phase === PHASES.FLOWER_MARSH ? VO.marshStart
+      : phase === PHASES.FLOWER_MARSH ? VO.marshIdle
       : null;
     if (line) speak(line);
   }, [idleHintLevel, phase, speak]);

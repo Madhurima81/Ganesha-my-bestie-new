@@ -867,6 +867,7 @@
   top: var(--pond-flowers-y, 62.5%);
   width: clamp(60px, var(--pond-flowers-size, 10.5vw), 400px);
   min-width: 60px;
+  min-height: 60px;
   aspect-ratio: 1 / 1;
   z-index: 20;
   touch-action: none;
@@ -929,6 +930,28 @@
   height: auto;
   filter: drop-shadow(0 4px 4px rgba(60, 45, 70, 0.22));
   z-index: 19;
+}
+
+.pond-turtle-item {
+  position: absolute;
+  width: clamp(60px, 8vw, 160px);
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 6px rgba(40, 60, 30, 0.25));
+  transform-origin: center bottom;
+  z-index: 19;
+  animation: pondTurtleBreathe 4200ms ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pond-turtle-item {
+    animation: none;
+  }
+}
+
+@keyframes pondTurtleBreathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.035); }
 }
 
 .pond-trunk-lotus {
