@@ -67,6 +67,7 @@ const GAMES = {
   'sm-tusk':     { label: 'Symbol Mtn — Tusk Giving Game',           Comp: lazy(() => import('../zones/symbol-mountain/scenes/tusk/TuskPathGame')) },
   'sm-tusk-beatplayer': { label: 'DEV — Tusk via BeatPlayerGame (not live)', Comp: lazy(() => import('./beatPlayerPreview/TuskBeatPlayerPreview')) },
   'sm-tusk-live-v2': { label: 'Symbol Mtn — Tusk (BeatPlayerGame, pilot)', Comp: lazy(() => import('../zones/symbol-mountain/scenes/tusk/TuskBeatPlayerLive')) },
+  'sm-tusk-nest-debug': { label: 'DEV — Tusk Nest Rebuild, Layout Debug (drag & size panel)', Comp: lazy(() => import('./beatPlayerPreview/tuskNest/TuskNestBeatPlayerPreview')) },
   'kurumedeva-beatplayer': { label: 'DEV — KurumeDeva via BeatPlayerGame (not live)', Comp: lazy(() => import('./beatPlayerPreview/kurumedeva/KurumeDevaBeatPlayerPreview')) },
   'modak-game2-new': { label: 'DEV — Modak Game 2 redesign: Bush/Branch/Marsh/Belly (not live)', Comp: lazy(() => import('./modakGame2Preview/ModakGame2Preview')) },
   'modak-game3-new': { label: 'DEV — Modak Game 3: Garland Build/Offer (not live)', Comp: lazy(() => import('./modakGame3Preview/Game3Garland')) },
