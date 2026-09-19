@@ -46,8 +46,37 @@ matches in App.jsx are inside commented-out code blocks (:732, :951, :1031,
 :1837) and were correctly left alone. `console.error` untouched by design.
 Side benefit: `GameStateManager.saveGameState`'s `new Error().stack` caller
 trace (:395-410) now only runs in dev instead of on every progress write.
-No behaviour change. Build-verified.
-**Open:** Not yet pushed. Live-browser pass (checklist §17) still to run.
+No behaviour change. Build-verified. Pushed to `origin/staging` (merge `6bcd5b1`).
+**Open:** Live-browser pass (checklist §17) still to run.
+
+## [2026-09-18] — Celebration re-save dedupe + tab-hide TTS safety in 3 direct-speech mini-games
+**Touched:** src/lib/components/celebration/SceneCompletionCelebration.jsx,
+src/zones/symbol-mountain/scenes/modak/GarlandGame3.jsx,
+src/zones/symbol-mountain/scenes/modak/FlowerJourneyGame2.jsx,
+src/zones/symbol-mountain/scenes/tusk/EarsSoundMatchGame.jsx
+**Changed:**
+1. `SceneCompletionCelebration` — the temp-session stamp + permanent
+   `GameStateManager.saveGameState` effect keyed on `completionData` identity;
+   11 of 13 scenes pass it as an inline object literal, so it re-ran on every
+   parent re-render while the modal was open. Now dedupes on
+   `JSON.stringify(completionData)` per show cycle (reset when `show` flips
+   off). Same semantics, one write per distinct payload.
+2. Garland / Flower Journey / Ears — these three live mini-games call
+   `window.speechSynthesis` directly, bypassing `useVoiceGuidance`, so the
+   earlier tab-hide fix in the hook didn't cover them. Each now uses
+   `useAppVisibility`: on hide, cancel speech and remember the interrupted
+   line; on return, re-speak it from the start after 2s (matches the hook);
+   pending replay cleared on unmount. Flower Journey's `speakAsync` (awaited by
+   its story-beat sequences) detaches onend/onerror BEFORE cancel so the beat
+   doesn't advance while hidden, and resolves the same promise after the
+   replay so the sequence continues naturally. Unmount deliberately does NOT
+   call `cancel()` — the parent scene may have just started its next VO line in
+   the same commit; scene navigation teardown already cancels globally.
+   `TuskPathGame.jsx` also speaks directly but is not imported by the live
+   Tusk scene (`TuskBeatPlayerLive` is) — left alone.
+Build-verified. Lint: only pre-existing errors/warnings remain in these files.
+**Open:** Not committed yet. Modal-open (`isPaused`) pause still doesn't stop
+these games' TTS — only tab-hide is covered; scope for a later pass.
 
 ## [2026-09-18] — Tusk zone: Ganesha gesture cue was dead code, fixed
 **Touched:** src/zones/symbol-mountain/scenes/tusk/SymbolMountainSceneV3.jsx

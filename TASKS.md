@@ -20,8 +20,8 @@ Before every task, Claude Code must:
 - [x] T01 · Opening Modal — spec TBD (Madhurima will describe separately)
 - [x] T02 · Completion Modal — use NewModakV7 as benchmark
 - [x] T11 · Opening Modal → remove fade out (ONE fix in OpeningModal.css fixes all 13 live scenes)
-- [ ] T12 · Zone Completion Screen — 3 final scenes only
-- [ ] T17 · Zone Completion Modal — 3 final scenes only
+- [x] T12 · Zone Completion Screen — Symbol Mountain + Shloka River finales only (`ZoneCompletionFireworks` + final-scene badge on `SceneCompletionCelebration`). About Me Hut scenes are independent — no zone completion by design (2026-09-18, see DECISIONS.md)
+- [x] T17 · Zone Completion Modal — same as T12; the `isFinalScene` variant of `SceneCompletionCelebration` (Home CTA + zone badge) is the modal. About Me Hut N/A
 
 ### Navigation & UI Chrome
 - [x] T04 · Sound on/off toggle → Purple styling
@@ -174,16 +174,16 @@ Before every task, Claude Code must:
 | 01 | modak | NewModakSceneV7 | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
 | 02 | pond | PondSceneSimplifiedV4 | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
 | 03 | symbol | SymbolMountainSceneV3 | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
-| 04 | final-scene | SacredAssemblySceneV8 | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
+| 04 | final-scene | SacredAssemblySceneV8 | [x] | [x] | [ ] | [x] | [x] | [x] | [x] | [x] |
 | 05 | vakratunda-grove | VakratundaGroveSimplified | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
 | 06 | suryakoti-bank | SuryakotiBankSimplified | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
 | 07 | nirvighnam-chant | NirvighnamChantSimplified | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
 | 08 | sarvakaryeshu-chant | SarvakaryeshuChantSimplified | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
-| 09 | shloka-river-finale | ShlokaRiverFinale | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
+| 09 | shloka-river-finale | ShlokaRiverFinale | [x] | [x] | [ ] | [x] | [x] | [x] | [x] | [x] |
 | 10 | family-tree | Familytreegame | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
 | 11 | favorite-food | Favoritefoodgame | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
 | 12 | dreams-wishes | ObstacleRemoverGame | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
-| 13 | my-indian-story | MyIndianStoryGame | [x] | [x] | [ ] | [ ] | [ ] | [x] | [x] | [x] |
+| 13 | my-indian-story | MyIndianStoryGame | [x] | [x] | [ ] | [--] | [--] | [x] | [x] | [x] |
 
 ### Voice & Audio
 

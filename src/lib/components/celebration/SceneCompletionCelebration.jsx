@@ -135,8 +135,20 @@ const SceneCompletionCelebration = ({
   // Stamp temp session as completed when celebration shows.
   // This ensures "Continue Journey" navigates to zone-welcome (not back into the scene).
   // Also saves to permanent storage (GameStateManager) so replay doesn't erase completion.
+  // Most scenes pass `completionData` as an inline object literal, so its identity
+  // changes on every parent re-render (fireworks, timers) while this modal is open.
+  // Dedupe on the serialised value instead, so the temp-session stamp and the
+  // permanent save run once per distinct payload, not once per render.
+  const completionSignature = JSON.stringify(completionData ?? null);
+  const lastSavedSignatureRef = useRef(null);
+  useEffect(() => {
+    if (!show) lastSavedSignatureRef.current = null;
+  }, [show]);
+
   useEffect(() => {
     if (!show || !sceneId || !resolvedZoneId) return;
+    if (lastSavedSignatureRef.current === completionSignature) return;
+    lastSavedSignatureRef.current = completionSignature;
     const profileId = localStorage.getItem('activeProfileId');
     if (!profileId) return;
     const tempKey = `temp_session_${profileId}_${resolvedZoneId}_${sceneId}`;
@@ -161,7 +173,7 @@ const SceneCompletionCelebration = ({
       };
       GameStateManager.saveGameState(resolvedZoneId, sceneId, saveData);
     } catch (e) {}
-  }, [show, sceneId, resolvedZoneId, completionData]);
+  }, [show, sceneId, resolvedZoneId, completionSignature]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // `alreadyLocked` is passed by handleContinueWithAnimation, which takes the
   // lock itself before its 700ms delay so the deferred handleAction still runs.

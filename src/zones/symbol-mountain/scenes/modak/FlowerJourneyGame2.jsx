@@ -12,6 +12,7 @@ import PoseImage, { usePreloadPoses } from '../../../../lib/components/animation
 // symbol keeps whatever name the live scene's SymbolAutoReveal already uses.
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
+import useAppVisibility from '../../../../lib/hooks/useAppVisibility';
 import './FlowerJourneyGame2.css';
 
 import forestBackground from './assets/images/modak-fj-bg.webp';
@@ -126,15 +127,37 @@ export default function FlowerJourneyGame2({
   const mutedRef = useRef(!isAudioOn);
   useEffect(() => { mutedRef.current = !isAudioOn; }, [isAudioOn]);
 
+  // Tab-hide safety for this game's direct speechSynthesis use (it bypasses the
+  // scene's useVoiceGuidance hook). On hide: detach the active utterance's
+  // handlers BEFORE cancel() so a story beat awaiting speakAsync doesn't resolve
+  // and advance while nobody is watching; remember it. On return: re-speak the
+  // interrupted line from the start after 2s, resolving the same promise so the
+  // awaiting sequence continues naturally.
+  const activeSpeechRef = useRef(null); // { text, resolve } — resolve is null for fire-and-forget
+  const interruptedSpeechRef = useRef(null);
+  const replayTimerRef = useRef(null);
+
+  const startUtterance = useCallback((text, resolve) => {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.rate = 0.95;
+    const entry = { text, resolve, utterance: u };
+    const done = () => {
+      if (activeSpeechRef.current === entry) activeSpeechRef.current = null;
+      resolve?.();
+    };
+    u.onend = done;
+    u.onerror = done;
+    activeSpeechRef.current = entry;
+    window.speechSynthesis.speak(u);
+  }, []);
+
   const speak = useCallback((text) => {
     try {
       if (mutedRef.current || typeof window === 'undefined' || !window.speechSynthesis) return;
-      window.speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(text);
-      u.rate = 0.95;
-      window.speechSynthesis.speak(u);
+      startUtterance(text, null);
     } catch { /* no-op */ }
-  }, []);
+  }, [startUtterance]);
 
   const speakAsync = useCallback((text) => new Promise((resolve) => {
     try {
@@ -142,14 +165,44 @@ export default function FlowerJourneyGame2({
         window.setTimeout(resolve, Math.max(700, text.length * 45));
         return;
       }
-      window.speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(text);
-      u.rate = 0.95;
-      u.onend = resolve;
-      u.onerror = resolve;
-      window.speechSynthesis.speak(u);
+      startUtterance(text, resolve);
     } catch { resolve(); }
-  }), []);
+  }), [startUtterance]);
+
+  useAppVisibility(
+    useCallback(() => {
+      if (replayTimerRef.current) { clearTimeout(replayTimerRef.current); replayTimerRef.current = null; }
+      const entry = activeSpeechRef.current;
+      activeSpeechRef.current = null;
+      if (entry) {
+        entry.utterance.onend = null;
+        entry.utterance.onerror = null;
+        interruptedSpeechRef.current = { text: entry.text, resolve: entry.resolve };
+      }
+      try { window.speechSynthesis?.cancel(); } catch { /* no-op */ }
+    }, []),
+    useCallback(() => {
+      const entry = interruptedSpeechRef.current;
+      interruptedSpeechRef.current = null;
+      if (!entry) return;
+      replayTimerRef.current = setTimeout(() => {
+        replayTimerRef.current = null;
+        try {
+          if (mutedRef.current || !window.speechSynthesis) { entry.resolve?.(); return; }
+          startUtterance(entry.text, entry.resolve);
+        } catch { entry.resolve?.(); }
+      }, 2000);
+    }, [startUtterance])
+  );
+
+  // Unmount: only drop the pending replay. Don't cancel() here — the parent scene
+  // may already have started its next VO line in the same commit, and the scene's
+  // own navigation teardown cancels speech globally anyway.
+  useEffect(() => () => {
+    if (replayTimerRef.current) clearTimeout(replayTimerRef.current);
+    replayTimerRef.current = null;
+    interruptedSpeechRef.current = null;
+  }, []);
   const wait = useCallback((ms) => new Promise((resolve) => window.setTimeout(resolve, ms)), []);
 
   const safeTimeout = useCallback((fn, ms) => window.setTimeout(fn, ms), []);

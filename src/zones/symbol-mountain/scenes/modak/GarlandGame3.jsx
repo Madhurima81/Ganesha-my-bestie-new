@@ -12,6 +12,7 @@ import { usePreloadPoses, preparePose } from '../../../../lib/components/animati
 // puzzle, flowers auto-thread onto the next spot.
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
+import useAppVisibility from '../../../../lib/hooks/useAppVisibility';
 import './GarlandGame3.css';
 
 import flowerPink from './assets/images/fj-flower-coral.webp';
@@ -90,14 +91,46 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
 
   const mutedRef = useRef(!isAudioOn);
   useEffect(() => { mutedRef.current = !isAudioOn; }, [isAudioOn]);
+  // Tab-hide safety for this game's direct speechSynthesis use (it bypasses the
+  // scene's useVoiceGuidance hook). Mirrors the hook: cancel on hide, replay the
+  // interrupted line from the start 2s after return, clear everything on unmount.
+  const speakingTextRef = useRef(null);
+  const interruptedTextRef = useRef(null);
+  const replayTimerRef = useRef(null);
   const speak = useCallback((text) => {
     try {
       if (mutedRef.current || typeof window === 'undefined' || !window.speechSynthesis) return;
       window.speechSynthesis.cancel();
       const u = new SpeechSynthesisUtterance(text);
       u.rate = 0.95;
+      const done = () => { if (speakingTextRef.current === text) speakingTextRef.current = null; };
+      u.onend = done;
+      u.onerror = done;
+      speakingTextRef.current = text;
       window.speechSynthesis.speak(u);
     } catch { /* no-op */ }
+  }, []);
+  useAppVisibility(
+    useCallback(() => {
+      if (replayTimerRef.current) { clearTimeout(replayTimerRef.current); replayTimerRef.current = null; }
+      interruptedTextRef.current = speakingTextRef.current;
+      speakingTextRef.current = null;
+      try { window.speechSynthesis?.cancel(); } catch { /* no-op */ }
+    }, []),
+    useCallback(() => {
+      const text = interruptedTextRef.current;
+      interruptedTextRef.current = null;
+      if (!text) return;
+      replayTimerRef.current = setTimeout(() => { replayTimerRef.current = null; speak(text); }, 2000);
+    }, [speak])
+  );
+  // Unmount: only drop the pending replay. Don't cancel() here — the parent scene
+  // may already have started its next VO line in the same commit, and the scene's
+  // own navigation teardown cancels speech globally anyway.
+  useEffect(() => () => {
+    if (replayTimerRef.current) clearTimeout(replayTimerRef.current);
+    replayTimerRef.current = null;
+    interruptedTextRef.current = null;
   }, []);
 
   const isBuild = phase === PHASES.BUILD;

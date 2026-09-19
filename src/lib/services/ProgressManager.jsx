@@ -59,10 +59,10 @@ static SCENE_METADATA = {
   'final-meaning-scene': { name: 'Memory Match Finale', maxStars: 8, order: 5 },
   
   // About Me Hut scenes
-  'game1': { name: 'Family Tree', maxStars: 4, order: 1 },
-  'game2': { name: 'My Favorite Things', maxStars: 2, order: 2 },
-  'game3': { name: 'Obstacle Remover', maxStars: 3, order: 3 },
-  'game4': { name: 'Name & Birthday', maxStars: 2, order: 4 },
+  'family-tree': { name: 'Our Families', maxStars: 4, order: 1 },
+  'favorite-food': { name: 'Our Favorite Things', maxStars: 2, order: 2 },
+  'dreams-wishes': { name: 'Our Wishes & Dreams', maxStars: 3, order: 3 },
+  'my-indian-story': { name: 'My Indian Story', maxStars: 2, order: 4 },
   
   'crystal-cave': { name: 'Crystal Cave Exploration', maxStars: 5, order: 1 },
   'treasure-chamber': { name: 'Treasure Chamber Adventure', maxStars: 6, order: 2 },

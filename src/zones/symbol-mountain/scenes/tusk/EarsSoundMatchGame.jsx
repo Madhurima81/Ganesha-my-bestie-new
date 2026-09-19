@@ -5,6 +5,7 @@ import PoseImage, { usePreloadPoses } from '../../../../lib/components/animation
 // becomes the focal animal. Same 3 listening zones serve both rounds.
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import useAppVisibility from '../../../../lib/hooks/useAppVisibility';
 import './EarsSoundMatchGame.css';
 
 // Reuse the shared scene-3 Symbol Mountain background across Eyes, Ears, and Tusk.
@@ -152,16 +153,19 @@ const HINT_REPLAY_MS = 10000;
 const HINT_TEXT_MS = 18000;
 const HINT_TARGET_MS = 26000;
 
+// Returns the utterance so the component can track it for tab-hide handling.
 const speakFallback = (text) => {
-  if (!text || typeof window === 'undefined' || !window.speechSynthesis) return;
+  if (!text || typeof window === 'undefined' || !window.speechSynthesis) return null;
   try {
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.rate = 0.92;
     utterance.pitch = 1;
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(utterance);
+    return utterance;
   } catch {
     // Speech synthesis is optional.
+    return null;
   }
 };
 
@@ -236,10 +240,47 @@ const EarsSoundMatchGame = ({
     }
   }, []);
 
+  // Tab-hide safety for this game's direct speechSynthesis use (it bypasses the
+  // scene's useVoiceGuidance hook). Mirrors the hook: cancel on hide, replay the
+  // interrupted line from the start 2s after return. Only the spoken hint/story
+  // lines are tracked — the animal-sound MP3s are left to the browser's own
+  // background-tab media pausing so their onDone chains aren't broken.
+  const speakingTextRef = useRef(null);
+  const interruptedTextRef = useRef(null);
+  const replayTimerRef = useRef(null);
+  const trackUtterance = useCallback((text, utterance) => {
+    if (!utterance) return;
+    const done = () => { if (speakingTextRef.current === text) speakingTextRef.current = null; };
+    utterance.onend = done;
+    utterance.onerror = done;
+    speakingTextRef.current = text;
+  }, []);
+
   const speak = useCallback((text) => {
     if (!isAudioOn) return;
-    speakFallback(text);
-  }, [isAudioOn]);
+    trackUtterance(text, speakFallback(text));
+  }, [isAudioOn, trackUtterance]);
+
+  useAppVisibility(
+    useCallback(() => {
+      if (replayTimerRef.current) { clearTimeout(replayTimerRef.current); replayTimerRef.current = null; }
+      interruptedTextRef.current = speakingTextRef.current;
+      speakingTextRef.current = null;
+      try { window.speechSynthesis?.cancel(); } catch { /* no-op */ }
+    }, []),
+    useCallback(() => {
+      const text = interruptedTextRef.current;
+      interruptedTextRef.current = null;
+      if (!text) return;
+      replayTimerRef.current = setTimeout(() => { replayTimerRef.current = null; speak(text); }, 2000);
+    }, [speak])
+  );
+
+  useEffect(() => () => {
+    if (replayTimerRef.current) clearTimeout(replayTimerRef.current);
+    replayTimerRef.current = null;
+    interruptedTextRef.current = null;
+  }, []);
 
   const playSound = useCallback((src, fallbackText = '', onDone = null, volume = 0.72) => {
     stopAudio();
@@ -255,7 +296,7 @@ const EarsSoundMatchGame = ({
     })();
 
     if (!isAudioOn || !src) {
-      if (fallbackText) speakFallback(fallbackText);
+      if (fallbackText) trackUtterance(fallbackText, speakFallback(fallbackText));
       schedule(finish, 850);
       return;
     }
@@ -270,7 +311,7 @@ const EarsSoundMatchGame = ({
     } catch {
       finish();
     }
-  }, [isAudioOn, schedule, stopAudio]);
+  }, [isAudioOn, schedule, stopAudio, trackUtterance]);
 
   const showFeedback = useCallback((message) => {
     setFeedback(message);
