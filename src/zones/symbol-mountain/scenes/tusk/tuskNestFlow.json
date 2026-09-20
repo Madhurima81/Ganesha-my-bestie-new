@@ -14,7 +14,7 @@
           { "name": "Torn leaf", "path": "leaf", "x": 24, "y": 86, "scale": 30, "rotation": 8, "opacity": 100, "flip": 1, "z": 12, "w": 16, "gameKey": "leafItem" },
           { "name": "Bent feather", "path": "feather", "x": 72, "y": 86, "scale": 26, "rotation": -12, "opacity": 100, "flip": 1, "z": 12, "w": 14, "gameKey": "featherItem" },
           { "name": "Broken nest", "path": "nest-0", "x": 48, "y": 55, "scale": 60, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 26, "gameKey": "nestSprite" },
-          { "name": "Bunny sad", "path": "bunny-sad", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
+          { "name": "Bunny", "path": "bunny-helping", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
         ],
         "audio": { "voText": "Oh no, the little bird's nest is broken. Bunny wants to rebuild it. What can help?", "trigger": "state-enter" }
       },
@@ -29,7 +29,7 @@
           { "name": "Torn leaf", "path": "leaf", "x": 24, "y": 86, "scale": 30, "rotation": 8, "opacity": 100, "flip": 1, "z": 12, "w": 16, "gameKey": "leafItem" },
           { "name": "Bent feather", "path": "feather", "x": 72, "y": 86, "scale": 26, "rotation": -12, "opacity": 100, "flip": 1, "z": 12, "w": 14, "gameKey": "featherItem" },
           { "name": "Broken nest", "path": "nest-0", "x": 48, "y": 55, "scale": 60, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 26, "gameKey": "nestSprite" },
-          { "name": "Bunny sad", "path": "bunny-sad", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
+          { "name": "Bunny", "path": "bunny-helping", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
         ],
         "audio": { "voText": "", "trigger": "state-enter" }
       },
@@ -44,7 +44,7 @@
           { "name": "Torn leaf", "path": "leaf", "x": 24, "y": 86, "scale": 30, "rotation": 8, "opacity": 100, "flip": 1, "z": 12, "w": 16, "gameKey": "leafItem" },
           { "name": "Bent feather", "path": "feather", "x": 72, "y": 86, "scale": 26, "rotation": -12, "opacity": 100, "flip": 1, "z": 12, "w": 14, "gameKey": "featherItem" },
           { "name": "Broken nest", "path": "nest-0", "x": 48, "y": 55, "scale": 60, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 26, "gameKey": "nestSprite" },
-          { "name": "Bunny sad", "path": "bunny-sad", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
+          { "name": "Bunny", "path": "bunny-helping", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
         ],
         "audio": { "voText": "Look around. Which things could help build the nest?", "trigger": "state-enter" }
       }
@@ -61,7 +61,7 @@
           { "name": "Torn leaf", "path": "leaf", "x": 24, "y": 86, "scale": 30, "rotation": 8, "opacity": 100, "flip": 1, "z": 12, "w": 16, "gameKey": "leafItem" },
           { "name": "Bent feather", "path": "feather", "x": 72, "y": 86, "scale": 26, "rotation": -12, "opacity": 100, "flip": 1, "z": 12, "w": 14, "gameKey": "featherItem" },
           { "name": "Broken nest", "path": "nest-0", "x": 48, "y": 55, "scale": 60, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 26, "gameKey": "nestSprite" },
-          { "name": "Bunny sad", "path": "bunny-sad", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
+          { "name": "Bunny", "path": "bunny-helping", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
         ],
         "audio": { "voText": "Can the broken twig still help? Drag it to the nest.", "trigger": "state-enter" }
       },
@@ -75,7 +75,7 @@
           { "name": "Torn leaf", "path": "leaf", "x": 24, "y": 86, "scale": 30, "rotation": 8, "opacity": 100, "flip": 1, "z": 12, "w": 16, "gameKey": "leafItem" },
           { "name": "Bent feather", "path": "feather", "x": 72, "y": 86, "scale": 26, "rotation": -12, "opacity": 100, "flip": 1, "z": 12, "w": 14, "gameKey": "featherItem" },
           { "name": "Broken nest", "path": "nest-0", "x": 48, "y": 55, "scale": 60, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 26, "gameKey": "nestSprite" },
-          { "name": "Bunny sad", "path": "bunny-sad", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
+          { "name": "Bunny", "path": "bunny-helping", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
         ],
         "audio": { "voText": "", "trigger": "state-enter" }
       },
@@ -89,7 +89,7 @@
           { "name": "Torn leaf", "path": "leaf", "x": 24, "y": 86, "scale": 30, "rotation": 8, "opacity": 100, "flip": 1, "z": 12, "w": 16, "gameKey": "leafItem" },
           { "name": "Bent feather", "path": "feather", "x": 72, "y": 86, "scale": 26, "rotation": -12, "opacity": 100, "flip": 1, "z": 12, "w": 14, "gameKey": "featherItem" },
           { "name": "Nest with twig", "path": "nest-1", "x": 48, "y": 55, "scale": 60, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 26, "gameKey": "nestSprite" },
-          { "name": "Bunny sad", "path": "bunny-sad", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
+          { "name": "Bunny", "path": "bunny-helping", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
         ],
         "audio": { "voText": "The twig can help.", "trigger": "state-enter" }
       },
@@ -106,7 +106,7 @@
           { "name": "Torn leaf", "path": "leaf", "x": 24, "y": 86, "scale": 30, "rotation": 8, "opacity": 100, "flip": 1, "z": 12, "w": 16, "gameKey": "leafItem" },
           { "name": "Bent feather", "path": "feather", "x": 72, "y": 86, "scale": 26, "rotation": -12, "opacity": 100, "flip": 1, "z": 12, "w": 14, "gameKey": "featherItem" },
           { "name": "Nest with twig", "path": "nest-1", "x": 48, "y": 55, "scale": 60, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 26, "gameKey": "nestSprite" },
-          { "name": "Bunny sad", "path": "bunny-sad", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
+          { "name": "Bunny", "path": "bunny-helping", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
         ],
         "audio": { "voText": "What about the short grass? Drag it to the nest.", "trigger": "state-enter" }
       },
@@ -119,7 +119,7 @@
           { "name": "Torn leaf", "path": "leaf", "x": 24, "y": 86, "scale": 30, "rotation": 8, "opacity": 100, "flip": 1, "z": 12, "w": 16, "gameKey": "leafItem" },
           { "name": "Bent feather", "path": "feather", "x": 72, "y": 86, "scale": 26, "rotation": -12, "opacity": 100, "flip": 1, "z": 12, "w": 14, "gameKey": "featherItem" },
           { "name": "Nest with twig", "path": "nest-1", "x": 48, "y": 55, "scale": 60, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 26, "gameKey": "nestSprite" },
-          { "name": "Bunny sad", "path": "bunny-sad", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
+          { "name": "Bunny", "path": "bunny-helping", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
         ],
         "audio": { "voText": "", "trigger": "state-enter" }
       },
@@ -132,7 +132,7 @@
           { "name": "Torn leaf", "path": "leaf", "x": 24, "y": 86, "scale": 30, "rotation": 8, "opacity": 100, "flip": 1, "z": 12, "w": 16, "gameKey": "leafItem" },
           { "name": "Bent feather", "path": "feather", "x": 72, "y": 86, "scale": 26, "rotation": -12, "opacity": 100, "flip": 1, "z": 12, "w": 14, "gameKey": "featherItem" },
           { "name": "Nest with twig and grass", "path": "nest-2", "x": 48, "y": 55, "scale": 60, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 26, "gameKey": "nestSprite" },
-          { "name": "Bunny sad", "path": "bunny-sad", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
+          { "name": "Bunny", "path": "bunny-helping", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
         ],
         "audio": { "voText": "The grass can help too.", "trigger": "state-enter" }
       },
@@ -148,7 +148,7 @@
           { "name": "Torn leaf", "path": "leaf", "x": 24, "y": 86, "scale": 30, "rotation": 8, "opacity": 100, "flip": 1, "z": 12, "w": 16, "gameKey": "leafItem" },
           { "name": "Bent feather", "path": "feather", "x": 72, "y": 86, "scale": 26, "rotation": -12, "opacity": 100, "flip": 1, "z": 12, "w": 14, "gameKey": "featherItem" },
           { "name": "Nest with twig and grass", "path": "nest-2", "x": 48, "y": 55, "scale": 60, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 26, "gameKey": "nestSprite" },
-          { "name": "Bunny sad", "path": "bunny-sad", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
+          { "name": "Bunny", "path": "bunny-helping", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
         ],
         "audio": { "voText": "Can the torn leaf help too? Drag it to the nest.", "trigger": "state-enter" }
       },
@@ -160,7 +160,7 @@
           { "name": "Peacock", "path": "peacock-idle", "x": 80, "y": 78, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
           { "name": "Bent feather", "path": "feather", "x": 72, "y": 86, "scale": 26, "rotation": -12, "opacity": 100, "flip": 1, "z": 12, "w": 14, "gameKey": "featherItem" },
           { "name": "Nest with twig and grass", "path": "nest-2", "x": 48, "y": 55, "scale": 60, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 26, "gameKey": "nestSprite" },
-          { "name": "Bunny sad", "path": "bunny-sad", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
+          { "name": "Bunny", "path": "bunny-helping", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
         ],
         "audio": { "voText": "", "trigger": "state-enter" }
       },
@@ -172,7 +172,7 @@
           { "name": "Peacock", "path": "peacock-idle", "x": 80, "y": 78, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
           { "name": "Bent feather", "path": "feather", "x": 72, "y": 86, "scale": 26, "rotation": -12, "opacity": 100, "flip": 1, "z": 12, "w": 14, "gameKey": "featherItem" },
           { "name": "Nest with twig, grass, leaf", "path": "nest-3", "x": 48, "y": 55, "scale": 60, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 26, "gameKey": "nestSprite" },
-          { "name": "Bunny sad", "path": "bunny-sad", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
+          { "name": "Bunny", "path": "bunny-helping", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
         ],
         "audio": { "voText": "The torn leaf still works.", "trigger": "state-enter" }
       },
@@ -187,7 +187,7 @@
           { "name": "Peacock", "path": "peacock-idle", "x": 80, "y": 78, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
           { "name": "Bent feather", "path": "feather", "x": 72, "y": 86, "scale": 26, "rotation": -12, "opacity": 100, "flip": 1, "z": 12, "w": 14, "gameKey": "featherItem" },
           { "name": "Nest with twig, grass, leaf", "path": "nest-3", "x": 48, "y": 55, "scale": 60, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 26, "gameKey": "nestSprite" },
-          { "name": "Bunny sad", "path": "bunny-sad", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
+          { "name": "Bunny", "path": "bunny-helping", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
         ],
         "audio": { "voText": "And the bent feather? Drag it to the nest.", "trigger": "state-enter" }
       },
@@ -198,7 +198,7 @@
           { "name": "Elephant", "path": "elephant-idle", "x": 14, "y": 78, "scale": 85, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 24, "gameKey": "" },
           { "name": "Peacock", "path": "peacock-idle", "x": 80, "y": 78, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
           { "name": "Nest with twig, grass, leaf", "path": "nest-3", "x": 48, "y": 55, "scale": 60, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 26, "gameKey": "nestSprite" },
-          { "name": "Bunny sad", "path": "bunny-sad", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
+          { "name": "Bunny", "path": "bunny-helping", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
         ],
         "audio": { "voText": "", "trigger": "state-enter" }
       },
@@ -209,8 +209,8 @@
           { "name": "Elephant", "path": "elephant-idle", "x": 14, "y": 78, "scale": 85, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 24, "gameKey": "" },
           { "name": "Peacock", "path": "peacock-idle", "x": 80, "y": 78, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
           { "name": "Complete nest", "path": "nest-4", "x": 48, "y": 55, "scale": 60, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 26, "gameKey": "nestSprite" },
-          { "name": "Baby bird", "path": "baby-bird", "x": 48, "y": 52, "scale": 28, "rotation": 0, "opacity": 100, "flip": 1, "z": 15, "w": 18, "gameKey": "" },
-          { "name": "Bunny happy", "path": "bunny-happy", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
+          { "name": "Baby bird", "path": "baby-bird-happy", "x": 48, "y": 52, "scale": 28, "rotation": 0, "opacity": 100, "flip": 1, "z": 15, "w": 18, "gameKey": "" },
+          { "name": "Bunny", "path": "bunny-helping", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
         ],
         "audio": { "voText": "And the feather can make it soft. You did it! All those little things helped rebuild the nest.", "trigger": "state-enter" }
       },
@@ -224,8 +224,8 @@
           { "name": "Elephant", "path": "elephant-idle", "x": 14, "y": 78, "scale": 85, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 24, "gameKey": "" },
           { "name": "Peacock", "path": "peacock-idle", "x": 80, "y": 78, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
           { "name": "Complete nest", "path": "nest-4", "x": 48, "y": 55, "scale": 60, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 26, "gameKey": "nestSprite" },
-          { "name": "Baby bird", "path": "baby-bird", "x": 48, "y": 52, "scale": 28, "rotation": 0, "opacity": 100, "flip": 1, "z": 15, "w": 18, "gameKey": "" },
-          { "name": "Bunny happy", "path": "bunny-happy", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
+          { "name": "Baby bird", "path": "baby-bird-happy", "x": 48, "y": 52, "scale": 28, "rotation": 0, "opacity": 100, "flip": 1, "z": 15, "w": 18, "gameKey": "" },
+          { "name": "Bunny", "path": "bunny-helping", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
         ],
         "audio": { "voText": "Ganesha's tusk reminds us: even broken things can still help.", "trigger": "state-enter" }
       },
@@ -236,8 +236,8 @@
           { "name": "Elephant", "path": "elephant-idle", "x": 14, "y": 78, "scale": 85, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 24, "gameKey": "" },
           { "name": "Peacock", "path": "peacock-idle", "x": 80, "y": 78, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
           { "name": "Complete nest", "path": "nest-4", "x": 48, "y": 55, "scale": 60, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 26, "gameKey": "nestSprite" },
-          { "name": "Baby bird", "path": "baby-bird", "x": 48, "y": 52, "scale": 28, "rotation": 0, "opacity": 100, "flip": 1, "z": 15, "w": 18, "gameKey": "" },
-          { "name": "Bunny happy", "path": "bunny-happy", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
+          { "name": "Baby bird", "path": "baby-bird-happy", "x": 48, "y": 52, "scale": 28, "rotation": 0, "opacity": 100, "flip": 1, "z": 15, "w": 18, "gameKey": "" },
+          { "name": "Bunny", "path": "bunny-helping", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
         ],
         "audio": { "voText": "", "trigger": "state-enter" }
       },
@@ -248,8 +248,8 @@
           { "name": "Elephant", "path": "elephant-idle", "x": 14, "y": 78, "scale": 85, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 24, "gameKey": "" },
           { "name": "Peacock", "path": "peacock-idle", "x": 80, "y": 78, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
           { "name": "Complete nest", "path": "nest-4", "x": 48, "y": 55, "scale": 60, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 26, "gameKey": "nestSprite" },
-          { "name": "Baby bird", "path": "baby-bird", "x": 48, "y": 52, "scale": 28, "rotation": 0, "opacity": 100, "flip": 1, "z": 15, "w": 18, "gameKey": "" },
-          { "name": "Bunny happy", "path": "bunny-happy", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
+          { "name": "Baby bird", "path": "baby-bird-happy", "x": 48, "y": 52, "scale": 28, "rotation": 0, "opacity": 100, "flip": 1, "z": 15, "w": 18, "gameKey": "" },
+          { "name": "Bunny", "path": "bunny-helping", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
         ],
         "audio": { "voText": "", "trigger": "state-enter" }
       }

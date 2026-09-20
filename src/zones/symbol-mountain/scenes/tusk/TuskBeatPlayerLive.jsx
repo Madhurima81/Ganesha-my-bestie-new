@@ -9,8 +9,7 @@ import monkeyIdle from './assets/images/monkey-new.webp';
 import cowIdle from './assets/images/cow-new.webp';
 import elephantIdle from './assets/images/elephant-new1.webp';
 import peacockIdle from './assets/images/peacock-new.webp';
-import bunnySad from './assets/images/tusk-giving/bunny_01_tired.webp';
-import bunnyHappy from './assets/images/tusk-giving/bunny_06_happy_recovered.webp';
+import bunnyHelping from './assets/images/tusk-nest/bunny-helping.webp';
 import bgImg from './assets/images/tusk-giving/symbol_mountain_3_bg.webp';
 
 // Nest-rebuild items — the four imperfect-but-useful things each animal
@@ -24,15 +23,14 @@ import nest1 from './assets/images/tusk-nest/nest-1.webp';
 import nest2 from './assets/images/tusk-nest/nest-2.webp';
 import nest3 from './assets/images/tusk-nest/nest-3.webp';
 import nest4 from './assets/images/tusk-nest/nest-4.webp';
-import babyBird from './assets/images/tusk-nest/baby-bird.webp';
+import babyBirdHappy from './assets/images/tusk-nest/baby-bird-happy.webp';
 
 const ASSET_MAP = {
   'monkey-idle': monkeyIdle,
   'cow-idle': cowIdle,
   'elephant-idle': elephantIdle,
   'peacock-idle': peacockIdle,
-  'bunny-sad': bunnySad,
-  'bunny-happy': bunnyHappy,
+  'bunny-helping': bunnyHelping,
   'broken-twig': brokenTwig,
   'grass-bundle': grassBundle,
   'leaf': tornLeaf,
@@ -42,7 +40,7 @@ const ASSET_MAP = {
   'nest-2': nest2,
   'nest-3': nest3,
   'nest-4': nest4,
-  'baby-bird': babyBird,
+  'baby-bird-happy': babyBirdHappy,
 };
 
 // Tusk game — Bunny's baby bird lost its nest. Monkey, cow, elephant, and

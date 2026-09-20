@@ -201,6 +201,33 @@ function BeatPlayerGame({
   const [debugCopyStatus, setDebugCopyStatus] = useState('');
   const debugDragRef = useRef(null); // { mode: 'item' | 'fixedPoint', key, offsetX, offsetY }
 
+  // Layout Debug panel itself is draggable by its header — the panel is
+  // fixed-position (so it's never clipped by the stage), which meant it
+  // could permanently cover part of the scene (e.g. the peacock in the
+  // Tusk nest flow) with no way to move it aside. null = default
+  // bottom-right CSS position; once dragged, {left, top} in viewport px.
+  const [debugPanelPos, setDebugPanelPos] = useState(null);
+  const debugPanelDragRef = useRef(null); // { offsetX, offsetY }
+
+  const onDebugPanelHeaderPointerDown = useCallback((e) => {
+    e.preventDefault();
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+    const panelRect = e.currentTarget.closest('.beat-player-debug-panel')?.getBoundingClientRect();
+    if (!panelRect) return;
+    debugPanelDragRef.current = { offsetX: e.clientX - panelRect.left, offsetY: e.clientY - panelRect.top };
+  }, []);
+
+  const onDebugPanelPointerMove = useCallback((e) => {
+    const d = debugPanelDragRef.current;
+    if (!d) return;
+    setDebugPanelPos({
+      left: clamp(e.clientX - d.offsetX, 0, window.innerWidth - 40),
+      top: clamp(e.clientY - d.offsetY, 0, window.innerHeight - 40),
+    });
+  }, []);
+
+  const endDebugPanelDrag = useCallback(() => { debugPanelDragRef.current = null; }, []);
+
   const beatIndex = beatKeys[beatPos];
   const beat = flowJson?.beats?.[beatIndex];
   const stateBlock = beat?.[stateName];
@@ -1302,9 +1329,18 @@ function BeatPlayerGame({
     </div>
 
     {layoutDebug && (
-      <div className="beat-player-debug-panel">
-        <div className="beat-player-debug-panel-row">
-          <strong>Layout Debug</strong> — beat {beatIndex} / {stateName}
+      <div
+        className="beat-player-debug-panel"
+        style={debugPanelPos ? { left: debugPanelPos.left, top: debugPanelPos.top, right: 'auto', bottom: 'auto' } : undefined}
+        onPointerMove={onDebugPanelPointerMove}
+        onPointerUp={endDebugPanelDrag}
+        onPointerCancel={endDebugPanelDrag}
+      >
+        <div
+          className="beat-player-debug-panel-row beat-player-debug-panel-header"
+          onPointerDown={onDebugPanelHeaderPointerDown}
+        >
+          <strong>⠿ Layout Debug</strong> — beat {beatIndex} / {stateName}
         </div>
         {debugSelectedItem ? (
           <>

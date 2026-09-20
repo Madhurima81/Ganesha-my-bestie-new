@@ -190,6 +190,16 @@
   gap: 6px;
 }
 
+.beat-player-debug-panel-header {
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+
+.beat-player-debug-panel-header:active {
+  cursor: grabbing;
+}
+
 .beat-player-debug-panel label {
   display: flex;
   justify-content: space-between;
