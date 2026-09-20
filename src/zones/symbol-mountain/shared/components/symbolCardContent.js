@@ -104,14 +104,14 @@ export const symbolCardContent = {
 
   tusk: {
     label: 'Tusk',
-    icon: '/images/icons/broken-tusk-symbol.png',
-    affirmation: 'I stay focused on what is true.',
+    icon: '/images/icons/broken-tusk-symbol.webp',
+    affirmation: 'I can use what I have for something important.',
     ganeshaLines: [
-      'You see I have one strong tusk?',
-      'It reminds me to stay strong and focused on what is true, even when things are difficult.',
+      'Ganesha’s tusk reminds us: even broken things can still help.',
+      'Something broken, bent, torn, or short can still be useful for an important purpose.',
     ],
     invitation:
-      'Think of something old or broken. What could you still use it for?',
-    gift: 'You can stay strong and focused on what matters.',
+      'Think of something old or broken. What could it still help with?',
+    gift: 'You can use what you have for something important.',
   },
 };

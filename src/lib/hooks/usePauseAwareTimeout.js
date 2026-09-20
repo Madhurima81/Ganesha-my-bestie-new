@@ -39,7 +39,15 @@ const usePauseAwareTimeout = ({ onHide, onShow, resumeDelay = 0, resumePending =
     entry.startedAt = Date.now();
     entry.id = setTimeout(() => {
       pendingRef.current = pendingRef.current.filter(e => e !== entry);
-      entry.callback();
+      // A bug in one scene's scheduled callback must not take down every other
+      // pending timer silently — surface it clearly instead of an opaque
+      // "Cannot read properties of undefined" with no indication of which
+      // safeSetTimeout call site it came from.
+      try {
+        entry.callback();
+      } catch (error) {
+        console.error('[usePauseAwareTimeout] scheduled callback threw:', error);
+      }
     }, Math.max(0, entry.remaining));
   }, []);
 

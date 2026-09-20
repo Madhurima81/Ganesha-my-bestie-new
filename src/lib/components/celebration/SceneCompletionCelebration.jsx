@@ -68,7 +68,7 @@ const SceneCompletionCelebration = ({
   usePreloadPoses([
     GANESHA_POSE_ASSETS.sitModak, badgeImage,
     ...Object.values(symbolImages), ...Object.values(appImages),
-    ...(isZoneFinalCompletionBadge ? [finalBadgeConfig[resolvedZoneId].icon] : []),
+    ...(isZoneFinalCompletionBadge ? [finalBadgeConfig[resolvedZoneId]?.icon] : []),
   ].filter(Boolean));
   // Value-based dependencies keep parent rerenders from restarting the reveal.
   const trophySources = JSON.stringify([...new Set(discoveredSymbols)].map(symbol => [
@@ -352,24 +352,29 @@ const SceneCompletionCelebration = ({
 
                 {/* Primary CTA */}
                 {!primaryAction && (
-                  <ProfilePillBtn
-                    onClick={() => {
-                      if (isFinalScene) {
-                        handleContinueWithAnimation(() => handleAction(onHome || onContinue || handleExplore, false, true));
-                        return;
-                      }
-                      const currentZone = resolvedZoneId || GameStateManager.currentZone || 'symbol-mountain';
-                      const nextSceneInfo = GameStateManager.getNextScene(currentZone, sceneId);
-                      if (nextSceneInfo) {
-                        GameStateManager.clearSceneState(nextSceneInfo.zone, nextSceneInfo.scene);
-                      }
-                      handleContinueWithAnimation(() => handleAction(onContinue, false, true));
-                    }}
-                    label={isFinalScene ? 'Home' : nextSceneName}
-                    size="md"
-                    fullWidth={true}
-                    style={getProfilePillBtnStyle(resolvedZoneId)}
-                  />
+                  <div className="primary-action-container">
+                    <ProfilePillBtn
+                      onClick={() => {
+                        if (isFinalScene) {
+                          handleContinueWithAnimation(() => handleAction(onHome || onContinue || handleExplore, false, true));
+                          return;
+                        }
+                        const currentZone = resolvedZoneId || GameStateManager.currentZone || 'symbol-mountain';
+                        const nextSceneInfo = GameStateManager.getNextScene(currentZone, sceneId);
+                        if (nextSceneInfo) {
+                          GameStateManager.clearSceneState(nextSceneInfo.zone, nextSceneInfo.scene);
+                        }
+                        handleContinueWithAnimation(() => handleAction(onContinue, false, true));
+                      }}
+                      label={isFinalScene ? 'Home' : 'Next Adventure'}
+                      size="md"
+                      fullWidth={true}
+                      style={getProfilePillBtnStyle(resolvedZoneId)}
+                    />
+                    {!isFinalScene && nextSceneName && (
+                      <p className="next-adventure-subtext">{nextSceneName}</p>
+                    )}
+                  </div>
                 )}
 
                 {/* Secondary / Tertiary actions */}
