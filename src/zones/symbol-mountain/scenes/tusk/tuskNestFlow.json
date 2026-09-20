@@ -5,253 +5,2075 @@
     "0": {
       "before": {
         "items": [
-          { "name": "Monkey", "path": "monkey-idle", "x": 15, "y": 28, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Cow", "path": "cow-idle", "x": 78, "y": 26, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Elephant", "path": "elephant-idle", "x": 14, "y": 78, "scale": 85, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Peacock", "path": "peacock-idle", "x": 80, "y": 78, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Broken twig", "path": "broken-twig", "x": 24, "y": 36, "scale": 30, "rotation": -10, "opacity": 100, "flip": 1, "z": 12, "w": 14, "gameKey": "twigItem" },
-          { "name": "Short grass", "path": "grass-bundle", "x": 70, "y": 34, "scale": 32, "rotation": 0, "opacity": 100, "flip": 1, "z": 12, "w": 16, "gameKey": "grassItem" },
-          { "name": "Torn leaf", "path": "leaf", "x": 24, "y": 86, "scale": 30, "rotation": 8, "opacity": 100, "flip": 1, "z": 12, "w": 16, "gameKey": "leafItem" },
-          { "name": "Bent feather", "path": "feather", "x": 72, "y": 86, "scale": 26, "rotation": -12, "opacity": 100, "flip": 1, "z": 12, "w": 14, "gameKey": "featherItem" },
-          { "name": "Broken nest", "path": "nest-0", "x": 48, "y": 55, "scale": 60, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 26, "gameKey": "nestSprite" },
-          { "name": "Bunny", "path": "bunny-helping", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
+          {
+            "name": "Monkey",
+            "path": "monkey-idle",
+            "x": 16.13,
+            "y": 41.72,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Cow",
+            "path": "cow-idle",
+            "x": 63.13,
+            "y": 75.73,
+            "scale": 70,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Elephant",
+            "path": "elephant-idle",
+            "x": 70.27,
+            "y": 55.06,
+            "scale": 85,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Peacock",
+            "path": "peacock-idle",
+            "x": 16.98,
+            "y": 66.53,
+            "scale": 70,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Broken twig",
+            "path": "broken-twig",
+            "x": 18.86,
+            "y": 45.97,
+            "scale": 40,
+            "rotation": -10,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 14,
+            "gameKey": "twigItem"
+          },
+          {
+            "name": "Short grass",
+            "path": "grass-bundle",
+            "x": 58.91,
+            "y": 83.2,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 16,
+            "gameKey": "grassItem"
+          },
+          {
+            "name": "Torn leaf",
+            "path": "leaf",
+            "x": 72.63,
+            "y": 61.13,
+            "scale": 49,
+            "rotation": 8,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 16,
+            "gameKey": "leafItem"
+          },
+          {
+            "name": "Bent feather",
+            "path": "feather",
+            "x": 23.13,
+            "y": 72.17,
+            "scale": 32,
+            "rotation": -12,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 14,
+            "gameKey": "featherItem"
+          },
+          {
+            "name": "Broken nest",
+            "path": "nest-0",
+            "x": 48,
+            "y": 55,
+            "scale": 60,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 26,
+            "gameKey": "nestSprite"
+          },
+          {
+            "name": "Bunny",
+            "path": "bunny-helping",
+            "x": 48,
+            "y": 18,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 22,
+            "gameKey": ""
+          }
         ],
-        "audio": { "voText": "Oh no, the little bird's nest is broken. Bunny wants to rebuild it. What can help?", "trigger": "state-enter" }
+        "audio": {
+          "voText": "Oh no, the little bird's nest is broken. Bunny wants to rebuild it. What can help?",
+          "trigger": "state-enter"
+        }
       },
       "movement": {
         "items": [
-          { "name": "Monkey", "path": "monkey-idle", "x": 15, "y": 28, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Cow", "path": "cow-idle", "x": 78, "y": 26, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Elephant", "path": "elephant-idle", "x": 14, "y": 78, "scale": 85, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Peacock", "path": "peacock-idle", "x": 80, "y": 78, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Broken twig", "path": "broken-twig", "x": 24, "y": 36, "scale": 30, "rotation": -10, "opacity": 100, "flip": 1, "z": 12, "w": 14, "gameKey": "twigItem" },
-          { "name": "Short grass", "path": "grass-bundle", "x": 70, "y": 34, "scale": 32, "rotation": 0, "opacity": 100, "flip": 1, "z": 12, "w": 16, "gameKey": "grassItem" },
-          { "name": "Torn leaf", "path": "leaf", "x": 24, "y": 86, "scale": 30, "rotation": 8, "opacity": 100, "flip": 1, "z": 12, "w": 16, "gameKey": "leafItem" },
-          { "name": "Bent feather", "path": "feather", "x": 72, "y": 86, "scale": 26, "rotation": -12, "opacity": 100, "flip": 1, "z": 12, "w": 14, "gameKey": "featherItem" },
-          { "name": "Broken nest", "path": "nest-0", "x": 48, "y": 55, "scale": 60, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 26, "gameKey": "nestSprite" },
-          { "name": "Bunny", "path": "bunny-helping", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
+          {
+            "name": "Monkey",
+            "path": "monkey-idle",
+            "x": 16.13,
+            "y": 41.72,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Cow",
+            "path": "cow-idle",
+            "x": 63.13,
+            "y": 75.73,
+            "scale": 70,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Elephant",
+            "path": "elephant-idle",
+            "x": 70.27,
+            "y": 55.06,
+            "scale": 85,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Peacock",
+            "path": "peacock-idle",
+            "x": 16.98,
+            "y": 66.53,
+            "scale": 70,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Broken twig",
+            "path": "broken-twig",
+            "x": 18.86,
+            "y": 45.97,
+            "scale": 40,
+            "rotation": -10,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 14,
+            "gameKey": "twigItem"
+          },
+          {
+            "name": "Short grass",
+            "path": "grass-bundle",
+            "x": 58.91,
+            "y": 83.2,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 16,
+            "gameKey": "grassItem"
+          },
+          {
+            "name": "Torn leaf",
+            "path": "leaf",
+            "x": 72.63,
+            "y": 61.13,
+            "scale": 49,
+            "rotation": 8,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 16,
+            "gameKey": "leafItem"
+          },
+          {
+            "name": "Bent feather",
+            "path": "feather",
+            "x": 23.13,
+            "y": 72.17,
+            "scale": 32,
+            "rotation": -12,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 14,
+            "gameKey": "featherItem"
+          },
+          {
+            "name": "Broken nest",
+            "path": "nest-0",
+            "x": 48,
+            "y": 55,
+            "scale": 60,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 26,
+            "gameKey": "nestSprite"
+          },
+          {
+            "name": "Bunny",
+            "path": "bunny-helping",
+            "x": 48,
+            "y": 18,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 22,
+            "gameKey": ""
+          }
         ],
-        "audio": { "voText": "", "trigger": "state-enter" }
+        "audio": {
+          "voText": "",
+          "trigger": "state-enter"
+        }
       },
       "after": {
         "items": [
-          { "name": "Monkey", "path": "monkey-idle", "x": 15, "y": 28, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Cow", "path": "cow-idle", "x": 78, "y": 26, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Elephant", "path": "elephant-idle", "x": 14, "y": 78, "scale": 85, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Peacock", "path": "peacock-idle", "x": 80, "y": 78, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Broken twig", "path": "broken-twig", "x": 24, "y": 36, "scale": 30, "rotation": -10, "opacity": 100, "flip": 1, "z": 12, "w": 14, "gameKey": "twigItem" },
-          { "name": "Short grass", "path": "grass-bundle", "x": 70, "y": 34, "scale": 32, "rotation": 0, "opacity": 100, "flip": 1, "z": 12, "w": 16, "gameKey": "grassItem" },
-          { "name": "Torn leaf", "path": "leaf", "x": 24, "y": 86, "scale": 30, "rotation": 8, "opacity": 100, "flip": 1, "z": 12, "w": 16, "gameKey": "leafItem" },
-          { "name": "Bent feather", "path": "feather", "x": 72, "y": 86, "scale": 26, "rotation": -12, "opacity": 100, "flip": 1, "z": 12, "w": 14, "gameKey": "featherItem" },
-          { "name": "Broken nest", "path": "nest-0", "x": 48, "y": 55, "scale": 60, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 26, "gameKey": "nestSprite" },
-          { "name": "Bunny", "path": "bunny-helping", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
+          {
+            "name": "Monkey",
+            "path": "monkey-idle",
+            "x": 16.13,
+            "y": 41.72,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Cow",
+            "path": "cow-idle",
+            "x": 63.13,
+            "y": 75.73,
+            "scale": 70,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Elephant",
+            "path": "elephant-idle",
+            "x": 70.27,
+            "y": 55.06,
+            "scale": 85,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Peacock",
+            "path": "peacock-idle",
+            "x": 16.98,
+            "y": 66.53,
+            "scale": 70,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Broken twig",
+            "path": "broken-twig",
+            "x": 18.86,
+            "y": 45.97,
+            "scale": 40,
+            "rotation": -10,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 14,
+            "gameKey": "twigItem"
+          },
+          {
+            "name": "Short grass",
+            "path": "grass-bundle",
+            "x": 58.91,
+            "y": 83.2,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 16,
+            "gameKey": "grassItem"
+          },
+          {
+            "name": "Torn leaf",
+            "path": "leaf",
+            "x": 72.63,
+            "y": 61.13,
+            "scale": 49,
+            "rotation": 8,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 16,
+            "gameKey": "leafItem"
+          },
+          {
+            "name": "Bent feather",
+            "path": "feather",
+            "x": 23.13,
+            "y": 72.17,
+            "scale": 32,
+            "rotation": -12,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 14,
+            "gameKey": "featherItem"
+          },
+          {
+            "name": "Broken nest",
+            "path": "nest-0",
+            "x": 48,
+            "y": 55,
+            "scale": 60,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 26,
+            "gameKey": "nestSprite"
+          },
+          {
+            "name": "Bunny",
+            "path": "bunny-helping",
+            "x": 48,
+            "y": 18,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 22,
+            "gameKey": ""
+          }
         ],
-        "audio": { "voText": "Look around. Which things could help build the nest?", "trigger": "state-enter" }
+        "audio": {
+          "voText": "Look around. Which things could help build the nest?",
+          "trigger": "state-enter"
+        }
       }
     },
     "1": {
       "before": {
         "items": [
-          { "name": "Monkey", "path": "monkey-idle", "x": 15, "y": 28, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Cow", "path": "cow-idle", "x": 78, "y": 26, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Elephant", "path": "elephant-idle", "x": 14, "y": 78, "scale": 85, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Peacock", "path": "peacock-idle", "x": 80, "y": 78, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Broken twig", "path": "broken-twig", "x": 24, "y": 36, "scale": 30, "rotation": -10, "opacity": 100, "flip": 1, "z": 12, "w": 14, "gameKey": "twigItem" },
-          { "name": "Short grass", "path": "grass-bundle", "x": 70, "y": 34, "scale": 32, "rotation": 0, "opacity": 100, "flip": 1, "z": 12, "w": 16, "gameKey": "grassItem" },
-          { "name": "Torn leaf", "path": "leaf", "x": 24, "y": 86, "scale": 30, "rotation": 8, "opacity": 100, "flip": 1, "z": 12, "w": 16, "gameKey": "leafItem" },
-          { "name": "Bent feather", "path": "feather", "x": 72, "y": 86, "scale": 26, "rotation": -12, "opacity": 100, "flip": 1, "z": 12, "w": 14, "gameKey": "featherItem" },
-          { "name": "Broken nest", "path": "nest-0", "x": 48, "y": 55, "scale": 60, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 26, "gameKey": "nestSprite" },
-          { "name": "Bunny", "path": "bunny-helping", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
+          {
+            "name": "Monkey",
+            "path": "monkey-idle",
+            "x": 16.13,
+            "y": 41.72,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Cow",
+            "path": "cow-idle",
+            "x": 63.13,
+            "y": 75.73,
+            "scale": 70,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Elephant",
+            "path": "elephant-idle",
+            "x": 70.27,
+            "y": 55.06,
+            "scale": 85,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Peacock",
+            "path": "peacock-idle",
+            "x": 16.98,
+            "y": 66.53,
+            "scale": 70,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Broken twig",
+            "path": "broken-twig",
+            "x": 18.86,
+            "y": 45.97,
+            "scale": 40,
+            "rotation": -10,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 14,
+            "gameKey": "twigItem"
+          },
+          {
+            "name": "Short grass",
+            "path": "grass-bundle",
+            "x": 58.91,
+            "y": 83.2,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 16,
+            "gameKey": "grassItem"
+          },
+          {
+            "name": "Torn leaf",
+            "path": "leaf",
+            "x": 72.63,
+            "y": 61.13,
+            "scale": 49,
+            "rotation": 8,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 16,
+            "gameKey": "leafItem"
+          },
+          {
+            "name": "Bent feather",
+            "path": "feather",
+            "x": 23.13,
+            "y": 72.17,
+            "scale": 32,
+            "rotation": -12,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 14,
+            "gameKey": "featherItem"
+          },
+          {
+            "name": "Broken nest",
+            "path": "nest-0",
+            "x": 48,
+            "y": 55,
+            "scale": 60,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 26,
+            "gameKey": "nestSprite"
+          },
+          {
+            "name": "Bunny",
+            "path": "bunny-helping",
+            "x": 48,
+            "y": 18,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 22,
+            "gameKey": ""
+          }
         ],
-        "audio": { "voText": "Can the broken twig still help? Drag it to the nest.", "trigger": "state-enter" }
+        "audio": {
+          "voText": "Can the broken twig still help? Drag it to the nest.",
+          "trigger": "state-enter"
+        }
       },
       "movement": {
         "items": [
-          { "name": "Monkey", "path": "monkey-idle", "x": 15, "y": 28, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Cow", "path": "cow-idle", "x": 78, "y": 26, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Elephant", "path": "elephant-idle", "x": 14, "y": 78, "scale": 85, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Peacock", "path": "peacock-idle", "x": 80, "y": 78, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Short grass", "path": "grass-bundle", "x": 70, "y": 34, "scale": 32, "rotation": 0, "opacity": 100, "flip": 1, "z": 12, "w": 16, "gameKey": "grassItem" },
-          { "name": "Torn leaf", "path": "leaf", "x": 24, "y": 86, "scale": 30, "rotation": 8, "opacity": 100, "flip": 1, "z": 12, "w": 16, "gameKey": "leafItem" },
-          { "name": "Bent feather", "path": "feather", "x": 72, "y": 86, "scale": 26, "rotation": -12, "opacity": 100, "flip": 1, "z": 12, "w": 14, "gameKey": "featherItem" },
-          { "name": "Broken nest", "path": "nest-0", "x": 48, "y": 55, "scale": 60, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 26, "gameKey": "nestSprite" },
-          { "name": "Bunny", "path": "bunny-helping", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
+          {
+            "name": "Monkey",
+            "path": "monkey-idle",
+            "x": 16.13,
+            "y": 41.72,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Cow",
+            "path": "cow-idle",
+            "x": 63.13,
+            "y": 75.73,
+            "scale": 70,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Elephant",
+            "path": "elephant-idle",
+            "x": 70.27,
+            "y": 55.06,
+            "scale": 85,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Peacock",
+            "path": "peacock-idle",
+            "x": 16.98,
+            "y": 66.53,
+            "scale": 70,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Short grass",
+            "path": "grass-bundle",
+            "x": 58.91,
+            "y": 83.2,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 16,
+            "gameKey": "grassItem"
+          },
+          {
+            "name": "Torn leaf",
+            "path": "leaf",
+            "x": 72.63,
+            "y": 61.13,
+            "scale": 49,
+            "rotation": 8,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 16,
+            "gameKey": "leafItem"
+          },
+          {
+            "name": "Bent feather",
+            "path": "feather",
+            "x": 23.13,
+            "y": 72.17,
+            "scale": 32,
+            "rotation": -12,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 14,
+            "gameKey": "featherItem"
+          },
+          {
+            "name": "Broken nest",
+            "path": "nest-0",
+            "x": 48,
+            "y": 55,
+            "scale": 60,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 26,
+            "gameKey": "nestSprite"
+          },
+          {
+            "name": "Bunny",
+            "path": "bunny-helping",
+            "x": 48,
+            "y": 18,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 22,
+            "gameKey": ""
+          }
         ],
-        "audio": { "voText": "", "trigger": "state-enter" }
+        "audio": {
+          "voText": "",
+          "trigger": "state-enter"
+        }
       },
       "after": {
         "items": [
-          { "name": "Monkey", "path": "monkey-idle", "x": 15, "y": 28, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Cow", "path": "cow-idle", "x": 78, "y": 26, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Elephant", "path": "elephant-idle", "x": 14, "y": 78, "scale": 85, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Peacock", "path": "peacock-idle", "x": 80, "y": 78, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Short grass", "path": "grass-bundle", "x": 70, "y": 34, "scale": 32, "rotation": 0, "opacity": 100, "flip": 1, "z": 12, "w": 16, "gameKey": "grassItem" },
-          { "name": "Torn leaf", "path": "leaf", "x": 24, "y": 86, "scale": 30, "rotation": 8, "opacity": 100, "flip": 1, "z": 12, "w": 16, "gameKey": "leafItem" },
-          { "name": "Bent feather", "path": "feather", "x": 72, "y": 86, "scale": 26, "rotation": -12, "opacity": 100, "flip": 1, "z": 12, "w": 14, "gameKey": "featherItem" },
-          { "name": "Nest with twig", "path": "nest-1", "x": 48, "y": 55, "scale": 60, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 26, "gameKey": "nestSprite" },
-          { "name": "Bunny", "path": "bunny-helping", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
+          {
+            "name": "Monkey",
+            "path": "monkey-idle",
+            "x": 16.13,
+            "y": 41.72,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Cow",
+            "path": "cow-idle",
+            "x": 63.13,
+            "y": 75.73,
+            "scale": 70,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Elephant",
+            "path": "elephant-idle",
+            "x": 70.27,
+            "y": 55.06,
+            "scale": 85,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Peacock",
+            "path": "peacock-idle",
+            "x": 16.98,
+            "y": 66.53,
+            "scale": 70,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Short grass",
+            "path": "grass-bundle",
+            "x": 58.91,
+            "y": 83.2,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 16,
+            "gameKey": "grassItem"
+          },
+          {
+            "name": "Torn leaf",
+            "path": "leaf",
+            "x": 72.63,
+            "y": 61.13,
+            "scale": 49,
+            "rotation": 8,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 16,
+            "gameKey": "leafItem"
+          },
+          {
+            "name": "Bent feather",
+            "path": "feather",
+            "x": 23.13,
+            "y": 72.17,
+            "scale": 32,
+            "rotation": -12,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 14,
+            "gameKey": "featherItem"
+          },
+          {
+            "name": "Nest with twig",
+            "path": "nest-1",
+            "x": 48,
+            "y": 55,
+            "scale": 60,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 26,
+            "gameKey": "nestSprite"
+          },
+          {
+            "name": "Bunny",
+            "path": "bunny-helping",
+            "x": 48,
+            "y": 18,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 22,
+            "gameKey": ""
+          }
         ],
-        "audio": { "voText": "The twig can help.", "trigger": "state-enter" }
+        "audio": {
+          "voText": "The twig can help.",
+          "trigger": "state-enter"
+        }
       },
-      "interaction": { "type": "drag-drop", "drag": "twigItem", "target": "nestSprite" }
+      "interaction": {
+        "type": "drag-drop",
+        "drag": "twigItem",
+        "target": "nestSprite"
+      }
     },
     "2": {
       "before": {
         "items": [
-          { "name": "Monkey", "path": "monkey-idle", "x": 15, "y": 28, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Cow", "path": "cow-idle", "x": 78, "y": 26, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Elephant", "path": "elephant-idle", "x": 14, "y": 78, "scale": 85, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Peacock", "path": "peacock-idle", "x": 80, "y": 78, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Short grass", "path": "grass-bundle", "x": 70, "y": 34, "scale": 32, "rotation": 0, "opacity": 100, "flip": 1, "z": 12, "w": 16, "gameKey": "grassItem" },
-          { "name": "Torn leaf", "path": "leaf", "x": 24, "y": 86, "scale": 30, "rotation": 8, "opacity": 100, "flip": 1, "z": 12, "w": 16, "gameKey": "leafItem" },
-          { "name": "Bent feather", "path": "feather", "x": 72, "y": 86, "scale": 26, "rotation": -12, "opacity": 100, "flip": 1, "z": 12, "w": 14, "gameKey": "featherItem" },
-          { "name": "Nest with twig", "path": "nest-1", "x": 48, "y": 55, "scale": 60, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 26, "gameKey": "nestSprite" },
-          { "name": "Bunny", "path": "bunny-helping", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
+          {
+            "name": "Monkey",
+            "path": "monkey-idle",
+            "x": 16.13,
+            "y": 41.72,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Cow",
+            "path": "cow-idle",
+            "x": 63.13,
+            "y": 75.73,
+            "scale": 70,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Elephant",
+            "path": "elephant-idle",
+            "x": 70.27,
+            "y": 55.06,
+            "scale": 85,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Peacock",
+            "path": "peacock-idle",
+            "x": 16.98,
+            "y": 66.53,
+            "scale": 70,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Short grass",
+            "path": "grass-bundle",
+            "x": 58.91,
+            "y": 83.2,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 16,
+            "gameKey": "grassItem"
+          },
+          {
+            "name": "Torn leaf",
+            "path": "leaf",
+            "x": 72.63,
+            "y": 61.13,
+            "scale": 49,
+            "rotation": 8,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 16,
+            "gameKey": "leafItem"
+          },
+          {
+            "name": "Bent feather",
+            "path": "feather",
+            "x": 23.13,
+            "y": 72.17,
+            "scale": 32,
+            "rotation": -12,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 14,
+            "gameKey": "featherItem"
+          },
+          {
+            "name": "Nest with twig",
+            "path": "nest-1",
+            "x": 48,
+            "y": 55,
+            "scale": 60,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 26,
+            "gameKey": "nestSprite"
+          },
+          {
+            "name": "Bunny",
+            "path": "bunny-helping",
+            "x": 48,
+            "y": 18,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 22,
+            "gameKey": ""
+          }
         ],
-        "audio": { "voText": "What about the short grass? Drag it to the nest.", "trigger": "state-enter" }
+        "audio": {
+          "voText": "What about the short grass? Drag it to the nest.",
+          "trigger": "state-enter"
+        }
       },
       "movement": {
         "items": [
-          { "name": "Monkey", "path": "monkey-idle", "x": 15, "y": 28, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Cow", "path": "cow-idle", "x": 78, "y": 26, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Elephant", "path": "elephant-idle", "x": 14, "y": 78, "scale": 85, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Peacock", "path": "peacock-idle", "x": 80, "y": 78, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Torn leaf", "path": "leaf", "x": 24, "y": 86, "scale": 30, "rotation": 8, "opacity": 100, "flip": 1, "z": 12, "w": 16, "gameKey": "leafItem" },
-          { "name": "Bent feather", "path": "feather", "x": 72, "y": 86, "scale": 26, "rotation": -12, "opacity": 100, "flip": 1, "z": 12, "w": 14, "gameKey": "featherItem" },
-          { "name": "Nest with twig", "path": "nest-1", "x": 48, "y": 55, "scale": 60, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 26, "gameKey": "nestSprite" },
-          { "name": "Bunny", "path": "bunny-helping", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
+          {
+            "name": "Monkey",
+            "path": "monkey-idle",
+            "x": 16.13,
+            "y": 41.72,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Cow",
+            "path": "cow-idle",
+            "x": 63.13,
+            "y": 75.73,
+            "scale": 70,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Elephant",
+            "path": "elephant-idle",
+            "x": 70.27,
+            "y": 55.06,
+            "scale": 85,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Peacock",
+            "path": "peacock-idle",
+            "x": 16.98,
+            "y": 66.53,
+            "scale": 70,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Torn leaf",
+            "path": "leaf",
+            "x": 72.63,
+            "y": 61.13,
+            "scale": 49,
+            "rotation": 8,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 16,
+            "gameKey": "leafItem"
+          },
+          {
+            "name": "Bent feather",
+            "path": "feather",
+            "x": 23.13,
+            "y": 72.17,
+            "scale": 32,
+            "rotation": -12,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 14,
+            "gameKey": "featherItem"
+          },
+          {
+            "name": "Nest with twig",
+            "path": "nest-1",
+            "x": 48,
+            "y": 55,
+            "scale": 60,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 26,
+            "gameKey": "nestSprite"
+          },
+          {
+            "name": "Bunny",
+            "path": "bunny-helping",
+            "x": 48,
+            "y": 18,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 22,
+            "gameKey": ""
+          }
         ],
-        "audio": { "voText": "", "trigger": "state-enter" }
+        "audio": {
+          "voText": "",
+          "trigger": "state-enter"
+        }
       },
       "after": {
         "items": [
-          { "name": "Monkey", "path": "monkey-idle", "x": 15, "y": 28, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Cow", "path": "cow-idle", "x": 78, "y": 26, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Elephant", "path": "elephant-idle", "x": 14, "y": 78, "scale": 85, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Peacock", "path": "peacock-idle", "x": 80, "y": 78, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Torn leaf", "path": "leaf", "x": 24, "y": 86, "scale": 30, "rotation": 8, "opacity": 100, "flip": 1, "z": 12, "w": 16, "gameKey": "leafItem" },
-          { "name": "Bent feather", "path": "feather", "x": 72, "y": 86, "scale": 26, "rotation": -12, "opacity": 100, "flip": 1, "z": 12, "w": 14, "gameKey": "featherItem" },
-          { "name": "Nest with twig and grass", "path": "nest-2", "x": 48, "y": 55, "scale": 60, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 26, "gameKey": "nestSprite" },
-          { "name": "Bunny", "path": "bunny-helping", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
+          {
+            "name": "Monkey",
+            "path": "monkey-idle",
+            "x": 16.13,
+            "y": 41.72,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Cow",
+            "path": "cow-idle",
+            "x": 63.13,
+            "y": 75.73,
+            "scale": 70,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Elephant",
+            "path": "elephant-idle",
+            "x": 70.27,
+            "y": 55.06,
+            "scale": 85,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Peacock",
+            "path": "peacock-idle",
+            "x": 16.98,
+            "y": 66.53,
+            "scale": 70,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Torn leaf",
+            "path": "leaf",
+            "x": 72.63,
+            "y": 61.13,
+            "scale": 49,
+            "rotation": 8,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 16,
+            "gameKey": "leafItem"
+          },
+          {
+            "name": "Bent feather",
+            "path": "feather",
+            "x": 23.13,
+            "y": 72.17,
+            "scale": 32,
+            "rotation": -12,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 14,
+            "gameKey": "featherItem"
+          },
+          {
+            "name": "Nest with twig and grass",
+            "path": "nest-2",
+            "x": 48,
+            "y": 55,
+            "scale": 60,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 26,
+            "gameKey": "nestSprite"
+          },
+          {
+            "name": "Bunny",
+            "path": "bunny-helping",
+            "x": 48,
+            "y": 18,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 22,
+            "gameKey": ""
+          }
         ],
-        "audio": { "voText": "The grass can help too.", "trigger": "state-enter" }
+        "audio": {
+          "voText": "The grass can help too.",
+          "trigger": "state-enter"
+        }
       },
-      "interaction": { "type": "drag-drop", "drag": "grassItem", "target": "nestSprite" }
+      "interaction": {
+        "type": "drag-drop",
+        "drag": "grassItem",
+        "target": "nestSprite"
+      }
     },
     "3": {
       "before": {
         "items": [
-          { "name": "Monkey", "path": "monkey-idle", "x": 15, "y": 28, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Cow", "path": "cow-idle", "x": 78, "y": 26, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Elephant", "path": "elephant-idle", "x": 14, "y": 78, "scale": 85, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Peacock", "path": "peacock-idle", "x": 80, "y": 78, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Torn leaf", "path": "leaf", "x": 24, "y": 86, "scale": 30, "rotation": 8, "opacity": 100, "flip": 1, "z": 12, "w": 16, "gameKey": "leafItem" },
-          { "name": "Bent feather", "path": "feather", "x": 72, "y": 86, "scale": 26, "rotation": -12, "opacity": 100, "flip": 1, "z": 12, "w": 14, "gameKey": "featherItem" },
-          { "name": "Nest with twig and grass", "path": "nest-2", "x": 48, "y": 55, "scale": 60, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 26, "gameKey": "nestSprite" },
-          { "name": "Bunny", "path": "bunny-helping", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
+          {
+            "name": "Monkey",
+            "path": "monkey-idle",
+            "x": 16.13,
+            "y": 41.72,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Cow",
+            "path": "cow-idle",
+            "x": 63.13,
+            "y": 75.73,
+            "scale": 70,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Elephant",
+            "path": "elephant-idle",
+            "x": 70.27,
+            "y": 55.06,
+            "scale": 85,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Peacock",
+            "path": "peacock-idle",
+            "x": 16.98,
+            "y": 66.53,
+            "scale": 70,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Torn leaf",
+            "path": "leaf",
+            "x": 72.63,
+            "y": 61.13,
+            "scale": 49,
+            "rotation": 8,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 16,
+            "gameKey": "leafItem"
+          },
+          {
+            "name": "Bent feather",
+            "path": "feather",
+            "x": 23.13,
+            "y": 72.17,
+            "scale": 32,
+            "rotation": -12,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 14,
+            "gameKey": "featherItem"
+          },
+          {
+            "name": "Nest with twig and grass",
+            "path": "nest-2",
+            "x": 48,
+            "y": 55,
+            "scale": 60,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 26,
+            "gameKey": "nestSprite"
+          },
+          {
+            "name": "Bunny",
+            "path": "bunny-helping",
+            "x": 48,
+            "y": 18,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 22,
+            "gameKey": ""
+          }
         ],
-        "audio": { "voText": "Can the torn leaf help too? Drag it to the nest.", "trigger": "state-enter" }
+        "audio": {
+          "voText": "Can the torn leaf help too? Drag it to the nest.",
+          "trigger": "state-enter"
+        }
       },
       "movement": {
         "items": [
-          { "name": "Monkey", "path": "monkey-idle", "x": 15, "y": 28, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Cow", "path": "cow-idle", "x": 78, "y": 26, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Elephant", "path": "elephant-idle", "x": 14, "y": 78, "scale": 85, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Peacock", "path": "peacock-idle", "x": 80, "y": 78, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Bent feather", "path": "feather", "x": 72, "y": 86, "scale": 26, "rotation": -12, "opacity": 100, "flip": 1, "z": 12, "w": 14, "gameKey": "featherItem" },
-          { "name": "Nest with twig and grass", "path": "nest-2", "x": 48, "y": 55, "scale": 60, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 26, "gameKey": "nestSprite" },
-          { "name": "Bunny", "path": "bunny-helping", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
+          {
+            "name": "Monkey",
+            "path": "monkey-idle",
+            "x": 16.13,
+            "y": 41.72,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Cow",
+            "path": "cow-idle",
+            "x": 63.13,
+            "y": 75.73,
+            "scale": 70,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Elephant",
+            "path": "elephant-idle",
+            "x": 70.27,
+            "y": 55.06,
+            "scale": 85,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Peacock",
+            "path": "peacock-idle",
+            "x": 16.98,
+            "y": 66.53,
+            "scale": 70,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Bent feather",
+            "path": "feather",
+            "x": 23.13,
+            "y": 72.17,
+            "scale": 32,
+            "rotation": -12,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 14,
+            "gameKey": "featherItem"
+          },
+          {
+            "name": "Nest with twig and grass",
+            "path": "nest-2",
+            "x": 48,
+            "y": 55,
+            "scale": 60,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 26,
+            "gameKey": "nestSprite"
+          },
+          {
+            "name": "Bunny",
+            "path": "bunny-helping",
+            "x": 48,
+            "y": 18,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 22,
+            "gameKey": ""
+          }
         ],
-        "audio": { "voText": "", "trigger": "state-enter" }
+        "audio": {
+          "voText": "",
+          "trigger": "state-enter"
+        }
       },
       "after": {
         "items": [
-          { "name": "Monkey", "path": "monkey-idle", "x": 15, "y": 28, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Cow", "path": "cow-idle", "x": 78, "y": 26, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Elephant", "path": "elephant-idle", "x": 14, "y": 78, "scale": 85, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Peacock", "path": "peacock-idle", "x": 80, "y": 78, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Bent feather", "path": "feather", "x": 72, "y": 86, "scale": 26, "rotation": -12, "opacity": 100, "flip": 1, "z": 12, "w": 14, "gameKey": "featherItem" },
-          { "name": "Nest with twig, grass, leaf", "path": "nest-3", "x": 48, "y": 55, "scale": 60, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 26, "gameKey": "nestSprite" },
-          { "name": "Bunny", "path": "bunny-helping", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
+          {
+            "name": "Monkey",
+            "path": "monkey-idle",
+            "x": 16.13,
+            "y": 41.72,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Cow",
+            "path": "cow-idle",
+            "x": 63.13,
+            "y": 75.73,
+            "scale": 70,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Elephant",
+            "path": "elephant-idle",
+            "x": 70.27,
+            "y": 55.06,
+            "scale": 85,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Peacock",
+            "path": "peacock-idle",
+            "x": 16.98,
+            "y": 66.53,
+            "scale": 70,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Bent feather",
+            "path": "feather",
+            "x": 23.13,
+            "y": 72.17,
+            "scale": 32,
+            "rotation": -12,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 14,
+            "gameKey": "featherItem"
+          },
+          {
+            "name": "Nest with twig, grass, leaf",
+            "path": "nest-3",
+            "x": 48,
+            "y": 55,
+            "scale": 60,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 26,
+            "gameKey": "nestSprite"
+          },
+          {
+            "name": "Bunny",
+            "path": "bunny-helping",
+            "x": 48,
+            "y": 18,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 22,
+            "gameKey": ""
+          }
         ],
-        "audio": { "voText": "The torn leaf still works.", "trigger": "state-enter" }
+        "audio": {
+          "voText": "The torn leaf still works.",
+          "trigger": "state-enter"
+        }
       },
-      "interaction": { "type": "drag-drop", "drag": "leafItem", "target": "nestSprite" }
+      "interaction": {
+        "type": "drag-drop",
+        "drag": "leafItem",
+        "target": "nestSprite"
+      }
     },
     "4": {
       "before": {
         "items": [
-          { "name": "Monkey", "path": "monkey-idle", "x": 15, "y": 28, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Cow", "path": "cow-idle", "x": 78, "y": 26, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Elephant", "path": "elephant-idle", "x": 14, "y": 78, "scale": 85, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Peacock", "path": "peacock-idle", "x": 80, "y": 78, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Bent feather", "path": "feather", "x": 72, "y": 86, "scale": 26, "rotation": -12, "opacity": 100, "flip": 1, "z": 12, "w": 14, "gameKey": "featherItem" },
-          { "name": "Nest with twig, grass, leaf", "path": "nest-3", "x": 48, "y": 55, "scale": 60, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 26, "gameKey": "nestSprite" },
-          { "name": "Bunny", "path": "bunny-helping", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
+          {
+            "name": "Monkey",
+            "path": "monkey-idle",
+            "x": 16.13,
+            "y": 41.72,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Cow",
+            "path": "cow-idle",
+            "x": 63.13,
+            "y": 75.73,
+            "scale": 70,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Elephant",
+            "path": "elephant-idle",
+            "x": 70.27,
+            "y": 55.06,
+            "scale": 85,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Peacock",
+            "path": "peacock-idle",
+            "x": 16.98,
+            "y": 66.53,
+            "scale": 70,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Bent feather",
+            "path": "feather",
+            "x": 23.13,
+            "y": 72.17,
+            "scale": 32,
+            "rotation": -12,
+            "opacity": 100,
+            "flip": 1,
+            "z": 12,
+            "w": 14,
+            "gameKey": "featherItem"
+          },
+          {
+            "name": "Nest with twig, grass, leaf",
+            "path": "nest-3",
+            "x": 48,
+            "y": 55,
+            "scale": 60,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 26,
+            "gameKey": "nestSprite"
+          },
+          {
+            "name": "Bunny",
+            "path": "bunny-helping",
+            "x": 48,
+            "y": 18,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 22,
+            "gameKey": ""
+          }
         ],
-        "audio": { "voText": "And the bent feather? Drag it to the nest.", "trigger": "state-enter" }
+        "audio": {
+          "voText": "And the bent feather? Drag it to the nest.",
+          "trigger": "state-enter"
+        }
       },
       "movement": {
         "items": [
-          { "name": "Monkey", "path": "monkey-idle", "x": 15, "y": 28, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Cow", "path": "cow-idle", "x": 78, "y": 26, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Elephant", "path": "elephant-idle", "x": 14, "y": 78, "scale": 85, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Peacock", "path": "peacock-idle", "x": 80, "y": 78, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Nest with twig, grass, leaf", "path": "nest-3", "x": 48, "y": 55, "scale": 60, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 26, "gameKey": "nestSprite" },
-          { "name": "Bunny", "path": "bunny-helping", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
+          {
+            "name": "Monkey",
+            "path": "monkey-idle",
+            "x": 16.13,
+            "y": 41.72,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Cow",
+            "path": "cow-idle",
+            "x": 63.13,
+            "y": 75.73,
+            "scale": 70,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Elephant",
+            "path": "elephant-idle",
+            "x": 70.27,
+            "y": 55.06,
+            "scale": 85,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Peacock",
+            "path": "peacock-idle",
+            "x": 16.98,
+            "y": 66.53,
+            "scale": 70,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Nest with twig, grass, leaf",
+            "path": "nest-3",
+            "x": 48,
+            "y": 55,
+            "scale": 60,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 26,
+            "gameKey": "nestSprite"
+          },
+          {
+            "name": "Bunny",
+            "path": "bunny-helping",
+            "x": 48,
+            "y": 18,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 22,
+            "gameKey": ""
+          }
         ],
-        "audio": { "voText": "", "trigger": "state-enter" }
+        "audio": {
+          "voText": "",
+          "trigger": "state-enter"
+        }
       },
       "after": {
         "items": [
-          { "name": "Monkey", "path": "monkey-idle", "x": 15, "y": 28, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Cow", "path": "cow-idle", "x": 78, "y": 26, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Elephant", "path": "elephant-idle", "x": 14, "y": 78, "scale": 85, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Peacock", "path": "peacock-idle", "x": 80, "y": 78, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Complete nest", "path": "nest-4", "x": 48, "y": 55, "scale": 60, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 26, "gameKey": "nestSprite" },
-          { "name": "Baby bird", "path": "baby-bird-happy", "x": 48, "y": 52, "scale": 28, "rotation": 0, "opacity": 100, "flip": 1, "z": 15, "w": 18, "gameKey": "" },
-          { "name": "Bunny", "path": "bunny-helping", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
+          {
+            "name": "Monkey",
+            "path": "monkey-idle",
+            "x": 16.13,
+            "y": 41.72,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Cow",
+            "path": "cow-idle",
+            "x": 63.13,
+            "y": 75.73,
+            "scale": 70,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Elephant",
+            "path": "elephant-idle",
+            "x": 70.27,
+            "y": 55.06,
+            "scale": 85,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Peacock",
+            "path": "peacock-idle",
+            "x": 16.98,
+            "y": 66.53,
+            "scale": 70,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Complete nest",
+            "path": "nest-4",
+            "x": 48,
+            "y": 55,
+            "scale": 60,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 26,
+            "gameKey": "nestSprite"
+          },
+          {
+            "name": "Baby bird",
+            "path": "baby-bird-happy",
+            "x": 48,
+            "y": 52,
+            "scale": 28,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 15,
+            "w": 18,
+            "gameKey": ""
+          },
+          {
+            "name": "Bunny",
+            "path": "bunny-helping",
+            "x": 48,
+            "y": 18,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 22,
+            "gameKey": ""
+          }
         ],
-        "audio": { "voText": "And the feather can make it soft. You did it! All those little things helped rebuild the nest.", "trigger": "state-enter" }
+        "audio": {
+          "voText": "And the feather can make it soft. You did it! All those little things helped rebuild the nest.",
+          "trigger": "state-enter"
+        }
       },
-      "interaction": { "type": "drag-drop", "drag": "featherItem", "target": "nestSprite" }
+      "interaction": {
+        "type": "drag-drop",
+        "drag": "featherItem",
+        "target": "nestSprite"
+      }
     },
     "5": {
       "before": {
         "items": [
-          { "name": "Monkey", "path": "monkey-idle", "x": 15, "y": 28, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Cow", "path": "cow-idle", "x": 78, "y": 26, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Elephant", "path": "elephant-idle", "x": 14, "y": 78, "scale": 85, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Peacock", "path": "peacock-idle", "x": 80, "y": 78, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Complete nest", "path": "nest-4", "x": 48, "y": 55, "scale": 60, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 26, "gameKey": "nestSprite" },
-          { "name": "Baby bird", "path": "baby-bird-happy", "x": 48, "y": 52, "scale": 28, "rotation": 0, "opacity": 100, "flip": 1, "z": 15, "w": 18, "gameKey": "" },
-          { "name": "Bunny", "path": "bunny-helping", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
+          {
+            "name": "Monkey",
+            "path": "monkey-idle",
+            "x": 16.13,
+            "y": 41.72,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Cow",
+            "path": "cow-idle",
+            "x": 63.13,
+            "y": 75.73,
+            "scale": 70,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Elephant",
+            "path": "elephant-idle",
+            "x": 70.27,
+            "y": 55.06,
+            "scale": 85,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Peacock",
+            "path": "peacock-idle",
+            "x": 16.98,
+            "y": 66.53,
+            "scale": 70,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Complete nest",
+            "path": "nest-4",
+            "x": 48,
+            "y": 55,
+            "scale": 60,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 26,
+            "gameKey": "nestSprite"
+          },
+          {
+            "name": "Baby bird",
+            "path": "baby-bird-happy",
+            "x": 48,
+            "y": 52,
+            "scale": 28,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 15,
+            "w": 18,
+            "gameKey": ""
+          },
+          {
+            "name": "Bunny",
+            "path": "bunny-helping",
+            "x": 48,
+            "y": 18,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 22,
+            "gameKey": ""
+          }
         ],
-        "audio": { "voText": "Ganesha's tusk reminds us: even broken things can still help.", "trigger": "state-enter" }
+        "audio": {
+          "voText": "Ganesha's tusk reminds us: even broken things can still help.",
+          "trigger": "state-enter"
+        }
       },
       "movement": {
         "items": [
-          { "name": "Monkey", "path": "monkey-idle", "x": 15, "y": 28, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Cow", "path": "cow-idle", "x": 78, "y": 26, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Elephant", "path": "elephant-idle", "x": 14, "y": 78, "scale": 85, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Peacock", "path": "peacock-idle", "x": 80, "y": 78, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Complete nest", "path": "nest-4", "x": 48, "y": 55, "scale": 60, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 26, "gameKey": "nestSprite" },
-          { "name": "Baby bird", "path": "baby-bird-happy", "x": 48, "y": 52, "scale": 28, "rotation": 0, "opacity": 100, "flip": 1, "z": 15, "w": 18, "gameKey": "" },
-          { "name": "Bunny", "path": "bunny-helping", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
+          {
+            "name": "Monkey",
+            "path": "monkey-idle",
+            "x": 16.13,
+            "y": 41.72,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Cow",
+            "path": "cow-idle",
+            "x": 63.13,
+            "y": 75.73,
+            "scale": 70,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Elephant",
+            "path": "elephant-idle",
+            "x": 70.27,
+            "y": 55.06,
+            "scale": 85,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Peacock",
+            "path": "peacock-idle",
+            "x": 16.98,
+            "y": 66.53,
+            "scale": 70,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Complete nest",
+            "path": "nest-4",
+            "x": 48,
+            "y": 55,
+            "scale": 60,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 26,
+            "gameKey": "nestSprite"
+          },
+          {
+            "name": "Baby bird",
+            "path": "baby-bird-happy",
+            "x": 48,
+            "y": 52,
+            "scale": 28,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 15,
+            "w": 18,
+            "gameKey": ""
+          },
+          {
+            "name": "Bunny",
+            "path": "bunny-helping",
+            "x": 48,
+            "y": 18,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 22,
+            "gameKey": ""
+          }
         ],
-        "audio": { "voText": "", "trigger": "state-enter" }
+        "audio": {
+          "voText": "",
+          "trigger": "state-enter"
+        }
       },
       "after": {
         "items": [
-          { "name": "Monkey", "path": "monkey-idle", "x": 15, "y": 28, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Cow", "path": "cow-idle", "x": 78, "y": 26, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Elephant", "path": "elephant-idle", "x": 14, "y": 78, "scale": 85, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Peacock", "path": "peacock-idle", "x": 80, "y": 78, "scale": 70, "rotation": 0, "opacity": 100, "flip": -1, "z": 10, "w": 24, "gameKey": "" },
-          { "name": "Complete nest", "path": "nest-4", "x": 48, "y": 55, "scale": 60, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 26, "gameKey": "nestSprite" },
-          { "name": "Baby bird", "path": "baby-bird-happy", "x": 48, "y": 52, "scale": 28, "rotation": 0, "opacity": 100, "flip": 1, "z": 15, "w": 18, "gameKey": "" },
-          { "name": "Bunny", "path": "bunny-helping", "x": 48, "y": 18, "scale": 55, "rotation": 0, "opacity": 100, "flip": 1, "z": 10, "w": 22, "gameKey": "" }
+          {
+            "name": "Monkey",
+            "path": "monkey-idle",
+            "x": 16.13,
+            "y": 41.72,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Cow",
+            "path": "cow-idle",
+            "x": 63.13,
+            "y": 75.73,
+            "scale": 70,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Elephant",
+            "path": "elephant-idle",
+            "x": 70.27,
+            "y": 55.06,
+            "scale": 85,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Peacock",
+            "path": "peacock-idle",
+            "x": 16.98,
+            "y": 66.53,
+            "scale": 70,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": -1,
+            "z": 10,
+            "w": 24,
+            "gameKey": ""
+          },
+          {
+            "name": "Complete nest",
+            "path": "nest-4",
+            "x": 48,
+            "y": 55,
+            "scale": 60,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 26,
+            "gameKey": "nestSprite"
+          },
+          {
+            "name": "Baby bird",
+            "path": "baby-bird-happy",
+            "x": 48,
+            "y": 52,
+            "scale": 28,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 15,
+            "w": 18,
+            "gameKey": ""
+          },
+          {
+            "name": "Bunny",
+            "path": "bunny-helping",
+            "x": 48,
+            "y": 18,
+            "scale": 55,
+            "rotation": 0,
+            "opacity": 100,
+            "flip": 1,
+            "z": 10,
+            "w": 22,
+            "gameKey": ""
+          }
         ],
-        "audio": { "voText": "", "trigger": "state-enter" }
+        "audio": {
+          "voText": "",
+          "trigger": "state-enter"
+        }
       }
     }
   }
