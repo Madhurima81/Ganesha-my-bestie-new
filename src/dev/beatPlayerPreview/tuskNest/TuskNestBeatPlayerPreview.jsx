@@ -23,6 +23,7 @@ import nest1 from '../../../zones/symbol-mountain/scenes/tusk/assets/images/tusk
 import nest2 from '../../../zones/symbol-mountain/scenes/tusk/assets/images/tusk-nest/nest-2.webp';
 import nest3 from '../../../zones/symbol-mountain/scenes/tusk/assets/images/tusk-nest/nest-3.webp';
 import nest4 from '../../../zones/symbol-mountain/scenes/tusk/assets/images/tusk-nest/nest-4.webp';
+import babyBirdSad from '../../../zones/symbol-mountain/scenes/tusk/assets/images/tusk-nest/baby-bird-sad.webp';
 import babyBirdHappy from '../../../zones/symbol-mountain/scenes/tusk/assets/images/tusk-nest/baby-bird-happy.webp';
 
 const ASSET_MAP = {
@@ -40,6 +41,7 @@ const ASSET_MAP = {
   'nest-2': nest2,
   'nest-3': nest3,
   'nest-4': nest4,
+  'baby-bird-sad': babyBirdSad,
   'baby-bird-happy': babyBirdHappy,
 };
 
