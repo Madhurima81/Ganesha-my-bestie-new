@@ -10,7 +10,7 @@ export const VOICE_SCRIPTS = {
     'vakratunda-grove': {
       // Scene entry
       welcome: {
-        text: "Our river friends need a way across. Let's help them."
+        text: "Our river friends need a way across. Let’s help."
       },
 
       // Vakratunda rounds (after each round completes)
@@ -59,13 +59,13 @@ export const VOICE_SCRIPTS = {
 
       // Mahakaya Rescue Game — scene 10 VO lines
       scene10_vak_intro: {
-        text: "Frog can see his family, but the way is blocked. Let's help him find another way."
+        text: "Frog’s way to his family is blocked. Drag Frog to find another way."
       },
       scene10_vak_choose: {
         text: "That way is blocked. Can you find another way around?"
       },
       scene10_vak_crossed: {
-        text: "Vakratunda! You found another way, and Frog reached his family."
+        text: "Vakratunda! You found another way and helped Frog reach his family."
       },
       scene10_vak_current_too_strong: {
         text: "That way is blocked. Can you find another way around?"
@@ -88,9 +88,7 @@ export const VOICE_SCRIPTS = {
       scene10_maha_success: {
         text: "Mahakaay! You made space so everyone could come along."
       },
-      scene10_maha_meaning: {
-        text: "Mahakaay means great form."
-      },
+
 
       // ── Shared instructions — uncomment to activate when VO is ready ───────
       // instructionListen:         { text: "Listen carefully!",                      file: 'instruction_watch_and_listen.mp3' },
@@ -123,7 +121,7 @@ export const VOICE_SCRIPTS = {
     },
     'suryakoti-bank': {
       welcome: {
-        text: "The river is dark today. Let's see what a little light can do."
+        text: "The river is dark. Let’s bring back some light."
       },
       scene11SuryaHint: {
         text: "Rub the glowing spot."
@@ -138,19 +136,14 @@ export const VOICE_SCRIPTS = {
         text: "Move the light and look closely."
       },
       scene11SuryaDone: {
-        text: "Suryakoti! You brought back the light, and Bunny found her way home."
+        text: "Suryakoti! You brought back the light and helped Bunny home."
       },
       scene11SamaDone: {
-        text: "Samaprabha! You looked closely and saw what was really there."
+        text: "Samaprabha! You looked closely and helped Deer feel safe."
       },
-      scene11SuryaMeaning: {
-        text: "Suryakoti means bright as ten million suns."
-      },
-      scene11SamaMeaning: {
-        text: "Samaprabha means steady, equal brilliance."
-      },
+
       suryakotiSetup: {
-        text: "Bunny can't find her way home in the dark. Rub the glowing spot to brighten the river."
+        text: "Bunny can’t find home. Rub the glow to bring back the light."
       },
       suryakotiClaim: {
         text: "A little deer sees a strange shadow. Move the light and look closely."
@@ -161,60 +154,64 @@ export const VOICE_SCRIPTS = {
     },
     'nirvighnam-chant': {
       welcome: {
-        text: "Our river friends have a tricky way ahead. Let's help them through."
+        text: "The way ahead is tricky. Let’s help our friends through."
       },
       scene12NirvHint: {
-        text: "Turtle's way home is blocked. Let's clear the path, one thing at a time."
+        text: "Turtle’s way home is blocked. Press and hold the rock to move it."
       },
       scene12KuruHint: {
-        text: "Baby Beaver is on the other side, but the bridge is broken. Let's help Beaver reach him."
+        text: "Baby Beaver is across the broken bridge. Press and hold to lift the logs and help rebuild it."
       },
       scene12NirvDone: {
-        text: "Nirvighnam! You cleared the path, and Turtle reached her home."
+        text: "Nirvighnam! You cleared the way and helped Turtle through."
       },
       scene12KuruDone: {
-        text: "Kuru Me Deva! Beaver asked for help, and the bridge was finished."
+        text: "Kuru Me Deva! You asked for help and finished the bridge."
       },
-      scene12NirvMeaning: {
-        text: "Nirvighnam means without obstacles."
-      },
-      scene12KuruMeaning: {
-        text: "Kuru Me Deva means please help me."
-      },
+
       sceneComplete: {
-        text: "You cleared the path and asked for help when the way got hard."
+        text: "You cleared the path and asked for help when things got hard."
       }
     },
     'sarvakaryeshu-chant': {
       welcome: {
-        text: "Let's see where Ganesha is with you today."
+        text: "Let’s see where Ganesha is with you today."
       },
       scene13_puzzle: {
-        text: "Oops! The painting went splat. Which Ganesha symbol could help?"
+        text: "So much to do. Which symbol can help him start small?"
       },
       scene13_puzzle_after: {
-        text: "The Trunk helped him try another way!"
+        text: "Mooshika helped him begin with one small thing."
       },
       scene13_sports: {
-        text: "His feelings feel really big. Which Ganesha symbol could help?"
+        text: "So many distractions. Which symbol can help him focus?"
       },
       scene13_sports_after: {
-        text: "The Belly helped him make room for his feelings."
+        text: "The Eyes helped him focus on what mattered."
       },
       scene13_bike: {
-        text: "Where did the toy go? Which Ganesha symbol could help?"
+        text: "Heavy here, gentle there. Which symbol can help?"
       },
       scene13_bike_after: {
-        text: "The Eyes helped her spot the clue!"
+        text: "The Trunk helped him use strength, then gentleness."
       },
       scene13_grandma: {
-        text: "So many things are distracting him. Which Ganesha symbol could help?"
+        text: "The crayon is broken. Which symbol can help?"
       },
       scene13_grandma_after: {
-        text: "The Tusk helped him stay focused."
+        text: "The Tusk reminded her that something broken can still help."
+      },
+      scene13_hint_mooshika_1: {
+        text: "Which symbol can help him start small?"
+      },
+      scene13_hint_mooshika_2: {
+        text: "Think of Ganesha's tiny friend."
+      },
+      scene13_hint_mooshika_3: {
+        text: "Choose Mooshika."
       },
       scene13_hint_trunk_1: {
-        text: "Which symbol helps when one way doesn't work?"
+        text: "Which symbol can help with strength and gentleness?"
       },
       scene13_hint_trunk_2: {
         text: "Think of Ganesha's bendy trunk."
@@ -222,17 +219,8 @@ export const VOICE_SCRIPTS = {
       scene13_hint_trunk_3: {
         text: "Choose the Trunk."
       },
-      scene13_hint_belly_1: {
-        text: "Which symbol reminds us there is room for all our feelings?"
-      },
-      scene13_hint_belly_2: {
-        text: "Think of Ganesha's big belly."
-      },
-      scene13_hint_belly_3: {
-        text: "Choose the Belly."
-      },
       scene13_hint_eyes_1: {
-        text: "Which symbol reminds us to look carefully?"
+        text: "Which symbol can help him focus?"
       },
       scene13_hint_eyes_2: {
         text: "Think of Ganesha's eyes."
@@ -241,7 +229,7 @@ export const VOICE_SCRIPTS = {
         text: "Choose the Eyes."
       },
       scene13_hint_tusk_1: {
-        text: "Which symbol reminds us to choose what is important?"
+        text: "Which symbol reminds us broken things can still help?"
       },
       scene13_hint_tusk_2: {
         text: "Think of Ganesha's tusk."
@@ -288,19 +276,32 @@ export const VOICE_SCRIPTS = {
       scene13SarvadaDone: {
         text: "Morning. Ganesha is there too. Tap the next bubble. Afternoon. Ganesha is there too. Tap the last bubble. Night. Ganesha is there too."
       },
-      scene13SarvaMeaning: {
-        text: "Sarvakaryeshu. Every task can be done with care."
+      scene14_intro: {
+        text: "Morning, afternoon and night — let’s find Ganesha through your day."
       },
-      scene13SarvadaMeaning: {
-        text: "Sarvada. What I learn stays with me."
+      scene14_morning: {
+        text: "Let’s look at the morning."
       },
+      scene14_afternoon: {
+        text: "Now the afternoon."
+      },
+      scene14_night: {
+        text: "Now the night."
+      },
+      scene14_find_symbol: {
+        text: "Can you find the hidden symbol?"
+      },
+      scene14_success: {
+        text: "Sarvada! You found Ganesha through the whole day."
+      },
+
       sceneComplete: {
-        text: "In everything you did, from morning to night, Ganesha was with you."
+        text: "From morning to night, Ganesha was with you."
       }
     },
     'shloka-river-finale': {
       openingModalPrompt: {
-        text: "You've discovered all eight words. Now let's put the whole shloka together."
+        text: "You found all eight words. Now let’s put them together."
       },
       arrangeStart: {
         text: "Find the first word and place its boat."
@@ -312,7 +313,7 @@ export const VOICE_SCRIPTS = {
         text: "Now listen to the whole shloka."
       },
       finalCelebration: {
-        text: "You remembered the whole Ganesha Shloka. Now all eight words travel with you."
+        text: "You remembered the whole Ganesha Shloka. Now you can carry it with you."
       },
       hintBoatL1: {
         text: "Which word comes next?"
@@ -335,14 +336,14 @@ export const VOICE_SCRIPTS = {
       // SCENE ENTRY
       // ========================================
       openingModalPrompt: {
-        text: "Mooshika has a journey to make. Let’s help him along the way."
+        text: "Mooshika has a journey ahead. Let’s help him."
       },
 
       // ========================================
       // PHASE 1: FIND MOOSHIKA
       // ========================================
       findMooshika: {
-        text: "Mooshika’s thoughts are jumping everywhere. Press and hold to help him stay with one thing."
+        text: "Mooshika’s thoughts keep jumping around. Press and hold to help him focus."
       },
       mooshikaFound: {
         text: "Mooshika stayed with it and made a little progress."
@@ -355,7 +356,7 @@ export const VOICE_SCRIPTS = {
       // PHASE 2: COLLECT MODAKS
       // ========================================
       collectStart: {
-        text: "Six flowers! Tap each one to make a garland for Ganesha."
+        text: "You found all six flowers. Tap them to make a garland for Ganesha."
       },
 
       // ========================================
@@ -394,7 +395,7 @@ export const VOICE_SCRIPTS = {
     ,
     'final-scene': {
       openingModalPrompt: {
-        text: "You’ve discovered all eight symbols. Let’s see what you remember when you look at Ganesha."
+        text: "You found all eight symbols. Let’s see what you remember."
       },
 
       cardEyes: {
@@ -452,10 +453,10 @@ export const VOICE_SCRIPTS = {
       },
 
       threeSymbolsPlaced: {
-        text: "You’re remembering what Ganesha’s symbols can teach you."
+        text: "You’re remembering what Ganesha’s symbols mean."
       },
       sixSymbolsPlaced: {
-        text: "Almost there — six meanings are back with Ganesha."
+        text: "Almost there — six symbols are back with Ganesha."
       },
 
       wrongTryAgain: {
@@ -465,9 +466,6 @@ export const VOICE_SCRIPTS = {
       // Final fireworks: 2-line recap (what you did -> what it means), 700ms gap
       finalYouFoundAll: {
         text: "You remembered all eight symbols and what they mean."
-      },
-      finalNowComplete: {
-        text: "Now when you see Ganesha, you can remember their wisdom."
       },
       finalAlwaysWithYou: {
         text: "Now when you see Ganesha, you can remember their wisdom."
@@ -484,7 +482,7 @@ export const VOICE_SCRIPTS = {
       // OPENING MODAL
       // ========================================
       welcome: {
-        text: "Let's meet my family, then make a tree for yours.",
+        text: "Let’s meet my family, then make your family tree.",
         useWebSpeech: true
       },
 
@@ -654,17 +652,17 @@ export const VOICE_SCRIPTS = {
     },
     'favorite-food': {
       opening: {
-        text: "Let's find out what I like — then I want to learn about you."
+        text: "Let’s find my favorites, then yours."
       }
     },
     'dreams-wishes': {
       opening: {
-        text: "I have a few wishes for the world. Will you help me?"
+        text: "I have a few wishes for the world. Will you help?"
       }
     },
     'my-indian-story': {
       opening: {
-        text: "Let's explore some parts of my India story, then you can share yours."
+        text: "Let’s explore my India story, then yours."
       }
     },
     
