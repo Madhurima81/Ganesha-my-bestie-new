@@ -350,6 +350,8 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   const [showCelebration, setShowCelebration] = useState(false);
   const [phase1SpotSparkle, setPhase1SpotSparkle] = useState({ index: null, key: 0 });
   const [isChildHomeContinueEnabled, setIsChildHomeContinueEnabled] = useState(false);
+  const [ganeshaHomePromptReady, setGaneshaHomePromptReady] = useState(false);
+  const [childHomePromptReady, setChildHomePromptReady] = useState(false);
 
   // Language phase state
   const [langGuessPhase, setLangGuessPhase] = useState('guessing');
@@ -358,6 +360,8 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   const [langWrongReaction, setLangWrongReaction] = useState(null);
   const [hasPressedLanguagePlay, setHasPressedLanguagePlay] = useState(false);
   const [showLanguageCards, setShowLanguageCards] = useState(false); // Show cards only after mantra finishes
+  const [languageGuessPromptReady, setLanguageGuessPromptReady] = useState(false);
+  const [languageChildPromptReady, setLanguageChildPromptReady] = useState(false);
   const [swappingOutLangId, setSwappingOutLangId] = useState(null); // Track which language is being swapped out
   const [showLangSelectionHelper, setShowLangSelectionHelper] = useState(false); // Show helper text at 3 selections
 
@@ -369,6 +373,8 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   const [returnHintNonce, setReturnHintNonce] = useState(0);
   const [swappingOutFestId, setSwappingOutFestId] = useState(null); // Track which festival is being swapped out
   const [showFestSelectionHelper, setShowFestSelectionHelper] = useState(false); // Show helper text at 4 selections
+  const [festivalGuessPromptReady, setFestivalGuessPromptReady] = useState(false);
+  const [festivalChildPromptReady, setFestivalChildPromptReady] = useState(false);
 
   // Gesture & sparkle
   const { miniGesture, triggerMiniGesture: triggerMiniGestureRaw } = useMiniGesture();
@@ -376,6 +382,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
 
   // Idle Hint Level for Ganesha Home Phase
   const [ganeshaHomeIdleLevel, setGaneshaHomeIdleLevel] = useState(0);
+  const [ganeshaHomeIdleRestartNonce, setGaneshaHomeIdleRestartNonce] = useState(0);
   const ganeshaHomeIdleTimerRef = useRef(null);
   const ganeshaHomeIdleVoiceRef = useRef(false);
 
@@ -639,6 +646,40 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     ? rawProfileAvatar
     : profileDisplayName.charAt(0).toUpperCase();
 
+  useEffect(() => {
+    setGaneshaHomePromptReady(false);
+    setChildHomePromptReady(false);
+    setLanguageGuessPromptReady(false);
+    setLanguageChildPromptReady(false);
+    setFestivalGuessPromptReady(false);
+    setFestivalChildPromptReady(false);
+  }, [phase]);
+
+  const markPromptReady = useCallback((step) => {
+    switch (step) {
+      case STEPS.GANESHA_HOME:
+        setGaneshaHomePromptReady(true);
+        break;
+      case STEPS.CHILD_HOME:
+        setChildHomePromptReady(true);
+        break;
+      case STEPS.LANGUAGE_GANESHA:
+        setLanguageGuessPromptReady(true);
+        break;
+      case STEPS.LANGUAGE_CHILD:
+        setLanguageChildPromptReady(true);
+        break;
+      case STEPS.FESTIVALS_GANESHA:
+        setFestivalGuessPromptReady(true);
+        break;
+      case STEPS.FESTIVALS_CHILD:
+        setFestivalChildPromptReady(true);
+        break;
+      default:
+        break;
+    }
+  }, []);
+
   // Speak on step change — Entry VOs only (LANGUAGE_GANESHA entry VO only)
   useEffect(() => {
     const voiceMap = {
@@ -652,16 +693,27 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     };
     const info = voiceMap[phase];
     if (!info?.text) return;
-    if (!isAudioOn) return;
+    if (!isAudioOn) {
+      markPromptReady(phase);
+      return;
+    }
     const phaseEntryKey = `${phase}:${info.text}`;
     if (entryVoPlayedForPhaseRef.current === phaseEntryKey) return;
     const stepVoiceKey = `about-me-hut:my-indian-story:${phase}:${info.text}`;
     const shouldBypassRecentDedupe = isReload && !reloadHandledRef.current;
-    if (!shouldBypassRecentDedupe && wasStepVoSpokenRecently(stepVoiceKey)) return;
-    speak(info.text, { age: childAge, moment: info.moment });
+    if (!shouldBypassRecentDedupe && wasStepVoSpokenRecently(stepVoiceKey)) {
+      markPromptReady(phase);
+      return;
+    }
+    speak(info.text, {
+      age: childAge,
+      moment: info.moment,
+      onEnd: () => markPromptReady(phase),
+      onError: () => markPromptReady(phase)
+    });
     RECENT_STEP_VO.set(stepVoiceKey, Date.now());
     entryVoPlayedForPhaseRef.current = phaseEntryKey;
-  }, [phase, childAge, isAudioOn, isReload, speak]);
+  }, [phase, childAge, isAudioOn, isReload, speak, markPromptReady]);
 
   // Opening VO: dedicated path for reliability on scene entry.
   useEffect(() => {
@@ -682,9 +734,21 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   useEffect(() => {
     if (phase !== STEPS.LANGUAGE_GANESHA || !showLanguageCards) return;
     const reminderKey = `about-me-hut:my-indian-story:${phase}:cards-revealed:${VOICE.language_guess}`;
-    if (wasStepVoSpokenRecently(reminderKey)) return;
-    if (isAudioOn) speak(VOICE.language_guess, { age: childAge, moment: 'default' });
-  }, [phase, showLanguageCards, childAge, isAudioOn, speak]);
+    if (wasStepVoSpokenRecently(reminderKey)) {
+      setLanguageGuessPromptReady(true);
+      return;
+    }
+    if (isAudioOn) {
+      speak(VOICE.language_guess, {
+        age: childAge,
+        moment: 'default',
+        onEnd: () => setLanguageGuessPromptReady(true),
+        onError: () => setLanguageGuessPromptReady(true)
+      });
+    } else {
+      setLanguageGuessPromptReady(true);
+    }
+  }, [phase, showLanguageCards, childAge, isAudioOn, speak, VOICE.language_guess]);
 
   const getPhaseReminderLine = useCallback((phase) => {
     switch (phase) {
@@ -860,14 +924,28 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   // Child Home entry VO — single combined line, immediate
   useEffect(() => {
     if (phase !== STEPS.CHILD_HOME) return;
-    if (!isAudioOn) return;
+    if (!isAudioOn) {
+      setChildHomePromptReady(true);
+      return;
+    }
     if (childHomeEntryVoiceTimerRef.current) clearTimeout(childHomeEntryVoiceTimerRef.current);
     const childHomeEntryKey = `${phase}:${VOICE.child_home_entry}`;
-    if (entryVoPlayedForPhaseRef.current === childHomeEntryKey) return;
+    if (entryVoPlayedForPhaseRef.current === childHomeEntryKey) {
+      setChildHomePromptReady(true);
+      return;
+    }
     const childHomeStepVoiceKey = `about-me-hut:my-indian-story:${phase}:${VOICE.child_home_entry}`;
     const shouldBypassRecentDedupe = isReload && !reloadHandledRef.current;
-    if (!shouldBypassRecentDedupe && wasStepVoSpokenRecently(childHomeStepVoiceKey)) return;
-    speakIfUnmuted(VOICE.child_home_entry, { age: childAge, moment: 'default' });
+    if (!shouldBypassRecentDedupe && wasStepVoSpokenRecently(childHomeStepVoiceKey)) {
+      setChildHomePromptReady(true);
+      return;
+    }
+    speakIfUnmuted(VOICE.child_home_entry, {
+      age: childAge,
+      moment: 'default',
+      onEnd: () => setChildHomePromptReady(true),
+      onError: () => setChildHomePromptReady(true)
+    });
     RECENT_STEP_VO.set(childHomeStepVoiceKey, Date.now());
     entryVoPlayedForPhaseRef.current = childHomeEntryKey;
     return () => {
@@ -1073,7 +1151,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
 
   // Ganesha Home: Idle hint progression (Level 1 @ 10s, Level 2 @ 18s, Level 3 @ 26s)
   useEffect(() => {
-    if (phase !== STEPS.GANESHA_HOME || discoveredLocations.length === PHASE1_LOCATIONS.length) {
+    if (phase !== STEPS.GANESHA_HOME || discoveredLocations.length === PHASE1_LOCATIONS.length || !ganeshaHomePromptReady) {
       if (ganeshaHomeIdleLevel > 0) {
         if (import.meta.env.DEV) console.log('[Idle Hint] Cleared: Exiting Ganesha Home phase or all spots discovered');
       }
@@ -1110,10 +1188,9 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     return () => {
       if (ganeshaHomeIdleTimerRef.current) clearTimeout(ganeshaHomeIdleTimerRef.current);
     };
-  }, [phase, discoveredLocations.length, returnHintNonce, speakIfUnmuted, childAge]);
+  }, [phase, discoveredLocations.length, returnHintNonce, speakIfUnmuted, childAge, ganeshaHomePromptReady, ganeshaHomeIdleRestartNonce, ganeshaHomeIdleLevel]);
 
-  // Language Ganesha pre-play nudges: focus on Play button until it is pressed
-  // Flow: Entry "Tap play to listen." → After 5s: pulse Play + repeat entry hint once
+  // Language Ganesha pre-play nudges: immediate visual Play-button teaching only.
   useEffect(() => {
     if (phase !== STEPS.LANGUAGE_GANESHA || hasPressedLanguagePlay || langGuessPhase !== 'guessing') {
       if (languagePlayNudgeTimeoutRef.current) clearTimeout(languagePlayNudgeTimeoutRef.current);
@@ -1121,20 +1198,15 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
       return;
     }
 
-    // Play nudge at 5 seconds — ONCE only, no interval
-    languagePlayNudgeTimeoutRef.current = setTimeout(() => {
-      if (isAudioOn) speak(VOICE.language_play_hint, { age: childAge, moment: 'encouragement' });
-    }, 5000);
-
     return () => {
       if (languagePlayNudgeTimeoutRef.current) clearTimeout(languagePlayNudgeTimeoutRef.current);
       languagePlayNudgeTimeoutRef.current = null;
     };
-  }, [phase, hasPressedLanguagePlay, langGuessPhase, childAge, isAudioOn, speak, VOICE.language_play_hint]);
+  }, [phase, hasPressedLanguagePlay, langGuessPhase]);
 
   // Child Home: reflective/personal-question repeat — one repeat at 10s, no escalation.
   useEffect(() => {
-    if (phase !== STEPS.CHILD_HOME || selectedRegion) return;
+    if (phase !== STEPS.CHILD_HOME || selectedRegion || !childHomePromptReady) return;
     if (childHomeIdleHintTimerRef.current) clearTimeout(childHomeIdleHintTimerRef.current);
     childHomeIdleHintVoiceRef.current = false;
     childHomeIdleHintTimerRef.current = setTimeout(() => {
@@ -1146,11 +1218,11 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     return () => {
       if (childHomeIdleHintTimerRef.current) clearTimeout(childHomeIdleHintTimerRef.current);
     };
-  }, [phase, selectedRegion, childAge, isAudioOn, speak, VOICE.child_home_idle, returnHintNonce]);
+  }, [phase, selectedRegion, childAge, isAudioOn, speak, VOICE.child_home_idle, returnHintNonce, childHomePromptReady]);
 
   // Language Child: reflective/personal-question repeat — one repeat at 10s, no escalation.
   useEffect(() => {
-    if (phase !== STEPS.LANGUAGE_CHILD || selectedLanguages.length > 0) return;
+    if (phase !== STEPS.LANGUAGE_CHILD || selectedLanguages.length > 0 || !languageChildPromptReady) return;
     if (languageSelectionIdleHintTimerRef.current) clearTimeout(languageSelectionIdleHintTimerRef.current);
     languageSelectionIdleHintVoiceRef.current = false;
     languageSelectionIdleHintTimerRef.current = setTimeout(() => {
@@ -1162,11 +1234,11 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     return () => {
       if (languageSelectionIdleHintTimerRef.current) clearTimeout(languageSelectionIdleHintTimerRef.current);
     };
-  }, [phase, selectedLanguages.length, childAge, isAudioOn, speak, VOICE.language_child_idle, returnHintNonce]);
+  }, [phase, selectedLanguages.length, childAge, isAudioOn, speak, VOICE.language_child_idle, returnHintNonce, languageChildPromptReady]);
 
   // Festivals Child: reflective/personal-question repeat — one repeat at 10s, no escalation.
   useEffect(() => {
-    if (phase !== STEPS.FESTIVALS_CHILD || selectedFestivals.length > 0) return;
+    if (phase !== STEPS.FESTIVALS_CHILD || selectedFestivals.length > 0 || !festivalChildPromptReady) return;
     if (festivalSelectionIdleHintTimerRef.current) clearTimeout(festivalSelectionIdleHintTimerRef.current);
     festivalSelectionIdleHintVoiceRef.current = false;
     festivalSelectionIdleHintTimerRef.current = setTimeout(() => {
@@ -1178,11 +1250,11 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     return () => {
       if (festivalSelectionIdleHintTimerRef.current) clearTimeout(festivalSelectionIdleHintTimerRef.current);
     };
-  }, [phase, selectedFestivals.length, childAge, isAudioOn, speak, VOICE.festivals_child_idle, returnHintNonce]);
+  }, [phase, selectedFestivals.length, childAge, isAudioOn, speak, VOICE.festivals_child_idle, returnHintNonce, festivalChildPromptReady]);
 
   // Language Ganesha: Idle hint progression (Level 1 @ 10s, Level 2 @ 18s, Level 3 @ 26s)
   useEffect(() => {
-    if (phase !== STEPS.LANGUAGE_GANESHA || shakeLang !== null || langGuessPhase !== 'guessing' || !hasPressedLanguagePlay) {
+    if (phase !== STEPS.LANGUAGE_GANESHA || shakeLang !== null || langGuessPhase !== 'guessing' || !hasPressedLanguagePlay || !showLanguageCards || !languageGuessPromptReady) {
       if (langGuessIdleLevel > 0) {
         if (import.meta.env.DEV) console.log('[Idle Hint Language] Cleared: Exiting phase or user made a guess');
       }
@@ -1219,11 +1291,11 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     return () => {
       if (langGuessIdleTimerRef.current) clearTimeout(langGuessIdleTimerRef.current);
     };
-  }, [phase, langGuessPhase, shakeLang, returnHintNonce, speakIfUnmuted, childAge, hasPressedLanguagePlay, VOICE.language_guess_hint, langIdleRestartNonce]);
+  }, [phase, langGuessPhase, shakeLang, returnHintNonce, speakIfUnmuted, childAge, hasPressedLanguagePlay, showLanguageCards, VOICE.language_guess_hint, langIdleRestartNonce, languageGuessPromptReady, langGuessIdleLevel]);
 
   // Festival Ganesha: Idle hint progression (Level 1 @ 10s, Level 2 @ 18s, Level 3 @ 26s)
   useEffect(() => {
-    if (phase !== STEPS.FESTIVALS_GANESHA || shakeGuess !== null || guessPhase !== 'guessing') {
+    if (phase !== STEPS.FESTIVALS_GANESHA || shakeGuess !== null || guessPhase !== 'guessing' || !festivalGuessPromptReady) {
       if (festGuessIdleLevel > 0) {
         if (import.meta.env.DEV) console.log('[Idle Hint Festival] Cleared: Exiting phase or user made a guess');
       }
@@ -1259,7 +1331,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     return () => {
       if (festGuessIdleTimerRef.current) clearTimeout(festGuessIdleTimerRef.current);
     };
-  }, [phase, guessPhase, shakeGuess, returnHintNonce, speakIfUnmuted, childAge]);
+  }, [phase, guessPhase, shakeGuess, returnHintNonce, speakIfUnmuted, childAge, festivalGuessPromptReady, VOICE.festivals_guess_hint, festGuessIdleLevel]);
 
   // Save progress
   const saveProgress = (region, langs, fests, stepValue = phase) => {
@@ -1324,17 +1396,18 @@ const discoverLocation = useCallback((index) => {
   // Handle magnifying glass move
   const handleMglassMove = useCallback((newPosition) => {
     setMglassPosition(newPosition);
-    // Reset idle hint level when user interacts
-    if (phase === STEPS.GANESHA_HOME && ganeshaHomeIdleLevel > 0) {
+    // Reset idle hint baseline when the child searches, even if nothing is found.
+    if (phase === STEPS.GANESHA_HOME) {
       if (import.meta.env.DEV) console.log('[Idle Hint] Reset: User dragged magnifying glass');
       setGaneshaHomeIdleLevel(0);
       ganeshaHomeIdleVoiceRef.current = false;
       if (ganeshaHomeIdleTimerRef.current) clearTimeout(ganeshaHomeIdleTimerRef.current);
+      setGaneshaHomeIdleRestartNonce(n => n + 1);
     }
     const percentX = parseFloat(newPosition.left);
     const percentY = parseFloat(newPosition.top);
     checkLocationDiscovery(percentX, percentY);
-  }, [checkLocationDiscovery, phase, ganeshaHomeIdleLevel]);
+  }, [checkLocationDiscovery, phase]);
 
   // Handle region select
   const handleRegionSelect = (region, event) => {
@@ -1967,8 +2040,8 @@ const handleComplete = () => {
                 y: parsePercent(mglassPosition.top, 30),
               }}
               to={{
-                x: PHASE1_LOCATIONS[discoveredLocations.length]?.x ?? PHASE1_LOCATIONS[0].x,
-                y: PHASE1_LOCATIONS[discoveredLocations.length]?.y ?? PHASE1_LOCATIONS[0].y,
+                x: Math.min(92, parsePercent(mglassPosition.left, 20) + 14),
+                y: Math.max(8, Math.min(92, parsePercent(mglassPosition.top, 30) + 4)),
               }}
               active={
                 phase === STEPS.GANESHA_HOME &&
@@ -2179,6 +2252,7 @@ const handleComplete = () => {
                 }
                 // Replaying Play should restart card hint timing from Level 1.
                 setLangGuessIdleLevel(0);
+                setLanguageGuessPromptReady(false);
                 langGuessIdleVoiceRef.current = false;
                 if (langGuessIdleTimerRef.current) clearTimeout(langGuessIdleTimerRef.current);
                 setLangIdleRestartNonce(n => n + 1);
@@ -2203,8 +2277,17 @@ const handleComplete = () => {
                   return;
                 }
 
-                // Replay mode: keep cards visible while mantra plays.
-                speakIfUnmuted(VOICE.language_audio, { age: childAge, moment: 'default' });
+                // Replay mode: keep cards visible, then restart the card hint baseline after the mantra.
+                if (isAudioOn) {
+                  speakIfUnmuted(VOICE.language_audio, {
+                    age: childAge,
+                    moment: 'default',
+                    onEnd: () => setLanguageGuessPromptReady(true),
+                    onError: () => setLanguageGuessPromptReady(true)
+                  });
+                } else {
+                  setLanguageGuessPromptReady(true);
+                }
               }}
               disabled={langGuessPhase === 'correct'}
               style={{
@@ -2251,7 +2334,7 @@ const handleComplete = () => {
               return (
               <button
                 key={lang.id}
-                className={`card ${isSelected ? 'selected' : ''} ${wrongLangGuesses.has(lang.id) ? 'wrong' : ''} ${langGuessIdleLevel === 1 && lang.id === 'sanskrit' ? 'hint' : ''} ${langGuessIdleLevel === 2 && lang.id === 'sanskrit' ? 'hint-strong' : ''} ${langGuessIdleLevel === 3 && lang.id === 'sanskrit' ? 'hint-final' : ''}`}
+                className={`card ${isSelected ? 'selected' : ''} ${wrongLangGuesses.has(lang.id) ? 'wrong' : ''} ${langGuessIdleLevel === 1 || langGuessIdleLevel === 2 ? 'hint' : ''} ${langGuessIdleLevel === 3 && lang.id === 'sanskrit' ? 'hint-final' : ''}`}
                 onClick={() => {
                   if (!hasPressedLanguagePlay) {
                     playUiTap();
@@ -2546,7 +2629,7 @@ const handleComplete = () => {
             }}>
               <button
                 key="pongal"
-                className={`card mis-fest-guess-card ${shakeGuess === 'pongal' ? 'wrong' : ''}`}
+                className={`card mis-fest-guess-card ${shakeGuess === 'pongal' ? 'wrong' : ''} ${festGuessIdleLevel === 1 || festGuessIdleLevel === 2 ? 'hint' : ''}`}
                 onClick={() => {
                   setFestGuessIdleLevel(0);
                   festGuessIdleVoiceRef.current = false;
@@ -2571,7 +2654,7 @@ const handleComplete = () => {
               </button>
               <button
                 key="holi"
-                className={`card mis-fest-guess-card ${shakeGuess === 'holi' ? 'wrong' : ''}`}
+                className={`card mis-fest-guess-card ${shakeGuess === 'holi' ? 'wrong' : ''} ${festGuessIdleLevel === 1 || festGuessIdleLevel === 2 ? 'hint' : ''}`}
                 onClick={() => {
                   setFestGuessIdleLevel(0);
                   festGuessIdleVoiceRef.current = false;
@@ -2605,7 +2688,7 @@ const handleComplete = () => {
             }}>
               <button
                 key="janmashtami"
-                className={`card mis-fest-guess-card ${shakeGuess === 'janmashtami' ? 'wrong' : ''}`}
+                className={`card mis-fest-guess-card ${shakeGuess === 'janmashtami' ? 'wrong' : ''} ${festGuessIdleLevel === 1 || festGuessIdleLevel === 2 ? 'hint' : ''}`}
                 onClick={() => {
                   setFestGuessIdleLevel(0);
                   festGuessIdleVoiceRef.current = false;
@@ -2630,7 +2713,7 @@ const handleComplete = () => {
               </button>
               <button
                 key="ganesh"
-                className={`card mis-fest-guess-card ${guessPhase === 'correct' ? 'selected' : ''} ${festGuessIdleLevel === 1 ? 'hint' : ''} ${festGuessIdleLevel === 2 ? 'hint-strong' : ''} ${festGuessIdleLevel === 3 ? 'hint-final' : ''}`}
+                className={`card mis-fest-guess-card ${guessPhase === 'correct' ? 'selected' : ''} ${festGuessIdleLevel === 1 || festGuessIdleLevel === 2 ? 'hint' : ''} ${festGuessIdleLevel === 3 ? 'hint-final' : ''}`}
                 onClick={() => {
                   setFestGuessIdleLevel(0);
                   festGuessIdleVoiceRef.current = false;
@@ -2657,7 +2740,7 @@ const handleComplete = () => {
               </button>
               <button
                 key="diwali"
-                className={`card mis-fest-guess-card ${shakeGuess === 'diwali' ? 'wrong' : ''}`}
+                className={`card mis-fest-guess-card ${shakeGuess === 'diwali' ? 'wrong' : ''} ${festGuessIdleLevel === 1 || festGuessIdleLevel === 2 ? 'hint' : ''}`}
                 onClick={() => {
                   setFestGuessIdleLevel(0);
                   festGuessIdleVoiceRef.current = false;
