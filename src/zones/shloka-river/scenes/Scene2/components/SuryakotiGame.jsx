@@ -115,13 +115,12 @@ export default function SuryakotiGame({
   } = useRepeatedHintCycle({
     enabled: isActive && !isPaused && phase === 'play' && (!isFirstSpot || initialTeachingDone),
     stageKey: phase === 'play' ? `spot-${activeSpot}` : phase,
-    // Spot 1 has already had the teaching demo. Later spots get a little
-    // more independent time before the hint ladder kicks in.
-    initialDelay: isFirstSpot ? 8000 : 10000,
+    // GMB Hint Standard v1 — flat 10s/18s/26s from VO end or last interaction.
+    initialDelay: 10000,
     pulseCountBeforeEscalation: 3,
     pulseInterval: 1800,
-    level2Delay: isFirstSpot ? 15500 : 18000,
-    level3Delay: isFirstSpot ? 22500 : 26000,
+    level2Delay: 18000,
+    level3Delay: 26000,
   });
 
   useEffect(() => {

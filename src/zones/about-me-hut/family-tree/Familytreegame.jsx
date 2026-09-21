@@ -805,14 +805,13 @@ sceneState.isSequencePlaying,
 ]);
 
  // ========================================
- // GANESHA PHASE: Play tapCircle hint 3.5s after phase begins
+ // GANESHA PHASE: immediate teaching cue (0-150ms), same convention as the
+ // gesture demos other scenes show right away — this scene has no visual
+ // gesture demo, so tapCircle stands in for it. GMB Hint Standard v1: this
+ // is teaching, not a hint, so it plays once immediately and is separate
+ // from the 10s/18s/26s idle-hint ladder below (no more 3.5s mid-delay).
  // ========================================
  useEffect(() => {
- if (tapCircleTimerRef.current) {
- clearTimeout(tapCircleTimerRef.current);
- tapCircleTimerRef.current = null;
- }
-
  const canPlayTapHint =
  sceneState.gamePhase === 'ganeshaTree' &&
  sceneState.placedGaneshaMembers.length === 0 &&
@@ -820,12 +819,12 @@ sceneState.isSequencePlaying,
 !sceneState.flippedMember &&
 !sceneState.isSequencePlaying;
 
- if (canPlayTapHint) {
+ if (!canPlayTapHint) return undefined;
+
  tapCircleTimerRef.current = setTimeout(() => {
  playVoice('tapCircle');
  tapCircleTimerRef.current = null;
- }, 3500);
- }
+ }, 150);
 
  return () => {
  if (tapCircleTimerRef.current) {
@@ -859,7 +858,7 @@ sceneState.isSequencePlaying,
  const placedCount = sceneState.placedGaneshaMembers.length;
  const shouldPlayRepeatHint =
  sceneState.gamePhase === 'ganeshaTree' &&
- (placedCount === 1 || placedCount === 2 || placedCount === 3) &&
+ (placedCount === 0 || placedCount === 1 || placedCount === 2 || placedCount === 3) &&
 !sceneState.showFunFactModal &&
 !sceneState.flippedMember &&
 !sceneState.isSequencePlaying;
@@ -894,14 +893,15 @@ sceneState.isSequencePlaying,
  }, [sceneState.placedGaneshaMembers.length, sceneState.gamePhase, sceneState.showFunFactModal, sceneState.flippedMember, sceneState.isSequencePlaying]);
 
  // ========================================
- // CHILD PHASE: Play childStart VO 3.5s after phase begins (fresh start only)
+ // CHILD PHASE: immediate teaching cue (0-150ms), fresh start only — same
+ // convention as GANESHA PHASE above, no more 3.5s mid-delay.
  // ========================================
  useEffect(() => {
  if (sceneState.gamePhase === 'childInput' && sceneState.childFamily.length === 0) {
  childStartTimerRef.current = scheduleTimeout(() => {
  childStartTimerRef.current = null;
  playVoice('childStart');
- }, 3500);
+ }, 150);
  return () => {
  cancelTimer(childStartTimerRef);
  };

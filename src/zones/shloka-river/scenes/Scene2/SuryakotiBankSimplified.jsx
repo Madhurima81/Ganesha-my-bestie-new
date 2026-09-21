@@ -516,9 +516,7 @@ const SuryakotiBankContent = ({
           if (suryaInteractionStartedRef.current) return;
           playGuidanceVoice('scene11_surya_intro', () => {
             if (suryaInteractionStartedRef.current) return;
-            safeSetTimeout(() => {
-              startIdleTimer();
-            }, 3500);
+            startIdleTimer();
           });
         }, 2500);
         return () => cancelIntro?.();
@@ -546,9 +544,7 @@ const SuryakotiBankContent = ({
         playGuidanceVoice('scene11_sama_intro', () => {
           setSamaIntroComplete(true);
           if (samaInteractionStartedRef.current) return;
-          safeSetTimeout(() => {
-            startIdleTimer();
-          }, 3500);
+          startIdleTimer();
         });
         return undefined;
       }

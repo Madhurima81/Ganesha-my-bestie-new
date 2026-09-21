@@ -443,7 +443,7 @@ const NirvighnamChantContent = ({
       if (isAudioOn && !nirvIntroPlayedRef.current) {
         nirvIntroPlayedRef.current = true;
         playGuidanceVoice('scene12_nir_intro', () => {
-          safeSetTimeout(() => startIdleTimer(), 3500);
+          startIdleTimer();
         });
         return;
       }
@@ -463,7 +463,7 @@ const NirvighnamChantContent = ({
         setKuruIntroComplete(false);
         playGuidanceVoice('scene12_kuru_intro', () => {
           setKuruIntroComplete(true);
-          safeSetTimeout(() => startIdleTimer(), 3500);
+          startIdleTimer();
         });
         return;
       }

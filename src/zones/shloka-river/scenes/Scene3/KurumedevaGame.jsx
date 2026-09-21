@@ -487,11 +487,12 @@ export default function KurumedevaGame({
     stageKey: phase === 'play'
       ? (placeActive ? `place-${friendStep}` : `friend-${friendStep}`)
       : phase,
-    initialDelay: 8000,
+    // GMB Hint Standard v1 — flat 10s/18s/26s from VO end or last interaction.
+    initialDelay: 10000,
     pulseCountBeforeEscalation: 3,
     pulseInterval: 1800,
-    level2Delay: 15000,
-    level3Delay: 22000,
+    level2Delay: 18000,
+    level3Delay: 26000,
   });
 
   // Non-tap gesture hints (drag/hold/scratch) show right away at the start of

@@ -250,23 +250,17 @@ export default function MahakayaRescueGame({
   const hintStageKey = `${ropeStage}-${activeLog}`;
   const needsInitialTeaching = activeLog === 0 && (ropeStage === 'detached' || ropeStage === 'attached');
   const teachingComplete = !needsInitialTeaching || teachingCompleteKey === hintStageKey;
-  const isFirstLog = activeLog === 0;
-  const hintTimings = ropeStage === 'detached'
-    ? (isFirstLog
-      ? { initialDelay: 8000, level2Delay: 15000, level3Delay: 22000 }
-      : { initialDelay: 10000, level2Delay: 18000, level3Delay: 26000 })
-    : (isFirstLog
-      ? { initialDelay: 6500, level2Delay: 13000, level3Delay: 20000 }
-      : { initialDelay: 8000, level2Delay: 16000, level3Delay: 24000 });
-
+  // GMB Hint Standard v1 — 10s/18s/26s from VO end or last interaction,
+  // flat across every stage/obstacle. Only Vakratunda's own reactive
+  // stuck-hint (no idle timer) is exempt from this standard.
   const { hintLevel, markInteraction } = useRepeatedHintCycle({
     enabled: isActive && !isPaused && phase === 'play' && !debugMode && teachingComplete,
     stageKey: hintStageKey,
-    initialDelay: hintTimings.initialDelay,
+    initialDelay: 10000,
     pulseCountBeforeEscalation: 3,
     pulseInterval: 1800,
-    level2Delay: hintTimings.level2Delay,
-    level3Delay: hintTimings.level3Delay,
+    level2Delay: 18000,
+    level3Delay: 26000,
   });
 
   useEffect(() => {

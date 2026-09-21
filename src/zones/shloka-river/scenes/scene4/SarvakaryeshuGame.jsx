@@ -180,14 +180,15 @@ export default function SarvakaryeshuGame({
     y: rect.top + rect.height / 2,
   });
 
+  // GMB Hint Standard v1 — flat 10s/18s/26s from VO end or last interaction.
   const { hintLevel, markInteraction } = useRepeatedHintCycle({
     enabled: isActive && !isPaused && phase === 'play' && canPick,
     stageKey: isActive ? `card-${cardIndex}` : null,
-    initialDelay: 7000,
+    initialDelay: 10000,
     pulseCountBeforeEscalation: 1,
     pulseInterval: 1800,
-    level2Delay: 14000,
-    level3Delay: 21000,
+    level2Delay: 18000,
+    level3Delay: 26000,
   });
 
   useEffect(() => {

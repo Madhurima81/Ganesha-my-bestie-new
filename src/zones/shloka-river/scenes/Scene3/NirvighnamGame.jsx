@@ -87,10 +87,12 @@ const obstacleImageById = {
   reed: reedsClosedImg,
 };
 
+// GMB Hint Standard v1 — flat 10s/18s/26s from VO end or last interaction,
+// same across every obstacle.
 const HINT_TIMINGS = {
-  stone: { l1: 7000, l2: 14000, l3: 20000 },
-  branch: { l1: 9000, l2: 17000, l3: 25000 },
-  reed: { l1: 8000, l2: 15000, l3: 22000 },
+  stone: { l1: 10000, l2: 18000, l3: 26000 },
+  branch: { l1: 10000, l2: 18000, l3: 26000 },
+  reed: { l1: 10000, l2: 18000, l3: 26000 },
 };
 
 const NIRV_HINT_COPY = {

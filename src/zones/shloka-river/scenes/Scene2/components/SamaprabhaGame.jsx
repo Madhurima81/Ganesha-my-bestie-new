@@ -274,14 +274,15 @@ export default function SamaprabhaGame({
     return id;
   }, []);
 
+  // GMB Hint Standard v1 — flat 10s/18s/26s from VO end or last interaction.
   const { hintLevel, markInteraction } = useRepeatedHintCycle({
     enabled: isActive && !isPaused && phase === 'play' && introComplete,
     stageKey: phase === 'play' ? `clue-${lit}` : phase,
-    initialDelay: lit === 0 ? 10500 : 8500,
+    initialDelay: 10000,
     pulseCountBeforeEscalation: 3,
     pulseInterval: 1800,
-    level2Delay: lit === 0 ? 17500 : 15500,
-    level3Delay: lit === 0 ? 25000 : 22500,
+    level2Delay: 18000,
+    level3Delay: 26000,
   });
 
   useEffect(() => {
@@ -420,6 +421,11 @@ export default function SamaprabhaGame({
 
   const handlePointerDown = useCallback((event) => {
     if (isPaused || phase !== 'play') return;
+    // The Layout Debug panel adds its own move/resize handles directly on
+    // the stage (not inside .sama-debug-panel), so relying on propagation
+    // order between the two pointer systems is fragile — while the panel
+    // is open, gameplay dragging (the light beam) is fully disabled instead.
+    if (debugEnabled && showDebugPanel) return;
     if (event.target.closest?.('.sama-debug-panel')) return;
 
     event.preventDefault();
@@ -437,7 +443,7 @@ export default function SamaprabhaGame({
     }
 
     startHoldAtPoint(point);
-  }, [getStagePoint, isPaused, onFirstInteraction, phase, startHoldAtPoint]);
+  }, [debugEnabled, showDebugPanel, getStagePoint, isPaused, onFirstInteraction, phase, startHoldAtPoint]);
 
   const handlePointerMove = useCallback((event) => {
     if (pointerIdRef.current !== event.pointerId || !isDraggingLight) return;
