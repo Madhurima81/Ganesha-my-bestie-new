@@ -344,7 +344,10 @@ const SymbolMountainSceneContent = ({
 
 
   const speakScenePrompt = useCallback((key, options = {}) => {
-    if (!isAudioOn || !VOICE_LINES[key]) return;
+    if (!isAudioOn || !VOICE_LINES[key]) {
+      options?.onEnd?.();
+      return;
+    }
     speak(VOICE_LINES[key], {
       age: 7,
       style: 'child',
@@ -366,8 +369,7 @@ const SymbolMountainSceneContent = ({
     if (sceneState?.welcomeShown) {
       const replayKey = getPromptKeyForPhase();
       if (replayKey) {
-        resetIdleBaseline();
-        speakScenePrompt(replayKey);
+        speakScenePrompt(replayKey, { onEnd: resetIdleBaseline });
       }
     }
   };
@@ -496,8 +498,7 @@ const SymbolMountainSceneContent = ({
     lastAnnouncedPromptRef.current = promptKey;
 
     const timer = setTimeout(() => {
-      resetIdleBaseline();
-      speakScenePrompt(promptKey);
+      speakScenePrompt(promptKey, { onEnd: resetIdleBaseline });
     }, promptKey === 'complete' ? 250 : 500);
     return () => clearTimeout(timer);
   }, [
@@ -511,7 +512,7 @@ const SymbolMountainSceneContent = ({
     isTuskGameVisible,
     sceneState?.discoveredSymbols?.eyes,
     sceneState?.discoveredSymbols?.ears,
-    
+
     isSymbolPopupOpen,
     revealConfig,
     showSceneCompletion,
@@ -1017,9 +1018,12 @@ const SymbolMountainSceneContent = ({
                 }}
                 onPopupClose={() => {
                   setIsSymbolPopupOpen(false);
-                  resetHintCadence();
                   const replayKey = getPromptKeyForPhase();
-                  if (replayKey) speakScenePrompt(replayKey);
+                  if (replayKey) {
+                    speakScenePrompt(replayKey, { onEnd: resetHintCadence });
+                  } else {
+                    resetHintCadence();
+                  }
                 }}
               />
             )}

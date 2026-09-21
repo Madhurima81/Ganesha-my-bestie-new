@@ -104,14 +104,14 @@ const powerConfig = {
     name: 'Clear Path Power',
     image: symbolNirvighnam,
     color: '#6DBF67',
-    affirmation: 'I clear the way and move forward.',
+    affirmation: 'I can solve one thing at a time.',
     story: 'When something blocks you, you can find a way through.'
   },
   kurumedeva: {
     name: 'Ask for Help',
     image: symbolKurumedeva,
     color: '#7B9ED9',
-    affirmation: 'I ask for help and friends show up.',
+    affirmation: 'I can ask for help when I need it.',
     story: 'Asking for help is a superpower.'
   }
 };
@@ -258,6 +258,7 @@ const NirvighnamChantContent = ({
   const speechSynthRef = useRef(typeof window !== 'undefined' ? window.speechSynthesis : null);
   const nirvIntroPlayedRef = useRef(false);
   const kuruIntroPlayedRef = useRef(false);
+  const [kuruIntroComplete, setKuruIntroComplete] = useState(false);
   const hintRef = useRef(null);
   const revealTimeoutsRef = useRef([]);
 
@@ -281,21 +282,20 @@ const NirvighnamChantContent = ({
 
   const playGuidanceVoice = useCallback((key, onEnded, options = {}) => {
     const map = {
-      welcome:             "Our river friends have a tricky way ahead. Let's help them through.",
-      scene12_nir_intro:   "Turtle's way home is blocked. Let's clear the path, one thing at a time.",
-      scene12_nir_drag:    "Something's still blocking the turtle's way.",
-      nirv_hint:           "Something's still blocking the turtle's way.",
+      welcome:             "The way ahead is tricky. Let’s help our friends through.",
+      scene12_nir_intro:   "Turtle’s way home is blocked. Press and hold the rock to move it.",
+      scene12_nir_drag:    "Something’s still blocking Turtle’s way.",
+      nirv_hint:           "Something’s still blocking Turtle’s way.",
       nirv_hint_stone:     "Hold the rock.",
       nirv_hint_branch:    "Move the branch out of the way.",
       nirv_hint_reed:      "Open the reeds.",
       nirv_hint_keep_stone:  "Keep holding.",
       nirv_hint_keep_branch: "Drag the branch aside.",
       nirv_hint_keep_reed:   "Swipe the reeds apart.",
-      nirv_done:           "Nirvighnam! You cleared the path, and Turtle reached her home.",
-      nirv_meaning:        "Nirvighnam means without obstacles.",
-      nirvighnamSetup:     "Turtle's way home is blocked. Let's clear the path, one thing at a time.",
+      nirv_done:           "Nirvighnam! You cleared the way and helped Turtle through.",
+      nirvighnamSetup:     "Turtle’s way home is blocked. Press and hold the rock to move it.",
       nirvighnamClaim:     'I can solve one thing at a time.',
-      scene12_kuru_intro:  "Baby Beaver is on the other side, but the bridge is broken. Let's help Beaver reach him.",
+      scene12_kuru_intro:  "Baby Beaver is across the broken bridge. Press and hold to lift the logs and help rebuild it.",
       scene12_kuru_tap:    'Who can help with the logs?',
       kuru_hint:           'Who can help with the logs?',
       kuru_logs_first:     "Press and hold to help Beaver try.",
@@ -308,11 +308,10 @@ const NirvighnamChantContent = ({
       kuru_hint_rope:      "Who can help with the rope?",
       kuru_hint_rope_drag: "Drag the help bubble to Monkey.",
       kuru_rope_after:     "Monkey helped tie the rope.",
-      kuru_done:           "Kuru Me Deva! Beaver asked for help, and the bridge was finished.",
-      kuru_meaning:        "Kuru Me Deva means please help me.",
-      kurumedevaSetup:     "Baby Beaver is on the other side, but the bridge is broken. Let's help Beaver reach him.",
+      kuru_done:           "Kuru Me Deva! You asked for help and finished the bridge.",
+      kurumedevaSetup:     "Baby Beaver is across the broken bridge. Press and hold to lift the logs and help rebuild it.",
       kurumedevaClaim:     'I can ask for help when I need it.',
-      sceneComplete:       "You cleared the path and asked for help when the way got hard.",
+      sceneComplete:       "You cleared the path and asked for help when things got hard.",
     };
     if (map[key]) { speakWebSpeech(stripLeadingSpeechText(map[key], options.stripLeadingText), onEnded); return; }
     onEnded?.();
@@ -461,16 +460,20 @@ const NirvighnamChantContent = ({
       setCurrentPhase('kurumedevaGame');
       if (isAudioOn && !kuruIntroPlayedRef.current) {
         kuruIntroPlayedRef.current = true;
+        setKuruIntroComplete(false);
         playGuidanceVoice('scene12_kuru_intro', () => {
+          setKuruIntroComplete(true);
           safeSetTimeout(() => startIdleTimer(), 3500);
         });
         return;
       }
+      setKuruIntroComplete(true);
       startIdleTimer();
       return;
     }
     if (sceneState.phase !== PHASES.KURUMEDEVA_GAME) {
       kuruIntroPlayedRef.current = false;
+      setKuruIntroComplete(false);
     }
   }, [isAudioOn, playGuidanceVoice, sceneState.phase, setCurrentPhase, startIdleTimer, safeSetTimeout]);
 
@@ -616,6 +619,7 @@ const NirvighnamChantContent = ({
               {/* ── KURUMEDEVA GAME — tap friends ── */}
               <KurumedevaGame
                 isActive={sceneState.phase === PHASES.KURUMEDEVA_GAME}
+                introComplete={kuruIntroComplete}
                 hideElements={showCenteredWord || showPowerOverlay || !!revealConfig}
                 onMicroWin={handleMicroWin}
                 onPhaseComplete={() => window.setTimeout(() => handlePhaseComplete('kurumedeva'), 0)}
@@ -654,11 +658,7 @@ const NirvighnamChantContent = ({
                   revealVoice={{
                     isEnabled: isAudioOn,
                     wordId: revealConfig.symbolId,
-                    meaningKey: revealConfig.symbolId === 'nirvighnam'
-                      ? 'nirv_meaning'
-                      : revealConfig.symbolId === 'kurumedeva'
-                        ? 'kuru_meaning'
-                        : null,
+
                     playWord: playWordAudio,
                     playLine: playGuidanceVoice,
                     stopVoice: stopAllVoice,

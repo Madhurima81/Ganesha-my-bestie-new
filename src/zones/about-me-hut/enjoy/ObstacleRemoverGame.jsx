@@ -325,6 +325,11 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const { isAudioOn, toggleAudio } = useAudioPreference();
 
   const [returnHintNonce, setReturnHintNonce] = useState(0);
+  // Gates the idle-hint ladders below: the countdown only starts once the
+  // phase's own entry VO has actually finished (onEnd), not the instant the
+  // phase is entered — otherwise a hint could fire while Ganesha is still
+  // talking. Keyed by phase so unrelated phases don't block each other.
+  const [phaseVoiceDoneFor, setPhaseVoiceDoneFor] = useState(null);
   const [wish1IdleLevel, setWish1IdleLevel] = useState(0);
   const [wish2IdleLevel, setWish2IdleLevel] = useState(0);
   const [wish3IdleLevel, setWish3IdleLevel] = useState(0);
@@ -841,6 +846,19 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     // and the cleanup cancels the pending call if phase changes before it fires.
     // We set phaseVoiceRef.current.opening INSIDE the timer (not before) so a
     // silently-failed playVoice can be retried on the next render.
+    // Idle-hint gate: if this phase's entry VO already played earlier
+    // (e.g. resumed mid-phase), there's no VO left to wait for — mark it
+    // done immediately so the idle ladder below isn't blocked forever.
+    const idleGatedPhaseFlag = {
+      'wish1-active': 'wish1Active',
+      'wish2-active': 'wish2Active',
+      'wish3-active': 'wish3Active',
+      'dream-clouded': 'dreamClouded',
+    }[sceneState.gamePhase];
+    if (idleGatedPhaseFlag && phaseVoiceRef.current[idleGatedPhaseFlag]) {
+      setPhaseVoiceDoneFor(sceneState.gamePhase);
+    }
+
     if (sceneState.gamePhase === 'intro' && !phaseVoiceRef.current.opening) {
       const cancel = safeSetTimeout(() => {
         phaseVoiceRef.current.opening = true;
@@ -857,7 +875,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     }
     if (sceneState.gamePhase === 'wish1-active' && !phaseVoiceRef.current.wish1Active) {
       phaseVoiceRef.current.wish1Active = true;
-      speakLine(VOICE_LINES.wish1Active, { moment: 'encouragement' });
+      speakLine(VOICE_LINES.wish1Active, { moment: 'encouragement', onEnd: () => setPhaseVoiceDoneFor('wish1-active') });
     }
     if (sceneState.gamePhase === 'wish1-complete' && !phaseVoiceRef.current.wish1Complete) {
       phaseVoiceRef.current.wish1Complete = true;
@@ -871,7 +889,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     }
     if (sceneState.gamePhase === 'wish2-active' && !phaseVoiceRef.current.wish2Active) {
       phaseVoiceRef.current.wish2Active = true;
-      speakLine(VOICE_LINES.wish2Active, { moment: 'encouragement' });
+      speakLine(VOICE_LINES.wish2Active, { moment: 'encouragement', onEnd: () => setPhaseVoiceDoneFor('wish2-active') });
     }
 
     // Wish 3
@@ -881,7 +899,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     }
     if (sceneState.gamePhase === 'wish3-active' && !phaseVoiceRef.current.wish3Active) {
       phaseVoiceRef.current.wish3Active = true;
-      speakLine(VOICE_LINES.wish3Active, { moment: 'encouragement' });
+      speakLine(VOICE_LINES.wish3Active, { moment: 'encouragement', onEnd: () => setPhaseVoiceDoneFor('wish3-active') });
     }
 
     // All Wishes Complete
@@ -902,7 +920,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     }
     if (sceneState.gamePhase === 'dream-clouded' && !sceneState.dreamRevealed && !phaseVoiceRef.current.dreamClouded) {
       phaseVoiceRef.current.dreamClouded = true;
-      speakLine(VOICE_LINES.dreamClouded, { moment: 'story' });
+      speakLine(VOICE_LINES.dreamClouded, { moment: 'story', onEnd: () => setPhaseVoiceDoneFor('dream-clouded') });
     }
     if (sceneState.gamePhase === 'dream-clearing' && !sceneState.dreamRevealed && !phaseVoiceRef.current.dreamClearing) {
       phaseVoiceRef.current.dreamClearing = true;
@@ -1053,6 +1071,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       return;
     }
     if (sceneState.showingCompletionScreen || showDrawingPad) return;
+    if (phaseVoiceDoneFor !== 'wish1-active') return;
 
     setWish1IdleLevel(0);
     idleVoFlagsRef.current.wish1Level2 = false;
@@ -1097,7 +1116,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       if (t2Clear) t2Clear();
       if (t3) t3();
     };
-  }, [sceneState.gamePhase, isAudioOn, sceneState.showingCompletionScreen, showDrawingPad, safeSetTimeout]);
+  }, [sceneState.gamePhase, isAudioOn, sceneState.showingCompletionScreen, showDrawingPad, safeSetTimeout, phaseVoiceDoneFor]);
 
   // ── Wish 2, 3, dream phases — setTimeout ladders (same pattern as wish1) ────
   // Level fires → class on → animation plays → level resets to 0 → element back to normal.
@@ -1121,6 +1140,8 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       return;
     }
     if (sceneState.showingCompletionScreen || showDrawingPad) return;
+    // dream-clearing has no entry VO of its own to wait for; the others do.
+    if (phase !== 'dream-clearing' && phaseVoiceDoneFor !== phase) return;
 
     const setLevel = isWish2 ? setWish2IdleLevel : isWish3 ? setWish3IdleLevel : setChildIdleLevel;
     const voL2Flag = isWish2 ? 'wish2Level2' : isWish3 ? 'wish3Level2' : 'childLevel2';
@@ -1172,7 +1193,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       if (t2Clear) t2Clear();
       if (t3) t3();
     };
-  }, [isAudioOn, sceneState.gamePhase, sceneState.dreamRevealed, sceneState.showingCompletionScreen, showDrawingPad, safeSetTimeout]);
+  }, [isAudioOn, sceneState.gamePhase, sceneState.dreamRevealed, sceneState.showingCompletionScreen, showDrawingPad, safeSetTimeout, phaseVoiceDoneFor]);
 
   // Reset idle timer on major phase/modal transitions
   useEffect(() => {

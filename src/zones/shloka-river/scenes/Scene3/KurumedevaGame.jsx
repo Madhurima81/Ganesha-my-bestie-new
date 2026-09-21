@@ -405,6 +405,7 @@ const POSE_ASSETS = [
 
 export default function KurumedevaGame({
   isActive = false,
+  introComplete = true,
   hideElements = false,
   onMicroWin = () => {},
   onPhaseComplete = () => {},
@@ -482,7 +483,7 @@ export default function KurumedevaGame({
     hintLevel,
     markInteraction,
   } = useRepeatedHintCycle({
-    enabled: isActive && !isPaused && phase === 'play' && !isRoundSettling && !debugMode,
+    enabled: isActive && !isPaused && phase === 'play' && !isRoundSettling && !debugMode && introComplete,
     stageKey: phase === 'play'
       ? (placeActive ? `place-${friendStep}` : `friend-${friendStep}`)
       : phase,

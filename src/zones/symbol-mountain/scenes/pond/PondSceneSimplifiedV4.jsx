@@ -476,12 +476,16 @@ const PondSceneContent = ({
     return () => window.clearTimeout(t);
   }, [sceneState?.phase]);
 
-  const speakPondPrompt = useCallback((key) => {
-    if (!isAudioOn || !VOICE_LINES[key]) return;
+  const speakPondPrompt = useCallback((key, onEnd) => {
+    if (!isAudioOn || !VOICE_LINES[key]) {
+      onEnd?.();
+      return;
+    }
     speak(VOICE_LINES[key], {
       age: 7,
       style: 'child',
-      moment: key === 'complete' ? 'celebration' : 'encouragement'
+      moment: key === 'complete' ? 'celebration' : 'encouragement',
+      onEnd
     });
   }, [isAudioOn, speak]);
   const getPromptKeyForPhase = useCallback(() => {
@@ -532,10 +536,10 @@ const PondSceneContent = ({
   const onPauseShow = useCallback(() => {
     const replayKey = getPromptKeyForPhase();
     if (replayKey) {
-      resetIdleBaseline();
-      speakPondPrompt(replayKey);
+      speakPondPrompt(replayKey, resetIdleBaseline);
+    } else {
+      rearmIdleHints();
     }
-    rearmIdleHints();
   }, [getPromptKeyForPhase, resetIdleBaseline, speakPondPrompt, rearmIdleHints]);
 
   const { safeSetTimeout, clearAll: clearAllTimeouts } = usePauseAwareTimeout({
@@ -586,8 +590,7 @@ const PondSceneContent = ({
     if (lastAnnouncedPromptRef.current === promptKey) return;
 
     const timer = setTimeout(() => {
-      resetIdleBaseline();
-      speakPondPrompt(promptKey);
+      speakPondPrompt(promptKey, resetIdleBaseline);
       lastAnnouncedPromptRef.current = promptKey;
     }, promptKey === 'complete' ? 250 : promptKey === 'rockRound' ? 850 : 500);
     return () => clearTimeout(timer);
@@ -660,16 +663,10 @@ const PondSceneContent = ({
     idleVoGateRef.current = true;
   }, [idleHintLevel, sceneState?.phase, speakPondPrompt]);
 
-  // Re-arm hints when phase/context changes.
-  useEffect(() => {
-    rearmIdleHints();
-  }, [
-    sceneState?.phase,
-    sceneState?.welcomeShown,
-    revealConfig,
-    showSceneCompletion,
-    rearmIdleHints
-  ]);
+  // NOTE: idle-hint baseline is re-armed from inside the phase-prompt VO's
+  // onEnd callback above (see speakPondPrompt(promptKey, resetIdleBaseline)),
+  // not on every phase change directly — otherwise the countdown would start
+  // before the child has heard the prompt.
 
   // ==================== RELOAD / RESUME LOGIC ====================
   // Runs once on mount — same pattern as Modak (empty deps, no isReload check).
@@ -945,8 +942,7 @@ const PondSceneContent = ({
 
     triggerMiniGesture('thumbsup', 'center', 1500);
     safeSetTimeout(() => {
-      resetIdleBaseline();
-      speakPondPrompt('reedsRound');
+      speakPondPrompt('reedsRound', resetIdleBaseline);
     }, WATER_TO_REEDS_MS);
   }, [
     playGlow,
@@ -1901,10 +1897,12 @@ const PondSceneContent = ({
                 }}
                 onPopupClose={() => {
                   setIsSymbolPopupOpen(false);
-                  resetIdleBaseline();
-                  rearmIdleHints();
                   const replayKey = getPromptKeyForPhase();
-                  if (replayKey) speakPondPrompt(replayKey);
+                  if (replayKey) {
+                    speakPondPrompt(replayKey, resetIdleBaseline);
+                  } else {
+                    rearmIdleHints();
+                  }
                 }}
               />
             )}

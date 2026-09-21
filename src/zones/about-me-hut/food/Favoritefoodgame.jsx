@@ -473,6 +473,11 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const ganeshaIdleTimerRef = useRef(null);
   const childIdleTimerRef = useRef(null);
   const childEntryVoRepeatRef = useRef(false);
+  // Gates the idle-hint ladders below: the countdown only starts once the
+  // phase's own question VO has actually finished (onEnd), not the instant
+  // the phase is entered — otherwise a hint could fire while Ganesha/the
+  // child is still talking.
+  const [phaseVoiceDone, setPhaseVoiceDone] = useState(false);
 
   // Mini gesture (thumbs up) on successful taps
   const { miniGesture, triggerMiniGesture: triggerMiniGestureRaw, hideMiniGesture } = useMiniGesture();
@@ -1177,26 +1182,40 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     // Collect all timeouts for cleanup
     const timers = [];
 
-    // Ganesha's questions
+    // Ganesha's questions — idle-hint ladders below wait on phaseVoiceDone,
+    // so reset it here and flip it true only once this question VO ends.
+    // If the question was already spoken earlier (e.g. resumed mid-phase),
+    // there's no VO left to wait for, so mark it done immediately.
+    const ganeshaQuestionFlagByPhase = {
+      'food-choice': 'foodQuestion',
+      'color-choice': 'colorQuestion',
+      'activity-choice': 'activityQuestion',
+      'friend-choice': 'friendQuestion',
+    };
+    const ganeshaQuestionFlag = ganeshaQuestionFlagByPhase[sceneState.gamePhase];
+    if (ganeshaQuestionFlag) {
+      setPhaseVoiceDone(!!phaseVoiceRef.current[ganeshaQuestionFlag]);
+    }
+
     if (sceneState.gamePhase === 'food-choice' && !phaseVoiceRef.current.foodQuestion) {
       phaseVoiceRef.current.foodCorrect = false;
       phaseVoiceRef.current.foodQuestion = true;
-      speakLine(VOICE_LINES.foodQuestion, { moment: 'thinking' });
+      speakLine(VOICE_LINES.foodQuestion, { moment: 'thinking', onEnd: () => setPhaseVoiceDone(true) });
     }
     if (sceneState.gamePhase === 'color-choice' && !phaseVoiceRef.current.colorQuestion) {
       phaseVoiceRef.current.colorCorrect = false;
       phaseVoiceRef.current.colorQuestion = true;
-      speakLine(VOICE_LINES.colorQuestion, { moment: 'thinking' });
+      speakLine(VOICE_LINES.colorQuestion, { moment: 'thinking', onEnd: () => setPhaseVoiceDone(true) });
     }
     if (sceneState.gamePhase === 'activity-choice' && !phaseVoiceRef.current.activityQuestion) {
       phaseVoiceRef.current.activityCorrect = false;
       phaseVoiceRef.current.activityQuestion = true;
-      speakLine(VOICE_LINES.activityQuestion, { moment: 'thinking' });
+      speakLine(VOICE_LINES.activityQuestion, { moment: 'thinking', onEnd: () => setPhaseVoiceDone(true) });
     }
     if (sceneState.gamePhase === 'friend-choice' && !phaseVoiceRef.current.friendQuestion) {
       phaseVoiceRef.current.friendCorrect = false;
       phaseVoiceRef.current.friendQuestion = true;
-      speakLine(VOICE_LINES.friendQuestion, { moment: 'thinking' });
+      speakLine(VOICE_LINES.friendQuestion, { moment: 'thinking', onEnd: () => setPhaseVoiceDone(true) });
     }
 
     // Ganesha's correct answers
@@ -1223,22 +1242,34 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       speakLine(VOICE_LINES.childIntro, { moment: 'encouragement' });
     }
 
-    // Child's questions
+    // Child's questions — same VO-done gate as the Ganesha questions above,
+    // reused by the child-phase entry-VO-repeat timer.
+    const childQuestionFlagByPhase = {
+      'child-food-choice': 'childFoodQuestion',
+      'child-color-choice': 'childColorQuestion',
+      'child-activity-choice': 'childActivityQuestion',
+      'child-friend-input': 'childFriendQuestion',
+    };
+    const childQuestionFlag = childQuestionFlagByPhase[sceneState.gamePhase];
+    if (childQuestionFlag) {
+      setPhaseVoiceDone(!!phaseVoiceRef.current[childQuestionFlag]);
+    }
+
     if (sceneState.gamePhase === 'child-food-choice' && !phaseVoiceRef.current.childFoodQuestion) {
       phaseVoiceRef.current.childFoodQuestion = true;
-      speakLine(VOICE_LINES.childFoodQuestion, { moment: 'thinking' });
+      speakLine(VOICE_LINES.childFoodQuestion, { moment: 'thinking', onEnd: () => setPhaseVoiceDone(true) });
     }
     if (sceneState.gamePhase === 'child-color-choice' && !phaseVoiceRef.current.childColorQuestion) {
       phaseVoiceRef.current.childColorQuestion = true;
-      speakLine(VOICE_LINES.childColorQuestion, { moment: 'thinking' });
+      speakLine(VOICE_LINES.childColorQuestion, { moment: 'thinking', onEnd: () => setPhaseVoiceDone(true) });
     }
     if (sceneState.gamePhase === 'child-activity-choice' && !phaseVoiceRef.current.childActivityQuestion) {
       phaseVoiceRef.current.childActivityQuestion = true;
-      speakLine(VOICE_LINES.childActivityQuestion, { moment: 'thinking' });
+      speakLine(VOICE_LINES.childActivityQuestion, { moment: 'thinking', onEnd: () => setPhaseVoiceDone(true) });
     }
     if (sceneState.gamePhase === 'child-friend-input' && !phaseVoiceRef.current.childFriendQuestion) {
       phaseVoiceRef.current.childFriendQuestion = true;
-      speakLine(VOICE_LINES.childFriendQuestion, { moment: 'thinking' });
+      speakLine(VOICE_LINES.childFriendQuestion, { moment: 'thinking', onEnd: () => setPhaseVoiceDone(true) });
     }
 
     // Final comparison card VO (starts after hearts appear)
@@ -1272,8 +1303,9 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     const ganeshaPhases = ['food-choice', 'color-choice', 'activity-choice', 'friend-choice'];
     const currentPhase = sceneState.gamePhase;
 
-    // Only run for Ganesha choice phases
-    if (!ganeshaPhases.includes(currentPhase) || showShake) {
+    // Only run for Ganesha choice phases, and only once that phase's own
+    // question VO has finished — otherwise the ladder could fire mid-VO.
+    if (!ganeshaPhases.includes(currentPhase) || showShake || !phaseVoiceDone) {
       if (ganeshaIdleTimerRef.current) clearTimeout(ganeshaIdleTimerRef.current);
       setIdleHintLevel(0);
       idleHintVoiceRef.current = false;
@@ -1315,15 +1347,16 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     return () => {
       if (ganeshaIdleTimerRef.current) clearTimeout(ganeshaIdleTimerRef.current);
     };
-  }, [sceneState.gamePhase, showShake, resumeHintCycleKey]);
+  }, [sceneState.gamePhase, showShake, resumeHintCycleKey, phaseVoiceDone]);
 
   // Child phase entry VO repeat @ 10s (once)
   useEffect(() => {
     const childPhases = ['child-food-choice', 'child-color-choice', 'child-activity-choice', 'child-friend-input'];
     const currentPhase = sceneState.gamePhase;
 
-    // Only run for child choice phases
-    if (!childPhases.includes(currentPhase)) {
+    // Only run for child choice phases, and only once the entry question
+    // VO for this phase has finished.
+    if (!childPhases.includes(currentPhase) || !phaseVoiceDone) {
       if (childIdleTimerRef.current) clearTimeout(childIdleTimerRef.current);
       childEntryVoRepeatRef.current = false;
       return;
@@ -1352,7 +1385,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     return () => {
       if (childIdleTimerRef.current) clearTimeout(childIdleTimerRef.current);
     };
-  }, [sceneState.gamePhase, isAudioOn]);
+  }, [sceneState.gamePhase, isAudioOn, phaseVoiceDone]);
 
   // Reset idle hints on any user interaction (choice click)
   const resetIdleHints = () => {

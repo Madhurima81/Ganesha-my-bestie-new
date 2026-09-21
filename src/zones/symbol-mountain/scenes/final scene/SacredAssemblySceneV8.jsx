@@ -860,50 +860,60 @@ const SacredAssemblyContent = ({
     // Guard prevents double-play if effect re-runs while still in 'play'
     const roundIndex = sceneState?.currentRound ?? -1;
     const ENTRY_VO_DELAY_MS = 2500;
+    const hintTimersRef = { current: [] };
+
+    const armHintLadder = () => {
+      const hintLevel1Timer = safeSetTimeout(() => {
+        setZoneStates(prev => {
+          if (prev[correctZone] === 'idle') return { ...prev, [correctZone]: 'hint' };
+          return prev;
+        });
+      }, 10000);
+
+      const hintLevel2Timer = safeSetTimeout(() => {
+        setZoneStates(prev => {
+          if (prev[correctZone] === 'hint' || prev[correctZone] === 'idle') {
+            return { ...prev, [correctZone]: 'hint-strong' };
+          }
+          return prev;
+        });
+        if (!idleNudgePlayedRef.current) {
+          const hintVoKey = HINT_VO_MAP[currentSymbol.id];
+          if (hintVoKey) {
+            playSceneVoice(hintVoKey, null, { replayOnReturn: false });
+            idleNudgePlayedRef.current = true;
+          }
+        }
+      }, 18000);
+
+      const hintLevel3Timer = safeSetTimeout(() => {
+        setZoneStates(prev => {
+          if (prev[correctZone] === 'hint-strong' || prev[correctZone] === 'hint' || prev[correctZone] === 'idle') {
+            return { ...prev, [correctZone]: 'hint-final' };
+          }
+          return prev;
+        });
+      }, 26000);
+
+      hintTimersRef.current.push(hintLevel1Timer, hintLevel2Timer, hintLevel3Timer);
+    };
+
+    // Card VO plays first; the idle-hint ladder only starts counting once
+    // that VO has actually finished (onEnded), not from a flat delay after
+    // the card lands — otherwise a hint could appear while the card VO is
+    // still talking. If there's no VO for this card, arm the ladder right away.
     const cardVoTimer = safeSetTimeout(() => {
       if (cardVoKey && cardVoPlayedForRoundRef.current !== roundIndex) {
         cardVoPlayedForRoundRef.current = roundIndex;
-        playSceneVoice(cardVoKey, null, { replayOnReturn: false });
+        playSceneVoice(cardVoKey, armHintLadder, { replayOnReturn: false });
+      } else {
+        armHintLadder();
       }
     }, ENTRY_VO_DELAY_MS);
 
-    const hintLevel1Timer = safeSetTimeout(() => {
-      setZoneStates(prev => {
-        if (prev[correctZone] === 'idle') return { ...prev, [correctZone]: 'hint' };
-        return prev;
-      });
-    }, ENTRY_VO_DELAY_MS + 10000);
-
-    const hintLevel2Timer = safeSetTimeout(() => {
-      setZoneStates(prev => {
-        if (prev[correctZone] === 'hint' || prev[correctZone] === 'idle') {
-          return { ...prev, [correctZone]: 'hint-strong' };
-        }
-        return prev;
-      });
-      if (!idleNudgePlayedRef.current) {
-        const hintVoKey = HINT_VO_MAP[currentSymbol.id];
-        if (hintVoKey) {
-          playSceneVoice(hintVoKey, null, { replayOnReturn: false });
-          idleNudgePlayedRef.current = true;
-        }
-      }
-    }, ENTRY_VO_DELAY_MS + 18000);
-
-    const hintLevel3Timer = safeSetTimeout(() => {
-      setZoneStates(prev => {
-        if (prev[correctZone] === 'hint-strong' || prev[correctZone] === 'hint' || prev[correctZone] === 'idle') {
-          return { ...prev, [correctZone]: 'hint-final' };
-        }
-        return prev;
-      });
-    }, ENTRY_VO_DELAY_MS + 26000);
-
     return () => {
       clearTimeout(cardVoTimer);
-      clearTimeout(hintLevel1Timer);
-      clearTimeout(hintLevel2Timer);
-      clearTimeout(hintLevel3Timer);
+      hintTimersRef.current.forEach(clearTimeout);
     };
   }, [cardPhase, HINT_VO_MAP, isPageVisible, sceneState?.currentAssociationSymbol]);
 

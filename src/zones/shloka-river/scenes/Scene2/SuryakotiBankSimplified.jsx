@@ -167,6 +167,7 @@ const SuryakotiBankContent = ({
   const samaIntroPlayedRef = useRef(false);
   const suryaInteractionStartedRef = useRef(false);
   const samaInteractionStartedRef = useRef(false);
+  const [samaIntroComplete, setSamaIntroComplete] = useState(false);
 
   const { resetScene } = useSceneReset(sceneActions, zoneId, sceneId, getSceneResetConfig(sceneId));
   const completionModalContent = getCompletionModal(zoneId, sceneId);
@@ -541,7 +542,9 @@ const SuryakotiBankContent = ({
       setCurrentPhase('samaprabhaGame');
       if (isAudioOn && !samaIntroPlayedRef.current) {
         samaIntroPlayedRef.current = true;
+        setSamaIntroComplete(false);
         playGuidanceVoice('scene11_sama_intro', () => {
+          setSamaIntroComplete(true);
           if (samaInteractionStartedRef.current) return;
           safeSetTimeout(() => {
             startIdleTimer();
@@ -549,6 +552,7 @@ const SuryakotiBankContent = ({
         });
         return undefined;
       }
+      setSamaIntroComplete(true);
       startIdleTimer();
       return undefined;
     }
@@ -560,6 +564,7 @@ const SuryakotiBankContent = ({
     if (sceneState?.phase !== PHASES.SAMAPRABHA_GAME) {
       samaIntroPlayedRef.current = false;
       samaInteractionStartedRef.current = false;
+      setSamaIntroComplete(false);
     }
   }, [sceneState?.phase]);
 
@@ -671,6 +676,7 @@ const SuryakotiBankContent = ({
 
                 <SamaprabhaGame
                   isActive={sceneState.phase === PHASES.SAMAPRABHA_GAME}
+                  introComplete={samaIntroComplete}
                   hideElements={!!revealConfig}
                   onMicroWin={handleMicroWin}
                   onPhaseComplete={() => handlePhaseComplete('samaprabha')}

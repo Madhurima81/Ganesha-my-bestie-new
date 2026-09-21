@@ -965,9 +965,11 @@ const NewModakSceneMVPContent = ({
     const meta = PHASE_META[s.phase];
     if (!meta) return;
     safeSetTimeout(() => {
-      resetIdleBaseline();
       idleVoPlayedRef.current[s.phase] = false;
-      playVoice(meta.start);
+      playVoice(meta.start, () => {
+        resetIdleBaseline();
+        if (idleHintsEnabled) startIdleTimer();
+      });
       setCurrentPhase(meta.game);
     }, 500);
   };
@@ -991,10 +993,11 @@ const NewModakSceneMVPContent = ({
     if (!sceneState?.welcomeShown || isCelebrationOrOverlayActive) return;
     const meta = PHASE_META[sceneState.phase];
     if (meta) {
-      resetIdleBaseline();
-      playVoice(meta.start);
+      playVoice(meta.start, () => {
+        resetIdleBaseline();
+        if (idleHintsEnabled) startIdleTimer();
+      });
       setCurrentPhase(meta.game);
-      if (idleHintsEnabled) startIdleTimer();
     }
   };
 
@@ -1096,11 +1099,12 @@ const NewModakSceneMVPContent = ({
 
     if (WORKING_PHASES.includes(phase) && sceneState.welcomeShown) {
       safeSetTimeout(() => {
-        resetIdleBaseline();
         const meta = PHASE_META[phase];
-        playVoice(meta.start);
+        playVoice(meta.start, () => {
+          resetIdleBaseline();
+          if (idleHintsEnabled) startIdleTimer();
+        });
         setCurrentPhase(meta.game);
-        if (idleHintsEnabled) startIdleTimer();
       }, 500);
     }
   }, []); // once on mount
@@ -1112,11 +1116,12 @@ const NewModakSceneMVPContent = ({
     if (sceneState.welcomeShown && sceneState.phase === PHASES.CALM_SEARCH) {
       startMusic();
       const timer = safeSetTimeout(() => {
-        resetIdleBaseline();
         idleVoPlayedRef.current = {};
-        playVoice('calmMooshika');
+        playVoice('calmMooshika', () => {
+          resetIdleBaseline();
+          if (idleHintsEnabled) startIdleTimer();
+        });
         setCurrentPhase('calm');
-        if (idleHintsEnabled) startIdleTimer();
       }, 500);
       return timer;
     }

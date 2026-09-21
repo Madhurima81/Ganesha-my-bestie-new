@@ -35,7 +35,6 @@ const CLUE_META = [
 const SAMA_DEFAULT_LAYOUT = {
   fawnStart: { l: 20, t: 69 },
   fawnWalk: { l: 40, t: 63 },
-  shadow: { l: 58, t: 63, w: 28, rotate: 0, scaleX: 1, scaleY: 1, skewX: 0 },
   shadowPieces: {
     branch: { l: 58, t: 63, w: 28, rotate: 0, scaleX: 1, scaleY: 1, skewX: 0 },
     reeds: { l: 58, t: 63, w: 28, rotate: 0, scaleX: 1, scaleY: 1, skewX: 0 },
@@ -78,7 +77,6 @@ const SAMA_DEBUG_FIELD_RANGE = {
 const samaDebugOptions = [
   { type: 'object', key: 'fawnStart', label: 'Fawn Start', fields: ['l', 't'] },
   { type: 'object', key: 'fawnWalk', label: 'Fawn Walk Target', fields: ['l', 't'] },
-  { type: 'object', key: 'shadow', label: 'Shadow (combined, legacy)', fields: ['l', 't', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX'] },
   { type: 'shadowPiece', pieceKey: 'branch', key: 'shadowPiece-branch', label: 'Shadow: Branch', fields: ['l', 't', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX'] },
   { type: 'shadowPiece', pieceKey: 'reeds', key: 'shadowPiece-reeds', label: 'Shadow: Reeds/Leaves', fields: ['l', 't', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX'] },
   { type: 'shadowPiece', pieceKey: 'stump', key: 'shadowPiece-stump', label: 'Shadow: Stump', fields: ['l', 't', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX'] },
@@ -115,7 +113,6 @@ const loadDebugLayout = () => {
       ...parsed,
       fawnStart: { ...fallback.fawnStart, ...parsed.fawnStart },
       fawnWalk: { ...fallback.fawnWalk, ...parsed.fawnWalk },
-      shadow: { ...fallback.shadow, ...parsed.shadow },
       shadowPieces: {
         branch: { ...fallback.shadowPieces.branch, ...parsed.shadowPieces?.branch },
         reeds: { ...fallback.shadowPieces.reeds, ...parsed.shadowPieces?.reeds },
@@ -195,6 +192,7 @@ const POSE_ASSETS = [
 
 export default function SamaprabhaGame({
   isActive = false,
+  introComplete = true,
   hideElements = false,
   onMicroWin = () => {},
   onPhaseComplete = () => {},
@@ -225,6 +223,7 @@ export default function SamaprabhaGame({
   const [revealPulse, setRevealPulse] = useState(null);
 
   const stageRef = useRef(null);
+  const debugItemDragRef = useRef(null); // { mode: 'move' | 'resize' }
   const pointerIdRef = useRef(null);
   const holdRafRef = useRef(null);
   const holdStartedAtRef = useRef(null);
@@ -276,7 +275,7 @@ export default function SamaprabhaGame({
   }, []);
 
   const { hintLevel, markInteraction } = useRepeatedHintCycle({
-    enabled: isActive && !isPaused && phase === 'play',
+    enabled: isActive && !isPaused && phase === 'play' && introComplete,
     stageKey: phase === 'play' ? `clue-${lit}` : phase,
     initialDelay: lit === 0 ? 10500 : 8500,
     pulseCountBeforeEscalation: 3,
@@ -630,6 +629,58 @@ export default function SamaprabhaGame({
     updateDebugValue(field, current + delta);
   };
 
+  // On-canvas drag for the selected debug element — dragging the sliders
+  // one field at a time made repositioning slow, so this lets you grab the
+  // element directly. One small handle moves it (l/t or cx/cy), a second
+  // offset handle resizes it (w, or rx+ry together) by drag distance from
+  // the position handle. Position-only fields (fawn start/walk, mystery
+  // object) just get the move handle.
+  const posFieldsFor = (option) => (
+    option.fields.includes('cx') ? { x: 'cx', y: 'cy' } : { x: 'l', y: 't' }
+  );
+  const sizeFieldsFor = (option) => (
+    option.fields.includes('rx') ? ['rx', 'ry'] : (option.fields.includes('w') ? ['w'] : [])
+  );
+
+  const startDebugItemDrag = (event, mode) => {
+    event.preventDefault();
+    event.stopPropagation();
+    debugItemDragRef.current = { mode };
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+  };
+
+  const continueDebugItemDrag = (event) => {
+    const drag = debugItemDragRef.current;
+    if (!drag) return;
+    event.preventDefault();
+    event.stopPropagation();
+
+    const option = samaDebugOptions.find((opt) => opt.key === selectedDebugKey) || samaDebugOptions[0];
+    const point = getStagePoint(event);
+    const pos = posFieldsFor(option);
+
+    if (drag.mode === 'move') {
+      updateDebugValue(pos.x, point.x);
+      updateDebugValue(pos.y, point.y);
+      return;
+    }
+
+    // resize: size follows how far the pointer is from the element's own
+    // position, in stage percent — drag outward to grow, inward to shrink.
+    const cx = Number(getDebugValue(pos.x)) || 0;
+    const cy = Number(getDebugValue(pos.y)) || 0;
+    const dist = Math.max(1, Math.hypot(point.x - cx, point.y - cy));
+    sizeFieldsFor(option).forEach((field) => updateDebugValue(field, dist));
+  };
+
+  const endDebugItemDrag = (event) => {
+    if (!debugItemDragRef.current) return;
+    if (event.currentTarget.hasPointerCapture?.(event.pointerId)) {
+      event.currentTarget.releasePointerCapture?.(event.pointerId);
+    }
+    debugItemDragRef.current = null;
+  };
+
   const copyDebugLayout = () => {
     const payload = 'const SAMA_DEFAULT_LAYOUT = ' + JSON.stringify(activeLayout, null, 2) + ';';
     if (import.meta.env.DEV) {
@@ -641,9 +692,11 @@ export default function SamaprabhaGame({
   const startDebugPanelDrag = (event) => {
     event.preventDefault();
     event.stopPropagation();
+    const rect = stageRef.current?.getBoundingClientRect();
+    if (!rect) return;
     debugPanelDragRef.current = {
-      offsetX: event.clientX - debugPanelPosition.x,
-      offsetY: event.clientY - debugPanelPosition.y,
+      offsetX: event.clientX - rect.left - debugPanelPosition.x,
+      offsetY: event.clientY - rect.top - debugPanelPosition.y,
     };
     event.currentTarget.setPointerCapture?.(event.pointerId);
   };
@@ -795,7 +848,7 @@ export default function SamaprabhaGame({
           )}
         </div>
 
-        {activeClue && hintLevel === 2 && (
+        {activeClue && hintLevel === 2 && !(debugEnabled && showDebugPanel) && (
           <div
             className="sama-hint-bubble"
             style={{
@@ -818,6 +871,39 @@ export default function SamaprabhaGame({
         {effShowDoneline && (
           <p className="sama-doneline is-visible">Now you can see clearly.</p>
         )}
+
+        {debugEnabled && showDebugPanel && (() => {
+          const option = samaDebugOptions.find((opt) => opt.key === selectedDebugKey) || samaDebugOptions[0];
+          const pos = posFieldsFor(option);
+          const sizeFields = sizeFieldsFor(option);
+          const cx = Number(getDebugValue(pos.x)) || 0;
+          const cy = Number(getDebugValue(pos.y)) || 0;
+          const handleDist = sizeFields.length ? (Number(getDebugValue(sizeFields[0])) || 8) : 0;
+          return (
+            <>
+              <div
+                className="sama-debug-move-handle"
+                style={{ left: `${cx}%`, top: `${cy}%` }}
+                onPointerDown={(e) => startDebugItemDrag(e, 'move')}
+                onPointerMove={continueDebugItemDrag}
+                onPointerUp={endDebugItemDrag}
+                onPointerCancel={endDebugItemDrag}
+                title="Drag to move"
+              />
+              {sizeFields.length > 0 && (
+                <div
+                  className="sama-debug-resize-handle"
+                  style={{ left: `${cx + handleDist}%`, top: `${cy}%` }}
+                  onPointerDown={(e) => startDebugItemDrag(e, 'resize')}
+                  onPointerMove={continueDebugItemDrag}
+                  onPointerUp={endDebugItemDrag}
+                  onPointerCancel={endDebugItemDrag}
+                  title="Drag to resize"
+                />
+              )}
+            </>
+          );
+        })()}
 
         {debugEnabled && (
           <div
