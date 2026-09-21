@@ -1,6 +1,333 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
 
+## [2026-09-21] — Intro story flow simplified and bridge image added
+**Touched:** src/components/GaneshaIntroStory.jsx, src/components/GaneshaIntroStory.css, src/App.jsx, public/intro-story/story1-img2-transition.png
+**Changed:** Reworked the Ganesha intro story after the welcome video into a shorter five-beat
+story flow. Removed the separate `story1-open-pg` / "Meet Ganesha" slide, moved the required
+Web Speech unlock onto the first real story image, added the new `story1-img2-transition.png`
+bridge artwork, and updated the VO lines to: Parvati made Ganesha with love; Ganesha guarded
+the door; something went wrong; Shiva made things right; the family was together again; then
+"Now come explore my world." Simplified the presentation by removing permanent captions,
+whole-image tap navigation, decorative sparkles, tap puff animation, continuous image floating,
+and the old pulsing end screen. The story now uses the image, progress dots, replay VO, back/
+next arrows, and a single final "Let's go" button.
+**Verified:** Added the new transition image to the intro-story preload list and ran
+`npx eslint src/components/GaneshaIntroStory.jsx` cleanly. `npm run build` was attempted; the
+sandboxed run hit the known Windows parent-folder `EPERM`, and the escalated Vite build reached
+chunk rendering but hung with no new error, so it was stopped.
+
+## [2026-09-21] — Dev test harness: fixed stale Sarvakaryeshu VO script, added Scene 4 full-scene entry
+**Touched:** src/dev/webSpeechScripts.js, src/dev/GameTestHarness.jsx
+**Changed:** While live-testing Scene 4 (Sarvakaryeshu) in the game-test harness, the spoken
+"real audio" lines didn't match what's on screen or what the live scene actually says — traced
+to `src/dev/webSpeechScripts.js` (the harness's standalone TTS script, kept separately from each
+scene's own `playGuidanceVoice` map for "real audio" test mode) having a stale, out-of-date copy
+of the `sarvakaryeshu-chant` lines (old "painting splat / Trunk" situations instead of the
+current "So much to do... / Mooshika" ones). Re-synced that whole section to match
+`SarvakaryeshuChantSimplified.jsx`'s current local map exactly, and dropped the dead
+`scene13_meaning`/`scene14_meaning` keys that no longer exist in production. Verified live —
+harness audio now matches the on-screen situation text.
+Also added a proper `isScene` entry (`sr-sarvakaryeshu`) to `GameTestHarness.jsx` so Scene 4 can
+be tested end-to-end (opening modal → both mini-games → completion) the same way Scenes 1, 2,
+and 5 already can — previously only the two standalone mini-games were wired in, with no way to
+exercise the full scene wrapper. Verified live: opening modal renders correctly.
+Added Scene 3 (`sr-nirvighnam` → `nirvighnam-chant`) the same way, per Madhurima's follow-up ask
+— verified live, opening modal renders correctly. All 5 Shloka River scenes now have full-scene
+harness entries.
+**Open:** None — full-scene coverage now matches all 5 live Shloka River scenes.
+
+## [2026-09-21] — Global VO format locked and Shloka/Symbol VO pass marked complete
+**Touched:** VO_FLOW.md, CHANGELOG.md
+
+**Changed:** Locked the global future-scene VO format in `VO_FLOW.md` so the source of truth is:
+
+1. Opening modal VO.
+2. Scene-start instruction VO using **what + why + action**.
+3. Hint / idle VO only when needed, keeping useful element-specific hints.
+4. One success VO per mini-scene beat.
+5. One reveal-card affirmation / “Say it with me” VO.
+6. One final fireworks VO for the full scene.
+
+Also documented the negative rules from the current pass: no generic second gameplay intro between
+the opening modal and the first task prompt, no dictionary-style spoken “X means…” line after
+success unless explicitly approved, and no VO in completion modals.
+
+**Status:** The current VO tightening pass is now marked complete across Symbol Mountain, Shloka
+River Scenes 1–5, and the About Me Hut opening-modal pass. Scene-specific changes from this pass
+remain documented below in the 2026-09-20/2026-09-21 entries.
+
+## [2026-09-21] — Shloka River Finale (Scene 5) final-fireworks line updated
+**Touched:** src/lib/config/content/voiceGuidance.js
+**Changed:** Madhurima reviewed Scene 5 (Shloka River Finale) end to end — opening, arrange-start,
+hints, success, and recap-start lines were all approved as-is, no changes. Only the final
+fireworks/celebration line was updated per her note that "all eight words travel with you" reads
+poetic but abstract for a child: `finalCelebration` now reads "You remembered the whole Ganesha
+Shloka. Now you can carry it with you." Confirmed this is the only copy of that line in the
+codebase (no local scene override), and that `ShlokaRiverFinale.jsx` reads it via the shared
+`finalCelebration` key.
+**Open:** Not yet live-tested; text-only change to an already-wired VO key.
+
+## [2026-09-21] — Modak Game 2 entry VO trimmed to one line, GameStateManager crash fix
+**Touched:** src/zones/symbol-mountain/scenes/modak/NewModakSceneV7.jsx,
+src/zones/symbol-mountain/scenes/modak/FlowerJourneyGame2.jsx,
+src/lib/services/GameStateManager.js
+**Changed:**
+- **Modak Game 2 VO:** Madhurima flagged (via live playtest) that 2-3 VO lines were playing
+  back to back when Game 2 (Flower Journey: bush → branch → marsh) started, one of which
+  ("Guide Mooshika from safe spot to safe spot") got misheard as unrelated. Traced it to 3
+  separate lines firing in sequence: the parent scene's `mudStart` line (played right after the
+  Mooshika reveal card, itself wrongly describing "mud" when the first challenge is the bush),
+  then `FlowerJourneyGame2`'s own generic `VO.open` ("Mooshika has more challenges ahead..."),
+  then the actual `bushStart` instruction. Per Madhurima's fix: each challenge should open
+  directly on what's-happening → why it matters → action, with no separate transition line.
+  Removed `mudStart` (call site + dead VO/moment entries) from `NewModakSceneV7.jsx` and removed
+  `VO.open` from `FlowerJourneyGame2.jsx` — Game 2 now starts straight on `bushStart`, matching
+  the already-correct `branchStart`/marsh lines. Verified live in the game-test harness
+  (`sm-modak-game2`) by patching `speechSynthesis.speak` to log every utterance — confirmed
+  exactly one VO fires on entry.
+- **Branch VO bug found + fixed during that same live test:** the branch challenge's instruction
+  line ("Two flowers are too high for Mooshika. Pull the branch down.") was never playing —
+  only the generic idle hint fired, ~15-20s later. Root cause: the intro effect in
+  `FlowerJourneyGame2.jsx` used `branchIntroFailed` (a state var) both as its own dependency and
+  as something it set mid-flight; `setBranchIntroFailed(true)` triggered a re-render that
+  re-ran/cancelled the effect before its `speakAsync(VO.branchStart)` call, self-cancelling every
+  time. Fixed by guarding with a `branchIntroStartedRef` instead, dropping `branchIntroFailed`
+  from the dependency array. Reverified live — the branch line now plays correctly.
+- **GameStateManager crash fix:** live-tested Pond completion in the game-test harness and hit
+  an uncaught `TypeError: Cannot read properties of undefined (reading 'symbol-mountain')` in
+  `unlockNextScene()` — a saved `_gameProgress` object in localStorage was missing its `zones`
+  key (stale/partial progress data), and the function read `progress.zones[zoneId]` without a
+  guard. Made it self-heal: fills in any missing `zones`/zone/scene entries instead of crashing,
+  both for the next-scene-in-zone path and the next-zone-unlock path.
+**Open:** Modak Game 2 entry VO and the branch-line fix both confirmed live in-browser this
+session. GameStateManager fix verified by code read + lint only — not yet re-triggered live.
+Madhurima to spot-check the full Game 2 flow (bush → branch → marsh) and the completion/
+auto-unlock path in her own browser when convenient.
+
+## [2026-09-20] — Shortened opening-modal VO and locked future-scene VO format
+**Touched:** src/lib/config/content/openingModals.js,
+src/lib/config/content/voiceGuidance.js,
+src/zones/symbol-mountain/scenes/pond/PondSceneSimplifiedV4.jsx,
+src/zones/symbol-mountain/scenes/tusk/SymbolMountainSceneV3.jsx,
+src/zones/shloka-river/scenes/Scene1/VakratundaGroveSimplified.jsx,
+src/zones/shloka-river/scenes/Scene2/SuryakotiBankSimplified.jsx,
+src/zones/shloka-river/scenes/Scene3/NirvighnamChantSimplified.jsx,
+src/zones/shloka-river/scenes/scene4/SarvakaryeshuChantSimplified.jsx,
+src/zones/about-me-hut/indian-story/MyIndianStoryGame.jsx,
+src/zones/about-me-hut/food/Favoritefoodgame.jsx,
+src/zones/about-me-hut/enjoy/ObstacleRemoverGame.jsx,
+VO_FLOW.md
+
+**Changed:** Applied Madhurima's shortened opening-modal VO pass across the active Symbol
+Mountain, Shloka River, and About Me Hut scenes. Kept the story function intact, but made the
+modal VO shorter and cleaner:
+
+- Symbol Mountain
+  - Modak: "Mooshika has a journey ahead. Let’s help him."
+  - Pond: "The lotus needs water to bloom. Let’s help the water reach it."
+  - Eyes / Ears / Tusk: "Let’s look, listen, and find what can help."
+  - Final Symbol Challenge: "You found all eight symbols. Let’s see what you remember."
+- Shloka River
+  - Vakratunda Grove: "Our river friends need a way across. Let’s help."
+  - Suryakoti Bank: "The river is dark. Let’s bring back some light."
+  - Nirvighnam Chant: "The way ahead is tricky. Let’s help our friends through."
+  - Sarvakaryeshu Chant: "Let’s see where Ganesha is with you today."
+  - Shloka River Finale: "You found all eight words. Now let’s put them together."
+- About Me Hut
+  - My Indian Story: "Let’s explore my India story, then yours."
+  - Family Tree: "Let’s meet my family, then make your family tree."
+  - Favorite Food: "Let’s find my favorites, then yours."
+  - Dreams & Wishes: "I have a few wishes for the world. Will you help?"
+
+Also removed the duplicate config-level `voiceover` from Symbol Mountain `final-scene`, leaving
+that scene with one opening VO source (`openingModalPrompt`) instead of both shared modal config
+and scene-level VO. This avoids the final challenge being double-wired.
+
+**Future scene VO format:** The first voiceover belongs in the opening modal. When the scene
+begins, it starts with instructions. There is one success voiceover and one affirmation, and
+then there is the final scene voiceover. There is no voiceover in the completion modal.
+
+**Follow-up Pond VO lock:** Updated the live Pond scene to the final shorter "why + action"
+set: rock start/idle, flowers start/idle, trunk success ("The water reached the lotus."),
+lotus start/idle, lotus success ("The lotus bloomed, even in the muddy pond."), and the same
+final fireworks VO ("You used strength, then gentleness, and helped the lotus bloom.").
+
+**Follow-up Modak VO lock:** Applied the 3-game Modak tightening pass. Game 1 now says
+"Mooshika’s thoughts keep jumping around. Press and hold to help him focus." Game 2 now
+combines the tree setup/action into "Two flowers are too high for Mooshika. Pull the branch
+down." with idle "Keep holding the branch," and the separate Big Belly meaning VO was removed
+so "You made it! All six flowers." goes directly into "I can have lots of feelings and keep
+going." Game 3 now starts garland-making with "You found all six flowers. Tap them to make a
+garland for Ganesha," and combines the garland offering + Modak reveal into "You brought the
+garland to Ganesha — and look, a sweet Modak!"
+
+**Follow-up Shloka River Scene 1 lock:** Updated Vakratunda Grove to the final Scene 1 VO.
+Vakratunda start is now "Frog’s way to his family is blocked. Drag Frog to find another way."
+The local and shared Vakratunda success line both stay on "Vakratunda! You found another way,
+and Frog reached his family" instead of the shared-config curved-trunk alternative. Removed the
+reveal-card `meaningKey` wiring for Vakratunda/Mahakaay so the flow is success VO → affirmation
+VO, with no separate literal meaning VO between them.
+
+**Follow-up Shloka River success/meaning VO lock:** Locked all 8 Shloka River word success lines to the tighter success VO → affirmation VO structure. Updated success text for Vakratunda, Suryakoti, Samaprabha, Nirvighnam, Kuru Me Deva, Sarvakaryeshu, and Sarvada to the story-beat lines Madhurima approved; Mahakaay already matched. Removed remaining live reveal `meaningKey` wiring and unused local/shared spoken meaning entries (`... means ...`) from Scenes 2–4, so literal Sanskrit meanings stay in card/sidebar/text instead of playing as separate VO. Dropped the extra Sarvada reflection-line path by leaving only success → affirmation, with the scene fireworks VO handling final wrap.
+
+**Follow-up Shloka River Scene 2 lock:** Updated Suryakoti Bank to the final shorter VO + hint set.
+Suryakoti now starts with "Bunny can’t find home. Rub the glow to bring back the light," uses
+"Rub the glowing spot" / "Keep rubbing" as hints, and closes with "Suryakoti! You brought
+back the light and helped Bunny home" → "I can find hope inside me." Samaprabha now starts
+with "A little deer sees a strange shadow. Move the light and look closely," uses "Move the
+light and look closely" / "Look again — what is really there?" as hints, and closes with
+"Samaprabha! You looked closely and helped Deer feel safe" → "I can see what is really
+there." The Scene 2 fireworks VO remains "You brought back the light and saw what was really
+there."
+
+**Follow-up Shloka River Scene 3 lock:** Updated Nirvighnam Chant to the final tighter
+what/why/action structure while keeping the existing element-specific hints. Nirvighnam now
+starts with "Turtle’s way home is blocked. Press and hold the rock to move it," keeps
+"Something’s still blocking Turtle’s way" plus the rock/branch/reed-specific hint lines, and
+closes with "Nirvighnam! You cleared the way and helped Turtle through" → "I can solve one
+thing at a time." Kuru Me Deva now starts with "Baby Beaver is across the broken bridge.
+Press and hold to lift the logs and help rebuild it," keeps the logs/rope helper hints, and
+closes with "Kuru Me Deva! You asked for help and finished the bridge" → "I can ask for help
+when I need it." Scene 3 fireworks VO is now "You cleared the path and asked for help when
+things got hard."
+
+**Follow-up Shloka River Scene 4 lock:** Updated Sarvakaryeshu + Sarvada to the final VO and
+symbol-choice set. Sarvakaryeshu now uses the new four task cards from Downloads:
+Mooshika/start-small, Eyes/focus, Trunk/strength+gentleness, and Tusk/broken-but-useful. The
+decoys are the approved plausible sets: Mooshika vs Modak/Eyes, Eyes vs Mooshika/Ears, Trunk
+vs Tusk/Mooshika, and Tusk vs Modak/Trunk. Updated all task prompts, after-success lines,
+wrong-choice VO, Sarvakaryeshu success/affirmation, Sarvada day prompts, Sarvada success/
+affirmation, and the final fireworks VO ("From morning to night, Ganesha was with you.").
+
+**Open:** Build was attempted. The sandboxed build failed with the known Windows `EPERM`
+parent-folder issue; the escalated build passed transform and reached chunk rendering, then
+hung for several minutes with no new error, so it was stopped. Targeted text scans confirmed
+the old long opening-modal lines are gone from the active opening spots.
+
+## [2026-09-20] — Pond water-flow visual redesign + Shloka River success/meaning/affirmation VO cleanup
+**Touched:** src/zones/symbol-mountain/scenes/pond/PondSceneSimplifiedV4.jsx,
+src/zones/symbol-mountain/scenes/pond/PondScene.css,
+src/lib/config/content/voiceGuidance.js,
+src/zones/shloka-river/scenes/Scene2/SuryakotiBankSimplified.jsx,
+src/zones/shloka-river/scenes/Scene3/NirvighnamChantSimplified.jsx,
+src/zones/shloka-river/scenes/scene4/SarvakaryeshuChantSimplified.jsx,
+src/zones/shloka-river/scenes/scene4/SarvadaGame.jsx
+**Changed:**
+- **Pond water flow:** the water-reaching-the-lotus visual looked wrong in two ways — it
+  reached the lotus instantly even when only the rock (not the flowers) was cleared, and the
+  glint effect looked scattered rather than like water. Iterated through a few CSS approaches
+  (percentage-travel glints, then a tiled-SVG wave-band background) before landing on a single
+  non-repeating `linear-gradient` sweep anchored to the previously-unused `pondLayout.water`
+  coordinate, gated by a `--blocked`/`--flowing` width modifier so it stops short until the
+  flowers are cleared. The tiled-SVG version had rendered as 3 disconnected blobs because
+  `background-repeat: repeat-x` stamped a 160px tile multiple times across the wider box —
+  fixed by dropping tiling entirely.
+- Also fixed two Pond gameplay bugs found while relaying out the scene: flowers/pebbles were
+  unmounting (vanishing) instead of settling in place after being swept aside, and the
+  invisible flower-swipe hit-zone had gone out of alignment with the visible flower art after
+  a coordinate update — both now correct. Removed two now-dead "meaning" VO lines
+  (`waterPathPower`/`lotusBloomPower`) that were playing between the success moment and the
+  reveal card's affirmation — see below, same fix applied scene-wide.
+- **Shloka River VO flow:** Madhurima flagged that symbol success felt "stitched together"
+  rather than like one natural line — investigation found each of the 8 words playing up to 3
+  VO beats back to back (Sanskrit word pronunciation → a generic success sentence → in one
+  live case, `SarvadaGame.jsx`, a *third* separate dictionary-style "meaning" line — e.g.
+  "Sarvada means always" — before handing off to the card's affirmation VO). Fixed per
+  Madhurima's new pattern: one success line with the literal meaning folded naturally into the
+  sentence (e.g. "Vakratunda! You found another way — just like Ganesha's curved trunk."),
+  followed directly by the affirmation — no separate glossary-style meaning line. Updated the
+  live success-line text for all 8 words (Vakratunda, Mahakaya, Suryakoti, Samaprabha,
+  Nirvighnam, Kuru Me Deva, Sarvakaryeshu — already matched, Sarvada) and removed the extra
+  `scene14_meaning` VO chain in `SarvadaGame.jsx`, which was the only scene actually playing a
+  3rd VO live (the other 7 scenes pass an unused `meaningKey` prop into `SymbolAutoReveal`,
+  which doesn't read it — dead code, left as-is, not a live 3rd VO).
+**Open:** Water-flow fix confirmed via my own browser screenshot; Madhurima to confirm it reads
+correctly on her end. Shloka River VO text updated in code but not yet live-tested per scene.
+
+## [2026-09-19] — Sarvakaryeshu distinct in-game opening VO
+**Touched:** src/zones/shloka-river/scenes/scene4/SarvakaryeshuChantSimplified.jsx,
+src/lib/config/content/voiceGuidance.js, GMB_AUDIT_PUNCHLIST.md
+**Changed:** Fixed the minor mismatch flagged in the earlier content pass: the opening-modal
+VO ("Let's see where Ganesha is with you today.") and the in-game opening VO ("Let's see
+which Ganesha symbol can help.") were both scripted as separate lines, but the scene only had
+one `welcome` slot, so gameplay start silently repeated the modal line instead of playing the
+second one. Added a new `gameplayIntro` VO key (local map + `voiceGuidance.js`), and gated
+`SarvakaryeshuGame`'s `isActive` prop on a new `sarvaIntroReady` state so the child game's own
+first-card VO (which fires 500ms after activation) can't cut `gameplayIntro` off mid-sentence.
+Falls back to ready-immediately if audio is off, resuming mid-game, or after a 3s timeout so a
+VO failure can't soft-lock the scene.
+**Open:** Not yet live-tested in-browser.
+
+## [2026-09-19] — Modak Big Belly emotion redesign (3 new success-beat emojis)
+**Touched:** src/zones/symbol-mountain/scenes/modak/FlowerJourneyGame2.jsx,
+src/zones/symbol-mountain/scenes/modak/assets/images/emotion-pleased-game3.{png,webp},
+src/zones/symbol-mountain/scenes/modak/assets/images/emotion-excited-game3.{png,webp},
+src/zones/symbol-mountain/scenes/modak/assets/images/emotion-relieved-game3.{png,webp},
+TASKS.md
+**Changed:** Madhurima's redesign note: Mooshika's Big Belly challenges (leaves/branch/marsh)
+should read as "hard feeling → success feeling → next challenge," not "get rid of the bad
+feeling" — the game previously cleared the emotion to neutral the instant a challenge was
+solved, with no beat to feel the positive outcome. Sourced 3 new emoji assets from Madhurima
+(iterated live on style — compared a plain "excited" vs. one with hands-together "pleased" vs.
+a brand-new "relieved" exhale pose — kept the more distinct-from-existing-"happy" option for
+each), downscaled from ~1MB/1254px PNGs to the existing 500px/~15-20KB webp convention via
+ffmpeg. Wired `setEmotion('pleased'|'excited'|'relieved')` for ~700-900ms after each challenge
+succeeds, before clearing and advancing — leaves→pleased, branch→excited, marsh→relieved
+(replaces the plan to reuse `happy`, which is reserved for the modak-reveal ending). The
+"during" struggle emotions (angry/sad/worried) and the existing belly-reflection VO/meaning/
+affirmation text were already correct — not touched. See TASKS.md T58.
+**Open:** Branch and marsh full-success beats need a sustained ~900ms press-hold to trigger —
+couldn't be automated in the browser-testing tooling used this session (no mousedown-wait-
+mouseup primitive), so only verified by code review + confirming the assets load cleanly.
+Recommend a manual playthrough to confirm timing feels right, not just functionally correct.
+
+## [2026-09-19] — Symbol Mountain Pond (Trunk + Lotus) final VO/content pass + dead-code cleanup
+**Touched:** src/zones/symbol-mountain/scenes/pond/PondSceneSimplifiedV4.jsx,
+src/zones/symbol-mountain/shared/components/symbolCardContent.js,
+src/lib/config/content/openingModals.js,
+src/lib/config/content/completionModals.js,
+src/lib/config/content/discoveryContent.js,
+TASKS.md
+**Changed:** Applied Madhurima's finalized Trunk + Lotus script — opening modal, gameplay hint
+VO (rock/flowers), meaning VO, affirmations, sidebar Ganesha lines/invitation/gift, and
+completion modal. Renamed all child-facing "reeds" wording to "flowers" (the live hint bubble
+text, the drag-zone `aria-label`, and the VO lines) while leaving internal names (`reedsRound`,
+`REEDS_ACTIVE`, `pond-trunk-reeds`, etc.) untouched per instruction, to avoid unnecessary code
+churn. Removed `powerConfig` and `discoveryConfig` — two unused config objects still holding
+the retired "Divine Blessing"/"Sacred Purity" labels; confirmed zero references anywhere else
+in the file before deleting. Found and fixed 2 real content-wiring gaps in the same pass: the
+Lotus "success" VO line and both Trunk/Lotus "meaning" VO lines existed as content but had no
+live trigger on a normal playthrough (meaning was only reachable via a narrow audio-toggle
+edge case) — added a new `lotusBloomed` key and wired `speakPondPrompt` calls at the actual
+reveal-card moments so all of it plays automatically now. See TASKS.md T59.
+**Open:** Not yet re-verified in-browser after this pass (Kuru Me Deva/Modak testing took
+priority this session) — recommend a playthrough before considering this fully closed.
+
+## [2026-09-19] — Kuru Me Deva & Nirvighnam granular hint VO (T53/T57 fix)
+**Touched:** src/zones/shloka-river/scenes/Scene3/NirvighnamGame.jsx,
+src/zones/shloka-river/scenes/Scene3/KurumedevaGame.jsx,
+src/zones/shloka-river/scenes/Scene3/NirvighnamChantSimplified.jsx,
+src/zones/shloka-river/scenes/Scene2/components/SamaprabhaGame.jsx,
+TASKS.md
+**Changed:** Closed the game-logic gap flagged (but deliberately not fixed) in the same day's
+earlier Shloka River content pass. `NirvighnamGame.jsx` gained a level-3 "keep going"
+idle-progress hint per obstacle (`nirv_hint_keep_stone/branch/reed` — "Keep holding," "Drag
+the branch aside," "Swipe the reeds apart"), mirroring the rub/keep pattern already used in
+Suryakoti Bank. `KurumedevaGame.jsx` gained 5 new `playSceneLine` calls per helper round (logs
+and rope): a round-start prompt, a fail line after the timed hold, an idle "who can help"
+hint, an escalated "drag the help bubble to X" hint, and an after-help confirmation line —
+previously only `kuru_done` (the final success line) was wired to any voice line at all, so
+all of this copy existed in content only. Added the matching keys to
+`NirvighnamChantSimplified.jsx`'s local `webSpeechMap`. Also gave `SamaprabhaGame.jsx` its
+missing level-3 "Move the light and look closely" escalation (previously capped at level 2,
+"Look closely").
+**Open:** Verified in-browser that the Kuru Me Deva phase renders cleanly with the new hooks
+active (no console errors, round-intro VO fires on phase entry) but could not click-test the
+specific timed press-and-hold beats (logs fail, rope fail) — the automation tooling has no
+way to hold a pointer down for a set duration. Recommend a manual playthrough of both helper
+rounds.
+
 ## [2026-09-19] — Shloka River final VO/content pass (all 5 scenes)
 **Touched:** src/lib/config/content/openingModals.js,
 src/lib/config/content/completionModals.js,

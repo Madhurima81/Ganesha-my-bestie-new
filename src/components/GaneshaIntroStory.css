@@ -5,28 +5,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background:
-    linear-gradient(160deg, #c9b8ec 0%, #ddd0f2 52%, #d3c4ef 100%);
+  background: linear-gradient(160deg, #c9b8ec 0%, #ddd0f2 52%, #d3c4ef 100%);
   overflow: hidden;
   animation: gisFadeIn 0.5s ease-out;
-}
-
-.gis-overlay::before {
-  content: none;
-}
-
-.gis-overlay::after {
-  content: none;
-}
-
-.gis-overlay .storySparkle {
-  position: absolute;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.65);
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.55);
-  animation: sparkleFloat 7s linear infinite;
 }
 
 .gis-stage {
@@ -41,46 +22,52 @@
   justify-content: center;
 }
 
-.storyStageTap {
-  position: absolute;
-  inset: 0;
-  border: none;
-  padding: 0;
-  margin: 0;
-  background: transparent;
-  cursor: pointer;
-}
-
 .gis-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center;
-  animation: float 4.5s ease-in-out infinite;
+  display: block;
 }
 
 .storyScene {
-  transition: all 450ms ease;
-  transform: translateY(8px);
   opacity: 0;
+  transform: scale(1.01);
 }
 
 .storyScene.active {
-  transform: translateY(0);
   opacity: 1;
+  transform: scale(1);
+  animation: storySceneIn 420ms ease-out both;
 }
 
-.gis-bottom {
+.storyBeginButton {
   position: absolute;
-  left: 0;
-  right: 0;
-  top: 24px;
-  padding: 0 22px;
-  text-align: center;
+  left: 50%;
+  bottom: 34px;
+  transform: translateX(-50%);
+  z-index: 4;
+  border: none;
+  border-radius: 999px;
+  padding: 12px 26px;
+  font-family: "Baloo 2", sans-serif;
+  font-size: clamp(17px, 1.5vw, 23px);
+  font-weight: 700;
+  color: #ffffff;
+  background: rgba(126, 88, 224, 0.92);
+  box-shadow:
+    0 4px 0 rgba(93, 61, 190, 0.85),
+    0 8px 18px rgba(76, 48, 145, 0.16);
+  cursor: pointer;
+  animation: beginPulse 2.2s ease-in-out infinite;
 }
 
 .gis-dots {
-  margin: 14px 0 10px;
+  position: absolute;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
   display: flex;
   justify-content: center;
   gap: 7px;
@@ -90,124 +77,100 @@
   width: 6px;
   height: 6px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.24);
+  background: rgba(255, 255, 255, 0.38);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
 .gis-dot.active {
-  background: rgba(255, 216, 131, 0.78);
-}
-
-/* TITLE */
-.storyTitle {
-  font-family: "Baloo 2", sans-serif;
-  font-size: clamp(38px, 4.5vw, 70px);
-  font-weight: 800;
-  line-height: 1;
-  color: #6d4cc9;
-  text-align: center;
-  letter-spacing: -1px;
-  text-shadow: 0 3px 0 rgba(255, 255, 255, 0.35);
-  margin-top: 28px;
-  margin-bottom: 0;
-}
-
-/* SUBTITLE */
-.storySubtitle {
-  margin-top: 14px;
-  margin-bottom: 0;
-  font-family: "Nunito", sans-serif;
-  font-size: clamp(16px, 1.8vw, 27px);
-  font-weight: 700;
-  color: #8978b5;
-  text-align: center;
-  opacity: 0.82;
-}
-
-/* TAP TO BEGIN */
-.storyTap {
-  position: absolute;
-  bottom: 42px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-family: "Baloo 2", sans-serif;
-  font-size: clamp(18px, 1.6vw, 26px);
-  font-weight: 700;
-  color: #fff;
-  background: rgba(132, 92, 255, 0.88);
-  padding: 12px 28px;
-  border: none;
-  border-radius: 999px;
-  cursor: pointer;
-  box-shadow: 0 4px 0 #6e49d8, 0 8px 20px rgba(111, 74, 216, 0.16);
-  animation: tapPulse 2.4s ease-in-out infinite;
-}
-
-/* STORY NEXT ARROW */
-.storyNextArrow {
-  position: absolute;
-  right: 28px;
-  bottom: 26px;
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #ffffff;
-  border: none;
-  box-shadow: none;
-  cursor: pointer;
-  transition: transform 180ms ease, background 180ms ease;
-  animation: arrowFloat 2s ease-in-out infinite;
-}
-
-/* HOVER */
-.storyNextArrow:hover {
-  transform: scale(1.06);
-  background: #f6efff;
-}
-
-.storyNextArrow:active {
-  transform: scale(0.96);
-  background: #f6efff;
-}
-
-/* CHEVRON */
-.storyNextArrow::before {
-  content: "";
   width: 16px;
-  height: 16px;
-  border-top: 4px solid #8f63ff;
-  border-right: 4px solid #8f63ff;
-  transform: rotate(45deg) translateX(-2px);
+  background: rgba(255, 224, 151, 0.92);
+}
+
+.storyNextArrow,
+.storyBackArrow {
+  position: absolute;
+  bottom: 24px;
+  width: 58px;
+  height: 58px;
+  z-index: 4;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 4px 14px rgba(64, 43, 111, 0.10);
+  cursor: pointer;
+}
+
+.storyNextArrow {
+  right: 24px;
+  animation: arrowFloat 2.2s ease-in-out infinite;
+}
+
+.storyBackArrow {
+  left: 24px;
+}
+
+.storyNextArrow::before,
+.storyBackArrow::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 14px;
+  height: 14px;
   border-radius: 2px;
 }
 
-/* FLOAT */
-@keyframes arrowFloat {
-  0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(6px); }
+.storyNextArrow::before {
+  border-top: 4px solid #8f63ff;
+  border-right: 4px solid #8f63ff;
+  transform: translate(-62%, -50%) rotate(45deg);
 }
 
-.storyTapPuff {
+.storyBackArrow::before {
+  border-top: 4px solid #8f63ff;
+  border-left: 4px solid #8f63ff;
+  transform: translate(-38%, -50%) rotate(-45deg);
+}
+
+.storyNextArrow:active,
+.storyBackArrow:active {
+  transform: scale(0.94);
+}
+
+.storyReplayVo {
   position: absolute;
-  right: 56px;
-  bottom: 56px;
-  width: 10px;
-  height: 10px;
+  right: 31px;
+  bottom: 94px;
+  width: 42px;
+  height: 42px;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
   border-radius: 50%;
-  background: rgba(255, 249, 206, 0.85);
-  box-shadow: 0 0 12px rgba(255, 244, 178, 0.7);
-  pointer-events: none;
-  animation: puffOut 420ms ease-out forwards;
+  background: rgba(255, 255, 255, 0.76);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  transition: transform 160ms ease;
 }
 
-/* SKIP */
+.storyReplayVo:active {
+  transform: scale(0.92);
+}
+
+.storyReplayVoIcon {
+  width: 20px;
+  height: 20px;
+  display: block;
+  pointer-events: none;
+}
+
 .storySkip {
   position: absolute;
   top: 22px;
   right: 22px;
-  z-index: 3;
+  z-index: 5;
   font-family: "Baloo 2", sans-serif;
   font-size: 16px;
   font-weight: 700;
@@ -221,110 +184,81 @@
   border-radius: 999px;
 }
 
-/* PULSE */
-@keyframes tapPulse {
-  0% {
-    transform: translateX(-50%) scale(1);
-    box-shadow: 0 4px 0 #6e49d8, 0 8px 20px rgba(111, 74, 216, 0.14);
-  }
-
-  50% {
-    transform: translateX(-50%) scale(1.02);
-    box-shadow: 0 5px 0 #6e49d8, 0 10px 24px rgba(111, 74, 216, 0.18);
-  }
-
-  100% {
-    transform: translateX(-50%) scale(1);
-    box-shadow: 0 4px 0 #6e49d8, 0 8px 20px rgba(111, 74, 216, 0.14);
-  }
+.storyEnd {
+  position: relative;
+  width: 100%;
+  height: var(--app-height, 100vh);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: transparent;
 }
 
-.storyCaption {
+.endMapBg {
   position: absolute;
-  bottom: 26px;
-  left: 50%;
-  transform: translateX(-50%);
-  max-width: min(78vw, 720px);
-  padding: 10px 22px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.78);
-  -webkit-backdrop-filter: blur(6px);
-  backdrop-filter: blur(6px);
-  font-family: "Nunito", sans-serif;
-  font-size: clamp(15px, min(1.7vw, 2.4vh), 24px);
-  font-weight: 700;
-  color: #5a4494;
-  text-align: center;
-  line-height: 1.35;
-  margin: 0;
-  animation: fadeUp 400ms ease;
-  pointer-events: none;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(4px) brightness(0.88);
+  transform: scale(1.025);
+}
+
+.endGanesha {
+  position: relative;
   z-index: 2;
+  width: min(36vw, 390px);
+  animation:
+    endGaneshaIn 650ms ease-out both,
+    floaty 3.2s 650ms ease-in-out infinite;
 }
 
-.storyBackArrow {
-  position: absolute;
-  left: 28px;
-  bottom: 26px;
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.endTitle {
+  position: relative;
+  z-index: 2;
+  margin: 14px 20px 0;
+  font-family: "Baloo 2", sans-serif;
+  font-size: clamp(36px, 4vw, 64px);
+  font-weight: 800;
+  line-height: 1.05;
+  color: #ffffff;
+  text-align: center;
+  text-shadow: 0 4px 18px rgba(0, 0, 0, 0.17);
+}
+
+.storyStartButton {
+  position: relative;
+  z-index: 3;
+  margin-top: 20px;
+  border: none;
+  border-radius: 999px;
+  padding: 12px 30px;
+  font-family: "Baloo 2", sans-serif;
+  font-size: clamp(18px, 1.5vw, 23px);
+  font-weight: 700;
+  color: #6d4cc9;
   background: #ffffff;
-  border: none;
+  box-shadow: 0 5px 18px rgba(49, 31, 91, 0.14);
   cursor: pointer;
-  transition: transform 180ms ease, background 180ms ease;
 }
 
-.storyBackArrow::before {
-  content: "";
-  width: 16px;
-  height: 16px;
-  border-top: 4px solid #8f63ff;
-  border-left: 4px solid #8f63ff;
-  transform: rotate(-45deg) translateX(2px);
-  border-radius: 2px;
-}
-
-.storyBackArrow:hover {
-  transform: scale(1.06);
-  background: #f6efff;
-}
-
-.storyBackArrow:active {
+.storyStartButton:active {
   transform: scale(0.96);
-  background: #f6efff;
 }
 
-.storyReplayVo {
+.gis-video-intro {
+  background: #000;
+}
+
+.gis-intro-video {
   position: absolute;
-  right: 28px;
-  bottom: 104px;
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.88);
-  border: none;
-  font-size: 22px;
-  cursor: pointer;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.10);
-  transition: transform 180ms ease;
-}
-
-.storyReplayVo:active {
-  transform: scale(0.94);
-}
-
-.storyReplayVoIcon {
-  width: 24px;
-  height: 24px;
-  display: block;
-  pointer-events: none;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #000;
 }
 
 @media (max-width: 700px) {
@@ -334,21 +268,34 @@
     border-radius: 0;
   }
 
-  .gis-bottom {
-    top: 20px;
-    padding: 0 16px;
-  }
-
-  .storyTap {
-    bottom: 28px;
+  .storyBeginButton {
+    bottom: 24px;
     padding: 10px 22px;
   }
 
   .storyNextArrow {
     right: 16px;
     bottom: 18px;
-    width: 60px;
-    height: 60px;
+    width: 54px;
+    height: 54px;
+  }
+
+  .storyBackArrow {
+    left: 16px;
+    bottom: 18px;
+    width: 54px;
+    height: 54px;
+  }
+
+  .storyReplayVo {
+    right: 22px;
+    bottom: 84px;
+    width: 40px;
+    height: 40px;
+  }
+
+  .gis-dots {
+    top: 18px;
   }
 
   .storySkip {
@@ -358,9 +305,14 @@
     padding: 8px 14px;
   }
 
-  .storyCaption   { bottom: 84px; max-width: 86vw; font-size: 15px; padding: 8px 18px; }
-  .storyBackArrow { left: 16px; bottom: 18px; width: 60px; height: 60px; }
-  .storyReplayVo  { right: 16px; bottom: 92px; width: 48px; height: 48px; font-size: 20px; }
+  .endGanesha {
+    width: min(66vw, 340px);
+  }
+
+  .storyStartButton {
+    margin-top: 16px;
+    padding: 11px 26px;
+  }
 }
 
 @keyframes gisFadeIn {
@@ -373,156 +325,62 @@
   }
 }
 
-/* END SCREEN */
-.storyEnd {
-  position: relative;
-  width: 100%;
-  height: var(--app-height, 100vh);
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  border: none;
-  padding: 0;
-  background: transparent;
-  cursor: pointer;
-}
-
-/* MAP BG */
-.endMapBg {
-  position: absolute;
-  inset: 0;
-  background-size: cover;
-  background-position: center;
-  filter: blur(6px) brightness(0.92);
-  transform: scale(1.04);
-}
-
-/* GANESHA */
-.endGanesha {
-  width: min(38vw, 420px);
-  position: relative;
-  z-index: 2;
-  animation: floaty 3s ease-in-out infinite, fadeUp 700ms ease;
-}
-
-/* TITLE */
-.endTitle {
-  position: relative;
-  z-index: 2;
-  margin-top: 18px;
-  font-family: "Baloo 2", sans-serif;
-  font-size: clamp(38px, 4vw, 68px);
-  font-weight: 800;
-  color: #ffffff;
-  text-align: center;
-  text-shadow: 0 4px 18px rgba(0, 0, 0, 0.18);
-  animation: fadeUp 700ms ease;
-}
-
-/* SUBTEXT */
-.endSubtitle {
-  position: relative;
-  z-index: 2;
-  margin-top: 10px;
-  font-family: "Nunito", sans-serif;
-  font-size: clamp(18px, 1.8vw, 28px);
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.92);
-  animation: fadeUp 900ms ease;
-}
-
-/* START GLOW */
-.startPulse {
-  position: absolute;
-  bottom: 90px;
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.18);
-  animation: pulseGlow 2s ease infinite;
-}
-
-@keyframes floaty {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
-  100% { transform: translateY(0); }
-}
-
-/* FADE */
-@keyframes fadeUp {
+@keyframes storySceneIn {
   from {
     opacity: 0;
-    transform: translateY(18px);
+    transform: scale(1.015);
   }
 
   to {
     opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes beginPulse {
+  0%,
+  100% {
+    transform: translateX(-50%) scale(1);
+  }
+
+  50% {
+    transform: translateX(-50%) scale(1.035);
+  }
+}
+
+@keyframes arrowFloat {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+
+  50% {
+    translate: 4px 0;
+  }
+}
+
+@keyframes endGaneshaIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes floaty {
+  0% {
     transform: translateY(0);
   }
-}
 
-/* PULSE */
-@keyframes pulseGlow {
-  0% {
-    transform: scale(0.8);
-    opacity: 0.5;
-  }
-
-  70% {
-    transform: scale(1.4);
-    opacity: 0;
+  50% {
+    transform: translateY(-8px);
   }
 
   100% {
-    opacity: 0;
+    transform: translateY(0);
   }
-}
-
-@keyframes sparkleFloat {
-  0% {
-    transform: translateY(12px);
-    opacity: 0;
-  }
-  20% {
-    opacity: 0.75;
-  }
-  80% {
-    opacity: 0.5;
-  }
-  100% {
-    transform: translateY(-14px);
-    opacity: 0;
-  }
-}
-
-@keyframes puffOut {
-  0% {
-    transform: scale(0.5);
-    opacity: 0.95;
-  }
-  100% {
-    transform: scale(2.5);
-    opacity: 0;
-  }
-}
-
-@keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-2px); }
-  100% { transform: translateY(0px); }
-}
-
-/* Ganesha welcome video — plays before slide 0 (autoplay, then advances) */
-.gis-video-intro {
-  background: #000;
-}
-.gis-intro-video {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  background: #000;
 }

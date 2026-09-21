@@ -3,6 +3,24 @@
 
 ---
 
+## New assets — 2026-09-19 (Modak Big Belly emotion redesign)
+
+3 new emoji sprites for the Modak "success beat" emotion states (see CHANGELOG/TASKS T58).
+Sourced from Madhurima as ~1MB, 1254×1254px PNGs; downscaled via ffmpeg to match the existing
+`emotion-*-game3` convention (500×500px) and re-encoded to webp:
+
+| File | Size before | Size after (png / webp) | Used by |
+|------|---|---|---|
+| emotion-pleased-game3 | 690 KB | 139 KB / 15.6 KB | FlowerJourneyGame2 (leaves/bush success) |
+| emotion-excited-game3 | 1.1 MB | 218 KB / 21.4 KB | FlowerJourneyGame2 (branch success) |
+| emotion-relieved-game3 | 733 KB | 143 KB / 15.9 KB | FlowerJourneyGame2 (marsh/crossing success) |
+
+Still larger on the `.png` side than the pre-existing `emotion-angry/sad/worried/happy-game3`
+set (~30-44 KB each) since ffmpeg's default PNG compression is weaker than whatever pipeline
+made those originals — the app only imports the `.webp` versions, so this doesn't affect
+runtime payload, but worth a proper `pngquant`/`sharp` pass later if the `.png` fallbacks
+matter (e.g. Safari edge cases).
+
 ## WebP Conversion — 2026-09-18 (done)
 
 Scope: `.png` files actually imported/referenced by the 13 live scenes

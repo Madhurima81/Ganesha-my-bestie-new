@@ -208,7 +208,15 @@ scenes: ['family-tree', 'favorite-food', 'dreams-wishes', 'my-indian-story']
     
     const sceneIndex = zone.scenes.indexOf(completedSceneId);
     const nextSceneId = zone.scenes[sceneIndex + 1];
-    
+
+    // Self-heal: saved progress can predate a schema change, or (in the dev
+    // test harness) be seeded without the full zones structure — don't crash
+    // on a missing zones/zone entry, just fill it in.
+    if (!progress.zones) progress.zones = {};
+    if (!progress.zones[zoneId]) {
+      progress.zones[zoneId] = { unlocked: true, stars: 0, completed: false, scenes: {} };
+    }
+
     if (nextSceneId) {
       // ✅ DISNEY MAGIC: Auto-unlock next scene
       if (!progress.zones[zoneId].scenes[nextSceneId]) {
@@ -256,11 +264,19 @@ scenes: ['family-tree', 'favorite-food', 'dreams-wishes', 'my-indian-story']
             });
           }
 
+          if (!progress.zones[nextZoneId]) {
+            progress.zones[nextZoneId] = { unlocked: true, stars: 0, completed: false, scenes: {} };
+          }
           progress.zones[nextZoneId].unlocked = true;
-          
+
           // Unlock first scene in next zone
           const firstSceneInNextZone = GameStateManager.ZONES[nextZoneId].scenes[0];
           if (firstSceneInNextZone) {
+            if (!progress.zones[nextZoneId].scenes[firstSceneInNextZone]) {
+              progress.zones[nextZoneId].scenes[firstSceneInNextZone] = {
+                completed: false, stars: 0, symbols: {}, lastPlayed: null, unlocked: true
+              };
+            }
             progress.zones[nextZoneId].scenes[firstSceneInNextZone].unlocked = true;
           }
           

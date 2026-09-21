@@ -613,9 +613,9 @@ useEffect(() => {
       preloadImages([
         '/images/pan-bg.webp',
         '/images/mooshika-flying.webp',
-        '/intro-story/story1-open-pg.webp',
         '/intro-story/story1-img1.webp',
         '/intro-story/story1-img2.webp',
+        '/intro-story/story1-img2-transition.png',
         '/intro-story/story1-img3.webp',
         '/intro-story/story1-img4.webp',
         '/intro-story/map-new-2.webp',

@@ -36,10 +36,10 @@ const SAMA_DEFAULT_LAYOUT = {
   fawnStart: { l: 20, t: 69 },
   fawnWalk: { l: 40, t: 63 },
   shadowPieces: {
-    branch: { l: 58, t: 63, w: 28, rotate: 0, scaleX: 1, scaleY: 1, skewX: 0 },
-    reeds: { l: 58, t: 63, w: 28, rotate: 0, scaleX: 1, scaleY: 1, skewX: 0 },
-    stump: { l: 58, t: 63, w: 28, rotate: 0, scaleX: 1, scaleY: 1, skewX: 0 },
-    rocks: { l: 58, t: 63, w: 28, rotate: 0, scaleX: 1, scaleY: 1, skewX: 0 },
+    branch: { l: 55.86536762326263, t: 52.9703364198507, w: 27.5, rotate: -42, scaleX: 0.88, scaleY: 1, skewX: 30 },
+    reeds: { l: 50.130515874818315, t: 53.796584403466596, w: 28, rotate: 0, scaleX: 0.96, scaleY: 1.02, skewX: 25 },
+    stump: { l: 55.964248124943225, t: 63.71147989744117, w: 28, rotate: 0, scaleX: 1.22, scaleY: 1.48, skewX: 0 },
+    rocks: { l: 57.05189372217932, t: 70.18370840713563, w: 28, rotate: 0, scaleX: 1, scaleY: 1, skewX: 0 },
   },
   mystery: { l: 72, t: 58 },
   clues: [
@@ -885,8 +885,33 @@ export default function SamaprabhaGame({
           const cx = Number(getDebugValue(pos.x)) || 0;
           const cy = Number(getDebugValue(pos.y)) || 0;
           const handleDist = sizeFields.length ? (Number(getDebugValue(sizeFields[0])) || 8) : 0;
+
+          // Clue tap-zones have no visible art of their own (the actual
+          // reveal image lives in the mystery-object stack, positioned
+          // separately) — without an outline there's nothing to see while
+          // dragging, just an invisible ellipse. Draw it while selected so
+          // there's something to align against.
+          let outline = null;
+          if (option.type === 'clue') {
+            const rx = Number(getDebugValue('rx')) || 8;
+            const ry = Number(getDebugValue('ry')) || 8;
+            outline = {
+              left: `${cx - rx}%`, top: `${cy - ry}%`,
+              width: `${rx * 2}%`, height: `${ry * 2}%`,
+              borderRadius: '50%',
+            };
+          } else if (option.fields.includes('w')) {
+            const w = Number(getDebugValue('w')) || 20;
+            outline = {
+              left: `${cx - w / 2}%`, top: `${cy - w / 2}%`,
+              width: `${w}%`, height: `${w}%`,
+              borderRadius: '10%',
+            };
+          }
+
           return (
             <>
+              {outline && <div className="sama-debug-outline" style={outline} />}
               <div
                 className="sama-debug-move-handle"
                 style={{ left: `${cx}%`, top: `${cy}%` }}

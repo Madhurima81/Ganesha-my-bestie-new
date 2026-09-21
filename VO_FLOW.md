@@ -3,16 +3,26 @@
 The rule every scene VO now follows. Locked for Shloka River (2026-08-29),
 Symbol Mountain (2026-08-29), About Me Hut (2026-08-29).
 
-## The four beats
+## Global VO format for future scenes
 
-| Beat | What it says |
-|---|---|
-| **setup** | what's happening + why it matters (the problem / the point of the moment) |
-| **mechanic** | one short action sentence — the thing to do, said once |
-| **idle** | goal reminder — what's still unsolved, NOT a repeat of the instruction, NOT narration of an animation the child can already see |
-| **completion** | what the child discovered or made happen — no new lesson, no generic praise |
+Use this structure for new scenes and future rewrites:
 
-Ordering in play: **setup → mechanic → child acts → meaning / completion.**
+| Order | Beat | What it should do |
+|---|---|---|
+| 1 | **Opening modal VO** | Short story setup only. It should give the emotional/story reason to enter the scene. |
+| 2 | **Scene-start instruction VO** | The first gameplay line. Use **what + why + action** in one tight line: what is happening, why it matters, and the exact first action. |
+| 3 | **Hint / idle VO** | Only when needed. Remind the child what is still unsolved, or name the next useful action. Keep element-specific hints when they help. |
+| 4 | **Success VO** | One spoken success line for the mini-scene beat. It should say what the child made happen. |
+| 5 | **Affirmation VO** | The reveal-card / “Say it with me” line. Keep it to one clear “I can…” or equivalent affirmation. |
+| 6 | **Final fireworks VO** | One final scene-level wrap after all mini-scenes are complete. Summarize the journey, not a new lesson. |
+
+Ordering in play:
+
+**opening modal VO → what/why/action instruction → hint if needed → success VO → affirmation VO → final fireworks VO**
+
+Do **not** put VO in the completion modal.
+
+Do **not** add a second generic gameplay intro between the opening modal and the first task prompt. The first task prompt is the scene-start instruction.
 
 ## What to cut
 - Slogans and sugary filler ("Let's make the world smile!", "Keep dreaming!").
@@ -20,6 +30,8 @@ Ordering in play: **setup → mechanic → child acts → meaning / completion.*
 - Lines that imply a correct emotional answer ("which place feels right").
 - Animation narration — if the child can see it, don't say it.
 - A second instruction VO chained straight after the first.
+- Dictionary-style spoken meaning lines after success, such as “Vakratunda means…”. Keep literal meanings in cards/sidebar/text unless explicitly approved as VO.
+- Completion-modal VO. Completion modals stay silent unless explicitly approved.
 
 ## Zone tone (keep the zones distinct)
 - **Symbol Mountain** — teaches through symbols. Problem → mechanic → symbol meaning.
@@ -34,7 +46,7 @@ Ordering in play: **setup → mechanic → child acts → meaning / completion.*
 
 | Beat | VO |
 |---|---|
-| Opening | "Let's meet my family, then make a tree for yours." |
+| Opening | "Let’s meet my family, then make your family tree." |
 | Ganesha family start | "Tap a circle, then drag each family member to where they belong." |
 | Idle | "Who belongs in this spot?" |
 | Father / Mother / Brother / Self correct | "Yes — that's my father." / "Yes — that's my mother." / "Yes — that's my brother." / "And that's me!" |
@@ -56,7 +68,7 @@ Per-spot identifying idle clues kept (`IDLE_HINT_VO`: trident / golden sari / pe
 
 | Beat | VO |
 |---|---|
-| Opening | "Let's find out what I like, then you can choose your favorites." |
+| Opening | "Let’s find my favorites, then yours." |
 | Food Q / correct | "Which food is my favorite? Tap your guess." / "Yes — I love modak!" |
 | Color Q / correct | "Which color do I like best?" / "Yes — red!" |
 | Activity Q / correct | "What do I love to do?" / "Yes — I love to dance!" |
@@ -72,7 +84,7 @@ Per-spot identifying idle clues kept (`IDLE_HINT_VO`: trident / golden sari / pe
 
 | Beat | VO |
 |---|---|
-| Opening | "I have a few wishes for the world. Will you help me?" |
+| Opening | "I have a few wishes for the world. Will you help?" |
 | Wish 1 setup / mechanic / idle / done | "My first wish is for more kindness." / "Tap the kind actions you can spot." / "Can you find another kind action?" / "You found all the kind choices." |
 | Wish 2 setup / mechanic / idle / done | "My next wish is for everyone to have food." / "Drag food to each empty plate." / "There's still an empty plate." / "Now every plate has food." |
 | Wish 3 setup / mechanic / idle / done | "My next wish is for a greener world." / "Tap the bare spaces to help the garden grow." / "There's still space for more to grow." / "Look how green it has become." |
@@ -88,7 +100,7 @@ Note: cloud-clearing is a trunk gesture only — no Vakratunda symbolism attache
 
 | Beat | VO |
 |---|---|
-| Opening | "Let's explore some parts of my India story, then you can share yours." |
+| Opening | "Let’s explore my India story, then yours." |
 | Home — Ganesha start | "Move the magnifying glass around the map to find my places." |
 | Home — child transition / idle / confirmed | "Now choose a place your family feels connected to." / "Which place feels connected to your family?" / "This is the place you chose." |
 | Home — phase complete | "You found some places connected to my story." |

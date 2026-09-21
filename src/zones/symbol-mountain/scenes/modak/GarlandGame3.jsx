@@ -49,12 +49,11 @@ const LAYOUT = {
 };
 
 const VO = {
-  open: 'Six flowers! Tap each one to make a garland for Ganesha.',
+  open: 'You found all six flowers. Tap them to make a garland for Ganesha.',
   tapIdle: 'Tap another flower.',
   ready: 'The garland is ready! Drag it to Ganesha.',
   carry: 'Drag the garland to Ganesha.',
-  offered: 'You brought the garland all the way to Ganesha.',
-  modakReveal: 'And look… a sweet Modak!',
+  offered: 'You brought the garland to Ganesha — and look, a sweet Modak!',
 };
 
 const SCENE_IMAGES = [
@@ -274,7 +273,6 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
     // Mooshika for a moment before the real symbol reveal card takes over.
     window.setTimeout(() => {
       setShowModakGlow(true);
-      speak(VO.modakReveal);
     }, 1100);
     window.setTimeout(() => { onComplete?.(); }, 3200);
   };

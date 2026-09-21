@@ -44,7 +44,7 @@ const MooshikaRideTransition = ({ avatarId = 'monkey', profileName, onComplete }
       if (canSpeak) {
         window.speechSynthesis.cancel();
         const u = new window.SpeechSynthesisUtterance(
-          `Hold on tight, ${profileName || 'little one'}! We are flying to my world.`
+          `Hold on tight, ${profileName || 'little one'}! Let's go!`
         );
         u.rate = 1.02;
         u.pitch = 1.05;

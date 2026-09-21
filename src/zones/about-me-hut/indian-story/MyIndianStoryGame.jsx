@@ -602,7 +602,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
 
   // Voice lines
   const VOICE = {
-    opening:        `Let's explore some parts of my India story, then you can share yours.`,
+    opening:        `Let’s explore my India story, then yours.`,
     ganesha_home:   `Move the magnifying glass around the map to find my places.`,
     child_home_entry: `Now choose a place your family feels connected to.`,
     child_home_idle: `Which place feels connected to your family?`,
@@ -875,18 +875,6 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     };
   }, [phase, VOICE.child_home_entry, speakIfUnmuted, childAge, isAudioOn, isReload]);
 
-  // Child Home idle hint (4s of no selection)
-  useEffect(() => {
-    if (phase !== STEPS.CHILD_HOME || selectedRegion) return;
-    if (childHomeIdleTimerRef.current) clearTimeout(childHomeIdleTimerRef.current);
-    childHomeIdleTimerRef.current = setTimeout(() => {
-      // Idle hint removed - child has enough context from entry VO
-      // speakIfUnmuted(VOICE.child_home_idle, { age: childAge, moment: 'default' });
-    }, 4000);
-    return () => {
-      if (childHomeIdleTimerRef.current) clearTimeout(childHomeIdleTimerRef.current);
-    };
-  }, [phase, selectedRegion, VOICE.child_home_idle, speakIfUnmuted, childAge]);
 
   // Reload restore: recover last saved scene step on reload.
   // If SceneManager restore is slightly stale (debounced save race), prefer the later saved step.
@@ -1144,7 +1132,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     };
   }, [phase, hasPressedLanguagePlay, langGuessPhase, childAge, isAudioOn, speak, VOICE.language_play_hint]);
 
-  // Child Home: Idle hint (6-7s of no selection)
+  // Child Home: reflective/personal-question repeat — one repeat at 10s, no escalation.
   useEffect(() => {
     if (phase !== STEPS.CHILD_HOME || selectedRegion) return;
     if (childHomeIdleHintTimerRef.current) clearTimeout(childHomeIdleHintTimerRef.current);
@@ -1154,13 +1142,13 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
         speak(VOICE.child_home_idle, { age: childAge, moment: 'default' });
         childHomeIdleHintVoiceRef.current = true;
       }
-    }, 6500);
+    }, 10000);
     return () => {
       if (childHomeIdleHintTimerRef.current) clearTimeout(childHomeIdleHintTimerRef.current);
     };
   }, [phase, selectedRegion, childAge, isAudioOn, speak, VOICE.child_home_idle, returnHintNonce]);
 
-  // Language Child: Idle hint (6-7s of no selection)
+  // Language Child: reflective/personal-question repeat — one repeat at 10s, no escalation.
   useEffect(() => {
     if (phase !== STEPS.LANGUAGE_CHILD || selectedLanguages.length > 0) return;
     if (languageSelectionIdleHintTimerRef.current) clearTimeout(languageSelectionIdleHintTimerRef.current);
@@ -1170,13 +1158,13 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
         speak(VOICE.language_child_idle, { age: childAge, moment: 'default' });
         languageSelectionIdleHintVoiceRef.current = true;
       }
-    }, 6500);
+    }, 10000);
     return () => {
       if (languageSelectionIdleHintTimerRef.current) clearTimeout(languageSelectionIdleHintTimerRef.current);
     };
   }, [phase, selectedLanguages.length, childAge, isAudioOn, speak, VOICE.language_child_idle, returnHintNonce]);
 
-  // Festivals Child: Idle hint (6-7s of no selection)
+  // Festivals Child: reflective/personal-question repeat — one repeat at 10s, no escalation.
   useEffect(() => {
     if (phase !== STEPS.FESTIVALS_CHILD || selectedFestivals.length > 0) return;
     if (festivalSelectionIdleHintTimerRef.current) clearTimeout(festivalSelectionIdleHintTimerRef.current);
@@ -1186,7 +1174,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
         speak(VOICE.festivals_child_idle, { age: childAge, moment: 'default' });
         festivalSelectionIdleHintVoiceRef.current = true;
       }
-    }, 6500);
+    }, 10000);
     return () => {
       if (festivalSelectionIdleHintTimerRef.current) clearTimeout(festivalSelectionIdleHintTimerRef.current);
     };

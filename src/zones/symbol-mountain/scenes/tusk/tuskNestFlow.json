@@ -605,7 +605,7 @@
           }
         ],
         "audio": {
-          "voText": "Can the broken twig still help? Drag it to the nest.",
+          "voText": "Can the broken twig help? Drag it to the nest.",
           "trigger": "state-enter"
         }
       },
@@ -881,7 +881,7 @@
           }
         ],
         "audio": {
-          "voText": "The twig can help.",
+          "voText": "",
           "trigger": "state-enter"
         }
       },
@@ -1026,7 +1026,7 @@
           }
         ],
         "audio": {
-          "voText": "What about the short grass? Drag it to the nest.",
+          "voText": "What about the short grass?",
           "trigger": "state-enter"
         }
       },
@@ -1276,7 +1276,7 @@
           }
         ],
         "audio": {
-          "voText": "The grass can help too.",
+          "voText": "",
           "trigger": "state-enter"
         }
       },
@@ -1408,7 +1408,7 @@
           }
         ],
         "audio": {
-          "voText": "Can the torn leaf help too? Drag it to the nest.",
+          "voText": "Can the torn leaf help?",
           "trigger": "state-enter"
         }
       },
@@ -1632,7 +1632,7 @@
           }
         ],
         "audio": {
-          "voText": "The torn leaf still works.",
+          "voText": "",
           "trigger": "state-enter"
         }
       },
@@ -1738,7 +1738,7 @@
           }
         ],
         "audio": {
-          "voText": "And the bent feather? Drag it to the nest.",
+          "voText": "And the bent feather?",
           "trigger": "state-enter"
         }
       },
@@ -1923,7 +1923,7 @@
           }
         ],
         "audio": {
-          "voText": "And the feather can make it soft. You did it! All those little things helped rebuild the nest.",
+          "voText": "You did it! All those little things helped rebuild the nest.",
           "trigger": "state-enter"
         }
       },
@@ -2029,7 +2029,7 @@
           }
         ],
         "audio": {
-          "voText": "Ganesha's tusk reminds us: even broken things can still help.",
+          "voText": "I can use what I have for something important.",
           "trigger": "state-enter"
         }
       },

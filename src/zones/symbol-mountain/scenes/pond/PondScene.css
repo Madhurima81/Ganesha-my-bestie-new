@@ -761,41 +761,46 @@
   filter: drop-shadow(0 2px 4px rgba(46, 123, 178, 0.2));
 }
 
+/* Flow accent — a single soft light sheen sweeping along the water's edge,
+   not a repeating/tiled pattern (a tiled background here showed up as
+   several disconnected stamped copies instead of one continuous wave).
+   The container's own WIDTH is what stops the water short of the flowers
+   until they're cleared: "blocked" = rock cleared but flowers still in
+   the way, "flowing" = flowers cleared, water reaches the lotus pool. */
 .pond-water-ripples {
   position: absolute;
-  inset: 0;
+  height: clamp(14px, 2.8vw, 26px);
+  /* Centers the band on the water's edge instead of hanging below it. */
+  transform: translateY(-65%);
+  overflow: hidden;
+  border-radius: 999px;
   pointer-events: none;
+  transition: width 900ms ease;
+  z-index: 12;
 }
+/* Widths are a fraction of the full scene, roughly matching how far along
+   the mud path the water should visibly reach at each stage. */
+.pond-water-ripples--blocked { width: 34%; }
+.pond-water-ripples--flowing { width: 66%; }
 
-.pond-ripple {
+.pond-water-ripples::before {
+  content: '';
   position: absolute;
-  top: 45%;
-  width: clamp(6px, 0.9vw, 11px);
-  height: clamp(6px, 0.9vw, 11px);
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.75);
-  opacity: 0;
-  animation: pondRippleFlow 2200ms linear infinite;
+  inset: 0;
+  width: 55%;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(120, 190, 235, 0.55) 35%,
+    rgba(255, 255, 255, 0.85) 55%,
+    rgba(120, 190, 235, 0.55) 75%,
+    transparent);
+  animation: pondFlowSweep 2.6s ease-in-out infinite;
 }
 
-.pond-ripple--1 { left: 8%; animation-delay: 0ms; }
-.pond-ripple--2 { left: 8%; animation-delay: 750ms; }
-.pond-ripple--3 { left: 8%; animation-delay: 1500ms; }
-
-@keyframes pondRippleFlow {
-  0% { transform: translate(0, 0) scale(0.6); opacity: 0; }
-  15% { opacity: 0.85; }
-  85% { opacity: 0.5; }
-  100% { transform: translate(68vw, -6px) scale(1); opacity: 0; }
-}
-
-@media (max-width: 900px) {
-  @keyframes pondRippleFlow {
-    0% { transform: translate(0, 0) scale(0.6); opacity: 0; }
-    15% { opacity: 0.85; }
-    85% { opacity: 0.5; }
-    100% { transform: translate(240px, -6px) scale(1); opacity: 0; }
-  }
+@keyframes pondFlowSweep {
+  0% { transform: translateX(-100%); opacity: 0.3; }
+  50% { transform: translateX(90%); opacity: 0.95; }
+  100% { transform: translateX(280%); opacity: 0.3; }
 }
 
 .pond-mud-pool {
@@ -922,6 +927,14 @@
   filter: drop-shadow(0 4px 5px rgba(50, 88, 32, 0.22));
   transform-origin: bottom center;
   z-index: 19;
+  transition: transform 900ms ease, opacity 900ms ease;
+}
+
+/* Once swept aside, settle gently rather than vanishing — a small lean +
+   fade, still clearly there. */
+.pond-flower-item--parted {
+  transform: rotate(-6deg) scale(0.94);
+  opacity: 0.88;
 }
 
 .pond-pebble-item {
@@ -965,10 +978,19 @@
 }
 
 .pond-layout-panel {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  z-index: 100;
+  /* fixed, not absolute — its actual positioned ancestor in the game-test
+     harness is a short box, so "bottom" resolved against that instead of
+     the viewport and the panel rendered hidden behind the toolbar at the
+     very top. Fixed anchors to the real viewport regardless of ancestor
+     sizing. Bottom-left avoids the harness's own top toolbar/sidebar. */
+  position: fixed;
+  bottom: 12px;
+  left: 12px;
+  top: auto;
+  right: auto;
+  /* Must beat SymbolSidebar (2000), the game-test annotation overlay (90000),
+     and the game-test toolbar (99999) so this dev-only panel stays movable. */
+  z-index: 100000;
   width: 210px;
   font: 600 12px/1.2 sans-serif;
   display: flex;

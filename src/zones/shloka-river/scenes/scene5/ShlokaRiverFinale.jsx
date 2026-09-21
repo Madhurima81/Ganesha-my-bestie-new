@@ -73,6 +73,19 @@ const SHLOKA_WORDS = [
 
 const FULL_SHLOKA_WORD_AUDIO = SHLOKA_WORDS.map((word) => `/audio/words/${word.id}.mp3`);
 
+// GMB Hint Standard v1, finale variant: L2's clue is a meaning-recall line
+// per word (never the word/boat itself), keyed by voiceGuidance.js entries.
+const HINT_MEANING_VO_KEY = {
+  vakratunda: 'hintMeaningVakratunda',
+  mahakaya: 'hintMeaningMahakaya',
+  suryakoti: 'hintMeaningSuryakoti',
+  samaprabha: 'hintMeaningSamaprabha',
+  nirvighnam: 'hintMeaningNirvighnam',
+  kurumedeva: 'hintMeaningKurumedeva',
+  sarvakaryeshu: 'hintMeaningSarvakaryeshu',
+  sarvada: 'hintMeaningSarvada',
+};
+
 function BoatSvg({ className = '', style = {} }) {
   return (
     <svg
@@ -364,18 +377,26 @@ const ShlokaRiverFinaleContent = ({
     return () => revealFallback?.();
   }, [isAudioOn, phase, playVoice, safeSetTimeout]);
 
+  // GMB Hint Standard v1: L1 is visual-only (a subtle group nudge, no VO —
+  // naming the correct boat's syllable area would give away the recall
+  // answer). L2 gives a meaning clue, never the word itself. L3 is explicit.
+  // This only ever gets armed from a word-audio's onEnded (see handleStartGame
+  // and the correct-placement handler below) or from markInteraction, never
+  // automatically on phase/slot change — so the countdown never starts before
+  // the child has heard the word they're listening for.
   const scheduleHints = useCallback((slotIndex) => {
     clearHintTimers();
     if (phase !== PHASES.ARRANGE || slotIndex >= SHLOKA_WORDS.length) return;
 
+    const meaningVoKey = HINT_MEANING_VO_KEY[SHLOKA_WORDS[slotIndex]?.id];
+
     hintTimersRef.current = [
       safeSetTimeout(() => {
         setHintLevel(1);
-        playVoice?.('hintBoatL1', undefined, { replayOnReturn: false });
       }, 10000),
       safeSetTimeout(() => {
         setHintLevel(2);
-        playVoice?.('hintBoatL2', undefined, { replayOnReturn: false });
+        if (meaningVoKey) playVoice?.(meaningVoKey, undefined, { replayOnReturn: false });
       }, 18000),
       safeSetTimeout(() => {
         setHintLevel(3);
@@ -392,18 +413,27 @@ const ShlokaRiverFinaleContent = ({
   }, [activeSlotIndex, phase, scheduleHints]);
 
   useEffect(() => {
-    if (phase !== PHASES.ARRANGE) {
-      clearHintTimers();
-      return;
-    }
-    scheduleHints(activeSlotIndex);
+    if (phase !== PHASES.ARRANGE) clearHintTimers();
     return clearHintTimers;
-  }, [phase, activeSlotIndex, scheduleHints, clearHintTimers]);
+  }, [phase, clearHintTimers]);
+
+  // Resume case: the component can mount directly into ARRANGE (reload)
+  // without ever going through handleStartGame's arrangeStart VO. Replay the
+  // current target word's audio once and arm hints only after it ends, same
+  // as the normal flow — never on mount alone.
+  const armedOnMountRef = useRef(false);
+  useEffect(() => {
+    if (armedOnMountRef.current) return;
+    armedOnMountRef.current = true;
+    if (phase !== PHASES.ARRANGE) return;
+    playWordAudio?.(SHLOKA_WORDS[activeSlotIndex]?.id, () => scheduleHints(activeSlotIndex));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleStartGame = () => {
     sceneActions.updateState({ phase: PHASES.ARRANGE, welcomeShown: true });
     playVoice?.('arrangeStart', () => {
-      playWordAudio?.(SHLOKA_WORDS[0].id);
+      playWordAudio?.(SHLOKA_WORDS[0].id, () => scheduleHints(0));
     }, { replayOnReturn: false });
   };
 
@@ -505,9 +535,9 @@ const ShlokaRiverFinaleContent = ({
     playWordAudio?.(wordData.id, () => {
       setActiveSlotIndex(slotIdx + 1);
       setHintLevel(0);
-      playWordAudio?.(SHLOKA_WORDS[slotIdx + 1].id);
+      playWordAudio?.(SHLOKA_WORDS[slotIdx + 1].id, () => scheduleHints(slotIdx + 1));
     });
-  }, [markInteraction, playChime, playSparkle, playWordAudio, safeSetTimeout, triggerSuccessFlow]);
+  }, [markInteraction, playChime, playSparkle, playWordAudio, safeSetTimeout, scheduleHints, triggerSuccessFlow]);
 
   const handleTrayPointerDown = (e, wordData) => {
     if (phase !== PHASES.ARRANGE || usedWords.has(wordData.id)) return;
@@ -744,11 +774,22 @@ const ShlokaRiverFinaleContent = ({
                   <p className="srf-tray-label">Tap the next word boat</p>
                   <div className="srf-tray-boats">
                     {trayWords.filter((w) => !usedWords.has(w.id)).map((w) => {
-                      const isHintBoat = currentTargetWord?.id === w.id && hintLevel >= 2;
+                      const isTargetBoat = currentTargetWord?.id === w.id;
+                      // L1: every remaining boat gets a soft group nudge, and the
+                      // correct one gets a slightly stronger version of that same
+                      // nudge — a directional cue, not an identification. L2/L3
+                      // clearly single out the correct boat.
+                      const hintClass = hintLevel >= 3 && isTargetBoat
+                        ? 'is-hint-wiggle'
+                        : hintLevel >= 2 && isTargetBoat
+                          ? 'is-hint-pulse'
+                          : hintLevel >= 1
+                            ? (isTargetBoat ? 'is-hint-candidate' : 'is-hint-group')
+                            : '';
                       return (
                         <div
                           key={w.id}
-                          className={`srf-tray-boat ${isHintBoat ? (hintLevel >= 3 ? 'is-hint-wiggle' : 'is-hint-pulse') : ''}`}
+                          className={`srf-tray-boat ${hintClass}`}
                           style={{ color: w.color }}
                           onPointerDown={(e) => handleTrayPointerDown(e, w)}
                           onClick={() => handleWordChipTap(w)}

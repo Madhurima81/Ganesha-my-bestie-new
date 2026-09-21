@@ -2,6 +2,24 @@
 _Generated from the 4-zone Claude Code audit (Symbol Mountain, Shloka River, About Me Hut, Opening Scenes) run against `CLAUDE_CODE_PROMPT.md` / `GMB_COMPREHENSIVE_CHECKLIST.html`._
 _Updated 2026-09-18 — folded in a fresh 13-scene checklist re-sweep (3 background agents, one per zone) run against this same document. New items are marked "(2026-09-18)"._
 _Updated 2026-09-19 — folded in a shared-layer bug sweep (audited App.jsx/GameStateManager/ProgressManager/useVoiceGuidance/SoundManager/SceneCompletionCelebration instead of just the 13 scene files), item B's remaining touch-target fixes, and a live-browser pass on several scenes. Full detail for each fix lives in `CHANGELOG.md`'s 2026-09-18 entries; this section is the condensed cross-reference. Anything not explicitly listed as fixed/still-open below has not changed since the last update._
+_Updated 2026-09-19 (later same day) — folded in the finalized content/VO pass across all 13 live scenes plus the Modak emotion redesign. Everything below "🚧 Sign-off blockers" is what's left before this pass can be called fully done — read that section first._
+
+## 🚧 Sign-off blockers — content/VO pass (2026-09-19)
+Full detail for each item lives in `CHANGELOG.md` (search "2026-09-19") and `TASKS.md` (T57/T58/T59). This is the condensed "what's actually left" list.
+
+**Manual/live-browser verification needed** — nothing here failed a check; these just haven't been click-tested end-to-end, either because the automation tooling can't hold a pointer down for a timed press-and-hold, or because testing priority went elsewhere this session:
+- [x] **Pond (Trunk + Lotus)** — re-verified live 2026-09-20/21: water-flow visual redesign, flower vanish/hit-zone bugs, and the success→affirmation VO cleanup all confirmed working in-browser. Still open: the rock hold and lotus-bloom hold gestures themselves weren't click-tested (timed press-and-hold, same automation limit as below) — visuals/VO around them are confirmed, the hold mechanic itself is not.
+- [ ] **Kuru Me Deva (Shloka River Scene 3)** — the 5 new per-round hint lines (T57) render and enter cleanly with no console errors, but the actual timed beats — logs fail-after-hold, rope fail-after-hold — were only code-reviewed, not clicked through.
+- [x] **Modak Game 2 entry VO** (2026-09-21) — found and fixed live: 2-3 stray VO lines were stacking at Game 2 start (`mudStart` + `VO.open` + `bushStart`); trimmed to one line per Madhurima's what's-happening→why→action pattern. Also found and fixed a real bug during this same test: the branch challenge's instruction line was silently never playing (a self-cancelling effect) — fixed and reverified live, line now plays correctly.
+- [ ] **Modak Big Belly, branch + marsh challenges — the hold gestures themselves** — leaves/bush success (`pleased`) was click-tested live and confirmed working; branch's *entry VO* is now confirmed live too (see above). Still open: the actual press-and-hold to complete branch (`excited`) and marsh/crossing (`relieved`) need a real timed hold and were only code-reviewed + asset-load-verified, not clicked through.
+- [x] **Sarvakaryeshu's new `gameplayIntro` VO / full Scene 4 flow** — live-tested 2026-09-21 via a new `sr-sarvakaryeshu` harness entry (opening modal confirmed rendering) and the standalone `SarvakaryeshuGame`/`SarvadaGame` mini-games with real TTS audio: situation cards, hints, correct/incorrect picks, card-to-card transitions, and the final success lines all confirmed correct with no stray/duplicate VO. (Also fixed a stale dev-only test script — `src/dev/webSpeechScripts.js` — that had been playing outdated Sarvakaryeshu lines during harness testing; production code was never affected.)
+- [ ] **Samaprabha game flow and element positions** — general flow/layout check requested; not yet scoped or reviewed this pass.
+
+**Known content gaps, not blocking but should be a conscious decision, not an oversight:**
+- [ ] New Modak emotion `.png` fallbacks (`emotion-pleased/excited/relieved-game3.png`) are 139-218KB, notably larger than the existing set's 30-44KB — the app only ever loads the `.webp` versions so this doesn't affect runtime, but the pngs could use a proper compression pass (`pngquant`/`sharp`) if the fallback path ever matters.
+
+**Not part of this pass, flagged for awareness only:**
+- [ ] A separate, apparently still-in-progress Tusk-flow update (`TuskBeatPlayerLive.jsx`, `GameTestHarness.jsx`, new `tusk-nest` assets/`tuskNestFlow.json`) is sitting uncommitted in the working tree. Not touched or reviewed as part of this pass — whoever owns that thread should pick it back up.
 
 ## ✅ Shared-layer bugs fixed 2026-09-19 (see CHANGELOG.md for full detail per commit)
 These live in code every one of the 13 scenes inherits from, so the per-scene "13/13 pass" reports on VO teardown/tab-hide/reload were structurally blind to them — a real gap in how the audit was scoped, not just missed bugs.

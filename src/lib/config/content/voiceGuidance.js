@@ -315,14 +315,32 @@ export const VOICE_SCRIPTS = {
       finalCelebration: {
         text: "You remembered the whole Ganesha Shloka. Now you can carry it with you."
       },
-      hintBoatL1: {
-        text: "Which word comes next?"
-      },
-      hintBoatL2: {
-        text: "Look for the next word boat."
-      },
       hintBoatL3: {
         text: "Tap the glowing boat."
+      },
+      hintMeaningVakratunda: {
+        text: "Remember Ganesha's curved trunk."
+      },
+      hintMeaningMahakaya: {
+        text: "Think of Ganesha's great form."
+      },
+      hintMeaningSuryakoti: {
+        text: "Think of a light as bright as millions of suns."
+      },
+      hintMeaningSamaprabha: {
+        text: "Think of steady, equal brightness."
+      },
+      hintMeaningNirvighnam: {
+        text: "Remember the word about clearing obstacles."
+      },
+      hintMeaningKurumedeva: {
+        text: "Remember the words that ask for help."
+      },
+      hintMeaningSarvakaryeshu: {
+        text: "Think of the word for everything we do."
+      },
+      hintMeaningSarvada: {
+        text: "Remember the word that means always."
       }
     }
   },

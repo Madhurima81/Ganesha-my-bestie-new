@@ -1085,6 +1085,16 @@ transition:
   z-index: 1;
 }
 
+/* Subtext under the "Next Adventure" pill, naming the actual next scene */
+.next-adventure-subtext {
+  font-family: var(--cs-font-body, 'Nunito', sans-serif);
+  font-size: 0.95rem;
+  color: #6B5D4F;
+  margin: 6px 0 0;
+  text-align: center;
+  font-weight: 600;
+}
+
 /* Subtext under primary button */
 .primary-action-subtext {
   font-family: var(--cs-font-body, 'Nunito', sans-serif);

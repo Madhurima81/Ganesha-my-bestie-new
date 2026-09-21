@@ -372,7 +372,7 @@ const VakratundaGroveContent = ({
 
   const playGuidanceVoice = useCallback((key, onEnded, options = {}) => {
     const webSpeechMap = {
-      welcome: "Our river friends need a way across. Let's help them.",
+      welcome: "Our river friends need a way across. Let’s help.",
       instructionListen: 'Listen carefully.',
       instructionTapAndRepeat: "That way is blocked. Can you find another way around?",
       instructionTapTheElephant: "That way is blocked. Can you find another way around?",
@@ -390,19 +390,18 @@ const VakratundaGroveContent = ({
       instructionTapLilyWord: 'Tap the lily.',
       instructionTapLily: 'Tap the lily.',
       instructionTapLilyUnlock: 'Tap the lily.',
-      scene10_vak_intro: 'Frog can see his family, but the way is blocked. Let\'s help him find another way.',
+      scene10_vak_intro: 'Frog’s way to his family is blocked. Drag Frog to find another way.',
       scene10_vak_current_too_strong: 'That way is blocked. Can you find another way around?',
       scene10_vak_hint_another_way: 'Look for another way through.',
-      scene10_vak_frog_cross: 'Frog can see his family, but the way is blocked. Let\'s help him find another way.',
+      scene10_vak_frog_cross: 'Frog’s way to his family is blocked. Drag Frog to find another way.',
       scene10_vak_tap_logs: 'That way is blocked. Can you find another way around?',
       scene10_vak_blocked: 'That way is blocked. Can you find another way around?',
       scene10_vak_choose: 'That way is blocked. Can you find another way around?',
-      scene10_vak_make_path: 'Frog can see his family, but the way is blocked. Let\'s help him find another way.',
+      scene10_vak_make_path: 'Frog’s way to his family is blocked. Drag Frog to find another way.',
       scene10_vak_drag_leaves: 'Look for another way through.',
       scene10_vak_drag: 'Look for another way through.',
       scene10_vak_drag_pieces: 'Look for another way through.',
-      scene10_vak_crossed: 'Vakratunda! You found another way, and Frog reached his family.',
-      scene10_vak_meaning: 'Vakratunda means curved trunk.',
+      scene10_vak_crossed: 'Vakratunda! You found another way and helped Frog reach his family.',
       scene10_vak_affirmation: 'I can change my plan and try another way.',
       scene10_maha_intro: 'The friends are waiting. Let\'s build a raft with space for everyone.',
       scene10_maha_blocking: 'Bring the rope to the log.',
@@ -410,7 +409,6 @@ const VakratundaGroveContent = ({
       scene10_maha_pull_down: 'Now pull down.',
       scene10_maha_log_moving: '',
       scene10_maha_success: 'Mahakaay! You made space so everyone could come along.',
-      scene10_maha_meaning: 'Mahakaay means great form.',
       scene10_maha_strength: 'I can make space in my heart for others.',
     };
     if (webSpeechMap[key]) {
@@ -1042,11 +1040,7 @@ const VakratundaGroveContent = ({
                 revealVoice={{
                   isEnabled: isAudioOn,
                   wordId: revealConfig.symbolId,
-                  meaningKey: revealConfig.symbolId === 'vakratunda'
-                    ? 'scene10_vak_meaning'
-                    : revealConfig.symbolId === 'mahakaya'
-                      ? 'scene10_maha_meaning'
-                      : null,
+
                   playWord: playWordAudio,
                   playLine: playGuidanceVoice,
                   stopVoice: stopAllVoice,

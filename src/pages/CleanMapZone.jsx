@@ -105,8 +105,8 @@ const ZONE_IDS = {
 const HIDDEN_MAP_ZONE_IDS = new Set([ZONE_IDS.CAVE]);
 
 const MAP_ZONE_UNLOCK_VO = {
-  [ZONE_IDS.RIVER]: 'The Shloka River is ready to explore.',
-  [ZONE_IDS.HUT]: 'Lambodara Lodge is ready to explore.',
+  [ZONE_IDS.RIVER]: 'The Shloka River is waiting for you.',
+  [ZONE_IDS.HUT]: 'Lambodara Lodge is waiting for you.',
 };
 
 const MAP_ZONE_COMPLETION_VO = {

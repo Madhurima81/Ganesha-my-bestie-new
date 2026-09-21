@@ -1,0 +1,224 @@
+<title>Water Flow Ideas</title>
+<style>
+  :root {
+    --bank: #EFC98A;
+    --bank-dark: #C99A55;
+    --grass: #DFF0C8;
+    --ink: #3D2B12;
+    --card-bg: #FFFDF7;
+    --card-border: #E9E0CC;
+  }
+  :root:not([data-theme="light"]) {
+    @media (prefers-color-scheme: dark) {
+      --card-bg: #241d12;
+      --card-border: #3a3020;
+      --ink: #f0e6cf;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 24px 16px 48px;
+    background: #FAF6EC;
+    font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--ink);
+  }
+  h1 {
+    font-family: 'Baloo 2', 'Nunito', sans-serif;
+    font-size: clamp(22px, 4vw, 30px);
+    text-align: center;
+    margin: 0 0 4px;
+  }
+  p.sub {
+    text-align: center;
+    max-width: 640px;
+    margin: 0 auto 32px;
+    color: #7a6b4f;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 2px 10px rgba(80, 60, 20, 0.06);
+  }
+  .card h2 {
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 16px;
+    margin: 0 0 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .tag {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: #FFE9B0;
+    color: #7a5200;
+  }
+  .card p.desc {
+    font-size: 12.5px;
+    color: #82754f;
+    margin: 0 0 12px;
+    line-height: 1.45;
+  }
+  .stage {
+    position: relative;
+    height: 140px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: linear-gradient(180deg, #EAF6E3 0%, var(--grass) 100%);
+  }
+  .stream-bed {
+    position: absolute;
+    left: -5%;
+    top: 44%;
+    width: 110%;
+    height: 34%;
+    background: var(--bank);
+    border-radius: 40% 40% 45% 45% / 60% 60% 40% 40%;
+    box-shadow: inset 0 -6px 0 rgba(0,0,0,0.05);
+  }
+  svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+  /* ---------- Option 1: layered wave bands ---------- */
+  .waveband { transform-origin: center; }
+  .wb1 { animation: wbScroll1 3.2s linear infinite; }
+  .wb2 { animation: wbScroll2 4.6s linear infinite; }
+  @keyframes wbScroll1 { from { transform: translateX(0); } to { transform: translateX(-120px); } }
+  @keyframes wbScroll2 { from { transform: translateX(0); } to { transform: translateX(-160px); } }
+
+  /* ---------- Option 2: glint streaks (current impl) ---------- */
+  .glint { opacity: 0; }
+  .g1 { animation: glintFlow 2.2s ease-in-out infinite; }
+  .g2 { animation: glintFlow 2.2s ease-in-out infinite 0.7s; }
+  .g3 { animation: glintFlow 2.2s ease-in-out infinite 1.4s; }
+  @keyframes glintFlow {
+    0% { opacity: 0; transform: translateX(0) scaleX(0.7); }
+    15% { opacity: 0.95; }
+    85% { opacity: 0.3; }
+    100% { opacity: 0; transform: translateX(210px) scaleX(1.2); }
+  }
+
+  /* ---------- Option 3: shimmer overlay on stream art ---------- */
+  .shimmer-base { fill: url(#waterGrad); }
+  .shimmer-sheen {
+    fill: rgba(255,255,255,0.55);
+    animation: shimmerSweep 2.6s ease-in-out infinite;
+  }
+  @keyframes shimmerSweep {
+    0%, 100% { transform: translateX(-40px); opacity: 0.15; }
+    50% { transform: translateX(40px); opacity: 0.55; }
+  }
+
+  /* ---------- Option 4: ripple rings from a source point ---------- */
+  .ring { fill: none; stroke: rgba(255,255,255,0.8); stroke-width: 2; transform-origin: center; }
+  .r1 { animation: ringOut 2.4s ease-out infinite; }
+  .r2 { animation: ringOut 2.4s ease-out infinite 0.8s; }
+  .r3 { animation: ringOut 2.4s ease-out infinite 1.6s; }
+  @keyframes ringOut {
+    0% { r: 2; opacity: 0.9; }
+    100% { r: 26; opacity: 0; }
+  }
+
+  .footer-note {
+    max-width: 900px;
+    margin: 28px auto 0;
+    font-size: 12.5px;
+    color: #9a8c66;
+    text-align: center;
+    line-height: 1.6;
+  }
+</style>
+
+<h1>Water Flow — Style Options</h1>
+<p class="sub">Four different ways to render "water moving through the stream" for the Pond scene, side by side. All loop continuously so you can compare motion, not just a single frame.</p>
+
+<div class="grid">
+
+  <div class="card">
+    <h2>1. Layered wave bands <span class="tag">broad / calm</span></h2>
+    <p class="desc">Two translucent wave shapes scroll sideways at different speeds, overlapping. Reads as a body of moving water rather than individual sparkles — good for a wide, slow stream.</p>
+    <div class="stage">
+      <div class="stream-bed"></div>
+      <svg viewBox="0 0 300 140" preserveAspectRatio="none">
+        <g class="waveband wb1">
+          <path d="M-40,66 Q -10,58 20,66 T 80,66 T 140,66 T 200,66 T 260,66 T 320,66 T 380,66 V90 H-40 Z" fill="rgba(120,190,235,0.55)"/>
+        </g>
+        <g class="waveband wb2">
+          <path d="M-40,74 Q -10,68 20,74 T 80,74 T 140,74 T 200,74 T 260,74 T 320,74 T 380,74 V94 H-40 Z" fill="rgba(200,235,255,0.6)"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>2. Glint streaks <span class="tag">current build</span></h2>
+    <p class="desc">Soft horizontal light streaks travel left to right, fading in and out. What's currently wired into the scene now (with stage-aware distance: shorter while flowers block, full length once cleared).</p>
+    <div class="stage">
+      <div class="stream-bed"></div>
+      <svg viewBox="0 0 300 140" preserveAspectRatio="none">
+        <rect x="8" y="62" width="48" height="6" rx="3" class="glint g1" fill="url(#glintGrad)"/>
+        <rect x="8" y="72" width="48" height="6" rx="3" class="glint g2" fill="url(#glintGrad)"/>
+        <rect x="8" y="82" width="48" height="6" rx="3" class="glint g3" fill="url(#glintGrad)"/>
+        <defs>
+          <linearGradient id="glintGrad" x1="0" x2="1">
+            <stop offset="0%" stop-color="white" stop-opacity="0"/>
+            <stop offset="50%" stop-color="white" stop-opacity="0.95"/>
+            <stop offset="100%" stop-color="#cdeeff" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>3. Shimmer overlay on stream art <span class="tag">subtle</span></h2>
+    <p class="desc">Keep the existing painted stream image as the base "body" of water, and just animate a soft white sheen sweeping across it — the water itself never disappears, it just catches the light.</p>
+    <div class="stage">
+      <div class="stream-bed"></div>
+      <svg viewBox="0 0 300 140" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="waterGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#8fd0f2"/>
+            <stop offset="100%" stop-color="#4f9fd6"/>
+          </linearGradient>
+          <clipPath id="streamClip">
+            <path d="M-10,58 Q40,50 90,58 T190,58 T290,58 T390,58 V96 Q340,104 290,96 T190,96 T90,96 T-10,96 Z"/>
+          </clipPath>
+        </defs>
+        <path d="M-10,58 Q40,50 90,58 T190,58 T290,58 T390,58 V96 Q340,104 290,96 T190,96 T90,96 T-10,96 Z" class="shimmer-base"/>
+        <g clip-path="url(#streamClip)">
+          <rect class="shimmer-sheen" x="0" y="40" width="30" height="70" transform="skewX(-20)"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>4. Ripple rings <span class="tag">playful</span></h2>
+    <p class="desc">Small circular ripples expand outward from a point and fade — reads more like a droplet/gentle disturbance than directional flow. Nice for the moment water first reaches the lotus, less good for showing continuous movement along a stream.</p>
+    <div class="stage">
+      <div class="stream-bed"></div>
+      <svg viewBox="0 0 300 140" preserveAspectRatio="none">
+        <circle class="ring r1" cx="150" cy="76" r="2"/>
+        <circle class="ring r2" cx="150" cy="76" r="2"/>
+        <circle class="ring r3" cx="150" cy="76" r="2"/>
+      </svg>
+    </div>
+  </div>
+
+</div>
+
+<p class="footer-note">All four are plain inline SVG + CSS keyframes — no libraries, so any of them drop straight into <code>PondScene.css</code>. Option 2 is the smallest change from what's already live. Option 1 or 3 would read as more "water-like" for a continuous stream; Option 4 works better as a one-off accent (e.g. right when the lotus first receives water) than as the ongoing flow indicator.</p>

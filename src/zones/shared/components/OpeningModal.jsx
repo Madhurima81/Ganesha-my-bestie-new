@@ -5,31 +5,38 @@ import { getZoneTheme, getProfilePillBtnStyle } from '../../../lib/config/ZoneTh
 import { GANESHA_POSE_ASSETS } from '../../../lib/config/ganeshaUsageSystem';
 import useAppVisibility from '../../../lib/hooks/useAppVisibility';
 import ProfilePillBtn from '../../../lib/components/shared/ProfilePillBtn';
+import symbolMooshikaIcon from '../../symbol-mountain/shared/images/icons/symbol-mooshika-new.webp';
+import symbolModakIcon from '../../symbol-mountain/shared/images/icons/symbol-modak-new.webp';
+import symbolBellyIcon from '../../symbol-mountain/shared/images/icons/symbol-belly-new.webp';
+import symbolLotusIcon from '../../symbol-mountain/shared/images/icons/symbol-lotus-new.webp';
+import symbolTrunkIcon from '../../symbol-mountain/shared/images/icons/symbol-trunk-new.webp';
+import symbolEyesIcon from '../../symbol-mountain/shared/images/icons/symbol-eyes-new.webp';
+import symbolEarsIcon from '../../symbol-mountain/shared/images/icons/symbol-ears-new.webp';
+import symbolTuskIcon from '../../symbol-mountain/shared/images/icons/broken-tusk-symbol.webp';
 
 const CTA_POST_VO_GAP_MS = 5000;
-const CTA_FALLBACK_TOTAL_MS = 12000;
+const CTA_FALLBACK_TOTAL_MS = 8000;
 const CTA_VO_POLL_INTERVAL_MS = 250;
-const CTA_HINT_TEXT = 'Tap the button to begin!';
 const AUDIO_PREF_KEY = 'ganesha_audio_enabled';
 const FALLBACK_SPARKLE = '\u2728';
 
 const PUBLIC_ICON_MAP = {
-  mooshika: '/images/icons/symbol-mooshika-new.png',
-  modak: '/images/icons/symbol-modak-new.png',
-  belly: '/images/icons/symbol-belly-new.png',
-  lotus: '/images/icons/symbol-lotus-new.png',
-  trunk: '/images/icons/symbol-trunk-new.png',
-  eyes: '/images/icons/symbol-eyes-new.png',
-  ears: '/images/icons/symbol-ears-new.png',
-  tusk: '/images/icons/broken-tusk-symbol.png',
-  vakratunda: '/images/meanings-caveofsecrets/vakratunda-symbol.png',
-  mahakaya: '/images/meanings-caveofsecrets/mahakaya-symbol.png',
-  suryakoti: '/images/meanings-caveofsecrets/suryakoti-symbol.png',
-  samaprabha: '/images/meanings-caveofsecrets/samaprabha-symbol.png',
-  nirvighnam: '/images/meanings-caveofsecrets/nirvighnam-symbol.png',
-  kurumedeva: '/images/meanings-caveofsecrets/kurumedeva-symbol.png',
-  sarvakaryeshu: '/images/meanings-caveofsecrets/sarvakaryeshu-symbol.png',
-  sarvada: '/images/meanings-caveofsecrets/sarvada-symbol.png',
+  mooshika: symbolMooshikaIcon,
+  modak: symbolModakIcon,
+  belly: symbolBellyIcon,
+  lotus: symbolLotusIcon,
+  trunk: symbolTrunkIcon,
+  eyes: symbolEyesIcon,
+  ears: symbolEarsIcon,
+  tusk: symbolTuskIcon,
+  vakratunda: '/images/meanings-caveofsecrets/vakratunda-symbol.webp',
+  mahakaya: '/images/meanings-caveofsecrets/mahakaya-symbol.webp',
+  suryakoti: '/images/meanings-caveofsecrets/suryakoti-symbol.webp',
+  samaprabha: '/images/meanings-caveofsecrets/samaprabha-symbol.webp',
+  nirvighnam: '/images/meanings-caveofsecrets/nirvighnam-symbol.webp',
+  kurumedeva: '/images/meanings-caveofsecrets/kurumedeva-symbol.webp',
+  sarvakaryeshu: '/images/meanings-caveofsecrets/sarvakaryeshu-symbol.webp',
+  sarvada: '/images/meanings-caveofsecrets/sarvada-symbol.webp',
   meaning: '/images/icons/meanings-icon.png',
   'story-home': '\u{1F3E0}',
   'story-language': '\u{1F5E3}\uFE0F',
@@ -80,13 +87,15 @@ const canUseTimedSpeechHint = () => {
   return !/iPad|iPhone|iPod/i.test(ua);
 };
 
-const playOpeningCtaHint = () => {
+const speakOpeningVoiceover = (text) => {
   if (typeof window === 'undefined') return false;
   if (!isGlobalAudioEnabled() || !canUseTimedSpeechHint()) return false;
   if (!window.speechSynthesis || typeof window.SpeechSynthesisUtterance === 'undefined') return false;
+  if (!text) return false;
 
   try {
-    const utterance = new window.SpeechSynthesisUtterance(CTA_HINT_TEXT);
+    const utterance = new window.SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-IN';
     utterance.rate = 0.95;
     utterance.pitch = 1;
     utterance.volume = 1;
@@ -161,6 +170,7 @@ const OpeningModal = ({
   const lastVoActiveAtRef = useRef(0);
   const monitorStartedAtRef = useRef(0);
   const visibleRef = useRef(false);
+  const voiceoverPlayedRef = useRef(false);
   const configContent = zoneId && sceneId ? getOpeningModal(zoneId, sceneId) : null;
 
   const content = {
@@ -169,6 +179,7 @@ const OpeningModal = ({
     icons: iconsProp ?? configContent?.icons,
     iconLabels: iconLabelsProp ?? configContent?.iconLabels,
     buttonText: buttonTextProp ?? configContent?.buttonText,
+    voiceover: configContent?.voiceover,
   };
   const hasContent = Boolean(content.title || content.description);
   const visible = typeof isOpen === 'boolean' ? isOpen : internalOpen;
@@ -186,7 +197,6 @@ const OpeningModal = ({
     if (hintTriggeredRef.current || !visibleRef.current) return;
     hintTriggeredRef.current = true;
     setShowIdleCtaHint(true);
-    playOpeningCtaHint();
     clearCtaHintTimers();
   }, [clearCtaHintTimers]);
 
@@ -272,6 +282,7 @@ const OpeningModal = ({
       clearCtaHintTimers();
       setShowIdleCtaHint(false);
       hintTriggeredRef.current = true;
+      voiceoverPlayedRef.current = false;
       return undefined;
     }
 
@@ -285,6 +296,18 @@ const OpeningModal = ({
       clearCtaHintTimers();
     };
   }, [clearCtaHintTimers, hasContent, showButton, startVoMonitor, visible]);
+
+  useEffect(() => {
+    if (!visible || !hasContent || !content.voiceover || voiceoverPlayedRef.current) return;
+
+    voiceoverPlayedRef.current = true;
+    const timer = setTimeout(() => {
+      if (!visibleRef.current || isOpeningVoActive()) return;
+      speakOpeningVoiceover(content.voiceover);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [content.voiceover, hasContent, visible]);
 
   if (!hasContent || !visible) return null;
 

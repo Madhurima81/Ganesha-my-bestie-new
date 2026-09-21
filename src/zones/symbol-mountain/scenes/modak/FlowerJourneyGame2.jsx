@@ -28,6 +28,9 @@ import flowerCream from './assets/images/fj-flower-cream.webp';
 import emotionAngry from './assets/images/emotion-angry-game3.webp';
 import emotionSad from './assets/images/emotion-sad-game3.webp';
 import emotionWorried from './assets/images/emotion-worried-game3.webp';
+import emotionPleased from './assets/images/emotion-pleased-game3.webp';
+import emotionExcited from './assets/images/emotion-excited-game3.webp';
+import emotionRelieved from './assets/images/emotion-relieved-game3.webp';
 import ganeshaArt from './assets/images/ganesha-game3-new.webp';
 
 const PHASES = {
@@ -74,14 +77,13 @@ const IDLE_HINT_L2_MS = 18000;
 const IDLE_HINT_L3_MS = 26000;
 
 const VO = {
-  open: 'Mooshika has more challenges ahead. Let’s help him keep going.',
   bushStart: 'Two flowers are hiding in the leaves. Swipe them apart.',
   bushFail: 'Oh no! They closed again. Try once more.',
   bushIdle: 'Swipe the leaves apart again.',
   bushSuccess: 'There they are! Two flowers.',
-  branchStart: 'These flowers are too high for Mooshika.',
-  branchGesture: 'Pull the branch down and keep holding.',
-  branchEarly: 'Almost! Keep holding.',
+  branchStart: 'Two flowers are too high for Mooshika. Pull the branch down.',
+  branchGesture: 'Keep holding the branch.',
+  branchEarly: 'Keep holding the branch.',
   branchSuccess: 'Got them! Two more flowers.',
   branchNearMiss: 'Aww… so close. Try once more.',
   marshStart: 'The last two flowers are across the mud. Guide Mooshika from safe spot to safe spot.',
@@ -93,7 +95,6 @@ const VO = {
   bellyDisappointed: 'proud,',
   bellyWorried: 'worried, and happy.',
   bellyKeptGoing: 'Lots of feelings came and went.',
-  bellyMeaning: 'Ganesha’s big belly reminds us: happy feelings and hard feelings can all be there, and we can keep going.',
   bellyAffirmation: 'I can have lots of feelings and keep going.',
 };
 
@@ -111,6 +112,9 @@ const SCENE_IMAGES = [
   emotionAngry,
   emotionSad,
   emotionWorried,
+  emotionPleased,
+  emotionExcited,
+  emotionRelieved,
   ganeshaArt,
 ];
 
@@ -125,6 +129,12 @@ export default function FlowerJourneyGame2({
   const [phase, setPhase] = useState(PHASES.FLOWER_BUSH);
   const [flowerCount, setFlowerCount] = useState(0);
   const [emotion, setEmotion] = useState(null);
+  // Small persistent "emotion trace" left near each challenge once it's
+  // solved — a quiet visual recap (bush→pleased, branch→excited,
+  // marsh→relieved), not a collectible/badge. Stays visible through the
+  // rest of the game so the belly-reflection VO ("lots of feelings came
+  // and went") has something to point back to.
+  const [emotionTraces, setEmotionTraces] = useState({ bush: null, branch: null, marsh: null });
 
   const mutedRef = useRef(!isAudioOn);
   useEffect(() => { mutedRef.current = !isAudioOn; }, [isAudioOn]);
@@ -273,6 +283,7 @@ export default function FlowerJourneyGame2({
   const branchHoldTimerRef = useRef(null);
   const branchEarlyWarnedRef = useRef(false);
   const branchAttemptedRef = useRef(false);
+  const branchCompletedRef = useRef(false);
 
   // ---- MARSH ----
   const marshRef = useRef(null);
@@ -303,15 +314,7 @@ export default function FlowerJourneyGame2({
 
   useEffect(() => {
     if (phase !== PHASES.FLOWER_BUSH || bushAttempted || !isActive) return undefined;
-    let cancelled = false;
-    (async () => {
-      await speakAsync(VO.open);
-      if (cancelled) return;
-      await wait(400);
-      if (cancelled) return;
-      await speakAsync(VO.bushStart);
-    })();
-    return () => { cancelled = true; };
+    speakAsync(VO.bushStart);
   }, [isActive]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const flyFlowerToBasket = useCallback(({ src, startX, startY, delay = 0 }) => {
@@ -368,20 +371,25 @@ export default function FlowerJourneyGame2({
     }
 
     setBushOpenState(true);
-    setEmotion(null);
+    setEmotion('pleased');
     speak(VO.bushSuccess);
     safeTimeout(() => {
+      setEmotion(null);
+      setEmotionTraces((prev) => ({ ...prev, bush: 'pleased' }));
       collectChallengeFlowers({ firstEl: bushFlowerOneRef.current, secondEl: bushFlowerTwoRef.current, newFlowerCount: 2 });
       safeTimeout(() => setPhase(PHASES.FLOWER_BRANCH), 2200);
-    }, 700);
+    }, 1350);
   }, [phase, isPaused, bushAttempted, collectChallengeFlowers, safeTimeout, speak]);
 
   const branchFlowerOneRef = useRef(null);
   const branchFlowerTwoRef = useRef(null);
   const branchRef = useRef(null);
+  const branchIntroStartedRef = useRef(false);
 
   useEffect(() => {
-    if (phase !== PHASES.FLOWER_BRANCH || branchIntroFailed || !isActive) return undefined;
+    if (phase !== PHASES.FLOWER_BRANCH || !isActive) return undefined;
+    if (branchIntroStartedRef.current) return undefined;
+    branchIntroStartedRef.current = true;
     let cancelled = false;
     (async () => {
       await wait(850);
@@ -390,13 +398,10 @@ export default function FlowerJourneyGame2({
       await wait(300);
       if (cancelled) return;
       await speakAsync(VO.branchStart);
-      if (cancelled) return;
-      await wait(400);
-      if (cancelled) return;
-      await speakAsync(VO.branchGesture);
+
     })();
     return () => { cancelled = true; };
-  }, [phase, branchIntroFailed, isActive]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [phase, isActive]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const clearBranchHold = useCallback(() => {
     if (branchHoldTimerRef.current) { clearTimeout(branchHoldTimerRef.current); branchHoldTimerRef.current = null; }
@@ -415,12 +420,15 @@ export default function FlowerJourneyGame2({
     }
     setBranchPull(1);
     setBranchComplete(true);
-    setEmotion(null);
+    branchCompletedRef.current = true;
+    setEmotion('excited');
     speak(VO.branchSuccess);
     safeTimeout(() => {
+      setEmotion(null);
+      setEmotionTraces((prev) => ({ ...prev, branch: 'excited' }));
       collectChallengeFlowers({ firstEl: branchFlowerOneRef.current, secondEl: branchFlowerTwoRef.current, newFlowerCount: 4 });
       safeTimeout(() => setPhase(PHASES.FLOWER_MARSH), 2200);
-    }, 700);
+    }, 1350);
   }, [clearBranchHold, collectChallengeFlowers, safeTimeout, speak]);
 
   const handleBranchPointerDown = useCallback((e) => {
@@ -472,7 +480,7 @@ export default function FlowerJourneyGame2({
   );
 
   useEffect(() => {
-    if (phase === PHASES.FLOWER_MARSH && marshStep === 0 && isActive) speak(VO.marshStart);
+    if (phase === PHASES.FLOWER_MARSH && marshStep === 0 && isActive && branchCompletedRef.current) speak(VO.marshStart);
   }, [phase, marshStep, isActive, speak]);
 
   const marshPointerRef = useRef(null);
@@ -549,8 +557,10 @@ export default function FlowerJourneyGame2({
       if (nextStep === 4) {
         safeTimeout(async () => {
           flyOneFlowerToBasket(marshFlowerTwoRef.current, flowerCream, 6);
+          setEmotion('relieved');
+          await wait(2000);
           setEmotion(null);
-          await wait(600);
+          setEmotionTraces((prev) => ({ ...prev, marsh: 'relieved' }));
           setMarshExiting(true);
           await wait(1400);
           await speakAsync(VO.marshDone);
@@ -602,10 +612,6 @@ export default function FlowerJourneyGame2({
 
       if (cancelled) return;
       setBellyBeat(5);
-      await speakAsync(VO.bellyMeaning);
-
-      await wait(350);
-      if (cancelled) return;
       await speakAsync(VO.bellyAffirmation);
 
       await wait(500);
@@ -640,6 +646,34 @@ export default function FlowerJourneyGame2({
             <span key={i} className={`fjg2-hud-dot ${i < flowerCount ? 'filled' : ''}`} />
           ))}
         </div>
+      )}
+
+      {/* Persistent emotion traces — small "memory" markers left near each
+          challenge once solved, always rendered (not phase-gated) so they
+          stay visible for the rest of the game, including the belly recap. */}
+      {emotionTraces.bush && (
+        <img
+          src={emotionPleased}
+          alt="Pleased"
+          className="fjg2-emotion-trace"
+          style={{ left: `${LAYOUT.bush.l + 11}%`, top: `${LAYOUT.bush.t - 6}%` }}
+        />
+      )}
+      {emotionTraces.branch && (
+        <img
+          src={emotionExcited}
+          alt="Excited"
+          className="fjg2-emotion-trace"
+          style={{ left: `${LAYOUT.branch.l + 10}%`, top: `${LAYOUT.branch.t - 6}%` }}
+        />
+      )}
+      {emotionTraces.marsh && (
+        <img
+          src={emotionRelieved}
+          alt="Relieved"
+          className="fjg2-emotion-trace"
+          style={{ left: `${LAYOUT.marsh.l + 9}%`, top: `${LAYOUT.marsh.t - 10}%` }}
+        />
       )}
 
       {/* ---------------- BUSH ---------------- */}
@@ -757,6 +791,9 @@ export default function FlowerJourneyGame2({
                 {emotion === 'worried' && (
                   <img src={emotionWorried} alt="Worried" className="fjg2-emotion fjg2-emotion--anchored" style={{ left: `${LAYOUT.emojiMarsh.l}%`, top: `${LAYOUT.emojiMarsh.t}%` }} />
                 )}
+                {emotion === 'relieved' && (
+                  <img src={emotionRelieved} alt="Relieved" className="fjg2-emotion fjg2-emotion--anchored" style={{ left: `${LAYOUT.emojiMarsh.l}%`, top: `${LAYOUT.emojiMarsh.t}%` }} />
+                )}
               </button>
             );
           })()}
@@ -788,8 +825,14 @@ export default function FlowerJourneyGame2({
           {isBushPhase && emotion === 'angry' && (
             <img src={emotionAngry} alt="Frustrated" className="fjg2-emotion fjg2-emotion--anchored" style={{ left: `${LAYOUT.emojiBush.l}%`, top: `${LAYOUT.emojiBush.t}%` }} />
           )}
+          {isBushPhase && emotion === 'pleased' && (
+            <img src={emotionPleased} alt="Pleased" className="fjg2-emotion fjg2-emotion--anchored" style={{ left: `${LAYOUT.emojiBush.l}%`, top: `${LAYOUT.emojiBush.t}%` }} />
+          )}
           {isBranchPhase && emotion === 'sad' && (
             <img src={emotionSad} alt="Disappointed" className="fjg2-emotion fjg2-emotion--anchored" style={{ left: `${LAYOUT.emojiBranch.l}%`, top: `${LAYOUT.emojiBranch.t}%` }} />
+          )}
+          {isBranchPhase && emotion === 'excited' && (
+            <img src={emotionExcited} alt="Excited" className="fjg2-emotion fjg2-emotion--anchored" style={{ left: `${LAYOUT.emojiBranch.l}%`, top: `${LAYOUT.emojiBranch.t}%` }} />
           )}
         </div>
       )}

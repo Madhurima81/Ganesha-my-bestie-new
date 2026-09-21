@@ -1,6 +1,6 @@
 import PoseImage, { usePreloadPoses } from '../components/animation/PoseImage';
 import GestureDemo from '../components/feedback/GestureDemo';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import './BeatPlayerGame.css';
 
 /**
@@ -132,7 +132,7 @@ const styleFromItem = (item, extra = {}) => ({
   ...extra
 });
 
-function BeatPlayerGame({
+const BeatPlayerGame = forwardRef(function BeatPlayerGame({
   flowJson,
   assetMap,
   interactions = {},
@@ -154,7 +154,7 @@ function BeatPlayerGame({
   // additive and local (React state, never mutates flowJson) — turning it
   // off leaves the beat exactly as authored.
   layoutDebug = false,
-}) {
+}, ref) {
   const sceneImages = useMemo(() => Object.values(assetMap || {}).filter(Boolean), [assetMap]);
   usePreloadPoses(sceneImages);
   const beatKeys = useMemo(
@@ -172,6 +172,22 @@ function BeatPlayerGame({
 
   const [beatPos, setBeatPos] = useState(0);
   const [stateName, setStateName] = useState('before');
+
+  // Dev-only escape hatch: jump straight to any beat by its JSON key,
+  // instead of having to play/hold/drag through every prior beat to reach
+  // one further down the flow (e.g. testing the rope round's hint timing
+  // without first completing the logs round for real). No-ops harmlessly
+  // if the caller never attaches a ref.
+  useImperativeHandle(ref, () => ({
+    jumpToBeat: (key) => {
+      const pos = beatKeys.indexOf(String(key));
+      if (pos === -1) return;
+      setBeatPos(pos);
+      setStateName('before');
+    },
+    beatKeys,
+  }), [beatKeys]);
+
   const [drag, setDrag] = useState(null); // { gameKey, x, y }
   const [selectedGameKey, setSelectedGameKey] = useState(null);
   // 0-1 fill for the press-hold progress ring — same pattern as the Pond
@@ -362,8 +378,12 @@ function BeatPlayerGame({
       if (cancelled) return;
 
       // Interactive "before" states now stay on screen after the story VO.
-      // The child acts when ready.
-      if (needsInput(stateName)) return;
+      // The child acts when ready — start the idle-hint clock now, so the
+      // narration itself never eats into the 9s/16s/24s budget.
+      if (needsInput(stateName)) {
+        beatWaitStartedAtRef.current = Date.now();
+        return;
+      }
 
       let holdFor = autoAdvanceMs;
 
@@ -432,9 +452,12 @@ function BeatPlayerGame({
   // re-shows the gesture demo even past the "first 2 beats" teaching window
   // below, so a child stuck on a later beat still gets re-taught the gesture.
   const [beatHintLevel, setBeatHintLevel] = useState(0);
+  // Set for real once the state's own VO finishes speaking (see runState
+  // below) — not here on mount, or a beat with a long intro line would
+  // burn several seconds of its narration off the 9s/16s/24s budget before
+  // the child even has a chance to try.
   const beatWaitStartedAtRef = useRef(Date.now());
   useEffect(() => {
-    beatWaitStartedAtRef.current = Date.now();
     setBeatHintLevel(0);
   }, [beatIndex, stateName]);
 
@@ -449,6 +472,25 @@ function BeatPlayerGame({
     return () => clearInterval(tick);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [beatIndex, stateName, isActive, isPaused, layoutDebug]);
+
+  // Escalated named hint — spoken once at L2 (16s idle), the same moment the
+  // pulse goes from light to strong. Only fires if the beat actually defines
+  // one (`beat.hintVoText` in the flow JSON); a beat with no named-helper
+  // hint to give just keeps pulsing/gesture-demoing as before. Sits between
+  // the initial call-for-help line (spoken on entry, doesn't name the
+  // helper) and the L3 gesture demo at 24s, so a stuck child gets told who
+  // to drag to before being shown outright.
+  const hintSpokenForBeatRef = useRef(null);
+  useEffect(() => {
+    const hintVoText = beat?.hintVoText;
+    if (!hintVoText || !needsInput(stateName)) return;
+    if (beatHintLevel < 2) return;
+    const beatKey = `${beatIndex}:${stateName}`;
+    if (hintSpokenForBeatRef.current === beatKey) return;
+    hintSpokenForBeatRef.current = beatKey;
+    speakAndWait(hintVoText, isAudioOn);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [beatHintLevel, beatIndex, stateName]);
 
   // Gesture demo — every interaction type here is a non-tap gesture (drag,
   // rope-drag, drag-path, press-hold), so a first-timer needs a quick shown
@@ -1071,6 +1113,7 @@ function BeatPlayerGame({
       onPointerMove={(e) => { onPointerMove(e); onDropPointerMove(e); onDebugPointerMove(e); }}
       onPointerUp={(e) => { onPointerUp(e); onDropPointerUp(); endDebugDrag(); }}
       onPointerCancel={() => { setDrag(null); onDropPointerUp(); endDebugDrag(); cancelHold(); }}
+      onContextMenu={(e) => e.preventDefault()}
     >
       {gestureDemoFromTo && (
         <GestureDemo
@@ -1161,12 +1204,17 @@ function BeatPlayerGame({
             type="button"
             data-beat-key={item.gameKey || undefined}
             className={`beat-player-item${interactive ? ' is-interactive' : ''}${isDragKey && selectedGameKey === item.gameKey ? ' is-selected' : ''}${isBeingDragged ? ' is-dragging' : ''}${isDragKey && feedback === 'holding' ? ' is-holding' : ''}${isDebugSelected ? ' is-debug-selected' : ''}${interactive && (isDragKey || isTargetKey) && beatHintLevel === 1 ? ' beat-player-hint-pulse' : ''}${interactive && (isDragKey || isTargetKey) && beatHintLevel >= 2 ? ' beat-player-hint-strong' : ''}`}
-            style={{ ...style, pointerEvents: interactive ? 'auto' : 'none', opacity: isPendingReveal ? 0 : style.opacity, outline: isDebugSelected ? '2px dashed #03A9F4' : undefined }}
+            style={{ ...style, pointerEvents: interactive ? 'auto' : 'none', opacity: isPendingReveal ? 0 : style.opacity, outline: isDebugSelected ? '2px dashed #03A9F4' : undefined, touchAction: 'none', WebkitTouchCallout: 'none', WebkitUserSelect: 'none' }}
             tabIndex={interactive ? 0 : -1}
             // Inactive artwork must also stop accepting focus. aria-hidden
             // alone leaves a previously clicked button focused and causes
             // Chrome's "Blocked aria-hidden" accessibility warning.
             inert={!interactive}
+            // A sustained press-hold otherwise reads as a long-press to the
+            // browser/OS, which pops its own context menu (or, on iOS, the
+            // image-save callout) mid-gesture and swallows the pointerup —
+            // block it so the hold never gets hijacked.
+            onContextMenu={(e) => e.preventDefault()}
             onPointerDown={layoutDebug
               ? (e) => startDebugItemDrag(e, debugKey, item)
               : (isDragKey ? (e) => { onPointerDown(e, item.gameKey); startHold(item.gameKey); } : undefined)}
@@ -1386,6 +1434,6 @@ function BeatPlayerGame({
     )}
     </>
   );
-}
+});
 
 export default BeatPlayerGame;

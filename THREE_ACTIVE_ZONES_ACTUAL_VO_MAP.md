@@ -20,28 +20,36 @@ Sources checked:
 
 | Scene | VO Text | When It Plays | Purpose |
 |---|---|---|---|
-| Calm Mooshika | `Mooshika is darting around. Press and hold him gently to help him settle.` | After Start, Mooshika search phase begins. | Explains new settle/hold mechanic. |
-| Calm Mooshika | `Hold Mooshika gently when he pauses near an object.` | Idle hint, Mooshika search, level 2. | Helps child know when/how to hold. |
-| Calm Mooshika | `There he is... calm and ready to walk with us.` | Mooshika is successfully settled/found. | Confirms calm state and transition. |
-| Calm Mooshika | `You helped Mooshika slow down. Say it with me... I can guide my busy thoughts.` | Mooshika symbol reveal card. | Connects Mooshika to guiding busy thoughts. |
-| Calm Mooshika | `Mushika is ready to gather three offerings for Ganesha. Drag her to each one.` | After Mooshika reveal flies to sidebar; offerings phase begins. | Explains drag-to-offerings mechanic. |
-| Calm Mooshika | `Guide Mushika to each offering for Ganesha.` | Idle hint in offerings phase. | Nudges offering collection. |
-| Calm Mooshika | `The sweetness of modak reminds us of a happy, peaceful feeling inside. Say it with me... I have joy inside me.` | Modak symbol reveal card. | Connects Modak/offering to peaceful inner sweetness. |
-| Calm Mooshika | `Drag each feeling into Ganesha's belly. There is room for every feeling.` | After Modak reveal flies to sidebar; belly phase begins. | Explains feelings-to-belly mechanic. |
-| Calm Mooshika | `Move a feeling into Ganesha's belly.` | Idle hint in belly phase. | Nudges final drag action. |
-| Calm Mooshika | `There is room for all my feelings.` | Belly symbol reveal card. | Names belly acceptance payoff. |
-| Calm Mooshika | `You helped Mooshika settle, found the sweetness inside, and made room for every feeling.` | Final fireworks / scene-complete VO. | Closes scene before completion modal. |
-| Find a Way to the Lotus | `The water can't get through... let's find it a way around.` | Opening/current prompt before gameplay. | Sets blocked-water problem. |
-| Find a Way to the Lotus | `The rock is in the way. Guide the water around it, to the pond.` | Trunk route phase prompt. | Explains guide-water-around-rock mechanic. |
-| Find a Way to the Lotus | `Try curving the water around the rock...` | Idle hint in trunk route phase. | Nudges curved path. |
-| Find a Way to the Lotus | `You found a way around... Say it with me... I find my way.` | Trunk reveal card. | Connects trunk to finding another way. |
-| Find a Way to the Lotus | `The lotus woke up... press and hold it gently... let it bloom.` | Lotus phase prompt. | Explains press-and-hold bloom mechanic. |
-| Find a Way to the Lotus | `Hold it gently... watch it bloom.` | Idle hint in lotus phase. | Nudges gentle hold. |
-| Find a Way to the Lotus | `You stayed with it... nice and slow. Say it with me... I can stay calm when things get messy.` | Lotus reveal card. | Connects lotus to calm in messy moments. |
-| Find a Way to the Lotus | `You found another way, and the lotus bloomed.` | Scene-complete VO. | Summarizes trunk + lotus flow. |
+| Modak | `Mooshika has a journey ahead. Let’s help him.` | Opening modal is visible. | Sets the journey goal. |
+| Modak | `Mooshika’s thoughts keep jumping around. Press and hold to help him focus.` | Game 1 / Mooshika focus starts. | Explains focus hold mechanic. |
+| Modak | `Mooshika stayed with it and made a little progress.` | Mooshika focus succeeds. | Confirms focus success. |
+| Modak | `I can keep going, one small step at a time.` | Mooshika reveal card affirmation. | Connects Mooshika to steady effort. |
+| Modak | `Two flowers are hiding in the leaves. Swipe them apart.` | Game 2 / bush phase starts. | Explains leaf swipe. |
+| Modak | `Two flowers are too high for Mooshika. Pull the branch down.` | Game 2 / tree branch phase starts. | Combines tree setup and action. |
+| Modak | `Keep holding the branch.` | Tree branch idle / early release hint. | Nudges continued hold. |
+| Modak | `The last two flowers are across the mud. Guide Mooshika from safe spot to safe spot.` | Game 2 / marsh phase starts. | Explains safe-spot path. |
+| Modak | `You made it! All six flowers.` | Game 2 success after all flowers. | Confirms all flowers found. |
+| Modak | `I can have lots of feelings and keep going.` | Big Belly reveal card affirmation. | Connects Belly to feelings + persistence. |
+| Modak | `You found all six flowers. Tap them to make a garland for Ganesha.` | Game 3 / garland making starts. | Explains garland tap mechanic. |
+| Modak | `The garland is ready! Drag it to Ganesha.` | Garland completed. | Starts carry step. |
+| Modak | `You brought the garland to Ganesha — and look, a sweet Modak!` | Garland offered / Modak reveal. | Combines offering success and Modak reveal. |
+| Modak | `I can learn, keep trying, and find joy.` | Modak reveal card affirmation. | Connects Modak to effort → joy. |
+| Modak | `Small steps, big feelings, and lots of trying brought Mooshika to Ganesha.` | Final fireworks / scene-complete VO. | Closes full Modak scene. |
+| Find a Way to the Lotus | `The lotus needs water to bloom. Let’s help the water reach it.` | Opening modal is visible. | Sets blocked-water story goal. |
+| Find a Way to the Lotus | `The rock is blocking the stream. Press and hold to move it.` | Rock phase prompt. | Explains first hold mechanic. |
+| Find a Way to the Lotus | `Keep holding to move the rock.` | Idle hint in rock phase. | Nudges continued hold. |
+| Find a Way to the Lotus | `The flowers are in the water’s way. Gently move them aside.` | Flowers phase prompt. | Explains gentle movement mechanic. |
+| Find a Way to the Lotus | `Move the flowers gently so the water can pass.` | Idle hint in flowers phase. | Nudges gentle flower move. |
+| Find a Way to the Lotus | `The water reached the lotus.` | Trunk success beat. | Confirms the water reached the lotus before Trunk reveal. |
+| Find a Way to the Lotus | `I can be strong and gentle.` | Trunk reveal card affirmation. | Connects Trunk to strength + gentleness. |
+| Find a Way to the Lotus | `The water reached the lotus. Hold the bud to help it bloom.` | Lotus phase prompt. | Explains hold-to-bloom mechanic. |
+| Find a Way to the Lotus | `Keep holding the bud.` | Idle hint in lotus phase. | Nudges continued hold. |
+| Find a Way to the Lotus | `The lotus bloomed, even in the muddy pond.` | Lotus success beat. | Confirms bloom before Lotus reveal. |
+| Find a Way to the Lotus | `I can keep growing when things are hard.` | Lotus reveal card affirmation. | Connects Lotus to growing through hard things. |
+| Find a Way to the Lotus | `You used strength, then gentleness, and helped the lotus bloom.` | Final fireworks / scene-complete VO. | Summarizes trunk + lotus flow. |
 | Look, Listen, Choose | `Let's explore... look and listen.` | Opening modal is visible. | Sets up the scene. |
 | Look, Listen, Choose | `Look closely and spot what is hidden.` | Eyes phase prompt, before entering telescope mini-game. | Explains visual search. |
-| Look, Listen, Choose | `Look closely... you can find them.` | Idle hint in eyes phase. | Nudges visual search. |
+| Look, Listen, Choose | `Look closely — there's still one hiding.` | Idle hint in eyes phase. | Nudges visual search. |
 | Look, Listen, Choose | `You looked carefully... and found them all.` | Eyes reveal/setup completion. | Confirms careful seeing. |
 | Look, Listen, Choose | `Listen carefully and find where the sound is coming from.` | Ears phase prompt, before rhythm/sound mini-game. | Explains listening match. |
 | Look, Listen, Choose | `Listen carefully... then choose where the sound came from.` | Idle hint in ears phase. | Nudges listening choice. |
@@ -86,39 +94,59 @@ Sources checked:
 
 | Scene | VO Text | When It Plays | Purpose |
 |---|---|---|---|
-| Your Journey Begins! | `Welcome!` | Opening / scene entry. | Welcomes child. |
-| Your Journey Begins! | `The little frog wants to meet his family.` | Vakratunda rescue intro. | Sets first rescue goal. |
-| Your Journey Begins! | `Help guide the lily pad another way.` | Vakratunda action prompt. | Guides alternate route. |
-| Your Journey Begins! | `The river current is too strong there. Let's try another way.` | Wrong/blocked route. | Gentle correction. |
-| Your Journey Begins! | `You found another way. The frog made it home to the family.` | Vakratunda rescue success. | Confirms another-way meaning. |
-| Your Journey Begins! | `Now let's help the little calf.` | Mahakaya rescue intro. | Sets second rescue goal. |
-| Your Journey Begins! | `A heavy log is trapping him!` | Mahakaya obstacle reveal. | Clarifies problem. |
-| Your Journey Begins! | `Drag the rope to the log.` / `Now pull down!` | Mahakaya action prompts. | Guides rope/pull mechanic. |
-| Your Journey Begins! | `You did it! The calf is free!` | Mahakaya rescue success. | Celebrates release. |
-| Your Journey Begins! | `It means great strength.` | Mahakaya meaning reveal. | Teaches meaning. |
-| Bring Back the Light! | `The river is dark today. Let's bring back the light!` | Opening / scene entry. | Sets visual problem. |
-| Bring Back the Light! | `Swipe the dark patch.` | Suryakoti hint/action prompt. | Guides clearing darkness. |
-| Bring Back the Light! | `The light showed the way!` | Suryakoti done. | Confirms light payoff. |
-| Bring Back the Light! | `It means bright as ten million suns.` | Suryakoti meaning. | Teaches meaning. |
-| Bring Back the Light! | `Drag the light across. Share the light evenly. Keep balancing.` | Samaprabha hint/action prompt. | Guides equal-light mechanic. |
-| Bring Back the Light! | `Both sides are glowing now. You did it.` | Samaprabha done. | Confirms equal shine. |
-| Bring Back the Light! | `It helps us share fairly.` | Samaprabha meaning. | Child-facing meaning. |
-| Bring Back the Light! | `The light showed the way. Both shine equally now.` | Scene completion. | Summarizes both words. |
-| The River Needs You! | `Let's help our river friend. The turtle wants to go home.` | Opening / scene entry. | Sets rescue goal. |
-| The River Needs You! | `Something is blocking the way. Drag the obstacle away. Great job. Clear the next one.` | Nirvighnam hint/action prompt. | Guides obstacle clearing. |
-| The River Needs You! | `The path is opening up. You did it. The turtle made it home.` | Nirvighnam done. | Confirms clear path. |
-| The River Needs You! | `It helps clear obstacles.` | Nirvighnam meaning. | Teaches meaning. |
-| The River Needs You! | `Now another friend needs help. The beaver needs a bridge. Tap the glowing friend. Look. They are helping. Tap the next friend.` | Kuru Me Deva hint/action prompt. | Guides asking helpers. |
-| The River Needs You! | `The bridge is getting bigger. One more helper. The bridge is ready. The beaver made it across.` | Kuru Me Deva done. | Confirms bridge/help payoff. |
-| The River Needs You! | `It means helping together.` | Kuru Me Deva meaning. | Child-facing meaning. |
-| Care in Every Task | `Let's see who needs help. Look carefully.` | Opening / scene entry. | Sets scenario-matching task. |
-| Care in Every Task | `Which power would help here? Tap a power. Nice choice. The problem is solved. Let's help another friend.` | Sarvakaryeshu hint/action prompt. | Guides power matching. |
-| Care in Every Task | `Choose a power again. You got it. That helped too. One more challenge. Great thinking.` | Sarvakaryeshu progress prompt. | Sustains multi-scenario play. |
-| Care in Every Task | `Sarvakaryeshu. Every task can be done with care.` | Sarvakaryeshu meaning. | Teaches meaning. |
-| Care in Every Task | `Our journey is not over yet. Let's keep floating down the river. Tap the bubble.` | Sarvada action prompt. | Guides bubble sequence. |
-| Care in Every Task | `Morning. Ganesha is there too. Tap the next bubble. Afternoon. Ganesha is there too. Tap the last bubble. Night. Ganesha is there too.` | Sarvada sequence. | Shows always/across day. |
-| Care in Every Task | `Sarvada. What I learn stays with me.` | Sarvada meaning. | Teaches meaning. |
-| Care in Every Task | `Every task can be done with care. Sarvada. Always.` | Scene completion. | Closes scene. |
+| Vakratunda Grove | `Our river friends need a way across. Let’s help.` | Opening modal is visible. | Sets river-crossing goal. |
+| Vakratunda Grove | `Frog’s way to his family is blocked. Drag Frog to find another way.` | Vakratunda start. | Gives problem + action. |
+| Vakratunda Grove | `That way is blocked. Can you find another way around?` | Blocked / choose prompt. | Nudges alternate route. |
+| Vakratunda Grove | `Look for another way through.` | Hint. | Helps child keep searching. |
+| Vakratunda Grove | `Vakratunda! You found another way and helped Frog reach his family.` | Vakratunda success. | Confirms another-way payoff. |
+| Vakratunda Grove | `I can change my plan and try another way.` | Vakratunda reveal card affirmation. | Say-with-me affirmation. |
+| Vakratunda Grove | `The friends are waiting. Let’s build a raft with space for everyone.` | Mahakaay start. | Sets raft goal. |
+| Vakratunda Grove | `Bring the rope to the log.` | Rope instruction. | Starts rope/log mechanic. |
+| Vakratunda Grove | `Drag the rope to a log.` | Drag hint. | Clarifies action. |
+| Vakratunda Grove | `Now pull down.` | Pull prompt. | Guides pull action. |
+| Vakratunda Grove | `Mahakaay! You made space so everyone could come along.` | Mahakaay success. | Confirms space-for-everyone payoff. |
+| Vakratunda Grove | `I can make space in my heart for others.` | Mahakaay reveal card affirmation. | Say-with-me affirmation. |
+| Vakratunda Grove | `You found another way, and made sure everyone could come along.` | Final fireworks / scene-complete VO. | Summarizes both words. |
+| Suryakoti Bank | `The river is dark. Let’s bring back some light.` | Opening modal is visible. | Sets dark-river goal. |
+| Suryakoti Bank | `Bunny can’t find home. Rub the glow to bring back the light.` | Suryakoti start. | Gives problem + action. |
+| Suryakoti Bank | `Rub the glowing spot.` / `Keep rubbing.` | Suryakoti hints. | Nudges rubbing action. |
+| Suryakoti Bank | `Suryakoti! You brought back the light and helped Bunny home.` | Suryakoti success. | Confirms light helped Bunny. |
+| Suryakoti Bank | `I can find hope inside me.` | Suryakoti reveal card affirmation. | Say-with-me affirmation. |
+| Suryakoti Bank | `A little deer sees a strange shadow. Move the light and look closely.` | Samaprabha start. | Gives shadow problem + action. |
+| Suryakoti Bank | `Move the light and look closely.` / `Look again — what is really there?` | Samaprabha hints. | Nudges close-looking action. |
+| Suryakoti Bank | `Samaprabha! You looked closely and helped Deer feel safe.` | Samaprabha success. | Confirms seeing clearly. |
+| Suryakoti Bank | `I can see what is really there.` | Samaprabha reveal card affirmation. | Say-with-me affirmation. |
+| Suryakoti Bank | `You brought back the light and saw what was really there.` | Final fireworks / scene-complete VO. | Summarizes both words. |
+| Nirvighnam Chant | `The way ahead is tricky. Let’s help our friends through.` | Opening modal is visible. | Sets blocked-way goal. |
+| Nirvighnam Chant | `Turtle’s way home is blocked. Press and hold the rock to move it.` | Nirvighnam start. | Gives Turtle problem + action. |
+| Nirvighnam Chant | `Something’s still blocking Turtle’s way.` | Nirvighnam hint. | Nudges clearing remaining obstacle. |
+| Nirvighnam Chant | `Nirvighnam! You cleared the way and helped Turtle through.` | Nirvighnam success. | Confirms cleared path. |
+| Nirvighnam Chant | `I can solve one thing at a time.` | Nirvighnam reveal card affirmation. | Say-with-me affirmation. |
+| Nirvighnam Chant | `Baby Beaver is across the broken bridge. Press and hold to lift the logs and help rebuild it.` | Kuru Me Deva start. | Gives Beaver bridge problem. |
+| Nirvighnam Chant | `Who can help with the logs?` / `Who can help with the rope?` | Kuru Me Deva helper hints. | Nudges asking helpers. |
+| Nirvighnam Chant | `Kuru Me Deva! You asked for help and finished the bridge.` | Kuru Me Deva success. | Confirms asking-for-help payoff. |
+| Nirvighnam Chant | `I can ask for help when I need it.` | Kuru Me Deva reveal card affirmation. | Say-with-me affirmation. |
+| Nirvighnam Chant | `You cleared the path and asked for help when things got hard.` | Final fireworks / scene-complete VO. | Summarizes both words. |
+| Sarvakaryeshu Chant | `Let’s see where Ganesha is with you today.` | Opening modal is visible. | Sets daily-life goal. |
+| Sarvakaryeshu Chant | `So much to do. Which symbol can help him start small?` | Mooshika task prompt. | Starts small-step choice. |
+| Sarvakaryeshu Chant | `Mooshika helped him begin with one small thing.` | Mooshika task success. | Confirms start-small payoff. |
+| Sarvakaryeshu Chant | `So many distractions. Which symbol can help him focus?` | Eyes task prompt. | Starts focus choice. |
+| Sarvakaryeshu Chant | `The Eyes helped him focus on what mattered.` | Eyes task success. | Confirms focus payoff. |
+| Sarvakaryeshu Chant | `Heavy here, gentle there. Which symbol can help?` | Trunk task prompt. | Starts strength/gentleness choice. |
+| Sarvakaryeshu Chant | `The Trunk helped him use strength, then gentleness.` | Trunk task success. | Confirms strong + gentle payoff. |
+| Sarvakaryeshu Chant | `The crayon is broken. Which symbol can help?` | Tusk task prompt. | Starts broken-but-useful choice. |
+| Sarvakaryeshu Chant | `The Tusk reminded her that something broken can still help.` | Tusk task success. | Confirms broken-but-useful payoff. |
+| Sarvakaryeshu Chant | `Try another symbol.` | Wrong choice hint. | Gentle correction. |
+| Sarvakaryeshu Chant | `Sarvakaryeshu! You chose a Ganesha symbol for each task.` | Sarvakaryeshu success. | Confirms symbol matching. |
+| Sarvakaryeshu Chant | `I can remember Ganesha in everything I do.` | Sarvakaryeshu reveal card affirmation. | Say-with-me affirmation. |
+| Sarvakaryeshu Chant | `Morning, afternoon and night — let’s find Ganesha through your day.` | Sarvada start. | Sets day-sequence goal. |
+| Sarvakaryeshu Chant | `Let’s look at the morning.` | Morning memory. | Starts morning search. |
+| Sarvakaryeshu Chant | `Now the afternoon.` | Afternoon memory. | Starts afternoon search. |
+| Sarvakaryeshu Chant | `Now the night.` | Night memory. | Starts night search. |
+| Sarvakaryeshu Chant | `Can you find the hidden symbol?` | Sarvada hidden-symbol prompt. | Nudges finding symbol. |
+| Sarvakaryeshu Chant | `Sarvada! You found Ganesha through the whole day.` | Sarvada success. | Confirms whole-day discovery. |
+| Sarvakaryeshu Chant | `Ganesha is always with me.` | Sarvada reveal card affirmation. | Say-with-me affirmation. |
+| Sarvakaryeshu Chant | `From morning to night, Ganesha was with you.` | Final fireworks / scene-complete VO. | Final wrap for the scene. |
 | Complete the Shloka! | `You've learned all eight Ganesha powers. Now let's put the shloka together!` | Opening modal prompt. | Sets finale task. |
 | Complete the Shloka! | `Tap the first word boat.` | Arrange game starts. | Starts sequencing. |
 | Complete the Shloka! | `Tap the next word boat.` | Hint boat L1. | Gentle hint. |

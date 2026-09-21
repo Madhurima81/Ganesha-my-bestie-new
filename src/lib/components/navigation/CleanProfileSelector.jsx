@@ -62,7 +62,6 @@ const CleanProfileSelector = ({
   // click handler always sees the current value.
   const isManagingRef = React.useRef(false);
   const voiceTimersRef = useRef([]);
-  const hasPlayedFriendChoiceVoRef = useRef(false);
   const avatarAudioCtxRef = useRef(null);
 
   // 20 explorer friends — art lives at /images/new-explorer-<id>.webp (+ .png fallback).
@@ -122,12 +121,6 @@ const CleanProfileSelector = ({
     };
   }, []);
 
-  useEffect(() => {
-    if (!showCreateProfile) {
-      hasPlayedFriendChoiceVoRef.current = false;
-    }
-  }, [showCreateProfile]);
-
   const clearLongPressTimer = () => {
     if (longPressTimer.current) {
       clearTimeout(longPressTimer.current);
@@ -143,7 +136,6 @@ const CleanProfileSelector = ({
     setSelectedAge(7);
     setIsCreatingProfile(false);
     setCreateError('');
-    hasPlayedFriendChoiceVoRef.current = false;
     window.speechSynthesis?.cancel();
   };
 
@@ -187,17 +179,6 @@ const CleanProfileSelector = ({
     } catch (e) {
       // non-blocking
     }
-
-    if (hasPlayedFriendChoiceVoRef.current) return;
-    if (!isAudioOn || !window.speechSynthesis || typeof window.SpeechSynthesisUtterance === 'undefined') return;
-
-    hasPlayedFriendChoiceVoRef.current = true;
-    window.speechSynthesis.cancel();
-    const utterance = new window.SpeechSynthesisUtterance('Nice choice!');
-    utterance.rate = 1.03;
-    utterance.pitch = 1;
-    utterance.volume = 0.9;
-    window.speechSynthesis.speak(utterance);
   };
 
   const loadProfiles = () => {

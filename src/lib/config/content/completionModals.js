@@ -12,8 +12,8 @@ export const COMPLETION_MODALS = {
       subtitle: 'You helped the water reach the lotus.'
     },
     symbol: {
-      title: 'You Looked and Listened Carefully!',
-      subtitle: 'Then you stayed focused and chose what each obstacle needed.'
+      title: 'The Forest Friends Are Happy!',
+      subtitle: 'You found what could help.'
     },
     'final-scene': {
       title: 'You Know Ganesha’s Symbols!',

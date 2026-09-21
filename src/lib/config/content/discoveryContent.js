@@ -113,7 +113,7 @@ export const DISCOVERY_CONTENT = {
 
       tusk: {
         title: "Tusk",
-        affirmation: "I stay focused on what is true.",
+        affirmation: "I can use what I have for something important.",
         icon: 'ganesha-tusk'
       }
     }

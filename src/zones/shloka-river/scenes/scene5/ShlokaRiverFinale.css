@@ -409,12 +409,46 @@
   margin-top: -2px;
 }
 
+/* L1 — soft group nudge on every remaining boat: barely-there scale
+   breathing, no color/glow, so it reads as "look here again" not "here". */
+.srf-tray-boat.is-hint-group {
+  animation: srf-trayGroupNudge 1.6s ease-in-out infinite;
+}
+
+/* L1 — the correct boat only, a fraction stronger than the group nudge
+   above but still no glow: a directional cue, not an identification. */
+.srf-tray-boat.is-hint-candidate {
+  animation: srf-trayCandidateNudge 1.6s ease-in-out infinite;
+}
+
 .srf-tray-boat.is-hint-pulse {
   animation: srf-trayPulse 1.2s ease-in-out infinite;
 }
 
 .srf-tray-boat.is-hint-wiggle {
   animation: srf-trayWiggle 1s ease-in-out infinite;
+}
+
+@keyframes srf-trayGroupNudge {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.03);
+  }
+}
+
+@keyframes srf-trayCandidateNudge {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.06);
+  }
 }
 
 @keyframes srf-trayPulse {

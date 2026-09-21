@@ -75,6 +75,26 @@
 }
 
 /* ---------------------------------------------------------
+   PERSISTENT EMOTION TRACE — a quiet recap marker left near a
+   challenge once solved. Deliberately smaller and calmer than the
+   live in-challenge bubble above — a memory of the feeling, not a
+   collectible/reward, so no bounce/scale, no glow, just a soft fade.
+   --------------------------------------------------------- */
+.fjg2-emotion-trace {
+  position: absolute;
+  width: clamp(28px, 2.4vw, 38px);
+  height: auto;
+  opacity: 0.85;
+  z-index: 11;
+  pointer-events: none;
+  animation: fjg2TraceIn 700ms ease-out both;
+}
+@keyframes fjg2TraceIn {
+  from { opacity: 0; }
+  to { opacity: 0.85; }
+}
+
+/* ---------------------------------------------------------
    1 — BUSH
    --------------------------------------------------------- */
 .fjg2-bush-area {

@@ -851,13 +851,13 @@ const handleReplayIntroStory = () => {
       const isZoneComplete = zoneCompletedCount >= (zoneData?.scenes?.length || 0) && (zoneData?.scenes?.length || 0) > 0;
 
       if (isZoneComplete && !hasHeardZoneVo('complete')) {
-        speakZoneLine(`You finished ${zoneData.name.replaceAll('\n', ' ')}! I'm so proud of you.`);
+        speakZoneLine(`You finished ${zoneData.name.replaceAll('\n', ' ')}!`);
         markZoneVoHeard('complete');
         return;
       }
 
       if (!hasHeardZoneVo('welcome')) {
-        speakZoneLine(`Welcome to ${zoneData.name.replaceAll('\n', ' ')}! Tap a card to begin.`);
+        speakZoneLine(`Welcome to ${zoneData.name.replaceAll('\n', ' ')}!`);
         markZoneVoHeard('welcome');
       }
     }, 600);
@@ -1230,4 +1230,3 @@ const handleReplayIntroStory = () => {
 
 
 export default ZoneWelcome;
-

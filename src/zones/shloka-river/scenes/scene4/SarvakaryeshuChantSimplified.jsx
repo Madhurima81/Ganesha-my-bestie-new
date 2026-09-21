@@ -298,26 +298,24 @@ const SarvakaryeshuChantContent = ({
   const playGuidanceVoice = useCallback((key, onEnded, options = {}) => {
     const { minDelayAfterVoiceMs = 0, replayOnReturn = false, stripLeadingText = null } = options;
     const map = {
-      scene13_puzzle: "Oops! The painting went splat. Which Ganesha symbol could help?",
-      scene13_puzzle_after: "The Trunk helped him try another way!",
-      scene13_sports: "His feelings feel really big. Which Ganesha symbol could help?",
-      scene13_sports_after: "The Belly helped him make room for his feelings.",
-      scene13_bike: "Where did the toy go? Which Ganesha symbol could help?",
-      scene13_bike_after: "The Eyes helped her spot the clue!",
-      scene13_grandma: "So many things are distracting him. Which Ganesha symbol could help?",
-      scene13_grandma_after: "The Tusk helped him stay focused.",
-      welcome: "Let's see where Ganesha is with you today.",
+      scene13_puzzle: "So much to do. Which symbol can help him start small?",
+      scene13_puzzle_after: "Mooshika helped him begin with one small thing.",
+      scene13_sports: "So many distractions. Which symbol can help him focus?",
+      scene13_sports_after: "The Eyes helped him focus on what mattered.",
+      scene13_bike: "Heavy here, gentle there. Which symbol can help?",
+      scene13_bike_after: "The Trunk helped him use strength, then gentleness.",
+      scene13_grandma: "The crayon is broken. Which symbol can help?",
+      scene13_grandma_after: "The Tusk reminded her that something broken can still help.",
+      welcome: "Let’s see where Ganesha is with you today.",
       scene13_try_again: "Try another symbol.",
-      scene13_success: "Sarvakaryeshu! Ganesha can be part of everything we do.",
-      scene13_meaning: "Sarvakaryeshu means in everything we do.",
-      scene14_intro: "Morning, afternoon and night — let's find Ganesha through the whole day.",
-      scene14_morning: "Let's look at the morning.",
-      scene14_afternoon: "Now let's look at the afternoon.",
-      scene14_night: "Now let's look at night.",
+      scene13_success: "Sarvakaryeshu! You chose a Ganesha symbol for each task.",
+      scene14_intro: "Morning, afternoon and night — let’s find Ganesha through your day.",
+      scene14_morning: "Let’s look at the morning.",
+      scene14_afternoon: "Now the afternoon.",
+      scene14_night: "Now the night.",
       scene14_find_symbol: "Can you find the hidden symbol?",
-      scene14_success: "Sarvada! Morning, afternoon and night — Ganesha was there through it all.",
-      scene14_meaning: "Sarvada means always.",
-      sceneComplete: "In everything you did, from morning to night, Ganesha was with you.",
+      scene14_success: "Sarvada! You found Ganesha through the whole day.",
+      sceneComplete: "From morning to night, Ganesha was with you.",
     };
     const finishPlayback = () => {
       guidanceVoiceActiveRef.current = false;
@@ -470,6 +468,13 @@ const SarvakaryeshuChantContent = ({
     if (!nextOn) stopAllVoice();
     toggleAudio();
   };
+
+  // No extra gameplay intro VO here: after the opening modal, the first
+  // Sarvakaryeshu task prompt is the next spoken line.
+  const [sarvaIntroReady, setSarvaIntroReady] = useState(true);
+  useEffect(() => {
+    if (sceneState.phase === PHASES.SARVAKARYESHU_GAME) setSarvaIntroReady(true);
+  }, [sceneState.phase]);
 
   useEffect(() => {
     if (sceneState.phase === PHASES.SARVAKARYESHU_GAME && sceneState.welcomeShown) {
@@ -628,7 +633,7 @@ const SarvakaryeshuChantContent = ({
             {!showSceneCompletion && (
               <>
                 <SarvakaryeshuGame
-                  isActive={sceneState.phase === PHASES.SARVAKARYESHU_GAME}
+                  isActive={sceneState.phase === PHASES.SARVAKARYESHU_GAME && sarvaIntroReady}
                   hideElements={!!revealConfig || showPowerOverlay}
                   onMicroWin={handleMicroWin}
                   onPhaseComplete={() => window.setTimeout(() => handlePhaseComplete('sarvakaryeshu'), 0)}
@@ -685,11 +690,7 @@ const SarvakaryeshuChantContent = ({
                     revealVoice={{
                       isEnabled: isAudioOn,
                       wordId: revealConfig.symbolId,
-                      meaningKey: revealConfig.symbolId === 'sarvakaryeshu'
-                        ? 'scene13_meaning'
-                        : revealConfig.symbolId === 'sarvada'
-                          ? 'scene14_meaning'
-                          : null,
+
                       playWord: playWordAudio,
                       playLine: playGuidanceVoice,
                       stopVoice: stopAllVoice,

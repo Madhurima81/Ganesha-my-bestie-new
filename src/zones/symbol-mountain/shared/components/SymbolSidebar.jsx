@@ -9,14 +9,14 @@ import {
 } from '../../../../lib/services/AudioService';
 import SymbolCardModal from './SymbolCardModal';
 
-import symbolBellyColored from '../images/icons/symbol-belly-new.png';
-import symbolEarColored from '../images/icons/symbol-ears-new.png';
-import symbolEyesColored from '../images/icons/symbol-eyes-new.png';
-import symbolLotusColored from '../images/icons/symbol-lotus-new.png';
-import symbolModakColored from '../images/icons/symbol-modak-new.png';
-import symbolMooshikaColored from '../images/icons/symbol-mooshika-new.png';
-import symbolTrunkColored from '../images/icons/symbol-trunk-new.png';
-import symbolTuskColored from '../images/icons/broken-tusk-symbol.png';
+import symbolBellyColored from '../images/icons/symbol-belly-new.webp';
+import symbolEarColored from '../images/icons/symbol-ears-new.webp';
+import symbolEyesColored from '../images/icons/symbol-eyes-new.webp';
+import symbolLotusColored from '../images/icons/symbol-lotus-new.webp';
+import symbolModakColored from '../images/icons/symbol-modak-new.webp';
+import symbolMooshikaColored from '../images/icons/symbol-mooshika-new.webp';
+import symbolTrunkColored from '../images/icons/symbol-trunk-new.webp';
+import symbolTuskColored from '../images/icons/broken-tusk-symbol.webp';
 
 const symbolInfo = {
   modak: { title: 'Modak', colorIcon: symbolModakColored },

@@ -150,8 +150,42 @@ Before every task, Claude Code must:
   Vakratunda's canonical gold star. See CHANGELOG 2026-09-18. Not yet visually verified
   in-browser — Madhurima to confirm on next Tusk eyes-game playthrough.
 - [ ] T51 · Onboarding install/hand-off scene (`CleanProfileSelector.jsx`, `PwaInstallManager.getInstallGuide`) — device-test the *install* state on real iOS Safari, iOS Chrome and Android (desktop Chrome skips it, so it was never seen live). Also verify the installed-PWA relaunch → Pick Your Friend boot on a real installed PWA. Nudge the beside-card Ganesha up a little if it reads too low.
-- [ ] T53 · Shloka River Scene 3 (Nirvighnam + Kuru Me Deva) granular hint VO — game logic change, not content wiring, deferred from the 2026-09-19 content pass. `NirvighnamGame.jsx` only fires one hint line per obstacle (no "keep holding" / "keep rubbing" idle-progress tier). `KurumedevaGame.jsx` only calls `playSceneLine` once, for `kuru_done` — none of the per-step lines (logs first-try vs. after-fail, idle "who can help", rope first-try vs. after-fail, post-Elephant/post-Monkey confirmations) are wired to any `playSceneLine` call at all, so that copy exists in content only, not in the live scene. Needs new `playSceneLine(...)` calls added at the right interaction points in both game files, plus matching keys in `NirvighnamChantSimplified.jsx`'s local `webSpeechMap`. Can be done later — do before wider beta if audio-guidance completeness matters for launch.
-
+- [x] T57 · Shloka River Scene 3 (Nirvighnam + Kuru Me Deva) granular hint VO — was flagged
+  2026-09-19 as a game-logic gap (deferred from the content-only pass), then fixed same day.
+  `NirvighnamGame.jsx` now has a level-3 "keep going" idle-progress tier per obstacle
+  (`nirv_hint_keep_stone/branch/reed`, mirroring Suryakoti's rub/keep pattern).
+  `KurumedevaGame.jsx` now fires `playSceneLine` at 5 new points per helper round (logs and
+  rope): round-start prompt, fail-after-hold line, idle "who can help" hint, escalated
+  "drag the help bubble to X" hint, and the after-help confirmation — all wired through
+  `NirvighnamChantSimplified.jsx`'s local `webSpeechMap`. `SamaprabhaGame.jsx` also got its
+  missing level-3 "Move the light and look closely" escalation. Verified by code review and a
+  live-browser pass into the Kuru Me Deva phase (clean render, no console errors, round-intro
+  VO fired on entry) — the timed press-and-hold beats (logs fail, rope fail) couldn't be
+  automated in-browser (no sustained-hold primitive in the test tooling available), so those
+  specific interactions are code-reviewed but not click-tested. See CHANGELOG 2026-09-19.
+- [x] T58 · Modak Big Belly emotion redesign — added the "don't reset to neutral instantly"
+  fix Madhurima asked for. `FlowerJourneyGame2.jsx` now shows a positive emotion for a real
+  beat (700–900ms) after each of the 3 challenges succeeds, instead of clearing straight to
+  null: leaves/bush → `pleased`, branch → `excited`, marsh/crossing → `relieved` (new asset,
+  replaces reusing `happy`). 3 new emoji assets sourced from Madhurima, downscaled from
+  ~1MB/1254px to match the existing 500px/~15-20KB webp convention
+  (`emotion-pleased/excited/relieved-game3.png+webp`). The "during" struggle emotions
+  (angry/sad/worried) and the belly-reflection VO/meaning/affirmation text were already
+  correct from an earlier pass — not touched. Live-tested in browser: bush swipe fail
+  (angry) → success (pleased, phase advanced cleanly) and branch early-release (sad) all
+  confirmed with no console errors; all 3 new assets load 200 OK. Branch/marsh full success
+  (needs a sustained press-hold) not click-tested — same automation limit as T57.
+- [x] T59 · Symbol Mountain Pond (Trunk + Lotus) final VO/content pass — applied Madhurima's
+  finalized script: opening modal, gameplay hint VO, meaning VO, affirmations, sidebar
+  (`symbolCardContent.js`), and completion modal. Renamed all child-facing "reeds" copy to
+  "flowers" (hint text, aria-label, VO lines) while leaving internal variable/class names
+  (`reedsRound`, `REEDS_ACTIVE`, `pond-trunk-reeds`, etc.) untouched per instruction. Removed
+  two confirmed-dead config objects (`powerConfig`, `discoveryConfig`) that held stale
+  "Divine Blessing"/"Sacred Purity" labels — grepped for zero other references before
+  deleting. Found and fixed 2 real gaps: the Lotus "success" line and both Trunk/Lotus
+  "meaning" lines had content but no live trigger (meaning was reachable only via a narrow
+  audio-toggle edge case) — added a `lotusBloomed` VO key and wired `speakPondPrompt` calls
+  at the actual reveal-card moments so both play on every normal playthrough now.
 
 
 
