@@ -6,22 +6,22 @@ import './SarvakaryeshuGame.css';
 
 import bgImg from './assets/images/sarvakaryeshu-bg.webp';
 
-import puzzleBeforeImg from './assets/images/sarvakaryeshu/puzzle-before.webp';
-import puzzleAfterImg from './assets/images/sarvakaryeshu/after-puzzle.webp';
-import sportsBeforeImg from './assets/images/sarvakaryeshu/before-sports.webp';
-import sportsAfterImg from './assets/images/sarvakaryeshu/after-sports.webp';
-import bikeBeforeImg from './assets/images/sarvakaryeshu/before-ride.webp';
-import bikeAfterImg from './assets/images/sarvakaryeshu/after-ride.webp';
-import grandmaBeforeImg from './assets/images/sarvakaryeshu/before-grandma.webp';
-import grandmaAfterImg from './assets/images/sarvakaryeshu/after-grandma.webp';
+import mooshikaBeforeImg from './assets/images/sarvakaryeshu/mooshika-before.png';
+import mooshikaAfterImg from './assets/images/sarvakaryeshu/mooshika-after.png';
+import eyesBeforeImg from './assets/images/sarvakaryeshu/eyes-before.png';
+import eyesAfterImg from './assets/images/sarvakaryeshu/eyes-after.png';
+import trunkBeforeImg from './assets/images/sarvakaryeshu/trunk-before.png';
+import trunkAfterImg from './assets/images/sarvakaryeshu/trunk-after.png';
+import tuskBeforeImg from './assets/images/sarvakaryeshu/tusk-before.png';
+import tuskAfterImg from './assets/images/sarvakaryeshu/tusk-after.png';
 import boatImg from './assets/images/boat.webp';
 
 import trunkIcon from '../../../../zones/symbol-mountain/shared/images/icons/symbol-trunk-new.png';
 import tuskIcon from '../../../../zones/symbol-mountain/shared/images/icons/symbol-tusk-new.png';
 import modakIcon from '../../../../zones/symbol-mountain/shared/images/icons/symbol-modak-new.png';
-import bellyIcon from '../../../../zones/symbol-mountain/shared/images/icons/symbol-belly-new.png';
-import lotusIcon from '../../../../zones/symbol-mountain/shared/images/icons/symbol-lotus-new.png';
+import mooshikaIcon from '../../../../zones/symbol-mountain/shared/images/icons/symbol-mooshika-new.png';
 import eyesIcon from '../../../../zones/symbol-mountain/shared/images/icons/symbol-eyes-new.png';
+import earsIcon from '../../../../zones/symbol-mountain/shared/images/icons/symbol-ears-new.png';
 
 const SYLLABLES = ['Sar', 'va', 'kar', 'yeshu'];
 const AUDIO = ['sar', 'va', 'kar', 'yeshu'];
@@ -34,81 +34,79 @@ const SYLLABLE_INDEX_BY_CHUNK = {
 
 const SITUATIONS = [
   {
-    id: 'trunk',
-    before: puzzleBeforeImg,
-    after: puzzleAfterImg,
-    beforeLine: 'Oops! The painting went splat.',
-    afterLine: 'The splat became something new!',
+    id: 'mooshika',
+    before: mooshikaBeforeImg,
+    after: mooshikaAfterImg,
+    beforeLine: 'So much to do.',
+    afterLine: 'Mooshika helped him begin with one small thing.',
     question: 'Which Ganesha power can help?',
     voKeyBefore: 'scene13_puzzle',
     voKeyAfter: 'scene13_puzzle_after',
-    correct: 'trunk',
-    feedback: 'The Trunk helped him try another way!',
+    correct: 'mooshika',
+    feedback: 'Mooshika helped him begin with one small thing.',
     syllableChunk: 'SAR',
-    options: ['trunk', 'tusk', 'modak'],
+    options: ['mooshika', 'modak', 'eyes'],
     clues: [
-      "Which symbol helps when one way doesn't work?",
-      'Which symbol reminds you to bend, change, and try another way?',
-      'Which long, bendy part of Ganesha can twist and turn?',
-    ],
-  },
-  {
-    id: 'belly',
-    before: sportsBeforeImg,
-    after: sportsAfterImg,
-    beforeLine: 'His feelings feel too big.',
-    afterLine: 'He feels calmer inside.',
-    question: 'Which Ganesha power can help?',
-    voKeyBefore: 'scene13_sports',
-    voKeyAfter: 'scene13_sports_after',
-    correct: 'belly',
-    feedback: 'The Belly helped him make room for his feelings!',
-    syllableChunk: 'VA',
-    options: ['belly', 'lotus', 'modak'],
-    clues: [
-      'Which symbol reminds you there is room for all your feelings?',
-      'Which symbol can hold happy, sad, worried, and angry feelings too?',
-      'Which big part of Ganesha can hold so much inside?',
+      'Which symbol can help him start small?',
+      'Which symbol reminds us to begin with one small thing?',
+      'Which tiny friend takes one small step at a time?',
     ],
   },
   {
     id: 'eyes',
-    before: grandmaBeforeImg,
-    after: grandmaAfterImg,
-    beforeLine: 'Where did the toy go?',
-    afterLine: 'She spotted the clue!',
+    before: eyesBeforeImg,
+    after: eyesAfterImg,
+    beforeLine: 'So many distractions.',
+    afterLine: 'The Eyes helped him focus on what mattered.',
+    question: 'Which Ganesha power can help?',
+    voKeyBefore: 'scene13_sports',
+    voKeyAfter: 'scene13_sports_after',
+    correct: 'eyes',
+    feedback: 'The Eyes helped him focus on what mattered.',
+    syllableChunk: 'VA',
+    options: ['eyes', 'mooshika', 'ears'],
+    clues: [
+      'Which symbol can help him focus?',
+      'Which symbol helps us notice what matters?',
+      'Which part of Ganesha helps him see clearly?',
+    ],
+  },
+  {
+    id: 'trunk',
+    before: trunkBeforeImg,
+    after: trunkAfterImg,
+    beforeLine: 'Heavy here, gentle there.',
+    afterLine: 'The Trunk helped him use strength, then gentleness.',
     question: 'Which Ganesha power can help?',
     voKeyBefore: 'scene13_bike',
     voKeyAfter: 'scene13_bike_after',
-    correct: 'eyes',
-    feedback: 'The Eyes helped her notice what others missed!',
+    correct: 'trunk',
+    feedback: 'The Trunk helped him use strength, then gentleness.',
     syllableChunk: 'KAR',
-    options: ['eyes', 'modak', 'belly'],
+    options: ['trunk', 'tusk', 'mooshika'],
     clues: [
-      'Which symbol helps you notice what matters?',
-      'Which symbol reminds you to look carefully and spot what others may miss?',
-      'Which part of Ganesha helps him see?',
+      'Which symbol can help with strength and gentleness?',
+      'Which symbol can be strong here and gentle there?',
+      'Which long, bendy part of Ganesha can move with care?',
     ],
   },
   {
     id: 'tusk',
-    // swapped: before-ride = engaged, after-ride = distracted — so the
-    // "before" (distracted) is after-ride and the "after" (focused) is before-ride
-    before: bikeAfterImg,
-    after: bikeBeforeImg,
-    beforeLine: 'So many things are distracting him.',
-    afterLine: 'He stayed with what mattered.',
+    before: tuskBeforeImg,
+    after: tuskAfterImg,
+    beforeLine: 'The crayon is broken.',
+    afterLine: 'The Tusk reminded her that something broken can still help.',
     question: 'Which Ganesha power can help?',
     voKeyBefore: 'scene13_grandma',
     voKeyAfter: 'scene13_grandma_after',
     correct: 'tusk',
-    feedback: 'The Tusk helped him stay focused on what mattered!',
+    feedback: 'The Tusk reminded her that something broken can still help.',
     syllableChunk: 'YESHU',
-    options: ['tusk', 'eyes', 'trunk'],
+    options: ['tusk', 'modak', 'trunk'],
     clues: [
-      'Which symbol reminds you to stay with what is important?',
-      'Which symbol reminds you to stay strong and focused, even when something is difficult?',
-      'Which strong white part does Ganesha have only one of?',
+      'Which symbol reminds us broken things can still help?',
+      'Which symbol helps when something broken can still be useful?',
+      'Which part of Ganesha is broken but important?',
     ],
   },
 ];
@@ -117,28 +115,28 @@ const POWER_ICONS = {
   trunk: { img: trunkIcon, label: 'Trunk', color: '#9C6FD6' },
   tusk: { img: tuskIcon, label: 'Tusk', color: '#F2B94B' },
   modak: { img: modakIcon, label: 'Modak', color: '#E07B3A' },
-  belly: { img: bellyIcon, label: 'Belly', color: '#F48FB1' },
-  lotus: { img: lotusIcon, label: 'Lotus', color: '#D86ACB' },
+  mooshika: { img: mooshikaIcon, label: 'Mooshika', color: '#8D6E63' },
   eyes: { img: eyesIcon, label: 'Eyes', color: '#57A6D9' },
+  ears: { img: earsIcon, label: 'Ears', color: '#7CB342' },
 };
 
 const POSE_ASSETS = [
   bgImg,
-  puzzleBeforeImg,
-  puzzleAfterImg,
-  sportsBeforeImg,
-  sportsAfterImg,
-  bikeBeforeImg,
-  bikeAfterImg,
-  grandmaBeforeImg,
-  grandmaAfterImg,
+  mooshikaBeforeImg,
+  mooshikaAfterImg,
+  eyesBeforeImg,
+  eyesAfterImg,
+  trunkBeforeImg,
+  trunkAfterImg,
+  tuskBeforeImg,
+  tuskAfterImg,
   boatImg,
   trunkIcon,
   tuskIcon,
   modakIcon,
-  bellyIcon,
-  lotusIcon,
+  mooshikaIcon,
   eyesIcon,
+  earsIcon,
 ];
 
 export default function SarvakaryeshuGame({

@@ -353,12 +353,11 @@ export default function SarvadaGame({
               onPhaseComplete?.();
             };
 
-            // Full word "sarvada" → closing line → meaning, then hand off.
-            // Fallback timer covers muted audio / missing callbacks.
+            // Full word "sarvada" → closing line (meaning is embedded in the
+            // line itself), then hand off. Fallback timer covers muted
+            // audio / missing callbacks.
             playWord?.('sarvada', () => {
-              playSceneLine?.('scene14_success', () => {
-                playSceneLine?.('scene14_meaning', finish);
-              });
+              playSceneLine?.('scene14_success', finish);
             });
             safeAfter(9000, finish);
           });
