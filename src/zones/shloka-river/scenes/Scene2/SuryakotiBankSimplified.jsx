@@ -286,20 +286,18 @@ const SuryakotiBankContent = ({
 
   const playGuidanceVoice = useCallback((key, onEnded, options = {}) => {
     const webSpeechMap = {
-      welcome: "The river is dark today. Let's see what a little light can do.",
-      scene11_intro: "The river is dark today. Let's see what a little light can do.",
-      scene11_surya_intro: "Bunny can't find her way home in the dark. Rub the glowing spot to brighten the river.",
+      welcome: "The river is dark. Let’s bring back some light.",
+      scene11_intro: "The river is dark. Let’s bring back some light.",
+      scene11_surya_intro: "Bunny can’t find home. Rub the glow to bring back the light.",
       scene11_surya_rub: "Rub the glowing spot.",
       scene11_surya_hint: "Keep rubbing.",
-      scene11_surya_success: 'Suryakoti! You brought back the light, and Bunny found her way home.',
-      scene11_surya_done: 'Suryakoti! You brought back the light, and Bunny found her way home.',
-      scene11_surya_meaning: 'Suryakoti means bright as ten million suns.',
+      scene11_surya_success: 'Suryakoti! You brought back the light and helped Bunny home.',
+      scene11_surya_done: 'Suryakoti! You brought back the light and helped Bunny home.',
       scene11_sama_intro: 'A little deer sees a strange shadow. Move the light and look closely.',
       scene11_sama_hint: 'Move the light and look closely.',
-      scene11_sama_hint_look: 'Look closely.',
-      scene11_sama_done: 'Samaprabha! You looked closely and saw what was really there.',
-      scene11_sama_meaning: 'Samaprabha means steady, equal brilliance.',
-      suryakotiSetup: "Bunny can't find her way home in the dark. Rub the glowing spot to brighten the river.",
+      scene11_sama_hint_look: 'Look again — what is really there?',
+      scene11_sama_done: 'Samaprabha! You looked closely and helped Deer feel safe.',
+      suryakotiSetup: "Bunny can’t find home. Rub the glow to bring back the light.",
       suryakotiClaim: 'Suryakoti lights the way.',
       samaprabhaSetup: "A shadow looks scary until we understand it.",
       samaprabhaClaim: 'Samaprabha helps us see clearly.',
@@ -718,11 +716,7 @@ const SuryakotiBankContent = ({
                     revealVoice={{
                       isEnabled: isAudioOn,
                       wordId: revealConfig.symbolId,
-                      meaningKey: revealConfig.symbolId === 'suryakoti'
-                        ? 'scene11_surya_meaning'
-                        : revealConfig.symbolId === 'samaprabha'
-                          ? 'scene11_sama_meaning'
-                          : null,
+
                       playWord: playWordAudio,
                       playLine: playGuidanceVoice,
                       stopVoice: stopAllVoice,

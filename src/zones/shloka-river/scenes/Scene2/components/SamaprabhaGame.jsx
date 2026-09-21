@@ -760,7 +760,7 @@ export default function SamaprabhaGame({
               top: `${Math.min(82, activeClue.cy + 16)}%`,
             }}
           >
-            Look closely.
+            Look again — what is really there?
           </div>
         )}
 
