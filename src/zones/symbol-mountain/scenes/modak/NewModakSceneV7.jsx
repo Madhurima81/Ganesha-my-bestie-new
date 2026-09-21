@@ -245,20 +245,19 @@ function parsePercentValue(value, fallback) {
 // VO (Web Speech scaffolding - MP3s later)
 // ========================================
 const MODAK_VO = {
-  calmMooshika: 'Mooshika’s thoughts are jumping everywhere. Press and hold to help him stay with one thing.',
+  calmMooshika: 'Mooshika’s thoughts keep jumping around. Press and hold to help him focus.',
   calmMooshikaIdle: 'Catch Mooshika and keep holding.',
   mooshikaCalmed: 'Mooshika stayed with it and made a little progress.',
   guidePower: 'I can keep going, one small step at a time.',
-  mudStart: 'The last two flowers are across the mud. Guide Mooshika from safe spot to safe spot.',
   mudIdle: 'Guide Mooshika to the next safe spot.',
   leavesStart: 'Two flowers are hiding in the leaves. Swipe them apart.',
   leavesIdle: 'Swipe the leaves apart again.',
-  branchStart: 'These flowers are too high for Mooshika.',
-  branchIdle: 'Pull the branch down and keep holding.',
-  garlandStart: 'Six flowers! Tap each one to make a garland for Ganesha.',
+  branchStart: 'Two flowers are too high for Mooshika. Pull the branch down.',
+  branchIdle: 'Keep holding the branch.',
+  garlandStart: 'You found all six flowers. Tap them to make a garland for Ganesha.',
   garlandIdle: 'Tap another flower.',
   garlandDone: 'The garland is ready! Drag it to Ganesha.',
-  carryStart: 'You brought the garland all the way to Ganesha.',
+  carryStart: 'You brought the garland to Ganesha — and look, a sweet Modak!',
   carryIdle: 'Drag the garland to Ganesha.',
   bellyPower: 'I can have lots of feelings and keep going.',
   modakPower: 'I can learn, keep trying, and find joy.',
@@ -270,7 +269,6 @@ const MODAK_VO_MOMENT = {
   calmMooshikaIdle: 'default',
   mooshikaCalmed: 'celebration',
   guidePower: 'encouragement',
-  mudStart: 'default',
   mudIdle: 'default',
   leavesStart: 'default',
   leavesIdle: 'default',
@@ -849,7 +847,7 @@ const NewModakSceneMVPContent = ({
       symbolId: 'modak',
       symbolImage: symbolModakColored,
       symbolName: 'Modak',
-      affirmation: 'I can feel peaceful inside.',
+      affirmation: MODAK_VO.modakPower,
       sidebarTarget: getSidebarTarget('modak')
     });
     safeSetTimeout(() => setShowSparkle(null), 1600);
@@ -884,7 +882,6 @@ const NewModakSceneMVPContent = ({
     if (symbolId === 'mooshika') {
       safeSetTimeout(() => {
         resetIdleBaseline();
-        playVoice('mudStart');
         setShowSparkle('flowers-appear');
         safeSetTimeout(() => {
           sceneActions.updateState({
@@ -1076,7 +1073,7 @@ const NewModakSceneMVPContent = ({
           symbolId: 'modak',
           symbolImage: symbolModakColored,
           symbolName: 'Modak',
-          affirmation: 'I can feel peaceful inside.',
+          affirmation: MODAK_VO.modakPower,
           sidebarTarget: getSidebarTarget('modak')
         });
       }, 1200);

@@ -103,20 +103,19 @@ const PHASES = {
 
 const VOICE_LINES = {
   // Entry
-  opening: 'The lotus needs water to bloom. Let\'s help the water reach it.',
+  opening: 'The lotus needs water to bloom. Let’s help the water reach it.',
 
   // Trunk phase (strength, then gentleness) — first
-  rockRound: 'This heavy rock needs strength. Press and hold.',
-  idleRock: 'Keep holding. This one needs strength.',
-  reedsRound: 'These flowers are delicate. Gently move them aside.',
-  idleReeds: 'A gentle touch will move them.',
-  waterPathPower: 'Ganesha\'s trunk knows when to be strong or gentle.',
+  rockRound: 'The rock is blocking the stream. Press and hold to move it.',
+  idleRock: 'Keep holding to move the rock.',
+  reedsRound: 'The flowers are in the water’s way. Gently move them aside.',
+  idleReeds: 'Move the flowers gently so the water can pass.',
+  trunkSuccess: 'The water reached the lotus.',
 
   // Lotus phase (press-and-hold to bloom) — second
-  lotusRound: 'The lotus is growing through the mud. Press and hold the bud.',
-  idleLotus: 'Keep holding.',
-  lotusBloomed: 'Look! The lotus bloomed, even in the muddy pond.',
-  lotusBloomPower: 'The lotus reminds us: we can keep growing when things are hard.',
+  lotusRound: 'The water reached the lotus. Hold the bud to help it bloom.',
+  idleLotus: 'Keep holding the bud.',
+  lotusBloomed: 'The lotus bloomed, even in the muddy pond.',
 
   // Completion
   complete: 'You used strength, then gentleness, and helped the lotus bloom.'
@@ -309,24 +308,24 @@ const PondSceneContent = ({
     }
   }, []);
   const DEFAULT_POND_LAYOUT = {
-    rock: { x: 32.5, y: 53, size: 26.5 },
-    flowers: { x: 55.5, y: 62.5, size: 10.5 },
-    lotus: { x: 76.5, y: 59.5, size: 8.5 },
+    rock: { x: 28.7, y: 49.9, size: 26.5 },
+    flowers: { x: 52, y: 64, size: 17.5 },
+    lotus: { x: 69.6, y: 56.2, size: 8.5 },
     reflection: { x: 76, y: 66, size: 20 },
     water: { x: 0, y: 67.8, size: 78 },
     streamOverlay: { x: 0, y: 41, size: 90.5 },
     // Each flower and pebble is now a fully independent stage-positioned
     // element (own x/y/size) — NOT nested inside the reeds-swipe group, so
     // dragging one never drags the others as a group.
-    flower1: { x: 48, y: 60, size: 6 },
-    flower2: { x: 51, y: 65, size: 5 },
-    flower3: { x: 63, y: 60, size: 6 },
-    flower4: { x: 60, y: 65, size: 5 },
-    pebble1: { x: 55, y: 69, size: 3.5 },
-    pebble2: { x: 59, y: 66, size: 2.5 },
-    pebble3: { x: 51, y: 71, size: 2.8 },
-    pebble4: { x: 57, y: 73, size: 2.2 },
-    turtle: { x: 40, y: 70, size: 8 },
+    flower1: { x: 52.5, y: 60.1, size: 6 },
+    flower2: { x: 54.2, y: 62.7, size: 5 },
+    flower3: { x: 50.5, y: 62, size: 6 },
+    flower4: { x: 53, y: 63.5, size: 5 },
+    pebble1: { x: 52.7, y: 66.3, size: 7 },
+    pebble2: { x: 51.5, y: 65.5, size: 5.5 },
+    pebble3: { x: 51.5, y: 68, size: 6 },
+    pebble4: { x: 49.5, y: 66.5, size: 5.5 },
+    turtle: { x: 59, y: 41.7, size: 8 },
   };
   const [pondLayout, setPondLayout] = useState(DEFAULT_POND_LAYOUT);
   const pondStageRef = useRef(null);
@@ -564,15 +563,6 @@ const PondSceneContent = ({
       idleVoGateRef.current = false;
       lastAnnouncedPromptRef.current = null;
       resumePromptPlayedRef.current = false;
-
-      if (revealConfig?.symbolId) {
-        const voMap = { lotus: 'lotusBloomPower', trunk: 'waterPathPower' };
-        const voKey = voMap[revealConfig.symbolId];
-        if (voKey) {
-          speakPondPrompt(voKey);
-          return;
-        }
-      }
 
       const replayKey = getPromptKeyForPhase();
       if (replayKey) speakPondPrompt(replayKey);
@@ -1048,6 +1038,7 @@ const PondSceneContent = ({
     safeSetTimeout(() => {
       setShowSparkle('lotus-wake');
       sceneActions.updateState({ lotusUpright: true });
+      speakPondPrompt('trunkSuccess');
       triggerMiniGesture('victory', 'center', 1800);
       playGlow();
     }, WATER_TO_POND_MS);
@@ -1061,7 +1052,6 @@ const PondSceneContent = ({
         affirmation: 'I can be strong and gentle.',
         symbolImage: symbolTrunkColored
       });
-      speakPondPrompt('waterPathPower');
     }, WATER_TO_POND_MS + LOTUS_GLOW_MS);
   }, [
     playGlow,
@@ -1138,7 +1128,6 @@ const PondSceneContent = ({
         affirmation: 'I can keep growing when things are hard.',
         symbolImage: symbolLotusColored
       });
-      speakPondPrompt('lotusBloomPower');
     }, 2400);
   }, [sceneActions, playBloom, playChime, speakPondPrompt, triggerMiniGesture, safeSetTimeout]);
 
@@ -1389,14 +1378,22 @@ const PondSceneContent = ({
                   className="pond-water-stream__img"
                   draggable={false}
                 />
-                {waterStage > 0 && (
-                  <div className="pond-water-ripples" aria-hidden="true">
-                    <span className="pond-ripple pond-ripple--1" />
-                    <span className="pond-ripple pond-ripple--2" />
-                    <span className="pond-ripple pond-ripple--3" />
-                  </div>
-                )}
               </div>
+
+              {/* Flow accent — anchored to the actual visible blue stream's own
+                  position (the 'water' layout slot), not the streamOverlay
+                  decal box above, which doesn't line up with it. Flows out of
+                  the stream, along the mud path, toward the flowers/lotus. */}
+              {waterStage > 0 && (
+                <div
+                  className={`pond-water-ripples ${waterStage === 1 ? 'pond-water-ripples--blocked' : 'pond-water-ripples--flowing'}`}
+                  style={{
+                    left: `${pondLayout.water.x}%`,
+                    top: `${pondLayout.water.y}%`,
+                  }}
+                  aria-hidden="true"
+                />
+              )}
 
               <div
                 className={`pond-mud-pool ${waterStage >= 2 ? 'pond-mud-pool--filled' : ''}`}
@@ -1569,60 +1566,66 @@ const PondSceneContent = ({
               />
 
               {!sceneState.reedsParted && (
-                <>
-                  <div
-                    role="button"
-                    aria-label="Gently move the flowers aside"
-                    className={`
-                      pond-trunk-reeds
-                      ${sceneState.phase === PHASES.REEDS_ACTIVE ? hintClassName : ''}
-                    `}
-                    onPointerDown={layoutOpen ? undefined : handleReedsPointerDown}
-                    onPointerMove={layoutOpen ? undefined : handleReedsPointerMove}
-                    onPointerUp={layoutOpen ? undefined : handleReedsPointerUp}
-                    onPointerCancel={layoutOpen ? undefined : handleReedsPointerUp}
-                    onPointerLeave={layoutOpen ? undefined : handleReedsPointerUp}
-                    style={{ '--reeds-progress': reedsProgress, pointerEvents: layoutOpen ? 'none' : undefined }}
-                  />
-
-                  {/* Flowers and pebbles — each fully independent, own x/y/size,
-                      dragged directly (not nested inside the reeds group above). */}
-                  {['flower1', 'flower2', 'flower3', 'flower4'].map((key) => (
-                    <img
-                      key={key}
-                      src={pondFlower}
-                      className="pond-flower-item"
-                      alt=""
-                      draggable={false}
-                      style={{
-                        left: `var(--pond-${key}-x)`,
-                        top: `var(--pond-${key}-y)`,
-                        width: `var(--pond-${key}-size)`,
-                        cursor: layoutOpen ? 'move' : undefined,
-                        pointerEvents: layoutOpen ? 'auto' : 'none',
-                      }}
-                      onPointerDown={layoutOpen ? (e) => startMainDrag(key, e) : undefined}
-                    />
-                  ))}
-                  {['pebble1', 'pebble2', 'pebble3', 'pebble4'].map((key) => (
-                    <img
-                      key={key}
-                      src={pondPebble}
-                      className="pond-pebble-item"
-                      alt=""
-                      draggable={false}
-                      style={{
-                        left: `var(--pond-${key}-x)`,
-                        top: `var(--pond-${key}-y)`,
-                        width: `var(--pond-${key}-size)`,
-                        cursor: layoutOpen ? 'move' : undefined,
-                        pointerEvents: layoutOpen ? 'auto' : 'none',
-                      }}
-                      onPointerDown={layoutOpen ? (e) => startMainDrag(key, e) : undefined}
-                    />
-                  ))}
-                </>
+                <div
+                  role="button"
+                  aria-label="Gently move the flowers aside"
+                  className={`
+                    pond-trunk-reeds
+                    ${sceneState.phase === PHASES.REEDS_ACTIVE ? hintClassName : ''}
+                  `}
+                  onPointerDown={layoutOpen ? (e) => startMainDrag('flowers', e) : handleReedsPointerDown}
+                  onPointerMove={layoutOpen ? undefined : handleReedsPointerMove}
+                  onPointerUp={layoutOpen ? undefined : handleReedsPointerUp}
+                  onPointerCancel={layoutOpen ? undefined : handleReedsPointerUp}
+                  onPointerLeave={layoutOpen ? undefined : handleReedsPointerUp}
+                  style={{
+                    '--reeds-progress': reedsProgress,
+                    cursor: layoutOpen ? 'move' : undefined,
+                    pointerEvents: layoutOpen ? 'auto' : undefined,
+                  }}
+                />
               )}
+
+              {/* Flowers and pebbles — each fully independent, own x/y/size,
+                  dragged directly (not nested inside the reeds hit-zone above).
+                  Stay visible after the flowers are swept aside — sweeping
+                  them aside doesn't make them disappear, just clears the way
+                  for the water. Only the (invisible) hit-zone above unmounts
+                  once parted, since it has no more job to do. */}
+              {['flower1', 'flower2', 'flower3', 'flower4'].map((key) => (
+                <img
+                  key={key}
+                  src={pondFlower}
+                  className={`pond-flower-item ${sceneState.reedsParted ? 'pond-flower-item--parted' : ''}`}
+                  alt=""
+                  draggable={false}
+                  style={{
+                    left: `var(--pond-${key}-x)`,
+                    top: `var(--pond-${key}-y)`,
+                    width: `var(--pond-${key}-size)`,
+                    cursor: layoutOpen ? 'move' : undefined,
+                    pointerEvents: layoutOpen ? 'auto' : 'none',
+                  }}
+                  onPointerDown={layoutOpen ? (e) => startMainDrag(key, e) : undefined}
+                />
+              ))}
+              {['pebble1', 'pebble2', 'pebble3', 'pebble4'].map((key) => (
+                <img
+                  key={key}
+                  src={pondPebble}
+                  className="pond-pebble-item"
+                  alt=""
+                  draggable={false}
+                  style={{
+                    left: `var(--pond-${key}-x)`,
+                    top: `var(--pond-${key}-y)`,
+                    width: `var(--pond-${key}-size)`,
+                    cursor: layoutOpen ? 'move' : undefined,
+                    pointerEvents: layoutOpen ? 'auto' : 'none',
+                  }}
+                  onPointerDown={layoutOpen ? (e) => startMainDrag(key, e) : undefined}
+                />
+              ))}
 
               {/* Sad turtle — static decorative asset, gentle breathing loop, independently draggable */}
               <img

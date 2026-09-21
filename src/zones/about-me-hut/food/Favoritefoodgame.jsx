@@ -244,7 +244,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
   const VOICE_LINES = {
     // Opening Screen
-    opening: "Let's find out what I like — then I want to learn about you.",
+    opening: "Let’s find my favorites, then yours.",
 
     // Ganesha Section - Food
     foodQuestion: "Can you guess my favorite food?",

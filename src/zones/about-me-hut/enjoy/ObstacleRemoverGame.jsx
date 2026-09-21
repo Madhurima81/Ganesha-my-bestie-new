@@ -258,7 +258,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
   const VOICE_LINES = {
     // Opening Modal
-    opening: "I have a few wishes for the world. Will you help me?",
+    opening: "I have a few wishes for the world. Will you help?",
 
     // Wish 1
     wish1Intro: "My first wish is for more kindness.",

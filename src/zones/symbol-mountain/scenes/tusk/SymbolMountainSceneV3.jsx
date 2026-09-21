@@ -85,17 +85,17 @@ const RESUME_DELAY_MS = 3000;
 const GANESHA_REVEAL_IMAGE = '/images/ganesha-sit.svg';
 
 const VOICE_LINES = {
-  opening: "Let's explore... look and listen.",
+  opening: "The forest friends need your help. Let’s see what they need.",
   eyes: 'Some things are hiding. Look closely and tap each one you find.',
-  ears: 'Listen to the sound. Tap where you think it came from.',
+  ears: 'Our friends need the right sounds. Listen, then tap where each sound came from.',
   eyesSetup: 'You looked closely and found them all.',
   earsSetup: 'You listened carefully and found every sound.',
-  tuskSetup: "You stayed focused... now let's clear the path.",
-  tusk: 'The path is blocked. Stay focused and choose what can clear each obstacle.',
+  tuskSetup: '',
+  tusk: '',
   idleEyes: "Look closely — there's still one hiding.",
   idleEars: 'Listen again — where did it come from?',
   idleTusk: 'Look at the obstacle. What can clear it?',
-  complete: 'You looked closely, listened carefully, and stayed focused.'
+  complete: 'You looked, listened, and used what you had to help.'
 };
 
 // Game phases
@@ -587,15 +587,15 @@ const SymbolMountainSceneContent = ({
     }
 
     if (sceneState.phase === PHASES.EYES_COMPLETE) {
-      safeSetTimeout(() => setRevealConfig({ symbolId: 'eyes', symbolImage: symbolEyesColored, symbolName: 'Eyes', affirmation: "I notice what's around me.", sidebarTarget: getSidebarTarget('eyes'), sayWithMeDelayMs: 3200 }), 500);
+      safeSetTimeout(() => setRevealConfig({ symbolId: 'eyes', symbolImage: symbolEyesColored, symbolName: 'Eyes', affirmation: 'I can focus on what matters.', sidebarTarget: getSidebarTarget('eyes'), sayWithMeDelayMs: 3200 }), 500);
       return;
     }
     if (sceneState.phase === PHASES.EARS_COMPLETE) {
-      safeSetTimeout(() => setRevealConfig({ symbolId: 'ear', symbolImage: symbolEarColored, symbolName: 'Ears', affirmation: 'I listen with care.', sidebarTarget: getSidebarTarget('ear'), sayWithMeDelayMs: 3200 }), 500);
+      safeSetTimeout(() => setRevealConfig({ symbolId: 'ear', symbolImage: symbolEarColored, symbolName: 'Ears', affirmation: 'I can listen for what helps me.', sidebarTarget: getSidebarTarget('ear'), sayWithMeDelayMs: 3200 }), 500);
       return;
     }
     if (sceneState.phase === PHASES.TUSK_COMPLETE) {
-      safeSetTimeout(() => setRevealConfig({ symbolId: 'tusk', symbolImage: symbolTuskColored, symbolName: 'Tusk', affirmation: 'I stay focused on what is true.', sidebarTarget: getSidebarTarget('tusk'), sayWithMeDelayMs: 3200 }), 500);
+      safeSetTimeout(() => setRevealConfig({ symbolId: 'tusk', symbolImage: symbolTuskColored, symbolName: 'Tusk', affirmation: 'I can use what I have for something important.', sidebarTarget: getSidebarTarget('tusk'), sayWithMeDelayMs: 3200 }), 500);
       return;
     }
 
@@ -699,7 +699,7 @@ const SymbolMountainSceneContent = ({
     triggerMiniGesture('victory', 'center', 2000);
     safeSetTimeout(() => {
       setShowSparkle(null);
-      setRevealConfig({ symbolId: 'eyes', symbolImage: symbolEyesColored, symbolName: 'Eyes', affirmation: "I notice what's around me.", sidebarTarget: getSidebarTarget('eyes'), sayWithMeDelayMs: 3200 });
+      setRevealConfig({ symbolId: 'eyes', symbolImage: symbolEyesColored, symbolName: 'Eyes', affirmation: 'I can focus on what matters.', sidebarTarget: getSidebarTarget('eyes'), sayWithMeDelayMs: 3200 });
     }, 1200);
   };
 
@@ -729,7 +729,7 @@ const SymbolMountainSceneContent = ({
       setGaneshaRevealing(false);
     }, 3000);
     safeSetTimeout(() => {
-      setRevealConfig({ symbolId: 'tusk', symbolImage: symbolTuskColored, symbolName: 'Tusk', affirmation: 'I stay focused on what is true.', sidebarTarget: getSidebarTarget('tusk'), sayWithMeDelayMs: 3200 });
+      setRevealConfig({ symbolId: 'tusk', symbolImage: symbolTuskColored, symbolName: 'Tusk', affirmation: 'I can use what I have for something important.', sidebarTarget: getSidebarTarget('tusk'), sayWithMeDelayMs: 3200 });
     }, 3200);
   };
 
@@ -900,7 +900,7 @@ const SymbolMountainSceneContent = ({
                           symbolId: 'ear',
                           symbolImage: symbolEarColored,
                           symbolName: 'Ears',
-                          affirmation: 'I listen with care.',
+                          affirmation: 'I can listen for what helps me.',
                           sidebarTarget: getSidebarTarget('ear'),
                           sayWithMeDelayMs: 3200
                         });
@@ -1119,7 +1119,7 @@ const SymbolMountainSceneContent = ({
                   },
                   tusk: {
                     title: "Tusk â€” Ganesha's Writing Tool!",
-                    description: "Ganesha broke his own tusk to write a great story! It shows us that we can turn any challenge into something amazing."
+                    description: "You used what was there to help rebuild the nest."
                   }
                 }}
                 nextSceneName="Ganesha's Symbol Challenge"
