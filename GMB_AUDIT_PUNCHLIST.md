@@ -428,16 +428,8 @@ None beyond what's already tracked below — no new findings this pass.
 ## About Me Hut — Group C audit (Sections 9, 10, 11, 12, 13)
 _Audited 2026-09-18. Scope: `Familytreegame`, `Favoritefoodgame`, `ObstacleRemoverGame` (+ `DreamsWishesGame.css`), `MyIndianStoryGame` (+ `FreeDraggableItem`), `AboutMeComparisonCard`._
 
-### New actionable bugs
-- **Dreams & Wishes intro CTA drops below 60px at tablet/small-desktop width.** `DreamsWishesGame.css:443-446`, inside `@media (max-width: 1024px)`:
-  ```css
-  .wish1-intro-btn {
-    min-width: 400px;
-    min-height: 56px;
-    font-size: 24px !important;
-  }
-  ```
-  Base rule is `min-height: 78px`; this breakpoint drops it to 56px, below the 60px floor.
+### Resolved — was listed as a new actionable bug, now confirmed fixed (2026-09-22)
+- ~~**Dreams & Wishes intro CTA drops below 60px at tablet/small-desktop width**~~ — dated 2026-09-18, before this session's Item B touch-target pass. Re-verified: `DreamsWishesGame.css:443-447` (`@media max-width: 1024px`) now sets `min-height: 64px`, above the 60px floor. Closing.
 - **Family Tree "Continue" button has no min-height on mobile.** `Familytreegame.css:4853-4857`, inside `@media (max-width: 900px)`:
   ```css
   .continue-btn-simple {
