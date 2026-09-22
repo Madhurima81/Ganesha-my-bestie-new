@@ -144,10 +144,8 @@
   opacity: 0.46;
 }
 
-.hinting {
-  animation: eyes-hint-pulse 1.8s ease-in-out infinite;
-}
-
+/* L3 only: exact hidden item revealed — the only stage that touches the
+   hidden target itself. L1/L2 hint at the scenery instead (below). */
 .hinting-strong {
   animation: eyes-hint-pulse-strong 1s ease-in-out infinite;
 }
@@ -162,6 +160,36 @@
   pointer-events: none;
   user-select: none;
   filter: drop-shadow(0 10px 14px rgba(30, 49, 35, 0.2));
+}
+
+/* L1: remaining hiding areas breathe gently as a group — "search broadly",
+   never the hidden feather/mango itself. Very restrained, no glow, no VO. */
+.eyes-hiding-prop.eyes-search-area-hint {
+  animation: eyes-search-area-breathe 1.4s ease-in-out 1;
+}
+
+/* L2: narrows to the one bush holding the next remaining object — still no
+   reveal of the object, just "look here" for a smaller area. */
+.eyes-hiding-prop.eyes-search-area-hint-strong {
+  animation: eyes-search-area-breathe-strong 1.3s ease-in-out infinite;
+}
+
+@keyframes eyes-search-area-breathe {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); filter: drop-shadow(0 10px 14px rgba(30, 49, 35, 0.2)); }
+  50% { transform: translate(-50%, -50%) scale(1.025); filter: brightness(1.06) drop-shadow(0 10px 14px rgba(30, 49, 35, 0.2)); }
+}
+
+@keyframes eyes-search-area-breathe-strong {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); filter: brightness(1.04) drop-shadow(0 10px 14px rgba(30, 49, 35, 0.2)); }
+  50% { transform: translate(-50%, -50%) scale(1.045); filter: brightness(1.12) drop-shadow(0 0 10px rgba(255, 225, 120, 0.4)) drop-shadow(0 10px 14px rgba(30, 49, 35, 0.2)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eyes-hiding-prop.eyes-search-area-hint,
+  .eyes-hiding-prop.eyes-search-area-hint-strong,
+  .hinting-strong {
+    animation: none;
+  }
 }
 
 .eyes-story-character {
@@ -284,11 +312,6 @@
   0% { transform: translate(-50%, -50%) scale(0.92); }
   65% { transform: translate(-50%, -50%) scale(1.06); }
   100% { transform: translate(-50%, -50%) scale(1); }
-}
-
-@keyframes eyes-hint-pulse {
-  0%, 100% { filter: drop-shadow(0 0 0 rgba(255, 225, 120, 0)); }
-  50% { filter: drop-shadow(0 0 16px rgba(255, 225, 120, 0.92)); }
 }
 
 @keyframes eyes-hint-pulse-strong {

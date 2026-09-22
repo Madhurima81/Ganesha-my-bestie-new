@@ -148,23 +148,40 @@ const VO_TEXTS = {
   neutral: 'That is interesting, but it is not what they are looking for.',
   feather: 'Feather found! Peacock will be so happy.',
   mango: 'Mango found! Monkey is hungry no more.',
-  idleHint: 'Look near the bushes — something is hiding there.'
+  // L2 — narrows the search without naming the object.
+  idleHintL2: 'Look near the bushes. Something is peeking out.',
+  // L3 — exact object, direct tap instruction, per remaining target.
+  idleHintL3: {
+    feather: 'Tap the glowing feather.',
+    mango: 'Tap the glowing mango.'
+  }
 };
 
-const IDLE_HINT_MS = 9000;
-const IDLE_HINT_L2_MS = 17000;
-const IDLE_HINT_L3_MS = 25000;
+const IDLE_HINT_MS = 10000;
+const IDLE_HINT_L2_MS = 18000;
+const IDLE_HINT_L3_MS = 26000;
+// Repeated unsuccessful searching (background taps) accelerates help —
+// a child randomly tapping the forest is exactly who needs it, so
+// exploration attempts must not just restart the idle clock.
+const MISS_COUNT_FOR_L2 = 3;
+const MISS_COUNT_FOR_L3 = 6;
 
-const speakFallback = (text) => {
-  if (!text || typeof window === 'undefined' || !window.speechSynthesis) return;
+const speakFallback = (text, onEnd) => {
+  if (!text || typeof window === 'undefined' || !window.speechSynthesis) {
+    onEnd?.();
+    return;
+  }
   try {
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.rate = 0.92;
     utterance.pitch = 1;
+    utterance.onend = () => onEnd?.();
+    utterance.onerror = () => onEnd?.();
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(utterance);
   } catch {
     // Speech synthesis is optional.
+    onEnd?.();
   }
 };
 
@@ -186,9 +203,17 @@ const EyesPopUpGame = ({
   const [goneTargets, setGoneTargets] = useState([]);
   const [feedback, setFeedback] = useState('');
   const [softPulse, setSoftPulse] = useState(null);
-  const [hintId, setHintId] = useState(null);
-  const [hintStage, setHintStage] = useState(0);
-  const hintVoPlayedRef = useRef(false);
+  // idleHintStage comes from the 10/18/26 clock; forcedHintStage escalates
+  // from repeated unsuccessful searching (background taps) so a child who
+  // keeps missing doesn't have to wait out the full ladder.
+  const [idleHintStage, setIdleHintStage] = useState(0);
+  const [forcedHintStage, setForcedHintStage] = useState(0);
+  const hintStage = Math.max(idleHintStage, forcedHintStage);
+  const lastSpokenHintKeyRef = useRef(null);
+  const missCountRef = useRef(0);
+  // Idle clock must not start while the intro or a success VO is still
+  // speaking — armed only once that VO's onEnd fires.
+  const idleClockArmedRef = useRef(false);
   const [layout, setLayout] = useState(loadSavedLayout);
   const [debugMode, setDebugMode] = useState(false);
   const [selectedDebugKey, setSelectedDebugKey] = useState('targetFeather');
@@ -232,9 +257,12 @@ const EyesPopUpGame = ({
     return timer;
   }, []);
 
-  const speak = useCallback((text) => {
-    if (!isAudioOn) return;
-    speakFallback(text);
+  const speak = useCallback((text, onEnd) => {
+    if (!isAudioOn) {
+      onEnd?.();
+      return;
+    }
+    speakFallback(text, onEnd);
   }, [isAudioOn]);
 
   const showFeedback = useCallback((message, pulseId = null) => {
@@ -247,11 +275,14 @@ const EyesPopUpGame = ({
     }, 1500);
   }, []);
 
+  // A genuine find earns a fresh window and clears the error streak —
+  // distinct from a background tap, which must NOT reset the clock.
   const resetIdle = useCallback(() => {
     lastTapTimeRef.current = Date.now();
-    setHintId(null);
-    setHintStage(0);
-    hintVoPlayedRef.current = false;
+    setIdleHintStage(0);
+    setForcedHintStage(0);
+    lastSpokenHintKeyRef.current = null;
+    missCountRef.current = 0;
   }, []);
 
   const saveLayout = useCallback((nextLayout) => {
@@ -386,36 +417,42 @@ const EyesPopUpGame = ({
     setGoneTargets([]);
     setFeedback('');
     setSoftPulse(null);
-    setHintId(null);
-    setHintStage(0);
-    hintVoPlayedRef.current = false;
-    lastTapTimeRef.current = Date.now();
-    speak(VO_TEXTS.intro);
+    setIdleHintStage(0);
+    setForcedHintStage(0);
+    lastSpokenHintKeyRef.current = null;
+    missCountRef.current = 0;
+    idleClockArmedRef.current = false;
+    // The 10/18/26 clock starts only once the intro VO actually finishes —
+    // never while the child is still being told what to look for.
+    speak(VO_TEXTS.intro, () => {
+      idleClockArmedRef.current = true;
+      lastTapTimeRef.current = Date.now();
+    });
   }, [isActive, speak, stopTimers]);
+
+  const nextHintTarget = useMemo(
+    () => SEARCH_TARGETS.find((target) => !foundIds.has(target.id)) || null,
+    [foundIds]
+  );
 
   useEffect(() => {
     if (!isActive || flow === FLOW.COMPLETE) return;
 
     idleTimerRef.current = setInterval(() => {
+      if (!idleClockArmedRef.current) return;
+
       const idleMs = Date.now() - lastTapTimeRef.current;
       if (idleMs < IDLE_HINT_MS) {
-        setHintId(null);
-        setHintStage(0);
+        setIdleHintStage(0);
         return;
       }
-      const nextHint = SEARCH_TARGETS.find((target) => !foundIds.has(target.id));
-      setHintId(nextHint?.id || null);
 
       if (idleMs >= IDLE_HINT_L3_MS) {
-        setHintStage(3);
+        setIdleHintStage(3);
       } else if (idleMs >= IDLE_HINT_L2_MS) {
-        setHintStage(2);
-        if (!hintVoPlayedRef.current) {
-          hintVoPlayedRef.current = true;
-          speak(VO_TEXTS.idleHint);
-        }
+        setIdleHintStage(2);
       } else {
-        setHintStage(1);
+        setIdleHintStage(1);
       }
     }, 1000);
 
@@ -424,6 +461,22 @@ const EyesPopUpGame = ({
       idleTimerRef.current = null;
     };
   }, [foundIds, flow, isActive, speak]);
+
+  // L2 = narrow the search area (generic, no object named). L3 = exact
+  // object + direct tap instruction. Spoken once per (target, level) pair.
+  useEffect(() => {
+    if (!isActive || flow === FLOW.COMPLETE || hintStage < 2 || !nextHintTarget) return;
+
+    const key = `${nextHintTarget.id}-${hintStage}`;
+    if (lastSpokenHintKeyRef.current === key) return;
+    lastSpokenHintKeyRef.current = key;
+
+    if (hintStage === 2) {
+      speak(VO_TEXTS.idleHintL2);
+    } else {
+      speak(VO_TEXTS.idleHintL3[nextHintTarget.id]);
+    }
+  }, [hintStage, nextHintTarget, isActive, flow, speak]);
 
   useAppVisibility(null, useCallback(() => {
     resetIdle();
@@ -462,9 +515,21 @@ const EyesPopUpGame = ({
     };
   }, [foundTargets, onGameComplete, speak]);
 
+  // An empty/background tap is exploration, not a mistake to punish — but a
+  // child who keeps missing is exactly who needs help sooner, so misses
+  // accelerate the hint ladder instead of resetting its clock.
+  const registerMiss = useCallback(() => {
+    missCountRef.current += 1;
+    if (missCountRef.current >= MISS_COUNT_FOR_L3) {
+      setForcedHintStage(3);
+    } else if (missCountRef.current >= MISS_COUNT_FOR_L2) {
+      setForcedHintStage((stage) => Math.max(stage, 2));
+    }
+  }, []);
+
   const handleSceneTap = useCallback((e) => {
     if (debugMode || flow === FLOW.COMPLETE) return;
-    resetIdle();
+    registerMiss();
 
     const rect = e.currentTarget.getBoundingClientRect();
     const shimmer = document.createElement('div');
@@ -473,23 +538,34 @@ const EyesPopUpGame = ({
     shimmer.style.top = `${e.clientY - rect.top}px`;
     e.currentTarget.appendChild(shimmer);
     setTimeout(() => shimmer.remove(), 650);
-  }, [debugMode, flow, resetIdle]);
+  }, [debugMode, flow, registerMiss]);
 
   const handleDistractorTap = useCallback((target, e) => {
     e.stopPropagation();
     if (debugMode || flow === FLOW.COMPLETE) return;
-    resetIdle();
+    registerMiss();
     showFeedback(VO_TEXTS.neutral, target.id);
     speak(VO_TEXTS.neutral);
-  }, [debugMode, flow, resetIdle, showFeedback, speak]);
+  }, [debugMode, flow, registerMiss, showFeedback, speak]);
 
   const handleTargetTap = useCallback((target, e) => {
     e.stopPropagation();
     if (debugMode || flow === FLOW.COMPLETE || foundIds.has(target.id)) return;
-    resetIdle();
+
+    // Freeze the idle clock for the found-animation + success VO, then
+    // start a fresh 10/18/26 window for whatever's left once that VO ends
+    // — never mid-sentence.
+    idleClockArmedRef.current = false;
+    setIdleHintStage(0);
+    setForcedHintStage(0);
+    missCountRef.current = 0;
+
     setFoundTargets((prev) => [...prev, target.id]);
     showFeedback(target.prompt, target.id);
-    speak(VO_TEXTS[target.id] || target.label);
+    speak(VO_TEXTS[target.id] || target.label, () => {
+      idleClockArmedRef.current = true;
+      lastTapTimeRef.current = Date.now();
+    });
 
     // Slower, staged journey so kids can actually follow it: hold in place
     // to register the find -> glide to the center of the scene (900ms,
@@ -501,7 +577,7 @@ const EyesPopUpGame = ({
     schedule(() => setCarriedTargets((prev) => [...prev, target.id]), 2100); // 700 + 900 glide + 500 pause at center
     schedule(() => setDeliveredTargets((prev) => [...prev, target.id]), 3000); // 2100 + 900 glide to animal
     schedule(() => setGoneTargets((prev) => [...prev, target.id]), 3600); // 3000 + 600 hold after pose change
-  }, [debugMode, flow, foundIds, resetIdle, schedule, showFeedback, speak]);
+  }, [debugMode, flow, foundIds, schedule, showFeedback, speak]);
 
   if (hideElements || !isActive) return null;
 
@@ -537,9 +613,11 @@ const EyesPopUpGame = ({
       />
 
       {/* Permanent scenery — the bushes never disappear. Only the feather/
-          mango icon itself flies out to the peacock/monkey once tapped. */}
+          mango icon itself flies out to the peacock/monkey once tapped.
+          L1: remaining hiding areas breathe as a group (no VO, no reveal).
+          L2: narrows to the specific bush of the next remaining target. */}
       <img
-        className={`eyes-hiding-prop ${debugMode && selectedDebugKey === 'targetFeatherBush1' ? 'is-debug-selected' : ''}`}
+        className={`eyes-hiding-prop ${!foundIds.has('feather') && hintStage === 1 ? 'eyes-search-area-hint' : ''} ${nextHintTarget?.id === 'feather' && hintStage === 2 ? 'eyes-search-area-hint-strong' : ''} ${debugMode && selectedDebugKey === 'targetFeatherBush1' ? 'is-debug-selected' : ''}`}
         src={newFeatherBushImg}
         alt=""
         draggable={false}
@@ -547,7 +625,7 @@ const EyesPopUpGame = ({
         onPointerDown={(e) => debugMode && startDebugDrag(e, 'targetFeatherBush1')}
       />
       <img
-        className={`eyes-hiding-prop ${debugMode && selectedDebugKey === 'targetFeatherBush2' ? 'is-debug-selected' : ''}`}
+        className={`eyes-hiding-prop ${!foundIds.has('feather') && hintStage === 1 ? 'eyes-search-area-hint' : ''} ${nextHintTarget?.id === 'feather' && hintStage === 2 ? 'eyes-search-area-hint-strong' : ''} ${debugMode && selectedDebugKey === 'targetFeatherBush2' ? 'is-debug-selected' : ''}`}
         src={newFeatherBushImg}
         alt=""
         draggable={false}
@@ -555,7 +633,7 @@ const EyesPopUpGame = ({
         onPointerDown={(e) => debugMode && startDebugDrag(e, 'targetFeatherBush2')}
       />
       <img
-        className={`eyes-hiding-prop ${debugMode && selectedDebugKey === 'targetMangoBush' ? 'is-debug-selected' : ''}`}
+        className={`eyes-hiding-prop ${!foundIds.has('mango') && hintStage === 1 ? 'eyes-search-area-hint' : ''} ${nextHintTarget?.id === 'mango' && hintStage === 2 ? 'eyes-search-area-hint-strong' : ''} ${debugMode && selectedDebugKey === 'targetMangoBush' ? 'is-debug-selected' : ''}`}
         src={newMangoBushImg}
         alt=""
         draggable={false}
@@ -595,7 +673,7 @@ const EyesPopUpGame = ({
           <button
             key={target.id}
             type="button"
-            className={`eyes-hidden-target clue-target ${isFound ? 'found' : ''} ${isCarried ? 'carried' : ''} ${hintId === target.id ? 'hinting' : ''} ${hintId === target.id && hintStage >= 3 ? 'hinting-strong' : ''} ${softPulse === target.id ? 'soft-pulse' : ''} ${debugMode && selectedDebugKey === sizeKey ? 'is-debug-selected' : ''}`}
+            className={`eyes-hidden-target clue-target ${isFound ? 'found' : ''} ${isCarried ? 'carried' : ''} ${nextHintTarget?.id === target.id && hintStage >= 3 ? 'hinting-strong' : ''} ${softPulse === target.id ? 'soft-pulse' : ''} ${debugMode && selectedDebugKey === sizeKey ? 'is-debug-selected' : ''}`}
             style={{
               left: `${pos.x}%`,
               top: `${pos.y}%`,
