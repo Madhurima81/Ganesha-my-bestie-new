@@ -906,7 +906,9 @@ export default function MahakayaRescueGame({
       )}
 
       {/* L2 shows a short partial gesture (does not reach the target) + VO;
-          L3 shows the full path. The initial teaching pass is always full. */}
+          L3 shows the full path. The initial teaching pass is always full,
+          one iteration only, starting ~300ms after the "drag..."/"pull..."
+          action phrase begins (GMB gesture-timing preset A/B). */}
       <GestureDemo
         type="drag"
         from={{ x: sharedRigLayout.handleStart.l, y: sharedRigLayout.handleStart.t }}
@@ -924,8 +926,8 @@ export default function MahakayaRescueGame({
           !debugMode && phase === 'play' && ropeStage === 'detached'
           && ((needsInitialTeaching && !teachingComplete) || hintLevel >= 2)
         }
-        idleDelay={needsInitialTeaching && !teachingComplete ? 150 : 0}
-        iterations={needsInitialTeaching && !teachingComplete ? 2 : 1}
+        idleDelay={needsInitialTeaching && !teachingComplete ? 300 : 0}
+        iterations={1}
         onComplete={() => {
           if (needsInitialTeaching && !teachingComplete) setTeachingCompleteKey(hintStageKey);
         }}
@@ -950,8 +952,8 @@ export default function MahakayaRescueGame({
           !debugMode && phase === 'play' && ropeStage === 'attached'
           && ((needsInitialTeaching && !teachingComplete) || hintLevel >= 2)
         }
-        idleDelay={needsInitialTeaching && !teachingComplete ? 150 : 0}
-        iterations={needsInitialTeaching && !teachingComplete ? 2 : 1}
+        idleDelay={needsInitialTeaching && !teachingComplete ? 300 : 0}
+        iterations={1}
         onComplete={() => {
           if (needsInitialTeaching && !teachingComplete) setTeachingCompleteKey(hintStageKey);
         }}

@@ -510,12 +510,15 @@ export default function VakratundaRescueGame({
   // on `phase` so a re-rendering parent can't cancel the timer.
   useEffect(() => {
     if (phase !== 'trace' || introGestureShownRef.current) return undefined;
-    // Teaches the control (drag), not a rescue for inactivity — show it
-    // almost immediately so it can overlap the opening VO.
+    // Teaches the control (drag), not a rescue for inactivity. scene10_vak_intro
+    // is "Frog's way to his family is blocked. Drag Frog to find another way." —
+    // a short setup clause before the action word, so this uses GMB gesture-
+    // timing preset B (short setup before action): ~700-900ms after VO start,
+    // aimed at when "Drag" is spoken.
     const t = setTimeout(() => {
       introGestureShownRef.current = true;
       setShowIntroGesture(true);
-    }, 150);
+    }, 750);
     return () => clearTimeout(t);
   }, [phase]);
 
@@ -1062,6 +1065,7 @@ export default function VakratundaRescueGame({
         to={{ x: introGestureTo.x, y: introGestureTo.y }}
         active={isPlaying && showIntroGesture}
         idleDelay={0}
+        iterations={1}
       />
 
       <div
