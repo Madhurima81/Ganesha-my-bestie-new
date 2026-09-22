@@ -159,7 +159,6 @@ export default function SarvakaryeshuGame({
   const [phase, setPhase] = useState('play');
   const [guidanceMessage, setGuidanceMessage] = useState('');
   const [guidedPowerId, setGuidedPowerId] = useState(null);
-  const [rescueHintActive, setRescueHintActive] = useState(false);
   const [flyingPower, setFlyingPower] = useState(null);
   const [imageHit, setImageHit] = useState(false);
   const [activeSyllableHit, setActiveSyllableHit] = useState(null);
@@ -191,68 +190,34 @@ export default function SarvakaryeshuGame({
     level3Delay: 26000,
   });
 
+  // L1 is visual-only (all options make one neutral lift — see sarva-options
+  // below). Only L2 (a meaning clue) and L3 (the final clue, which reveals
+  // the correct symbol the moment it finishes) speak.
   useEffect(() => {
-    if (!isActive || phase !== 'play' || isCorrect) {
-      setGuidedPowerId(null);
-      setRescueHintActive(false);
-      lastHintVoiceKeyRef.current = null;
-      return;
-    }
-
-    if (hintLevel === 0) {
-      setGuidedPowerId(null);
-      setRescueHintActive(false);
-      lastHintVoiceKeyRef.current = null;
+    if (!isActive || phase !== 'play' || isCorrect || hintLevel < 2) {
+      if (hintLevel < 3) setGuidedPowerId(null);
       return;
     }
 
     const situation = SITUATIONS[cardIndex];
-
-    if (hintLevel < 3) {
-      setGuidedPowerId(null);
-    }
-
     const hintVoiceKey = `scene13_hint_${situation.id}_${hintLevel}`;
-    if (lastHintVoiceKeyRef.current !== hintVoiceKey) {
-      lastHintVoiceKeyRef.current = hintVoiceKey;
-      let glowTimerId = null;
-      const timerId = window.setTimeout(() => {
-        playSceneLine?.(
-          hintVoiceKey,
-          // At hint level 3, wait until the VO actually finishes, then glow
-          // the correct symbol 1.8s after that — not on a guessed delay.
-          hintLevel >= 3
-            ? () => {
-                glowTimerId = window.setTimeout(() => {
-                  setGuidedPowerId(situation.correct);
-                }, 1800);
-              }
-            : undefined,
-          {
-            replayOnReturn: false,
-            minDelayAfterVoiceMs: 5000,
-          }
-        );
-      }, 120);
-      return () => {
-        window.clearTimeout(timerId);
-        if (glowTimerId) window.clearTimeout(glowTimerId);
-      };
-    }
+    if (lastHintVoiceKeyRef.current === hintVoiceKey) return;
+
+    lastHintVoiceKeyRef.current = hintVoiceKey;
+    const timerId = window.setTimeout(() => {
+      playSceneLine?.(
+        hintVoiceKey,
+        // L3 is the final rescue — reveal the correct symbol the instant
+        // the clue finishes, not after a further guessed delay.
+        hintLevel === 3 ? () => setGuidedPowerId(situation.correct) : undefined,
+        {
+          replayOnReturn: false,
+          minDelayAfterVoiceMs: 5000,
+        }
+      );
+    }, 120);
+    return () => window.clearTimeout(timerId);
   }, [cardIndex, hintLevel, isActive, isCorrect, phase, playSceneLine]);
-
-  useEffect(() => {
-    if (!isActive || phase !== 'play' || hintLevel < 3 || isCorrect) {
-      setRescueHintActive(false);
-      return undefined;
-    }
-
-    const id = window.setTimeout(() => {
-      setRescueHintActive(true);
-    }, 7000);
-
-    return () => window.clearTimeout(id);
-  }, [cardIndex, hintLevel, isActive, isCorrect, phase]);
 
   const safeAfter = useCallback((ms, fn) => {
     const id = window.setTimeout(fn, ms);
@@ -277,7 +242,6 @@ export default function SarvakaryeshuGame({
       setPhase('play');
       setGuidanceMessage('');
       setGuidedPowerId(null);
-      setRescueHintActive(false);
       setFlyingPower(null);
       setImageHit(false);
       setActiveSyllableHit(null);
@@ -299,7 +263,6 @@ export default function SarvakaryeshuGame({
     setIsCorrect(null);
     setGuidanceMessage('');
     setGuidedPowerId(null);
-    setRescueHintActive(false);
     setFlyingPower(null);
     setImageHit(false);
     setActiveSyllableHit(null);
@@ -338,15 +301,18 @@ export default function SarvakaryeshuGame({
     const situation = SITUATIONS[cardIndex];
     const correct = powerId === situation.correct;
 
-    stopSceneVoice?.();
     setPicked(powerId);
 
     if (!correct) {
+      // Don't interrupt an active hint VO (especially the L3 rescue) — a
+      // wrong tap stopping it could drop its completion callback and lose
+      // the correct-symbol reveal. Visual wobble + text is enough feedback.
       setIsCorrect(null);
       setGuidanceMessage('Try another symbol.');
-      playSceneLine?.('scene13_try_again');
       return;
     }
+
+    stopSceneVoice?.();
 
     // Only successful understanding resets the hint cycle — a wrong guess
     // must not let the child keep postponing the clues.
@@ -449,7 +415,6 @@ export default function SarvakaryeshuGame({
       setCanPick(false);
       setGuidanceMessage('');
       setGuidedPowerId(null);
-      setRescueHintActive(false);
       setFlyingPower(null);
       setImageHit(false);
       setActiveSyllableHit(null);
@@ -526,7 +491,7 @@ export default function SarvakaryeshuGame({
               <p className="sarva-question">{situation.question}</p>
             )}
             {canPick && (
-              <div className="sarva-options">
+              <div className={`sarva-options${hintLevel === 1 ? ' is-hint-l1' : ''}`}>
                 {situation.options.map((powerId) => {
                   const power = POWER_ICONS[powerId];
                   const isRight = picked === powerId && isCorrect;
@@ -534,13 +499,12 @@ export default function SarvakaryeshuGame({
                   const isWrong = picked === powerId && picked !== null && !isCorrect;
                   const isGuided = guidedPowerId === powerId;
                   const isHintGlow = isGuided && hintLevel >= 3;
-                  const isRescueDimmed = rescueHintActive && guidedPowerId && powerId !== guidedPowerId;
 
                   return (
                     <button
                       key={powerId}
                       ref={(node) => { optionRefs.current[powerId] = node; }}
-                      className={`sarva-option${isRight ? ' is-right' : ''}${isWrong ? ' is-wrong' : ''}${isSelected ? ' is-selected' : ''}${isGuided ? ' is-guided' : ''}${isHintGlow ? ' hint-glow' : ''}${isRescueDimmed ? ' is-rescue-dimmed' : ''}${isCorrect && picked && !isRight ? ' is-dimmed' : ''}`}
+                      className={`sarva-option${isRight ? ' is-right' : ''}${isWrong ? ' is-wrong' : ''}${isSelected ? ' is-selected' : ''}${isGuided ? ' is-guided' : ''}${isHintGlow ? ' hint-glow' : ''}${isCorrect && picked && !isRight ? ' is-dimmed' : ''}`}
                       style={{ '--power-color': power.color }}
                       onPointerDown={() => handlePick(powerId)}
                       aria-label={power.label}

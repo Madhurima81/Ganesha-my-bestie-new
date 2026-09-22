@@ -229,6 +229,17 @@
   animation: sarvaOptionsIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+/* L1 — visual-only: every option makes one small neutral lift, reminding
+   the child "these are the choices" without privileging the answer. */
+.sarva-options.is-hint-l1 .sarva-option-circle {
+  animation: sarvaChoicesNotice 1.15s ease-in-out 2;
+}
+
+@keyframes sarvaChoicesNotice {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-4px) scale(1.025); }
+}
+
 .sarva-option {
   display: flex;
   flex-direction: column;
@@ -267,10 +278,6 @@
   pointer-events: none;
 }
 
-.sarva-option.is-rescue-dimmed {
-  opacity: 0.45;
-}
-
 .sarva-option.is-selected .sarva-option-circle {
   border-color: #FFD54F;
   background: #FFF8D6;
@@ -279,13 +286,19 @@
     0 0 12px rgba(255, 213, 79, 0.35);
 }
 
+/* L3 is the final rescue — make it clearly readable, not restrained. */
 .sarva-option.hint-glow .sarva-option-circle {
+  border-color: rgba(255, 213, 79, 0.78);
+  background: rgba(255, 249, 224, 0.96);
   box-shadow:
-    0 0 0 2px rgba(255, 213, 79, 0.1),
-    0 0 6px rgba(255, 213, 79, 0.12);
-  border-color: rgba(255, 213, 79, 0.55);
-  background: rgba(255, 249, 224, 0.9);
-  animation: guidedPulse 1.6s ease-in-out infinite;
+    0 0 0 3px rgba(255, 213, 79, 0.16),
+    0 0 16px rgba(255, 213, 79, 0.34);
+  animation: sarvaFinalGuide 1.45s ease-in-out infinite;
+}
+
+@keyframes sarvaFinalGuide {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.07); }
 }
 
 .sarva-option-circle {
@@ -454,11 +467,6 @@
   50% {
     transform: translateX(-50%) translateY(-6px);
   }
-}
-
-@keyframes guidedPulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.025); }
 }
 
 @keyframes stageHintPulse {

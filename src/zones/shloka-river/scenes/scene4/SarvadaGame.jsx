@@ -124,7 +124,6 @@ export default function SarvadaGame({
   const [findVoComplete, setFindVoComplete] = useState(true);
   const [symbolFound, setSymbolFound] = useState(false);
   const [popOut, setPopOut] = useState(false);
-  const [rescueHintActive, setRescueHintActive] = useState(false);
   const [boatGaneshaVisible, setBoatGaneshaVisible] = useState(false);
   const [boatGaneshaJoining, setBoatGaneshaJoining] = useState(false);
   const [boatGaneshaCelebrating, setBoatGaneshaCelebrating] = useState(false);
@@ -137,7 +136,6 @@ export default function SarvadaGame({
     PHASES_CONFIG.map((p) => ({ ...p.symbolSpot })),
   );
   const [flySymbol, setFlySymbol] = useState(null);
-  const [wrongTap, setWrongTap] = useState(false);
   const [showDebugPanel, setShowDebugPanel] = useState(false);
   const [showZones, setShowZones] = useState(true);
   const [copyStatus, setCopyStatus] = useState('');
@@ -159,45 +157,28 @@ export default function SarvadaGame({
     level3Delay: 26000,
   });
 
+  // L1 is visual-only (a broad search-area cue — see sarvada-search-hint
+  // below). Only L2 (narrower area + clue) and L3 (exact ring + final clue)
+  // speak.
   useEffect(() => {
-    if (!isActive || !findMode || symbolFound) {
-      setRescueHintActive(false);
-      lastHintVoiceKeyRef.current = null;
-      return;
-    }
-
-    if (hintLevel === 0) {
-      setRescueHintActive(false);
+    if (!isActive || !findMode || symbolFound || hintLevel < 2) {
       lastHintVoiceKeyRef.current = null;
       return;
     }
 
     const cfg = PHASES_CONFIG[phaseIndex];
     const hintVoiceKey = `scene14_hint_${cfg.id}_${hintLevel}`;
-    if (lastHintVoiceKeyRef.current !== hintVoiceKey) {
-      lastHintVoiceKeyRef.current = hintVoiceKey;
-      const timerId = window.setTimeout(() => {
-        playSceneLine?.(hintVoiceKey, undefined, {
-          replayOnReturn: false,
-          minDelayAfterVoiceMs: 5000,
-        });
-      }, 120);
-      return () => window.clearTimeout(timerId);
-    }
+    if (lastHintVoiceKeyRef.current === hintVoiceKey) return;
+
+    lastHintVoiceKeyRef.current = hintVoiceKey;
+    const timerId = window.setTimeout(() => {
+      playSceneLine?.(hintVoiceKey, undefined, {
+        replayOnReturn: false,
+        minDelayAfterVoiceMs: 5000,
+      });
+    }, 120);
+    return () => window.clearTimeout(timerId);
   }, [findMode, symbolFound, hintLevel, isActive, phaseIndex, playSceneLine]);
-
-  useEffect(() => {
-    if (!isActive || !findMode || symbolFound || hintLevel < 3) {
-      setRescueHintActive(false);
-      return undefined;
-    }
-
-    const id = window.setTimeout(() => {
-      setRescueHintActive(true);
-    }, 7000);
-
-    return () => window.clearTimeout(id);
-  }, [findMode, symbolFound, hintLevel, isActive]);
 
   const safeAfter = useCallback((ms, fn) => {
     const id = window.setTimeout(fn, ms);
@@ -230,8 +211,6 @@ export default function SarvadaGame({
       setSymbolFound(false);
       setPopOut(false);
       setFlySymbol(null);
-      setWrongTap(false);
-      setRescueHintActive(false);
       setBoatGaneshaVisible(false);
       setBoatGaneshaJoining(false);
       setBoatGaneshaCelebrating(false);
@@ -269,9 +248,24 @@ export default function SarvadaGame({
       safeAfter(800, () => {
         setFindMode(true);
         setFindVoComplete(false);
-        setRescueHintActive(false);
         lastHintVoiceKeyRef.current = null;
-        playSceneLine?.('scene14_find_symbol', () => setFindVoComplete(true));
+
+        // Defensive: if audio is off, playSceneLine is missing, or its
+        // completion callback is dropped, findVoComplete must not stay
+        // false forever — that would permanently block the hint ladder.
+        let findVoFinished = false;
+        const finishFindVo = () => {
+          if (findVoFinished) return;
+          findVoFinished = true;
+          setFindVoComplete(true);
+        };
+
+        if (playSceneLine) {
+          playSceneLine('scene14_find_symbol', finishFindVo);
+          safeAfter(4500, finishFindVo);
+        } else {
+          finishFindVo();
+        }
       });
     });
   }, [
@@ -310,7 +304,6 @@ export default function SarvadaGame({
 
     setSymbolFound(true);
     setPopOut(true);
-    setWrongTap(false);
     markInteraction();
     window.setTimeout(() => onMicroWin?.(), 0);
 
@@ -326,7 +319,6 @@ export default function SarvadaGame({
       setShowMemory(false);
       setFindMode(false);
       setSymbolFound(false);
-      setRescueHintActive(false);
       lastHintVoiceKeyRef.current = null;
 
       const nextIndex = phaseIndex + 1;
@@ -407,11 +399,10 @@ export default function SarvadaGame({
       // units so the hit zone is a true circle, not an ellipse.
       const dx = px - s.l;
       const dy = (py - s.t) * (3 / 4);
+      // A miss simply does nothing — for a visual-search game, a whole-image
+      // shake on every wrong guess is too much punishment for exploring.
       if (Math.hypot(dx, dy) <= s.w / 2) {
         triggerFound(event.clientX, event.clientY);
-      } else {
-        setWrongTap(true);
-        window.setTimeout(() => setWrongTap(false), 400);
       }
     },
     [findMode, symbolFound, isPaused, spots, phaseIndex, triggerFound],
@@ -450,6 +441,21 @@ export default function SarvadaGame({
   });
   const isPlaying = gamePhase === 'playing' || gamePhase === 'transition';
   const showSarvada = gamePhase === 'sarvada' || gamePhase === 'done';
+
+  // L1 = broad vicinity, L2 = narrower vicinity, L3 = exact ring (rendered
+  // separately below) — a visual-search game needs a search AREA, not a
+  // brighter symbol (the hidden symbol is baked into the scene image, not
+  // its own element).
+  const searchHintStyle = (() => {
+    if (!findMode || symbolFound || hintLevel < 1 || hintLevel >= 3) return null;
+    const scale = hintLevel === 1 ? 2.8 : 1.8;
+    return {
+      left: `${spot.l}%`,
+      top: `${spot.t}%`,
+      width: `${Math.min(38, spot.w * scale)}%`,
+      height: `${Math.min(34, spot.w * scale)}%`,
+    };
+  })();
   return (
     <div className={`sarvada-game${hideElements ? ' is-hidden' : ''}${flash ? ' flash' : ''}`} onContextMenu={(e) => e.preventDefault()}>
       <PoseImage
@@ -497,7 +503,7 @@ export default function SarvadaGame({
               />
               {findMode && !symbolFound && (
                 <button
-                  className={`sarvada-image-tap${wrongTap ? ' is-wrong' : ''}`}
+                  className="sarvada-image-tap"
                   onPointerDown={handleImageTap}
                   aria-label="Tap where you think the symbol is hiding"
                 />
@@ -505,7 +511,15 @@ export default function SarvadaGame({
               {findMode && showDebugPanel && showZones && (
                 <div className="sarvada-zone-outline" style={zoneStyle(spot)} />
               )}
-              {findMode && rescueHintActive && !symbolFound && (
+              {/* L1/L2 — a broad, then narrower search area, not the exact
+                  location. L3 — the exact ring, which stays until found. */}
+              {searchHintStyle && (
+                <div
+                  className={`sarvada-search-hint${hintLevel === 2 ? ' is-narrower' : ''}`}
+                  style={searchHintStyle}
+                />
+              )}
+              {findMode && hintLevel >= 3 && !symbolFound && (
                 <div className="sarvada-symbol-ring hint-glow" style={zoneStyle(spot)} />
               )}
               {findMode && popOut && (
