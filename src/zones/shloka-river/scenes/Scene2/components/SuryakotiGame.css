@@ -158,17 +158,6 @@
   opacity: 1;
 }
 
-.surya-dark-wrap.pulse,
-.surya-dark-canvas.pulse {
-  animation: suryaHintPulse 1.15s ease-in-out infinite;
-}
-
-.surya-dark-wrap.hint-glow,
-.surya-dark-canvas.hint-glow {
-  animation: suryaHintGlow 1.45s ease-in-out infinite;
-  filter: drop-shadow(0 0 16px rgba(255, 211, 107, 0.8));
-}
-
 .surya-dark-canvas {
   position: absolute;
   inset: 0;
@@ -216,22 +205,6 @@
   }
 }
 
-@keyframes suryaHintPulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.04); }
-}
-
-@keyframes suryaHintGlow {
-  0%, 100% {
-    filter: drop-shadow(0 0 8px rgba(255, 211, 107, 0.45));
-    transform: scale(1);
-  }
-  50% {
-    filter: drop-shadow(0 0 18px rgba(255, 211, 107, 0.85));
-    transform: scale(1.08);
-  }
-}
-
 /* ── Scratch target ring ── */
 .surya-scratch-ring {
   position: absolute;
@@ -251,52 +224,7 @@
   animation: suryaRingPulse 1.6s ease-in-out infinite;
 }
 
-/* ── L2 hint bubble ── */
-.surya-hint-bubble {
-  position: absolute;
-  transform: translate(-50%, 0);
-  z-index: 42;
-  pointer-events: none;
-  background: #FFF9E6;
-  color: #5D2E0F;
-  border: 1.5px solid rgba(150, 121, 196, 0.28);
-  border-radius: 20px 24px 21px 25px;
-  box-shadow: 0 6px 16px rgba(40, 20, 80, 0.12);
-  padding: 7px 12px;
-  font-family: 'Baloo 2', cursive;
-  font-weight: 700;
-  font-size: clamp(13px, 1.8vw, 17px);
-  line-height: 1.15;
-  white-space: nowrap;
-  animation: suryaHintBubbleIn 0.22s ease-out;
-}
-
-.surya-hint-bubble::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: -5px;
-  width: 10px;
-  height: 10px;
-  background: #FFF9E6;
-  border-left: 1.5px solid rgba(150, 121, 196, 0.28);
-  border-top: 1.5px solid rgba(150, 121, 196, 0.28);
-  transform: translateX(-50%) rotate(45deg);
-}
-
-@keyframes suryaHintBubbleIn {
-  from {
-    opacity: 0;
-    transform: translate(-50%, 4px) scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, 0) scale(1);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .surya-hint-bubble,
   .surya-scratch-ring.is-hint-l1 {
     animation: none;
   }

@@ -168,6 +168,7 @@ const SuryakotiBankContent = ({
   const suryaInteractionStartedRef = useRef(false);
   const samaInteractionStartedRef = useRef(false);
   const [samaIntroComplete, setSamaIntroComplete] = useState(false);
+  const [suryaIntroComplete, setSuryaIntroComplete] = useState(false);
 
   const { resetScene } = useSceneReset(sceneActions, zoneId, sceneId, getSceneResetConfig(sceneId));
   const completionModalContent = getCompletionModal(zoneId, sceneId);
@@ -512,15 +513,18 @@ const SuryakotiBankContent = ({
       setCurrentPhase('suryakotiGame');
       if (isAudioOn && !suryaIntroPlayedRef.current) {
         suryaIntroPlayedRef.current = true;
+        setSuryaIntroComplete(false);
         const cancelIntro = safeSetTimeout(() => {
-          if (suryaInteractionStartedRef.current) return;
+          if (suryaInteractionStartedRef.current) { setSuryaIntroComplete(true); return; }
           playGuidanceVoice('scene11_surya_intro', () => {
+            setSuryaIntroComplete(true);
             if (suryaInteractionStartedRef.current) return;
             startIdleTimer();
           });
         }, 2500);
         return () => cancelIntro?.();
       }
+      setSuryaIntroComplete(true);
       startIdleTimer();
       return undefined;
     }
@@ -532,6 +536,7 @@ const SuryakotiBankContent = ({
     if (sceneState?.phase !== PHASES.SURYAKOTI_GAME) {
       suryaIntroPlayedRef.current = false;
       suryaInteractionStartedRef.current = false;
+      setSuryaIntroComplete(false);
     }
   }, [sceneState?.phase]);
 
@@ -650,12 +655,14 @@ const SuryakotiBankContent = ({
               <>
                 <SuryakotiGame
                   isActive={sceneState.phase === PHASES.SURYAKOTI_GAME}
+                  introComplete={suryaIntroComplete}
                   hideElements={!!revealConfig}
                   onMicroWin={handleMicroWin}
                   onPhaseComplete={() => handlePhaseComplete('suryakoti')}
                   onGameComplete={() => {}}
                   onFirstInteraction={() => {
                     suryaInteractionStartedRef.current = true;
+                    setSuryaIntroComplete(true);
                     stopAllVoice();
                   }}
                   voiceGuidance={{

@@ -284,46 +284,27 @@
   }
 }
 
-.sama-hint-bubble {
+/* HOLD L1 — a stationary ring says "stay here", not "go somewhere else". */
+.sama-hold-hint {
   position: absolute;
-  transform: translate(-50%, 0);
-  z-index: 45;
+  width: clamp(42px, 6vw, 66px);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 3px solid rgba(255, 239, 166, 0.7);
+  z-index: 19;
   pointer-events: none;
-  background: #fff9e6;
-  color: #5d2e0f;
-  border: 1.5px solid rgba(150, 121, 196, 0.28);
-  border-radius: 20px 24px 21px 25px;
-  box-shadow: 0 6px 16px rgba(40, 20, 80, 0.12);
-  padding: 7px 12px;
-  font-family: 'Baloo 2', cursive;
-  font-size: clamp(13px, 1.8vw, 17px);
-  font-weight: 700;
-  line-height: 1.15;
-  white-space: nowrap;
-  animation: samaHintBubbleIn 0.22s ease-out;
+  animation: samaHoldHint 1.35s ease-in-out infinite;
 }
 
-.sama-hint-bubble::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: -5px;
-  width: 10px;
-  height: 10px;
-  transform: translateX(-50%) rotate(45deg);
-  background: #fff9e6;
-  border-left: 1.5px solid rgba(150, 121, 196, 0.28);
-  border-top: 1.5px solid rgba(150, 121, 196, 0.28);
-}
-
-@keyframes samaHintBubbleIn {
-  from {
-    opacity: 0;
-    transform: translate(-50%, 4px) scale(0.96);
+@keyframes samaHoldHint {
+  0%, 100% {
+    opacity: 0.35;
+    transform: translate(-50%, -50%) scale(0.88);
   }
-  to {
-    opacity: 1;
-    transform: translate(-50%, 0) scale(1);
+  50% {
+    opacity: 0.95;
+    transform: translate(-50%, -50%) scale(1.04);
   }
 }
 
@@ -581,7 +562,7 @@
   .sama-inspection-light,
   .sama-light-core,
   .sama-hint-area,
-  .sama-hint-bubble,
+  .sama-hold-hint,
   .sama-rescue-dot,
   .sama-doneline {
     animation: none !important;

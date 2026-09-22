@@ -53,6 +53,7 @@ const POSE_ASSETS = [
 
 export default function SuryakotiGame({
   isActive = false,
+  introComplete = true,
   hideElements = false,
   onMicroWin = () => {},
   onPhaseComplete = () => {},
@@ -107,13 +108,14 @@ export default function SuryakotiGame({
     onPhaseCompleteRef.current = onPhaseComplete;
   }, [onGameComplete, onPhaseComplete]);
 
-  const isFirstSpot = activeSpot === 0;
-
   const {
     hintLevel,
     markInteraction,
   } = useRepeatedHintCycle({
-    enabled: isActive && !isPaused && phase === 'play' && (!isFirstSpot || initialTeachingDone),
+    // Gated on the instruction VO (introComplete), not on the teaching
+    // gesture finishing — the gesture and VO can overlap; teaching disappears
+    // as soon as the child actually starts scratching (see onPointerDown).
+    enabled: isActive && !isPaused && phase === 'play' && introComplete && !drawingRef.current,
     stageKey: phase === 'play' ? `spot-${activeSpot}` : phase,
     // GMB Hint Standard v1 — flat 10s/18s/26s from VO end or last interaction.
     initialDelay: 10000,
@@ -374,10 +376,15 @@ export default function SuryakotiGame({
       firstInteractionSentRef.current = true;
       onFirstInteraction?.();
     }
+    // The child understood the mechanic — dismiss the teaching hand
+    // immediately instead of waiting for its animation to finish.
+    if (activeSpotRef.current === 0 && !initialTeachingDone) {
+      setInitialTeachingDone(true);
+    }
     drawingRef.current = true;
     const [x, y] = getPos(e);
     mark(x, y);
-  }, [getPos, isPaused, mark, onFirstInteraction]);
+  }, [getPos, initialTeachingDone, isPaused, mark, onFirstInteraction]);
 
   const onPointerMove = useCallback((e) => {
     if (!drawingRef.current || isPaused) return;
@@ -581,10 +588,11 @@ export default function SuryakotiGame({
         </div>
 
         <div className={`surya-dark-wrap ${canvasReady ? 'is-ready' : ''}`} style={{ pointerEvents: phase === 'play' && !isPaused ? 'auto' : 'none' }}>
-          {/* Pulsing ring cue over the spot the player should rub next */}
+          {/* Pulsing ring cue over the spot the player should rub next — L1
+              only ("rub here"); L2/L3 replace it with an actual gesture demo. */}
           {phase === 'play' && canvasReady && !completedRef.current && (
             <div
-              className={`surya-scratch-ring ${hintLevel >= 1 ? 'is-hint-l1' : ''}`}
+              className={`surya-scratch-ring ${hintLevel === 1 ? 'is-hint-l1' : ''}`}
               style={{ left: `${cueSpot.cx * 100}%`, top: `${cueSpot.cy * 100}%`, width: '20%' }}
             />
           )}
@@ -597,15 +605,6 @@ export default function SuryakotiGame({
             onPointerCancel={onPointerUp}
           />
         </div>
-
-        {phase === 'play' && hintLevel === 2 && (
-          <div
-            className="surya-hint-bubble"
-            style={{ left: `${cueSpot.cx * 100}%`, top: `${Math.min(84, cueSpot.cy * 100 + 13)}%` }}
-          >
-            {spotHasProgress ? 'Keep rubbing.' : 'Rub the glowing spot.'}
-          </div>
-        )}
 
         {/* Initial teaching demo — Spot 1 only, twice, then hands off to the hint ladder */}
         {phase === 'play' && activeSpot === 0 && !initialTeachingDone && (
@@ -623,7 +622,22 @@ export default function SuryakotiGame({
           />
         )}
 
-        {/* L3 rescue demo — every spot, one pass */}
+        {/* L2 — a short scratch, not the full demo: shows the kind of action
+            without giving the whole answer away. VO carries "rub"/"keep rubbing". */}
+        {phase === 'play' && hintLevel === 2 && (activeSpot > 0 || initialTeachingDone) && (
+          <GestureDemo
+            key={`surya-partial-${activeSpot}`}
+            type="scratch"
+            from={{ x: cueSpot.cx * 100 - 4, y: cueSpot.cy * 100 - 2 }}
+            to={{ x: cueSpot.cx * 100 + 2, y: cueSpot.cy * 100 + 2 }}
+            active
+            idleDelay={0}
+            iterations={1}
+            zIndex={46}
+          />
+        )}
+
+        {/* L3 rescue demo — every spot, one full pass */}
         {phase === 'play' && hintLevel >= 3 && (activeSpot > 0 || initialTeachingDone) && (
           <GestureDemo
             key={`surya-rescue-${activeSpot}`}
