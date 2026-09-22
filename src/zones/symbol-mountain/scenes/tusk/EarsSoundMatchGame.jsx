@@ -108,6 +108,8 @@ const ROUNDS = [
     id: 'elephant',
     label: 'Elephant',
     prompt: 'Listen for the water.',
+    // L2 — semantic clue, replays this sound alone, no location reveal.
+    hintClue: 'Listen for the water drip.',
     targetZoneId: 'center',
     sounds: {
       left: decoyRustle,
@@ -121,6 +123,7 @@ const ROUNDS = [
     id: 'cow',
     label: 'Cow',
     prompt: 'Listen for the grass.',
+    hintClue: 'Listen for the grass rustle.',
     targetZoneId: 'right',
     sounds: {
       left: decoyWind,
@@ -135,8 +138,9 @@ const ROUNDS = [
 const VO_TEXTS = {
   intro: 'Listen closely. Hear each place first. Then choose the sound that matters.',
   choose: 'Now choose the sound.',
-  neutral: 'Good listening. Try another sound source.',
-  hint: 'Listen for the sound.',
+  // A wrong choice isn't "good listening" — minimal, non-punitive.
+  neutral: 'Listen again.',
+  tapGlow: 'Tap the glowing place.',
   complete: 'You listened carefully and found what mattered.',
   elephant: 'Elephant found water.',
   cow: 'Cow found grass.'
@@ -152,19 +156,29 @@ const COMPLETE_DELAY_MS = 1900;
 const HINT_REPLAY_MS = 10000;
 const HINT_TEXT_MS = 18000;
 const HINT_TARGET_MS = 26000;
+// Repeated wrong choices accelerate help instead of resetting the clock.
+const WRONG_COUNT_FOR_L2 = 2;
+const WRONG_COUNT_FOR_L3 = 3;
 
 // Returns the utterance so the component can track it for tab-hide handling.
-const speakFallback = (text) => {
-  if (!text || typeof window === 'undefined' || !window.speechSynthesis) return null;
+const speakFallback = (text, onEnd) => {
+  if (!text || typeof window === 'undefined' || !window.speechSynthesis) {
+    onEnd?.();
+    return null;
+  }
   try {
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.rate = 0.92;
     utterance.pitch = 1;
+    const done = () => onEnd?.();
+    utterance.onend = done;
+    utterance.onerror = done;
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(utterance);
     return utterance;
   } catch {
     // Speech synthesis is optional.
+    onEnd?.();
     return null;
   }
 };
@@ -200,6 +214,7 @@ const EarsSoundMatchGame = ({
   const runIdRef = useRef(0);
   const chooseStartedAtRef = useRef(Date.now());
   const hintStageRef = useRef(0);
+  const wrongCountRef = useRef(0);
   const completedRef = useRef(false);
   const stageRef = useRef(null);
   const debugDragRef = useRef(null);
@@ -248,17 +263,26 @@ const EarsSoundMatchGame = ({
   const speakingTextRef = useRef(null);
   const interruptedTextRef = useRef(null);
   const replayTimerRef = useRef(null);
-  const trackUtterance = useCallback((text, utterance) => {
-    if (!utterance) return;
-    const done = () => { if (speakingTextRef.current === text) speakingTextRef.current = null; };
+  const trackUtterance = useCallback((text, utterance, onEnd) => {
+    if (!utterance) {
+      onEnd?.();
+      return;
+    }
+    const done = () => {
+      if (speakingTextRef.current === text) speakingTextRef.current = null;
+      onEnd?.();
+    };
     utterance.onend = done;
     utterance.onerror = done;
     speakingTextRef.current = text;
   }, []);
 
-  const speak = useCallback((text) => {
-    if (!isAudioOn) return;
-    trackUtterance(text, speakFallback(text));
+  const speak = useCallback((text, onEnd) => {
+    if (!isAudioOn) {
+      onEnd?.();
+      return;
+    }
+    trackUtterance(text, speakFallback(text), onEnd);
   }, [isAudioOn, trackUtterance]);
 
   useAppVisibility(
@@ -455,10 +479,15 @@ const EarsSoundMatchGame = ({
       if (index >= zoneIds.length) {
         setActiveZoneId(null);
         setPhase(PHASE.CHOOSING);
-        chooseStartedAtRef.current = Date.now();
         hintStageRef.current = 0;
+        wrongCountRef.current = 0;
         setFeedback(VO_TEXTS.choose);
-        speak(VO_TEXTS.choose);
+        // The 10s choosing clock must start only once "Now choose the
+        // sound." actually finishes, not while it's still speaking.
+        speak(VO_TEXTS.choose, () => {
+          if (runId !== runIdRef.current) return;
+          chooseStartedAtRef.current = Date.now();
+        });
         afterSequence?.();
         return;
       }
@@ -473,7 +502,13 @@ const EarsSoundMatchGame = ({
       }, zoneId === targetRound.targetZoneId ? 0.68 : 0.42);
     };
 
-    schedule(playNext, index === 0 ? 240 : BETWEEN_SOUND_MS);
+    // Round goal is spoken before the three sources play — a non-reading
+    // child needs to hear "Listen for the water" before the sounds start,
+    // not just see it as on-screen text.
+    speak(targetRound.prompt, () => {
+      if (runId !== runIdRef.current) return;
+      schedule(playNext, 240);
+    });
   }, [clearTimers, isActive, playSound, schedule, speak, stopAudio]);
 
   const resetGame = useCallback(() => {
@@ -492,40 +527,86 @@ const EarsSoundMatchGame = ({
     setZonesHidden(false);
     chooseStartedAtRef.current = Date.now();
     hintStageRef.current = 0;
+    wrongCountRef.current = 0;
   }, [clearTimers, stopAudio]);
 
   useEffect(() => {
     if (!isActive) return;
     resetGame();
-    speak(VO_TEXTS.intro);
-    schedule(() => playSequence(ROUNDS[0]), INTRO_DELAY_MS);
+    speak(VO_TEXTS.intro, () => schedule(() => playSequence(ROUNDS[0]), INTRO_DELAY_MS));
   }, [isActive, playSequence, resetGame, schedule, speak]);
+
+  // L1: replay all three sources once (memory aid, no VO, no reveal) — a
+  // dedicated replay, not a full round restart (no prompt VO, no phase
+  // change, doesn't touch the choosing clock).
+  const playHintReplayAll = useCallback((targetRound) => {
+    if (!isActive || !targetRound) return;
+    const runId = runIdRef.current;
+    const zoneIds = ['left', 'center', 'right'];
+    let index = 0;
+    const playNext = () => {
+      if (runId !== runIdRef.current || index >= zoneIds.length) {
+        if (runId === runIdRef.current) setActiveZoneId(null);
+        return;
+      }
+      const zoneId = zoneIds[index];
+      setActiveZoneId(zoneId);
+      playSound(targetRound.sounds[zoneId], '', () => {
+        if (runId !== runIdRef.current) return;
+        setActiveZoneId(null);
+        index += 1;
+        schedule(playNext, BETWEEN_SOUND_MS);
+      }, zoneId === targetRound.targetZoneId ? 0.68 : 0.42);
+    };
+    playNext();
+  }, [isActive, playSound, schedule]);
+
+  // L3 — exact source revealed, its sound replayed, direct tap VO. This is
+  // the final rescue: no loop back into another full round, the cue stays
+  // up until the child responds.
+  const triggerHintL3 = useCallback((targetRound) => {
+    if (hintStageRef.current >= 3) return;
+    hintStageRef.current = 3;
+    setHintZoneId(targetRound.targetZoneId);
+    playSound(targetRound.sounds[targetRound.targetZoneId], '', () => {
+      speak(VO_TEXTS.tapGlow);
+    }, 0.68);
+  }, [playSound, speak]);
+
+  // L2 — semantic clue + the target sound alone, no location reveal.
+  const triggerHintL2 = useCallback((targetRound) => {
+    if (hintStageRef.current >= 2) return;
+    hintStageRef.current = 2;
+    showFeedback(targetRound.hintClue);
+    speak(targetRound.hintClue, () => {
+      playSound(targetRound.sounds[targetRound.targetZoneId], '', null, 0.68);
+    });
+  }, [playSound, showFeedback, speak]);
 
   useEffect(() => {
     if (!isActive || phase !== PHASE.CHOOSING || !round) return;
 
     const tick = () => {
       const waitingMs = Date.now() - chooseStartedAtRef.current;
+
       if (waitingMs >= HINT_TARGET_MS && hintStageRef.current < 3) {
-        hintStageRef.current = 3;
-        setHintZoneId(round.targetZoneId);
-        playSound(round.sounds[round.targetZoneId], VO_TEXTS[round.id], () => {
-          schedule(() => playSequence(round), BETWEEN_SOUND_MS);
-        }, 0.68);
-        chooseStartedAtRef.current = Date.now();
-      } else if (waitingMs >= HINT_TEXT_MS && hintStageRef.current < 2) {
-        hintStageRef.current = 2;
-        showFeedback(VO_TEXTS.hint);
-        speak(VO_TEXTS.hint);
-      } else if (waitingMs >= HINT_REPLAY_MS && hintStageRef.current < 1) {
+        triggerHintL3(round);
+        return;
+      }
+      if (waitingMs >= HINT_TEXT_MS && hintStageRef.current < 2) {
+        triggerHintL2(round);
+        return;
+      }
+      // L1 — replay all three sources once, no VO, no reveal.
+      if (waitingMs >= HINT_REPLAY_MS && hintStageRef.current < 1) {
         hintStageRef.current = 1;
-        playSequence(round);
+        playHintReplayAll(round);
       }
     };
 
     const timer = setInterval(tick, 1000);
     return () => clearInterval(timer);
-  }, [isActive, phase, playSequence, playSound, round, schedule, showFeedback, speak]);
+  }, [isActive, phase, playHintReplayAll, round, triggerHintL2, triggerHintL3]);
 
   useEffect(() => () => {
     runIdRef.current += 1;
@@ -600,13 +681,23 @@ const EarsSoundMatchGame = ({
       showFeedback(VO_TEXTS.neutral);
       speak(VO_TEXTS.neutral);
       schedule(() => setWrongZoneId(null), 520);
+
+      // A wrong choice is exploration, not a mistake to punish — but
+      // repeated wrong choices accelerate help instead of resetting the
+      // choosing clock (which stays untouched here).
+      wrongCountRef.current += 1;
+      if (wrongCountRef.current >= WRONG_COUNT_FOR_L3) {
+        triggerHintL3(round);
+      } else if (wrongCountRef.current >= WRONG_COUNT_FOR_L2) {
+        triggerHintL2(round);
+      }
       return;
     }
 
     setCompletedRounds((prev) => [...prev, round.id]);
     showFeedback(VO_TEXTS[round.id]);
     startReveal(round);
-  }, [debugMode, phase, round, schedule, showFeedback, speak, startReveal]);
+  }, [debugMode, phase, round, schedule, showFeedback, speak, startReveal, triggerHintL2, triggerHintL3]);
 
   if (hideElements || !isActive) return null;
 
