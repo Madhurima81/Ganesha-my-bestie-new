@@ -19,25 +19,6 @@
   overflow: hidden;
 }
 
-.nirv-hint-bubble {
-  position: absolute;
-  transform: translate(-50%, 0);
-  z-index: 42;
-  pointer-events: none;
-  background: #FFF9E6;
-  color: #5D2E0F;
-  border: 1.5px solid rgba(150, 121, 196, 0.28);
-  border-radius: 20px 24px 21px 25px;
-  box-shadow: 0 6px 16px rgba(40, 20, 80, 0.12);
-  padding: 7px 12px;
-  font-family: 'Baloo 2', cursive;
-  font-weight: 700;
-  font-size: clamp(13px, 1.8vw, 17px);
-  line-height: 1.15;
-  white-space: nowrap;
-  animation: nirv-fadeIn 0.6s ease;
-}
-
 .nirv-doneline {
   position: absolute;
   top: 40%;
@@ -252,34 +233,60 @@
   to { transform: translateX(1px) rotate(1deg); }
 }
 
-@keyframes nirv-fadeIn {
-  from { opacity: 0; transform: translateX(-50%) translateY(6px); }
-  to { opacity: 1; transform: translateX(-50%) translateY(0); }
-}
-
 @keyframes nirv-popIn {
   from { opacity: 0; transform: translate(-50%, -50%) scale(0.7); }
   to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 }
 
-/* Glow-only emphasis — no scale/translate, so the object never appears to
-   shift or resize during the hint. The gesture demo shows the motion. */
-@keyframes stageHintPulse {
-  0%, 100% { filter: drop-shadow(0 0 4px rgba(255, 220, 90, 0.3)); }
-  50% { filter: drop-shadow(0 0 12px rgba(255, 220, 90, 0.6)); }
+/* L1 hints — mechanic-specific, not a generic pulse/glow. Rock = "hold
+   here" (a ring, distinct from .nirv-hold-ring's real progress once the
+   child presses). Branch = "this can move" (a small lift, not the whole
+   path). Reeds = "move sideways" (a nudge, not a full swipe demo). */
+.nirv-rock.is-hint-hold::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 120%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 3px solid rgba(255, 220, 95, 0.58);
+  pointer-events: none;
+  animation: nirvHoldHint 1.35s ease-in-out infinite;
 }
 
-@keyframes stageHintGlow {
-  0%, 100% { filter: drop-shadow(0 0 8px rgba(255, 220, 90, 0.5)); }
-  50% { filter: drop-shadow(0 0 20px rgba(255, 220, 90, 0.9)); }
+@keyframes nirvHoldHint {
+  0%, 100% { opacity: 0.35; transform: translate(-50%, -50%) scale(0.9); }
+  50% { opacity: 0.95; transform: translate(-50%, -50%) scale(1.03); }
+}
+
+.nirv-branch.is-hint-drag img {
+  animation: nirvBranchHint 1.3s ease-in-out infinite;
+}
+
+@keyframes nirvBranchHint {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-5px) rotate(-1.5deg); }
+}
+
+.nirv-reeds.is-hint-swipe > .pose-image {
+  animation: nirvReedHint 1.25s ease-in-out infinite;
+}
+
+@keyframes nirvReedHint {
+  0%, 100% { transform: translateX(0); }
+  40% { transform: translateX(5px); }
+  70% { transform: translateX(-3px); }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .nirv-breathe > .pose-image,
   .nirv-turtle.is-swimming > .pose-image,
   .nirv-rock.is-holding img,
-  .pulse,
-  .hint-glow {
+  .nirv-rock.is-hint-hold::after,
+  .nirv-branch.is-hint-drag img,
+  .nirv-reeds.is-hint-swipe > .pose-image {
     animation: none;
   }
 
@@ -289,14 +296,6 @@
   .nirv-reeds {
     transition: none;
   }
-}
-
-.pulse {
-  animation: stageHintPulse 1.15s ease-in-out infinite !important;
-}
-
-.hint-glow {
-  animation: stageHintGlow 1.45s ease-in-out infinite !important;
 }
 
 .nirv-debug-toggle {

@@ -259,6 +259,7 @@ const NirvighnamChantContent = ({
   const nirvIntroPlayedRef = useRef(false);
   const kuruIntroPlayedRef = useRef(false);
   const [kuruIntroComplete, setKuruIntroComplete] = useState(false);
+  const [nirvIntroComplete, setNirvIntroComplete] = useState(false);
   const hintRef = useRef(null);
   const revealTimeoutsRef = useRef([]);
 
@@ -442,16 +443,20 @@ const NirvighnamChantContent = ({
       setCurrentPhase('nirvighnamGame');
       if (isAudioOn && !nirvIntroPlayedRef.current) {
         nirvIntroPlayedRef.current = true;
+        setNirvIntroComplete(false);
         playGuidanceVoice('scene12_nir_intro', () => {
+          setNirvIntroComplete(true);
           startIdleTimer();
         });
         return;
       }
+      setNirvIntroComplete(true);
       startIdleTimer();
       return;
     }
     if (sceneState.phase !== PHASES.NIRVIGHNAM_GAME) {
       nirvIntroPlayedRef.current = false;
+      setNirvIntroComplete(false);
     }
   }, [isAudioOn, playGuidanceVoice, sceneState.phase, sceneState.welcomeShown, setCurrentPhase, startIdleTimer, safeSetTimeout]);
 
@@ -600,6 +605,7 @@ const NirvighnamChantContent = ({
               {/* ── NIRVIGHNAM GAME — drag obstacles ── */}
               <NirvighnamGame
                 isActive={sceneState.phase === PHASES.NIRVIGHNAM_GAME}
+                introComplete={nirvIntroComplete}
                 hideElements={showCenteredWord || showPowerOverlay || !!revealConfig}
                 onMicroWin={handleMicroWin}
                 onPhaseComplete={() => window.setTimeout(() => handlePhaseComplete('nirvighnam'), 0)}

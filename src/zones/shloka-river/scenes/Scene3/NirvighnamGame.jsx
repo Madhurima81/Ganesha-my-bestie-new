@@ -95,12 +95,6 @@ const HINT_TIMINGS = {
   reed: { l1: 10000, l2: 18000, l3: 26000 },
 };
 
-const NIRV_HINT_COPY = {
-  stone: 'Hold the rock.',
-  branch: 'Drag the branch aside.',
-  reed: 'Swipe the reeds apart.',
-};
-
 const debugOptions = [
   { type: 'object', key: 'turtleStart', label: 'Turtle Start', fields: ['l', 't'] },
   { type: 'root', key: 'turtleWidth', label: 'Turtle Width', fields: ['turtleWidth'] },
@@ -129,6 +123,7 @@ const POSE_ASSETS = [
 
 export default function NirvighnamGame({
   isActive = false,
+  introComplete = true,
   hideElements = false,
   onMicroWin = () => {},
   onPhaseComplete = () => {},
@@ -157,6 +152,10 @@ export default function NirvighnamGame({
   const [reedSwipeStart, setReedSwipeStart] = useState(null);
   const [reedSwipeAmount, setReedSwipeAmount] = useState(0);
   const [teachingDoneFor, setTeachingDoneFor] = useState(null);
+  // Persists across a pointer-up, unlike checking live drag/hold state — a
+  // child who started, stalled, and let go should still get "keep going",
+  // not the from-scratch instruction.
+  const [obstacleHasProgress, setObstacleHasProgress] = useState(false);
 
   const stageRef = useRef(null);
   const dragStartRef = useRef(null);
@@ -189,8 +188,10 @@ export default function NirvighnamGame({
   const nextObstacleId = OBSTACLE_ORDER[cleared.length];
   const teachingComplete = teachingDoneFor === nextObstacleId;
   const currentHintTiming = HINT_TIMINGS[nextObstacleId] || HINT_TIMINGS.stone;
+  // Gated on the instruction VO (introComplete), not on the teaching
+  // gesture finishing — the clock shouldn't wait on an animation.
   const { hintLevel, markInteraction } = useRepeatedHintCycle({
-    enabled: isActive && !isPaused && phase === 'play' && teachingComplete,
+    enabled: isActive && !isPaused && phase === 'play' && introComplete,
     stageKey: phase === 'play' ? `clear-${cleared.length}` : phase,
     initialDelay: currentHintTiming.l1,
     pulseCountBeforeEscalation: 3,
@@ -276,40 +277,25 @@ export default function NirvighnamGame({
   // the fresh hint clock for it.
   useEffect(() => {
     setTeachingDoneFor(null);
+    setObstacleHasProgress(false);
     lastProgressHintResetRef.current = 0;
+    lastHintVoRef.current = '';
   }, [nextObstacleId]);
 
-  // Level-2 hint: one short VO line per obstacle, played once.
+  // L2 hint VO — "Press and hold..." if untouched, "Keep holding" (etc.) if
+  // the child made real progress and then stalled. obstacleHasProgress
+  // persists across a pointer-up, so a stall genuinely gets the "keep going"
+  // wording instead of waiting for a separate L3 escalation to say it.
   useEffect(() => {
     if (phase !== 'play' || hintLevel !== 2 || !nextObstacleId || isPaused) return;
 
-    const onceKey = `${nextObstacleId}-nirv_hint_${nextObstacleId}`;
+    const voiceKey = obstacleHasProgress ? `nirv_hint_keep_${nextObstacleId}` : `nirv_hint_${nextObstacleId}`;
+    const onceKey = `${nextObstacleId}-${voiceKey}`;
     if (lastHintVoRef.current === onceKey) return;
     lastHintVoRef.current = onceKey;
 
     stopSceneVoice?.();
-    playSceneLine?.(`nirv_hint_${nextObstacleId}`);
-  }, [hintLevel, isPaused, nextObstacleId, phase, playSceneLine, stopSceneVoice]);
-
-  // Level-3 hint: "keep going" idle-progress line — once per obstacle, only
-  // fires if the child has actually started (mirrors Suryakoti's rub/keep pattern).
-  const obstacleHasProgress = nextObstacleId === 'stone'
-    ? (holdingRock || rockProgress > 0)
-    : nextObstacleId === 'branch'
-      ? dragging === 'branch'
-      : nextObstacleId === 'reed'
-        ? reedSwipeAmount > 0
-        : false;
-
-  useEffect(() => {
-    if (phase !== 'play' || hintLevel !== 3 || !nextObstacleId || isPaused || !obstacleHasProgress) return;
-
-    const onceKey = `${nextObstacleId}-nirv_hint_keep_${nextObstacleId}`;
-    if (lastHintVoRef.current === onceKey) return;
-    lastHintVoRef.current = onceKey;
-
-    stopSceneVoice?.();
-    playSceneLine?.(`nirv_hint_keep_${nextObstacleId}`);
+    playSceneLine?.(voiceKey);
   }, [hintLevel, isPaused, nextObstacleId, obstacleHasProgress, phase, playSceneLine, stopSceneVoice]);
 
   useEffect(() => {
@@ -395,6 +381,12 @@ export default function NirvighnamGame({
     event.currentTarget.setPointerCapture?.(event.pointerId);
     stopSceneVoice?.();
 
+    // Touching the correct active obstacle is meaningful even before the
+    // progress threshold — dismiss the teaching demo right away instead of
+    // waiting for its own animation to finish.
+    if (teachingDoneFor !== nextObstacleId) setTeachingDoneFor(nextObstacleId);
+    markInteraction();
+
     if (rockProgressRef.current) {
       window.clearInterval(rockProgressRef.current);
     }
@@ -409,6 +401,7 @@ export default function NirvighnamGame({
       setRockProgress(progress);
 
       if (progress >= 0.2) {
+        setObstacleHasProgress(true);
         markMeaningfulProgress();
       }
 
@@ -420,7 +413,7 @@ export default function NirvighnamGame({
         clearObstacle('stone');
       }
     }, 30);
-  }, [clearObstacle, isCleared, isPaused, markMeaningfulProgress, nextObstacleId, stopSceneVoice]);
+  }, [clearObstacle, isCleared, isPaused, markInteraction, markMeaningfulProgress, nextObstacleId, stopSceneVoice, teachingDoneFor]);
 
   const cancelRockHold = useCallback(() => {
     if (rockProgressRef.current) {
@@ -439,6 +432,9 @@ export default function NirvighnamGame({
     event.currentTarget.setPointerCapture?.(event.pointerId);
     stopSceneVoice?.();
 
+    if (teachingDoneFor !== nextObstacleId) setTeachingDoneFor(nextObstacleId);
+    markInteraction();
+
     dragStartRef.current = {
       clientX: event.clientX,
       clientY: event.clientY,
@@ -446,7 +442,7 @@ export default function NirvighnamGame({
     setDragging('branch');
     setDragOffset({ x: 0, y: 0 });
     dragOffsetRef.current = { x: 0, y: 0 };
-  }, [isCleared, isPaused, nextObstacleId, stopSceneVoice]);
+  }, [isCleared, isPaused, markInteraction, nextObstacleId, stopSceneVoice, teachingDoneFor]);
 
   useEffect(() => {
     if (dragging !== 'branch' || !isActive) return;
@@ -460,6 +456,7 @@ export default function NirvighnamGame({
       setDragOffset({ x: dx, y: dy });
 
       if (Math.hypot(dx, dy) >= 4) {
+        setObstacleHasProgress(true);
         markMeaningfulProgress();
       }
     };
@@ -505,9 +502,12 @@ export default function NirvighnamGame({
     event.currentTarget.setPointerCapture?.(event.pointerId);
     stopSceneVoice?.();
 
+    if (teachingDoneFor !== nextObstacleId) setTeachingDoneFor(nextObstacleId);
+    markInteraction();
+
     setReedSwipeStart({ x: event.clientX, y: event.clientY });
     setReedSwipeAmount(0);
-  }, [isCleared, isPaused, nextObstacleId, stopSceneVoice]);
+  }, [isCleared, isPaused, markInteraction, nextObstacleId, stopSceneVoice, teachingDoneFor]);
 
   useEffect(() => {
     if (!reedSwipeStart || !isActive) return;
@@ -521,6 +521,7 @@ export default function NirvighnamGame({
       setReedSwipeAmount(amount);
 
       if (amount >= 12) {
+        setObstacleHasProgress(true);
         markMeaningfulProgress();
       }
     };
@@ -652,8 +653,6 @@ export default function NirvighnamGame({
   const effLitCount = debugPreview ? previewClearedCount : litCount;
   const effSwimming = debugPreview ? debugPhase === 4 : isSwimming;
   const isDone = effPhase === 'done';
-  const activeObstacle = obstacles.find((obstacle) => obstacle.id === nextObstacleId);
-  const hintBubbleText = NIRV_HINT_COPY[nextObstacleId] || '';
 
   const getObstacleFocusClass = (id) => {
     if (showCleared(id)) return 'is-cleared-focus';
@@ -753,9 +752,24 @@ export default function NirvighnamGame({
     debugPanelDragRef.current = null;
   };
 
-  const gestureConfig = {
+  const fullGestureConfig = {
     stone: stone ? { type: 'hold', from: { x: stone.l, y: stone.t } } : null,
     branch: branch ? { type: 'drag', from: { x: branch.l, y: branch.t }, to: { x: bankSpots.branch.l, y: bankSpots.branch.t } } : null,
+    reed: reeds ? { type: 'swipe-right', from: { x: reeds.l, y: reeds.t } } : null,
+  }[nextObstacleId];
+
+  // L2 shows a shorter version — for branch, a partial path partway to the
+  // bank; hold/swipe distinguish partial from full mainly via one pass vs.
+  // the more explicit L3 pass (see iterations below).
+  const partialBranchTarget = branch
+    ? {
+      x: branch.l + (bankSpots.branch.l - branch.l) * 0.38,
+      y: branch.t + (bankSpots.branch.t - branch.t) * 0.38,
+    }
+    : null;
+  const partialGestureConfig = {
+    stone: stone ? { type: 'hold', from: { x: stone.l, y: stone.t } } : null,
+    branch: branch && partialBranchTarget ? { type: 'drag', from: { x: branch.l, y: branch.t }, to: partialBranchTarget } : null,
     reed: reeds ? { type: 'swipe-right', from: { x: reeds.l, y: reeds.t } } : null,
   }[nextObstacleId];
 
@@ -778,18 +792,6 @@ export default function NirvighnamGame({
             } : undefined);
           }}
         />
-
-        {phase === 'play' && hintLevel === 2 && activeObstacle && (
-          <div
-            className="nirv-hint-bubble"
-            style={{
-              left: `${activeObstacle.l}%`,
-              top: `${Math.min(86, activeObstacle.t + 12)}%`,
-            }}
-          >
-            {hintBubbleText}
-          </div>
-        )}
 
         {isDone && (
           <p className="nirv-doneline">
@@ -824,7 +826,7 @@ export default function NirvighnamGame({
         </div>
 
         <div
-          className={`nirv-layer nirv-rock ${holdingRock ? 'is-holding' : ''} ${showCleared('stone') ? 'is-cleared' : ''} ${getObstacleFocusClass('stone')} ${phase === 'play' && nextObstacleId === 'stone' && hintLevel >= 1 ? 'pulse' : ''}`}
+          className={`nirv-layer nirv-rock ${holdingRock ? 'is-holding' : ''} ${showCleared('stone') ? 'is-cleared' : ''} ${getObstacleFocusClass('stone')} ${phase === 'play' && nextObstacleId === 'stone' && hintLevel === 1 && !holdingRock ? 'is-hint-hold' : ''}`}
           style={{
             left: `${showCleared('stone') ? bankSpots.stone.l : stone.l}%`,
             top: `${showCleared('stone') ? bankSpots.stone.t : stone.t}%`,
@@ -850,7 +852,7 @@ export default function NirvighnamGame({
         )}
 
         <div
-          className={`nirv-layer nirv-branch ${dragging === 'branch' ? 'is-dragging' : ''} ${showCleared('branch') ? 'is-cleared' : ''} ${getObstacleFocusClass('branch')} ${phase === 'play' && nextObstacleId === 'branch' && hintLevel >= 1 ? 'pulse' : ''}`}
+          className={`nirv-layer nirv-branch ${dragging === 'branch' ? 'is-dragging' : ''} ${showCleared('branch') ? 'is-cleared' : ''} ${getObstacleFocusClass('branch')} ${phase === 'play' && nextObstacleId === 'branch' && hintLevel === 1 && dragging !== 'branch' ? 'is-hint-drag' : ''}`}
           style={{
             left: `${showCleared('branch') ? bankSpots.branch.l : branch.l + (dragging === 'branch' ? dragOffset.x : 0)}%`,
             top: `${showCleared('branch') ? bankSpots.branch.t : branch.t + (dragging === 'branch' ? dragOffset.y : 0)}%`,
@@ -864,7 +866,7 @@ export default function NirvighnamGame({
         </div>
 
         <div
-          className={`nirv-layer nirv-reeds ${reedSwipeStart ? 'is-swiping' : ''} ${showCleared('reed') ? 'is-open' : ''} ${getObstacleFocusClass('reed')} ${phase === 'play' && nextObstacleId === 'reed' && hintLevel >= 1 ? 'pulse' : ''}`}
+          className={`nirv-layer nirv-reeds ${reedSwipeStart ? 'is-swiping' : ''} ${showCleared('reed') ? 'is-open' : ''} ${getObstacleFocusClass('reed')} ${phase === 'play' && nextObstacleId === 'reed' && hintLevel === 1 && !reedSwipeStart ? 'is-hint-swipe' : ''}`}
           style={{
             left: `${reeds.l}%`,
             top: `${reeds.t}%`,
@@ -889,27 +891,46 @@ export default function NirvighnamGame({
           )}
         </div>
 
-        {gestureConfig && phase === 'play' && !showDebugPanel && !teachingComplete && (
+        {/* Rock is the first obstacle, right after the scene's own narrative
+            intro VO — give that VO room before the hand appears (GMB preset
+            C, ~1.1s). Branch/reed have no further story lead-in of their
+            own, so their teaching hand appears immediately (preset A). */}
+        {fullGestureConfig && phase === 'play' && !showDebugPanel && !teachingComplete && (
           <GestureDemo
             key={`nirv-teach-${nextObstacleId}`}
-            type={gestureConfig.type}
-            from={gestureConfig.from}
-            to={gestureConfig.to}
+            type={fullGestureConfig.type}
+            from={fullGestureConfig.from}
+            to={fullGestureConfig.to}
             active
-            idleDelay={150}
-            iterations={2}
+            idleDelay={nextObstacleId === 'stone' ? 1100 : 250}
+            iterations={1}
             onComplete={() => setTeachingDoneFor(nextObstacleId)}
             onDismiss={() => setTeachingDoneFor(nextObstacleId)}
             zIndex={46}
           />
         )}
 
-        {gestureConfig && phase === 'play' && !showDebugPanel && teachingComplete && hintLevel >= 3 && (
+        {/* L2 — a partial gesture, not the full demo. */}
+        {partialGestureConfig && phase === 'play' && !showDebugPanel && teachingComplete && hintLevel === 2 && (
+          <GestureDemo
+            key={`nirv-partial-${nextObstacleId}`}
+            type={partialGestureConfig.type}
+            from={partialGestureConfig.from}
+            to={partialGestureConfig.to}
+            active
+            idleDelay={0}
+            iterations={1}
+            zIndex={46}
+          />
+        )}
+
+        {/* L3 — the full rescue demo. */}
+        {fullGestureConfig && phase === 'play' && !showDebugPanel && teachingComplete && hintLevel >= 3 && (
           <GestureDemo
             key={`nirv-rescue-${nextObstacleId}`}
-            type={gestureConfig.type}
-            from={gestureConfig.from}
-            to={gestureConfig.to}
+            type={fullGestureConfig.type}
+            from={fullGestureConfig.from}
+            to={fullGestureConfig.to}
             active
             idleDelay={0}
             iterations={1}
