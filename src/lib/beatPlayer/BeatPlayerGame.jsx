@@ -446,28 +446,35 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
 
   const findItem = useCallback((gameKey) => items.find((it) => it.gameKey === gameKey), [items]);
 
-  // Idle-hint ladder for a stuck beat — same 9s/16s/24s cadence used across
-  // the app's other mini-games (useRepeatedHintCycle). Resets whenever a new
-  // beat starts waiting for input. L1/L2 pulse the interactive item; L3
-  // re-shows the gesture demo even past the "first 2 beats" teaching window
-  // below, so a child stuck on a later beat still gets re-taught the gesture.
+  // Idle-hint ladder for a stuck beat — GMB Hint Standard v1 (10s/18s/26s),
+  // same cadence used across the app's other mini-games
+  // (useRepeatedHintCycle). Resets whenever a new beat starts waiting for
+  // input. L1/L2 pulse the interactive item; L3 re-shows the gesture demo
+  // even past the "first 2 beats" teaching window below, so a child stuck
+  // on a later beat still gets re-taught the gesture.
   const [beatHintLevel, setBeatHintLevel] = useState(0);
   // Set for real once the state's own VO finishes speaking (see runState
   // below) — not here on mount, or a beat with a long intro line would
-  // burn several seconds of its narration off the 9s/16s/24s budget before
+  // burn several seconds of its narration off the 10s/18s/26s budget before
   // the child even has a chance to try.
   const beatWaitStartedAtRef = useRef(Date.now());
   useEffect(() => {
     setBeatHintLevel(0);
+    // Provisional reset — the ladder's tick interval (below) starts
+    // immediately and would otherwise read whatever stale timestamp was
+    // left over from the *previous* beat on its very first tick, computing
+    // a huge elapsed time and jumping straight to L2/L3. runState still
+    // re-bases this to the real value once this state's own VO finishes.
+    beatWaitStartedAtRef.current = Date.now();
   }, [beatIndex, stateName]);
 
   useEffect(() => {
     if (!isActive || isPaused || layoutDebug || !needsInput(stateName)) return undefined;
     const tick = setInterval(() => {
       const idleMs = Date.now() - beatWaitStartedAtRef.current;
-      if (idleMs >= 24000) setBeatHintLevel(3);
-      else if (idleMs >= 16000) setBeatHintLevel(2);
-      else if (idleMs >= 9000) setBeatHintLevel(1);
+      if (idleMs >= 26000) setBeatHintLevel(3);
+      else if (idleMs >= 18000) setBeatHintLevel(2);
+      else if (idleMs >= 10000) setBeatHintLevel(1);
     }, 1000);
     return () => clearInterval(tick);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -507,7 +514,13 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
     return count;
   }, [beatPos, beatKeys, interactions, flowJson]);
 
-  const showGestureDemo = needsInput(stateName) && (interactiveBeatsSoFar <= 2 || beatHintLevel >= 3);
+  // Beats with a hintVoText (e.g. "drag the bubble to a helper" — deliberately
+  // not naming who) are exempt from the free first-2-beats teaching demo:
+  // that demo animates straight to the real interaction.target, which would
+  // give away the answer immediately instead of after the child is actually
+  // stuck (L3). Every other beat keeps the early teaching freebie.
+  const showGestureDemo = needsInput(stateName)
+    && ((interactiveBeatsSoFar <= 2 && !beat?.hintVoText) || beatHintLevel >= 3);
 
   const gestureDemoType = (() => {
     if (!interaction) return 'drag';

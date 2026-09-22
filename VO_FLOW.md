@@ -24,12 +24,35 @@ Do **not** put VO in the completion modal.
 
 Do **not** add a second generic gameplay intro between the opening modal and the first task prompt. The first task prompt is the scene-start instruction.
 
+## App-level / non-scene VO rule
+
+App-level VO should be even lighter than scene VO:
+
+- Use spoken VO only when it adds warmth, story, or helps the child act.
+- Cut redundant UI narration when the interface already shows the action.
+- Avoid generic praise that will repeat across screens or zones.
+- Keep map and transition lines short, specific, and character-like.
+- Do not prerecord these lines until the wording is locked.
+
+Applied app-level cleanup:
+
+| Area | Current rule / line |
+|---|---|
+| Profile avatar choice | No spoken VO. Visual feedback and the tiny selection sound are enough. |
+| Mooshika ride transition | "Hold on tight, {name}! Let's go!" |
+| Main map unlocks | "The Shloka River is waiting for you." / "Lambodara Lodge is waiting for you." |
+| Zone welcome | "Welcome to {zone name}!" |
+| Zone completion | "You finished {zone name}!" |
+| Intro Story | Keep the story warm and direct; avoid adult/expository phrasing. |
+
 ## What to cut
 - Slogans and sugary filler ("Let's make the world smile!", "Keep dreaming!").
 - Praise that assumes an experience ("She gives the best hugs.", "best friend").
 - Lines that imply a correct emotional answer ("which place feels right").
 - Animation narration — if the child can see it, don't say it.
 - A second instruction VO chained straight after the first.
+- Redundant app-level UI narration ("Tap a card to begin") when the UI can carry the action.
+- Repeated generic praise ("I'm so proud of you") across zones or system moments.
 - Dictionary-style spoken meaning lines after success, such as “Vakratunda means…”. Keep literal meanings in cards/sidebar/text unless explicitly approved as VO.
 - Completion-modal VO. Completion modals stay silent unless explicitly approved.
 

@@ -1,6 +1,28 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
 
+## [2026-09-22] — App-level VO cleanup documented and applied
+**Touched:** src/lib/components/navigation/CleanProfileSelector.jsx,
+src/lib/components/navigation/MooshikaRideTransition.jsx,
+src/components/GaneshaIntroStory.jsx,
+src/pages/CleanMapZone.jsx,
+src/lib/components/zone/ZoneWelcome.jsx,
+VO_FLOW.md,
+CHANGELOG.md
+
+**Changed:** Applied Madhurima's non-scene VO pass: removed the spoken "Nice choice!" from
+profile avatar selection, shortened the Mooshika ride transition to "Hold on tight, {name}!
+Let's go!", tightened the intro-story Web Speech lines, changed map unlock VO from
+"ready to explore" to "is waiting for you", and removed redundant zone-welcome instruction
+copy plus repeated generic "I'm so proud of you" zone-completion praise. Added an app-level /
+non-scene VO rule section to `VO_FLOW.md` so future app shell copy stays warm, short, specific,
+and non-redundant.
+
+**Verified:** Searched the touched files for the old target phrases (`Nice choice`,
+`ready to explore`, `Tap a card to begin`, `I'm so proud of you`, and the older intro/ride
+lines); no matches remain in those files. Ran `git diff --check` on the touched implementation
+files cleanly.
+
 ## [2026-09-21] — Intro story flow simplified and bridge image added
 **Touched:** src/components/GaneshaIntroStory.jsx, src/components/GaneshaIntroStory.css, src/App.jsx, public/intro-story/story1-img2-transition.png
 **Changed:** Reworked the Ganesha intro story after the welcome video into a shorter five-beat

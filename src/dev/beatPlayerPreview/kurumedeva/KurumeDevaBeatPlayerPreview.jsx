@@ -95,7 +95,7 @@ function KurumeDevaBeatPlayerPreview(props) {
         isAudioOn={isAudioOn}
         layoutDebug={layoutDebug}
         movementMs={1000}
-        reactionPauseMs={900}
+        reactionPauseMs={1800}
       />
     </div>
   );
