@@ -241,8 +241,10 @@ export default function VakratundaRescueGame({
   const [layoutCopyStatus, setLayoutCopyStatus] = useState('');
 
   const [stuckLevel, setStuckLevel] = useState(0);  // 0 none · 1 shimmer · 2 +bubble/VO · 3 +arc
-  const [showStuckBubble, setShowStuckBubble] = useState(false);
   const [showIntroGesture, setShowIntroGesture] = useState(false);  // one-time "you drag me" cue
+  const [showPassiveNudge, setShowPassiveNudge] = useState(false);
+  const [introVoDone, setIntroVoDone] = useState(false);
+  const [passiveIdleReset, setPassiveIdleReset] = useState(0);
   const introGestureShownRef = useRef(false);
 
   const stageRef = useRef(null);
@@ -330,6 +332,23 @@ export default function VakratundaRescueGame({
     stuckTimersRef.current = [];
   }, []);
 
+  // Pause-safe delay for the stuck escalation (+6s / +12s): while paused it
+  // re-checks every 150ms instead of firing, and every retry id is tracked in
+  // stuckTimersRef so clearStuckTimers (e.g. real progress) cancels the whole
+  // chain — paused time must never count toward the escalation.
+  const pauseSafeAfter = useCallback((ms, fn) => {
+    const runWhenReady = () => {
+      if (isPausedRef.current) {
+        const retryId = setTimeout(runWhenReady, 150);
+        stuckTimersRef.current.push(retryId);
+        return;
+      }
+      fn();
+    };
+    const id = setTimeout(runWhenReady, ms);
+    stuckTimersRef.current.push(id);
+  }, []);
+
   const resetStuck = useCallback(() => {
     clearStuckTimers();
     bumpCountRef.current = 0;
@@ -405,16 +424,18 @@ export default function VakratundaRescueGame({
       stuckLevelRef.current = 1;
       setStuckLevel(1);
       clearStuckTimers();
-      stuckTimersRef.current.push(setTimeout(() => {
+      // Pause-safe: a child who pauses at L1 must not come back already at
+      // L3 — paused time must not count toward the +6s / +12s escalation.
+      pauseSafeAfter(STUCK_L2_MS, () => {
         stuckLevelRef.current = 2;
         setStuckLevel(2);
-      }, STUCK_L2_MS));
-      stuckTimersRef.current.push(setTimeout(() => {
+      });
+      pauseSafeAfter(STUCK_L3_MS, () => {
         stuckLevelRef.current = 3;
         setStuckLevel(3);
-      }, STUCK_L3_MS));
+      });
     }
-  }, [clearStuckTimers, playSfx]);
+  }, [clearStuckTimers, pauseSafeAfter, playSfx]);
 
   const resetState = useCallback(() => {
     clearTimers();
@@ -440,9 +461,10 @@ export default function VakratundaRescueGame({
     stuckAnchorXRef.current = startPosRef.current.x;
     stuckLevelRef.current = 0;
     setStuckLevel(0);
-    setShowStuckBubble(false);
     introGestureShownRef.current = false;
     setShowIntroGesture(false);
+    setIntroVoDone(false);
+    setShowPassiveNudge(false);
   }, [clearTimers, onStageChange, setFrog, setLit]);
 
   const startTraceCourse = useCallback(() => {
@@ -451,8 +473,36 @@ export default function VakratundaRescueGame({
     setPads([]);
     setTrailPoints([]);
     setFrog(startPosRef.current);
-    playSceneLine?.('scene10_vak_intro');
+
+    setIntroVoDone(false);
+    const markIntroVoDone = () => setIntroVoDone(true);
+    if (playSceneLine) {
+      playSceneLine('scene10_vak_intro', markIntroVoDone);
+    } else {
+      markIntroVoDone();
+    }
   }, [onStageChange, playSceneLine, setFrog]);
+
+  // Passive-idle safety net: the reactive stuck system only helps once the
+  // child has actually bumped something — a child who never touches Frog at
+  // all gets no help. This is a single neutral reminder (no route, no VO)
+  // that Frog can be moved, separate from the reactive stuck escalation.
+  useEffect(() => {
+    if (
+      !isActive
+      || phase !== 'trace'
+      || !introVoDone
+      || isPaused
+      || isDragging
+      || stuckLevel > 0
+    ) {
+      setShowPassiveNudge(false);
+      return undefined;
+    }
+
+    const id = window.setTimeout(() => setShowPassiveNudge(true), 18000);
+    return () => window.clearTimeout(id);
+  }, [isActive, phase, introVoDone, isPaused, isDragging, stuckLevel, passiveIdleReset]);
 
   // One-time onboarding: a hand drags the frog from the bank into the water so
   // kids know to DRAG (not tap). Fires once when play starts, GestureDemo
@@ -460,10 +510,12 @@ export default function VakratundaRescueGame({
   // on `phase` so a re-rendering parent can't cancel the timer.
   useEffect(() => {
     if (phase !== 'trace' || introGestureShownRef.current) return undefined;
+    // Teaches the control (drag), not a rescue for inactivity — show it
+    // almost immediately so it can overlap the opening VO.
     const t = setTimeout(() => {
       introGestureShownRef.current = true;
       setShowIntroGesture(true);
-    }, 1200);
+    }, 150);
     return () => clearTimeout(t);
   }, [phase]);
 
@@ -605,6 +657,8 @@ export default function VakratundaRescueGame({
     setIsDragging(true);
     introGestureShownRef.current = true;   // they've got it — kill the intro cue
     setShowIntroGesture(false);
+    setShowPassiveNudge(false);
+    setPassiveIdleReset((n) => n + 1);
     event.currentTarget.setPointerCapture?.(event.pointerId);
   }, [getPoint, isPaused, phase, showDebugPanel]);
 
@@ -620,23 +674,14 @@ export default function VakratundaRescueGame({
     }
     setIsDragging(false);
     blockedContactRef.current = false;
+    setPassiveIdleReset((n) => n + 1);
     // Trail, pads and frog position deliberately PERSIST — the path the child
     // has drawn stays on screen so they can pick up and continue.
   }, []);
 
-  // Stuck level 2 = "Think": a small cream bubble near the frog every time
-  // this episode escalates (visual, so it repeats without VO fatigue), plus
-  // the actual "can you find another way" line ONCE for the whole game.
-  useEffect(() => {
-    if (!isActive || phase !== 'trace' || stuckLevel !== 2) {
-      setShowStuckBubble(false);
-      return undefined;
-    }
-    setShowStuckBubble(true);
-    const timer = window.setTimeout(() => setShowStuckBubble(false), 2800);
-    return () => window.clearTimeout(timer);
-  }, [stuckLevel, isActive, phase]);
-
+  // Stuck level 2 = "Look for another way through" — spoken ONCE for the
+  // whole game. The shimmer cue (rendered below) already carries the visual
+  // escalation; no on-screen bubble is needed alongside it.
   useEffect(() => {
     if (!isActive || phase !== 'trace') return;
     if (stuckLevel < 2 || hasPlayedStuckVoRef.current) return;
@@ -651,7 +696,9 @@ export default function VakratundaRescueGame({
   // Where the stuck shimmer sits — the nearest clear water beside the frog,
   // computed live so it always points at the gap next to where the child is
   // stuck. null if the frog is fully boxed in (bad layout — fix in debug).
-  const openingPoint = (isPlaying && !isDragging && stuckLevel >= 1)
+  // Shown even while still dragging/pushing against the blocker, so the
+  // response feels immediate instead of waiting for the child to let go.
+  const openingPoint = (isPlaying && stuckLevel >= 1)
     ? findNearbyOpening(frogPos, obstacles, waterPoly, familyPoint.x)
     : null;
   const showShimmer = !!openingPoint;
@@ -925,7 +972,7 @@ export default function VakratundaRescueGame({
       ))}
 
       <div
-        className={`vak-layer vak-start-frog ${phase === 'reunion' ? 'is-reunion' : ''} ${phase === 'reunion' && familyBounce ? 'is-bouncing' : ''} ${isPlaying && !isDragging ? 'is-waiting' : ''} ${blockPulse ? 'is-shaking' : ''} ${frogSnapping ? 'is-snapping' : ''} ${showDebugPanel ? 'is-debug-draggable' : ''}`}
+        className={`vak-layer vak-start-frog ${phase === 'reunion' ? 'is-reunion' : ''} ${phase === 'reunion' && familyBounce ? 'is-bouncing' : ''} ${isPlaying && !isDragging ? 'is-waiting' : ''} ${blockPulse ? 'is-shaking' : ''} ${frogSnapping ? 'is-snapping' : ''} ${showPassiveNudge ? 'is-passive-hint' : ''} ${showDebugPanel ? 'is-debug-draggable' : ''}`}
         style={{ left: `${frogRenderPos.x}%`, top: `${frogRenderPos.y}%`, width: `${frogWidth}%`, zIndex: 14 }}
         onPointerDown={(event) => startDebugDrag(event, { type: 'frogStart' })}
         onPointerMove={continueDebugDrag}
@@ -1008,17 +1055,6 @@ export default function VakratundaRescueGame({
           style={{ left: `${dot.x}%`, top: `${dot.y}%`, zIndex: 13, animationDelay: `${i * 0.18}s` }}
         />
       ))}
-
-      {showStuckBubble && (
-        <div
-          className="vak-hint-bubble"
-          style={{ left: `${frogPos.x}%`, top: `${frogPos.y - 8}%`, zIndex: 30 }}
-          role="status"
-          aria-live="polite"
-        >
-          Another way?
-        </div>
-      )}
 
       <GestureDemo
         type="drag"

@@ -153,6 +153,25 @@
   animation: vakBreathe 2.4s ease-in-out infinite;
 }
 
+/* Passive rescue only: child has not tried anything for a long time.
+   This reminds them Frog can move, without pointing to the route. */
+.vak-start-frog.is-passive-hint {
+  animation: vakPassiveFrogNudge 1.05s ease-in-out 2;
+}
+
+@keyframes vakPassiveFrogNudge {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) translateY(0) rotate(0deg);
+  }
+  35% {
+    transform: translate(-50%, -50%) translateY(-5%) rotate(-2deg);
+  }
+  65% {
+    transform: translate(-50%, -50%) translateY(-2%) rotate(2deg);
+  }
+}
+
 .vak-start-frog.is-reunion {
   transform: translate(-50%, -50%);
 }
@@ -241,9 +260,9 @@
 }
 
 .vak-water-shimmer.is-strong {
-  width: 11%;
-  height: 11%;
-  animation-duration: 1.15s;
+  width: 10%;
+  height: 10%;
+  animation-duration: 1.35s;
 }
 
 .vak-shimmer-dot {
@@ -264,29 +283,6 @@
 @keyframes vakShimmerDot {
   0%, 100% { transform: translate(-50%, -50%) scale(0.5); opacity: 0.2; }
   45%      { transform: translate(-50%, -50%) scale(1); opacity: 0.95; }
-}
-
-/* Stuck-hint L2: small cream speech bubble near the frog. */
-.vak-hint-bubble {
-  position: absolute;
-  transform: translate(-50%, -100%);
-  padding: 7px 13px;
-  background: #FFF9E6;
-  color: #5D2E0F;
-  border: 1.5px solid rgba(150, 121, 196, 0.28);
-  border-radius: 20px 24px 21px 25px;
-  box-shadow: 0 6px 16px rgba(40, 20, 80, 0.12);
-  font-family: 'Baloo 2', cursive;
-  font-weight: 700;
-  font-size: clamp(15px, 2.2vw, 19px);
-  white-space: nowrap;
-  pointer-events: none;
-  animation: vakHintIn 0.24s ease-out;
-}
-
-@keyframes vakHintIn {
-  from { opacity: 0; transform: translate(-50%, -92%) scale(0.96); }
-  to   { opacity: 1; transform: translate(-50%, -100%) scale(1); }
 }
 
 .vak-debug-hitbox {
@@ -579,6 +575,7 @@
 @media (prefers-reduced-motion: reduce) {
   .vak-start-frog.is-waiting,
   .vak-start-frog.is-shaking,
+  .vak-start-frog.is-passive-hint,
   .vak-pad,
   .vak-pad.is-drifting,
   .vak-family.is-breathing,
