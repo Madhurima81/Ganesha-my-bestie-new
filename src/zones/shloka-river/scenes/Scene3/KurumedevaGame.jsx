@@ -479,11 +479,14 @@ export default function KurumedevaGame({
   const onPhaseCompleteRef = useRef(onPhaseComplete);
   const onGameCompleteRef = useRef(onGameComplete);
   const isPausedRef = useRef(isPaused);
+  // GMB Hint Standard v1: gates the idle-hint ladder below until each
+  // round's own "first try" VO has finished (see the effect further down).
+  const [roundVoComplete, setRoundVoComplete] = useState(true);
   const {
     hintLevel,
     markInteraction,
   } = useRepeatedHintCycle({
-    enabled: isActive && !isPaused && phase === 'play' && !isRoundSettling && !debugMode && introComplete,
+    enabled: isActive && !isPaused && phase === 'play' && !isRoundSettling && !debugMode && introComplete && roundVoComplete,
     stageKey: phase === 'play'
       ? (placeActive ? `place-${friendStep}` : `friend-${friendStep}`)
       : phase,
@@ -509,7 +512,9 @@ export default function KurumedevaGame({
   const currentFriend = friendStep < FRIENDS.length ? FRIENDS[friendStep] : null;
 
   // Per-round "first try" VO — once when Beaver enters the logs round, once
-  // when she enters the rope round.
+  // when she enters the rope round. GMB Hint Standard v1: the idle-hint
+  // ladder for this round (see `enabled` above) waits on roundVoComplete,
+  // so it never starts counting while this VO is still talking.
   const lastRoundIntroRef = useRef(null);
   useEffect(() => {
     if (phase !== 'play' || isRoundSettling || debugMode) return;
@@ -519,8 +524,9 @@ export default function KurumedevaGame({
     const key = isLogsRound ? 'kuru_logs_first' : 'kuru_rope_first';
     if (lastRoundIntroRef.current === key) return;
     lastRoundIntroRef.current = key;
+    setRoundVoComplete(false);
     stopSceneVoice?.();
-    playSceneLine?.(key);
+    playSceneLine?.(key, () => setRoundVoComplete(true));
   }, [friendStep, phase, isRoundSettling, debugMode, triedPush, triedRope, playSceneLine, stopSceneVoice]);
 
   // Each helper loop is gated behind its own "try and fail" beat — Beaver

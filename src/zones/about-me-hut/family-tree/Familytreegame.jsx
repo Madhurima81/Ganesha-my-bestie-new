@@ -363,6 +363,9 @@ const FamilyTreeGameContent = ({
  const isPausedRef = useRef(false);
  const scheduledTimeoutsRef = useRef([]);
  const [showReturnHint, setShowReturnHint] = useState(false);
+ // GMB Hint Standard v1: gates the placedCount===0 case of the repeat-tap
+ // ladder below on the immediate tapCircle teaching cue actually finishing.
+ const [ganeshaTapVoComplete, setGaneshaTapVoComplete] = useState(true);
  const prevCountdownRef = useRef(null);
  const childStartTimerRef = useRef(null);
  const tapCircleTimerRef = useRef(null);
@@ -821,8 +824,9 @@ sceneState.isSequencePlaying,
 
  if (!canPlayTapHint) return undefined;
 
+ setGaneshaTapVoComplete(false);
  tapCircleTimerRef.current = setTimeout(() => {
- playVoice('tapCircle');
+ playVoice('tapCircle', () => setGaneshaTapVoComplete(true));
  tapCircleTimerRef.current = null;
  }, 150);
 
@@ -859,6 +863,7 @@ sceneState.isSequencePlaying,
  const shouldPlayRepeatHint =
  sceneState.gamePhase === 'ganeshaTree' &&
  (placedCount === 0 || placedCount === 1 || placedCount === 2 || placedCount === 3) &&
+ (placedCount !== 0 || ganeshaTapVoComplete) &&
 !sceneState.showFunFactModal &&
 !sceneState.flippedMember &&
 !sceneState.isSequencePlaying;
@@ -890,7 +895,7 @@ sceneState.isSequencePlaying,
  treeIdleHintTimersRef.current = [];
  setTreeIdleHintLevel(0);
  };
- }, [sceneState.placedGaneshaMembers.length, sceneState.gamePhase, sceneState.showFunFactModal, sceneState.flippedMember, sceneState.isSequencePlaying]);
+ }, [sceneState.placedGaneshaMembers.length, sceneState.gamePhase, sceneState.showFunFactModal, sceneState.flippedMember, sceneState.isSequencePlaying, ganeshaTapVoComplete]);
 
  // ========================================
  // CHILD PHASE: immediate teaching cue (0-150ms), fresh start only — same
@@ -1044,22 +1049,32 @@ sceneState.isSequencePlaying,
  });
 
  playSparkle();
- if (isAudioOn) {
- speakHint(member.voiceLine, {
- age: 7,
- style: 'child',
- moment: 'story'
- });
- }
-
  triggerMiniGesture('thumbsup', 'center', 1100);
- scheduleTimeout(() => {
+
+ // isSequencePlaying gates the idle-hint ladder (GMB Hint Standard v1) —
+ // it only clears once BOTH the placement animation and this member's
+ // voice line have finished, not on a flat timer alone.
+ let voDone = !isAudioOn;
+ let animDone = false;
+ const finishSequence = () => {
+ if (!voDone || !animDone) return;
  playChime();
  sceneActions.updateState({
  justPlacedId: null,
  isSequencePlaying: false
  });
- }, 1400);
+ };
+
+ if (isAudioOn) {
+ speakHint(member.voiceLine, {
+ age: 7,
+ style: 'child',
+ moment: 'story',
+ onEnd: () => { voDone = true; finishSequence(); }
+ });
+ }
+
+ scheduleTimeout(() => { animDone = true; finishSequence(); }, 1400);
  };
 
  useEffect(() => {
@@ -1085,22 +1100,27 @@ sceneState.isSequencePlaying,
 
  playSparkle();
 
- if (isAudioOn) {
- speakHint("And that's me, Ganesha!", {
- age: 7,
- style: 'child',
- moment: 'story'
- });
- }
-
- scheduleTimeout(() => {
+ let voDone = !isAudioOn;
+ let animDone = false;
+ const finishSequence = () => {
+ if (!voDone || !animDone) return;
  playChime();
-
  sceneActions.updateState({
  justPlacedId: null,
  isSequencePlaying: false
  });
- }, 1400);
+ };
+
+ if (isAudioOn) {
+ speakHint("And that's me, Ganesha!", {
+ age: 7,
+ style: 'child',
+ moment: 'story',
+ onEnd: () => { voDone = true; finishSequence(); }
+ });
+ }
+
+ scheduleTimeout(() => { animDone = true; finishSequence(); }, 1400);
  }, 900);
 
  return () => cancel?.();

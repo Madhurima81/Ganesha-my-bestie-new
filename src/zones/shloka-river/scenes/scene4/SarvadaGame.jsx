@@ -119,6 +119,9 @@ export default function SarvadaGame({
   const [gamePhase, setGamePhase] = useState('intro');
   const [flash, setFlash] = useState(false);
   const [findMode, setFindMode] = useState(false);
+  // GMB Hint Standard v1: gates the ladder below until the "find the symbol"
+  // VO (scene14_find_symbol) has actually finished, not just findMode flipping.
+  const [findVoComplete, setFindVoComplete] = useState(true);
   const [symbolFound, setSymbolFound] = useState(false);
   const [popOut, setPopOut] = useState(false);
   const [rescueHintActive, setRescueHintActive] = useState(false);
@@ -147,7 +150,7 @@ export default function SarvadaGame({
   // The 8s gap between L2 and L3 still clears playSceneLine's own
   // minDelayAfterVoiceMs: 5000 spacing between hint VO lines.
   const { hintLevel, markInteraction } = useRepeatedHintCycle({
-    enabled: isActive && !isPaused && findMode && !symbolFound && !showDebugPanel,
+    enabled: isActive && !isPaused && findMode && findVoComplete && !symbolFound && !showDebugPanel,
     stageKey: isActive && findMode ? `find-${phaseIndex}` : null,
     initialDelay: 10000,
     pulseCountBeforeEscalation: 1,
@@ -265,9 +268,10 @@ export default function SarvadaGame({
       setBubbleState('memory');
       safeAfter(800, () => {
         setFindMode(true);
+        setFindVoComplete(false);
         setRescueHintActive(false);
         lastHintVoiceKeyRef.current = null;
-        playSceneLine?.('scene14_find_symbol');
+        playSceneLine?.('scene14_find_symbol', () => setFindVoComplete(true));
       });
     });
   }, [

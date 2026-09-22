@@ -96,15 +96,17 @@
   50% { transform: translate(-50%, -50%) translateY(-4%); }
 }
 
-.sama-mystery {
+.sama-mystery-group {
   position: absolute;
-  left: 72%;
-  top: 58%;
-  width: clamp(185px, 25vw, 385px);
-  aspect-ratio: 1;
-  transform: translate(-50%, -50%);
+  inset: 0;
   z-index: 6;
   pointer-events: none;
+}
+
+.sama-mystery-piece {
+  position: absolute;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
 }
 
 .sama-shadow-group {
@@ -132,7 +134,6 @@
 }
 
 .sama-shadow-piece img,
-.sama-full-source,
 .sama-truth-layer {
   position: absolute;
   inset: 0;
@@ -141,18 +142,6 @@
   object-fit: contain;
   user-select: none;
   -webkit-user-drag: none;
-}
-
-.sama-full-source {
-  z-index: 1;
-  opacity: 0;
-  filter: brightness(0.9) saturate(0.85);
-  transition: opacity 0.7s ease, filter 0.7s ease;
-}
-
-.sama-mystery.is-understood .sama-full-source {
-  opacity: 0.26;
-  filter: brightness(1) saturate(1);
 }
 
 .sama-truth-layer {
@@ -387,10 +376,6 @@
 }
 
 @media (max-width: 600px) {
-  .sama-mystery {
-    width: 42vw;
-  }
-
   .sama-animal {
     width: clamp(70px, 15vw, 110px);
   }
@@ -521,11 +506,26 @@
   user-select: none;
 }
 
+.sama-debug-clue-preview {
+  position: absolute;
+  object-fit: contain;
+  pointer-events: none;
+  z-index: 38;
+  opacity: 0.92;
+  filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.6));
+}
+
+.sama-debug-clue-preview--dim {
+  opacity: 0.4;
+  filter: grayscale(0.6) drop-shadow(0 0 4px rgba(0, 0, 0, 0.5));
+  z-index: 36;
+}
+
 .sama-debug-outline {
   position: absolute;
-  border: 3px dashed #03A9F4;
-  background: rgba(3, 169, 244, 0.28);
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4), 0 0 14px rgba(3, 169, 244, 0.85);
+  border: 3px dashed #ffffff;
+  background: transparent;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.55);
   pointer-events: none;
   z-index: 39;
   box-sizing: border-box;

@@ -9,7 +9,6 @@ import bgImg from '../assets/images/Samaprabha/samaprabha-bg.webp';
 import fawnWorriedImg from '../assets/images/Samaprabha/fawn-worried.webp';
 import fawnHappyImg from '../assets/images/Samaprabha/fawn-happy.webp';
 import fawnWalkImg from '../assets/images/Samaprabha/fawn-walk.webp';
-import mysterySourceFullImg from '../assets/images/Samaprabha/mystery-source-full.png';
 import branchImg from '../assets/images/Samaprabha/reveal-branch.png';
 import reedsLeavesImg from '../assets/images/Samaprabha/reveal-reeds-leaves.png';
 import stumpImg from '../assets/images/Samaprabha/reveal-stump.png';
@@ -34,19 +33,18 @@ const CLUE_META = [
 
 const SAMA_DEFAULT_LAYOUT = {
   fawnStart: { l: 20, t: 69 },
-  fawnWalk: { l: 40, t: 63 },
+  fawnWalk: { l: 12.952856684840002, t: 45.947287246765875 },
   shadowPieces: {
     branch: { l: 55.86536762326263, t: 52.9703364198507, w: 27.5, rotate: -42, scaleX: 0.88, scaleY: 1, skewX: 30 },
     reeds: { l: 50.130515874818315, t: 53.796584403466596, w: 28, rotate: 0, scaleX: 0.96, scaleY: 1.02, skewX: 25 },
     stump: { l: 55.964248124943225, t: 63.71147989744117, w: 28, rotate: 0, scaleX: 1.22, scaleY: 1.48, skewX: 0 },
     rocks: { l: 57.05189372217932, t: 70.18370840713563, w: 28, rotate: 0, scaleX: 1, scaleY: 1, skewX: 0 },
   },
-  mystery: { l: 72, t: 58 },
   clues: [
-    { cx: 75, cy: 47, rx: 11, ry: 9 },
-    { cx: 86, cy: 51, rx: 11, ry: 12 },
-    { cx: 82, cy: 62, rx: 11, ry: 10 },
-    { cx: 76, cy: 67, rx: 12, ry: 8 },
+    { cx: 73.06992286859557, cy: 40.989836410954894, rx: 27, ry: 9 },
+    { cx: 79.39804432003997, cy: 49.38996349751708, rx: 14, ry: 14.7 },
+    { cx: 81.17782237917878, cy: 46.911238079611586, rx: 18.8, ry: 10 },
+    { cx: 86.81379806163699, cy: 43.74397679379112, rx: 14.5, ry: 11.9 },
   ],
 };
 
@@ -81,11 +79,10 @@ const samaDebugOptions = [
   { type: 'shadowPiece', pieceKey: 'reeds', key: 'shadowPiece-reeds', label: 'Shadow: Reeds/Leaves', fields: ['l', 't', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX'] },
   { type: 'shadowPiece', pieceKey: 'stump', key: 'shadowPiece-stump', label: 'Shadow: Stump', fields: ['l', 't', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX'] },
   { type: 'shadowPiece', pieceKey: 'rocks', key: 'shadowPiece-rocks', label: 'Shadow: Rocks/Grass', fields: ['l', 't', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX'] },
-  { type: 'object', key: 'mystery', label: 'Mystery Object', fields: ['l', 't'] },
-  { type: 'clue', index: 0, key: 'clue-0', label: 'Clue: Branch', fields: ['cx', 'cy', 'rx', 'ry'] },
-  { type: 'clue', index: 1, key: 'clue-1', label: 'Clue: Reeds/Leaves', fields: ['cx', 'cy', 'rx', 'ry'] },
-  { type: 'clue', index: 2, key: 'clue-2', label: 'Clue: Stump', fields: ['cx', 'cy', 'rx', 'ry'] },
-  { type: 'clue', index: 3, key: 'clue-3', label: 'Clue: Rocks', fields: ['cx', 'cy', 'rx', 'ry'] },
+  { type: 'clue', index: 0, key: 'clue-0', label: 'Clue: Branch (hit radius)', fields: ['rx', 'ry'] },
+  { type: 'clue', index: 1, key: 'clue-1', label: 'Clue: Reeds/Leaves (hit radius)', fields: ['rx', 'ry'] },
+  { type: 'clue', index: 2, key: 'clue-2', label: 'Clue: Stump (hit radius)', fields: ['rx', 'ry'] },
+  { type: 'clue', index: 3, key: 'clue-3', label: 'Clue: Rocks (hit radius)', fields: ['rx', 'ry'] },
 ];
 
 const getDebugEnabled = () => {
@@ -119,7 +116,6 @@ const loadDebugLayout = () => {
         stump: { ...fallback.shadowPieces.stump, ...parsed.shadowPieces?.stump },
         rocks: { ...fallback.shadowPieces.rocks, ...parsed.shadowPieces?.rocks },
       },
-      mystery: { ...fallback.mystery, ...parsed.mystery },
       clues: fallback.clues.map((clue, index) => ({
         ...clue,
         ...(parsed.clues?.[index] || {}),
@@ -179,7 +175,6 @@ const POSE_ASSETS = [
   fawnWorriedImg,
   fawnHappyImg,
   fawnWalkImg,
-  mysterySourceFullImg,
   branchImg,
   reedsLeavesImg,
   stumpImg,
@@ -221,6 +216,7 @@ export default function SamaprabhaGame({
   const [holdProgress, setHoldProgress] = useState(0);
   const [hasInteracted, setHasInteracted] = useState(false);
   const [revealPulse, setRevealPulse] = useState(null);
+  const [clueVoComplete, setClueVoComplete] = useState(true);
 
   const stageRef = useRef(null);
   const debugItemDragRef = useRef(null); // { mode: 'move' | 'resize' }
@@ -247,9 +243,24 @@ export default function SamaprabhaGame({
   isPausedRef.current = isPaused;
 
   const activeLayout = debugEnabled ? debugLayout : defaultLayout;
+  // The reveal / tap-target position for each clue is driven directly by its
+  // own shadow piece's position (l/t), so the real object always fades in
+  // exactly where its shadow was, and the light/hold interaction happens
+  // right over the shadow itself. Only the hit-zone radius (rx/ry) is a
+  // separate, independently tunable value.
   const CLUES = useMemo(
-    () => CLUE_META.map((meta, index) => ({ ...meta, ...activeLayout.clues[index] })),
-    [activeLayout.clues]
+    () => CLUE_META.map((meta, index) => {
+      const piece = activeLayout.shadowPieces[meta.shadowPieceKey];
+      const radius = activeLayout.clues[index];
+      return {
+        ...meta,
+        cx: piece.l,
+        cy: piece.t,
+        rx: radius.rx,
+        ry: radius.ry,
+      };
+    }),
+    [activeLayout.shadowPieces, activeLayout.clues]
   );
 
   const activeClue = phase === 'play' && lit < CLUE_META.length ? CLUES[lit] : null;
@@ -275,8 +286,10 @@ export default function SamaprabhaGame({
   }, []);
 
   // GMB Hint Standard v1 — flat 10s/18s/26s from VO end or last interaction.
+  // clueVoComplete additionally gates the ladder on each clue's own reveal
+  // VO ("That's a branch!" etc.) finishing, not just the game's intro VO.
   const { hintLevel, markInteraction } = useRepeatedHintCycle({
-    enabled: isActive && !isPaused && phase === 'play' && introComplete,
+    enabled: isActive && !isPaused && phase === 'play' && introComplete && clueVoComplete,
     stageKey: phase === 'play' ? `clue-${lit}` : phase,
     initialDelay: 10000,
     pulseCountBeforeEscalation: 3,
@@ -344,9 +357,10 @@ export default function SamaprabhaGame({
 
     const revealVo = CLUE_META[currentIndex]?.revealVo;
     if (revealVo) {
+      setClueVoComplete(false);
       safeAfter(250, () => {
         stopVoice?.();
-        playSceneLine?.(revealVo, undefined, { replayOnReturn: false });
+        playSceneLine?.(revealVo, () => setClueVoComplete(true), { replayOnReturn: false });
       });
     }
 
@@ -787,21 +801,28 @@ export default function SamaprabhaGame({
           })}
         </div>
 
-        <div
-          className={`sama-mystery${effUnderstood ? ' is-understood' : ''}`}
-          style={{ left: `${activeLayout.mystery.l}%`, top: `${activeLayout.mystery.t}%` }}
-          aria-hidden="true"
-        >
-          <img className="sama-full-source" src={mysterySourceFullImg} alt="" draggable={false} />
-          {CLUES.map((clue, index) => (
-            <TruthLayer
-              key={clue.id}
-              clue={clue}
-              isRevealed={index < effLit}
-              isBeingSeen={index === lit && isHoldingClue}
-              isNew={revealPulse === index}
-            />
-          ))}
+        <div className="sama-mystery-group" aria-hidden="true">
+          {CLUES.map((clue, index) => {
+            const piece = activeLayout.shadowPieces[clue.shadowPieceKey];
+            return (
+              <div
+                key={clue.id}
+                className="sama-mystery-piece"
+                style={{
+                  left: `${piece.l}%`,
+                  top: `${piece.t}%`,
+                  width: `${piece.w}vw`,
+                }}
+              >
+                <TruthLayer
+                  clue={clue}
+                  isRevealed={index < effLit}
+                  isBeingSeen={index === lit && isHoldingClue}
+                  isNew={revealPulse === index}
+                />
+              </div>
+            );
+          })}
         </div>
 
         {activeClue && hintLevel >= 1 && (
@@ -878,6 +899,25 @@ export default function SamaprabhaGame({
           <p className="sama-doneline is-visible">Now you can see clearly.</p>
         )}
 
+        {debugEnabled && showDebugPanel && activeLayout.clues.map((clue, index) => {
+          // Reference layer: every clue placed so far, dimmed, so
+          // positioning the next one doesn't lose sight of the ones
+          // already done — only the selected clue (rendered separately
+          // below, full strength + handles) needs to stand out.
+          if (selectedDebugKey === `clue-${index}`) return null;
+          const d = Math.max(clue.rx, clue.ry) * 2;
+          return (
+            <img
+              key={`clue-ref-${index}`}
+              src={CLUE_META[index]?.img}
+              alt=""
+              className="sama-debug-clue-preview sama-debug-clue-preview--dim"
+              style={{ left: `${clue.cx - d / 2}%`, top: `${clue.cy - d / 2}%`, width: `${d}%`, height: `${d}%` }}
+              draggable={false}
+            />
+          );
+        })}
+
         {debugEnabled && showDebugPanel && (() => {
           const option = samaDebugOptions.find((opt) => opt.key === selectedDebugKey) || samaDebugOptions[0];
           const pos = posFieldsFor(option);
@@ -886,12 +926,14 @@ export default function SamaprabhaGame({
           const cy = Number(getDebugValue(pos.y)) || 0;
           const handleDist = sizeFields.length ? (Number(getDebugValue(sizeFields[0])) || 8) : 0;
 
-          // Clue tap-zones have no visible art of their own (the actual
-          // reveal image lives in the mystery-object stack, positioned
-          // separately) — without an outline there's nothing to see while
-          // dragging, just an invisible ellipse. Draw it while selected so
-          // there's something to align against.
+          // Clue tap-zones have no visible art of their own at cx/cy (the
+          // actual reveal image lives in the mystery-object stack,
+          // positioned separately) — so there's nothing to see while
+          // dragging, just an invisible ellipse. Show the real clue artwork
+          // (branch/reeds/stump/rocks) right at the tap-zone instead of an
+          // abstract outline, so it's obvious what you're actually placing.
           let outline = null;
+          let clueImg = null;
           if (option.type === 'clue') {
             const rx = Number(getDebugValue('rx')) || 8;
             const ry = Number(getDebugValue('ry')) || 8;
@@ -899,6 +941,17 @@ export default function SamaprabhaGame({
               left: `${cx - rx}%`, top: `${cy - ry}%`,
               width: `${rx * 2}%`, height: `${ry * 2}%`,
               borderRadius: '50%',
+            };
+            // The clue art is a square canvas with a lot of transparent
+            // padding around the actual glyph — object-fit: contain inside
+            // the (non-square) ellipse box was scaling to whichever of
+            // rx/ry was smaller, so dragging just one axis barely moved it.
+            // Size it as a square from the larger of the two instead, so it
+            // visibly tracks the resize handle either way.
+            const d = Math.max(rx, ry) * 2;
+            clueImg = {
+              src: CLUE_META[option.index]?.img,
+              style: { left: `${cx - d / 2}%`, top: `${cy - d / 2}%`, width: `${d}%`, height: `${d}%` },
             };
           } else if (option.fields.includes('w')) {
             const w = Number(getDebugValue('w')) || 20;
@@ -911,6 +964,15 @@ export default function SamaprabhaGame({
 
           return (
             <>
+              {clueImg?.src && (
+                <img
+                  src={clueImg.src}
+                  alt=""
+                  className="sama-debug-clue-preview"
+                  style={clueImg.style}
+                  draggable={false}
+                />
+              )}
               {outline && <div className="sama-debug-outline" style={outline} />}
               <div
                 className="sama-debug-move-handle"
