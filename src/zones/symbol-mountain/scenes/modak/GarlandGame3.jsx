@@ -51,8 +51,10 @@ const LAYOUT = {
 const VO = {
   open: 'You found all six flowers. Tap them to make a garland for Ganesha.',
   tapIdle: 'Tap another flower.',
+  tapDirect: 'Tap any flower.',
   ready: 'The garland is ready! Drag it to Ganesha.',
   carry: 'Drag the garland to Ganesha.',
+  carryDirect: 'Drag the garland onto Ganesha.',
   offered: 'You brought the garland to Ganesha — and look, a sweet Modak!',
 };
 
@@ -96,35 +98,75 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
   // Tab-hide safety for this game's direct speechSynthesis use (it bypasses the
   // scene's useVoiceGuidance hook). Mirrors the hook: cancel on hide, replay the
   // interrupted line from the start 2s after return, clear everything on unmount.
-  const speakingTextRef = useRef(null);
-  const interruptedTextRef = useRef(null);
+  const activeSpeechRef = useRef(null);
+  const interruptedSpeechRef = useRef(null);
   const replayTimerRef = useRef(null);
+
+  const startUtterance = useCallback((text, resolve) => {
+    if (typeof window === 'undefined' || !window.speechSynthesis) {
+      resolve?.();
+      return;
+    }
+    // Don't let cancel() accidentally resolve the previous instruction as
+    // though it had genuinely finished.
+    const previous = activeSpeechRef.current;
+    if (previous?.utterance) {
+      previous.utterance.onend = null;
+      previous.utterance.onerror = null;
+    }
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 0.95;
+    const entry = { text, resolve, utterance };
+    const done = () => {
+      if (activeSpeechRef.current === entry) activeSpeechRef.current = null;
+      resolve?.();
+    };
+    utterance.onend = done;
+    utterance.onerror = done;
+    activeSpeechRef.current = entry;
+    window.speechSynthesis.speak(utterance);
+  }, []);
+
   const speak = useCallback((text) => {
     try {
       if (mutedRef.current || typeof window === 'undefined' || !window.speechSynthesis) return;
-      window.speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(text);
-      u.rate = 0.95;
-      const done = () => { if (speakingTextRef.current === text) speakingTextRef.current = null; };
-      u.onend = done;
-      u.onerror = done;
-      speakingTextRef.current = text;
-      window.speechSynthesis.speak(u);
+      startUtterance(text, null);
     } catch { /* no-op */ }
-  }, []);
+  }, [startUtterance]);
+
+  const speakAsync = useCallback((text) => new Promise((resolve) => {
+    try {
+      if (mutedRef.current || typeof window === 'undefined' || !window.speechSynthesis) {
+        resolve();
+        return;
+      }
+      startUtterance(text, resolve);
+    } catch { resolve(); }
+  }), [startUtterance]);
+
   useAppVisibility(
     useCallback(() => {
       if (replayTimerRef.current) { clearTimeout(replayTimerRef.current); replayTimerRef.current = null; }
-      interruptedTextRef.current = speakingTextRef.current;
-      speakingTextRef.current = null;
+      const entry = activeSpeechRef.current;
+      activeSpeechRef.current = null;
+      if (entry) {
+        entry.utterance.onend = null;
+        entry.utterance.onerror = null;
+        interruptedSpeechRef.current = { text: entry.text, resolve: entry.resolve };
+      }
       try { window.speechSynthesis?.cancel(); } catch { /* no-op */ }
     }, []),
     useCallback(() => {
-      const text = interruptedTextRef.current;
-      interruptedTextRef.current = null;
-      if (!text) return;
-      replayTimerRef.current = setTimeout(() => { replayTimerRef.current = null; speak(text); }, 2000);
-    }, [speak])
+      const entry = interruptedSpeechRef.current;
+      interruptedSpeechRef.current = null;
+      if (!entry) return;
+      replayTimerRef.current = window.setTimeout(() => {
+        replayTimerRef.current = null;
+        if (mutedRef.current) { entry.resolve?.(); return; }
+        try { startUtterance(entry.text, entry.resolve); } catch { entry.resolve?.(); }
+      }, 2000);
+    }, [startUtterance])
   );
   // Unmount: only drop the pending replay. Don't cancel() here — the parent scene
   // may already have started its next VO line in the same commit, and the scene's
@@ -132,56 +174,127 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
   useEffect(() => () => {
     if (replayTimerRef.current) clearTimeout(replayTimerRef.current);
     replayTimerRef.current = null;
-    interruptedTextRef.current = null;
+    interruptedSpeechRef.current = null;
   }, []);
 
   const isBuild = phase === PHASES.BUILD;
   const isReady = phase === PHASES.READY;
   const isOffered = phase === PHASES.OFFERED;
 
-  // Carrying the finished garland to Ganesha is a drag, not the tap used to
-  // thread flowers — same 9s/16s/24s idle-hint ladder used across the app
-  // (useRepeatedHintCycle): L1 pulse, L2 stronger pulse + one-time VO, L3
-  // re-shows the gesture demo. Restarts on each attempt (drag start, or a
-  // failed drop) so it doesn't nag right after the child just tried.
-  const [garlandHintLevel, setGarlandHintLevel] = useState(0);
-  const garlandHintVoPlayedRef = useRef(false);
-  const garlandReadyAtRef = useRef(Date.now());
+  // ---------------------------------------------------------
+  // BUILD HINTS — VO end -> 10 / 18 / 26. Every flower is valid, so hints
+  // never single out "the correct one" until the L3 example nudge.
+  // ---------------------------------------------------------
+  const [buildHintLevel, setBuildHintLevel] = useState(0);
+  const buildHintStartedAtRef = useRef(null);
+  const buildHintVoPlayedRef = useRef({ l2: false, l3: false });
 
-  const restartGarlandHintClock = useCallback(() => {
-    garlandReadyAtRef.current = Date.now();
-    setGarlandHintLevel(0);
-    garlandHintVoPlayedRef.current = false;
+  const startBuildHintClock = useCallback(() => {
+    buildHintStartedAtRef.current = Date.now();
+    setBuildHintLevel(0);
+    buildHintVoPlayedRef.current = { l2: false, l3: false };
+  }, []);
+
+  const stopBuildHintClock = useCallback(() => {
+    buildHintStartedAtRef.current = null;
+    setBuildHintLevel(0);
+    buildHintVoPlayedRef.current = { l2: false, l3: false };
   }, []);
 
   useEffect(() => {
-    if (!isReady) { setGarlandHintLevel(0); garlandHintVoPlayedRef.current = false; return undefined; }
-    restartGarlandHintClock();
-  }, [isReady, restartGarlandHintClock]);
+    if (!isBuild || !isActive || isPaused) return undefined;
+    const tick = window.setInterval(() => {
+      const startedAt = buildHintStartedAtRef.current;
+      if (!startedAt) return;
+      const idleMs = Date.now() - startedAt;
+      if (idleMs >= 26000) setBuildHintLevel(3);
+      else if (idleMs >= 18000) setBuildHintLevel(2);
+      else if (idleMs >= 10000) setBuildHintLevel(1);
+    }, 250);
+    return () => window.clearInterval(tick);
+  }, [isBuild, isActive, isPaused]);
 
   useEffect(() => {
-    if (!isReady || garlandPosition.active) return undefined;
+    if (!isBuild) return;
+    if (buildHintLevel >= 3 && !buildHintVoPlayedRef.current.l3) {
+      buildHintVoPlayedRef.current.l3 = true;
+      speak(VO.tapDirect);
+      return;
+    }
+    if (buildHintLevel >= 2 && !buildHintVoPlayedRef.current.l2) {
+      buildHintVoPlayedRef.current.l2 = true;
+      speak(VO.tapIdle);
+    }
+  }, [buildHintLevel, isBuild, speak]);
+
+  // ---------------------------------------------------------
+  // GARLAND CARRY HINTS — carrying the finished garland to Ganesha is a
+  // drag, a new gesture after six tap interactions. Clock starts after the
+  // "ready" VO finishes; meaningful drag movement resets it; repeated
+  // failed drops accelerate help without waiting the full ladder.
+  // ---------------------------------------------------------
+  const [garlandHintLevel, setGarlandHintLevel] = useState(0);
+  const [forcedGarlandHintLevel, setForcedGarlandHintLevel] = useState(0);
+  const [carryTeachingGesture, setCarryTeachingGesture] = useState(false);
+  const garlandHintStartedAtRef = useRef(null);
+  const garlandHintVoPlayedRef = useRef({ l2: false, l3: false });
+  const garlandFailedDropsRef = useRef(0);
+  const garlandDragStartRef = useRef(null);
+  const garlandMeaningfulDragRef = useRef(false);
+
+  const effectiveGarlandHintLevel = Math.max(garlandHintLevel, forcedGarlandHintLevel);
+
+  const startGarlandHintClock = useCallback((clearEscalation = false) => {
+    garlandHintStartedAtRef.current = Date.now();
+    setGarlandHintLevel(0);
+    if (clearEscalation) {
+      setForcedGarlandHintLevel(0);
+      garlandFailedDropsRef.current = 0;
+    }
+    garlandHintVoPlayedRef.current = { l2: false, l3: false };
+  }, []);
+
+  useEffect(() => {
+    if (!isReady || !isActive || isPaused || garlandPosition.active) return undefined;
     const tick = window.setInterval(() => {
-      const idleMs = Date.now() - garlandReadyAtRef.current;
-      if (idleMs >= 24000) {
-        setGarlandHintLevel(3);
-      } else if (idleMs >= 16000) {
-        setGarlandHintLevel(2);
-        if (!garlandHintVoPlayedRef.current) {
-          garlandHintVoPlayedRef.current = true;
-          speak(isBuild ? VO.tapIdle : VO.carry);
-        }
-      } else if (idleMs >= 9000) {
-        setGarlandHintLevel(1);
-      }
-    }, 1000);
+      const startedAt = garlandHintStartedAtRef.current;
+      if (!startedAt) return;
+      const idleMs = Date.now() - startedAt;
+      if (idleMs >= 26000) setGarlandHintLevel(3);
+      else if (idleMs >= 18000) setGarlandHintLevel(2);
+      else if (idleMs >= 10000) setGarlandHintLevel(1);
+    }, 250);
     return () => window.clearInterval(tick);
-  }, [isReady, garlandPosition.active, speak]);
+  }, [isReady, isActive, isPaused, garlandPosition.active]);
+
+  useEffect(() => {
+    if (!isReady) return;
+    if (effectiveGarlandHintLevel >= 3 && !garlandHintVoPlayedRef.current.l3) {
+      garlandHintVoPlayedRef.current.l3 = true;
+      speak(VO.carryDirect);
+      return;
+    }
+    if (effectiveGarlandHintLevel >= 2 && !garlandHintVoPlayedRef.current.l2) {
+      garlandHintVoPlayedRef.current.l2 = true;
+      speak(VO.carry);
+    }
+  }, [effectiveGarlandHintLevel, isReady, speak]);
 
   const liveSlots = GARLAND_SLOTS;
   const placedIds = useMemo(() => new Set(placedFlowers.map((item) => item.id)), [placedFlowers]);
 
-  useEffect(() => { if (isBuild && isActive) speak(VO.open); }, [isActive]); // eslint-disable-line react-hooks/exhaustive-deps
+  const buildIntroStartedRef = useRef(false);
+  useEffect(() => {
+    if (!isBuild || !isActive || buildIntroStartedRef.current) return undefined;
+    buildIntroStartedRef.current = true;
+    let cancelled = false;
+    (async () => {
+      await speakAsync(VO.open);
+      if (cancelled) return;
+      startBuildHintClock();
+    })();
+    return () => { cancelled = true; };
+  }, [isBuild, isActive, speakAsync, startBuildHintClock]);
 
   // Measure the basket's position relative to the workspace once both are
   // mounted, then trigger the fly-out-to-loose-positions transition.
@@ -205,6 +318,9 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
   const threadFlower = (flower) => {
     if (!isBuild || !isActive || isPaused || !flowersArrived
       || threadingLock.current || placedIds.has(flower.id) || placedFlowers.length >= FLOWERS.length) return;
+    // A flower tap is the meaningful interaction — no wrong flower exists,
+    // so every tap earns a fresh 10/18/26 window.
+    startBuildHintClock();
     threadingLock.current = true;
     setThreadingFlower({ ...flower, slot: liveSlots[placedFlowers.length], slotIndex: placedFlowers.length });
   };
@@ -224,14 +340,24 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
     let cancelled = false;
     const timer = window.setTimeout(() => {
       // Keep the assembled flowers visible while the replacement art decodes.
-      preparePose(completedGarland).then(() => {
+      preparePose(completedGarland).then(async () => {
         if (cancelled) return;
+        stopBuildHintClock();
         setPhase(PHASES.READY);
-        speak(VO.ready);
+
+        // Drag is a new gesture after six tap interactions — teach it once
+        // immediately, independent of (and overlapping) the ready VO.
+        setCarryTeachingGesture(true);
+        window.setTimeout(() => setCarryTeachingGesture(false), 3200);
+
+        await speakAsync(VO.ready);
+        if (cancelled) return;
+        // 10 / 18 / 26 begins only once the ready VO actually finishes.
+        startGarlandHintClock(true);
       }).catch(() => {});
     }, 550);
     return () => { cancelled = true; window.clearTimeout(timer); };
-  }, [isBuild, placedFlowers.length, isActive, isPaused, speak]);
+  }, [isBuild, placedFlowers.length, isActive, isPaused, speakAsync, stopBuildHintClock, startGarlandHintClock]);
 
   const getScenePoint = (event) => {
     const scene = sceneRef.current;
@@ -243,7 +369,10 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
     if (!isReady || isPaused) return;
     event.preventDefault();
     event.currentTarget.setPointerCapture?.(event.pointerId);
-    restartGarlandHintClock();
+    const start = getScenePoint(event);
+    garlandDragStartRef.current = start;
+    garlandMeaningfulDragRef.current = false;
+    setCarryTeachingGesture(false);
     setGarlandPosition((prev) => ({ ...prev, active: true }));
   };
   const moveGarland = (event) => {
@@ -251,6 +380,16 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
     const point = getScenePoint(event);
     if (!point) return;
     setGarlandPosition({ active: true, x: Math.max(5, Math.min(95, point.x)), y: Math.max(8, Math.min(92, point.y)) });
+
+    if (!garlandMeaningfulDragRef.current && garlandDragStartRef.current) {
+      const start = garlandDragStartRef.current;
+      const distance = Math.hypot(point.x - start.x, point.y - start.y);
+      if (distance >= 5) {
+        garlandMeaningfulDragRef.current = true;
+        // A genuine drag earns a fresh idle window.
+        startGarlandHintClock();
+      }
+    }
   };
   const endGarlandDrag = (event) => {
     if (!garlandPosition.active) return;
@@ -260,11 +399,30 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
     const droppedOnGanesha = event.clientX >= rect.left - 35 && event.clientX <= rect.right + 35 && event.clientY >= rect.top - 35 && event.clientY <= rect.bottom + 45;
 
     if (!droppedOnGanesha) {
+      const wasMeaningful = garlandMeaningfulDragRef.current;
+      garlandDragStartRef.current = null;
+      garlandMeaningfulDragRef.current = false;
       setGarlandPosition({ x: 50, y: 55, active: false });
-      restartGarlandHintClock();
+
+      if (wasMeaningful) {
+        garlandFailedDropsRef.current += 1;
+        const failures = garlandFailedDropsRef.current;
+        // First real miss: quiet return.
+        if (failures === 2) {
+          setForcedGarlandHintLevel((level) => Math.max(level, 2));
+        }
+        if (failures >= 3) {
+          setForcedGarlandHintLevel(3);
+        }
+      }
+
+      startGarlandHintClock();
       return;
     }
 
+    garlandDragStartRef.current = null;
+    garlandMeaningfulDragRef.current = false;
+    garlandFailedDropsRef.current = 0;
     setGarlandPosition((prev) => ({ ...prev, active: false }));
     setPhase(PHASES.OFFERED);
     speak(VO.offered);
@@ -279,6 +437,8 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
 
   if (!isActive) return null;
 
+  const firstRemainingFlowerId = FLOWERS.find((flower) => !placedIds.has(flower.id))?.id;
+
   return (
     <div
       ref={sceneRef}
@@ -286,19 +446,32 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
       style={{ backgroundImage: `url(${forestBackground})` }}
       onContextMenu={(e) => e.preventDefault()}
     >
-      <GestureDemo
-        type="drag"
-        from={{ x: LAYOUT.workspace.l, y: LAYOUT.workspace.t }}
-        to={{ x: LAYOUT.ganesha.l, y: LAYOUT.ganesha.t }}
-        active={garlandHintLevel >= 3 && !garlandPosition.active}
-        idleDelay={150}
-        zIndex={30}
-      />
+      {(() => {
+        const carryFrom = { x: LAYOUT.workspace.l, y: LAYOUT.workspace.t };
+        const carryTarget = { x: LAYOUT.ganesha.l, y: LAYOUT.ganesha.t };
+        const carryPartialTarget = {
+          x: carryFrom.x + (carryTarget.x - carryFrom.x) * 0.52,
+          y: carryFrom.y + (carryTarget.y - carryFrom.y) * 0.52,
+        };
+        const carryGestureTarget = effectiveGarlandHintLevel >= 3 ? carryTarget : carryPartialTarget;
+        const showCarryGesture = isReady && !garlandPosition.active
+          && (carryTeachingGesture || effectiveGarlandHintLevel >= 2);
+        return (
+          <GestureDemo
+            type="drag"
+            from={carryFrom}
+            to={carryGestureTarget}
+            active={!isPaused && showCarryGesture}
+            idleDelay={150}
+            zIndex={30}
+          />
+        );
+      })()}
 
       {/* GANESHA */}
       <div
         ref={ganeshaDropRef}
-        className={`g3g-ganesha ${isOffered ? 'g3g-ganesha--happy' : ''}`}
+        className={`g3g-ganesha ${isOffered ? 'g3g-ganesha--happy' : ''} ${isReady && effectiveGarlandHintLevel >= 3 ? 'g3g-ganesha--hint-target' : ''}`}
         style={{ left: `${LAYOUT.ganesha.l}%`, top: `${LAYOUT.ganesha.t}%` }}
       >
         <img src={ganesha} alt="Ganesha" />
@@ -344,7 +517,7 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
                   <button
                     key={flower.id}
                     type="button"
-                    className={`g3g-loose-flower ${isThreading ? 'is-threading' : ''} ${flowersArrived ? 'has-arrived' : ''}`}
+                    className={`g3g-loose-flower ${isThreading ? 'is-threading' : ''} ${flowersArrived ? 'has-arrived' : ''} ${buildHintLevel === 1 ? 'g3g-build-hint-l1' : ''} ${buildHintLevel === 2 ? 'g3g-build-hint-l2' : ''} ${buildHintLevel >= 3 && flower.id === firstRemainingFlowerId ? 'g3g-build-hint-example' : ''}`}
                     style={{ left: `${x}%`, top: `${y}%`, '--flower-delay': isThreading ? '0ms' : `${index * 70}ms` }}
                     onClick={() => threadFlower(flower)}
                     disabled={!flowersArrived || !!threadingFlower || isPaused}
@@ -361,11 +534,16 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
             <div className="g3g-completed-garland-stage">
               <button
                 type="button"
-                className={`g3g-completed-garland ${garlandHintLevel === 1 ? 'g3g-hint-pulse' : ''} ${garlandHintLevel >= 2 ? 'g3g-hint-strong' : ''}`}
+                className={`g3g-completed-garland ${effectiveGarlandHintLevel === 1 ? 'g3g-hint-nudge' : ''}`}
                 onPointerDown={startGarlandDrag}
                 onPointerMove={moveGarland}
                 onPointerUp={endGarlandDrag}
-                onPointerCancel={() => { setGarlandPosition({ x: 50, y: 55, active: false }); restartGarlandHintClock(); }}
+                onPointerCancel={() => {
+                  garlandDragStartRef.current = null;
+                  garlandMeaningfulDragRef.current = false;
+                  setGarlandPosition({ x: 50, y: 55, active: false });
+                  startGarlandHintClock();
+                }}
                 aria-label="Carry the garland to Ganesha"
               >
                 <img src={completedGarland} alt="Garland" />
@@ -383,7 +561,12 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
           style={{ left: `${garlandPosition.x}%`, top: `${garlandPosition.y}%` }}
           onPointerMove={moveGarland}
           onPointerUp={endGarlandDrag}
-          onPointerCancel={() => setGarlandPosition({ x: 50, y: 55, active: false })}
+          onPointerCancel={() => {
+            garlandDragStartRef.current = null;
+            garlandMeaningfulDragRef.current = false;
+            setGarlandPosition({ x: 50, y: 55, active: false });
+            startGarlandHintClock();
+          }}
         >
           <img src={completedGarland} alt="" />
         </button>

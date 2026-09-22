@@ -21,6 +21,20 @@
   50% { transform: translate(-50%, -50%) scale(1.035); }
 }
 
+/* L3 — destination finally becomes explicit. */
+.g3g-ganesha--hint-target {
+  animation: g3gGaneshaTargetHint 1.35s ease-in-out infinite;
+}
+@keyframes g3gGaneshaTargetHint {
+  0%, 100% { filter: drop-shadow(0 0 0 rgba(255, 215, 100, 0)); }
+  50% { filter: drop-shadow(0 0 14px rgba(255, 215, 100, .72)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .g3g-ganesha--hint-target {
+    animation: none;
+  }
+}
+
 /* ========================================================
    MOOSHIKA
    ======================================================== */
@@ -125,6 +139,53 @@
 .g3g-loose-flower:focus-visible { outline: 3px solid #ffe69a; border-radius: 50%; }
 
 /* ========================================================
+   BUILD HINTS — every flower is valid, so L1/L2 move the whole group
+   rather than singling one out. Only L3 nudges toward one example.
+   ======================================================== */
+.g3g-loose-flower.g3g-build-hint-l1 img {
+  animation: g3gFlowerHintL1 1.8s ease-in-out infinite;
+}
+@keyframes g3gFlowerHintL1 {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+.g3g-loose-flower.g3g-build-hint-l2 img {
+  animation: g3gFlowerHintL2 1.5s ease-in-out infinite;
+}
+@keyframes g3gFlowerHintL2 {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-3px) scale(1.025); }
+}
+.g3g-loose-flower.g3g-build-hint-example {
+  position: absolute;
+}
+.g3g-build-hint-example::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 72%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 3px solid rgba(255, 220, 120, 0.88);
+  pointer-events: none;
+  animation: g3gTapExample 1.1s ease-out infinite;
+}
+@keyframes g3gTapExample {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(.65); }
+  35% { opacity: .9; }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.15); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .g3g-loose-flower.g3g-build-hint-l1 img,
+  .g3g-loose-flower.g3g-build-hint-l2 img,
+  .g3g-build-hint-example::after {
+    animation: none;
+  }
+}
+
+/* ========================================================
    FLOWER SNAPPED ONTO GARLAND
    ======================================================== */
 .g3g-placed-flower {
@@ -154,26 +215,26 @@
 .g3g-completed-garland {
   width: 54%; min-width: 60px; min-height: 60px; padding: 0; border: 0; background: transparent;
   cursor: grab; touch-action: none;
-  animation: g3gGarlandAppear 450ms cubic-bezier(.2, 1.2, .4, 1) both, g3gGarlandReady 1.6s ease-in-out infinite 450ms;
+  animation: g3gGarlandAppear 450ms cubic-bezier(.2, 1.2, .4, 1) both;
 }
 .g3g-completed-garland img { display: block; width: 100%; height: auto; pointer-events: none; }
 @keyframes g3gGarlandAppear { from { opacity: 0; transform: scale(.88); } to { opacity: 1; transform: scale(1); } }
-@keyframes g3gGarlandReady {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-4px) scale(1.02); }
-}
 
-/* Idle-hint ladder (L1/L2) — glow only, layered on top of the permanent
-   bob animation above rather than replacing its transform. */
-.g3g-completed-garland.g3g-hint-pulse {
-  animation: g3gGarlandAppear 450ms cubic-bezier(.2, 1.2, .4, 1) both, g3gGarlandReady 1.6s ease-in-out infinite 450ms, g3gHintGlow 1.4s ease-in-out infinite;
+/* ========================================================
+   GARLAND CARRY HINT — L1 = subtle lift. The garland settles and waits
+   after appearing; it no longer bobs continuously before any hint fires.
+   ======================================================== */
+.g3g-completed-garland.g3g-hint-nudge img {
+  animation: g3gGarlandHintNudge 1.8s ease-in-out infinite;
 }
-.g3g-completed-garland.g3g-hint-strong {
-  animation: g3gGarlandAppear 450ms cubic-bezier(.2, 1.2, .4, 1) both, g3gGarlandReady 1.6s ease-in-out infinite 450ms, g3gHintGlow 0.9s ease-in-out infinite;
+@keyframes g3gGarlandHintNudge {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
 }
-@keyframes g3gHintGlow {
-  0%, 100% { filter: drop-shadow(0 0 0 rgba(255, 193, 7, 0)); }
-  50% { filter: drop-shadow(0 0 16px rgba(255, 193, 7, 0.85)); }
+@media (prefers-reduced-motion: reduce) {
+  .g3g-completed-garland.g3g-hint-nudge img {
+    animation: none;
+  }
 }
 
 /* ========================================================
