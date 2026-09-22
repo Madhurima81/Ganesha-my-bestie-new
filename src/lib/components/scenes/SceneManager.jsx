@@ -104,13 +104,17 @@ const loadSceneProgress = () => {
       };
     }
     
-    // If completed but no session data, start fresh replay
-    if (isCompleted && !isActualReload) {
+    // If completed but no session data, start fresh replay. This also covers a
+    // reload landing right after completion was saved but before the temp
+    // session was cleared/completion screen shown — without isCompleted alone
+    // gating this, that narrow window would fall through to "fresh start" below
+    // and silently forget the scene was already completed.
+    if (isCompleted) {
       if (import.meta.env.DEV) console.log('🎮 SCENE: Starting fresh replay of completed scene');
       localStorage.removeItem(replayKey);
       localStorage.removeItem(normalKey);  // ← FIX: Also clear temp_session to prevent stale completion markers
       setIsReplay(true);
-      setIsReload(false);
+      setIsReload(isActualReload);
       return {
         ...initialState,
         welcomeShown: false,  // replay should restart from opening modal + VO

@@ -505,9 +505,6 @@ const SacredAssemblyScene = ({
         assemblyWisdomShown: false,
         masteryShown: false,
         readyForWisdom: false,
-        gameCoachState: null,
-        lastGameCoachTime: 0,
-        isReloadingGameCoach: false,
         currentPopup: null,
         showingCompletionScreen: false,
         showingZoneCompletion: false,
@@ -981,9 +978,6 @@ const SacredAssemblyContent = ({
       assemblyWisdomShown: false,
       masteryShown: false,
       readyForWisdom: false,
-      gameCoachState: null,
-      lastGameCoachTime: 0,
-      isReloadingGameCoach: false,
       currentPopup: null,
       showingCompletionScreen: false,
       showingZoneCompletion: false,
@@ -1358,9 +1352,6 @@ const SacredAssemblyContent = ({
         setShowZoneCompletion(true);
       }, 500);
     }
-    else {
-      sceneActions.updateState({ isReloadingGameCoach: false });
-    }
   }, [isReload]);
 
   // FINAL CELEBRATION: completion modal waits for BOTH the orbs and the finale
@@ -1575,9 +1566,7 @@ const SacredAssemblyContent = ({
       welcomeShown: true,
       assemblyWisdomShown: true,
       masteryShown: false,
-      readyForWisdom: false,
-      gameCoachState: null,
-      isReloadingGameCoach: false
+      readyForWisdom: false
     });
 
     const phase = devPhaseIndexRef.current % 2;
@@ -1934,11 +1923,9 @@ const SacredAssemblyContent = ({
                 welcomeShown: true,
                 assemblyWisdomShown: true,
                 masteryShown: false,
-                readyForWisdom: false,
-                gameCoachState: null,
-                isReloadingGameCoach: false
+                readyForWisdom: false
               });
-              
+
               triggerFinalCelebration();
             }}>
               COMPLETE V8
@@ -1984,9 +1971,6 @@ const SacredAssemblyContent = ({
                     assemblyWisdomShown: false,
                     masteryShown: false,
                     readyForWisdom: false,
-                    gameCoachState: null,
-                    lastGameCoachTime: 0,
-                    isReloadingGameCoach: false,
                     stars: 0,
                     completed: false,
                     progress: {
