@@ -191,8 +191,8 @@ Tusk's Arial font, Tusk's sub-60px mobile touch targets, Suryakoti Bank's off-pa
 ## About Me Hut — Group A audit (Sections 1, 2, 3, 16)
 _Audited 2026-09-18 against `GMB_SCENE_LAUNCH_CHECKLIST.md`. Scope was limited to the four live About Me Hut scenes imported by `src/App.jsx`: `Familytreegame.jsx`, `Favoritefoodgame.jsx`, `ObstacleRemoverGame.jsx`, and `MyIndianStoryGame.jsx`. Group B and Group C were not audited in this pass._
 
-### New actionable bug
-- **Section 2 — Completion next-scene text:** `SceneCompletionCelebration.jsx` accepts a `nextSceneName` prop but does not render it; the primary CTA is hardcoded to `Next Adventure` (`SceneCompletionCelebration.jsx:21,325-340`). This affects the three non-final About Me Hut scenes. Two callers also supply stale values: Family Tree says `Let's Be Friends` but routes to `favorite-food` (`Familytreegame.jsx:1773,1781-1782`), and Dreams & Wishes says `About Me Hut Complete` but routes to `my-indian-story` (`ObstacleRemoverGame.jsx:2391,2408-2409`). Favorite Food's supplied `Dream Big Together` value matches its next scene but is also ignored (`Favoritefoodgame.jsx:2473,2488-2490`). Cross-check: `NewModakSceneV7.jsx:1694` also supplies `nextSceneName`, confirming that the prop belongs to the shared completion interface.
+### Resolved — was listed as an actionable bug, now confirmed fixed (2026-09-22)
+- ~~**Section 2 — Completion next-scene text**~~ — `SceneCompletionCelebration.jsx` now accepts, defaults, and renders `nextSceneName` (subtext at `:374-375`, CTA label at `:415`, `isFinalScene ? 'Home' : nextSceneName`). All live About Me Hut callers verified with correct current values: `Familytreegame.jsx:1803` → "Our Favorite Things", `Favoritefoodgame.jsx:2499` → "Our Wishes & Dreams", `ObstacleRemoverGame.jsx:2420` → "My Indian Story". `MyIndianStoryGame.jsx:1721` still carries a stale `"Let's Be Friends"` value but it's never rendered — that scene is `isFinalScene`, which always shows "Home" instead. Star props (`starsEarned`/`totalStars`) are still not accepted/rendered by the component, but stars aren't displayed anywhere live in the app, so this isn't user-visible. Confirmed not an issue, closing.
 
 ### Known punchlist item still present
 - ~~Sections 2/3 — About Me metadata~~ — **RESOLVED 2026-09-19**, see "About Me Hut scene names finalized" section near the top of this file.
@@ -213,7 +213,7 @@ _Audited 2026-09-18 against `GMB_SCENE_LAUNCH_CHECKLIST.md`. Scope was limited t
 | 2 | `AudioToggle` present | PASS |
 | 2 | `VOReplayButton` present | PASS |
 | 2 | `SceneCompletionCelebration` present | PASS |
-| 2 | Completion scene name, symbols, stars, and next-scene text | FINDING — next-scene text issue above; name/star authority remains KNOWN |
+| 2 | Completion scene name, symbols, stars, and next-scene text | **RESOLVED 2026-09-22** — next-scene text confirmed rendering correctly, see above |
 | 3 | Completion saves immediately and only once | PASS |
 | 3 | Persistence path present | PASS |
 | 3 | `ProgressManager.updateSceneCompletion` or equivalent update occurs | PASS |
@@ -234,8 +234,8 @@ _Audited 2026-09-18 against `GMB_SCENE_LAUNCH_CHECKLIST.md`. Scope was limited t
 ### Data inconsistency — confirmed NOT user-visible, downgraded from actionable bug
 - **Finale star metadata mismatch (not currently shown to users):** the live finale saves and reports 8 stars (`ShlokaRiverFinale.jsx:643-652,658-662`), but `ProgressManager.SCENE_METADATA` declares `maxStars: 6` for `shloka-river-finale` (`ProgressManager.jsx:75`). `calculateZoneProgress()` is the only place that combines saved stars with this metadata maximum (`ProgressManager.jsx:107-140`) — **but nothing in the live app calls `calculateZoneProgress()`** (confirmed via repo-wide grep: only `ProgressManager.jsx` itself references it). The only live star display is `ZoneWelcome.jsx:1017` (`{status.stars}⭐`), which shows the raw earned count with no "X of Y" comparison against any max at all. So this mismatch exists in dead calculation logic only — real, but currently invisible to any child or parent. Low priority; fix opportunistically if `calculateZoneProgress()` ever gets wired into a real UI, not before.
 
-### Known punchlist item still present
-- **Section 2 — Shared completion next-scene text:** the About Me Hut Group A entry above documents that `SceneCompletionCelebration.jsx` accepts but does not render `nextSceneName`, instead showing the generic `Next Adventure` CTA (`SceneCompletionCelebration.jsx:21,325-340`). The same shared behavior affects the four non-final Shloka River completion screens. Their supplied values are `Suryakoti Bank` (`VakratundaGroveSimplified.jsx:1231`), `Next Scene` (`SuryakotiBankSimplified.jsx:856`), `Next Scene` (`NirvighnamChantSimplified.jsx:749`), and `Final Scene` (`SarvakaryeshuChantSimplified.jsx:813`). This is recorded here as the already-documented shared issue, not a second new bug.
+### Resolved — was listed as a known punchlist item, now confirmed fixed (2026-09-22)
+- ~~**Section 2 — Shared completion next-scene text**~~ — `SceneCompletionCelebration.jsx` now renders `nextSceneName` correctly (see the About Me Hut Group A entry above). All 4 non-final Shloka River callers verified with correct current finalized values: `VakratundaGroveSimplified.jsx:1226` → "Bring Back the Light!", `SuryakotiBankSimplified.jsx:856` → "Clear the Way Together!", `NirvighnamChantSimplified.jsx:765` → "Ganesha All Day", `SarvakaryeshuChantSimplified.jsx:814` → "Build the Shloka!". Closing.
 
 ### Manual/device-only follow-ups
 - Visually confirm completion titles, subtitles, discovered symbols, and child-facing CTA wording on phone and iPad.
@@ -252,7 +252,7 @@ _Audited 2026-09-18 against `GMB_SCENE_LAUNCH_CHECKLIST.md`. Scope was limited t
 | 2 | `AudioToggle` present | PASS |
 | 2 | `VOReplayButton` present | PASS |
 | 2 | `SceneCompletionCelebration` present | PASS |
-| 2 | Completion scene name, symbols, stars, and next-scene text | KNOWN — shared CTA ignores `nextSceneName`; static title/symbol wiring passes; final visual/content check remains MANUAL |
+| 2 | Completion scene name, symbols, stars, and next-scene text | **RESOLVED 2026-09-22** — shared CTA confirmed rendering `nextSceneName` correctly; final visual/content check remains MANUAL |
 | 3 | Completion saves immediately and only once | PASS |
 | 3 | Persistence path present | PASS |
 | 3 | `ProgressManager.updateSceneCompletion` or equivalent update occurs | FINDING — finale writes 8 stars against `maxStars: 6` |
@@ -275,7 +275,7 @@ _Audited 2026-09-18 against `GMB_SCENE_LAUNCH_CHECKLIST.md`. Scope is limited to
 
 | Status | Checklist item | Finding | Location |
 |---|---|---|---|
-| **FINDING** | 2.6 — Completion modal content | The scenes pass `starsEarned`, `totalStars`, and `nextSceneName`, but `SceneCompletionCelebration` does not accept/render the star props and ignores `nextSceneName`, rendering the fixed label `Next Adventure`. Pond also still supplies the obsolete label `Temple Discovery`; the live next scene is `symbol`. | `SceneCompletionCelebration.jsx:12-24,325-383`; `PondSceneSimplifiedV4.jsx:1817-1848`; `App.jsx:1134-1184` |
+| ~~**FINDING**~~ **RESOLVED 2026-09-22** | 2.6 — Completion modal content | `SceneCompletionCelebration` now renders `nextSceneName` correctly. All 3 live Symbol Mountain callers verified with correct current values: `NewModakSceneV7.jsx:1693` → "Find a Way to the Lotus", `PondSceneSimplifiedV4.jsx:1845` → "Ganesha's Eyes, Ears & Tusk" (the stale "Temple Discovery" label only exists in dead backup files, not the live one), `SymbolMountainSceneV3.jsx:1129` → "Ganesha's Symbol Challenge". Star props still unrendered but stars aren't displayed live anywhere — not user-visible, closing. | `SceneCompletionCelebration.jsx:374-375,415` |
 | **FINDING** | 3.1 — Completion saves immediately and only once | Completion persistence/unlocking runs through overlapping paths. `SceneCompletionCelebration` saves through `GameStateManager`, then its CTA calls the app completion handler, which updates `ProgressManager` and unlocks again. Pond and Sacred additionally write through both managers locally; Tusk also saves directly. This is separate from the fixed Pond two-call-site bug: the local ref guard exists, but shared/app paths bypass it. | `SceneCompletionCelebration.jsx:123-166`; `App.jsx:1355-1379`; `PondSceneSimplifiedV4.jsx:891-916`; `SymbolMountainSceneV3.jsx:793-808,1130-1141`; `SacredAssemblySceneV8.jsx:257-277,1461-1487` |
 | **FINDING** | 3.5 / 16.4 — Replay and saved-profile integrity | Sacred Assembly's Play Again path calls `hardResetSceneState()`, which clears the permanent `final-scene` completion record. Exiting before finishing the replay can therefore leave the saved profile no longer marked complete. The Modak benchmark resets playback/UI state without clearing permanent completion. | `SacredAssemblySceneV8.jsx:924-993,2196-2198`; `NewModakSceneV7.jsx:1225-1263` |
 | **FINDING** | 3.7 / 16.4 — Reload after completion | Pond and Tusk delete their temp session before the final fireworks/mandala transition has stamped `showingCompletionScreen`. Reloading in that gap can return the scene to initial state: `SceneManager` only enters its completed-scene replay branch when `!isActualReload`, and otherwise falls back to `initialState` when no temp session exists. | `PondSceneSimplifiedV4.jsx:891-916,1275-1295,1790-1797`; `SymbolMountainSceneV3.jsx:793-812,1045-1091`; `SceneManager.jsx:60-131` |
