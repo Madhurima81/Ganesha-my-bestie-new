@@ -77,20 +77,25 @@ const IDLE_HINT_L2_MS = 18000;
 const IDLE_HINT_L3_MS = 26000;
 
 const VO = {
-  bushStart: 'Two flowers are hiding in the leaves. Swipe them apart.',
-  bushFail: 'Oh no! They closed again. Try once more.',
-  bushIdle: 'Swipe the leaves apart again.',
+  bushStart: 'The flowers are behind a thorny bush. Mooshika feels frustrated. Swipe the branches apart.',
   bushSuccess: 'There they are! Two flowers.',
-  branchStart: 'Two flowers are too high for Mooshika. Pull the branch down.',
-  branchGesture: 'Keep holding the branch.',
+  // Timed hints
+  bushIdle: 'Swipe the branches apart.',
+  bushDirect: 'Swipe all the way to open the branches.',
+
+  branchStart: 'The flowers are too high. Mooshika feels disappointed. Pull the branch down.',
+  branchGesture: 'Pull the branch down and hold it.',
+  branchDirect: 'Pull the branch down and keep holding.',
   branchEarly: 'Keep holding the branch.',
   branchSuccess: 'Got them! Two more flowers.',
-  branchNearMiss: 'Aww… so close. Try once more.',
+
   marshStart: 'The last two flowers are across the mud. Guide Mooshika from safe spot to safe spot.',
   marshIdle: 'Guide Mooshika to the next safe spot.',
+  marshDirect: 'Drag Mooshika to the glowing safe spot.',
   marshWobble: 'Ooh… that’s wobbly.',
   marshWrong: 'Back to the safe spot. Try again.',
   marshDone: 'You made it! All six flowers.',
+
   bellyFrustrated: 'Mooshika felt frustrated,',
   bellyDisappointed: 'proud,',
   bellyWorried: 'worried, and happy.',
@@ -214,85 +219,151 @@ export default function FlowerJourneyGame2({
     if (replayTimerRef.current) clearTimeout(replayTimerRef.current);
     replayTimerRef.current = null;
     interruptedSpeechRef.current = null;
+    if (teachingTimerRef.current) {
+      clearTimeout(teachingTimerRef.current);
+      teachingTimerRef.current = null;
+    }
   }, []);
   const wait = useCallback((ms) => new Promise((resolve) => window.setTimeout(resolve, ms)), []);
 
   const safeTimeout = useCallback((fn, ms) => window.setTimeout(fn, ms), []);
 
-  // ---- idle-hint ladder ----
-  const [introGesture, setIntroGesture] = useState(false);
+  // ---------------------------------------------------------
+  // HINT SYSTEM
+  // VO finishes -> arm -> 10s / 18s / 26s.
+  // Meaningful interaction resets the idle clock.
+  // Repeated genuine failures can promote help early.
+  // ---------------------------------------------------------
+  const [teachingGesture, setTeachingGesture] = useState(false);
   const [idleHintLevel, setIdleHintLevel] = useState(0);
-  const [showIdleGestureHint, setShowIdleGestureHint] = useState(false);
-  const lastIdleInteractionAtRef = useRef(Date.now());
-  const idleVoPlayedRef = useRef({});
+  const [forcedHintLevel, setForcedHintLevel] = useState(0);
 
-  const noteInteraction = useCallback(() => {
-    lastIdleInteractionAtRef.current = Date.now();
+  const idleArmedAtRef = useRef(null);
+  const teachingTimerRef = useRef(null);
+  const spokenHintRef = useRef(new Set());
+  const failureCountsRef = useRef({});
+
+  const effectiveHintLevel = Math.max(idleHintLevel, forcedHintLevel);
+
+  const armIdleHints = useCallback((showTeaching = true) => {
+    idleArmedAtRef.current = Date.now();
     setIdleHintLevel(0);
-    setShowIdleGestureHint(false);
-    setIntroGesture(false);
-  }, []);
+    setForcedHintLevel(0);
+    failureCountsRef.current[phase] = 0;
+
+    if (teachingTimerRef.current) clearTimeout(teachingTimerRef.current);
+    setTeachingGesture(showTeaching);
+    if (showTeaching) {
+      teachingTimerRef.current = window.setTimeout(() => {
+        teachingTimerRef.current = null;
+        setTeachingGesture(false);
+      }, 3800);
+    }
+  }, [phase]);
+
+  const resetIdleBaseline = useCallback((clearEscalation = false) => {
+    if (!idleArmedAtRef.current) return;
+    idleArmedAtRef.current = Date.now();
+    setIdleHintLevel(0);
+    setTeachingGesture(false);
+    if (clearEscalation) {
+      setForcedHintLevel(0);
+      failureCountsRef.current[phase] = 0;
+    }
+  }, [phase]);
+
+  // First mistake: normal feedback only. Second: promote to L2. Third: L3.
+  const registerFailedAttempt = useCallback(() => {
+    if (!WORKING_PHASES.includes(phase)) return;
+    const next = (failureCountsRef.current[phase] || 0) + 1;
+    failureCountsRef.current[phase] = next;
+    if (next === 2) setForcedHintLevel((level) => Math.max(level, 2));
+    if (next >= 3) setForcedHintLevel(3);
+  }, [phase]);
 
   useEffect(() => {
-    if (!isActive || isPaused || !WORKING_PHASES.includes(phase)) { setIntroGesture(false); return undefined; }
-    setIntroGesture(true);
-    lastIdleInteractionAtRef.current = Date.now();
-    const t = window.setTimeout(() => setIntroGesture(false), 6000);
-    return () => window.clearTimeout(t);
-  }, [phase, isActive, isPaused]);
+    idleArmedAtRef.current = null;
+    setIdleHintLevel(0);
+    setForcedHintLevel(0);
+    setTeachingGesture(false);
+    failureCountsRef.current[phase] = 0;
+    if (teachingTimerRef.current) {
+      clearTimeout(teachingTimerRef.current);
+      teachingTimerRef.current = null;
+    }
+  }, [phase]);
 
   useEffect(() => {
-    if (!isActive || isPaused || !WORKING_PHASES.includes(phase)) { setIdleHintLevel(0); setShowIdleGestureHint(false); return undefined; }
+    if (!isActive || isPaused || !WORKING_PHASES.includes(phase)) return undefined;
+
     const tick = window.setInterval(() => {
-      const idleFor = Date.now() - lastIdleInteractionAtRef.current;
+      const startedAt = idleArmedAtRef.current;
+      // Intro / VO not finished yet — clock isn't armed.
+      if (!startedAt) return;
+
+      const idleFor = Date.now() - startedAt;
       let nextLevel = 0;
       if (idleFor >= IDLE_HINT_L3_MS) nextLevel = 3;
       else if (idleFor >= IDLE_HINT_L2_MS) nextLevel = 2;
       else if (idleFor >= IDLE_HINT_L1_MS) nextLevel = 1;
-      setIdleHintLevel((prev) => (prev === nextLevel ? prev : nextLevel));
+
+      setIdleHintLevel((current) => (current === nextLevel ? current : nextLevel));
     }, 250);
+
     return () => window.clearInterval(tick);
   }, [phase, isActive, isPaused]);
 
+  // L2/L3 spoken once per (phase, level) pair.
   useEffect(() => {
-    setShowIdleGestureHint(WORKING_PHASES.includes(phase) && idleHintLevel >= 3);
-  }, [idleHintLevel, phase]);
+    if (!WORKING_PHASES.includes(phase) || !idleArmedAtRef.current) return;
 
-  useEffect(() => {
-    if (idleHintLevel < 2 || idleVoPlayedRef.current[phase]) return;
-    idleVoPlayedRef.current[phase] = true;
-    const line = phase === PHASES.FLOWER_BUSH ? VO.bushIdle
-      : phase === PHASES.FLOWER_BRANCH ? VO.branchGesture
-      : phase === PHASES.FLOWER_MARSH ? VO.marshIdle
-      : null;
-    if (line) speak(line);
-  }, [idleHintLevel, phase, speak]);
+    let level = 0;
+    if (effectiveHintLevel >= 3) level = 3;
+    else if (effectiveHintLevel >= 2) level = 2;
+    if (!level) return;
+
+    const key = `${phase}:${level}`;
+    if (spokenHintRef.current.has(key)) return;
+
+    let line = null;
+    if (phase === PHASES.FLOWER_BUSH) line = level === 3 ? VO.bushDirect : VO.bushIdle;
+    if (phase === PHASES.FLOWER_BRANCH) line = level === 3 ? VO.branchDirect : VO.branchGesture;
+    if (phase === PHASES.FLOWER_MARSH) line = level === 3 ? VO.marshDirect : VO.marshIdle;
+    if (!line) return;
+
+    spokenHintRef.current.add(key);
+    speak(line);
+  }, [effectiveHintLevel, phase, speak]);
 
   // ---- BUSH ----
-  const [bushAttempted, setBushAttempted] = useState(false);
+  const [bushIntroReaction, setBushIntroReaction] = useState(false);
+  const [bushIntroDone, setBushIntroDone] = useState(false);
   const [bushOpenState, setBushOpenState] = useState(false);
   const [bushSpringing, setBushSpringing] = useState(false);
   const bushSwipeStartRef = useRef(null);
 
   // ---- BRANCH ----
-  const [branchIntroFailed, setBranchIntroFailed] = useState(false);
+  const [branchIntroReaction, setBranchIntroReaction] = useState(false);
+  const [branchIntroDone, setBranchIntroDone] = useState(false);
   const [branchComplete, setBranchComplete] = useState(false);
   const [branchPull, setBranchPull] = useState(0);
   const [branchHolding, setBranchHolding] = useState(false);
   const branchDragRef = useRef({ active: false, startY: 0 });
   const branchHoldTimerRef = useRef(null);
   const branchEarlyWarnedRef = useRef(false);
-  const branchAttemptedRef = useRef(false);
+  const branchMeaningfulPullRef = useRef(false);
   const branchCompletedRef = useRef(false);
 
   // ---- MARSH ----
   const marshRef = useRef(null);
   const [marshStep, setMarshStep] = useState(0);
+  const [marshIntroDone, setMarshIntroDone] = useState(false);
   const [marshExiting, setMarshExiting] = useState(false);
   useEffect(() => { setMarshExiting(false); }, [phase]);
   const [marshDrag, setMarshDrag] = useState({ active: false, x: 0, y: 0 });
   const [marshWobble, setMarshWobble] = useState(false);
   const [marshSlip, setMarshSlip] = useState(false);
+  const marshMeaningfulMoveRef = useRef(false);
 
   // ---- flying-flower + basket ----
   const basketTargetRef = useRef(null);
@@ -312,10 +383,33 @@ export default function FlowerJourneyGame2({
   useEffect(() => { onFlowersUpdateRef.current = onFlowersUpdate; }, [onFlowersUpdate]);
   useEffect(() => { onFlowersUpdateRef.current?.(flowerCount); }, [flowerCount]);
 
+  const bushIntroStartedRef = useRef(false);
+
   useEffect(() => {
-    if (phase !== PHASES.FLOWER_BUSH || bushAttempted || !isActive) return undefined;
-    speakAsync(VO.bushStart);
-  }, [isActive]); // eslint-disable-line react-hooks/exhaustive-deps
+    if (phase !== PHASES.FLOWER_BUSH || !isActive || bushIntroStartedRef.current) return undefined;
+    bushIntroStartedRef.current = true;
+    let cancelled = false;
+    (async () => {
+      await wait(350);
+      if (cancelled) return;
+      // Tiny approach + recoil from the thorns.
+      setBushIntroReaction(true);
+      await wait(430);
+      if (cancelled) return;
+      setEmotion('angry');
+      await wait(470);
+      if (cancelled) return;
+      setBushIntroReaction(false);
+      await wait(150);
+      if (cancelled) return;
+      await speakAsync(VO.bushStart);
+      if (cancelled) return;
+      setBushIntroDone(true);
+      // NOW the child gets the mechanic teaching.
+      armIdleHints(true);
+    })();
+    return () => { cancelled = true; };
+  }, [phase, isActive, wait, speakAsync, armIdleHints]);
 
   const flyFlowerToBasket = useCallback(({ src, startX, startY, delay = 0 }) => {
     const basket = basketTargetRef.current;
@@ -345,31 +439,39 @@ export default function FlowerJourneyGame2({
   const bushFlowerTwoRef = useRef(null);
 
   const handleBushPointerDown = useCallback((e) => {
-    if (phase !== PHASES.FLOWER_BUSH || isPaused) return;
+    if (phase !== PHASES.FLOWER_BUSH || !bushIntroDone || isPaused) return;
     e.preventDefault();
-    noteInteraction();
     bushSwipeStartRef.current = { x: e.clientX, y: e.clientY };
-  }, [phase, isPaused, noteInteraction]);
+  }, [phase, bushIntroDone, isPaused]);
 
   const handleBushPointerUp = useCallback((e) => {
-    if (phase !== PHASES.FLOWER_BUSH || isPaused) return;
+    if (phase !== PHASES.FLOWER_BUSH || !bushIntroDone || isPaused) return;
     const start = bushSwipeStartRef.current;
     bushSwipeStartRef.current = null;
     if (!start) return;
+
     const dx = e.clientX - start.x;
     const dy = e.clientY - start.y;
-    const validSwipe = Math.abs(dx) >= 45 && Math.abs(dx) > Math.abs(dy);
-    if (!validSwipe) return;
+    const horizontalEnough = Math.abs(dx) > Math.abs(dy);
+    const meaningfulSwipe = horizontalEnough && Math.abs(dx) >= 15;
+    const successfulSwipe = horizontalEnough && Math.abs(dx) >= 45;
 
-    if (!bushAttempted) {
-      setBushAttempted(true);
-      setEmotion('angry');
+    // Tiny tap / accidental movement: do nothing, don't reset the clock.
+    if (!meaningfulSwipe) return;
+
+    // A genuine attempt happened.
+    resetIdleBaseline();
+
+    // Genuine but insufficient swipe — bush resists and springs back.
+    if (!successfulSwipe) {
       setBushSpringing(true);
-      speak(VO.bushFail);
       safeTimeout(() => setBushSpringing(false), 650);
+      registerFailedAttempt();
       return;
     }
 
+    // First correct swipe succeeds.
+    setEmotion(null);
     setBushOpenState(true);
     setEmotion('pleased');
     speak(VO.bushSuccess);
@@ -379,7 +481,7 @@ export default function FlowerJourneyGame2({
       collectChallengeFlowers({ firstEl: bushFlowerOneRef.current, secondEl: bushFlowerTwoRef.current, newFlowerCount: 2 });
       safeTimeout(() => setPhase(PHASES.FLOWER_BRANCH), 2200);
     }, 1350);
-  }, [phase, isPaused, bushAttempted, collectChallengeFlowers, safeTimeout, speak]);
+  }, [phase, bushIntroDone, isPaused, resetIdleBaseline, registerFailedAttempt, safeTimeout, speak, collectChallengeFlowers]);
 
   const branchFlowerOneRef = useRef(null);
   const branchFlowerTwoRef = useRef(null);
@@ -387,21 +489,27 @@ export default function FlowerJourneyGame2({
   const branchIntroStartedRef = useRef(false);
 
   useEffect(() => {
-    if (phase !== PHASES.FLOWER_BRANCH || !isActive) return undefined;
-    if (branchIntroStartedRef.current) return undefined;
+    if (phase !== PHASES.FLOWER_BRANCH || !isActive || branchIntroStartedRef.current) return undefined;
     branchIntroStartedRef.current = true;
     let cancelled = false;
     (async () => {
-      await wait(850);
+      await wait(500);
       if (cancelled) return;
-      setBranchIntroFailed(true);
-      await wait(300);
+      // Mooshika stretches upward, but the flowers are simply too high.
+      setBranchIntroReaction(true);
+      await wait(900);
+      if (cancelled) return;
+      setBranchIntroReaction(false);
+      setEmotion('sad');
+      await wait(200);
       if (cancelled) return;
       await speakAsync(VO.branchStart);
-
+      if (cancelled) return;
+      setBranchIntroDone(true);
+      armIdleHints(true);
     })();
     return () => { cancelled = true; };
-  }, [phase, isActive]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [phase, isActive, wait, speakAsync, armIdleHints]);
 
   const clearBranchHold = useCallback(() => {
     if (branchHoldTimerRef.current) { clearTimeout(branchHoldTimerRef.current); branchHoldTimerRef.current = null; }
@@ -410,14 +518,7 @@ export default function FlowerJourneyGame2({
 
   const finishBranchChallenge = useCallback(() => {
     clearBranchHold();
-    if (!branchAttemptedRef.current) {
-      branchAttemptedRef.current = true;
-      setEmotion('sad');
-      speak(VO.branchNearMiss);
-      setBranchPull(0.3);
-      safeTimeout(() => setBranchPull(0), 450);
-      return;
-    }
+    // First correct pull + hold succeeds.
     setBranchPull(1);
     setBranchComplete(true);
     branchCompletedRef.current = true;
@@ -432,19 +533,28 @@ export default function FlowerJourneyGame2({
   }, [clearBranchHold, collectChallengeFlowers, safeTimeout, speak]);
 
   const handleBranchPointerDown = useCallback((e) => {
-    if (phase !== PHASES.FLOWER_BRANCH || branchComplete || isPaused) return;
+    if (phase !== PHASES.FLOWER_BRANCH || !branchIntroDone || branchComplete || isPaused) return;
     e.preventDefault();
-    noteInteraction();
     e.currentTarget.setPointerCapture?.(e.pointerId);
+    branchMeaningfulPullRef.current = false;
     branchDragRef.current = { active: true, startY: e.clientY };
     clearBranchHold();
-  }, [phase, branchComplete, isPaused, clearBranchHold, noteInteraction]);
+  }, [phase, branchIntroDone, branchComplete, isPaused, clearBranchHold]);
 
   const handleBranchPointerMove = useCallback((e) => {
     if (!branchDragRef.current.active) return;
     const dy = e.clientY - branchDragRef.current.startY;
     const progress = Math.max(0, Math.min(1, dy / 120));
     setBranchPull(progress);
+
+    // Only a real pull resets the timer — touching the branch does not.
+    if (!branchMeaningfulPullRef.current && progress >= 0.18) {
+      branchMeaningfulPullRef.current = true;
+      resetIdleBaseline();
+      // Intro disappointment has done its job.
+      setEmotion(null);
+    }
+
     // Once the hold has started, give some slack (0.55) so a small finger
     // wobble doesn't silently cancel the timer — only crossing back below
     // that lower bar counts as letting go. Starting the hold still needs
@@ -455,7 +565,7 @@ export default function FlowerJourneyGame2({
       branchHoldTimerRef.current = setTimeout(finishBranchChallenge, 900);
       setBranchHolding(true);
     }
-  }, [finishBranchChallenge, clearBranchHold]);
+  }, [finishBranchChallenge, clearBranchHold, resetIdleBaseline]);
 
   const handleBranchPointerEnd = useCallback(() => {
     if (!branchDragRef.current.active) return;
@@ -464,13 +574,14 @@ export default function FlowerJourneyGame2({
     clearBranchHold();
     if (branchPull > 0.15) {
       setEmotion('sad');
+      registerFailedAttempt();
       if (!branchEarlyWarnedRef.current) {
         branchEarlyWarnedRef.current = true;
         speak(VO.branchEarly);
       }
     }
     setBranchPull(0);
-  }, [branchComplete, branchPull, clearBranchHold, speak]);
+  }, [branchComplete, branchPull, clearBranchHold, registerFailedAttempt, speak]);
 
   const marshStopsLive = MARSH_STOPS;
   const marshStartLive = MARSH_START;
@@ -479,9 +590,28 @@ export default function FlowerJourneyGame2({
     [marshStep]
   );
 
+  const marshIntroStartedRef = useRef(false);
+
   useEffect(() => {
-    if (phase === PHASES.FLOWER_MARSH && marshStep === 0 && isActive && branchCompletedRef.current) speak(VO.marshStart);
-  }, [phase, marshStep, isActive, speak]);
+    if (
+      phase !== PHASES.FLOWER_MARSH ||
+      !isActive ||
+      !branchCompletedRef.current ||
+      marshIntroStartedRef.current
+    ) return undefined;
+
+    marshIntroStartedRef.current = true;
+    let cancelled = false;
+    (async () => {
+      await wait(350);
+      if (cancelled) return;
+      await speakAsync(VO.marshStart);
+      if (cancelled) return;
+      setMarshIntroDone(true);
+      armIdleHints(true);
+    })();
+    return () => { cancelled = true; };
+  }, [phase, isActive, wait, speakAsync, armIdleHints]);
 
   const marshPointerRef = useRef(null);
   const marshPointFromEvent = (e) => {
@@ -497,21 +627,31 @@ export default function FlowerJourneyGame2({
   };
 
   const handleMarshPointerDown = useCallback((e) => {
-    if (phase !== PHASES.FLOWER_MARSH || marshStep >= 4 || marshPointerRef.current || isPaused) return;
+    if (phase !== PHASES.FLOWER_MARSH || !marshIntroDone || marshStep >= 4 || marshPointerRef.current || isPaused) return;
     e.preventDefault();
     const point = marshPointFromEvent(e);
     if (!point) return;
-    noteInteraction();
     const current = getCurrentMarshPosition();
+    marshMeaningfulMoveRef.current = false;
     marshPointerRef.current = { id: e.pointerId, offsetX: current.x - point.x, offsetY: current.y - point.y };
     e.currentTarget.setPointerCapture?.(e.pointerId);
     setMarshDrag({ active: true, x: current.x, y: current.y });
-  }, [phase, marshStep, isPaused, getCurrentMarshPosition, noteInteraction]);
+  }, [phase, marshIntroDone, marshStep, isPaused, getCurrentMarshPosition]);
 
   const handleMarshPointerMove = useCallback((e) => {
     const position = marshLandingFromEvent(e);
-    if (position) setMarshDrag({ active: true, ...position });
-  }, []);
+    if (!position) return;
+    setMarshDrag({ active: true, ...position });
+
+    if (!marshMeaningfulMoveRef.current) {
+      const start = getCurrentMarshPosition();
+      const distance = Math.hypot(position.x - start.x, position.y - start.y);
+      if (distance >= 6) {
+        marshMeaningfulMoveRef.current = true;
+        resetIdleBaseline();
+      }
+    }
+  }, [getCurrentMarshPosition, resetIdleBaseline]);
 
   const handleMarshPointerCancel = useCallback(() => {
     marshPointerRef.current = null;
@@ -534,6 +674,10 @@ export default function FlowerJourneyGame2({
     if (!position) return;
     marshPointerRef.current = null;
     e.currentTarget.releasePointerCapture?.(e.pointerId);
+
+    const meaningfulAttempt = marshMeaningfulMoveRef.current;
+    marshMeaningfulMoveRef.current = false;
+
     const target = marshStopsLive[marshStep];
     if (!target) { setMarshDrag((d) => ({ ...d, active: false })); return; }
     const dx = position.x - target.x;
@@ -550,6 +694,11 @@ export default function FlowerJourneyGame2({
       }
       setMarshStep(nextStep);
       setMarshDrag({ active: false, x: target.x, y: target.y });
+
+      // A new safe spot is effectively a new mini-round — fresh clock.
+      if (nextStep < MARSH_STOPS.length) {
+        resetIdleBaseline(true);
+      }
 
       if (nextStep === 3) {
         safeTimeout(() => flyOneFlowerToBasket(marshFlowerOneRef.current, flowerPink, 5), 100);
@@ -572,15 +721,22 @@ export default function FlowerJourneyGame2({
     }
 
     setMarshSlip(true);
-    setEmotion('worried');
-    if (!marshWrongWarnedRef.current) {
-      marshWrongWarnedRef.current = true;
-      speak(VO.marshWrong);
-    }
+
     const safePosition = getCurrentMarshPosition();
     setMarshDrag({ active: false, x: safePosition.x, y: safePosition.y });
+
+    // A tap without real movement doesn't count as a failure.
+    if (meaningfulAttempt) {
+      setEmotion('worried');
+      registerFailedAttempt();
+      if (!marshWrongWarnedRef.current) {
+        marshWrongWarnedRef.current = true;
+        speak(VO.marshWrong);
+      }
+    }
+
     safeTimeout(() => setMarshSlip(false), 500);
-  }, [marshStep, marshStopsLive, flyOneFlowerToBasket, getCurrentMarshPosition, safeTimeout, speak, speakAsync, wait]);
+  }, [marshStep, marshStopsLive, flyOneFlowerToBasket, getCurrentMarshPosition, resetIdleBaseline, registerFailedAttempt, safeTimeout, speak, speakAsync, wait]);
 
   // ---- BELLY beats -> hand off to live SymbolAutoReveal via onComplete ----
   useEffect(() => {
@@ -684,11 +840,11 @@ export default function FlowerJourneyGame2({
         >
           <button
             type="button"
-            className={`fjg2-bush ${bushSpringing ? 'fjg2-bush--springing' : ''} ${bushOpenState ? 'fjg2-bush--open' : ''} ${isBushPhase && idleHintLevel >= 1 ? 'hint' : ''}`}
-            onPointerDown={isBushPhase ? handleBushPointerDown : undefined}
-            onPointerUp={isBushPhase ? handleBushPointerUp : undefined}
+            className={`fjg2-bush ${bushSpringing ? 'fjg2-bush--springing' : ''} ${bushOpenState ? 'fjg2-bush--open' : ''} ${isBushPhase && bushIntroDone && effectiveHintLevel === 1 ? 'fjg2-bush--hint-l1' : ''} ${isBushPhase && bushIntroDone && effectiveHintLevel >= 3 ? 'fjg2-bush--hint-l3' : ''}`}
+            onPointerDown={isBushPhase && bushIntroDone ? handleBushPointerDown : undefined}
+            onPointerUp={isBushPhase && bushIntroDone ? handleBushPointerUp : undefined}
             onPointerCancel={() => { bushSwipeStartRef.current = null; }}
-            disabled={!isBushPhase}
+            disabled={!isBushPhase || !bushIntroDone}
             aria-label="Swipe the leaves apart"
           >
             <PoseImage src={bushOpenState ? bushOpen : bushClosed} alt="" />
@@ -713,14 +869,14 @@ export default function FlowerJourneyGame2({
           <button
             ref={branchRef}
             type="button"
-            className={`fjg2-branch ${isBranchPhase && branchIntroFailed && !branchComplete && idleHintLevel >= 1 ? 'hint' : ''}`}
+            className={`fjg2-branch ${isBranchPhase && branchIntroDone && !branchComplete && effectiveHintLevel === 1 ? 'fjg2-branch--hint-l1' : ''}`}
             style={{ '--pull': branchComplete ? 1 : branchPull, '--layout-scale': (LAYOUT.branch.s || 100) / 100, left: `${LAYOUT.branch.l}%`, top: `${LAYOUT.branch.t}%` }}
             onPointerDown={isBranchPhase ? handleBranchPointerDown : undefined}
             onPointerMove={isBranchPhase ? handleBranchPointerMove : undefined}
             onPointerUp={isBranchPhase ? handleBranchPointerEnd : undefined}
             onPointerCancel={isBranchPhase ? handleBranchPointerEnd : undefined}
             onContextMenu={(e) => e.preventDefault()}
-            disabled={!isBranchPhase}
+            disabled={!isBranchPhase || !branchIntroDone || branchComplete}
             aria-label="Pull the branch down and hold"
           >
             <img src={branchArt} alt="" />
@@ -755,7 +911,9 @@ export default function FlowerJourneyGame2({
           {MARSH_STOPS.map((stop, i) => (
             <img
               key={i}
-              src={marshClumpArt} alt="" className="fjg2-marsh-clump"
+              src={marshClumpArt}
+              alt=""
+              className={`fjg2-marsh-clump ${isMarshPhase && marshIntroDone && effectiveHintLevel >= 3 && i === marshStep ? 'fjg2-marsh-clump--hint-target' : ''}`}
               style={{ left: `${stop.x}%`, top: `${stop.y}%` }}
             />
           ))}
@@ -779,12 +937,13 @@ export default function FlowerJourneyGame2({
             return (
               <button
                 type="button"
-                className={`fjg2-marsh-mooshika ${marshExiting ? 'fjg2-marsh-mooshika--exiting' : ''} ${marshWobble ? 'fjg2-marsh-mooshika--wobble' : ''} ${marshSlip ? 'fjg2-marsh-mooshika--slip' : ''} ${idleHintLevel >= 1 ? 'hint' : ''}`}
+                className={`fjg2-marsh-mooshika ${marshExiting ? 'fjg2-marsh-mooshika--exiting' : ''} ${marshWobble ? 'fjg2-marsh-mooshika--wobble' : ''} ${marshSlip ? 'fjg2-marsh-mooshika--slip' : ''} ${marshIntroDone && effectiveHintLevel === 1 ? 'fjg2-marsh-mooshika--hint-l1' : ''}`}
                 style={{ left: `${position.x}%`, top: `${position.y}%` }}
-                onPointerDown={handleMarshPointerDown}
-                onPointerMove={handleMarshPointerMove}
-                onPointerUp={handleMarshPointerEnd}
-                onPointerCancel={handleMarshPointerCancel}
+                disabled={!marshIntroDone}
+                onPointerDown={marshIntroDone ? handleMarshPointerDown : undefined}
+                onPointerMove={marshIntroDone ? handleMarshPointerMove : undefined}
+                onPointerUp={marshIntroDone ? handleMarshPointerEnd : undefined}
+                onPointerCancel={marshIntroDone ? handleMarshPointerCancel : undefined}
                 aria-label="Guide Mooshika across the stepping stones"
               >
                 <MooshikaWithBasket flowerCount={flowerCount} basketRef={basketTargetRef} />
@@ -798,15 +957,29 @@ export default function FlowerJourneyGame2({
             );
           })()}
 
-          {isMarshPhase && (() => {
+          {isMarshPhase && marshIntroDone && (() => {
             const from = getCurrentMarshPosition();
-            const to = marshStopsLive[marshStep] || from;
+            const target = marshStopsLive[marshStep] || from;
+            const isTeaching = teachingGesture && effectiveHintLevel < 2;
+
+            // L2 shows direction but stops short; L3 / teaching reaches the
+            // actual next safe spot.
+            let to = target;
+            if (!isTeaching && effectiveHintLevel === 2) {
+              to = {
+                x: from.x + (target.x - from.x) * 0.55,
+                y: from.y + (target.y - from.y) * 0.55,
+              };
+            }
+
+            const showDemo = !isPaused && !marshDrag.active && (teachingGesture || effectiveHintLevel >= 2);
+
             return (
               <GestureDemo
                 type="drag"
                 from={{ x: from.x, y: from.y }}
                 to={{ x: to.x, y: to.y }}
-                active={!isPaused && (introGesture || showIdleGestureHint) && !marshDrag.active}
+                active={showDemo}
                 idleDelay={120}
                 zIndex={30}
               />
@@ -818,7 +991,7 @@ export default function FlowerJourneyGame2({
       {/* ---------------- Shared Mooshika (Bush + Branch) ---------------- */}
       {showSharedMooshika && (
         <div
-          className={`fjg2-mooshika-shared ${branchIntroFailed && isBranchPhase ? 'fjg2-mooshika-shared--failed' : ''}`}
+          className={`fjg2-mooshika-shared ${isBushPhase && bushIntroReaction ? 'fjg2-mooshika-shared--thorn-reaction' : ''} ${isBranchPhase && branchIntroReaction ? 'fjg2-mooshika-shared--reach-high' : ''}`}
           style={{ left: `${LAYOUT[mooshikaPhaseKey].l}%`, top: `${LAYOUT[mooshikaPhaseKey].t}%`, '--layout-scale': (LAYOUT[mooshikaPhaseKey].s || 100) / 100 }}
         >
           <MooshikaWithBasket flowerCount={flowerCount} basketRef={basketTargetRef} />
@@ -841,7 +1014,7 @@ export default function FlowerJourneyGame2({
       <GestureDemo
         type="swipe-left"
         from={{ x: LAYOUT.bush.l, y: LAYOUT.bush.t }}
-        active={!isPaused && (introGesture || showIdleGestureHint) && isBushPhase && !bushOpenState}
+        active={!isPaused && bushIntroDone && isBushPhase && !bushOpenState && (teachingGesture || effectiveHintLevel >= 2)}
         idleDelay={120}
         zIndex={30}
       />
@@ -849,16 +1022,17 @@ export default function FlowerJourneyGame2({
         type="pull-down"
         from={{ x: LAYOUT.branch.l, y: LAYOUT.branch.t }}
         to={{ x: LAYOUT.branch.l, y: LAYOUT.branch.t + 15 }}
-        active={!isPaused && (introGesture || showIdleGestureHint) && isBranchPhase && branchIntroFailed && !branchComplete}
+        active={!isPaused && branchIntroDone && isBranchPhase && !branchComplete && (teachingGesture || effectiveHintLevel >= 2)}
         idleDelay={120}
         zIndex={30}
       />
       {/* Shows the "...and hold" half of the gesture at the pulled-down spot,
-          since pull-down's own pause is too brief to read as a hold. */}
+          since pull-down's own pause is too brief to read as a hold. L2 =
+          pull clue only; L3 = pull + hold, a real escalation. */}
       <GestureDemo
         type="hold"
         from={{ x: LAYOUT.branch.l, y: LAYOUT.branch.t + 15 }}
-        active={!isPaused && (introGesture || showIdleGestureHint) && isBranchPhase && branchIntroFailed && !branchComplete}
+        active={!isPaused && branchIntroDone && isBranchPhase && !branchComplete && (teachingGesture || effectiveHintLevel >= 3)}
         idleDelay={900}
         zIndex={30}
       />
