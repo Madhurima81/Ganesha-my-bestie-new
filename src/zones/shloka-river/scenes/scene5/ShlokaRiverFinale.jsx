@@ -15,6 +15,7 @@ import useVoiceGuidance from '../../../../lib/hooks/useVoiceGuidance';
 import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
 import usePauseAwareTimeout from '../../../../lib/hooks/usePauseAwareTimeout';
 import { useGameSounds } from '../../../../lib/hooks/useGameSounds';
+import useRepeatedHintCycle from '../../../../lib/hooks/useRepeatedHintCycle';
 
 import TocaBocaNav from '../../../../lib/components/navigation/TocaBocaNav';
 import HomeButton from '../../../../lib/components/ui/HomeButton/HomeButton';
@@ -29,15 +30,6 @@ import OpeningModal from '../../../shared/components/OpeningModal';
 import { getCompletionModal } from '../../../../lib/config/content';
 
 import riverBg from './assets/images/river-finale-bg.webp';
-import boatSailImage from './assets/images/boat-sail.webp';
-import vakratundaRecapBoat from './assets/images/recap-boats/vakratunda.webp';
-import mahakayaRecapBoat from './assets/images/recap-boats/mahakaya.webp';
-import suryakotiRecapBoat from './assets/images/recap-boats/suryakoti.webp';
-import samaprabhaRecapBoat from './assets/images/recap-boats/samaprabha.webp';
-import nirvighnamRecapBoat from './assets/images/recap-boats/nirvighnam.webp';
-import kurumedevaRecapBoat from './assets/images/recap-boats/kurumedeva.webp';
-import sarvakaryeshuRecapBoat from './assets/images/recap-boats/sarvakaryeshu.webp';
-import sarvadaRecapBoat from './assets/images/recap-boats/sarvada.webp';
 import revealVakratunda from '../../../symbol-mountain/shared/images/icons/symbol-trunk-new.webp';
 import revealMahakaya from '../../../meaning cave/assets/images/symbols/mahakaya-symbol.webp';
 import revealSuryakoti from '../../../meaning cave/assets/images/symbols/suryakoti-symbol.webp';
@@ -61,14 +53,14 @@ const ORB_APP_IMAGES = {
 const OPENING_SCENE_GANESHA = '/images/new-ganesha-sit-modak.webp';
 
 const SHLOKA_WORDS = [
-  { id: 'vakratunda', label: 'Vakratunda', icon: ORB_APP_IMAGES.vakratunda, color: '#FF5722', recapBoatImage: vakratundaRecapBoat },
-  { id: 'mahakaya', label: 'Mahakaya', icon: ORB_APP_IMAGES.mahakaya, color: '#1565C0', recapBoatImage: mahakayaRecapBoat },
-  { id: 'suryakoti', label: 'Suryakoti', icon: ORB_APP_IMAGES.suryakoti, color: '#FF9800', recapBoatImage: suryakotiRecapBoat },
-  { id: 'samaprabha', label: 'Samaprabha', icon: ORB_APP_IMAGES.samaprabha, color: '#E91E63', recapBoatImage: samaprabhaRecapBoat },
-  { id: 'nirvighnam', label: 'Nirvighnam', icon: ORB_APP_IMAGES.nirvighnam, color: '#009688', recapBoatImage: nirvighnamRecapBoat },
-  { id: 'kurumedeva', label: 'Kurumedeva', icon: ORB_APP_IMAGES.kurumedeva, color: '#7B1FA2', recapBoatImage: kurumedevaRecapBoat },
-  { id: 'sarvakaryeshu', label: 'Sarvakaryeshu', icon: ORB_APP_IMAGES.sarvakaryeshu, color: '#3F51B5', recapBoatImage: sarvakaryeshuRecapBoat },
-  { id: 'sarvada', label: 'Sarvada', icon: ORB_APP_IMAGES.sarvada, color: '#689F38', recapBoatImage: sarvadaRecapBoat },
+  { id: 'vakratunda', label: 'Vakratunda', icon: ORB_APP_IMAGES.vakratunda, color: '#FF5722' },
+  { id: 'mahakaya', label: 'Mahakaya', icon: ORB_APP_IMAGES.mahakaya, color: '#1565C0' },
+  { id: 'suryakoti', label: 'Suryakoti', icon: ORB_APP_IMAGES.suryakoti, color: '#FF9800' },
+  { id: 'samaprabha', label: 'Samaprabha', icon: ORB_APP_IMAGES.samaprabha, color: '#E91E63' },
+  { id: 'nirvighnam', label: 'Nirvighnam', icon: ORB_APP_IMAGES.nirvighnam, color: '#009688' },
+  { id: 'kurumedeva', label: 'Kurumedeva', icon: ORB_APP_IMAGES.kurumedeva, color: '#7B1FA2' },
+  { id: 'sarvakaryeshu', label: 'Sarvakaryeshu', icon: ORB_APP_IMAGES.sarvakaryeshu, color: '#3F51B5' },
+  { id: 'sarvada', label: 'Sarvada', icon: ORB_APP_IMAGES.sarvada, color: '#689F38' },
 ];
 
 const FULL_SHLOKA_WORD_AUDIO = SHLOKA_WORDS.map((word) => `/audio/words/${word.id}.mp3`);
@@ -140,7 +132,6 @@ const PHASES = {
   INITIAL: 'initial',
   ARRANGE: 'arrange',
   SUCCESS: 'success',
-  RECAP: 'recap',
   FINALE: 'finale',
   COMPLETE: 'complete',
 };
@@ -203,15 +194,6 @@ const ShlokaRiverFinale = ({
 
 const SCENE_IMAGES = [
   riverBg,
-  boatSailImage,
-  vakratundaRecapBoat,
-  mahakayaRecapBoat,
-  suryakotiRecapBoat,
-  samaprabhaRecapBoat,
-  nirvighnamRecapBoat,
-  kurumedevaRecapBoat,
-  sarvakaryeshuRecapBoat,
-  sarvadaRecapBoat,
   revealVakratunda,
   revealMahakaya,
   revealSuryakoti,
@@ -248,27 +230,36 @@ const ShlokaRiverFinaleContent = ({
 
   const [scrambledWords, setScrambledWords] = useState(() => shuffle(SHLOKA_WORDS));
   const [slots, setSlots] = useState(Array(8).fill(null));
-  const [wrongSlots, setWrongSlots] = useState(new Set());
+  const [wrongWordId, setWrongWordId] = useState(null);
   const [correctSlots, setCorrectSlots] = useState(new Set());
   const [draggingWord, setDraggingWord] = useState(null);
   const [dragPos, setDragPos] = useState(null);
   const [openingButtonVisible, setOpeningButtonVisible] = useState(false);
   const [activeSlotIndex, setActiveSlotIndex] = useState(0);
-  const [hintLevel, setHintLevel] = useState(0);
   const [rippleSlot, setRippleSlot] = useState(null);
-  const [recapIndex, setRecapIndex] = useState(-1);
-  const [allComplete, setAllComplete] = useState(false);
-  const [startSailing, setStartSailing] = useState(false);
   const [showOrbsCelebration, setShowOrbsCelebration] = useState(false);
   const [showSceneCompletion, setShowSceneCompletion] = useState(false);
+
+  // buildReady/hintReadySlot gate the hint ladder: it must never start while
+  // the opening whole-Shloka listen or a pair-reinforcement playback is
+  // talking, only once the child is actually waiting on a specific slot.
+  const [buildReady, setBuildReady] = useState(false);
+  const [hintReadySlot, setHintReadySlot] = useState(null);
+  // Highlights each placed boat as the completed board's own Shloka plays —
+  // this replaces the old moving recap-boat sequence as the "hear it back"
+  // payoff, without taking the child away from the board they just built.
+  const [chantHighlightIndex, setChantHighlightIndex] = useState(null);
 
   const stageRef = useRef(null);
   const fullShlokaAudioRef = useRef(null);
   const fullShlokaPlaybackTokenRef = useRef(0);
-  const recapSequenceStartedRef = useRef(false);
   const resumeHandledRef = useRef(false);
   const dragMovedRef = useRef(false);
-  const hintTimersRef = useRef([]);
+  const finalChantStartedRef = useRef(false);
+  const lastFinaleHintVoRef = useRef(null);
+  // Guards triggerSuccessFlow (declared below) against double-firing when
+  // both the live placeWord path and the SUCCESS resume-effect can call it.
+  const successFlowStartedRef = useRef(false);
 
   const phase = sceneState.phase || PHASES.INITIAL;
   const usedWords = new Set(slots.filter(Boolean));
@@ -278,15 +269,9 @@ const ShlokaRiverFinaleContent = ({
   const fillCompletedBoard = useCallback(() => {
     setSlots(SHLOKA_WORDS.map((word) => word.id));
     setCorrectSlots(new Set(SHLOKA_WORDS.map((_, index) => index)));
-    setWrongSlots(new Set());
+    setWrongWordId(null);
     setActiveSlotIndex(SHLOKA_WORDS.length - 1);
-    setHintLevel(0);
     setRippleSlot(null);
-  }, []);
-
-  const clearHintTimers = useCallback(() => {
-    hintTimersRef.current.forEach((cancel) => cancel?.());
-    hintTimersRef.current = [];
   }, []);
 
   useEffect(() => {
@@ -295,7 +280,6 @@ const ShlokaRiverFinaleContent = ({
 
   useEffect(() => () => {
     clearAllTimeouts();
-    clearHintTimers();
     fullShlokaPlaybackTokenRef.current += 1;
     fullShlokaAudioRef.current?.pause();
     fullShlokaAudioRef.current = null;
@@ -350,19 +334,19 @@ const ShlokaRiverFinaleContent = ({
 
   useEffect(() => {
     if (phase !== PHASES.INITIAL) return;
-    recapSequenceStartedRef.current = false;
     resumeHandledRef.current = false;
+    finalChantStartedRef.current = false;
+    successFlowStartedRef.current = false;
     setOpeningButtonVisible(!isAudioOn);
     setScrambledWords(shuffle(SHLOKA_WORDS));
     setSlots(Array(8).fill(null));
-    setWrongSlots(new Set());
+    setWrongWordId(null);
     setCorrectSlots(new Set());
     setActiveSlotIndex(0);
-    setHintLevel(0);
     setRippleSlot(null);
-    setRecapIndex(-1);
-    setAllComplete(false);
-    setStartSailing(false);
+    setBuildReady(false);
+    setHintReadySlot(null);
+    setChantHighlightIndex(null);
     if (!isAudioOn) {
       return undefined;
     }
@@ -377,48 +361,64 @@ const ShlokaRiverFinaleContent = ({
     return () => revealFallback?.();
   }, [isAudioOn, phase, playVoice, safeSetTimeout]);
 
-  // GMB Hint Standard v1: L1 is visual-only (a subtle group nudge, no VO —
-  // naming the correct boat's syllable area would give away the recall
-  // answer). L2 gives a meaning clue, never the word itself. L3 is explicit.
-  // This only ever gets armed from a word-audio's onEnded (see handleStartGame
-  // and the correct-placement handler below) or from markInteraction, never
-  // automatically on phase/slot change — so the countdown never starts before
-  // the child has heard the word they're listening for.
-  const scheduleHints = useCallback((slotIndex) => {
-    clearHintTimers();
-    if (phase !== PHASES.ARRANGE || slotIndex >= SHLOKA_WORDS.length) return;
-
-    const meaningVoKey = HINT_MEANING_VO_KEY[SHLOKA_WORDS[slotIndex]?.id];
-
-    hintTimersRef.current = [
-      safeSetTimeout(() => {
-        setHintLevel(1);
-      }, 10000),
-      safeSetTimeout(() => {
-        setHintLevel(2);
-        if (meaningVoKey) playVoice?.(meaningVoKey, undefined, { replayOnReturn: false });
-      }, 18000),
-      safeSetTimeout(() => {
-        setHintLevel(3);
-        playVoice?.('hintBoatL3', undefined, { replayOnReturn: false });
-      }, 26000),
-    ];
-  }, [clearHintTimers, phase, playVoice, safeSetTimeout]);
-
-  const markInteraction = useCallback(() => {
-    setHintLevel(0);
-    if (phase === PHASES.ARRANGE) {
-      scheduleHints(activeSlotIndex);
-    }
-  }, [activeSlotIndex, phase, scheduleHints]);
+  // GMB Hint Standard v1, finale variant, via the shared hook: L1 is
+  // visual-only (every remaining boat gets the same neutral nudge — no
+  // answer revealed). L2 is a meaning-recall clue VO, never the word/boat
+  // itself. L3 clearly reveals the correct boat and, as the final rescue,
+  // speaks the word. Enabled only once the child is actually waiting on a
+  // specific slot — never while the opening whole-Shloka listen or a
+  // pair-reinforcement replay is still talking.
+  const {
+    hintLevel,
+    markInteraction,
+  } = useRepeatedHintCycle({
+    enabled: phase === PHASES.ARRANGE && buildReady && hintReadySlot === activeSlotIndex,
+    stageKey: phase === PHASES.ARRANGE ? `finale-slot-${activeSlotIndex}` : phase,
+    initialDelay: 10000,
+    pulseCountBeforeEscalation: 1,
+    pulseInterval: 1800,
+    level2Delay: 18000,
+    level3Delay: 26000,
+  });
 
   useEffect(() => {
-    if (phase !== PHASES.ARRANGE) clearHintTimers();
-    return clearHintTimers;
-  }, [phase, clearHintTimers]);
+    lastFinaleHintVoRef.current = null;
+  }, [activeSlotIndex]);
+
+  useEffect(() => {
+    if (
+      phase !== PHASES.ARRANGE
+      || !buildReady
+      || hintReadySlot !== activeSlotIndex
+      || hintLevel < 2
+    ) {
+      return;
+    }
+
+    const target = SHLOKA_WORDS[activeSlotIndex];
+    if (!target) return;
+
+    const onceKey = `${activeSlotIndex}-${hintLevel}`;
+    if (lastFinaleHintVoRef.current === onceKey) return;
+    lastFinaleHintVoRef.current = onceKey;
+
+    if (hintLevel === 2) {
+      const meaningKey = HINT_MEANING_VO_KEY[target.id];
+      if (meaningKey) {
+        playVoice?.(meaningKey, undefined, { replayOnReturn: false, minDelayAfterVoiceMs: 5000 });
+      }
+      return;
+    }
+
+    // L3 = final rescue: the correct boat glows (rendered below), then the
+    // target word is spoken once the rescue VO line finishes.
+    playVoice?.('hintBoatL3', () => {
+      playWordAudio?.(target.id);
+    }, { replayOnReturn: false, minDelayAfterVoiceMs: 5000 });
+  }, [activeSlotIndex, buildReady, hintLevel, hintReadySlot, phase, playVoice, playWordAudio]);
 
   // Resume case: the component can mount directly into ARRANGE (reload)
-  // without ever going through handleStartGame's arrangeStart VO. Replay the
+  // without ever going through handleStartGame's opening listen. Replay the
   // current target word's audio once and arm hints only after it ends, same
   // as the normal flow — never on mount alone.
   const armedOnMountRef = useRef(false);
@@ -426,83 +426,112 @@ const ShlokaRiverFinaleContent = ({
     if (armedOnMountRef.current) return;
     armedOnMountRef.current = true;
     if (phase !== PHASES.ARRANGE) return;
-    playWordAudio?.(SHLOKA_WORDS[activeSlotIndex]?.id, () => scheduleHints(activeSlotIndex));
+    setBuildReady(false);
+    playWordAudio?.(SHLOKA_WORDS[activeSlotIndex]?.id, () => {
+      setBuildReady(true);
+      setHintReadySlot(activeSlotIndex);
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleStartGame = () => {
     sceneActions.updateState({ phase: PHASES.ARRANGE, welcomeShown: true });
+    setBuildReady(false);
+    setHintReadySlot(null);
     playVoice?.('arrangeStart', () => {
-      playWordAudio?.(SHLOKA_WORDS[0].id, () => scheduleHints(0));
+      playFullShloka({
+        onComplete: () => {
+          setBuildReady(true);
+          setHintReadySlot(0);
+        },
+      });
     }, { replayOnReturn: false });
   };
 
-  const triggerSuccessFlow = useCallback(() => {
-    setAllComplete(true);
-    sceneActions.updateState({ phase: PHASES.SUCCESS });
-    let recapStarted = false;
-    const startRecap = () => {
-      if (recapStarted) return;
-      recapStarted = true;
-      setStartSailing(true);
-      sceneActions.updateState({ phase: PHASES.RECAP });
-      setRecapIndex(0);
-    };
-    // VO callbacks can fail to fire (missing file, iOS dropping events) — don't strand SUCCESS
-    safeSetTimeout(startRecap, 12000);
-    playVoice?.('sceneComplete', () => {
-      safeSetTimeout(() => {
-        playVoice?.('recapStart', startRecap, { replayOnReturn: false });
-      }, 250);
-    }, { replayOnReturn: false });
-  }, [playVoice, safeSetTimeout, sceneActions]);
-
-  useEffect(() => {
-    if (phase === PHASES.SUCCESS) {
-      const isResume = !allComplete && correctSlots.size !== SHLOKA_WORDS.length;
-      fillCompletedBoard();
-      setAllComplete(true);
-      setStartSailing(false);
-      setRecapIndex(-1);
-
-      if (!isResume || resumeHandledRef.current) {
-        return undefined;
+  // Plays a short sequence of word-audio clips back to back — used for the
+  // single-word confirmation and the end-of-pair "Vakratunda — Mahakaya"
+  // reinforcement, so the child hears the pair together instead of being
+  // told the next answer outright.
+  const playWordSequence = useCallback((wordIds, onComplete) => {
+    if (!wordIds?.length) {
+      onComplete?.();
+      return;
+    }
+    let index = 0;
+    const playNext = () => {
+      if (index >= wordIds.length) {
+        onComplete?.();
+        return;
       }
-      resumeHandledRef.current = true;
+      const wordId = wordIds[index];
+      index += 1;
+      if (!playWordAudio) {
+        safeSetTimeout(playNext, 250);
+        return;
+      }
+      playWordAudio(wordId, () => {
+        safeSetTimeout(playNext, 120);
+      });
+    };
+    playNext();
+  }, [playWordAudio, safeSetTimeout]);
 
-      const resumeRecap = safeSetTimeout(() => {
-        setStartSailing(true);
-        sceneActions.updateState({ phase: PHASES.RECAP });
-        setRecapIndex(0);
-      }, 3000);
+  const triggerSuccessFlow = useCallback(() => {
+    if (successFlowStartedRef.current) return;
+    successFlowStartedRef.current = true;
 
-      return () => resumeRecap?.();
-    }
+    setHintReadySlot(null);
+    sceneActions.updateState({ phase: PHASES.SUCCESS });
 
-    if (phase === PHASES.RECAP) {
-      fillCompletedBoard();
-      setAllComplete(true);
-      setStartSailing(true);
-      setRecapIndex((prev) => (prev < 0 ? 0 : prev));
-      return undefined;
-    }
+    const playCompletedShloka = () => {
+      if (finalChantStartedRef.current) return;
+      finalChantStartedRef.current = true;
 
-    return undefined;
-  }, [correctSlots.size, allComplete, fillCompletedBoard, phase, safeSetTimeout, sceneActions]);
+      setChantHighlightIndex(null);
+      playFullShloka({
+        onWordStart: (index) => setChantHighlightIndex(index),
+        onComplete: () => {
+          setChantHighlightIndex(null);
+          safeSetTimeout(() => {
+            sceneActions.updateState({ phase: PHASES.FINALE });
+          }, 700);
+        },
+      });
+    };
+
+    playVoice?.('sceneComplete', () => {
+      safeSetTimeout(playCompletedShloka, 400);
+    }, { replayOnReturn: false });
+
+    // VO callbacks can fail to fire (missing file, iOS dropping events) —
+    // don't strand SUCCESS on a dropped callback.
+    safeSetTimeout(playCompletedShloka, 5000);
+  }, [playFullShloka, playVoice, safeSetTimeout, sceneActions]);
+
+  // Resume case: mounting directly into SUCCESS (reload) should fill the
+  // board and continue into the completed-Shloka playback. Idempotent with
+  // the live placeWord path via successFlowStartedRef, so this never
+  // double-fires the completion VO for a child who just finished live.
+  useEffect(() => {
+    if (phase !== PHASES.SUCCESS) return undefined;
+    fillCompletedBoard();
+
+    if (resumeHandledRef.current) return undefined;
+    resumeHandledRef.current = true;
+
+    const resumeTimer = safeSetTimeout(() => triggerSuccessFlow(), 500);
+    return () => resumeTimer?.();
+  }, [phase, fillCompletedBoard, safeSetTimeout, triggerSuccessFlow]);
 
   const placeWord = useCallback((wordData, slotIdx) => {
     const isCorrect = SHLOKA_WORDS[slotIdx].id === wordData.id;
 
     if (!isCorrect) {
-      setWrongSlots((prev) => new Set(prev).add(slotIdx));
+      // A wrong guess must not let the child postpone the hint ladder
+      // indefinitely — only a correct placement counts as real progress.
+      setWrongWordId(wordData.id);
       playSfx?.('wrong');
-      safeSetTimeout(() => {
-        setWrongSlots((prev) => {
-          const next = new Set(prev);
-          next.delete(slotIdx);
-          return next;
-        });
-      }, 600);
+      safeSetTimeout(() => setWrongWordId(null), 500);
       return;
     }
 
@@ -521,30 +550,47 @@ const ShlokaRiverFinaleContent = ({
     });
     setRippleSlot(slotIdx);
     safeSetTimeout(() => setRippleSlot(null), 650);
-
-    if (slotIdx === SHLOKA_WORDS.length - 1) {
-      playSparkle();
-      playChime();
-      playWordAudio?.(wordData.id, () => {
-        triggerSuccessFlow();
-      });
-      return;
-    }
+    setHintReadySlot(null);
 
     playSparkle();
-    playWordAudio?.(wordData.id, () => {
-      setActiveSlotIndex(slotIdx + 1);
-      setHintLevel(0);
-      playWordAudio?.(SHLOKA_WORDS[slotIdx + 1].id, () => scheduleHints(slotIdx + 1));
-    });
-  }, [markInteraction, playChime, playSparkle, playWordAudio, safeSetTimeout, scheduleHints, triggerSuccessFlow]);
+
+    const isFinalSlot = slotIdx === SHLOKA_WORDS.length - 1;
+    const isPairEnd = slotIdx % 2 === 1;
+
+    const advance = () => {
+      if (isFinalSlot) {
+        triggerSuccessFlow();
+        return;
+      }
+      const nextSlot = slotIdx + 1;
+      setActiveSlotIndex(nextSlot);
+      safeSetTimeout(() => setHintReadySlot(nextSlot), 250);
+    };
+
+    if (isFinalSlot) {
+      playChime();
+    }
+
+    if (isPairEnd) {
+      // End of a pair — reinforce both words together ("Vakratunda —
+      // Mahakaya") instead of naming the next answer.
+      playWordSequence([SHLOKA_WORDS[slotIdx - 1].id, SHLOKA_WORDS[slotIdx].id], advance);
+    } else {
+      playWordSequence([wordData.id], advance);
+    }
+  }, [markInteraction, playChime, playSfx, playSparkle, playWordSequence, safeSetTimeout, triggerSuccessFlow]);
 
   const handleTrayPointerDown = (e, wordData) => {
-    if (phase !== PHASES.ARRANGE || usedWords.has(wordData.id)) return;
+    if (phase !== PHASES.ARRANGE || !buildReady || usedWords.has(wordData.id)) return;
     e.preventDefault();
     dragMovedRef.current = false;
     playUiTap();
-    markInteraction();
+    // Only a real placement attempt against the current target counts as
+    // progress — grabbing a boat doesn't reset the hint clock, or a child
+    // could postpone help indefinitely by picking up and dropping boats.
+    if (wordData.id === currentTargetWord?.id) {
+      markInteraction();
+    }
     setDraggingWord(wordData);
     const rect = stageRef.current?.getBoundingClientRect();
     if (!rect) return;
@@ -595,46 +641,9 @@ const ShlokaRiverFinaleContent = ({
       dragMovedRef.current = false;
       return;
     }
-    if (phase !== PHASES.ARRANGE || usedWords.has(wordData.id)) return;
+    if (phase !== PHASES.ARRANGE || !buildReady || usedWords.has(wordData.id)) return;
     placeWord(wordData, activeSlotIndex);
   };
-
-  useEffect(() => {
-    if (phase !== PHASES.RECAP) {
-      recapSequenceStartedRef.current = false;
-      return undefined;
-    }
-
-    const goToFinale = () => {
-      safeSetTimeout(() => {
-        sceneActions.updateState({ phase: PHASES.FINALE });
-      }, 1200);
-    };
-
-    if (isAudioOn && !recapSequenceStartedRef.current) {
-      recapSequenceStartedRef.current = true;
-      playFullShloka({
-        onWordStart: (index) => setRecapIndex(index),
-        onComplete: () => {
-          setRecapIndex(SHLOKA_WORDS.length);
-          goToFinale();
-        },
-      });
-      return undefined;
-    }
-
-    if (!isAudioOn && recapIndex >= 0) {
-      if (recapIndex >= SHLOKA_WORDS.length) {
-        goToFinale();
-        return undefined;
-      }
-
-      const advanceRecap = safeSetTimeout(() => setRecapIndex((prev) => prev + 1), 2000);
-      return () => advanceRecap?.();
-    }
-
-    return undefined;
-  }, [phase, recapIndex, isAudioOn, playFullShloka, safeSetTimeout, sceneActions]);
 
   useEffect(() => {
     if (phase === PHASES.FINALE) {
@@ -643,10 +652,7 @@ const ShlokaRiverFinaleContent = ({
   }, [phase]);
 
   // Re-plays whatever line belongs to the current phase — same "one replay
-  // button per scene" pattern as every other live scene. RECAP replays just
-  // its intro line rather than restarting the full word-by-word sequence
-  // (which is already playing/has its own completion timers, so re-firing it
-  // could double up audio and finale transitions).
+  // button per scene" pattern as every other live scene.
   const replayCurrentVoice = useCallback(() => {
     if (!isAudioOn) return;
     if (phase === PHASES.INITIAL) {
@@ -655,8 +661,6 @@ const ShlokaRiverFinaleContent = ({
       playVoice?.('arrangeStart', undefined, { replayOnReturn: false });
     } else if (phase === PHASES.SUCCESS) {
       playVoice?.('sceneComplete', undefined, { replayOnReturn: false });
-    } else if (phase === PHASES.RECAP) {
-      playVoice?.('recapStart', undefined, { replayOnReturn: false });
     } else if (phase === PHASES.FINALE || phase === PHASES.COMPLETE) {
       playVoice?.('finalCelebration', undefined, { replayOnReturn: false });
     }
@@ -725,7 +729,7 @@ const ShlokaRiverFinaleContent = ({
             <div className="srf-arrange">
               <div className="srf-title-banner">
                 <h1 className="srf-title">Complete the Shloka!</h1>
-                <p className="srf-subtitle">Tap the first word boat.</p>
+                <p className="srf-subtitle">Can you put the Shloka back together?</p>
               </div>
 
               <div className="srf-progress-badge">{correctCount} / 8</div>
@@ -738,19 +742,19 @@ const ShlokaRiverFinaleContent = ({
                       ? SHLOKA_WORDS.find((w) => w.id === placedWordId)
                       : null;
                     const isCorrect = correctSlots.has(idx);
-                    const isWrong = wrongSlots.has(idx);
                     const isActive = phase === PHASES.ARRANGE && idx === activeSlotIndex && !placedWordId;
                     const isLocked = idx > activeSlotIndex && !placedWordId;
+                    const isChanting = chantHighlightIndex === idx;
                     return (
                       <div
                         key={idx}
-                        className={`srf-slot ${isCorrect ? 'is-correct' : ''} ${isWrong ? 'is-wrong' : ''} ${isActive ? 'is-active' : ''} ${isLocked ? 'is-locked' : ''} ${placedWordId ? 'is-filled' : ''} ${rippleSlot === idx ? 'is-ripple' : ''} ${hintLevel >= 1 && isActive ? 'is-hint-slot' : ''}`}
+                        className={`srf-slot ${isCorrect ? 'is-correct' : ''} ${isActive ? 'is-active' : ''} ${isLocked ? 'is-locked' : ''} ${placedWordId ? 'is-filled' : ''} ${rippleSlot === idx ? 'is-ripple' : ''}`}
                         data-index={idx}
                       >
                         <span className="srf-slot-number">{idx + 1}</span>
                         {placedWordId && wordData ? (
                           <div
-                            className={`srf-placed-boat ${allComplete ? 'is-all-complete' : ''}`}
+                            className={`srf-placed-boat ${isChanting ? 'is-chanting' : ''}`}
                             style={{ color: wordData.color }}
                           >
                             <BoatSvg />
@@ -770,26 +774,26 @@ const ShlokaRiverFinaleContent = ({
               </div>
 
               {phase === PHASES.ARRANGE && (
-                <div className="srf-tray">
-                  <p className="srf-tray-label">Tap the next word boat</p>
+                <div className={`srf-tray${!buildReady ? ' is-listening' : ''}`}>
+                  <p className="srf-tray-label">
+                    {buildReady ? 'What comes next?' : 'Listen to the Shloka...'}
+                  </p>
                   <div className="srf-tray-boats">
                     {trayWords.filter((w) => !usedWords.has(w.id)).map((w) => {
                       const isTargetBoat = currentTargetWord?.id === w.id;
-                      // L1: every remaining boat gets a soft group nudge, and the
-                      // correct one gets a slightly stronger version of that same
-                      // nudge — a directional cue, not an identification. L2/L3
-                      // clearly single out the correct boat.
+                      // L1: every remaining boat gets the same neutral nudge —
+                      // no answer revealed. L2 has no boat visual (meaning
+                      // clue only, rendered as VO). L3 clearly reveals the
+                      // correct boat as the final rescue.
                       const hintClass = hintLevel >= 3 && isTargetBoat
-                        ? 'is-hint-wiggle'
-                        : hintLevel >= 2 && isTargetBoat
-                          ? 'is-hint-pulse'
-                          : hintLevel >= 1
-                            ? (isTargetBoat ? 'is-hint-candidate' : 'is-hint-group')
-                            : '';
+                        ? 'is-hint-final'
+                        : hintLevel === 1
+                          ? 'is-hint-group'
+                          : '';
                       return (
                         <div
                           key={w.id}
-                          className={`srf-tray-boat ${hintClass}`}
+                          className={`srf-tray-boat ${hintClass}${wrongWordId === w.id ? ' is-wrong' : ''}`}
                           style={{ color: w.color }}
                           onPointerDown={(e) => handleTrayPointerDown(e, w)}
                           onClick={() => handleWordChipTap(w)}
@@ -818,56 +822,6 @@ const ShlokaRiverFinaleContent = ({
                   <span className="srf-boat-label">{draggingWord.label}</span>
                 </div>
               )}
-            </div>
-          )}
-
-          {phase === PHASES.SUCCESS && (
-            <div className="srf-success-overlay">
-              <div className="srf-success-glow" />
-              <h2 className="srf-success-text">You completed the Shloka River! ✨</h2>
-            </div>
-          )}
-
-          {phase === PHASES.RECAP && (
-            <div className="srf-recap srf-slow-zoom">
-              {recapIndex >= 0 && recapIndex < SHLOKA_WORDS.length && (
-                <div
-                  key={`recap-boat-${recapIndex}`}
-                  className={`srf-recap-boat ${startSailing ? 'is-sailing' : ''}`}
-                  style={{ color: SHLOKA_WORDS[recapIndex].color }}
-                >
-                  {SHLOKA_WORDS[recapIndex].recapBoatImage ? (
-                    <>
-                      <img
-                        src={SHLOKA_WORDS[recapIndex].recapBoatImage}
-                        alt={SHLOKA_WORDS[recapIndex].label}
-                        className="srf-recap-custom-boat"
-                      />
-                      <span className="srf-boat-label srf-recap-custom-label">{SHLOKA_WORDS[recapIndex].label}</span>
-                    </>
-                  ) : (
-                    <>
-                      <BoatSvg />
-                      <img src={SHLOKA_WORDS[recapIndex].icon} alt="" className="srf-boat-icon" />
-                      <span className="srf-boat-label">{SHLOKA_WORDS[recapIndex].label}</span>
-                    </>
-                  )}
-                </div>
-              )}
-
-              <div className="srf-spectator-boat">
-                <img src={boatSailImage} alt="Kids and Mooshika watching" />
-              </div>
-
-              <div className="srf-recap-dots">
-                {SHLOKA_WORDS.map((w, i) => (
-                  <div
-                    key={w.id}
-                    className={`srf-recap-dot ${i < recapIndex ? 'is-done' : ''} ${i === recapIndex ? 'is-current' : ''}`}
-                    style={{ '--dot-color': w.color }}
-                  />
-                ))}
-              </div>
             </div>
           )}
 
