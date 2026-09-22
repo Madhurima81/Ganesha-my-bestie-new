@@ -246,7 +246,8 @@ function parsePercentValue(value, fallback) {
 // ========================================
 const MODAK_VO = {
   calmMooshika: 'Mooshika’s thoughts keep jumping around. Press and hold to help him focus.',
-  calmMooshikaIdle: 'Catch Mooshika and keep holding.',
+  calmMooshikaIdle: 'Press and hold Mooshika.',
+  calmMooshikaDirect: 'Keep holding until Mooshika settles.',
   mooshikaCalmed: 'Mooshika stayed with it and made a little progress.',
   guidePower: 'I can keep going, one small step at a time.',
   mudIdle: 'Guide Mooshika to the next safe spot.',
@@ -267,6 +268,7 @@ const MODAK_VO = {
 const MODAK_VO_MOMENT = {
   calmMooshika: 'default',
   calmMooshikaIdle: 'default',
+  calmMooshikaDirect: 'default',
   mooshikaCalmed: 'celebration',
   guidePower: 'encouragement',
   mudIdle: 'default',
@@ -638,7 +640,9 @@ const NewModakSceneMVPContent = ({
   const [hintResetKey, setHintResetKey] = useState(0);
   const [idleHintLevel, setIdleHintLevel] = useState(0);
   const idleVoPlayedRef = useRef({});
-  const lastIdleInteractionAtRef = useRef(Date.now());
+  // null until the opening VO's onEnd arms it — the clock must not exist
+  // before the child has actually heard the instruction.
+  const lastIdleInteractionAtRef = useRef(null);
   const IDLE_HINT_L1_MS = 10000;
   const IDLE_HINT_L2_MS = 18000;
   const IDLE_HINT_L3_MS = 26000;
@@ -676,6 +680,12 @@ const NewModakSceneMVPContent = ({
   const mushikaHoldRafRef = useRef(null);
   const mushikaDartIndexRef = useRef(0);
   const calmRevealFiredRef = useRef(false);
+  // Tracks whether the current hold has actually become meaningful
+  // (~18% progress) — a bare pointer-down/quick tap must not reset the
+  // idle clock, only a genuine hold does.
+  const mushikaMeaningfulHoldRef = useRef(false);
+  // Repeated quick taps (tapping instead of holding) escalate help early.
+  const mushikaShortTapCountRef = useRef(0);
   const MUSHIKA_DART_INTERVAL_MS = 1800;
   const MUSHIKA_HOLD_MS = 1600;
   const CALM_REVEAL_GAP_MS = 500;   // beat after "well done" line ends
@@ -758,21 +768,31 @@ const NewModakSceneMVPContent = ({
     const elapsed = performance.now() - mushikaHoldStartRef.current;
     const progress = Math.min(elapsed / MUSHIKA_HOLD_MS, 1);
     sceneActions.updateState({ holdProgress: progress });
+
+    // ~18% of the hold (~300ms) is enough to say: yes, the child understood
+    // press-and-hold — only then does it count as meaningful interaction.
+    if (!mushikaMeaningfulHoldRef.current && progress >= 0.18) {
+      mushikaMeaningfulHoldRef.current = true;
+      mushikaShortTapCountRef.current = 0;
+      noteInteraction();
+    }
+
     if (progress >= 1) {
       completeMushikaSettle();
       return;
     }
     mushikaHoldRafRef.current = requestAnimationFrame(tickMushikaHold);
-  }, [completeMushikaSettle, sceneActions]);
+  }, [completeMushikaSettle, noteInteraction, sceneActions]);
 
   const handleMushikaHoldStart = (event) => {
     event.preventDefault?.();
-    noteInteraction();
     if (!sceneState || sceneState.phase !== PHASES.CALM_SEARCH) return;
+    event.currentTarget.setPointerCapture?.(event.pointerId);
     clearMushikaDartTimer();
     clearMushikaHoldLoop();
     stopVoice();
     if (idleHintsEnabled) stopIdleTimer();
+    mushikaMeaningfulHoldRef.current = false;
     mushikaHoldStartRef.current = performance.now();
     sceneActions.updateState({ mooshikaVisible: true, mushikaHolding: true, holdProgress: 0 });
     mushikaHoldRafRef.current = requestAnimationFrame(tickMushikaHold);
@@ -782,6 +802,19 @@ const NewModakSceneMVPContent = ({
     if (!sceneState || sceneState.phase !== PHASES.CALM_SEARCH || !sceneState.mushikaHolding) return;
     clearMushikaHoldLoop();
     mushikaHoldStartRef.current = null;
+
+    // Repeated taps instead of holds — accelerate help without waiting the
+    // full ladder out, since this is exactly the child who needs it.
+    if (!mushikaMeaningfulHoldRef.current) {
+      mushikaShortTapCountRef.current += 1;
+      if (mushikaShortTapCountRef.current === 2) {
+        setIdleHintLevel((level) => Math.max(level, 2));
+      }
+      if (mushikaShortTapCountRef.current >= 3) {
+        setIdleHintLevel(3);
+      }
+    }
+
     sceneActions.updateState({ mushikaHolding: false, holdProgress: 0 });
     scheduleNextMushikaDart();
   };
@@ -1167,7 +1200,10 @@ const NewModakSceneMVPContent = ({
       return;
     }
     const tick = setInterval(() => {
-      const idleFor = Date.now() - lastIdleInteractionAtRef.current;
+      const startedAt = lastIdleInteractionAtRef.current;
+      // Not armed yet (opening VO hasn't finished) — no clock running.
+      if (!startedAt) return;
+      const idleFor = Date.now() - startedAt;
       let nextLevel = 0;
       if (idleFor >= IDLE_HINT_L3_MS) nextLevel = 3;
       else if (idleFor >= IDLE_HINT_L2_MS) nextLevel = 2;
@@ -1186,14 +1222,28 @@ const NewModakSceneMVPContent = ({
     setShowIdleGestureHint(isHintPhase && idleHintLevel >= 3);
   }, [idleHintLevel, sceneState?.phase, sceneState?.welcomeShown, idleHintsEnabled, isSymbolPopupOpen]);
 
-  // Idle VO once at level >= 2
+  // Idle VO — L2 names the action, L3 gives the exact endpoint (genuinely
+  // new information, not just a repeat of L2).
   useEffect(() => {
     if (!idleHintsEnabled || !sceneState?.welcomeShown || isSymbolPopupOpen) return;
     const meta = PHASE_META[sceneState?.phase];
     if (!meta) return;
-    if (idleHintLevel >= 2 && !idleVoPlayedRef.current[sceneState.phase]) {
-      idleVoPlayedRef.current[sceneState.phase] = true;
-      playVoice(meta.idle);
+
+    if (idleHintLevel >= 3) {
+      const key = `${sceneState.phase}:l3`;
+      if (!idleVoPlayedRef.current[key]) {
+        idleVoPlayedRef.current[key] = true;
+        playVoice('calmMooshikaDirect');
+      }
+      return;
+    }
+
+    if (idleHintLevel >= 2) {
+      const key = `${sceneState.phase}:l2`;
+      if (!idleVoPlayedRef.current[key]) {
+        idleVoPlayedRef.current[key] = true;
+        playVoice(meta.idle);
+      }
     }
   }, [idleHintLevel, sceneState?.phase, sceneState?.welcomeShown, idleHintsEnabled, isSymbolPopupOpen, playVoice]);
 
@@ -1534,16 +1584,16 @@ const NewModakSceneMVPContent = ({
                         {sceneState.mooshikaVisible && (
                           <button
                             type="button"
-                            className={`modak-game-mushika-search ${sceneState.phase === PHASES.CALM_REVEAL ? 'walking' : 'darting'} ${sceneState.mushikaHolding ? 'holding' : ''}`}
+                            className={`modak-game-mushika-search ${sceneState.phase === PHASES.CALM_REVEAL ? 'walking' : 'darting'} ${sceneState.mushikaHolding ? 'holding' : ''} ${idleHintLevel === 1 ? 'modak-game-mushika-search--hint-l1' : ''} ${idleHintLevel === 2 ? 'modak-game-mushika-search--hint-l2' : ''}`}
                             style={sceneState.mooshikaPosition || { top: CALM_DISTRACTIONS[0].top, left: CALM_DISTRACTIONS[0].left }}
                             onPointerDown={handleMushikaHoldStart}
                             onPointerUp={handleMushikaHoldEnd}
-                            onPointerLeave={handleMushikaHoldEnd}
                             onPointerCancel={handleMushikaHoldEnd}
-                            onTouchStart={handleMushikaHoldStart}
-                            onTouchEnd={handleMushikaHoldEnd}
                             onContextMenu={(e) => e.preventDefault()}
                           >
+                            {sceneState.phase === PHASES.CALM_SEARCH && !sceneState.mushikaHolding && idleHintLevel === 1 && (
+                              <span className="modak-game-hold-hint-ring" aria-hidden="true" />
+                            )}
                             {sceneState.mushikaHolding && (
                               <span
                                 className="modak-game-hold-ring"
@@ -1597,7 +1647,7 @@ const NewModakSceneMVPContent = ({
                       x: parsePercentValue((sceneState.mooshikaPosition || CALM_DISTRACTIONS[0]).left, 30),
                       y: parsePercentValue((sceneState.mooshikaPosition || CALM_DISTRACTIONS[0]).top, 52)
                     }}
-                    active={(introGesture || showIdleGestureHint) && sceneState.phase === PHASES.CALM_SEARCH && !sceneState.mushikaHolding}
+                    active={(introGesture || idleHintLevel >= 2) && sceneState.phase === PHASES.CALM_SEARCH && !sceneState.mushikaHolding}
                     idleDelay={120}
                     zIndex={24}
                   />
