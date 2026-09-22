@@ -912,13 +912,16 @@ export default function SamaprabhaGame({
         </div>
 
         {/* Teaching, first clue only — teaches BOTH halves of the mechanic:
-            drag the light to the real first shadow, then hold it there. */}
+            drag the light to the real first shadow, then hold it there.
+            scene11_sama_intro has a short setup clause before "Move the
+            light..." — GMB gesture-timing preset B (~750ms), with the hold
+            demo staggered to start after the drag has landed. */}
         <GestureDemo
           type="drag"
           from={START_BEAM}
           to={{ x: firstClue.cx, y: firstClue.cy }}
           active={phase === 'play' && lit === 0 && !hasInteracted}
-          idleDelay={150}
+          idleDelay={750}
           iterations={1}
         />
         <GestureDemo
@@ -926,7 +929,7 @@ export default function SamaprabhaGame({
           from={{ x: firstClue.cx, y: firstClue.cy }}
           to={{ x: firstClue.cx, y: firstClue.cy }}
           active={phase === 'play' && lit === 0 && !hasInteracted}
-          idleDelay={1200}
+          idleDelay={1800}
           iterations={1}
         />
 

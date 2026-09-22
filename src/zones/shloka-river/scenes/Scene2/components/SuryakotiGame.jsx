@@ -606,7 +606,9 @@ export default function SuryakotiGame({
           />
         </div>
 
-        {/* Initial teaching demo — Spot 1 only, twice, then hands off to the hint ladder */}
+        {/* Initial teaching demo — Spot 1 only, one pass, then hands off to the
+            hint ladder. scene11_surya_intro has a short setup clause before
+            "Rub the glow..." — GMB gesture-timing preset B. */}
         {phase === 'play' && activeSpot === 0 && !initialTeachingDone && (
           <GestureDemo
             key="surya-initial-teaching"
@@ -614,8 +616,8 @@ export default function SuryakotiGame({
             from={{ x: cueSpot.cx * 100 - 6, y: cueSpot.cy * 100 - 5 }}
             to={{ x: cueSpot.cx * 100 + 6, y: cueSpot.cy * 100 + 5 }}
             active
-            idleDelay={150}
-            iterations={2}
+            idleDelay={750}
+            iterations={1}
             onComplete={() => setInitialTeachingDone(true)}
             onDismiss={() => setInitialTeachingDone(true)}
             zIndex={46}
