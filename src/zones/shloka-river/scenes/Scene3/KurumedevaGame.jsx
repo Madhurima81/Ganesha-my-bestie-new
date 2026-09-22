@@ -569,14 +569,20 @@ export default function KurumedevaGame({
   // Non-tap gesture hints (drag/hold/scratch) show right away at the start of
   // each step, not just after the idle ladder escalates — same "introGesture"
   // pattern used in Pond/FlowerJourneyGame2. Tap hints stay idle-only (hintLevel).
+  // Only genuinely NEW mechanics get an intro teaching pass: trying the
+  // logs (press-hold), the first-ever ask-bubble drag, placing the logs
+  // object, and trying the rope (a different drag than the logs press-hold).
+  // Asking Monkey, tying the rope, and placing the plank all reuse a
+  // mechanic the child has already learned this game — no re-teaching.
   const kuruStageKey = hintBeat;
+  const isTeachableBeat = ['logs-try', 'logs-ask', 'logs-place', 'rope-try'].includes(hintBeat);
   const [kuruIntroGesture, setKuruIntroGesture] = useState(false);
   useEffect(() => {
-    if (phase !== 'play' || isRoundSettling || debugMode) { setKuruIntroGesture(false); return undefined; }
+    if (phase !== 'play' || isRoundSettling || debugMode || !isTeachableBeat) { setKuruIntroGesture(false); return undefined; }
     setKuruIntroGesture(true);
     const t = window.setTimeout(() => setKuruIntroGesture(false), 6000);
     return () => window.clearTimeout(t);
-  }, [kuruStageKey, phase, isRoundSettling, debugMode]);
+  }, [kuruStageKey, phase, isRoundSettling, debugMode, isTeachableBeat]);
   const currentFriend = friendStep < FRIENDS.length ? FRIENDS[friendStep] : null;
 
   // Per-round "first try" VO — once when Beaver enters the logs round, once
@@ -1956,7 +1962,16 @@ export default function KurumedevaGame({
             from={gestureHint.from}
             to={gestureHint.to}
             active={hintLevel >= 1 || (kuruIntroGesture && gestureHint.type !== 'tap')}
-            idleDelay={400}
+            // Teaching-pass delay is per-beat (GMB gesture-timing presets,
+            // matched to each beat's VO lead-in); a rescue triggered by the
+            // idle ladder keeps the shorter 400ms — there's no fresh
+            // instruction VO to wait out at that point.
+            idleDelay={
+              kuruIntroGesture && hintLevel < 1
+                ? ({ 'logs-try': 1100, 'logs-ask': 300, 'logs-place': 250, 'rope-try': 400 }[hintBeat] ?? 400)
+                : 400
+            }
+            iterations={1}
             zIndex={46}
           />
         )}
