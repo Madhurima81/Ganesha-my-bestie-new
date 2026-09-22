@@ -107,14 +107,18 @@ const VOICE_LINES = {
 
   // Trunk phase (strength, then gentleness) — first
   rockRound: 'The rock is blocking the stream. Press and hold to move it.',
-  idleRock: 'Keep holding to move the rock.',
+  // Hint VO — L2 gives the action, L3 gives the exact endpoint
+  idleRockL2: 'Press and hold the rock.',
+  idleRockL3: 'Keep holding until the rock moves.',
   reedsRound: 'The flowers are in the water’s way. Gently move them aside.',
-  idleReeds: 'Move the flowers gently so the water can pass.',
+  idleReedsL2: 'Gently move the flowers aside.',
+  idleReedsL3: 'Drag the flowers to the side.',
   trunkSuccess: 'The water reached the lotus.',
 
   // Lotus phase (press-and-hold to bloom) — second
   lotusRound: 'The water reached the lotus. Hold the bud to help it bloom.',
-  idleLotus: 'Keep holding the bud.',
+  idleLotusL2: 'Press and hold the bud.',
+  idleLotusL3: 'Keep holding until it blooms.',
   lotusBloomed: 'The lotus bloomed, even in the muddy pond.',
 
   // Completion
@@ -454,9 +458,31 @@ const PondSceneContent = ({
   const IDLE_HINT_L1_MS = 10000;
   const IDLE_HINT_L2_MS = 18000;
   const IDLE_HINT_L3_MS = 26000;
+
+  // Time-based hint level still comes from 10 / 18 / 26. forcedHintLevel lets
+  // repeated incorrect attempts move help forward without making an
+  // actively-trying child wait out the full ladder.
+  const [forcedHintLevel, setForcedHintLevel] = useState(0);
+  const lastSpokenHintLevelRef = useRef(0);
+
+  const rockFailedAttemptsRef = useRef(0);
+  const reedsFailedAttemptsRef = useRef(0);
+  const lotusFailedAttemptsRef = useRef(0);
+
+  const rockMeaningfulInteractionRef = useRef(false);
+  const reedsMeaningfulInteractionRef = useRef(false);
+  const lotusMeaningfulInteractionRef = useRef(false);
+
+  const rockHoldProgressRef = useRef(0);
+  const holdProgressRef = useRef(0);
+
+  const effectiveHintLevel = Math.max(idleHintLevel, forcedHintLevel);
+
   const resetIdleBaseline = useCallback(() => {
     idleVoGateRef.current = false;
     setIdleHintLevel(0);
+    setForcedHintLevel(0);
+    lastSpokenHintLevelRef.current = 0;
     lastIdleInteractionAtRef.current = Date.now();
   }, []);
 
@@ -464,17 +490,53 @@ const PondSceneContent = ({
     setHintResetKey(k => k + 1);
   }, []);
 
+  // A genuine attempt earns a fresh 10 / 18 / 26 window — distinct from
+  // resetting on every tap, which would let idle-only touches postpone help.
+  const markMeaningfulInteraction = useCallback(() => {
+    setForcedHintLevel(0);
+    lastSpokenHintLevelRef.current = 0;
+    rearmIdleHints();
+  }, [rearmIdleHints]);
+
+  // First mistake: normal gentle feedback only (no forced hint). Second same
+  // misunderstanding (e.g. repeated short taps on a hold target): jump to
+  // L2 immediately. Third: L3 immediately.
+  const promoteHintFromErrors = useCallback((attemptRef) => {
+    attemptRef.current += 1;
+    if (attemptRef.current === 2) {
+      setForcedHintLevel((level) => Math.max(level, 2));
+    }
+    if (attemptRef.current >= 3) {
+      setForcedHintLevel(3);
+    }
+  }, []);
+
   // Show the gesture demo (rock hold / reeds drag / lotus hold) right away
   // when each phase starts, same "introGesture" pattern as FlowerJourneyGame2 —
   // not just after the idle-hint ladder escalates. Auto-clears after 6s (or
   // instantly on any touch, via GestureDemo's own dismiss-on-pointerdown).
   const [pondIntroGesture, setPondIntroGesture] = useState(false);
+  // Keyed on the actual gameplay beat (rock / flowers / lotus), not on every
+  // raw phase change — INITIAL -> ROCK_MOVING is a beat the child causes by
+  // already holding, and retriggering the tutorial mid-hold is wrong.
+  const interactionBeat = !sceneState?.welcomeShown
+    ? null
+    : (sceneState.phase === PHASES.INITIAL || sceneState.phase === PHASES.ROCK_MOVING)
+      ? 'rock'
+      : sceneState.phase === PHASES.REEDS_ACTIVE
+        ? 'flowers'
+        : sceneState.phase === PHASES.LOTUS_ACTIVE
+          ? 'lotus'
+          : null;
   useEffect(() => {
-    if (!sceneState?.phase) return undefined;
+    if (!interactionBeat) {
+      setPondIntroGesture(false);
+      return undefined;
+    }
     setPondIntroGesture(true);
     const t = window.setTimeout(() => setPondIntroGesture(false), 6000);
     return () => window.clearTimeout(t);
-  }, [sceneState?.phase]);
+  }, [interactionBeat]);
 
   const speakPondPrompt = useCallback((key, onEnd) => {
     if (!isAudioOn || !VOICE_LINES[key]) {
@@ -534,6 +596,7 @@ const PondSceneContent = ({
     setHoldProgress(0);
   }
   const onPauseShow = useCallback(() => {
+    // resume prompt ends -> then the 10s clock starts, never before.
     const replayKey = getPromptKeyForPhase();
     if (replayKey) {
       speakPondPrompt(replayKey, resetIdleBaseline);
@@ -579,7 +642,9 @@ const PondSceneContent = ({
   // 3) restart the level timer from now
   useEffect(() => {
     setIdleHintLevel(0);
+    setForcedHintLevel(0);
     idleVoGateRef.current = false;
+    lastSpokenHintLevelRef.current = 0;
     lastIdleInteractionAtRef.current = Date.now();
   }, [hintResetKey]);
 
@@ -589,10 +654,18 @@ const PondSceneContent = ({
     if (!promptKey || revealConfig || showSceneCompletion || isSymbolPopupOpen) return;
     if (lastAnnouncedPromptRef.current === promptKey) return;
 
+    const promptDelay = promptKey === 'complete'
+      ? 250
+      : promptKey === 'rockRound'
+        ? 850
+        : promptKey === 'reedsRound'
+          ? WATER_TO_REEDS_MS
+          : 500;
+
     const timer = setTimeout(() => {
       speakPondPrompt(promptKey, resetIdleBaseline);
       lastAnnouncedPromptRef.current = promptKey;
-    }, promptKey === 'complete' ? 250 : promptKey === 'rockRound' ? 850 : 500);
+    }, promptDelay);
     return () => clearTimeout(timer);
   }, [
     isAudioOn,
@@ -643,25 +716,34 @@ const PondSceneContent = ({
     showSceneCompletion
   ]);
 
-  const hintClassName = idleHintLevel === 1
-    ? 'hint'
-    : idleHintLevel === 2
-      ? 'hint-strong'
-      : idleHintLevel >= 3
-        ? 'hint-final'
-        : '';
 
+  // L2 gives the action ("Press and hold the rock"), L3 gives the exact
+  // endpoint ("Keep holding until the rock moves") — L3 adds new
+  // information instead of just repeating L2 louder.
   useEffect(() => {
-    if (idleHintLevel < 2) return;
-    if (idleVoGateRef.current) return;
+    if (effectiveHintLevel < 2) return;
+
+    const level = effectiveHintLevel >= 3 ? 3 : 2;
+    if (lastSpokenHintLevelRef.current >= level) return;
 
     let idleKey = null;
-    if (sceneState?.phase === PHASES.INITIAL || sceneState?.phase === PHASES.ROCK_MOVING) idleKey = 'idleRock';
-    if (sceneState?.phase === PHASES.REEDS_ACTIVE) idleKey = 'idleReeds';
-    if (sceneState?.phase === PHASES.LOTUS_ACTIVE) idleKey = 'idleLotus';
-    if (idleKey) speakPondPrompt(idleKey);
-    idleVoGateRef.current = true;
-  }, [idleHintLevel, sceneState?.phase, speakPondPrompt]);
+    const isRockPhase = sceneState?.phase === PHASES.INITIAL || sceneState?.phase === PHASES.ROCK_MOVING;
+
+    if (isRockPhase) {
+      idleKey = level === 2 ? 'idleRockL2' : 'idleRockL3';
+    }
+    if (sceneState?.phase === PHASES.REEDS_ACTIVE) {
+      idleKey = level === 2 ? 'idleReedsL2' : 'idleReedsL3';
+    }
+    if (sceneState?.phase === PHASES.LOTUS_ACTIVE) {
+      idleKey = level === 2 ? 'idleLotusL2' : 'idleLotusL3';
+    }
+
+    if (!idleKey) return;
+
+    lastSpokenHintLevelRef.current = level;
+    speakPondPrompt(idleKey);
+  }, [effectiveHintLevel, sceneState?.phase, speakPondPrompt]);
 
   // NOTE: idle-hint baseline is re-armed from inside the phase-prompt VO's
   // onEnd callback above (see speakPondPrompt(promptKey, resetIdleBaseline)),
@@ -800,8 +882,8 @@ const PondSceneContent = ({
 
     resumePromptPlayedRef.current = true;
     const timer = setTimeout(() => {
-      resetIdleBaseline();
-      speakPondPrompt(promptKey);
+      // resume prompt must finish before the 10s clock starts.
+      speakPondPrompt(promptKey, resetIdleBaseline);
       lastAnnouncedPromptRef.current = promptKey;
     }, promptKey === 'rockRound' ? 850 : 500);
     return () => clearTimeout(timer);
@@ -928,6 +1010,7 @@ const PondSceneContent = ({
 
     playGlow();
     playChime();
+    rockHoldProgressRef.current = 1;
     setRockHoldProgress(1);
     setWaterStage(1);
 
@@ -941,17 +1024,15 @@ const PondSceneContent = ({
     });
 
     triggerMiniGesture('thumbsup', 'center', 1500);
-    safeSetTimeout(() => {
-      speakPondPrompt('reedsRound', resetIdleBaseline);
-    }, WATER_TO_REEDS_MS);
+    // The phase-prompt effect below is the single owner of the reedsRound
+    // VO (it reads WATER_TO_REEDS_MS as its own delay for this phase) —
+    // firing it here too raced that effect into playing it twice.
   }, [
     playGlow,
     playChime,
     sceneActions,
     triggerMiniGesture,
-    safeSetTimeout,
-    resetIdleBaseline,
-    speakPondPrompt
+    safeSetTimeout
   ]);
 
   const handleRockHoldStart = useCallback((e) => {
@@ -962,8 +1043,10 @@ const PondSceneContent = ({
       sceneState.phase !== PHASES.ROCK_MOVING
     ) return;
 
-    rearmIdleHints();
     stopSpokenVoice();
+    setPondIntroGesture(false);
+    rockMeaningfulInteractionRef.current = false;
+
     if (rockHoldRafRef.current) {
       cancelAnimationFrame(rockHoldRafRef.current);
       rockHoldRafRef.current = null;
@@ -975,7 +1058,16 @@ const PondSceneContent = ({
       if (!rockHoldStartRef.current) return;
       const elapsed = performance.now() - rockHoldStartRef.current;
       const progress = Math.min(elapsed / ROCK_HOLD_MS, 1);
+      rockHoldProgressRef.current = progress;
       setRockHoldProgress(progress);
+
+      // Around 20% of a hold is enough to say: yes, the child understood
+      // the mechanic — earn a fresh hint window and clear the error streak.
+      if (progress >= 0.2 && !rockMeaningfulInteractionRef.current) {
+        rockMeaningfulInteractionRef.current = true;
+        markMeaningfulInteraction();
+        rockFailedAttemptsRef.current = 0;
+      }
 
       if (progress >= 1) {
         completeRockMove();
@@ -990,8 +1082,8 @@ const PondSceneContent = ({
     sceneState.phase,
     sceneActions,
     completeRockMove,
-    rearmIdleHints,
-    stopSpokenVoice
+    stopSpokenVoice,
+    markMeaningfulInteraction
   ]);
 
   const handleRockHoldEnd = useCallback(() => {
@@ -1002,9 +1094,18 @@ const PondSceneContent = ({
       rockHoldRafRef.current = null;
     }
     rockHoldStartRef.current = null;
-    setRockHoldProgress(prev => Math.max(0, prev - 0.18));
+
+    // A short release (well before 20%) suggests tapping rather than
+    // understanding "hold" — accelerate help instead of waiting 26s.
+    const finalProgress = rockHoldProgressRef.current;
+    if (finalProgress < 0.35) {
+      promoteHintFromErrors(rockFailedAttemptsRef);
+    }
+
+    rockHoldProgressRef.current = Math.max(0, finalProgress - 0.18);
+    setRockHoldProgress(rockHoldProgressRef.current);
     sceneActions.updateState({ phase: PHASES.INITIAL });
-  }, [sceneActions]);
+  }, [sceneActions, promoteHintFromErrors]);
 
   const completeReeds = useCallback(() => {
     if (sceneStateRef.current?.reedsParted) return;
@@ -1061,13 +1162,15 @@ const PondSceneContent = ({
   const handleReedsPointerDown = useCallback((e) => {
     if (sceneState.phase !== PHASES.REEDS_ACTIVE) return;
     e.preventDefault?.();
-    rearmIdleHints();
     stopSpokenVoice();
+    setPondIntroGesture(false);
+    // Merely touching the flowers doesn't count as understanding — only
+    // actually beginning to move them does (see handleReedsPointerMove).
+    reedsMeaningfulInteractionRef.current = false;
     setReedsDragActive(true);
     reedsStartXRef.current = e.clientX;
   }, [
     sceneState.phase,
-    rearmIdleHints,
     stopSpokenVoice
   ]);
 
@@ -1077,7 +1180,13 @@ const PondSceneContent = ({
     const distance = Math.abs(e.clientX - reedsStartXRef.current);
     const progress = Math.min(distance / REEDS_DRAG_DISTANCE, 1);
     setReedsProgress(progress);
-  }, [reedsDragActive]);
+
+    if (progress >= 0.12 && !reedsMeaningfulInteractionRef.current) {
+      reedsMeaningfulInteractionRef.current = true;
+      markMeaningfulInteraction();
+      reedsFailedAttemptsRef.current = 0;
+    }
+  }, [reedsDragActive, markMeaningfulInteraction]);
 
   const handleReedsPointerUp = useCallback(() => {
     if (!reedsDragActive) return;
@@ -1085,15 +1194,19 @@ const PondSceneContent = ({
     reedsStartXRef.current = null;
 
     if (reedsProgress >= 0.75) {
+      reedsFailedAttemptsRef.current = 0;
       completeReeds();
       return;
     }
 
+    // Child tried, but didn't move far enough — accelerate help.
+    promoteHintFromErrors(reedsFailedAttemptsRef);
     setReedsProgress(prev => prev * 0.65);
   }, [
     reedsDragActive,
     reedsProgress,
-    completeReeds
+    completeReeds,
+    promoteHintFromErrors
   ]);
   // ==========================================================================================
 
@@ -1128,11 +1241,14 @@ const PondSceneContent = ({
   }, [sceneActions, playBloom, playChime, speakPondPrompt, triggerMiniGesture, safeSetTimeout]);
 
   const handleLotusHoldStart = () => {
-    rearmIdleHints();
     if (progressiveHintRef.current?.hideHint) progressiveHintRef.current.hideHint();
     if (!sceneState || !sceneActions) return;
     if (sceneState.phase !== PHASES.LOTUS_ACTIVE) return;
     if (sceneState.lotusBloomed) return;
+
+    stopSpokenVoice();
+    setPondIntroGesture(false);
+    lotusMeaningfulInteractionRef.current = false;
 
     if (holdReleaseRef.current) {
       cancelAnimationFrame(holdReleaseRef.current);
@@ -1150,7 +1266,14 @@ const PondSceneContent = ({
       const elapsed = now - startTime;
       const added = elapsed / LOTUS_HOLD_MS;
       const next = Math.min(1, startProgress + added);
+      holdProgressRef.current = next;
       setHoldProgress(next);
+
+      if (next >= 0.18 && !lotusMeaningfulInteractionRef.current) {
+        lotusMeaningfulInteractionRef.current = true;
+        markMeaningfulInteraction();
+        lotusFailedAttemptsRef.current = 0;
+      }
 
       if (next >= 1) {
         holdTimerRef.current = null;
@@ -1172,6 +1295,12 @@ const PondSceneContent = ({
       holdTimerRef.current = null;
     }
 
+    // Short release suggests tapping rather than understanding "hold".
+    const releasedAt = holdProgressRef.current;
+    if (releasedAt < 0.35) {
+      promoteHintFromErrors(lotusFailedAttemptsRef);
+    }
+
     const decayDurationMs = LOTUS_HOLD_MS / HOLD_DECAY_MULTIPLIER;
     const startProgress = holdProgress;
     if (startProgress <= 0) return;
@@ -1181,6 +1310,7 @@ const PondSceneContent = ({
       const elapsed = now - startTime;
       const shrinkRatio = elapsed / decayDurationMs;
       const next = Math.max(0, startProgress - shrinkRatio);
+      holdProgressRef.current = next;
       setHoldProgress(next);
 
       if (next <= 0) {
@@ -1196,6 +1326,7 @@ const PondSceneContent = ({
         cancelAnimationFrame(holdReleaseRef.current);
         holdReleaseRef.current = null;
       }
+      holdProgressRef.current = 0;
       setHoldProgress(0);
       holdResetTimerRef.current = null;
     }, HOLD_RESET_GRACE_MS);
@@ -1400,12 +1531,13 @@ const PondSceneContent = ({
                 type="hold"
                 from={{ x: 40, y: 69 }}
                 active={
-                  (pondIntroGesture || idleHintLevel >= 3) &&
+                  (pondIntroGesture || effectiveHintLevel >= 2) &&
                   (
                     sceneState.phase === PHASES.INITIAL ||
                     sceneState.phase === PHASES.ROCK_MOVING
                   ) &&
-                  !sceneState.rockMoved
+                  !sceneState.rockMoved &&
+                  rockHoldProgress <= 0
                 }
                 idleDelay={120}
                 zIndex={28}
@@ -1417,14 +1549,6 @@ const PondSceneContent = ({
                 className={`
                   pond-strength-rock-wrap
                   ${sceneState.rockMoved ? 'moved' : ''}
-                  ${
-                    (
-                      sceneState.phase === PHASES.INITIAL ||
-                      sceneState.phase === PHASES.ROCK_MOVING
-                    )
-                      ? hintClassName
-                      : ''
-                  }
                 `}
                 onPointerDown={layoutOpen ? (e) => startMainDrag('rock', e) : handleRockHoldStart}
                 onPointerUp={layoutOpen ? undefined : handleRockHoldEnd}
@@ -1439,6 +1563,19 @@ const PondSceneContent = ({
                   className="pond-trunk-rock"
                   draggable={false}
                 />
+
+                {!sceneState.rockMoved && rockHoldProgress <= 0 && effectiveHintLevel >= 1 && (
+                  <div
+                    className={`pond-hold-hint-ring pond-hold-hint-ring--rock ${
+                      effectiveHintLevel >= 3
+                        ? 'pond-hold-hint-ring--final'
+                        : effectiveHintLevel >= 2
+                          ? 'pond-hold-hint-ring--strong'
+                          : ''
+                    }`}
+                    aria-hidden="true"
+                  />
+                )}
 
                 {!sceneState.rockMoved && rockHoldProgress > 0 && (
                   <svg
@@ -1550,9 +1687,15 @@ const PondSceneContent = ({
               <GestureDemo
                 type="drag"
                 from={REEDS_START_POINT}
-                to={{ x: 63, y: 70 }}
+                to={
+                  pondIntroGesture
+                    ? { x: 63, y: 70 }
+                    : effectiveHintLevel >= 3
+                      ? { x: 69, y: 70 }
+                      : { x: 64, y: 70 }
+                }
                 active={
-                  (pondIntroGesture || idleHintLevel >= 3) &&
+                  (pondIntroGesture || effectiveHintLevel >= 2) &&
                   sceneState.phase === PHASES.REEDS_ACTIVE &&
                   !sceneState.reedsParted &&
                   !reedsDragActive
@@ -1565,10 +1708,7 @@ const PondSceneContent = ({
                 <div
                   role="button"
                   aria-label="Gently move the flowers aside"
-                  className={`
-                    pond-trunk-reeds
-                    ${sceneState.phase === PHASES.REEDS_ACTIVE ? hintClassName : ''}
-                  `}
+                  className="pond-trunk-reeds"
                   onPointerDown={layoutOpen ? (e) => startMainDrag('flowers', e) : handleReedsPointerDown}
                   onPointerMove={layoutOpen ? undefined : handleReedsPointerMove}
                   onPointerUp={layoutOpen ? undefined : handleReedsPointerUp}
@@ -1588,23 +1728,34 @@ const PondSceneContent = ({
                   them aside doesn't make them disappear, just clears the way
                   for the water. Only the (invisible) hit-zone above unmounts
                   once parted, since it has no more job to do. */}
-              {['flower1', 'flower2', 'flower3', 'flower4'].map((key) => (
-                <img
-                  key={key}
-                  src={pondFlower}
-                  className={`pond-flower-item ${sceneState.reedsParted ? 'pond-flower-item--parted' : ''}`}
-                  alt=""
-                  draggable={false}
-                  style={{
-                    left: `var(--pond-${key}-x)`,
-                    top: `var(--pond-${key}-y)`,
-                    width: `var(--pond-${key}-size)`,
-                    cursor: layoutOpen ? 'move' : undefined,
-                    pointerEvents: layoutOpen ? 'auto' : 'none',
-                  }}
-                  onPointerDown={layoutOpen ? (e) => startMainDrag(key, e) : undefined}
-                />
-              ))}
+              {['flower1', 'flower2', 'flower3', 'flower4'].map((key, i) => {
+                // L1 hint: the flowers themselves briefly part outward and
+                // return — "these move sideways" — instead of a gold glow.
+                // Only while nothing is actively dragging, so it never
+                // fights a real swipe transform.
+                const shouldShowFlowerL1 = sceneState.phase === PHASES.REEDS_ACTIVE
+                  && effectiveHintLevel === 1
+                  && !reedsDragActive
+                  && !sceneState.reedsParted;
+                return (
+                  <img
+                    key={key}
+                    src={pondFlower}
+                    className={`pond-flower-item ${sceneState.reedsParted ? 'pond-flower-item--parted' : ''} ${shouldShowFlowerL1 ? 'pond-flower-item--hint-l1' : ''}`}
+                    alt=""
+                    draggable={false}
+                    style={{
+                      left: `var(--pond-${key}-x)`,
+                      top: `var(--pond-${key}-y)`,
+                      width: `var(--pond-${key}-size)`,
+                      cursor: layoutOpen ? 'move' : undefined,
+                      pointerEvents: layoutOpen ? 'auto' : 'none',
+                      '--pond-flower-hint-x': i % 2 === 0 ? '-6px' : '6px',
+                    }}
+                    onPointerDown={layoutOpen ? (e) => startMainDrag(key, e) : undefined}
+                  />
+                );
+              })}
               {['pebble1', 'pebble2', 'pebble3', 'pebble4'].map((key) => (
                 <img
                   key={key}
@@ -1644,7 +1795,7 @@ const PondSceneContent = ({
                 type="hold"
                 from={LOTUS_HOLD_POINT}
                 active={
-                  (pondIntroGesture || idleHintLevel >= 3) &&
+                  (pondIntroGesture || effectiveHintLevel >= 2) &&
                   sceneState.phase === PHASES.LOTUS_ACTIVE &&
                   !sceneState.lotusBloomed &&
                   holdProgress <= 0
@@ -1654,7 +1805,7 @@ const PondSceneContent = ({
               />
 
               <div
-                className={`pond-trunk-lotus ${sceneState.phase === PHASES.LOTUS_ACTIVE && !sceneState.lotusBloomed ? hintClassName : ''}`}
+                className="pond-trunk-lotus"
                 onPointerDown={layoutOpen ? (e) => startMainDrag('lotus', e) : undefined}
                 style={layoutOpen ? { cursor: 'move' } : undefined}
               >
@@ -1662,6 +1813,18 @@ const PondSceneContent = ({
                   <div className="pond-lotus-wake-glow" aria-hidden="true">
                     <SparkleAnimation type="star" count={18} color="#FFD86B" size={10} duration={LOTUS_GLOW_MS} fadeOut={true} area="full" />
                   </div>
+                )}
+                {sceneState.phase === PHASES.LOTUS_ACTIVE && !sceneState.lotusBloomed && holdProgress <= 0 && effectiveHintLevel >= 1 && (
+                  <div
+                    className={`pond-hold-hint-ring pond-hold-hint-ring--lotus ${
+                      effectiveHintLevel >= 3
+                        ? 'pond-hold-hint-ring--final'
+                        : effectiveHintLevel >= 2
+                          ? 'pond-hold-hint-ring--strong'
+                          : ''
+                    }`}
+                    aria-hidden="true"
+                  />
                 )}
                 {sceneState.phase === PHASES.LOTUS_ACTIVE && !sceneState.lotusBloomed && holdProgress > 0 && (
                   <svg viewBox="0 0 100 100" className="pond-hold-ring" aria-hidden="true">
