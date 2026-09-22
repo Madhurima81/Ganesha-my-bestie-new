@@ -452,7 +452,7 @@
           }
         ],
         "audio": {
-          "voText": "Look around. Which things could help build the nest?",
+          "voText": "Can these little things help rebuild the nest?",
           "trigger": "state-enter"
         }
       }
@@ -885,6 +885,12 @@
           "trigger": "state-enter"
         }
       },
+      "hints": {
+        "mode": "drag-to-target",
+        "teachingGesture": true,
+        "l2VoText": "Drag the twig to the nest.",
+        "l3VoText": "Drag the twig into the nest."
+      },
       "interaction": {
         "type": "drag-drop",
         "drag": "twigItem",
@@ -1280,6 +1286,12 @@
           "trigger": "state-enter"
         }
       },
+      "hints": {
+        "mode": "drag-to-target",
+        "teachingGesture": false,
+        "l2VoText": "Drag the grass to the nest.",
+        "l3VoText": "Drag the grass into the nest."
+      },
       "interaction": {
         "type": "drag-drop",
         "drag": "grassItem",
@@ -1636,6 +1648,12 @@
           "trigger": "state-enter"
         }
       },
+      "hints": {
+        "mode": "drag-to-target",
+        "teachingGesture": false,
+        "l2VoText": "Drag the leaf to the nest.",
+        "l3VoText": "Drag the leaf into the nest."
+      },
       "interaction": {
         "type": "drag-drop",
         "drag": "leafItem",
@@ -1926,6 +1944,12 @@
           "voText": "You did it! All those little things helped rebuild the nest.",
           "trigger": "state-enter"
         }
+      },
+      "hints": {
+        "mode": "drag-to-target",
+        "teachingGesture": false,
+        "l2VoText": "Drag the feather to the nest.",
+        "l3VoText": "Drag the feather into the nest."
       },
       "interaction": {
         "type": "drag-drop",

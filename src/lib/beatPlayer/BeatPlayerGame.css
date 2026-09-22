@@ -88,6 +88,48 @@
   50% { filter: drop-shadow(0 0 18px rgba(255, 152, 0, 0.9)); }
 }
 
+/* =========================================================
+   STRUCTURED DRAG HINTS (beat.hints.mode === 'drag-to-target')
+   L1 = notice what moves, L2/L3 = the generic pulse/strong classes
+   above via beatHintLevel are NOT used here — see the JS gate.
+   ========================================================= */
+
+/* A structured-hint beat does not advertise the answer continuously from
+   the instant it opens — no permanent beckon glow before the child is
+   actually stuck. */
+.beat-player-stage.beat-player-structured-hints .beat-player-item.is-interactive {
+  animation: none;
+}
+
+/* Nor the generic whole-item shake on a miss — the item's own positional
+   transition (styleFromItem) already returns it to rest, which is enough
+   feedback for a drag/visual-search mechanic. */
+.beat-player-stage.beat-player-structured-hints.beat-player-wrong .beat-player-item.is-interactive {
+  animation: none;
+}
+
+/* L1 — a small restrained lift/wiggle: "this little thing can move",
+   without saying where it goes. */
+.beat-player-item.beat-player-hint-nudge img {
+  animation: beatPlayerHintNudge 2.2s ease-in-out infinite;
+}
+
+@keyframes beatPlayerHintNudge {
+  0%, 66%, 100% { transform: translateY(0) rotate(0deg); }
+  76% { transform: translateY(-3px) rotate(-2deg); }
+  86% { transform: translateY(-1px) rotate(1deg); }
+}
+
+/* L3 — the destination finally breathes; not glowing from the start. */
+.beat-player-item.beat-player-hint-target {
+  animation: beatPlayerTargetBreathe 1.45s ease-in-out infinite;
+}
+
+@keyframes beatPlayerTargetBreathe {
+  0%, 100% { filter: drop-shadow(0 0 3px rgba(255, 205, 85, 0.25)); }
+  50% { filter: drop-shadow(0 0 12px rgba(255, 205, 85, 0.78)); }
+}
+
 /* Press-hold progress ring — same fill-as-you-hold pattern as the Pond
    scene's lotus/rock hold, so a press-hold reads as "something is
    happening" instead of a vague pulse. Drawn on top of the held item,
@@ -234,6 +276,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .beat-player-item,
+  .beat-player-item.beat-player-hint-nudge img,
   .beat-player-drop,
   .beat-player-stage.beat-player-wrong .beat-player-item,
   .beat-player-state-before .beat-player-item,

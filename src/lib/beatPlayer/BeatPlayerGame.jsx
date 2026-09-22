@@ -453,29 +453,51 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
   // even past the "first 2 beats" teaching window below, so a child stuck
   // on a later beat still gets re-taught the gesture.
   const [beatHintLevel, setBeatHintLevel] = useState(0);
+  // Error-responsive escalation (registerFailedAttempt below) forces the
+  // ladder ahead of the normal idle clock — kept separate from beatHintLevel
+  // so a run of failed drops can't be silently overwritten by the idle timer
+  // resetting to a lower level on the same tick.
+  const [forcedHintLevel, setForcedHintLevel] = useState(0);
+  const failedAttemptsRef = useRef(0);
+  const dragAttemptRef = useRef({ start: null, meaningful: false });
+  const lastSpokenHintLevelRef = useRef(0);
+  // Reusable structured hint mode — a beat opts in via `beat.hints` in the
+  // flow JSON (`{ mode: 'drag-to-target', teachingGesture, l2VoText,
+  // l3VoText }`) instead of hard-coding any one game's items/wording into
+  // this shared engine. Beats without a `hints` block keep the original
+  // generic pulse/glow + first-2-beats teaching behavior untouched.
+  const hintConfig = beat?.hints || null;
+  const useStructuredDragHints = hintConfig?.mode === 'drag-to-target' && interaction?.type === 'drag-drop';
+  const effectiveHintLevel = Math.max(beatHintLevel, forcedHintLevel);
   // Set for real once the state's own VO finishes speaking (see runState
   // below) — not here on mount, or a beat with a long intro line would
   // burn several seconds of its narration off the 10s/18s/26s budget before
-  // the child even has a chance to try.
-  const beatWaitStartedAtRef = useRef(Date.now());
+  // the child even has a chance to try. null = not armed yet (VO still
+  // talking); the idle-hint timer effect below leaves the ladder at 0 until
+  // this is a real timestamp.
+  const beatWaitStartedAtRef = useRef(null);
   useEffect(() => {
     setBeatHintLevel(0);
-    // Provisional reset — the ladder's tick interval (below) starts
-    // immediately and would otherwise read whatever stale timestamp was
-    // left over from the *previous* beat on its very first tick, computing
-    // a huge elapsed time and jumping straight to L2/L3. runState still
-    // re-bases this to the real value once this state's own VO finishes.
-    beatWaitStartedAtRef.current = Date.now();
+    setForcedHintLevel(0);
+    failedAttemptsRef.current = 0;
+    dragAttemptRef.current = { start: null, meaningful: false };
+    lastSpokenHintLevelRef.current = 0;
+    // Not armed until this state's own VO finishes — see runState below.
+    beatWaitStartedAtRef.current = null;
   }, [beatIndex, stateName]);
 
   useEffect(() => {
     if (!isActive || isPaused || layoutDebug || !needsInput(stateName)) return undefined;
     const tick = setInterval(() => {
-      const idleMs = Date.now() - beatWaitStartedAtRef.current;
+      const startedAt = beatWaitStartedAtRef.current;
+      // Not armed yet — this state's VO hasn't finished, so the idle clock
+      // must not count narration time toward the 10/18/26 budget.
+      if (!startedAt) return;
+      const idleMs = Date.now() - startedAt;
       if (idleMs >= 26000) setBeatHintLevel(3);
       else if (idleMs >= 18000) setBeatHintLevel(2);
       else if (idleMs >= 10000) setBeatHintLevel(1);
-    }, 1000);
+    }, 500);
     return () => clearInterval(tick);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [beatIndex, stateName, isActive, isPaused, layoutDebug]);
@@ -489,15 +511,31 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
   // to drag to before being shown outright.
   const hintSpokenForBeatRef = useRef(null);
   useEffect(() => {
+    if (!needsInput(stateName)) return;
+
+    // Structured drag-to-target hints — distinct L2/L3 wording per beat,
+    // authored in the flow JSON instead of hard-coded into this engine.
+    if (useStructuredDragHints) {
+      const level = effectiveHintLevel >= 3 ? 3 : effectiveHintLevel >= 2 ? 2 : 0;
+      if (!level) return;
+      if (lastSpokenHintLevelRef.current >= level) return;
+
+      const text = level === 3 ? hintConfig?.l3VoText : hintConfig?.l2VoText;
+      lastSpokenHintLevelRef.current = level;
+      if (text) speakAndWait(text, isAudioOn);
+      return;
+    }
+
+    // Legacy BeatPlayer behavior — a single beat.hintVoText spoken once at L2.
     const hintVoText = beat?.hintVoText;
-    if (!hintVoText || !needsInput(stateName)) return;
+    if (!hintVoText) return;
     if (beatHintLevel < 2) return;
     const beatKey = `${beatIndex}:${stateName}`;
     if (hintSpokenForBeatRef.current === beatKey) return;
     hintSpokenForBeatRef.current = beatKey;
     speakAndWait(hintVoText, isAudioOn);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [beatHintLevel, beatIndex, stateName]);
+  }, [effectiveHintLevel, beatHintLevel, beatIndex, stateName, useStructuredDragHints]);
 
   // Gesture demo — every interaction type here is a non-tap gesture (drag,
   // rope-drag, drag-path, press-hold), so a first-timer needs a quick shown
@@ -519,8 +557,15 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
   // that demo animates straight to the real interaction.target, which would
   // give away the answer immediately instead of after the child is actually
   // stuck (L3). Every other beat keeps the early teaching freebie.
-  const showGestureDemo = needsInput(stateName)
+  // Structured beats (opted in via beat.hints) only get the free immediate
+  // teaching pass when the JSON explicitly asks for it (teachingGesture:
+  // true — the first time this exact mechanic appears), plus a full L3
+  // rescue. Legacy beats keep the original "first 2 interactive beats" rule.
+  const showStructuredGesture = useStructuredDragHints && needsInput(stateName) && !drag
+    && ((effectiveHintLevel === 0 && hintConfig?.teachingGesture) || effectiveHintLevel >= 2);
+  const showLegacyGesture = !useStructuredDragHints && needsInput(stateName)
     && ((interactiveBeatsSoFar <= 2 && !beat?.hintVoText) || beatHintLevel >= 3);
+  const showGestureDemo = showStructuredGesture || showLegacyGesture;
 
   const gestureDemoType = (() => {
     if (!interaction) return 'drag';
@@ -534,11 +579,53 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
     const dragItem = findItem(interaction.drag);
     const targetItem = interaction.target ? findItem(interaction.target) : null;
     const from = dragItem ? { x: dragItem.x, y: dragItem.y } : { x: 50, y: 60 };
-    const to = targetItem
-      ? { x: targetItem.x, y: targetItem.y }
-      : (interaction.type === 'drag-path' && interaction.path?.length ? interaction.path[0] : from);
-    return { from, to };
-  }, [showGestureDemo, interaction, findItem]);
+    let fullTo = from;
+    if (targetItem) {
+      fullTo = { x: targetItem.x, y: targetItem.y };
+    } else if (interaction.type === 'drag-path' && interaction.path?.length) {
+      fullTo = interaction.path[0];
+    }
+
+    // Structured drag hints escalate how much of the path is shown:
+    // teaching/L1 = enough to say "this drags", L2 = a clearer partial
+    // direction, L3 = the exact full route.
+    if (useStructuredDragHints) {
+      const amount = effectiveHintLevel >= 3 ? 1 : effectiveHintLevel === 2 ? 0.58 : 0.38;
+      const to = {
+        x: from.x + (fullTo.x - from.x) * amount,
+        y: from.y + (fullTo.y - from.y) * amount,
+      };
+      return { from, to };
+    }
+
+    return { from, to: fullTo };
+  }, [showGestureDemo, interaction, findItem, useStructuredDragHints, effectiveHintLevel]);
+
+  // A genuine drag attempt resets the idle clock (so a child who's actively
+  // working isn't interrupted); a tap that barely moves the item does not.
+  // Once L3 has been reached, keep the final guidance in place until the
+  // beat actually succeeds rather than resetting it away.
+  const resetHintBaselineFromInteraction = useCallback(() => {
+    if (effectiveHintLevel >= 3) return;
+    beatWaitStartedAtRef.current = Date.now();
+    setBeatHintLevel(0);
+    setForcedHintLevel(0);
+    lastSpokenHintLevelRef.current = 0;
+  }, [effectiveHintLevel]);
+
+  // Repeated failed drops escalate help early instead of waiting out the
+  // full idle clock — a child who is actively trying and missing needs
+  // help sooner than one who hasn't touched anything yet.
+  const registerFailedAttempt = useCallback(() => {
+    if (!useStructuredDragHints) return;
+    failedAttemptsRef.current += 1;
+    if (failedAttemptsRef.current === 2) {
+      setForcedHintLevel((level) => Math.max(level, 2));
+    }
+    if (failedAttemptsRef.current >= 3) {
+      setForcedHintLevel(3);
+    }
+  }, [useStructuredDragHints]);
 
   // ---- Layout Debug ---------------------------------------------------
   const itemKeyOf = (item, i) => item.gameKey || `${item.name}#${i}`;
@@ -789,15 +876,28 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
   }, []);
 
   const completeInteraction = useCallback(() => {
+    failedAttemptsRef.current = 0;
     clearTimers();
     goToState('movement');
   }, [clearTimers, goToState]);
 
   const rejectInteraction = useCallback(() => {
     setDrag(null);
+    registerFailedAttempt();
+
+    if (useStructuredDragHints) {
+      // No dramatic "wrong" shake for this mode — the item naturally
+      // transitions back to its authored resting position (styleFromItem's
+      // own transition) once `drag` clears. That's enough feedback for a
+      // visual-search/drag mechanic; a whole-scene shake over-punishes
+      // ordinary exploration.
+      setFeedback('idle');
+      return;
+    }
+
     setFeedback('wrong');
     setTimeout(() => setFeedback('idle'), 420);
-  }, []);
+  }, [registerFailedAttempt, useStructuredDragHints]);
 
   const isTryFailHold = (it) => it?.type === 'try-fail' && it?.gesture === 'press-hold';
   const isTryFailDrag = (it) => it?.type === 'try-fail' && it?.gesture !== 'press-hold';
@@ -826,23 +926,43 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
     e.currentTarget.setPointerCapture?.(e.pointerId);
     const rect = sceneRef.current?.getBoundingClientRect();
     if (!rect) return;
-    setSelectedGameKey(gameKey);
-    setDrag({
-      gameKey,
+    const startPoint = {
       x: ((e.clientX - rect.left) / rect.width) * 100,
       y: ((e.clientY - rect.top) / rect.height) * 100,
-    });
+    };
+    dragAttemptRef.current = { start: startPoint, meaningful: false };
+    setSelectedGameKey(gameKey);
+    setDrag({ gameKey, ...startPoint });
   }, [stateName, interaction, centerTieLocked]);
 
   const onPointerMove = useCallback((e) => {
     if (!drag || !sceneRef.current) return;
     const rect = sceneRef.current.getBoundingClientRect();
-    setDrag((d) => d ? ({
-      ...d,
+    const next = {
       x: clamp(((e.clientX - rect.left) / rect.width) * 100, 0, 100),
       y: clamp(((e.clientY - rect.top) / rect.height) * 100, 0, 100),
-    }) : null);
-  }, [drag]);
+    };
+    setDrag((d) => d ? ({ ...d, ...next }) : null);
+
+    // A genuine attempt (moved a meaningful fraction of the actual required
+    // distance) resets the idle clock; a tap that barely shifts the item
+    // does not — so a child who is truly stuck can't indefinitely postpone
+    // the hint ladder with tiny taps.
+    if (useStructuredDragHints && !dragAttemptRef.current.meaningful && dragAttemptRef.current.start) {
+      const start = dragAttemptRef.current.start;
+      const draggedItem = findItem(interaction.drag);
+      const targetItem = typeof interaction.target === 'string' ? findItem(interaction.target) : interaction.target;
+      if (draggedItem && targetItem) {
+        const requiredDistance = Math.hypot(targetItem.x - draggedItem.x, targetItem.y - draggedItem.y);
+        const movedDistance = Math.hypot(next.x - start.x, next.y - start.y);
+        const meaningfulThreshold = Math.max(3, requiredDistance * 0.12);
+        if (movedDistance >= meaningfulThreshold) {
+          dragAttemptRef.current.meaningful = true;
+          resetHintBaselineFromInteraction();
+        }
+      }
+    }
+  }, [drag, useStructuredDragHints, interaction, findItem, resetHintBaselineFromInteraction]);
 
   const onPointerUp = useCallback((e) => {
     if (!drag) return;
@@ -1121,6 +1241,7 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
         beat-player-stage
         beat-player-state-${stateName}
         ${className}
+        ${useStructuredDragHints ? 'beat-player-structured-hints' : ''}
         ${feedback === 'wrong' ? 'beat-player-wrong' : ''}
       `}
       onPointerMove={(e) => { onPointerMove(e); onDropPointerMove(e); onDebugPointerMove(e); }}
@@ -1211,12 +1332,25 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
         const interactive = layoutDebug || (!isPendingReveal && needsInput(stateName) && (isDragKey || isTargetKey || isTriggerKey));
         const isDebugSelected = layoutDebug && debugSelectedKey === debugKey;
 
+        // Structured drag hints intentionally do NOT permanently advertise
+        // the interactive item from the instant the beat opens (that's the
+        // "beckon" pulse below, suppressed for this mode in CSS). L1 only
+        // identifies what can move; L3 finally reveals the destination.
+        let hintClass = '';
+        if (useStructuredDragHints) {
+          if (isDragKey && effectiveHintLevel === 1) hintClass = ' beat-player-hint-nudge';
+          if (isTargetKey && effectiveHintLevel >= 3) hintClass = ' beat-player-hint-target';
+        } else if (interactive && (isDragKey || isTargetKey)) {
+          if (beatHintLevel === 1) hintClass = ' beat-player-hint-pulse';
+          if (beatHintLevel >= 2) hintClass = ' beat-player-hint-strong';
+        }
+
         return (
           <button
             key={renderKeys[i]}
             type="button"
             data-beat-key={item.gameKey || undefined}
-            className={`beat-player-item${interactive ? ' is-interactive' : ''}${isDragKey && selectedGameKey === item.gameKey ? ' is-selected' : ''}${isBeingDragged ? ' is-dragging' : ''}${isDragKey && feedback === 'holding' ? ' is-holding' : ''}${isDebugSelected ? ' is-debug-selected' : ''}${interactive && (isDragKey || isTargetKey) && beatHintLevel === 1 ? ' beat-player-hint-pulse' : ''}${interactive && (isDragKey || isTargetKey) && beatHintLevel >= 2 ? ' beat-player-hint-strong' : ''}`}
+            className={`beat-player-item${interactive ? ' is-interactive' : ''}${isDragKey && selectedGameKey === item.gameKey ? ' is-selected' : ''}${isBeingDragged ? ' is-dragging' : ''}${isDragKey && feedback === 'holding' ? ' is-holding' : ''}${isDebugSelected ? ' is-debug-selected' : ''}${hintClass}`}
             style={{ ...style, pointerEvents: interactive ? 'auto' : 'none', opacity: isPendingReveal ? 0 : style.opacity, outline: isDebugSelected ? '2px dashed #03A9F4' : undefined, touchAction: 'none', WebkitTouchCallout: 'none', WebkitUserSelect: 'none' }}
             tabIndex={interactive ? 0 : -1}
             // Inactive artwork must also stop accepting focus. aria-hidden
