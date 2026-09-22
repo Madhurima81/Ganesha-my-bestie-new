@@ -234,7 +234,10 @@ export default function MahakayaRescueGame({
   const [layoutCopyStatus, setLayoutCopyStatus] = useState('');
   const [crossTargetRaft, setCrossTargetRaft] = useState(CROSS_TARGET_RAFT);
   const [teachingCompleteKey, setTeachingCompleteKey] = useState(null);
-  const [showHintBubble, setShowHintBubble] = useState(false);
+  // Separate from teachingCompleteKey: tracks whether the entry VO for this
+  // stage ("Drag the rope to a log." / "Pull down.") has actually finished
+  // playing, so the idle ladder can be gated on VO-end, not gesture-end.
+  const [voCompleteKey, setVoCompleteKey] = useState(null);
 
   const stageRef = useRef(null);
   const timers = useRef([]);
@@ -250,11 +253,20 @@ export default function MahakayaRescueGame({
   const hintStageKey = `${ropeStage}-${activeLog}`;
   const needsInitialTeaching = activeLog === 0 && (ropeStage === 'detached' || ropeStage === 'attached');
   const teachingComplete = !needsInitialTeaching || teachingCompleteKey === hintStageKey;
+  // Only log 1 has its own entry VO ("Drag the rope to a log." / "Pull
+  // down.") — rounds 2-4 reuse the mechanic the child already learned, so
+  // their idle ladder isn't gated on any VO.
+  const needsEntryVo = activeLog === 0 && (ropeStage === 'detached' || ropeStage === 'attached');
+  const stageVoComplete = !needsEntryVo || voCompleteKey === hintStageKey;
   // GMB Hint Standard v1 — 10s/18s/26s from VO end or last interaction,
   // flat across every stage/obstacle. Only Vakratunda's own reactive
-  // stuck-hint (no idle timer) is exempt from this standard.
+  // stuck-hint (no idle timer) is exempt from this standard. Gated on
+  // stageVoComplete (VO actually finished), not teachingComplete (gesture
+  // finished) — those are different things and were being conflated.
+  // Also suppressed while the child is actively dragging, so hints don't
+  // fire over their hand mid-gesture.
   const { hintLevel, markInteraction } = useRepeatedHintCycle({
-    enabled: isActive && !isPaused && phase === 'play' && !debugMode && teachingComplete,
+    enabled: isActive && !isPaused && phase === 'play' && !debugMode && stageVoComplete && !dragging,
     stageKey: hintStageKey,
     initialDelay: 10000,
     pulseCountBeforeEscalation: 3,
@@ -263,18 +275,16 @@ export default function MahakayaRescueGame({
     level3Delay: 26000,
   });
 
+  // L2: short partial gesture (rendered above) + one spoken line per stage —
+  // no on-screen bubble, the gesture + VO communicate it together.
+  const lastHintVoStageRef = useRef(null);
   useEffect(() => {
-    if (hintLevel !== 2 || phase !== 'play' || debugMode || isPaused) {
-      setShowHintBubble(false);
-      return undefined;
-    }
-    setShowHintBubble(true);
+    if (hintLevel !== 2 || phase !== 'play' || debugMode || isPaused) return;
+    if (lastHintVoStageRef.current === hintStageKey) return;
+    lastHintVoStageRef.current = hintStageKey;
     const voiceKey = ropeStage === 'detached' ? 'scene10_maha_blocking' : 'scene10_maha_pull_down';
     playSceneLine?.(voiceKey, () => {});
-    const hideBubble = window.setTimeout(() => setShowHintBubble(false), 2800);
-    return () => window.clearTimeout(hideBubble);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hintLevel, ropeStage, activeLog, phase, debugMode, isPaused]);
+  }, [hintLevel, ropeStage, hintStageKey, phase, debugMode, isPaused, playSceneLine]);
 
   const clearTimers = useCallback(() => {
     timers.current.forEach(clearTimeout);
@@ -321,7 +331,8 @@ export default function MahakayaRescueGame({
     setDebugPhase(0);
     setCrossing(false);
     setTeachingCompleteKey(null);
-    setShowHintBubble(false);
+    setVoCompleteKey(null);
+    lastHintVoStageRef.current = null;
   }, [clearTimers, phaseLayouts]);
 
   useEffect(() => {
@@ -339,7 +350,12 @@ export default function MahakayaRescueGame({
     playSceneLine?.('scene10_maha_intro', () => {
       setPhase('play');
       phaseRef.current = 'play';
-      playSceneLine?.('scene10_maha_drag_rope');
+      const key = 'detached-0';
+      if (playSceneLine) {
+        playSceneLine('scene10_maha_drag_rope', () => setVoCompleteKey(key));
+      } else {
+        setVoCompleteKey(key);
+      }
     });
     return clearTimers;
     // Voice and timer helpers are stable enough for this scene lifecycle.
@@ -622,6 +638,9 @@ export default function MahakayaRescueGame({
     e.stopPropagation();
     e.currentTarget.setPointerCapture?.(e.pointerId);
     markInteraction();
+    // The child has demonstrated they understand — stop the teaching demo
+    // from continuing to animate over their finger.
+    if (needsInitialTeaching && !teachingComplete) setTeachingCompleteKey(hintStageKey);
     draggingRef.current = 'knob';
     setDragging('knob');
   };
@@ -632,6 +651,7 @@ export default function MahakayaRescueGame({
     e.stopPropagation();
     e.currentTarget.setPointerCapture?.(e.pointerId);
     markInteraction();
+    if (needsInitialTeaching && !teachingComplete) setTeachingCompleteKey(hintStageKey);
     draggingRef.current = 'pull';
     setDragging('pull');
   };
@@ -679,7 +699,12 @@ export default function MahakayaRescueGame({
         setKnobPos({ l: currentWaitingLog.l, t: currentWaitingLog.t });
         playSfx?.('chime');
         if (activeLog === 0) {
-          playSceneLine?.('scene10_maha_pull_down');
+          const key = 'attached-0';
+          if (playSceneLine) {
+            playSceneLine('scene10_maha_pull_down', () => setVoCompleteKey(key));
+          } else {
+            setVoCompleteKey(key);
+          }
         }
       } else {
         setKnobPos({ l: sharedRigLayout.handleStart.l, t: sharedRigLayout.handleStart.t });
@@ -781,20 +806,6 @@ export default function MahakayaRescueGame({
         />
       )}
 
-      {phase === 'play' && showHintBubble && hintLevel === 2 && (
-        <div
-          className={`maha-hint-bubble ${ropeStage === 'detached' ? 'is-attach' : 'is-pull'}`}
-          style={{
-            left: `${ropeStage === 'detached' ? sharedRigLayout.handleStart.l : sharedRigLayout.pullTop.l}%`,
-            top: `${ropeStage === 'detached' ? sharedRigLayout.handleStart.t - 10 : sharedRigLayout.pullTop.t - 9}%`,
-          }}
-          role="status"
-          aria-live="polite"
-        >
-          {ropeStage === 'detached' ? 'Rope to the log.' : 'Pull down.'}
-        </div>
-      )}
-
       {phase === 'complete' && <p className="maha-doneline">There is room for everyone.</p>}
 
       {/* Hidden base anchor for tuning/crossing math. No starter log is shown. */}
@@ -848,7 +859,12 @@ export default function MahakayaRescueGame({
           return renderLog(`movingLog${index}`, 'is-moving', currentMovingLog, 20);
         }
         if (index >= completedLogs) {
-          return renderLog(`waitingLog${index}`, index === activeLog ? 'is-current' : '', baseLayout[`waitingLog${index}`], 8);
+          const isHintTarget = index === activeLog && ropeStage === 'detached' && hintLevel >= 3;
+          const logClass = [
+            index === activeLog ? 'is-current' : '',
+            isHintTarget ? 'is-hint-target' : '',
+          ].filter(Boolean).join(' ');
+          return renderLog(`waitingLog${index}`, logClass, baseLayout[`waitingLog${index}`], 8);
         }
         return null;
       })}
@@ -866,7 +882,7 @@ export default function MahakayaRescueGame({
         <>
           <RopeLine x1={sharedRigLayout.pulley.l} y1={sharedRigLayout.pulley.t} x2={knobPos.l} y2={knobPos.t} />
           <div
-            className={`maha-layer maha-knob ${dragging === 'knob' ? 'grabbing' : ''} ${hintLevel >= 1 ? 'maha-hint-pulse' : ''} ${hintLevel >= 2 ? 'maha-hint-glow' : ''} ${debugMode && selectedDebugKey === 'handleStart' ? 'is-debug-selected' : ''}`}
+            className={`maha-layer maha-knob ${dragging === 'knob' ? 'grabbing' : ''} ${hintLevel === 1 && dragging !== 'knob' ? 'is-hint-nudge' : ''} ${debugMode && selectedDebugKey === 'handleStart' ? 'is-debug-selected' : ''}`}
             style={placeStyle({ ...sharedRigLayout.handleStart, l: knobPos.l, t: knobPos.t }, { zIndex: 24 })}
             onPointerDown={(e) => (debugMode ? startDebugDrag(e, 'handleStart') : onKnobDown(e))}
           >
@@ -880,7 +896,7 @@ export default function MahakayaRescueGame({
           <RopeLine x1={sharedRigLayout.pulley.l} y1={sharedRigLayout.pulley.t} x2={currentMovingLog.l} y2={currentMovingLog.t} />
           <RopeLine x1={sharedRigLayout.pulley.l} y1={sharedRigLayout.pulley.t} x2={sharedRigLayout.pullTop.l} y2={activePullHandle.t} />
           <div
-            className={`maha-layer maha-pull ${dragging === 'pull' ? 'grabbing' : ''} ${hintLevel >= 1 ? 'maha-hint-pulse' : ''} ${hintLevel >= 2 ? 'maha-hint-glow' : ''} ${debugMode && selectedDebugKey === 'pullTop' ? 'is-debug-selected' : ''}`}
+            className={`maha-layer maha-pull ${dragging === 'pull' ? 'grabbing' : ''} ${hintLevel === 1 && dragging !== 'pull' ? 'is-hint-nudge' : ''} ${debugMode && selectedDebugKey === 'pullTop' ? 'is-debug-selected' : ''}`}
             style={placeStyle(activePullHandle, { zIndex: 24 })}
             onPointerDown={(e) => (debugMode ? startDebugDrag(e, 'pullTop') : onPullDown(e))}
           >
@@ -889,13 +905,24 @@ export default function MahakayaRescueGame({
         </>
       )}
 
+      {/* L2 shows a short partial gesture (does not reach the target) + VO;
+          L3 shows the full path. The initial teaching pass is always full. */}
       <GestureDemo
         type="drag"
         from={{ x: sharedRigLayout.handleStart.l, y: sharedRigLayout.handleStart.t }}
-        to={{ x: currentWaitingLog.l, y: currentWaitingLog.t }}
+        to={
+          needsInitialTeaching && !teachingComplete
+            ? { x: currentWaitingLog.l, y: currentWaitingLog.t }
+            : hintLevel >= 3
+              ? { x: currentWaitingLog.l, y: currentWaitingLog.t }
+              : {
+                  x: lerp(sharedRigLayout.handleStart.l, currentWaitingLog.l, 0.38),
+                  y: lerp(sharedRigLayout.handleStart.t, currentWaitingLog.t, 0.38),
+                }
+        }
         active={
           !debugMode && phase === 'play' && ropeStage === 'detached'
-          && ((needsInitialTeaching && !teachingComplete) || hintLevel >= 3)
+          && ((needsInitialTeaching && !teachingComplete) || hintLevel >= 2)
         }
         idleDelay={needsInitialTeaching && !teachingComplete ? 150 : 0}
         iterations={needsInitialTeaching && !teachingComplete ? 2 : 1}
@@ -909,10 +936,19 @@ export default function MahakayaRescueGame({
       <GestureDemo
         type="pull-down"
         from={{ x: sharedRigLayout.pullTop.l, y: sharedRigLayout.pullTop.t }}
-        to={{ x: sharedRigLayout.pullBottom.l, y: sharedRigLayout.pullBottom.t }}
+        to={
+          needsInitialTeaching && !teachingComplete
+            ? { x: sharedRigLayout.pullBottom.l, y: sharedRigLayout.pullBottom.t }
+            : hintLevel >= 3
+              ? { x: sharedRigLayout.pullBottom.l, y: sharedRigLayout.pullBottom.t }
+              : {
+                  x: lerp(sharedRigLayout.pullTop.l, sharedRigLayout.pullBottom.l, 0.38),
+                  y: lerp(sharedRigLayout.pullTop.t, sharedRigLayout.pullBottom.t, 0.38),
+                }
+        }
         active={
           !debugMode && phase === 'play' && ropeStage === 'attached'
-          && ((needsInitialTeaching && !teachingComplete) || hintLevel >= 3)
+          && ((needsInitialTeaching && !teachingComplete) || hintLevel >= 2)
         }
         idleDelay={needsInitialTeaching && !teachingComplete ? 150 : 0}
         iterations={needsInitialTeaching && !teachingComplete ? 2 : 1}
