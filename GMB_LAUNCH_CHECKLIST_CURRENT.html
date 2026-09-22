@@ -75,8 +75,8 @@
     <div class="summary-box">
         <h3>Headline numbers</h3>
         <div class="summary-stats">
-            <div class="stat-box"><div class="stat-number">~65+</div><div class="stat-label">Items resolved across all zones</div></div>
-            <div class="stat-box"><div class="stat-number">4</div><div class="stat-label">Open confirmed bugs (Symbol Mountain)</div></div>
+            <div class="stat-box"><div class="stat-number">~70+</div><div class="stat-label">Items resolved across all zones</div></div>
+            <div class="stat-box"><div class="stat-number">1</div><div class="stat-label">Open confirmed bug (Symbol Mountain)</div></div>
             <div class="stat-box"><div class="stat-number">7</div><div class="stat-label">Your-decision items</div></div>
             <div class="stat-box"><div class="stat-number">~15</div><div class="stat-label">Manual/device-only checks left</div></div>
         </div>
@@ -103,12 +103,12 @@
     <div class="item done"><div class="item-content"><div class="item-title">Sacred Assembly opening VO / intro modal</div><div class="item-desc">Confirmed present with real registered content, not a stub.</div></div></div>
     <div class="item done"><div class="item-content"><div class="item-title">18 PNGs → WebP (Shloka finale) + 83 images project-wide WebP pass</div><div class="item-desc">Build-verified clean.</div></div></div>
     <div class="item done"><div class="item-content"><div class="item-title">Zone palette confirmed applied</div><div class="item-desc"><code>#FF5722/#FFD700/#FFF8E7</code> via zone-themes.css + scene overrides.</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">Sacred Assembly "Play Again" false alarm (2026-09-22)</div><div class="item-desc">Traced storage keys — <code>hardResetSceneState()</code> only clears local session keys, not the separate permanent completion record the map/Zone Welcome actually read. Not a real bug, closed.</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">Reload gap right before completion locks in (2026-09-22)</div><div class="item-desc">Present in 3 scenes (Pond, Tusk, Sacred Assembly), not 2 as first thought. Fixed once at the shared root cause in <code>SceneManager.jsx</code> instead of patching each scene — the completed-scene replay branch now triggers on <code>isCompleted</code> alone instead of requiring <code>!isActualReload</code>. Committed <code>3004aae</code>.</div><span class="tag">SceneManager.jsx</span></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">Dead GameCoach state removed (2026-09-22)</div><div class="item-desc"><code>gameCoachState</code>/<code>lastGameCoachTime</code>/<code>isReloadingGameCoach</code> removed from all 6 sites — component was already commented out, this was pure clutter. Committed <code>3004aae</code>.</div><span class="tag">SacredAssemblySceneV8.jsx</span></div></div>
 
     <h2 class="section-title">🔴 Still open</h2>
-    <div class="item open"><div class="item-content"><div class="item-title">Completion saves via overlapping paths</div><div class="item-desc">Pond/Sacred/Tusk write through both a local ref-guard AND shared/app paths. (Next-scene text rendering — closed 2026-09-22, see Done section.)</div><span class="tag">App.jsx</span></div></div>
-    <div class="item open"><div class="item-content"><div class="item-title">Sacred Assembly "Play Again" clears permanent completion record</div><div class="item-desc"><code>hardResetSceneState()</code> wipes the permanent final-scene completion flag — exiting mid-replay can leave the saved profile un-completed.</div><span class="tag">SacredAssemblySceneV8.jsx:924-993</span></div></div>
-    <div class="item open"><div class="item-content"><div class="item-title">Pond/Tusk reload gap right before completion locks in</div><div class="item-desc">Temp session deleted before the final fireworks/mandala transition stamps completion — a reload in that narrow window can drop back to initial state.</div><span class="tag">PondSceneSimplifiedV4.jsx</span><span class="tag">SymbolMountainSceneV3.jsx</span></div></div>
-    <div class="item open"><div class="item-content"><div class="item-title">Dead GameCoach state still wired through Sacred Assembly</div><div class="item-desc">Component is commented out but <code>gameCoachState</code>/<code>lastGameCoachTime</code>/<code>isReloadingGameCoach</code> and a derived var still touch ~12 call sites. Non-functional cleanup, low priority.</div><span class="tag">SacredAssemblySceneV8.jsx</span></div></div>
+    <div class="item open"><div class="item-content"><div class="item-title">Completion saves via overlapping paths</div><div class="item-desc">Pond/Sacred/Tusk write through both a local ref-guard AND shared/app paths.</div><span class="tag">App.jsx</span></div></div>
 
     <h2 class="section-title">🟡 Fixed, uncommitted</h2>
     <div class="item uncommitted"><div class="item-content"><div class="item-title">Sacred Assembly 769-1023px landscape breakpoint gap</div><div class="item-desc">Real bug found via live-device test — container had zero responsive coverage for phone-landscape widths, rendered at full desktop size. Fix in progress in working tree, needs build check + full 8-symbol visual verification before commit.</div><span class="tag">SacredAssemblyScene.css</span></div></div>
