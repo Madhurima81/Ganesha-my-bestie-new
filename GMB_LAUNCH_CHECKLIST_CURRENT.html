@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GMB Launch Checklist — Current Status (2026-09-22)</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Nunito', 'Segoe UI', sans-serif; background: #f5f5f5; color: #333; line-height: 1.6; }
+        .navbar { position: fixed; left: 0; top: 0; width: 100%; background: #2c3e50; padding: 12px 20px; z-index: 1000; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+        .nav-container { max-width: 1400px; margin: 0 auto; display: flex; gap: 8px; flex-wrap: wrap; }
+        .nav-btn { background: #34495e; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600; transition: all 0.3s; }
+        .nav-btn:hover { background: #1abc9c; transform: translateY(-2px); }
+        .nav-btn.active { background: #e74c3c; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 80px 20px 40px; }
+        .page { display: none; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .page.active { display: block; }
+        .page-title { font-family: 'Baloo 2', cursive; font-size: 28px; color: #2c3e50; margin-bottom: 24px; border-bottom: 3px solid #1abc9c; padding-bottom: 12px; }
+        .section-title { font-family: 'Baloo 2', cursive; font-size: 18px; color: #2c3e50; margin-top: 24px; margin-bottom: 12px; padding-left: 12px; border-left: 4px solid #3498db; }
+        .item { padding: 12px; margin-bottom: 8px; border-radius: 4px; display: flex; gap: 12px; align-items: flex-start; }
+        .item.done { background-color: #d5f4e6; border-left: 4px solid #27ae60; }
+        .item.open { background-color: #fdeaea; border-left: 4px solid #e74c3c; }
+        .item.decision { background-color: #f0e6ff; border-left: 4px solid #8e44ad; }
+        .item.manual { background-color: #e8f4fd; border-left: 4px solid #16a085; }
+        .item.uncommitted { background-color: #fff3cd; border-left: 4px solid #f39c12; }
+        .item-content { flex: 1; }
+        .item-title { font-weight: 700; margin-bottom: 4px; }
+        .item-desc { font-size: 13px; color: #444; }
+        .tag { display: inline-block; background: #ecf0f1; padding: 2px 8px; border-radius: 3px; font-size: 11px; font-weight: 600; color: #555; margin-right: 6px; margin-top: 6px; }
+        .summary-box { background: #ecf0f1; padding: 16px; border-radius: 6px; margin-bottom: 20px; }
+        .summary-box h3 { margin-bottom: 10px; color: #2c3e50; }
+        .summary-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 10px; }
+        .stat-box { background: white; padding: 12px; border-radius: 4px; text-align: center; }
+        .stat-number { font-size: 24px; font-weight: 700; color: #2c3e50; }
+        .stat-label { font-size: 11px; color: #7f8c8d; }
+        .legend { display: flex; gap: 16px; padding: 14px; background: #ecf0f1; border-radius: 6px; margin-bottom: 20px; font-size: 12px; flex-wrap: wrap; }
+        .legend-item { display: flex; align-items: center; gap: 6px; }
+        .legend-swatch { width: 16px; height: 16px; border-radius: 3px; }
+        code { background: #ecf0f1; padding: 1px 5px; border-radius: 3px; font-size: 12px; }
+        @media print { .navbar, .nav-btn { display: none; } .page { box-shadow: none; border: 1px solid #ddd; } }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <div class="nav-container">
+        <button class="nav-btn active" onclick="showPage('page-overview')">📋 Overview</button>
+        <button class="nav-btn" onclick="showPage('page-symbol')">🏔️ Symbol Mountain</button>
+        <button class="nav-btn" onclick="showPage('page-shloka')">💬 Shloka River</button>
+        <button class="nav-btn" onclick="showPage('page-aboutme')">🏠 About Me Hut</button>
+        <button class="nav-btn" onclick="showPage('page-decisions')">🟣 Your Decisions</button>
+        <button class="nav-btn" onclick="showPage('page-manual')">🟢 Manual/Device Tests</button>
+    </div>
+</div>
+
+<div class="container">
+
+<!-- OVERVIEW -->
+<div class="page active" id="page-overview">
+    <h1 class="page-title">🎯 GMB Launch Checklist — Current Status</h1>
+    <div class="summary-box" style="background:#d5f4e6;">
+        <p><strong>Built 2026-09-22</strong> directly from <code>GMB_AUDIT_PUNCHLIST.md</code>, the live running source of truth. Replaces the ~month-old <code>GMB_COMPREHENSIVE_CHECKLIST.html</code>, which was written against an older code state (many of its bugs no longer exist — mechanics were rewritten since).</p>
+    </div>
+    <div class="summary-box">
+        <h3>Scope</h3>
+        <p><strong>3 live zones, 13 scenes:</strong> Symbol Mountain (4), Shloka River (5), About Me Hut (4). Festival Square and Cave of Secrets are out of scope (parked/obsolete).</p>
+    </div>
+    <div class="legend">
+        <div class="legend-item"><div class="legend-swatch" style="background:#27ae60;"></div><span><strong>✅ DONE</strong> — fixed &amp; committed</span></div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#e74c3c;"></div><span><strong>🔴 OPEN</strong> — confirmed bug, not yet fixed</span></div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#f39c12;"></div><span><strong>🟡 UNCOMMITTED</strong> — fixed in working tree, not yet committed</span></div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#8e44ad;"></div><span><strong>🟣 YOUR DECISION</strong> — needs your call, not auto-fixable</span></div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#16a085;"></div><span><strong>🟢 MANUAL TEST</strong> — needs a real device/browser, can't confirm from code</span></div>
+    </div>
+    <div class="summary-box">
+        <h3>Headline numbers</h3>
+        <div class="summary-stats">
+            <div class="stat-box"><div class="stat-number">~60+</div><div class="stat-label">Items resolved across all zones</div></div>
+            <div class="stat-box"><div class="stat-number">4</div><div class="stat-label">Open confirmed bugs</div></div>
+            <div class="stat-box"><div class="stat-number">7</div><div class="stat-label">Your-decision items</div></div>
+            <div class="stat-box"><div class="stat-number">~15</div><div class="stat-label">Manual/device-only checks left</div></div>
+        </div>
+    </div>
+    <div class="summary-box" style="background:#fff3cd;">
+        <h3>🟡 Currently uncommitted, in progress</h3>
+        <p><code>SacredAssemblyScene.css</code>, <code>SacredAssemblySceneV8.jsx</code>, <code>PondScene.css</code>, <code>ObstacleRemoverGame.jsx</code>, <code>Favoritefoodgame.jsx</code>, <code>MyIndianStoryGame.jsx</code>, <code>DECISIONS.md</code>, plus a new untracked <code>AboutMeGaneshaHost.jsx</code>/<code>.css</code>. Don't treat their fixes as shipped until committed.</p>
+    </div>
+</div>
+
+<!-- SYMBOL MOUNTAIN -->
+<div class="page" id="page-symbol">
+    <h1 class="page-title">🏔️ Symbol Mountain</h1>
+
+    <h2 class="section-title">✅ Done</h2>
+    <div class="item done"><div class="item-content"><div class="item-title">Test Tusk debug button, 130px !important modak override, 44%→30% basket-modak-top</div><div class="item-desc">All confirmed already correct on disk — no action needed.</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">console.log spam gated behind DEV</div><div class="item-desc">Pond, SymbolMountainSceneV3, SacredAssemblySceneV8 — all confirmed clean, zero ungated calls across all 9 files scanned.</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">ModakScene.css duplicate breakpoint rules</div><div class="item-desc">File is down to 1625 lines (was 2251) — the suspect range no longer exists.</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">Sacred Assembly card flip sequence</div><div class="item-desc">Confirmed slide-then-flip in current code, correctly sequenced with a 1350ms margin. The "flips before sliding" description is stale.</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">Pond ghost-gesture / pointercancel audit</div><div class="item-desc">Rock-hold/reeds-drag/lotus-hold all correctly route pointercancel/pointerleave. Eyes/Ears games are tap-only, n/a.</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">Wall-clock progress survives tab-hide</div><div class="item-desc">Resolved via shared <code>usePauseAwareTimeout</code> (wires <code>useAppVisibility</code> internally); Sacred Assembly also gates directly.</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">EyesPopUpGame idle-hint tab-visibility gap</div><div class="item-desc">Real bug found and fixed — had its own idle-hint interval with zero tab-visibility awareness. Now resets on tab return.</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">Sacred Assembly opening VO / intro modal</div><div class="item-desc">Confirmed present with real registered content, not a stub.</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">18 PNGs → WebP (Shloka finale) + 83 images project-wide WebP pass</div><div class="item-desc">Build-verified clean.</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">Zone palette confirmed applied</div><div class="item-desc"><code>#FF5722/#FFD700/#FFF8E7</code> via zone-themes.css + scene overrides.</div></div></div>
+
+    <h2 class="section-title">🔴 Still open</h2>
+    <div class="item open"><div class="item-content"><div class="item-title">Completion modal doesn't render stars / next-scene text correctly, saves via overlapping paths</div><div class="item-desc"><code>SceneCompletionCelebration</code> doesn't accept star props; Pond/Sacred/Tusk write through both a local ref-guard AND shared/app paths.</div><span class="tag">SceneCompletionCelebration.jsx</span><span class="tag">App.jsx</span></div></div>
+    <div class="item open"><div class="item-content"><div class="item-title">Sacred Assembly "Play Again" clears permanent completion record</div><div class="item-desc"><code>hardResetSceneState()</code> wipes the permanent final-scene completion flag — exiting mid-replay can leave the saved profile un-completed.</div><span class="tag">SacredAssemblySceneV8.jsx:924-993</span></div></div>
+    <div class="item open"><div class="item-content"><div class="item-title">Pond/Tusk reload gap right before completion locks in</div><div class="item-desc">Temp session deleted before the final fireworks/mandala transition stamps completion — a reload in that narrow window can drop back to initial state.</div><span class="tag">PondSceneSimplifiedV4.jsx</span><span class="tag">SymbolMountainSceneV3.jsx</span></div></div>
+    <div class="item open"><div class="item-content"><div class="item-title">Dead GameCoach state still wired through Sacred Assembly</div><div class="item-desc">Component is commented out but <code>gameCoachState</code>/<code>lastGameCoachTime</code>/<code>isReloadingGameCoach</code> and a derived var still touch ~12 call sites. Non-functional cleanup, low priority.</div><span class="tag">SacredAssemblySceneV8.jsx</span></div></div>
+
+    <h2 class="section-title">🟡 Fixed, uncommitted</h2>
+    <div class="item uncommitted"><div class="item-content"><div class="item-title">Sacred Assembly 769-1023px landscape breakpoint gap</div><div class="item-desc">Real bug found via live-device test — container had zero responsive coverage for phone-landscape widths, rendered at full desktop size. Fix in progress in working tree, needs build check + full 8-symbol visual verification before commit.</div><span class="tag">SacredAssemblyScene.css</span></div></div>
+    <div class="item uncommitted"><div class="item-content"><div class="item-title">Pond trunk reed/lotus drag-target min-size</div><div class="item-desc"><code>.pond-trunk-reeds</code>/<code>.pond-trunk-lotus</code> min-width raised to 60px — sitting in Madhurima's active <code>PondScene.css</code> WIP, not yet committed.</div></div></div>
+</div>
+
+<!-- SHLOKA RIVER -->
+<div class="page" id="page-shloka">
+    <h1 class="page-title">💬 Shloka River</h1>
+
+    <h2 class="section-title">✅ Done</h2>
+    <div class="item done"><div class="item-content"><div class="item-title">KurumedevaGame debug-toggle gating + pause-triggered drag cleanup</div><div class="item-desc">Committed <code>b5e8abd</code>.</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">BeatPlayerGame / TuskBeatPlayerLive pause + pointercancel</div><div class="item-desc">Hold RAF loop now cancelled on pointercancel; <code>isPaused</code> wired via <code>useAppVisibility</code>. Committed <code>b5e8abd</code>.</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">SuryakotiGame + SamaprabhaGame missing pause-triggered drag cleanup</div><div class="item-desc">Both had onPointerCancel bound but no pause-effect cleanup — added, matching MahakayaRescueGame reference pattern.</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">NirvighnamChantSimplified PHASES typo</div><div class="item-desc"><code>PHASES.COMPLETE</code> → <code>PHASES.SCENE_COMPLETE</code> fixed.</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">Off-palette backgrounds — Suryakoti Bank, Sarvakaryeshu Chant, Vakratunda Grove</div><div class="item-desc">All 3 corrected to <code>#E8F5E9</code> zone palette.</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">Console.log gating — Vakratunda/Mahakaya/Nirvighnam/Kurumedeva/Samaprabha debug panels</div><div class="item-desc">All gated behind DEV.</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">FreeDraggableItem missing touchcancel / mid-drag disabled abort</div><div class="item-desc">Added touchcancel listener + disabled-triggered self-terminate. Only live consumer: MyIndianStoryGame's magnifying glass.</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">Hint-gate / dual-flag / voFallback checks — Suryakoti, Kurumedeva, Sarvakaryeshu, Sarvada</div><div class="item-desc">Re-investigated: all four have correct single-fire completion guards and correct hint-gating. No bugs found.</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">18 PNGs → WebP (Finale)</div><div class="item-desc">Confirmed all imports already <code>.webp</code>.</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">Sarvakaryeshu meaning-subtitle decision</div><div class="item-desc">Played live — situation/question text already carries enough context, subtitle not needed. No code change.</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">Shared-layer VO/TTS/audio bugs (affects all 13 scenes incl. Shloka)</div><div class="item-desc">useVoiceGuidance tab-return replay leak, TTS-not-cancelled-on-hide, SoundManager iOS "interrupted" state, SceneCompletionCelebration double-tap + re-save-on-render. Commits <code>ae2c7be</code>, <code>ecd79a5</code>.</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">Hardcoded "Next Adventure" completion label</div><div class="item-desc">Fixed in SceneCompletionCelebration.jsx — now uses real <code>nextSceneName</code>.</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">Scene names finalized everywhere</div><div class="item-desc">All 5 Shloka River scenes' child-facing names live in ZoneConfig.js, sceneName/nextSceneName props, ProgressManager metadata.</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">Pond live-browser pass (2026-09-20/21)</div><div class="item-desc">Water-flow redesign, flower vanish/hit-zone bugs, success→affirmation VO cleanup all confirmed working. Hold gestures themselves not click-tested (automation limit, not a bug).</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">Sarvakaryeshu gameplayIntro VO + full Scene 4 flow</div><div class="item-desc">Live-tested 2026-09-21 with real TTS — situation cards, hints, correct/incorrect picks, transitions, success lines all correct, no stray/duplicate VO.</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">Modak Game 2 entry VO stacking + branch instruction silent-fail</div><div class="item-desc">Found &amp; fixed live 2026-09-21: 2-3 stray VO lines trimmed to one; branch instruction was silently never playing due to a self-cancelling effect — fixed and reverified.</div></div></div>
+
+    <h2 class="section-title">🔴 Still open</h2>
+    <div class="item open"><div class="item-content"><div class="item-title">HomeButton/ZoneBadgeButton/Continue don't stop scene audio before navigating</div><div class="item-desc">All 5 live scenes leak audio into Zone Welcome/Map/next scene — benchmark Modak wraps with <code>stopVoice()</code>, these don't. Same gap confirmed cross-zone (only Modak + Favorite Food are compliant of all 13 scenes) — worth fixing once as a single pass.</div><span class="tag">VakratundaGroveSimplified.jsx</span><span class="tag">+4 more files</span></div></div>
+    <div class="item open"><div class="item-content"><div class="item-title">Completion modal shared CTA ignores nextSceneName</div><div class="item-desc">Same shared bug as Symbol Mountain/About Me Hut — 4 non-final Shloka scenes supply real next-scene text that's ignored in favor of a generic label.</div><span class="tag">SceneCompletionCelebration.jsx</span></div></div>
+
+    <h2 class="section-title">🟣 Your decision (not bugs)</h2>
+    <div class="item decision"><div class="item-content"><div class="item-title">Sarvada hide-and-seek redesign</div><div class="item-desc">Needs 3 new scene art assets (Ganesha occluded 8-12% of width). Not started — scoping/priority call needed.</div></div></div>
+    <div class="item decision"><div class="item-content"><div class="item-title">Vakratunda mid-rewrite re-check</div><div class="item-desc">File is mid-rewrite; old line-number references are stale. Needs a fresh targeted pass once your rewrite settles.</div></div></div>
+
+    <h2 class="section-title">🟢 Manual/device-only</h2>
+    <div class="item manual"><div class="item-content"><div class="item-title">Kuru Me Deva timed hint beats (logs/rope fail-after-hold)</div><div class="item-desc">5 new per-round hint lines render cleanly with no console errors, but the actual timed beats were only code-reviewed, not clicked through.</div></div></div>
+    <div class="item manual"><div class="item-content"><div class="item-title">Samaprabha game flow and element positions</div><div class="item-desc">General flow/layout check requested; not yet scoped or reviewed.</div></div></div>
+    <div class="item manual"><div class="item-content"><div class="item-title">VO-replay-plays-correct-line, no audible overlap on rapid tap</div><div class="item-desc">Wiring correct in code; audible confirmation not yet done.</div></div></div>
+    <div class="item manual"><div class="item-content"><div class="item-title">Not yet live-tested this pass: Nirvighnam Chant, Sarvakaryeshu Chant, Tusk/Symbol (viewport-verified)</div><div class="item-desc">Functionally spot-checked only, viewport sweep still open.</div></div></div>
+</div>
+
+<!-- ABOUT ME HUT -->
+<div class="page" id="page-aboutme">
+    <h1 class="page-title">🏠 About Me Hut</h1>
+
+    <h2 class="section-title">✅ Done</h2>
+    <div class="item done"><div class="item-content"><div class="item-title">Family Tree soft-lock root cause</div><div class="item-desc">A stray <code>transform: translateY(52px) !important</code> was pushing the Continue button off-screen. Fixed.</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">Family Tree double-navigation bug on back button</div><div class="item-desc">Fixed.</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">Family Tree portrait 55vh/45vh fixed floors → clamp()</div><div class="item-desc">Fixed, plus wrong CSS selector on portrait continue-button query corrected.</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">Family Tree hearts progress row</div><div class="item-desc">Was clipped at iPad landscape and didn't match the current design — removed per Madhurima. Commit <code>b92872a</code>.</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">console.log gating — Familytreegame, Favoritefoodgame, MyIndianStoryGame</div><div class="item-desc">All DEV-gated. MyIndianStoryGame had 20 ungated calls found &amp; fixed in a full top-to-bottom read.</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">"Obstacle Remover" / "Name Birthday" checklist items — confirmed not applicable</div><div class="item-desc">Both games were redesigned (Dreams &amp; Wishes, My Indian Story) — the obstacle-grid/form-submit mechanics the old checklist describes no longer exist.</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">AboutMeComparisonCard fixed-px sizing on iPad landscape</div><div class="item-desc">Converted to <code>clamp()</code>. Commit <code>59ad626</code>.</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">Item B touch-target fixes</div><div class="item-desc">Familytreegame Continue button 60px+ landscape; Dreams &amp; Wishes intro button tablet min-height raised; Favorite Food + My Indian Story icon/swatch sizing converted to clamp(). Commit <code>9dc6c95</code>.</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">Scene metadata renamed from stale game1-game4 placeholders</div><div class="item-desc"><code>ProgressManager.SCENE_METADATA</code> now uses real scene IDs, resolving the auto-unlock phantom-key issue.</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">Scene names finalized everywhere</div><div class="item-desc">Our Families → Our Favorite Things → Our Wishes &amp; Dreams → My Indian Story — live in ZoneConfig.js, scene props, ProgressManager.</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">Favorite Food's "unguarded console.log" / two-1500ms-timer race / emoji mojibake / prop-shape mismatch</div><div class="item-desc">All investigated and did not reproduce — confirmed false positives or premises that don't match current code. Tray-on-reload genuinely needs a live test (see Manual tab).</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">ObstacleRemoverGame full top-to-bottom read</div><div class="item-desc">2418 lines, confirmed clean end-to-end — no soft-locks, all shared components present, completion persistence correct, idle-hint ladder present.</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">Familytreegame remaining unverified items</div><div class="item-desc">Pointercancel n/a (no drag mechanic), tab-visibility handled via usePauseAwareTimeout, completion-persistence/intro-VO/idle-hints all confirmed correct.</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">Audio teardown fixes — Familytreegame, ObstacleRemoverGame, MyIndianStoryGame</div><div class="item-desc">HomeButton/ZoneBadgeButton/Continue now wrapped with <code>stopVoice()</code>/<code>interruptCurrentVoice()</code> before navigating.</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">Idle-hint timers not paused on tab-hide — ObstacleRemoverGame, MyIndianStoryGame</div><div class="item-desc">ObstacleRemoverGame's wish1/2/3 idle ladders converted from raw setTimeout to safeSetTimeout, cleared on hide. MyIndianStoryGame's onShow expanded from 3 to 9 cleared timer refs.</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">Familytreegame tap-hint timer not covered by onHide</div><div class="item-desc"><code>tapCircleTimerRef</code> now cleared, matching sibling pattern.</div></div></div>
+    <div class="item done"><div class="item-content"><div class="item-title">Dreams &amp; Wishes speech bubble palette + duplicate CSS block</div><div class="item-desc">4 spots fixed to About Me Hut brown/coral/cream palette; a second duplicate <code>.speech-bubble-large</code> rule (silently overriding the fix via cascade order) found and removed. Committed <code>89cb4ac</code>.</div></div></div>
+
+    <h2 class="section-title">🔴 Still open</h2>
+    <div class="item open"><div class="item-content"><div class="item-title">SceneCompletionCelebration doesn't render nextSceneName (About Me Hut instance)</div><div class="item-desc">Shared bug — Family Tree/Dreams &amp; Wishes/Favorite Food supply real next-scene text that's ignored for a generic label; two callers also had stale values (now partly addressed by the ZoneConfig rename, worth re-checking with current code).</div><span class="tag">SceneCompletionCelebration.jsx</span></div></div>
+    <div class="item open"><div class="item-content"><div class="item-title">Dreams &amp; Wishes intro CTA drops below 60px at tablet/small-desktop width</div><div class="item-desc"><code>@media (max-width: 1024px)</code> sets <code>.wish1-intro-btn</code> min-height to 56px vs. base 78px — below the 60px touch-target floor.</div><span class="tag">DreamsWishesGame.css:443-446</span></div></div>
+
+    <h2 class="section-title">🟣 Your decision (not bugs)</h2>
+    <div class="item decision"><div class="item-content"><div class="item-title">Dreams &amp; Wishes "dusk wishing sky" off-palette background</div><div class="item-desc">Uses <code>#f8f2ea</code>/gold-orange tones instead of zone palette <code>#795548/#FF6B6B/#FBE9E7</code>. Could be an intentional sub-theme — needs your yes/no.</div></div></div>
+
+    <h2 class="section-title">🟢 Manual/device-only</h2>
+    <div class="item manual"><div class="item-content"><div class="item-title">Favorite Food tray-on-reload</div><div class="item-desc">Traced twice in code, both times looked correct, no gap found — genuinely needs a live reload test on-device to close out.</div></div></div>
+    <div class="item manual"><div class="item-content"><div class="item-title">Comparison-card avatar sizing on iPad landscape</div><div class="item-desc">Newly unified into a shared clamp() pattern — worth a live check next time you're in Favorite Food/My Indian Story.</div></div></div>
+    <div class="item manual"><div class="item-content"><div class="item-title">Not yet live-tested this pass</div><div class="item-desc">Favorite Food, Dreams &amp; Wishes, My Indian Story — not yet viewport-swept in the live-browser pass.</div></div></div>
+</div>
+
+<!-- YOUR DECISIONS (cross-zone) -->
+<div class="page" id="page-decisions">
+    <h1 class="page-title">🟣 Everything Waiting On Your Call</h1>
+    <div class="item decision"><div class="item-content"><div class="item-title">Opening — unlock-dot threshold shows ≥2 but actual unlock is ≥1</div><div class="item-desc">Code comment suggests this was deliberate. Confirm intentional?</div><span class="tag">CleanMapZone.jsx</span></div></div>
+    <div class="item decision"><div class="item-content"><div class="item-title">Symbol Mountain — Pond scene emoji positioning</div><div class="item-desc">Visual judgment call, needs your eyes.</div><span class="tag">PondSceneSimplifiedV4.jsx</span></div></div>
+    <div class="item decision"><div class="item-content"><div class="item-title">About Me Hut — Dreams &amp; Wishes off-palette "dusk wishing sky" background</div><div class="item-desc">Intentional sub-theme or should it match zone palette?</div><span class="tag">DreamsWishesGame.css</span></div></div>
+    <div class="item decision"><div class="item-content"><div class="item-title">Shloka River — Sarvada hide-and-seek redesign</div><div class="item-desc">Needs 3 new art assets, scoping/priority call.</div><span class="tag">scene4/SarvadaGame.jsx</span></div></div>
+    <div class="item decision"><div class="item-content"><div class="item-title">Shloka River — Vakratunda mid-rewrite re-check</div><div class="item-desc">Re-audit once your rewrite settles.</div><span class="tag">VakratundaRescueGame.jsx</span></div></div>
+</div>
+
+<!-- MANUAL / DEVICE TESTS (cross-zone) -->
+<div class="page" id="page-manual">
+    <h1 class="page-title">🟢 Everything Needing a Real Device / Browser</h1>
+    <p style="margin-bottom:16px;font-size:13px;color:#555;">These can't be confirmed by reading code — they need eyes-on, hands-on testing.</p>
+    <div class="item manual"><div class="item-content"><div class="item-title">Symbol Mountain</div><div class="item-desc">Rapid-tap VO overlap; modal open/close VO stacking on symbol sidebar/opening/mode-selection modals; general phone/iPad polish pass.</div></div></div>
+    <div class="item manual"><div class="item-content"><div class="item-title">Shloka River</div><div class="item-desc">Kuru Me Deva timed hint beats (logs/rope fail-after-hold — click-through, not just code review); Samaprabha flow/layout; Vakratunda/Modak hold gestures (timed press-and-hold, automation can't test this); Nirvighnam Chant, Sarvakaryeshu Chant viewport sweep.</div></div></div>
+    <div class="item manual"><div class="item-content"><div class="item-title">About Me Hut</div><div class="item-desc">Favorite Food tray-on-reload; comparison-card avatar sizing on iPad landscape; Favorite Food/Dreams &amp; Wishes/My Indian Story viewport sweep.</div></div></div>
+    <div class="item manual"><div class="item-content"><div class="item-title">Cross-zone</div><div class="item-desc">Audible confirmation of no cross-scene audio leak once the Home/ZoneBadge/Continue audio-teardown fix lands; Sacred Assembly's 769-1023px landscape fix needs a real-device eyeball pass before it can be called done.</div></div></div>
+</div>
+
+</div>
+
+<script>
+function showPage(pageId) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(pageId).classList.add('active');
+    if (event && event.target) event.target.classList.add('active');
+    window.scrollTo(0, 0);
+}
+</script>
+
+</body>
+</html>
