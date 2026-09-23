@@ -56,7 +56,15 @@ Before every task, Claude Code must:
 - [x] T06 · SymbolAutoReveal
 - [x] T08 · useAppVisibility.js → import and wire up in all scenes
 - [x] T22 · Idle hints — Symbol Mountain, Shloka River, Cave of Secrets
-- [ ] T27 · Idle hints — About Me and Festival Square
+- [x] T27 · Idle hints — About Me (Festival Square out of scope, not built) — standardized all
+  4 About Me Hut scenes onto the 10s/18s/26s notice→understand→do VO-gated ladder: My Indian
+  Story (magnifying glass, VO-onStart-synced), Dreams & Wishes / ObstacleRemoverGame +
+  Wish2PlateDropGame (also fixed a timer-restart bug in the idle-clock gating), Family Tree
+  (removed permanent circle pulse, single-repeat child-tree pattern), Favorite Things (fixed an
+  L1-reveals-the-answer bug; wrong taps no longer reset the idle ladder). This closes the
+  original 13-scene hint-standardization effort — all 13 live scenes (Symbol Mountain 4,
+  Shloka River 5, About Me Hut 4) are now on the same hint model. See CHANGELOG 2026-09-22.
+  Not yet committed — awaiting go-ahead. Not yet visually verified in-browser.
 - [x] T53 · GestureDemo coverage — every non-tap mini-game (drag/hold/scratch/swipe/pull-down)
   across the 13 live scenes now shows its gesture demo at the start of the mini-game, not just
   after idle-ladder escalation. Tap mechanics intentionally left on idle-hint only (tap is
@@ -88,6 +96,21 @@ Before every task, Claude Code must:
   `enjoy/components/`. **VakratundaRescueGame's failed-attempt-count model left as-is —
   Madhurima confirmed it's intentionally different, not a bug.** See CHANGELOG 2026-09-18.
   Not yet visually verified in-browser.
+- [x] T58 · GestureDemo shared-component audit — Symbol Mountain teaching-gesture call sites
+  (Calm Mooshika, Pond rock/reeds/lotus, Flower Journey bush/branch/marsh). Added new
+  `pull-down-hold` compound gesture type (collapses Flower Branch's separate pull-down + hold
+  demos, which could render two overlapping hands, into one). Fixed Flower Bush's `swipe-left`
+  misuse (that config ignores `to` and always sweeps ±15% of scene width regardless of anchor) —
+  switched to explicit `drag` with real bush-anchored coordinates. Froze Calm Mooshika's teaching
+  target position at trigger time instead of a live-tracked (moving) position, which could
+  regenerate GestureDemo's keyframes mid-animation. Set `idleDelay={0}` + explicit `iterations={1}`
+  at every Symbol Mountain call site now that gestures are VO-onStart-synced (animation already
+  has its own ~250-300ms fade-in; shared default of 2 iterations is wrong for a one-shot teaching
+  demo). Removed a dead `onPointerDown={dismiss}` handler on `.gesture-demo-overlay` (has
+  `pointer-events: none` in CSS, could never fire — real dismissal is the window-level pointerdown
+  listener). Added immediate teaching-gesture dismissal on real press in Calm Mooshika, separate
+  from the later "meaningful hold" idle-clock reset. See CHANGELOG 2026-09-22. Not yet committed
+  — awaiting go-ahead. Not yet visually verified in-browser.
 
 ### Ganesha & Mooshika Presence
 - [ ] T18 · Ganesha Gestures — map which gesture per scene phase — Symbol Mountain, Cave of Secrets, Shloka River (zones 1–3)

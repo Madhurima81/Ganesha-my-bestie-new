@@ -3,6 +3,40 @@ _Generated from the 4-zone Claude Code audit (Symbol Mountain, Shloka River, Abo
 _Updated 2026-09-18 — folded in a fresh 13-scene checklist re-sweep (3 background agents, one per zone) run against this same document. New items are marked "(2026-09-18)"._
 _Updated 2026-09-19 — folded in a shared-layer bug sweep (audited App.jsx/GameStateManager/ProgressManager/useVoiceGuidance/SoundManager/SceneCompletionCelebration instead of just the 13 scene files), item B's remaining touch-target fixes, and a live-browser pass on several scenes. Full detail for each fix lives in `CHANGELOG.md`'s 2026-09-18 entries; this section is the condensed cross-reference. Anything not explicitly listed as fixed/still-open below has not changed since the last update._
 _Updated 2026-09-19 (later same day) — folded in the finalized content/VO pass across all 13 live scenes plus the Modak emotion redesign. Everything below "🚧 Sign-off blockers" is what's left before this pass can be called fully done — read that section first._
+_Updated 2026-09-23 — folded in the GMB Hint Standard v1 rewrite (notice→understand→do, 10s/18s/26s, VO-gated, error-responsive) applied across 8 files, plus a full live-browser smoke test of everything touched this session and every remaining live scene not previously click-tested. See "✅ GMB Hint Standard v1 — hint rewrite + live smoke test" below._
+
+## 🧪 Manual test order (2026-09-23)
+For everything tagged manual/device-only below: **laptop first, to catch flow/logic bugs cheaply — then phone, then iPad.** Laptop pass is real mouse/keyboard clicking through each flow (hint timing, completion, navigation, audio) to catch actual behavior bugs fast, before spending real-device time on viewport/touch/iOS-specific issues. Phone and iPad passes are then specifically for touch-target size, safe-area/viewport layout, real-finger drag/hold behavior, and iOS audio interruption — not for re-finding flow bugs the laptop pass should have already caught.
+
+## ✅ GMB Hint Standard v1 — hint rewrite + live smoke test (2026-09-23)
+
+**Hint rewrite applied** — replaced the old "glow → stronger glow → strongest glow" idle-hint pattern with the locked GMB Hint Standard v1 (L1/10s = affordance/notice only, no VO; L2/18s = action clue + VO; L3/26s = full/exact demonstration + direct VO), VO-gated so the clock only starts after the relevant intro VO's `onEnd` fires, plus error-responsive escalation (repeated genuine failures promote the hint level early) and "meaningful interaction" thresholds so a confused child tapping repeatedly can't indefinitely postpone help. Applied to:
+
+| File | Commit | What changed |
+|---|---|---|
+| `VakratundaRescueGame.jsx`/`.css` | `9595ad4` | Reactive stuck-hint retuned; VO-gated pause-safe idle nudge |
+| `MahakayaRescueGame.jsx`/`.css` | `77e1740` | VO-end-gated idle clock, mechanic-specific L1/L3 CSS |
+| `ShlokaRiverFinale.jsx`/`.css` | `6b2555c` | Recap-boat system removed; hint ladder moved to shared `useRepeatedHintCycle` |
+| `PondSceneSimplifiedV4.jsx`/`PondScene.css` | `f34b59ca` | Forced-hint + meaningful-interaction infra; mechanic-specific L1 hint rings |
+| `EyesPopUpGame.jsx`/`.css` | `092a29f8` | Genuine search progression (group breathe → narrow → exact glow) replacing "glow everything" |
+| `EarsSoundMatchGame.jsx` | `ffea40a0` | 3-tier ladder distinct from Eyes; round-goal VO now actually spoken; wrong-choice escalation |
+| `FlowerJourneyGame2.jsx`/`.css` | `3574c8cb` | Removed scripted first-failure; real 10/18/26 ladder per phase; emotional intro beats |
+| `GarlandGame3.jsx`/`.css` | `e3e23144` | Separate BUILD vs READY hint ladders (BUILD previously had none of its own) |
+| `NewModakSceneV7.jsx`/`ModakScene.css` (Calm Mooshika / Game 1) | `4db41977` | Missing L1 visual added; **L2 (18s) gesture-demo now also shows the hand** (was gated to L3-only); split L2/L3 VO so L3 doesn't repeat L2; fixed repeated-quick-tap resetting the idle clock |
+
+**Live smoke test — everything above, confirmed working in the browser** via `game-test.html`/`GameTestHarness.jsx`, real console-log verification (no errors beyond benign Vite HMR WebSocket noise), and direct interaction where the mechanic allowed it:
+- Calm Mooshika — confirmed, **including the L2 gesture-demo hand now appearing at 18s** (previously only appeared at L3/26s)
+- Pond, Eyes, Ears, Shloka River Finale, Flower Journey, Garland — confirmed, no console errors, interactions respond correctly
+- Tusk (full `sm-symbol` scene, all 3 phases wrapping Eyes) — confirmed live, Eyes phase rendered correctly inside the full scene
+- Vakratunda Grove — opening modal **and** live Vakratunda Rescue gameplay both confirmed (river/rock/reeds render, sidebar progress icons correct)
+- Suryakoti Bank, Nirvighnam Chant, Sarvakaryeshu Chant — opening modals confirmed rendering cleanly, no errors
+- Shloka River Finale — confirmed in the same pass
+
+**New `GameTestHarness.jsx` entries added (2026-09-23)** so the 4 About Me Hut scenes can be live-tested the same way — no code change to the scenes themselves, harness-only:
+- `amh-family-tree` (Family Tree), `amh-favorite-food` (Favorite Food), `amh-dreams-wishes` (Dreams and Wishes), `amh-indian-story` (My Indian Story)
+- All 4 confirmed live: opening modals render correctly with clean `🎬 SCENE: Initializing` → `🔄 STATE CHANGE` console logs, no errors.
+
+**Still not click-tested (timed press-and-hold mechanics, same automation limit noted elsewhere in this file):** the hold gestures themselves in Modak's branch/marsh and Pond's rock/lotus were not click-tested this pass — visuals and VO around them are confirmed, the hold mechanic completion itself is not. Kuru Me Deva's timed hint beats also remain code-reviewed only, not clicked through (unchanged from before this pass).
 
 ## 🚧 Sign-off blockers — content/VO pass (2026-09-19)
 Full detail for each item lives in `CHANGELOG.md` (search "2026-09-19") and `TASKS.md` (T57/T58/T59). This is the condensed "what's actually left" list.
@@ -276,7 +310,7 @@ _Audited 2026-09-18 against `GMB_SCENE_LAUNCH_CHECKLIST.md`. Scope is limited to
 | Status | Checklist item | Finding | Location |
 |---|---|---|---|
 | ~~**FINDING**~~ **RESOLVED 2026-09-22** | 2.6 — Completion modal content | `SceneCompletionCelebration` now renders `nextSceneName` correctly. All 3 live Symbol Mountain callers verified with correct current values: `NewModakSceneV7.jsx:1693` → "Find a Way to the Lotus", `PondSceneSimplifiedV4.jsx:1845` → "Ganesha's Eyes, Ears & Tusk" (the stale "Temple Discovery" label only exists in dead backup files, not the live one), `SymbolMountainSceneV3.jsx:1129` → "Ganesha's Symbol Challenge". Star props still unrendered but stars aren't displayed live anywhere — not user-visible, closing. | `SceneCompletionCelebration.jsx:374-375,415` |
-| **FINDING** | 3.1 — Completion saves immediately and only once | Completion persistence/unlocking runs through overlapping paths. `SceneCompletionCelebration` saves through `GameStateManager`, then its CTA calls the app completion handler, which updates `ProgressManager` and unlocks again. Pond and Sacred additionally write through both managers locally; Tusk also saves directly. This is separate from the fixed Pond two-call-site bug: the local ref guard exists, but shared/app paths bypass it. | `SceneCompletionCelebration.jsx:123-166`; `App.jsx:1355-1379`; `PondSceneSimplifiedV4.jsx:891-916`; `SymbolMountainSceneV3.jsx:793-808,1130-1141`; `SacredAssemblySceneV8.jsx:257-277,1461-1487` |
+| ~~**FINDING**~~ **RESOLVED 2026-09-23 — confirmed working as designed, no fix needed** | 3.1 — Completion saves immediately and only once | Traced the full write chain. `App.jsx`'s `ProgressManager`/`unlockNextScene` write only fires when the child taps Continue/Replay on the completion screen — it is NOT automatic on completion. Pond/Sacred/Tusk's scene-local direct writes (`GameStateManager.saveGameState` + `ProgressManager.updateSceneCompletion`) fire immediately when the scene completes, independent of whether the child ever interacts with the completion screen — this is a deliberate safety net, not redundant cruft: removing it would mean a child who closes the app before tapping Continue never gets the scene marked complete. Confirmed all values written by every path match exactly (Pond always 5 stars, Sacred always 8, Tusk always 9), and `GameStateManager.saveGameState` has a built-in guard refusing to overwrite a completed scene with `completed:false`/`stars:0`, so even a stray mismatched write can't corrupt progress. `unlockNextScene()` itself is called from exactly one place (`App.jsx`), never duplicated. Closing — no change needed. | `SceneCompletionCelebration.jsx:148-176`; `App.jsx:1355-1379`; `GameStateManager.js:409-448` |
 | ~~**FINDING**~~ **RESOLVED 2026-09-22 — false alarm, no fix needed** | 3.5 / 16.4 — Replay and saved-profile integrity | Traced the actual storage keys: `hardResetSceneState()` only clears `GameStateManager`'s local `_state`/`temp_session` keys. The Map and Zone Welcome read completion from a separate permanent record (`${profileId}_gameProgress` via `ProgressManager`/`GameStateManager.getSceneProgress()`), which `hardResetSceneState()` never touches. So Sacred Assembly's "Play Again" does not actually un-complete the scene for map/unlock purposes — same class of false alarm as the already-confirmed Continue non-issue. Closing. | `SacredAssemblySceneV8.jsx:924-993` |
 | ~~**FINDING**~~ **RESOLVED 2026-09-22 (commit `3004aae`)** | 3.7 / 16.4 — Reload after completion | Was actually present in **3** scenes, not 2 — Pond, Tusk, *and* Sacred Assembly all delete their temp session and persist completion before `showingCompletionScreen` is stamped true; Modak (the benchmark) doesn't have this gap since it saves and flags "show completion" at the same instant. Fixed once at the shared root cause instead of patching each scene: `SceneManager.jsx`'s completed-scene replay branch only triggered on `isCompleted && !isActualReload`, so a reload landing in that narrow window fell through to "fresh start" and silently forgot the scene was completed. Dropped the reload restriction (`isCompleted` alone now gates it) while still tracking `isReload` correctly for downstream code. Build-verified. | `SceneManager.jsx:108-121` |
 
@@ -308,8 +342,8 @@ _Audited 2026-09-18 against `GMB_SCENE_LAUNCH_CHECKLIST.md`. Scope is limited to
 | 2 | `AudioToggle` present if scene has audio | **PASS** | Present in all four audio-enabled scenes. |
 | 2 | `VOReplayButton` present where VO guidance is used | **PASS** | Present in all four live scenes. |
 | 2 | `SceneCompletionCelebration` appears on completion | **PASS** | Present in Modak `:1664`, Pond `:1817`, Tusk `:1096`, Sacred `:2157`. |
-| 2 | Completion modal has correct scene name, symbols, stars, and next-scene text | **FINDING** | Stars and scene-specific next text are not rendered; see actionable finding above. |
-| 3 | Completion saves immediately and only once | **FINDING** | Overlapping shared, app, and scene-local writes/unlocks; see actionable finding above. |
+| 2 | Completion modal has correct scene name, symbols, stars, and next-scene text | **RESOLVED 2026-09-22** | Next-scene text confirmed rendering correctly; see finding above. |
+| 3 | Completion saves immediately and only once | **RESOLVED 2026-09-23** | Confirmed working as designed — scene-local writes are an intentional safety net, not a bug; see finding above. |
 | 3 | Persistence path is present | **PASS** | All four scenes have shared or direct persistence. |
 | 3 | `ProgressManager.updateSceneCompletion` or equivalent happens | **PASS** | App completion handler covers every scene; Pond and Sacred also call it directly. Duplication is tracked separately. |
 | 3 | Map/zone unlock state updates correctly | **PASS** | Completion reaches `GameStateManager.unlockNextScene`; duplication is tracked separately. |

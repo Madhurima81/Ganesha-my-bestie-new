@@ -132,7 +132,9 @@ User has not interacted for X seconds.
 
 **Tab Switch** — Status: [ ] EXISTS  [ ] PARTIAL  [ ] MISSING / Notes:
 **Continue / Resume** — Status: [ ] EXISTS  [ ] PARTIAL  [ ] MISSING / Notes:
-**Idle Hints** — Status: [ ] EXISTS  [ ] PARTIAL  [ ] MISSING / Notes:
+**Idle Hints** — Status: [x] EXISTS / Notes: reworked 2026-09session (`roundHintLevel`,
+`showChoiceAffordance`) onto the 10s/18s/26s notice→understand→do ladder, VO-gated; fixed an
+invisible-hitbox-priority bug. Not yet committed. See CHANGELOG 2026-09-22.
 
 **Gaps to fix:**
 - [ ]
