@@ -980,7 +980,8 @@ export default function FlowerJourneyGame2({
                 from={{ x: from.x, y: from.y }}
                 to={{ x: to.x, y: to.y }}
                 active={showDemo}
-                idleDelay={120}
+                idleDelay={0}
+                iterations={1}
                 zIndex={30}
               />
             );
@@ -1011,29 +1012,30 @@ export default function FlowerJourneyGame2({
       )}
 
       {/* ---------------- GESTURE DEMOS (Bush + Branch) ---------------- */}
+      {/* swipe-left ignores `to` and always sweeps ±15% (30% of the whole
+          scene width) regardless of where it's anchored — far wider than
+          the actual bush swipe threshold. An explicit short drag over the
+          real bush instead teaches "move sideways through here" without
+          sweeping halfway across the screen. */}
       <GestureDemo
-        type="swipe-left"
-        from={{ x: LAYOUT.bush.l, y: LAYOUT.bush.t }}
+        type="drag"
+        from={{ x: LAYOUT.bush.l + 6, y: LAYOUT.bush.t }}
+        to={{ x: LAYOUT.bush.l - 6, y: LAYOUT.bush.t }}
         active={!isPaused && bushIntroDone && isBushPhase && !bushOpenState && (teachingGesture || effectiveHintLevel >= 2)}
-        idleDelay={120}
+        idleDelay={0}
+        iterations={1}
         zIndex={30}
       />
+      {/* pull-down and hold are two separate animations with no compound
+          type — showing both left two overlapping hand graphics on screen.
+          pull-down-hold is one hand: press, pull, KEEP HOLDING, release. */}
       <GestureDemo
-        type="pull-down"
+        type="pull-down-hold"
         from={{ x: LAYOUT.branch.l, y: LAYOUT.branch.t }}
         to={{ x: LAYOUT.branch.l, y: LAYOUT.branch.t + 15 }}
         active={!isPaused && branchIntroDone && isBranchPhase && !branchComplete && (teachingGesture || effectiveHintLevel >= 2)}
-        idleDelay={120}
-        zIndex={30}
-      />
-      {/* Shows the "...and hold" half of the gesture at the pulled-down spot,
-          since pull-down's own pause is too brief to read as a hold. L2 =
-          pull clue only; L3 = pull + hold, a real escalation. */}
-      <GestureDemo
-        type="hold"
-        from={{ x: LAYOUT.branch.l, y: LAYOUT.branch.t + 15 }}
-        active={!isPaused && branchIntroDone && isBranchPhase && !branchComplete && (teachingGesture || effectiveHintLevel >= 3)}
-        idleDelay={900}
+        idleDelay={0}
+        iterations={1}
         zIndex={30}
       />
 

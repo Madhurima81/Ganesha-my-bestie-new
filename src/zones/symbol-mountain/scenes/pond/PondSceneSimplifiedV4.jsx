@@ -1539,7 +1539,8 @@ const PondSceneContent = ({
                   !sceneState.rockMoved &&
                   rockHoldProgress <= 0
                 }
-                idleDelay={120}
+                idleDelay={0}
+                iterations={1}
                 zIndex={28}
               />
 
@@ -1700,7 +1701,8 @@ const PondSceneContent = ({
                   !sceneState.reedsParted &&
                   !reedsDragActive
                 }
-                idleDelay={120}
+                idleDelay={0}
+                iterations={1}
                 zIndex={28}
               />
 
@@ -1800,7 +1802,8 @@ const PondSceneContent = ({
                   !sceneState.lotusBloomed &&
                   holdProgress <= 0
                 }
-                idleDelay={120}
+                idleDelay={0}
+                iterations={1}
                 zIndex={28}
               />
 

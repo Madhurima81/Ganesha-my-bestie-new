@@ -586,6 +586,10 @@ const NewModakSceneMVPContent = ({
 
   // Show-what-to-do gesture shown briefly on entering each working beat.
   const [introGesture, setIntroGesture] = useState(false);
+  // Frozen teaching-hand target for Mooshika (see the introGesture effect
+  // below) — captured once per phase entry instead of tracking Mooshika's
+  // live darting position while the demo plays.
+  const [mooshikaGesturePoint, setMooshikaGesturePoint] = useState({ x: 30, y: 52 });
 
   // --- Live layout + debug panel -----------------------------------
   const [fjLayout, setFjLayout] = useState(loadFjLayout);
@@ -667,10 +671,33 @@ const NewModakSceneMVPContent = ({
       setIntroGesture(false);
       return undefined;
     }
+    // Mooshika is actively darting — freeze the teaching hand's target at
+    // the position it happened to be at when teaching starts, rather than
+    // letting GestureDemo regenerate its path as Mooshika keeps moving.
+    if (sceneState.phase === PHASES.CALM_SEARCH) {
+      const pos = sceneState.mooshikaPosition || CALM_DISTRACTIONS[0];
+      setMooshikaGesturePoint({
+        x: parsePercentValue(pos.left, 30),
+        y: parsePercentValue(pos.top, 52),
+      });
+    }
     setIntroGesture(true);
     const t = setTimeout(() => setIntroGesture(false), 6000);
     return () => clearTimeout(t);
   }, [sceneState.phase, sceneState.welcomeShown]);
+
+  // Re-freeze the teaching hand's target when the idle-hint rescue kicks
+  // the hold demo back in (L2+) — Mooshika may have darted a long way since
+  // the intro's own freeze, seconds ago.
+  useEffect(() => {
+    if (idleHintLevel < 2 || sceneState.phase !== PHASES.CALM_SEARCH) return;
+    const pos = sceneState.mooshikaPosition || CALM_DISTRACTIONS[0];
+    setMooshikaGesturePoint({
+      x: parsePercentValue(pos.left, 30),
+      y: parsePercentValue(pos.top, 52),
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [idleHintLevel >= 2, sceneState.phase]);
 
   // ------------------------------------------------------------------
   // beat 1 - HOLD Mooshika
@@ -792,6 +819,10 @@ const NewModakSceneMVPContent = ({
     clearMushikaHoldLoop();
     stopVoice();
     if (idleHintsEnabled) stopIdleTimer();
+    // Dismiss the teaching hand the instant the child actually touches
+    // Mooshika — don't wait for the hold to become "meaningful" (that's a
+    // separate, later reset of the idle-hint baseline below).
+    setIntroGesture(false);
     mushikaMeaningfulHoldRef.current = false;
     mushikaHoldStartRef.current = performance.now();
     sceneActions.updateState({ mooshikaVisible: true, mushikaHolding: true, holdProgress: 0 });
@@ -1643,12 +1674,10 @@ const NewModakSceneMVPContent = ({
                   {/* ============ GESTURE DEMOS ============ */}
                   <GestureDemo
                     type="hold"
-                    from={{
-                      x: parsePercentValue((sceneState.mooshikaPosition || CALM_DISTRACTIONS[0]).left, 30),
-                      y: parsePercentValue((sceneState.mooshikaPosition || CALM_DISTRACTIONS[0]).top, 52)
-                    }}
+                    from={mooshikaGesturePoint}
                     active={(introGesture || idleHintLevel >= 2) && sceneState.phase === PHASES.CALM_SEARCH && !sceneState.mushikaHolding}
-                    idleDelay={120}
+                    idleDelay={0}
+                    iterations={1}
                     zIndex={24}
                   />
 

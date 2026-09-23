@@ -437,16 +437,47 @@
   animation-fill-mode: both;
 }
 
-.zone-hint-overlay[data-hint-level="hint"] {
-  animation: sacredHintPulse 1.6s ease-in-out 1;
-}
-
-.zone-hint-overlay[data-hint-level="hint-strong"] {
-  animation: sacredHintPulseStrong 1.5s ease-in-out 2;
-}
-
+/* L3 only — the earlier levels no longer glow the correct target at all
+   (see .ganesha-choice-affordance below for the neutral L1/L2 cue). */
 .zone-hint-overlay[data-hint-level="hint-final"] {
-  animation: sacredHintPulseFinal 1.4s ease-in-out 4;
+  animation: sacredFinalTargetHint 1.35s ease-in-out infinite;
+}
+
+/* ========================================
+   L1 / L2 — NEUTRAL BODY-PART AFFORDANCE
+
+   Every available target gets the SAME cue. This teaches "these parts
+   can be tapped" without revealing the correct answer.
+======================================== */
+.ganesha-choice-affordance {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  /* Do not animate transform here — some zone positions use
+     translate(-50%), supplied inline from GANESHA_ZONES. */
+  animation: sacredChoiceAffordance 1.8s ease-in-out infinite;
+}
+
+@keyframes sacredChoiceAffordance {
+  0%, 100% {
+    background: radial-gradient(circle, rgba(255, 238, 190, 0) 0%, rgba(255, 238, 190, 0) 66%);
+    box-shadow: 0 0 0 0 rgba(255, 224, 150, 0);
+  }
+  50% {
+    background: radial-gradient(circle, rgba(255, 238, 190, 0.12) 0%, rgba(255, 224, 150, 0.06) 44%, transparent 68%);
+    box-shadow: 0 0 12px rgba(255, 224, 150, 0.12);
+  }
+}
+
+@keyframes sacredFinalTargetHint {
+  0%, 100% {
+    background: radial-gradient(circle, rgba(186, 142, 240, 0) 0%, transparent 70%);
+    box-shadow: 0 0 0 rgba(186, 142, 240, 0);
+  }
+  50% {
+    background: radial-gradient(circle, rgba(186, 142, 240, 0.48) 0%, rgba(186, 142, 240, 0.20) 42%, transparent 70%);
+    box-shadow: 0 0 16px rgba(186, 142, 240, 0.24);
+  }
 }
 
 .zone-hint-overlay-debug {
@@ -461,33 +492,6 @@
   border: 1px solid rgba(255, 255, 255, 0.65);
 }
 
-/* Start and END at transparent — glow is invisible at rest, pulses softly, returns to invisible */
-@keyframes sacredHintPulse {
-  0%, 100% {
-    background: radial-gradient(circle, rgba(186, 142, 240, 0) 0%, transparent 65%);
-  }
-  50% {
-    background: radial-gradient(circle, rgba(186, 142, 240, 0.40) 0%, rgba(186, 142, 240, 0.16) 40%, transparent 65%);
-  }
-}
-
-@keyframes sacredHintPulseStrong {
-  0%, 100% {
-    background: radial-gradient(circle, rgba(186, 142, 240, 0) 0%, transparent 68%);
-  }
-  50% {
-    background: radial-gradient(circle, rgba(186, 142, 240, 0.50) 0%, rgba(186, 142, 240, 0.22) 40%, transparent 68%);
-  }
-}
-
-@keyframes sacredHintPulseFinal {
-  0%, 100% {
-    background: radial-gradient(circle, rgba(186, 142, 240, 0) 0%, transparent 70%);
-  }
-  50% {
-    background: radial-gradient(circle, rgba(186, 142, 240, 0.58) 0%, rgba(186, 142, 240, 0.28) 40%, transparent 70%);
-  }
-}
 
 /* ───────────────────────────────────────────── */
 
@@ -1009,7 +1013,9 @@
   .pulse-glow-v8,
   .pulse-ring-v8,
   .placed-symbol-v8,
-  .symbol-aura-v8 {
+  .symbol-aura-v8,
+  .ganesha-choice-affordance,
+  .zone-hint-overlay {
     animation: none;
   }
   

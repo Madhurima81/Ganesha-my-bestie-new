@@ -635,6 +635,13 @@ const SacredAssemblyContent = ({
   }, []);
 
   const [cardPhase, setCardPhase] = useState('hidden'); // 'hidden' | 'appear' | 'flipped' | 'side' | 'play' | 'feedback'
+  // GMB hint standard: notice -> understand -> do, instead of three glow
+  // strengths on the same answer. 0 = nothing yet, 1 = neutral "these parts
+  // can be tapped" cue, 2 = semantic clue VO, 3 = exact target + direct VO.
+  const [roundHintLevel, setRoundHintLevel] = useState(0);
+  const [showChoiceAffordance, setShowChoiceAffordance] = useState(false);
+  const hintVoPlayedRef = useRef({ l2: false, l3: false });
+  const DIRECT_TARGET_HINT = 'Tap the glowing part.';
   const [flyingSymbol, setFlyingSymbol] = useState(null);
   const [ganeshaReaction, setGaneshaReaction] = useState('');
   const devPhaseIndexRef = useRef(0);
@@ -650,14 +657,16 @@ const SacredAssemblyContent = ({
     sceneState?.showingZoneCompletion === true ||
     sceneState?.celebrationActive === true;
   const activeTargetZoneId = useMemo(() => {
-    if (cardPhase !== 'play') return null;
+    // Do NOT give the correct hitbox priority before L3 — otherwise
+    // overlapping hit areas can silently favour the answer even when
+    // there's no visible hint at all.
+    if (cardPhase !== 'play' || roundHintLevel < 3) return null;
     const currentSymbol = SACRED_SYMBOLS.find(s => s.id === sceneState?.currentAssociationSymbol);
     return currentSymbol?.correctZone || null;
-  }, [cardPhase, sceneState?.currentAssociationSymbol]);
+  }, [cardPhase, roundHintLevel, sceneState?.currentAssociationSymbol]);
   const { countdownValue } = useResumeCountdown(RESUME_DELAY_MS / 1000);
   const onboardingPlayedRef = useRef(sceneState?.onboardingPlayed || false);
   const onboardingPlayedAtRef = useRef(0);
-  const idleNudgePlayedRef = useRef(false);
   useEffect(() => {
     isGaneshaSpeakingRef.current = isGaneshaSpeaking;
   }, [isGaneshaSpeaking]);
@@ -721,6 +730,14 @@ const SacredAssemblyContent = ({
     return true;
   }, [getMomentForVoiceKey, isAudioOn, isGaneshaSpeaking, playVoice, sceneId, speakGanesha, zoneId]);
 
+  // L3's direct guidance is one generic line rather than 8 new per-symbol VO
+  // files — "Tap the glowing part" works for any symbol once the exact
+  // target is actually glowing.
+  const playDirectTargetHint = useCallback(() => {
+    if (!isAudioOn) return;
+    speakGanesha(DIRECT_TARGET_HINT, { age: 7, style: 'child', moment: 'encouragement' });
+  }, [isAudioOn, speakGanesha]);
+
   const replayVoiceForCurrentPhase = useCallback(() => {
     if (!isAudioOn || !sceneState) return;
 
@@ -753,10 +770,23 @@ const SacredAssemblyContent = ({
           onboardingPlayedRef.current = true;
           onboardingPlayedAtRef.current = Date.now();
         }
-      } else {
+        return;
+      }
+
+      // Replay should replay the amount of help the child has already
+      // reached — it should NOT secretly jump them to L2/L3.
+      if (roundHintLevel >= 3) {
+        playDirectTargetHint();
+        return;
+      }
+
+      if (roundHintLevel >= 2) {
         const hintVoKey = HINT_VO_MAP[currentSymbolId];
         if (hintVoKey) playSceneVoice(hintVoKey, null, { replayOnReturn: false, auto: true });
+        return;
       }
+
+      if (cardVoKey) playSceneVoice(cardVoKey, null, { replayOnReturn: false, auto: true });
       return;
     }
 
@@ -766,7 +796,9 @@ const SacredAssemblyContent = ({
     HINT_VO_MAP,
     cardPhase,
     isAudioOn,
+    playDirectTargetHint,
     playSceneVoice,
+    roundHintLevel,
     sceneState,
     showSceneCompletion,
     showSparkle
@@ -844,55 +876,42 @@ const SacredAssemblyContent = ({
     }
   }, [CARD_VO_MAP, cardPhase, isPageVisible, playChime, playSceneVoice, playSparkle, playUiTap, sceneState?.currentAssociationSymbol, sceneState?.currentRound]);
 
-  // Play-phase VO sequence: card VO when card lands, then 3-level idle hint escalation
+  // ---------------------------------------------------------
+  // PLAY PHASE
+  //
+  // Card VO ends
+  //      ↓
+  // 10s  L1 = all available parts gently indicate "tap"
+  // 18s  L2 = semantic clue VO
+  // 26s  L3 = exact target glow + direct VO
+  //
+  // Wrong answers can promote the same ladder early (handleWrongPlacement).
+  // ---------------------------------------------------------
   useEffect(() => {
     if (cardPhase !== 'play') return;
     if (!isPageVisible) return;
     const currentSymbol = SACRED_SYMBOLS.find(s => s.id === sceneState?.currentAssociationSymbol);
     if (!currentSymbol) return;
-    const correctZone = currentSymbol.correctZone;
     const cardVoKey = CARD_VO_MAP[currentSymbol.id];
 
-    // Card VO � 2.5s after card lands, giving child time to look first
-    // Guard prevents double-play if effect re-runs while still in 'play'
+    // Card VO — 2.5s after card lands, giving child time to look first.
+    // Guard prevents double-play if effect re-runs while still in 'play'.
     const roundIndex = sceneState?.currentRound ?? -1;
     const ENTRY_VO_DELAY_MS = 2500;
-    const hintTimersRef = { current: [] };
+    const hintTimers = [];
 
     const armHintLadder = () => {
-      const hintLevel1Timer = safeSetTimeout(() => {
-        setZoneStates(prev => {
-          if (prev[correctZone] === 'idle') return { ...prev, [correctZone]: 'hint' };
-          return prev;
-        });
-      }, 10000);
+      hintTimers.push(safeSetTimeout(() => {
+        setRoundHintLevel((level) => Math.max(level, 1));
+      }, 10000));
 
-      const hintLevel2Timer = safeSetTimeout(() => {
-        setZoneStates(prev => {
-          if (prev[correctZone] === 'hint' || prev[correctZone] === 'idle') {
-            return { ...prev, [correctZone]: 'hint-strong' };
-          }
-          return prev;
-        });
-        if (!idleNudgePlayedRef.current) {
-          const hintVoKey = HINT_VO_MAP[currentSymbol.id];
-          if (hintVoKey) {
-            playSceneVoice(hintVoKey, null, { replayOnReturn: false });
-            idleNudgePlayedRef.current = true;
-          }
-        }
-      }, 18000);
+      hintTimers.push(safeSetTimeout(() => {
+        setRoundHintLevel((level) => Math.max(level, 2));
+      }, 18000));
 
-      const hintLevel3Timer = safeSetTimeout(() => {
-        setZoneStates(prev => {
-          if (prev[correctZone] === 'hint-strong' || prev[correctZone] === 'hint' || prev[correctZone] === 'idle') {
-            return { ...prev, [correctZone]: 'hint-final' };
-          }
-          return prev;
-        });
-      }, 26000);
-
-      hintTimersRef.current.push(hintLevel1Timer, hintLevel2Timer, hintLevel3Timer);
+      hintTimers.push(safeSetTimeout(() => {
+        setRoundHintLevel((level) => Math.max(level, 3));
+      }, 26000));
     };
 
     // Card VO plays first; the idle-hint ladder only starts counting once
@@ -910,9 +929,66 @@ const SacredAssemblyContent = ({
 
     return () => {
       clearTimeout(cardVoTimer);
-      hintTimersRef.current.forEach(clearTimeout);
+      hintTimers.forEach(clearTimeout);
     };
-  }, [cardPhase, HINT_VO_MAP, isPageVisible, sceneState?.currentAssociationSymbol]);
+  }, [cardPhase, CARD_VO_MAP, isPageVisible, sceneState?.currentAssociationSymbol, sceneState?.currentRound, playSceneVoice]);
+
+  // Translates roundHintLevel into actual behaviour — the ladder above only
+  // decides WHEN each level fires, this decides WHAT happens at each one.
+  useEffect(() => {
+    if (cardPhase !== 'play') {
+      setShowChoiceAffordance(false);
+      return;
+    }
+
+    const currentSymbol = SACRED_SYMBOLS.find(s => s.id === sceneState?.currentAssociationSymbol);
+    if (!currentSymbol) return;
+    const correctZone = currentSymbol.correctZone;
+
+    // First clear any exact-target hint left from a previous level/round.
+    // Preserve placed / correct / wrong transient feedback.
+    if (roundHintLevel < 3) {
+      setZoneStates((prev) => {
+        let changed = false;
+        const next = { ...prev };
+        Object.keys(next).forEach((zoneId) => {
+          if (next[zoneId] === 'hint' || next[zoneId] === 'hint-strong' || next[zoneId] === 'hint-final') {
+            next[zoneId] = 'idle';
+            changed = true;
+          }
+        });
+        return changed ? next : prev;
+      });
+    }
+
+    // L1 + L2: all still-available body parts share the same neutral tap
+    // affordance.
+    setShowChoiceAffordance(roundHintLevel >= 1 && roundHintLevel < 3);
+
+    // L2: semantic clue only. Do NOT identify the correct body part.
+    if (roundHintLevel >= 2 && !hintVoPlayedRef.current.l2) {
+      hintVoPlayedRef.current.l2 = true;
+      const hintVoKey = HINT_VO_MAP[currentSymbol.id];
+      if (hintVoKey) {
+        playSceneVoice(hintVoKey, null, { replayOnReturn: false });
+      }
+    }
+
+    // L3: direct guidance.
+    if (roundHintLevel >= 3) {
+      setShowChoiceAffordance(false);
+
+      setZoneStates((prev) => {
+        if (prev[correctZone] === 'placed' || prev[correctZone] === 'correct') return prev;
+        return { ...prev, [correctZone]: 'hint-final' };
+      });
+
+      if (!hintVoPlayedRef.current.l3) {
+        hintVoPlayedRef.current.l3 = true;
+        playDirectTargetHint();
+      }
+    }
+  }, [roundHintLevel, cardPhase, sceneState?.currentAssociationSymbol, HINT_VO_MAP, playSceneVoice, playDirectTargetHint]);
 
   const safeSetTimeout = (callback, delay) => {
     const id = setTimeout(callback, delay);
@@ -947,10 +1023,12 @@ const SacredAssemblyContent = ({
     setFlyingSymbol(null);
     setGaneshaReaction('');
     setZoneStates(initZoneStates({}));
+    setRoundHintLevel(0);
+    setShowChoiceAffordance(false);
+    hintVoPlayedRef.current = { l2: false, l3: false };
 
     onboardingPlayedRef.current = false;
     onboardingPlayedAtRef.current = 0;
-    idleNudgePlayedRef.current = false;
     cardVoPlayedForRoundRef.current = -1;
     finalVoPlayedRef.current = false;
     openingModalVoPlayedRef.current = false;
@@ -1004,7 +1082,6 @@ const SacredAssemblyContent = ({
     if (!sceneState?.welcomeShown && placedCount === 0) {
       onboardingPlayedRef.current = false;
       onboardingPlayedAtRef.current = 0;
-      idleNudgePlayedRef.current = false;
       finalVoPlayedRef.current = false;
       openingModalVoPlayedRef.current = false;
       threeSymbolMilestoneVoPlayedRef.current = false;
@@ -1101,7 +1178,9 @@ const SacredAssemblyContent = ({
     const currentSymbol = SACRED_SYMBOLS.find(s => s.id === currentSymbolId);
     if (!currentSymbol) return;
 
-    idleNudgePlayedRef.current = false;
+    setRoundHintLevel(0);
+    setShowChoiceAffordance(false);
+    hintVoPlayedRef.current = { l2: false, l3: false };
     cardVoPlayedForRoundRef.current = -1;
     setCardPhase('appear');
     // Reset non-placed zones to idle for the new round
@@ -1125,18 +1204,6 @@ const SacredAssemblyContent = ({
     if (!sceneState || !sceneActions) return;
     if (cardPhase !== 'play') return;
 
-    setZoneStates(prev => {
-      const next = { ...prev };
-      let changed = false;
-      Object.keys(next).forEach(z => {
-        if (next[z] === 'hint' || next[z] === 'hint-strong' || next[z] === 'hint-final') {
-          next[z] = 'idle';
-          changed = true;
-        }
-      });
-      return changed ? next : prev;
-    });
-
     const currentSymbol = SACRED_SYMBOLS.find(s => s.id === sceneState.currentAssociationSymbol);
     if (!currentSymbol) return;
 
@@ -1152,9 +1219,9 @@ const SacredAssemblyContent = ({
       handleCorrectPlacement(currentSymbol);
     } else {
       playWrongTap();
-      setGaneshaReaction('wrong');
-      safeSetTimeout(() => setGaneshaReaction(''), 300);
-      // wrong ? wiggle ? snap back to idle
+      // Only the tapped part wiggles — don't shake all of Ganesha for a
+      // normal exploration mistake. If a child already needed L3 and then
+      // taps somewhere else, the correct glowing target stays put.
       setZoneStates(prev => ({ ...prev, [zoneId]: 'wrong' }));
       safeSetTimeout(() => {
         setZoneStates(prev => (prev[zoneId] === 'wrong' ? { ...prev, [zoneId]: 'idle' } : prev));
@@ -1254,6 +1321,9 @@ const SacredAssemblyContent = ({
     if (!sceneState || !sceneActions) return;
 
     setCardPhase('feedback');
+    setRoundHintLevel(0);
+    setShowChoiceAffordance(false);
+    hintVoPlayedRef.current = { l2: false, l3: false };
     setCelebrationZoneId(symbol.correctZone);
     playGlow();
     safeSetTimeout(() => playTwinkle(), 450);
@@ -1324,18 +1394,28 @@ const SacredAssemblyContent = ({
   };
 
   // NEW: Handle wrong placement
+  // A repeated wrong pick means one specific misunderstanding: the child
+  // doesn't know WHICH body part. Escalate the hint ladder directly instead
+  // of waiting out the idle clock.
   const handleWrongPlacement = () => {
     if (!sceneState || !sceneActions) return;
 
-    const newWrongAttempts = (sceneState.wrongAttempts || 0) + 1;
-    playSceneVoice('wrongTryAgain', null, { replayOnReturn: false, auto: true });
+    const nextWrongAttempts = (sceneState.wrongAttempts || 0) + 1;
+    sceneActions.updateState({ wrongAttempts: nextWrongAttempts });
 
-    // Update wrong attempts count
-    sceneActions.updateState({
-      wrongAttempts: newWrongAttempts
-    });
+    // Wrong #1: local wiggle + wrong SFX already happened. No narration needed.
+    if (nextWrongAttempts === 1) return;
 
-    // Progressive hint disabled in this scene.
+    // Wrong #2: promote directly to the semantic clue.
+    if (nextWrongAttempts === 2) {
+      setRoundHintLevel((level) => Math.max(level, 2));
+      return;
+    }
+
+    // Wrong #3+: direct WHERE guidance.
+    if (nextWrongAttempts >= 3) {
+      setRoundHintLevel((level) => Math.max(level, 3));
+    }
   };
 
 
@@ -1702,6 +1782,7 @@ const SacredAssemblyContent = ({
                 onZoneClick={handleZoneClick}
                 activeZoneId={activeTargetZoneId}
                 baseOpacity={getGaneshaOpacity()}
+                showChoiceAffordance={cardPhase === 'play' && showChoiceAffordance}
               />
 
               {/* Hint glow only � uses SAME position as hitbox, perfect alignment */}

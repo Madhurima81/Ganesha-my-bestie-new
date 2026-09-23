@@ -36,7 +36,7 @@ const buildHitboxes = () => {
 
 const ZONE_HITBOXES = buildHitboxes();
 
-const GaneshaIllustration = ({ zoneStates = {}, onZoneClick, activeZoneId = null, baseOpacity = 0.2 }) => {
+const GaneshaIllustration = ({ zoneStates = {}, onZoneClick, activeZoneId = null, baseOpacity = 0.2, showChoiceAffordance = false }) => {
   return (
     <div className="ganesha-illustration-breathing" style={{ width: '100%', height: '100%', position: 'relative' }}>
       <img
@@ -72,6 +72,27 @@ const GaneshaIllustration = ({ zoneStates = {}, onZoneClick, activeZoneId = null
               userSelect: 'none',
               zIndex: ZONE_VISUAL_Z_INDEX[zoneId]
             }}
+          />
+        );
+      })}
+
+      {/* -------------------------------------------------------
+          L1 / L2 neutral affordance
+
+          Every still-available part gets the SAME quiet cue.
+          Nothing here indicates the correct answer.
+         ------------------------------------------------------- */}
+      {showChoiceAffordance && GANESHA_ZONES.map((zone) => {
+        const state = zoneStates[zone.id] || 'idle';
+        const unavailable = state === 'placed' || state === 'correct';
+        if (unavailable) return null;
+
+        return (
+          <div
+            key={`choice-affordance-${zone.id}`}
+            className="ganesha-choice-affordance"
+            style={{ position: 'absolute', ...zone.position, zIndex: 18 }}
+            aria-hidden="true"
           />
         );
       })}
