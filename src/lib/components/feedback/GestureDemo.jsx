@@ -130,6 +130,27 @@ const GESTURE_CONFIGS = {
       100% { left: ${from.x}%; top: ${from.y}%; opacity: 0; transform: translate(-50%,-50%) scale(0.85); }
     `,
   },
+  // Compound gesture: press, pull to `to`, and KEEP HOLDING there before
+  // releasing — for a mechanic like Flower Branch (pull down, then hold)
+  // that plain `pull-down` + `hold` can't express without two overlapping
+  // hand graphics.
+  'pull-down-hold': {
+    asset: 'touch',
+    loopDuration: 3000,
+    keyframes: (from, to) => {
+      const targetX = to?.x ?? from.x;
+      const targetY = to?.y ?? (from.y + 20);
+      return `
+        0%   { left: ${from.x}%; top: ${from.y}%; opacity: 0; transform: translate(-50%,-50%) scale(0.9); }
+        10%  { left: ${from.x}%; top: ${from.y}%; opacity: 1; transform: translate(-50%,-50%) scale(1); }
+        18%  { left: ${from.x}%; top: ${from.y}%; opacity: 1; transform: translate(-50%,-50%) scale(0.84); }
+        48%  { left: ${targetX}%; top: ${targetY}%; opacity: 1; transform: translate(-50%,-50%) scale(0.84); }
+        78%  { left: ${targetX}%; top: ${targetY}%; opacity: 1; transform: translate(-50%,-50%) scale(0.84); }
+        88%  { left: ${targetX}%; top: ${targetY}%; opacity: 1; transform: translate(-50%,-50%) scale(1); }
+        100% { left: ${targetX}%; top: ${targetY}%; opacity: 0; transform: translate(-50%,-50%) scale(0.92); }
+      `;
+    },
+  },
   point: {
     asset: 'point',
     loopDuration: 2000,
@@ -238,7 +259,6 @@ export default function GestureDemo({
     <div
       className="gesture-demo-overlay"
       style={{ zIndex }}
-      onPointerDown={dismiss}
     >
       {/* Touch ripple for touch-type gestures */}
       {config.asset === 'touch' && (

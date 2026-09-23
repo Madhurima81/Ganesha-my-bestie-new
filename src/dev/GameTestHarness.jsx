@@ -90,6 +90,10 @@ const SCENES = {
   'sm-pond':     { label: 'Symbol Mtn 2 — Pond',         isScene: true, zoneId: 'symbol-mountain', sceneId: 'pond',        Comp: lazy(() => import('../zones/symbol-mountain/scenes/pond/PondSceneSimplifiedV4')) },
   'sm-symbol':   { label: 'Symbol Mtn 3 — Symbol',       isScene: true, zoneId: 'symbol-mountain', sceneId: 'symbol',      Comp: lazy(() => import('../zones/symbol-mountain/scenes/tusk/SymbolMountainSceneV3')) },
   'sm-final':    { label: 'Symbol Mtn 4 — Sacred Assembly', isScene: true, zoneId: 'symbol-mountain', sceneId: 'final-scene', Comp: lazy(() => import('../zones/symbol-mountain/scenes/final scene/SacredAssemblySceneV8')) },
+  'amh-family-tree': { label: 'About Me Hut 1 — Family Tree', isScene: true, zoneId: 'about-me-hut', sceneId: 'family-tree', Comp: lazy(() => import('../zones/about-me-hut/family-tree/Familytreegame')) },
+  'amh-favorite-food': { label: 'About Me Hut 2 — Favorite Food', isScene: true, zoneId: 'about-me-hut', sceneId: 'favorite-food', Comp: lazy(() => import('../zones/about-me-hut/food/Favoritefoodgame')) },
+  'amh-dreams-wishes': { label: 'About Me Hut 3 — Dreams and Wishes', isScene: true, zoneId: 'about-me-hut', sceneId: 'dreams-wishes', Comp: lazy(() => import('../zones/about-me-hut/enjoy/ObstacleRemoverGame')) },
+  'amh-indian-story': { label: 'About Me Hut 4 — My Indian Story', isScene: true, zoneId: 'about-me-hut', sceneId: 'my-indian-story', Comp: lazy(() => import('../zones/about-me-hut/indian-story/MyIndianStoryGame')) },
 };
 
 const ALL = { ...GAMES, ...SCENES };
