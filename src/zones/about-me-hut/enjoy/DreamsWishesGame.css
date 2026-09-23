@@ -1263,88 +1263,135 @@
   filter: drop-shadow(0 6px 15px rgba(0, 0, 0, 0.25));
 }
 
-/* Generic hint glow for wish hotspots and trunk helper */
-.dreams-wishes-game .park-scene .hint {
-  border-color: rgba(255, 214, 102, 0.95) !important;
-  background: rgba(255, 241, 178, 0.2) !important;
+/* =========================================
+   WISH 3 — GARDEN HINTS
+   L1: notice — every remaining bare space
+   L2: understand — a stronger, distinct cue + VO
+   L3: do — the remaining spot(s) stay clearly highlighted
+========================================= */
+.dreams-wishes-game .park-scene .wish3-hint-attention {
   box-shadow:
-    0 0 0 2px rgba(255, 214, 102, 0.55),
-    0 0 18px rgba(255, 214, 102, 0.55);
-  animation: parkHintGlowSoft 2s ease-in-out 1;
+    0 0 0 2px rgba(255, 214, 102, 0.42),
+    0 0 12px rgba(255, 214, 102, 0.35);
+  animation: wish3Attention 1.5s ease-in-out 2;
 }
 
-.dreams-wishes-game .park-scene .hint-strong {
-  border-color: rgba(255, 188, 73, 1) !important;
-  background: rgba(255, 225, 128, 0.24) !important;
+@keyframes wish3Attention {
+  0%, 100% { opacity: 0.75; }
+  50% {
+    opacity: 1;
+    box-shadow:
+      0 0 0 3px rgba(255, 214, 102, 0.58),
+      0 0 18px rgba(255, 214, 102, 0.48);
+  }
+}
+
+.dreams-wishes-game .park-scene .wish3-hint-clue {
+  border-color: rgba(255, 188, 73, 0.88) !important;
   box-shadow:
-    0 0 0 3px rgba(255, 188, 73, 0.65),
-    0 0 22px rgba(255, 188, 73, 0.65);
-  animation: parkHintGlowStrong 1.2s ease-in-out 3;
+    0 0 0 3px rgba(255, 188, 73, 0.45),
+    0 0 20px rgba(255, 188, 73, 0.55);
+  animation: wish3Clue 1.1s ease-in-out 2;
 }
 
-.dreams-wishes-game .park-scene .hint-final {
-  border-color: rgba(255, 160, 64, 1) !important;
-  background: rgba(255, 208, 102, 0.28) !important;
+@keyframes wish3Clue {
+  0%, 100% {
+    box-shadow:
+      0 0 0 2px rgba(255, 188, 73, 0.38),
+      0 0 14px rgba(255, 188, 73, 0.4);
+  }
+  50% {
+    box-shadow:
+      0 0 0 4px rgba(255, 188, 73, 0.62),
+      0 0 24px rgba(255, 188, 73, 0.64);
+  }
+}
+
+.dreams-wishes-game .park-scene .wish3-hint-final {
+  border-color: rgba(255, 174, 66, 0.95) !important;
   box-shadow:
-    0 0 0 3px rgba(255, 160, 64, 0.75),
-    0 0 30px rgba(255, 160, 64, 0.8),
-    0 0 44px rgba(255, 220, 120, 0.55);
-  animation: parkHintGlowFinal 1s ease-in-out 4;
+    0 0 0 4px rgba(255, 174, 66, 0.68),
+    0 0 25px rgba(255, 194, 90, 0.72),
+    0 0 38px rgba(255, 220, 130, 0.4);
 }
 
-.dreams-wishes-game .ganesha-helper.hint .ganesha-trunk {
-  filter: drop-shadow(0 0 10px rgba(255, 214, 102, 0.7));
+/* =========================================
+   DREAM — TRUNK TAP HINTS
+   L1: notice — trunk nudges
+   L2: understand — action cue (contextual VO handles the wording)
+   L3: do — trunk stays clearly highlighted
+========================================= */
+.dreams-wishes-game .ganesha-helper.dream-trunk-hint-attention .ganesha-trunk {
+  animation: dreamTrunkNudge 1.2s ease-in-out 2;
 }
 
-.dreams-wishes-game .ganesha-helper.hint-strong .ganesha-trunk {
-  filter: drop-shadow(0 0 14px rgba(255, 188, 73, 0.85));
+@keyframes dreamTrunkNudge {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
 }
 
-.dreams-wishes-game .ganesha-helper.hint-final .ganesha-trunk {
+.dreams-wishes-game .ganesha-helper.dream-trunk-hint-clue .ganesha-trunk {
+  animation: dreamTrunkTapCue 0.85s ease-in-out 2;
+  filter: drop-shadow(0 0 10px rgba(255, 214, 102, 0.65));
+}
+
+@keyframes dreamTrunkTapCue {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+
+.dreams-wishes-game .ganesha-helper.dream-trunk-hint-final .ganesha-trunk {
   filter:
-    drop-shadow(0 0 16px rgba(255, 160, 64, 0.95))
-    drop-shadow(0 0 24px rgba(255, 220, 120, 0.6));
+    drop-shadow(0 0 14px rgba(255, 190, 80, 0.9))
+    drop-shadow(0 0 24px rgba(255, 220, 120, 0.55));
 }
 
-@keyframes parkHintGlowSoft {
-  0%, 100% {
-    box-shadow:
-      0 0 0 2px rgba(255, 214, 102, 0.55),
-      0 0 18px rgba(255, 214, 102, 0.55);
-  }
+.dreams-wishes-game .ganesha-helper.dream-trunk-hint-final {
+  position: relative;
+}
+
+.dreams-wishes-game .ganesha-helper.dream-trunk-hint-final::after {
+  content: '';
+  position: absolute;
+  inset: -10px;
+  border: 3px solid rgba(255, 199, 91, 0.72);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* =========================================
+   WISH 2 — DRAG HINTS
+   L1: notice — every remaining food nudges
+   L3: do — the current source food glows
+========================================= */
+.wish2-food-img.wish2-food-hint-attention {
+  animation: wish2FoodAttention 1.25s ease-in-out 2;
+}
+
+@keyframes wish2FoodAttention {
+  0%, 100% { transform: translateY(0); filter: none; }
   50% {
-    box-shadow:
-      0 0 0 3px rgba(255, 214, 102, 0.75),
-      0 0 24px rgba(255, 214, 102, 0.75);
+    transform: translateY(-6px);
+    filter: drop-shadow(0 5px 8px rgba(120, 80, 30, 0.18));
   }
 }
 
-@keyframes parkHintGlowStrong {
-  0%, 100% {
-    box-shadow:
-      0 0 0 3px rgba(255, 188, 73, 0.65),
-      0 0 22px rgba(255, 188, 73, 0.65);
-  }
-  50% {
-    box-shadow:
-      0 0 0 4px rgba(255, 188, 73, 0.82),
-      0 0 30px rgba(255, 188, 73, 0.82);
-  }
+.wish2-food-img.wish2-food-hint-source {
+  filter:
+    drop-shadow(0 0 10px rgba(255, 214, 102, 0.75))
+    drop-shadow(0 0 18px rgba(255, 214, 102, 0.42));
 }
 
-@keyframes parkHintGlowFinal {
-  0%, 100% {
-    box-shadow:
-      0 0 0 3px rgba(255, 160, 64, 0.75),
-      0 0 30px rgba(255, 160, 64, 0.8),
-      0 0 44px rgba(255, 220, 120, 0.55);
-  }
-  50% {
-    box-shadow:
-      0 0 0 5px rgba(255, 160, 64, 0.92),
-      0 0 40px rgba(255, 160, 64, 0.92),
-      0 0 54px rgba(255, 220, 120, 0.7);
-  }
+.wish2-hint-target-ring {
+  position: absolute;
+  inset: 2px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 205, 90, 0.78);
+  box-shadow:
+    0 0 12px rgba(255, 205, 90, 0.55),
+    0 0 24px rgba(255, 220, 130, 0.35);
+  pointer-events: none;
+  z-index: 3;
 }
 
 /* Ganesha Blowing Animation */
@@ -2457,109 +2504,31 @@ font-weight: 700;
   animation: bubbleWrongShake 0.35s ease, bubbleWrongDim 0.2s ease !important;
 }
 
-/* ========================================= */
-/* WISH 1 IDLE HINT VISUALS                 */
-/* (Classes are applied in ObstacleRemoverGame.jsx) */
-/* ========================================= */
-.dreams-wishes-game .wish1-bubble-shell.hint,
-.dreams-wishes-game .wish1-bubble-shell.hint-glow,
-.dreams-wishes-game .wish1-bubble-shell.hint-strng,
-.dreams-wishes-game .wish1-bubble-shell.hint-strong,
-.dreams-wishes-game .wish1-bubble-shell.hint-final {
-  position: relative;
+/* =========================================
+   WISH 1 — HINTS
+   (Classes are applied in ObstacleRemoverGame.jsx)
+   L1: notice — every bubble gets one neutral nudge
+   L2: understand — semantic VO only, no visual reveal
+   L3: do — the correct kind bubbles are revealed
+========================================= */
+.dreams-wishes-game .wish1-bubble-shell.wish1-hint-attention {
+  animation: wish1CandidateNudge 1.25s ease-in-out 2;
 }
 
-.dreams-wishes-game .wish1-bubble-shell.hint > .bubble {
-  position: relative;
-  filter: drop-shadow(0 0 8px rgba(255, 215, 96, 0.28));
+@keyframes wish1CandidateNudge {
+  0%, 100% { filter: none; }
+  50% { filter: drop-shadow(0 0 9px rgba(255, 215, 96, 0.38)); }
 }
 
-.dreams-wishes-game .wish1-bubble-shell.hint-glow > .bubble,
-.dreams-wishes-game .wish1-bubble-shell.hint-strong > .bubble {
-  position: relative;
-  filter: drop-shadow(0 0 14px rgba(255, 215, 96, 0.55));
-}
-
-.dreams-wishes-game .wish1-bubble-shell.hint-strng > .bubble,
-.dreams-wishes-game .wish1-bubble-shell.hint-final > .bubble {
-  position: relative;
-  filter: drop-shadow(0 0 18px rgba(255, 215, 96, 0.72));
-}
-
-.dreams-wishes-game .wish1-bubble-shell.hint > .bubble::after,
-.dreams-wishes-game .wish1-bubble-shell.hint-glow > .bubble::after,
-.dreams-wishes-game .wish1-bubble-shell.hint-strng > .bubble::after,
-.dreams-wishes-game .wish1-bubble-shell.hint-strong > .bubble::after,
-.dreams-wishes-game .wish1-bubble-shell.hint-final > .bubble::after {
-  content: '';
-  position: absolute;
-  inset: 8px;
-  border-radius: 50%;
-  pointer-events: none;
-  border: 2px solid rgba(255, 215, 96, 0.42);
-  opacity: 0;
-}
-
-.dreams-wishes-game .wish1-bubble-shell.hint-glow > .bubble::after,
-.dreams-wishes-game .wish1-bubble-shell.hint-strong > .bubble::after {
-  border-width: 3px;
-  border-color: rgba(255, 215, 96, 0.78);
-}
-
-.dreams-wishes-game .wish1-bubble-shell.hint-strng > .bubble::after,
-.dreams-wishes-game .wish1-bubble-shell.hint-final > .bubble::after {
-  border-width: 3px;
-  border-color: rgba(255, 215, 96, 0.96);
-}
-
-.dreams-wishes-game .wish1-bubble-shell.hint-strng > .bubble::before,
-.dreams-wishes-game .wish1-bubble-shell.hint-final > .bubble::before {
-  content: '';
-  position: absolute;
-  inset: 3px;
-  border-radius: 50%;
-  border: 2px solid rgba(255, 243, 189, 0.95);
-  pointer-events: none;
-  opacity: 0;
-}
-
-.dreams-wishes-game .wish1-bubble-shell.hint > .bubble::after {
-  animation: wishHintRingSoft 2s ease-in-out 1;
-}
-
-.dreams-wishes-game .wish1-bubble-shell.hint-glow > .bubble::after,
-.dreams-wishes-game .wish1-bubble-shell.hint-strong > .bubble::after {
-  animation: wishHintRingStrong 1.2s ease-in-out 3;
-}
-
-.dreams-wishes-game .wish1-bubble-shell.hint-strng > .bubble::after,
-.dreams-wishes-game .wish1-bubble-shell.hint-final > .bubble::after {
-  animation: wishHintRingFinal 1s ease-in-out 4;
-}
-
-.dreams-wishes-game .wish1-bubble-shell.hint-strng > .bubble::before,
-.dreams-wishes-game .wish1-bubble-shell.hint-final > .bubble::before {
-  animation: wishHintOuterFinal 1.15s ease-in-out 4;
-}
-
-@keyframes wishHintRingSoft {
-  0%, 100% { opacity: 0; transform: scale(1); }
-  35%, 70% { opacity: 0.72; transform: scale(1.03); }
-}
-
-@keyframes wishHintRingStrong {
-  0%, 100% { opacity: 0; transform: scale(1); }
-  45% { opacity: 0.88; transform: scale(1.07); }
-}
-
-@keyframes wishHintRingFinal {
-  0%, 100% { opacity: 0; transform: scale(1); }
-  45% { opacity: 1; transform: scale(1.1); }
-}
-
-@keyframes wishHintOuterFinal {
-  0%, 100% { opacity: 0; transform: scale(1); }
-  50% { opacity: 0.85; transform: scale(1.14); }
+.dreams-wishes-game .wish1-bubble-shell.wish1-hint-final > .bubble {
+  filter:
+    drop-shadow(0 0 12px rgba(255, 215, 96, 0.72))
+    drop-shadow(0 0 22px rgba(255, 215, 96, 0.42));
+  box-shadow:
+    inset 0 8px 14px rgba(255,255,255,0.6),
+    inset 0 -8px 16px rgba(173,126,57,0.28),
+    0 0 0 4px rgba(255,220,130,0.72),
+    0 8px 18px rgba(86,56,24,0.22);
 }
 
 /* ============================================

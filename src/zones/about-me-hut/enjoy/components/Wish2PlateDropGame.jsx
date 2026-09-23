@@ -14,6 +14,7 @@ const PLATE_HEIGHT = 116;   // px (further reduced)
 const Wish2PlateDropGame = ({
   sceneState,
   wish2IdleLevel,
+  wish2TeachingReady,
   firstUnfilledBowlIndex,
   markInteraction,
   handleWish2FoodDrop,
@@ -28,10 +29,27 @@ const Wish2PlateDropGame = ({
   mouseImg,
   peacockImg,
 }) => {
+  // One-time teaching demo — once the child starts a real drag, it must
+  // never auto-reappear (a child who understood immediately shouldn't keep
+  // seeing the hand just because wish2Taps is still 0).
+  const [teachingGestureDismissed, setTeachingGestureDismissed] = React.useState(false);
   const activeFoodPool = sceneState.wish2FoodPool || WISH2_FOOD_KEYS;
   const firstAvailableFoodKey = activeFoodPool[0];
   const pointerStart = WISH2_FOOD_POSITIONS[firstAvailableFoodKey] || { left: '18%', top: '62%' };
   const pointerTarget = WISH2_PLATE_POSITIONS[firstUnfilledBowlIndex] || { left: '50%', top: '62%' };
+
+  const startPoint = {
+    x: Number.parseFloat(pointerStart.left) || 18,
+    y: Number.parseFloat(pointerStart.top) || 62,
+  };
+  const targetPoint = {
+    x: Number.parseFloat(pointerTarget.left) || 50,
+    y: Number.parseFloat(pointerTarget.top) || 62,
+  };
+  const partialTargetPoint = {
+    x: startPoint.x + (targetPoint.x - startPoint.x) * 0.45,
+    y: startPoint.y + (targetPoint.y - startPoint.y) * 0.45,
+  };
 
   return (
     <div className="wish-screen">
@@ -55,23 +73,35 @@ const Wish2PlateDropGame = ({
       <div style={{ position: 'absolute', inset: 0 }}>
         <GestureDemo
           type="drag"
-          from={{
-            x: Number.parseFloat(pointerStart.left) || 18,
-            y: Number.parseFloat(pointerStart.top) || 62,
-          }}
-          to={{
-            x: Number.parseFloat(pointerTarget.left) || 50,
-            y: Number.parseFloat(pointerTarget.top) || 62,
-          }}
+          from={startPoint}
+          to={targetPoint}
           active={
+            !teachingGestureDismissed &&
+            wish2TeachingReady &&
+            wish2IdleLevel === 0 &&
             (sceneState.wish2Taps || 0) === 0 &&
             activeFoodPool.length > 0 &&
             firstUnfilledBowlIndex !== null &&
             firstUnfilledBowlIndex !== undefined
           }
-          idleDelay={150}
+          idleDelay={250}
+          iterations={1}
           zIndex={24}
         />
+
+        {/* Idle rescue — L2 partial drag, L3 the full food-to-plate path. */}
+        {wish2IdleLevel >= 2 && (
+          <GestureDemo
+            key={`wish2-hint-${wish2IdleLevel}-${firstAvailableFoodKey}-${firstUnfilledBowlIndex}`}
+            type="drag"
+            from={startPoint}
+            to={wish2IdleLevel === 2 ? partialTargetPoint : targetPoint}
+            active
+            idleDelay={0}
+            iterations={1}
+            zIndex={24}
+          />
+        )}
 
         {/* Food items */}
         {WISH2_FOOD_KEYS.map((foodKey) => {
@@ -85,11 +115,6 @@ const Wish2PlateDropGame = ({
           return (
             <div
               key={foodKey}
-              className={`
-                ${wish2IdleLevel === 1 ? 'hint' : ''}
-                ${wish2IdleLevel === 2 ? 'hint-strong' : ''}
-                ${wish2IdleLevel === 3 ? 'hint-final' : ''}
-              `}
               style={{
                 position: 'absolute',
                 left: pos.left,
@@ -107,12 +132,20 @@ const Wish2PlateDropGame = ({
                 id={`wish2-food-${foodKey}`}
                 data={{ type: 'wish2-food', foodKey }}
                 disabled={!isAvailable}
-                onDragStart={() => markInteraction()}
+                onDragStart={() => {
+                  setTeachingGestureDismissed(true);
+                  markInteraction();
+                }}
                 style={{ width: '100%', height: '100%' }}
               >
                 <img
                   src={WISH2_FOOD_ASSETS[foodKey]}
                   alt={foodKey}
+                  className={`
+                    wish2-food-img
+                    ${wish2IdleLevel === 1 && isAvailable ? 'wish2-food-hint-attention' : ''}
+                    ${wish2IdleLevel >= 3 && isAvailable && foodKey === firstAvailableFoodKey ? 'wish2-food-hint-source' : ''}
+                  `}
                   style={{
                     width: '100%',
                     height: '100%',
@@ -153,6 +186,9 @@ const Wish2PlateDropGame = ({
             }}
             onClick={() => handleWish2PlateClick(index)}
           >
+            {wish2IdleLevel >= 3 && index === firstUnfilledBowlIndex && !isFilled && (
+              <div className="wish2-hint-target-ring" />
+            )}
             <img
               src={plateImg}
               alt=""

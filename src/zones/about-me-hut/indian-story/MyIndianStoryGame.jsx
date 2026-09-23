@@ -351,6 +351,14 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   const [phase1SpotSparkle, setPhase1SpotSparkle] = useState({ index: null, key: 0 });
   const [isChildHomeContinueEnabled, setIsChildHomeContinueEnabled] = useState(false);
   const [ganeshaHomePromptReady, setGaneshaHomePromptReady] = useState(false);
+
+  // One-time teaching gesture for the magnifying-glass drag — becomes
+  // eligible when the Ganesha Home VO actually starts speaking (synced to
+  // "Move the magnifying glass..."), and is dismissed for good the instant
+  // the child moves it themselves.
+  const [ganeshaHomeGestureReady, setGaneshaHomeGestureReady] = useState(false);
+  const [ganeshaHomeGestureDismissed, setGaneshaHomeGestureDismissed] = useState(false);
+
   const [childHomePromptReady, setChildHomePromptReady] = useState(false);
 
   // Language phase state
@@ -653,6 +661,11 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     setLanguageChildPromptReady(false);
     setFestivalGuessPromptReady(false);
     setFestivalChildPromptReady(false);
+
+    if (phase === STEPS.GANESHA_HOME) {
+      setGaneshaHomeGestureReady(false);
+      setGaneshaHomeGestureDismissed(false);
+    }
   }, [phase]);
 
   const markPromptReady = useCallback((step) => {
@@ -694,6 +707,9 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     const info = voiceMap[phase];
     if (!info?.text) return;
     if (!isAudioOn) {
+      if (phase === STEPS.GANESHA_HOME) {
+        setGaneshaHomeGestureReady(true);
+      }
       markPromptReady(phase);
       return;
     }
@@ -702,14 +718,28 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     const stepVoiceKey = `about-me-hut:my-indian-story:${phase}:${info.text}`;
     const shouldBypassRecentDedupe = isReload && !reloadHandledRef.current;
     if (!shouldBypassRecentDedupe && wasStepVoSpokenRecently(stepVoiceKey)) {
+      if (phase === STEPS.GANESHA_HOME) {
+        setGaneshaHomeGestureReady(true);
+      }
       markPromptReady(phase);
       return;
     }
     speak(info.text, {
       age: childAge,
       moment: info.moment,
+      onStart: () => {
+        if (phase === STEPS.GANESHA_HOME) {
+          setGaneshaHomeGestureReady(true);
+        }
+      },
       onEnd: () => markPromptReady(phase),
-      onError: () => markPromptReady(phase)
+      onError: () => {
+        // Don't strand the visual teaching cue if VO fails.
+        if (phase === STEPS.GANESHA_HOME) {
+          setGaneshaHomeGestureReady(true);
+        }
+        markPromptReady(phase);
+      }
     });
     RECENT_STEP_VO.set(stepVoiceKey, Date.now());
     entryVoPlayedForPhaseRef.current = phaseEntryKey;
@@ -1396,8 +1426,12 @@ const discoverLocation = useCallback((index) => {
   // Handle magnifying glass move
   const handleMglassMove = useCallback((newPosition) => {
     setMglassPosition(newPosition);
-    // Reset idle hint baseline when the child searches, even if nothing is found.
     if (phase === STEPS.GANESHA_HOME) {
+      // The child has understood the drag mechanic. Teaching hand should
+      // never compete with their own finger.
+      setGaneshaHomeGestureDismissed(true);
+
+      // Reset idle hint baseline when the child searches, even if nothing is found.
       if (import.meta.env.DEV) console.log('[Idle Hint] Reset: User dragged magnifying glass');
       setGaneshaHomeIdleLevel(0);
       ganeshaHomeIdleVoiceRef.current = false;
@@ -2045,10 +2079,13 @@ const handleComplete = () => {
               }}
               active={
                 phase === STEPS.GANESHA_HOME &&
+                ganeshaHomeGestureReady &&
+                !ganeshaHomeGestureDismissed &&
                 discoveredLocations.length < PHASE1_LOCATIONS.length &&
                 !showCelebration
               }
               idleDelay={300}
+              iterations={1}
               zIndex={19}
             />
 

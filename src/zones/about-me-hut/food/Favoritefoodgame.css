@@ -1660,39 +1660,33 @@
 }
 
 /* ========================================= */
-/* IDLE HINT ANIMATIONS (10s, 18s, 26s)     */
+/* FAVORITES — GANESHA CHOICE HINTS (10s, 18s, 26s) */
+/* L1: all candidates move equally, no answer given away.           */
+/* L2: semantic clue VO only, no visual reveal.                     */
+/* L3: the correct answer gets a persistent final glow.             */
 /* ========================================= */
-/* Level 1 @ 10s */
-.choice-image.hint {
-  animation: hintGlow 1.2s ease-in-out 1;
+.choice-image.fav-hint-candidates {
+  animation: favCandidateNudge 1.2s ease-in-out 2;
 }
 
-@keyframes hintGlow {
-  0% { filter: drop-shadow(0 0 0 rgba(255, 215, 0, 0)); }
-  50% { filter: drop-shadow(0 0 14px rgba(255, 215, 0, 0.75)); }
-  100% { filter: drop-shadow(0 0 0 rgba(255, 215, 0, 0)); }
+@keyframes favCandidateNudge {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
 }
 
-/* Level 2 @ 18s */
-.choice-image.hint-strong {
-  animation: guidedGlow 1.6s ease-in-out 2;
+.choice-image.fav-hint-final {
+  animation: favFinalReveal 1.35s ease-in-out infinite;
 }
 
-@keyframes guidedGlow {
-  0% { filter: drop-shadow(0 0 0 rgba(255, 215, 0, 0)); }
-  50% { filter: drop-shadow(0 0 18px rgba(255, 215, 0, 0.85)); }
-  100% { filter: drop-shadow(0 0 0 rgba(255, 215, 0, 0)); }
-}
-
-/* Level 3 @ 26s */
-.choice-image.hint-final {
-  animation: finalGlow 2s ease-in-out 3;
-}
-
-@keyframes finalGlow {
-  0% { filter: drop-shadow(0 0 0 rgba(255, 215, 0, 0)); }
-  50% { filter: drop-shadow(0 0 22px rgba(255, 215, 0, 0.92)); }
-  100% { filter: drop-shadow(0 0 0 rgba(255, 215, 0, 0)); }
+@keyframes favFinalReveal {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 7px rgba(255, 215, 90, 0.38));
+  }
+  50% {
+    transform: scale(1.06);
+    filter: drop-shadow(0 0 16px rgba(255, 215, 90, 0.72));
+  }
 }
 
 

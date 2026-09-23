@@ -757,35 +757,45 @@
   transition: transform 0.3s ease;
 }
 
-/* Soft pulse to signal "tap me" */
-.empty-circle-hint-glow {
-  animation: pulseTap 1.6s ease-in-out infinite;
+/* ========================================
+   FAMILY TREE — IDLE HINTS
+   No permanent pre-hint pulsing — circles are quiet until the idle ladder
+   actually fires. Any available family circle is valid here (no
+   correct-answer puzzle), so all three levels apply equally.
+======================================== */
+
+/* L1 — gently show which empty circles can be tapped */
+.empty-circle.tree-hint-attention {
+  animation: treeCircleAttention 1.25s ease-in-out 2;
 }
 
-.empty-circle-hint-glow::before {
-  content: none;
+@keyframes treeCircleAttention {
+  0%, 100% { transform: scale(1); opacity: 0.35; }
+  50% { transform: scale(1.045); opacity: 0.7; }
 }
 
-/* Sparkle removed for ghost-outline behavior */
-.empty-circle-hint-glow::after {
-  content: none;
+/* L2 — VO gives instruction; visual reinforces affordance */
+.empty-circle.tree-hint-reminder {
+  animation: treeCircleReminder 1.3s ease-in-out 2;
 }
 
-@keyframes pulseTap {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-
+@keyframes treeCircleReminder {
+  0%, 100% { transform: scale(1); opacity: 0.4; box-shadow: none; }
   50% {
-    transform: scale(1.04);
-    opacity: 0.82;
+    transform: scale(1.05);
+    opacity: 0.85;
+    box-shadow:
+      0 0 0 3px rgba(255, 215, 110, 0.35),
+      0 0 16px rgba(255, 215, 110, 0.38);
   }
+}
 
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
+/* L3 — final help stays available */
+.empty-circle.tree-hint-final {
+  opacity: 0.9;
+  box-shadow:
+    0 0 0 4px rgba(255, 207, 92, 0.55),
+    0 0 22px rgba(255, 207, 92, 0.58);
 }
 
 

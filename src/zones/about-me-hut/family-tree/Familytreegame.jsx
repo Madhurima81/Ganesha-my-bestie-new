@@ -368,6 +368,9 @@ const FamilyTreeGameContent = ({
  const [ganeshaTapVoComplete, setGaneshaTapVoComplete] = useState(true);
  const prevCountdownRef = useRef(null);
  const childStartTimerRef = useRef(null);
+ const [childStartVoComplete, setChildStartVoComplete] = useState(false);
+ const childIdleHintTimerRef = useRef(null);
+ const childIdleRepeatPlayedRef = useRef(false);
  const tapCircleTimerRef = useRef(null);
  const flipCloseHintTimerRef = useRef(null);
  const transitionContinueInFlightRef = useRef(false);
@@ -898,20 +901,69 @@ sceneState.isSequencePlaying,
  }, [sceneState.placedGaneshaMembers.length, sceneState.gamePhase, sceneState.showFunFactModal, sceneState.flippedMember, sceneState.isSequencePlaying, ganeshaTapVoComplete]);
 
  // ========================================
- // CHILD PHASE: immediate teaching cue (0-150ms), fresh start only — same
- // convention as GANESHA PHASE above, no more 3.5s mid-delay.
+ // CHILD PHASE: immediate entry VO (0-150ms), then ONE repeat at 10s if the
+ // child hasn't started. This is a personal/reflection phase — no 10/18/26
+ // ladder, no glow on the family choices. Just: ask once, wait, ask again,
+ // stop.
  // ========================================
  useEffect(() => {
- if (sceneState.gamePhase === 'childInput' && sceneState.childFamily.length === 0) {
+ if (sceneState.gamePhase !== 'childInput' || sceneState.childFamily.length > 0) {
+ setChildStartVoComplete(false);
+ return;
+ }
+
+ setChildStartVoComplete(false);
+ childIdleRepeatPlayedRef.current = false;
+
  childStartTimerRef.current = scheduleTimeout(() => {
  childStartTimerRef.current = null;
- playVoice('childStart');
+
+ if (!isAudioOn) {
+ setChildStartVoComplete(true);
+ return;
+ }
+
+ playVoice('childStart', () => {
+ setChildStartVoComplete(true);
+ });
  }, 150);
+
  return () => {
  cancelTimer(childStartTimerRef);
  };
+ }, [sceneState.gamePhase, sceneState.childFamily.length, isAudioOn]);
+
+ useEffect(() => {
+ if (childIdleHintTimerRef.current) {
+ clearTimeout(childIdleHintTimerRef.current);
+ childIdleHintTimerRef.current = null;
  }
- }, [sceneState.gamePhase]);
+
+ const shouldRun =
+ sceneState.gamePhase === 'childInput' &&
+ sceneState.childFamily.length === 0 &&
+ !sceneState.showNameModal &&
+ childStartVoComplete &&
+ !childIdleRepeatPlayedRef.current;
+
+ if (!shouldRun) return;
+
+ childIdleHintTimerRef.current = setTimeout(() => {
+ childIdleHintTimerRef.current = null;
+ childIdleRepeatPlayedRef.current = true;
+
+ if (isAudioOn) {
+ playVoice('childStart');
+ }
+ }, 10000);
+
+ return () => {
+ if (childIdleHintTimerRef.current) {
+ clearTimeout(childIdleHintTimerRef.current);
+ childIdleHintTimerRef.current = null;
+ }
+ };
+ }, [sceneState.gamePhase, sceneState.childFamily.length, sceneState.showNameModal, childStartVoComplete, isAudioOn]);
 
  // ========================================
  // TRANSITION PHASE: Play transition VO on phase entry
@@ -1378,10 +1430,9 @@ sceneActions.updateState({ gamePhase: 'transition' });
  <div className={[
  'empty-circle',
  'tap-circle',
-!sceneState.isSequencePlaying? 'empty-circle-hint-glow': '',
- treeIdleHintLevel === 1? 'hint': '',
- treeIdleHintLevel === 2? 'hint-strong': '',
- treeIdleHintLevel >= 3? 'hint-final': ''
+ member.id !== 'myself' && treeIdleHintLevel === 1? 'tree-hint-attention': '',
+ member.id !== 'myself' && treeIdleHintLevel === 2? 'tree-hint-reminder': '',
+ member.id !== 'myself' && treeIdleHintLevel >= 3? 'tree-hint-final': ''
  ].filter(Boolean).join(' ')}>
  </div>
  </div>

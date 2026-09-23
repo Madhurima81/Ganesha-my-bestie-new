@@ -1305,7 +1305,10 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
     // Only run for Ganesha choice phases, and only once that phase's own
     // question VO has finished — otherwise the ladder could fire mid-VO.
-    if (!ganeshaPhases.includes(currentPhase) || showShake || !phaseVoiceDone) {
+    // showShake is deliberately NOT a gate here — a wrong guess gives
+    // feedback but must not destroy/restart the hint clock, or repeated
+    // random guessing would let a child indefinitely postpone real help.
+    if (!ganeshaPhases.includes(currentPhase) || !phaseVoiceDone) {
       if (ganeshaIdleTimerRef.current) clearTimeout(ganeshaIdleTimerRef.current);
       setIdleHintLevel(0);
       idleHintVoiceRef.current = false;
@@ -1347,7 +1350,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     return () => {
       if (ganeshaIdleTimerRef.current) clearTimeout(ganeshaIdleTimerRef.current);
     };
-  }, [sceneState.gamePhase, showShake, resumeHintCycleKey, phaseVoiceDone]);
+  }, [sceneState.gamePhase, resumeHintCycleKey, phaseVoiceDone]);
 
   // Child phase entry VO repeat @ 10s (once)
   useEffect(() => {
@@ -1409,10 +1412,10 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const handleFoodClick = (foodId) => {
     playUiTap();
     if (sceneState.correctChoiceId) return;
-    interruptCurrentVoice();
-    resetIdleHints();
     const food = foods.find(f => f.id === foodId);
     if (food.correct) {
+      interruptCurrentVoice();
+      resetIdleHints();
       playSparkle();
       triggerMiniGesture('food', 1500);
       triggerSparkleFx('all', 1700);
@@ -1443,10 +1446,10 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const handleColorClick = (colorId) => {
     playUiTap();
     if (sceneState.correctChoiceId) return;
-    interruptCurrentVoice();
-    resetIdleHints();
     const color = colors.find(c => c.id === colorId);
     if (color.correct) {
+      interruptCurrentVoice();
+      resetIdleHints();
       playSparkle();
       triggerMiniGesture('color', 1500);
       triggerSparkleFx('all', 1700);
@@ -1473,10 +1476,10 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const handleActivityClick = (activityId) => {
     playUiTap();
     if (sceneState.correctChoiceId) return;
-    interruptCurrentVoice();
-    resetIdleHints();
     const activity = activities.find(a => a.id === activityId);
     if (activity.correct) {
+      interruptCurrentVoice();
+      resetIdleHints();
       playSparkle();
       triggerMiniGesture('activity', 1500);
       triggerSparkleFx('all', 1700);
@@ -1503,10 +1506,10 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const handleFriendClick = (friendId) => {
     playUiTap();
     if (sceneState.correctChoiceId) return;
-    interruptCurrentVoice();
-    resetIdleHints();
     const friend = friends.find(f => f.id === friendId);
     if (friend.correct) {
+      interruptCurrentVoice();
+      resetIdleHints();
       playSparkle();
       triggerMiniGesture('friend', 1500);
       triggerSparkleFx('all', 1700);
@@ -1786,7 +1789,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                   <img
                     src={food.image}
                     alt={food.name}
-                    className={`choice-image ${food.correct && idleHintLevel === 1 ? 'hint' : ''} ${food.correct && idleHintLevel === 2 ? 'hint-strong' : ''} ${food.correct && idleHintLevel === 3 ? 'hint-final' : ''}`}
+                    className={`choice-image ${idleHintLevel === 1 ? 'fav-hint-candidates' : ''} ${food.correct && idleHintLevel >= 3 ? 'fav-hint-final' : ''}`}
                   />
                 </div>
                 <div className="choice-name">{food.name}</div>
@@ -1827,7 +1830,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                   <img
                     src={color.image}
                     alt={color.name}
-                    className={`choice-image ${color.correct && idleHintLevel === 1 ? 'hint' : ''} ${color.correct && idleHintLevel === 2 ? 'hint-strong' : ''} ${color.correct && idleHintLevel === 3 ? 'hint-final' : ''}`}
+                    className={`choice-image ${idleHintLevel === 1 ? 'fav-hint-candidates' : ''} ${color.correct && idleHintLevel >= 3 ? 'fav-hint-final' : ''}`}
                   />
                 </div>
                 <div className="choice-name">{color.name}</div>
@@ -1868,7 +1871,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                   <img
                     src={activity.image}
                     alt={activity.name}
-                    className={`choice-image ${activity.correct && idleHintLevel === 1 ? 'hint' : ''} ${activity.correct && idleHintLevel === 2 ? 'hint-strong' : ''} ${activity.correct && idleHintLevel === 3 ? 'hint-final' : ''}`}
+                    className={`choice-image ${idleHintLevel === 1 ? 'fav-hint-candidates' : ''} ${activity.correct && idleHintLevel >= 3 ? 'fav-hint-final' : ''}`}
                   />
                 </div>
                 <div className="choice-name">{activity.name}</div>
@@ -1921,7 +1924,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                   <img
                     src={friend.image}
                     alt={friend.name}
-                    className={`choice-image ${friend.correct && idleHintLevel === 1 ? 'hint' : ''} ${friend.correct && idleHintLevel === 2 ? 'hint-strong' : ''} ${friend.correct && idleHintLevel === 3 ? 'hint-final' : ''}`}
+                    className={`choice-image ${idleHintLevel === 1 ? 'fav-hint-candidates' : ''} ${friend.correct && idleHintLevel >= 3 ? 'fav-hint-final' : ''}`}
                   />
                 </div>
                 <div className="choice-name">{friend.name}</div>
