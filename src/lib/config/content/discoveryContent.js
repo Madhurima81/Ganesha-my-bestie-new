@@ -107,7 +107,7 @@ export const DISCOVERY_CONTENT = {
 
       ears: {
         title: "Ears",
-        affirmation: "I listen with care.",
+        affirmation: "I can listen for what helps me.",
         icon: 'ganesha-ears'
       },
 

@@ -20,7 +20,7 @@ const eyesCard = {
 const earCard = {
   label: 'Ear',
   icon: '/images/icons/symbol-ears-new.png',
-  affirmation: 'I listen with care.',
+  affirmation: 'I can listen for what helps me.',
   ganeshaLines: [
     'My big ears are shaped like little filters.',
     'They remind me to listen carefully and notice the sounds and words worth keeping.',
