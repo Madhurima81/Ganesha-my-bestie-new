@@ -49,9 +49,6 @@ const LAYOUT = {
   emojiBush: { l: 80, t: -38, s: 100 },
   emojiBranch: { l: 80, t: -38, s: 100 },
   emojiMarsh: { l: 80, t: -38, s: 100 },
-  emojiAngry: { l: -1.9, t: -30.8, s: 100 },
-  emojiSad: { l: 86.9, t: 59.2, s: 100 },
-  emojiWorried: { l: 90.2, t: -18.7, s: 100 },
   bush: { l: 26.9, t: 74.3, s: 100 },
   tree: { l: 76, t: 47.9, s: 120 },
   branch: { l: 67.6, t: 44.8, s: 100 },
@@ -77,17 +74,28 @@ const IDLE_HINT_L2_MS = 18000;
 const IDLE_HINT_L3_MS = 26000;
 
 const VO = {
-  bushStart: 'The flowers are behind a thorny bush. Mooshika feels frustrated. Swipe the branches apart.',
+  bushStart: 'Two flowers are hiding in the leaves. Swipe them apart.',
   bushSuccess: 'There they are! Two flowers.',
   // Timed hints
   bushIdle: 'Swipe the branches apart.',
   bushDirect: 'Swipe all the way to open the branches.',
 
-  branchStart: 'The flowers are too high. Mooshika feels disappointed. Pull the branch down.',
+  branchStart: 'Two flowers are too high for Mooshika. Pull the branch down.',
   branchGesture: 'Pull the branch down and hold it.',
   branchDirect: 'Pull the branch down and keep holding.',
-  branchEarly: 'Keep holding the branch.',
   branchSuccess: 'Got them! Two more flowers.',
+  // Per-error-type tiered feedback (1st = corrective VO, 2nd = physical
+  // only, 3rd = gesture demo + VO again) — see registerBushMistake /
+  // registerBranchMistake below.
+  branchWrongDir1: 'Pull it downward.',
+  branchWrongDir3: 'Pull downward.',
+  branchEarly1: 'Keep pulling down.',
+  branchEarly3: 'Keep pulling down.',
+
+  bushWrongDir1: 'Try swiping sideways.',
+  bushWrongDir3: 'Swipe sideways.',
+  bushTooShort1: 'Swipe a little farther.',
+  bushTooShort3: 'Swipe farther.',
 
   marshStart: 'The last two flowers are across the mud. Guide Mooshika from safe spot to safe spot.',
   marshIdle: 'Guide Mooshika to the next safe spot.',
@@ -96,10 +104,8 @@ const VO = {
   marshWrong: 'Back to the safe spot. Try again.',
   marshDone: 'You made it! All six flowers.',
 
-  bellyFrustrated: 'Mooshika felt frustrated,',
-  bellyDisappointed: 'proud,',
-  bellyWorried: 'worried, and happy.',
-  bellyKeptGoing: 'Lots of feelings came and went.',
+  bellyReflection: 'Mooshika felt upset, sad, nervous, pleased, happy, and excited.',
+  bellyHeld: 'His big belly held all those feelings.',
   bellyAffirmation: 'I can have lots of feelings and keep going.',
 };
 
@@ -242,11 +248,17 @@ export default function FlowerJourneyGame2({
   const teachingTimerRef = useRef(null);
   const spokenHintRef = useRef(new Set());
   const failureCountsRef = useRef({});
+  // When the L2 hint line finished speaking — L3's 8s gap counts from THIS,
+  // not from the original arm point. Without it, L3 was a fixed 26s-from-arm
+  // regardless of how long the L2 line took to speak, so a slow L2 line could
+  // leave only a few real seconds between "hearing L2 finish" and L3 firing.
+  const l2VoiceEndedAtRef = useRef(null);
 
   const effectiveHintLevel = Math.max(idleHintLevel, forcedHintLevel);
 
   const armIdleHints = useCallback((showTeaching = true) => {
     idleArmedAtRef.current = Date.now();
+    l2VoiceEndedAtRef.current = null;
     setIdleHintLevel(0);
     setForcedHintLevel(0);
     failureCountsRef.current[phase] = 0;
@@ -264,6 +276,7 @@ export default function FlowerJourneyGame2({
   const resetIdleBaseline = useCallback((clearEscalation = false) => {
     if (!idleArmedAtRef.current) return;
     idleArmedAtRef.current = Date.now();
+    l2VoiceEndedAtRef.current = null;
     setIdleHintLevel(0);
     setTeachingGesture(false);
     if (clearEscalation) {
@@ -283,6 +296,7 @@ export default function FlowerJourneyGame2({
 
   useEffect(() => {
     idleArmedAtRef.current = null;
+    l2VoiceEndedAtRef.current = null;
     setIdleHintLevel(0);
     setForcedHintLevel(0);
     setTeachingGesture(false);
@@ -303,9 +317,16 @@ export default function FlowerJourneyGame2({
 
       const idleFor = Date.now() - startedAt;
       let nextLevel = 0;
-      if (idleFor >= IDLE_HINT_L3_MS) nextLevel = 3;
-      else if (idleFor >= IDLE_HINT_L2_MS) nextLevel = 2;
+      if (idleFor >= IDLE_HINT_L2_MS) nextLevel = 2;
       else if (idleFor >= IDLE_HINT_L1_MS) nextLevel = 1;
+
+      // L3 is an 8s gap AFTER the L2 line finishes speaking, not a fixed
+      // 26s-from-arm mark — otherwise a slow L2 line eats into the gap the
+      // child actually gets to try again before L3 fires.
+      if (nextLevel === 2 && l2VoiceEndedAtRef.current) {
+        const sinceL2Voice = Date.now() - l2VoiceEndedAtRef.current;
+        if (sinceL2Voice >= (IDLE_HINT_L3_MS - IDLE_HINT_L2_MS)) nextLevel = 3;
+      }
 
       setIdleHintLevel((current) => (current === nextLevel ? current : nextLevel));
     }, 250);
@@ -313,7 +334,9 @@ export default function FlowerJourneyGame2({
     return () => window.clearInterval(tick);
   }, [phase, isActive, isPaused]);
 
-  // L2/L3 spoken once per (phase, level) pair.
+  // L2/L3 spoken once per (phase, level) pair. L2's line is awaited so L3's
+  // 8s gap (above) can start counting from when the child actually hears it
+  // finish, not from the fixed idle-arm timestamp.
   useEffect(() => {
     if (!WORKING_PHASES.includes(phase) || !idleArmedAtRef.current) return;
 
@@ -332,25 +355,47 @@ export default function FlowerJourneyGame2({
     if (!line) return;
 
     spokenHintRef.current.add(key);
-    speak(line);
-  }, [effectiveHintLevel, phase, speak]);
+    if (level === 2) {
+      speakAsync(line).then(() => { l2VoiceEndedAtRef.current = Date.now(); });
+    } else {
+      speak(line);
+    }
+  }, [effectiveHintLevel, phase, speak, speakAsync]);
 
   // ---- BUSH ----
   const [bushIntroReaction, setBushIntroReaction] = useState(false);
   const [bushIntroDone, setBushIntroDone] = useState(false);
+  // Teaching gesture is tied to the ACTION WORD inside the instruction VO,
+  // not to the VO finishing. This flag lets the GestureDemo appear mid-VO
+  // (aligned with "Swipe...") while bushIntroDone (which still gates real
+  // interaction) only flips once the whole line has finished.
+  const [bushTeachingReady, setBushTeachingReady] = useState(false);
   const [bushOpenState, setBushOpenState] = useState(false);
   const [bushSpringing, setBushSpringing] = useState(false);
   const bushSwipeStartRef = useRef(null);
+  // Per-error-type tiered feedback counters — 1st occurrence of a given
+  // mistake gets a corrective VO, 2nd is physical-only, 3rd repeats the VO
+  // and re-shows the teaching gesture. Two distinct error types for Bush
+  // (wrong direction vs. correct direction but too short) each get their
+  // own count, so a child who fixed one problem doesn't get penalized on
+  // the other's counter.
+  const bushWrongDirCountRef = useRef(0);
+  const bushTooShortCountRef = useRef(0);
 
   // ---- BRANCH ----
   const [branchIntroReaction, setBranchIntroReaction] = useState(false);
   const [branchIntroDone, setBranchIntroDone] = useState(false);
+  const [branchTeachingReady, setBranchTeachingReady] = useState(false);
   const [branchComplete, setBranchComplete] = useState(false);
   const [branchPull, setBranchPull] = useState(0);
   const [branchHolding, setBranchHolding] = useState(false);
   const branchDragRef = useRef({ active: false, startY: 0 });
   const branchHoldTimerRef = useRef(null);
-  const branchEarlyWarnedRef = useRef(false);
+  // Same per-error-type tiering as Bush — wrong direction (pulling up) vs.
+  // correct direction but released too early are tracked separately.
+  const branchWrongDirCountRef = useRef(0);
+  const branchEarlyCountRef = useRef(0);
+  const branchWrongDirectionRef = useRef(false);
   const branchMeaningfulPullRef = useRef(false);
   const branchCompletedRef = useRef(false);
 
@@ -358,12 +403,19 @@ export default function FlowerJourneyGame2({
   const marshRef = useRef(null);
   const [marshStep, setMarshStep] = useState(0);
   const [marshIntroDone, setMarshIntroDone] = useState(false);
+  const [marshTeachingReady, setMarshTeachingReady] = useState(false);
   const [marshExiting, setMarshExiting] = useState(false);
-  useEffect(() => { setMarshExiting(false); }, [phase]);
+  useEffect(() => { setMarshExiting(false); setMarshWakeStep(null); }, [phase]);
   const [marshDrag, setMarshDrag] = useState({ active: false, x: 0, y: 0 });
   const [marshWobble, setMarshWobble] = useState(false);
   const [marshSlip, setMarshSlip] = useState(false);
   const marshMeaningfulMoveRef = useRef(false);
+  // Index of the safe-spot clump currently doing its brief "wake-up" pulse
+  // (tiny lift/glow, ~500ms) right after Mooshika lands on the spot before
+  // it — this is what tells the child which spot is next, instead of
+  // printing 1/2/3/4 on the clumps. It's a normal game-state change, not
+  // part of the L1/L2/L3 idle-hint ladder.
+  const [marshWakeStep, setMarshWakeStep] = useState(null);
 
   // ---- flying-flower + basket ----
   const basketTargetRef = useRef(null);
@@ -392,21 +444,41 @@ export default function FlowerJourneyGame2({
     (async () => {
       await wait(350);
       if (cancelled) return;
-      // Tiny approach + recoil from the thorns.
+      // Tiny physical approach + recoil from the thorns — a wordless beat,
+      // not tied to VO timing.
       setBushIntroReaction(true);
       await wait(430);
       if (cancelled) return;
-      setEmotion('angry');
       await wait(470);
       if (cancelled) return;
       setBushIntroReaction(false);
       await wait(150);
       if (cancelled) return;
+
+      // VO.bushStart = "Two flowers are hiding in the leaves. Swipe them
+      // apart." — two short sentences, no named emotion word anymore. At
+      // this scene's TTS rate (~142 wpm + sentence-end pause), the first
+      // sentence (7 words) runs ~3.3s before "Swipe" (word 8, the action
+      // word) begins, so the teaching hand is synced there. The reaction
+      // emoji has no word to sync to, so it just follows the wordless
+      // approach beat immediately.
+      const emotionTimer = window.setTimeout(() => {
+        if (cancelled) return;
+        setEmotion('angry');
+      }, 200);
+      const teachTimer = window.setTimeout(() => {
+        if (cancelled) return;
+        setBushTeachingReady(true);
+        window.setTimeout(() => { if (!cancelled) setBushTeachingReady(false); }, 3800);
+      }, 3300);
+
       await speakAsync(VO.bushStart);
+      clearTimeout(emotionTimer);
+      clearTimeout(teachTimer);
       if (cancelled) return;
       setBushIntroDone(true);
-      // NOW the child gets the mechanic teaching.
-      armIdleHints(true);
+      // Teaching already shown mid-VO above — just arm the 10/18/26 idle ladder.
+      armIdleHints(false);
     })();
     return () => { cancelled = true; };
   }, [phase, isActive, wait, speakAsync, armIdleHints]);
@@ -453,7 +525,12 @@ export default function FlowerJourneyGame2({
     const dx = e.clientX - start.x;
     const dy = e.clientY - start.y;
     const horizontalEnough = Math.abs(dx) > Math.abs(dy);
-    const meaningfulSwipe = horizontalEnough && Math.abs(dx) >= 15;
+    const totalDistance = Math.hypot(dx, dy);
+    // Any real drag counts as a genuine attempt now, not just a horizontal
+    // one — a vertical swipe used to be silently ignored (same as a stray
+    // tap), which left the child with zero feedback for a real-but-wrong
+    // attempt.
+    const meaningfulSwipe = totalDistance >= 15;
     const successfulSwipe = horizontalEnough && Math.abs(dx) >= 45;
 
     // Tiny tap / accidental movement: do nothing, don't reset the clock.
@@ -462,11 +539,29 @@ export default function FlowerJourneyGame2({
     // A genuine attempt happened.
     resetIdleBaseline();
 
-    // Genuine but insufficient swipe — bush resists and springs back.
+    // Genuine but insufficient or wrong-direction swipe — bush resists and
+    // springs back. Two distinct error types, each with its own 1st-VO /
+    // 2nd-silent / 3rd-VO+demo ladder, so the correction is specific to
+    // what actually went wrong.
     if (!successfulSwipe) {
       setBushSpringing(true);
       safeTimeout(() => setBushSpringing(false), 650);
       registerFailedAttempt();
+
+      const countRef = horizontalEnough ? bushTooShortCountRef : bushWrongDirCountRef;
+      countRef.current += 1;
+      const [voFirst, voThird] = horizontalEnough
+        ? [VO.bushTooShort1, VO.bushTooShort3]
+        : [VO.bushWrongDir1, VO.bushWrongDir3];
+
+      if (countRef.current === 1) {
+        speak(voFirst);
+      } else if (countRef.current >= 3) {
+        speak(voThird);
+        setBushTeachingReady(true);
+        safeTimeout(() => setBushTeachingReady(false), 3800);
+      }
+      // 2nd occurrence: physical spring-back only, no VO.
       return;
     }
 
@@ -500,13 +595,32 @@ export default function FlowerJourneyGame2({
       await wait(900);
       if (cancelled) return;
       setBranchIntroReaction(false);
-      setEmotion('sad');
       await wait(200);
       if (cancelled) return;
+
+      // VO.branchStart = "Two flowers are too high for Mooshika. Pull the
+      // branch down." — one sentence before the action word, no named
+      // emotion word anymore. At this scene's TTS rate, the first sentence
+      // (7 words) runs ~3.3s before "Pull" (word 8, the action word)
+      // begins, so the teaching hand is synced there. The reaction emoji
+      // has no word to sync to, so it just follows the wordless stretch
+      // beat immediately.
+      const emotionTimer = window.setTimeout(() => {
+        if (cancelled) return;
+        setEmotion('sad');
+      }, 200);
+      const teachTimer = window.setTimeout(() => {
+        if (cancelled) return;
+        setBranchTeachingReady(true);
+        window.setTimeout(() => { if (!cancelled) setBranchTeachingReady(false); }, 3800);
+      }, 3300);
+
       await speakAsync(VO.branchStart);
+      clearTimeout(emotionTimer);
+      clearTimeout(teachTimer);
       if (cancelled) return;
       setBranchIntroDone(true);
-      armIdleHints(true);
+      armIdleHints(false);
     })();
     return () => { cancelled = true; };
   }, [phase, isActive, wait, speakAsync, armIdleHints]);
@@ -522,11 +636,11 @@ export default function FlowerJourneyGame2({
     setBranchPull(1);
     setBranchComplete(true);
     branchCompletedRef.current = true;
-    setEmotion('excited');
+    setEmotion('relieved');
     speak(VO.branchSuccess);
     safeTimeout(() => {
       setEmotion(null);
-      setEmotionTraces((prev) => ({ ...prev, branch: 'excited' }));
+      setEmotionTraces((prev) => ({ ...prev, branch: 'relieved' }));
       collectChallengeFlowers({ firstEl: branchFlowerOneRef.current, secondEl: branchFlowerTwoRef.current, newFlowerCount: 4 });
       safeTimeout(() => setPhase(PHASES.FLOWER_MARSH), 2200);
     }, 1350);
@@ -537,6 +651,7 @@ export default function FlowerJourneyGame2({
     e.preventDefault();
     e.currentTarget.setPointerCapture?.(e.pointerId);
     branchMeaningfulPullRef.current = false;
+    branchWrongDirectionRef.current = false;
     branchDragRef.current = { active: true, startY: e.clientY };
     clearBranchHold();
   }, [phase, branchIntroDone, branchComplete, isPaused, clearBranchHold]);
@@ -553,6 +668,13 @@ export default function FlowerJourneyGame2({
       resetIdleBaseline();
       // Intro disappointment has done its job.
       setEmotion(null);
+    }
+
+    // A genuine pull the wrong way (up, not down) used to just clamp to 0
+    // and go completely unnoticed — same silent-ignore gap as Bush's
+    // vertical swipe. Flag it so pointer-up can give real feedback.
+    if (!branchMeaningfulPullRef.current && dy <= -15) {
+      branchWrongDirectionRef.current = true;
     }
 
     // Once the hold has started, give some slack (0.55) so a small finger
@@ -573,15 +695,36 @@ export default function FlowerJourneyGame2({
     if (branchComplete) return;
     clearBranchHold();
     if (branchPull > 0.15) {
+      // Correct direction, released too early — its own error-type ladder.
       setEmotion('sad');
       registerFailedAttempt();
-      if (!branchEarlyWarnedRef.current) {
-        branchEarlyWarnedRef.current = true;
-        speak(VO.branchEarly);
+      branchEarlyCountRef.current += 1;
+      if (branchEarlyCountRef.current === 1) {
+        speak(VO.branchEarly1);
+      } else if (branchEarlyCountRef.current >= 3) {
+        speak(VO.branchEarly3);
+        setBranchTeachingReady(true);
+        safeTimeout(() => setBranchTeachingReady(false), 3800);
+      }
+      // 2nd occurrence: sad emotion + physical only, no VO.
+    } else if (branchWrongDirectionRef.current) {
+      // A real attempt happened, it just went the wrong way — give it the
+      // same "genuine attempt" treatment as an insufficient pull, instead
+      // of leaving it completely unacknowledged. Own error-type ladder.
+      resetIdleBaseline();
+      registerFailedAttempt();
+      branchWrongDirCountRef.current += 1;
+      if (branchWrongDirCountRef.current === 1) {
+        speak(VO.branchWrongDir1);
+      } else if (branchWrongDirCountRef.current >= 3) {
+        speak(VO.branchWrongDir3);
+        setBranchTeachingReady(true);
+        safeTimeout(() => setBranchTeachingReady(false), 3800);
       }
     }
+    branchWrongDirectionRef.current = false;
     setBranchPull(0);
-  }, [branchComplete, branchPull, clearBranchHold, registerFailedAttempt, speak]);
+  }, [branchComplete, branchPull, clearBranchHold, registerFailedAttempt, resetIdleBaseline, safeTimeout, speak]);
 
   const marshStopsLive = MARSH_STOPS;
   const marshStartLive = MARSH_START;
@@ -605,10 +748,24 @@ export default function FlowerJourneyGame2({
     (async () => {
       await wait(350);
       if (cancelled) return;
+
+      // "The last two flowers are across the mud. Guide Mooshika from safe
+      // spot to safe spot." — only one short setup clause before "Guide",
+      // so the teaching hand appears sooner than Bush/Branch's ~1.1s.
+      // Unlike Bush/Branch, no nervous emoji here at the start — Marsh
+      // already has its own wobble/wrong-attempt moment mid-crossing where
+      // that emotion actually reads as caused by something.
+      const teachTimer = window.setTimeout(() => {
+        if (cancelled) return;
+        setMarshTeachingReady(true);
+        window.setTimeout(() => { if (!cancelled) setMarshTeachingReady(false); }, 3800);
+      }, 800);
+
       await speakAsync(VO.marshStart);
+      clearTimeout(teachTimer);
       if (cancelled) return;
       setMarshIntroDone(true);
-      armIdleHints(true);
+      armIdleHints(false);
     })();
     return () => { cancelled = true; };
   }, [phase, isActive, wait, speakAsync, armIdleHints]);
@@ -698,6 +855,11 @@ export default function FlowerJourneyGame2({
       // A new safe spot is effectively a new mini-round — fresh clock.
       if (nextStep < MARSH_STOPS.length) {
         resetIdleBaseline(true);
+        // Wake up the next safe spot so it's visually obvious where to go
+        // next, without labeling it — a short pulse, then it settles into
+        // its normal look same as every other still-ahead spot.
+        setMarshWakeStep(nextStep);
+        safeTimeout(() => setMarshWakeStep((cur) => (cur === nextStep ? null : cur)), 550);
       }
 
       if (nextStep === 3) {
@@ -706,10 +868,10 @@ export default function FlowerJourneyGame2({
       if (nextStep === 4) {
         safeTimeout(async () => {
           flyOneFlowerToBasket(marshFlowerTwoRef.current, flowerCream, 6);
-          setEmotion('relieved');
+          setEmotion('excited');
           await wait(2000);
           setEmotion(null);
-          setEmotionTraces((prev) => ({ ...prev, marsh: 'relieved' }));
+          setEmotionTraces((prev) => ({ ...prev, marsh: 'excited' }));
           setMarshExiting(true);
           await wait(1400);
           await speakAsync(VO.marshDone);
@@ -739,42 +901,46 @@ export default function FlowerJourneyGame2({
   }, [marshStep, marshStopsLive, flyOneFlowerToBasket, getCurrentMarshPosition, resetIdleBaseline, registerFailedAttempt, safeTimeout, speak, speakAsync, wait]);
 
   // ---- BELLY beats -> hand off to live SymbolAutoReveal via onComplete ----
+  // bellyBeat 1-6 = that many feeling emojis visible (upset, sad, nervous,
+  // pleased, happy, excited — VO.bellyReflection's naming order, harder
+  // feelings on the left, lighter feelings on the right).
+  // bellyBeat 7 = belly glow on. bellyBeat 8 = glow strong / settled, held
+  // through VO.bellyAffirmation's handoff.
   useEffect(() => {
     if (phase !== PHASES.BELLY_RECOGNITION || !isActive) { setBellyBeat(0); return undefined; }
     let cancelled = false;
+    const beatTimers = [];
     (async () => {
       await wait(600);
       if (cancelled) return;
-      setBellyBeat(1);
-      await speakAsync(VO.bellyFrustrated);
+
+      // All 6 emojis pop in one by one while VO.bellyReflection names them,
+      // ~320ms apart so all six are up by ~2s into the line.
+      for (let i = 1; i <= 6; i++) {
+        beatTimers.push(window.setTimeout(() => { if (!cancelled) setBellyBeat(i); }, i * 320));
+      }
+      await speakAsync(VO.bellyReflection);
+      if (cancelled) return;
+      setBellyBeat(6);
 
       await wait(300);
       if (cancelled) return;
-      setBellyBeat(2);
-      await speakAsync(VO.bellyDisappointed);
-
-      await wait(300);
-      if (cancelled) return;
-      setBellyBeat(3);
-      await speakAsync(VO.bellyWorried);
+      setBellyBeat(7);
+      await speakAsync(VO.bellyHeld);
 
       await wait(450);
       if (cancelled) return;
-      await speakAsync(VO.bellyKeptGoing);
-
-      if (cancelled) return;
-      setBellyBeat(4);
-      await wait(750);
-
-      if (cancelled) return;
-      setBellyBeat(5);
-      await speakAsync(VO.bellyAffirmation);
-
-      await wait(500);
+      setBellyBeat(8);
+      // Don't speak VO.bellyAffirmation here — it's the exact same line the
+      // parent scene's SymbolAutoReveal card says next ("Say with me, I can
+      // have lots of feelings and keep going.") once onComplete hands off.
+      // Speaking it here too made the child hear the identical sentence
+      // twice in a row with no "say it with me" framing on the first one.
+      await wait(1400);
       if (cancelled) return;
       onComplete?.();
     })();
-    return () => { cancelled = true; };
+    return () => { cancelled = true; beatTimers.forEach(clearTimeout); };
   }, [phase, isActive, onComplete]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!isActive) return null;
@@ -804,10 +970,13 @@ export default function FlowerJourneyGame2({
         </div>
       )}
 
-      {/* Persistent emotion traces — small "memory" markers left near each
-          challenge once solved, always rendered (not phase-gated) so they
-          stay visible for the rest of the game, including the belly recap. */}
-      {emotionTraces.bush && (
+      {/* Small "memory" marker left near a challenge right after it's solved
+          — but only for as long as that challenge's own phase is still on
+          screen. Each one is gated to its own phase so it doesn't keep
+          floating above the bush/tree once the game has moved on to the
+          next challenge (e.g. the branch's emoji staying up once marsh
+          starts looked like a stuck/stale emotion). */}
+      {emotionTraces.bush && isBushPhase && (
         <img
           src={emotionPleased}
           alt="Pleased"
@@ -815,18 +984,18 @@ export default function FlowerJourneyGame2({
           style={{ left: `${LAYOUT.bush.l + 11}%`, top: `${LAYOUT.bush.t - 6}%` }}
         />
       )}
-      {emotionTraces.branch && (
+      {emotionTraces.branch && isBranchPhase && (
         <img
-          src={emotionExcited}
-          alt="Excited"
+          src={emotionRelieved}
+          alt="Happy"
           className="fjg2-emotion-trace"
           style={{ left: `${LAYOUT.branch.l + 10}%`, top: `${LAYOUT.branch.t - 6}%` }}
         />
       )}
-      {emotionTraces.marsh && (
+      {emotionTraces.marsh && isMarshPhase && (
         <img
-          src={emotionRelieved}
-          alt="Relieved"
+          src={emotionExcited}
+          alt="Excited"
           className="fjg2-emotion-trace"
           style={{ left: `${LAYOUT.marsh.l + 9}%`, top: `${LAYOUT.marsh.t - 10}%` }}
         />
@@ -913,7 +1082,7 @@ export default function FlowerJourneyGame2({
               key={i}
               src={marshClumpArt}
               alt=""
-              className={`fjg2-marsh-clump ${isMarshPhase && marshIntroDone && effectiveHintLevel >= 3 && i === marshStep ? 'fjg2-marsh-clump--hint-target' : ''}`}
+              className={`fjg2-marsh-clump ${isMarshPhase && marshIntroDone && effectiveHintLevel >= 3 && i === marshStep ? 'fjg2-marsh-clump--hint-target' : ''} ${isMarshPhase && i === marshWakeStep ? 'fjg2-marsh-clump--wake' : ''}`}
               style={{ left: `${stop.x}%`, top: `${stop.y}%` }}
             />
           ))}
@@ -948,19 +1117,19 @@ export default function FlowerJourneyGame2({
               >
                 <MooshikaWithBasket flowerCount={flowerCount} basketRef={basketTargetRef} />
                 {emotion === 'worried' && (
-                  <img src={emotionWorried} alt="Worried" className="fjg2-emotion fjg2-emotion--anchored" style={{ left: `${LAYOUT.emojiMarsh.l}%`, top: `${LAYOUT.emojiMarsh.t}%` }} />
+                  <img src={emotionWorried} alt="Nervous" className="fjg2-emotion fjg2-emotion--anchored" style={{ left: `${LAYOUT.emojiMarsh.l}%`, top: `${LAYOUT.emojiMarsh.t}%` }} />
                 )}
-                {emotion === 'relieved' && (
-                  <img src={emotionRelieved} alt="Relieved" className="fjg2-emotion fjg2-emotion--anchored" style={{ left: `${LAYOUT.emojiMarsh.l}%`, top: `${LAYOUT.emojiMarsh.t}%` }} />
+                {emotion === 'excited' && (
+                  <img src={emotionExcited} alt="Excited" className="fjg2-emotion fjg2-emotion--anchored" style={{ left: `${LAYOUT.emojiMarsh.l}%`, top: `${LAYOUT.emojiMarsh.t}%` }} />
                 )}
               </button>
             );
           })()}
 
-          {isMarshPhase && marshIntroDone && (() => {
+          {isMarshPhase && (marshIntroDone || marshTeachingReady) && (() => {
             const from = getCurrentMarshPosition();
             const target = marshStopsLive[marshStep] || from;
-            const isTeaching = teachingGesture && effectiveHintLevel < 2;
+            const isTeaching = (teachingGesture || marshTeachingReady) && effectiveHintLevel < 2;
 
             // L2 shows direction but stops short; L3 / teaching reaches the
             // actual next safe spot.
@@ -972,7 +1141,7 @@ export default function FlowerJourneyGame2({
               };
             }
 
-            const showDemo = !isPaused && !marshDrag.active && (teachingGesture || effectiveHintLevel >= 2);
+            const showDemo = !isPaused && !marshDrag.active && (teachingGesture || marshTeachingReady || effectiveHintLevel >= 2);
 
             return (
               <GestureDemo
@@ -981,7 +1150,8 @@ export default function FlowerJourneyGame2({
                 to={{ x: to.x, y: to.y }}
                 active={showDemo}
                 idleDelay={0}
-                iterations={1}
+                replayKey={effectiveHintLevel}
+                iterations={2}
                 zIndex={30}
               />
             );
@@ -997,16 +1167,16 @@ export default function FlowerJourneyGame2({
         >
           <MooshikaWithBasket flowerCount={flowerCount} basketRef={basketTargetRef} />
           {isBushPhase && emotion === 'angry' && (
-            <img src={emotionAngry} alt="Frustrated" className="fjg2-emotion fjg2-emotion--anchored" style={{ left: `${LAYOUT.emojiBush.l}%`, top: `${LAYOUT.emojiBush.t}%` }} />
+            <img src={emotionAngry} alt="Upset" className="fjg2-emotion fjg2-emotion--anchored" style={{ left: `${LAYOUT.emojiBush.l}%`, top: `${LAYOUT.emojiBush.t}%` }} />
           )}
           {isBushPhase && emotion === 'pleased' && (
             <img src={emotionPleased} alt="Pleased" className="fjg2-emotion fjg2-emotion--anchored" style={{ left: `${LAYOUT.emojiBush.l}%`, top: `${LAYOUT.emojiBush.t}%` }} />
           )}
           {isBranchPhase && emotion === 'sad' && (
-            <img src={emotionSad} alt="Disappointed" className="fjg2-emotion fjg2-emotion--anchored" style={{ left: `${LAYOUT.emojiBranch.l}%`, top: `${LAYOUT.emojiBranch.t}%` }} />
+            <img src={emotionSad} alt="Sad" className="fjg2-emotion fjg2-emotion--anchored" style={{ left: `${LAYOUT.emojiBranch.l}%`, top: `${LAYOUT.emojiBranch.t}%` }} />
           )}
-          {isBranchPhase && emotion === 'excited' && (
-            <img src={emotionExcited} alt="Excited" className="fjg2-emotion fjg2-emotion--anchored" style={{ left: `${LAYOUT.emojiBranch.l}%`, top: `${LAYOUT.emojiBranch.t}%` }} />
+          {isBranchPhase && emotion === 'relieved' && (
+            <img src={emotionRelieved} alt="Happy" className="fjg2-emotion fjg2-emotion--anchored" style={{ left: `${LAYOUT.emojiBranch.l}%`, top: `${LAYOUT.emojiBranch.t}%` }} />
           )}
         </div>
       )}
@@ -1021,20 +1191,34 @@ export default function FlowerJourneyGame2({
         type="drag"
         from={{ x: LAYOUT.bush.l + 6, y: LAYOUT.bush.t }}
         to={{ x: LAYOUT.bush.l - 6, y: LAYOUT.bush.t }}
-        active={!isPaused && bushIntroDone && isBushPhase && !bushOpenState && (teachingGesture || effectiveHintLevel >= 2)}
+        active={!isPaused && isBushPhase && !bushOpenState && (bushTeachingReady || (bushIntroDone && (teachingGesture || effectiveHintLevel >= 2)))}
         idleDelay={0}
-        iterations={1}
+        replayKey={effectiveHintLevel}
+        iterations={2}
         zIndex={30}
       />
       {/* pull-down and hold are two separate animations with no compound
           type — showing both left two overlapping hand graphics on screen.
           pull-down-hold is one hand: press, pull, KEEP HOLDING, release. */}
+      {/* Unlike .fjg2-bush / .fjg2-marsh-area, .fjg2-branch has no
+          translate(-X%,-Y%) centering transform in CSS — its left/top
+          mark the button's TOP-LEFT corner, not the visible branch
+          artwork. LAYOUT.branch (67.6, 44.8) is that corner; the actual
+          branch/flower cluster renders lower-right of it. (78.9, 57.2) is
+          measured from the branch's own rendered box using the same
+          local-percent convention as branchFlower1 (49.1%, 34.4% of the
+          branch box) converted to stage percent — verified against the
+          live DOM, matches where the flowers actually sit. */}
       <GestureDemo
         type="pull-down-hold"
-        from={{ x: LAYOUT.branch.l, y: LAYOUT.branch.t }}
-        to={{ x: LAYOUT.branch.l, y: LAYOUT.branch.t + 15 }}
-        active={!isPaused && branchIntroDone && isBranchPhase && !branchComplete && (teachingGesture || effectiveHintLevel >= 2)}
+        from={{ x: 78.9, y: 57.2 }}
+        to={{ x: 78.9, y: 72.2 }}
+        active={!isPaused && isBranchPhase && !branchComplete && (branchTeachingReady || (branchIntroDone && (teachingGesture || effectiveHintLevel >= 2)))}
         idleDelay={0}
+        replayKey={effectiveHintLevel}
+        // A hold-type gesture already shows the full press → ring → release
+        // cycle in one pass (~3s) — playing it twice looks like two separate
+        // presses instead of one sustained hold, so keep this at 1.
         iterations={1}
         zIndex={30}
       />
@@ -1044,7 +1228,7 @@ export default function FlowerJourneyGame2({
         <div className="fjg2-belly">
           <div className="fjg2-belly-ganesha" style={{ left: `${LAYOUT.ganesha.l}%`, top: `${LAYOUT.ganesha.t}%`, transform: `translate(-50%, -50%) scale(${LAYOUT.ganesha.s / 100})` }}>
             <img src={ganeshaArt} alt="Ganesha" />
-            {bellyBeat >= 4 && <div className={`fjg2-belly-glow ${bellyBeat >= 5 ? 'fjg2-belly-glow--strong' : ''}`} aria-hidden="true" />}
+            {bellyBeat >= 7 && <div className={`fjg2-belly-glow ${bellyBeat >= 8 ? 'fjg2-belly-glow--strong' : ''}`} aria-hidden="true" />}
           </div>
 
           <div
@@ -1052,24 +1236,12 @@ export default function FlowerJourneyGame2({
             style={{ left: `${LAYOUT.mooshikaBelly.l}%`, top: `${LAYOUT.mooshikaBelly.t}%`, '--layout-scale': (LAYOUT.mooshikaBelly.s || 100) / 100 }}
           >
             <MooshikaWithBasket flowerCount={6} basketRef={basketTargetRef} />
-            {bellyBeat >= 1 && bellyBeat < 6 && (
-              <img
-                src={emotionAngry} alt="Frustrated" className="fjg2-belly-emotion fjg2-belly-emotion--angry"
-                style={{ left: `${LAYOUT.emojiAngry.l}%`, top: `${LAYOUT.emojiAngry.t}%`, right: 'auto', transform: `scale(${LAYOUT.emojiAngry.s / 100})` }}
-              />
-            )}
-            {bellyBeat >= 2 && bellyBeat < 6 && (
-              <img
-                src={emotionSad} alt="Disappointed" className="fjg2-belly-emotion fjg2-belly-emotion--sad"
-                style={{ left: `${LAYOUT.emojiSad.l}%`, top: `${LAYOUT.emojiSad.t}%`, transform: `scale(${LAYOUT.emojiSad.s / 100})` }}
-              />
-            )}
-            {bellyBeat >= 3 && bellyBeat < 6 && (
-              <img
-                src={emotionWorried} alt="Worried" className="fjg2-belly-emotion fjg2-belly-emotion--worried"
-                style={{ left: `${LAYOUT.emojiWorried.l}%`, top: `${LAYOUT.emojiWorried.t}%`, right: 'auto', transform: `scale(${LAYOUT.emojiWorried.s / 100})` }}
-              />
-            )}
+            {bellyBeat >= 1 && <img src={emotionAngry} alt="Upset" className="fjg2-belly-emotion fjg2-belly-emotion--upset" />}
+            {bellyBeat >= 2 && <img src={emotionSad} alt="Sad" className="fjg2-belly-emotion fjg2-belly-emotion--sad" />}
+            {bellyBeat >= 3 && <img src={emotionWorried} alt="Nervous" className="fjg2-belly-emotion fjg2-belly-emotion--nervous" />}
+            {bellyBeat >= 4 && <img src={emotionPleased} alt="Pleased" className="fjg2-belly-emotion fjg2-belly-emotion--pleased" />}
+            {bellyBeat >= 5 && <img src={emotionRelieved} alt="Happy" className="fjg2-belly-emotion fjg2-belly-emotion--happy" />}
+            {bellyBeat >= 6 && <img src={emotionExcited} alt="Excited" className="fjg2-belly-emotion fjg2-belly-emotion--excited" />}
           </div>
         </div>
       )}

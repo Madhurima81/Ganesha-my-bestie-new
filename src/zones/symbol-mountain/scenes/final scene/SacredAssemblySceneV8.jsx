@@ -48,7 +48,6 @@ import sacredBackground from './assets/images/final_symbol_background.webp';
 // Images - Ganesha Forms
 import ganeshaStone from './assets/images/ganesha-stone.webp';
 import ganeshaDivine from './assets/images/ganesha-divine.webp';
-import purpleHeart from './assets/images/purple-heart.svg';
 
 // Images - Symbol Icons
 import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-new.webp';
@@ -535,7 +534,6 @@ const SacredAssemblyScene = ({
 
 const SCENE_IMAGES = [
   sacredBackground,
-  purpleHeart,
   symbolMooshikaColored,
   symbolModakColored,
   symbolBellyColored,
@@ -567,12 +565,22 @@ const SacredAssemblyContent = ({
   // const [hintUsed, setHintUsed] = useState(false);
   const [isOrbsRunning, setIsOrbsRunning] = useState(false);
   const [celebrationZoneId, setCelebrationZoneId] = useState(null);
-  const [hideProgressBar, setHideProgressBar] = useState(false);
   const [isPageVisible, setIsPageVisible] = useState(() =>
     typeof document === 'undefined' ? true : !document.hidden
   );
   const [showHintDebug, setShowHintDebug] = useState(false);
   const [selectedHintDebugZone, setSelectedHintDebugZone] = useState(null);
+  // Dev-only: lets someone drag the selected zone's hitbox to a better
+  // spot in the Hint Debug panel instead of hand-editing ganeshaZones.js
+  // and reloading. Keyed by zoneId -> a position override that fully
+  // replaces that zone's `position` (see getZonePosition below).
+  const [zonePositionOverrides, setZonePositionOverrides] = useState({});
+  const ganeshaContainerRef = useRef(null);
+  const zoneDragStateRef = useRef(null);
+  const getZonePosition = useCallback((zoneId) => {
+    const zone = BODY_PART_ZONES.find((z) => z.id === zoneId);
+    return zonePositionOverrides[zoneId] || zone?.position || {};
+  }, [zonePositionOverrides]);
   const completionModalContent = getCompletionModal(zoneId, sceneId);
   const { isAudioOn, toggleAudio } = useAudioPreference();
   const {
@@ -625,6 +633,85 @@ const SacredAssemblyContent = ({
     () => SACRED_SYMBOLS.find((s) => s.id === sceneState?.currentAssociationSymbol),
     [sceneState?.currentAssociationSymbol]
   );
+  // Drag the selected zone's debug box to reposition it live. Converts the
+  // drop point to percent-of-container top/left, drops right/bottom/transform
+  // (so a right-anchored zone like "ears" becomes left-anchored once moved —
+  // visually identical, just simpler to read back out).
+  const handleZoneDebugDragStart = useCallback((e, zoneId) => {
+    const container = ganeshaContainerRef.current;
+    if (!container) return;
+    e.preventDefault();
+    const boxRect = e.currentTarget.getBoundingClientRect();
+    zoneDragStateRef.current = {
+      zoneId,
+      offsetX: e.clientX - boxRect.left,
+      offsetY: e.clientY - boxRect.top,
+      widthPx: boxRect.width,
+      heightPx: boxRect.height,
+    };
+
+    const onMove = (moveEvent) => {
+      const drag = zoneDragStateRef.current;
+      if (!drag) return;
+      const containerRect = container.getBoundingClientRect();
+      const leftPx = moveEvent.clientX - drag.offsetX - containerRect.left;
+      const topPx = moveEvent.clientY - drag.offsetY - containerRect.top;
+      const leftPct = Math.max(0, Math.min(100, (leftPx / containerRect.width) * 100));
+      const topPct = Math.max(0, Math.min(100, (topPx / containerRect.height) * 100));
+      setZonePositionOverrides((prev) => ({
+        ...prev,
+        [drag.zoneId]: {
+          top: `${topPct.toFixed(1)}%`,
+          left: `${leftPct.toFixed(1)}%`,
+          width: `${Math.round(drag.widthPx)}px`,
+          height: `${Math.round(drag.heightPx)}px`,
+        },
+      }));
+    };
+    const onUp = () => {
+      zoneDragStateRef.current = null;
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+    };
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+  }, []);
+
+  // Arrow keys nudge the selected zone by ~0.3% per press (~5px on a
+  // typical scene width) for fine-tuning after a drag.
+  useEffect(() => {
+    if (!showHintDebug || !selectedHintDebugZone) return undefined;
+    const onKeyDown = (e) => {
+      const step = e.shiftKey ? 1.5 : 0.3;
+      let dx = 0, dy = 0;
+      if (e.key === 'ArrowLeft') dx = -step;
+      else if (e.key === 'ArrowRight') dx = step;
+      else if (e.key === 'ArrowUp') dy = -step;
+      else if (e.key === 'ArrowDown') dy = step;
+      else return;
+      e.preventDefault();
+      const current = getZonePosition(selectedHintDebugZone);
+      const container = ganeshaContainerRef.current;
+      const containerRect = container?.getBoundingClientRect();
+      const boxEl = container?.querySelector('.zone-hint-overlay-debug');
+      const boxRect = boxEl?.getBoundingClientRect();
+      if (!containerRect || !boxRect) return;
+      const currentLeftPct = ((boxRect.left - containerRect.left) / containerRect.width) * 100;
+      const currentTopPct = ((boxRect.top - containerRect.top) / containerRect.height) * 100;
+      setZonePositionOverrides((prev) => ({
+        ...prev,
+        [selectedHintDebugZone]: {
+          top: `${(currentTopPct + dy).toFixed(1)}%`,
+          left: `${(currentLeftPct + dx).toFixed(1)}%`,
+          width: current.width || `${Math.round(boxRect.width)}px`,
+          height: current.height || `${Math.round(boxRect.height)}px`,
+        },
+      }));
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [showHintDebug, selectedHintDebugZone, getZonePosition]);
+
   const zoneDebugLabels = useMemo(() => {
     const labels = {};
     BODY_PART_ZONES.forEach((zone) => {
@@ -641,7 +728,16 @@ const SacredAssemblyContent = ({
   const [roundHintLevel, setRoundHintLevel] = useState(0);
   const [showChoiceAffordance, setShowChoiceAffordance] = useState(false);
   const hintVoPlayedRef = useRef({ l2: false, l3: false });
+  // When the L2 hint line finished speaking — L3's 8s gap counts from THIS,
+  // not from a fixed 26s-from-arm mark, so a slow L2 line doesn't eat into
+  // the real gap the child gets before L3 fires.
+  const l2VoiceEndedAtRef = useRef(null);
+  const l3TimerRef = useRef(null);
   const DIRECT_TARGET_HINT = 'Tap the glowing part.';
+  // Wrong attempt #3 gets one generic nudge — NOT the semantic/exact-target
+  // hints (those stay owned by the normal idle-timed L2/L3 ladder below).
+  // This just tells the child their tap registered and to try somewhere else.
+  const WRONG_TAP_GUIDANCE = 'Try another place.';
   const [flyingSymbol, setFlyingSymbol] = useState(null);
   const [ganeshaReaction, setGaneshaReaction] = useState('');
   const devPhaseIndexRef = useRef(0);
@@ -736,6 +832,11 @@ const SacredAssemblyContent = ({
   const playDirectTargetHint = useCallback(() => {
     if (!isAudioOn) return;
     speakGanesha(DIRECT_TARGET_HINT, { age: 7, style: 'child', moment: 'encouragement' });
+  }, [isAudioOn, speakGanesha]);
+
+  const playWrongTapGuidance = useCallback(() => {
+    if (!isAudioOn) return;
+    speakGanesha(WRONG_TAP_GUIDANCE, { age: 7, style: 'child', moment: 'encouragement' });
   }, [isAudioOn, speakGanesha]);
 
   const replayVoiceForCurrentPhase = useCallback(() => {
@@ -901,6 +1002,7 @@ const SacredAssemblyContent = ({
     const hintTimers = [];
 
     const armHintLadder = () => {
+      l2VoiceEndedAtRef.current = null;
       hintTimers.push(safeSetTimeout(() => {
         setRoundHintLevel((level) => Math.max(level, 1));
       }, 10000));
@@ -909,9 +1011,14 @@ const SacredAssemblyContent = ({
         setRoundHintLevel((level) => Math.max(level, 2));
       }, 18000));
 
-      hintTimers.push(safeSetTimeout(() => {
+      // Fallback L3 — replaced by the L2-voice-completion timer below once
+      // the L2 hint line actually finishes speaking; kept in case it's
+      // muted or has no VO, so L3 still eventually fires.
+      const fallback = safeSetTimeout(() => {
         setRoundHintLevel((level) => Math.max(level, 3));
-      }, 26000));
+      }, 26000);
+      hintTimers.push(fallback);
+      l3TimerRef.current = fallback;
     };
 
     // Card VO plays first; the idle-hint ladder only starts counting once
@@ -969,8 +1076,19 @@ const SacredAssemblyContent = ({
     if (roundHintLevel >= 2 && !hintVoPlayedRef.current.l2) {
       hintVoPlayedRef.current.l2 = true;
       const hintVoKey = HINT_VO_MAP[currentSymbol.id];
+      // L3's 8s gap counts from when this L2 line finishes speaking, not
+      // from the fixed 26s-from-arm fallback armed in armHintLadder above.
+      const onL2VoiceEnded = () => {
+        l2VoiceEndedAtRef.current = Date.now();
+        if (l3TimerRef.current) clearTimeout(l3TimerRef.current);
+        l3TimerRef.current = safeSetTimeout(() => {
+          setRoundHintLevel((level) => Math.max(level, 3));
+        }, 8000);
+      };
       if (hintVoKey) {
-        playSceneVoice(hintVoKey, null, { replayOnReturn: false });
+        playSceneVoice(hintVoKey, onL2VoiceEnded, { replayOnReturn: false });
+      } else {
+        onL2VoiceEnded();
       }
     }
 
@@ -1394,27 +1512,21 @@ const SacredAssemblyContent = ({
   };
 
   // NEW: Handle wrong placement
-  // A repeated wrong pick means one specific misunderstanding: the child
-  // doesn't know WHICH body part. Escalate the hint ladder directly instead
-  // of waiting out the idle clock.
+  // Wrong #1 and #2: local wobble + ripple + wrong SFX only, no narration —
+  // a normal exploration miss doesn't need a voice line. Wrong #3: one
+  // generic "Try another place." nudge, confirming the tap registered
+  // without revealing the semantic clue or the exact target. If the child
+  // is still stuck after that, the normal idle-timed L1/L2/L3 hint ladder
+  // (armed elsewhere) escalates on its own pace — this does NOT jump the
+  // ladder itself anymore.
   const handleWrongPlacement = () => {
     if (!sceneState || !sceneActions) return;
 
     const nextWrongAttempts = (sceneState.wrongAttempts || 0) + 1;
     sceneActions.updateState({ wrongAttempts: nextWrongAttempts });
 
-    // Wrong #1: local wiggle + wrong SFX already happened. No narration needed.
-    if (nextWrongAttempts === 1) return;
-
-    // Wrong #2: promote directly to the semantic clue.
-    if (nextWrongAttempts === 2) {
-      setRoundHintLevel((level) => Math.max(level, 2));
-      return;
-    }
-
-    // Wrong #3+: direct WHERE guidance.
-    if (nextWrongAttempts >= 3) {
-      setRoundHintLevel((level) => Math.max(level, 3));
+    if (nextWrongAttempts === 3) {
+      playWrongTapGuidance();
     }
   };
 
@@ -1484,15 +1596,6 @@ const SacredAssemblyContent = ({
     }
 
   }, []); // run once on mount; avoids repeated card/audio re-triggers
-
-  // Hide progress bar 1s after all 8 symbols placed � keeps fireworks clean
-  useEffect(() => {
-    const placedCount = Object.keys(sceneState?.placedSymbols || {}).length;
-    if (placedCount >= 8 && !hideProgressBar) {
-      const t = safeSetTimeout(() => setHideProgressBar(true), 1000);
-      return () => clearTimeout(t);
-    }
-  }, [sceneState?.placedSymbols, hideProgressBar]);
 
   const getGaneshaOpacity = () => {
     const placedCount = Object.keys(sceneState?.placedSymbols || {}).length;
@@ -1695,40 +1798,6 @@ const SacredAssemblyContent = ({
             showButton={true}
           />
 
-          {/* HEARTS PROGRESS BAR */}
-          {sceneState.welcomeShown && !hideProgressBar && (
-            <div className="hearts-progress-container">
-              <div className="hearts-row">
-                {[0, 1, 2, 3, 4, 5, 6, 7].map((index) => {
-                  const isCompleted = Object.keys(sceneState.placedSymbols || {}).length > index;
-                  const isJustCompleted = Object.keys(sceneState.placedSymbols || {}).length - 1 === index;
-
-                  return (
-                    <div
-                      key={`heart-${index}`}
-                      className={`progress-heart ${isCompleted ? 'filled' : 'empty'} ${isJustCompleted ? 'just-completed' : ''}`}
-                    >
-                      <img src={purpleHeart} alt="" className="heart-icon" aria-hidden="true" />
-                      {isJustCompleted && (
-                        <div className="heart-sparkle-burst">
-                          <SparkleAnimation
-                            type="star"
-                            count={8}
-                            color="#8A2BE2"
-                            size={4}
-                            duration={1000}
-                            fadeOut={true}
-                            area="contained"
-                          />
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
           {/* CREAM SYMBOL CARD � slides right before zones appear */}
           {sceneState?.currentAssociationSymbol && cardPhase !== 'hidden' && (() => {
             const isFlippedCard =
@@ -1774,6 +1843,7 @@ const SacredAssemblyContent = ({
             {/* Ganesha � ganesha-sit.svg with click zones */}
             {!showSceneCompletion && (
             <div
+              ref={ganeshaContainerRef}
               className={`ganesha-assembly-container ${ganeshaReaction}`}
             >
               {/* Ganesha inline SVG � zones glow via CSS, opacity grows as symbols placed */}
@@ -1783,6 +1853,7 @@ const SacredAssemblyContent = ({
                 activeZoneId={activeTargetZoneId}
                 baseOpacity={getGaneshaOpacity()}
                 showChoiceAffordance={cardPhase === 'play' && showChoiceAffordance}
+                zoneOverrides={zonePositionOverrides}
               />
 
               {/* Hint glow only � uses SAME position as hitbox, perfect alignment */}
@@ -1795,7 +1866,7 @@ const SacredAssemblyContent = ({
                     key={`hint-${zoneId}`}
                     className="zone-hint-overlay"
                     data-hint-level={state}
-                    style={zone.position}
+                    style={getZonePosition(zoneId)}
                   />
                 );
               })}
@@ -1805,7 +1876,9 @@ const SacredAssemblyContent = ({
                   key={`hint-debug-${zone.id}`}
                   className="zone-hint-overlay zone-hint-overlay-debug"
                   data-hint-level="hint-final"
-                  style={zone.position}
+                  style={{ ...getZonePosition(zone.id), cursor: 'grab' }}
+                  onPointerDown={(e) => handleZoneDebugDragStart(e, zone.id)}
+                  title="Drag to reposition. Arrow keys to nudge (Shift = bigger step)."
                 >
                   <div className="zone-hint-text">{zoneDebugLabels[zone.id]}</div>
                 </div>
@@ -2131,7 +2204,7 @@ const SacredAssemblyContent = ({
                       top: '192px',
                       right: '18px',
                       zIndex: 9999,
-                      width: '150px',
+                      width: '190px',
                       background: 'rgba(66, 34, 106, 0.94)',
                       border: '2px solid rgba(255,255,255,0.88)',
                       borderRadius: '18px',
@@ -2160,6 +2233,54 @@ const SacredAssemblyContent = ({
                         {zoneDebugLabels[zone.id]}
                       </button>
                     ))}
+
+                    {selectedHintDebugZone && (
+                      <>
+                        <div
+                          style={{
+                            color: '#fff',
+                            fontSize: '10px',
+                            fontFamily: 'monospace',
+                            background: 'rgba(0,0,0,0.25)',
+                            borderRadius: '8px',
+                            padding: '6px 8px',
+                            wordBreak: 'break-all',
+                            lineHeight: 1.4
+                          }}
+                        >
+                          {(() => {
+                            const pos = getZonePosition(selectedHintDebugZone);
+                            return Object.entries(pos).map(([k, v]) => `${k}: '${v}'`).join(', ') || 'no override';
+                          })()}
+                        </div>
+                        <div style={{ display: 'flex', gap: '6px' }}>
+                          <button
+                            type="button"
+                            style={{ flex: 1, border: 'none', borderRadius: '999px', padding: '6px 8px', background: '#4CAF50', color: '#fff', fontSize: '11px', fontWeight: 800, cursor: 'pointer' }}
+                            onClick={() => {
+                              const pos = getZonePosition(selectedHintDebugZone);
+                              const snippet = `position: { ${Object.entries(pos).map(([k, v]) => `${k}: '${v}'`).join(', ')} }`;
+                              navigator.clipboard?.writeText(snippet);
+                            }}
+                          >
+                            Copy
+                          </button>
+                          <button
+                            type="button"
+                            style={{ flex: 1, border: 'none', borderRadius: '999px', padding: '6px 8px', background: 'rgba(255,255,255,0.14)', color: '#fff', fontSize: '11px', fontWeight: 800, cursor: 'pointer' }}
+                            onClick={() => {
+                              setZonePositionOverrides((prev) => {
+                                const next = { ...prev };
+                                delete next[selectedHintDebugZone];
+                                return next;
+                              });
+                            }}
+                          >
+                            Reset
+                          </button>
+                        </div>
+                      </>
+                    )}
                   </div>
                 )}
               </>

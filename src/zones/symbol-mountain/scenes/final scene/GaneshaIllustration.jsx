@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { GANESHA_ZONES, ZONE_VISUAL_Z_INDEX, ZONE_HITBOX_Z_INDEX } from '../../../ganeshaZones';
 import ganeshaBase from './assets/images/ganesha-base.png';
 import ganeshaEyes from './assets/images/ganesha-eyes.png';
@@ -21,11 +21,11 @@ const ZONE_PARTS = {
   base: ganeshaMooshika
 };
 
-// Build flat hitbox list from shared GANESHA_ZONES config.
+// Build flat hitbox list from a (possibly overridden) zones array.
 // One zone can have multiple hit areas (e.g., ears left + right).
-const buildHitboxes = () => {
+const buildHitboxes = (zones) => {
   const list = [];
-  GANESHA_ZONES.forEach(zone => {
+  zones.forEach(zone => {
     list.push({ hitId: `${zone.id}-main`, zoneId: zone.id, box: zone.position });
     (zone.extraHitboxes || []).forEach(extra => {
       list.push({ hitId: extra.hitId, zoneId: zone.id, box: extra.box });
@@ -34,9 +34,19 @@ const buildHitboxes = () => {
   return list;
 };
 
-const ZONE_HITBOXES = buildHitboxes();
+const GaneshaIllustration = ({ zoneStates = {}, onZoneClick, activeZoneId = null, baseOpacity = 0.2, showChoiceAffordance = false, zoneOverrides = {} }) => {
+  // Dev "Hint Debug" panel can drag a zone to a new spot without touching
+  // ganeshaZones.js — when it does, that override fully replaces the
+  // zone's `position` here so hitbox, tap-point dot, and choice-affordance
+  // all move together.
+  const zones = useMemo(
+    () => GANESHA_ZONES.map((zone) => (
+      zoneOverrides[zone.id] ? { ...zone, position: zoneOverrides[zone.id] } : zone
+    )),
+    [zoneOverrides]
+  );
+  const zoneHitboxes = useMemo(() => buildHitboxes(zones), [zones]);
 
-const GaneshaIllustration = ({ zoneStates = {}, onZoneClick, activeZoneId = null, baseOpacity = 0.2, showChoiceAffordance = false }) => {
   return (
     <div className="ganesha-illustration-breathing" style={{ width: '100%', height: '100%', position: 'relative' }}>
       <img
@@ -77,12 +87,41 @@ const GaneshaIllustration = ({ zoneStates = {}, onZoneClick, activeZoneId = null
       })}
 
       {/* -------------------------------------------------------
+          8 TAP TARGETS — faint anchor points, visible from the start
+          (unlike the L1/L2-only affordance below), one per GANESHA_ZONES
+          entry, centered on that zone's existing hitbox rect so they stay
+          in sync with GaneshaIllustration's own click targets. Wobble on
+          wrong tap, brief pulse then fade on correct tap.
+         ------------------------------------------------------- */}
+      {zones.map((zone, index) => {
+        const state = zoneStates[zone.id] || 'idle';
+        return (
+          <div
+            key={`tap-point-${zone.id}`}
+            style={{ position: 'absolute', ...zone.position, pointerEvents: 'none' }}
+            aria-hidden="true"
+          >
+            {/* .assembly-tap-hitbox is a generous 52px anchor for the small
+                visual marker — purely a sizing/centering wrapper here since
+                the actual click target is the big ganesha-hitbox-btn below;
+                pointer-events stays off so it never competes with that. */}
+            <div className="assembly-tap-hitbox">
+              <div
+                className={`assembly-tap-point ${state === 'wrong' ? 'is-wrong' : ''} ${state === 'correct' ? 'is-correct' : ''} ${state === 'placed' ? 'is-filled' : ''}`}
+                style={{ pointerEvents: 'none', '--tap-delay': `${index * 140}ms` }}
+              />
+            </div>
+          </div>
+        );
+      })}
+
+      {/* -------------------------------------------------------
           L1 / L2 neutral affordance
 
           Every still-available part gets the SAME quiet cue.
           Nothing here indicates the correct answer.
          ------------------------------------------------------- */}
-      {showChoiceAffordance && GANESHA_ZONES.map((zone) => {
+      {showChoiceAffordance && zones.map((zone) => {
         const state = zoneStates[zone.id] || 'idle';
         const unavailable = state === 'placed' || state === 'correct';
         if (unavailable) return null;
@@ -98,7 +137,7 @@ const GaneshaIllustration = ({ zoneStates = {}, onZoneClick, activeZoneId = null
       })}
 
       <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
-        {ZONE_HITBOXES.map(({ hitId, zoneId, box }) => {
+        {zoneHitboxes.map(({ hitId, zoneId, box }) => {
           const state = zoneStates[zoneId] || 'idle';
           const disabled = state === 'placed';
 

@@ -48,7 +48,9 @@
    L3 = stronger directional/opening cue
    --------------------------------------------------------- */
 .fjg2-bush--hint-l1 {
-  animation: fjg2BushHintL1 1.8s ease-in-out infinite;
+  /* L1 is an attention cue, not a mini-demo of the swipe — 2 cycles then
+     settle, not a loop for the whole 10s->18s window. */
+  animation: fjg2BushHintL1 1.8s ease-in-out 2;
 }
 @keyframes fjg2BushHintL1 {
   0%, 100% { transform: scaleX(1); }
@@ -67,7 +69,8 @@
    transform, because that transform already carries live pull state.
    --------------------------------------------------------- */
 .fjg2-branch--hint-l1 > img:first-child {
-  animation: fjg2BranchHintL1 1.8s ease-in-out infinite;
+  /* 2 tiny dips, then stop — not a repeated mini pull-down demo. */
+  animation: fjg2BranchHintL1 1.8s ease-in-out 2;
 }
 @keyframes fjg2BranchHintL1 {
   0%, 100% { transform: translateY(0); }
@@ -78,7 +81,8 @@
    MARSH L1 — Mooshika gives a tiny ready-to-move lift.
    --------------------------------------------------------- */
 .fjg2-marsh-mooshika--hint-l1 .fjg2-basket-character {
-  animation: fjg2MarshHintL1 1.8s ease-in-out infinite;
+  /* 2 small nudges, then settle. */
+  animation: fjg2MarshHintL1 1.8s ease-in-out 2;
 }
 @keyframes fjg2MarshHintL1 {
   0%, 100% { transform: translateY(0); }
@@ -96,12 +100,26 @@
   50% { transform: translate(-50%, -65%) scale(1.06); filter: drop-shadow(0 0 12px rgba(255, 215, 100, 0.75)); }
 }
 
+/* One-shot "wake-up" pulse on whichever safe spot just became the next one
+   — tells the child where to go next without a printed number. Not part of
+   the L1/L2/L3 idle-hint ladder; it fires on every landing regardless of
+   hint level. */
+.fjg2-marsh-clump--wake {
+  animation: fjg2SafeSpotWake 550ms ease-out;
+}
+@keyframes fjg2SafeSpotWake {
+  0% { transform: translate(-50%, -65%) scale(1); filter: drop-shadow(0 0 0 rgba(255, 215, 100, 0)); }
+  35% { transform: translate(-50%, -70%) scale(1.1); filter: drop-shadow(0 0 14px rgba(255, 215, 100, 0.85)); }
+  100% { transform: translate(-50%, -65%) scale(1); filter: drop-shadow(0 0 0 rgba(255, 215, 100, 0)); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .fjg2-bush--hint-l1,
   .fjg2-bush--hint-l3,
   .fjg2-branch--hint-l1 > img:first-child,
   .fjg2-marsh-mooshika--hint-l1 .fjg2-basket-character,
-  .fjg2-marsh-clump--hint-target {
+  .fjg2-marsh-clump--hint-target,
+  .fjg2-marsh-clump--wake {
     animation: none;
   }
 }
@@ -437,6 +455,12 @@
 .fjg2-belly-mooshika > img:first-child { width: 100%; height: auto; display: block; }
 
 .fjg2-belly-emotion { position: absolute; width: clamp(46px, 4.2vw, 68px); height: auto; animation: fjg2EmotionIn 400ms ease both; }
-.fjg2-belly-emotion--angry { left: -60%; top: -55%; }
-.fjg2-belly-emotion--worried { right: -60%; top: -55%; }
-.fjg2-belly-emotion--sad { left: 30%; top: 90%; }
+/* Left column = harder feelings (upset -> nervous -> sad), right column =
+   lighter feelings (pleased -> happy -> excited) — a balanced 3-left/3-right
+   arc around Mooshika so nothing overlaps his face. */
+.fjg2-belly-emotion--upset { left: -62%; top: -58%; }
+.fjg2-belly-emotion--nervous { left: -68%; top: 10%; }
+.fjg2-belly-emotion--sad { left: -62%; top: 78%; }
+.fjg2-belly-emotion--pleased { right: -62%; top: -58%; }
+.fjg2-belly-emotion--happy { right: -68%; top: 10%; }
+.fjg2-belly-emotion--excited { right: -62%; top: 78%; }

@@ -455,7 +455,10 @@
   pointer-events: none;
   /* Do not animate transform here — some zone positions use
      translate(-50%), supplied inline from GANESHA_ZONES. */
-  animation: sacredChoiceAffordance 1.8s ease-in-out infinite;
+  /* 8 zones pulsing at once for the full L1+L2 window reads as visually
+     noisy — 2-3 soft common pulses, then settle (still visible, just
+     static), same as the rest of the hint ladder. */
+  animation: sacredChoiceAffordance 1.8s ease-in-out 3;
 }
 
 @keyframes sacredChoiceAffordance {
@@ -466,6 +469,136 @@
   50% {
     background: radial-gradient(circle, rgba(255, 238, 190, 0.12) 0%, rgba(255, 224, 150, 0.06) 44%, transparent 68%);
     box-shadow: 0 0 12px rgba(255, 224, 150, 0.12);
+  }
+}
+
+/* ========================================
+   SACRED ASSEMBLY — 8 TAP TARGETS
+
+   Faint, always-visible anchor points centered on each of the 8
+   GANESHA_ZONES hitboxes — discoverable from the start, unlike
+   .ganesha-choice-affordance above which only shows at hint L1/L2. Wobble
+   + ripple on a wrong tap tells the child the tap registered without a
+   VO line (VO stays silent until wrong attempt 3 — see handleWrongPlacement).
+======================================== */
+/* Generous invisible tap area — kept separate from the small visual
+   marker below so the marker can read as a soft "socket" cue without
+   forcing kids to hit a tiny 34px target. */
+.assembly-tap-hitbox {
+  position: absolute;
+  width: 54px;
+  height: 54px;
+  transform: translate(-50%, -50%);
+}
+
+.assembly-tap-point {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+/* soft but visible lavender halo — gold blended into the scene's warm
+   amber/cream background, so this switches to a cool lavender family
+   instead for contrast without going back to a hard white ring. */
+.assembly-tap-point::before {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(238, 228, 255, 0.58) 0%,
+    rgba(200, 172, 245, 0.30) 38%,
+    rgba(186, 142, 240, 0.14) 62%,
+    rgba(186, 142, 240, 0) 78%
+  );
+  box-shadow:
+    0 0 0 1px rgba(220, 200, 250, 0.32),
+    0 0 10px rgba(186, 142, 240, 0.30);
+}
+
+/* central anchor point */
+.assembly-tap-point::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(230, 215, 255, 0.92);
+  box-shadow:
+    0 0 0 3px rgba(200, 172, 245, 0.18),
+    0 0 8px rgba(186, 142, 240, 0.5);
+}
+
+/* breathing — staggered per-dot via a --tap-delay custom property set
+   inline (see GaneshaIllustration.jsx) so all 8 don't pulse in lockstep
+   like a control panel. */
+.assembly-tap-point:not(.is-filled)::before {
+  animation: assemblyAnchorBreath 2.6s ease-in-out infinite;
+  animation-delay: var(--tap-delay, 0ms);
+}
+
+@keyframes assemblyAnchorBreath {
+  0%, 100% { transform: scale(0.92); opacity: 0.65; }
+  50% { transform: scale(1.12); opacity: 1; }
+}
+
+.assembly-tap-point:active {
+  transform: translate(-50%, -50%) scale(0.92);
+}
+
+.assembly-tap-point.is-wrong {
+  animation: assemblyAnchorWrong 280ms ease;
+}
+
+@keyframes assemblyAnchorWrong {
+  0% { transform: translate(-50%, -50%) translateX(0); }
+  25% { transform: translate(-50%, -50%) translateX(-3px); }
+  55% { transform: translate(-50%, -50%) translateX(3px); }
+  80% { transform: translate(-50%, -50%) translateX(-1px); }
+  100% { transform: translate(-50%, -50%) translateX(0); }
+}
+
+.assembly-tap-point.is-wrong::before {
+  animation: assemblyWrongRipple 340ms ease-out;
+}
+
+@keyframes assemblyWrongRipple {
+  0% { transform: scale(0.8); opacity: 0.8; }
+  100% { transform: scale(1.45); opacity: 0; }
+}
+
+.assembly-tap-point.is-correct::before {
+  animation: assemblyAnchorCorrect 420ms ease-out;
+}
+
+@keyframes assemblyAnchorCorrect {
+  0% { transform: scale(0.9); opacity: 0.55; }
+  45% { transform: scale(1.32); opacity: 1; }
+  100% { transform: scale(1); opacity: 0; }
+}
+
+.assembly-tap-point.is-filled {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .assembly-tap-point:not(.is-filled)::before {
+    animation: none;
+  }
+  .assembly-tap-point.is-wrong,
+  .assembly-tap-point.is-correct::before {
+    animation-duration: 1ms;
   }
 }
 
@@ -485,6 +618,9 @@
   background: radial-gradient(circle, rgba(255, 92, 92, 0.28) 0%, rgba(255, 92, 92, 0.12) 45%, transparent 74%);
   border: 3px solid rgba(255, 92, 92, 0.88);
   box-shadow: 0 0 0 4px rgba(255, 92, 92, 0.16), 0 0 28px rgba(255, 92, 92, 0.26);
+  /* Overrides .zone-hint-overlay's pointer-events: none — this one is
+     dev-only and needs to receive the drag. */
+  pointer-events: auto;
 }
 
 .zone-hint-overlay-debug .zone-hint-text {
@@ -1739,100 +1875,6 @@
   width: 100px;
   pointer-events: none;
   animation: flyToTarget 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-/* ===================================
-   HEARTS PROGRESS BAR
-   =================================== */
-
-.hearts-progress-container {
-  position: fixed;
-  top: 86px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1000;
-  text-align: center;
-}
-
-.assembly-progress {
-  display: none !important;
-}
-
-.hearts-row {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-}
-
-.progress-heart {
-  font-size: 36px;
-  position: relative;
-  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  line-height: 1;
-}
-
-.progress-heart.empty {
-  opacity: 0.4;
-  transform: scale(0.9);
-}
-
-.progress-heart.filled {
-  opacity: 1;
-  filter: drop-shadow(0 0 6px rgba(186, 142, 240, 0.45));
-  transform: scale(1);
-  animation: heartPulse 0.6s ease-out;
-}
-
-.heart-icon {
-  display: block;
-  width: 28px;
-  height: 28px;
-  object-fit: contain;
-  opacity: 0.96;
-  filter: none;
-}
-
-.progress-heart.filled .heart-icon {
-  opacity: 1;
-  filter: drop-shadow(0 0 4px rgba(186, 142, 240, 0.35));
-}
-
-.progress-heart.just-completed {
-  animation: heartPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-}
-
-.heart-sparkle-burst {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-}
-
-@keyframes heartPulse {
-  0% {
-    transform: scale(0.9);
-  }
-  50% {
-    transform: scale(1.15);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-@keyframes heartPop {
-  0% {
-    transform: scale(0.5) rotate(-10deg);
-    opacity: 0;
-  }
-  50% {
-    transform: scale(1.3) rotate(5deg);
-  }
-  100% {
-    transform: scale(1) rotate(0deg);
-    opacity: 1;
-  }
 }
 
 /* ===================================
