@@ -190,7 +190,7 @@ export default function NirvighnamGame({
   const currentHintTiming = HINT_TIMINGS[nextObstacleId] || HINT_TIMINGS.stone;
   // Gated on the instruction VO (introComplete), not on the teaching
   // gesture finishing — the clock shouldn't wait on an animation.
-  const { hintLevel, markInteraction } = useRepeatedHintCycle({
+  const { hintLevel, markInteraction, markLevel2VoiceEnded } = useRepeatedHintCycle({
     enabled: isActive && !isPaused && phase === 'play' && introComplete,
     stageKey: phase === 'play' ? `clear-${cleared.length}` : phase,
     initialDelay: currentHintTiming.l1,
@@ -295,8 +295,8 @@ export default function NirvighnamGame({
     lastHintVoRef.current = onceKey;
 
     stopSceneVoice?.();
-    playSceneLine?.(voiceKey);
-  }, [hintLevel, isPaused, nextObstacleId, obstacleHasProgress, phase, playSceneLine, stopSceneVoice]);
+    playSceneLine?.(voiceKey, markLevel2VoiceEnded);
+  }, [hintLevel, isPaused, nextObstacleId, obstacleHasProgress, phase, playSceneLine, stopSceneVoice, markLevel2VoiceEnded]);
 
   useEffect(() => {
     onPhaseCompleteRef.current = onPhaseComplete;
@@ -914,7 +914,9 @@ export default function NirvighnamGame({
         {partialGestureConfig && phase === 'play' && !showDebugPanel && teachingComplete && hintLevel === 2 && (
           <GestureDemo
             key={`nirv-partial-${nextObstacleId}`}
-            type={partialGestureConfig.type}
+            // Hold obstacles get a filling progress ring at L2 instead of
+            // the plain teaching-demo ring, so L2 reads as "partway there".
+            type={partialGestureConfig.type === 'hold' ? 'hold-progress-l2' : partialGestureConfig.type}
             from={partialGestureConfig.from}
             to={partialGestureConfig.to}
             active
@@ -928,7 +930,8 @@ export default function NirvighnamGame({
         {fullGestureConfig && phase === 'play' && !showDebugPanel && teachingComplete && hintLevel >= 3 && (
           <GestureDemo
             key={`nirv-rescue-${nextObstacleId}`}
-            type={fullGestureConfig.type}
+            // Hold obstacles get a fully-filling progress ring at L3.
+            type={fullGestureConfig.type === 'hold' ? 'hold-progress-l3' : fullGestureConfig.type}
             from={fullGestureConfig.from}
             to={fullGestureConfig.to}
             active

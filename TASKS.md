@@ -210,6 +210,37 @@ Before every task, Claude Code must:
   audio-toggle edge case) — added a `lotusBloomed` VO key and wired `speakPondPrompt` calls
   at the actual reveal-card moments so both play on every normal playthrough now.
 
+- [x] T60 · Symbol Mountain harness-QA-driven pass (2026-09-24) — see CHANGELOG 2026-09-24 for
+  full detail. Root-cause fixes: L3 idle-hint threshold was a fixed 26s-from-arm timer
+  regardless of whether L2's own line had finished speaking (now an 8s gap counted from L2's
+  actual voice-end, fixed in `useRepeatedHintCycle` + every scene's own inline ladder —
+  About Me Hut and all 8 Shloka River scenes included, not just Symbol Mountain); GestureDemo's
+  replay logic only re-armed on an `active` false→true transition so it never replayed L2→L3
+  (added `replayKey` prop, wired everywhere); added new `hold-progress-l2`/`hold-progress-l3`
+  GestureDemo types (an actual filling ring, not the plain teaching-demo ring, at each
+  escalation level). Modak Bush/Branch teaching-gesture timing + emotion sync recalibrated
+  against real VO word timing; Branch gesture was anchored to the wrong DOM point (fixed via
+  live measurement); duplicate affirmation VO removed; emotion-trace persistence past its own
+  phase fixed. Pond: same timing recalibration for Rock/Reeds/Lotus; Rock/Lotus double-ring
+  bug fixed (scene's own ring + GestureDemo's ring both rendering at L2/L3); Lotus gesture
+  anchor fixed (was 6-7% off); trunk-reveal and lotus-bloom reveal cards no longer cut off
+  their own success VO; symbol discovery order (sidebar + mandala) corrected to match actual
+  play order (trunk before lotus). Eyes: generic "tap the glowing bushes" hint instead of
+  naming one object; mango-completion race fixed; self-managed fade-out added. Ears: intro
+  double-play guard; wrong-tap now replays the sound; completion VO no longer cut; added a
+  correct-tap acknowledgement; L3 glow strengthened (was applying per computed style but
+  visually imperceptible). Tusk: removed a Ganesha character image from the completion reveal
+  (now just tusk symbol → card); baby bird hops once happy; idle "breathe" animation added to
+  every animal sprite across Eyes/Ears/Tusk. Design pass: capped most L1 hint pulses to 2-3
+  repetitions instead of looping the full 10s→18s window (hold-type rings stay continuous,
+  per design review). New **wrong-action feedback rule** (locked in DECISIONS.md): per
+  distinct error type, 1st occurrence = physical feedback + specific corrective VO, 2nd =
+  physical only, 3rd = physical + gesture demo + VO again — applied to Bush/Branch (2 error
+  types each) and Calm Mooshika/Pond Rock/Pond Lotus (early-release). Sacred Assembly's own
+  JSX changes from this session (hearts→symbol-progress-row, sparkle removal, Ganesha removal)
+  were lost to a concurrent edit on that file and are NOT included — see CHANGELOG entry's
+  "Open" section; only its unrelated L1-pulse-cap CSS fix survived. Device-tested via the
+  in-app harness and live browser checks only; no real-device pass yet.
 
 
 

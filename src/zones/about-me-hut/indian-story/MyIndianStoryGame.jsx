@@ -2085,7 +2085,7 @@ const handleComplete = () => {
                 !showCelebration
               }
               idleDelay={300}
-              iterations={1}
+              iterations={2}
               zIndex={19}
             />
 

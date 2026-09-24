@@ -50,6 +50,49 @@
   .gesture-demo-hold-ring { animation: none !important; opacity: 0.8; }
 }
 
+/* L2/L3 hold rescue — a real filling progress ring, not a copy of the
+   teaching demo's expand-and-fade ring. Circumference for r=42 in a 0..100
+   viewBox is 2*pi*42 ~= 263.9; L2 fills to 55%, L3 fills all the way. */
+.gesture-demo-progress-ring {
+  position: absolute;
+  width: clamp(48px, 8.5vw, 84px);
+  height: clamp(48px, 8.5vw, 84px);
+  transform: translate(-50%, -50%) rotate(-90deg);
+  overflow: visible;
+  pointer-events: none;
+}
+.gesture-demo-progress-ring-track {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.35);
+  stroke-width: 7;
+}
+.gesture-demo-progress-ring-fill {
+  fill: none;
+  stroke: rgba(255, 214, 92, 0.95);
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-dasharray: 263.9;
+  stroke-dashoffset: 263.9;
+  filter: drop-shadow(0 0 6px rgba(255, 214, 92, 0.6));
+}
+
+@keyframes gd-progress-ring-partial {
+  0%   { stroke-dashoffset: 263.9; opacity: 0; }
+  10%  { stroke-dashoffset: 263.9; opacity: 1; }
+  85%  { stroke-dashoffset: 118.75; opacity: 1; }
+  100% { stroke-dashoffset: 118.75; opacity: 0; }
+}
+@keyframes gd-progress-ring-full {
+  0%   { stroke-dashoffset: 263.9; opacity: 0; }
+  10%  { stroke-dashoffset: 263.9; opacity: 1; }
+  85%  { stroke-dashoffset: 0; opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gesture-demo-progress-ring-fill { animation: none !important; stroke-dashoffset: 118.75; opacity: 0.9; }
+}
+
 .gesture-demo-trail {
   position: absolute;
   inset: 0;

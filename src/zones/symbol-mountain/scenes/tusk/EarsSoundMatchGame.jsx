@@ -21,7 +21,7 @@ import elephantHappyWaterImg from './assets/images/ears-game-v2/elephant_happy_w
 import cowTiredImg from './assets/images/ears-game-v2/cow_tired.webp';
 import cowHungryImg from './assets/images/ears-game-v2/cow_hungry.webp';
 import cowEatingGrassImg from './assets/images/ears-game-v2/cow_eating_grass.webp';
-import cowHappyChewingImg from './assets/images/ears-game-v2/cow_happy_chewing.webp';
+import cowHappyChewingImg from './assets/images/ears-game-v2/cow_happy_chewing_new.png';
 import soundWaterDrip from './assets/audio/ear_water_drip.wav';
 import soundGrassRustle from './assets/audio/ear_grass_rustle.wav';
 import soundBirdAmbient from './assets/audio/ear_bird_forest_ambient.wav';
@@ -152,7 +152,6 @@ const INTRO_DELAY_MS = 700;
 // swaps to the next, and a real pause before the next round begins.
 const REVEAL_FRAME_MS = 950;
 const NEXT_ROUND_DELAY_MS = 2000;
-const COMPLETE_DELAY_MS = 1900;
 const HINT_REPLAY_MS = 10000;
 const HINT_TEXT_MS = 18000;
 const HINT_TARGET_MS = 26000;
@@ -199,6 +198,7 @@ const EarsSoundMatchGame = ({
   const [activeZoneId, setActiveZoneId] = useState(null);
   const [completedRounds, setCompletedRounds] = useState([]);
   const [wrongZoneId, setWrongZoneId] = useState(null);
+  const [correctZoneId, setCorrectZoneId] = useState(null);
   const [feedback, setFeedback] = useState('');
   const [revealFrameByAnimal, setRevealFrameByAnimal] = useState({});
   const [hintZoneId, setHintZoneId] = useState(null);
@@ -214,6 +214,10 @@ const EarsSoundMatchGame = ({
   const runIdRef = useRef(0);
   const chooseStartedAtRef = useRef(Date.now());
   const hintStageRef = useRef(0);
+  // When the L2 clue + sound finished — L3's 8s gap counts from THIS, not
+  // from chooseStartedAtRef, so a slow L2 clue doesn't eat into the real
+  // gap the child gets before L3 fires.
+  const l2FinishedAtRef = useRef(null);
   const wrongCountRef = useRef(0);
   const completedRef = useRef(false);
   const stageRef = useRef(null);
@@ -480,6 +484,7 @@ const EarsSoundMatchGame = ({
         setActiveZoneId(null);
         setPhase(PHASE.CHOOSING);
         hintStageRef.current = 0;
+        l2FinishedAtRef.current = null;
         wrongCountRef.current = 0;
         setFeedback(VO_TEXTS.choose);
         // The 10s choosing clock must start only once "Now choose the
@@ -527,11 +532,18 @@ const EarsSoundMatchGame = ({
     setZonesHidden(false);
     chooseStartedAtRef.current = Date.now();
     hintStageRef.current = 0;
+    l2FinishedAtRef.current = null;
     wrongCountRef.current = 0;
   }, [clearTimers, stopAudio]);
 
+  // Guard against the intro (reset + opening VO + round-1 sequence) firing
+  // more than once for a single real mount — without this, any double
+  // invocation of this effect (e.g. React 18 dev double-invoke, or a parent
+  // remount) plays the intro VO and round-1 zone sounds twice, overlapping.
+  const introStartedRef = useRef(false);
   useEffect(() => {
-    if (!isActive) return;
+    if (!isActive || introStartedRef.current) return;
+    introStartedRef.current = true;
     resetGame();
     speak(VO_TEXTS.intro, () => schedule(() => playSequence(ROUNDS[0]), INTRO_DELAY_MS));
   }, [isActive, playSequence, resetGame, schedule, speak]);
@@ -579,7 +591,9 @@ const EarsSoundMatchGame = ({
     hintStageRef.current = 2;
     showFeedback(targetRound.hintClue);
     speak(targetRound.hintClue, () => {
-      playSound(targetRound.sounds[targetRound.targetZoneId], '', null, 0.68);
+      playSound(targetRound.sounds[targetRound.targetZoneId], '', () => {
+        l2FinishedAtRef.current = Date.now();
+      }, 0.68);
     });
   }, [playSound, showFeedback, speak]);
 
@@ -589,7 +603,12 @@ const EarsSoundMatchGame = ({
     const tick = () => {
       const waitingMs = Date.now() - chooseStartedAtRef.current;
 
-      if (waitingMs >= HINT_TARGET_MS && hintStageRef.current < 3) {
+      // L3 is an 8s gap AFTER the L2 clue + sound finish, not a fixed
+      // 26s-from-arm mark — so it never overlaps or cuts off L2's own line.
+      if (
+        waitingMs >= HINT_TARGET_MS && hintStageRef.current < 3 &&
+        l2FinishedAtRef.current && (Date.now() - l2FinishedAtRef.current) >= (HINT_TARGET_MS - HINT_TEXT_MS)
+      ) {
         triggerHintL3(round);
         return;
       }
@@ -623,6 +642,11 @@ const EarsSoundMatchGame = ({
     setActiveZoneId(null);
     setHintZoneId(null);
     setWrongZoneId(null);
+    // A correct tap used to just sit there silently while the reveal played
+    // out elsewhere — nothing acknowledged the zone the child actually got
+    // right, which read as an abrupt jump straight to the animal's reveal.
+    setCorrectZoneId(animalRound.targetZoneId);
+    schedule(() => setCorrectZoneId(null), 1400);
     setRevealFrameByAnimal((prev) => ({ ...prev, [animalRound.id]: 0 }));
     speak(VO_TEXTS[animalRound.id]);
 
@@ -644,7 +668,6 @@ const EarsSoundMatchGame = ({
       if (nextIndex >= ROUNDS.length) {
         setPhase(PHASE.COMPLETE);
         showFeedback(VO_TEXTS.complete);
-        speak(VO_TEXTS.complete);
         // Let the listening zones fade, then remove them so the payoff is
         // just the two resolved, happy animals — no leftover clutter.
         schedule(() => setZonesHidden(true), 700);
@@ -655,15 +678,20 @@ const EarsSoundMatchGame = ({
         };
         onAnimalPositionsChange?.(positions);
 
-        schedule(() => {
-          if (completedRef.current) return;
-          completedRef.current = true;
-          onGameComplete?.({
-            matchedAnimals: ROUNDS.map((item) => item.id),
-            totalMatched: ROUNDS.length,
-            animalPositions: positions
-          });
-        }, COMPLETE_DELAY_MS);
+        // Wait for "You listened carefully and found what mattered."
+        // (~3.3s) to actually finish before handing off — the old fixed
+        // COMPLETE_DELAY_MS (1900ms) was cutting it off mid-sentence.
+        speak(VO_TEXTS.complete, () => {
+          schedule(() => {
+            if (completedRef.current) return;
+            completedRef.current = true;
+            onGameComplete?.({
+              matchedAnimals: ROUNDS.map((item) => item.id),
+              totalMatched: ROUNDS.length,
+              animalPositions: positions
+            });
+          }, 900);
+        });
         return;
       }
 
@@ -679,7 +707,12 @@ const EarsSoundMatchGame = ({
     if (zoneId !== round.targetZoneId) {
       setWrongZoneId(zoneId);
       showFeedback(VO_TEXTS.neutral);
-      speak(VO_TEXTS.neutral);
+      // "Listen again." should actually give the child something to listen
+      // to again — replay the target sound once the line finishes, instead
+      // of just saying the phrase and leaving them to guess again blind.
+      speak(VO_TEXTS.neutral, () => {
+        playSound(round.sounds[round.targetZoneId], '', null, 0.68);
+      });
       schedule(() => setWrongZoneId(null), 520);
 
       // A wrong choice is exploration, not a mistake to punish — but
@@ -697,7 +730,7 @@ const EarsSoundMatchGame = ({
     setCompletedRounds((prev) => [...prev, round.id]);
     showFeedback(VO_TEXTS[round.id]);
     startReveal(round);
-  }, [debugMode, phase, round, schedule, showFeedback, speak, startReveal, triggerHintL2, triggerHintL3]);
+  }, [debugMode, phase, playSound, round, schedule, showFeedback, speak, startReveal, triggerHintL2, triggerHintL3]);
 
   if (hideElements || !isActive) return null;
 
@@ -749,6 +782,7 @@ const EarsSoundMatchGame = ({
         const isPlaying = activeZoneId === zone.id;
         const isWrong = wrongZoneId === zone.id;
         const isHinted = hintZoneId === zone.id;
+        const isCorrect = correctZoneId === zone.id;
         const locked = phase !== PHASE.CHOOSING;
         const isComplete = phase === PHASE.COMPLETE;
         // left has no hidden/revealed pair — it's plain decoration throughout.
@@ -764,7 +798,7 @@ const EarsSoundMatchGame = ({
           <button
             key={zone.id}
             type="button"
-            className={`ears-source ${locked ? 'locked' : 'ready'} ${isPlaying ? 'playing' : ''} ${isWrong ? 'wrong' : ''} ${isHinted ? 'hinted' : ''} ${isComplete ? 'resolving' : ''} ${debugMode && selectedDebugKey === zone.layoutKey ? 'is-debug-selected' : ''}`}
+            className={`ears-source ${locked ? 'locked' : 'ready'} ${isPlaying ? 'playing' : ''} ${isWrong ? 'wrong' : ''} ${isHinted ? 'hinted' : ''} ${isCorrect ? 'correct' : ''} ${isComplete ? 'resolving' : ''} ${debugMode && selectedDebugKey === zone.layoutKey ? 'is-debug-selected' : ''}`}
             style={{ ...styleFromLayout(layout[zone.layoutKey]), '--source-index': index + 1 }}
             onClick={(e) => handleZoneTap(zone.id, e)}
             onPointerDown={(e) => debugMode && startDebugDrag(e, zone.layoutKey)}

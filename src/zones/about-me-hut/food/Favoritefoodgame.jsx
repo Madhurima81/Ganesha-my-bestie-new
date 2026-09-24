@@ -1327,6 +1327,14 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       // Level 2 @ 18s: Wobble + VO hint (speak once)
       ganeshaIdleTimerRef.current = setTimeout(() => {
         setIdleHintLevel(2);
+        // Level 3's 8s gap counts from when this L2 line finishes speaking,
+        // not from the moment the L2 timer fires — otherwise L3 could land
+        // while (or right on top of) the L2 line still talking.
+        const armLevel3 = () => {
+          ganeshaIdleTimerRef.current = setTimeout(() => {
+            setIdleHintLevel(3);
+          }, 8000);
+        };
         if (!idleHintVoiceRef.current) {
           const hintMap = {
             'food-choice': VOICE_LINES.foodHint,
@@ -1335,15 +1343,14 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             'friend-choice': VOICE_LINES.friendHint
           };
           if (hintMap[currentPhase]) {
-            speakLine(hintMap[currentPhase], { moment: 'encouragement' });
+            speakLine(hintMap[currentPhase], { moment: 'encouragement', onEnd: armLevel3 });
             idleHintVoiceRef.current = true;
+          } else {
+            armLevel3();
           }
+        } else {
+          armLevel3();
         }
-
-        // Level 3 @ 26s: Strong glow (visual only)
-        ganeshaIdleTimerRef.current = setTimeout(() => {
-          setIdleHintLevel(3);
-        }, 8000);
       }, 8000);
     }, 10000);
 

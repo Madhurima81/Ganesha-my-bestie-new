@@ -1108,21 +1108,27 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       // Level 2 @ 18s — 3 pulses (~3.6s) + VO hint, then clear
       t2 = safeSetTimeout(() => {
         setWish1IdleLevel(2);
-        if (!idleVoFlagsRef.current.wish1Level2) {
-          speakLine("Look for actions that help or care for someone.", { moment: 'encouragement' });
-          idleVoFlagsRef.current.wish1Level2 = true;
-        }
         t2Clear = safeSetTimeout(() => setWish1IdleLevel(0), 3800); // clear after animation finishes
 
-        // Level 3 @ 26s — 4 pulses + VO, stays on (child needs max help)
-        t3 = safeSetTimeout(() => {
-          setWish1IdleLevel(3);
-          if (!idleVoFlagsRef.current.wish1Level3) {
-            speakLine("Tap the bubbles that show helping, sharing, hugging, and gifting.", { moment: 'encouragement' });
-            idleVoFlagsRef.current.wish1Level3 = true;
-          }
-          // No clear — level 3 stays as persistent static glow
-        }, 8000); // 18s + 8s = 26s
+        // Level 3's 8s gap counts from when the L2 line finishes speaking,
+        // not from the moment the L2 timer fires — otherwise L3 could land
+        // while (or right on top of) the L2 line still talking.
+        const armLevel3 = () => {
+          t3 = safeSetTimeout(() => {
+            setWish1IdleLevel(3);
+            if (!idleVoFlagsRef.current.wish1Level3) {
+              speakLine("Tap the bubbles that show helping, sharing, hugging, and gifting.", { moment: 'encouragement' });
+              idleVoFlagsRef.current.wish1Level3 = true;
+            }
+            // No clear — level 3 stays as persistent static glow
+          }, 8000);
+        };
+        if (!idleVoFlagsRef.current.wish1Level2) {
+          speakLine("Look for actions that help or care for someone.", { moment: 'encouragement', onEnd: armLevel3 });
+          idleVoFlagsRef.current.wish1Level2 = true;
+        } else {
+          armLevel3();
+        }
       }, 8000); // 10s + 8s = 18s
     }, 10000);
 
@@ -1188,20 +1194,25 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       // Level 2 @ 18s — 3 pulses + VO, then clear
       t2 = safeSetTimeout(() => {
         setLevel(2);
-        if (!idleVoFlagsRef.current[voL2Flag]) {
-          speakLine(voL2Line, { moment: 'encouragement' });
-          idleVoFlagsRef.current[voL2Flag] = true;
-        }
         t2Clear = safeSetTimeout(() => setLevel(0), 3800);
 
-        // Level 3 @ 26s — 4 pulses + VO (if any), stays on
-        t3 = safeSetTimeout(() => {
-          setLevel(3);
-          if (voL3Line && !idleVoFlagsRef.current[voL3Flag]) {
-            speakLine(voL3Line, { moment: 'encouragement' });
-            idleVoFlagsRef.current[voL3Flag] = true;
-          }
-        }, 8000);
+        // Level 3's 8s gap counts from when the L2 line finishes speaking,
+        // not from the moment the L2 timer fires.
+        const armLevel3 = () => {
+          t3 = safeSetTimeout(() => {
+            setLevel(3);
+            if (voL3Line && !idleVoFlagsRef.current[voL3Flag]) {
+              speakLine(voL3Line, { moment: 'encouragement' });
+              idleVoFlagsRef.current[voL3Flag] = true;
+            }
+          }, 8000);
+        };
+        if (!idleVoFlagsRef.current[voL2Flag]) {
+          speakLine(voL2Line, { moment: 'encouragement', onEnd: armLevel3 });
+          idleVoFlagsRef.current[voL2Flag] = true;
+        } else {
+          armLevel3();
+        }
       }, 8000);
     }, 10000);
 

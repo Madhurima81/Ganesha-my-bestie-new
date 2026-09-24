@@ -147,7 +147,7 @@ export default function SarvadaGame({
   // GMB Hint Standard v1 — flat 10s/18s/26s from VO end or last interaction.
   // The 8s gap between L2 and L3 still clears playSceneLine's own
   // minDelayAfterVoiceMs: 5000 spacing between hint VO lines.
-  const { hintLevel, markInteraction } = useRepeatedHintCycle({
+  const { hintLevel, markInteraction, markLevel2VoiceEnded } = useRepeatedHintCycle({
     enabled: isActive && !isPaused && findMode && findVoComplete && !symbolFound && !showDebugPanel,
     stageKey: isActive && findMode ? `find-${phaseIndex}` : null,
     initialDelay: 10000,
@@ -172,13 +172,13 @@ export default function SarvadaGame({
 
     lastHintVoiceKeyRef.current = hintVoiceKey;
     const timerId = window.setTimeout(() => {
-      playSceneLine?.(hintVoiceKey, undefined, {
+      playSceneLine?.(hintVoiceKey, hintLevel === 2 ? markLevel2VoiceEnded : undefined, {
         replayOnReturn: false,
         minDelayAfterVoiceMs: 5000,
       });
     }, 120);
     return () => window.clearTimeout(timerId);
-  }, [findMode, symbolFound, hintLevel, isActive, phaseIndex, playSceneLine]);
+  }, [findMode, symbolFound, hintLevel, isActive, phaseIndex, playSceneLine, markLevel2VoiceEnded]);
 
   const safeAfter = useCallback((ms, fn) => {
     const id = window.setTimeout(fn, ms);

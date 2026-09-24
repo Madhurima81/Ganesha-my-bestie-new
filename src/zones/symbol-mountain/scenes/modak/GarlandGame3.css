@@ -143,7 +143,8 @@
    rather than singling one out. Only L3 nudges toward one example.
    ======================================================== */
 .g3g-loose-flower.g3g-build-hint-l1 img {
-  animation: g3gFlowerHintL1 1.8s ease-in-out infinite;
+  /* 2-3 synchronized bobs, then stop — enough to say "these are tappable". */
+  animation: g3gFlowerHintL1 1.8s ease-in-out 3;
 }
 @keyframes g3gFlowerHintL1 {
   0%, 100% { transform: translateY(0); }

@@ -188,15 +188,20 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
   const [buildHintLevel, setBuildHintLevel] = useState(0);
   const buildHintStartedAtRef = useRef(null);
   const buildHintVoPlayedRef = useRef({ l2: false, l3: false });
+  // L3's 8s gap counts from when the L2 line finishes speaking, not from a
+  // fixed 26s-from-arm mark — see the matching fix in FlowerJourneyGame2.jsx.
+  const buildL2VoiceEndedAtRef = useRef(null);
 
   const startBuildHintClock = useCallback(() => {
     buildHintStartedAtRef.current = Date.now();
+    buildL2VoiceEndedAtRef.current = null;
     setBuildHintLevel(0);
     buildHintVoPlayedRef.current = { l2: false, l3: false };
   }, []);
 
   const stopBuildHintClock = useCallback(() => {
     buildHintStartedAtRef.current = null;
+    buildL2VoiceEndedAtRef.current = null;
     setBuildHintLevel(0);
     buildHintVoPlayedRef.current = { l2: false, l3: false };
   }, []);
@@ -207,9 +212,13 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
       const startedAt = buildHintStartedAtRef.current;
       if (!startedAt) return;
       const idleMs = Date.now() - startedAt;
-      if (idleMs >= 26000) setBuildHintLevel(3);
-      else if (idleMs >= 18000) setBuildHintLevel(2);
-      else if (idleMs >= 10000) setBuildHintLevel(1);
+      let nextLevel = 0;
+      if (idleMs >= 18000) nextLevel = 2;
+      else if (idleMs >= 10000) nextLevel = 1;
+      if (nextLevel === 2 && buildL2VoiceEndedAtRef.current) {
+        if (Date.now() - buildL2VoiceEndedAtRef.current >= 8000) nextLevel = 3;
+      }
+      setBuildHintLevel((prev) => (prev === nextLevel ? prev : nextLevel));
     }, 250);
     return () => window.clearInterval(tick);
   }, [isBuild, isActive, isPaused]);
@@ -223,9 +232,9 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
     }
     if (buildHintLevel >= 2 && !buildHintVoPlayedRef.current.l2) {
       buildHintVoPlayedRef.current.l2 = true;
-      speak(VO.tapIdle);
+      speakAsync(VO.tapIdle).then(() => { buildL2VoiceEndedAtRef.current = Date.now(); });
     }
-  }, [buildHintLevel, isBuild, speak]);
+  }, [buildHintLevel, isBuild, speak, speakAsync]);
 
   // ---------------------------------------------------------
   // GARLAND CARRY HINTS — carrying the finished garland to Ganesha is a
@@ -241,11 +250,15 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
   const garlandFailedDropsRef = useRef(0);
   const garlandDragStartRef = useRef(null);
   const garlandMeaningfulDragRef = useRef(false);
+  // Same fix as buildL2VoiceEndedAtRef above — L3 waits 8s after the L2
+  // line finishes speaking, not a fixed 26s from arm.
+  const garlandL2VoiceEndedAtRef = useRef(null);
 
   const effectiveGarlandHintLevel = Math.max(garlandHintLevel, forcedGarlandHintLevel);
 
   const startGarlandHintClock = useCallback((clearEscalation = false) => {
     garlandHintStartedAtRef.current = Date.now();
+    garlandL2VoiceEndedAtRef.current = null;
     setGarlandHintLevel(0);
     if (clearEscalation) {
       setForcedGarlandHintLevel(0);
@@ -260,9 +273,13 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
       const startedAt = garlandHintStartedAtRef.current;
       if (!startedAt) return;
       const idleMs = Date.now() - startedAt;
-      if (idleMs >= 26000) setGarlandHintLevel(3);
-      else if (idleMs >= 18000) setGarlandHintLevel(2);
-      else if (idleMs >= 10000) setGarlandHintLevel(1);
+      let nextLevel = 0;
+      if (idleMs >= 18000) nextLevel = 2;
+      else if (idleMs >= 10000) nextLevel = 1;
+      if (nextLevel === 2 && garlandL2VoiceEndedAtRef.current) {
+        if (Date.now() - garlandL2VoiceEndedAtRef.current >= 8000) nextLevel = 3;
+      }
+      setGarlandHintLevel((prev) => (prev === nextLevel ? prev : nextLevel));
     }, 250);
     return () => window.clearInterval(tick);
   }, [isReady, isActive, isPaused, garlandPosition.active]);
@@ -276,9 +293,9 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
     }
     if (effectiveGarlandHintLevel >= 2 && !garlandHintVoPlayedRef.current.l2) {
       garlandHintVoPlayedRef.current.l2 = true;
-      speak(VO.carry);
+      speakAsync(VO.carry).then(() => { garlandL2VoiceEndedAtRef.current = Date.now(); });
     }
-  }, [effectiveGarlandHintLevel, isReady, speak]);
+  }, [effectiveGarlandHintLevel, isReady, speak, speakAsync]);
 
   const liveSlots = GARLAND_SLOTS;
   const placedIds = useMemo(() => new Set(placedFlowers.map((item) => item.id)), [placedFlowers]);
@@ -463,6 +480,7 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
             to={carryGestureTarget}
             active={!isPaused && showCarryGesture}
             idleDelay={150}
+            replayKey={effectiveGarlandHintLevel}
             zIndex={30}
           />
         );

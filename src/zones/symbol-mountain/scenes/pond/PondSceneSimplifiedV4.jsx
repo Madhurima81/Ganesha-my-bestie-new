@@ -107,6 +107,9 @@ const VOICE_LINES = {
 
   // Trunk phase (strength, then gentleness) — first
   rockRound: 'The rock is blocking the stream. Press and hold to move it.',
+  // 1st-occurrence corrective line for releasing a hold too early — its own
+  // error-type ladder, separate from the idle-hint L2/L3 lines below.
+  earlyRock: 'Keep holding.',
   // Hint VO — L2 gives the action, L3 gives the exact endpoint
   idleRockL2: 'Press and hold the rock.',
   idleRockL3: 'Keep holding until the rock moves.',
@@ -117,6 +120,7 @@ const VOICE_LINES = {
 
   // Lotus phase (press-and-hold to bloom) — second
   lotusRound: 'The water reached the lotus. Hold the bud to help it bloom.',
+  earlyLotus: 'Keep holding.',
   idleLotusL2: 'Press and hold the bud.',
   idleLotusL3: 'Keep holding until it blooms.',
   lotusBloomed: 'The lotus bloomed, even in the muddy pond.',
@@ -135,7 +139,10 @@ const missionImages = {
 const ROCK_HOLD_MS = 1600;
 const REEDS_START_POINT = { x: 58, y: 70 };
 const REEDS_DRAG_DISTANCE = 90;
-const LOTUS_HOLD_POINT = { x: 80, y: 68 };
+// Measured against the live-rendered .pond-trunk-lotus box (top-left
+// anchored, no centering transform) at the default layout — the old (80, 68)
+// was off by 6-7% in both axes, well clear of the actual lotus artwork.
+const LOTUS_HOLD_POINT = { x: 73.9, y: 61 };
 
 // Lotus phase: press-and-hold to bloom. Same forgiving-release feel as before.
 const LOTUS_HOLD_MS = 1800;
@@ -455,6 +462,10 @@ const PondSceneContent = ({
   const [hintResetKey, setHintResetKey] = useState(0);
   const [idleHintLevel, setIdleHintLevel] = useState(0);
   const lastIdleInteractionAtRef = useRef(Date.now());
+  // When the L2 idle line finished speaking — L3's 8s gap counts from THIS,
+  // not from lastIdleInteractionAtRef, so a slow L2 line doesn't eat into
+  // the real gap the child gets before L3 fires.
+  const l2VoiceEndedAtRef = useRef(null);
   const IDLE_HINT_L1_MS = 10000;
   const IDLE_HINT_L2_MS = 18000;
   const IDLE_HINT_L3_MS = 26000;
@@ -484,6 +495,7 @@ const PondSceneContent = ({
     setForcedHintLevel(0);
     lastSpokenHintLevelRef.current = 0;
     lastIdleInteractionAtRef.current = Date.now();
+    l2VoiceEndedAtRef.current = null;
   }, []);
 
   const rearmIdleHints = useCallback(() => {
@@ -497,19 +509,6 @@ const PondSceneContent = ({
     lastSpokenHintLevelRef.current = 0;
     rearmIdleHints();
   }, [rearmIdleHints]);
-
-  // First mistake: normal gentle feedback only (no forced hint). Second same
-  // misunderstanding (e.g. repeated short taps on a hold target): jump to
-  // L2 immediately. Third: L3 immediately.
-  const promoteHintFromErrors = useCallback((attemptRef) => {
-    attemptRef.current += 1;
-    if (attemptRef.current === 2) {
-      setForcedHintLevel((level) => Math.max(level, 2));
-    }
-    if (attemptRef.current >= 3) {
-      setForcedHintLevel(3);
-    }
-  }, []);
 
   // Show the gesture demo (rock hold / reeds drag / lotus hold) right away
   // when each phase starts, same "introGesture" pattern as FlowerJourneyGame2 —
@@ -533,9 +532,22 @@ const PondSceneContent = ({
       setPondIntroGesture(false);
       return undefined;
     }
-    setPondIntroGesture(true);
-    const t = window.setTimeout(() => setPondIntroGesture(false), 6000);
-    return () => window.clearTimeout(t);
+    // Teaching should appear when the ACTION WORD in that beat's instruction
+    // VO is spoken, not the instant the phase starts — that's actually
+    // before the VO even begins (its own promptDelay staggers VO start by
+    // 500-900ms below), let alone before the action word inside it.
+    // Each line is a full sentence before the action word (6-7 words), not
+    // a short clause — at this scene's TTS rate (~142 wpm + sentence-end
+    // pause) that's ~2.5-3.3s of speech, not the ~800ms this was tuned for
+    // before (which fired the teaching hand mid-setup-sentence).
+    const teachDelay = interactionBeat === 'rock'
+      ? 850 + 2900   // "The rock is blocking the stream." (6 words) before "Press"
+      : interactionBeat === 'flowers'
+        ? WATER_TO_REEDS_MS + 3325  // "The flowers are in the water's way." (7 words) before "Gently"
+        : 500 + 2475; // lotus: "The water reached the lotus." (5 words) before "Hold"
+    const showTimer = window.setTimeout(() => setPondIntroGesture(true), teachDelay);
+    const hideTimer = window.setTimeout(() => setPondIntroGesture(false), teachDelay + 6000);
+    return () => { window.clearTimeout(showTimer); window.clearTimeout(hideTimer); };
   }, [interactionBeat]);
 
   const speakPondPrompt = useCallback((key, onEnd) => {
@@ -550,6 +562,25 @@ const PondSceneContent = ({
       onEnd
     });
   }, [isAudioOn, speak]);
+
+  // 1st mistake: a short, specific corrective VO (when the caller passes
+  // one — hold-type mechanics only, per the drag/hold/tap wrong-action
+  // rule; drag mistakes already get enough feedback from snapping back).
+  // 2nd same misunderstanding: physical only, jump the idle ladder to L2.
+  // 3rd: L3 immediately (which also re-shows the gesture demo).
+  const promoteHintFromErrors = useCallback((attemptRef, earlyVoiceKey) => {
+    attemptRef.current += 1;
+    if (attemptRef.current === 1 && earlyVoiceKey) {
+      speakPondPrompt(earlyVoiceKey);
+    }
+    if (attemptRef.current === 2) {
+      setForcedHintLevel((level) => Math.max(level, 2));
+    }
+    if (attemptRef.current >= 3) {
+      setForcedHintLevel(3);
+    }
+  }, [speakPondPrompt]);
+
   const getPromptKeyForPhase = useCallback(() => {
     if (!sceneState?.welcomeShown) return 'opening';
     if (revealConfig || showSparkle === 'final-fireworks') return null;
@@ -643,6 +674,7 @@ const PondSceneContent = ({
   useEffect(() => {
     setIdleHintLevel(0);
     setForcedHintLevel(0);
+    l2VoiceEndedAtRef.current = null;
     idleVoGateRef.current = false;
     lastSpokenHintLevelRef.current = 0;
     lastIdleInteractionAtRef.current = Date.now();
@@ -701,9 +733,13 @@ const PondSceneContent = ({
     const tick = setInterval(() => {
       const idleFor = Date.now() - lastIdleInteractionAtRef.current;
       let nextLevel = 0;
-      if (idleFor >= IDLE_HINT_L3_MS) nextLevel = 3;
-      else if (idleFor >= IDLE_HINT_L2_MS) nextLevel = 2;
+      if (idleFor >= IDLE_HINT_L2_MS) nextLevel = 2;
       else if (idleFor >= IDLE_HINT_L1_MS) nextLevel = 1;
+      // L3 is an 8s gap AFTER the L2 line finishes speaking, not a fixed
+      // 26s-from-arm mark.
+      if (nextLevel === 2 && l2VoiceEndedAtRef.current) {
+        if (Date.now() - l2VoiceEndedAtRef.current >= (IDLE_HINT_L3_MS - IDLE_HINT_L2_MS)) nextLevel = 3;
+      }
       setIdleHintLevel(prev => (prev === nextLevel ? prev : nextLevel));
     }, 250);
 
@@ -742,7 +778,11 @@ const PondSceneContent = ({
     if (!idleKey) return;
 
     lastSpokenHintLevelRef.current = level;
-    speakPondPrompt(idleKey);
+    if (level === 2) {
+      speakPondPrompt(idleKey, () => { l2VoiceEndedAtRef.current = Date.now(); });
+    } else {
+      speakPondPrompt(idleKey);
+    }
   }, [effectiveHintLevel, sceneState?.phase, speakPondPrompt]);
 
   // NOTE: idle-hint baseline is re-armed from inside the phase-prompt VO's
@@ -1099,7 +1139,7 @@ const PondSceneContent = ({
     // understanding "hold" — accelerate help instead of waiting 26s.
     const finalProgress = rockHoldProgressRef.current;
     if (finalProgress < 0.35) {
-      promoteHintFromErrors(rockFailedAttemptsRef);
+      promoteHintFromErrors(rockFailedAttemptsRef, 'earlyRock');
     }
 
     rockHoldProgressRef.current = Math.max(0, finalProgress - 0.18);
@@ -1135,21 +1175,26 @@ const PondSceneContent = ({
     safeSetTimeout(() => {
       setShowSparkle('lotus-wake');
       sceneActions.updateState({ lotusUpright: true });
-      speakPondPrompt('trunkSuccess');
       triggerMiniGesture('victory', 'center', 1800);
       playGlow();
-    }, WATER_TO_POND_MS);
 
-    safeSetTimeout(() => {
-      setShowSparkle(null);
-      sceneActions.updateState({ phase: PHASES.TRUNK_REVEAL });
-      setRevealConfig({
-        symbolId: 'trunk',
-        symbolName: 'Trunk',
-        affirmation: 'I can be strong and gentle.',
-        symbolImage: symbolTrunkColored
+      // The glow burst clears on its own short timer (visual only), but
+      // the reveal card must wait for "The water reached the lotus."
+      // (~2.4s) to actually finish — the old fixed LOTUS_GLOW_MS (900ms)
+      // timer was opening the card mid-sentence.
+      safeSetTimeout(() => setShowSparkle(null), LOTUS_GLOW_MS);
+      speakPondPrompt('trunkSuccess', () => {
+        safeSetTimeout(() => {
+          sceneActions.updateState({ phase: PHASES.TRUNK_REVEAL });
+          setRevealConfig({
+            symbolId: 'trunk',
+            symbolName: 'Trunk',
+            affirmation: 'I can be strong and gentle.',
+            symbolImage: symbolTrunkColored
+          });
+        }, 1200);
       });
-    }, WATER_TO_POND_MS + LOTUS_GLOW_MS);
+    }, WATER_TO_POND_MS);
   }, [
     playGlow,
     playChime,
@@ -1218,7 +1263,6 @@ const PondSceneContent = ({
     if (!sceneActions) return;
     playBloom();
     playChime();
-    speakPondPrompt('lotusBloomed');
     triggerMiniGesture('victory', 'center', 2500);
     sceneActions.updateState({
       lotusBloomed: true,
@@ -1228,16 +1272,20 @@ const PondSceneContent = ({
     setShowSparkle('lotus-bloom');
     safeSetTimeout(() => setShowSparkle(null), 2000);
 
-    // Give the child a clear moment to see the lotus actually bloom before
-    // the reveal card covers the scene.
-    safeSetTimeout(() => {
-      setRevealConfig({
-        symbolId: 'lotus',
-        symbolName: 'Lotus',
-        affirmation: 'I can keep growing when things are hard.',
-        symbolImage: symbolLotusColored
-      });
-    }, 2400);
+    // Give the child a clear moment to see the lotus actually bloom, and
+    // let "The lotus bloomed, even in the muddy pond." finish speaking
+    // (~3.5-4s) before the reveal card covers the scene — a fixed 2400ms
+    // timer was opening the card mid-sentence.
+    speakPondPrompt('lotusBloomed', () => {
+      safeSetTimeout(() => {
+        setRevealConfig({
+          symbolId: 'lotus',
+          symbolName: 'Lotus',
+          affirmation: 'I can keep growing when things are hard.',
+          symbolImage: symbolLotusColored
+        });
+      }, 1200);
+    });
   }, [sceneActions, playBloom, playChime, speakPondPrompt, triggerMiniGesture, safeSetTimeout]);
 
   const handleLotusHoldStart = () => {
@@ -1298,7 +1346,7 @@ const PondSceneContent = ({
     // Short release suggests tapping rather than understanding "hold".
     const releasedAt = holdProgressRef.current;
     if (releasedAt < 0.35) {
-      promoteHintFromErrors(lotusFailedAttemptsRef);
+      promoteHintFromErrors(lotusFailedAttemptsRef, 'earlyLotus');
     }
 
     const decayDurationMs = LOTUS_HOLD_MS / HOLD_DECAY_MULTIPLIER;
@@ -1528,7 +1576,10 @@ const PondSceneContent = ({
               />
 
               <GestureDemo
-                type="hold"
+                // Teaching = plain hold demo. L2/L3 rescue = an actual
+                // filling progress ring instead of the same expand-fade
+                // ring at every level (L2 partial fill, L3 full fill).
+                type={pondIntroGesture ? 'hold' : effectiveHintLevel >= 3 ? 'hold-progress-l3' : effectiveHintLevel === 2 ? 'hold-progress-l2' : 'hold'}
                 from={{ x: 40, y: 69 }}
                 active={
                   (pondIntroGesture || effectiveHintLevel >= 2) &&
@@ -1540,6 +1591,9 @@ const PondSceneContent = ({
                   rockHoldProgress <= 0
                 }
                 idleDelay={0}
+                replayKey={effectiveHintLevel}
+                // Hold gesture already shows one full press-ring-release
+                // cycle — playing it twice reads as two separate presses.
                 iterations={1}
                 zIndex={28}
               />
@@ -1565,15 +1619,13 @@ const PondSceneContent = ({
                   draggable={false}
                 />
 
-                {!sceneState.rockMoved && rockHoldProgress <= 0 && effectiveHintLevel >= 1 && (
+                {/* L1 only — the plain breathing ring is the affordance
+                    cue. From L2 on, the full GestureDemo below (hand + its
+                    own hold ring) takes over; showing both at once was two
+                    overlapping rings pulsing at different rates. */}
+                {!sceneState.rockMoved && rockHoldProgress <= 0 && effectiveHintLevel === 1 && (
                   <div
-                    className={`pond-hold-hint-ring pond-hold-hint-ring--rock ${
-                      effectiveHintLevel >= 3
-                        ? 'pond-hold-hint-ring--final'
-                        : effectiveHintLevel >= 2
-                          ? 'pond-hold-hint-ring--strong'
-                          : ''
-                    }`}
+                    className="pond-hold-hint-ring pond-hold-hint-ring--rock"
                     aria-hidden="true"
                   />
                 )}
@@ -1702,7 +1754,8 @@ const PondSceneContent = ({
                   !reedsDragActive
                 }
                 idleDelay={0}
-                iterations={1}
+                replayKey={effectiveHintLevel}
+                iterations={2}
                 zIndex={28}
               />
 
@@ -1794,7 +1847,7 @@ const PondSceneContent = ({
 
               {/* Lotus — dormant → upright (Trunk success) → bloomed (Lotus success) */}
               <GestureDemo
-                type="hold"
+                type={pondIntroGesture ? 'hold' : effectiveHintLevel >= 3 ? 'hold-progress-l3' : effectiveHintLevel === 2 ? 'hold-progress-l2' : 'hold'}
                 from={LOTUS_HOLD_POINT}
                 active={
                   (pondIntroGesture || effectiveHintLevel >= 2) &&
@@ -1803,6 +1856,8 @@ const PondSceneContent = ({
                   holdProgress <= 0
                 }
                 idleDelay={0}
+                replayKey={effectiveHintLevel}
+                // Hold gesture — one full cycle already shows press-ring-release.
                 iterations={1}
                 zIndex={28}
               />
@@ -1817,15 +1872,11 @@ const PondSceneContent = ({
                     <SparkleAnimation type="star" count={18} color="#FFD86B" size={10} duration={LOTUS_GLOW_MS} fadeOut={true} area="full" />
                   </div>
                 )}
-                {sceneState.phase === PHASES.LOTUS_ACTIVE && !sceneState.lotusBloomed && holdProgress <= 0 && effectiveHintLevel >= 1 && (
+                {/* L1 only — see the matching rock ring above for why L2/L3
+                    don't also render this (GestureDemo takes over there). */}
+                {sceneState.phase === PHASES.LOTUS_ACTIVE && !sceneState.lotusBloomed && holdProgress <= 0 && effectiveHintLevel === 1 && (
                   <div
-                    className={`pond-hold-hint-ring pond-hold-hint-ring--lotus ${
-                      effectiveHintLevel >= 3
-                        ? 'pond-hold-hint-ring--final'
-                        : effectiveHintLevel >= 2
-                          ? 'pond-hold-hint-ring--strong'
-                          : ''
-                    }`}
+                    className="pond-hold-hint-ring pond-hold-hint-ring--lotus"
                     aria-hidden="true"
                   />
                 )}
@@ -1952,9 +2003,13 @@ const PondSceneContent = ({
                   { ring: 'middle', id: 4 },
                   { ring: 'middle', id: 5 },
                 ]}
+                /* Trunk (reeds) is discovered before Lotus (bloom) in actual
+                   gameplay — see completeReeds/completeLotusBloom above —
+                   so it takes the earlier petal slot, matching the sidebar
+                   order fix in SymbolSidebar.jsx. */
                 earnedSymbols={[
-                  { id: 'lotus', petalId: 4, ring: 'middle', image: symbolLotusColored },
-                  { id: 'trunk', petalId: 5, ring: 'middle', image: symbolTrunkColored },
+                  { id: 'trunk', petalId: 4, ring: 'middle', image: symbolTrunkColored },
+                  { id: 'lotus', petalId: 5, ring: 'middle', image: symbolLotusColored },
                 ]}
                 autoCloseMs={3000 + (2 * 950) + 2600}
                 message="That power is growing inside you"

@@ -82,7 +82,6 @@ import symbolTrunkColored from '../../shared/images/icons/symbol-trunk-new.webp'
 
 // Shared countdown duration â€” must match across useResumeCountdown + usePauseAwareTimeout
 const RESUME_DELAY_MS = 3000;
-const GANESHA_REVEAL_IMAGE = '/images/ganesha-sit.svg';
 
 const VOICE_LINES = {
   opening: "The forest friends need your help. Let’s see what they need.",
@@ -203,7 +202,6 @@ const SCENE_IMAGES = [
   symbolBellyColored,
   symbolLotusColored,
   symbolTrunkColored,
-  GANESHA_REVEAL_IMAGE,
 ];
 
 const SymbolMountainSceneContent = ({
@@ -235,7 +233,6 @@ const SymbolMountainSceneContent = ({
   const [tuskFadeOut, setTuskFadeOut] = useState(false);
   const [tuskTransforming, setTuskTransforming] = useState(false);
   const [showGoldenAura, setShowGoldenAura] = useState(false);
-  const [ganeshaRevealing, setGaneshaRevealing] = useState(false);
 
   // SymbolAutoReveal state
   const [revealConfig, setRevealConfig] = useState(null);
@@ -273,6 +270,10 @@ const SymbolMountainSceneContent = ({
   const [hintResetKey, setHintResetKey] = useState(0);
   const [idleHintLevel, setIdleHintLevel] = useState(0);
   const lastIdleInteractionAtRef = useRef(Date.now());
+  // When the L2 idle line finished speaking — L3's 8s gap counts from THIS,
+  // not from lastIdleInteractionAtRef, so a slow line doesn't eat into the
+  // real gap the child gets before L3 fires.
+  const l2VoiceEndedAtRef = useRef(null);
   const IDLE_HINT_L1_MS = 10000;
   const IDLE_HINT_L2_MS = 18000;
   const IDLE_HINT_L3_MS = 26000;
@@ -334,12 +335,14 @@ const SymbolMountainSceneContent = ({
     setIdleHintLevel(0);
     idleVoGateRef.current = false;
     lastIdleInteractionAtRef.current = Date.now();
+    l2VoiceEndedAtRef.current = null;
     setHintResetKey(k => k + 1);
   }, []);
   const resetIdleBaseline = useCallback(() => {
     setIdleHintLevel(0);
     idleVoGateRef.current = false;
     lastIdleInteractionAtRef.current = Date.now();
+    l2VoiceEndedAtRef.current = null;
   }, []);
 
 
@@ -366,6 +369,7 @@ const SymbolMountainSceneContent = ({
     setIdleHintLevel(0);
     idleVoGateRef.current = false;
     lastIdleInteractionAtRef.current = Date.now();
+    l2VoiceEndedAtRef.current = null;
     if (sceneState?.welcomeShown) {
       const replayKey = getPromptKeyForPhase();
       if (replayKey) {
@@ -456,9 +460,13 @@ const SymbolMountainSceneContent = ({
     const tick = setInterval(() => {
       const idleFor = Date.now() - lastIdleInteractionAtRef.current;
       let nextLevel = 0;
-      if (idleFor >= IDLE_HINT_L3_MS) nextLevel = 3;
-      else if (idleFor >= IDLE_HINT_L2_MS) nextLevel = 2;
+      if (idleFor >= IDLE_HINT_L2_MS) nextLevel = 2;
       else if (idleFor >= IDLE_HINT_L1_MS) nextLevel = 1;
+      // L3 is an 8s gap AFTER the idle line finishes speaking, not a fixed
+      // 26s-from-arm mark.
+      if (nextLevel === 2 && l2VoiceEndedAtRef.current) {
+        if (Date.now() - l2VoiceEndedAtRef.current >= (IDLE_HINT_L3_MS - IDLE_HINT_L2_MS)) nextLevel = 3;
+      }
       setIdleHintLevel(prev => (prev === nextLevel ? prev : nextLevel));
     }, 250);
 
@@ -536,7 +544,7 @@ const SymbolMountainSceneContent = ({
     else if (sceneState?.phase === PHASES.TUSK_GAME && sceneState?.showTuskAssemblyGame) idleKey = 'idleTusk';
 
     if (idleKey) {
-      speakScenePrompt(idleKey);
+      speakScenePrompt(idleKey, { onEnd: () => { l2VoiceEndedAtRef.current = Date.now(); } });
       idleVoGateRef.current = true;
     }
   }, [sceneState?.phase, sceneState?.showEarsRhythmGame, sceneState?.showEyesTelescopeGame, sceneState?.showTuskAssemblyGame, idleHintLevel,  speakScenePrompt]);
@@ -716,19 +724,15 @@ const SymbolMountainSceneContent = ({
       phase: PHASES.TUSK_COMPLETE
     });
     triggerMiniGesture('victory', 'center', 2200);
+    // Just the tusk symbol fading in with a golden burst, then straight to
+    // the symbol reveal card — no separate Ganesha character image over it.
     safeSetTimeout(() => {
       setShowGoldenAura(true);
     }, 450);
     safeSetTimeout(() => {
-      setGaneshaRevealing(true);
-    }, 950);
-    safeSetTimeout(() => {
       setShowGoldenAura(false);
       setTuskTransforming(false);
     }, 2500);
-    safeSetTimeout(() => {
-      setGaneshaRevealing(false);
-    }, 3000);
     safeSetTimeout(() => {
       setRevealConfig({ symbolId: 'tusk', symbolImage: symbolTuskColored, symbolName: 'Tusk', affirmation: 'I can use what I have for something important.', sidebarTarget: getSidebarTarget('tusk'), sayWithMeDelayMs: 3200 });
     }, 3200);
@@ -949,28 +953,6 @@ const SymbolMountainSceneContent = ({
                         zIndex: 13
                       }}
                     />
-                  )}
-                  <img
-                    src={GANESHA_REVEAL_IMAGE}
-                    alt="Ganesha"
-                    className={`${ganeshaRevealing ? 'ganesha-reveal' : ''} ${sceneState.ganeshaComplete && !ganeshaRevealing ? 'ganesha-glow' : ''}`}
-                    onAnimationEnd={() => {
-                      if (ganeshaRevealing) setGaneshaRevealing(false);
-                    }}
-                    style={{
-                      position: 'absolute',
-                      left: '50%',
-                      top: '50%',
-                      transform: 'translate(-50%, -50%)',
-                      width: '44%',
-                      maxWidth: '460px',
-                      zIndex: 15,
-                      pointerEvents: 'none',
-                      opacity: ganeshaRevealing || (!tuskTransforming && sceneState.ganeshaComplete) ? 1 : 0
-                    }}
-                  />
-                  {sceneState.ganeshaComplete && !sceneState.discoveredSymbols?.tusk && !ganeshaRevealing && !tuskTransforming && (
-                    <div className="golden-dust" style={{ zIndex: 12 }} />
                   )}
                 </>
               )}

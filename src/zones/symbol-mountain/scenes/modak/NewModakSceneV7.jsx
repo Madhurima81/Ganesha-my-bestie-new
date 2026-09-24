@@ -248,6 +248,9 @@ const MODAK_VO = {
   calmMooshika: 'Mooshika’s thoughts keep jumping around. Press and hold to help him focus.',
   calmMooshikaIdle: 'Press and hold Mooshika.',
   calmMooshikaDirect: 'Keep holding until Mooshika settles.',
+  // 1st-occurrence corrective line for a genuine early release (tap instead
+  // of hold) — distinct from the idle-hint ladder's own L2/L3 lines above.
+  calmMooshikaEarly: 'Keep holding.',
   mooshikaCalmed: 'Mooshika stayed with it and made a little progress.',
   guidePower: 'I can keep going, one small step at a time.',
   mudIdle: 'Guide Mooshika to the next safe spot.',
@@ -269,6 +272,7 @@ const MODAK_VO_MOMENT = {
   calmMooshika: 'default',
   calmMooshikaIdle: 'default',
   calmMooshikaDirect: 'default',
+  calmMooshikaEarly: 'default',
   mooshikaCalmed: 'celebration',
   guidePower: 'encouragement',
   mudIdle: 'default',
@@ -586,10 +590,6 @@ const NewModakSceneMVPContent = ({
 
   // Show-what-to-do gesture shown briefly on entering each working beat.
   const [introGesture, setIntroGesture] = useState(false);
-  // Frozen teaching-hand target for Mooshika (see the introGesture effect
-  // below) — captured once per phase entry instead of tracking Mooshika's
-  // live darting position while the demo plays.
-  const [mooshikaGesturePoint, setMooshikaGesturePoint] = useState({ x: 30, y: 52 });
 
   // --- Live layout + debug panel -----------------------------------
   const [fjLayout, setFjLayout] = useState(loadFjLayout);
@@ -647,12 +647,18 @@ const NewModakSceneMVPContent = ({
   // null until the opening VO's onEnd arms it — the clock must not exist
   // before the child has actually heard the instruction.
   const lastIdleInteractionAtRef = useRef(null);
+  // When the L2 idle line finished speaking — L3's 8s gap counts from THIS,
+  // not from lastIdleInteractionAtRef. Otherwise L3 is a fixed 26s-from-arm
+  // mark regardless of how long the L2 line takes to speak, so a slow L2
+  // line eats into the real gap the child gets before L3 fires.
+  const l2VoiceEndedAtRef = useRef(null);
   const IDLE_HINT_L1_MS = 10000;
   const IDLE_HINT_L2_MS = 18000;
   const IDLE_HINT_L3_MS = 26000;
 
   const resetIdleBaseline = useCallback(() => {
     lastIdleInteractionAtRef.current = Date.now();
+    l2VoiceEndedAtRef.current = null;
     setIdleHintLevel(0);
     setShowIdleGestureHint(false);
   }, []);
@@ -671,33 +677,10 @@ const NewModakSceneMVPContent = ({
       setIntroGesture(false);
       return undefined;
     }
-    // Mooshika is actively darting — freeze the teaching hand's target at
-    // the position it happened to be at when teaching starts, rather than
-    // letting GestureDemo regenerate its path as Mooshika keeps moving.
-    if (sceneState.phase === PHASES.CALM_SEARCH) {
-      const pos = sceneState.mooshikaPosition || CALM_DISTRACTIONS[0];
-      setMooshikaGesturePoint({
-        x: parsePercentValue(pos.left, 30),
-        y: parsePercentValue(pos.top, 52),
-      });
-    }
     setIntroGesture(true);
     const t = setTimeout(() => setIntroGesture(false), 6000);
     return () => clearTimeout(t);
   }, [sceneState.phase, sceneState.welcomeShown]);
-
-  // Re-freeze the teaching hand's target when the idle-hint rescue kicks
-  // the hold demo back in (L2+) — Mooshika may have darted a long way since
-  // the intro's own freeze, seconds ago.
-  useEffect(() => {
-    if (idleHintLevel < 2 || sceneState.phase !== PHASES.CALM_SEARCH) return;
-    const pos = sceneState.mooshikaPosition || CALM_DISTRACTIONS[0];
-    setMooshikaGesturePoint({
-      x: parsePercentValue(pos.left, 30),
-      y: parsePercentValue(pos.top, 52),
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [idleHintLevel >= 2, sceneState.phase]);
 
   // ------------------------------------------------------------------
   // beat 1 - HOLD Mooshika
@@ -834,14 +817,16 @@ const NewModakSceneMVPContent = ({
     clearMushikaHoldLoop();
     mushikaHoldStartRef.current = null;
 
-    // Repeated taps instead of holds — accelerate help without waiting the
-    // full ladder out, since this is exactly the child who needs it.
+    // Repeated taps instead of holds — same 1st-VO / 2nd-silent /
+    // 3rd-VO+demo error-type ladder used for Bush/Branch. 1st occurrence
+    // gets a direct "Keep holding." line; 2nd is the ring draining back
+    // with no VO; 3rd forces the idle ladder to L3, which already speaks
+    // "Keep holding until Mooshika settles." and re-shows the hold demo.
     if (!mushikaMeaningfulHoldRef.current) {
       mushikaShortTapCountRef.current += 1;
-      if (mushikaShortTapCountRef.current === 2) {
-        setIdleHintLevel((level) => Math.max(level, 2));
-      }
-      if (mushikaShortTapCountRef.current >= 3) {
+      if (mushikaShortTapCountRef.current === 1) {
+        playVoice('calmMooshikaEarly');
+      } else if (mushikaShortTapCountRef.current >= 3) {
         setIdleHintLevel(3);
       }
     }
@@ -1216,6 +1201,7 @@ const NewModakSceneMVPContent = ({
     setIdleHintLevel(0);
     idleVoPlayedRef.current = {};
     lastIdleInteractionAtRef.current = Date.now();
+    l2VoiceEndedAtRef.current = null;
   }, [hintResetKey, idleHintsEnabled]);
 
   // Deterministic idle ladder
@@ -1236,9 +1222,14 @@ const NewModakSceneMVPContent = ({
       if (!startedAt) return;
       const idleFor = Date.now() - startedAt;
       let nextLevel = 0;
-      if (idleFor >= IDLE_HINT_L3_MS) nextLevel = 3;
-      else if (idleFor >= IDLE_HINT_L2_MS) nextLevel = 2;
+      if (idleFor >= IDLE_HINT_L2_MS) nextLevel = 2;
       else if (idleFor >= IDLE_HINT_L1_MS) nextLevel = 1;
+      // L3 is an 8s gap AFTER the L2 line finishes speaking (see
+      // l2VoiceEndedAtRef above), not a fixed 26s-from-arm mark.
+      if (nextLevel === 2 && l2VoiceEndedAtRef.current) {
+        const sinceL2Voice = Date.now() - l2VoiceEndedAtRef.current;
+        if (sinceL2Voice >= (IDLE_HINT_L3_MS - IDLE_HINT_L2_MS)) nextLevel = 3;
+      }
       setIdleHintLevel(prev => (prev === nextLevel ? prev : nextLevel));
     }, 250);
     return () => clearInterval(tick);
@@ -1273,7 +1264,7 @@ const NewModakSceneMVPContent = ({
       const key = `${sceneState.phase}:l2`;
       if (!idleVoPlayedRef.current[key]) {
         idleVoPlayedRef.current[key] = true;
-        playVoice(meta.idle);
+        playVoice(meta.idle, () => { l2VoiceEndedAtRef.current = Date.now(); });
       }
     }
   }, [idleHintLevel, sceneState?.phase, sceneState?.welcomeShown, idleHintsEnabled, isSymbolPopupOpen, playVoice]);
@@ -1673,10 +1664,30 @@ const NewModakSceneMVPContent = ({
 
                   {/* ============ GESTURE DEMOS ============ */}
                   <GestureDemo
-                    type="hold"
-                    from={mooshikaGesturePoint}
+                    // Teaching = plain hold demo. L2/L3 rescue = an actual
+                    // filling progress ring instead of the same expand-fade
+                    // ring at every level (L2 partial fill, L3 full fill).
+                    type={introGesture ? 'hold' : idleHintLevel >= 3 ? 'hold-progress-l3' : idleHintLevel === 2 ? 'hold-progress-l2' : 'hold'}
+                    from={{
+                      x: parsePercentValue((sceneState.mooshikaPosition || CALM_DISTRACTIONS[0]).left, 30),
+                      y: parsePercentValue((sceneState.mooshikaPosition || CALM_DISTRACTIONS[0]).top, 52)
+                    }}
                     active={(introGesture || idleHintLevel >= 2) && sceneState.phase === PHASES.CALM_SEARCH && !sceneState.mushikaHolding}
-                    idleDelay={0}
+                    // idleDelay is measured from phase-mount (when `active`
+                    // first flips true via introGesture), NOT from VO start.
+                    // calmMooshika VO itself only starts 500ms after mount
+                    // (see the playVoice('calmMooshika', ...) timer above),
+                    // and the whole first sentence — "Mooshika's thoughts
+                    // keep jumping around." (6 words + sentence-end pause,
+                    // ~2.6-2.9s at this scene's slow/warm TTS rate) — is
+                    // spoken BEFORE the action word "Press and hold" even
+                    // begins. So total delay from mount needs to be roughly
+                    // 500ms (VO start) + ~2.8s (preamble) ≈ 3300ms, not the
+                    // ~1500ms this was previously set to (which made the
+                    // hand appear right as Mooshika shows up, well before
+                    // "Press and hold" is actually said).
+                    idleDelay={introGesture ? 3300 : 0}
+                    replayKey={idleHintLevel}
                     iterations={1}
                     zIndex={24}
                   />
@@ -1777,9 +1788,9 @@ const NewModakSceneMVPContent = ({
                   completed: true
                 }}
                 showFireworks={true}
-                onComplete={() => {
+                onComplete={(completedSceneId, completedData) => {
                   Analytics.sceneCompleted(zoneId, sceneId, 3);
-                  onComplete?.();
+                  onComplete?.(completedSceneId, completedData);
                 }}
                 onReplay={() => {
                   setShowSceneCompletion(false);

@@ -298,7 +298,7 @@ export default function SamaprabhaGame({
   // VO ("That's a branch!" etc.) finishing, not just the game's intro VO.
   // A child correctly holding the light must never get an idle hint while
   // the progress ring is filling — isHoldingClue/isDraggingLight excluded.
-  const { hintLevel, markInteraction } = useRepeatedHintCycle({
+  const { hintLevel, markInteraction, markLevel2VoiceEnded } = useRepeatedHintCycle({
     enabled: isActive && !isPaused && phase === 'play' && introComplete && clueVoComplete && !isDraggingLight && !isHoldingClue,
     stageKey: hintStageKey,
     initialDelay: 10000,
@@ -321,8 +321,8 @@ export default function SamaprabhaGame({
 
     lastHintVoKeyRef.current = onceKey;
     stopVoice?.();
-    playSceneLine?.(voiceKey, undefined, { replayOnReturn: false });
-  }, [hintLevel, hintMode, isActive, isPaused, lit, phase, playSceneLine, stopVoice]);
+    playSceneLine?.(voiceKey, markLevel2VoiceEnded, { replayOnReturn: false });
+  }, [hintLevel, hintMode, isActive, isPaused, lit, phase, playSceneLine, stopVoice, markLevel2VoiceEnded]);
 
   useEffect(() => {
     lastHintVoKeyRef.current = null;
@@ -937,7 +937,7 @@ export default function SamaprabhaGame({
         {activeClue && hintMode === 'hold' && hintLevel === 2 && (
           <GestureDemo
             key={`sama-hold-partial-${lit}`}
-            type="hold"
+            type="hold-progress-l2"
             from={{ x: activeClue.cx, y: activeClue.cy }}
             to={{ x: activeClue.cx, y: activeClue.cy }}
             active
@@ -960,7 +960,7 @@ export default function SamaprabhaGame({
             />
             <GestureDemo
               key={`sama-hold-full-hold-${lit}`}
-              type="hold"
+              type="hold-progress-l3"
               from={{ x: activeClue.cx, y: activeClue.cy }}
               to={{ x: activeClue.cx, y: activeClue.cy }}
               active

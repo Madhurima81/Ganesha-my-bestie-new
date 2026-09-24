@@ -66,6 +66,23 @@ const GESTURE_CONFIGS = {
       100% { left: ${from.x}%; top: ${from.y}%; opacity: 0; transform: translate(-50%,-50%) scale(0.92); }
     `,
   },
+  // L2/L3 rescue variants of `hold` — same press-and-stay hand, but paired
+  // with a visible progress ring that actually fills as the hold plays out,
+  // so the two escalation levels look different from the teaching demo and
+  // from each other (L2 = partial fill, "you're partway there"; L3 = fills
+  // all the way, showing the complete action).
+  'hold-progress-l2': {
+    asset: 'touch',
+    loopDuration: 2800,
+    keyframes: (from) => GESTURE_CONFIGS.hold.keyframes(from),
+    ringFill: 0.55,
+  },
+  'hold-progress-l3': {
+    asset: 'touch',
+    loopDuration: 2800,
+    keyframes: (from) => GESTURE_CONFIGS.hold.keyframes(from),
+    ringFill: 1,
+  },
   scratch: {
     asset: 'touch',
     loopDuration: 2800,
@@ -171,6 +188,7 @@ export default function GestureDemo({
   to = { x: 60, y: 40 },
   idleDelay = 3000,
   active = true,
+  replayKey,
   onDismiss,
   onComplete,
   iterations = 2,
@@ -204,7 +222,12 @@ export default function GestureDemo({
     onComplete?.();
   }, [onComplete]);
 
-  // Start idle timer
+  // Start idle timer. `active` alone only catches a false->true transition —
+  // if a caller's condition is e.g. `effectiveHintLevel >= 2`, it stays true
+  // continuously across L2->L3, so without `replayKey` the demo would play
+  // once at L2 and never replay when L3 arrives. Callers that want a replay
+  // on hint escalation pass replayKey={effectiveHintLevel} (or similar) so
+  // this effect re-arms even though `active` itself didn't change.
   useEffect(() => {
     if (!active) {
       setVisible(false);
@@ -219,7 +242,7 @@ export default function GestureDemo({
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, [active, idleDelay]);
+  }, [active, idleDelay, replayKey]);
 
   // Inject dynamic keyframes
   useEffect(() => {
@@ -268,7 +291,7 @@ export default function GestureDemo({
         />
       )}
 
-      {/* Expanding "keep holding" ring for press-and-hold gestures */}
+      {/* Expanding "keep holding" ring for the plain teaching hold demo. */}
       {type === 'hold' && (
         <div
           className="gesture-demo-hold-ring"
@@ -278,6 +301,27 @@ export default function GestureDemo({
             animation: `gd-hold-ring ${config.loopDuration}ms ease-in-out ${loopCount}`,
           }}
         />
+      )}
+
+      {/* L2/L3 hold rescue — an actual filling progress ring (partial for
+          L2, complete for L3), matching what the real hold-progress ring
+          looks like during real play, instead of reusing the plain
+          teaching demo's expand-and-fade ring at every level. */}
+      {config.ringFill != null && (
+        <svg
+          className="gesture-demo-progress-ring"
+          style={{ left: `${from.x}%`, top: `${from.y}%` }}
+          viewBox="0 0 100 100"
+        >
+          <circle className="gesture-demo-progress-ring-track" cx="50" cy="50" r="42" />
+          <circle
+            className="gesture-demo-progress-ring-fill"
+            cx="50" cy="50" r="42"
+            style={{
+              animation: `${config.ringFill >= 1 ? 'gd-progress-ring-full' : 'gd-progress-ring-partial'} ${config.loopDuration}ms ease-in-out ${loopCount}`,
+            }}
+          />
+        </svg>
       )}
 
       {/* Hand image */}

@@ -232,6 +232,18 @@ export default function GameTestHarness() {
 
   const remount = useCallback(() => { setBanner(''); setTapFx(null); setStarFx(0); setMountId((n) => n + 1); }, []);
 
+  const clearStorage = useCallback(() => {
+    try {
+      localStorage.clear();
+      sessionStorage.clear();
+    } catch (err) {
+      setBanner(`clear storage failed: ${err}`);
+      return;
+    }
+    setBanner('🧹 localStorage cleared');
+    remount();
+  }, [remount]);
+
   // --- pointer → normalized stage coords (0..1) ---
   const norm = useCallback((e) => {
     const rect = stageRef.current.getBoundingClientRect();
@@ -319,6 +331,7 @@ export default function GameTestHarness() {
           </optgroup>
         </select>
         <button onClick={remount} style={btn}>⟳ remount</button>
+        <button onClick={clearStorage} style={{ ...btn, background: '#c62828' }} title="Clears localStorage + sessionStorage, then remounts — use to reset progress/idle-hint state between test runs">🧹 clear storage</button>
         <label style={lbl}><input type="checkbox" checked={isActive} onChange={(e) => setIsActive(e.target.checked)} /> isActive</label>
         <label style={lbl}><input type="checkbox" checked={isPaused} onChange={(e) => setIsPaused(e.target.checked)} /> isPaused</label>
         <label style={lbl}><input type="checkbox" checked={hideElements} onChange={(e) => setHideElements(e.target.checked)} /> hideElements</label>

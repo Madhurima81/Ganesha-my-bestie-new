@@ -29,7 +29,9 @@ const symbolInfo = {
   tusk: { title: 'Tusk', colorIcon: symbolTuskColored },
 };
 
-const symbolOrder = ['mooshika', 'modak', 'belly', 'lotus', 'trunk', 'eyes', 'ear', 'tusk'];
+// Pond's actual discovery order is trunk (reeds solved) then lotus (bloom) —
+// see PondSceneSimplifiedV4.jsx's TRUNK_REVEAL vs BLOOMED phases.
+const symbolOrder = ['mooshika', 'modak', 'belly', 'trunk', 'lotus', 'eyes', 'ear', 'tusk'];
 const TAPPED_SYMBOLS_STORAGE_KEY = 'symbol-sidebar-tapped-symbols-v1';
 
 const readTappedSymbols = () => {

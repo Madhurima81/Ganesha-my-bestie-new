@@ -118,6 +118,11 @@ const speakAndWait = (text, enabled = true) => {
   });
 };
 
+// Decorative animals (bystanders, not the drag/target item itself) get a
+// subtle idle "breathe" loop so the scene doesn't feel frozen — matches the
+// same idea already used for character sprites in Modak.
+const ANIMAL_NAMES = new Set(['Monkey', 'Cow', 'Elephant', 'Peacock', 'Bunny', 'Baby bird']);
+
 // Editor convention: rendered width % = item.w * (item.scale / 100).
 // (Confirmed against real exports — e.g. peacock w:24 scale:80 -> 19.2%,
 // matching the hand-placed DEFAULT_LAYOUT value from the same export.)
@@ -476,6 +481,10 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
   // talking); the idle-hint timer effect below leaves the ladder at 0 until
   // this is a real timestamp.
   const beatWaitStartedAtRef = useRef(null);
+  // When the L2 hint line finished speaking — L3's 8s gap counts from THIS,
+  // not from beatWaitStartedAtRef, so a slow L2 line doesn't eat into the
+  // real gap the child gets before L3 fires.
+  const l2VoiceEndedAtRef = useRef(null);
   useEffect(() => {
     setBeatHintLevel(0);
     setForcedHintLevel(0);
@@ -484,6 +493,7 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
     lastSpokenHintLevelRef.current = 0;
     // Not armed until this state's own VO finishes — see runState below.
     beatWaitStartedAtRef.current = null;
+    l2VoiceEndedAtRef.current = null;
   }, [beatIndex, stateName]);
 
   useEffect(() => {
@@ -494,7 +504,9 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
       // must not count narration time toward the 10/18/26 budget.
       if (!startedAt) return;
       const idleMs = Date.now() - startedAt;
-      if (idleMs >= 26000) setBeatHintLevel(3);
+      // L3 is an 8s gap AFTER the L2 line finishes speaking, not a fixed
+      // 26s-from-arm mark.
+      if (idleMs >= 18000 && l2VoiceEndedAtRef.current && (Date.now() - l2VoiceEndedAtRef.current) >= 8000) setBeatHintLevel(3);
       else if (idleMs >= 18000) setBeatHintLevel(2);
       else if (idleMs >= 10000) setBeatHintLevel(1);
     }, 500);
@@ -522,7 +534,13 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
 
       const text = level === 3 ? hintConfig?.l3VoText : hintConfig?.l2VoText;
       lastSpokenHintLevelRef.current = level;
-      if (text) speakAndWait(text, isAudioOn);
+      if (text) {
+        speakAndWait(text, isAudioOn).then(() => {
+          if (level === 2) l2VoiceEndedAtRef.current = Date.now();
+        });
+      } else if (level === 2) {
+        l2VoiceEndedAtRef.current = Date.now();
+      }
       return;
     }
 
@@ -533,7 +551,9 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
     const beatKey = `${beatIndex}:${stateName}`;
     if (hintSpokenForBeatRef.current === beatKey) return;
     hintSpokenForBeatRef.current = beatKey;
-    speakAndWait(hintVoText, isAudioOn);
+    speakAndWait(hintVoText, isAudioOn).then(() => {
+      l2VoiceEndedAtRef.current = Date.now();
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [effectiveHintLevel, beatHintLevel, beatIndex, stateName, useStructuredDragHints]);
 
@@ -1256,6 +1276,7 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
           to={gestureDemoFromTo.to}
           active={showGestureDemo}
           idleDelay={150}
+          replayKey={effectiveHintLevel}
         />
       )}
 
@@ -1350,7 +1371,7 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
             key={renderKeys[i]}
             type="button"
             data-beat-key={item.gameKey || undefined}
-            className={`beat-player-item${interactive ? ' is-interactive' : ''}${isDragKey && selectedGameKey === item.gameKey ? ' is-selected' : ''}${isBeingDragged ? ' is-dragging' : ''}${isDragKey && feedback === 'holding' ? ' is-holding' : ''}${isDebugSelected ? ' is-debug-selected' : ''}${hintClass}`}
+            className={`beat-player-item${interactive ? ' is-interactive' : ''}${isDragKey && selectedGameKey === item.gameKey ? ' is-selected' : ''}${isBeingDragged ? ' is-dragging' : ''}${isDragKey && feedback === 'holding' ? ' is-holding' : ''}${isDebugSelected ? ' is-debug-selected' : ''}${hintClass}${!isBeingDragged && item.path === 'baby-bird-happy' ? ' is-jumping' : !isBeingDragged && ANIMAL_NAMES.has(item.name) ? ' is-breathing' : ''}`}
             style={{ ...style, pointerEvents: interactive ? 'auto' : 'none', opacity: isPendingReveal ? 0 : style.opacity, outline: isDebugSelected ? '2px dashed #03A9F4' : undefined, touchAction: 'none', WebkitTouchCallout: 'none', WebkitUserSelect: 'none' }}
             tabIndex={interactive ? 0 : -1}
             // Inactive artwork must also stop accepting focus. aria-hidden

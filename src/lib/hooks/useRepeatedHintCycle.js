@@ -24,10 +24,19 @@ export default function useRepeatedHintCycle({
   const [pulseTick, setPulseTick] = useState(0);
   const timersRef = useRef([]);
   const hasScheduledRef = useRef(false);
+  // The L3 timer scheduled by schedule() below is a FALLBACK for when the
+  // caller never tells us the L2 line finished speaking (muted, or no VO at
+  // all) — it fires at the original fixed level3Delay mark. When the caller
+  // does call markLevel2VoiceEnded() (once their L2 line's onEnd fires),
+  // that fallback is replaced with a timer counting the same gap from the
+  // real moment the child heard L2 finish, so a slow L2 line can't eat into
+  // the real time the child gets before L3 fires.
+  const level3TimerRef = useRef(null);
 
   const clearTimers = useCallback(() => {
     timersRef.current.forEach((id) => window.clearTimeout(id));
     timersRef.current = [];
+    level3TimerRef.current = null;
   }, []);
 
   const schedule = useCallback(() => {
@@ -66,6 +75,7 @@ export default function useRepeatedHintCycle({
       setPulseTick(0);
     }, Math.max(level3Delay, Math.max(level2Delay, strongHintAt) + 1200));
     timersRef.current.push(explicit);
+    level3TimerRef.current = explicit;
   }, [
     clearTimers,
     enabled,
@@ -80,6 +90,24 @@ export default function useRepeatedHintCycle({
   const markInteraction = useCallback(() => {
     schedule();
   }, [schedule]);
+
+  // Call once the caller's L2 hint line finishes speaking. Replaces the
+  // fixed-mark L3 fallback with an 8s-after-this-moment timer, so L3 never
+  // fires while (or right on top of) the L2 line still speaking.
+  const markLevel2VoiceEnded = useCallback(() => {
+    if (hintLevel !== 2) return;
+    if (level3TimerRef.current) {
+      window.clearTimeout(level3TimerRef.current);
+      timersRef.current = timersRef.current.filter((id) => id !== level3TimerRef.current);
+    }
+    const gapMs = Math.max(level3Delay - level2Delay, 1200);
+    const t = window.setTimeout(() => {
+      setHintLevel(3);
+      setPulseTick(0);
+    }, gapMs);
+    timersRef.current.push(t);
+    level3TimerRef.current = t;
+  }, [hintLevel, level2Delay, level3Delay]);
 
   useEffect(() => {
     schedule();
@@ -111,6 +139,7 @@ export default function useRepeatedHintCycle({
     hintLevel,
     pulseTick,
     markInteraction,
+    markLevel2VoiceEnded,
     clearHints: clearTimers,
   };
 }

@@ -555,6 +555,7 @@ export default function KurumedevaGame({
   const {
     hintLevel,
     markInteraction,
+    markLevel2VoiceEnded,
   } = useRepeatedHintCycle({
     enabled: isActive && !isPaused && phase === 'play' && !isRoundSettling && !debugMode && introComplete && roundVoComplete,
     stageKey: hintBeat,
@@ -617,8 +618,8 @@ export default function KurumedevaGame({
     if (lastKuruHintRef.current === onceKey) return;
     lastKuruHintRef.current = onceKey;
     stopSceneVoice?.();
-    playSceneLine?.(key);
-  }, [hintLevel, phase, isRoundSettling, debugMode, canAsk, helpDelivered, friendStep, playSceneLine, stopSceneVoice]);
+    playSceneLine?.(key, hintLevel === 2 ? markLevel2VoiceEnded : undefined);
+  }, [hintLevel, phase, isRoundSettling, debugMode, canAsk, helpDelivered, friendStep, playSceneLine, stopSceneVoice, markLevel2VoiceEnded]);
 
   // Keep the selected debug marker inside the current phase's group.
   useEffect(() => {
@@ -1958,7 +1959,16 @@ export default function KurumedevaGame({
         {gestureHint && (
           <GestureDemo
             key={gestureHint.k}
-            type={gestureHint.type}
+            // Hold obstacles (logs) get a filling progress ring for the
+            // idle-ladder rescue — partial at L2, full at L3 — instead of
+            // the same plain teaching ring at every level.
+            type={
+              gestureHint.type === 'hold' && !kuruIntroGesture && hintLevel >= 3
+                ? 'hold-progress-l3'
+                : gestureHint.type === 'hold' && !kuruIntroGesture && hintLevel === 2
+                  ? 'hold-progress-l2'
+                  : gestureHint.type
+            }
             from={gestureHint.from}
             to={gestureHint.to}
             active={hintLevel >= 1 || (kuruIntroGesture && gestureHint.type !== 'tap')}
@@ -1968,7 +1978,14 @@ export default function KurumedevaGame({
             // instruction VO to wait out at that point.
             idleDelay={
               kuruIntroGesture && hintLevel < 1
-                ? ({ 'logs-try': 1100, 'logs-ask': 300, 'logs-place': 250, 'rope-try': 400 }[hintBeat] ?? 400)
+                // 'logs-try' is taught against the real scene-entry VO
+                // (scene12_kuru_intro: "Baby Beaver is across the broken
+                // bridge. Press and hold to lift the logs...") — one setup
+                // clause before the action word, ~750ms tier, same shape as
+                // Vakratunda's intro. 'rope-try' has the same one-clause
+                // setup ("Now help Beaver try the rope."). 'logs-ask'/
+                // 'logs-place' stay short — no long narrative lead-in there.
+                ? ({ 'logs-try': 750, 'logs-ask': 300, 'logs-place': 250, 'rope-try': 750 }[hintBeat] ?? 400)
                 : 400
             }
             iterations={1}

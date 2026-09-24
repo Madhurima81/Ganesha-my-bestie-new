@@ -1,6 +1,125 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
 
+## [2026-09-24] — Symbol Mountain QA pass: hint timing, gesture accuracy, wrong-action feedback
+**Touched:** src/lib/components/feedback/GestureDemo.jsx/.css; src/lib/hooks/useRepeatedHintCycle.js;
+src/lib/beatPlayer/BeatPlayerGame.jsx/.css; src/dev/GameTestHarness.jsx;
+src/zones/symbol-mountain/scenes/modak/NewModakSceneV7.jsx, FlowerJourneyGame2.jsx, GarlandGame3.jsx/.css;
+src/zones/symbol-mountain/scenes/pond/PondSceneSimplifiedV4.jsx;
+src/zones/symbol-mountain/scenes/tusk/EyesPopUpGame.jsx/.css, EarsSoundMatchGame.jsx/.css, SymbolMountainSceneV3.jsx;
+src/zones/symbol-mountain/scenes/final scene/SacredAssemblyScene.css;
+src/zones/symbol-mountain/shared/components/SymbolSidebar.jsx;
+src/zones/shloka-river/scenes/Scene1/MahakayaRescueGame.jsx, Scene1/VakratundaRescueGame.jsx,
+Scene2/components/SuryakotiGame.jsx, Scene2/components/SamaprabhaGame.jsx, Scene3/NirvighnamGame.jsx,
+Scene3/KurumedevaGame.jsx, scene4/SarvakaryeshuGame.jsx, scene4/SarvadaGame.jsx, scene5/ShlokaRiverFinale.jsx;
+src/zones/about-me-hut/food/Favoritefoodgame.jsx, enjoy/ObstacleRemoverGame.jsx, indian-story/MyIndianStoryGame.jsx,
+enjoy/components/Wish2PlateDropGame.jsx;
+src/zones/symbol-mountain/scenes/tusk/assets/images/ears-game-v2/cow_happy_chewing_new.png (new asset).
+
+**Changed:** A full pass driven by a harness QA report, working scene by scene.
+
+- **L3-fixed-offset bug (root cause, fixed in the shared `useRepeatedHintCycle`
+  hook + every scene with its own inline ladder):** L3 was always a flat 26s
+  from when the idle clock armed, regardless of whether the L2 line had
+  actually finished speaking — a slow L2 line could cut into or overlap L3.
+  Now L3 counts an 8s gap from when L2's own voice line ends (`markLevel2VoiceEnded`
+  in the shared hook; equivalent inline fix in Modak/Pond/Eyes/Ears/Sacred
+  Assembly/About Me Hut/all 8 `useRepeatedHintCycle` consumers in Shloka River).
+- **GestureDemo L3 replay bug (shared component):** the demo's idle-timer
+  effect only re-armed on an `active` `false→true` transition; since the
+  trigger condition (`effectiveHintLevel >= 2`) is already `true` at L2, it
+  never replayed at L3. Added a `replayKey` prop, wired into every hold/drag
+  teaching-gesture call site across Modak, Pond, and Tusk's BeatPlayer.
+- **New GestureDemo types `hold-progress-l2`/`hold-progress-l3`:** an actual
+  filling progress ring (partial at L2, full at L3) for hold mechanics,
+  replacing the plain teaching-demo ring at every escalation level. Wired
+  into Calm Mooshika, Pond Rock/Lotus, Samaprabha's hold track, Nirvighnam's
+  stone obstacle, Kurumedeva's log-try obstacle.
+- **Modak Bush/Branch teaching timing + emotion sync:** the "action word"
+  delay estimates assumed a one-clause VO; the real lines are full sentences,
+  so the teaching hand and angry/sad emoji were firing before the VO even
+  reached the relevant word. Recomputed against actual VO text.
+- **Modak Branch gesture location:** `.fjg2-branch` has no centering
+  transform (unlike bush/marsh), so the hand was anchored at the box's
+  top-left corner, not the branch artwork. Re-anchored via live DOM
+  measurement.
+- **Modak affirmation spoken twice:** `FlowerJourneyGame2`'s own closing line
+  and the parent's SymbolAutoReveal "say it with me" card spoke the identical
+  sentence back to back. Removed the duplicate from FlowerJourneyGame2.
+- **Modak emotion-trace persistence:** the small "memory" emoji left near a
+  solved challenge was unconditionally rendered ("stays visible for the rest
+  of the game"), so Branch's emoji stayed up through Marsh. Now gated to its
+  own phase.
+- **Pond Rock/Lotus double-ring:** the scene's own static L1 hint-ring
+  rendered continuously through L2/L3 *alongside* GestureDemo's own internal
+  ring — two overlapping rings pulsing at different rates. Ring now only
+  shows at L1; GestureDemo owns L2/L3.
+- **Pond teaching timing:** same one-clause-vs-full-sentence miscalibration
+  as Modak, recomputed for Rock/Reeds/Lotus.
+- **Pond Lotus gesture location:** hardcoded `LOTUS_HOLD_POINT` was off by
+  6-7% from the actual rendered lotus center; fixed via live measurement.
+- **Pond reveal-card-cuts-VO (trunk reveal + lotus bloom):** both used fixed
+  timers shorter than their own success VO lines; now wait for the VO to
+  finish + a buffer before opening the reveal card.
+- **Pond symbol order:** `SymbolSidebar.jsx`'s fixed order listed lotus
+  before trunk, but trunk (reeds) is solved before lotus (bloom) in actual
+  play. Swapped in the sidebar; the analogous mandala `earnedSymbols` array
+  in Pond's own completion sequence was corrected too.
+- **Eyes (Tusk scene) generic hint:** only the first unfound target (feather)
+  pulsed/spoke by name at L2/L3; now both remaining bushes pulse together
+  with a generic "Tap the glowing bushes." line. Pulse intensity increased.
+  Fixed the mango-tap completion sequence racing ahead of its own fly-to-target
+  animation and cutting off the completion VO; added a self-managed fade-out
+  before the parent unmounts the scene (was a sudden cut to background).
+- **Ears (Tusk scene):** guarded the intro effect against firing twice
+  (was audibly playing the round-1 sounds twice on start); "Listen again."
+  on a wrong tap now actually replays the target sound; completion VO no
+  longer cut by a fixed auto-advance timer; added a success-pulse on a
+  correct tap (previously nothing acknowledged it before jumping to the
+  reveal); L3's hint glow was applying correctly per computed style but was
+  visually imperceptible against the busy art — strengthened to a double
+  drop-shadow + animated ring. Swapped in a better-cropped cow reveal image.
+- **Tusk completion cue:** removed an actual Ganesha character image that
+  faded in and stayed visible over the tusk symbol reveal (per Madhurima:
+  show just the tusk fading in, then the symbol). Added a small hop
+  animation to the baby bird once happy, and a shared idle "breathe" loop
+  to every animal sprite across Eyes/Ears/Tusk and Modak's BeatPlayer items.
+- **L1 pulse-repetition (design pass):** per a design review, most L1 hint
+  cues (a physical object visibly moving) were looping for the full 8s
+  10s→18s window, reading as a mini-demo of the action rather than an
+  attention cue. Capped to 2-3 repetitions then settle, everywhere except
+  hold-type "ring" affordances (Calm Mooshika, Pond Rock/Lotus — explicitly
+  exempt, meant to breathe continuously) and Ears' sound replay (already
+  correctly single-shot).
+- **Tiered wrong-action feedback (design pass, Symbol Mountain only —
+  Sacred Assembly excluded, in-progress elsewhere):** a genuine wrong
+  attempt used to be either silently ignored (Bush's vertical swipe, Branch's
+  upward pull) or get one generic "try again" line forever. New rule, per
+  distinct error type: 1st occurrence → physical feedback + a short
+  corrective VO specific to what went wrong; 2nd → physical feedback only;
+  3rd → physical feedback + re-shown gesture demo + the VO again. Applied to
+  Bush (wrong-direction vs. too-short, tracked separately), Branch
+  (wrong-direction vs. released-early), Calm Mooshika and Pond Rock/Lotus
+  (released-early). Drag mechanics (Marsh/Reeds/Garland) and tap mechanics
+  (Eyes/Ears) were left as-is per the same review — snap-back/wobble is
+  already sufficient feedback there.
+
+**Open:**
+- Sacred Assembly: hearts-progress-bar → 8-slot symbol-progress-row swap,
+  sparkle-burst removal, and Ganesha-character removal were implemented and
+  build-verified earlier in this session, but the file is being edited
+  concurrently elsewhere — by the time of this entry `SacredAssemblySceneV8.jsx`
+  matches HEAD exactly (git status: unmodified), meaning those three JSX
+  changes did not survive and need to be redone once the concurrent edit
+  settles. The `SacredAssemblyScene.css` L1-pulse-cap fix (unrelated, from
+  the design-pass item above) did survive and is included in this commit.
+- Two flagged items still need Madhurima's input, not code: About Me Hut
+  Dreams-and-Wishes "no answer stuck-safe-spot" hint clarity, and a Tusk flow
+  content edit (an old "obstacle overview" VO line playing before the
+  twig-specific line — content call, not touched here).
+- Device-tested only via the in-app harness (`game-test.html`) and live
+  browser checks this session; no real iOS/Android/laptop pass yet.
+
 ## [2026-09-22] — App-level VO cleanup documented and applied
 **Touched:** src/lib/components/navigation/CleanProfileSelector.jsx,
 src/lib/components/navigation/MooshikaRideTransition.jsx,
@@ -1329,3 +1448,5 @@ MooshikaRideTransition rider img switched to .webp with .png onError fallback.
 **Touched:** src/lib/components/feedback/GestureDemo.jsx; src/zones/symbol-mountain/scenes/modak/NewModakSceneV7.jsx, FlowerJourneyGame2.jsx; src/zones/symbol-mountain/scenes/pond/PondSceneSimplifiedV4.jsx; src/zones/symbol-mountain/scenes/final scene/SacredAssemblySceneV8.jsx, GaneshaIllustration.jsx, SacredAssemblyScene.css; src/zones/about-me-hut/indian-story/MyIndianStoryGame.jsx; src/zones/about-me-hut/enjoy/ObstacleRemoverGame.jsx, DreamsWishesGame.css, enjoy/components/Wish2PlateDropGame.jsx; src/zones/about-me-hut/family-tree/Familytreegame.jsx/.css; src/zones/about-me-hut/food/Favoritefoodgame.jsx/.css
 **Changed:** Completed the full 13-scene idle-hint standardization pass (10s/18s/26s notice→understand→do ladder, VO-completion-gated, replacing generic pulse escalation) — Shloka River's 5 scenes and Symbol Mountain/About Me Hut's remaining scenes were finished across this and prior sessions, with Sacred Assembly (finale) as the last of the 13. Also did a GestureDemo shared-component audit across Symbol Mountain's teaching-gesture call sites: added a new `pull-down-hold` compound gesture type (collapses Flower Branch's separate pull-down + hold demos, which could render two overlapping hands, into one); fixed Flower Bush's `swipe-left` misuse (that config ignores `to` and always sweeps ±15% of scene width) by switching to explicit `drag` with real anchored coordinates; froze Calm Mooshika's teaching-gesture target position at trigger time instead of passing the live-tracked (moving) position, which could regenerate GestureDemo's keyframes mid-animation; set `idleDelay={0}` + explicit `iterations={1}` at every Symbol Mountain GestureDemo call site now that gestures are VO-onStart-synced instead of mount-delayed (the animation already has its own ~250-300ms fade-in, and the shared default of 2 iterations is wrong for an immediate one-shot teaching demo); removed a dead `onPointerDown={dismiss}` handler on `.gesture-demo-overlay` (that element has `pointer-events: none`, so it could never fire — real dismissal is the window-level pointerdown listener); added immediate teaching-gesture dismissal in Calm Mooshika's press-down handler, separate from the later "meaningful hold" idle-clock reset.
 **Open:** Large batch of work across About Me Hut (4 scenes), Sacred Assembly, and this GestureDemo audit is implemented and build-verified but NOT YET COMMITTED — awaiting explicit go-ahead to commit (one commit per scene/feature, per standing convention). All 13 scenes' hint passes are now functionally complete; no scenes remain in the original scope.
+
+**Addendum [2026-09-23]:** Committed the next morning after go-ahead — Symbol Mountain (incl. all 6 GestureDemo audit items above) in `406a3215`, the shared `pull-down-hold` type + dead-handler removal in `898531c3`, and About Me Hut in `58df7df5`. Verified line-by-line against this entry; nothing was lost.

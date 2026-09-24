@@ -265,7 +265,7 @@ export default function MahakayaRescueGame({
   // finished) — those are different things and were being conflated.
   // Also suppressed while the child is actively dragging, so hints don't
   // fire over their hand mid-gesture.
-  const { hintLevel, markInteraction } = useRepeatedHintCycle({
+  const { hintLevel, markInteraction, markLevel2VoiceEnded } = useRepeatedHintCycle({
     enabled: isActive && !isPaused && phase === 'play' && !debugMode && stageVoComplete && !dragging,
     stageKey: hintStageKey,
     initialDelay: 10000,
@@ -283,8 +283,8 @@ export default function MahakayaRescueGame({
     if (lastHintVoStageRef.current === hintStageKey) return;
     lastHintVoStageRef.current = hintStageKey;
     const voiceKey = ropeStage === 'detached' ? 'scene10_maha_blocking' : 'scene10_maha_pull_down';
-    playSceneLine?.(voiceKey, () => {});
-  }, [hintLevel, ropeStage, hintStageKey, phase, debugMode, isPaused, playSceneLine]);
+    playSceneLine?.(voiceKey, markLevel2VoiceEnded);
+  }, [hintLevel, ropeStage, hintStageKey, phase, debugMode, isPaused, playSceneLine, markLevel2VoiceEnded]);
 
   const clearTimers = useCallback(() => {
     timers.current.forEach(clearTimeout);
@@ -927,7 +927,7 @@ export default function MahakayaRescueGame({
           && ((needsInitialTeaching && !teachingComplete) || hintLevel >= 2)
         }
         idleDelay={needsInitialTeaching && !teachingComplete ? 300 : 0}
-        iterations={1}
+        iterations={2}
         onComplete={() => {
           if (needsInitialTeaching && !teachingComplete) setTeachingCompleteKey(hintStageKey);
         }}
@@ -953,7 +953,7 @@ export default function MahakayaRescueGame({
           && ((needsInitialTeaching && !teachingComplete) || hintLevel >= 2)
         }
         idleDelay={needsInitialTeaching && !teachingComplete ? 300 : 0}
-        iterations={1}
+        iterations={2}
         onComplete={() => {
           if (needsInitialTeaching && !teachingComplete) setTeachingCompleteKey(hintStageKey);
         }}

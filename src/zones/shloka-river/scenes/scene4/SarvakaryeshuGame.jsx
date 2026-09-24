@@ -180,7 +180,7 @@ export default function SarvakaryeshuGame({
   });
 
   // GMB Hint Standard v1 — flat 10s/18s/26s from VO end or last interaction.
-  const { hintLevel, markInteraction } = useRepeatedHintCycle({
+  const { hintLevel, markInteraction, markLevel2VoiceEnded } = useRepeatedHintCycle({
     enabled: isActive && !isPaused && phase === 'play' && canPick,
     stageKey: isActive ? `card-${cardIndex}` : null,
     initialDelay: 10000,
@@ -209,7 +209,7 @@ export default function SarvakaryeshuGame({
         hintVoiceKey,
         // L3 is the final rescue — reveal the correct symbol the instant
         // the clue finishes, not after a further guessed delay.
-        hintLevel === 3 ? () => setGuidedPowerId(situation.correct) : undefined,
+        hintLevel === 3 ? () => setGuidedPowerId(situation.correct) : markLevel2VoiceEnded,
         {
           replayOnReturn: false,
           minDelayAfterVoiceMs: 5000,
@@ -217,7 +217,7 @@ export default function SarvakaryeshuGame({
       );
     }, 120);
     return () => window.clearTimeout(timerId);
-  }, [cardIndex, hintLevel, isActive, isCorrect, phase, playSceneLine]);
+  }, [cardIndex, hintLevel, isActive, isCorrect, phase, playSceneLine, markLevel2VoiceEnded]);
 
   const safeAfter = useCallback((ms, fn) => {
     const id = window.setTimeout(fn, ms);

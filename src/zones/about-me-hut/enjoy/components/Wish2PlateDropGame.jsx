@@ -85,7 +85,7 @@ const Wish2PlateDropGame = ({
             firstUnfilledBowlIndex !== undefined
           }
           idleDelay={250}
-          iterations={1}
+          iterations={2}
           zIndex={24}
         />
 
@@ -98,7 +98,7 @@ const Wish2PlateDropGame = ({
             to={wish2IdleLevel === 2 ? partialTargetPoint : targetPoint}
             active
             idleDelay={0}
-            iterations={1}
+            iterations={2}
             zIndex={24}
           />
         )}

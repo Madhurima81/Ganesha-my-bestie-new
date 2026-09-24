@@ -111,7 +111,9 @@
 /* L1 — a small restrained lift/wiggle: "this little thing can move",
    without saying where it goes. */
 .beat-player-item.beat-player-hint-nudge img {
-  animation: beatPlayerHintNudge 2.2s ease-in-out infinite;
+  /* 2 gentle nudges, then stop — a physical lift is a mini-demo if it loops
+     for the whole L1 window, not just an attention cue. */
+  animation: beatPlayerHintNudge 2.2s ease-in-out 2;
 }
 
 @keyframes beatPlayerHintNudge {
@@ -123,6 +125,32 @@
 /* L3 — the destination finally breathes; not glowing from the start. */
 .beat-player-item.beat-player-hint-target {
   animation: beatPlayerTargetBreathe 1.45s ease-in-out infinite;
+}
+
+/* Idle animals (bystanders, not the item being taught/dragged) — a gentle
+   permanent breathe so the scene doesn't feel like a frozen slideshow.
+   Animates the inner img, not the button, so it doesn't fight the button's
+   own position/rotation/flip transform from styleFromItem. */
+.beat-player-item.is-breathing img {
+  animation: beatPlayerBreathe 2.6s ease-in-out infinite;
+}
+
+@keyframes beatPlayerBreathe {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-2px) scale(1.02); }
+}
+
+/* Baby bird, happy and back in its rebuilt nest — a small hop instead of
+   just sitting there once the child has actually solved the beat. */
+.beat-player-item.is-jumping img {
+  animation: beatPlayerJump 900ms ease-in-out infinite;
+}
+
+@keyframes beatPlayerJump {
+  0%, 100% { transform: translateY(0); }
+  35% { transform: translateY(-8px); }
+  55% { transform: translateY(0); }
+  70% { transform: translateY(-3px); }
 }
 
 @keyframes beatPlayerTargetBreathe {
@@ -277,6 +305,8 @@
 @media (prefers-reduced-motion: reduce) {
   .beat-player-item,
   .beat-player-item.beat-player-hint-nudge img,
+  .beat-player-item.is-breathing img,
+  .beat-player-item.is-jumping img,
   .beat-player-drop,
   .beat-player-stage.beat-player-wrong .beat-player-item,
   .beat-player-state-before .beat-player-item,

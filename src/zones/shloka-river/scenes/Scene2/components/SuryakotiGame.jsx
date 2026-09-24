@@ -111,6 +111,7 @@ export default function SuryakotiGame({
   const {
     hintLevel,
     markInteraction,
+    markLevel2VoiceEnded,
   } = useRepeatedHintCycle({
     // Gated on the instruction VO (introComplete), not on the teaching
     // gesture finishing — the gesture and VO can overlap; teaching disappears
@@ -142,8 +143,8 @@ export default function SuryakotiGame({
     lastHintVoRef.current = onceKey;
 
     stopVoice?.();
-    playSceneLine?.(voiceKey);
-  }, [activeSpot, hintLevel, isPaused, phase, playSceneLine, spotHasProgress, stopVoice]);
+    playSceneLine?.(voiceKey, markLevel2VoiceEnded);
+  }, [activeSpot, hintLevel, isPaused, phase, playSceneLine, spotHasProgress, stopVoice, markLevel2VoiceEnded]);
 
   // preserve=true (resize/rotation mid-play): rebuild the overlay at the new
   // geometry but keep cleared cells and game phase instead of restarting.

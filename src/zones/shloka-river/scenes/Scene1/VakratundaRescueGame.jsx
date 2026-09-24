@@ -1065,7 +1065,7 @@ export default function VakratundaRescueGame({
         to={{ x: introGestureTo.x, y: introGestureTo.y }}
         active={isPlaying && showIntroGesture}
         idleDelay={0}
-        iterations={1}
+        iterations={2}
       />
 
       <div
