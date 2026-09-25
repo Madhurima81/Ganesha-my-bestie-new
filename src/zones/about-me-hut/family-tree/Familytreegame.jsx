@@ -1,4 +1,4 @@
-import { usePreloadPoses } from '../../../lib/components/animation/PoseImage';
+﻿import { usePreloadPoses } from '../../../lib/components/animation/PoseImage';
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useGameSounds } from '../../../lib/hooks/useGameSounds';
 import './Familytreegame.css';
@@ -33,7 +33,8 @@ import useKeyboardAwareModal from '../../../lib/hooks/useKeyboardAwareModal';
 
 // Content Configs
 import { getOpeningModal, getCompletionModal } from '../../../lib/config/content';
-import { getZoneTheme } from '../../../lib/config/ZoneThemes';
+import { getZoneTheme, getProfilePillBtnStyle } from '../../../lib/config/ZoneThemes';
+import ProfilePillBtn from '../../../lib/components/shared/ProfilePillBtn';
 import { getVoiceScript } from '../../../lib/config/content/voiceGuidance';
 
 // Shared Components
@@ -524,7 +525,8 @@ const FamilyTreeGameContent = ({
  { id: 'brother', label: 'Brother', image: childBrotherImg, color: '#7EDC9A', row: 3 },
  { id: 'sister', label: 'Sister', image: childSisterImg, color: '#FFA6C9', row: 3 },
  { id: 'myself', label: 'Myself', image: childMyselfImg, color: '#FFD966', row: 3 },
- { id: 'someone-else', label: 'Someone Else', image: childDadImg, color: '#D8C7E8', row: 2 },
+ { id: 'someone-else-m', label: 'Someone Else', image: childDadImg, color: '#D8C7E8', row: 2 },
+ { id: 'someone-else-f', label: 'Someone Else', image: childMomImg, color: '#D8C7E8', row: 2 },
  { id: 'pet', label: 'Pet', image: childPetImg, color: '#F2D3A2', row: 3 }
  ];
 
@@ -612,7 +614,8 @@ showTreeSparkles: false,
  brother: 'What do you call your Brother?',
  sister: 'What do you call your Sister?',
  myself: 'What do you call yourself?',
- 'someone-else': 'What do you call them?'
+ 'someone-else-m': 'What do you call them?',
+ 'someone-else-f': 'What do you call them?'
  };
  return promptMap[typeId] || `What do you call your ${fallbackLabel}?`;
  };
@@ -812,7 +815,7 @@ sceneState.isSequencePlaying,
 
  // ========================================
  // GANESHA PHASE: immediate teaching cue (0-150ms), same convention as the
- // gesture demos other scenes show right away — this scene has no visual
+ // gesture demos other scenes show right away â€” this scene has no visual
  // gesture demo, so tapCircle stands in for it. GMB Hint Standard v1: this
  // is teaching, not a hint, so it plays once immediately and is separate
  // from the 10s/18s/26s idle-hint ladder below (no more 3.5s mid-delay).
@@ -874,19 +877,26 @@ sceneState.isSequencePlaying,
  if (shouldPlayRepeatHint) {
  const level1Timer = setTimeout(() => {
  setTreeIdleHintLevel(1);
- }, IDLE_HINT_FIRST_DELAY_MS);
+
+ // Level 3's 8s gap counts from when the level 2 VO finishes speaking,
+ // not from the moment the level 2 timer fires â€” otherwise level 3
+ // could land while (or right on top of) that line still talking.
+ const armLevel3 = () => {
+ const level3Timer = setTimeout(() => {
+ setTreeIdleHintLevel(3);
+ }, IDLE_HINT_STEP_MS);
+ treeIdleHintTimersRef.current.push(level3Timer);
+ };
 
  const level2Timer = setTimeout(() => {
  setTreeIdleHintLevel(2);
  stopVoice();
- playVoice('tapCircle'); // VO only on level 2
- }, IDLE_HINT_FIRST_DELAY_MS + IDLE_HINT_STEP_MS);
+ playVoice('tapCircle', armLevel3); // VO only on level 2
+ }, IDLE_HINT_STEP_MS);
+ treeIdleHintTimersRef.current.push(level2Timer);
+ }, IDLE_HINT_FIRST_DELAY_MS);
 
- const level3Timer = setTimeout(() => {
- setTreeIdleHintLevel(3);
- }, IDLE_HINT_FIRST_DELAY_MS + (2 * IDLE_HINT_STEP_MS));
-
- treeIdleHintTimersRef.current = [level1Timer, level2Timer, level3Timer];
+ treeIdleHintTimersRef.current = [level1Timer];
  }
 
  return () => {
@@ -902,7 +912,7 @@ sceneState.isSequencePlaying,
 
  // ========================================
  // CHILD PHASE: immediate entry VO (0-150ms), then ONE repeat at 10s if the
- // child hasn't started. This is a personal/reflection phase — no 10/18/26
+ // child hasn't started. This is a personal/reflection phase â€” no 10/18/26
  // ladder, no glow on the family choices. Just: ask once, wait, ask again,
  // stop.
  // ========================================
@@ -1103,7 +1113,7 @@ sceneState.isSequencePlaying,
  playSparkle();
  triggerMiniGesture('thumbsup', 'center', 1100);
 
- // isSequencePlaying gates the idle-hint ladder (GMB Hint Standard v1) —
+ // isSequencePlaying gates the idle-hint ladder (GMB Hint Standard v1) â€”
  // it only clears once BOTH the placement animation and this member's
  // voice line have finished, not on a flat timer alone.
  let voDone = !isAudioOn;
@@ -1124,6 +1134,10 @@ sceneState.isSequencePlaying,
  moment: 'story',
  onEnd: () => { voDone = true; finishSequence(); }
  });
+ // Safety net: if the VO's onEnd never fires (speechSynthesis.cancel()
+ // race, no TTS engine available, etc.), don't leave the child stuck
+ // with isSequencePlaying true and no Continue button forever.
+ scheduleTimeout(() => { voDone = true; finishSequence(); }, 4000);
  }
 
  scheduleTimeout(() => { animDone = true; finishSequence(); }, 1400);
@@ -1170,6 +1184,10 @@ sceneState.isSequencePlaying,
  moment: 'story',
  onEnd: () => { voDone = true; finishSequence(); }
  });
+ // Safety net: if the VO's onEnd never fires (speechSynthesis.cancel()
+ // race, no TTS engine available, etc.), don't leave the child stuck
+ // with isSequencePlaying true and no Continue button forever.
+ scheduleTimeout(() => { voDone = true; finishSequence(); }, 4000);
  }
 
  scheduleTimeout(() => { animDone = true; finishSequence(); }, 1400);
@@ -1391,7 +1409,7 @@ sceneActions.updateState({ gamePhase: 'transition' });
  Tap a circle to meet my family!
  </div>
  )} */}
- {/* Hearts progress row removed per Madhurima — clipped at iPad landscape
+ {/* Hearts progress row removed per Madhurima â€” clipped at iPad landscape
  and no longer matches the current (non-quiz) tree-building design. */}
  {/* <div className="hud-hearts-row">
  {ganeshaFamily.map((m, i) => (
@@ -1461,13 +1479,14 @@ sceneActions.updateState({ gamePhase: 'transition' });
  </div>
 
  {sceneState.placedGaneshaMembers.length === ganeshaFamily.length &&!sceneState.showFunFactModal &&!sceneState.isSequencePlaying && (
- <button
- className="tree-done-btn done-btn-pulse"
+ <ProfilePillBtn
+ label="Continue"
  onClick={handleGaneshaTreeDone}
  disabled={sceneState.showTreeSparkles}
- >
- Continue
- </button>
+ className="tree-done-btn done-btn-pulse"
+ style={getProfilePillBtnStyle('about-me-hut')}
+ fullWidth={false}
+ />
  )}
  </>
  )}
@@ -1510,7 +1529,8 @@ sceneActions.updateState({ gamePhase: 'transition' });
  </p>
  <VOGatedButton
  visible={transitionButtonVisible}
- className="continue-btn-simple done-btn-pulse"
+ className="continue-btn-simple done-btn-pulse profile-cta-btn-unified profile-cta-btn-md"
+ style={getProfilePillBtnStyle('about-me-hut')}
  onClick={() => {
  if (transitionContinueInFlightRef.current) return;
  transitionContinueInFlightRef.current = true;
@@ -1522,7 +1542,7 @@ sceneActions.updateState({ gamePhase: 'transition' });
  proceedToChildInput();
  }}
  >
- Continue
+ <span className="profile-cta-btn-text">Continue</span>
  </VOGatedButton>
  </div>
  </div>
@@ -1573,7 +1593,7 @@ sceneActions.updateState({ gamePhase: 'transition' });
  handleDeleteMember(actualIdx);
  }}
  >
- ×
+ Ã—
  </button>
  )}
  </div>
@@ -1585,10 +1605,20 @@ sceneActions.updateState({ gamePhase: 'transition' });
  ))}
  </div>
 
- {/* FLOATING DONE BUTTON (Moved Above Tray) */}
+ {/* BOTTOM TRAY (Centered & Padded) */}
+ <div
+ className={`bottom-member-tray ${sceneState.showBottomTray? 'tray-visible': ''}`}
+ style={{
+ justifyContent: 'center',
+ paddingLeft: '20px',
+ paddingRight: '20px'
+ }}
+ >
+ {/* DONE BUTTON — attached to tray, centered above the family choices */}
  {sceneState.childFamily.length >= 1 && (
  <button
- className={`tray-done-btn ${sceneState.childFamily.length >= 21? 'tray-done-btn-attention': ''}`}
+ className={`tray-done-btn profile-cta-btn-unified ${sceneState.childFamily.length >= 21? 'tray-done-btn-attention': ''}`}
+ style={getProfilePillBtnStyle('about-me-hut')}
  onClick={() => {
  // Dismiss resume popup on any action
  if (showResumePopup) {
@@ -1599,20 +1629,13 @@ sceneActions.updateState({ gamePhase: 'transition' });
  sceneActions.updateState({ gamePhase: 'sideBySide' });
  }}
  >
+ <span className="profile-cta-btn-text">
  <span className="tray-done-main">Done!</span>
  <span className="tray-done-sub">Finish Tree</span>
+ </span>
  </button>
  )}
 
- {/* BOTTOM TRAY (Centered & Padded) */}
- <div
- className={`bottom-member-tray ${sceneState.showBottomTray? 'tray-visible': ''}`}
- style={{
- justifyContent: 'center',
- paddingLeft: '20px',
- paddingRight: '20px'
- }}
- >
  {familyMemberTypes.map(type => {
  // Count members in this type's row
  const rowCount = sceneState.childFamily.filter(m => m.row === type.row).length;
@@ -1794,7 +1817,12 @@ justifyContent: 'center',
  </div>
 
  <div className="action-buttons">
- <button className="family-tree-end-game-btn" onClick={() => {
+ <ProfilePillBtn
+ label="Continue"
+ className="family-tree-end-game-btn"
+ style={getProfilePillBtnStyle('about-me-hut')}
+ fullWidth={false}
+ onClick={() => {
    playTwinkle();
    SimpleSceneManager.clearCurrentScene();
    sceneActions.updateState({ showingCompletionScreen: true, completed: true, stars: 3 });
@@ -1802,9 +1830,8 @@ justifyContent: 'center',
    if (profileId) {
      ProgressManager.updateSceneCompletion(profileId, 'about-me-hut', 'family-tree', { completed: true, stars: 3 });
    }
- }}>
- Continue
- </button>
+ }}
+ />
  </div>
  </div>
  )}

@@ -274,68 +274,75 @@
 }
 
 /* ========================================
-   BOTTOM TRAY DONE BUTTON
+   FAMILY TREE — DONE BUTTON
+   Attached to family tray
    ======================================== */
-.tray-done-btn {
-  position: fixed;
-  right: 50px;
-  bottom: calc(270px + env(safe-area-inset-bottom, 0px));
-  z-index: 320;
 
-  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-  color: white;
+/* Done floats above center of tray */
+.bottom-member-tray .tray-done-btn {
+  position: absolute;
+
+  left: 50%;
+  top: -64px;
+  transform: translateX(-50%);
+
+  z-index: 120;
+
+  min-width: 150px;
+  min-height: 54px;
+
+  padding: 9px 28px 8px;
+
   border: none;
-  border-radius: 50px;
+  border-radius: 22px;
+
+  background: linear-gradient(
+    180deg,
+    #67c86c 0%,
+    #4caf50 100%
+  );
+
+  color: #fff;
 
   font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-size: 2.5rem;
-  font-weight: 700;
-  line-height: 1.05;
-
-  padding: 18px 45px;
-  min-height: 88px;
-  min-width: 230px;
-  white-space: normal;
   cursor: pointer;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
 
   box-shadow:
-    0 8px 25px rgba(0,0,0,0.12),
-    0 0 0 0 rgba(0,0,0,0.14);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    0 5px 0 rgba(55, 130, 60, 0.16),
+    0 8px 18px rgba(0, 0, 0, 0.12);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 /* Hover State */
-.tray-done-btn:hover {
-  transform: translateY(-3px);
+.bottom-member-tray .tray-done-btn:hover {
+  transform: translateX(-50%) translateY(-2px);
   box-shadow:
-    0 12px 30px rgba(0,0,0,0.14),
-    0 0 0 0 rgba(0,0,0,0.14);
+    0 6px 0 rgba(55, 130, 60, 0.14),
+    0 10px 20px rgba(0, 0, 0, 0.14);
 }
 
 /* Click/Active State */
-.tray-done-btn:active {
-  transform: translateY(-1px);
+.bottom-member-tray .tray-done-btn:active {
+  transform: translateX(-50%) translateY(1px);
 }
 
 .tray-done-main {
-  font-size: 2.5rem;
+  display: block;
+  font-size: 1.35rem;
   font-weight: 800;
   line-height: 1;
 }
 
 .tray-done-sub {
+  display: block;
+  margin-top: 3px;
   font-family: 'Nunito', sans-serif;
-  font-size: 1.05rem;
-  font-weight: 800;
-  line-height: 1;
-  opacity: 0.95;
+  font-size: 0.72rem;
+  font-weight: 700;
+  opacity: 0.9;
 }
 
 .tray-done-btn-attention {
@@ -347,19 +354,19 @@
 
 @keyframes donePulseGlow {
   0% {
-    transform: translateY(0) scale(1);
+    transform: translateX(-50%) translateY(0) scale(1);
     box-shadow:
       0 0 0 0 rgba(0,0,0,0.15),
       0 12px 26px rgba(0,0,0,0.15);
   }
   50% {
-    transform: translateY(-2px) scale(1.06);
+    transform: translateX(-50%) translateY(-2px) scale(1.06);
     box-shadow:
       0 0 0 14px rgba(76, 175, 80, 0),
       0 16px 34px rgba(0,0,0,0.18);
   }
   100% {
-    transform: translateY(0) scale(1);
+    transform: translateX(-50%) translateY(0) scale(1);
     box-shadow:
       0 0 0 0 rgba(76, 175, 80, 0),
       0 12px 26px rgba(0,0,0,0.15);
@@ -744,17 +751,36 @@
   justify-content: center;
 }
 
+/* ========================================
+   FAMILY TREE — CLEAR TAP CIRCLES
+   ======================================== */
+
 .empty-circle,
 .tap-circle {
-  width: 210px;
-  height: 210px;
+  width: clamp(96px, 12vw, 140px);
+  height: clamp(96px, 12vw, 140px);
+
   position: relative;
   border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  box-shadow: none;
-  background: transparent;
-  opacity: 0.35;
-  transition: transform 0.3s ease;
+
+  /* Clearer ghost circle */
+  border: 3px solid rgba(255, 248, 220, 0.92);
+
+  /* Very soft fill so it reads as a tappable space */
+  background: rgba(255, 248, 220, 0.16);
+
+  /* Gentle separation from tree */
+  box-shadow:
+    0 0 0 4px rgba(93, 64, 55, 0.08),
+    0 4px 12px rgba(60, 40, 20, 0.10);
+
+  opacity: 1;
+
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    background-color 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 /* ========================================
@@ -764,14 +790,33 @@
    correct-answer puzzle), so all three levels apply equally.
 ======================================== */
 
-/* L1 — gently show which empty circles can be tapped */
+/* L1 attention cue — gentle breathing only */
 .empty-circle.tree-hint-attention {
-  animation: treeCircleAttention 1.25s ease-in-out 2;
+  animation: familyTapCirclePulse 2.2s ease-in-out infinite;
 }
 
-@keyframes treeCircleAttention {
-  0%, 100% { transform: scale(1); opacity: 0.35; }
-  50% { transform: scale(1.045); opacity: 0.7; }
+.empty-circle.tree-hint-attention::before,
+.empty-circle.tree-hint-attention::after {
+  content: none;
+}
+
+@keyframes familyTapCirclePulse {
+  0%, 100% {
+    transform: scale(1);
+    border-color: rgba(255, 248, 220, 0.82);
+    background: rgba(255, 248, 220, 0.14);
+    box-shadow:
+      0 0 0 4px rgba(93, 64, 55, 0.07),
+      0 4px 12px rgba(60, 40, 20, 0.10);
+  }
+  50% {
+    transform: scale(1.045);
+    border-color: rgba(255, 244, 190, 1);
+    background: rgba(255, 244, 190, 0.23);
+    box-shadow:
+      0 0 0 6px rgba(255, 224, 145, 0.16),
+      0 5px 16px rgba(60, 40, 20, 0.13);
+  }
 }
 
 /* L2 — VO gives instruction; visual reinforces affordance */
@@ -780,10 +825,10 @@
 }
 
 @keyframes treeCircleReminder {
-  0%, 100% { transform: scale(1); opacity: 0.4; box-shadow: none; }
+  0%, 100% { transform: scale(1); opacity: 1; box-shadow: none; }
   50% {
     transform: scale(1.05);
-    opacity: 0.85;
+    opacity: 1;
     box-shadow:
       0 0 0 3px rgba(255, 215, 110, 0.35),
       0 0 16px rgba(255, 215, 110, 0.38);
@@ -792,7 +837,7 @@
 
 /* L3 — final help stays available */
 .empty-circle.tree-hint-final {
-  opacity: 0.9;
+  opacity: 1;
   box-shadow:
     0 0 0 4px rgba(255, 207, 92, 0.55),
     0 0 22px rgba(255, 207, 92, 0.58);
@@ -2096,8 +2141,8 @@
   border: none !important;
   box-shadow: none !important;
   padding: 0 !important;
-  min-width: 100px !important;
-  /* Give it enough width */
+  min-width: clamp(62px, 8vw, 88px) !important;
+  /* Give it enough width, but shrink enough for all 10 cards to fit one row */
   overflow: visible !important;
   /* Let image pop out */
   margin-top: -20px;
@@ -2299,6 +2344,14 @@
 
 .bottom-member-tray .member-card:nth-child(8) .member-card-icon-wrap {
   animation-delay: 0.8s;
+}
+
+.bottom-member-tray .member-card:nth-child(9) .member-card-icon-wrap {
+  animation-delay: 1.5s;
+}
+
+.bottom-member-tray .member-card:nth-child(10) .member-card-icon-wrap {
+  animation-delay: 0.4s;
 }
 
 /* 4. Hover State Override */
@@ -4443,11 +4496,14 @@
   -webkit-backdrop-filter: blur(10px);
   padding: 20px;
   display: flex;
-  gap: 15px;
+  gap: clamp(6px, 1.5vw, 14px);
   justify-content: center;
   flex-wrap: wrap;
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
   z-index: 100;
+
+  /* Needed for the Done button to float above the tray */
+  overflow: visible;
 
   /* Start hidden below screen */
   transform: translateY(100%);
@@ -4460,8 +4516,6 @@
 }
 @media (max-width: 900px) {
   .tray-done-btn {
-    right: 14px;
-    bottom: calc(205px + env(safe-area-inset-bottom, 0px));
     padding: 14px 28px 12px;
     min-height: 74px;
     min-width: 180px;
@@ -4880,8 +4934,8 @@
 
 
 .bottom-member-tray .member-card .member-card-icon-wrap {
-  width: clamp(70px, 10vw, 110px) !important;
-  height: clamp(70px, 10vw, 100px) !important;
+  width: clamp(56px, 8vw, 84px) !important;
+  height: clamp(56px, 8vw, 76px) !important;
 }
 
 .bottom-member-tray .member-card .member-card-label {
@@ -4897,8 +4951,6 @@
 }
 
 .tray-done-btn {
-  bottom: calc(156px + env(safe-area-inset-bottom, 0px)) !important;
-  right: 36px !important;
   font-size: clamp(0.95rem, 1.8vw, 1.2rem) !important;
   padding: 12px 32px !important;
   min-width: clamp(120px, 18vw, 180px) !important;
@@ -5207,8 +5259,46 @@
   /* BUG 1 � push intro tree Continue button up off the bottom edge */
   .family-tree-game .tree-done-btn {
     bottom: max(clamp(70px, 9vh, 110px), env(safe-area-inset-bottom)) !important;
-    font-size: clamp(1rem, 2vh, 1.4rem) !important;
-    padding: clamp(10px, 1.6vh, 14px) clamp(28px, 5vw, 40px) !important;
     z-index: 1500;
   }
+}
+
+/* --- Pill CTA UI (matches OpeningModal "Let's Explore" button) ---
+   Combined-class selectors below win on specificity over the single-class
+   .tree-done-btn / .continue-btn-simple / .family-tree-end-game-btn rules
+   above, so the old green/clay backgrounds, border-radius and box-shadow
+   never show through. Layout-only rules (position, bottom, margin) on
+   those base classes still apply and are left untouched. */
+.tree-done-btn.profile-cta-btn-unified,
+.continue-btn-simple.profile-cta-btn-unified,
+.family-tree-end-game-btn.profile-cta-btn-unified,
+.tray-done-btn.profile-cta-btn-unified {
+  background: linear-gradient(
+    180deg,
+    var(--profile-btn-top, #C3A8F3) 0%,
+    var(--profile-btn-base, #B99AEC) 100%
+  );
+  box-shadow:
+    0 6px 0 var(--profile-btn-shadow, #9B7DD8),
+    0 12px 24px var(--profile-btn-glow, rgba(180, 158, 232, 0.20));
+  border-radius: 999px;
+  animation: none;
+  min-width: 0;
+  padding: 14px 34px;
+  font-size: clamp(16px, 1.8vw, 24px);
+}
+
+.tree-done-btn.profile-cta-btn-unified:hover:not(:disabled),
+.continue-btn-simple.profile-cta-btn-unified:hover:not(:disabled),
+.family-tree-end-game-btn.profile-cta-btn-unified:hover:not(:disabled),
+.tray-done-btn.profile-cta-btn-unified:hover:not(:disabled) {
+  box-shadow:
+    0 8px 0 var(--profile-btn-shadow, #9B7DD8),
+    0 14px 26px var(--profile-btn-glow, rgba(180, 158, 232, 0.20));
+}
+
+/* tray-done-btn keeps its absolute position (floats above the tray) and its
+   two-line "Done! / Finish Tree" text sizing — only color/shape are pill-ified. */
+.tray-done-btn.profile-cta-btn-unified {
+  padding: 9px 28px 8px;
 }
