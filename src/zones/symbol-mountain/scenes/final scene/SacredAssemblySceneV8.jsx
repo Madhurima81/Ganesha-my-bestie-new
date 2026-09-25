@@ -575,12 +575,47 @@ const SacredAssemblyContent = ({
   // and reloading. Keyed by zoneId -> a position override that fully
   // replaces that zone's `position` (see getZonePosition below).
   const [zonePositionOverrides, setZonePositionOverrides] = useState({});
+  const [layoutCopyStatus, setLayoutCopyStatus] = useState('');
+  // All 8 tap markers pulse together once when a round's search actually
+  // starts, then settle into their normal staggered idle breathing.
+  const [showTapIntroPulse, setShowTapIntroPulse] = useState(false);
   const ganeshaContainerRef = useRef(null);
   const zoneDragStateRef = useRef(null);
   const getZonePosition = useCallback((zoneId) => {
     const zone = BODY_PART_ZONES.find((z) => z.id === zoneId);
     return zonePositionOverrides[zoneId] || zone?.position || {};
   }, [zonePositionOverrides]);
+
+  // One-shot dump of ALL 8 zones (dragged + untouched) as a single JSON
+  // blob keyed by zone id, ready to paste straight over the `position`
+  // field of each entry in ganeshaZones.js — instead of copying each
+  // zone's position one at a time with no name attached to it.
+  const copyAllZonePositionsJson = useCallback(async () => {
+    const payload = BODY_PART_ZONES.reduce((acc, zone) => {
+      acc[zone.id] = getZonePosition(zone.id);
+      return acc;
+    }, {});
+    const json = JSON.stringify(payload, null, 2);
+    const canPrompt = typeof window !== 'undefined' && typeof window.prompt === 'function';
+
+    try {
+      if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(json);
+        setLayoutCopyStatus('Copied');
+      } else if (canPrompt) {
+        window.prompt('Copy all zone positions JSON', json);
+        setLayoutCopyStatus('Shown');
+      }
+    } catch {
+      if (canPrompt) {
+        window.prompt('Copy all zone positions JSON', json);
+        setLayoutCopyStatus('Shown');
+      } else {
+        if (import.meta.env.DEV) console.log('Sacred Assembly zone positions JSON:', json);
+        setLayoutCopyStatus('Logged');
+      }
+    }
+  }, [getZonePosition]);
   const completionModalContent = getCompletionModal(zoneId, sceneId);
   const { isAudioOn, toggleAudio } = useAudioPreference();
   const {
@@ -636,18 +671,26 @@ const SacredAssemblyContent = ({
   // Drag the selected zone's debug box to reposition it live. Converts the
   // drop point to percent-of-container top/left, drops right/bottom/transform
   // (so a right-anchored zone like "ears" becomes left-anchored once moved —
-  // visually identical, just simpler to read back out).
+  // visually identical, just simpler to read back out). Deliberately never
+  // touches width/height: those were previously captured via
+  // getBoundingClientRect(), which reflects whatever page zoom/"fit to
+  // window" scale the browser or game-test harness happens to be applying —
+  // storing that back as a CSS px width caused every drag to re-measure an
+  // already-scaled box and grow it further, compounding into a runaway size
+  // increase. Dragging only ever moves a zone now; resize it by hand in
+  // ganeshaZones.js if it's genuinely the wrong size.
   const handleZoneDebugDragStart = useCallback((e, zoneId) => {
     const container = ganeshaContainerRef.current;
     if (!container) return;
     e.preventDefault();
     const boxRect = e.currentTarget.getBoundingClientRect();
+    const existing = getZonePosition(zoneId);
     zoneDragStateRef.current = {
       zoneId,
       offsetX: e.clientX - boxRect.left,
       offsetY: e.clientY - boxRect.top,
-      widthPx: boxRect.width,
-      heightPx: boxRect.height,
+      width: existing.width,
+      height: existing.height,
     };
 
     const onMove = (moveEvent) => {
@@ -663,8 +706,8 @@ const SacredAssemblyContent = ({
         [drag.zoneId]: {
           top: `${topPct.toFixed(1)}%`,
           left: `${leftPct.toFixed(1)}%`,
-          width: `${Math.round(drag.widthPx)}px`,
-          height: `${Math.round(drag.heightPx)}px`,
+          width: drag.width,
+          height: drag.height,
         },
       }));
     };
@@ -675,7 +718,7 @@ const SacredAssemblyContent = ({
     };
     window.addEventListener('pointermove', onMove);
     window.addEventListener('pointerup', onUp);
-  }, []);
+  }, [getZonePosition]);
 
   // Arrow keys nudge the selected zone by ~0.3% per press (~5px on a
   // typical scene width) for fine-tuning after a drag.
@@ -703,8 +746,11 @@ const SacredAssemblyContent = ({
         [selectedHintDebugZone]: {
           top: `${(currentTopPct + dy).toFixed(1)}%`,
           left: `${(currentLeftPct + dx).toFixed(1)}%`,
-          width: current.width || `${Math.round(boxRect.width)}px`,
-          height: current.height || `${Math.round(boxRect.height)}px`,
+          // Never derived from a measured rect (see handleZoneDebugDragStart's
+          // comment) — always carried over from the existing position so
+          // nudging can never inflate the zone's size.
+          width: current.width,
+          height: current.height,
         },
       }));
     };
@@ -734,9 +780,11 @@ const SacredAssemblyContent = ({
   const l2VoiceEndedAtRef = useRef(null);
   const l3TimerRef = useRef(null);
   const DIRECT_TARGET_HINT = 'Tap the glowing part.';
-  // Wrong attempt #3 gets one generic nudge — NOT the semantic/exact-target
-  // hints (those stay owned by the normal idle-timed L2/L3 ladder below).
-  // This just tells the child their tap registered and to try somewhere else.
+  // Every 3rd wrong attempt gets one generic nudge — NOT the semantic/exact-
+  // target hints (those stay owned by the normal idle-timed L2/L3 ladder
+  // below). The child is already tapping one of the markers; the problem is
+  // WHICH one, not that they haven't found the affordance — so this points
+  // at "somewhere else," not "the glowing spots" (they're already doing that).
   const WRONG_TAP_GUIDANCE = 'Try another place.';
   const [flyingSymbol, setFlyingSymbol] = useState(null);
   const [ganeshaReaction, setGaneshaReaction] = useState('');
@@ -835,9 +883,9 @@ const SacredAssemblyContent = ({
   }, [isAudioOn, speakGanesha]);
 
   const playWrongTapGuidance = useCallback(() => {
-    if (!isAudioOn) return;
+    if (!isAudioOn || isGaneshaSpeaking) return;
     speakGanesha(WRONG_TAP_GUIDANCE, { age: 7, style: 'child', moment: 'encouragement' });
-  }, [isAudioOn, speakGanesha]);
+  }, [isAudioOn, isGaneshaSpeaking, speakGanesha]);
 
   const replayVoiceForCurrentPhase = useCallback(() => {
     if (!isAudioOn || !sceneState) return;
@@ -973,6 +1021,12 @@ const SacredAssemblyContent = ({
       // No VO here � card is still sliding. VO fires in 'play' once card has landed.
       playSparkle();
       const t = safeSetTimeout(() => setCardPhase('play'), 600);
+      return () => clearTimeout(t);
+    }
+
+    if (cardPhase === 'play') {
+      setShowTapIntroPulse(true);
+      const t = safeSetTimeout(() => setShowTapIntroPulse(false), 2200);
       return () => clearTimeout(t);
     }
   }, [CARD_VO_MAP, cardPhase, isPageVisible, playChime, playSceneVoice, playSparkle, playUiTap, sceneState?.currentAssociationSymbol, sceneState?.currentRound]);
@@ -1512,21 +1566,24 @@ const SacredAssemblyContent = ({
   };
 
   // NEW: Handle wrong placement
-  // Wrong #1 and #2: local wobble + ripple + wrong SFX only, no narration —
-  // a normal exploration miss doesn't need a voice line. Wrong #3: one
-  // generic "Try another place." nudge, confirming the tap registered
-  // without revealing the semantic clue or the exact target. If the child
-  // is still stuck after that, the normal idle-timed L1/L2/L3 hint ladder
-  // (armed elsewhere) escalates on its own pace — this does NOT jump the
-  // ladder itself anymore.
+  // Wrong #1 and #2: local wobble + pop + wrong SFX only, no narration — a
+  // normal exploration miss doesn't need a voice line. Wrong #3: wobble/pop
+  // + one generic "Try another place." nudge, then the count resets to 0
+  // so the same 2-silent/1-spoken cycle repeats for as long as the child
+  // keeps missing this symbol, instead of firing once and going silent for
+  // the rest of the round. Correct placement also resets it to 0. This is
+  // independent of the idle-timed L1/L2/L3 hint ladder (armed elsewhere),
+  // which still escalates on its own pace if the child stays stuck.
   const handleWrongPlacement = () => {
     if (!sceneState || !sceneActions) return;
 
     const nextWrongAttempts = (sceneState.wrongAttempts || 0) + 1;
-    sceneActions.updateState({ wrongAttempts: nextWrongAttempts });
 
-    if (nextWrongAttempts === 3) {
+    if (nextWrongAttempts >= 3) {
       playWrongTapGuidance();
+      sceneActions.updateState({ wrongAttempts: 0 });
+    } else {
+      sceneActions.updateState({ wrongAttempts: nextWrongAttempts });
     }
   };
 
@@ -1854,6 +1911,7 @@ const SacredAssemblyContent = ({
                 baseOpacity={getGaneshaOpacity()}
                 showChoiceAffordance={cardPhase === 'play' && showChoiceAffordance}
                 zoneOverrides={zonePositionOverrides}
+                showTapIntroPulse={showTapIntroPulse}
               />
 
               {/* Hint glow only � uses SAME position as hitbox, perfect alignment */}
@@ -1910,42 +1968,6 @@ const SacredAssemblyContent = ({
                 </div>
               )}
               {/* CORRECT ANSWER CELEBRATION (global burst disabled; using local sparkles only) */}
-
-              {/* Placed Symbol Sparkles */}
-              {Object.keys(sceneState.placedSymbols || {}).map(symbolId => {
-                const zone = BODY_PART_ZONES.find(z => z.acceptTypes.includes(symbolId));
-                if (sceneState?.masteryShown) return null;
-
-                return (
-                  <div
-                    key={`sparkle-${symbolId}`}
-                    className="placed-symbol-sparkle"
-                    style={{
-                      position: 'absolute',
-                      ...zone.position,
-                      width: '80px',
-                      height: '80px',
-                      transform: 'translate(-50%, -50%)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      pointerEvents: 'none',
-                      zIndex: 210
-                    }}
-                  >
-                    <SparkleAnimation
-                      type="star"
-                      count={8}
-                      color={SACRED_COLOR_PALETTE.primary}
-                      size={4}
-                      duration={3000}
-                      fadeOut
-                      area="contained"
-                      key={`sparkle-${symbolId}`}
-                    />
-                  </div>
-                );
-              })}
             </div>
             )}
 
@@ -2214,6 +2236,18 @@ const SacredAssemblyContent = ({
                       gap: '8px'
                     }}
                   >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <button
+                        type="button"
+                        style={{ flex: 1, border: 'none', borderRadius: '999px', padding: '8px 10px', background: '#4CAF50', color: '#fff', fontSize: '11px', fontWeight: 800, cursor: 'pointer' }}
+                        onClick={copyAllZonePositionsJson}
+                        title="Copies all 8 zones' current positions (dragged or not) as one JSON object, keyed by zone id — paste straight over the position fields in ganeshaZones.js"
+                      >
+                        Copy All Positions
+                      </button>
+                      {layoutCopyStatus && <span style={{ color: '#fff', fontSize: '10px', fontWeight: 700 }}>{layoutCopyStatus}</span>}
+                    </div>
+
                     {BODY_PART_ZONES.map((zone) => (
                       <button
                         key={`hint-debug-button-${zone.id}`}

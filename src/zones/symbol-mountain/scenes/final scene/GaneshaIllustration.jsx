@@ -34,7 +34,7 @@ const buildHitboxes = (zones) => {
   return list;
 };
 
-const GaneshaIllustration = ({ zoneStates = {}, onZoneClick, activeZoneId = null, baseOpacity = 0.2, showChoiceAffordance = false, zoneOverrides = {} }) => {
+const GaneshaIllustration = ({ zoneStates = {}, onZoneClick, activeZoneId = null, baseOpacity = 0.2, showChoiceAffordance = false, zoneOverrides = {}, showTapIntroPulse = false }) => {
   // Dev "Hint Debug" panel can drag a zone to a new spot without touching
   // ganeshaZones.js — when it does, that override fully replaces the
   // zone's `position` here so hitbox, tap-point dot, and choice-affordance
@@ -87,30 +87,26 @@ const GaneshaIllustration = ({ zoneStates = {}, onZoneClick, activeZoneId = null
       })}
 
       {/* -------------------------------------------------------
-          8 TAP TARGETS — faint anchor points, visible from the start
-          (unlike the L1/L2-only affordance below), one per GANESHA_ZONES
-          entry, centered on that zone's existing hitbox rect so they stay
-          in sync with GaneshaIllustration's own click targets. Wobble on
-          wrong tap, brief pulse then fade on correct tap.
+          8 TAP AREA GLOWS — soft field whose visible shape matches that
+          zone's real tappable box (same GANESHA_ZONES rect the click
+          hitbox below uses), visible from the start (unlike the
+          L1/L2-only affordance further down). Static at rest — all 8
+          pulse together once on showTapIntroPulse so the child learns
+          "these are tappable," then settle; after that, motion is reserved
+          for wrong-tap/correct-tap feedback and the idle-hint ladder, so
+          those reactions actually read as reactions instead of blending
+          into a constant shimmer.
          ------------------------------------------------------- */}
-      {zones.map((zone, index) => {
+      {zones.map((zone) => {
         const state = zoneStates[zone.id] || 'idle';
         return (
           <div
             key={`tap-point-${zone.id}`}
-            style={{ position: 'absolute', ...zone.position, pointerEvents: 'none' }}
+            className={`assembly-tap-area assembly-tap-area--${zone.id} ${showTapIntroPulse ? 'is-intro' : ''} ${state === 'wrong' ? 'is-wrong' : ''} ${state === 'correct' ? 'is-correct' : ''} ${state === 'placed' ? 'is-filled' : ''}`}
+            style={{ position: 'absolute', ...zone.position }}
             aria-hidden="true"
           >
-            {/* .assembly-tap-hitbox is a generous 52px anchor for the small
-                visual marker — purely a sizing/centering wrapper here since
-                the actual click target is the big ganesha-hitbox-btn below;
-                pointer-events stays off so it never competes with that. */}
-            <div className="assembly-tap-hitbox">
-              <div
-                className={`assembly-tap-point ${state === 'wrong' ? 'is-wrong' : ''} ${state === 'correct' ? 'is-correct' : ''} ${state === 'placed' ? 'is-filled' : ''}`}
-                style={{ pointerEvents: 'none', '--tap-delay': `${index * 140}ms` }}
-              />
-            </div>
+            <span className="assembly-tap-field" />
           </div>
         );
       })}

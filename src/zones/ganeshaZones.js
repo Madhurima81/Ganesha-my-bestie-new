@@ -22,7 +22,7 @@ export const GANESHA_ZONES = [
     acceptTypes: ['ears'],
     hint: 'Deep Listening',
     // One hint glow on the right, but two visual hitboxes (left + right ear).
-    position: { top: '25.8%', left: '61.4%', width: '170px', height: '250px' },
+    position: { top: '24.2%', left: '61.7%', width: '170px', height: '250px' },
     extraHitboxes: [
       { hitId: 'ears-left', box: { top: '20%', left: '16%', width: '150px', height: '230px' } }
     ]
@@ -37,7 +37,7 @@ export const GANESHA_ZONES = [
     id: 'tusk',
     acceptTypes: ['tusk'],
     hint: 'Breaking Barriers',
-    position: { top: '61.9%', left: '79.3%', width: '185px', height: '93px' }
+    position: { top: '45.2%', left: '38.2%', width: '170px', height: '78px' }
   },
   {
     id: 'left-hand',
