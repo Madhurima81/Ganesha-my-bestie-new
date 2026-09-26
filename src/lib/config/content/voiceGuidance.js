@@ -71,7 +71,7 @@ export const VOICE_SCRIPTS = {
         text: "That way is blocked. Can you find another way around?"
       },
       scene10_vak_hint_another_way: {
-        text: "Look for another way through."
+        text: "Try going around it."
       },
       scene10_maha_intro: {
         text: "The friends are waiting. Let's build a raft with space for everyone."

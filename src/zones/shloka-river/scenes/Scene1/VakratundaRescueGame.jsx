@@ -500,7 +500,7 @@ export default function VakratundaRescueGame({
       return undefined;
     }
 
-    const id = window.setTimeout(() => setShowPassiveNudge(true), 18000);
+    const id = window.setTimeout(() => setShowPassiveNudge(true), 10000);
     return () => window.clearTimeout(id);
   }, [isActive, phase, introVoDone, isPaused, isDragging, stuckLevel, passiveIdleReset]);
 
