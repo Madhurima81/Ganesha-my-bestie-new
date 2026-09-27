@@ -1135,6 +1135,21 @@
   text-align: center;
 }
 
+.favorite-food-game .drawing-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: var(--app-height, 100vh);
+  background: rgba(0, 0, 0, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 24px;
+  box-sizing: border-box;
+  animation: fadeIn 0.3s ease;
+}
+
 .discovery-fly {
   position: absolute;
   left: 50%;
@@ -1314,7 +1329,7 @@
   height: 42px;
 }
 .favorite-food-game .aboutme-comparison-continue-btn {
-  margin-top: 42px;
+  margin-top: 22px;
   margin-bottom: 12px;
   border-radius: 22px;
   padding: 12px 32px;
@@ -1479,7 +1494,15 @@
 }
 
 .friendship-subtitle {
-  display: none;
+  display: block;
+  margin: -12px 0 8px;
+  max-width: 780px;
+  color: #6b4a1e;
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(16px, 1.7vw, 22px);
+  font-weight: 800;
+  line-height: 1.25;
+  text-align: center;
 }
 
 /* ========================================= */
@@ -1743,6 +1766,10 @@
 }
 
 /* FRIEND SCENE — was 300px */
+.friend-scene {
+  gap: clamp(80px, 12vw, 160px) !important;
+}
+
 .friend-scene .choice-image-container {
   width: clamp(90px, 12vw, 140px) !important;
   height: clamp(90px, 12vw, 140px) !important;

@@ -257,8 +257,8 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   };
 
   const VOICE_LINES = {
-    // Opening Modal
-    opening: "I have a few wishes for the world. Will you help?",
+    // Opening Modal VO now lives solely in openingModals.js (single source
+    // of truth) — the shared OpeningModal component speaks it directly.
 
     // Wish 1
     wish1Intro: "My first wish is for more kindness.",
@@ -618,7 +618,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   const getResumeVoiceLine = useCallback((phase) => {
     switch (phase) {
       case 'intro':
-        return VOICE_LINES.opening;
+        return openingModalContent?.voiceover;
       case 'wish1-intro':
         return VOICE_LINES.wish1Intro;
       case 'wish1-active':
@@ -659,13 +659,13 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     }
     if (sceneState.gamePhase === 'intro') {
       setVoiceVolume(isAudioOn ? OPENING_VO_VOLUME : 0);
-      playVoice('opening');
+      if (openingModalContent?.voiceover) speakLine(openingModalContent.voiceover, { moment: 'greeting' });
       return;
     }
     const line = getResumeVoiceLine(sceneState.gamePhase) || getPhaseReminderLine(sceneState.gamePhase);
     if (!line) return;
     speakLine(line, { moment: sceneState.gamePhase === 'ending' ? 'closing' : 'encouragement' });
-  }, [VOICE_LINES.completionCelebration, getPhaseReminderLine, getResumeVoiceLine, isAudioOn, playVoice, sceneState.gamePhase, sceneState.showingCompletionScreen, setVoiceVolume]);
+  }, [VOICE_LINES.completionCelebration, getPhaseReminderLine, getResumeVoiceLine, isAudioOn, openingModalContent, sceneState.gamePhase, sceneState.showingCompletionScreen, setVoiceVolume, speakLine]);
 
   // --- HELPERS ---
   const getDiscoveries = () => {
@@ -801,15 +801,8 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       return;
     }
 
-    // Intro / comparison / ending — just replay VO
-    if (gamePhase === 'intro') {
-      phaseVoiceRef.current.opening = true;
-      safeSetTimeout(() => {
-        setVoiceVolume(isAudioOnRef.current ? OPENING_VO_VOLUME : 0);
-        playVoice('opening');
-      }, 500);
-      return;
-    }
+    // Comparison / ending — just replay VO
+    // (no 'intro' case: the shared OpeningModal speaks its own voiceover on mount)
     if (gamePhase === 'comparison-card') {
       phaseVoiceRef.current.comparison = true;
       safeSetTimeout(() => { speakLine(VOICE_LINES.comparison, { moment: 'story' }); }, 500);
@@ -852,14 +845,11 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   }, [sceneState.gamePhase, sceneState.dreamRevealed, safeSetTimeout]);
 
   useEffect(() => {
-    // Opening modal intro VO — matches working Family Tree pattern:
-    // 800ms delay gives the audio pipeline time to initialize on first mount,
-    // and the cleanup cancels the pending call if phase changes before it fires.
-    // We set phaseVoiceRef.current.opening INSIDE the timer (not before) so a
-    // silently-failed playVoice can be retried on the next render.
     // Idle-hint gate: if this phase's entry VO already played earlier
     // (e.g. resumed mid-phase), there's no VO left to wait for — mark it
     // done immediately so the idle ladder below isn't blocked forever.
+    // (No 'intro' case here: the shared OpeningModal speaks its own
+    // voiceover on mount — this scene no longer has a second copy.)
     const idleGatedPhaseFlag = {
       'wish1-active': 'wish1Active',
       'wish2-active': 'wish2Active',
@@ -870,23 +860,16 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       setPhaseVoiceDoneFor(sceneState.gamePhase);
     }
 
-    if (sceneState.gamePhase === 'intro' && !phaseVoiceRef.current.opening) {
-      const cancel = safeSetTimeout(() => {
-        phaseVoiceRef.current.opening = true;
-        setVoiceVolume(isAudioOn ? OPENING_VO_VOLUME : 0);
-        playVoice('opening');
-      }, 800);
-      return () => cancel?.();
-    }
-
-    // Wish 1
-    if (sceneState.gamePhase === 'wish1-intro' && !phaseVoiceRef.current.wish1Intro) {
-      phaseVoiceRef.current.wish1Intro = true;
-      speakLine(VOICE_LINES.wish1Intro, { moment: 'story' });
-    }
+    // Wish 1 — no separate intro screen anymore; speak the intro line then
+    // the active/instruction line back-to-back on landing on wish1-active.
     if (sceneState.gamePhase === 'wish1-active' && !phaseVoiceRef.current.wish1Active) {
       phaseVoiceRef.current.wish1Active = true;
-      speakLine(VOICE_LINES.wish1Active, { moment: 'encouragement', onEnd: () => setPhaseVoiceDoneFor('wish1-active') });
+      speakLine(VOICE_LINES.wish1Intro, {
+        moment: 'story',
+        onEnd: () => {
+          speakLine(VOICE_LINES.wish1Active, { moment: 'encouragement', onEnd: () => setPhaseVoiceDoneFor('wish1-active') });
+        }
+      });
     }
     if (sceneState.gamePhase === 'wish1-complete' && !phaseVoiceRef.current.wish1Complete) {
       phaseVoiceRef.current.wish1Complete = true;
@@ -909,14 +892,16 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       });
     }
 
-    // Wish 3
-    if (sceneState.gamePhase === 'wish3-intro' && !phaseVoiceRef.current.wish3Intro) {
-      phaseVoiceRef.current.wish3Intro = true;
-      speakLine(VOICE_LINES.wish3Intro, { moment: 'story' });
-    }
+    // Wish 3 — no separate intro screen (flow goes straight to wish3-active);
+    // speak the intro line then the active/instruction line back-to-back.
     if (sceneState.gamePhase === 'wish3-active' && !phaseVoiceRef.current.wish3Active) {
       phaseVoiceRef.current.wish3Active = true;
-      speakLine(VOICE_LINES.wish3Active, { moment: 'encouragement', onEnd: () => setPhaseVoiceDoneFor('wish3-active') });
+      speakLine(VOICE_LINES.wish3Intro, {
+        moment: 'story',
+        onEnd: () => {
+          speakLine(VOICE_LINES.wish3Active, { moment: 'encouragement', onEnd: () => setPhaseVoiceDoneFor('wish3-active') });
+        }
+      });
     }
 
     // All Wishes Complete
@@ -1238,10 +1223,9 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     interruptCurrentVoice();
     playUiTap();
     setVoiceVolume(isAudioOn ? 1 : 0);
-    // Ensure Wish 1 intro VO plays immediately when gameplay starts.
-    phaseVoiceRef.current.wish1Intro = true;
-    speakLine(VOICE_LINES.wish1Intro, { moment: 'story' });
-    sceneActions.updateState({ gamePhase: 'wish1-intro' });
+    // No separate wish1-intro screen — land straight on wish1-active, whose
+    // mount effect speaks wish1Intro then wish1Active in sequence.
+    sceneActions.updateState({ gamePhase: 'wish1-active' });
   };
 
   const handleWish1Tap = ({ fromBubble = false } = {}) => {
@@ -1753,29 +1737,6 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
         />
       )}
 
-      {/* Wish 1 Intro */}
-      {sceneState.gamePhase === 'wish1-intro' && (
-        <div className="intro-overlay wish1-intro-layout">
-          <img src={babyGaneshaImg} alt="Baby Ganesha" className="intro-ganesha bounce" />
-          <div className="wish-intro-card">
-            <p className="wish-intro-text">I have three giant wishes for the whole world.</p>
-            <p className="wish-intro-text">Will you help me make them come true?</p>
-            <Button
-              variant="primary"
-              size="large"
-              onClick={() => {
-                interruptCurrentVoice();
-                playUiTap();
-                phaseVoiceRef.current.wish1Active = false; // allow VO to fire fresh on entry
-                sceneActions.updateState({ gamePhase: 'wish1-active' });
-              }}
-            >
-              Let's Make Them Smile!
-            </Button>
-          </div>
-        </div>
-      )}
-
       {/* Wish 1 Active */}
       {sceneState.gamePhase === 'wish1-active' && (
         <div className="wish-screen">
@@ -1785,13 +1746,6 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
             {/* <div className="wish-instruction-bubble">Tap the earth 3 times to send smiles! ({sceneState.wish1Taps}/3)</div> */}
             <div className="wish-progress-header">
               <div className="wish-progress-title">Wish 1: Make Earth Smile</div>
-              <div className="wish-smiley-row">
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <span key={i} className={`wish-smiley-icon ${i < sceneState.wish1Taps ? 'filled' : ''}`}>
-                    {i < sceneState.wish1Taps ? '😊' : '😶'}
-                  </span>
-                ))}
-              </div>
               <div className="wish-progress-count">{sceneState.wish1Taps}/3</div>
             </div>
           </div>
@@ -1998,13 +1952,6 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
           <div className="game-header-hud">
             <div className="wish-progress-header">
               <div className="wish-progress-title">Wish 3: Grow The Forest</div>
-              <div className="wish-smiley-row">
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <span key={i} className={`wish-smiley-icon ${i < sceneState.wish3Taps ? 'filled' : ''}`}>
-                    {i < sceneState.wish3Taps ? '😊' : '😶'}
-                  </span>
-                ))}
-              </div>
               <div className="wish-progress-count">{sceneState.wish3Taps}/3</div>
             </div>
           </div>
@@ -2163,6 +2110,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
             <Button
               variant="primary"
               size="large"
+              className="dreams-brown-cta"
               onClick={() => {
                 interruptCurrentVoice();
                 playUiTap();
@@ -2364,7 +2312,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
               SimpleSceneManager.clearCurrentScene();
               sceneActions.updateState({ showingCompletionScreen: true, completed: true });
             }}
-            className="continue-btn-simple done-btn-pulse"
+            className="continue-btn-simple done-btn-pulse dreams-brown-cta"
           >
             Continue
           </button>
@@ -2461,12 +2409,9 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
               playUiTap();
               hardStopSceneAudio();
               SimpleSceneManager.setCurrentScene('about-me-hut', 'dreams-wishes', false, false);
-              // Pre-set the opening flag so intro-VO effect won't double-fire; we speak explicitly.
-              phaseVoiceRef.current = { opening: true };
-              safeSetTimeout(() => {
-                setVoiceVolume(isAudioOn ? OPENING_VO_VOLUME : 0);
-                playVoice('opening');
-              }, 500);
+              // No manual opening-VO call here: the shared OpeningModal remounts
+              // fresh at gamePhase 'intro' and speaks its own voiceover on mount.
+              phaseVoiceRef.current = {};
 
               sceneActions.updateState({
                 gamePhase: 'intro',

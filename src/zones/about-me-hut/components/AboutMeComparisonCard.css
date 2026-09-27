@@ -318,13 +318,16 @@
   }
 }
 
-/* Indian Story final compare: slightly lower cards + slightly taller cards/boxes */
+/* Indian Story final compare: keep the story cards high enough for the CTA. */
 .aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-grid {
   transform: none;
+  flex: 0 1 auto;
+  margin-top: clamp(28px, 7vh, 78px);
+  margin-bottom: clamp(10px, 1.6vh, 18px);
 }
 
 .aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-column {
-  padding: 20px 20px 22px;
+  padding: 16px 18px 18px;
 }
 
 .aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-item {
@@ -336,6 +339,11 @@
 .aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-item-img {
   width: clamp(32px, 5vh, 52px);
   height: clamp(32px, 5vh, 52px);
+}
+
+.aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-continue-btn {
+  margin-top: clamp(8px, 1.4vh, 14px);
+  margin-bottom: clamp(10px, 1.8vh, 18px);
 }
 
 @keyframes aboutmeFamilyContinuePulse {

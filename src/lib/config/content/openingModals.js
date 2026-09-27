@@ -257,7 +257,7 @@ export const OPENING_MODALS = {
     'dreams-wishes': {
       title: "Our Wishes & Dreams",
       description: "Let's help and dream together!",
-      voiceover: "I have a few wishes for the world. Will you help?",
+      voiceover: "I have a few wishes. Will you help me — then share yours?",
       icons: [
         dreamHeartIcon,
         dreamStarIcon,

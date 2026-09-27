@@ -288,7 +288,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
     // Idle Hints (Ganesha Section)
     foodHint: "Look for the sweet I love.",
-    colorHint: "Which one is bright red?",
+    colorHint: "What color is an apple?",
     activityHint: "What lets me move to music?",
     friendHint: "Look for my tiny friend."
   };
@@ -1104,7 +1104,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       afterAdvance = () => setSelectedKidActivityId(null);
     } else if (sceneState.gamePhase === 'child-friend-input' && sceneState.childFriendName) {
       completionLine = `${sceneState.childFriendName}. ${VOICE_LINES.childFriendCorrect}`;
-      nextPhase = 'friend-celebration';
+      nextPhase = 'comparison-card';
       phaseVoiceRef.current.childFriendQuestion = true;
     }
 
@@ -1119,11 +1119,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
     safeSetTimeout(() => {
       playSparkle();
-      if (nextPhase === 'friend-celebration') {
-        sceneActions.updateState({ gamePhase: nextPhase });
-      } else {
-        advanceToChildPhase(nextPhase);
-      }
+      sceneActions.updateState({ gamePhase: nextPhase });
       afterAdvance?.();
     }, CHILD_SELECTION_ADVANCE_DELAY_MS);
   }, [
@@ -1636,6 +1632,14 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     if (sceneState.childActivityChoice || sceneState.childActivityDrawing || sceneState.childActivityText || selectedKidActivityId) return;
     interruptCurrentVoice();
     playUiTap();
+
+    if (activityId === 'drawing') {
+      setShowDrawingPad(true);
+      setDrawingMode('activity');
+      sceneActions.updateState({ currentModal: 'activity-draw' });
+      return;
+    }
+
     setSelectedKidActivityId(activityId);
     const selected = kidActivities.find(a => a.id === activityId);
     const discoveryImage = selected?.image;
@@ -2218,6 +2222,10 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             onSave={(name) => {
               interruptCurrentVoice();
               playChime();
+              setShowTextInput(false);
+              setTextInputMode(null);
+              setShowDrawingPad(false);
+              setDrawingMode(null);
               const currentState = latestSceneStateRef.current || sceneState;
               sceneActions.updateState({
                 childFriendName: name,
@@ -2236,7 +2244,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
               }, DISCOVERY_CENTER_REACH_MS);
               safeSetTimeout(() => {
                 sceneActions.updateState({
-                  gamePhase: 'friend-celebration'
+                  gamePhase: 'comparison-card'
                 });
               }, CHILD_FRIEND_ADVANCE_DELAY_MS);
 

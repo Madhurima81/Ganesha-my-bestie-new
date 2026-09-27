@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './DreamsWishesGame.css';
 import AboutMeCompletion from "../components/Aboutmecompletion";
 import DrawingPad from '../components/Drawingpad';
+import useRepeatedHintCycle from '../../../lib/hooks/useRepeatedHintCycle';
+import useVoiceGuidance from '../../../lib/hooks/useVoiceGuidance';
+import GestureDemo from '../../../lib/components/animation/GestureDemo';
 
 // Import images
 import babyGaneshaImg from './assets/images/baby-ganesha.png';
@@ -26,6 +29,37 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate }) => {
   const [gameState, setGameState] = useState({
     stars: 3,
     completed: false
+  });
+
+  // Dream-clearing hint system
+  const [dreamClearingActive, setDreamClearingActive] = useState(false);
+  const [cloudTapRedirectShown, setCloudTapRedirectShown] = useState(false);
+  const markLevel2VoiceEndedRef = useRef(null);
+
+  const {
+    effectiveHintLevel,
+    resetIdleHintClock,
+    setMarkLevel2VoiceEnded
+  } = useRepeatedHintCycle({
+    enabled: dreamClearingActive && trunkTaps < 3,
+    onMarkLevel2VoiceEnded: (callback) => {
+      markLevel2VoiceEndedRef.current = callback;
+    }
+  });
+
+  // Voice guidance for dream-clearing hints
+  useVoiceGuidance({
+    enabled: dreamClearingActive && trunkTaps < 3,
+    lines: {
+      'dream-clearing-redirect': 'Tap my trunk.',
+      'dream-clearing-l2': 'Tap my trunk.',
+      'dream-clearing-l3': 'Tap my trunk to clear the clouds.'
+    },
+    triggers: {
+      'dream-clearing-redirect': cloudTapRedirectShown,
+      'dream-clearing-l2': effectiveHintLevel === 2,
+      'dream-clearing-l3': effectiveHintLevel === 3
+    }
   });
 
   // Handle wish 1 tap (Happiness - Earth)
@@ -67,6 +101,21 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate }) => {
     }
   };
 
+  // Activate hint system when dream-clearing starts
+  useEffect(() => {
+    if (gamePhase === 'dream-clearing') {
+      setDreamClearingActive(true);
+      setCloudTapRedirectShown(false);
+    } else {
+      setDreamClearingActive(false);
+    }
+  }, [gamePhase]);
+
+  // Reset redirect flag when hint level changes (new hint cycle)
+  useEffect(() => {
+    setCloudTapRedirectShown(false);
+  }, [effectiveHintLevel]);
+
   // Handle dream drawing save
   const handleDreamDrawingSave = (imageData) => {
     setChildDreamDrawing(imageData);
@@ -74,12 +123,32 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate }) => {
     setGamePhase('dream-clouded');
   };
 
+  // Handle wrong tap on clouds (redirect to trunk)
+  const handleCloudTap = () => {
+    // Mark redirect as shown (will be reset when hint level changes)
+    setCloudTapRedirectShown(true);
+    // Reset idle timer
+    resetIdleHintClock();
+  };
+
   // Handle trunk tap to clear clouds
   const handleTrunkTap = () => {
     const newTaps = trunkTaps + 1;
     setTrunkTaps(newTaps);
 
+    // Mark L2 VO as finished if it was playing
+    if (markLevel2VoiceEndedRef.current) {
+      markLevel2VoiceEndedRef.current();
+    }
+
+    // Reset wrong-tap redirect flag on correct action
+    setCloudTapRedirectShown(false);
+
+    // Reset hint clock on correct tap
+    resetIdleHintClock();
+
     if (newTaps >= 3) {
+      setDreamClearingActive(false);
       setTimeout(() => {
         setGamePhase('dream-revealed');
         setTimeout(() => setGamePhase('comparison-card'), 2500);
@@ -496,19 +565,42 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate }) => {
                 <div
                   key={i}
                   className={`dream-cloud cloud-${i + 1} ${trunkTaps > i ? 'cloud-fade' : ''}`}
+                  onClick={handleCloudTap}
+                  style={{ cursor: 'pointer' }}
                 >
                   ☁️
                 </div>
               ))}
             </div>
 
-            {/* Tappable Ganesha */}
+            {/* L2: Arrow cue from cloud to trunk */}
+            {effectiveHintLevel === 2 && (
+              <div className="dream-arrow-cue" style={{ opacity: 0.85 }}>
+                ↓
+              </div>
+            )}
+
+            {/* Tappable Ganesha with hint ladder */}
             <div
-              className={`ganesha-helper ganesha-blowing ${trunkTaps >= 3 ? 'ganesha-blow-done' : ''}`}
+              className={`ganesha-helper ganesha-blowing ${trunkTaps >= 3 ? 'ganesha-blow-done' : ''} ${
+                effectiveHintLevel === 1 ? 'dream-trunk-hint-attention' : ''
+              } ${effectiveHintLevel === 2 ? 'dream-trunk-hint-clue' : ''} ${
+                effectiveHintLevel >= 3 ? 'dream-trunk-hint-final' : ''
+              }`}
               onClick={handleTrunkTap}
             >
               <img src={babyGaneshaImg} alt="Ganesha" className="ganesha-trunk" />
               {trunkTaps >= 3 && <div className="golden-puff">💨✨</div>}
+
+              {/* L3: Gesture demo hand */}
+              {effectiveHintLevel >= 3 && (
+                <GestureDemo
+                  type="tap"
+                  active={effectiveHintLevel >= 3}
+                  replayKey={effectiveHintLevel}
+                  delay={200}
+                />
+              )}
             </div>
           </div>
 

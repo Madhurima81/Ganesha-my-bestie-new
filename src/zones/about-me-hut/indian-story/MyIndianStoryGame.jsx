@@ -371,7 +371,6 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   const [languageGuessPromptReady, setLanguageGuessPromptReady] = useState(false);
   const [languageChildPromptReady, setLanguageChildPromptReady] = useState(false);
   const [swappingOutLangId, setSwappingOutLangId] = useState(null); // Track which language is being swapped out
-  const [showLangSelectionHelper, setShowLangSelectionHelper] = useState(false); // Show helper text at 3 selections
 
   // Festival phase state
   const [guessPhase, setGuessPhase] = useState('guessing');
@@ -380,7 +379,6 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   const [activeFestReaction, setActiveFestReaction] = useState(null);
   const [returnHintNonce, setReturnHintNonce] = useState(0);
   const [swappingOutFestId, setSwappingOutFestId] = useState(null); // Track which festival is being swapped out
-  const [showFestSelectionHelper, setShowFestSelectionHelper] = useState(false); // Show helper text at 4 selections
   const [festivalGuessPromptReady, setFestivalGuessPromptReady] = useState(false);
   const [festivalChildPromptReady, setFestivalChildPromptReady] = useState(false);
 
@@ -442,6 +440,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   const lastHandledReturnHintNonceRef = useRef(0);
   const lastDiscoveryTime = useRef(0);
   const reloadHandledRef = useRef(false);
+  const childHomeAdvanceRef = useRef(false);
 
   const { safeSetTimeout, clearAll: clearAllTimeouts } = usePauseAwareTimeout({
     onHide: () => {
@@ -540,6 +539,9 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   useEffect(() => {
     phaseEnteredAtRef.current = Date.now();
     entryVoPlayedForPhaseRef.current = null;
+    if (phase === STEPS.CHILD_HOME) {
+      childHomeAdvanceRef.current = false;
+    }
   }, [phase]);
 
   const prevStepRef = useRef(phase);
@@ -820,6 +822,48 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     speakIfUnmuted(line, { age: childAge, moment: 'encouragement' });
   }, [VOICE.completion_screen, VOICE.language_audio, childAge, getPhaseReminderLine, hasPressedLanguagePlay, isAudioOn, phase, playVoice, setVoiceVolume, showLanguageCards, speakIfUnmuted]);
 
+  const replayLanguageAudio = useCallback(() => {
+    playUiTap();
+    if (!hasPressedLanguagePlay) {
+      setHasPressedLanguagePlay(true);
+    }
+    setLangGuessIdleLevel(0);
+    setLanguageGuessPromptReady(false);
+    langGuessIdleVoiceRef.current = false;
+    if (langGuessIdleTimerRef.current) clearTimeout(langGuessIdleTimerRef.current);
+    setLangIdleRestartNonce(n => n + 1);
+
+    const revealCards = () => setShowLanguageCards(true);
+    const isFirstPlayReveal = phase === STEPS.LANGUAGE_GANESHA && !showLanguageCards;
+
+    if (isFirstPlayReveal) {
+      setShowLanguageCards(false);
+      if (isAudioOn) {
+        speakIfUnmuted(VOICE.language_audio, {
+          age: childAge,
+          moment: 'default',
+          onEnd: () => safeSetTimeout(revealCards, 200),
+          onError: () => safeSetTimeout(revealCards, 200)
+        });
+        safeSetTimeout(revealCards, 7000);
+      } else {
+        safeSetTimeout(revealCards, 250);
+      }
+      return;
+    }
+
+    if (isAudioOn) {
+      speakIfUnmuted(VOICE.language_audio, {
+        age: childAge,
+        moment: 'default',
+        onEnd: () => setLanguageGuessPromptReady(true),
+        onError: () => setLanguageGuessPromptReady(true)
+      });
+    } else {
+      setLanguageGuessPromptReady(true);
+    }
+  }, [VOICE.language_audio, childAge, hasPressedLanguagePlay, isAudioOn, phase, playUiTap, safeSetTimeout, showLanguageCards, speakIfUnmuted]);
+
   useEffect(() => {
     if (!returnHintNonce) return;
     if (lastHandledReturnHintNonceRef.current === returnHintNonce) return;
@@ -1025,7 +1069,8 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
         selectedFestivals: restoredFestivals,
       });
     } catch (e) {}
-  }, [isReload, phase, sceneActions, storyStorageKey]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- sceneActions is a new object every SceneManager render; including it here retriggers this effect in a loop (it calls sceneActions.updateState, which causes that new render)
+  }, [isReload, phase, storyStorageKey]);
 
   // ── RELOAD: Restart each phase state; entry VO is handled by phase-entry effects ─────────
   useEffect(() => {
@@ -1074,7 +1119,6 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     if (phase === STEPS.LANGUAGE_CHILD) {
       setSelectedLanguages([]);
       setSwappingOutLangId(null);
-      setShowLangSelectionHelper(false);
       setCurrentPhase('language_child');
       return;
     }
@@ -1095,7 +1139,6 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     if (phase === STEPS.FESTIVALS_CHILD) {
       setSelectedFestivals([]);
       setSwappingOutFestId(null);
-      setShowFestSelectionHelper(false);
       setCurrentPhase('festivals_child');
       return;
     }
@@ -1201,17 +1244,22 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
       ganeshaHomeIdleTimerRef.current = setTimeout(() => {
         if (import.meta.env.DEV) console.log('[Idle Hint] Level 2 triggered: Repeating glow + voice over');
         setGaneshaHomeIdleLevel(2);
+        // Level 3's 8s gap counts from when this VO finishes speaking, not
+        // from the moment the level 2 timer fires — otherwise level 3 could
+        // land while (or right on top of) this line still talking.
+        const armLevel3 = () => {
+          ganeshaHomeIdleTimerRef.current = setTimeout(() => {
+            if (import.meta.env.DEV) console.log('[Idle Hint] Level 3 triggered: Pointing emoji appears');
+            setGaneshaHomeIdleLevel(3);
+            // Keep Level 3 visual-only to avoid VO overlap right after Level 2.
+          }, 8000);
+        };
         if (!ganeshaHomeIdleVoiceRef.current) {
-          speakIfUnmuted('Drag the magnifying glass to find me.', { age: childAge, moment: 'default' });
+          speakIfUnmuted('Drag the magnifying glass to find me.', { age: childAge, moment: 'default', onEnd: armLevel3 });
           ganeshaHomeIdleVoiceRef.current = true;
+        } else {
+          armLevel3();
         }
-
-        // Level 3 @ 26 seconds: Pointing emoji + continue glowing (visual-only)
-        ganeshaHomeIdleTimerRef.current = setTimeout(() => {
-          if (import.meta.env.DEV) console.log('[Idle Hint] Level 3 triggered: Pointing emoji appears');
-          setGaneshaHomeIdleLevel(3);
-          // Keep Level 3 visual-only to avoid VO overlap right after Level 2.
-        }, 8000);
       }, 8000);
     }, 10000);
 
@@ -1304,24 +1352,47 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
       langGuessIdleTimerRef.current = setTimeout(() => {
         if (import.meta.env.DEV) console.log('[Idle Hint Language] Level 2 triggered: Repeating wobble + voice over');
         setLangGuessIdleLevel(2);
+        // Level 3's 8s gap counts from when this VO finishes speaking, not
+        // from the moment the level 2 timer fires.
+        const armLevel3 = () => {
+          langGuessIdleTimerRef.current = setTimeout(() => {
+            if (import.meta.env.DEV) console.log('[Idle Hint Language] Level 3 triggered: Repeat hint audio');
+            setLangGuessIdleLevel(3);
+            // Keep Level 3 visual-only to avoid back-to-back hint VO.
+          }, 8000);
+        };
         if (!langGuessIdleVoiceRef.current) {
-          speakIfUnmuted(VOICE.language_guess_hint, { age: childAge, moment: 'default' });
+          if (isAudioOn) {
+            speakIfUnmuted(VOICE.language_audio, {
+              age: childAge,
+              moment: 'default',
+              onEnd: () => speakIfUnmuted(VOICE.language_guess_hint, {
+                age: childAge,
+                moment: 'default',
+                onEnd: armLevel3,
+                onError: armLevel3,
+              }),
+              onError: () => speakIfUnmuted(VOICE.language_guess_hint, {
+                age: childAge,
+                moment: 'default',
+                onEnd: armLevel3,
+                onError: armLevel3,
+              }),
+            });
+          } else {
+            armLevel3();
+          }
           langGuessIdleVoiceRef.current = true;
+        } else {
+          armLevel3();
         }
-
-        // Level 3 @ 26 seconds: stronger glow only (visual-only, no repeated VO)
-        langGuessIdleTimerRef.current = setTimeout(() => {
-          if (import.meta.env.DEV) console.log('[Idle Hint Language] Level 3 triggered: Repeat hint audio');
-          setLangGuessIdleLevel(3);
-          // Keep Level 3 visual-only to avoid back-to-back hint VO.
-        }, 8000);
       }, 8000);
     }, 10000);
 
     return () => {
       if (langGuessIdleTimerRef.current) clearTimeout(langGuessIdleTimerRef.current);
     };
-  }, [phase, langGuessPhase, shakeLang, returnHintNonce, speakIfUnmuted, childAge, hasPressedLanguagePlay, showLanguageCards, VOICE.language_guess_hint, langIdleRestartNonce, languageGuessPromptReady, langGuessIdleLevel]);
+  }, [phase, langGuessPhase, shakeLang, returnHintNonce, speakIfUnmuted, childAge, hasPressedLanguagePlay, showLanguageCards, VOICE.language_audio, VOICE.language_guess_hint, langIdleRestartNonce, languageGuessPromptReady, langGuessIdleLevel, isAudioOn]);
 
   // Festival Ganesha: Idle hint progression (Level 1 @ 10s, Level 2 @ 18s, Level 3 @ 26s)
   useEffect(() => {
@@ -1345,16 +1416,20 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
       festGuessIdleTimerRef.current = setTimeout(() => {
         if (import.meta.env.DEV) console.log('[Idle Hint Festival] Level 2 triggered: Repeating wobble + voice over');
         setFestGuessIdleLevel(2);
+        // Level 3's 8s gap counts from when this VO finishes speaking, not
+        // from the moment the level 2 timer fires.
+        const armLevel3 = () => {
+          festGuessIdleTimerRef.current = setTimeout(() => {
+            if (import.meta.env.DEV) console.log('[Idle Hint Festival] Level 3 triggered: stronger glow only');
+            setFestGuessIdleLevel(3);
+          }, 8000);
+        };
         if (!festGuessIdleVoiceRef.current) {
-          speakIfUnmuted(VOICE.festivals_guess_hint, { age: childAge, moment: 'default' });
+          speakIfUnmuted(VOICE.festivals_guess_hint, { age: childAge, moment: 'default', onEnd: armLevel3 });
           festGuessIdleVoiceRef.current = true;
+        } else {
+          armLevel3();
         }
-
-        // Level 3 @ 26 seconds: stronger glow only (no repeated VO)
-        festGuessIdleTimerRef.current = setTimeout(() => {
-          if (import.meta.env.DEV) console.log('[Idle Hint Festival] Level 3 triggered: stronger glow only');
-          setFestGuessIdleLevel(3);
-        }, 8000);
       }, 8000);
     }, 10000);
 
@@ -1394,7 +1469,8 @@ useEffect(() => {
       selectedFestivals: selectedFestivals?.length > 0 ? selectedFestivals : undefined,
     });
   }
-}, [phase, selectedRegion, selectedLanguages, selectedFestivals, sceneActions]);
+// eslint-disable-next-line react-hooks/exhaustive-deps -- sceneActions is a new object every SceneManager render; including it here retriggers this effect in a loop (it calls sceneActions.updateState, which causes that new render)
+}, [phase, selectedRegion, selectedLanguages, selectedFestivals]);
 
   // Check location discovery
   const checkLocationDiscovery = useCallback((percentX, percentY) => {
@@ -1464,7 +1540,7 @@ const discoverLocation = useCallback((index) => {
     }
     setSelectedRegion(region);
     setIsChildHomeContinueEnabled(false);
-    speakIfUnmuted(region.label, { age: childAge, moment: 'story' });
+    speakIfUnmuted(`${region.label}. This is the place you chose.`, { age: childAge, moment: 'story' });
     childHomePostSelectTimerRef.current = setTimeout(() => {
       setIsChildHomeContinueEnabled(true);
     }, 900);
@@ -1504,12 +1580,6 @@ const discoverLocation = useCallback((index) => {
         setTimeout(() => setSwappingOutLangId(null), 300);
         return [prev[1], prev[2], lang];
       }
-      // Adding new language
-      if (prev.length === 2) {
-        // Show helper text when reaching 3
-        setShowLangSelectionHelper(true);
-        setTimeout(() => setShowLangSelectionHelper(false), 2000);
-      }
       return [...prev, lang];
     });
     speakIfUnmuted(lang.label, { age: childAge, moment: 'encouragement' });
@@ -1547,12 +1617,6 @@ const discoverLocation = useCallback((index) => {
         // Clear the swap animation after it completes
         setTimeout(() => setSwappingOutFestId(null), 300);
         return [prev[1], prev[2], prev[3], fest];
-      }
-      // Adding new festival
-      if (prev.length === 3) {
-        // Show helper text when reaching 4
-        setShowFestSelectionHelper(true);
-        setTimeout(() => setShowFestSelectionHelper(false), 2000);
       }
       return [...prev, fest];
     });
@@ -1593,7 +1657,8 @@ const discoverLocation = useCallback((index) => {
       }
     } else {
       setWrongLangGuesses(prev => new Set(prev).add(guessLang.id));
-      setShakeLang(guessLang.id);
+      setShakeLang(null);
+      safeSetTimeout(() => setShakeLang(guessLang.id), 0);
       speakIfUnmuted(guessLang.label, { age: childAge, moment: 'default' });
       safeSetTimeout(() => setShakeLang(null), 500);
     }
@@ -1619,13 +1684,21 @@ const discoverLocation = useCallback((index) => {
       };
 
       if (isAudioOn) {
-        speakIfUnmuted('Yes — Ganesh Chaturthi!', {
+        const speakCorrectFeedback = () => {
+          speakIfUnmuted('Yes — Ganesh Chaturthi!', {
+            age: childAge,
+            moment: 'celebration',
+            onEnd: goToFestivalChildPhase,
+            onError: goToFestivalChildPhase
+          });
+        };
+        speakIfUnmuted(fest.label, {
           age: childAge,
-          moment: 'celebration',
-          onEnd: goToFestivalChildPhase,
-          onError: goToFestivalChildPhase
+          moment: 'default',
+          onEnd: speakCorrectFeedback,
+          onError: speakCorrectFeedback
         });
-        safeSetTimeout(goToFestivalChildPhase, 5000);
+        safeSetTimeout(goToFestivalChildPhase, 6500);
       } else {
         safeSetTimeout(goToFestivalChildPhase, 1200);
       }
@@ -1635,6 +1708,7 @@ const discoverLocation = useCallback((index) => {
       }
       setShakeGuess(null);
       safeSetTimeout(() => setShakeGuess(fest.id), 0);
+      speakIfUnmuted(fest.label, { age: childAge, moment: 'default' });
       safeSetTimeout(() => setShakeGuess(null), 500);
     }
   };
@@ -1816,13 +1890,11 @@ const handleComplete = () => {
             setShakeLang(null);
             setLangWrongReaction(null);
             setSwappingOutLangId(null);
-            setShowLangSelectionHelper(false);
             setGuessPhase('guessing');
             setWrongGuesses(new Set());
             setShakeGuess(null);
             setActiveFestReaction(null);
             setSwappingOutFestId(null);
-            setShowFestSelectionHelper(false);
             sceneActions.updateState({
               phase: STEPS.OPENING,
               selectedRegion: null,
@@ -1849,13 +1921,13 @@ const handleComplete = () => {
 
       {/* Ganesha Home Phase */}
       {phase === STEPS.GANESHA_HOME && (
-        <div style={{ minHeight: 'var(--app-height, 100vh)', paddingTop: '40px', paddingBottom: '40px' }}>
+        <div className="mis-ganesha-home-phase" style={{ minHeight: 'var(--app-height, 100vh)', paddingTop: '40px', paddingBottom: '40px' }}>
           <StoryProgressHeader
             discoveries={discoveredLocations.length > 0 ? discoveredLocations.map(idx => ({ ...PHASE1_LOCATIONS[idx], image: PHASE1_LOCATIONS[idx].icon })) : []}
             isChildMode={false}
           />
 
-          <AboutMeGaneshaHost image={babyGaneshaImg} className="about-me-ganesha-host--left-bottom" />
+          <AboutMeGaneshaHost image={babyGaneshaImg} className="about-me-ganesha-host--left-middle" />
 
           {/* India Map Container */}
           <div
@@ -1978,21 +2050,30 @@ const handleComplete = () => {
               );
             })}
 
-            {/* Floating hearts on celebration */}
+            {/* Standard sparkle burst on celebration */}
             {showCelebration && HEART_POSITIONS.map((pos, i) => (
               <div
-                key={`heart-${i}`}
+                key={`phase1-celebration-sparkle-${i}`}
                 style={{
                   position: 'absolute',
                   top: pos.top,
                   left: pos.left,
-                  fontSize: '48px',
+                  width: '110px',
+                  height: '110px',
+                  transform: 'translate(-50%, -50%)',
                   zIndex: 10,
-                  animation: `floatUp 2s ease-out ${i * 0.15}s forwards`,
                   pointerEvents: 'none',
                 }}
               >
-                💖
+                <SparkleAnimation
+                  type="star"
+                  count={14}
+                  color="rgba(255, 205, 64, 0.95)"
+                  size={7}
+                  duration={1200}
+                  fadeOut={true}
+                  area="full"
+                />
               </div>
             ))}
 
@@ -2000,10 +2081,6 @@ const handleComplete = () => {
               @keyframes popIn {
                 from { transform: translate(-50%, -50%) scale(0); opacity: 0; }
                 to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-              }
-              @keyframes floatUp {
-                0% { transform: translateY(0); opacity: 1; }
-                100% { transform: translateY(-120px); opacity: 0; }
               }
               @keyframes idleWobble {
                 0%, 100% { transform: rotate(0deg); }
@@ -2070,12 +2147,12 @@ const handleComplete = () => {
             <GestureDemo
               type="drag"
               from={{
-                x: parsePercent(mglassPosition.left, 20),
-                y: parsePercent(mglassPosition.top, 30),
+                x: Math.min(92, parsePercent(mglassPosition.left, 20) + 7),
+                y: Math.min(92, parsePercent(mglassPosition.top, 30) + 7),
               }}
               to={{
-                x: Math.min(92, parsePercent(mglassPosition.left, 20) + 14),
-                y: Math.max(8, Math.min(92, parsePercent(mglassPosition.top, 30) + 4)),
+                x: Math.min(92, parsePercent(mglassPosition.left, 20) + 19),
+                y: Math.min(92, parsePercent(mglassPosition.top, 30) + 10),
               }}
               active={
                 phase === STEPS.GANESHA_HOME &&
@@ -2086,7 +2163,7 @@ const handleComplete = () => {
               }
               idleDelay={300}
               iterations={2}
-              zIndex={19}
+              zIndex={25}
             />
 
             {/* Draggable Magnifying Glass using FreeDraggableItem */}
@@ -2121,7 +2198,7 @@ const handleComplete = () => {
 
       {/* Child Home Phase */}
       {phase === STEPS.CHILD_HOME && (
-        <div style={{ paddingTop: '8px', paddingBottom: '24px' }}>
+        <div className="mis-child-home-phase" style={{ paddingTop: '8px', paddingBottom: '24px' }}>
           <div
             className="mis-india-map-wrap"
             style={{
@@ -2194,51 +2271,6 @@ const handleComplete = () => {
               </div>
             )}
 
-            {/* Continue Button — Positioned Below Map */}
-            <button
-              className="mis-continue-btn-uniform"
-              onClick={() => {
-                playUiTap();
-                let advanced = false;
-                const goToLanguagePhase = () => {
-                  if (advanced) return;
-                  advanced = true;
-                  saveProgress(selectedRegion, null, null, STEPS.LANGUAGE_GANESHA);
-                  sceneActions.updateState({ phase: STEPS.LANGUAGE_GANESHA });
-                };
-
-                if (isAudioOn) {
-                  speakIfUnmuted(VOICE.child_home_confirmed, {
-                    age: childAge,
-                    moment: 'celebration',
-                    onEnd: goToLanguagePhase,
-                    onError: goToLanguagePhase,
-                  });
-                  // Failsafe: advance even if browser speech callbacks do not fire.
-                  safeSetTimeout(goToLanguagePhase, 4500);
-                } else {
-                  goToLanguagePhase();
-                }
-              }}
-              disabled={!isChildHomeContinueEnabled}
-              style={{
-                position: 'absolute',
-                bottom: '8px',
-                left: '50%',
-                marginTop: 0,
-                padding: '12px 32px',
-                fontSize: '1.1rem',
-                minWidth: '170px',
-                minHeight: '62px',
-                ['--mis-continue-transform']: 'translateX(-50%)',
-                ['--mis-continue-hover-transform']: 'translateX(-50%) translateY(-3px)',
-                ['--mis-continue-active-transform']: 'translateX(-50%) translateY(-1px)',
-                zIndex: 5,
-              }}
-            >
-              Continue {'\u2192'}
-            </button>
-
             <style>{`
               @keyframes housePop {
                 0% { transform: translate(-50%, -120%) scale(0); }
@@ -2248,85 +2280,38 @@ const handleComplete = () => {
             `}</style>
           </div>
 
-          <div style={{ textAlign: 'center', margin: '20px auto 0', padding: '0 16px' }}>
-            <p style={{
-              fontFamily: "'Nunito', sans-serif",
-              fontSize: 'clamp(0.85rem, 1.4vw, 1rem)',
-              color: '#8B5E3C',
-              margin: '0 0 10px 0',
-              fontStyle: 'italic',
-            }}>
-              Not from India? That's okay too!
-            </p>
-            {(() => {
-              const outsideIndiaRegion = INDIA_REGIONS.find(r => r.id === 'other');
-              const isSelected = selectedRegion?.id === 'other';
-              return (
-                <button
-                  className={`mis-outside-india-card ${isSelected ? 'is-selected' : ''}`}
-                  onClick={(event) => handleRegionSelect(outsideIndiaRegion, event)}
-                >
-                  <img src={otherLangIcon} alt="" className="mis-outside-india-icon" />
-                  <span className="mis-outside-india-label">Where I live now</span>
-                </button>
-              );
-            })()}
-          </div>
+          <button
+            className="mis-continue-btn-uniform mis-child-home-continue"
+            onClick={() => {
+              if (childHomeAdvanceRef.current) return;
+              playUiTap();
+              childHomeAdvanceRef.current = true;
+              let advanced = false;
+              const goToLanguagePhase = () => {
+                if (advanced) return;
+                advanced = true;
+                saveProgress(selectedRegion, null, null, STEPS.LANGUAGE_GANESHA);
+                sceneActions.updateState({ phase: STEPS.LANGUAGE_GANESHA });
+              };
+
+              goToLanguagePhase();
+            }}
+            disabled={!isChildHomeContinueEnabled}
+          >
+            Continue {'\u2192'}
+          </button>
         </div>
       )}
       {/* Language Ganesha Phase — 4 Language Guess Game */}
       {phase === STEPS.LANGUAGE_GANESHA && (
-        <div style={{ paddingTop: '20px', paddingBottom: '56px', minHeight: 'var(--app-height, 100vh)' }}>
+        <div className="mis-language-guess-phase" style={{ paddingTop: '20px', paddingBottom: '56px', minHeight: 'var(--app-height, 100vh)' }}>
           <AboutMeGaneshaHost image={babyGaneshaImg} className="about-me-ganesha-host--left-middle" />
 
           {/* Play Button Section */}
-          <div style={{ textAlign: 'center', marginTop: 'clamp(20px, 4vh, 90px)', marginBottom: '8px' }}>
+          <div className="mis-language-play-wrap" style={{ textAlign: 'center', marginTop: 'clamp(20px, 4vh, 90px)', marginBottom: '8px' }}>
             <button
-              onClick={() => {
-                playUiTap();
-                if (!hasPressedLanguagePlay) {
-                  setHasPressedLanguagePlay(true);
-                }
-                // Replaying Play should restart card hint timing from Level 1.
-                setLangGuessIdleLevel(0);
-                setLanguageGuessPromptReady(false);
-                langGuessIdleVoiceRef.current = false;
-                if (langGuessIdleTimerRef.current) clearTimeout(langGuessIdleTimerRef.current);
-                setLangIdleRestartNonce(n => n + 1);
-                const isFirstPlayReveal = !showLanguageCards;
-                const revealCards = () => setShowLanguageCards(true);
-
-                // Only first play should gate card reveal. Subsequent replays keep cards visible.
-                if (isFirstPlayReveal) {
-                  setShowLanguageCards(false);
-                  if (isAudioOn) {
-                    speakIfUnmuted(VOICE.language_audio, {
-                      age: childAge,
-                      moment: 'default',
-                      onEnd: () => safeSetTimeout(revealCards, 200),
-                      onError: () => safeSetTimeout(revealCards, 200)
-                    });
-                    // Safety fallback in case onEnd never fires on a device/browser edge-case.
-                    safeSetTimeout(revealCards, 7000);
-                  } else {
-                    safeSetTimeout(revealCards, 250);
-                  }
-                  return;
-                }
-
-                // Replay mode: keep cards visible, then restart the card hint baseline after the mantra.
-                if (isAudioOn) {
-                  speakIfUnmuted(VOICE.language_audio, {
-                    age: childAge,
-                    moment: 'default',
-                    onEnd: () => setLanguageGuessPromptReady(true),
-                    onError: () => setLanguageGuessPromptReady(true)
-                  });
-                } else {
-                  setLanguageGuessPromptReady(true);
-                }
-              }}
-              disabled={langGuessPhase === 'correct'}
+              onClick={replayLanguageAudio}
+              className="mis-language-replay-btn"
               style={{
                 width: 'clamp(180px, 22vw, 320px)',
                 height: 'clamp(180px, 22vw, 320px)',
@@ -2334,7 +2319,7 @@ const handleComplete = () => {
                 backgroundColor: 'transparent',
                 border: 'none',
                 outline: 'none',
-                cursor: langGuessPhase === 'correct' ? 'not-allowed' : 'pointer',
+                cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -2342,7 +2327,7 @@ const handleComplete = () => {
                 transition: 'all 0.2s',
                 margin: '0 auto',
                 animation: !hasPressedLanguagePlay && langGuessPhase !== 'correct' ? 'pulse 1.5s ease-in-out infinite' : 'none',
-                opacity: langGuessPhase === 'correct' ? 0.5 : 1,
+                opacity: 1,
               }}
             >
               <img src={playLangIcon} alt="Play" style={{ width: '50%', height: '50%', objectFit: 'contain' }} />
@@ -2351,9 +2336,9 @@ const handleComplete = () => {
 
           {/* Language Cards Grid — 2x2 (Hidden until mantra finishes) */}
           {showLanguageCards && (
-          <div style={{
-            maxWidth: 'min(720px, 78vw)',
-            margin: 'clamp(-12px, -1.5vh, -24px) auto 0',
+          <div className="mis-language-guess-grid" style={{
+            maxWidth: 'min(780px, 84vw)',
+            margin: 'clamp(10px, 2vh, 28px) auto 0',
             display: 'grid',
             gridTemplateColumns: 'repeat(2, 1fr)',
             gap: 'clamp(16px, 3vw, 48px)',
@@ -2371,7 +2356,7 @@ const handleComplete = () => {
               return (
               <button
                 key={lang.id}
-                className={`card ${isSelected ? 'selected' : ''} ${wrongLangGuesses.has(lang.id) ? 'wrong' : ''} ${langGuessIdleLevel === 1 || langGuessIdleLevel === 2 ? 'hint' : ''} ${langGuessIdleLevel === 3 && lang.id === 'sanskrit' ? 'hint-final' : ''}`}
+                className={`card ${isSelected ? 'selected' : ''} ${wrongLangGuesses.has(lang.id) ? 'lang-attempted' : ''} ${shakeLang === lang.id ? 'wrong' : ''} ${langGuessIdleLevel === 1 || langGuessIdleLevel === 2 ? 'hint' : ''} ${langGuessIdleLevel === 3 && lang.id === 'sanskrit' ? 'hint-final' : ''}`}
                 onClick={() => {
                   if (!hasPressedLanguagePlay) {
                     playUiTap();
@@ -2386,8 +2371,8 @@ const handleComplete = () => {
                 disabled={langGuessPhase === 'correct'}
                 style={{
                   width: '100%',
-                  minHeight: 'clamp(160px, 22vh, 280px)',
-                  padding: 'clamp(14px, 2vw, 28px)',
+                  minHeight: 'clamp(180px, 24vh, 300px)',
+                  padding: 'clamp(16px, 2.4vw, 32px)',
                   border: 'none',
                   backgroundColor: '#F8F1E2',
                   cursor: langGuessPhase === 'correct' ? 'not-allowed' : 'pointer',
@@ -2401,10 +2386,10 @@ const handleComplete = () => {
                   position: 'relative',
                 }}
               >
-                <img src={lang.icon} alt={lang.label} style={{ width: 'clamp(48px, 7vh, 80px)', height: 'clamp(48px, 7vh, 80px)', objectFit: 'contain' }} />
+                <img src={lang.icon} alt={lang.label} style={{ width: 'clamp(56px, 8vh, 92px)', height: 'clamp(56px, 8vh, 92px)', objectFit: 'contain' }} />
                 <div style={{
                   fontFamily: "'Baloo 2', cursive",
-                  fontSize: 'clamp(18px, 2.4vh, 28px)',
+                  fontSize: 'clamp(20px, 2.7vh, 30px)',
                   fontWeight: 700,
                   color: '#654321',
                 }}>
@@ -2412,7 +2397,7 @@ const handleComplete = () => {
                 </div>
                 <div style={{
                   fontFamily: "'Nunito', sans-serif",
-                  fontSize: 'clamp(14px, 1.8vh, 20px)',
+                  fontSize: 'clamp(15px, 2vh, 22px)',
                   color: '#8B6914',
                 }}>
                   {lang.script}
@@ -2464,73 +2449,60 @@ const handleComplete = () => {
             <StoryProgressHeader discoveries={selectedLanguages.map(lang => ({ ...lang, image: lang.icon, name: lang.label }))} isChildMode={false} />
           )}
 
-          <div style={{ maxWidth: '900px', margin: '20px auto 0', padding: '0 20px' }}>
+          <div className="mis-language-child-panel" style={{ maxWidth: '980px', margin: 'clamp(48px, 8vh, 86px) auto 0', padding: '0 20px', position: 'relative' }}>
             {/* Most Spoken At Home */}
             <div style={{ marginBottom: '20px' }}>
               <h3 style={{ fontFamily: "'Baloo 2', cursive", fontSize: '18px', fontWeight: 700, color: '#8B6914', textAlign: 'center', marginBottom: '12px' }}>
                 Most Spoken At Home
               </h3>
-              {showLangSelectionHelper && (
-                <div style={{
-                  textAlign: 'center',
-                  marginBottom: '30px',
-                  fontFamily: "'Nunito', sans-serif",
-                  fontSize: '16px',
-                  color: '#4A3A2F',
-                  fontWeight: 600,
-                  background: '#F7F1E3',
-                  borderRadius: '42px',
-                  padding: '12px 24px',
-                  display: 'inline-block',
-                  margin: '0 auto 30px',
-                  animation: 'fadeIn 0.3s ease-out'
-                }}>
-                  Pick 3. Tap another to change.
-                </div>
-              )}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '22px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'clamp(18px, 2.6vw, 28px)', marginBottom: '28px' }}>
                 {[
                   LANGUAGE_MAP['hindi'],
                   LANGUAGE_MAP['english'],
                   LANGUAGE_MAP['tamil'],
                   LANGUAGE_MAP['marathi'],
                 ].filter(Boolean).map((lang) => (
+                  (() => {
+                    const isSelected = selectedLanguages.some(l => l.id === lang.id);
+                    return (
                   <button
                     key={lang.id}
                     onClick={(event) => toggleLanguage(lang, event)}
                     disabled={false}
                     style={{
                       width: '100%',
-                      maxWidth: '150px',
+                      maxWidth: '170px',
                       justifySelf: 'center',
-                      minHeight: '88px',
-                      padding: '10px',
+                      minHeight: '106px',
+                      padding: '12px',
                       borderRadius: '20px',
-                      border: selectedLanguages.find(l => l.id === lang.id) ? `4px solid #FFD76A` : '2px solid #E0E0E0',
-                      backgroundColor: selectedLanguages.find(l => l.id === lang.id) ? '#FFFBE9' : '#F8F1E2',
+                      border: isSelected ? `4px solid #FFD76A` : '2px solid #E0E0E0',
+                      backgroundColor: isSelected ? '#FFFBE9' : '#F8F1E2',
                       cursor: 'pointer',
                       display: 'flex',
                       flexDirection: 'column',
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: '8px',
-                      transition: swappingOutLangId === lang.id ? 'none' : 'all 0.2s',
-                      boxShadow: selectedLanguages.find(l => l.id === lang.id) ? '0 6px 16px rgba(255, 215, 106, 0.3)' : '0 2px 6px rgba(0, 0, 0, 0.08)',
-                      transform: selectedLanguages.find(l => l.id === lang.id) ? 'scale(1.05)' : 'scale(1)',
+                      transition: swappingOutLangId === lang.id ? 'none' : 'border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease',
+                      boxShadow: isSelected ? '0 0 0 4px rgba(255, 215, 106, 0.35), 0 6px 16px rgba(0, 0, 0, 0.12)' : '0 2px 6px rgba(0, 0, 0, 0.08)',
+                      transform: 'none',
                       opacity: swappingOutLangId === lang.id ? 0.3 : 1,
                       position: 'relative',
                       animation: swappingOutLangId === lang.id ? 'swapOut 0.3s ease-out forwards' : 'none',
                     }}
                   >
-                    {selectedLanguages.find(l => l.id === lang.id) && <div style={{ fontSize: '18px', position: 'absolute', top: '8px', right: '12px', fontWeight: 'bold' }}>✓</div>}
-                    <img src={lang.icon} alt={lang.label} style={{ width: '34px', height: '34px', objectFit: 'contain' }} />
-                    <div style={{ fontFamily: "'Baloo 2', cursive", fontSize: '13px', fontWeight: 700, color: '#654321' }}>
+                    {isSelected && <div style={{ fontSize: '18px', position: 'absolute', top: '8px', right: '12px', fontWeight: 'bold' }}>✓</div>}
+                    <img src={lang.icon} alt={lang.label} style={{ width: '42px', height: '42px', objectFit: 'contain' }} />
+                    <div style={{ fontFamily: "'Baloo 2', cursive", fontSize: '15px', fontWeight: 700, color: '#654321' }}>
                       {lang.label}
                     </div>
-                    <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: '10px', color: '#8B6914' }}>
+                    <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: '11px', color: '#8B6914' }}>
                       {lang.script}
                     </div>
                   </button>
+                    );
+                  })()
                 ))}
               </div>
             </div>
@@ -2540,7 +2512,7 @@ const handleComplete = () => {
               <h3 style={{ fontFamily: "'Baloo 2', cursive", fontSize: '18px', fontWeight: 700, color: '#8B6914', textAlign: 'center', marginBottom: '12px' }}>
                 More Languages
               </h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', marginBottom: '12px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'clamp(16px, 2.4vw, 24px)', marginBottom: '16px' }}>
                 {[
                   LANGUAGE_MAP['gujarati'],
                   LANGUAGE_MAP['bengali'],
@@ -2551,49 +2523,54 @@ const handleComplete = () => {
                   LANGUAGE_MAP['sanskrit'],
                   LANGUAGE_MAP['other'],
                 ].filter(Boolean).map((lang) => (
+                  (() => {
+                    const isSelected = selectedLanguages.some(l => l.id === lang.id);
+                    return (
                   <button
                     key={lang.id}
                     onClick={(event) => toggleLanguage(lang, event)}
                     disabled={false}
                     style={{
                       width: '100%',
-                      maxWidth: '150px',
+                      maxWidth: '170px',
                       justifySelf: 'center',
-                      minHeight: '88px',
-                      padding: '10px',
+                      minHeight: '106px',
+                      padding: '12px',
                       borderRadius: '20px',
-                      border: selectedLanguages.find(l => l.id === lang.id) ? `4px solid #FFD76A` : '2px solid #E0E0E0',
-                      backgroundColor: selectedLanguages.find(l => l.id === lang.id) ? '#FFFBE9' : '#F8F1E2',
+                      border: isSelected ? `4px solid #FFD76A` : '2px solid #E0E0E0',
+                      backgroundColor: isSelected ? '#FFFBE9' : '#F8F1E2',
                       cursor: 'pointer',
                       display: 'flex',
                       flexDirection: 'column',
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: '8px',
-                      transition: swappingOutLangId === lang.id ? 'none' : 'all 0.2s',
-                      boxShadow: selectedLanguages.find(l => l.id === lang.id) ? '0 6px 16px rgba(255, 215, 106, 0.3)' : '0 2px 6px rgba(0, 0, 0, 0.08)',
-                      transform: selectedLanguages.find(l => l.id === lang.id) ? 'scale(1.05)' : 'scale(1)',
+                      transition: swappingOutLangId === lang.id ? 'none' : 'border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease',
+                      boxShadow: isSelected ? '0 0 0 4px rgba(255, 215, 106, 0.35), 0 6px 16px rgba(0, 0, 0, 0.12)' : '0 2px 6px rgba(0, 0, 0, 0.08)',
+                      transform: 'none',
                       opacity: swappingOutLangId === lang.id ? 0.3 : 1,
                       position: 'relative',
                       animation: swappingOutLangId === lang.id ? 'swapOut 0.3s ease-out forwards' : 'none',
                     }}
                   >
-                    {selectedLanguages.find(l => l.id === lang.id) && <div style={{ fontSize: '18px', position: 'absolute', top: '8px', right: '12px', fontWeight: 'bold' }}>✓</div>}
-                    <img src={lang.icon} alt={lang.label} style={{ width: '34px', height: '34px', objectFit: 'contain' }} />
-                    <div style={{ fontFamily: "'Baloo 2', cursive", fontSize: '13px', fontWeight: 700, color: '#654321' }}>
+                    {isSelected && <div style={{ fontSize: '18px', position: 'absolute', top: '8px', right: '12px', fontWeight: 'bold' }}>✓</div>}
+                    <img src={lang.icon} alt={lang.label} style={{ width: '42px', height: '42px', objectFit: 'contain' }} />
+                    <div style={{ fontFamily: "'Baloo 2', cursive", fontSize: '15px', fontWeight: 700, color: '#654321' }}>
                       {lang.label}
                     </div>
-                    <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: '10px', color: '#8B6914' }}>
+                    <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: '11px', color: '#8B6914' }}>
                       {lang.script}
                     </div>
                   </button>
+                    );
+                  })()
                 ))}
               </div>
             </div>
 
             {/* Selection Counter */}
             {selectedLanguages.length > 0 && (
-              <div style={{ textAlign: 'center', marginBottom: '10px', fontFamily: "'Nunito', sans-serif", fontSize: '14px', color: '#8B6914', fontWeight: 600 }}>
+              <div className="mis-language-child-count" style={{ textAlign: 'center', marginBottom: '10px', fontFamily: "'Nunito', sans-serif", fontSize: '14px', color: '#8B6914', fontWeight: 600 }}>
                 Pick up to 3 languages. {selectedLanguages.length} of 3 selected
               </div>
             )}
@@ -2601,7 +2578,7 @@ const handleComplete = () => {
             {/* Continue Button */}
             {selectedLanguages.length > 0 && (
               <button
-                className="mis-continue-btn-uniform"
+                className="mis-continue-btn-uniform mis-language-child-continue"
                 onClick={() => {
                   playUiTap();
                   let advanced = false;
@@ -2625,11 +2602,9 @@ const handleComplete = () => {
                 }}
                 style={{
                   display: 'block',
-                  margin: '10px auto 0',
-                  padding: '12px 32px',
-                  fontSize: '1.1rem',
-                  minWidth: '170px',
-                  minHeight: '62px',
+                  margin: '18px auto 0',
+                  minWidth: '240px',
+                  minHeight: '68px',
                 }}
               >
                 Continue
@@ -2641,7 +2616,7 @@ const handleComplete = () => {
 
       {/* Festivals Ganesha Phase — 5 Festival Guess Game (2x3 Layout) */}
       {phase === STEPS.FESTIVALS_GANESHA && (
-        <div style={{
+        <div className="mis-festivals-ganesha-phase" style={{
           minHeight: 'var(--app-height, 100vh)',
           paddingTop: 'clamp(20px, 6vh, 60px)',
           paddingBottom: 'clamp(24px, 8vh, 80px)',
@@ -2649,7 +2624,7 @@ const handleComplete = () => {
           flexDirection: 'column',
           alignItems: 'center',
         }}>
-          <AboutMeGaneshaHost image={babyGaneshaImg} className="about-me-ganesha-host--left-bottom" />
+          <AboutMeGaneshaHost image={babyGaneshaImg} className="about-me-ganesha-host--left-middle" />
 
           {/* Festival Cards Container — Flexbox for proper centering */}
           <div style={{
@@ -2679,15 +2654,18 @@ const handleComplete = () => {
                   backgroundColor: '#F8F1E2',
                   cursor: guessPhase === 'correct' ? 'not-allowed' : 'pointer',
                   display: 'flex',
+                  flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'center',
+                  gap: '8px',
                   outline: 'none',
                   WebkitTapHighlightColor: 'transparent',
                   boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
                   opacity: 1,
                 }}
               >
-                <img src={pongalIcon} alt="Pongal" style={{ width: '82%', height: '82%', objectFit: 'contain' }} />
+                <img src={pongalIcon} alt="Pongal" style={{ width: '68%', height: '68%', objectFit: 'contain' }} />
+                <span className="mis-fest-guess-label">Pongal</span>
               </button>
               <button
                 key="holi"
@@ -2704,15 +2682,18 @@ const handleComplete = () => {
                   backgroundColor: '#F8F1E2',
                   cursor: guessPhase === 'correct' ? 'not-allowed' : 'pointer',
                   display: 'flex',
+                  flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'center',
+                  gap: '8px',
                   outline: 'none',
                   WebkitTapHighlightColor: 'transparent',
                   boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
                   opacity: 1,
                 }}
               >
-                <img src={holiIcon} alt="Holi" style={{ width: '82%', height: '82%', objectFit: 'contain' }} />
+                <img src={holiIcon} alt="Holi" style={{ width: '68%', height: '68%', objectFit: 'contain' }} />
+                <span className="mis-fest-guess-label">Holi</span>
               </button>
             </div>
 
@@ -2738,15 +2719,18 @@ const handleComplete = () => {
                   backgroundColor: '#F8F1E2',
                   cursor: guessPhase === 'correct' ? 'not-allowed' : 'pointer',
                   display: 'flex',
+                  flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'center',
+                  gap: '8px',
                   outline: 'none',
                   WebkitTapHighlightColor: 'transparent',
                   boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
                   opacity: 1,
                 }}
               >
-                <img src={janmashtamiIcon} alt="Janmashtami" style={{ width: '82%', height: '82%', objectFit: 'contain' }} />
+                <img src={janmashtamiIcon} alt="Janmashtami" style={{ width: '68%', height: '68%', objectFit: 'contain' }} />
+                <span className="mis-fest-guess-label">Janmashtami</span>
               </button>
               <button
                 key="ganesh"
@@ -2763,8 +2747,10 @@ const handleComplete = () => {
                   backgroundColor: '#F8F1E2',
                   cursor: guessPhase === 'correct' ? 'not-allowed' : 'pointer',
                   display: 'flex',
+                  flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'center',
+                  gap: '8px',
                   outline: 'none',
                   WebkitTapHighlightColor: 'transparent',
                   boxShadow: guessPhase === 'correct' ? undefined : '0 4px 12px rgba(0, 0, 0, 0.1)',
@@ -2773,7 +2759,8 @@ const handleComplete = () => {
                   animation: guessPhase === 'correct' ? 'none' : undefined,
                 }}
               >
-                <img src={modakImage} alt="Ganesh Chaturthi - Modak" style={{ width: '82%', height: '82%', objectFit: 'contain' }} />
+                <img src={modakImage} alt="Ganesh Chaturthi - Modak" style={{ width: '68%', height: '68%', objectFit: 'contain' }} />
+                <span className="mis-fest-guess-label">Ganesh Chaturthi</span>
               </button>
               <button
                 key="diwali"
@@ -2790,15 +2777,18 @@ const handleComplete = () => {
                   backgroundColor: '#F8F1E2',
                   cursor: guessPhase === 'correct' ? 'not-allowed' : 'pointer',
                   display: 'flex',
+                  flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'center',
+                  gap: '8px',
                   outline: 'none',
                   WebkitTapHighlightColor: 'transparent',
                   boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
                   opacity: 1,
                 }}
               >
-                <img src={diwaliIcon} alt="Diwali" style={{ width: '82%', height: '82%', objectFit: 'contain' }} />
+                <img src={diwaliIcon} alt="Diwali" style={{ width: '68%', height: '68%', objectFit: 'contain' }} />
+                <span className="mis-fest-guess-label">Diwali</span>
               </button>
             </div>
           </div>
@@ -2837,19 +2827,17 @@ const handleComplete = () => {
 
       {/* Festivals Child Phase — Festival Selection (2-Section Layout) */}
       {phase === STEPS.FESTIVALS_CHILD && (
-        <div style={{
+        <div className="mis-festival-child-phase" style={{
           minHeight: 'var(--app-height, 100vh)',
           paddingTop: '20px',
           paddingBottom: '40px',
         }}>
-          {selectedFestivals.length > 0 && (
-            <StoryProgressHeader discoveries={selectedFestivals.map(fest => ({ ...fest, image: fest.icon, name: fest.label }))} isChildMode={false} />
-          )}
+          <StoryProgressHeader discoveries={selectedFestivals.map(fest => ({ ...fest, image: fest.icon, name: fest.label }))} isChildMode={false} />
 
-          <div style={{ maxWidth: '900px', margin: '20px auto 0', padding: '0 20px' }}>
+          <div className="mis-festival-child-panel" style={{ maxWidth: '980px', margin: 'clamp(78px, 11vh, 116px) auto 0', padding: '0 20px' }}>
             {/* COMMON FESTIVALS (Top Row - 4 cards) */}
             <div style={{ marginBottom: '20px' }}>
-              <h3 style={{
+              <h3 className="mis-festival-section-title" style={{
                 fontFamily: "'Baloo 2', cursive",
                 fontSize: '18px',
                 fontWeight: 700,
@@ -2857,46 +2845,31 @@ const handleComplete = () => {
                 textAlign: 'center',
                 marginBottom: '12px',
               }}>
-                Common Festivals
+                Most Common Festivals
               </h3>
-              {showFestSelectionHelper && (
-                <div style={{
-                  textAlign: 'center',
-                  marginBottom: '30px',
-                  fontFamily: "'Nunito', sans-serif",
-                  fontSize: '16px',
-                  color: '#4A3A2F',
-                  fontWeight: 600,
-                  background: '#F7F1E3',
-                  borderRadius: '42px',
-                  padding: '12px 24px',
-                  display: 'inline-block',
-                  margin: '0 auto 30px',
-                  animation: 'fadeIn 0.3s ease-out'
-                }}>
-                  Pick 4. Tap another to change.
-                </div>
-              )}
               <div style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(4, 1fr)',
-                gap: '16px',
-                marginBottom: '22px',
+                gap: 'clamp(18px, 2.6vw, 28px)',
+                marginBottom: '28px',
               }}>
                 {COMMON_FESTIVALS.filter(Boolean).map((fest) => (
+                  (() => {
+                    const isSelected = selectedFestivals.some(f => f.id === fest.id);
+                    return (
                   <button
                     key={fest.id}
                     onClick={(event) => toggleFestival(fest, event)}
                     disabled={false}
                     style={{
                       width: '100%',
-                      maxWidth: '150px',
+                      maxWidth: '178px',
                       justifySelf: 'center',
-                      minHeight: '92px',
-                      padding: '10px',
+                      minHeight: '116px',
+                      padding: '14px',
                       borderRadius: '20px',
-                      border: selectedFestivals.find(f => f.id === fest.id) ? '2px solid #FFC857' : '2px solid #E0E0E0',
-                      backgroundColor: selectedFestivals.find(f => f.id === fest.id) ? '#FFF4D8' : '#F8F1E2',
+                      border: isSelected ? '2px solid #FFC857' : '2px solid #E0E0E0',
+                      backgroundColor: isSelected ? '#FFF4D8' : '#F8F1E2',
                       cursor: 'pointer',
                       display: 'flex',
                       flexDirection: 'column',
@@ -2905,33 +2878,35 @@ const handleComplete = () => {
                       outline: 'none',
                       WebkitTapHighlightColor: 'transparent',
                       gap: '10px',
-                      transition: swappingOutFestId === fest.id ? 'none' : 'all 0.3s',
-                      boxShadow: selectedFestivals.find(f => f.id === fest.id)
-                        ? '0 6px 16px rgba(255, 200, 87, 0.4)'
+                      transition: swappingOutFestId === fest.id ? 'none' : 'border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease',
+                      boxShadow: isSelected
+                        ? '0 0 0 4px rgba(255, 200, 87, 0.35), 0 6px 16px rgba(0, 0, 0, 0.12)'
                         : '0 4px 12px rgba(0, 0, 0, 0.1)',
-                      transform: selectedFestivals.find(f => f.id === fest.id) ? 'scale(1.05)' : 'scale(1)',
+                      transform: 'none',
                       opacity: swappingOutFestId === fest.id ? 0.3 : 1,
                       position: 'relative',
                       animation: swappingOutFestId === fest.id ? 'swapOut 0.3s ease-out forwards' : 'none',
                     }}
                   >
-                    <img src={fest.icon} alt={fest.label} style={{ width: '30px', height: '30px', objectFit: 'contain' }} />
+                    <img src={fest.icon} alt={fest.label} style={{ width: '46px', height: '46px', objectFit: 'contain' }} />
                     <div style={{
                       fontFamily: "'Baloo 2', cursive",
-                      fontSize: '13px',
+                      fontSize: '15px',
                       fontWeight: 700,
                       color: '#654321',
                     }}>
                       {fest.label}
                     </div>
                   </button>
+                    );
+                  })()
                 ))}
               </div>
             </div>
 
             {/* OTHER FESTIVALS (Bottom Grid - 8 cards in 4x2) */}
             <div>
-              <h3 style={{
+              <h3 className="mis-festival-section-title" style={{
                 fontFamily: "'Baloo 2', cursive",
                 fontSize: '18px',
                 fontWeight: 700,
@@ -2939,28 +2914,31 @@ const handleComplete = () => {
                 textAlign: 'center',
                 marginBottom: '12px',
               }}>
-                Other Festivals
+                More Festivals
               </h3>
               <div style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(4, 1fr)',
-                gap: '12px',
-                marginBottom: '12px',
+                gap: 'clamp(16px, 2.4vw, 24px)',
+                marginBottom: '16px',
               }}>
                 {OTHER_FESTIVALS.filter(Boolean).map((fest) => (
+                  (() => {
+                    const isSelected = selectedFestivals.some(f => f.id === fest.id);
+                    return (
                   <button
                     key={fest.id}
                     onClick={(event) => toggleFestival(fest, event)}
                     disabled={false}
                     style={{
                       width: '100%',
-                      maxWidth: '150px',
+                      maxWidth: '178px',
                       justifySelf: 'center',
-                      minHeight: '92px',
-                      padding: '10px',
+                      minHeight: '116px',
+                      padding: '14px',
                       borderRadius: '20px',
-                      border: selectedFestivals.find(f => f.id === fest.id) ? '2px solid #FFC857' : '2px solid #E0E0E0',
-                      backgroundColor: selectedFestivals.find(f => f.id === fest.id) ? '#FFF4D8' : '#F8F1E2',
+                      border: isSelected ? '2px solid #FFC857' : '2px solid #E0E0E0',
+                      backgroundColor: isSelected ? '#FFF4D8' : '#F8F1E2',
                       cursor: 'pointer',
                       display: 'flex',
                       flexDirection: 'column',
@@ -2969,26 +2947,28 @@ const handleComplete = () => {
                       outline: 'none',
                       WebkitTapHighlightColor: 'transparent',
                       gap: '10px',
-                      transition: swappingOutFestId === fest.id ? 'none' : 'all 0.3s',
-                      boxShadow: selectedFestivals.find(f => f.id === fest.id)
-                        ? '0 6px 16px rgba(255, 200, 87, 0.4)'
+                      transition: swappingOutFestId === fest.id ? 'none' : 'border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease',
+                      boxShadow: isSelected
+                        ? '0 0 0 4px rgba(255, 200, 87, 0.35), 0 6px 16px rgba(0, 0, 0, 0.12)'
                         : '0 4px 12px rgba(0, 0, 0, 0.1)',
-                      transform: selectedFestivals.find(f => f.id === fest.id) ? 'scale(1.05)' : 'scale(1)',
+                      transform: 'none',
                       opacity: swappingOutFestId === fest.id ? 0.3 : 1,
                       position: 'relative',
                       animation: swappingOutFestId === fest.id ? 'swapOut 0.3s ease-out forwards' : 'none',
                     }}
                   >
-                    <img src={fest.icon} alt={fest.label} style={{ width: '30px', height: '30px', objectFit: 'contain' }} />
+                    <img src={fest.icon} alt={fest.label} style={{ width: '46px', height: '46px', objectFit: 'contain' }} />
                     <div style={{
                       fontFamily: "'Baloo 2', cursive",
-                      fontSize: '13px',
+                      fontSize: '15px',
                       fontWeight: 700,
                       color: '#654321',
                     }}>
                       {fest.label}
                     </div>
                   </button>
+                    );
+                  })()
                 ))}
               </div>
             </div>
@@ -3002,7 +2982,7 @@ const handleComplete = () => {
                 fontSize: '14px',
                 color: '#8B6914',
                 fontWeight: 600,
-              }}>
+              }} className="mis-festival-child-count">
                 Pick up to 4 festivals. {selectedFestivals.length} of 4 selected
               </div>
             )}
@@ -3010,7 +2990,7 @@ const handleComplete = () => {
             {/* Continue Button */}
             {selectedFestivals.length > 0 && (
               <button
-                className="mis-continue-btn-uniform"
+                className="mis-continue-btn-uniform mis-festival-child-continue"
                 onClick={() => {
                   playUiTap();
                   let advanced = false;
@@ -3032,16 +3012,8 @@ const handleComplete = () => {
                     goToOriginPhase();
                   }
                 }}
-                style={{
-                  display: 'block',
-                  margin: '10px auto 0',
-                  padding: '12px 32px',
-                  fontSize: '1.1rem',
-                  minWidth: '170px',
-                  minHeight: '62px',
-                }}
               >
-                See Our Story 🌟
+                See Our Story
               </button>
             )}
           </div>

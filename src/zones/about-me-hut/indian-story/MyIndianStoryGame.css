@@ -24,7 +24,15 @@
   overflow-x: hidden;
 }
 
-/* Background image — fixed behind all content */
+/* Background image — fixed behind all content.
+   Deliberately NOT z-index:-1: a negative z-index paints behind ANY
+   ancestor that is itself positioned (fixed/absolute/relative) with
+   z-index:auto, even one several levels up the tree (e.g. the dev
+   harness's own fixed stage wrapper) — that ancestor's own background
+   then covers this image completely. Staying at z-index:0 and being
+   the first child of .mis-wrapper keeps it behind this scene's own
+   content (which is all it needs) without being vulnerable to an
+   unrelated ancestor's stacking. */
 .mis-background {
   position: fixed;
   top: 0;
@@ -33,7 +41,7 @@
   height: 100%;
   object-fit: cover;
   object-position: center;
-  z-index: -1;
+  z-index: 0;
 }
 
 /* -- MUTE / REPLAY BUTTON -- */
@@ -403,6 +411,19 @@
   text-align: center;
 }
 
+.mis-language-replay-btn {
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+  z-index: 90;
+}
+
+.mis-language-replay-btn img {
+  width: 50%;
+  height: 50%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
 /* -- GUESS GRID (Step 4a) -- */
 .mis-guess-grid {
   display: grid;
@@ -428,6 +449,15 @@
   min-height: 90px;
   padding: 20px;
 }
+
+.mis-fest-guess-label {
+  font-family: 'Baloo 2', cursive;
+  font-size: clamp(13px, 1.7vh, 18px);
+  font-weight: 700;
+  color: #654321;
+  line-height: 1.15;
+  text-align: center;
+}
 .mis-guess-btn:active { transform: scale(0.95); }
 .mis-guess-btn.ganesha-option {
   border-color: rgba(255,215,0,0.4);
@@ -443,10 +473,10 @@
 .mis-guess-btn.shake { animation: guessShake 0.5s ease; }
 @keyframes guessShake {
   0%,100% { transform: translateX(0); }
-  20%     { transform: translateX(-8px); }
-  40%     { transform: translateX(8px); }
-  60%     { transform: translateX(-6px); }
-  80%     { transform: translateX(6px); }
+  20%     { transform: translateX(-5px); }
+  40%     { transform: translateX(5px); }
+  60%     { transform: translateX(-3px); }
+  80%     { transform: translateX(3px); }
 }
 .mis-guess-emoji { font-size: 36px; }
 .mis-guess-label {
@@ -816,30 +846,36 @@
 .mis-continue-btn-uniform {
   display: block;
   margin: 24px auto 0;
-  background: linear-gradient(135deg, #4CAF50 0%, #45A049 100%);
-  color: #fff;
+  background: linear-gradient(180deg, #d99a65 0%, #c9824c 100%);
+  color: white;
   border: none;
   padding: 20px 54px;
   font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-size: 28px;
+  font-size: clamp(1.8rem, 3.2vw, 2.3rem);
   font-weight: 700;
   border-radius: 50px;
   cursor: pointer;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.12);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow:
+    0 4px 0 rgba(0,0,0,0.12),
+    0 8px 18px rgba(0,0,0,0.12);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.3s ease,
+    filter 0.3s ease;
   white-space: nowrap;
   min-width: 260px;
   transform: var(--mis-continue-transform, none);
-  animation: misContinuePulse 2s ease-in-out infinite;
+  animation: misContinuePulse 3.5s ease-in-out infinite;
 }
 
 .mis-continue-btn-uniform:hover:not(:disabled) {
   transform: var(--mis-continue-hover-transform, translateY(-3px));
-  box-shadow: 0 12px 30px rgba(0,0,0,0.14);
+  filter: brightness(1.02);
 }
 
 .mis-continue-btn-uniform:active:not(:disabled) {
-  transform: var(--mis-continue-active-transform, translateY(-1px));
+  transform: var(--mis-continue-active-transform, scale(0.97));
+  box-shadow: 0 2px 6px rgba(0,0,0,0.10);
 }
 
 .mis-continue-btn-uniform:disabled {
@@ -854,10 +890,14 @@
 @keyframes misContinuePulse {
   0%,
   100% {
-    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+    box-shadow:
+      0 4px 0 rgba(0,0,0,0.12),
+      0 8px 18px rgba(120, 90, 60, 0.18);
   }
   50% {
-    box-shadow: 0 8px 35px rgba(0,0,0,0.16);
+    box-shadow:
+      0 4px 0 rgba(0,0,0,0.12),
+      0 10px 26px rgba(120, 90, 60, 0.28);
   }
 }
 
@@ -1014,18 +1054,20 @@
 /* -- WRONG CARD GENTLE SHAKE -- */
 .card.wrong {
   will-change: transform;
-  animation: shake 0.52s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+  animation: shake 0.42s ease-out;
+}
+
+.card.lang-attempted:not(.selected) {
+  box-shadow: 0 5px 12px rgba(121, 85, 72, 0.14) !important;
+  opacity: 0.86;
 }
 
 @keyframes shake {
   0% { transform: translateX(0) scale(1); }
-  12% { transform: translateX(-10px) scale(0.985); }
-  24% { transform: translateX(10px) scale(0.985); }
-  36% { transform: translateX(-9px) scale(0.988); }
-  48% { transform: translateX(9px) scale(0.988); }
-  60% { transform: translateX(-7px) scale(0.992); }
-  72% { transform: translateX(7px) scale(0.992); }
-  84% { transform: translateX(-4px) scale(0.996); }
+  18% { transform: translateX(-5px) scale(0.992); }
+  36% { transform: translateX(5px) scale(0.992); }
+  54% { transform: translateX(-3px) scale(0.996); }
+  72% { transform: translateX(3px) scale(0.996); }
   100% { transform: translateX(0) scale(1); }
 }
 
@@ -1154,6 +1196,101 @@
   overflow: visible;
 }
 
+.mis-ganesha-home-phase,
+.mis-language-guess-phase,
+.mis-festivals-ganesha-phase {
+  position: relative;
+  z-index: 1;
+}
+
+.mis-ganesha-home-phase .about-me-ganesha-host,
+.mis-language-guess-phase .about-me-ganesha-host,
+.mis-festivals-ganesha-phase .about-me-ganesha-host {
+  z-index: 40;
+}
+
+.mis-child-home-phase .mis-india-map-wrap {
+  width: min(78vw, 620px);
+}
+
+.mis-child-home-continue {
+  position: fixed;
+  left: 50%;
+  bottom: clamp(28px, 5vh, 52px);
+  z-index: 80;
+  margin-top: 0;
+  min-width: 280px;
+  min-height: 72px;
+  padding: 20px 58px;
+  font-size: 30px;
+  animation: none;
+  --mis-continue-transform: translateX(-50%);
+  --mis-continue-hover-transform: translateX(-50%) translateY(-3px);
+  --mis-continue-active-transform: translateX(-50%) translateY(-1px);
+}
+
+.mis-language-child-continue {
+  position: fixed;
+  left: 50%;
+  bottom: clamp(28px, 5vh, 52px);
+  z-index: 80;
+  margin: 0;
+  min-width: 260px;
+  min-height: 70px;
+  animation: none;
+  --mis-continue-transform: translateX(-50%);
+  --mis-continue-hover-transform: translateX(-50%) translateY(-3px);
+  --mis-continue-active-transform: translateX(-50%) translateY(-1px);
+}
+
+.mis-language-child-count {
+  position: fixed;
+  left: 50%;
+  bottom: clamp(132px, 18vh, 154px);
+  transform: translateX(-50%);
+  z-index: 81;
+  width: max-content;
+  max-width: calc(100vw - 96px);
+  text-shadow: 0 1px 2px rgba(255, 249, 230, 0.95);
+}
+
+.mis-festival-child-phase .story-strip {
+  animation: none;
+  z-index: 90;
+}
+
+.mis-festival-section-title {
+  position: relative;
+  z-index: 60;
+  display: block;
+  text-shadow: 0 1px 2px rgba(255, 249, 230, 0.95);
+}
+
+.mis-festival-child-continue {
+  position: fixed;
+  left: 50%;
+  bottom: clamp(28px, 5vh, 52px);
+  z-index: 80;
+  margin: 0;
+  min-width: 260px;
+  min-height: 70px;
+  animation: none;
+  --mis-continue-transform: translateX(-50%);
+  --mis-continue-hover-transform: translateX(-50%) translateY(-3px);
+  --mis-continue-active-transform: translateX(-50%) translateY(-1px);
+}
+
+.mis-festival-child-count {
+  position: fixed;
+  left: 50%;
+  bottom: clamp(132px, 18vh, 154px);
+  transform: translateX(-50%);
+  z-index: 81;
+  width: max-content;
+  max-width: calc(100vw - 96px);
+  text-shadow: 0 1px 2px rgba(255, 249, 230, 0.95);
+}
+
 @media (max-width: 900px) {
   .mis-region-pin-label {
     font-size: clamp(0.7rem, 1.5vw, 0.85rem);
@@ -1167,6 +1304,51 @@
 
   .mis-india-map-wrap {
     width: min(68vw, 520px, calc(50vh * 536 / 583));
+  }
+
+  .mis-child-home-phase .mis-india-map-wrap {
+    width: min(76vw, 600px, calc(60vh * 536 / 583));
+  }
+
+  .mis-child-home-continue {
+    bottom: clamp(20px, 4vh, 34px);
+    min-height: 64px;
+    padding: 16px 48px;
+    font-size: 26px;
+  }
+
+  .mis-language-child-panel {
+    margin-top: clamp(34px, 6vh, 58px) !important;
+    padding-bottom: 92px !important;
+  }
+
+  .mis-language-child-continue {
+    bottom: clamp(18px, 3vh, 30px);
+    min-height: 62px;
+    min-width: 240px;
+    padding: 16px 48px;
+    font-size: 26px;
+  }
+
+  .mis-language-child-count {
+    bottom: clamp(106px, 15vh, 124px);
+  }
+
+  .mis-festival-child-panel {
+    margin-top: clamp(62px, 9vh, 86px) !important;
+    padding-bottom: 92px !important;
+  }
+
+  .mis-festival-child-continue {
+    bottom: clamp(18px, 3vh, 30px);
+    min-height: 62px;
+    min-width: 240px;
+    padding: 16px 48px;
+    font-size: 26px;
+  }
+
+  .mis-festival-child-count {
+    bottom: clamp(106px, 15vh, 124px);
   }
 
   .mis-guess-grid {

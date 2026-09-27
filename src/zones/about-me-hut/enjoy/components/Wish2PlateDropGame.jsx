@@ -58,13 +58,6 @@ const Wish2PlateDropGame = ({
       <div className="game-header-hud">
         <div className="wish-progress-header">
           <div className="wish-progress-title">Wish 2: Fill The Bowls</div>
-          <div className="wish-smiley-row">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <span key={i} className={`wish-smiley-icon ${i < sceneState.wish2Taps ? 'filled' : ''}`}>
-                {i < sceneState.wish2Taps ? '😊' : '😶'}
-              </span>
-            ))}
-          </div>
           <div className="wish-progress-count">{sceneState.wish2Taps}/3</div>
         </div>
       </div>
