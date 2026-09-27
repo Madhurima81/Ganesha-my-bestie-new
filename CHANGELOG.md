@@ -1,6 +1,153 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
 
+## [2026-09-26] — Shloka River wrong-action polish: Sarvada tap ripple + Finale drag miss/soften
+**Touched:** src/zones/shloka-river/scenes/scene4/SarvadaGame.jsx,
+SarvadaGame.css; src/zones/shloka-river/scenes/scene5/ShlokaRiverFinale.jsx,
+ShlokaRiverFinale.css.
+
+**Changed:** Two small wrong-action reviews, no redesign of either scene's
+hint ladders (left untouched in both).
+
+Sarvada (tap-to-find symbol game): a missed tap used to do nothing, so the
+child couldn't tell if the tap registered or was ignored. Added a tiny
+neutral ripple exactly at the tap point on a miss — no shake, VO, red, or
+penalty, just confirmation the tap landed.
+
+Shloka River Finale (drag-the-boat-into-slot game): two changes.
+1. Wrong boat into the active slot: sound softened from `playSfx('wrong')`
+   to the existing `playSfx('softWrong')` sfx key — wobble-then-clear
+   behavior unchanged, since this is a memory-order game, not a failure
+   state.
+2. Drop released outside the target slot (the actual gap): previously the
+   drag ghost just vanished with no feedback. Now it briefly "lands" at the
+   release point with a small bounce, then shrinks/fades back — no VO, no
+   red, no penalty. The tray boat was never removed on pickup, so it's
+   already available again; repeated misses are still handled by the
+   existing hint ladder.
+
+**Open:** Not yet visually tested in-browser by Madhurima.
+
+## [2026-09-26] — Shloka River polish: Vakratunda, Samaprabha, Nirvighnam
+**Touched:** src/dev/webSpeechScripts.js;
+src/lib/config/content/voiceGuidance.js;
+src/zones/shloka-river/scenes/Scene1/VakratundaRescueGame.jsx;
+src/zones/shloka-river/scenes/Scene2/components/SamaprabhaGame.jsx/.css;
+src/zones/shloka-river/scenes/Scene2/assets/images/Samaprabha/fawn-walk-new.png;
+src/zones/shloka-river/scenes/Scene2/assets/images/Samaprabha/reveal-branch-new.png;
+src/zones/shloka-river/scenes/Scene2/assets/images/Samaprabha/reveal-rock-new.png;
+src/zones/shloka-river/scenes/Scene3/NirvighnamGame.jsx/.css.
+
+**Changed:** Kept the existing scene architectures and made only targeted
+interaction/asset polish updates.
+
+- **Vakratunda:** shortened the stuck L2 hint line to "Try going around it."
+  in both canonical voice guidance and the Web Speech fallback; changed the
+  passive no-interaction frog nudge from 18s to 10s while leaving the
+  collision system, three-bump trigger, `softWrong`-only blocked response,
+  and 6s/12s reactive stuck escalation intact.
+- **Samaprabha hold feedback:** incomplete clue holds now drain the visible
+  hold ring smoothly when the child leaves early, instead of vanishing
+  instantly. No wrong counter, wrong VO, shake, or rejection state was added.
+- **Samaprabha assets/layout:** replaced the branch reveal, rock reveal, and
+  walking deer images with the new downloaded assets. Added editable layout
+  controls for `Reveal: Branch`, `Reveal: Rock`, `Fawn Start`, and `Fawn Walk
+  Target` so position, size, rotation/flip (where applicable), and walking
+  deer scale can be tuned in the layout panel. Removed the hardcoded walking
+  deer CSS position so the panel controls it.
+- **Nirvighnam:** wrong branch drops now visibly land, pause briefly, then
+  return smoothly; repeated wrong branch drops trigger the existing branch
+  hint. Mostly vertical reeds swipes now get a gentle resistance nudge, and
+  repeated vertical swipes trigger the existing reeds hint. Rock behavior and
+  all generic wrong-SFX/VO behavior were left unchanged.
+
+**Verified:** Focused ESLint checks passed for the edited Samaprabha and
+Nirvighnam components; `git diff --check` passed for the edited files, with
+only existing Windows CRLF warnings.
+
+## [2026-09-26] — Mahakaya Rescue: rope-pull → direct drag-and-drop mechanic + new hint ladder
+**Touched:** src/zones/shloka-river/scenes/Scene1/MahakayaRescueGame.jsx,
+MahakayaRescueGame.css; src/lib/config/content/voiceGuidance.js;
+src/zones/shloka-river/scenes/Scene1/VakratundaGroveSimplified.jsx.
+
+**Changed:** Replaced the two-step rope rig (drag knob to attach → pull handle
+down) with a single direct drag: the child now drags each waiting log
+straight into a soft water dropzone at its raft position. Removed the
+pulley/knob/pull-handle rig entirely (state, layout keys, debug entries,
+`RopeGripSvg`/`RopeLine`, related CSS) and collapsed the two teaching
+`GestureDemo`s (attach + pull) into one `drag` demo from log to dropzone.
+Rebuilt the idle-hint ladder for the new mechanic per spec: 10s/18s/26s per
+log, restarting fresh each round (already automatic — hint-cycle is keyed on
+`activeLog`); immediate teaching cue on Log 1 only (one drag gesture, no VO);
+L1 is visual-only (log nudge + a **broad, blurred, breathing** dropzone —
+deliberately not the exact spot, and hidden entirely before L1 so there's
+never a permanent strong dropzone from the start); L2 sharpens the dropzone
+to its exact "clear" shape + VO "Drag the log into the water."; L3 shows the
+full gesture + VO "Put the log here." Wrong drops bounce the log briefly in
+place then slide it back to the bank — no sound, no VO, no red X; the first
+1-2 misses are visual-only, and from the 2nd consecutive miss the
+dropzone/gesture jump to L2-style clarity early (independent of the timer,
+without pulling the spoken lines forward). Added the two new VO keys
+(`scene10_maha_drag_water`, `scene10_maha_place_here`) to voiceGuidance.js
+and removed the obsolete rope-era keys (`scene10_maha_blocking`,
+`scene10_maha_drag_rope`, `scene10_maha_pull_down`); updated the parent
+VakratundaGroveSimplified scene's Web-Speech fallback map and replay-button
+reference to match, so its "replay voice" button doesn't call a dead key.
+
+**Open:** Not yet visually tested in-browser by Madhurima (lint + full
+production build both pass clean, but drop-distance threshold and the
+broad→clear dropzone feel need her eyes on the live game-test harness at
+`?game=mahakaya`). The new entry/hint VO lines are wired to text-only content
+entries — no recorded MP3s yet, so they'll currently fall back to TTS/Web
+Speech until real audio is recorded (folds into existing T14).
+
+## [2026-09-26] — About Me Hut: My Indian Story Ganesha host placement
+**Touched:** src/zones/about-me-hut/indian-story/MyIndianStoryGame.jsx;
+src/zones/about-me-hut/indian-story/MyIndianStoryGame.css.
+
+**Changed:** Fixed Ganesha visibility and placement consistency across the
+My Indian Story Ganesha-led phases in the game-test harness.
+
+- Added explicit phase wrapper classes for **Ganesha Home** and **Festival
+  Ganesha** so the shared Ganesha host anchors to the active phase area.
+- Kept **Language Ganesha** as the reference placement and aligned Ganesha
+  Home + Festival to the same `about-me-ganesha-host--left-middle` position.
+- Added a shared positioning context for Ganesha Home, Language, and Festival
+  phases, and raised the host z-index so it renders above phase content.
+
+## [2026-09-26] — About Me Hut QA pass: Favorite Things and My Indian Story fixes
+**Touched:** src/lib/config/content/voiceGuidance.js;
+src/zones/about-me-hut/food/Favoritefoodgame.jsx/.css;
+src/zones/about-me-hut/indian-story/MyIndianStoryGame.jsx/.css;
+src/zones/about-me-hut/components/AboutMeComparisonCard.css.
+
+**Changed:** QA fixes from Madhurima's visual pass across Favorite Things and My Indian Story.
+
+- **Color hint VO:** changed the color-round hint to "What color is an apple?"
+- **Activity choice content:** kept the activity as Nature, reverted the "Draw another" label, and left the activity icon positions in their intended layout.
+- **Favorite Things food round spacing:** spread the crowded tap targets in the Ganesha food round.
+- **Drawing flow:** fixed the Draw button so it opens the drawing component.
+- **White blank card/modal artifact:** adjusted the blank white card/box behavior so it does not remain visible through the scene.
+- **Region selection VO:** the region name and confirmation line now play when the region card is tapped, not on Continue.
+- **Region Continue visibility:** adjusted the region Continue button so it remains visible after selection.
+- **Child language layout:** adjusted language cards and the Continue area so the Continue button remains visible.
+- **Child language replay:** removed the play button from the child language selection phase.
+- **Ganesha language replay:** kept the large play button visible throughout the Ganesha language phase, including while and after the audio plays.
+- **Language card stability:** prevented the language cards from shifting after the third selection.
+- **Language/festival flicker:** reduced the selected-card/header flicker behavior in the child language and festival selection screens.
+- **Festival tap VO:** festival cards now speak their own name when tapped.
+- **Festival correct feedback:** the correct festival tap speaks "Ganesh Chaturthi" first, then the correct feedback.
+- **Festival labels:** added visible festival labels under icons, styled like the Ganesha language cards with the same Baloo/Nunito typography.
+- **Festival selection layout:** matched the language selection layout with "Most Common Festivals" and "More Festivals" sections.
+- **Festival card sizing:** enlarged festival cards to match the language card feel.
+- **Festival selection count:** supports up to 4 selected festivals and shows the selected count above the button.
+- **Story button copy/style:** removed the emoji from "See Our Story" and changed the buttons in this scene to the brown Family Tree/opening-modal style.
+- **Festival count placement:** moved the festival count text so it does not get covered by the button.
+- **Language count placement:** moved the language count text down so it sits just above the Continue button.
+- **Final My Indian Story comparison:** moved the comparison cards up so the Continue button is visible, using Dreams/Wishes as the layout reference.
+
+**Verified:** Ran `git diff --check` on the touched CSS during the pass; only existing Windows line-ending warnings were reported.
+
 ## [2026-09-24] — Symbol Mountain QA pass: hint timing, gesture accuracy, wrong-action feedback
 **Touched:** src/lib/components/feedback/GestureDemo.jsx/.css; src/lib/hooks/useRepeatedHintCycle.js;
 src/lib/beatPlayer/BeatPlayerGame.jsx/.css; src/dev/GameTestHarness.jsx;
