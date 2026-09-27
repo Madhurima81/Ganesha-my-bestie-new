@@ -264,15 +264,15 @@
 .profile-cta-btn-unified.opening-modal-cta.cta-idle-prompt::after {
   content: "";
   position: absolute;
-  right: 12px;
-  bottom: -18px;
+  left: 50%;
+  bottom: -32px;
   width: 38px;
   height: 38px;
   background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text x='6' y='48' font-size='42'>👆</text></svg>") center / contain no-repeat;
   filter: drop-shadow(0 4px 8px rgba(78, 44, 12, 0.28));
   pointer-events: none;
   opacity: 0;
-  transform: translate(8px, 12px) scale(0.9);
+  transform: translate(-50%, 12px) scale(0.9);
   animation: openingCtaTapDemo 1.8s ease-in-out 2;
 }
 
@@ -294,23 +294,23 @@
 @keyframes openingCtaTapDemo {
   0%, 100% {
     opacity: 0;
-    transform: translate(8px, 12px) scale(0.9);
+    transform: translate(-50%, 12px) scale(0.9);
   }
   16% {
     opacity: 1;
-    transform: translate(4px, 6px) scale(1);
+    transform: translate(-50%, 6px) scale(1);
   }
   30% {
     opacity: 1;
-    transform: translate(0, 0) scale(0.84);
+    transform: translate(-50%, 0) scale(0.84);
   }
   44% {
     opacity: 1;
-    transform: translate(4px, 6px) scale(1);
+    transform: translate(-50%, 6px) scale(1);
   }
   64% {
     opacity: 0;
-    transform: translate(8px, 12px) scale(0.9);
+    transform: translate(-50%, 12px) scale(0.9);
   }
 }
 

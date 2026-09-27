@@ -65,9 +65,9 @@ const PUBLIC_ICON_MAP = {
 };
 
 const OPENING_BG_MAP = {
-  'symbol-mountain': ['/images/symbol-mountain-bg.webp', '/images/symbol-mountain-bg.png'],
+  'symbol-mountain': ['/images/modakmtn-bg.webp', '/images/modakmtn-bg.png'],
   'shloka-river': ['/images/shloka-river-bg.webp', '/images/shloka-river-bg.png'],
-  'about-me-hut': ['/images/about-me-hut-bg.webp', '/images/about-me-hut-bg.png'],
+  'about-me-hut': ['/images/hut-bg.webp', '/images/hut-bg.png'],
   'festival-square': ['/images/festivalsquare-bg.webp', '/images/festivalsquare-bg.png'],
   'cave-of-secrets': ['/images/cave-of-secrets-background.webp', '/images/cave-of-secrets-background.png'],
 };
