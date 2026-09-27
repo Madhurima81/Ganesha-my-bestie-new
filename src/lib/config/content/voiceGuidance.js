@@ -76,14 +76,11 @@ export const VOICE_SCRIPTS = {
       scene10_maha_intro: {
         text: "The friends are waiting. Let's build a raft with space for everyone."
       },
-      scene10_maha_blocking: {
-        text: "Bring the rope to the log."
+      scene10_maha_drag_water: {
+        text: "Drag the log into the water."
       },
-      scene10_maha_drag_rope: {
-        text: "Drag the rope to a log."
-      },
-      scene10_maha_pull_down: {
-        text: "Now pull down."
+      scene10_maha_place_here: {
+        text: "Put the log here."
       },
       scene10_maha_success: {
         text: "Mahakaay! You made space so everyone could come along."
@@ -160,13 +157,39 @@ export const VOICE_SCRIPTS = {
         text: "Turtle’s way home is blocked. Press and hold the rock to move it."
       },
       scene12KuruHint: {
-        text: "Baby Beaver is across the broken bridge. Press and hold to lift the logs and help rebuild it."
+        text: "Baby Beaver is across the river. Beaver needs help to build a bridge."
       },
       scene12NirvDone: {
         text: "Nirvighnam! You cleared the way and helped Turtle through."
       },
       scene12KuruDone: {
         text: "Kuru Me Deva! You asked for help and finished the bridge."
+      },
+
+      // Kurumedeva bridge game (v2 — no more solo try/fail beats)
+      kuru_ask_elephant: {
+        text: "Who can help with the heavy logs?"
+      },
+      kuru_ask_monkey: {
+        text: "Who can help tie the rope?"
+      },
+      kuru_logs_after: {
+        text: "Elephant helped put the logs in place."
+      },
+      kuru_rope_after: {
+        text: "Monkey helped tie the rope."
+      },
+      kuru_plank_instruction: {
+        text: "Now drag the planks into place."
+      },
+      kuru_hint_ask: {
+        text: "Drag the help bubble to someone who can help."
+      },
+      kuru_hint_elephant: {
+        text: "Drag the help bubble to Elephant."
+      },
+      kuru_hint_monkey: {
+        text: "Drag the help bubble to Monkey."
       },
 
       sceneComplete: {
@@ -671,11 +694,6 @@ export const VOICE_SCRIPTS = {
     'favorite-food': {
       opening: {
         text: "Let’s find my favorites, then yours."
-      }
-    },
-    'dreams-wishes': {
-      opening: {
-        text: "I have a few wishes for the world. Will you help?"
       }
     },
     'my-indian-story': {
