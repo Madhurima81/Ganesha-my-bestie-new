@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GMB Manual QA — Beta Launch Checklist</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Nunito','Segoe UI',sans-serif; background:#f5f5f5; color:#333; line-height:1.5; }
+.navbar { position:fixed; left:0; top:0; width:100%; background:#2c3e50; padding:10px 16px; z-index:1000; box-shadow:0 2px 8px rgba(0,0,0,.15); }
+.nav-container { max-width:1500px; margin:0 auto; display:flex; gap:6px; flex-wrap:wrap; }
+.nav-btn { background:#34495e; color:#fff; border:none; padding:7px 11px; border-radius:4px; cursor:pointer; font-size:11.5px; font-weight:600; }
+.nav-btn:hover { background:#1abc9c; }
+.nav-btn.active { background:#e74c3c; }
+.container { max-width:1500px; margin:0 auto; padding:70px 16px 40px; }
+.page { display:none; background:#fff; padding:24px; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,.1); }
+.page.active { display:block; }
+.page-title { font-family:'Baloo 2',cursive; font-size:24px; color:#2c3e50; margin-bottom:6px; border-bottom:3px solid #1abc9c; padding-bottom:10px; }
+.page-sub { font-size:12.5px; color:#666; margin-bottom:14px; }
+.section-title { font-family:'Baloo 2',cursive; font-size:16.5px; color:#2c3e50; margin-top:22px; margin-bottom:6px; padding-left:10px; border-left:4px solid #3498db; }
+.section-note { font-size:11.5px; color:#777; margin:0 0 8px 14px; }
+table { width:100%; border-collapse:collapse; margin-bottom:4px; font-size:12.3px; }
+th { background:#34495e; color:#fff; padding:7px 5px; text-align:left; font-weight:600; position:sticky; top:0; }
+td { padding:6px 5px; border-bottom:1px solid #ecf0f1; vertical-align:top; }
+tr:hover td { background:#f9fbfc; }
+.dev-col { text-align:center; width:36px; }
+.dev-col input { width:16px; height:16px; cursor:pointer; }
+.item-col { width:19%; font-weight:600; }
+.exp-col { width:31%; color:#444; }
+.note-col { width:auto; }
+.note-col textarea { width:100%; min-height:30px; font-size:11.5px; font-family:'Nunito',sans-serif; padding:4px 6px; border:1px solid #ddd; border-radius:3px; resize:vertical; }
+.progress-bar-wrap { background:#ecf0f1; border-radius:20px; height:10px; margin-bottom:10px; overflow:hidden; }
+.progress-bar-fill { background:#27ae60; height:100%; width:0%; transition:width .2s; }
+.progress-label { font-size:12px; color:#555; margin-bottom:4px; }
+.scene-progress-label { font-size:11.5px; color:#666; margin-bottom:10px; }
+.summary-box { background:#ecf0f1; padding:14px; border-radius:6px; margin-bottom:16px; font-size:13px; }
+.legend { display:flex; gap:16px; flex-wrap:wrap; background:#ecf0f1; padding:10px 14px; border-radius:6px; margin-bottom:16px; font-size:12px; }
+.reset-btn { background:#e74c3c; color:#fff; border:none; padding:6px 12px; border-radius:4px; font-size:11px; cursor:pointer; }
+.na-row td { color:#999; font-style:italic; }
+@media print { .navbar,.nav-btn,.reset-btn { display:none; } }
+</style>
+</head>
+<body>
+
+<div class="navbar"><div class="nav-container" id="navContainer"></div></div>
+<div class="container">
+  <div class="page active" id="page-overview">
+    <h1 class="page-title">🎯 GMB Manual QA — Beta Launch Checklist</h1>
+    <div class="summary-box">
+      <p><strong>Purpose:</strong> hands-on device testing only — nothing here can be confirmed by reading code. Every scene is checked against the same full set of categories below, on all 3 devices, with a note field on every row for anything you observe.</p>
+    </div>
+    <div class="legend">
+      <div><strong>💻 Laptop</strong> — desktop browser, mouse/trackpad</div>
+      <div><strong>📱 Phone</strong> — real phone, portrait, touch</div>
+      <div><strong>📱 iPad</strong> — real iPad, both orientations, touch</div>
+    </div>
+    <div class="summary-box" style="background:#fff3cd;">
+      <p><strong>Every scene is checked against these categories:</strong></p>
+      <p>1) Opening Modal (size, icons, content, VO, close behavior) &nbsp;2) Onboarding (first-time vs. returning) &nbsp;3) Symbol Sidebar / info panel, where the scene has one &nbsp;4) Hint ladder (L1/L2/L3) &nbsp;5) Gesture demo &nbsp;6) Audio map — SFX &amp; VO timing &nbsp;7) Fireworks / completion visual FX &nbsp;8) Pause &amp; backgrounding &nbsp;9) Navigation audio leak (Home/ZoneBadge/Continue) &nbsp;10) Continue/resume between mini-games &nbsp;11) Completion modal detail &nbsp;12) Fonts &amp; touch targets &nbsp;13) Console &amp; performance &nbsp;14) Scene-specific known items from this session's code audit</p>
+    </div>
+    <div class="progress-label" id="overallLabel">Overall progress</div>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="overallBar"></div></div>
+    <button class="reset-btn" onclick="if(confirm('Clear ALL checkmarks and notes?')){localStorage.removeItem('gmbQaChecks');localStorage.removeItem('gmbQaNotes');location.reload();}">Reset all checkmarks &amp; notes</button>
+  </div>
+  <div id="scenePages"></div>
+</div>
+
+<script>
+const DEVICES = [['lap','💻'],['phn','📱P'],['ipd','📱i']];
+
+function buildFlowTable(s){
+  if (!s.flow || !s.flow.length) return '';
+  let html = `<h2 class="section-title">🎬 Flow — step by step, in play order</h2>`;
+  html += `<div class="section-note">Traced from the actual scene code (not generic) — play through in this exact order and check each step as you hit it. "Does it happen correctly?" = tick the box once VO/gesture/action/SFX all match what's listed.</div>`;
+  html += `<table><tr><th style="width:26px;">#</th><th class="dev-col">💻</th><th class="dev-col">📱P</th><th class="dev-col">📱i</th><th style="width:16%;">VO plays</th><th style="width:15%;">Gesture demo</th><th style="width:20%;">Action required</th><th style="width:15%;">SFX / sparkle</th><th class="note-col">Notes</th></tr>`;
+  s.flow.forEach((f,i)=>{
+    const key = `${s.id}-flow-${i}`;
+    html += `<tr><td><strong>${i+1}</strong><br><span style="font-size:10.5px;color:#888;">${f.phase||''}</span></td>${DEVICES.map(d=>`<td class="dev-col"><input type="checkbox" data-k="${key}-${d[0]}"></td>`).join('')}<td>${f.vo||'—'}</td><td>${f.gesture||'—'}</td><td>${f.action||'—'}</td><td>${f.sfx||'—'}</td><td class="note-col"><textarea data-k="${key}-note" placeholder="Notes..."></textarea></td></tr>`;
+  });
+  html += `</table>`;
+  return html;
+}
+
+// ---- Universal category template. {{ } } tokens filled per scene. ----
+function universalCategories(s){
+  const cats = [];
+
+  cats.push({title:'Opening Modal', note:'', rows:[
+    ['Modal size/layout fits the screen', 'No clipping or scroll needed at any of the 3 device sizes; modal is centered and readable.'],
+    ['Icon(s)/art in the modal', 'Correct art, sharp (not blurry/pixelated), no placeholder or missing image.'],
+    ['Title & body text', 'Matches approved copy for this scene, no leftover lorem/placeholder text, no typos.'],
+    ['Opening VO', 'Plays automatically once, fully, no cutoff, no overlap with map/zone ambient.'],
+    ['Close (X) button', 'Visible, 44px+ tappable, doesn\'t overlap other UI.'],
+    ['Closing the modal', 'Tapping X (or the start action) cancels the VO instantly if still playing — no lingering audio into gameplay.'],
+    ['Re-opening on replay', 'Replaying the scene shows the full opening modal again from the start, not skipped.'],
+  ]});
+
+  cats.push({title:'Onboarding — first-time vs. returning', note:'', rows:[
+    ['First-time entry', 'Full onboarding sequence (modal + intro VO) plays for a brand-new profile.'],
+    ['Returning to an unfinished scene', 'No repeated full onboarding — resumes at the correct point without replaying the whole intro.'],
+  ]});
+
+  if (s.hasSidebar) {
+    cats.push({title:'Symbol Sidebar / info panel', note:'', rows:[
+      ['Sidebar shows only discovered symbols', 'No symbol appears before it\'s actually been discovered in gameplay.'],
+      ['Sidebar updates instantly', 'New discovery appears in the sidebar immediately, no lag or missing entry.'],
+      ['Symbol name & description text', 'Matches approved content, no placeholder text, no typos.'],
+      ['Opening the sidebar/detail popup', 'Pauses gameplay input and pauses any playing game VO/SFX while open.'],
+      ['Closing the sidebar/detail popup', 'Resumes gameplay correctly; does not replay VO from the start.'],
+    ]});
+  } else {
+    cats.push({title:'Symbol Sidebar / info panel', note:'', rows:[['N/A for this scene', 'This scene has no symbol sidebar or discovery panel — skip.']], na:true});
+  }
+
+  if (s.hasMandala) {
+    cats.push({title:'Inner Mandala / progress visual', note:'', rows:[
+      ['Petals/progress markers reflect real progress', 'Exactly matches symbols actually discovered — no extra, none missing.'],
+      ['Mandala animation on new discovery', 'Plays smoothly, correct petal lights up, no flicker or wrong-petal bug.'],
+    ]});
+  }
+
+  cats.push({title:'Hint ladder (L1 notice → L2 understand+gesture → L3 do/reveal)', note: s.hintNote || '', rows:[
+    ['L1 (~10s idle) — notice', 'Gentle nudge VO/animation, doesn\'t interrupt if child is mid-action.'],
+    ['L2 (~18s idle) — understand + gesture demo', 'Hand-cue gesture demo appears, correctly points at/demonstrates the real next action.'],
+    ['L3 (~26s idle) — do / full reveal', 'Most explicit hint fires; any interaction resets the ladder back to L1 timing.'],
+    ['Hint after a wrong attempt', 'Wrong-target tap doesn\'t wrongly advance or reset the hint ladder.'],
+  ]});
+
+  cats.push({title:'Gesture demo', note:'', rows:[
+    ['Gesture demo motion matches the real mechanic', 'Shows the actual current interaction (tap/drag/hold/press) — not a stale animation from an older version of the mechanic.'],
+    ['Gesture demo timing', 'Appears and disappears cleanly, doesn\'t block the actual interaction area while showing.'],
+  ]});
+
+  cats.push({title:'Audio map — SFX & VO timing', note:'Note in the comment box exactly what you hear and in what order, so anything unexpected gets caught.', rows:[
+    ['Tap/interaction SFX', 'Plays instantly on every valid tap, no missed or delayed triggers.'],
+    ['Correct-answer SFX/chime', 'Plays once per correct action — never doubled or missing.'],
+    ['Wrong-answer SFX/VO', 'Plays gently, feels like redirection not punishment, matches app tone.'],
+    ['Ambient/background loop (if present)', 'Loops with no audible seam, click, or gap.'],
+    ['Mute toggle scope', 'Confirm it mutes voice narration only (SFX/ambient continue) — this is the documented intended behavior; flag if it feels wrong here.'],
+    ['No overlapping simultaneous VO lines', 'Never two voice lines talking over each other.'],
+  ]});
+
+  cats.push({title:'Fireworks / completion visual FX', note:'', rows:[
+    ['Sparkle/fireworks fires exactly once', 'No repeat/re-trigger on parent re-render.'],
+    ['Effect timing vs. VO', 'Visual effect lines up with the matching success/completion VO line, not noticeably before or after.'],
+    ['Effect cleans up fully', 'No stray particles or leftover animation elements after it finishes.'],
+    ['No visual clipping', 'Effect doesn\'t run off-screen or get cut off at small viewport widths.'],
+  ]});
+
+  cats.push({title:'Pause & backgrounding', note:'', rows:[
+    ['In-game pause button', 'Freezes gameplay input immediately.'],
+    ['Pause stops ALL audio', 'VO, SFX, and ambient all stop — not just voice.'],
+    ['Backgrounding the app/tab', 'Has the identical pause effect automatically, without tapping the pause button.'],
+    ['Resuming after pause/background', 'Continues exactly where it left off — no restart from scratch, no double-fire of a queued hint or effect.'],
+  ]});
+
+  cats.push({title:'Navigation audio leak — Home / ZoneBadge / Continue', note:'', rows:[
+    ['Tap Home mid-VO or mid-SFX', 'All audio cuts instantly before the map appears — nothing keeps playing over the map.'],
+    ['Tap Zone Badge (back-to-zone) mid-audio', 'Same instant cutoff before Zone Welcome appears.'],
+    ['Tap Continue on the completion screen', 'Same instant cutoff before the next scene/screen loads.'],
+    ['Listen for 2-3 seconds after any of the above', 'No audio from the old scene is audible on the new screen.'],
+  ]});
+
+  if (s.miniGames && s.miniGames.length > 1) {
+    cats.push({title:'Continue / resume between mini-games ('+s.miniGames.join(' → ')+')', note:'', rows:[
+      ['Background app mid-transition between mini-games', 'No progress bleed, no duplicate/missing entry VO on return.'],
+      ['Reload mid mini-game', 'Restarts or resumes per this scene\'s design — never a blank/broken screen.'],
+    ]});
+  }
+
+  cats.push({title:'Completion modal — detail', note:'', rows:[
+    ['Modal fits all 3 device sizes', 'No clipping/scroll needed.'],
+    ['Correct scene name & discovered symbols/icons shown', 'Matches what was actually completed in this playthrough.'],
+    [s.isFinal ? 'CTA text (final scene)' : 'Next-scene name text', s.isFinal ? 'Shows "Home", not a next-scene name — this is the last scene in its zone.' : ('Shows "'+(s.nextName||'the correct next scene')+'" — not a generic placeholder like "Next Adventure."')],
+    ['Continue button size', '60px+ tall, comfortably tappable on phone.'],
+    ['Closing/dismissing the modal (if possible)', 'Cancels any playing VO immediately.'],
+  ]});
+
+  cats.push({title:'Fonts & touch targets', note:'', rows:[
+    ['Headings font', 'Baloo 2 throughout, no fallback-font flash on load.'],
+    ['Body/instruction text font', 'Nunito throughout.'],
+    ['Every tappable element', '44-60px+ on the smallest device tested — buttons, cards, drag handles.'],
+  ]});
+
+  cats.push({title:'Console & performance', note:'', rows:[
+    ['Full playthrough, DevTools console open', 'Zero red errors (VO warnings are OK).'],
+    ['Animation-heavy moments', 'No visible jank or frame drops during gesture/reveal/fireworks sequences.'],
+  ]});
+
+  if (s.known && s.known.length) {
+    cats.push({title:'Scene-specific known items from this session\'s code audit', note:'', rows: s.known});
+  }
+
+  return cats;
+}
+
+// ---- Scene metadata ----
+const SCENES = [
+  {id:'map', nav:'🗺️ Map/ZoneWelcome', title:'🗺️ Map / Navigation / Zone Welcome', sub:'Not a single scene — covers the shell around all 13 scenes.',
+    skip:true}, // handled specially below
+
+  {id:'modak', nav:'🍬 Modak', title:'🍬 Modak (Symbol Mountain, Scene 1)', sub:'Benchmark scene — if something looks wrong here, it\'s likely wrong everywhere.',
+   hasSidebar:true, hasMandala:false, isFinal:false, nextName:'Find a Way to the Lotus', miniGames:['Modak Collection','Belly-Emotion Game'],
+   flow:[
+     {phase:'GAME 1 — Calm Search', vo:'calmMooshika (auto): "Mooshika\'s thoughts keep jumping around. Press and hold to help him focus."', gesture:'—', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Calm Mooshika: Teaching', vo:'Aligned with "Press and hold…"', gesture:'Hold GestureDemo once — hand presses Mooshika and visibly stays down', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Calm Mooshika: L1 (10s)', vo:'None', gesture:'Faint hold ring around Mooshika', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Calm Mooshika: L2 (18s)', vo:'ADD: "Press and hold Mooshika."', gesture:'Finger presses + hold/progress cue', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Calm Mooshika: L3 (26s)', vo:'ADD: "Keep holding until Mooshika settles."', gesture:'Full sustained hold demo + clear progress/hold ring', action:'—', sfx:'—'},
+     {phase:'Calm Reveal', vo:'mooshikaCalmed', gesture:'—', action:'Watch the card-flip reveal', sfx:'Sparkle "mooshika-calm" (star)'},
+     {phase:'GAME 2 — Bush intro', vo:'bushStart: "The flowers are behind a thorny bush. Mooshika feels frustrated. Swipe the branches apart."', gesture:'—', action:'—', sfx:'Mooshika shows "angry" emotion art'},
+     {phase:'🎯 SPEC — Bush: Teaching', vo:'Aligned with "Swipe…"', gesture:'SHORT horizontal drag demo across the bush (NOT the old wide swipe-left sweep)', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Bush: L1 (10s)', vo:'None', gesture:'Branches make a tiny sideways part-and-return movement', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Bush: L2 (18s)', vo:'ADD: "Swipe the branches apart."', gesture:'Short/partial horizontal hand movement through branches', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Bush: L3 (26s)', vo:'ADD: "Swipe all the way to open the branches."', gesture:'Full successful-distance sideways gesture through bush', action:'—', sfx:'—'},
+     {phase:'Bush — action', vo:'—', gesture:'—', action:'Swipe the branches apart (drag gesture)', sfx:'—'},
+     {phase:'Bush — success', vo:'bushSuccess: "There they are! Two flowers."', gesture:'—', action:'—', sfx:'Emotion → "pleased"; 2200ms delay → advance to Branch'},
+     {phase:'Branch — intro', vo:'branchStart: "The flowers are too high. Mooshika feels disappointed. Pull the branch down."', gesture:'—', action:'—', sfx:'Emotion shows "sad"'},
+     {phase:'🎯 SPEC — Branch: Teaching', vo:'Aligned with "Pull…"', gesture:'Compound pull-down-and-hold demo once — one hand moves down, then stays (single coherent gesture, not two separate demos)', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Branch: L1 (10s)', vo:'None', gesture:'Branch itself dips a few pixels', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Branch: L2 (18s)', vo:'ADD: "Pull the branch down and hold it."', gesture:'Partial pull + brief stay at lower point', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Branch: L3 (26s)', vo:'ADD: "Pull it down and keep holding."', gesture:'Full pull to success threshold + sustained hold ring', action:'—', sfx:'—'},
+     {phase:'Branch — action', vo:'Early release → branchEarly: "Keep holding the branch."', gesture:'—', action:'Press, pull branch down, HOLD for ~1100ms', sfx:'—'},
+     {phase:'Branch — success', vo:'branchSuccess: "Got them! Two more flowers."', gesture:'—', action:'—', sfx:'Emotion → "excited"; 2200ms delay → advance to Marsh'},
+     {phase:'Marsh — intro', vo:'marshStart: "The last two flowers are across the mud. Guide Mooshika from safe spot to safe spot."', gesture:'—', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Marsh: Teaching', vo:'Aligned with "Guide…"', gesture:'Drag demo once from Mooshika\'s current safe spot to the NEXT safe spot', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Marsh: L1 (10s)', vo:'None', gesture:'Mooshika gives a tiny lift/nudge', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Marsh: L2 (18s)', vo:'Existing: "Guide Mooshika to the next safe spot."', gesture:'Partial path toward the next safe spot, stopping short', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Marsh: L3 (26s)', vo:'ADD: "Drag Mooshika to the glowing safe spot."', gesture:'Full path current→next spot; NEXT safe spot only breathes/glows (not all spots)', action:'—', sfx:'—'},
+     {phase:'Marsh — action', vo:'Near-miss → marshWobble: "Ooh… that\'s wobbly." Wrong drop → marshWrong: "Back to the safe spot. Try again." (resets to last safe stop)', gesture:'—', action:'Drag Mooshika across 4 stepping-stone stops in sequence', sfx:'—'},
+     {phase:'Marsh — success (all 4 stops)', vo:'—', gesture:'—', action:'—', sfx:'Emotion → "relieved" → advance to Belly Recognition'},
+     {phase:'Belly Recognition (recap, no action, no hint ladder)', vo:'Chain: bellyFrustrated "Mooshika felt frustrated," → bellyDisappointed "proud," → bellyWorried "worried, and happy." → bellyKeptGoing "Lots of feelings came and went." → bellyAffirmation "I can have lots of feelings and keep going."', gesture:'—', action:'Watch/listen only', sfx:'Shows pleased/excited/relieved emotion-trace icons together'},
+     {phase:'Handoff to Game 3', vo:'—', gesture:'—', action:'—', sfx:'—'},
+     {phase:'GAME 3 — Garland build intro', vo:'open: "You found all six flowers. Tap them to make a garland for Ganesha."', gesture:'No GestureDemo — ordinary tap mechanic, no hand needed', action:'—', sfx:'Flowers fly out from the basket to 6 loose positions'},
+     {phase:'🎯 SPEC — Garland build: L1 (10s)', vo:'None', gesture:'All remaining loose flowers gently bob together', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Garland build: L2 (18s)', vo:'Existing: "Tap another flower."', gesture:'All remaining flowers remain visibly available', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Garland build: L3 (26s)', vo:'ADD: "Tap any flower."', gesture:'One remaining valid flower gets a clear tap ripple — but ALL flowers are still valid (no single "correct" one)', action:'—', sfx:'—'},
+     {phase:'Garland — tap flowers (×6, any order)', vo:'Every tap resets the hint clock', gesture:'—', action:'Tap each of the 6 flowers (invisible slots — order/colour never matters)', sfx:'650ms thread animation per tap, taps locked during it'},
+     {phase:'Garland ready', vo:'ready: "The garland is ready! Drag it to Ganesha."', gesture:'One-time drag-teaching demo — new gesture after 6 taps, aligned with "Drag it…"', action:'—', sfx:'550ms hold, then completed-garland art swaps in'},
+     {phase:'🎯 SPEC — Garland carry: L1 (10s)', vo:'None', gesture:'Garland gives a small lift/nudge', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Garland carry: L2 (18s)', vo:'Existing: "Drag the garland to Ganesha."', gesture:'Hand carries garland only partway toward Ganesha', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Garland carry: L3 (26s)', vo:'ADD: "Drag the garland onto Ganesha."', gesture:'Full exact garland→Ganesha path; Ganesha softly glows as destination', action:'—', sfx:'2nd failed drop forces L2, 3rd+ forces L3'},
+     {phase:'Garland — drag/drop action', vo:'—', gesture:'—', action:'Drag the garland onto Ganesha (~35px hit-zone around him)', sfx:'Miss = snaps back to rest position, no VO, counts as a failed drop'},
+     {phase:'Garland — offered (success)', vo:'offered: "You brought the garland to Ganesha — and look, a sweet Modak!"', gesture:'—', action:'—', sfx:'1100ms later: Modak icon glows above Mooshika; 3200ms after drop: handoff to reveal'},
+     {phase:'Carry / Belly Reveal (main scene)', vo:'—', gesture:'—', action:'Watch the belly card-flip reveal', sfx:'—'},
+     {phase:'Modak Reveal', vo:'—', gesture:'—', action:'Watch modak appear', sfx:'Sparkle "modak-appear"'},
+     {phase:'Celebrate', vo:'sceneComplete', gesture:'—', action:'Watch the finale — no input needed', sfx:'Sparkle "final-fireworks" + fireworks animation'},
+     {phase:'Completion', vo:'—', gesture:'—', action:'Tap Continue on the completion screen', sfx:'—'},
+   ],
+   known:[
+     ['Belly-emotion states (pleased/excited/relieved)', 'Correct art + VO per state, no stuck state.'],
+     ['Branch press-and-hold (~1100ms) and Marsh 4-stop drag sequence', 'Real timed hold/drag works reliably — needs a real finger, not automatable.'],
+     ['No SFX found in Game 2 code beyond VO', 'Bush/Branch/Marsh appear to run on VO alone (no explicit chime call in this component) — confirm live whether you actually hear a distinct success sound; if so, flag for a closer code look.'],
+   ]},
+
+  {id:'pond', nav:'🪷 Pond', title:'🪷 Pond (Symbol Mountain, Scene 2)', sub:'',
+   hasSidebar:true, hasMandala:false, isFinal:false, nextName:"Ganesha's Eyes, Ears & Tusk", miniGames:[],
+   flow:[
+     {phase:'Rock (start)', vo:'Round-keyed rock VO: "The rock is blocking the stream. Press and hold to move it."', gesture:'—', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Rock: Teaching', vo:'Aligned with "Press and hold…"', gesture:'Hold demo once, anchored to the ACTUAL rendered rock (not hardcoded screen coordinates)', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Rock: L1 (10s)', vo:'None', gesture:'Faint hold ring over rock', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Rock: L2 (18s)', vo:'ADD: "Press and hold the rock."', gesture:'Finger presses + progress ring begins filling', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Rock: L3 (26s)', vo:'"Keep holding to move the rock."', gesture:'Full sustained hold long enough to show the mechanic', action:'—', sfx:'—'},
+     {phase:'Rock — action', vo:'—', gesture:'—', action:'Press-and-hold the rock', sfx:'—'},
+     {phase:'Rock → Reeds transition', vo:'—', gesture:'—', action:'Watch the transition', sfx:'Chime'},
+     {phase:'Reeds intro', vo:'Round-keyed reeds VO: "The flowers are in the water\'s way. Gently move them aside."', gesture:'—', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Reeds: Teaching', vo:'Aligned with "Gently move…"', gesture:'Short horizontal drag/part demo once', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Reeds: L1 (10s)', vo:'None', gesture:'Flower cluster makes a tiny sideways move-and-return', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Reeds: L2 (18s)', vo:'Existing: "Move the flowers gently so the water can pass."', gesture:'Partial horizontal gesture through flowers', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Reeds: L3 (26s)', vo:'ADD: "Move the flowers all the way aside."', gesture:'Full required-distance sideways gesture showing the complete movement', action:'—', sfx:'—'},
+     {phase:'Reeds — action', vo:'—', gesture:'—', action:'Swipe the reeds apart', sfx:'—'},
+     {phase:'Trunk solved → reveal', vo:'—', gesture:'—', action:'Watch the trunk symbol reveal', sfx:'Chime + sparkle "lotus-wake" (star)'},
+     {phase:'Lotus intro', vo:'Round-keyed lotus VO: "The water reached the lotus. Hold the bud to help it bloom."', gesture:'—', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Lotus: Teaching', vo:'Aligned with "Hold the bud…"', gesture:'Hold demo once', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Lotus: L1 (10s)', vo:'None', gesture:'Faint hold ring around bud', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Lotus: L2 (18s)', vo:'ADD: "Press and hold the bud."', gesture:'Hand presses bud + progress ring begins', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Lotus: L3 (26s)', vo:'Existing: "Keep holding the bud."', gesture:'Full sustained hold; ring visibly continues until bloom threshold', action:'—', sfx:'—'},
+     {phase:'Lotus — action', vo:'—', gesture:'—', action:'Press-and-hold to bloom the lotus', sfx:'—'},
+     {phase:'Bloomed', vo:'—', gesture:'—', action:'Watch the lotus bloom (~2s)', sfx:'Chime + sparkle "lotus-bloom" (pink star)'},
+     {phase:'Complete', vo:'—', gesture:'—', action:'Watch symbols stream into the sidebar', sfx:'Sparkle "final-fireworks" + "lotus/trunk-to-sidebar" streams'},
+     {phase:'Completion screen', vo:'—', gesture:'—', action:'Tap Continue', sfx:'—'},
+   ],
+   known:[
+     ['Rock press-and-hold gesture itself', 'Real timed hold completes the interaction — needs a real finger/click-and-hold, not automatable.'],
+     ['Lotus-bloom hold gesture itself', 'Same as above for the lotus bloom.'],
+     ['Reload right after completion (narrow window)', 'Recently fixed — should show as completed, not reset to initial state.'],
+     ['Reed/lotus drag-target size', 'Comfortably tappable at small viewport widths (60px+).'],
+     ['Emoji/art positioning', 'Your visual judgment call — confirm placement looks right.'],
+   ]},
+
+  {id:'tusk', nav:'👁️ Eyes/Ears/Tusk', title:'👁️ Ganesha\'s Eyes, Ears & Tusk (Symbol Mountain, Scene 3)', sub:'',
+   hasSidebar:true, hasMandala:false, isFinal:false, nextName:"Ganesha's Symbol Challenge", miniGames:['Eyes','Ears','Tusk beat-player'],
+   flow:[
+     {phase:'EYES — intro', vo:'"Monkey is hungry, and Peacock has lost a special feather. Look carefully. Can you find what they need?"', gesture:'No GestureDemo — find-by-tap does not need a hand', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Eyes: L1 (10s)', vo:'None', gesture:'Broad bush/search areas softly breathe together — do NOT reveal feather or mango', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Eyes: L2 (18s)', vo:'Existing: "Look near the bushes — something is hiding there."', gesture:'Bush/search area cue becomes more noticeable — still NOT the exact object', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Eyes: L3 (26s)', vo:'None needed (visual carries it)', gesture:'Exact remaining hidden object finally gets a clear pulse/glow', action:'—', sfx:'—'},
+     {phase:'Eyes — background/empty tap', vo:'—', gesture:'—', action:'—', sfx:'Shimmer sprite at tap point (650ms), no VO — treated as exploration, not punished'},
+     {phase:'Eyes — feather found', vo:'"Feather found! Peacock will be so happy."', gesture:'—', action:'Tap the feather', sfx:'Item glides to center (900ms) → pause → glides to Peacock (900ms) → animal flips happy on arrival'},
+     {phase:'Eyes — mango found', vo:'"Mango found! Monkey is hungry no more."', gesture:'—', action:'Tap the mango', sfx:'Same glide-to-center-then-animal sequence'},
+     {phase:'Eyes — complete', vo:'"You looked closely and found them both!"', gesture:'—', action:'—', sfx:'1500ms delay then advances'},
+     {phase:'EARS — intro', vo:'"Listen closely. Hear each place first. Then choose the sound that matters."', gesture:'—', action:'—', sfx:'700ms delay before first round starts'},
+     {phase:'Ears — Round 1 (Elephant): Listening', vo:'"Listen for the water."', gesture:'—', action:'Listen — all 3 zones (left/center/right) auto-play in sequence, target zone visually pulses', sfx:'Target zone plays louder (0.68 vol) than decoys (0.42 vol)'},
+     {phase:'Ears — Round 1: Choosing', vo:'"Now choose the sound."', gesture:'No GestureDemo — listening/tapping sources does not need a hand', action:'Tap the zone matching "water"', sfx:'—'},
+     {phase:'🎯 SPEC — Ears Round 1: L1 (10s)', vo:'None', gesture:'Replay ALL THREE sources in the same order — no source glows', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Ears Round 1: L2 (18s)', vo:'Existing round line: "Listen for the water."', gesture:'Replay the water sound again WITHOUT showing where it came from', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Ears Round 1: L3 (26s)', vo:'None needed', gesture:'Correct spring/source softly glows while the water sound plays', action:'—', sfx:'—'},
+     {phase:'Ears — wrong zone tap', vo:'"Listen again."', gesture:'—', action:'—', sfx:'520ms shake on wrong zone — does NOT reset the choosing clock'},
+     {phase:'Ears — Round 1: correct tap', vo:'"Elephant found water."', gesture:'—', action:'—', sfx:'Starts 2-frame reveal animation (950ms per frame: thirsty→drinking→happy)'},
+     {phase:'Ears — Round 2 (Cow): Listening', vo:'"Listen for the grass."', gesture:'—', action:'Same listen → choose flow for Cow/grass', sfx:'2000ms after Round 1 reveal, Elephant fades to background'},
+     {phase:'🎯 SPEC — Ears Round 2: L1/L2/L3', vo:'Same pattern as Round 1, grass-specific: L2 "Listen for the grass." (no source reveal)', gesture:'L1: replay all 3. L3: correct grass source glows + sound plays', action:'—', sfx:'—'},
+     {phase:'Ears — Round 2: correct tap', vo:'"Cow found grass."', gesture:'—', action:'—', sfx:'Same reveal animation'},
+     {phase:'Ears — complete', vo:'"You listened carefully and found what mattered."', gesture:'—', action:'—', sfx:'Listening zones fade out 700ms later; handoff after 1900ms'},
+     {phase:'TUSK — Beat 0 (intro)', vo:'Before: "Oh no, the little bird\'s nest is broken. Bunny wants to rebuild it. What can help?" After: "Can these little things help rebuild the nest?"', gesture:'—', action:'No action — auto-advances (~650ms)', sfx:'—'},
+     {phase:'Tusk — Beat 1 (twig): Teaching', vo:'"Can the broken twig help? Drag it to the nest."', gesture:'Full drag demo twig→nest — THE ONLY immediate drag teaching in Tusk', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Tusk Beat 1: L1 (10s)', vo:'None', gesture:'Twig makes a tiny lift/nudge', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Tusk Beat 1: L2 (18s)', vo:'ADD: "Drag it toward the nest."', gesture:'Hand moves twig partway toward nest, then stops', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Tusk Beat 1: L3 (26s)', vo:'ADD: "Drag it into the nest."', gesture:'Full twig→nest path; nest softly highlights', action:'—', sfx:'—'},
+     {phase:'Tusk — Beat 1 — action', vo:'—', gesture:'—', action:'Drag the twig to the nest', sfx:'Nest art swaps to "nest with twig" on success'},
+     {phase:'Tusk — Beat 2 (grass)', vo:'"What about the short grass?"', gesture:'NO immediate gesture demo this time — mechanic already taught', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Tusk Beat 2: L1/L2/L3', vo:'L2 ADD: "Try moving it toward the nest." L3 ADD: "Drag it into the nest."', gesture:'L1: grass nudges/lifts. L2: partial grass→nest path. L3: full path + nest cue', action:'Drag the grass to the nest', sfx:'Nest becomes "nest-2"'},
+     {phase:'Tusk — Beat 3 (leaf)', vo:'"Can the torn leaf help?"', gesture:'No reteach', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Tusk Beat 3: L1/L2/L3', vo:'L2 ADD: "Try moving it toward the nest." L3 ADD: "Drag it into the nest."', gesture:'L1: leaf nudges/lifts. L2: partial path. L3: full path + nest cue', action:'Drag the leaf to the nest', sfx:'Nest becomes "nest-3"'},
+     {phase:'Tusk — Beat 4 (feather)', vo:'Before: "And the bent feather?" After: "You did it! All those little things helped rebuild the nest."', gesture:'No reteach', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Tusk Beat 4: L1/L2/L3', vo:'Same pattern as Beats 2-3', gesture:'L1: feather nudges/lifts. L2: partial path. L3: full path + nest cue', action:'Drag the feather to the nest', sfx:'Nest becomes complete; baby bird sprite flips sad→happy'},
+     {phase:'Tusk — Beat 5 (closing)', vo:'"I can use what I have for something important."', gesture:'—', action:'No action — auto-advances to completion', sfx:'—'},
+     {phase:'All complete', vo:'—', gesture:'—', action:'Watch Ganesha gesture cue on each completed sub-game', sfx:'Sparkle "final-fireworks"'},
+     {phase:'Completion screen', vo:'—', gesture:'—', action:'Tap Continue', sfx:'—'},
+   ],
+   known:[
+     ['Ganesha gesture cue on sub-game completion', 'Recently fixed — real gesture cue now appears (previously silently not rendering).'],
+     ['Tusk beat-player press-and-hold rhythm (where used) and drag-drop timing (900ms default hold)', 'Real timed gestures — needs a real finger, not automatable.'],
+     ['Eyes idle-hint reset on tab-return', 'Recently fixed bug — confirm hint timer resets correctly after backgrounding.'],
+     ['Eyes has no real "wrong" state', 'Confirmed by code — background taps are exploration, not penalized. Don\'t expect a wrong-answer cue here.'],
+   ]},
+
+  {id:'sacred', nav:'✨ Sacred Assembly', title:'✨ Sacred Assembly (Symbol Mountain, Scene 4 — Final)', sub:'Confirmed by code: this scene is TAP-based, not drag-based — child taps a body part directly, no pickup/drag gesture, no symbol tray/sidebar (that UI exists in code but is never rendered).',
+   hasSidebar:false, hasMandala:true, isFinal:true, miniGames:[],
+   flow:[
+     {phase:'Card appears (per symbol)', vo:'—', gesture:'—', action:'—', sfx:'Chime, as the symbol card fades in center-screen showing its front face'},
+     {phase:'Card slides left (13%)', vo:'—', gesture:'—', action:'—', sfx:'Tap SFX; 1.1s slide, confirmed slide finishes before flip (1350ms wait)'},
+     {phase:'Card flips', vo:'—', gesture:'—', action:'—', sfx:'Sparkle SFX; 0.7s flip reveals name + description on the back face'},
+     {phase:'Card VO plays', vo:'Per-symbol card VO, e.g. cardEyes: "Eyes. I can focus on what matters." (plays 2.5s after entering play phase)', gesture:'—', action:'—', sfx:'Hint ladder only starts once this VO fully ends'},
+     {phase:'Tap the body part', vo:'—', gesture:'No highlight shown by default — no drop-zone glow until a hint level activates it', action:'Tap the matching body part directly on the Ganesha illustration', sfx:'—'},
+     {phase:'Wrong tap', vo:'No VO at all on a wrong tap (confirmed — a "Try another place" line exists in content but is never wired to any code path)', gesture:'—', action:'—', sfx:'Wrong-tap SFX + 320ms wiggle on that zone only; 2nd wrong attempt force-jumps to L2 hint, 3rd+ to L3'},
+     {phase:'Hint ladder — L1 (10s)', vo:'No VO', gesture:'All open body parts get a shared neutral "tap here" affordance — not pointing at the correct one specifically', action:'—', sfx:'—'},
+     {phase:'Hint ladder — L2 (18s)', vo:'Re-says the same line as the card VO. Target meaning per symbol: Eyes "I can focus on what matters." Ears "I can listen for what helps me." Trunk "I can be strong and gentle." Tusk "I can use what I have for something important." Modak "I can learn, keep trying, and find joy." Lotus "I can keep growing when things are hard." Belly "I can have lots of feelings and keep going." Mooshika "I can keep going, one small step at a time." — exact script source is external, verify by ear', gesture:'—', action:'—', sfx:'Still no exact-target highlight'},
+     {phase:'Hint ladder — L3 (26s)', vo:'One shared line across all 8 symbols: "Tap the glowing part."', gesture:'Only the correct zone glows now', action:'—', sfx:'—'},
+     {phase:'Correct tap', vo:'—', gesture:'—', action:'—', sfx:'Tap SFX → zone glows → glow SFX → 450ms later, twinkle SFX + gold/pale sparkle burst (2 layers)'},
+     {phase:'Correct tap — settle', vo:'—', gesture:'—', action:'—', sfx:'Placed zone stays lit 2.4s ("look what you did" beat) before the next card cycles in'},
+     {phase:'Milestone — 3rd symbol', vo:'threeSymbolsPlaced: "You\'re remembering what Ganesha\'s symbols mean."', gesture:'—', action:'No action — plays automatically', sfx:'—'},
+     {phase:'Milestone — 6th symbol', vo:'sixSymbolsPlaced: "Almost there — six symbols are back with Ganesha."', gesture:'—', action:'No action — plays automatically', sfx:'—'},
+     {phase:'8th symbol (same flow as 1-7, no skip)', vo:'Same card→VO→tap→correct sequence as above', gesture:'—', action:'Tap the final body part', sfx:'—'},
+     {phase:'Final VO chain', vo:'finalYouFoundAll: "You remembered all eight symbols and what they mean." — 700ms later — finalAlwaysWithYou: "Now when you see Ganesha, you can remember their wisdom."', gesture:'—', action:'Watch the finale', sfx:'Sparkle "final-fireworks"; Ganesha\'s pose ramps through sleeping→stirring→awakening→rising→manifesting→divine-radiance as symbols are placed (not a one-off "awakening phase" tied only to symbol 8)'},
+     {phase:'Completion screen', vo:'—', gesture:'—', action:'Tap Continue (Zone completion follows)', sfx:'—'},
+   ],
+   known:[
+     ['No drag mechanic exists — confirm this matches what you see', 'A drag-based implementation exists in the code but is dead/unused (`handleSymbolPlacement`, never called). If you see drag behavior live, that would be surprising and worth flagging immediately.'],
+     ['No VO on wrong taps', 'Confirmed by code — only a wiggle + SFX. A "Try another place" line exists in content but is never spoken. Not a bug per se, but worth deciding if silence-on-wrong feels right here vs. other scenes that do have wrong-answer VO.'],
+     ['Card slide-then-flip sequence', 'Card fully slides into place before flipping — confirmed correct in code (1350ms wait before flip).'],
+     ['3-symbol / 6-symbol milestone VO', 'Each fires once at the right count, no repeats.'],
+     ['769-1023px landscape width (phone sideways)', 'Recently fixed breakpoint gap — container should scale correctly, not render oversized.'],
+     ['Reload right after the 8th symbol (narrow window)', 'Recently fixed — should show as completed, not reset.'],
+     ['Play Again after full completion', 'Replay restarts cleanly; map still shows the zone completed after exiting mid-replay.'],
+     ['Final fireworks + zone-completion modal order', 'Both fire in the right order, no double-fire.'],
+   ]},
+
+  {id:'vakratunda', nav:'🐸 Vakratunda Grove', title:'🐸 Vakratunda Grove (Shloka River, Scene 1)', sub:'',
+   hasSidebar:false, hasMandala:false, isFinal:false, nextName:'Bring Back the Light!', miniGames:['Vakratunda Rescue','Mahakaya Rescue'],
+   flow:[
+     {phase:'Initial', vo:'Welcome VO (auto)', gesture:'—', action:'Wait for welcome VO to finish', sfx:'Chime after welcome'},
+     {phase:'VAKRATUNDA RESCUE — intro', vo:'scene10_vak_intro: "Frog\'s way to his family is blocked. Drag Frog to find another way."', gesture:'One-time drag-teaching demo (750ms after entering) from frog to nearest open water', action:'—', sfx:'Demo dismissed the instant the child grabs the frog'},
+     {phase:'Vakratunda — free-drag action', vo:'—', gesture:'—', action:'Drag the frog anywhere inside the swimmable water area — NOT a fixed path', sfx:'Wake trail + one lily pad drops per syllable newly earned'},
+     {phase:'Vakratunda — hitting an obstacle', vo:'No VO on a bump', gesture:'—', action:'—', sfx:'450ms shake + soft "nope" SFX (throttled, 500ms cooldown) — frog holds at last valid point, no reset'},
+     {phase:'⚠️ ADD — Vakratunda passive no-interaction nudge (separate from the stuck system below)', vo:'None — silent', gesture:'If the child never touches Frog at all, Frog itself gets a small 2x nudge animation at 10s of no drag/no bump (lowered from 18s on 2026-09-26). Different affordance than the stuck shimmer — fires on pure inactivity, suppressed once the bump-based stuck system is active. On real device, confirm it doesn\'t feel like two competing hints firing at once.', action:'—', sfx:'—'},
+     {phase:'Vakratunda — stuck escalation (bump-count based, NOT idle-timer)', vo:'L2 (after 3 bumps + 6s more stuck): scene10_vak_hint_another_way: "Try going around it." (changed 2026-09-26 from "Look for another way through."; said once for the whole game)', gesture:'L1: silent shimmer at the real opening. L3 (+12s more stuck): shimmer + a verified-clear 3-dot ripple arc toward the opening', action:'—', sfx:'Any new furthest-right progress instantly clears the stuck streak'},
+     {phase:'Vakratunda — syllable lighting', vo:'—', gesture:'—', action:'Cross 3 forward-progress thresholds (past each obstacle) to light "va"/"kra"/"tun"; reaching family lights "da"', sfx:'A single fast drag crossing multiple thresholds lights them all together'},
+     {phase:'Vakratunda — reunion', vo:'scene10_vak_crossed: "Vakratunda! You found another way and helped Frog reach his family."', gesture:'—', action:'Watch — frog snaps to family, bounces', sfx:'SFX "frogReunion" + syllable-word audio "vakratunda"'},
+     {phase:'⚠️ REBUILT 2026-09-26 — Mahakaya is no longer a rope-pull rig', vo:'—', gesture:'The old attach-rope + pull-down two-step (rope knob, pull handle, RopeGripSvg/RopeLine) was removed entirely. It is now a single direct drag: log → water dropzone. If this device build still shows a rope/knob/pull-handle, that is a regression.', action:'—', sfx:'—'},
+     {phase:'MAHAKAYA RESCUE — intro', vo:'scene10_maha_intro: "Let\'s build a raft with space for everyone."', gesture:'—', action:'—', sfx:'—'},
+     {phase:'Mahakaya — Log 1: Teaching (first log only)', vo:'—', gesture:'One collapsed drag demo, log → dropzone', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Mahakaya per-log hint ladder (10s/18s/26s, restarts fresh each of the 4 logs)', vo:'L2: scene10_maha_drag_water: "Drag the log into the water." L3: scene10_maha_place_here: "Put the log here."', gesture:'L1 (10s): visual-only — log nudge + a broad, blurred, breathing dropzone (not the exact spot, hidden before L1). L2 (18s): dropzone sharpens to its exact shape. L3 (26s): full gesture demo', action:'—', sfx:'—'},
+     {phase:'Mahakaya — drag action (×4 logs)', vo:'—', gesture:'—', action:'Drag each waiting log straight into its raft\'s soft water dropzone', sfx:'—'},
+     {phase:'Mahakaya — wrong/missed drop', vo:'No VO, no red X', gesture:'—', action:'—', sfx:'Log bounces briefly then slides back to the bank — no sound'},
+     {phase:'Mahakaya — miss escalation', vo:'Spoken lines do NOT pull forward early', gesture:'From the 2nd CONSECUTIVE miss, dropzone/gesture jump to L2-style clarity early, independent of the timer', action:'—', sfx:'—'},
+     {phase:'Mahakaya — round complete (×4)', vo:'—', gesture:'—', action:'—', sfx:'600ms hold before the syllable lights ("Ma"→"ha"→"ka"→"ya")'},
+     {phase:'Mahakaya — final (4th log)', vo:'scene10_maha_success: "Mahakaay! You made space so everyone could come along."', gesture:'—', action:'Watch the raft cross', sfx:'Syllable-word audio "mahakaya"; on-screen text "There is room for everyone."'},
+     {phase:'Complete', vo:'—', gesture:'—', action:'Watch the finale', sfx:'Sparkle "final-fireworks"'},
+     {phase:'Completion screen', vo:'—', gesture:'—', action:'Tap Continue', sfx:'—'},
+   ],
+   known:[
+     ['Vakratunda is a free-drag-anywhere mechanic, not a fixed path', 'Confirmed by code — frog can move anywhere inside the water polygon, no fixed route. Syllables light by forward-distance crossed, not by touching specific objects.'],
+     ['Vakratunda stuck-help is bump-count-based, not idle-timer-based', 'Different from every other hint ladder in the app — only escalates after repeated failed bumps with no progress, not after a fixed idle wait. Confirm this feels right in practice.'],
+     ['Mahakaya was rebuilt 2026-09-26 — rope-pull rig is GONE, replaced by direct drag-to-water', 'If you are testing an older build/branch and still see a rope/knob, you are on stale code, not finding a new bug. Drop-distance threshold and the broad→clear dropzone feel are flagged by Madhurima as not yet live-reviewed — pay extra attention here.'],
+     ['Pause mid-drag', 'No ghost drag state left on resume.'],
+   ]},
+
+  {id:'suryakoti', nav:'☀️ Suryakoti Bank', title:'☀️ Suryakoti Bank (Shloka River, Scene 2)', sub:'',
+   hasSidebar:false, hasMandala:false, isFinal:false, nextName:'Ganesha All Day', miniGames:['Suryakoti','Samaprabha'],
+   flow:[
+     {phase:'Initial', vo:'Welcome VO (auto)', gesture:'—', action:'Wait for welcome VO to finish', sfx:'Chime after welcome'},
+     {phase:'SURYAKOTI — intro / Teaching (first scratch only)', vo:'scene11_surya_intro: "Bunny can\'t find home. Rub the glow to bring back the light."', gesture:'One-pass scratch/rub demo over Spot 1 only (short back-and-forth rub), dismissed on first touch. Spots 2-4 get NO reteach', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Suryakoti: L1 (10s)', vo:'None', gesture:'Soft ring around the scratchable region — no hand yet', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Suryakoti: L2 (18s)', vo:'"surya_hint_rub"/"surya_hint_keep" — literal text not resolvable, verify by ear. Recommended: "Rub the dark spot."', gesture:'Hand performs a short partial scratch/rub', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Suryakoti: L3 (26s)', vo:'None needed', gesture:'Full scratch demonstration over the correct working area', action:'—', sfx:'—'},
+     {phase:'Suryakoti — scratch action (×4 spots)', vo:'—', gesture:'—', action:'Scratch/rub each dark spot to reveal sunlight (60% of an 8×8 grid clears it)', sfx:'Only the active spot\'s cells count — off-spot scratching doesn\'t progress it'},
+     {phase:'Suryakoti — per-syllable success (×4)', vo:'—', gesture:'—', action:'—', sfx:'Syllable lights + its own clip plays ("Sur"/"ya"/"ko"/"ti")'},
+     {phase:'Suryakoti — full success', vo:'scene11_surya_success: "Suryakoti! You brought back the light and helped Bunny home."', gesture:'—', action:'Watch — darkness fades, Bunny hops home across 4 waypoints', sfx:'On-screen text: "The light came through! Bunny found her way home!"'},
+     {phase:'SAMAPRABHA — intro / Teaching (first clue only)', vo:'scene11_sama_intro: "A little deer sees a strange shadow. Move the light and look closely."', gesture:'Drag demo (start beam→Clue 1), then hold demo at Clue 1, staggered', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Samaprabha FIND track: L1 (10s)', vo:'None', gesture:'Light gives a small directional nudge / broad search cue', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Samaprabha FIND track: L2 (18s)', vo:'None (code comment: child already heard what to do)', gesture:'Partial light movement toward the shadow/area (rescue-dot trail partway)', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Samaprabha FIND track: L3 (26s)', vo:'Recommended: "Move the light to the glowing part."', gesture:'Full path to the exact active region; region clearly indicated (rescue-dots almost all the way)', action:'—', sfx:'—'},
+     {phase:'Samaprabha — drag action', vo:'—', gesture:'—', action:'Drag the light beam onto the correct shadow', sfx:'—'},
+     {phase:'🎯 SPEC — Samaprabha HOLD track: L1 (10s, starts fresh once light reaches the right region)', vo:'None', gesture:'Hold/progress cue appears; visual tells child not to move away', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Samaprabha HOLD track: L2 (18s)', vo:'"scene11_sama_hint_hold" — literal text not resolvable, verify by ear. Recommended: "Keep the light there."', gesture:'Finger/light stays in position, progress visibly begins filling', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Samaprabha HOLD track: L3 (26s)', vo:'None needed', gesture:'Full move+stay+complete-progress demo', action:'—', sfx:'Active valid holding suppresses hint escalation; leaving early restarts the HOLD clock fresh'},
+     {phase:'⚠️ CHANGED 2026-09-26 — leaving a hold early', vo:'—', gesture:'—', action:'—', sfx:'The visible hold ring now DRAINS smoothly on early release, instead of vanishing instantly. Still no wrong counter, no wrong VO, no shake/rejection state.'},
+     {phase:'⚠️ ADD 2026-09-26 — Samaprabha reveal assets/layout', vo:'—', gesture:'—', action:'—', sfx:'Branch reveal, rock reveal, and walking-fawn images replaced with new assets; layout-panel controls added for Reveal:Branch, Reveal:Rock, Fawn Start, Fawn Walk Target — check these render and the panel controls actually move them.'},
+     {phase:'Samaprabha — hold action (×4 clues: branch, reeds/leaves, stump, rocks)', vo:'—', gesture:'—', action:'HOLD the light on the shadow for ~1150ms', sfx:'Dropping outside the zone or releasing early just resets — no penalty'},
+     {phase:'Samaprabha — per-clue reveal (×4)', vo:'branch: "That part is just a branch." reeds: "Those are just reeds and leaves." stump: "That part is a tree stump." rocks: "And those are just rocks and grass."', gesture:'—', action:'—', sfx:'250ms after each successful hold'},
+     {phase:'Samaprabha — full success', vo:'scene11_sama_done: "Samaprabha! You looked closely and helped Deer feel safe."', gesture:'—', action:'Watch — fawn relieved, then walks away', sfx:'On-screen text: "Now you can see clearly."'},
+     {phase:'Complete', vo:'—', gesture:'—', action:'Watch the finale', sfx:'Sparkle "final-fireworks"'},
+     {phase:'Completion screen', vo:'—', gesture:'—', action:'Tap Continue', sfx:'—'},
+   ],
+   known:[
+     ['Samaprabha is drag-then-HOLD (~1150ms), not drag-with-snap', 'Correction from earlier — confirmed by code. Real timed hold, needs a real finger.'],
+     ['Neither Suryakoti nor Samaprabha has a real "wrong" state', 'Both are pure progress-or-no-progress mechanics — confirmed by code, no fail feedback exists to test.'],
+     ['3 hint-VO lines (surya_hint_rub/keep, sama_hint_hold, sama_hint_move) — literal text not confirmable from code', 'These route through a separate VO content system. Please verify by ear what actually plays and note it in the comment box — this closes a real documentation gap.'],
+     ['Samaprabha element positions', 'Open flow/layout review requested — not yet scoped in detail, check general feel.'],
+   ]},
+
+  {id:'nirvighnam', nav:'🚧 Nirvighnam Chant', title:'🚧 Nirvighnam Chant (Shloka River, Scene 3)', sub:'',
+   hasSidebar:false, hasMandala:false, isFinal:false, nextName:'Build the Shloka!', miniGames:['Nirvighnam','Kuru Me Deva'],
+   flow:[
+     {phase:'Initial', vo:'Welcome VO (auto)', gesture:'—', action:'Wait for welcome VO to finish', sfx:'Chime after welcome'},
+     {phase:'NIRVIGHNAM — Rock: Teaching (~1.0-1.3s after VO, timed to "press and hold")', vo:'scene12_nir_intro: "Turtle\'s way home is blocked. Press and hold the rock to move it."', gesture:'Hold demo — hand presses and visibly stays down', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Rock: L1/L2/L3', vo:'L2 ADD: "Press and hold the rock." L3 ADD: "Keep holding until it moves."', gesture:'L1: faint hold ring on rock. L2: finger presses, progress ring fills. L3: full sustained hold until result shown', action:'Press-and-hold the rock for ~1200ms', sfx:'Releasing early resets progress to 0 (unless already cleared)'},
+     {phase:'Branch: Teaching', vo:'Existing branch instruction, ~250-300ms after "Drag…"', gesture:'One drag demo', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Branch: L1/L2/L3', vo:'L2 ADD: "Drag the branch out of the way."', gesture:'L1: branch tiny lift/nudge. L2: partial drag away from blocked path. L3: full exact removal path', action:'Drag the branch to its bank spot (within 13% radius)', sfx:'—'},
+     {phase:'⚠️ ADD 2026-09-26 — wrong branch drop', vo:'None', gesture:'—', action:'—', sfx:'Branch now visibly lands, pauses briefly, then returns smoothly (was an instant snap-back). Repeated wrong drops still trigger the existing branch hint.'},
+     {phase:'Reeds: Teaching', vo:'Existing reeds instruction, ~250-300ms after "Swipe…"', gesture:'One swipe demo', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Reeds: L1/L2/L3', vo:'L2 ADD: "Swipe through the reeds."', gesture:'L1: reeds sway/part slightly in swipe direction. L2: short partial swipe. L3: full swipe path that clearly parts them', action:'Horizontal swipe to open the reeds (must move more sideways than up/down)', sfx:'Live progress bar fill shown during swipe'},
+     {phase:'⚠️ ADD 2026-09-26 — mostly-vertical reed swipes', vo:'None', gesture:'—', action:'—', sfx:'A swipe that\'s mostly vertical now gets a gentle resistance nudge instead of failing silently. Repeated vertical swipes trigger the existing reeds hint. Rock behavior unchanged.'},
+     {phase:'Note — not boulder-glow→branch-glow→reeds-glow', vo:'—', gesture:'Each hint teaches the MECHANIC that can be misunderstood, not a generic "next object" pointer', action:'—', sfx:'—'},
+     {phase:'Nirvighnam — full success', vo:'nirv_done: "Nirvighnam! You cleared the way and helped Turtle through."', gesture:'—', action:'Watch — turtle swims home across waypoints', sfx:'On-screen text: "One thing at a time — you cleared the way!"'},
+     {phase:'⚠️ REBUILT — Kuru Me Deva no longer has any "Beaver tries and fails" beat', vo:'—', gesture:'Code comment: "No more solo try/fail gate — the child can ask for help as soon as it\'s that friend\'s turn." A log press-and-hold-to-fail or rope-drag-to-fail step means you are testing a stale build.', action:'—', sfx:'—'},
+     {phase:'KURU ME DEVA — round 1 starts', vo:'kuru_ask_elephant: "Who can help with the heavy logs?"', gesture:'Only this beat (asking Elephant) gets a teaching gesture — neutral short drag of the help bubble, does NOT reveal Elephant', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Ask Elephant hint ladder (10s/18s/26s)', vo:'L2: kuru_hint_ask: "Drag the help bubble to someone who can help." L3: kuru_hint_elephant: "Drag the help bubble to Elephant."', gesture:'L1: bubble floats/wiggles, no helper glow. L3: Elephant clearly glows', action:'Drag the help-token bubble onto Elephant', sfx:'—'},
+     {phase:'Kuru — Elephant helps (fully automatic, no child placement drag)', vo:'kuru_logs_after: "Elephant helped put the logs in place."', gesture:'—', action:'Watch — Elephant walks over, logs appear as a bridge-art swap. There is no separate "place the log" drag by the child here', sfx:'Bridge advances; syllables light; round 2 begins'},
+     {phase:'KURU ME DEVA — round 2 starts', vo:'kuru_ask_monkey: "Who can help tie the rope?"', gesture:'NO reteach — reuses the same help-bubble-drag mechanic', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Ask Monkey hint ladder (10s/18s/26s)', vo:'L2: kuru_hint_ask (same generic line). L3: kuru_hint_monkey: "Drag the help bubble to Monkey."', gesture:'L3: Monkey glows', action:'Drag the help-token bubble onto Monkey', sfx:'—'},
+     {phase:'Kuru — Monkey helps (fully automatic)', vo:'kuru_rope_after: "Monkey helped tie the rope."', gesture:'—', action:'Watch — Monkey walks over, rope appears as a bridge-art swap', sfx:'Bridge advances; syllables light; plank round begins'},
+     {phase:'KURU ME DEVA — plank round (Beaver alone, the ONLY child-drag placement in this game)', vo:'kuru_plank_instruction: "Now drag the planks into place."', gesture:'—', action:'Drag 3 planks one at a time from the pile onto the finished-logs bridge', sfx:'—'},
+     {phase:'Kuru — crossing & completion', vo:'kuru_done: "Kuru Me Deva! You asked for help and finished the bridge."', gesture:'—', action:'Watch Beaver cross the bridge and reunite with baby beaver', sfx:'On-screen text confirms the ask-for-help theme'},
+     {phase:'Complete', vo:'—', gesture:'—', action:'Watch the finale', sfx:'Sparkle "final-fireworks"'},
+     {phase:'Completion screen', vo:'—', gesture:'—', action:'Tap Continue', sfx:'—'},
+   ],
+   known:[
+     ['Kuru Me Deva was rebuilt — the "always fails alone" beats are GONE', 'Old design had Beaver try logs/rope solo and fail before asking for help. Current code (KurumedevaGame.jsx) has NO solo-try step: the child can ask for help the moment it is that friend\'s turn. Do not test for or expect a fail state on logs/rope.'],
+     ['Only 3 child-driven drags exist in this game now', 'Ask-bubble→Elephant, ask-bubble→Monkey, and 3× plank-drag. Elephant\'s logs and Monkey\'s rope appearing are automatic bridge-art swaps, not child placement drags.'],
+     ['A stray/missed help-token drop just resets silently', 'No penalty text — confirm this feels fine rather than confusing (child might not realize why nothing happened).'],
+   ]},
+
+  {id:'sarvakaryeshu', nav:'🎭 Sarvakaryeshu Chant', title:'🎭 Sarvakaryeshu Chant (Shloka River, Scene 4)', sub:'',
+   hasSidebar:false, hasMandala:false, isFinal:false, nextName:'Shloka River Finale', miniGames:['Sarvakaryeshu (situation cards)','Sarvada'],
+   flow:[
+     {phase:'Initial', vo:'Welcome VO, then gameplayIntro', gesture:'—', action:'Wait for welcome VO to finish', sfx:'Chime after welcome'},
+     {phase:'SARVAKARYESHU — card 1 (Mooshika)', vo:'scene13_puzzle: "So much to do. Which symbol can help him start small?"', gesture:'—', action:'Tap the correct symbol among 3 options', sfx:'—'},
+     {phase:'Sarvakaryeshu — card 2 (Eyes)', vo:'scene13_sports: "So many distractions. Which symbol can help him focus?"', gesture:'—', action:'Tap the correct symbol', sfx:'—'},
+     {phase:'Sarvakaryeshu — card 3 (Trunk)', vo:'scene13_bike: "Heavy here, gentle there. Which symbol can help?"', gesture:'—', action:'Tap the correct symbol', sfx:'—'},
+     {phase:'Sarvakaryeshu — card 4 (Tusk)', vo:'scene13_grandma: "The crayon is broken. Which symbol can help?"', gesture:'—', action:'Tap the correct symbol', sfx:'—'},
+     {phase:'Sarvakaryeshu — wrong pick (any card)', vo:'On-screen text: "Try another symbol." (no VO rebuke)', gesture:'—', action:'—', sfx:'Wobble on the wrong option; does NOT reset the hint timer'},
+     {phase:'🎯 SPEC — Sarvakaryeshu hint ladder (per card, no GestureDemo — this is tap/choice)', vo:'L1: no VO. L2: semantic clue — Mooshika "trying another way", Eyes "staying strong/keeping going", Trunk "fairness/equal turns", Tusk "help/support" theme. L3: reveals correct symbol', gesture:'L1: all 3 options gently animate equally, correct one NOT distinguished. L2: still no glow. L3: correct symbol clearly glows', action:'—', sfx:'Progression is: all choices → meaning clue → correct symbol (never correct-symbol-glows-from-L1)'},
+     {phase:'Sarvakaryeshu — correct pick (each card)', vo:'After-VO per card: Mooshika "Mooshika helped him begin with one small thing." Eyes "The Eyes helped him focus on what mattered." Trunk "The Trunk helped him use strength, then gentleness." Tusk "The Tusk reminded her that something broken can still help."', gesture:'—', action:'—', sfx:'Symbol flies to syllable tile (1080ms) then to the scene image (2350ms) — syllable lights and its clip plays partway through'},
+     {phase:'Sarvakaryeshu — full success', vo:'scene13_success: "Sarvakaryeshu! You chose a Ganesha symbol for each task."', gesture:'—', action:'—', sfx:'On-screen text: "Ganesha\'s wisdom can help in every task!"'},
+     {phase:'SARVADA — game intro', vo:'scene14_intro: "Morning, afternoon and night — let\'s find Ganesha through your day."', gesture:'—', action:'—', sfx:'—'},
+     {phase:'Sarvada — Morning phase', vo:'scene14_morning: "Let\'s look at the morning."', gesture:'—', action:'Tap the pulsing memory bubble to open the scene, then tap the hidden symbol (Mooshika) in it', sfx:'"Can you find the hidden symbol?" plays once the memory opens'},
+     {phase:'Sarvada — Afternoon phase', vo:'scene14_afternoon: "Now the afternoon."', gesture:'—', action:'Same bubble→open→find flow, hidden symbol is the Trunk', sfx:'—'},
+     {phase:'Sarvada — Night phase', vo:'scene14_night: "Now the night."', gesture:'—', action:'Same flow, hidden symbol is the Lotus', sfx:'—'},
+     {phase:'🎯 SPEC — Sarvada hint ladder (per phase, no GestureDemo)', vo:'L2/L3: dynamic per-phase hint lines — literal text not resolvable from code, verify by ear', gesture:'L1: broad relevant area softly shimmers/breathes — do NOT ring the exact spot yet. L2: search area narrows + clue. L3: exact region gets a clear ring + final direct clue', action:'—', sfx:'A miss does nothing — no shake/penalty by design ("too much punishment for exploring", per code comment). Broad→narrow→exact, never exact-from-L1'},
+     {phase:'⚠️ ADD 2026-09-26 — Sarvada missed tap now gives feedback', vo:'None', gesture:'A missed tap shows a small NEUTRAL ripple exactly at the tap point — no shake, no VO, no red, no penalty. Just confirms the tap registered. The hint ladder above is otherwise unchanged.', action:'—', sfx:'—'},
+     {phase:'Sarvada — found (each phase)', vo:'On-screen label: "You found Mooshika!" / "You found the Trunk!" / "You found the Lotus!"', gesture:'—', action:'—', sfx:'Symbol flies to that phase\'s syllable tile, syllable lights and plays'},
+     {phase:'Sarvada — full success', vo:'scene14_success: "Sarvada! You found Ganesha through the whole day."', gesture:'—', action:'Watch the 3 found symbols converge into the boat, Ganesha joins', sfx:'Reveal panel: "SARVADA" / "Always" / "Morning, afternoon, night — always."'},
+     {phase:'Complete', vo:'—', gesture:'—', action:'Watch the finale', sfx:'Sparkle "final-fireworks"'},
+     {phase:'Completion screen', vo:'—', gesture:'—', action:'Tap Continue', sfx:'—'},
+   ],
+   known:[
+     ['Sarvada already has a hidden-object mechanic — may mean the redesign already happened', 'IMPORTANT: earlier notes said Sarvada "needs a hide-and-seek redesign, not started." The code trace found a working Morning/Afternoon/Night hidden-symbol search already implemented. Please confirm live whether this IS the intended redesign (in which case the old note is stale and can close) or whether it\'s a different/placeholder mechanic still awaiting the real redesign.'],
+     ['16 hint-VO lines across both games — literal text not confirmable from code', 'These route through a separate VO content system outside the files traced. Please verify by ear what actually plays at L2/L3 hints in both games and note it — this closes a real documentation gap, not a guess.'],
+     ['Wrong pick in Sarvakaryeshu does not reset the hint timer', 'Confirmed intentional by code comment ("only successful understanding resets the hint cycle") — not a bug.'],
+     ['gameplayIntro VO / full flow', 'Already live-confirmed — recheck no stray/duplicate VO.'],
+   ]},
+
+  {id:'finale', nav:'🚤 Shloka Finale', title:'🚤 Shloka River Finale (Scene 5)', sub:'',
+   hasSidebar:false, hasMandala:false, isFinal:true, miniGames:[],
+   flow:[
+     {phase:'Initial', vo:'Full shloka preview, word-by-word', gesture:'—', action:'Listen to the full shloka preview', sfx:'—'},
+     {phase:'Arrange', vo:'Next-target-word VO, per slot as it activates', gesture:'No GestureDemo — tap-based memory/sequence play', action:'Drag/tap each of the 8 word-boats into its correct slot', sfx:'—'},
+     {phase:'🎯 SPEC — Per-word hint ladder (L1/L2/L3, resets fresh after each correct placement)', vo:'L2 word-specific clue: Vakratunda "Remember Ganesha\'s curved trunk." Mahakaya "Think of Ganesha\'s great form." Suryakoti "Think of a light as bright as millions of suns." Samaprabha "Think of steady, equal brightness." Nirvighnam "Remember the word about clearing obstacles." Kuru Me Deva "Remember the words that ask for help." Sarvakaryeshu "Think of the word for everything we do." Sarvada "Remember the word that means always." L3: "Tap the glowing boat."', gesture:'L1: ALL remaining candidate boats gently nudge equally — do not pulse the empty slot, do not reveal correct boat. L2: still no full answer glow, meaning-clue only. L3: correct boat gets a clear persistent glow', action:'—', sfx:'—'},
+     {phase:'⚠️ CHANGED 2026-09-26 — wrong boat into the active slot', vo:'—', gesture:'—', action:'—', sfx:'Sound softened from `playSfx(\'wrong\')` to `playSfx(\'softWrong\')` — wobble-then-clear behavior otherwise unchanged. This is a memory-order game, not a failure state.'},
+     {phase:'⚠️ CHANGED 2026-09-26 — drop released outside the target slot (the gap)', vo:'None, no red, no penalty', gesture:'The drag ghost used to just vanish. Now it briefly "lands" at the release point with a small bounce, then shrinks/fades back.', action:'—', sfx:'Tray boat was never removed on pickup, so it\'s already available to retry immediately; repeated misses still escalate via the existing hint ladder (untouched)'},
+     {phase:'Success', vo:'—', gesture:'—', action:'Watch the celebration once all slots are filled', sfx:'Sparkle + chime'},
+     {phase:'Finale', vo:'—', gesture:'—', action:'Watch the recap boat animation (synced to audio finishing, not a timer)', sfx:'—'},
+     {phase:'Complete', vo:'—', gesture:'—', action:'Watch the zone-completion celebration', sfx:'—'},
+     {phase:'Completion screen', vo:'—', gesture:'—', action:'Tap Continue → About Me Hut unlocks', sfx:'—'},
+   ],
+   known:[
+     ['8-boat word tray fully visible', 'No clipping at any viewport, including small phone width.'],
+     ['Next-target-word VO per slot activation', 'Correct word audio plays each time a new slot activates.'],
+     ['Recap boat animation', 'Driven by audio finishing (onended), not a fixed timer — stays in sync.'],
+     ['Wrong-boat sound softened, miss-outside-slot now bounces back (2026-09-26)', 'See flow rows above — confirm on device that softWrong doesn\'t feel identical to correct, and the bounce-back reads as neutral, not a fail state.'],
+   ]},
+
+  {id:'familytree', nav:'🌳 Family Tree', title:'🌳 Our Families (About Me Hut, Scene 1)', sub:'',
+   hasSidebar:false, hasMandala:false, isFinal:false, nextName:'Our Favorite Things', miniGames:[],
+   flow:[
+     {phase:'Opening', vo:'welcome', gesture:'—', action:'Listen to the welcome line', sfx:'—'},
+     {phase:'GANESHA\'S TREE — circle-tap intro', vo:'tapCircle: "Tap a circle to meet someone in my family." (150ms after entering)', gesture:'—', action:'Tap an unplaced circle (father/mother/brother)', sfx:'—'},
+     {phase:'🎯 SPEC — Ganesha\'s tree: L1 (10s)', vo:'None', gesture:'All currently valid EMPTY circles gently breathe/nudge equally. Do NOT highlight the unavailable Ganesha/self circle', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Ganesha\'s tree: L2 (18s)', vo:'Replays tapCircle: "Tap a circle to meet my family!"', gesture:'Valid empty circles get a clearer pulse/halo', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Ganesha\'s tree: L3 (26s)', vo:'None', gesture:'Valid empty circles remain clearly highlighted until child taps one', action:'—', sfx:'—'},
+     {phase:'⚠️ Verify — circle hint should NOT run from second 0', vo:'—', gesture:'If an "always-on" circle glow is visible immediately on entry (before any idle time passes), that makes L1 meaningless — flag it', action:'—', sfx:'—'},
+     {phase:'Ganesha\'s tree — tap a circle (×3: father, mother, brother)', vo:"Relationship line per member, e.g. correctFather: \"This is my father, Shiva.\"", gesture:'—', action:'—', sfx:'Sparkle immediately + thumbs-up mini-gesture (1100ms); chime fires only once VO ends AND a flat 1400ms timer completes'},
+     {phase:'Ganesha\'s tree — tap an already-placed circle', vo:'No VO on open. After 5000ms with the card open: "Tap anywhere to close."', gesture:'—', action:'Opens a flip-card with that member\'s info', sfx:'No SFX on flip'},
+     {phase:'Ganesha fills himself in', vo:'"And that\'s me, Ganesha!" (900ms after father+mother+brother all placed)', gesture:'—', action:'Watch — automatic, no input', sfx:'Sparkle immediately; chime after VO ends + 1400ms'},
+     {phase:'All 4 placed — celebration', vo:'—', gesture:'—', action:'Watch the glitter celebration', sfx:'5000ms after last VO: 30-count gold glitter sparkle for 2500ms, then clears'},
+     {phase:'Ganesha\'s tree — Done button', vo:'allPlaced: "You met everyone in my family." (fallback: "Great! You met my loving family!")', gesture:'—', action:'Tap Done', sfx:'Chime; advances to child phase on VO end or a 6000ms failsafe'},
+     {phase:'CHILD\'S TREE — intro', vo:'childStart: "Tap the people or pets you want to add." (one repeat only, at +10s if nothing added yet — no 3-level ladder, this is a reflection phase)', gesture:'—', action:'Tap a family-type icon', sfx:'—'},
+     {phase:'Child\'s tree — name entry', vo:'—', gesture:'—', action:'Type a name and submit in the modal that opens', sfx:'Tap SFX on icon select and on submit; member added to the tree'},
+     {phase:'Child\'s tree — progress VO ladder (by exact member count, VO-only, no SFX)', vo:'1 member: childProgressStart. 3: childProgressSmall. 6: childProgressMid. 15: childProgressNearFull — all four share the same text: "Your family tree is growing." 21 (max): childProgressComplete: "These are the people and pets you chose for your family."', gesture:'—', action:'Repeat: tap icon → name → submit, for as many family members as the child wants (up to 21)', sfx:'800ms delay after each add before the progress VO (if that count is a milestone)'},
+     {phase:'Completion screen', vo:'FINAL_VO.comparison: "Our family trees are different, and each one tells a story."', gesture:'—', action:'Tap Continue', sfx:'—'},
+   ],
+   known:[
+     ['Dual idle-hint tracks (tree-circle + choice-modal)', 'Both fire correctly without colliding with each other.'],
+     ['Continue button touch target', 'Recently fixed — 60px+ at mobile/landscape widths.'],
+     ['Back button mid-scene', 'Single clean navigation, no double-nav bug (recently fixed).'],
+     ['Tap-hint timer pause on backgrounding', 'Recently fixed — confirm it pauses correctly.'],
+   ]},
+
+  {id:'food', nav:'🍽️ Favorite Food', title:'🍽️ Our Favorite Things (About Me Hut, Scene 2)', sub:'',
+   hasSidebar:false, hasMandala:false, isFinal:false, nextName:'Our Wishes & Dreams', miniGames:[],
+   flow:[
+     {phase:'GANESHA SECTION — Food round: question', vo:'foodQuestion: "Can you guess my favorite food?" No GestureDemo (tap/choice mechanic)', gesture:'—', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Food round: L1 (10s)', vo:'None', gesture:'Modak, Ladoo and Barfi ALL make the same gentle nudge/lift — no correct-answer highlighting', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Food round: L2 (18s)', vo:'foodHint: "Look for the sweet I love."', gesture:'Still no answer reveal', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Food round: L3 (26s)', vo:'None', gesture:'Modak ONLY gets a persistent clear glow/emphasis', action:'—', sfx:'⚠️ Verify: correct answer should NOT glow before L3 — check it isn\'t highlighted from L1'},
+     {phase:'Food round — correct tap', vo:'foodCorrect: "Yes — I love modak!" (spoken on the next phase entry)', gesture:'—', action:'Tap the Modak card', sfx:'Sparkle + mini-gesture (1500ms) + a big "all" sparkle burst (42 particles, 2.4s) — Modak icon flies to the discovery tray ~1s later'},
+     {phase:'Food round — wrong tap', vo:'Speaks just the tapped food\'s own name (not a rebuke)', gesture:'—', action:'—', sfx:'Wrong-tap SFX + 500ms shake — card stays tappable, NOT disabled/removed'},
+     {phase:'Ganesha — Color round', vo:'colorQuestion: "Can you guess my favorite color?"', gesture:'—', action:'Same correct/wrong tap pattern', sfx:'—'},
+     {phase:'🎯 SPEC — Color round: L1/L2/L3', vo:'L2 colorHint: "Which one is bright red?"', gesture:'L1: all colors animate equally. L3: Red only glows', action:'—', sfx:'Same "all" sparkle + chime on correct'},
+     {phase:'Ganesha — Activity round', vo:'activityQuestion: "What do you think I love doing?"', gesture:'—', action:'Same correct/wrong tap pattern', sfx:'—'},
+     {phase:'🎯 SPEC — Activity round: L1/L2/L3', vo:'L2 activityHint: "What lets me move to music?"', gesture:'L1: all activities animate equally. L3: Dancing only glows', action:'—', sfx:'Same "all" sparkle + chime on correct'},
+     {phase:'Ganesha — Friend round', vo:'friendQuestion: "Who do you think my friend is?"', gesture:'—', action:'Same correct/wrong tap pattern', sfx:'—'},
+     {phase:'🎯 SPEC — Friend round: L1/L2/L3', vo:'L2 friendHint: "Look for my tiny friend."', gesture:'L1: all friends animate equally. L3: Mooshika only glows', action:'—', sfx:'Same "all" sparkle + chime on correct'},
+     {phase:'Transition to child section', vo:'childIntro/transition: "Now I want to know your favorites."', gesture:'—', action:'—', sfx:'—'},
+     {phase:'CHILD SECTION — Food/Color/Activity/Friend rounds (×4)', vo:'Speaks the tapped item\'s own name immediately, then after 900ms a celebratory line: childFoodCorrect "Yummy!" / childColorCorrect "Nice choice!" / childActivityCorrect "That sounds like fun!" / childFriendCorrect "Thanks for telling me!"', gesture:'—', action:'Tap any item — every choice is accepted, no wrong answer exists here', sfx:'Smaller "single" sparkle (14 particles) on tap; another sparkle on advance to next round, ~6s total per round'},
+     {phase:'Completion', vo:'friendCelebration: "Now we know some things we each enjoy."', gesture:'—', action:'Watch the finale', sfx:'—'},
+     {phase:'Completion screen', vo:'—', gesture:'—', action:'Tap Continue', sfx:'—'},
+   ],
+   known:[
+     ['Tray-on-reload', 'Genuinely unverified in code — needs a real device reload test mid-gameplay.'],
+     ['Emoji rendering (food/activity/friend)', 'No mojibake/boxes — code check passed, confirm live.'],
+     ['Comparison-card avatar sizing, iPad landscape', 'Newly unified clamp() sizing — confirm not oversized/clipped.'],
+     ['Color-swatch sizing on iPad', 'Scales with clamp(), no overflow.'],
+   ]},
+
+  {id:'dreams', nav:'🌠 Dreams & Wishes', title:'🌠 Our Wishes & Dreams (About Me Hut, Scene 3)', sub:'',
+   hasSidebar:false, hasMandala:false, isFinal:false, nextName:'My Indian Story', miniGames:['Wish1','Wish2 (plate drop)','Wish3'],
+   flow:[
+     {phase:'WISH 1 (kindness) — intro', vo:'wish1Intro: "My first wish is for more kindness." wish1Active: "Tap the kind actions you can spot." No GestureDemo (tap mechanic)', gesture:'—', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Wish 1: L1 (10s)', vo:'None', gesture:'All available bubbles get the same gentle attention/breathe cue — do not identify the kind ones yet', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Wish 1: L2 (18s)', vo:'Recommended stronger line: "Look for actions that help or care for someone." (current code line: wish1Hint "Can you find another kind action?")', gesture:'No answer reveal', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Wish 1: L3 (26s)', vo:'Recommended: "Tap the bubbles that show helping, sharing, hugging, and gifting."', gesture:'Remaining correct kind-action bubbles get a persistent clear glow', action:'—', sfx:'—'},
+     {phase:'Wish 1 — tap a kind bubble (×3)', vo:'Speaks that bubble\'s own voice line', gesture:'—', action:'Tap a bubble showing a kind action', sfx:'Taps 1-2: small "single" sparkle. Tap 3 (final): big "all" sparkle + chime — Kindness icon flies to the discovery tray'},
+     {phase:'Wish 1 — tap an UNKIND bubble', vo:'"Oh no, that\'s not kind. Look for a helping bubble."', gesture:'—', action:'—', sfx:'Card shakes and dims briefly — NOT removed/disabled, stays tappable'},
+     {phase:'Wish 1 — complete', vo:'wish1Complete: "You found all the kind choices."', gesture:'—', action:'—', sfx:'Auto-advances to Wish 2 after ~4.2s'},
+     {phase:'WISH 2 (sharing, plate-drop) — Teaching (THE ONLY GestureDemo in this scene)', vo:'"Drag food to each empty plate."', gesture:'One full example drag, one food → one empty plate, starting ~250ms after "Drag…" begins. First real child drag dismisses it permanently', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Wish 2: L1 (10s)', vo:'None', gesture:'All remaining draggable foods make a small lift/nudge', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Wish 2: L2 (18s)', vo:'Recommended: "Drag one food toward an empty plate."', gesture:'One food shows a PARTIAL drag path toward an empty plate — do not complete the path', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Wish 2: L3 (26s)', vo:'None', gesture:'Full food→empty-plate drag path; source food and destination plate clearly indicated', action:'—', sfx:'—'},
+     {phase:'Wish 2 — drag food to plate (×3)', vo:'—', gesture:'—', action:'Drag each food image onto a plate (or tap-to-select then tap a plate)', sfx:'Drops 1-2: "single" sparkle over that plate. Drop 3 (final): "all" sparkle + chime — Sharing icon flies to the tray. No "wrong drop" exists — any pairing accepted'},
+     {phase:'Wish 2 — complete', vo:'wish2Complete', gesture:'—', action:'—', sfx:'Auto-advances to Wish 3 after ~4.2s'},
+     {phase:'WISH 3 (greener world) — intro', vo:'"My next wish is for a greener world." Active: "Tap the bare spaces to help the garden grow." No GestureDemo — the issue is WHERE to tap, not how', gesture:'—', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Wish 3: L1 (10s)', vo:'None', gesture:'All remaining valid bare spots softly pulse once/twice', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Wish 3: L2 (18s)', vo:'Recommended: "Tap a bare space where something could grow." (current: "There\'s still space for more to grow.")', gesture:'Remaining bare spots become a clearer hotspot cue', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Wish 3: L3 (26s)', vo:'Recommended: "Tap a glowing spot to help the garden grow."', gesture:'Remaining exact hotspots stay clearly highlighted', action:'—', sfx:'—'},
+     {phase:'Wish 3 — tap 3 bare spots', vo:'—', gesture:'—', action:'Tap 3 bare garden spots', sfx:'Taps 1-2: "single" sparkle. Tap 3: "all" sparkle + chime — Nature icon flies to the tray'},
+     {phase:'Wish 3 — complete', vo:'wish3Complete', gesture:'—', action:'—', sfx:'Auto-advances to dream reveal after ~5.6s'},
+     {phase:'DRAW YOUR DREAM (if present in this build) — no ladder', vo:'"Draw something you hope for or dream about."', gesture:'None by default — let the child think/draw without nagging', action:'Draw freely on the canvas', sfx:'Only reconsider a tiny scribble-teaching cue if testing shows kids don\'t realize the canvas is drawable'},
+     {phase:'DREAM REVEAL — clouded', vo:'dreamClouded: "Your dream is hiding behind the clouds. Help me clear them — tap my trunk." No GestureDemo', gesture:'—', action:'—', sfx:'Child\'s own hand-drawn dream image shown blurred + dim'},
+     {phase:'🎯 SPEC — Cloud clearing: L1 (10s)', vo:'None', gesture:'Ganesha\'s trunk gently nudges/moves', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Cloud clearing: L2 (18s)', vo:'If no progress: "Tap my trunk to clear a cloud." If child already cleared one: "Keep tapping my trunk." (current code: dreamClearing "There are still clouds in the way.")', gesture:'Clearer trunk tap cue/pulse', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Cloud clearing: L3 (26s)', vo:'None', gesture:'Trunk gets a persistent clear ring/glow until tapped', action:'—', sfx:'—'},
+     {phase:'Dream reveal — tap trunk (×2, clearing clouds)', vo:'—', gesture:'—', action:'Tap Ganesha\'s trunk to clear one cloud at a time', sfx:'Each of the first 2 taps: cloud fades + "single" sparkle'},
+     {phase:'Dream reveal — final tap (3rd)', vo:'dreamRevealed: "There it is — your dream!"', gesture:'—', action:'—', sfx:'"all" sparkle + chime; blur fully removed, glow ring appears around the child\'s own drawing'},
+     {phase:'Completion screen', vo:'—', gesture:'—', action:'Tap Continue', sfx:'—'},
+   ],
+   known:[
+     ['Speech bubble palette (all instances)', 'Recently fixed — confirm consistent brown/coral/cream everywhere, no leftover gold/cream.'],
+     ['Wrong-guess policy', 'Wrong choices do not disable the card — prevents elimination-by-guessing.'],
+     ['Wish2 plate-drop gesture', 'No double-complete on rapid tap.'],
+     ['Intro button touch target at tablet width', 'Recently confirmed 64px at the 1024px breakpoint.'],
+     ['"Dusk wishing sky" background', 'Your decision — confirm whether intentional or should match zone palette.'],
+   ]},
+
+  {id:'indianstory', nav:'🇮🇳 Indian Story', title:'🇮🇳 My Indian Story (About Me Hut, Scene 4 — Final)', sub:'',
+   hasSidebar:false, hasMandala:false, isFinal:true, miniGames:['Language selection','Festival selection'],
+   flow:[
+     {phase:'Opening', vo:'opening', gesture:'—', action:'Listen to the opening line', sfx:'—'},
+     {phase:'PHASE 1 — map: Teaching (THE ONLY GestureDemo in this scene)', vo:'ganesha_home: "Move the magnifying glass around the map to find my places."', gesture:'One neutral short drag (NOT toward a hidden answer), starting ~300ms after "Move…" begins. First real child movement dismisses it', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Map search: L1 (10s)', vo:'None', gesture:'Magnifying glass makes a small wobble/sweep; optionally broad search area softly shimmers', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Map search: L2 (18s)', vo:'"Drag the magnifying glass to find me."', gesture:'Slightly clearer/narrower search cue', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Map search: L3 (26s)', vo:'None', gesture:'Narrows to the relevant region / soft region highlight — do NOT pinpoint the exact pixel immediately, no generic pointing emoji', action:'—', sfx:'—'},
+     {phase:'Phase 1 — action', vo:'—', gesture:'—', action:'Drag the magnifying glass over 3 hotspots (Varanasi/Mumbai/Tamil Nadu)', sfx:'Sparkle + mini-gesture on first entry into each hotspot; VO speaks just the location name'},
+     {phase:'CHILD HOME — choose a connected place (10s-only repeat, no L2/L3)', vo:'child_home_entry: "Now choose a place your family feels connected to." 10s repeat only: child_home_idle: "Which place feels connected to your family?"', gesture:'—', action:'Tap a region card', sfx:'Sparkle on tap; speaks that region\'s label; Continue enables 900ms later'},
+     {phase:'Child home — confirmed', vo:'child_home_confirmed: "This is the place you chose."', gesture:'—', action:'—', sfx:'—'},
+     {phase:'LANGUAGE — Play/listen (ordinary tap, no GestureDemo)', vo:'language_play_first: "Tap play and listen carefully." Audio: "Vakratunda Mahakaya Suryakoti Samaprabha!"', gesture:'Play button can give a small immediate nudge/pulse', action:'Tap play', sfx:'—'},
+     {phase:'Language — Ganesha\'s guess: question', vo:'language_guess: "Which language do you hear?"', gesture:'—', action:'Tap the correct language (Sanskrit)', sfx:'—'},
+     {phase:'🎯 SPEC — Language guess: L1 (10s)', vo:'None', gesture:'ALL language cards gently wobble/breathe equally', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Language guess: L2 (18s)', vo:'language_guess_hint: "Listen again, then choose." — still no Sanskrit reveal', gesture:'—', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Language guess: L3 (26s)', vo:'None', gesture:'Sanskrit card gets a clear persistent glow — this is the moment the answer is given away', action:'—', sfx:'⚠️ Verify: Sanskrit should NOT glow before L3'},
+     {phase:'Language — correct/wrong pick', vo:'Correct: language_correct: "Yes — that\'s Sanskrit, a language used in many mantras." Wrong: just speaks that language\'s own label, no rebuke', gesture:'—', action:'—', sfx:'Correct: "all" sparkle + chime. Wrong: 500ms shake, card stays tappable'},
+     {phase:'LANGUAGE — child\'s own selection (10s-only repeat, no L2/L3)', vo:'language_wheel: "Now choose up to three languages you use or hear." 10s repeat: "Choose the languages that are part of your life."', gesture:'—', action:'Tap up to 3 languages (4th tap replaces the oldest)', sfx:'"single" sparkle per tap; speaks the tapped language\'s label'},
+     {phase:'Language — confirmed', vo:'language_confirmed: "These are the languages you chose."', gesture:'—', action:'—', sfx:'—'},
+     {phase:'FESTIVALS — Ganesha\'s guess: question', vo:'festivals_guess: "Can you find my festival?"', gesture:'—', action:'Tap the correct festival (Ganesh Chaturthi)', sfx:'—'},
+     {phase:'🎯 SPEC — Festivals guess: L1 (10s)', vo:'None', gesture:'All festival candidate cards gently animate equally', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Festivals guess: L2 (18s)', vo:'festivals_guess_hint: "Look for the festival connected to my favorite sweet." — still no answer reveal', gesture:'—', action:'—', sfx:'—'},
+     {phase:'🎯 SPEC — Festivals guess: L3 (26s)', vo:'None', gesture:'Ganesh Chaturthi card gets a clear persistent glow', action:'—', sfx:'⚠️ Verify: correct card should NOT glow before L3'},
+     {phase:'Festivals — correct/wrong pick', vo:'Correct: "Yes — Ganesh Chaturthi!" Wrong: card shakes, no VO rebuke, stays tappable', gesture:'—', action:'—', sfx:'Correct: "all" sparkle + chime'},
+     {phase:'FESTIVALS — child\'s own selection (10s-only repeat, no L2/L3)', vo:'festivals_wheel: "Now choose the festivals your family celebrates." 10s repeat: "Which celebrations are part of your family?"', gesture:'—', action:'Tap up to 4 festivals (5th tap replaces the oldest)', sfx:'—'},
+     {phase:'Festivals — confirmed', vo:'festivals_confirmed: "These are the festivals you chose."', gesture:'—', action:'—', sfx:'—'},
+     {phase:'ORIGIN CARD (final)', vo:'origin_card: "Your places, languages, and celebrations can all be part of that connection."', gesture:'—', action:'Watch the summary card of your chosen region + languages + festivals', sfx:'No distinct sparkle/SFX tied to this step'},
+     {phase:'Complete (final scene)', vo:'—', gesture:'—', action:'Watch the finale — Continue shows "Home", not a next scene', sfx:'—'},
+   ],
+   known:[
+     ['3 independent idle-hint tracks (home/language/festival)', 'Recently fixed — all pause correctly on backgrounding (previously only 3 of 9 timers reconciled).'],
+     ['Magnifying-glass drag (FreeDraggableItem)', 'Recently fixed touchcancel gap — confirm smooth, self-terminates if interrupted mid-drag.'],
+     ['Language/festival icon sizing on iPad', 'Scales with clamp(), no overflow.'],
+   ]},
+];
+
+function buildMapPage(){
+  const rows = (title, items) => `<h2 class="section-title">${title}</h2><table><tr><th class="dev-col">💻</th><th class="dev-col">📱P</th><th class="dev-col">📱i</th><th class="item-col">Test Item</th><th class="exp-col">Expected Result</th><th class="note-col">Notes</th></tr>${
+    items.map((it,i)=>{
+      const key = 'map-'+title.replace(/[^a-z0-9]/gi,'').slice(0,10)+'-'+i;
+      return `<tr>${DEVICES.map(d=>`<td class="dev-col"><input type="checkbox" data-k="${key}-${d[0]}"></td>`).join('')}<td>${it[0]}</td><td>${it[1]}</td><td class="note-col"><textarea data-k="${key}-note" placeholder="Notes..."></textarea></td></tr>`;
+    }).join('')
+  }</table>`;
+
+  return `<h1 class="page-title">🗺️ Map / Navigation / Zone Welcome</h1>
+  <div class="page-sub">The shell around all 13 scenes — checked once here, not repeated per scene.</div>
+  ${rows('Map — First-time profile',[
+    ['Fresh profile lands on map','Only Symbol Mountain unlocked/glowing; other zones locked/darkened.'],
+    ['Mandala petals','All unawakened for a brand-new profile — no false "petal 1 lit" state.'],
+    ['Ambient audio','Plays once, loops quietly, mute toggle works, no overlap with intro VO.'],
+    ['Opening modal on first Ganesha intro story','Correct size/icons/content/VO/close behavior — same standard as every scene\'s opening modal.'],
+    ['Tap Symbol Mountain','Enters Zone Welcome, not directly into a scene.'],
+  ])}
+  ${rows('Map — Returning profile',[
+    ['Completed scenes show correctly','Map dots/stamps match actual completed scenes exactly.'],
+    ['Zone unlock threshold','Shloka River/About Me Hut unlock after the correct scene count.'],
+    ['Resume mid-scene','"Continue" resumes at the correct point, not from scratch.'],
+    ['Reload the map itself','Refreshing preserves all progress and lock states.'],
+    ['Mandala petals reflect real progress','Exactly match discovered symbols.'],
+  ])}
+  ${rows('Zone Welcome (all 3 zones)',[
+    ['Scene cards show correct finalized names','Current child-facing names everywhere, no stale placeholders.'],
+    ['Locked vs. unlocked scene cards','Only the correct next scene is tappable.'],
+    ['Completed scene → replay','Starts a clean replay from the opening modal.'],
+    ['Zone completion celebration','Fires on the last scene of a zone, distinct from scene-complete.'],
+    ['Back to map','Clean navigation, no audio leak from Zone Welcome.'],
+    ['Console errors on Map/Zone Welcome','Zero red errors through a full navigation pass.'],
+  ])}`;
+}
+
+function buildScenePage(s){
+  const cats = universalCategories(s);
+  let html = `<h1 class="page-title">${s.title}</h1>`;
+  if (s.sub) html += `<div class="page-sub">${s.sub}</div>`;
+  cats.forEach((cat,ci)=>{
+    if (ci === 1) html += buildFlowTable(s); // insert Flow right after Opening Modal (index 0)
+    html += `<h2 class="section-title">${cat.title}</h2>`;
+    if (cat.note) html += `<div class="section-note">${cat.note}</div>`;
+    html += `<table><tr><th class="dev-col">💻</th><th class="dev-col">📱P</th><th class="dev-col">📱i</th><th class="item-col">Test Item</th><th class="exp-col">Expected Result</th><th class="note-col">Notes</th></tr>`;
+    cat.rows.forEach((row,ri)=>{
+      const key = `${s.id}-c${ci}-r${ri}`;
+      if (cat.na) {
+        html += `<tr class="na-row"><td colspan="3"></td><td>${row[0]}</td><td colspan="2">${row[1]}</td></tr>`;
+      } else {
+        html += `<tr>${DEVICES.map(d=>`<td class="dev-col"><input type="checkbox" data-k="${key}-${d[0]}"></td>`).join('')}<td>${row[0]}</td><td>${row[1]}</td><td class="note-col"><textarea data-k="${key}-note" placeholder="Notes..."></textarea></td></tr>`;
+      }
+    });
+    html += `</table>`;
+  });
+  return html;
+}
+
+// ---- Render nav, pages ----
+const nav = document.getElementById('navContainer');
+nav.innerHTML = `<button class="nav-btn active" onclick="showPage('page-overview',this)">📋 Overview</button>` +
+  SCENES.filter(s=>!s.skip || s.id==='map').map(s=>`<button class="nav-btn" onclick="showPage('page-${s.id}',this)">${s.nav}</button>`).join('');
+
+const scenePagesEl = document.getElementById('scenePages');
+SCENES.forEach(s=>{
+  const div = document.createElement('div');
+  div.className = 'page';
+  div.id = 'page-'+s.id;
+  div.innerHTML = s.id === 'map' ? buildMapPage() : buildScenePage(s);
+  scenePagesEl.appendChild(div);
+});
+
+function showPage(pageId, btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(pageId).classList.add('active');
+  if (btn) btn.classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function loadState(){
+  try{
+    const checks = JSON.parse(localStorage.getItem('gmbQaChecks')||'{}');
+    document.querySelectorAll('input[type=checkbox][data-k]').forEach(cb=>{ if(checks[cb.dataset.k]) cb.checked = true; });
+    const notes = JSON.parse(localStorage.getItem('gmbQaNotes')||'{}');
+    document.querySelectorAll('textarea[data-k]').forEach(ta=>{ if(notes[ta.dataset.k]) ta.value = notes[ta.dataset.k]; });
+  }catch(e){}
+  updateProgress();
+}
+function updateProgress(){
+  const all = document.querySelectorAll('input[type=checkbox][data-k]');
+  const checked = document.querySelectorAll('input[type=checkbox][data-k]:checked');
+  const pct = all.length ? Math.round(checked.length/all.length*100) : 0;
+  document.getElementById('overallBar').style.width = pct+'%';
+  document.getElementById('overallLabel').textContent = 'Overall progress: '+checked.length+' / '+all.length+' checked ('+pct+'%)';
+}
+document.addEventListener('change', function(e){
+  if(e.target.matches('input[type=checkbox][data-k]')){
+    const checks = JSON.parse(localStorage.getItem('gmbQaChecks')||'{}');
+    checks[e.target.dataset.k] = e.target.checked;
+    localStorage.setItem('gmbQaChecks', JSON.stringify(checks));
+    updateProgress();
+  }
+});
+document.addEventListener('input', function(e){
+  if(e.target.matches('textarea[data-k]')){
+    const notes = JSON.parse(localStorage.getItem('gmbQaNotes')||'{}');
+    notes[e.target.dataset.k] = e.target.value;
+    localStorage.setItem('gmbQaNotes', JSON.stringify(notes));
+  }
+});
+loadState();
+</script>
+
+</body>
+</html>
