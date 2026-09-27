@@ -8,11 +8,11 @@ import './SamaprabhaGame.css';
 import bgImg from '../assets/images/Samaprabha/samaprabha-bg.webp';
 import fawnWorriedImg from '../assets/images/Samaprabha/fawn-worried.webp';
 import fawnHappyImg from '../assets/images/Samaprabha/fawn-happy.webp';
-import fawnWalkImg from '../assets/images/Samaprabha/fawn-walk.webp';
-import branchImg from '../assets/images/Samaprabha/reveal-branch.png';
+import fawnWalkImg from '../assets/images/Samaprabha/fawn-walk-new.png';
+import branchImg from '../assets/images/Samaprabha/reveal-branch-new.png';
 import reedsLeavesImg from '../assets/images/Samaprabha/reveal-reeds-leaves.png';
 import stumpImg from '../assets/images/Samaprabha/reveal-stump.png';
-import rocksGrassImg from '../assets/images/Samaprabha/reveal-rocks-grass.png';
+import rocksGrassImg from '../assets/images/Samaprabha/reveal-rock-new.png';
 import shadowBranchImg from '../assets/images/Samaprabha/shadow-branch.png';
 import shadowReedImg from '../assets/images/Samaprabha/shadow-reed.png';
 import shadowStumpImg from '../assets/images/Samaprabha/shadow-stump.png';
@@ -21,6 +21,7 @@ import shadowLeavesImg from '../assets/images/Samaprabha/shadow-leaves.png';
 const SYLLABLES = ['Sa', 'ma', 'pra', 'bha'];
 const AUDIO = { syllables: ['sa', 'ma', 'pra', 'bha'] };
 const HOLD_MS = 1150;
+const HOLD_DRAIN_MS = 260;
 
 // Static metadata for each clue (id/label/art) -- positions live in
 // SAMA_DEFAULT_LAYOUT below so they can be tuned via the Layout Debug panel.
@@ -32,8 +33,8 @@ const CLUE_META = [
 ];
 
 const SAMA_DEFAULT_LAYOUT = {
-  fawnStart: { l: 20, t: 69 },
-  fawnWalk: { l: 12.952856684840002, t: 45.947287246765875 },
+  fawnStart: { l: 20, t: 69, w: 11, flip: 1 },
+  fawnWalk: { l: 12.952856684840002, t: 45.947287246765875, w: 11, flip: 1 },
   shadowPieces: {
     branch: { l: 55.86536762326263, t: 52.9703364198507, w: 27.5, rotate: -42, scaleX: 0.88, scaleY: 1, skewX: 30 },
     reeds: { l: 50.130515874818315, t: 53.796584403466596, w: 28, rotate: 0, scaleX: 0.96, scaleY: 1.02, skewX: 25 },
@@ -67,22 +68,23 @@ const SAMA_DEBUG_FIELD_RANGE = {
   ry: { min: 1, max: 30, step: 0.1 },
   w: { min: 10, max: 60, step: 0.5 },
   rotate: { min: -45, max: 45, step: 0.5 },
+  flip: { min: -1, max: 1, step: 2 },
   scaleX: { min: 0.3, max: 2, step: 0.02 },
   scaleY: { min: 0.3, max: 2, step: 0.02 },
   skewX: { min: -30, max: 30, step: 0.5 },
 };
 
 const samaDebugOptions = [
-  { type: 'object', key: 'fawnStart', label: 'Fawn Start', fields: ['l', 't'] },
-  { type: 'object', key: 'fawnWalk', label: 'Fawn Walk Target', fields: ['l', 't'] },
-  { type: 'shadowPiece', pieceKey: 'branch', key: 'shadowPiece-branch', label: 'Shadow: Branch', fields: ['l', 't', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX'] },
-  { type: 'shadowPiece', pieceKey: 'reeds', key: 'shadowPiece-reeds', label: 'Shadow: Reeds/Leaves', fields: ['l', 't', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX'] },
-  { type: 'shadowPiece', pieceKey: 'stump', key: 'shadowPiece-stump', label: 'Shadow: Stump', fields: ['l', 't', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX'] },
-  { type: 'shadowPiece', pieceKey: 'rocks', key: 'shadowPiece-rocks', label: 'Shadow: Rocks/Grass', fields: ['l', 't', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX'] },
-  { type: 'clue', index: 0, key: 'clue-0', label: 'Clue: Branch (hit radius)', fields: ['rx', 'ry'] },
-  { type: 'clue', index: 1, key: 'clue-1', label: 'Clue: Reeds/Leaves (hit radius)', fields: ['rx', 'ry'] },
-  { type: 'clue', index: 2, key: 'clue-2', label: 'Clue: Stump (hit radius)', fields: ['rx', 'ry'] },
-  { type: 'clue', index: 3, key: 'clue-3', label: 'Clue: Rocks (hit radius)', fields: ['rx', 'ry'] },
+  { type: 'object', key: 'fawnStart', label: 'Fawn Start', fields: ['l', 't', 'w', 'flip'] },
+  { type: 'object', key: 'fawnWalk', label: 'Fawn Walk Target', fields: ['l', 't', 'w', 'flip'] },
+  { type: 'shadowPiece', pieceKey: 'branch', key: 'shadowPiece-branch', label: 'Branch', fields: ['l', 't', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX'] },
+  { type: 'shadowPiece', pieceKey: 'reeds', key: 'shadowPiece-reeds', label: 'Reeds', fields: ['l', 't', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX'] },
+  { type: 'shadowPiece', pieceKey: 'stump', key: 'shadowPiece-stump', label: 'Stump', fields: ['l', 't', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX'] },
+  { type: 'shadowPiece', pieceKey: 'rocks', key: 'shadowPiece-rocks', label: 'Rock', fields: ['l', 't', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX'] },
+  { type: 'clue', index: 0, key: 'clue-0', label: 'Clue: Branch', fields: ['cx', 'cy', 'rx', 'ry'] },
+  { type: 'clue', index: 1, key: 'clue-1', label: 'Clue: Reeds/Leaves', fields: ['cx', 'cy', 'rx', 'ry'] },
+  { type: 'clue', index: 2, key: 'clue-2', label: 'Clue: Stump', fields: ['cx', 'cy', 'rx', 'ry'] },
+  { type: 'clue', index: 3, key: 'clue-3', label: 'Clue: Rocks', fields: ['cx', 'cy', 'rx', 'ry'] },
 ];
 
 const getDebugEnabled = () => {
@@ -226,7 +228,9 @@ export default function SamaprabhaGame({
   const debugItemDragRef = useRef(null); // { mode: 'move' | 'resize' }
   const pointerIdRef = useRef(null);
   const holdRafRef = useRef(null);
+  const holdDrainRafRef = useRef(null);
   const holdStartedAtRef = useRef(null);
+  const holdProgressRef = useRef(0);
   const holdingClueIndexRef = useRef(null);
   const litRef = useRef(0);
   const timersRef = useRef([]);
@@ -328,7 +332,47 @@ export default function SamaprabhaGame({
     lastHintVoKeyRef.current = null;
   }, [lit, hintMode]);
 
-  const cancelHold = useCallback(() => {
+  const setHoldProgressValue = useCallback((value) => {
+    holdProgressRef.current = value;
+    setHoldProgress(value);
+  }, []);
+
+  const stopHoldDrain = useCallback(() => {
+    if (holdDrainRafRef.current) {
+      window.cancelAnimationFrame(holdDrainRafRef.current);
+      holdDrainRafRef.current = null;
+    }
+  }, []);
+
+  const drainHoldProgress = useCallback(() => {
+    stopHoldDrain();
+
+    const startProgress = holdProgressRef.current;
+    if (startProgress <= 0) {
+      setHoldProgressValue(0);
+      return;
+    }
+
+    const startedAt = performance.now();
+    const tick = (now) => {
+      const elapsed = now - startedAt;
+      const progress = Math.max(startProgress * (1 - elapsed / HOLD_DRAIN_MS), 0);
+      setHoldProgressValue(progress);
+
+      if (progress > 0) {
+        holdDrainRafRef.current = window.requestAnimationFrame(tick);
+        return;
+      }
+
+      holdDrainRafRef.current = null;
+    };
+
+    holdDrainRafRef.current = window.requestAnimationFrame(tick);
+  }, [setHoldProgressValue, stopHoldDrain]);
+
+  const cancelHold = useCallback((drain = false) => {
+    const wasHolding = holdRafRef.current || holdingClueIndexRef.current !== null;
+
     if (holdRafRef.current) {
       window.cancelAnimationFrame(holdRafRef.current);
       holdRafRef.current = null;
@@ -337,8 +381,12 @@ export default function SamaprabhaGame({
     holdStartedAtRef.current = null;
     holdingClueIndexRef.current = null;
     setIsHoldingClue(false);
-    setHoldProgress(0);
-  }, []);
+    if (drain && wasHolding) drainHoldProgress();
+    else {
+      stopHoldDrain();
+      setHoldProgressValue(0);
+    }
+  }, [drainHoldProgress, setHoldProgressValue, stopHoldDrain]);
 
   const revealCurrentClue = useCallback(() => {
     if (phase !== 'play' || isPausedRef.current) return;
@@ -401,7 +449,7 @@ export default function SamaprabhaGame({
     const clue = CLUES[clueIndex];
 
     if (!clue || !pointInsideClue(point, clue)) {
-      cancelHold();
+      cancelHold(true);
       return;
     }
 
@@ -415,7 +463,8 @@ export default function SamaprabhaGame({
     holdingClueIndexRef.current = clueIndex;
     holdStartedAtRef.current = performance.now();
     setIsHoldingClue(true);
-    setHoldProgress(0);
+    stopHoldDrain();
+    setHoldProgressValue(0);
     markInteraction();
 
     const tick = (now) => {
@@ -425,14 +474,14 @@ export default function SamaprabhaGame({
       }
 
       const progress = Math.min((now - holdStartedAtRef.current) / HOLD_MS, 1);
-      setHoldProgress(progress);
+      setHoldProgressValue(progress);
 
       if (progress >= 1) {
         holdRafRef.current = null;
         holdStartedAtRef.current = null;
         holdingClueIndexRef.current = null;
         setIsHoldingClue(false);
-        setHoldProgress(0);
+        setHoldProgressValue(0);
         revealCurrentClue();
         return;
       }
@@ -441,7 +490,7 @@ export default function SamaprabhaGame({
     };
 
     holdRafRef.current = window.requestAnimationFrame(tick);
-  }, [CLUES, cancelHold, markInteraction, phase, revealCurrentClue]);
+  }, [CLUES, cancelHold, markInteraction, phase, revealCurrentClue, setHoldProgressValue, stopHoldDrain]);
 
   const getStagePoint = useCallback((event) => {
     const rect = stageRef.current?.getBoundingClientRect();
@@ -497,7 +546,7 @@ export default function SamaprabhaGame({
 
     pointerIdRef.current = null;
     setIsDraggingLight(false);
-    cancelHold();
+    cancelHold(true);
   }, [cancelHold]);
 
   useEffect(() => {
@@ -806,7 +855,15 @@ export default function SamaprabhaGame({
           }}
         />
 
-        <Animal animalState={effAnimalState} style={{ left: `${fawnPos.l}%`, top: `${fawnPos.t}%` }} />
+        <Animal
+          animalState={effAnimalState}
+          style={{
+            left: `${fawnPos.l}%`,
+            top: `${fawnPos.t}%`,
+            width: `${fawnPos.w}vw`,
+            scale: `${fawnPos.flip || 1} 1`,
+          }}
+        />
 
         <div className={`sama-shadow-group${effUnderstood ? ' is-understood' : ''}`} aria-hidden="true">
           {CLUE_META.map((clue, index) => {
@@ -839,6 +896,7 @@ export default function SamaprabhaGame({
                   left: `${piece.l}%`,
                   top: `${piece.t}%`,
                   width: `${piece.w}vw`,
+                  transform: `translate(-50%, -50%) rotate(${piece.rotate}deg) scaleX(${piece.scaleX}) scaleY(${piece.scaleY}) skewX(${piece.skewX}deg)`,
                 }}
               >
                 <TruthLayer
@@ -1027,6 +1085,24 @@ export default function SamaprabhaGame({
             clueImg = {
               src: CLUE_META[option.index]?.img,
               style: { left: `${cx - d / 2}%`, top: `${cy - d / 2}%`, width: `${d}%`, height: `${d}%` },
+            };
+          } else if (option.type === 'shadowPiece') {
+            const w = Number(getDebugValue('w')) || 20;
+            const meta = CLUE_META.find((clue) => clue.shadowPieceKey === option.pieceKey);
+            outline = {
+              left: `${cx - w / 2}%`, top: `${cy - w / 2}%`,
+              width: `${w}%`, height: `${w}%`,
+              borderRadius: '10%',
+            };
+            clueImg = {
+              src: meta?.img,
+              style: {
+                left: `${cx - w / 2}%`,
+                top: `${cy - w / 2}%`,
+                width: `${w}%`,
+                height: `${w}%`,
+                transform: `rotate(${Number(getDebugValue('rotate')) || 0}deg) scaleX(${Number(getDebugValue('scaleX')) || 1}) scaleY(${Number(getDebugValue('scaleY')) || 1}) skewX(${Number(getDebugValue('skewX')) || 0}deg)`,
+              },
             };
           } else if (option.fields.includes('w')) {
             const w = Number(getDebugValue('w')) || 20;

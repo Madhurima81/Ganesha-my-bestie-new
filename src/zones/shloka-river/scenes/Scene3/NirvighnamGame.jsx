@@ -147,10 +147,13 @@ export default function NirvighnamGame({
   const [isSwimming, setIsSwimming] = useState(false);
   const [dragging, setDragging] = useState(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [branchReturning, setBranchReturning] = useState(false);
+  const [branchWrongPulse, setBranchWrongPulse] = useState(false);
   const [holdingRock, setHoldingRock] = useState(false);
   const [rockProgress, setRockProgress] = useState(0);
   const [reedSwipeStart, setReedSwipeStart] = useState(null);
   const [reedSwipeAmount, setReedSwipeAmount] = useState(0);
+  const [reedWrongPulse, setReedWrongPulse] = useState(false);
   const [teachingDoneFor, setTeachingDoneFor] = useState(null);
   // Persists across a pointer-up, unlike checking live drag/hold state — a
   // child who started, stalled, and let go should still get "keep going",
@@ -174,6 +177,9 @@ export default function NirvighnamGame({
   const sylEndFallbackRef = useRef(null);
   const lastProgressHintResetRef = useRef(0);
   const lastHintVoRef = useRef('');
+  const branchWrongCountRef = useRef(0);
+  const reedWrongCountRef = useRef(0);
+  const reedWrongThisGestureRef = useRef(false);
   const onPhaseCompleteRef = useRef(onPhaseComplete);
   const onGameCompleteRef = useRef(onGameComplete);
   const activeLayout = debugEnabled ? debugLayout : defaultLayout;
@@ -313,12 +319,18 @@ export default function NirvighnamGame({
       setIsSwimming(false);
       setDragging(null);
       setDragOffset({ x: 0, y: 0 });
+      setBranchReturning(false);
+      setBranchWrongPulse(false);
       setHoldingRock(false);
       setRockProgress(0);
       setReedSwipeStart(null);
       setReedSwipeAmount(0);
+      setReedWrongPulse(false);
       dragOffsetRef.current = { x: 0, y: 0 };
       dragStartRef.current = null;
+      branchWrongCountRef.current = 0;
+      reedWrongCountRef.current = 0;
+      reedWrongThisGestureRef.current = false;
       phaseRef.current = 'play';
       doneAnnouncedRef.current = false;
       successVoDoneRef.current = false;
@@ -339,9 +351,13 @@ export default function NirvighnamGame({
       if (!isCleared('stone')) setRockProgress(0);
       setDragging(null);
       setDragOffset({ x: 0, y: 0 });
+      setBranchReturning(false);
+      setBranchWrongPulse(false);
       dragOffsetRef.current = { x: 0, y: 0 };
       dragStartRef.current = null;
       setReedSwipeStart(null);
+      setReedWrongPulse(false);
+      reedWrongThisGestureRef.current = false;
       if (!isCleared('reed')) setReedSwipeAmount(0);
     }
   }, [isCleared, isPaused]);
@@ -426,6 +442,7 @@ export default function NirvighnamGame({
 
   const handleBranchPointerDown = useCallback((event) => {
     if (phaseRef.current !== 'play' || isPaused) return;
+    if (branchReturning) return;
     if (nextObstacleId !== 'branch' || isCleared('branch')) return;
 
     event.preventDefault();
@@ -442,7 +459,7 @@ export default function NirvighnamGame({
     setDragging('branch');
     setDragOffset({ x: 0, y: 0 });
     dragOffsetRef.current = { x: 0, y: 0 };
-  }, [isCleared, isPaused, markInteraction, nextObstacleId, stopSceneVoice, teachingDoneFor]);
+  }, [branchReturning, isCleared, isPaused, markInteraction, nextObstacleId, stopSceneVoice, teachingDoneFor]);
 
   useEffect(() => {
     if (dragging !== 'branch' || !isActive) return;
@@ -473,14 +490,36 @@ export default function NirvighnamGame({
       );
 
       if (distanceToBank < BRANCH_DROP_RADIUS) {
+        branchWrongCountRef.current = 0;
         clearObstacle('branch');
-      } else {
-        setDragOffset({ x: 0, y: 0 });
-        dragOffsetRef.current = { x: 0, y: 0 };
+        setDragging(null);
+        setBranchReturning(false);
+        dragStartRef.current = null;
+        return;
       }
 
+      branchWrongCountRef.current += 1;
       setDragging(null);
+      setBranchReturning(true);
+      setBranchWrongPulse(true);
+
+      window.setTimeout(() => {
+        setDragOffset({ x: 0, y: 0 });
+        dragOffsetRef.current = { x: 0, y: 0 };
+      }, 120);
+
+      window.setTimeout(() => {
+        setBranchReturning(false);
+        setBranchWrongPulse(false);
+      }, 560);
+
       dragStartRef.current = null;
+
+      if (branchWrongCountRef.current >= 3) {
+        branchWrongCountRef.current = 0;
+        stopSceneVoice?.();
+        playSceneLine?.('nirv_hint_branch');
+      }
     };
 
     window.addEventListener('pointermove', handleMove);
@@ -492,7 +531,7 @@ export default function NirvighnamGame({
       window.removeEventListener('pointerup', handleUp);
       window.removeEventListener('pointercancel', handleUp);
     };
-  }, [bankSpots.branch.l, bankSpots.branch.t, clearObstacle, dragging, isActive, markMeaningfulProgress, obstacles]);
+  }, [bankSpots.branch.l, bankSpots.branch.t, clearObstacle, dragging, isActive, markMeaningfulProgress, obstacles, playSceneLine, stopSceneVoice]);
 
   const handleReedPointerDown = useCallback((event) => {
     if (phaseRef.current !== 'play' || isPaused) return;
@@ -505,6 +544,7 @@ export default function NirvighnamGame({
     if (teachingDoneFor !== nextObstacleId) setTeachingDoneFor(nextObstacleId);
     markInteraction();
 
+    reedWrongThisGestureRef.current = false;
     setReedSwipeStart({ x: event.clientX, y: event.clientY });
     setReedSwipeAmount(0);
   }, [isCleared, isPaused, markInteraction, nextObstacleId, stopSceneVoice, teachingDoneFor]);
@@ -515,7 +555,15 @@ export default function NirvighnamGame({
     const handleMove = (event) => {
       const dx = event.clientX - reedSwipeStart.x;
       const dy = event.clientY - reedSwipeStart.y;
-      if (Math.abs(dx) < Math.abs(dy)) return;
+      if (Math.abs(dx) < Math.abs(dy)) {
+        if (Math.abs(dy) >= 12 && !reedWrongThisGestureRef.current) {
+          reedWrongThisGestureRef.current = true;
+          reedWrongCountRef.current += 1;
+          setReedWrongPulse(true);
+          window.setTimeout(() => setReedWrongPulse(false), 360);
+        }
+        return;
+      }
 
       const amount = Math.min(Math.abs(dx), REED_SWIPE_REQUIRED);
       setReedSwipeAmount(amount);
@@ -528,8 +576,15 @@ export default function NirvighnamGame({
 
     const handleUp = () => {
       if (reedSwipeAmount >= REED_SWIPE_REQUIRED) {
+        reedWrongCountRef.current = 0;
         clearObstacle('reed');
+      } else if (reedWrongThisGestureRef.current && reedWrongCountRef.current >= 3) {
+        reedWrongCountRef.current = 0;
+        stopSceneVoice?.();
+        playSceneLine?.('nirv_hint_reed');
       }
+
+      reedWrongThisGestureRef.current = false;
       setReedSwipeStart(null);
       if (!isCleared('reed')) setReedSwipeAmount(0);
     };
@@ -543,7 +598,7 @@ export default function NirvighnamGame({
       window.removeEventListener('pointerup', handleUp);
       window.removeEventListener('pointercancel', handleUp);
     };
-  }, [clearObstacle, isActive, isCleared, markMeaningfulProgress, reedSwipeAmount, reedSwipeStart]);
+  }, [clearObstacle, isActive, isCleared, markMeaningfulProgress, playSceneLine, reedSwipeAmount, reedSwipeStart, stopSceneVoice]);
 
   const completeAfterSuccess = useCallback(() => {
     if (!successVoDoneRef.current || !swimDoneRef.current || completionScheduledRef.current) return;
@@ -772,6 +827,7 @@ export default function NirvighnamGame({
     branch: branch && partialBranchTarget ? { type: 'drag', from: { x: branch.l, y: branch.t }, to: partialBranchTarget } : null,
     reed: reeds ? { type: 'swipe-right', from: { x: reeds.l, y: reeds.t } } : null,
   }[nextObstacleId];
+  const branchHasOffset = dragging === 'branch' || branchReturning;
 
   return (
     <div
@@ -852,10 +908,10 @@ export default function NirvighnamGame({
         )}
 
         <div
-          className={`nirv-layer nirv-branch ${dragging === 'branch' ? 'is-dragging' : ''} ${showCleared('branch') ? 'is-cleared' : ''} ${getObstacleFocusClass('branch')} ${phase === 'play' && nextObstacleId === 'branch' && hintLevel === 1 && dragging !== 'branch' ? 'is-hint-drag' : ''}`}
+          className={`nirv-layer nirv-branch ${dragging === 'branch' ? 'is-dragging' : ''} ${branchReturning ? 'is-returning' : ''} ${branchWrongPulse ? 'is-wrong-drop' : ''} ${showCleared('branch') ? 'is-cleared' : ''} ${getObstacleFocusClass('branch')} ${phase === 'play' && nextObstacleId === 'branch' && hintLevel === 1 && dragging !== 'branch' ? 'is-hint-drag' : ''}`}
           style={{
-            left: `${showCleared('branch') ? bankSpots.branch.l : branch.l + (dragging === 'branch' ? dragOffset.x : 0)}%`,
-            top: `${showCleared('branch') ? bankSpots.branch.t : branch.t + (dragging === 'branch' ? dragOffset.y : 0)}%`,
+            left: `${showCleared('branch') ? bankSpots.branch.l : branch.l + (branchHasOffset ? dragOffset.x : 0)}%`,
+            top: `${showCleared('branch') ? bankSpots.branch.t : branch.t + (branchHasOffset ? dragOffset.y : 0)}%`,
             width: `${branch.w}%`,
             zIndex: dragging === 'branch' ? 30 : 12,
             scale: branch.flip ? '-1 1' : '1 1',
@@ -866,7 +922,7 @@ export default function NirvighnamGame({
         </div>
 
         <div
-          className={`nirv-layer nirv-reeds ${reedSwipeStart ? 'is-swiping' : ''} ${showCleared('reed') ? 'is-open' : ''} ${getObstacleFocusClass('reed')} ${phase === 'play' && nextObstacleId === 'reed' && hintLevel === 1 && !reedSwipeStart ? 'is-hint-swipe' : ''}`}
+          className={`nirv-layer nirv-reeds ${reedSwipeStart ? 'is-swiping' : ''} ${reedWrongPulse ? 'is-wrong-direction' : ''} ${showCleared('reed') ? 'is-open' : ''} ${getObstacleFocusClass('reed')} ${phase === 'play' && nextObstacleId === 'reed' && hintLevel === 1 && !reedSwipeStart ? 'is-hint-swipe' : ''}`}
           style={{
             left: `${reeds.l}%`,
             top: `${reeds.t}%`,

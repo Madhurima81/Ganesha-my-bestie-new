@@ -163,6 +163,17 @@
   filter: drop-shadow(0 8px 15px rgba(0, 0, 0, 0.22));
 }
 
+.nirv-branch.is-returning {
+  transition:
+    left 0.42s cubic-bezier(0.22, 0.8, 0.3, 1),
+    top 0.42s cubic-bezier(0.22, 0.8, 0.3, 1),
+    transform 0.3s ease;
+}
+
+.nirv-branch.is-wrong-drop > img {
+  animation: nirvBranchWrongDrop 0.22s ease-out;
+}
+
 .nirv-branch.is-cleared {
   pointer-events: none;
   transform: translate(-50%, -50%) rotate(-16deg) scale(0.96);
@@ -194,6 +205,10 @@
 
 .nirv-reeds.is-open {
   pointer-events: none;
+}
+
+.nirv-reeds.is-wrong-direction > .pose-image {
+  animation: nirvReedWrongDirection 0.34s ease-out;
 }
 
 .nirv-reed-progress {
@@ -231,6 +246,19 @@
 @keyframes nirv-rock-effort {
   from { transform: translateX(-1px) rotate(-1deg); }
   to { transform: translateX(1px) rotate(1deg); }
+}
+
+@keyframes nirvBranchWrongDrop {
+  0% { transform: translateY(0) scale(1); }
+  45% { transform: translateY(3px) scale(0.98); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+@keyframes nirvReedWrongDirection {
+  0% { transform: translateY(0); }
+  35% { transform: translateY(5px); }
+  65% { transform: translateY(-2px); }
+  100% { transform: translateY(0); }
 }
 
 @keyframes nirv-popIn {
@@ -286,6 +314,8 @@
   .nirv-rock.is-holding img,
   .nirv-rock.is-hint-hold::after,
   .nirv-branch.is-hint-drag img,
+  .nirv-branch.is-wrong-drop > img,
+  .nirv-reeds.is-wrong-direction > .pose-image,
   .nirv-reeds.is-hint-swipe > .pose-image {
     animation: none;
   }

@@ -81,8 +81,6 @@
 }
 
 .sama-animal.is-walking {
-  left: 40%;
-  top: 63%;
   animation: samaAnimalWalkBob 0.55s ease-in-out infinite;
 }
 
