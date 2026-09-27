@@ -36,7 +36,7 @@ const SAMA_DEFAULT_LAYOUT = {
   fawnStart: { l: 20, t: 69, w: 11, flip: 1 },
   fawnWalk: { l: 12.952856684840002, t: 45.947287246765875, w: 11, flip: 1 },
   shadowPieces: {
-    branch: { l: 55.86536762326263, t: 52.9703364198507, w: 27.5, rotate: -42, scaleX: 0.88, scaleY: 1, skewX: 30 },
+    branch: { l: 58.8316, t: 44.9833, w: 27.5, rotate: -42, scaleX: 0.88, scaleY: 1, skewX: 30 },
     reeds: { l: 50.130515874818315, t: 53.796584403466596, w: 28, rotate: 0, scaleX: 0.96, scaleY: 1.02, skewX: 25 },
     stump: { l: 55.964248124943225, t: 63.71147989744117, w: 28, rotate: 0, scaleX: 1.22, scaleY: 1.48, skewX: 0 },
     rocks: { l: 57.05189372217932, t: 70.18370840713563, w: 28, rotate: 0, scaleX: 1, scaleY: 1, skewX: 0 },
@@ -77,10 +77,14 @@ const SAMA_DEBUG_FIELD_RANGE = {
 const samaDebugOptions = [
   { type: 'object', key: 'fawnStart', label: 'Fawn Start', fields: ['l', 't', 'w', 'flip'] },
   { type: 'object', key: 'fawnWalk', label: 'Fawn Walk Target', fields: ['l', 't', 'w', 'flip'] },
-  { type: 'shadowPiece', pieceKey: 'branch', key: 'shadowPiece-branch', label: 'Branch', fields: ['l', 't', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX'] },
-  { type: 'shadowPiece', pieceKey: 'reeds', key: 'shadowPiece-reeds', label: 'Reeds', fields: ['l', 't', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX'] },
-  { type: 'shadowPiece', pieceKey: 'stump', key: 'shadowPiece-stump', label: 'Stump', fields: ['l', 't', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX'] },
-  { type: 'shadowPiece', pieceKey: 'rocks', key: 'shadowPiece-rocks', label: 'Rock', fields: ['l', 't', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX'] },
+  { type: 'shadowPiece', pieceKey: 'branch', key: 'object-branch', label: 'Branch', preview: 'object', fields: ['l', 't', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX'] },
+  { type: 'shadowPiece', pieceKey: 'reeds', key: 'object-reeds', label: 'Reeds', preview: 'object', fields: ['l', 't', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX'] },
+  { type: 'shadowPiece', pieceKey: 'stump', key: 'object-stump', label: 'Stump', preview: 'object', fields: ['l', 't', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX'] },
+  { type: 'shadowPiece', pieceKey: 'rocks', key: 'object-rocks', label: 'Rock', preview: 'object', fields: ['l', 't', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX'] },
+  { type: 'shadowPiece', pieceKey: 'branch', key: 'shadowPiece-branch', label: 'Shadow: Branch', preview: 'shadow', fields: ['l', 't', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX'] },
+  { type: 'shadowPiece', pieceKey: 'reeds', key: 'shadowPiece-reeds', label: 'Shadow: Reeds', preview: 'shadow', fields: ['l', 't', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX'] },
+  { type: 'shadowPiece', pieceKey: 'stump', key: 'shadowPiece-stump', label: 'Shadow: Stump', preview: 'shadow', fields: ['l', 't', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX'] },
+  { type: 'shadowPiece', pieceKey: 'rocks', key: 'shadowPiece-rocks', label: 'Shadow: Rock', preview: 'shadow', fields: ['l', 't', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX'] },
   { type: 'clue', index: 0, key: 'clue-0', label: 'Clue: Branch', fields: ['cx', 'cy', 'rx', 'ry'] },
   { type: 'clue', index: 1, key: 'clue-1', label: 'Clue: Reeds/Leaves', fields: ['cx', 'cy', 'rx', 'ry'] },
   { type: 'clue', index: 2, key: 'clue-2', label: 'Clue: Stump', fields: ['cx', 'cy', 'rx', 'ry'] },
@@ -1089,19 +1093,19 @@ export default function SamaprabhaGame({
           } else if (option.type === 'shadowPiece') {
             const w = Number(getDebugValue('w')) || 20;
             const meta = CLUE_META.find((clue) => clue.shadowPieceKey === option.pieceKey);
+            const src = option.preview === 'shadow' ? meta?.shadowImg : meta?.img;
             outline = {
               left: `${cx - w / 2}%`, top: `${cy - w / 2}%`,
               width: `${w}%`, height: `${w}%`,
               borderRadius: '10%',
             };
             clueImg = {
-              src: meta?.img,
+              src,
               style: {
-                left: `${cx - w / 2}%`,
-                top: `${cy - w / 2}%`,
-                width: `${w}%`,
-                height: `${w}%`,
-                transform: `rotate(${Number(getDebugValue('rotate')) || 0}deg) scaleX(${Number(getDebugValue('scaleX')) || 1}) scaleY(${Number(getDebugValue('scaleY')) || 1}) skewX(${Number(getDebugValue('skewX')) || 0}deg)`,
+                left: `${cx}%`,
+                top: `${cy}%`,
+                width: `${w}vw`,
+                transform: `translate(-50%, -50%) rotate(${Number(getDebugValue('rotate')) || 0}deg) scaleX(${Number(getDebugValue('scaleX')) || 1}) scaleY(${Number(getDebugValue('scaleY')) || 1}) skewX(${Number(getDebugValue('skewX')) || 0}deg)`,
               },
             };
           } else if (option.fields.includes('w')) {

@@ -144,25 +144,21 @@
 
 .sama-truth-layer {
   z-index: 3;
-  opacity: 0.055;
+  opacity: 0.3;
   filter: brightness(0.4) saturate(0.45);
-  transform: scale(0.985);
   transition:
     opacity 0.48s ease,
-    filter 0.48s ease,
-    transform 0.48s ease;
+    filter 0.48s ease;
 }
 
 .sama-truth-layer.is-being-seen {
   opacity: 0.34;
   filter: brightness(0.85) saturate(0.75);
-  transform: scale(0.995);
 }
 
 .sama-truth-layer.is-revealed {
   opacity: 1;
   filter: brightness(1) saturate(1);
-  transform: scale(1);
 }
 
 .sama-truth-layer.is-new {
@@ -171,11 +167,9 @@
 
 @keyframes samaTruthFound {
   0% {
-    transform: scale(0.96);
     filter: brightness(1.25) saturate(1.08);
   }
   100% {
-    transform: scale(1);
     filter: brightness(1) saturate(1);
   }
 }
