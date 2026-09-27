@@ -36,16 +36,21 @@ const SAMA_DEFAULT_LAYOUT = {
   fawnStart: { l: 20, t: 69, w: 11, flip: 1 },
   fawnWalk: { l: 12.952856684840002, t: 45.947287246765875, w: 11, flip: 1 },
   shadowPieces: {
-    branch: { l: 58.8316, t: 44.9833, w: 27.5, rotate: -42, scaleX: 0.88, scaleY: 1, skewX: 30 },
-    reeds: { l: 50.130515874818315, t: 53.796584403466596, w: 28, rotate: 0, scaleX: 0.96, scaleY: 1.02, skewX: 25 },
-    stump: { l: 55.964248124943225, t: 63.71147989744117, w: 28, rotate: 0, scaleX: 1.22, scaleY: 1.48, skewX: 0 },
-    rocks: { l: 57.05189372217932, t: 70.18370840713563, w: 28, rotate: 0, scaleX: 1, scaleY: 1, skewX: 0 },
+    // rx/ry is the hold-target hit-zone the child actually shines the
+    // light on — the shadow IS the interaction target now. hitOffsetX/Y
+    // nudges the hit-zone center away from the shadow's own l/t, in case
+    // the shadow art isn't visually centered in its bounding box.
+    branch: { l: 56.162004692609926, t: 56.550715519831726, w: 31.5, rotate: -45, scaleX: 0.88, scaleY: 0.7, skewX: 30, rx: 25.60907851817997, ry: 25.60907851817997, hitOffsetX: 0, hitOffsetY: 0 },
+    reeds: { l: 50.32827244248501, t: 56.82613975123355, w: 28, rotate: 0, scaleX: 0.96, scaleY: 1.02, skewX: 25, rx: 14, ry: 14.7, hitOffsetX: 0, hitOffsetY: 0 },
+    stump: { l: 53.591204798498815, t: 66.87873500561425, w: 28, rotate: 0, scaleX: 1.22, scaleY: 1.48, skewX: 0, rx: 18.8, ry: 10, hitOffsetX: 0, hitOffsetY: 0 },
+    rocks: { l: 54.975478593693225, t: 74.45261101973685, w: 28, rotate: 0, scaleX: 1.48, scaleY: 1, skewX: 0, rx: 14.5, ry: 11.9, hitOffsetX: 0, hitOffsetY: 0 },
   },
+  // Bank display objects — purely visual placement, no interaction target.
   clues: [
-    { cx: 73.06992286859557, cy: 40.989836410954894, rx: 27, ry: 9 },
-    { cx: 79.39804432003997, cy: 49.38996349751708, rx: 14, ry: 14.7 },
-    { cx: 81.17782237917878, cy: 46.911238079611586, rx: 18.8, ry: 10 },
-    { cx: 86.81379806163699, cy: 43.74397679379112, rx: 14.5, ry: 11.9 },
+    { cx: 70.49913628156796, cy: 34.79302595501487, w: 27.5, rotate: 18.5, scaleX: 1, scaleY: 1, skewX: 0 },
+    { cx: 79.39804432003997, cy: 49.38996349751708, w: 28, rotate: 0, scaleX: 0.96, scaleY: 1.02, skewX: 0 },
+    { cx: 76.92612049191497, cy: 52.28181290723052, w: 28, rotate: 0, scaleX: 1.22, scaleY: 1.48, skewX: 0 },
+    { cx: 90.96662831860918, cy: 52.28181290723052, w: 28, rotate: 0, scaleX: 0.92, scaleY: 0.7, skewX: 0 },
   ],
 };
 
@@ -72,23 +77,21 @@ const SAMA_DEBUG_FIELD_RANGE = {
   scaleX: { min: 0.3, max: 2, step: 0.02 },
   scaleY: { min: 0.3, max: 2, step: 0.02 },
   skewX: { min: -30, max: 30, step: 0.5 },
+  hitOffsetX: { min: -20, max: 20, step: 0.1 },
+  hitOffsetY: { min: -20, max: 20, step: 0.1 },
 };
 
 const samaDebugOptions = [
   { type: 'object', key: 'fawnStart', label: 'Fawn Start', fields: ['l', 't', 'w', 'flip'] },
   { type: 'object', key: 'fawnWalk', label: 'Fawn Walk Target', fields: ['l', 't', 'w', 'flip'] },
-  { type: 'shadowPiece', pieceKey: 'branch', key: 'object-branch', label: 'Branch', preview: 'object', fields: ['l', 't', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX'] },
-  { type: 'shadowPiece', pieceKey: 'reeds', key: 'object-reeds', label: 'Reeds', preview: 'object', fields: ['l', 't', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX'] },
-  { type: 'shadowPiece', pieceKey: 'stump', key: 'object-stump', label: 'Stump', preview: 'object', fields: ['l', 't', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX'] },
-  { type: 'shadowPiece', pieceKey: 'rocks', key: 'object-rocks', label: 'Rock', preview: 'object', fields: ['l', 't', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX'] },
-  { type: 'shadowPiece', pieceKey: 'branch', key: 'shadowPiece-branch', label: 'Shadow: Branch', preview: 'shadow', fields: ['l', 't', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX'] },
-  { type: 'shadowPiece', pieceKey: 'reeds', key: 'shadowPiece-reeds', label: 'Shadow: Reeds', preview: 'shadow', fields: ['l', 't', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX'] },
-  { type: 'shadowPiece', pieceKey: 'stump', key: 'shadowPiece-stump', label: 'Shadow: Stump', preview: 'shadow', fields: ['l', 't', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX'] },
-  { type: 'shadowPiece', pieceKey: 'rocks', key: 'shadowPiece-rocks', label: 'Shadow: Rock', preview: 'shadow', fields: ['l', 't', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX'] },
-  { type: 'clue', index: 0, key: 'clue-0', label: 'Clue: Branch', fields: ['cx', 'cy', 'rx', 'ry'] },
-  { type: 'clue', index: 1, key: 'clue-1', label: 'Clue: Reeds/Leaves', fields: ['cx', 'cy', 'rx', 'ry'] },
-  { type: 'clue', index: 2, key: 'clue-2', label: 'Clue: Stump', fields: ['cx', 'cy', 'rx', 'ry'] },
-  { type: 'clue', index: 3, key: 'clue-3', label: 'Clue: Rocks', fields: ['cx', 'cy', 'rx', 'ry'] },
+  { type: 'shadowPiece', pieceKey: 'branch', key: 'shadowPiece-branch', label: 'Shadow: Branch', preview: 'shadow', fields: ['l', 't', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX', 'rx', 'ry', 'hitOffsetX', 'hitOffsetY'] },
+  { type: 'shadowPiece', pieceKey: 'reeds', key: 'shadowPiece-reeds', label: 'Shadow: Reeds', preview: 'shadow', fields: ['l', 't', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX', 'rx', 'ry', 'hitOffsetX', 'hitOffsetY'] },
+  { type: 'shadowPiece', pieceKey: 'stump', key: 'shadowPiece-stump', label: 'Shadow: Stump', preview: 'shadow', fields: ['l', 't', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX', 'rx', 'ry', 'hitOffsetX', 'hitOffsetY'] },
+  { type: 'shadowPiece', pieceKey: 'rocks', key: 'shadowPiece-rocks', label: 'Shadow: Rock', preview: 'shadow', fields: ['l', 't', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX', 'rx', 'ry', 'hitOffsetX', 'hitOffsetY'] },
+  { type: 'clue', index: 0, key: 'clue-0', label: 'Object: Branch', fields: ['cx', 'cy', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX'] },
+  { type: 'clue', index: 1, key: 'clue-1', label: 'Object: Reeds/Leaves', fields: ['cx', 'cy', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX'] },
+  { type: 'clue', index: 2, key: 'clue-2', label: 'Object: Stump', fields: ['cx', 'cy', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX'] },
+  { type: 'clue', index: 3, key: 'clue-3', label: 'Object: Rocks', fields: ['cx', 'cy', 'w', 'rotate', 'scaleX', 'scaleY', 'skewX'] },
 ];
 
 const getDebugEnabled = () => {
@@ -260,19 +263,42 @@ export default function SamaprabhaGame({
   // exactly where its shadow was, and the light/hold interaction happens
   // right over the shadow itself. Only the hit-zone radius (rx/ry) is a
   // separate, independently tunable value.
+  // Interaction target — the child shines the light ON THE SHADOW, so the
+  // hold hit-zone is centered on the shadow's own position/size, not the
+  // bank object's. The bank object (BANK_OBJECTS below) is purely visual.
   const CLUES = useMemo(
     () => CLUE_META.map((meta, index) => {
       const piece = activeLayout.shadowPieces[meta.shadowPieceKey];
-      const radius = activeLayout.clues[index];
+
       return {
         ...meta,
-        cx: piece.l,
-        cy: piece.t,
-        rx: radius.rx,
-        ry: radius.ry,
+        cx: piece.l + (piece.hitOffsetX || 0),
+        cy: piece.t + (piece.hitOffsetY || 0),
+        rx: piece.rx,
+        ry: piece.ry,
       };
     }),
-    [activeLayout.shadowPieces, activeLayout.clues]
+    [activeLayout.shadowPieces]
+  );
+
+  // Bank display objects — fully independent position/size/transform, no
+  // bearing on the interaction hit-test.
+  const BANK_OBJECTS = useMemo(
+    () => CLUE_META.map((meta, index) => {
+      const obj = activeLayout.clues[index];
+
+      return {
+        ...meta,
+        cx: obj.cx,
+        cy: obj.cy,
+        w: obj.w,
+        rotate: obj.rotate,
+        scaleX: obj.scaleX,
+        scaleY: obj.scaleY,
+        skewX: obj.skewX,
+      };
+    }),
+    [activeLayout.clues]
   );
 
   const activeClue = phase === 'play' && lit < CLUE_META.length ? CLUES[lit] : null;
@@ -890,28 +916,26 @@ export default function SamaprabhaGame({
         </div>
 
         <div className="sama-mystery-group" aria-hidden="true">
-          {CLUES.map((clue, index) => {
-            const piece = activeLayout.shadowPieces[clue.shadowPieceKey];
-            return (
-              <div
-                key={clue.id}
-                className="sama-mystery-piece"
-                style={{
-                  left: `${piece.l}%`,
-                  top: `${piece.t}%`,
-                  width: `${piece.w}vw`,
-                  transform: `translate(-50%, -50%) rotate(${piece.rotate}deg) scaleX(${piece.scaleX}) scaleY(${piece.scaleY}) skewX(${piece.skewX}deg)`,
-                }}
-              >
-                <TruthLayer
-                  clue={clue}
-                  isRevealed={index < effLit}
-                  isBeingSeen={index === lit && isHoldingClue}
-                  isNew={revealPulse === index}
-                />
-              </div>
-            );
-          })}
+          {BANK_OBJECTS.map((clue, index) => (
+            <div
+              key={clue.id}
+              className="sama-mystery-piece"
+              style={{
+                // BANK position — fully independent of the shadow
+                left: `${clue.cx}%`,
+                top: `${clue.cy}%`,
+                width: `${clue.w}vw`,
+                transform: `translate(-50%, -50%) rotate(${clue.rotate}deg) scaleX(${clue.scaleX}) scaleY(${clue.scaleY}) skewX(${clue.skewX}deg)`,
+              }}
+            >
+              <TruthLayer
+                clue={clue}
+                isRevealed={index < effLit}
+                isBeingSeen={index === lit && isHoldingClue}
+                isNew={revealPulse === index}
+              />
+            </div>
+          ))}
         </div>
 
         {/* FIND L1 — "notice this shadow", not the full action. */}
@@ -1037,19 +1061,23 @@ export default function SamaprabhaGame({
         )}
 
         {debugEnabled && showDebugPanel && activeLayout.clues.map((clue, index) => {
-          // Reference layer: every clue placed so far, dimmed, so
+          // Reference layer: every bank object placed so far, dimmed, so
           // positioning the next one doesn't lose sight of the ones
-          // already done — only the selected clue (rendered separately
+          // already done — only the selected one (rendered separately
           // below, full strength + handles) needs to stand out.
           if (selectedDebugKey === `clue-${index}`) return null;
-          const d = Math.max(clue.rx, clue.ry) * 2;
           return (
             <img
               key={`clue-ref-${index}`}
               src={CLUE_META[index]?.img}
               alt=""
               className="sama-debug-clue-preview sama-debug-clue-preview--dim"
-              style={{ left: `${clue.cx - d / 2}%`, top: `${clue.cy - d / 2}%`, width: `${d}%`, height: `${d}%` }}
+              style={{
+                left: `${clue.cx}%`,
+                top: `${clue.cy}%`,
+                width: `${clue.w}vw`,
+                transform: `translate(-50%, -50%) rotate(${clue.rotate}deg) scaleX(${clue.scaleX}) scaleY(${clue.scaleY}) skewX(${clue.skewX}deg)`,
+              }}
               draggable={false}
             />
           );
@@ -1063,32 +1091,28 @@ export default function SamaprabhaGame({
           const cy = Number(getDebugValue(pos.y)) || 0;
           const handleDist = sizeFields.length ? (Number(getDebugValue(sizeFields[0])) || 8) : 0;
 
-          // Clue tap-zones have no visible art of their own at cx/cy (the
-          // actual reveal image lives in the mystery-object stack,
-          // positioned separately) — so there's nothing to see while
-          // dragging, just an invisible ellipse. Show the real clue artwork
-          // (branch/reeds/stump/rocks) right at the tap-zone instead of an
-          // abstract outline, so it's obvious what you're actually placing.
+          // Bank object (type 'clue'): purely visual, own size/rotation.
+          // Shadow (type 'shadowPiece'): also carries the rx/ry hit-zone —
+          // the actual area the child shines the light on — shown as a
+          // dashed ellipse alongside the shadow's own footprint.
           let outline = null;
           let clueImg = null;
+          let hitZone = null;
           if (option.type === 'clue') {
-            const rx = Number(getDebugValue('rx')) || 8;
-            const ry = Number(getDebugValue('ry')) || 8;
+            const w = Number(getDebugValue('w')) || 20;
             outline = {
-              left: `${cx - rx}%`, top: `${cy - ry}%`,
-              width: `${rx * 2}%`, height: `${ry * 2}%`,
-              borderRadius: '50%',
+              left: `${cx - w / 2}%`, top: `${cy - w / 2}%`,
+              width: `${w}%`, height: `${w}%`,
+              borderRadius: '10%',
             };
-            // The clue art is a square canvas with a lot of transparent
-            // padding around the actual glyph — object-fit: contain inside
-            // the (non-square) ellipse box was scaling to whichever of
-            // rx/ry was smaller, so dragging just one axis barely moved it.
-            // Size it as a square from the larger of the two instead, so it
-            // visibly tracks the resize handle either way.
-            const d = Math.max(rx, ry) * 2;
             clueImg = {
               src: CLUE_META[option.index]?.img,
-              style: { left: `${cx - d / 2}%`, top: `${cy - d / 2}%`, width: `${d}%`, height: `${d}%` },
+              style: {
+                left: `${cx}%`,
+                top: `${cy}%`,
+                width: `${w}vw`,
+                transform: `translate(-50%, -50%) rotate(${Number(getDebugValue('rotate')) || 0}deg) scaleX(${Number(getDebugValue('scaleX')) || 1}) scaleY(${Number(getDebugValue('scaleY')) || 1}) skewX(${Number(getDebugValue('skewX')) || 0}deg)`,
+              },
             };
           } else if (option.type === 'shadowPiece') {
             const w = Number(getDebugValue('w')) || 20;
@@ -1108,6 +1132,17 @@ export default function SamaprabhaGame({
                 transform: `translate(-50%, -50%) rotate(${Number(getDebugValue('rotate')) || 0}deg) scaleX(${Number(getDebugValue('scaleX')) || 1}) scaleY(${Number(getDebugValue('scaleY')) || 1}) skewX(${Number(getDebugValue('skewX')) || 0}deg)`,
               },
             };
+            if (option.fields.includes('rx')) {
+              const rx = Number(getDebugValue('rx')) || 8;
+              const ry = Number(getDebugValue('ry')) || 8;
+              const hx = cx + (Number(getDebugValue('hitOffsetX')) || 0);
+              const hy = cy + (Number(getDebugValue('hitOffsetY')) || 0);
+              hitZone = {
+                left: `${hx - rx}%`, top: `${hy - ry}%`,
+                width: `${rx * 2}%`, height: `${ry * 2}%`,
+                borderRadius: '50%',
+              };
+            }
           } else if (option.fields.includes('w')) {
             const w = Number(getDebugValue('w')) || 20;
             outline = {
@@ -1129,6 +1164,7 @@ export default function SamaprabhaGame({
                 />
               )}
               {outline && <div className="sama-debug-outline" style={outline} />}
+              {hitZone && <div className="sama-debug-outline sama-debug-hitzone" style={hitZone} />}
               <div
                 className="sama-debug-move-handle"
                 style={{ left: `${cx}%`, top: `${cy}%` }}

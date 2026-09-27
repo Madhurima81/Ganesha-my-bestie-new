@@ -144,16 +144,18 @@
 
 .sama-truth-layer {
   z-index: 3;
-  opacity: 0.3;
-  filter: brightness(0.4) saturate(0.45);
+  /* completely hidden until light reaches the bank object */
+  opacity: 0;
+  filter: brightness(0.72) saturate(0.72);
   transition:
     opacity 0.48s ease,
     filter 0.48s ease;
 }
 
+/* Child is holding the light on the correct bank area */
 .sama-truth-layer.is-being-seen {
-  opacity: 0.34;
-  filter: brightness(0.85) saturate(0.75);
+  opacity: 0.32;
+  filter: brightness(0.95) saturate(0.9);
 }
 
 .sama-truth-layer.is-revealed {
@@ -502,6 +504,13 @@
   pointer-events: none;
   z-index: 39;
   box-sizing: border-box;
+}
+
+/* The hold hit-zone on a Shadow entry — the actual area the light must
+   be held over — distinguished from the shadow's own footprint outline. */
+.sama-debug-hitzone {
+  border: 3px dashed rgba(3, 169, 244, 0.9);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.55);
 }
 
 .sama-debug-move-handle,
