@@ -139,6 +139,7 @@ export default function SarvadaGame({
   const [showDebugPanel, setShowDebugPanel] = useState(false);
   const [showZones, setShowZones] = useState(true);
   const [copyStatus, setCopyStatus] = useState('');
+  const [missRipple, setMissRipple] = useState(null);
 
   const timersRef = useRef([]);
   const doneCalledRef = useRef(false);
@@ -399,10 +400,14 @@ export default function SarvadaGame({
       // units so the hit zone is a true circle, not an ellipse.
       const dx = px - s.l;
       const dy = (py - s.t) * (3 / 4);
-      // A miss simply does nothing — for a visual-search game, a whole-image
-      // shake on every wrong guess is too much punishment for exploring.
+      // A miss gets a tiny neutral ripple at the tap point only — no shake,
+      // VO, red, or penalty. For a visual-search game, punishing exploration
+      // is too much; but silence also can't tell the child their tap
+      // registered, so a small ripple confirms it landed without judging it.
       if (Math.hypot(dx, dy) <= s.w / 2) {
         triggerFound(event.clientX, event.clientY);
+      } else {
+        setMissRipple({ key: Date.now(), left: px, top: py });
       }
     },
     [findMode, symbolFound, isPaused, spots, phaseIndex, triggerFound],
@@ -506,6 +511,14 @@ export default function SarvadaGame({
                   className="sarvada-image-tap"
                   onPointerDown={handleImageTap}
                   aria-label="Tap where you think the symbol is hiding"
+                />
+              )}
+              {missRipple && (
+                <div
+                  key={missRipple.key}
+                  className="sarvada-miss-ripple"
+                  style={{ left: `${missRipple.left}%`, top: `${missRipple.top}%` }}
+                  onAnimationEnd={() => setMissRipple(null)}
                 />
               )}
               {findMode && showDebugPanel && showZones && (

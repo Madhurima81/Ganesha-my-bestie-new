@@ -475,6 +475,30 @@
   animation: sarvadaFoundLabelIn 1.2s ease-out forwards;
 }
 
+.sarvada-miss-ripple {
+  position: absolute;
+  width: clamp(30px, 6vw, 48px);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 3;
+  border: 2px solid rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.18);
+  animation: sarvadaMissRipple 0.5s ease-out forwards;
+}
+
+@keyframes sarvadaMissRipple {
+  0% {
+    opacity: 0.9;
+    transform: translate(-50%, -50%) scale(0.4);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.6);
+  }
+}
+
 @keyframes ganeshaPopOut {
   0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.3); }
   25%  { opacity: 1; transform: translate(-50%, -60%) scale(1.15); }

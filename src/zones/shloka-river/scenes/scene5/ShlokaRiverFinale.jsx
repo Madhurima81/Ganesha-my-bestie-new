@@ -234,6 +234,7 @@ const ShlokaRiverFinaleContent = ({
   const [correctSlots, setCorrectSlots] = useState(new Set());
   const [draggingWord, setDraggingWord] = useState(null);
   const [dragPos, setDragPos] = useState(null);
+  const [missDrop, setMissDrop] = useState(null);
   const [openingButtonVisible, setOpeningButtonVisible] = useState(false);
   const [activeSlotIndex, setActiveSlotIndex] = useState(0);
   const [rippleSlot, setRippleSlot] = useState(null);
@@ -533,7 +534,7 @@ const ShlokaRiverFinaleContent = ({
       // A wrong guess must not let the child postpone the hint ladder
       // indefinitely — only a correct placement counts as real progress.
       setWrongWordId(wordData.id);
-      playSfx?.('wrong');
+      playSfx?.('softWrong');
       safeSetTimeout(() => setWrongWordId(null), 500);
       return;
     }
@@ -624,6 +625,7 @@ const ShlokaRiverFinaleContent = ({
     }
 
     const activeSlotEl = stageRef.current.querySelector(`.srf-slot[data-index="${activeSlotIndex}"]`);
+    let placed = false;
     if (activeSlotEl && !slots[activeSlotIndex]) {
       const x = ((e.clientX - rect.left) / rect.width) * 100;
       const y = ((e.clientY - rect.top) / rect.height) * 100;
@@ -632,7 +634,15 @@ const ShlokaRiverFinaleContent = ({
       const sy = ((slotRect.top + slotRect.height / 2 - rect.top) / rect.height) * 100;
       if (Math.hypot(x - sx, y - sy) < 16) {
         placeWord(draggingWord, activeSlotIndex);
+        placed = true;
       }
+    }
+
+    // Drop landed outside the target slot — this is a memory-order game, not
+    // a failure state, so it just lands with a tiny bounce and settles back
+    // to the tray. No VO, no red, no penalty.
+    if (!placed && dragPos) {
+      setMissDrop({ key: Date.now(), word: draggingWord, x: dragPos.x, y: dragPos.y });
     }
 
     setDraggingWord(null);
@@ -823,6 +833,23 @@ const ShlokaRiverFinaleContent = ({
                   <BoatSvg />
                   <img src={draggingWord.icon} alt="" className="srf-boat-icon" />
                   <span className="srf-boat-label">{draggingWord.label}</span>
+                </div>
+              )}
+
+              {missDrop && (
+                <div
+                  key={missDrop.key}
+                  className="srf-drag-ghost srf-miss-drop"
+                  style={{
+                    left: `${missDrop.x}%`,
+                    top: `${missDrop.y}%`,
+                    color: missDrop.word.color,
+                  }}
+                  onAnimationEnd={() => setMissDrop(null)}
+                >
+                  <BoatSvg />
+                  <img src={missDrop.word.icon} alt="" className="srf-boat-icon" />
+                  <span className="srf-boat-label">{missDrop.word.label}</span>
                 </div>
               )}
             </div>
