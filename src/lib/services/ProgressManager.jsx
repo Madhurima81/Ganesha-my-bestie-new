@@ -264,7 +264,7 @@ static SCENE_METADATA = {
       // Update scene data
       progressData.zones[zoneId].scenes[sceneId] = {
         ...progressData.zones[zoneId].scenes[sceneId], // Preserve existing data
-        completed: completionData.completed || true,
+        completed: completionData.completed ?? true,
         stars: completionData.stars || 0,
         symbols: completionData.symbols || {},
 
@@ -360,7 +360,7 @@ if (import.meta.env.DEV) console.log('🔥 PROGRESS MANAGER RECEIVED:', {
 // Update the scene data that calculateZoneProgress will read
 profileProgress.zones[zoneId].scenes[sceneId] = {
   ...profileProgress.zones[zoneId].scenes[sceneId], // Preserve existing data
-  completed: completionData.completed || true,
+  completed: completionData.completed ?? true,
   stars: completionData.stars || 0,
   symbols: completionData.symbols || {},
 
