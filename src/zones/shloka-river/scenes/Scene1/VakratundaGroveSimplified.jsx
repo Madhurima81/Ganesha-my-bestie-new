@@ -404,9 +404,8 @@ const VakratundaGroveContent = ({
       scene10_vak_crossed: 'Vakratunda! You found another way and helped Frog reach his family.',
       scene10_vak_affirmation: 'I can change my plan and try another way.',
       scene10_maha_intro: 'The friends are waiting. Let\'s build a raft with space for everyone.',
-      scene10_maha_blocking: 'Bring the rope to the log.',
-      scene10_maha_drag_rope: 'Drag the rope to a log.',
-      scene10_maha_pull_down: 'Now pull down.',
+      scene10_maha_drag_water: 'Drag the log into the water.',
+      scene10_maha_place_here: 'Put the log here.',
       scene10_maha_log_moving: '',
       scene10_maha_success: 'Mahakaay! You made space so everyone could come along.',
       scene10_maha_strength: 'I can make space in my heart for others.',
@@ -437,7 +436,7 @@ const VakratundaGroveContent = ({
       return;
     }
     if (sceneState.phase === PHASES.MAHAKAYA_GAME) {
-      playGuidanceVoice('scene10_maha_blocking');
+      playGuidanceVoice('scene10_maha_drag_water');
       return;
     }
     if (showSceneCompletion) {

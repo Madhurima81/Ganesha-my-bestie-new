@@ -54,81 +54,6 @@
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 }
 
-.maha-rope-svg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
-.maha-pulley {
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background:
-    radial-gradient(circle at 50% 50%, #5f381f 0 10%, transparent 11%),
-    radial-gradient(circle at 50% 50%, transparent 0 24%, rgba(77, 44, 23, 0.92) 24.5% 31%, transparent 31.5%),
-    radial-gradient(circle at 34% 30%, rgba(255, 235, 182, 0.34) 0 8%, transparent 9%),
-    radial-gradient(circle at 50% 50%, #c68446 0 46%, #8d572f 47% 66%, #5d351f 67% 100%);
-  border: 0.2vw solid #f1c36a;
-  box-shadow:
-    inset 0 0 0 0.18vw rgba(255, 240, 202, 0.24),
-    inset 0 -0.2vw 0.38vw rgba(66, 34, 16, 0.34),
-    0 0.35vw 0.7vw rgba(0, 0, 0, 0.28);
-}
-
-.maha-pulley::before,
-.maha-pulley::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  border-radius: 999px;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-}
-
-.maha-pulley::before {
-  width: 72%;
-  height: 10%;
-  background: linear-gradient(90deg, rgba(104, 60, 31, 0.2), rgba(104, 60, 31, 0.7), rgba(104, 60, 31, 0.2));
-  box-shadow: 0 0 0.08vw rgba(255, 234, 182, 0.24);
-}
-
-.maha-pulley::after {
-  width: 10%;
-  height: 72%;
-  background: linear-gradient(180deg, rgba(104, 60, 31, 0.2), rgba(104, 60, 31, 0.7), rgba(104, 60, 31, 0.2));
-  box-shadow: 0 0 0.08vw rgba(255, 234, 182, 0.24);
-}
-
-.maha-knob,
-.maha-pull {
-  cursor: grab;
-  touch-action: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.maha-grip-svg {
-  display: block;
-  width: 100%;
-  height: auto;
-  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.32));
-}
-
-.maha-knob.grabbing,
-.maha-pull.grabbing {
-  cursor: grabbing;
-  transform: translate(-50%, -50%) scale(1.1);
-}
-
-.maha-knob.grabbing .maha-grip-svg,
-.maha-pull.grabbing .maha-grip-svg {
-  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.45));
-}
-
 .maha-raft-art {
   transition: filter 0.35s ease, transform 0.35s ease;
   filter: drop-shadow(0 0.4vw 0.6vw rgba(0, 0, 0, 0.25));
@@ -152,12 +77,35 @@
 }
 
 .maha-log-piece.is-current {
+  cursor: grab;
   filter: brightness(1.06) drop-shadow(0 0 0.7vw rgba(255, 205, 95, 0.62));
 }
 
 .maha-log-piece.is-moving {
   transition: none;
   filter: brightness(1.08) drop-shadow(0 0.55vw 0.75vw rgba(0, 0, 0, 0.35));
+}
+
+.maha-log-piece.is-dragging {
+  cursor: grabbing;
+}
+
+/* Wrong drop — a small land/bounce right where it was dropped, before it
+   slides back to the bank. No wobble on the water dropzone itself, just here. */
+.maha-log-piece.is-wrong-drop {
+  animation: mahaLogWrongBounce 220ms ease-out;
+}
+
+@keyframes mahaLogWrongBounce {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  35% {
+    transform: translate(-50%, -46%) scale(1.04);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
 }
 
 .maha-raft-log {
@@ -191,42 +139,145 @@
   transform: translate(-50%, -50%) scaleX(-1);
 }
 
-/* L1 affordance cues — mechanically different per control, not a generic
-   pulse/glow. Detached rope: the grip lifts slightly toward the log.
-   Attached rope: the handle nudges downward (the direction to pull). */
-.maha-knob.is-hint-nudge {
-  animation: mahaAttachNudge 1.25s ease-in-out infinite;
+/* L1 affordance cue — the waiting log gives a small nudge toward the water. */
+.maha-log-piece.is-hint-nudge {
+  animation: mahaLogNudge 1.25s ease-in-out infinite;
 }
 
-@keyframes mahaAttachNudge {
+@keyframes mahaLogNudge {
   0%,
   100% {
     transform: translate(-50%, -50%);
   }
   50% {
-    transform: translate(-46%, -53%);
-  }
-}
-
-.maha-pull.is-hint-nudge {
-  animation: mahaPullNudge 1.25s ease-in-out infinite;
-}
-
-@keyframes mahaPullNudge {
-  0%,
-  100% {
-    transform: translate(-50%, -50%) translateY(0);
-  }
-  50% {
-    transform: translate(-50%, -50%) translateY(8px);
+    transform: translate(-50%, -56%);
   }
 }
 
 /* L3 destination emphasis — only the active waiting log, only once the
    full-path gesture is already showing. Restrained: no permanent circle
-   on the pull-down destination, the GestureDemo path shows that instead. */
+   on the drop target, the GestureDemo path + water dropzone show that. */
 .maha-log-piece.is-hint-target {
   filter: brightness(1.06) drop-shadow(0 0 10px rgba(255, 214, 105, 0.58));
+}
+
+/* Soft water placement zone for the current log. Water-blue/cream, never a
+   hard white oval — it belongs to the river, not a prebuilt raft outline. */
+.maha-water-dropzone {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  aspect-ratio: 3.2 / 1;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 7;
+  opacity: 0;
+  transition: opacity 220ms ease, width 220ms ease, filter 220ms ease, transform 180ms ease;
+}
+
+.maha-water-dropzone__inner {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(255, 255, 255, 0.16) 0%,
+      rgba(214, 242, 255, 0.18) 36%,
+      rgba(144, 211, 246, 0.12) 62%,
+      rgba(144, 211, 246, 0) 82%
+    );
+  border: 2px solid rgba(235, 250, 255, 0.42);
+  box-shadow:
+    0 0 10px rgba(220, 247, 255, 0.18),
+    inset 0 0 10px rgba(255, 255, 255, 0.08);
+}
+
+/* L1 — broad, vague breathing area. Deliberately blurred and wider than the
+   log's own footprint so it reads as "somewhere around here", not the exact
+   final position. */
+.maha-water-dropzone.is-broad {
+  opacity: 0.5;
+  filter: blur(6px);
+}
+
+.maha-water-dropzone.is-broad .maha-water-dropzone__inner {
+  animation: mahaWaterBroadBreathe 2.4s ease-in-out infinite;
+}
+
+/* L2+/dragging/repeated-miss — the clear, exact zone. */
+.maha-water-dropzone.is-clear {
+  opacity: 0.78;
+  filter: none;
+}
+
+.maha-water-dropzone.is-clear .maha-water-dropzone__inner {
+  animation: mahaWaterHint 1.8s ease-in-out infinite;
+}
+
+.maha-water-dropzone.is-clear.is-dragging {
+  opacity: 1;
+}
+
+.maha-water-dropzone.is-clear.is-dragging .maha-water-dropzone__inner {
+  animation: mahaWaterReady 1.5s ease-in-out infinite;
+}
+
+.maha-water-dropzone.is-wrong .maha-water-dropzone__inner {
+  animation: mahaWaterWrong 360ms ease-out;
+}
+
+@keyframes mahaWaterBroadBreathe {
+  0%,
+  100% {
+    transform: scale(0.96);
+    opacity: 0.42;
+  }
+  50% {
+    transform: scale(1.06);
+    opacity: 0.58;
+  }
+}
+
+@keyframes mahaWaterReady {
+  0%,
+  100% {
+    transform: scale(0.98);
+    opacity: 0.78;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+}
+
+@keyframes mahaWaterHint {
+  0%,
+  100% {
+    transform: scale(0.98);
+    opacity: 0.72;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 1;
+    box-shadow:
+      0 0 14px rgba(220, 247, 255, 0.34),
+      inset 0 0 12px rgba(255, 255, 255, 0.12);
+  }
+}
+
+@keyframes mahaWaterWrong {
+  0% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  45% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.72;
+  }
 }
 
 .maha-debug-panel {
@@ -398,9 +449,12 @@
     transition: none;
   }
 
-  .maha-knob.is-hint-nudge,
-  .maha-pull.is-hint-nudge,
-  .maha-log-piece.is-hint-target {
+  .maha-log-piece.is-hint-nudge,
+  .maha-log-piece.is-hint-target,
+  .maha-log-piece.is-wrong-drop,
+  .maha-water-dropzone.is-broad .maha-water-dropzone__inner,
+  .maha-water-dropzone.is-clear .maha-water-dropzone__inner,
+  .maha-water-dropzone.is-wrong .maha-water-dropzone__inner {
     animation: none;
   }
 }

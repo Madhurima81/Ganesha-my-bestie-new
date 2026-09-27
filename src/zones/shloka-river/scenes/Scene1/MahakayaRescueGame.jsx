@@ -20,7 +20,7 @@ const SYLLABLES = ['Ma', 'ha', 'ka', 'ya'];
 const AUDIO = { syllables: ['ma', 'ha', 'ka', 'ya'] };
 const TOTAL_LOGS = 4;
 const TOTAL_SYLLABLES = 4;
-const ATTACH_DIST = 10;
+const DROP_DIST = 12;
 const DEBUG_PHASE_OPTIONS = [
   { value: 0, label: 'Start' },
   { value: 1, label: 'After Log 1' },
@@ -37,10 +37,6 @@ const LAYOUT_PRESET_VERSION = '2026-08-27-mahakaya-pasted-layout-15';
 const CROSS_TARGET_RAFT = { l: 63.79, t: 41.67 };
 
 const PHASE0_LAYOUT = {
-  pulley: { l: 39.7, t: 11.15, w: 3 },
-  handleStart: { l: 45.3, t: 35.8, w: 6.6 },
-  pullTop: { l: 39.67, t: 31, w: 6.6 },
-  pullBottom: { l: 56.2, t: 78, w: 6.6 },
   raft: { l: 21.81, t: 46.38, w: 31.8, r: -18 },
   logTarget0: { l: 31.2, t: 40.6, w: 31.8 },
   logTarget1: { l: 39.6, t: 41.2, w: 31.8 },
@@ -102,10 +98,6 @@ const DEFAULT_PHASE_LAYOUTS = [
 ];
 
 const START_DEBUG_KEYS = [
-  'pulley',
-  'handleStart',
-  'pullTop',
-  'pullBottom',
   'raft',
   'waitingLog0',
   'waitingLog1',
@@ -135,66 +127,6 @@ const ANIMALS = [
 const FLIPPED_ANIMAL_IDS = new Set(['peacock', 'cow']);
 
 const lerp = (a, b, t) => a + (b - a) * t;
-const mixPos = (from, to, t) => ({
-  l: lerp(from.l, to.l, t),
-  t: lerp(from.t, to.t, t),
-  w: lerp(from.w, to.w, t),
-});
-
-function RopeGripSvg() {
-  return (
-    <svg className="maha-grip-svg" viewBox="0 0 120 44" aria-hidden="true" focusable="false">
-      <defs>
-        <linearGradient id="mahaGripWood" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#d49a66" />
-          <stop offset="22%" stopColor="#ebbc8b" />
-          <stop offset="48%" stopColor="#d49a66" />
-          <stop offset="74%" stopColor="#ebbc8b" />
-          <stop offset="100%" stopColor="#bc7f4f" />
-        </linearGradient>
-        <linearGradient id="mahaGripCap" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#cf9560" />
-          <stop offset="100%" stopColor="#a96f45" />
-        </linearGradient>
-      </defs>
-      <rect x="18" y="12" width="84" height="20" rx="10" fill="url(#mahaGripWood)" />
-      <rect x="8" y="6" width="16" height="32" rx="8" fill="url(#mahaGripCap)" />
-      <rect x="96" y="6" width="16" height="32" rx="8" fill="url(#mahaGripCap)" />
-      <path d="M26 16 H94" stroke="rgba(255,255,255,0.22)" strokeWidth="2.5" strokeLinecap="round" />
-      <path d="M26 28 H94" stroke="rgba(120,72,34,0.18)" strokeWidth="2.5" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function RopeLine({ x1, y1, x2, y2, zIndex = 14 }) {
-  const midX = (x1 + x2) / 2;
-  const midY = (y1 + y2) / 2;
-  const distance = Math.hypot(x2 - x1, y2 - y1);
-  const controlX = midX + (x2 - x1) * 0.04;
-  const controlY = midY + Math.min(14, Math.max(4, distance * 0.12));
-  const d = `M ${x1} ${y1} Q ${controlX} ${controlY} ${x2} ${y2}`;
-
-  return (
-    <svg
-      className="maha-rope-svg"
-      style={{ zIndex }}
-      viewBox="0 0 100 100"
-      preserveAspectRatio="none"
-      aria-hidden="true"
-    >
-      <path d={d} fill="none" stroke="#d19159" strokeWidth="0.95" strokeLinecap="round" />
-      <path
-        d={d}
-        fill="none"
-        stroke="#efc392"
-        strokeWidth="0.48"
-        strokeLinecap="round"
-        strokeDasharray="0.01 2.2"
-        opacity="0.82"
-      />
-    </svg>
-  );
-}
 
 const POSE_ASSETS = [
   raftLogSingle,
@@ -217,12 +149,11 @@ export default function MahakayaRescueGame({
   const { playVoice: playSceneLine, playSfx, playSyllable, playWord, stopVoice } = voiceGuidance;
 
   const [phase, setPhase] = useState('intro');
-  const [ropeStage, setRopeStage] = useState('detached');
   const [activeLog, setActiveLog] = useState(0);
   const [completedLogs, setCompletedLogs] = useState(0);
   const [litCount, setLitCount] = useState(0);
-  const [pullProgress, setPullProgress] = useState(0);
-  const [knobPos, setKnobPos] = useState({ l: DEFAULT_PHASE_LAYOUTS[0].handleStart.l, t: DEFAULT_PHASE_LAYOUTS[0].handleStart.t });
+  const [logPos, setLogPos] = useState(null);
+  const [wrongDropPulse, setWrongDropPulse] = useState(false);
   const [dragging, setDragging] = useState(null);
   const [phaseLayouts, setPhaseLayouts] = useState(DEFAULT_PHASE_LAYOUTS);
   const [debugMode, setDebugMode] = useState(false);
@@ -234,39 +165,29 @@ export default function MahakayaRescueGame({
   const [layoutCopyStatus, setLayoutCopyStatus] = useState('');
   const [crossTargetRaft, setCrossTargetRaft] = useState(CROSS_TARGET_RAFT);
   const [teachingCompleteKey, setTeachingCompleteKey] = useState(null);
-  // Separate from teachingCompleteKey: tracks whether the entry VO for this
-  // stage ("Drag the rope to a log." / "Pull down.") has actually finished
-  // playing, so the idle ladder can be gated on VO-end, not gesture-end.
-  const [voCompleteKey, setVoCompleteKey] = useState(null);
 
   const stageRef = useRef(null);
   const timers = useRef([]);
   const isPausedRef = useRef(isPaused);
   const phaseRef = useRef('intro');
-  const ropeStageRef = useRef('detached');
   const draggingRef = useRef(null);
   const completedLogsRef = useRef(0);
   const completionStartedRef = useRef(false);
   const debugDragRef = useRef(null);
   const debugPanelDragRef = useRef(null);
 
-  const hintStageKey = `${ropeStage}-${activeLog}`;
-  const needsInitialTeaching = activeLog === 0 && (ropeStage === 'detached' || ropeStage === 'attached');
+  const hintStageKey = `drag-${activeLog}`;
+  // Only log 1 gets the immediate teaching gesture (one short drag demo, no
+  // VO) — rounds 2-4 reuse the mechanic the child already learned. The hint
+  // ladder itself restarts fresh for every log because it's keyed on
+  // hintStageKey (useRepeatedHintCycle re-schedules whenever stageKey changes).
+  const needsInitialTeaching = activeLog === 0;
   const teachingComplete = !needsInitialTeaching || teachingCompleteKey === hintStageKey;
-  // Only log 1 has its own entry VO ("Drag the rope to a log." / "Pull
-  // down.") — rounds 2-4 reuse the mechanic the child already learned, so
-  // their idle ladder isn't gated on any VO.
-  const needsEntryVo = activeLog === 0 && (ropeStage === 'detached' || ropeStage === 'attached');
-  const stageVoComplete = !needsEntryVo || voCompleteKey === hintStageKey;
-  // GMB Hint Standard v1 — 10s/18s/26s from VO end or last interaction,
-  // flat across every stage/obstacle. Only Vakratunda's own reactive
-  // stuck-hint (no idle timer) is exempt from this standard. Gated on
-  // stageVoComplete (VO actually finished), not teachingComplete (gesture
-  // finished) — those are different things and were being conflated.
-  // Also suppressed while the child is actively dragging, so hints don't
-  // fire over their hand mid-gesture.
+  // GMB Hint Standard v1 — 10s/18s/26s from mount or last interaction, flat
+  // across every log. Suppressed while the child is actively dragging, so
+  // hints don't fire over their hand mid-gesture.
   const { hintLevel, markInteraction, markLevel2VoiceEnded } = useRepeatedHintCycle({
-    enabled: isActive && !isPaused && phase === 'play' && !debugMode && stageVoComplete && !dragging,
+    enabled: isActive && !isPaused && phase === 'play' && !debugMode && !dragging,
     stageKey: hintStageKey,
     initialDelay: 10000,
     pulseCountBeforeEscalation: 3,
@@ -275,16 +196,29 @@ export default function MahakayaRescueGame({
     level3Delay: 26000,
   });
 
-  // L2: short partial gesture (rendered above) + one spoken line per stage —
-  // no on-screen bubble, the gesture + VO communicate it together.
-  const lastHintVoStageRef = useRef(null);
+  // Repeated wrong drops bring the L2-style destination clarity in earlier —
+  // the first one or two misses stay visual-only (bounce + soft pulse), but
+  // from the 2nd consecutive miss the dropzone/gesture jump straight to their
+  // "clear" look regardless of the timer. Never affects the spoken hint lines
+  // (still tied to the real 18s/26s marks) or plays any punitive sound.
+  const [wrongDropCount, setWrongDropCount] = useState(0);
+  const effectiveHintLevel = wrongDropCount >= 2 ? Math.max(hintLevel, 2) : hintLevel;
+
+  // L1: visual only (log nudge + dropzone breathes) — no VO.
+  // L2: clearer partial gesture + "Drag the log into the water."
+  // L3: full gesture + "Put the log here."
+  const lastHintVoRef = useRef(null);
   useEffect(() => {
-    if (hintLevel !== 2 || phase !== 'play' || debugMode || isPaused) return;
-    if (lastHintVoStageRef.current === hintStageKey) return;
-    lastHintVoStageRef.current = hintStageKey;
-    const voiceKey = ropeStage === 'detached' ? 'scene10_maha_blocking' : 'scene10_maha_pull_down';
-    playSceneLine?.(voiceKey, markLevel2VoiceEnded);
-  }, [hintLevel, ropeStage, hintStageKey, phase, debugMode, isPaused, playSceneLine, markLevel2VoiceEnded]);
+    if (hintLevel < 2 || phase !== 'play' || debugMode || isPaused) return;
+    const voKey = `${hintStageKey}:${hintLevel}`;
+    if (lastHintVoRef.current === voKey) return;
+    lastHintVoRef.current = voKey;
+    if (hintLevel === 2) {
+      playSceneLine?.('scene10_maha_drag_water', markLevel2VoiceEnded);
+    } else {
+      playSceneLine?.('scene10_maha_place_here');
+    }
+  }, [hintLevel, hintStageKey, phase, debugMode, isPaused, playSceneLine, markLevel2VoiceEnded]);
 
   const clearTimers = useCallback(() => {
     timers.current.forEach(clearTimeout);
@@ -317,23 +251,21 @@ export default function MahakayaRescueGame({
     clearTimers();
     setPhase('intro');
     phaseRef.current = 'intro';
-    setRopeStage('detached');
-    ropeStageRef.current = 'detached';
     setActiveLog(0);
     setCompletedLogs(0);
     completedLogsRef.current = 0;
     setLitCount(0);
-    setPullProgress(0);
-    setKnobPos({ l: phaseLayouts[0].handleStart.l, t: phaseLayouts[0].handleStart.t });
+    setLogPos(null);
+    setWrongDropPulse(false);
+    setWrongDropCount(0);
     setDragging(null);
     draggingRef.current = null;
     completionStartedRef.current = false;
     setDebugPhase(0);
     setCrossing(false);
     setTeachingCompleteKey(null);
-    setVoCompleteKey(null);
-    lastHintVoStageRef.current = null;
-  }, [clearTimers, phaseLayouts]);
+    lastHintVoRef.current = null;
+  }, [clearTimers]);
 
   useEffect(() => {
     isPausedRef.current = isPaused;
@@ -350,12 +282,6 @@ export default function MahakayaRescueGame({
     playSceneLine?.('scene10_maha_intro', () => {
       setPhase('play');
       phaseRef.current = 'play';
-      const key = 'detached-0';
-      if (playSceneLine) {
-        playSceneLine('scene10_maha_drag_rope', () => setVoCompleteKey(key));
-      } else {
-        setVoCompleteKey(key);
-      }
     });
     return clearTimers;
     // Voice and timer helpers are stable enough for this scene lifecycle.
@@ -363,17 +289,10 @@ export default function MahakayaRescueGame({
   }, [isActive]);
 
   useEffect(() => {
-    if (!debugMode) return;
-    const previewLayout = phaseLayouts[debugPhase];
-    setKnobPos({ l: previewLayout.handleStart.l, t: previewLayout.handleStart.t });
-  }, [debugMode, debugPhase, phaseLayouts]);
-
-  useEffect(() => {
     if (layoutPresetVersion === LAYOUT_PRESET_VERSION) return;
     setPhaseLayouts(DEFAULT_PHASE_LAYOUTS);
     setLayoutPresetVersion(LAYOUT_PRESET_VERSION);
     setCrossTargetRaft(CROSS_TARGET_RAFT);
-    setKnobPos({ l: DEFAULT_PHASE_LAYOUTS[0].handleStart.l, t: DEFAULT_PHASE_LAYOUTS[0].handleStart.t });
     if (completedLogsRef.current === 0) {
       setDebugPhase(0);
     }
@@ -436,7 +355,6 @@ export default function MahakayaRescueGame({
     setCrossTargetRaft(CROSS_TARGET_RAFT);
     setDebugPhase(0);
     setSelectedDebugKey(START_DEBUG_KEYS[0]);
-    setKnobPos({ l: DEFAULT_PHASE_LAYOUTS[0].handleStart.l, t: DEFAULT_PHASE_LAYOUTS[0].handleStart.t });
   };
 
   const nudgeSize = (delta) => {
@@ -541,20 +459,10 @@ export default function MahakayaRescueGame({
     ...extra,
   });
 
-  const sharedRigLayout = {
-    pulley: baseLayout.pulley,
-    handleStart: baseLayout.handleStart,
-    pullTop: baseLayout.pullTop,
-    pullBottom: baseLayout.pullBottom,
-  };
-
   const waitingLogKey = `waitingLog${activeLog}`;
   const targetLogKey = `logTarget${activeLog}`;
   const currentWaitingLog = activeLayout[waitingLogKey];
   const currentTargetLog = nextLayout[targetLogKey];
-  const currentMovingLog = mixPos(currentWaitingLog, currentTargetLog, pullProgress);
-  const pullHandleTop = lerp(sharedRigLayout.pullTop.t, sharedRigLayout.pullBottom.t, pullProgress);
-  const activePullHandle = { ...sharedRigLayout.pullTop, t: pullHandleTop };
   const allDone = litCount >= TOTAL_SYLLABLES;
   const raftImage = raftLogSingle;
   const crossTargetDebugLayout = { ...crossTargetRaft, w: baseLayout.raft.w, r: baseLayout.raft.r };
@@ -564,13 +472,11 @@ export default function MahakayaRescueGame({
   };
 
   const completeRound = () => {
-    if (ropeStageRef.current !== 'attached') return;
     const nextCompleted = Math.min(TOTAL_LOGS, completedLogsRef.current + 1);
     completedLogsRef.current = nextCompleted;
     setCompletedLogs(nextCompleted);
     onMicroWin?.();
     playSfx?.('chime');
-    setPullProgress(0);
     draggingRef.current = null;
     setDragging(null);
 
@@ -579,9 +485,6 @@ export default function MahakayaRescueGame({
     const SYLLABLE_HOLD_MS = 600;
 
     if (nextCompleted >= TOTAL_LOGS) {
-      ropeStageRef.current = 'done';
-      setRopeStage('done');
-
       // ka
       after(SYLLABLE_HOLD_MS, () => {
         setLitCount(nextCompleted);
@@ -624,16 +527,14 @@ export default function MahakayaRescueGame({
 
     const nextLog = nextCompleted;
     setActiveLog(nextLog);
-    ropeStageRef.current = 'detached';
-    setRopeStage('detached');
-    setKnobPos({ l: sharedRigLayout.handleStart.l, t: sharedRigLayout.handleStart.t });
-    // Full "drag the rope" VO only plays once, before round 1 (via the intro
-    // sequence). Rounds 2+ rely on the hint-cycle text + GestureDemo instead —
-    // avoids repeating the line and colliding with the syllable clip's audio.
+    setLogPos(null);
+    setWrongDropCount(0);
+    // Each log is its own beat — the hint ladder above already restarts on
+    // its own since it's keyed on hintStageKey (which includes activeLog).
   };
 
-  const onKnobDown = (e) => {
-    if (debugMode || isPaused || phaseRef.current !== 'play' || ropeStageRef.current !== 'detached') return;
+  const onLogPointerDown = (e) => {
+    if (debugMode || isPaused || phaseRef.current !== 'play') return;
     e.preventDefault();
     e.stopPropagation();
     e.currentTarget.setPointerCapture?.(e.pointerId);
@@ -641,19 +542,10 @@ export default function MahakayaRescueGame({
     // The child has demonstrated they understand — stop the teaching demo
     // from continuing to animate over their finger.
     if (needsInitialTeaching && !teachingComplete) setTeachingCompleteKey(hintStageKey);
-    draggingRef.current = 'knob';
-    setDragging('knob');
-  };
-
-  const onPullDown = (e) => {
-    if (debugMode || isPaused || phaseRef.current !== 'play' || ropeStageRef.current !== 'attached') return;
-    e.preventDefault();
-    e.stopPropagation();
-    e.currentTarget.setPointerCapture?.(e.pointerId);
-    markInteraction();
-    if (needsInitialTeaching && !teachingComplete) setTeachingCompleteKey(hintStageKey);
-    draggingRef.current = 'pull';
-    setDragging('pull');
+    draggingRef.current = 'log';
+    setDragging('log');
+    const point = pointFromEvent(e) || currentWaitingLog;
+    setLogPos(point);
   };
 
   const onPointerMove = (e) => {
@@ -668,15 +560,8 @@ export default function MahakayaRescueGame({
     const point = pointFromEvent(e);
     if (!point) return;
 
-    if (draggingRef.current === 'knob') {
-      setKnobPos(point);
-      return;
-    }
-
-    if (draggingRef.current === 'pull') {
-      const np = Math.max(0, Math.min(1, (point.t - activeLayout.pullTop.t) / (activeLayout.pullBottom.t - activeLayout.pullTop.t)));
-      setPullProgress(np);
-      if (np >= 1) completeRound();
+    if (draggingRef.current === 'log') {
+      setLogPos(point);
     }
   };
 
@@ -690,27 +575,26 @@ export default function MahakayaRescueGame({
     }
 
     if (!draggingRef.current) return;
-    if (draggingRef.current === 'knob') {
-      const point = pointFromEvent(e) || knobPos;
-      const dist = Math.hypot(point.l - currentWaitingLog.l, point.t - currentWaitingLog.t);
-      if (dist < ATTACH_DIST) {
-        ropeStageRef.current = 'attached';
-        setRopeStage('attached');
-        setKnobPos({ l: currentWaitingLog.l, t: currentWaitingLog.t });
-        playSfx?.('chime');
-        if (activeLog === 0) {
-          const key = 'attached-0';
-          if (playSceneLine) {
-            playSceneLine('scene10_maha_pull_down', () => setVoCompleteKey(key));
-          } else {
-            setVoCompleteKey(key);
-          }
-        }
-      } else {
-        setKnobPos({ l: sharedRigLayout.handleStart.l, t: sharedRigLayout.handleStart.t });
+    if (draggingRef.current === 'log') {
+      const point = pointFromEvent(e) || logPos;
+      const dist = point ? Math.hypot(point.l - currentTargetLog.l, point.t - currentTargetLog.t) : Infinity;
+      if (dist < DROP_DIST) {
+        completeRound();
+        return;
       }
-    } else if (draggingRef.current === 'pull') {
-      setPullProgress(0);
+      // Land/bounce briefly where it was dropped, then slide back — no red X,
+      // no buzzer, no punitive VO. First 1-2 misses stay visual-only; from
+      // the 2nd consecutive miss, effectiveHintLevel escalates the dropzone/
+      // gesture clarity earlier (see hint-ladder block above).
+      setWrongDropPulse(true);
+      setWrongDropCount((c) => c + 1);
+      after(220, () => {
+        setLogPos(null);
+        draggingRef.current = null;
+        setDragging(null);
+      });
+      after(360, () => setWrongDropPulse(false));
+      return;
     }
     draggingRef.current = null;
     setDragging(null);
@@ -757,9 +641,12 @@ export default function MahakayaRescueGame({
       style={placeStyle(pos, {
         zIndex,
         opacity: options.hidden ? 0 : 1,
-        pointerEvents: options.hidden ? 'none' : undefined,
+        pointerEvents: options.hidden ? 'none' : (options.interactive ? 'auto' : undefined),
       })}
-      onPointerDown={(e) => startDebugDrag(e, key)}
+      onPointerDown={(e) => {
+        if (debugMode) { startDebugDrag(e, key); return; }
+        if (options.interactive) onLogPointerDown(e);
+      }}
     >
       <img src={raftLogSingle} alt="" />
     </div>
@@ -855,102 +742,76 @@ export default function MahakayaRescueGame({
           const logLayout = getLogLayoutForPhase(index);
           return renderLog(`logTarget${index}`, 'maha-raft-log is-attached', withCross(logLayout[`logTarget${index}`]), 18 + index);
         }
-        if (index === activeLog && ropeStage === 'attached') {
-          return renderLog(`movingLog${index}`, 'is-moving', currentMovingLog, 20);
+        if (index === activeLog && dragging === 'log') {
+          const movingClass = ['is-moving', 'is-dragging', wrongDropPulse ? 'is-wrong-drop' : ''].filter(Boolean).join(' ');
+          return renderLog(`movingLog${index}`, movingClass, { ...logPos, w: currentWaitingLog.w }, 20);
         }
         if (index >= completedLogs) {
-          const isHintTarget = index === activeLog && ropeStage === 'detached' && hintLevel >= 3;
+          const isHintTarget = index === activeLog && hintLevel >= 3;
           const logClass = [
             index === activeLog ? 'is-current' : '',
             isHintTarget ? 'is-hint-target' : '',
+            index === activeLog && hintLevel === 1 && dragging !== 'log' ? 'is-hint-nudge' : '',
           ].filter(Boolean).join(' ');
-          return renderLog(`waitingLog${index}`, logClass, baseLayout[`waitingLog${index}`], 8);
+          return renderLog(`waitingLog${index}`, logClass, baseLayout[`waitingLog${index}`], 8, { interactive: index === activeLog });
         }
         return null;
       })}
 
       {ANIMALS.map((_, index) => renderAnimal(index))}
 
-      <div
-        className={`maha-layer maha-pulley ${debugMode && selectedDebugKey === 'pulley' ? 'is-debug-selected' : ''}`}
-        style={placeStyle(sharedRigLayout.pulley, { zIndex: 16 })}
-        onPointerDown={(e) => startDebugDrag(e, 'pulley')}
-        aria-hidden="true"
-      />
-
-      {ropeStage === 'detached' && phase === 'play' && (
-        <>
-          <RopeLine x1={sharedRigLayout.pulley.l} y1={sharedRigLayout.pulley.t} x2={knobPos.l} y2={knobPos.t} />
+      {/* Soft water placement zone for the current log. Hidden by default —
+          no permanent strong dropzone from the start. L1 shows a broad, vague
+          breathing area (not the exact spot); L2+/dragging/repeated-miss
+          shows the clear, exact zone. */}
+      {phase === 'play' && !debugMode && activeLog < TOTAL_LOGS && (() => {
+        const visibility = dragging === 'log' || effectiveHintLevel >= 2
+          ? 'clear'
+          : effectiveHintLevel === 1
+            ? 'broad'
+            : 'hidden';
+        return (
           <div
-            className={`maha-layer maha-knob ${dragging === 'knob' ? 'grabbing' : ''} ${hintLevel === 1 && dragging !== 'knob' ? 'is-hint-nudge' : ''} ${debugMode && selectedDebugKey === 'handleStart' ? 'is-debug-selected' : ''}`}
-            style={placeStyle({ ...sharedRigLayout.handleStart, l: knobPos.l, t: knobPos.t }, { zIndex: 24 })}
-            onPointerDown={(e) => (debugMode ? startDebugDrag(e, 'handleStart') : onKnobDown(e))}
+            className={[
+              'maha-water-dropzone',
+              `is-${visibility}`,
+              dragging === 'log' ? 'is-dragging' : '',
+              wrongDropPulse ? 'is-wrong' : '',
+            ].filter(Boolean).join(' ')}
+            style={{
+              left: `${currentTargetLog.l}%`,
+              top: `${currentTargetLog.t}%`,
+              width: `${currentTargetLog.w * (visibility === 'broad' ? 0.95 : 0.72)}%`,
+            }}
+            aria-hidden="true"
           >
-            <RopeGripSvg />
+            <span className="maha-water-dropzone__inner" />
           </div>
-        </>
-      )}
+        );
+      })()}
 
-      {ropeStage === 'attached' && phase === 'play' && (
-        <>
-          <RopeLine x1={sharedRigLayout.pulley.l} y1={sharedRigLayout.pulley.t} x2={currentMovingLog.l} y2={currentMovingLog.t} />
-          <RopeLine x1={sharedRigLayout.pulley.l} y1={sharedRigLayout.pulley.t} x2={sharedRigLayout.pullTop.l} y2={activePullHandle.t} />
-          <div
-            className={`maha-layer maha-pull ${dragging === 'pull' ? 'grabbing' : ''} ${hintLevel === 1 && dragging !== 'pull' ? 'is-hint-nudge' : ''} ${debugMode && selectedDebugKey === 'pullTop' ? 'is-debug-selected' : ''}`}
-            style={placeStyle(activePullHandle, { zIndex: 24 })}
-            onPointerDown={(e) => (debugMode ? startDebugDrag(e, 'pullTop') : onPullDown(e))}
-          >
-            <RopeGripSvg />
-          </div>
-        </>
-      )}
-
-      {/* L2 shows a short partial gesture (does not reach the target) + VO;
-          L3 shows the full path. The initial teaching pass is always full,
-          one iteration only, starting ~300ms after the "drag..."/"pull..."
-          action phrase begins (GMB gesture-timing preset A/B). */}
+      {/* L2 shows a short partial gesture (does not reach the target) + VO
+          "Drag the log into the water."; L3 shows the full path + "Put the
+          log here." The initial teaching pass (log 1 only) is always full,
+          one iteration, no VO, starting ~300ms after mount. Two consecutive
+          wrong drops bring the L2-style clarity in early (effectiveHintLevel),
+          without pulling the spoken lines forward. */}
       <GestureDemo
         type="drag"
-        from={{ x: sharedRigLayout.handleStart.l, y: sharedRigLayout.handleStart.t }}
+        from={{ x: currentWaitingLog.l, y: currentWaitingLog.t }}
         to={
           needsInitialTeaching && !teachingComplete
-            ? { x: currentWaitingLog.l, y: currentWaitingLog.t }
+            ? { x: currentTargetLog.l, y: currentTargetLog.t }
             : hintLevel >= 3
-              ? { x: currentWaitingLog.l, y: currentWaitingLog.t }
+              ? { x: currentTargetLog.l, y: currentTargetLog.t }
               : {
-                  x: lerp(sharedRigLayout.handleStart.l, currentWaitingLog.l, 0.38),
-                  y: lerp(sharedRigLayout.handleStart.t, currentWaitingLog.t, 0.38),
+                  x: lerp(currentWaitingLog.l, currentTargetLog.l, 0.38),
+                  y: lerp(currentWaitingLog.t, currentTargetLog.t, 0.38),
                 }
         }
         active={
-          !debugMode && phase === 'play' && ropeStage === 'detached'
-          && ((needsInitialTeaching && !teachingComplete) || hintLevel >= 2)
-        }
-        idleDelay={needsInitialTeaching && !teachingComplete ? 300 : 0}
-        iterations={2}
-        onComplete={() => {
-          if (needsInitialTeaching && !teachingComplete) setTeachingCompleteKey(hintStageKey);
-        }}
-        onDismiss={() => {
-          if (needsInitialTeaching && !teachingComplete) setTeachingCompleteKey(hintStageKey);
-        }}
-      />
-      <GestureDemo
-        type="pull-down"
-        from={{ x: sharedRigLayout.pullTop.l, y: sharedRigLayout.pullTop.t }}
-        to={
-          needsInitialTeaching && !teachingComplete
-            ? { x: sharedRigLayout.pullBottom.l, y: sharedRigLayout.pullBottom.t }
-            : hintLevel >= 3
-              ? { x: sharedRigLayout.pullBottom.l, y: sharedRigLayout.pullBottom.t }
-              : {
-                  x: lerp(sharedRigLayout.pullTop.l, sharedRigLayout.pullBottom.l, 0.38),
-                  y: lerp(sharedRigLayout.pullTop.t, sharedRigLayout.pullBottom.t, 0.38),
-                }
-        }
-        active={
-          !debugMode && phase === 'play' && ropeStage === 'attached'
-          && ((needsInitialTeaching && !teachingComplete) || hintLevel >= 2)
+          !debugMode && phase === 'play' && dragging !== 'log'
+          && ((needsInitialTeaching && !teachingComplete) || effectiveHintLevel >= 2)
         }
         idleDelay={needsInitialTeaching && !teachingComplete ? 300 : 0}
         iterations={2}
