@@ -1,6 +1,214 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
 
+## [2026-09-28] — VO cleanup: dual-speech-source race across 6 scenes
+**Touched:** src/zones/about-me-hut/family-tree/Familytreegame.jsx;
+src/zones/about-me-hut/enjoy/ObstacleRemoverGame.jsx;
+src/zones/about-me-hut/food/Favoritefoodgame.jsx;
+src/zones/shloka-river/scenes/Scene1/VakratundaGroveSimplified.jsx;
+src/zones/shloka-river/scenes/Scene2/SuryakotiBankSimplified.jsx;
+src/zones/shloka-river/scenes/Scene3/NirvighnamChantSimplified.jsx.
+
+**Changed:** Root-caused Madhurima's report of old VO lines still playing/
+overlapping in some scenes to a repeated pattern: 7 of the 13 live scenes run
+**two independent speech engines** — `useVoiceGuidance` (MP3 + TTS-fallback,
+touches `window.speechSynthesis`) and either a second `useGaneshaVoice()`
+instance or a scene-local `speechSynthRef`/Web-Speech wrapper (also touches
+`window.speechSynthesis`) — and one engine wasn't always stopping the other
+before speaking. Audited all 13 live scenes for every VO mechanism
+(`useVoiceGuidance`, raw `speechSynthesis`, `new Audio()`, `VOReplayButton`);
+Symbol Mountain (all 4 scenes) + Finale + My Indian Story were already clean.
+Fixed by adding `stopVoice()`+`stopSpokenVoice()` (or the scene's
+`stopVoice()`+`stopWebSpeech()` equivalent) immediately before every
+call site that was missing it:
+- **Family Tree**: 8 sites — the entire `replayCurrentVoice`/VOReplayButton
+  handler (all 5 branches), the intro-modal welcome VO, the flip-card
+  "tap anywhere to close" hint, and the "And that's me, Ganesha!" auto-fill
+  line. File already had the correct pattern in ~10 other places and even a
+  comment documenting the two-speech-source risk — these were the gaps in it.
+- **Vakratunda Grove, Suryakoti Bank, Nirvighnam Chant**: single fix each,
+  at the shared `playGuidanceVoice` gatekeeper function — it already stopped
+  both channels when routing to the MP3/hook path, but not when routing to
+  the raw Web-Speech path. One addition per file covers every call site.
+- **Dreams & Wishes, Favorite Food**: single fix each, at the shared
+  `speakLine` gatekeeper — `useVoiceGuidance`'s own idle timer can fire a
+  hook-driven `playVoice()` independently of `speakLine`'s Web-Speech calls;
+  now `speakLine` stops both first.
+- **Sarvakaryeshu Chant**: audited, already correct — its `playGuidanceVoice`
+  uses a `guidanceVoiceActiveRef` gate that queues a new line to play after
+  the current one finishes instead of overlapping, and every `stopVoice()`
+  call already goes through one `stopAllVoice()` that resets that ref. No
+  change needed. (The `new Audio(FULL_SHLOKA_WORD_AUDIO...)` bypass flagged
+  in an earlier pass of this file is no longer present — already cleaned up
+  before this session.)
+- Also confirmed, separately: a stale hardcoded Kuru Me Deva intro line
+  ("Beaver can't build the bridge alone...") that Madhurima reported hearing
+  after a hard refresh was coming from `src/dev/webSpeechScripts.js`, the
+  **dev test harness only** (`src/dev/` is non-production per CLAUDE.md,
+  consumed only by `GameTestHarness.jsx`) — not the live Kurumedeva scene,
+  and not this dual-engine bug. Madhurima fixed that file directly; no code
+  change needed from this pass.
+
+No content, layout, or game-logic changes — only the stop-both-engines guard,
+matching the convention the codebase's own comments already prescribed.
+
+**Open:** Not yet live-tested by Madhurima. Remaining scope not touched in
+this pass: T07 (simplify audio hints), T10 (first-time vs returning VO),
+T14–T16 (new audio files), T36 (VO vs Web Speech usage policy).
+
+## [2026-09-28] — QA checklist pass: today's full change set (not just VO)
+**Touched:** docs/GMB_HARNESS_QA_CHECKLIST.html; docs/GMB_MANUAL_QA_CHECKLIST.html.
+
+**Changed:** Went through today's git history (commit `d0df04bb` and the
+"Mahakaya QA defect fixes" session below) plus this session's own VO work,
+and added `⚠️ FIXED/CHANGED/NEW` flow rows (harness doc) and matching
+`known[]` entries (manual doc) for every behavior change found, not only
+the voiceover sequencing items. Covers:
+- **Vakratunda Grove**: intro no longer waits 700ms before the drag course
+  starts; VO stops immediately on frog grab.
+- **Mahakaya**: intro VO copy corrected (3 previously-out-of-sync copies
+  now match); Log 1 teaching-demo timing now VO-onStart-gated instead of a
+  blind fixed delay; L3 gesture-demo regression (missing `replayKey`)
+  restored; drop-zone forgiveness widened (`DROP_DIST` 12→16); logs 2-4
+  stuck/undraggable bug fixed (pointer-capture-before-unmount + pile
+  pointer-events:none + VO-gate removed from log-1 draggability); join-scene
+  animal drift on each log placed fixed.
+- **Sarvada**: game now enters "playing" immediately instead of after an
+  800ms wait.
+- **Shloka River Finale**: a word-boat is now draggable/placeable on the
+  very first touch instead of being gated on a `buildReady` flag.
+- **Tusk (Symbol Mountain)**: child can now act during Beat 0's intro VO
+  instead of waiting ~3.6s for it to finish; VO now stops on interaction.
+- **My Indian Story**: VO now stops immediately on every interaction
+  (magnifying-glass move, region/language/festival select, guesses) instead
+  of potentially talking over the next action.
+- Confirmed **`Namebirthdaygame.jsx` is dead code** (per Madhurima) — its
+  VO-stop fixes in the same commit were NOT added to the Family Tree
+  checklist section, which is backed by the live `Familytreegame.jsx`
+  instead.
+- Added `🔎 VERIFY` rows (not yet fixed, just flagged) to Vakratunda,
+  Sarvakaryeshu/Sarvada, and the Finale for the VO-race/gesture-timing bug
+  class found in Nirvighnam/Kuru — those scenes weren't specifically
+  retested for it.
+
+**Open:** None of today's fixes beyond Nirvighnam/Kuru Me Deva have been
+live-tested by Madhurima yet in this pass (Mahakaya's 4 items were
+separately verified per the QA-defect-fixes entry below). Kuru Me Deva's
+bridge rebuild (asset swap, no-solo-fail redesign) bundled into `d0df04bb`
+was already accurately described in both checklists before this pass — no
+changes needed there.
+
+## [2026-09-28] — Shloka River VO sequencing + gesture-timing standardization
+**Touched:** src/lib/config/content/voiceGuidance.js;
+src/zones/shloka-river/scenes/Scene1/MahakayaRescueGame.jsx;
+src/zones/shloka-river/scenes/Scene2/SuryakotiBankSimplified.jsx;
+src/zones/shloka-river/scenes/Scene2/components/SuryakotiGame.jsx;
+src/zones/shloka-river/scenes/Scene2/components/SamaprabhaGame.jsx;
+src/zones/shloka-river/scenes/Scene3/NirvighnamChantSimplified.jsx;
+src/zones/shloka-river/scenes/Scene3/NirvighnamGame.jsx;
+src/zones/shloka-river/scenes/Scene3/KurumedevaGame.jsx.
+
+**Changed:** Standardized the VO pattern across all 5 Shloka River scenes per
+Madhurima's spec (opening VO once; syllable after every success; transition
+VO only when the mechanic changes; at most one continuation cue when the
+same mechanic continues to a non-obvious next target; otherwise visual +
+gesture carry it). Found and fixed real bugs uncovered along the way, not
+just content gaps:
+
+- **Missing VO fallback (Suryakoti, Nirvighnam):** both scenes' local
+  `playGuidanceVoice` maps were missing the `getVoiceScript` + hook
+  `playVoice` fallback that `VakratundaGroveSimplified.jsx` already had —
+  any key not in the local hardcoded map (even if correctly defined in
+  `voiceGuidance.js`) silently played nothing. Added the same fallback to
+  both, unblocking Nirvighnam's branch/reed intro lines and all of Kuru Me
+  Deva's ask/plank/hint/done lines (content for these already existed
+  correctly in `voiceGuidance.js`, just unreachable).
+- **VO race condition (Nirvighnam, Kuru Me Deva):** the next-obstacle intro
+  VO and the just-cleared obstacle's syllable VO both fired off the same
+  state change (`cleared.length`/`litCount`), sharing one audio channel —
+  whichever started second cut the first off via `stopVoice()`. Fixed by
+  chaining the next VO onto the syllable's `onEnded` in both
+  `NirvighnamGame.jsx` (stone→branch→reed) and `KurumedevaGame.jsx`
+  (`kuru_logs_after`/`kuru_rope_after` now play after "Kuru"/"me" instead of
+  alongside them).
+- **Gesture demo timing (Nirvighnam, Kuru Me Deva):** the teaching gesture
+  for branch/reed/elephant-ask/plank was gated only on `nextObstacleId`
+  changing, so it appeared immediately — before the obstacle's own intro VO
+  even started, let alone reached its action clause. Now gated on that VO's
+  `onStart`, plus a flat 500ms delay (approximates "story clause has ended,
+  action clause has begun" without needing to split each line's audio into
+  two separate playbacks).
+- **Gesture demo playing twice:** per Madhurima's call — a single teaching
+  pass, then immediate control, then the 10/18/26 hint ladder only if
+  stuck (no automatic replay). Mahakaya's log-drag teaching and Suryakoti's
+  initial scratch teaching were both `iterations={2}` (Suryakoti's own code
+  comment already said "one pass", the value just didn't match); both now
+  `iterations={1}` for the auto-teaching pass only — their L2/L3 hint-ladder
+  escalations (shown only if the child is stuck) are untouched. Nirvighnam's
+  hold gesture (the one case Madhurima flagged worth a longer single pass
+  instead of two) was already a single 2.8s loop — no change needed.
+- **New content in `voiceGuidance.js`:** `scene10_maha_keep_adding` ("Keep
+  adding logs to the raft.") — one-time cue after the first log only;
+  `scene11_surya_keep_rubbing` ("Keep rubbing to bring back more light.") —
+  one-time cue after the first patch only; `scene11_sama_find_another`
+  ("Look and hold another part of the shadow.") — one-time cue after the
+  first shadow reveal only, wired into `SamaprabhaGame.jsx`. Vakratunda,
+  Sarvakaryeshu, and Sarvada were left as-is per Madhurima's call (syllable +
+  visual already carry them).
+
+**Open:** Not yet retested end-to-end on Suryakoti/Mahakaya/Samaprabha's new
+continuation cues or the `iterations={1}` change (only Nirvighnam and Kuru Me
+Deva were live-tested this session, across two fix rounds). Also observed —
+NOT authored by me this session — Madhurima's own manual fix in
+`NirvighnamGame.jsx` for a branch-drag threshold/jitter issue
+(`BRANCH_DRAG_START_THRESHOLD`, `branchDragActive`) and a debug-panel
+default change, picked up while re-reading the file after her live testing.
+Checklist items for all of the above added to `TEST.md` (Scenes 10, 11, 12).
+
+## [2026-09-28] — Mahakaya QA defect fixes (GMB_QA_Defect_Report_Vakratunda_Grove_2026-09-28)
+**Touched:** src/lib/config/content/voiceGuidance.js;
+src/zones/shloka-river/scenes/Scene1/MahakayaRescueGame.jsx;
+src/zones/shloka-river/scenes/Scene1/VakratundaGroveSimplified.jsx;
+src/dev/webSpeechScripts.js.
+
+**Changed:** Fixed all 4 actionable items from Madhurima's Mahakaya harness QA pass.
+
+- **Intro VO copy:** `scene10_maha_intro` changed to "Everyone wants to cross
+  the river. Drag the logs to build a raft." — updated in `voiceGuidance.js`,
+  the live scene's inline `webSpeechMap` fallback, and the dev harness's
+  `webSpeechScripts.js` (all three copies were out of sync; the harness copy
+  still had older "raft is too small" wording).
+- **Log-1 teaching-demo timing (FAIL: was showing at scene start):** the
+  one-time drag gesture demo for log 1 was on a blind fixed delay counted
+  from component mount, unrelated to when the intro VO actually started
+  speaking (browser TTS has variable startup lag after cancel()+speak()).
+  Wired a real `onStart` callback through the VO chain (`speakWebSpeech` in
+  both `VakratundaGroveSimplified.jsx` and the dev harness's
+  `webSpeechScripts.js` now call `utterance.onstart`), so the teaching demo
+  now waits for the intro VO to actually begin, plus a 600ms buffer on top —
+  with a 1200ms fallback timer in case speech never starts (muted/no
+  `speechSynthesis` support).
+- **L3 gesture demo not showing (FAIL/BUG):** root cause was the same
+  `GestureDemo` replay bug fixed elsewhere on 2026-09-24 (`replayKey` needed
+  whenever one `active` condition spans multiple escalating hint levels) —
+  Mahakaya's 2026-09-26 rope-to-drag rebuild recreated the `GestureDemo` call
+  site from scratch and dropped that fix. Restored by adding
+  `replayKey={needsInitialTeaching && !teachingComplete ? 'teaching' : effectiveHintLevel}`,
+  so the full-path L3 demo now replays instead of only ever showing once at L2.
+- **Drop zone too strict ("even leaving half the log on the dropzone bounces
+  it back"):** `DROP_DIST` raised from `12` to `16` (roughly the log's own
+  half-width, ~15.9%), so a roughly-half-overlapping drop now registers as a
+  successful placement.
+
+**Not changed (confirmed out of scope this pass):** L1→L2 finish-gating
+(waiting for L1's visual pulse to finish before arming L2, mirroring the
+existing L2→L3 VO-end gating) — Madhurima confirmed to leave this alone for
+now; only L3's gesture-demo regression needed fixing.
+
+**Verified:** All 4 fixes re-tested in the game-test harness (`?game=mahakaya`)
+by Madhurima — intro VO, teaching-demo timing, L3 gesture demo, and drop-zone
+forgiveness all confirmed working. Mahakaya is ready for device testing.
+
 ## [2026-09-26] — Shloka River wrong-action polish: Sarvada tap ripple + Finale drag miss/soften
 **Touched:** src/zones/shloka-river/scenes/scene4/SarvadaGame.jsx,
 SarvadaGame.css; src/zones/shloka-river/scenes/scene5/ShlokaRiverFinale.jsx,

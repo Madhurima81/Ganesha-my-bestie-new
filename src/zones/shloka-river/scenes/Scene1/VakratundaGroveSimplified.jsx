@@ -345,7 +345,7 @@ const VakratundaGroveContent = ({
     }
   }, []);
 
-  const speakWebSpeech = useCallback((text, onEnded) => {
+  const speakWebSpeech = useCallback((text, onEnded, onStart) => {
     if (!audioEnabledRef.current || !text) {
       if (onEnded) onEnded();
       return;
@@ -362,6 +362,7 @@ const VakratundaGroveContent = ({
       utterance.rate = 0.95;
       utterance.pitch = 1;
       utterance.volume = 0.95;
+      utterance.onstart = () => onStart?.();
       utterance.onend = () => onEnded?.();
       utterance.onerror = () => onEnded?.();
       synth.speak(utterance);
@@ -371,6 +372,12 @@ const VakratundaGroveContent = ({
   }, []);
 
   const playGuidanceVoice = useCallback((key, onEnded, options = {}) => {
+    // Stop both channels before speaking: playHookVoice already cancels Web
+    // Speech internally, but speakWebSpeech only cancels its own utterance —
+    // without this, a still-playing MP3 line keeps going under a new
+    // Web-Speech line (same two-speech-source issue as Family Tree).
+    stopVoice();
+    stopWebSpeech();
     const webSpeechMap = {
       welcome: "Our river friends need a way across. Let’s help.",
       instructionListen: 'Listen carefully.',
@@ -403,7 +410,7 @@ const VakratundaGroveContent = ({
       scene10_vak_drag_pieces: 'Look for another way through.',
       scene10_vak_crossed: 'Vakratunda! You found another way and helped Frog reach his family.',
       scene10_vak_affirmation: 'I can change my plan and try another way.',
-      scene10_maha_intro: 'The friends are waiting. Let\'s build a raft with space for everyone.',
+      scene10_maha_intro: 'Everyone wants to cross the river. Drag the logs to build a raft.',
       scene10_maha_drag_water: 'Drag the log into the water.',
       scene10_maha_place_here: 'Put the log here.',
       scene10_maha_log_moving: '',
@@ -411,7 +418,7 @@ const VakratundaGroveContent = ({
       scene10_maha_strength: 'I can make space in my heart for others.',
     };
     if (webSpeechMap[key]) {
-      speakWebSpeech(stripLeadingSpeechText(webSpeechMap[key], options.stripLeadingText), onEnded);
+      speakWebSpeech(stripLeadingSpeechText(webSpeechMap[key], options.stripLeadingText), onEnded, options.onStart);
       return;
     }
     const script = getVoiceScript(zoneId, sceneId, key);
@@ -420,7 +427,7 @@ const VakratundaGroveContent = ({
       return;
     }
     if (onEnded) onEnded();
-  }, [playHookVoice, sceneId, speakWebSpeech, zoneId]);
+  }, [playHookVoice, sceneId, speakWebSpeech, stopVoice, stopWebSpeech, zoneId]);
   const replayCurrentVoice = useCallback(() => {
     if (!isAudioOn) return;
     if (!sceneState.welcomeShown || sceneState.phase === PHASES.INITIAL) {

@@ -540,6 +540,12 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       return;
     }
     const { onStart, onEnd, onError, moment = 'encouragement' } = options;
+    // Stop both engines first: useVoiceGuidance's own idle timer can fire its
+    // hook-driven playVoice() independently of this scene's speakLine calls —
+    // without this, a still-playing idle-hint MP3 keeps going under this line
+    // (same two-speech-source issue as Family Tree).
+    stopVoice();
+    stopSpokenVoice();
     speak(text, { age: 7, style: 'child', moment, onStart, onEnd, onError });
   };
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useGameSounds } from '../../../../lib/hooks/useGameSounds';
+import { getVoiceScript } from '../../../../lib/config/content/voiceGuidance';
 import './SuryakotiBankSimplified.css';
 
 import SceneManager from '../../../../lib/components/scenes/SceneManager';
@@ -168,7 +169,9 @@ const SuryakotiBankContent = ({
   const suryaInteractionStartedRef = useRef(false);
   const samaInteractionStartedRef = useRef(false);
   const [samaIntroComplete, setSamaIntroComplete] = useState(false);
+  const [samaIntroVoStarted, setSamaIntroVoStarted] = useState(false);
   const [suryaIntroComplete, setSuryaIntroComplete] = useState(false);
+  const [suryaIntroVoStarted, setSuryaIntroVoStarted] = useState(false);
 
   const { resetScene } = useSceneReset(sceneActions, zoneId, sceneId, getSceneResetConfig(sceneId));
   const completionModalContent = getCompletionModal(zoneId, sceneId);
@@ -243,6 +246,7 @@ const SuryakotiBankContent = ({
     setCurrentPhase,
     startIdleTimer,
     stopIdleTimer,
+    playVoice: playHookVoice,
   } = useVoiceGuidance(zoneId, sceneId, {
     enableMusic: false,
     voiceVolume: 1,
@@ -261,7 +265,7 @@ const SuryakotiBankContent = ({
     }
   }, []);
 
-  const speakWebSpeech = useCallback((text, onEnded) => {
+  const speakWebSpeech = useCallback((text, onEnded, onStart) => {
     if (!audioEnabledRef.current || !text) {
       onEnded?.();
       return;
@@ -278,6 +282,7 @@ const SuryakotiBankContent = ({
       utterance.rate = 0.95;
       utterance.pitch = 1;
       utterance.volume = 0.95;
+      utterance.onstart = () => onStart?.();
       utterance.onend = () => onEnded?.();
       utterance.onerror = () => onEnded?.();
       synth.speak(utterance);
@@ -287,16 +292,26 @@ const SuryakotiBankContent = ({
   }, []);
 
   const playGuidanceVoice = useCallback((key, onEnded, options = {}) => {
+    // Stop both channels before speaking: playHookVoice already cancels Web
+    // Speech internally, but speakWebSpeech only cancels its own utterance —
+    // without this, a still-playing MP3 line keeps going under a new
+    // Web-Speech line (same two-speech-source issue as Family Tree).
+    stopVoice();
+    stopWebSpeech();
     const webSpeechMap = {
       welcome: "The river is dark. Let’s bring back some light.",
       scene11_intro: "The river is dark. Let’s bring back some light.",
       scene11_surya_intro: "Bunny can’t find home. Rub the glow to bring back the light.",
       scene11_surya_rub: "Rub the glowing spot.",
       scene11_surya_hint: "Keep rubbing.",
+      surya_hint_rub: "Rub the glowing spot.",
+      surya_hint_keep: "Keep rubbing.",
       scene11_surya_success: 'Suryakoti! You brought back the light and helped Bunny home.',
       scene11_surya_done: 'Suryakoti! You brought back the light and helped Bunny home.',
-      scene11_sama_intro: 'A little deer sees a strange shadow. Move the light and look closely.',
-      scene11_sama_hint: 'Move the light and look closely.',
+      scene11_sama_intro: 'Deer sees a strange shadow. Press and hold to look closely.',
+      scene11_sama_hint: 'Press and hold on the shadow.',
+      scene11_sama_hint_move: 'Press and hold on the shadow.',
+      scene11_sama_hint_hold: 'Keep holding to look closely.',
       scene11_sama_hint_look: 'Look again — what is really there?',
       scene11_sama_reveal_branch: 'That part is just a branch.',
       scene11_sama_reveal_reeds: 'Those are just reeds and leaves.',
@@ -310,11 +325,16 @@ const SuryakotiBankContent = ({
       sceneComplete: 'You brought back the light and saw what was really there.',
     };
     if (webSpeechMap[key]) {
-      speakWebSpeech(stripLeadingSpeechText(webSpeechMap[key], options.stripLeadingText), onEnded);
+      speakWebSpeech(stripLeadingSpeechText(webSpeechMap[key], options.stripLeadingText), onEnded, options.onStart);
+      return;
+    }
+    const script = getVoiceScript(zoneId, sceneId, key);
+    if (script) {
+      playHookVoice(key, onEnded, options);
       return;
     }
     onEnded?.();
-  }, [speakWebSpeech]);
+  }, [playHookVoice, sceneId, speakWebSpeech, stopVoice, stopWebSpeech, zoneId]);
 
   const replayCurrentVoice = useCallback(() => {
     if (!isAudioOn) return;
@@ -514,17 +534,20 @@ const SuryakotiBankContent = ({
       if (isAudioOn && !suryaIntroPlayedRef.current) {
         suryaIntroPlayedRef.current = true;
         setSuryaIntroComplete(false);
+        setSuryaIntroVoStarted(false);
         const cancelIntro = safeSetTimeout(() => {
-          if (suryaInteractionStartedRef.current) { setSuryaIntroComplete(true); return; }
+          if (suryaInteractionStartedRef.current) { setSuryaIntroComplete(true); setSuryaIntroVoStarted(true); return; }
           playGuidanceVoice('scene11_surya_intro', () => {
             setSuryaIntroComplete(true);
+            setSuryaIntroVoStarted(true);
             if (suryaInteractionStartedRef.current) return;
             startIdleTimer();
-          });
-        }, 2500);
+          }, { onStart: () => setSuryaIntroVoStarted(true) });
+        }, 800);
         return () => cancelIntro?.();
       }
       setSuryaIntroComplete(true);
+      setSuryaIntroVoStarted(true);
       startIdleTimer();
       return undefined;
     }
@@ -537,6 +560,7 @@ const SuryakotiBankContent = ({
       suryaIntroPlayedRef.current = false;
       suryaInteractionStartedRef.current = false;
       setSuryaIntroComplete(false);
+      setSuryaIntroVoStarted(false);
     }
   }, [sceneState?.phase]);
 
@@ -546,14 +570,17 @@ const SuryakotiBankContent = ({
       if (isAudioOn && !samaIntroPlayedRef.current) {
         samaIntroPlayedRef.current = true;
         setSamaIntroComplete(false);
+        setSamaIntroVoStarted(false);
         playGuidanceVoice('scene11_sama_intro', () => {
           setSamaIntroComplete(true);
+          setSamaIntroVoStarted(true);
           if (samaInteractionStartedRef.current) return;
           startIdleTimer();
-        });
+        }, { onStart: () => setSamaIntroVoStarted(true) });
         return undefined;
       }
       setSamaIntroComplete(true);
+      setSamaIntroVoStarted(true);
       startIdleTimer();
       return undefined;
     }
@@ -566,6 +593,7 @@ const SuryakotiBankContent = ({
       samaIntroPlayedRef.current = false;
       samaInteractionStartedRef.current = false;
       setSamaIntroComplete(false);
+      setSamaIntroVoStarted(false);
     }
   }, [sceneState?.phase]);
 
@@ -656,6 +684,7 @@ const SuryakotiBankContent = ({
                 <SuryakotiGame
                   isActive={sceneState.phase === PHASES.SURYAKOTI_GAME}
                   introComplete={suryaIntroComplete}
+                  introVoStarted={suryaIntroVoStarted}
                   hideElements={!!revealConfig}
                   onMicroWin={handleMicroWin}
                   onPhaseComplete={() => handlePhaseComplete('suryakoti')}
@@ -680,6 +709,7 @@ const SuryakotiBankContent = ({
                 <SamaprabhaGame
                   isActive={sceneState.phase === PHASES.SAMAPRABHA_GAME}
                   introComplete={samaIntroComplete}
+                  introVoStarted={samaIntroVoStarted}
                   hideElements={!!revealConfig}
                   onMicroWin={handleMicroWin}
                   onPhaseComplete={() => handlePhaseComplete('samaprabha')}

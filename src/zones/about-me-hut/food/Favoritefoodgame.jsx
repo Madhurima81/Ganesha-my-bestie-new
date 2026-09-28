@@ -551,8 +551,14 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       return;
     }
     const { onEnd, moment = 'encouragement' } = options;
+    // Stop both engines first: useVoiceGuidance's own idle timer can fire its
+    // hook-driven playVoice() independently of this scene's speakLine calls —
+    // without this, a still-playing idle-hint MP3 keeps going under this line
+    // (same two-speech-source issue as Family Tree).
+    stopVoice();
+    stopSpokenVoice();
     speak(text, { age: 7, style: 'child', moment, onEnd });
-  }, [isAudioOn, speak]);
+  }, [isAudioOn, speak, stopVoice, stopSpokenVoice]);
   const replayCurrentVoice = useCallback(() => {
     if (sceneState.showingCompletionScreen) {
       speakLine(VOICE_LINES.completionCelebration, { moment: 'celebration' });

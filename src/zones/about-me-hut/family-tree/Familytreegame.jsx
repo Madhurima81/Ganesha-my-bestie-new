@@ -286,6 +286,10 @@ const FamilyTreeGameContent = ({
  const { speak: speakHint, stop: stopSpokenVoice } = useGaneshaVoice();
  const replayCurrentVoice = useCallback(() => {
  if (!isAudioOn) return;
+ // Stop whatever either speech engine is mid-line before starting a replay
+ // (see the two-speech-source note above handleGaneshaTreeDone/finalReveal).
+ stopVoice();
+ stopSpokenVoice();
  if (sceneState.showingCompletionScreen) {
  if (FINAL_VO.completion) speakHint(FINAL_VO.completion, { age: 7, style: 'child', moment: 'celebration' });
  return;
@@ -316,7 +320,7 @@ const FamilyTreeGameContent = ({
  if (sceneState.gamePhase === 'sideBySide') {
  speakHint(FINAL_VO.comparison, { age: 7, style: 'child', moment: 'celebration' });
  }
- }, [isAudioOn, playVoice, sceneState.flippedMember, sceneState.gamePhase, sceneState.showingCompletionScreen, speakHint]);
+ }, [isAudioOn, playVoice, stopVoice, stopSpokenVoice, sceneState.flippedMember, sceneState.gamePhase, sceneState.showingCompletionScreen, speakHint]);
 
  // Audio toggle no syllable/word game audio here, stopVoice() is safe on toggle-off
  const handleAudioToggle = () => {
@@ -645,7 +649,10 @@ showTreeSparkles: false,
  // Check if welcome uses Web Speech API
  const welcomeScript = getVoiceScript('about-me-hut', 'family-tree', 'welcome');
  if (welcomeScript?.useWebSpeech) {
- // Use Web Speech API
+ // Use Web Speech API stop both engines first in case a prior
+ // scene instance (reload/remount) left something mid-line.
+ stopVoice();
+ stopSpokenVoice();
  speakHint(welcomeScript.text);
  } else {
  // Use file-based audio
@@ -753,6 +760,8 @@ showTreeSparkles: false,
  if (sceneState.gamePhase!== 'ganeshaTree' ||!sceneState.flippedMember ||!isAudioOn) return;
 
  flipCloseHintTimerRef.current = scheduleTimeout(() => {
+ stopVoice();
+ stopSpokenVoice();
  speakHint('Tap anywhere to close.', { age: 7, style: 'child', moment: 'encouragement' });
  flipCloseHintTimerRef.current = null;
  }, 5000);
@@ -1178,6 +1187,8 @@ sceneState.isSequencePlaying,
  };
 
  if (isAudioOn) {
+ stopVoice();
+ stopSpokenVoice();
  speakHint("And that's me, Ganesha!", {
  age: 7,
  style: 'child',

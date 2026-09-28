@@ -3,6 +3,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useGameSounds } from '../../../../lib/hooks/useGameSounds';
+import { getVoiceScript } from '../../../../lib/config/content/voiceGuidance';
 import './NirvighnamChantSimplified.css';
 
 import SceneManager from "../../../../lib/components/scenes/SceneManager";
@@ -248,7 +249,7 @@ const NirvighnamChantContent = ({
   // ── Voice guidance ─────────────────────────────────────────────────────────
   const {
     stopVoice, setVoiceVolume, playSfx, setCurrentPhase, startIdleTimer, stopIdleTimer,
-    playWord: playWordAudio, playSyllable, isPlaying: isVOPlaying,
+    playWord: playWordAudio, playSyllable, isPlaying: isVOPlaying, playVoice: playHookVoice,
   } = useVoiceGuidance(zoneId, sceneId, {
     enableMusic: false, voiceVolume: 1, sfxVolume: 0.7,
     idleTimeout: 999999, resumeDelay: RESUME_DELAY_MS,
@@ -260,6 +261,7 @@ const NirvighnamChantContent = ({
   const kuruIntroPlayedRef = useRef(false);
   const [kuruIntroComplete, setKuruIntroComplete] = useState(false);
   const [nirvIntroComplete, setNirvIntroComplete] = useState(false);
+  const [nirvIntroVoStarted, setNirvIntroVoStarted] = useState(false);
   const hintRef = useRef(null);
   const revealTimeoutsRef = useRef([]);
 
@@ -267,7 +269,7 @@ const NirvighnamChantContent = ({
     try { speechSynthRef.current?.cancel(); } catch {}
   }, []);
 
-  const speakWebSpeech = useCallback((text, onEnded) => {
+  const speakWebSpeech = useCallback((text, onEnded, onStart) => {
     if (!audioEnabledRef.current || !text) { onEnded?.(); return; }
     const synth = speechSynthRef.current;
     if (!synth || typeof SpeechSynthesisUtterance === 'undefined') { onEnded?.(); return; }
@@ -275,6 +277,7 @@ const NirvighnamChantContent = ({
       synth.cancel();
       const u = new SpeechSynthesisUtterance(text);
       u.lang = 'en-IN'; u.rate = 0.95; u.pitch = 1; u.volume = 0.95;
+      u.onstart = () => onStart?.();
       u.onend = () => onEnded?.();
       u.onerror = () => onEnded?.();
       synth.speak(u);
@@ -282,41 +285,51 @@ const NirvighnamChantContent = ({
   }, []);
 
   const playGuidanceVoice = useCallback((key, onEnded, options = {}) => {
+    // Stop both channels before speaking: playHookVoice already cancels Web
+    // Speech internally, but speakWebSpeech only cancels its own utterance —
+    // without this, a still-playing MP3 line keeps going under a new
+    // Web-Speech line (same two-speech-source issue as Family Tree).
+    stopVoice();
+    stopWebSpeech();
     const map = {
       welcome:             "The way ahead is tricky. Let’s help our friends through.",
       scene12_nir_intro:   "Turtle’s way home is blocked. Press and hold the rock to move it.",
+      nirv_branch_intro:    "The branch is still blocking the way. Drag it onto the bank.",
+      nirv_reed_intro:      "The reeds are blocking the way. Swipe them apart.",
       scene12_nir_drag:    "Something’s still blocking Turtle’s way.",
       nirv_hint:           "Something’s still blocking Turtle’s way.",
       nirv_hint_stone:     "Hold the rock.",
-      nirv_hint_branch:    "Move the branch out of the way.",
-      nirv_hint_reed:      "Open the reeds.",
+      nirv_hint_branch:    "Drag the branch onto the bank.",
+      nirv_hint_reed:      "Swipe the reeds apart.",
       nirv_hint_keep_stone:  "Keep holding.",
-      nirv_hint_keep_branch: "Drag the branch aside.",
+      nirv_hint_keep_branch: "Drag the branch onto the bank.",
       nirv_hint_keep_reed:   "Swipe the reeds apart.",
-      nirv_done:           "Nirvighnam! You cleared the way and helped Turtle through.",
+      nirv_done:           "You cleared the way and helped Turtle through.",
       nirvighnamSetup:     "Turtle’s way home is blocked. Press and hold the rock to move it.",
       nirvighnamClaim:     'I can solve one thing at a time.',
-      scene12_kuru_intro:  "Baby Beaver is across the broken bridge. Press and hold to lift the logs and help rebuild it.",
-      scene12_kuru_tap:    'Who can help with the logs?',
-      kuru_hint:           'Who can help with the logs?',
-      kuru_logs_first:     "Press and hold to help Beaver try.",
-      kuru_logs_fail:      "Those logs are too heavy. Who can Beaver ask for help?",
-      kuru_hint_logs:      "Who can help with the logs?",
+      scene12_kuru_intro:  "Baby Beaver is across the river.",
+      scene12_kuru_tap:    "The logs are too heavy. Drag the help bubble to someone who can help.",
+      kuru_hint:           "Drag the help bubble to someone who can help.",
+      kuru_hint_logs:      "Drag the help bubble to Elephant.",
       kuru_hint_logs_drag: "Drag the help bubble to Elephant.",
-      kuru_logs_after:     "Elephant helped move the logs.",
-      kuru_rope_first:     "Now help Beaver try the rope.",
-      kuru_rope_fail:      "The rope keeps slipping. Who can Beaver ask for help?",
-      kuru_hint_rope:      "Who can help with the rope?",
+      kuru_logs_after:     "Elephant helped put the logs in place.",
+      kuru_hint_rope:      "Drag the help bubble to Monkey.",
       kuru_hint_rope_drag: "Drag the help bubble to Monkey.",
       kuru_rope_after:     "Monkey helped tie the rope.",
-      kuru_done:           "Kuru Me Deva! You asked for help and finished the bridge.",
-      kurumedevaSetup:     "Baby Beaver is across the broken bridge. Press and hold to lift the logs and help rebuild it.",
+      kuru_plank_instruction: "Now drag the planks into place.",
+      kuru_done:           "Kuru Me Deva! You asked for help and built the bridge.",
+      kurumedevaSetup:     "Baby Beaver is across the river.",
       kurumedevaClaim:     'I can ask for help when I need it.',
       sceneComplete:       "You cleared the path and asked for help when things got hard.",
     };
-    if (map[key]) { speakWebSpeech(stripLeadingSpeechText(map[key], options.stripLeadingText), onEnded); return; }
+    if (map[key]) { speakWebSpeech(stripLeadingSpeechText(map[key], options.stripLeadingText), onEnded, options.onStart); return; }
+    const script = getVoiceScript(zoneId, sceneId, key);
+    if (script) {
+      playHookVoice(key, onEnded, options);
+      return;
+    }
     onEnded?.();
-  }, [speakWebSpeech]);
+  }, [playHookVoice, sceneId, speakWebSpeech, stopVoice, stopWebSpeech, zoneId]);
 
   const replayCurrentVoice = useCallback(() => {
     if (!isAudioOn) return;
@@ -444,19 +457,23 @@ const NirvighnamChantContent = ({
       if (isAudioOn && !nirvIntroPlayedRef.current) {
         nirvIntroPlayedRef.current = true;
         setNirvIntroComplete(false);
+        setNirvIntroVoStarted(false);
         playGuidanceVoice('scene12_nir_intro', () => {
           setNirvIntroComplete(true);
+          setNirvIntroVoStarted(true);
           startIdleTimer();
-        });
+        }, { onStart: () => setNirvIntroVoStarted(true) });
         return;
       }
       setNirvIntroComplete(true);
+      setNirvIntroVoStarted(true);
       startIdleTimer();
       return;
     }
     if (sceneState.phase !== PHASES.NIRVIGHNAM_GAME) {
       nirvIntroPlayedRef.current = false;
       setNirvIntroComplete(false);
+      setNirvIntroVoStarted(false);
     }
   }, [isAudioOn, playGuidanceVoice, sceneState.phase, sceneState.welcomeShown, setCurrentPhase, startIdleTimer, safeSetTimeout]);
 
@@ -606,6 +623,7 @@ const NirvighnamChantContent = ({
               <NirvighnamGame
                 isActive={sceneState.phase === PHASES.NIRVIGHNAM_GAME}
                 introComplete={nirvIntroComplete}
+                introVoStarted={nirvIntroVoStarted}
                 hideElements={showCenteredWord || showPowerOverlay || !!revealConfig}
                 onMicroWin={handleMicroWin}
                 onPhaseComplete={() => window.setTimeout(() => handlePhaseComplete('nirvighnam'), 0)}
