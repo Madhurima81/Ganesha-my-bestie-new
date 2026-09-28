@@ -5,42 +5,46 @@ import useRepeatedHintCycle from '../../../../lib/hooks/useRepeatedHintCycle';
 import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
 import './KurumedevaGame.css';
 
-import bgImg from './assets/images/nirvighnam/bg.png';
+import bgImg from './assets/images/nirvighnam/bg.webp';
 
 // Bridge redesign v2 (Kurume Deva) — no more solo try/fail beats. The child
 // asks Elephant for help (logs appear), asks Monkey for help (rope appears,
 // same image — the pack has no separate "tied" art), then Beaver alone lays
 // 3 planks on top to finish the bridge.
-import elephantPullImg from './assets/images/bridge/Characters/elephant-pulling.webp';
-import elephantHappyImg from './assets/images/bridge/Characters/elephant-happy.webp';
 import elephantIdleBananaImg from './assets/images/bridge/Characters/elephant-idle-banana.webp';
+import elephantHelpingImg from './assets/images/bridge/Characters/elephant-lift.webp';
+import elephantHappyImg from './assets/images/bridge/Characters/elephant-happy.webp';
 import elephantApproachingImg from './assets/images/bridge/Characters/elephant-approaching-walking.webp';
 import helpBubbleElephantImg from './assets/images/bridge/Characters/help-bubble-elephant-logs.webp';
-import monkeyTyingImg from './assets/images/bridge/Characters/monkey-tying.webp';
-import monkeyHappyImg from './assets/images/bridge/Characters/monkey-happy.webp';
 import monkeyPlayingTwigImg from './assets/images/bridge/Characters/monkey-playing-twig.webp';
+import monkeyHelpingImg from './assets/images/bridge/Characters/monkey-tie.webp';
+import monkeyHappyImg from './assets/images/bridge/Characters/monkey-happy.webp';
 import monkeyIdleImg from './assets/images/bridge/Characters/monkey-idle.webp';
 import helpBubbleMonkeyImg from './assets/images/bridge/Characters/help-bubble-monkey-knot.webp';
 
-import plankObj from './assets/images/bridge/Bridge/bridge-single-plank.webp';
-// Small resting piles shown near each friend BEFORE they help — a visual cue
-// for what they're about to bring, since nothing else hints "logs" vs "rope".
-import logPileObj from './assets/images/bridge/Bridge/bridge-support-logs.webp';
-import ropePileObj from './assets/images/bridge/Bridge/rope-knot.webp';
+import plankObj from './assets/images/Kurumedeva/plank-bunny.webp';
+// Resting logs shown near Elephant BEFORE he helps — a visual cue for what
+// he's about to bring. 3 single logs, each independently positionable in the
+// Layout Debug panel, sharing one size.
+import logPieceObj from './assets/images/Kurumedeva/log-turtle.webp';
 
 // Explicit bridge-state images: step1 = bare support logs (after Elephant),
 // step2 = logs + rope tied (after Monkey) — this stays as the base art while
 // the 3 planks are dragged on top of it, right through to the finished bridge.
-import bridgeStep1Img from './assets/images/Kurumedeva/step1.png';
-import bridgeStep2Img from './assets/images/Kurumedeva/step2.png';
+import bridgeStep1Img from './assets/images/Kurumedeva/step1.webp';
+import bridgeStep2Img from './assets/images/Kurumedeva/step2.webp';
 
 import beaverAskingImg from './assets/images/bridge/Characters/beaver-asking.webp';
 import beaverIdleWorriedImg from './assets/images/bridge/Characters/beaver-idle-worried.webp';
+// Beaver's own helping pose differs per round — matches the beat player's
+// beaver-lift (with Elephant) vs beaver-tie (with Monkey).
+import beaverLiftImg from './assets/images/bridge/Characters/beaver-lift.webp';
+import beaverTieImg from './assets/images/bridge/Characters/beaver-tie.webp';
 import beaverPlacingPlankImg from './assets/images/bridge/Characters/beaver-placing-plank.webp';
 import beaverCrossingImg from './assets/images/bridge/Characters/beaver-crossing.webp';
 import babyBeaverWavingImg from './assets/images/bridge/Characters/baby-beaver-waving.webp';
 import beaverBabyReunionImg from './assets/images/bridge/Characters/beaver-baby-reunion.webp';
-import helpHandIconImg from './assets/images/Kurumedeva/help-hand-icon.png';
+import helpHandIconImg from './assets/images/Kurumedeva/help-hand-icon.webp';
 
 import { KURUMEDEVA_LAYOUT } from './scene3LayoutConfig';
 
@@ -49,8 +53,9 @@ const DEBUG_UI_ENABLED =
   (window.location.pathname.includes('game-test') ||
     new URLSearchParams(window.location.search).has('debugKuru'));
 
-const SYLLABLES = ['Ku', 'ru', 'me', 'deva'];
-const HELP_TOKEN_HOME = { l: 77.2, t: 60.7 };
+const SYLLABLES = ['Kuru', 'me', 'deva'];
+// Near Mother Beaver's new left-side starting spot (BEAVER_PATH[0]).
+const HELP_TOKEN_HOME = { l: 23.5, t: 55.5 };
 
 // Play order = build order: ask Elephant (logs appear), ask Monkey (rope
 // appears), then Beaver alone lays the planks — no third helper.
@@ -60,7 +65,7 @@ const FRIENDS = [
     label: 'Elephant',
     carryImg: elephantIdleBananaImg, // idle, eating a banana, before being asked
     walkingImg: elephantApproachingImg, // walking over after the ask
-    helpingImg: elephantPullImg, // helping settle the logs into place
+    helpingImg: elephantHelpingImg, // helping settle the logs into place
     emptyImg: elephantHappyImg,
     helpBubbleImg: helpBubbleElephantImg,
   },
@@ -69,17 +74,17 @@ const FRIENDS = [
     label: 'Monkey',
     carryImg: monkeyPlayingTwigImg, // idle, playing with a twig, before being asked
     walkingImg: monkeyIdleImg, // calm transition pose while responding/approaching
-    helpingImg: monkeyTyingImg, // tying the rope
+    helpingImg: monkeyHelpingImg, // tying the rope
     emptyImg: monkeyHappyImg,
     helpBubbleImg: helpBubbleMonkeyImg,
   },
 ];
 
-const AUDIO = { syllables: ['ku', 'ru', 'me', 'deva'] };
-// Elephant lights 1 syllable (Ku), Monkey lights the 2nd (Ru), the finished
-// plank round lights the rest (me + deva) — matches the child's rhythm of
-// two "ask for help" beats followed by one "finish it yourself" beat.
-const SYLLABLES_LIT_AFTER_STEP = [1, 2, 4];
+const AUDIO = { syllables: ['kuru', 'me', 'deva'] };
+// One word-group lit per game step: Elephant lights "Kuru", Monkey lights
+// "Me", the finished plank round lights "Deva" — matches the child's rhythm
+// of two "ask for help" beats followed by one "finish it yourself" beat.
+const SYLLABLES_LIT_AFTER_STEP = [1, 2, 3];
 // 2 ask-for-help rounds (Elephant, Monkey) + 1 non-gated finishing round
 // (Beaver lays the planks alone) = 3 stages total.
 const TOTAL_ROUNDS = 3;
@@ -93,11 +98,14 @@ const WAIT_SPOTS = [
 ];
 // Where each friend stands while it "helps" (beside the bridge, not just at
 // the gap), and where it walks to once its part is done.
+// Elephant's helper spot sits right next to the log pile (so he visibly
+// arrives beside what he's about to carry); Monkey's stays near the bridge.
 const HELPER_SPOTS = [
-  { l: 40.7, t: 66 },
+  { l: 24, t: 68 },
   { l: 56.6, t: 68 },
 ];
 const WALK_TO_MS = 1000; // amble to the bridge
+const LOG_FLY_MS = 650; // logs sliding from the pile onto the bridge
 const HELP_SETTLE_MS = 900; // stand and help before the bridge art updates
 const WALK_BACK_MS = 1050; // amble to the bank line
 
@@ -114,11 +122,15 @@ const PLANK_DROP_RADIUS = 18; // forgiving snap to the active slot
 // Anywhere over the gap counts as "close enough" for little hands.
 const GAP_ZONE = { l0: 40, l1: 84, t0: 58, t1: 84 };
 
-// Resting piles — visible from scene start next to each friend, so a child
-// can see "logs" vs "rope" before ever asking for help. Each disappears once
-// that friend actually helps (its material becomes the bridge art instead).
-const LOG_PILE_SPOT = { l: 38, t: 66, w: 11 };
-const ROPE_PILE_SPOT = { l: 29, t: 45, w: 8 };
+// Resting logs — 3 single logs visible from scene start next to Elephant.
+// Disappear once he helps (the bridge art takes over). Each is independently
+// positioned (fine-tune in the Layout Debug panel); all 3 share one size.
+const LOG_PILE_SLOTS = [
+  { l: 17.3, t: 72.9 },
+  { l: 17.7, t: 71.8 },
+  { l: 17.4, t: 72.1 },
+];
+const LOG_PILE_W = 16;
 
 // ---------------------------------------------------------------------------
 // Layout Debug panel (ported from MahakayaRescueGame). Drag any marker on the
@@ -133,8 +145,9 @@ const DEBUG_PANEL_KEYS = [
   ['wait1', 'Monkey wait spot'],
   ['helper0', 'Elephant helper spot'],
   ['helper1', 'Monkey helper spot'],
-  ['logPile', 'Log pile (before Elephant helps)  (+ size)'],
-  ['ropePile', 'Rope pile (before Monkey helps)  (+ size)'],
+  ['logPile0', 'Log 1 (before Elephant helps)  (+ size)'],
+  ['logPile1', 'Log 2'],
+  ['logPile2', 'Log 3'],
   ['bridge', 'Bridge'],
   ['beaverBaby', 'Baby beaver'],
   ['plankPile', 'Plank pile'],
@@ -162,8 +175,7 @@ function debugArtFor(key, pos, layout) {
   if (key.startsWith('friend')) return { src: FRIENDS[tail]?.carryImg, w: pos.w || 10, r: 0, flip };
   if (key.startsWith('wait')) return { src: FRIENDS[tail]?.emptyImg, w: 10, r: 0, flip };
   if (key.startsWith('helper')) return { src: FRIENDS[tail]?.helpingImg, w: 10, r: 0, flip };
-  if (key === 'logPile') return { src: logPileObj, w: wOf('logPile', LOG_PILE_SPOT.w), r: 0 };
-  if (key === 'ropePile') return { src: ropePileObj, w: wOf('ropePile', ROPE_PILE_SPOT.w), r: 0 };
+  if (key.startsWith('logPile')) return { src: logPieceObj, w: wOf('logPile0', LOG_PILE_W), r: 0 };
   if (key === 'helpTokenHome') return { src: helpHandIconImg, w: 8, r: 0 };
   if (key === 'beaverBaby') return { src: babyBeaverWavingImg, w: KURUMEDEVA_LAYOUT.beaverBaby.w, r: 0, flip };
   if (key.startsWith('beaverPath')) return { src: beaverIdleWorriedImg, w: KURUMEDEVA_LAYOUT.beaver.w, r: 0, flip };
@@ -174,8 +186,8 @@ function debugArtFor(key, pos, layout) {
 
 // Only the markers for one phase show at a time — keeps the scene readable.
 const DEBUG_PHASES = [
-  { label: 'Phase 0 — Setup', keys: ['friend0', 'friend1', 'helpTokenHome', 'beaverBaby', 'bridge'] },
-  { label: 'Phase 1 — Ask (Elephant / Monkey)', keys: ['helper0', 'helper1', 'wait0', 'wait1', 'logPile', 'ropePile'] },
+  { label: 'Phase 0 — Setup', keys: ['friend0', 'friend1', 'helpTokenHome', 'beaverBaby', 'bridge', 'logPile0', 'logPile1', 'logPile2'] },
+  { label: 'Phase 1 — Ask (Elephant / Monkey)', keys: ['helper0', 'helper1', 'wait0', 'wait1'] },
   { label: 'Phase 2 — Planks (Beaver alone)', keys: ['plankPile', 'plankSlot0', 'plankSlot1', 'plankSlot2'] },
   { label: 'Phase 3 — Crossing', keys: ['beaverPath0', 'beaverPath1', 'beaverPath2', 'beaverPath3', 'beaverPath4', 'beaverPath5', 'beaverPath6'] },
 ];
@@ -191,8 +203,11 @@ function buildDebugLayout() {
   HELPER_SPOTS.forEach((spot, index) => {
     layout[`helper${index}`] = { l: spot.l, t: spot.t };
   });
-  layout.logPile = { l: LOG_PILE_SPOT.l, t: LOG_PILE_SPOT.t, w: LOG_PILE_SPOT.w };
-  layout.ropePile = { l: ROPE_PILE_SPOT.l, t: ROPE_PILE_SPOT.t, w: ROPE_PILE_SPOT.w };
+  LOG_PILE_SLOTS.forEach((slot, index) => {
+    layout[`logPile${index}`] = index === 0
+      ? { l: slot.l, t: slot.t, w: LOG_PILE_W }
+      : { l: slot.l, t: slot.t };
+  });
   layout.helpTokenHome = { ...HELP_TOKEN_HOME };
   layout.bridge = {
     l: KURUMEDEVA_LAYOUT.bridge.l,
@@ -224,23 +239,24 @@ const round1 = (n) => Number(Number(n).toFixed(1));
 
 const POSE_ASSETS = [
   bgImg,
-  elephantPullImg,
-  elephantHappyImg,
   elephantIdleBananaImg,
+  elephantHelpingImg,
+  elephantHappyImg,
   elephantApproachingImg,
   helpBubbleElephantImg,
-  monkeyTyingImg,
-  monkeyHappyImg,
   monkeyPlayingTwigImg,
+  monkeyHelpingImg,
+  monkeyHappyImg,
   monkeyIdleImg,
   helpBubbleMonkeyImg,
   plankObj,
-  logPileObj,
-  ropePileObj,
+  logPieceObj,
   bridgeStep1Img,
   bridgeStep2Img,
   beaverAskingImg,
   beaverIdleWorriedImg,
+  beaverLiftImg,
+  beaverTieImg,
   beaverPlacingPlankImg,
   beaverCrossingImg,
   babyBeaverWavingImg,
@@ -273,6 +289,9 @@ export default function KurumedevaGame({
   const [helpDelivered, setHelpDelivered] = useState(false);
   const [isRoundSettling, setIsRoundSettling] = useState(false);
   const [walkingIndex, setWalkingIndex] = useState(null);
+  // The 3 log pieces slide from their pile onto the bridge once Elephant
+  // helps, right before the bridge art itself swaps to step1.
+  const [logsFlying, setLogsFlying] = useState(false);
 
   // Plank round — drag 3 planks onto the finished bridge.
   const [placeActive, setPlaceActive] = useState(false);
@@ -440,6 +459,7 @@ export default function KurumedevaGame({
       setHelpDelivered(false);
       setIsRoundSettling(false);
       setWalkingIndex(null);
+      setLogsFlying(false);
       setPlaceActive(false);
       setPlacedCount(0);
       setPieceDragActive(false);
@@ -469,14 +489,6 @@ export default function KurumedevaGame({
   }, [friendStep, isActive, phase]);
 
   useEffect(() => () => clearTimers(), [clearTimers]);
-
-  const moveFriendToWait = useCallback((friendIndex) => {
-    setFriendPositions((prev) => {
-      const next = [...prev];
-      next[friendIndex] = WAIT_SPOTS[friendIndex];
-      return next;
-    });
-  }, []);
 
   const resetHelpToken = useCallback(() => {
     setIsDraggingHelp(false);
@@ -538,21 +550,24 @@ export default function KurumedevaGame({
       });
 
       // ---------------------------------------------------------------
-      // ELEPHANT — logs appear.
+      // ELEPHANT — logs appear. He stays in his "helping" pose at the
+      // bridge (no happy pose, no walking back yet) — only Ganesha's
+      // "wait → help → happy" 3-state rule, and "happy" is reserved for
+      // once the whole bridge is finished.
       // ---------------------------------------------------------------
       if (friendIndex === 0) {
-        setBridgeStep(1);
-        setLitCount(SYLLABLES_LIT_AFTER_STEP[0]);
-        window.setTimeout(() => onMicroWin?.(), 0);
+        // The logs slide from their pile onto the bridge, THEN the bridge
+        // art swaps to step1 — not an instant cut.
+        setLogsFlying(true);
         playSceneLine?.('kuru_logs_after');
+        safeAfter(LOG_FLY_MS, () => {
+          setLogsFlying(false);
+          setBridgeStep(1);
+          setLitCount(SYLLABLES_LIT_AFTER_STEP[0]);
+          window.setTimeout(() => onMicroWin?.(), 0);
+        });
 
         safeAfter(HELP_SETTLE_MS, () => {
-          setFriendImgStates((prev) => {
-            const next = [...prev];
-            next[0] = 'empty';
-            return next;
-          });
-          moveFriendToWait(0);
           setFriendStep(1);
           setHelpDelivered(false);
           setHelpTokenPos(HELP_TOKEN_HOME);
@@ -562,7 +577,8 @@ export default function KurumedevaGame({
       }
 
       // ---------------------------------------------------------------
-      // MONKEY — rope appears, then the plank round begins.
+      // MONKEY — rope appears, then the plank round begins. Same rule —
+      // stays in "helping" pose until the bridge is fully done.
       // ---------------------------------------------------------------
       setBridgeStep(2);
       setLitCount(SYLLABLES_LIT_AFTER_STEP[1]);
@@ -570,12 +586,6 @@ export default function KurumedevaGame({
       playSceneLine?.('kuru_rope_after');
 
       safeAfter(HELP_SETTLE_MS, () => {
-        setFriendImgStates((prev) => {
-          const next = [...prev];
-          next[1] = 'empty';
-          return next;
-        });
-        moveFriendToWait(1);
         setFriendStep(2);
         setHelpDelivered(false);
         setHelpTokenPos(HELP_TOKEN_HOME);
@@ -586,7 +596,7 @@ export default function KurumedevaGame({
         setIsRoundSettling(false);
       });
     });
-  }, [friendImgStates, friendPositions, friendStep, isPaused, isRoundSettling, markInteraction, moveFriendToWait, onMicroWin, placeActive, playSceneLine, safeAfter, stopSceneVoice]);
+  }, [friendImgStates, friendPositions, friendStep, isPaused, isRoundSettling, markInteraction, onMicroWin, placeActive, playSceneLine, safeAfter, stopSceneVoice]);
 
   // --- Plank drag handlers: pull a plank from the pile into the gap --------
   const placeNextPiece = useCallback(() => {
@@ -656,6 +666,9 @@ export default function KurumedevaGame({
     setBridgeStep(TOTAL_ROUNDS);
     setPlaceActive(false);
     setIsRoundSettling(true);
+    // Bridge is fully done — only now do Elephant and Monkey switch from
+    // their "helping" pose to happy.
+    setFriendImgStates(['empty', 'empty']);
 
     safeAfter(420, () => {
       setIsRoundSettling(false);
@@ -876,16 +889,11 @@ export default function KurumedevaGame({
           l: round1(debugLayout[`helper${index}`].l),
           t: round1(debugLayout[`helper${index}`].t),
         })),
-        LOG_PILE_SPOT: {
-          l: round1(debugLayout.logPile.l),
-          t: round1(debugLayout.logPile.t),
-          w: round1(debugLayout.logPile.w),
-        },
-        ROPE_PILE_SPOT: {
-          l: round1(debugLayout.ropePile.l),
-          t: round1(debugLayout.ropePile.t),
-          w: round1(debugLayout.ropePile.w),
-        },
+        LOG_PILE_W: round1(debugLayout.logPile0.w),
+        LOG_PILE_SLOTS: LOG_PILE_SLOTS.map((slot, index) => ({
+          l: round1(debugLayout[`logPile${index}`].l),
+          t: round1(debugLayout[`logPile${index}`].t),
+        })),
         PLANK_SLOT_W: round1(debugLayout.plankSlot0.w),
         PLANK_PILE: {
           l: round1(debugLayout.plankPile.l),
@@ -957,7 +965,10 @@ export default function KurumedevaGame({
   // rope — step2 stays as the base art while the planks are dragged onto it,
   // right through crossing/done.
   const bridgeImg = bridgeStep === 0 ? null : bridgeStep === 1 ? bridgeStep1Img : bridgeStep2Img;
-  const showPlacedPieces = debugMode || placeActive;
+  // Stays true once the bridge is fully done too — placeActive flips false
+  // the instant the last plank lands, but the placed planks must stay put
+  // through crossing/done, not vanish.
+  const showPlacedPieces = debugMode || placeActive || bridgeStep === TOTAL_ROUNDS;
 
   // One idle gesture hint, keyed to the current piece/friend. pointer-events:none overlay.
   const gestureHint = (() => {
@@ -978,15 +989,21 @@ export default function KurumedevaGame({
     return null;
   })();
 
+  // While a friend is walking over/helping (after the ask, before the next
+  // round starts), Beaver's own pose matches which friend it is — lift with
+  // Elephant, tie with Monkey — not just a generic worried/idle look.
+  const isHelpingInProgress = isRoundSettling && helpDelivered && !placeActive;
   const beaverImg = phase === 'done'
     ? beaverBabyReunionImg
     : phase === 'crossing'
       ? beaverCrossingImg
       : placeActive
         ? beaverPlacingPlankImg
-        : canAsk
-          ? beaverAskingImg
-          : beaverIdleWorriedImg;
+        : isHelpingInProgress
+          ? (friendStep === 0 ? beaverLiftImg : beaverTieImg)
+          : canAsk
+            ? beaverAskingImg
+            : beaverIdleWorriedImg;
 
   return (
     <div className={`kuru-game${hideElements ? ' is-hidden' : ''}${debugMode ? ' is-debugging' : ''}`}>
@@ -1022,36 +1039,32 @@ export default function KurumedevaGame({
           <p className="kuru-doneline">You asked for help. Together, you made a way!</p>
         )}
 
-        {/* Resting piles — visible before each friend helps, so the child
-            can see what they're about to bring. Each vanishes once that
-            friend's help lands (its material becomes the bridge art). */}
-        {!debugMode && phase === 'play' && bridgeStep === 0 && (
-          <div
-            className="kuru-log-piece is-log"
-            style={{
-              left: `${LOG_PILE_SPOT.l}%`,
-              top: `${LOG_PILE_SPOT.t}%`,
-              width: `${LOG_PILE_SPOT.w}%`,
-              pointerEvents: 'none',
-            }}
-          >
-            <img src={logPileObj} alt="" draggable={false} />
-          </div>
-        )}
-        {!debugMode && phase === 'play' && friendStep === 1 && bridgeStep === 1 && (
-          <div
-            className="kuru-log-piece is-rope"
-            style={{
-              left: `${ROPE_PILE_SPOT.l}%`,
-              top: `${ROPE_PILE_SPOT.t}%`,
-              width: `${ROPE_PILE_SPOT.w}%`,
-              transform: 'translate(-50%, -50%) rotate(0deg)',
-              pointerEvents: 'none',
-            }}
-          >
-            <img src={ropePileObj} alt="" draggable={false} />
-          </div>
-        )}
+        {/* Resting logs — visible before Elephant helps. Once he helps, they
+            slide from the pile onto the bridge (logsFlying), then the bridge
+            art itself swaps to step1 — not an instant cut. */}
+        {!debugMode && phase === 'play' && (bridgeStep === 0 || logsFlying) && LOG_PILE_SLOTS.map((slot, i) => {
+          const target = logsFlying
+            ? { l: KURUMEDEVA_LAYOUT.bridge.l, t: KURUMEDEVA_LAYOUT.bridge.t }
+            : slot;
+          return (
+            <div
+              key={`log-pile-${i}`}
+              className="kuru-log-piece is-log"
+              style={{
+                left: `${target.l}%`,
+                top: `${target.t}%`,
+                width: `${LOG_PILE_W}%`,
+                pointerEvents: 'none',
+                opacity: logsFlying ? 0 : 1,
+                transition: logsFlying
+                  ? `left ${LOG_FLY_MS}ms ease-in, top ${LOG_FLY_MS}ms ease-in, opacity ${LOG_FLY_MS}ms ease-in`
+                  : undefined,
+              }}
+            >
+              <img src={logPieceObj} alt="" draggable={false} />
+            </div>
+          );
+        })}
 
         {bridgeImg && (
           <div
@@ -1076,11 +1089,12 @@ export default function KurumedevaGame({
             round succeeds these stay put — no loose pieces linger. */}
         {showPlacedPieces && (() => {
           const debugDone = debugMode && debugPhase > 2;
-          const roundCurrent = placeActive;
+          const bridgeDone = bridgeStep === TOTAL_ROUNDS;
+          const roundCurrent = placeActive || bridgeDone;
           if (!debugDone && !roundCurrent) return null;
-          const count = debugDone ? PLANK_SLOTS.length : placedCount;
+          const count = (debugDone || bridgeDone) ? PLANK_SLOTS.length : placedCount;
           return PLANK_SLOTS.slice(0, count).map((slot, i) => {
-            const isNewest = !debugDone && i === count - 1;
+            const isNewest = !debugDone && !bridgeDone && i === count - 1;
             const dropCls = isNewest ? ' is-newest is-roll' : '';
             return (
               <div
@@ -1099,20 +1113,11 @@ export default function KurumedevaGame({
           });
         })()}
 
-        {/* Active plank round — ghost slot + draggable pile at the friend's feet. */}
+        {/* Active plank round — simple drag and drop: a faint ghost plank at
+            the target slot (no dashed drop-zone oval) plus the draggable
+            pile at the friend's feet. */}
         {placeActive && phase === 'play' && placedCount < PLANK_SLOTS.length && (
           <>
-            {/* Drop zone — a clear dashed landing pad, not just the faint ghost
-                piece, so little hands can see exactly where to drag to. */}
-            <div
-              className="kuru-drop-zone"
-              style={{
-                left: `${PLANK_SLOTS[placedCount].l}%`,
-                top: `${PLANK_SLOTS[placedCount].t}%`,
-                width: `${PLANK_SLOT_W * 1.35}%`,
-              }}
-              aria-hidden="true"
-            />
             <div
               className="kuru-span-log is-plank is-ghost"
               style={{

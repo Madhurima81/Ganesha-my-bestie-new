@@ -1501,6 +1501,7 @@ const discoverLocation = useCallback((index) => {
 
   // Handle magnifying glass move
   const handleMglassMove = useCallback((newPosition) => {
+    stopVoice();
     setMglassPosition(newPosition);
     if (phase === STEPS.GANESHA_HOME) {
       // The child has understood the drag mechanic. Teaching hand should
@@ -1517,10 +1518,11 @@ const discoverLocation = useCallback((index) => {
     const percentX = parseFloat(newPosition.left);
     const percentY = parseFloat(newPosition.top);
     checkLocationDiscovery(percentX, percentY);
-  }, [checkLocationDiscovery, phase]);
+  }, [checkLocationDiscovery, phase, stopVoice]);
 
   // Handle region select
   const handleRegionSelect = (region, event) => {
+    stopVoice();
     playUiTap();
     triggerMiniGesture(1500);
     const regionRect = event?.currentTarget?.getBoundingClientRect?.();
@@ -1549,6 +1551,7 @@ const discoverLocation = useCallback((index) => {
 
   // Handle language toggle
   const toggleLanguage = (lang, event) => {
+    stopVoice();
     playUiTap();
     triggerMiniGesture(1500);
     const langRect = event?.currentTarget?.getBoundingClientRect?.();
@@ -1587,6 +1590,7 @@ const discoverLocation = useCallback((index) => {
 
   // Handle festival toggle
   const toggleFestival = (fest, event) => {
+    stopVoice();
     playUiTap();
     triggerMiniGesture(1500);
     const festRect = event?.currentTarget?.getBoundingClientRect?.();
@@ -1625,6 +1629,7 @@ const discoverLocation = useCallback((index) => {
 
   // Handle language guess
   const handleLanguageGuess = (guessLang) => {
+    stopVoice();
     playUiTap();
     const isCorrect = guessLang.id === 'sanskrit';
 
@@ -1666,6 +1671,7 @@ const discoverLocation = useCallback((index) => {
 
   // Handle festival guess
   const handleFestivalGuess = (fest) => {
+    stopVoice();
     playUiTap();
     const isCorrect = fest.id === 'ganesh';
 

@@ -34,7 +34,7 @@ const LAYOUT_PRESET_VERSION = '2026-08-27-mahakaya-pasted-layout-15';
 // landing at ~{ l: 76, t: 52 } in the "After Log 3" layout:
 //   logTarget2 phase-3 layout {39.6, 46.6} + CROSS_DELTA {36.4, 5.5}
 //   → raft target {24.8 + 36.4, 39.3 + 5.5}
-const CROSS_TARGET_RAFT = { l: 63.79, t: 41.67 };
+const CROSS_TARGET_RAFT = { l: 69.13, t: 46.9 };
 
 const PHASE0_LAYOUT = {
   raft: { l: 21.81, t: 46.38, w: 31.8, r: -18 },
@@ -73,7 +73,7 @@ const DEFAULT_PHASE_LAYOUTS = [
     logTarget0: { l: 31.4, t: 40.4, w: 31.8 },
     logTarget1: { l: 23.94, t: 45.44, w: 31.8, r: -41 },
     animal0: { l: 22.15, t: 33.68, w: 15.8 },
-    animal2: { l: 21.16, t: 43.12, w: 16.9 },
+    animal2: { l: 19.38, t: 42.84, w: 16.9 },
   },
   {
     ...PHASE0_LAYOUT,
@@ -81,8 +81,8 @@ const DEFAULT_PHASE_LAYOUTS = [
     logTarget1: { l: 33.9, t: 43.5, w: 31.8 },
     logTarget2: { l: 28.54, t: 47.43, w: 31.8, r: -41 },
     animal0: { l: 22.15, t: 33.68, w: 15.8 },
-    animal1: { l: 34.4, t: 38, w: 15.5 },
-    animal2: { l: 21.16, t: 43.12, w: 16.9 },
+    animal1: { l: 26.69, t: 33.18, w: 15.5 },
+    animal2: { l: 19.38, t: 42.84, w: 16.9 },
   },
   {
     ...PHASE0_LAYOUT,
@@ -91,9 +91,9 @@ const DEFAULT_PHASE_LAYOUTS = [
     logTarget2: { l: 39.6, t: 46.6, w: 31.8 },
     logTarget3: { l: 33.25, t: 49.64, w: 31.8, r: -41 },
     animal0: { l: 22.15, t: 33.68, w: 15.8 },
-    animal1: { l: 34.4, t: 38, w: 15.5 },
-    animal2: { l: 21.16, t: 43.12, w: 16.9 },
-    animal3: { l: 29.24, t: 46.61, w: 12.7 },
+    animal1: { l: 26.69, t: 33.18, w: 15.5 },
+    animal2: { l: 19.38, t: 42.84, w: 16.9 },
+    animal3: { l: 28.65, t: 48.26, w: 12.7 },
   },
 ];
 
@@ -171,6 +171,7 @@ export default function MahakayaRescueGame({
   const isPausedRef = useRef(isPaused);
   const phaseRef = useRef('intro');
   const draggingRef = useRef(null);
+  const logPosRef = useRef(null);
   const completedLogsRef = useRef(0);
   const completionStartedRef = useRef(false);
   const debugDragRef = useRef(null);
@@ -256,6 +257,7 @@ export default function MahakayaRescueGame({
     completedLogsRef.current = 0;
     setLitCount(0);
     setLogPos(null);
+    logPosRef.current = null;
     setWrongDropPulse(false);
     setWrongDropCount(0);
     setDragging(null);
@@ -271,6 +273,7 @@ export default function MahakayaRescueGame({
     isPausedRef.current = isPaused;
     if (isPaused) {
       draggingRef.current = null;
+      logPosRef.current = null;
       setDragging(null);
       debugDragRef.current = null;
     }
@@ -279,10 +282,12 @@ export default function MahakayaRescueGame({
   useEffect(() => {
     if (!isActive) return undefined;
     resetState();
-    playSceneLine?.('scene10_maha_intro', () => {
-      setPhase('play');
-      phaseRef.current = 'play';
-    });
+    // The log is draggable immediately — kids don't wait for the intro VO or
+    // gesture demo to finish before touching things. The line still plays,
+    // just as narration alongside play instead of a gate in front of it.
+    setPhase('play');
+    phaseRef.current = 'play';
+    playSceneLine?.('scene10_maha_intro');
     return clearTimers;
     // Voice and timer helpers are stable enough for this scene lifecycle.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -538,6 +543,10 @@ export default function MahakayaRescueGame({
     e.preventDefault();
     e.stopPropagation();
     e.currentTarget.setPointerCapture?.(e.pointerId);
+    // Cut off any playing hint VO immediately — otherwise a lingering
+    // speechSynthesis utterance can jank touch responsiveness until it ends
+    // (matches the stopVoice-on-grab pattern other drag scenes already use).
+    stopVoice?.();
     markInteraction();
     // The child has demonstrated they understand — stop the teaching demo
     // from continuing to animate over their finger.
@@ -545,6 +554,7 @@ export default function MahakayaRescueGame({
     draggingRef.current = 'log';
     setDragging('log');
     const point = pointFromEvent(e) || currentWaitingLog;
+    logPosRef.current = point;
     setLogPos(point);
   };
 
@@ -561,6 +571,7 @@ export default function MahakayaRescueGame({
     if (!point) return;
 
     if (draggingRef.current === 'log') {
+      logPosRef.current = point;
       setLogPos(point);
     }
   };
@@ -576,9 +587,20 @@ export default function MahakayaRescueGame({
 
     if (!draggingRef.current) return;
     if (draggingRef.current === 'log') {
-      const point = pointFromEvent(e) || logPos;
+      // onPointerUp is bound on the stage, not the log itself, so
+      // e.currentTarget here is the stage — release capture on e.target
+      // instead (the actual captured log element) before any state change
+      // that might unmount it. A pointer-captured element removed from the
+      // DOM without releasing capture first can leave the pointer stuck,
+      // silently breaking the next log's pointerdown.
+      const captureTarget = e.target;
+      if (captureTarget?.hasPointerCapture?.(e.pointerId)) {
+        captureTarget.releasePointerCapture?.(e.pointerId);
+      }
+      const point = pointFromEvent(e) || logPosRef.current || logPos;
       const dist = point ? Math.hypot(point.l - currentTargetLog.l, point.t - currentTargetLog.t) : Infinity;
       if (dist < DROP_DIST) {
+        logPosRef.current = null;
         completeRound();
         return;
       }
@@ -590,6 +612,7 @@ export default function MahakayaRescueGame({
       setWrongDropCount((c) => c + 1);
       after(220, () => {
         setLogPos(null);
+        logPosRef.current = null;
         draggingRef.current = null;
         setDragging(null);
       });
@@ -641,7 +664,12 @@ export default function MahakayaRescueGame({
       style={placeStyle(pos, {
         zIndex,
         opacity: options.hidden ? 0 : 1,
-        pointerEvents: options.hidden ? 'none' : (options.interactive ? 'auto' : undefined),
+        // Every not-yet-placed log renders at once (the "pile" look) and they
+        // tightly overlap (31.8%-wide pieces only ~4-8% apart), all at the
+        // same z-index. Only one is ever interactive — the rest must let
+        // clicks pass through, or a later, inert pile log silently sits on
+        // top and swallows taps meant for the actual current log underneath.
+        pointerEvents: options.hidden ? 'none' : (options.interactive ? 'auto' : 'none'),
       })}
       onPointerDown={(e) => {
         if (debugMode) { startDebugDrag(e, key); return; }
@@ -744,7 +772,7 @@ export default function MahakayaRescueGame({
         }
         if (index === activeLog && dragging === 'log') {
           const movingClass = ['is-moving', 'is-dragging', wrongDropPulse ? 'is-wrong-drop' : ''].filter(Boolean).join(' ');
-          return renderLog(`movingLog${index}`, movingClass, { ...logPos, w: currentWaitingLog.w }, 20);
+          return renderLog(`waitingLog${index}`, movingClass, { ...(logPos || currentWaitingLog), w: currentWaitingLog.w }, 20);
         }
         if (index >= completedLogs) {
           const isHintTarget = index === activeLog && hintLevel >= 3;

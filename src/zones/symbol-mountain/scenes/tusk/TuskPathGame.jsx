@@ -184,6 +184,12 @@ const speak = (text, enabled = true) => {
   }
 };
 
+const stopSpeech = () => {
+  if (typeof window !== 'undefined' && window.speechSynthesis) {
+    window.speechSynthesis.cancel();
+  }
+};
+
 const POSE_ASSETS = [bgImg, bunnyTired, bunnyHungry, bunnyDrink, bunnyGrass, bunnyFeather, bunnyHappy, monkeyIdleShared, elephantDrinking, elephantSpraying, elephantIdleShared, cowEatingGrass, cowIdleShared, peacockIdleShared, mango, mangoBitten, grassBundle, grassBed, bowlEmpty, bowlFilled, waterPour, feather, featherPlaced, needBubbleMangoImg, needBubbleWaterImg, needBubbleGrassImg, needBubbleFeatherImg];
 
 function TuskPathGame({
@@ -327,22 +333,23 @@ function TuskPathGame({
     scheduleHints(phase);
 
     if (phase === PHASES.INTRO) {
-      // Beat 1: everyone on the mountain is happy. Beat 2 (after a pause):
-      // the child hears a bunny sound and the bunny's need bubble appears —
-      // only then do we hand control over to the mango-drag interaction.
+      // Let the child act as soon as the scene appears; the intro VO guides
+      // in parallel and is interrupted by the first drag/tap.
       setIntroBunnySoundHeard(false);
       speak(VO.introHappy, isAudioOn);
       const listenTimer = setTimeout(() => {
         speak(VO.introListen, isAudioOn);
         setIntroBunnySoundHeard(true);
       }, 1900);
-      advanceTimer.current = setTimeout(() => setPhase(PHASES.MANGO), 3600);
+      advanceTimer.current = setTimeout(() => setPhase(PHASES.MANGO), 0);
       return () => {
         clearTimeout(listenTimer);
+        stopSpeech();
         clearTimers();
       };
     }
 
+    stopSpeech();
     speak(phaseVoice[phase], isAudioOn);
     return clearTimers;
   }, [phase, isActive, isAudioOn, phaseVoice, scheduleHints, clearTimers]);
@@ -454,6 +461,7 @@ function TuskPathGame({
 
   const onPointerDown = (e, id) => {
     if (![PHASES.MANGO, PHASES.WATER, PHASES.GRASS, PHASES.FEATHER].includes(phase)) return;
+    stopSpeech();
     e.currentTarget.setPointerCapture?.(e.pointerId);
     const rect = sceneRef.current?.getBoundingClientRect();
     if (!rect) return;
@@ -483,6 +491,7 @@ function TuskPathGame({
 
   const onTapTarget = (targetId) => {
     if (!selectedItem || targetId !== phaseTarget) return;
+    stopSpeech();
     if (phase === PHASES.MANGO) completeMango();
     if (phase === PHASES.WATER) completeWater();
     if (phase === PHASES.GRASS) completeGrass();

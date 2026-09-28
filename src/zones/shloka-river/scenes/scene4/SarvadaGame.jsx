@@ -223,18 +223,18 @@ export default function SarvadaGame({
     safeAfter(700, () => {
       playSceneLine?.('scene14_intro');
     });
+    setGamePhase('playing');
+    startPhase();
     return clearTimers;
-  }, [isActive, clearTimers, safeAfter, playSceneLine]);
+  }, [isActive, clearTimers, safeAfter, playSceneLine, startPhase]);
 
   useEffect(() => () => clearTimers(), [clearTimers]);
 
 
   useEffect(() => {
     if (!isActive || gamePhase !== 'intro') return;
-    safeAfter(800, () => {
-      setGamePhase('playing');
-      startPhase();
-    });
+    setGamePhase('playing');
+    startPhase();
   }, [isActive, gamePhase, safeAfter, startPhase]);
 
   const handleBubbleTap = useCallback(() => {

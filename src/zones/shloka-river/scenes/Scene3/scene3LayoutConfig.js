@@ -38,31 +38,36 @@ export const KURUMEDEVA_LAYOUT = {
     r: 5,
     flip: false,
   },
+  // Orientation flipped to match the BeatPlayer prototype's beat 1 (Sept
+  // 2026): Mother Beaver starts on the LEFT bank with Elephant/Monkey, Baby
+  // Beaver waits on the RIGHT — reverse of the earlier setup. beaverPath is
+  // the same S-curve walked in the opposite direction (left → right), so it
+  // still tracks the river art exactly.
   beaver: {
     w: 8,
-    flip: true,
+    flip: false,
   },
   beaverBaby: {
-    l: 10.6,
-    t: 66.7,
+    l: 86.2,
+    t: 65.8,
     w: 8.5,
-    flip: false,
+    flip: true,
   },
   // Bridge redesign (GMB_KurumeDeva_New_Assets pack): exactly 2 ask-for-help
   // loops — Elephant (support logs), Monkey (rope) — then Beaver lays the
-  // planks alone, no third helper. Positions adapted from the asset pack's
-  // suggested zones, fitted to this scene's existing bank side.
+  // planks alone, no third helper. Positions match the BeatPlayer prototype's
+  // beat 1 snapshot.
   friends: [
-    { id: 'elephant', label: 'Elephant', brings: 'support', l: 30.1, t: 63.3, w: 13, flip: false },
-    { id: 'monkey', label: 'Monkey', brings: 'ropes', l: 21.7, t: 39.7, w: 10, flip: false },
+    { id: 'elephant', label: 'Elephant', brings: 'support', l: 35.8, t: 46.4, w: 13, flip: false },
+    { id: 'monkey', label: 'Monkey', brings: 'ropes', l: 4.1, t: 55.2, w: 10, flip: false },
   ],
   beaverPath: [
-    { l: 73.9, t: 69.9 },
-    { l: 63.1, t: 67.9 },
-    { l: 49.1, t: 68.2 },
-    { l: 41.9, t: 65.5 },
-    { l: 34.3, t: 66.9 },
-    { l: 26.8, t: 65.4 },
     { l: 20.2, t: 64.7 },
+    { l: 26.8, t: 65.4 },
+    { l: 34.3, t: 66.9 },
+    { l: 41.9, t: 65.5 },
+    { l: 49.1, t: 68.2 },
+    { l: 63.1, t: 67.9 },
+    { l: 73.9, t: 69.9 },
   ],
 };

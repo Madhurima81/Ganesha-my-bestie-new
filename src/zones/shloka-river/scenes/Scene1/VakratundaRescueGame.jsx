@@ -440,8 +440,8 @@ export default function VakratundaRescueGame({
   const resetState = useCallback(() => {
     clearTimers();
     reunionStartedRef.current = false;
-    setPhase('intro');
-    onStageChange('intro');
+    setPhase('trace');
+    onStageChange('trace');
     setLit(0);
     setPads([]);
     setTrailPoints([]);
@@ -525,9 +525,9 @@ export default function VakratundaRescueGame({
   useEffect(() => {
     if (!isActive) return undefined;
     resetState();
-    after(700, startTraceCourse);
+    startTraceCourse();
     return clearTimers;
-  }, [after, clearTimers, isActive, resetState, startTraceCourse]);
+  }, [clearTimers, isActive, resetState, startTraceCourse]);
 
   const goToReunion = useCallback(() => {
     if (reunionStartedRef.current) return;
@@ -657,13 +657,14 @@ export default function VakratundaRescueGame({
     const point = getPoint(event.clientX, event.clientY);
     if (!point) return;
     if (distance(point, frogPosRef.current) > GRAB_RADIUS) return; // must grab the frog
+    stopVoice?.();
     setIsDragging(true);
     introGestureShownRef.current = true;   // they've got it — kill the intro cue
     setShowIntroGesture(false);
     setShowPassiveNudge(false);
     setPassiveIdleReset((n) => n + 1);
     event.currentTarget.setPointerCapture?.(event.pointerId);
-  }, [getPoint, isPaused, phase, showDebugPanel]);
+  }, [getPoint, isPaused, phase, showDebugPanel, stopVoice]);
 
   const continueDrag = useCallback((event) => {
     if (!isDragging || isPaused) return;

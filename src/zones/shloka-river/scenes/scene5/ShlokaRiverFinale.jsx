@@ -452,6 +452,13 @@ const ShlokaRiverFinaleContent = ({
     }, { replayOnReturn: false });
   };
 
+  const makeArrangePlayableNow = useCallback(() => {
+    if (phase !== PHASES.ARRANGE || buildReady) return;
+    stopAllVoice();
+    setBuildReady(true);
+    setHintReadySlot(activeSlotIndex);
+  }, [activeSlotIndex, buildReady, phase, stopAllVoice]);
+
   // Plays a short sequence of word-audio clips back to back — used for the
   // single-word confirmation and the end-of-pair "Vakratunda — Mahakaya"
   // reinforcement, so the child hears the pair together instead of being
@@ -585,9 +592,10 @@ const ShlokaRiverFinaleContent = ({
   }, [markInteraction, playChime, playSfx, playSparkle, playWordSequence, safeSetTimeout, triggerSuccessFlow]);
 
   const handleTrayPointerDown = (e, wordData) => {
-    if (phase !== PHASES.ARRANGE || !buildReady || usedWords.has(wordData.id)) return;
+    if (phase !== PHASES.ARRANGE || usedWords.has(wordData.id)) return;
     e.preventDefault();
     dragMovedRef.current = false;
+    makeArrangePlayableNow();
     playUiTap();
     // Only a real placement attempt against the current target counts as
     // progress — grabbing a boat doesn't reset the hint clock, or a child
@@ -654,7 +662,8 @@ const ShlokaRiverFinaleContent = ({
       dragMovedRef.current = false;
       return;
     }
-    if (phase !== PHASES.ARRANGE || !buildReady || usedWords.has(wordData.id)) return;
+    if (phase !== PHASES.ARRANGE || usedWords.has(wordData.id)) return;
+    makeArrangePlayableNow();
     placeWord(wordData, activeSlotIndex);
   };
 

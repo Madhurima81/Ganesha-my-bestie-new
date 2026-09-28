@@ -731,6 +731,8 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
   };
 
   const handlePopBalloon = (item) => {
+    stopVoice();
+    stopSpokenVoice();
     const { id: letterId, letter: clickedLetter } = item;
     if (sceneState.poppedLetters.includes(letterId)) return;
 
@@ -785,6 +787,8 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
   };
 
   const handleStartBirthdayChoice = () => {
+    stopVoice();
+    stopSpokenVoice();
     playUiTap();
     sceneActions.updateState({ wrongFestivals: [], gamePhase: 'birthday-choice' });
     setShowShake(null);
@@ -792,6 +796,8 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
   // --- UPDATED HANDLER: SHAKE -> FADE -> INFO SEQUENCE ---
   const handleFestivalClick = (festivalId) => {
+    stopVoice();
+    stopSpokenVoice();
     // If THIS card is already open, do nothing
     if (sceneState.flippedCards.includes(festivalId)) return;
 
@@ -856,6 +862,8 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
   };
 
   const handleChildNameLetterClick = (letter, index) => {
+    stopVoice();
+    stopSpokenVoice();
     playUiTap();
     sceneActions.updateState({ childNameLetters: [...sceneState.childNameLetters, letter] });
 
@@ -876,6 +884,8 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
   };
 
   const handleChildNameBackspace = () => {
+    stopVoice();
+    stopSpokenVoice();
     playUiTap();
     sceneActions.updateState({ childNameLetters: sceneState.childNameLetters.slice(0, -1) });
   };
@@ -884,6 +894,8 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
     const name = sceneState.childNameLetters.join('');
     if (name.length < 2) return;
 
+    stopVoice();
+    stopSpokenVoice();
     playChime();
     sceneActions.updateState({
       childName: name,
@@ -894,6 +906,8 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
   };
 
   const handleMonthSelect = (monthData) => {
+    stopVoice();
+    stopSpokenVoice();
     playUiTap();
     sceneActions.updateState({
       childBirthdayMonth: monthData.month,
@@ -903,6 +917,8 @@ const NameBirthdayGameContent = ({ sceneState, sceneActions, isReload, onComplet
   };
 
   const handleDateSelect = (date) => {
+    stopVoice();
+    stopSpokenVoice();
     playChime();
     sceneActions.updateState({
       childBirthdayDate: date,
