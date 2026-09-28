@@ -153,13 +153,28 @@
   animation: vakBreathe 2.4s ease-in-out infinite;
 }
 
-/* Passive rescue only: child has not tried anything for a long time.
-   This reminds them Frog can move, without pointing to the route. */
-.vak-start-frog.is-passive-hint {
-  animation: vakPassiveFrogNudge 1.05s ease-in-out 2;
+/* Start-drag hint ladder: visual-only L1, clearer L2/L3 while the hand demo
+   shows the drag. The obstacle stuck hint uses separate water shimmer classes. */
+.vak-start-frog.is-start-hint {
+  animation: vakStartHintNudge 1.05s ease-in-out 2;
 }
 
-@keyframes vakPassiveFrogNudge {
+.vak-start-frog.is-start-hint-strong {
+  animation: vakStartHintNudge 1.05s ease-in-out 3;
+  filter:
+    drop-shadow(0 8px 14px rgba(0, 0, 0, 0.16))
+    drop-shadow(0 0 12px rgba(255, 235, 165, 0.8));
+}
+
+.vak-start-frog.is-start-hint-final {
+  animation: vakStartHintFinal 1.15s ease-in-out infinite;
+  filter:
+    drop-shadow(0 8px 14px rgba(0, 0, 0, 0.16))
+    drop-shadow(0 0 16px rgba(255, 240, 178, 0.95))
+    drop-shadow(0 0 28px rgba(255, 196, 92, 0.52));
+}
+
+@keyframes vakStartHintNudge {
   0%,
   100% {
     transform: translate(-50%, -50%) translateY(0) rotate(0deg);
@@ -169,6 +184,19 @@
   }
   65% {
     transform: translate(-50%, -50%) translateY(-2%) rotate(2deg);
+  }
+}
+
+@keyframes vakStartHintFinal {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+  }
+  35% {
+    transform: translate(-50%, -50%) scale(1.08) rotate(-2deg);
+  }
+  65% {
+    transform: translate(-50%, -50%) scale(1.04) rotate(2deg);
   }
 }
 
@@ -575,7 +603,9 @@
 @media (prefers-reduced-motion: reduce) {
   .vak-start-frog.is-waiting,
   .vak-start-frog.is-shaking,
-  .vak-start-frog.is-passive-hint,
+  .vak-start-frog.is-start-hint,
+  .vak-start-frog.is-start-hint-strong,
+  .vak-start-frog.is-start-hint-final,
   .vak-pad,
   .vak-pad.is-drifting,
   .vak-family.is-breathing,

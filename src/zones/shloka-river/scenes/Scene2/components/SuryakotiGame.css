@@ -224,8 +224,17 @@
   animation: suryaRingPulse 1.6s ease-in-out infinite;
 }
 
+.surya-scratch-ring.is-hint-guided {
+  border-color: rgba(255, 220, 100, 0.5);
+  box-shadow:
+    0 0 22px rgba(255, 220, 100, 0.34),
+    inset 0 0 14px rgba(255, 220, 100, 0.1);
+  animation: suryaRingPulse 1.6s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .surya-scratch-ring.is-hint-l1 {
+  .surya-scratch-ring.is-hint-l1,
+  .surya-scratch-ring.is-hint-guided {
     animation: none;
   }
 }

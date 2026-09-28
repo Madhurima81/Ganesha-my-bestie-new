@@ -332,6 +332,7 @@ const SCENES = [
      ['Tusk beat-player press-and-hold rhythm (where used) and drag-drop timing (900ms default hold)', 'Real timed gestures — needs a real finger, not automatable.'],
      ['Eyes idle-hint reset on tab-return', 'Recently fixed bug — confirm hint timer resets correctly after backgrounding.'],
      ['Eyes has no real "wrong" state', 'Confirmed by code — background taps are exploration, not penalized. Don\'t expect a wrong-answer cue here.'],
+     ['CHANGED 2026-09-28 — Tusk Beat 0: child can now act during the intro VO instead of waiting ~3.6s for it', 'The phase now advances to the mango-drag interaction at 0ms (VO plays in parallel) instead of after a fixed 3600ms delay. A new stopSpeech() helper cancels the in-flight VO the moment you touch something. Confirm you can start dragging immediately, and that VO stops the instant you interact rather than talking over you.'],
    ]},
 
   {id:'sacred', nav:'✨ Sacred Assembly', title:'✨ Sacred Assembly (Symbol Mountain, Scene 4 — Final)', sub:'Confirmed by code: this scene is TAP-based, not drag-based — child taps a body part directly, no pickup/drag gesture, no symbol tray/sidebar (that UI exists in code but is never rendered).',
@@ -393,6 +394,14 @@ const SCENES = [
      ['Vakratunda stuck-help is bump-count-based, not idle-timer-based', 'Different from every other hint ladder in the app — only escalates after repeated failed bumps with no progress, not after a fixed idle wait. Confirm this feels right in practice.'],
      ['Mahakaya was rebuilt 2026-09-26 — rope-pull rig is GONE, replaced by direct drag-to-water', 'If you are testing an older build/branch and still see a rope/knob, you are on stale code, not finding a new bug. Drop-distance threshold and the broad→clear dropzone feel are flagged by Madhurima as not yet live-reviewed — pay extra attention here.'],
      ['Pause mid-drag', 'No ghost drag state left on resume.'],
+     ['NEW 2026-09-28 — "Keep adding logs to the raft." continuation cue', 'Should play once, ~1.1s after log 1 lands — must NOT repeat on logs 2, 3, or 4.'],
+     ['FIXED 2026-09-28 — Log 1 teaching gesture now plays ONCE (was twice)', 'Per Madhurima\'s call: single demo, then immediate control, then the hint ladder only if stuck. L2/L3 hint-ladder gestures (shown only when stuck) are unaffected.'],
+     ['CHANGED 2026-09-28 — Vakratunda intro no longer waits 700ms before the drag course starts, and VO stops the instant you grab the frog', 'Confirm the frog/course is interactive right away on scene entry, and that any playing VO cuts off immediately on grab rather than lingering over your drag.'],
+     ['FIXED 2026-09-28 — Mahakaya intro VO copy corrected + gesture timing fixed', 'scene10_maha_intro changed to "Everyone wants to cross the river. Drag the logs to build a raft." (was "Let\'s build a raft with space for everyone.") — the 3 copies (live scene, voiceGuidance.js, dev harness) were out of sync, now match. Separately, the Log 1 teaching-hand demo used to appear on a blind fixed delay from mount, sometimes before the intro VO even started (TTS startup lag varies) — now waits for the VO\'s real onStart plus a 600ms buffer. Confirm the hand never appears before you hear the new intro line begin.'],
+     ['FIXED 2026-09-28 — L3 gesture demo was not showing at all (regression from the 2026-09-26 rope-to-drag rebuild)', 'Missing `replayKey` on the GestureDemo call site meant the L2→L3 escalation never actually replayed the full-path demo. Restored — confirm L3 (26s of no progress) shows the full drag path, not just L2\'s partial one.'],
+     ['FIXED 2026-09-28 — drop zone was too strict', 'Previously even a roughly half-overlapping log drop could bounce back. DROP_DIST widened from 12 to 16. Already confirmed working by Madhurima in the harness — real-device recheck still worth doing.'],
+     ['FIXED 2026-09-28 — logs 2, 3, 4 could get stuck/undraggable after log 1 landed', 'Three compounding causes, all fixed: log-1 draggability no longer waits on the intro VO finishing; pointer capture is now released BEFORE the completed log element unmounts (this was the actual stuck-log cause); and non-interactive "pile" logs now have pointer-events:none so they can\'t swallow taps meant for the log underneath. This is a real functional fix, not cosmetic — please specifically confirm all 4 logs drag equally reliably on a real device, this is the one most likely to still misbehave under real touch latency.'],
+     ['FIXED 2026-09-28 — join-scene animals (elephant/deer) no longer drift as each log is placed', 'Positions are now locked to their join-phase value across later layouts instead of shifting slightly per log.'],
    ]},
 
   {id:'suryakoti', nav:'☀️ Suryakoti Bank', title:'☀️ Suryakoti Bank (Shloka River, Scene 2)', sub:'',
@@ -427,6 +436,9 @@ const SCENES = [
      ['Neither Suryakoti nor Samaprabha has a real "wrong" state', 'Both are pure progress-or-no-progress mechanics — confirmed by code, no fail feedback exists to test.'],
      ['3 hint-VO lines (surya_hint_rub/keep, sama_hint_hold, sama_hint_move) — literal text not confirmable from code', 'These route through a separate VO content system. Please verify by ear what actually plays and note it in the comment box — this closes a real documentation gap.'],
      ['Samaprabha element positions', 'Open flow/layout review requested — not yet scoped in detail, check general feel.'],
+     ['NEW 2026-09-28 — Suryakoti "Keep rubbing to bring back more light." continuation cue', 'Should play once, ~0.5s after patch 1 clears — must NOT repeat on patches 2, 3, or 4.'],
+     ['FIXED 2026-09-28 — Suryakoti scratch teaching gesture now plays ONCE (was twice)', 'Own code comment already said "one pass" but the value was iterations=2 — now matches.'],
+     ['NEW 2026-09-28 — Samaprabha "Look and hold another part of the shadow." continuation cue', 'Should play once, right after clue 1\'s own reveal line ("That part is just a branch.") finishes — must NOT repeat on clues 2, 3, or 4.'],
    ]},
 
   {id:'nirvighnam', nav:'🚧 Nirvighnam Chant', title:'🚧 Nirvighnam Chant (Shloka River, Scene 3)', sub:'',
@@ -459,6 +471,12 @@ const SCENES = [
      ['Kuru Me Deva was rebuilt — the "always fails alone" beats are GONE', 'Old design had Beaver try logs/rope solo and fail before asking for help. Current code (KurumedevaGame.jsx) has NO solo-try step: the child can ask for help the moment it is that friend\'s turn. Do not test for or expect a fail state on logs/rope.'],
      ['Only 3 child-driven drags exist in this game now', 'Ask-bubble→Elephant, ask-bubble→Monkey, and 3× plank-drag. Elephant\'s logs and Monkey\'s rope appearing are automatic bridge-art swaps, not child placement drags.'],
      ['A stray/missed help-token drop just resets silently', 'No penalty text — confirm this feels fine rather than confusing (child might not realize why nothing happened).'],
+     ['FIXED 2026-09-28 — Nirvighnam: syllable/next-obstacle-intro VO race (live-tested bug)', 'The next obstacle\'s intro VO and the just-cleared obstacle\'s syllable both used to fire off the same state change, sharing one audio channel — whichever started second cut the other off. Reported live: the branch intro was cutting off "Nir", and separately "vigh" was cutting off the reed intro. Now each syllable ("Nir"/"vigh") always plays fully BEFORE its next obstacle\'s intro VO starts. Confirm on device: rock→"Nir"→branch intro, then branch→"vigh"→reed intro, with no line cut short.'],
+     ['FIXED 2026-09-28 — Nirvighnam: branch/reed teaching gesture appeared before its own intro VO', 'Previously showed the instant the obstacle became active — sometimes before its intro line had even started speaking. Now gated on that VO\'s onStart plus a ~500ms buffer (approximates the line\'s action clause, e.g. after "The branch is still blocking the way..."). Confirm the gesture never appears before you hear the obstacle named.'],
+     ['FIXED 2026-09-28 — Nirvighnam: all 3 teaching gestures (rock, branch, reed) now play ONCE, not twice', 'Per Madhurima\'s call: single demo, then immediate control, then the 10/18/26 hint ladder only if stuck.'],
+     ['FIXED 2026-09-28 — Kuru Me Deva: kuru_logs_after / kuru_rope_after VO race vs. syllables', 'Same race/fix as Nirvighnam above — "Elephant helped..." now plays after "Kuru" finishes, "Monkey helped..." now plays after "me" finishes, not alongside them.'],
+     ['FIXED 2026-09-28 — Kuru Me Deva: kuru_ask_monkey and kuru_plank_instruction were previously SILENT', 'Root cause: the scene\'s local VO map was missing a fallback to the shared voiceGuidance.js content (Vakratunda already had this fallback, Suryakoti and Nirvighnam did not). The content itself was always correct, just unreachable. Confirm you now hear "Who can help tie the rope?" at round 2 and "Now drag the planks into place." at the plank round.'],
+     ['FIXED 2026-09-28 — Kuru Me Deva: elephant-ask and first-plank teaching gestures now wait for their VO + play ONCE', 'Same ~500ms-after-VO-start timing fix as Nirvighnam, plus the single-pass-only fix.'],
    ]},
 
   {id:'sarvakaryeshu', nav:'🎭 Sarvakaryeshu Chant', title:'🎭 Sarvakaryeshu Chant (Shloka River, Scene 4)', sub:'',
@@ -489,6 +507,7 @@ const SCENES = [
      ['16 hint-VO lines across both games — literal text not confirmable from code', 'These route through a separate VO content system outside the files traced. Please verify by ear what actually plays at L2/L3 hints in both games and note it — this closes a real documentation gap, not a guess.'],
      ['Wrong pick in Sarvakaryeshu does not reset the hint timer', 'Confirmed intentional by code comment ("only successful understanding resets the hint cycle") — not a bug.'],
      ['gameplayIntro VO / full flow', 'Already live-confirmed — recheck no stray/duplicate VO.'],
+     ['CHANGED 2026-09-28 — Sarvada now enters play immediately, no 800ms wait on entry', 'Confirm the morning memory bubble is tappable right away, not after an extra pause.'],
    ]},
 
   {id:'finale', nav:'🚤 Shloka Finale', title:'🚤 Shloka River Finale (Scene 5)', sub:'',
@@ -509,6 +528,7 @@ const SCENES = [
      ['Next-target-word VO per slot activation', 'Correct word audio plays each time a new slot activates.'],
      ['Recap boat animation', 'Driven by audio finishing (onended), not a fixed timer — stays in sync.'],
      ['Wrong-boat sound softened, miss-outside-slot now bounces back (2026-09-26)', 'See flow rows above — confirm on device that softWrong doesn\'t feel identical to correct, and the bounce-back reads as neutral, not a fail state.'],
+     ['CHANGED 2026-09-28 — a boat is now draggable/placeable on the very first touch, not gated on buildReady', 'Previously a tap/drag before buildReady was true did nothing. A new makeArrangePlayableNow() helper now arms the round from that first interaction itself. Confirm you can grab and place a boat immediately when Arrange appears, with no dead first tap.'],
    ]},
 
   {id:'familytree', nav:'🌳 Family Tree', title:'🌳 Our Families (About Me Hut, Scene 1)', sub:'',
@@ -636,6 +656,7 @@ const SCENES = [
      ['3 independent idle-hint tracks (home/language/festival)', 'Recently fixed — all pause correctly on backgrounding (previously only 3 of 9 timers reconciled).'],
      ['Magnifying-glass drag (FreeDraggableItem)', 'Recently fixed touchcancel gap — confirm smooth, self-terminates if interrupted mid-drag.'],
      ['Language/festival icon sizing on iPad', 'Scales with clamp(), no overflow.'],
+     ['CHANGED 2026-09-28 — VO now stops immediately on interaction across this scene', 'stopVoice() added to the magnifying-glass move handler, region select, language/festival toggles, and language/festival guesses. Confirm any playing VO cuts off the instant you interact, rather than continuing to talk over your next action.'],
    ]},
 ];
 

@@ -197,6 +197,7 @@ const POSE_ASSETS = [
 export default function SamaprabhaGame({
   isActive = false,
   introComplete = true,
+  introVoStarted = true,
   hideElements = false,
   onMicroWin = () => {},
   onPhaseComplete = () => {},
@@ -211,7 +212,7 @@ export default function SamaprabhaGame({
   const debugEnabled = getDebugEnabled();
   const defaultLayout = useMemo(createDefaultLayout, []);
   const [debugLayout, setDebugLayout] = useState(loadDebugLayout);
-  const [showDebugPanel, setShowDebugPanel] = useState(debugEnabled);
+  const [showDebugPanel, setShowDebugPanel] = useState(false);
   const [selectedDebugKey, setSelectedDebugKey] = useState(samaDebugOptions[0].key);
   const [debugPhase, setDebugPhase] = useState(0);
   const [debugPanelPosition, setDebugPanelPosition] = useState({ x: 16, y: 16 });
@@ -220,17 +221,10 @@ export default function SamaprabhaGame({
   const [phase, setPhase] = useState('play');
   const [animalState, setAnimalState] = useState('worried');
   const [beamPos, setBeamPos] = useState(START_BEAM);
-  const [isDraggingLight, setIsDraggingLight] = useState(false);
   const [isHoldingClue, setIsHoldingClue] = useState(false);
   const [holdProgress, setHoldProgress] = useState(0);
-  const [hasInteracted, setHasInteracted] = useState(false);
   const [revealPulse, setRevealPulse] = useState(null);
   const [clueVoComplete, setClueVoComplete] = useState(true);
-  // The mechanic is two different skills — find the shadow, then hold the
-  // light there. Each needs its own hints: 'find' points at direction/where,
-  // 'hold' says "stay" instead of "go somewhere else."
-  const [hintMode, setHintMode] = useState('find');
-
   const stageRef = useRef(null);
   const debugItemDragRef = useRef(null); // { mode: 'move' | 'resize' }
   const pointerIdRef = useRef(null);
@@ -250,6 +244,7 @@ export default function SamaprabhaGame({
   const completionFinishedRef = useRef(false);
   const sylEndFallbackRef = useRef(null);
   const voFallbackRef = useRef(null);
+  const pendingRevealIndexRef = useRef(null);
   const lastHintVoKeyRef = useRef(null);
   const debugPanelDragRef = useRef(null);
   const onGameCompleteRef = useRef(onGameComplete);
@@ -267,7 +262,7 @@ export default function SamaprabhaGame({
   // hold hit-zone is centered on the shadow's own position/size, not the
   // bank object's. The bank object (BANK_OBJECTS below) is purely visual.
   const CLUES = useMemo(
-    () => CLUE_META.map((meta, index) => {
+    () => CLUE_META.map((meta) => {
       const piece = activeLayout.shadowPieces[meta.shadowPieceKey];
 
       return {
@@ -323,17 +318,15 @@ export default function SamaprabhaGame({
     return id;
   }, []);
 
-  // The hint key includes hintMode so "find the shadow" and "hold the light
-  // there" are treated as separate problems — each gets its own fresh timer.
-  const hintStageKey = phase === 'play' ? `clue-${lit}-${hintMode}` : phase;
+  const hintStageKey = phase === 'play' ? `clue-${lit}` : phase;
 
   // GMB Hint Standard v1 — flat 10s/18s/26s from VO end or last interaction.
   // clueVoComplete additionally gates the ladder on each clue's own reveal
   // VO ("That's a branch!" etc.) finishing, not just the game's intro VO.
-  // A child correctly holding the light must never get an idle hint while
-  // the progress ring is filling — isHoldingClue/isDraggingLight excluded.
+  // A child correctly holding a shadow must never get an idle hint while
+  // the progress ring is filling.
   const { hintLevel, markInteraction, markLevel2VoiceEnded } = useRepeatedHintCycle({
-    enabled: isActive && !isPaused && phase === 'play' && introComplete && clueVoComplete && !isDraggingLight && !isHoldingClue,
+    enabled: isActive && !isPaused && phase === 'play' && introComplete && clueVoComplete && !isHoldingClue,
     stageKey: hintStageKey,
     initialDelay: 10000,
     pulseCountBeforeEscalation: 3,
@@ -342,25 +335,22 @@ export default function SamaprabhaGame({
     level3Delay: 26000,
   });
 
-  // L2 VO — the only hint VO needed. "Move the light over the shadow" while
-  // still searching, "Keep the light there" once they've found it and just
-  // need to hold. No L3 VO — the child has already heard what to do; L3 just
-  // shows the fuller visual.
+  // L2 VO — one mechanic now: press and hold on the shadow.
   useEffect(() => {
     if (!isActive || isPaused || phase !== 'play' || hintLevel !== 2) return;
 
-    const voiceKey = hintMode === 'find' ? 'scene11_sama_hint_move' : 'scene11_sama_hint_hold';
-    const onceKey = `${lit}-${hintMode}-${voiceKey}`;
+    const voiceKey = 'scene11_sama_hint_hold';
+    const onceKey = `${lit}-${voiceKey}`;
     if (lastHintVoKeyRef.current === onceKey) return;
 
     lastHintVoKeyRef.current = onceKey;
     stopVoice?.();
     playSceneLine?.(voiceKey, markLevel2VoiceEnded, { replayOnReturn: false });
-  }, [hintLevel, hintMode, isActive, isPaused, lit, phase, playSceneLine, stopVoice, markLevel2VoiceEnded]);
+  }, [hintLevel, isActive, isPaused, lit, phase, playSceneLine, stopVoice, markLevel2VoiceEnded]);
 
   useEffect(() => {
     lastHintVoKeyRef.current = null;
-  }, [lit, hintMode]);
+  }, [lit]);
 
   const setHoldProgressValue = useCallback((value) => {
     holdProgressRef.current = value;
@@ -428,9 +418,6 @@ export default function SamaprabhaGame({
     litRef.current = next;
     setLit(next);
     setRevealPulse(currentIndex);
-    // Fresh clue starts back in FIND mode — the object just revealed doesn't
-    // carry forward into the next shadow's hints.
-    setHintMode('find');
 
     safeAfter(480, () => setRevealPulse(null));
     window.setTimeout(() => onMicroWin?.(), 0);
@@ -438,25 +425,8 @@ export default function SamaprabhaGame({
 
     if (currentIndex === 0) setAnimalState('curious');
 
-    const revealVo = CLUE_META[currentIndex]?.revealVo;
-    if (revealVo && playSceneLine) {
-      setClueVoComplete(false);
-      safeAfter(250, () => {
-        stopVoice?.();
-        let finished = false;
-        const finishRevealVo = () => {
-          if (finished) return;
-          finished = true;
-          setClueVoComplete(true);
-        };
-        playSceneLine(revealVo, finishRevealVo, { replayOnReturn: false });
-        // iOS Safari can silently drop the onend/onerror callback — don't
-        // let a lost callback block the hint ladder indefinitely.
-        safeAfter(4000, finishRevealVo);
-      });
-    } else {
-      setClueVoComplete(true);
-    }
+    pendingRevealIndexRef.current = currentIndex;
+    setClueVoComplete(false);
 
     if (next === CLUE_META.length && !doneCalledRef.current) {
       doneCalledRef.current = true;
@@ -467,9 +437,9 @@ export default function SamaprabhaGame({
       safeAfter(1250, () => setAnimalState('walking'));
       safeAfter(3000, () => setPhase('done'));
     }
-  }, [markInteraction, onMicroWin, phase, playSceneLine, safeAfter, stopVoice]);
+  }, [markInteraction, onMicroWin, phase, safeAfter]);
 
-  const startHoldAtPoint = useCallback((point) => {
+  const startHoldAtPoint = useCallback((point, pointerId = null) => {
     if (phase !== 'play' || isPausedRef.current) {
       cancelHold();
       return;
@@ -486,13 +456,11 @@ export default function SamaprabhaGame({
     if (holdingClueIndexRef.current === clueIndex && holdRafRef.current) return;
 
     cancelHold();
-    // First time the child reaches the right shadow, "where does the light
-    // go?" is solved — hints from here should help with "what do I do now
-    // that I'm here?" instead.
-    setHintMode('hold');
+    if (pointerId !== null) pointerIdRef.current = pointerId;
     holdingClueIndexRef.current = clueIndex;
     holdStartedAtRef.current = performance.now();
     setIsHoldingClue(true);
+    setBeamPos(point);
     stopHoldDrain();
     setHoldProgressValue(0);
     markInteraction();
@@ -542,30 +510,27 @@ export default function SamaprabhaGame({
     if (event.target.closest?.('.sama-debug-panel')) return;
 
     event.preventDefault();
-    pointerIdRef.current = event.pointerId;
     event.currentTarget.setPointerCapture?.(event.pointerId);
-    setIsDraggingLight(true);
-
     const point = getStagePoint(event);
+    stopVoice?.();
     setBeamPos(point);
+    startHoldAtPoint(point, event.pointerId);
 
     if (!firstInteractionSentRef.current) {
       firstInteractionSentRef.current = true;
-      setHasInteracted(true);
       onFirstInteraction?.();
     }
-
-    startHoldAtPoint(point);
-  }, [debugEnabled, showDebugPanel, getStagePoint, isPaused, onFirstInteraction, phase, startHoldAtPoint]);
+  }, [debugEnabled, showDebugPanel, getStagePoint, isPaused, onFirstInteraction, phase, startHoldAtPoint, stopVoice]);
 
   const handlePointerMove = useCallback((event) => {
-    if (pointerIdRef.current !== event.pointerId || !isDraggingLight) return;
+    if (pointerIdRef.current !== event.pointerId || holdingClueIndexRef.current === null) return;
 
     event.preventDefault();
     const point = getStagePoint(event);
     setBeamPos(point);
-    startHoldAtPoint(point);
-  }, [getStagePoint, isDraggingLight, startHoldAtPoint]);
+    const clue = CLUES[litRef.current];
+    if (!clue || !pointInsideClue(point, clue)) cancelHold(true);
+  }, [CLUES, cancelHold, getStagePoint]);
 
   const endPointer = useCallback((event) => {
     if (event && pointerIdRef.current !== event.pointerId) return;
@@ -575,7 +540,6 @@ export default function SamaprabhaGame({
     }
 
     pointerIdRef.current = null;
-    setIsDraggingLight(false);
     cancelHold(true);
   }, [cancelHold]);
 
@@ -609,7 +573,6 @@ export default function SamaprabhaGame({
     if (!isPaused) return;
 
     pointerIdRef.current = null;
-    setIsDraggingLight(false);
     cancelHold();
   }, [cancelHold, isPaused]);
 
@@ -623,10 +586,7 @@ export default function SamaprabhaGame({
     setPhase('play');
     setAnimalState('worried');
     setBeamPos(START_BEAM);
-    setIsDraggingLight(false);
-    setHasInteracted(false);
     setRevealPulse(null);
-    setHintMode('find');
     pointerIdRef.current = null;
     firstInteractionSentRef.current = false;
     doneCalledRef.current = false;
@@ -634,8 +594,38 @@ export default function SamaprabhaGame({
     lastSyllableDoneRef.current = false;
     completionVoStartedRef.current = false;
     completionFinishedRef.current = false;
+    pendingRevealIndexRef.current = null;
     lastHintVoKeyRef.current = null;
   }, [cancelHold, clearTimers, isActive]);
+
+  const playRevealForIndex = useCallback((index, afterReveal) => {
+    if (pendingRevealIndexRef.current !== index) {
+      afterReveal?.();
+      return;
+    }
+    pendingRevealIndexRef.current = null;
+
+    const revealVo = CLUE_META[index]?.revealVo;
+    if (!revealVo || !playSceneLine) {
+      setClueVoComplete(true);
+      afterReveal?.();
+      return;
+    }
+
+    let finished = false;
+    const finishRevealVo = () => {
+      if (finished) return;
+      finished = true;
+      setClueVoComplete(true);
+      if (index === 0) {
+        safeAfter(300, () => playSceneLine('scene11_sama_find_another', undefined, { replayOnReturn: false }));
+      }
+      afterReveal?.();
+    };
+
+    playSceneLine(revealVo, finishRevealVo, { replayOnReturn: false });
+    safeAfter(4000, finishRevealVo);
+  }, [playSceneLine, safeAfter]);
 
   const startCompletionVo = useCallback(() => {
     if (
@@ -703,19 +693,6 @@ export default function SamaprabhaGame({
   }, [cancelHold, clearTimers]);
 
   if (!isActive) return null;
-
-  // FIND mode only — HOLD mode shows a stationary ring instead (the target
-  // is already found; dots pointing "toward the shadow" would be confusing
-  // once the child is standing on it). L2 = partial direction, L3 = almost
-  // the whole path — reusing the existing dot visual instead of a new one.
-  const rescueDots = activeClue && hintMode === 'find' && hintLevel >= 2
-    ? (hintLevel === 2 ? [0.2, 0.35, 0.5] : [0.34, 0.62, 0.88]).map((amount) => ({
-      x: beamPos.x + (activeClue.cx - beamPos.x) * amount,
-      y: beamPos.y + (activeClue.cy - beamPos.y) * amount,
-    }))
-    : [];
-
-  const firstClue = CLUES[0];
 
   // Debug Phase selector previews the scene at a given phase without running
   // gameplay: clues revealed, fawn moved/re-posed, shadow/mystery understood.
@@ -878,10 +855,14 @@ export default function SamaprabhaGame({
           onSyllableLit={(syllable, index) => {
             stopVoice?.();
             const isLast = index === SYLLABLES.length - 1;
-            playSyllable?.(syllable, isLast ? () => {
-              lastSyllableDoneRef.current = true;
-              startCompletionVo();
-            } : undefined);
+            playSyllable?.(syllable, () => {
+              if (isLast) {
+                lastSyllableDoneRef.current = true;
+                playRevealForIndex(index, startCompletionVo);
+                return;
+              }
+              playRevealForIndex(index);
+            });
           }}
         />
 
@@ -915,6 +896,24 @@ export default function SamaprabhaGame({
           })}
         </div>
 
+        {phase === 'play' && CLUES.map((clue, index) => {
+          if (index < lit) return null;
+          return (
+            <div
+              key={`hold-target-${clue.id}`}
+              className={[
+                'sama-hold-target',
+                index === lit ? 'is-current' : 'is-future',
+              ].join(' ')}
+              style={{
+                left: `${clue.cx}%`,
+                top: `${clue.cy}%`,
+              }}
+              aria-hidden="true"
+            />
+          );
+        })}
+
         <div className="sama-mystery-group" aria-hidden="true">
           {BANK_OBJECTS.map((clue, index) => (
             <div
@@ -938,50 +937,13 @@ export default function SamaprabhaGame({
           ))}
         </div>
 
-        {/* FIND L1 — "notice this shadow", not the full action. */}
-        {activeClue && hintMode === 'find' && hintLevel === 1 && (
+        {isHoldingClue && (
           <div
-            className="sama-hint-area"
-            style={{
-              left: `${activeClue.cx}%`,
-              top: `${activeClue.cy}%`,
-              width: `${activeClue.hintW}%`,
-              height: `${activeClue.hintH}%`,
-            }}
-          />
-        )}
-
-        {/* HOLD L1 — "stay here", not "go somewhere else". */}
-        {activeClue && hintMode === 'hold' && hintLevel === 1 && (
-          <div
-            className="sama-hold-hint"
-            style={{ left: `${activeClue.cx}%`, top: `${activeClue.cy}%` }}
-          />
-        )}
-
-        {rescueDots.map((dot, index) => (
-          <span
-            key={`rescue-${index}`}
-            className="sama-rescue-dot"
-            style={{
-              left: `${dot.x}%`,
-              top: `${dot.y}%`,
-              animationDelay: `${index * 0.13}s`,
-            }}
-          />
-        ))}
-
-        <div
-          className={[
-            'sama-inspection-light',
-            isDraggingLight ? 'is-moving' : '',
-            isHoldingClue ? 'is-holding' : '',
-          ].filter(Boolean).join(' ')}
-          style={{ left: `${beamPos.x}%`, top: `${beamPos.y}%` }}
-          aria-hidden="true"
-        >
-          <div className="sama-light-core" />
-          {isHoldingClue && (
+            className="sama-inspection-light is-holding"
+            style={{ left: `${beamPos.x}%`, top: `${beamPos.y}%` }}
+            aria-hidden="true"
+          >
+            <div className="sama-light-core" />
             <svg className="sama-hold-progress" viewBox="0 0 44 44">
               <circle className="sama-hold-track" cx="22" cy="22" r="18" />
               <circle
@@ -994,33 +956,23 @@ export default function SamaprabhaGame({
                 strokeDashoffset={100 - holdProgress * 100}
               />
             </svg>
-          )}
-        </div>
+          </div>
+        )}
 
-        {/* Teaching, first clue only — teaches BOTH halves of the mechanic:
-            drag the light to the real first shadow, then hold it there.
-            scene11_sama_intro has a short setup clause before "Move the
-            light..." — GMB gesture-timing preset B (~750ms), with the hold
-            demo staggered to start after the drag has landed. */}
-        <GestureDemo
-          type="drag"
-          from={START_BEAM}
-          to={{ x: firstClue.cx, y: firstClue.cy }}
-          active={phase === 'play' && lit === 0 && !hasInteracted}
-          idleDelay={750}
-          iterations={1}
-        />
-        <GestureDemo
-          type="hold"
-          from={{ x: firstClue.cx, y: firstClue.cy }}
-          to={{ x: firstClue.cx, y: firstClue.cy }}
-          active={phase === 'play' && lit === 0 && !hasInteracted}
-          idleDelay={1800}
-          iterations={1}
-        />
+        {activeClue && phase === 'play' && lit === 0 && !firstInteractionSentRef.current && introVoStarted && !showDebugPanel && !isHoldingClue && (
+          <GestureDemo
+            key="sama-start-hold-demo"
+            type="hold-progress-l3"
+            from={{ x: activeClue.cx, y: activeClue.cy }}
+            to={{ x: activeClue.cx, y: activeClue.cy }}
+            active
+            idleDelay={750}
+            iterations={1}
+            zIndex={46}
+          />
+        )}
 
-        {/* HOLD L2 — VO says "keep the light there"; a brief hold demo shows it. */}
-        {activeClue && hintMode === 'hold' && hintLevel === 2 && (
+        {activeClue && phase === 'play' && !showDebugPanel && !isHoldingClue && hintLevel === 2 && (
           <GestureDemo
             key={`sama-hold-partial-${lit}`}
             type="hold-progress-l2"
@@ -1029,31 +981,21 @@ export default function SamaprabhaGame({
             active
             idleDelay={0}
             iterations={1}
+            zIndex={46}
           />
         )}
 
-        {/* HOLD L3 — the complete idea: beam moves to the shadow, then holds. */}
-        {activeClue && hintMode === 'hold' && hintLevel >= 3 && (
-          <>
-            <GestureDemo
-              key={`sama-hold-full-drag-${lit}`}
-              type="drag"
-              from={beamPos}
-              to={{ x: activeClue.cx, y: activeClue.cy }}
-              active
-              idleDelay={0}
-              iterations={1}
-            />
-            <GestureDemo
-              key={`sama-hold-full-hold-${lit}`}
-              type="hold-progress-l3"
-              from={{ x: activeClue.cx, y: activeClue.cy }}
-              to={{ x: activeClue.cx, y: activeClue.cy }}
-              active
-              idleDelay={900}
-              iterations={1}
-            />
-          </>
+        {activeClue && phase === 'play' && !showDebugPanel && !isHoldingClue && hintLevel >= 3 && (
+          <GestureDemo
+            key={`sama-hold-full-${lit}`}
+            type="hold-progress-l3"
+            from={{ x: activeClue.cx, y: activeClue.cy }}
+            to={{ x: activeClue.cx, y: activeClue.cy }}
+            active
+            idleDelay={0}
+            iterations={1}
+            zIndex={46}
+          />
         )}
 
         {effShowDoneline && (

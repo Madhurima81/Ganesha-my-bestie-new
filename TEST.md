@@ -381,6 +381,12 @@ All other scenes compared against it.*
 [ ] Case 14:
 [ ] Case 15:
 
+### VO / Gesture Sequencing (added 2026-09-28)
+[ ] Case 16: Drop log 1 on the raft — "Keep adding logs to the raft." plays once, shortly after log 1 lands.
+[ ] Case 17: Drop logs 2, 3, 4 — the "keep adding" line does NOT repeat on any of them.
+[ ] Case 18: On scene entry, the log-drag teaching gesture (hand demo) plays exactly ONCE, then hands control to the child — it does not loop a second time before you can act.
+[ ] Case 19: If you let the teaching gesture finish without touching anything, the 10s/18s/26s hint ladder still kicks in normally afterward.
+
 ### Gaps to fix before testing
 - [ ]
 
@@ -415,6 +421,13 @@ All other scenes compared against it.*
 [ ] Case 14:
 [ ] Case 15:
 
+### VO / Gesture Sequencing (added 2026-09-28)
+[ ] Case 16 (Suryakoti): Rub the first patch clear — "Keep rubbing to bring back more light." plays once, shortly after.
+[ ] Case 17 (Suryakoti): Rub patches 2, 3, 4 — the "keep rubbing" line does NOT repeat on any of them.
+[ ] Case 18 (Suryakoti): On scene entry, the scratch teaching gesture plays exactly ONCE, then hands control to the child.
+[ ] Case 19 (Samaprabha): Hold the first shadow region until it reveals — "Look and hold another part of the shadow." plays once, right after that reveal's own line.
+[ ] Case 20 (Samaprabha): Reveal regions 2, 3, 4 — the "look and hold another part" line does NOT repeat on any of them.
+
 ### Gaps to fix before testing
 - [ ]
 
@@ -448,6 +461,19 @@ All other scenes compared against it.*
 ### Audio Edge Cases
 [ ] Case 14:
 [ ] Case 15:
+
+### VO / Gesture Sequencing (added 2026-09-28 — fixed and live-tested this session)
+[ ] Case 16 (Nirvighnam): Hold the rock clear — "Nir" syllable plays fully to the end, THEN the branch intro VO ("The branch is still blocking the way...") starts. Neither line gets cut off.
+[ ] Case 17 (Nirvighnam): Drag the branch clear — "vigh" syllable plays fully, THEN the reed intro VO ("The reeds are blocking the way...") starts. Neither cut off.
+[ ] Case 18 (Nirvighnam): The branch teaching gesture appears ~0.5s after its intro VO starts speaking — not the instant the branch becomes active, and not before the VO has begun.
+[ ] Case 19 (Nirvighnam): Same as Case 18 for the reed teaching gesture.
+[ ] Case 20 (Nirvighnam): Rock, branch, and reed teaching gestures each play exactly ONCE — no automatic second loop before you get control.
+[ ] Case 21 (Kuru Me Deva): Ask Elephant for help — after the logs land, the "Kuru" syllable plays fully, THEN "Elephant helped put the logs in place." plays. Neither cut off.
+[ ] Case 22 (Kuru Me Deva): Ask Monkey for help — after the rope ties, the "me" syllable plays fully, THEN "Monkey helped tie the rope." plays. Neither cut off.
+[ ] Case 23 (Kuru Me Deva): "Who can help tie the rope?" (kuru_ask_monkey) actually plays when Monkey's round begins — previously silent.
+[ ] Case 24 (Kuru Me Deva): "Now drag the planks into place." (kuru_plank_instruction) actually plays when the plank round begins — previously silent.
+[ ] Case 25 (Kuru Me Deva): The elephant-ask teaching gesture and the first-plank teaching gesture each appear ~0.5s after their own VO starts, not instantly.
+[ ] Case 26 (Kuru Me Deva): Elephant-ask and first-plank teaching gestures each play exactly ONCE — no automatic second loop.
 
 ### Gaps to fix before testing
 - [ ]

@@ -142,6 +142,46 @@
   -webkit-user-drag: none;
 }
 
+.sama-hold-target {
+  position: absolute;
+  width: clamp(52px, 7vw, 86px);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  z-index: 18;
+  pointer-events: none;
+  box-sizing: border-box;
+  background:
+    radial-gradient(
+      circle,
+      rgba(255, 244, 188, 0.58) 0%,
+      rgba(255, 235, 164, 0.34) 28%,
+      rgba(255, 224, 135, 0.17) 49%,
+      rgba(255, 220, 120, 0) 73%
+    );
+  filter: drop-shadow(0 0 12px rgba(255, 230, 145, 0.24));
+}
+
+.sama-hold-target.is-current {
+  animation: samaTargetLightPulse 1.6s ease-in-out infinite;
+  filter: drop-shadow(0 0 18px rgba(255, 230, 145, 0.45));
+}
+
+.sama-hold-target.is-future {
+  opacity: 0.34;
+}
+
+@keyframes samaTargetLightPulse {
+  0%, 100% {
+    opacity: 0.68;
+    transform: translate(-50%, -50%) scale(0.95);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.06);
+  }
+}
+
 .sama-truth-layer {
   z-index: 3;
   /* completely hidden until light reaches the bank object */
@@ -197,10 +237,6 @@
   transition: transform 0.16s ease;
 }
 
-.sama-inspection-light.is-moving {
-  transform: translate(-50%, -50%) scale(1.03);
-}
-
 .sama-light-core {
   position: absolute;
   left: 50%;
@@ -231,6 +267,7 @@
   height: 44%;
   transform: translate(-50%, -50%) rotate(-90deg);
   overflow: visible;
+  pointer-events: none;
 }
 
 .sama-hold-track,
@@ -250,82 +287,7 @@
   filter: drop-shadow(0 0 4px rgba(255, 230, 145, 0.5));
 }
 
-.sama-hint-area {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  z-index: 12;
-  pointer-events: none;
-  background:
-    radial-gradient(
-      circle,
-      rgba(255, 238, 175, 0.12),
-      rgba(255, 230, 155, 0.045) 48%,
-      transparent 72%
-    );
-  border: 1px solid rgba(255, 238, 180, 0.16);
-  animation: samaAreaNotice 1.8s ease-in-out infinite;
-}
-
-@keyframes samaAreaNotice {
-  0%, 100% {
-    opacity: 0.34;
-    transform: translate(-50%, -50%) scale(0.96);
-  }
-  50% {
-    opacity: 0.72;
-    transform: translate(-50%, -50%) scale(1.06);
-  }
-}
-
 /* HOLD L1 — a stationary ring says "stay here", not "go somewhere else". */
-.sama-hold-hint {
-  position: absolute;
-  width: clamp(42px, 6vw, 66px);
-  aspect-ratio: 1;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  border: 3px solid rgba(255, 239, 166, 0.7);
-  z-index: 19;
-  pointer-events: none;
-  animation: samaHoldHint 1.35s ease-in-out infinite;
-}
-
-@keyframes samaHoldHint {
-  0%, 100% {
-    opacity: 0.35;
-    transform: translate(-50%, -50%) scale(0.88);
-  }
-  50% {
-    opacity: 0.95;
-    transform: translate(-50%, -50%) scale(1.04);
-  }
-}
-
-.sama-rescue-dot {
-  position: absolute;
-  width: clamp(8px, 1.15vw, 13px);
-  aspect-ratio: 1;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  z-index: 19;
-  pointer-events: none;
-  background: rgba(255, 239, 175, 0.82);
-  box-shadow: 0 0 9px rgba(255, 229, 145, 0.45);
-  animation: samaRescueDot 1.15s ease-in-out infinite;
-}
-
-@keyframes samaRescueDot {
-  0%, 100% {
-    opacity: 0.3;
-    transform: translate(-50%, -50%) scale(0.82);
-  }
-  50% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1.12);
-  }
-}
-
 .sama-doneline {
   position: absolute;
   left: 50%;
@@ -562,9 +524,7 @@
   .sama-truth-layer,
   .sama-inspection-light,
   .sama-light-core,
-  .sama-hint-area,
-  .sama-hold-hint,
-  .sama-rescue-dot,
+  .sama-hold-target,
   .sama-doneline {
     animation: none !important;
     transition: none !important;

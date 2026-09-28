@@ -283,8 +283,10 @@ export default function GestureDemo({
       className="gesture-demo-overlay"
       style={{ zIndex }}
     >
-      {/* Touch ripple for touch-type gestures */}
-      {config.asset === 'touch' && (
+      {/* Touch ripple for touch-type gestures. Hold-progress demos use the
+          progress ring below instead, so don't stack a second pulsing ring on
+          top of the fill indicator. */}
+      {config.asset === 'touch' && config.ringFill == null && (
         <div
           className="gesture-demo-ripple"
           style={loopAnimation}

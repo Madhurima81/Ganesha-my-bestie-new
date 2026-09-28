@@ -20,6 +20,7 @@ const AUDIO = { syllables: ['nir', 'vigh', 'nam'] };
 const OBSTACLE_ORDER = ['stone', 'branch', 'reed'];
 const ROCK_HOLD_MS = 1200;
 const BRANCH_DROP_RADIUS = 13;
+const BRANCH_DRAG_START_THRESHOLD = 1.5;
 const REED_SWIPE_REQUIRED = 58;
 const NIRV_DEBUG_STORAGE_KEY = 'shloka_nirvighnam_layout_debug_v2';
 
@@ -87,6 +88,11 @@ const obstacleImageById = {
   reed: reedsClosedImg,
 };
 
+const OBSTACLE_INTRO_KEYS = {
+  branch: 'nirv_branch_intro',
+  reed: 'nirv_reed_intro',
+};
+
 // GMB Hint Standard v1 — flat 10s/18s/26s from VO end or last interaction,
 // same across every obstacle.
 const HINT_TIMINGS = {
@@ -124,6 +130,7 @@ const POSE_ASSETS = [
 export default function NirvighnamGame({
   isActive = false,
   introComplete = true,
+  introVoStarted = true,
   hideElements = false,
   onMicroWin = () => {},
   onPhaseComplete = () => {},
@@ -136,7 +143,7 @@ export default function NirvighnamGame({
   const debugEnabled = getDebugEnabled();
   const defaultLayout = useMemo(createDebugLayout, []);
   const [debugLayout, setDebugLayout] = useState(loadDebugLayout);
-  const [showDebugPanel, setShowDebugPanel] = useState(debugEnabled);
+  const [showDebugPanel, setShowDebugPanel] = useState(false);
   const [selectedDebugKey, setSelectedDebugKey] = useState(debugOptions[0].key);
   const [debugPhase, setDebugPhase] = useState(0);
   const [debugPanelPosition, setDebugPanelPosition] = useState({ x: 16, y: 16 });
@@ -146,6 +153,7 @@ export default function NirvighnamGame({
   const [turtlePos, setTurtlePos] = useState(() => loadDebugLayout().turtleStart);
   const [isSwimming, setIsSwimming] = useState(false);
   const [dragging, setDragging] = useState(null);
+  const [branchDragActive, setBranchDragActive] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [branchReturning, setBranchReturning] = useState(false);
   const [branchWrongPulse, setBranchWrongPulse] = useState(false);
@@ -155,6 +163,23 @@ export default function NirvighnamGame({
   const [reedSwipeAmount, setReedSwipeAmount] = useState(0);
   const [reedWrongPulse, setReedWrongPulse] = useState(false);
   const [teachingDoneFor, setTeachingDoneFor] = useState(null);
+  const [obstacleIntroComplete, setObstacleIntroComplete] = useState({});
+  // Tracks when branch/reed's own intro VO has actually started speaking —
+  // the teaching gesture for that obstacle waits for this (mirrors how the
+  // stone gesture waits on introVoStarted), so it doesn't pop up before the
+  // line that names the obstacle has even begun.
+  const [obstacleIntroVoStarted, setObstacleIntroVoStarted] = useState({});
+  // Each intro line has a story clause then an action clause ("Turtle's way
+  // home is blocked. Press and hold the rock...") — showing the gesture the
+  // instant the VO starts lands it during "story", not "action". A flat delay
+  // after VO-start approximates "action" without needing to split the audio.
+  const GESTURE_VO_DELAY_MS = 500;
+  const [stoneGestureReady, setStoneGestureReady] = useState(false);
+  useEffect(() => {
+    if (!introVoStarted) { setStoneGestureReady(false); return undefined; }
+    const t = window.setTimeout(() => setStoneGestureReady(true), GESTURE_VO_DELAY_MS);
+    return () => window.clearTimeout(t);
+  }, [introVoStarted]);
   // Persists across a pointer-up, unlike checking live drag/hold state — a
   // child who started, stalled, and let go should still get "keep going",
   // not the from-scratch instruction.
@@ -162,6 +187,7 @@ export default function NirvighnamGame({
 
   const stageRef = useRef(null);
   const dragStartRef = useRef(null);
+  const branchDragActiveRef = useRef(false);
   const dragOffsetRef = useRef({ x: 0, y: 0 });
   const rockProgressRef = useRef(null);
   const transitionTimerRef = useRef(null);
@@ -194,10 +220,13 @@ export default function NirvighnamGame({
   const nextObstacleId = OBSTACLE_ORDER[cleared.length];
   const teachingComplete = teachingDoneFor === nextObstacleId;
   const currentHintTiming = HINT_TIMINGS[nextObstacleId] || HINT_TIMINGS.stone;
+  const currentObstacleIntroComplete = nextObstacleId === 'stone'
+    ? introComplete
+    : !!obstacleIntroComplete[nextObstacleId];
   // Gated on the instruction VO (introComplete), not on the teaching
   // gesture finishing — the clock shouldn't wait on an animation.
   const { hintLevel, markInteraction, markLevel2VoiceEnded } = useRepeatedHintCycle({
-    enabled: isActive && !isPaused && phase === 'play' && introComplete,
+    enabled: isActive && !isPaused && phase === 'play' && currentObstacleIntroComplete,
     stageKey: phase === 'play' ? `clear-${cleared.length}` : phase,
     initialDelay: currentHintTiming.l1,
     pulseCountBeforeEscalation: 3,
@@ -245,6 +274,13 @@ export default function NirvighnamGame({
     onMicroWin?.();
   }, [cleared, markInteraction, onMicroWin]);
 
+  const finishCurrentObstacleIntro = useCallback(() => {
+    if (!nextObstacleId || nextObstacleId === 'stone') return;
+    setObstacleIntroComplete((current) => (
+      current[nextObstacleId] ? current : { ...current, [nextObstacleId]: true }
+    ));
+  }, [nextObstacleId]);
+
   useEffect(() => {
     if (!debugEnabled) return;
     window.localStorage.setItem(NIRV_DEBUG_STORAGE_KEY, JSON.stringify(debugLayout));
@@ -288,6 +324,23 @@ export default function NirvighnamGame({
     lastHintVoRef.current = '';
   }, [nextObstacleId]);
 
+  // Branch/reed intro VO is NOT triggered off nextObstacleId directly — that
+  // races the just-cleared obstacle's own syllable (both fire off the same
+  // cleared.length change, sharing one audio channel, so whichever fired
+  // second cut the first one off). Instead it's chained onto that syllable's
+  // onEnded below (SyllableHighlight's onSyllableLit), so it always plays
+  // after the syllable finishes, never over it.
+  // Fallback: if a resume/edge-case leaves obstacleIntroComplete unset with
+  // no syllable event to trigger it (e.g. reload mid-obstacle), don't let the
+  // hint clock and teaching gesture stay gated forever.
+  useEffect(() => {
+    if (!isActive || phase !== 'play' || isPaused) return;
+    if (!nextObstacleId || nextObstacleId === 'stone') return;
+    if (obstacleIntroComplete[nextObstacleId]) return;
+    if (OBSTACLE_INTRO_KEYS[nextObstacleId] && playSceneLine) return;
+    finishCurrentObstacleIntro();
+  }, [finishCurrentObstacleIntro, isActive, isPaused, nextObstacleId, obstacleIntroComplete, phase, playSceneLine]);
+
   // L2 hint VO — "Press and hold..." if untouched, "Keep holding" (etc.) if
   // the child made real progress and then stalled. obstacleHasProgress
   // persists across a pointer-up, so a stall genuinely gets the "keep going"
@@ -318,6 +371,8 @@ export default function NirvighnamGame({
       setTurtlePos(activeLayout.turtleStart);
       setIsSwimming(false);
       setDragging(null);
+      setBranchDragActive(false);
+      branchDragActiveRef.current = false;
       setDragOffset({ x: 0, y: 0 });
       setBranchReturning(false);
       setBranchWrongPulse(false);
@@ -326,6 +381,8 @@ export default function NirvighnamGame({
       setReedSwipeStart(null);
       setReedSwipeAmount(0);
       setReedWrongPulse(false);
+      setObstacleIntroComplete({});
+      setObstacleIntroVoStarted({});
       dragOffsetRef.current = { x: 0, y: 0 };
       dragStartRef.current = null;
       branchWrongCountRef.current = 0;
@@ -350,6 +407,8 @@ export default function NirvighnamGame({
       setHoldingRock(false);
       if (!isCleared('stone')) setRockProgress(0);
       setDragging(null);
+      setBranchDragActive(false);
+      branchDragActiveRef.current = false;
       setDragOffset({ x: 0, y: 0 });
       setBranchReturning(false);
       setBranchWrongPulse(false);
@@ -396,6 +455,7 @@ export default function NirvighnamGame({
     event.preventDefault();
     event.currentTarget.setPointerCapture?.(event.pointerId);
     stopSceneVoice?.();
+    finishCurrentObstacleIntro();
 
     // Touching the correct active obstacle is meaningful even before the
     // progress threshold — dismiss the teaching demo right away instead of
@@ -429,7 +489,7 @@ export default function NirvighnamGame({
         clearObstacle('stone');
       }
     }, 30);
-  }, [clearObstacle, isCleared, isPaused, markInteraction, markMeaningfulProgress, nextObstacleId, stopSceneVoice, teachingDoneFor]);
+  }, [clearObstacle, finishCurrentObstacleIntro, isCleared, isPaused, markInteraction, markMeaningfulProgress, nextObstacleId, stopSceneVoice, teachingDoneFor]);
 
   const cancelRockHold = useCallback(() => {
     if (rockProgressRef.current) {
@@ -448,6 +508,7 @@ export default function NirvighnamGame({
     event.preventDefault();
     event.currentTarget.setPointerCapture?.(event.pointerId);
     stopSceneVoice?.();
+    finishCurrentObstacleIntro();
 
     if (teachingDoneFor !== nextObstacleId) setTeachingDoneFor(nextObstacleId);
     markInteraction();
@@ -457,9 +518,11 @@ export default function NirvighnamGame({
       clientY: event.clientY,
     };
     setDragging('branch');
+    setBranchDragActive(false);
+    branchDragActiveRef.current = false;
     setDragOffset({ x: 0, y: 0 });
     dragOffsetRef.current = { x: 0, y: 0 };
-  }, [branchReturning, isCleared, isPaused, markInteraction, nextObstacleId, stopSceneVoice, teachingDoneFor]);
+  }, [branchReturning, finishCurrentObstacleIntro, isCleared, isPaused, markInteraction, nextObstacleId, stopSceneVoice, teachingDoneFor]);
 
   useEffect(() => {
     if (dragging !== 'branch' || !isActive) return;
@@ -472,7 +535,13 @@ export default function NirvighnamGame({
       dragOffsetRef.current = { x: dx, y: dy };
       setDragOffset({ x: dx, y: dy });
 
-      if (Math.hypot(dx, dy) >= 4) {
+      const dragDistance = Math.hypot(dx, dy);
+      if (dragDistance >= BRANCH_DRAG_START_THRESHOLD) {
+        branchDragActiveRef.current = true;
+        setBranchDragActive(true);
+      }
+
+      if (dragDistance >= 4) {
         setObstacleHasProgress(true);
         markMeaningfulProgress();
       }
@@ -481,6 +550,15 @@ export default function NirvighnamGame({
     const handleUp = () => {
       const branch = obstacles.find((obstacle) => obstacle.id === 'branch');
       if (!branch) return;
+
+      if (!branchDragActiveRef.current) {
+        setDragging(null);
+        setBranchDragActive(false);
+        dragStartRef.current = null;
+        setDragOffset({ x: 0, y: 0 });
+        dragOffsetRef.current = { x: 0, y: 0 };
+        return;
+      }
 
       const currentL = branch.l + dragOffsetRef.current.x;
       const currentT = branch.t + dragOffsetRef.current.y;
@@ -493,6 +571,8 @@ export default function NirvighnamGame({
         branchWrongCountRef.current = 0;
         clearObstacle('branch');
         setDragging(null);
+        setBranchDragActive(false);
+        branchDragActiveRef.current = false;
         setBranchReturning(false);
         dragStartRef.current = null;
         return;
@@ -500,6 +580,8 @@ export default function NirvighnamGame({
 
       branchWrongCountRef.current += 1;
       setDragging(null);
+      setBranchDragActive(false);
+      branchDragActiveRef.current = false;
       setBranchReturning(true);
       setBranchWrongPulse(true);
 
@@ -540,6 +622,7 @@ export default function NirvighnamGame({
     event.preventDefault();
     event.currentTarget.setPointerCapture?.(event.pointerId);
     stopSceneVoice?.();
+    finishCurrentObstacleIntro();
 
     if (teachingDoneFor !== nextObstacleId) setTeachingDoneFor(nextObstacleId);
     markInteraction();
@@ -547,7 +630,7 @@ export default function NirvighnamGame({
     reedWrongThisGestureRef.current = false;
     setReedSwipeStart({ x: event.clientX, y: event.clientY });
     setReedSwipeAmount(0);
-  }, [isCleared, isPaused, markInteraction, nextObstacleId, stopSceneVoice, teachingDoneFor]);
+  }, [finishCurrentObstacleIntro, isCleared, isPaused, markInteraction, nextObstacleId, stopSceneVoice, teachingDoneFor]);
 
   useEffect(() => {
     if (!reedSwipeStart || !isActive) return;
@@ -827,7 +910,7 @@ export default function NirvighnamGame({
     branch: branch && partialBranchTarget ? { type: 'drag', from: { x: branch.l, y: branch.t }, to: partialBranchTarget } : null,
     reed: reeds ? { type: 'swipe-right', from: { x: reeds.l, y: reeds.t } } : null,
   }[nextObstacleId];
-  const branchHasOffset = dragging === 'branch' || branchReturning;
+  const branchHasOffset = branchDragActive || branchReturning;
 
   return (
     <div
@@ -842,10 +925,34 @@ export default function NirvighnamGame({
           onSyllableLit={(syllable, index) => {
             stopSceneVoice?.();
             const isLast = index === SYLLABLES.length - 1;
-            playSyllable?.(syllable, isLast ? () => {
-              lastSyllableDoneRef.current = true;
-              startCompletionVo();
-            } : undefined);
+            // Chain the NEXT obstacle's intro VO after THIS syllable finishes,
+            // rather than triggering it off cleared.length in parallel — see
+            // note above the obstacleIntroComplete fallback effect.
+            const introObstacle = !isLast ? OBSTACLE_ORDER[index + 1] : null;
+            const introKey = introObstacle ? OBSTACLE_INTRO_KEYS[introObstacle] : null;
+            playSyllable?.(syllable, () => {
+              if (isLast) {
+                lastSyllableDoneRef.current = true;
+                startCompletionVo();
+                return;
+              }
+              if (introKey && playSceneLine) {
+                playSceneLine(introKey, finishCurrentObstacleIntro, {
+                  onStart: () => window.setTimeout(() => {
+                    setObstacleIntroVoStarted((current) => (
+                      current[introObstacle] ? current : { ...current, [introObstacle]: true }
+                    ));
+                  }, GESTURE_VO_DELAY_MS),
+                });
+              } else {
+                if (introObstacle) {
+                  setObstacleIntroVoStarted((current) => (
+                    current[introObstacle] ? current : { ...current, [introObstacle]: true }
+                  ));
+                }
+                finishCurrentObstacleIntro();
+              }
+            });
           }}
         />
 
@@ -908,12 +1015,12 @@ export default function NirvighnamGame({
         )}
 
         <div
-          className={`nirv-layer nirv-branch ${dragging === 'branch' ? 'is-dragging' : ''} ${branchReturning ? 'is-returning' : ''} ${branchWrongPulse ? 'is-wrong-drop' : ''} ${showCleared('branch') ? 'is-cleared' : ''} ${getObstacleFocusClass('branch')} ${phase === 'play' && nextObstacleId === 'branch' && hintLevel === 1 && dragging !== 'branch' ? 'is-hint-drag' : ''}`}
+          className={`nirv-layer nirv-branch ${branchDragActive ? 'is-dragging' : ''} ${branchReturning ? 'is-returning' : ''} ${branchWrongPulse ? 'is-wrong-drop' : ''} ${showCleared('branch') ? 'is-cleared' : ''} ${getObstacleFocusClass('branch')} ${phase === 'play' && nextObstacleId === 'branch' && hintLevel === 1 && !branchDragActive ? 'is-hint-drag' : ''}`}
           style={{
             left: `${showCleared('branch') ? bankSpots.branch.l : branch.l + (branchHasOffset ? dragOffset.x : 0)}%`,
             top: `${showCleared('branch') ? bankSpots.branch.t : branch.t + (branchHasOffset ? dragOffset.y : 0)}%`,
             width: `${branch.w}%`,
-            zIndex: dragging === 'branch' ? 30 : 12,
+            zIndex: branchDragActive ? 30 : 12,
             scale: branch.flip ? '-1 1' : '1 1',
           }}
           onPointerDown={handleBranchPointerDown}
@@ -947,11 +1054,13 @@ export default function NirvighnamGame({
           )}
         </div>
 
-        {/* Rock is the first obstacle, right after the scene's own narrative
-            intro VO — give that VO room before the hand appears (GMB preset
-            C, ~1.1s). Branch/reed have no further story lead-in of their
-            own, so their teaching hand appears immediately (preset A). */}
-        {fullGestureConfig && phase === 'play' && !showDebugPanel && !teachingComplete && (
+        {/* Stone waits for the scene intro VO to actually start speaking
+            before showing the first teaching gesture; branch/reed wait on
+            their own obstacle intro VO starting the same way (chained after
+            the preceding syllable), so the gesture never appears before the
+            line naming that obstacle has begun. */}
+        {fullGestureConfig && phase === 'play' && !showDebugPanel && !teachingComplete
+          && (nextObstacleId === 'stone' ? stoneGestureReady : !!obstacleIntroVoStarted[nextObstacleId]) && (
           <GestureDemo
             key={`nirv-teach-${nextObstacleId}`}
             type={fullGestureConfig.type}

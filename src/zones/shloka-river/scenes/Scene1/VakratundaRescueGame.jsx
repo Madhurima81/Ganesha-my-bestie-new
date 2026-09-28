@@ -2,6 +2,7 @@ import PoseImage, { usePreloadPoses } from '../../../../lib/components/animation
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import SyllableHighlight from '../../shared/SyllableHighlight';
 import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
+import useRepeatedHintCycle from '../../../../lib/hooks/useRepeatedHintCycle';
 import './VakratundaRescueGame.css';
 
 import frogSwim from './assets/images/vakratunda/frog-baby.webp';
@@ -242,9 +243,9 @@ export default function VakratundaRescueGame({
 
   const [stuckLevel, setStuckLevel] = useState(0);  // 0 none · 1 shimmer · 2 +bubble/VO · 3 +arc
   const [showIntroGesture, setShowIntroGesture] = useState(false);  // one-time "you drag me" cue
-  const [showPassiveNudge, setShowPassiveNudge] = useState(false);
   const [introVoDone, setIntroVoDone] = useState(false);
-  const [passiveIdleReset, setPassiveIdleReset] = useState(0);
+  const [introVoStarted, setIntroVoStarted] = useState(false);
+  const [hasStartedDrag, setHasStartedDrag] = useState(false);
   const introGestureShownRef = useRef(false);
 
   const stageRef = useRef(null);
@@ -271,6 +272,20 @@ export default function VakratundaRescueGame({
   const maxProgressXRef = useRef(START_POS.x);
   const lastBlockSfxRef = useRef(0);
   const reunionStartedRef = useRef(false);
+
+  const {
+    hintLevel: startDragHintLevel,
+    pulseTick: startDragPulseTick,
+    markLevel2VoiceEnded: markStartDragLevel2VoiceEnded,
+  } = useRepeatedHintCycle({
+    enabled: isActive && !isPaused && phase === 'trace' && introVoDone && !isDragging && !hasStartedDrag && stuckLevel === 0,
+    stageKey: 'vakratunda-start-drag',
+    initialDelay: 10000,
+    pulseCountBeforeEscalation: 3,
+    pulseInterval: 1800,
+    level2Delay: 18000,
+    level3Delay: 26000,
+  });
 
   const setFrog = useCallback((point) => {
     frogPosRef.current = point;
@@ -464,7 +479,8 @@ export default function VakratundaRescueGame({
     introGestureShownRef.current = false;
     setShowIntroGesture(false);
     setIntroVoDone(false);
-    setShowPassiveNudge(false);
+    setIntroVoStarted(false);
+    setHasStartedDrag(false);
   }, [clearTimers, onStageChange, setFrog, setLit]);
 
   const startTraceCourse = useCallback(() => {
@@ -475,41 +491,40 @@ export default function VakratundaRescueGame({
     setFrog(startPosRef.current);
 
     setIntroVoDone(false);
-    const markIntroVoDone = () => setIntroVoDone(true);
+    setIntroVoStarted(false);
+    const markIntroVoDone = () => { setIntroVoDone(true); setIntroVoStarted(true); };
     if (playSceneLine) {
-      playSceneLine('scene10_vak_intro', markIntroVoDone);
+      playSceneLine('scene10_vak_intro', markIntroVoDone, { onStart: () => setIntroVoStarted(true) });
     } else {
       markIntroVoDone();
     }
   }, [onStageChange, playSceneLine, setFrog]);
 
-  // Passive-idle safety net: the reactive stuck system only helps once the
-  // child has actually bumped something — a child who never touches Frog at
-  // all gets no help. This is a single neutral reminder (no route, no VO)
-  // that Frog can be moved, separate from the reactive stuck escalation.
+  // Start-drag hint ladder: L1 is visual-only, L2 replays the core "drag Frog"
+  // instruction once, and L3 becomes the most explicit hand demo. Once the
+  // child grabs Frog, this ladder stays dismissed and the obstacle stuck-hints
+  // take over.
   useEffect(() => {
-    if (
-      !isActive
-      || phase !== 'trace'
-      || !introVoDone
-      || isPaused
-      || isDragging
-      || stuckLevel > 0
-    ) {
-      setShowPassiveNudge(false);
-      return undefined;
-    }
-
-    const id = window.setTimeout(() => setShowPassiveNudge(true), 10000);
-    return () => window.clearTimeout(id);
-  }, [isActive, phase, introVoDone, isPaused, isDragging, stuckLevel, passiveIdleReset]);
+    if (!isActive || phase !== 'trace' || isPaused || hasStartedDrag || startDragHintLevel !== 2) return;
+    playSceneLine?.('scene10_vak_intro', markStartDragLevel2VoiceEnded);
+  }, [
+    hasStartedDrag,
+    isActive,
+    isPaused,
+    markStartDragLevel2VoiceEnded,
+    phase,
+    playSceneLine,
+    startDragHintLevel,
+  ]);
 
   // One-time onboarding: a hand drags the frog from the bank into the water so
   // kids know to DRAG (not tap). Fires once when play starts, GestureDemo
-  // auto-hides after 2 loops, and beginDrag kills it on first grab. Keyed only
-  // on `phase` so a re-rendering parent can't cancel the timer.
+  // auto-hides after 2 loops, and beginDrag kills it on first grab. Waits for
+  // the intro VO to actually start speaking (introVoStarted) — a fixed delay
+  // from the `phase` transition doesn't track real TTS startup lag, and could
+  // show the demo before the VO even started.
   useEffect(() => {
-    if (phase !== 'trace' || introGestureShownRef.current) return undefined;
+    if (phase !== 'trace' || !introVoStarted || introGestureShownRef.current) return undefined;
     // Teaches the control (drag), not a rescue for inactivity. scene10_vak_intro
     // is "Frog's way to his family is blocked. Drag Frog to find another way." —
     // a short setup clause before the action word, so this uses GMB gesture-
@@ -520,7 +535,7 @@ export default function VakratundaRescueGame({
       setShowIntroGesture(true);
     }, 750);
     return () => clearTimeout(t);
-  }, [phase]);
+  }, [phase, introVoStarted]);
 
   useEffect(() => {
     if (!isActive) return undefined;
@@ -659,10 +674,9 @@ export default function VakratundaRescueGame({
     if (distance(point, frogPosRef.current) > GRAB_RADIUS) return; // must grab the frog
     stopVoice?.();
     setIsDragging(true);
+    setHasStartedDrag(true);
     introGestureShownRef.current = true;   // they've got it — kill the intro cue
     setShowIntroGesture(false);
-    setShowPassiveNudge(false);
-    setPassiveIdleReset((n) => n + 1);
     event.currentTarget.setPointerCapture?.(event.pointerId);
   }, [getPoint, isPaused, phase, showDebugPanel, stopVoice]);
 
@@ -678,7 +692,6 @@ export default function VakratundaRescueGame({
     }
     setIsDragging(false);
     blockedContactRef.current = false;
-    setPassiveIdleReset((n) => n + 1);
     // Trail, pads and frog position deliberately PERSIST — the path the child
     // has drawn stays on screen so they can pick up and continue.
   }, []);
@@ -976,7 +989,7 @@ export default function VakratundaRescueGame({
       ))}
 
       <div
-        className={`vak-layer vak-start-frog ${phase === 'reunion' ? 'is-reunion' : ''} ${phase === 'reunion' && familyBounce ? 'is-bouncing' : ''} ${isPlaying && !isDragging ? 'is-waiting' : ''} ${blockPulse ? 'is-shaking' : ''} ${frogSnapping ? 'is-snapping' : ''} ${showPassiveNudge ? 'is-passive-hint' : ''} ${showDebugPanel ? 'is-debug-draggable' : ''}`}
+        className={`vak-layer vak-start-frog ${phase === 'reunion' ? 'is-reunion' : ''} ${phase === 'reunion' && familyBounce ? 'is-bouncing' : ''} ${isPlaying && !isDragging ? 'is-waiting' : ''} ${blockPulse ? 'is-shaking' : ''} ${frogSnapping ? 'is-snapping' : ''} ${startDragHintLevel === 1 ? 'is-start-hint' : ''} ${startDragHintLevel === 2 ? 'is-start-hint-strong' : ''} ${startDragHintLevel >= 3 ? 'is-start-hint-final' : ''} ${showDebugPanel ? 'is-debug-draggable' : ''}`}
         style={{ left: `${frogRenderPos.x}%`, top: `${frogRenderPos.y}%`, width: `${frogWidth}%`, zIndex: 14 }}
         onPointerDown={(event) => startDebugDrag(event, { type: 'frogStart' })}
         onPointerMove={continueDebugDrag}
@@ -1068,6 +1081,26 @@ export default function VakratundaRescueGame({
         idleDelay={0}
         iterations={2}
       />
+
+      {startDragHintLevel >= 2 && isPlaying && !showDebugPanel && !hasStartedDrag && (
+        <GestureDemo
+          key={`vak-start-drag-hint-${startDragHintLevel}-${startDragPulseTick}`}
+          type="drag"
+          from={{ x: startPos.x, y: startPos.y }}
+          to={
+            startDragHintLevel >= 3
+              ? { x: introGestureTo.x, y: introGestureTo.y }
+              : {
+                  x: startPos.x + ((introGestureTo.x - startPos.x) * 0.45),
+                  y: startPos.y + ((introGestureTo.y - startPos.y) * 0.45),
+                }
+          }
+          active
+          idleDelay={0}
+          replayKey={`${startDragHintLevel}-${startDragPulseTick}`}
+          iterations={2}
+        />
+      )}
 
       <div
         className={`vak-debug-panel ${showDebugPanel ? 'is-open' : ''}`}

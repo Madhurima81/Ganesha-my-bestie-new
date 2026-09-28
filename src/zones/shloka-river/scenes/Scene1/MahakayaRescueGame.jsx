@@ -20,7 +20,7 @@ const SYLLABLES = ['Ma', 'ha', 'ka', 'ya'];
 const AUDIO = { syllables: ['ma', 'ha', 'ka', 'ya'] };
 const TOTAL_LOGS = 4;
 const TOTAL_SYLLABLES = 4;
-const DROP_DIST = 12;
+const DROP_DIST = 16;
 const DEBUG_PHASE_OPTIONS = [
   { value: 0, label: 'Start' },
   { value: 1, label: 'After Log 1' },
@@ -165,6 +165,7 @@ export default function MahakayaRescueGame({
   const [layoutCopyStatus, setLayoutCopyStatus] = useState('');
   const [crossTargetRaft, setCrossTargetRaft] = useState(CROSS_TARGET_RAFT);
   const [teachingCompleteKey, setTeachingCompleteKey] = useState(null);
+  const [introVoStarted, setIntroVoStarted] = useState(false);
 
   const stageRef = useRef(null);
   const timers = useRef([]);
@@ -266,6 +267,7 @@ export default function MahakayaRescueGame({
     setDebugPhase(0);
     setCrossing(false);
     setTeachingCompleteKey(null);
+    setIntroVoStarted(false);
     lastHintVoRef.current = null;
   }, [clearTimers]);
 
@@ -287,7 +289,13 @@ export default function MahakayaRescueGame({
     // just as narration alongside play instead of a gate in front of it.
     setPhase('play');
     phaseRef.current = 'play';
-    playSceneLine?.('scene10_maha_intro');
+    // The log-1 teaching demo waits for this VO to actually start speaking
+    // (browser TTS has variable startup lag after cancel()+speak(), so a
+    // blind fixed delay from mount can fire the demo before/under the VO).
+    // Fallback timer covers muted audio or no speechSynthesis support, where
+    // onStart never fires.
+    playSceneLine?.('scene10_maha_intro', undefined, { onStart: () => setIntroVoStarted(true) });
+    after(1200, () => setIntroVoStarted(true));
     return clearTimers;
     // Voice and timer helpers are stable enough for this scene lifecycle.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -529,6 +537,14 @@ export default function MahakayaRescueGame({
     after(SYLLABLE_HOLD_MS, () => {
       setLitCount(nextCompleted);
     });
+
+    // One-time continuation cue after the very first log only — later logs
+    // rely on the raft visibly growing + gesture hints, not a repeated line.
+    if (nextCompleted === 1) {
+      after(SYLLABLE_HOLD_MS + 500, () => {
+        playSceneLine?.('scene10_maha_keep_adding');
+      });
+    }
 
     const nextLog = nextCompleted;
     setActiveLog(nextLog);
@@ -821,9 +837,11 @@ export default function MahakayaRescueGame({
       {/* L2 shows a short partial gesture (does not reach the target) + VO
           "Drag the log into the water."; L3 shows the full path + "Put the
           log here." The initial teaching pass (log 1 only) is always full,
-          one iteration, no VO, starting ~300ms after mount. Two consecutive
-          wrong drops bring the L2-style clarity in early (effectiveHintLevel),
-          without pulling the spoken lines forward. */}
+          one iteration, no VO, and waits for the intro VO to actually start
+          speaking (introVoStarted) before its own short buffer delay — a
+          fixed ms-from-mount guess doesn't track real TTS startup lag.
+          Two consecutive wrong drops bring the L2-style clarity in early
+          (effectiveHintLevel), without pulling the spoken lines forward. */}
       <GestureDemo
         type="drag"
         from={{ x: currentWaitingLog.l, y: currentWaitingLog.t }}
@@ -839,10 +857,14 @@ export default function MahakayaRescueGame({
         }
         active={
           !debugMode && phase === 'play' && dragging !== 'log'
-          && ((needsInitialTeaching && !teachingComplete) || effectiveHintLevel >= 2)
+          && ((needsInitialTeaching && !teachingComplete && introVoStarted) || effectiveHintLevel >= 2)
         }
-        idleDelay={needsInitialTeaching && !teachingComplete ? 300 : 0}
-        iterations={2}
+        replayKey={needsInitialTeaching && !teachingComplete ? 'teaching' : effectiveHintLevel}
+        idleDelay={needsInitialTeaching && !teachingComplete ? 600 : 0}
+        // One pass for the automatic first-time teaching demo — a repeat
+        // reads as nagging and delays the child's own turn. The L2/L3 hint
+        // ladder (only shown if the child gets stuck) keeps its 2 passes.
+        iterations={needsInitialTeaching && !teachingComplete ? 1 : 2}
         onComplete={() => {
           if (needsInitialTeaching && !teachingComplete) setTeachingCompleteKey(hintStageKey);
         }}
