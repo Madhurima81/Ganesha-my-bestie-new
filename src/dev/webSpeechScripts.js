@@ -39,7 +39,7 @@ export const WEB_SPEECH_SCRIPTS = {
     scene10_vak_drag_pieces: 'Follow the safe water past the rocks.',
     scene10_vak_crossed: 'Vakratunda! You found another way and helped the frog reach his family.',
     scene10_vak_meaning: 'Vakratunda means finding another way.',
-    scene10_maha_intro: 'Everyone wants to cross, but the raft is too small. Help make room for them all.',
+    scene10_maha_intro: 'Everyone wants to cross the river. Drag the logs to build a raft.',
     scene10_maha_blocking: "The raft's still too small for everyone.",
     scene10_maha_drag_rope: 'Grab another log so everyone can fit.',
     scene10_maha_pull_down: '',
@@ -58,8 +58,9 @@ export const WEB_SPEECH_SCRIPTS = {
     scene11_surya_success: 'Suryakoti! You brought back the light and helped the bunny home.',
     scene11_surya_done: 'Suryakoti! You brought back the light and helped the bunny home.',
     scene11_surya_meaning: 'Suryakoti means bright as ten million suns.',
-    scene11_sama_intro: 'A little deer sees a strange shadow. Move the light and look closely.',
-    scene11_sama_hint: 'Move the light around the shadow and look closely.',
+    scene11_sama_intro: 'Deer sees a strange shadow. Press and hold to look closely.',
+    scene11_sama_hint: 'Press and hold on the shadow.',
+    scene11_sama_hint_hold: 'Keep holding to look closely.',
     scene11_sama_hint_look: 'Look closely.',
     scene11_sama_reveal_branch: 'That part is just a branch.',
     scene11_sama_reveal_reeds: 'Those are just reeds and leaves.',
@@ -83,12 +84,12 @@ export const WEB_SPEECH_SCRIPTS = {
     nirv_meaning: 'Nirvighnam means removing obstacles.',
     nirvighnamSetup: 'You cleared the path… and the turtle made it home.',
     nirvighnamClaim: 'I clear the way and move forward.',
-    scene12_kuru_intro: "Beaver can't build the bridge alone. Help him ask his friends to build it together.",
-    scene12_kuru_tap: 'Who can Beaver ask for help next?',
-    kuru_hint: 'Who can Beaver ask for help next?',
-    kuru_done: 'Kurume Deva! You asked for help and built the beaver’s bridge.',
+    scene12_kuru_intro: 'Baby Beaver is across the river.',
+    scene12_kuru_tap: 'The logs are too heavy. Drag the help bubble to someone who can help.',
+    kuru_hint: 'The logs are too heavy. Drag the help bubble to someone who can help.',
+    kuru_done: 'Kuru Me Deva! You asked for help and built the bridge.',
     kuru_meaning: 'Kuru Me Deva means please help us.',
-    kurumedevaSetup: 'You called for help… and friends came.',
+    kurumedevaSetup: 'Baby Beaver is across the river.',
     kurumedevaClaim: 'Asking for help is a superpower.',
     sceneComplete: 'The turtle reached her nest. The bridge is ready. Both powers are yours now.',
   },
@@ -125,7 +126,7 @@ const stripLeadingSpeechText = (text, leadingText) => {
 };
 
 /** Speak `text` via the browser's SpeechSynthesis; calls onEnded when done/failed. */
-export function speakWebSpeech(text, onEnded) {
+export function speakWebSpeech(text, onEnded, onStart) {
   const done = () => { try { onEnded && onEnded(); } catch { /* no-op */ } };
   if (!text || typeof window === 'undefined' || typeof SpeechSynthesisUtterance === 'undefined' || !window.speechSynthesis) {
     done();
@@ -138,6 +139,7 @@ export function speakWebSpeech(text, onEnded) {
     u.rate = 0.95;
     u.pitch = 1;
     u.volume = 0.95;
+    u.onstart = () => { try { onStart && onStart(); } catch { /* no-op */ } };
     u.onend = done;
     u.onerror = done;
     window.speechSynthesis.speak(u);
@@ -163,7 +165,7 @@ export function makeTtsVoiceGuidance({ sceneId, word, realVG, log = true }) {
       const line = map[key];
       if (line) {
         tag('speak', key, '→', line);
-        speakWebSpeech(stripLeadingSpeechText(line, opts.stripLeadingText), onEnded);
+        speakWebSpeech(stripLeadingSpeechText(line, opts.stripLeadingText), onEnded, opts.onStart);
         return;
       }
       tag('no TTS line for', key, '— trying MP3');

@@ -84,6 +84,40 @@
     drop-shadow(0 0 20px rgba(255, 220, 80, 0.4));
 }
 
+.kuru-bridge.is-wobbling .kuru-bridge-img.is-cur {
+  transform-origin: 50% 60%;
+  animation: kuruBridgeWobble 1.4s ease-in-out infinite;
+}
+
+/* Vine — a plain fade-in next to Beaver once the logs land. No movement,
+   just a swap from not-there to there. */
+.kuru-vine {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 15;
+  animation: kuruVineFadeIn 0.4s ease both;
+}
+
+.kuru-vine img {
+  width: 100%;
+  display: block;
+  -webkit-user-drag: none;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.18));
+}
+
+@keyframes kuruVineFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes kuruBridgeWobble {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(-1.1deg); }
+  50% { transform: rotate(0.9deg); }
+  75% { transform: rotate(-0.6deg); }
+  100% { transform: rotate(0deg); }
+}
+
 @keyframes kuruBridgeFadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -206,9 +240,9 @@
 }
 
 .kuru-friend > .pose-image {
-  /* 1 / KURU_HIT_SCALE (1.6) — keeps the visible sprite at its original size
+  /* 1 / KURU_HIT_SCALE (1.18) — keeps the visible sprite at its original size
      inside the enlarged hit area. */
-  width: 62.5%;
+  width: 84.75%;
   display: block;
   -webkit-user-drag: none;
   pointer-events: none;

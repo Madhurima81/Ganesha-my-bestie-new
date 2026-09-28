@@ -48,8 +48,8 @@ export const KURUMEDEVA_LAYOUT = {
     flip: false,
   },
   beaverBaby: {
-    l: 86.2,
-    t: 65.8,
+    l: 79.6,
+    t: 60.8,
     w: 8.5,
     flip: true,
   },
@@ -62,7 +62,7 @@ export const KURUMEDEVA_LAYOUT = {
     { id: 'monkey', label: 'Monkey', brings: 'ropes', l: 4.1, t: 55.2, w: 10, flip: false },
   ],
   beaverPath: [
-    { l: 20.2, t: 64.7 },
+    { l: 39.68, t: 62.91 },
     { l: 26.8, t: 65.4 },
     { l: 34.3, t: 66.9 },
     { l: 41.9, t: 65.5 },

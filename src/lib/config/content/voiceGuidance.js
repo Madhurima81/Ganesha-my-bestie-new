@@ -74,7 +74,7 @@ export const VOICE_SCRIPTS = {
         text: "Try going around it."
       },
       scene10_maha_intro: {
-        text: "The friends are waiting. Let's build a raft with space for everyone."
+        text: "Everyone wants to cross the river. Drag the logs to build a raft."
       },
       scene10_maha_drag_water: {
         text: "Drag the log into the water."
@@ -84,6 +84,9 @@ export const VOICE_SCRIPTS = {
       },
       scene10_maha_success: {
         text: "Mahakaay! You made space so everyone could come along."
+      },
+      scene10_maha_keep_adding: {
+        text: "Keep adding logs to the raft."
       },
 
 
@@ -129,8 +132,14 @@ export const VOICE_SCRIPTS = {
       surya_hint_keep: {
         text: "Keep rubbing."
       },
+      scene11_surya_keep_rubbing: {
+        text: "Keep rubbing to bring back more light."
+      },
       scene11SamaHint: {
-        text: "Move the light and look closely."
+        text: "Press and hold on the shadow."
+      },
+      scene11_sama_find_another: {
+        text: "Press and hold another part of the shadow."
       },
       scene11SuryaDone: {
         text: "Suryakoti! You brought back the light and helped Bunny home."
@@ -143,7 +152,7 @@ export const VOICE_SCRIPTS = {
         text: "Bunny can’t find home. Rub the glow to bring back the light."
       },
       suryakotiClaim: {
-        text: "A little deer sees a strange shadow. Move the light and look closely."
+        text: "Deer sees a strange shadow. Press and hold to look closely."
       },
       sceneComplete: {
         text: "You brought back the light and saw what was really there."
@@ -156,22 +165,40 @@ export const VOICE_SCRIPTS = {
       scene12NirvHint: {
         text: "Turtle’s way home is blocked. Press and hold the rock to move it."
       },
+      nirv_branch_intro: {
+        text: "The branch is still blocking the way. Drag it onto the bank."
+      },
+      nirv_reed_intro: {
+        text: "The reeds are blocking the way. Swipe them apart."
+      },
+      nirv_hint_branch: {
+        text: "Drag the branch onto the bank."
+      },
+      nirv_hint_reed: {
+        text: "Swipe the reeds apart."
+      },
+      nirv_hint_keep_branch: {
+        text: "Drag the branch onto the bank."
+      },
+      nirv_hint_keep_reed: {
+        text: "Swipe the reeds apart."
+      },
       scene12KuruHint: {
-        text: "Baby Beaver is across the river. Beaver needs help to build a bridge."
+        text: "Baby Beaver is across the river."
       },
       scene12NirvDone: {
-        text: "Nirvighnam! You cleared the way and helped Turtle through."
+        text: "You cleared the way and helped Turtle through."
       },
       scene12KuruDone: {
-        text: "Kuru Me Deva! You asked for help and finished the bridge."
+        text: "Kuru Me Deva! You asked for help and built the bridge."
       },
 
       // Kurumedeva bridge game (v2 — no more solo try/fail beats)
       kuru_ask_elephant: {
-        text: "Who can help with the heavy logs?"
+        text: "The logs are too heavy. Drag the help bubble to someone who can help."
       },
       kuru_ask_monkey: {
-        text: "Who can help tie the rope?"
+        text: "The rope needs tying. Drag the help bubble to someone who can help."
       },
       kuru_logs_after: {
         text: "Elephant helped put the logs in place."
@@ -190,6 +217,12 @@ export const VOICE_SCRIPTS = {
       },
       kuru_hint_monkey: {
         text: "Drag the help bubble to Monkey."
+      },
+      kuru_hint_plank_soft: {
+        text: "Drag a plank toward the bridge."
+      },
+      kuru_hint_plank_direct: {
+        text: "Drag the plank onto the glowing place."
       },
 
       sceneComplete: {
