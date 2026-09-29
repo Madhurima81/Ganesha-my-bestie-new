@@ -166,9 +166,6 @@ const DEBUG_PANEL_KEYS = [
   ['beaverPath1', 'Beaver walk 1'],
   ['beaverPath2', 'Beaver walk 2'],
   ['beaverPath3', 'Beaver walk 3'],
-  ['beaverPath4', 'Beaver walk 4'],
-  ['beaverPath5', 'Beaver walk 5'],
-  ['beaverPath6', 'Beaver walk 6'],
 ];
 
 const DEBUG_LABELS = Object.fromEntries(DEBUG_PANEL_KEYS);
@@ -199,8 +196,8 @@ const DEBUG_PHASES = [
   { label: 'Phase 1 — Helper positions on bridge', keys: ['helper0', 'helper1'] },
   { label: 'Phase 1b — Final wait positions', keys: ['wait0', 'wait1'] },
   { label: 'Phase 2 — Plank wait/place positions', keys: ['plankPile', 'plankSlot0', 'plankSlot1', 'plankSlot2'] },
-  { label: 'Phase 3 — Beaver bridge-side walk', keys: ['beaverPath0', 'beaverPath1', 'beaverPath2', 'beaverPath3', 'beaverPath4', 'beaverPath5', 'beaverPath6'] },
-  { label: 'Phase 4 — Final Beaver walk only', keys: ['wait0', 'wait1', 'beaverPath0', 'beaverPath1', 'beaverPath2', 'beaverPath3', 'beaverPath4', 'beaverPath5', 'beaverPath6'] },
+  { label: 'Phase 3 — Beaver bridge-side walk', keys: ['beaverPath0', 'beaverPath1', 'beaverPath2', 'beaverPath3'] },
+  { label: 'Phase 4 — Final Beaver walk only', keys: ['wait0', 'wait1', 'beaverPath0', 'beaverPath1', 'beaverPath2', 'beaverPath3'] },
 ];
 
 function buildDebugLayout() {
@@ -795,7 +792,7 @@ export default function KurumedevaGame({
         playSceneLine('scene12KuruDone', () => {
           successVoDoneRef.current = true;
           completeAfterSuccess();
-        }, { stripLeadingText: 'Kurume Deva' });
+        }, { stripLeadingText: 'Kuru Me Deva' });
       };
       if (playWord) playWord('kurumedeva', afterWord);
       else afterWord();

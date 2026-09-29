@@ -44,13 +44,13 @@ export const KURUMEDEVA_LAYOUT = {
   // the same S-curve walked in the opposite direction (left → right), so it
   // still tracks the river art exactly.
   beaver: {
-    w: 8,
+    w: 10,
     flip: false,
   },
   beaverBaby: {
     l: 79.6,
     t: 60.8,
-    w: 8.5,
+    w: 6.5,
     flip: true,
   },
   // Bridge redesign (GMB_KurumeDeva_New_Assets pack): exactly 2 ask-for-help
@@ -62,12 +62,9 @@ export const KURUMEDEVA_LAYOUT = {
     { id: 'monkey', label: 'Monkey', brings: 'ropes', l: 4.1, t: 55.2, w: 10, flip: false },
   ],
   beaverPath: [
-    { l: 39.68, t: 62.91 },
-    { l: 26.8, t: 65.4 },
-    { l: 34.3, t: 66.9 },
-    { l: 41.9, t: 65.5 },
-    { l: 49.1, t: 68.2 },
-    { l: 63.1, t: 67.9 },
-    { l: 73.9, t: 69.9 },
+    { l: 39.7, t: 62.9 },
+    { l: 53, t: 66.6 },
+    { l: 69.7, t: 70.3 },
+    { l: 85, t: 66.7 },
   ],
 };
