@@ -188,6 +188,9 @@ export default function GestureDemo({
   to = { x: 60, y: 40 },
   idleDelay = 3000,
   active = true,
+  // Scene is frozen (sidebar open): hide the demo and, on resume, play it again
+  // from the start — same "replay from the beginning" rule as the VO.
+  paused = false,
   replayKey,
   onDismiss,
   onComplete,
@@ -229,7 +232,7 @@ export default function GestureDemo({
   // on hint escalation pass replayKey={effectiveHintLevel} (or similar) so
   // this effect re-arms even though `active` itself didn't change.
   useEffect(() => {
-    if (!active) {
+    if (!active || paused) {
       setVisible(false);
       if (timerRef.current) clearTimeout(timerRef.current);
       return;
@@ -242,7 +245,7 @@ export default function GestureDemo({
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, [active, idleDelay, replayKey]);
+  }, [active, paused, idleDelay, replayKey]);
 
   // Inject dynamic keyframes
   useEffect(() => {
@@ -266,8 +269,13 @@ export default function GestureDemo({
   useEffect(() => {
     if (!visible) return;
 
-    const handler = () => dismiss();
-    window.addEventListener('pointerdown', handler, { once: true });
+    // A tap on the sidebar isn't the child trying the gesture — it must not
+    // dismiss the demo (or count as "learned"); the pause hook replays it.
+    const handler = (e) => {
+      if (e.target?.closest?.('.ganesha-sidebar, [data-keep-gesture]')) return;
+      dismiss();
+    };
+    window.addEventListener('pointerdown', handler);
     return () => window.removeEventListener('pointerdown', handler);
   }, [visible, dismiss]);
 

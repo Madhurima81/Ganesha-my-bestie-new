@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import SyllableHighlight from '../../shared/SyllableHighlight';
 import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
 import useRepeatedHintCycle from '../../../../lib/hooks/useRepeatedHintCycle';
+import usePausableTimers from '../../../../lib/hooks/usePausableTimers';
 import './VakratundaRescueGame.css';
 
 import frogSwim from './assets/images/vakratunda/frog-baby.webp';
@@ -253,6 +254,8 @@ export default function VakratundaRescueGame({
   const debugPanelDragRef = useRef(null);
   const timers = useRef([]);
   const isPausedRef = useRef(isPaused);
+  // Freezes with the sidebar and resumes with the remaining time (see hook).
+  const { after: pausableAfter, cancel: cancelPausable, clear: clearPausable } = usePausableTimers(isPaused);
   const blockPulseTimeoutRef = useRef(null);
   const hasPlayedStuckVoRef = useRef(false);
   const bumpCountRef = useRef(0);          // bumps since the last forward progress
@@ -276,6 +279,7 @@ export default function VakratundaRescueGame({
   const {
     hintLevel: startDragHintLevel,
     pulseTick: startDragPulseTick,
+    markLevel2VoiceStarted: markStartDragLevel2VoiceStarted,
     markLevel2VoiceEnded: markStartDragLevel2VoiceEnded,
   } = useRepeatedHintCycle({
     enabled: isActive && !isPaused && phase === 'trace' && introVoDone && !isDragging && !hasStartedDrag && stuckLevel === 0,
@@ -343,26 +347,17 @@ export default function VakratundaRescueGame({
   // Any new furthest-right position clears the streak and hides it again, so
   // every rock / reed / log is its own fresh little puzzle.
   const clearStuckTimers = useCallback(() => {
-    stuckTimersRef.current.forEach(clearTimeout);
+    stuckTimersRef.current.forEach(cancelPausable);
     stuckTimersRef.current = [];
-  }, []);
+  }, [cancelPausable]);
 
-  // Pause-safe delay for the stuck escalation (+6s / +12s): while paused it
-  // re-checks every 150ms instead of firing, and every retry id is tracked in
-  // stuckTimersRef so clearStuckTimers (e.g. real progress) cancels the whole
-  // chain — paused time must never count toward the escalation.
+  // Pause-safe delay for the stuck escalation (+6s / +12s): frozen while paused
+  // and resumed with the remaining time, so paused time never counts toward the
+  // escalation. Handles are tracked in stuckTimersRef so clearStuckTimers (e.g.
+  // real progress) cancels them.
   const pauseSafeAfter = useCallback((ms, fn) => {
-    const runWhenReady = () => {
-      if (isPausedRef.current) {
-        const retryId = setTimeout(runWhenReady, 150);
-        stuckTimersRef.current.push(retryId);
-        return;
-      }
-      fn();
-    };
-    const id = setTimeout(runWhenReady, ms);
-    stuckTimersRef.current.push(id);
-  }, []);
+    stuckTimersRef.current.push(pausableAfter(ms, fn));
+  }, [pausableAfter]);
 
   const resetStuck = useCallback(() => {
     clearStuckTimers();
@@ -376,29 +371,19 @@ export default function VakratundaRescueGame({
     timers.current.forEach(clearTimeout);
     timers.current = [];
     clearStuckTimers();
+    clearPausable();
     if (blockPulseTimeoutRef.current) {
       clearTimeout(blockPulseTimeoutRef.current);
       blockPulseTimeoutRef.current = null;
     }
-  }, [clearStuckTimers]);
+  }, [clearPausable, clearStuckTimers]);
 
   useEffect(() => {
     isPausedRef.current = isPaused;
     if (isPaused) setIsDragging(false);
   }, [isPaused]);
 
-  const after = useCallback((ms, fn) => {
-    const runWhenReady = () => {
-      if (isPausedRef.current) {
-        const retryId = setTimeout(runWhenReady, 150);
-        timers.current.push(retryId);
-        return;
-      }
-      fn();
-    };
-    const id = setTimeout(runWhenReady, ms);
-    timers.current.push(id);
-  }, []);
+  const after = pausableAfter;
 
   const getPoint = useCallback((clientX, clientY) => {
     const stage = stageRef.current;
@@ -422,17 +407,21 @@ export default function VakratundaRescueGame({
     // Soft "nope" SFX only — no VO. Throttled so scrubbing along the bank or a
     // rock doesn't machine-gun it.
     const now = Date.now();
-    if (now - lastBlockSfxRef.current > BLOCK_SFX_COOLDOWN_MS) {
+    const playedBlockSfx = now - lastBlockSfxRef.current > BLOCK_SFX_COOLDOWN_MS;
+    if (playedBlockSfx) {
       lastBlockSfxRef.current = now;
       playSfx?.('softWrong');
     }
 
     // Stuck detection: N bumps with no forward progress since the streak began.
-    // One continuous shove against the same spot must count as ONE bump, not
-    // one per pointermove — blockedContactRef only clears when the frog
-    // reaches valid water again (or the drag ends).
-    if (blockedContactRef.current) return;
+    // Count the first blocked contact, then only count again when the
+    // throttled bump SFX plays. That keeps raw pointermove spam from creating
+    // fake attempts, but makes the visual hint follow the same repeated "nope"
+    // signal the child actually hears.
+    const shouldCountBump = !blockedContactRef.current || playedBlockSfx;
     blockedContactRef.current = true;
+    if (!shouldCountBump) return;
+
     bumpCountRef.current += 1;
     const stalled = maxProgressXRef.current <= stuckAnchorXRef.current + STUCK_PROGRESS_EPS;
     if (bumpCountRef.current >= STUCK_BUMPS && stalled && stuckLevelRef.current === 0) {
@@ -506,11 +495,13 @@ export default function VakratundaRescueGame({
   // take over.
   useEffect(() => {
     if (!isActive || phase !== 'trace' || isPaused || hasStartedDrag || startDragHintLevel !== 2) return;
+    if (playSceneLine) markStartDragLevel2VoiceStarted();
     playSceneLine?.('scene10_vak_intro', markStartDragLevel2VoiceEnded);
   }, [
     hasStartedDrag,
     isActive,
     isPaused,
+    markStartDragLevel2VoiceStarted,
     markStartDragLevel2VoiceEnded,
     phase,
     playSceneLine,
@@ -530,12 +521,12 @@ export default function VakratundaRescueGame({
     // a short setup clause before the action word, so this uses GMB gesture-
     // timing preset B (short setup before action): ~700-900ms after VO start,
     // aimed at when "Drag" is spoken.
-    const t = setTimeout(() => {
+    const t = pausableAfter(750, () => {
       introGestureShownRef.current = true;
       setShowIntroGesture(true);
-    }, 750);
-    return () => clearTimeout(t);
-  }, [phase, introVoStarted]);
+    });
+    return () => cancelPausable(t);
+  }, [phase, introVoStarted, pausableAfter, cancelPausable]);
 
   useEffect(() => {
     if (!isActive) return undefined;
@@ -561,20 +552,20 @@ export default function VakratundaRescueGame({
     const finish = () => {
       if (done) return;
       done = true;
-      clearTimeout(voFallback);
+      cancelPausable(voFallback);
       onGameComplete?.();
       onPhaseComplete?.();
     };
     // Browser audio onended can silently drop (esp. iOS Safari) — don't hang.
-    voFallback = setTimeout(finish, 8000);
-    timers.current.push(voFallback);
+    // Pausable, so the sidebar can't let it complete the scene behind the panel.
+    voFallback = after(8000, finish);
 
     playWord?.('vakratunda', () => {
       playSceneLine?.('scene10_vak_crossed', finish, { stripLeadingText: 'Vakratunda' });
     });
 
     after(4200, () => setFamilyBounce(false));
-  }, [after, familyPoint, onGameComplete, onPhaseComplete, onStageChange, playSceneLine, playSfx, playWord, setFrog]);
+  }, [after, cancelPausable, familyPoint, onGameComplete, onPhaseComplete, onStageChange, playSceneLine, playSfx, playWord, setFrog]);
 
   // One drag step: try to move the frog to `raw`. Blocked by obstacles; drops
   // wake + stepping stones on valid water; lights syllables by forward reach.
@@ -918,7 +909,7 @@ export default function VakratundaRescueGame({
   return (
     <div
       ref={stageRef}
-      className={`vak-game ${hideElements ? 'is-hidden' : ''}`}
+      className={`vak-game ${hideElements ? 'is-hidden' : ''} ${isPaused ? 'is-paused' : ''}`}
       onContextMenu={(event) => event.preventDefault()}
       onPointerDown={beginDrag}
       onPointerMove={continueDrag}
@@ -1078,6 +1069,7 @@ export default function VakratundaRescueGame({
         from={{ x: startPos.x, y: startPos.y }}
         to={{ x: introGestureTo.x, y: introGestureTo.y }}
         active={isPlaying && showIntroGesture}
+        paused={isPaused}
         idleDelay={0}
         iterations={2}
       />
@@ -1096,6 +1088,7 @@ export default function VakratundaRescueGame({
                 }
           }
           active
+          paused={isPaused}
           idleDelay={0}
           replayKey={`${startDragHintLevel}-${startDragPulseTick}`}
           iterations={2}

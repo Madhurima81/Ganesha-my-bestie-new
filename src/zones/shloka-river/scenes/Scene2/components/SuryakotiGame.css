@@ -255,3 +255,12 @@
     transform: translate(-50%, -50%) scale(1.03);
   }
 }
+
+/* Sidebar open = true pause: freeze every in-flight animation (bunny hop,
+   glow cues, gesture demos) so nothing plays out behind the panel. */
+.surya-game.is-paused,
+.surya-game.is-paused *,
+.surya-game.is-paused *::before,
+.surya-game.is-paused *::after {
+  animation-play-state: paused !important;
+}

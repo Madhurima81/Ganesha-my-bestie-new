@@ -416,7 +416,7 @@ const PondSceneContent = ({
 
   // Audio
   const { isAudioOn, toggleAudio } = useAudioPreference();
-  const { speak, stop: stopSpokenVoice } = useGaneshaVoice();
+  const { speak, stop: stopSpokenVoice, mute: muteSpokenVoice } = useGaneshaVoice();
   const { setGlobalVolume } = useGameSounds();
   const { startMusic, stopMusic, setVoiceVolume, playCorrect, playPowerUnlock, playCelebration } = useVoiceGuidance(
     zoneId, sceneId, {
@@ -431,7 +431,10 @@ const PondSceneContent = ({
   const playChime = playCorrect;
   const playGlow = playPowerUnlock;
   const playTwinkle = playCelebration;
-  useEffect(() => { setVoiceVolume(isAudioOn ? 1 : 0); }, [isAudioOn, setVoiceVolume]);
+  useEffect(() => {
+    setVoiceVolume(isAudioOn ? 1 : 0);
+    if (!isAudioOn) muteSpokenVoice(); // finish any in-flight line silently, on schedule
+  }, [isAudioOn, setVoiceVolume, muteSpokenVoice]);
   useEffect(() => { if (sceneState?.welcomeShown) startMusic(); }, [sceneState?.welcomeShown]);
   useEffect(() => {
     setGlobalVolume(0.35);
@@ -551,7 +554,7 @@ const PondSceneContent = ({
   }, [interactionBeat]);
 
   const speakPondPrompt = useCallback((key, onEnd) => {
-    if (!isAudioOn || !VOICE_LINES[key]) {
+    if (!VOICE_LINES[key]) {
       onEnd?.();
       return;
     }

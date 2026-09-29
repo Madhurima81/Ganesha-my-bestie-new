@@ -13,6 +13,7 @@ import PoseImage, { usePreloadPoses } from '../../../../lib/components/animation
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
 import useAppVisibility from '../../../../lib/hooks/useAppVisibility';
+import usePausableTimers from '../../../../lib/hooks/usePausableTimers';
 import './FlowerJourneyGame2.css';
 
 import forestBackground from './assets/images/modak-fj-bg.webp';
@@ -135,6 +136,7 @@ export default function FlowerJourneyGame2({
   isAudioOn = true,
   onFlowersUpdate,
   onComplete,
+  stopVoice,
 }) {
   usePreloadPoses(SCENE_IMAGES);
   const [phase, setPhase] = useState(PHASES.FLOWER_BUSH);
@@ -150,6 +152,12 @@ export default function FlowerJourneyGame2({
   const mutedRef = useRef(!isAudioOn);
   useEffect(() => { mutedRef.current = !isAudioOn; }, [isAudioOn]);
 
+  // Sidebar = true pause: every game timer freezes (and resumes with its remaining
+  // time), and speech is interrupted + replayed — see interruptSpeech/resumeSpeech.
+  const { after, cancel: cancelTimer } = usePausableTimers(isPaused);
+  const pausedRef = useRef(isPaused);
+  pausedRef.current = isPaused;
+
   // Tab-hide safety for this game's direct speechSynthesis use (it bypasses the
   // scene's useVoiceGuidance hook). On hide: detach the active utterance's
   // handlers BEFORE cancel() so a story beat awaiting speakAsync doesn't resolve
@@ -161,6 +169,17 @@ export default function FlowerJourneyGame2({
   const replayTimerRef = useRef(null);
 
   const startUtterance = useCallback((text, resolve) => {
+    // A line requested while the sidebar is open must not speak behind it —
+    // queue it as the interrupted line so it plays, from the start, on close.
+    if (pausedRef.current) {
+      interruptedSpeechRef.current?.resolve?.();
+      interruptedSpeechRef.current = { text, resolve };
+      return;
+    }
+    // Stop the parent scene's own voice engine first — its MP3 audio element
+    // isn't touched by window.speechSynthesis.cancel() below, so without this
+    // a still-playing scene VO keeps going under this mini-game's line.
+    stopVoice?.();
     window.speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
     u.rate = 0.95;
@@ -173,7 +192,7 @@ export default function FlowerJourneyGame2({
     u.onerror = done;
     activeSpeechRef.current = entry;
     window.speechSynthesis.speak(u);
-  }, []);
+  }, [stopVoice]);
 
   const speak = useCallback((text) => {
     try {
@@ -185,37 +204,46 @@ export default function FlowerJourneyGame2({
   const speakAsync = useCallback((text) => new Promise((resolve) => {
     try {
       if (mutedRef.current || typeof window === 'undefined' || !window.speechSynthesis) {
-        window.setTimeout(resolve, Math.max(700, text.length * 45));
+        after(Math.max(700, text.length * 45), resolve);
         return;
       }
       startUtterance(text, resolve);
     } catch { resolve(); }
-  }), [startUtterance]);
+  }), [after, startUtterance]);
+
+  // Detach the active utterance's handlers BEFORE cancel() (so nothing awaiting it
+  // resolves and advances), and remember it. Shared by tab-hide and sidebar-open.
+  const interruptSpeech = useCallback(() => {
+    if (replayTimerRef.current) { clearTimeout(replayTimerRef.current); replayTimerRef.current = null; }
+    const entry = activeSpeechRef.current;
+    activeSpeechRef.current = null;
+    if (entry) {
+      entry.utterance.onend = null;
+      entry.utterance.onerror = null;
+      interruptedSpeechRef.current = { text: entry.text, resolve: entry.resolve };
+    }
+    try { window.speechSynthesis?.cancel(); } catch { /* no-op */ }
+  }, []);
+
+  // Re-speak the interrupted line from the start after `settleMs`, resolving the same
+  // promise so the awaiting sequence continues; `onSettled` runs once it has finished
+  // (or immediately when nothing was interrupted).
+  const resumeSpeech = useCallback((settleMs, onSettled) => {
+    const entry = interruptedSpeechRef.current;
+    interruptedSpeechRef.current = null;
+    if (!entry) { onSettled?.(); return; }
+    replayTimerRef.current = setTimeout(() => {
+      replayTimerRef.current = null;
+      try {
+        if (mutedRef.current || !window.speechSynthesis) { entry.resolve?.(); onSettled?.(); return; }
+        startUtterance(entry.text, () => { entry.resolve?.(); onSettled?.(); });
+      } catch { entry.resolve?.(); onSettled?.(); }
+    }, settleMs);
+  }, [startUtterance]);
 
   useAppVisibility(
-    useCallback(() => {
-      if (replayTimerRef.current) { clearTimeout(replayTimerRef.current); replayTimerRef.current = null; }
-      const entry = activeSpeechRef.current;
-      activeSpeechRef.current = null;
-      if (entry) {
-        entry.utterance.onend = null;
-        entry.utterance.onerror = null;
-        interruptedSpeechRef.current = { text: entry.text, resolve: entry.resolve };
-      }
-      try { window.speechSynthesis?.cancel(); } catch { /* no-op */ }
-    }, []),
-    useCallback(() => {
-      const entry = interruptedSpeechRef.current;
-      interruptedSpeechRef.current = null;
-      if (!entry) return;
-      replayTimerRef.current = setTimeout(() => {
-        replayTimerRef.current = null;
-        try {
-          if (mutedRef.current || !window.speechSynthesis) { entry.resolve?.(); return; }
-          startUtterance(entry.text, entry.resolve);
-        } catch { entry.resolve?.(); }
-      }, 2000);
-    }, [startUtterance])
+    interruptSpeech,
+    useCallback(() => resumeSpeech(2000), [resumeSpeech])
   );
 
   // Unmount: only drop the pending replay. Don't cancel() here — the parent scene
@@ -226,13 +254,16 @@ export default function FlowerJourneyGame2({
     replayTimerRef.current = null;
     interruptedSpeechRef.current = null;
     if (teachingTimerRef.current) {
-      clearTimeout(teachingTimerRef.current);
+      cancelTimer(teachingTimerRef.current);
       teachingTimerRef.current = null;
     }
-  }, []);
-  const wait = useCallback((ms) => new Promise((resolve) => window.setTimeout(resolve, ms)), []);
+  }, [cancelTimer]);
+  const wait = useCallback((ms) => new Promise((resolve) => after(ms, resolve)), [after]);
 
-  const safeTimeout = useCallback((fn, ms) => window.setTimeout(fn, ms), []);
+  const safeTimeout = useCallback((fn, ms) => after(ms, fn), [after]);
+
+  // Drop-in for window.setTimeout(fn, ms) / clearTimeout(handle) that respects the pause.
+  const pTimeout = useCallback((fn, ms) => after(ms, fn), [after]);
 
   // ---------------------------------------------------------
   // HINT SYSTEM
@@ -263,15 +294,15 @@ export default function FlowerJourneyGame2({
     setForcedHintLevel(0);
     failureCountsRef.current[phase] = 0;
 
-    if (teachingTimerRef.current) clearTimeout(teachingTimerRef.current);
+    if (teachingTimerRef.current) cancelTimer(teachingTimerRef.current);
     setTeachingGesture(showTeaching);
     if (showTeaching) {
-      teachingTimerRef.current = window.setTimeout(() => {
+      teachingTimerRef.current = after(3800, () => {
         teachingTimerRef.current = null;
         setTeachingGesture(false);
-      }, 3800);
+      });
     }
-  }, [phase]);
+  }, [phase, after, cancelTimer]);
 
   const resetIdleBaseline = useCallback((clearEscalation = false) => {
     if (!idleArmedAtRef.current) return;
@@ -294,6 +325,33 @@ export default function FlowerJourneyGame2({
     if (next >= 3) setForcedHintLevel(3);
   }, [phase]);
 
+  // Sidebar open = true pause: interrupt the current line WITHOUT resolving it (so no
+  // story beat advances behind the panel) and disarm the idle ladder. On close, wait a
+  // beat, replay the interrupted line from the start (its promise resolves then, so the
+  // sequence continues), and only after that start a fresh 10/18/26 clock.
+  const wasPausedRef = useRef(false);
+  const wasArmedRef = useRef(false);
+  useEffect(() => {
+    if (isPaused) {
+      if (!wasPausedRef.current) {
+        wasArmedRef.current = !!idleArmedAtRef.current;
+        idleArmedAtRef.current = null;
+        l2VoiceEndedAtRef.current = null;
+        setIdleHintLevel(0);
+        setForcedHintLevel(0);
+        setTeachingGesture(false);
+      }
+      interruptSpeech();
+    } else if (wasPausedRef.current) {
+      resumeSpeech(400, () => {
+        // If the resumed story beat armed the ladder itself, leave that alone.
+        if (wasArmedRef.current && !idleArmedAtRef.current) idleArmedAtRef.current = Date.now();
+        wasArmedRef.current = false;
+      });
+    }
+    wasPausedRef.current = isPaused;
+  }, [isPaused, interruptSpeech, resumeSpeech]);
+
   useEffect(() => {
     idleArmedAtRef.current = null;
     l2VoiceEndedAtRef.current = null;
@@ -302,10 +360,10 @@ export default function FlowerJourneyGame2({
     setTeachingGesture(false);
     failureCountsRef.current[phase] = 0;
     if (teachingTimerRef.current) {
-      clearTimeout(teachingTimerRef.current);
+      cancelTimer(teachingTimerRef.current);
       teachingTimerRef.current = null;
     }
-  }, [phase]);
+  }, [phase, cancelTimer]);
 
   useEffect(() => {
     if (!isActive || isPaused || !WORKING_PHASES.includes(phase)) return undefined;
@@ -462,26 +520,26 @@ export default function FlowerJourneyGame2({
       // word) begins, so the teaching hand is synced there. The reaction
       // emoji has no word to sync to, so it just follows the wordless
       // approach beat immediately.
-      const emotionTimer = window.setTimeout(() => {
+      const emotionTimer = pTimeout(() => {
         if (cancelled) return;
         setEmotion('angry');
       }, 200);
-      const teachTimer = window.setTimeout(() => {
+      const teachTimer = pTimeout(() => {
         if (cancelled) return;
         setBushTeachingReady(true);
-        window.setTimeout(() => { if (!cancelled) setBushTeachingReady(false); }, 3800);
+        pTimeout(() => { if (!cancelled) setBushTeachingReady(false); }, 3800);
       }, 3300);
 
       await speakAsync(VO.bushStart);
-      clearTimeout(emotionTimer);
-      clearTimeout(teachTimer);
+      cancelTimer(emotionTimer);
+      cancelTimer(teachTimer);
       if (cancelled) return;
       setBushIntroDone(true);
       // Teaching already shown mid-VO above — just arm the 10/18/26 idle ladder.
       armIdleHints(false);
     })();
     return () => { cancelled = true; };
-  }, [phase, isActive, wait, speakAsync, armIdleHints]);
+  }, [phase, isActive, wait, speakAsync, armIdleHints, pTimeout, cancelTimer]);
 
   const flyFlowerToBasket = useCallback(({ src, startX, startY, delay = 0 }) => {
     const basket = basketTargetRef.current;
@@ -493,10 +551,10 @@ export default function FlowerJourneyGame2({
     const midY = (startY + endY) / 2 - 55;
     const id = `${Date.now()}-${Math.random()}`;
     setFlyingFlowers((prev) => [...prev, { id, src, startX, startY, endX, endY, midX, midY, delay }]);
-    window.setTimeout(() => {
+    pTimeout(() => {
       setFlyingFlowers((prev) => prev.filter((f) => f.id !== id));
     }, 900 + delay);
-  }, []);
+  }, [pTimeout]);
 
   const collectChallengeFlowers = useCallback(({ firstEl, secondEl, newFlowerCount }) => {
     if (!firstEl || !secondEl) { setFlowerCount(newFlowerCount); return; }
@@ -504,8 +562,8 @@ export default function FlowerJourneyGame2({
     const r2 = secondEl.getBoundingClientRect();
     flyFlowerToBasket({ src: flowerPink, startX: r1.left + r1.width / 2, startY: r1.top + r1.height / 2, delay: 0 });
     flyFlowerToBasket({ src: flowerCream, startX: r2.left + r2.width / 2, startY: r2.top + r2.height / 2, delay: 120 });
-    window.setTimeout(() => setFlowerCount(newFlowerCount), 760);
-  }, [flyFlowerToBasket]);
+    pTimeout(() => setFlowerCount(newFlowerCount), 760);
+  }, [flyFlowerToBasket, pTimeout]);
 
   const bushFlowerOneRef = useRef(null);
   const bushFlowerTwoRef = useRef(null);
@@ -605,25 +663,25 @@ export default function FlowerJourneyGame2({
       // begins, so the teaching hand is synced there. The reaction emoji
       // has no word to sync to, so it just follows the wordless stretch
       // beat immediately.
-      const emotionTimer = window.setTimeout(() => {
+      const emotionTimer = pTimeout(() => {
         if (cancelled) return;
         setEmotion('sad');
       }, 200);
-      const teachTimer = window.setTimeout(() => {
+      const teachTimer = pTimeout(() => {
         if (cancelled) return;
         setBranchTeachingReady(true);
-        window.setTimeout(() => { if (!cancelled) setBranchTeachingReady(false); }, 3800);
+        pTimeout(() => { if (!cancelled) setBranchTeachingReady(false); }, 3800);
       }, 3300);
 
       await speakAsync(VO.branchStart);
-      clearTimeout(emotionTimer);
-      clearTimeout(teachTimer);
+      cancelTimer(emotionTimer);
+      cancelTimer(teachTimer);
       if (cancelled) return;
       setBranchIntroDone(true);
       armIdleHints(false);
     })();
     return () => { cancelled = true; };
-  }, [phase, isActive, wait, speakAsync, armIdleHints]);
+  }, [phase, isActive, wait, speakAsync, armIdleHints, pTimeout, cancelTimer]);
 
   const clearBranchHold = useCallback(() => {
     if (branchHoldTimerRef.current) { clearTimeout(branchHoldTimerRef.current); branchHoldTimerRef.current = null; }
@@ -755,20 +813,20 @@ export default function FlowerJourneyGame2({
       // Unlike Bush/Branch, no nervous emoji here at the start — Marsh
       // already has its own wobble/wrong-attempt moment mid-crossing where
       // that emotion actually reads as caused by something.
-      const teachTimer = window.setTimeout(() => {
+      const teachTimer = pTimeout(() => {
         if (cancelled) return;
         setMarshTeachingReady(true);
-        window.setTimeout(() => { if (!cancelled) setMarshTeachingReady(false); }, 3800);
+        pTimeout(() => { if (!cancelled) setMarshTeachingReady(false); }, 3800);
       }, 800);
 
       await speakAsync(VO.marshStart);
-      clearTimeout(teachTimer);
+      cancelTimer(teachTimer);
       if (cancelled) return;
       setMarshIntroDone(true);
       armIdleHints(false);
     })();
     return () => { cancelled = true; };
-  }, [phase, isActive, wait, speakAsync, armIdleHints]);
+  }, [phase, isActive, wait, speakAsync, armIdleHints, pTimeout, cancelTimer]);
 
   const marshPointerRef = useRef(null);
   const marshPointFromEvent = (e) => {
@@ -823,8 +881,8 @@ export default function FlowerJourneyGame2({
     if (!el) { setFlowerCount(newFlowerCount); return; }
     const r = el.getBoundingClientRect();
     flyFlowerToBasket({ src, startX: r.left + r.width / 2, startY: r.top + r.height / 2, delay: 0 });
-    window.setTimeout(() => setFlowerCount(newFlowerCount), 600);
-  }, [flyFlowerToBasket]);
+    pTimeout(() => setFlowerCount(newFlowerCount), 600);
+  }, [flyFlowerToBasket, pTimeout]);
 
   const handleMarshPointerEnd = useCallback((e) => {
     const position = marshLandingFromEvent(e);
@@ -917,7 +975,7 @@ export default function FlowerJourneyGame2({
       // All 6 emojis pop in one by one while VO.bellyReflection names them,
       // ~320ms apart so all six are up by ~2s into the line.
       for (let i = 1; i <= 6; i++) {
-        beatTimers.push(window.setTimeout(() => { if (!cancelled) setBellyBeat(i); }, i * 320));
+        beatTimers.push(pTimeout(() => { if (!cancelled) setBellyBeat(i); }, i * 320));
       }
       await speakAsync(VO.bellyReflection);
       if (cancelled) return;
@@ -940,7 +998,7 @@ export default function FlowerJourneyGame2({
       if (cancelled) return;
       onComplete?.();
     })();
-    return () => { cancelled = true; beatTimers.forEach(clearTimeout); };
+    return () => { cancelled = true; beatTimers.forEach(cancelTimer); };
   }, [phase, isActive, onComplete]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!isActive) return null;

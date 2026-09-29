@@ -8,15 +8,11 @@ import morningBg from './assets/images/sarvada/morning.webp';
 import afternoonBg from './assets/images/sarvada/afternoon.webp';
 import nightBg from './assets/images/sarvada/night-phase.webp';
 
-import boatImg from './assets/images/sarvada/boat.png';
-import ganeshaPopImg from '/images/ganesha-hi-stand.png';
-import mooshikaSymbolImg from '../../../../zones/symbol-mountain/shared/images/icons/symbol-mooshika-new.png';
-import trunkSymbolImg from '../../../../zones/symbol-mountain/shared/images/icons/symbol-trunk-new.png';
-import lotusSymbolImg from '../../../../zones/symbol-mountain/shared/images/icons/symbol-lotus-new.png';
-
-import morningBubbleImg from './assets/images/sarvada/puzzle-bubble.png';
-import afternoonBubbleImg from './assets/images/sarvada/sports-bubble.png';
-import nightBubbleImg from './assets/images/sarvada/gocery-bubble.png';
+import boatImg from './assets/images/sarvada/boat.webp';
+import ganeshaPopImg from '/images/ganesha-hi-stand.webp';
+import earsSymbolImg from '../../../../zones/symbol-mountain/shared/images/icons/symbol-ears-new.webp';
+import bellySymbolImg from '../../../../zones/symbol-mountain/shared/images/icons/symbol-belly-new.webp';
+import modakSymbolImg from '../../../../zones/symbol-mountain/shared/images/icons/symbol-modak-new.webp';
 
 import morningSceneImg from './assets/images/sarvada/morning-scene.webp';
 import afternoonSceneImg from './assets/images/sarvada/afternoon-scene.webp';
@@ -30,56 +26,53 @@ const PHASES_CONFIG = [
   {
     id: 'morning',
     bg: morningBg,
-    bubble: morningBubbleImg,
     scene: morningSceneImg,
     label: 'Morning',
     syllable: 'SAR',
     litCount: 1,
     timeColor: '#FFE066',
-    hiddenSymbol: mooshikaSymbolImg,
-    foundLabel: 'You found Mooshika!',
+    hiddenSymbol: earsSymbolImg,
+    foundLabel: 'You found the Ears!',
     clues: [
-      'Look for a small friend who can be quick and busy.',
-      'He may be hiding near something you take with you in the morning.',
-      'Look near the school bag for a tiny mouse.',
+      'Look for something that helps us listen.',
+      'Look for something that helps us listen.',
+      'Look closely at the backpack.',
     ],
-    symbolSpot: { l: 6, t: 65, w: 12 },
+    symbolSpot: { l: 40.5, t: 50.0, w: 10.5 },
   },
   {
     id: 'afternoon',
     bg: afternoonBg,
-    bubble: afternoonBubbleImg,
     scene: afternoonSceneImg,
     label: 'Afternoon',
     syllable: 'VA',
     litCount: 2,
     timeColor: '#FFB347',
-    hiddenSymbol: trunkSymbolImg,
-    foundLabel: 'You found the Trunk!',
+    hiddenSymbol: bellySymbolImg,
+    foundLabel: 'You found the Big Belly!',
     clues: [
-      'Look for a symbol that can bend and curve.',
-      'Something flying in the sky has a long curving shape.',
-      "Look closely at the kite's tail.",
+      'Look for something that can hold lots of feelings.',
+      'Look for something that can hold lots of feelings.',
+      'Look at the playground.',
     ],
-    symbolSpot: { l: 78, t: 54, w: 12 },
+    symbolSpot: { l: 89.5, t: 48.5, w: 18.0 },
   },
   {
     id: 'night',
     bg: nightBg,
-    bubble: nightBubbleImg,
     scene: nightSceneImg,
     label: 'Night',
     syllable: 'DA',
     litCount: 3,
     timeColor: '#B39DDB',
-    hiddenSymbol: lotusSymbolImg,
-    foundLabel: 'You found the Lotus!',
+    hiddenSymbol: modakSymbolImg,
+    foundLabel: 'You found the Modak!',
     clues: [
-      'Look for a symbol that stays peaceful even when things around it are messy.',
-      'A flower shape is hiding somewhere near the bed.',
-      'Look at the bedside lamp for the lotus.',
+      'Look for something sweet that reminds us of joy.',
+      'Look for something sweet that reminds us of joy.',
+      'Look near the lamp.',
     ],
-    symbolSpot: { l: 86, t: 46, w: 10 },
+    symbolSpot: { l: 34.0, t: 31.5, w: 13.5 },
   },
 ];
 
@@ -89,12 +82,9 @@ const POSE_ASSETS = [
   nightBg,
   boatImg,
   ganeshaPopImg,
-  mooshikaSymbolImg,
-  trunkSymbolImg,
-  lotusSymbolImg,
-  morningBubbleImg,
-  afternoonBubbleImg,
-  nightBubbleImg,
+  earsSymbolImg,
+  bellySymbolImg,
+  modakSymbolImg,
   morningSceneImg,
   afternoonSceneImg,
   nightSceneImg,
@@ -106,16 +96,15 @@ export default function SarvadaGame({
   onMicroWin = () => {},
   onPhaseComplete = () => {},
   onGameComplete = () => {},
+  onReplayKeyChange = () => {},
   isPaused = false,
   voiceGuidance = {},
 }) {
   usePreloadPoses(POSE_ASSETS);
-  const { playVoice: playSceneLine, stopVoice: stopSceneVoice, playWord, playSyllable } = voiceGuidance;
+  const { playVoice: playSceneLine, stopVoice: stopSceneVoice, playWord, playSyllable, setBeat } = voiceGuidance;
   const [phaseIndex, setPhaseIndex] = useState(0);
-  const [bubbleState, setBubbleState] = useState('idle');
   const [showMemory, setShowMemory] = useState(false);
   const [litCount, setLitCount] = useState(0);
-  const [revealedSyls, setRevealedSyls] = useState([]);
   const [gamePhase, setGamePhase] = useState('intro');
   const [flash, setFlash] = useState(false);
   const [findMode, setFindMode] = useState(false);
@@ -144,11 +133,14 @@ export default function SarvadaGame({
   const timersRef = useRef([]);
   const doneCalledRef = useRef(false);
   const completeCalledRef = useRef(false);
+  const lastSyllableDoneRef = useRef(true);
+  const introPlayedRef = useRef(false);
+  const runStartedRef = useRef(false);
 
   // GMB Hint Standard v1 — flat 10s/18s/26s from VO end or last interaction.
   // The 8s gap between L2 and L3 still clears playSceneLine's own
   // minDelayAfterVoiceMs: 5000 spacing between hint VO lines.
-  const { hintLevel, markInteraction, markLevel2VoiceEnded } = useRepeatedHintCycle({
+  const { hintLevel, markInteraction, markLevel2VoiceStarted, markLevel2VoiceEnded } = useRepeatedHintCycle({
     enabled: isActive && !isPaused && findMode && findVoComplete && !symbolFound && !showDebugPanel,
     stageKey: isActive && findMode ? `find-${phaseIndex}` : null,
     initialDelay: 10000,
@@ -173,39 +165,106 @@ export default function SarvadaGame({
 
     lastHintVoiceKeyRef.current = hintVoiceKey;
     const timerId = window.setTimeout(() => {
+      if (hintLevel === 2 && playSceneLine) markLevel2VoiceStarted();
       playSceneLine?.(hintVoiceKey, hintLevel === 2 ? markLevel2VoiceEnded : undefined, {
         replayOnReturn: false,
         minDelayAfterVoiceMs: 5000,
       });
     }, 120);
     return () => window.clearTimeout(timerId);
-  }, [findMode, symbolFound, hintLevel, isActive, phaseIndex, playSceneLine, markLevel2VoiceEnded]);
+  }, [findMode, symbolFound, hintLevel, isActive, phaseIndex, playSceneLine, markLevel2VoiceStarted, markLevel2VoiceEnded]);
 
-  const safeAfter = useCallback((ms, fn) => {
-    const id = window.setTimeout(fn, ms);
-    timersRef.current.push(id);
-    return id;
+  // Pausable timers: while the sidebar is open (isPaused) every pending timer
+  // is frozen with its remaining time, and resumes from there — so a reveal or
+  // auto-advance never runs behind the sidebar or jumps ahead when it closes.
+  const isPausedRef = useRef(isPaused);
+  isPausedRef.current = isPaused;
+
+  const runTimer = useCallback((t) => {
+    t.startedAt = Date.now();
+    t.id = window.setTimeout(() => {
+      timersRef.current = timersRef.current.filter((x) => x !== t);
+      t.fn();
+    }, t.remaining);
   }, []);
 
+  const safeAfter = useCallback((ms, fn) => {
+    const t = { fn, remaining: ms, startedAt: 0, id: null };
+    timersRef.current.push(t);
+    if (!isPausedRef.current) runTimer(t);
+    return t;
+  }, [runTimer]);
+
   const clearTimers = useCallback(() => {
-    timersRef.current.forEach(clearTimeout);
+    timersRef.current.forEach((t) => window.clearTimeout(t.id));
     timersRef.current = [];
   }, []);
 
-  const startPhase = useCallback(() => {
-    safeAfter(300, () => {
-      setBubbleState('pulsing');
+  useEffect(() => {
+    timersRef.current.forEach((t) => {
+      if (isPaused) {
+        if (t.id === null) return;
+        window.clearTimeout(t.id);
+        t.id = null;
+        t.remaining = Math.max(0, t.remaining - (Date.now() - t.startedAt));
+      } else if (t.id === null) {
+        runTimer(t);
+      }
     });
-  }, [safeAfter]);
+  }, [isPaused, runTimer]);
+
+  const startPhase = useCallback((index) => {
+    setShowMemory(true);
+    setFindMode(false);
+    setFindVoComplete(false);
+    setSymbolFound(false);
+    setPopOut(false);
+    setMissRipple(null);
+    lastHintVoiceKeyRef.current = null;
+    setBeat?.(`round-${index}`);
+
+    const startSearch = () => {
+      setBeat?.(`find-${index}`);
+      setFindMode(true);
+
+      let findVoFinished = false;
+      const finishFindVo = () => {
+        if (findVoFinished) return;
+        findVoFinished = true;
+        setFindVoComplete(true);
+      };
+
+      if (playSceneLine) {
+        playSceneLine('scene14_find_symbol', finishFindVo);
+        safeAfter(4500, finishFindVo);
+      } else {
+        finishFindVo();
+      }
+    };
+
+    safeAfter(300, () => {
+      const phaseVoKey = PHASE_VO_KEYS[index];
+      if (phaseVoKey && playSceneLine) {
+        let phaseVoDone = false;
+        const finishPhaseVo = () => {
+          if (phaseVoDone) return;
+          phaseVoDone = true;
+          startSearch();
+        };
+        playSceneLine(phaseVoKey, finishPhaseVo);
+        safeAfter(4500, finishPhaseVo);
+      } else {
+        startSearch();
+      }
+    });
+  }, [playSceneLine, safeAfter, setBeat]);
 
   useEffect(() => {
     if (!isActive) {
       clearTimers();
       setPhaseIndex(0);
-      setBubbleState('idle');
       setShowMemory(false);
       setLitCount(0);
-      setRevealedSyls([]);
       setGamePhase('intro');
       setFlash(false);
       setFindMode(false);
@@ -218,69 +277,56 @@ export default function SarvadaGame({
       lastHintVoiceKeyRef.current = null;
       doneCalledRef.current = false;
       completeCalledRef.current = false;
+      introPlayedRef.current = false;
+      runStartedRef.current = false;
       return;
     }
+    if (runStartedRef.current) return;
+    runStartedRef.current = true;
+    setBeat?.('intro');
     safeAfter(700, () => {
-      playSceneLine?.('scene14_intro');
+      if (playSceneLine && !introPlayedRef.current) {
+        introPlayedRef.current = true;
+        let introDone = false;
+        const finishIntro = () => {
+          if (introDone) return;
+          introDone = true;
+          startPhase(0);
+        };
+        playSceneLine('scene14_intro', finishIntro);
+        safeAfter(6000, finishIntro);
+      } else {
+        introPlayedRef.current = true;
+        startPhase(0);
+      }
     });
     setGamePhase('playing');
-    startPhase();
     return clearTimers;
-  }, [isActive, clearTimers, safeAfter, playSceneLine, startPhase]);
+  }, [isActive, clearTimers, safeAfter, playSceneLine, setBeat, startPhase]);
 
   useEffect(() => () => clearTimers(), [clearTimers]);
 
-
   useEffect(() => {
-    if (!isActive || gamePhase !== 'intro') return;
-    setGamePhase('playing');
-    startPhase();
-  }, [isActive, gamePhase, safeAfter, startPhase]);
+    if (!isActive) {
+      onReplayKeyChange(null);
+      return;
+    }
 
-  const handleBubbleTap = useCallback(() => {
-    if (isPaused || bubbleState !== 'pulsing') return;
+    // gamePhase flips to 'playing' as soon as the run starts, so it can't mark
+    // the intro; showMemory only turns on once startPhase(0) begins.
+    if (!showMemory) {
+      onReplayKeyChange('scene14_intro');
+      return;
+    }
 
-    stopSceneVoice?.();
-    markInteraction();
-    setBubbleState('expanding');
-    safeAfter(300, () => {
-      setShowMemory(true);
-      setBubbleState('memory');
-      safeAfter(800, () => {
-        setFindMode(true);
-        setFindVoComplete(false);
-        lastHintVoiceKeyRef.current = null;
+    if (findMode) {
+      onReplayKeyChange('scene14_find_symbol');
+      return;
+    }
 
-        // Defensive: if audio is off, playSceneLine is missing, or its
-        // completion callback is dropped, findVoComplete must not stay
-        // false forever — that would permanently block the hint ladder.
-        let findVoFinished = false;
-        const finishFindVo = () => {
-          if (findVoFinished) return;
-          findVoFinished = true;
-          setFindVoComplete(true);
-        };
+    onReplayKeyChange(PHASE_VO_KEYS[phaseIndex] || 'scene14_intro');
+  }, [findMode, isActive, onReplayKeyChange, phaseIndex, showMemory]);
 
-        if (playSceneLine) {
-          playSceneLine('scene14_find_symbol', finishFindVo);
-          safeAfter(4500, finishFindVo);
-        } else {
-          finishFindVo();
-        }
-      });
-    });
-  }, [
-    bubbleState,
-    isPaused,
-    markInteraction,
-    onMicroWin,
-    onGameComplete,
-    onPhaseComplete,
-    phaseIndex,
-    playSceneLine,
-    safeAfter,
-    stopSceneVoice,
-  ]);
 
   const triggerFound = useCallback((clientX, clientY) => {
     if (!findMode || symbolFound || isPaused) return;
@@ -303,6 +349,7 @@ export default function SarvadaGame({
       dy: targetY - clientY,
     });
 
+    setBeat?.(`found-${phaseIndex}`);
     setSymbolFound(true);
     setPopOut(true);
     markInteraction();
@@ -314,10 +361,8 @@ export default function SarvadaGame({
 
     safeAfter(3400, () => {
       setPopOut(false);
-      setBubbleState('bursting');
       setFlash(true);
       safeAfter(650, () => setFlash(false));
-      setShowMemory(false);
       setFindMode(false);
       setSymbolFound(false);
       lastHintVoiceKeyRef.current = null;
@@ -325,11 +370,13 @@ export default function SarvadaGame({
       const nextIndex = phaseIndex + 1;
 
       if (nextIndex >= PHASES_CONFIG.length) {
-        // Final beat: let the three found symbols converge toward the boat,
-        // THEN reveal Ganesha — the mid-game boat appearance is gone so this
-        // is the first time Ganesha shows up, saving the payoff for the end.
+        setShowMemory(false);
+        // Final beat: reveal Ganesha on the boat, then hand off to the shared
+        // Sarvada completion reveal. The mini-game does not show its own word
+        // or all-three-symbol summary.
         safeAfter(1000, () => {
-          setGamePhase('convergence');
+          setBeat?.('final');
+          setGamePhase('done');
           safeAfter(1300, () => {
             setBoatGaneshaVisible(true);
             setBoatGaneshaJoining(true);
@@ -342,7 +389,6 @@ export default function SarvadaGame({
           safeAfter(3100, () => {
             if (doneCalledRef.current) return;
             doneCalledRef.current = true;
-            setGamePhase('done');
 
             const finish = () => {
               if (completeCalledRef.current) return;
@@ -354,22 +400,30 @@ export default function SarvadaGame({
             // Full word "sarvada" → closing line (meaning is embedded in the
             // line itself), then hand off. Fallback timer covers muted
             // audio / missing callbacks.
-            playWord?.('sarvada', () => {
-              playSceneLine?.('scene14_success', finish);
-            });
+            const playFinalWord = () => {
+              playWord?.('sarvada', () => {
+                playSceneLine?.('scene14_success', finish);
+              });
+            };
+            if (lastSyllableDoneRef.current) playFinalWord();
+            else {
+              const waitForSyllable = () => {
+                if (lastSyllableDoneRef.current) {
+                  playFinalWord();
+                  return;
+                }
+                safeAfter(120, waitForSyllable);
+              };
+              waitForSyllable();
+            }
             safeAfter(9000, finish);
           });
         });
       } else {
         safeAfter(600, () => {
           setPhaseIndex(nextIndex);
-          setGamePhase('transition');
-          setBubbleState('idle');
-          safeAfter(500, () => {
-            setGamePhase('playing');
-            startPhase();
-            playSceneLine?.(PHASE_VO_KEYS[nextIndex]);
-          });
+          setGamePhase('playing');
+          startPhase(nextIndex);
         });
       }
     });
@@ -385,6 +439,7 @@ export default function SarvadaGame({
     playSceneLine,
     playWord,
     safeAfter,
+    setBeat,
     startPhase,
   ]);
 
@@ -444,9 +499,6 @@ export default function SarvadaGame({
     top: `${s.t}%`,
     width: `${s.w}%`,
   });
-  const isPlaying = gamePhase === 'playing' || gamePhase === 'transition';
-  const showSarvada = gamePhase === 'sarvada' || gamePhase === 'done';
-
   // L1 = broad vicinity, L2 = narrower vicinity, L3 = exact ring (rendered
   // separately below) — a visual-search game needs a search AREA, not a
   // brighter symbol (the hidden symbol is baked into the scene image, not
@@ -462,9 +514,9 @@ export default function SarvadaGame({
     };
   })();
   return (
-    <div className={`sarvada-game${hideElements ? ' is-hidden' : ''}${flash ? ' flash' : ''}`} onContextMenu={(e) => e.preventDefault()}>
+    <div className={`sarvada-game${hideElements ? ' is-hidden' : ''}${flash ? ' flash' : ''}${isPaused ? ' is-paused' : ''}`} onContextMenu={(e) => e.preventDefault()}>
       <PoseImage
-        className={`sarvada-bg${gamePhase === 'transition' ? ' zoom-in' : ''}`}
+        className="sarvada-bg"
         src={cfg.bg}
         alt=""
         aria-hidden="true"
@@ -479,22 +531,16 @@ export default function SarvadaGame({
           audioSyllables={AUDIO}
           onSyllableLit={(syllable) => {
             stopSceneVoice?.();
-            playSyllable?.(syllable);
+            lastSyllableDoneRef.current = false;
+            playSyllable?.(syllable, () => {
+              lastSyllableDoneRef.current = true;
+            });
+            safeAfter(1600, () => {
+              lastSyllableDoneRef.current = true;
+            });
           }}
         />
       </div>
-
-      {isPlaying && !showMemory && (
-        <div
-          className={`sarvada-bubble ${bubbleState}`}
-          onPointerDown={handleBubbleTap}
-          key={`bubble-${phaseIndex}`}
-        >
-          <img src={cfg.bubble} alt="memory bubble" draggable={false} />
-        </div>
-      )}
-
-      {bubbleState === 'bursting' && <div className="sarvada-ring-burst" />}
 
       {showMemory && (
         <div className="sarvada-memory" key={`memory-${phaseIndex}`}>
@@ -554,41 +600,6 @@ export default function SarvadaGame({
         </div>
       )}
 
-      {gamePhase === 'convergence' && (
-        <div className="sarvada-converge">
-          {PHASES_CONFIG.map((p, i) => (
-            <img
-              key={p.id}
-              className="sarvada-converge-symbol"
-              src={p.hiddenSymbol}
-              alt=""
-              aria-hidden="true"
-              draggable={false}
-              style={{ animationDelay: `${i * 0.12}s` }}
-            />
-          ))}
-        </div>
-      )}
-
-      {showSarvada && (
-        <div className="sarvada-reveal">
-          <div className="sarvada-syllables-row">
-            {revealedSyls.map((syl, i) => (
-              <span
-                key={syl}
-                className="sarvada-syl-float"
-                style={{ animationDelay: `${i * 0.18}s` }}
-              >
-                {syl}
-              </span>
-            ))}
-          </div>
-          <div className="sarvada-word">SARVADA</div>
-          <div className="sarvada-meaning">Always</div>
-          <div className="sarvada-story">Morning, afternoon, night — always.</div>
-        </div>
-      )}
-
       <div className="sarvada-boat">
         <img src={boatImg} alt="boat with kids" draggable={false} />
         {boatGaneshaVisible && (
@@ -621,9 +632,6 @@ export default function SarvadaGame({
             // syllable sound lands on contact (matches Sarvakaryeshu).
             const cfgNow = PHASES_CONFIG[phaseIndex];
             setLitCount(cfgNow.litCount);
-            setRevealedSyls((prev) =>
-              prev.includes(cfgNow.syllable) ? prev : [...prev, cfgNow.syllable],
-            );
             window.setTimeout(() => setFlySymbol(null), 120);
           }}
         />
@@ -658,8 +666,8 @@ export default function SarvadaGame({
 
             <p className="sarvada-debug-note">
               {findMode
-                ? `Editing: ${cfg.label}. Tap the memory bubble on each phase to line up its zone.`
-                : 'Tap the memory bubble to open the image and see the zone.'}
+                ? `Editing: ${cfg.label}. Tap the image to test and line up its zone.`
+                : 'Each image opens directly for hidden-symbol search.'}
             </p>
 
             {PHASES_CONFIG.map((p, i) => (

@@ -12,6 +12,17 @@
  *   speak("Good morning, Arjun!", { age: 7, moment: 'greeting' })
  */
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { estimateSpeechMs } from './useVoiceGuidance'
+
+// Global audio toggle (see DECISIONS.md 2026-09-29): when off, nothing is spoken,
+// but each line still "plays" on a silent timer so onEnd fires on schedule.
+const isGlobalAudioOff = () => {
+  try {
+    return localStorage.getItem('ganesha_audio_enabled') === 'false'
+  } catch {
+    return false
+  }
+}
 
 // ─── Male Voice Priority List ─────────────────────────────────────────────────
 // First match wins. Rishi first — Indian English, handles names naturally.
@@ -134,6 +145,28 @@ export const useGaneshaVoice = () => {
   const utteranceRef = useRef(null)
   const voiceRef     = useRef(null)
   const speakTimerRef = useRef(null)
+  // Current line's callback + timing, so mute() can finish it silently on schedule.
+  const activeLineRef = useRef(null)   // { onEnd, at, ms, utterance }
+  const silentTimerRef = useRef(null)  // { id, onEnd }
+
+  // A superseded / stopped silent line ends right away, like a cancelled utterance
+  // does (cancel() fires onerror -> onEnd), so sequences never stall.
+  const flushSilent = useCallback(() => {
+    const t = silentTimerRef.current
+    if (!t) return
+    clearTimeout(t.id)
+    silentTimerRef.current = null
+    t.onEnd?.()
+  }, [])
+
+  const runSilent = useCallback((onEnd, ms) => {
+    const t = { id: null, onEnd }
+    t.id = setTimeout(() => {
+      if (silentTimerRef.current === t) silentTimerRef.current = null
+      onEnd?.()
+    }, Math.max(0, ms))
+    silentTimerRef.current = t
+  }, [])
 
   // ── Load voices ──────────────────────────────────────────────────────────────
   // Voices load asynchronously on most browsers — must wait for voiceschanged
@@ -182,6 +215,15 @@ export const useGaneshaVoice = () => {
     }
     window.speechSynthesis.cancel()
     setIsSpeaking(false)
+    activeLineRef.current = null
+    flushSilent()
+
+    if (isGlobalAudioOff()) {
+      onStart?.()
+      runSilent(onEnd, estimateSpeechMs(text))
+      return
+    }
+    activeLineRef.current = { onEnd, at: Date.now(), ms: estimateSpeechMs(text), utterance: null }
 
     // 50ms delay after cancel avoids Chrome TTS bug
     speakTimerRef.current = setTimeout(() => {
@@ -213,19 +255,21 @@ export const useGaneshaVoice = () => {
       }
 
       u.onstart = () => { setIsSpeaking(true); onStart?.() }
-      u.onend   = () => { setIsSpeaking(false); onEnd?.() }
+      u.onend   = () => { setIsSpeaking(false); activeLineRef.current = null; onEnd?.() }
       u.onerror = (e) => {
         setIsSpeaking(false)
+        activeLineRef.current = null
         onError?.(e)
         onEnd?.()
       }
 
+      if (activeLineRef.current) activeLineRef.current.utterance = u
       utteranceRef.current = u
       // Some browsers leave speech synthesis paused after tab/background changes.
       try { window.speechSynthesis.resume() } catch {}
       window.speechSynthesis.speak(u)
     }, 50)
-  }, [])
+  }, [flushSilent, runSilent])
 
   // ── Stop ─────────────────────────────────────────────────────────────────────
   const stop = useCallback(() => {
@@ -235,7 +279,28 @@ export const useGaneshaVoice = () => {
     }
     window.speechSynthesis?.cancel()
     setIsSpeaking(false)
-  }, [])
+    flushSilent()
+  }, [flushSilent])
+
+  // ── Mute ─────────────────────────────────────────────────────────────────────
+  // Mute pressed mid-line: silence now, but fire onEnd once when the line would
+  // have finished — mute never skips or stalls a step. The line is not resumed.
+  const mute = useCallback(() => {
+    const a = activeLineRef.current
+    if (!a) return
+    activeLineRef.current = null
+    if (speakTimerRef.current) {
+      clearTimeout(speakTimerRef.current)
+      speakTimerRef.current = null
+    }
+    if (a.utterance) {
+      a.utterance.onend = null
+      a.utterance.onerror = null
+    }
+    window.speechSynthesis?.cancel()
+    setIsSpeaking(false)
+    runSilent(a.onEnd, a.ms - (Date.now() - a.at))
+  }, [runSilent])
 
   // ── Speak sequence ───────────────────────────────────────────────────────────
   // speakSequence([
@@ -266,12 +331,14 @@ export const useGaneshaVoice = () => {
       clearTimeout(speakTimerRef.current)
       speakTimerRef.current = null
     }
+    if (silentTimerRef.current) clearTimeout(silentTimerRef.current.id)
     window.speechSynthesis?.cancel()
   }, [])
 
   return {
     speak,
     stop,
+    mute,
     speakSequence,
     isSpeaking,
     voicesLoaded,

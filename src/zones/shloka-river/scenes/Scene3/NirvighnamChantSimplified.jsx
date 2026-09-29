@@ -7,7 +7,8 @@ import { getVoiceScript } from '../../../../lib/config/content/voiceGuidance';
 import './NirvighnamChantSimplified.css';
 
 import SceneManager from "../../../../lib/components/scenes/SceneManager";
-import useVoiceGuidance from '../../../../lib/hooks/useVoiceGuidance';
+import useVoiceGuidance, { estimateSpeechMs } from '../../../../lib/hooks/useVoiceGuidance';
+import useSidebarPause from '../../../../lib/hooks/useSidebarPause';
 import MessageManager from "../../../../lib/components/scenes/MessageManager";
 import InteractionManager from "../../../../lib/components/scenes/InteractionManager";
 import GameStateManager from "../../../../lib/services/GameStateManager";
@@ -224,6 +225,8 @@ const NirvighnamChantContent = ({
   }, []);
   const [showAppDiscovery,     setShowAppDiscovery]     = useState(false);
   const [isRecorderOpen,       setIsRecorderOpen]       = useState(false);
+  // Sidebar = true pause: tracks the in-flight VO so it can be replayed after the sidebar closes.
+  const sidebarPause = useSidebarPause();
 
   const { isAudioOn, toggleAudio } = useAudioPreference();
   const audioEnabledRef = useRef(isAudioOn);
@@ -248,7 +251,7 @@ const NirvighnamChantContent = ({
 
   // ── Voice guidance ─────────────────────────────────────────────────────────
   const {
-    stopVoice, setVoiceVolume, playSfx, setCurrentPhase, startIdleTimer, stopIdleTimer,
+    stopVoice, muteVoicePlayback, playSilent, setVoiceVolume, playSfx, setCurrentPhase, startIdleTimer, stopIdleTimer,
     playWord: playWordAudio, playSyllable, isPlaying: isVOPlaying, playVoice: playHookVoice,
   } = useVoiceGuidance(zoneId, sceneId, {
     enableMusic: false, voiceVolume: 1, sfxVolume: 0.7,
@@ -257,6 +260,7 @@ const NirvighnamChantContent = ({
 
   const { playUiTap, playChime } = useGameSounds();
   const speechSynthRef = useRef(typeof window !== 'undefined' ? window.speechSynthesis : null);
+  const webSpeechRef = useRef(null); // in-flight scene-owned utterance, for mute-mid-line
   const nirvIntroPlayedRef = useRef(false);
   const kuruIntroPlayedRef = useRef(false);
   const [kuruIntroComplete, setKuruIntroComplete] = useState(false);
@@ -270,21 +274,55 @@ const NirvighnamChantContent = ({
   }, []);
 
   const speakWebSpeech = useCallback((text, onEnded, onStart) => {
-    if (!audioEnabledRef.current || !text) { onEnded?.(); return; }
+    if (!text) {
+      onEnded?.();
+      return;
+    }
+    if (!audioEnabledRef.current) {
+      // Muted: finish on a silent timer matching the line's length, not instantly,
+      // so mute never skips a step (DECISIONS.md 2026-09-29).
+      onStart?.();
+      playSilent(text, onEnded);
+      return;
+    }
     const synth = speechSynthRef.current;
-    if (!synth || typeof SpeechSynthesisUtterance === 'undefined') { onEnded?.(); return; }
+    if (!synth || typeof SpeechSynthesisUtterance === 'undefined') {
+      onEnded?.();
+      return;
+    }
     try {
       synth.cancel();
-      const u = new SpeechSynthesisUtterance(text);
-      u.lang = 'en-IN'; u.rate = 0.95; u.pitch = 1; u.volume = 0.95;
-      u.onstart = () => onStart?.();
-      u.onend = () => onEnded?.();
-      u.onerror = () => onEnded?.();
-      synth.speak(u);
-    } catch { onEnded?.(); }
-  }, []);
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'en-IN';
+      utterance.rate = 0.95;
+      utterance.pitch = 1;
+      utterance.volume = 0.95;
+      utterance.onstart = () => onStart?.();
+      const clearTracked = () => {
+        if (webSpeechRef.current?.utterance === utterance) webSpeechRef.current = null;
+      };
+      utterance.onend = () => { clearTracked(); onEnded?.(); };
+      utterance.onerror = () => { clearTracked(); onEnded?.(); };
+      webSpeechRef.current = { utterance, onEnded, at: Date.now(), ms: estimateSpeechMs(text) };
+      synth.speak(utterance);
+    } catch {
+      onEnded?.();
+    }
+  }, [playSilent]);
 
-  const playGuidanceVoice = useCallback((key, onEnded, options = {}) => {
+  // Mute pressed mid-line: silence the utterance now but let its callback fire
+  // once, when it would have finished, so mute never skips or stalls a step.
+  const muteWebSpeech = useCallback(() => {
+    const w = webSpeechRef.current;
+    if (!w) return;
+    webSpeechRef.current = null;
+    w.utterance.onend = null;
+    w.utterance.onerror = null;
+    try { speechSynthRef.current?.cancel(); } catch {}
+    playSilent(Math.max(0, w.ms - (Date.now() - w.at)), w.onEnded);
+  }, [playSilent]);
+
+  const playGuidanceVoiceRaw = useCallback((key, onEnded, options = {}) => {
     // Stop both channels before speaking: playHookVoice already cancels Web
     // Speech internally, but speakWebSpeech only cancels its own utterance —
     // without this, a still-playing MP3 line keeps going under a new
@@ -331,6 +369,15 @@ const NirvighnamChantContent = ({
     onEnded?.();
   }, [playHookVoice, sceneId, speakWebSpeech, stopVoice, stopWebSpeech, zoneId]);
 
+  const { playTracked, clearActive: clearActiveVoice } = sidebarPause;
+  const playGuidanceVoice = useCallback((key, onEnded, options = {}) => {
+    playTracked(
+      'line',
+      (done, overrides) => playGuidanceVoiceRaw(key, done, { ...options, ...overrides }),
+      onEnded,
+    );
+  }, [playTracked, playGuidanceVoiceRaw]);
+
   const replayCurrentVoice = useCallback(() => {
     if (!isAudioOn) return;
     if (!sceneState.welcomeShown || sceneState.phase === PHASES.INITIAL) {
@@ -341,7 +388,16 @@ const NirvighnamChantContent = ({
     if (showSceneCompletion) playGuidanceVoice('sceneComplete');
   }, [isAudioOn, playGuidanceVoice, sceneState.phase, sceneState.welcomeShown, showSceneCompletion]);
 
-  const stopAllVoice = useCallback(() => { stopVoice(); stopWebSpeech(); }, [stopVoice, stopWebSpeech]);
+  const stopAllVoice = useCallback(() => {
+    // A deliberate stop is not a sidebar interruption — don't leave a stale replay entry.
+    clearActiveVoice();
+    stopVoice();
+    stopWebSpeech();
+  }, [clearActiveVoice, stopVoice, stopWebSpeech]);
+
+  // Beat = which game step we're on. Set during render (not in an effect) so a
+  // clip started by a child effect this render is tagged with the current beat.
+  sidebarPause.setBeat(String(sceneState.phase));
 
   useEffect(() => {
     if (!sceneState?.phase) {
@@ -446,7 +502,10 @@ const NirvighnamChantContent = ({
   const handleAudioToggle = () => {
     const nextOn = !isAudioOn;
     setVoiceVolume(nextOn ? 1 : 0);
-    if (!nextOn && sceneState.phase === PHASES.INITIAL) stopAllVoice();
+    if (!nextOn) {
+      muteVoicePlayback();
+      muteWebSpeech();
+    }
     toggleAudio();
   };
 
@@ -630,14 +689,14 @@ const NirvighnamChantContent = ({
                 onGameComplete={() => {}}
                 voiceGuidance={{
                   playVoice: playGuidanceVoice,
-                  playWord: playWordAudio,
+                  playWord: (word, onEnded) => playTracked('word', (done) => playWordAudio(word, done), onEnded),
                   playSyllable: (syllable, onEnded) => {
                     stopAllVoice();
-                    playSyllable('nirvighnam', syllable, onEnded);
+                    playTracked('syllable', (done) => playSyllable('nirvighnam', syllable, done), onEnded);
                   },
                   stopVoice: stopAllVoice,
                 }}
-                isPaused={isRecorderOpen}
+                isPaused={isRecorderOpen || sidebarPause.isSidebarPaused}
               />
 
               {/* ── KURUMEDEVA GAME — tap friends ── */}
@@ -650,14 +709,14 @@ const NirvighnamChantContent = ({
                 onGameComplete={() => {}}
                 voiceGuidance={{
                   playVoice: playGuidanceVoice,
-                  playWord: playWordAudio,
+                  playWord: (word, onEnded) => playTracked('word', (done) => playWordAudio(word, done), onEnded),
                   playSyllable: (syllable, onEnded) => {
                     stopAllVoice();
-                    playSyllable('kurumedeva', syllable, onEnded);
+                    playTracked('syllable', (done) => playSyllable('kurumedeva', syllable, done), onEnded);
                   },
                   stopVoice: stopAllVoice,
                 }}
-                isPaused={isRecorderOpen}
+                isPaused={isRecorderOpen || sidebarPause.isSidebarPaused}
               />
 
               {showWordStar && (
@@ -704,13 +763,19 @@ const NirvighnamChantContent = ({
                     onSaveRecording={handleSaveRecording}
                     onDeleteRecording={handleDeleteRecording}
                     isReload={isReload}
-                    onPopupOpen={() => { stopAllVoice(); stopIdleTimer(); setIsRecorderOpen(true); }}
+                    onPopupOpen={() => {
+                      if ([PHASES.NIRVIGHNAM_GAME, PHASES.KURUMEDEVA_GAME].includes(sceneState.phase)) sidebarPause.beginPause();
+                      stopAllVoice();
+                      stopIdleTimer();
+                      setIsRecorderOpen(true);
+                    }}
                     onPopupClose={() => {
                       setIsRecorderOpen(false);
                       const activeGamePhases = [PHASES.NIRVIGHNAM_GAME, PHASES.KURUMEDEVA_GAME];
                       if (activeGamePhases.includes(sceneState.phase) && !showPowerOverlay && !revealConfig && !showCenteredWord) {
                         startIdleTimer();
                       }
+                      sidebarPause.endPause();
                     }}
                   />
                 )}

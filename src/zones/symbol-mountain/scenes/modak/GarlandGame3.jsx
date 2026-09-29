@@ -13,6 +13,7 @@ import { usePreloadPoses, preparePose } from '../../../../lib/components/animati
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
 import useAppVisibility from '../../../../lib/hooks/useAppVisibility';
+import usePausableTimers from '../../../../lib/hooks/usePausableTimers';
 import './GarlandGame3.css';
 
 import flowerPink from './assets/images/fj-flower-coral.webp';
@@ -69,7 +70,7 @@ const SCENE_IMAGES = [
   symbolModakColored,
 ];
 
-export default function GarlandGame3({ isActive = true, isPaused = false, isAudioOn = true, onComplete }) {
+export default function GarlandGame3({ isActive = true, isPaused = false, isAudioOn = true, onComplete, stopVoice }) {
   usePreloadPoses(SCENE_IMAGES);
   const [phase, setPhase] = useState(PHASES.BUILD);
   const sceneRef = useRef(null);
@@ -95,6 +96,12 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
 
   const mutedRef = useRef(!isAudioOn);
   useEffect(() => { mutedRef.current = !isAudioOn; }, [isAudioOn]);
+
+  // Sidebar = true pause: every game timer freezes (and resumes with its remaining
+  // time), and speech is interrupted + replayed — see interruptSpeech/resumeSpeech.
+  const { after, cancel: cancelTimer } = usePausableTimers(isPaused);
+  const pausedRef = useRef(isPaused);
+  pausedRef.current = isPaused;
   // Tab-hide safety for this game's direct speechSynthesis use (it bypasses the
   // scene's useVoiceGuidance hook). Mirrors the hook: cancel on hide, replay the
   // interrupted line from the start 2s after return, clear everything on unmount.
@@ -107,6 +114,13 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
       resolve?.();
       return;
     }
+    // A line requested while the sidebar is open must not speak behind it —
+    // queue it as the interrupted line so it plays, from the start, on close.
+    if (pausedRef.current) {
+      interruptedSpeechRef.current?.resolve?.();
+      interruptedSpeechRef.current = { text, resolve };
+      return;
+    }
     // Don't let cancel() accidentally resolve the previous instruction as
     // though it had genuinely finished.
     const previous = activeSpeechRef.current;
@@ -114,6 +128,10 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
       previous.utterance.onend = null;
       previous.utterance.onerror = null;
     }
+    // Stop the parent scene's own voice engine first — its MP3 audio element
+    // isn't touched by window.speechSynthesis.cancel() below, so without this
+    // a still-playing scene VO keeps going under this mini-game's line.
+    stopVoice?.();
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.rate = 0.95;
@@ -126,7 +144,7 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
     utterance.onerror = done;
     activeSpeechRef.current = entry;
     window.speechSynthesis.speak(utterance);
-  }, []);
+  }, [stopVoice]);
 
   const speak = useCallback((text) => {
     try {
@@ -145,28 +163,39 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
     } catch { resolve(); }
   }), [startUtterance]);
 
+  // Detach the active utterance's handlers BEFORE cancel() (so nothing awaiting it
+  // resolves and advances), and remember it. Shared by tab-hide and sidebar-open.
+  const interruptSpeech = useCallback(() => {
+    if (replayTimerRef.current) { clearTimeout(replayTimerRef.current); replayTimerRef.current = null; }
+    const entry = activeSpeechRef.current;
+    activeSpeechRef.current = null;
+    if (entry) {
+      entry.utterance.onend = null;
+      entry.utterance.onerror = null;
+      interruptedSpeechRef.current = { text: entry.text, resolve: entry.resolve };
+    }
+    try { window.speechSynthesis?.cancel(); } catch { /* no-op */ }
+  }, []);
+
+  // Re-speak the interrupted line from the start after `settleMs`, resolving the same
+  // promise so the awaiting sequence continues; `onSettled` runs once it has finished
+  // (or immediately when nothing was interrupted).
+  const resumeSpeech = useCallback((settleMs, onSettled) => {
+    const entry = interruptedSpeechRef.current;
+    interruptedSpeechRef.current = null;
+    if (!entry) { onSettled?.(); return; }
+    replayTimerRef.current = window.setTimeout(() => {
+      replayTimerRef.current = null;
+      if (mutedRef.current) { entry.resolve?.(); onSettled?.(); return; }
+      try {
+        startUtterance(entry.text, () => { entry.resolve?.(); onSettled?.(); });
+      } catch { entry.resolve?.(); onSettled?.(); }
+    }, settleMs);
+  }, [startUtterance]);
+
   useAppVisibility(
-    useCallback(() => {
-      if (replayTimerRef.current) { clearTimeout(replayTimerRef.current); replayTimerRef.current = null; }
-      const entry = activeSpeechRef.current;
-      activeSpeechRef.current = null;
-      if (entry) {
-        entry.utterance.onend = null;
-        entry.utterance.onerror = null;
-        interruptedSpeechRef.current = { text: entry.text, resolve: entry.resolve };
-      }
-      try { window.speechSynthesis?.cancel(); } catch { /* no-op */ }
-    }, []),
-    useCallback(() => {
-      const entry = interruptedSpeechRef.current;
-      interruptedSpeechRef.current = null;
-      if (!entry) return;
-      replayTimerRef.current = window.setTimeout(() => {
-        replayTimerRef.current = null;
-        if (mutedRef.current) { entry.resolve?.(); return; }
-        try { startUtterance(entry.text, entry.resolve); } catch { entry.resolve?.(); }
-      }, 2000);
-    }, [startUtterance])
+    interruptSpeech,
+    useCallback(() => resumeSpeech(2000), [resumeSpeech])
   );
   // Unmount: only drop the pending replay. Don't cancel() here — the parent scene
   // may already have started its next VO line in the same commit, and the scene's
@@ -297,6 +326,38 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
     }
   }, [effectiveGarlandHintLevel, isReady, speak, speakAsync]);
 
+  // Sidebar open = true pause: interrupt the line WITHOUT resolving it and disarm both
+  // hint clocks. On close, replay it from the start, then start fresh 10/18/26 clocks —
+  // but only for a clock that was running (a clock the resumed beat arms itself is left alone).
+  const wasPausedRef = useRef(false);
+  const wasBuildArmedRef = useRef(false);
+  const wasGarlandArmedRef = useRef(false);
+  useEffect(() => {
+    if (isPaused) {
+      if (!wasPausedRef.current) {
+        wasBuildArmedRef.current = !!buildHintStartedAtRef.current;
+        wasGarlandArmedRef.current = !!garlandHintStartedAtRef.current;
+        buildHintStartedAtRef.current = null;
+        buildL2VoiceEndedAtRef.current = null;
+        garlandHintStartedAtRef.current = null;
+        garlandL2VoiceEndedAtRef.current = null;
+        setBuildHintLevel(0);
+        setGarlandHintLevel(0);
+        setForcedGarlandHintLevel(0);
+        setCarryTeachingGesture(false);
+      }
+      interruptSpeech();
+    } else if (wasPausedRef.current) {
+      resumeSpeech(400, () => {
+        if (wasBuildArmedRef.current && !buildHintStartedAtRef.current) startBuildHintClock();
+        if (wasGarlandArmedRef.current && !garlandHintStartedAtRef.current) startGarlandHintClock(true);
+        wasBuildArmedRef.current = false;
+        wasGarlandArmedRef.current = false;
+      });
+    }
+    wasPausedRef.current = isPaused;
+  }, [isPaused, interruptSpeech, resumeSpeech, startBuildHintClock, startGarlandHintClock]);
+
   const liveSlots = GARLAND_SLOTS;
   const placedIds = useMemo(() => new Set(placedFlowers.map((item) => item.id)), [placedFlowers]);
 
@@ -317,7 +378,7 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
   // mounted, then trigger the fly-out-to-loose-positions transition.
   useEffect(() => {
     if (!isBuild || flowersArrived || !isActive) return undefined;
-    const t = setTimeout(() => {
+    const t = after(250, () => {
       const basket = mooshikaRef.current;
       const workspace = workspaceRef.current;
       if (basket && workspace) {
@@ -328,9 +389,9 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
         setBasketPct({ x: Math.max(0, Math.min(100, bx)), y: Math.max(0, Math.min(100, by)) });
       }
       requestAnimationFrame(() => setFlowersArrived(true));
-    }, 250);
-    return () => clearTimeout(t);
-  }, [isBuild, flowersArrived, isActive]);
+    });
+    return () => cancelTimer(t);
+  }, [isBuild, flowersArrived, isActive, after, cancelTimer]);
 
   const threadFlower = (flower) => {
     if (!isBuild || !isActive || isPaused || !flowersArrived
@@ -343,19 +404,19 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
   };
 
   useEffect(() => {
-    if (!threadingFlower || !isBuild || !isActive || isPaused) return;
-    const timer = window.setTimeout(() => {
+    if (!threadingFlower || !isBuild || !isActive) return;
+    const timer = after(650, () => {
       setPlacedFlowers((current) => [...current, threadingFlower]);
       setThreadingFlower(null);
       threadingLock.current = false;
-    }, 650);
-    return () => window.clearTimeout(timer);
-  }, [threadingFlower, isBuild, isActive, isPaused]);
+    });
+    return () => cancelTimer(timer);
+  }, [threadingFlower, isBuild, isActive, after, cancelTimer]);
 
   useEffect(() => {
-    if (!isBuild || placedFlowers.length !== FLOWERS.length || !isActive || isPaused) return;
+    if (!isBuild || placedFlowers.length !== FLOWERS.length || !isActive) return;
     let cancelled = false;
-    const timer = window.setTimeout(() => {
+    const timer = after(550, () => {
       // Keep the assembled flowers visible while the replacement art decodes.
       preparePose(completedGarland).then(async () => {
         if (cancelled) return;
@@ -365,16 +426,16 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
         // Drag is a new gesture after six tap interactions — teach it once
         // immediately, independent of (and overlapping) the ready VO.
         setCarryTeachingGesture(true);
-        window.setTimeout(() => setCarryTeachingGesture(false), 3200);
+        after(3200, () => setCarryTeachingGesture(false));
 
         await speakAsync(VO.ready);
         if (cancelled) return;
         // 10 / 18 / 26 begins only once the ready VO actually finishes.
         startGarlandHintClock(true);
       }).catch(() => {});
-    }, 550);
-    return () => { cancelled = true; window.clearTimeout(timer); };
-  }, [isBuild, placedFlowers.length, isActive, isPaused, speakAsync, stopBuildHintClock, startGarlandHintClock]);
+    });
+    return () => { cancelled = true; cancelTimer(timer); };
+  }, [isBuild, placedFlowers.length, isActive, speakAsync, stopBuildHintClock, startGarlandHintClock, after, cancelTimer]);
 
   const getScenePoint = (event) => {
     const scene = sceneRef.current;
@@ -446,10 +507,10 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
     // Matches the original pre-rework "modak above Mooshika" beat: a short
     // pause after the offering lands, then the golden Modak glows above
     // Mooshika for a moment before the real symbol reveal card takes over.
-    window.setTimeout(() => {
+    after(1100, () => {
       setShowModakGlow(true);
-    }, 1100);
-    window.setTimeout(() => { onComplete?.(); }, 3200);
+    });
+    after(3200, () => { onComplete?.(); });
   };
 
   if (!isActive) return null;

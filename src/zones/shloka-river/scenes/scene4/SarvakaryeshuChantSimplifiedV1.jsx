@@ -38,53 +38,53 @@ import SaveAnimalMission from '../../../../lib/components/missions/SaveAnimalMis
 import OpeningModal from '../../../shared/components/OpeningModal.jsx';
 
 // Background Images
-import sarvakaryeshuBg from './assets/images/sarvakaryeshu-bg.png';
-import sarvadaBg from './assets/images/sarvada-bg.png';
+import sarvakaryeshuBg from './assets/images/sarvakaryeshu-bg.webp';
+import sarvadaBg from './assets/images/sarvada-bg.webp';
 
 // Sarvakaryeshu game assets
-import sarSquirrelHappy from './assets/images/sarvakaryeshu/sar-squirrel-happy.png';
-import sarSquirrelHelper from './assets/images/sarvakaryeshu/sar-squirrel-helper.png';
-import sarSquirrelSad from './assets/images/sarvakaryeshu/sar-squirrel-sad.png';
-import vaBirdHappy from './assets/images/sarvakaryeshu/va-bird-happy.png';
-import vaBirdHelper from './assets/images/sarvakaryeshu/va-bird-helper.png';
-import vaBirdSad from './assets/images/sarvakaryeshu/va-bird-sad.png';
-import karDuckHappy from './assets/images/sarvakaryeshu/kar-duck-happy.png';
-import karDuckHelper from './assets/images/sarvakaryeshu/kar-duck-helper.png';
-import karDuckSad from './assets/images/sarvakaryeshu/kar-duck-sad.png';
-import yeshuRabbitHappy from './assets/images/sarvakaryeshu/yeshu-rabbit-happy.png';
-import yeshuRabbitHelper from './assets/images/sarvakaryeshu/yeshu-rabbit-helper.png';
-import yeshuRabbitSad from './assets/images/sarvakaryeshu/yeshu-rabbit-sad.png';
+import sarSquirrelHappy from './assets/images/sarvakaryeshu/sar-squirrel-happy.webp';
+import sarSquirrelHelper from './assets/images/sarvakaryeshu/sar-squirrel-helper.webp';
+import sarSquirrelSad from './assets/images/sarvakaryeshu/sar-squirrel-sad.webp';
+import vaBirdHappy from './assets/images/sarvakaryeshu/va-bird-happy.webp';
+import vaBirdHelper from './assets/images/sarvakaryeshu/va-bird-helper.webp';
+import vaBirdSad from './assets/images/sarvakaryeshu/va-bird-sad.webp';
+import karDuckHappy from './assets/images/sarvakaryeshu/kar-duck-happy.webp';
+import karDuckHelper from './assets/images/sarvakaryeshu/kar-duck-helper.webp';
+import karDuckSad from './assets/images/sarvakaryeshu/kar-duck-sad.webp';
+import yeshuRabbitHappy from './assets/images/sarvakaryeshu/yeshu-rabbit-happy.webp';
+import yeshuRabbitHelper from './assets/images/sarvakaryeshu/yeshu-rabbit-helper.webp';
+import yeshuRabbitSad from './assets/images/sarvakaryeshu/yeshu-rabbit-sad.webp';
 
 // Sarvada game assets
-import savButterflyHappy from './assets/images/sarvada/sav-butterfly-happy.png';
-import savButterflyHelper from './assets/images/sarvada/sav-butterfly-helper.png';
-import savButterflySad from './assets/images/sarvada/sav-butterfly-sad.png';
-import vaFawnHappy from './assets/images/sarvada/va-fawn-happy.png';
-import vaFawnHelper from './assets/images/sarvada/va-fawn-helper.png';
-import vaFawnSad from './assets/images/sarvada/va-fawn-sad.png';
-import daHedgehogHappy from './assets/images/sarvada/da-hedgehog-happy.png';
-import daHedgehogHelper from './assets/images/sarvada/da-hedgehog-helper.png';
-import daHedgehogSad from './assets/images/sarvada/da-hedgehog-sad.png';
+import savButterflyHappy from './assets/images/sarvada/sav-butterfly-happy.webp';
+import savButterflyHelper from './assets/images/sarvada/sav-butterfly-helper.webp';
+import savButterflySad from './assets/images/sarvada/sav-butterfly-sad.webp';
+import vaFawnHappy from './assets/images/sarvada/va-fawn-happy.webp';
+import vaFawnHelper from './assets/images/sarvada/va-fawn-helper.webp';
+import vaFawnSad from './assets/images/sarvada/va-fawn-sad.webp';
+import daHedgehogHappy from './assets/images/sarvada/da-hedgehog-happy.webp';
+import daHedgehogHelper from './assets/images/sarvada/da-hedgehog-helper.webp';
+import daHedgehogSad from './assets/images/sarvada/da-hedgehog-sad.webp';
 
 // Shared assets
-import ganeshaHeadphones from '../assets/images/ganesha_with_headphones.png';
-import smartwatchBase from '../assets/images/smartwatch-base.png';
-import smartwatchScreen from '../assets/images/smartwatch-screen.png';
-import appVakratunda from '../assets/images/apps/app-Vakratunda.png';
-import appMahakaya from '../assets/images/apps/app-mahakaya.png';
-import appSuryakoti from '../assets/images/apps/app-suryakoti.png';
-import appSamaprabha from '../assets/images/apps/app-samaprabha.png';
-import appNirvighnam from '../assets/images/apps/app-nirvighnam.png';
-import appKurumedeva from '../assets/images/apps/app-kurumedeva.png';
-import appSarvakaryeshu from '../assets/images/apps/app-sarvakaryeshu.png';
-import appSarvada from '../assets/images/apps/app-sarvada.png';
-import boyNamaste from '../assets/images/boy-namaste.png';
+import ganeshaHeadphones from '../assets/images/ganesha_with_headphones.webp';
+import smartwatchBase from '../assets/images/smartwatch-base.webp';
+import smartwatchScreen from '../assets/images/smartwatch-screen.webp';
+import appVakratunda from '../assets/images/apps/app-Vakratunda.webp';
+import appMahakaya from '../assets/images/apps/app-mahakaya.webp';
+import appSuryakoti from '../assets/images/apps/app-suryakoti.webp';
+import appSamaprabha from '../assets/images/apps/app-samaprabha.webp';
+import appNirvighnam from '../assets/images/apps/app-nirvighnam.webp';
+import appKurumedeva from '../assets/images/apps/app-kurumedeva.webp';
+import appSarvakaryeshu from '../assets/images/apps/app-sarvakaryeshu.webp';
+import appSarvada from '../assets/images/apps/app-sarvada.webp';
+import boyNamaste from '../assets/images/boy-namaste.webp';
 
 // Rescue mission images
-import sarvakaryeshuBefore from './assets/images/sarvakaryeshu/sarvakaryeshu-before.png';
-import sarvakaryeshuAfter from './assets/images/sarvakaryeshu/sarvakaryeshu-after.png';
-import sarvadaBefore from './assets/images/sarvada/sarvada-before.png';
-import sarvadaAfter from './assets/images/sarvada/sarvada-after.png';
+import sarvakaryeshuBefore from './assets/images/sarvakaryeshu/sarvakaryeshu-before.webp';
+import sarvakaryeshuAfter from './assets/images/sarvakaryeshu/sarvakaryeshu-after.webp';
+import sarvadaBefore from './assets/images/sarvada/sarvada-before.webp';
+import sarvadaAfter from './assets/images/sarvada/sarvada-after.webp';
 
 // ✅ Clean phase structure (like Scene 2)
 const PHASES = {

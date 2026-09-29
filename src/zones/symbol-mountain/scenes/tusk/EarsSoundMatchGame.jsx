@@ -190,7 +190,8 @@ const EarsSoundMatchGame = ({
   onGameComplete,
   onAnimalPositionsChange,
   hideElements = false,
-  className = ''
+  className = '',
+  stopVoice
 }) => {
   usePreloadPoses(POSE_ASSETS);
   const [roundIndex, setRoundIndex] = useState(0);
@@ -286,8 +287,13 @@ const EarsSoundMatchGame = ({
       onEnd?.();
       return;
     }
+    // Stop the parent scene's own voice engine first — its MP3 audio element
+    // isn't touched by window.speechSynthesis.cancel() inside speakFallback,
+    // so without this a still-playing scene VO keeps going under this
+    // mini-game's line.
+    stopVoice?.();
     trackUtterance(text, speakFallback(text), onEnd);
-  }, [isAudioOn, trackUtterance]);
+  }, [isAudioOn, stopVoice, trackUtterance]);
 
   useAppVisibility(
     useCallback(() => {

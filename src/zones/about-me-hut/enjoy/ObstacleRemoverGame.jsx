@@ -381,7 +381,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   }, []);
 
   // ── T08/T09: visibility + idle timer infrastructure ──────────────────────────
-  const { startIdleTimer, stopIdleTimer, setCurrentPhase, stopVoice, setVoiceVolume, startMusic, stopMusic, playVoice } = useVoiceGuidance(
+  const { startIdleTimer, stopIdleTimer, setCurrentPhase, stopVoice, muteVoicePlayback, setVoiceVolume, startMusic, stopMusic, playVoice } = useVoiceGuidance(
     'about-me-hut', 'dreams-wishes', {
       enableMusic: true,
       musicVolume: 0.06,
@@ -391,7 +391,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     }
   );
   const { playUiTap, playSparkle, playChime, playGlow, setGlobalVolume } = useGameSounds();
-  const { speak, stop: stopSpokenVoice, isSpeaking } = useGaneshaVoice();
+  const { speak, stop: stopSpokenVoice, mute: muteSpokenVoice, isSpeaking } = useGaneshaVoice();
   const isSpeakingRef = useRef(false);
   const isAudioOnRef = useRef(isAudioOn);
   const latestSceneStateRef = useRef(sceneState);
@@ -420,13 +420,13 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   // Audio toggle should only mute voiceover.
   useEffect(() => { setGlobalVolume(1); }, [setGlobalVolume]);
 
-  // Stop all voice when audio is toggled off
+  // Audio off: silence now, but finish each in-flight line's callback on schedule
   useEffect(() => {
     if (!isAudioOn) {
-      stopVoice();
-      stopSpokenVoice();
+      muteVoicePlayback();
+      muteSpokenVoice();
     }
-  }, [isAudioOn, stopVoice, stopSpokenVoice]);
+  }, [isAudioOn, muteVoicePlayback, muteSpokenVoice]);
 
   useEffect(() => () => stopMusic(), [stopMusic]);
   useEffect(() => () => {
@@ -535,7 +535,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
   const phaseVoiceRef = useRef({});
   const speakLine = (text, options = {}) => {
-    if (!isAudioOn || !text) {
+    if (!text) {
       options.onEnd?.();
       return;
     }

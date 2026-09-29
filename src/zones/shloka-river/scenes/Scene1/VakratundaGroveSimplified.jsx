@@ -9,7 +9,8 @@ import './VakratundaGroveSimplified.css';
 import SceneManager from "../../../../lib/components/scenes/SceneManager";
 
 // Voice Guidance Hook
-import useVoiceGuidance from '../../../../lib/hooks/useVoiceGuidance';
+import useVoiceGuidance, { estimateSpeechMs } from '../../../../lib/hooks/useVoiceGuidance';
+import useSidebarPause from '../../../../lib/hooks/useSidebarPause';
 import MessageManager from "../../../../lib/components/scenes/MessageManager";
 import InteractionManager from "../../../../lib/components/scenes/InteractionManager";
 import GameStateManager from "../../../../lib/services/GameStateManager";
@@ -312,6 +313,8 @@ const VakratundaGroveContent = ({
   const {
     playVoice: playHookVoice,
     stopVoice,
+    muteVoicePlayback,
+    playSilent,
     setVoiceVolume,
     playSyllable,
     playWord: playWordAudio,
@@ -335,7 +338,10 @@ const VakratundaGroveContent = ({
 
   // Track whether recorder popup is open — pause game voice when it is
   const [isRecorderOpen, setIsRecorderOpen] = useState(false);
+  // Sidebar = true pause: tracks the in-flight VO so it can be replayed after the sidebar closes.
+  const sidebarPause = useSidebarPause();
   const speechSynthRef = useRef(typeof window !== 'undefined' ? window.speechSynthesis : null);
+  const webSpeechRef = useRef(null); // in-flight scene-owned utterance, for mute-mid-line
 
   const stopWebSpeech = useCallback(() => {
     try {
@@ -346,13 +352,20 @@ const VakratundaGroveContent = ({
   }, []);
 
   const speakWebSpeech = useCallback((text, onEnded, onStart) => {
-    if (!audioEnabledRef.current || !text) {
-      if (onEnded) onEnded();
+    if (!text) {
+      onEnded?.();
+      return;
+    }
+    if (!audioEnabledRef.current) {
+      // Muted: finish on a silent timer matching the line's length, not instantly,
+      // so mute never skips a step (DECISIONS.md 2026-09-29).
+      onStart?.();
+      playSilent(text, onEnded);
       return;
     }
     const synth = speechSynthRef.current;
     if (!synth || typeof SpeechSynthesisUtterance === 'undefined') {
-      if (onEnded) onEnded();
+      onEnded?.();
       return;
     }
     try {
@@ -363,15 +376,31 @@ const VakratundaGroveContent = ({
       utterance.pitch = 1;
       utterance.volume = 0.95;
       utterance.onstart = () => onStart?.();
-      utterance.onend = () => onEnded?.();
-      utterance.onerror = () => onEnded?.();
+      const clearTracked = () => {
+        if (webSpeechRef.current?.utterance === utterance) webSpeechRef.current = null;
+      };
+      utterance.onend = () => { clearTracked(); onEnded?.(); };
+      utterance.onerror = () => { clearTracked(); onEnded?.(); };
+      webSpeechRef.current = { utterance, onEnded, at: Date.now(), ms: estimateSpeechMs(text) };
       synth.speak(utterance);
     } catch {
-      if (onEnded) onEnded();
+      onEnded?.();
     }
-  }, []);
+  }, [playSilent]);
 
-  const playGuidanceVoice = useCallback((key, onEnded, options = {}) => {
+  // Mute pressed mid-line: silence the utterance now but let its callback fire
+  // once, when it would have finished, so mute never skips or stalls a step.
+  const muteWebSpeech = useCallback(() => {
+    const w = webSpeechRef.current;
+    if (!w) return;
+    webSpeechRef.current = null;
+    w.utterance.onend = null;
+    w.utterance.onerror = null;
+    try { speechSynthRef.current?.cancel(); } catch {}
+    playSilent(Math.max(0, w.ms - (Date.now() - w.at)), w.onEnded);
+  }, [playSilent]);
+
+  const playGuidanceVoiceRaw = useCallback((key, onEnded, options = {}) => {
     // Stop both channels before speaking: playHookVoice already cancels Web
     // Speech internally, but speakWebSpeech only cancels its own utterance —
     // without this, a still-playing MP3 line keeps going under a new
@@ -428,6 +457,16 @@ const VakratundaGroveContent = ({
     }
     if (onEnded) onEnded();
   }, [playHookVoice, sceneId, speakWebSpeech, stopVoice, stopWebSpeech, zoneId]);
+
+  const { playTracked, clearActive: clearActiveVoice } = sidebarPause;
+  const playGuidanceVoice = useCallback((key, onEnded, options = {}) => {
+    playTracked(
+      'line',
+      (done, overrides) => playGuidanceVoiceRaw(key, done, { ...options, ...overrides }),
+      onEnded,
+    );
+  }, [playTracked, playGuidanceVoiceRaw]);
+
   const replayCurrentVoice = useCallback(() => {
     if (!isAudioOn) return;
     if (!sceneState.welcomeShown || sceneState.phase === PHASES.INITIAL) {
@@ -452,9 +491,15 @@ const VakratundaGroveContent = ({
   }, [isAudioOn, playGuidanceVoice, sceneState.phase, sceneState.welcomeShown, showSceneCompletion, vakratundaStage]);
 
   const stopAllVoice = useCallback(() => {
+    // A deliberate stop is not a sidebar interruption — don't leave a stale replay entry.
+    clearActiveVoice();
     stopVoice();
     stopWebSpeech();
-  }, [stopVoice, stopWebSpeech]);
+  }, [clearActiveVoice, stopVoice, stopWebSpeech]);
+
+  // Beat = which game step we're on. Set during render (not in an effect) so a
+  // clip started by a child effect this render is tagged with the current beat.
+  sidebarPause.setBeat(`${sceneState.phase}:${vakratundaStage}`);
 
 
   // -- ESC key pause handler — REMOVED (replaced by home icon) --
@@ -695,13 +740,14 @@ const VakratundaGroveContent = ({
 
   // Audio toggle handler — volume approach: change volume live so game callbacks always fire.
   // Turning OFF: set vol 0 (audio silenced but still plays, callbacks intact).
-  //              Stop welcome VO during INITIAL phase only — safe, no game callbacks there.
+  //              Mute silences audio immediately; a mid-line callback still fires on the line's silent timer.
   // Turning ON:  restore vol 1 on whatever is currently playing, and future audio.
   const handleAudioToggle = () => {
     const nextOn = !isAudioOn;
     setVoiceVolume(nextOn ? 1 : 0);
-    if (!nextOn && sceneState.phase === PHASES.INITIAL) {
-      stopAllVoice(); // during opening modal: stop welcome VO cleanly (no game callbacks running)
+    if (!nextOn) {
+      muteVoicePlayback();
+      muteWebSpeech();
     }
     toggleAudio();
   };
@@ -974,15 +1020,15 @@ const VakratundaGroveContent = ({
               voiceGuidance={{
                 playVoice: playGuidanceVoice,
                 playSfx,
-                playWord: playWordAudio,
+                playWord: (word, onEnded) => playTracked('word', (done) => playWordAudio(word, done), onEnded),
                 playSyllable: (syllable, onEnded) => {
                   stopAllVoice();
-                  playSyllable('vakratunda', syllable, onEnded);
+                  playTracked('syllable', (done) => playSyllable('vakratunda', syllable, done), onEnded);
                 },
                 stopVoice: stopAllVoice,
                 characterImage: mooshikaCoach
               }}
-              isPaused={isRecorderOpen}
+              isPaused={isRecorderOpen || sidebarPause.isSidebarPaused}
             />
 
             {/* MAHAKAYA RESCUE GAME — PushLog → word build → chant */}
@@ -997,15 +1043,15 @@ const VakratundaGroveContent = ({
               voiceGuidance={{
                 playVoice: playGuidanceVoice,
                 playSfx,
-                playWord: playWordAudio,
+                playWord: (word, onEnded) => playTracked('word', (done) => playWordAudio(word, done), onEnded),
                 playSyllable: (syllable, onEnded) => {
                   stopAllVoice();
-                  playSyllable('mahakaya', syllable, onEnded);
+                  playTracked('syllable', (done) => playSyllable('mahakaya', syllable, done), onEnded);
                 },
                 stopVoice: stopAllVoice,
                 characterImage: mooshikaCoach
               }}
-              isPaused={isRecorderOpen}
+              isPaused={isRecorderOpen || sidebarPause.isSidebarPaused}
             />
 
             {/* PERSISTENT BOY CHARACTER (Commented out per user request) */}
@@ -1133,6 +1179,7 @@ const VakratundaGroveContent = ({
                   isReload={isReload}
                   onPopupOpen={() => {
                     if (import.meta.env.DEV) console.log("Recorder Opening - Pausing Game");
+                    if ([PHASES.VAKRATUNDA_GAME, PHASES.MAHAKAYA_GAME].includes(sceneState.phase)) sidebarPause.beginPause();
                     stopAllVoice();
                     stopIdleTimer();
                     setIsRecorderOpen(true);
@@ -1145,6 +1192,7 @@ const VakratundaGroveContent = ({
                     if (activeGamePhases.includes(sceneState.phase) && !showPowerOverlay && !showCenteredWord) {
                       startIdleTimer();
                     }
+                    sidebarPause.endPause();
                   }}
                 />
               )}

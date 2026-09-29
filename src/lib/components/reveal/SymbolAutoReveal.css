@@ -21,6 +21,9 @@
 .sar-overlay.sar-dimmed {
   background: rgba(40, 35, 60, 0.25);
   backdrop-filter: none;
+}
+
+.sar-wrap.sar-wrap--in {
   cursor: pointer;
 }
 
@@ -362,3 +365,11 @@ transition: transform 0.58s cubic-bezier(0.4, 0, 0.2, 1);}
   .sar-name        { font-size: 18px; }
 }
 
+
+/* Sidebar is unavailable while the card is up — dim its icons, but keep the
+   one the card is flying to bright so the landing still reads. */
+.ganesha-sidebar.sar-sidebar-dimmed .ganesha-icon:not(.sar-sidebar-bloom) {
+  opacity: 0.35;
+  filter: grayscale(0.4);
+  transition: opacity 0.4s ease, filter 0.4s ease;
+}

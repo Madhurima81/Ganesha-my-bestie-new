@@ -47,6 +47,13 @@ export default function SymbolAutoReveal({
     timers.current.push(id);
   };
 
+  // Dim the sidebar while the card is up so it reads as "not available yet".
+  useEffect(() => {
+    const sidebar = document.querySelector(".ganesha-sidebar");
+    sidebar?.classList.add("sar-sidebar-dimmed");
+    return () => sidebar?.classList.remove("sar-sidebar-dimmed");
+  }, []);
+
   useEffect(() => {
     // Step 1 -> icon already visible by default
     canScheduleHintRef.current = true;
@@ -160,10 +167,9 @@ export default function SymbolAutoReveal({
   const showParticles = phase === "icon" || phase === "card";
 
   return (
-    <div
-      className={`sar-overlay${cardVisible ? " sar-dimmed" : ""}`}
-      onClick={handleTap}
-    >
+    // The overlay is modal (covers the sidebar) but only the card collects —
+    // a stray tap on the backdrop or over the sidebar does nothing.
+    <div className={`sar-overlay${cardVisible ? " sar-dimmed" : ""}`}>
       {showParticles && (
         <>
           <div className="sar-ring sar-ring-1" />
@@ -193,6 +199,7 @@ export default function SymbolAutoReveal({
         ]
           .filter(Boolean)
           .join(" ")}
+        onClick={handleTap}
         style={
           flying && sidebarTargetRect
             ? {

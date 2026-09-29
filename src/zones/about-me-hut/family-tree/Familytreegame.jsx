@@ -260,6 +260,7 @@ const FamilyTreeGameContent = ({
  const {
  playVoice,
  stopVoice,
+ muteVoicePlayback,
  setVoiceVolume,
  playSfx,
  playTap,
@@ -283,7 +284,7 @@ const FamilyTreeGameContent = ({
  const { playSparkle, playChime, playGlow, playTwinkle } = useGameSounds();
 
  // Web Speech API for idle hint VO (arbitrary text)
- const { speak: speakHint, stop: stopSpokenVoice } = useGaneshaVoice();
+ const { speak: speakHint, stop: stopSpokenVoice, mute: muteSpokenVoice } = useGaneshaVoice();
  const replayCurrentVoice = useCallback(() => {
  if (!isAudioOn) return;
  // Stop whatever either speech engine is mid-line before starting a replay
@@ -327,8 +328,8 @@ const FamilyTreeGameContent = ({
  const nextOn =!isAudioOn;
  setVoiceVolume(nextOn? 0.65: 0);
  if (!nextOn) {
- stopVoice();
- stopSpokenVoice();
+ muteVoicePlayback();
+ muteSpokenVoice();
  }
  if (nextOn) setShowVoiceOffPill(false);
  toggleAudio();
@@ -937,11 +938,8 @@ sceneState.isSequencePlaying,
  childStartTimerRef.current = scheduleTimeout(() => {
  childStartTimerRef.current = null;
 
- if (!isAudioOn) {
- setChildStartVoComplete(true);
- return;
- }
-
+ // Muted: playVoice completes on a silent timer (DECISIONS.md 2026-09-29),
+ // so the idle-hint ladder starts after the same delay as with audio.
  playVoice('childStart', () => {
  setChildStartVoComplete(true);
  });
@@ -1125,7 +1123,7 @@ sceneState.isSequencePlaying,
  // isSequencePlaying gates the idle-hint ladder (GMB Hint Standard v1) â€”
  // it only clears once BOTH the placement animation and this member's
  // voice line have finished, not on a flat timer alone.
- let voDone = !isAudioOn;
+ let voDone = false; // muted lines finish on the hook's silent timer, not instantly
  let animDone = false;
  const finishSequence = () => {
  if (!voDone || !animDone) return;
@@ -1136,7 +1134,6 @@ sceneState.isSequencePlaying,
  });
  };
 
- if (isAudioOn) {
  speakHint(member.voiceLine, {
  age: 7,
  style: 'child',
@@ -1147,7 +1144,6 @@ sceneState.isSequencePlaying,
  // race, no TTS engine available, etc.), don't leave the child stuck
  // with isSequencePlaying true and no Continue button forever.
  scheduleTimeout(() => { voDone = true; finishSequence(); }, 4000);
- }
 
  scheduleTimeout(() => { animDone = true; finishSequence(); }, 1400);
  };
@@ -1175,7 +1171,7 @@ sceneState.isSequencePlaying,
 
  playSparkle();
 
- let voDone = !isAudioOn;
+ let voDone = false; // muted lines finish on the hook's silent timer, not instantly
  let animDone = false;
  const finishSequence = () => {
  if (!voDone || !animDone) return;
@@ -1186,7 +1182,6 @@ sceneState.isSequencePlaying,
  });
  };
 
- if (isAudioOn) {
  stopVoice();
  stopSpokenVoice();
  speakHint("And that's me, Ganesha!", {
@@ -1199,7 +1194,6 @@ sceneState.isSequencePlaying,
  // race, no TTS engine available, etc.), don't leave the child stuck
  // with isSequencePlaying true and no Continue button forever.
  scheduleTimeout(() => { voDone = true; finishSequence(); }, 4000);
- }
 
  scheduleTimeout(() => { animDone = true; finishSequence(); }, 1400);
  }, 900);
@@ -1221,11 +1215,8 @@ sceneState.isSequencePlaying,
  playChime();
  sceneActions.updateState({ showTreeSparkles: false, showCelebration: null });
 
-if (!isAudioOn) {
-sceneActions.updateState({ gamePhase: 'transition' });
-return;
-}
-
+// Muted: speakHint completes on the hook's silent timer, so the transition
+// keeps the same pacing as with audio instead of jumping instantly.
 const advancedRef = { current: false };
 const proceedToTransition = () => {
 if (advancedRef.current) return;

@@ -261,37 +261,37 @@ export const VOICE_SCRIPTS = {
         text: "Which symbol can help him start small?"
       },
       scene13_hint_mooshika_2: {
-        text: "Think of Ganesha's tiny friend."
+        text: "Think of a symbol that reminds us to begin with one small step."
       },
       scene13_hint_mooshika_3: {
-        text: "Choose Mooshika."
+        text: "Remember? Mooshika helps us start small."
       },
       scene13_hint_trunk_1: {
-        text: "Which symbol can help with strength and gentleness?"
+        text: "Which symbol helps us be strong and gentle?"
       },
       scene13_hint_trunk_2: {
-        text: "Think of Ganesha's bendy trunk."
+        text: "Think of a symbol that can be strong and gentle."
       },
       scene13_hint_trunk_3: {
-        text: "Choose the Trunk."
+        text: "Remember? The Trunk can be strong and gentle."
       },
       scene13_hint_eyes_1: {
         text: "Which symbol can help him focus?"
       },
       scene13_hint_eyes_2: {
-        text: "Think of Ganesha's eyes."
+        text: "Think of the symbol that helps us notice what matters."
       },
       scene13_hint_eyes_3: {
-        text: "Choose the Eyes."
+        text: "Remember? The Eyes help us focus on what matters."
       },
       scene13_hint_tusk_1: {
         text: "Which symbol reminds us broken things can still help?"
       },
       scene13_hint_tusk_2: {
-        text: "Think of Ganesha's tusk."
+        text: "Think of a symbol that shows something broken can still be useful."
       },
       scene13_hint_tusk_3: {
-        text: "Choose the Tusk."
+        text: "Remember? The Tusk can still help, even when it's broken."
       },
       scene13SarvaHint: {
         text: "Which power would help here? Tap a power. Nice choice. The problem is solved. Let's help another friend."
@@ -300,55 +300,55 @@ export const VOICE_SCRIPTS = {
         text: "Choose a power again. You got it. That helped too. One more challenge. Great thinking."
       },
       scene14_hint_morning_1: {
-        text: "Look for a small friend who can be quick and busy."
+        text: "Look for something that helps us listen."
       },
       scene14_hint_morning_2: {
-        text: "Look near something you take to school."
+        text: "Look for something that helps us listen."
       },
       scene14_hint_morning_3: {
-        text: "Look near the school bag."
+        text: "Look closely at the backpack."
       },
       scene14_hint_afternoon_1: {
-        text: "Look for something long and bendy."
+        text: "Look for something that can hold lots of feelings."
       },
       scene14_hint_afternoon_2: {
-        text: "Look at something flying in the sky."
+        text: "Look for something that can hold lots of feelings."
       },
       scene14_hint_afternoon_3: {
-        text: "Look closely at the kite's tail."
+        text: "Look at the playground."
       },
       scene14_hint_night_1: {
-        text: "Look for a flower shape."
+        text: "Look for something sweet that reminds us of joy."
       },
       scene14_hint_night_2: {
-        text: "Look near the bed."
+        text: "Look for something sweet that reminds us of joy."
       },
       scene14_hint_night_3: {
-        text: "Look closely at the bedside lamp."
+        text: "Look near the lamp."
       },
       scene13SarvadaHint: {
-        text: "Our journey is not over yet. Let's keep floating down the river. Tap the bubble."
+        text: "Look through the picture and find Ganesha's hidden symbol."
       },
       scene13SarvadaDone: {
-        text: "Morning. Ganesha is there too. Tap the next bubble. Afternoon. Ganesha is there too. Tap the last bubble. Night. Ganesha is there too."
+        text: "Morning, afternoon, and night. Ganesha is with you through the whole day."
       },
       scene14_intro: {
         text: "Morning, afternoon and night — let’s find Ganesha through your day."
       },
       scene14_morning: {
-        text: "Let’s look at the morning."
+        text: "Morning can be busy. What can help him listen?"
       },
       scene14_afternoon: {
-        text: "Now the afternoon."
+        text: "Things didn’t go his way. What can help him keep going?"
       },
       scene14_night: {
-        text: "Now the night."
+        text: "He kept trying and finished the puzzle. What can remind him of that happy feeling?"
       },
       scene14_find_symbol: {
         text: "Can you find the hidden symbol?"
       },
       scene14_success: {
-        text: "Sarvada! You found Ganesha through the whole day."
+        text: "You found Ganesha through the whole day."
       },
 
       sceneComplete: {

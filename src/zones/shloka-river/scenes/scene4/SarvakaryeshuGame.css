@@ -595,3 +595,12 @@
     animation: none;
   }
 }
+
+/* Sidebar open = true pause: freeze every in-flight animation (flying symbol,
+   image hit glow, hint lifts) so nothing plays out behind the panel. */
+.sarva-game.is-paused,
+.sarva-game.is-paused *,
+.sarva-game.is-paused *::before,
+.sarva-game.is-paused *::after {
+  animation-play-state: paused !important;
+}

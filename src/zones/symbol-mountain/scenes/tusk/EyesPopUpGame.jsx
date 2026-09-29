@@ -191,7 +191,8 @@ const EyesPopUpGame = ({
   isAudioOn = true,
   onGameComplete,
   hideElements = false,
-  className = ''
+  className = '',
+  stopVoice
 }) => {
   usePreloadPoses(POSE_ASSETS);
   const [flow, setFlow] = useState(FLOW.SEARCH);
@@ -269,8 +270,12 @@ const EyesPopUpGame = ({
       onEnd?.();
       return;
     }
+    // Stop the parent scene's own voice engine first — its MP3 audio element
+    // isn't touched by window.speechSynthesis.cancel() below, so without this
+    // a still-playing scene VO keeps going under this mini-game's line.
+    stopVoice?.();
     speakFallback(text, onEnd);
-  }, [isAudioOn]);
+  }, [isAudioOn, stopVoice]);
 
   const showFeedback = useCallback((message, pulseId = null) => {
     setFeedback(message);

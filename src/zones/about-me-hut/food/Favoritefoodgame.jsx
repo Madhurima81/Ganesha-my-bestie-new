@@ -340,7 +340,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   };
 
   // ── T08/T09: visibility + idle timer infrastructure ──────────────────────────
-  const { startIdleTimer, stopIdleTimer, setCurrentPhase, stopVoice, setVoiceVolume, startMusic, stopMusic, playVoice } = useVoiceGuidance(
+  const { startIdleTimer, stopIdleTimer, setCurrentPhase, stopVoice, muteVoicePlayback, setVoiceVolume, startMusic, stopMusic, playVoice } = useVoiceGuidance(
     'about-me-hut', 'favorite-food', {
       enableMusic: true,
       musicVolume: 0.06,
@@ -350,7 +350,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     }
   );
   const { playUiTap, playWrongTap, playSparkle, playChime, playGlow, setGlobalVolume } = useGameSounds();
-  const { speak, stop: stopSpokenVoice } = useGaneshaVoice();
+  const { speak, stop: stopSpokenVoice, mute: muteSpokenVoice } = useGaneshaVoice();
   useEffect(() => { startIdleTimer(); return () => stopIdleTimer(); }, [startIdleTimer, stopIdleTimer]);
   useEffect(() => { setCurrentPhase(sceneState?.gamePhase ?? null); }, [sceneState?.gamePhase, setCurrentPhase]);
   useEffect(() => {
@@ -364,14 +364,14 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   // Modak V7 pattern: volume 0 keeps MP3 VO playing silently so it resumes mid-sentence on unmute
   useEffect(() => { setVoiceVolume(isAudioOn ? 1 : 0); }, [isAudioOn, setVoiceVolume]);
 
-  // Web Speech API TTS (useGaneshaVoice): pause/resume instead of cancel — keeps utterance alive
+  // Mute (DECISIONS.md 2026-09-29): silence in-flight speech + MP3 now, but let each
+  // line's callback fire on schedule. Unmuting never resumes the old line.
   useEffect(() => {
     if (!isAudioOn) {
-      window.speechSynthesis?.pause();
-    } else {
-      window.speechSynthesis?.resume();
+      muteSpokenVoice();
+      muteVoicePlayback();
     }
-  }, [isAudioOn]);
+  }, [isAudioOn, muteSpokenVoice, muteVoicePlayback]);
 
   // Prevent stale VO at scene boundaries without cancelling reload replays
   // during normal state updates.
@@ -546,7 +546,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   }, []);
 
   const speakLine = useCallback((text, options = {}) => {
-    if (!isAudioOn || !text) {
+    if (!text) {
       options.onEnd?.();
       return;
     }

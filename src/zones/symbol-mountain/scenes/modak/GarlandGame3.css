@@ -272,3 +272,12 @@
   .g3g-string { width: 58%; }
   .g3g-completed-garland { width: 58%; }
 }
+
+/* Sidebar open = true pause: freeze every in-flight animation (flower threading,
+   garland glide, modak glow, gesture demos) so nothing plays out behind the panel. */
+.g3g--paused,
+.g3g--paused *,
+.g3g--paused *::before,
+.g3g--paused *::after {
+  animation-play-state: paused !important;
+}

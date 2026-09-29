@@ -2,6 +2,7 @@ import PoseImage, { usePreloadPoses } from '../../../../lib/components/animation
 import { useState, useEffect, useRef, useCallback } from 'react';
 import SyllableHighlight from '../../shared/SyllableHighlight';
 import useRepeatedHintCycle from '../../../../lib/hooks/useRepeatedHintCycle';
+import usePausableTimers from '../../../../lib/hooks/usePausableTimers';
 import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
 import './KurumedevaGame.css';
 
@@ -330,6 +331,8 @@ export default function KurumedevaGame({
   const onPhaseCompleteRef = useRef(onPhaseComplete);
   const onGameCompleteRef = useRef(onGameComplete);
   const isPausedRef = useRef(isPaused);
+  // Freezes with the sidebar and resumes with the remaining time (see hook).
+  const { after: pausableAfter, cancel: cancelPausable, clear: clearPausable } = usePausableTimers(isPaused);
 
   // No more solo try/fail gate — the child can ask for help as soon as it's
   // that friend's turn.
@@ -349,6 +352,7 @@ export default function KurumedevaGame({
   const {
     hintLevel,
     markInteraction,
+    markLevel2VoiceStarted,
     markLevel2VoiceEnded,
   } = useRepeatedHintCycle({
     enabled: isActive && !isPaused && phase === 'play' && !isRoundSettling && !debugMode && introComplete,
@@ -375,9 +379,9 @@ export default function KurumedevaGame({
     if (!isActive || !introComplete || phase !== 'play' || isRoundSettling || debugMode || !isTeachableBeat) { setKuruIntroGesture(false); return undefined; }
     setKuruIntroGesture(true);
     setIntroGestureVoStarted(false);
-    const t = window.setTimeout(() => setKuruIntroGesture(false), 6000);
-    return () => window.clearTimeout(t);
-  }, [isActive, introComplete, kuruStageKey, phase, isRoundSettling, debugMode, isTeachableBeat]);
+    const t = pausableAfter(6000, () => setKuruIntroGesture(false));
+    return () => cancelPausable(t);
+  }, [isActive, introComplete, kuruStageKey, phase, isRoundSettling, debugMode, isTeachableBeat, pausableAfter, cancelPausable]);
   const currentFriend = friendStep < FRIENDS.length ? FRIENDS[friendStep] : null;
 
   // Round-start question — once per ask round: "Who can help with the heavy
@@ -428,8 +432,9 @@ export default function KurumedevaGame({
     if (lastKuruHintRef.current === onceKey) return;
     lastKuruHintRef.current = onceKey;
     stopSceneVoice?.();
+    if (hintLevel === 2 && playSceneLine) markLevel2VoiceStarted();
     playSceneLine?.(key, hintLevel === 2 ? markLevel2VoiceEnded : undefined);
-  }, [hintLevel, hintBeat, phase, isRoundSettling, debugMode, placeActive, canAsk, helpDelivered, friendStep, playSceneLine, stopSceneVoice, markLevel2VoiceEnded]);
+  }, [hintLevel, hintBeat, phase, isRoundSettling, debugMode, placeActive, canAsk, helpDelivered, friendStep, playSceneLine, stopSceneVoice, markLevel2VoiceStarted, markLevel2VoiceEnded]);
 
   // Keep the selected debug marker inside the current phase's group.
   useEffect(() => {
@@ -448,24 +453,13 @@ export default function KurumedevaGame({
     isPausedRef.current = isPaused;
   }, [isPaused]);
 
-  const safeAfter = useCallback((ms, fn) => {
-    const runWhenReady = () => {
-      if (isPausedRef.current) {
-        const retryId = window.setTimeout(runWhenReady, 150);
-        timersRef.current.push(retryId);
-        return;
-      }
-      fn();
-    };
-    const id = window.setTimeout(runWhenReady, ms);
-    timersRef.current.push(id);
-    return id;
-  }, []);
+  const safeAfter = pausableAfter;
 
   const clearTimers = useCallback(() => {
     timersRef.current.forEach(clearTimeout);
     timersRef.current = [];
-  }, []);
+    clearPausable();
+  }, [clearPausable]);
 
   useEffect(() => {
     if (!isActive) {
@@ -774,11 +768,11 @@ export default function KurumedevaGame({
   const completeAfterSuccess = useCallback(() => {
     if (!successVoDoneRef.current || !crossingDoneRef.current || completionScheduledRef.current) return;
     completionScheduledRef.current = true;
-    window.setTimeout(() => {
+    pausableAfter(500, () => {
       onGameCompleteRef.current?.();
       onPhaseCompleteRef.current?.();
-    }, 500);
-  }, []);
+    });
+  }, [pausableAfter]);
 
   useEffect(() => {
     if (phase !== 'crossing' || doneCalledRef.current) return;
@@ -797,12 +791,13 @@ export default function KurumedevaGame({
       if (playWord) playWord('kurumedeva', afterWord);
       else afterWord();
       // iOS Safari can silently drop utterance onend/onerror — don't let completion hang on VO
-      voFallbackRef.current = window.setTimeout(() => {
+      // Pausable, so the sidebar can't let it complete the game behind the panel.
+      voFallbackRef.current = pausableAfter(10000, () => {
         if (!successVoDoneRef.current) {
           successVoDoneRef.current = true;
           completeAfterSuccess();
         }
-      }, 10000);
+      });
     } else {
       successVoDoneRef.current = true;
     }
@@ -831,14 +826,14 @@ export default function KurumedevaGame({
         }
       });
     });
-  }, [completeAfterSuccess, phase, playSceneLine, playWord, stopSceneVoice, safeAfter]);
+  }, [completeAfterSuccess, pausableAfter, phase, playSceneLine, playWord, stopSceneVoice, safeAfter]);
 
   useEffect(() => () => {
     if (voFallbackRef.current) {
-      window.clearTimeout(voFallbackRef.current);
+      cancelPausable(voFallbackRef.current);
       voFallbackRef.current = null;
     }
-  }, []);
+  }, [cancelPausable]);
 
   // --- Layout Debug helpers -------------------------------------------------
   const startDebugDrag = (event, key) => {
@@ -1080,7 +1075,7 @@ export default function KurumedevaGame({
             : beaverIdleWorriedImg;
 
   return (
-    <div className={`kuru-game${hideElements ? ' is-hidden' : ''}${debugMode ? ' is-debugging' : ''}`}>
+    <div className={`kuru-game${hideElements ? ' is-hidden' : ''}${debugMode ? ' is-debugging' : ''}${isPaused ? ' is-paused' : ''}`}>
       <div
         ref={stageRef}
         className="kuru-stage"
@@ -1111,10 +1106,6 @@ export default function KurumedevaGame({
           <p className="kuru-hint">
             {`[debug] ask ${currentFriend.label} — hintLevel ${hintLevel}`}
           </p>
-        )}
-
-        {phase === 'done' && (
-          <p className="kuru-doneline">You asked for help. Together, you made a way!</p>
         )}
 
         {/* Resting logs — visible before Elephant helps. During the help beat,
@@ -1376,6 +1367,7 @@ export default function KurumedevaGame({
                 : 400
             }
             iterations={1}
+            paused={isPaused}
             zIndex={46}
           />
         )}

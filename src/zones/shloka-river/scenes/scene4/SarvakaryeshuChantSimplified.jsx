@@ -3,7 +3,8 @@ import { useGameSounds } from '../../../../lib/hooks/useGameSounds';
 import './SarvakaryeshuChantSimplified.css';
 
 import SceneManager from '../../../../lib/components/scenes/SceneManager';
-import useVoiceGuidance from '../../../../lib/hooks/useVoiceGuidance';
+import useVoiceGuidance, { estimateSpeechMs } from '../../../../lib/hooks/useVoiceGuidance';
+import useSidebarPause from '../../../../lib/hooks/useSidebarPause';
 import MessageManager from '../../../../lib/components/scenes/MessageManager';
 import InteractionManager from '../../../../lib/components/scenes/InteractionManager';
 import GameStateManager from '../../../../lib/services/GameStateManager';
@@ -236,6 +237,8 @@ const SarvakaryeshuChantContent = ({
   const {
     playVoice: playConfiguredVoice,
     stopVoice,
+    muteVoicePlayback,
+    playSilent,
     setVoiceVolume,
     playSfx,
     playSyllable,
@@ -253,9 +256,11 @@ const SarvakaryeshuChantContent = ({
 
   const { playUiTap, playChime } = useGameSounds();
   const speechSynthRef = useRef(typeof window !== 'undefined' ? window.speechSynthesis : null);
+  const webSpeechRef = useRef(null); // in-flight scene-owned utterance, for mute-mid-line
   const guidanceVoiceActiveRef = useRef(false);
   const guidanceVoiceTimerRef = useRef(null);
   const lastGuidanceVoiceEndedAtRef = useRef(0);
+  const sarvadaReplayKeyRef = useRef('scene14_intro');
 
   const stopWebSpeech = useCallback(() => {
     try {
@@ -271,8 +276,14 @@ const SarvakaryeshuChantContent = ({
   }, []);
 
   const speakWebSpeech = useCallback((text, onEnded) => {
-    if (!audioEnabledRef.current || !text) {
+    if (!text) {
       onEnded?.();
+      return;
+    }
+    if (!audioEnabledRef.current) {
+      // Muted: finish on a silent timer matching the line's length, not instantly,
+      // so mute never skips a step (DECISIONS.md 2026-09-29).
+      playSilent(text, onEnded);
       return;
     }
     const synth = speechSynthRef.current;
@@ -287,15 +298,42 @@ const SarvakaryeshuChantContent = ({
       utterance.rate = 0.95;
       utterance.pitch = 1;
       utterance.volume = 0.95;
-      utterance.onend = () => onEnded?.();
-      utterance.onerror = () => onEnded?.();
+      const clearTracked = () => {
+        if (webSpeechRef.current?.utterance === utterance) webSpeechRef.current = null;
+      };
+      utterance.onend = () => { clearTracked(); onEnded?.(); };
+      utterance.onerror = () => { clearTracked(); onEnded?.(); };
+      webSpeechRef.current = { utterance, onEnded, at: Date.now(), ms: estimateSpeechMs(text) };
       synth.speak(utterance);
     } catch {
       onEnded?.();
     }
-  }, []);
+  }, [playSilent]);
 
-  const playGuidanceVoice = useCallback((key, onEnded, options = {}) => {
+  // Mute pressed mid-line: silence the utterance now but let its callback fire
+  // once, when it would have finished, so mute never skips or stalls a step.
+  const muteWebSpeech = useCallback(() => {
+    const w = webSpeechRef.current;
+    if (!w) return;
+    webSpeechRef.current = null;
+    w.utterance.onend = null;
+    w.utterance.onerror = null;
+    try { speechSynthRef.current?.cancel(); } catch {}
+    playSilent(Math.max(0, w.ms - (Date.now() - w.at)), w.onEnded);
+  }, [playSilent]);
+
+  // ── Sidebar = true pause ────────────────────────────────────────────────────
+  // Shared hook: tracks the in-flight VO so it can be replayed after the sidebar closes.
+  const sidebarPause = useSidebarPause();
+  const {
+    setBeat,
+    playTracked,
+    clearActive: clearActiveVoice,
+    beginPause: beginSidebarPause,
+    endPause: endSidebarPause,
+  } = sidebarPause;
+
+  const playGuidanceVoiceRaw = useCallback((key, onEnded, options = {}) => {
     const { minDelayAfterVoiceMs = 0, replayOnReturn = false, stripLeadingText = null } = options;
     const map = {
       scene13_puzzle: "So much to do. Which symbol can help him start small?",
@@ -310,11 +348,11 @@ const SarvakaryeshuChantContent = ({
       scene13_try_again: "Try another symbol.",
       scene13_success: "Sarvakaryeshu! You chose a Ganesha symbol for each task.",
       scene14_intro: "Morning, afternoon and night — let’s find Ganesha through your day.",
-      scene14_morning: "Let’s look at the morning.",
-      scene14_afternoon: "Now the afternoon.",
-      scene14_night: "Now the night.",
+      scene14_morning: "Morning can be busy. What can help him listen?",
+      scene14_afternoon: "Things didn’t go his way. What can help him keep going?",
+      scene14_night: "He kept trying and finished the puzzle. What can remind him of that happy feeling?",
       scene14_find_symbol: "Can you find the hidden symbol?",
-      scene14_success: "Sarvada! You found Ganesha through the whole day.",
+      scene14_success: "You found Ganesha through the whole day.",
       sceneComplete: "From morning to night, Ganesha was with you.",
     };
     const finishPlayback = () => {
@@ -355,6 +393,14 @@ const SarvakaryeshuChantContent = ({
     startPlayback();
   }, [clearGuidanceVoiceTimer, playConfiguredVoice, speakWebSpeech]);
 
+  const playGuidanceVoice = useCallback((key, onEnded, options = {}) => {
+    playTracked(
+      'line',
+      (done, overrides) => playGuidanceVoiceRaw(key, done, { ...options, ...overrides }),
+      onEnded,
+    );
+  }, [playTracked, playGuidanceVoiceRaw]);
+
   const replayCurrentVoice = useCallback(() => {
     if (!isAudioOn) return;
     if (!sceneState.welcomeShown || sceneState.phase === PHASES.INITIAL) {
@@ -366,18 +412,29 @@ const SarvakaryeshuChantContent = ({
       return;
     }
     if (sceneState.phase === PHASES.SARVADA_GAME) {
-      playGuidanceVoice('scene14_morning');
+      playGuidanceVoice(sarvadaReplayKeyRef.current || 'scene14_intro');
       return;
     }
     if (showSceneCompletion) playGuidanceVoice('sceneComplete');
   }, [isAudioOn, playGuidanceVoice, sceneState.phase, sceneState.welcomeShown, showSceneCompletion]);
 
+  const handleSarvadaReplayKeyChange = useCallback((key) => {
+    if (key) sarvadaReplayKeyRef.current = key;
+  }, []);
+
   const stopAllVoice = useCallback(() => {
     clearGuidanceVoiceTimer();
     guidanceVoiceActiveRef.current = false;
+    // A deliberate stop (new clip taking over) is not a sidebar interruption:
+    // don't leave a stale entry that a later sidebar-open would replay.
+    clearActiveVoice();
     stopVoice();
     stopWebSpeech();
-  }, [clearGuidanceVoiceTimer, stopVoice, stopWebSpeech]);
+  }, [clearActiveVoice, clearGuidanceVoiceTimer, stopVoice, stopWebSpeech]);
+
+  // Sarvakaryeshu is a single beat for the wrapper (SarvadaGame drives its own beats via setBeat).
+  // Set during render so a clip started by a child effect this render is tagged with it.
+  if (sceneState.phase === PHASES.SARVAKARYESHU_GAME) setBeat('sarvakaryeshu');
 
   const pauseCelebRef = useRef(null);
   const onPauseHide = useCallback(() => pauseCelebRef.current?.(), []);
@@ -465,7 +522,10 @@ const SarvakaryeshuChantContent = ({
   const handleAudioToggle = () => {
     const nextOn = !isAudioOn;
     setVoiceVolume(nextOn ? 1 : 0);
-    if (!nextOn) stopAllVoice();
+    if (!nextOn) {
+      muteVoicePlayback();
+      muteWebSpeech();
+    }
     toggleAudio();
   };
 
@@ -565,19 +625,10 @@ const SarvakaryeshuChantContent = ({
       });
     };
 
-    if (isAudioOn) {
-      const successKey = word === 'sarvakaryeshu' ? 'scene13_success' : 'scene14_success';
-      // iOS Safari can silently drop utterance onend/onerror — don't let the reveal hang on VO
-      const voFallback = window.setTimeout(() => triggerReveal(), 9000);
-      window.setTimeout(() => {
-        playGuidanceVoice(successKey, () => {
-          window.clearTimeout(voFallback);
-          window.setTimeout(() => triggerReveal(), 250);
-        }, { stripLeadingText: word === 'sarvakaryeshu' ? 'Sarva-Karyeshu' : 'Sarvada' });
-      }, 250);
-    } else {
-      window.setTimeout(() => triggerReveal(), 350);
-    }
+    // The child mini-games already play the full word MP3 followed by their
+    // success VO before calling onPhaseComplete. Do not replay that success
+    // line here; just give the reveal a small breath after the game hands off.
+    window.setTimeout(() => triggerReveal(), isAudioOn ? 350 : 250);
   }, [
     sceneState,
     sceneActions,
@@ -585,7 +636,6 @@ const SarvakaryeshuChantContent = ({
     sceneId,
     isAudioOn,
     playChime,
-    playGuidanceVoice,
     stopIdleTimer,
     setCurrentPhase,
     triggerMiniGesture,
@@ -638,16 +688,12 @@ const SarvakaryeshuChantContent = ({
                   onMicroWin={handleMicroWin}
                   onPhaseComplete={() => window.setTimeout(() => handlePhaseComplete('sarvakaryeshu'), 0)}
                   onGameComplete={() => {}}
-                  isPaused={isRecorderOpen}
+                  isPaused={isRecorderOpen || sidebarPause.isSidebarPaused}
                   voiceGuidance={{
                     playVoice: playGuidanceVoice,
-                    playWord: playWordAudio,
+                    playWord: (word, onEnded) => playTracked('word', (done) => playWordAudio(word, done), onEnded),
                     playSyllable: (syllable, onEnded) => {
-                      if (!audioEnabledRef.current) {
-                        onEnded?.();
-                        return;
-                      }
-                      playSyllable('sarvakaryeshu', syllable, onEnded);
+                      playTracked('syllable', (done) => playSyllable('sarvakaryeshu', syllable, done), onEnded);
                     },
                     stopVoice: stopAllVoice
                   }}
@@ -659,16 +705,22 @@ const SarvakaryeshuChantContent = ({
                   onMicroWin={handleMicroWin}
                   onPhaseComplete={() => window.setTimeout(() => handlePhaseComplete('sarvada'), 0)}
                   onGameComplete={() => {}}
-                  isPaused={isRecorderOpen}
+                  onReplayKeyChange={handleSarvadaReplayKeyChange}
+                  isPaused={isRecorderOpen || sidebarPause.isSidebarPaused}
                   voiceGuidance={{
                     playVoice: playGuidanceVoice,
-                    playWord: playWordAudio,
+                    setBeat,
+                    playWord: (word, onEnded) => playTracked(
+                      'word',
+                      (done) => playWordAudio(word, done),
+                      onEnded,
+                    ),
                     playSyllable: (syllable, onEnded) => {
-                      if (!audioEnabledRef.current) {
-                        onEnded?.();
-                        return;
-                      }
-                      playSyllable('sarvada', syllable, onEnded);
+                      playTracked(
+                        'syllable',
+                        (done) => playSyllable('sarvada', syllable, done),
+                        onEnded,
+                      );
                     },
                     stopVoice: stopAllVoice
                   }}
@@ -712,6 +764,7 @@ const SarvakaryeshuChantContent = ({
                       onDeleteRecording={handleDeleteRecording}
                       isReload={isReload}
                       onPopupOpen={() => {
+                        if ([PHASES.SARVAKARYESHU_GAME, PHASES.SARVADA_GAME].includes(sceneState.phase)) beginSidebarPause();
                         stopAllVoice();
                         stopIdleTimer();
                         setIsRecorderOpen(true);
@@ -720,6 +773,7 @@ const SarvakaryeshuChantContent = ({
                         setIsRecorderOpen(false);
                         const activeGamePhases = [PHASES.SARVAKARYESHU_GAME, PHASES.SARVADA_GAME];
                         if (activeGamePhases.includes(sceneState.phase) && !revealConfig) startIdleTimer();
+                        endSidebarPause();
                       }}
                     />
                   )}

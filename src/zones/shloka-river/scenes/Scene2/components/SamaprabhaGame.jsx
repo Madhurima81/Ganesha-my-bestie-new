@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import SyllableHighlight from '../../../shared/SyllableHighlight';
 import GestureDemo from '../../../../../lib/components/feedback/GestureDemo';
 import useRepeatedHintCycle from '../../../../../lib/hooks/useRepeatedHintCycle';
+import usePausableTimers from '../../../../../lib/hooks/usePausableTimers';
 import './SamaprabhaGame.css';
 
 import bgImg from '../assets/images/Samaprabha/samaprabha-bg.webp';
@@ -236,6 +237,8 @@ export default function SamaprabhaGame({
   const litRef = useRef(0);
   const timersRef = useRef([]);
   const isPausedRef = useRef(isPaused);
+  // Freezes with the sidebar and resumes with the remaining time (see hook).
+  const { after: pausableAfter, cancel: cancelPausable, clear: clearPausable } = usePausableTimers(isPaused);
   const firstInteractionSentRef = useRef(false);
   const doneCalledRef = useRef(false);
   const doneAnnouncedRef = useRef(false);
@@ -301,22 +304,10 @@ export default function SamaprabhaGame({
   const clearTimers = useCallback(() => {
     timersRef.current.forEach((id) => window.clearTimeout(id));
     timersRef.current = [];
-  }, []);
+    clearPausable();
+  }, [clearPausable]);
 
-  const safeAfter = useCallback((ms, fn) => {
-    const runWhenReady = () => {
-      if (isPausedRef.current) {
-        const retry = window.setTimeout(runWhenReady, 150);
-        timersRef.current.push(retry);
-        return;
-      }
-      fn();
-    };
-
-    const id = window.setTimeout(runWhenReady, ms);
-    timersRef.current.push(id);
-    return id;
-  }, []);
+  const safeAfter = pausableAfter;
 
   const hintStageKey = phase === 'play' ? `clue-${lit}` : phase;
 
@@ -325,7 +316,7 @@ export default function SamaprabhaGame({
   // VO ("That's a branch!" etc.) finishing, not just the game's intro VO.
   // A child correctly holding a shadow must never get an idle hint while
   // the progress ring is filling.
-  const { hintLevel, markInteraction, markLevel2VoiceEnded } = useRepeatedHintCycle({
+  const { hintLevel, markInteraction, markLevel2VoiceStarted, markLevel2VoiceEnded } = useRepeatedHintCycle({
     enabled: isActive && !isPaused && phase === 'play' && introComplete && clueVoComplete && !isHoldingClue,
     stageKey: hintStageKey,
     initialDelay: 10000,
@@ -345,8 +336,9 @@ export default function SamaprabhaGame({
 
     lastHintVoKeyRef.current = onceKey;
     stopVoice?.();
+    if (playSceneLine) markLevel2VoiceStarted();
     playSceneLine?.(voiceKey, markLevel2VoiceEnded, { replayOnReturn: false });
-  }, [hintLevel, isActive, isPaused, lit, phase, playSceneLine, stopVoice, markLevel2VoiceEnded]);
+  }, [hintLevel, isActive, isPaused, lit, phase, playSceneLine, stopVoice, markLevel2VoiceStarted, markLevel2VoiceEnded]);
 
   useEffect(() => {
     lastHintVoKeyRef.current = null;
@@ -639,7 +631,7 @@ export default function SamaprabhaGame({
     completionVoStartedRef.current = true;
 
     if (sylEndFallbackRef.current) {
-      window.clearTimeout(sylEndFallbackRef.current);
+      cancelPausable(sylEndFallbackRef.current);
       sylEndFallbackRef.current = null;
     }
 
@@ -649,7 +641,7 @@ export default function SamaprabhaGame({
       completionFinishedRef.current = true;
 
       if (voFallbackRef.current) {
-        window.clearTimeout(voFallbackRef.current);
+        cancelPausable(voFallbackRef.current);
         voFallbackRef.current = null;
       }
 
@@ -658,7 +650,7 @@ export default function SamaprabhaGame({
     };
 
     if (!playSceneLine) {
-      window.setTimeout(finish, 800);
+      pausableAfter(800, finish);
       return;
     }
 
@@ -669,28 +661,29 @@ export default function SamaprabhaGame({
     if (playWord) playWord('samaprabha', afterWord);
     else afterWord();
 
-    voFallbackRef.current = window.setTimeout(finish, 10000);
-  }, [playSceneLine, playWord]);
+    // Pausable, so the sidebar can't let it complete the game behind the panel.
+    voFallbackRef.current = pausableAfter(10000, finish);
+  }, [cancelPausable, pausableAfter, playSceneLine, playWord]);
 
   useEffect(() => {
     if (phase !== 'done' || doneAnnouncedRef.current) return;
 
     doneAnnouncedRef.current = true;
-    sylEndFallbackRef.current = window.setTimeout(() => {
+    sylEndFallbackRef.current = pausableAfter(1700, () => {
       lastSyllableDoneRef.current = true;
       startCompletionVo();
-    }, 1700);
+    });
 
     startCompletionVo();
-  }, [phase, startCompletionVo]);
+  }, [pausableAfter, phase, startCompletionVo]);
 
   useEffect(() => () => {
     clearTimers();
     cancelHold();
 
-    if (sylEndFallbackRef.current) window.clearTimeout(sylEndFallbackRef.current);
-    if (voFallbackRef.current) window.clearTimeout(voFallbackRef.current);
-  }, [cancelHold, clearTimers]);
+    if (sylEndFallbackRef.current) cancelPausable(sylEndFallbackRef.current);
+    if (voFallbackRef.current) cancelPausable(voFallbackRef.current);
+  }, [cancelHold, cancelPausable, clearTimers]);
 
   if (!isActive) return null;
 
@@ -835,7 +828,7 @@ export default function SamaprabhaGame({
   const selectedDebugOption = samaDebugOptions.find((opt) => opt.key === selectedDebugKey) || samaDebugOptions[0];
 
   return (
-    <div className={`sama-game${hideElements ? ' is-hidden' : ''}`}>
+    <div className={`sama-game${hideElements ? ' is-hidden' : ''}${isPaused ? ' is-paused' : ''}`}>
       <div
         ref={stageRef}
         className={`sama-stage is-${phase}`}
@@ -968,6 +961,7 @@ export default function SamaprabhaGame({
             active
             idleDelay={750}
             iterations={1}
+            paused={isPaused}
             zIndex={46}
           />
         )}
@@ -981,6 +975,7 @@ export default function SamaprabhaGame({
             active
             idleDelay={0}
             iterations={1}
+            paused={isPaused}
             zIndex={46}
           />
         )}
@@ -994,12 +989,9 @@ export default function SamaprabhaGame({
             active
             idleDelay={0}
             iterations={1}
+            paused={isPaused}
             zIndex={46}
           />
-        )}
-
-        {effShowDoneline && (
-          <p className="sama-doneline is-visible">Now you can see clearly.</p>
         )}
 
         {debugEnabled && showDebugPanel && activeLayout.clues.map((clue, index) => {

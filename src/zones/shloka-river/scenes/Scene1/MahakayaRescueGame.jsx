@@ -7,6 +7,7 @@ import { usePreloadPoses } from '../../../../lib/components/animation/PoseImage'
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import SyllableHighlight from '../../shared/SyllableHighlight';
 import useRepeatedHintCycle from '../../../../lib/hooks/useRepeatedHintCycle';
+import usePausableTimers from '../../../../lib/hooks/usePausableTimers';
 import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
 import './MahakayaRescueGame.css';
 
@@ -170,6 +171,8 @@ export default function MahakayaRescueGame({
   const stageRef = useRef(null);
   const timers = useRef([]);
   const isPausedRef = useRef(isPaused);
+  // Freezes with the sidebar and resumes with the remaining time (see hook).
+  const { after, clear: clearPausable } = usePausableTimers(isPaused);
   const phaseRef = useRef('intro');
   const draggingRef = useRef(null);
   const logPosRef = useRef(null);
@@ -188,7 +191,7 @@ export default function MahakayaRescueGame({
   // GMB Hint Standard v1 — 10s/18s/26s from mount or last interaction, flat
   // across every log. Suppressed while the child is actively dragging, so
   // hints don't fire over their hand mid-gesture.
-  const { hintLevel, markInteraction, markLevel2VoiceEnded } = useRepeatedHintCycle({
+  const { hintLevel, markInteraction, markLevel2VoiceStarted, markLevel2VoiceEnded } = useRepeatedHintCycle({
     enabled: isActive && !isPaused && phase === 'play' && !debugMode && !dragging,
     stageKey: hintStageKey,
     initialDelay: 10000,
@@ -216,29 +219,18 @@ export default function MahakayaRescueGame({
     if (lastHintVoRef.current === voKey) return;
     lastHintVoRef.current = voKey;
     if (hintLevel === 2) {
+      if (playSceneLine) markLevel2VoiceStarted();
       playSceneLine?.('scene10_maha_drag_water', markLevel2VoiceEnded);
     } else {
       playSceneLine?.('scene10_maha_place_here');
     }
-  }, [hintLevel, hintStageKey, phase, debugMode, isPaused, playSceneLine, markLevel2VoiceEnded]);
+  }, [hintLevel, hintStageKey, phase, debugMode, isPaused, playSceneLine, markLevel2VoiceStarted, markLevel2VoiceEnded]);
 
   const clearTimers = useCallback(() => {
     timers.current.forEach(clearTimeout);
     timers.current = [];
-  }, []);
-
-  const after = useCallback((ms, fn) => {
-    const runWhenReady = () => {
-      if (isPausedRef.current) {
-        const retryId = setTimeout(runWhenReady, 150);
-        timers.current.push(retryId);
-        return;
-      }
-      fn();
-    };
-    const id = setTimeout(runWhenReady, ms);
-    timers.current.push(id);
-  }, []);
+    clearPausable();
+  }, [clearPausable]);
 
   const pointFromEvent = useCallback((e) => {
     const rect = stageRef.current?.getBoundingClientRect();
@@ -524,11 +516,11 @@ export default function MahakayaRescueGame({
 
         // Browser TTS/audio onended can silently fail to fire (esp. iOS Safari) —
         // don't let scene completion hang forever on a dropped VO callback.
-        const voFallback = setTimeout(finishGame, 8000);
-        timers.current.push(voFallback);
+        // Pausable, so the sidebar can't let it complete the scene behind the panel.
+        after(8000, finishGame);
 
         playWord?.('mahakaya', () => {
-          playSceneLine?.('scene10_maha_success', finishGame, { stripLeadingText: 'Mahakaya' });
+          playSceneLine?.('scene10_maha_success', finishGame, { stripLeadingText: 'Mahakaay' });
         });
       });
       return;
@@ -719,7 +711,7 @@ export default function MahakayaRescueGame({
   return (
     <div
       ref={stageRef}
-      className={`maha-game ${hideElements ? 'is-hidden' : ''} ${debugMode ? 'is-debugging' : ''}`}
+      className={`maha-game ${hideElements ? 'is-hidden' : ''} ${debugMode ? 'is-debugging' : ''} ${isPaused ? 'is-paused' : ''}`}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
@@ -736,8 +728,6 @@ export default function MahakayaRescueGame({
           }}
         />
       )}
-
-      {phase === 'complete' && <p className="maha-doneline">There is room for everyone.</p>}
 
       {/* Hidden base anchor for tuning/crossing math. No starter log is shown. */}
       <div
@@ -865,6 +855,7 @@ export default function MahakayaRescueGame({
         // reads as nagging and delays the child's own turn. The L2/L3 hint
         // ladder (only shown if the child gets stuck) keeps its 2 passes.
         iterations={needsInitialTeaching && !teachingComplete ? 1 : 2}
+        paused={isPaused}
         onComplete={() => {
           if (needsInitialTeaching && !teachingComplete) setTeachingCompleteKey(hintStageKey);
         }}

@@ -2,26 +2,27 @@ import PoseImage, { usePreloadPoses } from '../../../../lib/components/animation
 import { useState, useEffect, useRef, useCallback } from 'react';
 import SyllableHighlight from '../../shared/SyllableHighlight';
 import useRepeatedHintCycle from '../../../../lib/hooks/useRepeatedHintCycle';
+import usePausableTimers from '../../../../lib/hooks/usePausableTimers';
 import './SarvakaryeshuGame.css';
 
 import bgImg from './assets/images/sarvakaryeshu-bg.webp';
 
-import mooshikaBeforeImg from './assets/images/sarvakaryeshu/mooshika-before.png';
-import mooshikaAfterImg from './assets/images/sarvakaryeshu/mooshika-after.png';
-import eyesBeforeImg from './assets/images/sarvakaryeshu/eyes-before.png';
-import eyesAfterImg from './assets/images/sarvakaryeshu/eyes-after.png';
-import trunkBeforeImg from './assets/images/sarvakaryeshu/trunk-before.png';
-import trunkAfterImg from './assets/images/sarvakaryeshu/trunk-after.png';
-import tuskBeforeImg from './assets/images/sarvakaryeshu/tusk-before.png';
-import tuskAfterImg from './assets/images/sarvakaryeshu/tusk-after.png';
+import mooshikaBeforeImg from './assets/images/sarvakaryeshu/mooshika-before.webp';
+import mooshikaAfterImg from './assets/images/sarvakaryeshu/mooshika-after.webp';
+import eyesBeforeImg from './assets/images/sarvakaryeshu/eyes-before.webp';
+import eyesAfterImg from './assets/images/sarvakaryeshu/eyes-after.webp';
+import trunkBeforeImg from './assets/images/sarvakaryeshu/trunk-before.webp';
+import trunkAfterImg from './assets/images/sarvakaryeshu/trunk-after.webp';
+import tuskBeforeImg from './assets/images/sarvakaryeshu/tusk-before.webp';
+import tuskAfterImg from './assets/images/sarvakaryeshu/tusk-after.webp';
 import boatImg from './assets/images/boat.webp';
 
-import trunkIcon from '../../../../zones/symbol-mountain/shared/images/icons/symbol-trunk-new.png';
-import tuskIcon from '../../../../zones/symbol-mountain/shared/images/icons/symbol-tusk-new.png';
-import modakIcon from '../../../../zones/symbol-mountain/shared/images/icons/symbol-modak-new.png';
-import mooshikaIcon from '../../../../zones/symbol-mountain/shared/images/icons/symbol-mooshika-new.png';
-import eyesIcon from '../../../../zones/symbol-mountain/shared/images/icons/symbol-eyes-new.png';
-import earsIcon from '../../../../zones/symbol-mountain/shared/images/icons/symbol-ears-new.png';
+import trunkIcon from '../../../../zones/symbol-mountain/shared/images/icons/symbol-trunk-new.webp';
+import tuskIcon from '../../../../zones/symbol-mountain/shared/images/icons/symbol-tusk-new.webp';
+import modakIcon from '../../../../zones/symbol-mountain/shared/images/icons/symbol-modak-new.webp';
+import mooshikaIcon from '../../../../zones/symbol-mountain/shared/images/icons/symbol-mooshika-new.webp';
+import eyesIcon from '../../../../zones/symbol-mountain/shared/images/icons/symbol-eyes-new.webp';
+import earsIcon from '../../../../zones/symbol-mountain/shared/images/icons/symbol-ears-new.webp';
 
 const SYLLABLES = ['Sar', 'va', 'kar', 'yeshu'];
 const AUDIO = ['sar', 'va', 'kar', 'yeshu'];
@@ -164,6 +165,8 @@ export default function SarvakaryeshuGame({
   const [activeSyllableHit, setActiveSyllableHit] = useState(null);
 
   const timersRef = useRef([]);
+  // Freezes with the sidebar and resumes with the remaining time (see hook).
+  const { after: pausableAfter, cancel: cancelPausable, clear: clearPausable } = usePausableTimers(isPaused);
   const doneCalledRef = useRef(false);
   const phaseRef = useRef('play');
   const resolvingRef = useRef(false);
@@ -172,6 +175,7 @@ export default function SarvakaryeshuGame({
   const syllableAnchorRefs = useRef({});
   const syllableWrapRef = useRef(null);
   const lastHintVoiceKeyRef = useRef(null);
+  const lastSyllableDoneRef = useRef(true);
   phaseRef.current = phase;
 
   const getRectCenter = (rect) => ({
@@ -180,7 +184,7 @@ export default function SarvakaryeshuGame({
   });
 
   // GMB Hint Standard v1 — flat 10s/18s/26s from VO end or last interaction.
-  const { hintLevel, markInteraction, markLevel2VoiceEnded } = useRepeatedHintCycle({
+  const { hintLevel, markInteraction, markLevel2VoiceStarted, markLevel2VoiceEnded } = useRepeatedHintCycle({
     enabled: isActive && !isPaused && phase === 'play' && canPick,
     stageKey: isActive ? `card-${cardIndex}` : null,
     initialDelay: 10000,
@@ -205,6 +209,7 @@ export default function SarvakaryeshuGame({
 
     lastHintVoiceKeyRef.current = hintVoiceKey;
     const timerId = window.setTimeout(() => {
+      if (hintLevel === 2 && playSceneLine) markLevel2VoiceStarted();
       playSceneLine?.(
         hintVoiceKey,
         // L3 is the final rescue — reveal the correct symbol the instant
@@ -217,18 +222,15 @@ export default function SarvakaryeshuGame({
       );
     }, 120);
     return () => window.clearTimeout(timerId);
-  }, [cardIndex, hintLevel, isActive, isCorrect, phase, playSceneLine, markLevel2VoiceEnded]);
+  }, [cardIndex, hintLevel, isActive, isCorrect, phase, playSceneLine, markLevel2VoiceStarted, markLevel2VoiceEnded]);
 
-  const safeAfter = useCallback((ms, fn) => {
-    const id = window.setTimeout(fn, ms);
-    timersRef.current.push(id);
-    return id;
-  }, []);
+  const safeAfter = pausableAfter;
 
   const clearTimers = useCallback(() => {
     timersRef.current.forEach(clearTimeout);
     timersRef.current = [];
-  }, []);
+    clearPausable();
+  }, [clearPausable]);
 
   useEffect(() => {
     if (!isActive) {
@@ -270,28 +272,28 @@ export default function SarvakaryeshuGame({
     let cancelled = false;
     const fallbacks = [];
     const addFallback = (ms, fn) => {
-      const id = window.setTimeout(fn, ms);
+      const id = pausableAfter(ms, fn);
       fallbacks.push(id);
       return id;
     };
 
-    const t1 = window.setTimeout(() => {
+    const t1 = pausableAfter(500, () => {
       if (cancelled) return;
       const pickFallback = addFallback(2500, () => {
         if (!cancelled) setCanPick(true);
       });
       playSceneLine?.(s.voKeyBefore, () => {
-        window.clearTimeout(pickFallback);
+        cancelPausable(pickFallback);
         if (!cancelled) setCanPick(true);
       });
-    }, 500);
+    });
 
     return () => {
       cancelled = true;
-      window.clearTimeout(t1);
-      fallbacks.forEach((id) => window.clearTimeout(id));
+      cancelPausable(t1);
+      fallbacks.forEach(cancelPausable);
     };
-  }, [isActive, cardIndex, phase, playSceneLine]);
+  }, [isActive, cardIndex, phase, playSceneLine, pausableAfter, cancelPausable]);
 
   useEffect(() => () => clearTimers(), [clearTimers]);
 
@@ -358,7 +360,13 @@ export default function SarvakaryeshuGame({
       setActiveSyllableHit(syllableIndex);
       setLitCount(syllableIndex);
       stopSceneVoice?.();
-      playSyllable?.(AUDIO[syllableIndex - 1]);
+      lastSyllableDoneRef.current = false;
+      playSyllable?.(AUDIO[syllableIndex - 1], () => {
+        lastSyllableDoneRef.current = true;
+      });
+      safeAfter(1600, () => {
+        lastSyllableDoneRef.current = true;
+      });
     });
 
     // 2) Symbol reaches the image — a quick power-hit glow.
@@ -395,14 +403,14 @@ export default function SarvakaryeshuGame({
           onGameComplete?.();
           onPhaseComplete?.();
         };
-        const voFallback = window.setTimeout(finish, 9000);
-        timersRef.current.push(voFallback);
+        // Pausable, so the sidebar can't let it complete the game behind the panel.
+        const voFallback = pausableAfter(9000, finish);
         safeAfter(500, () => {
           playWord?.('sarvakaryeshu', () => {
             playSceneLine?.('scene13_success', () => {
-              clearTimeout(voFallback);
+              cancelPausable(voFallback);
               finish();
-            }, { stripLeadingText: 'Sarva-Karyeshu' });
+            }, { stripLeadingText: 'Sarvakaryeshu' });
           });
         });
         return;
@@ -428,18 +436,31 @@ export default function SarvakaryeshuGame({
     // card while it was still talking. A generous fallback timer covers
     // the case where the VO fails to fire its completion callback at all.
     safeAfter(2700, () => {
-      playSceneLine?.(situation.voKeyAfter, () => {
-        safeAfter(2500, advance);
-      });
+      const playAfterLine = () => {
+        playSceneLine?.(situation.voKeyAfter, () => {
+          safeAfter(2500, advance);
+        });
+      };
+      if (lastSyllableDoneRef.current) playAfterLine();
+      else {
+        const waitForSyllable = () => {
+          if (lastSyllableDoneRef.current) {
+            playAfterLine();
+            return;
+          }
+          safeAfter(120, waitForSyllable);
+        };
+        waitForSyllable();
+      }
       safeAfter(9000, advance);
     });
-  }, [canPick, cardIndex, isPaused, markInteraction, onGameComplete, onMicroWin, onPhaseComplete, playSceneLine, playSyllable, playWord, safeAfter, stopSceneVoice]);
+  }, [canPick, cardIndex, isPaused, markInteraction, onGameComplete, onMicroWin, onPhaseComplete, playSceneLine, playSyllable, playWord, safeAfter, pausableAfter, cancelPausable, stopSceneVoice]);
 
   if (!isActive) return null;
 
   const situation = SITUATIONS[cardIndex];
   return (
-    <div className={`sarva-game${hideElements ? ' is-hidden' : ''}`} onContextMenu={(e) => e.preventDefault()}>
+    <div className={`sarva-game${hideElements ? ' is-hidden' : ''}${isPaused ? ' is-paused' : ''}`} onContextMenu={(e) => e.preventDefault()}>
       <div className="sarva-stage" style={{ backgroundImage: `url(${bgImg})` }}>
         <div className="sarva-boat" aria-hidden="true">
           <img src={boatImg} alt="" draggable={false} />
@@ -465,10 +486,6 @@ export default function SarvakaryeshuGame({
             })}
           </div>
         </div>
-
-        {phase === 'done' && (
-          <p className="sarva-doneline">Ganesha's wisdom can help in every task!</p>
-        )}
 
         {phase === 'play' && (
           <div className={`sarva-card${isCorrect ? ' is-correct' : ''}`} key={situation.id}>

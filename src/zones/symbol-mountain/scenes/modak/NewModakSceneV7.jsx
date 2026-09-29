@@ -38,6 +38,7 @@ import { sceneAnalytics } from '../../../../lib/services/sceneAnalytics';
 // Voice Guidance
 import useVoiceGuidance from '../../../../lib/hooks/useVoiceGuidance';
 import usePauseAwareTimeout from '../../../../lib/hooks/usePauseAwareTimeout';
+import useSidebarPause from '../../../../lib/hooks/useSidebarPause';
 import useResumeCountdown from '../../../../lib/hooks/useResumeCountdown';
 import ResumeCountdown from '../../../../lib/components/feedback/ResumeCountdown';
 import VOReplayButton from '../../../../lib/components/feedback/VOReplayButton';
@@ -489,11 +490,16 @@ const NewModakSceneMVPContent = ({
     setHintResetKey(k => k + 1);
   }, []);
 
-  const { safeSetTimeout, clearAll: clearAllTimeouts } = usePauseAwareTimeout({
+  const { safeSetTimeout, clearAll: clearAllTimeouts, freeze: freezeTimeouts, thaw: thawTimeouts } = usePauseAwareTimeout({
     onHide: onPauseHide,
     onShow: onPauseShow,
     resumeDelay: RESUME_DELAY_MS
   });
+
+  // Sidebar = true pause for the scene-owned beat (CALM_SEARCH). The two mini-games
+  // (Flower Journey / Garland) own their own VO and pause themselves via isPaused.
+  const sidebarPause = useSidebarPause();
+  const sidebarPauseActiveRef = useRef(false);
 
   const { countdownValue } = useResumeCountdown(RESUME_DELAY_MS / 1000);
 
@@ -504,7 +510,7 @@ const NewModakSceneMVPContent = ({
   const playCelebrationSfx = useCallback(() => playSfx('celebration'), [playSfx]);
 
   const { isAudioOn, toggleAudio } = useAudioPreference();
-  const { speak, stop: stopSpokenVoice } = useGaneshaVoice();
+  const { speak, stop: stopSpokenVoice, mute: muteSpokenVoice } = useGaneshaVoice();
   const lastVoRef = useRef(null);
   const wasAudioOnRef = useRef(isAudioOn);
 
@@ -513,19 +519,18 @@ const NewModakSceneMVPContent = ({
   const replaySpeak = useCallback((line, options = {}) => {
     if (!line) return;
     lastVoRef.current = line;
-    if (!isAudioOn) {
-      options.onEnd?.();
-      return;
-    }
     speak(line, options);
   }, [isAudioOn, speak]);
 
+  const { clearActive: clearActiveVoice, playTracked, beginPause: beginSidebarPause, endPause: endSidebarPause } = sidebarPause;
   const stopVoice = useCallback(() => {
+    // A deliberate stop is not a sidebar interruption — don't leave a stale replay entry.
+    clearActiveVoice();
     stopRecordedVoice();
     stopSpokenVoice();
-  }, [stopRecordedVoice, stopSpokenVoice]);
+  }, [clearActiveVoice, stopRecordedVoice, stopSpokenVoice]);
 
-  const playVoice = useCallback((key, onEnded, _options = {}) => {
+  const playVoiceRaw = useCallback((key, onEnded, _options = {}) => {
     stopRecordedVoice();
     const text = MODAK_VO[key];
     if (!text) {
@@ -539,6 +544,15 @@ const NewModakSceneMVPContent = ({
       onError: () => onEnded?.()
     });
   }, [replaySpeak, stopRecordedVoice]);
+
+  // Every scene line runs through playTracked so a sidebar stop can never fire its
+  // onEnded (the scene would advance behind the panel) and it can be replayed.
+  const playVoice = useCallback((key, onEnded, options = {}) => {
+    playTracked('line', (done) => playVoiceRaw(key, done, options), onEnded);
+  }, [playTracked, playVoiceRaw]);
+
+  // Beat = current phase. Set during render so a clip started this render is tagged with it.
+  sidebarPause.setBeat(String(sceneState.phase));
 
   // Replay context on audio toggle-on
   useEffect(() => {
@@ -561,8 +575,8 @@ const NewModakSceneMVPContent = ({
   // AudioToggle -> VO volume (mutes narration only)
   useEffect(() => {
     setVoiceVolume(0);
-    if (!isAudioOn) stopSpokenVoice();
-  }, [isAudioOn, setVoiceVolume, stopSpokenVoice]);
+    if (!isAudioOn) muteSpokenVoice();
+  }, [isAudioOn, setVoiceVolume, muteSpokenVoice]);
 
   // Analytics
   useEffect(() => {
@@ -840,14 +854,15 @@ const NewModakSceneMVPContent = ({
     if (
       sceneState?.welcomeShown &&
       sceneState?.phase === PHASES.CALM_SEARCH &&
-      !sceneState?.mushikaHolding
+      !sceneState?.mushikaHolding &&
+      !sidebarPause.isSidebarPaused
     ) {
       if (!mushikaDartTimerRef.current) scheduleNextMushikaDart();
       return undefined;
     }
     clearMushikaDartTimer();
     return undefined;
-  }, [clearMushikaDartTimer, scheduleNextMushikaDart, sceneState?.mushikaHolding, sceneState?.phase, sceneState?.welcomeShown]);
+  }, [clearMushikaDartTimer, scheduleNextMushikaDart, sceneState?.mushikaHolding, sceneState?.phase, sceneState?.welcomeShown, sidebarPause.isSidebarPaused]);
 
   useEffect(() => {
     return () => {
@@ -1060,17 +1075,48 @@ const NewModakSceneMVPContent = ({
     if (symbolPopupSessionOpenRef.current) return;
     symbolPopupSessionOpenRef.current = true;
     setIsSymbolPopupOpen(true);
-    handlePauseCore();
+    if (sceneStateRef.current?.phase === PHASES.CALM_SEARCH) {
+      // Scene-owned beat: capture the interrupted line, freeze timers + the dart loop.
+      sidebarPauseActiveRef.current = true;
+      beginSidebarPause();
+      freezeTimeouts();
+      clearMushikaDartTimer();
+      handlePauseCore();
+    } else {
+      // Mini-games own their VO: stopping it here would race their own
+      // pause handling (a cancel fires their onEnded and advances the game).
+      if (idleHintsEnabled) stopIdleTimer();
+    }
     resetIdleBaseline();
-  }, [resetIdleBaseline]);
+  }, [resetIdleBaseline, beginSidebarPause, freezeTimeouts, clearMushikaDartTimer]);
 
   const handleSymbolPopupClose = useCallback(() => {
     if (!symbolPopupSessionOpenRef.current) return;
     symbolPopupSessionOpenRef.current = false;
     setIsSymbolPopupOpen(false);
+    if (sidebarPauseActiveRef.current) {
+      // Replays the interrupted line once, then releases (fresh idle clock).
+      sidebarPauseActiveRef.current = false;
+      endSidebarPause();
+      return;
+    }
     resetIdleBaseline();
     resumePhaseAfterPause();
-  }, [resetIdleBaseline]);
+  }, [resetIdleBaseline, endSidebarPause]);
+
+  // Sidebar hold released (after any replay finished): thaw timers, restart the
+  // dart loop and start a fresh idle clock — the child just switched context.
+  const wasSidebarPausedRef = useRef(false);
+  useEffect(() => {
+    const paused = sidebarPause.isSidebarPaused;
+    if (wasSidebarPausedRef.current && !paused) {
+      thawTimeouts();
+      resetIdleBaseline();
+      setHintResetKey((k) => k + 1);
+      if (idleHintsEnabled) startIdleTimer();
+    }
+    wasSidebarPausedRef.current = paused;
+  }, [sidebarPause.isSidebarPaused, thawTimeouts, resetIdleBaseline, startIdleTimer]);
 
   const activeProfile = GameStateManager.getActiveProfile();
 
@@ -1210,7 +1256,8 @@ const NewModakSceneMVPContent = ({
     const isHintPhase =
       WORKING_PHASES.includes(sceneState?.phase) &&
       !!sceneState?.welcomeShown &&
-      !isSymbolPopupOpen;
+      !isSymbolPopupOpen &&
+      !sidebarPause.isSidebarPaused;
     if (!isHintPhase) {
       setIdleHintLevel(0);
       setShowIdleGestureHint(false);
@@ -1233,21 +1280,22 @@ const NewModakSceneMVPContent = ({
       setIdleHintLevel(prev => (prev === nextLevel ? prev : nextLevel));
     }, 250);
     return () => clearInterval(tick);
-  }, [sceneState?.phase, sceneState?.welcomeShown, idleHintsEnabled, isSymbolPopupOpen]);
+  }, [sceneState?.phase, sceneState?.welcomeShown, idleHintsEnabled, isSymbolPopupOpen, sidebarPause.isSidebarPaused]);
 
   useEffect(() => {
     if (!idleHintsEnabled) return;
     const isHintPhase =
       WORKING_PHASES.includes(sceneState?.phase) &&
       !!sceneState?.welcomeShown &&
-      !isSymbolPopupOpen;
+      !isSymbolPopupOpen &&
+      !sidebarPause.isSidebarPaused;
     setShowIdleGestureHint(isHintPhase && idleHintLevel >= 3);
-  }, [idleHintLevel, sceneState?.phase, sceneState?.welcomeShown, idleHintsEnabled, isSymbolPopupOpen]);
+  }, [idleHintLevel, sceneState?.phase, sceneState?.welcomeShown, idleHintsEnabled, isSymbolPopupOpen, sidebarPause.isSidebarPaused]);
 
   // Idle VO — L2 names the action, L3 gives the exact endpoint (genuinely
   // new information, not just a repeat of L2).
   useEffect(() => {
-    if (!idleHintsEnabled || !sceneState?.welcomeShown || isSymbolPopupOpen) return;
+    if (!idleHintsEnabled || !sceneState?.welcomeShown || isSymbolPopupOpen || sidebarPause.isSidebarPaused) return;
     const meta = PHASE_META[sceneState?.phase];
     if (!meta) return;
 
@@ -1267,7 +1315,7 @@ const NewModakSceneMVPContent = ({
         playVoice(meta.idle, () => { l2VoiceEndedAtRef.current = Date.now(); });
       }
     }
-  }, [idleHintLevel, sceneState?.phase, sceneState?.welcomeShown, idleHintsEnabled, isSymbolPopupOpen, playVoice]);
+  }, [idleHintLevel, sceneState?.phase, sceneState?.welcomeShown, idleHintsEnabled, isSymbolPopupOpen, sidebarPause.isSidebarPaused, playVoice]);
 
   // Final celebration sync
   useEffect(() => {
@@ -1648,6 +1696,7 @@ const NewModakSceneMVPContent = ({
                       isAudioOn={isAudioOn}
                       onFlowersUpdate={handleGame2FlowersUpdate}
                       onComplete={handleGame2Complete}
+                      stopVoice={stopVoice}
                     />
                   )}
 
@@ -1659,6 +1708,7 @@ const NewModakSceneMVPContent = ({
                       isPaused={isSymbolPopupOpen}
                       isAudioOn={isAudioOn}
                       onComplete={handleGame3Complete}
+                      stopVoice={stopVoice}
                     />
                   )}
 

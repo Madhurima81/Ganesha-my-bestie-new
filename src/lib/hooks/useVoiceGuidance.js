@@ -11,6 +11,25 @@ import {
   getWordPath
 } from '../config/content/voiceGuidance';
 
+// Audio toggle is a global mute (see DECISIONS.md 2026-09-29): when the shared
+// preference is off, ALL voice — guidance VO, hints, Sanskrit words and
+// syllables — is silent. Read live from storage so no scene has to thread it in.
+// Muted playback still resolves its callback — on a silent timer matching the
+// line's length, not instantly — so gameplay never hangs and mute never skips.
+const isGlobalAudioOff = () => {
+  try {
+    return localStorage.getItem('ganesha_audio_enabled') === 'false';
+  } catch {
+    return false;
+  }
+};
+
+// Rough spoken duration, used to time a line's completion while muted.
+export const estimateSpeechMs = (text) => {
+  const words = String(text || '').trim().split(/\s+/).filter(Boolean).length;
+  return words ? Math.max(900, words * 380 + 300) : 1500;
+};
+
 // ========================================
 // MIX PROFILE (child-safe defaults)
 // ========================================
@@ -92,6 +111,29 @@ const useVoiceGuidance = (zoneId, sceneId, {
   // The 2s tab-return replay timer. Must be cleared on stop/unmount so an old
   // scene's VO can't start over Zone Welcome after a quick Home tap.
   const replayTimeoutRef = useRef(null);
+  // Muted playback: a line that "plays" while the global mute is on runs on a silent
+  // timer instead of audio, so its onEnded still fires once, on schedule.
+  const silentTimersRef = useRef(new Set());
+  const ttsTimingRef = useRef(null); // { at, ms } for the in-flight TTS utterance
+
+  const clearSilentTimers = useCallback(() => {
+    silentTimersRef.current.forEach((id) => clearTimeout(id));
+    silentTimersRef.current.clear();
+  }, []);
+
+  const runSilent = useCallback((onEnded, ms) => {
+    const id = setTimeout(() => {
+      silentTimersRef.current.delete(id);
+      onEnded?.();
+    }, Math.max(0, ms));
+    silentTimersRef.current.add(id);
+  }, []);
+
+  // Public: complete a muted line after the time it would have taken to speak.
+  // `textOrMs` is the spoken text (duration estimated) or a number of ms.
+  const playSilent = useCallback((textOrMs, onEnded) => {
+    runSilent(onEnded, typeof textOrMs === 'number' ? textOrMs : estimateSpeechMs(textOrMs));
+  }, [runSilent]);
 
   // Refs for idle timer to access current values
   const isPlayingRef = useRef(isPlaying);
@@ -144,6 +186,12 @@ const useVoiceGuidance = (zoneId, sceneId, {
     textOverride = null,
     stripLeadingText = null
   } = {}) => {
+    if (isGlobalAudioOff()) {
+      const mutedScript = getVoiceScript(zoneId, sceneId, key);
+      clearSilentTimers();
+      playSilent(textOverride || mutedScript?.text, onEnded);
+      return;
+    }
     if (isHiddenRef.current) {
       pendingVoiceRef.current = { key, onEnded, options: { replayOnReturn, textOverride, stripLeadingText } };
       return;
@@ -207,6 +255,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
         activeVoiceStripLeadingTextRef.current = stripLeadingText;
         setIsPlaying(true);
 
+        ttsTimingRef.current = { at: Date.now(), ms: estimateSpeechMs(utterance.text) };
         window.speechSynthesis.cancel();
         window.speechSynthesis.speak(utterance);
         lastInteractionRef.current = Date.now();
@@ -291,10 +340,11 @@ const useVoiceGuidance = (zoneId, sceneId, {
     });
 
     lastInteractionRef.current = Date.now();
-  }, [zoneId, sceneId]); // voiceVolume removed — read from ref instead
+  }, [zoneId, sceneId, playSilent, clearSilentTimers]); // voiceVolume removed — read from ref instead
 
   // Stop voice
   const stopVoice = useCallback(() => {
+    clearSilentTimers();
     if (replayTimeoutRef.current) {
       clearTimeout(replayTimeoutRef.current);
       replayTimeoutRef.current = null;
@@ -333,7 +383,28 @@ const useVoiceGuidance = (zoneId, sceneId, {
       setIsPlaying(false);
       clearVoDuck();
     }
-  }, [clearVoDuck]);
+  }, [clearVoDuck, clearSilentTimers]);
+
+  // Mute pressed mid-line: silence the audio now, but let the line's callback fire
+  // later, once, when it would have finished — so mute never skips or stalls a
+  // step. The old line is never resumed on unmute.
+  const muteVoicePlayback = useCallback(() => {
+    const cb = activeVoiceCallbackRef.current;
+    let remainingMs;
+    const audio = voiceRef.current;
+    if (audio) {
+      remainingMs = Number.isFinite(audio.duration) && audio.duration > 0
+        ? (audio.duration - audio.currentTime) * 1000
+        : 1500;
+    } else if (ttsUtteranceRef.current) {
+      const t = ttsTimingRef.current;
+      remainingMs = t ? t.ms - (Date.now() - t.at) : 1500;
+    } else {
+      return;
+    }
+    stopVoice();
+    runSilent(cb, remainingMs);
+  }, [stopVoice, runSilent]);
 
   // Set voice volume live — updates currently playing audio AND all future audio
   const setVoiceVolume = useCallback((vol) => {
@@ -349,6 +420,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
   // ========================================
 
   const playSfx = useCallback((key) => {
+    if (isGlobalAudioOff()) return; // global mute covers SFX too
     const path = getSfxPath(key);
     if (!path) {
       console.warn(`SFX not found: ${key}`);
@@ -523,6 +595,11 @@ const useVoiceGuidance = (zoneId, sceneId, {
 
   // Play a syllable audio (e.g., "va" from vakratunda)
   const playSyllable = useCallback((word, syllable, onEnded) => {
+    if (isGlobalAudioOff()) {
+      clearSilentTimers();
+      playSilent(700, onEnded);
+      return;
+    }
     const path = getSyllablePath(word, syllable);
     if (!path) {
       console.warn(`Syllable not found: ${word}/${syllable}`);
@@ -535,7 +612,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
     stopVoice();
 
     const audio = new Audio(path);
-    audio.volume = voiceVolumeRef.current; // always full volume — game audio, never muted by toggle
+    audio.volume = voiceVolumeRef.current; // follows the voice volume; the audio toggle mutes this too (global mute)
 
     // Guard: ensure onEnded is called exactly once
     let callbackFired = false;
@@ -586,10 +663,15 @@ const useVoiceGuidance = (zoneId, sceneId, {
     });
 
     lastInteractionRef.current = Date.now();
-  }, [stopVoice]);
+  }, [stopVoice, playSilent, clearSilentTimers]);
 
   // Play a full word audio (e.g., "vakratunda")
   const playWord = useCallback((word, onEnded) => {
+    if (isGlobalAudioOff()) {
+      clearSilentTimers();
+      playSilent(1000, onEnded);
+      return;
+    }
     const path = getWordPath(word);
     if (!path) {
       console.warn(`Word not found: ${word}`);
@@ -602,7 +684,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
     stopVoice();
 
     const audio = new Audio(path);
-    audio.volume = voiceVolumeRef.current; // always full volume — game audio, never muted by toggle
+    audio.volume = voiceVolumeRef.current; // follows the voice volume; the audio toggle mutes this too (global mute)
 
     // Guard: ensure onEnded is called exactly once
     let callbackFired = false;
@@ -653,7 +735,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
     });
 
     lastInteractionRef.current = Date.now();
-  }, [stopVoice]);
+  }, [stopVoice, playSilent, clearSilentTimers]);
 
   // ========================================
   // APP VISIBILITY (tab switch / phone call)
@@ -787,6 +869,8 @@ const useVoiceGuidance = (zoneId, sceneId, {
     // Voice
     playVoice,
     stopVoice,
+    muteVoicePlayback,
+    playSilent,
     setVoiceVolume,
 
     // Syllable & Word (for memory games)

@@ -32,6 +32,7 @@ export default function useRepeatedHintCycle({
   // real moment the child heard L2 finish, so a slow L2 line can't eat into
   // the real time the child gets before L3 fires.
   const level3TimerRef = useRef(null);
+  const level2VoiceStartedRef = useRef(false);
 
   const clearTimers = useCallback(() => {
     timersRef.current.forEach((id) => window.clearTimeout(id));
@@ -42,6 +43,7 @@ export default function useRepeatedHintCycle({
   const schedule = useCallback(() => {
     clearTimers();
     hasScheduledRef.current = false;
+    level2VoiceStartedRef.current = false;
     setHintLevel(0);
     setPulseTick(0);
 
@@ -71,6 +73,7 @@ export default function useRepeatedHintCycle({
     timersRef.current.push(stronger);
 
     const explicit = window.setTimeout(() => {
+      if (level2VoiceStartedRef.current) return;
       setHintLevel(3);
       setPulseTick(0);
     }, Math.max(level3Delay, Math.max(level2Delay, strongHintAt) + 1200));
@@ -94,8 +97,14 @@ export default function useRepeatedHintCycle({
   // Call once the caller's L2 hint line finishes speaking. Replaces the
   // fixed-mark L3 fallback with an 8s-after-this-moment timer, so L3 never
   // fires while (or right on top of) the L2 line still speaking.
+  const markLevel2VoiceStarted = useCallback(() => {
+    if (hintLevel !== 2) return;
+    level2VoiceStartedRef.current = true;
+  }, [hintLevel]);
+
   const markLevel2VoiceEnded = useCallback(() => {
     if (hintLevel !== 2) return;
+    level2VoiceStartedRef.current = false;
     if (level3TimerRef.current) {
       window.clearTimeout(level3TimerRef.current);
       timersRef.current = timersRef.current.filter((id) => id !== level3TimerRef.current);
@@ -139,6 +148,7 @@ export default function useRepeatedHintCycle({
     hintLevel,
     pulseTick,
     markInteraction,
+    markLevel2VoiceStarted,
     markLevel2VoiceEnded,
     clearHints: clearTimers,
   };

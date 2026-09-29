@@ -621,6 +621,7 @@ const SacredAssemblyContent = ({
   const {
     speak: speakGanesha,
     stop: stopGaneshaVoice,
+    mute: muteGaneshaVoice,
     isSpeaking: isGaneshaSpeaking
   } = useGaneshaVoice();
   const isGaneshaSpeakingRef = useRef(false);
@@ -629,7 +630,7 @@ const SacredAssemblyContent = ({
     setGlobalVolume
   } = useGameSounds();
   // -- T08/T09: visibility + idle timer infrastructure --------------------------
-  const { startIdleTimer, stopIdleTimer, setCurrentPhase, startMusic, stopMusic, setVoiceVolume, playVoice, playTap, playCorrect, playWrong, playPowerUnlock, playCelebration } = useVoiceGuidance(
+  const { startIdleTimer, stopIdleTimer, setCurrentPhase, startMusic, stopMusic, setVoiceVolume, muteVoicePlayback, playVoice, playTap, playCorrect, playWrong, playPowerUnlock, playCelebration } = useVoiceGuidance(
     zoneId, sceneId, { enableMusic: true, musicVolume: 0.06, sfxVolume: 0.7, idleTimeout: 20 }
   );
   const playUiTap = playTap;
@@ -639,7 +640,10 @@ const SacredAssemblyContent = ({
   const playTwinkle = playCelebration;
   useEffect(() => { startIdleTimer(); return () => stopIdleTimer(); }, [startIdleTimer, stopIdleTimer]);
   useEffect(() => { setCurrentPhase(sceneState?.phase ?? null); }, [sceneState?.phase, setCurrentPhase]);
-  useEffect(() => { setVoiceVolume(isAudioOn ? 1 : 0); }, [isAudioOn, setVoiceVolume]);
+  useEffect(() => {
+    setVoiceVolume(isAudioOn ? 1 : 0);
+    if (!isAudioOn) { muteGaneshaVoice(); muteVoicePlayback(); } // finish in-flight lines silently, on schedule
+  }, [isAudioOn, setVoiceVolume, muteGaneshaVoice, muteVoicePlayback]);
   useEffect(() => {
     if (sceneState?.welcomeShown) startMusic();
   }, [sceneState?.welcomeShown, startMusic]);

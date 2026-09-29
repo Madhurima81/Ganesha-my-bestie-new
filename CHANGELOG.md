@@ -1,6 +1,53 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
 
+## [2026-09-29] — VO cleanup: same dual-speech-source race, inside Symbol Mountain's mini-games
+**Touched:** src/zones/symbol-mountain/scenes/modak/FlowerJourneyGame2.jsx;
+src/zones/symbol-mountain/scenes/modak/GarlandGame3.jsx;
+src/zones/symbol-mountain/scenes/modak/NewModakSceneV7.jsx;
+src/zones/symbol-mountain/scenes/tusk/EyesPopUpGame.jsx;
+src/zones/symbol-mountain/scenes/tusk/EarsSoundMatchGame.jsx;
+src/zones/symbol-mountain/scenes/tusk/SymbolMountainSceneV3.jsx.
+
+**Changed:** Madhurima asked to check Symbol Mountain for the same
+mini-game-vs-main-scene VO overlap already fixed in Shloka River/About Me
+Hut yesterday. Found it: 4 mini-games (`FlowerJourneyGame2`, `GarlandGame3`
+in Modak; `EyesPopUpGame`, `EarsSoundMatchGame` in the Tusk/Symbol scene)
+each run their own independent `window.speechSynthesis` engine for idle
+hints/story beats, fully unwired from the parent scene's `useVoiceGuidance`
+(the dev's own comment in `FlowerJourneyGame2.jsx` already flagged this as
+a bypass). Unlike Shloka River's mini-games — which get a `voiceGuidance`
+prop bundle from the parent, so there's effectively one owner shared via
+props — these 4 got no VO props at all: two fully separate engines.
+
+Risk was one-directional: the parent's own `playVoice()` already calls
+`window.speechSynthesis.cancel()` unconditionally, so parent → mini-game was
+already safe (shared browser API). But a mini-game's `speak()` only
+cancelled its own utterance — it never touched the parent's MP3 `Audio`
+element — so mini-game → parent was not safe: a still-playing parent MP3
+line could keep going under a mini-game's new line. `TuskBeatPlayerLive`
+doesn't touch speech at all — clean, no change needed.
+
+Fixed by adding a `stopVoice` prop to each of the 4 mini-games, called at
+the single funnel each one already uses for all its speech (`startUtterance`
+in the Modak pair, `speak` in the Tusk pair), and wiring it from the parent:
+`NewModakSceneV7.jsx` already had a combined `stopVoice()`, just passed it
+through; `SymbolMountainSceneV3.jsx` didn't destructure the hook's `stopVoice`
+at all, so added it (`stopHookVoice`) plus a new combined `stopVoice` that
+also calls `stopSpokenVoice()`, then passed that down to both mini-games.
+
+No content, layout, or game-logic changes — same stop-both-engines guard
+pattern as the rest of this VO cleanup.
+
+**Open:** Not yet live-tested. Discussed with Madhurima that this is a
+reactive fix (stop the other engine right before speaking), not a
+preventive one — if a parent's idle-hint timer fires while a mini-game is
+still mid-line, the mini-game's own line can still get cut short (no
+overlap, but a possible early cutoff). A deeper fix would make the parent
+go fully silent for the whole time a mini-game is mounted (one owner per
+phase, not mutual stopping) — not done in this pass, flagged as a possible
+follow-up if premature-cutoff reports come up.
+
 ## [2026-09-28] — VO cleanup: dual-speech-source race across 6 scenes
 **Touched:** src/zones/about-me-hut/family-tree/Familytreegame.jsx;
 src/zones/about-me-hut/enjoy/ObstacleRemoverGame.jsx;

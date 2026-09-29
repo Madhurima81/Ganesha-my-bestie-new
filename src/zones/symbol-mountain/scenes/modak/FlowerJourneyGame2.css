@@ -464,3 +464,12 @@
 .fjg2-belly-emotion--pleased { right: -62%; top: -58%; }
 .fjg2-belly-emotion--happy { right: -68%; top: 10%; }
 .fjg2-belly-emotion--excited { right: -62%; top: 78%; }
+
+/* Sidebar open = true pause: freeze every in-flight animation (flying flowers,
+   emotion pops, gesture demos) so nothing plays out behind the panel. */
+.fjg2--paused,
+.fjg2--paused *,
+.fjg2--paused *::before,
+.fjg2--paused *::after {
+  animation-play-state: paused !important;
+}

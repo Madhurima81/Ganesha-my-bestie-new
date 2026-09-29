@@ -372,6 +372,7 @@ const ShlokaRiverFinaleContent = ({
   const {
     hintLevel,
     markInteraction,
+    markLevel2VoiceStarted,
     markLevel2VoiceEnded,
   } = useRepeatedHintCycle({
     enabled: phase === PHASES.ARRANGE && buildReady && hintReadySlot === activeSlotIndex,
@@ -407,6 +408,7 @@ const ShlokaRiverFinaleContent = ({
     if (hintLevel === 2) {
       const meaningKey = HINT_MEANING_VO_KEY[target.id];
       if (meaningKey) {
+        if (playVoice) markLevel2VoiceStarted();
         playVoice?.(meaningKey, markLevel2VoiceEnded, { replayOnReturn: false, minDelayAfterVoiceMs: 5000 });
       } else {
         markLevel2VoiceEnded();
@@ -419,7 +421,7 @@ const ShlokaRiverFinaleContent = ({
     playVoice?.('hintBoatL3', () => {
       playWordAudio?.(target.id);
     }, { replayOnReturn: false, minDelayAfterVoiceMs: 5000 });
-  }, [activeSlotIndex, buildReady, hintLevel, hintReadySlot, phase, playVoice, playWordAudio, markLevel2VoiceEnded]);
+  }, [activeSlotIndex, buildReady, hintLevel, hintReadySlot, phase, playVoice, playWordAudio, markLevel2VoiceStarted, markLevel2VoiceEnded]);
 
   // Resume case: the component can mount directly into ARRANGE (reload)
   // without ever going through handleStartGame's opening listen. Replay the

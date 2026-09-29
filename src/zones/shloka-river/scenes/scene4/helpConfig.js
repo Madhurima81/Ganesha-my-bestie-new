@@ -2,18 +2,18 @@
 // Help menu configuration for Sarvakaryeshu Chant (Shloka River Scene 4)
 
 // Import images
-import sarSquirrelHappy from './assets/images/sarvakaryeshu/sar-squirrel-happy.png';
-import sarSquirrelHelper from './assets/images/sarvakaryeshu/sar-squirrel-helper.png';
-import sarSquirrelSad from './assets/images/sarvakaryeshu/sar-squirrel-sad.png';
-import vaBirdHappy from './assets/images/sarvakaryeshu/va-bird-happy.png';
-import karDuckHappy from './assets/images/sarvakaryeshu/kar-duck-happy.png';
-import yeshuRabbitHappy from './assets/images/sarvakaryeshu/yeshu-rabbit-happy.png';
-import savButterflyHappy from './assets/images/sarvada/sav-butterfly-happy.png';
-import savButterflyHelper from './assets/images/sarvada/sav-butterfly-helper.png';
-import vaFawnHappy from './assets/images/sarvada/va-fawn-happy.png';
-import daHedgehogHappy from './assets/images/sarvada/da-hedgehog-happy.png';
-import appSarvakaryeshu from '../assets/images/apps/app-sarvakaryeshu.png';
-import appSarvada from '../assets/images/apps/app-sarvada.png';
+import sarSquirrelHappy from './assets/images/sarvakaryeshu/sar-squirrel-happy.webp';
+import sarSquirrelHelper from './assets/images/sarvakaryeshu/sar-squirrel-helper.webp';
+import sarSquirrelSad from './assets/images/sarvakaryeshu/sar-squirrel-sad.webp';
+import vaBirdHappy from './assets/images/sarvakaryeshu/va-bird-happy.webp';
+import karDuckHappy from './assets/images/sarvakaryeshu/kar-duck-happy.webp';
+import yeshuRabbitHappy from './assets/images/sarvakaryeshu/yeshu-rabbit-happy.webp';
+import savButterflyHappy from './assets/images/sarvada/sav-butterfly-happy.webp';
+import savButterflyHelper from './assets/images/sarvada/sav-butterfly-helper.webp';
+import vaFawnHappy from './assets/images/sarvada/va-fawn-happy.webp';
+import daHedgehogHappy from './assets/images/sarvada/da-hedgehog-happy.webp';
+import appSarvakaryeshu from '../assets/images/apps/app-sarvakaryeshu.webp';
+import appSarvada from '../assets/images/apps/app-sarvada.webp';
 
 // Phase constants (should match your scene)
 const PHASES = {

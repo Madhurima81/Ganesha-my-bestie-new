@@ -615,3 +615,12 @@
     animation: none;
   }
 }
+
+/* Sidebar open = true pause: freeze every in-flight animation (frog wake,
+   hint shimmer, gesture demo) so nothing plays out behind the panel. */
+.vak-game.is-paused,
+.vak-game.is-paused *,
+.vak-game.is-paused *::before,
+.vak-game.is-paused *::after {
+  animation-play-state: paused !important;
+}

@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import SyllableHighlight from '../../../shared/SyllableHighlight';
 import useRepeatedHintCycle from '../../../../../lib/hooks/useRepeatedHintCycle';
 import GestureDemo from '../../../../../lib/components/feedback/GestureDemo';
+import usePausableTimers from '../../../../../lib/hooks/usePausableTimers';
 import './SuryakotiGame.css';
 
 import sharedSceneBg from '../assets/images/saurakoti-bg.png';
@@ -95,6 +96,8 @@ export default function SuryakotiGame({
   const onGameCompleteRef = useRef(onGameComplete);
   const onPhaseCompleteRef = useRef(onPhaseComplete);
   const isPausedRef = useRef(isPaused);
+  // Freezes with the sidebar and resumes with the remaining time (see hook).
+  const { after: pausableAfter, cancel: cancelPausable } = usePausableTimers(isPaused);
 
   useEffect(() => {
     phaseRef.current = phase;
@@ -112,6 +115,7 @@ export default function SuryakotiGame({
   const {
     hintLevel,
     markInteraction,
+    markLevel2VoiceStarted,
     markLevel2VoiceEnded,
   } = useRepeatedHintCycle({
     // Gated on the instruction VO (introComplete), not on the teaching
@@ -145,8 +149,9 @@ export default function SuryakotiGame({
     lastHintVoRef.current = onceKey;
 
     stopVoice?.();
+    if (playSceneLine) markLevel2VoiceStarted();
     playSceneLine?.(voiceKey, markLevel2VoiceEnded);
-  }, [activeSpot, hintLevel, isPaused, phase, playSceneLine, spotHasProgress, stopVoice, markLevel2VoiceEnded]);
+  }, [activeSpot, hintLevel, isPaused, phase, playSceneLine, spotHasProgress, stopVoice, markLevel2VoiceStarted, markLevel2VoiceEnded]);
 
   // preserve=true (resize/rotation mid-play): rebuild the overlay at the new
   // geometry but keep cleared cells and game phase instead of restarting.
@@ -280,6 +285,7 @@ export default function SuryakotiGame({
     if (!ctx) return;
     let opacity = 0.92; // matches the canvas's own painted darkness — no re-darken flash
     const fade = window.setInterval(() => {
+      if (isPausedRef.current) return; // freeze mid-fade behind the sidebar
       opacity -= 0.06;
       ctx.clearRect(0, 0, cv.width, cv.height);
       ctx.globalCompositeOperation = 'source-over';
@@ -351,19 +357,19 @@ export default function SuryakotiGame({
       // patches rely on the darkness visibly shrinking, not a repeated line.
       if (wasFirstSpot && next === 1 && !continuationCuePlayedRef.current) {
         continuationCuePlayedRef.current = true;
-        window.setTimeout(() => playSceneLine?.('scene11_surya_keep_rubbing'), 500);
+        pausableAfter(500, () => playSceneLine?.('scene11_surya_keep_rubbing'));
       }
     }
 
     if (next >= 4 && !completedRef.current) {
       completedRef.current = true;
       setLitCount(4); // TI lights first — give it a beat before the fade/hop
-      window.setTimeout(() => {
+      pausableAfter(500, () => {
         setPhase('hop');
         fadeOverlay(cv);
-      }, 500);
+      });
     }
-  }, [fadeOverlay, isPaused, markInteraction, onMicroWin]);
+  }, [fadeOverlay, isPaused, markInteraction, onMicroWin, pausableAfter, playSceneLine]);
 
   const getPos = useCallback((e) => {
     const cv = canvasRef.current;
@@ -415,11 +421,11 @@ export default function SuryakotiGame({
   const completeAfterSuccess = useCallback(() => {
     if (!successVoDoneRef.current || !hopDoneRef.current || completionScheduledRef.current) return;
     completionScheduledRef.current = true;
-    window.setTimeout(() => {
+    pausableAfter(500, () => {
       onGameCompleteRef.current?.();
       onPhaseCompleteRef.current?.();
-    }, 500);
-  }, []);
+    });
+  }, [pausableAfter]);
 
   // Completion audio plays strictly in sequence, no overlap:
   //   final syllable "ti"  ->  full word "suryakoti"  ->  ending line
@@ -432,7 +438,7 @@ export default function SuryakotiGame({
     completionVoStartedRef.current = true;
 
     if (sylEndFallbackRef.current) {
-      window.clearTimeout(sylEndFallbackRef.current);
+      cancelPausable(sylEndFallbackRef.current);
       sylEndFallbackRef.current = null;
     }
 
@@ -452,13 +458,14 @@ export default function SuryakotiGame({
     else afterWord();
 
     // iOS Safari can silently drop utterance onend/onerror — don't hang.
-    voFallbackRef.current = window.setTimeout(() => {
+    // Pausable, so the sidebar can't let it complete the game behind the panel.
+    voFallbackRef.current = pausableAfter(10000, () => {
       if (!successVoDoneRef.current) {
         successVoDoneRef.current = true;
         completeAfterSuccess();
       }
-    }, 10000);
-  }, [completeAfterSuccess, playSceneLine, playWord]);
+    });
+  }, [cancelPausable, completeAfterSuccess, pausableAfter, playSceneLine, playWord]);
 
   useEffect(() => {
     if (phase !== 'hop' || doneAnnouncedRef.current) return undefined;
@@ -468,23 +475,14 @@ export default function SuryakotiGame({
     // Hold the word/ending line until the final "ti" syllable clip has
     // finished (its onSyllableLit onEnded sets lastSyllableDoneRef). Fallback
     // covers a dropped callback (audio error / iOS / test mock).
-    sylEndFallbackRef.current = window.setTimeout(() => {
+    sylEndFallbackRef.current = pausableAfter(1600, () => {
       lastSyllableDoneRef.current = true;
       startCompletionVo();
-    }, 1600);
+    });
     startCompletionVo();
 
     const hopAfter = (ms, fn) => {
-      const runWhenReady = () => {
-        if (isPausedRef.current) {
-          const retryId = window.setTimeout(runWhenReady, 150);
-          timers.push(retryId);
-          return;
-        }
-        fn();
-      };
-      const id = window.setTimeout(runWhenReady, ms);
-      timers.push(id);
+      timers.push(pausableAfter(ms, fn));
     };
 
     HOP_PATH.forEach((waypoint, index) => {
@@ -503,24 +501,24 @@ export default function SuryakotiGame({
     });
 
     return () => {
-      timers.forEach((timerId) => window.clearTimeout(timerId));
+      timers.forEach(cancelPausable);
     };
-  }, [completeAfterSuccess, phase, startCompletionVo]);
+  }, [cancelPausable, completeAfterSuccess, pausableAfter, phase, startCompletionVo]);
 
   useEffect(() => () => {
     if (voFallbackRef.current) {
-      window.clearTimeout(voFallbackRef.current);
+      cancelPausable(voFallbackRef.current);
       voFallbackRef.current = null;
     }
     if (sylEndFallbackRef.current) {
-      window.clearTimeout(sylEndFallbackRef.current);
+      cancelPausable(sylEndFallbackRef.current);
       sylEndFallbackRef.current = null;
     }
     if (fadeOverlayRef.current) {
       window.clearInterval(fadeOverlayRef.current);
       fadeOverlayRef.current = null;
     }
-  }, []);
+  }, [cancelPausable]);
 
   if (!isActive) return null;
 
@@ -554,7 +552,7 @@ export default function SuryakotiGame({
   })();
 
   return (
-    <div className={`surya-game ${hideElements ? 'is-hidden' : ''}`} onContextMenu={(e) => e.preventDefault()}>
+    <div className={`surya-game ${hideElements ? 'is-hidden' : ''} ${isPaused ? 'is-paused' : ''}`} onContextMenu={(e) => e.preventDefault()}>
       <div className="surya-stage" style={{ backgroundImage: `url(${sharedSceneBg})` }}>
 
         <SyllableHighlight
@@ -570,12 +568,6 @@ export default function SuryakotiGame({
             } : undefined);
           }}
         />
-
-        {phase === 'done' && (
-          <p className="surya-doneline">
-            The light came through! Bunny found her way home!
-          </p>
-        )}
 
         <div className="surya-reveal-layer">
           <svg className="surya-reveal-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -652,6 +644,7 @@ export default function SuryakotiGame({
             iterations={1}
             onComplete={() => setInitialTeachingDone(true)}
             onDismiss={() => setInitialTeachingDone(true)}
+            paused={isPaused}
             zIndex={46}
           />
         )}
@@ -667,6 +660,7 @@ export default function SuryakotiGame({
             active
             idleDelay={0}
             iterations={1}
+            paused={isPaused}
             zIndex={46}
           />
         )}
@@ -681,6 +675,7 @@ export default function SuryakotiGame({
             active
             idleDelay={0}
             iterations={2}
+            paused={isPaused}
             zIndex={46}
           />
         )}

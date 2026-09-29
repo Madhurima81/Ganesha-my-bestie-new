@@ -530,3 +530,12 @@
     transition: none !important;
   }
 }
+
+/* Sidebar open = true pause: freeze every in-flight animation (fawn walk,
+   reveal pulses, gesture demos) so nothing plays out behind the panel. */
+.sama-game.is-paused,
+.sama-game.is-paused *,
+.sama-game.is-paused *::before,
+.sama-game.is-paused *::after {
+  animation-play-state: paused !important;
+}

@@ -405,12 +405,12 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
 
   // Audio & voices
   const { isAudioOn, toggleAudio } = useAudioPreference();
-  const { speak, stop } = useGaneshaVoice();
+  const { speak, stop, mute: muteSpokenVoice } = useGaneshaVoice();
   const { playUiTap, playSparkle, playChime, playGlow } = useGameSounds();
   const onReturnHint = useCallback(() => {
     setReturnHintNonce(n => n + 1);
   }, []);
-  const { setCurrentPhase, startMusic, stopMusic, playVoice, stopVoice, setVoiceVolume } = useVoiceGuidance('about-me-hut', 'my-indian-story', {
+  const { setCurrentPhase, startMusic, stopMusic, playVoice, stopVoice, muteVoicePlayback, setVoiceVolume } = useVoiceGuidance('about-me-hut', 'my-indian-story', {
     enableMusic: true,
     musicVolume: 0.07,
     voiceVolume: 0.65,
@@ -609,13 +609,17 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   // Audio toggle handler
   const handleAudioToggle = useCallback(() => {
     toggleAudio();
-    if (isAudioOn) stop();
-  }, [isAudioOn, toggleAudio, stop]);
+    if (isAudioOn) {
+      muteSpokenVoice();
+      muteVoicePlayback();
+    }
+  }, [isAudioOn, toggleAudio, muteSpokenVoice, muteVoicePlayback]);
 
-  // Audio-gated speak
+  // Speak a line. When muted, useGaneshaVoice completes it on a silent timer
+  // (DECISIONS.md 2026-09-29), so onEnd/onError callbacks keep the scene's pacing.
   const speakIfUnmuted = useCallback((text, opts) => {
-    if (isAudioOn && text) speak(text, opts);
-  }, [isAudioOn, speak]);
+    if (text) speak(text, opts);
+  }, [speak]);
 
   // Voice lines
   const VOICE = {
@@ -708,13 +712,6 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     };
     const info = voiceMap[phase];
     if (!info?.text) return;
-    if (!isAudioOn) {
-      if (phase === STEPS.GANESHA_HOME) {
-        setGaneshaHomeGestureReady(true);
-      }
-      markPromptReady(phase);
-      return;
-    }
     const phaseEntryKey = `${phase}:${info.text}`;
     if (entryVoPlayedForPhaseRef.current === phaseEntryKey) return;
     const stepVoiceKey = `about-me-hut:my-indian-story:${phase}:${info.text}`;
@@ -770,16 +767,12 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
       setLanguageGuessPromptReady(true);
       return;
     }
-    if (isAudioOn) {
-      speak(VOICE.language_guess, {
-        age: childAge,
-        moment: 'default',
-        onEnd: () => setLanguageGuessPromptReady(true),
-        onError: () => setLanguageGuessPromptReady(true)
-      });
-    } else {
-      setLanguageGuessPromptReady(true);
-    }
+    speak(VOICE.language_guess, {
+      age: childAge,
+      moment: 'default',
+      onEnd: () => setLanguageGuessPromptReady(true),
+      onError: () => setLanguageGuessPromptReady(true)
+    });
   }, [phase, showLanguageCards, childAge, isAudioOn, speak, VOICE.language_guess]);
 
   const getPhaseReminderLine = useCallback((phase) => {
@@ -838,30 +831,22 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
 
     if (isFirstPlayReveal) {
       setShowLanguageCards(false);
-      if (isAudioOn) {
-        speakIfUnmuted(VOICE.language_audio, {
-          age: childAge,
-          moment: 'default',
-          onEnd: () => safeSetTimeout(revealCards, 200),
-          onError: () => safeSetTimeout(revealCards, 200)
-        });
-        safeSetTimeout(revealCards, 7000);
-      } else {
-        safeSetTimeout(revealCards, 250);
-      }
-      return;
-    }
-
-    if (isAudioOn) {
       speakIfUnmuted(VOICE.language_audio, {
         age: childAge,
         moment: 'default',
-        onEnd: () => setLanguageGuessPromptReady(true),
-        onError: () => setLanguageGuessPromptReady(true)
+        onEnd: () => safeSetTimeout(revealCards, 200),
+        onError: () => safeSetTimeout(revealCards, 200)
       });
-    } else {
-      setLanguageGuessPromptReady(true);
+      safeSetTimeout(revealCards, 7000);
+      return;
     }
+
+    speakIfUnmuted(VOICE.language_audio, {
+      age: childAge,
+      moment: 'default',
+      onEnd: () => setLanguageGuessPromptReady(true),
+      onError: () => setLanguageGuessPromptReady(true)
+    });
   }, [VOICE.language_audio, childAge, hasPressedLanguagePlay, isAudioOn, phase, playUiTap, safeSetTimeout, showLanguageCards, speakIfUnmuted]);
 
   useEffect(() => {
@@ -998,10 +983,6 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   // Child Home entry VO — single combined line, immediate
   useEffect(() => {
     if (phase !== STEPS.CHILD_HOME) return;
-    if (!isAudioOn) {
-      setChildHomePromptReady(true);
-      return;
-    }
     if (childHomeEntryVoiceTimerRef.current) clearTimeout(childHomeEntryVoiceTimerRef.current);
     const childHomeEntryKey = `${phase}:${VOICE.child_home_entry}`;
     if (entryVoPlayedForPhaseRef.current === childHomeEntryKey) {
@@ -1203,18 +1184,14 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     const cancel1 = safeSetTimeout(() => {
       setShowCelebration(true);
       triggerSparkle('all', 2000);
-      if (isAudioOn) {
-        speakIfUnmuted(VOICE.phase1_complete, {
-          age: childAge,
-          moment: 'celebration',
-          onEnd: goToChildHome,
-          onError: goToChildHome
-        });
-        // Failsafe: proceed even if voice callbacks fail.
-        cancelAdvance = safeSetTimeout(goToChildHome, 6500);
-      } else {
-        cancelAdvance = safeSetTimeout(goToChildHome, 1200);
-      }
+      speakIfUnmuted(VOICE.phase1_complete, {
+        age: childAge,
+        moment: 'celebration',
+        onEnd: goToChildHome,
+        onError: goToChildHome
+      });
+      // Failsafe: proceed even if voice callbacks fail.
+      cancelAdvance = safeSetTimeout(goToChildHome, 6500);
     }, completionDelayMs);
     return () => {
       cancel1?.();
@@ -1362,26 +1339,22 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
           }, 8000);
         };
         if (!langGuessIdleVoiceRef.current) {
-          if (isAudioOn) {
-            speakIfUnmuted(VOICE.language_audio, {
+          speakIfUnmuted(VOICE.language_audio, {
+            age: childAge,
+            moment: 'default',
+            onEnd: () => speakIfUnmuted(VOICE.language_guess_hint, {
               age: childAge,
               moment: 'default',
-              onEnd: () => speakIfUnmuted(VOICE.language_guess_hint, {
-                age: childAge,
-                moment: 'default',
-                onEnd: armLevel3,
-                onError: armLevel3,
-              }),
-              onError: () => speakIfUnmuted(VOICE.language_guess_hint, {
-                age: childAge,
-                moment: 'default',
-                onEnd: armLevel3,
-                onError: armLevel3,
-              }),
-            });
-          } else {
-            armLevel3();
-          }
+              onEnd: armLevel3,
+              onError: armLevel3,
+            }),
+            onError: () => speakIfUnmuted(VOICE.language_guess_hint, {
+              age: childAge,
+              moment: 'default',
+              onEnd: armLevel3,
+              onError: armLevel3,
+            }),
+          });
           langGuessIdleVoiceRef.current = true;
         } else {
           armLevel3();
@@ -1648,18 +1621,13 @@ const discoverLocation = useCallback((index) => {
           sceneActions.updateState({ phase: STEPS.LANGUAGE_CHILD });
         }, 2000);
       };
-      if (isAudioOn) {
-        speakIfUnmuted(VOICE.language_correct, {
-          age: childAge,
-          moment: 'celebration',
-          onEnd: advanceToNextPhase,
-          onError: advanceToNextPhase
-        });
-        safeSetTimeout(advanceToNextPhase, 5000);
-      } else {
-        // Audio-off: keep same UX rhythm with a short pause before advancing.
-        advanceToNextPhase();
-      }
+      speakIfUnmuted(VOICE.language_correct, {
+        age: childAge,
+        moment: 'celebration',
+        onEnd: advanceToNextPhase,
+        onError: advanceToNextPhase
+      });
+      safeSetTimeout(advanceToNextPhase, 5000);
     } else {
       setWrongLangGuesses(prev => new Set(prev).add(guessLang.id));
       setShakeLang(null);
@@ -1689,25 +1657,21 @@ const discoverLocation = useCallback((index) => {
         sceneActions.updateState({ phase: STEPS.FESTIVALS_CHILD });
       };
 
-      if (isAudioOn) {
-        const speakCorrectFeedback = () => {
-          speakIfUnmuted('Yes — Ganesh Chaturthi!', {
-            age: childAge,
-            moment: 'celebration',
-            onEnd: goToFestivalChildPhase,
-            onError: goToFestivalChildPhase
-          });
-        };
-        speakIfUnmuted(fest.label, {
+      const speakCorrectFeedback = () => {
+        speakIfUnmuted('Yes — Ganesh Chaturthi!', {
           age: childAge,
-          moment: 'default',
-          onEnd: speakCorrectFeedback,
-          onError: speakCorrectFeedback
+          moment: 'celebration',
+          onEnd: goToFestivalChildPhase,
+          onError: goToFestivalChildPhase
         });
-        safeSetTimeout(goToFestivalChildPhase, 6500);
-      } else {
-        safeSetTimeout(goToFestivalChildPhase, 1200);
-      }
+      };
+      speakIfUnmuted(fest.label, {
+        age: childAge,
+        moment: 'default',
+        onEnd: speakCorrectFeedback,
+        onError: speakCorrectFeedback
+      });
+      safeSetTimeout(goToFestivalChildPhase, 6500);
     } else {
       if (!wrongGuesses.has(fest.id)) {
         setWrongGuesses(prev => new Set(prev).add(fest.id));
@@ -2594,17 +2558,13 @@ const handleComplete = () => {
                     sceneActions.updateState({ phase: STEPS.FESTIVALS_GANESHA });
                   };
 
-                  if (isAudioOn) {
-                    speakIfUnmuted(VOICE.language_confirmed, {
-                      age: childAge,
-                      moment: 'celebration',
-                      onEnd: goToFestivalsPhase,
-                      onError: goToFestivalsPhase,
-                    });
-                    safeSetTimeout(goToFestivalsPhase, 4500);
-                  } else {
-                    goToFestivalsPhase();
-                  }
+                  speakIfUnmuted(VOICE.language_confirmed, {
+                    age: childAge,
+                    moment: 'celebration',
+                    onEnd: goToFestivalsPhase,
+                    onError: goToFestivalsPhase,
+                  });
+                  safeSetTimeout(goToFestivalsPhase, 4500);
                 }}
                 style={{
                   display: 'block',
@@ -3006,17 +2966,13 @@ const handleComplete = () => {
                     sceneActions.updateState({ phase: STEPS.ORIGIN_CARD });
                   };
 
-                  if (isAudioOn) {
-                    speakIfUnmuted(VOICE.festivals_confirmed, {
-                      age: childAge,
-                      moment: 'celebration',
-                      onEnd: goToOriginPhase,
-                      onError: goToOriginPhase,
-                    });
-                    safeSetTimeout(goToOriginPhase, 4500);
-                  } else {
-                    goToOriginPhase();
-                  }
+                  speakIfUnmuted(VOICE.festivals_confirmed, {
+                    age: childAge,
+                    moment: 'celebration',
+                    onEnd: goToOriginPhase,
+                    onError: goToOriginPhase,
+                  });
+                  safeSetTimeout(goToOriginPhase, 4500);
                 }}
               >
                 See Our Story

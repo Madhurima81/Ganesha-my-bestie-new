@@ -93,7 +93,6 @@ const VOICE_LINES = {
   tusk: '',
   idleEyes: "Look closely — there's still one hiding.",
   idleEars: 'Listen again — where did it come from?',
-  idleTusk: 'Look at the obstacle. What can clear it?',
   complete: 'You looked, listened, and used what you had to help.'
 };
 
@@ -279,7 +278,7 @@ const SymbolMountainSceneContent = ({
   const IDLE_HINT_L3_MS = 26000;
 
   const { isAudioOn, toggleAudio } = useAudioPreference();
-  const { speak, stop: stopSpokenVoice } = useGaneshaVoice();
+  const { speak, stop: stopSpokenVoice, mute: muteSpokenVoice } = useGaneshaVoice();
   const lastAnnouncedPromptRef = useRef(null);
   const openingVoPlayedRef = useRef(false);
   const idleVoGateRef = useRef(false);
@@ -287,9 +286,16 @@ const SymbolMountainSceneContent = ({
   const wasAudioOnRef = useRef(isAudioOn);
 
   // -- Voice guidance (music + SFX enabled) ---------------------------------
-  const { startMusic, stopMusic, playCorrect, playPowerUnlock } = useVoiceGuidance(
+  const { startMusic, stopMusic, playCorrect, playPowerUnlock, stopVoice: stopHookVoice } = useVoiceGuidance(
     zoneId, sceneId, { enableMusic: true, musicVolume: 0.1, voiceVolume: 1, sfxVolume: 0.7, idleTimeout: 20 }
   );
+  // Combined stop for both engines this scene uses — passed down to mini-games
+  // (EyesPopUpGame/EarsSoundMatchGame) so their own speechSynthesis calls stop
+  // this scene's MP3 voice first (see the two-speech-source VO fix).
+  const stopVoice = useCallback(() => {
+    stopHookVoice();
+    stopSpokenVoice();
+  }, [stopHookVoice, stopSpokenVoice]);
   useEffect(() => {
     if (sceneState?.welcomeShown) startMusic();
     return () => stopMusic();
@@ -347,7 +353,7 @@ const SymbolMountainSceneContent = ({
 
 
   const speakScenePrompt = useCallback((key, options = {}) => {
-    if (!isAudioOn || !VOICE_LINES[key]) {
+    if (!VOICE_LINES[key]) {
       options?.onEnd?.();
       return;
     }
@@ -358,6 +364,10 @@ const SymbolMountainSceneContent = ({
       onEnd: options?.onEnd
     });
   }, [isAudioOn, speak]);
+  // Mute pressed mid-line: silence now, finish the line's callback on schedule.
+  useEffect(() => {
+    if (!isAudioOn) muteSpokenVoice();
+  }, [isAudioOn, muteSpokenVoice]);
   const replayCurrentVoice = useCallback(() => {
     const replayKey = getPromptKeyForPhase();
     if (replayKey) speakScenePrompt(replayKey);
@@ -448,6 +458,9 @@ const SymbolMountainSceneContent = ({
       && sceneState?.welcomeShown
       && !sceneState?.showEyesTelescopeGame
       && !sceneState?.showEarsRhythmGame
+      // The tusk nest game (BeatPlayerGame) runs its own 10/18/26s ladder with
+      // per-beat lines; the parent ladder stays off so the two don't overlap.
+      && !sceneState?.showTuskAssemblyGame
       && !isSymbolPopupOpen
       && !revealConfig
       && !showSceneCompletion;
@@ -479,6 +492,7 @@ const SymbolMountainSceneContent = ({
     sceneState?.phase,
     sceneState?.showEarsRhythmGame,
     sceneState?.showEyesTelescopeGame,
+    sceneState?.showTuskAssemblyGame,
     sceneState?.welcomeShown,
     showSceneCompletion
   ]);
@@ -541,7 +555,6 @@ const SymbolMountainSceneContent = ({
     let idleKey = null;
     if (sceneState?.phase === PHASES.EYES_GAME) idleKey = 'idleEyes';
     else if (sceneState?.phase === PHASES.EARS_GAME) idleKey = 'idleEars';
-    else if (sceneState?.phase === PHASES.TUSK_GAME && sceneState?.showTuskAssemblyGame) idleKey = 'idleTusk';
 
     if (idleKey) {
       speakScenePrompt(idleKey, { onEnd: () => { l2VoiceEndedAtRef.current = Date.now(); } });
@@ -861,6 +874,7 @@ const SymbolMountainSceneContent = ({
                 <EyesPopUpGame
                   isActive={sceneState.showEyesTelescopeGame}
                   isAudioOn={isAudioOn}
+                  stopVoice={stopVoice}
                   onGameComplete={({ assignedSpots } = {}) => {
                     sceneActions.updateState({
                       animalSpots: assignedSpots || sceneState.animalSpots || {},
@@ -879,6 +893,7 @@ const SymbolMountainSceneContent = ({
                 <EarsSoundMatchGame
                   isActive={sceneState.showEarsRhythmGame}
                   isAudioOn={isAudioOn}
+                  stopVoice={stopVoice}
                   animalPositions={sceneState.animalSpots}
                   onAnimalPositionsChange={(positions) => {
                     sceneActions.updateState({

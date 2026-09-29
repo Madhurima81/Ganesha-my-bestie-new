@@ -2,6 +2,7 @@ import PoseImage, { usePreloadPoses } from '../../../../lib/components/animation
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import SyllableHighlight from '../../shared/SyllableHighlight';
 import useRepeatedHintCycle from '../../../../lib/hooks/useRepeatedHintCycle';
+import usePausableTimers from '../../../../lib/hooks/usePausableTimers';
 import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
 import './NirvighnamGame.css';
 
@@ -225,7 +226,7 @@ export default function NirvighnamGame({
     : !!obstacleIntroComplete[nextObstacleId];
   // Gated on the instruction VO (introComplete), not on the teaching
   // gesture finishing — the clock shouldn't wait on an animation.
-  const { hintLevel, markInteraction, markLevel2VoiceEnded } = useRepeatedHintCycle({
+  const { hintLevel, markInteraction, markLevel2VoiceStarted, markLevel2VoiceEnded } = useRepeatedHintCycle({
     enabled: isActive && !isPaused && phase === 'play' && currentObstacleIntroComplete,
     stageKey: phase === 'play' ? `clear-${cleared.length}` : phase,
     initialDelay: currentHintTiming.l1,
@@ -234,6 +235,9 @@ export default function NirvighnamGame({
     level2Delay: currentHintTiming.l2,
     level3Delay: currentHintTiming.l3,
   });
+
+  // Freezes with the sidebar and resumes with the remaining time (see hook).
+  const { after: pausableAfter, cancel: cancelPausable, clear: clearPausable } = usePausableTimers(isPaused);
 
   const markMeaningfulProgress = useCallback(() => {
     const now = performance.now();
@@ -248,18 +252,19 @@ export default function NirvighnamGame({
       rockProgressRef.current = null;
     }
     if (transitionTimerRef.current) {
-      window.clearTimeout(transitionTimerRef.current);
+      cancelPausable(transitionTimerRef.current);
       transitionTimerRef.current = null;
     }
     if (voFallbackRef.current) {
-      window.clearTimeout(voFallbackRef.current);
+      cancelPausable(voFallbackRef.current);
       voFallbackRef.current = null;
     }
     if (sylEndFallbackRef.current) {
-      window.clearTimeout(sylEndFallbackRef.current);
+      cancelPausable(sylEndFallbackRef.current);
       sylEndFallbackRef.current = null;
     }
-  }, []);
+    clearPausable();
+  }, [cancelPausable, clearPausable]);
 
   const isCleared = useCallback((id) => cleared.includes(id), [cleared]);
 
@@ -354,8 +359,9 @@ export default function NirvighnamGame({
     lastHintVoRef.current = onceKey;
 
     stopSceneVoice?.();
+    if (playSceneLine) markLevel2VoiceStarted();
     playSceneLine?.(voiceKey, markLevel2VoiceEnded);
-  }, [hintLevel, isPaused, nextObstacleId, obstacleHasProgress, phase, playSceneLine, stopSceneVoice, markLevel2VoiceEnded]);
+  }, [hintLevel, isPaused, nextObstacleId, obstacleHasProgress, phase, playSceneLine, stopSceneVoice, markLevel2VoiceStarted, markLevel2VoiceEnded]);
 
   useEffect(() => {
     onPhaseCompleteRef.current = onPhaseComplete;
@@ -427,7 +433,7 @@ export default function NirvighnamGame({
     if (debugEnabled && showDebugPanel) return;
 
     if (transitionTimerRef.current) {
-      window.clearTimeout(transitionTimerRef.current);
+      cancelPausable(transitionTimerRef.current);
       transitionTimerRef.current = null;
     }
 
@@ -442,11 +448,11 @@ export default function NirvighnamGame({
     }
 
     if (cleared.length >= OBSTACLE_ORDER.length) {
-      transitionTimerRef.current = window.setTimeout(() => {
+      transitionTimerRef.current = pausableAfter(420, () => {
         setPhase('swim');
-      }, 420);
+      });
     }
-  }, [activeLayout.turtleStart, cleared.length, isActive, phase, turtleNodes, debugEnabled, showDebugPanel]);
+  }, [activeLayout.turtleStart, cancelPausable, cleared.length, isActive, pausableAfter, phase, turtleNodes, debugEnabled, showDebugPanel]);
 
   const startRockHold = useCallback((event) => {
     if (phaseRef.current !== 'play' || isPaused) return;
@@ -686,11 +692,11 @@ export default function NirvighnamGame({
   const completeAfterSuccess = useCallback(() => {
     if (!successVoDoneRef.current || !swimDoneRef.current || completionScheduledRef.current) return;
     completionScheduledRef.current = true;
-    window.setTimeout(() => {
+    pausableAfter(500, () => {
       onGameCompleteRef.current?.();
       onPhaseCompleteRef.current?.();
-    }, 500);
-  }, []);
+    });
+  }, [pausableAfter]);
 
   // Completion audio plays strictly in sequence, no overlap:
   //   final syllable "nam"  ->  full word "nirvighnam"  ->  ending line
@@ -701,7 +707,7 @@ export default function NirvighnamGame({
     completionVoStartedRef.current = true;
 
     if (sylEndFallbackRef.current) {
-      window.clearTimeout(sylEndFallbackRef.current);
+      cancelPausable(sylEndFallbackRef.current);
       sylEndFallbackRef.current = null;
     }
 
@@ -720,13 +726,14 @@ export default function NirvighnamGame({
     if (playWord) playWord('nirvighnam', afterWord);
     else afterWord();
 
-    voFallbackRef.current = window.setTimeout(() => {
+    // Pausable, so the sidebar can't let it complete the game behind the panel.
+    voFallbackRef.current = pausableAfter(10000, () => {
       if (!successVoDoneRef.current) {
         successVoDoneRef.current = true;
         completeAfterSuccess();
       }
-    }, 10000);
-  }, [completeAfterSuccess, playSceneLine, playWord]);
+    });
+  }, [cancelPausable, completeAfterSuccess, pausableAfter, playSceneLine, playWord]);
 
   useEffect(() => {
     if (phase !== 'swim' || doneAnnouncedRef.current) return;
@@ -738,32 +745,32 @@ export default function NirvighnamGame({
     // Don't start the word/ending line yet — wait for the final "nam" syllable
     // to finish (its playSyllable onEnded sets lastSyllableDoneRef). Guard with
     // a fallback in case that callback never fires (audio error / iOS).
-    sylEndFallbackRef.current = window.setTimeout(() => {
+    sylEndFallbackRef.current = pausableAfter(1600, () => {
       lastSyllableDoneRef.current = true;
       startCompletionVo();
-    }, 1600);
+    });
     startCompletionVo();
 
     swimPath.forEach((waypoint, index) => {
-      const hopTimer = window.setTimeout(() => {
+      const hopTimer = pausableAfter(index * 580, () => {
         setTurtlePos(waypoint);
         if (index === swimPath.length - 1) {
-          const settleTimer = window.setTimeout(() => {
+          const settleTimer = pausableAfter(550, () => {
             setIsSwimming(false);
             swimDoneRef.current = true;
             setPhase('done');
             completeAfterSuccess();
-          }, 550);
+          });
           timers.push(settleTimer);
         }
-      }, index * 580);
+      });
       timers.push(hopTimer);
     });
 
     return () => {
-      timers.forEach((timer) => window.clearTimeout(timer));
+      timers.forEach(cancelPausable);
     };
-  }, [completeAfterSuccess, phase, startCompletionVo, swimPath]);
+  }, [cancelPausable, completeAfterSuccess, pausableAfter, phase, startCompletionVo, swimPath]);
 
   useEffect(() => () => {
     clearTimers();
@@ -914,7 +921,7 @@ export default function NirvighnamGame({
 
   return (
     <div
-      className={`nirv-game ${hideElements ? 'is-hidden' : ''}`}
+      className={`nirv-game ${hideElements ? 'is-hidden' : ''} ${isPaused ? 'is-paused' : ''}`}
       onContextMenu={(event) => event.preventDefault()}
     >
       <div ref={stageRef} className="nirv-stage" style={{ backgroundImage: `url(${sharedSceneBg})` }}>
@@ -955,12 +962,6 @@ export default function NirvighnamGame({
             });
           }}
         />
-
-        {isDone && (
-          <p className="nirv-doneline">
-            One thing at a time — you cleared the way!
-          </p>
-        )}
 
         <div
           className="nirv-layer nirv-nest"
@@ -1071,6 +1072,7 @@ export default function NirvighnamGame({
             iterations={1}
             onComplete={() => setTeachingDoneFor(nextObstacleId)}
             onDismiss={() => setTeachingDoneFor(nextObstacleId)}
+            paused={isPaused}
             zIndex={46}
           />
         )}
@@ -1087,6 +1089,7 @@ export default function NirvighnamGame({
             active
             idleDelay={0}
             iterations={1}
+            paused={isPaused}
             zIndex={46}
           />
         )}
@@ -1102,6 +1105,7 @@ export default function NirvighnamGame({
             active
             idleDelay={0}
             iterations={1}
+            paused={isPaused}
             zIndex={46}
           />
         )}

@@ -467,3 +467,12 @@
   font-weight: 800;
   cursor: pointer;
 }
+
+/* Sidebar open = true pause: freeze every in-flight animation (turtle swim,
+   obstacle nudges, gesture demos) so nothing plays out behind the panel. */
+.nirv-game.is-paused,
+.nirv-game.is-paused *,
+.nirv-game.is-paused *::before,
+.nirv-game.is-paused *::after {
+  animation-play-state: paused !important;
+}
