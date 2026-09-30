@@ -1,6 +1,15 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
 
+## [2026-09-30] — Suryakoti: broad percentage rub bands replace small scratch targets
+**Touched:** src/zones/shloka-river/scenes/Scene2/components/SuryakotiGame.jsx, SuryakotiGame.css.
+**Changed:** Suryakoti now tracks progress with four overlapping normalized rectangle bands (`sur`, `ya`,
+`ko`, `ti`) instead of small circular/ellipse targets. Rubbing anywhere still visibly clears the dark
+canvas, while progress counts inside the current broad left-to-right band (`0–90%` height, bottom
+10% excluded). Completion threshold lowered to `0.42`, grid is `10 x 16`, and the L1 hint is a soft
+band-sized glow instead of a permanent circular ring.
+**Verified:** focused `npx eslint src/zones/shloka-river/scenes/Scene2/components/SuryakotiGame.jsx`
+passed.
 ## [2026-09-29] — VO cleanup: same dual-speech-source race, inside Symbol Mountain's mini-games
 **Touched:** src/zones/symbol-mountain/scenes/modak/FlowerJourneyGame2.jsx;
 src/zones/symbol-mountain/scenes/modak/GarlandGame3.jsx;

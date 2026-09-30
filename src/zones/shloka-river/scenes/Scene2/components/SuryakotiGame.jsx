@@ -29,20 +29,19 @@ const SYLLABLES = ['Sur', 'ya', 'ko', 'ti'];
 // ('su' had no file, so the first syllable silently 404'd)
 const AUDIO = { syllables: ['sur', 'ya', 'ko', 'ti'] };
 
-// Four discrete dark spots to rub, one per syllable, revealed in order
-// (Sur → ya → ko → ti). Rubbing the active spot clear enough lights that
-// syllable and advances to the next — mirrors the one-target-at-a-time
-// 4-step reveal in Mahakaya/Kurumedeva. cx/cy are fractions of the stage box.
-const SPOTS = [
-  { cx: 0.24, cy: 0.31 }, // Sur
-  { cx: 0.44, cy: 0.20 }, // ya
-  { cx: 0.63, cy: 0.15 }, // ko
-  { cx: 0.80, cy: 0.27 }, // ti
+// Four broad, overlapping progress regions. The child can rub anywhere on the
+// dark canvas and see darkness disappear; these invisible regions only decide
+// when each Suryakoti syllable is earned.
+const RUB_ZONES = [
+  { id: 'sur', x1: 0.00, x2: 0.30, y1: 0.00, y2: 0.90 },
+  { id: 'ya',  x1: 0.20, x2: 0.50, y1: 0.00, y2: 0.90 },
+  { id: 'ko',  x1: 0.45, x2: 0.75, y1: 0.00, y2: 0.90 },
+  { id: 'ti',  x1: 0.70, x2: 1.00, y1: 0.00, y2: 0.90 },
 ];
-const SPOT_R = 0.10;        // spot radius, fraction of canvas width
-const SCRATCH_R = 0.055;    // brush radius, fraction of canvas width
-const SPOT_GRID = 8;        // cells per axis inside each spot
-const SPOT_CLEAR = 0.6;     // fraction of a spot's cells cleared to light its syllable
+const SCRATCH_R = 0.06;     // visible rub brush, fraction of canvas width
+const ZONE_GRID_X = 10;
+const ZONE_GRID_Y = 16;
+const ZONE_CLEAR = 0.42;    // forgiving completion threshold
 
 const POSE_ASSETS = [
   sharedSceneBg,
@@ -72,7 +71,7 @@ export default function SuryakotiGame({
   const { playVoice: playSceneLine, playWord, playSyllable, stopVoice } = voiceGuidance;
   const [phase, setPhase] = useState('play');
   const [litCount, setLitCount] = useState(0);
-  const [activeSpot, setActiveSpot] = useState(0);
+  const [activeZone, setActiveZone] = useState(0);
   const [bunnyPos, setBunnyPos] = useState(POS.bunny);
   const [bunnyHopping, setBunnyHopping] = useState(false);
   const [canvasReady, setCanvasReady] = useState(false);
@@ -80,10 +79,10 @@ export default function SuryakotiGame({
   const [spotHasProgress, setSpotHasProgress] = useState(false);
   const [remainingCueVersion, setRemainingCueVersion] = useState(0);
   const canvasRef = useRef(null);
-  const gridRef = useRef([]);            // flat list of cells: { px, py, cleared, spot }
-  const spotTotalRef = useRef([0, 0, 0, 0]);
-  const spotDoneRef = useRef([0, 0, 0, 0]);
-  const activeSpotRef = useRef(0);
+  const gridRef = useRef([]);            // flat list of cells: { px, py, cleared, zone }
+  const zoneTotalRef = useRef([0, 0, 0, 0]);
+  const zoneDoneRef = useRef([0, 0, 0, 0]);
+  const activeZoneRef = useRef(0);
   const drawingRef = useRef(false);
   const phaseRef = useRef('play');
   const completedRef = useRef(false);
@@ -119,7 +118,7 @@ export default function SuryakotiGame({
   const hintWasActiveRef = useRef(false);
   useEffect(() => {
     if (handPaused && !wasPausedForTeachRef.current) hintWasActiveRef.current = hintLevel >= 2;
-    if (wasPausedForTeachRef.current && !handPaused && !hintWasActiveRef.current && activeSpotRef.current === 0) setInitialTeachingDone(false);
+    if (wasPausedForTeachRef.current && !handPaused && !hintWasActiveRef.current && activeZoneRef.current === 0) setInitialTeachingDone(false);
     wasPausedForTeachRef.current = handPaused;
   }, [handPaused]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -138,7 +137,7 @@ export default function SuryakotiGame({
     // gesture finishing — the gesture and VO can overlap; teaching disappears
     // as soon as the child actually starts scratching (see onPointerDown).
     enabled: isActive && !isPaused && phase === 'play' && introComplete && !drawingRef.current,
-    stageKey: phase === 'play' ? `spot-${activeSpot}` : phase,
+    stageKey: phase === 'play' ? `rub-zone-${activeZone}` : phase,
     // GMB Hint Standard v1 — flat 10s/18s/26s from VO end or last interaction.
     initialDelay: 10000,
     pulseCountBeforeEscalation: 3,
@@ -151,7 +150,7 @@ export default function SuryakotiGame({
   useEffect(() => {
     setSpotHasProgress(false);
     setRemainingCueVersion((version) => version + 1);
-  }, [activeSpot]);
+  }, [activeZone]);
 
   // L2 spoken hint: "Rub the glowing spot" / "Keep rubbing" — once per spot
   // per level-2 escalation, not repeated every render.
@@ -161,14 +160,14 @@ export default function SuryakotiGame({
     if (phase !== 'play' || hintLevel !== 2 || isPaused) return;
 
     const voiceKey = spotHasProgress ? 'surya_hint_keep' : 'surya_hint_rub';
-    const onceKey = `${activeSpot}-${voiceKey}`;
+    const onceKey = `${activeZone}-${voiceKey}`;
     if (lastHintVoRef.current === onceKey) return;
     lastHintVoRef.current = onceKey;
 
     stopVoice?.();
     if (playSceneLine) markLevel2VoiceStarted();
     playSceneLine?.(voiceKey, markLevel2VoiceEnded);
-  }, [activeSpot, hintLevel, isPaused, phase, playSceneLine, spotHasProgress, stopVoice, markLevel2VoiceStarted, markLevel2VoiceEnded]);
+  }, [activeZone, hintLevel, isPaused, phase, playSceneLine, spotHasProgress, stopVoice, markLevel2VoiceStarted, markLevel2VoiceEnded]);
 
   // preserve=true (resize/rotation mid-play): rebuild the overlay at the new
   // geometry but keep cleared cells and game phase instead of restarting.
@@ -221,29 +220,31 @@ export default function SuryakotiGame({
 
     ctx.globalCompositeOperation = 'destination-out';
 
-    // Scratch-target ring cue is the animated .surya-scratch-ring overlay
-    // (see render) — not painted here to avoid a duplicate static ring.
-
     const grid = [];
     const totals = [0, 0, 0, 0];
     const dones = [0, 0, 0, 0];
     const scratchRadius = cv.width * SCRATCH_R;
-    const spotRadius = cv.width * SPOT_R;
 
-    SPOTS.forEach((spot, si) => {
-      const scx = cv.width * spot.cx;
-      const scy = cv.height * spot.cy;
-      for (let gy = 0; gy < SPOT_GRID; gy += 1) {
-        for (let gx = 0; gx < SPOT_GRID; gx += 1) {
-          const px = scx - spotRadius + gx * ((spotRadius * 2) / SPOT_GRID);
-          const py = scy - spotRadius + gy * ((spotRadius * 2) / SPOT_GRID);
-          if (Math.hypot(px - scx, py - scy) >= spotRadius) continue;
+    RUB_ZONES.forEach((zone, zi) => {
+      for (let gy = 0; gy < ZONE_GRID_Y; gy += 1) {
+        for (let gx = 0; gx < ZONE_GRID_X; gx += 1) {
+          const nx = zone.x1 + (gx / Math.max(ZONE_GRID_X - 1, 1)) * (zone.x2 - zone.x1);
+          const ny = zone.y1 + (gy / Math.max(ZONE_GRID_Y - 1, 1)) * (zone.y2 - zone.y1);
+          const px = nx * cv.width;
+          const py = ny * cv.height;
           const idx = grid.length;
           const cleared = Boolean(prevCleared?.[idx]);
-          grid.push({ px, py, cleared, spot: si });
-          totals[si] += 1;
+          grid.push({
+            px,
+            py,
+            nx,
+            ny,
+            zone: zi,
+            cleared,
+          });
+          totals[zi] += 1;
           if (cleared) {
-            dones[si] += 1;
+            dones[zi] += 1;
             // Re-punch previously cleared cells at the new geometry
             ctx.beginPath();
             ctx.arc(px, py, scratchRadius, 0, Math.PI * 2);
@@ -254,8 +255,8 @@ export default function SuryakotiGame({
     });
 
     gridRef.current = grid;
-    spotTotalRef.current = totals;
-    spotDoneRef.current = dones;
+    zoneTotalRef.current = totals;
+    zoneDoneRef.current = dones;
 
     if (!preserve) {
       completedRef.current = false;
@@ -266,8 +267,8 @@ export default function SuryakotiGame({
       completionScheduledRef.current = false;
       lastSyllableDoneRef.current = false;
       completionVoStartedRef.current = false;
-      activeSpotRef.current = 0;
-      setActiveSpot(0);
+      activeZoneRef.current = 0;
+      setActiveZone(0);
       setInitialTeachingDone(false);
       setBunnyPos(POS.bunny);
       setBunnyHopping(false);
@@ -276,9 +277,9 @@ export default function SuryakotiGame({
     } else {
       // Recover how far the player had gotten from the restored cleared cells.
       let lit = 0;
-      while (lit < 4 && totals[lit] > 0 && dones[lit] / totals[lit] >= SPOT_CLEAR) lit += 1;
-      activeSpotRef.current = lit;
-      setActiveSpot(lit);
+      while (lit < RUB_ZONES.length && totals[lit] > 0 && dones[lit] / totals[lit] >= ZONE_CLEAR) lit += 1;
+      activeZoneRef.current = lit;
+      setActiveZone(lit);
       setLitCount(lit);
     }
     setCanvasReady(true);
@@ -330,57 +331,52 @@ export default function SuryakotiGame({
     ctx.arc(x, y, radius, 0, Math.PI * 2);
     ctx.fill();
 
-    // Only cells belonging to the spot the player is meant to be on right now
-    // count toward progress — keeps the syllables lighting in order.
-    const active = activeSpotRef.current;
+    // Every rub clears darkness. Only cells in the current broad region count
+    // toward syllable progress, keeping Sur → ya → ko → ti in order.
+    const active = activeZoneRef.current;
     let newlyCleared = 0;
     for (const cell of gridRef.current) {
-      if (cell.cleared || cell.spot !== active) continue;
+      if (cell.cleared || cell.zone !== active) continue;
       if (Math.hypot(cell.px - x, cell.py - y) < radius) {
         cell.cleared = true;
-        spotDoneRef.current[cell.spot] += 1;
+        zoneDoneRef.current[cell.zone] += 1;
         newlyCleared += 1;
       }
     }
 
-    // Only real progress on the active spot resets the hint timer — a child
-    // scratching the wrong area shouldn't be able to indefinitely postpone
-    // the hint by touching the screen.
     if (newlyCleared > 0) {
       setSpotHasProgress(true);
       setRemainingCueVersion((version) => version + 1);
       markInteraction();
     }
 
-    // Advance through any spots that are now clear enough (handles a spot the
-    // player scrubbed past in one stroke).
-    let next = activeSpotRef.current;
+    let next = activeZoneRef.current;
     while (
-      next < 4
-      && spotTotalRef.current[next] > 0
-      && spotDoneRef.current[next] / spotTotalRef.current[next] >= SPOT_CLEAR
+      next < RUB_ZONES.length
+      && zoneTotalRef.current[next] > 0
+      && zoneDoneRef.current[next] / zoneTotalRef.current[next] >= ZONE_CLEAR
     ) {
       next += 1;
       onMicroWin?.();
     }
 
-    if (next !== activeSpotRef.current) {
-      const wasFirstSpot = activeSpotRef.current === 0;
-      activeSpotRef.current = next;
-      setActiveSpot(next);
+    if (next !== activeZoneRef.current) {
+      const wasFirstZone = activeZoneRef.current === 0;
+      activeZoneRef.current = next;
+      setActiveZone(next);
       setLitCount(next); // lighting syllable `next-1`; SyllableHighlight plays its clip
 
       // One-time continuation cue after the very first patch only — later
       // patches rely on the darkness visibly shrinking, not a repeated line.
-      if (wasFirstSpot && next === 1 && !continuationCuePlayedRef.current) {
+      if (wasFirstZone && next === 1 && !continuationCuePlayedRef.current) {
         continuationCuePlayedRef.current = true;
         pausableAfter(500, () => playSceneLine?.('scene11_surya_keep_rubbing'));
       }
     }
 
-    if (next >= 4 && !completedRef.current) {
+    if (next >= RUB_ZONES.length && !completedRef.current) {
       completedRef.current = true;
-      setLitCount(4); // TI lights first — give it a beat before the fade/hop
+      setLitCount(RUB_ZONES.length); // TI lights first — give it a beat before the fade/hop
       pausableAfter(500, () => {
         setPhase('hop');
         fadeOverlay(cv);
@@ -408,7 +404,7 @@ export default function SuryakotiGame({
     }
     // The child understood the mechanic — dismiss the teaching hand
     // immediately instead of waiting for its animation to finish.
-    if (activeSpotRef.current === 0 && !initialTeachingDone) {
+    if (activeZoneRef.current === 0 && !initialTeachingDone) {
       setInitialTeachingDone(true);
     }
     drawingRef.current = true;
@@ -542,21 +538,25 @@ export default function SuryakotiGame({
 
   // Sun brightens one step per syllable lit (0→4) — every successful reveal
   // adds visibly more radiance, starting from the very first rub.
-  const litFrac = litCount / SPOTS.length;
+  const litFrac = litCount / RUB_ZONES.length;
   const sunOp = Math.min(1, 0.08 + litFrac * 0.92);
   const showSun = litCount >= 1;
   const sunFadeOp = showSun ? Math.min(0.95, 0.18 + litCount * 0.19) : 0;
-  const cueSpot = SPOTS[Math.min(activeSpot, SPOTS.length - 1)];
+  const cueZone = RUB_ZONES[Math.min(activeZone, RUB_ZONES.length - 1)];
+  const cueX = ((cueZone.x1 + cueZone.x2) / 2) * 100;
+  const cueY = ((cueZone.y1 + cueZone.y2) / 2) * 100;
+  const cueW = (cueZone.x2 - cueZone.x1) * 100;
+  const cueH = (cueZone.y2 - cueZone.y1) * 100;
   const remainingCue = (() => {
     // The target follows uncleared cells, so hints point at the work still
     // left to do.
     const cv = canvasRef.current;
     if (!cv?.width || !cv?.height) {
-      return { x: cueSpot.cx * 100, y: cueSpot.cy * 100, width: 20 };
+      return { x: cueX, y: cueY };
     }
-    const remaining = gridRef.current.filter((cell) => cell.spot === activeSpot && !cell.cleared);
+    const remaining = gridRef.current.filter((cell) => cell.zone === activeZone && !cell.cleared);
     if (!remaining.length) {
-      return { x: cueSpot.cx * 100, y: cueSpot.cy * 100, width: 20 };
+      return { x: cueX, y: cueY };
     }
     const sum = remaining.reduce((acc, cell) => ({
       x: acc.x + cell.px,
@@ -565,7 +565,6 @@ export default function SuryakotiGame({
     return {
       x: (sum.x / remaining.length / cv.width) * 100,
       y: (sum.y / remaining.length / cv.height) * 100,
-      width: spotHasProgress ? 16 : 20,
     };
   })();
 
@@ -625,14 +624,18 @@ export default function SuryakotiGame({
         </div>
 
         <div className={`surya-dark-wrap ${canvasReady ? 'is-ready' : ''}`} style={{ pointerEvents: phase === 'play' && !isPaused ? 'auto' : 'none' }}>
-          {/* Pulsing ring cue over the spot the player should rub next. L1
-              says "where"; L2/L3 keep the target visible while the gesture
-              demonstrates "how". */}
-          {phase === 'play' && canvasReady && !completedRef.current && (
+          {/* L1 only: a soft area glow suggests where progress is most useful.
+              Free rubbing still clears darkness anywhere on the canvas. */}
+          {phase === 'play' && canvasReady && !completedRef.current && hintLevel === 1 && (
             <div
-              key={`surya-ring-${activeSpot}-${remainingCueVersion}`}
-              className={`surya-scratch-ring ${hintLevel === 1 ? 'is-hint-l1' : ''} ${hintLevel >= 2 ? 'is-hint-guided' : ''}`}
-              style={{ left: `${remainingCue.x}%`, top: `${remainingCue.y}%`, width: `${remainingCue.width}%` }}
+              key={`surya-rub-zone-${activeZone}-${remainingCueVersion}`}
+              className="surya-rub-hint"
+              style={{
+                left: `${cueX}%`,
+                top: `${cueY}%`,
+                width: `${cueW}%`,
+                height: `${cueH}%`,
+              }}
             />
           )}
           <canvas
@@ -651,12 +654,12 @@ export default function SuryakotiGame({
             intro VO to actually start speaking (introVoStarted) before its
             own short buffer, instead of a blind fixed delay from mount that
             could show the demo before the VO even started. */}
-        {phase === 'play' && activeSpot === 0 && !initialTeachingDone && (
+        {phase === 'play' && activeZone === 0 && !initialTeachingDone && (
           <GestureDemo
             key="surya-initial-teaching"
             type="scratch"
-            from={{ x: cueSpot.cx * 100 - 6, y: cueSpot.cy * 100 - 5 }}
-            to={{ x: cueSpot.cx * 100 + 6, y: cueSpot.cy * 100 + 5 }}
+            from={{ x: cueX - 7, y: cueY - 4 }}
+            to={{ x: cueX + 7, y: cueY + 4 }}
             active={introVoStarted}
             idleDelay={150}
             iterations={1}
@@ -669,12 +672,12 @@ export default function SuryakotiGame({
 
         {/* L2 — a short scratch, not the full demo: shows the kind of action
             without giving the whole answer away. VO carries "rub"/"keep rubbing". */}
-        {phase === 'play' && hintLevel === 2 && (activeSpot > 0 || initialTeachingDone) && (
+        {phase === 'play' && hintLevel === 2 && (activeZone > 0 || initialTeachingDone) && (
           <GestureDemo
-            key={`surya-partial-${activeSpot}`}
+            key={`surya-partial-${activeZone}`}
             type="scratch"
-            from={{ x: remainingCue.x - 3, y: remainingCue.y - 2 }}
-            to={{ x: remainingCue.x + 3, y: remainingCue.y + 2 }}
+            from={{ x: remainingCue.x - 7, y: remainingCue.y - 4 }}
+            to={{ x: remainingCue.x + 7, y: remainingCue.y + 4 }}
             active
             idleDelay={0}
             iterations={1}
@@ -684,9 +687,9 @@ export default function SuryakotiGame({
         )}
 
         {/* L3 rescue demo — every spot, one full pass */}
-        {phase === 'play' && hintLevel >= 3 && (activeSpot > 0 || initialTeachingDone) && (
+        {phase === 'play' && hintLevel >= 3 && (activeZone > 0 || initialTeachingDone) && (
           <GestureDemo
-            key={`surya-rescue-${activeSpot}`}
+            key={`surya-rescue-${activeZone}`}
             type="scratch"
             from={{ x: remainingCue.x - 8, y: remainingCue.y - 6 }}
             to={{ x: remainingCue.x + 8, y: remainingCue.y + 6 }}
