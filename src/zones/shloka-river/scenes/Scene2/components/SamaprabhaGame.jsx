@@ -22,7 +22,10 @@ import shadowLeavesImg from '../assets/images/Samaprabha/shadow-leaves.png';
 const SYLLABLES = ['Sa', 'ma', 'pra', 'bha'];
 const AUDIO = { syllables: ['sa', 'ma', 'pra', 'bha'] };
 const HOLD_MS = 1150;
-const HOLD_DRAIN_MS = 260;
+// Same forgiving-release feel as the Pond lotus/rock hold: releasing early shrinks the ring at 2x
+// speed, re-pressing within the grace window resumes from where it was, after that it resets.
+const HOLD_DECAY_MULTIPLIER = 2;
+const HOLD_RESET_GRACE_MS = 1000;
 
 // Static metadata for each clue (id/label/art) -- positions live in
 // SAMA_DEFAULT_LAYOUT below so they can be tuned via the Layout Debug panel.
@@ -206,7 +209,11 @@ export default function SamaprabhaGame({
   onFirstInteraction = () => {},
   voiceGuidance = {},
   isPaused = false,
+  // Sidebar actually open (isPaused also covers the short replay hold after it closes): drives the
+  // hand demo, the animation freeze and the hint pin, so the hand can play WITH the replayed line.
+  isSidebarOpen,
 }) {
+  const handPaused = isSidebarOpen ?? isPaused;
   usePreloadPoses(POSE_ASSETS);
   const { playVoice: playSceneLine, playSyllable, playWord, stopVoice } = voiceGuidance;
 
@@ -231,6 +238,7 @@ export default function SamaprabhaGame({
   const pointerIdRef = useRef(null);
   const holdRafRef = useRef(null);
   const holdDrainRafRef = useRef(null);
+  const holdGraceTimerRef = useRef(null);
   const holdStartedAtRef = useRef(null);
   const holdProgressRef = useRef(0);
   const holdingClueIndexRef = useRef(null);
@@ -324,6 +332,7 @@ export default function SamaprabhaGame({
     pulseInterval: 1800,
     level2Delay: 18000,
     level3Delay: 26000,
+    paused: handPaused,
   });
 
   // L2 VO — one mechanic now: press and hold on the shadow.
@@ -350,6 +359,10 @@ export default function SamaprabhaGame({
   }, []);
 
   const stopHoldDrain = useCallback(() => {
+    if (holdGraceTimerRef.current) {
+      window.clearTimeout(holdGraceTimerRef.current);
+      holdGraceTimerRef.current = null;
+    }
     if (holdDrainRafRef.current) {
       window.cancelAnimationFrame(holdDrainRafRef.current);
       holdDrainRafRef.current = null;
@@ -368,7 +381,7 @@ export default function SamaprabhaGame({
     const startedAt = performance.now();
     const tick = (now) => {
       const elapsed = now - startedAt;
-      const progress = Math.max(startProgress * (1 - elapsed / HOLD_DRAIN_MS), 0);
+      const progress = Math.max(startProgress - (elapsed / HOLD_MS) * HOLD_DECAY_MULTIPLIER, 0);
       setHoldProgressValue(progress);
 
       if (progress > 0) {
@@ -380,6 +393,16 @@ export default function SamaprabhaGame({
     };
 
     holdDrainRafRef.current = window.requestAnimationFrame(tick);
+
+    // After the grace window the hold fully resets.
+    holdGraceTimerRef.current = window.setTimeout(() => {
+      holdGraceTimerRef.current = null;
+      if (holdDrainRafRef.current) {
+        window.cancelAnimationFrame(holdDrainRafRef.current);
+        holdDrainRafRef.current = null;
+      }
+      setHoldProgressValue(0);
+    }, HOLD_RESET_GRACE_MS);
   }, [setHoldProgressValue, stopHoldDrain]);
 
   const cancelHold = useCallback((drain = false) => {
@@ -447,6 +470,8 @@ export default function SamaprabhaGame({
 
     if (holdingClueIndexRef.current === clueIndex && holdRafRef.current) return;
 
+    // Resume from the current (possibly still-decaying) ring value.
+    const resumeFrom = holdProgressRef.current;
     cancelHold();
     if (pointerId !== null) pointerIdRef.current = pointerId;
     holdingClueIndexRef.current = clueIndex;
@@ -454,7 +479,7 @@ export default function SamaprabhaGame({
     setIsHoldingClue(true);
     setBeamPos(point);
     stopHoldDrain();
-    setHoldProgressValue(0);
+    setHoldProgressValue(resumeFrom);
     markInteraction();
 
     const tick = (now) => {
@@ -463,7 +488,7 @@ export default function SamaprabhaGame({
         return;
       }
 
-      const progress = Math.min((now - holdStartedAtRef.current) / HOLD_MS, 1);
+      const progress = Math.min(resumeFrom + (now - holdStartedAtRef.current) / HOLD_MS, 1);
       setHoldProgressValue(progress);
 
       if (progress >= 1) {
@@ -828,7 +853,7 @@ export default function SamaprabhaGame({
   const selectedDebugOption = samaDebugOptions.find((opt) => opt.key === selectedDebugKey) || samaDebugOptions[0];
 
   return (
-    <div className={`sama-game${hideElements ? ' is-hidden' : ''}${isPaused ? ' is-paused' : ''}`}>
+    <div className={`sama-game${hideElements ? ' is-hidden' : ''}${handPaused ? ' is-paused' : ''}`}>
       <div
         ref={stageRef}
         className={`sama-stage is-${phase}`}
@@ -937,19 +962,26 @@ export default function SamaprabhaGame({
             aria-hidden="true"
           >
             <div className="sama-light-core" />
-            <svg className="sama-hold-progress" viewBox="0 0 44 44">
-              <circle className="sama-hold-track" cx="22" cy="22" r="18" />
-              <circle
-                className="sama-hold-fill"
-                cx="22"
-                cy="22"
-                r="18"
-                pathLength="100"
-                strokeDasharray="100"
-                strokeDashoffset={100 - holdProgress * 100}
-              />
-            </svg>
           </div>
+        )}
+
+        {activeClue && phase === 'play' && holdProgress > 0 && (
+          <svg
+            className="sama-hold-ring"
+            viewBox="0 0 100 100"
+            style={{ left: `${activeClue.cx}%`, top: `${activeClue.cy}%` }}
+            aria-hidden="true"
+          >
+            <circle
+              cx="50" cy="50" r="46" fill="none" stroke="#FFD86B" strokeWidth="4" strokeLinecap="round"
+              strokeDasharray={2 * Math.PI * 46}
+              strokeDashoffset={2 * Math.PI * 46 * (1 - holdProgress)}
+              transform="rotate(-90 50 50)"
+              style={{
+                filter: `drop-shadow(0 0 ${4 + holdProgress * 8}px rgba(255, 216, 107, ${0.5 + holdProgress * 0.4}))`,
+              }}
+            />
+          </svg>
         )}
 
         {activeClue && phase === 'play' && lit === 0 && !firstInteractionSentRef.current && introVoStarted && !showDebugPanel && !isHoldingClue && (
@@ -959,9 +991,9 @@ export default function SamaprabhaGame({
             from={{ x: activeClue.cx, y: activeClue.cy }}
             to={{ x: activeClue.cx, y: activeClue.cy }}
             active
-            idleDelay={750}
+            idleDelay={150}
             iterations={1}
-            paused={isPaused}
+            paused={handPaused}
             zIndex={46}
           />
         )}
@@ -975,7 +1007,7 @@ export default function SamaprabhaGame({
             active
             idleDelay={0}
             iterations={1}
-            paused={isPaused}
+            paused={handPaused}
             zIndex={46}
           />
         )}
@@ -989,7 +1021,7 @@ export default function SamaprabhaGame({
             active
             idleDelay={0}
             iterations={1}
-            paused={isPaused}
+            paused={handPaused}
             zIndex={46}
           />
         )}

@@ -6,6 +6,8 @@ import './SuryakotiBankSimplified.css';
 import SceneManager from '../../../../lib/components/scenes/SceneManager';
 import useVoiceGuidance, { estimateSpeechMs } from '../../../../lib/hooks/useVoiceGuidance';
 import useSidebarPause from '../../../../lib/hooks/useSidebarPause';
+import { getLineCue } from '../../../../lib/config/content/voiceCues';
+import { attachSpeechCue, startCueTimer } from '../../../../lib/utils/speechCue';
 import MessageManager from '../../../../lib/components/scenes/MessageManager';
 import InteractionManager from '../../../../lib/components/scenes/InteractionManager';
 import GameStateManager from '../../../../lib/services/GameStateManager';
@@ -271,7 +273,7 @@ const SuryakotiBankContent = ({
     }
   }, []);
 
-  const speakWebSpeech = useCallback((text, onEnded, onStart) => {
+  const speakWebSpeech = useCallback((text, onEnded, onStart, cue) => {
     if (!text) {
       onEnded?.();
       return;
@@ -280,6 +282,7 @@ const SuryakotiBankContent = ({
       // Muted: finish on a silent timer matching the line's length, not instantly,
       // so mute never skips a step (DECISIONS.md 2026-09-29).
       onStart?.();
+      startCueTimer(text, cue); // muted: the hand still lands on the action word's estimated time
       playSilent(text, onEnded);
       return;
     }
@@ -296,6 +299,7 @@ const SuryakotiBankContent = ({
       utterance.pitch = 1;
       utterance.volume = 0.95;
       utterance.onstart = () => onStart?.();
+      attachSpeechCue(utterance, text, cue); // hand appears exactly when the action word is spoken
       const clearTracked = () => {
         if (webSpeechRef.current?.utterance === utterance) webSpeechRef.current = null;
       };
@@ -354,7 +358,7 @@ const SuryakotiBankContent = ({
       sceneComplete: 'You brought back the light and saw what was really there.',
     };
     if (webSpeechMap[key]) {
-      speakWebSpeech(stripLeadingSpeechText(webSpeechMap[key], options.stripLeadingText), onEnded, options.onStart);
+      speakWebSpeech(stripLeadingSpeechText(webSpeechMap[key], options.stripLeadingText), onEnded, options.onStart, options.cue);
       return;
     }
     const script = getVoiceScript(zoneId, sceneId, key);
@@ -460,10 +464,6 @@ const SuryakotiBankContent = ({
   }, [sceneId, sceneState.chantedVerses, sceneState.learnedSyllables, sceneState.learnedWords, sceneState.unlockedApps, zoneId]);
 
   const handleAppDiscoveryCelebrate = useCallback(() => {
-    if (isAudioOn) {
-      playGuidanceVoice('sceneComplete');
-    }
-
     sceneActions.updateState({
       phase: PHASES.COMPLETE,
       stars: 5,
@@ -473,7 +473,7 @@ const SuryakotiBankContent = ({
     persistCompletion();
 
     setShowSparkle('final-fireworks');
-  }, [isAudioOn, persistCompletion, playGuidanceVoice, sceneActions]);
+  }, [persistCompletion, sceneActions]);
 
   useEffect(() => {
     if (
@@ -578,7 +578,7 @@ const SuryakotiBankContent = ({
       setCurrentPhase('suryakotiGame');
       if (isAudioOn && !suryaIntroPlayedRef.current) {
         suryaIntroPlayedRef.current = true;
-        setSuryaIntroComplete(false);
+        setSuryaIntroComplete(true);
         setSuryaIntroVoStarted(false);
         const cancelIntro = safeSetTimeout(() => {
           if (suryaInteractionStartedRef.current) { setSuryaIntroComplete(true); setSuryaIntroVoStarted(true); return; }
@@ -587,7 +587,7 @@ const SuryakotiBankContent = ({
             setSuryaIntroVoStarted(true);
             if (suryaInteractionStartedRef.current) return;
             startIdleTimer();
-          }, { onStart: () => setSuryaIntroVoStarted(true) });
+          }, { cue: getLineCue('scene11_surya_intro', () => setSuryaIntroVoStarted(true)) });
         }, 800);
         return () => cancelIntro?.();
       }
@@ -614,14 +614,14 @@ const SuryakotiBankContent = ({
       setCurrentPhase('samaprabhaGame');
       if (isAudioOn && !samaIntroPlayedRef.current) {
         samaIntroPlayedRef.current = true;
-        setSamaIntroComplete(false);
+        setSamaIntroComplete(true);
         setSamaIntroVoStarted(false);
         playGuidanceVoice('scene11_sama_intro', () => {
           setSamaIntroComplete(true);
           setSamaIntroVoStarted(true);
           if (samaInteractionStartedRef.current) return;
           startIdleTimer();
-        }, { onStart: () => setSamaIntroVoStarted(true) });
+        }, { cue: getLineCue('scene11_sama_intro', () => setSamaIntroVoStarted(true)) });
         return undefined;
       }
       setSamaIntroComplete(true);
@@ -749,6 +749,7 @@ const SuryakotiBankContent = ({
                     stopVoice: stopAllVoice,
                   }}
                   isPaused={isRecorderOpen || sidebarPause.isSidebarPaused}
+                  isSidebarOpen={isRecorderOpen}
                 />
 
                 <SamaprabhaGame
@@ -773,6 +774,7 @@ const SuryakotiBankContent = ({
                     stopVoice: stopAllVoice,
                   }}
                   isPaused={isRecorderOpen || sidebarPause.isSidebarPaused}
+                  isSidebarOpen={isRecorderOpen}
                 />
 
                 {showWordStar && (
@@ -826,6 +828,10 @@ const SuryakotiBankContent = ({
                       isReload={isReload}
                       onPopupOpen={() => {
                         if ([PHASES.SURYAKOTI_GAME, PHASES.SAMAPRABHA_GAME].includes(sceneState.phase)) sidebarPause.beginPause();
+                        // Re-time the teaching hand to the replayed intro's action word (only while the child
+                        // hasn't started playing).
+                        if (!suryaInteractionStartedRef.current && sceneState.phase === PHASES.SURYAKOTI_GAME) setSuryaIntroVoStarted(false);
+                        if (!samaInteractionStartedRef.current && sceneState.phase === PHASES.SAMAPRABHA_GAME) setSamaIntroVoStarted(false);
                         stopAllVoice();
                         stopIdleTimer();
                         setIsRecorderOpen(true);

@@ -63,7 +63,11 @@ export default function SuryakotiGame({
   onFirstInteraction = () => {},
   voiceGuidance = {},
   isPaused = false,
+  // Sidebar actually open (isPaused also covers the short replay hold after it closes): drives the
+  // hand demo, the animation freeze and the hint pin, so the hand can play WITH the replayed line.
+  isSidebarOpen,
 }) {
+  const handPaused = isSidebarOpen ?? isPaused;
   usePreloadPoses(POSE_ASSETS);
   const { playVoice: playSceneLine, playWord, playSyllable, stopVoice } = voiceGuidance;
   const [phase, setPhase] = useState('play');
@@ -107,6 +111,18 @@ export default function SuryakotiGame({
     isPausedRef.current = isPaused;
   }, [isPaused]);
 
+  // Back from the sidebar before the first patch is cleared: the teaching hand plays again
+  // with the replayed intro line.
+  // Not when the child left during an L2/L3 hint: the hint hand only shows once the first
+  // teaching is marked done, so re-arming teaching would switch the hint hand off.
+  const wasPausedForTeachRef = useRef(false);
+  const hintWasActiveRef = useRef(false);
+  useEffect(() => {
+    if (handPaused && !wasPausedForTeachRef.current) hintWasActiveRef.current = hintLevel >= 2;
+    if (wasPausedForTeachRef.current && !handPaused && !hintWasActiveRef.current && activeSpotRef.current === 0) setInitialTeachingDone(false);
+    wasPausedForTeachRef.current = handPaused;
+  }, [handPaused]); // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     onGameCompleteRef.current = onGameComplete;
     onPhaseCompleteRef.current = onPhaseComplete;
@@ -129,6 +145,7 @@ export default function SuryakotiGame({
     pulseInterval: 1800,
     level2Delay: 18000,
     level3Delay: 26000,
+    paused: handPaused,
   });
 
   useEffect(() => {
@@ -384,6 +401,7 @@ export default function SuryakotiGame({
 
   const onPointerDown = useCallback((e) => {
     if (isPaused) return;
+    stopVoice?.();
     if (!firstInteractionSentRef.current) {
       firstInteractionSentRef.current = true;
       onFirstInteraction?.();
@@ -396,7 +414,7 @@ export default function SuryakotiGame({
     drawingRef.current = true;
     const [x, y] = getPos(e);
     mark(x, y);
-  }, [getPos, initialTeachingDone, isPaused, mark, onFirstInteraction]);
+  }, [getPos, initialTeachingDone, isPaused, mark, onFirstInteraction, stopVoice]);
 
   const onPointerMove = useCallback((e) => {
     if (!drawingRef.current || isPaused) return;
@@ -552,7 +570,7 @@ export default function SuryakotiGame({
   })();
 
   return (
-    <div className={`surya-game ${hideElements ? 'is-hidden' : ''} ${isPaused ? 'is-paused' : ''}`} onContextMenu={(e) => e.preventDefault()}>
+    <div className={`surya-game ${hideElements ? 'is-hidden' : ''} ${handPaused ? 'is-paused' : ''}`} onContextMenu={(e) => e.preventDefault()}>
       <div className="surya-stage" style={{ backgroundImage: `url(${sharedSceneBg})` }}>
 
         <SyllableHighlight
@@ -640,11 +658,11 @@ export default function SuryakotiGame({
             from={{ x: cueSpot.cx * 100 - 6, y: cueSpot.cy * 100 - 5 }}
             to={{ x: cueSpot.cx * 100 + 6, y: cueSpot.cy * 100 + 5 }}
             active={introVoStarted}
-            idleDelay={300}
+            idleDelay={150}
             iterations={1}
             onComplete={() => setInitialTeachingDone(true)}
             onDismiss={() => setInitialTeachingDone(true)}
-            paused={isPaused}
+            paused={handPaused}
             zIndex={46}
           />
         )}
@@ -660,7 +678,7 @@ export default function SuryakotiGame({
             active
             idleDelay={0}
             iterations={1}
-            paused={isPaused}
+            paused={handPaused}
             zIndex={46}
           />
         )}
@@ -675,7 +693,7 @@ export default function SuryakotiGame({
             active
             idleDelay={0}
             iterations={2}
-            paused={isPaused}
+            paused={handPaused}
             zIndex={46}
           />
         )}

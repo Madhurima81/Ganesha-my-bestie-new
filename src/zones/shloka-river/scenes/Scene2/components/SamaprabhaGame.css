@@ -259,32 +259,14 @@
   transform: translate(-50%, -50%) scale(1.15);
 }
 
-.sama-hold-progress {
+.sama-hold-ring {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 44%;
-  height: 44%;
-  transform: translate(-50%, -50%) rotate(-90deg);
+  width: calc(clamp(52px, 7vw, 86px) * 1.4);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
   overflow: visible;
   pointer-events: none;
-}
-
-.sama-hold-track,
-.sama-hold-fill {
-  fill: none;
-  stroke-width: 2.7;
-}
-
-.sama-hold-track {
-  stroke: rgba(255, 249, 230, 0.25);
-}
-
-.sama-hold-fill {
-  stroke: rgba(255, 239, 166, 0.95);
-  stroke-linecap: round;
-  transition: stroke-dashoffset 0.05s linear;
-  filter: drop-shadow(0 0 4px rgba(255, 230, 145, 0.5));
+  z-index: 21;
 }
 
 /* HOLD L1 — a stationary ring says "stay here", not "go somewhere else". */
