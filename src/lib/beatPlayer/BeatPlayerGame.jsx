@@ -71,6 +71,17 @@ import './BeatPlayerGame.css';
 
 const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
 
+// Finish handle of the line speakAndWait is currently awaiting, so a child's
+// grab/tap can cut the narration AND let the timeline move on (cancel() alone
+// doesn't reliably fire onend on real devices).
+let activeVoFinish = null;
+const silenceActiveVo = () => {
+  const finish = activeVoFinish;
+  activeVoFinish = null;
+  try { window.speechSynthesis?.cancel(); } catch { /* no-op */ }
+  finish?.();
+};
+
 const speakAndWait = (text, enabled = true) => {
   return new Promise((resolve) => {
     if (
@@ -96,8 +107,10 @@ const speakAndWait = (text, enabled = true) => {
         if (finished) return;
         finished = true;
         clearTimeout(safetyTimer);
+        if (activeVoFinish === finish) activeVoFinish = null;
         resolve();
       };
+      activeVoFinish = finish;
 
       // Real-device speechSynthesis doesn't reliably fire onend/onerror —
       // voices not loaded yet, the tab losing focus, a rapid cancel() right
@@ -1385,10 +1398,10 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
             onContextMenu={(e) => e.preventDefault()}
             onPointerDown={layoutDebug
               ? (e) => startDebugItemDrag(e, debugKey, item)
-              : (isDragKey ? (e) => { onPointerDown(e, item.gameKey); startHold(item.gameKey); } : undefined)}
+              : (isDragKey ? (e) => { silenceActiveVo(); onPointerDown(e, item.gameKey); startHold(item.gameKey); } : undefined)}
             onPointerUp={!layoutDebug && isDragKey ? cancelHold : undefined}
             onPointerLeave={!layoutDebug && isDragKey ? cancelHold : undefined}
-            onClick={layoutDebug ? undefined : (isTriggerKey ? () => onTriggerTap(item.gameKey) : interactive ? () => onTapItem(item.gameKey) : undefined)}
+            onClick={layoutDebug ? undefined : (isTriggerKey ? () => { silenceActiveVo(); onTriggerTap(item.gameKey); } : interactive ? () => { silenceActiveVo(); onTapItem(item.gameKey); } : undefined)}
           >
             <PoseImage src={src} alt="" draggable={false} />
             {!layoutDebug && isDragKey && holdProgress > 0 && (
