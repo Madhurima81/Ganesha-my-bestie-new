@@ -135,7 +135,7 @@
    --------------------------------------------------------- */
 .fjg2-emotion {
   position: absolute;
-  width: clamp(48px, 4.5vw, 72px);
+  width: calc(clamp(48px, 4.5vw, 72px) * var(--emoji-scale, 1));
   height: auto;
   z-index: 30;
   pointer-events: none;
@@ -454,7 +454,7 @@
 }
 .fjg2-belly-mooshika > img:first-child { width: 100%; height: auto; display: block; }
 
-.fjg2-belly-emotion { position: absolute; width: clamp(46px, 4.2vw, 68px); height: auto; animation: fjg2EmotionIn 400ms ease both; }
+.fjg2-belly-emotion { position: absolute; width: calc(clamp(46px, 4.2vw, 68px) * var(--emoji-scale, 1)); height: auto; animation: fjg2EmotionIn 400ms ease both; }
 /* Left column = harder feelings (upset -> nervous -> sad), right column =
    lighter feelings (pleased -> happy -> excited) — a balanced 3-left/3-right
    arc around Mooshika so nothing overlaps his face. */
@@ -473,3 +473,20 @@
 .fjg2--paused *::after {
   animation-play-state: paused !important;
 }
+
+/* ---------------------------------------------------------
+   DEV-ONLY emoji tuner (only rendered when EMOJI_TUNER_ENABLED)
+   --------------------------------------------------------- */
+.fjg2-dbg { position: fixed; top: 150px; left: 12px; z-index: 1300; font-family: 'Nunito', sans-serif; }
+.fjg2-dbg__toggle { border: 1px solid #7c3aed; background: #7c3aed; color: #fff; border-radius: 999px; padding: 8px 14px; font-weight: 700; font-size: 12px; cursor: pointer; }
+.fjg2-dbg__panel { width: 300px; max-height: 80vh; display: flex; flex-direction: column; background: #fff; border: 2px solid #7c3aed; border-radius: 12px; box-shadow: 0 6px 24px rgba(0,0,0,.25); overflow: hidden; font-size: 12px; color: #2b1a4a; }
+.fjg2-dbg__head { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: #7c3aed; color: #fff; font-weight: 800; }
+.fjg2-dbg__head button, .fjg2-dbg__actions button, .fjg2-dbg__jump button { border: 1px solid #7c3aed; background: #fff; color: #7c3aed; border-radius: 8px; padding: 4px 8px; font-weight: 700; cursor: pointer; }
+.fjg2-dbg__jump { display: flex; gap: 6px; padding: 8px 10px 0; }
+.fjg2-dbg__jump button.is-on { background: #7c3aed; color: #fff; }
+.fjg2-dbg__body { overflow-y: auto; padding: 0 10px 8px; }
+.fjg2-dbg__section { margin-top: 8px; font-weight: 800; color: #7c3aed; }
+.fjg2-dbg__row { display: grid; grid-template-columns: 34px 1fr 62px; gap: 6px; align-items: center; padding: 1px 0; }
+.fjg2-dbg__row--check { grid-template-columns: 1fr auto; padding: 8px 10px 4px; }
+.fjg2-dbg__row input[type='number'] { width: 62px; }
+.fjg2-dbg__actions { display: flex; gap: 8px; align-items: center; padding: 8px 10px; border-top: 1px solid #eee; }

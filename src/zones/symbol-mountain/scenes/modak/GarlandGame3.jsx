@@ -177,6 +177,19 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
     try { window.speechSynthesis?.cancel(); } catch { /* no-op */ }
   }, []);
 
+  // Grabbing a flower / the garland cuts whatever instruction is still speaking
+  // (so it doesn't keep talking behind the action). Detach handlers first, then
+  // resolve the awaiting promise so the intro moves on to arming the hint clock.
+  const silenceIntroVO = useCallback(() => {
+    const entry = activeSpeechRef.current;
+    if (!entry) return;
+    activeSpeechRef.current = null;
+    entry.utterance.onend = null;
+    entry.utterance.onerror = null;
+    try { window.speechSynthesis?.cancel(); } catch { /* no-op */ }
+    entry.resolve?.();
+  }, []);
+
   // Re-speak the interrupted line from the start after `settleMs`, resolving the same
   // promise so the awaiting sequence continues; `onSettled` runs once it has finished
   // (or immediately when nothing was interrupted).
@@ -348,6 +361,15 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
       }
       interruptSpeech();
     } else if (wasPausedRef.current) {
+      // A replayed carry line brings the carry hand back with it (it would otherwise be gone
+      // after its first showing even though the instruction is spoken again).
+      const replayText = interruptedSpeechRef.current?.text;
+      if (replayText && (replayText === VO.ready || replayText === VO.carry || replayText === VO.carryDirect)) {
+        after(400, () => {
+          setCarryTeachingGesture(true);
+          after(3200, () => setCarryTeachingGesture(false));
+        });
+      }
       resumeSpeech(400, () => {
         if (wasBuildArmedRef.current && !buildHintStartedAtRef.current) startBuildHintClock();
         if (wasGarlandArmedRef.current && !garlandHintStartedAtRef.current) startGarlandHintClock(true);
@@ -356,7 +378,7 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
       });
     }
     wasPausedRef.current = isPaused;
-  }, [isPaused, interruptSpeech, resumeSpeech, startBuildHintClock, startGarlandHintClock]);
+  }, [isPaused, interruptSpeech, resumeSpeech, startBuildHintClock, startGarlandHintClock, after]);
 
   const liveSlots = GARLAND_SLOTS;
   const placedIds = useMemo(() => new Set(placedFlowers.map((item) => item.id)), [placedFlowers]);
@@ -396,6 +418,7 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
   const threadFlower = (flower) => {
     if (!isBuild || !isActive || isPaused || !flowersArrived
       || threadingLock.current || placedIds.has(flower.id) || placedFlowers.length >= FLOWERS.length) return;
+    silenceIntroVO();
     // A flower tap is the meaningful interaction — no wrong flower exists,
     // so every tap earns a fresh 10/18/26 window.
     startBuildHintClock();
@@ -446,6 +469,7 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
   const startGarlandDrag = (event) => {
     if (!isReady || isPaused) return;
     event.preventDefault();
+    silenceIntroVO();
     event.currentTarget.setPointerCapture?.(event.pointerId);
     const start = getScenePoint(event);
     garlandDragStartRef.current = start;

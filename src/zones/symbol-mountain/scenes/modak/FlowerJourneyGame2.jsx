@@ -70,6 +70,30 @@ const MARSH_STOPS = [
   { x: 84.9, y: 55.4 },
 ];
 
+// Emoji placement/size. Bush/Branch/Marsh are % offsets from Mooshika's box;
+// belly emojis are % offsets from the named edge of Mooshika's box (x is
+// measured from `side`, negative = outside). s = size %. Tunable live from the
+// dev-only "Emoji tuner" panel (Copy JSON -> paste back here).
+const DEFAULT_EMOJI_LAYOUT = {
+  emojiBush: { x: 80, y: -38, s: 100 },
+  emojiBranch: { x: 80, y: -38, s: 100 },
+  emojiMarsh: { x: 80, y: -38, s: 100 },
+  bellyUpset: { side: 'left', x: -62, y: -58, s: 100 },
+  bellyNervous: { side: 'left', x: -68, y: 10, s: 100 },
+  bellySad: { side: 'left', x: -62, y: 78, s: 100 },
+  bellyPleased: { side: 'right', x: -62, y: -58, s: 100 },
+  bellyHappy: { side: 'right', x: -68, y: 10, s: 100 },
+  bellyExcited: { side: 'right', x: -62, y: 78, s: 100 },
+};
+const EMOJI_TUNER_ENABLED = (() => {
+  if (typeof window === 'undefined') return false;
+  const params = new URLSearchParams(window.location.search);
+  if (params.has('debugModak') || window.localStorage.getItem('debugModakUI') === '1') return true;
+  let isDev = false;
+  try { isDev = !!import.meta.env?.DEV; } catch { isDev = false; }
+  return isDev && /game-test|modak-test|\/dev\//.test(window.location.pathname);
+})();
+
 const IDLE_HINT_L1_MS = 10000;
 const IDLE_HINT_L2_MS = 18000;
 const IDLE_HINT_L3_MS = 26000;
@@ -149,6 +173,23 @@ export default function FlowerJourneyGame2({
   // and went") has something to point back to.
   const [emotionTraces, setEmotionTraces] = useState({ bush: null, branch: null, marsh: null });
 
+  const [emojiLayout, setEmojiLayout] = useState(DEFAULT_EMOJI_LAYOUT);
+  const [showEmojiTuner, setShowEmojiTuner] = useState(false);
+  const [dbgShowEmojis, setDbgShowEmojis] = useState(false);
+  const [dbgCopyStatus, setDbgCopyStatus] = useState('');
+  const updateEmojiLayout = useCallback((key, axis, value) => {
+    setEmojiLayout((prev) => ({ ...prev, [key]: { ...prev[key], [axis]: Number(value) } }));
+  }, []);
+  const anchoredEmojiStyle = (key) => ({
+    left: `${emojiLayout[key].x}%`,
+    top: `${emojiLayout[key].y}%`,
+    '--emoji-scale': emojiLayout[key].s / 100,
+  });
+  const bellyEmojiStyle = (key) => {
+    const e = emojiLayout[key];
+    return { [e.side]: `${e.x}%`, top: `${e.y}%`, '--emoji-scale': e.s / 100 };
+  };
+
   const mutedRef = useRef(!isAudioOn);
   useEffect(() => { mutedRef.current = !isAudioOn; }, [isAudioOn]);
 
@@ -157,6 +198,9 @@ export default function FlowerJourneyGame2({
   const { after, cancel: cancelTimer } = usePausableTimers(isPaused);
   const pausedRef = useRef(isPaused);
   pausedRef.current = isPaused;
+  // Set by the belly-feelings sequence: re-pops the six emotion emojis (used when its
+  // VO line is replayed after a sidebar pause, so the visuals replay with the voice).
+  const bellyPopRef = useRef(null);
 
   // Tab-hide safety for this game's direct speechSynthesis use (it bypasses the
   // scene's useVoiceGuidance hook). On hide: detach the active utterance's
@@ -223,6 +267,19 @@ export default function FlowerJourneyGame2({
       interruptedSpeechRef.current = { text: entry.text, resolve: entry.resolve };
     }
     try { window.speechSynthesis?.cancel(); } catch { /* no-op */ }
+  }, []);
+
+  // Grabbing the game cuts whatever line is speaking (the intro instruction) —
+  // detach handlers first, resolve the awaiting promise so the intro sequence
+  // moves on to arming the idle ladder, then cancel the audio.
+  const silenceIntroVO = useCallback(() => {
+    const entry = activeSpeechRef.current;
+    if (!entry) return;
+    activeSpeechRef.current = null;
+    entry.utterance.onend = null;
+    entry.utterance.onerror = null;
+    try { window.speechSynthesis?.cancel(); } catch { /* no-op */ }
+    entry.resolve?.();
   }, []);
 
   // Re-speak the interrupted line from the start after `settleMs`, resolving the same
@@ -343,6 +400,21 @@ export default function FlowerJourneyGame2({
       }
       interruptSpeech();
     } else if (wasPausedRef.current) {
+      // A replayed line brings its teaching hand back with it, timed like the original
+      // (the hand lands on the action word) — otherwise the hand would be gone after the
+      // first showing even though the instruction is spoken again.
+      const replayText = interruptedSpeechRef.current?.text;
+      if (replayText) {
+        const showFlag = (setter, delay) => after(400 + delay, () => {
+          setter(true);
+          after(3800, () => setter(false));
+        });
+        if (replayText === VO.bellyReflection) after(400, () => bellyPopRef.current?.());
+        else if (replayText === VO.bushStart) showFlag(setBushTeachingReady, 3300);
+        else if (replayText === VO.branchStart) showFlag(setBranchTeachingReady, 3300);
+        else if (replayText === VO.marshStart) showFlag(setMarshTeachingReady, 800);
+        else showFlag(setTeachingGesture, 400);
+      }
       resumeSpeech(400, () => {
         // If the resumed story beat armed the ladder itself, leave that alone.
         if (wasArmedRef.current && !idleArmedAtRef.current) idleArmedAtRef.current = Date.now();
@@ -350,7 +422,7 @@ export default function FlowerJourneyGame2({
       });
     }
     wasPausedRef.current = isPaused;
-  }, [isPaused, interruptSpeech, resumeSpeech]);
+  }, [isPaused, interruptSpeech, resumeSpeech, after]);
 
   useEffect(() => {
     idleArmedAtRef.current = null;
@@ -500,18 +572,13 @@ export default function FlowerJourneyGame2({
     bushIntroStartedRef.current = true;
     let cancelled = false;
     (async () => {
-      await wait(350);
-      if (cancelled) return;
-      // Tiny physical approach + recoil from the thorns — a wordless beat,
-      // not tied to VO timing.
+      // Action is live from the first frame — the child can swipe while the
+      // intro VO is still speaking (grabbing cuts the VO, see silenceIntroVO).
+      setBushIntroDone(true);
+      // Tiny physical approach + recoil from the thorns — a wordless beat that
+      // now runs alongside the VO instead of delaying it.
       setBushIntroReaction(true);
-      await wait(430);
-      if (cancelled) return;
-      await wait(470);
-      if (cancelled) return;
-      setBushIntroReaction(false);
-      await wait(150);
-      if (cancelled) return;
+      pTimeout(() => { if (!cancelled) setBushIntroReaction(false); }, 900);
 
       // VO.bushStart = "Two flowers are hiding in the leaves. Swipe them
       // apart." — two short sentences, no named emotion word anymore. At
@@ -571,8 +638,10 @@ export default function FlowerJourneyGame2({
   const handleBushPointerDown = useCallback((e) => {
     if (phase !== PHASES.FLOWER_BUSH || !bushIntroDone || isPaused) return;
     e.preventDefault();
+    silenceIntroVO();
+    setBushTeachingReady(false);
     bushSwipeStartRef.current = { x: e.clientX, y: e.clientY };
-  }, [phase, bushIntroDone, isPaused]);
+  }, [phase, bushIntroDone, isPaused, silenceIntroVO]);
 
   const handleBushPointerUp = useCallback((e) => {
     if (phase !== PHASES.FLOWER_BUSH || !bushIntroDone || isPaused) return;
@@ -646,15 +715,12 @@ export default function FlowerJourneyGame2({
     branchIntroStartedRef.current = true;
     let cancelled = false;
     (async () => {
-      await wait(500);
-      if (cancelled) return;
-      // Mooshika stretches upward, but the flowers are simply too high.
+      // Action is live from the first frame (see Bush intro).
+      setBranchIntroDone(true);
+      // Mooshika stretches upward, but the flowers are simply too high —
+      // runs alongside the VO instead of delaying it.
       setBranchIntroReaction(true);
-      await wait(900);
-      if (cancelled) return;
-      setBranchIntroReaction(false);
-      await wait(200);
-      if (cancelled) return;
+      pTimeout(() => { if (!cancelled) setBranchIntroReaction(false); }, 900);
 
       // VO.branchStart = "Two flowers are too high for Mooshika. Pull the
       // branch down." — one sentence before the action word, no named
@@ -707,12 +773,14 @@ export default function FlowerJourneyGame2({
   const handleBranchPointerDown = useCallback((e) => {
     if (phase !== PHASES.FLOWER_BRANCH || !branchIntroDone || branchComplete || isPaused) return;
     e.preventDefault();
+    silenceIntroVO();
+    setBranchTeachingReady(false);
     e.currentTarget.setPointerCapture?.(e.pointerId);
     branchMeaningfulPullRef.current = false;
     branchWrongDirectionRef.current = false;
     branchDragRef.current = { active: true, startY: e.clientY };
     clearBranchHold();
-  }, [phase, branchIntroDone, branchComplete, isPaused, clearBranchHold]);
+  }, [phase, branchIntroDone, branchComplete, isPaused, clearBranchHold, silenceIntroVO]);
 
   const handleBranchPointerMove = useCallback((e) => {
     if (!branchDragRef.current.active) return;
@@ -804,8 +872,8 @@ export default function FlowerJourneyGame2({
     marshIntroStartedRef.current = true;
     let cancelled = false;
     (async () => {
-      await wait(350);
-      if (cancelled) return;
+      // Action is live from the first frame (see Bush intro).
+      setMarshIntroDone(true);
 
       // "The last two flowers are across the mud. Guide Mooshika from safe
       // spot to safe spot." — only one short setup clause before "Guide",
@@ -844,6 +912,8 @@ export default function FlowerJourneyGame2({
   const handleMarshPointerDown = useCallback((e) => {
     if (phase !== PHASES.FLOWER_MARSH || !marshIntroDone || marshStep >= 4 || marshPointerRef.current || isPaused) return;
     e.preventDefault();
+    silenceIntroVO();
+    setMarshTeachingReady(false);
     const point = marshPointFromEvent(e);
     if (!point) return;
     const current = getCurrentMarshPosition();
@@ -851,7 +921,7 @@ export default function FlowerJourneyGame2({
     marshPointerRef.current = { id: e.pointerId, offsetX: current.x - point.x, offsetY: current.y - point.y };
     e.currentTarget.setPointerCapture?.(e.pointerId);
     setMarshDrag({ active: true, x: current.x, y: current.y });
-  }, [phase, marshIntroDone, marshStep, isPaused, getCurrentMarshPosition]);
+  }, [phase, marshIntroDone, marshStep, isPaused, getCurrentMarshPosition, silenceIntroVO]);
 
   const handleMarshPointerMove = useCallback((e) => {
     const position = marshLandingFromEvent(e);
@@ -974,10 +1044,21 @@ export default function FlowerJourneyGame2({
 
       // All 6 emojis pop in one by one while VO.bellyReflection names them,
       // ~320ms apart so all six are up by ~2s into the line.
-      for (let i = 1; i <= 6; i++) {
-        beatTimers.push(pTimeout(() => { if (!cancelled) setBellyBeat(i); }, i * 320));
-      }
+      // Each emoji lands when its word is spoken ("Mooshika felt" runs ~0.9s before
+      // "upset"), for the first run and any replay alike.
+      const WORD_SYNCED_MS = [900, 1400, 1950, 2500, 3000, 3650];
+      const popEmojis = () => {
+        beatTimers.forEach(cancelTimer);
+        beatTimers.length = 0;
+        setBellyBeat(0);
+        for (let i = 1; i <= 6; i++) {
+          beatTimers.push(pTimeout(() => { if (!cancelled) setBellyBeat(i); }, WORD_SYNCED_MS[i - 1]));
+        }
+      };
+      bellyPopRef.current = popEmojis;
+      popEmojis();
       await speakAsync(VO.bellyReflection);
+      bellyPopRef.current = null;
       if (cancelled) return;
       setBellyBeat(6);
 
@@ -1174,11 +1255,11 @@ export default function FlowerJourneyGame2({
                 aria-label="Guide Mooshika across the stepping stones"
               >
                 <MooshikaWithBasket flowerCount={flowerCount} basketRef={basketTargetRef} />
-                {emotion === 'worried' && (
-                  <img src={emotionWorried} alt="Nervous" className="fjg2-emotion fjg2-emotion--anchored" style={{ left: `${LAYOUT.emojiMarsh.l}%`, top: `${LAYOUT.emojiMarsh.t}%` }} />
+                {(emotion === 'worried' || dbgShowEmojis) && (
+                  <img src={emotionWorried} alt="Nervous" className="fjg2-emotion fjg2-emotion--anchored" style={anchoredEmojiStyle('emojiMarsh')} />
                 )}
                 {emotion === 'excited' && (
-                  <img src={emotionExcited} alt="Excited" className="fjg2-emotion fjg2-emotion--anchored" style={{ left: `${LAYOUT.emojiMarsh.l}%`, top: `${LAYOUT.emojiMarsh.t}%` }} />
+                  <img src={emotionExcited} alt="Excited" className="fjg2-emotion fjg2-emotion--anchored" style={anchoredEmojiStyle('emojiMarsh')} />
                 )}
               </button>
             );
@@ -1224,17 +1305,17 @@ export default function FlowerJourneyGame2({
           style={{ left: `${LAYOUT[mooshikaPhaseKey].l}%`, top: `${LAYOUT[mooshikaPhaseKey].t}%`, '--layout-scale': (LAYOUT[mooshikaPhaseKey].s || 100) / 100 }}
         >
           <MooshikaWithBasket flowerCount={flowerCount} basketRef={basketTargetRef} />
-          {isBushPhase && emotion === 'angry' && (
-            <img src={emotionAngry} alt="Upset" className="fjg2-emotion fjg2-emotion--anchored" style={{ left: `${LAYOUT.emojiBush.l}%`, top: `${LAYOUT.emojiBush.t}%` }} />
+          {isBushPhase && (emotion === 'angry' || dbgShowEmojis) && (
+            <img src={emotionAngry} alt="Upset" className="fjg2-emotion fjg2-emotion--anchored" style={anchoredEmojiStyle('emojiBush')} />
           )}
           {isBushPhase && emotion === 'pleased' && (
-            <img src={emotionPleased} alt="Pleased" className="fjg2-emotion fjg2-emotion--anchored" style={{ left: `${LAYOUT.emojiBush.l}%`, top: `${LAYOUT.emojiBush.t}%` }} />
+            <img src={emotionPleased} alt="Pleased" className="fjg2-emotion fjg2-emotion--anchored" style={anchoredEmojiStyle('emojiBush')} />
           )}
-          {isBranchPhase && emotion === 'sad' && (
-            <img src={emotionSad} alt="Sad" className="fjg2-emotion fjg2-emotion--anchored" style={{ left: `${LAYOUT.emojiBranch.l}%`, top: `${LAYOUT.emojiBranch.t}%` }} />
+          {isBranchPhase && (emotion === 'sad' || dbgShowEmojis) && (
+            <img src={emotionSad} alt="Sad" className="fjg2-emotion fjg2-emotion--anchored" style={anchoredEmojiStyle('emojiBranch')} />
           )}
           {isBranchPhase && emotion === 'relieved' && (
-            <img src={emotionRelieved} alt="Happy" className="fjg2-emotion fjg2-emotion--anchored" style={{ left: `${LAYOUT.emojiBranch.l}%`, top: `${LAYOUT.emojiBranch.t}%` }} />
+            <img src={emotionRelieved} alt="Happy" className="fjg2-emotion fjg2-emotion--anchored" style={anchoredEmojiStyle('emojiBranch')} />
           )}
         </div>
       )}
@@ -1294,13 +1375,76 @@ export default function FlowerJourneyGame2({
             style={{ left: `${LAYOUT.mooshikaBelly.l}%`, top: `${LAYOUT.mooshikaBelly.t}%`, '--layout-scale': (LAYOUT.mooshikaBelly.s || 100) / 100 }}
           >
             <MooshikaWithBasket flowerCount={6} basketRef={basketTargetRef} />
-            {bellyBeat >= 1 && <img src={emotionAngry} alt="Upset" className="fjg2-belly-emotion fjg2-belly-emotion--upset" />}
-            {bellyBeat >= 2 && <img src={emotionSad} alt="Sad" className="fjg2-belly-emotion fjg2-belly-emotion--sad" />}
-            {bellyBeat >= 3 && <img src={emotionWorried} alt="Nervous" className="fjg2-belly-emotion fjg2-belly-emotion--nervous" />}
-            {bellyBeat >= 4 && <img src={emotionPleased} alt="Pleased" className="fjg2-belly-emotion fjg2-belly-emotion--pleased" />}
-            {bellyBeat >= 5 && <img src={emotionRelieved} alt="Happy" className="fjg2-belly-emotion fjg2-belly-emotion--happy" />}
-            {bellyBeat >= 6 && <img src={emotionExcited} alt="Excited" className="fjg2-belly-emotion fjg2-belly-emotion--excited" />}
+            {(bellyBeat >= 1 || dbgShowEmojis) && <img src={emotionAngry} alt="Upset" className="fjg2-belly-emotion fjg2-belly-emotion--upset" style={bellyEmojiStyle('bellyUpset')} />}
+            {(bellyBeat >= 2 || dbgShowEmojis) && <img src={emotionSad} alt="Sad" className="fjg2-belly-emotion fjg2-belly-emotion--sad" style={bellyEmojiStyle('bellySad')} />}
+            {(bellyBeat >= 3 || dbgShowEmojis) && <img src={emotionWorried} alt="Nervous" className="fjg2-belly-emotion fjg2-belly-emotion--nervous" style={bellyEmojiStyle('bellyNervous')} />}
+            {(bellyBeat >= 4 || dbgShowEmojis) && <img src={emotionPleased} alt="Pleased" className="fjg2-belly-emotion fjg2-belly-emotion--pleased" style={bellyEmojiStyle('bellyPleased')} />}
+            {(bellyBeat >= 5 || dbgShowEmojis) && <img src={emotionRelieved} alt="Happy" className="fjg2-belly-emotion fjg2-belly-emotion--happy" style={bellyEmojiStyle('bellyHappy')} />}
+            {(bellyBeat >= 6 || dbgShowEmojis) && <img src={emotionExcited} alt="Excited" className="fjg2-belly-emotion fjg2-belly-emotion--excited" style={bellyEmojiStyle('bellyExcited')} />}
           </div>
+        </div>
+      )}
+
+      {/* ---------------- DEV-ONLY emoji tuner ---------------- */}
+      {EMOJI_TUNER_ENABLED && (
+        <div className="fjg2-dbg" onPointerDown={(e) => e.stopPropagation()}>
+          {!showEmojiTuner ? (
+            <button type="button" className="fjg2-dbg__toggle" onClick={() => setShowEmojiTuner(true)}>Emoji tuner</button>
+          ) : (
+            <div className="fjg2-dbg__panel">
+              <div className="fjg2-dbg__head">
+                <span>Flower Journey emojis</span>
+                <button type="button" onClick={() => setShowEmojiTuner(false)}>close</button>
+              </div>
+              <div className="fjg2-dbg__jump">
+                {[['Bush', PHASES.FLOWER_BUSH], ['Branch', PHASES.FLOWER_BRANCH], ['Marsh', PHASES.FLOWER_MARSH], ['Belly', PHASES.BELLY_RECOGNITION]].map(([label, ph]) => (
+                  <button
+                    key={ph}
+                    type="button"
+                    className={phase === ph ? 'is-on' : ''}
+                    onClick={() => {
+                      if (ph === PHASES.FLOWER_MARSH) branchCompletedRef.current = true;
+                      setEmotion(null);
+                      setPhase(ph);
+                    }}
+                  >{label}</button>
+                ))}
+              </div>
+              <label className="fjg2-dbg__row fjg2-dbg__row--check">
+                <span>Show all emojis (ignore game state)</span>
+                <input type="checkbox" checked={dbgShowEmojis} onChange={(e) => setDbgShowEmojis(e.target.checked)} />
+              </label>
+              <div className="fjg2-dbg__body">
+                {Object.keys(emojiLayout).map((key) => (
+                  <div key={key}>
+                    <div className="fjg2-dbg__section">{key}</div>
+                    {[['x', -150, 150], ['y', -150, 200], ['s', 30, 250]].map(([axis, min, max]) => (
+                      <label key={axis} className="fjg2-dbg__row">
+                        <span>{axis === 's' ? 'size' : axis}</span>
+                        <input type="range" min={min} max={max} step={0.5} value={emojiLayout[key][axis]} onChange={(e) => updateEmojiLayout(key, axis, e.target.value)} />
+                        <input type="number" min={min} max={max} step={0.5} value={emojiLayout[key][axis]} onChange={(e) => updateEmojiLayout(key, axis, e.target.value)} />
+                      </label>
+                    ))}
+                  </div>
+                ))}
+              </div>
+              <div className="fjg2-dbg__actions">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const json = JSON.stringify(emojiLayout, null, 2);
+                    (navigator.clipboard?.writeText(json) || Promise.reject())
+                      .then(() => setDbgCopyStatus('Copied!'))
+                      .catch(() => setDbgCopyStatus('Copy failed — see console'))
+                      .finally(() => setTimeout(() => setDbgCopyStatus(''), 2000));
+                    console.log('[FJ emoji layout]', json);
+                  }}
+                >Copy Layout JSON</button>
+                {dbgCopyStatus && <span>{dbgCopyStatus}</span>}
+                <button type="button" onClick={() => setEmojiLayout(DEFAULT_EMOJI_LAYOUT)}>Reset</button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
