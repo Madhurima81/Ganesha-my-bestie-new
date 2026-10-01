@@ -58,7 +58,6 @@ import SparkleAnimation from '../../../../lib/components/animation/SparkleAnimat
 import SymbolSidebar from '../../shared/components/SymbolSidebar';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
 import InnerMandala from '../../../../lib/components/celebration/InnerMandala';
-import HomeButton from '../../../../lib/components/ui/HomeButton';
 import AudioToggle from '../../../../lib/components/ui/AudioToggle';
 import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
 import VOReplayButton from '../../../../lib/components/feedback/VOReplayButton';
@@ -848,10 +847,9 @@ const SymbolMountainSceneContent = ({
       <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
         <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
           <div className="symbol-mountain-scene-v2-container">
-            <HomeButton onNavigate={(...args) => { stopSpokenVoice(); onNavigate?.(...args); }} />
-            <ZoneBadgeButton zoneId="symbol-mountain" onBack={() => { stopSpokenVoice(); onNavigate?.('zone-welcome'); }} />
-            <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
-            <VOReplayButton
+            <ZoneBadgeButton variant="gameplay" zoneId="symbol-mountain" onBack={() => { stopSpokenVoice(); onNavigate?.('zone-welcome'); }} />
+            <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={toggleAudio} />
+            <VOReplayButton variant="gameplay"
               onReplay={replayCurrentVoice}
               disabled={!isAudioOn || !getPromptKeyForPhase()}
             />

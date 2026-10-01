@@ -1160,7 +1160,7 @@
    bottom bar closer to the edge so everything fits without
    scrolling.
    ========================================================== */
-@media (max-height: 480px) {
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
   .cards-wrapper {
     height: 92vh;
   }

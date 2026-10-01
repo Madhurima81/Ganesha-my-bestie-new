@@ -57,7 +57,6 @@ import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
 import SymbolSidebar from '../../shared/components/SymbolSidebar';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
 import InnerMandala from '../../../../lib/components/celebration/InnerMandala';
-import HomeButton from '../../../../lib/components/ui/HomeButton';
 import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
 import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOverlay';
 import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal';
@@ -1464,7 +1463,6 @@ const PondSceneContent = ({
       <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
         <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
           <div className="pond-scene-container">
-            <HomeButton onNavigate={(...args) => { stopSpokenVoice(); onNavigate?.(...args); }} />
             <div
               ref={pondStageRef}
               className="pond-background"
@@ -2135,9 +2133,9 @@ const PondSceneContent = ({
         </MessageManager>
       </InteractionManager>
 
-      <ZoneBadgeButton zoneId="symbol-mountain" onBack={() => { stopSpokenVoice(); onNavigate?.('zone-welcome'); }} />
-      <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
-      <VOReplayButton
+      <ZoneBadgeButton variant="gameplay" zoneId="symbol-mountain" onBack={() => { stopSpokenVoice(); onNavigate?.('zone-welcome'); }} />
+      <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={toggleAudio} />
+      <VOReplayButton variant="gameplay"
         onReplay={replayCurrentVoice}
         disabled={!isAudioOn || !getPromptKeyForPhase()}
       />

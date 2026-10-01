@@ -81,7 +81,6 @@ import fruitImg from './assets/images/food/fav-fruit.webp';
 import dosaImg from './assets/images/food/fav-dosa.webp';
 import riceImg from './assets/images/food/fav-rice.webp';
 import friendsImg from './assets/images/friends.webp';
-import HomeButton from '../../../lib/components/ui/HomeButton';
 import ZoneBadgeButton from '../../../lib/components/navigation/ZoneBadgeButton';
 import AudioToggle from '../../../lib/components/ui/AudioToggle';
 import VOReplayButton from '../../../lib/components/feedback/VOReplayButton';
@@ -1707,20 +1706,14 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   return (
     <div className="favorite-food-game">
       <img src={foodBg} alt="Background" className="food-background" />
-      <HomeButton onNavigate={(...args) => {
-        SimpleSceneManager.clearCurrentScene();
-        interruptCurrentVoice();
-        clearAllTimeouts();
-        onNavigate?.(...args);
-      }} />
-      <ZoneBadgeButton zoneId="about-me-hut" onBack={() => {
+      <ZoneBadgeButton variant="gameplay" zoneId="about-me-hut" onBack={() => {
         SimpleSceneManager.clearCurrentScene();
         interruptCurrentVoice();
         clearAllTimeouts();
         onNavigate?.('zone-welcome');
       }} />
-      <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
-      <VOReplayButton onReplay={replayCurrentVoice} disabled={!isAudioOn} />
+      <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={toggleAudio} />
+      <VOReplayButton variant="gameplay" onReplay={replayCurrentVoice} disabled={!isAudioOn} />
 
       {discoveryFly && !['food-correct', 'color-correct', 'activity-correct', 'friend-correct'].includes(sceneState.gamePhase) && (
         <div

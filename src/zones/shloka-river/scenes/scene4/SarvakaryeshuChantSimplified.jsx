@@ -20,7 +20,6 @@ import SceneCompletionCelebration from '../../../../lib/components/celebration/S
 import InnerMandala from '../../../../lib/components/celebration/InnerMandala';
 // import ProgressiveHintSystem from '../../../../lib/components/interactive/ProgressiveHintSystem';
 import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal';
-import HomeButton from '../../../../lib/components/ui/HomeButton';
 import AudioToggle from '../../../../lib/components/ui/AudioToggle/AudioToggle';
 import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
 import { SCENE_TO_OUTER_PETAL_ID } from '../../../../lib/components/navigation/ProgressPopup';
@@ -666,10 +665,9 @@ const SarvakaryeshuChantContent = ({
     <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
       <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
         <div className="sarva-scene-container">
-          <HomeButton onNavigate={(...args) => { stopAllVoice(); onNavigate?.(...args); }} />
-          <ZoneBadgeButton zoneId="shloka-river" onBack={() => { stopAllVoice(); onNavigate?.('zone-welcome'); }} />
-          <AudioToggle isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
-          <VOReplayButton onReplay={replayCurrentVoice} disabled={!isAudioOn} />
+          <ZoneBadgeButton variant="gameplay" zoneId="shloka-river" onBack={() => { stopAllVoice(); onNavigate?.('zone-welcome'); }} />
+          <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
+          <VOReplayButton variant="gameplay" onReplay={replayCurrentVoice} disabled={!isAudioOn} />
           <ResumeCountdown value={countdownValue} />
 
           <div

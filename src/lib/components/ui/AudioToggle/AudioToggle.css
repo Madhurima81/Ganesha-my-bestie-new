@@ -97,3 +97,77 @@
   }
 }
 
+/* ============================================================
+   variant="gameplay" — shared gameplay shell (opt-in; other screens keep
+   the legacy look). 60px transparent hit box (CLAUDE.md touch rule),
+   42px visible circle drawn by ::before. Applies on iPad-class AND phone
+   landscape, overriding the 36px iPad rule above. Safe-area aware.
+   ============================================================ */
+@media (min-width: 768px) and (max-width: 1366px), (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
+  .audio-toggle.audio-toggle--gameplay {
+    width: var(--gmb-phone-control-hit, 60px);
+    height: var(--gmb-phone-control-hit, 60px);
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    padding: 0;
+  }
+
+  .audio-toggle--gameplay::before {
+    content: '';
+    position: absolute;
+    inset: var(--gmb-phone-voice-inset, 9px);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.92);
+    border: 2px solid rgba(160, 120, 220, 0.4);
+    box-shadow: 0 3px 8px rgba(140, 120, 180, 0.12);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    pointer-events: none;
+  }
+
+  .audio-toggle.audio-toggle--gameplay .audio-toggle__icon {
+    position: relative;
+    width: var(--gmb-phone-utility-icon, 22px);
+    height: var(--gmb-phone-utility-icon, 22px);
+  }
+
+  /* Keep the muted state readable (the iPad rule above would otherwise win). */
+  .audio-toggle.audio-toggle--gameplay.audio-toggle--on { opacity: 1; }
+  .audio-toggle.audio-toggle--gameplay.audio-toggle--off { opacity: 0.55; }
+  .audio-toggle.audio-toggle--gameplay.audio-toggle--off:hover { opacity: 1; }
+}
+
+/* iPad-class: keep the visible circle where the 36px button used to sit. */
+@media (min-width: 768px) and (max-width: 1366px) {
+  .audio-toggle.audio-toggle--gameplay.audio-toggle--bottom-right {
+    right: calc(10px - var(--gmb-phone-voice-inset, 9px));
+    bottom: calc(26px - var(--gmb-phone-voice-inset, 9px));
+  }
+}
+
+/* Phone landscape placement (declared after the iPad block so it wins on
+   wide phones that also match the iPad width range). */
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
+  .audio-toggle.audio-toggle--gameplay.audio-toggle--bottom-right {
+    right: calc(var(--gmb-safe-right, 0px) + var(--gmb-phone-utility-offset, 0px));
+    bottom: calc(var(--gmb-safe-bottom, 0px) + var(--gmb-phone-utility-offset, 0px));
+  }
+
+  .audio-toggle.audio-toggle--gameplay.audio-toggle--bottom-left {
+    left: calc(var(--gmb-safe-left, 0px) + var(--gmb-phone-utility-offset, 0px));
+    bottom: calc(var(--gmb-safe-bottom, 0px) + var(--gmb-phone-utility-offset, 0px));
+  }
+
+  .audio-toggle.audio-toggle--gameplay.audio-toggle--top-right {
+    right: calc(var(--gmb-safe-right, 0px) + var(--gmb-phone-utility-offset, 0px));
+    top: calc(var(--gmb-safe-top, 0px) + var(--gmb-phone-utility-offset, 0px));
+  }
+
+  .audio-toggle.audio-toggle--gameplay.audio-toggle--top-left {
+    left: calc(var(--gmb-safe-left, 0px) + var(--gmb-phone-utility-offset, 0px));
+    top: calc(var(--gmb-safe-top, 0px) + var(--gmb-phone-utility-offset, 0px));
+  }
+}

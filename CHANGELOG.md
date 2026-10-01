@@ -1,6 +1,12 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
 
+## [2026-10-01] — Mobile Step 1: phone gameplay chrome foundation + Home removed from 13 live scenes
+**Touched:** App.css, ZoneBadgeButton.jsx/.css, AudioToggle.css, VOReplayButton.css, SymbolSidebar.css, ZoneWelcome.css, and the 13 live scene files (NewModakSceneV7, PondSceneSimplifiedV4, SymbolMountainSceneV3, SacredAssemblySceneV8, VakratundaGroveSimplified, SuryakotiBankSimplified, NirvighnamChantSimplified, SarvakaryeshuChantSimplified, ShlokaRiverFinale, Familytreegame, Favoritefoodgame, ObstacleRemoverGame, MyIndianStoryGame).
+**Changed:** Revised the external Step 1 pack before applying (see DECISIONS 2026-10-01): scoped `variant="gameplay"` Zone, 60px hit / 46px visible controls, canonical 500px phone breakpoint (480px rules migrated), fixed-position VOReplay on phone, no safe bands, OFF-state dimming preserved. HomeButton import + render removed from the 13 scenes; Zone kept with `variant="gameplay"`. Parked zones untouched. Not committed.
+**Verified:** eslint clean on changed JSX; no HomeButton refs left in the 13 files. NOT yet checked visually at 667x375 / 844x390 / 932x430.
+**Open:** visual QA at the 3 phone sizes; Step 2 Wisdom button + drawer (reusing useSidebarPause, generic collectionTarget); do not merge/ship before Step 2. Other 480px rules (CleanProfileSelector, Enhanced.css) belong to the later non-gameplay phase. Tablet Voice/Replay still 36px (pre-existing, below the 60px rule) — decide separately.
+
 ## [2026-09-30] — Suryakoti: broad percentage rub bands replace small scratch targets
 **Touched:** src/zones/shloka-river/scenes/Scene2/components/SuryakotiGame.jsx, SuryakotiGame.css.
 **Changed:** Suryakoti now tracks progress with four overlapping normalized rectangle bands (`sur`, `ya`,

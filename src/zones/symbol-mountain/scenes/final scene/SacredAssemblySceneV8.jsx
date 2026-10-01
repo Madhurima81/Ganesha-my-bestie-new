@@ -13,7 +13,6 @@ import MessageManager from "../../../../lib/components/scenes/MessageManager";
 import InteractionManager from "../../../../lib/components/scenes/InteractionManager";
 import GameStateManager from "../../../../lib/services/GameStateManager";
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
-import HomeButton from '../../../../lib/components/ui/HomeButton';
 import AudioToggle from '../../../../lib/components/ui/AudioToggle';
 import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
 import VOReplayButton from '../../../../lib/components/feedback/VOReplayButton';
@@ -1840,10 +1839,9 @@ const SacredAssemblyContent = ({
         sceneActions={sceneActions}
       >
         <div className="sacred-assembly-container">
-          <HomeButton onNavigate={(...args) => { stopGaneshaVoice(); onNavigate?.(...args); }} />
-          <ZoneBadgeButton zoneId="symbol-mountain" onBack={() => { stopGaneshaVoice(); onNavigate?.('zone-welcome'); }} />
-          <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
-          <VOReplayButton
+          <ZoneBadgeButton variant="gameplay" zoneId="symbol-mountain" onBack={() => { stopGaneshaVoice(); onNavigate?.('zone-welcome'); }} />
+          <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={toggleAudio} />
+          <VOReplayButton variant="gameplay"
             onReplay={replayVoiceForCurrentPhase}
             disabled={!isAudioOn}
           />

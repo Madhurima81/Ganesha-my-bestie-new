@@ -18,7 +18,6 @@ import { useGameSounds } from '../../../../lib/hooks/useGameSounds';
 import useRepeatedHintCycle from '../../../../lib/hooks/useRepeatedHintCycle';
 
 import TocaBocaNav from '../../../../lib/components/navigation/TocaBocaNav';
-import HomeButton from '../../../../lib/components/ui/HomeButton/HomeButton';
 import AudioToggle from '../../../../lib/components/ui/AudioToggle/AudioToggle';
 import VOReplayButton from '../../../../lib/components/feedback/VOReplayButton';
 import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
@@ -735,10 +734,9 @@ const ShlokaRiverFinaleContent = ({
           onPointerCancel={handlePointerUp}
           onContextMenu={(e) => e.preventDefault()}
         >
-          <HomeButton onNavigate={(...args) => { stopAllVoice(); onNavigate?.(...args); }} />
-          <ZoneBadgeButton zoneId="shloka-river" onBack={() => { stopAllVoice(); onNavigate?.('zone-welcome'); }} />
-          <AudioToggle isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
-          <VOReplayButton onReplay={replayCurrentVoice} disabled={!isAudioOn} />
+          <ZoneBadgeButton variant="gameplay" zoneId="shloka-river" onBack={() => { stopAllVoice(); onNavigate?.('zone-welcome'); }} />
+          <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
+          <VOReplayButton variant="gameplay" onReplay={replayCurrentVoice} disabled={!isAudioOn} />
 
           {phase === PHASES.INITIAL && (
             <OpeningModal

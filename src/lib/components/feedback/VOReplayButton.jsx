@@ -24,6 +24,7 @@ import './VOReplayButton.css';
  *   speak    function              – useGaneshaVoice().speak
  *   onReplay function              – optional scene-owned replay handler
  *   position 'top-right' | 'top-left' (default 'top-right')
+ *   variant  'gameplay' opts into the 60px-hit / 46px-visible shell used by the 13 live scenes
  *   disabled boolean               – hide when no VO has played yet
  */
 export default function VOReplayButton({
@@ -31,6 +32,7 @@ export default function VOReplayButton({
   speak,
   onReplay,
   position = 'top-right',
+  variant,
   disabled = false,
 }) {
   const [playing, setPlaying] = useState(false);
@@ -57,7 +59,7 @@ export default function VOReplayButton({
   return (
     <button
       type="button"
-      className={`vo-replay-btn vo-replay-btn--${position} ${playing ? 'vo-replay-btn--playing' : ''}`}
+      className={`vo-replay-btn vo-replay-btn--${position} ${playing ? 'vo-replay-btn--playing' : ''}${variant === 'gameplay' ? ' vo-replay-btn--gameplay' : ''}`}
       onClick={handleTap}
       aria-label="Replay voice"
     >

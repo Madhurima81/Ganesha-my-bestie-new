@@ -100,3 +100,77 @@
   }
 }
 
+/* ============================================================
+   variant="gameplay" — shared gameplay shell (opt-in; other screens keep
+   the legacy look). 60px transparent hit box, 40px visible circle drawn by
+   ::before, on iPad-class AND phone landscape (overrides the 36px iPad rule).
+   Phone only: viewport-anchored (position: fixed)
+   and, because top-right is reserved for the upcoming Wisdom button, the
+   default top-right replay sits on the bottom row, immediately left of Voice.
+   ============================================================ */
+@media (min-width: 768px) and (max-width: 1366px), (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
+  .vo-replay-btn.vo-replay-btn--gameplay {
+    width: var(--gmb-phone-control-hit, 60px);
+    height: var(--gmb-phone-control-hit, 60px);
+    background: transparent;
+    opacity: 1;
+  }
+
+  .vo-replay-btn--gameplay::before {
+    content: '';
+    position: absolute;
+    inset: var(--gmb-phone-replay-inset, 10px);
+    border-radius: 50%;
+    background: #ffffff;
+    pointer-events: none;
+  }
+
+  .vo-replay-btn--gameplay .vo-replay-icon {
+    position: relative;
+    width: var(--gmb-phone-utility-icon, 22px);
+    height: var(--gmb-phone-utility-icon, 22px);
+  }
+
+  /* Waves hug the visible circle, not the transparent hit box. */
+  .vo-replay-btn--gameplay .vo-wave {
+    inset: calc(var(--gmb-phone-replay-inset, 10px) - 4px);
+  }
+}
+
+/* iPad-class: visible circle stays where the 36px button used to sit. */
+@media (min-width: 768px) and (max-width: 1366px) {
+  .vo-replay-btn.vo-replay-btn--gameplay.vo-replay-btn--top-right {
+    top: calc(clamp(12px, 2vw, 20px) - var(--gmb-phone-replay-inset, 10px));
+    right: calc(clamp(12px, 2vw, 20px) - var(--gmb-phone-replay-inset, 10px));
+  }
+
+  .vo-replay-btn.vo-replay-btn--gameplay.vo-replay-btn--top-left {
+    top: calc(clamp(12px, 2vw, 20px) - var(--gmb-phone-replay-inset, 10px));
+    left: calc(clamp(12px, 2vw, 20px) - var(--gmb-phone-replay-inset, 10px));
+  }
+}
+
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
+  .vo-replay-btn.vo-replay-btn--gameplay {
+    position: fixed;
+    /* Above scene art, below OpeningModal / SceneCompletionCelebration / sidebar
+       / future Wisdom drawer (all z-index 2000+), which must be able to cover it. */
+    z-index: 1500;
+  }
+
+  .vo-replay-btn.vo-replay-btn--gameplay.vo-replay-btn--top-right {
+    top: auto;
+    right: calc(
+      var(--gmb-safe-right, 0px) +
+      var(--gmb-phone-utility-offset, 0px) +
+      var(--gmb-phone-control-hit, 60px)
+    );
+    bottom: calc(var(--gmb-safe-bottom, 0px) + var(--gmb-phone-utility-offset, 0px));
+  }
+
+  .vo-replay-btn.vo-replay-btn--gameplay.vo-replay-btn--top-left {
+    top: auto;
+    left: calc(var(--gmb-safe-left, 0px) + var(--gmb-phone-utility-offset, 0px));
+    bottom: calc(var(--gmb-safe-bottom, 0px) + var(--gmb-phone-utility-offset, 0px));
+  }
+}

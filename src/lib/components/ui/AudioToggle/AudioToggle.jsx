@@ -14,11 +14,12 @@ import './AudioToggle.css';
  *   isAudioOn  — boolean, current voice-narration state
  *   onToggle   — function, called on tap
  *   position   — 'bottom-right' (default) | 'bottom-left' | 'top-right' | 'top-left'
+ *   variant    — 'gameplay' opts into the 60px-hit / 46px-visible shell used by the 13 live scenes
  */
-const AudioToggle = ({ isAudioOn, onToggle, position = 'bottom-right' }) => {
+const AudioToggle = ({ isAudioOn, onToggle, position = 'bottom-right', variant }) => {
   return (
     <button
-      className={`audio-toggle audio-toggle--${position} ${isAudioOn ? 'audio-toggle--on' : 'audio-toggle--off'}`}
+      className={`audio-toggle audio-toggle--${position} ${isAudioOn ? 'audio-toggle--on' : 'audio-toggle--off'}${variant === 'gameplay' ? ' audio-toggle--gameplay' : ''}`}
       onClick={onToggle}
       aria-label={isAudioOn ? 'Turn off voice narration' : 'Turn on voice narration'}
       title={isAudioOn ? 'Turn off voice' : 'Turn on voice'}

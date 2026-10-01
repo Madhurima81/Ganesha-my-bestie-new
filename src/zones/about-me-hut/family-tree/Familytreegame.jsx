@@ -17,7 +17,6 @@ import { useGaneshaVoice } from '../../../lib/hooks/useGaneshaVoice';
 
 // Pause Menu Components (commented out replaced by HomeButton)
 // import { PauseButton, PauseMenu, PauseBlurOverlay, usePauseEnhancements } from '../../../lib/components/ui/PauseMenu';
-import HomeButton from '../../../lib/components/ui/HomeButton';
 import AudioToggle from '../../../lib/components/ui/AudioToggle/AudioToggle';
 import ZoneBadgeButton from '../../../lib/components/navigation/ZoneBadgeButton';
 import VOReplayButton from '../../../lib/components/feedback/VOReplayButton';
@@ -1342,21 +1341,14 @@ sceneActions.updateState({ gamePhase: 'transition' });
  <div className="family-tree-game">
  <img src={familyTreeBg} alt="Background" className="tree-background" />
 
- {/* Home Button */}
- <HomeButton onNavigate={(...args) => {
- stopVoice();
- stopSpokenVoice();
- SimpleSceneManager.clearCurrentScene();
- onNavigate?.(...args);
- }} />
- <ZoneBadgeButton zoneId="about-me-hut" onBack={() => {
+ <ZoneBadgeButton variant="gameplay" zoneId="about-me-hut" onBack={() => {
  stopVoice();
  stopSpokenVoice();
  SimpleSceneManager.clearCurrentScene();
  onNavigate?.('zone-welcome');
  }} />
- <AudioToggle isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
- <VOReplayButton onReplay={replayCurrentVoice} disabled={!isAudioOn} />
+ <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
+ <VOReplayButton variant="gameplay" onReplay={replayCurrentVoice} disabled={!isAudioOn} />
 
  {showVoiceOffPill && (
  <div className="voice-off-pill">

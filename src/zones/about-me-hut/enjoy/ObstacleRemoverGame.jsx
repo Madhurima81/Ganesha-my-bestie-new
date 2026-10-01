@@ -20,7 +20,6 @@ import { getZoneTheme } from '../../../lib/config/ZoneThemes';
 
 // Shared Components
 import OpeningModal from '../../shared/components/OpeningModal';
-import HomeButton from '../../../lib/components/ui/HomeButton';
 import ZoneBadgeButton from '../../../lib/components/navigation/ZoneBadgeButton';
 import AudioToggle from '../../../lib/components/ui/AudioToggle';
 import VOReplayButton from '../../../lib/components/feedback/VOReplayButton';
@@ -1698,18 +1697,13 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   return (
     <div className="dreams-wishes-game" data-zone="about-me-hut">
       <img src={dreamsBg} alt="Background" className="dreams-background" />
-      <HomeButton onNavigate={(...args) => {
-        interruptCurrentVoice();
-        SimpleSceneManager.clearCurrentScene();
-        onNavigate?.(...args);
-      }} />
-      <ZoneBadgeButton zoneId="about-me-hut" onBack={() => {
+      <ZoneBadgeButton variant="gameplay" zoneId="about-me-hut" onBack={() => {
         interruptCurrentVoice();
         SimpleSceneManager.clearCurrentScene();
         onNavigate?.('zone-welcome');
       }} />
-      <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />
-      <VOReplayButton onReplay={replayCurrentVoice} disabled={!isAudioOn} />
+      <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={toggleAudio} />
+      <VOReplayButton variant="gameplay" onReplay={replayCurrentVoice} disabled={!isAudioOn} />
 
       {/* Story Progress Header */}
       {!sceneState.gamePhase.startsWith('dream') &&

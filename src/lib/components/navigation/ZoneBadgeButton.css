@@ -57,3 +57,43 @@
     opacity: 0.98;
   }
 }
+
+
+/* ============================================================
+   variant="gameplay" — sole top-left control in the 13 live gameplay
+   scenes (Home removed there). Opt-in only: the base rules above stay
+   untouched for scenes that still render HomeButton (parked zones).
+   ============================================================ */
+.zone-badge-button.zone-badge-button--gameplay {
+  top: clamp(12px, 1.5vw, 24px);
+  left: clamp(12px, 1.5vw, 24px);
+  width: clamp(60px, 5.5vw, 68px);
+  height: clamp(60px, 5.5vw, 68px);
+}
+
+/* Phone landscape: 60px transparent hit box, 46px visible badge. */
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
+  .zone-badge-button.zone-badge-button--gameplay {
+    top: calc(var(--gmb-safe-top, 0px) + var(--gmb-phone-edge-offset, 1px));
+    left: calc(var(--gmb-safe-left, 0px) + var(--gmb-phone-edge-offset, 1px));
+    width: var(--gmb-phone-control-hit, 60px);
+    height: var(--gmb-phone-control-hit, 60px);
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    overflow: visible;
+    opacity: 1;
+  }
+
+  .zone-badge-button--gameplay .zone-badge-button__icon {
+    width: var(--gmb-phone-control-visual, 46px);
+    height: var(--gmb-phone-control-visual, 46px);
+    flex: none;
+    box-sizing: border-box;
+    background: rgba(255, 255, 255, 0.92);
+    border: 2px solid rgba(160, 120, 220, 0.4);
+    box-shadow: 0 3px 8px rgba(140, 120, 180, 0.12);
+  }
+}

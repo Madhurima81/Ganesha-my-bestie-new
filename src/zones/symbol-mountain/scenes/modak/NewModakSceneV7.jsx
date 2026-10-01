@@ -66,7 +66,6 @@ import FireworksCompletion from '../../../../lib/components/feedback/FireworksCo
 import SymbolSidebar from '../../shared/components/SymbolSidebar';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
 import InnerMandala from '../../../../lib/components/celebration/InnerMandala';
-import HomeButton from '../../../../lib/components/ui/HomeButton';
 import AudioToggle from '../../../../lib/components/ui/AudioToggle';
 import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
 import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
@@ -1486,11 +1485,10 @@ const NewModakSceneMVPContent = ({
   // ------------------------------------------------------------------
   return (
     <div data-zone="symbol-mountain">
-      {!isFinalTransitionView && <HomeButton onNavigate={(dest) => { stopVoice(); onNavigate?.(dest); }} />}
-      {!isFinalTransitionView && <ZoneBadgeButton zoneId="symbol-mountain" onBack={() => { stopVoice(); onNavigate?.('zone-welcome'); }} />}
-      {!isFinalTransitionView && <AudioToggle isAudioOn={isAudioOn} onToggle={toggleAudio} />}
+      {!isFinalTransitionView && <ZoneBadgeButton variant="gameplay" zoneId="symbol-mountain" onBack={() => { stopVoice(); onNavigate?.('zone-welcome'); }} />}
+      {!isFinalTransitionView && <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={toggleAudio} />}
       {!isFinalTransitionView && (
-        <VOReplayButton
+        <VOReplayButton variant="gameplay"
           getLine={() => lastVoRef.current}
           speak={replaySpeak}
           disabled={!isAudioOn || !lastVoRef.current}

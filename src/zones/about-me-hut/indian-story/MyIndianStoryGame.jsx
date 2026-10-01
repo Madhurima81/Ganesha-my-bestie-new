@@ -15,7 +15,6 @@ import useVoiceGuidance from '../../../lib/hooks/useVoiceGuidance';
 import usePauseAwareTimeout from '../../../lib/hooks/usePauseAwareTimeout';
 import useResumeCountdown from '../../../lib/hooks/useResumeCountdown';
 import ResumeCountdown from '../../../lib/components/feedback/ResumeCountdown';
-import HomeButton from '../../../lib/components/ui/HomeButton';
 import AudioToggle from '../../../lib/components/ui/AudioToggle/AudioToggle';
 import ZoneBadgeButton from '../../../lib/components/navigation/ZoneBadgeButton';
 import VOReplayButton from '../../../lib/components/feedback/VOReplayButton';
@@ -1703,18 +1702,13 @@ const handleComplete = () => {
     <div className="mis-wrapper">
       <img src={bgImage} alt="Background" className="mis-background" />
       <ResumeCountdown value={countdownValue} />
-      <HomeButton onNavigate={(...args) => {
-        stopVoice();
-        SimpleSceneManager.clearCurrentScene();
-        onNavigate?.(...args);
-      }} />
-      <ZoneBadgeButton zoneId="about-me-hut" onBack={() => {
+      <ZoneBadgeButton variant="gameplay" zoneId="about-me-hut" onBack={() => {
         stopVoice();
         SimpleSceneManager.clearCurrentScene();
         onNavigate?.('zone-welcome');
       }} />
-      <AudioToggle isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
-      <VOReplayButton onReplay={replayCurrentVoice} disabled={!isAudioOn} />
+      <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
+      <VOReplayButton variant="gameplay" onReplay={replayCurrentVoice} disabled={!isAudioOn} />
       {/* Sparkles */}
       {sparkleState.type && (
         <div

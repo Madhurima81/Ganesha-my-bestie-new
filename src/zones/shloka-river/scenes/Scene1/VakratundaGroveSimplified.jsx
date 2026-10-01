@@ -28,7 +28,6 @@ import InnerMandala from '../../../../lib/components/celebration/InnerMandala';
 import PowerUnlockOverlay from '../../../../lib/components/overlay/PowerUnlockOverlay'; // ? superseded by SymbolAutoReveal
 import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal';
 // import { PauseButton, PauseMenu } from '../../../../lib/components/ui/PauseMenu'; // ? removed: replaced by home icon
-import HomeButton from '../../../../lib/components/ui/HomeButton';
 import AudioToggle from '../../../../lib/components/ui/AudioToggle/AudioToggle';
 import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
 import { SCENE_TO_OUTER_PETAL_ID } from '../../../../lib/components/navigation/ProgressPopup';
@@ -939,10 +938,9 @@ const VakratundaGroveContent = ({
     <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
       <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
         <div className="vakratunda-simplified-container">
-          <HomeButton onNavigate={(...args) => { stopAllVoice(); onNavigate?.(...args); }} />
-          <ZoneBadgeButton zoneId="shloka-river" onBack={() => { stopAllVoice(); onNavigate?.('zone-welcome'); }} />
-          <AudioToggle isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
-          <VOReplayButton onReplay={replayCurrentVoice} disabled={!isAudioOn} />
+          <ZoneBadgeButton variant="gameplay" zoneId="shloka-river" onBack={() => { stopAllVoice(); onNavigate?.('zone-welcome'); }} />
+          <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
+          <VOReplayButton variant="gameplay" onReplay={replayCurrentVoice} disabled={!isAudioOn} />
           <ResumeCountdown value={countdownValue} />
           <div className="river-background" ref={fxBgRef} onPointerDownCapture={recordPoint} style={{ backgroundImage: `url(${riverBackground})` }}>
             <div style={{ display: showSceneCompletion ? 'none' : 'contents' }}>
@@ -951,8 +949,6 @@ const VakratundaGroveContent = ({
             <div className="vakratunda-scene-banyan">
               <img src={banyanTree} alt="" />
             </div>
-
-            {/* HOME BUTTON — inline green button removed; HomeButton component handles this */}
 
             {/* -- PauseButton — REMOVED (replaced by home icon) --
             <PauseButton

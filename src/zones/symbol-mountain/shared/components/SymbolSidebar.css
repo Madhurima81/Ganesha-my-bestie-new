@@ -401,7 +401,7 @@
    off both edges and the strip crowds the bottom-right mute button.
    Anchor it top-to-near-bottom instead of centring, reserve room for the
    mute control, and let it scroll internally if symbols still overflow. */
-@media (max-height: 480px) {
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
   .ganesha-sidebar {
     top: 6px;
     bottom: 72px;

@@ -1,4 +1,6 @@
-// ZoneBadgeButton.jsx - Zone badge icon shown in game scenes next to HomeButton
+// ZoneBadgeButton.jsx - Zone badge icon shown in game scenes
+// variant="gameplay": sole top-left control of the 13 live gameplay scenes (Home removed there).
+// Without it the button keeps its legacy position beside HomeButton (parked zones).
 // Tap -> goes back to Zone Welcome (NOT the map)
 
 import React from 'react';
@@ -12,12 +14,12 @@ const ZONE_BADGES = {
   'about-me-hut':    { image: '/images/zone-badge/icon-aboutme.webp',    emoji: 'AH', label: 'Lambodara Lodge' },
 };
 
-const ZoneBadgeButton = ({ zoneId, onBack, style = {} }) => {
+const ZoneBadgeButton = ({ zoneId, onBack, variant, style = {} }) => {
   const badge = ZONE_BADGES[zoneId] || { emoji: 'ZN', label: 'Zone' };
 
   return (
     <button
-      className="zone-badge-button"
+      className={`zone-badge-button${variant === 'gameplay' ? ' zone-badge-button--gameplay' : ''}`}
       onClick={onBack}
       title={badge.label}
       aria-label={`Back to ${badge.label}`}
