@@ -59,6 +59,90 @@ TEST_CHECKLISTS['modak-game2-bush-marsh'] = {
   ],
 };
 
+TEST_CHECKLISTS.samaprabha = {
+  title: 'Samaprabha: random taps must not cut hint VO or the hand',
+  items: [
+    { text: 'First-time teaching hand is playing. Tap empty sky / ground (not on the shadow).', expect: 'Hand finishes its pass; intro VO is not cut.' },
+    { text: 'Do nothing ~18s for L2 (hand + VO). Tap empty areas repeatedly.', expect: 'L2 VO plays to the end; hand stays; nothing restarts.' },
+    { text: 'Keep waiting for L3 (about 8s after L2 ends). Tap empty areas again.', expect: 'L3 hand and VO still arrive.' },
+    { text: 'At L2 or L3: press and hold the shadow, then let go early.', expect: 'Ring fills while held; the idle clock restarts on release.' },
+    { text: 'Hold the shadow until the ring completes.', expect: 'Clue lights, hint clears, next clue starts a fresh clock.' },
+    { text: 'During the L2 line, press on the shadow (cuts the line). Wait.', expect: 'L3 still comes on time (no stuck L2).' },
+  ],
+};
+
+TEST_CHECKLISTS.kurumedeva = {
+  title: 'Kurumedeva: wrong drops and grabs keep or escalate hints',
+  items: [
+    { text: 'Drag the help token and drop it far from the friend, twice.', expect: 'Token returns each time; after the 2nd miss L2 help starts.' },
+    { text: 'At L2 or L3: drop the token away from the friend again.', expect: 'Hint and hand stay; the L2 line is not cut off by L3.' },
+    { text: 'Do nothing for L2 and L3. Tap empty areas.', expect: 'Hints keep playing; background taps change nothing.' },
+    { text: 'Drag the help token onto the friend.', expect: 'Friend helps, hint clears, next step starts a fresh clock.' },
+    { text: 'Plank round: with a hint showing, grab a plank and let go in the wrong place.', expect: 'Hint stays up; plank returns.' },
+    { text: 'Plank round: drop a plank in the gap.', expect: 'Plank placed, hint clears, fresh idle clock.' },
+  ],
+};
+
+TEST_CHECKLISTS.mahakaya = {
+  title: 'Mahakaya: grabbing the log keeps a visible hint',
+  items: [
+    { text: 'Wait for L2 (hand + VO). Grab the log and let go without finishing.', expect: 'L2 hand stays up; no reset to L0.' },
+    { text: 'With NO hint showing (first ~10s): grab the log and release.', expect: 'Idle clock restarts (L1 about 10s later).' },
+    { text: 'Tap empty sky/ground at L2 and L3.', expect: 'Hints keep playing; nothing restarts.' },
+    { text: 'Drag the log to finish.', expect: 'Stage completes; hint clears.' },
+  ],
+};
+
+TEST_CHECKLISTS.nirvighnam = {
+  title: 'Nirvighnam: grabbing an obstacle keeps a visible hint',
+  items: [
+    { text: 'Wait for L2 on the rock. Press the rock briefly and let go.', expect: 'L2 hand stays up.' },
+    { text: 'Repeat for the branch and the reed at L2 or L3.', expect: 'Hand stays up each time; teaching hand is gone after a real touch.' },
+    { text: 'Tap empty areas at L2 and L3.', expect: 'Hints keep playing; nothing restarts.' },
+    { text: 'Clear each obstacle for real.', expect: 'Hint clears; next obstacle starts a fresh clock.' },
+  ],
+};
+
+TEST_CHECKLISTS.sarvakaryeshu = {
+  title: 'Sarvakaryeshu: wrong picks escalate help, never clear it',
+  items: [
+    { text: 'Pick a wrong symbol once.', expect: 'Gentle "Try another symbol"; hints not cleared.' },
+    { text: 'Pick a wrong symbol a 2nd time.', expect: 'L2 help starts early.' },
+    { text: 'At L2: pick wrong again.', expect: 'L3 follows only after the L2 line finishes.' },
+    { text: 'Pick the correct symbol.', expect: 'Success; fresh clock for the next card.' },
+  ],
+};
+
+TEST_CHECKLISTS['sr-finale'] = {
+  title: 'Shloka River Finale: boat grabs and wrong boats',
+  items: [
+    { text: 'With L2 or L3 showing: tap a wrong boat.', expect: 'Soft wrong sound; hint stays; a 2nd wrong boat earns L2 early.' },
+    { text: 'With a hint showing: tap or grab the correct boat but do not place it.', expect: 'Hint stays until it is placed.' },
+    { text: 'Place the correct boat.', expect: 'Success; hint clears; fresh clock.' },
+  ],
+};
+
+TEST_CHECKLISTS['sm-pond'] = {
+  title: 'Pond: partial holds and drags keep a visible hint',
+  items: [
+    { text: 'Rock: wait for L2. Hold the rock about a third of the way, then let go. Repeat.', expect: 'Hand stays; the 2nd short hold earns L2/L3 help early.' },
+    { text: 'Rock with no hint showing: hold briefly and release.', expect: 'Idle clock restarts.' },
+    { text: 'Reeds and lotus: do a partial drag/hold at L2.', expect: 'Hand stays up each time.' },
+    { text: 'Tap empty areas while the intro hand plays.', expect: 'Hand finishes (it hides only when you really hold or drag).' },
+    { text: 'Complete rock, reeds and lotus.', expect: 'Each step clears its hint.' },
+  ],
+};
+
+TEST_CHECKLISTS['amh-indian-story'] = {
+  title: 'My Indian Story: hint timing 10s / 18s / 26s',
+  items: [
+    { text: 'Ganesha Home: do nothing after the prompt. Time L1, L2 (with VO), L3.', expect: 'L1 about 10s, L2 about 18s, L3 about 8s after the L2 line ends. No dropping back to L1.' },
+    { text: 'Language guess: do nothing after pressing play. Time the same three levels.', expect: 'Same timing; the level never falls back.' },
+    { text: 'Festival guess: do nothing. Time the three levels.', expect: 'Same timing.' },
+    { text: 'Make a guess in each phase.', expect: 'Hints clear and the phase moves on.' },
+  ],
+};
+
 // Other harness keys that mount the same game share a checklist.
 export const CHECKLIST_ALIASES = {
   'sm-modak-game2': 'modak-game2-new',
