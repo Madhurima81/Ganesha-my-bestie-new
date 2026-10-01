@@ -174,6 +174,7 @@ export default function TestChecklistPanel({ gameKey }) {
   const [pasteText, setPasteText] = useState('');
   const [toast, setToast] = useState('');
   const [saveWarn, setSaveWarn] = useState(false);
+  const [copyBox, setCopyBox] = useState('');
   const [pip, setPip] = useState(null); // { win, root }
   const dragRef = useRef(null);
   const pipRef = useRef(null);
@@ -257,9 +258,28 @@ export default function TestChecklistPanel({ gameKey }) {
   };
 
   const meta = { gameKey, when: new Date().toLocaleString() };
+  // Copy must run against the window the button was clicked in (the popped-out window has
+  // its own clipboard/focus). Falls back to execCommand, then to a select-and-copy box.
   const copyMarkdown = async () => {
-    try { await navigator.clipboard.writeText(buildMarkdown(list, results, meta)); flash('Markdown copied'); }
-    catch { flash('Copy was blocked by the browser'); }
+    const text = buildMarkdown(list, results, meta);
+    const win = pip?.win || window;
+    try {
+      await win.navigator.clipboard.writeText(text);
+      flash('Copied as text'); setCopyBox('');
+      return;
+    } catch { /* fall through */ }
+    try {
+      const ta = win.document.createElement('textarea');
+      ta.value = text;
+      ta.style.cssText = 'position:fixed;left:-9999px;top:0';
+      win.document.body.appendChild(ta);
+      ta.select();
+      const ok = win.document.execCommand('copy');
+      ta.remove();
+      if (ok) { flash('Copied as text'); setCopyBox(''); return; }
+    } catch { /* fall through */ }
+    setCopyBox(text);
+    flash('Copy was blocked. Select the text below and copy it.');
   };
   const downloadReport = () => {
     const slug = (gameKey || 'test').replace(/[^a-z0-9-]/gi, '_');
@@ -364,6 +384,12 @@ export default function TestChecklistPanel({ gameKey }) {
             <div style={{ ...label, marginTop: 6 }}>Share</div>
             <button type="button" onClick={downloadReport} style={btn('pass')}>Download report (.html with screenshots)</button>
             <button type="button" onClick={copyMarkdown} style={btn('plain')}>Copy as text</button>
+            {copyBox && (
+              <textarea
+                readOnly value={copyBox} rows={8} onFocus={(e) => e.target.select()}
+                style={{ ...base, width: '100%', fontSize: 12, padding: 8, border: `1px solid ${C.line}`, borderRadius: 8 }}
+              />
+            )}
             <div style={{ ...label, marginTop: 6 }}>Danger</div>
             <button type="button" onClick={resetRun} style={btn('fail')}>Clear all results for this checklist</button>
             <button type="button" onClick={() => setView('run')} style={btn('quiet', { justifySelf: 'start' })}>Back to steps</button>

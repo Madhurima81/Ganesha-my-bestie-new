@@ -45,6 +45,20 @@ export const TEST_CHECKLISTS = {
   },
 };
 
+TEST_CHECKLISTS['modak-game2-bush-marsh'] = {
+  title: 'Modak Game 2 - Bush and Marsh: partial attempts keep the hint',
+  items: [
+    { text: 'Bush phase: wait ~18s for L2 (hand + VO). Do a short or vertical swipe and let go.', expect: 'L2 hand stays up; the bush springs back; no reset to L0.' },
+    { text: 'Bush phase at L3: do a short swipe again.', expect: 'L3 hand stays up.' },
+    { text: 'Bush phase with NO hint showing (first ~10s): do a short swipe.', expect: 'Idle clock restarts; L1 comes ~10s after the swipe.' },
+    { text: 'Bush phase: do the real sideways swipe.', expect: 'Bush opens, flowers collect, game moves to the Branch phase.' },
+    { text: 'Marsh phase: wait for L2, then start dragging Mooshika but drop on the wrong spot.', expect: 'L2 hand stays up while you drag and after the wrong drop.' },
+    { text: 'Marsh phase at L3: drag part-way and let go.', expect: 'L3 hand stays up; no reset.' },
+    { text: 'Marsh phase: tap the sky / grass at L2 and L3.', expect: 'Nothing changes; hand and VO continue.' },
+    { text: 'Marsh phase: drop Mooshika on the correct safe spot.', expect: 'Hint clears, the next spot pulses, and a fresh idle clock starts.' },
+  ],
+};
+
 // Other harness keys that mount the same game share a checklist.
 export const CHECKLIST_ALIASES = {
   'sm-modak-game2': 'modak-game2-new',
