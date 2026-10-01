@@ -8,6 +8,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import SyllableHighlight from '../../shared/SyllableHighlight';
 import useRepeatedHintCycle from '../../../../lib/hooks/useRepeatedHintCycle';
 import usePausableTimers from '../../../../lib/hooks/usePausableTimers';
+import { getLineCue } from '../../../../lib/config/content/voiceCues';
 import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
 import './MahakayaRescueGame.css';
 
@@ -21,7 +22,9 @@ const SYLLABLES = ['Ma', 'ha', 'ka', 'ya'];
 const AUDIO = { syllables: ['ma', 'ha', 'ka', 'ya'] };
 const TOTAL_LOGS = 4;
 const TOTAL_SYLLABLES = 4;
-const DROP_DIST = 16;
+const DROP_RX = 9.5;
+const DROP_RY = 7;
+const SHOW_HIT_ZONES = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('hitzones');
 const DEBUG_PHASE_OPTIONS = [
   { value: 0, label: 'Start' },
   { value: 1, label: 'After Log 1' },
@@ -145,7 +148,11 @@ export default function MahakayaRescueGame({
   onGameComplete = () => {},
   voiceGuidance = {},
   isPaused = false,
+  // Sidebar actually open (isPaused also covers the short replay hold after it closes): drives the
+  // hand demo, the animation freeze and the hint pin, so the hand can play WITH the replayed line.
+  isSidebarOpen,
 }) {
+  const handPaused = isSidebarOpen ?? isPaused;
   usePreloadPoses(POSE_ASSETS);
   const { playVoice: playSceneLine, playSfx, playSyllable, playWord, stopVoice } = voiceGuidance;
 
@@ -191,7 +198,7 @@ export default function MahakayaRescueGame({
   // GMB Hint Standard v1 — 10s/18s/26s from mount or last interaction, flat
   // across every log. Suppressed while the child is actively dragging, so
   // hints don't fire over their hand mid-gesture.
-  const { hintLevel, markInteraction, markLevel2VoiceStarted, markLevel2VoiceEnded } = useRepeatedHintCycle({
+  const { hintLevel, markAttempt, markLevel2VoiceStarted, markLevel2VoiceEnded } = useRepeatedHintCycle({
     enabled: isActive && !isPaused && phase === 'play' && !debugMode && !dragging,
     stageKey: hintStageKey,
     initialDelay: 10000,
@@ -199,6 +206,7 @@ export default function MahakayaRescueGame({
     pulseInterval: 1800,
     level2Delay: 18000,
     level3Delay: 26000,
+    paused: handPaused,
   });
 
   // Repeated wrong drops bring the L2-style destination clarity in earlier —
@@ -263,6 +271,18 @@ export default function MahakayaRescueGame({
     lastHintVoRef.current = null;
   }, [clearTimers]);
 
+  // Back from the sidebar with log 1 still unfinished: the teaching hand plays again with
+  // the replayed intro line (it would otherwise be gone once its first showing ended).
+  // The replayed intro's cue (below) re-times it: reset the started flag so the hand waits for "Drag".
+  const wasPausedForTeachRef = useRef(false);
+  useEffect(() => {
+    if (wasPausedForTeachRef.current && !handPaused && completedLogsRef.current === 0) {
+      setTeachingCompleteKey(null);
+      setIntroVoStarted(false);
+    }
+    wasPausedForTeachRef.current = handPaused;
+  }, [handPaused]);
+
   useEffect(() => {
     isPausedRef.current = isPaused;
     if (isPaused) {
@@ -286,8 +306,10 @@ export default function MahakayaRescueGame({
     // blind fixed delay from mount can fire the demo before/under the VO).
     // Fallback timer covers muted audio or no speechSynthesis support, where
     // onStart never fires.
-    playSceneLine?.('scene10_maha_intro', undefined, { onStart: () => setIntroVoStarted(true) });
-    after(1200, () => setIntroVoStarted(true));
+    // The hand is cued to the action word ("Drag") of the line, not to a guessed delay.
+    playSceneLine?.('scene10_maha_intro', undefined, { cue: getLineCue('scene10_maha_intro', () => setIntroVoStarted(true)) });
+    // Safety net only (e.g. no speech engine at all).
+    after(6000, () => setIntroVoStarted(true));
     return clearTimers;
     // Voice and timer helpers are stable enough for this scene lifecycle.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -555,7 +577,9 @@ export default function MahakayaRescueGame({
     // speechSynthesis utterance can jank touch responsiveness until it ends
     // (matches the stopVoice-on-grab pattern other drag scenes already use).
     stopVoice?.();
-    markInteraction();
+    // Grabbing the log is an attempt, not progress: a visible hint stays up; the idle clock only
+    // restarts when no hint is showing. Finishing the stage changes hintStageKey, which resets it.
+    markAttempt();
     // The child has demonstrated they understand — stop the teaching demo
     // from continuing to animate over their finger.
     if (needsInitialTeaching && !teachingComplete) setTeachingCompleteKey(hintStageKey);
@@ -606,8 +630,9 @@ export default function MahakayaRescueGame({
         captureTarget.releasePointerCapture?.(e.pointerId);
       }
       const point = pointFromEvent(e) || logPosRef.current || logPos;
-      const dist = point ? Math.hypot(point.l - currentTargetLog.l, point.t - currentTargetLog.t) : Infinity;
-      if (dist < DROP_DIST) {
+      const dx = point ? (point.l - currentTargetLog.l) / DROP_RX : Infinity;
+      const dy = point ? (point.t - currentTargetLog.t) / DROP_RY : Infinity;
+      if (dx * dx + dy * dy <= 1) {
         logPosRef.current = null;
         completeRound();
         return;
@@ -711,7 +736,7 @@ export default function MahakayaRescueGame({
   return (
     <div
       ref={stageRef}
-      className={`maha-game ${hideElements ? 'is-hidden' : ''} ${debugMode ? 'is-debugging' : ''} ${isPaused ? 'is-paused' : ''}`}
+      className={`maha-game ${hideElements ? 'is-hidden' : ''} ${debugMode ? 'is-debugging' : ''} ${handPaused ? 'is-paused' : ''}`}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
@@ -794,6 +819,24 @@ export default function MahakayaRescueGame({
 
       {ANIMALS.map((_, index) => renderAnimal(index))}
 
+      {SHOW_HIT_ZONES && activeLog < TOTAL_LOGS && (
+        <div
+          style={{
+            position: 'absolute',
+            left: `${currentTargetLog.l - DROP_RX}%`,
+            top: `${currentTargetLog.t - DROP_RY}%`,
+            width: `${DROP_RX * 2}%`,
+            height: `${DROP_RY * 2}%`,
+            borderRadius: '50%',
+            border: '2px solid rgba(255, 0, 90, 0.85)',
+            background: 'rgba(255, 0, 90, 0.1)',
+            pointerEvents: 'none',
+            zIndex: 60,
+          }}
+          aria-hidden="true"
+        />
+      )}
+
       {/* Soft water placement zone for the current log. Hidden by default —
           no permanent strong dropzone from the start. L1 shows a broad, vague
           breathing area (not the exact spot); L2+/dragging/repeated-miss
@@ -850,12 +893,12 @@ export default function MahakayaRescueGame({
           && ((needsInitialTeaching && !teachingComplete && introVoStarted) || effectiveHintLevel >= 2)
         }
         replayKey={needsInitialTeaching && !teachingComplete ? 'teaching' : effectiveHintLevel}
-        idleDelay={needsInitialTeaching && !teachingComplete ? 600 : 0}
+        idleDelay={needsInitialTeaching && !teachingComplete ? 150 : 0}
         // One pass for the automatic first-time teaching demo — a repeat
         // reads as nagging and delays the child's own turn. The L2/L3 hint
         // ladder (only shown if the child gets stuck) keeps its 2 passes.
         iterations={needsInitialTeaching && !teachingComplete ? 1 : 2}
-        paused={isPaused}
+        paused={handPaused}
         onComplete={() => {
           if (needsInitialTeaching && !teachingComplete) setTeachingCompleteKey(hintStageKey);
         }}

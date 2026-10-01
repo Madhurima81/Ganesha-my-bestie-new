@@ -11,11 +11,14 @@ import { useCallback, useEffect, useRef, useState } from 'react';
  * Pointer movement is not interaction; a valid attempt is; meaningful progress resets hints.
  * - markProgress()           correct, meaningful action (tap/drag start/hold start)
  * - markContinuousProgress() same, throttled ~700ms, for rub/drag/hold move events
+ * - markAttempt()            genuine but incomplete attempt (grabbed the right item): keeps a
+ *                            visible hint, restarts the idle clock only if none is showing
  * - markWrongAttempt()       real attempt on a valid target, wrong result
  * - random touches           call nothing
  * `markInteraction()` is a temporary alias for markProgress().
  */
 const CONTINUOUS_PROGRESS_THROTTLE_MS = 700;
+const LEVEL2_VOICE_SAFETY_MS = 12000;
 
 export default function useRepeatedHintCycle({
   enabled = true,
@@ -194,13 +197,8 @@ export default function useRepeatedHintCycle({
   // Call once the caller's L2 hint line finishes speaking. Replaces the
   // fixed-mark L3 fallback with an 8s-after-this-moment timer, so L3 never
   // fires while (or right on top of) the L2 line still speaking.
-  const markLevel2VoiceStarted = useCallback(() => {
-    if (realHintLevel !== 2) return;
-    level2VoiceStartedRef.current = true;
-  }, [realHintLevel]);
-
   const markLevel2VoiceEnded = useCallback(() => {
-    if (realHintLevel !== 2) return;
+    if (realLevelRef.current !== 2) return;
     level2VoiceStartedRef.current = false;
     if (level3TimerRef.current) {
       window.clearTimeout(level3TimerRef.current);
@@ -215,7 +213,26 @@ export default function useRepeatedHintCycle({
     }, gapMs);
     timersRef.current.push(t);
     level3TimerRef.current = t;
-  }, [realHintLevel, level2Delay, level3Delay]);
+  }, [level2Delay, level3Delay]);
+
+  // While the L2 line is "speaking", L3 is held back until the caller reports it ended. If that
+  // report never comes (line cut by a tap, or the browser never fires its "ended" event), L3 would
+  // be gated forever — so after a generous limit treat the line as ended.
+  const markLevel2VoiceStarted = useCallback(() => {
+    if (realLevelRef.current !== 2) return;
+    level2VoiceStartedRef.current = true;
+    const safety = window.setTimeout(() => {
+      if (level2VoiceStartedRef.current) markLevel2VoiceEnded();
+    }, LEVEL2_VOICE_SAFETY_MS);
+    timersRef.current.push(safety);
+  }, [markLevel2VoiceEnded]);
+
+  // A genuine attempt that is NOT progress (grabbed the right item, partial hold/drag): it must not
+  // clear a hint that is already showing, but with no hint showing it restarts the idle clock.
+  const markAttempt = useCallback(() => {
+    if (realLevelRef.current >= 1) return;
+    schedule();
+  }, [schedule]);
 
   useEffect(() => {
     wrongAttemptCountRef.current = 0;
@@ -248,6 +265,7 @@ export default function useRepeatedHintCycle({
     hintLevel,
     pulseTick,
     markProgress,
+    markAttempt,
     markWrongAttempt,
     markContinuousProgress,
     markInteraction, // temporary alias -> markProgress

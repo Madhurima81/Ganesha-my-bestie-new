@@ -744,9 +744,13 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   }, [phase, childAge, isAudioOn, isReload, speak, markPromptReady]);
 
   // Opening VO: dedicated path for reliability on scene entry.
+  // Played once per mount: muted, it completes silently and counts as played, so
+  // unmuting later never resurrects the opening line.
+  const openingVoPlayedRef = useRef(false);
   useEffect(() => {
-    if (phase === STEPS.OPENING && isAudioOn) {
-      setVoiceVolume(OPENING_VO_VOLUME);
+    if (phase === STEPS.OPENING && !openingVoPlayedRef.current) {
+      openingVoPlayedRef.current = true;
+      if (isAudioOn) setVoiceVolume(OPENING_VO_VOLUME);
       playVoice('opening');
     }
   }, [phase, isAudioOn, playVoice, setVoiceVolume]);
@@ -1201,9 +1205,8 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   // Ganesha Home: Idle hint progression (Level 1 @ 10s, Level 2 @ 18s, Level 3 @ 26s)
   useEffect(() => {
     if (phase !== STEPS.GANESHA_HOME || discoveredLocations.length === PHASE1_LOCATIONS.length || !ganeshaHomePromptReady) {
-      if (ganeshaHomeIdleLevel > 0) {
-        if (import.meta.env.DEV) console.log('[Idle Hint] Cleared: Exiting Ganesha Home phase or all spots discovered');
-      }
+      // NOTE: the level state must NOT be read here or listed in the deps below — a dependency on
+      // the effect's own level re-ran it on every L1/L2/L3 change and restarted the 10/18/26 chain.
       setGaneshaHomeIdleLevel(0);
       ganeshaHomeIdleVoiceRef.current = false;
       if (ganeshaHomeIdleTimerRef.current) clearTimeout(ganeshaHomeIdleTimerRef.current);
@@ -1242,7 +1245,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     return () => {
       if (ganeshaHomeIdleTimerRef.current) clearTimeout(ganeshaHomeIdleTimerRef.current);
     };
-  }, [phase, discoveredLocations.length, returnHintNonce, speakIfUnmuted, childAge, ganeshaHomePromptReady, ganeshaHomeIdleRestartNonce, ganeshaHomeIdleLevel]);
+  }, [phase, discoveredLocations.length, returnHintNonce, speakIfUnmuted, childAge, ganeshaHomePromptReady, ganeshaHomeIdleRestartNonce]);
 
   // Language Ganesha pre-play nudges: immediate visual Play-button teaching only.
   useEffect(() => {
@@ -1309,9 +1312,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   // Language Ganesha: Idle hint progression (Level 1 @ 10s, Level 2 @ 18s, Level 3 @ 26s)
   useEffect(() => {
     if (phase !== STEPS.LANGUAGE_GANESHA || shakeLang !== null || langGuessPhase !== 'guessing' || !hasPressedLanguagePlay || !showLanguageCards || !languageGuessPromptReady) {
-      if (langGuessIdleLevel > 0) {
-        if (import.meta.env.DEV) console.log('[Idle Hint Language] Cleared: Exiting phase or user made a guess');
-      }
+      // (level state intentionally not read/listed in deps — see Ganesha Home ladder above)
       setLangGuessIdleLevel(0);
       langGuessIdleVoiceRef.current = false;
       if (langGuessIdleTimerRef.current) clearTimeout(langGuessIdleTimerRef.current);
@@ -1364,14 +1365,12 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     return () => {
       if (langGuessIdleTimerRef.current) clearTimeout(langGuessIdleTimerRef.current);
     };
-  }, [phase, langGuessPhase, shakeLang, returnHintNonce, speakIfUnmuted, childAge, hasPressedLanguagePlay, showLanguageCards, VOICE.language_audio, VOICE.language_guess_hint, langIdleRestartNonce, languageGuessPromptReady, langGuessIdleLevel, isAudioOn]);
+  }, [phase, langGuessPhase, shakeLang, returnHintNonce, speakIfUnmuted, childAge, hasPressedLanguagePlay, showLanguageCards, VOICE.language_audio, VOICE.language_guess_hint, langIdleRestartNonce, languageGuessPromptReady, isAudioOn]);
 
   // Festival Ganesha: Idle hint progression (Level 1 @ 10s, Level 2 @ 18s, Level 3 @ 26s)
   useEffect(() => {
     if (phase !== STEPS.FESTIVALS_GANESHA || shakeGuess !== null || guessPhase !== 'guessing' || !festivalGuessPromptReady) {
-      if (festGuessIdleLevel > 0) {
-        if (import.meta.env.DEV) console.log('[Idle Hint Festival] Cleared: Exiting phase or user made a guess');
-      }
+      // (level state intentionally not read/listed in deps — see Ganesha Home ladder above)
       setFestGuessIdleLevel(0);
       festGuessIdleVoiceRef.current = false;
       if (festGuessIdleTimerRef.current) clearTimeout(festGuessIdleTimerRef.current);
@@ -1408,7 +1407,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     return () => {
       if (festGuessIdleTimerRef.current) clearTimeout(festGuessIdleTimerRef.current);
     };
-  }, [phase, guessPhase, shakeGuess, returnHintNonce, speakIfUnmuted, childAge, festivalGuessPromptReady, VOICE.festivals_guess_hint, festGuessIdleLevel]);
+  }, [phase, guessPhase, shakeGuess, returnHintNonce, speakIfUnmuted, childAge, festivalGuessPromptReady, VOICE.festivals_guess_hint]);
 
   // Save progress
   const saveProgress = (region, langs, fests, stepValue = phase) => {

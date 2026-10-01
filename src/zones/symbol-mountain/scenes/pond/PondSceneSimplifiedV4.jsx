@@ -41,6 +41,8 @@ import { useGaneshaVoice } from '../../../../lib/hooks/useGaneshaVoice';
 import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
 import AudioToggle from '../../../../lib/components/ui/AudioToggle';
 import usePauseAwareTimeout from '../../../../lib/hooks/usePauseAwareTimeout';
+import useSidebarPause from '../../../../lib/hooks/useSidebarPause';
+import { getLineCue } from '../../../../lib/config/content/voiceCues';
 import useResumeCountdown from '../../../../lib/hooks/useResumeCountdown';
 import ResumeCountdown from '../../../../lib/components/feedback/ResumeCountdown';
 import VOReplayButton from '../../../../lib/components/feedback/VOReplayButton';
@@ -58,6 +60,7 @@ import SymbolSidebar from '../../shared/components/SymbolSidebar';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
 import InnerMandala from '../../../../lib/components/celebration/InnerMandala';
 import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
+import { getCollectionTarget } from '../../../../lib/utils/collectionTarget';
 import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOverlay';
 import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal';
 
@@ -118,7 +121,7 @@ const VOICE_LINES = {
   trunkSuccess: 'The water reached the lotus.',
 
   // Lotus phase (press-and-hold to bloom) — second
-  lotusRound: 'The water reached the lotus. Hold the bud to help it bloom.',
+  lotusRound: 'Hold the bud to help it bloom.',
   earlyLotus: 'Keep holding.',
   idleLotusL2: 'Press and hold the bud.',
   idleLotusL3: 'Keep holding until it blooms.',
@@ -154,6 +157,7 @@ const WATER_TO_REEDS_MS = 900;
 const WATER_TO_POND_MS = 1100;
 const POND_OVERLAY_MID = null;
 const POND_OVERLAY_FRONT = '';
+const SHOW_HIT_ZONES = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('hitzones');
 // =============================================================
 
 // Error Boundary Component
@@ -416,6 +420,16 @@ const PondSceneContent = ({
   // Audio
   const { isAudioOn, toggleAudio } = useAudioPreference();
   const { speak, stop: stopSpokenVoice, mute: muteSpokenVoice } = useGaneshaVoice();
+  // Sidebar = true pause: tracks the in-flight line so it can be replayed after the sidebar closes.
+  const sidebarPause = useSidebarPause();
+  const {
+    playTracked,
+    beginPause: beginSidebarPause,
+    endPause: endSidebarPause,
+  } = sidebarPause;
+  const pondPaused = isSymbolPopupOpen || sidebarPause.isSidebarPaused;
+  // Beat = current phase. Set during render so a clip started this render is tagged with it.
+  sidebarPause.setBeat(String(sceneState?.phase));
   const { setGlobalVolume } = useGameSounds();
   const { startMusic, stopMusic, setVoiceVolume, playCorrect, playPowerUnlock, playCelebration } = useVoiceGuidance(
     zoneId, sceneId, {
@@ -504,9 +518,14 @@ const PondSceneContent = ({
     setHintResetKey(k => k + 1);
   }, []);
 
-  // A genuine attempt earns a fresh 10 / 18 / 26 window — distinct from
-  // resetting on every tap, which would let idle-only touches postpone help.
+  // A genuine attempt (hold past ~20%, drag past ~12%) earns a fresh 10 / 18 / 26 window ONLY when
+  // no hint is showing. It is not progress, so a hint already up (L1/L2/L3, hand + VO) stays until
+  // the mechanic is completed — and it no longer wipes the failed-attempt streak, so repeated
+  // partial tries still earn L2/L3 help early.
+  const effectiveHintLevelRef = useRef(0);
+  effectiveHintLevelRef.current = effectiveHintLevel;
   const markMeaningfulInteraction = useCallback(() => {
+    if (effectiveHintLevelRef.current >= 1) return;
     setForcedHintLevel(0);
     lastSpokenHintLevelRef.current = 0;
     rearmIdleHints();
@@ -517,6 +536,7 @@ const PondSceneContent = ({
   // not just after the idle-hint ladder escalates. Auto-clears after 6s (or
   // instantly on any touch, via GestureDemo's own dismiss-on-pointerdown).
   const [pondIntroGesture, setPondIntroGesture] = useState(false);
+  const safeSetTimeoutRef = useRef((fn, ms) => { const id = window.setTimeout(fn, ms); return () => window.clearTimeout(id); });
   // Keyed on the actual gameplay beat (rock / flowers / lotus), not on every
   // raw phase change — INITIAL -> ROCK_MOVING is a beat the child causes by
   // already holding, and retriggering the tutorial mid-hold is wrong.
@@ -534,36 +554,62 @@ const PondSceneContent = ({
       setPondIntroGesture(false);
       return undefined;
     }
-    // Teaching should appear when the ACTION WORD in that beat's instruction
-    // VO is spoken, not the instant the phase starts — that's actually
-    // before the VO even begins (its own promptDelay staggers VO start by
-    // 500-900ms below), let alone before the action word inside it.
-    // Each line is a full sentence before the action word (6-7 words), not
-    // a short clause — at this scene's TTS rate (~142 wpm + sentence-end
-    // pause) that's ~2.5-3.3s of speech, not the ~800ms this was tuned for
-    // before (which fired the teaching hand mid-setup-sentence).
-    const teachDelay = interactionBeat === 'rock'
-      ? 850 + 2900   // "The rock is blocking the stream." (6 words) before "Press"
-      : interactionBeat === 'flowers'
-        ? WATER_TO_REEDS_MS + 3325  // "The flowers are in the water's way." (7 words) before "Gently"
-        : 500 + 2475; // lotus: "The water reached the lotus." (5 words) before "Hold"
-    const showTimer = window.setTimeout(() => setPondIntroGesture(true), teachDelay);
-    const hideTimer = window.setTimeout(() => setPondIntroGesture(false), teachDelay + 6000);
-    return () => { window.clearTimeout(showTimer); window.clearTimeout(hideTimer); };
+    // The hand is cued to the ACTION WORD of this beat's prompt line (see speakPondPromptRaw),
+    // not to a guessed delay — a beat change just clears any hand left from the previous beat.
+    setPondIntroGesture(false);
+    return undefined;
   }, [interactionBeat]);
 
-  const speakPondPrompt = useCallback((key, onEnd) => {
+  const speakPondPromptRaw = useCallback((key, onEnd) => {
     if (!VOICE_LINES[key]) {
       onEnd?.();
       return;
     }
+    // Round prompts carry the teaching hand: it appears exactly when the action word is spoken.
+    const showHand = () => {
+      setPondIntroGesture(true);
+      safeSetTimeoutRef.current(() => setPondIntroGesture(false), 6000);
+    };
     speak(VOICE_LINES[key], {
       age: 7,
       style: 'child',
       moment: key === 'complete' ? 'celebration' : 'encouragement',
-      onEnd
+      onEnd,
+      cue: ['rockRound', 'reedsRound', 'lotusRound'].includes(key) ? getLineCue(`pond:${key}`, showHand) : null
     });
   }, [isAudioOn, speak]);
+
+  // Every prompt / hint line runs through playTracked so a sidebar stop can never fire
+  // its onEnd (the ladder would arm behind the panel) and it can be replayed on close.
+  // Which line is speaking right now — read when the sidebar opens so the hand that goes with
+  // it (teaching / hint demo) can come back with the replayed line.
+  const currentLineKeyRef = useRef(null);
+  const interruptedLineKeyRef = useRef(null);
+  const replayGestureTimersRef = useRef([]);
+  const speakPondPrompt = useCallback((key, onEnd) => {
+    playTracked('line', (done) => {
+      currentLineKeyRef.current = key;
+      speakPondPromptRaw(key, () => {
+        if (currentLineKeyRef.current === key) currentLineKeyRef.current = null;
+        done();
+      });
+    }, onEnd);
+  }, [playTracked, speakPondPromptRaw]);
+
+  // The replayed line brings its hand back: prompt lines re-cue the teaching hand on their
+  // action word automatically (the cue is part of the line); hint lines re-show that level's demo.
+  const replayGestureFor = useCallback((key) => {
+    const later = (fn, ms) => { replayGestureTimersRef.current.push(window.setTimeout(fn, ms)); };
+    const SETTLE = 400; // matches the sidebar-pause settle before the replay starts
+    const hintLevel = /L3$/.test(key) ? 3 : /L2$/.test(key) ? 2 : 0;
+    if (hintLevel) {
+      later(() => {
+        // Mark it spoken so the hint effect doesn't speak it a second time.
+        lastSpokenHintLevelRef.current = hintLevel;
+        setForcedHintLevel(hintLevel);
+      }, SETTLE);
+    }
+  }, []);
 
   // 1st mistake: a short, specific corrective VO (when the caller passes
   // one — hold-type mechanics only, per the drag/hold/tap wrong-action
@@ -638,11 +684,25 @@ const PondSceneContent = ({
     }
   }, [getPromptKeyForPhase, resetIdleBaseline, speakPondPrompt, rearmIdleHints]);
 
-  const { safeSetTimeout, clearAll: clearAllTimeouts } = usePauseAwareTimeout({
+  const { safeSetTimeout, clearAll: clearAllTimeouts, freeze: freezeTimeouts, thaw: thawTimeouts } = usePauseAwareTimeout({
     onHide: onPauseHide,
     onShow: onPauseShow,
     resumeDelay: RESUME_DELAY_MS,
   });
+  safeSetTimeoutRef.current = safeSetTimeout;
+
+  // Sidebar hold released (after any replay finished): thaw timers and start a fresh
+  // 10/18/26 clock — the child just switched context and needs time to look and act.
+  const wasSidebarPausedRef = useRef(false);
+  useEffect(() => {
+    const paused = sidebarPause.isSidebarPaused;
+    if (wasSidebarPausedRef.current && !paused) {
+      thawTimeouts();
+      resetIdleBaseline();
+      rearmIdleHints();
+    }
+    wasSidebarPausedRef.current = paused;
+  }, [sidebarPause.isSidebarPaused, thawTimeouts, resetIdleBaseline, rearmIdleHints]);
 
   const { countdownValue } = useResumeCountdown(RESUME_DELAY_MS / 1000);
 
@@ -685,7 +745,7 @@ const PondSceneContent = ({
   useEffect(() => {
     if (!isAudioOn) return;
     const promptKey = getPromptKeyForPhase();
-    if (!promptKey || revealConfig || showSceneCompletion || isSymbolPopupOpen) return;
+    if (!promptKey || revealConfig || showSceneCompletion || pondPaused) return;
     if (lastAnnouncedPromptRef.current === promptKey) return;
 
     const promptDelay = promptKey === 'complete'
@@ -706,7 +766,7 @@ const PondSceneContent = ({
     sceneState?.phase,
     sceneState?.welcomeShown,
     sceneState?.completed,
-    isSymbolPopupOpen,
+    pondPaused,
     revealConfig,
     showSceneCompletion
   ]);
@@ -723,7 +783,7 @@ const PondSceneContent = ({
     ];
     const isHintPhase = hintPhases.includes(sceneState?.phase)
       && sceneState?.welcomeShown
-      && !isSymbolPopupOpen
+      && !pondPaused
       && !revealConfig
       && !showSceneCompletion;
 
@@ -749,7 +809,7 @@ const PondSceneContent = ({
   }, [
     sceneState?.phase,
     sceneState?.welcomeShown,
-    isSymbolPopupOpen,
+    pondPaused,
     revealConfig,
     showSceneCompletion
   ]);
@@ -918,7 +978,7 @@ const PondSceneContent = ({
   useEffect(() => {
     if (!sceneState?.welcomeShown) return;
     if (resumePromptPlayedRef.current) return;
-    if (showSceneCompletion || revealConfig || isSymbolPopupOpen) return;
+    if (showSceneCompletion || revealConfig || pondPaused) return;
     const promptKey = getPromptKeyForPhase();
     if (!promptKey || promptKey === 'opening') return;
 
@@ -934,7 +994,7 @@ const PondSceneContent = ({
     sceneState?.welcomeShown,
     showSceneCompletion,
     revealConfig,
-    isSymbolPopupOpen,
+    pondPaused,
     getPromptKeyForPhase,
     resetIdleBaseline,
     speakPondPrompt
@@ -962,7 +1022,7 @@ const PondSceneContent = ({
   // mid-line.
 
   const getSidebarTarget = useCallback((symbolId) => {
-    const el = document.getElementById(`sidebar-${symbolId}`);
+    const el = getCollectionTarget(symbolId);
     if (!el) return { x: 220, y: 0 };
     const r = el.getBoundingClientRect();
     return {
@@ -1108,7 +1168,6 @@ const PondSceneContent = ({
       if (progress >= 0.2 && !rockMeaningfulInteractionRef.current) {
         rockMeaningfulInteractionRef.current = true;
         markMeaningfulInteraction();
-        rockFailedAttemptsRef.current = 0;
       }
 
       if (progress >= 1) {
@@ -1231,7 +1290,6 @@ const PondSceneContent = ({
     if (progress >= 0.12 && !reedsMeaningfulInteractionRef.current) {
       reedsMeaningfulInteractionRef.current = true;
       markMeaningfulInteraction();
-      reedsFailedAttemptsRef.current = 0;
     }
   }, [reedsDragActive, markMeaningfulInteraction]);
 
@@ -1322,7 +1380,6 @@ const PondSceneContent = ({
       if (next >= 0.18 && !lotusMeaningfulInteractionRef.current) {
         lotusMeaningfulInteractionRef.current = true;
         markMeaningfulInteraction();
-        lotusFailedAttemptsRef.current = 0;
       }
 
       if (next >= 1) {
@@ -1462,7 +1519,7 @@ const PondSceneContent = ({
     >
       <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
         <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
-          <div className="pond-scene-container">
+          <div className={`pond-scene-container${pondPaused ? ' is-paused' : ''}`}>
             <div
               ref={pondStageRef}
               className="pond-background"
@@ -1577,10 +1634,10 @@ const PondSceneContent = ({
               />
 
               <GestureDemo
-                // Teaching = plain hold demo. L2/L3 rescue = an actual
-                // filling progress ring instead of the same expand-fade
-                // ring at every level (L2 partial fill, L3 full fill).
-                type={pondIntroGesture ? 'hold' : effectiveHintLevel >= 3 ? 'hold-progress-l3' : effectiveHintLevel === 2 ? 'hold-progress-l2' : 'hold'}
+                paused={isSymbolPopupOpen}
+                // Hold demos show the full progress ring, matching drag/swipe
+                // demos that teach the complete action path.
+                type={pondIntroGesture ? 'hold-progress-l3' : effectiveHintLevel >= 3 ? 'hold-progress-l3' : effectiveHintLevel === 2 ? 'hold-progress-l2' : 'hold'}
                 from={{ x: 40, y: 69 }}
                 active={
                   (pondIntroGesture || effectiveHintLevel >= 2) &&
@@ -1612,6 +1669,21 @@ const PondSceneContent = ({
                 onPointerCancel={layoutOpen ? undefined : handleRockHoldEnd}
                 style={layoutOpen ? { cursor: 'move' } : undefined}
               >
+                {SHOW_HIT_ZONES && !sceneState.rockMoved && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      borderRadius: '18px',
+                      border: '2px solid rgba(0, 170, 90, 0.9)',
+                      background: 'rgba(0, 170, 90, 0.08)',
+                      pointerEvents: 'none',
+                      zIndex: 9,
+                    }}
+                    aria-hidden="true"
+                    title="hold start zone: rock"
+                  />
+                )}
                 <img
                   src={pondBigRock}
                   alt=""
@@ -1739,6 +1811,7 @@ const PondSceneContent = ({
               </div>
 
               <GestureDemo
+                paused={isSymbolPopupOpen}
                 type="drag"
                 from={REEDS_START_POINT}
                 to={
@@ -1775,7 +1848,22 @@ const PondSceneContent = ({
                     cursor: layoutOpen ? 'move' : undefined,
                     pointerEvents: layoutOpen ? 'auto' : undefined,
                   }}
-                />
+                >
+                  {SHOW_HIT_ZONES && sceneState.phase === PHASES.REEDS_ACTIVE && (
+                    <div
+                      style={{
+                        position: 'absolute',
+                        inset: 0,
+                        borderRadius: '50%',
+                        border: '2px solid rgba(0, 120, 255, 0.88)',
+                        background: 'rgba(0, 120, 255, 0.08)',
+                        pointerEvents: 'none',
+                      }}
+                      aria-hidden="true"
+                      title="swipe start zone: flowers"
+                    />
+                  )}
+                </div>
               )}
 
               {/* Flowers and pebbles — each fully independent, own x/y/size,
@@ -1848,7 +1936,8 @@ const PondSceneContent = ({
 
               {/* Lotus — dormant → upright (Trunk success) → bloomed (Lotus success) */}
               <GestureDemo
-                type={pondIntroGesture ? 'hold' : effectiveHintLevel >= 3 ? 'hold-progress-l3' : effectiveHintLevel === 2 ? 'hold-progress-l2' : 'hold'}
+                paused={isSymbolPopupOpen}
+                type={pondIntroGesture ? 'hold-progress-l3' : effectiveHintLevel >= 3 ? 'hold-progress-l3' : effectiveHintLevel === 2 ? 'hold-progress-l2' : 'hold'}
                 from={LOTUS_HOLD_POINT}
                 active={
                   (pondIntroGesture || effectiveHintLevel >= 2) &&
@@ -1868,6 +1957,21 @@ const PondSceneContent = ({
                 onPointerDown={layoutOpen ? (e) => startMainDrag('lotus', e) : undefined}
                 style={layoutOpen ? { cursor: 'move' } : undefined}
               >
+                {SHOW_HIT_ZONES && sceneState.phase === PHASES.LOTUS_ACTIVE && !sceneState.lotusBloomed && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      borderRadius: '18px',
+                      border: '2px solid rgba(0, 170, 90, 0.9)',
+                      background: 'rgba(0, 170, 90, 0.08)',
+                      pointerEvents: 'none',
+                      zIndex: 8,
+                    }}
+                    aria-hidden="true"
+                    title="hold start zone: lotus"
+                  />
+                )}
                 {showSparkle === 'lotus-wake' && (
                   <div className="pond-lotus-wake-glow" aria-hidden="true">
                     <SparkleAnimation type="star" count={18} color="#FFD86B" size={10} duration={LOTUS_GLOW_MS} fadeOut={true} area="full" />
@@ -2114,17 +2218,24 @@ const PondSceneContent = ({
                 }}
                 onPopupOpen={() => {
                   setIsSymbolPopupOpen(true);
+                  replayGestureTimersRef.current.forEach(clearTimeout);
+                  replayGestureTimersRef.current = [];
+                  setPondIntroGesture(false);
+                  interruptedLineKeyRef.current = currentLineKeyRef.current;
+                  // Capture the interrupted line BEFORE stopping voice, then freeze the scene.
+                  beginSidebarPause();
+                  freezeTimeouts();
                   stopSpokenVoice();
                   resetIdleBaseline();
                 }}
                 onPopupClose={() => {
                   setIsSymbolPopupOpen(false);
-                  const replayKey = getPromptKeyForPhase();
-                  if (replayKey) {
-                    speakPondPrompt(replayKey, resetIdleBaseline);
-                  } else {
-                    rearmIdleHints();
-                  }
+                  // Replays ONLY an interrupted line (once, from the start); if nothing was
+                  // interrupted the child just gets a fresh idle clock — see the release effect.
+                  endSidebarPause();
+                  const interruptedKey = interruptedLineKeyRef.current;
+                  interruptedLineKeyRef.current = null;
+                  if (interruptedKey) replayGestureFor(interruptedKey);
                 }}
               />
             )}
@@ -2146,6 +2257,3 @@ const PondSceneContent = ({
 };
 
 export default PondSceneSimplifiedV5;
-
-
-

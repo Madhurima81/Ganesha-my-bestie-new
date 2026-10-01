@@ -29,6 +29,7 @@ import OpeningModal from '../../../shared/components/OpeningModal';
 import { getCompletionModal } from '../../../../lib/config/content';
 
 import riverBg from './assets/images/river-finale-bg.webp';
+import neutralBoat from './assets/images/choice-boat.png';
 import revealVakratunda from '../../../symbol-mountain/shared/images/icons/symbol-trunk-new.webp';
 import revealMahakaya from '../../../meaning cave/assets/images/symbols/mahakaya-symbol.webp';
 import revealSuryakoti from '../../../meaning cave/assets/images/symbols/suryakoti-symbol.webp';
@@ -64,17 +65,15 @@ const SHLOKA_WORDS = [
 
 const FULL_SHLOKA_WORD_AUDIO = SHLOKA_WORDS.map((word) => `/audio/words/${word.id}.mp3`);
 
-// GMB Hint Standard v1, finale variant: L2's clue is a meaning-recall line
-// per word (never the word/boat itself), keyed by voiceGuidance.js entries.
-const HINT_MEANING_VO_KEY = {
-  vakratunda: 'hintMeaningVakratunda',
-  mahakaya: 'hintMeaningMahakaya',
-  suryakoti: 'hintMeaningSuryakoti',
-  samaprabha: 'hintMeaningSamaprabha',
-  nirvighnam: 'hintMeaningNirvighnam',
-  kurumedeva: 'hintMeaningKurumedeva',
-  sarvakaryeshu: 'hintMeaningSarvakaryeshu',
-  sarvada: 'hintMeaningSarvada',
+const FINALE_HINT_VO_KEY = {
+  vakratunda: { l2: 'finaleVakratundaHintL2', l3: 'finaleVakratundaHintL3' },
+  mahakaya: { l2: 'finaleMahakayaHintL2', l3: 'finaleMahakayaHintL3' },
+  suryakoti: { l2: 'finaleSuryakotiHintL2', l3: 'finaleSuryakotiHintL3' },
+  samaprabha: { l2: 'finaleSamaprabhaHintL2', l3: 'finaleSamaprabhaHintL3' },
+  nirvighnam: { l2: 'finaleNirvighnamHintL2', l3: 'finaleNirvighnamHintL3' },
+  kurumedeva: { l2: 'finaleKurumedevaHintL2', l3: 'finaleKurumedevaHintL3' },
+  sarvakaryeshu: { l2: 'finaleSarvakaryeshuHintL2', l3: 'finaleSarvakaryeshuHintL3' },
+  sarvada: { l2: 'finaleSarvadaHintL2', l3: 'finaleSarvadaHintL3' },
 };
 
 function BoatSvg({ className = '', style = {} }) {
@@ -193,6 +192,7 @@ const ShlokaRiverFinale = ({
 
 const SCENE_IMAGES = [
   riverBg,
+  neutralBoat,
   revealVakratunda,
   revealMahakaya,
   revealSuryakoti,
@@ -203,6 +203,46 @@ const SCENE_IMAGES = [
   revealSarvada,
   OPENING_SCENE_GANESHA,
 ];
+
+const DEFAULT_SYMBOL_TUNE = {
+  left: 61,
+  top: 34,
+  width: 40,
+  height: 44,
+  scale: 1,
+};
+
+// Locked in from the finale boat tuner (Copy Tune JSON) — per-word symbol
+// left/top/width/height come from Madhurima's on-scene drag pass, 2026-09-30.
+const DEFAULT_FINALE_TUNE = {
+  choiceBottom: 11,
+  choiceWidth: 180,
+  choiceSymbol: DEFAULT_SYMBOL_TUNE,
+  placed: [
+    { left: 37, top: 88 },
+    { left: 58, top: 78 },
+    { left: 43, top: 66 },
+    { left: 59, top: 54 },
+    { left: 42, top: 42 },
+    { left: 57, top: 30 },
+    { left: 46, top: 18 },
+    { left: 53, top: 7 },
+  ],
+  wordSymbol: {
+    vakratunda: { left: 58.1, top: 48.4, width: 26, height: 30, scale: 1.18 },
+    // Mahakaya + Sarvakaryeshu sized up on request — bigger scale than the
+    // rest, everyone else untouched.
+    mahakaya: { left: 59, top: 49, width: 26, height: 30, scale: 1.35 },
+    suryakoti: { left: 60.2, top: 49.6, width: 40, height: 44, scale: 1 },
+    samaprabha: { left: 59.4, top: 48, width: 40, height: 44, scale: 1 },
+    nirvighnam: { left: 61.2, top: 47.5, width: 40, height: 44, scale: 1 },
+    kurumedeva: { left: 57.6, top: 50.8, width: 40, height: 44, scale: 1 },
+    sarvakaryeshu: { left: 59.1, top: 47.9, width: 26, height: 30, scale: 1.35 },
+    sarvada: { left: 60.1, top: 50.9, width: 40, height: 44, scale: 1 },
+  },
+};
+
+const clampTune = (value, min, max) => Math.min(max, Math.max(min, Number(value)));
 
 const ShlokaRiverFinaleContent = ({
   sceneState,
@@ -239,6 +279,25 @@ const ShlokaRiverFinaleContent = ({
   const [rippleSlot, setRippleSlot] = useState(null);
   const [showOrbsCelebration, setShowOrbsCelebration] = useState(false);
   const [showSceneCompletion, setShowSceneCompletion] = useState(false);
+  const [sailingWordId, setSailingWordId] = useState(null);
+  const [introTeaching, setIntroTeaching] = useState(false);
+  const [introSymbolIndex, setIntroSymbolIndex] = useState(null);
+  const [choiceWords, setChoiceWords] = useState([]);
+  const [debugTune, setDebugTune] = useState(DEFAULT_FINALE_TUNE);
+  const [debugWordId, setDebugWordId] = useState(SHLOKA_WORDS[0].id);
+  const [debugPlacedIndex, setDebugPlacedIndex] = useState(0);
+  // Dev tuner extras: on-scene drag mode, "preview all 8 placed boats", a
+  // draggable/collapsible panel, and a copy-JSON status.
+  const [debugDragOn, setDebugDragOn] = useState(false);
+  const [debugShowAll, setDebugShowAll] = useState(false);
+  const [debugPanelOpen, setDebugPanelOpen] = useState(true);
+  const [debugPanelPos, setDebugPanelPos] = useState({ x: 12, y: 96 });
+  // Drag mode only actually engages while the panel is open, so collapsing
+  // it (or leaving it checked from a previous session) can never leave
+  // gameplay hijacked by tuner handlers.
+  const tunerDragActive = debugDragOn && debugPanelOpen;
+  const [debugCopyStatus, setDebugCopyStatus] = useState('');
+  const paradeRef = useRef(null);
 
   // buildReady/hintReadySlot gate the hint ladder: it must never start while
   // the opening whole-Shloka listen or a pair-reinforcement playback is
@@ -249,6 +308,9 @@ const ShlokaRiverFinaleContent = ({
   // this replaces the old moving recap-boat sequence as the "hear it back"
   // payoff, without taking the child away from the board they just built.
   const [chantHighlightIndex, setChantHighlightIndex] = useState(null);
+  // Tiny completion beat after the 8th boat lands: all 8 boats bob/sparkle
+  // once, before the "let's say it together" recap begins.
+  const [allBoatsCelebrate, setAllBoatsCelebrate] = useState(false);
 
   const stageRef = useRef(null);
   const fullShlokaAudioRef = useRef(null);
@@ -256,6 +318,7 @@ const ShlokaRiverFinaleContent = ({
   const resumeHandledRef = useRef(false);
   const dragMovedRef = useRef(false);
   const finalChantStartedRef = useRef(false);
+  const chantRecapStartedRef = useRef(false);
   const lastFinaleHintVoRef = useRef(null);
   // Guards triggerSuccessFlow (declared below) against double-firing when
   // both the live placeWord path and the SUCCESS resume-effect can call it.
@@ -263,15 +326,134 @@ const ShlokaRiverFinaleContent = ({
 
   const phase = sceneState.phase || PHASES.INITIAL;
   const usedWords = new Set(slots.filter(Boolean));
-  const correctCount = correctSlots.size;
   const currentTargetWord = SHLOKA_WORDS[activeSlotIndex] || null;
   const trayWords = scrambledWords.length ? scrambledWords : SHLOKA_WORDS;
+  const selectedSymbolTune = debugTune.wordSymbol[debugWordId] || debugTune.choiceSymbol;
+
+  const updateDebugTune = useCallback((updater) => {
+    setDebugTune((prev) => {
+      const next = typeof updater === 'function' ? updater(prev) : updater;
+      return {
+        ...next,
+        choiceSymbol: { ...DEFAULT_SYMBOL_TUNE, ...next.choiceSymbol },
+        placed: DEFAULT_FINALE_TUNE.placed.map((fallback, index) => ({
+          ...fallback,
+          ...(next.placed?.[index] || {}),
+        })),
+        wordSymbol: next.wordSymbol || {},
+      };
+    });
+  }, []);
+
+  const updateChoiceSymbolTune = useCallback((key, value) => {
+    updateDebugTune((prev) => ({
+      ...prev,
+      choiceSymbol: {
+        ...prev.choiceSymbol,
+        [key]: value,
+      },
+    }));
+  }, [updateDebugTune]);
+
+  const updateWordSymbolTune = useCallback((wordId, key, value) => {
+    updateDebugTune((prev) => ({
+      ...prev,
+      wordSymbol: {
+        ...prev.wordSymbol,
+        [wordId]: {
+          ...prev.choiceSymbol,
+          ...(prev.wordSymbol[wordId] || {}),
+          [key]: value,
+        },
+      },
+    }));
+  }, [updateDebugTune]);
+
+  const patchWordSymbolTune = useCallback((wordId, patch) => {
+    updateDebugTune((prev) => ({
+      ...prev,
+      wordSymbol: {
+        ...prev.wordSymbol,
+        [wordId]: {
+          ...prev.choiceSymbol,
+          ...(prev.wordSymbol[wordId] || {}),
+          ...patch,
+        },
+      },
+    }));
+  }, [updateDebugTune]);
+
+  const resetWordSymbolTune = useCallback((wordId) => {
+    updateDebugTune((prev) => {
+      const nextWordSymbol = { ...prev.wordSymbol };
+      delete nextWordSymbol[wordId];
+      return { ...prev, wordSymbol: nextWordSymbol };
+    });
+  }, [updateDebugTune]);
+
+  const updatePlacedTune = useCallback((index, key, value) => {
+    updateDebugTune((prev) => {
+      const placed = prev.placed.map((position, idx) => (
+        idx === index ? { ...position, [key]: value } : position
+      ));
+      return { ...prev, placed };
+    });
+  }, [updateDebugTune]);
+
+  const getSymbolStyle = useCallback((wordId) => {
+    const tune = debugTune.wordSymbol[wordId] || debugTune.choiceSymbol;
+    return {
+      '--srf-symbol-left': `${tune.left}%`,
+      '--srf-symbol-top': `${tune.top}%`,
+      '--srf-symbol-width': `${tune.width}%`,
+      '--srf-symbol-height': `${tune.height}%`,
+      '--srf-symbol-scale': tune.scale,
+    };
+  }, [debugTune.choiceSymbol, debugTune.wordSymbol]);
+
+  const getPlacedBoatStyle = useCallback((idx, wordData) => ({
+    color: wordData.color,
+    left: `${debugTune.placed[idx]?.left ?? DEFAULT_FINALE_TUNE.placed[idx].left}%`,
+    top: `${debugTune.placed[idx]?.top ?? DEFAULT_FINALE_TUNE.placed[idx].top}%`,
+    '--srf-placed-scale': debugTune.placed[idx]?.scale ?? 1,
+    ...getSymbolStyle(wordData.id),
+  }), [debugTune.placed, getSymbolStyle]);
+
+  useEffect(() => {
+    if (phase !== PHASES.ARRANGE || !buildReady || introTeaching || !currentTargetWord) {
+      setChoiceWords([]);
+      return;
+    }
+
+    const usedIds = new Set(slots.filter(Boolean));
+    const remaining = trayWords.filter((word) => !usedIds.has(word.id));
+    if (remaining.length <= 3) {
+      setChoiceWords(remaining);
+      return;
+    }
+
+    // `currentTargetWord` (from activeSlotIndex) lags one tick behind
+    // `slots` right when a boat lands — placeWord updates slots immediately,
+    // but activeSlotIndex only advances after the placement VO finishes.
+    // Deriving the target from `remaining` itself (still in shloka order)
+    // keeps this correct at that instant, instead of briefly re-adding the
+    // boat that was just placed back into the choice tray.
+    const nextTarget = SHLOKA_WORDS.find((word) => !usedIds.has(word.id)) || currentTargetWord;
+    // Random 2 of whatever's left each time the tray rebuilds — not just
+    // "next 2 in the shuffled queue" — so the distractor pair itself varies
+    // turn to turn, not only the left/mid/right position.
+    const distractors = shuffle(remaining.filter((word) => word.id !== nextTarget.id)).slice(0, 2);
+    setChoiceWords(shuffle([nextTarget, ...distractors]));
+  }, [activeSlotIndex, buildReady, currentTargetWord, introTeaching, phase, slots, trayWords]);
+
   const fillCompletedBoard = useCallback(() => {
     setSlots(SHLOKA_WORDS.map((word) => word.id));
     setCorrectSlots(new Set(SHLOKA_WORDS.map((_, index) => index)));
     setWrongWordId(null);
     setActiveSlotIndex(SHLOKA_WORDS.length - 1);
     setRippleSlot(null);
+    setIntroTeaching(false);
+    setIntroSymbolIndex(null);
   }, []);
 
   useEffect(() => {
@@ -336,6 +518,7 @@ const ShlokaRiverFinaleContent = ({
     if (phase !== PHASES.INITIAL) return;
     resumeHandledRef.current = false;
     finalChantStartedRef.current = false;
+    chantRecapStartedRef.current = false;
     successFlowStartedRef.current = false;
     setOpeningButtonVisible(!isAudioOn);
     setScrambledWords(shuffle(SHLOKA_WORDS));
@@ -347,6 +530,9 @@ const ShlokaRiverFinaleContent = ({
     setBuildReady(false);
     setHintReadySlot(null);
     setChantHighlightIndex(null);
+    setSailingWordId(null);
+    setIntroTeaching(false);
+    setIntroSymbolIndex(null);
     if (!isAudioOn) {
       return undefined;
     }
@@ -371,10 +557,16 @@ const ShlokaRiverFinaleContent = ({
   const {
     hintLevel,
     markInteraction,
+    markAttempt,
+    markWrongAttempt,
     markLevel2VoiceStarted,
     markLevel2VoiceEnded,
   } = useRepeatedHintCycle({
-    enabled: phase === PHASES.ARRANGE && buildReady && hintReadySlot === activeSlotIndex,
+    enabled: phase === PHASES.ARRANGE
+      && buildReady
+      && !introTeaching
+      && !sailingWordId
+      && hintReadySlot === activeSlotIndex,
     stageKey: phase === PHASES.ARRANGE ? `finale-slot-${activeSlotIndex}` : phase,
     initialDelay: 10000,
     pulseCountBeforeEscalation: 1,
@@ -405,7 +597,7 @@ const ShlokaRiverFinaleContent = ({
     lastFinaleHintVoRef.current = onceKey;
 
     if (hintLevel === 2) {
-      const meaningKey = HINT_MEANING_VO_KEY[target.id];
+      const meaningKey = FINALE_HINT_VO_KEY[target.id]?.l2;
       if (meaningKey) {
         if (playVoice) markLevel2VoiceStarted();
         playVoice?.(meaningKey, markLevel2VoiceEnded, { replayOnReturn: false, minDelayAfterVoiceMs: 5000 });
@@ -415,12 +607,11 @@ const ShlokaRiverFinaleContent = ({
       return;
     }
 
-    // L3 = final rescue: the correct boat glows (rendered below), then the
-    // target word is spoken once the rescue VO line finishes.
-    playVoice?.('hintBoatL3', () => {
-      playWordAudio?.(target.id);
-    }, { replayOnReturn: false, minDelayAfterVoiceMs: 5000 });
-  }, [activeSlotIndex, buildReady, hintLevel, hintReadySlot, phase, playVoice, playWordAudio, markLevel2VoiceStarted, markLevel2VoiceEnded]);
+    const revealKey = FINALE_HINT_VO_KEY[target.id]?.l3;
+    if (revealKey) {
+      playVoice?.(revealKey, undefined, { replayOnReturn: false, minDelayAfterVoiceMs: 5000 });
+    }
+  }, [activeSlotIndex, buildReady, hintLevel, hintReadySlot, introTeaching, phase, playVoice, markLevel2VoiceStarted, markLevel2VoiceEnded]);
 
   // Resume case: the component can mount directly into ARRANGE (reload)
   // without ever going through handleStartGame's opening listen. Replay the
@@ -443,11 +634,22 @@ const ShlokaRiverFinaleContent = ({
     sceneActions.updateState({ phase: PHASES.ARRANGE, welcomeShown: true });
     setBuildReady(false);
     setHintReadySlot(null);
+    setIntroTeaching(true);
+    setIntroSymbolIndex(null);
     playVoice?.('arrangeStart', () => {
       playFullShloka({
+        onWordStart: (index) => setIntroSymbolIndex(index),
         onComplete: () => {
-          setBuildReady(true);
-          setHintReadySlot(0);
+          setIntroSymbolIndex(null);
+          const makePlayable = () => {
+            setIntroTeaching(false);
+            setBuildReady(true);
+            setHintReadySlot(0);
+          };
+          safeSetTimeout(() => {
+            playVoice?.('finaleChooseFirst', makePlayable, { replayOnReturn: false });
+            if (!playVoice) makePlayable();
+          }, 450);
         },
       });
     }, { replayOnReturn: false });
@@ -460,34 +662,6 @@ const ShlokaRiverFinaleContent = ({
     setHintReadySlot(activeSlotIndex);
   }, [activeSlotIndex, buildReady, phase, stopAllVoice]);
 
-  // Plays a short sequence of word-audio clips back to back — used for the
-  // single-word confirmation and the end-of-pair "Vakratunda — Mahakaya"
-  // reinforcement, so the child hears the pair together instead of being
-  // told the next answer outright.
-  const playWordSequence = useCallback((wordIds, onComplete) => {
-    if (!wordIds?.length) {
-      onComplete?.();
-      return;
-    }
-    let index = 0;
-    const playNext = () => {
-      if (index >= wordIds.length) {
-        onComplete?.();
-        return;
-      }
-      const wordId = wordIds[index];
-      index += 1;
-      if (!playWordAudio) {
-        safeSetTimeout(playNext, 250);
-        return;
-      }
-      playWordAudio(wordId, () => {
-        safeSetTimeout(playNext, 120);
-      });
-    };
-    playNext();
-  }, [playWordAudio, safeSetTimeout]);
-
   const triggerSuccessFlow = useCallback(() => {
     if (successFlowStartedRef.current) return;
     successFlowStartedRef.current = true;
@@ -495,9 +669,9 @@ const ShlokaRiverFinaleContent = ({
     setHintReadySlot(null);
     sceneActions.updateState({ phase: PHASES.SUCCESS });
 
-    const playCompletedShloka = () => {
-      if (finalChantStartedRef.current) return;
-      finalChantStartedRef.current = true;
+    const startRecap = () => {
+      if (chantRecapStartedRef.current) return;
+      chantRecapStartedRef.current = true;
 
       setChantHighlightIndex(null);
       playFullShloka({
@@ -511,6 +685,30 @@ const ShlokaRiverFinaleContent = ({
       });
     };
 
+    const playCompletedShloka = () => {
+      if (finalChantStartedRef.current) return;
+      finalChantStartedRef.current = true;
+
+      // Let the "Sarvada" landing breathe, then give the finished parade one
+      // shared celebratory bob/sparkle before inviting the recap — not
+      // another completion card, just the built boats being seen.
+      safeSetTimeout(() => {
+        setAllBoatsCelebrate(true);
+        playSparkle?.();
+
+        safeSetTimeout(() => {
+          setAllBoatsCelebrate(false);
+
+          playVoice?.('finaleWholeShlokaIntro', () => {
+            safeSetTimeout(startRecap, 300);
+          }, { replayOnReturn: false });
+
+          // VO callbacks can fail to fire — never strand SUCCESS.
+          safeSetTimeout(startRecap, 3500);
+        }, 700);
+      }, 700);
+    };
+
     playVoice?.('sceneComplete', () => {
       safeSetTimeout(playCompletedShloka, 400);
     }, { replayOnReturn: false });
@@ -518,7 +716,7 @@ const ShlokaRiverFinaleContent = ({
     // VO callbacks can fail to fire (missing file, iOS dropping events) —
     // don't strand SUCCESS on a dropped callback.
     safeSetTimeout(playCompletedShloka, 5000);
-  }, [playFullShloka, playVoice, safeSetTimeout, sceneActions]);
+  }, [playFullShloka, playSparkle, playVoice, safeSetTimeout, sceneActions]);
 
   // Resume case: mounting directly into SUCCESS (reload) should fill the
   // board and continue into the completed-Shloka playback. Idempotent with
@@ -539,10 +737,11 @@ const ShlokaRiverFinaleContent = ({
     const isCorrect = SHLOKA_WORDS[slotIdx].id === wordData.id;
 
     if (!isCorrect) {
-      // A wrong guess must not let the child postpone the hint ladder
-      // indefinitely — only a correct placement counts as real progress.
+      // Only a correct placement counts as real progress. A wrong guess is a genuine attempt:
+      // it never clears a visible hint, and a 2nd wrong one earns L2 help early.
       setWrongWordId(wordData.id);
       playSfx?.('softWrong');
+      markWrongAttempt();
       safeSetTimeout(() => setWrongWordId(null), 500);
       return;
     }
@@ -567,42 +766,53 @@ const ShlokaRiverFinaleContent = ({
     playSparkle();
 
     const isFinalSlot = slotIdx === SHLOKA_WORDS.length - 1;
-    const isPairEnd = slotIdx % 2 === 1;
-
-    const advance = () => {
+    const advanceToNextStep = () => {
       if (isFinalSlot) {
+        setSailingWordId(null);
         triggerSuccessFlow();
         return;
       }
       const nextSlot = slotIdx + 1;
       setActiveSlotIndex(nextSlot);
+      setSailingWordId(null);
       safeSetTimeout(() => setHintReadySlot(nextSlot), 250);
+    };
+
+    // The next boat becomes tappable right away — the little "keep
+    // choosing" encouragement line plays alongside it, not as a gate. Only
+    // slots 0/1 get that extra line; from slot 2 on it was already just the
+    // word audio, so this makes every slot equally responsive.
+    const advance = () => {
+      advanceToNextStep();
+      if (slotIdx === 0) {
+        playVoice?.('finaleChooseNext', undefined, { replayOnReturn: false });
+      } else if (slotIdx === 1) {
+        playVoice?.('finaleKeepChoosing', undefined, { replayOnReturn: false });
+      }
     };
 
     if (isFinalSlot) {
       playChime();
     }
 
-    if (isPairEnd) {
-      // End of a pair — reinforce both words together ("Vakratunda —
-      // Mahakaya") instead of naming the next answer.
-      playWordSequence([SHLOKA_WORDS[slotIdx - 1].id, SHLOKA_WORDS[slotIdx].id], advance);
+    if (playWordAudio) {
+      playWordAudio(wordData.id, advance);
     } else {
-      playWordSequence([wordData.id], advance);
+      safeSetTimeout(advance, 250);
     }
-  }, [markInteraction, playChime, playSfx, playSparkle, playWordSequence, safeSetTimeout, triggerSuccessFlow]);
+  }, [markInteraction, markWrongAttempt, playChime, playSfx, playSparkle, playVoice, playWordAudio, safeSetTimeout, triggerSuccessFlow]);
 
   const handleTrayPointerDown = (e, wordData) => {
     if (phase !== PHASES.ARRANGE || usedWords.has(wordData.id)) return;
     e.preventDefault();
     dragMovedRef.current = false;
+    stopAllVoice();
     makeArrangePlayableNow();
     playUiTap();
-    // Only a real placement attempt against the current target counts as
-    // progress — grabbing a boat doesn't reset the hint clock, or a child
-    // could postpone help indefinitely by picking up and dropping boats.
+    // Grabbing the correct boat is an attempt, not progress: a visible hint stays up, and the
+    // idle clock restarts only if none is showing. Placing it is what counts as progress.
     if (wordData.id === currentTargetWord?.id) {
-      markInteraction();
+      markAttempt();
     }
     setDraggingWord(wordData);
     const rect = stageRef.current?.getBoundingClientRect();
@@ -659,20 +869,38 @@ const ShlokaRiverFinaleContent = ({
   };
 
   const handleWordChipTap = (wordData) => {
-    if (dragMovedRef.current) {
-      dragMovedRef.current = false;
+    if (phase !== PHASES.ARRANGE || !buildReady || introTeaching || usedWords.has(wordData.id) || sailingWordId) return;
+    stopAllVoice();
+    playUiTap();
+
+    const isCorrect = currentTargetWord?.id === wordData.id;
+    if (!isCorrect) {
+      // A wrong boat makes a playful little false start, then floats back.
+      setWrongWordId(wordData.id);
+      playSfx?.('softWrong');
+      markWrongAttempt();
+      safeSetTimeout(() => setWrongWordId(null), 650);
       return;
     }
-    if (phase !== PHASES.ARRANGE || usedWords.has(wordData.id)) return;
-    makeArrangePlayableNow();
-    placeWord(wordData, activeSlotIndex);
+
+    // Let the child SEE the success: the boat sails toward the glowing ripple
+    // before the existing placement/audio/reinforcement logic takes over.
+    setSailingWordId(wordData.id);
+    markInteraction();
+    safeSetTimeout(() => {
+      placeWord(wordData, activeSlotIndex);
+    }, 650);
   };
 
   useEffect(() => {
     if (phase === PHASES.FINALE) {
       setShowOrbsCelebration(true);
+      // Was firing in handleOrbsComplete (celebration END) — landed right
+      // as the orbs closed and the completion modal opened, so it read as
+      // "plays while closing" instead of during the celebration itself.
+      playVoice?.('finalCelebration', undefined, { replayOnReturn: false });
     }
-  }, [phase]);
+  }, [phase, playVoice]);
 
   // Re-plays whatever line belongs to the current phase — same "one replay
   // button per scene" pattern as every other live scene.
@@ -691,7 +919,6 @@ const ShlokaRiverFinaleContent = ({
 
   const handleOrbsComplete = useCallback(() => {
     setShowOrbsCelebration(false);
-    playVoice?.('finalCelebration', undefined, { replayOnReturn: false });
 
     const profileId = activeProfile?.id || localStorage.getItem('activeProfileId');
     if (profileId) {
@@ -722,6 +949,96 @@ const ShlokaRiverFinaleContent = ({
     setShowSceneCompletion(true);
   }, [activeProfile?.id, playVoice, sceneActions, sceneId, zoneId]);
 
+  // --- Dev tuner: on-scene drag helpers (DEV only) ---------------------------
+  const beginDebugDrag = (event, onMove) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const up = () => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', up);
+      window.removeEventListener('pointercancel', up);
+    };
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', up);
+    window.addEventListener('pointercancel', up);
+  };
+
+  const pctIn = (event, rect) => ({
+    x: clampTune(((event.clientX - rect.left) / rect.width) * 100, 0, 100),
+    y: clampTune(((event.clientY - rect.top) / rect.height) * 100, 0, 100),
+  });
+
+  const startSymbolDrag = (event, wordId) => {
+    if (!tunerDragActive) return;
+    const artEl = event.currentTarget.parentElement;
+    setDebugWordId(wordId);
+    beginDebugDrag(event, (e) => {
+      const p = pctIn(e, artEl.getBoundingClientRect());
+      patchWordSymbolTune(wordId, { left: Number(p.x.toFixed(1)), top: Number(p.y.toFixed(1)) });
+    });
+  };
+
+  const wheelSymbol = (event, wordId) => {
+    if (!tunerDragActive) return;
+    event.stopPropagation();
+    const cur = (debugTune.wordSymbol[wordId] || debugTune.choiceSymbol).scale ?? 1;
+    patchWordSymbolTune(wordId, { scale: Number(clampTune(cur - Math.sign(event.deltaY) * 0.05, 0.3, 2.5).toFixed(2)) });
+  };
+
+  const startPlacedDrag = (event, idx) => {
+    if (!tunerDragActive || !paradeRef.current) return;
+    const parade = paradeRef.current;
+    setDebugPlacedIndex(idx);
+    beginDebugDrag(event, (e) => {
+      const p = pctIn(e, parade.getBoundingClientRect());
+      updatePlacedTune(idx, 'left', Number(p.x.toFixed(1)));
+      updatePlacedTune(idx, 'top', Number(p.y.toFixed(1)));
+    });
+  };
+
+  const wheelPlaced = (event, idx) => {
+    if (!tunerDragActive) return;
+    const cur = debugTune.placed[idx]?.scale ?? 1;
+    updatePlacedTune(idx, 'scale', Number(clampTune(cur - Math.sign(event.deltaY) * 0.05, 0.4, 3).toFixed(2)));
+  };
+
+  const startPanelDrag = (event) => {
+    const ox = event.clientX - debugPanelPos.x;
+    const oy = event.clientY - debugPanelPos.y;
+    beginDebugDrag(event, (e) => {
+      setDebugPanelPos({
+        x: clampTune(e.clientX - ox, 0, window.innerWidth - 60),
+        y: clampTune(e.clientY - oy, 0, window.innerHeight - 40),
+      });
+    });
+  };
+
+  const copyTuneJson = async () => {
+    const payload = JSON.stringify(debugTune, null, 2);
+    try {
+      await navigator.clipboard.writeText(payload);
+      setDebugCopyStatus('Copied');
+    } catch {
+      window.prompt('Copy finale tune JSON', payload);
+      setDebugCopyStatus('Shown');
+    }
+  };
+
+  const renderDebugRange = (label, value, min, max, step, onChange) => (
+    <label className="srf-debug-row">
+      <span>{label}</span>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={(event) => onChange(Number(event.target.value))}
+      />
+      <b>{value}</b>
+    </label>
+  );
+
   return (
     <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
       <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
@@ -749,84 +1066,185 @@ const ShlokaRiverFinaleContent = ({
 
           {(phase === PHASES.ARRANGE || phase === PHASES.SUCCESS) && (
             <div className="srf-arrange">
-              <div className="srf-title-banner">
-                <h1 className="srf-title">Complete the Shloka!</h1>
-                <p className="srf-subtitle">Can you put the Shloka back together?</p>
-              </div>
+              <div className="srf-river-area srf-river-journey">
+                {introTeaching && introSymbolIndex !== null && SHLOKA_WORDS[introSymbolIndex] && (
+                  <div
+                    key={`intro-${SHLOKA_WORDS[introSymbolIndex].id}`}
+                    className="srf-intro-symbol"
+                  >
+                    <div className="srf-intro-symbol-glow" />
+                    <img
+                      src={SHLOKA_WORDS[introSymbolIndex].icon}
+                      alt=""
+                      className="srf-intro-symbol-img"
+                      draggable="false"
+                    />
+                    <div className="srf-intro-ripple" />
+                  </div>
+                )}
 
-              <div className="srf-progress-badge">{correctCount} / 8</div>
-
-              <div className="srf-river-area">
-                <div className="srf-slot-grid">
-                  {Array(8).fill(null).map((_, idx) => {
-                    const placedWordId = slots[idx];
-                    const wordData = placedWordId
-                      ? SHLOKA_WORDS.find((w) => w.id === placedWordId)
-                      : null;
-                    const isCorrect = correctSlots.has(idx);
-                    const isActive = phase === PHASES.ARRANGE && idx === activeSlotIndex && !placedWordId;
-                    const isLocked = idx > activeSlotIndex && !placedWordId;
+                <div className="srf-boat-parade" ref={paradeRef}>
+                  {(import.meta.env.DEV && debugShowAll
+                    ? SHLOKA_WORDS.map((w) => w.id)
+                    : slots
+                  ).map((placedWordId, idx) => {
+                    if (!placedWordId) return null;
+                    const wordData = SHLOKA_WORDS.find((w) => w.id === placedWordId);
                     const isChanting = chantHighlightIndex === idx;
+                    const isDebugSelected = import.meta.env.DEV && tunerDragActive && debugPlacedIndex === idx;
                     return (
                       <div
-                        key={idx}
-                        className={`srf-slot ${isCorrect ? 'is-correct' : ''} ${isActive ? 'is-active' : ''} ${isLocked ? 'is-locked' : ''} ${placedWordId ? 'is-filled' : ''} ${rippleSlot === idx ? 'is-ripple' : ''}`}
-                        data-index={idx}
+                        key={placedWordId}
+                        className={`srf-journey-boat srf-journey-${idx} ${isChanting ? 'is-chanting' : ''}${allBoatsCelebrate ? ' is-all-celebrate' : ''}${isDebugSelected ? ' srf-debug-selected' : ''}`}
+                        style={{ ...getPlacedBoatStyle(idx, wordData), ...(import.meta.env.DEV && tunerDragActive ? { cursor: 'grab', pointerEvents: 'auto' } : null) }}
+                        onPointerDown={import.meta.env.DEV && tunerDragActive ? (e) => startPlacedDrag(e, idx) : undefined}
+                        onWheel={import.meta.env.DEV && tunerDragActive ? (e) => wheelPlaced(e, idx) : undefined}
                       >
-                        <span className="srf-slot-number">{idx + 1}</span>
-                        {placedWordId && wordData ? (
-                          <div
-                            className={`srf-placed-boat ${isChanting ? 'is-chanting' : ''}`}
-                            style={{ color: wordData.color }}
-                          >
-                            <BoatSvg />
-                            <img src={wordData.icon} alt="" className="srf-boat-icon" />
-                            <span className="srf-boat-label">{wordData.label}</span>
-                          </div>
-                        ) : (
-                          <div className="srf-ghost-boat">
-                            <BoatSvg style={{ opacity: 0.15 }} />
-                            <span className="srf-slot-q">?</span>
-                          </div>
-                        )}
+                        <div className="srf-boat-art">
+                          <img src={neutralBoat} alt="" className="srf-neutral-boat" draggable="false" />
+                          <img
+                            src={wordData.icon}
+                            alt=""
+                            className={`srf-choice-symbol${import.meta.env.DEV && tunerDragActive ? ' srf-debug-draggable' : ''}`}
+                            draggable="false"
+                            onPointerDown={import.meta.env.DEV && tunerDragActive ? (e) => startSymbolDrag(e, wordData.id) : undefined}
+                            onWheel={import.meta.env.DEV && tunerDragActive ? (e) => wheelSymbol(e, wordData.id) : undefined}
+                          />
+                        </div>
+                        <span className="srf-completed-word">{wordData.label}</span>
                       </div>
                     );
                   })}
+
+                  {phase === PHASES.ARRANGE && activeSlotIndex < SHLOKA_WORDS.length && (
+                    <div
+                      className={`srf-next-ripple srf-ripple-${activeSlotIndex}`}
+                      data-index={activeSlotIndex}
+                    >
+                      <span className="srf-ripple-ring" />
+                      <span className="srf-ripple-spark">✦</span>
+                    </div>
+                  )}
                 </div>
               </div>
 
-              {phase === PHASES.ARRANGE && (
-                <div className={`srf-tray${!buildReady ? ' is-listening' : ''}`}>
-                  <p className="srf-tray-label">
-                    {buildReady ? 'What comes next?' : 'Listen to the Shloka...'}
-                  </p>
-                  <div className="srf-tray-boats">
-                    {trayWords.filter((w) => !usedWords.has(w.id)).map((w) => {
+              {phase === PHASES.ARRANGE && buildReady && !introTeaching && (
+                <div
+                  className={`srf-choice-boats${hintLevel === 1 ? ' is-hint-l1' : ''}`}
+                  style={{ '--srf-choice-bottom': `${debugTune.choiceBottom}%`, '--srf-choice-width': `${debugTune.choiceWidth}px` }}
+                >
+                    {choiceWords.map((w, choiceIdx) => {
                       const isTargetBoat = currentTargetWord?.id === w.id;
-                      // L1: every remaining boat gets the same neutral nudge —
-                      // no answer revealed. L2 has no boat visual (meaning
-                      // clue only, rendered as VO). L3 clearly reveals the
-                      // correct boat as the final rescue.
-                      const hintClass = hintLevel >= 3 && isTargetBoat
-                        ? 'is-hint-final'
-                        : hintLevel === 1
-                          ? 'is-hint-group'
-                          : '';
+                      const hintClass = hintLevel >= 3 && isTargetBoat ? 'is-l3-target' : '';
                       return (
-                        <div
+                        <button
+                          type="button"
                           key={w.id}
-                          className={`srf-tray-boat ${hintClass}${wrongWordId === w.id ? ' is-wrong' : ''}`}
-                          style={{ color: w.color }}
-                          onPointerDown={(e) => handleTrayPointerDown(e, w)}
-                          onClick={() => handleWordChipTap(w)}
+                          className={`srf-choice-boat srf-choice-${choiceIdx} ${hintClass}${wrongWordId === w.id ? ' is-wrong-try' : ''}${sailingWordId === w.id ? ' is-sailing' : ''}`}
+                          style={{ color: w.color, ...getSymbolStyle(w.id) }}
+                          onClick={() => { if (!(import.meta.env.DEV && tunerDragActive)) handleWordChipTap(w); }}
+                          disabled={Boolean(sailingWordId)}
+                          aria-label={`Choose ${w.label} boat`}
                         >
-                          <BoatSvg />
-                          <img src={w.icon} alt="" className="srf-boat-icon" />
-                          <span className="srf-boat-label">{w.label}</span>
-                        </div>
+                          <div className="srf-boat-art">
+                            <img src={neutralBoat} alt="" className="srf-neutral-boat" draggable="false" />
+                            <img
+                              src={w.icon}
+                              alt=""
+                              className={`srf-choice-symbol${import.meta.env.DEV && tunerDragActive ? ' srf-debug-draggable' : ''}`}
+                              draggable="false"
+                              onPointerDown={import.meta.env.DEV && tunerDragActive ? (e) => startSymbolDrag(e, w.id) : undefined}
+                              onWheel={import.meta.env.DEV && tunerDragActive ? (e) => wheelSymbol(e, w.id) : undefined}
+                            />
+                          </div>
+                        </button>
                       );
                     })}
+                </div>
+              )}
+
+              {import.meta.env.DEV && phase === PHASES.ARRANGE && (
+                <div
+                  className={`srf-debug-panel${debugPanelOpen ? '' : ' is-collapsed'}`}
+                  style={{ left: `${debugPanelPos.x}px`, top: `${debugPanelPos.y}px` }}
+                >
+                  <div
+                    className="srf-debug-drag-handle"
+                    onPointerDown={startPanelDrag}
+                  >
+                    <span>⠿ Finale boat tuner</span>
+                    <button type="button" className="srf-debug-collapse" onClick={() => setDebugPanelOpen((v) => !v)}>
+                      {debugPanelOpen ? '—' : '+'}
+                    </button>
                   </div>
+
+                  {debugPanelOpen && (
+                    <>
+                      <div className="srf-debug-split">
+                        <label className="srf-debug-toggle-label">
+                          <input type="checkbox" checked={debugDragOn} onChange={(e) => setDebugDragOn(e.target.checked)} />
+                          drag-on-scene
+                        </label>
+                        <label className="srf-debug-toggle-label">
+                          <input type="checkbox" checked={debugShowAll} onChange={(e) => setDebugShowAll(e.target.checked)} />
+                          preview all 8 boats
+                        </label>
+                      </div>
+                      <p className="srf-debug-note">
+                        Drag a symbol on a choice/placed boat to set left/top. Scroll-wheel over a
+                        symbol to scale it. Drag a placed boat itself to move its river position.
+                      </p>
+
+                      <div className="srf-debug-grid">
+                        {renderDebugRange('row bottom', debugTune.choiceBottom, 2, 20, 1, (value) => updateDebugTune((prev) => ({ ...prev, choiceBottom: value })))}
+                        {renderDebugRange('boat px', debugTune.choiceWidth, 120, 210, 1, (value) => updateDebugTune((prev) => ({ ...prev, choiceWidth: value })))}
+                        {renderDebugRange('symbol left', debugTune.choiceSymbol.left, 45, 75, 1, (value) => updateChoiceSymbolTune('left', value))}
+                        {renderDebugRange('symbol top', debugTune.choiceSymbol.top, 20, 50, 1, (value) => updateChoiceSymbolTune('top', value))}
+                        {renderDebugRange('symbol width', debugTune.choiceSymbol.width, 16, 40, 1, (value) => updateChoiceSymbolTune('width', value))}
+                        {renderDebugRange('symbol height', debugTune.choiceSymbol.height, 16, 44, 1, (value) => updateChoiceSymbolTune('height', value))}
+                      </div>
+
+                      <div className="srf-debug-split">
+                        <label>
+                          symbol
+                          <select value={debugWordId} onChange={(event) => setDebugWordId(event.target.value)}>
+                            {SHLOKA_WORDS.map((word) => (
+                              <option key={word.id} value={word.id}>{word.label}</option>
+                            ))}
+                          </select>
+                        </label>
+                        <button type="button" onClick={() => resetWordSymbolTune(debugWordId)}>reset symbol</button>
+                      </div>
+
+                      <div className="srf-debug-grid">
+                        {renderDebugRange('word left', selectedSymbolTune.left, 45, 75, 1, (value) => updateWordSymbolTune(debugWordId, 'left', value))}
+                        {renderDebugRange('word top', selectedSymbolTune.top, 20, 50, 1, (value) => updateWordSymbolTune(debugWordId, 'top', value))}
+                        {renderDebugRange('word scale', selectedSymbolTune.scale, 0.7, 1.35, 0.01, (value) => updateWordSymbolTune(debugWordId, 'scale', value))}
+                      </div>
+
+                      <div className="srf-debug-split">
+                        <label>
+                          placed boat
+                          <select value={debugPlacedIndex} onChange={(event) => setDebugPlacedIndex(Number(event.target.value))}>
+                            {SHLOKA_WORDS.map((word, index) => (
+                              <option key={word.id} value={index}>{index + 1}. {word.label}</option>
+                            ))}
+                          </select>
+                        </label>
+                      </div>
+
+                      <div className="srf-debug-grid">
+                        {renderDebugRange('placed left', debugTune.placed[debugPlacedIndex].left, 20, 80, 1, (value) => updatePlacedTune(debugPlacedIndex, 'left', value))}
+                        {renderDebugRange('placed top', debugTune.placed[debugPlacedIndex].top, 2, 92, 1, (value) => updatePlacedTune(debugPlacedIndex, 'top', value))}
+                        {renderDebugRange('placed scale', debugTune.placed[debugPlacedIndex]?.scale ?? 1, 0.4, 3, 0.05, (value) => updatePlacedTune(debugPlacedIndex, 'scale', value))}
+                      </div>
+
+                      <div className="srf-debug-split">
+                        <button type="button" onClick={copyTuneJson}>Copy Tune JSON</button>
+                        {debugCopyStatus && <span className="srf-debug-copy-status">{debugCopyStatus}</span>}
+                      </div>
+                    </>
+                  )}
                 </div>
               )}
 

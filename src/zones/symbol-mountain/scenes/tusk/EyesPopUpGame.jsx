@@ -251,6 +251,8 @@ const EyesPopUpGame = ({
   const interruptedSpeechRef = useRef(null);
   const replayTimerRef = useRef(null);
   const pendingReplayRef = useRef(null);
+  const l2SpeakingRef = useRef(false);
+  const [l2EndTick, setL2EndTick] = useState(0);
   const wasPausedRef = useRef(false);
   const wasArmedRef = useRef(false);
 
@@ -385,6 +387,7 @@ const EyesPopUpGame = ({
     setIdleHintStage(0);
     setForcedHintStage(0);
     lastSpokenHintKeyRef.current = null;
+    l2SpeakingRef.current = false;
     missCountRef.current = 0;
   }, []);
 
@@ -575,14 +578,29 @@ const EyesPopUpGame = ({
 
     const key = `${nextHintTarget.id}-${hintStage}`;
     if (lastSpokenHintKeyRef.current === key) return;
+    // Escalating to L3 (repeated misses) while the L2 line is still speaking must not cut it off:
+    // wait. Finishing L2 bumps l2EndTick, which re-runs this effect.
+    if (hintStage >= 3 && l2SpeakingRef.current) return;
     lastSpokenHintKeyRef.current = key;
 
     if (hintStage === 2) {
-      speak(VO_TEXTS.idleHintL2, () => { l2VoiceEndedAtRef.current = Date.now(); });
+      l2SpeakingRef.current = true;
+      // The browser does not always deliver the "ended" event, which would gate L3 forever — so
+      // also stamp it after a time limit (pausable via `after`).
+      let stamped = false;
+      const stampEnded = () => {
+        if (stamped) return;
+        stamped = true;
+        l2SpeakingRef.current = false;
+        l2VoiceEndedAtRef.current = Date.now();
+        setL2EndTick((tick) => tick + 1);
+      };
+      speak(VO_TEXTS.idleHintL2, stampEnded);
+      after(Math.max(4000, VO_TEXTS.idleHintL2.length * 90 + 2500), stampEnded);
     } else {
       speak(VO_TEXTS.idleHintL3);
     }
-  }, [hintStage, nextHintTarget, isActive, flow, speak]);
+  }, [hintStage, nextHintTarget, isActive, flow, speak, after, l2EndTick]);
 
   useAppVisibility(null, useCallback(() => {
     resetIdle();

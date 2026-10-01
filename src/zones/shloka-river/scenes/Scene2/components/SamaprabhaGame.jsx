@@ -44,10 +44,10 @@ const SAMA_DEFAULT_LAYOUT = {
     // light on — the shadow IS the interaction target now. hitOffsetX/Y
     // nudges the hit-zone center away from the shadow's own l/t, in case
     // the shadow art isn't visually centered in its bounding box.
-    branch: { l: 56.162004692609926, t: 56.550715519831726, w: 31.5, rotate: -45, scaleX: 0.88, scaleY: 0.7, skewX: 30, rx: 25.60907851817997, ry: 25.60907851817997, hitOffsetX: 0, hitOffsetY: 0 },
-    reeds: { l: 50.32827244248501, t: 56.82613975123355, w: 28, rotate: 0, scaleX: 0.96, scaleY: 1.02, skewX: 25, rx: 14, ry: 14.7, hitOffsetX: 0, hitOffsetY: 0 },
-    stump: { l: 53.591204798498815, t: 66.87873500561425, w: 28, rotate: 0, scaleX: 1.22, scaleY: 1.48, skewX: 0, rx: 18.8, ry: 10, hitOffsetX: 0, hitOffsetY: 0 },
-    rocks: { l: 54.975478593693225, t: 74.45261101973685, w: 28, rotate: 0, scaleX: 1.48, scaleY: 1, skewX: 0, rx: 14.5, ry: 11.9, hitOffsetX: 0, hitOffsetY: 0 },
+    branch: { l: 56.162004692609926, t: 56.550715519831726, w: 31.5, rotate: -45, scaleX: 0.88, scaleY: 0.7, skewX: 30, rx: 5, ry: 6, hitOffsetX: 0, hitOffsetY: 0 },
+    reeds: { l: 50.32827244248501, t: 56.82613975123355, w: 28, rotate: 0, scaleX: 0.96, scaleY: 1.02, skewX: 25, rx: 5, ry: 6, hitOffsetX: 0, hitOffsetY: 0 },
+    stump: { l: 53.591204798498815, t: 66.87873500561425, w: 28, rotate: 0, scaleX: 1.22, scaleY: 1.48, skewX: 0, rx: 5, ry: 6, hitOffsetX: 0, hitOffsetY: 0 },
+    rocks: { l: 54.975478593693225, t: 74.45261101973685, w: 28, rotate: 0, scaleX: 1.48, scaleY: 1, skewX: 0, rx: 5, ry: 6, hitOffsetX: 0, hitOffsetY: 0 },
   },
   // Bank display objects — purely visual placement, no interaction target.
   clues: [
@@ -143,6 +143,8 @@ const loadDebugLayout = () => {
 };
 
 const START_BEAM = { x: 31, y: 57 };
+
+const SHOW_HIT_ZONES = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('hitzones');
 
 function pointInsideClue(point, clue) {
   if (!clue) return false;
@@ -529,15 +531,19 @@ export default function SamaprabhaGame({
     event.preventDefault();
     event.currentTarget.setPointerCapture?.(event.pointerId);
     const point = getStagePoint(event);
-    stopVoice?.();
     setBeamPos(point);
+    // Only a touch ON the current clue is an attempt. A random tap on the stage must not cut the
+    // playing VO (a hint line) or dismiss the first-time teaching hand.
+    const clue = CLUES[litRef.current];
+    const onClue = !!clue && pointInsideClue(point, clue);
+    if (onClue) stopVoice?.();
     startHoldAtPoint(point, event.pointerId);
 
-    if (!firstInteractionSentRef.current) {
+    if (onClue && !firstInteractionSentRef.current) {
       firstInteractionSentRef.current = true;
       onFirstInteraction?.();
     }
-  }, [debugEnabled, showDebugPanel, getStagePoint, isPaused, onFirstInteraction, phase, startHoldAtPoint, stopVoice]);
+  }, [CLUES, debugEnabled, showDebugPanel, getStagePoint, isPaused, onFirstInteraction, phase, startHoldAtPoint, stopVoice]);
 
   const handlePointerMove = useCallback((event) => {
     if (pointerIdRef.current !== event.pointerId || holdingClueIndexRef.current === null) return;
@@ -865,6 +871,25 @@ export default function SamaprabhaGame({
         onContextMenu={(event) => event.preventDefault()}
       >
         <div className="sama-dusk-wash" />
+
+        {/* Dev aid: add ?hitzones to the URL to see every clue's hold zone (active one solid). */}
+        {SHOW_HIT_ZONES && CLUES.map((clue, index) => (
+          <div
+            key={`hitzone-${clue.shadowPieceKey}`}
+            style={{
+              position: 'absolute',
+              left: `${clue.cx - clue.rx}%`,
+              top: `${clue.cy - clue.ry}%`,
+              width: `${clue.rx * 2}%`,
+              height: `${clue.ry * 2}%`,
+              borderRadius: '50%',
+              border: `2px ${index === lit ? 'solid' : 'dashed'} rgba(255, 0, 90, ${index === lit ? 0.95 : 0.4})`,
+              background: index === lit ? 'rgba(255, 0, 90, 0.12)' : 'none',
+              pointerEvents: 'none',
+              zIndex: 60,
+            }}
+          />
+        ))}
 
         <SyllableHighlight
           syllables={SYLLABLES}

@@ -184,7 +184,7 @@ export default function SarvakaryeshuGame({
   });
 
   // GMB Hint Standard v1 — flat 10s/18s/26s from VO end or last interaction.
-  const { hintLevel, markInteraction, markLevel2VoiceStarted, markLevel2VoiceEnded } = useRepeatedHintCycle({
+  const { hintLevel, markInteraction, markWrongAttempt, markLevel2VoiceStarted, markLevel2VoiceEnded } = useRepeatedHintCycle({
     enabled: isActive && !isPaused && phase === 'play' && canPick,
     stageKey: isActive ? `card-${cardIndex}` : null,
     initialDelay: 10000,
@@ -302,22 +302,22 @@ export default function SarvakaryeshuGame({
 
     const situation = SITUATIONS[cardIndex];
     const correct = powerId === situation.correct;
+    stopSceneVoice?.();
+    if (hintLevel === 2) markLevel2VoiceEnded();
+    if (hintLevel >= 3) setGuidedPowerId(situation.correct);
 
     setPicked(powerId);
 
     if (!correct) {
-      // Don't interrupt an active hint VO (especially the L3 rescue) — a
-      // wrong tap stopping it could drop its completion callback and lose
-      // the correct-symbol reveal. Visual wobble + text is enough feedback.
       setIsCorrect(null);
       setGuidanceMessage('Try another symbol.');
+      // A wrong symbol is a genuine attempt: it never clears a visible hint (so it cannot keep
+      // postponing the clues), and a 2nd wrong pick earns L2 help early.
+      markWrongAttempt();
       return;
     }
 
-    stopSceneVoice?.();
-
-    // Only successful understanding resets the hint cycle — a wrong guess
-    // must not let the child keep postponing the clues.
+    // Only successful understanding resets the hint cycle.
     markInteraction();
     resolvingRef.current = true;
     setIsCorrect(true);
@@ -454,7 +454,7 @@ export default function SarvakaryeshuGame({
       }
       safeAfter(9000, advance);
     });
-  }, [canPick, cardIndex, isPaused, markInteraction, onGameComplete, onMicroWin, onPhaseComplete, playSceneLine, playSyllable, playWord, safeAfter, pausableAfter, cancelPausable, stopSceneVoice]);
+  }, [canPick, cardIndex, hintLevel, isPaused, markInteraction, markLevel2VoiceEnded, markWrongAttempt, onGameComplete, onMicroWin, onPhaseComplete, playSceneLine, playSyllable, playWord, safeAfter, pausableAfter, cancelPausable, stopSceneVoice]);
 
   if (!isActive) return null;
 

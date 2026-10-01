@@ -684,12 +684,21 @@ const EarsSoundMatchGame = ({
   const triggerHintL2 = useCallback((targetRound) => {
     if (hintStageRef.current >= 2) return;
     hintStageRef.current = 2;
+    const runId = runIdRef.current;
     speak(targetRound.hintClue, () => {
       playSound(targetRound.sounds[targetRound.targetZoneId], '', () => {
         l2FinishedAtRef.current = Date.now();
       }, 0.68);
     });
-  }, [playSound, speak]);
+    // L3 is gated on L2 "finishing". If the browser never delivers the speech "ended" event the
+    // chain above never completes and L3 would never come — so stamp it after a generous limit
+    // (the clue line plus the target sound), only if this is still the same round at stage 2.
+    after(Math.max(9000, targetRound.hintClue.length * 90 + 6000), () => {
+      if (runId === runIdRef.current && hintStageRef.current === 2 && !l2FinishedAtRef.current) {
+        l2FinishedAtRef.current = Date.now();
+      }
+    });
+  }, [after, playSound, speak]);
 
   useEffect(() => {
     if (!isActive || phase !== PHASE.CHOOSING || !round) return;

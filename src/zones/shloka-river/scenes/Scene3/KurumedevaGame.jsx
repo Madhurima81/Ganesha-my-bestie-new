@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import SyllableHighlight from '../../shared/SyllableHighlight';
 import useRepeatedHintCycle from '../../../../lib/hooks/useRepeatedHintCycle';
 import usePausableTimers from '../../../../lib/hooks/usePausableTimers';
+import { getLineCue } from '../../../../lib/config/content/voiceCues';
 import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
 import './KurumedevaGame.css';
 
@@ -92,6 +93,11 @@ const BEAVER_PATH = KURUMEDEVA_LAYOUT.beaverPath;
 // Friend tap hitbox is enlarged vs. the visible sprite for touch forgiveness —
 // KurumedevaGame.css compensates by sizing the <img> at 1/KURU_HIT_SCALE.
 const KURU_HIT_SCALE = 1.18;
+const FRIEND_DROP_RADIUS = {
+  elephant: 6,
+  monkey: 7,
+};
+const getFriendDropRadius = (friend) => FRIEND_DROP_RADIUS[friend.id] ?? Math.max(6, friend.w * 0.55);
 const BEAVER_CROSSING_W = 6.5;
 const BEAVER_REUNION_W = 8.5;
 // Where each friend walks when asked for help. Elephant arrives beside the
@@ -126,9 +132,10 @@ const PLANK_SLOTS = [
   { l: 72.3, t: 75, r: -1 },
 ];
 const PLANK_SLOT_W = 10.5;
-const PLANK_DROP_RADIUS = 18; // forgiving snap to the active slot
-// Anywhere over the gap counts as "close enough" for little hands.
-const GAP_ZONE = { l0: 40, l1: 84, t0: 58, t1: 84 };
+const PLANK_DROP_RX = 4.2; // snap near the active plank slot, not anywhere in the river gap
+const PLANK_DROP_RY = 3.2;
+
+const SHOW_HIT_ZONES = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('hitzones');
 
 // Resting logs — 3 single logs visible from scene start next to Elephant.
 // Disappear once he helps (the bridge art takes over). Each is independently
@@ -282,7 +289,11 @@ export default function KurumedevaGame({
   onGameComplete = () => {},
   voiceGuidance = {},
   isPaused = false,
+  // Sidebar actually open (isPaused also covers the short replay hold after it closes): drives the
+  // hand demo, the animation freeze and the hint pin, so the hand can play WITH the replayed line.
+  isSidebarOpen,
 }) {
+  const handPaused = isSidebarOpen ?? isPaused;
   usePreloadPoses(POSE_ASSETS);
   const { playVoice: playSceneLine, playSyllable, playWord, stopVoice: stopSceneVoice } = voiceGuidance;
   const [friendStep, setFriendStep] = useState(0);
@@ -352,6 +363,8 @@ export default function KurumedevaGame({
   const {
     hintLevel,
     markInteraction,
+    markAttempt,
+    markWrongAttempt,
     markLevel2VoiceStarted,
     markLevel2VoiceEnded,
   } = useRepeatedHintCycle({
@@ -363,6 +376,7 @@ export default function KurumedevaGame({
     pulseInterval: 1800,
     level2Delay: 18000,
     level3Delay: 26000,
+    paused: handPaused,
   });
 
   // Teaching gesture appears for the first help bubble and the first plank.
@@ -382,6 +396,22 @@ export default function KurumedevaGame({
     const t = pausableAfter(6000, () => setKuruIntroGesture(false));
     return () => cancelPausable(t);
   }, [isActive, introComplete, kuruStageKey, phase, isRoundSettling, debugMode, isTeachableBeat, pausableAfter, cancelPausable]);
+
+  // Back from the sidebar during a teachable beat: the teaching hand plays again with the
+  // replayed instruction line.
+  const wasPausedForTeachRef = useRef(false);
+  useEffect(() => {
+    if (wasPausedForTeachRef.current && !handPaused && isActive && introComplete && phase === 'play' && !isRoundSettling && !debugMode && isTeachableBeat) {
+      setKuruIntroGesture(true);
+      // The replayed instruction's cue re-times it: the hand waits for the action word again.
+      setIntroGestureVoStarted(false);
+      const t = pausableAfter(8000, () => setKuruIntroGesture(false));
+      wasPausedForTeachRef.current = handPaused;
+      return () => cancelPausable(t);
+    }
+    wasPausedForTeachRef.current = handPaused;
+    return undefined;
+  }, [handPaused, isActive, introComplete, phase, isRoundSettling, debugMode, isTeachableBeat, pausableAfter, cancelPausable]);
   const currentFriend = friendStep < FRIENDS.length ? FRIENDS[friendStep] : null;
 
   // Round-start question — once per ask round: "Who can help with the heavy
@@ -398,7 +428,8 @@ export default function KurumedevaGame({
     // Delay matches the story-clause-then-action-clause shape of these lines
     // ("Everyone wants to cross... drag the logs...") — showing the gesture
     // right as the VO starts lands it on "story", not "action".
-    playSceneLine?.(key, undefined, { onStart: () => window.setTimeout(() => setIntroGestureVoStarted(true), 500) });
+    // The hand is cued to the action word ("drag") of the line, not a guessed delay.
+    playSceneLine?.(key, undefined, { cue: getLineCue(key, () => setIntroGestureVoStarted(true)) });
   }, [isActive, introComplete, isPaused, friendStep, phase, isRoundSettling, debugMode, placeActive, playSceneLine, stopSceneVoice]);
 
   // Plank round instruction — once, right as the plank round begins.
@@ -408,7 +439,7 @@ export default function KurumedevaGame({
     if (plankInstructionPlayedRef.current) return;
     plankInstructionPlayedRef.current = true;
     stopSceneVoice?.();
-    playSceneLine?.('kuru_plank_instruction', undefined, { onStart: () => window.setTimeout(() => setIntroGestureVoStarted(true), 500) });
+    playSceneLine?.('kuru_plank_instruction', undefined, { cue: getLineCue('kuru_plank_instruction', () => setIntroGestureVoStarted(true)) });
   }, [placeActive, playSceneLine, stopSceneVoice]);
 
   // Idle hint VO — L1 is visual only. L2 is soft/partial guidance; L3 gives
@@ -651,12 +682,13 @@ export default function KurumedevaGame({
     event.preventDefault();
     event.stopPropagation();
     stopSceneVoice?.();
-    markInteraction();
+    // Grabbing the plank is an attempt, not progress: a visible hint stays; placing it is progress.
+    markAttempt();
     pieceDragRef.current = event.pointerId;
     event.currentTarget.setPointerCapture?.(event.pointerId);
     setPieceDragActive(true);
     setPieceDragPos(getStagePoint(event));
-  }, [getStagePoint, isPaused, placeActive, placedCount, markInteraction, stopSceneVoice]);
+  }, [getStagePoint, isPaused, placeActive, placedCount, markAttempt, stopSceneVoice]);
 
   const handlePiecePointerMove = useCallback((event) => {
     if (pieceDragRef.current !== event.pointerId || !pieceDragActive) return;
@@ -691,12 +723,19 @@ export default function KurumedevaGame({
     const drop = getStagePoint(event);
 
     const slot = PLANK_SLOTS[placedCount] || PLANK_SLOTS[PLANK_SLOTS.length - 1];
-    const near = Math.hypot(drop.l - slot.l, drop.t - slot.t) <= PLANK_DROP_RADIUS;
-    const overGap = drop.l >= GAP_ZONE.l0 && drop.l <= GAP_ZONE.l1
-      && drop.t >= GAP_ZONE.t0 && drop.t <= GAP_ZONE.t1;
+    const dx = (drop.l - slot.l) / PLANK_DROP_RX;
+    const dy = (drop.t - slot.t) / PLANK_DROP_RY;
+    const near = dx * dx + dy * dy <= 1;
     endPieceDrag();
-    if (near || overGap) placeNextPiece();
-  }, [endPieceDrag, getStagePoint, placeNextPiece, placedCount]);
+    if (near) {
+      const isFirstPlank = placedCount === 0;
+      markInteraction(); // plank placed = real progress
+      placeNextPiece();
+      if (isFirstPlank) playSceneLine?.('kuru_plank_continue');
+    } else {
+      markWrongAttempt(); // genuine drag, missed the gap
+    }
+  }, [endPieceDrag, getStagePoint, markInteraction, markWrongAttempt, placeNextPiece, placedCount, playSceneLine]);
 
   // Plank round completes once all 3 land — light the last syllables, then
   // start the crossing.
@@ -748,22 +787,15 @@ export default function KurumedevaGame({
     const friend = FRIENDS[friendStep];
     const friendPos = friendPositions[friendStep] || friend;
     const distance = Math.hypot(dropPoint.l - friendPos.l, dropPoint.t - friendPos.t);
-    const dropRadius = Math.max(8, friend.w * 0.75);
+    const dropRadius = getFriendDropRadius(friend);
 
-    // Also accept the drop if the pointer was released directly over the
-    // current friend's tightened element hitbox.
-    let overFriend = false;
-    if (typeof document !== 'undefined') {
-      const el = document.elementFromPoint(event.clientX, event.clientY);
-      overFriend = !!el?.closest?.(`[data-friend-id="${friend.id}"]`);
-    }
-
-    if (distance <= dropRadius || overFriend) {
+    if (distance <= dropRadius) {
       askFriendForHelp(friendStep);
     } else {
       resetHelpToken();
+      markWrongAttempt(); // dragged the help token and dropped it away from the friend
     }
-  }, [askFriendForHelp, friendPositions, friendStep, getStagePoint, isDraggingHelp, resetHelpToken]);
+  }, [askFriendForHelp, friendPositions, friendStep, getStagePoint, isDraggingHelp, markWrongAttempt, resetHelpToken]);
 
   const completeAfterSuccess = useCallback(() => {
     if (!successVoDoneRef.current || !crossingDoneRef.current || completionScheduledRef.current) return;
@@ -1075,7 +1107,7 @@ export default function KurumedevaGame({
             : beaverIdleWorriedImg;
 
   return (
-    <div className={`kuru-game${hideElements ? ' is-hidden' : ''}${debugMode ? ' is-debugging' : ''}${isPaused ? ' is-paused' : ''}`}>
+    <div className={`kuru-game${hideElements ? ' is-hidden' : ''}${debugMode ? ' is-debugging' : ''}${handPaused ? ' is-paused' : ''}`}>
       <div
         ref={stageRef}
         className="kuru-stage"
@@ -1085,6 +1117,51 @@ export default function KurumedevaGame({
         onPointerCancel={debugMode ? endDebugDrag : undefined}
         onContextMenu={(event) => event.preventDefault()}
       >
+        {/* Dev aid: add ?hitzones to the URL to see help-token and plank drop zones. */}
+        {SHOW_HIT_ZONES && (
+          <>
+            {FRIENDS.map((friend, index) => {
+              const pos = friendPositions[index] || friend;
+              const dropRadius = getFriendDropRadius(friend);
+              const isCurrent = index === friendStep && canAsk;
+              return (
+                <div key={`hitzone-friend-${friend.id}`}>
+                  <div
+                    style={{
+                      position: 'absolute',
+                      left: `${pos.l - dropRadius}%`,
+                      top: `${pos.t - dropRadius}%`,
+                      width: `${dropRadius * 2}%`,
+                      height: `${dropRadius * 2}%`,
+                      borderRadius: '50%',
+                      border: `2px ${isCurrent ? 'solid' : 'dashed'} rgba(0, 170, 90, 0.82)`,
+                      background: isCurrent ? 'rgba(0, 170, 90, 0.1)' : 'rgba(0, 170, 90, 0.04)',
+                      pointerEvents: 'none',
+                      zIndex: 61,
+                    }}
+                    aria-hidden="true"
+                  />
+                </div>
+              );
+            })}
+            {PLANK_SLOTS.map((slot, i) => (
+              <div
+                key={`hitzone-slot-${i}`}
+                style={{
+                  position: 'absolute',
+                  left: `${slot.l - PLANK_DROP_RX}%`,
+                  top: `${slot.t - PLANK_DROP_RY}%`,
+                  width: `${PLANK_DROP_RX * 2}%`,
+                  height: `${PLANK_DROP_RY * 2}%`,
+                  borderRadius: '50%',
+                  border: '2px solid rgba(0, 120, 255, 0.8)',
+                  pointerEvents: 'none',
+                  zIndex: 60,
+                }}
+              />
+            ))}
+          </>
+        )}
         <SyllableHighlight
           syllables={SYLLABLES}
           litCount={litCount}
@@ -1367,7 +1444,7 @@ export default function KurumedevaGame({
                 : 400
             }
             iterations={1}
-            paused={isPaused}
+            paused={handPaused}
             zIndex={46}
           />
         )}

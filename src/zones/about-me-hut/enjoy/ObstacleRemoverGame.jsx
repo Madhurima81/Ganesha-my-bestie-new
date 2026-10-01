@@ -1292,11 +1292,13 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
   // Bubble tap — kind actions advance wish progress; unkind actions shake + dim.
   const handleBubbleTap = (bubble) => {
-    markInteraction();
     interruptCurrentVoice();
     playUiTap();
 
     if (bubble.type === 'kind') {
+      // Only a kind (correct) bubble is progress. An unkind tap is a wrong attempt: it must not
+      // reset the idle-hint ladder or dismiss a hint that is already showing.
+      markInteraction();
       // Kind action: speak and advance progress
       if (bubble.voiceLine) {
         speakLine(bubble.voiceLine, { moment: 'encouragement' });

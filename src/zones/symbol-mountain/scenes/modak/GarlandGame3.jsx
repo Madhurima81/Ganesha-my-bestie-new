@@ -314,12 +314,15 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
   // Same fix as buildL2VoiceEndedAtRef above — L3 waits 8s after the L2
   // line finishes speaking, not a fixed 26s from arm.
   const garlandL2VoiceEndedAtRef = useRef(null);
+  const garlandL2SpeakingRef = useRef(false);
+  const [garlandL2EndTick, setGarlandL2EndTick] = useState(0);
 
   const effectiveGarlandHintLevel = Math.max(garlandHintLevel, forcedGarlandHintLevel);
 
   const startGarlandHintClock = useCallback((clearEscalation = false) => {
     garlandHintStartedAtRef.current = Date.now();
     garlandL2VoiceEndedAtRef.current = null;
+    garlandL2SpeakingRef.current = false;
     setGarlandHintLevel(0);
     if (clearEscalation) {
       setForcedGarlandHintLevel(0);
@@ -348,15 +351,30 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
   useEffect(() => {
     if (!isReady) return;
     if (effectiveGarlandHintLevel >= 3 && !garlandHintVoPlayedRef.current.l3) {
+      // Escalating to L3 (e.g. a 3rd failed drop) while the L2 line is still speaking must not
+      // cut it off: wait. Finishing L2 bumps garlandL2EndTick, which re-runs this effect.
+      if (garlandL2SpeakingRef.current) return;
       garlandHintVoPlayedRef.current.l3 = true;
       speak(VO.carryDirect);
       return;
     }
     if (effectiveGarlandHintLevel >= 2 && !garlandHintVoPlayedRef.current.l2) {
       garlandHintVoPlayedRef.current.l2 = true;
-      speakAsync(VO.carry).then(() => { garlandL2VoiceEndedAtRef.current = Date.now(); });
+      garlandL2SpeakingRef.current = true;
+      // The "ended" event is not always delivered by the browser, which would gate L3 forever —
+      // so also stamp it after a time limit (pausable via `after`).
+      let stamped = false;
+      const stampEnded = () => {
+        if (stamped) return;
+        stamped = true;
+        garlandL2SpeakingRef.current = false;
+        garlandL2VoiceEndedAtRef.current = Date.now();
+        setGarlandL2EndTick((tick) => tick + 1);
+      };
+      speakAsync(VO.carry).then(stampEnded);
+      after(Math.max(4000, VO.carry.length * 90 + 2500), stampEnded);
     }
-  }, [effectiveGarlandHintLevel, isReady, speak, speakAsync]);
+  }, [effectiveGarlandHintLevel, isReady, speak, speakAsync, after, garlandL2EndTick]);
 
   // Sidebar open = true pause: interrupt the line WITHOUT resolving it and disarm both
   // hint clocks. On close, replay it from the start, then start fresh 10/18/26 clocks —
@@ -509,8 +527,9 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
       const distance = Math.hypot(point.x - start.x, point.y - start.y);
       if (distance >= 5) {
         garlandMeaningfulDragRef.current = true;
-        // A genuine drag earns a fresh idle window.
-        startGarlandHintClock();
+        // A genuine drag is an attempt, not progress: it restarts the idle window only when no
+        // hint is showing — a visible L1/L2/L3 hint (hand + VO) stays until the garland is delivered.
+        if (effectiveGarlandHintLevel < 1) startGarlandHintClock();
       }
     }
   };
@@ -539,7 +558,8 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
         }
       }
 
-      startGarlandHintClock();
+      // A missed drop is not progress: keep a visible hint; otherwise restart the idle window.
+      if (effectiveGarlandHintLevel < 1) startGarlandHintClock();
       return;
     }
 
