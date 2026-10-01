@@ -1,8 +1,13 @@
 // lib/components/feedback/GestureDemo.jsx
 //
-// Reusable gesture tutorial overlay.
-// Shows animated hand performing the required gesture after idle timeout.
-// Disappears on first user interaction.
+// Reusable gesture tutorial overlay — DISPLAY ONLY.
+// Shows an animated hand performing the required gesture. By default it stays
+// visible until its animation finishes, the caller deactivates it (`active`
+// false), or the beat/hint changes. It does NOT guess whether a touch was
+// meaningful: random taps on sky/grass/empty space must not dismiss it. The
+// scene detects a valid attempt and turns `active` off itself.
+// Optional `dismissOnAnyPointer` restores the old "any pointerdown dismisses"
+// behaviour for legacy teaching flows.
 //
 // Usage:
 //   <GestureDemo
@@ -196,6 +201,7 @@ export default function GestureDemo({
   onComplete,
   iterations = 2,
   zIndex = 100,
+  dismissOnAnyPointer = false,
 }) {
   const [visible, setVisible] = useState(false);
   const [styleId] = useState(() => `gd-anim-${++gestureStyleCounter}`);
@@ -265,19 +271,19 @@ export default function GestureDemo({
     };
   }, [visible, styleId, config, from, to]);
 
-  // Dismiss on any interaction
+  // Legacy opt-in: dismiss on any pointerdown (off by default).
   useEffect(() => {
-    if (!visible) return;
+    if (!visible || !dismissOnAnyPointer) return;
 
     // A tap on the sidebar isn't the child trying the gesture — it must not
     // dismiss the demo (or count as "learned"); the pause hook replays it.
     const handler = (e) => {
-      if (e.target?.closest?.('.ganesha-sidebar, [data-keep-gesture]')) return;
+      if (e.target?.closest?.('.ganesha-sidebar, [data-keep-gesture], [data-collection-ui="true"]')) return;
       dismiss();
     };
     window.addEventListener('pointerdown', handler);
     return () => window.removeEventListener('pointerdown', handler);
-  }, [visible, dismiss]);
+  }, [visible, dismiss, dismissOnAnyPointer]);
 
   if (!visible) return null;
 

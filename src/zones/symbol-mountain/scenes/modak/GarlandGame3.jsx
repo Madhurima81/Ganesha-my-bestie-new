@@ -14,6 +14,8 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
 import useAppVisibility from '../../../../lib/hooks/useAppVisibility';
 import usePausableTimers from '../../../../lib/hooks/usePausableTimers';
+import { getLineCue } from '../../../../lib/config/content/voiceCues';
+import { attachSpeechCue, startCueTimer } from '../../../../lib/utils/speechCue';
 import './GarlandGame3.css';
 
 import flowerPink from './assets/images/fj-flower-coral.webp';
@@ -108,8 +110,12 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
   const activeSpeechRef = useRef(null);
   const interruptedSpeechRef = useRef(null);
   const replayTimerRef = useRef(null);
+  // The line waiting out resumeSpeech's settle delay. If the sidebar opens again inside that
+  // window it must go back into interruptedSpeechRef; otherwise its promise is never resolved,
+  // the intro (`await speakAsync(VO.open)`) never finishes, and the hint clock is never armed.
+  const pendingReplayRef = useRef(null);
 
-  const startUtterance = useCallback((text, resolve) => {
+  const startUtterance = useCallback((text, resolve, cue = null) => {
     if (typeof window === 'undefined' || !window.speechSynthesis) {
       resolve?.();
       return;
@@ -118,7 +124,7 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
     // queue it as the interrupted line so it plays, from the start, on close.
     if (pausedRef.current) {
       interruptedSpeechRef.current?.resolve?.();
-      interruptedSpeechRef.current = { text, resolve };
+      interruptedSpeechRef.current = { text, resolve, cue };
       return;
     }
     // Don't let cancel() accidentally resolve the previous instruction as
@@ -135,13 +141,15 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.rate = 0.95;
-    const entry = { text, resolve, utterance };
+    const entry = { text, resolve, utterance, cue };
     const done = () => {
       if (activeSpeechRef.current === entry) activeSpeechRef.current = null;
       resolve?.();
     };
     utterance.onend = done;
     utterance.onerror = done;
+    // The carry hand (or other cue) fires exactly when the action word is spoken.
+    entry.cancelCue = attachSpeechCue(utterance, text, cue);
     activeSpeechRef.current = entry;
     window.speechSynthesis.speak(utterance);
   }, [stopVoice]);
@@ -153,26 +161,35 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
     } catch { /* no-op */ }
   }, [startUtterance]);
 
-  const speakAsync = useCallback((text) => new Promise((resolve) => {
+  const speakAsync = useCallback((text, cue = null) => new Promise((resolve) => {
     try {
       if (mutedRef.current || typeof window === 'undefined' || !window.speechSynthesis) {
+        startCueTimer(text, cue);
         resolve();
         return;
       }
-      startUtterance(text, resolve);
+      startUtterance(text, resolve, cue);
     } catch { resolve(); }
   }), [startUtterance]);
 
   // Detach the active utterance's handlers BEFORE cancel() (so nothing awaiting it
   // resolves and advances), and remember it. Shared by tab-hide and sidebar-open.
   const interruptSpeech = useCallback(() => {
-    if (replayTimerRef.current) { clearTimeout(replayTimerRef.current); replayTimerRef.current = null; }
+    if (replayTimerRef.current) {
+      clearTimeout(replayTimerRef.current);
+      replayTimerRef.current = null;
+      if (pendingReplayRef.current) {
+        interruptedSpeechRef.current = pendingReplayRef.current;
+        pendingReplayRef.current = null;
+      }
+    }
     const entry = activeSpeechRef.current;
     activeSpeechRef.current = null;
     if (entry) {
       entry.utterance.onend = null;
       entry.utterance.onerror = null;
-      interruptedSpeechRef.current = { text: entry.text, resolve: entry.resolve };
+      entry.cancelCue?.();
+      interruptedSpeechRef.current = { text: entry.text, resolve: entry.resolve, cue: entry.cue };
     }
     try { window.speechSynthesis?.cancel(); } catch { /* no-op */ }
   }, []);
@@ -197,11 +214,13 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
     const entry = interruptedSpeechRef.current;
     interruptedSpeechRef.current = null;
     if (!entry) { onSettled?.(); return; }
+    pendingReplayRef.current = entry;
     replayTimerRef.current = window.setTimeout(() => {
       replayTimerRef.current = null;
+      pendingReplayRef.current = null;
       if (mutedRef.current) { entry.resolve?.(); onSettled?.(); return; }
       try {
-        startUtterance(entry.text, () => { entry.resolve?.(); onSettled?.(); });
+        startUtterance(entry.text, () => { entry.resolve?.(); onSettled?.(); }, entry.cue);
       } catch { entry.resolve?.(); onSettled?.(); }
     }, settleMs);
   }, [startUtterance]);
@@ -364,7 +383,8 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
       // A replayed carry line brings the carry hand back with it (it would otherwise be gone
       // after its first showing even though the instruction is spoken again).
       const replayText = interruptedSpeechRef.current?.text;
-      if (replayText && (replayText === VO.ready || replayText === VO.carry || replayText === VO.carryDirect)) {
+      // "ready" re-fires its own cue with the replayed line; only the carry hint lines need this.
+      if (replayText && (replayText === VO.carry || replayText === VO.carryDirect)) {
         after(400, () => {
           setCarryTeachingGesture(true);
           after(3200, () => setCarryTeachingGesture(false));
@@ -448,10 +468,11 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
 
         // Drag is a new gesture after six tap interactions — teach it once
         // immediately, independent of (and overlapping) the ready VO.
-        setCarryTeachingGesture(true);
-        after(3200, () => setCarryTeachingGesture(false));
-
-        await speakAsync(VO.ready);
+        // The carry hand lands exactly when the action word ("Drag") of the line is spoken.
+        await speakAsync(VO.ready, getLineCue('garland:ready', () => {
+          setCarryTeachingGesture(true);
+          after(3200, () => setCarryTeachingGesture(false));
+        }));
         if (cancelled) return;
         // 10 / 18 / 26 begins only once the ready VO actually finishes.
         startGarlandHintClock(true);

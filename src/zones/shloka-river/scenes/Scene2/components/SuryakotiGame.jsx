@@ -129,7 +129,7 @@ export default function SuryakotiGame({
 
   const {
     hintLevel,
-    markInteraction,
+    markContinuousProgress,
     markLevel2VoiceStarted,
     markLevel2VoiceEnded,
   } = useRepeatedHintCycle({
@@ -347,7 +347,7 @@ export default function SuryakotiGame({
     if (newlyCleared > 0) {
       setSpotHasProgress(true);
       setRemainingCueVersion((version) => version + 1);
-      markInteraction();
+      markContinuousProgress();
     }
 
     let next = activeZoneRef.current;
@@ -382,7 +382,7 @@ export default function SuryakotiGame({
         fadeOverlay(cv);
       });
     }
-  }, [fadeOverlay, isPaused, markInteraction, onMicroWin, pausableAfter, playSceneLine]);
+  }, [fadeOverlay, isPaused, markContinuousProgress, onMicroWin, pausableAfter, playSceneLine]);
 
   const getPos = useCallback((e) => {
     const cv = canvasRef.current;

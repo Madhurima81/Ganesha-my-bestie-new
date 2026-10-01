@@ -6,6 +6,7 @@ import PoseImage, { usePreloadPoses } from '../../../../lib/components/animation
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useAppVisibility from '../../../../lib/hooks/useAppVisibility';
+import usePausableTimers from '../../../../lib/hooks/usePausableTimers';
 import './EarsSoundMatchGame.css';
 
 // Reuse the shared scene-3 Symbol Mountain background across Eyes, Ears, and Tusk.
@@ -191,7 +192,8 @@ const EarsSoundMatchGame = ({
   onAnimalPositionsChange,
   hideElements = false,
   className = '',
-  stopVoice
+  stopVoice,
+  isPaused = false
 }) => {
   usePreloadPoses(POSE_ASSETS);
   const [roundIndex, setRoundIndex] = useState(0);
@@ -225,22 +227,59 @@ const EarsSoundMatchGame = ({
   const debugDragRef = useRef(null);
   const debugPanelDragRef = useRef(null);
 
+  // Sidebar = true pause: timers freeze (resume with remaining time) and the current
+  // line / animal sound is interrupted + replayed — see the isPaused effect below.
+  const { after, cancel: cancelTimer } = usePausableTimers(isPaused);
+  const pausedRef = useRef(isPaused);
+  pausedRef.current = isPaused;
+  const activeAudioRef = useRef(null);       // { start, onEnd, dead }
+  const interruptedAudioRef = useRef(null);
+  const sidebarReplayRef = useRef(null);
+  const pendingSidebarEntryRef = useRef(null);
+  const wasPausedRef = useRef(false);
+  const hintHoldRef = useRef(false);
+
   const round = ROUNDS[roundIndex];
   const completedIds = useMemo(() => new Set(completedRounds), [completedRounds]);
   const selectedDebugLayout = layout[selectedDebugKey] || DEFAULT_LAYOUT[selectedDebugKey];
 
   const clearTimers = useCallback(() => {
-    timersRef.current.forEach((timer) => clearTimeout(timer));
+    timersRef.current.forEach((timer) => cancelTimer(timer));
     timersRef.current = [];
-  }, []);
+  }, [cancelTimer]);
 
   const schedule = useCallback((fn, delay) => {
-    const timer = setTimeout(() => {
+    const timer = after(delay, () => {
       timersRef.current = timersRef.current.filter((item) => item !== timer);
       fn();
-    }, delay);
+    });
     timersRef.current.push(timer);
     return timer;
+  }, [after]);
+
+  // Every spoken line and animal sound runs through track() so this component owns
+  // its completion callback: a clip stopped by the sidebar is marked dead (a
+  // cancel-triggered end can never advance the game) and is replayed on close.
+  const track = useCallback((start, onEnd) => {
+    const entry = { start, onEnd, dead: false };
+    // Requested while the sidebar is open: queue it, play it (from the start) on close.
+    if (pausedRef.current) {
+      interruptedAudioRef.current = entry;
+      return;
+    }
+    const done = () => {
+      if (entry.dead) return;
+      if (pausedRef.current) {
+        entry.dead = true;
+        interruptedAudioRef.current = entry;
+        return;
+      }
+      entry.dead = true;
+      if (activeAudioRef.current === entry) activeAudioRef.current = null;
+      onEnd?.();
+    };
+    activeAudioRef.current = entry;
+    start(done);
   }, []);
 
   const stopAudio = useCallback(() => {
@@ -291,9 +330,11 @@ const EarsSoundMatchGame = ({
     // isn't touched by window.speechSynthesis.cancel() inside speakFallback,
     // so without this a still-playing scene VO keeps going under this
     // mini-game's line.
-    stopVoice?.();
-    trackUtterance(text, speakFallback(text), onEnd);
-  }, [isAudioOn, stopVoice, trackUtterance]);
+    track((done) => {
+      stopVoice?.();
+      trackUtterance(text, speakFallback(text), done);
+    }, onEnd);
+  }, [isAudioOn, stopVoice, trackUtterance, track]);
 
   useAppVisibility(
     useCallback(() => {
@@ -314,43 +355,92 @@ const EarsSoundMatchGame = ({
     if (replayTimerRef.current) clearTimeout(replayTimerRef.current);
     replayTimerRef.current = null;
     interruptedTextRef.current = null;
+    if (sidebarReplayRef.current) clearTimeout(sidebarReplayRef.current);
+    sidebarReplayRef.current = null;
   }, []);
 
   const playSound = useCallback((src, fallbackText = '', onDone = null, volume = 0.72) => {
-    stopAudio();
+    track((soundDone) => {
+      stopAudio();
 
-    const finish = (() => {
-      let done = false;
-      return () => {
-        if (done) return;
-        done = true;
-        audioRef.current = null;
-        onDone?.();
+      const finish = (() => {
+        let done = false;
+        return () => {
+          if (done) return;
+          done = true;
+          audioRef.current = null;
+          soundDone();
+        };
+      })();
+
+      if (!isAudioOn || !src) {
+        if (fallbackText) trackUtterance(fallbackText, speakFallback(fallbackText));
+        schedule(finish, 850);
+        return;
+      }
+
+      try {
+        const audio = new Audio(src);
+        audio.volume = volume;
+        audio.onended = finish;
+        audio.onerror = finish;
+        audio.play().catch(finish);
+        audioRef.current = audio;
+      } catch {
+        finish();
+      }
+    }, onDone);
+  }, [isAudioOn, schedule, stopAudio, trackUtterance, track]);
+
+  // Sidebar open = true pause: kill the current clip WITHOUT firing its callback and hold
+  // the hint ladder. On close: after a beat, replay the interrupted clip from the start
+  // (its callback fires then, so the round continues), and only then start a fresh
+  // 10/18/26 clock.
+  useEffect(() => {
+    if (isPaused) {
+      if (!wasPausedRef.current) {
+        hintHoldRef.current = true;
+        const active = activeAudioRef.current;
+        if (active && !active.dead) {
+          active.dead = true;
+          interruptedAudioRef.current = active;
+        }
+        activeAudioRef.current = null;
+        if (sidebarReplayRef.current) {
+          clearTimeout(sidebarReplayRef.current);
+          sidebarReplayRef.current = null;
+          // Sidebar reopened inside the 400ms settle window: the clip waiting to replay must go
+          // back to "interrupted", or its callback never fires and the hint hold is never released.
+          if (pendingSidebarEntryRef.current && !interruptedAudioRef.current) {
+            interruptedAudioRef.current = pendingSidebarEntryRef.current;
+          }
+          pendingSidebarEntryRef.current = null;
+        }
+        stopAudio();
+      }
+    } else if (wasPausedRef.current) {
+      const entry = interruptedAudioRef.current;
+      interruptedAudioRef.current = null;
+      const rearm = () => {
+        chooseStartedAtRef.current = Date.now();
+        hintStageRef.current = 0;
+        l2FinishedAtRef.current = null;
+        setHintZoneId(null);
+        hintHoldRef.current = false;
       };
-    })();
-
-    if (!isAudioOn || !src) {
-      if (fallbackText) trackUtterance(fallbackText, speakFallback(fallbackText));
-      schedule(finish, 850);
-      return;
+      pendingSidebarEntryRef.current = entry;
+      sidebarReplayRef.current = setTimeout(() => {
+        sidebarReplayRef.current = null;
+        pendingSidebarEntryRef.current = null;
+        if (entry) {
+          track(entry.start, () => { entry.onEnd?.(); rearm(); });
+        } else {
+          rearm();
+        }
+      }, 400);
     }
-
-    try {
-      const audio = new Audio(src);
-      audio.volume = volume;
-      audio.onended = finish;
-      audio.onerror = finish;
-      audio.play().catch(finish);
-      audioRef.current = audio;
-    } catch {
-      finish();
-    }
-  }, [isAudioOn, schedule, stopAudio, trackUtterance]);
-
-  const showFeedback = useCallback((message) => {
-    setFeedback(message);
-    schedule(() => setFeedback(''), 1500);
-  }, [schedule]);
+    wasPausedRef.current = isPaused;
+  }, [isPaused, stopAudio, track]);
 
   const saveLayout = useCallback((nextLayout) => {
     if (typeof window === 'undefined') return;
@@ -480,7 +570,6 @@ const EarsSoundMatchGame = ({
     setPhase(PHASE.LISTENING);
     setHintZoneId(null);
     setWrongZoneId(null);
-    setFeedback(targetRound.prompt);
 
     const zoneIds = ['left', 'center', 'right'];
     let index = 0;
@@ -492,7 +581,6 @@ const EarsSoundMatchGame = ({
         hintStageRef.current = 0;
         l2FinishedAtRef.current = null;
         wrongCountRef.current = 0;
-        setFeedback(VO_TEXTS.choose);
         // The 10s choosing clock must start only once "Now choose the
         // sound." actually finishes, not while it's still speaking.
         speak(VO_TEXTS.choose, () => {
@@ -595,18 +683,18 @@ const EarsSoundMatchGame = ({
   const triggerHintL2 = useCallback((targetRound) => {
     if (hintStageRef.current >= 2) return;
     hintStageRef.current = 2;
-    showFeedback(targetRound.hintClue);
     speak(targetRound.hintClue, () => {
       playSound(targetRound.sounds[targetRound.targetZoneId], '', () => {
         l2FinishedAtRef.current = Date.now();
       }, 0.68);
     });
-  }, [playSound, showFeedback, speak]);
+  }, [playSound, speak]);
 
   useEffect(() => {
     if (!isActive || phase !== PHASE.CHOOSING || !round) return;
 
     const tick = () => {
+      if (pausedRef.current || hintHoldRef.current) return;
       const waitingMs = Date.now() - chooseStartedAtRef.current;
 
       // L3 is an 8s gap AFTER the L2 clue + sound finish, not a fixed
@@ -673,7 +761,6 @@ const EarsSoundMatchGame = ({
       const nextIndex = roundIndex + 1;
       if (nextIndex >= ROUNDS.length) {
         setPhase(PHASE.COMPLETE);
-        showFeedback(VO_TEXTS.complete);
         // Let the listening zones fade, then remove them so the payoff is
         // just the two resolved, happy animals — no leftover clutter.
         schedule(() => setZonesHidden(true), 700);
@@ -704,7 +791,7 @@ const EarsSoundMatchGame = ({
       setRoundIndex(nextIndex);
       playSequence(ROUNDS[nextIndex]);
     }, (animalRound.revealFrames.length * REVEAL_FRAME_MS) + NEXT_ROUND_DELAY_MS);
-  }, [clearTimers, onAnimalPositionsChange, onGameComplete, playSequence, roundIndex, schedule, showFeedback, speak, stopAudio]);
+  }, [clearTimers, onAnimalPositionsChange, onGameComplete, playSequence, roundIndex, schedule, speak, stopAudio]);
 
   const handleZoneTap = useCallback((zoneId, e) => {
     e.stopPropagation();
@@ -712,7 +799,6 @@ const EarsSoundMatchGame = ({
 
     if (zoneId !== round.targetZoneId) {
       setWrongZoneId(zoneId);
-      showFeedback(VO_TEXTS.neutral);
       // "Listen again." should actually give the child something to listen
       // to again — replay the target sound once the line finishes, instead
       // of just saying the phrase and leaving them to guess again blind.
@@ -734,9 +820,8 @@ const EarsSoundMatchGame = ({
     }
 
     setCompletedRounds((prev) => [...prev, round.id]);
-    showFeedback(VO_TEXTS[round.id]);
     startReveal(round);
-  }, [debugMode, phase, playSound, round, schedule, showFeedback, speak, startReveal, triggerHintL2, triggerHintL3]);
+  }, [debugMode, phase, playSound, round, schedule, speak, startReveal, triggerHintL2, triggerHintL3]);
 
   if (hideElements || !isActive) return null;
 
@@ -759,7 +844,7 @@ const EarsSoundMatchGame = ({
   return (
     <div
       ref={stageRef}
-      className={`ears-sound-game ${className} ${debugMode ? 'is-debugging' : ''}`}
+      className={`ears-sound-game ${className} ${debugMode ? 'is-debugging' : ''} ${isPaused ? 'is-paused' : ''}`}
       onPointerMove={handleDebugPointerMove}
       onPointerUp={stopDebugDrag}
       onPointerLeave={stopDebugDrag}

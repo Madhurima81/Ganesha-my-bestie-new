@@ -5,6 +5,7 @@ import PoseImage, { usePreloadPoses } from '../../../../lib/components/animation
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useAppVisibility from '../../../../lib/hooks/useAppVisibility';
+import usePausableTimers from '../../../../lib/hooks/usePausableTimers';
 import './EyesPopUpGame.css';
 
 import bgImg from './assets/images/eyes-game/symbol_mountain_3_bg.webp';
@@ -148,6 +149,8 @@ const VO_TEXTS = {
   neutral: 'That is interesting, but it is not what they are looking for.',
   feather: 'Feather found! Peacock will be so happy.',
   mango: 'Mango found! Monkey is hungry no more.',
+  findFeather: 'Now find the feather.',
+  findMango: 'Now find the mango.',
   // L2 — narrows the search without naming the object.
   idleHintL2: 'Look near the bushes. Something is peeking out.',
   // L3 — generic direct instruction, points at whichever bushes are still
@@ -192,7 +195,8 @@ const EyesPopUpGame = ({
   onGameComplete,
   hideElements = false,
   className = '',
-  stopVoice
+  stopVoice,
+  isPaused = false
 }) => {
   usePreloadPoses(POSE_ASSETS);
   const [flow, setFlow] = useState(FLOW.SEARCH);
@@ -238,6 +242,18 @@ const EyesPopUpGame = ({
   const debugDragRef = useRef(null);
   const debugPanelDragRef = useRef(null);
 
+  // Sidebar = true pause: game timers freeze (resume with remaining time) and the
+  // current line is interrupted + replayed — see the isPaused effect below.
+  const { after, cancel: cancelTimer } = usePausableTimers(isPaused);
+  const pausedRef = useRef(isPaused);
+  pausedRef.current = isPaused;
+  const activeSpeechRef = useRef(null);       // { text, onEnd, dead }
+  const interruptedSpeechRef = useRef(null);
+  const replayTimerRef = useRef(null);
+  const pendingReplayRef = useRef(null);
+  const wasPausedRef = useRef(false);
+  const wasArmedRef = useRef(false);
+
   const foundIds = useMemo(() => new Set(foundTargets), [foundTargets]);
   const centeredIds = useMemo(() => new Set(centeredTargets), [centeredTargets]);
   const carriedIds = useMemo(() => new Set(carriedTargets), [carriedTargets]);
@@ -248,34 +264,109 @@ const EyesPopUpGame = ({
   const stopTimers = useCallback(() => {
     if (idleTimerRef.current) clearInterval(idleTimerRef.current);
     if (feedbackTimerRef.current) clearTimeout(feedbackTimerRef.current);
-    if (completionTimerRef.current) clearTimeout(completionTimerRef.current);
-    carryTimersRef.current.forEach((timer) => clearTimeout(timer));
+    if (completionTimerRef.current) cancelTimer(completionTimerRef.current);
+    carryTimersRef.current.forEach((timer) => cancelTimer(timer));
     carryTimersRef.current = [];
     idleTimerRef.current = null;
     feedbackTimerRef.current = null;
     completionTimerRef.current = null;
-  }, []);
+  }, [cancelTimer]);
 
   const schedule = useCallback((fn, delay) => {
-    const timer = setTimeout(() => {
+    const timer = after(delay, () => {
       carryTimersRef.current = carryTimersRef.current.filter((item) => item !== timer);
       fn();
-    }, delay);
+    });
     carryTimersRef.current.push(timer);
     return timer;
-  }, []);
+  }, [after]);
 
   const speak = useCallback((text, onEnd) => {
     if (!isAudioOn) {
       onEnd?.();
       return;
     }
+    const entry = { text, onEnd, dead: false };
+    // A line requested while the sidebar is open must not speak behind it — queue it
+    // as the interrupted line so it plays, from the start, when the sidebar closes.
+    if (pausedRef.current) {
+      interruptedSpeechRef.current = entry;
+      return;
+    }
+    const done = () => {
+      if (entry.dead) return;
+      // A cancel-triggered end that arrives while paused is an interruption, not a
+      // finish: remember the line instead of letting the game advance behind the sidebar.
+      if (pausedRef.current) {
+        entry.dead = true;
+        interruptedSpeechRef.current = entry;
+        return;
+      }
+      entry.dead = true;
+      if (activeSpeechRef.current === entry) activeSpeechRef.current = null;
+      onEnd?.();
+    };
+    activeSpeechRef.current = entry;
     // Stop the parent scene's own voice engine first — its MP3 audio element
     // isn't touched by window.speechSynthesis.cancel() below, so without this
     // a still-playing scene VO keeps going under this mini-game's line.
     stopVoice?.();
-    speakFallback(text, onEnd);
+    speakFallback(text, done);
   }, [isAudioOn, stopVoice]);
+
+  // Sidebar open = true pause: interrupt the current line WITHOUT firing its onEnd and
+  // disarm the idle clock. On close: after a beat, replay the interrupted line from the
+  // start (its onEnd fires then, so the game continues), then start a fresh 10/18/26 clock.
+  useEffect(() => {
+    if (isPaused) {
+      if (!wasPausedRef.current) {
+        wasArmedRef.current = idleClockArmedRef.current;
+        idleClockArmedRef.current = false;
+        l2VoiceEndedAtRef.current = null;
+        setIdleHintStage(0);
+        setForcedHintStage(0);
+        const active = activeSpeechRef.current;
+        if (active && !active.dead) {
+          active.dead = true;
+          interruptedSpeechRef.current = active;
+        }
+        activeSpeechRef.current = null;
+        if (replayTimerRef.current) {
+          clearTimeout(replayTimerRef.current);
+          replayTimerRef.current = null;
+          // Sidebar reopened inside the 400ms settle window: the line waiting to replay must
+          // go back to "interrupted", or its onEnd never fires and the game/hint clock stalls.
+          if (pendingReplayRef.current && !interruptedSpeechRef.current) {
+            interruptedSpeechRef.current = pendingReplayRef.current;
+          }
+          pendingReplayRef.current = null;
+        }
+        try { window.speechSynthesis?.cancel(); } catch { /* no-op */ }
+      }
+    } else if (wasPausedRef.current) {
+      const entry = interruptedSpeechRef.current;
+      interruptedSpeechRef.current = null;
+      const rearm = () => {
+        if (wasArmedRef.current && !idleClockArmedRef.current) {
+          idleClockArmedRef.current = true;
+          lastTapTimeRef.current = Date.now();
+          lastSpokenHintKeyRef.current = null;
+        }
+        wasArmedRef.current = false;
+      };
+      if (entry) {
+        pendingReplayRef.current = entry;
+        replayTimerRef.current = setTimeout(() => {
+          replayTimerRef.current = null;
+          pendingReplayRef.current = null;
+          speak(entry.text, () => { entry.onEnd?.(); rearm(); });
+        }, 400);
+      } else {
+        rearm();
+      }
+    }
+    wasPausedRef.current = isPaused;
+  }, [isPaused, speak]);
 
   const showFeedback = useCallback((message, pulseId = null) => {
     setFeedback(message);
@@ -452,7 +543,7 @@ const EyesPopUpGame = ({
     if (!isActive || flow === FLOW.COMPLETE) return;
 
     idleTimerRef.current = setInterval(() => {
-      if (!idleClockArmedRef.current) return;
+      if (!idleClockArmedRef.current || pausedRef.current) return;
 
       const idleMs = Date.now() - lastTapTimeRef.current;
       if (idleMs < IDLE_HINT_MS) {
@@ -499,6 +590,7 @@ const EyesPopUpGame = ({
 
   useEffect(() => () => {
     stopTimers();
+    if (replayTimerRef.current) clearTimeout(replayTimerRef.current);
     if (typeof window !== 'undefined' && window.speechSynthesis?.cancel) {
       window.speechSynthesis.cancel();
     }
@@ -514,17 +606,16 @@ const EyesPopUpGame = ({
     if (goneTargets.length !== SEARCH_TARGETS.length || completedRef.current) return;
     completedRef.current = true;
     setFlow(FLOW.COMPLETE);
-    setFeedback(VO_TEXTS.complete);
 
     // Let the scene sit for a beat after the last animal settles, then
     // speak the completion line and only hand off to onGameComplete once
     // that line has actually finished — a fixed 1500ms timer was cutting
     // "You looked closely and found them both!" (~3.3s) off mid-sentence.
-    completionTimerRef.current = setTimeout(() => {
+    completionTimerRef.current = after(500, () => {
       speak(VO_TEXTS.complete, () => {
-        completionTimerRef.current = setTimeout(() => {
+        completionTimerRef.current = after(900, () => {
           setIsExiting(true);
-          completionTimerRef.current = setTimeout(() => {
+          completionTimerRef.current = after(600, () => {
             const assignedSpots = {
               monkey: ANIMAL_POSITIONS.monkey,
               peacock: ANIMAL_POSITIONS.peacock
@@ -536,15 +627,15 @@ const EyesPopUpGame = ({
               totalDiscovered: foundTargets.length,
               assignedSpots
             });
-          }, 600);
-        }, 900);
+          });
+        });
       });
-    }, 500);
+    });
 
     return () => {
-      if (completionTimerRef.current) clearTimeout(completionTimerRef.current);
+      if (completionTimerRef.current) cancelTimer(completionTimerRef.current);
     };
-  }, [goneTargets, foundTargets, onGameComplete, speak]);
+  }, [goneTargets, foundTargets, onGameComplete, speak, after, cancelTimer]);
 
   // An empty/background tap is exploration, not a mistake to punish — but a
   // child who keeps missing is exactly who needs help sooner, so misses
@@ -592,9 +683,19 @@ const EyesPopUpGame = ({
     setForcedHintStage(0);
     missCountRef.current = 0;
 
+    const remainingTarget = SEARCH_TARGETS.find((item) => item.id !== target.id && !foundIds.has(item.id));
+    const isFinalFind = !remainingTarget;
+
     setFoundTargets((prev) => [...prev, target.id]);
-    showFeedback(target.prompt, target.id);
     speak(VO_TEXTS[target.id] || target.label, () => {
+      if (!isFinalFind) {
+        const promptKey = remainingTarget.id === 'feather' ? 'findFeather' : 'findMango';
+        speak(VO_TEXTS[promptKey], () => {
+          idleClockArmedRef.current = true;
+          lastTapTimeRef.current = Date.now();
+        });
+        return;
+      }
       idleClockArmedRef.current = true;
       lastTapTimeRef.current = Date.now();
     });
@@ -609,7 +710,7 @@ const EyesPopUpGame = ({
     schedule(() => setCarriedTargets((prev) => [...prev, target.id]), 2100); // 700 + 900 glide + 500 pause at center
     schedule(() => setDeliveredTargets((prev) => [...prev, target.id]), 3000); // 2100 + 900 glide to animal
     schedule(() => setGoneTargets((prev) => [...prev, target.id]), 3600); // 3000 + 600 hold after pose change
-  }, [debugMode, flow, foundIds, schedule, showFeedback, speak]);
+  }, [debugMode, flow, foundIds, schedule, speak]);
 
   if (hideElements || !isActive) return null;
 
@@ -619,7 +720,7 @@ const EyesPopUpGame = ({
   return (
     <div
       ref={stageRef}
-      className={`eyes-popup-game ${className} ${debugMode ? 'is-debugging' : ''} ${isExiting ? 'is-exiting' : ''}`}
+      className={`eyes-popup-game ${className} ${debugMode ? 'is-debugging' : ''} ${isExiting ? 'is-exiting' : ''} ${isPaused ? 'is-paused' : ''}`}
       onClick={handleSceneTap}
       onPointerMove={handleDebugPointerMove}
       onPointerUp={stopDebugDrag}
