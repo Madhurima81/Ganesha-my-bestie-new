@@ -28,6 +28,7 @@ import AudioToggle from '../../../../lib/components/ui/AudioToggle/AudioToggle';
 import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
 import { SCENE_TO_OUTER_PETAL_ID } from '../../../../lib/components/navigation/ProgressPopup';
 import VOReplayButton from '../../../../lib/components/feedback/VOReplayButton';
+import { getCollectionTarget } from '../../../../lib/utils/collectionTarget';
 import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
 import useResumeCountdown from '../../../../lib/hooks/useResumeCountdown';
 import usePauseAwareTimeout from '../../../../lib/hooks/usePauseAwareTimeout';
@@ -425,7 +426,7 @@ const NirvighnamChantContent = ({
 
   // ── SymbolAutoReveal VO ────────────────────────────────────────────────────
   const getSidebarTarget = (symbolId) => {
-    const el = document.getElementById(`sidebar-${symbolId}`);
+    const el = getCollectionTarget(symbolId);
     if (!el) return { x: 220, y: 0 };
     const r = el.getBoundingClientRect();
     return {

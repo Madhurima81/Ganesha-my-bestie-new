@@ -31,6 +31,7 @@ import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal
 import AudioToggle from '../../../../lib/components/ui/AudioToggle/AudioToggle';
 import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
 import { SCENE_TO_OUTER_PETAL_ID } from '../../../../lib/components/navigation/ProgressPopup';
+import { getCollectionTarget } from '../../../../lib/utils/collectionTarget';
 import VOReplayButton from '../../../../lib/components/feedback/VOReplayButton';
 import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
 import useResumeCountdown from '../../../../lib/hooks/useResumeCountdown';
@@ -581,7 +582,7 @@ const VakratundaGroveContent = ({
 
   // Compute delta from card center (viewport center) to sidebar icon center
   const getSidebarTarget = (symbolId) => {
-    const el = document.getElementById(`sidebar-${symbolId}`);
+    const el = getCollectionTarget(symbolId);
     if (!el) return { x: 220, y: 0 }; // fallback: right edge of screen
     const r = el.getBoundingClientRect();
     return {

@@ -4,6 +4,8 @@ import SanskritVoiceRecorder from '../../../lib/components/audio/SanskritVoiceRe
 import { getZoneTheme } from '../../../lib/config/ZoneThemes';
 import { applyRecorderTheme } from '../../../lib/theme/RecorderThemeAdapter';
 import ChantCardModal from './components/ChantCardModal';
+import PhoneCollectionDrawer from '../../../lib/components/collection/PhoneCollectionDrawer';
+import { playUiTap } from '../../../lib/services/AudioService';
 
 // Mantra icons — same images as Meaning Cave (colored only, no gray set)
 import vakratundaIcon    from '../../symbol-mountain/shared/images/icons/symbol-trunk-new.png';
@@ -48,6 +50,9 @@ const AppSidebar = ({
   const [tappedApps, setTappedApps] = useState({});
   const prevUnlockedRef = useRef({});
   const bloomTimeoutRef = useRef(null);
+  // On phones the collection drawer owns the scene pause while it is open, so a
+  // card / recorder opened and closed inside it must not begin/end that pause.
+  const drawerOpenRef = useRef(false);
   const theme = getZoneTheme(zoneId);
   const zoneThemeVars = {
     '--zone-accent-color': theme.accentColor,
@@ -79,16 +84,26 @@ const AppSidebar = ({
       setTappedApps(prev => ({ ...prev, [appId]: true }));
       setSelectedApp(appId);
       setShowCard(true);
-      onPopupOpen?.();
+      if (!drawerOpenRef.current) onPopupOpen?.();
       if (onAppClick) onAppClick(appId);
     }
+  };
+
+  const releasePopupPause = () => {
+    if (!drawerOpenRef.current) onPopupClose?.();
+  };
+
+  const handleDrawerOpenChange = (open) => {
+    drawerOpenRef.current = open;
+    if (open) onPopupOpen?.();
+    else onPopupClose?.();
   };
 
   const closePopup = () => {
     setShowPopup(false);
     setShowCard(false);
     setSelectedApp(null);
-    onPopupClose?.();
+    releasePopupPause();
   };
 
   // Trigger bloom animation when an app is newly unlocked
@@ -165,13 +180,14 @@ const AppSidebar = ({
             onClose={() => {
               setShowCard(false);
               setSelectedApp(null);
-              onPopupClose?.();
+              releasePopupPause();
             }}
           />
         )}
 
         {showPopup && selectedApp && (
           <SanskritVoiceRecorder
+            themeStyles={chantThemeVars}
             word={selectedApp}
             syllables={appInfo[selectedApp].syllables}
             chantResult={null}
@@ -224,6 +240,21 @@ const AppSidebar = ({
         })}
       </div>
 
+      <PhoneCollectionDrawer
+        items={appOrder.map((appId) => ({
+          id: appId,
+          title: appInfo[appId].title,
+          icon: appInfo[appId].icon,
+          locked: !unlockedApps[appId],
+          attention: !tappedApps[appId],
+        }))}
+        style={zoneThemeVars}
+        bloom={!!animatingApp}
+        onItemSelect={handleAppClick}
+        onLockedTap={() => playUiTap()}
+        onOpenChange={handleDrawerOpenChange}
+      />
+
       {showCard && selectedApp && (
         <ChantCardModal
           wordId={selectedApp}
@@ -235,13 +266,14 @@ const AppSidebar = ({
           onClose={() => {
             setShowCard(false);
             setSelectedApp(null);
-            onPopupClose?.();
+            releasePopupPause();
           }}
         />
       )}
 
       {showPopup && selectedApp && (
         <SanskritVoiceRecorder
+          themeStyles={chantThemeVars}
           word={selectedApp}
           syllables={appInfo[selectedApp].syllables}
           chantResult={null}

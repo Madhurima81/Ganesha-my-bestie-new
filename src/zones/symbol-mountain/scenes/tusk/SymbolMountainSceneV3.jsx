@@ -61,6 +61,7 @@ import InnerMandala from '../../../../lib/components/celebration/InnerMandala';
 import AudioToggle from '../../../../lib/components/ui/AudioToggle';
 import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
 import VOReplayButton from '../../../../lib/components/feedback/VOReplayButton';
+import { getCollectionTarget } from '../../../../lib/utils/collectionTarget';
 // import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOverlay'; // superseded by SymbolAutoReveal
 import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal';
 
@@ -770,7 +771,7 @@ const SymbolMountainSceneContent = ({
 
   // -- SymbolAutoReveal helpers -----------------------------------------------
   const getSidebarTarget = (symbolId) => {
-    const el = document.getElementById(`sidebar-${symbolId}`);
+    const el = getCollectionTarget(symbolId);
     if (!el) return { x: 220, y: 0 };
     const r = el.getBoundingClientRect();
     return {

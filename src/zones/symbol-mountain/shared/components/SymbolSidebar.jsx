@@ -5,9 +5,9 @@ import { useGaneshaVoice } from '../../../../lib/hooks/useGaneshaVoice';
 import {
   playCardRevealChime,
   playUiTap,
-  playWrongTap,
 } from '../../../../lib/services/AudioService';
 import SymbolCardModal from './SymbolCardModal';
+import PhoneCollectionDrawer from '../../../../lib/components/collection/PhoneCollectionDrawer';
 
 import symbolBellyColored from '../images/icons/symbol-belly-new.webp';
 import symbolEarColored from '../images/icons/symbol-ears-new.webp';
@@ -68,6 +68,9 @@ const SymbolSidebar = ({
   const [tappedSymbols, setTappedSymbols] = useState(readTappedSymbols);
   const [lockedFeedbackSymbol, setLockedFeedbackSymbol] = useState(null);
   const lockedFeedbackTimerRef = useRef(null);
+  // On phones the collection drawer owns the scene pause while it is open, so a
+  // card opened/closed inside it must not begin/end that pause itself.
+  const drawerOpenRef = useRef(false);
   const centerModeVoicePlayedRef = useRef(false);
 
   const displaySymbols = centerMode
@@ -104,7 +107,7 @@ const SymbolSidebar = ({
   };
 
   const triggerLockedFeedback = (symbolId) => {
-    playWrongTap();
+    playUiTap();
     setLockedFeedbackSymbol(symbolId);
     if (lockedFeedbackTimerRef.current) {
       clearTimeout(lockedFeedbackTimerRef.current);
@@ -125,14 +128,20 @@ const SymbolSidebar = ({
     setTappedSymbols((prev) => ({ ...prev, [symbolId]: true }));
     setSelectedSymbol(symbolId);
     setShowPopup(true);
-    onPopupOpen?.();
+    if (!drawerOpenRef.current) onPopupOpen?.();
     onSymbolClick?.(symbolId);
   };
 
   const closePopup = () => {
     setShowPopup(false);
     setSelectedSymbol(null);
-    onPopupClose?.();
+    if (!drawerOpenRef.current) onPopupClose?.();
+  };
+
+  const handleDrawerOpenChange = (open) => {
+    drawerOpenRef.current = open;
+    if (open) onPopupOpen?.();
+    else onPopupClose?.();
   };
 
   const handleCelebrateClick = () => {
@@ -231,6 +240,21 @@ const SymbolSidebar = ({
           );
         })}
       </div>
+
+      <PhoneCollectionDrawer
+        items={displaySymbols.map((symbolId) => ({
+          id: symbolId,
+          title: symbolInfo[symbolId].title,
+          icon: symbolInfo[symbolId].colorIcon,
+          locked: !discoveredSymbols[symbolId],
+          attention: !tappedSymbols[symbolId],
+        }))}
+        style={zoneThemeVars}
+        bloom={!!animatingSymbol}
+        onItemSelect={handleSymbolClick}
+        onLockedTap={() => playUiTap()}
+        onOpenChange={handleDrawerOpenChange}
+      />
 
       {showPopup && selectedSymbol && (
         <SymbolCardModal

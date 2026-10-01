@@ -25,6 +25,7 @@ import InnerMandala from '../../../../lib/components/celebration/InnerMandala';
 import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal';
 import AudioToggle from '../../../../lib/components/ui/AudioToggle/AudioToggle';
 import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
+import { getCollectionTarget } from '../../../../lib/utils/collectionTarget';
 import { SCENE_TO_OUTER_PETAL_ID } from '../../../../lib/components/navigation/ProgressPopup';
 import VOReplayButton from '../../../../lib/components/feedback/VOReplayButton';
 import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
@@ -427,7 +428,7 @@ const SuryakotiBankContent = ({
   useEffect(() => () => stopWebSpeech(), [stopWebSpeech]);
 
   const getSidebarTarget = useCallback((symbolId) => {
-    const el = document.getElementById(`sidebar-${symbolId}`);
+    const el = getCollectionTarget(symbolId);
     if (!el) return { x: 220, y: 0 };
     const r = el.getBoundingClientRect();
     return {

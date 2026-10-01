@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { getCollectionTarget } from '../utils/collectionTarget';
 
 /**
  * useSymbolCollection
@@ -40,9 +41,9 @@ const useSymbolCollection = ({ onCollectSound } = {}) => {
    * @param {string}   imageSrc  - imported image URL for the flying clone
    */
   const handleCollect = (symbolId, startRect, imageSrc) => {
-    const sidebarIcon = document.getElementById(`sidebar-${symbolId}`);
+    const sidebarIcon = getCollectionTarget(symbolId);
     if (!sidebarIcon) {
-      console.warn(`useSymbolCollection: no element with id "sidebar-${symbolId}" found`);
+      console.warn(`useSymbolCollection: no collection target for "${symbolId}" found`);
       return;
     }
     const endRect = sidebarIcon.getBoundingClientRect();

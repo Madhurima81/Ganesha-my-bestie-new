@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useGaneshaVoice } from "../../hooks/useGaneshaVoice";
 import { playCardRevealChime } from "../../services/AudioService";
+import { getCollectionTarget } from "../../utils/collectionTarget";
 import "./SymbolAutoReveal.css";
 
 /**
@@ -131,7 +132,7 @@ export default function SymbolAutoReveal({
     if (phase !== "fly" || !symbolId || !sidebarTargetRect) return;
 
     const t = setTimeout(() => {
-      const el = document.getElementById(`sidebar-${symbolId}`);
+      const el = getCollectionTarget(symbolId);
       if (el) el.classList.add("sar-sidebar-bloom");
     }, 680);
 
