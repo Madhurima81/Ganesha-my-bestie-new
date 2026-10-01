@@ -18,6 +18,7 @@ import { makeMockVoiceGuidance, makeMockCallbacks } from './mockVoiceGuidance';
 import useVoiceGuidance from '../lib/hooks/useVoiceGuidance';
 import { makeTtsVoiceGuidance } from './webSpeechScripts';
 import SparkleAnimation from '../lib/components/animation/SparkleAnimation';
+import TestChecklistPanel from './TestChecklistPanel';
 
 // Real-audio mode: which scene id + Sanskrit word each game maps to, so the
 // real useVoiceGuidance hook resolves the right MP3s (/audio/syllables/*,
@@ -456,6 +457,9 @@ export default function GameTestHarness() {
           </div>
         )}
       </div>
+
+      {/* floating test checklist (tick / note / screenshot / share) */}
+      <TestChecklistPanel gameKey={gameKey} />
     </div>
   );
 }
