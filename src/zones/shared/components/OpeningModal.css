@@ -439,8 +439,9 @@
   }
 }
 
-/* MOBILE LANDSCAPE */
-@media (min-width: 568px) and (max-width: 1023px) and (orientation: landscape) {
+/* MOBILE LANDSCAPE (taller than a phone, e.g. small tablets). Phones — landscape and
+   max-height 500px — are handled by the PHONE LANDSCAPE block at the end of this file. */
+@media (min-width: 568px) and (max-width: 1023px) and (orientation: landscape) and (min-height: 501px) {
   .game-modal-content {
     width: 100%;
     min-height: 95dvh;
@@ -587,4 +588,110 @@
     margin: 6px 0 12px;
   }
 
+}
+
+/* ============================================================
+   PHONE LANDSCAPE — wide, shallow, no scrolling.
+   Canonical phone condition (App.css / DECISIONS 2026-10-01).
+   Ganesha small on the left; title, one line, ONE row of icons and the CTA
+   on the card. Decorative lotus + dashed connector are dropped on phones.
+   Sizes are clamp()/dvh based — no fixed-px !important overrides.
+   Tablet / desktop are untouched.
+   ============================================================ */
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
+  .game-modal-content {
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    min-height: 0;
+    box-sizing: border-box;
+    padding:
+      calc(var(--gmb-safe-top, 0px) + 6px)
+      calc(var(--gmb-safe-right, 0px) + 16px)
+      calc(var(--gmb-safe-bottom, 0px) + 6px)
+      calc(var(--gmb-safe-left, 0px) + 16px);
+    gap: clamp(8px, 2vw, 18px);
+    transform: none;
+  }
+
+  /* Smaller Ganesha on the left. */
+  .game-modal-character {
+    flex: 0 0 clamp(110px, 22vw, 210px);
+    margin-right: 0;
+  }
+
+  .game-modal-character img,
+  .game-modal-character .game-modal-ganesha {
+    max-width: 100%;
+    max-height: min(66dvh, 230px);
+    width: auto;
+    margin-right: 0;
+  }
+
+  /* Wide, shallow card — never taller than the viewport. */
+  .game-modal-card {
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: none;
+    min-height: 0;
+    max-height: calc(100dvh - var(--gmb-safe-top, 0px) - var(--gmb-safe-bottom, 0px) - 12px);
+    box-sizing: border-box;
+    padding: clamp(14px, 4.2dvh, 24px) clamp(30px, 6vw, 56px);
+    gap: clamp(2px, 0.8dvh, 6px);
+    justify-content: center;
+    overflow: visible;
+    /* The organic SVG card keeps its aspect ratio, so on a wide-shallow card it
+       shrinks to a near-square and the text spills past its edges. Use a plain
+       rounded cream card in the same language (cream fill, lavender edge). */
+    background: #fffaf3;
+    border: 2px solid rgba(214, 196, 240, 0.9);
+    border-radius: 36px 44px 38px 42px / 42px 36px 44px 38px;
+    filter: none;
+    box-shadow: 0 10px 24px rgba(40, 20, 80, 0.14);
+  }
+
+  .game-modal-lotus-top,
+  .game-modal-icons::before {
+    display: none;
+  }
+
+  .game-modal-title {
+    font-size: clamp(22px, 6.6dvh, 26px) !important;
+    margin-bottom: 0;
+  }
+
+  .game-modal-subtitle {
+    font-size: clamp(15px, 4.4dvh, 17px) !important;
+    line-height: 1.3;
+    margin-bottom: clamp(2px, 1dvh, 6px) !important;
+    max-width: 100%;
+  }
+
+  /* One row, always (live scenes show at most 3 icons). */
+  .game-modal-icons {
+    flex-wrap: nowrap;
+    gap: clamp(8px, 2vw, 16px);
+    margin: clamp(2px, 0.8dvh, 6px) 0 clamp(6px, 2dvh, 12px);
+  }
+
+  .game-modal-icon-item {
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .game-modal-icon-circle {
+    width: clamp(40px, 12dvh, 52px);
+    height: clamp(40px, 12dvh, 52px);
+  }
+
+  .game-modal-icon-label {
+    font-size: 12px;
+    padding: 1px 7px;
+  }
+
+  /* One clear CTA, full 60px touch height. */
+  .profile-cta-btn-unified.opening-modal-cta {
+    min-height: 60px;
+    padding: 10px 28px;
+  }
 }

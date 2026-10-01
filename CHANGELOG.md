@@ -1,6 +1,12 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
 
+## [2026-10-01] — Mobile Step 3A: OpeningModal phone-landscape layout
+**Touched:** src/zones/shared/components/OpeningModal.css (CSS only).
+**Changed:** New block under the canonical phone condition: wide/shallow card, small Ganesha left, one icon row, no lotus/connector, 60px CTA, no scroll, clamp()/dvh sizing (no new fixed-px !important). Card is a plain rounded cream card on phone instead of the aspect-locked organic SVG. The pre-existing 568-1023px landscape block is now limited to height > 500px so tablets keep their look.
+**Verified:** headless Chrome with the real OpeningModal for all 13 live scenes at 667x375, 844x390, 932x430: card inside viewport, CTA fully visible and 60px, no scroll, no clipped child, one icon row, lotus hidden; screenshots reviewed at 667 and 844. Tablet/desktop CSS untouched. Not yet checked on a physical device.
+**Open:** Step 3B completion screen, then SymbolAutoReveal, SymbolCardModal/ChantCardModal, InnerMandala.
+
 ## [2026-10-01] — Mobile Step 2: phone collection drawer (rosette) for Symbol Mountain + Shloka River
 **Touched:** NEW src/lib/components/collection/PhoneCollectionDrawer.jsx/.css, src/lib/utils/collectionTarget.js, public/images/icons/symbol-collection-rosette.png; EDITED SymbolSidebar.jsx, AppSidebar.jsx, SymbolAutoReveal.jsx, useSymbolCollection.js, SymbolCardModal.css, ChantCardModal.css, and the 7 scenes that computed a flight target (Modak, Pond, Tusk, Vakratunda, Suryakoti, Nirvighnam, Sarvakaryeshu); GestureDemo.jsx (exemption — already landed inside 712618be).
 **Changed:** Phone landscape hides the rail and shows a rosette button + 4x2 symbols-only drawer; `getCollectionTarget` makes symbols fly to the rosette on phone and to the exact rail slot elsewhere; drawer owns the sidebar pause (cards inside it do not end it); locked taps are neutral (tap + pulse); cards raised to z 2100 above the drawer (2050).
