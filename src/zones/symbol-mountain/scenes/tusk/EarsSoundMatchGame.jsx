@@ -299,14 +299,9 @@ const EarsSoundMatchGame = ({
     }
   }, []);
 
-  // Tab-hide safety for this game's direct speechSynthesis use (it bypasses the
-  // scene's useVoiceGuidance hook). Mirrors the hook: cancel on hide, replay the
-  // interrupted line from the start 2s after return. Only the spoken hint/story
-  // lines are tracked — the animal-sound MP3s are left to the browser's own
-  // background-tab media pausing so their onDone chains aren't broken.
+  // Direct speechSynthesis use (bypasses the scene's useVoiceGuidance hook). Tab-hide and the
+  // sidebar both interrupt/replay through track() — see interruptActiveAudio below.
   const speakingTextRef = useRef(null);
-  const interruptedTextRef = useRef(null);
-  const replayTimerRef = useRef(null);
   const trackUtterance = useCallback((text, utterance, onEnd) => {
     if (!utterance) {
       onEnd?.();
@@ -336,25 +331,68 @@ const EarsSoundMatchGame = ({
     }, onEnd);
   }, [isAudioOn, stopVoice, trackUtterance, track]);
 
+  // Shared by sidebar-open and tab-hide: kill the current clip WITHOUT firing its callback
+  // (a cancel-triggered end must never advance the game), hold the hint ladder, and remember
+  // the clip — with its original callback — so it can be replayed from the start.
+  const interruptActiveAudio = useCallback(() => {
+    hintHoldRef.current = true;
+    const active = activeAudioRef.current;
+    if (active && !active.dead) {
+      active.dead = true;
+      interruptedAudioRef.current = active;
+    }
+    activeAudioRef.current = null;
+    if (sidebarReplayRef.current) {
+      clearTimeout(sidebarReplayRef.current);
+      sidebarReplayRef.current = null;
+      // Reopened inside the settle window: the clip waiting to replay goes back to
+      // "interrupted", or its callback never fires and the hint hold is never released.
+      if (pendingSidebarEntryRef.current && !interruptedAudioRef.current) {
+        interruptedAudioRef.current = pendingSidebarEntryRef.current;
+      }
+      pendingSidebarEntryRef.current = null;
+    }
+    stopAudio();
+  }, [stopAudio]);
+
+  // Replay the interrupted clip from the start after `settleMs` (its callback fires then, so the
+  // round continues), then start a fresh 10/18/26 hint clock.
+  const resumeInterruptedAudio = useCallback((settleMs) => {
+    const entry = interruptedAudioRef.current;
+    interruptedAudioRef.current = null;
+    const rearm = () => {
+      chooseStartedAtRef.current = Date.now();
+      hintStageRef.current = 0;
+      l2FinishedAtRef.current = null;
+      setHintZoneId(null);
+      hintHoldRef.current = false;
+    };
+    pendingSidebarEntryRef.current = entry;
+    sidebarReplayRef.current = setTimeout(() => {
+      sidebarReplayRef.current = null;
+      pendingSidebarEntryRef.current = null;
+      if (entry) {
+        track(entry.start, () => { entry.onEnd?.(); rearm(); });
+      } else {
+        rearm();
+      }
+    }, settleMs);
+  }, [track]);
+
+  // Tab hidden = same as the sidebar: interrupt, then replay with its callback on return.
+  // (The sidebar owns the pause while it is open, so tab events are ignored then.)
   useAppVisibility(
     useCallback(() => {
-      if (replayTimerRef.current) { clearTimeout(replayTimerRef.current); replayTimerRef.current = null; }
-      interruptedTextRef.current = speakingTextRef.current;
-      speakingTextRef.current = null;
-      try { window.speechSynthesis?.cancel(); } catch { /* no-op */ }
-    }, []),
+      if (pausedRef.current) return;
+      interruptActiveAudio();
+    }, [interruptActiveAudio]),
     useCallback(() => {
-      const text = interruptedTextRef.current;
-      interruptedTextRef.current = null;
-      if (!text) return;
-      replayTimerRef.current = setTimeout(() => { replayTimerRef.current = null; speak(text); }, 2000);
-    }, [speak])
+      if (pausedRef.current) return;
+      resumeInterruptedAudio(2000);
+    }, [resumeInterruptedAudio])
   );
 
   useEffect(() => () => {
-    if (replayTimerRef.current) clearTimeout(replayTimerRef.current);
-    replayTimerRef.current = null;
-    interruptedTextRef.current = null;
     if (sidebarReplayRef.current) clearTimeout(sidebarReplayRef.current);
     sidebarReplayRef.current = null;
   }, []);
@@ -398,49 +436,12 @@ const EarsSoundMatchGame = ({
   // 10/18/26 clock.
   useEffect(() => {
     if (isPaused) {
-      if (!wasPausedRef.current) {
-        hintHoldRef.current = true;
-        const active = activeAudioRef.current;
-        if (active && !active.dead) {
-          active.dead = true;
-          interruptedAudioRef.current = active;
-        }
-        activeAudioRef.current = null;
-        if (sidebarReplayRef.current) {
-          clearTimeout(sidebarReplayRef.current);
-          sidebarReplayRef.current = null;
-          // Sidebar reopened inside the 400ms settle window: the clip waiting to replay must go
-          // back to "interrupted", or its callback never fires and the hint hold is never released.
-          if (pendingSidebarEntryRef.current && !interruptedAudioRef.current) {
-            interruptedAudioRef.current = pendingSidebarEntryRef.current;
-          }
-          pendingSidebarEntryRef.current = null;
-        }
-        stopAudio();
-      }
+      if (!wasPausedRef.current) interruptActiveAudio();
     } else if (wasPausedRef.current) {
-      const entry = interruptedAudioRef.current;
-      interruptedAudioRef.current = null;
-      const rearm = () => {
-        chooseStartedAtRef.current = Date.now();
-        hintStageRef.current = 0;
-        l2FinishedAtRef.current = null;
-        setHintZoneId(null);
-        hintHoldRef.current = false;
-      };
-      pendingSidebarEntryRef.current = entry;
-      sidebarReplayRef.current = setTimeout(() => {
-        sidebarReplayRef.current = null;
-        pendingSidebarEntryRef.current = null;
-        if (entry) {
-          track(entry.start, () => { entry.onEnd?.(); rearm(); });
-        } else {
-          rearm();
-        }
-      }, 400);
+      resumeInterruptedAudio(400);
     }
     wasPausedRef.current = isPaused;
-  }, [isPaused, stopAudio, track]);
+  }, [isPaused, interruptActiveAudio, resumeInterruptedAudio]);
 
   const saveLayout = useCallback((nextLayout) => {
     if (typeof window === 'undefined') return;

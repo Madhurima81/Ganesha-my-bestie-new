@@ -137,6 +137,7 @@ const VO = {
   marshStart: 'The last two flowers are across the mud. Guide Mooshika from safe spot to safe spot.',
   marshIdle: 'Guide Mooshika to the next safe spot.',
   marshDirect: 'Drag Mooshika to the glowing safe spot.',
+  marshKeepGoing: 'Good jump! Now the next safe spot.',
   marshWobble: 'Ooh… that’s wobbly.',
   marshWrong: 'Back to the safe spot. Try again.',
   marshDone: 'You made it! All six flowers.',
@@ -1099,6 +1100,8 @@ export default function FlowerJourneyGame2({
 
     if ((dx * dx) + (dy * dy) <= 1) {
       const nextStep = marshStep + 1;
+      // After the FIRST jump only: say what to do next (the 2nd jump has its own wobble line).
+      if (nextStep === 1) speak(VO.marshKeepGoing);
       if (nextStep === 2) {
         setMarshWobble(true);
         setEmotion('worried');
