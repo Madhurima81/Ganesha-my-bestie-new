@@ -14,7 +14,7 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { TEST_CHECKLISTS, CHECKLIST_ALIASES, GENERIC_CHECKLIST } from './testChecklists';
+import { TEST_CHECKLISTS, TEST_CHECKLIST_GROUPS, CHECKLIST_ALIASES, GENERIC_CHECKLIST } from './testChecklists';
 
 const HEADING = "'Baloo 2', system-ui, sans-serif";
 const BODY = "'Nunito', system-ui, sans-serif";
@@ -164,6 +164,18 @@ export default function TestChecklistPanel({ gameKey }) {
     ...Object.entries(TEST_CHECKLISTS).map(([k, v]) => ({ id: `builtin:${k}`, list: v })),
     { id: 'builtin:generic', list: GENERIC_CHECKLIST },
   ], []);
+  // Dropdown groups: zone -> games, then "Other" for anything not listed.
+  const builtInGroups = useMemo(() => {
+    const byId = new Map(builtInEntries.map((e) => [e.id, e]));
+    const used = new Set();
+    const groups = Object.entries(TEST_CHECKLIST_GROUPS).map(([label, keys]) => ({
+      label,
+      entries: keys.map((k) => byId.get(`builtin:${k}`)).filter(Boolean).map((e) => { used.add(e.id); return e; }),
+    }));
+    const rest = builtInEntries.filter((e) => !used.has(e.id));
+    if (rest.length) groups.push({ label: 'Other', entries: rest });
+    return groups.filter((g) => g.entries.length);
+  }, [builtInEntries]);
 
   const [store, setStore] = useState(loadStore);
   const [activeId, setActiveId] = useState(builtInId);
@@ -346,9 +358,11 @@ export default function TestChecklistPanel({ gameKey }) {
           onChange={(e) => { setActiveId(e.target.value); setIndex(0); setView('run'); }}
           style={{ ...base, flex: 1, minWidth: 0, fontSize: 13, fontWeight: 700, padding: '6px 8px', borderRadius: 8, border: `1px solid ${C.line}`, background: C.white, color: C.ink }}
         >
-          <optgroup label="Built-in">
-            {builtInEntries.map((e) => <option key={e.id} value={e.id}>{e.list.title}</option>)}
-          </optgroup>
+          {builtInGroups.map((g) => (
+            <optgroup key={g.label} label={g.label}>
+              {g.entries.map((e) => <option key={e.id} value={e.id}>{e.list.title}</option>)}
+            </optgroup>
+          ))}
           {customIds.length > 0 && (
             <optgroup label="Pasted by you">
               {customIds.map((id) => <option key={id} value={id}>{custom[id].title}</option>)}

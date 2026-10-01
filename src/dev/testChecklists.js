@@ -143,10 +143,123 @@ TEST_CHECKLISTS['amh-indian-story'] = {
   ],
 };
 
+TEST_CHECKLISTS['modak-garland'] = {
+  title: 'Modak Game 3 (Garland): carry hints, L3 waits for L2, sidebar in intro',
+  items: [
+    { text: 'Intro line is playing: open and close the sidebar 3-4 times quickly.', expect: 'Intro replays once; hints still start afterwards (no freeze).' },
+    { text: 'Build: tap flowers one by one; do nothing at the end for L2/L3.', expect: 'Hints come on time (about 10s / 18s / 26s).' },
+    { text: 'Carry: wait for L2 (hand + VO). Start dragging the garland and drop it away from Ganesha.', expect: 'Hand stays up; no reset to L0.' },
+    { text: 'Carry: miss 3 times quickly.', expect: 'L3 starts only after the L2 line finishes (no cut-off).' },
+    { text: 'Carry with no hint showing: drag part-way and drop it away.', expect: 'Idle clock restarts.' },
+    { text: 'Drop the garland on Ganesha.', expect: 'Success; hint clears.' },
+  ],
+};
+
+TEST_CHECKLISTS['sm-eyes'] = {
+  title: 'Symbol Mountain, Eyes game: misses, L3 after L2, sidebar',
+  items: [
+    { text: 'Intro line playing: open and close the sidebar several times quickly.', expect: 'Intro replays; the game and hints continue (no freeze).' },
+    { text: 'Tap empty space 3 or more times.', expect: 'Help comes earlier (L2, then L3 after more misses).' },
+    { text: 'Misses until L3 is due while the L2 line is speaking.', expect: 'L3 waits for the L2 line to finish.' },
+    { text: 'Do nothing: time L1 / L2 (VO) / L3.', expect: 'About 10s / 18s / 8s after the L2 line.' },
+    { text: 'Find the feather, then the mango.', expect: 'Each find clears the hint; next target starts a fresh clock.' },
+  ],
+};
+
+TEST_CHECKLISTS['sm-ears'] = {
+  title: 'Symbol Mountain, Ears sound-match: tab switch, sidebar, L2/L3',
+  items: [
+    { text: 'During the intro or a prompt line, switch to another tab and come back.', expect: 'The round does not advance while you are away; the line replays once on return.' },
+    { text: 'Open and close the sidebar several times quickly during a line.', expect: 'Line replays; round and hints continue.' },
+    { text: 'On the choosing screen do nothing: L1 replay, L2 clue, then L3 reveal.', expect: 'L3 comes only after the L2 clue and sound finish.' },
+    { text: 'Tap a wrong zone.', expect: 'Gentle "listen again"; no stuck state.' },
+    { text: 'Tap the right zone.', expect: 'Reveal plays; next round starts.' },
+  ],
+};
+
+TEST_CHECKLISTS['sm-tusk-live-v2'] = {
+  title: 'Symbol Mountain, Tusk nest (BeatPlayer): drags and hints',
+  items: [
+    { text: 'Wait for L2 on a nest item. Drag it part-way and let go.', expect: 'L2 hand stays up; no reset.' },
+    { text: 'Drop the item on the wrong place 3 times quickly.', expect: 'L3 starts only after the L2 line finishes (no cut-off).' },
+    { text: 'With no hint showing: drag part-way and release.', expect: 'Idle clock restarts.' },
+    { text: 'Tap empty areas at L2 and L3.', expect: 'Hints keep playing; nothing restarts.' },
+    { text: 'Open and close the sidebar during a line.', expect: 'Replays once; hints restart fresh.' },
+    { text: 'Drop the item in the nest.', expect: 'Success; next item starts a fresh clock.' },
+  ],
+};
+
+TEST_CHECKLISTS['suryakoti'] = {
+  title: 'Suryakoti (rub): only real clearing counts',
+  items: [
+    { text: 'First-time teaching hand plays. Rub somewhere else on screen.', expect: 'Hand finishes its pass; nothing restarts.' },
+    { text: 'Wait for L2 / L3. Rub where no darkness remains.', expect: 'Hints stay.' },
+    { text: 'Rub the dark area for real.', expect: 'Hint clears while you clear darkness; the clock restarts roughly every 0.7s of real rubbing.' },
+    { text: 'Open and close the sidebar mid-rub.', expect: 'Rub stops cleanly; hints restart fresh.' },
+  ],
+};
+
+TEST_CHECKLISTS['vakratunda'] = {
+  title: 'Vakratunda (frog): start-drag hint and stuck help',
+  items: [
+    { text: 'After the intro do nothing.', expect: 'Start-drag hint ladder arrives about 10s / 18s / 26s.' },
+    { text: 'Start dragging the frog.', expect: 'Start-drag hint stops for good.' },
+    { text: 'Push the frog into a blocked spot repeatedly.', expect: 'Stuck help escalates after repeated real bumps.' },
+    { text: 'Tap empty areas during hints.', expect: 'Nothing restarts.' },
+  ],
+};
+
+TEST_CHECKLISTS['sarvada'] = {
+  title: 'Sarvada (find the hidden symbol)',
+  items: [
+    { text: 'Do nothing for the hint ladder.', expect: 'L2 and L3 arrive on time; L3 after the L2 line.' },
+    { text: 'Tap around the scene (not the symbol).', expect: 'Hints keep playing; nothing restarts.' },
+    { text: 'Find the symbol.', expect: 'Success; next phase starts a fresh clock.' },
+  ],
+};
+
+TEST_CHECKLISTS['amh-dreams-wishes'] = {
+  title: 'Dreams and Wishes: wrong bubble does not reset hints',
+  items: [
+    { text: 'Wish 1: wait for the hints. Tap an unkind bubble.', expect: 'Shake and gentle redirect; the hint ladder is NOT reset.' },
+    { text: 'Tap kind bubbles.', expect: 'Progress advances; hints reset only on kind taps.' },
+    { text: 'Complete the three wishes and the trunk taps.', expect: 'Each step works; no stuck hint.' },
+    { text: 'Tap empty background during hints.', expect: 'Nothing restarts.' },
+  ],
+};
+
+TEST_CHECKLISTS['sidebar-general'] = {
+  title: 'Sidebar check (any scene that has a sidebar)',
+  items: [
+    { text: 'While an intro line is speaking, open and close the sidebar 3-4 times quickly.', expect: 'The line replays once from the start; the scene then carries on.' },
+    { text: 'While a hint line (L2) is speaking, open the sidebar then close it.', expect: 'The line replays once; hints restart fresh (about 10s / 18s / 26s).' },
+    { text: 'Open the sidebar and leave it open for 30s.', expect: 'Nothing advances or speaks behind it; timers are frozen.' },
+    { text: 'Switch to another browser tab and back during a line.', expect: 'The game does not advance while away; the line replays on return.' },
+  ],
+};
+
 // Other harness keys that mount the same game share a checklist.
 export const CHECKLIST_ALIASES = {
   'sm-modak-game2': 'modak-game2-new',
   'sm-modak': 'modak-game2-new',
+  'sm-modak-game3': 'modak-garland',
+  'sm-eyes': 'sm-eyes',
+  'sm-ears': 'sm-ears',
+  'sm-tusk-beatplayer': 'sm-tusk-live-v2',
+  'sm-tusk-nest-debug': 'sm-tusk-live-v2',
+  'sm-symbol': 'sm-eyes',
+  'sr-vakratunda': 'vakratunda',
+  'sr-suryakoti': 'suryakoti',
+  'sr-nirvighnam': 'nirvighnam',
+  'sr-sarvakaryeshu': 'sarvakaryeshu',
+};
+
+// Dropdown grouping (zone -> games). Any checklist not listed here still appears under "Other".
+export const TEST_CHECKLIST_GROUPS = {
+  'Symbol Mountain': ['modak-game2-new', 'modak-game2-bush-marsh', 'modak-garland', 'sm-pond', 'sm-eyes', 'sm-ears', 'sm-tusk-live-v2'],
+  'Shloka River': ['vakratunda', 'mahakaya', 'suryakoti', 'samaprabha', 'nirvighnam', 'kurumedeva', 'sarvakaryeshu', 'sarvada', 'sr-finale'],
+  'About Me Hut': ['amh-dreams-wishes', 'amh-indian-story'],
+  General: ['sidebar-general'],
 };
 
 export const GENERIC_CHECKLIST = {
