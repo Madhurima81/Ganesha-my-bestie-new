@@ -2,6 +2,7 @@ import PoseImage, { usePreloadPoses } from '../components/animation/PoseImage';
 import GestureDemo from '../components/feedback/GestureDemo';
 import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import './BeatPlayerGame.css';
+import { attachSpeechCue, startCueTimer } from '../utils/speechCue';
 
 /**
  * Generic "beat player" — renders a game directly from a Visual Flow Editor
@@ -82,7 +83,9 @@ const silenceActiveVo = () => {
   finish?.();
 };
 
-const speakAndWait = (text, enabled = true) => {
+// `cue` = { word, onCue, cueMs? } fires onCue when `word` is spoken (see utils/speechCue) — used to land
+// the teaching hand on the action word. Muted / no-speech lines fire it on the same estimate.
+const speakAndWait = (text, enabled = true, cue = null) => {
   return new Promise((resolve) => {
     if (
       !enabled ||
@@ -90,6 +93,7 @@ const speakAndWait = (text, enabled = true) => {
       typeof window === 'undefined' ||
       !window.speechSynthesis
     ) {
+      if (text) startCueTimer(text, cue);
       resolve();
       return;
     }
@@ -123,6 +127,7 @@ const speakAndWait = (text, enabled = true) => {
 
       utterance.onend = finish;
       utterance.onerror = finish;
+      attachSpeechCue(utterance, text, cue);
 
       window.speechSynthesis.speak(utterance);
     } catch {
@@ -149,6 +154,10 @@ const styleFromItem = (item, extra = {}) => ({
   zIndex: item.z ?? 10,
   ...extra
 });
+
+const HIT_ZONE_PARAMS = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+const SHOW_HIT_ZONES = HIT_ZONE_PARAMS?.has('hitzones') ?? false;
+const SHOW_START_HIT_ZONES = HIT_ZONE_PARAMS?.get('hitzones') === 'all' || HIT_ZONE_PARAMS?.has('startzones');
 
 const BeatPlayerGame = forwardRef(function BeatPlayerGame({
   flowJson,
@@ -377,6 +386,23 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
 
   const needsInput = (name) => name === 'before' && interaction && interaction.type && interaction.type !== 'none';
 
+  // ---- Pause bookkeeping (sidebar open / tab hidden) -----------------------
+  // Pause = freeze the beat. On resume the timeline effect below re-runs for the
+  // SAME state: it replays that state's VO from the start ONLY if it hadn't
+  // finished (voDoneKeyRef), replays an interrupted hint line, then starts a fresh
+  // 10/18/26 clock. `resumedRef` is true for exactly the first run after a pause;
+  // this effect is declared before the timeline effect so it is set in time.
+  const pausedRef = useRef(isPaused);
+  pausedRef.current = isPaused;
+  const wasPausedRef = useRef(false);
+  const resumedRef = useRef(false);
+  const voDoneKeyRef = useRef(null);      // `${beatIndex}:${stateName}` whose state VO finished
+  const hintSpeakingRef = useRef(null);   // { text, level } hint line currently speaking
+  useEffect(() => {
+    if (wasPausedRef.current && !isPaused) resumedRef.current = true;
+    wasPausedRef.current = isPaused;
+  }, [isPaused]);
+
   // Drive the before -> movement -> after -> next timeline for every beat.
   // Beats with an interaction wait at "before" for the child; everything
   // else (including every beat once its need is met) advances on a timer.
@@ -389,11 +415,43 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
 
     const runState = async () => {
       const voText = stateBlock?.audio?.voText || '';
+      const stateKey = `${beatIndex}:${stateName}`;
+      const resumed = resumedRef.current;
+      resumedRef.current = false;
 
-      // Let the narration finish before progressing.
-      await speakAndWait(voText, isAudioOn);
+      if (resumed) {
+        // Tiny settle so the child has switched back before anything speaks.
+        await new Promise((resolve) => setTimeout(resolve, 400));
+        if (cancelled) return;
+      }
 
-      if (cancelled) return;
+      if (resumed && voDoneKeyRef.current === stateKey) {
+        // The state's VO had already finished — don't repeat it. If a hint line was cut
+        // off, replay that one instead.
+        const interruptedHint = hintSpeakingRef.current;
+        if (interruptedHint) {
+          hintSpeakingRef.current = null;
+          // Show that hint's gesture/pulse again while its line replays (the ladder itself
+          // stays fresh): pin the level for the replay, and mark it spoken so the hint
+          // effect doesn't speak it a second time.
+          lastSpokenHintLevelRef.current = interruptedHint.level;
+          setForcedHintLevel(interruptedHint.level);
+          await speakAndWait(interruptedHint.text, isAudioOn);
+          setForcedHintLevel(0);
+          lastSpokenHintLevelRef.current = 0;
+          if (cancelled) return;
+        }
+      } else {
+        // Let the narration finish before progressing. The teaching hand (if this beat has one
+        // with a cue word) fires when that word is spoken; a replay waits for it again.
+        const teachCueCfg = needsInput(stateName) && hintConfig?.teachingGesture ? hintConfig?.teachingGestureCue : null;
+        const teachCue = teachCueCfg ? { ...teachCueCfg, onCue: () => setTeachCueFired(true) } : null;
+        if (resumed && teachCue) setTeachCueFired(false);
+        await speakAndWait(voText, isAudioOn, teachCue);
+
+        if (cancelled) return;
+        voDoneKeyRef.current = stateKey;
+      }
 
       // Interactive "before" states now stay on screen after the story VO.
       // The child acts when ready — start the idle-hint clock now, so the
@@ -471,12 +529,17 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
   // even past the "first 2 beats" teaching window below, so a child stuck
   // on a later beat still gets re-taught the gesture.
   const [beatHintLevel, setBeatHintLevel] = useState(0);
+  // True once the state's VO has reached the teaching cue word (hints.teachingGestureCue) — the
+  // teaching hand waits for it so it lands on the action word, not at the start of the line.
+  const [teachCueFired, setTeachCueFired] = useState(false);
   // Error-responsive escalation (registerFailedAttempt below) forces the
   // ladder ahead of the normal idle clock — kept separate from beatHintLevel
   // so a run of failed drops can't be silently overwritten by the idle timer
   // resetting to a lower level on the same tick.
   const [forcedHintLevel, setForcedHintLevel] = useState(0);
   const failedAttemptsRef = useRef(0);
+  // Bumped when an L2 hint line finishes speaking, so a queued L3 line can start right after it.
+  const [l2EndTick, setL2EndTick] = useState(0);
   const dragAttemptRef = useRef({ start: null, meaningful: false });
   const lastSpokenHintLevelRef = useRef(0);
   // Reusable structured hint mode — a beat opts in via `beat.hints` in the
@@ -501,6 +564,7 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
   useEffect(() => {
     setBeatHintLevel(0);
     setForcedHintLevel(0);
+    setTeachCueFired(false);
     failedAttemptsRef.current = 0;
     dragAttemptRef.current = { start: null, meaningful: false };
     lastSpokenHintLevelRef.current = 0;
@@ -544,12 +608,22 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
       const level = effectiveHintLevel >= 3 ? 3 : effectiveHintLevel >= 2 ? 2 : 0;
       if (!level) return;
       if (lastSpokenHintLevelRef.current >= level) return;
+      // Escalating to L3 (e.g. a 3rd wrong drop) while the L2 line is still speaking must not
+      // cut it off: wait. The L2 completion below bumps l2EndTick, which re-runs this effect.
+      if (level === 3 && hintSpeakingRef.current?.level === 2) return;
 
       const text = level === 3 ? hintConfig?.l3VoText : hintConfig?.l2VoText;
       lastSpokenHintLevelRef.current = level;
       if (text) {
+        hintSpeakingRef.current = { text, level };
         speakAndWait(text, isAudioOn).then(() => {
-          if (level === 2) l2VoiceEndedAtRef.current = Date.now();
+          // Cut off by a pause: keep it so it is replayed on resume, don't treat as finished.
+          if (pausedRef.current) return;
+          hintSpeakingRef.current = null;
+          if (level === 2) {
+            l2VoiceEndedAtRef.current = Date.now();
+            setL2EndTick((tick) => tick + 1);
+          }
         });
       } else if (level === 2) {
         l2VoiceEndedAtRef.current = Date.now();
@@ -564,11 +638,28 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
     const beatKey = `${beatIndex}:${stateName}`;
     if (hintSpokenForBeatRef.current === beatKey) return;
     hintSpokenForBeatRef.current = beatKey;
+    hintSpeakingRef.current = { text: hintVoText, level: 2 };
     speakAndWait(hintVoText, isAudioOn).then(() => {
+      if (pausedRef.current) return;
+      hintSpeakingRef.current = null;
       l2VoiceEndedAtRef.current = Date.now();
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [effectiveHintLevel, beatHintLevel, beatIndex, stateName, useStructuredDragHints]);
+  }, [effectiveHintLevel, beatHintLevel, beatIndex, stateName, useStructuredDragHints, l2EndTick]);
+
+  // Pause (sidebar / tab): drop back to a clean hint slate — the child is switching
+  // context and gets a fresh 10/18/26 window after the resume replay.
+  useEffect(() => {
+    if (!isPaused) return;
+    setBeatHintLevel(0);
+    setForcedHintLevel(0);
+    failedAttemptsRef.current = 0;
+    dragAttemptRef.current = { start: null, meaningful: false };
+    lastSpokenHintLevelRef.current = 0;
+    hintSpokenForBeatRef.current = null;
+    beatWaitStartedAtRef.current = null;
+    l2VoiceEndedAtRef.current = null;
+  }, [isPaused]);
 
   // Gesture demo — every interaction type here is a non-tap gesture (drag,
   // rope-drag, drag-path, press-hold), so a first-timer needs a quick shown
@@ -595,7 +686,7 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
   // true — the first time this exact mechanic appears), plus a full L3
   // rescue. Legacy beats keep the original "first 2 interactive beats" rule.
   const showStructuredGesture = useStructuredDragHints && needsInput(stateName) && !drag
-    && ((effectiveHintLevel === 0 && hintConfig?.teachingGesture) || effectiveHintLevel >= 2);
+    && ((effectiveHintLevel === 0 && hintConfig?.teachingGesture && (!hintConfig?.teachingGestureCue || teachCueFired)) || effectiveHintLevel >= 2);
   const showLegacyGesture = !useStructuredDragHints && needsInput(stateName)
     && ((interactiveBeatsSoFar <= 2 && !beat?.hintVoText) || beatHintLevel >= 3);
   const showGestureDemo = showStructuredGesture || showLegacyGesture;
@@ -634,12 +725,13 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
     return { from, to: fullTo };
   }, [showGestureDemo, interaction, findItem, useStructuredDragHints, effectiveHintLevel]);
 
-  // A genuine drag attempt resets the idle clock (so a child who's actively
-  // working isn't interrupted); a tap that barely moves the item does not.
-  // Once L3 has been reached, keep the final guidance in place until the
-  // beat actually succeeds rather than resetting it away.
+  // A genuine drag attempt restarts the idle clock (so a child who's actively
+  // working isn't interrupted) — but only when NO hint is showing. A partial or
+  // wrong attempt is not progress, so a hint that is already up (L1/L2/L3, with its
+  // gesture and VO) stays until the beat actually succeeds. A tap that barely moves
+  // the item does not count as an attempt at all.
   const resetHintBaselineFromInteraction = useCallback(() => {
-    if (effectiveHintLevel >= 3) return;
+    if (effectiveHintLevel >= 1) return;
     beatWaitStartedAtRef.current = Date.now();
     setBeatHintLevel(0);
     setForcedHintLevel(0);
@@ -881,7 +973,7 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
   // "resting spot" is just wherever the grass bundle is meant to land, not a
   // second thing on screen. For those, the adapter passes a raw {x,y,w} zone
   // (same % convention as everything else) instead of a gameKey string.
-  const hitTest = useCallback((clientX, clientY, target) => {
+  const hitTest = useCallback((clientX, clientY, target, options = {}) => {
     if (!sceneRef.current || !target) return false;
     const stageRect = sceneRef.current.getBoundingClientRect();
 
@@ -893,8 +985,9 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
       // pixels short of a character shouldn't read as a miss. Zone targets
       // already get their own tolerance via `w`; this gives gameKey targets
       // the same courtesy.
-      const padX = r.width * 0.2;
-      const padY = r.height * 0.2;
+      const targetPad = options.targetPad ?? 0.2;
+      const padX = r.width * targetPad;
+      const padY = r.height * targetPad;
       return (
         clientX >= r.left - padX && clientX <= r.right + padX &&
         clientY >= r.top - padY && clientY <= r.bottom + padY
@@ -1001,7 +1094,7 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
     if (!drag) return;
     if (isCenterTieInteraction(interaction)) {
       const side = centerTieSideFor(interaction, drag.gameKey);
-      const ok = side && hitTest(e.clientX, e.clientY, interaction.target);
+      const ok = side && hitTest(e.clientX, e.clientY, interaction.target, { targetPad: interaction.targetPad });
       setDrag(null);
       if (!ok) return; // misses just spring back to start (no lock, no fail)
       setCenterTieLocked((cur) => {
@@ -1030,7 +1123,7 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
       failThenAdvance();
       return;
     }
-    const ok = hitTest(e.clientX, e.clientY, interaction.target);
+    const ok = hitTest(e.clientX, e.clientY, interaction.target, { targetPad: interaction.targetPad });
     if (ok) completeInteraction();
     else rejectInteraction();
   }, [drag, interaction, hitTest, completeInteraction, rejectInteraction, failThenAdvance]);
@@ -1265,6 +1358,61 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
     ? debugSelectedKey.slice('__point_'.length, -2) : null;
   const debugSelectedPoint = debugSelectedPointName ? effectivePoint(debugSelectedPointName) : null;
   const debugSelectedTargetZone = layoutDebug && debugSelectedKey === '__targetZone__' ? effectiveTargetZone : null;
+  const itemHitZoneStyle = (item, {
+    color,
+    background,
+    dashed = false,
+    pad = 0,
+    zIndex = 58,
+  }) => {
+    const width = (item.w || 12) * ((item.scale || 100) / 100);
+    const hitWidth = width * (1 + pad * 2);
+    return {
+      position: 'absolute',
+      left: `${item.x}%`,
+      top: `${item.y}%`,
+      width: `${hitWidth}%`,
+      aspectRatio: '1 / 1',
+      transform: `translate(-50%, -50%) rotate(${item.rotation || 0}deg)`,
+      borderRadius: '10px',
+      border: `2px ${dashed ? 'dashed' : 'solid'} ${color}`,
+      background,
+      pointerEvents: 'none',
+      zIndex,
+    };
+  };
+  const pointHitZoneStyle = (point, {
+    color,
+    background,
+    dashed = false,
+    zIndex = 58,
+  }) => ({
+    position: 'absolute',
+    left: `${point.x}%`,
+    top: `${point.y}%`,
+    width: `${point.w ?? 12}%`,
+    aspectRatio: '1 / 1',
+    transform: 'translate(-50%, -50%)',
+    borderRadius: '50%',
+    border: `2px ${dashed ? 'dashed' : 'solid'} ${color}`,
+    background,
+    pointerEvents: 'none',
+    zIndex,
+  });
+  const hitZoneStartItems = SHOW_HIT_ZONES && needsInput(stateName) && interaction ? items
+    .map((item, i) => withDebugOverride(item, itemKeyOf(item, i)))
+    .filter((item) => item.gameKey && (
+      item.gameKey === interaction.drag
+      || item.gameKey === interaction.dragLeft
+      || item.gameKey === interaction.dragRight
+      || (interaction.type === 'drag-path' && item.gameKey === interaction.trigger)
+    )) : [];
+  const hitZoneTargetItem = SHOW_HIT_ZONES && needsInput(stateName) && interaction?.target && typeof interaction.target === 'string'
+    ? items.map((item, i) => withDebugOverride(item, itemKeyOf(item, i))).find((item) => item.gameKey === interaction.target)
+    : null;
+  const hitZoneTargetPoint = SHOW_HIT_ZONES && needsInput(stateName) && interaction?.target && typeof interaction.target === 'object'
+    ? effectiveTargetZone
+    : null;
 
   return (
     <>
@@ -1276,6 +1424,7 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
         ${className}
         ${useStructuredDragHints ? 'beat-player-structured-hints' : ''}
         ${feedback === 'wrong' ? 'beat-player-wrong' : ''}
+        ${isPaused ? 'beat-player-paused' : ''}
       `}
       onPointerMove={(e) => { onPointerMove(e); onDropPointerMove(e); onDebugPointerMove(e); }}
       onPointerUp={(e) => { onPointerUp(e); onDropPointerUp(); endDebugDrag(); }}
@@ -1288,6 +1437,7 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
           from={gestureDemoFromTo.from}
           to={gestureDemoFromTo.to}
           active={showGestureDemo}
+          paused={isPaused}
           idleDelay={150}
           replayKey={effectiveHintLevel}
         />
@@ -1331,6 +1481,70 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
           }}
           onPointerDown={startDebugTargetZoneDrag}
         />
+      )}
+
+      {SHOW_HIT_ZONES && needsInput(stateName) && interaction && (
+        <>
+          {SHOW_START_HIT_ZONES && hitZoneStartItems.map((item) => (
+            <div
+              key={`hit-start-${item.gameKey}`}
+              style={itemHitZoneStyle(item, {
+                color: 'rgba(0, 170, 90, 0.9)',
+                background: 'rgba(0, 170, 90, 0.08)',
+                zIndex: 57,
+              })}
+              aria-hidden="true"
+              title={`start zone: ${item.gameKey}`}
+            />
+          ))}
+          {hitZoneTargetItem && (
+            <div
+              style={itemHitZoneStyle(hitZoneTargetItem, {
+                color: 'rgba(255, 0, 90, 0.85)',
+                background: 'rgba(255, 0, 90, 0.09)',
+                pad: interaction.targetPad ?? 0.2,
+                zIndex: 58,
+              })}
+              aria-hidden="true"
+              title={`target zone: ${hitZoneTargetItem.gameKey}`}
+            />
+          )}
+          {hitZoneTargetPoint && (
+            <div
+              style={pointHitZoneStyle(hitZoneTargetPoint, {
+                color: 'rgba(255, 0, 90, 0.85)',
+                background: 'rgba(255, 0, 90, 0.09)',
+                zIndex: 58,
+              })}
+              aria-hidden="true"
+              title="target zone"
+            />
+          )}
+          {interaction.type === 'drag-path' && dropRevealed && dropPos && (
+            <div
+              style={pointHitZoneStyle({ ...dropPos, w: 7 }, {
+                color: 'rgba(0, 170, 90, 0.9)',
+                background: 'rgba(0, 170, 90, 0.08)',
+                zIndex: 57,
+              })}
+              aria-hidden="true"
+              title="drag path start zone"
+            />
+          )}
+          {interaction.type === 'drag-path' && (interaction.path || []).map((point, index) => (
+            <div
+              key={`hit-path-${index}`}
+              style={pointHitZoneStyle({ ...point, w: interaction.snapRadius ?? 8 }, {
+                color: 'rgba(0, 120, 255, 0.82)',
+                background: 'rgba(0, 120, 255, 0.06)',
+                dashed: index !== pathIndex + 1,
+                zIndex: 56,
+              })}
+              aria-hidden="true"
+              title={`path zone ${index + 1}`}
+            />
+          ))}
+        </>
       )}
 
       {items.map((item, i) => {
