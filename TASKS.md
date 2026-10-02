@@ -51,6 +51,15 @@ Before every task, Claude Code must:
   Not yet visually verified in-browser. Possible future add (not built): a "voice on by default"
   preference in Parent Dashboard for first launch.
 
+- [x] T61 · Voice-mute standardization — the toggle is a **voice mute, not an audio mute**
+  (keeps T55: SFX stay on). Voice off silences scene VO, hint VO, Sanskrit words + syllables;
+  muted lines run on a silent timer and fire callbacks on schedule (no skip, no instant-done);
+  mute mid-line silences immediately but still completes the step; unmute never replays old
+  lines. Shared: `useVoiceGuidance` (`muteVoicePlayback`, `playSilent`), `useGaneshaVoice`
+  (`mute`). Applied across all 13 live scenes; see CHANGELOG 2026-09-29 + DECISIONS.md.
+  **Not yet live-tested** — test mute/unmute/replay per scene and mute↔sidebar. Open:
+  SanskritVoiceRecorder still plays when muted (child-triggered, intentional), Sacred Assembly
+  onboarding bookkeeping unchanged.
 
 ### Scene Behaviour & Hooks
 - [x] T06 · SymbolAutoReveal
@@ -111,6 +120,21 @@ Before every task, Claude Code must:
   listener). Added immediate teaching-gesture dismissal on real press in Calm Mooshika, separate
   from the later "meaningful hold" idle-clock reset. See CHANGELOG 2026-09-22. Not yet committed
   — awaiting go-ahead. Not yet visually verified in-browser.
+- [ ] T62 · Hint system: only meaningful progress clears/resets hints (2026-10-01) — random touches do
+  nothing; a genuine incomplete attempt keeps a visible hint; wrong attempts escalate (2nd wrong → L2,
+  L3 only from L2 and never cutting a speaking L2 line); hint VO replays every ladder cycle; L3 no longer
+  gated forever on a missing speech "ended" event; `GestureDemo` is display-only; sidebar-reopen-inside-
+  400ms race fixed in Garland / Flower Journey / Eyes / Ears. Code done + committed on `staging`
+  (see CHANGELOG 2026-10-01 "Hint system"). **Open:** NOT yet browser-tested — run the per-game checklists in
+  the harness checklist panel (`src/dev/TEST_CHECKLISTS.md`), priority: My Indian Story timing, Game 3
+  sidebar-in-intro freeze, Marsh L3, Ears tab switch. Then full build → staging → Netlify preview → prod.
+- [ ] T63 · Choice-game hint ladders (2026-10-02) — "settled L3" standard applied: 3 strong pulses (~8s)
+  then a quiet static highlight until the child acts; wrong taps never restart the ladder; L3 voice is
+  per game (Favorite Food visual-only, Sarvakaryeshu keeps one "Remember?" line). Done + committed for My
+  Indian Story (Ganesha Home rings, Language, Festival), Favorite Food, Sarvakaryeshu; hint-timing bug
+  in the 3 Indian Story ladders fixed. **Open:** not browser-tested (checklists in the harness); Ganesha
+  Home L3 ends after ~8s (decide: keep, or leave a static ring); Family Tree / Dreams & Wishes ladders
+  not reviewed against this standard. See CHANGELOG 2026-10-02, DECISIONS 2026-10-02.
 
 ### Ganesha & Mooshika Presence
 - [ ] T18 · Ganesha Gestures — map which gesture per scene phase — Symbol Mountain, Cave of Secrets, Shloka River (zones 1–3)

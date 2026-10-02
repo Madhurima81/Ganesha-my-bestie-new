@@ -1,6 +1,19 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
 
+## [2026-10-02] — Choice-game hint ladders: settled L3, wrong taps keep the ladder (My Indian Story, Favorite Food, Sarvakaryeshu)
+**Touched:** src/zones/about-me-hut/indian-story/MyIndianStoryGame.jsx + .css; src/zones/about-me-hut/food/Favoritefoodgame.css; src/zones/shloka-river/scenes/scene4/SarvakaryeshuGame.css; src/dev/testChecklists.js.
+**Changed:**
+- Ganesha Home (magnifier): L3 now rings every spot not yet found (3 at the start) for ~8s, then the rings end and the ladder stays quiet until the child moves the magnifier (fresh 10/18/26). No pointing emoji existed in code (only a stale log line). Dragging the magnifier no longer clears a visible hint; finding a spot resets the ladder.
+- Language Ganesha: L2 is ONE line, "Think of the language many shlokas are in." (chant no longer replayed); removed the standalone "Tap play." line (fallbacks use "Tap play and listen carefully."). L3: Sanskrit card pulses 3x (~8s) then a quiet static gold highlight; no VO.
+- Festival Ganesha: L2 "Think of the festival that celebrates Ganesha." (was "...my favorite sweet"); L3 same settled treatment on Ganesh Chaturthi.
+- A wrong tap no longer ends/restarts the Language/Festival ladders (shake state removed from the effect gate + deps); after L3 the answer stays highlighted. L3 also arms after a 7s limit if the L2 line is cut or its "ended" never arrives.
+- Favorite Food L3 and Sarvakaryeshu L3: 3 pulses (~8s) then static highlight (were pulsing forever). Favorite Food L3 stays visual-only; Sarvakaryeshu keeps its single "Remember? ..." line (spoken once).
+- Same day: the three My Indian Story idle ladders no longer list their own level as an effect dependency (it restarted 10/18/26 on every level change).
+- Checklists: Ganesha Home, Language, Festival, Favorite Food, Sarvakaryeshu steps.
+**Verified:** the game file compiles (esbuild) and the checklist file lints clean; NOT browser-tested.
+**Open:** run the My Indian Story / Favorite Food / Sarvakaryeshu checklists; Ganesha Home L3 currently ends after ~8s — critic suggested a quiet static ring may remain (DECISIONS PENDING 2026-10-02); Family Tree / Dreams & Wishes ladders not reviewed against the settled-L3 standard; full build before pushing.
+
 ## [2026-10-02] — Mobile Step 3E: InnerMandala phone-landscape treatment (Step 3 complete)
 **Touched:** src/lib/components/celebration/InnerMandala.css + .jsx (middle-ring hit disc + tap router).
 **Changed:** Overlay mandala sized to 66dvh with message and hint below it (hint no longer overlaps the message), safe-area padding, no scroll; invisible middle-ring hit disc routes taps by angle to the nearest of the 8 symbol petals (active only on phone landscape).
@@ -25,15 +38,28 @@ Append one entry per work session. Newest on top.
 **Verified:** headless Chrome with the real OpeningModal for all 13 live scenes at 667x375, 844x390, 932x430: card inside viewport, CTA fully visible and 60px, no scroll, no clipped child, one icon row, lotus hidden; screenshots reviewed at 667 and 844. Tablet/desktop CSS untouched. Not yet checked on a physical device.
 **Open:** Step 3B completion screen, then SymbolAutoReveal, SymbolCardModal/ChantCardModal, InnerMandala.
 
+## [2026-10-01] — Hint system: only meaningful progress clears hints + floating test checklist
+**Touched:** src/lib/hooks/useRepeatedHintCycle.js; src/lib/components/feedback/GestureDemo.jsx; src/lib/beatPlayer/BeatPlayerGame.jsx; Modak (FlowerJourneyGame2, GarlandGame3); Symbol Mountain (EyesPopUpGame, EarsSoundMatchGame, PondSceneSimplifiedV4); Shloka River (SuryakotiGame, SamaprabhaGame, KurumedevaGame, MahakayaRescueGame, NirvighnamGame, SarvakaryeshuGame, ShlokaRiverFinale); About Me (ObstacleRemoverGame, MyIndianStoryGame); NEW src/dev/TestChecklistPanel.jsx, src/dev/testChecklists.js, src/dev/TEST_CHECKLISTS.md; GameTestHarness.jsx (mounts the panel).
+**Changed:**
+- Hook: `markProgress` / `markAttempt` / `markWrongAttempt` / `markContinuousProgress` (700ms throttle); `markInteraction` kept as a temporary alias of `markProgress`. A wrong attempt never clears a visible hint; 2nd wrong → L2, L3 only from L2 and never cuts a speaking L2 line. A cut/never-ended L2 line no longer gates L3 forever (12s limit; same idea in Flower Journey, Garland, Eyes, Ears).
+- `GestureDemo` is display-only: no longer dismisses on any pointerdown (`dismissOnAnyPointer` opts back in).
+- Partial attempts keep a visible hint (Flower Journey bush/branch/marsh, BeatPlayer nest, Garland, Pond, Mahakaya, Nirvighnam, Finale, Kurumedeva). Wrong attempts now escalate (Kurumedeva, Finale, Sarvakaryeshu). Samaprabha: only a touch ON the clue cuts VO / dismisses the teaching hand. Dreams & Wishes: a wrong bubble no longer resets hints. Pond: partial tries no longer wipe the failed-attempt streak.
+- Flower Journey: hint VO replays each ladder cycle (was once per phase); new Marsh line "Good jump! Now the next safe spot." after the first jump.
+- Sidebar: reopening within the 400ms replay window used to drop the interrupted line (intro never finished → hint clock never armed → frozen hints). Fixed in Garland, Flower Journey, Eyes, Ears. Ears tab-switch now uses the same tracked interrupt/replay (no early advance, no stale replay).
+- My Indian Story: the three idle ladders listed their own level as an effect dependency, restarting the 10/18/26 chain on every level change; removed.
+- Dev harness: floating step-by-step test checklist (Pass/Fail, notes, screenshots, pop-out window, HTML/markdown report), one list per game grouped by zone.
+**Verified:** eslint on changed files (new code clean; remaining errors/warnings pre-existing); one full `vite build` passed mid-session. NOT browser-tested: Samaprabha/Kurumedeva/Mahakaya/Nirvighnam/Sarvakaryeshu/Finale/Pond/Indian Story/Garland/Eyes/Ears/nest changes. Flower Journey branch (9 steps) and generic gesture checks passed in the harness; Bush/Marsh 7 of 8 passed (step 7 failed before the L3 fix).
+**Open:** run the per-game checklists; final full build → staging → Netlify preview → prod; Ears/other `markInteraction` callers still on the alias; TASKS T62. Several scene files carry earlier uncommitted sidebar-pause work that was committed along with these changes (noted in the commit messages).
+
+## [2026-10-01] — Mobile Step 1: phone gameplay chrome foundation + Home removed from 13 live scenes
+**Touched:** App.css, ZoneBadgeButton.jsx/.css, AudioToggle.css, VOReplayButton.css, SymbolSidebar.css, ZoneWelcome.css, and the 13 live scene files (NewModakSceneV7, PondSceneSimplifiedV4, SymbolMountainSceneV3, SacredAssemblySceneV8, VakratundaGroveSimplified, SuryakotiBankSimplified, NirvighnamChantSimplified, SarvakaryeshuChantSimplified, ShlokaRiverFinale, Familytreegame, Favoritefoodgame, ObstacleRemoverGame, MyIndianStoryGame).
+**Changed:** Revised the external Step 1 pack before applying (see DECISIONS 2026-10-01): scoped `variant="gameplay"` Zone, 60px hit / 46px visible controls, canonical 500px phone breakpoint (480px rules migrated), fixed-position VOReplay on phone, no safe bands, OFF-state dimming preserved. HomeButton import + render removed from the 13 scenes; Zone kept with `variant="gameplay"`. Parked zones untouched. Not committed.
 ## [2026-10-01] — Mobile Step 2: phone collection drawer (rosette) for Symbol Mountain + Shloka River
 **Touched:** NEW src/lib/components/collection/PhoneCollectionDrawer.jsx/.css, src/lib/utils/collectionTarget.js, public/images/icons/symbol-collection-rosette.png; EDITED SymbolSidebar.jsx, AppSidebar.jsx, SymbolAutoReveal.jsx, useSymbolCollection.js, SymbolCardModal.css, ChantCardModal.css, and the 7 scenes that computed a flight target (Modak, Pond, Tusk, Vakratunda, Suryakoti, Nirvighnam, Sarvakaryeshu); GestureDemo.jsx (exemption — already landed inside 712618be).
 **Changed:** Phone landscape hides the rail and shows a rosette button + 4x2 symbols-only drawer; `getCollectionTarget` makes symbols fly to the rosette on phone and to the exact rail slot elsewhere; drawer owns the sidebar pause (cards inside it do not end it); locked taps are neutral (tap + pulse); cards raised to z 2100 above the drawer (2050).
 **Verified:** headless Chrome with the REAL SymbolSidebar / AppSidebar + SymbolAutoReveal + useSidebarPause at 844x390 (both) and 667x375 (SymbolSidebar): rail hidden, flight delta = rosette centre, gold bloom on rosette, new symbol unlocked in the drawer, 4 columns / 8 items / no text, card above drawer, scene stays paused after closing a card, resumes after closing the drawer. NOT run through full Pond/Vakratunda gameplay or on a physical device.
 **Open:** SymbolCardModal / ChantCardModal phone layout (Step 3); OpeningModal + completion phone layouts (Step 3); on-device check of flight + bloom in a real scene; do not merge/ship Step 1+2 together until QA'd.
 
-## [2026-10-01] — Mobile Step 1: phone gameplay chrome foundation + Home removed from 13 live scenes
-**Touched:** App.css, ZoneBadgeButton.jsx/.css, AudioToggle.css, VOReplayButton.css, SymbolSidebar.css, ZoneWelcome.css, and the 13 live scene files (NewModakSceneV7, PondSceneSimplifiedV4, SymbolMountainSceneV3, SacredAssemblySceneV8, VakratundaGroveSimplified, SuryakotiBankSimplified, NirvighnamChantSimplified, SarvakaryeshuChantSimplified, ShlokaRiverFinale, Familytreegame, Favoritefoodgame, ObstacleRemoverGame, MyIndianStoryGame).
-**Changed:** Revised the external Step 1 pack before applying (see DECISIONS 2026-10-01): scoped `variant="gameplay"` Zone, 60px hit / 46px visible controls, canonical 500px phone breakpoint (480px rules migrated), fixed-position VOReplay on phone, no safe bands, OFF-state dimming preserved. HomeButton import + render removed from the 13 scenes; Zone kept with `variant="gameplay"`. Parked zones untouched. Not committed.
 **Verified:** eslint clean on changed JSX; no HomeButton refs left in the 13 files. NOT yet checked visually at 667x375 / 844x390 / 932x430.
 **Open:** visual QA at the 3 phone sizes; Step 2 Wisdom button + drawer (reusing useSidebarPause, generic collectionTarget); do not merge/ship before Step 2. Other 480px rules (CleanProfileSelector, Enhanced.css) belong to the later non-gameplay phase. Tablet Voice/Replay still 36px (pre-existing, below the 60px rule) — decide separately.
 
@@ -46,6 +72,313 @@ canvas, while progress counts inside the current broad left-to-right band (`0–
 band-sized glow instead of a permanent circular ring.
 **Verified:** focused `npx eslint src/zones/shloka-river/scenes/Scene2/components/SuryakotiGame.jsx`
 passed.
+
+## [2026-09-30] — Samaprabha: press-and-hold switched to the Pond hold behaviour
+**Touched:** src/zones/shloka-river/scenes/Scene2/components/SamaprabhaGame.jsx, SamaprabhaGame.css (uncommitted).
+**Changed:** Hold now works like the Pond lotus/rock hold. The progress ring is a gold ring drawn on the
+current shadow target (`.sama-hold-ring`), not a tiny ring inside the moving light beam. Early release
+shrinks the ring at 2x speed; re-pressing within 1s resumes from the current value; after 1s it resets
+to 0 (`HOLD_DECAY_MULTIPLIER`, `HOLD_RESET_GRACE_MS`; `HOLD_MS` still 1150). Removed `HOLD_DRAIN_MS` and
+the old `.sama-hold-progress/track/fill` CSS. Cause of the reported "ring only ~5%" was not reproduced;
+best guess: every press reset the ring to 0 and release drained it in 260ms.
+**Open:** Madhurima tested it and confirmed ("fine, done"). Not committed — waiting for go-ahead.
+
+## [2026-09-30] — Tusk: parent idle ladder switched off during the nest game; L2 -> L3 audit of other zones
+**Touched:** src/zones/symbol-mountain/scenes/tusk/SymbolMountainSceneV3.jsx (uncommitted).
+**Changed:** The scene-level 10/18/26s idle ladder no longer runs while the tusk nest game
+(`TuskBeatPlayerLive` / BeatPlayerGame) is showing (`!sceneState?.showTuskAssemblyGame` added to
+`isHintPhase`, plus the effect dependency). Before, it kept counting from game start (the child's
+drags never reach the parent) and spoke the old `idleTusk` line ("Look at the obstacle...") at ~18s
+on top of the beat player's own per-beat L2/L3 lines. Removed the now-unused `idleTusk` line and
+its branch. Eyes/Ears ladders unchanged.
+**Audited, no change needed:** other zones' L2 -> L3 timing. Symbol Mountain (Modak, Pond, Tusk) and
+About Me Hut (Family Tree, Favorite Food, Obstacle Remover, My Indian Story) build their own inline
+ladders (not `useRepeatedHintCycle`) and already wait for the L2 VO to end; the end callback also
+fires when muted / key missing (traced by reading). `DreamsWishesGame.jsx` (About Me Hut) was the
+only other `useRepeatedHintCycle` caller — it is an old unused scene (not imported anywhere) and was
+left alone. Sacred Assembly (final scene) has no L1-L3 ladder, only the shared idle timer (skimmed).
+**Left to test (not verified in a browser):**
+1. Full Symbol Mountain Tusk scene: play Eyes and Ears, reach the nest game, leave it idle ~30s ->
+   only the beat player's lines ("Drag the twig to the nest." etc.) play, no "Look at the
+   obstacle" line, no parent hint visuals over the nest game.
+2. Eyes and Ears games still get their scene-level L1-L3 hints after the change.
+3. Nest game -> tusk reveal -> completion: parent ladder resumes/stays off correctly afterwards.
+4. Beat player alone (harness `game=sm-tusk-live-v2`, checked): loads, no console errors, L2 spoke
+   once at idle. NOT checked: L3 arriving 8s after L2, hints during real drags, all 4 beats.
+5. Whether the parent's `speak` and the beat player's `speechSynthesis` really interrupt each other
+   (inferred from the Shloka River dual-speech fix, not observed).
+**Open:** The full-scene harness (`game=sm-symbol`) sat on "loading" >20s so the scene itself was
+not exercised; my own dev server on 5174 was unreachable, the check used the server already on
+5173 (assumed to serve this folder). Change not committed — waiting for Madhurima's go-ahead.
+
+## [2026-09-30] — Voice-mute: hook-level test result + what is left to test
+**Touched:** none in the app (temporary test page and a temporary launch.json entry were
+added and removed; nothing left behind).
+
+**Tested (13/13 PASS, real `useGaneshaVoice` + `useVoiceGuidance` in the browser pane, fake
+TTS/Audio, timings approximate because the pane runs timers slowly):**
+voice on speaks + `onEnd` once; voice off = no speech/audio, `onStart` fires, `onEnd` NOT
+instant and fires once after ~line length (spoken line, `playWord` ~1s, `playSyllable`
+~0.7s, `playVoice` with text); mute mid-spoken-line cancels at once, callback fires once ~when
+the line would have ended, no second callback; mute mid-MP3 pauses at once, callback fires
+once at ~full length, no second callback; unmute starts nothing by itself; a new line
+supersedes a pending silent line (old one ends right away, once); SFX still plays with voice
+off.
+
+**Left to test (needs a real browser/device — none of this is covered above):**
+1. Every one of the 13 live scenes: mute mid-line -> game moves on at its normal pace (no
+   skip), unmute -> nothing old resumes, Replay -> plays the current line, Replay disabled
+   while muted.
+2. Mute -> open sidebar -> close sidebar -> unmute while a line is active (Sarvakaryeshu/
+   Sarvada, Vakratunda, Suryakoti, Nirvighnam). Traced by reading only.
+3. Scene wrappers I rewrote: Shloka scenes' own Web Speech (`muteWebSpeech`), Family Tree
+   (placement sequences, child-start line, tree-done transition), My Indian Story (13
+   branches now wait the line's length when muted — check the pacing feels right; opening
+   line plays once and never on unmute), Pond/Tusk/Modak/Favourite Food/Dreams.
+4. Sarvada replay: intro during the intro, morning/afternoon/night prompt on images 1-3,
+   "find the hidden symbol" in the search stage.
+5. SFX stays on with voice off; `SanskritVoiceRecorder` reference/playback still works muted.
+6. iOS Safari (speech priming + hidden-tab behaviour), and a slow/low-end device.
+Not reachable in this sandbox: the real app stalled on its loading screen with a hand-made
+test profile, and the game harness mocks the voice hook, so neither tested the scenes.
+
+## [2026-09-30] — Sidebar = true pause across Shloka River + Symbol Mountain; teaching hand cued to the action word
+**New shared files:** src/lib/hooks/useSidebarPause.js; src/lib/hooks/usePausableTimers.js; src/lib/utils/speechCue.js; src/lib/config/content/voiceCues.js.
+**Touched (shared):** src/lib/hooks/usePauseAwareTimeout.js (freeze/thaw); src/lib/hooks/useRepeatedHintCycle.js (`paused` + resume pin); src/lib/hooks/useGaneshaVoice.js, useVoiceGuidance.js (`cue` option); src/lib/components/feedback/GestureDemo.jsx (`paused` prop, ignores sidebar taps); src/lib/components/reveal/SymbolAutoReveal.jsx/.css (only a card tap collects; sidebar dims while the card is up); src/lib/beatPlayer/BeatPlayerGame.jsx/.css (sidebar pause, hint/VO replay rules, teaching-gesture cue).
+**Touched (Shloka River):** Scene1 VakratundaGroveSimplified, MahakayaRescueGame, VakratundaRescueGame; Scene2 SuryakotiBankSimplified, components/SuryakotiGame, SamaprabhaGame; Scene3 NirvighnamChantSimplified, NirvighnamGame, KurumedevaGame; scene4 SarvakaryeshuChantSimplified, SarvakaryeshuGame, SarvadaGame (+ .css for each game root).
+**Touched (Symbol Mountain):** modak/NewModakSceneV7, FlowerJourneyGame2, GarlandGame3 (+ .css); pond/PondSceneSimplifiedV4, PondScene.css; tusk/SymbolMountainSceneV3, EyesPopUpGame, EarsSoundMatchGame, TuskBeatPlayerLive, tuskNestFlow.json (+ .css).
+**Changed:** Opening the symbol sidebar is now a TRUE pause of the playable scene. Open: the in-flight VO is captured and stopped WITHOUT firing its onEnded (so nothing advances behind the panel), game timers freeze with their remaining time (usePausableTimers / usePauseAwareTimeout freeze()), animations freeze, hint state is held. Close: after ~400ms only the INTERRUPTED line is replayed once from its start (never mid-sentence), then a fresh 10/18/26 hint clock starts from L0 — if nothing was interrupted the child just gets a fresh 10s and no hint fires. A replayed hint keeps its gesture for ~3.5s (useRepeatedHintCycle `paused` pin). Also: the "finish anyway if audio drops" fallback timers were made pausable so a scene can't complete behind the sidebar; Garland's ready-step no longer cancels itself on pause; Pond/Tusk scene handlers replay only the interrupted line; Eyes/Ears/nest game gained isPaused support. The Pond/Tusk sidebar-card flicker was the pause CSS freezing the card's own animations — the freeze is now scoped to the pond stage. Family Tree unchanged (only verified modal/background-tap behaviour). Affirmation card (SymbolAutoReveal): only a tap on the card collects, backdrop/sidebar taps do nothing, sidebar icons dim while it is up (the fun-fact card keeps "tap anywhere to close").
+**Also:** Teaching-hand timing is now cued to the ACTION WORD of the instruction instead of a guessed delay. speechCue.js uses Web Speech word-boundary events (estimate fallback, also used when muted); voiceCues.js registers word (+ `cueMs` for the future recorded MP3s) per line; `cue` option added to useGaneshaVoice / useVoiceGuidance; BeatPlayerGame reads `hints.teachingGestureCue` from the flow JSON. Dev helper `markCue('/audio/….mp3')` in the console prints the cueMs when you press Space at the word. Flower Journey belly emotions now land on their words.
+**Commit state:** the first wave — useSidebarPause / usePausableTimers, the Shloka River games + wrappers, SymbolAutoReveal, GestureDemo, useRepeatedHintCycle — is in `09d7fd7c` ("Checkpoint Shloka River current flow"). UNCOMMITTED: the Symbol Mountain sidebar pause (Modak Flower Journey/Garland/scene, Pond, Tusk scene + Eyes/Ears/nest game), the word-cue work (speechCue.js, voiceCues.js, `cue` in useGaneshaVoice/useVoiceGuidance, BeatPlayerGame + tuskNestFlow.json), the `paused` resume-pin in useRepeatedHintCycle, and these docs.
+**Mute interplay:** no special case needed — muted lines already run on a silent timer and fire their callbacks on schedule (2026-09-29 voice-mute entry), so the pause captures/replays them the same way; the hand cue falls back to the same character estimate when muted.
+**Open:** Not all browser-tested — Madhurima has verified Sarvada, Mahakaya, Flower Journey, Garland, Pond, and the Tusk nest game; Suryakoti, Samaprabha, Nirvighnam, Kurumedeva, Sarvakaryeshu, Eyes, Ears, Modak Mooshika-hold and the word-cued hands still need a pass. `cueMs` values are empty until the MP3s exist. About Me Hut scenes have no sidebar and were not touched. BeatPlayerGame.test.jsx uses jest.mock and can't run under vitest (pre-existing). CHANGELOG/TASKS still carry earlier uncommitted edits.
+
+## [2026-09-30] — Working-tree changes found while reconciling git history (documented from the diff, NOT built/verified by me)
+**Touched:** src/lib/components/navigation/ParentDashboard.jsx; src/App.jsx; src/zones/about-me-hut/indian-story/MyIndianStoryGame.jsx; src/zones/symbol-mountain/scenes/modak/ModakScene.css, modak-flow-editor.html; src/dev/modakGame2Preview/ModakGame2Preview.jsx; TASKS.md (T61).
+**Changed:** ParentDashboard: sound settings became ON/OFF toggles (Ambience / Voice & pronunciation / Effects) instead of volume sliders — the existing `gmb_parent_sound_*` keys keep storing a number, read as ON for any value > 0 and OFF only for an explicit 0 (no new storage key, old slider values migrate); added a PWA "install app" button with manual install steps (`PwaInstallManager`), Help and About screens, and the active child's age; App.jsx passes `onOpenChildProfile` → profile selector. MyIndianStoryGame: the opening VO is tracked as "played once per mount" so a muted child who unmutes later never gets the opening line resurrected (matches the 2026-09-29 voice-mute rule). Modak dev preview + flow editor: emotion art references switched from `.webp` to `.png`; ModakScene.css gained `aspect-ratio: 1` / `object-fit: contain` for the emotion images. TASKS.md: T61 (voice-mute standardization) added.
+**Open:** All uncommitted. ParentDashboard's sound toggles and the install flow need a manual pass (especially that Voice OFF actually silences the game after a reload); the .webp→.png switch assumes the .png files exist next to the .webp ones.
+
+## [2026-09-30] — Shloka River: rebuild finale as symbol-boat flow
+**Touched:** src/lib/config/content/voiceGuidance.js;
+src/zones/shloka-river/scenes/scene5/ShlokaRiverFinale.css;
+src/zones/shloka-river/scenes/scene5/ShlokaRiverFinale.jsx;
+src/zones/shloka-river/scenes/scene5/assets/images/choice-boat.png.
+
+**Changed:** Reworked the finale into the new three-boat symbol choice flow.
+The opening now plays the full Shloka while each symbol appears in sequence,
+then asks the child to choose the first symbol boat. Correct choices sail into
+the river, reveal the Sanskrit word only after placement, play the word audio,
+and use only two early scaffold lines: "Now, choose the next one." after
+Vakratunda and "Great! Keep choosing." after Mahakaay. Later turns rely on boat
+movement, sparkle, word audio, and hints instead of extra instruction VO. Added
+the new neutral boat asset, enlarged the boat presence, anchored symbols into
+the right sail panel, and added a dev-only finale boat tuner for adjusting symbol
+placement/scale and placed-boat positions.
+
+**Verified:** `npm run build` passed. Existing build warnings remain for
+duplicate object keys, unresolved runtime character image references, and stale
+Browserslist data.
+
+## [2026-09-30] — Shloka River: Sarvada refresh, hint timing, and success cleanup
+**Touched:** src/lib/hooks/useRepeatedHintCycle.js;
+src/lib/config/content/voiceGuidance.js;
+src/zones/shloka-river/scenes/Scene1/MahakayaRescueGame.jsx;
+src/zones/shloka-river/scenes/Scene1/VakratundaRescueGame.jsx;
+src/zones/shloka-river/scenes/Scene2/components/SuryakotiGame.jsx;
+src/zones/shloka-river/scenes/Scene2/components/SamaprabhaGame.jsx;
+src/zones/shloka-river/scenes/Scene3/NirvighnamGame.jsx;
+src/zones/shloka-river/scenes/Scene3/KurumedevaGame.jsx;
+src/zones/shloka-river/scenes/scene4/SarvakaryeshuGame.jsx;
+src/zones/shloka-river/scenes/scene4/SarvadaGame.jsx;
+src/zones/shloka-river/scenes/scene4/SarvadaGame.css;
+src/zones/shloka-river/scenes/scene4/assets/images/sarvada/morning-scene.webp;
+src/zones/shloka-river/scenes/scene5/ShlokaRiverFinale.jsx.
+
+**Changed:** Refreshed Sarvada with the new morning scene art, revised daily-round
+VO/hints, removed the repeated morning/afternoon/night chooser flow after the
+one-time intro, strengthened L1/L2 search-area glow and the L3 exact-zone ring,
+and kept Scene 4 functional text while removing only decorative success captions.
+Shared Shloka River hint timing now waits for L2 VO to actually finish before
+starting the L2-to-L3 gap across active scenes. Mahakaya success no longer repeats
+the word after the full-word MP3 because the success line now strips the matching
+"Mahakaay" spelling.
+
+**Verified:** `rg` checks confirmed active Shloka River hint-cycle callers are
+wired for the L2-finished timing and that decorative success caption nodes were
+removed from the active mini-games. `git diff --check` passed for the touched
+files, with only normal CRLF warnings. Full Vite build was not completed in this
+session; an earlier build attempt hung at chunk rendering after transforming
+modules.
+
+## [2026-09-30] — Shloka River: clarify Sarvada mute and replay behavior
+**Touched:** src/zones/shloka-river/scenes/scene4/SarvadaGame.jsx;
+src/zones/shloka-river/scenes/scene4/SarvakaryeshuChantSimplified.jsx.
+
+**Changed:** Clarified the audio rule for Sarvada replay: muting stops any
+currently playing VO, unmuting only enables future audio and does not auto-resume
+or resurrect an old line, and the replay button now plays the current contextual
+line for the Sarvada mini-game. Sarvada publishes its live replay key from the
+current intro/image/search state, so unmuting on the second or third image and
+pressing replay no longer falls back to the first intro line.
+
+**Verified:** `npm run build` passed. Focused ESLint still reports pre-existing
+unused imports/vars and an empty catch in `SarvakaryeshuChantSimplified.jsx`.
+
+## [2026-09-30] — Shloka River: simplify Samaprabha hold and teach Nirvighnam obstacles
+**Touched:** src/lib/components/feedback/GestureDemo.css;
+src/lib/components/feedback/GestureDemo.jsx;
+src/zones/shloka-river/scenes/Scene2/components/SamaprabhaGame.css;
+src/zones/shloka-river/scenes/Scene2/components/SamaprabhaGame.jsx;
+src/zones/shloka-river/scenes/Scene3/NirvighnamGame.jsx.
+
+**Changed:** Simplified Samaprabha to one mechanic: press and hold directly on
+the shadow to inspect it. The old drag-light/hold combination was removed, the
+active inspection point is now shown as a smaller soft light with inactive lights
+faded, and child action stops active VO immediately. Samaprabha hint demos now
+use the same hold-progress teaching pattern as Nirvighnam's rock. Nirvighnam now
+plays immediate task VO as each obstacle becomes active, starts each obstacle's
+hint timer only after that intro VO finishes, and avoids treating a branch tap as
+a drag until there is meaningful movement.
+
+**Verified:** Targeted ESLint passed for SamaprabhaGame, NirvighnamGame,
+voiceGuidance, and webSpeechScripts during the work session. Broader targeted
+lint still reports pre-existing unused imports/vars and hook warnings in scene
+wrapper files.
+
+## [2026-09-30] — Hold demos: show full progress on first teaching cue
+**Touched:** src/zones/symbol-mountain/scenes/pond/PondSceneSimplifiedV4.jsx;
+src/zones/symbol-mountain/scenes/modak/NewModakSceneV7.jsx;
+src/zones/shloka-river/scenes/Scene3/NirvighnamGame.jsx.
+
+**Changed:** Removed the repeated Pond VO after the trunk reveal so the lotus
+phase now says only "Hold the bud to help it bloom." The water-reaching-lotus
+line remains before the trunk symbol reveal. Updated intro hold teaching demos
+in Pond, Modak, and Nirvighnam to use the full `hold-progress-l3` ring so hold
+teaching shows the complete action, matching drag/swipe demos. Samaprabha was
+checked and already used `hold-progress-l3` for its first hold teaching cue.
+
+**Verified:** Targeted `rg` checks confirmed no remaining `introGesture ?
+'hold'` or `pondIntroGesture ? 'hold'` branches in the checked scenes, and
+confirmed Samaprabha/Nirvighnam intro hold demo mappings.
+
+## [2026-09-30] — Symbol Mountain: align final-scene completion VO after orbs
+**Touched:** src/zones/symbol-mountain/scenes/final scene/SacredAssemblySceneV8.jsx.
+
+**Changed:** Moved the final assembly closing VO chain out of the initial
+fireworks/orbs trigger. The orbs finish first, then the two closing lines play,
+then the completion modal opens. Pond and Tusk were checked and already hand off
+fireworks to mandala/completion without an early `sceneComplete` VO call; Modak
+remains unchanged as the reference flow.
+
+**Verified:** `git diff --check` passed for the final scene file.
+
+## [2026-09-30] — Shloka River: defer completion VO until after fireworks
+**Touched:** src/zones/shloka-river/scenes/Scene1/VakratundaGroveSimplified.jsx;
+src/zones/shloka-river/scenes/Scene2/SuryakotiBankSimplified.jsx;
+src/zones/shloka-river/scenes/Scene3/NirvighnamChantSimplified.jsx;
+src/zones/shloka-river/scenes/scene4/SarvakaryeshuChantSimplified.jsx.
+
+**Changed:** Removed the early `sceneComplete` VO calls from the final
+app-discovery/fireworks trigger. The completion line now waits for the existing
+completion-display path instead of starting during the fireworks, matching the
+Modak-style flow where the fireworks hand off into the mandala/completion reveal.
+
+**Verified:** `git diff --check` passed for the touched Shloka River scene files.
+Targeted ESLint still reports pre-existing unused imports/vars, empty blocks, and
+hook dependency warnings in these scene wrappers.
+
+## [2026-09-30] — Symbol Mountain: remove duplicate eyes/ears success VO and captions
+**Touched:** src/zones/symbol-mountain/scenes/tusk/EyesPopUpGame.jsx;
+src/zones/symbol-mountain/scenes/tusk/EarsSoundMatchGame.jsx;
+src/zones/symbol-mountain/scenes/tusk/SymbolMountainSceneV3.jsx;
+src/zones/symbol-mountain/scenes/tusk/tuskNestFlow.json.
+
+**Changed:** Removed the parent reveal success VO for Eyes and Ears so the mini-game
+completion line does not get followed by a second "found them all/every sound" line.
+Eyes no longer shows found/completion feedback text. Ears keeps the spoken listening
+guidance ("Listen for the water/grass", "Now choose the sound", hints, and success VO)
+but removes the visible feedback captions for those moments. Tusk nest no longer plays
+the affirmation as a flow VO, leaving the "say it with me" affirmation as the only
+affirmation line.
+
+**Verified:** `git diff --check` passed for the touched Symbol Mountain files. Targeted
+ESLint was run and still reports the existing `setTuskTestRunKey` unused error plus
+pre-existing hook warnings in `SymbolMountainSceneV3.jsx`; the edited ears game file
+had no new lint errors.
+
+## [2026-09-30] — Shloka River: child actions interrupt intro/hint VO
+**Touched:** src/zones/shloka-river/scenes/Scene2/SuryakotiBankSimplified.jsx;
+src/zones/shloka-river/scenes/Scene2/components/SuryakotiGame.jsx;
+src/zones/shloka-river/scenes/Scene3/NirvighnamChantSimplified.jsx;
+src/zones/shloka-river/scenes/scene4/SarvakaryeshuGame.jsx;
+src/zones/shloka-river/scenes/scene4/SarvadaGame.jsx;
+src/zones/shloka-river/scenes/scene5/ShlokaRiverFinale.jsx.
+
+**Changed:** Matched the Calm Mooshika/Flower Journey interaction rule in
+Shloka River: a meaningful child action takes over immediately, even while an
+intro line, scene VO, or hint VO is still speaking. The game should not force
+the child to wait for VO to finish before acting, and active VO/hints should
+stop as soon as the action begins.
+
+- **Suryakoti, Samaprabha, Nirvighnam, Kurumedeva:** mini-game actions are now
+  live from phase start instead of treating intro VO completion as the action
+  gate. Existing `introVoStarted` timing remains in place for teaching-hand
+  alignment.
+- **Suryakoti:** scratch start now always stops active VO, so later scratches
+  during L2/L3 hint VO interrupt the hint instead of letting it continue.
+- **Sarvada:** any search tap, correct or miss, stops active scene/hint VO
+  before showing the found result or neutral miss ripple.
+- **Sarvakaryeshu:** any symbol pick stops active VO. If the pick interrupts
+  an L2 clue, the L2 hint clock is marked ended; if it interrupts an L3 clue,
+  the correct symbol is still revealed so stopping the VO cannot strand the
+  rescue hint state.
+- **Shloka River Finale:** boat drag/choice starts stop active VO before the
+  boat interaction proceeds.
+
+**Verified:** `git diff --check` passed for touched files. Targeted ESLint was
+run and still reports existing cleanup issues in these files (unused imports/
+vars, empty blocks, and current Finale redesign unused-handler warnings); no
+new whitespace issues from this pass. Not yet live-tested in browser.
+
+## [2026-09-29] — Voice-mute standardization (a VOICE mute, not an audio mute)
+**Touched:** src/lib/hooks/useVoiceGuidance.js; src/lib/hooks/useGaneshaVoice.js;
+src/zones/shloka-river/scenes/{Scene1/VakratundaGroveSimplified,Scene2/SuryakotiBankSimplified,
+Scene3/NirvighnamChantSimplified,scene4/SarvakaryeshuChantSimplified,scene4/SarvadaGame}.jsx;
+src/zones/symbol-mountain/scenes/{pond/PondSceneSimplifiedV4,tusk/SymbolMountainSceneV3,
+modak/NewModakSceneV7,final scene/SacredAssemblySceneV8}.jsx;
+src/zones/about-me-hut/{food/Favoritefoodgame,enjoy/ObstacleRemoverGame,
+family-tree/Familytreegame,indian-story/MyIndianStoryGame}.jsx; DECISIONS.md.
+
+**Changed:** Locked the rule (DECISIONS.md 2026-09-29, keeps TASKS T55): the toggle is a
+**voice** mute. Voice OFF = scene VO, hint VO, Sanskrit words and syllables are silent; **SFX
+stay ON**. Muted voice runs on a silent timer matching the line's length and fires `onEnded`
+once, on schedule — never instantly, so mute never skips/compresses pacing. Mute mid-line
+silences now but the callback still fires on schedule (`muteVoicePlayback` in
+`useVoiceGuidance`, `mute()` in `useGaneshaVoice`). Unmuting never resumes or auto-plays an
+old line. Shared hooks now hold the rule; Shloka River scenes' own Web Speech gets the same
+treatment (`muteWebSpeech`). Removed the "muted = instantly done" shortcuts in Pond, Tusk,
+Modak, Favourite Food, Dreams, Family Tree (placement sequences, child-start line, tree-done
+transition) and My Indian Story (13 advance/prompt-ready branches — muted children now wait
+the line's length, slower than before). Favourite Food's "pause + resume mid-sentence" mute
+removed. Sarvada: replay key now returns the intro during the intro (was the morning prompt);
+image 2/3 contextual replay was Madhurima's earlier fix, untouched. My Indian Story opening
+line now plays once per mount, so unmuting can't resurrect it. Stale "never muted by toggle"
+comments in `useVoiceGuidance` corrected. `npm run build` passes; lint shows no new errors.
+
+**Open:** NOT live-tested — please test on each scene: mute mid-line (game moves on at normal
+pace, no skip), unmute (nothing old resumes), Replay (current line), and mute → sidebar open →
+close → unmute while a line is active (two systems control interrupted audio; traced by
+reading only). Deliberately left: `SanskritVoiceRecorder` reference pronunciation/playback
+still plays when muted (child-triggered); Sacred Assembly onboarding-hint bookkeeping
+unchanged (muted = not consumed, so it can play if unmuted while that beat still applies);
+Family Tree's remaining `isAudioOn` checks only gate optional hints. Not audited: coReg/twg
+components and legacy files. Pre-existing lint errors in touched files untouched.
+
+## [2026-09-29] — Kurumedeva: bridge flow tuned, beaver crossing trimmed to 4 steps
+**Touched:** src/zones/shloka-river/scenes/Scene3/KurumedevaGame.jsx/.css, scene3LayoutConfig.js; src/lib/config/content/voiceGuidance.js; src/dev/webSpeechScripts.js. Commits `0315722d` (2026-09-28, "Tune Kurumedeva bridge flow") and `56da677e` (2026-09-29).
+**Changed:** Reworked the Kurumedeva bridge flow (game logic + CSS + its VO lines and dev speech scripts), then trimmed the beaver's crossing path from 7 to 4 waypoints (debug-panel phases updated to match), rebalanced sizes (bigger Mother Beaver, smaller Baby Beaver) and applied the latest layout-debug export for the beaver path positions.
+**Open:** Not re-verified in this reconciliation pass — spot-check the crossing on a real device.
+
 ## [2026-09-29] — VO cleanup: same dual-speech-source race, inside Symbol Mountain's mini-games
 **Touched:** src/zones/symbol-mountain/scenes/modak/FlowerJourneyGame2.jsx;
 src/zones/symbol-mountain/scenes/modak/GarlandGame3.jsx;
@@ -1897,3 +2230,9 @@ MooshikaRideTransition rider img switched to .webp with .png onError fallback.
 **Open:** Large batch of work across About Me Hut (4 scenes), Sacred Assembly, and this GestureDemo audit is implemented and build-verified but NOT YET COMMITTED — awaiting explicit go-ahead to commit (one commit per scene/feature, per standing convention). All 13 scenes' hint passes are now functionally complete; no scenes remain in the original scope.
 
 **Addendum [2026-09-23]:** Committed the next morning after go-ahead — Symbol Mountain (incl. all 6 GestureDemo audit items above) in `406a3215`, the shared `pull-down-hold` type + dead-handler removal in `898531c3`, and About Me Hut in `58df7df5`. Verified line-by-line against this entry; nothing was lost.
+
+## [2026-09-30]
+**Touched:** src/zones/symbol-mountain/scenes/modak/FlowerJourneyGame2.jsx/.css, GarlandGame3.jsx; src/lib/beatPlayer/BeatPlayerGame.jsx
+**Changed:** "Action starts the moment the stage starts" extended to Flower Journey (bush/branch/marsh no longer locked until intro VO ends; the wordless reaction runs alongside the VO) and Garland/Tusk-nest beat player (a grab/tap now cuts the narration and lets the timeline/hint clock move on). Pond and Eyes already conformed; Ears is intentionally listen-first. Added a dev-only "Emoji tuner" panel to Flower Journey (x/y/size for all 9 emojis, phase jump, Copy JSON). Commits d71492bd (beat player), adb94027 (Modak).
+**Also:** Tusk nest flow — removed standalone non-interactive story beat 0, merged its line into the twig beat (beats renumbered 0-4; saved layout-editor overrides keyed by old beat index will be off).
+**Open:** Not browser-tested. Paste tuned emoji JSON back to lock in `DEFAULT_EMOJI_LAYOUT`. BeatPlayerGame is shared (Kurumedeva etc.) — spot-check one. CHANGELOG/TASKS still carry earlier uncommitted edits, so this entry is uncommitted.
