@@ -13,13 +13,12 @@
   height: clamp(60px, 5.5vw, 68px);
 
   /* Lavender circle — same as profile chip + home button */
+  /* Soft translucent cream halo — no hard border, no drop shadow. */
   border-radius: 50%;
-  border: 2px solid rgba(160, 120, 220, 0.4);
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(10px);
-
-  /* Shadow: Y=3 blur=8 opacity=12% soft lavender-grey */
-  box-shadow: 0 3px 8px rgba(140, 120, 180, 0.12);
+  border: none;
+  background: rgba(255, 249, 238, 0.6);
+  backdrop-filter: blur(6px);
+  box-shadow: none;
 
   /* Centre icon */
   display: flex;
@@ -42,14 +41,12 @@
 /* ---- Hover (both states) ---- */
 .audio-toggle:hover {
   transform: scale(1.06);
-  box-shadow: 0 4px 12px rgba(140, 120, 180, 0.22);
   opacity: 1;
 }
 
 /* ---- Press ---- */
 .audio-toggle:active {
   transform: scale(0.95);
-  box-shadow: 0 1px 4px rgba(140, 120, 180, 0.12);
 }
 
 /* ---- Positions ---- */
@@ -72,8 +69,9 @@
 
 /* ---- Icon: ~36–44 px inside the bubble ---- */
 .audio-toggle__icon {
-  width:  clamp(36px, 3.8vw, 48px);
-  height: clamp(36px, 3.8vw, 48px);
+  /* Smaller icon inside the halo so it has breathing room. */
+  width:  clamp(26px, 2.6vw, 32px);
+  height: clamp(26px, 2.6vw, 32px);
   display: block;
   pointer-events: none;
 }
@@ -118,13 +116,12 @@
   .audio-toggle--gameplay::before {
     content: '';
     position: absolute;
-    inset: var(--gmb-phone-voice-inset, 9px);
+    inset: var(--gmb-phone-voice-inset, 12px);
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.92);
-    border: 2px solid rgba(160, 120, 220, 0.4);
-    box-shadow: 0 3px 8px rgba(140, 120, 180, 0.12);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    /* Soft translucent halo: no border, no shadow. */
+    background: rgba(255, 249, 238, 0.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     pointer-events: none;
   }
 
@@ -135,7 +132,9 @@
   }
 
   /* Keep the muted state readable (the iPad rule above would otherwise win). */
-  .audio-toggle.audio-toggle--gameplay.audio-toggle--on { opacity: 1; }
+  .audio-toggle.audio-toggle--gameplay.audio-toggle--on { opacity: 0.88; }
+  .audio-toggle.audio-toggle--gameplay.audio-toggle--on:hover,
+  .audio-toggle.audio-toggle--gameplay.audio-toggle--on:active { opacity: 1; }
   .audio-toggle.audio-toggle--gameplay.audio-toggle--off { opacity: 0.55; }
   .audio-toggle.audio-toggle--gameplay.audio-toggle--off:hover { opacity: 1; }
 }

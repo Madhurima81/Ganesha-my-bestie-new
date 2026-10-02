@@ -10,7 +10,8 @@
   height: clamp(52px, 5.5vw, 68px);
   border-radius: 50%;
   border: none;
-  background: #ffffff;
+  /* Soft translucent cream halo — no hard white disc, border or shadow. */
+  background: rgba(255, 249, 238, 0.6);
   box-shadow: none;
   cursor: pointer;
   display: flex;
@@ -50,8 +51,9 @@
 
 /* Icon */
 .vo-replay-icon {
-  width: clamp(36px, 3.8vw, 48px);
-  height: clamp(36px, 3.8vw, 48px);
+  /* Smaller icon inside the halo so it has breathing room. */
+  width: clamp(26px, 2.6vw, 32px);
+  height: clamp(26px, 2.6vw, 32px);
   display: block;
   pointer-events: none;
 }
@@ -71,7 +73,7 @@
   position: absolute;
   inset: -4px;
   border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.75);
+  border: 2px solid rgba(160, 120, 220, 0.45);
   pointer-events: none;
   opacity: 0;
 }
@@ -113,22 +115,35 @@
     width: var(--gmb-phone-control-hit, 60px);
     height: var(--gmb-phone-control-hit, 60px);
     background: transparent;
+    /* Subtle until tapped / hovered / playing. */
+    opacity: 0.88;
+  }
+
+  .vo-replay-btn.vo-replay-btn--gameplay:active,
+  .vo-replay-btn.vo-replay-btn--gameplay.vo-replay-btn--playing {
     opacity: 1;
   }
 
+  @media (hover: hover) {
+    .vo-replay-btn.vo-replay-btn--gameplay:hover { opacity: 1; }
+  }
+
+  /* Soft translucent halo: a small circle with breathing room around the icon; no border/shadow. */
   .vo-replay-btn--gameplay::before {
     content: '';
     position: absolute;
-    inset: var(--gmb-phone-replay-inset, 10px);
+    inset: var(--gmb-phone-replay-inset, 13px);
     border-radius: 50%;
-    background: #ffffff;
+    background: rgba(255, 249, 238, 0.6);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
     pointer-events: none;
   }
 
   .vo-replay-btn--gameplay .vo-replay-icon {
     position: relative;
-    width: var(--gmb-phone-utility-icon, 22px);
-    height: var(--gmb-phone-utility-icon, 22px);
+    width: var(--gmb-phone-replay-icon, 24px);
+    height: var(--gmb-phone-replay-icon, 24px);
   }
 
   /* Waves hug the visible circle, not the transparent hit box. */

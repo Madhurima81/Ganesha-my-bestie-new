@@ -349,9 +349,12 @@ h1, h2, h3, h4, h5, h6 {
   --gmb-phone-edge-offset: max(0px, calc(var(--gmb-phone-edge-gap) - var(--gmb-phone-control-inset)));
 
   /* Utility controls (Voice, Replay): lighter than navigation. Hit box stays 60px. */
-  --gmb-phone-voice-visual: 42px;
-  --gmb-phone-replay-visual: 40px;
-  --gmb-phone-utility-icon: 22px;
+  /* Soft translucent halo (no border/shadow) around a small icon; hit box stays 60px. */
+  --gmb-phone-voice-visual: 36px;
+  --gmb-phone-replay-visual: 36px;           /* same halo size as Voice */
+  --gmb-phone-utility-icon: 20px;
+  /* The replay PNG has transparent padding, so it needs a larger box to look the same weight as the Voice icon. */
+  --gmb-phone-replay-icon: 24px;
   --gmb-phone-voice-inset: calc((var(--gmb-phone-control-hit) - var(--gmb-phone-voice-visual)) / 2);
   --gmb-phone-replay-inset: calc((var(--gmb-phone-control-hit) - var(--gmb-phone-replay-visual)) / 2);
   --gmb-phone-utility-offset: max(0px, calc(var(--gmb-phone-edge-gap) - var(--gmb-phone-voice-inset)));
