@@ -1697,8 +1697,11 @@
   50% { transform: translateY(-5px); }
 }
 
+/* L3: 3 strong pulses (~8s), then the animated cue ends and a quiet static gold highlight stays on
+   the correct choice until the child acts. No voice. */
 .choice-image.fav-hint-final {
-  animation: favFinalReveal 1.35s ease-in-out infinite;
+  filter: drop-shadow(0 0 8px rgba(255, 215, 90, 0.5));
+  animation: favFinalReveal 2.7s ease-in-out 3;
 }
 
 @keyframes favFinalReveal {

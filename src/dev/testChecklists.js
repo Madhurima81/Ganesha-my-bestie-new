@@ -109,7 +109,19 @@ TEST_CHECKLISTS.sarvakaryeshu = {
     { text: 'Pick a wrong symbol once.', expect: 'Gentle "Try another symbol"; hints not cleared.' },
     { text: 'Pick a wrong symbol a 2nd time.', expect: 'L2 help starts early.' },
     { text: 'At L2: pick wrong again.', expect: 'L3 follows only after the L2 line finishes.' },
+    { text: 'Wait for L3 on any card.', expect: 'The correct symbol pulses 3 times (about 8s), then stays as a soft static gold highlight; ONE "Remember? ..." line plays once and does not repeat.' },
+    { text: 'At L3: tap a wrong symbol.', expect: 'The correct symbol stays highlighted; the ladder does not restart; the "Remember?" line does not repeat.' },
     { text: 'Pick the correct symbol.', expect: 'Success; fresh clock for the next card.' },
+  ],
+};
+
+TEST_CHECKLISTS['amh-favorite-food'] = {
+  title: 'Favorite Food: choice hints (L3 settles)',
+  items: [
+    { text: 'After a question line, do nothing. Time the levels.', expect: 'L1 about 10s: all choices bounce. L2 about 18s: one short voice clue. L3 about 8s after the clue: the correct choice pulses 3 times (about 8s), then stays as a soft static gold highlight. No voice at L3.' },
+    { text: 'Tap a wrong choice before and at L3.', expect: 'Wrong choice reacts; the ladder is not restarted; at L3 the correct choice stays highlighted.' },
+    { text: 'Tap the correct choice.', expect: 'Success; the next question starts a fresh clock.' },
+    { text: 'Check all four questions (food, color, activity, friend).', expect: 'Each has its own L2 clue line.' },
   ],
 };
 
@@ -265,7 +277,7 @@ export const CHECKLIST_ALIASES = {
 export const TEST_CHECKLIST_GROUPS = {
   'Symbol Mountain': ['modak-game2-new', 'modak-game2-bush-marsh', 'modak-garland', 'sm-pond', 'sm-eyes', 'sm-ears', 'sm-tusk-live-v2'],
   'Shloka River': ['vakratunda', 'mahakaya', 'suryakoti', 'samaprabha', 'nirvighnam', 'kurumedeva', 'sarvakaryeshu', 'sarvada', 'sr-finale'],
-  'About Me Hut': ['amh-dreams-wishes', 'amh-indian-story'],
+  'About Me Hut': ['amh-dreams-wishes', 'amh-favorite-food', 'amh-indian-story'],
   General: ['sidebar-general'],
 };
 

@@ -293,7 +293,9 @@
   box-shadow:
     0 0 0 3px rgba(255, 213, 79, 0.16),
     0 0 16px rgba(255, 213, 79, 0.34);
-  animation: sarvaFinalGuide 1.45s ease-in-out infinite;
+  /* 3 strong pulses (~8s), then the animated cue ends; the static gold border/glow above stays
+     on the correct symbol until the child acts. */
+  animation: sarvaFinalGuide 2.7s ease-in-out 3;
 }
 
 @keyframes sarvaFinalGuide {
