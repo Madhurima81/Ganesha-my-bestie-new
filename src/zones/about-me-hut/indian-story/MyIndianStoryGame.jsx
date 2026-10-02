@@ -1231,9 +1231,15 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
         // land while (or right on top of) this line still talking.
         const armLevel3 = () => {
           ganeshaHomeIdleTimerRef.current = setTimeout(() => {
-            if (import.meta.env.DEV) console.log('[Idle Hint] Level 3 triggered: hidden spot highlighted');
+            if (import.meta.env.DEV) console.log('[Idle Hint] Level 3 triggered: hidden spots highlighted');
             setGaneshaHomeIdleLevel(3);
-            // Keep Level 3 visual-only (persistent highlight on the hidden spot; no VO, no emoji).
+            // Level 3 is visual-only (rings on the unfound spots; no VO, no emoji) and does not run
+            // forever: after ~8s it ends and the ladder stays quiet until the child moves the
+            // magnifier again (handleMglassMove then starts a fresh 10/18/26).
+            ganeshaHomeIdleTimerRef.current = setTimeout(() => {
+              setGaneshaHomeIdleLevel(0);
+              ganeshaHomeIdleVoiceRef.current = false;
+            }, 8000);
           }, 8000);
         };
         if (!ganeshaHomeIdleVoiceRef.current) {
@@ -1938,10 +1944,9 @@ const handleComplete = () => {
               const isDiscovered = discoveredLocations.includes(idx);
               const isUndiscovered = !isDiscovered;
               const shouldGlow = isUndiscovered && ganeshaHomeIdleLevel >= 1;
-              // L3: ONE clear, persistent highlight on the actual hidden spot (the first one not
-              // yet found) — no pointing emoji, no extra VO. It stays until the child finds it.
-              const hintTargetIdx = GANESHA_SPOTS.findIndex((_, i) => !discoveredLocations.includes(i));
-              const isFinalTarget = ganeshaHomeIdleLevel === 3 && idx === hintTargetIdx;
+              // L3: a clear, persistent ring on EVERY spot not yet found (each disappears when its spot
+              // is found) — no pointing emoji, no extra VO.
+              const isFinalTarget = ganeshaHomeIdleLevel === 3 && isUndiscovered;
 
               return (
               <div

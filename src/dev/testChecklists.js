@@ -137,9 +137,10 @@ TEST_CHECKLISTS['amh-indian-story'] = {
   title: 'My Indian Story: hint timing 10s / 18s / 26s',
   items: [
     { text: 'Ganesha Home: do nothing after the prompt. Time L1, L2 (with VO), L3.', expect: 'L1 about 10s, L2 about 18s, L3 about 8s after the L2 line ends. No dropping back to L1.' },
-    { text: 'Ganesha Home at L3: look at the map.', expect: 'ONE clear ring stays on the first hidden spot (no pointing emoji, no extra voice).' },
-    { text: 'Ganesha Home at L3: drag the magnifier around without finding it.', expect: 'The ring stays on; dragging does not clear it.' },
-    { text: 'Ganesha Home: find that spot (or any spot).', expect: 'Hints clear; the next spot starts a fresh 10/18/26; the ring does not jump to the next spot.' },
+    { text: 'Ganesha Home at L3: look at the map.', expect: 'A clear ring on EVERY spot not yet found (3 at the start); no pointing emoji, no extra voice.' },
+    { text: 'Ganesha Home at L3: do nothing for about 8 more seconds.', expect: 'The rings fade out and the hints stop (no endless pulsing). Moving the magnifier then starts a fresh 10/18/26.' },
+    { text: 'Ganesha Home at L3: drag the magnifier around without finding anything.', expect: 'The rings stay on while you drag; dragging does not clear them.' },
+    { text: 'Ganesha Home: find one spot.', expect: 'All hints clear and a fresh 10/18/26 starts; the found spot never shows a ring again.' },
     { text: 'Language guess: do nothing after pressing play. Time the same three levels.', expect: 'Same timing; the level never falls back.' },
     { text: 'Festival guess: do nothing. Time the three levels.', expect: 'Same timing.' },
     { text: 'Make a guess in each phase.', expect: 'Hints clear and the phase moves on.' },
