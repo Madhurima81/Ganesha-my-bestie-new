@@ -387,6 +387,9 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
 
   // Idle Hint Level for Ganesha Home Phase
   const [ganeshaHomeIdleLevel, setGaneshaHomeIdleLevel] = useState(0);
+  // Mirror of the level for event handlers (a magnifier drag must not wipe a visible hint).
+  const ganeshaHomeIdleLevelRef = useRef(0);
+  ganeshaHomeIdleLevelRef.current = ganeshaHomeIdleLevel;
   const [ganeshaHomeIdleRestartNonce, setGaneshaHomeIdleRestartNonce] = useState(0);
   const ganeshaHomeIdleTimerRef = useRef(null);
   const ganeshaHomeIdleVoiceRef = useRef(false);
@@ -1228,9 +1231,9 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
         // land while (or right on top of) this line still talking.
         const armLevel3 = () => {
           ganeshaHomeIdleTimerRef.current = setTimeout(() => {
-            if (import.meta.env.DEV) console.log('[Idle Hint] Level 3 triggered: Pointing emoji appears');
+            if (import.meta.env.DEV) console.log('[Idle Hint] Level 3 triggered: hidden spot highlighted');
             setGaneshaHomeIdleLevel(3);
-            // Keep Level 3 visual-only to avoid VO overlap right after Level 2.
+            // Keep Level 3 visual-only (persistent highlight on the hidden spot; no VO, no emoji).
           }, 8000);
         };
         if (!ganeshaHomeIdleVoiceRef.current) {
@@ -1458,6 +1461,9 @@ const discoverLocation = useCallback((index) => {
   lastDiscoveryTime.current = Date.now();
 
   const location = PHASE1_LOCATIONS[index];
+    // A find is real progress: clear the hint ladder so the next spot starts a fresh 10/18/26.
+    setGaneshaHomeIdleLevel(0);
+    ganeshaHomeIdleVoiceRef.current = false;
     setDiscoveredLocations(prev => [...prev, index]);
     playSparkle();
     triggerMiniGesture({
@@ -1479,12 +1485,14 @@ const discoverLocation = useCallback((index) => {
       // never compete with their own finger.
       setGaneshaHomeGestureDismissed(true);
 
-      // Reset idle hint baseline when the child searches, even if nothing is found.
-      if (import.meta.env.DEV) console.log('[Idle Hint] Reset: User dragged magnifying glass');
-      setGaneshaHomeIdleLevel(0);
-      ganeshaHomeIdleVoiceRef.current = false;
-      if (ganeshaHomeIdleTimerRef.current) clearTimeout(ganeshaHomeIdleTimerRef.current);
-      setGaneshaHomeIdleRestartNonce(n => n + 1);
+      // Searching is an attempt, not progress. With NO hint showing, a drag restarts the idle
+      // window; once a hint (L1/L2/L3) is up it stays up — the L3 region highlight must not
+      // vanish the moment the child starts moving the magnifier. Finding a spot resets the ladder.
+      if (ganeshaHomeIdleLevelRef.current < 1) {
+        ganeshaHomeIdleVoiceRef.current = false;
+        if (ganeshaHomeIdleTimerRef.current) clearTimeout(ganeshaHomeIdleTimerRef.current);
+        setGaneshaHomeIdleRestartNonce(n => n + 1);
+      }
     }
     const percentX = parseFloat(newPosition.left);
     const percentY = parseFloat(newPosition.top);
@@ -1930,6 +1938,10 @@ const handleComplete = () => {
               const isDiscovered = discoveredLocations.includes(idx);
               const isUndiscovered = !isDiscovered;
               const shouldGlow = isUndiscovered && ganeshaHomeIdleLevel >= 1;
+              // L3: ONE clear, persistent highlight on the actual hidden spot (the first one not
+              // yet found) — no pointing emoji, no extra VO. It stays until the child finds it.
+              const hintTargetIdx = GANESHA_SPOTS.findIndex((_, i) => !discoveredLocations.includes(i));
+              const isFinalTarget = ganeshaHomeIdleLevel === 3 && idx === hintTargetIdx;
 
               return (
               <div
@@ -1938,17 +1950,17 @@ const handleComplete = () => {
                   position: 'absolute',
                   top: PHASE1_LOCATIONS[idx] ? `${PHASE1_LOCATIONS[idx].y}%` : '50%',
                   left: PHASE1_LOCATIONS[idx] ? `${PHASE1_LOCATIONS[idx].x}%` : '50%',
-                  width: '40px',
-                  height: '40px',
+                  width: isFinalTarget ? '64px' : '40px',
+                  height: isFinalTarget ? '64px' : '40px',
                   borderRadius: '50%',
                   transform: 'translate(-50%, -50%)',
-                  border: 'none',
+                  border: isFinalTarget ? '3px solid rgba(0, 229, 255, 0.9)' : 'none',
                   background: 'transparent',
                   pointerEvents: 'none',
                   zIndex: 1,
                   animation:
                     ganeshaHomeIdleLevel === 3
-                      ? 'phase1HintGlowFinal 2s ease-in-out 3'
+                      ? (isFinalTarget ? 'phase1HintGlowFinal 1.6s ease-in-out infinite' : 'none')
                       : ganeshaHomeIdleLevel === 2
                         ? 'phase1HintGlowGuide 1.6s ease-in-out 2'
                         : shouldGlow
