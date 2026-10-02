@@ -1370,7 +1370,168 @@ transition:
   cursor: pointer;
 }
 
+/* ============================================================
+   PHONE LANDSCAPE — wide, shallow, no scrolling (Step 3B).
+   Same shell as OpeningModal: small Ganesha left, plain rounded cream card
+   (the aspect-locked organic SVG card spills when shallow). One primary
+   button; Home / Play Again stay quiet text actions underneath.
+   Canonical phone condition. clamp()/dvh sizes; tablet/desktop untouched.
+   Declared last so it wins over the older max-width: 768 / 480 rules above.
+   ============================================================ */
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
+  .celebration-backdrop {
+    overflow: hidden;
+    padding: 0;
+  }
 
+  .celebration-backdrop .scene-completion-content,
+  .scene-completion-content {
+    width: 100% !important;
+    max-width: none !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    box-sizing: border-box;
+    padding:
+      calc(var(--gmb-safe-top, 0px) + 6px)
+      calc(var(--gmb-safe-right, 0px) + 16px)
+      calc(var(--gmb-safe-bottom, 0px) + 6px)
+      calc(var(--gmb-safe-left, 0px) + 16px) !important;
+    gap: clamp(8px, 2vw, 18px);
+    transform: none;
+  }
 
+  /* The max-width: 768 rules hide Ganesha on narrow screens; on phones keep him, smaller. */
+  .completion-ganesha-left {
+    display: flex !important;
+    flex: 0 0 clamp(110px, 22vw, 210px);
+    margin: 0;
+  }
 
+  .completion-ganesha-left > * {
+    max-width: 100%;
+    max-height: min(66dvh, 230px);
+    width: auto;
+  }
 
+  .celebration-card {
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: none;
+    min-height: 0;
+    max-height: calc(100dvh - var(--gmb-safe-top, 0px) - var(--gmb-safe-bottom, 0px) - 12px);
+    box-sizing: border-box;
+    padding: clamp(10px, 3dvh, 18px) clamp(26px, 5vw, 48px);
+    margin-left: 0;
+    overflow: visible;
+    background: #fffaf3;
+    border: 2px solid rgba(214, 196, 240, 0.9);
+    border-radius: 36px 44px 38px 42px / 42px 36px 44px 38px;
+    box-shadow: 0 10px 24px rgba(40, 20, 80, 0.14);
+  }
+
+  .celebration-lotus-top {
+    display: none;
+  }
+
+  .celebration-header {
+    margin-bottom: clamp(2px, 1dvh, 6px);
+    padding-top: 0;
+  }
+
+  .title-text {
+    font-size: clamp(22px, 6.4dvh, 26px);
+    margin-bottom: 2px;
+  }
+
+  .subtitle-text {
+    font-size: clamp(15px, 4.2dvh, 17px);
+    margin-bottom: clamp(2px, 1dvh, 6px);
+  }
+
+  /* Trophy symbols / badge: smaller, no connector line. */
+  .trophy-symbols-row {
+    --trophy-symbol-size: clamp(40px, 11dvh, 52px);
+    gap: clamp(8px, 2vw, 16px);
+    margin: 0 0 clamp(2px, 1dvh, 6px);
+  }
+
+  .trophy-symbols-row::before {
+    display: none;
+  }
+
+  .trophy-symbol-glow {
+    width: var(--trophy-symbol-size);
+    height: var(--trophy-symbol-size);
+    margin-bottom: 0;
+  }
+
+  .container-holder,
+  .completion-badge-holder {
+    width: clamp(56px, 16dvh, 84px);
+    height: clamp(56px, 16dvh, 84px);
+  }
+
+  .symbol-complete-badge-wrap {
+    margin: 0 0 clamp(2px, 1dvh, 6px);
+  }
+
+  .symbol-complete-glow {
+    width: clamp(60px, 17dvh, 90px);
+    height: clamp(60px, 17dvh, 90px);
+  }
+
+  .symbol-complete-badge,
+  .symbol-final-icon {
+    width: clamp(48px, 14dvh, 72px);
+    height: clamp(48px, 14dvh, 72px);
+  }
+
+  .discovered-growth-bridge {
+    font-size: 15px;
+    margin: 0 0 clamp(4px, 1.4dvh, 8px);
+  }
+
+  .celebration-actions-section {
+    max-width: none;
+    margin-top: 0;
+    gap: 4px;
+  }
+
+  .primary-action-container {
+    gap: 2px;
+    margin-bottom: clamp(4px, 1.2dvh, 8px);
+  }
+
+  /* One clear primary action, full 60px touch height. */
+  .primary-action-container .profile-cta-btn-unified {
+    width: auto;
+    min-width: clamp(180px, 32vw, 260px);
+    min-height: 60px;
+    padding: 8px 32px;
+  }
+
+  .next-adventure-subtext,
+  .primary-action-subtext {
+    font-size: 13px;
+    margin: 2px 0 0;
+  }
+
+  /* Quiet text actions: small to the eye, 60px to the finger (padding is
+     cancelled by negative margin so it does not cost layout height). */
+  .celebration-secondary-row {
+    gap: 6px;
+    margin-top: 4px;
+  }
+
+  .celebration-btn-teal,
+  .celebration-btn-replay,
+  .primary-action-container + div .celebration-btn-teal {
+    font-size: clamp(15px, 4.2dvh, 16px) !important;
+    padding: clamp(18px, 5dvh, 20px) 14px !important;
+    margin: -10px 0;
+  }
+
+  .celebration-secondary-sep {
+    font-size: 16px;
+  }
+}

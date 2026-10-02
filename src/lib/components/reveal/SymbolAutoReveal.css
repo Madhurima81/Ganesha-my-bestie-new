@@ -373,3 +373,92 @@ transition: transform 0.58s cubic-bezier(0.4, 0, 0.2, 1);}
   filter: grayscale(0.4);
   transition: opacity 0.4s ease, filter 0.4s ease;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   12. PHONE LANDSCAPE — horizontal flip card (Step 3C)
+   Canonical phone condition. Front: just the symbol. Back: symbol on the left,
+   name + affirmation + Collect on the right. No scrolling; sizes are
+   clamp()/dvh based. Tablet keeps the portrait card. Declared last so it wins
+   over the older max-width: 768 / 480 rules above.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.sar-back-icon {
+  display: none;
+}
+
+.sar-back-text {
+  display: contents;
+}
+
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
+  .sar-card {
+    --sar-icon: clamp(80px, 32dvh, 124px);
+    width: min(86vw, 600px);
+    height: min(68dvh, 264px);
+  }
+
+  .sar-face {
+    padding: clamp(12px, 4dvh, 22px) clamp(16px, 3vw, 28px);
+    border-radius: 28px;
+  }
+
+  .sar-icon,
+  .sar-fly-icon,
+  .sar-solo {
+    width: var(--sar-icon, clamp(80px, 32dvh, 124px));
+  }
+
+  .sar-solo {
+    --sar-icon: clamp(80px, 32dvh, 124px);
+  }
+
+  .sar-icon[src$=".svg"],
+  .sar-fly-icon[src$=".svg"],
+  .sar-solo[src$=".svg"] {
+    width: calc(var(--sar-icon, 100px) * 1.3);
+  }
+
+  /* Back face: symbol left, text right. */
+  .sar-back-body {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(14px, 3vw, 28px);
+  }
+
+  .sar-back-icon {
+    display: block;
+    flex: none;
+    width: clamp(64px, 26dvh, 104px);
+    height: auto;
+    filter: drop-shadow(0 4px 14px rgba(255, 200, 60, 0.38));
+  }
+
+  .sar-back-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: clamp(4px, 1.4dvh, 8px);
+    min-width: 0;
+  }
+
+  .sar-name {
+    font-size: clamp(18px, 5.4dvh, 20px);
+    text-align: left;
+  }
+
+  .sar-affirmation {
+    font-size: clamp(20px, 6.6dvh, 24px);
+    line-height: 1.25;
+    text-align: left;
+  }
+
+  /* "Tap to collect" reads as a clear Collect affordance (the whole card is tappable). */
+  .sar-hint {
+    font-size: 16px;
+    padding: 6px 16px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #FFE08A 0%, #F6B93B 100%);
+    color: #4A2F10;
+    box-shadow: 0 3px 0 rgba(150, 100, 20, 0.35);
+  }
+}

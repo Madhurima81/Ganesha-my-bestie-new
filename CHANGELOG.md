@@ -1,6 +1,12 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
 
+## [2026-10-02] — Mobile Step 3B + 3C: completion screen and SymbolAutoReveal phone layouts
+**Touched:** src/lib/components/celebration/SceneCompletionCelebration.css; src/lib/components/reveal/SymbolAutoReveal.css + .jsx (markup: hidden back-icon + text wrapper).
+**Changed:** Completion — phone-landscape shell like OpeningModal (small Ganesha, cream card, one 60px primary button, quiet Home/Play Again links with 60px hit areas, trophies/badge scaled, no scroll, no lotus). SymbolAutoReveal — horizontal flip card: symbol front; symbol + name + affirmation + 'Tap to collect' pill on the back. Tablet/desktop unchanged.
+**Verified:** headless Chrome with the REAL components: completion in 6 live variants at 667x375 and 844x390 (card inside viewport, CTA 60px, quiet-action hit boxes 60px and not overlapping the CTA, trophies + bridge line fit, no clipped child, overflow hidden, no VO replay); SymbolAutoReveal with short/long names and affirmations at 667x375 and 844x390 (card + all parts inside, no overflow, 24/20/16px type). Screenshots reviewed. Not yet on a physical device.
+**Open:** Step 3D SymbolCardModal/ChantCardModal phone layout; Step 3E InnerMandala; on-device check of the reveal fly animation.
+
 ## [2026-10-01] — Mobile Step 3A: OpeningModal phone-landscape layout
 **Touched:** src/zones/shared/components/OpeningModal.css (CSS only).
 **Changed:** New block under the canonical phone condition: wide/shallow card, small Ganesha left, one icon row, no lotus/connector, 60px CTA, no scroll, clamp()/dvh sizing (no new fixed-px !important). Card is a plain rounded cream card on phone instead of the aspect-locked organic SVG. The pre-existing 568-1023px landscape block is now limited to height > 500px so tablets keep their look.

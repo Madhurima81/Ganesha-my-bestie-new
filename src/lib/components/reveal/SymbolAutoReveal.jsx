@@ -231,9 +231,13 @@ export default function SymbolAutoReveal({
             />
 
             <div className={`sar-back-body${flying ? " sar-back-body--gone" : ""}`}>
-              <h3 className="sar-name">{symbolName}</h3>
-              <p className="sar-affirmation">{affirmation}</p>
-              <span className="sar-hint">Tap to collect</span>
+              {/* Phone landscape only (hidden by CSS elsewhere): symbol beside the text. */}
+              <img src={symbolImage} alt="" aria-hidden="true" className="sar-back-icon" />
+              <div className="sar-back-text">
+                <h3 className="sar-name">{symbolName}</h3>
+                <p className="sar-affirmation">{affirmation}</p>
+                <span className="sar-hint">Tap to collect</span>
+              </div>
             </div>
           </div>
         </div>
