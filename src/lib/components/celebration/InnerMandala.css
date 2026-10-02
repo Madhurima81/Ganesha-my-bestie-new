@@ -406,3 +406,66 @@
     transform: translate(-50%, -50%) scale(0.74);
   }
 }
+
+/* Middle-ring hit disc: inert everywhere except phone landscape (enabled in the block below). */
+.mandala-middle-hit {
+  position: absolute;
+  left: 17%;
+  top: 17%;
+  width: 66%;
+  height: 66%;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ============================================================
+   PHONE LANDSCAPE — focused gameplay state (Step 3E)
+   Canonical phone condition. OVERLAY mode only (the inline mandala on the welcome
+   screen is a non-gameplay screen and is left alone). The whole mandala stays
+   visible, sized by viewport HEIGHT (~66dvh) so the message/hint fit below it;
+   the dim background already removes competing UI. No scrolling. Petal tap
+   areas are the SVG paths themselves, so the mandala is kept as large as the
+   height budget allows. Tablet/desktop unchanged.
+   ============================================================ */
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
+  .inner-mandala-overlay {
+    box-sizing: border-box;
+    padding:
+      calc(var(--gmb-safe-top, 0px) + 6px)
+      calc(var(--gmb-safe-right, 0px) + 12px)
+      calc(var(--gmb-safe-bottom, 0px) + 6px)
+      calc(var(--gmb-safe-left, 0px) + 12px);
+    overflow: hidden;
+  }
+
+  .inner-mandala-overlay .inner-mandala,
+  .inner-mandala-overlay .ganesha-mandala {
+    width: min(520px, 66dvh);
+    height: min(520px, 66dvh);
+    /* leave room underneath for the message / hint */
+    margin-top: calc(-1 * clamp(10px, 4dvh, 20px));
+  }
+
+  .inner-mandala-overlay .mandala-subtitle {
+    bottom: calc(-1 * clamp(36px, 11dvh, 48px));
+    width: min(90vw, 420px);
+    font-size: clamp(15px, 4.4dvh, 17px);
+  }
+
+  /* Below the message instead of on top of it (they share a spot on larger screens). */
+  .inner-mandala-overlay .mandala-hint {
+    bottom: calc(-1 * clamp(56px, 16dvh, 68px));
+    width: min(90vw, 420px);
+    font-size: 14px;
+  }
+
+  /* Invisible forgiving hit area over the middle ring: a tap anywhere on the disc
+     picks the petal in that angular sector (see handleMiddleHitTap). The disc
+     covers only the middle ring (the outer petals' tips stay tappable). */
+  .inner-mandala-overlay .mandala-middle-hit {
+    pointer-events: auto;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+}

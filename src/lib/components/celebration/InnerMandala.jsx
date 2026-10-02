@@ -124,6 +124,35 @@ export default function InnerMandala({
     [onPetalClick]
   );
 
+  // Phone landscape only (the layer is inert elsewhere): the middle-ring petals are
+  // ~33px on a 375px-tall screen, so a tap anywhere on the middle disc is routed to
+  // the petal in that angular sector (a forgiving 45-degree wedge per petal).
+  const handleMiddleHitTap = useCallback(
+    (e) => {
+      e.stopPropagation();
+      const box = e.currentTarget.parentElement.getBoundingClientRect();
+      const cx = box.left + box.width / 2;
+      const cy = box.top + box.height / 2;
+      const tapAngle = Math.atan2(e.clientY - cy, e.clientX - cx);
+      let best = null;
+      let bestDiff = Infinity;
+      MIDDLE_PETALS.forEach((petal) => {
+        const el = e.currentTarget.parentElement.querySelector(`#middle-petal-${petal.id}`);
+        if (!el) return;
+        const r = el.getBoundingClientRect();
+        const petalAngle = Math.atan2(r.top + r.height / 2 - cy, r.left + r.width / 2 - cx);
+        let diff = Math.abs(tapAngle - petalAngle);
+        if (diff > Math.PI) diff = 2 * Math.PI - diff;
+        if (diff < bestDiff) {
+          bestDiff = diff;
+          best = petal;
+        }
+      });
+      if (best) onPetalClick?.('middle', best.id);
+    },
+    [onPetalClick]
+  );
+
   useEffect(() => {
     requestAnimationFrame(() => setMounted(true));
   }, []);
@@ -225,6 +254,10 @@ export default function InnerMandala({
             <circle className="avatar-circle" cx="7.3145399" cy="7.22227" r="0.81771392" />
           </g>
         </svg>
+
+        {interactive && (
+          <div className="mandala-middle-hit" aria-hidden="true" onClick={handleMiddleHitTap} />
+        )}
 
         <div className="mandala-token-layer" aria-hidden="true">
           {earnedSymbols.map((symbol, index) => {

@@ -1,6 +1,12 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
 
+## [2026-10-02] — Mobile Step 3E: InnerMandala phone-landscape treatment (Step 3 complete)
+**Touched:** src/lib/components/celebration/InnerMandala.css + .jsx (middle-ring hit disc + tap router).
+**Changed:** Overlay mandala sized to 66dvh with message and hint below it (hint no longer overlaps the message), safe-area padding, no scroll; invisible middle-ring hit disc routes taps by angle to the nearest of the 8 symbol petals (active only on phone landscape).
+**Verified:** headless Chrome with the REAL InnerMandala at 667x375 and 844x390: mandala/message/hint inside viewport, overflow hidden, 24/24 simulated middle-ring taps routed to the correct petal, 0 wrongly routed to the outer ring, outer tip tap still reaches the outer ring. The hint-under-message offset was applied after the last run (arithmetic check only). Not on a physical device.
+**Open:** on-device pass of all Step 3 modals; delete untracked __*_test.html / src/dev/__*TestMain.jsx harness files; Step 3 then done -> next: per-scene object composition (one hard scene first).
+
 ## [2026-10-02] — Mobile Step 3D: SymbolCardModal + ChantCardModal phone layouts
 **Touched:** src/zones/symbol-mountain/shared/components/SymbolCardModal.css + .jsx (hidden-by-default close X); src/zones/shloka-river/shared/components/ChantCardModal.css.
 **Changed:** Wide two-column panel on phone landscape (icon left, text right), visible 60px close X on the symbol card, Practice Chanting on a full-width 60px row, chant close button pulled inside the card (60px hit / 42px visible), helper + footer lines hidden on phone. Tablet/desktop unchanged.
