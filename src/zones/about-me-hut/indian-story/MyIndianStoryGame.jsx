@@ -631,16 +631,15 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     child_home_idle: `Which place feels connected to your family?`,
     child_home_confirmed: `This is the place you chose.`,
     language_play_first: `Tap play and listen carefully.`,
-    language_play_hint: `Tap play.`,
     language_guess:   `Which language do you hear?`,
-    language_guess_hint: `Listen again, then choose.`,
+    language_guess_hint: `Think of the language many shlokas are in.`,
     language_audio:   `Vakratunda Mahakaya Suryakoti Samaprabha!`,
     language_correct: `Yes — that's Sanskrit, a language used in many mantras.`,
     language_wheel:   `Now choose up to three languages you use or hear.`,
     language_confirmed: `These are the languages you chose.`,
     language_child_idle: `Choose the languages that are part of your life.`,
     festivals_guess:  `Can you find my festival?`,
-    festivals_guess_hint: `Look for the festival connected to my favorite sweet.`,
+    festivals_guess_hint: `Think of the festival that celebrates Ganesha.`,
     festivals_wheel:  `Now choose the festivals your family celebrates.`,
     festivals_child_idle: `Which celebrations are part of your family?`,
     festivals_confirmed: `These are the festivals you chose.`,
@@ -788,7 +787,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
       case STEPS.CHILD_HOME:
         return 'Choose the place connected with your family.';
       case STEPS.LANGUAGE_GANESHA:
-        return hasPressedLanguagePlay ? VOICE.language_guess : VOICE.language_play_hint;
+        return hasPressedLanguagePlay ? VOICE.language_guess : VOICE.language_play_first;
       case STEPS.LANGUAGE_CHILD:
         return 'Tap up to three languages you speak.';
       case STEPS.FESTIVALS_GANESHA:
@@ -800,7 +799,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
       default:
         return null;
     }
-  }, [childName, hasPressedLanguagePlay, VOICE.language_guess, VOICE.language_play_hint]);
+  }, [childName, hasPressedLanguagePlay, VOICE.language_guess, VOICE.language_play_first]);
   const replayCurrentVoice = useCallback(() => {
     if (!isAudioOn) return;
     if (phase === STEPS.OPENING) {
@@ -971,7 +970,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
         }
         return;
       }
-      const prePlayLine = VOICE.language_play_hint;
+      const prePlayLine = VOICE.language_play_first;
       const prePlayKey = `about-me-hut:my-indian-story:${phase}:resume:${prePlayLine}`;
       if (!wasStepVoSpokenRecently(prePlayKey)) {
         speakIfUnmuted(prePlayLine, { age: childAge, moment: 'encouragement' });
@@ -984,7 +983,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     const returnHintVoiceKey = `about-me-hut:my-indian-story:${phase}:${line}`;
     if (wasStepVoSpokenRecently(returnHintVoiceKey)) return;
     speakIfUnmuted(line, { age: childAge, moment: 'encouragement' });
-  }, [returnHintNonce, isAudioOn, getPhaseReminderLine, phase, speakIfUnmuted, childAge, shakeLang, shakeGuess, hasPressedLanguagePlay, showLanguageCards, safeSetTimeout, discoveredLocations.length, VOICE.language_audio, VOICE.language_guess, VOICE.language_play_hint]);
+  }, [returnHintNonce, isAudioOn, getPhaseReminderLine, phase, speakIfUnmuted, childAge, shakeLang, shakeGuess, hasPressedLanguagePlay, showLanguageCards, safeSetTimeout, discoveredLocations.length, VOICE.language_audio, VOICE.language_guess, VOICE.language_play_first]);
 
   // Child Home entry VO — single combined line, immediate
   useEffect(() => {
@@ -1320,7 +1319,9 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
 
   // Language Ganesha: Idle hint progression (Level 1 @ 10s, Level 2 @ 18s, Level 3 @ 26s)
   useEffect(() => {
-    if (phase !== STEPS.LANGUAGE_GANESHA || shakeLang !== null || langGuessPhase !== 'guessing' || !hasPressedLanguagePlay || !showLanguageCards || !languageGuessPromptReady) {
+    // A wrong tap (shakeLang) is evidence the child needs help, so it must NOT end or restart the
+    // ladder: it neither appears here nor in the deps. After L3 the answer stays highlighted.
+    if (phase !== STEPS.LANGUAGE_GANESHA || langGuessPhase !== 'guessing' || !hasPressedLanguagePlay || !showLanguageCards || !languageGuessPromptReady) {
       // (level state intentionally not read/listed in deps — see Ganesha Home ladder above)
       setLangGuessIdleLevel(0);
       langGuessIdleVoiceRef.current = false;
@@ -1329,6 +1330,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     }
     if (import.meta.env.DEV) console.log('[Idle Hint Language] Started: Idle timer will trigger in 10s');
 
+    let l3FallbackId = null;
     langGuessIdleTimerRef.current = setTimeout(() => {
       // Level 1 @ 10 seconds: Cards wobble
       if (import.meta.env.DEV) console.log('[Idle Hint Language] Level 1 triggered: Cards wobble');
@@ -1348,21 +1350,17 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
           }, 8000);
         };
         if (!langGuessIdleVoiceRef.current) {
-          speakIfUnmuted(VOICE.language_audio, {
+          // L2 is ONE short clue line — the chant is not replayed (the Play button already lets
+          // the child replay it whenever they want). L3 arms when the line ends — or after a time
+          // limit, because a tap can cut the line and speech "ended" is not always delivered.
+          let l3Armed = false;
+          const armLevel3Once = () => { if (l3Armed) return; l3Armed = true; armLevel3(); };
+          l3FallbackId = setTimeout(armLevel3Once, 7000);
+          speakIfUnmuted(VOICE.language_guess_hint, {
             age: childAge,
             moment: 'default',
-            onEnd: () => speakIfUnmuted(VOICE.language_guess_hint, {
-              age: childAge,
-              moment: 'default',
-              onEnd: armLevel3,
-              onError: armLevel3,
-            }),
-            onError: () => speakIfUnmuted(VOICE.language_guess_hint, {
-              age: childAge,
-              moment: 'default',
-              onEnd: armLevel3,
-              onError: armLevel3,
-            }),
+            onEnd: armLevel3Once,
+            onError: armLevel3Once,
           });
           langGuessIdleVoiceRef.current = true;
         } else {
@@ -1372,13 +1370,15 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     }, 10000);
 
     return () => {
+      if (l3FallbackId) clearTimeout(l3FallbackId);
       if (langGuessIdleTimerRef.current) clearTimeout(langGuessIdleTimerRef.current);
     };
-  }, [phase, langGuessPhase, shakeLang, returnHintNonce, speakIfUnmuted, childAge, hasPressedLanguagePlay, showLanguageCards, VOICE.language_audio, VOICE.language_guess_hint, langIdleRestartNonce, languageGuessPromptReady, isAudioOn]);
+  }, [phase, langGuessPhase, returnHintNonce, speakIfUnmuted, childAge, hasPressedLanguagePlay, showLanguageCards, VOICE.language_audio, VOICE.language_guess_hint, langIdleRestartNonce, languageGuessPromptReady, isAudioOn]);
 
   // Festival Ganesha: Idle hint progression (Level 1 @ 10s, Level 2 @ 18s, Level 3 @ 26s)
   useEffect(() => {
-    if (phase !== STEPS.FESTIVALS_GANESHA || shakeGuess !== null || guessPhase !== 'guessing' || !festivalGuessPromptReady) {
+    // A wrong tap (shakeGuess) must NOT end or restart the ladder (see the Language ladder above).
+    if (phase !== STEPS.FESTIVALS_GANESHA || guessPhase !== 'guessing' || !festivalGuessPromptReady) {
       // (level state intentionally not read/listed in deps — see Ganesha Home ladder above)
       setFestGuessIdleLevel(0);
       festGuessIdleVoiceRef.current = false;
@@ -1387,6 +1387,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     }
     if (import.meta.env.DEV) console.log('[Idle Hint Festival] Started: Idle timer will trigger in 10s');
 
+    let l3FallbackId = null;
     festGuessIdleTimerRef.current = setTimeout(() => {
       // Level 1 @ 10 seconds: Cards wobble
       if (import.meta.env.DEV) console.log('[Idle Hint Festival] Level 1 triggered: Cards wobble');
@@ -1405,7 +1406,12 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
           }, 8000);
         };
         if (!festGuessIdleVoiceRef.current) {
-          speakIfUnmuted(VOICE.festivals_guess_hint, { age: childAge, moment: 'default', onEnd: armLevel3 });
+          // L3 arms when the L2 line ends — or after a time limit (a tap can cut the line, and
+          // speech "ended" is not always delivered).
+          let l3Armed = false;
+          const armLevel3Once = () => { if (l3Armed) return; l3Armed = true; armLevel3(); };
+          l3FallbackId = setTimeout(armLevel3Once, 7000);
+          speakIfUnmuted(VOICE.festivals_guess_hint, { age: childAge, moment: 'default', onEnd: armLevel3Once, onError: armLevel3Once });
           festGuessIdleVoiceRef.current = true;
         } else {
           armLevel3();
@@ -1414,9 +1420,10 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     }, 10000);
 
     return () => {
+      if (l3FallbackId) clearTimeout(l3FallbackId);
       if (festGuessIdleTimerRef.current) clearTimeout(festGuessIdleTimerRef.current);
     };
-  }, [phase, guessPhase, shakeGuess, returnHintNonce, speakIfUnmuted, childAge, festivalGuessPromptReady, VOICE.festivals_guess_hint]);
+  }, [phase, guessPhase, returnHintNonce, speakIfUnmuted, childAge, festivalGuessPromptReady, VOICE.festivals_guess_hint]);
 
   // Save progress
   const saveProgress = (region, langs, fests, stepValue = phase) => {
@@ -2336,7 +2343,7 @@ const handleComplete = () => {
               return (
               <button
                 key={lang.id}
-                className={`card ${isSelected ? 'selected' : ''} ${wrongLangGuesses.has(lang.id) ? 'lang-attempted' : ''} ${shakeLang === lang.id ? 'wrong' : ''} ${langGuessIdleLevel === 1 || langGuessIdleLevel === 2 ? 'hint' : ''} ${langGuessIdleLevel === 3 && lang.id === 'sanskrit' ? 'hint-final' : ''}`}
+                className={`card ${isSelected ? 'selected' : ''} ${wrongLangGuesses.has(lang.id) ? 'lang-attempted' : ''} ${shakeLang === lang.id ? 'wrong' : ''} ${langGuessIdleLevel === 1 || langGuessIdleLevel === 2 ? 'hint' : ''} ${langGuessIdleLevel === 3 && lang.id === 'sanskrit' ? 'hint-final hint-final--settle' : ''}`}
                 onClick={() => {
                   if (!hasPressedLanguagePlay) {
                     playUiTap();
@@ -2710,7 +2717,7 @@ const handleComplete = () => {
               </button>
               <button
                 key="ganesh"
-                className={`card mis-fest-guess-card ${guessPhase === 'correct' ? 'selected' : ''} ${festGuessIdleLevel === 1 || festGuessIdleLevel === 2 ? 'hint' : ''} ${festGuessIdleLevel === 3 ? 'hint-final' : ''}`}
+                className={`card mis-fest-guess-card ${guessPhase === 'correct' ? 'selected' : ''} ${festGuessIdleLevel === 1 || festGuessIdleLevel === 2 ? 'hint' : ''} ${festGuessIdleLevel === 3 ? 'hint-final hint-final--settle' : ''}`}
                 onClick={() => {
                   setFestGuessIdleLevel(0);
                   festGuessIdleVoiceRef.current = false;

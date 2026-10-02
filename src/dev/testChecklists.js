@@ -141,8 +141,11 @@ TEST_CHECKLISTS['amh-indian-story'] = {
     { text: 'Ganesha Home at L3: do nothing for about 8 more seconds.', expect: 'The rings fade out and the hints stop (no endless pulsing). Moving the magnifier then starts a fresh 10/18/26.' },
     { text: 'Ganesha Home at L3: drag the magnifier around without finding anything.', expect: 'The rings stay on while you drag; dragging does not clear them.' },
     { text: 'Ganesha Home: find one spot.', expect: 'All hints clear and a fresh 10/18/26 starts; the found spot never shows a ring again.' },
-    { text: 'Language guess: do nothing after pressing play. Time the same three levels.', expect: 'Same timing; the level never falls back.' },
-    { text: 'Festival guess: do nothing. Time the three levels.', expect: 'Same timing.' },
+    { text: 'Language guess: press Play, wait for the chant and "Which language do you hear?", then do nothing. Time the levels.', expect: 'L1 about 10s: all cards pulse once, no voice. L2 about 18s: ONLY "Think of the language many shlokas are in." (the chant does not replay). L3 about 8s later: Sanskrit card pulses 3 times (about 8s), then stays as a soft static gold highlight.' },
+    { text: 'Language guess: tap a wrong card BEFORE L3 (for example at about 12s).', expect: 'The card shakes and says its name; the ladder keeps its timing (L2 and L3 still arrive on schedule, not restarted).' },
+    { text: 'Language guess at L3: tap a wrong card.', expect: 'The card shakes; the Sanskrit card stays softly highlighted; nothing restarts.' },
+    { text: 'Festival guess: do nothing. Time the levels.', expect: 'L1 about 10s: all cards pulse once, no voice. L2 about 18s: "Think of the festival that celebrates Ganesha." (no answer highlight). L3 about 8s later: Ganesh Chaturthi pulses 3 times, then stays as a soft static gold highlight.' },
+    { text: 'Festival guess: tap a wrong card before and at L3.', expect: 'The wrong card shakes and says its name; the ladder is not restarted; at L3 the right card stays highlighted.' },
     { text: 'Make a guess in each phase.', expect: 'Hints clear and the phase moves on.' },
   ],
 };

@@ -1021,6 +1021,14 @@
   }
 }
 
+/* Language Ganesha L3: 3 strong pulses (~8s), then the animated cue ends and a quiet static
+   gold highlight stays on the Sanskrit card until the child acts. */
+.card.hint-final.hint-final--settle::after {
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+  border: 2px solid rgba(255, 215, 0, 0.6);
+  animation: finalGlow 2.6s ease-in-out 3;
+}
+
 .card.selected {
   transform: scale(1.05);
   box-shadow:
