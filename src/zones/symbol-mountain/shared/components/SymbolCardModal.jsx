@@ -46,6 +46,11 @@ export default function SymbolCardModal({ symbolId, onClose }) {
         aria-labelledby="symbol-card-title"
         aria-modal="true"
       >
+        {/* Visible close X — shown on phone landscape only (hidden by CSS elsewhere). */}
+        <button type="button" className="symbol-card__close" aria-label="Close" onClick={handleClose}>
+          <span className="symbol-card__close-x" aria-hidden="true">✕</span>
+        </button>
+
         {/* TOP — Icon with soft radial glow */}
         <div className="symbol-card__icon-wrap">
           <div className="symbol-card__icon-glow" />

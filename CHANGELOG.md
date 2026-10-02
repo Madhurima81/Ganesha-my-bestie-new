@@ -1,6 +1,12 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
 
+## [2026-10-02] — Mobile Step 3D: SymbolCardModal + ChantCardModal phone layouts
+**Touched:** src/zones/symbol-mountain/shared/components/SymbolCardModal.css + .jsx (hidden-by-default close X); src/zones/shloka-river/shared/components/ChantCardModal.css.
+**Changed:** Wide two-column panel on phone landscape (icon left, text right), visible 60px close X on the symbol card, Practice Chanting on a full-width 60px row, chant close button pulled inside the card (60px hit / 42px visible), helper + footer lines hidden on phone. Tablet/desktop unchanged.
+**Verified:** headless Chrome with the REAL components, all 8 symbol cards + all 8 chant cards at 667x375 and 844x390 (symbol) / 667x375 (chant re-check after the close-button fix): card inside viewport, all parts inside card, no internal scroll, close >= 60px, chant CTA 60px; screenshots reviewed. Madhurima is testing on device.
+**Open:** Step 3E InnerMandala (CSS written, being measured); on-device pass of all Step 3 modals; delete the untracked __*_test.html / src/dev/__*TestMain.jsx harness files.
+
 ## [2026-10-02] — Mobile Step 3B + 3C: completion screen and SymbolAutoReveal phone layouts
 **Touched:** src/lib/components/celebration/SceneCompletionCelebration.css; src/lib/components/reveal/SymbolAutoReveal.css + .jsx (markup: hidden back-icon + text wrapper).
 **Changed:** Completion — phone-landscape shell like OpeningModal (small Ganesha, cream card, one 60px primary button, quiet Home/Play Again links with 60px hit areas, trophies/badge scaled, no scroll, no lotus). SymbolAutoReveal — horizontal flip card: symbol front; symbol + name + affirmation + 'Tap to collect' pill on the back. Tablet/desktop unchanged.

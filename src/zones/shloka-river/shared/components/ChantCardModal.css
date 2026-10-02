@@ -300,3 +300,129 @@
     animation: none !important;
   }
 }
+
+/* ============================================
+   PHONE LANDSCAPE — wide reading panel (Step 3D)
+   Canonical phone condition. Symbol/word icon left, copy right, Practice
+   Chanting full-width on the bottom row; the existing close button stays
+   (60px) in the corner; tap-outside still closes. Declared last so it beats
+   the max-width 1024/640 rules above. Tablet/desktop unchanged.
+   ============================================ */
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
+  .chant-card-modal-backdrop {
+    padding: calc(var(--gmb-safe-top, 0px) + 8px) calc(var(--gmb-safe-right, 0px) + 12px)
+             calc(var(--gmb-safe-bottom, 0px) + 8px) calc(var(--gmb-safe-left, 0px) + 12px);
+  }
+
+  .chant-card-modal {
+    width: min(92vw, 800px);
+    max-width: none;
+    max-height: calc(100dvh - var(--gmb-safe-top, 0px) - var(--gmb-safe-bottom, 0px) - 16px);
+    box-sizing: border-box;
+    padding: clamp(10px, 3.4dvh, 18px) clamp(56px, 8vw, 72px) clamp(10px, 3.4dvh, 18px) clamp(18px, 3.2vw, 32px);
+    border-radius: 28px;
+    display: grid;
+    grid-template-columns: clamp(64px, 22dvh, 104px) minmax(0, 1fr);
+    column-gap: clamp(14px, 3vw, 28px);
+    row-gap: clamp(3px, 1dvh, 6px);
+    align-items: center;
+    text-align: left;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  /* The shared CloseButton hangs outside the card (top/right -14px, 42px) and would
+     be clipped by the card's overflow. Pull it inside: 60px hit box, 42px visible
+     circle drawn by ::before. Two-class selector beats CloseButton.css. */
+  .chant-card-modal .chant-card__close {
+    top: 2px;
+    right: 2px;
+    width: 60px;
+    height: 60px;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    border-radius: 50%;
+  }
+
+  .chant-card-modal .chant-card__close::before {
+    content: '';
+    position: absolute;
+    inset: 9px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.96);
+    border: 1.5px solid #d8cff3;
+    box-shadow: 0 4px 12px rgba(74, 58, 114, 0.14);
+    pointer-events: none;
+  }
+
+  .chant-card__icon-wrap {
+    grid-column: 1;
+    grid-row: 1 / span 3;
+    width: 100%;
+    margin: 0;
+    align-self: center;
+  }
+
+  .chant-card__title-stack {
+    grid-column: 2;
+    align-items: flex-start;
+    margin: 0;
+  }
+
+  .chant-card__line.is-hook {
+    font-size: clamp(20px, 6dvh, 22px);
+    margin-bottom: 4px;
+  }
+
+  .chant-card__line.is-teaching {
+    font-size: clamp(15px, 4.4dvh, 17px);
+    max-width: 100%;
+    line-height: 1.3;
+  }
+
+  .chant-card__invitation {
+    grid-column: 2;
+    margin: 0;
+    padding: clamp(8px, 2dvh, 12px) 14px;
+    border-radius: 16px;
+  }
+
+  .chant-card__pointer {
+    font-size: 22px;
+  }
+
+  .chant-card__invitation-body {
+    gap: 10px;
+  }
+
+  .chant-card__invitation-body p {
+    font-size: clamp(15px, 4.2dvh, 16px);
+    line-height: 1.35;
+  }
+
+  .chant-card__gift {
+    grid-column: 2;
+    margin: 0;
+    padding: 0;
+    max-width: 100%;
+    font-size: 14px;
+    line-height: 1.35;
+  }
+
+  /* The CTA is the one clear action: its own full-width row, 60px high. */
+  .chant-card__cta {
+    grid-column: 1 / -1;
+    justify-self: center;
+    margin: clamp(2px, 1dvh, 6px) 0 0;
+    min-height: 60px;
+    padding: 8px 32px;
+    font-size: clamp(18px, 5dvh, 20px);
+  }
+
+  /* Instruction + footer are covered by the button label and the close button. */
+  .chant-card__cta-helper,
+  .chant-card__footer {
+    display: none;
+  }
+}
