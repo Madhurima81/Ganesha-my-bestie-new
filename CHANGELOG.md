@@ -1,6 +1,12 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
 
+## [2026-10-02] — Voice + Replay controls: soft halo, smaller, equal size
+**Touched:** src/App.css (size variables), src/lib/components/ui/AudioToggle/AudioToggle.css, src/lib/components/feedback/VOReplayButton.css.
+**Changed:** Voice (mute) and Replay no longer sit in a hard white / lavender-bordered circle. They are now a small icon in a soft translucent cream halo (no border, no shadow), subtle (88% opacity) until tapped, hovered or playing. Gameplay variant (live scenes, iPad + phone): halo 36px for BOTH controls (was 42 / 40), Voice icon 20px, Replay icon 24px (its PNG has transparent padding, so it needs a bigger box to look the same weight). Tap area stays 60px (CLAUDE.md touch rule + Mobile Step 1 decision) — the critic's 44-48px suggestion was not followed. Legacy variant: icons 26-32px (were 36-48) inside the halo; replay wave rings changed from white to soft lavender so they show on the halo.
+**Verified:** the three CSS files compile (esbuild). NOT checked visually in a browser; halo may be faint on cream/pink scenes.
+**Open:** eyeball Family Tree + one Symbol Mountain scene on iPad/phone sizes; if the halo is too faint raise it from 60% to ~70%; tune the 24px replay icon if it still looks small/large next to the speaker.
+
 ## [2026-10-02] — Choice-game hint ladders: settled L3, wrong taps keep the ladder (My Indian Story, Favorite Food, Sarvakaryeshu)
 **Touched:** src/zones/about-me-hut/indian-story/MyIndianStoryGame.jsx + .css; src/zones/about-me-hut/food/Favoritefoodgame.css; src/zones/shloka-river/scenes/scene4/SarvakaryeshuGame.css; src/dev/testChecklists.js.
 **Changed:**
