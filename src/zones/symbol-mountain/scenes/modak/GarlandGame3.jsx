@@ -123,6 +123,8 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
   const { after, cancel: cancelTimer } = usePausableTimers(isPaused);
   const pausedRef = useRef(isPaused);
   pausedRef.current = isPaused;
+  const isActiveRef = useRef(isActive);
+  isActiveRef.current = isActive;
   // Tab-hide safety for this game's direct speechSynthesis use (it bypasses the
   // scene's useVoiceGuidance hook). Mirrors the hook: cancel on hide, replay the
   // interrupted line from the start 2s after return, clear everything on unmount.
@@ -510,7 +512,11 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
           setCarryTeachingGesture(true);
           after(3200, () => setCarryTeachingGesture(false));
         }));
-        if (cancelled) return;
+        // NOT `if (cancelled)`: setPhase(READY) above flips `isBuild`, which re-runs this effect and
+        // fires its cleanup (cancelled = true) while the ready line is still speaking. That made this
+        // return before the carry hint clock ever started, so no L1/L2/L3 appeared in the carry step.
+        // Only stop if the game itself was deactivated.
+        if (!isActiveRef.current) return;
         // 10 / 18 / 26 begins only once the ready VO actually finishes.
         startGarlandHintClock(true);
       }).catch(() => {});
@@ -594,7 +600,9 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
     after(1100, () => {
       setShowModakGlow(true);
     });
-    after(3200, () => { onComplete?.(); });
+    // The golden Modak stays on screen ~4s before the real symbol reveal takes over
+    // (was ~2.1s: 1100ms glow -> 3200ms reveal).
+    after(1100 + 4000, () => { onComplete?.(); });
   };
 
   if (!isActive) return null;

@@ -257,11 +257,12 @@
    after appearing; it no longer bobs continuously before any hint fires.
    ======================================================== */
 .g3g-completed-garland.g3g-hint-nudge img {
-  animation: g3gGarlandHintNudge 1.8s ease-in-out infinite;
+  /* 3 clearly visible lifts (about 4.5s), then stop — the 4px lift was too small to notice. */
+  animation: g3gGarlandHintNudge 1.5s ease-in-out 3;
 }
 @keyframes g3gGarlandHintNudge {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
+  0%, 100% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 0 rgba(255, 215, 100, 0)); }
+  50% { transform: translateY(-12px) scale(1.05); filter: drop-shadow(0 0 12px rgba(255, 215, 100, 0.75)); }
 }
 @media (prefers-reduced-motion: reduce) {
   .g3g-completed-garland.g3g-hint-nudge img {
