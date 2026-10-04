@@ -155,6 +155,29 @@ const btn = (variant = 'plain', extra = {}) => ({
 });
 const label = { ...base, fontSize: 11, fontWeight: 800, letterSpacing: '0.05em', textTransform: 'uppercase', color: C.mute, marginBottom: 3 };
 
+// Small status marks: a green dot + passed count, a red dot + failed (bug) count, and a green
+// "Done" tag once every step has a result.
+function Dot({ color }) {
+  return <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', background: color, marginRight: 4, verticalAlign: 'middle' }} />;
+}
+function StatusBadge({ counts, total }) {
+  // "Done" = every step has a result AND nothing failed. All resolved but with failures = "Bugs".
+  const resolved = total > 0 && counts.open === 0;
+  const finished = resolved && counts.fail === 0;
+  const buggy = resolved && counts.fail > 0;
+  const any = counts.pass + counts.fail + counts.skip > 0;
+  return (
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 11, color: C.mute, whiteSpace: 'nowrap', fontFamily: BODY }}>
+      {finished && <span style={{ background: C.passBg, color: C.pass, border: '1px solid #a7f3d0', borderRadius: 999, padding: '0 7px', fontWeight: 800 }}>Done</span>}
+      {buggy && <span style={{ background: C.failBg, color: C.fail, border: '1px solid #fecdd3', borderRadius: 999, padding: '0 7px', fontWeight: 800 }}>Bugs</span>}
+      <span title="Passed"><Dot color={C.pass} />{counts.pass}</span>
+      <span title="Failed (bugs)"><Dot color={C.fail} />{counts.fail}</span>
+      {!resolved && any && <span>{counts.open} left</span>}
+      {!any && <span>not started</span>}
+    </span>
+  );
+}
+
 export default function TestChecklistPanel({ gameKey }) {
   const resolvedKey = CHECKLIST_ALIASES[gameKey] || gameKey;
   const builtIn = useMemo(() => TEST_CHECKLISTS[resolvedKey] || GENERIC_CHECKLIST, [resolvedKey]);
@@ -187,6 +210,7 @@ export default function TestChecklistPanel({ gameKey }) {
   const [toast, setToast] = useState('');
   const [saveWarn, setSaveWarn] = useState(false);
   const [copyBox, setCopyBox] = useState('');
+  const [pickerOpen, setPickerOpen] = useState(false);
   const [pip, setPip] = useState(null); // { win, root }
   const dragRef = useRef(null);
   const pipRef = useRef(null);
@@ -338,7 +362,7 @@ export default function TestChecklistPanel({ gameKey }) {
       >
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontFamily: HEADING, fontSize: 15, fontWeight: 700, lineHeight: 1.2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={list.title}>{list.title}</div>
-          <div style={{ fontSize: 11, color: C.mute }}>{done} of {total} done{counts.fail ? `, ${counts.fail} failed` : ''}</div>
+          <div style={{ marginTop: 2 }}><StatusBadge counts={counts} total={total} /></div>
         </div>
         {pip ? (
           <button type="button" onClick={popIn} style={btn('plain', { padding: '5px 9px', fontSize: 12 })}>Bring back</button>
@@ -350,26 +374,55 @@ export default function TestChecklistPanel({ gameKey }) {
         )}
       </div>
 
-      {/* checklist picker — always visible */}
-      <div style={{ padding: '8px 12px', borderBottom: `1px solid ${C.line}`, display: 'flex', alignItems: 'center', gap: 8 }}>
-        <span style={{ ...label, marginBottom: 0 }}>Checklist</span>
-        <select
-          value={activeId}
-          onChange={(e) => { setActiveId(e.target.value); setIndex(0); setView('run'); }}
-          style={{ ...base, flex: 1, minWidth: 0, fontSize: 13, fontWeight: 700, padding: '6px 8px', borderRadius: 8, border: `1px solid ${C.line}`, background: C.white, color: C.ink }}
-        >
-          {builtInGroups.map((g) => (
-            <optgroup key={g.label} label={g.label}>
-              {g.entries.map((e) => <option key={e.id} value={e.id}>{e.list.title}</option>)}
-            </optgroup>
-          ))}
-          {customIds.length > 0 && (
-            <optgroup label="Pasted by you">
-              {customIds.map((id) => <option key={id} value={id}>{custom[id].title}</option>)}
-            </optgroup>
-          )}
-        </select>
-      </div>
+      {/* checklist picker — always visible; shows each checklist's status */}
+      {(() => {
+        const statsOf = (id, l) => tally(l, store.results?.[id] || {});
+        const row = (id, l) => {
+          const c = statsOf(id, l);
+          const finished = l.items.length > 0 && c.open === 0 && c.fail === 0;
+          const active = id === activeId;
+          return (
+            <button
+              key={id} type="button"
+              onClick={() => { setActiveId(id); setIndex(0); setView('run'); setPickerOpen(false); }}
+              style={{ ...base, display: 'flex', alignItems: 'center', gap: 8, width: '100%', textAlign: 'left', cursor: 'pointer', border: 'none', borderLeft: `3px solid ${active ? C.accent : 'transparent'}`, background: active ? '#eef2ff' : C.white, padding: '7px 10px', fontSize: 13, fontWeight: finished ? 800 : 600, color: finished ? C.pass : C.ink }}
+            >
+              <span style={{ flex: 1, minWidth: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={l.title}>{l.title}</span>
+              <StatusBadge counts={c} total={l.items.length} />
+            </button>
+          );
+        };
+        return (
+          <div style={{ borderBottom: `1px solid ${C.line}` }}>
+            <div style={{ padding: '8px 12px', display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ ...label, marginBottom: 0 }}>Checklist</span>
+              <button
+                type="button" onClick={() => setPickerOpen((o) => !o)}
+                style={{ ...base, flex: 1, minWidth: 0, display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', textAlign: 'left', fontSize: 13, fontWeight: 700, padding: '6px 8px', borderRadius: 8, border: `1px solid ${C.line}`, background: C.white, color: C.ink }}
+              >
+                <span style={{ flex: 1, minWidth: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{list.title}</span>
+                <span style={{ width: 0, height: 0, borderLeft: '5px solid transparent', borderRight: '5px solid transparent', borderTop: `6px solid ${C.mute}`, transform: pickerOpen ? 'rotate(180deg)' : 'none' }} />
+              </button>
+            </div>
+            {pickerOpen && (
+              <div style={{ maxHeight: '50vh', overflowY: 'auto', borderTop: `1px solid ${C.line}`, background: C.white }}>
+                {builtInGroups.map((g) => (
+                  <div key={g.label}>
+                    <div style={{ ...label, padding: '8px 10px 2px', marginBottom: 0 }}>{g.label}</div>
+                    {g.entries.map((en) => row(en.id, en.list))}
+                  </div>
+                ))}
+                {customIds.length > 0 && (
+                  <div>
+                    <div style={{ ...label, padding: '8px 10px 2px', marginBottom: 0 }}>Pasted by you</div>
+                    {customIds.map((id) => row(id, custom[id]))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       {/* progress */}
       <div style={{ height: 4, background: C.line }}>
