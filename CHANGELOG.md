@@ -1,5 +1,16 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+
+## [2026-10-04] — Symbol Mountain hint pass complete (Eyes prompt, Tusk nest hand/zone/voice) + checklist status panel
+**Touched:** src/lib/beatPlayer/BeatPlayerGame.jsx; src/lib/components/feedback/GestureDemo.jsx; src/zones/symbol-mountain/scenes/tusk/tuskNestFlow.json + EyesPopUpGame.jsx; src/dev/TestChecklistPanel.jsx + testChecklists.js.
+**Changed:**
+- Tusk nest: the demo hand never travelled — BeatPlayer's gestureDemoFromTo looked the target up as an item, but the nest target is a raw {x,y,w} zone, so from === to and the hand sat on its start spot (teaching, L1, L2, L3). Now uses the zone position. Nest drop zone width 16 -> 12. From the 2nd wrong drop the current hint line is spoken again (unless it is still speaking), so a line cut by the next grab is not lost.
+- GestureDemo: keyframe injection is keyed on the coordinate values, not object identity (a parent re-render with fresh {x,y} literals used to restart the hand).
+- Eyes: tapping the second object while the first one's found-line was speaking cut that line and its end callback said "Now find the X" over the found line; the prompt (and the idle clock it arms) now skips an already-found object.
+- Checklist panel: the picker shows each checklist's status (green dot + passed, red dot + failed, "Done" only with zero failures, red "Bugs" otherwise).
+**Verified:** Madhurima ran all seven Symbol Mountain checklists in the harness — all Done, 0 failures (Branch 9, Bush+Marsh 8, Garland 7, Pond 5, Eyes 6, Ears 5, nest 9). eslint clean on changed files; not otherwise automated.
+**Open:** Shloka River + About Me Hut checklists still to run (Mahakaya, Samaprabha, Kurumedeva, Nirvighnam, Sarvakaryeshu, Sarvada, Finale, Suryakoti, Vakratunda, Favorite Food, Dreams & Wishes, My Indian Story, sidebar check); Madhurima's tuned nest drop-zone position (50.95, 55.2) not saved; full build before pushing.
+
 ## [2026-10-04] — Indian Story: iPad sizing pass (--u unit) on map, guess, choice and final screens
 **Touched:** src/zones/about-me-hut/indian-story/MyIndianStoryGame.jsx + .css; src/zones/about-me-hut/components/AboutMeComparisonCard.css.
 **Changed:** Ganesha Home and Child Home now share identical wrapper spacing; map ~14% bigger (65% of app height) and its pins/labels/glow scale from the map width (`--mis-map-w`) so they match on every iPad. Language guess and Festival guess screens (cut off at 1024x670) re-sized from `--u` instead of vh/vw clamps; removed the `!important` fest-card size override. Language choice: cards ~12% shorter, counter text moved down, block lifted (paddingBottom 20u) so the text no longer overlaps the bottom row. Final "My Indian Story" compare card sized entirely in `--u` (scoped to `--story-connect`, rules last in AboutMeComparisonCard.css); child-column icons/gaps in the JSX moved to `--u`.
