@@ -221,6 +221,8 @@ const EyesPopUpGame = ({
   const [forcedHintStage, setForcedHintStage] = useState(0);
   const hintStage = Math.max(idleHintStage, forcedHintStage);
   const lastSpokenHintKeyRef = useRef(null);
+  // Synchronous mirror of which targets are found, for speech callbacks (state lags a render).
+  const foundIdsRef = useRef(new Set());
   const missCountRef = useRef(0);
   // Idle clock must not start while the intro or a success VO is still
   // speaking — armed only once that VO's onEnd fires.
@@ -520,6 +522,7 @@ const EyesPopUpGame = ({
     completedRef.current = false;
     setFlow(FLOW.SEARCH);
     setFoundTargets([]);
+    foundIdsRef.current = new Set();
     setCenteredTargets([]);
     setCarriedTargets([]);
     setDeliveredTargets([]);
@@ -707,11 +710,18 @@ const EyesPopUpGame = ({
     const remainingTarget = SEARCH_TARGETS.find((item) => item.id !== target.id && !foundIds.has(item.id));
     const isFinalFind = !remainingTarget;
 
+    foundIdsRef.current.add(target.id);
     setFoundTargets((prev) => [...prev, target.id]);
     speak(VO_TEXTS[target.id] || target.label, () => {
       if (!isFinalFind) {
+        // If the child already found the other object while this line was speaking (their tap cut
+        // this line, and the cut line's end callback landed here), do NOT say "Now find the X" —
+        // it would play over the found line for something already found. The other tap's own
+        // chain arms the idle clock.
+        if (foundIdsRef.current.has(remainingTarget.id)) return;
         const promptKey = remainingTarget.id === 'feather' ? 'findFeather' : 'findMango';
         speak(VO_TEXTS[promptKey], () => {
+          if (foundIdsRef.current.has(remainingTarget.id)) return;
           idleClockArmedRef.current = true;
           lastTapTimeRef.current = Date.now();
         });

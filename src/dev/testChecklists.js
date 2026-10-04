@@ -183,6 +183,7 @@ TEST_CHECKLISTS['sm-eyes'] = {
     { text: 'Misses until L3 is due while the L2 line is speaking.', expect: 'L3 waits for the L2 line to finish.' },
     { text: 'Do nothing: time L1 / L2 (VO) / L3.', expect: 'About 10s / 18s / 8s after the L2 line.' },
     { text: 'Find the feather, then the mango.', expect: 'Each find clears the hint; next target starts a fresh clock.' },
+    { text: 'Find the mango, then tap the feather quickly (while the mango line or "Now find the feather" is still speaking).', expect: 'The feather-found line plays; "Now find the feather" does NOT play afterwards, because the feather is already found.' },
   ],
 };
 
@@ -200,8 +201,11 @@ TEST_CHECKLISTS['sm-ears'] = {
 TEST_CHECKLISTS['sm-tusk-live-v2'] = {
   title: 'Symbol Mountain, Tusk nest (BeatPlayer): drags and hints',
   items: [
+    { text: 'Start of each nest item (teaching hand) and at L2 / L3: watch the hand.', expect: 'The hand starts on the item and TRAVELS toward the nest (a third of the way at the start/L1, more at L2, all the way into the nest at L3). It must not sit still on the item.' },
+    { text: 'Drop zone: drop the item just outside the nest, then just inside it.', expect: 'Just outside = a miss; just inside = success. The zone is smaller than before (width 12, was 16).' },
     { text: 'Wait for L2 on a nest item. Drag it part-way and let go.', expect: 'L2 hand stays up; no reset.' },
     { text: 'Drop the item on the wrong place 3 times quickly.', expect: 'L3 starts only after the L2 line finishes (no cut-off).' },
+    { text: 'On a FRESH item, drop wrong 2 times, pause, then a 3rd and a 4th time (let each line play).', expect: 'You hear the L2 line after the 2nd wrong drop, the L3 line after the 3rd, and the L3 line again after the 4th. A line is never restarted while it is still speaking.' },
     { text: 'With no hint showing: drag part-way and release.', expect: 'Idle clock restarts.' },
     { text: 'Tap empty areas at L2 and L3.', expect: 'Hints keep playing; nothing restarts.' },
     { text: 'Open and close the sidebar during a line.', expect: 'Replays once; hints restart fresh.' },
