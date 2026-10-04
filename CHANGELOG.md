@@ -3,8 +3,8 @@ Append one entry per work session. Newest on top.
 ## [2026-10-04] — Indian Story: iPad sizing pass (--u unit) on map, guess, choice and final screens
 **Touched:** src/zones/about-me-hut/indian-story/MyIndianStoryGame.jsx + .css; src/zones/about-me-hut/components/AboutMeComparisonCard.css.
 **Changed:** Ganesha Home and Child Home now share identical wrapper spacing; map ~14% bigger (65% of app height) and its pins/labels/glow scale from the map width (`--mis-map-w`) so they match on every iPad. Language guess and Festival guess screens (cut off at 1024x670) re-sized from `--u` instead of vh/vw clamps; removed the `!important` fest-card size override. Language choice: cards ~12% shorter, counter text moved down, block lifted (paddingBottom 20u) so the text no longer overlaps the bottom row. Final "My Indian Story" compare card sized entirely in `--u` (scoped to `--story-connect`, rules last in AboutMeComparisonCard.css); child-column icons/gaps in the JSX moved to `--u`.
-**Verified:** vite build passes; Madhurima checked Ganesha/Child Home, guess screens and language choice in the harness; final compare card NOT yet re-checked on the 3 iPads.
-**Open:** re-check the final compare card at 1024x670, mini, Pro 13; T20 for Family Tree / Favorite Food / Dreams and Zone 2. Other uncommitted work in the tree (Garland DECISIONS entry, Tusk, Pond, BeatPlayer, GestureDemo, testChecklists) is not part of this commit.
+**Verified:** vite build passes; Madhurima checked Ganesha/Child Home, guess screens and language choice in the harness; final compare card re-checked by Madhurima on all 3 iPads: good.
+**Open:** T20 for Family Tree / Favorite Food / Dreams and Zone 2. Other uncommitted work in the tree (Garland DECISIONS entry, Tusk, Pond, BeatPlayer, GestureDemo, testChecklists) is not part of this commit.
 
 
 ## [2026-10-04] — Garland carry hints finally start (clock bug), visible L1 lift, 4s Modak gap
