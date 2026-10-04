@@ -1,6 +1,15 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
 
+## [2026-10-04] — Garland carry hints finally start (clock bug), visible L1 lift, 4s Modak gap
+**Touched:** src/zones/symbol-mountain/scenes/modak/GarlandGame3.jsx + .css.
+**Changed:**
+- BUG FIX: in the carry step (drag the garland to Ganesha) no hint ever appeared after the teaching hand. The carry 10/18/26 clock started after `await speakAsync(VO.ready)`, guarded by the effect-scoped `cancelled` flag; `setPhase(READY)` flips `isBuild`, re-running the effect and firing its cleanup (cancelled = true) while the line was still speaking, so the clock never started. Now guarded by `isActiveRef` (stops only if the game is deactivated). The guard dates from the original carry-hint commit e3e23144, so this probably never worked. The build-phase intro uses a similar guard; it passed testing and was left alone.
+- Carry L1: the 4px garland lift was too subtle to notice; now 3 clear lifts (12px, slight grow, soft gold glow) then stops.
+- After the garland lands on Ganesha, the golden Modak above Mooshika now stays ~4s before the symbol reveal (was ~2.1s: glow at 1.1s, reveal at 3.2s -> now 5.1s).
+**Verified:** Madhurima re-tested Garland in the harness after the fix: working. eslint clean on GarlandGame3.jsx.
+**Open:** Garland carry L3 Ganesha glow still pulses forever (not yet moved to the settled-L3 standard); Garland checklist step "Carry: miss 3 times quickly" still to run.
+
 ## [2026-10-04] — Garland (Modak Game 3) build hints: L2 wording, L3 tap hand
 **Touched:** src/zones/symbol-mountain/scenes/modak/GarlandGame3.jsx + .css; src/dev/testChecklists.js.
 **Changed:** Build phase (tap the six flowers). L2 line was "Tap another flower." — wrong for a child who has tapped nothing — now "Tap any flower." L3 (8s after the L2 line ends) now shows a tap GestureDemo on the first remaining flower (rendered inside the garland workspace so the flower's own % position lines up) plus ONE short line "Tap this flower." (L2 and L3 no longer say almost the same thing). The golden ripple ring on that flower now runs 3 ripples (in step with the 2-pass hand) then stays as a quiet static ring until the child taps (was an endless ripple). Carry phase unchanged: its L3 Ganesha glow still pulses forever (not yet moved to the settled-L3 standard).
