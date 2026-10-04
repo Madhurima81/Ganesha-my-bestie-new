@@ -352,6 +352,57 @@ const SCENE_IMAGES = [
   modakImage,
 ];
 
+// One language choice card. Sizes use --u (defined on .mis-wrapper): the smaller of 1vw and
+// ~1.45% of the app height, so the whole language screen scales together on any iPad.
+const LANG_HEADING_STYLE = {
+  fontFamily: "'Baloo 2', cursive",
+  fontSize: 'max(16px, calc(var(--u) * 1.8))',
+  fontWeight: 700,
+  color: '#8B6914',
+  textAlign: 'center',
+  marginBottom: 'calc(var(--u) * 0.8)',
+};
+
+function LangCard({ lang, isSelected, isSwappingOut, onToggle }) {
+  return (
+    <button
+      onClick={(event) => onToggle(lang, event)}
+      disabled={false}
+      style={{
+        width: '100%',
+        maxWidth: 'calc(var(--u) * 15)',
+        justifySelf: 'center',
+        minHeight: 'calc(var(--u) * 9.5)',
+        padding: 'calc(var(--u) * 0.8)',
+        borderRadius: '20px',
+        border: isSelected ? '4px solid #FFD76A' : '2px solid #E0E0E0',
+        backgroundColor: isSelected ? '#FFFBE9' : '#F8F1E2',
+        cursor: 'pointer',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 'calc(var(--u) * 0.8)',
+        transition: isSwappingOut ? 'none' : 'border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease',
+        boxShadow: isSelected ? '0 0 0 4px rgba(255, 215, 106, 0.35), 0 6px 16px rgba(0, 0, 0, 0.12)' : '0 2px 6px rgba(0, 0, 0, 0.08)',
+        transform: 'none',
+        opacity: isSwappingOut ? 0.3 : 1,
+        position: 'relative',
+        animation: isSwappingOut ? 'swapOut 0.3s ease-out forwards' : 'none',
+      }}
+    >
+      {isSelected && <div style={{ fontSize: '18px', position: 'absolute', top: '8px', right: '12px', fontWeight: 'bold' }}>✓</div>}
+      <img src={lang.icon} alt={lang.label} style={{ width: 'calc(var(--u) * 3.4)', height: 'calc(var(--u) * 3.4)', objectFit: 'contain' }} />
+      <div style={{ fontFamily: "'Baloo 2', cursive", fontSize: 'max(14px, calc(var(--u) * 1.5))', fontWeight: 700, color: '#654321' }}>
+        {lang.label}
+      </div>
+      <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: 'max(12px, calc(var(--u) * 1.1))', color: '#8B6914' }}>
+        {lang.script}
+      </div>
+    </button>
+  );
+}
+
 function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComplete, onNavigate, onBack, childName = 'friend', childAge = 8, sceneId = 'my-indian-story' }) {
   usePreloadPoses(SCENE_IMAGES);
   // ─── PHASE (from SceneManager - single source of truth) ───────────
@@ -2506,122 +2557,39 @@ const handleComplete = () => {
           {selectedLanguages.length > 0 && (
             <StoryProgressHeader discoveries={selectedLanguages.map(lang => ({ ...lang, image: lang.icon, name: lang.label }))} isChildMode={false} />
           )}
-
-          <div className="mis-language-child-panel" style={{ maxWidth: '880px', margin: 'clamp(34px, 6vh, 62px) auto 0', padding: '0 20px', position: 'relative' }}>
+          <div className="mis-language-child-panel" style={{ maxWidth: 'calc(var(--u) * 70)', margin: 'calc(var(--u) * 5) auto 0', padding: '0 20px', position: 'relative' }}>
             {/* Most Spoken At Home */}
-            <div style={{ marginBottom: '12px' }}>
-              <h3 style={{ fontFamily: "'Baloo 2', cursive", fontSize: '18px', fontWeight: 700, color: '#8B6914', textAlign: 'center', marginBottom: '8px' }}>
+            <div style={{ marginBottom: 'calc(var(--u) * 1.2)' }}>
+              <h3 style={LANG_HEADING_STYLE}>
                 Most Spoken At Home
               </h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'clamp(12px, 1.8vw, 20px)', marginBottom: '16px' }}>
-                {[
-                  LANGUAGE_MAP['hindi'],
-                  LANGUAGE_MAP['english'],
-                  LANGUAGE_MAP['tamil'],
-                  LANGUAGE_MAP['marathi'],
-                ].filter(Boolean).map((lang) => (
-                  (() => {
-                    const isSelected = selectedLanguages.some(l => l.id === lang.id);
-                    return (
-                  <button
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'calc(var(--u) * 1.6)', marginBottom: 'calc(var(--u) * 1.6)' }}>
+                {['hindi', 'english', 'tamil', 'marathi'].map((id) => LANGUAGE_MAP[id]).filter(Boolean).map((lang) => (
+                  <LangCard
                     key={lang.id}
-                    onClick={(event) => toggleLanguage(lang, event)}
-                    disabled={false}
-                    style={{
-                      width: '100%',
-                      maxWidth: '150px',
-                      justifySelf: 'center',
-                      minHeight: '94px',
-                      padding: '10px',
-                      borderRadius: '20px',
-                      border: isSelected ? `4px solid #FFD76A` : '2px solid #E0E0E0',
-                      backgroundColor: isSelected ? '#FFFBE9' : '#F8F1E2',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '8px',
-                      transition: swappingOutLangId === lang.id ? 'none' : 'border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease',
-                      boxShadow: isSelected ? '0 0 0 4px rgba(255, 215, 106, 0.35), 0 6px 16px rgba(0, 0, 0, 0.12)' : '0 2px 6px rgba(0, 0, 0, 0.08)',
-                      transform: 'none',
-                      opacity: swappingOutLangId === lang.id ? 0.3 : 1,
-                      position: 'relative',
-                      animation: swappingOutLangId === lang.id ? 'swapOut 0.3s ease-out forwards' : 'none',
-                    }}
-                  >
-                    {isSelected && <div style={{ fontSize: '18px', position: 'absolute', top: '8px', right: '12px', fontWeight: 'bold' }}>✓</div>}
-                    <img src={lang.icon} alt={lang.label} style={{ width: '38px', height: '38px', objectFit: 'contain' }} />
-                    <div style={{ fontFamily: "'Baloo 2', cursive", fontSize: '15px', fontWeight: 700, color: '#654321' }}>
-                      {lang.label}
-                    </div>
-                    <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: '11px', color: '#8B6914' }}>
-                      {lang.script}
-                    </div>
-                  </button>
-                    );
-                  })()
+                    lang={lang}
+                    isSelected={selectedLanguages.some(l => l.id === lang.id)}
+                    isSwappingOut={swappingOutLangId === lang.id}
+                    onToggle={toggleLanguage}
+                  />
                 ))}
               </div>
             </div>
 
             {/* More Languages */}
             <div>
-              <h3 style={{ fontFamily: "'Baloo 2', cursive", fontSize: '18px', fontWeight: 700, color: '#8B6914', textAlign: 'center', marginBottom: '8px' }}>
+              <h3 style={LANG_HEADING_STYLE}>
                 More Languages
               </h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'clamp(12px, 1.8vw, 20px)', marginBottom: '10px' }}>
-                {[
-                  LANGUAGE_MAP['gujarati'],
-                  LANGUAGE_MAP['bengali'],
-                  LANGUAGE_MAP['kannada'],
-                  LANGUAGE_MAP['malayalam'],
-                  LANGUAGE_MAP['punjabi'],
-                  LANGUAGE_MAP['telugu'],
-                  LANGUAGE_MAP['sanskrit'],
-                  LANGUAGE_MAP['other'],
-                ].filter(Boolean).map((lang) => (
-                  (() => {
-                    const isSelected = selectedLanguages.some(l => l.id === lang.id);
-                    return (
-                  <button
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'calc(var(--u) * 1.6)', marginBottom: 'calc(var(--u) * 1)' }}>
+                {['gujarati', 'bengali', 'kannada', 'malayalam', 'punjabi', 'telugu', 'sanskrit', 'other'].map((id) => LANGUAGE_MAP[id]).filter(Boolean).map((lang) => (
+                  <LangCard
                     key={lang.id}
-                    onClick={(event) => toggleLanguage(lang, event)}
-                    disabled={false}
-                    style={{
-                      width: '100%',
-                      maxWidth: '150px',
-                      justifySelf: 'center',
-                      minHeight: '94px',
-                      padding: '10px',
-                      borderRadius: '20px',
-                      border: isSelected ? `4px solid #FFD76A` : '2px solid #E0E0E0',
-                      backgroundColor: isSelected ? '#FFFBE9' : '#F8F1E2',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '8px',
-                      transition: swappingOutLangId === lang.id ? 'none' : 'border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease',
-                      boxShadow: isSelected ? '0 0 0 4px rgba(255, 215, 106, 0.35), 0 6px 16px rgba(0, 0, 0, 0.12)' : '0 2px 6px rgba(0, 0, 0, 0.08)',
-                      transform: 'none',
-                      opacity: swappingOutLangId === lang.id ? 0.3 : 1,
-                      position: 'relative',
-                      animation: swappingOutLangId === lang.id ? 'swapOut 0.3s ease-out forwards' : 'none',
-                    }}
-                  >
-                    {isSelected && <div style={{ fontSize: '18px', position: 'absolute', top: '8px', right: '12px', fontWeight: 'bold' }}>✓</div>}
-                    <img src={lang.icon} alt={lang.label} style={{ width: '38px', height: '38px', objectFit: 'contain' }} />
-                    <div style={{ fontFamily: "'Baloo 2', cursive", fontSize: '15px', fontWeight: 700, color: '#654321' }}>
-                      {lang.label}
-                    </div>
-                    <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: '11px', color: '#8B6914' }}>
-                      {lang.script}
-                    </div>
-                  </button>
-                    );
-                  })()
+                    lang={lang}
+                    isSelected={selectedLanguages.some(l => l.id === lang.id)}
+                    isSwappingOut={swappingOutLangId === lang.id}
+                    onToggle={toggleLanguage}
+                  />
                 ))}
               </div>
             </div>

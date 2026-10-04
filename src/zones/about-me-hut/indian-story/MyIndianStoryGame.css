@@ -22,6 +22,8 @@
   padding: 16px 16px 80px;
   position: relative;
   overflow-x: hidden;
+  /* One scale unit for the child language screen: the smaller of 1vw and ~1.45% of the app height */
+  --u: min(1vw, calc(var(--app-height, 100vh) * 0.0145));
 }
 
 /* Background image — fixed behind all content.
@@ -1238,7 +1240,7 @@
 .mis-language-child-continue {
   position: fixed;
   left: 50%;
-  bottom: clamp(28px, 5vh, 52px);
+  bottom: calc(var(--u) * 3);
   z-index: 80;
   margin: 0;
   animation: none;
@@ -1250,7 +1252,7 @@
 .mis-language-child-count {
   position: fixed;
   left: 50%;
-  bottom: clamp(104px, 14vh, 124px);
+  bottom: calc(var(--u) * 9.5);
   transform: translateX(-50%);
   z-index: 81;
   width: max-content;
@@ -1314,19 +1316,6 @@
 
   .mis-child-home-continue {
     bottom: clamp(20px, 4vh, 34px);
-  }
-
-  .mis-language-child-panel {
-    margin-top: clamp(34px, 6vh, 58px) !important;
-    padding-bottom: 92px !important;
-  }
-
-  .mis-language-child-continue {
-    bottom: clamp(18px, 3vh, 30px);
-  }
-
-  .mis-language-child-count {
-    bottom: clamp(106px, 15vh, 124px);
   }
 
   .mis-festival-child-panel {
