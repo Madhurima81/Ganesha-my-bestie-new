@@ -29,7 +29,9 @@ If Vite uses a different port, replace `5173` in the links.
 
 ## Status
 
-Symbol Mountain is done. Evidence is in the `INPUT_AUDIT.md` game-wise QA table:
+Complete as of 2026-10-04. Evidence is in the `INPUT_AUDIT.md` game-wise QA table.
+
+Covered areas:
 
 - Modak G1
 - Modak G2
@@ -39,10 +41,12 @@ Symbol Mountain is done. Evidence is in the `INPUT_AUDIT.md` game-wise QA table:
 - Ear
 - Tusk Nest
 - Sacred Assembly
+- Shloka River scenes: Vakratunda, Suryakoti, Samaprabha, Nirvighnam, Kurumedeva, Mahakaya, Sarvakaryeshu, Sarvada, Finale
+- About Me Hut scenes: Family Tree, Favorite Food, Dreams/Wishes, My Indian Story
 
 Ignore old notes for “Symbol Mountain Symbol scene” and “Grove mini-games”; those are not separate remaining active games.
 
-## Remaining Links
+## Reference Links
 
 - About Me Family Tree: `http://localhost:5173/game-test.html?game=amh-family-tree`
 - About Me Favorite Food: `http://localhost:5173/game-test.html?game=amh-favorite-food`

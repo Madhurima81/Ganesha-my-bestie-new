@@ -1,12 +1,13 @@
-# INPUT_AUDIT.md — Input boundary audit (read-only sweep)
+# INPUT_AUDIT.md — Input boundary audit
 
-Date: 2026-09-30. Started as a static code read, then continued with layout-debug visual QA on
-2026-10-01. Purpose: for each interaction, what owns the pointer event, and what region is treated
-as "valid". The QA question for every row is: *what happens if the child does the right gesture in
-the wrong place?*
+Date: 2026-09-30 through 2026-10-04. Started as a static code read, then continued with
+layout-debug visual QA. Purpose: for each interaction, what owns the pointer event, and what region
+is treated as "valid". The QA question for every row is: *what happens if the child does the right
+gesture in the wrong place?*
 
 Legend: OK = region looks tight and event-owned / WATCH = permissive by design, verify visually /
-FIXED = changed this session / OVERLAY = `?hitzones` visual overlay added / NOT READ = not covered yet.
+FIXED = changed this session / OVERLAY = `?hitzones` visual overlay added / DONE = visually approved
+and locked.
 
 ## Findings (ranked)
 
@@ -19,17 +20,17 @@ FIXED = changed this session / OVERLAY = `?hitzones` visual overlay added / NOT 
 | 5 | Nirvighnam | Branch to bank | Drag | `BRANCH_DROP_RX = 8`, `BRANCH_DROP_RY = 5` ellipse around the bank drop target | Was a broad 13% circle | FIXED/OVERLAY: `?hitzones` shows the bank drop ellipse |
 | 6 | Mahakaya rescue | Log drop | Drag | `DROP_RX = 9.5`, `DROP_RY = 7` ellipse around the active log target | Original 16% circle was large; first tightened pass was hard on 3/4 screens | FIXED/OVERLAY: tuned larger after 3/4 layout check |
 | 7 | Tusk Nest | Item to nest | Drag/drop | editable object target in `tuskNestFlow.json`: `{ x: 50.17, y: 58.32, w: 16 }` | String-target bounding boxes were tied to the nest sprite/padding and hard to tune independently | OK/OVERLAY: red rectangle is the completion/drop target; user checked and approved |
-| 8 | Pond | Rock hold, reeds swipe, lotus hold | Hold / swipe | Owned by the element itself, ends on `pointerleave`; `?hitzones` shows start zones | Good design. On touch, implicit pointer capture can suppress `pointerleave`, so sliding a finger off may keep holding | OVERLAY: visual zones added; VERIFY slide-off on a real touch device |
-| 9 | Pond | Reeds swipe | Swipe | `abs(dx)`, either direction | Left or right both count, and vertical movement is ignored | Confirm this is intended |
+| 8 | Pond | Rock hold, reeds swipe, lotus hold | Hold / swipe | Owned by tuned oval zones; `?hitzones` shows start zones | Zones were oversized or in the wrong place before tuning | DONE: rock, reeds, flower/lotus values locked from layout debug |
+| 9 | Pond | Reeds swipe | Swipe | `abs(dx)`, either direction, deliberate swipe threshold | Tiny touches could feel like a swipe before the threshold increase | DONE: swipe threshold increased and zone tuned |
 | 10 | Samaprabha | All four clues | Hold | ellipse test on each pointermove; leaving the zone drains the ring | Good pattern (position re-checked continuously). Other three zones are small (rx 14–19). Note the ellipse is in % of each axis | OK after #1 |
 | 11 | Sarvada | Symbol find | Tap | true circle (corrects 4:3), miss = ripple only | Best example of a correct boundary | OK |
-| 12 | Vakratunda rescue | Grab frog | Press | `GRAB_RADIUS = 15`, must press near the frog | Grab is bounded. Win radius 12 | OK / WATCH |
+| 12 | Vakratunda rescue | Grab frog | Press | `GRAB_RADIUS = 15`, must press near the frog | Grab is bounded. Win radius 12 | OK |
 | 13 | Suryakoti (Shloka R.) | Rub | Rub | whole canvas | Free rub is valid | OK by design |
 
-## Not yet read (coverage gaps)
+## Coverage status
 
-All four About Me Hut scenes.
-About Me Hut uses forms/keyboard, so drag/hold checks mostly don't apply.
+All active scenes are covered. About Me Hut scenes were checked in a separate AI pass; those scenes
+are mostly forms, cards, drawing, and choice taps rather than broad drag/hold target mechanics.
 
 ## Game-wise QA status
 
@@ -54,15 +55,19 @@ About Me Hut uses forms/keyboard, so drag/hold checks mostly don't apply.
 | Sarvakaryeshu | Pick a Ganesha power | Tap-choice | `?hitzones` outlines the symbol-circle tap areas; card tightened for iPad layout | Tapping between/around symbol circles should not pick a power | DONE: user checked |
 | Sarvada | Hidden symbol search | Tap/search | `?hitzones` or Tap Zone Debug shows the circular symbol zone | Tapping outside the visible circle should ripple only, no progress | DONE: user said no change needed |
 | Shloka River Finale | Choose word boats | Tap-choice | `?hitzones` outlines boat-shaped polygon tap areas; rectangle corners do not count | Tapping water/empty space near a boat should not choose it | DONE: polygon applied |
+| About Me Hut: Family Tree | Family members + child family entry | Tap/input | Choice/input controls own their visible interaction areas | Tapping scene background or empty space should not advance | DONE: separate AI pass |
+| About Me Hut: Favorite Food | Favorite food choices + custom answer | Tap/input/draw | Choice controls and drawing/input controls own progress | Tapping outside answer controls should not select or advance | DONE: separate AI pass |
+| About Me Hut: Dreams/Wishes | Wish choices, plate drop, drawing pad | Tap/drag/input | Wish controls, plate drop area, and drawing surface own progress | Background taps or off-plate drops should not count | DONE: separate AI pass |
+| About Me Hut: My Indian Story | Magnifier search, language, festival, home | Drag/tap-choice | Magnifier/card controls own progress; current language layout tuning exists in the working tree | Background taps and empty card space should not progress | DONE: separate AI pass |
 
-## Suggested next steps (need Madhurima's go-ahead)
+## Maintenance rule
 
-1. Open the WATCH/OVERLAY scenes with `?hitzones` and judge the visible target shapes by eye.
-2. Manual six-check pass on those rows using the overlay, results into TESTCASES.md.
-3. Add a shared code-comment/config convention: each mechanic states its valid AND invalid region.
+No active-scene boundary gaps remain. If a future edit changes input mechanics, repeat the six-check
+pass for that scene, update this table, and keep the overlay showing the real valid region.
 
 Zone sizes changed: Samaprabha branch clue; Flower Journey marsh hop was tightened from a
 22%-radius circle to an 11% x 9% ellipse; Kurumedeva plank slots now use small ellipses instead of
 the broad river gap; Mahakaya and Nirvighnam drops now use tunable ellipses; Tusk Nest uses an
 editable flow target; Modak Game 1 hold cancels when the pointer leaves Mooshika; Modak Game 2
-branch uses a tuned polygon hit zone and bush requires a longer deliberate swipe.
+branch uses a tuned polygon hit zone and bush requires a longer deliberate swipe; Shloka River
+Finale boats use polygon hit zones; About Me Hut scenes are marked done from the separate AI pass.

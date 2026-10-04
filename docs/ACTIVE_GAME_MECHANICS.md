@@ -4,6 +4,8 @@ Mechanic-wise list for the current active mini-games across the 13 active scenes
 
 This does not include sidebars, opening/completion modals, symbol reveal cards, pause controls, VO replay, generic navigation buttons, or decorative interactions.
 
+Boundary audit status: complete as of 2026-10-04. See `INPUT_AUDIT.md` for the game-wise pass/fail record and locked hit-zone notes.
+
 ## Tap
 
 1. EyesPopUpGame

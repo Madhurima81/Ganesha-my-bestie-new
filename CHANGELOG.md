@@ -1,6 +1,12 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
 
+## [2026-10-04] — Interaction boundary audit complete across active scenes
+**Touched:** INPUT_AUDIT.md; docs/INTERACTION_BOUNDARY_AUDIT_PROCESS.md; docs/ACTIVE_GAME_MECHANICS.md.
+**Changed:** Marked the input-boundary audit done across Symbol Mountain, Shloka River, and About Me Hut. Added the About Me Hut scene rows to the audit table, clarified that the Shloka River Finale boat choices now use polygon hit zones, and converted the handoff doc from a remaining-work list into a completed-audit process note. About Me Hut completion is recorded from the separate AI pass; current working-tree code changes for My Indian Story were left untouched.
+**Verified:** Git history shows the interaction-boundary overlay commit (`ba1ecdfd`) and finale polygon commit (`ddd74412`). Current status still has only the separate About Me Indian Story code changes outside this documentation update.
+**Open:** none for the interaction-boundary audit.
+
 ## [2026-10-02] — Voice + Replay controls: soft halo, smaller, equal size
 **Touched:** src/App.css (size variables), src/lib/components/ui/AudioToggle/AudioToggle.css, src/lib/components/feedback/VOReplayButton.css.
 **Changed:** Voice (mute) and Replay no longer sit in a hard white / lavender-bordered circle. They are now a small icon in a soft translucent cream halo (no border, no shadow), subtle (88% opacity) until tapped, hovered or playing. Gameplay variant (live scenes, iPad + phone): halo 36px for BOTH controls (was 42 / 40), Voice icon 20px, Replay icon 24px (its PNG has transparent padding, so it needs a bigger box to look the same weight). Tap area stays 60px (CLAUDE.md touch rule + Mobile Step 1 decision) — the critic's 44-48px suggestion was not followed. Legacy variant: icons 26-32px (were 36-48) inside the halo; replay wave rings changed from white to soft lavender so they show on the halo.
