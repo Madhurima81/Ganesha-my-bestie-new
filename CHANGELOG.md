@@ -1,6 +1,12 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
 
+## [2026-10-04] — Garland (Modak Game 3) build hints: L2 wording, L3 tap hand
+**Touched:** src/zones/symbol-mountain/scenes/modak/GarlandGame3.jsx + .css; src/dev/testChecklists.js.
+**Changed:** Build phase (tap the six flowers). L2 line was "Tap another flower." — wrong for a child who has tapped nothing — now "Tap any flower." L3 (8s after the L2 line ends) now shows a tap GestureDemo on the first remaining flower (rendered inside the garland workspace so the flower's own % position lines up) plus ONE short line "Tap this flower." (L2 and L3 no longer say almost the same thing). The golden ripple ring on that flower now runs 3 ripples (in step with the 2-pass hand) then stays as a quiet static ring until the child taps (was an endless ripple). Carry phase unchanged: its L3 Ganesha glow still pulses forever (not yet moved to the settled-L3 standard).
+**Verified:** eslint clean on GarlandGame3.jsx; GarlandGame3.css compiles (esbuild); NOT browser-tested — hand position over the flower not yet confirmed by eye.
+**Open:** run the Garland checklist (build-phase L1/L2/L3, and L2 with no flower tapped); confirm the hand lands on the flower at iPad sizes; decide whether the carry-phase L3 glow should also settle (DECISIONS 2026-10-02 settled-L3).
+
 ## [2026-10-04] — Interaction boundary audit complete across active scenes
 **Touched:** INPUT_AUDIT.md; docs/INTERACTION_BOUNDARY_AUDIT_PROCESS.md; docs/ACTIVE_GAME_MECHANICS.md.
 **Changed:** Marked the input-boundary audit done across Symbol Mountain, Shloka River, and About Me Hut. Added the About Me Hut scene rows to the audit table, clarified that the Shloka River Finale boat choices now use polygon hit zones, and converted the handoff doc from a remaining-work list into a completed-audit process note. About Me Hut completion is recorded from the separate AI pass; current working-tree code changes for My Indian Story were left untouched.
