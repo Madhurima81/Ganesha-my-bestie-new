@@ -199,7 +199,10 @@
   border-radius: 50%;
   border: 3px solid rgba(255, 220, 120, 0.88);
   pointer-events: none;
-  animation: g3gTapExample 1.1s ease-out infinite;
+  /* 3 ripples (about 3.3s, in step with the 2-pass tap hand), then the animation ends and a quiet
+     static ring stays on the flower until the child taps. */
+  opacity: 0.8;
+  animation: g3gTapExample 1.1s ease-out 3;
 }
 @keyframes g3gTapExample {
   0% { opacity: 0; transform: translate(-50%, -50%) scale(.65); }

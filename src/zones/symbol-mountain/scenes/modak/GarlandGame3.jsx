@@ -57,8 +57,10 @@ const LAYOUT = {
 
 const VO = {
   open: 'You found all six flowers. Tap them to make a garland for Ganesha.',
-  tapIdle: 'Tap another flower.',
-  tapDirect: 'Tap any flower.',
+  // L2 build hint: a child who has not tapped any flower yet must not hear "another".
+  tapIdle: 'Tap any flower.',
+  // L3 build hint: points at the one flower the hand is tapping.
+  tapDirect: 'Tap this flower.',
   ready: 'The garland is ready! Drag it to Ganesha.',
   carry: 'Drag the garland to Ganesha.',
   carryDirect: 'Drag the garland onto Ganesha.',
@@ -693,6 +695,24 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
                   </button>
                 );
               })}
+
+              {/* L3: a tap hand demonstrates on the first remaining flower (coordinates are the
+                  flower's own % inside this workspace; the overlay fills the workspace box). */}
+              {(() => {
+                const target = FLOWERS.find((flower) => flower.id === firstRemainingFlowerId);
+                if (!target || buildHintLevel < 3 || !flowersArrived || threadingFlower) return null;
+                return (
+                  <GestureDemo
+                    type="tap"
+                    from={{ x: target.x, y: target.y }}
+                    active={!isPaused}
+                    idleDelay={0}
+                    iterations={2}
+                    replayKey={buildHintLevel}
+                    zIndex={30}
+                  />
+                );
+              })()}
             </>
           )}
 

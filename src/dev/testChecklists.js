@@ -166,7 +166,8 @@ TEST_CHECKLISTS['modak-garland'] = {
   title: 'Modak Game 3 (Garland): carry hints, L3 waits for L2, sidebar in intro',
   items: [
     { text: 'Intro line is playing: open and close the sidebar 3-4 times quickly.', expect: 'Intro replays once; hints still start afterwards (no freeze).' },
-    { text: 'Build: tap flowers one by one; do nothing at the end for L2/L3.', expect: 'Hints come on time (about 10s / 18s / 26s).' },
+    { text: 'Build: tap a few flowers, then stop and wait. Time L1, L2, L3.', expect: 'L1 about 10s: flowers bob 3 times, no voice. L2 about 18s: flowers keep bobbing, voice "Tap any flower.". L3 about 8s after: a tap hand taps the first remaining flower twice, voice "Tap this flower.", then a quiet static ring stays on it.' },
+    { text: 'Build with NO flower tapped yet: wait for L2.', expect: 'The voice says "Tap any flower." (never "another").' },
     { text: 'Carry: wait for L2 (hand + VO). Start dragging the garland and drop it away from Ganesha.', expect: 'Hand stays up; no reset to L0.' },
     { text: 'Carry: miss 3 times quickly.', expect: 'L3 starts only after the L2 line finishes (no cut-off).' },
     { text: 'Carry with no hint showing: drag part-way and drop it away.', expect: 'Idle clock restarts.' },
