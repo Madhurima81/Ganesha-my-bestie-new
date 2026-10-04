@@ -22,6 +22,7 @@
   padding: 16px 16px 80px;
   position: relative;
   overflow-x: hidden;
+  box-sizing: border-box; /* width:100% + padding was 48px wider than the screen, pushing right-anchored controls (replay) off-screen */
   /* One scale unit for the child language screen: the smaller of 1vw and ~1.45% of the app height */
   --u: min(1vw, calc(var(--app-height, 100vh) * 0.0145));
 }
@@ -446,15 +447,15 @@
   min-height: 90px;
 }
 .mis-fest-guess-card {
-  width: clamp(115px, 25vw, 198px);
-  height: clamp(115px, 25vw, 198px);
+  width: calc(var(--u) * 18);
+  height: calc(var(--u) * 18);
   min-height: 90px;
-  padding: 20px;
+  padding: calc(var(--u) * 1.4);
 }
 
 .mis-fest-guess-label {
   font-family: 'Baloo 2', cursive;
-  font-size: clamp(13px, 1.7vh, 18px);
+  font-size: max(13px, calc(var(--u) * 1.7));
   font-weight: 700;
   color: #654321;
   line-height: 1.15;
@@ -1105,7 +1106,7 @@
    INDIA MAP - Region Pins (child-friendly)
    ======================================== */
 .mis-region-pin {
-  width: clamp(64px, 9vw, 96px);
+  width: calc(var(--mis-map-w, 400px) * 0.235);
   padding: 8px 6px 6px;
   background: #F8F1E2;
   border: 2px solid #D8B08C;
@@ -1125,8 +1126,8 @@
 }
 
 .mis-region-pin-icon {
-  width: clamp(36px, 4.5vw, 48px);
-  height: clamp(36px, 4.5vw, 48px);
+  width: calc(var(--mis-map-w, 400px) * 0.12);
+  height: calc(var(--mis-map-w, 400px) * 0.12);
   object-fit: contain;
   margin: 0 auto 4px;
   display: block;
@@ -1134,7 +1135,7 @@
 
 .mis-region-pin-label {
   font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-size: clamp(0.78rem, 1.3vw, 0.95rem);
+  font-size: calc(var(--mis-map-w, 400px) * 0.0235);
   font-weight: 700;
   color: #5D2E0F;
   line-height: 1.15;
@@ -1143,8 +1144,8 @@
 
 .mis-region-glow {
   position: absolute;
-  width: clamp(70px, 8vw, 90px);
-  height: clamp(70px, 8vw, 90px);
+  width: calc(var(--mis-map-w, 400px) * 0.22);
+  height: calc(var(--mis-map-w, 400px) * 0.22);
   border-radius: 50%;
   background: radial-gradient(circle,
     rgba(108, 195, 255, 0.62) 0%,
@@ -1202,7 +1203,9 @@
 
 .mis-india-map-wrap {
   position: relative;
-  width: min(68vw, 520px);
+  /* Map is ~71% of the app height at any iPad size (536:583 ratio, so width = height * 0.71 * 0.919 = 0.65). 78vw only guards very narrow windows. */
+  --mis-map-w: min(calc(var(--app-height, 100vh) * 0.65), 78vw);
+  width: var(--mis-map-w);
   aspect-ratio: 536 / 583;
   margin: 0 auto;
   overflow: visible;
@@ -1222,7 +1225,8 @@
 }
 
 .mis-child-home-phase .mis-india-map-wrap {
-  width: min(78vw, 620px);
+  --mis-map-w: min(calc(var(--app-height, 100vh) * 0.65), 78vw);
+  width: var(--mis-map-w);
 }
 
 .mis-child-home-continue {
@@ -1252,7 +1256,7 @@
 .mis-language-child-count {
   position: fixed;
   left: 50%;
-  bottom: calc(var(--u) * 9.5);
+  bottom: calc(var(--u) * 8.4);
   transform: translateX(-50%);
   z-index: 81;
   width: max-content;
@@ -1275,7 +1279,7 @@
 .mis-festival-child-continue {
   position: fixed;
   left: 50%;
-  bottom: clamp(28px, 5vh, 52px);
+  bottom: calc(var(--u) * 3);
   z-index: 80;
   margin: 0;
   animation: none;
@@ -1287,7 +1291,7 @@
 .mis-festival-child-count {
   position: fixed;
   left: 50%;
-  bottom: clamp(132px, 18vh, 154px);
+  bottom: calc(var(--u) * 9.5);
   transform: translateX(-50%);
   z-index: 81;
   width: max-content;
@@ -1295,57 +1299,24 @@
   text-shadow: 0 1px 2px rgba(255, 249, 230, 0.95);
 }
 
-@media (max-width: 900px) {
-  .mis-region-pin-label {
-    font-size: clamp(0.7rem, 1.5vw, 0.85rem);
-  }
-}
 
 @media (max-height: 700px) and (orientation: landscape) {
   .mis-wrapper {
     padding-bottom: 28px;
   }
 
-  .mis-india-map-wrap {
-    width: min(68vw, 520px, calc(50vh * 536 / 583));
-  }
-
-  .mis-child-home-phase .mis-india-map-wrap {
-    width: min(76vw, 600px, calc(60vh * 536 / 583));
-  }
-
   .mis-child-home-continue {
     bottom: clamp(20px, 4vh, 34px);
-  }
-
-  .mis-festival-child-panel {
-    margin-top: clamp(62px, 9vh, 86px) !important;
-    padding-bottom: 92px !important;
-  }
-
-  .mis-festival-child-continue {
-    bottom: clamp(18px, 3vh, 30px);
-  }
-
-  .mis-festival-child-count {
-    bottom: clamp(106px, 15vh, 124px);
   }
 
   .mis-guess-grid {
     gap: 10px;
   }
 
-  .mis-guess-btn,
-  .mis-fest-guess-card {
+  .mis-guess-btn {
     min-height: 72px;
     padding: 12px 8px !important;
   }
-
-  .mis-fest-guess-card {
-    width: clamp(96px, 22vw, 198px) !important;
-    height: clamp(96px, 22vw, 198px) !important;
-  }
-
   .mis-guess-emoji {
     font-size: 30px;
   }

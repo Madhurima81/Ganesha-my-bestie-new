@@ -476,3 +476,65 @@
     align-self: center;
   }
 }
+
+/* Indian Story final compare: one size unit (--u, set on .mis-wrapper) so the whole card
+   scales together on every iPad. Kept last so it wins over the landscape media block above. */
+.aboutme-comparison-overlay.aboutme-comparison--story-connect {
+  padding: calc(var(--u, 8px) * 1) calc(var(--u, 8px) * 2);
+}
+.aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-title {
+  font-size: calc(var(--u, 8px) * 3.2);
+  margin: 0 0 calc(var(--u, 8px) * 0.3);
+}
+.aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-subtitle {
+  font-size: max(13px, calc(var(--u, 8px) * 1.5));
+  margin: 0;
+}
+.aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-grid {
+  max-width: calc(var(--u, 8px) * 100);
+  gap: calc(var(--u, 8px) * 2);
+  margin-top: calc(var(--u, 8px) * 1.5);
+  margin-bottom: calc(var(--u, 8px) * 1);
+}
+.aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-column {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: calc(var(--u, 8px) * 46);
+  padding: calc(var(--u, 8px) * 1.4);
+  gap: calc(var(--u, 8px) * 0.5);
+}
+.aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-column-header {
+  min-height: calc(var(--u, 8px) * 7);
+}
+.aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-avatar {
+  width: calc(var(--u, 8px) * 7);
+  height: calc(var(--u, 8px) * 7);
+}
+.aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-column-title {
+  font-size: calc(var(--u, 8px) * 2.2);
+}
+.aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-items-grid {
+  gap: calc(var(--u, 8px) * 0.8);
+}
+.aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-item {
+  min-height: calc(var(--u, 8px) * 7.5);
+  padding: calc(var(--u, 8px) * 0.6);
+  gap: calc(var(--u, 8px) * 0.3);
+}
+.aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-item-label {
+  font-size: max(11px, calc(var(--u, 8px) * 1.15));
+}
+.aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-item-media,
+.aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-item-img {
+  width: calc(var(--u, 8px) * 3.6);
+  height: calc(var(--u, 8px) * 3.6);
+}
+.aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-item-text {
+  font-size: max(12px, calc(var(--u, 8px) * 1.4));
+}
+.aboutme-comparison-overlay.aboutme-comparison--story-connect .aboutme-comparison-continue-btn {
+  margin-top: calc(var(--u, 8px) * 1.2);
+  margin-bottom: calc(var(--u, 8px) * 0.5);
+  padding: calc(var(--u, 8px) * 1.1) calc(var(--u, 8px) * 4);
+  font-size: max(16px, calc(var(--u, 8px) * 2));
+}

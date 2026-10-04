@@ -370,9 +370,9 @@ function LangCard({ lang, isSelected, isSwappingOut, onToggle }) {
       disabled={false}
       style={{
         width: '100%',
-        maxWidth: 'calc(var(--u) * 15)',
+        maxWidth: 'calc(var(--u) * 14)',
         justifySelf: 'center',
-        minHeight: 'calc(var(--u) * 9.5)',
+        minHeight: 'calc(var(--u) * 8.4)',
         padding: 'calc(var(--u) * 0.8)',
         borderRadius: '20px',
         border: isSelected ? '4px solid #FFD76A' : '2px solid #E0E0E0',
@@ -398,6 +398,57 @@ function LangCard({ lang, isSelected, isSwappingOut, onToggle }) {
       </div>
       <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: 'max(12px, calc(var(--u) * 1.1))', color: '#8B6914' }}>
         {lang.script}
+      </div>
+    </button>
+  );
+}
+
+// One festival choice card. Sized from --u (see .mis-wrapper) like LangCard, so the festival
+// screen scales with the screen instead of staying a fixed 178x116px.
+const FEST_HEADING_STYLE = {
+  fontFamily: "'Baloo 2', cursive",
+  fontSize: 'max(16px, calc(var(--u) * 1.8))',
+  fontWeight: 700,
+  color: '#8B6914',
+  textAlign: 'center',
+  marginBottom: 'calc(var(--u) * 0.8)',
+};
+
+function FestCard({ fest, isSelected, isSwappingOut, onToggle }) {
+  return (
+    <button
+      onClick={(event) => onToggle(fest, event)}
+      disabled={false}
+      style={{
+        width: '100%',
+        maxWidth: 'calc(var(--u) * 15)',
+        justifySelf: 'center',
+        minHeight: 'calc(var(--u) * 9.5)',
+        padding: 'calc(var(--u) * 0.8)',
+        borderRadius: '20px',
+        border: isSelected ? '2px solid #FFC857' : '2px solid #E0E0E0',
+        backgroundColor: isSelected ? '#FFF4D8' : '#F8F1E2',
+        cursor: 'pointer',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        outline: 'none',
+        WebkitTapHighlightColor: 'transparent',
+        gap: 'calc(var(--u) * 0.8)',
+        transition: isSwappingOut ? 'none' : 'border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease',
+        boxShadow: isSelected
+          ? '0 0 0 4px rgba(255, 200, 87, 0.35), 0 6px 16px rgba(0, 0, 0, 0.12)'
+          : '0 4px 12px rgba(0, 0, 0, 0.1)',
+        transform: 'none',
+        opacity: isSwappingOut ? 0.3 : 1,
+        position: 'relative',
+        animation: isSwappingOut ? 'swapOut 0.3s ease-out forwards' : 'none',
+      }}
+    >
+      <img src={fest.icon} alt={fest.label} style={{ width: 'calc(var(--u) * 3.4)', height: 'calc(var(--u) * 3.4)', objectFit: 'contain' }} />
+      <div style={{ fontFamily: "'Baloo 2', cursive", fontSize: 'max(14px, calc(var(--u) * 1.5))', fontWeight: 700, color: '#654321' }}>
+        {fest.label}
       </div>
     </button>
   );
@@ -2307,12 +2358,13 @@ const handleComplete = () => {
 
       {/* Child Home Phase */}
       {phase === STEPS.CHILD_HOME && (
-        <div className="mis-child-home-phase" style={{ paddingTop: '8px', paddingBottom: '24px' }}>
+        <div className="mis-child-home-phase" style={{ minHeight: 'var(--app-height, 100vh)', paddingTop: '40px', paddingBottom: '40px' }}>
           <div
             className="mis-india-map-wrap"
             style={{
-            overflow: 'visible',
-          }}
+              margin: 'clamp(24px, 6vh, 90px) auto 0',
+              overflow: 'visible',
+            }}
           >
             <img
               src={indiaMapImage}
@@ -2322,7 +2374,7 @@ const handleComplete = () => {
                 inset: 0,
                 width: '100%',
                 height: '100%',
-                objectFit: 'contain',
+                objectFit: 'cover',
                 display: 'block',
               }}
             />
@@ -2413,17 +2465,17 @@ const handleComplete = () => {
       )}
       {/* Language Ganesha Phase — 4 Language Guess Game */}
       {phase === STEPS.LANGUAGE_GANESHA && (
-        <div className="mis-language-guess-phase" style={{ paddingTop: '20px', paddingBottom: '56px', minHeight: 'var(--app-height, 100vh)' }}>
+        <div className="mis-language-guess-phase" style={{ paddingTop: 'calc(var(--u) * 1.5)', paddingBottom: 'calc(var(--u) * 4)', minHeight: 'var(--app-height, 100vh)' }}>
           <AboutMeGaneshaHost image={babyGaneshaImg} className="about-me-ganesha-host--left-middle" />
 
           {/* Play Button Section */}
-          <div className="mis-language-play-wrap" style={{ textAlign: 'center', marginTop: 'clamp(20px, 4vh, 90px)', marginBottom: '8px' }}>
+          <div className="mis-language-play-wrap" style={{ textAlign: 'center', marginTop: 'calc(var(--u) * 2)', marginBottom: 'calc(var(--u) * 0.5)' }}>
             <button
               onClick={replayLanguageAudio}
               className="mis-language-replay-btn"
               style={{
-                width: 'clamp(180px, 22vw, 320px)',
-                height: 'clamp(180px, 22vw, 320px)',
+                width: 'calc(var(--u) * 17)',
+                height: 'calc(var(--u) * 17)',
                 borderRadius: '50%',
                 backgroundColor: 'transparent',
                 border: 'none',
@@ -2446,13 +2498,13 @@ const handleComplete = () => {
           {/* Language Cards Grid — 2x2 (Hidden until mantra finishes) */}
           {showLanguageCards && (
           <div className="mis-language-guess-grid" style={{
-            maxWidth: 'min(780px, 84vw)',
-            margin: 'clamp(10px, 2vh, 28px) auto 0',
+            maxWidth: 'calc(var(--u) * 66)',
+            margin: 'calc(var(--u) * 1) auto 0',
             display: 'grid',
             gridTemplateColumns: 'repeat(2, 1fr)',
-            gap: 'clamp(16px, 3vw, 48px)',
-            padding: '0 clamp(12px, 2vw, 24px)',
-            marginBottom: 'clamp(16px, 3vh, 40px)',
+            gap: 'calc(var(--u) * 2.4)',
+            padding: '0 calc(var(--u) * 1.5)',
+            marginBottom: 'calc(var(--u) * 2)',
             animation: 'fadeIn 0.6s ease-out',
           }}>
             {[
@@ -2480,8 +2532,8 @@ const handleComplete = () => {
                 disabled={langGuessPhase === 'correct'}
                 style={{
                   width: '100%',
-                  minHeight: 'clamp(180px, 24vh, 300px)',
-                  padding: 'clamp(16px, 2.4vw, 32px)',
+                  minHeight: 'calc(var(--u) * 15)',
+                  padding: 'calc(var(--u) * 1.6)',
                   border: 'none',
                   backgroundColor: '#F8F1E2',
                   cursor: langGuessPhase === 'correct' ? 'not-allowed' : 'pointer',
@@ -2489,16 +2541,16 @@ const handleComplete = () => {
                   flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: 'clamp(8px, 1.2vh, 16px)',
+                  gap: 'calc(var(--u) * 0.9)',
                   boxShadow: isSelected ? undefined : '0 6px 16px rgba(0, 0, 0, 0.16)',
                   transform: isSelected ? undefined : 'scale(1)',
                   position: 'relative',
                 }}
               >
-                <img src={lang.icon} alt={lang.label} style={{ width: 'clamp(56px, 8vh, 92px)', height: 'clamp(56px, 8vh, 92px)', objectFit: 'contain' }} />
+                <img src={lang.icon} alt={lang.label} style={{ width: 'calc(var(--u) * 6)', height: 'calc(var(--u) * 6)', objectFit: 'contain' }} />
                 <div style={{
                   fontFamily: "'Baloo 2', cursive",
-                  fontSize: 'clamp(20px, 2.7vh, 30px)',
+                  fontSize: 'calc(var(--u) * 2.5)',
                   fontWeight: 700,
                   color: '#654321',
                 }}>
@@ -2506,7 +2558,7 @@ const handleComplete = () => {
                 </div>
                 <div style={{
                   fontFamily: "'Nunito', sans-serif",
-                  fontSize: 'clamp(15px, 2vh, 22px)',
+                  fontSize: 'calc(var(--u) * 1.8)',
                   color: '#8B6914',
                 }}>
                   {lang.script}
@@ -2553,11 +2605,19 @@ const handleComplete = () => {
 
       {/* Language Child Phase — 12 Language Selection */}
       {phase === STEPS.LANGUAGE_CHILD && (
-        <div style={{ paddingTop: '20px', paddingBottom: '40px', minHeight: 'var(--app-height, 100vh)' }}>
+        <div style={{
+          paddingTop: 'calc(var(--u) * 5.5)',
+          paddingBottom: 'calc(var(--u) * 20)',
+          minHeight: 'var(--app-height, 100vh)',
+          boxSizing: 'border-box',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+        }}>
           {selectedLanguages.length > 0 && (
             <StoryProgressHeader discoveries={selectedLanguages.map(lang => ({ ...lang, image: lang.icon, name: lang.label }))} isChildMode={false} />
           )}
-          <div className="mis-language-child-panel" style={{ maxWidth: 'calc(var(--u) * 70)', margin: 'calc(var(--u) * 5) auto 0', padding: '0 20px', position: 'relative' }}>
+          <div className="mis-language-child-panel" style={{ width: '100%', maxWidth: 'calc(var(--u) * 70)', margin: '0 auto', padding: '0 20px', position: 'relative' }}>
             {/* Most Spoken At Home */}
             <div style={{ marginBottom: 'calc(var(--u) * 1.2)' }}>
               <h3 style={LANG_HEADING_STYLE}>
@@ -2638,8 +2698,8 @@ const handleComplete = () => {
       {phase === STEPS.FESTIVALS_GANESHA && (
         <div className="mis-festivals-ganesha-phase" style={{
           minHeight: 'var(--app-height, 100vh)',
-          paddingTop: 'clamp(20px, 6vh, 60px)',
-          paddingBottom: 'clamp(24px, 8vh, 80px)',
+          paddingTop: 'calc(var(--u) * 2.5)',
+          paddingBottom: 'calc(var(--u) * 3)',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -2648,15 +2708,15 @@ const handleComplete = () => {
 
           {/* Festival Cards Container — Flexbox for proper centering */}
           <div style={{
-            marginTop: 'clamp(24px, 15vh, 160px)',
-            marginBottom: 'clamp(24px, 8vh, 80px)',
+            marginTop: 'calc(var(--u) * 3)',
+            marginBottom: 'calc(var(--u) * 2)',
           }}>
             {/* TOP ROW: 2 cards centered */}
             <div style={{
               display: 'flex',
               justifyContent: 'center',
-              gap: 'clamp(16px, 4vw, 48px)',
-              marginBottom: 'clamp(16px, 4vw, 48px)',
+              gap: 'calc(var(--u) * 2.5)',
+              marginBottom: 'calc(var(--u) * 2.5)',
               flexWrap: 'wrap',
             }}>
               <button
@@ -2721,7 +2781,7 @@ const handleComplete = () => {
             <div style={{
               display: 'flex',
               justifyContent: 'center',
-              gap: 'clamp(16px, 4vw, 48px)',
+              gap: 'calc(var(--u) * 2.5)',
               flexWrap: 'wrap',
             }}>
               <button
@@ -2849,146 +2909,58 @@ const handleComplete = () => {
       {phase === STEPS.FESTIVALS_CHILD && (
         <div className="mis-festival-child-phase" style={{
           minHeight: 'var(--app-height, 100vh)',
-          paddingTop: '20px',
-          paddingBottom: '40px',
+          paddingTop: 'calc(var(--u) * 5.5)',
+          paddingBottom: 'calc(var(--u) * 15.5)',
+          boxSizing: 'border-box',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
         }}>
           <StoryProgressHeader discoveries={selectedFestivals.map(fest => ({ ...fest, image: fest.icon, name: fest.label }))} isChildMode={false} />
 
-          <div className="mis-festival-child-panel" style={{ maxWidth: '980px', margin: 'clamp(78px, 11vh, 116px) auto 0', padding: '0 20px' }}>
+          <div className="mis-festival-child-panel" style={{ width: '100%', maxWidth: 'calc(var(--u) * 70)', margin: '0 auto', padding: '0 20px' }}>
             {/* COMMON FESTIVALS (Top Row - 4 cards) */}
-            <div style={{ marginBottom: '20px' }}>
-              <h3 className="mis-festival-section-title" style={{
-                fontFamily: "'Baloo 2', cursive",
-                fontSize: '18px',
-                fontWeight: 700,
-                color: '#8B6914',
-                textAlign: 'center',
-                marginBottom: '12px',
-              }}>
+            <div style={{ marginBottom: 'calc(var(--u) * 1.2)' }}>
+              <h3 className="mis-festival-section-title" style={FEST_HEADING_STYLE}>
                 Most Common Festivals
               </h3>
               <div style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(4, 1fr)',
-                gap: 'clamp(18px, 2.6vw, 28px)',
-                marginBottom: '28px',
+                gap: 'calc(var(--u) * 1.6)',
+                marginBottom: 'calc(var(--u) * 1.6)',
               }}>
                 {COMMON_FESTIVALS.filter(Boolean).map((fest) => (
-                  (() => {
-                    const isSelected = selectedFestivals.some(f => f.id === fest.id);
-                    return (
-                  <button
+                  <FestCard
                     key={fest.id}
-                    onClick={(event) => toggleFestival(fest, event)}
-                    disabled={false}
-                    style={{
-                      width: '100%',
-                      maxWidth: '178px',
-                      justifySelf: 'center',
-                      minHeight: '116px',
-                      padding: '14px',
-                      borderRadius: '20px',
-                      border: isSelected ? '2px solid #FFC857' : '2px solid #E0E0E0',
-                      backgroundColor: isSelected ? '#FFF4D8' : '#F8F1E2',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      outline: 'none',
-                      WebkitTapHighlightColor: 'transparent',
-                      gap: '10px',
-                      transition: swappingOutFestId === fest.id ? 'none' : 'border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease',
-                      boxShadow: isSelected
-                        ? '0 0 0 4px rgba(255, 200, 87, 0.35), 0 6px 16px rgba(0, 0, 0, 0.12)'
-                        : '0 4px 12px rgba(0, 0, 0, 0.1)',
-                      transform: 'none',
-                      opacity: swappingOutFestId === fest.id ? 0.3 : 1,
-                      position: 'relative',
-                      animation: swappingOutFestId === fest.id ? 'swapOut 0.3s ease-out forwards' : 'none',
-                    }}
-                  >
-                    <img src={fest.icon} alt={fest.label} style={{ width: '46px', height: '46px', objectFit: 'contain' }} />
-                    <div style={{
-                      fontFamily: "'Baloo 2', cursive",
-                      fontSize: '15px',
-                      fontWeight: 700,
-                      color: '#654321',
-                    }}>
-                      {fest.label}
-                    </div>
-                  </button>
-                    );
-                  })()
+                    fest={fest}
+                    isSelected={selectedFestivals.some(f => f.id === fest.id)}
+                    isSwappingOut={swappingOutFestId === fest.id}
+                    onToggle={toggleFestival}
+                  />
                 ))}
               </div>
             </div>
 
             {/* OTHER FESTIVALS (Bottom Grid - 8 cards in 4x2) */}
             <div>
-              <h3 className="mis-festival-section-title" style={{
-                fontFamily: "'Baloo 2', cursive",
-                fontSize: '18px',
-                fontWeight: 700,
-                color: '#8B6914',
-                textAlign: 'center',
-                marginBottom: '12px',
-              }}>
+              <h3 className="mis-festival-section-title" style={FEST_HEADING_STYLE}>
                 More Festivals
               </h3>
               <div style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(4, 1fr)',
-                gap: 'clamp(16px, 2.4vw, 24px)',
-                marginBottom: '16px',
+                gap: 'calc(var(--u) * 1.6)',
+                marginBottom: 'calc(var(--u) * 1)',
               }}>
                 {OTHER_FESTIVALS.filter(Boolean).map((fest) => (
-                  (() => {
-                    const isSelected = selectedFestivals.some(f => f.id === fest.id);
-                    return (
-                  <button
+                  <FestCard
                     key={fest.id}
-                    onClick={(event) => toggleFestival(fest, event)}
-                    disabled={false}
-                    style={{
-                      width: '100%',
-                      maxWidth: '178px',
-                      justifySelf: 'center',
-                      minHeight: '116px',
-                      padding: '14px',
-                      borderRadius: '20px',
-                      border: isSelected ? '2px solid #FFC857' : '2px solid #E0E0E0',
-                      backgroundColor: isSelected ? '#FFF4D8' : '#F8F1E2',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      outline: 'none',
-                      WebkitTapHighlightColor: 'transparent',
-                      gap: '10px',
-                      transition: swappingOutFestId === fest.id ? 'none' : 'border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease',
-                      boxShadow: isSelected
-                        ? '0 0 0 4px rgba(255, 200, 87, 0.35), 0 6px 16px rgba(0, 0, 0, 0.12)'
-                        : '0 4px 12px rgba(0, 0, 0, 0.1)',
-                      transform: 'none',
-                      opacity: swappingOutFestId === fest.id ? 0.3 : 1,
-                      position: 'relative',
-                      animation: swappingOutFestId === fest.id ? 'swapOut 0.3s ease-out forwards' : 'none',
-                    }}
-                  >
-                    <img src={fest.icon} alt={fest.label} style={{ width: '46px', height: '46px', objectFit: 'contain' }} />
-                    <div style={{
-                      fontFamily: "'Baloo 2', cursive",
-                      fontSize: '15px',
-                      fontWeight: 700,
-                      color: '#654321',
-                    }}>
-                      {fest.label}
-                    </div>
-                  </button>
-                    );
-                  })()
+                    fest={fest}
+                    isSelected={selectedFestivals.some(f => f.id === fest.id)}
+                    isSwappingOut={swappingOutFestId === fest.id}
+                    onToggle={toggleFestival}
+                  />
                 ))}
               </div>
             </div>
@@ -3088,11 +3060,11 @@ const handleComplete = () => {
                 label: 'Language',
                 wide: true,
                 custom: (
-                  <div style={{ display: 'flex', gap: 'clamp(16px, 4vw, 48px)', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', gap: 'calc(var(--u) * 3.5)', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center' }}>
                     {selectedLanguages.map(lang => (
-                      <div key={lang.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
-                        <img src={lang?.icon} alt={lang?.label} style={{ width: 'clamp(48px, 8vw, 80px)', height: 'clamp(48px, 8vw, 80px)', objectFit: 'contain' }} />
-                        <div style={{ fontFamily: "'Baloo 2', cursive", fontSize: '16px', fontWeight: 700, color: '#3e2723', textAlign: 'center' }}>{lang?.label}</div>
+                      <div key={lang.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'calc(var(--u) * 0.5)' }}>
+                        <img src={lang?.icon} alt={lang?.label} style={{ width: 'calc(var(--u) * 5)', height: 'calc(var(--u) * 5)', objectFit: 'contain' }} />
+                        <div style={{ fontFamily: "'Baloo 2', cursive", fontSize: 'max(13px, calc(var(--u) * 1.6))', fontWeight: 700, color: '#3e2723', textAlign: 'center' }}>{lang?.label}</div>
                       </div>
                     ))}
                   </div>
@@ -3103,11 +3075,11 @@ const handleComplete = () => {
                 label: 'Festivals',
                 wide: true,
                 custom: (
-                  <div style={{ display: 'flex', gap: 'clamp(10px, 2.5vw, 20px)', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', gap: 'calc(var(--u) * 1.8)', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center' }}>
                     {selectedFestivals.map(fest => (
-                      <div key={fest.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
-                        <img src={fest?.icon} alt={fest?.label} style={{ width: 'clamp(38px, 6vw, 56px)', height: 'clamp(38px, 6vw, 56px)', objectFit: 'contain' }} />
-                        <div style={{ fontFamily: "'Baloo 2', cursive", fontSize: '14px', fontWeight: 700, color: '#3e2723', textAlign: 'center', whiteSpace: 'nowrap' }}>{fest?.label}</div>
+                      <div key={fest.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'calc(var(--u) * 0.5)' }}>
+                        <img src={fest?.icon} alt={fest?.label} style={{ width: 'calc(var(--u) * 3.6)', height: 'calc(var(--u) * 3.6)', objectFit: 'contain' }} />
+                        <div style={{ fontFamily: "'Baloo 2', cursive", fontSize: 'max(12px, calc(var(--u) * 1.4))', fontWeight: 700, color: '#3e2723', textAlign: 'center', whiteSpace: 'nowrap' }}>{fest?.label}</div>
                       </div>
                     ))}
                   </div>

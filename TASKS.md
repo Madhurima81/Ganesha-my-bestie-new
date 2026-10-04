@@ -186,6 +186,7 @@ Before every task, Claude Code must:
 - [x] T47 · InnerMandala — earned-symbol size increased ~33% (7.2%/36px → 9.6%/48px max) and subtitle/hint text repositioned below the flower (was overlapping the lowest petal) — confirmed via DOM measurement, mobile breakpoint updated to match
 - [x] T48 · CleanGameWelcomeScreen / InnerMandala — nudged avatar/monkey slot up 6px total via `.mandala-avatar-slot`
 - [~] T20 · CSS media-queries audit — Zone 1 (Symbol Mountain) done: phone-landscape (915×412 / 640×360) audit + fixes in 3 shared components (SymbolSidebar, ZoneWelcome, OpeningModal) via new `@media (max-height: 480px)` blocks; verified in-browser on all 4 SM scenes (Modak, Pond, Symbol, Sacred Assembly). Portrait out of scope (rotate overlay). SceneStage NOT used by SM scenes — see DECISIONS.md #7. Zones 2–3 still pending.
+- [~] T20 (Zone 3, My Indian Story) · iPad-size pass 2026-10-04 — 1024×670 / 1133×744 (mini) / 1376×1032 (Pro 13): map screens, Language guess, Festival guess, Language choice, final compare card all moved to the `--u` unit. Final compare card not yet re-checked by eye. Family Tree, Favorite Food, Dreams still pending.
 - [~] T52 · Mobile phone adaptation (13 live scenes) — Step 1 gameplay chrome foundation APPLIED + committed on staging (1dfbe94f, 2026-10-01): Home removed from the 13 scenes, Zone sole top-left (`variant="gameplay"`), Voice/Replay 60px hit + 42/40px visible, canonical phone breakpoint (500px). Verified: shared chrome measured at 667×375 / 844×390 / 932×430 + eyeballed in GameTestHarness. NOT yet verified in a real scene on device; Replay-vs-modal z-order unchecked in-app. Step 2 (Wisdom button + drawer, reuse useSidebarPause, generic collectionTarget) NOT started — do not merge/ship Step 1 before it. Details: DECISIONS.md 2026-10-01.
 - [ ] T49 · CleanGameWelcomeScreen (returning-user "Welcome Back / Continue Adventure" screen) — short-landscape (≤412px h) vertical overflow: "Continue Adventure" + Home / Switch Explorer / Start Over buttons sit below the fold, page scrolls. Flagged and deferred by TWO separate 2026-09-02 sweeps (Zone 1 CSS pilot + pre-Zone-1 onboarding). Returning families hit this every session — needs its own `@media (max-height: 480px)` pass (same pattern as ParentGate / ProfileSelector). Do before wider beta.
 - [ ] T50 · Marketing landing page (`src/pages/LandingPage.jsx`, `?view=landing`) — no nav menu yet (hamburger removed until it does something). Add the trigger + a real menu together before wider launch.
@@ -387,7 +388,7 @@ Before every task, Claude Code must:
 | 10 | family-tree | Familytreegame | [ ] | [ ] | [ ] |
 | 11 | favorite-food | Favoritefoodgame | [ ] | [ ] | [ ] |
 | 12 | dreams-wishes | ObstacleRemoverGame | [ ] | [ ] | [ ] |
-| 13 | my-indian-story | MyIndianStoryGame | [ ] | [ ] | [ ] |
+| 13 | my-indian-story | MyIndianStoryGame | [ ] | [~] | [ ] |
 
 ---
 
