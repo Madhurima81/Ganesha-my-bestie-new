@@ -4,6 +4,8 @@ import SyllableHighlight from '../../shared/SyllableHighlight';
 import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
 import useRepeatedHintCycle from '../../../../lib/hooks/useRepeatedHintCycle';
 import usePausableTimers from '../../../../lib/hooks/usePausableTimers';
+import { getLineCue } from '../../../../lib/config/content/voiceCues';
+import { getSyllablePath } from '../../../../lib/config/content/voiceGuidance';
 import './VakratundaRescueGame.css';
 
 import frogSwim from './assets/images/vakratunda/frog-baby.webp';
@@ -34,7 +36,7 @@ const FAMILY = { x: 91.08, y: 52.71, w: 14 };
 const FAMILY_WIN_RADIUS = 12;   // how close counts as "reached the family"
 const GRAB_RADIUS = 15;         // must press near the frog to pick it up
 const TRAIL_MIN_STEP = 1.0;     // ignore micro jitter when drawing the wake
-const TRAIL_LIMIT = 200;        // cap wake points so the polyline stays cheap
+const TRAIL_LIMIT = 600;        // above this, thin the oldest points (never truncate the start)
 const BLOCK_SFX_COOLDOWN_MS = 500;   // throttle the soft "nope" bump SFX
 const EDGE = { minX: 3, maxX: 96, minY: 6, maxY: 93 };
 
@@ -57,9 +59,9 @@ const DEFAULT_WATER_POLY = [
   { x: 16.68, y: 64.51 }, { x: 21.76, y: 65.48 }, { x: 27.14, y: 64.79 }, { x: 32.42, y: 66.87 },
   { x: 37.5, y: 69.37 }, { x: 42.28, y: 69.51 }, { x: 42.98, y: 60.21 }, { x: 45.07, y: 55.62 },
   { x: 49.05, y: 52.29 }, { x: 55.33, y: 53.26 }, { x: 60.21, y: 57.85 }, { x: 66.38, y: 63.54 },
-  { x: 68.28, y: 70.62 }, { x: 66.48, y: 83.95 }, { x: 90.39, y: 96.86 }, { x: 99.55, y: 68.12 },
-  { x: 97.26, y: 50.21 }, { x: 88.1, y: 47.43 }, { x: 80.23, y: 51.04 }, { x: 74.25, y: 52.36 },
-  { x: 67.78, y: 51.32 }, { x: 63.69, y: 49.38 }, { x: 59.71, y: 48.82 }, { x: 56.32, y: 44.73 },
+  { x: 68.28, y: 70.62 }, { x: 66.48, y: 83.95 }, { x: 87.31, y: 85.74 }, { x: 94.82, y: 71.15 },
+  { x: 98.18, y: 51.46 }, { x: 88.1, y: 47.43 }, { x: 80.23, y: 51.04 }, { x: 74.25, y: 52.36 },
+  { x: 68.72, y: 52.83 }, { x: 63.68, y: 51.04 }, { x: 59.62, y: 48.43 }, { x: 55.57, y: 46.91 },
   { x: 53.93, y: 39.24 }, { x: 51.44, y: 39.45 }, { x: 49.95, y: 45.49 }, { x: 45.77, y: 46.88 },
   { x: 39.09, y: 48.27 }, { x: 33.66, y: 49.38 }, { x: 23.85, y: 43.82 }, { x: 22.76, y: 33.69 },
   { x: 15.59, y: 34.11 }, { x: 6.82, y: 33.69 }, { x: 3.34, y: 58.54 }, { x: 9.71, y: 61.32 },
@@ -115,6 +117,83 @@ function findNearbyOpening(from, obstacles, area, familyX) {
   return best;
 }
 
+// Route-aware hint: BFS over a coarse grid of cells the frog may actually enter
+// (inside the channel, outside every obstacle — the same rules the drag uses),
+// from the frog to the family. Returns the path as points, or [] if none.
+// This is what the stuck hint follows, so it points along the real way through
+// the reeds/rocks instead of at whatever clear water happens to be nearest.
+const ROUTE_CELL = 2;
+function findRoute(from, to, obstacles, area) {
+  const n = Math.ceil(100 / ROUTE_CELL);
+  const toCell = (p) => ({
+    cx: clamp(Math.round(p.x / ROUTE_CELL), 0, n - 1),
+    cy: clamp(Math.round(p.y / ROUTE_CELL), 0, n - 1),
+  });
+  const center = (cx, cy) => ({ x: cx * ROUTE_CELL, y: cy * ROUTE_CELL });
+  const walkable = (cx, cy) => {
+    const p = center(cx, cy);
+    return isInWaterArea(p, area) && !isPointInsideObstacle(p, obstacles);
+  };
+  const idx = (cx, cy) => cy * n + cx;
+  const start = toCell(from);
+  // The frog may sit a hair off a walkable cell centre — start from the
+  // nearest walkable cell within 2 cells.
+  let s = null;
+  for (let r = 0; r <= 2 && !s; r += 1) {
+    for (let dy = -r; dy <= r && !s; dy += 1) {
+      for (let dx = -r; dx <= r && !s; dx += 1) {
+        const cx = start.cx + dx;
+        const cy = start.cy + dy;
+        if (cx >= 0 && cy >= 0 && cx < n && cy < n && walkable(cx, cy)) s = { cx, cy };
+      }
+    }
+  }
+  if (!s) return [];
+  const goal = toCell(to);
+  const prev = new Map([[idx(s.cx, s.cy), -1]]);
+  const queue = [s];
+  let end = null;
+  for (let qi = 0; qi < queue.length; qi += 1) {
+    const cur = queue[qi];
+    if (Math.abs(cur.cx - goal.cx) <= 1 && Math.abs(cur.cy - goal.cy) <= 1) { end = cur; break; }
+    for (let dy = -1; dy <= 1; dy += 1) {
+      for (let dx = -1; dx <= 1; dx += 1) {
+        if (!dx && !dy) continue;
+        const cx = cur.cx + dx;
+        const cy = cur.cy + dy;
+        if (cx < 0 || cy < 0 || cx >= n || cy >= n) continue;
+        const k = idx(cx, cy);
+        if (prev.has(k) || !walkable(cx, cy)) continue;
+        prev.set(k, idx(cur.cx, cur.cy));
+        queue.push({ cx, cy });
+      }
+    }
+  }
+  if (!end) return [];
+  const route = [];
+  for (let k = idx(end.cx, end.cy); k !== -1; k = prev.get(k)) {
+    route.push(center(k % n, Math.floor(k / n)));
+  }
+  return route.reverse();
+}
+
+// Point `dist` units along a route (clamped to its end).
+function pointAlongRoute(route, dist) {
+  let left = dist;
+  for (let i = 1; i < route.length; i += 1) {
+    const seg = distance(route[i - 1], route[i]);
+    if (seg >= left) {
+      const t = seg ? left / seg : 0;
+      return {
+        x: route[i - 1].x + (route[i].x - route[i - 1].x) * t,
+        y: route[i - 1].y + (route[i].y - route[i - 1].y) * t,
+      };
+    }
+    left -= seg;
+  }
+  return route[route.length - 1];
+}
+
 const DEFAULT_OBSTACLES = [
   {
     id: 'stone',
@@ -165,24 +244,13 @@ function cloneObstacles() {
   }));
 }
 
-// X thresholds (in %) that light va / kra / tun as the frog passes them.
-// 'da' lights on actually reaching the family, not just an X line.
-// Derived from the obstacles each syllable is meant to mark — never a
-// hand-picked line — so a threshold can't end up sitting inside the very
-// hitbox it's supposed to be past. 'reeds' + 'reeds2' are one checkpoint (the
-// reed cluster). Order matches how the frog actually meets them swimming
-// right: stone -> reed cluster -> logpile.
-const BAND_CHECKPOINTS = [['stone'], ['reeds', 'reeds2'], ['logpile']];
-const BAND_CLEAR_MARGIN = 6; // % past the obstacle's outer edge — clear water, not a graze
+// X thresholds (in %) that light va / kra / tun as the frog passes 25% / 50% /
+// 75% of the way from the start bay to the family. 'da' (100%) lights on
+// actually reaching the family, not just an X line.
+const BAND_FRACTIONS = [0.25, 0.5, 0.75];
 
-function computeBandsX(obstacles) {
-  return BAND_CHECKPOINTS.map((ids) => {
-    const edge = Math.max(...ids.map((id) => {
-      const obstacle = obstacles.find((o) => o.id === id);
-      return obstacle.hit.x + obstacle.hit.rx;
-    }));
-    return edge + BAND_CLEAR_MARGIN;
-  });
+function computeBandsX(startX, familyX) {
+  return BAND_FRACTIONS.map((f) => Number((startX + (familyX - startX) * f).toFixed(2)));
 }
 
 function isPointInsideObstacle(point, obstacles) {
@@ -215,6 +283,18 @@ export default function VakratundaRescueGame({
   isPaused = false,
 }) {
   usePreloadPoses(POSE_ASSETS);
+  // Warm the syllable MP3s so the first 'va' plays the instant it lights —
+  // playSyllable builds a fresh Audio on demand, and an uncached fetch/decode
+  // was the lateness.
+  useEffect(() => {
+    SYLLABLES.forEach((syl) => {
+      const path = getSyllablePath('vakratunda', syl);
+      if (!path) return;
+      const warm = new Audio(path);
+      warm.preload = 'auto';
+      warm.load();
+    });
+  }, []);
   const { playVoice: playSceneLine, playSfx, playSyllable, playWord, stopVoice } = voiceGuidance;
 
   const [phase, setPhase] = useState('intro');
@@ -227,7 +307,7 @@ export default function VakratundaRescueGame({
   const [blockPulse, setBlockPulse] = useState(false);
   const [familyBounce, setFamilyBounce] = useState(false);
   const [obstacles, setObstacles] = useState(() => cloneObstacles());
-  const [bandsX, setBandsX] = useState(() => computeBandsX(DEFAULT_OBSTACLES));
+  const [bandsX, setBandsX] = useState(() => computeBandsX(START_POS.x, FAMILY.x));
   const [startPos, setStartPos] = useState(START_POS);   // frog start / reset spot
   const [frogW, setFrogW] = useState(FROG_W);            // frog width %
   const [familyPoint, setFamilyPoint] = useState({ x: FAMILY.x, y: FAMILY.y });
@@ -483,7 +563,8 @@ export default function VakratundaRescueGame({
     setIntroVoStarted(false);
     const markIntroVoDone = () => { setIntroVoDone(true); setIntroVoStarted(true); };
     if (playSceneLine) {
-      playSceneLine('scene10_vak_intro', markIntroVoDone, { onStart: () => setIntroVoStarted(true) });
+      // The hand is cued to the action word ("Drag") of the line, not a guessed delay.
+      playSceneLine('scene10_vak_intro', markIntroVoDone, { cue: getLineCue('scene10_vak_intro', () => setIntroVoStarted(true)) });
     } else {
       markIntroVoDone();
     }
@@ -521,7 +602,7 @@ export default function VakratundaRescueGame({
     // a short setup clause before the action word, so this uses GMB gesture-
     // timing preset B (short setup before action): ~700-900ms after VO start,
     // aimed at when "Drag" is spoken.
-    const t = pausableAfter(750, () => {
+    const t = pausableAfter(100, () => {
       introGestureShownRef.current = true;
       setShowIntroGesture(true);
     });
@@ -598,7 +679,11 @@ export default function VakratundaRescueGame({
       if (tp.length === 0) return [prev, point];
       if (distance(tp[tp.length - 1], point) < TRAIL_MIN_STEP) return tp;
       const next = [...tp, point];
-      return next.length > TRAIL_LIMIT ? next.slice(next.length - TRAIL_LIMIT) : next;
+      if (next.length <= TRAIL_LIMIT) return next;
+      // Thin the OLDER half (every other point) instead of chopping the start
+      // off — the whole path stays visible, just with fewer vertices behind it.
+      const half = Math.floor(next.length / 2);
+      return [...next.slice(0, half).filter((_, i) => i % 2 === 0), ...next.slice(half)];
     });
 
     // Forward progress is monotonic — backing up never un-lights a syllable.
@@ -706,8 +791,13 @@ export default function VakratundaRescueGame({
   // stuck. null if the frog is fully boxed in (bad layout — fix in debug).
   // Shown even while still dragging/pushing against the blocker, so the
   // response feels immediate instead of waiting for the child to let go.
+  const hintRoute = (isPlaying && stuckLevel >= 1)
+    ? findRoute(frogPos, familyPoint, obstacles, waterPoly)
+    : [];
   const openingPoint = (isPlaying && stuckLevel >= 1)
-    ? findNearbyOpening(frogPos, obstacles, waterPoly, familyPoint.x)
+    ? (hintRoute.length > 1
+      ? pointAlongRoute(hintRoute, 12)
+      : findNearbyOpening(frogPos, obstacles, waterPoly, familyPoint.x))
     : null;
   const showShimmer = !!openingPoint;
   // Straight-line interpolation between the frog and the opening could, in
@@ -716,10 +806,13 @@ export default function VakratundaRescueGame({
   // lesson. Only show the arc if every dot on it is genuinely valid water.
   const arcDots = (() => {
     if (!showShimmer || stuckLevel < 3) return [];
-    const candidates = [0.34, 0.6, 0.85].map((t) => ({
-      x: frogPos.x + (openingPoint.x - frogPos.x) * t,
-      y: frogPos.y + (openingPoint.y - frogPos.y) * t,
-    }));
+    // Follow the route (not a straight line) so the ripples bend around blockers.
+    const candidates = hintRoute.length > 1
+      ? [4, 8, 12].map((d) => pointAlongRoute(hintRoute, d))
+      : [0.34, 0.6, 0.85].map((t) => ({
+        x: frogPos.x + (openingPoint.x - frogPos.x) * t,
+        y: frogPos.y + (openingPoint.y - frogPos.y) * t,
+      }));
     const allClear = candidates.every((p) => (
       isInWaterArea(p, waterPoly) && !isPointInsideObstacle(p, obstacles)
     ));
@@ -1306,7 +1399,7 @@ export default function VakratundaRescueGame({
               <button
                 type="button"
                 className="vak-debug-reset"
-                onClick={() => setBandsX(computeBandsX(obstacles))}
+                onClick={() => setBandsX(computeBandsX(startPos.x, familyPoint.x))}
               >
                 Reset Bands
               </button>

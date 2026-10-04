@@ -22,9 +22,9 @@ import marshArt from '../../zones/symbol-mountain/scenes/modak/assets/images/fj-
 import marshClumpArt from '../../zones/symbol-mountain/scenes/modak/assets/images/fj-marsh-clump.webp';
 import flowerPink from '../../zones/symbol-mountain/scenes/modak/assets/images/fj-flower-coral.webp';
 import flowerCream from '../../zones/symbol-mountain/scenes/modak/assets/images/fj-flower-cream.webp';
-import emotionAngry from '../../zones/symbol-mountain/scenes/modak/assets/images/emotion-angry-game3.webp';
-import emotionSad from '../../zones/symbol-mountain/scenes/modak/assets/images/emotion-sad-game3.webp';
-import emotionWorried from '../../zones/symbol-mountain/scenes/modak/assets/images/emotion-worried-game3.webp';
+import emotionAngry from '../../zones/symbol-mountain/scenes/modak/assets/images/emotion-angry-game3.png';
+import emotionSad from '../../zones/symbol-mountain/scenes/modak/assets/images/emotion-sad-game3.png';
+import emotionWorried from '../../zones/symbol-mountain/scenes/modak/assets/images/emotion-worried-game3.png';
 import ganeshaArt from '../../zones/symbol-mountain/scenes/modak/assets/images/ganesha-game3-new.webp';
 import bellySymbol from '../../zones/symbol-mountain/shared/images/icons/symbol-belly-new.webp';
 

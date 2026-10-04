@@ -7,9 +7,17 @@ import { KidsDraggable, KidsDropZone } from '../../../../lib/components/interact
 // Drop zone = the visible circle. No image sizing, no container offset.
 // Food positions and plate positions are both full-screen % values.
 
-const FOOD_SIZE = 132;   // px (further reduced)
-const PLATE_WIDTH = 264;   // px (further reduced)
-const PLATE_HEIGHT = 116;   // px (further reduced)
+// ?hitzones outlines the real drop box of every plate.
+const SHOW_HIT_ZONES = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('hitzones');
+
+// Sizes follow the screen so the three plate zones never overlap or run off the bottom:
+// 264x116 / 132 at 1280x720 (the old fixed values), smaller on phones. Plates sit 17% of the
+// width and 13% of the height apart; this width keeps the ovals clear of each other at every
+// tested size (667x375, 812x375, 1024x768, 768x1024).
+const PLATE_WIDTH = 'min(21vw, 36.7vh)';
+const PLATE_HEIGHT = `calc(${PLATE_WIDTH} * 0.44)`;
+const FOOD_SIZE = 'clamp(84px, 18.3vh, 132px)';
+const PLATE_FOOD_WIDTH = '60.6%'; // of the plate zone (160px on a 264px zone)
 
 const Wish2PlateDropGame = ({
   sceneState,
@@ -28,7 +36,36 @@ const Wish2PlateDropGame = ({
   cowImg,
   mouseImg,
   peacockImg,
+  onWish2Miss,
 }) => {
+  // A drag that ends off every plate (or on a full one) is a gentle miss: the food glides back
+  // to where it started and a soft sound plays. KidsDraggable fires the plate's drop first and
+  // onDragEnd after, so "no plate took it" = miss. Release point comes from a capture listener.
+  const droppedRef = React.useRef(false);
+  const releasePointRef = React.useRef(null);
+  const foodWrapRefs = React.useRef({});
+  React.useEffect(() => {
+    const onUp = (e) => { releasePointRef.current = { x: e.clientX, y: e.clientY }; };
+    document.addEventListener('pointerup', onUp, true);
+    return () => document.removeEventListener('pointerup', onUp, true);
+  }, []);
+  const handleFoodDragEnd = (foodKey) => {
+    const hit = droppedRef.current;
+    droppedRef.current = false;
+    if (hit) return;
+    onWish2Miss?.();
+    const wrap = foodWrapRefs.current[foodKey];
+    const img = wrap?.querySelector('img');
+    const up = releasePointRef.current;
+    if (!wrap || !img || !up || !img.animate) return;
+    const r = wrap.getBoundingClientRect();
+    const dx = up.x - (r.left + r.width / 2);
+    const dy = up.y - (r.top + r.height / 2);
+    img.animate(
+      [{ transform: `translate(${dx}px, ${dy}px) scale(1.08)` }, { transform: 'translate(0, 0) scale(1)' }],
+      { duration: 420, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' },
+    );
+  };
   // One-time teaching demo — once the child starts a real drag, it must
   // never auto-reappear (a child who understood immediately shouldn't keep
   // seeing the hand just because wish2Taps is still 0).
@@ -108,13 +145,14 @@ const Wish2PlateDropGame = ({
           return (
             <div
               key={foodKey}
+              ref={(el) => { foodWrapRefs.current[foodKey] = el; }}
               style={{
                 position: 'absolute',
                 left: pos.left,
                 top: pos.top,
                 transform: `translate(calc(-50% + ${inwardX}px), -50%)`,
-                width: `${FOOD_SIZE}px`,
-                height: `${FOOD_SIZE}px`,
+                width: FOOD_SIZE,
+                height: FOOD_SIZE,
                 opacity: isAvailable ? 1 : 0,
                 pointerEvents: isAvailable ? 'auto' : 'none',
                 transition: 'opacity 0.3s ease',
@@ -125,6 +163,7 @@ const Wish2PlateDropGame = ({
                 id={`wish2-food-${foodKey}`}
                 data={{ type: 'wish2-food', foodKey }}
                 disabled={!isAvailable}
+                onDragEnd={() => handleFoodDragEnd(foodKey)}
                 onDragStart={() => {
                   setTeachingGestureDismissed(true);
                   markInteraction();
@@ -160,18 +199,19 @@ const Wish2PlateDropGame = ({
             accepts="wish2-food"
             disabled={isFilled}
             onDrop={({ data }) => {
-              if (!isFilled) handleWish2FoodDrop(index, data?.foodKey);
+              if (!isFilled) { droppedRef.current = true; handleWish2FoodDrop(index, data?.foodKey); }
             }}
             style={{
               position: 'absolute',
               left: WISH2_PLATE_POSITIONS[index]?.left || '50%',
               top: WISH2_PLATE_POSITIONS[index]?.top || '50%',
               transform: 'translate(-50%, -50%)',
-              width: `${PLATE_WIDTH}px`,
-              height: `${PLATE_HEIGHT}px`,
+              width: PLATE_WIDTH,
+              height: PLATE_HEIGHT,
               borderRadius: '50%',
-              background: 'transparent',
+              background: SHOW_HIT_ZONES ? 'rgba(233, 30, 99, 0.16)' : 'transparent',
               border: 'none',
+              outline: SHOW_HIT_ZONES ? '3px dashed #E91E63' : 'none',
               boxShadow: 'none',
               zIndex: 20,
               cursor: isFilled ? 'default' : 'pointer',
@@ -204,8 +244,9 @@ const Wish2PlateDropGame = ({
                 alt="Food on plate"
                 style={{
                   position: 'absolute',
-                  width: '160px',
-                  height: '160px',
+                  width: PLATE_FOOD_WIDTH,
+                  height: 'auto',
+                  aspectRatio: '1 / 1',
                   objectFit: 'contain',
                   top: '50%',
                   left: '50%',

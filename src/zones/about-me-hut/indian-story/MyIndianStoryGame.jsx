@@ -78,6 +78,9 @@ import dussehra_Icon from './assets/images/festivals/dussehra.webp';
 import rakhi_Icon from './assets/images/festivals/rakhi.webp';
 import modakImage from './assets/images/festivals/modak.webp';
 
+// ?hitzones outlines the real tap box of every button in the scene.
+const SHOW_HIT_ZONES = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('hitzones');
+
 // ─── STEP CONSTANTS ───────────────────────────────────────────────
 const STEPS = {
   OPENING: 'opening',
@@ -205,6 +208,26 @@ const PHASE1_LOCATIONS = [
   { name: 'Mumbai', icon: mumbaiIcon, x: 31, y: 54 },
   { name: 'Tamil Nadu', icon: tamilNaduIcon, x: 45, y: 80 },
 ];
+
+const PHASE1_ZONE_RADIUS = 7; // % of the map box, ellipse around each target
+
+// Where the lens circle sits inside the magnifying-glass image box (measured from the
+// 256px PNG's opaque lens). Used to turn the glass's top-left position into the lens centre.
+const MGLASS_LENS_FRACTION = { x: 0.43, y: 0.4 };
+
+const getMglassLensPercent = (percentX, percentY) => {
+  const img = typeof document !== 'undefined' ? document.querySelector('img[alt="Magnifying Glass"]') : null;
+  const glass = img?.parentElement;
+  const parent = glass?.parentElement;
+  if (!glass || !parent) return { x: percentX + 7, y: percentY + 7 };
+  const g = glass.getBoundingClientRect();
+  const p = parent.getBoundingClientRect();
+  if (!p.width || !p.height) return { x: percentX + 7, y: percentY + 7 };
+  return {
+    x: percentX + (g.width * MGLASS_LENS_FRACTION.x / p.width) * 100,
+    y: percentY + (g.height * MGLASS_LENS_FRACTION.y / p.height) * 100,
+  };
+};
 
 const HEART_POSITIONS = [
   { top: '20%', left: '15%' },
@@ -1460,9 +1483,15 @@ useEffect(() => {
 }, [phase, selectedRegion, selectedLanguages, selectedFestivals]);
 
   // Check location discovery
+  // percentX/percentY are the glass's top-left corner. The child aims the LENS, so
+  // test the lens centre (measured from the PNG: ~43% / 40% into the image box),
+  // not the corner. Zone = 7% radius ellipse around the target.
   const checkLocationDiscovery = useCallback((percentX, percentY) => {
+    const lens = getMglassLensPercent(percentX, percentY);
     PHASE1_LOCATIONS.forEach((loc, idx) => {
-      if (Math.abs(percentX - loc.x) < 7 && Math.abs(percentY - loc.y) < 7) {
+      const dx = lens.x - loc.x;
+      const dy = lens.y - loc.y;
+      if ((dx * dx + dy * dy) / (PHASE1_ZONE_RADIUS * PHASE1_ZONE_RADIUS) < 1) {
         discoverLocation(idx);
       }
     });
@@ -1720,6 +1749,9 @@ const handleComplete = () => {
   // ─── RENDER ───────────────────────────────────────────────────
   return (
     <div className="mis-wrapper">
+      {SHOW_HIT_ZONES && (
+        <style>{'.mis-wrapper button:not(:disabled):not(.mis-language-replay-btn), .mis-wrapper .mis-language-replay-btn:not(:disabled)::after { outline: 3px dashed #E91E63 !important; background-color: rgba(233, 30, 99, 0.16) !important; }'}</style>
+      )}
       <img src={bgImage} alt="Background" className="mis-background" />
       <ResumeCountdown value={countdownValue} />
       <ZoneBadgeButton variant="gameplay" zoneId="about-me-hut" onBack={() => {
@@ -2153,6 +2185,45 @@ const handleComplete = () => {
               zIndex={25}
             />
 
+            {SHOW_HIT_ZONES && (
+              <>
+                {/* Discovery zones exactly as checkLocationDiscovery tests them: an ellipse of PHASE1_ZONE_RADIUS (% of the map box) around each target */}
+                {PHASE1_LOCATIONS.map((loc) => (
+                  <div
+                    key={`hz-${loc.name}`}
+                    style={{
+                      position: 'absolute',
+                      left: `${loc.x - PHASE1_ZONE_RADIUS}%`,
+                      top: `${loc.y - PHASE1_ZONE_RADIUS}%`,
+                      width: `${PHASE1_ZONE_RADIUS * 2}%`,
+                      height: `${PHASE1_ZONE_RADIUS * 2}%`,
+                      borderRadius: '50%',
+                      outline: '3px dashed #E91E63',
+                      background: 'rgba(233, 30, 99, 0.16)',
+                      zIndex: 19,
+                      pointerEvents: 'none',
+                    }}
+                  />
+                ))}
+                {/* The point that is actually compared: the lens centre */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: `${getMglassLensPercent(parsePercent(mglassPosition.left, 20), parsePercent(mglassPosition.top, 30)).x}%`,
+                    top: `${getMglassLensPercent(parsePercent(mglassPosition.left, 20), parsePercent(mglassPosition.top, 30)).y}%`,
+                    width: 10,
+                    height: 10,
+                    marginLeft: -5,
+                    marginTop: -5,
+                    borderRadius: '50%',
+                    background: '#1565C0',
+                    zIndex: 30,
+                    pointerEvents: 'none',
+                  }}
+                />
+              </>
+            )}
+
             {/* Draggable Magnifying Glass using FreeDraggableItem */}
             <FreeDraggableItem
               id="magnifying-glass"
@@ -2436,13 +2507,13 @@ const handleComplete = () => {
             <StoryProgressHeader discoveries={selectedLanguages.map(lang => ({ ...lang, image: lang.icon, name: lang.label }))} isChildMode={false} />
           )}
 
-          <div className="mis-language-child-panel" style={{ maxWidth: '980px', margin: 'clamp(48px, 8vh, 86px) auto 0', padding: '0 20px', position: 'relative' }}>
+          <div className="mis-language-child-panel" style={{ maxWidth: '880px', margin: 'clamp(34px, 6vh, 62px) auto 0', padding: '0 20px', position: 'relative' }}>
             {/* Most Spoken At Home */}
-            <div style={{ marginBottom: '20px' }}>
-              <h3 style={{ fontFamily: "'Baloo 2', cursive", fontSize: '18px', fontWeight: 700, color: '#8B6914', textAlign: 'center', marginBottom: '12px' }}>
+            <div style={{ marginBottom: '12px' }}>
+              <h3 style={{ fontFamily: "'Baloo 2', cursive", fontSize: '18px', fontWeight: 700, color: '#8B6914', textAlign: 'center', marginBottom: '8px' }}>
                 Most Spoken At Home
               </h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'clamp(18px, 2.6vw, 28px)', marginBottom: '28px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'clamp(12px, 1.8vw, 20px)', marginBottom: '16px' }}>
                 {[
                   LANGUAGE_MAP['hindi'],
                   LANGUAGE_MAP['english'],
@@ -2458,10 +2529,10 @@ const handleComplete = () => {
                     disabled={false}
                     style={{
                       width: '100%',
-                      maxWidth: '170px',
+                      maxWidth: '150px',
                       justifySelf: 'center',
-                      minHeight: '106px',
-                      padding: '12px',
+                      minHeight: '94px',
+                      padding: '10px',
                       borderRadius: '20px',
                       border: isSelected ? `4px solid #FFD76A` : '2px solid #E0E0E0',
                       backgroundColor: isSelected ? '#FFFBE9' : '#F8F1E2',
@@ -2480,7 +2551,7 @@ const handleComplete = () => {
                     }}
                   >
                     {isSelected && <div style={{ fontSize: '18px', position: 'absolute', top: '8px', right: '12px', fontWeight: 'bold' }}>✓</div>}
-                    <img src={lang.icon} alt={lang.label} style={{ width: '42px', height: '42px', objectFit: 'contain' }} />
+                    <img src={lang.icon} alt={lang.label} style={{ width: '38px', height: '38px', objectFit: 'contain' }} />
                     <div style={{ fontFamily: "'Baloo 2', cursive", fontSize: '15px', fontWeight: 700, color: '#654321' }}>
                       {lang.label}
                     </div>
@@ -2496,10 +2567,10 @@ const handleComplete = () => {
 
             {/* More Languages */}
             <div>
-              <h3 style={{ fontFamily: "'Baloo 2', cursive", fontSize: '18px', fontWeight: 700, color: '#8B6914', textAlign: 'center', marginBottom: '12px' }}>
+              <h3 style={{ fontFamily: "'Baloo 2', cursive", fontSize: '18px', fontWeight: 700, color: '#8B6914', textAlign: 'center', marginBottom: '8px' }}>
                 More Languages
               </h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'clamp(16px, 2.4vw, 24px)', marginBottom: '16px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'clamp(12px, 1.8vw, 20px)', marginBottom: '10px' }}>
                 {[
                   LANGUAGE_MAP['gujarati'],
                   LANGUAGE_MAP['bengali'],
@@ -2519,10 +2590,10 @@ const handleComplete = () => {
                     disabled={false}
                     style={{
                       width: '100%',
-                      maxWidth: '170px',
+                      maxWidth: '150px',
                       justifySelf: 'center',
-                      minHeight: '106px',
-                      padding: '12px',
+                      minHeight: '94px',
+                      padding: '10px',
                       borderRadius: '20px',
                       border: isSelected ? `4px solid #FFD76A` : '2px solid #E0E0E0',
                       backgroundColor: isSelected ? '#FFFBE9' : '#F8F1E2',
@@ -2541,7 +2612,7 @@ const handleComplete = () => {
                     }}
                   >
                     {isSelected && <div style={{ fontSize: '18px', position: 'absolute', top: '8px', right: '12px', fontWeight: 'bold' }}>✓</div>}
-                    <img src={lang.icon} alt={lang.label} style={{ width: '42px', height: '42px', objectFit: 'contain' }} />
+                    <img src={lang.icon} alt={lang.label} style={{ width: '38px', height: '38px', objectFit: 'contain' }} />
                     <div style={{ fontFamily: "'Baloo 2', cursive", fontSize: '15px', fontWeight: 700, color: '#654321' }}>
                       {lang.label}
                     </div>
@@ -2586,8 +2657,6 @@ const handleComplete = () => {
                 style={{
                   display: 'block',
                   margin: '18px auto 0',
-                  minWidth: '240px',
-                  minHeight: '68px',
                 }}
               >
                 Continue

@@ -677,3 +677,586 @@
     right: 12px;
   }
 }
+
+/* =========================================================
+   FUN RIVER FINALE — boat parade + three floating choices
+   Overrides the old worksheet-like slot grid / dark tray.
+   ========================================================= */
+.srf-title-banner { margin-top: 8px; }
+.srf-subtitle { display: none; }
+.srf-progress-badge {
+  top: 62px;
+  right: 24px;
+  padding: 6px 12px;
+  min-width: 58px;
+  background: rgba(255, 248, 214, 0.88);
+}
+
+.srf-river-journey {
+  position: absolute;
+  inset: 0;
+  padding: 0;
+  pointer-events: none;
+}
+
+.srf-boat-parade {
+  position: absolute;
+  inset: 13% 18% 28% 18%;
+}
+
+.srf-journey-boat {
+  position: absolute;
+  width: clamp(76px, 9vw, 118px);
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  filter: drop-shadow(0 5px 7px rgba(31, 80, 120, 0.22));
+  animation: srfJourneyArrive 0.55s cubic-bezier(.2,.9,.25,1.15) both,
+             srfJourneyBob 3.2s 0.55s ease-in-out infinite;
+}
+.srf-journey-boat .boat-svg { width: 100%; }
+.srf-journey-boat .srf-boat-label {
+  font-size: clamp(8px, 1vw, 12px);
+  margin-top: -6px;
+}
+.srf-journey-boat.is-chanting {
+  animation: srfChantBoat 0.6s ease-out !important;
+  filter: brightness(1.14) drop-shadow(0 0 14px rgba(255,226,130,.78));
+}
+
+/* One shared completion beat: all 8 boats bob + sparkle together after the
+   8th boat lands, before the whole-Shloka recap begins. A tiny stagger per
+   boat keeps it feeling like a parade greeting, not a synchronized flash. */
+.srf-journey-boat.is-all-celebrate {
+  animation: srfChantBoat 0.7s ease-in-out !important;
+  filter: brightness(1.1) drop-shadow(0 0 10px rgba(255, 226, 130, 0.55));
+}
+.srf-journey-boat.is-all-celebrate.srf-journey-1 { animation-delay: 0.04s !important; }
+.srf-journey-boat.is-all-celebrate.srf-journey-2 { animation-delay: 0.08s !important; }
+.srf-journey-boat.is-all-celebrate.srf-journey-3 { animation-delay: 0.12s !important; }
+.srf-journey-boat.is-all-celebrate.srf-journey-4 { animation-delay: 0.16s !important; }
+.srf-journey-boat.is-all-celebrate.srf-journey-5 { animation-delay: 0.2s !important; }
+.srf-journey-boat.is-all-celebrate.srf-journey-6 { animation-delay: 0.24s !important; }
+.srf-journey-boat.is-all-celebrate.srf-journey-7 { animation-delay: 0.28s !important; }
+
+/* A loose zig-zag feels like a fleet travelling upstream, not answer boxes. */
+.srf-journey-0 { left: 37%; top: 88%; }
+.srf-journey-1 { left: 58%; top: 78%; }
+.srf-journey-2 { left: 43%; top: 66%; }
+.srf-journey-3 { left: 59%; top: 54%; }
+.srf-journey-4 { left: 42%; top: 42%; }
+.srf-journey-5 { left: 57%; top: 30%; }
+.srf-journey-6 { left: 46%; top: 18%; }
+.srf-journey-7 { left: 53%; top: 7%; }
+
+.srf-next-ripple {
+  position: absolute;
+  width: clamp(72px, 9vw, 112px);
+  height: clamp(32px, 4vw, 50px);
+  transform: translate(-50%, -50%);
+}
+.srf-ripple-0 { left: 37%; top: 76%; }
+.srf-ripple-1 { left: 58%; top: 66%; }
+.srf-ripple-2 { left: 43%; top: 56%; }
+.srf-ripple-3 { left: 59%; top: 46%; }
+.srf-ripple-4 { left: 42%; top: 36%; }
+.srf-ripple-5 { left: 57%; top: 26%; }
+.srf-ripple-6 { left: 46%; top: 16%; }
+.srf-ripple-7 { left: 53%; top: 6%; }
+.srf-ripple-ring {
+  position: absolute;
+  inset: 0;
+  border: 3px solid rgba(255,249,218,.82);
+  border-radius: 50%;
+  box-shadow: 0 0 18px rgba(255,224,130,.45);
+  animation: srfDestinationRipple 1.7s ease-out infinite;
+}
+.srf-ripple-spark {
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  color: rgba(255,249,218,.95);
+  font-size: clamp(16px, 2vw, 24px);
+  animation: srfSparkFloat 1.7s ease-in-out infinite;
+}
+
+/* No footer: choices live on the water. */
+.srf-floating-choices {
+  position: absolute;
+  left: 7%;
+  right: 7%;
+  bottom: 10%;
+  height: 24%;
+  z-index: 16;
+  pointer-events: none;
+}
+.srf-floating-choices.is-listening { opacity: .72; }
+.srf-choice-prompt {
+  position: absolute;
+  left: 50%; top: 0;
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(255,248,220,.9);
+  box-shadow: 0 4px 12px rgba(45,76,110,.13);
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(11px, 1.6vw, 15px);
+  font-weight: 800;
+  color: #765025;
+  white-space: nowrap;
+}
+.srf-choice-prompt-title {
+  position: static;
+  display: inline-block;
+  transform: none;
+  margin-top: 5px;
+}
+.srf-choice-water { position: absolute; inset: 0; }
+.srf-floating-boat {
+  position: absolute;
+  top: 83%;
+  width: clamp(108px, 13vw, 158px);
+  transform: translate(-50%, -50%);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  pointer-events: auto;
+  touch-action: manipulation;
+  filter: drop-shadow(0 8px 8px rgba(28,76,112,.22));
+  animation: srfChoiceBob 2.8s ease-in-out infinite;
+}
+.srf-floating-boat:nth-child(2) { animation-delay: -.8s; }
+.srf-floating-boat:nth-child(3) { animation-delay: -1.5s; }
+.srf-floating-boat .boat-svg { width: 100%; }
+.srf-floating-boat .srf-boat-icon { width: 29%; top: 18%; }
+.srf-floating-boat .srf-boat-label {
+  margin-top: -8px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(255,248,225,.94);
+  color: #613b20;
+  text-shadow: none;
+  box-shadow: 0 3px 8px rgba(40,50,80,.12);
+  font-size: clamp(10px, 1.3vw, 14px);
+}
+.srf-choice-0 { left: 27%; top: 83%; }
+.srf-choice-1 { left: 50%; top: 86%; }
+.srf-choice-2 { left: 73%; top: 83%; }
+.srf-floating-boat:hover { filter: brightness(1.05) drop-shadow(0 10px 10px rgba(28,76,112,.25)); }
+.srf-floating-boat:disabled { cursor: default; }
+
+.srf-floating-boat.is-wrong {
+  animation: srfPlayfulWrong .58s ease;
+}
+.srf-floating-boat.is-sailing {
+  z-index: 30;
+  animation: srfSailAway .65s cubic-bezier(.2,.75,.25,1) forwards;
+}
+.srf-floating-boat.is-hint-group {
+  animation: srfChoiceHint 1.35s ease-in-out 2;
+}
+.srf-floating-boat.is-hint-final {
+  animation: srfFinalChoiceHint 1.25s ease-in-out infinite;
+}
+
+@keyframes srfJourneyArrive {
+  from { opacity: 0; transform: translate(-50%, 20%) scale(.72); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+@keyframes srfJourneyBob {
+  0%,100% { transform: translate(-50%, -50%) translateY(0) rotate(-1deg); }
+  50% { transform: translate(-50%, -50%) translateY(-4px) rotate(1deg); }
+}
+@keyframes srfDestinationRipple {
+  0% { opacity: .85; transform: scale(.72); }
+  100% { opacity: 0; transform: scale(1.35); }
+}
+@keyframes srfSparkFloat {
+  0%,100% { opacity: .65; transform: translate(-50%,-50%) scale(.9); }
+  50% { opacity: 1; transform: translate(-50%,-65%) scale(1.12); }
+}
+@keyframes srfChoiceBob {
+  0%,100% { transform: translate(-50%,-50%) translateY(0) rotate(-1.5deg); }
+  50% { transform: translate(-50%,-50%) translateY(-6px) rotate(1.5deg); }
+}
+@keyframes srfPlayfulWrong {
+  0%,100% { transform: translate(-50%,-50%); }
+  30% { transform: translate(-50%,-66%) rotate(-4deg); }
+  62% { transform: translate(-50%,-42%) rotate(4deg); }
+}
+@keyframes srfSailAway {
+  0% { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+  55% { opacity: 1; transform: translate(-50%,-115%) scale(.92) rotate(-2deg); }
+  100% { opacity: 0; transform: translate(-50%,-210%) scale(.72); }
+}
+@keyframes srfChoiceHint {
+  0%,100% { transform: translate(-50%,-50%) scale(1); }
+  50% { transform: translate(-50%,-58%) scale(1.035); }
+}
+@keyframes srfFinalChoiceHint {
+  0%,100% { transform: translate(-50%,-50%) scale(1); filter: drop-shadow(0 5px 8px rgba(255,214,102,.25)); }
+  50% { transform: translate(-50%,-62%) scale(1.09); filter: brightness(1.08) drop-shadow(0 0 18px rgba(255,214,102,.78)); }
+}
+
+@media (max-width: 700px) {
+  .srf-boat-parade { inset: 15% 9% 31% 9%; }
+  .srf-floating-choices { left: 2%; right: 2%; bottom: 9%; height: 25%; }
+  .srf-floating-boat { width: clamp(92px, 24vw, 126px); }
+  .srf-choice-0 { left: 24%; top: 82%; }
+  .srf-choice-1 { left: 50%; top: 86%; }
+  .srf-choice-2 { left: 76%; top: 82%; }
+  .srf-progress-badge { top: 54px; right: 10px; }
+}
+
+/* Finale symbol-boat flow: sound -> symbol -> boat choice -> word reveal. */
+.srf-intro-symbol {
+  position: absolute;
+  left: 50%;
+  top: 49%;
+  width: clamp(210px, 30vw, 310px);
+  height: clamp(210px, 30vw, 310px);
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 18;
+  pointer-events: none;
+  animation: srfIntroSymbolEnter 0.45s ease-out both;
+}
+
+.srf-intro-symbol-img {
+  position: relative;
+  width: 74%;
+  height: 74%;
+  object-fit: contain;
+  z-index: 2;
+  animation: srfIntroSymbolFloat 2s ease-in-out infinite;
+}
+
+.srf-intro-symbol-glow {
+  position: absolute;
+  width: 92%;
+  height: 92%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 249, 230, 0.8) 0%, rgba(255, 249, 230, 0.28) 52%, transparent 72%);
+  z-index: 1;
+}
+
+.srf-intro-ripple {
+  position: absolute;
+  left: 50%;
+  bottom: -15%;
+  width: 82%;
+  height: 20%;
+  transform: translateX(-50%);
+  border: 2px solid rgba(255, 255, 255, 0.58);
+  border-radius: 50%;
+  animation: srfIntroRipple 1.8s ease-out infinite;
+}
+
+.srf-choice-boats {
+  position: absolute;
+  left: 50%;
+  bottom: var(--srf-choice-bottom, 11%);
+  width: min(76%, 720px);
+  height: 170px;
+  transform: translateX(-50%);
+  z-index: 20;
+  pointer-events: none;
+}
+
+.srf-choice-boat {
+  position: absolute;
+  width: clamp(130px, 17vw, var(--srf-choice-width, 180px));
+  padding: 0;
+  margin: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.srf-choice-hit-outline {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  border: 2px dashed rgba(3, 169, 244, 0.88);
+  border-radius: 12px;
+  background: rgba(3, 169, 244, 0.08);
+  pointer-events: none;
+}
+
+.srf-choice-boat.srf-choice-0 { left: 27%; top: 3%; transform: translateX(-50%); }
+.srf-choice-boat.srf-choice-1 { left: 50%; top: 17%; transform: translateX(-50%); }
+.srf-choice-boat.srf-choice-2 { left: 73%; top: 3%; transform: translateX(-50%); }
+
+.srf-boat-art {
+  position: relative;
+  width: 100%;
+}
+
+.srf-neutral-boat {
+  display: block;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+  user-select: none;
+}
+
+.srf-choice-symbol {
+  position: absolute;
+  left: var(--srf-symbol-left, 61%);
+  top: var(--srf-symbol-top, 34%);
+  width: var(--srf-symbol-width, 26%);
+  height: var(--srf-symbol-height, 30%);
+  object-fit: contain;
+  transform: translate(-50%, -50%) scale(var(--srf-symbol-scale, 1));
+  pointer-events: none;
+  user-select: none;
+  filter: drop-shadow(0 2px 3px rgba(82, 45, 12, 0.2));
+}
+
+.srf-journey-boat .srf-boat-art {
+  width: 100%;
+  transform: scale(var(--srf-placed-scale, 1));
+}
+
+.srf-debug-draggable {
+  cursor: grab;
+  outline: 1px dashed rgba(255, 255, 255, 0.55);
+  outline-offset: 2px;
+  pointer-events: auto !important;
+  touch-action: none;
+}
+.srf-debug-draggable:active { cursor: grabbing; }
+
+.srf-journey-boat.srf-debug-selected .srf-boat-art {
+  outline: 2px dashed #ffe27a;
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+.srf-completed-word {
+  display: block;
+  margin-top: 2px;
+  font-family: "Baloo 2", sans-serif;
+  font-size: clamp(11px, 1.25vw, 15px);
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  color: #5d2e0f;
+  text-shadow: 0 1px 2px rgba(255, 248, 220, 0.8);
+  animation: srfWordReveal 0.35s ease-out both;
+}
+
+.srf-choice-boats.is-hint-l1 .srf-choice-boat .srf-boat-art {
+  animation: srfAllBoatsHint 1.1s ease-in-out 1;
+}
+
+.srf-choice-boat.is-l3-target {
+  z-index: 6;
+}
+
+.srf-choice-boat.is-l3-target .srf-boat-art {
+  animation: srfTargetBoatBob 1.15s ease-in-out infinite;
+}
+
+.srf-choice-boat.is-wrong-try .srf-boat-art {
+  animation: srfWrongBoatTry 0.6s ease-in-out;
+}
+
+.srf-choice-boat.is-sailing {
+  z-index: 30;
+  /* Settle-and-fade in place, not a drift toward a different spot on
+     screen — the actual "travel" the child sees is the parade boat landing,
+     so this must never look like a second boat going somewhere else. */
+  animation: srfChoiceSettle 0.65s cubic-bezier(.2,.75,.25,1) forwards;
+}
+
+@keyframes srfChoiceSettle {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  35% { opacity: 1; transform: translate(-50%, -50%) scale(1.06); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(0.92); }
+}
+
+@keyframes srfIntroSymbolEnter {
+  from { opacity: 0; transform: translate(-50%, -42%) scale(0.82); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes srfIntroSymbolFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
+}
+
+@keyframes srfIntroRipple {
+  0% { opacity: 0.7; transform: translateX(-50%) scale(0.72); }
+  100% { opacity: 0; transform: translateX(-50%) scale(1.28); }
+}
+
+@keyframes srfWordReveal {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes srfWrongBoatTry {
+  0% { transform: translateY(0) rotate(0deg); }
+  28% { transform: translateY(-7px) rotate(-3deg); }
+  52% { transform: translateY(-3px) rotate(3deg); }
+  75% { transform: translateY(1px) rotate(-1deg); }
+  100% { transform: translateY(0) rotate(0deg); }
+}
+
+@keyframes srfAllBoatsHint {
+  0%, 100% { transform: translateY(0); }
+  45% { transform: translateY(-7px); }
+  70% { transform: translateY(-2px); }
+}
+
+@keyframes srfTargetBoatBob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@media (max-width: 700px) {
+  .srf-choice-boats {
+    bottom: var(--srf-choice-bottom, 8%);
+    width: min(94%, 520px);
+    height: 136px;
+  }
+
+  .srf-choice-boat {
+    width: clamp(118px, 31vw, 150px);
+  }
+
+  .srf-choice-boat.srf-choice-0 { left: 24%; top: 2%; }
+  .srf-choice-boat.srf-choice-1 { left: 50%; top: 18%; }
+  .srf-choice-boat.srf-choice-2 { left: 76%; top: 2%; }
+}
+
+.srf-debug-panel {
+  position: absolute;
+  z-index: 80;
+  width: min(340px, calc(100vw - 24px));
+  max-height: 68vh;
+  overflow: auto;
+  padding: 10px;
+  border-radius: 8px;
+  background: rgba(20, 32, 45, 0.9);
+  color: #fff8dc;
+  font-family: "Nunito", sans-serif;
+  font-size: 11px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.26);
+  pointer-events: auto;
+}
+
+.srf-debug-panel.is-collapsed {
+  max-height: none;
+  overflow: visible;
+}
+
+.srf-debug-drag-handle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: -10px -10px 8px;
+  padding: 6px 10px;
+  border-radius: 8px 8px 0 0;
+  background: rgba(255, 255, 255, 0.08);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  font-family: "Baloo 2", sans-serif;
+  font-size: 13px;
+}
+.srf-debug-drag-handle:active { cursor: grabbing; }
+
+.srf-debug-collapse {
+  border: 0;
+  border-radius: 5px;
+  width: 20px;
+  height: 20px;
+  line-height: 1;
+  background: rgba(255, 255, 255, 0.18);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.srf-debug-toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+}
+
+.srf-debug-note {
+  margin: 0 0 8px;
+  font-size: 10px;
+  line-height: 1.35;
+  opacity: 0.75;
+}
+
+.srf-debug-copy-status {
+  font-size: 11px;
+  opacity: 0.85;
+}
+
+.srf-debug-panel h2 {
+  margin: 0 0 8px;
+  font-size: 13px;
+  line-height: 1.1;
+}
+
+.srf-debug-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 8px;
+}
+
+.srf-debug-row {
+  display: grid;
+  grid-template-columns: 72px 1fr 34px;
+  align-items: center;
+  gap: 5px;
+}
+
+.srf-debug-row input {
+  min-width: 0;
+}
+
+.srf-debug-row b {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.srf-debug-split {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 8px 0 6px;
+}
+
+.srf-debug-split label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.srf-debug-split select,
+.srf-debug-split button {
+  border: 0;
+  border-radius: 6px;
+  padding: 4px 6px;
+  font: inherit;
+}

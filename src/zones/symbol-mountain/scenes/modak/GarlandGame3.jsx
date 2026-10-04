@@ -28,6 +28,10 @@ import forestBackground from './assets/images/modak-fj-bg.webp';
 import symbolModakColored from '../../shared/images/icons/symbol-modak-new.webp';
 
 const PHASES = { BUILD: 'GARLAND_BUILD', READY: 'GARLAND_READY', OFFERED: 'GARLAND_OFFERED' };
+const SHOW_HIT_ZONES =
+  typeof window !== 'undefined' &&
+  new URLSearchParams(window.location.search).has('hitzones');
+const GANESHA_DROP_PAD = { x: 16, top: 18, bottom: 22 };
 
 const FLOWERS = [
   { id: 'flower-1', src: flowerPink, x: 18, y: 23 },
@@ -71,6 +75,19 @@ const SCENE_IMAGES = [
   forestBackground,
   symbolModakColored,
 ];
+
+const isPointInsideExpandedOval = (event, rect, pad = { x: 0, top: 0, bottom: 0 }) => {
+  const left = rect.left - pad.x;
+  const top = rect.top - pad.top;
+  const width = rect.width + (pad.x * 2);
+  const height = rect.height + pad.top + pad.bottom;
+  if (!width || !height) return false;
+  const cx = left + width / 2;
+  const cy = top + height / 2;
+  const dx = (event.clientX - cx) / (width / 2);
+  const dy = (event.clientY - cy) / (height / 2);
+  return (dx * dx) + (dy * dy) <= 1;
+};
 
 export default function GarlandGame3({ isActive = true, isPaused = false, isAudioOn = true, onComplete, stopVoice }) {
   usePreloadPoses(SCENE_IMAGES);
@@ -538,7 +555,7 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
     const target = ganeshaDropRef.current;
     if (!target) return;
     const rect = target.getBoundingClientRect();
-    const droppedOnGanesha = event.clientX >= rect.left - 35 && event.clientX <= rect.right + 35 && event.clientY >= rect.top - 35 && event.clientY <= rect.bottom + 45;
+    const droppedOnGanesha = isPointInsideExpandedOval(event, rect, GANESHA_DROP_PAD);
 
     if (!droppedOnGanesha) {
       const wasMeaningful = garlandMeaningfulDragRef.current;
@@ -585,7 +602,7 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
   return (
     <div
       ref={sceneRef}
-      className={`g3g ${isPaused ? 'g3g--paused' : ''}`}
+      className={`g3g ${isPaused ? 'g3g--paused' : ''} ${SHOW_HIT_ZONES ? 'g3g--show-hit-zones' : ''}`}
       style={{ backgroundImage: `url(${forestBackground})` }}
       onContextMenu={(e) => e.preventDefault()}
     >
@@ -618,6 +635,11 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
         className={`g3g-ganesha ${isOffered ? 'g3g-ganesha--happy' : ''} ${isReady && effectiveGarlandHintLevel >= 3 ? 'g3g-ganesha--hint-target' : ''}`}
         style={{ left: `${LAYOUT.ganesha.l}%`, top: `${LAYOUT.ganesha.t}%` }}
       >
+        {SHOW_HIT_ZONES && isReady && (
+          <span className="g3g-ganesha-drop-zone-outline" aria-hidden="true">
+            drop
+          </span>
+        )}
         <img src={ganesha} alt="Ganesha" />
       </div>
 

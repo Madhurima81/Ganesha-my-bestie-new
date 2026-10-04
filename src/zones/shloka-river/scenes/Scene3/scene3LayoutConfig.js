@@ -12,6 +12,11 @@ export const NIRVIGHNAM_LAYOUT = {
     stone: { l: 74, t: 56 },
     branch: { l: 62, t: 84 },
   },
+  hitZones: {
+    stone: { l: 67.3, t: 73.2, w: 13.8, h: 13.5 },
+    reed: { l: 51.9, t: 66.5, w: 15.3, h: 15.3 },
+    branchDrop: { l: 62, t: 84, w: 16, h: 10 },
+  },
   turtleNodes: [
     { l: 64.3, t: 74 },
     { l: 59, t: 71.7 },

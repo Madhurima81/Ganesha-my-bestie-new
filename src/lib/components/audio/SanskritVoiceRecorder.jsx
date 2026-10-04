@@ -3,8 +3,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import useSafeClick from '../../../zones/shloka-river/core/hooks/useSafeClick';
 import './SanskritVoiceRecorder.css';
 
+// Second page of the Chant Card: same cream card, teal border, radius, close button and type
+// hierarchy (see the "Chant Card family" block at the end of SanskritVoiceRecorder.css).
 const SanskritVoiceRecorder = ({
-  prompt = 'Try saying the word',
   word = '',
   syllables = null,
   chantResult = null,
@@ -16,9 +17,9 @@ const SanskritVoiceRecorder = ({
   title = 'Practice Chanting',
   allowSkip = true,
   maxRecordingTime = 20,
-  savedRecordings = {},
   onSaveRecording,
-  onDeleteRecording
+  // Same theme vars the Chant Card gets (--chant-accent, …) so the two pages match exactly.
+  themeStyles = null
 }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [recordedAudio, setRecordedAudio] = useState(null);
@@ -248,7 +249,7 @@ const SanskritVoiceRecorder = ({
   const showSuccessResult = chantResult === 'success' || chantResult === null;
 
   return (
-    <div className="svr-overlay">
+    <div className="svr-overlay" style={themeStyles || undefined}>
       <div className="svr-card">
         <button
           onClick={handleComplete}
@@ -260,12 +261,16 @@ const SanskritVoiceRecorder = ({
 
         <h3 className="svr-title">{hasRecorded && !isRecording ? 'Great Chanting' : title}</h3>
 
-        <p className="svr-prompt">
-          {hasRecorded && !isRecording
-            ? (showIncorrectResult ? 'Let us try once more' : 'Listen to your voice')
-            : <>{prompt}: <span className="svr-word">{word.toUpperCase()}</span></>
-          }
-        </p>
+        {hasRecorded && !isRecording ? (
+          <p className="svr-prompt">
+            {showIncorrectResult ? 'Let us try once more' : 'Want to hear how you sounded?'}
+          </p>
+        ) : (
+          <>
+            <div className="svr-word">{word.toUpperCase()}</div>
+            {!isRecording && <p className="svr-prompt">Listen first, then try it yourself.</p>}
+          </>
+        )}
 
         {helperMessage && <p className="svr-helper-message">{helperMessage}</p>}
         {errorMessage && <p className="svr-error-message">{errorMessage}</p>}
@@ -303,17 +308,23 @@ const SanskritVoiceRecorder = ({
                       }
                     })}
                   >
-                    {isPlaying ? 'Pause' : 'Listen to Your Voice'}
+                    {isPlaying ? 'Pause' : 'Hear your chant'}
                   </button>
-                  <button className="rec2-continue svr-btn" onClick={handleComplete}>
-                    Continue
-                  </button>
+                  <div className="rec2-row">
+                    <button className="rec2-try svr-btn" onClick={resetForRetry}>
+                      Try Again
+                    </button>
+                    <button className="rec2-continue svr-btn" onClick={handleComplete}>
+                      Continue
+                    </button>
+                  </div>
                 </>
               ) : null}
             </div>
           </>
         ) : (
           <>
+            {!isRecording && (
             <div className="svr-practice">
               <div className="svr-syllables">
                 {getSyllablesForWord(word).map((s, i) => (
@@ -333,9 +344,10 @@ const SanskritVoiceRecorder = ({
                 onClick={() => safeClick(handleHearCompleteWord)}
                 disabled={locked}
               >
-                Hear Complete Word
+                Hear the whole word
               </button>
             </div>
+            )}
 
             {hasHeardWord && !isRecording && (
               <button
@@ -348,7 +360,7 @@ const SanskritVoiceRecorder = ({
             )}
 
             {isRecording && (
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <div className="svr-record-state">
                 <button
                   className={`svr-btn-stop ${isRecording ? 'recording' : ''}`}
                   onClick={stopRecording}
@@ -358,30 +370,13 @@ const SanskritVoiceRecorder = ({
                 >
                   <span className="svr-record-icon"></span>
                 </button>
+                <p className="svr-listening-label">Listening…</p>
                 <p className="svr-recording-time">
                   {Math.max(maxRecordingTime - recordingTime, 0)}s left
                 </p>
               </div>
             )}
           </>
-        )}
-
-        {savedRecordings[word] && !isRecording && (
-          <div className="svr-saved-row">
-            <button
-              className="svr-btn"
-              onClick={() => safeClick(() => playAudioSafe(savedRecordings[word].url))}
-            >
-              My Last Chant
-            </button>
-            <button
-              className="svr-btn svr-delete"
-              aria-label="Delete recording"
-              onClick={() => safeClick(() => onDeleteRecording?.(word))}
-            >
-              🗑️
-            </button>
-          </div>
         )}
 
         {allowSkip && (

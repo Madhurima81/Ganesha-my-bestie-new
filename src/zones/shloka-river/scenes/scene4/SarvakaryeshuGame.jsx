@@ -26,6 +26,7 @@ import earsIcon from '../../../../zones/symbol-mountain/shared/images/icons/symb
 
 const SYLLABLES = ['Sar', 'va', 'kar', 'yeshu'];
 const AUDIO = ['sar', 'va', 'kar', 'yeshu'];
+const SHOW_HIT_ZONES = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('hitzones');
 const SYLLABLE_INDEX_BY_CHUNK = {
   SAR: 1,
   VA: 2,
@@ -527,6 +528,7 @@ export default function SarvakaryeshuGame({
                       aria-label={power.label}
                     >
                       <div className="sarva-option-circle">
+                        {SHOW_HIT_ZONES && <span className="sarva-option-hit-outline" aria-hidden="true" />}
                         <img src={power.img} alt={power.label} draggable={false} />
                       </div>
                       <span className="sarva-option-label">{power.label}</span>

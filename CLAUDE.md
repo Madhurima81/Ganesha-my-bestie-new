@@ -49,6 +49,12 @@ src/
 │   │   ├── celebration/SceneCompletionCelebration.jsx
 │   │   ├── feedback/VOReplayButton.jsx
 │   │   └── animation/PoseImage.jsx        # image preloader, added post-2026-09-01
+│   ├── hooks/
+│   │   ├── useSidebarPause.js             # sidebar = true pause: tracks the in-flight VO, replays only the
+│   │   │                                   # interrupted line on close, releases a hold for a fresh hint clock
+│   │   └── usePausableTimers.js           # timers that freeze while paused and resume with remaining time
+│   ├── utils/speechCue.js                 # fire a callback on the ACTION WORD of a spoken line (hand cue)
+│   ├── config/content/voiceCues.js        # per-line action word (+ cueMs for recorded MP3s); getLineCue()
 │   ├── services/
 │   │   ├── GameStateManager.js
 │   │   ├── ProgressManager.jsx

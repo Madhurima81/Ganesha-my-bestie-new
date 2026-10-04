@@ -668,6 +668,7 @@
   width: 100%;
   height: 100%;
   position: relative;
+  border-radius: 50%;
   touch-action: none;
   user-select: none;
   -webkit-user-select: none;
@@ -946,6 +947,18 @@
   z-index: 21;
 }
 
+.pond-lotus-hit-zone {
+  position: absolute;
+  left: var(--pond-lotus-hit-x, var(--pond-lotus-x, 76.5%));
+  top: var(--pond-lotus-hit-y, var(--pond-lotus-y, 59.5%));
+  width: clamp(40px, var(--pond-lotus-hit-size, var(--pond-lotus-size, 8.5vw)), 350px);
+  aspect-ratio: 1 / 1;
+  z-index: 24;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
 /* =========================================================
    POND MECHANIC-SPECIFIC HINTS
    L1 = affordance, L2 = gesture + action VO, L3 = direct gesture + endpoint VO
@@ -1188,4 +1201,14 @@
     width: clamp(160px, 24%, 240px) !important;
     top: 58% !important;
   }
+}
+
+/* Sidebar open = true pause: freeze every in-flight animation in the pond STAGE (water flow,
+   rock nudges, lotus glow) so nothing plays out behind the panel. Scoped to .pond-background so the
+   sidebar's own symbol card modal (a sibling) keeps animating normally. */
+.pond-scene-container.is-paused .pond-background,
+.pond-scene-container.is-paused .pond-background *,
+.pond-scene-container.is-paused .pond-background *::before,
+.pond-scene-container.is-paused .pond-background *::after {
+  animation-play-state: paused !important;
 }

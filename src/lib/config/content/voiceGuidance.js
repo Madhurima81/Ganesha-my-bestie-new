@@ -209,6 +209,9 @@ export const VOICE_SCRIPTS = {
       kuru_plank_instruction: {
         text: "Now drag the planks into place."
       },
+      kuru_plank_continue: {
+        text: "Good. Continue dragging the planks."
+      },
       kuru_hint_ask: {
         text: "Drag the help bubble to someone who can help."
       },
@@ -360,13 +363,25 @@ export const VOICE_SCRIPTS = {
         text: "You found all eight words. Now let’s put them together."
       },
       arrangeStart: {
-        text: "Find the first word and place its boat."
+        text: "Watch the Shloka come alive."
+      },
+      finaleChooseFirst: {
+        text: "Now, choose the first symbol boat in the Shloka."
+      },
+      finaleChooseNext: {
+        text: "Now, choose the next one."
+      },
+      finaleKeepChoosing: {
+        text: "Great! Keep choosing."
       },
       sceneComplete: {
-        text: "You did it! All eight words are in place."
+        text: "You did it! The whole Shloka is in place."
       },
       recapStart: {
         text: "Now listen to the whole shloka."
+      },
+      finaleWholeShlokaIntro: {
+        text: "Now, let's say it together."
       },
       finalCelebration: {
         text: "You remembered the whole Ganesha Shloka. Now you can carry it with you."
@@ -397,6 +412,54 @@ export const VOICE_SCRIPTS = {
       },
       hintMeaningSarvada: {
         text: "Remember the word that means always."
+      },
+      finaleVakratundaHintL2: {
+        text: "Which symbol can help you try another way?"
+      },
+      finaleVakratundaHintL3: {
+        text: "Remember Vakratunda."
+      },
+      finaleMahakayaHintL2: {
+        text: "Which symbol reminds you to make space for others?"
+      },
+      finaleMahakayaHintL3: {
+        text: "Remember Mahakaay."
+      },
+      finaleSuryakotiHintL2: {
+        text: "Which symbol can help you find hope inside?"
+      },
+      finaleSuryakotiHintL3: {
+        text: "Remember Suryakoti."
+      },
+      finaleSamaprabhaHintL2: {
+        text: "Which symbol can help you see what is really there?"
+      },
+      finaleSamaprabhaHintL3: {
+        text: "Remember Samaprabha."
+      },
+      finaleNirvighnamHintL2: {
+        text: "Which symbol can help you solve one thing at a time?"
+      },
+      finaleNirvighnamHintL3: {
+        text: "Remember Nirvighnam."
+      },
+      finaleKurumedevaHintL2: {
+        text: "Which symbol reminds you to ask for help?"
+      },
+      finaleKurumedevaHintL3: {
+        text: "Remember Kuru Me Deva."
+      },
+      finaleSarvakaryeshuHintL2: {
+        text: "Which symbol reminds you of Ganesha in all you do?"
+      },
+      finaleSarvakaryeshuHintL3: {
+        text: "Remember Sarva Karyeshu."
+      },
+      finaleSarvadaHintL2: {
+        text: "Which symbol reminds you Ganesha is always with you?"
+      },
+      finaleSarvadaHintL3: {
+        text: "Remember Sarvada."
       }
     }
   },

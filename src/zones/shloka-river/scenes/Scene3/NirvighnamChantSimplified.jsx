@@ -9,6 +9,8 @@ import './NirvighnamChantSimplified.css';
 import SceneManager from "../../../../lib/components/scenes/SceneManager";
 import useVoiceGuidance, { estimateSpeechMs } from '../../../../lib/hooks/useVoiceGuidance';
 import useSidebarPause from '../../../../lib/hooks/useSidebarPause';
+import { getLineCue } from '../../../../lib/config/content/voiceCues';
+import { attachSpeechCue, startCueTimer } from '../../../../lib/utils/speechCue';
 import MessageManager from "../../../../lib/components/scenes/MessageManager";
 import InteractionManager from "../../../../lib/components/scenes/InteractionManager";
 import GameStateManager from "../../../../lib/services/GameStateManager";
@@ -26,9 +28,9 @@ import InnerMandala from '../../../../lib/components/celebration/InnerMandala';
 import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal';
 import AudioToggle from '../../../../lib/components/ui/AudioToggle/AudioToggle';
 import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
+import { getCollectionTarget } from '../../../../lib/utils/collectionTarget';
 import { SCENE_TO_OUTER_PETAL_ID } from '../../../../lib/components/navigation/ProgressPopup';
 import VOReplayButton from '../../../../lib/components/feedback/VOReplayButton';
-import { getCollectionTarget } from '../../../../lib/utils/collectionTarget';
 import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
 import useResumeCountdown from '../../../../lib/hooks/useResumeCountdown';
 import usePauseAwareTimeout from '../../../../lib/hooks/usePauseAwareTimeout';
@@ -273,7 +275,7 @@ const NirvighnamChantContent = ({
     try { speechSynthRef.current?.cancel(); } catch {}
   }, []);
 
-  const speakWebSpeech = useCallback((text, onEnded, onStart) => {
+  const speakWebSpeech = useCallback((text, onEnded, onStart, cue) => {
     if (!text) {
       onEnded?.();
       return;
@@ -282,6 +284,7 @@ const NirvighnamChantContent = ({
       // Muted: finish on a silent timer matching the line's length, not instantly,
       // so mute never skips a step (DECISIONS.md 2026-09-29).
       onStart?.();
+      startCueTimer(text, cue); // muted: the hand still lands on the action word's estimated time
       playSilent(text, onEnded);
       return;
     }
@@ -298,6 +301,7 @@ const NirvighnamChantContent = ({
       utterance.pitch = 1;
       utterance.volume = 0.95;
       utterance.onstart = () => onStart?.();
+      attachSpeechCue(utterance, text, cue); // hand appears exactly when the action word is spoken
       const clearTracked = () => {
         if (webSpeechRef.current?.utterance === utterance) webSpeechRef.current = null;
       };
@@ -355,12 +359,13 @@ const NirvighnamChantContent = ({
       kuru_hint_rope_drag: "Drag the help bubble to Monkey.",
       kuru_rope_after:     "Monkey helped tie the rope.",
       kuru_plank_instruction: "Now drag the planks into place.",
+      kuru_plank_continue: "Good. Continue dragging the planks.",
       kuru_done:           "Kuru Me Deva! You asked for help and built the bridge.",
       kurumedevaSetup:     "Baby Beaver is across the river.",
       kurumedevaClaim:     'I can ask for help when I need it.',
       sceneComplete:       "You cleared the path and asked for help when things got hard.",
     };
-    if (map[key]) { speakWebSpeech(stripLeadingSpeechText(map[key], options.stripLeadingText), onEnded, options.onStart); return; }
+    if (map[key]) { speakWebSpeech(stripLeadingSpeechText(map[key], options.stripLeadingText), onEnded, options.onStart, options.cue); return; }
     const script = getVoiceScript(zoneId, sceneId, key);
     if (script) {
       playHookVoice(key, onEnded, options);
@@ -515,13 +520,13 @@ const NirvighnamChantContent = ({
       setCurrentPhase('nirvighnamGame');
       if (isAudioOn && !nirvIntroPlayedRef.current) {
         nirvIntroPlayedRef.current = true;
-        setNirvIntroComplete(false);
+        setNirvIntroComplete(true);
         setNirvIntroVoStarted(false);
         playGuidanceVoice('scene12_nir_intro', () => {
           setNirvIntroComplete(true);
           setNirvIntroVoStarted(true);
           startIdleTimer();
-        }, { onStart: () => setNirvIntroVoStarted(true) });
+        }, { cue: getLineCue('scene12_nir_intro', () => setNirvIntroVoStarted(true)) });
         return;
       }
       setNirvIntroComplete(true);
@@ -541,7 +546,7 @@ const NirvighnamChantContent = ({
       setCurrentPhase('kurumedevaGame');
       if (isAudioOn && !kuruIntroPlayedRef.current) {
         kuruIntroPlayedRef.current = true;
-        setKuruIntroComplete(false);
+        setKuruIntroComplete(true);
         playGuidanceVoice('scene12_kuru_intro', () => {
           setKuruIntroComplete(true);
           startIdleTimer();
@@ -654,7 +659,6 @@ const NirvighnamChantContent = ({
 
   const handleAppDiscoveryCelebrate = () => {
     setShowAppDiscovery(false);
-    if (isAudioOn) playGuidanceVoice('sceneComplete');
     sceneActions.updateState({
       phase: PHASES.COMPLETE, stars: 5, completed: true,
       progress: { percentage: 100, starsEarned: 5, completed: true },
@@ -696,6 +700,7 @@ const NirvighnamChantContent = ({
                   stopVoice: stopAllVoice,
                 }}
                 isPaused={isRecorderOpen || sidebarPause.isSidebarPaused}
+                  isSidebarOpen={isRecorderOpen}
               />
 
               {/* ── KURUMEDEVA GAME — tap friends ── */}
@@ -716,6 +721,7 @@ const NirvighnamChantContent = ({
                   stopVoice: stopAllVoice,
                 }}
                 isPaused={isRecorderOpen || sidebarPause.isSidebarPaused}
+                  isSidebarOpen={isRecorderOpen}
               />
 
               {showWordStar && (
@@ -764,6 +770,8 @@ const NirvighnamChantContent = ({
                     isReload={isReload}
                     onPopupOpen={() => {
                       if ([PHASES.NIRVIGHNAM_GAME, PHASES.KURUMEDEVA_GAME].includes(sceneState.phase)) sidebarPause.beginPause();
+                      // Re-time the stone's teaching hand to the replayed intro's action word.
+                      if (sceneState.phase === PHASES.NIRVIGHNAM_GAME) setNirvIntroVoStarted(false);
                       stopAllVoice();
                       stopIdleTimer();
                       setIsRecorderOpen(true);

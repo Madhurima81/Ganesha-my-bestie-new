@@ -92,6 +92,9 @@ import usePauseAwareTimeout from '../../../lib/hooks/usePauseAwareTimeout';
 import useResumeCountdown from '../../../lib/hooks/useResumeCountdown';
 import ResumeCountdown from '../../../lib/components/feedback/ResumeCountdown';
 
+// ?hitzones outlines the real tap box of every button in the scene.
+const SHOW_HIT_ZONES = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('hitzones');
+
 // Error Boundary
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -691,7 +694,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     { id: 'reading', name: 'Reading', image: kidActReadImg, emoji: 'read' },
     { id: 'drawing', name: 'Drawing', image: kidActArtImg, emoji: 'art' },
     { id: 'dancing', name: 'Dancing', image: kidActSingImg, emoji: 'dance' },
-    { id: 'sports', name: 'Playing', image: kidActSportsImg, emoji: 'play' },
+    { id: 'sports', name: 'Play & Games', image: kidActSportsImg, emoji: 'play' },
     { id: 'cooking', name: 'Cooking', image: kidActCookImg, emoji: 'cook' },
     { id: 'nature', name: 'Nature', image: kidActNatureImg, emoji: 'nature' },
     { id: 'stem', name: 'Science', image: kidActStemImg, emoji: 'stem' },
@@ -703,10 +706,11 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     drawing: { left: 300, top: 48 },
     dancing: { left: 490, top: 48 },
     sports: { left: 680, top: 48 },
-    cooking: { left: 110, top: 255 },
-    nature: { left: 300, top: 255 },
-    stem: { left: 490, top: 255 },
-    games: { left: 680, top: 255 }
+    cooking: { left: 110, top: 190 },
+    nature: { left: 300, top: 190 },
+    stem: { left: 490, top: 190 },
+    games: { left: 680, top: 190 },
+    myown: { left: 680, top: 190 }
   };
 
   const kidColors = [
@@ -1705,6 +1709,9 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   // --- RENDER ---
   return (
     <div className="favorite-food-game">
+      {SHOW_HIT_ZONES && (
+        <style>{'.favorite-food-game button:not(:disabled):not(.choice-card):not(.kid-choice-card):not(.color-choice-button), .favorite-food-game .color-choice-button:not(:disabled)::after, .favorite-food-game .choice-card:not(:disabled) .choice-image-container, .favorite-food-game .kid-choice-card:not(:disabled) img { outline: 3px dashed #E91E63 !important; background-color: rgba(233, 30, 99, 0.16) !important; }'}</style>
+      )}
       <img src={foodBg} alt="Background" className="food-background" />
       <ZoneBadgeButton variant="gameplay" zoneId="about-me-hut" onBack={() => {
         SimpleSceneManager.clearCurrentScene();
@@ -1988,10 +1995,23 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 <div className="kid-choice-name">{food.name}</div>
               </button>
             ))}
+            {/* 8th choice: anything not listed. Tap -> Draw | Type. */}
+            <div className="kid-choice-card myown-wrap">
+              <button
+                type="button"
+                className={`myown-circle ${showChildFoodTools ? 'open' : ''}`}
+                aria-label="My own"
+                onClick={() => {
+                  playUiTap();
+                  setShowChildFoodTools(prev => !prev);
+                }}
+              />
+              <div className="kid-choice-name">My own</div>
+            </div>
           </div>
           )}
 
-          {!(selectedKidFoodId || sceneState.childFoodChoice || sceneState.childFoodDrawing || sceneState.childFoodText) && (
+          {!(selectedKidFoodId || sceneState.childFoodChoice || sceneState.childFoodDrawing || sceneState.childFoodText) && showChildFoodTools && (
             <div className="custom-input-options child-food-actions">
               <div className="child-food-tools" ref={childFoodToolsRef}>
                 {showChildFoodTools && (
@@ -2012,16 +2032,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                     }}>Type</button>
                   </div>
                 )}
-                <button
-                  className={`child-food-tool-plus ${showChildFoodTools ? 'open' : ''}`}
-                  onClick={() => {
-                    playUiTap();
-                    setShowChildFoodTools(prev => !prev);
-                  }}
-                  aria-label={showChildFoodTools ? 'Close creative tools' : 'Open creative tools'}
-                >
-                  +
-                </button>
               </div>
             </div>
           )}
@@ -2095,7 +2105,8 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
         <div className="choice-screen">
           {!(selectedKidActivityId || sceneState.childActivityChoice || sceneState.childActivityDrawing || sceneState.childActivityText) && (
           <div className="child-activity-scene">
-            {kidActivities.map((activity, index) => (
+            {/* 'games' is merged into 'sports' ("Play & Games"); kept in the list only so an older saved choice still resolves. */}
+            {kidActivities.filter(a => a.id !== 'games').map((activity, index) => (
               <button
                 key={activity.id}
                 className={`kid-choice-card activity-${activity.id} bounce-gentle`}
@@ -2112,10 +2123,30 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 <div className="kid-choice-name">{activity.name}</div>
               </button>
             ))}
+            {/* 8th choice: anything not listed. Tap -> Draw | Type. */}
+            <div
+              className="kid-choice-card myown-wrap"
+              style={{
+                position: 'absolute',
+                left: `${CHILD_ACTIVITY_POSITIONS.myown.left}px`,
+                top: `${CHILD_ACTIVITY_POSITIONS.myown.top}px`
+              }}
+            >
+              <button
+                type="button"
+                className={`myown-circle ${showChildActivityTools ? 'open' : ''}`}
+                aria-label="My own"
+                onClick={() => {
+                  playUiTap();
+                  setShowChildActivityTools(prev => !prev);
+                }}
+              />
+              <div className="kid-choice-name">My own</div>
+            </div>
           </div>
           )}
 
-          {!(selectedKidActivityId || sceneState.childActivityChoice || sceneState.childActivityDrawing || sceneState.childActivityText) && (
+          {!(selectedKidActivityId || sceneState.childActivityChoice || sceneState.childActivityDrawing || sceneState.childActivityText) && showChildActivityTools && (
             <div className="custom-input-options child-activity-actions">
               <div className="child-activity-tools" ref={childActivityToolsRef}>
                 {showChildActivityTools && (
@@ -2136,16 +2167,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                     }}>Type</button>
                   </div>
                 )}
-                <button
-                  className={`child-food-tool-plus ${showChildActivityTools ? 'open' : ''}`}
-                  onClick={() => {
-                    playUiTap();
-                    setShowChildActivityTools(prev => !prev);
-                  }}
-                  aria-label={showChildActivityTools ? 'Close activity tools' : 'Open activity tools'}
-                >
-                  +
-                </button>
               </div>
             </div>
           )}

@@ -115,6 +115,29 @@
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.18));
 }
 
+.nirv-hit-zone-outline {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 60;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.nirv-hit-zone-outline--rock {
+  border: 2px solid rgba(255, 0, 90, 0.86);
+  background: rgba(255, 0, 90, 0.09);
+}
+
+.nirv-hit-zone-outline--reeds {
+  border: 2px solid rgba(0, 120, 255, 0.86);
+  background: rgba(0, 120, 255, 0.09);
+}
+
+.nirv-hit-zone-outline--branch-drop {
+  border: 2px solid rgba(255, 0, 90, 0.86);
+  background: rgba(255, 0, 90, 0.09);
+}
+
 .nirv-rock.is-holding img {
   animation: nirv-rock-effort 0.22s ease-in-out infinite alternate;
 }

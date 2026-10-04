@@ -103,6 +103,21 @@
   filter: drop-shadow(0 8px 10px rgba(48, 42, 25, 0.16));
 }
 
+.eyes-hit-zone-outline {
+  position: absolute;
+  inset: 0;
+  border: 2px solid rgba(0, 120, 255, 0.88);
+  background: rgba(0, 120, 255, 0.08);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.eyes-hit-zone-outline--mango {
+  border-color: rgba(0, 170, 90, 0.9);
+  background: rgba(0, 170, 90, 0.08);
+}
+
 .clue-target {
   /* Was 0.78 — meant to blend camouflage art into the scene, but now that
      the un-found state is a small, deliberately-visible peek (not a full
@@ -556,4 +571,13 @@
   background: rgba(0, 0, 0, 0.28);
   overflow: auto;
   white-space: pre-wrap;
+}
+
+/* Sidebar open = true pause: freeze every in-flight animation (found targets gliding
+   to their animals, shimmers, hint pulses) so nothing plays out behind the panel. */
+.eyes-popup-game.is-paused,
+.eyes-popup-game.is-paused *,
+.eyes-popup-game.is-paused *::before,
+.eyes-popup-game.is-paused *::after {
+  animation-play-state: paused !important;
 }

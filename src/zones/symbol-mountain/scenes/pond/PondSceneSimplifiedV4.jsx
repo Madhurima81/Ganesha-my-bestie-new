@@ -139,7 +139,13 @@ const missionImages = {
 // ==================== V6 GAMEPLAY CONFIG ====================
 // Coordinates are % of the background container.
 const ROCK_HOLD_MS = 1600;
-const REEDS_START_POINT = { x: 58, y: 70 };
+const ROCK_HIT_ZONE = {
+  left: 0.16,
+  top: 0.18,
+  width: 0.66,
+  height: 0.68,
+};
+const REEDS_START_POINT = { x: 53, y: 64 };
 const REEDS_DRAG_DISTANCE = 90;
 // Measured against the live-rendered .pond-trunk-lotus box (top-left
 // anchored, no centering transform) at the default layout — the old (80, 68)
@@ -323,8 +329,9 @@ const PondSceneContent = ({
   }, []);
   const DEFAULT_POND_LAYOUT = {
     rock: { x: 28.7, y: 49.9, size: 26.5 },
-    flowers: { x: 52, y: 64, size: 17.5 },
+    flowers: { x: 50.5, y: 59.5, size: 8.5 },
     lotus: { x: 69.6, y: 56.2, size: 8.5 },
+    lotusHit: { x: 69.6, y: 56.2, size: 7 },
     reflection: { x: 76, y: 66, size: 20 },
     water: { x: 0, y: 67.8, size: 78 },
     streamOverlay: { x: 0, y: 41, size: 90.5 },
@@ -1138,6 +1145,18 @@ const PondSceneContent = ({
   ]);
 
   const handleRockHoldStart = useCallback((e) => {
+    const rect = e.currentTarget?.getBoundingClientRect?.();
+    if (rect) {
+      const x = (e.clientX - rect.left) / rect.width;
+      const y = (e.clientY - rect.top) / rect.height;
+      const rockCx = ROCK_HIT_ZONE.left + ROCK_HIT_ZONE.width / 2;
+      const rockCy = ROCK_HIT_ZONE.top + ROCK_HIT_ZONE.height / 2;
+      const rockRx = ROCK_HIT_ZONE.width / 2;
+      const rockRy = ROCK_HIT_ZONE.height / 2;
+      const insideRock = (((x - rockCx) / rockRx) ** 2) + (((y - rockCy) / rockRy) ** 2) <= 1;
+      if (!insideRock) return;
+    }
+
     e.preventDefault?.();
 
     if (
@@ -1534,6 +1553,9 @@ const PondSceneContent = ({
                 '--pond-lotus-x': `${pondLayout.lotus.x}%`,
                 '--pond-lotus-y': `${pondLayout.lotus.y}%`,
                 '--pond-lotus-size': `${pondLayout.lotus.size}vw`,
+                '--pond-lotus-hit-x': `${pondLayout.lotusHit.x}%`,
+                '--pond-lotus-hit-y': `${pondLayout.lotusHit.y}%`,
+                '--pond-lotus-hit-size': `${pondLayout.lotusHit.size}vw`,
                 '--pond-reflection-x': `${pondLayout.reflection.x}%`,
                 '--pond-reflection-y': `${pondLayout.reflection.y}%`,
                 '--pond-reflection-size': `${pondLayout.reflection.size}%`,
@@ -1673,8 +1695,11 @@ const PondSceneContent = ({
                   <div
                     style={{
                       position: 'absolute',
-                      inset: 0,
-                      borderRadius: '18px',
+                      left: `${ROCK_HIT_ZONE.left * 100}%`,
+                      top: `${ROCK_HIT_ZONE.top * 100}%`,
+                      width: `${ROCK_HIT_ZONE.width * 100}%`,
+                      height: `${ROCK_HIT_ZONE.height * 100}%`,
+                      borderRadius: '50%',
                       border: '2px solid rgba(0, 170, 90, 0.9)',
                       background: 'rgba(0, 170, 90, 0.08)',
                       pointerEvents: 'none',
@@ -1754,6 +1779,7 @@ const PondSceneContent = ({
                           <option value="rock">Rock</option>
                           <option value="flowers">Reeds hit-zone (invisible)</option>
                           <option value="lotus">Lotus</option>
+                          <option value="lotusHit">Lotus hit-zone (invisible)</option>
                           <option value="reflection">Reflection</option>
                           <option value="water">Water</option>
                           <option value="streamOverlay">Stream overlay</option>
@@ -1957,12 +1983,39 @@ const PondSceneContent = ({
                 onPointerDown={layoutOpen ? (e) => startMainDrag('lotus', e) : undefined}
                 style={layoutOpen ? { cursor: 'move' } : undefined}
               >
-                {SHOW_HIT_ZONES && sceneState.phase === PHASES.LOTUS_ACTIVE && !sceneState.lotusBloomed && (
+                {showSparkle === 'lotus-wake' && (
+                  <div className="pond-lotus-wake-glow" aria-hidden="true">
+                    <SparkleAnimation type="star" count={18} color="#FFD86B" size={10} duration={LOTUS_GLOW_MS} fadeOut={true} area="full" />
+                  </div>
+                )}
+                <PoseImage
+                  imageStyle={{ height: '100%' }}
+                  src={getLotusImage()}
+                  alt="Lotus"
+                  className={`pond-lotus-image ${sceneState.lotusBloomed && showSparkle === 'lotus-bloom' ? 'pond-lotus-bloom-pop' : ''}`}
+                  style={{
+                    transform: sceneState.phase === PHASES.LOTUS_ACTIVE && !sceneState.lotusBloomed && holdProgress > 0
+                      ? `scale(${1 + holdProgress * 0.06})`
+                      : undefined,
+                  }}
+                  draggable={false}
+                />
+                {showSparkle === 'lotus-bloom' && (
+                  <SparkleAnimation type="star" count={15} color="#ff9ebd" size={10} duration={2000} fadeOut={true} area="full" />
+                )}
+              </div>
+
+              <div
+                className="pond-lotus-hit-zone"
+                onPointerDown={layoutOpen ? (e) => startMainDrag('lotusHit', e) : undefined}
+                style={layoutOpen ? { cursor: 'move' } : undefined}
+              >
+                {(SHOW_HIT_ZONES || (layoutOpen && layoutKey === 'lotusHit')) && !sceneState.lotusBloomed && (
                   <div
                     style={{
                       position: 'absolute',
                       inset: 0,
-                      borderRadius: '18px',
+                      borderRadius: '50%',
                       border: '2px solid rgba(0, 170, 90, 0.9)',
                       background: 'rgba(0, 170, 90, 0.08)',
                       pointerEvents: 'none',
@@ -1971,11 +2024,6 @@ const PondSceneContent = ({
                     aria-hidden="true"
                     title="hold start zone: lotus"
                   />
-                )}
-                {showSparkle === 'lotus-wake' && (
-                  <div className="pond-lotus-wake-glow" aria-hidden="true">
-                    <SparkleAnimation type="star" count={18} color="#FFD86B" size={10} duration={LOTUS_GLOW_MS} fadeOut={true} area="full" />
-                  </div>
                 )}
                 {/* L1 only — see the matching rock ring above for why L2/L3
                     don't also render this (GestureDemo takes over there). */}
@@ -2003,6 +2051,13 @@ const PondSceneContent = ({
                   role="button"
                   aria-label="Press and hold the lotus to let it bloom"
                   onPointerDown={layoutOpen ? undefined : (e) => {
+                    const rect = e.currentTarget?.getBoundingClientRect?.();
+                    if (rect) {
+                      const x = (e.clientX - rect.left) / rect.width;
+                      const y = (e.clientY - rect.top) / rect.height;
+                      const insideLotus = (((x - 0.5) / 0.5) ** 2) + (((y - 0.5) / 0.5) ** 2) <= 1;
+                      if (!insideLotus) return;
+                    }
                     e.preventDefault?.();
                     handleLotusHoldStart();
                   }}
@@ -2011,23 +2066,7 @@ const PondSceneContent = ({
                   onPointerCancel={layoutOpen ? undefined : handleLotusHoldEnd}
                   className="pond-lotus-hold-target"
                   style={{ cursor: layoutOpen ? 'move' : (sceneState.phase === PHASES.LOTUS_ACTIVE && !sceneState.lotusBloomed ? 'pointer' : 'default'), pointerEvents: layoutOpen ? 'none' : undefined }}
-                >
-                  <PoseImage
-                    imageStyle={{ height: '100%' }}
-                    src={getLotusImage()}
-                    alt="Lotus"
-                    className={`pond-lotus-image ${sceneState.lotusBloomed && showSparkle === 'lotus-bloom' ? 'pond-lotus-bloom-pop' : ''}`}
-                    style={{
-                      transform: sceneState.phase === PHASES.LOTUS_ACTIVE && !sceneState.lotusBloomed && holdProgress > 0
-                        ? `scale(${1 + holdProgress * 0.06})`
-                        : undefined,
-                    }}
-                    draggable={false}
-                  />
-                </div>
-                {showSparkle === 'lotus-bloom' && (
-                  <SparkleAnimation type="star" count={15} color="#ff9ebd" size={10} duration={2000} fadeOut={true} area="full" />
-                )}
+                />
               </div>
 
               {/* Ganesha reflection in pond water — appears once the lotus blooms */}

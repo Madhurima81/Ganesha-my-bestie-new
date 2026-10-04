@@ -155,6 +155,26 @@
 
 }
 
+.ears-hit-zone-outline {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border: 2px solid rgba(0, 120, 255, 0.88);
+  border-radius: 50%;
+  background: rgba(0, 120, 255, 0.08);
+  pointer-events: none;
+}
+
+.ears-hit-zone-outline--center {
+  border-color: rgba(0, 170, 90, 0.9);
+  background: rgba(0, 170, 90, 0.08);
+}
+
+.ears-hit-zone-outline--right {
+  border-color: rgba(255, 170, 0, 0.92);
+  background: rgba(255, 170, 0, 0.08);
+}
+
 @keyframes ears-source-reveal {
   from { opacity: 0; transform: scale(0.85); }
   to { opacity: 1; transform: scale(1); }
@@ -187,6 +207,29 @@
 .ears-source.ready .ears-source-number {
   background: rgba(255, 244, 180, 0.94);
   color: #294e5d;
+}
+
+.ears-source-hitbox {
+  position: absolute;
+  display: block;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ears-source-hitbox.locked {
+  cursor: default;
+}
+
+.ears-source-hitbox.is-debug-selected {
+  outline: 3px solid rgba(255, 80, 80, 0.95);
+  outline-offset: 4px;
 }
 
 .ears-source-pulse {
@@ -459,6 +502,7 @@
 }
 
 .ears-sound-game.is-debugging .ears-source,
+.ears-sound-game.is-debugging .ears-source-hitbox,
 .ears-sound-game.is-debugging .ears-animal-reveal,
 .ears-sound-game.is-debugging .ears-story-sprite,
 .ears-sound-game.is-debugging .ears-game-prompt,
@@ -469,6 +513,7 @@
 }
 
 .ears-source.is-debug-selected,
+.ears-source-hitbox.is-debug-selected,
 .ears-animal-reveal.is-debug-selected,
 .ears-game-prompt.is-debug-selected,
 .ears-found-tray.is-debug-selected,
@@ -597,4 +642,13 @@
   background: rgba(0, 0, 0, 0.28);
   overflow: auto;
   white-space: pre-wrap;
+}
+
+/* Sidebar open = true pause: freeze every in-flight animation (source glows, reveal
+   frames, hint pulses) so nothing plays out behind the panel. */
+.ears-sound-game.is-paused,
+.ears-sound-game.is-paused *,
+.ears-sound-game.is-paused *::before,
+.ears-sound-game.is-paused *::after {
+  animation-play-state: paused !important;
 }

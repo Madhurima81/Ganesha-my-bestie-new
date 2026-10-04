@@ -62,6 +62,13 @@ import heartIconImg from './assets/images/heart-icon.webp';
 import purpleHeartIconImg from './assets/images/purple-heart.svg';
 import homeIconImg from './assets/images/house-icon.webp';
 
+// ?hitzones paints the real tap zones. Valid: inside the round circle only.
+// Invalid: the label under it and the square corners around it.
+const SHOW_HIT_ZONES = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('hitzones');
+const HIT_ZONE_OVERLAY = SHOW_HIT_ZONES
+  ? { outline: '3px dashed #E91E63', background: 'rgba(233, 30, 99, 0.18)' }
+  : null;
+
 // ========================================
 // VO-GATED BUTTON COMPONENT
 // ========================================
@@ -365,6 +372,25 @@ const FamilyTreeGameContent = ({
  const resumePopupTimeoutRef = useRef(null);
  const [showResumePopup, setShowResumePopup] = useState(false);
  const [resumeMessage, setResumeMessage] = useState('');
+ // Remove flow: tap avatar -> "Remove" pill -> removed with a 5s Undo chip.
+ const [undoRemoval, setUndoRemoval] = useState(null); // { member, index }
+ useEffect(() => {
+ if (!undoRemoval) return undefined;
+ const t = setTimeout(() => setUndoRemoval(null), 5000);
+ return () => clearTimeout(t);
+ }, [undoRemoval]);
+ // Tapping anywhere except an avatar or its Remove pill dismisses the pill.
+ const selectedMemberIndexForDismiss = sceneState.selectedMemberIndex;
+ useEffect(() => {
+ if (selectedMemberIndexForDismiss === null || selectedMemberIndexForDismiss === undefined) return undefined;
+ const onPointerDown = (e) => {
+ if (e.target?.closest?.('.member-avatar-small, .remove-member-pill')) return;
+ sceneActions.updateState({ selectedMemberIndex: null });
+ };
+ document.addEventListener('pointerdown', onPointerDown);
+ return () => document.removeEventListener('pointerdown', onPointerDown);
+ // eslint-disable-next-line react-hooks/exhaustive-deps
+ }, [selectedMemberIndexForDismiss]);
  const isPausedRef = useRef(false);
  const scheduledTimeoutsRef = useRef([]);
  const [showReturnHint, setShowReturnHint] = useState(false);
@@ -1330,11 +1356,21 @@ sceneActions.updateState({ gamePhase: 'transition' });
  };
 
  const handleDeleteMember = (index) => {
+ const removed = sceneState.childFamily[index];
  const newFamily = sceneState.childFamily.filter((_, i) => i!== index);
  sceneActions.updateState({
  childFamily: newFamily,
  selectedMemberIndex: null
  });
+ if (removed) setUndoRemoval({ member: removed, index });
+ };
+
+ const handleUndoRemoval = () => {
+ if (!undoRemoval) return;
+ const restored = [...sceneState.childFamily];
+ restored.splice(Math.min(undoRemoval.index, restored.length), 0, undoRemoval.member);
+ sceneActions.updateState({ childFamily: restored, selectedMemberIndex: null });
+ setUndoRemoval(null);
  };
 
  return (
@@ -1430,16 +1466,18 @@ sceneActions.updateState({ gamePhase: 'transition' });
  sceneState.isSequencePlaying? 'blocked': '',
  member.id === 'myself' && !sceneState.placedGaneshaMembers.includes('myself')? 'self-waiting': ''
  ].filter(Boolean).join(' ')}
- style={member.position}
+ style={{ ...member.position, pointerEvents: 'none' }}
+ >
+ {!sceneState.placedGaneshaMembers.includes(member.id)? (
+ <div className="tap-hitbox" aria-hidden="true">
+ <div
+ style={{ pointerEvents: 'auto', ...HIT_ZONE_OVERLAY }}
  onClick={() => {
  if (member.id !== 'myself' || sceneState.placedGaneshaMembers.includes('myself')) {
  handleClickCircle(member.id);
  }
  }}
- >
- {!sceneState.placedGaneshaMembers.includes(member.id)? (
- <div className="tap-hitbox" aria-hidden="true">
- <div className={[
+ className={[
  'empty-circle',
  'tap-circle',
  member.id !== 'myself' && treeIdleHintLevel === 1? 'tree-hint-attention': '',
@@ -1449,7 +1487,11 @@ sceneActions.updateState({ gamePhase: 'transition' });
  </div>
  </div>
  ): (
- <div className={`placed-deity ${sceneState.justPlacedId === member.id? 'just-placed-glow': ''}`}>
+ <div
+ className={`placed-deity ${sceneState.justPlacedId === member.id? 'just-placed-glow': ''}`}
+ style={{ pointerEvents: 'auto', borderRadius: '50%', ...HIT_ZONE_OVERLAY }}
+ onClick={() => handleClickCircle(member.id)}
+ >
  <div className="deity-front">
  <div className="deity-circle">
  <img src={getPlacedDeityImage(member.id).image} alt="Deity" className="deity-image" />
@@ -1552,7 +1594,7 @@ sceneActions.updateState({ gamePhase: 'transition' });
  <div className="instruction-text"><p> "Tap someone to add to your tree!"!</p></div>
  )} */}
  {sceneState.childFamily.length > 0 && (
- <div className="tray-hint-text">Tap a member to delete</div>
+ <div className="tray-hint-text">Tap a member to remove</div>
  )}
 
  {/* Tree Display */}
@@ -1566,7 +1608,7 @@ sceneActions.updateState({ gamePhase: 'transition' });
  <div key={idx} className="tree-member-small">
  <div
  className={`member-avatar-small ${isSelected? 'selected-mode': ''}`}
- style={{ background: member.color, position: 'relative', cursor: 'pointer', overflow: 'hidden' }}
+ style={{ background: member.color, position: 'relative', cursor: 'pointer', overflow: 'hidden', ...(SHOW_HIT_ZONES ? { outline: '3px dashed #E91E63' } : null) }}
  onClick={(e) => {
  e.stopPropagation();
  // Dismiss resume popup on any member interaction
@@ -1578,18 +1620,6 @@ sceneActions.updateState({ gamePhase: 'transition' });
  }}
  >
  <img src={member.image} alt={member.label} style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '5px' }} />
- {isSelected && (
- <button
- className="delete-member-btn"
- aria-label={`Delete ${member.callName}`}
- onClick={(e) => {
- e.stopPropagation();
- handleDeleteMember(actualIdx);
- }}
- >
- Ã—
- </button>
- )}
  </div>
  <div className="member-name-small">{member.callName}</div>
  </div>
@@ -1598,6 +1628,28 @@ sceneActions.updateState({ gamePhase: 'transition' });
  </div>
  ))}
  </div>
+
+ {sceneState.selectedMemberIndex !== null && sceneState.selectedMemberIndex !== undefined && sceneState.childFamily[sceneState.selectedMemberIndex] && (
+ <button
+ type="button"
+ className="remove-member-pill"
+ style={SHOW_HIT_ZONES ? { outline: '3px dashed #1565C0', background: 'rgba(21, 101, 192, 0.2)' } : undefined}
+ onClick={(e) => {
+ e.stopPropagation();
+ playTap();
+ handleDeleteMember(sceneState.selectedMemberIndex);
+ }}
+ >
+ Remove {sceneState.childFamily[sceneState.selectedMemberIndex].callName}
+ </button>
+ )}
+
+ {undoRemoval && (
+ <div className="removed-undo-toast" role="status">
+ <span>Removed {undoRemoval.member.callName}</span>
+ <button type="button" className="removed-undo-btn" onClick={handleUndoRemoval}>Undo</button>
+ </div>
+ )}
 
  {/* BOTTOM TRAY (Centered & Padded) */}
  <div
@@ -1625,7 +1677,6 @@ sceneActions.updateState({ gamePhase: 'transition' });
  >
  <span className="profile-cta-btn-text">
  <span className="tray-done-main">Done!</span>
- <span className="tray-done-sub">Finish Tree</span>
  </span>
  </button>
  )}
@@ -1651,7 +1702,8 @@ sceneActions.updateState({ gamePhase: 'transition' });
  style={{
  borderColor: type.color,
  opacity: isRowFull? 0.4: 1,
- cursor: isRowFull? 'not-allowed': 'pointer'
+ cursor: isRowFull? 'not-allowed': 'pointer',
+ ...HIT_ZONE_OVERLAY
  }}
  >
  <div className="member-card-icon-wrap">

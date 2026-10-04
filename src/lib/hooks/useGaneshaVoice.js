@@ -13,8 +13,9 @@
  */
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { estimateSpeechMs } from './useVoiceGuidance'
+import { attachSpeechCue, startCueTimer } from '../utils/speechCue'
 
-// Global audio toggle (see DECISIONS.md 2026-09-29): when off, nothing is spoken,
+// Voice toggle (see DECISIONS.md 2026-09-29): when off, nothing is spoken,
 // but each line still "plays" on a silent timer so onEnd fires on schedule.
 const isGlobalAudioOff = () => {
   try {
@@ -207,6 +208,8 @@ export const useGaneshaVoice = () => {
       onStart = null,
       onEnd   = null,
       onError = null,
+      // { word, onCue, cueMs? } — fire onCue when `word` of this line is spoken (utils/speechCue)
+      cue     = null,
     } = options
 
     if (speakTimerRef.current) {
@@ -220,6 +223,7 @@ export const useGaneshaVoice = () => {
 
     if (isGlobalAudioOff()) {
       onStart?.()
+      startCueTimer(text, cue)
       runSilent(onEnd, estimateSpeechMs(text))
       return
     }
@@ -263,6 +267,7 @@ export const useGaneshaVoice = () => {
         onEnd?.()
       }
 
+      attachSpeechCue(u, processed, cue)
       if (activeLineRef.current) activeLineRef.current.utterance = u
       utteranceRef.current = u
       // Some browsers leave speech synthesis paused after tab/background changes.

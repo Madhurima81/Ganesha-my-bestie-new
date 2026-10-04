@@ -21,12 +21,26 @@ const SYLLABLES = ['Nir', 'vigh', 'nam'];
 const AUDIO = { syllables: ['nir', 'vigh', 'nam'] };
 const OBSTACLE_ORDER = ['stone', 'branch', 'reed'];
 const ROCK_HOLD_MS = 1200;
-const BRANCH_DROP_RX = 8;
-const BRANCH_DROP_RY = 5;
 const BRANCH_DRAG_START_THRESHOLD = 1.5;
-const REED_SWIPE_REQUIRED = 58;
-const NIRV_DEBUG_STORAGE_KEY = 'shloka_nirvighnam_layout_debug_v2';
+const REED_SWIPE_REQUIRED = 55;
+const NIRV_DEBUG_STORAGE_KEY = 'shloka_nirvighnam_layout_debug_v3';
 const SHOW_HIT_ZONES = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('hitzones');
+
+const getPointerStagePoint = (event, stage) => {
+  const rect = stage?.getBoundingClientRect();
+  if (!rect?.width || !rect?.height) return null;
+  return {
+    l: ((event.clientX - rect.left) / rect.width) * 100,
+    t: ((event.clientY - rect.top) / rect.height) * 100,
+  };
+};
+
+const isPointInsideLayoutOval = (point, zone) => {
+  if (!point || !zone?.w || !zone?.h) return false;
+  const dx = (point.l - zone.l) / (zone.w / 2);
+  const dy = (point.t - zone.t) / (zone.h / 2);
+  return (dx * dx) + (dy * dy) <= 1;
+};
 
 const DEBUG_PHASE_OPTIONS = [
   { value: 0, label: 'Start' },
@@ -70,6 +84,11 @@ const loadDebugLayout = () => {
         stone: { ...fallback.bankSpots.stone, ...(parsed.bankSpots?.stone || {}) },
         branch: { ...fallback.bankSpots.branch, ...(parsed.bankSpots?.branch || {}) },
       },
+      hitZones: {
+        stone: { ...fallback.hitZones.stone, ...(parsed.hitZones?.stone || {}) },
+        reed: { ...fallback.hitZones.reed, ...(parsed.hitZones?.reed || {}) },
+        branchDrop: { ...fallback.hitZones.branchDrop, ...(parsed.hitZones?.branchDrop || {}) },
+      },
       turtleNodes: fallback.turtleNodes.map((node, index) => ({
         ...node,
         ...(parsed.turtleNodes?.[index] || {}),
@@ -112,6 +131,9 @@ const debugOptions = [
   { type: 'obstacle', index: 0, key: 'obstacle-0', label: 'Rock', fields: ['l', 't', 'w'] },
   { type: 'obstacle', index: 1, key: 'obstacle-1', label: 'Branch', fields: ['l', 't', 'w'] },
   { type: 'obstacle', index: 2, key: 'obstacle-2', label: 'Reeds', fields: ['l', 't', 'w'] },
+  { type: 'hitZone', id: 'stone', key: 'hit-stone', label: 'Rock Hit Zone', fields: ['l', 't', 'w', 'h'] },
+  { type: 'hitZone', id: 'reed', key: 'hit-reed', label: 'Reeds Hit Zone', fields: ['l', 't', 'w', 'h'] },
+  { type: 'hitZone', id: 'branchDrop', key: 'hit-branch-drop', label: 'Branch Drop Hit Zone', fields: ['l', 't', 'w', 'h'] },
   { type: 'bankSpot', id: 'stone', key: 'bank-stone', label: 'Rock Bank Spot', fields: ['l', 't'] },
   { type: 'bankSpot', id: 'branch', key: 'bank-branch', label: 'Branch Bank Spot', fields: ['l', 't'] },
   { type: 'turtleNode', index: 0, key: 'turtle-node-0', label: 'Turtle Node 1', fields: ['l', 't'] },
@@ -222,6 +244,7 @@ export default function NirvighnamGame({
     img: obstacleImageById[obstacle.id],
   })), [activeLayout.obstacles]);
   const bankSpots = activeLayout.bankSpots;
+  const hitZones = activeLayout.hitZones;
   const turtleNodes = activeLayout.turtleNodes;
   const swimPath = activeLayout.swimPath;
   const selectedDebugOption = debugOptions.find((option) => option.key === selectedDebugKey) || debugOptions[0];
@@ -482,6 +505,7 @@ export default function NirvighnamGame({
   const startRockHold = useCallback((event) => {
     if (phaseRef.current !== 'play' || isPaused) return;
     if (nextObstacleId !== 'stone' || isCleared('stone')) return;
+    if (!isPointInsideLayoutOval(getPointerStagePoint(event, stageRef.current), hitZones.stone)) return;
 
     event.preventDefault();
     event.currentTarget.setPointerCapture?.(event.pointerId);
@@ -522,7 +546,7 @@ export default function NirvighnamGame({
         clearObstacle('stone');
       }
     }, 30);
-  }, [clearObstacle, finishCurrentObstacleIntro, isCleared, isPaused, markAttempt, markMeaningfulProgress, nextObstacleId, stopSceneVoice, teachingDoneFor]);
+  }, [clearObstacle, finishCurrentObstacleIntro, hitZones.stone, isCleared, isPaused, markAttempt, markMeaningfulProgress, nextObstacleId, stopSceneVoice, teachingDoneFor]);
 
   const cancelRockHold = useCallback(() => {
     if (rockProgressRef.current) {
@@ -597,10 +621,8 @@ export default function NirvighnamGame({
 
       const currentL = branch.l + dragOffsetRef.current.x;
       const currentT = branch.t + dragOffsetRef.current.y;
-      const dx = (currentL - bankSpots.branch.l) / BRANCH_DROP_RX;
-      const dy = (currentT - bankSpots.branch.t) / BRANCH_DROP_RY;
 
-      if (dx * dx + dy * dy <= 1) {
+      if (isPointInsideLayoutOval({ l: currentL, t: currentT }, hitZones.branchDrop)) {
         branchWrongCountRef.current = 0;
         clearObstacle('branch');
         setDragging(null);
@@ -646,11 +668,12 @@ export default function NirvighnamGame({
       window.removeEventListener('pointerup', handleUp);
       window.removeEventListener('pointercancel', handleUp);
     };
-  }, [bankSpots.branch.l, bankSpots.branch.t, clearObstacle, dragging, isActive, markMeaningfulProgress, obstacles, playSceneLine, stopSceneVoice]);
+  }, [clearObstacle, dragging, hitZones.branchDrop, isActive, markMeaningfulProgress, obstacles, playSceneLine, stopSceneVoice]);
 
   const handleReedPointerDown = useCallback((event) => {
     if (phaseRef.current !== 'play' || isPaused) return;
     if (nextObstacleId !== 'reed' || isCleared('reed')) return;
+    if (!isPointInsideLayoutOval(getPointerStagePoint(event, stageRef.current), hitZones.reed)) return;
 
     event.preventDefault();
     event.currentTarget.setPointerCapture?.(event.pointerId);
@@ -665,7 +688,7 @@ export default function NirvighnamGame({
     reedWrongThisGestureRef.current = false;
     setReedSwipeStart({ x: event.clientX, y: event.clientY });
     setReedSwipeAmount(0);
-  }, [finishCurrentObstacleIntro, isCleared, isPaused, markAttempt, nextObstacleId, stopSceneVoice, teachingDoneFor]);
+  }, [finishCurrentObstacleIntro, hitZones.reed, isCleared, isPaused, markAttempt, nextObstacleId, stopSceneVoice, teachingDoneFor]);
 
   useEffect(() => {
     if (!reedSwipeStart || !isActive) return;
@@ -846,6 +869,7 @@ export default function NirvighnamGame({
       if (option.type === 'object') next[option.key][field] = value;
       if (option.type === 'obstacle') next.obstacles[option.index][field] = value;
       if (option.type === 'bankSpot') next.bankSpots[option.id][field] = value;
+      if (option.type === 'hitZone') next.hitZones[option.id][field] = value;
       if (option.type === 'turtleNode') next.turtleNodes[option.index][field] = value;
       if (option.type === 'swimPath') next.swimPath[option.index][field] = value;
       if (option.type === 'pathLine') next.pathLine[field] = value;
@@ -860,6 +884,7 @@ export default function NirvighnamGame({
     if (option.type === 'object') return activeLayout[option.key][field];
     if (option.type === 'obstacle') return activeLayout.obstacles[option.index][field];
     if (option.type === 'bankSpot') return activeLayout.bankSpots[option.id][field];
+    if (option.type === 'hitZone') return activeLayout.hitZones[option.id][field];
     if (option.type === 'turtleNode') return activeLayout.turtleNodes[option.index][field];
     if (option.type === 'swimPath') return activeLayout.swimPath[option.index][field];
     if (option.type === 'pathLine') return activeLayout.pathLine[field];
@@ -879,6 +904,7 @@ export default function NirvighnamGame({
       nest: activeLayout.nest,
       obstacles: activeLayout.obstacles,
       bankSpots: activeLayout.bankSpots,
+      hitZones: activeLayout.hitZones,
       turtleNodes: activeLayout.turtleNodes,
       swimPath: activeLayout.swimPath,
       pathLine: activeLayout.pathLine,
@@ -1044,21 +1070,44 @@ export default function NirvighnamGame({
         )}
 
         {SHOW_HIT_ZONES && (
-          <div
-            style={{
-              position: 'absolute',
-              left: `${bankSpots.branch.l - BRANCH_DROP_RX}%`,
-              top: `${bankSpots.branch.t - BRANCH_DROP_RY}%`,
-              width: `${BRANCH_DROP_RX * 2}%`,
-              height: `${BRANCH_DROP_RY * 2}%`,
-              borderRadius: '50%',
-              border: '2px solid rgba(255, 0, 90, 0.85)',
-              background: 'rgba(255, 0, 90, 0.1)',
-              pointerEvents: 'none',
-              zIndex: 60,
-            }}
-            aria-hidden="true"
-          />
+          <>
+            {!showCleared('stone') && (
+              <div
+                className="nirv-hit-zone-outline nirv-hit-zone-outline--rock"
+                style={{
+                  left: `${hitZones.stone.l}%`,
+                  top: `${hitZones.stone.t}%`,
+                  width: `${hitZones.stone.w}%`,
+                  height: `${hitZones.stone.h}%`,
+                }}
+                aria-hidden="true"
+              />
+            )}
+            {!showCleared('branch') && (
+              <div
+                className="nirv-hit-zone-outline nirv-hit-zone-outline--branch-drop"
+                style={{
+                  left: `${hitZones.branchDrop.l}%`,
+                  top: `${hitZones.branchDrop.t}%`,
+                  width: `${hitZones.branchDrop.w}%`,
+                  height: `${hitZones.branchDrop.h}%`,
+                }}
+                aria-hidden="true"
+              />
+            )}
+            {!showCleared('reed') && (
+              <div
+                className="nirv-hit-zone-outline nirv-hit-zone-outline--reeds"
+                style={{
+                  left: `${hitZones.reed.l}%`,
+                  top: `${hitZones.reed.t}%`,
+                  width: `${hitZones.reed.w}%`,
+                  height: `${hitZones.reed.h}%`,
+                }}
+                aria-hidden="true"
+              />
+            )}
+          </>
         )}
 
         <div
@@ -1217,8 +1266,8 @@ export default function NirvighnamGame({
                     <span>{field}</span>
                     <input
                       type="range"
-                      min={field === 'turtleWidth' || field === 'w' ? 1 : 0}
-                      max={field === 'turtleWidth' || field === 'w' ? 30 : 100}
+                      min={field === 'turtleWidth' || field === 'w' || field === 'h' ? 1 : 0}
+                      max={field === 'turtleWidth' || field === 'w' || field === 'h' ? 30 : 100}
                       step="0.1"
                       value={getDebugValue(field)}
                       onChange={(event) => updateDebugValue(field, event.target.value)}

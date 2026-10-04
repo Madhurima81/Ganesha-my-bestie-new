@@ -68,7 +68,7 @@
    BRANCH L1 — nudge the artwork without touching the button's own
    transform, because that transform already carries live pull state.
    --------------------------------------------------------- */
-.fjg2-branch--hint-l1 > img:first-child {
+.fjg2-branch--hint-l1 > .fjg2-branch-art {
   /* 2 tiny dips, then stop — not a repeated mini pull-down demo. */
   animation: fjg2BranchHintL1 1.8s ease-in-out 2;
 }
@@ -116,7 +116,7 @@
 @media (prefers-reduced-motion: reduce) {
   .fjg2-bush--hint-l1,
   .fjg2-bush--hint-l3,
-  .fjg2-branch--hint-l1 > img:first-child,
+  .fjg2-branch--hint-l1 > .fjg2-branch-art,
   .fjg2-marsh-mooshika--hint-l1 .fjg2-basket-character,
   .fjg2-marsh-clump--hint-target,
   .fjg2-marsh-clump--wake {
@@ -136,7 +136,9 @@
 .fjg2-emotion {
   position: absolute;
   width: calc(clamp(48px, 4.5vw, 72px) * var(--emoji-scale, 1));
+  aspect-ratio: 1;
   height: auto;
+  object-fit: contain;
   z-index: 30;
   pointer-events: none;
   animation: fjg2EmotionIn 360ms cubic-bezier(.2, 1.3, .45, 1) both;
@@ -155,7 +157,9 @@
 .fjg2-emotion-trace {
   position: absolute;
   width: clamp(28px, 2.4vw, 38px);
+  aspect-ratio: 1;
   height: auto;
+  object-fit: contain;
   opacity: 0.85;
   z-index: 11;
   pointer-events: none;
@@ -240,7 +244,7 @@
   z-index: 14;
 }
 .fjg2-branch:active { cursor: grabbing; }
-.fjg2-branch > img:first-child { display: block; width: 100%; height: auto; pointer-events: none; -webkit-user-drag: none; user-drag: none; }
+.fjg2-branch-art { display: block; width: 100%; height: auto; pointer-events: none; -webkit-user-drag: none; user-drag: none; }
 
 .fjg2-branch-flower { position: absolute; width: 19%; height: auto; pointer-events: none; transform: scale(var(--layout-scale, 1)); transform-origin: center; }
 
@@ -454,7 +458,7 @@
 }
 .fjg2-belly-mooshika > img:first-child { width: 100%; height: auto; display: block; }
 
-.fjg2-belly-emotion { position: absolute; width: calc(clamp(46px, 4.2vw, 68px) * var(--emoji-scale, 1)); height: auto; animation: fjg2EmotionIn 400ms ease both; }
+.fjg2-belly-emotion { position: absolute; width: calc(clamp(46px, 4.2vw, 68px) * var(--emoji-scale, 1)); aspect-ratio: 1; height: auto; object-fit: contain; animation: fjg2EmotionIn 400ms ease both; }
 /* Left column = harder feelings (upset -> nervous -> sad), right column =
    lighter feelings (pleased -> happy -> excited) — a balanced 3-left/3-right
    arc around Mooshika so nothing overlaps his face. */
@@ -489,4 +493,14 @@
 .fjg2-dbg__row { display: grid; grid-template-columns: 34px 1fr 62px; gap: 6px; align-items: center; padding: 1px 0; }
 .fjg2-dbg__row--check { grid-template-columns: 1fr auto; padding: 8px 10px 4px; }
 .fjg2-dbg__row input[type='number'] { width: 62px; }
+.fjg2-dbg__hint { padding: 6px 10px 0; color: #6b5a8a; }
+.fjg2-dbg__chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 6px 10px 0; }
+.fjg2-dbg__chips button { border: 1px solid #7c3aed; background: #fff; color: #7c3aed; border-radius: 999px; padding: 3px 10px; font-weight: 700; cursor: pointer; }
+.fjg2-dbg__chips button.is-on { background: #7c3aed; color: #fff; }
+.fjg2-emotion[data-edit], .fjg2-belly-emotion[data-edit] { pointer-events: auto; cursor: grab; touch-action: none; outline: 2px dashed #7c3aed; outline-offset: 2px; border-radius: 50%; animation: none; z-index: 60; }
+.fjg2-emotion[data-edit='sel'], .fjg2-belly-emotion[data-edit='sel'] { outline: 3px solid #ff5722; cursor: grabbing; }
+.fjg2-lay-layer { position: absolute; inset: 0; z-index: 1200; pointer-events: none; }
+.fjg2-lay-marker { position: absolute; width: 22px; height: 22px; margin: -11px 0 0 -11px; border-radius: 50%; background: rgba(124, 58, 237, .85); border: 2px solid #fff; box-shadow: 0 0 0 2px #7c3aed; pointer-events: auto; cursor: grab; touch-action: none; }
+.fjg2-lay-marker.is-sel { background: #ff5722; box-shadow: 0 0 0 3px #ff5722; }
+.fjg2-lay-marker span { position: absolute; left: 26px; top: -2px; white-space: nowrap; font: 800 11px 'Nunito', sans-serif; color: #fff; background: rgba(43, 26, 74, .85); padding: 1px 6px; border-radius: 6px; pointer-events: none; }
 .fjg2-dbg__actions { display: flex; gap: 8px; align-items: center; padding: 8px 10px; border-top: 1px solid #eee; }

@@ -90,6 +90,9 @@ import kindnessHeaderIcon from './assets/images/story-header/kindness-icon.webp'
 import sharingHeaderIcon from './assets/images/story-header/sharing-icon.webp';
 import natureHeaderIcon from './assets/images/story-header/nature-icon.webp';
 
+// ?hitzones outlines the real tap box of every tappable thing in the scene.
+const SHOW_HIT_ZONES = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('hitzones');
+
 // Error Boundary
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -280,7 +283,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     // Dream Phases
     // dreamIntro: (REMOVED — merged into allWishesComplete)
     dreamDrawing: "Draw something you hope for or dream about.",
-    dreamClouded: "Your dream is hiding behind the clouds. Help me clear them — tap my trunk.",
+    dreamClouded: "Your dream is hiding behind the clouds. Help me clear them — tap me.",
     dreamClearing: "There are still clouds in the way.",
     dreamRevealed: "There it is — your dream!",
 
@@ -389,7 +392,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       onReturnHint                     // ← Called when child returns
     }
   );
-  const { playUiTap, playSparkle, playChime, playGlow, setGlobalVolume } = useGameSounds();
+  const { playUiTap, playWrongTap, playSparkle, playChime, playGlow, setGlobalVolume } = useGameSounds();
   const { speak, stop: stopSpokenVoice, mute: muteSpokenVoice, isSpeaking } = useGaneshaVoice();
   const isSpeakingRef = useRef(false);
   const isAudioOnRef = useRef(isAudioOn);
@@ -612,7 +615,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
         return null;
       case 'dream-clouded':
         if (sceneState.dreamRevealed) return null;
-        return "Tap my trunk to clear the clouds.";
+        return "Tap me to clear the clouds.";
       case 'dream-clearing':
         return null;
       default:
@@ -1162,8 +1165,8 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     const voL3Flag = isWish2 ? 'wish2Level3' : isWish3 ? 'wish3Level3' : 'childLevel3';
     const voL2Line = isWish2 ? "Drag one food toward an empty plate."
       : isWish3 ? "Tap a bare space where something could grow."
-      : sceneState.trunkTaps > 0 ? "Keep tapping my trunk."
-      : "Tap my trunk to clear a cloud.";
+      : sceneState.trunkTaps > 0 ? "Keep tapping me."
+      : "Tap me to clear a cloud.";
     const voL3Line = isWish3 ? "Tap a glowing spot to help the garden grow." : null;
 
     setLevel(0);
@@ -1698,6 +1701,9 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
   return (
     <div className="dreams-wishes-game" data-zone="about-me-hut">
+      {SHOW_HIT_ZONES && (
+        <style>{'.dreams-wishes-game .bubble, .dreams-wishes-game .wish3-hotspot, .dreams-wishes-game .ganesha-helper { outline: 3px dashed #E91E63 !important; background-color: rgba(233, 30, 99, 0.16) !important; }'}</style>
+      )}
       <img src={dreamsBg} alt="Background" className="dreams-background" />
       <ZoneBadgeButton variant="gameplay" zoneId="about-me-hut" onBack={() => {
         interruptCurrentVoice();
@@ -1904,6 +1910,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
             WISH2_FOOD_POSITIONS={WISH2_FOOD_POSITIONS}
             WISH2_PLATE_POSITIONS={WISH2_PLATE_POSITIONS}
             plateImg={plateImg}
+            onWish2Miss={() => playWrongTap()}
             cowImg={cowImg}
             mouseImg={mouseImg}
             peacockImg={peacockImg}
@@ -1967,15 +1974,19 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
               />
 
               {/* Hotspot 0: Left - Flower reveal */}
+              {/* Hotspots sit over the PAINTED pixels of the art they reveal: the wrapper has the same
+                  box as the revealed image, the hotspot is the art's visible bounds inside it. */}
+              <div style={{ position: 'absolute', left: '8%', bottom: '15%', width: '190px', height: '190px', pointerEvents: 'none', zIndex: 10 }}>
               <div
                 onClick={() => handleParkTap(0)}
-                className={`${wish3IdleLevel === 1 && !sceneState.parkStates[0] ? 'wish3-hint-attention' : ''} ${wish3IdleLevel === 2 && !sceneState.parkStates[0] ? 'wish3-hint-clue' : ''} ${wish3IdleLevel >= 3 && !sceneState.parkStates[0] ? 'wish3-hint-final' : ''}`}
+                className={`wish3-hotspot ${wish3IdleLevel === 1 && !sceneState.parkStates[0] ? 'wish3-hint-attention' : ''} ${wish3IdleLevel === 2 && !sceneState.parkStates[0] ? 'wish3-hint-clue' : ''} ${wish3IdleLevel >= 3 && !sceneState.parkStates[0] ? 'wish3-hint-final' : ''}`}
                 style={{
                   position: 'absolute',
-                  left: '18%',
-                  bottom: '25%',
-                  width: '96px',
-                  height: '112px',
+                  left: '15.2%',
+                  top: '37.9%',
+                  width: '69.2%',
+                  height: '33.6%',
+                  pointerEvents: 'auto',
                   cursor: sceneState.parkStates[0] ? 'default' : 'pointer',
                   background: sceneState.parkStates[0] ? '' : 'rgba(255, 200, 87, 0.12)',
                   border: sceneState.parkStates[0] ? '' : '2px dashed rgba(255, 200, 87, 0.5)',
@@ -1984,6 +1995,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                   transition: 'all 0.2s ease',
                 }}
               />
+              </div>
               {sceneState.parkStates[0] && (
                 <img
                   src={flowerImg}
@@ -1993,16 +2005,17 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
               )}
 
               {/* Hotspot 1: Center - Bush + Butterfly reveal */}
+              <div style={{ position: 'absolute', left: '48%', transform: 'translateX(-50%)', bottom: '12%', width: '210px', height: '210px', pointerEvents: 'none', zIndex: 10 }}>
               <div
                 onClick={() => handleParkTap(1)}
-                className={`${wish3IdleLevel === 1 && !sceneState.parkStates[1] ? 'wish3-hint-attention' : ''} ${wish3IdleLevel === 2 && !sceneState.parkStates[1] ? 'wish3-hint-clue' : ''} ${wish3IdleLevel >= 3 && !sceneState.parkStates[1] ? 'wish3-hint-final' : ''}`}
+                className={`wish3-hotspot ${wish3IdleLevel === 1 && !sceneState.parkStates[1] ? 'wish3-hint-attention' : ''} ${wish3IdleLevel === 2 && !sceneState.parkStates[1] ? 'wish3-hint-clue' : ''} ${wish3IdleLevel >= 3 && !sceneState.parkStates[1] ? 'wish3-hint-final' : ''}`}
                 style={{
                   position: 'absolute',
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  bottom: '40%',
-                  width: '112px',
-                  height: '128px',
+                  left: '15.2%',
+                  top: '31.3%',
+                  width: '70.7%',
+                  height: '38.2%',
+                  pointerEvents: 'auto',
                   cursor: sceneState.parkStates[1] ? 'default' : 'pointer',
                   background: sceneState.parkStates[1] ? '' : 'rgba(255, 200, 87, 0.12)',
                   border: sceneState.parkStates[1] ? '' : '2px dashed rgba(255, 200, 87, 0.5)',
@@ -2011,6 +2024,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                   transition: 'all 0.2s ease',
                 }}
               />
+              </div>
               {sceneState.parkStates[1] && (
                 <>
                   <img
@@ -2027,15 +2041,17 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
               )}
 
               {/* Hotspot 2: Right - Tree + Bird reveal */}
+              <div style={{ position: 'absolute', right: '5%', bottom: '5%', width: '300px', height: '300px', pointerEvents: 'none', zIndex: 10 }}>
               <div
                 onClick={() => handleParkTap(2)}
-                className={`${wish3IdleLevel === 1 && !sceneState.parkStates[2] ? 'wish3-hint-attention' : ''} ${wish3IdleLevel === 2 && !sceneState.parkStates[2] ? 'wish3-hint-clue' : ''} ${wish3IdleLevel >= 3 && !sceneState.parkStates[2] ? 'wish3-hint-final' : ''}`}
+                className={`wish3-hotspot ${wish3IdleLevel === 1 && !sceneState.parkStates[2] ? 'wish3-hint-attention' : ''} ${wish3IdleLevel === 2 && !sceneState.parkStates[2] ? 'wish3-hint-clue' : ''} ${wish3IdleLevel >= 3 && !sceneState.parkStates[2] ? 'wish3-hint-final' : ''}`}
                 style={{
                   position: 'absolute',
-                  right: '18%',
-                  bottom: '25%',
-                  width: '112px',
-                  height: '144px',
+                  left: '25.4%',
+                  top: '21.5%',
+                  width: '50.4%',
+                  height: '55.8%',
+                  pointerEvents: 'auto',
                   cursor: sceneState.parkStates[2] ? 'default' : 'pointer',
                   background: sceneState.parkStates[2] ? '' : 'rgba(255, 200, 87, 0.12)',
                   border: sceneState.parkStates[2] ? '' : '2px dashed rgba(255, 200, 87, 0.5)',
@@ -2044,6 +2060,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                   transition: 'all 0.2s ease',
                 }}
               />
+              </div>
               {sceneState.parkStates[2] && (
                 <>
                   <img
@@ -2241,8 +2258,10 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
           <p className="friendship-subtitle">Everyone can dream about something different.</p>
           <div className="friendship-grid">
             <div className="friend-column ganesha-card">
+              <div className="dream-card-header">
               <img src={babyGaneshaSit} alt="Ganesha" className="column-header-image" />
               <div className="column-label">My Wishes</div>
+              </div>
               <div className="friend-items-grid">
                 <div className="friend-item">
                   <div className="friend-item-label">Wish 1</div>
@@ -2269,23 +2288,24 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
               */}
             </div>
             <div className="friend-column you-card">
+              <div className="dream-card-header">
               {activeProfile?.icon ? (
                 <img
                   src={activeProfile.icon}
                   alt="Profile"
-                  style={{ width: '120px', height: '120px', borderRadius: '50%', objectFit: 'cover', marginBottom: '10px', boxShadow: '0 5px 15px rgba(0,0,0,0.2)' }}
+                  style={{ width: 'clamp(55px, 7vw, 80px)', height: 'clamp(55px, 7vw, 80px)', borderRadius: '50%', objectFit: 'cover', marginBottom: 0, boxShadow: '0 5px 15px rgba(0,0,0,0.2)' }}
                 />
               ) : profileAvatarImage ? (
                 <img
                   src={profileAvatarImage}
                   alt={profileDisplayName}
-                  style={{ width: '120px', height: '120px', borderRadius: '50%', objectFit: 'cover', marginBottom: '10px', boxShadow: '0 5px 15px rgba(0,0,0,0.2)', border: '4px solid white' }}
+                  style={{ width: 'clamp(55px, 7vw, 80px)', height: 'clamp(55px, 7vw, 80px)', borderRadius: '50%', objectFit: 'cover', marginBottom: 0, boxShadow: '0 5px 15px rgba(0,0,0,0.2)', border: '4px solid white' }}
                 />
               ) : (
                 <div
                   style={{
-                    width: '120px',
-                    height: '120px',
+                    width: 'clamp(55px, 7vw, 80px)',
+                    height: 'clamp(55px, 7vw, 80px)',
                     borderRadius: '50%',
                     background: 'linear-gradient(135deg, #4ECDC4, #44A08D)',
                     border: '4px solid white',
@@ -2293,16 +2313,17 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontFamily: "'Baloo 2', cursive",
-                    fontSize: '50px',
+                    fontSize: 'clamp(28px, 3.6vw, 40px)',
                     color: 'white',
                     boxShadow: '0 5px 15px rgba(0,0,0,0.2)',
-                    marginBottom: '10px',
+                    marginBottom: 0,
                   }}
                 >
                   {profileAvatar}
                 </div>
               )}
               <div className="column-label">{profileDisplayName}'s Dream</div>
+              </div>
               <div className="dream-display-box">
                 {sceneState.childDreamDrawing ? <img src={sceneState.childDreamDrawing} alt="Dream" className="dream-thumbnail" /> : "Loading..."}
               </div>

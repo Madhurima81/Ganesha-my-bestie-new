@@ -316,3 +316,12 @@
     transition: none !important;
   }
 }
+
+/* Pause (sidebar open / tab hidden): freeze every in-flight animation so nothing
+   plays out behind the panel. */
+.beat-player-paused,
+.beat-player-paused *,
+.beat-player-paused *::before,
+.beat-player-paused *::after {
+  animation-play-state: paused !important;
+}

@@ -11,6 +11,7 @@ import SceneManager from "../../../../lib/components/scenes/SceneManager";
 // Voice Guidance Hook
 import useVoiceGuidance, { estimateSpeechMs } from '../../../../lib/hooks/useVoiceGuidance';
 import useSidebarPause from '../../../../lib/hooks/useSidebarPause';
+import { attachSpeechCue, startCueTimer } from '../../../../lib/utils/speechCue';
 import MessageManager from "../../../../lib/components/scenes/MessageManager";
 import InteractionManager from "../../../../lib/components/scenes/InteractionManager";
 import GameStateManager from "../../../../lib/services/GameStateManager";
@@ -30,8 +31,8 @@ import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal
 // import { PauseButton, PauseMenu } from '../../../../lib/components/ui/PauseMenu'; // ? removed: replaced by home icon
 import AudioToggle from '../../../../lib/components/ui/AudioToggle/AudioToggle';
 import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
-import { SCENE_TO_OUTER_PETAL_ID } from '../../../../lib/components/navigation/ProgressPopup';
 import { getCollectionTarget } from '../../../../lib/utils/collectionTarget';
+import { SCENE_TO_OUTER_PETAL_ID } from '../../../../lib/components/navigation/ProgressPopup';
 import VOReplayButton from '../../../../lib/components/feedback/VOReplayButton';
 import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
 import useResumeCountdown from '../../../../lib/hooks/useResumeCountdown';
@@ -351,7 +352,7 @@ const VakratundaGroveContent = ({
     }
   }, []);
 
-  const speakWebSpeech = useCallback((text, onEnded, onStart) => {
+  const speakWebSpeech = useCallback((text, onEnded, onStart, cue) => {
     if (!text) {
       onEnded?.();
       return;
@@ -360,6 +361,7 @@ const VakratundaGroveContent = ({
       // Muted: finish on a silent timer matching the line's length, not instantly,
       // so mute never skips a step (DECISIONS.md 2026-09-29).
       onStart?.();
+      startCueTimer(text, cue); // muted: the hand still lands on the action word's estimated time
       playSilent(text, onEnded);
       return;
     }
@@ -376,6 +378,7 @@ const VakratundaGroveContent = ({
       utterance.pitch = 1;
       utterance.volume = 0.95;
       utterance.onstart = () => onStart?.();
+      attachSpeechCue(utterance, text, cue); // hand appears exactly when the action word is spoken
       const clearTracked = () => {
         if (webSpeechRef.current?.utterance === utterance) webSpeechRef.current = null;
       };
@@ -447,7 +450,7 @@ const VakratundaGroveContent = ({
       scene10_maha_strength: 'I can make space in my heart for others.',
     };
     if (webSpeechMap[key]) {
-      speakWebSpeech(stripLeadingSpeechText(webSpeechMap[key], options.stripLeadingText), onEnded, options.onStart);
+      speakWebSpeech(stripLeadingSpeechText(webSpeechMap[key], options.stripLeadingText), onEnded, options.onStart, options.cue);
       return;
     }
     const script = getVoiceScript(zoneId, sceneId, key);
@@ -867,11 +870,6 @@ const VakratundaGroveContent = ({
     setShowAppDiscovery(false);
     if (import.meta.env.DEV) console.log('Triggering Final Celebration from App Discovery');
 
-    // Play scene complete VO
-    if (isAudioOn) {
-      playGuidanceVoice('sceneComplete');
-    }
-
     // Complete Scene
     sceneActions.updateState({
       phase: PHASES.COMPLETE,
@@ -1026,6 +1024,7 @@ const VakratundaGroveContent = ({
                 characterImage: mooshikaCoach
               }}
               isPaused={isRecorderOpen || sidebarPause.isSidebarPaused}
+                  isSidebarOpen={isRecorderOpen}
             />
 
             {/* MAHAKAYA RESCUE GAME — PushLog → word build → chant */}
@@ -1049,6 +1048,7 @@ const VakratundaGroveContent = ({
                 characterImage: mooshikaCoach
               }}
               isPaused={isRecorderOpen || sidebarPause.isSidebarPaused}
+                  isSidebarOpen={isRecorderOpen}
             />
 
             {/* PERSISTENT BOY CHARACTER (Commented out per user request) */}

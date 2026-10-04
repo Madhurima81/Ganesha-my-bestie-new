@@ -41,6 +41,9 @@ const DEBUG_UI_ENABLED =
   typeof window !== 'undefined' &&
   (window.location.pathname.includes('game-test') ||
     new URLSearchParams(window.location.search).has('debugEars'));
+const SHOW_HIT_ZONES =
+  typeof window !== 'undefined' &&
+  new URLSearchParams(window.location.search).has('hitzones');
 const LAYOUT_STORAGE_KEY = 'symbol_mountain_ears_layout_v2';
 const LAYOUT_PRESET_VERSION = '2026-09-10-ears-visual-flow-editor-layout';
 
@@ -55,9 +58,12 @@ const DEFAULT_LAYOUT = {
   // spot as the representative middle-ground; flag if it needs adjusting.
   leftBush: { x: 23.08, y: 46.99, w: 24, z: 16 },
   centerRock: { x: 58.94, y: 55.5, w: 24, z: 16 },
-  rightSource: { x: 83.69, y: 66.11, w: 24, z: 16 },
-  elephantSprite: { x: 35.17, y: 61.53, w: 24, z: 20 },
-  cowSprite: { x: 76.03, y: 65.72, w: 24, z: 20 }
+  rightSource: { x: 83.79, y: 66.24, w: 24, z: 16 },
+  leftBushHit: { x: 23.08, y: 46.99, w: 24, h: 21.75, z: 35 },
+  centerRockHit: { x: 58.94, y: 55.5, w: 24, h: 16.5, z: 35 },
+  rightSourceHit: { x: 84.04, y: 64.85, w: 23.5, h: 19.5, z: 33 },
+  elephantSprite: { x: 30.51, y: 73.53, w: 24, z: 20 },
+  cowSprite: { x: 57.52, y: 78.93, w: 24, z: 20 }
 };
 
 const DEBUG_KEYS = [
@@ -67,6 +73,9 @@ const DEBUG_KEYS = [
   { key: 'leftBush', label: 'Zone - left bush' },
   { key: 'centerRock', label: 'Zone - center rock' },
   { key: 'rightSource', label: 'Zone - right water/grass' },
+  { key: 'leftBushHit', label: 'Hit-zone - left bush' },
+  { key: 'centerRockHit', label: 'Hit-zone - center rock' },
+  { key: 'rightSourceHit', label: 'Hit-zone - right water/grass' },
   { key: 'elephantSprite', label: 'Elephant' },
   { key: 'cowSprite', label: 'Cow' }
 ];
@@ -92,16 +101,27 @@ const styleFromLayout = (layoutItem) => ({
   top: `${layoutItem.y}%`,
   bottom: 'auto',
   width: `${layoutItem.w}%`,
+  ...(layoutItem.h ? { height: `${layoutItem.h}%` } : {}),
   zIndex: layoutItem.z
 });
+
+const isPointerInsideSourceOval = (event) => {
+  const rect = event.currentTarget.getBoundingClientRect();
+  if (!rect.width || !rect.height) return false;
+  const nx = (event.clientX - rect.left) / rect.width;
+  const ny = (event.clientY - rect.top) / rect.height;
+  const dx = (nx - 0.5) / 0.5;
+  const dy = (ny - 0.5) / 0.5;
+  return (dx * dx) + (dy * dy) <= 1;
+};
 
 // Left stays a plain decorative bush throughout — no hidden/revealed swap.
 // Center and right swap from a hidden to a revealed source once that
 // round's animal is solved, per Madhurima's Visual Flow Editor design.
 const ZONES = {
-  left: { id: 'left', label: 'Bush', img: leafyBushImg, layoutKey: 'leftBush' },
-  center: { id: 'center', label: 'Spring', hiddenImg: hiddenSpringImg, revealedImg: revealedSpringImg, layoutKey: 'centerRock' },
-  right: { id: 'right', label: 'Grass', hiddenImg: hiddenGrassBushImg, revealedImg: revealedGrassBushImg, layoutKey: 'rightSource' }
+  left: { id: 'left', label: 'Bush', img: leafyBushImg, layoutKey: 'leftBush', hitLayoutKey: 'leftBushHit' },
+  center: { id: 'center', label: 'Spring', hiddenImg: hiddenSpringImg, revealedImg: revealedSpringImg, layoutKey: 'centerRock', hitLayoutKey: 'centerRockHit' },
+  right: { id: 'right', label: 'Grass', hiddenImg: hiddenGrassBushImg, revealedImg: revealedGrassBushImg, layoutKey: 'rightSource', hitLayoutKey: 'rightSourceHit' }
 };
 
 const ROUNDS = [
@@ -242,6 +262,9 @@ const EarsSoundMatchGame = ({
   const round = ROUNDS[roundIndex];
   const completedIds = useMemo(() => new Set(completedRounds), [completedRounds]);
   const selectedDebugLayout = layout[selectedDebugKey] || DEFAULT_LAYOUT[selectedDebugKey];
+  const selectedDebugFields = selectedDebugKey.endsWith('Hit')
+    ? ['x', 'y', 'w', 'h', 'z']
+    : ['x', 'y', 'w', 'z'];
 
   const clearTimers = useCallback(() => {
     timersRef.current.forEach((timer) => cancelTimer(timer));
@@ -833,6 +856,14 @@ const EarsSoundMatchGame = ({
     startReveal(round);
   }, [debugMode, phase, playSound, round, schedule, speak, startReveal, triggerHintL2, triggerHintL3]);
 
+  const handleSourceTap = useCallback((zoneId, e) => {
+    if (!isPointerInsideSourceOval(e)) {
+      e.stopPropagation();
+      return;
+    }
+    handleZoneTap(zoneId, e);
+  }, [handleZoneTap]);
+
   if (hideElements || !isActive) return null;
 
   const elephantSolved = completedIds.has('elephant');
@@ -896,19 +927,45 @@ const EarsSoundMatchGame = ({
             : zone.hiddenImg;
 
         return (
-          <button
+          <div
             key={zone.id}
-            type="button"
             className={`ears-source ${locked ? 'locked' : 'ready'} ${isPlaying ? 'playing' : ''} ${isWrong ? 'wrong' : ''} ${isHinted ? 'hinted' : ''} ${isCorrect ? 'correct' : ''} ${isComplete ? 'resolving' : ''} ${debugMode && selectedDebugKey === zone.layoutKey ? 'is-debug-selected' : ''}`}
             style={{ ...styleFromLayout(layout[zone.layoutKey]), '--source-index': index + 1 }}
-            onClick={(e) => handleZoneTap(zone.id, e)}
             onPointerDown={(e) => debugMode && startDebugDrag(e, zone.layoutKey)}
-            disabled={!debugMode && locked}
-            aria-label={zone.label}
+            aria-hidden="true"
           >
             <span className="ears-source-number">{index + 1}</span>
             <span className="ears-source-pulse" aria-hidden="true" />
             <PoseImage src={zoneImg} alt="" draggable={false} />
+          </div>
+        );
+      })}
+
+      {!zonesHidden && Object.values(ZONES).map((zone) => {
+        const isPlaying = activeZoneId === zone.id;
+        const isWrong = wrongZoneId === zone.id;
+        const isHinted = hintZoneId === zone.id;
+        const isCorrect = correctZoneId === zone.id;
+        const locked = phase !== PHASE.CHOOSING;
+        const isComplete = phase === PHASE.COMPLETE;
+
+        return (
+          <button
+            key={`hit-${zone.id}`}
+            type="button"
+            className={`ears-source-hitbox ${locked ? 'locked' : 'ready'} ${isPlaying ? 'playing' : ''} ${isWrong ? 'wrong' : ''} ${isHinted ? 'hinted' : ''} ${isCorrect ? 'correct' : ''} ${isComplete ? 'resolving' : ''} ${debugMode && selectedDebugKey === zone.hitLayoutKey ? 'is-debug-selected' : ''}`}
+            style={styleFromLayout(layout[zone.hitLayoutKey])}
+            onClick={(e) => handleSourceTap(zone.id, e)}
+            onPointerDown={(e) => debugMode && startDebugDrag(e, zone.hitLayoutKey)}
+            disabled={!debugMode && locked}
+            aria-label={zone.label}
+          >
+            {SHOW_HIT_ZONES && (
+              <span
+                className={`ears-hit-zone-outline ears-hit-zone-outline--${zone.id}`}
+                aria-hidden="true"
+              />
+            )}
           </button>
         );
       })}
@@ -961,7 +1018,9 @@ const EarsSoundMatchGame = ({
                 </select>
               </label>
 
-              {['x', 'y', 'w', 'z'].map((field) => (
+              {selectedDebugFields.map((field) => {
+                const fieldValue = selectedDebugLayout?.[field] ?? (field === 'h' ? (selectedDebugLayout?.w ?? 0) : (field === 'z' ? 20 : 0));
+                return (
                 <label key={field} className="ears-debug-row">
                   <span>{field.toUpperCase()}</span>
                   <input
@@ -969,7 +1028,7 @@ const EarsSoundMatchGame = ({
                     min="0"
                     max={field === 'z' ? 80 : 100}
                     step={field === 'z' ? 1 : 0.25}
-                    value={selectedDebugLayout?.[field] ?? (field === 'z' ? 20 : 0)}
+                    value={fieldValue}
                     onChange={(e) => updateLayoutField(selectedDebugKey, field, e.target.value)}
                   />
                   <input
@@ -977,11 +1036,12 @@ const EarsSoundMatchGame = ({
                     min="0"
                     max={field === 'z' ? 80 : 100}
                     step={field === 'z' ? 1 : 0.25}
-                    value={selectedDebugLayout?.[field] ?? (field === 'z' ? 20 : 0)}
+                    value={fieldValue}
                     onChange={(e) => updateLayoutField(selectedDebugKey, field, e.target.value)}
                   />
                 </label>
-              ))}
+                );
+              })}
 
               <div className="ears-debug-actions">
                 <button type="button" onClick={copyLayoutJson}>

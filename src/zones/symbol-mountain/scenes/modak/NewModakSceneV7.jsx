@@ -39,6 +39,7 @@ import { sceneAnalytics } from '../../../../lib/services/sceneAnalytics';
 import useVoiceGuidance from '../../../../lib/hooks/useVoiceGuidance';
 import usePauseAwareTimeout from '../../../../lib/hooks/usePauseAwareTimeout';
 import useSidebarPause from '../../../../lib/hooks/useSidebarPause';
+import { getLineCue } from '../../../../lib/config/content/voiceCues';
 import useResumeCountdown from '../../../../lib/hooks/useResumeCountdown';
 import ResumeCountdown from '../../../../lib/components/feedback/ResumeCountdown';
 import VOReplayButton from '../../../../lib/components/feedback/VOReplayButton';
@@ -68,8 +69,8 @@ import SceneCompletionCelebration from '../../../../lib/components/celebration/S
 import InnerMandala from '../../../../lib/components/celebration/InnerMandala';
 import AudioToggle from '../../../../lib/components/ui/AudioToggle';
 import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
-import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
 import { getCollectionTarget } from '../../../../lib/utils/collectionTarget';
+import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
 import { useGaneshaVoice } from '../../../../lib/hooks/useGaneshaVoice';
 
 // Images ---------------------------------------------------------------
@@ -82,10 +83,10 @@ const mooshikaCalm = mooshikaTurned;
 import journeyFeather from './assets/images/journey-feather.webp';
 import journeyBerry from './assets/images/journey-berry.webp';
 import journeyAcorn from './assets/images/journey-acorn.webp';
-import emotionWorried from './assets/images/emotion-worried-game3.webp';
-import emotionSad from './assets/images/emotion-sad-game3.webp';
-import emotionAngry from './assets/images/emotion-angry-game3.webp';
-import emotionHappy from './assets/images/emotion-happy-game3.webp';
+import emotionWorried from './assets/images/emotion-worried-game3.png';
+import emotionSad from './assets/images/emotion-sad-game3.png';
+import emotionAngry from './assets/images/emotion-angry-game3.png';
+import emotionHappy from './assets/images/emotion-happy-game3.png';
 import ganeshaFeeding from './assets/images/ganesha-game3-new.webp';
 
 import symbolMooshikaColored from '../../shared/images/icons/symbol-mooshika-new.webp';
@@ -121,6 +122,7 @@ const CALM_DISTRACTIONS = [
   { id: 'grapes', image: journeyBerry, top: '87%', left: '75%' }
 ];
 const CALM_SETTLE_POSITION = { top: '58%', left: '32%' };
+const SHOW_HIT_ZONES = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('hitzones');
 
 // beat 2 mud crossing
 const MUD_START_POSITION = { top: '70%', left: '28%' };
@@ -541,9 +543,16 @@ const NewModakSceneMVPContent = ({
       age: 7,
       moment: MODAK_VO_MOMENT[key] || 'default',
       onEnd: onEnded || null,
-      onError: () => onEnded?.()
+      onError: () => onEnded?.(),
+      // The hold-Mooshika teaching hand appears exactly when "Press and hold" is spoken.
+      cue: key === 'calmMooshika'
+        ? getLineCue('modak:calmMooshika', () => {
+            setIntroGesture(true);
+            safeSetTimeout(() => setIntroGesture(false), 6000);
+          })
+        : null
     });
-  }, [replaySpeak, stopRecordedVoice]);
+  }, [replaySpeak, stopRecordedVoice, safeSetTimeout]);
 
   // Every scene line runs through playTracked so a sidebar stop can never fire its
   // onEnded (the scene would advance behind the panel) and it can be replayed.
@@ -687,13 +696,10 @@ const NewModakSceneMVPContent = ({
 
   // Brief "show what to do" gesture whenever a working beat begins.
   useEffect(() => {
-    if (!PHASE_META[sceneState.phase] || !sceneState.welcomeShown) {
-      setIntroGesture(false);
-      return undefined;
-    }
-    setIntroGesture(true);
-    const t = setTimeout(() => setIntroGesture(false), 6000);
-    return () => clearTimeout(t);
+    // The hand itself is cued to the action word of the line (see playVoiceRaw) — a beat
+    // change only clears one left from the previous beat.
+    setIntroGesture(false);
+    return undefined;
   }, [sceneState.phase, sceneState.welcomeShown]);
 
   // ------------------------------------------------------------------
@@ -824,6 +830,19 @@ const NewModakSceneMVPContent = ({
     mushikaHoldStartRef.current = performance.now();
     sceneActions.updateState({ mooshikaVisible: true, mushikaHolding: true, holdProgress: 0 });
     mushikaHoldRafRef.current = requestAnimationFrame(tickMushikaHold);
+  };
+
+  const handleMushikaHoldMove = (event) => {
+    if (!sceneState || sceneState.phase !== PHASES.CALM_SEARCH || !sceneState.mushikaHolding) return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    const inside = event.clientX >= rect.left
+      && event.clientX <= rect.right
+      && event.clientY >= rect.top
+      && event.clientY <= rect.bottom;
+    if (!inside) {
+      event.currentTarget.releasePointerCapture?.(event.pointerId);
+      handleMushikaHoldEnd();
+    }
   };
 
   const handleMushikaHoldEnd = () => {
@@ -1656,10 +1675,26 @@ const NewModakSceneMVPContent = ({
                             className={`modak-game-mushika-search ${sceneState.phase === PHASES.CALM_REVEAL ? 'walking' : 'darting'} ${sceneState.mushikaHolding ? 'holding' : ''} ${idleHintLevel === 1 ? 'modak-game-mushika-search--hint-l1' : ''} ${idleHintLevel === 2 ? 'modak-game-mushika-search--hint-l2' : ''}`}
                             style={sceneState.mooshikaPosition || { top: CALM_DISTRACTIONS[0].top, left: CALM_DISTRACTIONS[0].left }}
                             onPointerDown={handleMushikaHoldStart}
+                            onPointerMove={handleMushikaHoldMove}
                             onPointerUp={handleMushikaHoldEnd}
                             onPointerCancel={handleMushikaHoldEnd}
                             onContextMenu={(e) => e.preventDefault()}
                           >
+                            {SHOW_HIT_ZONES && sceneState.phase === PHASES.CALM_SEARCH && (
+                              <span
+                                style={{
+                                  position: 'absolute',
+                                  inset: 0,
+                                  borderRadius: '18px',
+                                  border: '2px solid rgba(0, 170, 90, 0.9)',
+                                  background: 'rgba(0, 170, 90, 0.08)',
+                                  pointerEvents: 'none',
+                                  zIndex: 5,
+                                }}
+                                aria-hidden="true"
+                                title="hold zone: Mooshika"
+                              />
+                            )}
                             {sceneState.phase === PHASES.CALM_SEARCH && !sceneState.mushikaHolding && idleHintLevel === 1 && (
                               <span className="modak-game-hold-hint-ring" aria-hidden="true" />
                             )}
@@ -1713,10 +1748,9 @@ const NewModakSceneMVPContent = ({
 
                   {/* ============ GESTURE DEMOS ============ */}
                   <GestureDemo
-                    // Teaching = plain hold demo. L2/L3 rescue = an actual
-                    // filling progress ring instead of the same expand-fade
-                    // ring at every level (L2 partial fill, L3 full fill).
-                    type={introGesture ? 'hold' : idleHintLevel >= 3 ? 'hold-progress-l3' : idleHintLevel === 2 ? 'hold-progress-l2' : 'hold'}
+                    // Teaching and L3 show the full hold; L2 shows a partial
+                    // fill as an intermediate hint.
+                    type={introGesture ? 'hold-progress-l3' : idleHintLevel >= 3 ? 'hold-progress-l3' : idleHintLevel === 2 ? 'hold-progress-l2' : 'hold'}
                     from={{
                       x: parsePercentValue((sceneState.mooshikaPosition || CALM_DISTRACTIONS[0]).left, 30),
                       y: parsePercentValue((sceneState.mooshikaPosition || CALM_DISTRACTIONS[0]).top, 52)

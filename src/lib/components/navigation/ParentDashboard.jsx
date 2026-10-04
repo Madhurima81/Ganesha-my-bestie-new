@@ -14,6 +14,7 @@ import PrivacyPolicy from '../onboarding/PrivacyPolicy'
 import GameStateManager from '../../services/GameStateManager'
 import { getUnlockedLearnings, getLatestLearning, getLearningById } from '../../services/LearningProgress'
 import { clearPin } from '../../utils/dashboardData'
+import pwaInstallManager, { isStandalone, getInstallGuide } from '../../services/PwaInstallManager'
 
 const SOUND_PREF_KEYS = {
   ambience: 'gmb_parent_sound_ambience',
@@ -21,13 +22,15 @@ const SOUND_PREF_KEYS = {
   sfx: 'gmb_parent_sound_sfx',
 }
 
+// Sound settings are ON/OFF, not volume — the repo's existing
+// gmb_parent_sound_* keys still store a number, so ON/OFF is encoded as 1/0.
+// Migration: any existing value > 0 (including old slider values like 0.35)
+// counts as ON; only an explicit 0 counts as OFF. No new storage key.
 const DEFAULT_SOUND_SETTINGS = {
-  ambience: 0.35,
-  voice: 1,
-  sfx: 0.75,
+  ambience: true,
+  voice: true,
+  sfx: true,
 }
-
-const clamp01 = (value) => Math.max(0, Math.min(1, value))
 
 const readSoundSettings = () => {
   if (typeof window === 'undefined') return DEFAULT_SOUND_SETTINGS
@@ -37,7 +40,7 @@ const readSoundSettings = () => {
     const raw = localStorage.getItem(storageKey)
     if (raw == null) return
     const parsed = Number(raw)
-    if (!Number.isNaN(parsed)) next[key] = clamp01(parsed)
+    if (!Number.isNaN(parsed)) next[key] = parsed > 0
   })
   return next
 }
@@ -55,35 +58,58 @@ const CV = {
   red:        '#C62828',
 }
 
-export default function ParentDashboard({ onBack }) {
+export default function ParentDashboard({ onBack, onOpenChildProfile }) {
   const [unlocked, setUnlocked] = useState(false)
   const [activeTab, setActiveTab] = useState('forParents')
 
   const [childName, setChildName] = useState('')
+  const [childAge, setChildAge] = useState(null)
   const [profileId, setProfileId] = useState(null)
   const [unlockedLearnings, setUnlockedLearnings] = useState([])
   const [selectedLearningId, setSelectedLearningId] = useState(null)
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false)
+  const [showHelp, setShowHelp] = useState(false)
+  const [showAbout, setShowAbout] = useState(false)
   const [soundSettings, setSoundSettings] = useState(readSoundSettings)
+  const [appInstalled, setAppInstalled] = useState(isStandalone())
+  const [showInstallSteps, setShowInstallSteps] = useState(false)
 
   useEffect(() => {
     const activeId = localStorage.getItem('activeProfileId')
     setProfileId(activeId)
 
     const stored = localStorage.getItem('childName') || ''
-    if (stored) {
-      setChildName(stored)
-    } else if (activeId) {
+    let profile = null
+    if (activeId) {
       try {
-        const p = GameStateManager.getProfiles?.()?.profiles?.[activeId]
-        if (p?.name) setChildName(p.name)
+        profile = GameStateManager.getProfiles?.()?.profiles?.[activeId] || null
       } catch (_) {}
     }
+
+    if (stored) {
+      setChildName(stored)
+    } else if (profile?.name) {
+      setChildName(profile.name)
+    }
+    if (profile?.age) setChildAge(profile.age)
 
     if (activeId) {
       setUnlockedLearnings(getUnlockedLearnings(activeId))
     }
   }, [])
+
+  useEffect(() => {
+    return pwaInstallManager.subscribe(() => setAppInstalled(isStandalone()))
+  }, [])
+
+  const handleInstallClick = async () => {
+    if (pwaInstallManager.isAvailable()) {
+      await pwaInstallManager.promptInstall()
+      setAppInstalled(isStandalone())
+    } else {
+      setShowInstallSteps((v) => !v)
+    }
+  }
 
   const handleDeleteAllData = () => {
     const confirmed = window.confirm(
@@ -125,12 +151,11 @@ export default function ParentDashboard({ onBack }) {
     }
   }
 
-  const handleSoundSettingChange = (key, value) => {
-    const clamped = clamp01(value)
+  const toggleSoundSetting = (key) => {
     setSoundSettings((prev) => {
-      const next = { ...prev, [key]: clamped }
-      localStorage.setItem(SOUND_PREF_KEYS[key], String(clamped))
-      return next
+      const nextValue = !prev[key]
+      localStorage.setItem(SOUND_PREF_KEYS[key], nextValue ? '1' : '0')
+      return { ...prev, [key]: nextValue }
     })
   }
 
@@ -141,6 +166,14 @@ export default function ParentDashboard({ onBack }) {
 
   if (showPrivacyPolicy) {
     return <PrivacyPolicy onBack={() => setShowPrivacyPolicy(false)} />
+  }
+
+  if (showHelp) {
+    return <HelpScreen onBack={() => setShowHelp(false)} />
+  }
+
+  if (showAbout) {
+    return <AboutScreen onBack={() => setShowAbout(false)} />
   }
 
   const name = childName || 'Your child'
@@ -327,74 +360,98 @@ export default function ParentDashboard({ onBack }) {
         {/* ── SETTINGS TAB ─────────────────────────────────────── */}
         {activeTab === 'settings' && (
           <div style={{ padding: '1.2rem', maxWidth: 560, margin: '0 auto' }}>
+
+            <SettingsSectionLabel>Sound</SettingsSectionLabel>
             <div style={{
               background: CV.ivory,
               border: `1.5px solid ${CV.lavenderBg}`,
               borderRadius: 16,
               padding: '1rem',
-              marginBottom: '0.8rem',
+              marginBottom: '1.2rem',
             }}>
-              <p style={{
-                fontFamily: 'Baloo 2, cursive',
-                fontSize: '0.95rem',
-                color: CV.brown,
-                margin: '0 0 0.2rem',
-                fontWeight: 700,
-              }}>
-                Sound
-              </p>
-              <p style={{
-                fontFamily: 'Nunito, sans-serif',
-                fontSize: '0.8rem',
-                color: CV.softBrown,
-                margin: '0 0 0.9rem',
-                lineHeight: 1.5,
-              }}>
-                Separate settings for ambience sound, voice, and SFX.
-              </p>
-
-              <SoundSettingRow
-                label="Ambience sound"
-                value={soundSettings.ambience}
-                onChange={(value) => handleSoundSettingChange('ambience', value)}
-                accent={CV.lavender}
+              <SoundToggleRow
+                label="Voice & pronunciation"
+                sublabel="Stories, hints & Sanskrit sounds"
+                checked={soundSettings.voice}
+                onChange={() => toggleSoundSetting('voice')}
               />
-              <SoundSettingRow
-                label="Voice"
-                value={soundSettings.voice}
-                onChange={(value) => handleSoundSettingChange('voice', value)}
-                accent={CV.peach}
+              <SoundToggleRow
+                label="Sound effects"
+                sublabel="Taps, movement & feedback"
+                checked={soundSettings.sfx}
+                onChange={() => toggleSoundSetting('sfx')}
               />
-              <SoundSettingRow
-                label="SFX"
-                value={soundSettings.sfx}
-                onChange={(value) => handleSoundSettingChange('sfx', value)}
-                accent={CV.gold}
+              <SoundToggleRow
+                label="Ambience"
+                sublabel="Background sounds & music"
+                checked={soundSettings.ambience}
+                onChange={() => toggleSoundSetting('ambience')}
+                last
               />
             </div>
 
-            <SettingRow
-              label="Change PIN"
-              sublabel="Update your 4-digit parent PIN"
-              action={() => {
-                clearPin()
-                setUnlocked(false)
-              }}
-              actionLabel="Change"
-            />
-            <SettingRow
-              label="Privacy Policy"
-              sublabel="Review what this local-only version stores on this device"
-              action={() => setShowPrivacyPolicy(true)}
-              actionLabel="Open"
-            />
-            <SettingRow
-              label="Delete all data"
-              sublabel="Remove profiles, progress, consent, and parent data from this device"
-              action={handleDeleteAllData}
-              actionLabel="Delete"
-              danger
-            />
+            <SettingsSectionLabel>Child</SettingsSectionLabel>
+            <div style={{ marginBottom: '1.2rem' }}>
+              <SettingRow
+                label="Child profile"
+                sublabel={childAge ? `${name} · Age ${childAge}` : name}
+                action={onOpenChildProfile}
+                actionLabel="Open"
+              />
+            </div>
+
+            <SettingsSectionLabel>App</SettingsSectionLabel>
+            <div style={{ marginBottom: '1.2rem' }}>
+              {!appInstalled && (
+                <>
+                  <SettingRow
+                    label="Install GMB"
+                    sublabel="Add GMB to this device"
+                    action={handleInstallClick}
+                    actionLabel="Install"
+                  />
+                  {showInstallSteps && <InstallStepsCard />}
+                </>
+              )}
+              <SettingRow
+                label="Help"
+                sublabel="Audio, gameplay, or installation trouble"
+                action={() => setShowHelp(true)}
+                actionLabel="Open"
+              />
+              <SettingRow
+                label="About GMB"
+                sublabel="What Ganesha My Bestie is, and why"
+                action={() => setShowAbout(true)}
+                actionLabel="Open"
+              />
+            </div>
+
+            <SettingsSectionLabel>Privacy</SettingsSectionLabel>
+            <div>
+              <SettingRow
+                label="Privacy"
+                sublabel="Review what this local-only version stores on this device"
+                action={() => setShowPrivacyPolicy(true)}
+                actionLabel="Open"
+              />
+              <SettingRow
+                label="Change PIN"
+                sublabel="Update your 4-digit parent PIN"
+                action={() => {
+                  clearPin()
+                  setUnlocked(false)
+                }}
+                actionLabel="Change"
+              />
+              <SettingRow
+                label="Delete all data"
+                sublabel="Remove profiles, progress, consent, and parent data from this device"
+                action={handleDeleteAllData}
+                actionLabel="Delete"
+                danger
+              />
+            </div>
           </div>
         )}
 
@@ -468,46 +525,237 @@ function SettingRow({ label, sublabel, action, actionLabel, danger }) {
   )
 }
 
-function SoundSettingRow({ label, value, onChange, accent }) {
-  const percent = Math.round(clamp01(value) * 100)
-
+function SoundToggleRow({ label, sublabel, checked, onChange, last }) {
   return (
-    <div style={{ marginBottom: '0.9rem' }}>
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: '0.4rem',
-      }}>
-        <span style={{
+    <div style={{
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      gap: '0.9rem',
+      paddingBottom: last ? 0 : '0.85rem',
+      marginBottom: last ? 0 : '0.85rem',
+      borderBottom: last ? 'none' : `1px solid ${CV.lavenderBg}`,
+    }}>
+      <div>
+        <p style={{
           fontFamily: 'Baloo 2, cursive',
           fontSize: '0.88rem',
           color: CV.brown,
           fontWeight: 700,
+          margin: 0,
         }}>
           {label}
-        </span>
-        <span style={{
+        </p>
+        <p style={{
           fontFamily: 'Nunito, sans-serif',
-          fontSize: '0.78rem',
+          fontSize: '0.76rem',
           color: CV.softBrown,
-          fontWeight: 700,
+          opacity: 0.7,
+          margin: '0.15rem 0 0',
         }}>
-          {percent}%
-        </span>
+          {sublabel}
+        </p>
       </div>
-      <input
-        type="range"
-        min="0"
-        max="100"
-        value={percent}
-        onChange={(e) => onChange(Number(e.target.value) / 100)}
+      <button
+        type="button"
+        role="switch"
+        aria-checked={checked}
+        aria-label={label}
+        onClick={onChange}
         style={{
-          width: '100%',
-          accentColor: accent,
+          flexShrink: 0,
+          width: 46, height: 26,
+          borderRadius: 999,
+          border: 'none',
+          background: checked ? CV.lavender : '#D9D4DF',
+          position: 'relative',
           cursor: 'pointer',
+          transition: 'background-color 180ms ease',
         }}
-      />
+      >
+        <span style={{
+          position: 'absolute',
+          top: 3, left: checked ? 23 : 3,
+          width: 20, height: 20,
+          borderRadius: '50%',
+          background: '#fff',
+          boxShadow: '0 2px 5px rgba(40, 20, 80, 0.18)',
+          transition: 'left 180ms ease',
+        }} />
+      </button>
     </div>
+  )
+}
+
+function SettingsSectionLabel({ children }) {
+  return (
+    <p style={{
+      fontFamily: 'Baloo 2, cursive',
+      fontSize: '0.74rem',
+      fontWeight: 800,
+      letterSpacing: '0.06em',
+      textTransform: 'uppercase',
+      color: CV.lavender,
+      margin: '0 0 0.5rem 0.2rem',
+    }}>
+      {children}
+    </p>
+  )
+}
+
+function InstallStepsCard() {
+  const guide = getInstallGuide()
+  return (
+    <div style={{
+      background: CV.lavenderBg,
+      borderRadius: 14,
+      padding: '0.9rem 1rem',
+      margin: '0 0 0.6rem',
+    }}>
+      <p style={{
+        fontFamily: 'Baloo 2, cursive',
+        fontSize: '0.85rem', color: CV.brown,
+        margin: '0 0 0.5rem', fontWeight: 700,
+      }}>
+        {guide.title}
+      </p>
+      {guide.steps.map((step, i) => (
+        <p key={i} style={{
+          fontFamily: 'Nunito, sans-serif',
+          fontSize: '0.84rem', color: CV.softBrown,
+          margin: '0 0 0.3rem', lineHeight: 1.5,
+        }}>
+          {step.icon} {step.text}
+        </p>
+      ))}
+    </div>
+  )
+}
+
+// ─── Help & About — simple full-page overlays, same pattern as PrivacyPolicy ──
+
+function SimplePage({ title, subtitle, onBack, children }) {
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 60,
+      background: '#FFFDF8', overflowY: 'auto',
+      fontFamily: 'Nunito, sans-serif',
+    }}>
+      <div style={{ maxWidth: 560, margin: '0 auto', padding: '1.2rem' }}>
+        <button
+          type="button"
+          onClick={onBack}
+          style={{
+            background: CV.lavenderBg, border: 'none', borderRadius: 999,
+            padding: '0.4rem 1rem', marginBottom: '1rem',
+            fontFamily: 'Nunito, sans-serif', fontWeight: 700, fontSize: '0.82rem',
+            color: CV.lavender, cursor: 'pointer',
+          }}
+        >
+          ‹ Back
+        </button>
+        <h1 style={{
+          fontFamily: 'Baloo 2, cursive', fontSize: '1.3rem',
+          color: CV.brown, margin: '0 0 0.3rem', fontWeight: 800,
+        }}>
+          {title}
+        </h1>
+        {subtitle && (
+          <p style={{
+            fontSize: '0.85rem', color: CV.softBrown, opacity: 0.75,
+            margin: '0 0 1.2rem',
+          }}>
+            {subtitle}
+          </p>
+        )}
+        {children}
+      </div>
+    </div>
+  )
+}
+
+// DRAFT COPY — first pass per the Settings brief, not yet reviewed. Flagged
+// for Madhurima to edit/approve before this is considered final.
+const HELP_ITEMS = [
+  {
+    title: 'Audio not working',
+    body: "Check Settings → Sound — each category (Voice, Sound effects, Ambience) has its own on/off switch. Also check your device isn't muted or in silent mode.",
+  },
+  {
+    title: 'Game not responding',
+    body: 'Close and reopen GMB. If a scene gets stuck mid-way, use the Home button inside the scene to return to the map and try again.',
+  },
+  {
+    title: 'Installation trouble',
+    body: 'Go to Settings → App → Install GMB for steps specific to your device and browser.',
+  },
+  {
+    title: 'Something else, or report a problem',
+    body: 'Contact us at support@example.com and tell us what happened — we read every message.',
+  },
+]
+
+function HelpScreen({ onBack }) {
+  return (
+    <SimplePage title="Help" subtitle="Quick answers for common issues." onBack={onBack}>
+      {HELP_ITEMS.map((item) => (
+        <div key={item.title} style={{
+          background: CV.ivory, border: `1.5px solid ${CV.lavenderBg}`,
+          borderRadius: 14, padding: '0.9rem 1rem', marginBottom: '0.7rem',
+        }}>
+          <p style={{
+            fontFamily: 'Baloo 2, cursive', fontSize: '0.9rem',
+            color: CV.brown, margin: '0 0 0.3rem', fontWeight: 700,
+          }}>
+            {item.title}
+          </p>
+          <p style={{
+            fontSize: '0.86rem', color: CV.softBrown, margin: 0, lineHeight: 1.55,
+          }}>
+            {item.body}
+          </p>
+        </div>
+      ))}
+    </SimplePage>
+  )
+}
+
+// DRAFT COPY — first pass per the Settings brief, not yet reviewed. Flagged
+// for Madhurima to edit/approve before this is considered final.
+function AboutScreen({ onBack }) {
+  return (
+    <SimplePage title="About GMB" onBack={onBack}>
+      <p style={{ fontSize: '0.92rem', color: CV.brown, lineHeight: 1.7, margin: '0 0 1.1rem' }}>
+        Ganesha My Bestie turns Hindu culture and Sanskrit into wisdom children
+        can use — not just stories to hear, but ideas to carry into their day.
+      </p>
+
+      {[
+        ['Explore', "Discover Ganesha's symbols and the words of a shloka, one at a time."],
+        ['Play', 'Each scene turns a symbol or word into something to do, not just watch.'],
+        ['Practise', 'A small real-life dare connects what they learned to their actual day.'],
+        ['Take it with you', 'The meaning stays with them long after the screen is off.'],
+      ].map(([step, body]) => (
+        <div key={step} style={{ display: 'flex', gap: '0.7rem', marginBottom: '0.7rem' }}>
+          <span style={{
+            fontFamily: 'Baloo 2, cursive', fontSize: '0.86rem', fontWeight: 800,
+            color: CV.lavender, minWidth: 98,
+          }}>
+            {step}
+          </span>
+          <span style={{ fontSize: '0.86rem', color: CV.softBrown, lineHeight: 1.55 }}>
+            {body}
+          </span>
+        </div>
+      ))}
+
+      <p style={{
+        fontSize: '0.78rem', color: CV.softBrown, opacity: 0.6,
+        margin: '1.2rem 0 0', lineHeight: 1.6,
+      }}>
+        This is a local-only version — see Privacy for what's stored on this
+        device. Version 1.0 (beta).
+      </p>
+    </SimplePage>
   )
 }

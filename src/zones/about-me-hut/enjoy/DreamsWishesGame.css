@@ -2781,3 +2781,66 @@ font-weight: 700;
 
 
 
+
+/* Wish progress bar removed (user request 2026-10-02) - hides it on Wish 1, 2 and 3. */
+.dreams-wishes-game .game-header-hud {
+  display: none !important;
+}
+
+/* Comparison card ("We Both Have Wishes"): the cards share whatever height is left and shrink to
+   fit, so the Continue button is always on screen (iPad / short viewports) instead of being pushed
+   below the fold; columns may narrow so the right card is never clipped. */
+.dreams-wishes-game .friendship-overlay {
+  overflow: hidden;
+}
+.dreams-wishes-game .friendship-overlay .friendship-grid {
+  flex: 1 1 0;
+  min-height: 0;
+}
+.dreams-wishes-game .friendship-overlay .friend-column {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+.dreams-wishes-game .friendship-overlay .dream-display-box {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: hidden;
+}
+.dreams-wishes-game .friendship-overlay .dream-thumbnail {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+.dreams-wishes-game .friendship-overlay .continue-btn-simple {
+  flex: 0 0 auto;
+  margin-bottom: max(4px, env(safe-area-inset-bottom));
+}
+/* The overlay is width/height:100% PLUS padding - without border-box it was larger than the game
+   (32px wider, 27px taller), which clipped the right card and pushed Continue below the bottom. */
+.dreams-wishes-game .friendship-overlay {
+  box-sizing: border-box;
+}
+
+/* Comparison card header: icon and name on ONE row, centred - same pattern as Family Tree's
+   .tree-card-header (icon ~80px + heading beside it). */
+.dreams-wishes-game .friendship-overlay .dream-card-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(8px, 1.5vw, 14px);
+  flex-wrap: nowrap;
+  width: 100%;
+}
+.dreams-wishes-game .friendship-overlay .dream-card-header .column-header-image {
+  width: clamp(55px, 7vw, 80px);
+  height: clamp(55px, 7vw, 80px);
+  margin: 0;
+  flex: 0 0 auto;
+}
+.dreams-wishes-game .friendship-overlay .dream-card-header .column-label {
+  margin: 0;
+  min-width: 0;
+  font-size: clamp(20px, 2.2vw, 28px);
+}

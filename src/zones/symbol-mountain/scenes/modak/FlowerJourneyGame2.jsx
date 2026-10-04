@@ -73,6 +73,24 @@ const MARSH_STOPS = [
 ];
 const MARSH_HIT_RX = 11;
 const MARSH_HIT_RY = 9;
+const BUSH_SWIPE_ZONE = {
+  left: 0.18,
+  top: 0.16,
+  width: 0.68,
+  height: 0.78,
+};
+const BRANCH_PULL_POLYGON = [
+  { x: 0.045, y: 0.53 },
+  { x: 0.18, y: 0.52 },
+  { x: 0.27, y: 0.48 },
+  { x: 0.6, y: 0.325 },
+  { x: 0.975, y: 0.16 },
+  { x: 0.94, y: 0.36 },
+  { x: 0.84, y: 0.45 },
+  { x: 0.47, y: 0.6 },
+  { x: 0.25, y: 0.815 },
+  { x: 0.13, y: 0.885 },
+];
 const SHOW_HIT_ZONES = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('hitzones');
 
 // Emoji placement/size. Bush/Branch/Marsh are % offsets from Mooshika's box;
@@ -194,9 +212,16 @@ export default function FlowerJourneyGame2({
   const [LAYOUT, setLayout] = useState(DEFAULT_LAYOUT);
   const [tunerTab, setTunerTab] = useState('elements');
   const [selectedEl, setSelectedEl] = useState('bush');
+  const [branchPullPolygon, setBranchPullPolygon] = useState(BRANCH_PULL_POLYGON);
+  const [selectedBranchPoint, setSelectedBranchPoint] = useState(0);
   const elDragRef = useRef(null);
   const updateLayout = useCallback((key, field, value) => {
     setLayout((prev) => ({ ...prev, [key]: { ...prev[key], [field]: Number(value) } }));
+  }, []);
+  const updateBranchPullPoint = useCallback((index, axis, value) => {
+    setBranchPullPolygon((prev) => prev.map((point, i) => (
+      i === index ? { ...point, [axis]: Number(value) / 100 } : point
+    )));
   }, []);
   const [dbgShowEmojis, setDbgShowEmojis] = useState(false);
   const [dbgCopyStatus, setDbgCopyStatus] = useState('');
@@ -766,13 +791,27 @@ export default function FlowerJourneyGame2({
   const bushFlowerOneRef = useRef(null);
   const bushFlowerTwoRef = useRef(null);
 
+  const pointInsideBushSwipeZone = useCallback((clientX, clientY, element) => {
+    const rect = element?.getBoundingClientRect?.();
+    if (!rect) return false;
+    const left = rect.left + rect.width * BUSH_SWIPE_ZONE.left;
+    const top = rect.top + rect.height * BUSH_SWIPE_ZONE.top;
+    const right = left + rect.width * BUSH_SWIPE_ZONE.width;
+    const bottom = top + rect.height * BUSH_SWIPE_ZONE.height;
+    return clientX >= left && clientX <= right && clientY >= top && clientY <= bottom;
+  }, []);
+
   const handleBushPointerDown = useCallback((e) => {
     if (phase !== PHASES.FLOWER_BUSH || !bushIntroDone || isPaused) return;
+    if (!pointInsideBushSwipeZone(e.clientX, e.clientY, e.currentTarget)) {
+      bushSwipeStartRef.current = null;
+      return;
+    }
     e.preventDefault();
     silenceIntroVO();
     setBushTeachingReady(false);
     bushSwipeStartRef.current = { x: e.clientX, y: e.clientY };
-  }, [phase, bushIntroDone, isPaused, silenceIntroVO]);
+  }, [phase, bushIntroDone, isPaused, pointInsideBushSwipeZone, silenceIntroVO]);
 
   const handleBushPointerUp = useCallback((e) => {
     if (phase !== PHASES.FLOWER_BUSH || !bushIntroDone || isPaused) return;
@@ -789,7 +828,7 @@ export default function FlowerJourneyGame2({
     // tap), which left the child with zero feedback for a real-but-wrong
     // attempt.
     const meaningfulSwipe = totalDistance >= 15;
-    const successfulSwipe = horizontalEnough && Math.abs(dx) >= 45;
+    const successfulSwipe = horizontalEnough && Math.abs(dx) >= 55;
 
     // Tiny tap / accidental movement: do nothing, don't reset the clock.
     if (!meaningfulSwipe) return;
@@ -841,6 +880,25 @@ export default function FlowerJourneyGame2({
   const branchFlowerTwoRef = useRef(null);
   const branchRef = useRef(null);
   const branchIntroStartedRef = useRef(false);
+  const branchPullSvgPoints = branchPullPolygon
+    .map((point) => `${point.x * 100},${point.y * 100}`)
+    .join(' ');
+
+  const pointInsideBranchPullZone = useCallback((clientX, clientY, element) => {
+    const rect = element?.getBoundingClientRect?.();
+    if (!rect) return false;
+    const x = (clientX - rect.left) / rect.width;
+    const y = (clientY - rect.top) / rect.height;
+    let inside = false;
+    for (let i = 0, j = branchPullPolygon.length - 1; i < branchPullPolygon.length; j = i, i += 1) {
+      const pi = branchPullPolygon[i];
+      const pj = branchPullPolygon[j];
+      const crosses = ((pi.y > y) !== (pj.y > y))
+        && (x < ((pj.x - pi.x) * (y - pi.y)) / (pj.y - pi.y) + pi.x);
+      if (crosses) inside = !inside;
+    }
+    return inside;
+  }, [branchPullPolygon]);
 
   useEffect(() => {
     if (phase !== PHASES.FLOWER_BRANCH || !isActive || branchIntroStartedRef.current) return undefined;
@@ -902,6 +960,10 @@ export default function FlowerJourneyGame2({
 
   const handleBranchPointerDown = useCallback((e) => {
     if (phase !== PHASES.FLOWER_BRANCH || !branchIntroDone || branchComplete || isPaused) return;
+    if (!pointInsideBranchPullZone(e.clientX, e.clientY, e.currentTarget)) {
+      branchDragRef.current = { active: false, startY: 0 };
+      return;
+    }
     e.preventDefault();
     silenceIntroVO();
     setBranchTeachingReady(false);
@@ -910,7 +972,7 @@ export default function FlowerJourneyGame2({
     branchWrongDirectionRef.current = false;
     branchDragRef.current = { active: true, startY: e.clientY };
     clearBranchHold();
-  }, [phase, branchIntroDone, branchComplete, isPaused, clearBranchHold, silenceIntroVO]);
+  }, [phase, branchIntroDone, branchComplete, isPaused, clearBranchHold, pointInsideBranchPullZone, silenceIntroVO]);
 
   const handleBranchPointerMove = useCallback((e) => {
     if (!branchDragRef.current.active) return;
@@ -1287,6 +1349,24 @@ export default function FlowerJourneyGame2({
             disabled={!isBushPhase || !bushIntroDone}
             aria-label="Swipe the leaves apart"
           >
+            {SHOW_HIT_ZONES && isBushPhase && !bushOpenState && (
+              <span
+                style={{
+                  position: 'absolute',
+                  left: `${BUSH_SWIPE_ZONE.left * 100}%`,
+                  top: `${BUSH_SWIPE_ZONE.top * 100}%`,
+                  width: `${BUSH_SWIPE_ZONE.width * 100}%`,
+                  height: `${BUSH_SWIPE_ZONE.height * 100}%`,
+                  borderRadius: '20px',
+                  border: '2px solid rgba(0, 120, 255, 0.88)',
+                  background: 'rgba(0, 120, 255, 0.08)',
+                  pointerEvents: 'none',
+                  zIndex: 20,
+                }}
+                aria-hidden="true"
+                title="swipe zone: bush"
+              />
+            )}
             <PoseImage src={bushOpenState ? bushOpen : bushClosed} alt="" />
           </button>
 
@@ -1319,7 +1399,29 @@ export default function FlowerJourneyGame2({
             disabled={!isBranchPhase || !branchIntroDone || branchComplete}
             aria-label="Pull the branch down and hold"
           >
-            <img src={branchArt} alt="" />
+            {SHOW_HIT_ZONES && isBranchPhase && !branchComplete && (
+              <svg
+                viewBox="0 0 100 100"
+                preserveAspectRatio="none"
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  pointerEvents: 'none',
+                  zIndex: 20,
+                }}
+                aria-hidden="true"
+                title="pull and hold zone: branch"
+              >
+                <polygon
+                  points={branchPullSvgPoints}
+                  fill="rgba(0, 170, 90, 0.08)"
+                  stroke="rgba(0, 170, 90, 0.9)"
+                  strokeWidth="2"
+                  vectorEffect="non-scaling-stroke"
+                />
+              </svg>
+            )}
+            <img src={branchArt} alt="" className="fjg2-branch-art" />
             {branchHolding && !branchComplete && (
               <span className="fjg2-branch-hold-ring" aria-hidden="true" />
             )}
@@ -1549,7 +1651,7 @@ export default function FlowerJourneyGame2({
                 <button type="button" onClick={() => setShowEmojiTuner(false)}>close</button>
               </div>
               <div className="fjg2-dbg__jump">
-                {[['elements', 'Elements'], ['emojis', 'Emojis']].map(([id, label]) => (
+                {[['elements', 'Elements'], ['hitzones', 'Hit zones'], ['emojis', 'Emojis']].map(([id, label]) => (
                   <button key={id} type="button" className={tunerTab === id ? 'is-on' : ''} onClick={() => setTunerTab(id)}>{label}</button>
                 ))}
               </div>
@@ -1588,6 +1690,46 @@ export default function FlowerJourneyGame2({
                   </div>
                 </>
               )}
+              {tunerTab === 'hitzones' && (
+                <>
+                  <div className="fjg2-dbg__hint">Branch polygon points are local to the branch image box. Select a point, then tune x/y.</div>
+                  <div className="fjg2-dbg__chips">
+                    {branchPullPolygon.map((_, index) => (
+                      <button
+                        key={`branch-point-${index}`}
+                        type="button"
+                        className={selectedBranchPoint === index ? 'is-on' : ''}
+                        onClick={() => setSelectedBranchPoint(index)}
+                      >
+                        P{index + 1}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="fjg2-dbg__body">
+                    {['x', 'y'].map((axis) => (
+                      <label key={axis} className="fjg2-dbg__row">
+                        <span>{axis}</span>
+                        <input
+                          type="range"
+                          min={0}
+                          max={100}
+                          step={0.5}
+                          value={Math.round(branchPullPolygon[selectedBranchPoint][axis] * 200) / 2}
+                          onChange={(e) => updateBranchPullPoint(selectedBranchPoint, axis, e.target.value)}
+                        />
+                        <input
+                          type="number"
+                          min={0}
+                          max={100}
+                          step={0.5}
+                          value={Math.round(branchPullPolygon[selectedBranchPoint][axis] * 200) / 2}
+                          onChange={(e) => updateBranchPullPoint(selectedBranchPoint, axis, e.target.value)}
+                        />
+                      </label>
+                    ))}
+                  </div>
+                </>
+              )}
               {tunerTab === 'emojis' && (<>
               <label className="fjg2-dbg__row fjg2-dbg__row--check">
                 <span>Show all emojis (ignore game state)</span>
@@ -1620,7 +1762,7 @@ export default function FlowerJourneyGame2({
                 <button
                   type="button"
                   onClick={() => {
-                    const json = JSON.stringify({ LAYOUT, emojiLayout }, null, 2);
+                    const json = JSON.stringify({ LAYOUT, emojiLayout, branchPullPolygon }, null, 2);
                     (navigator.clipboard?.writeText(json) || Promise.reject())
                       .then(() => setDbgCopyStatus('Copied!'))
                       .catch(() => setDbgCopyStatus('Copy failed — see console'))
@@ -1629,7 +1771,7 @@ export default function FlowerJourneyGame2({
                   }}
                 >Copy Layout JSON</button>
                 {dbgCopyStatus && <span>{dbgCopyStatus}</span>}
-                <button type="button" onClick={() => { setEmojiLayout(DEFAULT_EMOJI_LAYOUT); setLayout(DEFAULT_LAYOUT); }}>Reset</button>
+                <button type="button" onClick={() => { setEmojiLayout(DEFAULT_EMOJI_LAYOUT); setLayout(DEFAULT_LAYOUT); setBranchPullPolygon(BRANCH_PULL_POLYGON); }}>Reset</button>
               </div>
             </div>
           )}

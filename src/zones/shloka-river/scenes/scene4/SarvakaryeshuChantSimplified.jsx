@@ -649,7 +649,6 @@ const SarvakaryeshuChantContent = ({
 
   const handleAppDiscoveryCelebrate = () => {
     setShowAppDiscovery(false);
-    if (isAudioOn) playGuidanceVoice('sceneComplete');
     sceneActions.updateState({
       phase: PHASES.COMPLETE,
       stars: 5,

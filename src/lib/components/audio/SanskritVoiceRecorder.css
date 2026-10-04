@@ -792,3 +792,254 @@
   }
 }
 
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Chant Card family — the recorder is the SECOND PAGE of the Chant Card
+   (zones/shloka-river/shared/components/ChantCardModal.css): same cream card,
+   4px accent border, radius, backdrop, 60px close button, type hierarchy and
+   teal primary pill. Accent = the Chant Card's own --chant-accent (passed in via
+   `themeStyles`), falling back to the zone accent, then teal.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.svr-overlay {
+  --svr-accent-color: var(--chant-accent, var(--zone-accent-color, #4A9B87));
+  padding: 20px;
+  background: rgba(46, 30, 14, 0.45);
+  -webkit-backdrop-filter: blur(7px);
+  backdrop-filter: blur(7px);
+}
+
+.svr-overlay .svr-card {
+  width: clamp(440px, 45vw, 760px);
+  max-width: 92vw;
+  min-height: 0;
+  max-height: calc(100dvh - 40px);
+  padding: clamp(32px, 3vw, 48px) clamp(28px, 2.5vw, 40px) clamp(28px, 2vw, 34px);
+  background: #FFF8E7;
+  border: 4px solid var(--svr-accent-color);
+  border-radius: clamp(28px, 2.5vw, 40px);
+  box-shadow:
+    0 24px 64px rgba(70, 40, 10, 0.22),
+    0 4px 16px rgba(70, 40, 10, 0.10),
+    0 0 0 4px color-mix(in srgb, var(--svr-accent-color) 18%, transparent);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  text-align: center;
+  overflow-y: auto;
+}
+
+/* Close — identical to the Chant Card's 60px button */
+.svr-overlay .svr-close {
+  top: 14px;
+  right: 14px;
+  width: 60px;
+  height: 60px;
+  padding: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--svr-accent-color);
+  border: 2px solid color-mix(in srgb, var(--svr-accent-color) 28%, white);
+  box-shadow: 0 6px 18px rgba(70, 40, 10, 0.12);
+  font-family: 'Nunito', sans-serif;
+  font-size: 34px;
+  line-height: 1;
+}
+
+.svr-overlay .svr-close:hover {
+  background: #fff;
+}
+
+.svr-overlay .svr-title {
+  font-family: 'Baloo 2', cursive;
+  color: #1B4D3E;
+  font-size: clamp(26px, 2.2vw, 34px);
+  font-weight: 800;
+  letter-spacing: 0;
+  margin: 0 0 10px;
+}
+
+.svr-overlay .svr-word {
+  font-family: 'Baloo 2', cursive;
+  color: var(--svr-accent-color);
+  font-size: clamp(28px, 2.5vw, 38px);
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  margin-top: 8px;
+}
+
+.svr-overlay .svr-prompt {
+  margin: 4px 0 20px;
+  color: #6F5845;
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(16px, 1.3vw, 19px);
+  font-weight: 500;
+}
+
+/* Practice panel — the soft inner panel the Chant Card uses, not a second big card */
+.svr-overlay .svr-practice {
+  width: 100%;
+  margin: 14px 0 22px;
+  padding: clamp(22px, 2vw, 30px);
+  background: rgba(255, 153, 51, 0.045);
+  border: 2px solid rgba(235, 203, 174, 0.75);
+  border-radius: clamp(18px, 1.6vw, 24px);
+  box-shadow: none;
+}
+
+.svr-overlay .svr-syllables {
+  margin-bottom: 0;
+}
+
+/* Syllable tiles — pieces of the word, lighter weight */
+.svr-overlay .svr-syllable-btn {
+  min-width: 66px;
+  padding: 11px 18px;
+  background: rgba(255, 255, 255, 0.82);
+  color: #1B4D3E;
+  border: 2px solid var(--svr-accent-color);
+  border-radius: 14px;
+  box-shadow: none;
+  font-family: 'Baloo 2', cursive;
+  font-size: clamp(15px, 1.3vw, 19px);
+  font-weight: 800;
+}
+
+.svr-overlay .svr-syllable-btn:hover:not(:disabled) {
+  background: #fff;
+  transform: translateY(-1px);
+}
+
+.svr-overlay .svr-syllable-btn:active:not(:disabled) {
+  border: 2px solid var(--svr-accent-color);
+  transform: translateY(1px);
+}
+
+/* Hear the whole word — yellow keeps its own "audio" meaning, softened */
+.svr-overlay .svr-word-btn {
+  width: auto;
+  min-width: 280px;
+  max-width: 360px;
+  margin: 22px auto 0;
+  padding: 14px 26px;
+  border-radius: 999px;
+  background: #FFD93D;
+  color: #5C3C28;
+  font-family: 'Baloo 2', cursive;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+/* Your Turn — the same teal pill as the Chant Card's "Practice Chanting" CTA */
+.svr-overlay .svr-btn-start {
+  width: min(100%, 420px);
+  margin-top: 12px;
+  padding: 15px 28px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #63C7BB 0%, var(--svr-accent-color) 100%);
+  color: #fff;
+  font-family: 'Baloo 2', cursive;
+  font-size: 20px;
+  font-weight: 800;
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--svr-accent-color) 28%, transparent);
+}
+
+.svr-overlay .svr-btn-start:active:not(:disabled) {
+  border-bottom: 0;
+  transform: translateY(2px);
+}
+
+/* Recording — same card, practice panel hidden, just the mic + status */
+.svr-record-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 18px 0 8px;
+}
+
+.svr-overlay .svr-btn-stop {
+  background: linear-gradient(135deg, #63C7BB 0%, var(--svr-accent-color) 100%);
+}
+
+.svr-listening-label {
+  margin: 14px 0 0;
+  font-family: 'Baloo 2', cursive;
+  font-size: clamp(20px, 1.8vw, 24px);
+  font-weight: 800;
+  color: #1B4D3E;
+}
+
+.svr-overlay .svr-recording-time {
+  margin: 4px 0 0;
+  color: #6F5845;
+}
+
+/* Success — same teal family, no separate green system */
+.svr-overlay .rec2-actions {
+  width: 100%;
+  margin-top: 8px;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.svr-overlay .rec2-row {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.svr-overlay .rec2-listen {
+  width: auto;
+  min-width: 280px;
+  max-width: 360px;
+  padding: 14px 26px;
+  border: none;
+  border-radius: 999px;
+  background: #FFD93D;
+  color: #5C3C28;
+  font-family: 'Baloo 2', cursive;
+  font-size: 18px;
+  font-weight: 800;
+  box-shadow: 0 4px 0 #D4A800;
+}
+
+.svr-overlay .rec2-try {
+  min-width: 150px;
+  padding: 13px 24px;
+  border: 2px solid var(--svr-accent-color);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.82);
+  color: #1B4D3E;
+  font-family: 'Baloo 2', cursive;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.svr-overlay .rec2-continue {
+  min-width: 190px;
+  padding: 14px 28px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #63C7BB 0%, var(--svr-accent-color) 100%);
+  color: #fff;
+  font-family: 'Baloo 2', cursive;
+  font-size: 20px;
+  font-weight: 800;
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--svr-accent-color) 28%, transparent);
+}
+
+.svr-overlay .svr-btn-skip {
+  margin-top: 10px;
+  font-family: 'Nunito', sans-serif;
+  color: #8B6F47;
+}
+
+@media (max-width: 560px) {
+  .svr-overlay .svr-card { min-width: 0; width: 92vw; }
+  .svr-overlay .svr-word-btn,
+  .svr-overlay .rec2-listen { min-width: 0; width: 100%; }
+}

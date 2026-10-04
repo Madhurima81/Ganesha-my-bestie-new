@@ -85,6 +85,7 @@ const DEBUG_UI_ENABLED =
   typeof window !== 'undefined' &&
   (window.location.pathname.includes('game-test') ||
     new URLSearchParams(window.location.search).has('debugTusk'));
+const SHOW_HIT_ZONES = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('hitzones');
 const LAYOUT_STORAGE_KEY = 'symbol_mountain_tusk_full_layout_v1';
 const LAYOUT_PRESET_VERSION = '2026-09-11-tusk-full-layout-2';
 
@@ -433,6 +434,12 @@ function TuskPathGame({
     [PHASES.GRASS]: 'grass-bed',
     [PHASES.FEATHER]: 'bunny',
   }[phase];
+  const phaseTargetLayoutKey = {
+    [PHASES.MANGO]: 'bunnySprite',
+    [PHASES.WATER]: 'bowlItem',
+    [PHASES.GRASS]: 'grassBedItem',
+    [PHASES.FEATHER]: 'bunnySprite',
+  }[phase];
 
   const hitTest = useCallback((clientX, clientY, targetId) => {
     if (!sceneRef.current) return false;
@@ -631,6 +638,23 @@ function TuskPathGame({
       >
         <PoseImage className="bunny" src={bunnyImg} alt="Bunny traveller" />
       </button>
+
+      {SHOW_HIT_ZONES && phaseTargetLayoutKey && layout[phaseTargetLayoutKey] && (
+        <div
+          style={{
+            ...styleFromLayout(layout[phaseTargetLayoutKey]),
+            position: 'absolute',
+            transform: 'translate(-50%, -50%)',
+            height: phaseTargetLayoutKey === 'grassBedItem' ? '13%' : undefined,
+            aspectRatio: phaseTargetLayoutKey === 'grassBedItem' ? undefined : '1 / 1',
+            border: '2px solid rgba(255, 0, 90, 0.85)',
+            background: 'rgba(255, 0, 90, 0.1)',
+            pointerEvents: 'none',
+            zIndex: 80,
+          }}
+          aria-hidden="true"
+        />
+      )}
 
       {(phase === PHASES.WATER || completed.water) && (
         <button

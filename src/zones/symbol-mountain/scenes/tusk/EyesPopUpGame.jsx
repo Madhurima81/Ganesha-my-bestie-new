@@ -29,6 +29,9 @@ const DEBUG_UI_ENABLED =
   typeof window !== 'undefined' &&
   (window.location.pathname.includes('game-test') ||
     new URLSearchParams(window.location.search).has('debugEyes'));
+const SHOW_HIT_ZONES =
+  typeof window !== 'undefined' &&
+  new URLSearchParams(window.location.search).has('hitzones');
 const LAYOUT_STORAGE_KEY = 'symbol_mountain_eyes_layout_v2';
 const LAYOUT_PRESET_VERSION = '2026-09-10-eyes-visual-flow-editor-layout-7';
 
@@ -838,6 +841,13 @@ const EyesPopUpGame = ({
             aria-label={`Find ${target.label}`}
             disabled={!debugMode && isFound}
           >
+            {SHOW_HIT_ZONES && !isFound && (
+              <span
+                className={`eyes-hit-zone-outline eyes-hit-zone-outline--${target.id}`}
+                aria-hidden="true"
+                title={`tap zone: ${target.label}`}
+              />
+            )}
             {(isFound ? target.foundImg : target.hiddenImg) && (
               <PoseImage src={isFound ? target.foundImg : target.hiddenImg} alt="" draggable={false} />
             )}

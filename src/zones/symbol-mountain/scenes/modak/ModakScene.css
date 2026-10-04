@@ -677,6 +677,7 @@ div[class*="modak-game-modak-collected"] {
   position: absolute;
   width: 38%;
   height: 38%;
+  aspect-ratio: 1;
   object-fit: contain;
   filter: drop-shadow(0 4px 8px rgba(80, 50, 30, 0.12));
 }
@@ -744,6 +745,7 @@ div[class*="modak-game-modak-collected"] {
   position: absolute;
   width: 28%;
   height: 28%;
+  aspect-ratio: 1;
   object-fit: contain;
 }
 
@@ -770,6 +772,7 @@ div[class*="modak-game-modak-collected"] {
 .modak-game-emotion-orb {
   width: clamp(72px, 6.4vw, 104px);
   height: clamp(72px, 6.4vw, 104px);
+  object-fit: contain;
   display: block;
   user-select: none;
   cursor: grab;

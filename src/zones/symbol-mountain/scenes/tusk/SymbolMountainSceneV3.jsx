@@ -18,6 +18,7 @@ import OpeningModal from '../../../shared/components/OpeningModal';
 
 // Pause-aware timeout, resume countdown, SFX
 import usePauseAwareTimeout from '../../../../lib/hooks/usePauseAwareTimeout';
+import useSidebarPause from '../../../../lib/hooks/useSidebarPause';
 import useResumeCountdown from '../../../../lib/hooks/useResumeCountdown';
 import ResumeCountdown from '../../../../lib/components/feedback/ResumeCountdown';
 
@@ -60,8 +61,8 @@ import SceneCompletionCelebration from '../../../../lib/components/celebration/S
 import InnerMandala from '../../../../lib/components/celebration/InnerMandala';
 import AudioToggle from '../../../../lib/components/ui/AudioToggle';
 import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
-import VOReplayButton from '../../../../lib/components/feedback/VOReplayButton';
 import { getCollectionTarget } from '../../../../lib/utils/collectionTarget';
+import VOReplayButton from '../../../../lib/components/feedback/VOReplayButton';
 // import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOverlay'; // superseded by SymbolAutoReveal
 import SymbolAutoReveal from '../../../../lib/components/reveal/SymbolAutoReveal';
 
@@ -279,6 +280,17 @@ const SymbolMountainSceneContent = ({
 
   const { isAudioOn, toggleAudio } = useAudioPreference();
   const { speak, stop: stopSpokenVoice, mute: muteSpokenVoice } = useGaneshaVoice();
+  // Sidebar = true pause: tracks the in-flight scene line so it can be replayed after the
+  // sidebar closes; the three mini-games get `isPaused` and pause themselves.
+  const sidebarPause = useSidebarPause();
+  const {
+    playTracked,
+    beginPause: beginSidebarPause,
+    endPause: endSidebarPause,
+  } = sidebarPause;
+  const scenePaused = isSymbolPopupOpen || sidebarPause.isSidebarPaused;
+  // Beat = current phase. Set during render so a clip started this render is tagged with it.
+  sidebarPause.setBeat(String(sceneState?.phase));
   const lastAnnouncedPromptRef = useRef(null);
   const openingVoPlayedRef = useRef(false);
   const idleVoGateRef = useRef(false);
@@ -312,7 +324,7 @@ const SymbolMountainSceneContent = ({
   // onShow goes through a live ref (same pattern as NewModakSceneV7) so the
   // callback never captures a stale sceneState/phase from the mount render.
   const onTabReturnImplRef = useRef(null);
-  const { safeSetTimeout, clearAll: clearAllTimeouts } = usePauseAwareTimeout({
+  const { safeSetTimeout, clearAll: clearAllTimeouts, freeze: freezeTimeouts, thaw: thawTimeouts } = usePauseAwareTimeout({
     onHide: () => stopSpokenVoice(),
     onShow: () => onTabReturnImplRef.current?.(),
     resumeDelay: RESUME_DELAY_MS,
@@ -352,7 +364,7 @@ const SymbolMountainSceneContent = ({
   }, []);
 
 
-  const speakScenePrompt = useCallback((key, options = {}) => {
+  const speakScenePromptRaw = useCallback((key, options = {}) => {
     if (!VOICE_LINES[key]) {
       options?.onEnd?.();
       return;
@@ -364,6 +376,24 @@ const SymbolMountainSceneContent = ({
       onEnd: options?.onEnd
     });
   }, [isAudioOn, speak]);
+
+  // Every scene line runs through playTracked so a sidebar stop can never fire its onEnd
+  // (the ladder would arm behind the panel) and it can be replayed on close.
+  const speakScenePrompt = useCallback((key, options = {}) => {
+    playTracked('line', (done) => speakScenePromptRaw(key, { ...options, onEnd: done }), options?.onEnd);
+  }, [playTracked, speakScenePromptRaw]);
+
+  // Sidebar hold released (after any replay finished): thaw timers and start a fresh
+  // 10/18/26 clock — the child just switched context and needs time to look and act.
+  const wasSidebarPausedRef = useRef(false);
+  useEffect(() => {
+    const paused = sidebarPause.isSidebarPaused;
+    if (wasSidebarPausedRef.current && !paused) {
+      thawTimeouts();
+      resetHintCadence();
+    }
+    wasSidebarPausedRef.current = paused;
+  }, [sidebarPause.isSidebarPaused, thawTimeouts, resetHintCadence]);
   // Mute pressed mid-line: silence now, finish the line's callback on schedule.
   useEffect(() => {
     if (!isAudioOn) muteSpokenVoice();
@@ -422,13 +452,11 @@ const SymbolMountainSceneContent = ({
 
       if (revealConfig?.symbolId === 'eyes') {
         revealVoKeyRef.current = 'eyes';
-        speakScenePrompt('eyesSetup');
         return;
       }
 
       if (revealConfig?.symbolId === 'ear' || revealConfig?.symbolId === 'ears') {
         revealVoKeyRef.current = 'ears';
-        speakScenePrompt('earsSetup');
         return;
       }
 
@@ -461,7 +489,7 @@ const SymbolMountainSceneContent = ({
       // The tusk nest game (BeatPlayerGame) runs its own 10/18/26s ladder with
       // per-beat lines; the parent ladder stays off so the two don't overlap.
       && !sceneState?.showTuskAssemblyGame
-      && !isSymbolPopupOpen
+      && !scenePaused
       && !revealConfig
       && !showSceneCompletion;
 
@@ -487,7 +515,7 @@ const SymbolMountainSceneContent = ({
   }, [
     hintResetKey,
     idleHintsEnabled,
-    isSymbolPopupOpen,
+    scenePaused,
     revealConfig,
     sceneState?.phase,
     sceneState?.showEarsRhythmGame,
@@ -498,7 +526,7 @@ const SymbolMountainSceneContent = ({
   ]);
 
   useEffect(() => {
-    if (!sceneState?.welcomeShown || revealConfig || showSceneCompletion || isSymbolPopupOpen) return;
+    if (!sceneState?.welcomeShown || revealConfig || showSceneCompletion || scenePaused) return;
 
     let promptKey = null;
     if (sceneState.phase === PHASES.EYES_GAME && !sceneState.showEyesTelescopeGame && !sceneState.discoveredSymbols?.eyes) {
@@ -535,7 +563,7 @@ const SymbolMountainSceneContent = ({
     sceneState?.discoveredSymbols?.eyes,
     sceneState?.discoveredSymbols?.ears,
 
-    isSymbolPopupOpen,
+    scenePaused,
     revealConfig,
     showSceneCompletion,
     resetIdleBaseline,
@@ -691,13 +719,11 @@ const SymbolMountainSceneContent = ({
     const symbolId = revealConfig.symbolId;
     if (symbolId === 'eyes' && revealVoKeyRef.current !== 'eyes') {
       revealVoKeyRef.current = 'eyes';
-      speakScenePrompt('eyesSetup');
       return;
     }
 
     if ((symbolId === 'ear' || symbolId === 'ears') && revealVoKeyRef.current !== 'ears') {
       revealVoKeyRef.current = 'ears';
-      speakScenePrompt('earsSetup');
       return;
     }
 
@@ -873,6 +899,7 @@ const SymbolMountainSceneContent = ({
                 <EyesPopUpGame
                   isActive={sceneState.showEyesTelescopeGame}
                   isAudioOn={isAudioOn}
+                  isPaused={scenePaused}
                   stopVoice={stopVoice}
                   onGameComplete={({ assignedSpots } = {}) => {
                     sceneActions.updateState({
@@ -892,6 +919,7 @@ const SymbolMountainSceneContent = ({
                 <EarsSoundMatchGame
                   isActive={sceneState.showEarsRhythmGame}
                   isAudioOn={isAudioOn}
+                  isPaused={scenePaused}
                   stopVoice={stopVoice}
                   animalPositions={sceneState.animalSpots}
                   onAnimalPositionsChange={(positions) => {
@@ -937,6 +965,7 @@ const SymbolMountainSceneContent = ({
                   key={`tusk-${tuskTestRunKey}`}
                   isActive={sceneState.showTuskAssemblyGame}
                   isAudioOn={isAudioOn}
+                  isPaused={scenePaused}
                   onGameComplete={handleTuskGameComplete}
                 />
               )}
@@ -1009,17 +1038,17 @@ const SymbolMountainSceneContent = ({
                 onSymbolClick={(id) => { if (import.meta.env.DEV) console.log(`Symbol clicked: ${id}`); }}
                 onPopupOpen={() => {
                   setIsSymbolPopupOpen(true);
+                  // Capture the interrupted line BEFORE stopping voice, then freeze the scene.
+                  beginSidebarPause();
+                  freezeTimeouts();
                   stopSpokenVoice();
                   resetIdleBaseline();
                 }}
                 onPopupClose={() => {
                   setIsSymbolPopupOpen(false);
-                  const replayKey = getPromptKeyForPhase();
-                  if (replayKey) {
-                    speakScenePrompt(replayKey, { onEnd: resetHintCadence });
-                  } else {
-                    resetHintCadence();
-                  }
+                  // Replays ONLY an interrupted line (once, from the start); if nothing was
+                  // interrupted the child just gets a fresh idle clock — see the release effect.
+                  endSidebarPause();
                 }}
               />
             )}

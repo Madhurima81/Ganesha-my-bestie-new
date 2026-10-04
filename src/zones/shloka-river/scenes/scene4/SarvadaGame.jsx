@@ -21,6 +21,7 @@ import nightSceneImg from './assets/images/sarvada/night-scene.webp';
 const SYLLABLES = ['Sar', 'va', 'da'];
 const AUDIO = ['sar', 'va', 'da'];
 const PHASE_VO_KEYS = ['scene14_morning', 'scene14_afternoon', 'scene14_night'];
+const SHOW_HIT_ZONES = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('hitzones');
 
 const PHASES_CONFIG = [
   {
@@ -446,6 +447,7 @@ export default function SarvadaGame({
   const handleImageTap = useCallback(
     (event) => {
       if (!findMode || symbolFound || isPaused) return;
+      stopSceneVoice?.();
       const rect = event.currentTarget.getBoundingClientRect();
       if (!rect.width || !rect.height) return;
       const px = ((event.clientX - rect.left) / rect.width) * 100;
@@ -465,7 +467,7 @@ export default function SarvadaGame({
         setMissRipple({ key: Date.now(), left: px, top: py });
       }
     },
-    [findMode, symbolFound, isPaused, spots, phaseIndex, triggerFound],
+    [findMode, symbolFound, isPaused, spots, phaseIndex, stopSceneVoice, triggerFound],
   );
 
   const updateSpot = useCallback((index, key, value) => {
@@ -567,7 +569,7 @@ export default function SarvadaGame({
                   onAnimationEnd={() => setMissRipple(null)}
                 />
               )}
-              {findMode && showDebugPanel && showZones && (
+              {findMode && (SHOW_HIT_ZONES || (showDebugPanel && showZones)) && (
                 <div className="sarvada-zone-outline" style={zoneStyle(spot)} />
               )}
               {/* L1/L2 — a broad, then narrower search area, not the exact

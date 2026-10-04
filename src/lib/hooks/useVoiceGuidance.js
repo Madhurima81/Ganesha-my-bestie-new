@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import useAppVisibility from './useAppVisibility';
+import { attachSpeechCue, startCueTimer } from '../utils/speechCue';
 import {
   getVoiceScript,
   getAudioPath,
@@ -11,9 +12,9 @@ import {
   getWordPath
 } from '../config/content/voiceGuidance';
 
-// Audio toggle is a global mute (see DECISIONS.md 2026-09-29): when the shared
-// preference is off, ALL voice — guidance VO, hints, Sanskrit words and
-// syllables — is silent. Read live from storage so no scene has to thread it in.
+// The audio toggle is a VOICE mute (see DECISIONS.md 2026-09-29, T55): when the
+// shared preference is off, ALL voice — guidance VO, hints, Sanskrit words and
+// syllables — is silent. SFX are NOT affected. Read live from storage so no scene has to thread it in.
 // Muted playback still resolves its callback — on a silent timer matching the
 // line's length, not instantly — so gameplay never hangs and mute never skips.
 const isGlobalAudioOff = () => {
@@ -184,11 +185,14 @@ const useVoiceGuidance = (zoneId, sceneId, {
   const playVoice = useCallback((key, onEnded, {
     replayOnReturn = true,
     textOverride = null,
-    stripLeadingText = null
+    stripLeadingText = null,
+    // { word, onCue, cueMs? } — fire onCue when `word` of this line is spoken (see utils/speechCue)
+    cue = null
   } = {}) => {
     if (isGlobalAudioOff()) {
       const mutedScript = getVoiceScript(zoneId, sceneId, key);
       clearSilentTimers();
+      startCueTimer(textOverride || mutedScript?.text, cue);
       playSilent(textOverride || mutedScript?.text, onEnded);
       return;
     }
@@ -217,6 +221,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
         utterance.rate = 0.95;
         utterance.pitch = 1;
         utterance.volume = voiceVolumeRef.current;
+        attachSpeechCue(utterance, ttsText, cue);
 
         let callbackFired = false;
         const fireCallback = () => {
@@ -330,6 +335,9 @@ const useVoiceGuidance = (zoneId, sceneId, {
     activeVoiceStripLeadingTextRef.current = stripLeadingText;
     setIsPlaying(true);
 
+    // Recorded line: fire the cue at cue.cueMs (measured from the recording), or the estimate.
+    startCueTimer(ttsText, cue);
+
     audio.play().catch(err => {
       // AbortError = play() interrupted by pause() during tab hide.
       // Keep refs alive so handleShow can replay it on return.
@@ -420,7 +428,6 @@ const useVoiceGuidance = (zoneId, sceneId, {
   // ========================================
 
   const playSfx = useCallback((key) => {
-    if (isGlobalAudioOff()) return; // global mute covers SFX too
     const path = getSfxPath(key);
     if (!path) {
       console.warn(`SFX not found: ${key}`);
@@ -612,7 +619,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
     stopVoice();
 
     const audio = new Audio(path);
-    audio.volume = voiceVolumeRef.current; // follows the voice volume; the audio toggle mutes this too (global mute)
+    audio.volume = voiceVolumeRef.current; // follows the voice volume; the voice toggle mutes this too (voice mute)
 
     // Guard: ensure onEnded is called exactly once
     let callbackFired = false;
@@ -684,7 +691,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
     stopVoice();
 
     const audio = new Audio(path);
-    audio.volume = voiceVolumeRef.current; // follows the voice volume; the audio toggle mutes this too (global mute)
+    audio.volume = voiceVolumeRef.current; // follows the voice volume; the voice toggle mutes this too (voice mute)
 
     // Guard: ensure onEnded is called exactly once
     let callbackFired = false;

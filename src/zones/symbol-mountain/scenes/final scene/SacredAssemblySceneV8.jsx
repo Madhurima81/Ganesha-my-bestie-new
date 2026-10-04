@@ -901,8 +901,7 @@ const SacredAssemblyContent = ({
     if (
       sceneState.phase === 'complete' ||
       sceneState.showingZoneCompletion ||
-      showSceneCompletion ||
-      showSparkle === 'final-fireworks'
+      showSceneCompletion
     ) {
       playSceneVoice('finalAlwaysWithYou', null, { replayOnReturn: false, auto: true });
       return;
@@ -1606,13 +1605,28 @@ const SacredAssemblyContent = ({
     }
   }, [isReload]);
 
-  // FINAL CELEBRATION: completion modal waits for BOTH the orbs and the finale
-  // VO to finish, so Ganesha's closing words are never cut off.
+  // FINAL CELEBRATION: first let the orbs/fireworks finish, then play the
+  // closing VO, then show the completion modal. This keeps the VO mapped to
+  // the symbol reveal/completion moment instead of hiding under fireworks.
   useEffect(() => {
-    if (fireworksFinished && sceneCompleteVOFinished && !showSceneCompletion) {
+    if (!fireworksFinished || showSceneCompletion) return;
+
+    if (!sceneCompleteVOFinished && !finalVoPlayedRef.current) {
+      finalVoPlayedRef.current = true;
+      playSceneVoice('finalYouFoundAll', () => {
+        safeSetTimeout(() => {
+          playSceneVoice('finalAlwaysWithYou', () => {
+            setSceneCompleteVOFinished(true);
+          }, { replayOnReturn: false });
+        }, 700);
+      }, { replayOnReturn: false });
+      return;
+    }
+
+    if (sceneCompleteVOFinished) {
       setShowSceneCompletion(true);
     }
-  }, [fireworksFinished, sceneCompleteVOFinished, showSceneCompletion]);
+  }, [fireworksFinished, playSceneVoice, safeSetTimeout, sceneCompleteVOFinished, showSceneCompletion]);
 
   // RESUME � runs once on mount, handles returning mid-game
   useEffect(() => {
@@ -1707,17 +1721,7 @@ const SacredAssemblyContent = ({
 
     setIsOrbsRunning(true);
     setShowSparkle('final-fireworks');
-
     finalVoPlayedRef.current = false;
-    // 2-line recap: "what you did" -> 700ms -> "what it means"
-    playSceneVoice('finalYouFoundAll', () => {
-      safeSetTimeout(() => {
-        playSceneVoice('finalAlwaysWithYou', () => {
-          finalVoPlayedRef.current = true;
-          setSceneCompleteVOFinished(true);
-        }, { replayOnReturn: false });
-      }, 700);
-    }, { replayOnReturn: false });
 
     // Safety net: if a VO onEnd never fires (interrupted speech engine),
     // release the completion-modal gate after a generous ceiling.

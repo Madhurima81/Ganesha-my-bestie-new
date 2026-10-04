@@ -21,6 +21,10 @@ const ZONE_PARTS = {
   base: ganeshaMooshika
 };
 
+const SHOW_HIT_ZONES =
+  typeof window !== 'undefined' &&
+  new URLSearchParams(window.location.search).has('hitzones');
+
 // Build flat hitbox list from a (possibly overridden) zones array.
 // One zone can have multiple hit areas (e.g., ears left + right).
 const buildHitboxes = (zones) => {
@@ -32,6 +36,16 @@ const buildHitboxes = (zones) => {
     });
   });
   return list;
+};
+
+const isPointerInsideOval = (event) => {
+  const rect = event.currentTarget.getBoundingClientRect();
+  if (!rect.width || !rect.height) return false;
+  const nx = (event.clientX - rect.left) / rect.width;
+  const ny = (event.clientY - rect.top) / rect.height;
+  const dx = (nx - 0.5) / 0.5;
+  const dy = (ny - 0.5) / 0.5;
+  return (dx * dx) + (dy * dy) <= 1;
 };
 
 const GaneshaIllustration = ({ zoneStates = {}, onZoneClick, activeZoneId = null, baseOpacity = 0.2, showChoiceAffordance = false, zoneOverrides = {}, showTapIntroPulse = false }) => {
@@ -145,6 +159,7 @@ const GaneshaIllustration = ({ zoneStates = {}, onZoneClick, activeZoneId = null
               aria-label={`Tap ${zoneId}`}
               onClick={(e) => {
                 e.stopPropagation();
+                if (!isPointerInsideOval(e)) return;
                 if (!disabled) onZoneClick?.(zoneId);
               }}
               onMouseDown={(e) => e.currentTarget.blur()}
@@ -171,6 +186,11 @@ const GaneshaIllustration = ({ zoneStates = {}, onZoneClick, activeZoneId = null
                 // fontSize: '14px'
               }}
             >
+              {SHOW_HIT_ZONES && (
+                <span className={`assembly-hit-zone-outline assembly-hit-zone-outline--${zoneId}`}>
+                  {zoneId}
+                </span>
+              )}
               {/* {zoneId} */} {/* debug label */}
             </button>
           );

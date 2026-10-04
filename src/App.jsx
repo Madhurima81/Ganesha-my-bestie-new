@@ -1553,6 +1553,7 @@ chants: result?.chants || result?.chantedVerses || {},
           <Suspense fallback={<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 'var(--app-height, 100vh)', backgroundColor: '#FAF6EE' }}>Loading...</div>}>
             <ParentDashboard
               onBack={() => setCurrentView('profile-welcome')}
+              onOpenChildProfile={() => setCurrentView('profile-selector')}
             />
           </Suspense>
         </div>

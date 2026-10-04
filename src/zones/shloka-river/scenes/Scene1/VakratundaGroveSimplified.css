@@ -966,3 +966,35 @@
   .mahakaya-clicker-element { width: 150px !important; height: 150px !important; }
   .mahakaya-central-synthesis { width: 165px !important; height: 165px !important; }
 }
+
+/* ==========================================================================
+   PHONE LANDSCAPE — cover-mapped 4:3 stage (Step 4, Vakratunda Grove)
+   Canonical phone condition. The painted background is 4:3 (1448x1086) and every
+   game layer (frog, family, stone, logs, reeds, water polygon, pads, hit ellipses,
+   pointer mapping) is positioned in PERCENT of .river-background. Until now that
+   box was the full viewport while the art was cover-cropped, so on a 2.1:1 phone
+   the objects drifted off the art and the stone/logs/reeds were sized as a % of the
+   WIDTH of a very short screen. Here the box becomes the stage itself: the bg's
+   native ratio, width-fit (covers the viewport), centred by margins (NOT a transform,
+   so fixed chrome — Zone / Voice / Replay / collection — keeps anchoring to the
+   viewport). Gameplay lives in the middle ~60% of the art, which is what a phone
+   shows; the rest is cropped exactly as the art itself would be.
+   ========================================================================== */
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
+  .river-background {
+    --vak-stage-w: max(100vw, calc(var(--app-height, 100dvh) * 4 / 3));
+    width: var(--vak-stage-w) !important;
+    height: calc(var(--vak-stage-w) * 3 / 4) !important;
+    margin-left: calc((100vw - var(--vak-stage-w)) / 2) !important;
+    margin-top: calc((var(--app-height, 100dvh) - var(--vak-stage-w) * 3 / 4) / 2) !important;
+    background-size: 100% 100% !important;
+    flex: none;
+  }
+
+  /* Re-anchor the word reward to the VIEWPORT centre (stage centre == viewport centre)
+     and keep it inside the visible height. */
+  .vakratunda-word-star {
+    top: 50%;
+    height: min(60%, 84dvh);
+  }
+}

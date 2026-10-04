@@ -51,6 +51,7 @@ const ORB_APP_IMAGES = {
 };
 
 const OPENING_SCENE_GANESHA = '/images/new-ganesha-sit-modak.webp';
+const SHOW_HIT_ZONES = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('hitzones');
 
 const SHLOKA_WORDS = [
   { id: 'vakratunda', label: 'Vakratunda', icon: ORB_APP_IMAGES.vakratunda, color: '#FF5722' },
@@ -1146,6 +1147,7 @@ const ShlokaRiverFinaleContent = ({
                           disabled={Boolean(sailingWordId)}
                           aria-label={`Choose ${w.label} boat`}
                         >
+                          {SHOW_HIT_ZONES && <span className="srf-choice-hit-outline" aria-hidden="true" />}
                           <div className="srf-boat-art">
                             <img src={neutralBoat} alt="" className="srf-neutral-boat" draggable="false" />
                             <img

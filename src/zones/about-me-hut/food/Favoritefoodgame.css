@@ -1267,27 +1267,28 @@
   grid-template-columns: 1fr 1fr;
 }
 .favorite-food-game .aboutme-comparison-grid {
-  transform: translateY(44px);
+  /* was translateY(44px), which pushed the cards over the Continue button */
+  transform: none;
   gap: 14px;
 }
 .favorite-food-game .aboutme-comparison-title {
-  margin-top: 8px;
-  margin-bottom: 20px;
-  font-size: clamp(2rem, 4vw, 2.8rem);
+  margin-top: 0;
+  margin-bottom: clamp(6px, 1.2vh, 12px);
+  font-size: clamp(1.6rem, 4.6vh, 2.4rem);
 }
 .favorite-food-game .aboutme-comparison-column {
   min-height: auto;
-  max-width: 520px;
-  padding: 24px;
-  gap: 14px;
+  max-width: clamp(320px, 40vw, 440px);
+  padding: clamp(10px, 1.8vh, 16px) 18px;
+  gap: clamp(6px, 1.2vh, 10px);
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   background: #f7f3ea;
 }
 .favorite-food-game .aboutme-comparison-column-header {
-  min-height: 64px;
-  margin-bottom: 8px;
+  min-height: 0;
+  margin-bottom: 2px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1300,12 +1301,12 @@
   letter-spacing: 0;
 }
 .favorite-food-game .aboutme-comparison-item {
-  min-height: 154px;
-  padding: 16px 14px;
+  min-height: clamp(78px, 13vh, 104px);
+  padding: 8px 10px;
   border-radius: 14px;
 }
 .favorite-food-game .aboutme-comparison-item-text {
-  font-size: 1.12rem;
+  font-size: clamp(0.9rem, 2.2vh, 1.05rem);
   line-height: 1.28;
 }
 .favorite-food-game .aboutme-comparison-item-label {
@@ -1329,8 +1330,8 @@
   height: 42px;
 }
 .favorite-food-game .aboutme-comparison-continue-btn {
-  margin-top: 22px;
-  margin-bottom: 12px;
+  margin-top: clamp(4px, 1vh, 10px);
+  margin-bottom: max(clamp(12px, 2.5vh, 24px), env(safe-area-inset-bottom));
   border-radius: 22px;
   padding: 12px 32px;
   font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -2023,4 +2024,112 @@
   position: relative !important;
   top: 0 !important;
   left: 0 !important;
+}
+
+/* Tap zone = an oval on the picture only. The card/button box (padding, name
+   label, gaps) no longer takes taps; clicks on the picture still bubble up to
+   the button's onClick. Disabled cards stay inert (React ignores onClick). */
+.favorite-food-game .choice-card,
+.favorite-food-game .kid-choice-card {
+  pointer-events: none;
+}
+
+.favorite-food-game .choice-card .choice-image-container {
+  pointer-events: auto;
+  border-radius: 50%;
+}
+
+.favorite-food-game .kid-choice-card img {
+  pointer-events: auto;
+  border-radius: 50%;
+}
+
+/* Child colour hearts: the button box is ~160x170 around a much smaller heart.
+   The button itself is inert; an oval over the heart takes the tap. */
+.favorite-food-game .color-choice-button {
+  pointer-events: none;
+}
+
+.favorite-food-game .color-choice-button::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 62%;
+  height: 58%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  pointer-events: auto;
+}
+
+/* Child colour screen: the 4x2 heart grid ran off the bottom edge (second row
+   cut off). Lift the whole grid. */
+.favorite-food-game .color-palette-grid {
+  bottom: 25% !important;
+}
+
+/* Child activity screen: the + / Draw / Type stack sits a little higher so the
+   + isn't cut off at the bottom edge. (Row positions live in
+   CHILD_ACTIVITY_POSITIONS in the JSX, as inline styles.) */
+.favorite-food-game .custom-input-options.child-food-actions,
+.favorite-food-game .custom-input-options.child-activity-actions {
+  bottom: 6%;
+}
+
+/* Friends comparison: group title + cards + Continue and centre the group
+   vertically, so the button sits right under the cards instead of far below. */
+.favorite-food-game .aboutme-comparison-overlay {
+  justify-content: center;
+}
+.favorite-food-game .aboutme-comparison-grid {
+  flex: 0 1 auto;
+}
+
+/* "My own" card: the 8th choice on the child Food and Activity screens.
+   A cream circle with a dashed outline and a brown plus (drawn in CSS, no
+   emoji). Same footprint as the picture on the other cards. Only the circle
+   takes taps, not the label. */
+.favorite-food-game .myown-wrap {
+  pointer-events: none;
+}
+
+.favorite-food-game .myown-circle {
+  pointer-events: auto;
+  position: relative;
+  display: block;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 50%;
+  border: 3px dashed #B07A45;
+  background: #FFF6E8;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.18);
+  width: clamp(70px, 9vw, 110px);
+  height: clamp(70px, 9vw, 110px);
+  min-width: 60px;
+  min-height: 60px;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.2s ease;
+}
+
+.favorite-food-game .child-activity-scene .myown-circle {
+  width: clamp(70px, 9vw, 100px);
+  height: clamp(70px, 9vw, 100px);
+}
+
+.favorite-food-game .myown-circle::before,
+.favorite-food-game .myown-circle::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  background: #8C6A4A;
+  border-radius: 3px;
+  transform: translate(-50%, -50%);
+}
+.favorite-food-game .myown-circle::before { width: 38%; height: 6px; }
+.favorite-food-game .myown-circle::after  { width: 6px; height: 38%; }
+
+.favorite-food-game .myown-circle.open {
+  transform: rotate(45deg);
+  background: #FFEBC8;
 }
