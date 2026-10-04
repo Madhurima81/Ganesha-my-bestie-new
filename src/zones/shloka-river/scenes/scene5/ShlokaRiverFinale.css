@@ -988,10 +988,16 @@
   position: absolute;
   inset: 0;
   z-index: 4;
-  border: 2px dashed rgba(3, 169, 244, 0.88);
-  border-radius: 12px;
-  background: rgba(3, 169, 244, 0.08);
   pointer-events: none;
+  overflow: visible;
+}
+
+.srf-choice-hit-outline polygon {
+  fill: rgba(3, 169, 244, 0.08);
+  stroke: rgba(3, 169, 244, 0.88);
+  stroke-width: 1.6;
+  stroke-dasharray: 4 2;
+  vector-effect: non-scaling-stroke;
 }
 
 .srf-choice-boat.srf-choice-0 { left: 27%; top: 3%; transform: translateX(-50%); }

@@ -245,6 +245,38 @@ const DEFAULT_FINALE_TUNE = {
 
 const clampTune = (value, min, max) => Math.min(max, Math.max(min, Number(value)));
 
+const CHOICE_BOAT_HIT_POLYGON = [
+  [0.1, 0.72],
+  [0.25, 0.5],
+  [0.43, 0.08],
+  [0.58, 0.08],
+  [0.82, 0.5],
+  [0.94, 0.72],
+  [0.82, 0.94],
+  [0.18, 0.94],
+];
+
+const isPointInPolygon = (point, polygon) => {
+  let inside = false;
+  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i, i += 1) {
+    const [xi, yi] = polygon[i];
+    const [xj, yj] = polygon[j];
+    const intersects = ((yi > point.y) !== (yj > point.y))
+      && (point.x < ((xj - xi) * (point.y - yi)) / (yj - yi) + xi);
+    if (intersects) inside = !inside;
+  }
+  return inside;
+};
+
+const isPointerInsideElementPolygon = (event, polygon) => {
+  const rect = event.currentTarget.getBoundingClientRect();
+  if (!rect.width || !rect.height) return false;
+  return isPointInPolygon({
+    x: (event.clientX - rect.left) / rect.width,
+    y: (event.clientY - rect.top) / rect.height,
+  }, polygon);
+};
+
 const ShlokaRiverFinaleContent = ({
   sceneState,
   sceneActions,
@@ -893,6 +925,12 @@ const ShlokaRiverFinaleContent = ({
     }, 650);
   };
 
+  const handleChoiceBoatTap = (event, wordData) => {
+    if (import.meta.env.DEV && tunerDragActive) return;
+    if (!isPointerInsideElementPolygon(event, CHOICE_BOAT_HIT_POLYGON)) return;
+    handleWordChipTap(wordData);
+  };
+
   useEffect(() => {
     if (phase === PHASES.FINALE) {
       setShowOrbsCelebration(true);
@@ -1143,11 +1181,15 @@ const ShlokaRiverFinaleContent = ({
                           key={w.id}
                           className={`srf-choice-boat srf-choice-${choiceIdx} ${hintClass}${wrongWordId === w.id ? ' is-wrong-try' : ''}${sailingWordId === w.id ? ' is-sailing' : ''}`}
                           style={{ color: w.color, ...getSymbolStyle(w.id) }}
-                          onClick={() => { if (!(import.meta.env.DEV && tunerDragActive)) handleWordChipTap(w); }}
+                          onClick={(event) => handleChoiceBoatTap(event, w)}
                           disabled={Boolean(sailingWordId)}
                           aria-label={`Choose ${w.label} boat`}
                         >
-                          {SHOW_HIT_ZONES && <span className="srf-choice-hit-outline" aria-hidden="true" />}
+                          {SHOW_HIT_ZONES && (
+                            <svg className="srf-choice-hit-outline" viewBox="0 0 100 100" aria-hidden="true">
+                              <polygon points={CHOICE_BOAT_HIT_POLYGON.map(([x, y]) => `${x * 100},${y * 100}`).join(' ')} />
+                            </svg>
+                          )}
                           <div className="srf-boat-art">
                             <img src={neutralBoat} alt="" className="srf-neutral-boat" draggable="false" />
                             <img

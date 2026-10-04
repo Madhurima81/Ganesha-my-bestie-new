@@ -28,7 +28,7 @@ FIXED = changed this session / OVERLAY = `?hitzones` visual overlay added / NOT 
 
 ## Not yet read (coverage gaps)
 
-Shloka River Finale, all four About Me Hut scenes.
+All four About Me Hut scenes.
 About Me Hut uses forms/keyboard, so drag/hold checks mostly don't apply.
 
 ## Game-wise QA status
@@ -51,9 +51,9 @@ About Me Hut uses forms/keyboard, so drag/hold checks mostly don't apply.
 | Sacred Assembly | Ganesha parts | Tap-choice | Oval tap zones with `?hitzones` overlay; rectangle corners do not count | Tapping outside visible oval should not place the active symbol | DONE: user checked |
 | Modak Game 3: Garland | Flowers + finished garland | Tap / drag-drop | Flower tap buttons and smaller oval Ganesha drop zone with `?hitzones` overlay | Tapping between flowers should not thread; dropping garland outside Ganesha oval should fail | DONE: user checked |
 | Samaprabha | Shadow clues | Hold | Clue ellipses; branch corrected in layout debug | Holding the glow/background should not reveal the clue | DONE: user checked/corrected |
-| Sarvakaryeshu | Pick a Ganesha power | Tap-choice | `?hitzones` outlines the visible option buttons that own the tap | Tapping between/around option buttons should not pick a power | OVERLAY/READY TO CHECK |
-| Sarvada | Hidden symbol search | Tap/search | `?hitzones` or Tap Zone Debug shows the circular symbol zone | Tapping outside the visible circle should ripple only, no progress | OVERLAY/READY TO CHECK |
-| Shloka River Finale | Choose word boats | Tap-choice | `?hitzones` outlines the visible choice boat buttons that own the tap | Tapping water/empty space near a boat should not choose it | OVERLAY/READY TO CHECK |
+| Sarvakaryeshu | Pick a Ganesha power | Tap-choice | `?hitzones` outlines the symbol-circle tap areas; card tightened for iPad layout | Tapping between/around symbol circles should not pick a power | DONE: user checked |
+| Sarvada | Hidden symbol search | Tap/search | `?hitzones` or Tap Zone Debug shows the circular symbol zone | Tapping outside the visible circle should ripple only, no progress | DONE: user said no change needed |
+| Shloka River Finale | Choose word boats | Tap-choice | `?hitzones` outlines boat-shaped polygon tap areas; rectangle corners do not count | Tapping water/empty space near a boat should not choose it | DONE: polygon applied |
 
 ## Suggested next steps (need Madhurima's go-ahead)
 
