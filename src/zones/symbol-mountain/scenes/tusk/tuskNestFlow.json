@@ -440,7 +440,7 @@
       "interaction": {
         "type": "drag-drop",
         "drag": "twigItem",
-        "target": { "x": 50.17, "y": 58.32, "w": 16 }
+        "target": { "x": 50.17, "y": 58.32, "w": 12 }
       }
     },
     "1": {
@@ -841,7 +841,7 @@
       "interaction": {
         "type": "drag-drop",
         "drag": "grassItem",
-        "target": { "x": 50.17, "y": 58.32, "w": 16 }
+        "target": { "x": 50.17, "y": 58.32, "w": 12 }
       }
     },
     "2": {
@@ -1203,7 +1203,7 @@
       "interaction": {
         "type": "drag-drop",
         "drag": "leafItem",
-        "target": { "x": 50.17, "y": 58.32, "w": 16 }
+        "target": { "x": 50.17, "y": 58.32, "w": 12 }
       }
     },
     "3": {
@@ -1500,7 +1500,7 @@
       "interaction": {
         "type": "drag-drop",
         "drag": "featherItem",
-        "target": { "x": 50.17, "y": 58.32, "w": 16 }
+        "target": { "x": 50.17, "y": 58.32, "w": 12 }
       }
     },
     "4": {

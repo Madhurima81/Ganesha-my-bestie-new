@@ -540,6 +540,9 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
   const failedAttemptsRef = useRef(0);
   // Bumped when an L2 hint line finishes speaking, so a queued L3 line can start right after it.
   const [l2EndTick, setL2EndTick] = useState(0);
+  // Bumped on every wrong drop from the 2nd on, so the current hint line is spoken again (a line the
+  // child's next grab cut off, or one already spoken earlier in the cycle, would otherwise stay silent).
+  const [hintRepeatTick, setHintRepeatTick] = useState(0);
   const dragAttemptRef = useRef({ start: null, meaningful: false });
   const lastSpokenHintLevelRef = useRef(0);
   // Reusable structured hint mode — a beat opts in via `beat.hints` in the
@@ -608,6 +611,8 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
       const level = effectiveHintLevel >= 3 ? 3 : effectiveHintLevel >= 2 ? 2 : 0;
       if (!level) return;
       if (lastSpokenHintLevelRef.current >= level) return;
+      // A line of this level (or a higher one) is already speaking: let it finish, don't restart it.
+      if (hintSpeakingRef.current && hintSpeakingRef.current.level >= level) return;
       // Escalating to L3 (e.g. a 3rd wrong drop) while the L2 line is still speaking must not
       // cut it off: wait. The L2 completion below bumps l2EndTick, which re-runs this effect.
       if (level === 3 && hintSpeakingRef.current?.level === 2) return;
@@ -645,7 +650,7 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
       l2VoiceEndedAtRef.current = Date.now();
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [effectiveHintLevel, beatHintLevel, beatIndex, stateName, useStructuredDragHints, l2EndTick]);
+  }, [effectiveHintLevel, beatHintLevel, beatIndex, stateName, useStructuredDragHints, l2EndTick, hintRepeatTick]);
 
   // Pause (sidebar / tab): drop back to a clean hint slate — the child is switching
   // context and gets a fresh 10/18/26 window after the resume replay.
@@ -701,7 +706,12 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
   const gestureDemoFromTo = useMemo(() => {
     if (!showGestureDemo || !interaction) return null;
     const dragItem = findItem(interaction.drag);
-    const targetItem = interaction.target ? findItem(interaction.target) : null;
+    // A drag-drop target is either another item's gameKey (string) OR a raw {x,y,w} zone (the Tusk
+    // nest). A raw zone used to be looked up as an item, found nothing, and left the hand with
+    // from === to, so the demo hand sat on its start spot and never travelled to the nest.
+    const targetItem = typeof interaction.target === 'string'
+      ? findItem(interaction.target)
+      : (interaction.target || null);
     const from = dragItem ? { x: dragItem.x, y: dragItem.y } : { x: 50, y: 60 };
     let fullTo = from;
     if (targetItem) {
@@ -749,6 +759,11 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
     }
     if (failedAttemptsRef.current >= 3) {
       setForcedHintLevel(3);
+    }
+    // From the 2nd wrong drop on, speak the current level's line again (unless it is still speaking).
+    if (failedAttemptsRef.current >= 2) {
+      lastSpokenHintLevelRef.current = 0;
+      setHintRepeatTick((tick) => tick + 1);
     }
   }, [useStructuredDragHints]);
 

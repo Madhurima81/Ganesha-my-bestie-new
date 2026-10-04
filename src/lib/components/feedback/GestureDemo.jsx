@@ -253,11 +253,14 @@ export default function GestureDemo({
     };
   }, [active, paused, idleDelay, replayKey]);
 
-  // Inject dynamic keyframes
+  // Inject dynamic keyframes. Keyed on the coordinate VALUES (not the from/to object identity):
+  // callers often pass fresh {x,y} literals every render, which used to remove and re-add the
+  // @keyframes on every parent render and restart the hand, leaving it stuck at its start spot.
+  const fx = from?.x; const fy = from?.y; const tx = to?.x; const ty = to?.y;
   useEffect(() => {
     if (!visible) return;
 
-    const keyframeCSS = config.keyframes(from, to);
+    const keyframeCSS = config.keyframes({ x: fx, y: fy }, { x: tx, y: ty });
     const styleEl = document.createElement('style');
     styleEl.textContent = `@keyframes ${styleId} { ${keyframeCSS} }`;
     document.head.appendChild(styleEl);
@@ -269,7 +272,7 @@ export default function GestureDemo({
         styleRef.current = null;
       }
     };
-  }, [visible, styleId, config, from, to]);
+  }, [visible, styleId, config, fx, fy, tx, ty]);
 
   // Legacy opt-in: dismiss on any pointerdown (off by default).
   useEffect(() => {
