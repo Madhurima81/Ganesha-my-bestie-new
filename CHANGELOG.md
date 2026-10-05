@@ -1,5 +1,11 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-10-05] — Shloka River: Sarvakaryeshu card + syllable strip sized for shorter iPads
+**Touched:** src/zones/shloka-river/scenes/scene4/SarvakaryeshuGame.css, src/zones/shloka-river/shared/SyllableHighlight.css.
+**Changed:** landscape up to 900px tall — Sarvakaryeshu scenario card `zoom: 0.8` and `top: 38%`, boat width clamp(220px, 24vw, 300px) (the boat sat in front of the middle option); shared syllable strip (Sar va kar yeshu / Sur ya ko ti) text 15px, tighter padding, top 56px for every Shloka River scene. iPad Pro unchanged; phones keep their own rule.
+**Verified:** from Madhurima's screenshots; the card/boat clearance was calculated, not measured, and the syllable strip was not re-checked after the edit.
+**Open:** other Sarvakaryeshu screens (correct answer, rescue) not looked at; rest of Zone 2 T20 (scenes 05-09).
+
 
 ## [2026-10-05] — Suryakoti hints simplified: teach first, then remind once (25s "can't find it" cue still open)
 **Touched:** src/zones/shloka-river/scenes/Scene2/components/SuryakotiGame.jsx + .css; src/zones/shloka-river/scenes/Scene2/SuryakotiBankSimplified.jsx; src/lib/config/content/voiceGuidance.js; src/dev/testChecklists.js.

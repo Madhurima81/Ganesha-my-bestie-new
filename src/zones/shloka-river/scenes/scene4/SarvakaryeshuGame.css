@@ -618,3 +618,17 @@
 .sarva-game.is-paused *::after {
   animation-play-state: paused !important;
 }
+
+/* Shorter iPads (1024x670, mini 1133x744): the scenario card (picture, "So much to do.", three
+   powers) was tall enough that the boat sat in front of its middle option. Make the card ~20%
+   smaller (zoom keeps its centring translate and tap targets intact), lift it a little, and slim
+   the boat so the two clear each other. iPad Pro (taller than 900px) is unchanged. */
+@media (orientation: landscape) and (max-height: 900px) {
+  .sarva-card {
+    zoom: 0.8;
+    top: 38%;
+  }
+  .sarva-boat {
+    width: clamp(220px, 24vw, 300px);
+  }
+}
