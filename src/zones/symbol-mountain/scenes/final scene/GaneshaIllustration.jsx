@@ -48,11 +48,10 @@ const isPointerInsideOval = (event) => {
   return (dx * dx) + (dy * dy) <= 1;
 };
 
-const GaneshaIllustration = ({ zoneStates = {}, onZoneClick, activeZoneId = null, baseOpacity = 0.2, showChoiceAffordance = false, zoneOverrides = {}, showTapIntroPulse = false }) => {
+const GaneshaIllustration = ({ zoneStates = {}, onZoneClick, activeZoneId = null, baseOpacity = 0.2, showTapMarkers = false, zoneOverrides = {}, showTapIntroPulse = false }) => {
   // Dev "Hint Debug" panel can drag a zone to a new spot without touching
   // ganeshaZones.js — when it does, that override fully replaces the
-  // zone's `position` here so hitbox, tap-point dot, and choice-affordance
-  // all move together.
+  // zone's `position` here so hitbox and visible tap marker move together.
   const zones = useMemo(
     () => GANESHA_ZONES.map((zone) => (
       zoneOverrides[zone.id] ? { ...zone, position: zoneOverrides[zone.id] } : zone
@@ -100,49 +99,38 @@ const GaneshaIllustration = ({ zoneStates = {}, onZoneClick, activeZoneId = null
         );
       })}
 
-      {/* -------------------------------------------------------
-          8 TAP AREA GLOWS — soft field whose visible shape matches that
-          zone's real tappable box (same GANESHA_ZONES rect the click
-          hitbox below uses), visible from the start (unlike the
-          L1/L2-only affordance further down). Static at rest — all 8
-          pulse together once on showTapIntroPulse so the child learns
-          "these are tappable," then settle; after that, motion is reserved
-          for wrong-tap/correct-tap feedback and the idle-hint ladder, so
-          those reactions actually read as reactions instead of blending
-          into a constant shimmer.
-         ------------------------------------------------------- */}
-      {zones.map((zone) => {
-        const state = zoneStates[zone.id] || 'idle';
-        return (
-          <div
-            key={`tap-point-${zone.id}`}
-            className={`assembly-tap-area assembly-tap-area--${zone.id} ${showTapIntroPulse ? 'is-intro' : ''} ${state === 'wrong' ? 'is-wrong' : ''} ${state === 'correct' ? 'is-correct' : ''} ${state === 'placed' ? 'is-filled' : ''}`}
-            style={{ position: 'absolute', ...zone.position }}
-            aria-hidden="true"
-          >
-            <span className="assembly-tap-field" />
-          </div>
-        );
-      })}
-
-      {/* -------------------------------------------------------
-          L1 / L2 neutral affordance
-
-          Every still-available part gets the SAME quiet cue.
-          Nothing here indicates the correct answer.
-         ------------------------------------------------------- */}
-      {showChoiceAffordance && zones.map((zone) => {
+      {/* Small visible choice markers. The real hitboxes remain large/invisible below. */}
+      {showTapMarkers && zones.map((zone) => {
         const state = zoneStates[zone.id] || 'idle';
         const unavailable = state === 'placed' || state === 'correct';
         if (unavailable) return null;
 
+        const isWrong = state === 'wrong';
+        const isFinalHint = zone.id === activeZoneId || state === 'hint-final';
+
         return (
           <div
-            key={`choice-affordance-${zone.id}`}
-            className="ganesha-choice-affordance"
-            style={{ position: 'absolute', ...zone.position, zIndex: 18 }}
+            key={`tap-marker-${zone.id}`}
+            className="assembly-tap-marker-anchor"
+            style={{
+              position: 'absolute',
+              ...zone.position,
+              zIndex: 18,
+              pointerEvents: 'none',
+            }}
             aria-hidden="true"
-          />
+          >
+            <span
+              className={[
+                'assembly-tap-marker',
+                showTapIntroPulse ? 'is-intro' : '',
+                isWrong ? 'is-wrong' : '',
+                isFinalHint ? 'is-final-hint' : '',
+              ].filter(Boolean).join(' ')}
+            >
+              <span className="assembly-tap-marker-dot" />
+            </span>
+          </div>
         );
       })}
 

@@ -434,7 +434,7 @@
   100% { transform: scale(1); }
 }
 
-/* ── Hint overlay — uses inline position/size from zone config, matches hitbox exactly ── */
+/* Dev hint overlay base — production hints use the small tap marker system below. */
 .zone-hint-overlay {
   position: absolute;
   border-radius: 50%;
@@ -443,200 +443,127 @@
   animation-fill-mode: both;
 }
 
-/* L3 only — the earlier levels no longer glow the correct target at all
-   (see .ganesha-choice-affordance below for the neutral L1/L2 cue). */
-.zone-hint-overlay[data-hint-level="hint-final"] {
-  animation: sacredFinalTargetHint 1.35s ease-in-out infinite;
+/* ---------------------------------------------------------
+   SACRED ASSEMBLY — SMALL TAP MARKERS
+
+   Visible marker = small.
+   Actual hitbox = unchanged and much larger.
+   --------------------------------------------------------- */
+
+.assembly-tap-marker-anchor {
+  pointer-events: none;
 }
 
-/* ========================================
-   L1 / L2 — NEUTRAL BODY-PART AFFORDANCE
-
-   Every available target gets the SAME cue. This teaches "these parts
-   can be tapped" without revealing the correct answer.
-======================================== */
-.ganesha-choice-affordance {
+.assembly-tap-marker {
   position: absolute;
+  left: 50%;
+  top: 50%;
+  width: clamp(26px, 2.5vw, 34px);
+  height: clamp(26px, 2.5vw, 34px);
+  transform: translate(-50%, -50%);
   border-radius: 50%;
-  pointer-events: none;
-  /* Do not animate transform here — some zone positions use
-     translate(-50%), supplied inline from GANESHA_ZONES. */
-  /* 8 zones pulsing at once for the full L1+L2 window reads as visually
-     noisy — 2-3 soft common pulses, then settle (still visible, just
-     static), same as the rest of the hint ladder. */
-  animation: sacredChoiceAffordance 1.8s ease-in-out 3;
-}
-
-@keyframes sacredChoiceAffordance {
-  0%, 100% {
-    background: radial-gradient(circle, rgba(255, 238, 190, 0) 0%, rgba(255, 238, 190, 0) 66%);
-    box-shadow: 0 0 0 0 rgba(255, 224, 150, 0);
-  }
-  50% {
-    background: radial-gradient(circle, rgba(255, 238, 190, 0.12) 0%, rgba(255, 224, 150, 0.06) 44%, transparent 68%);
-    box-shadow: 0 0 12px rgba(255, 224, 150, 0.12);
-  }
-}
-
-/* ========================================
-   SACRED ASSEMBLY — 8 TAP AREA GLOWS
-
-   Soft area glows whose visible shape roughly matches each zone's actual
-   tappable region (the same box GANESHA_ZONES/ganeshaZones.js already
-   defines for the click hitbox), instead of a small dot floating near it —
-   discoverable from the start, unlike .ganesha-choice-affordance below
-   which only shows at hint L1/L2. Each zone gets its own border-radius
-   tuned to its real shape (eyes = wide ellipse, trunk = elongated blob,
-   etc.) rather than forcing all 8 into circles.
-
-   Deliberately does NOT single out the correct zone with a stronger
-   pulse — every field breathes the same until a hint level says
-   otherwise (.zone-hint-overlay / .ganesha-choice-affordance own that),
-   so tapping isn't reduced to "find the one that glows more."
-======================================== */
-.assembly-tap-area {
-  pointer-events: none;
-}
-
-/* Static at rest, deliberately — a continuous breathing loop on all 8 at
-   once made the whole illustration shimmer and competed with the actual
-   task, and it also drowned out the wrong-tap pulse (nothing reads as "a
-   reaction" if everything is already moving all the time). Motion is
-   reserved for: the one-shot intro pulse below, wrong/correct feedback,
-   and the separate idle-hint ladder (.zone-hint-overlay /
-   .ganesha-choice-affordance) if the child does nothing for a while. */
-.assembly-tap-field {
-  position: absolute;
-  inset: 8%;
-  border-radius: inherit;
-  background: radial-gradient(
-    ellipse at center,
-    rgba(245, 240, 255, 0.34) 0%,
-    rgba(214, 199, 255, 0.22) 42%,
-    rgba(187, 165, 245, 0.10) 67%,
-    rgba(187, 165, 245, 0) 82%
-  );
-  border: 2px solid rgba(225, 216, 255, 0.52);
+  background: rgba(255, 248, 220, 0.86);
+  border: 1.5px solid rgba(218, 168, 72, 0.58);
   box-shadow:
-    0 0 10px rgba(199, 181, 255, 0.26),
-    0 0 22px rgba(199, 181, 255, 0.14),
-    inset 0 0 10px rgba(255, 255, 255, 0.12);
-  opacity: 0.82;
+    0 0 0 4px rgba(255, 226, 150, 0.10),
+    0 2px 6px rgba(104, 73, 33, 0.10);
+  opacity: 0.76;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   pointer-events: none;
+  transition:
+    opacity 220ms ease,
+    transform 220ms ease,
+    background 220ms ease,
+    box-shadow 220ms ease;
 }
 
-/* soft outer shimmer — also static */
-.assembly-tap-field::after {
-  content: "";
-  position: absolute;
-  inset: -5px;
-  border-radius: inherit;
-  border: 1px solid rgba(233, 226, 255, 0.25);
-  opacity: 0.32;
+.assembly-tap-marker-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(197, 139, 45, 0.88);
+  box-shadow: 0 0 5px rgba(232, 184, 80, 0.34);
 }
 
-/* ---- per-zone shapes, tuned against the art rather than forced circles ---- */
-.assembly-tap-area--eyes { border-radius: 50% / 60%; }
-.assembly-tap-area--belly { border-radius: 48% / 55%; }
-.assembly-tap-area--ears { border-radius: 46% 54% 50% 50% / 42% 50% 50% 58%; }
-.assembly-tap-area--trunk { border-radius: 42% 42% 55% 55% / 28% 28% 72% 72%; }
-.assembly-tap-area--tusk { border-radius: 45% 60% 52% 60%; }
-.assembly-tap-area--right-hand { border-radius: 50%; } /* lotus */
-.assembly-tap-area--left-hand { border-radius: 48% 48% 55% 55%; } /* modak */
-.assembly-tap-area--base { border-radius: 50%; } /* mooshika */
-
-/* opening "all 8 spots available" pulse — fires together (no stagger) 1-2
-   times so the child learns "these are tappable," then settles back into
-   the static field above. One-shot: does NOT hand off into any looping
-   animation afterward — see the static-at-rest comment on .assembly-tap-field. */
-.assembly-tap-area.is-intro .assembly-tap-field {
-  animation: assemblyAreaIntroPulse 0.8s ease-in-out 2;
+.assembly-tap-marker.is-intro {
+  animation: sacredTapMarkerIntro 720ms ease-in-out 2;
 }
 
-@keyframes assemblyAreaIntroPulse {
-  0% { transform: scale(0.92); opacity: 0.45; }
+@keyframes sacredTapMarkerIntro {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.76;
+    box-shadow:
+      0 0 0 4px rgba(255, 226, 150, 0.10),
+      0 2px 6px rgba(104, 73, 33, 0.10);
+  }
+
   50% {
-    transform: scale(1.08);
+    transform: translate(-50%, -50%) scale(1.14);
     opacity: 1;
     box-shadow:
-      0 0 14px rgba(199, 181, 255, 0.44),
-      0 0 30px rgba(199, 181, 255, 0.22);
-  }
-  100% { transform: scale(1); opacity: 0.8; }
-}
-
-/* wrong tap: the tap area stays exactly where it is (a sideways wobble on
-   the whole zone made the target itself feel like it was moving, which read
-   as unstable) — only the glow inside it reacts: contracts/pulses, then a
-   quick ring flashes out and fades. No VO (VO stays silent until wrong
-   attempt 3 — see handleWrongPlacement / WRONG_TAP_GUIDANCE). */
-.assembly-tap-area.is-wrong .assembly-tap-field {
-  animation: assemblyAreaWrongPulse 360ms ease-out;
-}
-.assembly-tap-area.is-wrong .assembly-tap-field::before {
-  content: "";
-  position: absolute;
-  inset: -4px;
-  border-radius: inherit;
-  border: 2px solid rgba(210, 185, 255, 0.7);
-  animation: assemblyAreaWrongRing 360ms ease-out;
-}
-
-@keyframes assemblyAreaWrongPulse {
-  0% { transform: scale(1); opacity: 0.9; }
-  40% { transform: scale(0.94); opacity: 0.75; }
-  70% { transform: scale(1.06); opacity: 1; }
-  100% { transform: scale(1); opacity: 0.8; }
-}
-
-@keyframes assemblyAreaWrongRing {
-  0% { transform: scale(0.95); opacity: 0.8; }
-  100% { transform: scale(1.12); opacity: 0; }
-}
-
-.assembly-tap-area.is-correct .assembly-tap-field {
-  animation: assemblyAreaCorrect 420ms ease-out forwards;
-}
-
-@keyframes assemblyAreaCorrect {
-  0% { transform: scale(1); opacity: 1; }
-  45% { transform: scale(1.12); opacity: 1; }
-  100% { transform: scale(0.85); opacity: 0; }
-}
-
-/* hide the field once that symbol is placed — animation: none is required
-   here, not just opacity: 0, because the base breathing animation above
-   keeps running otherwise and its keyframes (opacity 0.68->1) win over a
-   plain opacity value every frame, so the glow kept silently reappearing
-   at that spot even after the symbol was placed. */
-.assembly-tap-area.is-filled .assembly-tap-field {
-  animation: none;
-  opacity: 0;
-  transition: opacity 220ms ease;
-}
-.assembly-tap-area.is-filled .assembly-tap-field::after {
-  animation: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .assembly-tap-field,
-  .assembly-tap-field::after,
-  .assembly-tap-area.is-intro .assembly-tap-field,
-  .assembly-tap-area.is-wrong .assembly-tap-field,
-  .assembly-tap-area.is-wrong .assembly-tap-field::before,
-  .assembly-tap-area.is-correct .assembly-tap-field {
-    animation: none;
+      0 0 0 9px rgba(255, 221, 126, 0.20),
+      0 2px 7px rgba(104, 73, 33, 0.12);
   }
 }
 
-@keyframes sacredFinalTargetHint {
-  0%, 100% {
-    background: radial-gradient(circle, rgba(186, 142, 240, 0) 0%, transparent 70%);
-    box-shadow: 0 0 0 rgba(186, 142, 240, 0);
+.assembly-tap-marker.is-wrong {
+  animation: sacredTapMarkerWrong 280ms ease-out 1;
+}
+
+@keyframes sacredTapMarkerWrong {
+  0%,
+  100% {
+    transform: translate(-50%, -50%);
   }
+
+  30% {
+    transform: translate(calc(-50% - 4px), -50%);
+  }
+
+  65% {
+    transform: translate(calc(-50% + 4px), -50%);
+  }
+}
+
+.assembly-tap-marker.is-final-hint {
+  opacity: 1;
+  background: rgba(255, 245, 193, 0.98);
+  border-color: rgba(214, 158, 44, 0.90);
+  box-shadow:
+    0 0 0 7px rgba(255, 214, 99, 0.22),
+    0 0 16px rgba(243, 183, 60, 0.32);
+  animation: sacredTapMarkerFinal 1050ms ease-in-out 3;
+}
+
+.assembly-tap-marker.is-final-hint .assembly-tap-marker-dot {
+  background: rgba(190, 126, 24, 1);
+  box-shadow: 0 0 8px rgba(232, 174, 62, 0.55);
+}
+
+@keyframes sacredTapMarkerFinal {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+
   50% {
-    background: radial-gradient(circle, rgba(186, 142, 240, 0.48) 0%, rgba(186, 142, 240, 0.20) 42%, transparent 70%);
-    box-shadow: 0 0 16px rgba(186, 142, 240, 0.24);
+    transform: translate(-50%, -50%) scale(1.17);
+  }
+}
+
+@media (max-width: 700px) {
+  .assembly-tap-marker {
+    width: 27px;
+    height: 27px;
+  }
+
+  .assembly-tap-marker-dot {
+    width: 5px;
+    height: 5px;
   }
 }
 
@@ -1209,7 +1136,7 @@
   .pulse-ring-v8,
   .placed-symbol-v8,
   .symbol-aura-v8,
-  .ganesha-choice-affordance,
+  .assembly-tap-marker,
   .zone-hint-overlay {
     animation: none;
   }

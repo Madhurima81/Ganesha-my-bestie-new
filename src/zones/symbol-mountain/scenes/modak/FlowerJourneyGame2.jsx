@@ -154,7 +154,7 @@ const VO = {
 
   marshStart: 'The last two flowers are across the mud. Guide Mooshika from safe spot to safe spot.',
   marshIdle: 'Guide Mooshika to the next safe spot.',
-  marshDirect: 'Drag Mooshika to the glowing safe spot.',
+  marshDirect: 'Find the glowing safe spot.',
   marshKeepGoing: 'Good jump! Now the next safe spot.',
   marshWobble: 'Ooh… that’s wobbly.',
   marshWrong: 'Back to the safe spot. Try again.',
@@ -496,7 +496,7 @@ export default function FlowerJourneyGame2({
     }
   }, [phase]);
 
-  // First mistake: normal feedback only. Second: promote to L2. Third: L3.
+  // First mistake: normal feedback only. Later misses promote visual help.
   const registerFailedAttempt = useCallback(() => {
     if (!WORKING_PHASES.includes(phase)) return;
     const next = (failureCountsRef.current[phase] || 0) + 1;
@@ -604,9 +604,9 @@ export default function FlowerJourneyGame2({
     if (spokenHintRef.current.has(key)) return;
 
     let line = null;
-    if (phase === PHASES.FLOWER_BUSH) line = level === 3 ? VO.bushDirect : VO.bushIdle;
-    if (phase === PHASES.FLOWER_BRANCH) line = level === 3 ? VO.branchDirect : VO.branchGesture;
-    if (phase === PHASES.FLOWER_MARSH) line = level === 3 ? VO.marshDirect : VO.marshIdle;
+    if (phase === PHASES.FLOWER_BUSH) line = level === 3 ? null : VO.bushIdle;
+    if (phase === PHASES.FLOWER_BRANCH) line = level === 3 ? null : VO.branchGesture;
+    if (phase === PHASES.FLOWER_MARSH) line = level === 3 ? null : VO.marshIdle;
     if (!line) return;
 
     spokenHintRef.current.add(key);
@@ -856,8 +856,6 @@ export default function FlowerJourneyGame2({
         speak(voFirst);
       } else if (countRef.current >= 3) {
         speak(voThird);
-        setBushTeachingReady(true);
-        safeTimeout(() => setBushTeachingReady(false), 3800);
       }
       // 2nd occurrence: physical spring-back only, no VO.
       return;
@@ -1021,8 +1019,6 @@ export default function FlowerJourneyGame2({
         speak(VO.branchEarly1);
       } else if (branchEarlyCountRef.current >= 3) {
         speak(VO.branchEarly3);
-        setBranchTeachingReady(true);
-        safeTimeout(() => setBranchTeachingReady(false), 3800);
       }
       // 2nd occurrence: sad emotion + physical only, no VO.
     } else if (branchWrongDirectionRef.current) {
@@ -1036,8 +1032,6 @@ export default function FlowerJourneyGame2({
         speak(VO.branchWrongDir1);
       } else if (branchWrongDirCountRef.current >= 3) {
         speak(VO.branchWrongDir3);
-        setBranchTeachingReady(true);
-        safeTimeout(() => setBranchTeachingReady(false), 3800);
       }
     }
     branchWrongDirectionRef.current = false;
@@ -1342,7 +1336,7 @@ export default function FlowerJourneyGame2({
         >
           <button
             type="button"
-            className={`fjg2-bush ${bushSpringing ? 'fjg2-bush--springing' : ''} ${bushOpenState ? 'fjg2-bush--open' : ''} ${isBushPhase && bushIntroDone && effectiveHintLevel === 1 ? 'fjg2-bush--hint-l1' : ''} ${isBushPhase && bushIntroDone && effectiveHintLevel >= 3 ? 'fjg2-bush--hint-l3' : ''}`}
+            className={`fjg2-bush ${bushSpringing ? 'fjg2-bush--springing' : ''} ${bushOpenState ? 'fjg2-bush--open' : ''} ${isBushPhase && bushIntroDone && effectiveHintLevel >= 1 ? 'fjg2-bush--hint-l1' : ''} ${isBushPhase && bushIntroDone && effectiveHintLevel >= 3 ? 'fjg2-bush--hint-l3' : ''}`}
             onPointerDown={isBushPhase && bushIntroDone ? handleBushPointerDown : undefined}
             onPointerUp={isBushPhase && bushIntroDone ? handleBushPointerUp : undefined}
             onPointerCancel={() => { bushSwipeStartRef.current = null; }}
@@ -1389,7 +1383,7 @@ export default function FlowerJourneyGame2({
           <button
             ref={branchRef}
             type="button"
-            className={`fjg2-branch ${isBranchPhase && branchIntroDone && !branchComplete && effectiveHintLevel === 1 ? 'fjg2-branch--hint-l1' : ''}`}
+            className={`fjg2-branch ${isBranchPhase && branchIntroDone && !branchComplete && effectiveHintLevel >= 1 ? 'fjg2-branch--hint-l1' : ''}`}
             style={{ '--pull': branchComplete ? 1 : branchPull, '--layout-scale': (LAYOUT.branch.s || 100) / 100, left: `${LAYOUT.branch.l}%`, top: `${LAYOUT.branch.t}%` }}
             onPointerDown={isBranchPhase ? handleBranchPointerDown : undefined}
             onPointerMove={isBranchPhase ? handleBranchPointerMove : undefined}
@@ -1455,7 +1449,7 @@ export default function FlowerJourneyGame2({
               key={i}
               src={marshClumpArt}
               alt=""
-              className={`fjg2-marsh-clump ${isMarshPhase && marshIntroDone && effectiveHintLevel >= 3 && i === marshStep ? 'fjg2-marsh-clump--hint-target' : ''} ${isMarshPhase && i === marshWakeStep ? 'fjg2-marsh-clump--wake' : ''}`}
+              className={`fjg2-marsh-clump ${isMarshPhase && marshIntroDone && effectiveHintLevel >= 2 && i === marshStep ? 'fjg2-marsh-clump--hint-target' : ''} ${isMarshPhase && i === marshWakeStep ? 'fjg2-marsh-clump--wake' : ''}`}
               style={{ left: `${stop.x}%`, top: `${stop.y}%` }}
             />
           ))}
@@ -1522,7 +1516,7 @@ export default function FlowerJourneyGame2({
           {isMarshPhase && (marshIntroDone || marshTeachingReady) && (() => {
             const from = getCurrentMarshPosition();
             const target = marshStopsLive[marshStep] || from;
-            const isTeaching = (teachingGesture || marshTeachingReady) && effectiveHintLevel < 2;
+            const isTeaching = marshStep === 0 && (teachingGesture || marshTeachingReady) && effectiveHintLevel < 2;
 
             // L2 shows direction but stops short; L3 / teaching reaches the
             // actual next safe spot.
@@ -1534,7 +1528,7 @@ export default function FlowerJourneyGame2({
               };
             }
 
-            const showDemo = !isPaused && !marshDrag.active && (teachingGesture || marshTeachingReady || effectiveHintLevel >= 2);
+            const showDemo = !isPaused && !marshDrag.active && isTeaching;
 
             return (
               <GestureDemo
@@ -1584,7 +1578,7 @@ export default function FlowerJourneyGame2({
         type="drag"
         from={{ x: LAYOUT.bush.l + 6, y: LAYOUT.bush.t }}
         to={{ x: LAYOUT.bush.l - 6, y: LAYOUT.bush.t }}
-        active={!isPaused && isBushPhase && !bushOpenState && (bushTeachingReady || (bushIntroDone && (teachingGesture || effectiveHintLevel >= 2)))}
+        active={!isPaused && isBushPhase && !bushOpenState && bushTeachingReady}
         idleDelay={0}
         replayKey={effectiveHintLevel}
         iterations={2}
@@ -1606,7 +1600,7 @@ export default function FlowerJourneyGame2({
         type="pull-down-hold"
         from={{ x: 78.9, y: 57.2 }}
         to={{ x: 78.9, y: 72.2 }}
-        active={!isPaused && isBranchPhase && !branchComplete && (branchTeachingReady || (branchIntroDone && (teachingGesture || effectiveHintLevel >= 2)))}
+        active={!isPaused && isBranchPhase && !branchComplete && branchTeachingReady}
         idleDelay={0}
         replayKey={effectiveHintLevel}
         // A hold-type gesture already shows the full press → ring → release

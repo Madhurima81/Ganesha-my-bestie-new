@@ -7,7 +7,7 @@ import { usePreloadPoses } from '../../../../lib/components/animation/PoseImage'
 //   2. GUIDE       -> drag Mooshika across the muddy stepping stones  -> 2 flowers
 //   3. SWIPE       -> swipe the leafy cluster apart (2 swipes)        -> 2 flowers
 //   4. PULL + HOLD -> pull the flowering branch down and hold         -> 2 flowers
-//   5. DRAG + SNAP -> thread the 6 flowers into a garland
+//   5. TAP         -> tap any flower to auto-thread the garland
 //   6. GUIDE       -> carry the finished garland to Ganesha
 //   7. REVEAL      -> Modak appears (no mechanic) as the sweet reveal
 //
@@ -106,7 +106,7 @@ const PHASES = {
   MUD_CROSS: 'mud_cross',          // beat 2 - guide across mud
   LEAVES_OPEN: 'leaves_open',      // beat 3 - swipe apart
   BRANCH_PULL: 'branch_pull',      // beat 4 - pull + hold
-  GARLAND_MAKING: 'garland_making',// beat 5 - drag + snap
+  GARLAND_MAKING: 'garland_making',// beat 5 - tap to thread
   CARRY: 'carry',                  // beat 6 - guide to Ganesha
   CARRY_REVEAL: 'carry_reveal',    // belly card flip
   MODAK_PAUSE: 'modak_pause',      // beat 7 - short pause before reveal
@@ -714,6 +714,7 @@ const NewModakSceneMVPContent = ({
   // (~18% progress) — a bare pointer-down/quick tap must not reset the
   // idle clock, only a genuine hold does.
   const mushikaMeaningfulHoldRef = useRef(false);
+  const mushikaHoldLearnedRef = useRef(false);
   // Repeated quick taps (tapping instead of holding) escalate help early.
   const mushikaShortTapCountRef = useRef(0);
   const MUSHIKA_DART_INTERVAL_MS = 1800;
@@ -803,6 +804,7 @@ const NewModakSceneMVPContent = ({
     // press-and-hold — only then does it count as meaningful interaction.
     if (!mushikaMeaningfulHoldRef.current && progress >= 0.18) {
       mushikaMeaningfulHoldRef.current = true;
+      mushikaHoldLearnedRef.current = true;
       mushikaShortTapCountRef.current = 0;
       noteInteraction();
     }
@@ -860,7 +862,7 @@ const NewModakSceneMVPContent = ({
       if (mushikaShortTapCountRef.current === 1) {
         playVoice('calmMooshikaEarly');
       } else if (mushikaShortTapCountRef.current >= 3) {
-        setIdleHintLevel(3);
+        setIdleHintLevel(mushikaHoldLearnedRef.current ? 2 : 3);
       }
     }
 
@@ -1318,7 +1320,7 @@ const NewModakSceneMVPContent = ({
     const meta = PHASE_META[sceneState?.phase];
     if (!meta) return;
 
-    if (idleHintLevel >= 3) {
+    if (idleHintLevel >= 3 && !mushikaHoldLearnedRef.current) {
       const key = `${sceneState.phase}:l3`;
       if (!idleVoPlayedRef.current[key]) {
         idleVoPlayedRef.current[key] = true;
@@ -1748,14 +1750,14 @@ const NewModakSceneMVPContent = ({
 
                   {/* ============ GESTURE DEMOS ============ */}
                   <GestureDemo
-                    // Teaching and L3 show the full hold; L2 shows a partial
-                    // fill as an intermediate hint.
+                    // Teach the hold once. After Mooshika has been held
+                    // meaningfully, later hints rely on the ring/pulse.
                     type={introGesture ? 'hold-progress-l3' : idleHintLevel >= 3 ? 'hold-progress-l3' : idleHintLevel === 2 ? 'hold-progress-l2' : 'hold'}
                     from={{
                       x: parsePercentValue((sceneState.mooshikaPosition || CALM_DISTRACTIONS[0]).left, 30),
                       y: parsePercentValue((sceneState.mooshikaPosition || CALM_DISTRACTIONS[0]).top, 52)
                     }}
-                    active={(introGesture || idleHintLevel >= 2) && sceneState.phase === PHASES.CALM_SEARCH && !sceneState.mushikaHolding}
+                    active={(introGesture || (!mushikaHoldLearnedRef.current && idleHintLevel >= 2)) && sceneState.phase === PHASES.CALM_SEARCH && !sceneState.mushikaHolding}
                     // idleDelay is measured from phase-mount (when `active`
                     // first flips true via introGesture), NOT from VO start.
                     // calmMooshika VO itself only starts 500ms after mount

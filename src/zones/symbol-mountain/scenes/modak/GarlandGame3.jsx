@@ -59,11 +59,8 @@ const VO = {
   open: 'You found all six flowers. Tap them to make a garland for Ganesha.',
   // L2 build hint: a child who has not tapped any flower yet must not hear "another".
   tapIdle: 'Tap any flower.',
-  // L3 build hint: points at the one flower the hand is tapping.
-  tapDirect: 'Tap this flower.',
   ready: 'The garland is ready! Drag it to Ganesha.',
   carry: 'Drag the garland to Ganesha.',
-  carryDirect: 'Drag the garland onto Ganesha.',
   offered: 'You brought the garland to Ganesha — and look, a sweet Modak!',
 };
 
@@ -307,11 +304,6 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
 
   useEffect(() => {
     if (!isBuild) return;
-    if (buildHintLevel >= 3 && !buildHintVoPlayedRef.current.l3) {
-      buildHintVoPlayedRef.current.l3 = true;
-      speak(VO.tapDirect);
-      return;
-    }
     if (buildHintLevel >= 2 && !buildHintVoPlayedRef.current.l2) {
       buildHintVoPlayedRef.current.l2 = true;
       speakAsync(VO.tapIdle).then(() => { buildL2VoiceEndedAtRef.current = Date.now(); });
@@ -371,14 +363,6 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
 
   useEffect(() => {
     if (!isReady) return;
-    if (effectiveGarlandHintLevel >= 3 && !garlandHintVoPlayedRef.current.l3) {
-      // Escalating to L3 (e.g. a 3rd failed drop) while the L2 line is still speaking must not
-      // cut it off: wait. Finishing L2 bumps garlandL2EndTick, which re-runs this effect.
-      if (garlandL2SpeakingRef.current) return;
-      garlandHintVoPlayedRef.current.l3 = true;
-      speak(VO.carryDirect);
-      return;
-    }
     if (effectiveGarlandHintLevel >= 2 && !garlandHintVoPlayedRef.current.l2) {
       garlandHintVoPlayedRef.current.l2 = true;
       garlandL2SpeakingRef.current = true;
@@ -423,7 +407,7 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
       // after its first showing even though the instruction is spoken again).
       const replayText = interruptedSpeechRef.current?.text;
       // "ready" re-fires its own cue with the replayed line; only the carry hint lines need this.
-      if (replayText && (replayText === VO.carry || replayText === VO.carryDirect)) {
+      if (replayText && replayText === VO.carry) {
         after(400, () => {
           setCarryTeachingGesture(true);
           after(3200, () => setCarryTeachingGesture(false));
@@ -623,9 +607,8 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
           x: carryFrom.x + (carryTarget.x - carryFrom.x) * 0.52,
           y: carryFrom.y + (carryTarget.y - carryFrom.y) * 0.52,
         };
-        const carryGestureTarget = effectiveGarlandHintLevel >= 3 ? carryTarget : carryPartialTarget;
-        const showCarryGesture = isReady && !garlandPosition.active
-          && (carryTeachingGesture || effectiveGarlandHintLevel >= 2);
+        const carryGestureTarget = carryPartialTarget;
+        const showCarryGesture = isReady && !garlandPosition.active && carryTeachingGesture;
         return (
           <GestureDemo
             type="drag"
@@ -642,7 +625,7 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
       {/* GANESHA */}
       <div
         ref={ganeshaDropRef}
-        className={`g3g-ganesha ${isOffered ? 'g3g-ganesha--happy' : ''} ${isReady && effectiveGarlandHintLevel >= 3 ? 'g3g-ganesha--hint-target' : ''}`}
+        className={`g3g-ganesha ${isOffered ? 'g3g-ganesha--happy' : ''} ${isReady && effectiveGarlandHintLevel >= 2 ? 'g3g-ganesha--hint-target' : ''}`}
         style={{ left: `${LAYOUT.ganesha.l}%`, top: `${LAYOUT.ganesha.t}%` }}
       >
         {SHOW_HIT_ZONES && isReady && (
@@ -704,23 +687,6 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
                 );
               })}
 
-              {/* L3: a tap hand demonstrates on the first remaining flower (coordinates are the
-                  flower's own % inside this workspace; the overlay fills the workspace box). */}
-              {(() => {
-                const target = FLOWERS.find((flower) => flower.id === firstRemainingFlowerId);
-                if (!target || buildHintLevel < 3 || !flowersArrived || threadingFlower) return null;
-                return (
-                  <GestureDemo
-                    type="tap"
-                    from={{ x: target.x, y: target.y }}
-                    active={!isPaused}
-                    idleDelay={0}
-                    iterations={2}
-                    replayKey={buildHintLevel}
-                    zIndex={30}
-                  />
-                );
-              })()}
             </>
           )}
 

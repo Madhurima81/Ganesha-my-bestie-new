@@ -57,13 +57,13 @@ const DEFAULT_LAYOUT = {
   // per sprite (poses swap in place, not travel) — used the eating-grass
   // spot as the representative middle-ground; flag if it needs adjusting.
   leftBush: { x: 23.08, y: 46.99, w: 24, z: 16 },
-  centerRock: { x: 58.94, y: 55.5, w: 24, z: 16 },
-  rightSource: { x: 83.79, y: 66.24, w: 24, z: 16 },
+  centerRock: { x: 50, y: 47.75, w: 24, z: 16 },
+  rightSource: { x: 79.32, y: 52.19, w: 24, z: 16 },
   leftBushHit: { x: 23.08, y: 46.99, w: 24, h: 21.75, z: 35 },
-  centerRockHit: { x: 58.94, y: 55.5, w: 24, h: 16.5, z: 35 },
-  rightSourceHit: { x: 84.04, y: 64.85, w: 23.5, h: 19.5, z: 33 },
+  centerRockHit: { x: 50.52, y: 48.83, w: 24, h: 16.5, z: 35 },
+  rightSourceHit: { x: 80.31, y: 52.77, w: 23.5, h: 19.5, z: 33 },
   elephantSprite: { x: 30.51, y: 73.53, w: 24, z: 20 },
-  cowSprite: { x: 57.52, y: 78.93, w: 24, z: 20 }
+  cowSprite: { x: 57.52, y: 68.5, w: 18.75, z: 20 }
 };
 
 const DEBUG_KEYS = [
@@ -161,7 +161,6 @@ const VO_TEXTS = {
   choose: 'Now choose the sound.',
   // A wrong choice isn't "good listening" — minimal, non-punitive.
   neutral: 'Listen again.',
-  tapGlow: 'Tap the glowing place.',
   complete: 'You listened carefully and found what mattered.',
   elephant: 'Elephant found water.',
   cow: 'Cow found grass.'
@@ -691,17 +690,15 @@ const EarsSoundMatchGame = ({
     playNext();
   }, [isActive, playSound, schedule]);
 
-  // L3 — exact source revealed, its sound replayed, direct tap VO. This is
-  // the final rescue: no loop back into another full round, the cue stays
-  // up until the child responds.
+  // L3 — exact source revealed and its sound replayed once, no spoken line.
+  // This is the final rescue: no loop back into another full round, the cue
+  // stays up until the child responds.
   const triggerHintL3 = useCallback((targetRound) => {
     if (hintStageRef.current >= 3) return;
     hintStageRef.current = 3;
     setHintZoneId(targetRound.targetZoneId);
-    playSound(targetRound.sounds[targetRound.targetZoneId], '', () => {
-      speak(VO_TEXTS.tapGlow);
-    }, 0.68);
-  }, [playSound, speak]);
+    playSound(targetRound.sounds[targetRound.targetZoneId], '', null, 0.68);
+  }, [playSound]);
 
   // L2 — semantic clue + the target sound alone, no location reveal.
   const triggerHintL2 = useCallback((targetRound) => {
@@ -832,29 +829,26 @@ const EarsSoundMatchGame = ({
 
     if (zoneId !== round.targetZoneId) {
       setWrongZoneId(zoneId);
-      // "Listen again." should actually give the child something to listen
-      // to again — replay the target sound once the line finishes, instead
-      // of just saying the phrase and leaving them to guess again blind.
-      speak(VO_TEXTS.neutral, () => {
-        playSound(round.sounds[round.targetZoneId], '', null, 0.68);
-      });
       schedule(() => setWrongZoneId(null), 520);
 
-      // A wrong choice is exploration, not a mistake to punish — but
-      // repeated wrong choices accelerate help instead of resetting the
-      // choosing clock (which stays untouched here).
+      // A wrong choice is exploration, not a mistake to punish — help
+      // escalates with repeated wrong choices and never resets the choosing
+      // clock: 1st = "Listen again." + all three sounds (no answer given),
+      // 2nd = clue + target sound, 3rd = exact source glows (no voice).
       wrongCountRef.current += 1;
       if (wrongCountRef.current >= WRONG_COUNT_FOR_L3) {
         triggerHintL3(round);
       } else if (wrongCountRef.current >= WRONG_COUNT_FOR_L2) {
         triggerHintL2(round);
+      } else {
+        speak(VO_TEXTS.neutral, () => playHintReplayAll(round));
       }
       return;
     }
 
     setCompletedRounds((prev) => [...prev, round.id]);
     startReveal(round);
-  }, [debugMode, phase, playSound, round, schedule, speak, startReveal, triggerHintL2, triggerHintL3]);
+  }, [debugMode, phase, playHintReplayAll, round, schedule, speak, startReveal, triggerHintL2, triggerHintL3]);
 
   const handleSourceTap = useCallback((zoneId, e) => {
     if (!isPointerInsideSourceOval(e)) {
@@ -934,7 +928,6 @@ const EarsSoundMatchGame = ({
             onPointerDown={(e) => debugMode && startDebugDrag(e, zone.layoutKey)}
             aria-hidden="true"
           >
-            <span className="ears-source-number">{index + 1}</span>
             <span className="ears-source-pulse" aria-hidden="true" />
             <PoseImage src={zoneImg} alt="" draggable={false} />
           </div>

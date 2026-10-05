@@ -540,9 +540,6 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
   const failedAttemptsRef = useRef(0);
   // Bumped when an L2 hint line finishes speaking, so a queued L3 line can start right after it.
   const [l2EndTick, setL2EndTick] = useState(0);
-  // Bumped on every wrong drop from the 2nd on, so the current hint line is spoken again (a line the
-  // child's next grab cut off, or one already spoken earlier in the cycle, would otherwise stay silent).
-  const [hintRepeatTick, setHintRepeatTick] = useState(0);
   const dragAttemptRef = useRef({ start: null, meaningful: false });
   const lastSpokenHintLevelRef = useRef(0);
   // Reusable structured hint mode — a beat opts in via `beat.hints` in the
@@ -586,13 +583,16 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
       const idleMs = Date.now() - startedAt;
       // L3 is an 8s gap AFTER the L2 line finishes speaking, not a fixed
       // 26s-from-arm mark.
-      if (idleMs >= 18000 && l2VoiceEndedAtRef.current && (Date.now() - l2VoiceEndedAtRef.current) >= 8000) setBeatHintLevel(3);
-      else if (idleMs >= 18000) setBeatHintLevel(2);
-      else if (idleMs >= 10000) setBeatHintLevel(1);
+      // Structured drag hints are two steps: reminder line + item nudge at
+      // ~12s, then the destination glows a gap after that line ends.
+      const clueMs = useStructuredDragHints ? 12000 : 18000;
+      if (idleMs >= clueMs && l2VoiceEndedAtRef.current && (Date.now() - l2VoiceEndedAtRef.current) >= 8000) setBeatHintLevel(3);
+      else if (idleMs >= clueMs) setBeatHintLevel(2);
+      else if (!useStructuredDragHints && idleMs >= 10000) setBeatHintLevel(1);
     }, 500);
     return () => clearInterval(tick);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [beatIndex, stateName, isActive, isPaused, layoutDebug]);
+  }, [beatIndex, stateName, isActive, isPaused, layoutDebug, useStructuredDragHints]);
 
   // Escalated named hint — spoken once at L2 (16s idle), the same moment the
   // pulse goes from light to strong. Only fires if the beat actually defines
@@ -650,7 +650,7 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
       l2VoiceEndedAtRef.current = Date.now();
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [effectiveHintLevel, beatHintLevel, beatIndex, stateName, useStructuredDragHints, l2EndTick, hintRepeatTick]);
+  }, [effectiveHintLevel, beatHintLevel, beatIndex, stateName, useStructuredDragHints, l2EndTick]);
 
   // Pause (sidebar / tab): drop back to a clean hint slate — the child is switching
   // context and gets a fresh 10/18/26 window after the resume replay.
@@ -691,7 +691,7 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
   // true — the first time this exact mechanic appears), plus a full L3
   // rescue. Legacy beats keep the original "first 2 interactive beats" rule.
   const showStructuredGesture = useStructuredDragHints && needsInput(stateName) && !drag
-    && ((effectiveHintLevel === 0 && hintConfig?.teachingGesture && (!hintConfig?.teachingGestureCue || teachCueFired)) || effectiveHintLevel >= 2);
+    && ((effectiveHintLevel === 0 && hintConfig?.teachingGesture && (!hintConfig?.teachingGestureCue || teachCueFired)) || (effectiveHintLevel >= 3 && hintConfig?.teachingGesture && !dragAttemptRef.current.meaningful));
   const showLegacyGesture = !useStructuredDragHints && needsInput(stateName)
     && ((interactiveBeatsSoFar <= 2 && !beat?.hintVoText) || beatHintLevel >= 3);
   const showGestureDemo = showStructuredGesture || showLegacyGesture;
@@ -754,16 +754,10 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
   const registerFailedAttempt = useCallback(() => {
     if (!useStructuredDragHints) return;
     failedAttemptsRef.current += 1;
-    if (failedAttemptsRef.current === 2) {
-      setForcedHintLevel((level) => Math.max(level, 2));
-    }
-    if (failedAttemptsRef.current >= 3) {
-      setForcedHintLevel(3);
-    }
-    // From the 2nd wrong drop on, speak the current level's line again (unless it is still speaking).
+    // 1st miss: the item just returns quietly. 2nd miss: the destination
+    // glows early. No repeated line, no restarted timer, no hand.
     if (failedAttemptsRef.current >= 2) {
-      lastSpokenHintLevelRef.current = 0;
-      setHintRepeatTick((tick) => tick + 1);
+      setForcedHintLevel(3);
     }
   }, [useStructuredDragHints]);
 
@@ -1478,6 +1472,21 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
           positioned independently of whatever item happens to share that
           area (e.g. the bridge image, which a plank drop zone sits on top
           of but isn't actually the same point as). */}
+      {/* Final rescue for a drag onto a raw {x,y,w} zone (the Tusk nest): the
+          destination glows and stays lit. No voice, no second hand. */}
+      {useStructuredDragHints && !layoutDebug && needsInput(stateName) && !drag
+        && effectiveHintLevel >= 3 && effectiveTargetZone && (
+        <div
+          className="beat-player-target-zone-glow"
+          aria-hidden="true"
+          style={{
+            left: `${effectiveTargetZone.x}%`,
+            top: `${effectiveTargetZone.y}%`,
+            width: `${(effectiveTargetZone.w ?? 12) * 1.5}%`,
+          }}
+        />
+      )}
+
       {layoutDebug && effectiveTargetZone && (
         <div
           className="beat-player-debug-target-zone"
@@ -1601,7 +1610,7 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
         // identifies what can move; L3 finally reveals the destination.
         let hintClass = '';
         if (useStructuredDragHints) {
-          if (isDragKey && effectiveHintLevel === 1) hintClass = ' beat-player-hint-nudge';
+          if (isDragKey && effectiveHintLevel === 2) hintClass = ' beat-player-hint-nudge';
           if (isTargetKey && effectiveHintLevel >= 3) hintClass = ' beat-player-hint-target';
         } else if (interactive && (isDragKey || isTargetKey)) {
           if (beatHintLevel === 1) hintClass = ' beat-player-hint-pulse';

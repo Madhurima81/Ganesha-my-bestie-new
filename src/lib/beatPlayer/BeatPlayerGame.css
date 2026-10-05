@@ -122,6 +122,23 @@
   86% { transform: translateY(-1px) rotate(1deg); }
 }
 
+/* Final rescue for a raw-zone drop target (no item of its own to breathe). */
+.beat-player-target-zone-glow {
+  position: absolute;
+  aspect-ratio: 1 / 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.5) 0%, rgba(255, 215, 0, 0.22) 55%, rgba(255, 215, 0, 0) 75%);
+  box-shadow: 0 0 22px 8px rgba(255, 215, 0, 0.45);
+  pointer-events: none;
+  z-index: 20;
+  animation: beatPlayerTargetBreathe 1.45s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .beat-player-target-zone-glow { animation: none; }
+}
+
 /* L3 — the destination finally breathes; not glowing from the start. */
 .beat-player-item.beat-player-hint-target {
   animation: beatPlayerTargetBreathe 1.45s ease-in-out infinite;
@@ -324,4 +341,12 @@
 .beat-player-paused *::before,
 .beat-player-paused *::after {
   animation-play-state: paused !important;
+}
+
+/* Cow ~20% bigger on every iPad (all beats). The cow is placed by each beat's JSON with no shared
+   name hook, so it is matched by its image file name; it grows from its feet so it stays on the
+   ground. Wrapped in a scale on the image only, so the item's position and tap zone don't move. */
+.beat-player-stage .beat-player-item img[src*="cow"] {
+  scale: 1.2;
+  transform-origin: 50% 100%;
 }

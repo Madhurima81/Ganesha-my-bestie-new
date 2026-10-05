@@ -149,27 +149,24 @@ const DISTRACTORS = [];
 const VO_TEXTS = {
   intro: 'Monkey is hungry, and Peacock has lost a special feather. Look carefully. Can you find what they need?',
   complete: 'You looked closely and found them both!',
-  neutral: 'That is interesting, but it is not what they are looking for.',
   feather: 'Feather found! Peacock will be so happy.',
   mango: 'Mango found! Monkey is hungry no more.',
   findFeather: 'Now find the feather.',
   findMango: 'Now find the mango.',
-  // L2 — narrows the search without naming the object.
-  idleHintL2: 'Look near the bushes. Something is peeking out.',
-  // L3 — generic direct instruction, points at whichever bushes are still
-  // glowing rather than naming one specific remaining object. Monkey and
-  // Peacock are both still waiting, so both bushes pulse together.
-  idleHintL3: 'Tap the glowing bushes.'
+  // Step 1 — narrows the search without naming the object. No spoken line
+  // for step 2: the glow on the one remaining object is enough.
+  idleHintL2: 'Look near the bushes. Something is peeking out.'
 };
 
-const IDLE_HINT_MS = 10000;
-const IDLE_HINT_L2_MS = 18000;
-const IDLE_HINT_L3_MS = 26000;
+// Two-step hints: clue (+ broad bush cue) -> exact remaining object glows.
+const IDLE_HINT_CLUE_MS = 13000;
+// Gap AFTER the clue line finishes before the exact-object glow.
+const IDLE_HINT_RESCUE_GAP_MS = 9000;
 // Repeated unsuccessful searching (background taps) accelerates help —
 // a child randomly tapping the forest is exactly who needs it, so
 // exploration attempts must not just restart the idle clock.
-const MISS_COUNT_FOR_L2 = 3;
-const MISS_COUNT_FOR_L3 = 6;
+const MISS_COUNT_FOR_CLUE = 3;
+const MISS_COUNT_FOR_RESCUE = 6;
 
 const speakFallback = (text, onEnd) => {
   if (!text || typeof window === 'undefined' || !window.speechSynthesis) {
@@ -555,16 +552,13 @@ const EyesPopUpGame = ({
       if (!idleClockArmedRef.current || pausedRef.current) return;
 
       const idleMs = Date.now() - lastTapTimeRef.current;
-      if (idleMs < IDLE_HINT_MS) {
+      if (idleMs < IDLE_HINT_CLUE_MS) {
         setIdleHintStage(0);
         return;
       }
 
-      // L3 is an 8s gap AFTER the L2 line finishes speaking, not a fixed
-      // 26s-from-arm mark.
-      if (idleMs >= IDLE_HINT_L2_MS && l2VoiceEndedAtRef.current && (Date.now() - l2VoiceEndedAtRef.current) >= (IDLE_HINT_L3_MS - IDLE_HINT_L2_MS)) {
-        setIdleHintStage(3);
-      } else if (idleMs >= IDLE_HINT_L2_MS) {
+      // Exact-object glow comes a gap AFTER the clue line finishes speaking.
+      if (l2VoiceEndedAtRef.current && (Date.now() - l2VoiceEndedAtRef.current) >= IDLE_HINT_RESCUE_GAP_MS) {
         setIdleHintStage(2);
       } else {
         setIdleHintStage(1);
@@ -577,35 +571,31 @@ const EyesPopUpGame = ({
     };
   }, [foundIds, flow, isActive, speak]);
 
-  // L2 = narrow the search area (generic, no object named). L3 = exact
-  // object + direct tap instruction. Spoken once per (target, level) pair.
+  // Stage 1 = clue line + broad bush cue (no object named). Stage 2 = the one
+  // remaining object glows, no voice. Clue is spoken once per target.
   useEffect(() => {
-    if (!isActive || flow === FLOW.COMPLETE || hintStage < 2 || !nextHintTarget) return;
+    if (!isActive || flow === FLOW.COMPLETE || hintStage < 1 || !nextHintTarget) return;
 
-    const key = `${nextHintTarget.id}-${hintStage}`;
+    const key = `${nextHintTarget.id}-clue`;
     if (lastSpokenHintKeyRef.current === key) return;
-    // Escalating to L3 (repeated misses) while the L2 line is still speaking must not cut it off:
-    // wait. Finishing L2 bumps l2EndTick, which re-runs this effect.
-    if (hintStage >= 3 && l2SpeakingRef.current) return;
     lastSpokenHintKeyRef.current = key;
 
-    if (hintStage === 2) {
-      l2SpeakingRef.current = true;
-      // The browser does not always deliver the "ended" event, which would gate L3 forever — so
-      // also stamp it after a time limit (pausable via `after`).
-      let stamped = false;
-      const stampEnded = () => {
-        if (stamped) return;
-        stamped = true;
-        l2SpeakingRef.current = false;
-        l2VoiceEndedAtRef.current = Date.now();
-        setL2EndTick((tick) => tick + 1);
-      };
-      speak(VO_TEXTS.idleHintL2, stampEnded);
-      after(Math.max(4000, VO_TEXTS.idleHintL2.length * 90 + 2500), stampEnded);
-    } else {
-      speak(VO_TEXTS.idleHintL3);
-    }
+    // A miss-forced rescue (stage 2) skips the clue line entirely.
+    if (hintStage >= 2) return;
+
+    l2SpeakingRef.current = true;
+    // The browser does not always deliver the "ended" event, which would gate the rescue forever — so
+    // also stamp it after a time limit (pausable via `after`).
+    let stamped = false;
+    const stampEnded = () => {
+      if (stamped) return;
+      stamped = true;
+      l2SpeakingRef.current = false;
+      l2VoiceEndedAtRef.current = Date.now();
+      setL2EndTick((tick) => tick + 1);
+    };
+    speak(VO_TEXTS.idleHintL2, stampEnded);
+    after(Math.max(4000, VO_TEXTS.idleHintL2.length * 90 + 2500), stampEnded);
   }, [hintStage, nextHintTarget, isActive, flow, speak, after, l2EndTick]);
 
   useAppVisibility(null, useCallback(() => {
@@ -666,10 +656,10 @@ const EyesPopUpGame = ({
   // accelerate the hint ladder instead of resetting its clock.
   const registerMiss = useCallback(() => {
     missCountRef.current += 1;
-    if (missCountRef.current >= MISS_COUNT_FOR_L3) {
-      setForcedHintStage(3);
-    } else if (missCountRef.current >= MISS_COUNT_FOR_L2) {
-      setForcedHintStage((stage) => Math.max(stage, 2));
+    if (missCountRef.current >= MISS_COUNT_FOR_RESCUE) {
+      setForcedHintStage(2);
+    } else if (missCountRef.current >= MISS_COUNT_FOR_CLUE) {
+      setForcedHintStage((stage) => Math.max(stage, 1));
     }
   }, []);
 
@@ -690,9 +680,9 @@ const EyesPopUpGame = ({
     e.stopPropagation();
     if (debugMode || flow === FLOW.COMPLETE) return;
     registerMiss();
-    showFeedback(VO_TEXTS.neutral, target.id);
-    speak(VO_TEXTS.neutral);
-  }, [debugMode, flow, registerMiss, showFeedback, speak]);
+    // Visual only (soft pulse) — no spoken or written wrong-answer line.
+    showFeedback('', target.id);
+  }, [debugMode, flow, registerMiss, showFeedback]);
 
   const handleTargetTap = useCallback((target, e) => {
     e.stopPropagation();
@@ -778,11 +768,10 @@ const EyesPopUpGame = ({
 
       {/* Permanent scenery — the bushes never disappear. Only the feather/
           mango icon itself flies out to the peacock/monkey once tapped.
-          L1: remaining hiding areas breathe as a group (no VO, no reveal).
-          L2: ALL remaining bushes pulse together (generic "tap the glowing
-          bushes" instead of naming one specific object). */}
+          Hint step 1+: only the bushes around the NEXT remaining object pulse
+          (broad area cue, object not revealed). Step 2: that object glows. */}
       <img
-        className={`eyes-hiding-prop ${!foundIds.has('feather') && hintStage === 1 ? 'eyes-search-area-hint' : ''} ${!foundIds.has('feather') && hintStage === 2 ? 'eyes-search-area-hint-strong' : ''} ${debugMode && selectedDebugKey === 'targetFeatherBush1' ? 'is-debug-selected' : ''}`}
+        className={`eyes-hiding-prop ${nextHintTarget?.id === 'feather' && hintStage >= 1 ? 'eyes-search-area-hint-strong' : ''} ${debugMode && selectedDebugKey === 'targetFeatherBush1' ? 'is-debug-selected' : ''}`}
         src={newFeatherBushImg}
         alt=""
         draggable={false}
@@ -790,7 +779,7 @@ const EyesPopUpGame = ({
         onPointerDown={(e) => debugMode && startDebugDrag(e, 'targetFeatherBush1')}
       />
       <img
-        className={`eyes-hiding-prop ${!foundIds.has('feather') && hintStage === 1 ? 'eyes-search-area-hint' : ''} ${!foundIds.has('feather') && hintStage === 2 ? 'eyes-search-area-hint-strong' : ''} ${debugMode && selectedDebugKey === 'targetFeatherBush2' ? 'is-debug-selected' : ''}`}
+        className={`eyes-hiding-prop ${nextHintTarget?.id === 'feather' && hintStage >= 1 ? 'eyes-search-area-hint-strong' : ''} ${debugMode && selectedDebugKey === 'targetFeatherBush2' ? 'is-debug-selected' : ''}`}
         src={newFeatherBushImg}
         alt=""
         draggable={false}
@@ -798,7 +787,7 @@ const EyesPopUpGame = ({
         onPointerDown={(e) => debugMode && startDebugDrag(e, 'targetFeatherBush2')}
       />
       <img
-        className={`eyes-hiding-prop ${!foundIds.has('mango') && hintStage === 1 ? 'eyes-search-area-hint' : ''} ${!foundIds.has('mango') && hintStage === 2 ? 'eyes-search-area-hint-strong' : ''} ${debugMode && selectedDebugKey === 'targetMangoBush' ? 'is-debug-selected' : ''}`}
+        className={`eyes-hiding-prop ${nextHintTarget?.id === 'mango' && hintStage >= 1 ? 'eyes-search-area-hint-strong' : ''} ${debugMode && selectedDebugKey === 'targetMangoBush' ? 'is-debug-selected' : ''}`}
         src={newMangoBushImg}
         alt=""
         draggable={false}
@@ -838,7 +827,7 @@ const EyesPopUpGame = ({
           <button
             key={target.id}
             type="button"
-            className={`eyes-hidden-target clue-target ${isFound ? 'found' : ''} ${isCarried ? 'carried' : ''} ${!isFound && hintStage >= 3 ? 'hinting-strong' : ''} ${softPulse === target.id ? 'soft-pulse' : ''} ${debugMode && selectedDebugKey === sizeKey ? 'is-debug-selected' : ''}`}
+            className={`eyes-hidden-target clue-target ${isFound ? 'found' : ''} ${isCarried ? 'carried' : ''} ${!isFound && hintStage >= 2 && nextHintTarget?.id === target.id ? 'hinting-strong' : ''} ${softPulse === target.id ? 'soft-pulse' : ''} ${debugMode && selectedDebugKey === sizeKey ? 'is-debug-selected' : ''}`}
             style={{
               left: `${pos.x}%`,
               top: `${pos.y}%`,

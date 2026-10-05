@@ -434,8 +434,8 @@
         "mode": "drag-to-target",
         "teachingGesture": true,
         "teachingGestureCue": { "word": "Drag" },
-        "l2VoText": "Drag the twig to the nest.",
-        "l3VoText": "Drag the twig into the nest."
+        "l2VoText": "Add the twig to the nest.",
+        "l3VoText": ""
       },
       "interaction": {
         "type": "drag-drop",
@@ -835,8 +835,8 @@
       "hints": {
         "mode": "drag-to-target",
         "teachingGesture": false,
-        "l2VoText": "Drag the grass to the nest.",
-        "l3VoText": "Drag the grass into the nest."
+        "l2VoText": "Add the grass to the nest.",
+        "l3VoText": ""
       },
       "interaction": {
         "type": "drag-drop",
@@ -1197,8 +1197,8 @@
       "hints": {
         "mode": "drag-to-target",
         "teachingGesture": false,
-        "l2VoText": "Drag the leaf to the nest.",
-        "l3VoText": "Drag the leaf into the nest."
+        "l2VoText": "Add the leaf to the nest.",
+        "l3VoText": ""
       },
       "interaction": {
         "type": "drag-drop",
@@ -1494,8 +1494,8 @@
       "hints": {
         "mode": "drag-to-target",
         "teachingGesture": false,
-        "l2VoText": "Drag the feather to the nest.",
-        "l3VoText": "Drag the feather into the nest."
+        "l2VoText": "Add the feather to the nest.",
+        "l3VoText": ""
       },
       "interaction": {
         "type": "drag-drop",

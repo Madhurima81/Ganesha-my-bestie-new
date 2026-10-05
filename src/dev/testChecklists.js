@@ -6,56 +6,62 @@
 
 export const TEST_CHECKLISTS = {
   'modak-game2-new': {
-    title: 'Modak Game 2 — Branch phase: hints must ignore random touches',
+    title: 'Modak Scene 1 — Mooshika hold and Branch teach once',
     items: [
-      { text: 'Play Bush phase to reach the Branch phase. Wait for the intro line to finish.' },
       {
-        text: 'Do NOT touch the branch. Wait ~18s for L2. Tap sky / grass / empty space.',
-        expect: 'L2 hand stays visible, L2 VO plays, background taps change nothing.',
+        text: 'Calm Mooshika: hear the opening hold instruction.',
+        expect: 'One hold teaching hand appears on the action phrase, then stops.',
       },
       {
-        text: 'Keep waiting ~8s after L2 finishes for L3. Tap the background again.',
-        expect: 'L3 hand stays visible; VO continues; nothing restarts.',
+        text: 'Calm Mooshika: hold meaningfully past about 20%, release, then wait.',
+        expect: 'No teaching hand returns. Mooshika uses ring/pulse help only.',
       },
       {
-        text: 'At L3: pull the branch part-way down and let go.',
-        expect: 'L3 hand stays up (a partial pull is not progress). Level does not reset.',
+        text: 'Calm Mooshika: quick-tap without holding a few times.',
+        expect: 'First quick tap says "Keep holding."; later help can strengthen, but after a meaningful hold it does not replay the hand.',
+      },
+      { text: 'Play Bush phase to reach the Branch phase. Wait for the Branch intro line.' },
+      {
+        text: 'Branch: watch the intro.',
+        expect: 'One pull-and-hold teaching hand appears with "Pull", then retires.',
       },
       {
-        text: 'At L2 (reload the phase): pull the branch part-way and let go.',
-        expect: 'L2 hand stays up; no reset to L0. Wrong-direction pull (up) also keeps the hint.',
+        text: 'Branch: do NOT touch the branch. Wait ~18s for L2.',
+        expect: 'The branch pulses/glows and the placement/action hint plays. No hand demo returns.',
       },
       {
-        text: 'At L3: do the REAL pull down + hold until it completes.',
-        expect: 'Scene reacts, branch succeeds, hand disappears because the scene turned it off.',
+        text: 'Branch: keep waiting ~8s after L2 finishes for L3.',
+        expect: 'Help becomes stronger visually; no repeated pull-and-hold demo and no repeated final rescue VO.',
       },
       {
-        text: 'Reload the phase. While the FIRST teaching hand is playing, tap randomly.',
-        expect: 'Hand finishes its pass instead of vanishing on the tap.',
+        text: 'Branch: pull part-way and release, or pull upward.',
+        expect: 'You get the specific corrective line for that error type; the branch keeps visual help and does not restart to L0.',
       },
       {
-        text: 'While a hand is on screen, open then close the sidebar.',
-        expect: 'Hand hides while the sidebar is open; replays from the start on close.',
+        text: 'Branch: do the real pull down + hold until it completes.',
+        expect: 'Scene reacts, branch succeeds, hint clears, and the next phase starts fresh.',
       },
       {
-        text: 'With NO hint showing (first ~10s), do a partial pull and release.',
-        expect: 'Idle clock restarts (L1 comes ~10s after the pull, not earlier).',
+        text: 'Open the sidebar mid-line or mid-hint, then close it.',
+        expect: 'The line resumes cleanly; retired teaching hands do not come back just because of the sidebar.',
       },
     ],
   },
 };
 
 TEST_CHECKLISTS['modak-game2-bush-marsh'] = {
-  title: 'Modak Game 2 - Bush and Marsh: partial attempts keep the hint',
+  title: 'Modak Scene 1 - Bush and Marsh: teach once, then point where',
   items: [
-    { text: 'Bush phase: wait ~18s for L2 (hand + VO). Do a short or vertical swipe and let go.', expect: 'L2 hand stays up; the bush springs back; no reset to L0.' },
-    { text: 'Bush phase at L3: do a short swipe again.', expect: 'L3 hand stays up.' },
-    { text: 'Bush phase with NO hint showing (first ~10s): do a short swipe.', expect: 'Idle clock restarts; L1 comes ~10s after the swipe.' },
+    { text: 'Bush phase: watch the intro.', expect: 'One sideways swipe hand appears with "Swipe", then retires.' },
+    { text: 'Bush phase: wait ~18s for L2.', expect: 'Bush gives visual movement/pulse and the swipe clue plays. No hand demo returns.' },
+    { text: 'Bush phase: do a short or vertical swipe and let go.', expect: 'The bush springs back and gives the relevant short/wrong-direction line once; later repeats are mostly visual.' },
+    { text: 'Bush phase at L3: keep waiting.', expect: 'Bush help becomes stronger visually. No final hand demo.' },
     { text: 'Bush phase: do the real sideways swipe.', expect: 'Bush opens, flowers collect, game moves to the Branch phase.' },
-    { text: 'Marsh phase: wait for L2, then start dragging Mooshika but drop on the wrong spot.', expect: 'L2 hand stays up while you drag and after the wrong drop.' },
-    { text: 'Marsh phase at L3: drag part-way and let go.', expect: 'L3 hand stays up; no reset.' },
-    { text: 'Marsh phase: tap the sky / grass at L2 and L3.', expect: 'Nothing changes; hand and VO continue.' },
-    { text: 'Marsh phase: drop Mooshika on the correct safe spot.', expect: 'Hint clears, the next spot pulses, and a fresh idle clock starts.' },
+    { text: 'Marsh first step: watch the intro.', expect: 'One drag-to-first-safe-spot teaching hand appears, then retires.' },
+    { text: 'Marsh first step: wait for help.', expect: 'The exact next safe spot glows/pulses; no second teaching hand appears.' },
+    { text: 'Marsh: land on the first safe spot, then wait on steps 2-4.', expect: 'Only the next safe spot/Mooshika cue appears. No hand re-teaches dragging.' },
+    { text: 'Marsh: drag Mooshika to a wrong place after the hand is retired.', expect: 'Mooshika returns, the target safe spot remains clear, and the drag hand does not come back.' },
+    { text: 'Marsh: complete all four safe spots.', expect: 'Each correct landing clears the current cue and wakes the next spot.' },
   ],
 };
 
@@ -174,13 +180,17 @@ TEST_CHECKLISTS['sr-finale'] = {
 };
 
 TEST_CHECKLISTS['sm-pond'] = {
-  title: 'Pond: partial holds and drags keep a visible hint',
+  title: 'Pond: teach hold once, teach drag once, lotus reminders only',
   items: [
-    { text: 'Rock: wait for L2. Hold the rock about a third of the way, then let go. Repeat.', expect: 'Hand stays; the 2nd short hold earns L2/L3 help early.' },
-    { text: 'Rock with no hint showing: hold briefly and release.', expect: 'Idle clock restarts.' },
-    { text: 'Reeds and lotus: do a partial drag/hold at L2.', expect: 'Hand stays up each time.' },
-    { text: 'Tap empty areas while the intro hand plays.', expect: 'Hand finishes (it hides only when you really hold or drag).' },
-    { text: 'Complete rock, reeds and lotus.', expect: 'Each step clears its hint.' },
+    { text: 'Rock: hear "Press and hold to move it."', expect: 'One hold teaching hand appears with the action phrase, then stops.' },
+    { text: 'Rock: release very early once.', expect: 'Only "Keep holding." plays. The rock keeps useful hold-ring feedback.' },
+    { text: 'Rock: hold meaningfully past about 20%, release, then wait.', expect: 'The teaching hand does not return. Around 12s the rock shows a subtle hold ring; around 25s the visual rescue strengthens only if hold was never meaningfully learned.' },
+    { text: 'Flowers: hear "Gently move them aside."', expect: 'One drag teaching hand plays one iteration, not two.' },
+    { text: 'Flowers: drag part-way but not far enough.', expect: 'The flowers settle back and "A little farther." plays once; later help is visual/directional, not a repeated drag VO.' },
+    { text: 'Flowers: make a meaningful drag, then stall.', expect: 'No teaching hand returns. The flowers gently shift sideways as the reminder/rescue cue.' },
+    { text: 'Lotus: reach "Hold the bud to help it bloom."', expect: 'No immediate teaching hand appears; the scene trusts the hold mechanic learned on the rock.' },
+    { text: 'Lotus: release early.', expect: '"Keep holding." plays. If idle, the bud uses ring/glow reminders only, with no GestureDemo and no second VO.' },
+    { text: 'Complete rock, flowers, and lotus.', expect: 'Each mechanic clears cleanly and the scene progresses without repeated tutorial hands.' },
   ],
 };
 
@@ -210,53 +220,66 @@ TEST_CHECKLISTS['amh-indian-story'] = {
 };
 
 TEST_CHECKLISTS['modak-garland'] = {
-  title: 'Modak Game 3 (Garland): carry hints, L3 waits for L2, sidebar in intro',
+  title: 'Modak Scene 1 (Garland): tap flowers, carry once, rescue is visual',
   items: [
     { text: 'Intro line is playing: open and close the sidebar 3-4 times quickly.', expect: 'Intro replays once; hints still start afterwards (no freeze).' },
-    { text: 'Build: tap a few flowers, then stop and wait. Time L1, L2, L3.', expect: 'L1 about 10s: flowers bob 3 times, no voice. L2 about 18s: flowers keep bobbing, voice "Tap any flower.". L3 about 8s after: a tap hand taps the first remaining flower twice, voice "Tap this flower.", then a quiet static ring stays on it.' },
+    { text: 'Build: tap a few flowers, then stop and wait. Time L1, L2, L3.', expect: 'L1 about 10s: remaining flowers bob/pulse. L2 about 18s: voice says "Tap any flower." L3 about 8s after: one remaining flower gets the stronger glow. No tap hand and no "Tap this flower." VO.' },
     { text: 'Build with NO flower tapped yet: wait for L2.', expect: 'The voice says "Tap any flower." (never "another").' },
-    { text: 'Carry: wait for L2 (hand + VO). Start dragging the garland and drop it away from Ganesha.', expect: 'Hand stays up; no reset to L0.' },
-    { text: 'Carry: miss 3 times quickly.', expect: 'L3 starts only after the L2 line finishes (no cut-off).' },
-    { text: 'Carry with no hint showing: drag part-way and drop it away.', expect: 'Idle clock restarts.' },
+    { text: 'Carry: after the garland completes, listen to the ready line.', expect: 'One drag-to-Ganesha teaching hand appears with "Drag", then retires.' },
+    { text: 'Carry: wait for L2, then start dragging the garland and drop it away from Ganesha.', expect: 'The carry clue plays and Ganesha can glow; the hand does not come back or reset to L0.' },
+    { text: 'Carry: miss 3 times quickly.', expect: 'Help becomes visual on Ganesha. No "Drag the garland onto Ganesha." final rescue VO.' },
+    { text: 'Carry with no hint showing: drag part-way and drop it away.', expect: 'Idle clock restarts quietly; later help is destination-focused.' },
     { text: 'Drop the garland on Ganesha.', expect: 'Success; hint clears.' },
   ],
 };
 
 TEST_CHECKLISTS['sm-eyes'] = {
-  title: 'Symbol Mountain, Eyes game: misses, L3 after L2, sidebar',
+  title: 'Symbol Mountain, Eyes game: 2-step hints (clue + bush cue -> one exact object), no wrong-tap voice',
   items: [
     { text: 'Intro line playing: open and close the sidebar several times quickly.', expect: 'Intro replays; the game and hints continue (no freeze).' },
-    { text: 'Tap empty space 3 or more times.', expect: 'Help comes earlier (L2, then L3 after more misses).' },
-    { text: 'Misses until L3 is due while the L2 line is speaking.', expect: 'L3 waits for the L2 line to finish.' },
-    { text: 'Do nothing: time L1 / L2 (VO) / L3.', expect: 'About 10s / 18s / 8s after the L2 line.' },
-    { text: 'Find the feather, then the mango.', expect: 'Each find clears the hint; next target starts a fresh clock.' },
+    { text: 'After the intro ends, do nothing for ~10s.', expect: 'Nothing happens: no bush breathing, no voice.' },
+    { text: 'Keep waiting to ~13s.', expect: '"Look near the bushes. Something is peeking out." plays and ONLY the bush(es) of the next remaining object pulse. The object itself does not glow.' },
+    { text: 'Keep waiting ~9s after the clue ends.', expect: 'ONE remaining object gets the strong glow and keeps it until found. No voice (no "Tap the glowing bushes").' },
+    { text: 'Tap empty space 3 times (fresh target).', expect: 'Only a shimmer each time, no voice. On the 3rd the clue + bush cue arrive early.' },
+    { text: 'Keep missing to 6 taps.', expect: 'The exact object glow comes early; a clue still speaking is not cut.' },
+    { text: 'Tap a wrong (distractor) item.', expect: 'Soft pulse only: no voice and no text line. The clock is not restarted.' },
+    { text: 'Find the first object with neither object found yet.', expect: 'Only that object glowed (never both at once). Success line, then "Now find the ..." and a fresh cycle for the other object.' },
+    { text: 'Find the feather and the mango.', expect: 'Each find clears the hint; next target starts a fresh clock.' },
     { text: 'Find the mango, then tap the feather quickly (while the mango line or "Now find the feather" is still speaking).', expect: 'The feather-found line plays; "Now find the feather" does NOT play afterwards, because the feather is already found.' },
   ],
 };
 
 TEST_CHECKLISTS['sm-ears'] = {
-  title: 'Symbol Mountain, Ears sound-match: tab switch, sidebar, L2/L3',
+  title: 'Symbol Mountain, Ears sound-match: replay all -> clue + sound -> source glow; wrong taps escalate; no numbers',
   items: [
     { text: 'During the intro or a prompt line, switch to another tab and come back.', expect: 'The round does not advance while you are away; the line replays once on return.' },
     { text: 'Open and close the sidebar several times quickly during a line.', expect: 'Line replays; round and hints continue.' },
-    { text: 'On the choosing screen do nothing: L1 replay, L2 clue, then L3 reveal.', expect: 'L3 comes only after the L2 clue and sound finish.' },
-    { text: 'Tap a wrong zone.', expect: 'Gentle "listen again"; no stuck state.' },
-    { text: 'Tap the right zone.', expect: 'Reveal plays; next round starts.' },
+    { text: 'Look at the three sound sources.', expect: 'No 1/2/3 numbers on them; the playing source pulses.' },
+    { text: 'On the choosing screen do nothing to ~10s.', expect: 'All three sounds replay once. No voice.' },
+    { text: 'Keep waiting to ~18s.', expect: 'Clue (e.g. "Listen for the water drip.") then ONLY the target sound.' },
+    { text: 'Keep waiting ~8s after the clue + sound finish.', expect: 'Correct source glows and stays; its sound replays once; NO "Tap the glowing place."' },
+    { text: 'New round: tap a wrong zone once.', expect: 'Wobble, "Listen again.", then ALL three sounds replay (not the target alone).' },
+    { text: 'Tap a wrong zone a 2nd time.', expect: 'Clue line plus the target sound.' },
+    { text: 'Tap a wrong zone a 3rd time.', expect: 'Correct source glows persistently; no voice line (target sound once).' },
+    { text: 'Tap the right zone.', expect: 'Reveal plays; next round starts with fresh hint state.' },
   ],
 };
 
 TEST_CHECKLISTS['sm-tusk-live-v2'] = {
-  title: 'Symbol Mountain, Tusk nest (BeatPlayer): drags and hints',
+  title: 'Symbol Mountain, Tusk nest (BeatPlayer): twig teaches how once; reminder line + nudge; nest glow rescue',
   items: [
-    { text: 'Start of each nest item (teaching hand) and at L2 / L3: watch the hand.', expect: 'The hand starts on the item and TRAVELS toward the nest (a third of the way at the start/L1, more at L2, all the way into the nest at L3). It must not sit still on the item.' },
-    { text: 'Drop zone: drop the item just outside the nest, then just inside it.', expect: 'Just outside = a miss; just inside = success. The zone is smaller than before (width 12, was 16).' },
-    { text: 'Wait for L2 on a nest item. Drag it part-way and let go.', expect: 'L2 hand stays up; no reset.' },
-    { text: 'Drop the item on the wrong place 3 times quickly.', expect: 'L3 starts only after the L2 line finishes (no cut-off).' },
-    { text: 'On a FRESH item, drop wrong 2 times, pause, then a 3rd and a 4th time (let each line play).', expect: 'You hear the L2 line after the 2nd wrong drop, the L3 line after the 3rd, and the L3 line again after the 4th. A line is never restarted while it is still speaking.' },
-    { text: 'With no hint showing: drag part-way and release.', expect: 'Idle clock restarts.' },
-    { text: 'Tap empty areas at L2 and L3.', expect: 'Hints keep playing; nothing restarts.' },
+    { text: 'Twig (first item): hear the opening line.', expect: 'The teaching hand appears ONCE on the word "Drag" and travels toward the nest.' },
+    { text: 'Grass, leaf, feather openings ("What about the short grass?" etc.).', expect: 'No teaching hand on any of them.' },
+    { text: 'Do nothing on an item, wait ~12s.', expect: '"Add the <item> to the nest." plays once and the item gives a small nudge. No hand, no glow yet.' },
+    { text: 'Keep waiting ~8s after that line ends.', expect: 'The nest glows clearly and stays lit. No voice, no hand.' },
+    { text: 'Drop the item just outside the nest, then just inside it.', expect: 'Just outside = a miss; just inside = success.' },
+    { text: 'On a FRESH item, drop it wrong once.', expect: 'It springs back quietly; no voice, no hand, no glow.' },
+    { text: 'Drop it wrong a 2nd time.', expect: 'The nest glow comes early and stays. No new voice line, no hand, the idle clock is not restarted.' },
+    { text: 'Twig only: never drag it, wait for the nest glow.', expect: 'The hand may re-show once with the glow (never-dragged child only). It does NOT show after a real drag.' },
+    { text: 'Drag part-way and release with no hint showing.', expect: 'Idle clock restarts.' },
+    { text: 'Tap empty areas at the line and at the glow.', expect: 'Hints keep playing; nothing restarts.' },
     { text: 'Open and close the sidebar during a line.', expect: 'Replays once; hints restart fresh.' },
-    { text: 'Drop the item in the nest.', expect: 'Success; next item starts a fresh clock.' },
+    { text: 'Drop all four items in the nest.', expect: 'Each success clears the glow; the next item starts a fresh clock; final line "You did it! All those little things helped rebuild the nest."' },
   ],
 };
 
@@ -280,8 +303,12 @@ TEST_CHECKLISTS['sm-final'] = {
       expect: 'No tap markers are visible until the scene is actually waiting for the child to choose.',
     },
     {
-      text: 'Tap a wrong available body part.',
-      expect: 'Only the tapped marker gives a short wobble. Other markers stay still; Ganesha does not show a full-zone glow.',
+      text: 'Tap one wrong available body part.',
+      expect: 'Only the tapped marker gives a short wobble/SFX. There is no "Try another place" VO and no full-zone glow.',
+    },
+    {
+      text: 'On the same round, tap a second wrong body part.',
+      expect: 'The placement clue comes forward early, using a body-part retrieval cue rather than repeating the affirmation.',
     },
     {
       text: 'Tap close to a marker but within the old large tappable area.',
@@ -292,8 +319,8 @@ TEST_CHECKLISTS['sm-final'] = {
       expect: 'The marker disappears as that part fills in, and markers hide during feedback/completion before the next card.',
     },
     {
-      text: 'Leave a round idle until the semantic clue plays.',
-      expect: 'The clue is VO-only; markers remain neutral and no correct full-zone oval appears.',
+      text: 'Leave a round idle until the clue plays.',
+      expect: 'The clue is VO-only and helps with placement, e.g. "Which part helps you see what matters?" Markers remain neutral and no correct full-zone oval appears.',
     },
     {
       text: 'Keep waiting until the final rescue hint.',
@@ -302,6 +329,14 @@ TEST_CHECKLISTS['sm-final'] = {
     {
       text: 'At final rescue, tap a wrong body part.',
       expect: 'The wrong marker wobbles locally and the correct small marker remains highlighted; the hint ladder does not restart.',
+    },
+    {
+      text: 'Place the 3rd symbol and continue.',
+      expect: 'No 3-symbol milestone VO plays; the next card flow stays smooth.',
+    },
+    {
+      text: 'Place the 6th symbol.',
+      expect: 'The only progress milestone VO plays: "Almost there — six symbols are back with Ganesha."',
     },
     {
       text: 'Open Hint Debug, select a zone, and drag/nudge its debug overlay.',

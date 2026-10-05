@@ -1,14 +1,8 @@
 import PoseImage, { usePreloadPoses } from '../../../../lib/components/animation/PoseImage';
 // zones/symbol-mountain/scenes/pond/PondSceneSimplifiedV6.jsx
-// V6 GAMEPLAY UPDATE — "Find a Way, Rise Anyway" (locked spec):
-//   Phase 1 (Trunk, first) — Blocked stream + rock obstacle. Child free-drags
-//     the water around the rock (either side) to reach the muddy pond.
-//     Reaching the pond lifts the dormant/drooped lotus upright (confirmation
-//     that water arrived) — this does NOT bloom it.
-//   Phase 2 (Lotus, second) — Press-and-hold the now-upright lotus bud;
-//     it rises from the still-muddy pond and blooms.
-//   Phase 3 — Final reveal (existing flow preserved)
-// All non-gameplay systems (reload, hints, audio, voice, sidebar, completion) untouched.
+// Pond gameplay: hold the rock, drag the flowers aside, then hold the lotus.
+// Rock teaches the hold mechanic once. Flowers teach the drag mechanic once.
+// Lotus reuses the already-learned hold mechanic with visual reminders only.
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './PondScene.css';
@@ -112,19 +106,13 @@ const VOICE_LINES = {
   // 1st-occurrence corrective line for releasing a hold too early — its own
   // error-type ladder, separate from the idle-hint L2/L3 lines below.
   earlyRock: 'Keep holding.',
-  // Hint VO — L2 gives the action, L3 gives the exact endpoint
-  idleRockL2: 'Press and hold the rock.',
-  idleRockL3: 'Keep holding until the rock moves.',
   reedsRound: 'The flowers are in the water’s way. Gently move them aside.',
-  idleReedsL2: 'Gently move the flowers aside.',
-  idleReedsL3: 'Drag the flowers to the side.',
+  earlyReeds: 'A little farther.',
   trunkSuccess: 'The water reached the lotus.',
 
   // Lotus phase (press-and-hold to bloom) — second
   lotusRound: 'Hold the bud to help it bloom.',
   earlyLotus: 'Keep holding.',
-  idleLotusL2: 'Press and hold the bud.',
-  idleLotusL3: 'Keep holding until it blooms.',
   lotusBloomed: 'The lotus bloomed, even in the muddy pond.',
 
   // Completion
@@ -485,13 +473,9 @@ const PondSceneContent = ({
   const [hintResetKey, setHintResetKey] = useState(0);
   const [idleHintLevel, setIdleHintLevel] = useState(0);
   const lastIdleInteractionAtRef = useRef(Date.now());
-  // When the L2 idle line finished speaking — L3's 8s gap counts from THIS,
-  // not from lastIdleInteractionAtRef, so a slow L2 line doesn't eat into
-  // the real gap the child gets before L3 fires.
   const l2VoiceEndedAtRef = useRef(null);
-  const IDLE_HINT_L1_MS = 10000;
-  const IDLE_HINT_L2_MS = 18000;
-  const IDLE_HINT_L3_MS = 26000;
+  const IDLE_HINT_L1_MS = 12000;
+  const IDLE_HINT_L3_MS = 25000;
 
   // Time-based hint level still comes from 10 / 18 / 26. forcedHintLevel lets
   // repeated incorrect attempts move help forward without making an
@@ -506,6 +490,8 @@ const PondSceneContent = ({
   const rockMeaningfulInteractionRef = useRef(false);
   const reedsMeaningfulInteractionRef = useRef(false);
   const lotusMeaningfulInteractionRef = useRef(false);
+  const rockHoldLearnedRef = useRef(false);
+  const reedsDragLearnedRef = useRef(false);
 
   const rockHoldProgressRef = useRef(0);
   const holdProgressRef = useRef(0);
@@ -538,7 +524,7 @@ const PondSceneContent = ({
     rearmIdleHints();
   }, [rearmIdleHints]);
 
-  // Show the gesture demo (rock hold / reeds drag / lotus hold) right away
+  // Show the gesture demo (rock hold / flower drag) right away
   // when each phase starts, same "introGesture" pattern as FlowerJourneyGame2 —
   // not just after the idle-hint ladder escalates. Auto-clears after 6s (or
   // instantly on any touch, via GestureDemo's own dismiss-on-pointerdown).
@@ -554,7 +540,7 @@ const PondSceneContent = ({
       : sceneState.phase === PHASES.REEDS_ACTIVE
         ? 'flowers'
         : sceneState.phase === PHASES.LOTUS_ACTIVE
-          ? 'lotus'
+          ? null
           : null;
   useEffect(() => {
     if (!interactionBeat) {
@@ -618,21 +604,16 @@ const PondSceneContent = ({
     }
   }, []);
 
-  // 1st mistake: a short, specific corrective VO (when the caller passes
-  // one — hold-type mechanics only, per the drag/hold/tap wrong-action
-  // rule; drag mistakes already get enough feedback from snapping back).
-  // 2nd same misunderstanding: physical only, jump the idle ladder to L2.
-  // 3rd: L3 immediately (which also re-shows the gesture demo).
+  // 1st mistake: a short, specific corrective VO when useful.
+  // Repeated misses move visual help forward, but do not bring back a full
+  // teaching hand once the mechanic has been meaningfully tried.
   const promoteHintFromErrors = useCallback((attemptRef, earlyVoiceKey) => {
     attemptRef.current += 1;
     if (attemptRef.current === 1 && earlyVoiceKey) {
       speakPondPrompt(earlyVoiceKey);
     }
-    if (attemptRef.current === 2) {
+    if (attemptRef.current >= 2) {
       setForcedHintLevel((level) => Math.max(level, 2));
-    }
-    if (attemptRef.current >= 3) {
-      setForcedHintLevel(3);
     }
   }, [speakPondPrompt]);
 
@@ -780,7 +761,7 @@ const PondSceneContent = ({
   // eslint-disable-next-line react-hooks/exhaustive-deps
 
   // Deterministic idle ladder:
-  // L1 @ 10s (hint), L2 @ 18s (hint-strong), L3 @ 26s (hint-final + gesture).
+  // L1 @ ~12s (subtle visual), L3 @ ~25s (stronger visual / rescue).
   useEffect(() => {
     const hintPhases = [
       PHASES.INITIAL,
@@ -802,13 +783,8 @@ const PondSceneContent = ({
     const tick = setInterval(() => {
       const idleFor = Date.now() - lastIdleInteractionAtRef.current;
       let nextLevel = 0;
-      if (idleFor >= IDLE_HINT_L2_MS) nextLevel = 2;
+      if (idleFor >= IDLE_HINT_L3_MS) nextLevel = 3;
       else if (idleFor >= IDLE_HINT_L1_MS) nextLevel = 1;
-      // L3 is an 8s gap AFTER the L2 line finishes speaking, not a fixed
-      // 26s-from-arm mark.
-      if (nextLevel === 2 && l2VoiceEndedAtRef.current) {
-        if (Date.now() - l2VoiceEndedAtRef.current >= (IDLE_HINT_L3_MS - IDLE_HINT_L2_MS)) nextLevel = 3;
-      }
       setIdleHintLevel(prev => (prev === nextLevel ? prev : nextLevel));
     }, 250);
 
@@ -822,37 +798,8 @@ const PondSceneContent = ({
   ]);
 
 
-  // L2 gives the action ("Press and hold the rock"), L3 gives the exact
-  // endpoint ("Keep holding until the rock moves") — L3 adds new
-  // information instead of just repeating L2 louder.
-  useEffect(() => {
-    if (effectiveHintLevel < 2) return;
-
-    const level = effectiveHintLevel >= 3 ? 3 : 2;
-    if (lastSpokenHintLevelRef.current >= level) return;
-
-    let idleKey = null;
-    const isRockPhase = sceneState?.phase === PHASES.INITIAL || sceneState?.phase === PHASES.ROCK_MOVING;
-
-    if (isRockPhase) {
-      idleKey = level === 2 ? 'idleRockL2' : 'idleRockL3';
-    }
-    if (sceneState?.phase === PHASES.REEDS_ACTIVE) {
-      idleKey = level === 2 ? 'idleReedsL2' : 'idleReedsL3';
-    }
-    if (sceneState?.phase === PHASES.LOTUS_ACTIVE) {
-      idleKey = level === 2 ? 'idleLotusL2' : 'idleLotusL3';
-    }
-
-    if (!idleKey) return;
-
-    lastSpokenHintLevelRef.current = level;
-    if (level === 2) {
-      speakPondPrompt(idleKey, () => { l2VoiceEndedAtRef.current = Date.now(); });
-    } else {
-      speakPondPrompt(idleKey);
-    }
-  }, [effectiveHintLevel, sceneState?.phase, speakPondPrompt]);
+  // Idle hints are visual in Pond. Prompt VO teaches each new mechanic once;
+  // corrective VO is reserved for early release / partial drag.
 
   // NOTE: idle-hint baseline is re-armed from inside the phase-prompt VO's
   // onEnd callback above (see speakPondPrompt(promptKey, resetIdleBaseline)),
@@ -1186,6 +1133,7 @@ const PondSceneContent = ({
       // the mechanic — earn a fresh hint window and clear the error streak.
       if (progress >= 0.2 && !rockMeaningfulInteractionRef.current) {
         rockMeaningfulInteractionRef.current = true;
+        rockHoldLearnedRef.current = true;
         markMeaningfulInteraction();
       }
 
@@ -1308,6 +1256,7 @@ const PondSceneContent = ({
 
     if (progress >= 0.12 && !reedsMeaningfulInteractionRef.current) {
       reedsMeaningfulInteractionRef.current = true;
+      reedsDragLearnedRef.current = true;
       markMeaningfulInteraction();
     }
   }, [reedsDragActive, markMeaningfulInteraction]);
@@ -1323,8 +1272,8 @@ const PondSceneContent = ({
       return;
     }
 
-    // Child tried, but didn't move far enough — accelerate help.
-    promoteHintFromErrors(reedsFailedAttemptsRef);
+    // Child tried, but didn't move far enough — clarify distance/direction.
+    promoteHintFromErrors(reedsFailedAttemptsRef, 'earlyReeds');
     setReedsProgress(prev => prev * 0.65);
   }, [
     reedsDragActive,
@@ -1659,10 +1608,10 @@ const PondSceneContent = ({
                 paused={isSymbolPopupOpen}
                 // Hold demos show the full progress ring, matching drag/swipe
                 // demos that teach the complete action path.
-                type={pondIntroGesture ? 'hold-progress-l3' : effectiveHintLevel >= 3 ? 'hold-progress-l3' : effectiveHintLevel === 2 ? 'hold-progress-l2' : 'hold'}
+                type="hold-progress-l3"
                 from={{ x: 40, y: 62 }}
                 active={
-                  (pondIntroGesture || effectiveHintLevel >= 2) &&
+                  (pondIntroGesture || (effectiveHintLevel >= 3 && !rockHoldLearnedRef.current)) &&
                   (
                     sceneState.phase === PHASES.INITIAL ||
                     sceneState.phase === PHASES.ROCK_MOVING
@@ -1721,7 +1670,7 @@ const PondSceneContent = ({
                     cue. From L2 on, the full GestureDemo below (hand + its
                     own hold ring) takes over; showing both at once was two
                     overlapping rings pulsing at different rates. */}
-                {!sceneState.rockMoved && rockHoldProgress <= 0 && effectiveHintLevel === 1 && (
+                {!sceneState.rockMoved && rockHoldProgress <= 0 && effectiveHintLevel >= 1 && (
                   <div
                     className="pond-hold-hint-ring pond-hold-hint-ring--rock"
                     aria-hidden="true"
@@ -1848,14 +1797,14 @@ const PondSceneContent = ({
                       : { x: 64, y: 70 }
                 }
                 active={
-                  (pondIntroGesture || effectiveHintLevel >= 2) &&
+                  (pondIntroGesture || (effectiveHintLevel >= 3 && !reedsDragLearnedRef.current)) &&
                   sceneState.phase === PHASES.REEDS_ACTIVE &&
                   !sceneState.reedsParted &&
                   !reedsDragActive
                 }
                 idleDelay={0}
                 replayKey={effectiveHintLevel}
-                iterations={2}
+                iterations={1}
                 zIndex={28}
               />
 
@@ -1904,7 +1853,7 @@ const PondSceneContent = ({
                 // Only while nothing is actively dragging, so it never
                 // fights a real swipe transform.
                 const shouldShowFlowerL1 = sceneState.phase === PHASES.REEDS_ACTIVE
-                  && effectiveHintLevel === 1
+                  && effectiveHintLevel >= 1
                   && !reedsDragActive
                   && !sceneState.reedsParted;
                 return (
@@ -1963,17 +1912,13 @@ const PondSceneContent = ({
               {/* Lotus — dormant → upright (Trunk success) → bloomed (Lotus success) */}
               <GestureDemo
                 paused={isSymbolPopupOpen}
-                type={pondIntroGesture ? 'hold-progress-l3' : effectiveHintLevel >= 3 ? 'hold-progress-l3' : effectiveHintLevel === 2 ? 'hold-progress-l2' : 'hold'}
+                type="hold-progress-l3"
                 from={LOTUS_HOLD_POINT}
-                active={
-                  (pondIntroGesture || effectiveHintLevel >= 2) &&
-                  sceneState.phase === PHASES.LOTUS_ACTIVE &&
-                  !sceneState.lotusBloomed &&
-                  holdProgress <= 0
-                }
+                active={false}
                 idleDelay={0}
                 replayKey={effectiveHintLevel}
-                // Hold gesture — one full cycle already shows press-ring-release.
+                // Lotus reuses the rock hold mechanic, so it reminds visually
+                // with rings/glow instead of reteaching with a hand.
                 iterations={1}
                 zIndex={28}
               />
@@ -2027,7 +1972,7 @@ const PondSceneContent = ({
                 )}
                 {/* L1 only — see the matching rock ring above for why L2/L3
                     don't also render this (GestureDemo takes over there). */}
-                {sceneState.phase === PHASES.LOTUS_ACTIVE && !sceneState.lotusBloomed && holdProgress <= 0 && effectiveHintLevel === 1 && (
+                {sceneState.phase === PHASES.LOTUS_ACTIVE && !sceneState.lotusBloomed && holdProgress <= 0 && effectiveHintLevel >= 1 && (
                   <div
                     className="pond-hold-hint-ring pond-hold-hint-ring--lotus"
                     aria-hidden="true"
