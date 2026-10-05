@@ -137,21 +137,37 @@ TEST_CHECKLISTS.sarvakaryeshu = {
 };
 
 TEST_CHECKLISTS['amh-favorite-food'] = {
-  title: 'Favorite Food: choice hints (L3 settles)',
+  title: 'Favorite Things: Ganesha questions = clue (~13s) then correct-choice glow; child questions = one repeat',
   items: [
-    { text: 'After a question line, do nothing. Time the levels.', expect: 'L1 about 10s: all choices bounce. L2 about 18s: one short voice clue. L3 about 8s after the clue: the correct choice pulses 3 times (about 8s), then stays as a soft static gold highlight. No voice at L3.' },
-    { text: 'Tap a wrong choice before and at L3.', expect: 'Wrong choice reacts; the ladder is not restarted; at L3 the correct choice stays highlighted.' },
-    { text: 'Tap the correct choice.', expect: 'Success; the next question starts a fresh clock.' },
-    { text: 'Check all four questions (food, color, activity, friend).', expect: 'Each has its own L2 clue line.' },
+    { text: 'Ganesha question: after the question line, do nothing for ~10s.', expect: 'No wobble or movement on any choice.' },
+    { text: 'Keep waiting to ~13s.', expect: 'One short meaning clue plays (e.g. "Look for the sweet I love."). Choices still do not move.' },
+    { text: 'Keep waiting after the clue ENDS (~10s).', expect: 'The correct choice gets the strong gold glow and stays lit. No extra voice.' },
+    { text: 'Wait longer. Tap empty areas.', expect: 'Glow stays; nothing repeats.' },
+    { text: 'Before the clue: tap a wrong choice.', expect: 'Wrong sound, shake, the option name is spoken; the clue timer is NOT restarted.' },
+    { text: 'While the clue is speaking: tap a wrong choice.', expect: 'Wrong sound and shake only. The clue is NOT interrupted and the option name is NOT read.' },
+    { text: 'After the glow is showing: tap a wrong choice.', expect: 'Wrong sound and shake; the correct choice stays glowing.' },
+    { text: 'Tap the correct choice (at any point).', expect: 'Success; hint clears; the next question starts a fresh clock.' },
+    { text: 'Check all four Ganesha questions (food, color, activity, friend).', expect: 'Each has its own clue line and the same timing; no choice-wobble on any of them.' },
+    { text: 'Activity question: count the choices.', expect: '7 activities plus "My own" (8). "Games" is not shown.' },
+    { text: 'Child question (own favorite food/color/activity/friend): wait ~10s.', expect: 'The question repeats ONCE, then nothing. No glow, no answer rescue.' },
   ],
 };
 
 TEST_CHECKLISTS['sr-finale'] = {
-  title: 'Shloka River Finale: boat grabs and wrong boats',
+  title: 'Shloka River Finale: 2-step recall hints (clue → rescue); wrong boats never cut or reset help',
   items: [
-    { text: 'With L2 or L3 showing: tap a wrong boat.', expect: 'Soft wrong sound; hint stays; a 2nd wrong boat earns L2 early.' },
-    { text: 'With a hint showing: tap or grab the correct boat but do not place it.', expect: 'Hint stays until it is placed.' },
-    { text: 'Place the correct boat.', expect: 'Success; hint clears; fresh clock.' },
+    { text: 'Wait for the opening shloka / reinforcement audio to finish, then do nothing for ~10s.', expect: 'No hint yet. The boats do NOT pulse or nudge at any point.' },
+    { text: 'Keep waiting to ~13s.', expect: 'The meaning-clue VO plays once (describes the word, does not name it). No hand.' },
+    { text: 'Keep waiting to ~25s.', expect: 'The correct boat glows gold and bobs, and the word is spoken once.' },
+    { text: 'Keep waiting past ~40s. Tap empty areas.', expect: 'Correct boat stays lit; no new VO, no repeats.' },
+    { text: 'After the rescue is showing: tap a wrong boat.', expect: 'Soft wrong sound; the correct boat stays lit; nothing restarts.' },
+    { text: 'During the clue VO: tap a wrong boat.', expect: 'Clue keeps playing to the end (not cut).' },
+    { text: 'During the clue VO: drag a wrong boat and drop it away from the slot.', expect: 'Clue keeps playing; boat settles back; no reset.' },
+    { text: 'On a new slot with no hint showing: tap a wrong boat twice.', expect: 'The meaning clue plays early after the 2nd wrong (once); the correct boat does NOT glow yet.' },
+    { text: 'After the early clue: wait.', expect: 'Clue does not repeat at ~13s; the rescue still arrives at ~25s from the slot start.' },
+    { text: 'With a hint showing: grab the correct boat but do not place it.', expect: 'Hint stays until it is placed.' },
+    { text: 'Tap or drag the correct boat while a clue is playing.', expect: 'Clue stops, success plays, the word audio is heard.' },
+    { text: 'Move to the next slot and leave it idle.', expect: 'Ladder is fresh: nothing, then clue (~13s), then rescue (~25s). Clue is that slot\'s own word.' },
   ],
 };
 
@@ -234,6 +250,60 @@ TEST_CHECKLISTS['sm-tusk-live-v2'] = {
   ],
 };
 
+TEST_CHECKLISTS['sm-final'] = {
+  title: 'Symbol Mountain, Sacred Assembly: small tap markers',
+  items: [
+    {
+      text: 'Reach the first symbol card, let it slide/flip into play, then look at Ganesha before tapping.',
+      expect: 'Small cream/gold circle markers appear on all available body-part choices. No large purple/white full-zone ovals or debug-looking hitbox fields are visible.',
+    },
+    {
+      text: 'On round 1 only, watch the markers when play begins.',
+      expect: 'All available markers pulse together twice, then settle into faint/static markers.',
+    },
+    {
+      text: 'Complete round 1, then begin rounds 2 and 3.',
+      expect: 'Markers appear during play but do not do the intro pulse again.',
+    },
+    {
+      text: 'Before play begins for a round (card appearing, sliding, or flipping), watch Ganesha.',
+      expect: 'No tap markers are visible until the scene is actually waiting for the child to choose.',
+    },
+    {
+      text: 'Tap a wrong available body part.',
+      expect: 'Only the tapped marker gives a short wobble. Other markers stay still; Ganesha does not show a full-zone glow.',
+    },
+    {
+      text: 'Tap close to a marker but within the old large tappable area.',
+      expect: 'The tap still works as a forgiving hit target; the visible marker remains small.',
+    },
+    {
+      text: 'Tap the correct body part.',
+      expect: 'The marker disappears as that part fills in, and markers hide during feedback/completion before the next card.',
+    },
+    {
+      text: 'Leave a round idle until the semantic clue plays.',
+      expect: 'The clue is VO-only; markers remain neutral and no correct full-zone oval appears.',
+    },
+    {
+      text: 'Keep waiting until the final rescue hint.',
+      expect: 'Only the correct small marker gets a stronger gold halo/pulse. There is no extra final-rescue VO and no large target oval.',
+    },
+    {
+      text: 'At final rescue, tap a wrong body part.',
+      expect: 'The wrong marker wobbles locally and the correct small marker remains highlighted; the hint ladder does not restart.',
+    },
+    {
+      text: 'Open Hint Debug, select a zone, and drag/nudge its debug overlay.',
+      expect: 'The red debug overlay is still available for tuning, and the visible marker follows the updated zone position.',
+    },
+    {
+      text: 'Check a narrow/mobile viewport.',
+      expect: 'Markers are slightly smaller, readable, and do not cover labels, art, or each other.',
+    },
+  ],
+};
+
 TEST_CHECKLISTS['suryakoti'] = {
   title: 'Suryakoti (rub): teach first, then remind once',
   items: [
@@ -309,7 +379,7 @@ export const CHECKLIST_ALIASES = {
 
 // Dropdown grouping (zone -> games). Any checklist not listed here still appears under "Other".
 export const TEST_CHECKLIST_GROUPS = {
-  'Symbol Mountain': ['modak-game2-new', 'modak-game2-bush-marsh', 'modak-garland', 'sm-pond', 'sm-eyes', 'sm-ears', 'sm-tusk-live-v2'],
+  'Symbol Mountain': ['modak-game2-new', 'modak-game2-bush-marsh', 'modak-garland', 'sm-pond', 'sm-eyes', 'sm-ears', 'sm-tusk-live-v2', 'sm-final'],
   'Shloka River': ['vakratunda', 'mahakaya', 'suryakoti', 'samaprabha', 'nirvighnam', 'kurumedeva', 'sarvakaryeshu', 'sarvada', 'sr-finale'],
   'About Me Hut': ['amh-dreams-wishes', 'amh-favorite-food', 'amh-indian-story'],
   General: ['sidebar-general'],

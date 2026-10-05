@@ -740,15 +740,18 @@
 .srf-journey-boat.is-all-celebrate.srf-journey-6 { animation-delay: 0.24s !important; }
 .srf-journey-boat.is-all-celebrate.srf-journey-7 { animation-delay: 0.28s !important; }
 
+/* The boat being chanted always comes to the front of the fleet. */
+.srf-journey-boat.is-chanting { z-index: 20; }
+
 /* A loose zig-zag feels like a fleet travelling upstream, not answer boxes. */
-.srf-journey-0 { left: 37%; top: 88%; }
-.srf-journey-1 { left: 58%; top: 78%; }
-.srf-journey-2 { left: 43%; top: 66%; }
-.srf-journey-3 { left: 59%; top: 54%; }
-.srf-journey-4 { left: 42%; top: 42%; }
-.srf-journey-5 { left: 57%; top: 30%; }
-.srf-journey-6 { left: 46%; top: 18%; }
-.srf-journey-7 { left: 53%; top: 7%; }
+.srf-journey-0 { left: 14%; top: 90%; }
+.srf-journey-1 { left: 28%; top: 78%; }
+.srf-journey-2 { left: 17%; top: 66%; }
+.srf-journey-3 { left: 30%; top: 53%; }
+.srf-journey-4 { left: 19%; top: 40%; }
+.srf-journey-5 { left: 30%; top: 27%; }
+.srf-journey-6 { left: 38%; top: 14%; }
+.srf-journey-7 { left: 50%; top: 0%; }
 
 .srf-next-ripple {
   position: absolute;
@@ -756,14 +759,14 @@
   height: clamp(32px, 4vw, 50px);
   transform: translate(-50%, -50%);
 }
-.srf-ripple-0 { left: 37%; top: 76%; }
-.srf-ripple-1 { left: 58%; top: 66%; }
-.srf-ripple-2 { left: 43%; top: 56%; }
-.srf-ripple-3 { left: 59%; top: 46%; }
-.srf-ripple-4 { left: 42%; top: 36%; }
-.srf-ripple-5 { left: 57%; top: 26%; }
-.srf-ripple-6 { left: 46%; top: 16%; }
-.srf-ripple-7 { left: 53%; top: 6%; }
+.srf-ripple-0 { left: 14%; top: 78%; }
+.srf-ripple-1 { left: 28%; top: 68%; }
+.srf-ripple-2 { left: 17%; top: 56%; }
+.srf-ripple-3 { left: 30%; top: 43%; }
+.srf-ripple-4 { left: 19%; top: 30%; }
+.srf-ripple-5 { left: 30%; top: 17%; }
+.srf-ripple-6 { left: 38%; top: 4%; }
+.srf-ripple-7 { left: 50%; top: -10%; }
 .srf-ripple-ring {
   position: absolute;
   inset: 0;
@@ -928,6 +931,12 @@
   z-index: 18;
   pointer-events: none;
   animation: srfIntroSymbolEnter 0.45s ease-out both;
+}
+
+/* Final recap: the chanted word's symbol sits in the open water to the right of the fleet */
+.srf-intro-symbol.is-recap {
+  left: 62%;
+  top: 52%;
 }
 
 .srf-intro-symbol-img {

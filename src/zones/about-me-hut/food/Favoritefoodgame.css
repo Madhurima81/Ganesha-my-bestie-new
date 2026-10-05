@@ -1689,10 +1689,6 @@
 /* L2: semantic clue VO only, no visual reveal.                     */
 /* L3: the correct answer gets a persistent final glow.             */
 /* ========================================= */
-.choice-image.fav-hint-candidates {
-  animation: favCandidateNudge 1.2s ease-in-out 2;
-}
-
 @keyframes favCandidateNudge {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-5px); }

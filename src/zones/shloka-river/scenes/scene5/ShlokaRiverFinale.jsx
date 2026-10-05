@@ -220,14 +220,17 @@ const DEFAULT_FINALE_TUNE = {
   choiceWidth: 180,
   choiceSymbol: DEFAULT_SYMBOL_TUNE,
   placed: [
-    { left: 37, top: 88 },
-    { left: 58, top: 78 },
-    { left: 43, top: 66 },
-    { left: 59, top: 54 },
-    { left: 42, top: 42 },
-    { left: 57, top: 30 },
-    { left: 46, top: 18 },
-    { left: 53, top: 7 },
+    // Fleet hugs the LEFT of the river (centre is free for the chanted word's symbol during the
+    // recap); the top three drift back toward the middle and are spaced wider so labels don't
+    // sit on the next boat's sail. Percentages are of .srf-boat-parade.
+    { left: 14, top: 90 },
+    { left: 28, top: 78 },
+    { left: 17, top: 66 },
+    { left: 30, top: 53 },
+    { left: 19, top: 40 },
+    { left: 30, top: 27 },
+    { left: 38, top: 14 },
+    { left: 50, top: 0 },
   ],
   wordSymbol: {
     vakratunda: { left: 58.1, top: 48.4, width: 26, height: 30, scale: 1.18 },
@@ -1131,6 +1134,22 @@ const ShlokaRiverFinaleContent = ({
                     <div className="srf-intro-symbol-glow" />
                     <img
                       src={SHLOKA_WORDS[introSymbolIndex].icon}
+                      alt=""
+                      className="srf-intro-symbol-img"
+                      draggable="false"
+                    />
+                    <div className="srf-intro-ripple" />
+                  </div>
+                )}
+
+                {phase === PHASES.SUCCESS && chantHighlightIndex !== null && SHLOKA_WORDS[chantHighlightIndex] && (
+                  <div
+                    key={`recap-${SHLOKA_WORDS[chantHighlightIndex].id}`}
+                    className="srf-intro-symbol is-recap"
+                  >
+                    <div className="srf-intro-symbol-glow" />
+                    <img
+                      src={SHLOKA_WORDS[chantHighlightIndex].icon}
                       alt=""
                       className="srf-intro-symbol-img"
                       draggable="false"

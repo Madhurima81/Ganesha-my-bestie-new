@@ -1325,39 +1325,33 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     idleHintVoiceRef.current = false;
     if (ganeshaIdleTimerRef.current) clearTimeout(ganeshaIdleTimerRef.current);
 
-    // Level 1 @ 10s: Wobble
+    // Two-step recall support (the choices are already in front of the child, so no wobble):
+    //   0 = no help
+    //   1 @ ~13s = semantic clue VO
+    //   2 = correct choice glows and stays lit (no extra VO)
+    // The final gap counts from when the clue FINISHES speaking, so the answer glow never
+    // appears while Ganesha is still talking.
     ganeshaIdleTimerRef.current = setTimeout(() => {
       setIdleHintLevel(1);
 
-      // Level 2 @ 18s: Wobble + VO hint (speak once)
-      ganeshaIdleTimerRef.current = setTimeout(() => {
-        setIdleHintLevel(2);
-        // Level 3's 8s gap counts from when this L2 line finishes speaking,
-        // not from the moment the L2 timer fires — otherwise L3 could land
-        // while (or right on top of) the L2 line still talking.
-        const armLevel3 = () => {
-          ganeshaIdleTimerRef.current = setTimeout(() => {
-            setIdleHintLevel(3);
-          }, 8000);
-        };
-        if (!idleHintVoiceRef.current) {
-          const hintMap = {
-            'food-choice': VOICE_LINES.foodHint,
-            'color-choice': VOICE_LINES.colorHint,
-            'activity-choice': VOICE_LINES.activityHint,
-            'friend-choice': VOICE_LINES.friendHint
-          };
-          if (hintMap[currentPhase]) {
-            speakLine(hintMap[currentPhase], { moment: 'encouragement', onEnd: armLevel3 });
-            idleHintVoiceRef.current = true;
-          } else {
-            armLevel3();
-          }
-        } else {
-          armLevel3();
-        }
-      }, 8000);
-    }, 10000);
+      const armFinalHint = () => {
+        ganeshaIdleTimerRef.current = setTimeout(() => {
+          setIdleHintLevel(2);
+        }, 10000);
+      };
+      const hintMap = {
+        'food-choice': VOICE_LINES.foodHint,
+        'color-choice': VOICE_LINES.colorHint,
+        'activity-choice': VOICE_LINES.activityHint,
+        'friend-choice': VOICE_LINES.friendHint
+      };
+      if (hintMap[currentPhase] && !idleHintVoiceRef.current) {
+        idleHintVoiceRef.current = true;
+        speakLine(hintMap[currentPhase], { moment: 'encouragement', onEnd: armFinalHint });
+      } else {
+        armFinalHint();
+      }
+    }, 13000);
 
     return () => {
       if (ganeshaIdleTimerRef.current) clearTimeout(ganeshaIdleTimerRef.current);
@@ -1448,7 +1442,8 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       }, 1000);
     } else {
       playWrongTap();
-      speakOptionName(food?.name);
+      // Once the clue has started, a wrong tap must not cut it by re-reading the option name.
+      if (idleHintLevel === 0) speakOptionName(food?.name);
       setShowShake(foodId);
       sceneActions.updateState({ wrongChoices: [...sceneState.wrongChoices, foodId] });
       safeSetTimeout(() => setShowShake(null), 500);
@@ -1478,7 +1473,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       }, DISCOVERY_CENTER_REACH_MS);
     } else {
       playWrongTap();
-      speakOptionName(color?.name);
+      if (idleHintLevel === 0) speakOptionName(color?.name);
       setShowShake(colorId);
       sceneActions.updateState({ wrongChoices: [...sceneState.wrongChoices, colorId] });
       safeSetTimeout(() => setShowShake(null), 500);
@@ -1508,7 +1503,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       }, DISCOVERY_CENTER_REACH_MS);
     } else {
       playWrongTap();
-      speakOptionName(activity?.name);
+      if (idleHintLevel === 0) speakOptionName(activity?.name);
       setShowShake(activityId);
       sceneActions.updateState({ wrongChoices: [...sceneState.wrongChoices, activityId] });
       safeSetTimeout(() => setShowShake(null), 500);
@@ -1539,7 +1534,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       }, DISCOVERY_CENTER_REACH_MS);
     } else {
       playWrongTap();
-      speakOptionName(friend?.name);
+      if (idleHintLevel === 0) speakOptionName(friend?.name);
       setShowShake(friendId);
       sceneActions.updateState({ wrongChoices: [...sceneState.wrongChoices, friendId] });
       safeSetTimeout(() => setShowShake(null), 500);
@@ -1806,7 +1801,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                   <img
                     src={food.image}
                     alt={food.name}
-                    className={`choice-image ${idleHintLevel === 1 ? 'fav-hint-candidates' : ''} ${food.correct && idleHintLevel >= 3 ? 'fav-hint-final' : ''}`}
+                    className={`choice-image ${food.correct && idleHintLevel >= 2 ? 'fav-hint-final' : ''}`}
                   />
                 </div>
                 <div className="choice-name">{food.name}</div>
@@ -1847,7 +1842,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                   <img
                     src={color.image}
                     alt={color.name}
-                    className={`choice-image ${idleHintLevel === 1 ? 'fav-hint-candidates' : ''} ${color.correct && idleHintLevel >= 3 ? 'fav-hint-final' : ''}`}
+                    className={`choice-image ${color.correct && idleHintLevel >= 2 ? 'fav-hint-final' : ''}`}
                   />
                 </div>
                 <div className="choice-name">{color.name}</div>
@@ -1888,7 +1883,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                   <img
                     src={activity.image}
                     alt={activity.name}
-                    className={`choice-image ${idleHintLevel === 1 ? 'fav-hint-candidates' : ''} ${activity.correct && idleHintLevel >= 3 ? 'fav-hint-final' : ''}`}
+                    className={`choice-image ${activity.correct && idleHintLevel >= 2 ? 'fav-hint-final' : ''}`}
                   />
                 </div>
                 <div className="choice-name">{activity.name}</div>
@@ -1941,7 +1936,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                   <img
                     src={friend.image}
                     alt={friend.name}
-                    className={`choice-image ${idleHintLevel === 1 ? 'fav-hint-candidates' : ''} ${friend.correct && idleHintLevel >= 3 ? 'fav-hint-final' : ''}`}
+                    className={`choice-image ${friend.correct && idleHintLevel >= 2 ? 'fav-hint-final' : ''}`}
                   />
                 </div>
                 <div className="choice-name">{friend.name}</div>
