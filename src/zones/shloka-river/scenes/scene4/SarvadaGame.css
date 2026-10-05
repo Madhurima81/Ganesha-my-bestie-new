@@ -392,7 +392,11 @@
   animation: sarvadaFindPulse 1.2s ease-in-out infinite;
 }
 
+/* The shared .hint-glow rule (other scenes) forces a scale-only stageHintGlow animation with
+   !important, which drops this ring's translate(-50%, -50%) centring and shifts it off the tap
+   area. Keep this ring on its own centred pulse. */
 .sarvada-symbol-ring.hint-glow {
+  animation: sarvadaFindPulse 1.2s ease-in-out infinite !important;
   box-shadow:
     0 0 0 10px rgba(255, 213, 79, 0.28),
     0 0 32px rgba(255, 213, 79, 0.62),
@@ -420,20 +424,6 @@
     0 0 0 3px rgba(255, 226, 92, 0.28),
     0 0 24px rgba(255, 213, 79, 0.38);
   animation: sarvadaSearchNotice 1.8s ease-in-out infinite;
-}
-
-.sarvada-search-hint.is-narrower {
-  background:
-    radial-gradient(
-      circle,
-      rgba(255, 246, 184, 0.5) 0%,
-      rgba(255, 221, 92, 0.28) 48%,
-      rgba(255, 196, 59, 0.1) 70%,
-      transparent 80%
-    );
-  box-shadow:
-    0 0 0 4px rgba(255, 226, 92, 0.32),
-    0 0 30px rgba(255, 213, 79, 0.46);
 }
 
 @keyframes sarvadaSearchNotice {
@@ -753,4 +743,23 @@
   display: flex;
   justify-content: flex-end;
   margin-top: 0.5rem;
+}
+
+/* Shorter iPads (1024x670, mini): the find-the-symbol picture reached down over the boat. A
+   narrower frame (the width is what is changed, so tap coordinates still map 1:1 onto the picture)
+   makes it ~15% smaller. The iPad Pro (taller than 900px) is unchanged. */
+@media (orientation: landscape) and (max-height: 900px) {
+  .sarvada-memory {
+    width: min(92%, 640px, calc(44vh * 4 / 3));
+  }
+}
+
+/* Shorter iPads: the boat (and Ganesha sitting in it) is ~25% smaller so the picture clears it. */
+@media (orientation: landscape) and (max-height: 900px) {
+  .sarvada-boat {
+    width: clamp(130px, 20vw, 210px);
+  }
+  .sarvada-boat-ganesha {
+    width: clamp(32px, 4.6vw, 54px);
+  }
 }

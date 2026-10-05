@@ -1,5 +1,11 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-10-05] — Shloka River: Sarvada picture + boat sized for shorter iPads
+**Touched:** src/zones/shloka-river/scenes/scene4/SarvadaGame.css.
+**Changed:** landscape up to 900px tall — find-the-symbol picture frame width limit 52vh -> 44vh (width changed, not zoom, so tap coordinates still map 1:1 onto the picture); boat width clamp(130px, 20vw, 210px) (was 160-280px) and the seated Ganesha clamp(32px, 4.6vw, 54px). iPad Pro unchanged.
+**Verified:** from Madhurima's screenshots; not re-checked after the edit. Tap accuracy on the smaller picture to be confirmed.
+**Open:** rest of Zone 2 T20 (Grove, Bank, Chant, Finale).
+
 ## [2026-10-05] — Shloka River: Sarvakaryeshu card + syllable strip sized for shorter iPads
 **Touched:** src/zones/shloka-river/scenes/scene4/SarvakaryeshuGame.css, src/zones/shloka-river/shared/SyllableHighlight.css.
 **Changed:** landscape up to 900px tall — Sarvakaryeshu scenario card `zoom: 0.8` and `top: 38%`, boat width clamp(220px, 24vw, 300px) (the boat sat in front of the middle option); shared syllable strip (Sar va kar yeshu / Sur ya ko ti) text 15px, tighter padding, top 56px for every Shloka River scene. iPad Pro unchanged; phones keep their own rule.
