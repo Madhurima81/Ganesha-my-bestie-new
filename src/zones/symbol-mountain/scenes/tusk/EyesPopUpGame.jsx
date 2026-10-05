@@ -688,6 +688,17 @@ const EyesPopUpGame = ({
     e.stopPropagation();
     if (debugMode || flow === FLOW.COMPLETE || foundIds.has(target.id)) return;
 
+    const rect = e.currentTarget.getBoundingClientRect();
+    const radius = Math.min(rect.width, rect.height) / 2;
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const dx = e.clientX - centerX;
+    const dy = e.clientY - centerY;
+    if ((dx * dx) + (dy * dy) > radius * radius) {
+      registerMiss();
+      return;
+    }
+
     // Freeze the idle clock for the found-animation + success VO, then
     // start a fresh 10/18/26 window for whatever's left once that VO ends
     // — never mid-sentence.
@@ -731,7 +742,7 @@ const EyesPopUpGame = ({
     schedule(() => setCarriedTargets((prev) => [...prev, target.id]), 2100); // 700 + 900 glide + 500 pause at center
     schedule(() => setDeliveredTargets((prev) => [...prev, target.id]), 3000); // 2100 + 900 glide to animal
     schedule(() => setGoneTargets((prev) => [...prev, target.id]), 3600); // 3000 + 600 hold after pose change
-  }, [debugMode, flow, foundIds, schedule, speak]);
+  }, [debugMode, flow, foundIds, registerMiss, schedule, speak]);
 
   if (hideElements || !isActive) return null;
 

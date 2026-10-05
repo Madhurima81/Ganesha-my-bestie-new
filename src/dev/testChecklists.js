@@ -164,7 +164,7 @@ TEST_CHECKLISTS['sr-finale'] = {
 };
 
 TEST_CHECKLISTS['sm-pond'] = {
-  title: 'Pond: teach hold once, teach drag once, lotus reminders only',
+  title: 'Pond: teach rock hold, flower drag, and lotus intro hold once',
   items: [
     { text: 'Rock: hear "Press and hold to move it."', expect: 'One hold teaching hand appears with the action phrase, then stops.' },
     { text: 'Rock: release very early once.', expect: 'Only "Keep holding." plays. The rock keeps useful hold-ring feedback.' },
@@ -172,8 +172,8 @@ TEST_CHECKLISTS['sm-pond'] = {
     { text: 'Flowers: hear "Gently move them aside."', expect: 'One drag teaching hand plays one iteration, not two.' },
     { text: 'Flowers: drag part-way but not far enough.', expect: 'The flowers settle back and "A little farther." plays once; later help is visual/directional, not a repeated drag VO.' },
     { text: 'Flowers: make a meaningful drag, then stall.', expect: 'No teaching hand returns. The flowers gently shift sideways as the reminder/rescue cue.' },
-    { text: 'Lotus: reach "Hold the bud to help it bloom."', expect: 'No immediate teaching hand appears; the scene trusts the hold mechanic learned on the rock.' },
-    { text: 'Lotus: release early.', expect: '"Keep holding." plays. If idle, the bud uses ring/glow reminders only, with no GestureDemo and no second VO.' },
+    { text: 'Lotus: reach "Hold the bud to help it bloom."', expect: 'One hold teaching hand appears with the action phrase, then stops.' },
+    { text: 'Lotus: release early.', expect: '"Keep holding." plays. If idle, the bud uses ring/glow reminders only, with no repeated GestureDemo and no second VO.' },
     { text: 'Complete rock, flowers, and lotus.', expect: 'Each mechanic clears cleanly and the scene progresses without repeated tutorial hands.' },
   ],
 };

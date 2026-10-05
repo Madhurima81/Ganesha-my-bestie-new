@@ -605,11 +605,18 @@ const EarsSoundMatchGame = ({
         l2FinishedAtRef.current = null;
         wrongCountRef.current = 0;
         // The 10s choosing clock must start only once "Now choose the
-        // sound." actually finishes, not while it's still speaking.
-        speak(VO_TEXTS.choose, () => {
-          if (runId !== runIdRef.current) return;
+        // sound." actually finishes, not while it's still speaking. Until
+        // then it is null (the hint tick ignores it) — a stale timestamp from
+        // the previous round/mount used to make the clue fire the instant this
+        // line began, skipping the replay-all step.
+        chooseStartedAtRef.current = null;
+        const armChooseClock = () => {
+          if (runId !== runIdRef.current || chooseStartedAtRef.current) return;
           chooseStartedAtRef.current = Date.now();
-        });
+        };
+        speak(VO_TEXTS.choose, armChooseClock);
+        // Speech "ended" events are not always delivered — arm anyway.
+        schedule(armChooseClock, 5000);
         afterSequence?.();
         return;
       }
@@ -725,6 +732,7 @@ const EarsSoundMatchGame = ({
 
     const tick = () => {
       if (pausedRef.current || hintHoldRef.current) return;
+      if (!chooseStartedAtRef.current) return;
       const waitingMs = Date.now() - chooseStartedAtRef.current;
 
       // L3 is an 8s gap AFTER the L2 clue + sound finish, not a fixed

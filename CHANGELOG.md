@@ -1,5 +1,16 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-10-05] — Zone 1 hint flows: Sacred Assembly fix, Eyes / Ears / Tusk nest simplified
+**Touched:** src/zones/symbol-mountain/scenes/final scene/SacredAssemblySceneV8.jsx, tusk/EyesPopUpGame.jsx, tusk/EarsSoundMatchGame.jsx, tusk/tuskNestFlow.json, src/lib/beatPlayer/BeatPlayerGame.jsx + .css, src/dev/GameTestHarness.jsx, src/dev/testChecklists.js.
+**Changed:**
+- Sacred Assembly: hint ladder re-armed mid card-VO and stale timers from earlier cards fired on later cards (card 3+ went straight to the glow). The ladder effect no longer depends on playSceneVoice (read via ref) and every timer carries a per-card generation token.
+- Eyes: 2 steps — ~13s clue + bush-only cue for the next object, then that one object glows (no VO). Misses: 3 = clue, 6 = glow. Wrong taps are visual only; removed the "interesting" and "Tap the glowing bushes" lines.
+- Ears: kept replay-all (10s) and clue + target sound (18s); final glow replays the target sound with no spoken line. Wrong taps: 1st = "Listen again" + all three sounds, 2nd = clue, 3rd = glow. Removed the 1/2/3 source numbers. Fixed the choosing clock holding a stale time during "Now choose the sound." (the clue fired at once and skipped the 10s replay).
+- Tusk nest (BeatPlayer drag-to-target): reminder line "Add the X to the nest." at ~12s with an item nudge, then a persistent nest glow (new, raw-zone targets); no L3 VO; no hand after a real drag; 2nd wrong drop brings the glow early.
+- Harness: clear storage now keeps checklist results. Checklists rewritten for sm-eyes, sm-ears, sm-tusk-live-v2.
+**Verified:** vite build passes; Ears trace in the harness shows replay at ~10s, clue ~18s. Eyes and Tusk nest checked by Madhurima; the Sacred Assembly timer fix was not run live.
+**Open:** BeatPlayer 12s two-step timing applies to every structured drag-to-target beat (only Tusk uses it today); Ears rapid wrong taps during replay-all may overlap replays; unused .ears-source-number CSS left in place; Modak files (FlowerJourneyGame2, GarlandGame3, NewModakSceneV7) show edits not made this session — left uncommitted.
+
 ## [2026-10-05] — Symbol Mountain Modak/Pond hint model recorded; Modak checklists split by game
 **Touched:** CHANGELOG.md, src/dev/testChecklists.js, src/zones/symbol-mountain/scenes/modak/FlowerJourneyGame2.jsx.
 **Changed:** Recorded the Symbol Mountain Modak/Pond teach-once hint pass in the 13-scene hint status table below. Split Modak QA into three harness checklists: `modak-calm` for Game 1 / Calm Mooshika, `modak-game2-new` for Game 2 / Bush-Branch-Marsh, and `modak-garland` for Game 3 / Garland. Harness aliases now route `sm-modak-game1`, `sm-modak-game2`, and `sm-modak-game3` to those specific checklists; the full `sm-modak` scene starts on the Calm checklist. Also reduced the Marsh emotion emoji default size from 100 to 72.
