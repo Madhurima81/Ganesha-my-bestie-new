@@ -83,10 +83,6 @@ const Wish2PlateDropGame = ({
     x: Number.parseFloat(pointerTarget.left) || 50,
     y: Number.parseFloat(pointerTarget.top) || 62,
   };
-  const partialTargetPoint = {
-    x: startPoint.x + (targetPoint.x - startPoint.x) * 0.45,
-    y: startPoint.y + (targetPoint.y - startPoint.y) * 0.45,
-  };
 
   return (
     <div className="wish-screen">
@@ -119,13 +115,14 @@ const Wish2PlateDropGame = ({
           zIndex={24}
         />
 
-        {/* Idle rescue — L2 partial drag, L3 the full food-to-plate path. */}
-        {wish2IdleLevel >= 2 && (
+        {/* Teaching reminder — only while the child has NOT yet placed a food (still learning to
+            drag). After the first food the hand never returns; the cues below are goal-only. */}
+        {wish2IdleLevel >= 1 && (sceneState.wish2Taps || 0) === 0 && firstUnfilledBowlIndex !== null && firstUnfilledBowlIndex !== undefined && (
           <GestureDemo
-            key={`wish2-hint-${wish2IdleLevel}-${firstAvailableFoodKey}-${firstUnfilledBowlIndex}`}
+            key={`wish2-hint-${firstAvailableFoodKey}-${firstUnfilledBowlIndex}`}
             type="drag"
             from={startPoint}
-            to={wish2IdleLevel === 2 ? partialTargetPoint : targetPoint}
+            to={targetPoint}
             active
             idleDelay={0}
             iterations={2}
@@ -175,8 +172,8 @@ const Wish2PlateDropGame = ({
                   alt={foodKey}
                   className={`
                     wish2-food-img
-                    ${wish2IdleLevel === 1 && isAvailable ? 'wish2-food-hint-attention' : ''}
-                    ${wish2IdleLevel >= 3 && isAvailable && foodKey === firstAvailableFoodKey ? 'wish2-food-hint-source' : ''}
+                    ${wish2IdleLevel === 1 && isAvailable && foodKey === firstAvailableFoodKey ? 'wish2-food-hint-attention' : ''}
+                    ${wish2IdleLevel >= 2 && isAvailable && foodKey === firstAvailableFoodKey ? 'wish2-food-hint-source' : ''}
                   `}
                   style={{
                     width: '100%',
@@ -219,8 +216,8 @@ const Wish2PlateDropGame = ({
             }}
             onClick={() => handleWish2PlateClick(index)}
           >
-            {wish2IdleLevel >= 3 && index === firstUnfilledBowlIndex && !isFilled && (
-              <div className="wish2-hint-target-ring" />
+            {wish2IdleLevel >= 1 && index === firstUnfilledBowlIndex && !isFilled && (
+              <div className={`wish2-hint-target-ring${wish2IdleLevel === 1 ? ' is-soft' : ''}`} />
             )}
             <img
               src={plateImg}

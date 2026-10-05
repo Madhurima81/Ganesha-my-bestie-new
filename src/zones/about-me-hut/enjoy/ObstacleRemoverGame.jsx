@@ -1065,19 +1065,16 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     return () => clearTimeout(retry);
   }, [isReload, returnHintNonce, isAudioOn, sceneState.gamePhase, sceneState.showingCompletionScreen, showDrawingPad, getResumeVoiceLine, getPhaseReminderLine]);
 
-  // ── Wish 1 idle hint ladder (setTimeout, not setInterval) ───────────────────
-  // Bubbles keep floating. The hint class is applied briefly then removed so the
-  // CSS animation (finite pulse/glow) plays once and the bubble returns to normal.
-  // Same pattern as FavoriteFoodGame — level fires → animation plays → level resets.
-  //   Level 1 @ 10s : hint       → ring pulses once  (wishHintRingSoft, 1 cycle, ~2s)
-  //   Level 2 @ 18s : hint-strong → ring pulses 3×   (wishHintRingStrong, 3 cycles, ~3.6s) + VO
-  //   Level 3 @ 26s : hint-final  → ring pulses 4×   (wishHintRingFinal, 4 cycles, ~4s) + VO
-  //   After level 3 animation the class stays (child is stuck — keep static glow).
+  // ── Dreams & Wishes hints: a simple 2-step system per beat (0 = none, 1 = reminder/clue,
+  //    2 = final visual rescue — never a level 3, never a visual-only "notice" step first). ──
+  // The final gap counts from when the clue FINISHES speaking, so the rescue glow never lands
+  // while Ganesha is still talking. markInteraction() (real progress) restarts the cycle.
+  //
+  // Wish 1: ~13s clue VO ("Look for actions that help…") → remaining kind bubbles glow and stay lit.
   useEffect(() => {
     if (sceneState.gamePhase !== 'wish1-active') {
       setWish1IdleLevel(0);
       idleVoFlagsRef.current.wish1Level2 = false;
-      idleVoFlagsRef.current.wish1Level3 = false;
       return;
     }
     if (sceneState.showingCompletionScreen || showDrawingPad) return;
@@ -1085,58 +1082,36 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
     setWish1IdleLevel(0);
     idleVoFlagsRef.current.wish1Level2 = false;
-    idleVoFlagsRef.current.wish1Level3 = false;
 
-    let t1 = null;
-    let t1Clear = null;
+    let cancelled = false;
     let t2 = null;
-    let t2Clear = null;
-    let t3 = null;
-
-    // Level 1 @ 10s — soft pulse once (~2s), then clear
-    t1 = safeSetTimeout(() => {
+    const t1 = safeSetTimeout(() => {
       setWish1IdleLevel(1);
-      t1Clear = safeSetTimeout(() => setWish1IdleLevel(0), 2200); // clear after animation finishes
-
-      // Level 2 @ 18s — 3 pulses (~3.6s) + VO hint, then clear
-      t2 = safeSetTimeout(() => {
-        setWish1IdleLevel(2);
-        t2Clear = safeSetTimeout(() => setWish1IdleLevel(0), 3800); // clear after animation finishes
-
-        // Level 3's 8s gap counts from when the L2 line finishes speaking,
-        // not from the moment the L2 timer fires — otherwise L3 could land
-        // while (or right on top of) the L2 line still talking.
-        const armLevel3 = () => {
-          t3 = safeSetTimeout(() => {
-            setWish1IdleLevel(3);
-            if (!idleVoFlagsRef.current.wish1Level3) {
-              speakLine("Tap the bubbles that show helping, sharing, hugging, and gifting.", { moment: 'encouragement' });
-              idleVoFlagsRef.current.wish1Level3 = true;
-            }
-            // No clear — level 3 stays as persistent static glow
-          }, 8000);
-        };
-        if (!idleVoFlagsRef.current.wish1Level2) {
-          speakLine("Look for actions that help or care for someone.", { moment: 'encouragement', onEnd: armLevel3 });
-          idleVoFlagsRef.current.wish1Level2 = true;
-        } else {
-          armLevel3();
-        }
-      }, 8000); // 10s + 8s = 18s
-    }, 10000);
+      const armFinal = () => {
+        if (cancelled) return;
+        t2 = safeSetTimeout(() => setWish1IdleLevel(2), 10000);
+      };
+      if (!idleVoFlagsRef.current.wish1Level2) {
+        idleVoFlagsRef.current.wish1Level2 = true;
+        speakLine("Look for actions that help or care for someone.", { moment: 'encouragement', onEnd: armFinal });
+      } else {
+        armFinal();
+      }
+    }, 13000);
 
     return () => {
+      cancelled = true;
       if (t1) t1();
-      if (t1Clear) t1Clear();
       if (t2) t2();
-      if (t2Clear) t2Clear();
-      if (t3) t3();
     };
   }, [sceneState.gamePhase, isAudioOn, sceneState.showingCompletionScreen, showDrawingPad, safeSetTimeout, phaseVoiceDoneFor, idleHintRestartNonce]);
 
-  // ── Wish 2, 3, dream phases — setTimeout ladders (same pattern as wish1) ────
-  // Level fires → class on → animation plays → level resets to 0 → element back to normal.
-  // Level 3 stays on (child genuinely stuck).
+  // Wish 2, Wish 3, dream clouds — same two steps, ~12s to the reminder VO:
+  //   Wish 2, before any food is placed: "Drag one food…" + one teaching hand, then the empty plate glows.
+  //   Wish 2, after the first food (drag already learned): "There's still an empty plate." — one
+  //     remaining food nudges, then the exact plate glows. Never a hand again.
+  //   Wish 3: "There's still space for more to grow." — one remaining spot pulses, then glows stronger.
+  //   Dream clouds: "Tap me to clear the clouds." / "Keep tapping." — then Ganesha glows.
   useEffect(() => {
     const phase = sceneState.gamePhase;
     const isWish2 = phase === 'wish2-active';
@@ -1148,12 +1123,6 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       setWish2TeachingReady(false);
       setWish3IdleLevel(0);
       setChildIdleLevel(0);
-      idleVoFlagsRef.current.wish2Level2 = false;
-      idleVoFlagsRef.current.wish2Level3 = false;
-      idleVoFlagsRef.current.wish3Level2 = false;
-      idleVoFlagsRef.current.wish3Level3 = false;
-      idleVoFlagsRef.current.childLevel2 = false;
-      idleVoFlagsRef.current.childLevel3 = false;
       return;
     }
     if (sceneState.showingCompletionScreen || showDrawingPad) return;
@@ -1161,62 +1130,30 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     if (phase !== 'dream-clearing' && phaseVoiceDoneFor !== phase) return;
 
     const setLevel = isWish2 ? setWish2IdleLevel : isWish3 ? setWish3IdleLevel : setChildIdleLevel;
-    const voL2Flag = isWish2 ? 'wish2Level2' : isWish3 ? 'wish3Level2' : 'childLevel2';
-    const voL3Flag = isWish2 ? 'wish2Level3' : isWish3 ? 'wish3Level3' : 'childLevel3';
-    const voL2Line = isWish2 ? "Drag one food toward an empty plate."
-      : isWish3 ? "Tap a bare space where something could grow."
-      : sceneState.trunkTaps > 0 ? "Keep tapping me."
-      : "Tap me to clear a cloud.";
-    const voL3Line = isWish3 ? "Tap a glowing spot to help the garden grow." : null;
+    const clueLine = isWish2
+      ? ((sceneState.wish2Taps || 0) > 0 ? "There's still an empty plate." : "Drag one food toward an empty plate.")
+      : isWish3 ? "There's still space for more to grow."
+      : sceneState.trunkTaps > 0 ? "Keep tapping." : "Tap me to clear the clouds.";
 
     setLevel(0);
-    idleVoFlagsRef.current[voL2Flag] = false;
-    idleVoFlagsRef.current[voL3Flag] = false;
 
-    let t1 = null;
-    let t1Clear = null;
+    let cancelled = false;
     let t2 = null;
-    let t2Clear = null;
-    let t3 = null;
-
-    // Level 1 @ 10s — soft pulse once (~2s), then clear
-    t1 = safeSetTimeout(() => {
+    const t1 = safeSetTimeout(() => {
       setLevel(1);
-      t1Clear = safeSetTimeout(() => setLevel(0), 2200);
-
-      // Level 2 @ 18s — 3 pulses + VO, then clear
-      t2 = safeSetTimeout(() => {
-        setLevel(2);
-        t2Clear = safeSetTimeout(() => setLevel(0), 3800);
-
-        // Level 3's 8s gap counts from when the L2 line finishes speaking,
-        // not from the moment the L2 timer fires.
-        const armLevel3 = () => {
-          t3 = safeSetTimeout(() => {
-            setLevel(3);
-            if (voL3Line && !idleVoFlagsRef.current[voL3Flag]) {
-              speakLine(voL3Line, { moment: 'encouragement' });
-              idleVoFlagsRef.current[voL3Flag] = true;
-            }
-          }, 8000);
-        };
-        if (!idleVoFlagsRef.current[voL2Flag]) {
-          speakLine(voL2Line, { moment: 'encouragement', onEnd: armLevel3 });
-          idleVoFlagsRef.current[voL2Flag] = true;
-        } else {
-          armLevel3();
-        }
-      }, 8000);
-    }, 10000);
+      const armFinal = () => {
+        if (cancelled) return;
+        t2 = safeSetTimeout(() => setLevel(2), 10000);
+      };
+      speakLine(clueLine, { moment: 'encouragement', onEnd: armFinal });
+    }, 12000);
 
     return () => {
+      cancelled = true;
       if (t1) t1();
-      if (t1Clear) t1Clear();
       if (t2) t2();
-      if (t2Clear) t2Clear();
-      if (t3) t3();
     };
-  }, [isAudioOn, sceneState.gamePhase, sceneState.dreamRevealed, sceneState.showingCompletionScreen, sceneState.trunkTaps, showDrawingPad, safeSetTimeout, phaseVoiceDoneFor, idleHintRestartNonce]);
+  }, [isAudioOn, sceneState.gamePhase, sceneState.dreamRevealed, sceneState.showingCompletionScreen, sceneState.trunkTaps, sceneState.wish2Taps, showDrawingPad, safeSetTimeout, phaseVoiceDoneFor, idleHintRestartNonce]);
 
   // Reset idle timer on major phase/modal transitions
   useEffect(() => {
@@ -1295,10 +1232,10 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
   // Bubble tap — kind actions advance wish progress; unkind actions shake + dim.
   const handleBubbleTap = (bubble) => {
-    interruptCurrentVoice();
     playUiTap();
 
     if (bubble.type === 'kind') {
+      interruptCurrentVoice();
       // Only a kind (correct) bubble is progress. An unkind tap is a wrong attempt: it must not
       // reset the idle-hint ladder or dismiss a hint that is already showing.
       markInteraction();
@@ -1312,9 +1249,9 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       }
       handleWish1Tap({ fromBubble: true });
     } else {
-      // Unkind action: shake, dim, and redirect gently without repeating the harmful word.
+      // Unkind action: local shake + dim only. No spoken correction — it would repeat on every
+      // wrong bubble and could cut off the semantic clue that is trying to help.
       setShakingBubbleId(bubble.id);
-      speakLine("Oh no, that's not kind. Look for a helping bubble.", { moment: 'encouragement' });
 
       // Remove shake class after 200ms (animation + dim duration)
       safeSetTimeout(() => {
@@ -1614,6 +1551,14 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   };
 
   // Specific handler for individual park items (optional enhancement from your code logic)
+  // The tap zones are large but invisible; each bare spot shows a small golden marker. The hint
+  // only ever points at ONE remaining spot: it pulses (clue) then glows stronger (rescue).
+  const wish3MarkerClass = (index) => {
+    const isHintSpot = sceneState.parkStates.findIndex((filled) => !filled) === index;
+    const level = isHintSpot ? (wish3IdleLevel >= 2 ? ' is-final' : wish3IdleLevel === 1 ? ' is-hint' : '') : '';
+    return `wish3-marker${level}`;
+  };
+
   const handleParkTap = (index) => {
     if (sceneState.parkStates[index] === true) return;
     markInteraction();
@@ -1801,9 +1746,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 <div
                   key={bubble.id}
                   className={`wish1-bubble-shell ${shakingBubbleId === bubble.id ? 'bubble-wrong-shake' : ''} ${
-                    wish1IdleLevel === 1 ? 'wish1-hint-attention' : ''
-                  } ${
-                    bubble.type === 'kind' && wish1IdleLevel === 3 ? 'wish1-hint-final' : ''
+                    bubble.type === 'kind' && wish1IdleLevel >= 2 ? 'wish1-hint-final' : ''
                   }`}
                   style={{
                     position: 'absolute',
@@ -1979,7 +1922,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
               <div style={{ position: 'absolute', left: '8%', bottom: '15%', width: '190px', height: '190px', pointerEvents: 'none', zIndex: 10 }}>
               <div
                 onClick={() => handleParkTap(0)}
-                className={`wish3-hotspot ${wish3IdleLevel === 1 && !sceneState.parkStates[0] ? 'wish3-hint-attention' : ''} ${wish3IdleLevel === 2 && !sceneState.parkStates[0] ? 'wish3-hint-clue' : ''} ${wish3IdleLevel >= 3 && !sceneState.parkStates[0] ? 'wish3-hint-final' : ''}`}
+                className="wish3-hotspot"
                 style={{
                   position: 'absolute',
                   left: '15.2%',
@@ -1988,13 +1931,12 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                   height: '33.6%',
                   pointerEvents: 'auto',
                   cursor: sceneState.parkStates[0] ? 'default' : 'pointer',
-                  background: sceneState.parkStates[0] ? '' : 'rgba(255, 200, 87, 0.12)',
-                  border: sceneState.parkStates[0] ? '' : '2px dashed rgba(255, 200, 87, 0.5)',
                   borderRadius: '50%',
                   zIndex: 10,
-                  transition: 'all 0.2s ease',
                 }}
-              />
+              >
+                {!sceneState.parkStates[0] && <span className={wish3MarkerClass(0)} />}
+              </div>
               </div>
               {sceneState.parkStates[0] && (
                 <img
@@ -2008,7 +1950,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
               <div style={{ position: 'absolute', left: '48%', transform: 'translateX(-50%)', bottom: '12%', width: '210px', height: '210px', pointerEvents: 'none', zIndex: 10 }}>
               <div
                 onClick={() => handleParkTap(1)}
-                className={`wish3-hotspot ${wish3IdleLevel === 1 && !sceneState.parkStates[1] ? 'wish3-hint-attention' : ''} ${wish3IdleLevel === 2 && !sceneState.parkStates[1] ? 'wish3-hint-clue' : ''} ${wish3IdleLevel >= 3 && !sceneState.parkStates[1] ? 'wish3-hint-final' : ''}`}
+                className="wish3-hotspot"
                 style={{
                   position: 'absolute',
                   left: '15.2%',
@@ -2017,13 +1959,12 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                   height: '38.2%',
                   pointerEvents: 'auto',
                   cursor: sceneState.parkStates[1] ? 'default' : 'pointer',
-                  background: sceneState.parkStates[1] ? '' : 'rgba(255, 200, 87, 0.12)',
-                  border: sceneState.parkStates[1] ? '' : '2px dashed rgba(255, 200, 87, 0.5)',
                   borderRadius: '50%',
                   zIndex: 10,
-                  transition: 'all 0.2s ease',
                 }}
-              />
+              >
+                {!sceneState.parkStates[1] && <span className={wish3MarkerClass(1)} />}
+              </div>
               </div>
               {sceneState.parkStates[1] && (
                 <>
@@ -2044,7 +1985,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
               <div style={{ position: 'absolute', right: '5%', bottom: '5%', width: '300px', height: '300px', pointerEvents: 'none', zIndex: 10 }}>
               <div
                 onClick={() => handleParkTap(2)}
-                className={`wish3-hotspot ${wish3IdleLevel === 1 && !sceneState.parkStates[2] ? 'wish3-hint-attention' : ''} ${wish3IdleLevel === 2 && !sceneState.parkStates[2] ? 'wish3-hint-clue' : ''} ${wish3IdleLevel >= 3 && !sceneState.parkStates[2] ? 'wish3-hint-final' : ''}`}
+                className="wish3-hotspot"
                 style={{
                   position: 'absolute',
                   left: '25.4%',
@@ -2053,13 +1994,12 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                   height: '55.8%',
                   pointerEvents: 'auto',
                   cursor: sceneState.parkStates[2] ? 'default' : 'pointer',
-                  background: sceneState.parkStates[2] ? '' : 'rgba(255, 200, 87, 0.12)',
-                  border: sceneState.parkStates[2] ? '' : '2px dashed rgba(255, 200, 87, 0.5)',
                   borderRadius: '50%',
                   zIndex: 10,
-                  transition: 'all 0.2s ease',
                 }}
-              />
+              >
+                {!sceneState.parkStates[2] && <span className={wish3MarkerClass(2)} />}
+              </div>
               </div>
               {sceneState.parkStates[2] && (
                 <>
@@ -2231,7 +2171,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
             </div>
             <div
               key={`ganesha-helper-${ganeshaReactKey}`}
-              className={`ganesha-helper ${sceneState.trunkTaps > 0 ? 'ganesha-blowing' : ''} ${childIdleLevel === 1 ? 'dream-trunk-hint-attention' : ''} ${childIdleLevel === 2 ? 'dream-trunk-hint-clue' : ''} ${childIdleLevel >= 3 ? 'dream-trunk-hint-final' : ''} ${ganeshaReactKey > 0 && sceneState.dreamRevealed ? 'ganesha-react' : ''}`}
+              className={`ganesha-helper ${sceneState.trunkTaps > 0 ? 'ganesha-blowing' : ''} ${childIdleLevel >= 2 ? 'dream-trunk-hint-final' : ''} ${ganeshaReactKey > 0 && sceneState.dreamRevealed ? 'ganesha-react' : ''}`}
               onClick={handleTrunkTap}
             >
               <img src={babyGaneshaImg} alt="Ganesha" className="ganesha-trunk bounce-gentle" />

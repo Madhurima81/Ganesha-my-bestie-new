@@ -352,12 +352,25 @@ TEST_CHECKLISTS['sarvada'] = {
 };
 
 TEST_CHECKLISTS['amh-dreams-wishes'] = {
-  title: 'Dreams and Wishes: wrong bubble does not reset hints',
+  title: 'Dreams and Wishes: 2-step hints (reminder → rescue); no hand after the first drag; no visible hit-boxes',
   items: [
-    { text: 'Wish 1: wait for the hints. Tap an unkind bubble.', expect: 'Shake and gentle redirect; the hint ladder is NOT reset.' },
-    { text: 'Tap kind bubbles.', expect: 'Progress advances; hints reset only on kind taps.' },
-    { text: 'Complete the three wishes and the trunk taps.', expect: 'Each step works; no stuck hint.' },
-    { text: 'Tap empty background during hints.', expect: 'Nothing restarts.' },
+    { text: 'Wish 1: after the instruction ends, do nothing for ~10s.', expect: 'No pulse on any bubble.' },
+    { text: 'Wish 1: keep waiting to ~13s.', expect: 'One clue plays: "Look for actions that help or care for someone." Bubbles still do not move.' },
+    { text: 'Wish 1: wait ~10s after the clue ends.', expect: 'The remaining KIND bubbles glow and stay lit. No second voice line (the four answers are NOT read out).' },
+    { text: 'Wish 1: tap an unkind bubble (before, during and after the clue).', expect: 'Shake + dim only. No spoken "that\'s not kind". A playing clue is NOT cut. Hint timing is not reset.' },
+    { text: 'Wish 1: tap a kind bubble.', expect: 'Progress advances; the 2-step cycle restarts for the next kind action.' },
+    { text: 'Wish 2: first time, wait for "Drag food…" to start.', expect: 'Teaching hand plays once, in sync with the line.' },
+    { text: 'Wish 2: place NO food and wait ~12s.', expect: 'Reminder "Drag one food toward an empty plate." plus the hand once more; then the empty plate glows (~10s after the line).' },
+    { text: 'Wish 2: place one food, then wait ~12s.', expect: 'Line is "There\'s still an empty plate." Only ONE remaining food nudges and the empty plate softly shows. NO hand.' },
+    { text: 'Wish 2: keep waiting after that line.', expect: 'The exact empty plate gets the full glow and the food glows. No extra voice.' },
+    { text: 'Wish 3: look at the garden before tapping anything.', expect: 'NO dashed ovals or pale fills. Each bare spot shows only a small golden twinkle. Tapping around the plant (large invisible zone) still works.' },
+    { text: 'Wish 3: wait ~12s.', expect: '"There\'s still space for more to grow." plays; ONE remaining spot pulses (not all three).' },
+    { text: 'Wish 3: wait ~10s more.', expect: 'That one spot glows stronger and stays lit. No extra voice.' },
+    { text: 'Wish 3: tap a spot, then wait again.', expect: 'The hint restarts, points at a remaining spot, and never behaves as if tapping is new.' },
+    { text: 'Dream clouds: do not tap for ~12s.', expect: '"Tap me to clear the clouds." plays; then Ganesha glows (~10s later). No arrow, no multi-stage nudges.' },
+    { text: 'Dream clouds: clear one cloud, then stall ~12s.', expect: '"Keep tapping." plays, then the Ganesha glow.' },
+    { text: 'Dream drawing: sit idle.', expect: 'No hint ladder at all.' },
+    { text: 'Tap empty background during any hint.', expect: 'Nothing restarts.' },
   ],
 };
 
