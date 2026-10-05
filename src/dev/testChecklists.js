@@ -218,7 +218,11 @@ TEST_CHECKLISTS['suryakoti'] = {
   items: [
     { text: 'First-time teaching hand plays. Rub somewhere else on screen.', expect: 'Hand finishes its pass; nothing restarts.' },
     { text: 'Wait for L2 / L3. Rub where no darkness remains.', expect: 'Hints stay.' },
+    { text: 'Do nothing and watch L1, L2, L3 on a patch.', expect: 'L1 about 10s: soft glow, no voice. L2 about 18s: short scratch hand + "Rub the glowing spot." (or "Keep rubbing." once some is cleared). L3 about 8s after: the longer 2-pass hand + ONE line "Rub right here." (said once per patch).' },
     { text: 'Rub the dark area for real.', expect: 'Hint clears while you clear darkness; the clock restarts roughly every 0.7s of real rubbing.' },
+    { text: 'Finish the first patch (Sur), then stop and do nothing for about 10s.', expect: 'L1 says "Continue rubbing." (once, no glow spot). The glow spot is only for the first patch or a patch you have partly rubbed.' },
+    { text: 'Rub a big blob in the middle of a patch, then wait for L1 / L2 / L3.', expect: 'The glow spot and the hand point at a DARK (uncleared) part of the patch, never at the area you already rubbed clear.' },
+    { text: 'Rub part of a patch, then lift your finger and do nothing.', expect: 'The hint ladder restarts after you stop: L1 glow about 10s later, L2 about 18s, then L3 (it must not stay silent after a partial rub).' },
     { text: 'Open and close the sidebar mid-rub.', expect: 'Rub stops cleanly; hints restart fresh.' },
   ],
 };

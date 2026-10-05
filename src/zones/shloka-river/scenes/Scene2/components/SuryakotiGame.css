@@ -213,33 +213,35 @@
   pointer-events: none;
   z-index: 21;
 
+  /* The old gradient was 13% / 7% alpha gold over a near-black layer: practically invisible.
+     Now a clearly visible warm glow, 3 pulses, then it stops (L2 takes over at ~18s). */
   background:
     radial-gradient(
       ellipse at center,
-      rgba(255, 220, 100, 0.13) 0%,
-      rgba(255, 220, 100, 0.07) 42%,
-      rgba(255, 220, 100, 0) 72%
+      rgba(255, 226, 120, 0.55) 0%,
+      rgba(255, 214, 90, 0.32) 42%,
+      rgba(255, 214, 90, 0) 74%
     );
 
-  box-shadow: none;
-  animation: suryaRubHint 1.8s ease-in-out infinite;
+  box-shadow: 0 0 20px 4px rgba(255, 214, 90, 0.3);
+  animation: suryaRubHint 1.8s ease-in-out 3;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .surya-rub-hint {
     animation: none;
-    opacity: 0.65;
+    opacity: 0.85;
   }
 }
 
 @keyframes suryaRubHint {
   0%, 100% {
-    opacity: 0.45;
+    opacity: 0.5;
     transform: translate(-50%, -50%) scale(0.96);
   }
   50% {
-    opacity: 0.9;
-    transform: translate(-50%, -50%) scale(1.04);
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.05);
   }
 }
 

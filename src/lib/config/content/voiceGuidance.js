@@ -132,6 +132,12 @@ export const VOICE_SCRIPTS = {
       surya_hint_keep: {
         text: "Keep rubbing."
       },
+      surya_hint_here: {
+        text: "Rub right here."
+      },
+      surya_hint_continue: {
+        text: "Continue rubbing."
+      },
       scene11_surya_keep_rubbing: {
         text: "Keep rubbing to bring back more light."
       },

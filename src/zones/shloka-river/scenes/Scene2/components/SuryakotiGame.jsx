@@ -84,6 +84,10 @@ export default function SuryakotiGame({
   const zoneDoneRef = useRef([0, 0, 0, 0]);
   const activeZoneRef = useRef(0);
   const drawingRef = useRef(false);
+  // State mirror of drawingRef. The hint clock's `enabled` flag is read at render time: with only the
+  // ref, lifting the finger changed nothing the component could see, no re-render happened, and the
+  // clock stayed disabled (computed while rubbing) — so the hint never restarted after a partial rub.
+  const [isRubbing, setIsRubbing] = useState(false);
   const phaseRef = useRef('play');
   const completedRef = useRef(false);
   const doneAnnouncedRef = useRef(false);
@@ -136,7 +140,7 @@ export default function SuryakotiGame({
     // Gated on the instruction VO (introComplete), not on the teaching
     // gesture finishing — the gesture and VO can overlap; teaching disappears
     // as soon as the child actually starts scratching (see onPointerDown).
-    enabled: isActive && !isPaused && phase === 'play' && introComplete && !drawingRef.current,
+    enabled: isActive && !isPaused && phase === 'play' && introComplete && !isRubbing,
     stageKey: phase === 'play' ? `rub-zone-${activeZone}` : phase,
     // GMB Hint Standard v1 — flat 10s/18s/26s from VO end or last interaction.
     initialDelay: 10000,
@@ -168,6 +172,31 @@ export default function SuryakotiGame({
     if (playSceneLine) markLevel2VoiceStarted();
     playSceneLine?.(voiceKey, markLevel2VoiceEnded);
   }, [activeZone, hintLevel, isPaused, phase, playSceneLine, spotHasProgress, stopVoice, markLevel2VoiceStarted, markLevel2VoiceEnded]);
+
+  // L1 on a LATER patch with nothing rubbed on it yet = the child finished a patch and stopped:
+  // just say "Continue rubbing." (no glow spot). Once per patch.
+  const lastL1VoRef = useRef('');
+  const l1ContinueNudge = activeZone > 0 && !spotHasProgress;
+  useEffect(() => {
+    if (phase !== 'play' || hintLevel !== 1 || !l1ContinueNudge || isPaused) return;
+    const onceKey = `${activeZone}-surya_hint_continue`;
+    if (lastL1VoRef.current === onceKey) return;
+    lastL1VoRef.current = onceKey;
+    stopVoice?.();
+    playSceneLine?.('surya_hint_continue');
+  }, [activeZone, hintLevel, isPaused, l1ContinueNudge, phase, playSceneLine, stopVoice]);
+
+  // L3 spoken hint: ONE short line that points at the exact spot while the L3 hand plays
+  // ("Rub right here."), like Mahakaya's L3 "Put the log here." Once per spot.
+  const lastL3VoRef = useRef('');
+  useEffect(() => {
+    if (phase !== 'play' || hintLevel < 3 || isPaused) return;
+    const onceKey = `${activeZone}-surya_hint_here`;
+    if (lastL3VoRef.current === onceKey) return;
+    lastL3VoRef.current = onceKey;
+    stopVoice?.();
+    playSceneLine?.('surya_hint_here');
+  }, [activeZone, hintLevel, isPaused, phase, playSceneLine, stopVoice]);
 
   // preserve=true (resize/rotation mid-play): rebuild the overlay at the new
   // geometry but keep cleared cells and game phase instead of restarting.
@@ -408,6 +437,7 @@ export default function SuryakotiGame({
       setInitialTeachingDone(true);
     }
     drawingRef.current = true;
+    setIsRubbing(true);
     const [x, y] = getPos(e);
     mark(x, y);
   }, [getPos, initialTeachingDone, isPaused, mark, onFirstInteraction, stopVoice]);
@@ -421,6 +451,7 @@ export default function SuryakotiGame({
 
   const onPointerUp = useCallback(() => {
     drawingRef.current = false;
+    setIsRubbing(false);
   }, []);
 
   // Pause-triggered cleanup: clears an in-progress scratch-drag if isPaused
@@ -429,6 +460,7 @@ export default function SuryakotiGame({
   useEffect(() => {
     if (isPaused) {
       drawingRef.current = false;
+      setIsRubbing(false);
     }
   }, [isPaused]);
 
@@ -546,7 +578,6 @@ export default function SuryakotiGame({
   const cueX = ((cueZone.x1 + cueZone.x2) / 2) * 100;
   const cueY = ((cueZone.y1 + cueZone.y2) / 2) * 100;
   const cueW = (cueZone.x2 - cueZone.x1) * 100;
-  const cueH = (cueZone.y2 - cueZone.y1) * 100;
   const remainingCue = (() => {
     // The target follows uncleared cells, so hints point at the work still
     // left to do.
@@ -554,17 +585,47 @@ export default function SuryakotiGame({
     if (!cv?.width || !cv?.height) {
       return { x: cueX, y: cueY };
     }
-    const remaining = gridRef.current.filter((cell) => cell.zone === activeZone && !cell.cleared);
-    if (!remaining.length) {
+    const zoneCells = gridRef.current.filter((cell) => cell.zone === activeZone);
+    const remaining = zoneCells.filter((cell) => !cell.cleared);
+    // Nothing rubbed yet (or nothing left): the band centre.
+    if (!remaining.length || remaining.length === zoneCells.length) {
       return { x: cueX, y: cueY };
     }
-    const sum = remaining.reduce((acc, cell) => ({
-      x: acc.x + cell.px,
-      y: acc.y + cell.py,
+    // Aim at the middle of the largest uncleared (dark) pocket. The old average of ALL remaining
+    // cells could land inside an area already rubbed clear once the bands became broad (dark patches
+    // around a cleared hole average out to the hole), so the hint pointed at light, not at dark.
+    // "Neighbour" = within ~2 grid cells (the grid is ZONE_GRID_X x ZONE_GRID_Y inside the band).
+    const stepX = ((cueZone.x2 - cueZone.x1) * cv.width) / Math.max(ZONE_GRID_X - 1, 1);
+    const stepY = ((cueZone.y2 - cueZone.y1) * cv.height) / Math.max(ZONE_GRID_Y - 1, 1);
+    const radius = Math.max(stepX, stepY) * 2.2;
+    const r2 = radius * radius;
+    // Score every dark cell by how many dark neighbours it has. Many cells tie for the top score, and
+    // the first of them is the band's top-left corner (cut off by the canvas edge) — so break ties by
+    // distance to the centroid of the dark cells, which keeps the pick in the middle of the dark pocket.
+    const centroid = remaining.reduce((acc, cell) => ({
+      x: acc.x + cell.px / remaining.length,
+      y: acc.y + cell.py / remaining.length,
     }), { x: 0, y: 0 });
+    let best = remaining[0];
+    let bestScore = -1;
+    let bestDist = Infinity;
+    remaining.forEach((cellA) => {
+      let score = 0;
+      remaining.forEach((cellB) => {
+        const dx = cellA.px - cellB.px;
+        const dy = cellA.py - cellB.py;
+        if (dx * dx + dy * dy <= r2) score += 1;
+      });
+      const dist = (cellA.px - centroid.x) ** 2 + (cellA.py - centroid.y) ** 2;
+      if (score > bestScore || (score === bestScore && dist < bestDist)) {
+        bestScore = score;
+        bestDist = dist;
+        best = cellA;
+      }
+    });
     return {
-      x: (sum.x / remaining.length / cv.width) * 100,
-      y: (sum.y / remaining.length / cv.height) * 100,
+      x: (best.px / cv.width) * 100,
+      y: (best.py / cv.height) * 100,
     };
   })();
 
@@ -626,15 +687,17 @@ export default function SuryakotiGame({
         <div className={`surya-dark-wrap ${canvasReady ? 'is-ready' : ''}`} style={{ pointerEvents: phase === 'play' && !isPaused ? 'auto' : 'none' }}>
           {/* L1 only: a soft area glow suggests where progress is most useful.
               Free rubbing still clears darkness anywhere on the canvas. */}
-          {phase === 'play' && canvasReady && !completedRef.current && hintLevel === 1 && (
+          {phase === 'play' && canvasReady && !completedRef.current && hintLevel === 1 && !l1ContinueNudge && (
             <div
               key={`surya-rub-zone-${activeZone}-${remainingCueVersion}`}
               className="surya-rub-hint"
+              // A small round spot (about half the band's width, never larger than 16% of the
+              // canvas) centred where rubbing is still needed — not the whole band.
               style={{
-                left: `${cueX}%`,
-                top: `${cueY}%`,
-                width: `${cueW}%`,
-                height: `${cueH}%`,
+                left: `${remainingCue.x}%`,
+                top: `${remainingCue.y}%`,
+                width: `${Math.min(cueW * 0.5, 16)}%`,
+                aspectRatio: '1 / 1',
               }}
             />
           )}

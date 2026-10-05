@@ -339,6 +339,8 @@ const SuryakotiBankContent = ({
       scene11_surya_hint: "Keep rubbing.",
       surya_hint_rub: "Rub the glowing spot.",
       surya_hint_keep: "Keep rubbing.",
+      surya_hint_here: "Rub right here.",
+      surya_hint_continue: "Continue rubbing.",
       scene11_surya_success: 'Suryakoti! You brought back the light and helped Bunny home.',
       scene11_surya_done: 'Suryakoti! You brought back the light and helped Bunny home.',
       scene11_sama_intro: 'Deer sees a strange shadow. Press and hold to look closely.',
