@@ -261,11 +261,13 @@ TEST_CHECKLISTS['vakratunda'] = {
 };
 
 TEST_CHECKLISTS['sarvada'] = {
-  title: 'Sarvada (find the hidden symbol)',
+  title: 'Sarvada: two-step search support (clue, then exact ring)',
   items: [
-    { text: 'Do nothing for the hint ladder.', expect: 'L2 and L3 arrive on time; L3 after the L2 line.' },
-    { text: 'Tap around the scene (not the symbol).', expect: 'Hints keep playing; nothing restarts.' },
-    { text: 'Find the symbol.', expect: 'Success; next phase starts a fresh clock.' },
+    { text: 'Each round: hear the instruction, then do nothing for ~12s.', expect: 'ONE meaning clue plays ("Think of the symbol that helps us listen." / "...hold lots of feelings." / "Think of the sweet that reminds us of joy.") with the broad glow. No hand.' },
+    { text: 'Keep waiting to ~25s.', expect: 'The broad glow disappears and the exact ring appears with no voice, and it stays.' },
+    { text: 'Keep waiting another 30s.', expect: 'Nothing else happens: no voice, no new animation.' },
+    { text: 'While the clue is speaking, tap somewhere wrong.', expect: 'Tiny ripple only; the clue is NOT cut off; the timer does not restart.' },
+    { text: 'Find the symbol.', expect: 'Symbol flies to the syllable; next phase starts a fresh clock.' },
   ],
 };
 

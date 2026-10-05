@@ -34,11 +34,7 @@ const PHASES_CONFIG = [
     timeColor: '#FFE066',
     hiddenSymbol: earsSymbolImg,
     foundLabel: 'You found the Ears!',
-    clues: [
-      'Look for something that helps us listen.',
-      'Look for something that helps us listen.',
-      'Look closely at the backpack.',
-    ],
+    hintVoKey: 'scene14_hint_morning_clue',
     symbolSpot: { l: 40.5, t: 50.0, w: 10.5 },
   },
   {
@@ -51,11 +47,7 @@ const PHASES_CONFIG = [
     timeColor: '#FFB347',
     hiddenSymbol: bellySymbolImg,
     foundLabel: 'You found the Big Belly!',
-    clues: [
-      'Look for something that can hold lots of feelings.',
-      'Look for something that can hold lots of feelings.',
-      'Look at the playground.',
-    ],
+    hintVoKey: 'scene14_hint_afternoon_clue',
     symbolSpot: { l: 89.5, t: 48.5, w: 18.0 },
   },
   {
@@ -68,11 +60,7 @@ const PHASES_CONFIG = [
     timeColor: '#B39DDB',
     hiddenSymbol: modakSymbolImg,
     foundLabel: 'You found the Modak!',
-    clues: [
-      'Look for something sweet that reminds us of joy.',
-      'Look for something sweet that reminds us of joy.',
-      'Look near the lamp.',
-    ],
+    hintVoKey: 'scene14_hint_night_clue',
     symbolSpot: { l: 34.0, t: 31.5, w: 13.5 },
   },
 ];
@@ -138,42 +126,33 @@ export default function SarvadaGame({
   const introPlayedRef = useRef(false);
   const runStartedRef = useRef(false);
 
-  // GMB Hint Standard v1 — flat 10s/18s/26s from VO end or last interaction.
-  // The 8s gap between L2 and L3 still clears playSceneLine's own
-  // minDelayAfterVoiceMs: 5000 spacing between hint VO lines.
-  const { hintLevel, markInteraction, markLevel2VoiceStarted, markLevel2VoiceEnded } = useRepeatedHintCycle({
+  // Two-step search support (no hand, no L3 behaviour):
+  //   L1 (~12s) = one meaning clue (VO) + the broad search-area glow
+  //   L2 (~25s) = broad glow off, exact ring on (no VO) and it stays until found
+  // The hook may reach L3 at 40s; L2 and L3 render identically.
+  const { hintLevel, markInteraction } = useRepeatedHintCycle({
     enabled: isActive && !isPaused && findMode && findVoComplete && !symbolFound && !showDebugPanel,
     stageKey: isActive && findMode ? `find-${phaseIndex}` : null,
-    initialDelay: 10000,
+    initialDelay: 12000,
     pulseCountBeforeEscalation: 1,
     pulseInterval: 1400,
-    level2Delay: 18000,
-    level3Delay: 26000,
+    level2Delay: 25000,
+    level3Delay: 40000,
   });
 
-  // L1 is visual-only (a broad search-area cue — see sarvada-search-hint
-  // below). Only L2 (narrower area + clue) and L3 (exact ring + final clue)
-  // speak.
+  // The clue is spoken once, at L1 only.
   useEffect(() => {
-    if (!isActive || !findMode || symbolFound || hintLevel < 2) {
-      lastHintVoiceKeyRef.current = null;
-      return;
-    }
+    if (!isActive || !findMode || symbolFound || hintLevel !== 1) return undefined;
 
-    const cfg = PHASES_CONFIG[phaseIndex];
-    const hintVoiceKey = `scene14_hint_${cfg.id}_${hintLevel}`;
-    if (lastHintVoiceKeyRef.current === hintVoiceKey) return;
+    const hintVoiceKey = PHASES_CONFIG[phaseIndex].hintVoKey;
+    if (lastHintVoiceKeyRef.current === hintVoiceKey) return undefined;
 
     lastHintVoiceKeyRef.current = hintVoiceKey;
     const timerId = window.setTimeout(() => {
-      if (hintLevel === 2 && playSceneLine) markLevel2VoiceStarted();
-      playSceneLine?.(hintVoiceKey, hintLevel === 2 ? markLevel2VoiceEnded : undefined, {
-        replayOnReturn: false,
-        minDelayAfterVoiceMs: 5000,
-      });
+      playSceneLine?.(hintVoiceKey, undefined, { replayOnReturn: false });
     }, 120);
     return () => window.clearTimeout(timerId);
-  }, [findMode, symbolFound, hintLevel, isActive, phaseIndex, playSceneLine, markLevel2VoiceStarted, markLevel2VoiceEnded]);
+  }, [findMode, symbolFound, hintLevel, isActive, phaseIndex, playSceneLine]);
 
   // Pausable timers: while the sidebar is open (isPaused) every pending timer
   // is frozen with its remaining time, and resumes from there — so a reveal or
@@ -447,7 +426,6 @@ export default function SarvadaGame({
   const handleImageTap = useCallback(
     (event) => {
       if (!findMode || symbolFound || isPaused) return;
-      stopSceneVoice?.();
       const rect = event.currentTarget.getBoundingClientRect();
       if (!rect.width || !rect.height) return;
       const px = ((event.clientX - rect.left) / rect.width) * 100;
@@ -462,6 +440,8 @@ export default function SarvadaGame({
       // is too much; but silence also can't tell the child their tap
       // registered, so a small ripple confirms it landed without judging it.
       if (Math.hypot(dx, dy) <= s.w / 2) {
+        // Only a real find cuts the voice - a wrong exploratory tap must not interrupt the clue.
+        stopSceneVoice?.();
         triggerFound(event.clientX, event.clientY);
       } else {
         setMissRipple({ key: Date.now(), left: px, top: py });
@@ -501,18 +481,16 @@ export default function SarvadaGame({
     top: `${s.t}%`,
     width: `${s.w}%`,
   });
-  // L1 = broad vicinity, L2 = narrower vicinity, L3 = exact ring (rendered
-  // separately below) — a visual-search game needs a search AREA, not a
-  // brighter symbol (the hidden symbol is baked into the scene image, not
-  // its own element).
+  // L1 = broad vicinity (with the clue), L2+ = exact ring (rendered separately below) — a
+  // visual-search game needs a search AREA, not a brighter symbol (the hidden symbol is baked
+  // into the scene image, not its own element).
   const searchHintStyle = (() => {
-    if (!findMode || symbolFound || hintLevel < 1 || hintLevel >= 3) return null;
-    const scale = hintLevel === 1 ? 2.8 : 1.8;
+    if (!findMode || symbolFound || hintLevel !== 1) return null;
     return {
       left: `${spot.l}%`,
       top: `${spot.t}%`,
-      width: `${Math.min(38, spot.w * scale)}%`,
-      height: `${Math.min(34, spot.w * scale)}%`,
+      width: `${Math.min(38, spot.w * 2.8)}%`,
+      height: `${Math.min(34, spot.w * 2.8)}%`,
     };
   })();
   return (
@@ -572,15 +550,12 @@ export default function SarvadaGame({
               {findMode && (SHOW_HIT_ZONES || (showDebugPanel && showZones)) && (
                 <div className="sarvada-zone-outline" style={zoneStyle(spot)} />
               )}
-              {/* L1/L2 — a broad, then narrower search area, not the exact
-                  location. L3 — the exact ring, which stays until found. */}
+              {/* Step 1 — meaning clue + broad search area (not the exact location).
+                  Step 2 — the exact ring, which stays until found. */}
               {searchHintStyle && (
-                <div
-                  className={`sarvada-search-hint${hintLevel === 2 ? ' is-narrower' : ''}`}
-                  style={searchHintStyle}
-                />
+                <div className="sarvada-search-hint" style={searchHintStyle} />
               )}
-              {findMode && hintLevel >= 3 && !symbolFound && (
+              {findMode && hintLevel >= 2 && !symbolFound && (
                 <div className="sarvada-symbol-ring hint-glow" style={zoneStyle(spot)} />
               )}
               {findMode && popOut && (

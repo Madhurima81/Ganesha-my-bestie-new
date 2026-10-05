@@ -317,32 +317,14 @@ export const VOICE_SCRIPTS = {
       scene13SarvaDone: {
         text: "Choose a power again. You got it. That helped too. One more challenge. Great thinking."
       },
-      scene14_hint_morning_1: {
-        text: "Look for something that helps us listen."
+      scene14_hint_morning_clue: {
+        text: "Think of the symbol that helps us listen."
       },
-      scene14_hint_morning_2: {
-        text: "Look for something that helps us listen."
+      scene14_hint_afternoon_clue: {
+        text: "Think of the symbol that can hold lots of feelings."
       },
-      scene14_hint_morning_3: {
-        text: "Look closely at the backpack."
-      },
-      scene14_hint_afternoon_1: {
-        text: "Look for something that can hold lots of feelings."
-      },
-      scene14_hint_afternoon_2: {
-        text: "Look for something that can hold lots of feelings."
-      },
-      scene14_hint_afternoon_3: {
-        text: "Look at the playground."
-      },
-      scene14_hint_night_1: {
-        text: "Look for something sweet that reminds us of joy."
-      },
-      scene14_hint_night_2: {
-        text: "Look for something sweet that reminds us of joy."
-      },
-      scene14_hint_night_3: {
-        text: "Look near the lamp."
+      scene14_hint_night_clue: {
+        text: "Think of the sweet that reminds us of joy."
       },
       scene13SarvadaHint: {
         text: "Look through the picture and find Ganesha's hidden symbol."
