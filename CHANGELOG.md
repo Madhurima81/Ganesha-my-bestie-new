@@ -11,6 +11,12 @@ Append one entry per work session. Newest on top.
 **Verified:** Madhurima ran all seven Symbol Mountain checklists in the harness — all Done, 0 failures (Branch 9, Bush+Marsh 8, Garland 7, Pond 5, Eyes 6, Ears 5, nest 9). eslint clean on changed files; not otherwise automated.
 **Open:** Shloka River + About Me Hut checklists still to run (Mahakaya, Samaprabha, Kurumedeva, Nirvighnam, Sarvakaryeshu, Sarvada, Finale, Suryakoti, Vakratunda, Favorite Food, Dreams & Wishes, My Indian Story, sidebar check); Madhurima's tuned nest drop-zone position (50.95, 55.2) not saved; full build before pushing.
 
+## [2026-10-05] — Family Tree: iPad sizing pass (frozen)
+**Touched:** src/zones/about-me-hut/family-tree/Familytreegame.css (iPad blocks appended at the end of the file).
+**Changed:** shorter iPads — tree + circles scaled together, build-your-tree rows/tree/circles resized, Remove/Done lowered; iPad Pro — tree/circles +10%, bigger Continue (also fixed the Continue jumping right on press: the shared pill hover/active transform dropped translateX(-50%)), bigger fact card and tray, "Our Families" cards +25%; Ganesha moved onto Kartikeya's row in "Our Families" on every iPad.
+**Verified:** checked by Madhurima on 1024x670, iPad mini and iPad Pro 13 in the harness; frozen.
+**Open:** Favorite Food, Dreams & Wishes and Zone 2 still need the T20 iPad pass. Not committed yet.
+
 ## [2026-10-04] — Indian Story: iPad sizing pass (--u unit) on map, guess, choice and final screens
 **Touched:** src/zones/about-me-hut/indian-story/MyIndianStoryGame.jsx + .css; src/zones/about-me-hut/components/AboutMeComparisonCard.css.
 **Changed:** Ganesha Home and Child Home now share identical wrapper spacing; map ~14% bigger (65% of app height) and its pins/labels/glow scale from the map width (`--mis-map-w`) so they match on every iPad. Language guess and Festival guess screens (cut off at 1024x670) re-sized from `--u` instead of vh/vw clamps; removed the `!important` fest-card size override. Language choice: cards ~12% shorter, counter text moved down, block lifted (paddingBottom 20u) so the text no longer overlaps the bottom row. Final "My Indian Story" compare card sized entirely in `--u` (scoped to `--story-connect`, rules last in AboutMeComparisonCard.css); child-column icons/gaps in the JSX moved to `--u`.

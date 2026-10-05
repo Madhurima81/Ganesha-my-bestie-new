@@ -5510,3 +5510,694 @@
   width: clamp(40px, 6.5vh, 52px) !important;
   height: clamp(40px, 6.5vh, 52px) !important;
 }
+
+/* iPad sizing: the tree + its circles are laid out for iPad Pro 13 (tall 4:3 screen). On the
+   shorter, wider iPads (1024x670, mini 1133x744) the same layout is ~25% too big, so shrink
+   the tree and its circles together (one transform keeps the circles on the tree). */
+@media (orientation: landscape) and (max-height: 900px) {
+  .family-tree-game .tree-and-circles-wrapper {
+    transform: translateY(calc(var(--app-height, 100vh) * 0.11)) scale(0.78);
+    transform-origin: 50% 30%;
+  }
+
+  /* Re-seat the four circles on the tree's leaf clusters after the scale-down (offsets are
+     in pre-scale px, so they shrink with the tree). */
+  .family-tree-game .tree-and-circles-wrapper > .circle-spot-with-label:nth-of-type(1) { margin-left: -22px; margin-top: -68px; }  /* Father */
+  .family-tree-game .tree-and-circles-wrapper > .circle-spot-with-label:nth-of-type(2) { margin-right: -69px; margin-top: -68px; } /* Mother */
+  .family-tree-game .tree-and-circles-wrapper > .circle-spot-with-label:nth-of-type(3) { margin-left: -22px; margin-top: -22px; }  /* Brother */
+  .family-tree-game .tree-and-circles-wrapper > .circle-spot-with-label:nth-of-type(4) { margin-right: -68px; margin-top: -22px; } /* Me */
+}
+
+/* iPad Pro (tall screens): the fact card hit its 400px / 1rem caps and looked small next to the
+   bigger scene, so lift the caps ~18% there. Shorter iPads keep the sizes above. */
+@media (orientation: landscape) and (min-height: 901px) {
+  .flip-card-big {
+    max-width: 470px !important;
+    width: min(90vw, 470px) !important;
+  }
+  .flip-card-deity {
+    width: 118px !important;
+    height: 118px !important;
+  }
+  .flip-card-title {
+    font-size: 1.55rem !important;
+  }
+  .flip-card-fact {
+    font-size: 1.18rem !important;
+  }
+  .flip-card-hint {
+    font-size: 1.1rem;
+  }
+
+  /* Intro-tree Continue sat on the bottom edge on the Pro; lift it the same way the shorter
+     iPads already do. */
+  .family-tree-game .tree-done-btn {
+    bottom: max(clamp(70px, 9vh, 110px), env(safe-area-inset-bottom)) !important;
+    z-index: 1500;
+  }
+
+  /* iPad Pro: tree + circles ~10% bigger (one transform keeps the circles on the tree). */
+  .family-tree-game .tree-and-circles-wrapper {
+    transform: scale(1.1);
+    transform-origin: 50% 35%;
+  }
+
+  /* iPad Pro: Continue pill ~30% bigger. */
+  .family-tree-game .tree-done-btn,
+  .family-tree-game .tree-done-btn.profile-cta-btn-unified {
+    font-size: 1.45rem !important;
+    padding: 18px 52px !important;
+    min-height: 0 !important;
+  }
+}
+
+/* The shared pill (ProfilePillBtn.css) sets hover/active transform to translateY only, which
+   drops this button's translateX(-50%) centring and makes it jump right while pressed. */
+.family-tree-game .tree-done-btn.profile-cta-btn-unified:hover:not(:disabled) {
+  transform: translateX(-50%) translateY(-2px);
+}
+.family-tree-game .tree-done-btn.profile-cta-btn-unified:active:not(:disabled) {
+  transform: translateX(-50%) translateY(3px);
+}
+
+/* "Build your own tree" step: member circles and the tree image are sized together from --u
+   (set below; same unit the Indian Story screens use) so the three rows fit on the shorter
+   iPads and fill the Pro. The tree's own centring transform is kept and only its scale changes
+   (the separate `scale` property would also scale the -50% offset and push the tree sideways). */
+@media (orientation: landscape) and (max-height: 900px) {
+  .family-tree-game .member-avatar-small {
+    width: calc(var(--u, 8px) * 5.1) !important;
+    height: calc(var(--u, 8px) * 5.1) !important;
+  }
+  .family-tree-game .tree-overlay.child-tree-overlay {
+    transform: translate(-50%, -50%) scale(calc(var(--scene-tree-scale) * 0.78));
+  }
+  /* Seat the three rows lower (the top row was clipped under the header) and lift the tree so
+     its canopy sits behind the upper rows. */
+  .family-tree-game .child-family-tree {
+    top: 35%;
+    gap: 4px;
+  }
+  .family-tree-game .tree-overlay.child-tree-overlay {
+    translate: 0 -100px;
+  }
+  /* Remove / Done / undo toast: drop them closer to the tray so they clear the last row. */
+  .family-tree-game .remove-member-pill,
+  .family-tree-game .removed-undo-toast,
+  .family-tree-game .bottom-member-tray .tray-done-btn.profile-cta-btn-unified {
+    bottom: calc(130px + env(safe-area-inset-bottom, 0px));
+  }
+  /* Shorter iPads: member names, tray and Done pill a further 20% smaller (Madhurima, iPad Safari). */
+  .family-tree-game .member-name-small {
+    font-size: clamp(0.52rem, 0.96vw, 0.68rem) !important;
+    padding: 2px 6px !important;
+  }
+  .family-tree-game .bottom-member-tray .member-card .member-card-icon-wrap {
+    width: clamp(45px, 6.4vw, 67px) !important;
+    height: clamp(45px, 6.4vw, 61px) !important;
+  }
+  .family-tree-game .bottom-member-tray .member-card .member-card-label {
+    font-size: clamp(0.56rem, 1.04vw, 0.8rem) !important;
+    padding: 2px 6px !important;
+  }
+  .family-tree-game .tree-done-btn.profile-cta-btn-unified {
+    font-size: clamp(0.8rem, 1.6vh, 1.12rem) !important;
+    padding: clamp(8px, 1.3vh, 11px) clamp(22px, 4vw, 32px) !important;
+  }
+}
+
+@media (orientation: landscape) and (min-height: 901px) {
+  .family-tree-game .member-avatar-small {
+    width: calc(var(--u, 8px) * 8.6) !important;
+    height: calc(var(--u, 8px) * 8.6) !important;
+  }
+  .family-tree-game .member-name-small {
+    font-size: 0.95rem !important;
+    padding: 4px 11px !important;
+  }
+  .family-tree-game .tree-overlay.child-tree-overlay {
+    transform: translate(-50%, -50%) scale(calc(var(--scene-tree-scale) * 1.1));
+  }
+  /* Member tray ~10% bigger on the Pro. */
+  .family-tree-game .bottom-member-tray .member-card .member-card-icon-wrap {
+    width: 92px !important;
+    height: 84px !important;
+  }
+  .family-tree-game .bottom-member-tray .member-card .member-card-label {
+    font-size: 1.1rem !important;
+  }
+}
+
+/* Same size unit the Indian Story screens use (smaller of 1vw and 1.45% of the app height). */
+.family-tree-game {
+  --u: min(1vw, calc(var(--app-height, 100vh) * 0.0145));
+}
+
+/* Family Tree positions are class-based so short landscape phones can use a
+   dedicated 2x2 composition without fighting inline top/left styles. */
+.family-tree-game .tree-and-circles-wrapper .family-tree-member--father {
+  top: 32%;
+  left: 40%;
+}
+
+.family-tree-game .tree-and-circles-wrapper .family-tree-member--mother {
+  top: 32%;
+  right: 30%;
+}
+
+.family-tree-game .tree-and-circles-wrapper .family-tree-member--brother {
+  top: 60%;
+  left: 41%;
+}
+
+.family-tree-game .tree-and-circles-wrapper .family-tree-member--myself {
+  top: 60%;
+  right: 30%;
+}
+
+.family-tree-game .tree-card-avatar {
+  width: 74px;
+  height: 74px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex: 0 0 auto;
+}
+
+.family-tree-game .tree-card-avatar--ganesha {
+  width: 80px;
+  height: 80px;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.2));
+}
+
+.family-tree-game .tree-card-avatar--profile {
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4ECDC4, #44A08D);
+  border: 3px solid #fff;
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.2);
+  color: #fff;
+  font-family: 'Baloo 2', cursive;
+  font-size: 30px;
+}
+
+.family-tree-game .tree-card-avatar--profile.has-profile-image {
+  background: transparent;
+  border: 0;
+}
+
+.family-tree-game .tree-card-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.family-tree-game .tree-card-avatar--profile img {
+  object-fit: cover;
+}
+
+.family-tree-game .family-tray-toggle {
+  display: none;
+}
+
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
+  .family-tree-game {
+    --scene-circle-y-offset: 0px;
+    --family-reveal-tree-transform: scale(1.05);
+  }
+
+  .family-tree-game .tree-and-circles-wrapper {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+    transform: none;
+  }
+
+  .family-tree-game .tree-and-circles-wrapper .ganesha-tree-overlay {
+    width: min(460px, 62vw);
+    top: 57%;
+    left: 52%;
+    transform: translate(-50%, -50%) scale(1);
+    transform-origin: center;
+  }
+
+  .family-tree-game .tree-and-circles-wrapper .circle-spot-with-label {
+    right: auto;
+    transform: translate(-50%, -50%);
+    gap: 3px;
+    margin: 0;
+  }
+
+  .family-tree-game .tree-and-circles-wrapper .family-tree-member--father {
+    top: 31%;
+    left: 43%;
+  }
+
+  .family-tree-game .tree-and-circles-wrapper .family-tree-member--mother {
+    top: 31%;
+    left: 59%;
+  }
+
+  .family-tree-game .tree-and-circles-wrapper .family-tree-member--brother {
+    top: 64%;
+    left: 43%;
+  }
+
+  .family-tree-game .tree-and-circles-wrapper .family-tree-member--myself {
+    top: 64%;
+    left: 59%;
+  }
+
+  .family-tree-game .tap-hitbox,
+  .family-tree-game .empty-circle,
+  .family-tree-game .tap-circle,
+  .family-tree-game .placed-deity {
+    width: clamp(76px, 10.5vw, 88px);
+    height: clamp(76px, 10.5vw, 88px);
+  }
+
+  .family-tree-game .circle-label {
+    max-width: 96px;
+    padding: 2px 8px;
+    font-size: clamp(0.72rem, 1.7vw, 0.86rem);
+    line-height: 1.1;
+  }
+
+  .family-tree-game .flip-card-overlay {
+    padding:
+      calc(env(safe-area-inset-top, 0px) + 10px)
+      calc(env(safe-area-inset-right, 0px) + 16px)
+      calc(env(safe-area-inset-bottom, 0px) + 10px)
+      calc(env(safe-area-inset-left, 0px) + 16px);
+  }
+
+  .family-tree-game .flip-card-big {
+    width: min(82vw, 560px);
+    max-width: none;
+    min-height: 0;
+    transform: none;
+    display: grid;
+    grid-template-columns: 92px minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    column-gap: 18px;
+    padding: 20px 58px 20px 20px;
+    border-radius: 24px;
+  }
+
+  .family-tree-game .flip-card-deity {
+    grid-column: 1;
+    grid-row: 1 / 3;
+    width: 88px;
+    height: 88px;
+    margin: 0;
+    align-self: center;
+  }
+
+  .family-tree-game .flip-card-content {
+    grid-column: 2;
+    text-align: left;
+    align-self: center;
+  }
+
+  .family-tree-game .flip-card-title {
+    margin: 0 0 6px;
+    font-size: clamp(1.15rem, 2.8vw, 1.45rem);
+  }
+
+  .family-tree-game .flip-card-fact {
+    padding: 10px 12px;
+    font-size: clamp(0.88rem, 2vw, 1rem);
+    line-height: 1.4;
+  }
+
+  .family-tree-game .flip-card-hint {
+    display: none;
+  }
+
+  .family-tree-game .flip-card-close {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 60px;
+    height: 60px;
+  }
+
+  .family-tree-game .transition-modal-simple {
+    flex-direction: row;
+    gap: clamp(14px, 3vw, 26px);
+    padding:
+      12px
+      calc(env(safe-area-inset-right, 0px) + 24px)
+      12px
+      calc(env(safe-area-inset-left, 0px) + 24px);
+  }
+
+  .family-tree-game .transition-ganesha-float {
+    width: clamp(96px, 16vw, 132px);
+    margin: 0;
+    flex: 0 0 auto;
+  }
+
+  .family-tree-game .transition-card-simple {
+    width: min(66vw, 470px);
+    min-height: 0;
+    padding: 20px 28px;
+    border-radius: 26px;
+  }
+
+  .family-tree-game .transition-title {
+    margin: 0 0 4px;
+    font-size: clamp(1.45rem, 3.2vw, 1.85rem);
+  }
+
+  .family-tree-game .transition-text {
+    margin: 0 0 12px;
+    font-size: clamp(0.95rem, 2.1vw, 1.1rem);
+    line-height: 1.3;
+  }
+
+  .family-tree-game .continue-btn-simple {
+    min-width: 150px;
+    min-height: 60px;
+    margin: 8px auto 0;
+    padding: 10px 28px;
+    font-size: clamp(1rem, 2.3vw, 1.15rem);
+  }
+
+  .family-tree-game .family-tray-toggle {
+    position: fixed;
+    top: 50%;
+    right: calc(env(safe-area-inset-right, 0px) + 4px);
+    transform: translateY(-50%);
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    z-index: 1450;
+  }
+
+  .family-tree-game .family-tray-toggle__visual {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 249, 235, 0.96);
+    box-shadow: 0 3px 10px rgba(70, 45, 30, 0.16);
+  }
+
+  .family-tree-game .family-tray-toggle__visual img {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+  }
+
+  .family-tree-game .bottom-member-tray {
+    position: fixed;
+    top: calc(env(safe-area-inset-top, 0px) + 8px);
+    right: calc(env(safe-area-inset-right, 0px) + 8px);
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 8px);
+    left: auto;
+    width: min(42vw, 292px);
+    height: auto;
+    padding: 12px 10px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(5, minmax(60px, 1fr));
+    gap: 6px 8px;
+    overflow: hidden;
+    background: rgba(255, 249, 235, 0.98);
+    border-radius: 24px;
+    box-shadow: 0 14px 36px rgba(60, 40, 28, 0.22);
+    transform: translateX(calc(100% + 24px));
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 220ms ease, opacity 180ms ease;
+    z-index: 1400;
+  }
+
+  .family-tree-game .bottom-member-tray.phone-tray-open {
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .family-tree-game .bottom-member-tray .member-card {
+    min-width: 0;
+    min-height: 60px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr);
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    padding: 0 5px;
+    border-radius: 14px;
+  }
+
+  .family-tree-game .bottom-member-tray .member-card .member-card-icon-wrap {
+    width: 42px !important;
+    height: 48px !important;
+    margin: 0;
+  }
+
+  .family-tree-game .bottom-member-tray .member-card .member-card-label {
+    margin: 0;
+    padding: 2px 4px !important;
+    font-size: clamp(0.68rem, 1.6vw, 0.78rem) !important;
+    line-height: 1.05;
+    text-align: left;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .family-tree-game .child-tree-overlay {
+    left: 49%;
+    top: 57%;
+    width: min(520px, 70vw);
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  .family-tree-game .child-family-tree {
+    top: 48%;
+    left: 50%;
+    width: min(70vw, 560px);
+    max-width: none;
+    gap: 8px;
+  }
+
+  .family-tree-game .family-row {
+    gap: 8px;
+  }
+
+  .family-tree-game .member-avatar-small {
+    width: clamp(62px, 8.5vw, 74px) !important;
+    height: clamp(62px, 8.5vw, 74px) !important;
+    padding: 5px;
+  }
+
+  .family-tree-game .member-name-small {
+    max-width: 90px;
+    padding: 2px 7px !important;
+    font-size: clamp(0.68rem, 1.5vw, 0.8rem) !important;
+    line-height: 1.05;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .family-tree-game.family-tray-is-open .child-tree-overlay {
+    left: 34%;
+    width: min(430px, 58vw);
+  }
+
+  .family-tree-game.family-tray-is-open .child-family-tree {
+    left: 34%;
+    width: min(56vw, 450px);
+  }
+
+  .family-tree-game .bottom-member-tray .tray-done-btn {
+    position: fixed;
+    left: 42%;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 10px);
+    top: auto;
+    transform: translateX(-50%);
+    min-width: 132px;
+    min-height: 60px;
+    z-index: 1300;
+  }
+
+  .family-tree-game .name-input-modal {
+    width: min(84vw, 600px);
+    max-width: none;
+    display: grid;
+    grid-template-columns: 88px minmax(0, 1fr);
+    grid-template-areas:
+      "avatar question"
+      "avatar input"
+      "avatar submit";
+    column-gap: 18px;
+    row-gap: 8px;
+    padding: 18px 58px 18px 20px;
+    border-radius: 24px;
+  }
+
+  .family-tree-game .modal-emoji-large {
+    grid-area: avatar;
+    width: 82px !important;
+    height: 82px !important;
+    margin: 0 !important;
+    align-self: center;
+  }
+
+  .family-tree-game .modal-question {
+    grid-area: question;
+    margin: 0;
+    font-size: clamp(1rem, 2.4vw, 1.25rem);
+    line-height: 1.2;
+    text-align: left;
+  }
+
+  .family-tree-game .input-with-voice {
+    grid-area: input;
+    margin: 0;
+  }
+
+  .family-tree-game .name-input {
+    min-height: 52px;
+    padding: 10px 14px;
+    font-size: 1rem;
+  }
+
+  .family-tree-game .submit-name-btn {
+    grid-area: submit;
+    width: auto;
+    min-width: 160px;
+    min-height: 60px;
+    justify-self: start;
+    padding: 10px 26px;
+    font-size: 1rem;
+  }
+
+  .family-tree-game .side-by-side-screen {
+    padding:
+      8px
+      calc(env(safe-area-inset-right, 0px) + 12px)
+      calc(env(safe-area-inset-bottom, 0px) + 8px)
+      calc(env(safe-area-inset-left, 0px) + 12px);
+    overflow: hidden;
+  }
+
+  .family-tree-game .reveal-title {
+    margin: 0;
+    font-size: clamp(1.35rem, 3.2vw, 1.7rem);
+    transform: none;
+  }
+
+  .family-tree-game .reveal-subtitle {
+    margin: 0 0 5px;
+    font-size: clamp(0.76rem, 1.7vw, 0.9rem);
+    transform: none;
+  }
+
+  .family-tree-game .two-trees-container {
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin: 0;
+    transform: none;
+  }
+
+  .family-tree-game .tree-column {
+    min-width: 0;
+    max-width: none;
+    min-height: 0;
+    padding: 8px 10px;
+    gap: 3px;
+    border-radius: 16px;
+  }
+
+  .family-tree-game .tree-card-avatar,
+  .family-tree-game .tree-card-header img,
+  .family-tree-game .tree-card-header > div {
+    width: 40px !important;
+    height: 40px !important;
+  }
+
+  .family-tree-game .tree-heading {
+    margin: 0;
+    font-size: clamp(0.82rem, 1.8vw, 1rem) !important;
+  }
+
+  .family-tree-game .tree-location {
+    margin: 0;
+    padding: 1px 6px;
+    font-size: clamp(0.6rem, 1.3vw, 0.72rem);
+  }
+
+  .family-tree-game .tree-visual {
+    height: min(48dvh, 180px);
+    min-height: 0;
+    margin: 0;
+    transform: none;
+  }
+
+  .family-tree-game .tree-column .reveal-tree-img {
+    transform: var(--family-reveal-tree-transform) !important;
+  }
+
+  .family-tree-game .action-buttons {
+    flex: 0 0 auto;
+    margin: 4px 0 0;
+  }
+
+  .family-tree-game .family-tree-end-game-btn {
+    min-height: 60px;
+    margin: 0 auto;
+  }
+}
+
+/* Our Families comparison: Ganesha sat higher than Kartikeya (22% vs 6% from the bottom, and a
+   64% / 36% left that didn't mirror the top row). Put him on Kartikeya's row, mirroring
+   Parvati, on every iPad. Later than every earlier nth-child(4/5) rule, same !important. */
+.side-by-side-screen .ganesha-comparison-icon:nth-child(5) {
+  bottom: 6% !important;
+  top: auto !important;
+  left: 66% !important;
+  right: auto !important;
+}
+.side-by-side-screen .ganesha-comparison-icon:nth-child(4) {
+  bottom: 6% !important;
+  top: auto !important;
+  left: 34% !important;
+  right: auto !important;
+}
+
+/* iPad Pro: the two family cards had plenty of spare room, so scale the pair up ~15%. */
+@media (orientation: landscape) and (min-height: 901px) {
+  .side-by-side-screen .two-trees-container {
+    transform: translateY(6px) scale(1.25) !important;
+    transform-origin: 50% 50%;
+  }
+  .side-by-side-screen .reveal-title,
+  .side-by-side-screen .reveal-subtitle {
+    transform: translateY(-24px) scale(1.2);
+  }
+  .side-by-side-screen .action-buttons {
+    transform: translateY(55px);
+  }
+  .side-by-side-screen .action-buttons button {
+    font-size: 1.35rem !important;
+    padding: 14px 38px !important;
+  }
+}
