@@ -1,5 +1,17 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+
+## [2026-10-05] — Suryakoti hints simplified: teach first, then remind once (25s "can't find it" cue still open)
+**Touched:** src/zones/shloka-river/scenes/Scene2/components/SuryakotiGame.jsx + .css; src/zones/shloka-river/scenes/Scene2/SuryakotiBankSimplified.jsx; src/lib/config/content/voiceGuidance.js; src/dev/testChecklists.js.
+**Changed:**
+- Model: DON'T KNOW HOW (nothing rubbed on the first patch) -> the first-time teaching ladder: ~10s a clearly visible small glow spot (no voice), ~18s short scratch hand + "Rub the glowing spot.", ~8s after that line the longer 2-pass hand with NO voice (the "Rub right here." line was tried and dropped). ALREADY KNOWS HOW (any rubbing on this patch, or a patch already finished) -> no more hands/glow spot: ~10s idle one short reminder — "Keep rubbing.", or "Almost there!" once the WHOLE game is ~75% done (3 of 4 patches finished, counting this patch's progress toward its 42% completion target); it is said once and re-armed only after the child rubs again; ~25s idle a quiet cue for the remaining dark area, no voice, then stop.
+- Bug fix: the hint clock never restarted after a partial rub (enabled was read from a ref, so lifting the finger caused no re-render); now tracked in state (isRubbing).
+- The glow/hand target now aims at the deepest uncleared point (farthest from any cleared cell), not the average of all dark cells (which landed inside the already-rubbed area once the rub bands became broad). L1 glow was ~7-13% alpha on a near-black layer (invisible); now clearly visible, ~half the patch width (max 16%), 3 pulses.
+- Voice content: removed surya_hint_here / surya_hint_continue; added surya_hint_almost ("Almost there!"); "Keep rubbing." (surya_hint_keep) reused.
+- Checklist: 10 steps for the above.
+**Verified:** Madhurima ran the checklist in the harness (10/10 ticked). eslint clean; CSS compiles.
+**Open:** the ~25s "can't find the rest" cue is NOT showing properly (checklist steps 5 and 6: "leave this — not showing", "same as before"). Tried in order: a small spot at the densest dark cluster (cut off in the top-left corner), a spot at the deepest dark point sized to fit (faint ring on the screen edge), and finally a screen-blended warm light wash over the whole active band (not visible enough). Madhurima parked it to do later. Ideas for later: fade the dark canvas (opacity pulse) while the patch is active instead of an overlay, or shimmer sparkles over the uncleared cells, or drop the visual and rely on the reminder voice. Also still undecided: whether the reminder should have a middle line (e.g. "You're doing great!") by overall progress.
+
 ## [2026-10-05] — Symbol Mountain: symbol card + sidebar sized for iPads
 **Touched:** src/zones/symbol-mountain/shared/components/SymbolCardModal.css, SymbolSidebar.css.
 **Changed:** symbol card ("Do you know why I ride Mooshika?") scaled 0.85 on shorter iPads (landscape, >=1000px wide, <=900px tall) and 1.15 on the Pro, via the `scale` property (its animation owns transform). Sidebar rail on shorter iPads: tap areas 56->50px, icon 42->38px, gap 6->4px, so it no longer reaches the replay button (~510px -> ~440px tall). Pro unchanged.
