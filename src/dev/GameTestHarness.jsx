@@ -19,6 +19,10 @@ import useVoiceGuidance from '../lib/hooks/useVoiceGuidance';
 import { makeTtsVoiceGuidance } from './webSpeechScripts';
 import SparkleAnimation from '../lib/components/animation/SparkleAnimation';
 import TestChecklistPanel from './TestChecklistPanel';
+import { getLineCue } from '../lib/config/content/voiceCues';
+
+// Games whose first-time teaching hand waits for the intro line's action word (introVoStarted).
+const CUE_GATED_GAMES = ['suryakoti', 'samaprabha'];
 
 // Real-audio mode: which scene id + Sanskrit word each game maps to, so the
 // real useVoiceGuidance hook resolves the right MP3s (/audio/syllables/*,
@@ -141,6 +145,7 @@ export default function GameTestHarness() {
   const [gameKey, setGameKey] = useState(getInitialGame);
   const [mountId, setMountId] = useState(0);
   const [isActive, setIsActive] = useState(true);
+  const [introVoStarted, setIntroVoStarted] = useState(true);
   const [isPaused, setIsPaused] = useState(false);
   const [hideElements, setHideElements] = useState(false);
   const [realAudio, setRealAudio] = useState(false);
@@ -215,7 +220,15 @@ export default function GameTestHarness() {
     if (!realAudio || !gameKey) return;
     const key = INTRO_VO[gameKey];
     if (!key) return;
-    const t = setTimeout(() => voiceGuidance.playVoice(key), 600);
+    // Games that hold their teaching hand until the intro's action word (introVoStarted prop) —
+    // the parent scene normally drives this via getLineCue, so the harness does the same.
+    const gated = CUE_GATED_GAMES.includes(gameKey);
+    setIntroVoStarted(!gated);
+    const t = setTimeout(() => {
+      if (!gated) { voiceGuidance.playVoice(key); return; }
+      const start = () => setIntroVoStarted(true);
+      voiceGuidance.playVoice(key, start, { cue: getLineCue(key, start) });
+    }, 600);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [realAudio, gameKey, mountId]);
@@ -373,7 +386,7 @@ export default function GameTestHarness() {
           )}
           {entry && !isScene && (
             <Suspense fallback={<div style={{ padding: 24 }}>loading {entry.label}…</div>}>
-              <entry.Comp key={`${gameKey}-${mountId}`} isActive={isActive} isPaused={isPaused} hideElements={hideElements} voiceGuidance={voiceGuidance} {...fxCallbacks} />
+              <entry.Comp key={`${gameKey}-${mountId}`} isActive={isActive} isPaused={isPaused} hideElements={hideElements} voiceGuidance={voiceGuidance} {...(CUE_GATED_GAMES.includes(gameKey) ? { introVoStarted } : {})} {...fxCallbacks} />
             </Suspense>
           )}
 

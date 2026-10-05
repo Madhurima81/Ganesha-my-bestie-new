@@ -128,8 +128,11 @@ const stripLeadingSpeechText = (text, leadingText) => {
   return text.replace(pattern, '').trim();
 };
 
-/** Speak `text` via the browser's SpeechSynthesis; calls onEnded when done/failed. */
-export function speakWebSpeech(text, onEnded, onStart) {
+import { attachSpeechCue } from '../lib/utils/speechCue';
+
+/** Speak `text` via the browser's SpeechSynthesis; calls onEnded when done/failed.
+ *  `cue` = { word, onCue } fires onCue when that word is spoken (same as the real scenes). */
+export function speakWebSpeech(text, onEnded, onStart, cue = null) {
   const done = () => { try { onEnded && onEnded(); } catch { /* no-op */ } };
   if (!text || typeof window === 'undefined' || typeof SpeechSynthesisUtterance === 'undefined' || !window.speechSynthesis) {
     done();
@@ -143,6 +146,7 @@ export function speakWebSpeech(text, onEnded, onStart) {
     u.pitch = 1;
     u.volume = 0.95;
     u.onstart = () => { try { onStart && onStart(); } catch { /* no-op */ } };
+    attachSpeechCue(u, text, cue);
     u.onend = done;
     u.onerror = done;
     window.speechSynthesis.speak(u);
@@ -168,7 +172,7 @@ export function makeTtsVoiceGuidance({ sceneId, word, realVG, log = true }) {
       const line = map[key];
       if (line) {
         tag('speak', key, '→', line);
-        speakWebSpeech(stripLeadingSpeechText(line, opts.stripLeadingText), onEnded, opts.onStart);
+        speakWebSpeech(stripLeadingSpeechText(line, opts.stripLeadingText), onEnded, opts.onStart, opts.cue);
         return;
       }
       tag('no TTS line for', key, '— trying MP3');
