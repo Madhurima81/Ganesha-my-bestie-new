@@ -51,7 +51,7 @@ const DEFAULT_LAYOUT = {
   ganesha: { l: 50.7, t: 29.4, s: 100 },
   emojiBush: { l: 80, t: -38, s: 100 },
   emojiBranch: { l: 80, t: -38, s: 100 },
-  emojiMarsh: { l: 80, t: -38, s: 100 },
+  emojiMarsh: { l: 80, t: -38, s: 72 },
   bush: { l: 21, t: 59.6, s: 140.2 },
   tree: { l: 76, t: 47.9, s: 120 },
   branch: { l: 67.6, t: 44.8, s: 100 },
@@ -100,7 +100,7 @@ const SHOW_HIT_ZONES = typeof window !== 'undefined' && new URLSearchParams(wind
 const DEFAULT_EMOJI_LAYOUT = {
   emojiBush: { x: 80, y: -38, s: 100 },
   emojiBranch: { x: 80, y: -38, s: 100 },
-  emojiMarsh: { x: 80, y: -38, s: 100 },
+  emojiMarsh: { x: 80, y: -38, s: 72 },
   bellyUpset: { side: 'left', x: -15, y: -45, s: 100 },
   bellyNervous: { side: 'left', x: -8.5, y: 100.5, s: 100 },
   bellySad: { side: 'left', x: 119.5, y: 23, s: 100 },

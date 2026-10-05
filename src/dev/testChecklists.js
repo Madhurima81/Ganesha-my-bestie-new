@@ -5,8 +5,8 @@
 // Item: { text, expect? }  — `expect` is the pass condition shown under the step.
 
 export const TEST_CHECKLISTS = {
-  'modak-game2-new': {
-    title: 'Modak Scene 1 — Mooshika hold and Branch teach once',
+  'modak-calm': {
+    title: 'Modak Game 1 - Calm Mooshika: teach hold once',
     items: [
       {
         text: 'Calm Mooshika: hear the opening hold instruction.',
@@ -20,27 +20,6 @@ export const TEST_CHECKLISTS = {
         text: 'Calm Mooshika: quick-tap without holding a few times.',
         expect: 'First quick tap says "Keep holding."; later help can strengthen, but after a meaningful hold it does not replay the hand.',
       },
-      { text: 'Play Bush phase to reach the Branch phase. Wait for the Branch intro line.' },
-      {
-        text: 'Branch: watch the intro.',
-        expect: 'One pull-and-hold teaching hand appears with "Pull", then retires.',
-      },
-      {
-        text: 'Branch: do NOT touch the branch. Wait ~18s for L2.',
-        expect: 'The branch pulses/glows and the placement/action hint plays. No hand demo returns.',
-      },
-      {
-        text: 'Branch: keep waiting ~8s after L2 finishes for L3.',
-        expect: 'Help becomes stronger visually; no repeated pull-and-hold demo and no repeated final rescue VO.',
-      },
-      {
-        text: 'Branch: pull part-way and release, or pull upward.',
-        expect: 'You get the specific corrective line for that error type; the branch keeps visual help and does not restart to L0.',
-      },
-      {
-        text: 'Branch: do the real pull down + hold until it completes.',
-        expect: 'Scene reacts, branch succeeds, hint clears, and the next phase starts fresh.',
-      },
       {
         text: 'Open the sidebar mid-line or mid-hint, then close it.',
         expect: 'The line resumes cleanly; retired teaching hands do not come back just because of the sidebar.',
@@ -49,14 +28,19 @@ export const TEST_CHECKLISTS = {
   },
 };
 
-TEST_CHECKLISTS['modak-game2-bush-marsh'] = {
-  title: 'Modak Scene 1 - Bush and Marsh: teach once, then point where',
+TEST_CHECKLISTS['modak-game2-new'] = {
+  title: 'Modak Game 2 - Bush, Branch, Marsh: teach once, then point where',
   items: [
     { text: 'Bush phase: watch the intro.', expect: 'One sideways swipe hand appears with "Swipe", then retires.' },
     { text: 'Bush phase: wait ~18s for L2.', expect: 'Bush gives visual movement/pulse and the swipe clue plays. No hand demo returns.' },
     { text: 'Bush phase: do a short or vertical swipe and let go.', expect: 'The bush springs back and gives the relevant short/wrong-direction line once; later repeats are mostly visual.' },
     { text: 'Bush phase at L3: keep waiting.', expect: 'Bush help becomes stronger visually. No final hand demo.' },
     { text: 'Bush phase: do the real sideways swipe.', expect: 'Bush opens, flowers collect, game moves to the Branch phase.' },
+    { text: 'Branch phase: watch the intro.', expect: 'One pull-and-hold teaching hand appears with "Pull", then retires.' },
+    { text: 'Branch phase: do NOT touch the branch. Wait ~18s for L2.', expect: 'The branch pulses/glows and the placement/action hint plays. No hand demo returns.' },
+    { text: 'Branch phase: keep waiting ~8s after L2 finishes for L3.', expect: 'Help becomes stronger visually; no repeated pull-and-hold demo and no repeated final rescue VO.' },
+    { text: 'Branch phase: pull part-way and release, or pull upward.', expect: 'You get the specific corrective line for that error type; the branch keeps visual help and does not restart to L0.' },
+    { text: 'Branch phase: do the real pull down + hold until it completes.', expect: 'Scene reacts, branch succeeds, hint clears, and Marsh starts fresh.' },
     { text: 'Marsh first step: watch the intro.', expect: 'One drag-to-first-safe-spot teaching hand appears, then retires.' },
     { text: 'Marsh first step: wait for help.', expect: 'The exact next safe spot glows/pulses; no second teaching hand appears.' },
     { text: 'Marsh: land on the first safe spot, then wait on steps 2-4.', expect: 'Only the next safe spot/Mooshika cue appears. No hand re-teaches dragging.' },
@@ -421,8 +405,9 @@ TEST_CHECKLISTS['sidebar-general'] = {
 
 // Other harness keys that mount the same game share a checklist.
 export const CHECKLIST_ALIASES = {
+  'sm-modak-game1': 'modak-calm',
   'sm-modak-game2': 'modak-game2-new',
-  'sm-modak': 'modak-game2-new',
+  'sm-modak': 'modak-calm',
   'sm-modak-game3': 'modak-garland',
   'sm-eyes': 'sm-eyes',
   'sm-ears': 'sm-ears',
@@ -437,7 +422,7 @@ export const CHECKLIST_ALIASES = {
 
 // Dropdown grouping (zone -> games). Any checklist not listed here still appears under "Other".
 export const TEST_CHECKLIST_GROUPS = {
-  'Symbol Mountain': ['modak-game2-new', 'modak-game2-bush-marsh', 'modak-garland', 'sm-pond', 'sm-eyes', 'sm-ears', 'sm-tusk-live-v2', 'sm-final'],
+  'Symbol Mountain': ['modak-calm', 'modak-game2-new', 'modak-garland', 'sm-pond', 'sm-eyes', 'sm-ears', 'sm-tusk-live-v2', 'sm-final'],
   'Shloka River': ['vakratunda', 'mahakaya', 'suryakoti', 'samaprabha', 'nirvighnam', 'kurumedeva', 'sarvakaryeshu', 'sarvada', 'sr-finale'],
   'About Me Hut': ['amh-dreams-wishes', 'amh-favorite-food', 'amh-indian-story'],
   General: ['sidebar-general'],

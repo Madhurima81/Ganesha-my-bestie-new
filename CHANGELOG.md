@@ -1,5 +1,11 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-10-05] — Symbol Mountain Modak/Pond hint model recorded; Modak checklists split by game
+**Touched:** CHANGELOG.md, src/dev/testChecklists.js, src/zones/symbol-mountain/scenes/modak/FlowerJourneyGame2.jsx.
+**Changed:** Recorded the Symbol Mountain Modak/Pond teach-once hint pass in the 13-scene hint status table below. Split Modak QA into three harness checklists: `modak-calm` for Game 1 / Calm Mooshika, `modak-game2-new` for Game 2 / Bush-Branch-Marsh, and `modak-garland` for Game 3 / Garland. Harness aliases now route `sm-modak-game1`, `sm-modak-game2`, and `sm-modak-game3` to those specific checklists; the full `sm-modak` scene starts on the Calm checklist. Also reduced the Marsh emotion emoji default size from 100 to 72.
+**Verified:** Madhurima confirmed all three Modak game checklists are fine. `git diff --check` passed on the changed files. Full build was not rerun for this small follow-up; the earlier build attempt reached Vite transform and then hung during chunk rendering.
+**Open:** Pond code changes were already in the working history before this small follow-up; this entry records the status/table/checklist side rather than changing Pond code.
+
 ## [2026-10-05] — Hint simplification: two-step / teach-once model (Samaprabha, Finale, Favorite Food, Dreams & Wishes, My Indian Story)
 **Touched:** SamaprabhaGame.jsx/.css, ShlokaRiverFinale.jsx/.css, Favoritefoodgame.jsx/.css, ObstacleRemoverGame.jsx, components/Wish2PlateDropGame.jsx, DreamsWishesGame.css, MyIndianStoryGame.jsx, GameTestHarness.jsx, webSpeechScripts.js, SuryakotiBankSimplified.jsx, voiceGuidance.js, testChecklists.js.
 **The model (replaces the 10s/18s/26s notice → understand → do ladder where a child already knows the mechanic):** teach HOW once, never again after the child has done it; after that the hint answers WHERE/WHICH. Recognition/recall games have no "wobble everything" step: one meaning-clue VO at ~12-13s, then ~10s after the clue ENDS the correct answer glows and stays lit, no second VO. A wrong answer never clears or restarts the hint clock and never cuts a playing clue (it shakes; the option name is spoken only BEFORE the clue starts). Personal/reflection questions keep one prompt repeat at ~10s and nothing else.
@@ -14,8 +20,8 @@ Append one entry per work session. Newest on top.
 
 | Scene | Zone | Two-step / teach-once hints? | Where recorded |
 |---|---|---|---|
-| Symbol Mountain Scene 1 — Modak (Flower Journey, Garland) | Symbol Mountain | Not recorded here; checklists were rewritten ("teach once, then point where") but those edits are uncommitted and not from this entry | checklist only |
-| Symbol Mountain — Pond | Symbol Mountain | Not recorded here; checklist rewritten ("teach hold once, teach drag once, lotus reminders only"), uncommitted | checklist only |
+| Symbol Mountain Scene 1 — Modak (Calm Mooshika, Flower Journey, Garland) | Symbol Mountain | YES (teach each new gesture once; later hints point where/which; garland final rescue is visual) | 10-05 Symbol Mountain follow-up entry |
+| Symbol Mountain — Pond | Symbol Mountain | YES (teach hold once, teach drag once, lotus uses reminders only) | 10-05 Symbol Mountain follow-up entry |
 | Symbol Mountain — Tusk (Eyes, Ears, nest) | Symbol Mountain | Not recorded here; Eyes/Ears checklists rewritten (clue -> one exact object; replay -> clue + sound -> glow), uncommitted | checklist only |
 | Symbol Mountain — Sacred Assembly (final) | Symbol Mountain | Not recorded here; checklist rewritten, uncommitted | checklist only |
 | Shloka River 1 — Vakratunda / Mahakaya | Shloka River | NO — still the 09-22 ladder (Mahakaya got a new ladder on 09-26) | not in this entry |
