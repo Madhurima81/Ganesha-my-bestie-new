@@ -1,5 +1,8 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-10-05] — Favorite Food: iPad sizing pass (Pro enlargements, shorter-iPad lifts)
+**Touched:** src/zones/about-me-hut/food/Favoritefoodgame.css (blocks appended at the end).
+**Changed:** iPad Pro (`min-height: 901px`) — Ganesha choice rows (sweets 22->18% up, colours/activities/friends) scaled 1.25 with the centring translate kept in the transform; child food grid 1.25, colour hearts 1.2, activity ring 1.25 (17% up); "Your turn" card + Ganesha 1.15; celebration Ganesha/food bigger; Draw/Type 1.3x; friend-name box zoom 1.3; story header zoom 1.25; picked icon zoom 1.3; "We're Friends Now!" card/title/Continue zoom 1.3. Choice-name gap tightened (-14px, colours -24px, Pro -20/-30px). Shorter iPads (`max-height: 900px`) — choice rows 21% up; child food Draw/Type 13% up; child activity ring 29% and Draw/Type 13% up (clipped before).\n**Verified:** CSS written from Madhurima's screenshots; she checked several screens, not all on every iPad. Browser could not open localhost this session, so no direct run.\n**Open:** child colour screen on short iPads; Dreams \& Wishes and Zone 2 T20 passes; Favorite Food NOT frozen.\n
 
 ## [2026-10-04] — Symbol Mountain hint pass complete (Eyes prompt, Tusk nest hand/zone/voice) + checklist status panel
 **Touched:** src/lib/beatPlayer/BeatPlayerGame.jsx; src/lib/components/feedback/GestureDemo.jsx; src/zones/symbol-mountain/scenes/tusk/tuskNestFlow.json + EyesPopUpGame.jsx; src/dev/TestChecklistPanel.jsx + testChecklists.js.

@@ -2133,3 +2133,146 @@
   transform: rotate(45deg);
   background: #FFEBC8;
 }
+
+/* iPad Pro (tall screens): the choice screens' sizes are capped by vw clamps / fixed px, so they
+   look small next to the bigger scene. Scale each row ~25% (the centring translate stays inside
+   the transform) and lift the sweets so the Ladoo label stays clear of the bottom edge. */
+@media (orientation: landscape) and (min-height: 901px) {
+  .favorite-food-game .choices-container.food-scene {
+    bottom: 18%;
+    transform: translateX(-50%) scale(1.25);
+    transform-origin: 50% 100%;
+  }
+  .favorite-food-game .choices-container.color-scene,
+  .favorite-food-game .choices-container.activity-scene,
+  .favorite-food-game .choices-container.friend-scene {
+    bottom: 22%;
+    transform: translateX(-50%) scale(1.25);
+    transform-origin: 50% 100%;
+  }
+
+  /* Child screens: food grid, colour hearts, activity ring. */
+  .favorite-food-game .child-food-scene {
+    transform: translateX(-50%) scale(1.25) !important;
+    transform-origin: 50% 100%;
+  }
+  .favorite-food-game .color-palette-grid {
+    transform: translateX(-50%) scale(1.2);
+    transform-origin: 50% 100%;
+  }
+  .favorite-food-game .child-activity-scene {
+    transform: translateX(-50%) scale(1.25);
+    transform-origin: 50% 100%;
+  }
+}
+
+/* Ganesha choice screens: the picture sits in a larger box with transparent margin, so the name
+   floated well below it (worse after the Pro scale-up). Pull the name up under the picture. */
+.favorite-food-game .food-scene .choice-name,
+.favorite-food-game .activity-scene .choice-name,
+.favorite-food-game .friend-scene .choice-name {
+  margin-top: -14px !important;
+}
+.favorite-food-game .color-scene .choice-name {
+  margin-top: -24px !important;
+}
+@media (orientation: landscape) and (min-height: 901px) {
+  .favorite-food-game .food-scene .choice-name,
+  .favorite-food-game .activity-scene .choice-name,
+  .favorite-food-game .friend-scene .choice-name {
+    margin-top: -20px !important;
+  }
+  .favorite-food-game .color-scene .choice-name {
+    margin-top: -30px !important;
+  }
+}
+
+/* Shorter iPads (1024x670, mini): the choice rows sat too close to the bottom edge. */
+@media (orientation: landscape) and (max-height: 900px) {
+  .favorite-food-game .choices-container {
+    bottom: 21%;
+  }
+}
+
+/* iPad Pro: remaining scene objects ~15% bigger (the choice rows above are already scaled).
+   `scale` is used where the element has no centring transform of its own. */
+@media (orientation: landscape) and (min-height: 901px) {
+  .favorite-food-game .intro-ganesha {
+    scale: 1.15;
+  }
+  .favorite-food-game .child-phase-modal {
+    scale: 1.15;
+  }
+  .favorite-food-game .ganesha-celebrate {
+    width: 230px;
+    height: 230px;
+  }
+  .favorite-food-game .food-in-hand {
+    width: 161px !important;
+    height: 161px !important;
+  }
+}
+
+/* Child food screen: Draw / Type buttons. Shorter iPads: they were clipped by the bottom edge, so
+   lift them. Pro: bigger, and lifted off the bottom. */
+@media (orientation: landscape) and (max-height: 900px) {
+  .favorite-food-game .custom-input-options.child-food-actions {
+    bottom: 13%;
+  }
+}
+@media (orientation: landscape) and (min-height: 901px) {
+  .favorite-food-game .custom-input-options.child-food-actions {
+    bottom: 10%;
+    transform: translateX(-50%) scale(1.3);
+    transform-origin: 50% 100%;
+  }
+}
+
+/* iPad Pro: the friend-name box (shared TextInputModal) is scoped to this scene and enlarged ~30%.
+   `zoom` keeps it centred and enlarges the text, field and buttons together. */
+@media (orientation: landscape) and (min-height: 901px) {
+  .favorite-food-game .text-input-modal {
+    zoom: 1.3;
+  }
+}
+
+/* Child activity screen on the shorter iPads: Draw / Type were clipped by the bottom edge. Push
+   the activity ring and the buttons up. */
+@media (orientation: landscape) and (max-height: 900px) {
+  .favorite-food-game .child-activity-scene {
+    bottom: 29% !important;
+  }
+  .favorite-food-game .custom-input-options.child-activity-actions {
+    bottom: 13%;
+  }
+}
+
+/* Child activity screen on the Pro: the ring floated high with the Draw / Type buttons far below.
+   Bring the ring down, and make the buttons bigger and closer. */
+@media (orientation: landscape) and (min-height: 901px) {
+  .favorite-food-game .child-activity-scene {
+    bottom: 17% !important;
+  }
+  .favorite-food-game .custom-input-options.child-activity-actions {
+    bottom: 6%;
+    transform: translateX(-50%) scale(1.3);
+    transform-origin: 50% 100%;
+  }
+}
+
+/* iPad Pro: story header strip, the "you picked it" icon + caption, and the "We're Friends Now!"
+   comparison card are bigger. `zoom` enlarges layout and text together and keeps each centred.
+   Scoped to this scene, so other scenes that share the strip / card are untouched. */
+@media (orientation: landscape) and (min-height: 901px) {
+  .favorite-food-game .story-strip {
+    zoom: 1.25;
+  }
+  .favorite-food-game .child-completion-object {
+    zoom: 1.3;
+  }
+  .favorite-food-game .aboutme-comparison-title,
+  .favorite-food-game .aboutme-comparison-grid,
+  .favorite-food-game .aboutme-comparison-continue-btn {
+    zoom: 1.3;
+  }
+}
