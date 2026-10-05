@@ -454,3 +454,16 @@
     font-weight: 800;
   }
 }
+
+/* iPad sizing: the symbol card is ~15% too big on the shorter iPads (1024x670, mini) and ~15%
+   small on the Pro. `scale` is used because the card's open/close animation owns `transform`. */
+@media (orientation: landscape) and (min-width: 1000px) and (max-height: 900px) {
+  .symbol-card-modal {
+    scale: 0.85;
+  }
+}
+@media (orientation: landscape) and (min-height: 901px) {
+  .symbol-card-modal {
+    scale: 1.15;
+  }
+}

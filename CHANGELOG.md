@@ -1,5 +1,11 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-10-05] — Symbol Mountain: symbol card + sidebar sized for iPads
+**Touched:** src/zones/symbol-mountain/shared/components/SymbolCardModal.css, SymbolSidebar.css.
+**Changed:** symbol card ("Do you know why I ride Mooshika?") scaled 0.85 on shorter iPads (landscape, >=1000px wide, <=900px tall) and 1.15 on the Pro, via the `scale` property (its animation owns transform). Sidebar rail on shorter iPads: tap areas 56->50px, icon 42->38px, gap 6->4px, so it no longer reaches the replay button (~510px -> ~440px tall). Pro unchanged.
+**Verified:** from Madhurima's screenshots; she asked for both changes. Not re-checked after the edit at the time of commit.
+**Open:** sidebar tap area is 50px (under the 60px rule) by choice for fit; revisit if tapping is hard on a real iPad.
+
 ## [2026-10-05] — Shloka River: sidebar rail + chant card sized for shorter iPads
 **Touched:** src/zones/shloka-river/shared/AppSidebar.css, src/zones/shloka-river/shared/components/ChantCardModal.css.
 **Changed:** landscape under 900px tall — the 8-icon rail overflowed past the top (icons 60px -> 44px, gap 4px, pill 62px); the chant card ("My great form can hold a lot") was taller than the screen (scale 0.78 via the `scale` property, since its animation owns transform). iPad Pro unchanged.
