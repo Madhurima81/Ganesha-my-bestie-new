@@ -360,6 +360,19 @@ export default function KurumedevaGame({
     return `play-${friendStep}`;
   })();
 
+  // Two beats TEACH a mechanic: the first help bubble (ask Elephant) and the first plank. They keep
+  // the full 10/18/26 ladder. Every other beat (ask Monkey, planks 2-3) is the child working
+  // independently: a ~12s nudge, then at ~25s the target glows quietly and stays. No hand, no L3.
+  const isTeachableBeat = hintBeat === 'ask-elephant' || hintBeat === 'plank-0';
+  // Set once the child has really MOVED a bubble / plank (not just pointer-down). After that the
+  // hand for that mechanic never appears again, even after the sidebar.
+  const [helpDragLearned, setHelpDragLearned] = useState(false);
+  const [plankDragLearned, setPlankDragLearned] = useState(false);
+  const learnedForBeat = (hintBeat === 'ask-elephant' && helpDragLearned) || (hintBeat === 'plank-0' && plankDragLearned);
+  // A real wrong drop makes the TARGET clearer (helper / slot glow) for the rest of that beat.
+  const [clarifyBeat, setClarifyBeat] = useState(null);
+  const dragStartRef = useRef(null);
+
   const {
     hintLevel,
     markInteraction,
@@ -370,19 +383,18 @@ export default function KurumedevaGame({
   } = useRepeatedHintCycle({
     enabled: isActive && !isPaused && phase === 'play' && !isRoundSettling && !debugMode && introComplete,
     stageKey: hintBeat,
-    // GMB Hint Standard v1 — flat 10s/18s/26s from VO end or last interaction.
-    initialDelay: 10000,
-    pulseCountBeforeEscalation: 3,
+    initialDelay: isTeachableBeat ? 10000 : 12000,
+    pulseCountBeforeEscalation: isTeachableBeat ? 3 : 2,
     pulseInterval: 1800,
-    level2Delay: 18000,
-    level3Delay: 26000,
+    level2Delay: isTeachableBeat ? 18000 : 25000,
+    level3Delay: isTeachableBeat ? 26000 : 3600000,
     paused: handPaused,
   });
+  // Target glow: L3 on a teaching beat, L2 (~25s) on the independent beats, or after a real miss.
+  const targetGlow = hintLevel >= (isTeachableBeat ? 3 : 2) || clarifyBeat === hintBeat;
 
-  // Teaching gesture appears for the first help bubble and the first plank.
-  // Later repeats fall back to the idle hint ladder.
+  // Teaching gesture appears for the first help bubble and the first plank, until learned.
   const kuruStageKey = hintBeat;
-  const isTeachableBeat = hintBeat === 'ask-elephant' || hintBeat === 'plank-0';
   const [kuruIntroGesture, setKuruIntroGesture] = useState(false);
   // Tracks whether this beat's own instruction VO (kuru_ask_elephant /
   // kuru_plank_instruction) has actually started speaking — the teaching
@@ -390,18 +402,18 @@ export default function KurumedevaGame({
   // transition, since browser TTS startup lag is variable.
   const [introGestureVoStarted, setIntroGestureVoStarted] = useState(false);
   useEffect(() => {
-    if (!isActive || !introComplete || phase !== 'play' || isRoundSettling || debugMode || !isTeachableBeat) { setKuruIntroGesture(false); return undefined; }
+    if (!isActive || !introComplete || phase !== 'play' || isRoundSettling || debugMode || !isTeachableBeat || learnedForBeat) { setKuruIntroGesture(false); return undefined; }
     setKuruIntroGesture(true);
     setIntroGestureVoStarted(false);
     const t = pausableAfter(6000, () => setKuruIntroGesture(false));
     return () => cancelPausable(t);
-  }, [isActive, introComplete, kuruStageKey, phase, isRoundSettling, debugMode, isTeachableBeat, pausableAfter, cancelPausable]);
+  }, [isActive, introComplete, kuruStageKey, phase, isRoundSettling, debugMode, isTeachableBeat, learnedForBeat, pausableAfter, cancelPausable]);
 
   // Back from the sidebar during a teachable beat: the teaching hand plays again with the
   // replayed instruction line.
   const wasPausedForTeachRef = useRef(false);
   useEffect(() => {
-    if (wasPausedForTeachRef.current && !handPaused && isActive && introComplete && phase === 'play' && !isRoundSettling && !debugMode && isTeachableBeat) {
+    if (wasPausedForTeachRef.current && !handPaused && isActive && introComplete && phase === 'play' && !isRoundSettling && !debugMode && isTeachableBeat && !learnedForBeat) {
       setKuruIntroGesture(true);
       // The replayed instruction's cue re-times it: the hand waits for the action word again.
       setIntroGestureVoStarted(false);
@@ -411,7 +423,7 @@ export default function KurumedevaGame({
     }
     wasPausedForTeachRef.current = handPaused;
     return undefined;
-  }, [handPaused, isActive, introComplete, phase, isRoundSettling, debugMode, isTeachableBeat, pausableAfter, cancelPausable]);
+  }, [handPaused, isActive, introComplete, phase, isRoundSettling, debugMode, isTeachableBeat, learnedForBeat, pausableAfter, cancelPausable]);
   const currentFriend = friendStep < FRIENDS.length ? FRIENDS[friendStep] : null;
 
   // Round-start question — once per ask round: "Who can help with the heavy
@@ -447,7 +459,19 @@ export default function KurumedevaGame({
   const lastKuruHintRef = useRef('');
   useEffect(() => {
     if (phase !== 'play' || isRoundSettling || debugMode || helpDelivered) return;
+    if (!isTeachableBeat) {
+      // Independent beats: one spoken clue at the first nudge when asking Monkey (which helper,
+      // not how to drag). Planks 2-3 already had "Good. Continue dragging the planks."
+      if (hintBeat === 'ask-monkey' && hintLevel === 1 && lastKuruHintRef.current !== hintBeat) {
+        lastKuruHintRef.current = hintBeat;
+        stopSceneVoice?.();
+        playSceneLine?.('kuru_hint_monkey_clue');
+      }
+      return;
+    }
     if (hintLevel !== 2 && hintLevel !== 3) return;
+    // The child has shown they can drag: the L2 line would only re-teach dragging.
+    if (hintLevel === 2 && learnedForBeat) return;
 
     let key = null;
     if (placeActive) {
@@ -465,7 +489,7 @@ export default function KurumedevaGame({
     stopSceneVoice?.();
     if (hintLevel === 2 && playSceneLine) markLevel2VoiceStarted();
     playSceneLine?.(key, hintLevel === 2 ? markLevel2VoiceEnded : undefined);
-  }, [hintLevel, hintBeat, phase, isRoundSettling, debugMode, placeActive, canAsk, helpDelivered, friendStep, playSceneLine, stopSceneVoice, markLevel2VoiceStarted, markLevel2VoiceEnded]);
+  }, [hintLevel, hintBeat, isTeachableBeat, learnedForBeat, phase, isRoundSettling, debugMode, placeActive, canAsk, helpDelivered, friendStep, playSceneLine, stopSceneVoice, markLevel2VoiceStarted, markLevel2VoiceEnded]);
 
   // Keep the selected debug marker inside the current phase's group.
   useEffect(() => {
@@ -524,6 +548,9 @@ export default function KurumedevaGame({
       completionScheduledRef.current = false;
       phaseRef.current = 'play';
       lastRoundQuestionRef.current = null;
+      setHelpDragLearned(false);
+      setPlankDragLearned(false);
+      setClarifyBeat(null);
     }
   }, [isActive, clearTimers]);
 
@@ -687,14 +714,19 @@ export default function KurumedevaGame({
     pieceDragRef.current = event.pointerId;
     event.currentTarget.setPointerCapture?.(event.pointerId);
     setPieceDragActive(true);
-    setPieceDragPos(getStagePoint(event));
+    const grab = getStagePoint(event);
+    dragStartRef.current = grab;
+    setPieceDragPos(grab);
   }, [getStagePoint, isPaused, placeActive, placedCount, markAttempt, stopSceneVoice]);
 
   const handlePiecePointerMove = useCallback((event) => {
     if (pieceDragRef.current !== event.pointerId || !pieceDragActive) return;
     event.preventDefault();
-    setPieceDragPos(getStagePoint(event));
-  }, [getStagePoint, pieceDragActive]);
+    const p = getStagePoint(event);
+    setPieceDragPos(p);
+    const g = dragStartRef.current;
+    if (!plankDragLearned && g && Math.hypot(p.l - g.l, p.t - g.t) > 3) setPlankDragLearned(true);
+  }, [getStagePoint, pieceDragActive, plankDragLearned]);
 
   const endPieceDrag = useCallback(() => {
     pieceDragRef.current = null;
@@ -734,8 +766,9 @@ export default function KurumedevaGame({
       if (isFirstPlank) playSceneLine?.('kuru_plank_continue');
     } else {
       markWrongAttempt(); // genuine drag, missed the gap
+      setClarifyBeat(hintBeat); // show the slot more clearly
     }
-  }, [endPieceDrag, getStagePoint, markInteraction, markWrongAttempt, placeNextPiece, placedCount, playSceneLine]);
+  }, [endPieceDrag, getStagePoint, hintBeat, markInteraction, markWrongAttempt, placeNextPiece, placedCount, playSceneLine]);
 
   // Plank round completes once all 3 land — light the last syllables, then
   // start the crossing.
@@ -769,14 +802,19 @@ export default function KurumedevaGame({
     dragPointerRef.current = event.pointerId;
     event.currentTarget.setPointerCapture?.(event.pointerId);
     setIsDraggingHelp(true);
-    setHelpTokenPos(getStagePoint(event));
+    const grab = getStagePoint(event);
+    dragStartRef.current = grab;
+    setHelpTokenPos(grab);
   }, [currentFriend, getStagePoint, isPaused, stopSceneVoice]);
 
   const handleHelpPointerMove = useCallback((event) => {
     if (!isDraggingHelp || dragPointerRef.current !== event.pointerId) return;
     event.preventDefault();
-    setHelpTokenPos(getStagePoint(event));
-  }, [getStagePoint, isDraggingHelp]);
+    const p = getStagePoint(event);
+    setHelpTokenPos(p);
+    const g = dragStartRef.current;
+    if (!helpDragLearned && g && Math.hypot(p.l - g.l, p.t - g.t) > 3) setHelpDragLearned(true);
+  }, [getStagePoint, isDraggingHelp, helpDragLearned]);
 
   const handleHelpPointerUp = useCallback((event) => {
     if (!isDraggingHelp || dragPointerRef.current !== event.pointerId) return;
@@ -794,8 +832,9 @@ export default function KurumedevaGame({
     } else {
       resetHelpToken();
       markWrongAttempt(); // dragged the help token and dropped it away from the friend
+      setClarifyBeat(hintBeat); // make the right helper clearer
     }
-  }, [askFriendForHelp, friendPositions, friendStep, getStagePoint, isDraggingHelp, markWrongAttempt, resetHelpToken]);
+  }, [askFriendForHelp, friendPositions, friendStep, getStagePoint, hintBeat, isDraggingHelp, markWrongAttempt, resetHelpToken]);
 
   const completeAfterSuccess = useCallback(() => {
     if (!successVoDoneRef.current || !crossingDoneRef.current || completionScheduledRef.current) return;
@@ -1066,6 +1105,8 @@ export default function KurumedevaGame({
   // One idle gesture hint, keyed to the current piece/friend. pointer-events:none overlay.
   const gestureHint = (() => {
     if (phase !== 'play' || debugMode || isRoundSettling) return null;
+    // Teaching beats only, and only until the child has really dragged one.
+    if (!isTeachableBeat || learnedForBeat) return null;
     if (placeActive) {
       const s = PLANK_SLOTS[Math.min(placedCount, PLANK_SLOTS.length - 1)];
       const from = { x: PLANK_PILE.l, y: PLANK_PILE.t };
@@ -1283,7 +1324,7 @@ export default function KurumedevaGame({
         {placeActive && phase === 'play' && placedCount < PLANK_SLOTS.length && (
           <>
             <div
-              className="kuru-span-log is-plank is-ghost"
+              className={`kuru-span-log is-plank is-ghost${targetGlow ? ' is-hint-glow' : ''}`}
               style={{
                 left: `${PLANK_SLOTS[placedCount].l}%`,
                 top: `${PLANK_SLOTS[placedCount].t}%`,
@@ -1383,7 +1424,7 @@ export default function KurumedevaGame({
                 ${isHelped ? 'kuru-friend--helped' : ''}
                 ${isCrossing ? 'kuru-friend--crossing' : ''}
                 ${isWalking ? 'is-walking' : ''}
-                ${isCurrent && imgState === 'carry' && canAsk && hintLevel >= 3 ? 'hint-glow' : ''}
+                ${isCurrent && imgState === 'carry' && canAsk && targetGlow ? 'hint-glow' : ''}
               `}
               style={{
                 left: `${pos.l}%`,

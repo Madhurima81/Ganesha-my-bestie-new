@@ -233,6 +233,9 @@ export const VOICE_SCRIPTS = {
       kuru_hint_monkey: {
         text: "Drag the help bubble to Monkey."
       },
+      kuru_hint_monkey_clue: {
+        text: "Who can help tie the rope?"
+      },
       kuru_hint_plank_soft: {
         text: "Drag a plank toward the bridge."
       },

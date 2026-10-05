@@ -758,6 +758,14 @@
   filter: grayscale(0.3);
 }
 
+/* Quiet "this is the spot" glow for planks 2-3 (~25s) and after a missed drop. */
+.kuru-span-log.is-ghost.is-hint-glow {
+  opacity: 0.55;
+}
+.kuru-span-log.is-ghost.is-hint-glow img {
+  filter: drop-shadow(0 0 14px rgba(255, 220, 90, 0.85));
+}
+
 @keyframes kuruSpanLogIn {
   from { opacity: 0; }
   to { opacity: 1; }

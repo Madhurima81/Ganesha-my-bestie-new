@@ -80,14 +80,22 @@ TEST_CHECKLISTS.samaprabha = {
 };
 
 TEST_CHECKLISTS.kurumedeva = {
-  title: 'Kurumedeva: wrong drops and grabs keep or escalate hints',
+  title: 'Kurumedeva: teach the bubble and the first plank, then step back',
   items: [
-    { text: 'Drag the help token and drop it far from the friend, twice.', expect: 'Token returns each time; after the 2nd miss L2 help starts.' },
-    { text: 'At L2 or L3: drop the token away from the friend again.', expect: 'Hint and hand stay; the L2 line is not cut off by L3.' },
-    { text: 'Do nothing for L2 and L3. Tap empty areas.', expect: 'Hints keep playing; background taps change nothing.' },
-    { text: 'Drag the help token onto the friend.', expect: 'Friend helps, hint clears, next step starts a fresh clock.' },
-    { text: 'Plank round: with a hint showing, grab a plank and let go in the wrong place.', expect: 'Hint stays up; plank returns.' },
-    { text: 'Plank round: drop a plank in the gap.', expect: 'Plank placed, hint clears, fresh idle clock.' },
+    { text: 'Ask Elephant: hear the instruction.', expect: 'One teaching hand drags the bubble, timed to the action word.' },
+    { text: 'Ask Elephant: drag the bubble a real distance and drop it far from Elephant.', expect: 'Bubble returns; Elephant glows (clearer helper); NO hand appears.' },
+    { text: 'Ask Elephant: drag a little, open the sidebar, close it.', expect: 'The teaching hand does NOT come back.' },
+    { text: 'Ask Elephant: drop the bubble on Elephant.', expect: 'Elephant helps; hint clears; next beat starts a fresh clock.' },
+    { text: 'Ask Monkey: hear the question, then do nothing for ~12s.', expect: 'NO teaching hand. Bubble wiggles twice and "Who can help tie the rope?" plays once.' },
+    { text: 'Ask Monkey: keep waiting to ~25s.', expect: 'Monkey glows quietly and stays. No hand, no further lines.' },
+    { text: 'Ask Monkey: drop the bubble away from Monkey.', expect: 'Monkey glows right away; no hand; ladder does not restart.' },
+    { text: 'Plank 1: hear the instruction.', expect: 'One teaching hand drags the plank to the slot.' },
+    { text: 'Plank 1: drag a plank a real distance and drop it in the wrong place.', expect: 'Plank returns; the slot glows; NO hand appears.' },
+    { text: 'Place plank 1.', expect: '"Good. Continue dragging the planks." plays once.' },
+    { text: 'Planks 2-3: do nothing for ~12s.', expect: 'The top plank nudges twice. No hand, no new line.' },
+    { text: 'Planks 2-3: keep waiting to ~25s.', expect: 'The slot glows quietly and stays. No hand, no L3 line.' },
+    { text: 'Tap empty areas at any hint stage.', expect: 'Hints keep playing; nothing restarts.' },
+    { text: 'Place planks 2 and 3.', expect: 'Bridge completes; crossing starts.' },
   ],
 };
 

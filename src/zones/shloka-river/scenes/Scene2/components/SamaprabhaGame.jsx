@@ -346,12 +346,6 @@ export default function SamaprabhaGame({
       : { initialDelay: 12000, pulseCountBeforeEscalation: 1, level2Delay: 25000, level3Delay: NEVER_MS };
 
   const hintStageKey = phase === 'play' ? `clue-${lit}` : phase;
-  // Visual cue on the current shadow area: pulse (teach L1 / find L1), exact region held quietly
-  // (find L2), soft glow while "keep holding" (keep L1).
-  let targetHintClass = '';
-  if (hintMode === 'find' && hintLevel >= 2) targetHintClass = 'is-region';
-  else if (hintMode === 'keep' && hintLevel >= 1) targetHintClass = 'is-keep';
-  else if (hintLevel >= 1) targetHintClass = 'is-hint';
 
   // clueVoComplete gates the ladder on each clue's own reveal VO ("That's a branch!" etc.)
   // finishing, not just the game's intro VO. A child holding a shadow must never get an idle
@@ -363,6 +357,13 @@ export default function SamaprabhaGame({
     paused: handPaused,
     ...hintTiming,
   });
+
+  // Visual cue on the current shadow area: pulse (teach L1 / find L1), exact region held quietly
+  // (find L2), soft glow while "keep holding" (keep L1).
+  let targetHintClass = '';
+  if (hintMode === 'find' && hintLevel >= 2) targetHintClass = 'is-region';
+  else if (hintMode === 'keep' && hintLevel >= 1) targetHintClass = 'is-keep';
+  else if (hintLevel >= 1) targetHintClass = 'is-hint';
 
   // Hint VO per state: teach speaks at L2, find/keep speak once at their single pulse (L1).
   useEffect(() => {
