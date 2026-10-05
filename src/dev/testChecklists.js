@@ -60,14 +60,22 @@ TEST_CHECKLISTS['modak-game2-bush-marsh'] = {
 };
 
 TEST_CHECKLISTS.samaprabha = {
-  title: 'Samaprabha: random taps must not cut hint VO or the hand',
+  title: 'Samaprabha: 3 hint states (teach / find / keep holding); hand only in clue 1',
   items: [
-    { text: 'First-time teaching hand is playing. Tap empty sky / ground (not on the shadow).', expect: 'Hand finishes its pass; intro VO is not cut.' },
-    { text: 'Do nothing ~18s for L2 (hand + VO). Tap empty areas repeatedly.', expect: 'L2 VO plays to the end; hand stays; nothing restarts.' },
-    { text: 'Keep waiting for L3 (about 8s after L2 ends). Tap empty areas again.', expect: 'L3 hand and VO still arrive.' },
-    { text: 'At L2 or L3: press and hold the shadow, then let go early.', expect: 'Ring fills while held; the idle clock restarts on release.' },
-    { text: 'Hold the shadow until the ring completes.', expect: 'Clue lights, hint clears, next clue starts a fresh clock.' },
-    { text: 'During the L2 line, press on the shadow (cuts the line). Wait.', expect: 'L3 still comes on time (no stuck L2).' },
+    { text: 'Clue 1: first-time teaching hand is playing. Tap empty sky / ground (not on the shadow).', expect: 'Hand finishes its pass; intro VO is not cut.' },
+    { text: 'Clue 1, never touch the shadow: wait ~10s.', expect: 'Current shadow area pulses.' },
+    { text: 'Clue 1: keep waiting to ~18s. Tap empty areas.', expect: '"Press and hold on the shadow." plays to the end; no hand yet; taps change nothing.' },
+    { text: 'Clue 1: keep waiting to ~26s.', expect: 'One full hold hand demo plays (once).' },
+    { text: 'Clue 1: hold only a sliver (under ~10% of the ring), release, wait.', expect: 'Still the TEACH ladder (pulse, then "Press and hold", then hand).' },
+    { text: 'Clue 1: hold past ~25% of the ring, release early, wait ~9s.', expect: '"Keep holding." plays once with a soft glow. NO hand, no search hint.' },
+    { text: 'Hold the shadow until the ring completes.', expect: 'Clue lights, "find another" plays, next clue starts a fresh clock.' },
+    { text: 'Clue 2-4, do nothing for ~12s.', expect: 'Shadow area pulses and "Look for another part of the shadow." plays.' },
+    { text: 'Clue 2-4, keep waiting to ~25s.', expect: 'Exact shadow region stays lit quietly. No extra VO. NO hand at any point.' },
+    { text: 'Clue 2-4: wait 25s+ and tap empty areas.', expect: 'Nothing restarts or escalates; the lit region stays.' },
+    { text: 'Clue 2-4: hold the correct region ~30%, release, wait ~9s.', expect: 'Only "Keep holding." plays once. No "look for another part", no hand.' },
+    { text: 'Clue 2-4: press the correct shadow during the hint line.', expect: 'Line is cut, ring fills, no stuck hint after release.' },
+    { text: 'Complete a clue, then reach the next clue and leave it idle.', expect: 'Hint states reset per clue: it is Find again, not Keep.' },
+    { text: 'Open the sidebar mid-hint, then close it.', expect: 'Hint pauses and resumes cleanly; no hand appears after clue 1.' },
   ],
 };
 
