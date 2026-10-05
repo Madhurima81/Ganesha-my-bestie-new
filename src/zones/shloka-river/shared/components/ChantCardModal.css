@@ -426,3 +426,12 @@
     display: none;
   }
 }
+
+/* Shorter iPads: the chant card was taller than the screen (top and bottom cut). Scale it down; the
+   `scale` property is used because the card's open/close animation owns `transform`. The iPad Pro
+   is unchanged. */
+@media (orientation: landscape) and (max-height: 900px) {
+  .chant-card-modal {
+    scale: 0.78;
+  }
+}

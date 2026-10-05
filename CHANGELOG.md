@@ -1,5 +1,11 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-10-05] — Shloka River: sidebar rail + chant card sized for shorter iPads
+**Touched:** src/zones/shloka-river/shared/AppSidebar.css, src/zones/shloka-river/shared/components/ChantCardModal.css.
+**Changed:** landscape under 900px tall — the 8-icon rail overflowed past the top (icons 60px -> 44px, gap 4px, pill 62px); the chant card ("My great form can hold a lot") was taller than the screen (scale 0.78 via the `scale` property, since its animation owns transform). iPad Pro unchanged.
+**Verified:** Madhurima checked on the shorter iPads: fine.
+**Open:** rest of Zone 2 T20 (scenes 05-09).
+
 ## [2026-10-05] — Dreams & Wishes: iPad sizing pass
 **Touched:** src/zones/about-me-hut/enjoy/DreamsWishesGame.css (blocks appended at the end).
 **Changed:** iPad Pro — Wish 1 globe 378px, faces ring x1.5, bubbles +50% (inline sizes overridden with !important); "Draw your dream" pad (shared Drawingpad, scoped to this scene) scaled 0.8 on shorter iPads and 1.3 on the Pro via transform (not zoom, so touch mapping stays right); "We Both Have Wishes" Continue pinned to the bottom of the overlay with 92px reserved.

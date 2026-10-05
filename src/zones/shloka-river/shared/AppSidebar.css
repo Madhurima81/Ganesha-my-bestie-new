@@ -391,3 +391,18 @@
     padding: 40px 32px;
   }
 }
+
+/* Shorter iPads (1024x670, mini): eight 60px icons overflowed the rail past the top of the screen.
+   Smaller icons and tighter spacing so the whole rail fits. The iPad Pro (taller than 900px) is
+   unchanged. */
+@media (orientation: landscape) and (max-height: 900px) {
+  .ganesha-sidebar {
+    width: 62px;
+    padding: 6px 4px;
+    gap: 4px;
+  }
+  .ganesha-icon {
+    width: 44px !important;
+    height: 44px !important;
+  }
+}
