@@ -491,6 +491,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
   const [shakeLang, setShakeLang] = useState(null);
   const [langWrongReaction, setLangWrongReaction] = useState(null);
   const [hasPressedLanguagePlay, setHasPressedLanguagePlay] = useState(false);
+  const [playPulseKey, setPlayPulseKey] = useState(0); // bumped to replay the Play button's 2-pulse nudge
   const [showLanguageCards, setShowLanguageCards] = useState(false); // Show cards only after mantra finishes
   const [languageGuessPromptReady, setLanguageGuessPromptReady] = useState(false);
   const [languageChildPromptReady, setLanguageChildPromptReady] = useState(false);
@@ -914,7 +915,7 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
       case STEPS.LANGUAGE_GANESHA:
         return hasPressedLanguagePlay ? VOICE.language_guess : VOICE.language_play_first;
       case STEPS.LANGUAGE_CHILD:
-        return 'Tap up to three languages you speak.';
+        return 'Choose up to three languages you use or hear.';
       case STEPS.FESTIVALS_GANESHA:
         return 'Tap my favorite festival.';
       case STEPS.FESTIVALS_CHILD:
@@ -1329,58 +1330,47 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     };
   }, [phase, discoveredLocations.length, safeSetTimeout, triggerSparkle, speakIfUnmuted, childAge, VOICE.phase1_complete, isAudioOn]);
 
-  // Ganesha Home: Idle hint progression (Level 1 @ 10s, Level 2 @ 18s, Level 3 @ 26s)
+  // Ganesha Home hints — two steps, chosen by what the child already knows:
+  //   Never dragged the magnifier yet (still learning HOW): ~12s "Move the magnifying glass around
+  //     the map." + a brief finite magnifier nudge; ~10s after the line, the teaching hand replays once.
+  //   Has dragged at least once (knows HOW, needs WHERE): ~12s one undiscovered spot softly glows
+  //     (no VO); ~25s that exact spot gets a ring that stays until it is found. Never all spots.
+  // Finding a spot restarts the cycle for the next one. Level 0 = none, 1 = clue, 2 = rescue.
   useEffect(() => {
     if (phase !== STEPS.GANESHA_HOME || discoveredLocations.length === PHASE1_LOCATIONS.length || !ganeshaHomePromptReady) {
       // NOTE: the level state must NOT be read here or listed in the deps below — a dependency on
-      // the effect's own level re-ran it on every L1/L2/L3 change and restarted the 10/18/26 chain.
+      // the effect's own level re-ran it on every level change and restarted the chain.
       setGaneshaHomeIdleLevel(0);
       ganeshaHomeIdleVoiceRef.current = false;
       if (ganeshaHomeIdleTimerRef.current) clearTimeout(ganeshaHomeIdleTimerRef.current);
       return;
     }
-    if (import.meta.env.DEV) console.log('[Idle Hint] Started: Ganesha Home phase idle timer will trigger in 6s');
 
+    let cancelled = false;
+    setGaneshaHomeIdleLevel(0);
     ganeshaHomeIdleTimerRef.current = setTimeout(() => {
-      // Level 1 @ 10 seconds: Spots glow once + magnifying glass wobbles
-      if (import.meta.env.DEV) console.log('[Idle Hint] Level 1 triggered: Spots glow + magnifying glass wobbles');
       setGaneshaHomeIdleLevel(1);
-
-      // Level 2 @ 18 seconds: Spots glow stronger + voice over (single play)
-      ganeshaHomeIdleTimerRef.current = setTimeout(() => {
-        if (import.meta.env.DEV) console.log('[Idle Hint] Level 2 triggered: Repeating glow + voice over');
-        setGaneshaHomeIdleLevel(2);
-        // Level 3's 8s gap counts from when this VO finishes speaking, not
-        // from the moment the level 2 timer fires — otherwise level 3 could
-        // land while (or right on top of) this line still talking.
-        const armLevel3 = () => {
-          ganeshaHomeIdleTimerRef.current = setTimeout(() => {
-            if (import.meta.env.DEV) console.log('[Idle Hint] Level 3 triggered: hidden spots highlighted');
-            setGaneshaHomeIdleLevel(3);
-            // Level 3 is visual-only (rings on the unfound spots; no VO, no emoji) and does not run
-            // forever: after ~8s it ends and the ladder stays quiet until the child moves the
-            // magnifier again (handleMglassMove then starts a fresh 10/18/26).
-            ganeshaHomeIdleTimerRef.current = setTimeout(() => {
-              setGaneshaHomeIdleLevel(0);
-              ganeshaHomeIdleVoiceRef.current = false;
-            }, 8000);
-          }, 8000);
-        };
-        if (!ganeshaHomeIdleVoiceRef.current) {
-          speakIfUnmuted('Drag the magnifying glass to find me.', { age: childAge, moment: 'default', onEnd: armLevel3 });
-          ganeshaHomeIdleVoiceRef.current = true;
-        } else {
-          armLevel3();
-        }
-      }, 8000);
-    }, 10000);
+      const armFinal = () => {
+        if (cancelled) return;
+        ganeshaHomeIdleTimerRef.current = setTimeout(() => setGaneshaHomeIdleLevel(2), ganeshaHomeGestureDismissed ? 13000 : 10000);
+      };
+      if (!ganeshaHomeGestureDismissed) {
+        ganeshaHomeIdleVoiceRef.current = true;
+        speakIfUnmuted('Move the magnifying glass around the map.', { age: childAge, moment: 'default', onEnd: armFinal, onError: armFinal });
+      } else {
+        armFinal();
+      }
+    }, 12000);
 
     return () => {
+      cancelled = true;
       if (ganeshaHomeIdleTimerRef.current) clearTimeout(ganeshaHomeIdleTimerRef.current);
     };
-  }, [phase, discoveredLocations.length, returnHintNonce, speakIfUnmuted, childAge, ganeshaHomePromptReady, ganeshaHomeIdleRestartNonce]);
+  }, [phase, discoveredLocations.length, returnHintNonce, speakIfUnmuted, childAge, ganeshaHomePromptReady, ganeshaHomeIdleRestartNonce, ganeshaHomeGestureDismissed]);
 
-  // Language Ganesha pre-play nudges: immediate visual Play-button teaching only.
+  // Language Ganesha pre-play: the Play button pulses twice (finite, not a permanent breathing
+  // button). If the child still hasn't pressed it after ~11s, repeat "Tap play and listen
+  // carefully." once and pulse twice more.
   useEffect(() => {
     if (phase !== STEPS.LANGUAGE_GANESHA || hasPressedLanguagePlay || langGuessPhase !== 'guessing') {
       if (languagePlayNudgeTimeoutRef.current) clearTimeout(languagePlayNudgeTimeoutRef.current);
@@ -1388,11 +1378,16 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
       return;
     }
 
+    languagePlayNudgeTimeoutRef.current = setTimeout(() => {
+      speakIfUnmuted(VOICE.language_play_first, { age: childAge, moment: 'default' });
+      setPlayPulseKey((n) => n + 1);
+    }, 11000);
+
     return () => {
       if (languagePlayNudgeTimeoutRef.current) clearTimeout(languagePlayNudgeTimeoutRef.current);
       languagePlayNudgeTimeoutRef.current = null;
     };
-  }, [phase, hasPressedLanguagePlay, langGuessPhase]);
+  }, [phase, hasPressedLanguagePlay, langGuessPhase, speakIfUnmuted, childAge, VOICE.language_play_first]);
 
   // Child Home: reflective/personal-question repeat — one repeat at 10s, no escalation.
   useEffect(() => {
@@ -1442,110 +1437,76 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
     };
   }, [phase, selectedFestivals.length, childAge, isAudioOn, speak, VOICE.festivals_child_idle, returnHintNonce, festivalChildPromptReady]);
 
-  // Language Ganesha: Idle hint progression (Level 1 @ 10s, Level 2 @ 18s, Level 3 @ 26s)
+  // Language Ganesha (Sanskrit guess) — recognition task, two steps (no decorative wobble first):
+  //   ~12s  meaning clue VO ("Think of the language many shlokas are in.")
+  //   ~10s after the clue ends (~25s) → Sanskrit gets the strong persistent glow. No 2nd VO.
+  // A wrong tap must NOT end or restart this (it is evidence the child needs help), so it neither
+  // clears the timers nor appears in the deps.
   useEffect(() => {
-    // A wrong tap (shakeLang) is evidence the child needs help, so it must NOT end or restart the
-    // ladder: it neither appears here nor in the deps. After L3 the answer stays highlighted.
     if (phase !== STEPS.LANGUAGE_GANESHA || langGuessPhase !== 'guessing' || !hasPressedLanguagePlay || !showLanguageCards || !languageGuessPromptReady) {
-      // (level state intentionally not read/listed in deps — see Ganesha Home ladder above)
+      // (level state intentionally not read/listed in deps — see Ganesha Home above)
       setLangGuessIdleLevel(0);
       langGuessIdleVoiceRef.current = false;
       if (langGuessIdleTimerRef.current) clearTimeout(langGuessIdleTimerRef.current);
       return;
     }
-    if (import.meta.env.DEV) console.log('[Idle Hint Language] Started: Idle timer will trigger in 10s');
 
-    let l3FallbackId = null;
+    let cancelled = false;
+    let fallbackId = null;
+    setLangGuessIdleLevel(0);
     langGuessIdleTimerRef.current = setTimeout(() => {
-      // Level 1 @ 10 seconds: Cards wobble
-      if (import.meta.env.DEV) console.log('[Idle Hint Language] Level 1 triggered: Cards wobble');
       setLangGuessIdleLevel(1);
-
-      // Level 2 @ 18 seconds: Cards wobble + voice over
-      langGuessIdleTimerRef.current = setTimeout(() => {
-        if (import.meta.env.DEV) console.log('[Idle Hint Language] Level 2 triggered: Repeating wobble + voice over');
-        setLangGuessIdleLevel(2);
-        // Level 3's 8s gap counts from when this VO finishes speaking, not
-        // from the moment the level 2 timer fires.
-        const armLevel3 = () => {
-          langGuessIdleTimerRef.current = setTimeout(() => {
-            if (import.meta.env.DEV) console.log('[Idle Hint Language] Level 3 triggered: Repeat hint audio');
-            setLangGuessIdleLevel(3);
-            // Keep Level 3 visual-only to avoid back-to-back hint VO.
-          }, 8000);
-        };
-        if (!langGuessIdleVoiceRef.current) {
-          // L2 is ONE short clue line — the chant is not replayed (the Play button already lets
-          // the child replay it whenever they want). L3 arms when the line ends — or after a time
-          // limit, because a tap can cut the line and speech "ended" is not always delivered.
-          let l3Armed = false;
-          const armLevel3Once = () => { if (l3Armed) return; l3Armed = true; armLevel3(); };
-          l3FallbackId = setTimeout(armLevel3Once, 7000);
-          speakIfUnmuted(VOICE.language_guess_hint, {
-            age: childAge,
-            moment: 'default',
-            onEnd: armLevel3Once,
-            onError: armLevel3Once,
-          });
-          langGuessIdleVoiceRef.current = true;
-        } else {
-          armLevel3();
-        }
-      }, 8000);
-    }, 10000);
+      let armed = false;
+      const armFinal = () => {
+        if (armed || cancelled) return;
+        armed = true;
+        langGuessIdleTimerRef.current = setTimeout(() => setLangGuessIdleLevel(2), 10000);
+      };
+      // Armed when the clue line ends — or after a time limit, since speech "ended" is not always
+      // delivered (a tap can cut the line).
+      fallbackId = setTimeout(armFinal, 7000);
+      langGuessIdleVoiceRef.current = true;
+      speakIfUnmuted(VOICE.language_guess_hint, { age: childAge, moment: 'default', onEnd: armFinal, onError: armFinal });
+    }, 12000);
 
     return () => {
-      if (l3FallbackId) clearTimeout(l3FallbackId);
+      cancelled = true;
+      if (fallbackId) clearTimeout(fallbackId);
       if (langGuessIdleTimerRef.current) clearTimeout(langGuessIdleTimerRef.current);
     };
   }, [phase, langGuessPhase, returnHintNonce, speakIfUnmuted, childAge, hasPressedLanguagePlay, showLanguageCards, VOICE.language_audio, VOICE.language_guess_hint, langIdleRestartNonce, languageGuessPromptReady, isAudioOn]);
 
-  // Festival Ganesha: Idle hint progression (Level 1 @ 10s, Level 2 @ 18s, Level 3 @ 26s)
+  // Festival Ganesha — same two steps as the Sanskrit guess:
+  //   ~12s meaning clue VO → ~10s after it ends (~25s) Ganesh Chaturthi gets the persistent glow.
+  // A wrong tap must NOT end or restart the timers (see the Language effect above).
   useEffect(() => {
-    // A wrong tap (shakeGuess) must NOT end or restart the ladder (see the Language ladder above).
     if (phase !== STEPS.FESTIVALS_GANESHA || guessPhase !== 'guessing' || !festivalGuessPromptReady) {
-      // (level state intentionally not read/listed in deps — see Ganesha Home ladder above)
+      // (level state intentionally not read/listed in deps — see Ganesha Home above)
       setFestGuessIdleLevel(0);
       festGuessIdleVoiceRef.current = false;
       if (festGuessIdleTimerRef.current) clearTimeout(festGuessIdleTimerRef.current);
       return;
     }
-    if (import.meta.env.DEV) console.log('[Idle Hint Festival] Started: Idle timer will trigger in 10s');
 
-    let l3FallbackId = null;
+    let cancelled = false;
+    let fallbackId = null;
+    setFestGuessIdleLevel(0);
     festGuessIdleTimerRef.current = setTimeout(() => {
-      // Level 1 @ 10 seconds: Cards wobble
-      if (import.meta.env.DEV) console.log('[Idle Hint Festival] Level 1 triggered: Cards wobble');
       setFestGuessIdleLevel(1);
-
-      // Level 2 @ 18 seconds: Cards wobble + voice over
-      festGuessIdleTimerRef.current = setTimeout(() => {
-        if (import.meta.env.DEV) console.log('[Idle Hint Festival] Level 2 triggered: Repeating wobble + voice over');
-        setFestGuessIdleLevel(2);
-        // Level 3's 8s gap counts from when this VO finishes speaking, not
-        // from the moment the level 2 timer fires.
-        const armLevel3 = () => {
-          festGuessIdleTimerRef.current = setTimeout(() => {
-            if (import.meta.env.DEV) console.log('[Idle Hint Festival] Level 3 triggered: stronger glow only');
-            setFestGuessIdleLevel(3);
-          }, 8000);
-        };
-        if (!festGuessIdleVoiceRef.current) {
-          // L3 arms when the L2 line ends — or after a time limit (a tap can cut the line, and
-          // speech "ended" is not always delivered).
-          let l3Armed = false;
-          const armLevel3Once = () => { if (l3Armed) return; l3Armed = true; armLevel3(); };
-          l3FallbackId = setTimeout(armLevel3Once, 7000);
-          speakIfUnmuted(VOICE.festivals_guess_hint, { age: childAge, moment: 'default', onEnd: armLevel3Once, onError: armLevel3Once });
-          festGuessIdleVoiceRef.current = true;
-        } else {
-          armLevel3();
-        }
-      }, 8000);
-    }, 10000);
+      let armed = false;
+      const armFinal = () => {
+        if (armed || cancelled) return;
+        armed = true;
+        festGuessIdleTimerRef.current = setTimeout(() => setFestGuessIdleLevel(2), 10000);
+      };
+      fallbackId = setTimeout(armFinal, 7000);
+      festGuessIdleVoiceRef.current = true;
+      speakIfUnmuted(VOICE.festivals_guess_hint, { age: childAge, moment: 'default', onEnd: armFinal, onError: armFinal });
+    }, 12000);
 
     return () => {
-      if (l3FallbackId) clearTimeout(l3FallbackId);
+      cancelled = true;
+      if (fallbackId) clearTimeout(fallbackId);
       if (festGuessIdleTimerRef.current) clearTimeout(festGuessIdleTimerRef.current);
     };
   }, [phase, guessPhase, returnHintNonce, speakIfUnmuted, childAge, festivalGuessPromptReady, VOICE.festivals_guess_hint]);
@@ -1752,11 +1713,15 @@ const discoverLocation = useCallback((index) => {
 
   // Handle language guess
   const handleLanguageGuess = (guessLang) => {
-    stopVoice();
     playUiTap();
     const isCorrect = guessLang.id === 'sanskrit';
 
     if (isCorrect) {
+      stopVoice();
+      // Only a correct answer ends the hint cycle; a wrong one leaves the clock (and any glow) alone.
+      setLangGuessIdleLevel(0);
+      langGuessIdleVoiceRef.current = false;
+      if (langGuessIdleTimerRef.current) clearTimeout(langGuessIdleTimerRef.current);
       setLangGuessPhase('correct');
       triggerSparkle('all', 2000);
       playSparkle();
@@ -1782,18 +1747,27 @@ const discoverLocation = useCallback((index) => {
       setWrongLangGuesses(prev => new Set(prev).add(guessLang.id));
       setShakeLang(null);
       safeSetTimeout(() => setShakeLang(guessLang.id), 0);
-      speakIfUnmuted(guessLang.label, { age: childAge, moment: 'default' });
+      // Once the clue has started (or the glow is showing), a wrong tap is shake-only so it never
+      // cuts the useful clue by reading out the tapped language.
+      if (langGuessIdleLevel === 0) {
+        stopVoice();
+        speakIfUnmuted(guessLang.label, { age: childAge, moment: 'default' });
+      }
       safeSetTimeout(() => setShakeLang(null), 500);
     }
   };
 
   // Handle festival guess
   const handleFestivalGuess = (fest) => {
-    stopVoice();
     playUiTap();
     const isCorrect = fest.id === 'ganesh';
 
     if (isCorrect) {
+      stopVoice();
+      // Only a correct answer ends the hint cycle; a wrong one leaves the clock (and any glow) alone.
+      setFestGuessIdleLevel(0);
+      festGuessIdleVoiceRef.current = false;
+      if (festGuessIdleTimerRef.current) clearTimeout(festGuessIdleTimerRef.current);
       setGuessPhase('correct');
       triggerSparkle('all', 2000);
       playSparkle();
@@ -1828,7 +1802,11 @@ const discoverLocation = useCallback((index) => {
       }
       setShakeGuess(null);
       safeSetTimeout(() => setShakeGuess(fest.id), 0);
-      speakIfUnmuted(fest.label, { age: childAge, moment: 'default' });
+      // Shake-only once the clue has started / the glow is showing, so it never cuts the clue.
+      if (festGuessIdleLevel === 0) {
+        stopVoice();
+        speakIfUnmuted(fest.label, { age: childAge, moment: 'default' });
+      }
       safeSetTimeout(() => setShakeGuess(null), 500);
     }
   };
@@ -2084,10 +2062,13 @@ const handleComplete = () => {
             {GANESHA_SPOTS.map((spot, idx) => {
               const isDiscovered = discoveredLocations.includes(idx);
               const isUndiscovered = !isDiscovered;
-              const shouldGlow = isUndiscovered && ganeshaHomeIdleLevel >= 1;
-              // L3: a clear, persistent ring on EVERY spot not yet found (each disappears when its spot
-              // is found) — no pointing emoji, no extra VO.
-              const isFinalTarget = ganeshaHomeIdleLevel === 3 && isUndiscovered;
+              // Only once the child knows how to drag does the hint answer WHERE — and only for ONE
+              // undiscovered spot (the first), never all of them at once. Step 1 glows softly, step 2
+              // is a ring that stays until the spot is found. No VO, no pointing emoji.
+              const isHintSpot = isUndiscovered && ganeshaHomeGestureDismissed
+                && idx === PHASE1_LOCATIONS.findIndex((_, i) => !discoveredLocations.includes(i));
+              const shouldGlow = isHintSpot && ganeshaHomeIdleLevel === 1;
+              const isFinalTarget = isHintSpot && ganeshaHomeIdleLevel >= 2;
 
               return (
               <div
@@ -2104,14 +2085,11 @@ const handleComplete = () => {
                   background: 'transparent',
                   pointerEvents: 'none',
                   zIndex: 1,
-                  animation:
-                    ganeshaHomeIdleLevel === 3
-                      ? (isFinalTarget ? 'phase1HintGlowFinal 1.6s ease-in-out infinite' : 'none')
-                      : ganeshaHomeIdleLevel === 2
-                        ? 'phase1HintGlowGuide 1.6s ease-in-out 2'
-                        : shouldGlow
-                          ? 'phase1HintGlow 1.2s ease-in-out 1'
-                          : 'none',
+                  animation: isFinalTarget
+                    ? 'phase1HintGlowFinal 1.6s ease-in-out infinite'
+                    : shouldGlow
+                      ? 'phase1HintGlowGuide 1.6s ease-in-out 2'
+                      : 'none',
                 }}
               />
             );
@@ -2283,9 +2261,29 @@ const handleComplete = () => {
                 !showCelebration
               }
               idleDelay={300}
-              iterations={2}
+              iterations={1}
               zIndex={25}
             />
+
+            {/* Rescue: only if the child has STILL never dragged — replay the demonstration once. */}
+            {phase === STEPS.GANESHA_HOME && !ganeshaHomeGestureDismissed && ganeshaHomeIdleLevel >= 2 && discoveredLocations.length < PHASE1_LOCATIONS.length && !showCelebration && (
+              <GestureDemo
+                key="mis-home-rescue-demo"
+                type="drag"
+                from={{
+                  x: Math.min(92, parsePercent(mglassPosition.left, 20) + 7),
+                  y: Math.min(92, parsePercent(mglassPosition.top, 30) + 7),
+                }}
+                to={{
+                  x: Math.min(92, parsePercent(mglassPosition.left, 20) + 19),
+                  y: Math.min(92, parsePercent(mglassPosition.top, 30) + 10),
+                }}
+                active
+                idleDelay={0}
+                iterations={1}
+                zIndex={25}
+              />
+            )}
 
             {SHOW_HIT_ZONES && (
               <>
@@ -2337,7 +2335,9 @@ const handleComplete = () => {
                 height: 'clamp(72px, 9vw + 48px, 130px)',
                 zIndex: 20,
                 cursor: 'grab',
-                animation: ganeshaHomeIdleLevel >= 1 ? 'idleWobble 0.5s ease-in-out infinite' : 'none',
+                // A brief nudge (3 short wobbles), and only before the child has dragged it themselves —
+                // once they know the mechanic, a moving tool is distracting; the SPOT is the hint then.
+                animation: ganeshaHomeIdleLevel === 1 && !ganeshaHomeGestureDismissed ? 'idleWobble 0.5s ease-in-out 3' : 'none',
               }}
             >
               <img
@@ -2471,6 +2471,7 @@ const handleComplete = () => {
           {/* Play Button Section */}
           <div className="mis-language-play-wrap" style={{ textAlign: 'center', marginTop: 'calc(var(--u) * 2)', marginBottom: 'calc(var(--u) * 0.5)' }}>
             <button
+              key={`play-btn-${playPulseKey}`}
               onClick={replayLanguageAudio}
               className="mis-language-replay-btn"
               style={{
@@ -2487,7 +2488,7 @@ const handleComplete = () => {
                 boxShadow: 'none',
                 transition: 'all 0.2s',
                 margin: '0 auto',
-                animation: !hasPressedLanguagePlay && langGuessPhase !== 'correct' ? 'pulse 1.5s ease-in-out infinite' : 'none',
+                animation: !hasPressedLanguagePlay && langGuessPhase !== 'correct' ? 'pulse 1.5s ease-in-out 2' : 'none',
                 opacity: 1,
               }}
             >
@@ -2517,16 +2518,13 @@ const handleComplete = () => {
               return (
               <button
                 key={lang.id}
-                className={`card ${isSelected ? 'selected' : ''} ${wrongLangGuesses.has(lang.id) ? 'lang-attempted' : ''} ${shakeLang === lang.id ? 'wrong' : ''} ${langGuessIdleLevel === 1 || langGuessIdleLevel === 2 ? 'hint' : ''} ${langGuessIdleLevel === 3 && lang.id === 'sanskrit' ? 'hint-final hint-final--settle' : ''}`}
+                className={`card ${isSelected ? 'selected' : ''} ${wrongLangGuesses.has(lang.id) ? 'lang-attempted' : ''} ${shakeLang === lang.id ? 'wrong' : ''} ${langGuessIdleLevel >= 2 && lang.id === 'sanskrit' ? 'hint-final hint-final--settle' : ''}`}
                 onClick={() => {
                   if (!hasPressedLanguagePlay) {
                     playUiTap();
                     speakIfUnmuted(VOICE.language_play_first, { age: childAge, moment: 'default' });
                     return;
                   }
-                  setLangGuessIdleLevel(0);
-                  langGuessIdleVoiceRef.current = false;
-                  if (langGuessIdleTimerRef.current) clearTimeout(langGuessIdleTimerRef.current);
                   handleLanguageGuess(lang);
                 }}
                 disabled={langGuessPhase === 'correct'}
@@ -2721,11 +2719,8 @@ const handleComplete = () => {
             }}>
               <button
                 key="pongal"
-                className={`card mis-fest-guess-card ${shakeGuess === 'pongal' ? 'wrong' : ''} ${festGuessIdleLevel === 1 || festGuessIdleLevel === 2 ? 'hint' : ''}`}
+                className={`card mis-fest-guess-card ${shakeGuess === 'pongal' ? 'wrong' : ''}`}
                 onClick={() => {
-                  setFestGuessIdleLevel(0);
-                  festGuessIdleVoiceRef.current = false;
-                  if (festGuessIdleTimerRef.current) clearTimeout(festGuessIdleTimerRef.current);
                   handleFestivalGuess(FESTIVAL_MAP['pongal']);
                 }}
                 disabled={guessPhase === 'correct'}
@@ -2749,11 +2744,8 @@ const handleComplete = () => {
               </button>
               <button
                 key="holi"
-                className={`card mis-fest-guess-card ${shakeGuess === 'holi' ? 'wrong' : ''} ${festGuessIdleLevel === 1 || festGuessIdleLevel === 2 ? 'hint' : ''}`}
+                className={`card mis-fest-guess-card ${shakeGuess === 'holi' ? 'wrong' : ''}`}
                 onClick={() => {
-                  setFestGuessIdleLevel(0);
-                  festGuessIdleVoiceRef.current = false;
-                  if (festGuessIdleTimerRef.current) clearTimeout(festGuessIdleTimerRef.current);
                   handleFestivalGuess(FESTIVAL_MAP['holi']);
                 }}
                 disabled={guessPhase === 'correct'}
@@ -2786,11 +2778,8 @@ const handleComplete = () => {
             }}>
               <button
                 key="janmashtami"
-                className={`card mis-fest-guess-card ${shakeGuess === 'janmashtami' ? 'wrong' : ''} ${festGuessIdleLevel === 1 || festGuessIdleLevel === 2 ? 'hint' : ''}`}
+                className={`card mis-fest-guess-card ${shakeGuess === 'janmashtami' ? 'wrong' : ''}`}
                 onClick={() => {
-                  setFestGuessIdleLevel(0);
-                  festGuessIdleVoiceRef.current = false;
-                  if (festGuessIdleTimerRef.current) clearTimeout(festGuessIdleTimerRef.current);
                   handleFestivalGuess(FESTIVAL_MAP['janmashtami']);
                 }}
                 disabled={guessPhase === 'correct'}
@@ -2814,11 +2803,8 @@ const handleComplete = () => {
               </button>
               <button
                 key="ganesh"
-                className={`card mis-fest-guess-card ${guessPhase === 'correct' ? 'selected' : ''} ${festGuessIdleLevel === 1 || festGuessIdleLevel === 2 ? 'hint' : ''} ${festGuessIdleLevel === 3 ? 'hint-final hint-final--settle' : ''}`}
+                className={`card mis-fest-guess-card ${guessPhase === 'correct' ? 'selected' : ''} ${festGuessIdleLevel >= 2 ? 'hint-final hint-final--settle' : ''}`}
                 onClick={() => {
-                  setFestGuessIdleLevel(0);
-                  festGuessIdleVoiceRef.current = false;
-                  if (festGuessIdleTimerRef.current) clearTimeout(festGuessIdleTimerRef.current);
                   handleFestivalGuess(FESTIVAL_MAP['ganesh']);
                 }}
                 disabled={guessPhase === 'correct'}
@@ -2844,11 +2830,8 @@ const handleComplete = () => {
               </button>
               <button
                 key="diwali"
-                className={`card mis-fest-guess-card ${shakeGuess === 'diwali' ? 'wrong' : ''} ${festGuessIdleLevel === 1 || festGuessIdleLevel === 2 ? 'hint' : ''}`}
+                className={`card mis-fest-guess-card ${shakeGuess === 'diwali' ? 'wrong' : ''}`}
                 onClick={() => {
-                  setFestGuessIdleLevel(0);
-                  festGuessIdleVoiceRef.current = false;
-                  if (festGuessIdleTimerRef.current) clearTimeout(festGuessIdleTimerRef.current);
                   handleFestivalGuess(FESTIVAL_MAP['diwali']);
                 }}
                 disabled={guessPhase === 'correct'}
