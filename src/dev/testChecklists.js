@@ -84,12 +84,17 @@ TEST_CHECKLISTS.kurumedeva = {
 };
 
 TEST_CHECKLISTS.mahakaya = {
-  title: 'Mahakaya: grabbing the log keeps a visible hint',
+  title: 'Mahakaya: teach on log 1, then step back',
   items: [
-    { text: 'Wait for L2 (hand + VO). Grab the log and let go without finishing.', expect: 'L2 hand stays up; no reset to L0.' },
-    { text: 'With NO hint showing (first ~10s): grab the log and release.', expect: 'Idle clock restarts (L1 about 10s later).' },
-    { text: 'Tap empty sky/ground at L2 and L3.', expect: 'Hints keep playing; nothing restarts.' },
-    { text: 'Drag the log to finish.', expect: 'Stage completes; hint clears.' },
+    { text: 'Log 1: do nothing. Wait for L2 (hand + "Drag the log into the water."). Grab the log and let go without finishing.', expect: 'Hand stays up; the L2 line plays again on release; no reset to L0.' },
+    { text: 'Log 1: drag the log a real distance and miss the raft, twice.', expect: 'After the 2nd miss the exact spot shows and "Put the log here." plays once. No hand appears.' },
+    { text: 'Log 1: drag a little (real movement), open the sidebar, close it.', expect: 'The teaching hand does NOT come back.' },
+    { text: 'Log 1: place it. Hear "Keep adding logs to the raft."', expect: 'Plays once, not again on logs 2-4.' },
+    { text: 'Logs 2-4: do nothing for ~12s.', expect: 'The log nudges twice and "Drag the next log." plays once. No hand.' },
+    { text: 'Logs 2-4: keep waiting to ~25s.', expect: 'The exact spot glows quietly and stays. No hand, no further lines.' },
+    { text: 'Logs 2-4: miss the raft twice.', expect: 'The exact spot shows early; "Put the log here." plays once; no hand.' },
+    { text: 'Tap empty sky/ground at any hint stage.', expect: 'Hints keep playing; nothing restarts.' },
+    { text: 'Drag each log to finish.', expect: 'Stage completes; hint clears; next log starts a fresh clock.' },
   ],
 };
 
@@ -214,15 +219,17 @@ TEST_CHECKLISTS['sm-tusk-live-v2'] = {
 };
 
 TEST_CHECKLISTS['suryakoti'] = {
-  title: 'Suryakoti (rub): only real clearing counts',
+  title: 'Suryakoti (rub): teach first, then remind once',
   items: [
-    { text: 'First-time teaching hand plays. Rub somewhere else on screen.', expect: 'Hand finishes its pass; nothing restarts.' },
-    { text: 'Wait for L2 / L3. Rub where no darkness remains.', expect: 'Hints stay.' },
-    { text: 'Do nothing and watch L1, L2, L3 on a patch.', expect: 'L1 about 10s: soft glow, no voice. L2 about 18s: short scratch hand + "Rub the glowing spot." (or "Keep rubbing." once some is cleared). L3 about 8s after: the longer 2-pass hand + ONE line "Rub right here." (said once per patch).' },
-    { text: 'Rub the dark area for real.', expect: 'Hint clears while you clear darkness; the clock restarts roughly every 0.7s of real rubbing.' },
-    { text: 'Finish the first patch (Sur), then stop and do nothing for about 10s.', expect: 'L1 says "Continue rubbing." (once, no glow spot). The glow spot is only for the first patch or a patch you have partly rubbed.' },
-    { text: 'Rub a big blob in the middle of a patch, then wait for L1 / L2 / L3.', expect: 'The glow spot and the hand point at a DARK (uncleared) part of the patch, never at the area you already rubbed clear.' },
-    { text: 'Rub part of a patch, then lift your finger and do nothing.', expect: 'The hint ladder restarts after you stop: L1 glow about 10s later, L2 about 18s, then L3 (it must not stay silent after a partial rub).' },
+    { text: 'First-time teaching hand plays on the first patch. Rub somewhere else on screen.', expect: 'The hand finishes its pass; nothing restarts.' },
+    { text: 'First patch, NOTHING rubbed yet: do nothing and time L1 / L2 / L3.', expect: 'L1 about 10s: a clearly visible small glow spot, no voice. L2 about 18s: a short scratch hand + "Rub the glowing spot.". L3 about 8s after that line: the longer 2-pass hand with NO voice.' },
+    { text: 'Rub a little of the first patch, then stop and do nothing.', expect: 'No hand and no glow spot. After about 10s a single "Keep rubbing." and nothing else repeats.' },
+    { text: 'Finish the first three patches (Sur, ya, ko), then on the LAST patch (ti) rub a little and stop.', expect: 'After about 10s it says "Almost there!" (the whole game is about 75% done). On the first three patches the reminder is "Keep rubbing.", never "Almost there!".' },
+    { text: 'After the reminder, keep doing nothing until about 25s.', expect: 'A soft warm light wash covers the active patch and pulses twice (about 5s), clearly lighting whatever is still dark in it, then stops. No voice. After that nothing more happens (no hand, no repeated lines).' },
+    { text: 'Rub a big blob in the middle of a patch, then wait for the 25s wash.', expect: 'The wash covers the patch and visibly lights up the parts you have NOT rubbed; the cleared area just looks normal.' },
+    { text: 'Finish a patch, then stop on the next patch without rubbing it.', expect: 'The same as step 3: about 10s a single "Keep rubbing.", about 25s the quiet glow. No hands on later patches.' },
+    { text: 'Rub part of a patch, lift your finger, do nothing, then rub again and stop again.', expect: 'The reminder timing restarts after each rub (it never stays silent after a partial rub), and the reminder speaks again only after you have rubbed again.' },
+    { text: 'Rub somewhere that has no darkness left, or tap the screen.', expect: 'The hint timing is not restarted by that.' },
     { text: 'Open and close the sidebar mid-rub.', expect: 'Rub stops cleanly; hints restart fresh.' },
   ],
 };

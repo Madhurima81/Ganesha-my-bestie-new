@@ -88,6 +88,9 @@ export const VOICE_SCRIPTS = {
       scene10_maha_keep_adding: {
         text: "Keep adding logs to the raft."
       },
+      scene10_maha_next_log: {
+        text: "Drag the next log."
+      },
 
 
       // ── Shared instructions — uncomment to activate when VO is ready ───────
@@ -132,11 +135,8 @@ export const VOICE_SCRIPTS = {
       surya_hint_keep: {
         text: "Keep rubbing."
       },
-      surya_hint_here: {
-        text: "Rub right here."
-      },
-      surya_hint_continue: {
-        text: "Continue rubbing."
+      surya_hint_almost: {
+        text: "Almost there!"
       },
       scene11_surya_keep_rubbing: {
         text: "Keep rubbing to bring back more light."

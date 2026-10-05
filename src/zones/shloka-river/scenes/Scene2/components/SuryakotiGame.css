@@ -234,6 +234,37 @@
   }
 }
 
+/* Already knows how, ~25s idle: a soft warm light wash over the active patch. It brightens whatever
+   is still dark in the patch (screen blend), pulses twice, then stops. No voice. */
+.surya-band-glow {
+  position: absolute;
+  z-index: 21;
+  pointer-events: none;
+  border-radius: 28px;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 226, 120, 0.85) 0%,
+    rgba(255, 214, 90, 0.6) 60%,
+    rgba(255, 214, 90, 0.35) 100%
+  );
+  mix-blend-mode: screen;
+  opacity: 0;
+  animation: suryaBandGlow 2.6s ease-in-out 2;
+}
+
+@keyframes suryaBandGlow {
+  0%   { opacity: 0; }
+  50%  { opacity: 0.8; }
+  100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .surya-band-glow {
+    animation: none;
+    opacity: 0.45;
+  }
+}
+
 @keyframes suryaRubHint {
   0%, 100% {
     opacity: 0.5;
