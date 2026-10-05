@@ -580,20 +580,18 @@ const ShlokaRiverFinaleContent = ({
     return () => revealFallback?.();
   }, [isAudioOn, phase, playVoice, safeSetTimeout]);
 
-  // GMB Hint Standard v1, finale variant, via the shared hook: L1 is
-  // visual-only (every remaining boat gets the same neutral nudge — no
-  // answer revealed). L2 is a meaning-recall clue VO, never the word/boat
-  // itself. L3 clearly reveals the correct boat and, as the final rescue,
-  // speaks the word. Enabled only once the child is actually waiting on a
-  // specific slot — never while the opening whole-Shloka listen or a
-  // pair-reinforcement replay is still talking.
+  // Finale hint = a 2-step recall system (the boats are already in front of the child, so no
+  // "look at the boats" nudge):
+  //   hintLevel 1 (~13s idle) → meaning-clue VO (never the word/boat itself)
+  //   hintLevel >=2 (~25s idle) → correct boat glows and STAYS lit; the word is spoken once
+  // A 2nd wrong answer plays the meaning clue early (handled below, not by the hook's escalation,
+  // which would jump straight to the rescue). Enabled only once the child is actually waiting on a
+  // specific slot — never while the opening whole-Shloka listen or a pair-reinforcement replay
+  // is still talking.
   const {
     hintLevel,
     markInteraction,
     markAttempt,
-    markWrongAttempt,
-    markLevel2VoiceStarted,
-    markLevel2VoiceEnded,
   } = useRepeatedHintCycle({
     enabled: phase === PHASES.ARRANGE
       && buildReady
@@ -601,50 +599,65 @@ const ShlokaRiverFinaleContent = ({
       && !sailingWordId
       && hintReadySlot === activeSlotIndex,
     stageKey: phase === PHASES.ARRANGE ? `finale-slot-${activeSlotIndex}` : phase,
-    initialDelay: 10000,
+    initialDelay: 13000,
     pulseCountBeforeEscalation: 1,
     pulseInterval: 1800,
-    level2Delay: 18000,
-    level3Delay: 26000,
+    level2Delay: 25000,
+    level3Delay: 40000, // no new behaviour at L3 — the rescue stays as-is
   });
+
+  const clueSpokenSlotRef = useRef(null);
+  const wrongCountRef = useRef(0);
 
   useEffect(() => {
     lastFinaleHintVoRef.current = null;
+    clueSpokenSlotRef.current = null;
+    wrongCountRef.current = 0;
   }, [activeSlotIndex]);
+
+  // Meaning clue, once per slot — from the idle ladder (L1) or an early 2nd wrong answer.
+  const playMeaningClue = useCallback(() => {
+    if (clueSpokenSlotRef.current === activeSlotIndex) return;
+    const meaningKey = FINALE_HINT_VO_KEY[SHLOKA_WORDS[activeSlotIndex]?.id]?.l2;
+    if (!meaningKey) return;
+    clueSpokenSlotRef.current = activeSlotIndex;
+    playVoice?.(meaningKey, undefined, { replayOnReturn: false, minDelayAfterVoiceMs: 5000 });
+  }, [activeSlotIndex, playVoice]);
 
   useEffect(() => {
     if (
       phase !== PHASES.ARRANGE
       || !buildReady
       || hintReadySlot !== activeSlotIndex
-      || hintLevel < 2
+      || hintLevel < 1
     ) {
+      return;
+    }
+
+    if (hintLevel === 1) {
+      playMeaningClue();
       return;
     }
 
     const target = SHLOKA_WORDS[activeSlotIndex];
     if (!target) return;
 
-    const onceKey = `${activeSlotIndex}-${hintLevel}`;
+    const onceKey = `${activeSlotIndex}-rescue`;
     if (lastFinaleHintVoRef.current === onceKey) return;
     lastFinaleHintVoRef.current = onceKey;
-
-    if (hintLevel === 2) {
-      const meaningKey = FINALE_HINT_VO_KEY[target.id]?.l2;
-      if (meaningKey) {
-        if (playVoice) markLevel2VoiceStarted();
-        playVoice?.(meaningKey, markLevel2VoiceEnded, { replayOnReturn: false, minDelayAfterVoiceMs: 5000 });
-      } else {
-        markLevel2VoiceEnded();
-      }
-      return;
-    }
 
     const revealKey = FINALE_HINT_VO_KEY[target.id]?.l3;
     if (revealKey) {
       playVoice?.(revealKey, undefined, { replayOnReturn: false, minDelayAfterVoiceMs: 5000 });
     }
-  }, [activeSlotIndex, buildReady, hintLevel, hintReadySlot, introTeaching, phase, playVoice, markLevel2VoiceStarted, markLevel2VoiceEnded]);
+  }, [activeSlotIndex, buildReady, hintLevel, hintReadySlot, introTeaching, phase, playVoice, playMeaningClue]);
+
+  // A wrong answer is feedback only: it never resets or postpones the ladder and never cuts a
+  // playing clue. The 2nd wrong on a slot earns the meaning clue early.
+  const noteWrongAnswer = useCallback(() => {
+    wrongCountRef.current += 1;
+    if (wrongCountRef.current >= 2) playMeaningClue();
+  }, [playMeaningClue]);
 
   // Resume case: the component can mount directly into ARRANGE (reload)
   // without ever going through handleStartGame's opening listen. Replay the
@@ -770,15 +783,16 @@ const ShlokaRiverFinaleContent = ({
     const isCorrect = SHLOKA_WORDS[slotIdx].id === wordData.id;
 
     if (!isCorrect) {
-      // Only a correct placement counts as real progress. A wrong guess is a genuine attempt:
-      // it never clears a visible hint, and a 2nd wrong one earns L2 help early.
+      // Only a correct placement counts as real progress. A wrong guess never clears a visible
+      // hint or cuts a playing clue, and a 2nd wrong one earns the meaning clue early.
       setWrongWordId(wordData.id);
       playSfx?.('softWrong');
-      markWrongAttempt();
+      noteWrongAnswer();
       safeSetTimeout(() => setWrongWordId(null), 500);
       return;
     }
 
+    stopAllVoice();
     markInteraction();
 
     setSlots((prev) => {
@@ -833,13 +847,14 @@ const ShlokaRiverFinaleContent = ({
     } else {
       safeSetTimeout(advance, 250);
     }
-  }, [markInteraction, markWrongAttempt, playChime, playSfx, playSparkle, playVoice, playWordAudio, safeSetTimeout, triggerSuccessFlow]);
+  }, [markInteraction, noteWrongAnswer, stopAllVoice, playChime, playSfx, playSparkle, playVoice, playWordAudio, safeSetTimeout, triggerSuccessFlow]);
 
   const handleTrayPointerDown = (e, wordData) => {
     if (phase !== PHASES.ARRANGE || usedWords.has(wordData.id)) return;
     e.preventDefault();
     dragMovedRef.current = false;
-    stopAllVoice();
+    // Don't cut a playing clue on pointer-down: a wrong drop must not silence it. Voice is
+    // stopped when the drop is correct (placeWord). Skipping the opening listen stops it itself.
     makeArrangePlayableNow();
     playUiTap();
     // Grabbing the correct boat is an attempt, not progress: a visible hint stays up, and the
@@ -903,18 +918,20 @@ const ShlokaRiverFinaleContent = ({
 
   const handleWordChipTap = (wordData) => {
     if (phase !== PHASES.ARRANGE || !buildReady || introTeaching || usedWords.has(wordData.id) || sailingWordId) return;
-    stopAllVoice();
     playUiTap();
 
     const isCorrect = currentTargetWord?.id === wordData.id;
     if (!isCorrect) {
-      // A wrong boat makes a playful little false start, then floats back.
+      // A wrong boat makes a playful little false start, then floats back. The playing clue
+      // (if any) keeps going; the hint state is untouched.
       setWrongWordId(wordData.id);
       playSfx?.('softWrong');
-      markWrongAttempt();
+      noteWrongAnswer();
       safeSetTimeout(() => setWrongWordId(null), 650);
       return;
     }
+
+    stopAllVoice();
 
     // Let the child SEE the success: the boat sails toward the glowing ripple
     // before the existing placement/audio/reinforcement logic takes over.
@@ -1169,12 +1186,12 @@ const ShlokaRiverFinaleContent = ({
 
               {phase === PHASES.ARRANGE && buildReady && !introTeaching && (
                 <div
-                  className={`srf-choice-boats${hintLevel === 1 ? ' is-hint-l1' : ''}`}
+                  className="srf-choice-boats"
                   style={{ '--srf-choice-bottom': `${debugTune.choiceBottom}%`, '--srf-choice-width': `${debugTune.choiceWidth}px` }}
                 >
                     {choiceWords.map((w, choiceIdx) => {
                       const isTargetBoat = currentTargetWord?.id === w.id;
-                      const hintClass = hintLevel >= 3 && isTargetBoat ? 'is-l3-target' : '';
+                      const hintClass = hintLevel >= 2 && isTargetBoat ? 'is-l3-target' : '';
                       return (
                         <button
                           type="button"

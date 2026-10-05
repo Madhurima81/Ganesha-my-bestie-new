@@ -1063,16 +1063,14 @@
   animation: srfWordReveal 0.35s ease-out both;
 }
 
-.srf-choice-boats.is-hint-l1 .srf-choice-boat .srf-boat-art {
-  animation: srfAllBoatsHint 1.1s ease-in-out 1;
-}
-
+/* Final rescue (~25s idle): the correct boat stays quietly lit — gold glow + gentle bob */
 .srf-choice-boat.is-l3-target {
   z-index: 6;
 }
 
 .srf-choice-boat.is-l3-target .srf-boat-art {
   animation: srfTargetBoatBob 1.15s ease-in-out infinite;
+  filter: drop-shadow(0 0 14px rgba(255, 215, 0, 0.9));
 }
 
 .srf-choice-boat.is-wrong-try .srf-boat-art {
