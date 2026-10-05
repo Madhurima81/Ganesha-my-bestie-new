@@ -1,5 +1,44 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-10-05] — Hint simplification: two-step / teach-once model (Samaprabha, Finale, Favorite Food, Dreams & Wishes, My Indian Story)
+**Touched:** SamaprabhaGame.jsx/.css, ShlokaRiverFinale.jsx/.css, Favoritefoodgame.jsx/.css, ObstacleRemoverGame.jsx, components/Wish2PlateDropGame.jsx, DreamsWishesGame.css, MyIndianStoryGame.jsx, GameTestHarness.jsx, webSpeechScripts.js, SuryakotiBankSimplified.jsx, voiceGuidance.js, testChecklists.js.
+**The model (replaces the 10s/18s/26s notice → understand → do ladder where a child already knows the mechanic):** teach HOW once, never again after the child has done it; after that the hint answers WHERE/WHICH. Recognition/recall games have no "wobble everything" step: one meaning-clue VO at ~12-13s, then ~10s after the clue ENDS the correct answer glows and stays lit, no second VO. A wrong answer never clears or restarts the hint clock and never cuts a playing clue (it shakes; the option name is spoken only BEFORE the clue starts). Personal/reflection questions keep one prompt repeat at ~10s and nothing else.
+**Changed (by scene):**
+- Samaprabha: 3 states — teach (clue 1 until ring >=22%: pulse -> "Press and hold on the shadow." -> one full hold hand), find (clues 2-4: 12s pulse + "Look for another part of the shadow.", 25s exact region held quietly, no hand), keep-holding (held >=10% then released: 9s "Keep holding." + soft glow). Hand only in teach. Added the missing `scene11_sama_find_another` / `_hint_find` / `_hint_keep` lines to both Web Speech maps (find_another was silent in the harness).
+- Shloka River Finale: ~13s meaning clue -> ~25s correct boat glows + word spoken once, stays lit; no all-boats nudge, no hand. A 2nd wrong answer on a slot plays the clue early (the hook's own escalation would have jumped to the rescue, so it is bypassed). Wrong taps/drops no longer stop voice; voice stops only on a correct answer. Layout: boats follow the left of the river in a wider zig-zag (top boats spaced apart), and each word's symbol shows large in the open water during the "say it together" recap.
+- Favorite Food (Ganesha questions): ~13s semantic clue -> glow ~10s after the clue ends; choice wobble removed. Wrong tap speaks the option name only before the clue. Rescue glow redone as a deep-gold edge + orange glow (white / pale yellow were invisible or muddy on the cream table). Child questions unchanged (one repeat at 10s).
+- Dreams & Wishes: Wish 1 clue at 13s -> kind bubbles glow (no all-bubble pulse, the 4-answer read-out removed; unkind bubbles shake only). Wish 2: hand once before the first food; after it "There's still an empty plate." + one food nudge + plate ring, never a hand. Wish 3: dashed oval hit-boxes removed (tap zones large and invisible, small golden marker per spot), one spot pulses then glows. Dream clouds: "Tap me to clear the clouds." / "Keep tapping." then Ganesha glow. Drawing: no ladder.
+- My Indian Story: Ganesha Home by what the child knows (never dragged: one hand, "Move the magnifying glass around the map." + 3-wobble nudge, hand replays once; has dragged: ONE undiscovered spot glows at 12s then a ring at ~25s, no voice). Sanskrit + festival guesses: clue at ~12s, glow ~10s after it ends, card wobble removed; the card onClicks no longer clear the hint timers (a wrong tap used to kill the help for good) and wrong taps are shake-only once the clue starts. Play button pulses twice then repeats the line once at ~11s. Language reminder now "use or hear". Personal phases unchanged.
+- Test harness: Suryakoti/Samaprabha teaching hand is gated on the intro line's action word (the harness mounted the game directly, so the hand showed immediately); Web Speech helper now passes the speech cue through.
+**Scene-by-scene status (13 live scenes):**
+
+| Scene | Zone | Two-step / teach-once hints? | Where recorded |
+|---|---|---|---|
+| Symbol Mountain Scene 1 — Modak (Flower Journey, Garland) | Symbol Mountain | Not recorded here; checklists were rewritten ("teach once, then point where") but those edits are uncommitted and not from this entry | checklist only |
+| Symbol Mountain — Pond | Symbol Mountain | Not recorded here; checklist rewritten ("teach hold once, teach drag once, lotus reminders only"), uncommitted | checklist only |
+| Symbol Mountain — Tusk (Eyes, Ears, nest) | Symbol Mountain | Not recorded here; Eyes/Ears checklists rewritten (clue -> one exact object; replay -> clue + sound -> glow), uncommitted | checklist only |
+| Symbol Mountain — Sacred Assembly (final) | Symbol Mountain | Not recorded here; checklist rewritten, uncommitted | checklist only |
+| Shloka River 1 — Vakratunda / Mahakaya | Shloka River | NO — still the 09-22 ladder (Mahakaya got a new ladder on 09-26) | not in this entry |
+| Shloka River 2 — Suryakoti | Shloka River | YES (teach first, remind once) | 10-05 earlier entry |
+| Shloka River 2 — Samaprabha | Shloka River | YES | this entry |
+| Shloka River 3 — Nirvighnam / Kurumedeva | Shloka River | NO — still the 09-22 ladder | not in this entry |
+| Shloka River 4 — Sarvakaryeshu | Shloka River | NO — 10-02 settled-L3 only | 10-02 entry |
+| Shloka River 4 — Sarvada | Shloka River | YES (12s clue + broad glow, 25s exact ring) | commit b4cbe56a, no changelog entry yet |
+| Shloka River 5 — Finale | Shloka River | YES | this entry |
+| About Me Hut — Family Tree | About Me Hut | NO | not in this entry |
+| About Me Hut — Favorite Food | About Me Hut | YES (Ganesha questions) | this entry |
+| About Me Hut — Dreams & Wishes | About Me Hut | YES | this entry |
+| About Me Hut — My Indian Story | About Me Hut | YES | this entry |
+
+**Verified:** syntax-checked with esbuild after each change; Madhurima ran the harness checklists — Samaprabha 13/14 (item 7, "find another" silent, fixed), Favorite Food 9/11 (glow fixed; item 5 awaiting a fresh-question retest), Dreams & Wishes passed ("fine"). Finale layout, My Indian Story, and the harness cue wiring were NOT confirmed in a browser. Commits: 9131ce91, 26ada340, 9002c4ee (Samaprabha/harness), 886b77ea, 81516942, 0a15aecd (Finale + Favorite Food), 122b853a (glow), cba21a73 (Dreams & Wishes), f5382500 (My Indian Story).
+**Open:** run the Finale, My Indian Story and Samaprabha-opening checklists; retest Favorite Food item 5; My Indian Story still silently replaces the oldest pick on a 4th language / 5th festival (disable-at-limit proposed, undecided); Dreams & Wishes still carries unused `wish*Level2/3` flags; "Not recorded here" Symbol Mountain rows need their own entries once those uncommitted edits are committed; Vakratunda/Mahakaya, Nirvighnam/Kurumedeva, Sarvakaryeshu, Family Tree not yet reviewed against this model.
+
+## [2026-10-05] — Zone 1 iPad pass done in harness; opening/closing cards, nest cow, Ears layout, Dreams tweaks
+**Touched (uncommitted at time of writing):** src/zones/shared/components/OpeningModal.css, src/lib/components/celebration/SceneCompletionCelebration.css, src/lib/beatPlayer/BeatPlayerGame.css, src/zones/about-me-hut/enjoy/DreamsWishesGame.css, src/zones/symbol-mountain/scenes/tusk/EarsSoundMatchGame.jsx.
+**Changed:** shared opening + closing cards on shorter iPads — card zoom 0.8, Ganesha max 180px (Pro unchanged); nest-game cow `scale: 1.2` (stopgap, the breathing animation owns transform so `scale` is used); Ears DEFAULT_LAYOUT updated from Madhurima's Visual Flow Editor JSON (centerRock, rightSource, their hit zones, cow); Dreams dream-clouded card 480x320 and Ganesha moved up/in on shorter iPads.
+**Verified:** Madhurima checked Pond, Modak, Symbol, Sacred Assembly in the harness: fine. Real-device check is next (the harness lays the game out ~44px below the visible area, so bottom-edge cut-offs there are partly an artifact).
+**Open:** nest cow size/position (use the layout debug `?game=sm-tusk-nest-debug`, then paste into tuskNestFlow.json); a saved Ears layout in the browser overrides the new defaults; real-device iPad checks for all three zones; Zone 2 scenes 05-09 not individually passed.
+
 ## [2026-10-05] — Shloka River: Sarvada picture + boat sized for shorter iPads
 **Touched:** src/zones/shloka-river/scenes/scene4/SarvadaGame.css.
 **Changed:** landscape up to 900px tall — find-the-symbol picture frame width limit 52vh -> 44vh (width changed, not zoom, so tap coordinates still map 1:1 onto the picture); boat width clamp(130px, 20vw, 210px) (was 160-280px) and the seated Ganesha clamp(32px, 4.6vw, 54px). iPad Pro unchanged.
