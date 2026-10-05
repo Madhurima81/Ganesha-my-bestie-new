@@ -346,6 +346,7 @@ const SuryakotiBankContent = ({
       scene11_sama_hint: 'Press and hold on the shadow.',
       scene11_sama_hint_move: 'Press and hold on the shadow.',
       scene11_sama_hint_hold: 'Keep holding to look closely.',
+      scene11_sama_find_another: 'Press and hold another part of the shadow.',
       scene11_sama_hint_find: 'Look for another part of the shadow.',
       scene11_sama_hint_keep: 'Keep holding.',
       scene11_sama_hint_look: 'Look again — what is really there?',
