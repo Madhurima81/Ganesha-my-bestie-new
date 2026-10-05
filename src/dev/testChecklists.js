@@ -143,7 +143,7 @@ TEST_CHECKLISTS['amh-favorite-food'] = {
     { text: 'Keep waiting to ~13s.', expect: 'One short meaning clue plays (e.g. "Look for the sweet I love."). Choices still do not move.' },
     { text: 'Keep waiting after the clue ENDS (~10s).', expect: 'The correct choice gets the strong gold glow and stays lit. No extra voice.' },
     { text: 'Wait longer. Tap empty areas.', expect: 'Glow stays; nothing repeats.' },
-    { text: 'Before the clue: tap a wrong choice.', expect: 'Wrong sound, shake, the option name is spoken; the clue timer is NOT restarted.' },
+    { text: 'On a FRESH question (remount or a new question), within the first ~10s and before any clue: tap a wrong choice.', expect: 'Wrong sound, shake, the option name is spoken; the clue timer is NOT restarted.' },
     { text: 'While the clue is speaking: tap a wrong choice.', expect: 'Wrong sound and shake only. The clue is NOT interrupted and the option name is NOT read.' },
     { text: 'After the glow is showing: tap a wrong choice.', expect: 'Wrong sound and shake; the correct choice stays glowing.' },
     { text: 'Tap the correct choice (at any point).', expect: 'Success; hint clears; the next question starts a fresh clock.' },

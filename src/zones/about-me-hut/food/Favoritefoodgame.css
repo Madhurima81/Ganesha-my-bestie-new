@@ -1694,21 +1694,29 @@
   50% { transform: translateY(-5px); }
 }
 
-/* L3: 3 strong pulses (~8s), then the animated cue ends and a quiet static gold highlight stays on
-   the correct choice until the child acts. No voice. */
+/* Rescue: 3 gentle pulses to catch the eye, then it SETTLES into a static glow that stays (the base
+   filter is what remains once the pulses finish). The table is cream/beige, so NO white or pale
+   yellow (invisible / muddy): a thin deep-gold edge outlines the food and a saturated orange glow
+   sits just outside it. */
 .choice-image.fav-hint-final {
-  filter: drop-shadow(0 0 8px rgba(255, 215, 90, 0.5));
+  filter:
+    drop-shadow(0 0 2px rgba(214, 120, 0, 1))
+    drop-shadow(0 0 10px rgba(255, 140, 0, 0.9));
   animation: favFinalReveal 2.7s ease-in-out 3;
 }
 
 @keyframes favFinalReveal {
   0%, 100% {
     transform: scale(1);
-    filter: drop-shadow(0 0 7px rgba(255, 215, 90, 0.38));
+    filter:
+      drop-shadow(0 0 2px rgba(214, 120, 0, 1))
+      drop-shadow(0 0 10px rgba(255, 140, 0, 0.9));
   }
   50% {
-    transform: scale(1.06);
-    filter: drop-shadow(0 0 16px rgba(255, 215, 90, 0.72));
+    transform: scale(1.05);
+    filter:
+      drop-shadow(0 0 3px rgba(214, 120, 0, 1))
+      drop-shadow(0 0 16px rgba(255, 130, 0, 1));
   }
 }
 
