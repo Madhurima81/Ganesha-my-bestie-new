@@ -26,6 +26,15 @@ const HOLD_MS = 1150;
 // speed, re-pressing within the grace window resumes from where it was, after that it resets.
 const HOLD_DECAY_MULTIPLIER = 2;
 const HOLD_RESET_GRACE_MS = 1000;
+// Ring progress at which the child counts as "found this clue's area" / "has learned to hold".
+const HELD_CLUE_PROGRESS = 0.1;
+const LEARNED_HOLD_PROGRESS = 0.22;
+const NEVER_MS = 3600000; // hint level that must not fire
+const HINT_VO = {
+  teach: 'scene11_sama_hint',
+  find: 'scene11_sama_hint_find',
+  keep: 'scene11_sama_hint_keep',
+};
 
 // Static metadata for each clue (id/label/art) -- positions live in
 // SAMA_DEFAULT_LAYOUT below so they can be tuned via the Layout Debug panel.
@@ -233,6 +242,10 @@ export default function SamaprabhaGame({
   const [beamPos, setBeamPos] = useState(START_BEAM);
   const [isHoldingClue, setIsHoldingClue] = useState(false);
   const [holdProgress, setHoldProgress] = useState(0);
+  // Index of the clue the child has started holding (-1 = none); drives the "keep holding" state.
+  const [heldClue, setHeldClue] = useState(-1);
+  // Set once the child has meaningfully held a shadow (clue 1) — from then on, never show the hand.
+  const hasLearnedHoldRef = useRef(false);
   const [revealPulse, setRevealPulse] = useState(null);
   const [clueVoComplete, setClueVoComplete] = useState(true);
   const stageRef = useRef(null);
@@ -319,37 +332,57 @@ export default function SamaprabhaGame({
 
   const safeAfter = pausableAfter;
 
-  const hintStageKey = phase === 'play' ? `clue-${lit}` : phase;
+  // Three different hint states, not one ladder for everything:
+  //   teach — clue 1, child hasn't yet held a shadow: HOW (pulse → "Press and hold" → full hand demo)
+  //   keep  — child started holding THIS clue and let go: they know where + how → "Keep holding." once
+  //   find  — knows the mechanic, hasn't found this clue's area: WHERE (pulse + VO → exact region, quiet)
+  // The hand (GestureDemo) is only ever shown in the teach state.
+  const isTeachingRound = lit === 0 && !hasLearnedHoldRef.current;
+  const hintMode = isTeachingRound ? 'teach' : heldClue === lit ? 'keep' : 'find';
+  const hintTiming = hintMode === 'teach'
+    ? { initialDelay: 10000, pulseCountBeforeEscalation: 3, level2Delay: 18000, level3Delay: 26000 }
+    : hintMode === 'keep'
+      ? { initialDelay: 9000, pulseCountBeforeEscalation: 1, level2Delay: NEVER_MS, level3Delay: NEVER_MS }
+      : { initialDelay: 12000, pulseCountBeforeEscalation: 1, level2Delay: 25000, level3Delay: NEVER_MS };
 
-  // GMB Hint Standard v1 — flat 10s/18s/26s from VO end or last interaction.
-  // clueVoComplete additionally gates the ladder on each clue's own reveal
-  // VO ("That's a branch!" etc.) finishing, not just the game's intro VO.
-  // A child correctly holding a shadow must never get an idle hint while
-  // the progress ring is filling.
+  const hintStageKey = phase === 'play' ? `clue-${lit}` : phase;
+  // Visual cue on the current shadow area: pulse (teach L1 / find L1), exact region held quietly
+  // (find L2), soft glow while "keep holding" (keep L1).
+  let targetHintClass = '';
+  if (hintMode === 'find' && hintLevel >= 2) targetHintClass = 'is-region';
+  else if (hintMode === 'keep' && hintLevel >= 1) targetHintClass = 'is-keep';
+  else if (hintLevel >= 1) targetHintClass = 'is-hint';
+
+  // clueVoComplete gates the ladder on each clue's own reveal VO ("That's a branch!" etc.)
+  // finishing, not just the game's intro VO. A child holding a shadow must never get an idle
+  // hint while the progress ring is filling.
   const { hintLevel, markInteraction, markLevel2VoiceStarted, markLevel2VoiceEnded } = useRepeatedHintCycle({
     enabled: isActive && !isPaused && phase === 'play' && introComplete && clueVoComplete && !isHoldingClue,
     stageKey: hintStageKey,
-    initialDelay: 10000,
-    pulseCountBeforeEscalation: 3,
     pulseInterval: 1800,
-    level2Delay: 18000,
-    level3Delay: 26000,
     paused: handPaused,
+    ...hintTiming,
   });
 
-  // L2 VO — one mechanic now: press and hold on the shadow.
+  // Hint VO per state: teach speaks at L2, find/keep speak once at their single pulse (L1).
   useEffect(() => {
-    if (!isActive || isPaused || phase !== 'play' || hintLevel !== 2) return;
+    if (!isActive || isPaused || phase !== 'play') return;
+    const speakLevel = hintMode === 'teach' ? 2 : 1;
+    if (hintLevel !== speakLevel) return;
 
-    const voiceKey = 'scene11_sama_hint_hold';
+    const voiceKey = HINT_VO[hintMode];
     const onceKey = `${lit}-${voiceKey}`;
     if (lastHintVoKeyRef.current === onceKey) return;
 
     lastHintVoKeyRef.current = onceKey;
     stopVoice?.();
-    if (playSceneLine) markLevel2VoiceStarted();
-    playSceneLine?.(voiceKey, markLevel2VoiceEnded, { replayOnReturn: false });
-  }, [hintLevel, isActive, isPaused, lit, phase, playSceneLine, stopVoice, markLevel2VoiceStarted, markLevel2VoiceEnded]);
+    if (hintMode === 'teach') {
+      if (playSceneLine) markLevel2VoiceStarted();
+      playSceneLine?.(voiceKey, markLevel2VoiceEnded, { replayOnReturn: false });
+    } else {
+      playSceneLine?.(voiceKey, undefined, { replayOnReturn: false });
+    }
+  }, [hintLevel, hintMode, isActive, isPaused, lit, phase, playSceneLine, stopVoice, markLevel2VoiceStarted, markLevel2VoiceEnded]);
 
   useEffect(() => {
     lastHintVoKeyRef.current = null;
@@ -492,6 +525,8 @@ export default function SamaprabhaGame({
 
       const progress = Math.min(resumeFrom + (now - holdStartedAtRef.current) / HOLD_MS, 1);
       setHoldProgressValue(progress);
+      if (progress >= HELD_CLUE_PROGRESS) setHeldClue(clueIndex);
+      if (progress >= LEARNED_HOLD_PROGRESS) hasLearnedHoldRef.current = true;
 
       if (progress >= 1) {
         holdRafRef.current = null;
@@ -612,6 +647,8 @@ export default function SamaprabhaGame({
     setRevealPulse(null);
     pointerIdRef.current = null;
     firstInteractionSentRef.current = false;
+    hasLearnedHoldRef.current = false;
+    setHeldClue(-1);
     doneCalledRef.current = false;
     doneAnnouncedRef.current = false;
     lastSyllableDoneRef.current = false;
@@ -947,6 +984,7 @@ export default function SamaprabhaGame({
               className={[
                 'sama-hold-target',
                 index === lit ? 'is-current' : 'is-future',
+                index === lit ? targetHintClass : '',
               ].join(' ')}
               style={{
                 left: `${clue.cx}%`,
@@ -1023,21 +1061,8 @@ export default function SamaprabhaGame({
           />
         )}
 
-        {activeClue && phase === 'play' && !showDebugPanel && !isHoldingClue && hintLevel === 2 && (
-          <GestureDemo
-            key={`sama-hold-partial-${lit}`}
-            type="hold-progress-l2"
-            from={{ x: activeClue.cx, y: activeClue.cy }}
-            to={{ x: activeClue.cx, y: activeClue.cy }}
-            active
-            idleDelay={0}
-            iterations={1}
-            paused={handPaused}
-            zIndex={46}
-          />
-        )}
-
-        {activeClue && phase === 'play' && !showDebugPanel && !isHoldingClue && hintLevel >= 3 && (
+        {/* Teach state only (clue 1, never held yet): one full hold demo. No hand after that. */}
+        {activeClue && phase === 'play' && isTeachingRound && !showDebugPanel && !isHoldingClue && hintLevel >= 3 && (
           <GestureDemo
             key={`sama-hold-full-${lit}`}
             type="hold-progress-l3"

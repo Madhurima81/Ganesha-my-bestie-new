@@ -147,6 +147,12 @@ export const VOICE_SCRIPTS = {
       scene11_sama_find_another: {
         text: "Press and hold another part of the shadow."
       },
+      scene11_sama_hint_find: {
+        text: "Look for another part of the shadow."
+      },
+      scene11_sama_hint_keep: {
+        text: "Keep holding."
+      },
       scene11SuryaDone: {
         text: "Suryakoti! You brought back the light and helped Bunny home."
       },

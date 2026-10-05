@@ -2319,3 +2319,8 @@ MooshikaRideTransition rider img switched to .webp with .png onError fallback.
 **Changed:** "Action starts the moment the stage starts" extended to Flower Journey (bush/branch/marsh no longer locked until intro VO ends; the wordless reaction runs alongside the VO) and Garland/Tusk-nest beat player (a grab/tap now cuts the narration and lets the timeline/hint clock move on). Pond and Eyes already conformed; Ears is intentionally listen-first. Added a dev-only "Emoji tuner" panel to Flower Journey (x/y/size for all 9 emojis, phase jump, Copy JSON). Commits d71492bd (beat player), adb94027 (Modak).
 **Also:** Tusk nest flow — removed standalone non-interactive story beat 0, merged its line into the twig beat (beats renumbered 0-4; saved layout-editor overrides keyed by old beat index will be off).
 **Open:** Not browser-tested. Paste tuned emoji JSON back to lock in `DEFAULT_EMOJI_LAYOUT`. BeatPlayerGame is shared (Kurumedeva etc.) — spot-check one. CHANGELOG/TASKS still carry earlier uncommitted edits, so this entry is uncommitted.
+
+## [2026-10-05]
+**Touched:** SamaprabhaGame.jsx/.css, voiceGuidance.js, SuryakotiBankSimplified.jsx, webSpeechScripts.js
+**Changed:** Samaprabha hints split into 3 states instead of one 10/18/26 ladder per clue. Teach (clue 1 until ring ≥22%): pulse → "Press and hold on the shadow." → one full hold hand. Find (clues 2–4): 12s pulse + "Look for another part of the shadow.", 25s exact region held quietly, no hand. Keep (started holding this clue, released): 9s "Keep holding." + soft glow. GestureDemo only in teach; old L2 partial hand and per-clue "scene11_sama_hint_hold" VO removed.
+**Open:** Not browser-tested. New VO keys scene11_sama_hint_find / _keep are Web Speech only until recorded (T14).

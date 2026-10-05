@@ -61,6 +61,8 @@ export const WEB_SPEECH_SCRIPTS = {
     scene11_sama_intro: 'Deer sees a strange shadow. Press and hold to look closely.',
     scene11_sama_hint: 'Press and hold on the shadow.',
     scene11_sama_hint_hold: 'Keep holding to look closely.',
+    scene11_sama_hint_find: 'Look for another part of the shadow.',
+    scene11_sama_hint_keep: 'Keep holding.',
     scene11_sama_hint_look: 'Look closely.',
     scene11_sama_reveal_branch: 'That part is just a branch.',
     scene11_sama_reveal_reeds: 'Those are just reeds and leaves.',
