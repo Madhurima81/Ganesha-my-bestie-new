@@ -33,6 +33,30 @@ Append one entry per work session. Newest on top.
 **Verified:** syntax-checked with esbuild after each change; Madhurima ran the harness checklists — Samaprabha 13/14 (item 7, "find another" silent, fixed), Favorite Food 9/11 (glow fixed; item 5 awaiting a fresh-question retest), Dreams & Wishes passed ("fine"). Finale layout, My Indian Story, and the harness cue wiring were NOT confirmed in a browser. Commits: 9131ce91, 26ada340, 9002c4ee (Samaprabha/harness), 886b77ea, 81516942, 0a15aecd (Finale + Favorite Food), 122b853a (glow), cba21a73 (Dreams & Wishes), f5382500 (My Indian Story).
 **Open:** run the Finale, My Indian Story and Samaprabha-opening checklists; retest Favorite Food item 5; My Indian Story still silently replaces the oldest pick on a 4th language / 5th festival (disable-at-limit proposed, undecided); Dreams & Wishes still carries unused `wish*Level2/3` flags; "Not recorded here" Symbol Mountain rows need their own entries once those uncommitted edits are committed; Vakratunda/Mahakaya, Nirvighnam/Kurumedeva, Sarvakaryeshu, Family Tree not yet reviewed against this model.
 
+## [2026-10-05] — iPad Safari / iPad Pro sizing: which scenes and shared components were changed (index of the 10-04 / 10-05 entries)
+**What this is:** a lookup table built from the iPad entries already in this file; nothing new was changed for it. "Shorter iPads" = landscape, up to ~900px tall (1024x670 harness size, iPad mini). "Pro" = `min-height: 901px` (iPad Pro 13). Real-device iPad checks have NOT been done for any row — all checks were in the dev harness.
+
+| Scene / component | Zone | Files | Shorter iPads (<=900px tall) | iPad Pro | Checked (harness) |
+|---|---|---|---|---|---|
+| Opening + closing/celebration cards (shared) | Shared | OpeningModal.css, SceneCompletionCelebration.css | card zoom 0.8, Ganesha max 180px | unchanged | Pond, Modak, Symbol, Sacred Assembly: fine |
+| Tusk nest game (cow) | Symbol Mountain | BeatPlayerGame.css, tuskNestFlow.json | cow `scale: 1.2` (stopgap) | — | cow size/position still open |
+| Ears sound-match | Symbol Mountain | EarsSoundMatchGame.jsx | DEFAULT_LAYOUT from the Visual Flow Editor JSON (centerRock, rightSource, hit zones, cow) | — | a saved browser layout overrides the new defaults |
+| Symbol card (all Symbol Mountain scenes) | Symbol Mountain | SymbolCardModal.css | scaled 0.85 | scaled 1.15 | from screenshots; not re-checked |
+| Symbol Mountain sidebar | Symbol Mountain | SymbolSidebar.css | tap 56->50px, icon 42->38px, gap 6->4px | unchanged | from screenshots; tap area is under the 60px rule by choice |
+| Shloka River sidebar rail | Shloka River (all scenes) | AppSidebar.css | icons 60->44px, gap 4px, pill 62px | unchanged | fine |
+| Chant card | Shloka River | ChantCardModal.css | scale 0.78 | unchanged | fine |
+| Syllable strip (shared) | Shloka River (all scenes) | SyllableHighlight.css | text 15px, tighter padding, top 56px | unchanged | NOT re-checked after the edit |
+| Sarvada (picture + boat) | Shloka River | SarvadaGame.css | picture frame 52vh->44vh, boat clamp(130px,20vw,210px), Ganesha clamp(32px,4.6vw,54px) | unchanged | from screenshots; tap accuracy on the smaller picture to confirm |
+| Sarvakaryeshu (card + boat) | Shloka River | SarvakaryeshuGame.css | card `zoom: 0.8`, top 38%, boat clamp(220px,24vw,300px) | unchanged | clearance calculated, not measured; other screens not looked at |
+| Family Tree | About Me Hut | Familytreegame.css | tree + circles scaled together; build rows/tree/circles resized; Remove/Done lowered; Ganesha on Kartikeya's row | tree/circles +10%, bigger Continue (fixed its jump on press), bigger fact card + tray, "Our Families" cards +25% | 1024x670, mini, Pro 13: fine, FROZEN |
+| My Indian Story | About Me Hut | MyIndianStoryGame.jsx/.css, AboutMeComparisonCard.css | map ~14% bigger, guess/choice/final screens re-sized in the `--u` unit | same `--u` sizing (all iPads) | Home, guess screens, language choice, final compare card on all 3 iPads: good |
+| Favorite Food | About Me Hut | Favoritefoodgame.css | choice rows 21% up; child food/activity Draw+Type lifted | Ganesha rows x1.25, child grids/hearts/ring enlarged, cards/titles 1.15-1.3 | several screens, not all on every iPad; NOT frozen; child colour screen on short iPads open |
+| Dreams & Wishes | About Me Hut | DreamsWishesGame.css | Draw-your-dream pad 0.8; dream-clouded card 480x320 and Ganesha up/in | Wish 1 globe 378px, faces x1.5, bubbles +50%, pad 1.3 | all three iPads: fine |
+
+**Still open on a real iPad (not just the harness):** the comparison screen for all 4 About Me Hut scenes (Family Tree, Favorite Food, Dreams & Wishes, My Indian Story).
+
+**Not yet iPad-passed (T20 open):** Shloka River Grove, Bank (Suryakoti/Samaprabha), Chant and Finale (scenes 05-09 not individually passed); Zone 1 and Zone 2 real-device checks. The harness lays the game out ~44px below the visible area, so bottom-edge cut-offs seen there are partly an artifact.
+
 ## [2026-10-05] — Zone 1 iPad pass done in harness; opening/closing cards, nest cow, Ears layout, Dreams tweaks
 **Touched (uncommitted at time of writing):** src/zones/shared/components/OpeningModal.css, src/lib/components/celebration/SceneCompletionCelebration.css, src/lib/beatPlayer/BeatPlayerGame.css, src/zones/about-me-hut/enjoy/DreamsWishesGame.css, src/zones/symbol-mountain/scenes/tusk/EarsSoundMatchGame.jsx.
 **Changed:** shared opening + closing cards on shorter iPads — card zoom 0.8, Ganesha max 180px (Pro unchanged); nest-game cow `scale: 1.2` (stopgap, the breathing animation owns transform so `scale` is used); Ears DEFAULT_LAYOUT updated from Madhurima's Visual Flow Editor JSON (centerRock, rightSource, their hit zones, cow); Dreams dream-clouded card 480x320 and Ganesha moved up/in on shorter iPads.
