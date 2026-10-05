@@ -57,7 +57,7 @@ const PHASE0_LAYOUT = {
   waitingAnimal0: { l: 19.6, t: 66, w: 19.4 },
   waitingAnimal1: { l: 55.9, t: 81.1, w: 16.7 },
   waitingAnimal2: { l: 38.96, t: 84.86, w: 18.2 },
-  waitingAnimal3: { l: 36.6, t: 72.9, w: 11.1 },
+  waitingAnimal3: { l: 29.48, t: 73.61, w: 11.1 },
 };
 
 const CROSS_DELTA = {
@@ -69,11 +69,13 @@ const DEFAULT_PHASE_LAYOUTS = [
   PHASE0_LAYOUT,
   {
     ...PHASE0_LAYOUT,
+    waitingAnimal3: { l: 36.6, t: 72.9, w: 11.1 },
     logTarget0: { l: 19.83, t: 43.61, w: 31.8, r: -40 },
     animal0: { l: 22.15, t: 33.68, w: 15.8 },
   },
   {
     ...PHASE0_LAYOUT,
+    waitingAnimal3: { l: 36.6, t: 72.9, w: 11.1 },
     logTarget0: { l: 31.4, t: 40.4, w: 31.8 },
     logTarget1: { l: 23.94, t: 45.44, w: 31.8, r: -41 },
     animal0: { l: 22.15, t: 33.68, w: 15.8 },
@@ -81,6 +83,7 @@ const DEFAULT_PHASE_LAYOUTS = [
   },
   {
     ...PHASE0_LAYOUT,
+    waitingAnimal3: { l: 36.6, t: 72.9, w: 11.1 },
     logTarget0: { l: 31.4, t: 40.4, w: 31.8 },
     logTarget1: { l: 33.9, t: 43.5, w: 31.8 },
     logTarget2: { l: 28.54, t: 47.43, w: 31.8, r: -41 },
@@ -90,6 +93,7 @@ const DEFAULT_PHASE_LAYOUTS = [
   },
   {
     ...PHASE0_LAYOUT,
+    waitingAnimal3: { l: 36.6, t: 72.9, w: 11.1 },
     logTarget0: { l: 31.4, t: 40.4, w: 31.8 },
     logTarget1: { l: 33.9, t: 43.5, w: 31.8 },
     logTarget2: { l: 39.6, t: 46.6, w: 31.8 },
@@ -221,6 +225,8 @@ export default function MahakayaRescueGame({
   // L2: clearer partial gesture + "Drag the log into the water."
   // L3: full gesture + "Put the log here."
   const lastHintVoRef = useRef(null);
+  // Hint level showing when the child grabbed the log: a release that misses replays the L2 line.
+  const grabbedAtLevelRef = useRef(0);
   useEffect(() => {
     if (hintLevel < 2 || phase !== 'play' || debugMode || isPaused) return;
     const voKey = `${hintStageKey}:${hintLevel}`;
@@ -577,6 +583,7 @@ export default function MahakayaRescueGame({
     // speechSynthesis utterance can jank touch responsiveness until it ends
     // (matches the stopVoice-on-grab pattern other drag scenes already use).
     stopVoice?.();
+    grabbedAtLevelRef.current = hintLevel;
     // Grabbing the log is an attempt, not progress: a visible hint stays up; the idle clock only
     // restarts when no hint is showing. Finishing the stage changes hintStageKey, which resets it.
     markAttempt();
@@ -643,6 +650,8 @@ export default function MahakayaRescueGame({
       // gesture clarity earlier (see hint-ladder block above).
       setWrongDropPulse(true);
       setWrongDropCount((c) => c + 1);
+      // The grab cut the L2 line off; the hint is still up, so say it again on release.
+      if (grabbedAtLevelRef.current === 2) playSceneLine?.('scene10_maha_drag_water');
       after(220, () => {
         setLogPos(null);
         logPosRef.current = null;
