@@ -92,7 +92,7 @@ TEST_CHECKLISTS.mahakaya = {
     { text: 'Log 1: place it. Hear "Keep adding logs to the raft."', expect: 'Plays once, not again on logs 2-4.' },
     { text: 'Logs 2-4: do nothing for ~12s.', expect: 'The log nudges twice and "Drag the next log." plays once. No hand.' },
     { text: 'Logs 2-4: keep waiting to ~25s.', expect: 'The exact spot glows quietly and stays. No hand, no further lines.' },
-    { text: 'Logs 2-4: miss the raft twice.', expect: 'The exact spot shows early; "Put the log here." plays once; no hand.' },
+    { text: 'Logs 2-4: miss the raft twice.', expect: 'The exact spot shows early; "Put the log here." plays once; a pointing hand (not a drag) appears on the drop spot.' },
     { text: 'Tap empty sky/ground at any hint stage.', expect: 'Hints keep playing; nothing restarts.' },
     { text: 'Drag each log to finish.', expect: 'Stage completes; hint clears; next log starts a fresh clock.' },
   ],

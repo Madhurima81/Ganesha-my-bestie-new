@@ -1660,7 +1660,7 @@ const PondSceneContent = ({
                 // Hold demos show the full progress ring, matching drag/swipe
                 // demos that teach the complete action path.
                 type={pondIntroGesture ? 'hold-progress-l3' : effectiveHintLevel >= 3 ? 'hold-progress-l3' : effectiveHintLevel === 2 ? 'hold-progress-l2' : 'hold'}
-                from={{ x: 40, y: 69 }}
+                from={{ x: 40, y: 62 }}
                 active={
                   (pondIntroGesture || effectiveHintLevel >= 2) &&
                   (

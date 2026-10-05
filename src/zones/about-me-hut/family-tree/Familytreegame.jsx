@@ -374,6 +374,7 @@ const FamilyTreeGameContent = ({
  const [resumeMessage, setResumeMessage] = useState('');
  // Remove flow: tap avatar -> "Remove" pill -> removed with a 5s Undo chip.
  const [undoRemoval, setUndoRemoval] = useState(null); // { member, index }
+ const [familyTrayOpen, setFamilyTrayOpen] = useState(false);
  useEffect(() => {
  if (!undoRemoval) return undefined;
  const t = setTimeout(() => setUndoRemoval(null), 5000);
@@ -510,7 +511,6 @@ const FamilyTreeGameContent = ({
  role: 'Father',
  name: 'Shiva',
  image: shivaImg,
- position: { top: '32%', left: '40%' },
  voiceLine: 'This is my father, Shiva.',
  flipTitle: 'My Father',
  funFact: 'My father is calm and strong. He sits in deep meditation high in the mountains.'
@@ -520,7 +520,6 @@ const FamilyTreeGameContent = ({
  role: 'Mother',
  name: 'Parvati',
  image: parvatiImg,
- position: { top: '32%', right: '30%' },
  voiceLine: 'This is my mother, Parvati.',
  flipTitle: 'My Mother',
  funFact: 'My mother is kind and loving. She cares for everyone and fills our home with warmth.'
@@ -530,7 +529,6 @@ const FamilyTreeGameContent = ({
  role: 'Brother',
  name: 'Kartikeya',
  image: kartikeyaImg,
- position: { top: '60%', left: '41%' },
  voiceLine: 'This is my brother, Kartikeya.',
  flipTitle: 'My Brother',
  funFact: 'My brother is brave and travels on his peacock.'
@@ -540,7 +538,6 @@ const FamilyTreeGameContent = ({
  role: 'Me',
  name: 'Ganesha',
  image: babyGaneshaImg,
- position: { top: '60%', right: '30%' },
  voiceLine: "And that's me!",
  flipTitle: 'Me',
  funFact: "That's me! I love modaks and helping my friends."
@@ -1278,7 +1275,10 @@ sceneActions.updateState({ gamePhase: 'transition' });
  const proceedToChildInput = () => {
  if (sceneState.gamePhase!== 'transition') return;
  sceneActions.updateState({ gamePhase: 'childInput' });
- scheduleTimeout(() => sceneActions.updateState({ showBottomTray: true }), 100);
+ scheduleTimeout(() => {
+ sceneActions.updateState({ showBottomTray: true });
+ setFamilyTrayOpen(true);
+ }, 100);
  };
 
  const handleSelectFamilyType = (type) => {
@@ -1320,6 +1320,7 @@ sceneActions.updateState({ gamePhase: 'transition' });
  currentFamilyType: null,
  callName: ''
  });
+ setFamilyTrayOpen(false);
 
  // Count members in each row
  const prevRow1Count = previousChildFamily.filter(m => m.row === 1).length; // Grandparents
@@ -1374,7 +1375,12 @@ sceneActions.updateState({ gamePhase: 'transition' });
  };
 
  return (
- <div className="family-tree-game">
+ <div
+ className={[
+ 'family-tree-game',
+ familyTrayOpen ? 'family-tray-is-open' : ''
+ ].filter(Boolean).join(' ')}
+ >
  <img src={familyTreeBg} alt="Background" className="tree-background" />
 
  <ZoneBadgeButton variant="gameplay" zoneId="about-me-hut" onBack={() => {
@@ -1463,10 +1469,11 @@ sceneActions.updateState({ gamePhase: 'transition' });
  key={member.id}
  className={[
  'circle-spot-with-label',
+ `family-tree-member--${member.id}`,
  sceneState.isSequencePlaying? 'blocked': '',
  member.id === 'myself' && !sceneState.placedGaneshaMembers.includes('myself')? 'self-waiting': ''
  ].filter(Boolean).join(' ')}
- style={{ ...member.position, pointerEvents: 'none' }}
+ style={{ pointerEvents: 'none' }}
  >
  {!sceneState.placedGaneshaMembers.includes(member.id)? (
  <div className="tap-hitbox" aria-hidden="true">
@@ -1539,9 +1546,15 @@ sceneActions.updateState({ gamePhase: 'transition' });
  <div className="flip-card-overlay" onClick={() => {
  sceneActions.updateState({ flippedMember: null });
  }}>
- <div className="flip-card-big" onClick={() => {
- sceneActions.updateState({ flippedMember: null });
+ <div className="flip-card-big" onClick={(e) => {
+ e.stopPropagation();
  }}>
+ <CloseButton
+ className="flip-card-close"
+ onClose={() => {
+ sceneActions.updateState({ flippedMember: null });
+ }}
+ />
  <div className="flip-card-deity">
  <img src={getPlacedDeityImage(sceneState.flippedMember).image} alt="Deity" />
  </div>
@@ -1596,6 +1609,19 @@ sceneActions.updateState({ gamePhase: 'transition' });
  {sceneState.childFamily.length > 0 && (
  <div className="tray-hint-text">Tap a member to remove</div>
  )}
+
+ <button
+ type="button"
+ className="family-tray-toggle"
+ data-family-tray-ui="true"
+ aria-label={familyTrayOpen ? 'Close family choices' : 'Open family choices'}
+ aria-expanded={familyTrayOpen}
+ onClick={() => setFamilyTrayOpen(open => !open)}
+ >
+ <span className="family-tray-toggle__visual" aria-hidden="true">
+ <img src={familyIconImg} alt="" />
+ </span>
+ </button>
 
  {/* Tree Display */}
  <div className="child-family-tree" onClick={() => sceneActions.updateState({ selectedMemberIndex: null })}>
@@ -1653,7 +1679,12 @@ sceneActions.updateState({ gamePhase: 'transition' });
 
  {/* BOTTOM TRAY (Centered & Padded) */}
  <div
- className={`bottom-member-tray ${sceneState.showBottomTray? 'tray-visible': ''}`}
+ className={[
+ 'bottom-member-tray',
+ sceneState.showBottomTray ? 'tray-visible' : '',
+ familyTrayOpen ? 'phone-tray-open' : ''
+ ].filter(Boolean).join(' ')}
+ data-family-tray-ui="true"
  style={{
  justifyContent: 'center',
  paddingLeft: '20px',
@@ -1773,21 +1804,10 @@ sceneActions.updateState({ showNameModal: false });
  {/* LEFT CARD: Ganesha */}
               <div className="tree-column slide-in-left">
                 <div className="tree-card-header">
-                  <div
-                    style={{
-                      width: '80px',
-                      height: '80px',
-                      margin: '0',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      filter: 'drop-shadow(0 3px 6px rgba(0,0,0,0.2))'
-                    }}
-                  >
+                  <div className="tree-card-avatar tree-card-avatar--ganesha">
                     <img
                       src={babyGaneshaImg}
                       alt="Ganesha icon"
-                      style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                     />
                   </div>
                   <h3 className="tree-heading">Ganesha's Family</h3>
@@ -1798,7 +1818,7 @@ sceneActions.updateState({ showNameModal: false });
  {ganeshaFamily.map(member => {
  const deity = getPlacedDeityImage(member.id);
  return (
- <div key={member.id} className="tree-member-mini ganesha-comparison-icon" style={member.position}>
+ <div key={member.id} className={`tree-member-mini ganesha-comparison-icon family-tree-member--${member.id}`}>
  <div className="mini-image ganesha-comparison-img">
  <img src={deity.image} alt={deity.name} className="ganesha-comparison-photo" />
  </div>
@@ -1812,30 +1832,17 @@ sceneActions.updateState({ showNameModal: false });
  {/* RIGHT CARD: Your Family */}
  <div className="tree-column slide-in-right">
  <div className="tree-card-header">
- <div
-style={{
-width: '74px',
-height: '74px',
-borderRadius: '50%',
-background: (activeProfile?.icon || activeProfile?.profileIcon || profileAvatarImage) ? 'transparent' : 'linear-gradient(135deg, #4ECDC4, #44A08D)',
-border: (activeProfile?.icon || activeProfile?.profileIcon || profileAvatarImage) ? 'none' : '3px solid #fff',
-display: 'flex',
-alignItems: 'center',
-justifyContent: 'center',
- fontFamily: "'Baloo 2', cursive",
- fontSize: '30px',
- color: '#fff',
- boxShadow: '0 5px 12px rgba(0,0,0,0.2)',
- overflow: 'hidden',
- margin: '0'
-}}
->
+ <div className={[
+ 'tree-card-avatar',
+ 'tree-card-avatar--profile',
+ (activeProfile?.icon || activeProfile?.profileIcon || profileAvatarImage) ? 'has-profile-image' : ''
+ ].filter(Boolean).join(' ')}>
  {activeProfile?.icon? (
- <img src={activeProfile.icon} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+ <img src={activeProfile.icon} alt="Profile" />
  ): activeProfile?.profileIcon? (
- <img src={activeProfile.profileIcon} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+ <img src={activeProfile.profileIcon} alt="Profile" />
  ): profileAvatarImage? (
- <img src={profileAvatarImage} alt={profileDisplayName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+ <img src={profileAvatarImage} alt={profileDisplayName} />
  ): (
  profileAvatar
  )}

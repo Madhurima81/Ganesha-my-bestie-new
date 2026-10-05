@@ -1,8 +1,8 @@
 import { usePreloadPoses } from '../../../../lib/components/animation/PoseImage';
 // src/zones/shloka-river/scenes/Scene1/MahakayaRescueGame.jsx
 //
-// MAHAKAYA - attach rope, pull logs into the raft, make room for everyone.
-// Each completed pull adds one log, welcomes one animal, and locks one syllable.
+// MAHAKAYA - drag each log to its spot on the raft, make room for everyone.
+// Each completed drop adds one log, welcomes one animal, and locks one syllable.
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import SyllableHighlight from '../../shared/SyllableHighlight';
@@ -202,16 +202,24 @@ export default function MahakayaRescueGame({
   // GMB Hint Standard v1 — 10s/18s/26s from mount or last interaction, flat
   // across every log. Suppressed while the child is actively dragging, so
   // hints don't fire over their hand mid-gesture.
+  // Log 1 is the learning round: full 10/18/26 ladder (nudge, partial hand + line, full hand).
+  // Logs 2-4: the child has shown they can drag, so no hand and no L3 - a ~12s nudge + "Drag the
+  // next log.", then at ~25s the exact spot glows quietly and stays (level3Delay is out of reach).
+  const isLearningLog = activeLog === 0;
   const { hintLevel, markAttempt, markLevel2VoiceStarted, markLevel2VoiceEnded } = useRepeatedHintCycle({
     enabled: isActive && !isPaused && phase === 'play' && !debugMode && !dragging,
     stageKey: hintStageKey,
-    initialDelay: 10000,
-    pulseCountBeforeEscalation: 3,
+    initialDelay: isLearningLog ? 10000 : 12000,
+    pulseCountBeforeEscalation: isLearningLog ? 3 : 2,
     pulseInterval: 1800,
-    level2Delay: 18000,
-    level3Delay: 26000,
+    level2Delay: isLearningLog ? 18000 : 25000,
+    level3Delay: isLearningLog ? 26000 : 3600000,
     paused: handPaused,
   });
+  // Set once the child has really dragged the log (pointer moved, not just a tap). From then on
+  // the hand never appears again in this scene, even after the sidebar closes.
+  const [childHasDragged, setChildHasDragged] = useState(false);
+  const grabPointRef = useRef(null);
 
   // Repeated wrong drops bring the L2-style destination clarity in earlier —
   // the first one or two misses stay visual-only (bounce + soft pulse), but
@@ -228,7 +236,15 @@ export default function MahakayaRescueGame({
   // Hint level showing when the child grabbed the log: a release that misses replays the L2 line.
   const grabbedAtLevelRef = useRef(0);
   useEffect(() => {
-    if (hintLevel < 2 || phase !== 'play' || debugMode || isPaused) return;
+    if (phase !== 'play' || debugMode || isPaused) return;
+    if (!isLearningLog) {
+      // Logs 2-4: one spoken nudge at the first pulse; the later glow is visual only.
+      if (hintLevel !== 1 || lastHintVoRef.current === hintStageKey) return;
+      lastHintVoRef.current = hintStageKey;
+      playSceneLine?.('scene10_maha_next_log');
+      return;
+    }
+    if (hintLevel < 2) return;
     const voKey = `${hintStageKey}:${hintLevel}`;
     if (lastHintVoRef.current === voKey) return;
     lastHintVoRef.current = voKey;
@@ -238,7 +254,7 @@ export default function MahakayaRescueGame({
     } else {
       playSceneLine?.('scene10_maha_place_here');
     }
-  }, [hintLevel, hintStageKey, phase, debugMode, isPaused, playSceneLine, markLevel2VoiceStarted, markLevel2VoiceEnded]);
+  }, [hintLevel, hintStageKey, isLearningLog, phase, debugMode, isPaused, playSceneLine, markLevel2VoiceStarted, markLevel2VoiceEnded]);
 
   const clearTimers = useCallback(() => {
     timers.current.forEach(clearTimeout);
@@ -274,6 +290,8 @@ export default function MahakayaRescueGame({
     setCrossing(false);
     setTeachingCompleteKey(null);
     setIntroVoStarted(false);
+    setChildHasDragged(false);
+    grabPointRef.current = null;
     lastHintVoRef.current = null;
   }, [clearTimers]);
 
@@ -282,12 +300,12 @@ export default function MahakayaRescueGame({
   // The replayed intro's cue (below) re-times it: reset the started flag so the hand waits for "Drag".
   const wasPausedForTeachRef = useRef(false);
   useEffect(() => {
-    if (wasPausedForTeachRef.current && !handPaused && completedLogsRef.current === 0) {
+    if (wasPausedForTeachRef.current && !handPaused && completedLogsRef.current === 0 && !childHasDragged) {
       setTeachingCompleteKey(null);
       setIntroVoStarted(false);
     }
     wasPausedForTeachRef.current = handPaused;
-  }, [handPaused]);
+  }, [handPaused, childHasDragged]);
 
   useEffect(() => {
     isPausedRef.current = isPaused;
@@ -593,6 +611,7 @@ export default function MahakayaRescueGame({
     draggingRef.current = 'log';
     setDragging('log');
     const point = pointFromEvent(e) || currentWaitingLog;
+    grabPointRef.current = point;
     logPosRef.current = point;
     setLogPos(point);
   };
@@ -612,6 +631,8 @@ export default function MahakayaRescueGame({
     if (draggingRef.current === 'log') {
       logPosRef.current = point;
       setLogPos(point);
+      const g = grabPointRef.current;
+      if (!childHasDragged && g && Math.hypot(point.l - g.l, point.t - g.t) > 3) setChildHasDragged(true);
     }
   };
 
@@ -650,8 +671,10 @@ export default function MahakayaRescueGame({
       // gesture clarity earlier (see hint-ladder block above).
       setWrongDropPulse(true);
       setWrongDropCount((c) => c + 1);
-      // The grab cut the L2 line off; the hint is still up, so say it again on release.
-      if (grabbedAtLevelRef.current === 2) playSceneLine?.('scene10_maha_drag_water');
+      // 2nd miss in a row: the child can drag but not where it goes - say where, once.
+      // Otherwise the grab cut the learning-round L2 line off; the hint is still up, so repeat it.
+      if (wrongDropCount === 1) playSceneLine?.('scene10_maha_place_here');
+      else if (grabbedAtLevelRef.current === 2 && isLearningLog) playSceneLine?.('scene10_maha_drag_water');
       after(220, () => {
         setLogPos(null);
         logPosRef.current = null;
@@ -876,14 +899,15 @@ export default function MahakayaRescueGame({
         );
       })()}
 
-      {/* L2 shows a short partial gesture (does not reach the target) + VO
+      {/* Log 1 only: L2 shows a short partial gesture (does not reach the target) + VO
           "Drag the log into the water."; L3 shows the full path + "Put the
-          log here." The initial teaching pass (log 1 only) is always full,
+          log here." Never after the child has really dragged once, and never on
+          logs 2-4. The initial teaching pass (log 1 only) is always full,
           one iteration, no VO, and waits for the intro VO to actually start
           speaking (introVoStarted) before its own short buffer delay — a
           fixed ms-from-mount guess doesn't track real TTS startup lag.
-          Two consecutive wrong drops bring the L2-style clarity in early
-          (effectiveHintLevel), without pulling the spoken lines forward. */}
+          Two consecutive wrong drops reveal the exact spot early (effectiveHintLevel drives the
+          drop zone only) - never the hand. */}
       <GestureDemo
         type="drag"
         from={{ x: currentWaitingLog.l, y: currentWaitingLog.t }}
@@ -899,9 +923,10 @@ export default function MahakayaRescueGame({
         }
         active={
           !debugMode && phase === 'play' && dragging !== 'log'
-          && ((needsInitialTeaching && !teachingComplete && introVoStarted) || effectiveHintLevel >= 2)
+          && !childHasDragged
+          && ((needsInitialTeaching && !teachingComplete && introVoStarted) || (isLearningLog && hintLevel >= 2))
         }
-        replayKey={needsInitialTeaching && !teachingComplete ? 'teaching' : effectiveHintLevel}
+        replayKey={needsInitialTeaching && !teachingComplete ? 'teaching' : hintLevel}
         idleDelay={needsInitialTeaching && !teachingComplete ? 150 : 0}
         // One pass for the automatic first-time teaching demo — a repeat
         // reads as nagging and delays the child's own turn. The L2/L3 hint
@@ -914,6 +939,18 @@ export default function MahakayaRescueGame({
         onDismiss={() => {
           if (needsInitialTeaching && !teachingComplete) setTeachingCompleteKey(hintStageKey);
         }}
+      />
+
+      {/* Logs 2-4, after 2 misses in a row: the child can drag but not where it goes, so a pointing
+          hand (not a drag lesson) shows the exact spot while "Put the log here." plays. */}
+      <GestureDemo
+        type="point"
+        from={{ x: currentTargetLog.l, y: currentTargetLog.t }}
+        active={!debugMode && phase === 'play' && !isLearningLog && dragging !== 'log' && wrongDropCount >= 2}
+        replayKey={wrongDropCount}
+        idleDelay={400}
+        iterations={2}
+        paused={handPaused}
       />
 
       <div
