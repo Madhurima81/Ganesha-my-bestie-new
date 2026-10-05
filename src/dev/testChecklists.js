@@ -168,6 +168,8 @@ TEST_CHECKLISTS['sr-finale'] = {
     { text: 'With a hint showing: grab the correct boat but do not place it.', expect: 'Hint stays until it is placed.' },
     { text: 'Tap or drag the correct boat while a clue is playing.', expect: 'Clue stops, success plays, the word audio is heard.' },
     { text: 'Move to the next slot and leave it idle.', expect: 'Ladder is fresh: nothing, then clue (~13s), then rescue (~25s). Clue is that slot\'s own word.' },
+    { text: 'Place all 8 boats and look at the fleet (iPad 1024x670).', expect: 'Boats follow the LEFT of the river in a zig-zag; the top boats are spaced apart; no word label sits on another boat\'s sail; the new-boat ripple lands on each boat\'s spot.' },
+    { text: 'Final "say it together" recap: watch each word being chanted.', expect: 'The chanted boat glows and comes to the front, and its symbol shows large in the open water to the right of the fleet (not hidden behind any boat). The symbol changes with each word and disappears at the end.' },
   ],
 };
 
