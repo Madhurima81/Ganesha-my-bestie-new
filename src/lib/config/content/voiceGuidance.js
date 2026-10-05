@@ -558,43 +558,36 @@ export const VOICE_SCRIPTS = {
       },
 
       hintEyes: {
-        text: "I can focus on what matters."
+        text: "Which part helps you see what matters?"
       },
       hintEars: {
-        text: "I can listen for what helps me."
+        text: "Which part helps you listen for what helps?"
       },
       hintTrunk: {
-        text: "I can be strong and gentle."
+        text: "Which part can lift something heavy and pick up something tiny?"
       },
       hintTusk: {
-        text: "I can use what I have for something important."
+        text: "Which part can still help, even when it’s broken?"
       },
       hintModak: {
-        text: "I can learn, keep trying, and find joy."
+        text: "Where does Ganesha hold his sweet?"
       },
       hintLotus: {
-        text: "I can keep growing when things are hard."
+        text: "Where does the lotus belong with Ganesha?"
       },
       hintBelly: {
-        text: "I can have lots of feelings and keep going."
+        text: "Which part can hold lots of feelings?"
       },
       hintMooshika: {
-        text: "I can keep going, one small step at a time."
+        text: "Where does Ganesha’s tiny friend belong?"
       },
 
       onboardingTapRightPart: {
         text: "Look at the symbol, then tap where it belongs."
       },
 
-      threeSymbolsPlaced: {
-        text: "You’re remembering what Ganesha’s symbols mean."
-      },
       sixSymbolsPlaced: {
         text: "Almost there — six symbols are back with Ganesha."
-      },
-
-      wrongTryAgain: {
-        text: "Try another place."
       },
 
       // Final fireworks: 2-line recap (what you did -> what it means), 700ms gap

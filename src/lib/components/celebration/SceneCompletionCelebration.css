@@ -1535,3 +1535,21 @@ transition:
     font-size: 16px;
   }
 }
+
+/* Shorter iPads (1024x670, mini): Ganesha beside the closing card was large for the space; ~20%
+   smaller. The iPad Pro (taller than 900px) is unchanged. */
+@media (orientation: landscape) and (min-width: 1000px) and (max-height: 900px) {
+  .completion-ganesha-left > * {
+    max-width: 180px;
+    max-height: 62vh;
+    object-fit: contain;
+  }
+}
+
+/* Shorter iPads: the closing card ran almost the full screen height (touching the top and bottom
+   edges). Shrink it ~12% so it sits inside the screen with a margin. Pro unchanged. */
+@media (orientation: landscape) and (min-width: 1000px) and (max-height: 900px) {
+  .celebration-card {
+    zoom: 0.8;
+  }
+}

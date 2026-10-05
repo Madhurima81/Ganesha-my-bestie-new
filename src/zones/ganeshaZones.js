@@ -3,65 +3,62 @@
 //  - GaneshaIllustration.jsx (renders clickable hitboxes)
 //  - SacredAssemblySceneV8.jsx (renders hint glows, sparkles, flying-symbol targets)
 //
-// width/height are px at the .ganesha-assembly-container's native 920x1020 design
-// size — kept in px (not %) because SacredAssemblySceneV8's getZoneCenter() does
-// px arithmetic (calc() offsets, +40px sparkle padding) on these values. The
-// container itself scales visually via CSS transform:scale() (see
-// SacredAssemblyScene.css .ganesha-assembly-container-scale-wrap), which resizes
-// everything inside proportionally without needing these values to change.
+// Positions are percentages of the square .ganesha-assembly-container. Keep
+// width/height in percentages too so the marker centers and forgiving hitboxes
+// scale consistently across iPad Pro and smaller iPad Safari layouts.
 
 export const GANESHA_ZONES = [
   {
     id: 'eyes',
     acceptTypes: ['eyes'],
     hint: 'Divine Sight',
-    position: { top: '31.8%', left: '31.4%', width: '295px', height: '105px' }
+    position: { top: '27.7%', left: '32.3%', width: '32.1%', height: '11.4%' }
   },
   {
     id: 'ears',
     acceptTypes: ['ears'],
     hint: 'Deep Listening',
     // One hint glow on the right, but two visual hitboxes (left + right ear).
-    position: { top: '24.2%', left: '61.7%', width: '170px', height: '250px' },
+    position: { top: '24.0%', left: '61.9%', width: '18.5%', height: '27.2%' },
     extraHitboxes: [
-      { hitId: 'ears-left', box: { top: '20%', left: '16%', width: '150px', height: '230px' } }
+      { hitId: 'ears-left', box: { top: '20%', left: '16%', width: '16.3%', height: '25.0%' } }
     ]
   },
   {
     id: 'trunk',
     acceptTypes: ['trunk'],
     hint: 'Removing Obstacles',
-    position: { top: '36.4%', left: '39.4%', width: '145px', height: '245px' }
+    position: { top: '30.6%', left: '40.9%', width: '15.8%', height: '26.6%' }
   },
   {
     id: 'tusk',
     acceptTypes: ['tusk'],
     hint: 'Breaking Barriers',
-    position: { top: '45.2%', left: '38.2%', width: '170px', height: '78px' }
+    position: { top: '47.1%', left: '39.5%', width: '18.5%', height: '8.5%' }
   },
   {
     id: 'left-hand',
     acceptTypes: ['modak'],
     hint: 'Sweet Blessings',
-    position: { top: '55%', right: '20%', width: '180px', height: '120px' }
+    position: { top: '58.0%', left: '59.6%', width: '19.6%', height: '13.0%' }
   },
   {
     id: 'right-hand',
     acceptTypes: ['lotus'],
     hint: 'Pure Wisdom',
-    position: { top: '38%', right: '12%', width: '140px', height: '200px' }
+    position: { top: '41.0%', left: '71.6%', width: '15.2%', height: '21.7%' }
   },
   {
     id: 'belly',
     acceptTypes: ['belly'],
     hint: 'Universe Within',
-    position: { top: '52.2%', left: '34.5%', width: '245px', height: '200px' }
+    position: { top: '52.3%', left: '35.8%', width: '26.6%', height: '21.7%' }
   },
   {
     id: 'base',
     acceptTypes: ['mooshika'],
     hint: 'Divine Vehicle',
-    position: { bottom: '10%', left: '20%', transform: 'translateX(-50%)', width: '180px', height: '180px' }
+    position: { bottom: '10%', left: '20%', transform: 'translateX(-50%)', width: '19.6%', height: '19.6%' }
   }
 ];
 

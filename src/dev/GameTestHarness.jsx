@@ -248,13 +248,17 @@ export default function GameTestHarness() {
 
   const clearStorage = useCallback(() => {
     try {
+      // Test-checklist results are tester notes, not game state — keep them.
+      const keep = 'gmb_test_checklists_v1';
+      const saved = localStorage.getItem(keep);
       localStorage.clear();
+      if (saved !== null) localStorage.setItem(keep, saved);
       sessionStorage.clear();
     } catch (err) {
       setBanner(`clear storage failed: ${err}`);
       return;
     }
-    setBanner('🧹 localStorage cleared');
+    setBanner('🧹 localStorage cleared (checklist results kept)');
     remount();
   }, [remount]);
 
