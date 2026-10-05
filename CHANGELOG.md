@@ -1,5 +1,11 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-10-05] — Dreams & Wishes: iPad sizing pass
+**Touched:** src/zones/about-me-hut/enjoy/DreamsWishesGame.css (blocks appended at the end).
+**Changed:** iPad Pro — Wish 1 globe 378px, faces ring x1.5, bubbles +50% (inline sizes overridden with !important); "Draw your dream" pad (shared Drawingpad, scoped to this scene) scaled 0.8 on shorter iPads and 1.3 on the Pro via transform (not zoom, so touch mapping stays right); "We Both Have Wishes" Continue pinned to the bottom of the overlay with 92px reserved.
+**Verified:** Madhurima checked the screens on all three iPads in the harness: fine.
+**Open:** Zone 2 (Shloka River) T20 passes. NOTE for testing: the harness lays the game out ~44px below the visible area (toolbar), so bottom-edge cut-offs there are partly a harness artifact (left unchanged by choice).
+
 ## [2026-10-05] — Favorite Food: iPad sizing pass (Pro enlargements, shorter-iPad lifts)
 **Touched:** src/zones/about-me-hut/food/Favoritefoodgame.css (blocks appended at the end).
 **Changed:** iPad Pro (`min-height: 901px`) — Ganesha choice rows (sweets 22->18% up, colours/activities/friends) scaled 1.25 with the centring translate kept in the transform; child food grid 1.25, colour hearts 1.2, activity ring 1.25 (17% up); "Your turn" card + Ganesha 1.15; celebration Ganesha/food bigger; Draw/Type 1.3x; friend-name box zoom 1.3; story header zoom 1.25; picked icon zoom 1.3; "We're Friends Now!" card/title/Continue zoom 1.3. Choice-name gap tightened (-14px, colours -24px, Pro -20/-30px). Shorter iPads (`max-height: 900px`) — choice rows 21% up; child food Draw/Type 13% up; child activity ring 29% and Draw/Type 13% up (clipped before).\n**Verified:** CSS written from Madhurima's screenshots; she checked several screens, not all on every iPad. Browser could not open localhost this session, so no direct run.\n**Open:** child colour screen on short iPads; Dreams \& Wishes and Zone 2 T20 passes; Favorite Food NOT frozen.\n

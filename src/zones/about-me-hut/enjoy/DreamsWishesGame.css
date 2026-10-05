@@ -2844,3 +2844,56 @@ font-weight: 700;
   min-width: 0;
   font-size: clamp(20px, 2.2vw, 28px);
 }
+
+/* iPad Pro, Wish 1 (make Earth smile): the globe, the six faces around it and the floating action
+   bubbles are ~50% bigger. The globe and bubble sizes are inline in the JSX, so they are overridden
+   here with !important; the faces orbit at an inline 155px radius, so the whole faces layer is
+   scaled together to keep them around the bigger globe. */
+@media (orientation: landscape) and (min-height: 901px) {
+  .dreams-wishes-game .wish-interactive-container .earth-container {
+    width: 378px !important;
+    height: 378px !important;
+  }
+  .dreams-wishes-game .wish-interactive-container .faces-container {
+    transform: scale(1.5);
+    transform-origin: 50% 50%;
+  }
+  .dreams-wishes-game .wish1-bubble-shell,
+  .dreams-wishes-game .wish1-bubble-shell > .bubble {
+    width: clamp(156px, 19.2vw, 240px) !important;
+    height: clamp(156px, 19.2vw, 240px) !important;
+  }
+}
+
+/* "Draw your dream" pad (shared Drawingpad, scoped to this scene). Shorter iPads: it filled and
+   overflowed the screen, so shrink it. Pro: it looked small, so enlarge it. A transform is used
+   (not zoom) because the drawing code maps touches through getBoundingClientRect, which follows
+   transforms. */
+@media (orientation: landscape) and (max-height: 900px) {
+  .dreams-wishes-game .drawing-overlay .simple-drawing-pad {
+    transform: scale(0.8);
+    transform-origin: 50% 50%;
+  }
+}
+@media (orientation: landscape) and (min-height: 901px) {
+  .dreams-wishes-game .drawing-overlay .simple-drawing-pad {
+    transform: scale(1.3);
+    transform-origin: 50% 50%;
+  }
+}
+
+/* "We Both Have Wishes": Continue was cut off at the bottom on all three iPads (the two cards
+   took the whole height). Pin Continue to the bottom of the overlay and reserve room for it, so the
+   cards (already flexible-height) shrink to fit above it. No transform on the button, so its press
+   effect can't move it sideways. */
+.dreams-wishes-game .friendship-overlay {
+  padding-bottom: 92px;
+}
+.dreams-wishes-game .friendship-overlay .continue-btn-simple {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  margin: 0 auto;
+  width: max-content;
+}
