@@ -2280,3 +2280,349 @@
     zoom: 1.3;
   }
 }
+
+/* ============================================================
+   PHONE LANDSCAPE (e.g. 844x390) — same condition as Familytreegame.css.
+   Every rule lives in this one block so iPad / desktop are untouched. Mechanics unchanged; each phase
+   is recomposed to fit ~360-430px of height. Doubled `.favorite-food-game.favorite-food-game` beats
+   the iPad nth-child / min-height blocks above; `!important` only where an inline style or an
+   earlier !important pins the same property.
+   ============================================================ */
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
+  /* ---- Ganesha choice rows: one compact row, no per-card arc offsets ---- */
+  .favorite-food-game.favorite-food-game .choices-container {
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 22px);
+    width: min(76vw, 620px);
+    gap: clamp(14px, 3.4vw, 36px);
+    transform: translateX(-50%);
+  }
+  .favorite-food-game.favorite-food-game .choices-container .choice-card:nth-child(n) {
+    top: 0 !important;
+  }
+  .favorite-food-game.favorite-food-game .choices-container .choice-image-container {
+    width: clamp(72px, 10vw, 90px);
+    height: clamp(72px, 10vw, 90px);
+  }
+  .favorite-food-game.favorite-food-game .choices-container .choice-name {
+    margin-top: -10px !important;
+    font-size: clamp(0.72rem, 1.7vw, 0.86rem);
+  }
+
+  /* ---- Correct reveal: Ganesha + object as one tight cluster ---- */
+  .favorite-food-game .ganesha-happy { top: 35%; }
+  .favorite-food-game .ganesha-celebrate {
+    width: clamp(120px, 17vw, 150px);
+    height: clamp(120px, 17vw, 150px);
+  }
+  .favorite-food-game .correct-food { top: 67%; }
+  .favorite-food-game .food-in-hand {
+    width: clamp(78px, 11vw, 100px) !important;
+    height: clamp(78px, 11vw, 100px) !important;
+  }
+
+  /* ---- "Your turn!": Ganesha left, card right (the column layout dropped the card off-screen) ---- */
+  .favorite-food-game .intro-overlay {
+    flex-direction: row;
+    gap: clamp(14px, 3vw, 28px);
+    padding: 12px calc(env(safe-area-inset-right, 0px) + 24px) 12px calc(env(safe-area-inset-left, 0px) + 24px);
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+  .favorite-food-game .intro-ganesha {
+    width: clamp(96px, 16vw, 132px);
+    height: auto;
+    margin: 0;
+    flex: 0 0 auto;
+  }
+  .favorite-food-game .child-phase-modal {
+    width: min(64vw, 470px) !important;
+    padding: 16px 26px !important;
+    border-radius: 26px;
+  }
+  .favorite-food-game .child-phase-title { margin: 0 0 3px; }
+  .favorite-food-game .child-phase-subtext { margin: 0 0 8px; line-height: 1.25; }
+  .favorite-food-game .child-phase-button {
+    min-height: 60px;
+    min-width: 150px;
+    margin: 4px auto 0;
+  }
+
+  /* ---- Child food: 4 x 2 grid (7 foods + My own) ---- */
+  .favorite-food-game.favorite-food-game .child-food-scene {
+    top: 52% !important;
+    bottom: auto !important;
+    width: min(76vw, 650px) !important;
+    row-gap: 6px !important;
+    column-gap: clamp(14px, 3vw, 30px) !important;
+    transform: translate(-50%, -50%) !important;
+  }
+  .favorite-food-game.favorite-food-game .child-food-scene .kid-choice-card {
+    width: clamp(66px, 8.8vw, 84px) !important;
+  }
+  .favorite-food-game.favorite-food-game .child-food-scene .kid-choice-card img {
+    width: clamp(60px, 7.6vw, 72px) !important;
+    height: clamp(60px, 7.6vw, 72px) !important;
+  }
+  .favorite-food-game .myown-circle,
+  .favorite-food-game .child-activity-scene .myown-circle {
+    width: clamp(60px, 7.6vw, 72px);
+    height: clamp(60px, 7.6vw, 72px);
+  }
+  .favorite-food-game .kid-choice-name { font-size: 0.78rem; line-height: 1.1; }
+
+  /* ---- Draw / Type popup: one compact row on the bottom edge ---- */
+  .favorite-food-game.favorite-food-game .custom-input-options.child-food-actions,
+  .favorite-food-game.favorite-food-game .custom-input-options.child-activity-actions {
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 8px);
+    margin-top: 0;
+    transform: translateX(-50%);
+  }
+  .favorite-food-game .child-food-tool-row {
+    padding: 6px;
+    gap: 8px;
+    border-radius: 18px;
+    background: rgba(255, 249, 235, 0.96);
+    box-shadow: 0 7px 18px rgba(70, 45, 25, 0.16);
+  }
+  .favorite-food-game .child-food-tool-btn {
+    min-width: 76px;
+    font-size: 0.9rem;
+    border-radius: 16px;
+  }
+
+  /* ---- Child colour: 4 x 2 grid instead of the 980x420 absolute canvas ---- */
+  .favorite-food-game.favorite-food-game .color-palette-grid {
+    top: 52%;
+    bottom: auto !important;
+    width: min(76vw, 640px) !important;   /* the base block pins width/height with !important */
+    height: auto !important;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px clamp(14px, 2.8vw, 26px);
+    transform: translate(-50%, -50%);
+  }
+  /* the heart art carries transparent margin, so the box is larger than the visible heart */
+  .favorite-food-game.favorite-food-game .color-choice-button {
+    position: relative;
+    top: auto !important;
+    left: auto !important;
+    width: clamp(88px, 11.5vw, 104px) !important;
+    height: clamp(88px, 11.5vw, 104px) !important;
+    justify-self: center;
+  }
+  /* the tap oval is a % of the button; keep it >= 60px now the button is small */
+  .favorite-food-game .color-choice-button::after {
+    width: 100%;
+    height: 100%;
+    min-width: 60px;
+    min-height: 60px;
+  }
+  .favorite-food-game .color-choice-button img {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  /* ---- Child activity: 4 x 2 grid; the inline left/top come from CHILD_ACTIVITY_POSITIONS ---- */
+  .favorite-food-game.favorite-food-game .child-activity-scene {
+    top: 52%;
+    bottom: auto !important;
+    left: 50%;
+    width: min(76vw, 660px) !important;
+    height: auto !important;
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px clamp(14px, 2.8vw, 28px);
+    transform: translate(-50%, -50%);
+  }
+  .favorite-food-game.favorite-food-game .child-activity-scene .kid-choice-card {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    width: clamp(68px, 8.8vw, 84px) !important;
+    justify-self: center;
+  }
+  .favorite-food-game.favorite-food-game .child-activity-scene .kid-choice-card img {
+    width: clamp(60px, 7.4vw, 70px) !important;
+    height: clamp(60px, 7.4vw, 70px) !important;
+  }
+
+  /* ---- Drawing: the dim wrapper hands the shared pad the whole viewport ---- */
+  .favorite-food-game .drawing-overlay {
+    padding: calc(env(safe-area-inset-top, 0px) + 4px) calc(env(safe-area-inset-right, 0px) + 4px)
+             calc(env(safe-area-inset-bottom, 0px) + 4px) calc(env(safe-area-inset-left, 0px) + 4px);
+    overflow: hidden;
+  }
+  /* The shared DrawingPad (components/Drawingpad.css) is ~666px tall: a 900x600 canvas beside a
+     12-tool column. Scoped here so the other scenes that use it are untouched. Layout:
+     [tools 3 cols] [canvas] [Done / Save]. `display: contents` lets the existing
+     container / brush group / actions take part in one grid without JSX changes. */
+  .favorite-food-game .drawing-overlay .simple-drawing-pad {
+    box-sizing: border-box;
+    align-self: stretch;
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    margin: 0;
+    padding: 4px 10px 8px;
+    border-radius: 16px;
+    display: grid;
+    align-items: stretch;   /* the base pad centres (flex column); grid items must fill their row */
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-rows: 48px minmax(0, 1fr);
+    column-gap: 10px;
+    row-gap: 4px;
+  }
+  .favorite-food-game .drawing-overlay .title-row {
+    grid-column: 1 / -1;
+    height: 48px;
+    margin: 0;
+  }
+  .favorite-food-game .drawing-overlay .simple-title { font-size: 1.05rem; }
+  .favorite-food-game .drawing-overlay .close-x-btn {
+    width: 60px;
+    height: 60px;
+    margin: -6px -4px -6px 0;
+    font-size: 1.2rem;
+  }
+  .favorite-food-game .drawing-overlay .simple-container {
+    display: contents;
+  }
+  .favorite-food-game .drawing-overlay .simple-sidebar {
+    grid-column: 1;
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: repeat(3, 60px);
+    grid-auto-rows: 60px;
+    gap: 4px;
+    padding: 6px;
+    align-content: start;
+    justify-items: center;
+    align-items: center;
+  }
+  .favorite-food-game .drawing-overlay .brush-size-icons {
+    display: contents;
+  }
+  .favorite-food-game .drawing-overlay .simple-color,
+  .favorite-food-game .drawing-overlay .simple-eraser,
+  .favorite-food-game .drawing-overlay .brush-size-btn {
+    width: 60px;
+    height: 60px;
+    min-width: 60px;
+    min-height: 60px;
+  }
+  .favorite-food-game .drawing-overlay .simple-color.active { transform: scale(1.06); }
+  .favorite-food-game .drawing-overlay .simple-canvas-wrap {
+    grid-column: 2;
+    grid-row: 2;
+    min-height: 0;
+  }
+  /* Out of flow: the canvas's intrinsic size (set from its box on mount) must not size the row. The
+     existing pointer maths scales by canvas.width / rect.width, so a stretched canvas stays accurate. */
+  .favorite-food-game .drawing-overlay .simple-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    max-height: none;
+  }
+  .favorite-food-game .drawing-overlay .drawing-actions {
+    grid-column: 3;
+    grid-row: 2;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 8px;
+    margin: 0;
+  }
+  .favorite-food-game .drawing-overlay .done-btn,
+  .favorite-food-game .drawing-overlay .download-btn {
+    margin: 0;
+    min-width: 88px;
+    min-height: 60px;
+  }
+
+  /* ---- Type modal (shared TextInputModal): wide + shallow so the landscape keyboard leaves it visible.
+     Prompt on top, text box left, Continue / Cancel stacked right. Scoped to this scene. ---- */
+  .favorite-food-game .text-input-modal {
+    box-sizing: border-box;
+    width: min(88vw, 660px);
+    max-width: none;
+    padding: 10px 18px 10px;
+    border-radius: 22px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "prompt  prompt"
+      "box     actions"
+      "counter cancel";
+    align-items: start;
+    gap: 4px 16px;
+  }
+  .favorite-food-game .text-input-prompt { grid-area: prompt; font-size: 1.1rem; line-height: 1.2; }
+  .favorite-food-game .text-input-wrapper { grid-area: box; align-self: stretch; }
+  .favorite-food-game .text-input-box { min-height: 72px; padding: 8px 12px; font-size: 1rem; }
+  .favorite-food-game .text-char-counter { grid-area: counter; margin: 0; }
+  .favorite-food-game .text-input-actions { grid-area: actions; width: auto; }
+  .favorite-food-game .text-save-btn { min-height: 60px; min-width: 140px; padding: 8px 24px; font-size: 1rem; }
+  .favorite-food-game .text-cancel-link {
+    grid-area: cancel;
+    min-height: 60px;
+    min-width: 140px;
+    font-size: 0.9rem;
+  }
+
+  /* ---- "We're Friends Now!" comparison: two short columns + Continue, no scroll ---- */
+  .favorite-food-game .aboutme-comparison-grid {
+    width: min(94vw, 820px);
+    flex: 0 0 auto;
+    margin-bottom: 0;
+    gap: 8px;
+  }
+  /* Avatar + name side by side (stacked it was ~90px of header per column) */
+  .favorite-food-game .aboutme-comparison-column-header { min-height: 44px; }
+  .favorite-food-game .aboutme-comparison-avatar-header {
+    flex-direction: row;
+    gap: 10px;
+  }
+  .favorite-food-game .aboutme-comparison-avatar {
+    width: 40px;
+    height: 40px;
+  }
+  .favorite-food-game .aboutme-comparison-avatar.is-fallback { border-width: 2px; }
+  .favorite-food-game .aboutme-comparison-avatar-name { font-size: 1rem; }
+  .favorite-food-game .aboutme-comparison-title {
+    margin: 0 0 4px;
+    font-size: clamp(1.25rem, 3vw, 1.6rem);
+  }
+  .favorite-food-game .aboutme-comparison-column {
+    min-width: 0;
+    max-width: none;
+    padding: 8px;
+    gap: 5px;
+    border-radius: 16px;
+  }
+  .favorite-food-game .aboutme-comparison-items-grid { margin-top: 0; gap: 6px; }
+  .favorite-food-game .aboutme-comparison-item {
+    min-height: 66px;
+    padding: 5px 6px;
+    border-radius: 12px;
+  }
+  .favorite-food-game .aboutme-comparison-item-media,
+  .favorite-food-game .aboutme-comparison-item-img { width: 28px; height: 28px; }
+  .favorite-food-game .aboutme-comparison-item.aboutme-best-friend-item .aboutme-comparison-item-media,
+  .favorite-food-game .aboutme-comparison-item.aboutme-best-friend-item .aboutme-comparison-item-img {
+    width: 34px;
+    height: 34px;
+  }
+  .favorite-food-game .aboutme-comparison-item-label { font-size: 11px; letter-spacing: 0.4px; }
+  .favorite-food-game .aboutme-comparison-item-text,
+  .favorite-food-game .food-comparison-typed {
+    font-size: clamp(0.78rem, 1.7vw, 0.9rem);
+    line-height: 1.12;
+  }
+  .favorite-food-game .aboutme-comparison-continue-btn {
+    min-height: 60px;
+    margin: 6px 0 0;
+    padding: 8px 24px;
+    font-size: 1rem;
+  }
+}

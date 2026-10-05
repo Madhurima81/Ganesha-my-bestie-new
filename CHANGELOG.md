@@ -1,5 +1,31 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-10-05] — Favorite Food: phone-landscape pass (same approach as Family Tree)
+**Touched:** src/zones/about-me-hut/food/Favoritefoodgame.css only (one new `@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px)` block appended at the end; no JSX change).
+**Changed:** Built from GMB_Favorite_Food_Mobile_Audit_and_Exact_Code_Plan.md but adapted to the real DOM, which differs from the doc (e.g. "My own" is the 8th grid card, not a `+` button; Draw/Type is a popup; activity positions are inline styles).
+- Ganesha rows: one compact row, nth-child offsets reset; reveal cluster re-spaced (mouse no longer overlaps Ganesha).
+- "Your turn!": Ganesha left + card right (the card was falling off the bottom).
+- Child food / activity: 4x2 grids (activity overrides the inline left/top with scoped !important, so iPad is untouched); colour: 4x2 grid replacing the 980x420 canvas (earlier `!important` width/height needed matching).
+- Draw/Type popup on the bottom edge; DrawingPad (shared) recomposed *scoped to this scene* as [3-col tool rail | canvas | Done/Save] using `display: contents`, canvas out of flow so its intrinsic size can't size the row; strokes verified at both corners + centre.
+- TextInputModal (shared, scoped here): wide + shallow grid, 60px Continue/Cancel; ~211px tall (was 342).
+- Comparison card: avatar header is a row (was stacked ~90px), title/columns/Continue no longer overlap.
+**Verified:** harness at 844x390, 667x375, 740x360 through every phase (script checks on-screen + >=60px taps + overlaps). NOT run: 932x430, real device + software keyboard (TextInputModal autofocus still on), shared opening/completion at phone sizes, iPad regression screenshot (rules are gated by max-height 500px).
+**Open:** Done + Save both kept (Save = download to device; audit suggests Done only - Madhurima's call); changes uncommitted.
+
+## [2026-10-05] — Family Tree: phone-landscape (844x390) verification + fixes
+**Touched:** src/zones/about-me-hut/family-tree/Familytreegame.css, Familytreegame.jsx.
+**Changed:** The Family Tree phone plan (GMB_Family_Tree_Mobile_Audit_and_Code_Plan.md) was already in the code from an earlier checkpoint; this session ran every phase in the harness at 667x375 / 844x390 / 932x430 and fixed what was off. All CSS is inside the phone media block (iPad untouched).
+- Ganesha 2x2: an iPad `:nth-of-type` margin rule beat the phone `top/left`, pushing the top row off-screen. Phone rule now doubled-class (no !important). Continue lowered to the bottom edge (it covered the lower labels).
+- Child tray: border-box (was ~312px wide), ends above Replay/Sound, rows flex 55-60px so all 10 fit at 360-430px high; toggle moves to the tray's left edge while open; tray now closes on member pick (it covered the name modal + its X) and reopens on cancel.
+- Done button was unreachable: the transformed / backdrop-filter tray was its fixed-position containing block, so it rode off-screen. Tray now slides with `right` + `visibility`, no transform/backdrop-filter. Done at left 22%, Remove pill / Undo toast on the same bottom row.
+- Child tree avatars sized from height (60-68px) so 3 rows + Done fit.
+- Name modal: no autofocus on phone-landscape (keyboard no longer jumps up before the question is seen) via PHONE_LANDSCAPE_QUERY in the JSX.
+- Our Families comparison: rebuilt phone layout (title + two panels + Continue fit, no scroll, names >= 11px, location chip top-right; header left-aligned <= 740px wide). Uses scoped !important only where the base rules pin the same property.
+- Follow-ups (same day): info card on phone now closes on any tap (X removed, "Tap anywhere to close" hint back, card click bubbles to the overlay on phones only); Ganesha-phase Continue moved to the right side, vertically centred (a bottom placement is cut off whenever browser bars shrink the viewport); Sound was a 48px box (iPad `.audio-toggle` !important leaking into phones) so it sat off-centre from Replay — phone block restores the shared 60px hit / 22px icon.
+- Child phase pass 2 (all inside the phone block, no iPad rule edited): Done and Remove pill smaller (46px) and stacked in the left column (Remove above Done, Undo toast in Remove's slot); child tree bigger/lower (an iPad rule was lifting it 100px and shrinking it to 78% on phones); "Tap a member to remove" hint moved off row 3. Checked with 10 members at 844x390.
+**Verified:** harness at 667x375, 844x390, 932x430 through Ganesha tree, info card, transition, child tray, name modal, 6-member tree + remove pill, comparison. NOT run: real device + software keyboard, shared opening/completion regression, 8-10 member tree, 740x360.
+**Open:** test the name modal with a real phone keyboard; check 8-10 members (rows can hold 4+); shared SceneCompletion at phone sizes; changes are uncommitted.
+
 ## [2026-10-05] — Zone 1 hint flows: Sacred Assembly fix, Eyes / Ears / Tusk nest simplified
 **Touched:** src/zones/symbol-mountain/scenes/final scene/SacredAssemblySceneV8.jsx, tusk/EyesPopUpGame.jsx, tusk/EarsSoundMatchGame.jsx, tusk/tuskNestFlow.json, src/lib/beatPlayer/BeatPlayerGame.jsx + .css, src/dev/GameTestHarness.jsx, src/dev/testChecklists.js.
 **Changed:**
