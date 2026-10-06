@@ -1502,12 +1502,43 @@ transition:
     margin-bottom: clamp(4px, 1.2dvh, 8px);
   }
 
-  /* One clear primary action, full 60px touch height. */
+  /* One compact, quiet primary action — same treatment as the OpeningModal CTA. The
+     button box stays 60px tall (the touch rule) but only a 52px pill is painted, with a
+     soft 3px base edge; the 4px above and below are transparent tap area. */
   .primary-action-container .profile-cta-btn-unified {
     width: auto;
-    min-width: clamp(180px, 32vw, 260px);
+    min-width: 158px;
     min-height: 60px;
-    padding: 8px 32px;
+    padding: 0 20px;
+    font-size: 18px;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    background: transparent;
+    box-shadow: none;
+    overflow: visible;
+    isolation: isolate;
+  }
+
+  .primary-action-container .profile-cta-btn-unified::before {
+    content: '';
+    position: absolute;
+    inset: 4px 0;
+    z-index: -1;
+    border-radius: 999px;
+    background: linear-gradient(
+      180deg,
+      var(--profile-btn-top, #C3A8F3) 0%,
+      var(--profile-btn-base, #B99AEC) 100%
+    );
+    box-shadow:
+      0 3px 0 var(--profile-btn-shadow, #9B7DD8),
+      0 6px 12px var(--profile-btn-glow, rgba(180, 158, 232, 0.20));
+  }
+
+  /* The painted pill carries the edge, so the button's own hover/press shadow stays off. */
+  .primary-action-container .profile-cta-btn-unified:hover:not(:disabled),
+  .primary-action-container .profile-cta-btn-unified:active:not(:disabled) {
+    box-shadow: none;
   }
 
   .next-adventure-subtext,

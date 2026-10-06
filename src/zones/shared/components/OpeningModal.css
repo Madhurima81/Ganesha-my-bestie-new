@@ -689,10 +689,54 @@
     padding: 1px 7px;
   }
 
-  /* One clear CTA, full 60px touch height. */
+  /* Icons sit close to the CTA below them. */
+  .game-modal-icons {
+    margin-bottom: 4px;
+  }
+
+  /* One compact, quiet CTA. The button box stays 60px tall (the touch rule) but only a
+     52px pill is painted, with a soft 3px base edge; the 4px above and below are
+     transparent tap area. overflow is visible so the pill's edge is not clipped; the
+     idle finger demo (::after) was already clipped away by the old overflow:hidden, so
+     it stays hidden here to keep the current look. */
   .profile-cta-btn-unified.opening-modal-cta {
+    min-width: 158px;
     min-height: 60px;
-    padding: 10px 28px;
+    margin-top: 4px;
+    padding: 0 20px;
+    font-size: 18px;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    background: transparent;
+    box-shadow: none;
+    overflow: visible;
+    isolation: isolate;
+  }
+
+  .profile-cta-btn-unified.opening-modal-cta::before {
+    content: '';
+    position: absolute;
+    inset: 4px 0;
+    z-index: -1;
+    border-radius: 999px;
+    background: linear-gradient(
+      180deg,
+      var(--profile-btn-top, #C3A8F3) 0%,
+      var(--profile-btn-base, #B99AEC) 100%
+    );
+    box-shadow:
+      0 3px 0 var(--profile-btn-shadow, #9B7DD8),
+      0 6px 12px var(--profile-btn-glow, rgba(180, 158, 232, 0.20));
+  }
+
+  .profile-cta-btn-unified.opening-modal-cta.cta-idle-prompt::after {
+    display: none;
+  }
+
+  /* The painted pill carries the edge, so the button's own hover/press shadow stays off. */
+  .profile-cta-btn-unified.opening-modal-cta:hover:not(:disabled),
+  .profile-cta-btn-unified.opening-modal-cta:active:not(:disabled) {
+    box-shadow: none;
   }
 }
 

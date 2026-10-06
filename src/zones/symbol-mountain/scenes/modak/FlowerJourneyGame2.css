@@ -559,4 +559,11 @@
       opacity 450ms ease,
       filter 450ms ease;
   }
+
+  /* The mud patch still pulled the eye downward — quieter than the bush/tree
+     (which stay at .18 / .55). Don't go lower or the scene feels empty. */
+  .fjg2--belly-focus .fjg2-marsh-area {
+    opacity: 0.10;
+    filter: saturate(0.35);
+  }
 }
