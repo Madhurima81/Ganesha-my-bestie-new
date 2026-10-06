@@ -30,7 +30,7 @@ const CleanProfileSelector = ({
   const [profiles, setProfiles] = useState(initialProfiles || {});
   const [showCreateProfile, setShowCreateProfile] = useState(forceCreate && !bootStage);
   const [newProfileName, setNewProfileName] = useState(resumedName);
-  const [selectedAvatar, setSelectedAvatar] = useState('monkey');
+  const [selectedAvatar, setSelectedAvatar] = useState(null);
   const [avatarTapPulseId, setAvatarTapPulseId] = useState(null);
   const [charPage, setCharPage] = useState(0);
   const [selectedAge, setSelectedAge] = useState(resumedAge);
@@ -132,7 +132,7 @@ const CleanProfileSelector = ({
     setShowCreateProfile(false);
     setCurrentStep(1);
     setNewProfileName('');
-    setSelectedAvatar('monkey');
+    setSelectedAvatar(null);
     setSelectedAge(7);
     setIsCreatingProfile(false);
     setCreateError('');
@@ -200,7 +200,7 @@ const CleanProfileSelector = ({
   // Fires once the child has picked their friend on the kid-facing avatar step —
   // this is where the profile actually gets created, then straight to the ride.
   const handleCreateProfile = () => {
-    if (!newProfileName.trim() || isCreatingProfile) return;
+    if (!newProfileName.trim() || !selectedAvatar || isCreatingProfile) return;
     setIsCreatingProfile(true);
     setCreateError('');
 
@@ -226,7 +226,7 @@ const CleanProfileSelector = ({
         } catch { /* ignore */ }
 
         setNewProfileName('');
-        setSelectedAvatar('monkey');
+        setSelectedAvatar(null);
         setSelectedAge(7);
 
         // Straight to the Mooshika ride — the child just picked their friend.
@@ -261,8 +261,8 @@ const CleanProfileSelector = ({
   // background as the create flow. (No Ganesha figure here — Ganesha's own
   // "hello" moment is the kids-facing Meet Ganesha screen after Pick Your
   // Friend.)
-  const renderHandoffCard = (inner) => (
-    <div className="clean-profile-overlay">
+  const renderHandoffCard = (inner, screenClass = '') => (
+    <div className={`clean-profile-overlay ${screenClass}`.trim()}>
       <div className="clean-forest-background">
         <div className="profile-bg-overlay" />
         <div className="profile-vignette" />
@@ -376,7 +376,6 @@ const CleanProfileSelector = ({
     return renderHandoffCard(
       <>
         <h2 className="create-step-heading">Who will join your adventure?</h2>
-        <p className="create-step-subheading">Pick a friend to explore with.</p>
         <div className="friend-carousel">
           <button
             type="button"
@@ -389,16 +388,18 @@ const CleanProfileSelector = ({
           </button>
           <div className="friend-grid">
             {pageItems.map((animal) => (
-              <div
+              <button
+                type="button"
                 key={animal.id}
                 className={`friend-card ${selectedAvatar === animal.id ? 'active' : ''} ${avatarTapPulseId === animal.id ? 'pop' : ''}`}
                 onClick={() => handleAvatarSelect(animal.id)}
                 aria-label={animal.name}
-                role="button"
+                aria-pressed={selectedAvatar === animal.id}
               >
                 <img
                   src={`/images/new-explorer-${animal.id}.webp`}
-                  alt={animal.name}
+                  alt=""
+                  aria-hidden="true"
                   onError={(e) => {
                     if (!e.currentTarget.dataset.fallback) {
                       e.currentTarget.dataset.fallback = '1';
@@ -406,7 +407,7 @@ const CleanProfileSelector = ({
                     }
                   }}
                 />
-              </div>
+              </button>
             ))}
             {Array.from({ length: fillerCount }).map((_, i) => (
               <div key={`filler-${i}`} className="friend-card filler" aria-hidden="true" />
@@ -422,16 +423,11 @@ const CleanProfileSelector = ({
             ›
           </button>
         </div>
-        <div className="friend-pagedots" role="tablist" aria-label="Friend pages">
+        <div className="friend-pagedots" aria-hidden="true">
           {Array.from({ length: charPageCount }).map((_, i) => (
-            <button
+            <span
               key={`dot-${i}`}
-              type="button"
               className={`friend-pagedot ${i === charPage ? 'active' : ''}`}
-              onClick={() => { playUiTap(0.2); setCharPage(i); }}
-              aria-label={`Page ${i + 1}`}
-              aria-selected={i === charPage}
-              role="tab"
             />
           ))}
         </div>
@@ -439,13 +435,13 @@ const CleanProfileSelector = ({
         <PrimaryBtn
           label="Let's go"
           onClick={handleCreateProfile}
-          disabled={isCreatingProfile}
+          disabled={!selectedAvatar || isCreatingProfile}
           size="md"
           fullWidth
           className="final-cta-btn"
         />
       </>,
-      'sit-hi'
+      'pick-friend-screen'
     );
   }
 
