@@ -1345,3 +1345,145 @@
   border-radius: 50%;
   pointer-events: auto;
 }
+
+/* ============================================================
+   PHONE LANDSCAPE (e.g. 844x390) — same condition as Familytreegame.css / Favoritefoodgame.css.
+   One block, so iPad / desktop are untouched. Mechanics unchanged; screens recomposed for ~360-430px
+   of height. Many of the base rules are inline styles, hence the scoped !important overrides.
+   ============================================================ */
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
+  /* The wrapper's 16/80px padding + each phase's own min-height made every screen ~100px taller than
+     the viewport (it scrolled). On phone each phase fits exactly one screen. */
+  .mis-wrapper {
+    padding: 0 !important;
+    height: var(--app-height, 100vh);
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  /* ---- Child home: bigger map so the 7 region pins stop overlapping; Continue beside the map ---- */
+  .mis-child-home-phase {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+  .mis-child-home-phase .mis-india-map-wrap {
+    --mis-map-w: min(calc(var(--app-height, 100vh) * 0.84), 60vw);
+    width: var(--mis-map-w);
+    margin: 6px auto 0 !important;
+  }
+  /* Pins are placed by inline top/left (% of the map); nudged apart so no two overlap at 23.5% width. */
+  .mis-child-home-phase .mis-region-pin[aria-label="North India"]     { top: 17% !important; left: 33% !important; }
+  .mis-child-home-phase .mis-region-pin[aria-label="Northeast India"] { top: 27% !important; left: 80% !important; }
+  .mis-child-home-phase .mis-region-pin[aria-label="Central India"]   { top: 45% !important; left: 40% !important; }
+  .mis-child-home-phase .mis-region-pin[aria-label="East India"]      { top: 52% !important; left: 65% !important; }
+  .mis-child-home-phase .mis-region-pin[aria-label="West India"]      { top: 52% !important; left: 16% !important; }
+  .mis-child-home-phase .mis-region-pin[aria-label="South India"]     { top: 77% !important; left: 36% !important; }
+  .mis-child-home-phase .mis-region-pin[aria-label="Outside India"]   { top: 78% !important; left: 79% !important; }
+  .mis-child-home-continue {
+    bottom: auto;
+    top: 50%;
+    left: 87%;
+    --mis-continue-transform: translate(-50%, -50%);
+    --mis-continue-hover-transform: translate(-50%, -50%) translateY(-3px);
+    --mis-continue-active-transform: translate(-50%, -50%) translateY(-1px);
+  }
+
+  /* ---- Child language + festival pickers: "most common" (2x2) beside "more" (4x2) ---- */
+  .mis-language-child-phase,
+  .mis-festival-child-phase {
+    padding: 50px 0 0 !important;
+    justify-content: flex-start !important;   /* grid ends above the fixed count + Continue stack */
+  }
+  .mis-language-child-panel,
+  .mis-festival-child-panel {
+    max-width: min(94vw, 780px) !important;
+    padding: 0 12px !important;
+    display: grid;
+    grid-template-columns: auto auto;
+    justify-content: center;
+    column-gap: 22px;
+    align-items: start;
+  }
+  .mis-language-child-panel > div:nth-child(1),
+  .mis-festival-child-panel > div:nth-child(1) { grid-column: 1; margin-bottom: 0 !important; }
+  .mis-language-child-panel > div:nth-child(2),
+  .mis-festival-child-panel > div:nth-child(2) { grid-column: 2; }
+  .mis-language-child-panel > div:nth-child(1) > div:last-child,
+  .mis-festival-child-panel > div:nth-child(1) > div:last-child {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+  .mis-language-child-panel > div:nth-child(2) > div:last-child,
+  .mis-festival-child-panel > div:nth-child(2) > div:last-child {
+    gap: 8px !important;
+    margin-bottom: 0 !important;
+  }
+  /* single-line festival cards (Holi, Onam...) were 59px tall: keep every card a 60px+ target */
+  .mis-language-child-panel > div button,
+  .mis-festival-child-panel > div button { min-height: 62px !important; }
+  /* count + Continue were both pinned near the bottom and overlapped; stack them */
+  .mis-language-child-count,
+  .mis-festival-child-count {
+    position: fixed;
+    left: 50%;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 72px);
+    transform: translateX(-50%);
+    margin: 0 !important;
+    font-size: 13px !important;
+    line-height: 1.1;
+    white-space: nowrap;
+    z-index: 80;
+  }
+  .mis-language-child-continue,
+  .mis-festival-child-continue {
+    position: fixed;
+    left: 50%;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 8px);
+    margin: 0 !important;
+    z-index: 80;
+    animation: none;
+    --mis-continue-transform: translateX(-50%);
+    --mis-continue-hover-transform: translateX(-50%) translateY(-3px);
+    --mis-continue-active-transform: translateX(-50%) translateY(-1px);
+  }
+
+  /* ---- Origin card ("My Indian Story"): shorter rows, 60px Continue ---- */
+  .mis-wrapper .aboutme-comparison--story-connect { padding-top: 4px; }
+  .mis-wrapper .aboutme-comparison--story-connect .aboutme-comparison-title {
+    margin: 0;
+    font-size: 1.3rem;
+    line-height: 1.1;
+  }
+  .mis-wrapper .aboutme-comparison--story-connect .aboutme-comparison-subtitle {
+    margin: 0 0 4px;
+    font-size: 0.8rem;
+    line-height: 1.1;
+  }
+  /* avatar + "<name>'s Story" on one line (stacked they cost ~45px per column) */
+  .mis-wrapper .aboutme-comparison--story-connect .aboutme-comparison-column {
+    padding: 6px 8px;
+    gap: 4px 10px;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    justify-content: center;
+  }
+  .mis-wrapper .aboutme-comparison--story-connect .aboutme-comparison-column-header {
+    grid-column: 1;
+    width: auto;
+    min-height: 0;
+  }
+  .mis-wrapper .aboutme-comparison--story-connect .aboutme-comparison-column-title {
+    grid-column: 2;
+    text-align: left;
+  }
+  .mis-wrapper .aboutme-comparison--story-connect .aboutme-comparison-items-grid { grid-column: 1 / -1; }
+  .mis-wrapper .aboutme-comparison--story-connect .aboutme-comparison-avatar { width: 34px; height: 34px; }
+  .mis-wrapper .aboutme-comparison--story-connect .aboutme-comparison-item { min-height: 0; padding: 4px 8px; }
+  .mis-wrapper .aboutme-comparison--story-connect .aboutme-comparison-continue-btn {
+    min-height: 60px;
+    margin: 6px 0 0;
+    padding: 8px 28px;
+    font-size: 1rem;
+  }
+}

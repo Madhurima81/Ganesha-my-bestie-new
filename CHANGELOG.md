@@ -1,5 +1,28 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-10-05] — My Indian Story: phone-landscape pass
+**Touched:** src/zones/about-me-hut/indian-story/MyIndianStoryGame.css (new phone `@media` block at the end), MyIndianStoryGame.jsx (one className hook: `mis-language-child-phase` on the Language Child wrapper).
+**Changed:** Inspected every phase in the harness first; Ganesha Home, Language Ganesha and Festivals Ganesha already fit, so only the broken screens were touched.
+- Wrapper: 16/80px padding + each phase's own min-height made every screen ~100px taller than the viewport (it scrolled). On phone `.mis-wrapper` is exactly one screen, no padding.
+- Child Home: map enlarged (0.84 x height), the 7 region pins nudged apart (they overlapped at any size; now 76x70, no overlaps), Continue moved to the right of the map instead of covering the bottom pins.
+- Language Child + Festivals Child (12 cards each, bottom row was cut off): "most common" 2x2 beside "more" 4x2, centred; the fixed count line and Continue were overlapping, now stacked; every card >= 62px tall (single-line festival cards were 59px).
+- Origin card: avatar + "<name>'s Story" on one line, shorter rows, title/subtitle compacted, Continue 60px (was 28px).
+**Verified:** harness at 844x390, 667x375, 740x360 through all 8 phases (scripted checks: on-screen, >=60px taps, no overlaps). NOT run: 932x430, real device, shared opening/completion at phone sizes, iPad regression screenshot (everything is gated by max-height 500px).
+**Open:** pins are moved from their geographic spots on phone only (e.g. West is further left) — Madhurima to confirm that's acceptable; changes uncommitted.
+
+## [2026-10-05] — Dreams & Wishes: phone-landscape pass (plan: GMB_Dreams_Wishes_Mobile_Audit_and_Code_Plan.md)
+**Touched:** src/zones/about-me-hut/enjoy/ObstacleRemoverGame.jsx, enjoy/DreamsWishesGame.css (new phone block at the END), enjoy/components/Wish2PlateDropGame.jsx, components/Drawingpad.css (shared; new phone block at the END), CHANGELOG.md.
+**Changed (iPad/desktop untouched — every CSS change is inside the phone media query; JSX changes are class hooks or gated on the same phone query):**
+- Wish 1: decorative face orbit hidden on phone, Earth ~203px, bubbles ~93px, max 4 live bubbles (phone only). Empty StoryProgressHeader hidden until a first discovery — PHONE ONLY for now (the plan calls it a general UX fix; iPad would also benefit, left for Madhurima's call).
+- Wish 2: phone position maps + phone animal sizes inside Wish2PlateDropGame (foods 3 over plates 3, animals beside plates, nothing near Replay/Sound); drag verified end to end.
+- Wish 3: reveal wrappers/art/butterfly/bird sized as % of the forest frame (inline px kept for iPad, overridden in the phone block); frame sized by height; hotspot tap areas grown to >= 60px with ::after.
+- All Wishes Complete: Ganesha left + compact card right (copy unchanged — shortening it needs approval).
+- DrawingPad (SHARED): phone layout = 3-column tool grid (56px cells), canvas at native 3:2, close / Done / Save column on the right, clear of Replay/Sound. An iPad `scale(0.8)` on the pad (Dreams, max-height 900) is cancelled on phone. Favorite Food uses the same pad — re-check it there.
+- Dream clouds: canvas 445x296 fits, Ganesha moved to the lower-left (124px), away from the bottom-right audio buttons.
+- Comparison: flat side-by-side, no scroll; had to beat base rules (grid flex:1, 768px column stack, dream box 259px).
+**Verified:** harness at 844x390 through Wish 1, Wish 2 (drag), Wish 3 (all reveals), All Wishes Complete, drawing, dream clouds, comparison; comparison also at 667x375.
+**Open:** run 667x375 / 740x360 / 932x430 for every phase except the comparison; hint ladders (L1/L2/L3) on phone; trunk-tap integrity (taps on Replay/canvas must not clear clouds); dream-revealed state; Wish 1 bubbles can overlap each other; Favorite Food + others using DrawingPad need a look; changes are uncommitted.
+
 ## [2026-10-05] — Favorite Food: phone-landscape pass (same approach as Family Tree)
 **Touched:** src/zones/about-me-hut/food/Favoritefoodgame.css only (one new `@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px)` block appended at the end; no JSX change).
 **Changed:** Built from GMB_Favorite_Food_Mobile_Audit_and_Exact_Code_Plan.md but adapted to the real DOM, which differs from the doc (e.g. "My own" is the 8th grid card, not a `+` button; Draw/Type is a popup; activity positions are inline styles).

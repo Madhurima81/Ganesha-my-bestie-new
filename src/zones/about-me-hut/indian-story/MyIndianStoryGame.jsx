@@ -2603,7 +2603,7 @@ const handleComplete = () => {
 
       {/* Language Child Phase — 12 Language Selection */}
       {phase === STEPS.LANGUAGE_CHILD && (
-        <div style={{
+        <div className="mis-language-child-phase" style={{
           paddingTop: 'calc(var(--u) * 5.5)',
           paddingBottom: 'calc(var(--u) * 20)',
           minHeight: 'var(--app-height, 100vh)',
