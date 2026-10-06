@@ -1,5 +1,11 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-10-06] — Mobile: compact phone CTA (OpeningModal + Completion) and plain 'Tap to collect'
+**Touched:** src/zones/shared/components/OpeningModal.css, src/lib/components/celebration/SceneCompletionCelebration.css, src/lib/components/reveal/SymbolAutoReveal.css (CSS only).
+**Changed:** Phone-landscape primary button on the opening modal and completion screen is narrower and softer: 158px min width, 18px text, 52px painted pill in a 60px tap box, 3px base edge, tighter gaps. SymbolAutoReveal 'Tap to collect' is now plain quiet text on tablet and phone (the yellow pill is gone); the whole card remains the tap target. Replaced an in-progress 5px-edge variant left uncommitted by another session.
+**Verified:** not run in a browser (Madhurima is testing). CSS-only; tablet CTA untouched.
+**Open:** on-device look at both buttons and the reveal hint; Vakratunda Grove 4:3 stage (VakratundaGroveSimplified.css) still uncommitted pending her test.
+
 ## [2026-10-06] — Symbol Mountain Tusk: nest-game phone layout + Ears elephant/cow tune
 **Touched:** scenes/tusk/tuskNestFlow.json (unchanged vs HEAD), scenes/tusk/tuskNestFlowPhone.json (NEW), scenes/tusk/tuskNestFlowSelect.js (NEW), scenes/tusk/TuskBeatPlayerLive.jsx, scenes/tusk/TuskPathGame.css, src/dev/beatPlayerPreview/tuskNest/TuskNestBeatPlayerPreview.jsx, scenes/tusk/EarsSoundMatchGame.jsx.
 **Changed:**

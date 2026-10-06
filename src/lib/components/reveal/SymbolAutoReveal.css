@@ -296,11 +296,18 @@ transition: transform 0.58s cubic-bezier(0.4, 0, 0.2, 1);}
 }
 
 .sar-hint {
+  /* Quiet instruction, not a button: the whole card is the tap target, so the text
+     ignores pointer events and the tap passes through to the card. */
+  margin-top: 10px;
   font-family: 'Nunito', sans-serif;
-  font-size: 16px;             /* up from 15 — minimum size for child legibility */
-  font-weight: 700;            /* up from 600 — Nunito at small size needs heavier weight */
-  color: #6B5A4D;              /* slightly darker for contrast */
-  letter-spacing: 0.4px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: #8f735b;
+  opacity: 0.9;
+  text-align: center;
+  letter-spacing: 0.2px;
+  pointer-events: none;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -452,13 +459,11 @@ transition: transform 0.58s cubic-bezier(0.4, 0, 0.2, 1);}
     text-align: left;
   }
 
-  /* "Tap to collect" reads as a clear Collect affordance (the whole card is tappable). */
+  /* "Tap to collect": plain quiet text, same treatment as tablet (no pill / border /
+     shadow); the whole card stays tappable. Slightly smaller on phone. */
   .sar-hint {
-    font-size: 16px;
-    padding: 6px 16px;
-    border-radius: 999px;
-    background: linear-gradient(180deg, #FFE08A 0%, #F6B93B 100%);
-    color: #4A2F10;
-    box-shadow: 0 3px 0 rgba(150, 100, 20, 0.35);
+    margin-top: 8px;
+    font-size: 13px;
+    text-align: left;
   }
 }
