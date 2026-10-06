@@ -188,7 +188,8 @@ const GaneshaIntroStory = ({ profileId, onComplete }) => {
 
     if (playback && typeof playback.catch === 'function') {
       playback.catch(() => {
-        // Skip remains available if autoplay is blocked.
+        // Autoplay blocked: go straight to the story instead of a black screen.
+        setShowVideoIntro(false);
       });
     }
 
@@ -222,9 +223,11 @@ const GaneshaIntroStory = ({ profileId, onComplete }) => {
 
   return (
     <div className="gis-overlay">
-      <button type="button" className="storySkip" onClick={finishStory}>
-        Skip
-      </button>
+      {!slide.endScreen && (
+        <button type="button" className="storySkip" onClick={finishStory}>
+          Skip
+        </button>
+      )}
 
       <div className="gis-stage">
         {slide.endScreen ? (

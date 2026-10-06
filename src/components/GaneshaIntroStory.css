@@ -459,3 +459,106 @@
     bottom: max(84px, calc(env(safe-area-inset-bottom, 0px) + 72px));
   }
 }
+
+/* ============================================================
+   INTRO STORY - SHORT LANDSCAPE PHONE (740x360-class)
+   The max-width: 700px rules above never fire on these phones.
+   Same story composition; 60px child-sized controls.
+   ============================================================ */
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
+  .gis-overlay,
+  .gis-stage {
+    width: 100vw;
+    height: var(--app-height, 100dvh);
+  }
+
+  .gis-stage {
+    max-width: none;
+  }
+
+  .gis-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .storyBeginButton {
+    min-width: 190px;
+    min-height: 60px;
+    bottom: max(14px, calc(env(safe-area-inset-bottom, 0px) + 8px));
+    padding: 0 24px;
+    font-size: 18px;
+  }
+
+  .storyNextArrow,
+  .storyBackArrow {
+    width: 60px;
+    height: 60px;
+    bottom: max(12px, calc(env(safe-area-inset-bottom, 0px) + 8px));
+  }
+
+  .storyNextArrow {
+    right: max(12px, calc(env(safe-area-inset-right, 0px) + 8px));
+  }
+
+  .storyBackArrow {
+    left: max(12px, calc(env(safe-area-inset-left, 0px) + 8px));
+  }
+
+  .storyReplayVo {
+    width: 42px;
+    height: 42px;
+    right: max(21px, calc(env(safe-area-inset-right, 0px) + 17px));
+    bottom: max(88px, calc(env(safe-area-inset-bottom, 0px) + 82px));
+  }
+
+  .storyReplayVo::after {
+    content: "";
+    position: absolute;
+    inset: -9px;
+    border-radius: 50%;
+  }
+
+  .storySkip {
+    top: max(10px, calc(env(safe-area-inset-top, 0px) + 6px));
+    right: max(10px, calc(env(safe-area-inset-right, 0px) + 6px));
+    padding: 7px 13px;
+    font-size: 14px;
+  }
+
+  .storySkip::after {
+    content: "";
+    position: absolute;
+    inset: -8px;
+    border-radius: 999px;
+  }
+
+  .gis-dots {
+    top: max(12px, calc(env(safe-area-inset-top, 0px) + 8px));
+    gap: 6px;
+  }
+
+  .endMapBg {
+    filter: blur(2px) brightness(0.95);
+    transform: scale(1.015);
+  }
+
+  .endGanesha {
+    max-width: 32vw;
+    max-height: 40dvh;
+  }
+
+  .endTitle {
+    margin: 8px 16px 0;
+    font-size: clamp(28px, 8dvh, 34px);
+    line-height: 1;
+  }
+
+  .storyStartButton {
+    min-height: 60px;
+    margin-top: 10px;
+    padding: 0 28px;
+    font-size: 18px;
+  }
+}
