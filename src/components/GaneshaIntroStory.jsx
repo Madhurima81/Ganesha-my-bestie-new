@@ -24,7 +24,7 @@ const GaneshaIntroStory = ({ profileId, onComplete }) => {
         vo: "Mom asked me to guard the door. When Shiva came, I wouldn't let him in."
       },
       {
-        image: '/intro-story/story1-img2-transition.png',
+        image: '/intro-story/story1-img2-transition.webp',
         alt: 'Parvati and Shiva after something has gone wrong',
         vo: 'Uh-oh... something went very wrong.'
       },

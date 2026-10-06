@@ -209,7 +209,11 @@
 .endGanesha {
   position: relative;
   z-index: 2;
-  width: min(36vw, 390px);
+  width: auto;
+  max-width: min(36vw, 390px);
+  /* Height cap keeps title + Start button on-screen on short landscape phones */
+  max-height: clamp(110px, 42dvh, 420px);
+  object-fit: contain;
   animation:
     endGaneshaIn 650ms ease-out both,
     floaty 3.2s 650ms ease-in-out infinite;
@@ -306,7 +310,7 @@
   }
 
   .endGanesha {
-    width: min(66vw, 340px);
+    max-width: min(66vw, 340px);
   }
 
   .storyStartButton {
@@ -382,5 +386,76 @@
 
   100% {
     transform: translateY(0);
+  }
+}
+
+/* Safe areas — keep controls clear of the status bar, camera cutout and gesture bar
+   (matters in installed/fullscreen PWA; no-op in a normal browser tab). */
+.storySkip {
+  top: max(22px, calc(env(safe-area-inset-top, 0px) + 10px));
+  right: max(22px, calc(env(safe-area-inset-right, 0px) + 10px));
+}
+
+.gis-dots {
+  top: max(24px, calc(env(safe-area-inset-top, 0px) + 12px));
+}
+
+.storyNextArrow {
+  right: max(24px, calc(env(safe-area-inset-right, 0px) + 12px));
+}
+
+.storyBackArrow {
+  left: max(24px, calc(env(safe-area-inset-left, 0px) + 12px));
+}
+
+.storyNextArrow,
+.storyBackArrow {
+  bottom: max(24px, calc(env(safe-area-inset-bottom, 0px) + 12px));
+}
+
+.storyBeginButton {
+  bottom: max(34px, calc(env(safe-area-inset-bottom, 0px) + 16px));
+}
+
+.storyReplayVo {
+  right: max(31px, calc(env(safe-area-inset-right, 0px) + 19px));
+  bottom: max(94px, calc(env(safe-area-inset-bottom, 0px) + 82px));
+}
+
+.storyEnd {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  box-sizing: border-box;
+}
+
+@media (max-width: 700px) {
+  .storySkip {
+    top: max(14px, calc(env(safe-area-inset-top, 0px) + 6px));
+    right: max(14px, calc(env(safe-area-inset-right, 0px) + 6px));
+  }
+
+  .gis-dots {
+    top: max(18px, calc(env(safe-area-inset-top, 0px) + 8px));
+  }
+
+  .storyNextArrow {
+    right: max(16px, calc(env(safe-area-inset-right, 0px) + 8px));
+  }
+
+  .storyBackArrow {
+    left: max(16px, calc(env(safe-area-inset-left, 0px) + 8px));
+  }
+
+  .storyNextArrow,
+  .storyBackArrow {
+    bottom: max(18px, calc(env(safe-area-inset-bottom, 0px) + 8px));
+  }
+
+  .storyBeginButton {
+    bottom: max(24px, calc(env(safe-area-inset-bottom, 0px) + 12px));
+  }
+
+  .storyReplayVo {
+    right: max(22px, calc(env(safe-area-inset-right, 0px) + 14px));
+    bottom: max(84px, calc(env(safe-area-inset-bottom, 0px) + 72px));
   }
 }

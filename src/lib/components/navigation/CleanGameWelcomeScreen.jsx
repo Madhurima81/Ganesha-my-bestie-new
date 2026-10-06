@@ -175,17 +175,17 @@ const CleanGameWelcomeScreen = ({
     
     if (isFirstTime) {
       return {
-        title: `Welcome to the Adventure, ${currentProfile.name}!`,
-        subtitle: "Are you excited? Let's begin your magical journey!",
+        title: `Welcome, ${currentProfile.name}!`,
+        subtitle: '',
         progressTitle: "Ready for Adventure",
-        buttonText: { main: "Start Adventure", sub: "Begin your magical journey" }
+        buttonText: { main: "Start Adventure", sub: '' }
       };
     } else {
       return {
-        title: `Welcome Back, ${currentProfile.name}!`,
-        subtitle: "Ready to continue your magical journey?",
+        title: `Welcome back, ${currentProfile.name}!`,
+        subtitle: '',
         progressTitle: "Your Journey So Far",
-        buttonText: { main: "Continue Adventure", sub: "Resume from where you left off" }
+        buttonText: { main: "Continue Adventure", sub: '' }
       };
     }
   };
@@ -540,11 +540,13 @@ const CleanGameWelcomeScreen = ({
 
   const completedSymbolKeys = collectCompletedSymbolKeys();
   const getAnimalId = (avatarData) => {
-    if (typeof avatarData === 'string' && ['monkey', 'peacock', 'squirrel', 'tiger'].includes(avatarData)) return avatarData;
+    if (typeof avatarData === 'string' && avatarData.trim() && /^[a-z0-9_-]+$/i.test(avatarData)) return avatarData;
+    if (avatarData?.id) return avatarData.id;
     const emojiToAnimal = { '🐵': 'monkey', '🦚': 'peacock', '🐿️': 'squirrel', '🐯': 'tiger' };
     return emojiToAnimal[avatarData] || 'monkey';
   };
   const animalId = getAnimalId(currentProfile?.avatar);
+  const hasMandalaCollection = completedSymbolKeys.length > 0 || (culturalProgress.chants || 0) > 0;
 
   const buildPetalStates = (count, activeValue = 'awakened') => {
     const states = {};
@@ -669,74 +671,75 @@ const CleanGameWelcomeScreen = ({
           glowColor="purple"
         />
        
-        <div className="profile-mandala-wrapper">
-          <div className="profile-mandala">
-            <InnerMandala
-              childName={currentProfile.name}
-              showAsOverlay={false}
-              allowTapToSkip={false}
-              message=""
-              shlokaPetalStates={buildPetalStates(culturalProgress.chants, 'awakened')}
-              symbolPetalStates={getMiddlePetalStatesFromKeys(completedSymbolKeys)}
-              onPetalClick={handleMandalaPetalTap}
-              avatar={
-                <img
-                  className={animalId === 'squirrel' ? 'squirrel-avatar' : ''}
-                  src={`/images/new-explorer-${animalId}.webp`}
-                  alt=""
-                  onError={(e) => { e.target.style.display = 'none'; }}
-                />
-              }
-            />
-          </div>
-        </div>
-
-        {/* ACTION BUTTONS */}
-        {isModal ? (
-          <button className="bottom-switch-explorer switch-explorer-link popup-switch-link" onClick={handleBackToProfiles}>
-            Not {currentProfile.name}? Switch Explorer
-          </button>
-        ) : (
-          <>
-            <div className="welcome-actions welcome-buttons-row profile-actions">
-              {hasProgress ? (
-                <>
-                  <PrimaryBtn
-                    label={welcomeMsg.buttonText.main}
-                    onClick={handleContinue}
-                    size="md"
-                    fullWidth
-                    className="continue-journey-btn welcome-action-btn"
+        <div className="welcome-main-layout">
+          <div className="profile-mandala-wrapper">
+            <div className="profile-mandala">
+              <InnerMandala
+                childName={currentProfile.name}
+                showAsOverlay={false}
+                allowTapToSkip={false}
+                message=""
+                shlokaPetalStates={buildPetalStates(culturalProgress.chants, 'awakened')}
+                symbolPetalStates={getMiddlePetalStatesFromKeys(completedSymbolKeys)}
+                onPetalClick={hasMandalaCollection ? handleMandalaPetalTap : undefined}
+                avatar={
+                  <img
+                    className={animalId === 'squirrel' ? 'squirrel-avatar' : ''}
+                    src={`/images/new-explorer-${animalId}.webp`}
+                    alt=""
+                    onError={(e) => { e.target.style.display = 'none'; }}
                   />
-                  <button className="secondary-btn explore-map-btn welcome-action-btn" onClick={handleNewGame}>
-                    Home
-                  </button>
-                </>
-              ) : (
-                <>
-                  <PrimaryBtn
-                    label="Start Adventure"
-                    onClick={handleStartAdventure}
-                    size="md"
-                    fullWidth
-                    className="continue-journey-btn welcome-action-btn"
-                  />
-                </>
-              )}
+                }
+              />
             </div>
-            <button className="bottom-switch-explorer switch-explorer-link" onClick={handleBackToProfiles}>
+          </div>
+
+          {isModal ? (
+            <button className="bottom-switch-explorer switch-explorer-link popup-switch-link" onClick={handleBackToProfiles}>
               Not {currentProfile.name}? Switch Explorer
             </button>
-            {hasProgress && (
-              <button
-                className="bottom-switch-explorer switch-explorer-link start-over-link"
-                onClick={() => { playUiTap(0.22); setShowNewGameConfirm(true); }}
-              >
-                Start Over
+          ) : (
+            <div className="welcome-phone-actions">
+              <div className="welcome-actions welcome-buttons-row profile-actions">
+                {hasProgress ? (
+                  <>
+                    <PrimaryBtn
+                      label={welcomeMsg.buttonText.main}
+                      onClick={handleContinue}
+                      size="md"
+                      fullWidth
+                      className="continue-journey-btn welcome-action-btn"
+                    />
+                    <button className="secondary-btn explore-map-btn welcome-action-btn" onClick={handleNewGame}>
+                      Home
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <PrimaryBtn
+                      label="Start Adventure"
+                      onClick={handleStartAdventure}
+                      size="md"
+                      fullWidth
+                      className="continue-journey-btn welcome-action-btn"
+                    />
+                  </>
+                )}
+              </div>
+              <button className="bottom-switch-explorer switch-explorer-link" onClick={handleBackToProfiles}>
+                Not {currentProfile.name}? Switch Explorer
               </button>
-            )}
-          </>
-        )}
+              {hasProgress && (
+                <button
+                  className="bottom-switch-explorer switch-explorer-link start-over-link"
+                  onClick={() => { playUiTap(0.22); setShowNewGameConfirm(true); }}
+                >
+                  Start Over
+                </button>
+              )}
+            </div>
+          )}
+        </div>
       </div>
       
       {showNewGameConfirm && (

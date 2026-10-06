@@ -1751,3 +1751,138 @@
   box-shadow: none !important;
   filter: none !important;
 }
+
+/* Fullscreen welcome keeps the bright background art; modal keeps its own dim backdrop */
+.clean-welcome-overlay--fullscreen::before {
+  background: rgba(40, 30, 70, 0.04);
+}
+
+.clean-welcome-overlay--modal::before {
+  background: transparent;
+}
+
+/* Wrapper for mandala + actions: plain centred column by default (tablet/desktop/modal) */
+.welcome-main-layout {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.welcome-phone-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+/* ============================================================
+   CHILD WELCOME - PHONE LANDSCAPE
+   Wide, shallow composition (mandala left, actions right). No scrolling.
+   The tall welcomeback.svg is a tablet shape, so phones get a cream surface instead.
+   ============================================================ */
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
+  .clean-welcome-overlay--fullscreen {
+    overflow: hidden;
+    align-items: center;
+    padding:
+      max(8px, env(safe-area-inset-top))
+      max(14px, env(safe-area-inset-right))
+      max(8px, env(safe-area-inset-bottom))
+      max(14px, env(safe-area-inset-left));
+    background-position: center 58%;
+  }
+
+  .clean-welcome-overlay--fullscreen::before {
+    background: rgba(40, 30, 70, 0.025);
+  }
+
+  .clean-welcome-overlay--fullscreen .clean-welcome-content {
+    width: min(670px, calc(100vw - 32px)) !important;
+    max-width: min(670px, calc(100vw - 32px)) !important;
+    height: auto;
+    max-height: calc(var(--app-height, 100dvh) - 18px);
+    aspect-ratio: auto !important;
+    padding: 14px 28px 16px !important;
+    gap: 4px !important;
+    background-image: none;
+    background-color: rgba(255, 253, 247, 0.94);
+    border-radius: 34px 42px 32px 46px / 38px 32px 44px 34px;
+    box-shadow: 0 12px 32px rgba(93, 67, 140, 0.12);
+  }
+
+  .clean-welcome-content .welcome-card-lotus {
+    width: 26px;
+    height: 26px;
+    margin-bottom: 0;
+  }
+
+  .clean-welcome-content .screen-header {
+    width: 100%;
+    margin: 0 0 2px;
+  }
+
+  .clean-welcome-content .screen-header-title {
+    font-size: clamp(22px, 6dvh, 27px);
+    line-height: 1;
+    margin: 0;
+  }
+
+  .clean-welcome-overlay--fullscreen .welcome-main-layout {
+    display: grid;
+    grid-template-columns: minmax(190px, 0.9fr) minmax(250px, 1.1fr);
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
+  }
+
+  .clean-welcome-overlay--fullscreen .profile-mandala-wrapper {
+    width: 100%;
+    margin: 0;
+  }
+
+  .clean-welcome-overlay--fullscreen .profile-mandala {
+    width: clamp(150px, 50dvh, 220px) !important;
+    height: clamp(150px, 50dvh, 220px) !important;
+    margin: -4px auto 0 !important;
+  }
+
+  .clean-welcome-overlay--fullscreen .profile-mandala img {
+    width: 100%;
+    height: 100%;
+  }
+
+  .clean-welcome-overlay--fullscreen .welcome-phone-actions {
+    justify-content: center;
+  }
+
+  .clean-welcome-overlay--fullscreen .profile-actions {
+    width: 100%;
+    gap: 8px;
+    margin: 0;
+  }
+
+  .clean-welcome-overlay--fullscreen .profile-actions .primary-btn-unified {
+    width: min(280px, 100%) !important;
+    min-width: 0;
+    max-width: 280px;
+    height: 60px;
+  }
+
+  .clean-welcome-overlay--fullscreen .profile-actions .secondary-btn {
+    width: min(280px, 100%);
+    min-width: 0;
+    max-width: 280px;
+    min-height: 52px;
+    height: 52px;
+  }
+
+  .clean-welcome-overlay--fullscreen .switch-explorer-link {
+    margin-top: 12px !important;
+    font-size: 14px !important;
+  }
+
+  .clean-welcome-overlay--fullscreen .start-over-link {
+    margin-top: 4px !important;
+  }
+}
