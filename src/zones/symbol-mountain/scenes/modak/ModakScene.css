@@ -208,6 +208,11 @@
   -webkit-touch-callout: none;
 }
 .modak-game-mushika-search img { -webkit-user-drag: none; user-drag: none; pointer-events: none; }
+/* Art-only shrink (~11%): the button — hit area and hold rings — keeps its full
+   size so the touch target stays generous; only the drawn Mooshika gets smaller
+   so the eye reads Mooshika → grapes → path instead of one big mouse. */
+.modak-game-mushika-search { --mooshika-art-scale: 0.89; }
+.modak-game-mushika-search > img { transform: scale(var(--mooshika-art-scale)); }
 
 .modak-game-mushika-basket-pack {
   position: absolute;

@@ -280,6 +280,14 @@
    Mooshika approaches slightly, then recoils. Story reaction, not a
    failed child interaction.
    --------------------------------------------------------- */
+/* Art-only shrink (~11%) to match the calm + marsh Mooshika. Scales the character
+   inside the wrapper (not the wrapper), so the reaction keyframes, --layout-scale
+   and the emotion badge anchoring are untouched. Feet stay planted (bottom origin). */
+.fjg2-mooshika-shared { --mooshika-art-scale: 0.89; }
+.fjg2-mooshika-shared > .fjg2-basket-character {
+  transform: scale(var(--mooshika-art-scale));
+  transform-origin: 50% 100%;
+}
 .fjg2-mooshika-shared--thorn-reaction {
   animation: fjg2ThornReaction 900ms cubic-bezier(.3, .7, .35, 1) both;
 }
@@ -379,6 +387,15 @@
   pointer-events: none;
 }
 .fjg2-marsh-mooshika .fjg2-basket-character { width: 100%; }
+/* Art-only shrink (~11%), same as the calm-phase Mooshika: the button keeps its
+   full size as the drag target; only the drawn Mooshika (and basket) shrinks.
+   Origin is bottom-centre so his feet stay planted on the stepping stone. */
+.fjg2-marsh-mooshika { --mooshika-art-scale: 0.89; }
+.fjg2-marsh-mooshika > img,
+.fjg2-marsh-mooshika > .fjg2-basket-character {
+  transform: scale(var(--mooshika-art-scale));
+  transform-origin: 50% 100%;
+}
 
 /* ---------------------------------------------------------
    Mooshika + basket
@@ -457,6 +474,11 @@
   transform: translate(-50%, -50%) scale(var(--layout-scale, 1));
 }
 .fjg2-belly-mooshika > img:first-child { width: 100%; height: auto; display: block; }
+/* Art-only shrink (~11%) to match the other Mooshika phases. Only the drawn
+   Mooshika scales — the wrapper (and so the emotion-badge arc anchored to it)
+   is unchanged. Centre origin: he is already centred on the belly glow. */
+.fjg2-belly-mooshika { --mooshika-art-scale: 0.89; }
+.fjg2-belly-mooshika > img:first-child { transform: scale(var(--mooshika-art-scale)); }
 
 .fjg2-belly-emotion { position: absolute; width: calc(clamp(46px, 4.2vw, 68px) * var(--emoji-scale, 1)); aspect-ratio: 1; height: auto; object-fit: contain; animation: fjg2EmotionIn 400ms ease both; }
 /* Left column = harder feelings (upset -> nervous -> sad), right column =
@@ -504,3 +526,37 @@
 .fjg2-lay-marker.is-sel { background: #ff5722; box-shadow: 0 0 0 3px #ff5722; }
 .fjg2-lay-marker span { position: absolute; left: 26px; top: -2px; white-space: nowrap; font: 800 11px 'Nunito', sans-serif; color: #fff; background: rgba(43, 26, 74, .85); padding: 1px 6px; border-radius: 6px; pointer-events: none; }
 .fjg2-dbg__actions { display: flex; gap: 8px; align-items: center; padding: 8px 10px; border-top: 1px solid #eee; }
+
+/* ---------------------------------------------------------
+   PHONE LANDSCAPE
+   Calm the flower journey composition on short phones
+   --------------------------------------------------------- */
+@media (orientation: landscape)
+  and (max-height: 500px)
+  and (max-width: 1023px) {
+
+  /* The default bush is very large on phone because its wrapper is already
+     at least 190px wide and then receives the tuned layout scale from JSX.
+     Reduce the wrapper only on phones. */
+  .fjg2-bush-area {
+    width: clamp(150px, 21vw, 165px);
+  }
+
+  /* Belly reflection is a focus beat. The three solved obstacles stay as faint
+     "what Mooshika just went through" memories instead of competing with
+     Ganesha + Mooshika + 6 feelings. Only these elements fade — the forest
+     background and path stay at full strength so the screen isn't washed out.
+     animation:none is needed because the reveal animation's fill-mode (both)
+     would otherwise pin opacity at 1 and ignore the rule below. */
+  .fjg2--belly-focus .fjg2-bush-area,
+  .fjg2--belly-focus .fjg2-tree-area,
+  .fjg2--belly-focus .fjg2-marsh-area {
+    animation: none;
+    opacity: 0.18;
+    filter: saturate(0.55);
+    pointer-events: none;
+    transition:
+      opacity 450ms ease,
+      filter 450ms ease;
+  }
+}

@@ -1288,7 +1288,7 @@ export default function FlowerJourneyGame2({
   const showSharedMooshika = !!mooshikaPhaseKey;
 
   return (
-    <div className={`fjg2 ${isPausedProp ? 'fjg2--paused' : ''}`} style={{ backgroundImage: `url(${forestBackground})` }}>
+    <div className={`fjg2 ${isPausedProp ? 'fjg2--paused' : ''} ${isBellyPhase ? 'fjg2--belly-focus' : ''}`} style={{ backgroundImage: `url(${forestBackground})` }}>
       {!isBellyPhase && (
         <div className="fjg2-hud" aria-label={`${flowerCount} of 6 flowers gathered`}>
           {Array.from({ length: 6 }).map((_, i) => (

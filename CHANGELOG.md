@@ -1,5 +1,59 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-10-06] — Symbol Mountain (Modak, Garland, Pond): phone hierarchy pass at 740x360
+**Touched:** scenes/modak/ModakScene.css, scenes/modak/FlowerJourneyGame2.css, scenes/modak/FlowerJourneyGame2.jsx (one className), scenes/modak/GarlandGame3.css, scenes/pond/PondScene.css.
+**Changed:**
+- **Mooshika art -11% in all four Modak phases** (calm/hold, marsh, bush+branch walking, belly) via `--mooshika-art-scale: 0.89` on the character IMAGE only — the button/wrapper is untouched, so the hold target, hold rings and marsh drag target keep full size (>=60px). Marsh and bush/branch scale from bottom-centre so feet stay planted; belly scales from centre. Applies at ALL screen sizes (not phone-gated). Grapes, background and the reaction keyframes untouched.
+- **FlowerJourneyGame2 phone landscape:** bush wrapper `clamp(150px, 21vw, 165px)` (~155 vs 190px at 740, ~18% smaller; all phases). Root gets `fjg2--belly-focus` when `isBellyPhase`; in the belly beat the bush, tree/branch and marsh fade to `opacity .18 / saturate .55` (450ms) instead of staying full strength. `animation: none` is needed on those three because the reveal animation's `both` fill-mode would pin opacity at 1.
+- **GarlandGame3 phone landscape (CSS only):** workspace `min(63vw, 470px)` centred at top 67% (was 76% wide at 72% — its bottom fell off a 360px screen); Ganesha `clamp(108px, 17vw, 126px)` at top 25%; Mooshika `clamp(72px, 11vw, 82px)`; string 58%, finished garland 54%, snapped flowers `clamp(44px, 6.5vw, 52px)`. Loose flowers stay 60px. Flower coordinates unchanged. `top` uses `!important` because position is an inline style from LAYOUT.
+- **Pond phone landscape (CSS only):** rock `clamp(82px, 13.5vw, 108px)` (~100 vs 111), reeds `clamp(60px, 9.7vw, 78px)`, lotus `clamp(68px, 9.5vw, 82px)` with min 68x72, lotus hit zone `max(68px, 9.5vw)` (was 40px min). Turtle deliberately not touched (its width is an inline style, so a CSS rule would do nothing).
+**Verified:** nothing run in a browser — CSS selectors and sizes were checked against the source only. Not seen on screen: any of the above at 740x360, 667x375, 844x390, 932x430.
+**Open:**
+- Eyeball at 740x360: bush/branch emoji badges (anchored by % of the full-size wrapper, may sit ~10% further from the smaller head); belly emotion arc looser around the smaller Mooshika; belly fade at 0.18 (try .12-.15 if the faded scenery still competes); Garland board vs Ganesha overlap.
+- Phone overrides bypass layout-editor controls: Garland `top` on workspace/Ganesha (inline + !important) and Pond rock/reeds/lotus size (`--pond-*-size` vars) can't be edited on phones via the debug panels.
+- The 11% Mooshika shrink is not phone-gated — confirm iPad/desktop are fine with it or gate it to the phone media query.
+- Nothing committed; the working tree still holds earlier uncommitted work (incl. GarlandGame3.jsx, PondSceneSimplifiedV4.jsx).
+
+## [2026-10-06] — Sarvada (Shloka River): bigger hidden-symbol picture on phones
+**Touched:** scenes/scene4/SarvadaGame.css (new phone block at the END, no JSX change).
+**Changed (phone only):** the shorter-iPad cap (44vh, ~211px wide at 740x360) is replaced by `min(52vw, 62dvh * 4/3, 360px)` -> 298px wide at 740x360 (~40% larger). Frame padding 10 -> 6px, radius tightened; boat 128-155px wide (was 130-210), bottom 1%; boat-Ganesha 31-42px; picture top 5% so the frame clears the children's heads. Aspect ratio 4:3, `object-fit: cover` and the %-based tap coordinates are untouched, so tap zones still map 1:1.
+**Verified:** 740x360 — frame 286x214 (ratio 1.336), children's faces visible above the boat, hint ring shows on the picture. Not run: an actual symbol tap, 667 / 844 / 932.
+
+## [2026-10-06] — Sarvakaryeshu: slimmer answer rail on phones
+**Touched:** scenes/scene4/SarvakaryeshuGame.css (edited the existing phone block, no duplicate block).
+**Changed (phone only):** right rail 112 -> 104px, column gap 14 -> 10, card padding 8px 10px 8px 12px; visible symbol circles 58px (touch area kept at 64 x 76 min); labels 11px / line-height 1; feedback 12px. Picture size, right-aligned card position (beside the syllable strip) and boat-behind-card kept as before.
+**Verified:** 740x360 — circles 58px, card 251px tall, picture unchanged, nothing clipped.
+
+## [2026-10-06] — Syllable strip smaller on phones (all Shloka River scenes)
+**Touched:** shloka-river/shared/SyllableHighlight.css (new phone block at the END), scenes/scene4/SarvakaryeshuGame.css.
+**Changed (phone landscape only):** `.syl-row` / `.syl` — left 10, top 52, 13px text, 2px 7px pills, 3px gaps (shorter-iPad treatment is 15px / 3px 8px, untouched). Applies to every scene using SyllableHighlight (Vakratunda, Mahakaya, Suryakoti, Samaprabha, Nirvighnam, Kurumedeva, Sarvakaryeshu, Sarvada). Sarvakaryeshu: fly-to-syllable anchors moved to the same left/top/gap (34x24 each) and the card now reserves 185px instead of 215px beside the strip.
+**Verified at 740x360 in the harness (13px text, strip 30px tall, at left 10 / top 52, nothing crowded):** Vakratunda 139px wide, Mahakaya 131, Suryakoti 128, Samaprabha 145, Nirvighnam 123, Kurumedeva 129, Sarvada 103, Sarvakaryeshu 159 (card widened). No other scene has anchors tied to the strip's position.
+**Open:** none for the strip itself; not re-checked at 667 / 844 / 932.
+
+## [2026-10-06] — Sarvakaryeshu (Shloka River): phone two-column card
+**Touched:** src/zones/shloka-river/scenes/scene4/SarvakaryeshuGame.css (new phone block at the END; no JSX change).
+**Changed (phone landscape only):** the situation card is now a 2-column grid — picture, "So much to do." and the question on the left, the 3 powers stacked on the right (60px circles, 76-83px hit rows). The iPad `zoom: 0.8` rescue is cancelled on phones (`zoom: 1`) because the content is laid out for the phone instead. Card is right-aligned beside the syllable chips (so the chips never cover the picture), boat is smaller and BEHIND the card (it used to sit in front of the text / middle option). When the options disappear the card collapses to one column via `:has()`. The flying-symbol animation measures the option's real rectangle, so it needed no change.
+**Verified in the harness:** 740x360 — card y21-303 fully in view, picture ~185px tall, wrong pick keeps the layout and shows the gentle line, right pick flies the symbol from the right-hand option and shows the "After" image; 667x375 — card x203-655, y28-310, chips clear. Not measured: 844x390 / 932x430 (card is capped at 640px wide, right-aligned, so it only gets more room), later situations (Trunk / Tusk rounds), hint L1/L2/L3 on phone.
+**Open:** the "after" state shows the same sentence twice (situation line + feedback) — existing behaviour, not layout; confirm the card height with the longest situation text.
+
+## [2026-10-06] — Kurumedeva (Shloka River): phone layout tuned at 740x360
+**Touched:** src/zones/shloka-river/scenes/Scene3/scene3LayoutConfig.js (KURUMEDEVA_LAYOUT is now DEFAULT + PHONE, chosen at load by short side <= 500 and long side <= 1023 — orientation-independent so a phone that loads in portrait still gets it; every iPad short side is >= 744).
+**Changed (phone only):** finished bridge ~9% smaller (46.5 -> 42.3), 2% lower, 3% further left so it clears the beaver family on the right bank; elephant ~7% smaller (13 -> 12.1); beaver 5% smaller (10 -> 9.5); the two beaver-path points that walk on the bridge move with it (-3 l, +2 t). Monkey and baby beaver unchanged.
+**Verified:** first state at 740x360 — elephant 90px (was 96), beaver 70px (was 74), monkey 70px, nothing clipped; module values confirmed in the browser.
+**Not verified:** the FINISHED bridge on screen — the harness Layout Debug phase preview doesn't draw the bridge and Elephant taps don't advance the scene there. The 3% left shift is from the supplied completed-state screenshot (bridge end ~86% vs beaver family ~78-86%), so please eyeball one full playthrough at 740x360 and adjust `bridge` / `beaverPath` in KURUMEDEVA_LAYOUT_PHONE if needed.
+**Open:** the Layout Debug panel stores its own layout in localStorage and overrides this — "clear storage" first.
+
+## [2026-10-06] — Nirvighnam (Shloka River): obstacle cluster nudged left on phones
+**Touched:** src/zones/shloka-river/scenes/Scene3/scene3LayoutConfig.js (new NIRVIGHNAM_LAYOUT_PHONE), Scene3/NirvighnamGame.jsx (picks it via the phone media query).
+**Changed:** on phone landscape only, the stone / branch / reeds, their hit zones, the turtle's stepping nodes and the bank spots move 4% left (turtle start, nest, swim path unchanged), giving the turtle room beside the rock at 740x360. iPad/desktop use the original NIRVIGHNAM_LAYOUT. Hit-zone outlines only show with ?hitzones and the Layout Debug panel only in the harness / ?debug, so neither ships.
+**Verified:** harness at 740x360 after clearing storage: objects stay on the river, ~30px gap rock -> turtle. NOT run: the full stone/branch/reed interaction and the hint ring after the shift; Replay/Sound aren't mounted in the harness (turtle's right edge touches the Replay hit box corner at 740 wide by ~9px).
+**Open:** the harness "Layout Debug" panel saves a layout in localStorage that overrides this one — use "clear storage" before judging.
+
+## [2026-10-06] — Suryakoti (Shloka River): phone regression check, no code changes
+**Touched:** none (CHANGELOG only).
+**Verified in the harness at 667x375, 740x360, 844x390:** stage + dark rub canvas fill the viewport; syllable chips (~37px tall, top-left), bunny (53-68px) and burrow (93-118px) stay inside the screen and don't overlap each other; rubbing the first patch clears the dark layer there (alpha ~232 -> ~0) while untouched areas stay dark. Layout call: keep as is, no phone changes.
+**Not checked:** the 10-step hint checklist (hints are drawn on the canvas, not in the DOM) and the corner Replay/Sound/zone buttons (the harness does not mount them for this scene) — run the checklist on a real phone or in the full app.
+
 ## [2026-10-05] — My Indian Story: phone-landscape pass
 **Touched:** src/zones/about-me-hut/indian-story/MyIndianStoryGame.css (new phone `@media` block at the end), MyIndianStoryGame.jsx (one className hook: `mis-language-child-phase` on the Language Child wrapper).
 **Changed:** Inspected every phase in the harness first; Ganesha Home, Language Ganesha and Festivals Ganesha already fit, so only the broken screens were touched.
@@ -21,7 +75,9 @@ Append one entry per work session. Newest on top.
 - Dream clouds: canvas 445x296 fits, Ganesha moved to the lower-left (124px), away from the bottom-right audio buttons.
 - Comparison: flat side-by-side, no scroll; had to beat base rules (grid flex:1, 768px column stack, dream box 259px).
 **Verified:** harness at 844x390 through Wish 1, Wish 2 (drag), Wish 3 (all reveals), All Wishes Complete, drawing, dream clouds, comparison; comparison also at 667x375.
-**Open:** run 667x375 / 740x360 / 932x430 for every phase except the comparison; hint ladders (L1/L2/L3) on phone; trunk-tap integrity (taps on Replay/canvas must not clear clouds); dream-revealed state; Wish 1 bubbles can overlap each other; Favorite Food + others using DrawingPad need a look; changes are uncommitted.
+- Stress-size pass (667x375, 740x360, 932x430): Wish 1 phone spawner now re-rolls spots under the zone badge / Replay+Sound / Ganesha host (bubbleFloat replaces the inner centring transform, so the box is top-left-origin); Wish 2 plate drop zones are 0.5 x width on phone (were 58px tall at 740x360, now >= 60px).
+**Verified at all four sizes:** Wish 1 (max 4 bubbles, 0 overlaps over ~150 samples per size, wrong bubble does not count, hint highlight on-screen), Wish 2 (miss drag returns, 3 correct drops = 3/3, nothing under audio buttons), Wish 3 (frame fits, hit areas extend ~9px, art within 7px of its hotspot, tap outside does nothing), drawing (fits, no scroll, controls clear of audio), dream clouds (taps on canvas / cloud / Replay clear nothing; one Ganesha tap = one cloud), reveal state, comparison (no scroll).
+**Open:** not measured at 667/932: the "All Wishes Complete" card (its entrance animation was stalled in the hidden preview; width is capped at min(65vw, 480px) and fits by arithmetic; measured OK at 844 and 740); two Ganesha taps ~80ms apart clear two clouds (existing behaviour on every device — decide if it should be throttled); the first bubble right after Wish 1 mounts may ignore the avoid-zones (one 8-sample hit at 667, 190 clean samples after); Favorite Food + other DrawingPad users need a look; empty-StoryProgressHeader fix is phone-only (iPad decision pending); changes are uncommitted.
 
 ## [2026-10-05] — Favorite Food: phone-landscape pass (same approach as Family Tree)
 **Touched:** src/zones/about-me-hut/food/Favoritefoodgame.css only (one new `@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px)` block appended at the end; no JSX change).
