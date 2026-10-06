@@ -1,6 +1,7 @@
 import React from 'react';
 import BeatPlayerGame from '../../../lib/beatPlayer/BeatPlayerGame';
-import flowJson from '../../../zones/symbol-mountain/scenes/tusk/tuskNestFlow.json';
+import { getTuskNestFlow } from '../../../zones/symbol-mountain/scenes/tusk/tuskNestFlowSelect';
+import '../../../zones/symbol-mountain/scenes/tusk/TuskPathGame.css'; // .tusk-giving-game stage sizing
 
 // Layout-debug harness for the new nest-rebuild Tusk flow — drag any
 // element, edit its exact x/y/scale/rotation in the panel, and copy the
@@ -46,11 +47,15 @@ const ASSET_MAP = {
 };
 
 function TuskNestBeatPlayerPreview(props) {
+  // Phone viewport edits tuskNestFlowPhone.json; iPad/desktop edits tuskNestFlow.json.
+  const [flowJson] = React.useState(getTuskNestFlow);
   const [isAudioOn, setIsAudioOn] = React.useState(true);
   const [layoutDebug, setLayoutDebug] = React.useState(true);
 
   return (
-    <div style={{ position: 'relative', width: '100%', aspectRatio: '4 / 3', overflow: 'hidden', background: '#333' }}>
+    // Same wrapper class as the live scene (TuskBeatPlayerLive) so this harness
+    // gets the same sizing — 4:3 normally, fills the stage on phone landscape.
+    <div className="tusk-giving-game" style={{ background: '#333', borderRadius: 0 }}>
       <img src={bgImg} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
       <button
         type="button"

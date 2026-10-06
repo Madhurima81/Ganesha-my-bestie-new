@@ -1,5 +1,27 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-10-06] — Symbol Mountain Tusk: nest-game phone layout + Ears elephant/cow tune
+**Touched:** scenes/tusk/tuskNestFlow.json (unchanged vs HEAD), scenes/tusk/tuskNestFlowPhone.json (NEW), scenes/tusk/tuskNestFlowSelect.js (NEW), scenes/tusk/TuskBeatPlayerLive.jsx, scenes/tusk/TuskPathGame.css, src/dev/beatPlayerPreview/tuskNest/TuskNestBeatPlayerPreview.jsx, scenes/tusk/EarsSoundMatchGame.jsx.
+**Changed:**
+- **Nest game phone layout (phone only; iPad/desktop untouched).** Phone = short side <= 500 and long side <= 1023 (same rule as KURUMEDEVA_LAYOUT), chosen once at mount by `getTuskNestFlow()`. Phone gets `tuskNestFlowPhone.json` (same beats/VO as the default; only item layout differs): monkey 16.31/29.48, cow 82.23/66.87, elephant 65.95/40.08 @80, peacock 12.12/65.47, twig/grass/leaf/feather 20.3/41.96, 75.12/71.18, 64.79/50.16, 19.8/74.7, nest 50.17/58.32, sad bird 44.55/68.15, bunny 37.31/60.34. Every item has ONE position across all 5 beats x 3 states (no glide/jump on drop), drop target 50.53/53.89 in all four drag beats. Happy bird (beats 3-4) left at the iPad position 48/58 @24 — confirmed fine. Built from the layout-debug "Copy beat JSON" exports of beat 0.
+- **Phone stage fill.** `.tusk-giving-game` was forced 4:3, taller than a ~2:1 phone stage, so everything below ~50% height was clipped. New phone-landscape block at the END of TuskPathGame.css: absolute, 100% x 100%, `aspect-ratio: auto` (like the Eyes/Ears games). The DEV layout-debug preview (`?game=sm-tusk-nest-debug`) had its own hard-coded 4:3 wrapper; it now uses the same `tusk-giving-game` class so the harness matches the live scene.
+- **Ears sound-match (DEFAULT_LAYOUT, all screens):** elephant w 24 -> 21 (-12.5%), x 30.51 -> 28.5, y 73.53 -> 75; cow x 57.52 -> 60.5, same width. Sprites are non-interactive, hit zones untouched.
+**Verified:** nest phone layout and stage fill seen by Madhurima in the harness at 740x360 (all animals/nest/bunny on screen). Not run by me: the live Symbol Mountain Tusk scene on a phone, the full 5-beat playthrough, iPad after the JSON split, Ears elephant/cow on screen.
+**Open:**
+- The phone stage now crops the background top/bottom (cover) — eyeball animals vs the dirt path in the live scene.
+- Layout-debug edits at phone size land in tuskNestFlowPhone.json (iPad size -> tuskNestFlow.json); the harness picks the file at load, so remount after resizing.
+- Ears layout editor: a saved `symbol_mountain_ears_layout_v2` in localStorage overrides the new defaults — clear it to see the change.
+- Nothing committed; the prior commit 70c002cc does not include any of this.
+
+## [2026-10-06] — Sacred Assembly: phone-landscape pass (Ganesha 560 -> ~420px, compact card)
+**Touched:** scenes/final scene/SacredAssemblyScene.css (phone block appended at END), scenes/final scene/SacredAssemblySceneV8.jsx (SymbolFlipCard sizes + side-card `left`, both gated on `IS_PHONE_LAYOUT`).
+**Changed:**
+- Ganesha container `min(58vw, 420px)` at top 52% / left 65% on phones (was 560px from the 768px and 769-1023px rules, a giant cropped torso at 740x360). Placed-symbol images scaled x0.75 (width + translate) so they still sit on the smaller art.
+- Phone card 190x200 (art 100px, title 20px, text 15px, padding 12px, radius 20px); side-card position 13% -> 5%. Flip kept (symbol -> meaning -> find it on Ganesha).
+- iPad / desktop untouched. Phone Tusk/Mooshika zone overrides kept: they are percent-based so they scale with the art; base target still sits clear of the cropped bottom.
+**Verified:** 740x360 in harness — Ganesha 420px at (271,-23) (~37px of transparent bottom cropped), all 9 tap zones inside the viewport (smallest 78x61), card 190x200 at left 37px; scene screenshot shows the whole figure with the card beside it.
+**Open:** 667x375 / 844x390 / 932x430 not checked; placed-symbol positions not checked after placing all 8 (full playthrough); real-device `?hitzones` marker check for tusk vs trunk overlap (tusk 78x61 overlaps trunk/belly boxes by design).
+
 ## [2026-10-06] — Symbol Mountain (Modak, Garland, Pond): phone hierarchy pass at 740x360
 **Touched:** scenes/modak/ModakScene.css, scenes/modak/FlowerJourneyGame2.css, scenes/modak/FlowerJourneyGame2.jsx (one className), scenes/modak/GarlandGame3.css, scenes/pond/PondScene.css.
 **Changed:**
@@ -13,6 +35,13 @@ Append one entry per work session. Newest on top.
 - Phone overrides bypass layout-editor controls: Garland `top` on workspace/Ganesha (inline + !important) and Pond rock/reeds/lotus size (`--pond-*-size` vars) can't be edited on phones via the debug panels.
 - The 11% Mooshika shrink is not phone-gated — confirm iPad/desktop are fine with it or gate it to the phone media query.
 - Nothing committed; the working tree still holds earlier uncommitted work (incl. GarlandGame3.jsx, PondSceneSimplifiedV4.jsx).
+
+## [2026-10-06] — Eyes (Symbol Mountain): calmer layout, iPad AND phone (by Madhurima's choice)
+**Touched:** src/zones/symbol-mountain/scenes/tusk/EyesPopUpGame.jsx (DEFAULT_LAYOUT + LAYOUT_PRESET_VERSION only).
+**Changed:** monkey w 12 -> 10.5 (x 17.2, y 40); peacock w 20.16 -> 16.5, y 43.58 -> 39.5, z 15 -> 13 (between the back bush z12 and the front bush z14, so greenery overlaps him); feather bushes 24/21.6 -> 20.5/18.5; mango bush 24 -> 20.5; yellow flowers 11.28 -> 9.5. Clue positions/sizes (feather, mango + found variants) and the phone minimum-target logic (PHONE_MIN_TARGET_PX = 62) untouched. LAYOUT_PRESET_VERSION bumped to 2026-10-06-eyes-mobile-depth-layout-8 so any saved debug layout in localStorage is dropped (otherwise the old saved layout wins and nothing seems to change).
+**Verified:** 740x360 in the harness — peacock higher and partly behind the front bush, bushes smaller, monkey smaller. NOT viewed on an iPad size, and the child interaction (tapping the feather / mango) was not re-run.
+- Follow-up (phone only): the two feather bushes + the hidden feather (and its found state) move 4% lower on small phones (short side <= 500, long side <= 1023 — orientation-independent) via BASE_LAYOUT -> DEFAULT_LAYOUT in EyesPopUpGame.jsx; peacock, mango bush and monkey unchanged. LAYOUT_PRESET_VERSION -> ...-layout-9. Measured at 740x360: bushes y 183/190 -> 198/204 (~+15px), peacock unchanged.
+**Open:** check the iPad composition once (this one changes iPad); not re-run: tapping the feather after the bush move.
 
 ## [2026-10-06] — Sarvada (Shloka River): bigger hidden-symbol picture on phones
 **Touched:** scenes/scene4/SarvadaGame.css (new phone block at the END, no JSX change).

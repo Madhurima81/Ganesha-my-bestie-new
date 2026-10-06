@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import BeatPlayerGame from '../../../../lib/beatPlayer/BeatPlayerGame';
 import useAppVisibility from '../../../../lib/hooks/useAppVisibility';
-import flowJson from './tuskNestFlow.json';
+import { getTuskNestFlow } from './tuskNestFlowSelect';
 import './TuskPathGame.css'; // reuse the existing stage/background sizing rules
 
 // Shared animal idle art (same source used by Eyes/Ears games)
@@ -61,6 +61,8 @@ function TuskBeatPlayerLive({ isActive = true, isAudioOn = true, onGameComplete,
     () => setTabPaused(false)
   );
   const isPaused = tabPaused || isSidebarPaused;
+  // iPad/desktop and phone have separate item layouts (see tuskNestFlowSelect.js).
+  const [flowJson] = useState(getTuskNestFlow);
 
   return (
     <div className={`tusk-giving-game ${className}`}>

@@ -62,8 +62,11 @@ const DEFAULT_LAYOUT = {
   leftBushHit: { x: 23.08, y: 46.99, w: 24, h: 21.75, z: 35 },
   centerRockHit: { x: 50.52, y: 48.83, w: 24, h: 16.5, z: 35 },
   rightSourceHit: { x: 80.31, y: 52.77, w: 23.5, h: 19.5, z: 33 },
-  elephantSprite: { x: 30.51, y: 73.53, w: 24, z: 20 },
-  cowSprite: { x: 57.52, y: 68.5, w: 18.75, z: 20 }
+  // Hierarchy tune: elephant -12.5% (24 -> 21), nudged left/down; cow keeps its
+  // size and moves 3% right for separation. Sprites are non-interactive (taps
+  // go to the *Hit zones above), so shrinking them doesn't affect touch targets.
+  elephantSprite: { x: 28.5, y: 75, w: 21, z: 20 },
+  cowSprite: { x: 60.5, y: 68.5, w: 18.75, z: 20 }
 };
 
 const DEBUG_KEYS = [
