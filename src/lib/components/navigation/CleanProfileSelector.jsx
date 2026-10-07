@@ -309,7 +309,8 @@ const CleanProfileSelector = ({
           <button type="button" className="back-btn" onClick={() => setShowInstallSteps(false)}>
             ← Back
           </button>
-        </>
+        </>,
+        'allset-screen'
       );
     }
 
@@ -345,7 +346,8 @@ const CleanProfileSelector = ({
           >
             Maybe later
           </button>
-        </>
+        </>,
+        'allset-screen'
       );
     }
 
@@ -362,7 +364,8 @@ const CleanProfileSelector = ({
           fullWidth
           className="final-cta-btn"
         />
-      </>
+      </>,
+      'allset-screen'
     );
   }
 
@@ -512,7 +515,7 @@ const CleanProfileSelector = ({
   const emptySlots = Math.max(0, 4 - profileArray.length);
 
   return (
-    <div className="clean-profile-overlay">
+    <div className={`clean-profile-overlay${showCreateProfile ? ' create-flow-screen' : ''}`}>
       <div className="clean-forest-background">
         <div className="profile-bg-overlay" />
         <div className="profile-vignette" />

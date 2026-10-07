@@ -2,7 +2,7 @@ import React, { useMemo, useState, useCallback } from 'react';
 import OnboardingCard from './OnboardingCard';
 import './ParentGate.css';
 
-// Reusable parent gate — a Khan Academy Kids-style challenge: 3-4 random digits are
+// Reusable parent gate — a Khan Academy Kids-style challenge: 4 random digits are
 // spelled out as words, and the parent keys the digits back in on a numeric keypad.
 // Re-mount this component fresh for ANY adult-only entry point (first-run onboarding,
 // "add profile", "edit profile", parent dashboard, etc) — it holds no state outside
@@ -11,8 +11,7 @@ import './ParentGate.css';
 const DIGIT_WORDS = ['ZERO', 'ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE'];
 
 function generateChallenge() {
-  const length = Math.random() < 0.5 ? 3 : 4;
-  const digits = Array.from({ length }, () => Math.floor(Math.random() * 10));
+  const digits = Array.from({ length: 4 }, () => Math.floor(Math.random() * 10));
   return { digits, answer: digits.join('') };
 }
 
@@ -58,34 +57,40 @@ const ParentGate = ({ onComplete, onBackToWelcome }) => {
 
   return (
     <OnboardingCard heading="Grown-ups only!" subheading="A quick check before we continue.">
-      <p className="pg-prompt">{words}</p>
+      <div className="pg-layout">
+        <div className="pg-challenge">
+          <p className="pg-prompt">{words}</p>
 
-      <div className="pg-slots" aria-live="polite">
-        {displaySlots.map((digit, i) => (
-          <span key={i} className="pg-slot">{digit}</span>
-        ))}
+          <div className="pg-slots" aria-live="polite">
+            {displaySlots.map((digit, i) => (
+              <span key={i} className="pg-slot">{digit}</span>
+            ))}
+          </div>
+
+          <div className="pg-feedback-space">
+            {feedback ? <p className="onb-error">{feedback}</p> : null}
+          </div>
+
+          {onBackToWelcome && (
+            <button type="button" className="onb-link pg-back" onClick={onBackToWelcome}>
+              ← Back
+            </button>
+          )}
+        </div>
+
+        <div className="pg-keypad">
+          {KEYS.map((key) => (
+            <button
+              key={key}
+              type="button"
+              className="pg-key"
+              onClick={() => handleKey(key)}
+            >
+              {key === 'clear' ? 'Clear' : key === 'back' ? '⌫' : key}
+            </button>
+          ))}
+        </div>
       </div>
-
-      {feedback ? <p className="onb-error">{feedback}</p> : null}
-
-      <div className="pg-keypad">
-        {KEYS.map((key) => (
-          <button
-            key={key}
-            type="button"
-            className="pg-key"
-            onClick={() => handleKey(key)}
-          >
-            {key === 'clear' ? 'Clear' : key === 'back' ? '⌫' : key}
-          </button>
-        ))}
-      </div>
-
-      {onBackToWelcome && (
-        <button type="button" className="onb-link" onClick={onBackToWelcome}>
-          ← Back
-        </button>
-      )}
     </OnboardingCard>
   );
 };

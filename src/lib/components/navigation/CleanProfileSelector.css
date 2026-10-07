@@ -2239,3 +2239,108 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
     margin-top: clamp(28px, 13dvh, 56px);
   }
 }
+
+/* ============================================================
+   ADD FRIEND / ALL SET — SHORT LANDSCAPE (Name, Age, All Set only)
+   Scoped to .create-flow-screen (inline Name/Age) and .allset-screen
+   (handoff/install). Pick Friend + portrait are untouched.
+   ============================================================ */
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
+  .create-flow-screen .clean-modal-overlay.scroll-overlay,
+  .allset-screen .clean-modal-overlay.scroll-overlay {
+    align-items: center; justify-content: center; overflow: hidden;
+    padding: max(8px, env(safe-area-inset-top)) max(14px, env(safe-area-inset-right))
+             max(8px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left));
+    background-image: none; background-color: transparent;
+  }
+  .create-flow-screen .scroll-card,
+  .allset-screen .scroll-card {
+    box-sizing: border-box; width: min(600px, calc(100vw - 32px));
+    height: auto; min-height: 0; max-height: calc(100dvh - 16px); aspect-ratio: auto;
+    padding: 14px 24px 16px;
+    background-image: none; background-color: rgba(255, 253, 247, 0.92);
+    border-radius: 30px; box-shadow: 0 9px 24px rgba(104, 74, 160, 0.10);
+  }
+  .create-flow-screen .scroll-card-inner,
+  .allset-screen .scroll-card-inner { width: 100%; height: auto; padding: 0; }
+  .create-flow-screen .create-card-lotus,
+  .allset-screen .create-card-lotus { display: none; }
+  .create-flow-screen .create-step-heading,
+  .allset-screen .create-step-heading { margin: 0 0 4px; font-size: clamp(21px, 6dvh, 25px); line-height: 1.05; }
+  .create-flow-screen .create-step-subheading,
+  .allset-screen .create-step-subheading,
+  .allset-screen .handoff-body { margin: 0 0 8px; font-size: 13px; line-height: 1.25; }
+
+  .create-flow-screen .create-step-content { width: 100%; display: flex; flex-direction: column; align-items: center; }
+
+  /* Name */
+  .create-flow-screen .name-input-wrap { width: min(320px, 100%); }
+  .create-flow-screen .scroll-card-inner .name-input { box-sizing: border-box; height: 48px; font-size: 17px; }
+
+  /* Age */
+  .create-flow-screen .age-stepper { gap: 18px; }
+  .create-flow-screen .age-stepper-btn { width: 52px; height: 52px; font-size: 26px; }
+  .create-flow-screen .age-stepper-value { font-size: 40px; min-width: 56px; }
+
+  /* Back/Cancel: top-left, clear of the centred heading */
+  .create-flow-screen .scroll-card-inner .back-btn { top: 12px; left: 16px; right: auto; height: 44px; min-width: 76px; }
+  .create-flow-screen .scroll-card-inner:has(.back-btn) .create-step-heading,
+  .create-flow-screen .scroll-card-inner:has(.back-btn) .create-step-subheading { padding: 0 90px; box-sizing: border-box; }
+
+  /* Next / Start Adventure: inside the card */
+  .create-flow-screen .scroll-card-inner .arrow-btn,
+  .allset-screen .scroll-card-inner .primary-btn-unified.final-cta-btn,
+  .create-flow-screen .scroll-card-inner .primary-btn-unified.final-cta-btn {
+    height: 52px !important; max-width: 100%; margin-top: 10px;
+  }
+  .create-flow-screen .scroll-card-inner .arrow-btn { width: 140px !important; }
+  .allset-screen .scroll-card-inner .primary-btn-unified.final-cta-btn,
+  .create-flow-screen .scroll-card-inner .primary-btn-unified.final-cta-btn { width: min(320px, 100%) !important; }
+
+  /* child-facing CTA: ~60px touch region around the 52px painted button */
+  .allset-screen .primary-btn-unified.final-cta-btn { position: relative; }
+  .allset-screen .primary-btn-unified.final-cta-btn::after { content: ""; position: absolute; inset: -4px 0; }
+
+  /* install-steps variant: stay compact */
+  .allset-screen .install-steps { gap: 4px; margin: 0 0 6px; }
+  .allset-screen .install-step-text { font-size: 12.5px; }
+  .allset-screen .cps-step-icon { width: 36px; height: 36px; margin-bottom: 4px; }
+
+  /* Name field: escape route when the software keyboard shrinks the viewport */
+  /* Stays centred when it fits; the card's auto margins let it scroll from the top
+     (not clip) when the keyboard leaves too little height. */
+  .create-flow-screen:has(.name-input:focus) .clean-modal-overlay.scroll-overlay {
+    overflow-y: auto; align-items: normal; justify-content: center;
+  }
+  .create-flow-screen:has(.name-input:focus) .scroll-card { margin: auto; flex-shrink: 0; }
+}
+
+/* ADD FRIEND / ALL SET — button hierarchy (short landscape):
+   Back = light secondary · Name arrow = compact · Age Next = medium · Start Adventure = strongest */
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
+  .create-flow-screen .scroll-card-inner .back-btn {
+    background: rgba(255, 253, 247, 0.92) !important;
+    color: #8872B8 !important;
+    border: 2px solid rgba(180, 158, 232, 0.65) !important;
+    box-shadow: 0 2px 6px rgba(120, 90, 170, 0.10) !important;
+  }
+  .create-flow-screen .scroll-card-inner .arrow-btn,
+  .create-flow-screen .scroll-card-inner .primary-btn-unified.final-cta-btn {
+    height: 50px !important;
+    min-height: 50px !important;
+    background: linear-gradient(180deg, #C8B2F2 0%, #B99BEA 100%) !important;
+    box-shadow: 0 4px 0 #9E82D2, 0 7px 14px rgba(130, 95, 190, 0.14) !important;
+  }
+  .create-flow-screen .scroll-card-inner .arrow-btn { width: 130px !important; }
+  .create-flow-screen .scroll-card-inner .primary-btn-unified.final-cta-btn { width: min(230px, 100%) !important; }
+  .allset-screen .scroll-card-inner .primary-btn-unified.final-cta-btn {
+    width: min(280px, 100%) !important;
+    height: 52px !important;
+  }
+}
+
+/* Name / Age / All Set share one card size (Age is the tallest, so it sets the height) */
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
+  .create-flow-screen .scroll-card,
+  .allset-screen .scroll-card { min-height: 234px; }
+}

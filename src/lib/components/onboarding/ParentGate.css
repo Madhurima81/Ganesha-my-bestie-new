@@ -51,3 +51,48 @@
 }
 .pg-key:hover { background: #f5f0fc; }
 .pg-key:active { transform: scale(0.95); background: #ede3fb; }
+
+/* ---- layout wrappers: stacked in portrait (same as before) ---- */
+.pg-layout,
+.pg-challenge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+}
+.pg-challenge { gap: 8px; }
+.pg-feedback-space:empty,
+.pg-feedback-space:not(:has(*)) { display: none; }
+
+/* ============================================================
+   PARENT GATE — SHORT LANDSCAPE (Add Friend from the child flow)
+   Challenge left, keypad right. Portrait is unchanged.
+   ============================================================ */
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
+  .pg-layout {
+    width: min(560px, 100%);
+    display: grid;
+    grid-template-columns: minmax(200px, 1fr) 232px;
+    align-items: center;
+    gap: 24px;
+    margin: 0 auto;
+  }
+  .pg-challenge { justify-content: center; gap: 8px; min-width: 0; }
+  .pg-prompt { margin: 0; max-width: 230px; font-size: 17px; line-height: 1.15; text-align: center; }
+  .pg-slots { gap: 7px; }
+  .pg-slot { width: 38px; height: 42px; border-radius: 10px; font-size: 20px; }
+  /* reserved height so a wrong answer doesn't shift the keypad */
+  .pg-feedback-space,
+  .pg-feedback-space:empty,
+  .pg-feedback-space:not(:has(*)) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 30px;
+  }
+  .pg-feedback-space .onb-error { max-width: 220px; font-size: 12px; line-height: 1.15; text-align: center; }
+  .pg-back { margin: 0; min-height: 44px; padding: 4px 14px; }
+  .pg-keypad { width: 232px; max-width: none; gap: 6px; }
+  .pg-key { min-height: 50px; padding: 0 6px; border-radius: 11px; font-size: 17px; line-height: 1; }
+}
