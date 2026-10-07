@@ -709,7 +709,10 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
   // then play the phase entry VO after a short settle delay.
   // Mirrors the pattern in NewModakSceneV7 — no guards, no suppress flags, just speak.
   useEffect(() => {
-    if (!isReload) return;
+    // Resume on any re-entry with saved progress (Continue from the map, relaunch, or a
+    // browser reload) — `isReload` alone is only true for a browser refresh. A fresh game
+    // (no save, still at 'intro') must not run this: it stops voice the OpeningModal needs.
+    if (!(isReload || (sceneState?.lastSaved && sceneState?.gamePhase !== 'intro'))) return;
 
     const { gamePhase, dreamRevealed, currentModal } = sceneState;
     // Pre-seed phaseVoiceRef flags so the phase-VO effect won't double-fire; we speak explicitly below.

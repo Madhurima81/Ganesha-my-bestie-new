@@ -562,7 +562,9 @@ const FamilyTreeGameContent = ({
  // ==================== RELOAD DETECTION (Exactly like Modak) ====================
  useEffect(() => {
  // If we are reloading and haven't handled it yet
- if (isReload &&!reloadHandledRef.current) {
+ // Runs for any re-entry (Continue from the map, relaunch, reload), not only a browser
+ // refresh. The first run consumes the ref, so a fresh game (gamePhase 'intro') is a no-op.
+ if (!reloadHandledRef.current) {
  reloadHandledRef.current = true;
 
  const { gamePhase, placedGaneshaMembers, childFamily } = sceneState;

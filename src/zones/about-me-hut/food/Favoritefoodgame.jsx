@@ -494,6 +494,9 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
   // Reload Logic Refs
   const reloadHandledRef = useRef(false);
+  // Decided once at mount: re-entering with saved progress (Continue from the map, app
+  // relaunch, or a browser reload). `isReload` alone is only true for a browser refresh.
+  const resumedOnMountRef = useRef(isReload || (!!sceneState?.lastSaved && sceneState?.gamePhase !== 'intro'));
   const hasHydratedOnceRef = useRef(false);
   const latestSceneStateRef = useRef(sceneState);
   const suppressCelebrationVoOnReloadRef = useRef(false);
@@ -798,7 +801,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
   // --- RELOAD DETECTION & RESTORATION LOGIC ---
   useEffect(() => {
-    if (isReload && !reloadHandledRef.current) {
+    if (resumedOnMountRef.current && !reloadHandledRef.current) {
       // If reload is true but state is still at the initial placeholder intro
       // (before persisted temp_session is fully reflected), wait one more render.
       // This prevents missing celebration phases like food-correct on reload.
