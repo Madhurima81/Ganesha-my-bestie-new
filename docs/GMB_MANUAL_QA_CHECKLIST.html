@@ -198,6 +198,7 @@ function universalCategories(s){
 const SCENES = [
   {id:'map', nav:'🗺️ Map/ZoneWelcome', title:'🗺️ Map / Navigation / Zone Welcome', sub:'Not a single scene — covers the shell around all 13 scenes.',
     skip:true}, // handled specially below
+  {id:'profile', nav:'👤 Profile & Onboarding', title:'Profile / Welcome / Intro Story / Add Friend', sub:'', skip:true}, // handled specially below
 
   {id:'modak', nav:'🍬 Modak', title:'🍬 Modak (Symbol Mountain, Scene 1)', sub:'Benchmark scene — if something looks wrong here, it\'s likely wrong everywhere.',
    hasSidebar:true, hasMandala:false, isFinal:false, nextName:'Find a Way to the Lotus', miniGames:['Modak Collection','Belly-Emotion Game'],
@@ -694,6 +695,89 @@ function buildMapPage(){
   ])}`;
 }
 
+function buildProfilePage(){
+  const FAIL = 'KNOWN OPEN 2026-10-07 — ';
+  const sections = [
+    ['A. Intro video & Ganesha story', 'Phone = landscape only (the app asks to turn sideways). Code: src/components/GaneshaIntroStory.jsx. 60px minimum on phone.', [
+      ['Intro video starts', 'Plays full screen, then enters the story. If the browser blocks autoplay it must go straight to the story — never sit on a black or grey screen. (Autoplay fallback NOT verified in the preview pane.)'],
+      ['Skip button (video and story pages)', 'Visible top-right, easy to hit, not under the notch/status bar. Hidden on the final screen.'],
+      ['"Tap to begin"', 'Large button, 60px+ tall, clear of the bottom gesture bar.'],
+      ['Story pages 1–5 controls', 'Dots top-centre, Skip top-right, Replay voice just above Next, Back bottom-left, Next bottom-right. All visible, none overlapping, Next/Back 60px+.'],
+      ['Replay voice button', 'Replays the current line only. Small icon but easy to hit (extra invisible hit area).'],
+      ['Artwork crop on phone', 'Pages 1–5 fill the screen (cropped, not stretched); faces and key action stay visible on a 20:9 phone, especially pages 1 and 2.'],
+      ['Transition page ("Uh-oh…")', 'New webp looks identical to the old PNG and loads quickly on mobile data.'],
+      ['Final screen', 'Ganesha, "Let’s explore my world!" and "Let’s go" all fit with no scrolling; map background is lightly blurred (not muddy); no Skip.'],
+      ['"Let’s go"', 'Ends the story and does not show it again for this profile on the next launch.'],
+      ['Narration', 'VO line matches each page, no overlap when tapping Next quickly, stops when leaving the story.'],
+    ]],
+    ['B. Welcome screen ("Welcome, X!" / "Welcome back, X!")', 'Code: CleanGameWelcomeScreen.jsx/.css. New profile = first-time variant; existing progress = returning variant.', [
+      ['Background', 'Bright original art; not grey/purple-muddy.'],
+      ['Heading text', 'New profile: "Welcome, Name!". Returning: "Welcome back, Name!". No long subtitle.'],
+      ['Phone landscape layout', 'Mandala on the left, buttons on the right on a cream card. Whole screen visible with NO scrolling. Heading not clipped.'],
+      ['Mandala size', 'Noticeably bigger on phone; every petal is easy to tap with a finger (returning profile).'],
+      ['Petal hint ("Tap a petal to see what you’ve collected!")', 'Only for a profile that has collected something; one line, fully inside the card. A brand-new profile shows NO hint and petals are not tappable.'],
+      ['Tapping a petal (returning profile)', 'Opens the collected-items popup for that petal; closing it returns cleanly.'],
+      ['Explorer avatar in the mandala', 'The animal the child picked (spot-check at least elephant, lion, rabbit, owl, panda — not always the monkey). Readable size; edges stay roughly inside the yellow circle.'],
+      ['Start Adventure / Continue Adventure', '60px+ tall, clear of the gesture bar; goes to the right place (new = story/map, returning = continue).'],
+      ['Home (returning profile)', 'Visible, 52px+, goes Home.'],
+      ['"Not Name? Switch Explorer"', 'Goes to the profile selector.'],
+      ['Start Over (returning profile)', 'Asks for confirmation first; "No, Keep Progress" changes nothing.'],
+      ['Audio toggle (top-right)', 'Not under the notch; mutes/unmutes.'],
+      ['iPad / tablet', 'Unchanged: single centred card, mandala above buttons, title fully inside the card, brighter background, shorter heading.'],
+    ]],
+    ['C. Profile selector ("Who’s Playing?")', 'Code: CleanProfileSelector.jsx/.css. Maximum four slots (real profiles + Add Friend).', [
+      ['Four slots in one row (phone)', 'All four visible side by side, well below the title; nothing scrolls or clips.'],
+      ['Real profile card', 'Correct avatar + name. ' + FAIL + 'a profile with a stale/legacy avatar value shows a broken image (seen on the old "Test" profile); confirm every real profile shows its animal.'],
+      ['Add Friend slots', 'Softer, lighter circle, sitting a little lower than a real profile; clearly invites a tap but does not compete with real profiles.'],
+      ['Label alignment', 'Real names sit ~17px higher than the "Add Friend" labels — decide if that is acceptable or should be level.'],
+      ['"?" info button', '60px, opens the info popup, closes cleanly.'],
+      ['Tapping a real profile', 'Goes to that profile’s Welcome screen with the right name and avatar.'],
+      ['Long-press a real profile (manage mode)', 'Delete trigger appears, 60px, not clipped by the card; Done button 52px+ exits manage mode; delete asks for confirmation.'],
+      ['Back to map (if opened from the map)', 'Visible and works; hidden when not from the map.'],
+      ['Audio toggle', 'Not under the notch; works.'],
+      ['iPad / tablet', 'Existing layout unchanged.'],
+    ]],
+    ['D. Add Friend flow (parent gate → name → age → handoff → friend picker)', 'Tap an Add Friend slot. Run on phone landscape, iPad both orientations, and with the on-screen keyboard open.', [
+      ['Grown-ups gate', 'Spoken digit sequence changes each time; correct code continues; wrong code gives a gentle reset. ' + FAIL + 'on phone landscape the keypad bottom row (Clear / 0 / delete) is cut off and the card scrolls — must fit without scrolling.'],
+      ['Gate: Back / cancel', 'Returns to the selector without creating anything.'],
+      ['Child name step', 'Input, arrow button and heading all fit inside the cream card; keyboard does not cover the input. ' + FAIL + 'input is wider than the card and Cancel overlaps the heading on phone landscape.'],
+      ['Child age step', '− / + change the age; Next fits inside the card; Back does not overlap the heading. ' + FAIL + 'Next is wider than the card and Back overlaps the heading on phone landscape.'],
+      ['"All set!" handoff step', 'Message readable; Start Adventure fits inside the card. ' + FAIL + 'button is wider than the card on phone landscape.'],
+      ['Friend picker — layout', 'Landscape layout: 8 animals per page in two rows, large preview on the right, "Let’s go" bottom-right. Fits with no scrolling (this step passed in the preview).'],
+      ['Friend picker — images', 'All animal images load (no blank circles), including on a slow network; 20 animals across 3 pages.'],
+      ['Friend picker — selecting', 'Tapping an animal highlights it and shows it large; "Let’s go" is disabled until one is chosen; tapping another switches the choice.'],
+      ['Friend picker — paging', 'Arrows change pages (60px); the three dots are indicators only, not buttons.'],
+      ['"Let’s go"', 'Creates the profile and goes to its Welcome screen with the chosen animal and name.'],
+      ['New profile appears in the selector', 'Shown with the chosen animal; the Add Friend count drops by one; maximum of four total.'],
+      ['Reload after creating', 'Profile is still there with the right avatar.'],
+    ]],
+    ['E. Cross-cutting real-device checks (all four areas)', 'These need a real phone/iPad — the browser preview cannot show them.', [
+      ['Safe areas / notch (installed PWA or fullscreen)', 'Skip, Next, Back, audio toggle and all buttons stay clear of the status bar, camera cutout and gesture bar in both landscape directions.'],
+      ['Address bar show/hide (browser tab)', 'Layout resizes without cutting off buttons or jumping badly when the address bar slides away.'],
+      ['Rotate portrait → landscape', 'The "turn sideways" prompt appears and the screen lays out correctly after rotating.'],
+      ['Fonts', 'Baloo 2 headings/buttons and Nunito body text; no fallback-font flash on first load.'],
+      ['Touch targets', 'Every tappable thing is comfortable to hit with a child’s finger (60px target); nothing needs a second try.'],
+      ['Audio on iOS/Safari', 'Narration and tap sounds work after the first tap; mute toggle behaves; no audio carries over into the next screen.'],
+      ['Lock screen / app switch mid-story', 'Story pauses and resumes at the same page; no duplicate narration on return.'],
+      ['Console & performance', 'Zero red console errors through story → welcome → selector → Add Friend; animations (story fade, mandala) stay smooth.'],
+    ]],
+  ];
+
+  let html = `<h1 class="page-title">Profile / Welcome / Intro Story / Add Friend</h1>
+  <div class="page-sub">Added 2026-10-07 for the phone-landscape pass on the screens around the scenes. Items marked KNOWN OPEN were seen failing in the 740×360 preview and are not fixed yet — tick them only once they pass on the device.</div>`;
+  sections.forEach((sec, si) => {
+    html += `<h2 class="section-title">${sec[0]}</h2>`;
+    if (sec[1]) html += `<div class="section-note">${sec[1]}</div>`;
+    html += `<table><tr><th class="dev-col">💻</th><th class="dev-col">📱P</th><th class="dev-col">📱i</th><th class="item-col">Test Item</th><th class="exp-col">Expected Result</th><th class="note-col">Notes</th></tr>`;
+    sec[2].forEach((it, i) => {
+      const key = `profile-s${si}-r${i}`;
+      html += `<tr>${DEVICES.map(d=>`<td class="dev-col"><input type="checkbox" data-k="${key}-${d[0]}"></td>`).join('')}<td>${it[0]}</td><td>${it[1]}</td><td class="note-col"><textarea data-k="${key}-note" placeholder="Notes..."></textarea></td></tr>`;
+    });
+    html += `</table>`;
+  });
+  return html;
+}
+
 function buildScenePage(s){
   const cats = universalCategories(s);
   let html = `<h1 class="page-title">${s.title}</h1>`;
@@ -719,14 +803,14 @@ function buildScenePage(s){
 // ---- Render nav, pages ----
 const nav = document.getElementById('navContainer');
 nav.innerHTML = `<button class="nav-btn active" onclick="showPage('page-overview',this)">📋 Overview</button>` +
-  SCENES.filter(s=>!s.skip || s.id==='map').map(s=>`<button class="nav-btn" onclick="showPage('page-${s.id}',this)">${s.nav}</button>`).join('');
+  SCENES.filter(s=>!s.skip || s.id==='map' || s.id==='profile').map(s=>`<button class="nav-btn" onclick="showPage('page-${s.id}',this)">${s.nav}</button>`).join('');
 
 const scenePagesEl = document.getElementById('scenePages');
 SCENES.forEach(s=>{
   const div = document.createElement('div');
   div.className = 'page';
   div.id = 'page-'+s.id;
-  div.innerHTML = s.id === 'map' ? buildMapPage() : buildScenePage(s);
+  div.innerHTML = s.id === 'map' ? buildMapPage() : s.id === 'profile' ? buildProfilePage() : buildScenePage(s);
   scenePagesEl.appendChild(div);
 });
 

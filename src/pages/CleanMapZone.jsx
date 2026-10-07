@@ -728,10 +728,10 @@ const MAP_ZONE_ART_DEFAULTS = {
     id: 'river',
     label: 'River',
     src: '/images/map/shlokariver-falls.webp',
-    left: 44.3,
-    top: 51.8,
-    w: 125,
-    h: 125,
+    left: 57.8,
+    top: 57.2,
+    w: 86,
+    h: 96,
     centered: true,
     flip: false,
     rotate: 0,
@@ -782,8 +782,8 @@ const MAP_ZONE_ART_DEFAULTS = {
     id: 'hut',
     label: "Lambodara Lodge",
     src: '/images/map/abtmehut2.webp',
-    left: 22.6,
-    top: 54.1,
+    left: 11.7,
+    top: 48.7,
     w: 27,
     h: 31,
     centered: false,
@@ -1415,6 +1415,11 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
     // Symbol Mountain: skip welcome, go straight to first scene (modak)
     if (state === 'active' && zone.id === ZONE_IDS.SYMBOL) {
       const firstScene = ZONE_FIRST_SCENES[zone.id];
+      const profileId = localStorage.getItem('activeProfileId');
+      if (profileId && firstScene) {
+        localStorage.removeItem(`temp_session_${profileId}_${zone.id}_${firstScene}`);
+        localStorage.removeItem(`replay_session_${profileId}_${zone.id}_${firstScene}`);
+      }
       if (onZoneSelect) onZoneSelect(zone.id, firstScene);
       return;
     }
@@ -1612,6 +1617,19 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
       <div className="map-dust" aria-hidden="true">
         <span/><span/><span/><span/>
       </div>
+
+      {import.meta.env.DEV && (
+        <button
+          type="button"
+          className="map-editor-open-btn"
+          onClick={(e) => {
+            e.stopPropagation();
+            setMapDebugMode(true);
+          }}
+        >
+          Edit Map
+        </button>
+      )}
 
       {/* ── Zone Wrappers (tap area + label grouped by state) ── */}
       {ZONES_DATA.map(zone => {
