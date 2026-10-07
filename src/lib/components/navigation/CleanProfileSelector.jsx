@@ -471,7 +471,7 @@ const CleanProfileSelector = ({
               disabled={!selectedAvatar || isCreatingProfile}
               size="md"
               fullWidth
-              className="final-cta-btn"
+              className="final-cta-btn gmb-compact-cta"
             />
           </div>
         </div>

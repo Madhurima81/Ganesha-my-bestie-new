@@ -196,7 +196,7 @@ const DetailCard = ({
       <div className="pp-detail-actions">
         {!locked && item.audio ? (
           <button
-            className="pp-btn-audio"
+            className="pp-btn-audio gmb-compact-cta"
             onClick={(e) => {
               e.stopPropagation();
               onPlayAudio(item.audio);
@@ -206,7 +206,7 @@ const DetailCard = ({
           </button>
         ) : null}
         <button
-          className="pp-action-btn pp-action-btn-detail"
+          className="pp-action-btn pp-action-btn-detail gmb-compact-cta"
           onClick={(e) => {
             e.stopPropagation();
             onClose();

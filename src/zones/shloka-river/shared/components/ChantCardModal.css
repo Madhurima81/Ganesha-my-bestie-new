@@ -415,23 +415,12 @@
   }
 
   /* The CTA is the one clear action: its own full-width row, 60px high. */
-  /* Same small pill as the Pick Friend CTA (36px high); the ::after keeps a ~60px touch area. */
+  /* Compact pill: size + ~60px touch area come from `.gmb-compact-cta` (App.css). */
   .chant-card__cta {
-    position: relative;
     grid-column: 1 / -1;
     justify-self: center;
     margin: clamp(4px, 1.4dvh, 8px) 0 0;
-    min-height: 36px;
-    height: 36px;
-    padding: 0 18px;
-    font-size: 14px;
-    line-height: 1;
     box-shadow: 0 4px 12px color-mix(in srgb, var(--chant-cta-shadow, rgba(74, 155, 135, 0.3)) 72%, transparent);
-  }
-  .chant-card__cta::after {
-    content: '';
-    position: absolute;
-    inset: -12px -8px;
   }
 
   /* Instruction + footer are covered by the button label and the close button. */

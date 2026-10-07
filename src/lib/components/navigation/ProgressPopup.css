@@ -558,19 +558,13 @@ box-shadow: 0 4px 10px rgba(60, 40, 80, 0.06);
 
   /* Continue / Play Sound: small pill like the Pick Friend CTA (36px) with a ~60px touch area */
   .pp-detail-card .pp-detail-actions { gap: 12px; margin-top: 8px; flex-direction: row; flex-wrap: nowrap; justify-content: center; }
+  /* size + touch area come from `.gmb-compact-cta` (App.css) */
   .pp-detail-card .pp-action-btn,
   .pp-detail-card .pp-btn-audio {
-    position: relative;
     min-width: 0;
     width: auto;
-    height: 36px;
     margin: 0;
-    padding: 0 18px;
-    font-size: 14px;
-    line-height: 1;
     box-shadow: 0 3px 0 #E6B24A;
   }
   .pp-detail-card .pp-btn-audio { box-shadow: 0 3px 0 #FFA000; text-transform: none; }
-  .pp-detail-card .pp-action-btn::after,
-  .pp-detail-card .pp-btn-audio::after { content: ''; position: absolute; inset: -12px -8px; }
 }

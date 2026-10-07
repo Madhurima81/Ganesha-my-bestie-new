@@ -366,3 +366,33 @@ h1, h2, h3, h4, h5, h6 {
     --gmb-phone-edge-gap: 6px;
   }
 }
+
+/* ============================================================
+   COMPACT CTA (phone landscape) — opt-in modifier, NOT a global size.
+   Visual size and touch target are separate: 36px painted pill, ~60px hit area.
+   Add `gmb-compact-cta` only where a compact child CTA was chosen on purpose.
+   Parent controls (44px+) and one-clear-action child CTAs (48-60px visible,
+   e.g. Intro Begin, OpeningModal, Completion) do NOT use it.
+   If two compact CTAs sit side by side keep >=12px between them so their
+   invisible hit areas (6px each side) do not overlap.
+   ============================================================ */
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
+  .gmb-compact-cta.gmb-compact-cta {
+    position: relative;
+    overflow: visible; /* PrimaryBtn is overflow:hidden, which would clip the hit area */
+    height: 36px;
+    min-height: 36px;
+    padding: 0 18px;
+    font-size: 13px;
+    line-height: 1;
+  }
+  .gmb-compact-cta.gmb-compact-cta::after {
+    content: "";
+    position: absolute;
+    top: -12px;
+    bottom: -12px;
+    left: -6px;
+    right: -6px;
+    border-radius: 999px;
+  }
+}
