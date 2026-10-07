@@ -1,11 +1,35 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-10-07] — Zone Welcome: phone landscape row/carousel, compact CTAs, Replay logic
+**Touched:** src/lib/components/zone/ZoneWelcome.jsx, src/lib/components/zone/ZoneWelcome.css
+**Changed:** Phone landscape (canonical query) reflows the scene cards from the absolute pyramid into one centred row (4 scenes) or a snap-scroll carousel with 60px arrows (Shloka River, 5 scenes; reuses `scenes-horizontal-container`, no new component). Old phone `top` overrides removed; one final phone block at the end of the CSS. Ganesha guide and critters hidden on phone. CTAs are thin (36px painted, 2px press edge); Continue + small replay circle (60px hit area, 36px painted, negative margins so the row fits). Phone label `↻ Replay` (tablet keeps `↻ Play Again`). Logic: a permanently completed scene is always `completed` (Replay) even with a half-played replay session — no Continue once a zone is complete; Replay (pill and whole-card tap) always restarts fresh (`mode: 'replay'`). Replay styled quiet cream with a zone-coloured edge (not grey).
+**Verified:** built-in browser at 740x360 — Modak 4/4 (all Replay) and Shloka River carousel/arrow. Replay-restart and the in-progress (one Continue) state NOT run in the browser.
+**Open:** Replay restart + in-progress zone state still to check; 44->36px CTAs are under the 60px rule (whole card is tappable); iPad/desktop Zone Welcome unchecked after the Replay colour change.
+
 ## [2026-10-06] — Mobile: compact phone CTA (OpeningModal + Completion) and plain 'Tap to collect'
 **Touched:** src/zones/shared/components/OpeningModal.css, src/lib/components/celebration/SceneCompletionCelebration.css, src/lib/components/reveal/SymbolAutoReveal.css (CSS only).
 **Changed:** Phone-landscape primary button on the opening modal and completion screen is narrower and softer: 158px min width, 18px text, 52px painted pill in a 60px tap box, 3px base edge, tighter gaps. SymbolAutoReveal 'Tap to collect' is now plain quiet text on tablet and phone (the yellow pill is gone); the whole card remains the tap target. Replaced an in-progress 5px-edge variant left uncommitted by another session.
 **Verified:** not run in a browser (Madhurima is testing). CSS-only; tablet CTA untouched.
 **Open:** on-device look at both buttons and the reveal hint; Vakratunda Grove 4:3 stage (VakratundaGroveSimplified.css) still uncommitted pending her test.
 
+## [2026-10-06] — Shloka River phone-landscape pass (Vakratunda, Mahakaya, Samaprabha, Finale) + Symbol Mountain 60px fixes
+**Touched:** shloka-river/scenes/Scene1/VakratundaRescueGame.jsx, shloka-river/scenes/Scene1/MahakayaRescueGame.jsx, shloka-river/scenes/Scene2/components/SamaprabhaGame.jsx, shloka-river/scenes/scene5/ShlokaRiverFinale.jsx + .css, symbol-mountain/scenes/modak/GarlandGame3.jsx, symbol-mountain/scenes/tusk/EyesPopUpGame.jsx, symbol-mountain/scenes/final scene/SacredAssemblySceneV8.jsx.
+**Changed:** (phone = landscape, max-height 500, max-width 1023 — the same query as the rest of the app; iPad/desktop untouched unless marked)
+- **Vakratunda Rescue (phone only):** `PHONE_OBSTACLES` overrides applied in `cloneObstacles()`: stone l 36.45 / t 26.97 / w 26.6 (Madhurima's debug export); logpile w 30 -> 26.6; reeds l 53.59 / t 77.26 / w 15.3; reeds2 l 47.04 / t 77.65 / w 13.05 (swapped to the left of reeds); hit zones scaled with the art. Frog 6 -> 6.4 (`startFrogW()`).
+- **Mahakaya Rescue (phone only):** `adaptLayoutForPhone()` builds `PHONE_PHASE_LAYOUTS` + `PHONE_CROSS_TARGET_RAFT` from the base layouts. Bridge (raft, logTarget*, waitingLog*) x0.85 x0.9, bridge nudged -1.5 l / -1.5 t; animals elephant x0.88, peacock x0.97, cow x0.9, monkey x0.95; animals on the bridge follow the shift and drop by half their shrink so feet stay on the logs. DROP_RX/RY unchanged.
+- **Samaprabha (phone only):** `withPhoneMinHit()` floors each clue's hold zone at 31px half-axis (>= 62px); the old 5% x 6% zone was ~85x47px at 852x393.
+- **Shloka Finale (ALL sizes, by request):** `placed` is now a horseshoe fleet; phone/iPad get slightly different outer positions (phone Vakratunda 14.5 / Sarvada 85.5; iPad-desktop 17/28/72/83), chosen once at load by `IS_PHONE_FINALE`. CSS: parade inset 10% 12% 18% 12%, boat width clamp(72px,8vw,104px), recap symbol left 50 / top 60, plus a phone block (inset 9% 7% 16% 7%, boats 64-74px, word 8-10px, recap top 66 / 125-155px).
+- **Garland (all sizes):** removed the "Tap a flower to thread it" caption (VO covers it); `.g3g-instruction` CSS left in place. The dev preview `src/dev/modakGame3Preview/Game3Garland.jsx` still has its own copy.
+- **Eyes (phone only):** hidden mango tap target gets `min-width: 62px` while not found (was 6% of width = ~51px at 852, ~40px at 667).
+- **Sacred Assembly (phone only):** `PHONE_ZONE_OVERRIDES` (also feeds hint/sparkle anchors via `ANCHOR_ZONES` and seeds `zonePositionOverrides`): tusk box height 8.5% -> 12% on the same centre; Mooshika (base) target bottom 10% -> 22% so it is on screen.
+**Verified:** read/measured only; no full playthroughs. Looked at Modak (3 games), Pond, Symbol (Eyes start) and Sacred Assembly opening at 844x390 in the in-app browser — nothing changed in Modak/Pond. Eslint: no new errors from these edits (old unused-var errors remain in SacredAssemblySceneV8.jsx and ShlokaRiverFinale.jsx; SamaprabhaGame.jsx has an old unused `effShowDoneline`). Checked by code: Ears hit zones, Tusk drag items/nest (all >= 60px at 667x375-932x430).
+**Open:**
+- Madhurima to re-check Mahakaya phases 1-4 (animals on the bridge, bridge position) and Vakratunda on screen after the final numbers.
+- Sacred Assembly: the Mooshika ARTWORK (78-91% down the square Ganesha) is still off-screen on phone — only its tap target moved; fixing needs the whole Ganesha moved up on phone.
+- Finale: saved tuner values in localStorage override the new boat positions (clear storage); `placed` position set is chosen at load, so rotating mid-scene does not re-apply it. Mark Shloka Finale DONE after Madhurima's phone + iPad check.
+- Mahakaya/Vakratunda background: Madhurima is getting a new phone background; the shared Grove stage (VakratundaGroveSimplified.css, 4:3 width-fit) and the separate banyan image were left alone. Re-place objects when the new art lands.
+- Modak/Pond/Symbol bottom-edge clipping seen in the harness is partly the harness (header + ~44px offset) — needs the real-device check. Ears tap zones are 59px tall at 740x360 (rock), Eyes 59px (min-height 60 covers it).
+- Nothing committed. The other session's About Me Hut / Pond / Modak / Tusk edits are in the same working tree — stage by file when committing.
 ## [2026-10-06] — Symbol Mountain Tusk: nest-game phone layout + Ears elephant/cow tune
 **Touched:** scenes/tusk/tuskNestFlow.json (unchanged vs HEAD), scenes/tusk/tuskNestFlowPhone.json (NEW), scenes/tusk/tuskNestFlowSelect.js (NEW), scenes/tusk/TuskBeatPlayerLive.jsx, scenes/tusk/TuskPathGame.css, src/dev/beatPlayerPreview/tuskNest/TuskNestBeatPlayerPreview.jsx, scenes/tusk/EarsSoundMatchGame.jsx.
 **Changed:**
@@ -22,7 +46,7 @@ Append one entry per work session. Newest on top.
 ## [2026-10-06] — Sacred Assembly: phone-landscape pass (Ganesha 560 -> ~420px, compact card)
 **Touched:** scenes/final scene/SacredAssemblyScene.css (phone block appended at END), scenes/final scene/SacredAssemblySceneV8.jsx (SymbolFlipCard sizes + side-card `left`, both gated on `IS_PHONE_LAYOUT`).
 **Changed:**
-- Ganesha container `min(58vw, 420px)` at top 52% / left 65% on phones (was 560px from the 768px and 769-1023px rules, a giant cropped torso at 740x360). Placed-symbol images scaled x0.75 (width + translate) so they still sit on the smaller art.
+- Ganesha container `min(58vw, 96dvh, 420px)` at top 50% / left 65% on phones (was 560px from the 768px and 769-1023px rules). Sized to the screen height so the baked-in Mooshika at the bottom of the art is visible (740x360: 346px at y 7-353; base target 68px at y 251-319). Placed-symbol images scaled ~x0.64 (width + translate) to match. The phone `base` zone override was removed (art is no longer cropped); the tusk override stays.
 - Phone card 190x200 (art 100px, title 20px, text 15px, padding 12px, radius 20px); side-card position 13% -> 5%. Flip kept (symbol -> meaning -> find it on Ganesha).
 - iPad / desktop untouched. Phone Tusk/Mooshika zone overrides kept: they are percent-based so they scale with the art; base target still sits clear of the cropped bottom.
 **Verified:** 740x360 in harness — Ganesha 420px at (271,-23) (~37px of transparent bottom cropped), all 9 tap zones inside the viewport (smallest 78x61), card 190x200 at left 37px; scene screenshot shows the whole figure with the card beside it.
@@ -2556,3 +2580,9 @@ MooshikaRideTransition rider img switched to .webp with .png onError fallback.
 **Touched:** SamaprabhaGame.jsx/.css, voiceGuidance.js, SuryakotiBankSimplified.jsx, webSpeechScripts.js
 **Changed:** Samaprabha hints split into 3 states instead of one 10/18/26 ladder per clue. Teach (clue 1 until ring ≥22%): pulse → "Press and hold on the shadow." → one full hold hand. Find (clues 2–4): 12s pulse + "Look for another part of the shadow.", 25s exact region held quietly, no hand. Keep (started holding this clue, released): 9s "Keep holding." + soft glow. GestureDemo only in teach; old L2 partial hand and per-clue "scene11_sama_hint_hold" VO removed.
 **Open:** Not browser-tested. New VO keys scene11_sama_hint_find / _keep are Web Speech only until recorded (T14).
+
+## [2026-10-06]
+**Touched:** src/pages/CleanMapZone.jsx, src/pages/CleanMapZone.css
+**Changed:** Home/Map phone-landscape reflow (≤500px tall, <1024px wide). Same map layers recomposed via `PHONE_MAP_ZONE_ART` / `PHONE_MAP_OVERLAYS` / `PHONE_ZONE_MUSHIKA_POS`, applied only when `isPhoneLandscape` (matchMedia) — tablet/desktop positions unchanged. Ganesha and Mushika follow the phone positions. New phone CSS block: compact zone labels (locked/coming-soon at 30% opacity), Lodge pill ~10% lighter, profile chip keeps a 60px hit area with a smaller visible ::before pill, smaller Ganesha/Mushika, dust hidden. Parent icon kept (it opens Parent Corner).
+**Also:** `getAnimalId` now accepts any avatar id from the expanded library (fish, elephant, lion…) — fixes the literal "fish" showing in the profile chip on ALL devices. All avatar ids have images in public/images.
+**Open:** Browser-checked at 844×390 only (screenshots/map-phone-landscape-844x390.jpg); try 667×375 and 932×430. Not committed. Phone coordinates are first-pass; Shloka River label slightly overlaps the waterfall (left as-is by decision).

@@ -1170,30 +1170,11 @@
     min-height: clamp(150px, min(22vw, 44vh), 360px);
   }
 
-  /* 4-card pyramid — pull the top and bottom rows inward */
-  .zone-1 { top: 73%; }
-  .zone-2,
-  .zone-3 { top: 50%; }
-  .zone-4 { top: 29%; }
-
   /* Trim the float bob so the top card's badge doesn't ride under the
      zone title on a short viewport. */
   .zone-card {
     animation-name: floatSoftShort;
   }
-
-  /* 5-card two-row zones (Shloka River / Cave) — same compression */
-  .cave-of-secrets .zone-1,
-  .shloka-river .zone-1,
-  .cave-of-secrets .zone-2,
-  .shloka-river .zone-2,
-  .cave-of-secrets .zone-3,
-  .shloka-river .zone-3 { top: 73%; }
-
-  .cave-of-secrets .zone-4,
-  .shloka-river .zone-4,
-  .cave-of-secrets .zone-5,
-  .shloka-river .zone-5 { top: 30%; }
 
   .stats-bottom-bar {
     bottom: 8px;
@@ -1930,4 +1911,307 @@ button[style*="position: fixed"][style*="background: purple"] {
 @keyframes sparkleShimmer {
   0%, 100% { opacity: 0.6; transform: scale(1); }
   50% { opacity: 1; transform: scale(1.2); }
+}
+
+/* ==========================================================
+   ZONE WELCOME — FINAL PHONE LANDSCAPE
+   4 scenes  = single horizontal row
+   5+ scenes = horizontal snap carousel (Shloka River)
+   ========================================================== */
+
+.zone-carousel-arrow {
+  display: none;
+}
+
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
+  /* Stage */
+  .cards-wrapper {
+    width: 100%;
+    height: 100%;
+    max-height: none;
+    margin: 0;
+    aspect-ratio: auto;
+  }
+
+  .scenes-horizontal-container {
+    position: absolute;
+    top: 51%;
+    left: 50%;
+    width: calc(100% - 48px);
+    height: auto;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    gap: 8px;
+    overflow: visible;
+  }
+
+  /* No Ganesha / critters on compact cards */
+  .zone-welcome-container .zone-card-ganesha-guide,
+  .zone-welcome-container .zone-card-creature {
+    display: none;
+  }
+
+  /* Card */
+  .zone-welcome-container .zone-scene-card {
+    position: relative;
+    top: auto;
+    left: auto;
+    flex: 0 0 clamp(124px, 18vw, 136px);
+    width: clamp(124px, 18vw, 136px);
+    min-height: 176px;
+    padding: 3px;
+    transform: none;
+    animation: none;
+  }
+
+  .zone-welcome-container .zone-card,
+  .zone-welcome-container .zone-card:hover,
+  .zone-welcome-container .zone-scene-card:hover,
+  .zone-welcome-container .zone-scene-card.available:hover,
+  .zone-welcome-container .zone-scene-card.in-progress:hover,
+  .zone-welcome-container .zone-scene-card.completed:hover {
+    transform: none;
+    animation: none;
+  }
+
+  .zone-welcome-container .zone-inner { padding: 7px 7px 6px; }
+
+  /* Icon */
+  .zone-welcome-container .scene-icon-area { margin-bottom: 3px; }
+
+  .zone-welcome-container .scene-icon-img {
+    width: clamp(44px, 6.5vw, 50px);
+    height: clamp(44px, 6.5vw, 50px);
+    object-fit: contain;
+  }
+
+  .zone-welcome-container .scene-emoji { font-size: clamp(38px, 6vw, 48px); }
+
+  /* Title */
+  .zone-welcome-container .scene-name-area {
+    min-height: 34px;
+    margin-bottom: 2px;
+  }
+
+  .zone-welcome-container .scene-name {
+    font-size: 12.5px;
+    line-height: 1.12;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+
+  /* Badges */
+  .zone-welcome-container .scene-order-indicator {
+    top: 7px;
+    left: 7px;
+    min-width: 28px;
+    height: 28px;
+    padding: 0 5px;
+    font-size: 15px;
+  }
+
+  .zone-welcome-container .scene-complete-badge {
+    top: 7px;
+    right: 7px;
+    width: 25px;
+    height: 25px;
+    font-size: 13px;
+  }
+
+  /* Actions — visually thin, 2px press edge only */
+  .zone-welcome-container .scene-action-integrated {
+    min-height: 48px;
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Start / Replay / Locked */
+  .zone-welcome-container .scene-action-integrated .profile-cta-btn-unified.zone-welcome-cta:not(.zone-welcome-replay-btn) {
+    width: auto !important;
+    min-width: 92px;
+    max-width: 108px;
+    height: 36px;
+    min-height: 36px;
+    padding: 0 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0;
+    box-shadow:
+      0 2px 0 var(--profile-btn-shadow, rgba(105, 78, 12, 0.25)),
+      0 3px 7px rgba(60, 40, 20, 0.06);
+    transform: none;
+  }
+
+  .zone-welcome-container .scene-action-integrated .profile-cta-btn-unified.zone-welcome-cta:not(.zone-welcome-replay-btn):active {
+    transform: translateY(1px);
+    box-shadow: 0 1px 0 var(--profile-btn-shadow, rgba(105, 78, 12, 0.22));
+  }
+
+  /* Continue + small replay */
+  .zone-welcome-container .action-split-container {
+    width: auto;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+  }
+
+  .zone-welcome-container .action-split-container .zone-welcome-continue-btn {
+    flex: 0 0 80px;
+    width: 80px !important;
+    min-width: 80px;
+    max-width: 80px;
+    height: 36px;
+    min-height: 36px;
+    padding: 0 8px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  /* 60px hit region, 36px painted circle. Negative side margins let the
+     invisible hit area overlap the card padding so the row still fits. */
+  .zone-welcome-container .action-split-container .zone-welcome-replay-btn {
+    position: relative;
+    flex: 0 0 60px;
+    width: 60px !important;
+    min-width: 60px !important;
+    height: 60px;
+    min-height: 60px;
+    margin: 0 -12px 0 -6px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    box-shadow: none;
+    display: grid;
+    place-items: center;
+    font-size: 17px;
+    isolation: isolate;
+  }
+
+  .zone-welcome-container .action-split-container .zone-welcome-replay-btn::before {
+    content: "";
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(
+      180deg,
+      var(--profile-btn-top, #FFD54F),
+      var(--profile-btn-base, #FFD54F)
+    );
+    box-shadow:
+      0 2px 0 var(--profile-btn-shadow, rgba(105, 78, 12, 0.23)),
+      0 3px 7px rgba(60, 40, 20, 0.05);
+    z-index: -1;
+  }
+
+  /* Four-scene zones: all visible */
+  .scenes-horizontal-container:not(.has-phone-carousel) {
+    justify-content: center;
+    overflow: visible;
+    touch-action: auto;
+  }
+
+  /* Shloka River carousel */
+  .shloka-river .scenes-horizontal-container.has-phone-carousel {
+    width: min(72vw, 535px);
+    justify-content: flex-start;
+    gap: 8px;
+    padding: 4px 12px 7px;
+    overflow-x: auto;
+    overflow-y: visible;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 12px;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    touch-action: pan-x;
+  }
+
+  .shloka-river .scenes-horizontal-container.has-phone-carousel::-webkit-scrollbar {
+    display: none;
+  }
+
+  .shloka-river .scenes-horizontal-container.has-phone-carousel .zone-scene-card {
+    flex: 0 0 142px;
+    width: 142px;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+
+  /* Arrows: 60px target, 36px visible circle */
+  .shloka-river .zone-carousel-arrow {
+    position: absolute;
+    top: 51%;
+    width: 60px;
+    height: 60px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    display: grid;
+    place-items: center;
+    transform: translateY(-50%);
+    z-index: 20;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .shloka-river .zone-carousel-arrow::before {
+    content: "";
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 250, 238, 0.96);
+    border: 1.5px solid rgba(115, 86, 180, 0.22);
+    box-shadow: 0 3px 8px rgba(60, 40, 20, 0.10);
+  }
+
+  .shloka-river .zone-carousel-arrow span {
+    position: relative;
+    z-index: 1;
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--zone-color);
+  }
+
+  .shloka-river .zone-carousel-arrow--left { left: 7px; }
+  .shloka-river .zone-carousel-arrow--right { right: 7px; }
+
+  .shloka-river .zone-carousel-arrow:disabled {
+    opacity: 0.18;
+    pointer-events: none;
+  }
+
+  /* Progress */
+  .stats-bottom-bar { bottom: 5px; }
+  .journey-panel { padding: 5px 14px; gap: 10px; }
+}
+
+/* Replay = quiet secondary CTA (cream, zone-coloured edge). Colour only —
+   sizing stays with the layout rules above. Not grey: grey means locked. */
+.zone-welcome-container .scene-action-integrated .profile-cta-btn-unified.zone-welcome-cta.completed {
+  background: rgba(255, 253, 244, 0.94);
+  border: 2px solid var(--profile-btn-base, #C9A227);
+  color: var(--profile-btn-shadow, #7A5C00);
+  box-shadow: 0 2px 6px rgba(120, 90, 40, 0.10);
+  text-shadow: none;
+}
+
+.zone-welcome-container .scene-action-integrated .profile-cta-btn-unified.zone-welcome-cta.completed .profile-cta-btn-text {
+  color: inherit;
+  text-shadow: none;
 }

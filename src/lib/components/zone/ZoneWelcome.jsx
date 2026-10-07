@@ -1,7 +1,7 @@
 // ZoneWelcome.jsx - Updated with Disney/PBS Unlock Detection System
 // Path: lib/components/zone/ZoneWelcome.jsx
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './ZoneWelcome.css';
 import '../../styles/zone-themes.css';
 import { getZoneTheme, getProfilePillBtnStyle } from '../../config/ZoneThemes';
@@ -129,6 +129,50 @@ const ZoneWelcome = ({
   // cleanup cancelled the pending setConfetti([]) and started a fresh timer,
   // so cleanup could be deferred indefinitely and confetti DOM nodes leaked.
   const confettiTimeoutRef = React.useRef(null);
+
+  // Phone landscape: Shloka River's 5 cards become a swipe carousel with arrows.
+  const sceneCarouselRef = useRef(null);
+  const [sceneCarouselState, setSceneCarouselState] = useState({
+    canScrollLeft: false,
+    canScrollRight: true,
+  });
+  const isPhoneLandscape =
+    typeof window !== 'undefined' &&
+    window.matchMedia('(orientation: landscape) and (max-height: 500px) and (max-width: 1023px)').matches;
+  const usesPhoneSceneCarousel =
+    zoneData?.id === 'shloka-river' && (zoneData?.scenes?.length || 0) > 4;
+
+  const updateSceneCarouselState = () => {
+    const track = sceneCarouselRef.current;
+    if (!track) return;
+    const maxScroll = Math.max(0, track.scrollWidth - track.clientWidth);
+    setSceneCarouselState({
+      canScrollLeft: track.scrollLeft > 4,
+      canScrollRight: track.scrollLeft < maxScroll - 4,
+    });
+  };
+
+  const scrollSceneCarousel = (direction) => {
+    const track = sceneCarouselRef.current;
+    if (!track) return;
+    const firstCard = track.querySelector('.zone-scene-card');
+    const cardWidth = firstCard?.getBoundingClientRect().width || 148;
+    const styles = window.getComputedStyle(track);
+    const parsedGap = parseFloat(styles.columnGap || styles.gap);
+    const gap = Number.isFinite(parsedGap) ? parsedGap : 10;
+    track.scrollBy({ left: direction * (cardWidth + gap), behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    if (!usesPhoneSceneCarousel) return undefined;
+    const raf = requestAnimationFrame(() => updateSceneCarouselState());
+    const handleResize = () => updateSceneCarouselState();
+    window.addEventListener('resize', handleResize);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [usesPhoneSceneCarousel, zoneData?.id]);
 
   const dlog = import.meta.env.DEV ? console.log : () => {};
 
@@ -622,6 +666,14 @@ if (tempData) {
   tempState.basketFull
 );
       
+      // A permanently completed scene is always "completed" (Replay) — a
+      // half-played replay session must never turn it back into "Continue".
+      // Tapping Replay still resumes that session via hasReplaySession.
+      if (hasPartialProgress && progress.completed === true) {
+        dlog(`🎯 COMPLETED + REPLAY SESSION: ${scene.id} stays completed (Replay)`);
+        return { status: 'completed', stars: progress.stars || tempState.stars || 0, hasReplaySession };
+      }
+
       if (hasPartialProgress) {
         dlog(`🎮 TEMP PROGRESS: ${scene.id} has partial progress`);
         return { status: 'in-progress', stars: tempState.stars || 0, hasReplaySession };
@@ -964,7 +1016,26 @@ const handleReplayIntroStory = () => {
               ))}
             </div>
           )}
-          <div className="scenes-horizontal-container">
+          {usesPhoneSceneCarousel && (
+            <button
+              type="button"
+              className="zone-carousel-arrow zone-carousel-arrow--left"
+              aria-label="Previous scenes"
+              disabled={!sceneCarouselState.canScrollLeft}
+              onClick={() => scrollSceneCarousel(-1)}
+            >
+              <span aria-hidden="true">‹</span>
+            </button>
+          )}
+          <div
+            ref={sceneCarouselRef}
+            className={[
+              'scenes-horizontal-container',
+              `scene-count-${zoneData.scenes.length}`,
+              usesPhoneSceneCarousel ? 'has-phone-carousel' : '',
+            ].join(' ')}
+            onScroll={usesPhoneSceneCarousel ? updateSceneCarouselState : undefined}
+          >
             {zoneData.scenes.map((scene, index) => {
             const status = sceneStatuses[scene.id];
             const isNextScene = recommendedScene && recommendedScene.id === scene.id;
@@ -989,7 +1060,7 @@ const handleReplayIntroStory = () => {
                   cursor: status.status === 'locked' ? 'not-allowed' : 'pointer',
                   '--zone-color': getCardAccentColor()
                 }}
-                onClick={() => handleSceneClick(scene)}
+                onClick={() => handleSceneClick(scene, status.status === 'completed' ? 'replay' : 'default')}
               >
                 {showButterfly && creature && (
                   <div
@@ -1107,9 +1178,10 @@ const handleReplayIntroStory = () => {
                         className={`zone-welcome-cta ${status.status}`.trim()}
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleSceneClick(scene);
+                          // Replay always restarts the scene fresh
+                          handleSceneClick(scene, status.status === 'completed' ? 'replay' : 'default');
                         }}
-                        label={status.status === 'available' ? 'Start' : status.status === 'completed' ? '↻ Play Again' : 'Locked'}
+                        label={status.status === 'available' ? 'Start' : status.status === 'completed' ? (isPhoneLandscape ? '↻ Replay' : '↻ Play Again') : 'Locked'}
                         size="sm"
                         fullWidth={true}
                         style={getProfilePillBtnStyle(zoneData.id)}
@@ -1178,6 +1250,17 @@ const handleReplayIntroStory = () => {
             )}
             */}
           </div>
+          {usesPhoneSceneCarousel && (
+            <button
+              type="button"
+              className="zone-carousel-arrow zone-carousel-arrow--right"
+              aria-label="Next scenes"
+              disabled={!sceneCarouselState.canScrollRight}
+              onClick={() => scrollSceneCarousel(1)}
+            >
+              <span aria-hidden="true">›</span>
+            </button>
+          )}
         </div>
       </div>
 
