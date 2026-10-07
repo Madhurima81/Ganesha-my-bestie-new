@@ -1084,6 +1084,11 @@
   background: rgba(255, 255, 255, 0.96);
   color: #30253e;
   box-shadow: 0 5px 18px rgba(35, 24, 50, 0.25);
+  /* Short phone viewports: stay below the harness toolbar and scroll instead
+     of growing upward under it (which hid the Element dropdown). */
+  max-height: calc(100vh - 200px);
+  max-height: calc(100dvh - 200px);
+  overflow-y: auto;
 }
 .pond-layout-panel__body label {
   display: grid;
@@ -1215,35 +1220,22 @@
 
 /* ===========================================================
    PHONE LANDSCAPE — POND SCENE
-   Minor visual hierarchy tune only: turtle -> obstacle -> lotus.
-   Widths are set here directly, so on phones these objects ignore the
-   --pond-*-size vars from pondLayout (the layout editor). The turtle is
-   left alone on purpose (its width is an inline style anyway).
+   Sizes now come from the --pond-*-size vars (pondLayout, tuned in the layout
+   editor) for rock / reeds / lotus on phones too — only touch minimums are
+   enforced here. The turtle's width is an inline style.
    =========================================================== */
 @media (orientation: landscape)
   and (max-height: 500px)
   and (max-width: 1023px) {
 
-  /* Rock is the strongest object — reduce visual weight, still easy to press. */
-  .pond-strength-rock-wrap {
-    width: clamp(82px, 13.5vw, 108px);
-  }
-
-  /* Slightly quieter obstacle cluster (keeps its 60px touch minimum). */
-  .pond-trunk-reeds {
-    width: clamp(60px, 9.7vw, 78px);
-  }
-
-  /* Give the destination/result a little more prominence. */
+  /* Keep the lotus touch-friendly whatever size the layout sets. */
   .pond-trunk-lotus {
-    width: clamp(68px, 9.5vw, 82px);
     min-width: 68px;
     min-height: 72px;
   }
 
   /* Keep lotus interaction forgiving even if the art changes later. */
   .pond-lotus-hit-zone {
-    width: max(68px, 9.5vw);
     min-width: 68px;
     min-height: 68px;
   }

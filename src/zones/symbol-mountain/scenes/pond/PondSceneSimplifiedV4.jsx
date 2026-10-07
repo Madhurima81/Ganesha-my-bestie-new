@@ -316,25 +316,25 @@ const PondSceneContent = ({
     }
   }, []);
   const DEFAULT_POND_LAYOUT = {
-    rock: { x: 28.7, y: 49.9, size: 26.5 },
-    flowers: { x: 50.5, y: 59.5, size: 8.5 },
-    lotus: { x: 69.6, y: 56.2, size: 8.5 },
-    lotusHit: { x: 69.6, y: 56.2, size: 7 },
+    rock: { x: 32, y: 46.7, size: 20.5 },
+    flowers: { x: 49.7, y: 56.4, size: 9 },
+    lotus: { x: 65, y: 48.5, size: 8.5 },
+    lotusHit: { x: 63.5, y: 45, size: 7 },
     reflection: { x: 76, y: 66, size: 20 },
     water: { x: 0, y: 67.8, size: 78 },
-    streamOverlay: { x: 0, y: 41, size: 90.5 },
+    streamOverlay: { x: 0.1, y: 30, size: 81 },
     // Each flower and pebble is now a fully independent stage-positioned
     // element (own x/y/size) — NOT nested inside the reeds-swipe group, so
     // dragging one never drags the others as a group.
-    flower1: { x: 52.5, y: 60.1, size: 6 },
-    flower2: { x: 54.2, y: 62.7, size: 5 },
-    flower3: { x: 50.5, y: 62, size: 6 },
-    flower4: { x: 53, y: 63.5, size: 5 },
-    pebble1: { x: 52.7, y: 66.3, size: 7 },
-    pebble2: { x: 51.5, y: 65.5, size: 5.5 },
-    pebble3: { x: 51.5, y: 68, size: 6 },
-    pebble4: { x: 49.5, y: 66.5, size: 5.5 },
-    turtle: { x: 59, y: 41.7, size: 8 },
+    flower1: { x: 52, y: 58, size: 6 },
+    flower2: { x: 53.7, y: 60.6, size: 5 },
+    flower3: { x: 50, y: 59.9, size: 6 },
+    flower4: { x: 52.5, y: 61.4, size: 5 },
+    pebble1: { x: 52.2, y: 64.2, size: 7 },
+    pebble2: { x: 50.5, y: 61.2, size: 5.5 },
+    pebble3: { x: 50.9, y: 64.8, size: 6 },
+    pebble4: { x: 48.7, y: 63.4, size: 5.5 },
+    turtle: { x: 53, y: 33.9, size: 6.5 },
   };
   const [pondLayout, setPondLayout] = useState(DEFAULT_POND_LAYOUT);
   const pondStageRef = useRef(null);
@@ -373,11 +373,30 @@ const PondSceneContent = ({
 
   const endElementDrag = useCallback(() => { elementDragRef.current = null; }, []);
 
+  // "cluster" = flower1-4 + pebble1-4 edited as one group. It shows flower1's
+  // x/y/size; x/y edits shift every member by the same delta and size edits
+  // scale every member's size by the same factor, so the arrangement is kept.
+  const CLUSTER_KEYS = ['flower1', 'flower2', 'flower3', 'flower4', 'pebble1', 'pebble2', 'pebble3', 'pebble4'];
+  const activeLayout = layoutKey === 'cluster' ? pondLayout.flower1 : pondLayout[layoutKey];
+  const round1 = (n) => Number(n.toFixed(1));
+
   const updatePondLayout = (field, value) => {
-    setPondLayout((current) => ({
-      ...current,
-      [layoutKey]: { ...current[layoutKey], [field]: Number(value) },
-    }));
+    const next = Number(value);
+    setPondLayout((current) => {
+      if (layoutKey !== 'cluster') {
+        return { ...current, [layoutKey]: { ...current[layoutKey], [field]: next } };
+      }
+      const anchor = current.flower1[field];
+      const updated = { ...current };
+      CLUSTER_KEYS.forEach((key) => {
+        const old = current[key][field];
+        const val = field === 'size'
+          ? (anchor ? old * (next / anchor) : old)
+          : old + (next - anchor);
+        updated[key] = { ...current[key], [field]: round1(Math.max(0, val)) };
+      });
+      return updated;
+    });
   };
 
   // Discovery overlay states
@@ -1640,7 +1659,7 @@ const PondSceneContent = ({
                 onPointerCancel={layoutOpen ? undefined : handleRockHoldEnd}
                 style={layoutOpen ? { cursor: 'move' } : undefined}
               >
-                {SHOW_HIT_ZONES && !sceneState.rockMoved && (
+                {(SHOW_HIT_ZONES || layoutOpen) && !sceneState.rockMoved && (
                   <div
                     style={{
                       position: 'absolute',
@@ -1733,6 +1752,9 @@ const PondSceneContent = ({
                           <option value="water">Water</option>
                           <option value="streamOverlay">Stream overlay</option>
                         </optgroup>
+                        <optgroup label="Group">
+                          <option value="cluster">Flowers + pebbles (all 8 together)</option>
+                        </optgroup>
                         <optgroup label="Flowers (independent)">
                           <option value="flower1">Flower 1</option>
                           <option value="flower2">Flower 2</option>
@@ -1752,8 +1774,8 @@ const PondSceneContent = ({
                     </label>
                     {['x', 'y', 'size'].map((field) => (
                       <label key={field}>{field.toUpperCase()}
-                        <input type="range" min="0" max="100" step="0.5" value={pondLayout[layoutKey][field]} onChange={(e) => updatePondLayout(field, e.target.value)} />
-                        <input type="number" min="0" max="100" step="0.5" value={pondLayout[layoutKey][field]} onChange={(e) => updatePondLayout(field, e.target.value)} />
+                        <input type="range" min="0" max="100" step="0.5" value={activeLayout[field]} onChange={(e) => updatePondLayout(field, e.target.value)} />
+                        <input type="number" min="0" max="100" step="0.5" value={activeLayout[field]} onChange={(e) => updatePondLayout(field, e.target.value)} />
                       </label>
                     ))}
                     <button type="button" onClick={() => setPondLayout(DEFAULT_POND_LAYOUT)}>Reset</button>
@@ -1778,7 +1800,7 @@ const PondSceneContent = ({
                       readOnly
                       value={JSON.stringify(pondLayout, null, 2)}
                       onFocus={(e) => e.target.select()}
-                      rows={8}
+                      rows={3}
                       style={{ width: '100%', fontFamily: 'monospace', fontSize: 11 }}
                     />
                   </div>
@@ -1824,7 +1846,7 @@ const PondSceneContent = ({
                     pointerEvents: layoutOpen ? 'auto' : undefined,
                   }}
                 >
-                  {SHOW_HIT_ZONES && sceneState.phase === PHASES.REEDS_ACTIVE && (
+                  {(SHOW_HIT_ZONES ? sceneState.phase === PHASES.REEDS_ACTIVE : layoutOpen) && (
                     <div
                       style={{
                         position: 'absolute',
@@ -1905,6 +1927,9 @@ const PondSceneContent = ({
                   width: 'var(--pond-turtle-size)',
                   cursor: layoutOpen ? 'move' : undefined,
                   pointerEvents: layoutOpen ? 'auto' : 'none',
+                  // Lift above the rock/reeds/lotus layers while editing so it can be grabbed.
+                  zIndex: layoutOpen ? 40 : undefined,
+                  touchAction: layoutOpen ? 'none' : undefined,
                 }}
                 onPointerDown={layoutOpen ? (e) => startMainDrag('turtle', e) : undefined}
               />
