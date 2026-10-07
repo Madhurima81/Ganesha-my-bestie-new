@@ -234,7 +234,7 @@ export const LEARNING_CATALOG = {
   mahakaay: {
     id: 'mahakaay',
     type: 'shloka',
-    title: 'Mahakaay',
+    title: 'Mahakaya',
     childMeaning:
       'Being big can mean having room for others, not only being physically strong.',
     affirmation: 'I can make space in my heart for others.',

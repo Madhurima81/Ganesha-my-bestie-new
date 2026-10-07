@@ -24,7 +24,7 @@ export const chantCardContent = {
 
   mahakaya: {
     icon: mahakayaIcon,
-    label: 'Mahakaay',
+    label: 'Mahakaya',
     ganeshaLines: [
       'My great form can hold a lot.',
       'It reminds us that our hearts can always make space for someone else.',

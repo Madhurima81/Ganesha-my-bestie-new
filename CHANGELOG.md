@@ -5,6 +5,11 @@ Append one entry per work session. Newest on top.
 **Changed:** New opt-in `.gmb-compact-cta` in App.css (phone landscape only): 36px painted pill, 13px text, `overflow: visible`, `::after` hit area (12px top/bottom, 6px sides = ~60px touch). NOT a global size — `PrimaryBtn` / `ProfilePillBtn` / `Button.css` / `.onb-btn` unchanged. Applied to Pick Friend "Let's go" (previously had no hit area), Practice Chanting, petal popup Continue + Play Sound (their duplicated size/::after rules removed). Rule of thumb locked with Madhurima: child compact CTA 36-40px visible, child one-clear-action CTA 48-60px, parent controls 44-48px+; touch target is separate from painted size. Keep >=12px between adjacent compact CTAs so hit areas don't overlap.
 **Open:** ZoneWelcome keeps its own compact layout (not on the modifier). Verified at 740x360: popup Continue 90x36, Pick Friend 92x36, chant 140x36 (all 13px, hit area extends). The chant/game-test harness page does not import App.css (the real app does) — modal CSS now depends on the global modifier. Button audit rows (162 CSS rules) not written to a file.
 
+## [2026-10-07] — Mahakaya display spelling
+**Touched:** src/lib/config/learningCatalog.js, src/lib/config/content/discoveryContent.js, src/zones/shloka-river/shared/AppSidebar.jsx, src/zones/shloka-river/shared/components/chantCardContent.js.
+**Changed:** Visible title/label "Mahakaay" -> "Mahakaya" in the learning catalog (Parent Dashboard, Daily Dare), discovery content, sidebar and chant card. Internal id `mahakaay` and the progress-key map in sceneLearningMap.js are unchanged on purpose (saved data uses them).
+**Open:** Spoken/VO lines still spell "Mahakaay" (voiceGuidance.js, Scene1 success lines, MahakayaRescueGame strip text) — possibly a deliberate phonetic spelling for TTS; left as is. `SUPPORT_EMAIL` in ParentDashboard.jsx is still `[SUPPORT EMAIL]`.
+
 ## [2026-10-07] — Parent PIN + Parent Dashboard: phone landscape tune, final Help/About copy
 **Touched:** src/lib/components/dashboard/PinScreen.jsx, src/lib/components/navigation/ParentDashboard.jsx + .css.
 **Changed:** (phone = landscape, max-height 500, max-width 1023; iPad/desktop layout untouched)

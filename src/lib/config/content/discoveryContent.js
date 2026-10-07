@@ -129,7 +129,7 @@ export const DISCOVERY_CONTENT = {
       },
 
       mahakaya: {
-        title: "Mahakaay",
+        title: "Mahakaya",
         affirmation: "I can make space in my heart for others.",
         icon: 'mahakaya-complete'
       }

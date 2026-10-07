@@ -19,7 +19,7 @@ import sarvadaIcon       from '../../meaning cave/assets/images/symbols/sarvada-
 
 const appInfo = {
   vakratunda:    { title: "Vakratunda",    description: "I can change my plan.", icon: vakratundaIcon,    syllables: ['VA', 'KRA', 'TUN', 'DA'],        power: { color: '#FFD700' } },
-  mahakaya:      { title: "Mahakaay",      description: "I make space.",       icon: mahakayaIcon,      syllables: ['MA', 'HA', 'KA', 'YA'],           power: { color: '#FF6B35' } },
+  mahakaya:      { title: "Mahakaya",      description: "I make space.",       icon: mahakayaIcon,      syllables: ['MA', 'HA', 'KA', 'YA'],           power: { color: '#FF6B35' } },
   suryakoti:     { title: "Suryakoti",     description: "I shine.",            icon: suryakotiIcon,     syllables: ['SUR', 'YA', 'KO', 'TI'],          power: { color: '#FFC107' } },
   samaprabha:    { title: "Samaprabha",    description: "I stay bright.",      icon: samaprabhaIcon,    syllables: ['SA', 'MA', 'PRA', 'BHA'],         power: { color: '#2196F3' } },
   kurumedeva:    { title: "Kurumedeva",    description: "I try again.",        icon: kurumedevaIcon,    syllables: ['KU', 'RU', 'ME', 'DEVA'],         power: { color: '#4CAF50' } },
