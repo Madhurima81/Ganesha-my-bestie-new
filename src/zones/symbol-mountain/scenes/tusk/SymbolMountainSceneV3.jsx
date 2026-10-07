@@ -605,9 +605,11 @@ const SymbolMountainSceneContent = ({
     }
   }, [sceneState?.phase, sceneState?.showEarsRhythmGame, sceneState?.showEyesTelescopeGame, sceneState?.showTuskAssemblyGame, idleHintLevel,  speakScenePrompt]);
 
-  // Reload Handling
+  // Resume Handling — runs for ANY re-entry with saved progress (Continue from the
+  // map, app relaunch, browser reload), not only a browser reload: `isReload` is
+  // false for the first two, which left the scene blank at every card/complete state.
   useEffect(() => {
-    if (!isReload || reloadHandledRef.current || !sceneState.welcomeShown) return;
+    if (reloadHandledRef.current || !sceneState.welcomeShown) return;
 
     if (import.meta.env.DEV) console.log('RELOAD DETECTED - Resuming from phase:', sceneState.phase);
     reloadHandledRef.current = true;
