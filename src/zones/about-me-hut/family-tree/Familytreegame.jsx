@@ -64,6 +64,8 @@ import homeIconImg from './assets/images/house-icon.webp';
 
 // ?hitzones paints the real tap zones. Valid: inside the round circle only.
 // Invalid: the label under it and the square corners around it.
+// Same condition as the phone block in Familytreegame.css.
+const PHONE_LANDSCAPE_QUERY = '(orientation: landscape) and (max-height: 500px) and (max-width: 1023px)';
 const SHOW_HIT_ZONES = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('hitzones');
 const HIT_ZONE_OVERLAY = SHOW_HIT_ZONES
   ? { outline: '3px dashed #E91E63', background: 'rgba(233, 30, 99, 0.18)' }
@@ -1296,6 +1298,8 @@ sceneActions.updateState({ gamePhase: 'transition' });
  callName: '',
  showNameModal: true
  });
+ // Phone: the right-side tray would sit on top of the name modal (and its X) — clear it.
+ setFamilyTrayOpen(false);
  };
 
  const handleAddFamilyMember = () => {
@@ -1547,7 +1551,8 @@ sceneActions.updateState({ gamePhase: 'transition' });
  sceneActions.updateState({ flippedMember: null });
  }}>
  <div className="flip-card-big" onClick={(e) => {
- e.stopPropagation();
+ // Phone: tapping the card closes it too (bubbles to the overlay); other sizes keep X / outside-tap.
+ if (!window.matchMedia(PHONE_LANDSCAPE_QUERY).matches) e.stopPropagation();
  }}>
  <CloseButton
  className="flip-card-close"
@@ -1758,6 +1763,8 @@ cancelTimer(resumePopupTimeoutRef);
 }
 stopVoice(); // Stop VO when modal closes
 sceneActions.updateState({ showNameModal: false });
+// Phone: hand the child back to the family choices they just left.
+if (window.matchMedia(PHONE_LANDSCAPE_QUERY).matches) setFamilyTrayOpen(true);
 }} />
  <div className="modal-emoji-large" style={{ width: '100px', height: '100px', margin: '0 auto 15px' }}>
  <img src={sceneState.currentFamilyType.image} alt={sceneState.currentFamilyType.label} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
@@ -1780,7 +1787,7 @@ sceneActions.updateState({ showNameModal: false });
  handleAddFamilyMember();
  }
  }}
- autoFocus
+ autoFocus={!window.matchMedia(PHONE_LANDSCAPE_QUERY).matches}
  />
  </div>
  <button className="submit-name-btn" onClick={handleAddFamilyMember} disabled={!sceneState.callName.trim()}>

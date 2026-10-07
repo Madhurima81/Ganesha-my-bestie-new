@@ -30,6 +30,12 @@ const AUDIO = { syllables: ['va', 'kra', 'tun', 'da'] };
 
 const START_POS = { x: 24.1, y: 64 };
 const FROG_W = 6;
+// Phone landscape only (same query the rest of the app uses): small frog a touch
+// bigger, reeds/logs smaller so the frog reads first. iPad/desktop keep the base values.
+const PHONE_MQ = '(orientation: landscape) and (max-height: 500px) and (max-width: 1023px)';
+const isPhone = () => typeof window !== 'undefined' && !!window.matchMedia?.(PHONE_MQ).matches;
+const PHONE_FROG_W = 6.4;
+const startFrogW = () => (isPhone() ? PHONE_FROG_W : FROG_W);
 const REUNION_FROG_W = 5.4;
 const FAMILY = { x: 91.08, y: 52.71, w: 14 };
 
@@ -237,11 +243,23 @@ const DEFAULT_OBSTACLES = [
   },
 ];
 
+const PHONE_OBSTACLES = {
+  stone: { l: 36.45, t: 26.97, w: 26.6, hit: { x: 37.05, y: 27.97, rx: 12.4, ry: 11.1 } },
+  logpile: { w: 26.6, hit: { rx: 12.35, ry: 11.1 } },
+  reeds: { l: 53.59, t: 77.26, w: 15.3, hit: { x: 53.59, y: 77.26, rx: 5.8, ry: 9.2 } },
+  reeds2: { l: 47.04, t: 77.65, w: 13.05, hit: { x: 47.04, y: 76.65, rx: 5, ry: 8.5 } },
+};
+
 function cloneObstacles() {
-  return DEFAULT_OBSTACLES.map((obstacle) => ({
-    ...obstacle,
-    hit: { ...obstacle.hit },
-  }));
+  const phone = isPhone();
+  return DEFAULT_OBSTACLES.map((obstacle) => {
+    const o = phone ? PHONE_OBSTACLES[obstacle.id] : null;
+    return {
+      ...obstacle,
+      ...(o || {}),
+      hit: { ...obstacle.hit, ...(o?.hit || {}) },
+    };
+  });
 }
 
 // X thresholds (in %) that light va / kra / tun as the frog passes 25% / 50% /
@@ -309,7 +327,7 @@ export default function VakratundaRescueGame({
   const [obstacles, setObstacles] = useState(() => cloneObstacles());
   const [bandsX, setBandsX] = useState(() => computeBandsX(START_POS.x, FAMILY.x));
   const [startPos, setStartPos] = useState(START_POS);   // frog start / reset spot
-  const [frogW, setFrogW] = useState(FROG_W);            // frog width %
+  const [frogW, setFrogW] = useState(startFrogW);            // frog width %
   const [familyPoint, setFamilyPoint] = useState({ x: FAMILY.x, y: FAMILY.y });
   const [familyW, setFamilyW] = useState(FAMILY.w);      // family width %
   const [waterPoly, setWaterPoly] = useState(DEFAULT_WATER_POLY);  // drag-allowed region
@@ -1323,7 +1341,7 @@ export default function VakratundaRescueGame({
               <button
                 type="button"
                 className="vak-debug-reset"
-                onClick={() => { moveStartPos({ ...START_POS }); setFrogW(FROG_W); }}
+                onClick={() => { moveStartPos({ ...START_POS }); setFrogW(startFrogW()); }}
               >
                 Reset Frog
               </button>

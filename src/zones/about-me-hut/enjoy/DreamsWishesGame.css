@@ -2917,3 +2917,264 @@ font-weight: 700;
     height: 320px;
   }
 }
+
+/* ==========================================================================
+   PHONE LANDSCAPE (844x390 reference; 667x375 / 740x360 / 932x430 stress)
+   Plan: GMB_Dreams_Wishes_Mobile_Audit_and_Code_Plan.md. Everything for phones lives in this one
+   block; iPad / desktop rules above are untouched. Where a base rule or an inline style pins a size
+   (many are inline px in ObstacleRemoverGame.jsx), the phone value is re-stated with !important
+   using clamp()/% — never a fixed-px override.
+   ========================================================================== */
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
+  /* --- Wish 1: Earth + actionable bubbles only ------------------------------------------ */
+  .dreams-wishes-game .wish1-face-orbit {
+    display: none; /* decorative faces look tappable and compete with the real bubbles */
+  }
+
+  .dreams-wishes-game .wish-interactive-container {
+    top: 55%;
+  }
+
+  .dreams-wishes-game .wish1-earth {
+    width: clamp(174px, 24vw, 205px) !important;
+    height: clamp(174px, 24vw, 205px) !important;
+  }
+
+  .dreams-wishes-game .wish1-bubble-shell,
+  .dreams-wishes-game .wish1-bubble-shell > .bubble {
+    width: clamp(84px, 11vw, 98px) !important;
+    height: clamp(84px, 11vw, 98px) !important;
+  }
+
+  /* --- Wish 3: forest frame sized by HEIGHT, art placed proportionally ------------------ */
+  .dreams-wishes-game .park-scene {
+    position: relative;
+    width: auto;
+    height: min(68dvh, 265px);
+    aspect-ratio: 576 / 372;
+    top: auto;
+    left: auto;
+    right: auto;
+    margin: 0;
+    transform: translateX(clamp(20px, 4vw, 42px));
+    border-width: 3px;
+    border-radius: 22px;
+  }
+
+  /* inline 190/210/300px wrappers -> share of the 576px reference frame */
+  .dreams-wishes-game .wish3-reveal {
+    height: auto !important;
+    aspect-ratio: 1;
+  }
+
+  .dreams-wishes-game .wish3-reveal--flower,
+  .dreams-wishes-game .wish3-reveal-art--flower {
+    width: 33% !important;
+  }
+
+  .dreams-wishes-game .wish3-reveal--bush,
+  .dreams-wishes-game .wish3-reveal-art--bush {
+    width: 36.5% !important;
+  }
+
+  .dreams-wishes-game .wish3-reveal--tree,
+  .dreams-wishes-game .wish3-reveal-art--tree {
+    width: 52% !important;
+  }
+
+  /* The hotspots hug the painted art (flower ~45px, bush ~57px tall here). Grow the TAP area
+     vertically by 9px each side so every one reaches 60px; the art itself is unchanged. */
+  .dreams-wishes-game .wish3-hotspot::after {
+    content: '';
+    position: absolute;
+    inset: -9px -4px;
+    border-radius: 50%;
+  }
+
+  .dreams-wishes-game .wish3-butterfly {
+    width: 14% !important;
+  }
+
+  .dreams-wishes-game .wish3-bird {
+    width: 15.5% !important;
+  }
+
+  /* --- All Wishes Complete: Ganesha left, compact card right ---------------------------- */
+  .dreams-wishes-game .dreams-turn-overlay {
+    flex-direction: row;
+    gap: clamp(14px, 3vw, 28px);
+    padding: 12px calc(env(safe-area-inset-right, 0px) + 24px) 12px calc(env(safe-area-inset-left, 0px) + 24px);
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  .dreams-wishes-game .dreams-turn-overlay .intro-ganesha {
+    width: clamp(100px, 16vw, 132px);
+    height: auto;
+    margin: 0;
+    flex: 0 0 auto;
+  }
+
+  .dreams-wishes-game .dreams-turn-overlay .wish-intro-card {
+    width: min(65vw, 480px);
+    max-width: 480px;
+    min-height: 0;
+    padding: 18px 26px;
+    border-radius: 26px;
+  }
+
+  .dreams-wishes-game .dreams-turn-overlay .wish-intro-text {
+    margin: 0 0 8px;
+    line-height: 1.25;
+    font-size: clamp(1rem, 2.2vw, 1.2rem);
+  }
+
+  .dreams-wishes-game .dreams-turn-overlay .unified-button {
+    min-height: 60px !important;
+    margin-top: 4px;
+  }
+
+  /* --- Drawing: full-focus, no decorative padding -------------------------------------- */
+  .dreams-wishes-game .dreams-drawing-overlay {
+    padding:
+      calc(env(safe-area-inset-top, 0px) + 4px)
+      calc(env(safe-area-inset-right, 0px) + 4px)
+      calc(env(safe-area-inset-bottom, 0px) + 4px)
+      calc(env(safe-area-inset-left, 0px) + 4px);
+    align-items: stretch;
+    justify-content: stretch;
+  }
+
+  /* An iPad rule (max-height: 900px) scales the pad to 0.8, which would shrink every phone control
+     below its target size; the pad is already sized for the phone in Drawingpad.css. */
+  .dreams-wishes-game .drawing-overlay .simple-drawing-pad {
+    transform: none;
+  }
+
+  /* --- Dream clouds: canvas fits, Ganesha moves to the lower-left (audio is bottom-right) -- */
+  .dreams-wishes-game .dream-screen {
+    gap: 0;
+    justify-content: center;
+  }
+
+  .dreams-wishes-game .dream-container {
+    width: auto !important;
+    height: min(76dvh, 300px) !important;
+    aspect-ratio: 3 / 2;
+    max-width: 66vw;
+    border-radius: 18px;
+    overflow: visible;
+  }
+
+  .dreams-wishes-game .cloud-icon {
+    width: clamp(70px, 11vw, 92px);
+    height: auto;
+  }
+
+  .dreams-wishes-game .ganesha-helper {
+    left: -72px !important;
+    right: auto !important;
+    bottom: -18px !important;
+    width: 124px;
+    min-width: 60px;
+    min-height: 60px;
+  }
+
+  .dreams-wishes-game .ganesha-helper .ganesha-trunk,
+  .dreams-wishes-game .ganesha-trunk {
+    width: 124px !important;
+    height: 124px !important;
+  }
+
+  /* --- Final comparison: flat side-by-side, never scrolls ------------------------------- */
+  .dreams-wishes-game .friendship-overlay {
+    overflow: hidden;
+    padding: 8px calc(env(safe-area-inset-right, 0px) + 12px) 8px calc(env(safe-area-inset-left, 0px) + 12px);
+  }
+
+  .dreams-wishes-game .friendship-title {
+    margin: 0 0 4px;
+    font-size: clamp(1.25rem, 3vw, 1.55rem);
+  }
+
+  .dreams-wishes-game .friendship-subtitle {
+    display: none; /* repeats the VO */
+  }
+
+  /* .friendship-overlay in the selector: the base rule that sets this grid to flex:1 (stretching both
+     columns and the dream box to the full screen height) has that specificity. */
+  .dreams-wishes-game .friendship-overlay .friendship-grid {
+    width: min(92vw, 800px);
+    gap: 10px;
+    margin: 0;
+    flex: 0 0 auto;
+    flex-direction: row; /* the base max-width:768px rule stacks the columns, which overflows at 667px */
+    align-items: stretch; /* both columns end up the same height */
+  }
+
+  .dreams-wishes-game .friendship-overlay .friend-column {
+    flex: 1 1 0;
+    width: auto;
+    max-width: none;
+  }
+
+  .dreams-wishes-game .friend-column {
+    min-width: 0;
+    padding: 8px 10px;
+    gap: 4px;
+    border-radius: 16px;
+  }
+
+  .dreams-wishes-game .column-header-image,
+  .dreams-wishes-game .dream-comparison-avatar {
+    width: 46px !important;
+    height: 46px !important;
+    margin-bottom: 0 !important;
+  }
+
+  .dreams-wishes-game .column-label {
+    margin: 0 0 3px;
+    font-size: 15px;
+  }
+
+  .dreams-wishes-game .ganesha-card .friend-items-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+  }
+
+  .dreams-wishes-game .friend-item {
+    min-height: 76px;
+    padding: 5px 4px;
+    gap: 2px;
+    border-radius: 12px;
+  }
+
+  .dreams-wishes-game .friend-item-label {
+    font-size: 11px; /* plan said 9px; kept >= 11px for readability */
+  }
+
+  .dreams-wishes-game .friend-item-img {
+    width: 30px;
+    height: 30px;
+  }
+
+  .dreams-wishes-game .friend-item-text {
+    font-size: 11px;
+  }
+
+  .dreams-wishes-game .friendship-overlay .dream-display-box {
+    flex: 0 0 auto;
+    min-height: 130px;
+    height: 130px;
+    padding: 6px;
+    border-width: 2px;
+  }
+
+  .dreams-wishes-game .continue-btn-simple {
+    min-height: 60px;
+    min-width: 150px;
+    margin: 6px auto 0;
+    padding: 8px 24px;
+    font-size: 1rem;
+  }
+}

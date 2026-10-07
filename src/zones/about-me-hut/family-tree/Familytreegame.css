@@ -5743,11 +5743,37 @@
     transform-origin: center;
   }
 
-  .family-tree-game .tree-and-circles-wrapper .circle-spot-with-label {
+  /* Doubled class beats the iPad `> .circle-spot-with-label:nth-of-type(n)` margin offsets above
+     (0,4,0), so the phone slots are placed purely by top/left. */
+  .family-tree-game .tree-and-circles-wrapper > .circle-spot-with-label.circle-spot-with-label {
     right: auto;
     transform: translate(-50%, -50%);
     gap: 3px;
     margin: 0;
+  }
+
+  /* The iPad block above forces .audio-toggle to 48px / 32px icon with !important, which also hits
+     phones and left Sound off-centre vs Replay (60px box, small icon). Give phones the shared
+     gameplay-control sizes back so the two line up; only !important can beat that rule. */
+  .family-tree-game .audio-toggle.audio-toggle--gameplay {
+    width: var(--gmb-phone-control-hit, 60px) !important;
+    height: var(--gmb-phone-control-hit, 60px) !important;
+  }
+
+  .family-tree-game .audio-toggle.audio-toggle--gameplay .audio-toggle__icon {
+    width: var(--gmb-phone-utility-icon, 22px) !important;
+    height: var(--gmb-phone-utility-icon, 22px) !important;
+  }
+
+  /* Ganesha-phase Continue: the iPad rules pin `bottom: ... !important` (~70px up), which on a short
+     phone lands on the lower labels, and a bottom placement is cut off whenever the browser bars
+     leave <390px. So it sits to the RIGHT of the 2x2, vertically centred — independent of height
+     (circles end ~66% of the width; Replay/Sound live in the bottom corner). */
+  .family-tree-game .tree-done-btn.profile-cta-btn-unified {
+    bottom: auto !important;
+    top: 50%;
+    left: 80%;
+    margin-top: -30px;
   }
 
   .family-tree-game .tree-and-circles-wrapper .family-tree-member--father {
@@ -5832,16 +5858,24 @@
     line-height: 1.4;
   }
 
+  /* Phone: whole card/screen closes it, so no X — a small hint line says so instead. */
   .family-tree-game .flip-card-hint {
-    display: none;
+    display: block;
+    grid-column: 2;
+    margin: 4px 0 0;
+    text-align: left;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.72rem;
+    line-height: 1.1;
+    opacity: 0.75;
   }
 
   .family-tree-game .flip-card-close {
-    position: absolute;
-    top: 2px;
-    right: 2px;
-    width: 60px;
-    height: 60px;
+    display: none;
+  }
+
+  .family-tree-game .flip-card-big {
+    padding-right: 20px;
   }
 
   .family-tree-game .transition-modal-simple {
@@ -5902,6 +5936,11 @@
     z-index: 1450;
   }
 
+  /* Open: the handle moves to the tray's left edge so it never covers a member card. */
+  .family-tree-game.family-tray-is-open .family-tray-toggle {
+    right: calc(env(safe-area-inset-right, 0px) + 8px + min(42vw, 292px) + 2px);
+  }
+
   .family-tree-game .family-tray-toggle__visual {
     width: 44px;
     height: 44px;
@@ -5919,39 +5958,52 @@
     object-fit: contain;
   }
 
+  /* Tray ends ~62px above the bottom edge so the shared Replay (60px) / Sound buttons stay
+     uncovered; 5 rows x 60px + 4 gaps + padding fills exactly that height. */
   .family-tree-game .bottom-member-tray {
+    --family-tray-w: min(42vw, 292px);
+    box-sizing: border-box;
     position: fixed;
     top: calc(env(safe-area-inset-top, 0px) + 8px);
     right: calc(env(safe-area-inset-right, 0px) + 8px);
-    bottom: calc(env(safe-area-inset-bottom, 0px) + 8px);
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 52px);
     left: auto;
-    width: min(42vw, 292px);
+    width: var(--family-tray-w);
     height: auto;
-    padding: 12px 10px;
+    padding: 4px 10px;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-rows: repeat(5, minmax(60px, 1fr));
-    gap: 6px 8px;
+    /* rows flex with the height (≈55-60px); 4px gaps keep the tap pitch at ~60px even at 360px */
+    grid-template-rows: repeat(5, minmax(0, 1fr));
+    gap: 4px 8px;
     overflow: hidden;
     background: rgba(255, 249, 235, 0.98);
     border-radius: 24px;
     box-shadow: 0 14px 36px rgba(60, 40, 28, 0.22);
-    transform: translateX(calc(100% + 24px));
-    opacity: 0;
+    /* Closed = slid off the right edge with `right` + `visibility`, NOT transform/opacity: a
+       transformed tray becomes the containing block of its `position: fixed` Done button, which
+       then rode off-screen with it (the child could never finish). visibility lets Done override. */
+    transform: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none; /* also makes the tray a containing block for fixed children */
+    right: calc(-1 * (var(--family-tray-w) + 40px));
+    visibility: hidden;
     pointer-events: none;
-    transition: transform 220ms ease, opacity 180ms ease;
+    transition: right 220ms ease, visibility 0s linear 220ms;
     z-index: 1400;
   }
 
   .family-tree-game .bottom-member-tray.phone-tray-open {
-    transform: translateX(0);
-    opacity: 1;
+    right: calc(env(safe-area-inset-right, 0px) + 8px);
+    visibility: visible;
     pointer-events: auto;
+    transition: right 220ms ease, visibility 0s;
   }
 
   .family-tree-game .bottom-member-tray .member-card {
     min-width: 0;
-    min-height: 60px;
+    min-height: 0;
+    height: 100%;
     width: 100%;
     display: grid;
     grid-template-columns: 42px minmax(0, 1fr);
@@ -5978,15 +6030,18 @@
     box-shadow: none;
   }
 
-  .family-tree-game .child-tree-overlay {
-    left: 49%;
-    top: 57%;
-    width: min(520px, 70vw);
+  /* Same specificity as the iPad rule that lifts (translate -100px) and shrinks (x0.78) this tree;
+     later wins. Bigger + lower so the canopy sits behind rows 1-2 and the trunk behind row 3. */
+  .family-tree-game .tree-overlay.child-tree-overlay {
+    left: 50%;
+    top: 62%;
+    width: min(640px, 80vw);
+    translate: 0 0;
     transform: translate(-50%, -50%) scale(1);
   }
 
   .family-tree-game .child-family-tree {
-    top: 48%;
+    top: 45%;
     left: 50%;
     width: min(70vw, 560px);
     max-width: none;
@@ -5997,10 +6052,13 @@
     gap: 8px;
   }
 
+  /* Sized from the HEIGHT: 3 family rows (avatar + name) plus the Done pill must fit a 360-430px
+     tall screen. 60px floor keeps each avatar a valid tap target (remove flow). */
   .family-tree-game .member-avatar-small {
-    width: clamp(62px, 8.5vw, 74px) !important;
-    height: clamp(62px, 8.5vw, 74px) !important;
-    padding: 5px;
+    box-sizing: border-box;
+    width: clamp(60px, 15.5dvh, 68px) !important;
+    height: clamp(60px, 15.5dvh, 68px) !important;
+    padding: 4px;
   }
 
   .family-tree-game .member-name-small {
@@ -6013,9 +6071,9 @@
     white-space: nowrap;
   }
 
-  .family-tree-game.family-tray-is-open .child-tree-overlay {
+  .family-tree-game.family-tray-is-open .tree-overlay.child-tree-overlay {
     left: 34%;
-    width: min(430px, 58vw);
+    width: min(500px, 58vw);
   }
 
   .family-tree-game.family-tray-is-open .child-family-tree {
@@ -6023,15 +6081,43 @@
     width: min(56vw, 450px);
   }
 
-  .family-tree-game .bottom-member-tray .tray-done-btn {
+  .family-tree-game .bottom-member-tray .tray-done-btn.profile-cta-btn-unified {
     position: fixed;
-    left: 42%;
-    bottom: calc(env(safe-area-inset-bottom, 0px) + 10px);
+    left: 22%; /* left of the tree column (tray closed 50% / open 34%), so it never covers the last row */
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);
     top: auto;
     transform: translateX(-50%);
-    min-width: 132px;
-    min-height: 60px;
+    /* Smaller pill (Madhurima): base pins 60px / big padding with !important. */
+    min-width: 0 !important;
+    min-height: 46px !important;
+    padding: 6px 22px 5px !important;
+    font-size: 1rem !important;
     z-index: 1300;
+    /* stays tappable while the tray is closed (see the tray rule above) */
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  /* Remove pill + Undo toast stack ABOVE Done in the same left column (Done: 16px up, 46px tall),
+     clear of the tree rows and of the bottom-right Replay / Sound. */
+  .family-tree-game .remove-member-pill,
+  .family-tree-game .removed-undo-toast {
+    left: 22%;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 70px);
+  }
+
+  /* "Tap a member to remove" hint: the iPad rule pins it 130px up (onto row 3 here) with
+     !important; the free strip is the bottom centre, between Done and Replay/Sound. */
+  .family-tree-game .tray-hint-text {
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 22px) !important;
+  }
+
+  .family-tree-game .remove-member-pill {
+    min-width: 0;
+    min-height: 46px;
+    height: 46px;
+    padding: 0 20px;
+    font-size: 0.95rem;
   }
 
   .family-tree-game .name-input-modal {
@@ -6095,75 +6181,192 @@
     overflow: hidden;
   }
 
-  .family-tree-game .reveal-title {
-    margin: 0;
-    font-size: clamp(1.35rem, 3.2vw, 1.7rem);
-    transform: none;
+  /* "Our Families" is display-only, so avatars may drop below the 60px tap size, but names stay
+     >= 11px. Height budget at 390px: title ~26 + subtitle ~20 + panels ~250 + Continue 60 + gaps.
+     The base rules for these elements use !important (title/visual/container/column/actions), so
+     the properties they pin are re-stated here at higher specificity (.side-by-side-screen X). */
+  .family-tree-game .side-by-side-screen .reveal-title {
+    margin: 0 !important;
+    font-size: clamp(1.2rem, 5.6dvh, 1.5rem) !important;
+    line-height: 1.1;
+    transform: none !important;
   }
 
-  .family-tree-game .reveal-subtitle {
-    margin: 0 0 5px;
-    font-size: clamp(0.76rem, 1.7vw, 0.9rem);
-    transform: none;
+  .family-tree-game .side-by-side-screen .reveal-subtitle {
+    margin: 0 0 4px;
+    font-size: clamp(0.72rem, 3.4dvh, 0.85rem);
+    line-height: 1.1;
+    transform: none !important;
   }
 
-  .family-tree-game .two-trees-container {
+  .family-tree-game .side-by-side-screen .two-trees-container {
     width: 100%;
-    flex: 1;
+    flex: 1 1 0;
     min-height: 0;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
+    grid-template-rows: minmax(0, 1fr);
+    gap: 10px !important;
     margin: 0;
-    transform: none;
+    transform: none !important;
   }
 
-  .family-tree-game .tree-column {
-    min-width: 0;
-    max-width: none;
-    min-height: 0;
-    padding: 8px 10px;
-    gap: 3px;
+  .family-tree-game .side-by-side-screen .tree-column {
+    min-width: 0 !important;
+    max-width: none !important;
+    min-height: 0 !important;
+    height: 100%;
+    padding: 6px 10px !important;
+    gap: 2px;
     border-radius: 16px;
+    overflow: hidden;
   }
 
-  .family-tree-game .tree-card-avatar,
-  .family-tree-game .tree-card-header img,
-  .family-tree-game .tree-card-header > div {
-    width: 40px !important;
-    height: 40px !important;
+  .family-tree-game .side-by-side-screen .tree-card-header {
+    gap: 8px;
+    margin: 0;
   }
 
-  .family-tree-game .tree-heading {
+  .family-tree-game .side-by-side-screen .tree-card-avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 1.1rem;
+  }
+
+  .family-tree-game .side-by-side-screen .tree-heading {
     margin: 0;
     font-size: clamp(0.82rem, 1.8vw, 1rem) !important;
   }
 
-  .family-tree-game .tree-location {
+  /* Location chip rides the panel's top-right corner so it costs no height in the art area. */
+  .family-tree-game .side-by-side-screen .tree-location {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    order: 0;
     margin: 0;
-    padding: 1px 6px;
-    font-size: clamp(0.6rem, 1.3vw, 0.72rem);
+    padding: 1px 8px;
+    font-size: 0.7rem;
   }
 
-  .family-tree-game .tree-visual {
-    height: min(48dvh, 180px);
+  /* The panel's art area fills what is left of the column; the tree sits behind as a backdrop. */
+  .family-tree-game .side-by-side-screen .tree-visual {
+    flex: 1 1 0;
+    height: auto !important;
     min-height: 0;
-    margin: 0;
-    transform: none;
+    margin: 0 !important;
+    transform: none !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
   }
 
-  .family-tree-game .tree-column .reveal-tree-img {
+  .family-tree-game .side-by-side-screen .tree-column .reveal-tree-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
     transform: var(--family-reveal-tree-transform) !important;
   }
 
-  .family-tree-game .action-buttons {
-    flex: 0 0 auto;
-    margin: 4px 0 0;
+  /* Child family: the three rows flow evenly down the panel instead of fixed top/bottom offsets. */
+  .family-tree-game .side-by-side-screen .reveal-row {
+    position: relative;
+    top: auto !important;    /* base .reveal-row-N pin top: N% !important */
+    bottom: auto !important;
+    margin: 0 !important;
+    left: auto;
+    width: 100%;
+    height: auto;
+    justify-content: center;
+    gap: 6px;
   }
 
-  .family-tree-game .family-tree-end-game-btn {
+  /* Ganesha's 2x2: the base nth-child rules pin bottom/left with !important for the tall layout;
+     restate all four as top/left centres so the two rows clear each other in the shorter panel. */
+  .family-tree-game .side-by-side-screen .tree-visual .ganesha-comparison-icon:nth-child(2),
+  .family-tree-game .side-by-side-screen .tree-visual .ganesha-comparison-icon:nth-child(3) {
+    top: 27% !important;
+    bottom: auto !important;
+  }
+
+  .family-tree-game .side-by-side-screen .tree-visual .ganesha-comparison-icon:nth-child(4),
+  .family-tree-game .side-by-side-screen .tree-visual .ganesha-comparison-icon:nth-child(5) {
+    top: 73% !important;
+    bottom: auto !important;
+  }
+
+  .family-tree-game .side-by-side-screen .tree-visual .ganesha-comparison-icon:nth-child(2),
+  .family-tree-game .side-by-side-screen .tree-visual .ganesha-comparison-icon:nth-child(4) {
+    left: 34% !important;
+    right: auto !important;
+  }
+
+  .family-tree-game .side-by-side-screen .tree-visual .ganesha-comparison-icon:nth-child(3),
+  .family-tree-game .side-by-side-screen .tree-visual .ganesha-comparison-icon:nth-child(5) {
+    left: 66% !important;
+    right: auto !important;
+  }
+
+  .family-tree-game .side-by-side-screen .reveal-avatar {
+    box-sizing: border-box;
+    width: 40px !important;
+    height: 40px !important;
+    margin-bottom: 2px;
+  }
+
+  .family-tree-game .side-by-side-screen .reveal-name {
+    font-size: 0.7rem !important; /* base pins ~8.8px; keep names >= 11px */
+    line-height: 1.1;
+    padding: 1px 6px;
+    max-width: 72px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .family-tree-game .side-by-side-screen .ganesha-comparison-img {
+    width: 42px;
+    height: 42px;
+  }
+
+  .family-tree-game .side-by-side-screen .ganesha-comparison-label {
+    font-size: 0.7rem;
+    line-height: 1.1;
+  }
+
+  .family-tree-game .side-by-side-screen .action-buttons {
+    flex: 0 0 auto;
+    margin: 4px 0 0 !important;
+    height: auto;
+  }
+
+  .family-tree-game .side-by-side-screen .family-tree-end-game-btn {
     min-height: 60px;
     margin: 0 auto;
+  }
+}
+
+/* Narrow phones (667-740px wide): a centred header would run into the top-right location chip, so
+   the header is left-aligned (avatar + heading) and the chip keeps the right corner. */
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 740px) {
+  .family-tree-game .side-by-side-screen .tree-card-header {
+    align-self: flex-start;
+    justify-content: flex-start;
+    margin-left: 2px;
+  }
+
+  .family-tree-game .side-by-side-screen .tree-heading {
+    max-width: 124px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .family-tree-game .side-by-side-screen .tree-location {
+    right: 8px;
   }
 }
 

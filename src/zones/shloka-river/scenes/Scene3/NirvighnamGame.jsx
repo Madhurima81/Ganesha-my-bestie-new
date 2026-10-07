@@ -15,7 +15,7 @@ import stoneImg from './assets/images/nirvighnam/stone.png';
 import branchImg from './assets/images/nirvighnam/branch.png';
 import reedsClosedImg from './assets/images/nirvighnam/reeds-closed.png';
 import reedsOpenImg from './assets/images/nirvighnam/reeds-open.png';
-import { NIRVIGHNAM_LAYOUT } from './scene3LayoutConfig';
+import { NIRVIGHNAM_LAYOUT, NIRVIGHNAM_LAYOUT_PHONE } from './scene3LayoutConfig';
 
 const SYLLABLES = ['Nir', 'vigh', 'nam'];
 const AUDIO = { syllables: ['nir', 'vigh', 'nam'] };
@@ -60,7 +60,13 @@ const getDebugEnabled = () => {
 };
 
 const cloneLayout = (layout) => JSON.parse(JSON.stringify(layout));
-const createDebugLayout = () => cloneLayout(NIRVIGHNAM_LAYOUT);
+// Phone landscape uses the shifted-left cluster; everything else keeps the original layout.
+const PHONE_LANDSCAPE_QUERY = '(orientation: landscape) and (max-height: 500px) and (max-width: 1023px)';
+const createDebugLayout = () => cloneLayout(
+  typeof window !== 'undefined' && window.matchMedia(PHONE_LANDSCAPE_QUERY).matches
+    ? NIRVIGHNAM_LAYOUT_PHONE
+    : NIRVIGHNAM_LAYOUT,
+);
 
 const loadDebugLayout = () => {
   const fallback = createDebugLayout();

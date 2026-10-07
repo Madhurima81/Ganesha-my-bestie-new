@@ -91,6 +91,9 @@ import sharingHeaderIcon from './assets/images/story-header/sharing-icon.webp';
 import natureHeaderIcon from './assets/images/story-header/nature-icon.webp';
 
 // ?hitzones outlines the real tap box of every tappable thing in the scene.
+// Same condition as the phone block in DreamsWishesGame.css.
+const PHONE_LANDSCAPE_QUERY = '(orientation: landscape) and (max-height: 500px) and (max-width: 1023px)';
+const MAX_ACTIVE_WISH1_BUBBLES_PHONE = 4;
 const SHOW_HIT_ZONES = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('hitzones');
 
 // Error Boundary
@@ -1329,6 +1332,8 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       if (sceneState.wish1Taps >= 3) return;
       const removed = removedWish1BubbleKeysRef.current;
       const activeKeys = activeWish1BubbleKeysRef.current;
+      // Phone only: bubbles live 12-18s but spawn every ~1.8s, which stacks up to 8 on a short screen.
+      if (activeKeys.size >= MAX_ACTIVE_WISH1_BUBBLES_PHONE && window.matchMedia(PHONE_LANDSCAPE_QUERY).matches) return;
       const availableKind = kindBubbles.filter(item => !removed.has(item.actionKey) && !activeKeys.has(item.actionKey));
       const availableUnkind = unkindBubbles.filter(item => !removed.has(item.actionKey) && !activeKeys.has(item.actionKey));
       if (availableKind.length === 0 && availableUnkind.length === 0) return;
@@ -1337,12 +1342,40 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       const isKind = canSpawnKind && (!canSpawnUnkind || Math.random() < 0.6);
       const source = isKind ? availableKind : availableUnkind;
       const data = source[Math.floor(Math.random() * source.length)];
+      // Phone: re-roll a spot that would sit under the corner controls (zone badge top-left,
+      // Replay / Sound bottom-right) or the Ganesha host (bottom-left). The bubble is drawn
+      // centred on its (left, top) point.
+      let left = Math.random() * 80 + 10;
+      let top = Math.random() * 60 + 10;
+      if (window.matchMedia(PHONE_LANDSCAPE_QUERY).matches) {
+        const box = document.querySelector('.wish-interactive-container')?.getBoundingClientRect();
+        if (box) {
+          const size = Math.min(98, Math.max(84, window.innerWidth * 0.11));
+          const vw = window.innerWidth;
+          const vh = window.innerHeight;
+          const blocked = (l, t) => {
+            // bubbleFloat replaces the inner translate(-50%,-50%), so the bubble occupies
+            // [point, point + size] (top-left origin), plus a little margin.
+            const px = box.left + (box.width * l) / 100;
+            const py = box.top + (box.height * t) / 100;
+            const x0 = px - 6, x1 = px + size + 6, y0 = py - 6, y1 = py + size + 6;
+            const hits = (ax0, ay0, ax1, ay1) => x1 > ax0 && x0 < ax1 && y1 > ay0 && y0 < ay1;
+            return hits(0, 0, 80, 80)                      // zone badge
+              || hits(vw - 130, vh - 70, vw, vh)           // Replay + Sound
+              || hits(0, vh - 150, 140, vh);               // Ganesha host
+          };
+          for (let tries = 0; tries < 10 && blocked(left, top); tries++) {
+            left = Math.random() * 80 + 10;
+            top = Math.random() * 60 + 10;
+          }
+        }
+      }
       const newBubble = {
         id: bubbleCounterRef.current++,
         type: isKind ? 'kind' : 'unkind',
         ...data,
-        left: Math.random() * 80 + 10,
-        top: Math.random() * 60 + 10,
+        left,
+        top,
         lifetimeS: bubbleDurationSeconds,
       };
       setBubbles(prev => [...prev, newBubble]);
@@ -1644,6 +1677,8 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     sceneActions.updateState({ currentModal: null, draftData: null, gamePhase: 'all-wishes-complete' });
   };
 
+  const currentDiscoveries = getDiscoveries();
+
   return (
     <div className="dreams-wishes-game" data-zone="about-me-hut">
       {SHOW_HIT_ZONES && (
@@ -1659,10 +1694,13 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       <VOReplayButton variant="gameplay" onReplay={replayCurrentVoice} disabled={!isAudioOn} />
 
       {/* Story Progress Header */}
+      {/* Phone: not rendered until there is a first discovery — the empty strip it drew before the
+          first Wish 1 tap wasted the top of a short screen. iPad/desktop keep the old behaviour. */}
       {!sceneState.gamePhase.startsWith('dream') &&
         sceneState.gamePhase !== 'comparison-card' &&
-        sceneState.gamePhase !== 'ending' && (
-          <StoryProgressHeader discoveries={getDiscoveries()} isChildMode={false} />
+        sceneState.gamePhase !== 'ending' &&
+        (currentDiscoveries.length > 0 || !window.matchMedia(PHONE_LANDSCAPE_QUERY).matches) && (
+          <StoryProgressHeader discoveries={currentDiscoveries} isChildMode={false} />
         )}
 
       {discoveryFly && (
@@ -1703,7 +1741,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
             </div>
           </div>
           <div className="wish-interactive-container">
-            <div className="earth-container earth-readonly" style={{ width: '252px', height: '252px' }}>
+            <div className="earth-container earth-readonly wish1-earth" style={{ width: '252px', height: '252px' }}>
               <img src={wishEarthSad} alt="Sad" className="earth-image sad" style={{ opacity: !earthHappyReady || sceneState.wish1Taps === 0 ? 1 : sceneState.wish1Taps === 1 ? 0.6 : sceneState.wish1Taps === 2 ? 0.3 : 0 }} />
               <img src={wishEarthHappy} alt="Happy" className={`earth-image happy ${sceneState.wish1Taps >= 3 ? 'complete-glow-pulse' : ''}`} style={{ opacity: !earthHappyReady || sceneState.wish1Taps === 0 ? 0 : sceneState.wish1Taps === 1 ? 0.4 : sceneState.wish1Taps === 2 ? 0.7 : 1 }} />
               {wish1Sparkle.type === 'single' && (
@@ -1735,7 +1773,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 </div>
               )}
             </div>
-            <div className="faces-container">
+            <div className="faces-container wish1-face-orbit">
               {Array.from({ length: 6 }).map((_, i) => (
                 <div key={i} className="face-emoji" style={{ transform: `rotate(${i * 60}deg) translate(155px) rotate(-${i * 60}deg)`, fontSize: '40px', marginTop: '-20px', marginLeft: '-20px', opacity: sceneState.wish1Taps >= 2 ? 0.6 : 1, transition: 'all 0.6s ease' }}>{sceneState.wish1Taps >= 3 ? '😊' : sceneState.wish1Taps >= 2 ? '😐' : '😢'}</div>
               ))}
@@ -1919,7 +1957,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
               {/* Hotspot 0: Left - Flower reveal */}
               {/* Hotspots sit over the PAINTED pixels of the art they reveal: the wrapper has the same
                   box as the revealed image, the hotspot is the art's visible bounds inside it. */}
-              <div style={{ position: 'absolute', left: '8%', bottom: '15%', width: '190px', height: '190px', pointerEvents: 'none', zIndex: 10 }}>
+              <div className="wish3-reveal wish3-reveal--flower" style={{ position: 'absolute', left: '8%', bottom: '15%', width: '190px', height: '190px', pointerEvents: 'none', zIndex: 10 }}>
               <div
                 onClick={() => handleParkTap(0)}
                 className="wish3-hotspot"
@@ -1942,12 +1980,13 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 <img
                   src={flowerImg}
                   alt="Flower"
+                  className="wish3-reveal-art wish3-reveal-art--flower"
                   style={{ position: 'absolute', left: '8%', bottom: '15%', width: '190px', height: 'auto', zIndex: 5 }}
                 />
               )}
 
               {/* Hotspot 1: Center - Bush + Butterfly reveal */}
-              <div style={{ position: 'absolute', left: '48%', transform: 'translateX(-50%)', bottom: '12%', width: '210px', height: '210px', pointerEvents: 'none', zIndex: 10 }}>
+              <div className="wish3-reveal wish3-reveal--bush" style={{ position: 'absolute', left: '48%', transform: 'translateX(-50%)', bottom: '12%', width: '210px', height: '210px', pointerEvents: 'none', zIndex: 10 }}>
               <div
                 onClick={() => handleParkTap(1)}
                 className="wish3-hotspot"
@@ -1971,18 +2010,20 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                   <img
                     src={bushImg}
                     alt="Bush"
+                    className="wish3-reveal-art wish3-reveal-art--bush"
                     style={{ position: 'absolute', left: '48%', transform: 'translateX(-50%)', bottom: '12%', width: '210px', height: 'auto', zIndex: 5 }}
                   />
                   <img
                     src={butterflyImg}
                     alt="Butterfly"
+                    className="wish3-butterfly"
                     style={{ position: 'absolute', left: '55%', transform: 'translateX(-50%)', bottom: '35%', width: '80px', height: 'auto', zIndex: 6 }}
                   />
                 </>
               )}
 
               {/* Hotspot 2: Right - Tree + Bird reveal */}
-              <div style={{ position: 'absolute', right: '5%', bottom: '5%', width: '300px', height: '300px', pointerEvents: 'none', zIndex: 10 }}>
+              <div className="wish3-reveal wish3-reveal--tree" style={{ position: 'absolute', right: '5%', bottom: '5%', width: '300px', height: '300px', pointerEvents: 'none', zIndex: 10 }}>
               <div
                 onClick={() => handleParkTap(2)}
                 className="wish3-hotspot"
@@ -2006,11 +2047,13 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                   <img
                     src={treeImg}
                     alt="Tree"
+                    className="wish3-reveal-art wish3-reveal-art--tree"
                     style={{ position: 'absolute', right: '5%', bottom: '5%', width: '300px', height: 'auto', zIndex: 5 }}
                   />
                   <img
                     src={birdImg}
                     alt="Bird"
+                    className="wish3-bird"
                     style={{ position: 'absolute', right: '18%', bottom: '50%', width: '90px', height: 'auto', zIndex: 6 }}
                   />
                 </>
@@ -2061,7 +2104,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
       {/* All Wishes Complete → Combined Modal (Goes straight to drawing) */}
       {sceneState.gamePhase === 'all-wishes-complete' && (
-        <div className="intro-overlay">
+        <div className="intro-overlay dreams-turn-overlay">
           <img src={babyGaneshaSit} alt="Baby Ganesha" className="intro-ganesha celebrate-scale" />
           <div className="wish-intro-card">
             <p className="wish-intro-text">You made the world brighter!</p>
@@ -2109,7 +2152,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
       {/* Drawing Pad */}
       {showDrawingPad && (
-        <div className="drawing-overlay">
+        <div className="drawing-overlay dreams-drawing-overlay">
           <DrawingPad
             prompt="Draw your dream"
 
@@ -2233,16 +2276,19 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 <img
                   src={activeProfile.icon}
                   alt="Profile"
+                  className="dream-comparison-avatar"
                   style={{ width: 'clamp(55px, 7vw, 80px)', height: 'clamp(55px, 7vw, 80px)', borderRadius: '50%', objectFit: 'cover', marginBottom: 0, boxShadow: '0 5px 15px rgba(0,0,0,0.2)' }}
                 />
               ) : profileAvatarImage ? (
                 <img
                   src={profileAvatarImage}
                   alt={profileDisplayName}
+                  className="dream-comparison-avatar"
                   style={{ width: 'clamp(55px, 7vw, 80px)', height: 'clamp(55px, 7vw, 80px)', borderRadius: '50%', objectFit: 'cover', marginBottom: 0, boxShadow: '0 5px 15px rgba(0,0,0,0.2)', border: '4px solid white' }}
                 />
               ) : (
                 <div
+                  className="dream-comparison-avatar"
                   style={{
                     width: 'clamp(55px, 7vw, 80px)',
                     height: 'clamp(55px, 7vw, 80px)',

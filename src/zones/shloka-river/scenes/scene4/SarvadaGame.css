@@ -763,3 +763,40 @@
     width: clamp(32px, 4.6vw, 54px);
   }
 }
+
+/* ==========================================================================
+   PHONE LANDSCAPE — SARVADA: larger hidden-symbol picture
+   The shorter-iPad rule above caps the 4:3 picture at 44vh (~211px wide at 740x360). On phones the
+   picture is the hero, so it gets 62dvh. The 4:3 aspect ratio, object-fit: cover and the
+   percentage tap coordinates are all unchanged — only the WIDTH of the frame changes, so the tap
+   zones still map 1:1 onto the picture. iPad / desktop rules above are untouched.
+   ========================================================================== */
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
+  .sarvada-memory {
+    top: 5%; /* high enough that the frame clears the children's heads in the boat */
+    width: min(52vw, calc(62dvh * 4 / 3), 360px);
+  }
+
+  /* tighter cream frame: spend the space on the picture */
+  .sarvada-memory-inner {
+    padding: 6px;
+    gap: 0;
+    border-radius: 18px;
+  }
+
+  .sarvada-find-frame,
+  .sarvada-memory-img,
+  .sarvada-image-tap {
+    border-radius: 12px;
+  }
+
+  /* the boat is supporting context here, not the hero */
+  .sarvada-boat {
+    width: clamp(128px, 19vw, 155px);
+    bottom: 1%;
+  }
+
+  .sarvada-boat-ganesha {
+    width: clamp(31px, 4.4vw, 42px);
+  }
+}

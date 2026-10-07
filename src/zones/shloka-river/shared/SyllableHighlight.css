@@ -64,3 +64,22 @@
     border-radius: 8px;
   }
 }
+
+/* Phone landscape: the strip was big for its corner (it sat on the Sarvakaryeshu picture and
+   crowded Suryakoti / Nirvighnam / Kurumedeva). Smaller than the shorter-iPad treatment above, on
+   every scene that uses it. iPad / desktop rules above are untouched. Sarvakaryeshu's
+   .sarva-syllable-anchors mirror these numbers (left / top / gap) — keep them in step. */
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
+  .syl-row {
+    left: 10px;
+    top: 52px;
+    gap: 3px;
+    padding: 3px 4px;
+    border-radius: 9px;
+  }
+  .syl {
+    font-size: 13px;
+    padding: 2px 7px;
+    border-radius: 7px;
+  }
+}

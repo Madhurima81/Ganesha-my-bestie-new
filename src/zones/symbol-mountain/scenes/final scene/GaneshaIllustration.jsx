@@ -82,7 +82,7 @@ const GaneshaIllustration = ({ zoneStates = {}, onZoneClick, activeZoneId = null
             src={src}
             alt=""
             draggable={false}
-            className={isCorrect ? 'svg-zone-correct' : ''}
+            className={[isCorrect ? 'svg-zone-correct' : '', `ganesha-zone-part-${zoneId}`].filter(Boolean).join(' ')}
             style={{
               position: 'absolute',
               inset: 0,

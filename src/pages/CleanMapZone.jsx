@@ -277,6 +277,45 @@ const ZONE_MUSHIKA_POS = {
   'story-treehouse': { left: '40%',  bottom: '40%'  },
 };
 
+// ── Phone landscape composition ─────────────────────────────────────────
+// Same map pieces, recomposed for the wide + shallow phone canvas.
+// Tablet/desktop keep using the editor-controlled defaults.
+const PHONE_LANDSCAPE_QUERY =
+  '(orientation: landscape) and (max-height: 500px) and (max-width: 1023px)';
+
+const PHONE_MAP_ZONE_ART = {
+  symbol:    { left: 11, top: 18, w: 21, h: 27 },
+  river:     { left: 50, top: 55, w: 96, h: 116, centered: true },
+  hut:       { left: 21, top: 50, w: 25, h: 30 },
+  festival:  { left: 73, top: 45, w: 23, h: 29 },
+  treehouse: { left: 66, top: 67, w: 18, h: 23 },
+};
+
+const PHONE_MAP_OVERLAYS = {
+  symbolLabel:      { left: 17, top: 13 },
+  riverLabel:       { left: 69, top: 13 },
+  hutLabel:         { left: 8,  top: 58 },
+  festivalLabel:    { left: 74, top: 43 },
+  treehouseLabel:   { left: 65, top: 69 },
+  ganeshaSymbol:    { left: 34, top: 49 },
+  ganeshaRiver:     { left: 64, top: 44 },
+  ganeshaHut:       { left: 30, top: 67 },
+  ganeshaFestival:  { left: 72, top: 59 },
+  ganeshaTreehouse: { left: 62, top: 66 },
+  ganeshaAllDone:   { left: 50, top: 78 },
+  creatureSymbol:   { left: 31, top: 27 },
+  creatureRiver:    { left: 72, top: 21 },
+  creatureHut:      { left: 24, top: 56 },
+};
+
+const PHONE_ZONE_MUSHIKA_POS = {
+  'symbol-mountain': { left: '27%',  top:    '33%' },
+  'shloka-river':    { right: '19%', top:    '32%' },
+  'festival-square': { right: '15%', bottom: '25%' },
+  'about-me-hut':    { left: '14%',  bottom: '22%' },
+  'story-treehouse': { left: '57%',  bottom: '20%' },
+};
+
 // Zone layout config: tap area + label position classes
 const ZONE_LAYOUT = {
   'symbol-mountain': {
@@ -798,10 +837,15 @@ const loadSavedZoneArt = () => {
 // Resolve avatar string/emoji → animal id for image path
 const getAnimalId = (avatar) => {
   if (!avatar) return null;
-  const KNOWN = ['monkey', 'peacock', 'squirrel', 'tiger'];
-  if (KNOWN.includes(avatar)) return avatar;
+  if (typeof avatar === 'object' && avatar.id) return avatar.id;
   const emojiMap = { '🐵': 'monkey', '🦚': 'peacock', '🐿️': 'squirrel', '🐯': 'tiger' };
-  return emojiMap[avatar] || null;
+  if (emojiMap[avatar]) return emojiMap[avatar];
+  if (typeof avatar === 'string') {
+    // Expanded avatar library (fish, elephant, lion, rabbit, owl, ...)
+    const id = avatar.trim().toLowerCase();
+    if (/^[a-z0-9-]+$/.test(id)) return id;
+  }
+  return null;
 };
 
 const toTitleCase = (value = '') =>
@@ -943,6 +987,18 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
   const [mushikaPop, setMushikaPop] = useState(null); // { zone, state } | null
   const [isGaneshaWalking, setIsGaneshaWalking] = useState(false);
   const [pulsingLabelZoneId, setPulsingLabelZoneId] = useState(null);
+  const [isPhoneLandscape, setIsPhoneLandscape] = useState(() =>
+    typeof window !== 'undefined' && window.matchMedia(PHONE_LANDSCAPE_QUERY).matches
+  );
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+    const media = window.matchMedia(PHONE_LANDSCAPE_QUERY);
+    const sync = () => setIsPhoneLandscape(media.matches);
+    sync();
+    media.addEventListener?.('change', sync);
+    return () => media.removeEventListener?.('change', sync);
+  }, []);
   const { isAudioOn, toggleAudio } = useAudioPreference();
   const unlockTimersRef = useRef({});
   const voiceTimersRef = useRef([]);
@@ -1001,7 +1057,9 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
   }, [zoneArtItems]);
 
   const getZoneArtStyle = (id, extra = {}) => {
-    const art = zoneArtItems[id];
+    const baseArt = zoneArtItems[id];
+    const phoneOverride = isPhoneLandscape ? PHONE_MAP_ZONE_ART[id] : null;
+    const art = phoneOverride ? { ...baseArt, ...phoneOverride } : baseArt;
     const transforms = [];
 
     if (art?.centered) transforms.push('translate(-50%, -50%)');
@@ -1020,8 +1078,17 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
     };
   };
 
+  const responsiveOverlayItems = isPhoneLandscape
+    ? Object.fromEntries(
+        Object.entries(overlayItems).map(([id, item]) => [
+          id,
+          PHONE_MAP_OVERLAYS[id] ? { ...item, ...PHONE_MAP_OVERLAYS[id] } : item,
+        ])
+      )
+    : overlayItems;
+
   const getOverlayStyle = (id, extra = {}) => {
-    const item = overlayItems[id];
+    const item = responsiveOverlayItems[id];
     if (!item) return extra;
     const style = {
       left: `${item.left}%`,
@@ -1315,7 +1382,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
     }
   };
 
-  const mapGaneshaState = getMapGaneshaState(zoneProgress, unlockingZones, overlayItems);
+  const mapGaneshaState = getMapGaneshaState(zoneProgress, unlockingZones, responsiveOverlayItems);
 
   useEffect(() => {
     const newPos = JSON.stringify(mapGaneshaState.position);
@@ -1681,7 +1748,12 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
       {mushikaPop && (
         <div
           className="mushika-pop-overlay"
-          style={getOverlayStyle(ZONE_MUSHIKA_OVERLAY_IDS[mushikaPop.zone.id], ZONE_MUSHIKA_POS[mushikaPop.zone.id])}
+          style={getOverlayStyle(
+            ZONE_MUSHIKA_OVERLAY_IDS[mushikaPop.zone.id],
+            isPhoneLandscape
+              ? PHONE_ZONE_MUSHIKA_POS[mushikaPop.zone.id]
+              : ZONE_MUSHIKA_POS[mushikaPop.zone.id]
+          )}
           aria-hidden="true"
         >
           <div className="mushika-pop-bubble">

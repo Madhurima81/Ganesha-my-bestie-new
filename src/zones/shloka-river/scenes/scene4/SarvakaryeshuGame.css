@@ -632,3 +632,131 @@
     width: clamp(220px, 24vw, 300px);
   }
 }
+
+/* ==========================================================================
+   PHONE LANDSCAPE (740x360 / 844x390 / 667x375 / 932x430)
+   The card was a single column (picture -> situation -> question -> three powers -> feedback),
+   which is what squeezed everything on a short screen (the iPad rescue above just zooms it to 80%).
+   On phones it becomes two columns: picture + text on the left, the three powers stacked on the
+   right. The flying-symbol animation measures each option's real rectangle, so moving the options
+   needs no new flight path. iPad / desktop rules above are untouched.
+   ========================================================================== */
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
+  .sarva-card {
+    zoom: 1; /* cancel the iPad 0.8 zoom: the content is laid out for the phone instead */
+    top: 45%;
+    /* sits to the right of the syllable chips (top-left, ~165px wide) instead of centred, so the
+       chips never cover the picture */
+    left: auto;
+    right: 12px;
+    transform: translateY(-50%);
+    width: min(calc(100% - 185px), 640px);
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 104px; /* slimmer answer rail */
+    /* the last (feedback) row takes whatever height the taller options column needs */
+    grid-template-rows: auto auto auto 1fr;
+    align-items: start;
+    justify-items: stretch;
+    column-gap: 10px;
+    row-gap: 2px;
+    padding: 8px 10px 8px 12px;
+    border-radius: 20px;
+  }
+
+  /* after the pick the options are gone: don't leave an empty right column */
+  .sarva-card:not(:has(.sarva-options)) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* keep the fly-to-syllable anchors on the (now smaller) phone syllable strip */
+  .sarva-syllable-anchors {
+    left: 10px;
+    top: 52px;
+    gap: 3px;
+  }
+
+  .sarva-syllable-anchor {
+    width: 34px;
+    height: 24px;
+  }
+
+  .sarva-card-img-wrap {
+    grid-column: 1;
+    grid-row: 1;
+    width: 100%;
+    max-height: none;
+  }
+
+  .sarva-card-img {
+    height: min(52dvh, 185px);
+  }
+
+  .sarva-situation {
+    grid-column: 1;
+    grid-row: 2;
+    font-size: clamp(14px, 2.3vw, 17px);
+  }
+
+  .sarva-question {
+    grid-column: 1;
+    grid-row: 3;
+    margin: 0;
+    font-size: clamp(12px, 1.8vw, 14px);
+  }
+
+  .sarva-feedback {
+    grid-column: 1;
+    grid-row: 4;
+    min-height: 0;
+    margin: 2px 0 0;
+    font-size: 12px;
+    line-height: 1.15;
+  }
+
+  /* the three powers, stacked on the right for the full height of the card */
+  .sarva-options {
+    grid-column: 2;
+    grid-row: 1 / span 4;
+    align-self: center;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    width: 100%;
+  }
+
+  /* the TOUCH area stays generous (64 x 76) even though the visible circle is smaller */
+  .sarva-option {
+    flex: 0 0 auto;
+    width: 100%;
+    min-width: 64px;
+    min-height: 76px;
+    padding: 2px 4px;
+    gap: 2px;
+  }
+
+  .sarva-option-circle {
+    width: 58px;
+    height: 58px;
+    flex: 0 0 58px;
+    border-width: 2px;
+  }
+
+  .sarva-option-circle img {
+    width: 68%;
+    height: 68%;
+  }
+
+  .sarva-option-label {
+    font-size: 11px;
+    line-height: 1;
+  }
+
+  /* smaller boat, and BEHIND the card (it was in front of the text / middle option): only the part
+     below the card shows */
+  .sarva-boat {
+    width: clamp(150px, 21vw, 185px);
+    z-index: 15;
+  }
+}

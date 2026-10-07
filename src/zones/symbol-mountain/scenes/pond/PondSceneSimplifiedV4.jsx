@@ -2,7 +2,7 @@ import PoseImage, { usePreloadPoses } from '../../../../lib/components/animation
 // zones/symbol-mountain/scenes/pond/PondSceneSimplifiedV6.jsx
 // Pond gameplay: hold the rock, drag the flowers aside, then hold the lotus.
 // Rock teaches the hold mechanic once. Flowers teach the drag mechanic once.
-// Lotus reuses the already-learned hold mechanic with visual reminders only.
+// Lotus gets its own intro hold demo, then uses visual reminders only.
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './PondScene.css';
@@ -540,7 +540,7 @@ const PondSceneContent = ({
       : sceneState.phase === PHASES.REEDS_ACTIVE
         ? 'flowers'
         : sceneState.phase === PHASES.LOTUS_ACTIVE
-          ? null
+          ? 'lotus'
           : null;
   useEffect(() => {
     if (!interactionBeat) {
@@ -1914,11 +1914,16 @@ const PondSceneContent = ({
                 paused={isSymbolPopupOpen}
                 type="hold-progress-l3"
                 from={LOTUS_HOLD_POINT}
-                active={false}
+                active={
+                  pondIntroGesture &&
+                  sceneState.phase === PHASES.LOTUS_ACTIVE &&
+                  !sceneState.lotusBloomed &&
+                  holdProgress <= 0
+                }
                 idleDelay={0}
                 replayKey={effectiveHintLevel}
-                // Lotus reuses the rock hold mechanic, so it reminds visually
-                // with rings/glow instead of reteaching with a hand.
+                // Lotus gets one intro hand on "Hold"; later stuck help stays
+                // visual-only with the ring/glow around the bud.
                 iterations={1}
                 zIndex={28}
               />
@@ -1970,8 +1975,7 @@ const PondSceneContent = ({
                     title="hold start zone: lotus"
                   />
                 )}
-                {/* L1 only — see the matching rock ring above for why L2/L3
-                    don't also render this (GestureDemo takes over there). */}
+                {/* Visual reminders after the intro hand: ring/glow only. */}
                 {sceneState.phase === PHASES.LOTUS_ACTIVE && !sceneState.lotusBloomed && holdProgress <= 0 && effectiveHintLevel >= 1 && (
                   <div
                     className="pond-hold-hint-ring pond-hold-hint-ring--lotus"

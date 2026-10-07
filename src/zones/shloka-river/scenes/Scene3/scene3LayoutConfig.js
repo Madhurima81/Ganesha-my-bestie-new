@@ -35,7 +35,22 @@ export const NIRVIGHNAM_LAYOUT = {
   },
 };
 
-export const KURUMEDEVA_LAYOUT = {
+// Phone landscape (<= 500px tall): the whole obstacle cluster (stone, branch, reeds), the hit zones
+// on them, the stepping nodes the turtle walks and the bank spots they land on move together
+// PHONE_CLUSTER_SHIFT_L percent to the left, which gives the turtle breathing room beside the rock
+// on a short screen. The nest, swim path and turtle start stay where they are. iPad / desktop keep
+// NIRVIGHNAM_LAYOUT unchanged.
+const PHONE_CLUSTER_SHIFT_L = -4;
+const shiftL = (p) => ({ ...p, l: Math.round((p.l + PHONE_CLUSTER_SHIFT_L) * 10) / 10 });
+export const NIRVIGHNAM_LAYOUT_PHONE = {
+  ...NIRVIGHNAM_LAYOUT,
+  obstacles: NIRVIGHNAM_LAYOUT.obstacles.map(shiftL),
+  bankSpots: Object.fromEntries(Object.entries(NIRVIGHNAM_LAYOUT.bankSpots).map(([k, v]) => [k, shiftL(v)])),
+  hitZones: Object.fromEntries(Object.entries(NIRVIGHNAM_LAYOUT.hitZones).map(([k, v]) => [k, shiftL(v)])),
+  turtleNodes: NIRVIGHNAM_LAYOUT.turtleNodes.map(shiftL),
+};
+
+const KURUMEDEVA_LAYOUT_DEFAULT = {
   bridge: {
     l: 57.7,
     t: 71.1,
@@ -73,3 +88,38 @@ export const KURUMEDEVA_LAYOUT = {
     { l: 85, t: 66.7 },
   ],
 };
+
+// Phone (either orientation, so a phone that loads in portrait and is then rotated still gets it;
+// every iPad has a short side >= 744px): the finished bridge was too dominant next to the
+// characters at 740x360, so the bridge is ~9% smaller, 2% lower and 3% further left (clear of the
+// beaver family on the right bank), the elephant ~7% smaller and the beaver 5% smaller. Monkey and
+// the baby beaver are unchanged; the two beaver-path points that walk on the bridge move with it. iPad / desktop keep KURUMEDEVA_LAYOUT_DEFAULT.
+const isSmallPhone = () => typeof window !== 'undefined'
+  && Math.min(window.innerWidth, window.innerHeight) <= 500
+  && Math.max(window.innerWidth, window.innerHeight) <= 1023;
+
+const KURUMEDEVA_LAYOUT_PHONE = {
+  ...KURUMEDEVA_LAYOUT_DEFAULT,
+  bridge: {
+    ...KURUMEDEVA_LAYOUT_DEFAULT.bridge,
+    // 3% left as well: at the old centre even the smaller bridge still ran under the beaver family
+    // (~78-86% of the width) in the finished state.
+    l: Math.round((KURUMEDEVA_LAYOUT_DEFAULT.bridge.l - 3) * 10) / 10,
+    t: Math.round((KURUMEDEVA_LAYOUT_DEFAULT.bridge.t + 2) * 10) / 10,
+    w: Math.round(KURUMEDEVA_LAYOUT_DEFAULT.bridge.w * 0.91 * 10) / 10,
+  },
+  beaver: {
+    ...KURUMEDEVA_LAYOUT_DEFAULT.beaver,
+    w: Math.round(KURUMEDEVA_LAYOUT_DEFAULT.beaver.w * 0.95 * 10) / 10,
+  },
+  friends: KURUMEDEVA_LAYOUT_DEFAULT.friends.map((f) => (
+    f.id === 'elephant' ? { ...f, w: Math.round(f.w * 0.93 * 10) / 10 } : f
+  )),
+  beaverPath: KURUMEDEVA_LAYOUT_DEFAULT.beaverPath.map((p, i) => (
+    i === 1 || i === 2
+      ? { l: Math.round((p.l - 3) * 10) / 10, t: Math.round((p.t + 2) * 10) / 10 }
+      : p
+  )),
+};
+
+export const KURUMEDEVA_LAYOUT = isSmallPhone() ? KURUMEDEVA_LAYOUT_PHONE : KURUMEDEVA_LAYOUT_DEFAULT;

@@ -155,6 +155,18 @@ const START_BEAM = { x: 31, y: 57 };
 
 const SHOW_HIT_ZONES = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('hitzones');
 
+// Phone landscape only (same query the rest of the app uses): the hold zone is a % of the stage,
+// so on a short screen its height fell to ~47px at 852x393. Grow it to a >=62px touch target.
+const PHONE_MQ = '(orientation: landscape) and (max-height: 500px) and (max-width: 1023px)';
+const PHONE_MIN_HIT_HALF_PX = 31;
+function withPhoneMinHit(rx, ry) {
+  if (typeof window === 'undefined' || !window.matchMedia?.(PHONE_MQ).matches) return { rx, ry };
+  return {
+    rx: Math.max(rx, (PHONE_MIN_HIT_HALF_PX / window.innerWidth) * 100),
+    ry: Math.max(ry, (PHONE_MIN_HIT_HALF_PX / window.innerHeight) * 100),
+  };
+}
+
 function pointInsideClue(point, clue) {
   if (!clue) return false;
   const dx = (point.x - clue.cx) / clue.rx;
@@ -295,8 +307,7 @@ export default function SamaprabhaGame({
         ...meta,
         cx: piece.l + (piece.hitOffsetX || 0),
         cy: piece.t + (piece.hitOffsetY || 0),
-        rx: piece.rx,
-        ry: piece.ry,
+        ...withPhoneMinHit(piece.rx, piece.ry),
       };
     }),
     [activeLayout.shadowPieces]

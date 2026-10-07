@@ -215,22 +215,35 @@ const DEFAULT_SYMBOL_TUNE = {
 
 // Locked in from the finale boat tuner (Copy Tune JSON) — per-word symbol
 // left/top/width/height come from Madhurima's on-scene drag pass, 2026-09-30.
+// Same landscape-phone query the rest of the app uses (checked once at load).
+const IS_PHONE_FINALE = typeof window !== 'undefined'
+  && !!window.matchMedia?.('(orientation: landscape) and (max-height: 500px) and (max-width: 1023px)').matches;
 const DEFAULT_FINALE_TUNE = {
   choiceBottom: 11,
   choiceWidth: 180,
   choiceSymbol: DEFAULT_SYMBOL_TUNE,
-  placed: [
-    // Fleet hugs the LEFT of the river (centre is free for the chanted word's symbol during the
-    // recap); the top three drift back toward the middle and are spaced wider so labels don't
-    // sit on the next boat's sail. Percentages are of .srf-boat-parade.
-    { left: 14, top: 90 },
-    { left: 28, top: 78 },
-    { left: 17, top: 66 },
-    { left: 30, top: 53 },
-    { left: 19, top: 40 },
-    { left: 30, top: 27 },
-    { left: 38, top: 14 },
-    { left: 50, top: 0 },
+  // Horseshoe fleet: the 8 boats arc across the river (rising to the middle, then
+  // descending) so the centre stays open for the chanted word's recap symbol.
+  // Percentages are of .srf-boat-parade. iPad/desktop: outer two pairs pulled ~5% inward
+  // (river is much wider there); phone: only the bottom two boats ~2.5% inward.
+  placed: IS_PHONE_FINALE ? [
+    { left: 14.5, top: 80 }, // Vakratunda
+    { left: 23, top: 58 },   // Mahakaya
+    { left: 35, top: 40 },   // Suryakoti
+    { left: 45, top: 25 },   // Samaprabha
+    { left: 55, top: 25 },   // Nirvighnam
+    { left: 65, top: 40 },   // Kurumedeva
+    { left: 77, top: 58 },   // Sarvakaryeshu
+    { left: 85.5, top: 80 }, // Sarvada
+  ] : [
+    { left: 17, top: 80 },   // Vakratunda
+    { left: 28, top: 58 },   // Mahakaya
+    { left: 35, top: 40 },   // Suryakoti
+    { left: 45, top: 25 },   // Samaprabha
+    { left: 55, top: 25 },   // Nirvighnam
+    { left: 65, top: 40 },   // Kurumedeva
+    { left: 72, top: 58 },   // Sarvakaryeshu
+    { left: 83, top: 80 },   // Sarvada
   ],
   wordSymbol: {
     vakratunda: { left: 58.1, top: 48.4, width: 26, height: 30, scale: 1.18 },

@@ -912,6 +912,109 @@
   .map-back-button       { font-size: 12px; padding: 6px 14px; }
 }
 
+/* ============================================================
+   HOME MAP — CHILD PHONE LANDSCAPE
+   Same world, recomposed for the short / wide viewport.
+   Positions come from PHONE_MAP_* in CleanMapZone.jsx.
+   ============================================================ */
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
+  .map-container {
+    width: 100vw;
+    height: var(--app-height, 100dvh);
+    overflow: hidden;
+  }
+
+  /* Meadow is decorative; landmarks are separate layers, so cover is safe. */
+  .map-bg-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 52%;
+  }
+
+  /* Labels: reduce footprint before readability. */
+  .label {
+    padding: 5px 13px;
+    font-size: clamp(17px, 4.8dvh, 20px) !important;
+    line-height: 1.05;
+    letter-spacing: 0.2px;
+    box-shadow: 0 3px 8px rgba(80, 50, 150, 0.24);
+  }
+
+  .festival-label,
+  .treehouse-label {
+    font-size: clamp(15px, 4.2dvh, 18px) !important;
+    padding: 5px 11px;
+  }
+
+  /* Lodge is not the first destination; keep it lighter than Modak. */
+  .hut-label {
+    font-size: clamp(15.5px, 4.3dvh, 18px) !important;
+    padding: 5px 11px;
+  }
+
+  /* Locked / future zones stay visible but recede. */
+  .label.label-state-locked,
+  .label.label-state-coming-soon,
+  .label-coming-soon {
+    opacity: 0.30;
+    box-shadow: none;
+  }
+
+  /* Touch areas stay much larger than labels/art. */
+  .shloka-mountain  { top: 12%; left: 5%;  width: 34%; height: 38%; }
+  .shloka-river     { top: 8%;  right: 4%; width: 35%; height: 38%; }
+  .about-hut        { top: 48%; left: 17%; width: 32%; height: 38%; }
+  .festival-square  { top: 38%; left: 66%; width: 32%; height: 37%; }
+  .tusk-treehouse   { top: 61%; left: 59%; width: 36%; height: 35%; }
+
+  /* Profile chip: 60px hit area; the visible pill is a smaller ::before. */
+  .map-profile-chip {
+    top: max(8px, env(safe-area-inset-top));
+    right: max(8px, env(safe-area-inset-right));
+    min-height: 60px;
+    padding: 0 12px;
+    gap: 5px;
+    background: transparent;
+    backdrop-filter: none;
+    border: 0;
+    box-shadow: none;
+  }
+
+  .map-profile-chip::before {
+    content: '';
+    position: absolute;
+    inset: 9px 0;
+    z-index: -1;
+    border-radius: 999px;
+    border: 1.5px solid rgba(160, 120, 220, 0.4);
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(6px);
+    box-shadow: 0 3px 10px rgba(120, 80, 200, 0.16);
+  }
+
+  .map-profile-avatar { width: 30px; height: 30px; border-width: 2px; }
+  .profile-pill-name  { max-width: 70px; font-size: 12px; }
+  .parent-icon        { width: 18px; height: 18px; margin-left: 1px; }
+
+  /* Ganesha: visible without dominating the shallow viewport. */
+  .map-ganesha-guide__float img {
+    width: clamp(64px, 20dvh, 76px) !important;
+    height: clamp(64px, 20dvh, 76px) !important;
+  }
+  .map-ganesha-guide__float {
+    filter: drop-shadow(0 3px 9px rgba(120, 80, 200, 0.24));
+  }
+
+  .zone-butterfly,
+  .zone-bird { width: 32px; height: 32px; }
+  .map-dust { display: none; }
+  .map-mountain-mist { opacity: 0.55; }
+
+  .mushika-pop-img { width: 68px; }
+  .mushika-pop-bubble { padding: 5px 12px; font-size: 14px; }
+}
+
 /* =========================
    GANESHA GUIDE
 ========================= */

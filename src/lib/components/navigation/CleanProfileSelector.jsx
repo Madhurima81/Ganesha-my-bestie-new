@@ -373,73 +373,107 @@ const CleanProfileSelector = ({
     const pageStart = charPage * CHARS_PER_PAGE;
     const pageItems = animalAvatars.slice(pageStart, pageStart + CHARS_PER_PAGE);
     const fillerCount = CHARS_PER_PAGE - pageItems.length;
+    const selectedFriend = animalAvatars.find((animal) => animal.id === selectedAvatar);
+
     return renderHandoffCard(
       <>
         <h2 className="create-step-heading">Who will join your adventure?</h2>
-        <div className="friend-carousel">
-          <button
-            type="button"
-            className="friend-carousel-arrow"
-            onClick={() => { playUiTap(0.2); setCharPage((p) => Math.max(0, p - 1)); }}
-            disabled={charPage === 0}
-            aria-label="Previous friends"
-          >
-            ‹
-          </button>
-          <div className="friend-grid">
-            {pageItems.map((animal) => (
+
+        <div className="pick-friend-phone-layout">
+          {/* LEFT — avatar browser */}
+          <div className="pick-friend-browser">
+            <div className="friend-carousel">
               <button
                 type="button"
-                key={animal.id}
-                className={`friend-card ${selectedAvatar === animal.id ? 'active' : ''} ${avatarTapPulseId === animal.id ? 'pop' : ''}`}
-                onClick={() => handleAvatarSelect(animal.id)}
-                aria-label={animal.name}
-                aria-pressed={selectedAvatar === animal.id}
+                className="friend-carousel-arrow"
+                onClick={() => { playUiTap(0.2); setCharPage((p) => Math.max(0, p - 1)); }}
+                disabled={charPage === 0}
+                aria-label="Previous friends"
               >
+                ‹
+              </button>
+
+              <div className="friend-grid">
+                {pageItems.map((animal) => (
+                  <button
+                    type="button"
+                    key={animal.id}
+                    className={`friend-card ${selectedAvatar === animal.id ? 'active' : ''} ${avatarTapPulseId === animal.id ? 'pop' : ''}`}
+                    onClick={() => handleAvatarSelect(animal.id)}
+                    aria-label={animal.name}
+                    aria-pressed={selectedAvatar === animal.id}
+                  >
+                    <img
+                      src={`/images/new-explorer-${animal.id}.webp`}
+                      alt=""
+                      aria-hidden="true"
+                      onError={(e) => {
+                        if (!e.currentTarget.dataset.fallback) {
+                          e.currentTarget.dataset.fallback = '1';
+                          e.currentTarget.src = `/images/new-explorer-${animal.id}.png`;
+                        }
+                      }}
+                    />
+                  </button>
+                ))}
+                {Array.from({ length: fillerCount }).map((_, i) => (
+                  <div key={`filler-${i}`} className="friend-card filler" aria-hidden="true" />
+                ))}
+              </div>
+
+              <button
+                type="button"
+                className="friend-carousel-arrow"
+                onClick={() => { playUiTap(0.2); setCharPage((p) => Math.min(charPageCount - 1, p + 1)); }}
+                disabled={charPage >= charPageCount - 1}
+                aria-label="More friends"
+              >
+                ›
+              </button>
+            </div>
+
+            <div className="friend-pagedots" aria-hidden="true">
+              {Array.from({ length: charPageCount }).map((_, i) => (
+                <span
+                  key={`dot-${i}`}
+                  className={`friend-pagedot ${i === charPage ? 'active' : ''}`}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* RIGHT — chosen friend + confirm */}
+          <div className="pick-friend-confirm">
+            <div
+              className={`selected-friend-preview ${selectedFriend ? 'has-selection' : ''}`}
+              aria-hidden="true"
+            >
+              {selectedFriend && (
                 <img
-                  src={`/images/new-explorer-${animal.id}.webp`}
+                  src={`/images/new-explorer-${selectedFriend.id}.webp`}
                   alt=""
-                  aria-hidden="true"
                   onError={(e) => {
                     if (!e.currentTarget.dataset.fallback) {
                       e.currentTarget.dataset.fallback = '1';
-                      e.currentTarget.src = `/images/new-explorer-${animal.id}.png`;
+                      e.currentTarget.src = `/images/new-explorer-${selectedFriend.id}.png`;
                     }
                   }}
                 />
-              </button>
-            ))}
-            {Array.from({ length: fillerCount }).map((_, i) => (
-              <div key={`filler-${i}`} className="friend-card filler" aria-hidden="true" />
-            ))}
-          </div>
-          <button
-            type="button"
-            className="friend-carousel-arrow"
-            onClick={() => { playUiTap(0.2); setCharPage((p) => Math.min(charPageCount - 1, p + 1)); }}
-            disabled={charPage >= charPageCount - 1}
-            aria-label="More friends"
-          >
-            ›
-          </button>
-        </div>
-        <div className="friend-pagedots" aria-hidden="true">
-          {Array.from({ length: charPageCount }).map((_, i) => (
-            <span
-              key={`dot-${i}`}
-              className={`friend-pagedot ${i === charPage ? 'active' : ''}`}
+              )}
+            </div>
+
+            <PrimaryBtn
+              label="Let's go"
+              onClick={handleCreateProfile}
+              disabled={!selectedAvatar || isCreatingProfile}
+              size="md"
+              fullWidth
+              className="final-cta-btn"
             />
-          ))}
+          </div>
         </div>
+
         {createError ? <p className="create-error-text">{createError}</p> : null}
-        <PrimaryBtn
-          label="Let's go"
-          onClick={handleCreateProfile}
-          disabled={!selectedAvatar || isCreatingProfile}
-          size="md"
-          fullWidth
-          className="final-cta-btn"
-        />
       </>,
       'pick-friend-screen'
     );

@@ -19,6 +19,32 @@ const PLATE_HEIGHT = `calc(${PLATE_WIDTH} * 0.44)`;
 const FOOD_SIZE = 'clamp(84px, 18.3vh, 132px)';
 const PLATE_FOOD_WIDTH = '60.6%'; // of the plate zone (160px on a 264px zone)
 
+// Phone landscape (same condition as DreamsWishesGame.css): a compact 3-over-3 layout. The desktop
+// maps (passed in as props) put the plates down to 83% of a 390px screen and the animals at fixed
+// px offsets, which clips the bottom row and runs the peacock into the Replay / Sound buttons.
+const PHONE_LANDSCAPE_QUERY = '(orientation: landscape) and (max-height: 500px) and (max-width: 1023px)';
+const PHONE_FOOD_POSITIONS = {
+  apple:  { left: '31%', top: '32%' },
+  banana: { left: '50%', top: '27%' },
+  rice:   { left: '69%', top: '32%' },
+};
+const PHONE_PLATE_POSITIONS = [
+  { left: '31%', top: '76%' },
+  { left: '50%', top: '72%' },
+  { left: '69%', top: '76%' },
+];
+// Animals sit to the upper-right of their plate; sizes/offsets are phone-scaled versions of the desktop ones.
+const DESKTOP_ANIMALS = [
+  { height: '207px', xOffset: 62, yOffset: -20 },
+  { height: '93px', xOffset: 90, yOffset: 0 },
+  { height: '132px', xOffset: 90, yOffset: 0 },
+];
+const PHONE_ANIMALS = [
+  { height: 'clamp(84px, 24vh, 104px)', xOffset: 62, yOffset: -34 },
+  { height: 'clamp(48px, 13vh, 60px)', xOffset: 64, yOffset: -22 },
+  { height: 'clamp(64px, 18vh, 80px)', xOffset: 64, yOffset: -30 },
+];
+
 const Wish2PlateDropGame = ({
   sceneState,
   wish2IdleLevel,
@@ -38,6 +64,11 @@ const Wish2PlateDropGame = ({
   peacockImg,
   onWish2Miss,
 }) => {
+  const isPhone = typeof window !== 'undefined' && window.matchMedia(PHONE_LANDSCAPE_QUERY).matches;
+  const FOOD_POS = isPhone ? PHONE_FOOD_POSITIONS : WISH2_FOOD_POSITIONS;
+  const PLATE_POS = isPhone ? PHONE_PLATE_POSITIONS : WISH2_PLATE_POSITIONS;
+  const animalSizes = isPhone ? PHONE_ANIMALS : DESKTOP_ANIMALS;
+
   // A drag that ends off every plate (or on a full one) is a gentle miss: the food glides back
   // to where it started and a soft sound plays. KidsDraggable fires the plate's drop first and
   // onDragEnd after, so "no plate took it" = miss. Release point comes from a capture listener.
@@ -72,8 +103,8 @@ const Wish2PlateDropGame = ({
   const [teachingGestureDismissed, setTeachingGestureDismissed] = React.useState(false);
   const activeFoodPool = sceneState.wish2FoodPool || WISH2_FOOD_KEYS;
   const firstAvailableFoodKey = activeFoodPool[0];
-  const pointerStart = WISH2_FOOD_POSITIONS[firstAvailableFoodKey] || { left: '18%', top: '62%' };
-  const pointerTarget = WISH2_PLATE_POSITIONS[firstUnfilledBowlIndex] || { left: '50%', top: '62%' };
+  const pointerStart = FOOD_POS[firstAvailableFoodKey] || { left: '18%', top: '62%' };
+  const pointerTarget = PLATE_POS[firstUnfilledBowlIndex] || { left: '50%', top: '62%' };
 
   const startPoint = {
     x: Number.parseFloat(pointerStart.left) || 18,
@@ -133,7 +164,7 @@ const Wish2PlateDropGame = ({
         {/* Food items */}
         {WISH2_FOOD_KEYS.map((foodKey) => {
           const isAvailable = (sceneState.wish2FoodPool || WISH2_FOOD_KEYS).includes(foodKey);
-          const pos = WISH2_FOOD_POSITIONS[foodKey];
+          const pos = FOOD_POS[foodKey];
           const inwardX =
             foodKey === 'apple' ? 10 :
             foodKey === 'rice' ? -10 :
@@ -200,11 +231,12 @@ const Wish2PlateDropGame = ({
             }}
             style={{
               position: 'absolute',
-              left: WISH2_PLATE_POSITIONS[index]?.left || '50%',
-              top: WISH2_PLATE_POSITIONS[index]?.top || '50%',
+              left: PLATE_POS[index]?.left || '50%',
+              top: PLATE_POS[index]?.top || '50%',
               transform: 'translate(-50%, -50%)',
               width: PLATE_WIDTH,
-              height: PLATE_HEIGHT,
+              // phone: 0.5 x width (not 0.44) so the drop target stays >= 60px tall at 740x360
+              height: isPhone ? `calc(${PLATE_WIDTH} * 0.5)` : PLATE_HEIGHT,
               borderRadius: '50%',
               background: SHOW_HIT_ZONES ? 'rgba(233, 30, 99, 0.16)' : 'transparent',
               border: 'none',
@@ -273,9 +305,9 @@ const Wish2PlateDropGame = ({
 
         {/* Animals next to each plate */}
         {[
-          { src: cowImg, height: '207px', xOffset: 62, yOffset: -20 },
-          { src: mouseImg, height: '93px', xOffset: 90, yOffset: 0 },
-          { src: peacockImg, height: '132px', xOffset: 90, yOffset: 0 },
+          { src: cowImg, ...animalSizes[0] },
+          { src: mouseImg, ...animalSizes[1] },
+          { src: peacockImg, ...animalSizes[2] },
         ].map((animal, index) => (
           <img
             key={index}
@@ -283,8 +315,8 @@ const Wish2PlateDropGame = ({
             alt="animal"
             style={{
               position: 'absolute',
-              left: `calc(${WISH2_PLATE_POSITIONS[index]?.left} + ${animal.xOffset}px)`,
-              top: WISH2_PLATE_POSITIONS[index]?.top,
+              left: `calc(${PLATE_POS[index]?.left} + ${animal.xOffset}px)`,
+              top: PLATE_POS[index]?.top,
               transform: `translateY(calc(-50% + ${animal.yOffset}px))`,
               height: animal.height,
               objectFit: 'contain',

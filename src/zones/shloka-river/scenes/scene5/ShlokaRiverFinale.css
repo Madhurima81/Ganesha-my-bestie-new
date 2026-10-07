@@ -701,12 +701,12 @@
 
 .srf-boat-parade {
   position: absolute;
-  inset: 13% 18% 28% 18%;
+  inset: 10% 12% 18% 12%;
 }
 
 .srf-journey-boat {
   position: absolute;
-  width: clamp(76px, 9vw, 118px);
+  width: clamp(72px, 8vw, 104px);
   transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
@@ -933,10 +933,10 @@
   animation: srfIntroSymbolEnter 0.45s ease-out both;
 }
 
-/* Final recap: the chanted word's symbol sits in the open water to the right of the fleet */
+/* Final recap: the chanted word's symbol sits in the open water inside the horseshoe fleet */
 .srf-intro-symbol.is-recap {
-  left: 62%;
-  top: 52%;
+  left: 50%;
+  top: 60%;
 }
 
 .srf-intro-symbol-img {
@@ -1272,4 +1272,26 @@
   border-radius: 6px;
   padding: 4px 6px;
   font: inherit;
+}
+
+/* Phone landscape: tighter fleet container + smaller boats / word / recap symbol. */
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
+  .srf-boat-parade {
+    inset: 9% 7% 16% 7%;
+  }
+
+  .srf-journey-boat {
+    width: clamp(64px, 9vw, 74px);
+  }
+
+  .srf-completed-word {
+    margin-top: -2px;
+    font-size: clamp(8px, 1.3vw, 10px);
+  }
+
+  .srf-intro-symbol.is-recap {
+    top: 66%;
+    width: clamp(125px, 20vw, 155px);
+    height: clamp(125px, 20vw, 155px);
+  }
 }

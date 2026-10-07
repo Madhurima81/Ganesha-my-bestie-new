@@ -105,6 +105,46 @@ const DEFAULT_PHASE_LAYOUTS = [
   },
 ];
 
+// Phone landscape only (same query the rest of the app uses): bridge logs ~15%
+// smaller and nudged up/left, animals trimmed unevenly (elephant/cow most), so the
+// scene is less crowded. Hit areas (DROP_RX/RY) are untouched. iPad/desktop keep
+// the base layouts above.
+const PHONE_MQ = '(orientation: landscape) and (max-height: 500px) and (max-width: 1023px)';
+const isPhone = () => typeof window !== 'undefined' && !!window.matchMedia?.(PHONE_MQ).matches;
+const PHONE_BRIDGE_SCALE = 0.85;
+const PHONE_WAITING_LOG_SCALE = 0.9;   // extra log trim; applied to waiting AND placed logs so they match
+const PHONE_BRIDGE_SHIFT = { l: -1.5, t: -1.5 };
+const PHONE_ANIMAL_SCALE = [0.88, 0.97, 0.9, 0.95];   // elephant, peacock, cow, monkey (ANIMALS order)
+const r2 = (n) => Math.round(n * 100) / 100;
+
+const adaptLayoutForPhone = (layout) => {
+  const out = {};
+  Object.entries(layout).forEach(([key, v]) => {
+    const animal = key.match(/^(animal|waitingAnimal)(\d)$/);
+    if (key === 'raft' || key.startsWith('logTarget')) {
+      out[key] = { ...v, l: r2(v.l + PHONE_BRIDGE_SHIFT.l), t: r2(v.t + PHONE_BRIDGE_SHIFT.t), w: r2(v.w * PHONE_BRIDGE_SCALE * PHONE_WAITING_LOG_SCALE) };
+    } else if (key.startsWith('waitingLog')) {
+      out[key] = { ...v, w: r2(v.w * PHONE_BRIDGE_SCALE * PHONE_WAITING_LOG_SCALE) };
+    } else if (animal) {
+      const sc = PHONE_ANIMAL_SCALE[Number(animal[2])];
+      out[key] = animal[1] === 'animal'
+        // riding the bridge: follow its shift and drop by half the shrink so feet stay on the logs
+        ? { ...v, l: r2(v.l + PHONE_BRIDGE_SHIFT.l), t: r2(v.t + PHONE_BRIDGE_SHIFT.t + v.w * (1 - sc) * 0.5), w: r2(v.w * sc) }
+        : { ...v, w: r2(v.w * sc) };
+    } else {
+      out[key] = v;
+    }
+  });
+  return out;
+};
+const PHONE_PHASE_LAYOUTS = DEFAULT_PHASE_LAYOUTS.map(adaptLayoutForPhone);
+const PHONE_CROSS_TARGET_RAFT = {
+  l: r2(CROSS_TARGET_RAFT.l + PHONE_BRIDGE_SHIFT.l),
+  t: r2(CROSS_TARGET_RAFT.t + PHONE_BRIDGE_SHIFT.t),
+};
+const getDefaultLayouts = () => (isPhone() ? PHONE_PHASE_LAYOUTS : DEFAULT_PHASE_LAYOUTS);
+const getDefaultCrossTarget = () => (isPhone() ? PHONE_CROSS_TARGET_RAFT : CROSS_TARGET_RAFT);
+
 const START_DEBUG_KEYS = [
   'raft',
   'waitingLog0',
@@ -167,7 +207,7 @@ export default function MahakayaRescueGame({
   const [logPos, setLogPos] = useState(null);
   const [wrongDropPulse, setWrongDropPulse] = useState(false);
   const [dragging, setDragging] = useState(null);
-  const [phaseLayouts, setPhaseLayouts] = useState(DEFAULT_PHASE_LAYOUTS);
+  const [phaseLayouts, setPhaseLayouts] = useState(getDefaultLayouts);
   const [debugMode, setDebugMode] = useState(false);
   const [selectedDebugKey, setSelectedDebugKey] = useState('waitingLog0');
   const [debugPhase, setDebugPhase] = useState(0);
@@ -175,7 +215,7 @@ export default function MahakayaRescueGame({
   const [crossing, setCrossing] = useState(false);
   const [layoutPresetVersion, setLayoutPresetVersion] = useState(LAYOUT_PRESET_VERSION);
   const [layoutCopyStatus, setLayoutCopyStatus] = useState('');
-  const [crossTargetRaft, setCrossTargetRaft] = useState(CROSS_TARGET_RAFT);
+  const [crossTargetRaft, setCrossTargetRaft] = useState(getDefaultCrossTarget);
   const [teachingCompleteKey, setTeachingCompleteKey] = useState(null);
   const [introVoStarted, setIntroVoStarted] = useState(false);
 
@@ -341,9 +381,9 @@ export default function MahakayaRescueGame({
 
   useEffect(() => {
     if (layoutPresetVersion === LAYOUT_PRESET_VERSION) return;
-    setPhaseLayouts(DEFAULT_PHASE_LAYOUTS);
+    setPhaseLayouts(getDefaultLayouts());
     setLayoutPresetVersion(LAYOUT_PRESET_VERSION);
-    setCrossTargetRaft(CROSS_TARGET_RAFT);
+    setCrossTargetRaft(getDefaultCrossTarget());
     if (completedLogsRef.current === 0) {
       setDebugPhase(0);
     }
@@ -393,17 +433,17 @@ export default function MahakayaRescueGame({
 
   const resetCurrentPhaseLayout = () => {
     if (selectedDebugKey === CROSS_TARGET_DEBUG_KEY) {
-      setCrossTargetRaft(CROSS_TARGET_RAFT);
+      setCrossTargetRaft(getDefaultCrossTarget());
       return;
     }
     setPhaseLayouts((current) => current.map((phaseLayout, phaseIndex) => (
-      phaseIndex === debugPhase ? DEFAULT_PHASE_LAYOUTS[debugPhase] : phaseLayout
+      phaseIndex === debugPhase ? getDefaultLayouts()[debugPhase] : phaseLayout
     )));
   };
 
   const resetAllPhaseLayouts = () => {
-    setPhaseLayouts(DEFAULT_PHASE_LAYOUTS);
-    setCrossTargetRaft(CROSS_TARGET_RAFT);
+    setPhaseLayouts(getDefaultLayouts());
+    setCrossTargetRaft(getDefaultCrossTarget());
     setDebugPhase(0);
     setSelectedDebugKey(START_DEBUG_KEYS[0]);
   };

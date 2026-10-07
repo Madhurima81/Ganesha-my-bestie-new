@@ -1737,9 +1737,24 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 }
 
 /* ============================================================
+   PICK FRIEND — STRUCTURE
+   Desktop/tablet keeps existing vertical composition.
+   Phone landscape overrides below.
+   ============================================================ */
+.pick-friend-phone-layout,
+.pick-friend-browser,
+.pick-friend-confirm {
+  display: contents;
+}
+
+/* Chosen-friend preview is phone-landscape only */
+.selected-friend-preview {
+  display: none;
+}
+
+/* ============================================================
    PICK YOUR FRIEND — PHONE LANDSCAPE
-   Child-facing single-screen composition (scoped to .pick-friend-screen
-   so install / All set / name / age are untouched).
+   Browse on left, chosen friend + confirmation on right.
    ============================================================ */
 @media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
   .pick-friend-screen {
@@ -1753,26 +1768,33 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
     overflow: hidden;
     padding:
       max(8px, env(safe-area-inset-top))
-      max(12px, env(safe-area-inset-right))
+      max(14px, env(safe-area-inset-right))
       max(8px, env(safe-area-inset-bottom))
-      max(12px, env(safe-area-inset-left));
+      max(14px, env(safe-area-inset-left));
+    /* The scenic .clean-forest-background stays visible. */
+    background-image: none;
+    background-color: transparent;
   }
 
   .pick-friend-screen .scroll-card {
-    width: min(600px, calc(100vw - 28px));
+    width: min(700px, calc(100vw - 32px));
     height: auto;
     min-height: 0;
     max-height: calc(100dvh - 16px);
     aspect-ratio: auto;
-    padding: 12px 18px 10px;
     box-sizing: border-box;
-    background-size: 100% 100%;
+    padding: 14px 22px 16px;
+    /* Tablet's tall organic SVG is the wrong proportion for landscape phone. */
+    background-image: none;
+    background-color: rgba(255, 253, 247, 0.80);
+    border-radius: 30px 36px 28px 38px / 34px 28px 38px 30px;
+    box-shadow: 0 9px 24px rgba(104, 74, 160, 0.10);
   }
 
   .pick-friend-screen .scroll-card-inner {
-    width: 92%;
+    width: 100%;
     height: auto;
-    padding-top: 8px;
+    padding: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1784,29 +1806,49 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   }
 
   .pick-friend-screen .create-step-heading {
-    font-size: clamp(21px, 6vh, 24px);
+    margin: 0 0 10px;
+    font-size: clamp(21px, 6dvh, 26px);
     line-height: 1.05;
-    margin: 0 0 8px;
+    white-space: nowrap;
+  }
+
+  /* Left = browsing, right = choice confirmation */
+  .pick-friend-screen .pick-friend-phone-layout {
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 170px;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .pick-friend-screen .pick-friend-browser {
+    display: block;
+    min-width: 0;
   }
 
   .pick-friend-screen .friend-carousel {
     width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     gap: 8px;
   }
 
   .pick-friend-screen .friend-carousel .friend-grid {
-    flex: 0 0 332px;
-    width: 332px;
-    max-width: 332px;
+    flex: 1 1 auto;
+    width: 100%;
+    max-width: 308px;
+    display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 6px 8px;
+    gap: 7px 8px;
     padding: 2px;
     margin: 0;
   }
 
+  /* Each avatar remains a genuine child-sized target */
   .pick-friend-screen .friend-card {
     width: 100%;
-    min-width: 0;
+    min-width: 60px;
     min-height: 60px;
     aspect-ratio: 1;
     padding: 0;
@@ -1818,10 +1860,12 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   }
 
   .pick-friend-screen .friend-card img {
-    width: 80%;
-    height: 80%;
+    width: 82%;
+    height: 82%;
+    object-fit: contain;
   }
 
+  /* Previous / next remain 60×60 child targets */
   .pick-friend-screen .friend-carousel-arrow {
     width: 60px;
     height: 60px;
@@ -1830,8 +1874,11 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   }
 
   .pick-friend-screen .friend-pagedots {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     gap: 6px;
-    margin-top: 6px;
+    margin-top: 7px;
   }
 
   .pick-friend-screen .friend-pagedot {
@@ -1845,15 +1892,227 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
     width: 20px;
   }
 
+  /* RIGHT — selected friend confirmation */
+  .pick-friend-screen .pick-friend-confirm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    gap: 12px;
+  }
+
+  .pick-friend-screen .selected-friend-preview {
+    display: grid;
+    width: 104px;
+    height: 104px;
+    place-items: center;
+    border-radius: 50%;
+    background: rgba(247, 243, 255, 0.48);
+    border: 2px solid rgba(180, 158, 232, 0.30);
+    transition:
+      background-color 160ms ease,
+      border-color 160ms ease,
+      box-shadow 160ms ease,
+      transform 160ms ease;
+  }
+
+  .pick-friend-screen .selected-friend-preview.has-selection {
+    background: #F7F3FF;
+    border-color: #B49EE8;
+    box-shadow: 0 5px 14px rgba(130, 98, 190, 0.15);
+    transform: scale(1.03);
+  }
+
+  .pick-friend-screen .selected-friend-preview img {
+    width: 82%;
+    height: 82%;
+    object-fit: contain;
+    animation: selectedFriendIn 180ms ease-out both;
+  }
+
+  /* Sized to match ZoneWelcome's phone Start/Replay CTA (size only, no colour). */
   .pick-friend-screen .primary-btn-unified.final-cta-btn {
-    width: min(300px, 72vw) !important;
-    height: 60px !important;
-    margin-top: 7px !important;
+    width: auto !important;
+    min-width: 92px;
+    max-width: 108px !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    padding: 0 12px;
+    margin: 0 !important;
+    border-radius: 999px !important;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0;
+    transform: none;
   }
 
   .pick-friend-screen .create-error-text {
-    margin: 5px 0 0;
+    margin: 6px 0 0;
     font-size: 13px;
+    line-height: 1.1;
+  }
+}
+
+/* Small selection arrival — no continuous motion */
+@keyframes selectedFriendIn {
+  from { opacity: 0; transform: scale(0.86); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ============================================================
+   PICK FRIEND — IPAD / TABLET LANDSCAPE
+   Show selected friend panel and give avatars more breathing room.
+   ============================================================ */
+@media (orientation: landscape) and (min-width: 768px) and (min-height: 600px) {
+  .pick-friend-screen .scroll-card {
+    width: min(900px, calc(100vw - 72px));
+    max-width: 900px;
+    height: auto;
+    min-height: 0;
+    aspect-ratio: auto;
+    padding: 28px 34px 30px;
+    box-sizing: border-box;
+    /* The tall organic SVG letterboxes inside a wide card; use a plain cream card like phone. */
+    background-image: none;
+    background-color: rgba(255, 253, 247, 0.86);
+    border-radius: 44px 52px 42px 54px / 48px 40px 54px 44px;
+    box-shadow: 0 12px 32px rgba(104, 74, 160, 0.12);
+  }
+
+  .pick-friend-screen .create-card-lotus {
+    display: none;
+  }
+
+  .pick-friend-screen .scroll-card-inner {
+    width: 100%;
+    height: auto;
+    padding-top: 8px;
+  }
+
+  .pick-friend-screen .create-step-heading {
+    margin: 0 0 20px;
+    font-size: 40px;
+    line-height: 1.05;
+  }
+
+  /* Turn the wrappers into a real layout */
+  .pick-friend-screen .pick-friend-phone-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 220px;
+    align-items: center;
+    gap: 30px;
+    width: 100%;
+  }
+
+  .pick-friend-screen .pick-friend-browser {
+    display: block;
+    min-width: 0;
+  }
+
+  .pick-friend-screen .pick-friend-confirm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    min-width: 0;
+  }
+
+  .pick-friend-screen .friend-carousel {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+  }
+
+  .pick-friend-screen .friend-carousel .friend-grid {
+    flex: 1 1 auto;
+    width: 100%;
+    max-width: 470px;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px 16px;
+    padding: 2px;
+    margin: 0;
+  }
+
+  .pick-friend-screen .friend-card {
+    width: 88px;
+    height: 88px;
+    min-width: 88px;
+    min-height: 88px;
+    aspect-ratio: 1;
+    padding: 0;
+  }
+
+  .pick-friend-screen .friend-card img {
+    width: 82%;
+    height: 82%;
+    object-fit: contain;
+  }
+
+  .pick-friend-screen .friend-card.active {
+    border-width: 3px;
+  }
+
+  .pick-friend-screen .friend-carousel-arrow {
+    width: 68px;
+    height: 68px;
+    flex: 0 0 68px;
+    font-size: 34px;
+  }
+
+  .pick-friend-screen .friend-pagedots {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .pick-friend-screen .friend-pagedot {
+    display: block;
+    width: 10px;
+    height: 10px;
+  }
+
+  .pick-friend-screen .friend-pagedot.active {
+    width: 26px;
+  }
+
+  /* Selected friend panel (hidden by default, shown here) */
+  .pick-friend-screen .selected-friend-preview {
+    display: grid;
+    place-items: center;
+    width: 136px;
+    height: 136px;
+    border-radius: 50%;
+    background: rgba(247, 243, 255, 0.52);
+    border: 2px solid rgba(180, 158, 232, 0.35);
+  }
+
+  .pick-friend-screen .selected-friend-preview.has-selection {
+    background: #F7F3FF;
+    border-color: #B49EE8;
+    box-shadow: 0 6px 16px rgba(130, 98, 190, 0.15);
+  }
+
+  .pick-friend-screen .selected-friend-preview img {
+    width: 82%;
+    height: 82%;
+    object-fit: contain;
+    animation: selectedFriendIn 180ms ease-out both;
+  }
+
+  .pick-friend-screen .primary-btn-unified.final-cta-btn {
+    width: 180px !important;
+    max-width: 180px !important;
+    height: 60px !important;
+    min-height: 60px !important;
+    margin: 0 !important;
   }
 }
 

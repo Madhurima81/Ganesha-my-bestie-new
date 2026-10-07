@@ -2297,3 +2297,36 @@
     left: 10%;
   }
 }
+
+/* ==========================================================
+   SACRED ASSEMBLY — PHONE LANDSCAPE
+   The 768px / 769-1023px rules above make Ganesha 560px, taller than a 360-390px screen, so the
+   baked-in Mooshika at the bottom of the art fell off screen. Phone only: the square art is capped
+   to ~96% of the screen height so the whole figure (head to Mooshika) is visible; placed symbols are
+   scaled to match (~0.64 of their 560px sizes). iPad / desktop untouched.
+   ========================================================== */
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
+  .ganesha-assembly-container {
+    width: min(58vw, 96dvh, 420px);
+    height: min(58vw, 96dvh, 420px);
+    top: 50%;
+    left: 65%;
+    transform: translate(-50%, -50%);
+  }
+
+  .placed-symbol-v8 img.placed-symbol-img.placed-symbol-mooshika { width: 39px !important; transform: translate(3px, -19px) rotate(0deg) scaleX(-1) !important; }
+  .placed-symbol-v8 img.placed-symbol-img.placed-symbol-modak { width: 24px !important; transform: translate(-6px, -15px) rotate(0deg) !important; }
+  .placed-symbol-v8 img.placed-symbol-img.placed-symbol-belly { width: 54px !important; transform: translate(-31px, -31px) rotate(0deg) !important; }
+  .placed-symbol-v8 img.placed-symbol-img.placed-symbol-lotus { width: 28px !important; transform: translate(-15px, -15px) rotate(0deg) scaleX(-1) !important; }
+  .placed-symbol-v8 img.placed-symbol-img.placed-symbol-trunk { width: 45px !important; transform: translate(-26px, -22px) rotate(0deg) !important; }
+  .placed-symbol-v8 img.placed-symbol-img.placed-symbol-eyes { width: 35px !important; transform: translate(-15px, -19px) rotate(0deg) !important; }
+  .placed-symbol-v8 img.placed-symbol-img.placed-symbol-ears { width: 49px !important; transform: translate(-26px, -11px) rotate(0deg) !important; }
+  .placed-symbol-v8 img.placed-symbol-img.placed-symbol-tusk { width: 19px !important; transform: translate(-11px, -19px) rotate(80deg) !important; }
+}
+
+/* Phone only: lift just the Mooshika layer (separate image) 8% so it isn't at the very bottom edge. */
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
+  .ganesha-illustration-breathing img.ganesha-zone-part-base {
+    translate: 0 -8%;
+  }
+}
