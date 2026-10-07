@@ -480,3 +480,97 @@ box-shadow: 0 4px 10px rgba(60, 40, 80, 0.06);
   animation: none !important;
   filter: drop-shadow(0 4px 10px rgba(60, 40, 80, 0.15));
 }
+
+/* =================================================================
+   PHONE LANDSCAPE — petal-tap detail card
+   Same uniform size as SymbolCardModal / ChantCardModal (600 x 240+).
+   Image left, copy right, small Continue pill, X inside the corner.
+   Tablet / desktop / portrait unchanged.
+   ================================================================= */
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
+  .pp-detail-overlay { padding: 8px 12px; box-sizing: border-box; }
+
+  .pp-detail-card {
+    box-sizing: border-box;
+    width: min(88vw, 600px);
+    max-width: none;
+    min-height: 240px;
+    max-height: calc(100dvh - 16px);
+    padding: 14px 64px 14px 24px;
+    border-width: 4px;
+    border-radius: 28px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  /* X: 60px touch box inside the corner, 42px visible circle */
+  .pp-detail-card .pp-detail-close {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    z-index: 1; /* own stacking context so ::before (z -1) sits behind the X glyph but above the card */
+    width: 60px;
+    height: 60px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    box-shadow: none;
+  }
+  .pp-detail-card .pp-detail-close::before {
+    content: '';
+    position: absolute;
+    inset: 9px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.96);
+    border: 1.5px solid #d8cff3;
+    box-shadow: 0 4px 12px rgba(74, 58, 114, 0.14);
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .pp-detail-card .symbol-content {
+    display: grid;
+    grid-template-columns: clamp(72px, 24dvh, 104px) minmax(0, 1fr);
+    column-gap: 20px;
+    row-gap: 4px;
+    align-items: center;
+    text-align: left;
+  }
+  .pp-detail-card .pp-detail-image-wrapper {
+    grid-column: 1;
+    grid-row: 1 / span 5;
+    height: auto;
+    margin: 0;
+  }
+  .pp-detail-card .pp-detail-image { width: 100%; height: auto; max-height: 104px; }
+  .pp-detail-card .symbol-content > :not(.pp-detail-image-wrapper) { grid-column: 2; }
+
+  .pp-detail-card .pp-detail-title { font-size: 22px; margin: 0; }
+  .pp-detail-card .pp-detail-affirmation { font-size: 15px; margin: 0; }
+  .pp-detail-card .pp-detail-ganesha-lines { margin: 0; }
+  .pp-detail-card .pp-detail-ganesha-line { font-size: 15px; line-height: 1.25; margin: 0; }
+  .pp-detail-card .pp-detail-invitation { font-size: 14px; line-height: 1.3; padding: 8px 12px; margin: 0; }
+  .pp-detail-card .pp-detail-desc { font-size: 14px; line-height: 1.3; margin: 0; padding: 0; }
+  .pp-detail-card .pp-detail-unlock-hint { font-size: 14px; margin: 0; max-width: none; }
+
+  /* Continue / Play Sound: small pill like the Pick Friend CTA (36px) with a ~60px touch area */
+  .pp-detail-card .pp-detail-actions { gap: 12px; margin-top: 8px; flex-direction: row; flex-wrap: nowrap; justify-content: center; }
+  .pp-detail-card .pp-action-btn,
+  .pp-detail-card .pp-btn-audio {
+    position: relative;
+    min-width: 0;
+    width: auto;
+    height: 36px;
+    margin: 0;
+    padding: 0 18px;
+    font-size: 14px;
+    line-height: 1;
+    box-shadow: 0 3px 0 #E6B24A;
+  }
+  .pp-detail-card .pp-btn-audio { box-shadow: 0 3px 0 #FFA000; text-transform: none; }
+  .pp-detail-card .pp-action-btn::after,
+  .pp-detail-card .pp-btn-audio::after { content: ''; position: absolute; inset: -12px -8px; }
+}

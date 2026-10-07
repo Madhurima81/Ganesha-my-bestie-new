@@ -1,5 +1,22 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-10-07] — Phone-landscape modals: map profile popup + uniform modal size
+**Touched:** CleanGameWelcomeScreen.jsx + .css, ProgressPopup.css, ChantCardModal.css, SymbolCardModal.css.
+**Changed:** (phone = landscape, max-height 500, max-width 1023)
+- **Map profile popup** (`displayMode="modal"`) now renders the same "Welcome back, X!" card as the fullscreen welcome (mandala, Continue Adventure / Home, Switch Explorer, Start Over) but stays an overlay (dim backdrop, map visible) with the shared small X. Old "Your Journey" title + popup-only layout removed; phone reflow selectors extended to `--modal`. Before, the modal overflowed at 740x360 (mandala cut off, Switch Explorer off-screen).
+- **Petal-tap detail card** (`ProgressPopup` `.pp-detail-card`) had no phone-landscape rules (515px tall, X off-screen). Now image-left / text-right, 60px X inside the corner, small Continue pill.
+- **Uniform modal size** on phone landscape: petal popup, ChantCardModal and SymbolCardModal are all 600px wide, min-height 240px. Chant was being shrunk by a `scale: .78` (max-height:900 rule) on phones; forced to scale 1 there. Practice Chanting / Continue / Play Sound are now 36px-high pills (like the Pick Friend CTA) with a ~60px invisible touch area (::after).
+**Open:** 36px painted CTAs are under the 60px child rule (touch area covers it) — Madhurima asked for it; confirm on device. Map popup not checked over the real map; petal popup's non-direct list view and tablet/desktop not rechecked; Pond modal measured (600x240) but no clean screenshot. "Shloka River modal" assumed = chant modal. Dev harness (`onb-capture.html`, `src/dev/onbCaptureMain.jsx`, `screenshots/`) untracked. ParentDashboard.*, PinScreen.jsx and docs/GMB_MANUAL_QA_CHECKLIST.html have uncommitted changes that are not from this work.
+
+## [2026-10-07] — Add Friend parent flow in phone landscape (Parent Gate, Name, Age, All Set)
+**Touched:** src/lib/components/onboarding/ParentGate.jsx + .css, OnboardingCard.css, src/lib/components/navigation/CleanProfileSelector.jsx + .css (commit 971fc2da on staging).
+**Changed:** (phone = landscape, max-height 500, max-width 1023; portrait first-run and Pick Friend untouched)
+- **Parent Gate:** challenge is now always 4 digits (was random 3 or 4; stale comment fixed). Short landscape is two-column: prompt, digit boxes and Back on the left, 3x4 keypad on the right (50px keys, parent-only so under the 60px child rule on purpose). No scrolling.
+- **OnboardingCard.css:** short-landscape shell (no scroll, shallow wide card, lotus hidden, `box-sizing: border-box` on input/buttons). Only Gate and Sign In use this shell.
+- **Name / Age / All Set** are NOT on OnboardingCard — Name/Age render inline in CleanProfileSelector, All Set via `renderHandoffCard()`. Scoped with new classes `create-flow-screen` (while the create modal is open) and `allset-screen` (the three All Set variants). All three share one 600x234 card. Back is light/secondary at top-left (heading padded only when Back exists); CTA hierarchy: Name arrow 130x50, Age Next 230x50, Start Adventure 280x52 with ~60px touch area. Name input is centred; with the input focused the card stays centred and scrolls from the top if the keyboard leaves too little height (an earlier top-align version pinned the card to the top because the input is autoFocus).
+- Verified at 740x360 in the browser with Baloo 2 + Nunito loaded (Gate, Name, Age, All Set: no scroll, controls inside card).
+**Open:** install-steps and "Almost there" All Set variants not captured (tallest, likeliest to overflow); no real-phone software-keyboard test; portrait regression not checked in a browser; dev harness `onb-capture.html` + `src/dev/onbCaptureMain.jsx` left untracked; not pushed/merged (staging only).
+
 ## [2026-10-07] — Phone landscape: Intro story, Welcome screen, Profile selector (+ Add Friend flow audit)
 **Touched:** src/components/GaneshaIntroStory.jsx + .css, src/App.jsx (preload path), public/intro-story/story1-img2-transition.webp (new), src/lib/components/navigation/CleanGameWelcomeScreen.jsx + .css, src/lib/components/navigation/CleanProfileSelector.jsx + .css.
 **Changed:** (phone = landscape, max-height 500, max-width 1023; iPad/desktop untouched)

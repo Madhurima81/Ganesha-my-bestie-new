@@ -616,7 +616,8 @@ const CleanGameWelcomeScreen = ({
 
   const welcomeMsg = currentProfile ? getWelcomeMessage() : null;
   const isModal = displayMode === 'modal';
-  const modalTitle = 'Your Journey';
+  // The map popup is an overlay (dim backdrop, map stays visible) but shares the fullscreen card + layout.
+  const overlayClass = `clean-welcome-overlay page-transition ${isModal ? 'clean-welcome-overlay--modal' : 'clean-welcome-overlay--fullscreen'}`;
   
   // Show profile selector
   if (showProfileSelector) {
@@ -630,7 +631,7 @@ const CleanGameWelcomeScreen = ({
   
   if (!currentProfile) {
     return (
-      <div className={`clean-welcome-overlay page-transition ${isModal ? 'clean-welcome-overlay--modal' : 'clean-welcome-overlay--fullscreen'}`}>
+      <div className={overlayClass}>
         <div className="clean-welcome-content clean-welcome-card loading-welcome-card">
           <ScreenHeader title="Loading Profile..." glowColor="purple" />
           <PrimaryBtn
@@ -646,7 +647,7 @@ const CleanGameWelcomeScreen = ({
   }
   
   return (
-    <div className={`clean-welcome-overlay page-transition ${isModal ? 'clean-welcome-overlay--modal' : 'clean-welcome-overlay--fullscreen'}`}>
+    <div className={overlayClass}>
       {!isModal && (
         <AudioToggle
           isAudioOn={audioOn}
@@ -654,7 +655,7 @@ const CleanGameWelcomeScreen = ({
           position="top-right"
         />
       )}
-      <div className={`clean-welcome-content clean-welcome-card ${isModal ? 'clean-welcome-content--modal compact' : ''}`}>
+      <div className={`clean-welcome-content clean-welcome-card`}>
         {isModal && (
           <CloseButton
             className="welcome-close-btn"
@@ -667,7 +668,7 @@ const CleanGameWelcomeScreen = ({
         )}
         <span className="welcome-card-lotus" aria-hidden="true" />
         <ScreenHeader
-          title={isModal ? modalTitle : welcomeMsg.title}
+          title={welcomeMsg.title}
           glowColor="purple"
         />
        
@@ -694,11 +695,6 @@ const CleanGameWelcomeScreen = ({
             </div>
           </div>
 
-          {isModal ? (
-            <button className="bottom-switch-explorer switch-explorer-link popup-switch-link" onClick={handleBackToProfiles}>
-              Not {currentProfile.name}? Switch Explorer
-            </button>
-          ) : (
             <div className="welcome-phone-actions">
               <div className="welcome-actions welcome-buttons-row profile-actions">
                 {hasProgress ? (
@@ -738,7 +734,6 @@ const CleanGameWelcomeScreen = ({
                 </button>
               )}
             </div>
-          )}
         </div>
       </div>
       

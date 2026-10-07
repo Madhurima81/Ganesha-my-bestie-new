@@ -344,9 +344,12 @@
              calc(var(--gmb-safe-bottom, 0px) + 8px) calc(var(--gmb-safe-left, 0px) + 12px);
   }
 
+  /* UNIFORM PHONE-LANDSCAPE MODAL SIZE — shared with ChantCardModal + the petal popup
+     (ProgressPopup): 600px wide, at least 240px tall. */
   .symbol-card-modal {
     position: relative;
-    width: min(92vw, 800px);
+    width: min(88vw, 600px);
+    min-height: 240px;
     max-width: none;
     max-height: calc(100dvh - var(--gmb-safe-top, 0px) - var(--gmb-safe-bottom, 0px) - 16px);
     box-sizing: border-box;

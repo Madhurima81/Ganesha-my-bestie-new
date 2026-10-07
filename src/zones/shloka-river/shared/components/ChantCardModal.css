@@ -314,8 +314,12 @@
              calc(var(--gmb-safe-bottom, 0px) + 8px) calc(var(--gmb-safe-left, 0px) + 12px);
   }
 
-  .chant-card-modal {
-    width: min(92vw, 800px);
+  /* UNIFORM PHONE-LANDSCAPE MODAL SIZE — shared with SymbolCardModal + the petal popup
+     (ProgressPopup): 600px wide, at least 240px tall. */
+  .chant-card-modal-backdrop .chant-card-modal {
+    width: min(88vw, 600px);
+    min-height: 240px;
+    scale: 1; /* the max-height:900 iPad scale-down below must not shrink phones */
     max-width: none;
     max-height: calc(100dvh - var(--gmb-safe-top, 0px) - var(--gmb-safe-bottom, 0px) - 16px);
     box-sizing: border-box;
@@ -411,13 +415,23 @@
   }
 
   /* The CTA is the one clear action: its own full-width row, 60px high. */
+  /* Same small pill as the Pick Friend CTA (36px high); the ::after keeps a ~60px touch area. */
   .chant-card__cta {
+    position: relative;
     grid-column: 1 / -1;
     justify-self: center;
-    margin: clamp(2px, 1dvh, 6px) 0 0;
-    min-height: 60px;
-    padding: 8px 32px;
-    font-size: clamp(18px, 5dvh, 20px);
+    margin: clamp(4px, 1.4dvh, 8px) 0 0;
+    min-height: 36px;
+    height: 36px;
+    padding: 0 18px;
+    font-size: 14px;
+    line-height: 1;
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--chant-cta-shadow, rgba(74, 155, 135, 0.3)) 72%, transparent);
+  }
+  .chant-card__cta::after {
+    content: '';
+    position: absolute;
+    inset: -12px -8px;
   }
 
   /* Instruction + footer are covered by the button label and the close button. */

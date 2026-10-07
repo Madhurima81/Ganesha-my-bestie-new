@@ -88,21 +88,12 @@
   background: url('../../../assets/cards/lotus-iconnew.svg') no-repeat center / contain;
 }
 
-.welcome-close-btn {
-  position: fixed;
-  top: 46px;
-  right: max(28px, calc(50% - min(620px, 88vw) / 2 + 22px));
+.gmb-close-btn.welcome-close-btn {
+  /* small X, tucked into the card's top-right corner (shared CloseButton size stays 42px) */
+  position: absolute;
+  top: 10px;
+  right: 12px;
   z-index: 4;
-  width: 46px;
-  height: 46px;
-  border: none;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.88);
-  color: #5c3ea6;
-  font-size: 30px;
-  line-height: 1;
-  box-shadow: 0 12px 28px rgba(60, 36, 106, 0.18);
-  cursor: pointer;
 }
 
 @keyframes groundedFade {
@@ -1782,7 +1773,7 @@
    The tall welcomeback.svg is a tablet shape, so phones get a cream surface instead.
    ============================================================ */
 @media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
-  .clean-welcome-overlay--fullscreen {
+  .clean-welcome-overlay:is(.clean-welcome-overlay--fullscreen, .clean-welcome-overlay--modal) {
     overflow: hidden;
     align-items: center;
     padding:
@@ -1793,11 +1784,11 @@
     background-position: center 58%;
   }
 
-  .clean-welcome-overlay--fullscreen::before {
+  .clean-welcome-overlay:is(.clean-welcome-overlay--fullscreen, .clean-welcome-overlay--modal)::before {
     background: rgba(40, 30, 70, 0.025);
   }
 
-  .clean-welcome-overlay--fullscreen .clean-welcome-content {
+  .clean-welcome-overlay:is(.clean-welcome-overlay--fullscreen, .clean-welcome-overlay--modal) .clean-welcome-content {
     width: min(670px, calc(100vw - 32px)) !important;
     max-width: min(670px, calc(100vw - 32px)) !important;
     height: auto;
@@ -1828,7 +1819,7 @@
     margin: 0;
   }
 
-  .clean-welcome-overlay--fullscreen .welcome-main-layout {
+  .clean-welcome-overlay:is(.clean-welcome-overlay--fullscreen, .clean-welcome-overlay--modal) .welcome-main-layout {
     display: grid;
     grid-template-columns: minmax(190px, 0.9fr) minmax(250px, 1.1fr);
     align-items: center;
@@ -1836,40 +1827,40 @@
     gap: 22px;
   }
 
-  .clean-welcome-overlay--fullscreen .profile-mandala-wrapper {
+  .clean-welcome-overlay:is(.clean-welcome-overlay--fullscreen, .clean-welcome-overlay--modal) .profile-mandala-wrapper {
     width: 100%;
     margin: 0;
   }
 
-  .clean-welcome-overlay--fullscreen .profile-mandala {
+  .clean-welcome-overlay:is(.clean-welcome-overlay--fullscreen, .clean-welcome-overlay--modal) .profile-mandala {
     width: clamp(150px, 50dvh, 220px) !important;
     height: clamp(150px, 50dvh, 220px) !important;
     margin: -4px auto 0 !important;
   }
 
-  .clean-welcome-overlay--fullscreen .profile-mandala img {
+  .clean-welcome-overlay:is(.clean-welcome-overlay--fullscreen, .clean-welcome-overlay--modal) .profile-mandala img {
     width: 100%;
     height: 100%;
   }
 
-  .clean-welcome-overlay--fullscreen .welcome-phone-actions {
+  .clean-welcome-overlay:is(.clean-welcome-overlay--fullscreen, .clean-welcome-overlay--modal) .welcome-phone-actions {
     justify-content: center;
   }
 
-  .clean-welcome-overlay--fullscreen .profile-actions {
+  .clean-welcome-overlay:is(.clean-welcome-overlay--fullscreen, .clean-welcome-overlay--modal) .profile-actions {
     width: 100%;
     gap: 8px;
     margin: 0;
   }
 
-  .clean-welcome-overlay--fullscreen .profile-actions .primary-btn-unified {
+  .clean-welcome-overlay:is(.clean-welcome-overlay--fullscreen, .clean-welcome-overlay--modal) .profile-actions .primary-btn-unified {
     width: min(280px, 100%) !important;
     min-width: 0;
     max-width: 280px;
     height: 60px;
   }
 
-  .clean-welcome-overlay--fullscreen .profile-actions .secondary-btn {
+  .clean-welcome-overlay:is(.clean-welcome-overlay--fullscreen, .clean-welcome-overlay--modal) .profile-actions .secondary-btn {
     width: min(280px, 100%);
     min-width: 0;
     max-width: 280px;
@@ -1877,12 +1868,12 @@
     height: 52px;
   }
 
-  .clean-welcome-overlay--fullscreen .switch-explorer-link {
+  .clean-welcome-overlay:is(.clean-welcome-overlay--fullscreen, .clean-welcome-overlay--modal) .switch-explorer-link {
     margin-top: 12px !important;
     font-size: 14px !important;
   }
 
-  .clean-welcome-overlay--fullscreen .start-over-link {
+  .clean-welcome-overlay:is(.clean-welcome-overlay--fullscreen, .clean-welcome-overlay--modal) .start-over-link {
     margin-top: 4px !important;
   }
 }
@@ -1911,11 +1902,11 @@
 
 /* Phone landscape: bigger mandala (every petal is tappable). Drop the lotus to buy height. */
 @media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
-  .clean-welcome-overlay--fullscreen .clean-welcome-content .welcome-card-lotus {
+  .clean-welcome-overlay:is(.clean-welcome-overlay--fullscreen, .clean-welcome-overlay--modal) .clean-welcome-content .welcome-card-lotus {
     display: none;
   }
 
-  .clean-welcome-overlay--fullscreen .profile-mandala {
+  .clean-welcome-overlay:is(.clean-welcome-overlay--fullscreen, .clean-welcome-overlay--modal) .profile-mandala {
     width: clamp(170px, 60dvh, 240px) !important;
     height: clamp(170px, 60dvh, 240px) !important;
     margin: 0 auto !important;
@@ -1924,12 +1915,12 @@
 
 /* Phone landscape: keep the petal hint on one line, inside the card */
 @media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
-  .clean-welcome-overlay--fullscreen .profile-mandala {
+  .clean-welcome-overlay:is(.clean-welcome-overlay--fullscreen, .clean-welcome-overlay--modal) .profile-mandala {
     width: clamp(170px, 56dvh, 220px) !important;
     height: clamp(170px, 56dvh, 220px) !important;
   }
 
-  .clean-welcome-overlay--fullscreen .profile-mandala .mandala-hint {
+  .clean-welcome-overlay:is(.clean-welcome-overlay--fullscreen, .clean-welcome-overlay--modal) .profile-mandala .mandala-hint {
     bottom: -14px;
     width: max-content;
     max-width: none;
