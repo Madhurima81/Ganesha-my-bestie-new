@@ -469,3 +469,17 @@
     -webkit-tap-highlight-color: transparent;
   }
 }
+
+/* Slight bump so the mandala fills the wide modal; caption/hint stay put.
+   Uses the individual scale/translate properties so they compose with the
+   existing transform-based animations. Everything that sits on the mandala
+   art must share the same bump so icons stay on their petals. */
+.inner-mandala svg,
+.inner-mandala .mandala-token-layer,
+.inner-mandala .mandala-sparkle-layer,
+.inner-mandala .mandala-avatar-slot,
+.inner-mandala .mandala-middle-hit {
+  translate: 0 -8px;
+  scale: 1.15;
+  transform-origin: center;
+}
