@@ -46,11 +46,20 @@ if (typeof window !== 'undefined' && 'serviceWorker' in navigator && (
 
 const isExpressionPreview = new URLSearchParams(window.location.search).get('preview') === 'ganesha';
 
+// Dev-only floating test checklist over the REAL app (for Continue / Zone Welcome checks, which the
+// game-test harness can't reach). Open http://localhost:5173/?checklist=1. Stripped from production
+// builds: `import.meta.env.DEV` is statically false there, so the lazy import is never emitted.
+const showDevChecklist = import.meta.env.DEV && new URLSearchParams(window.location.search).has('checklist');
+const DevChecklistPanel = import.meta.env.DEV ? React.lazy(() => import('./dev/TestChecklistPanel.jsx')) : null;
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     {isExpressionPreview
       ? <React.Suspense fallback={null}><GaneshaExpressionTest /></React.Suspense>
       : <UpdateManager><App/></UpdateManager>}
+    {showDevChecklist && DevChecklistPanel && (
+      <React.Suspense fallback={null}><DevChecklistPanel gameKey="continue-modak" /></React.Suspense>
+    )}
   </React.StrictMode>,
 )
 
