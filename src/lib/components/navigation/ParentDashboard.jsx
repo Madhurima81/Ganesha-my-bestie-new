@@ -190,14 +190,16 @@ export default function ParentDashboard({ onBack, onOpenChildProfile }) {
   return (
     <div className="pd-root">
       {/* ── Header ──────────────────────────────────────────────── */}
-      <div style={{
-        background: CV.ivory,
-        borderBottom: `1.5px solid ${CV.lavenderBg}`,
-        padding: '1.1rem 1.2rem',
-        display: 'flex', justifyContent: 'space-between',
-        alignItems: 'center',
-        position: 'sticky', top: 0, zIndex: 50,
-      }}>
+      <div
+        className="pd-header"
+        style={{
+          background: CV.ivory,
+          borderBottom: `1.5px solid ${CV.lavenderBg}`,
+          display: 'flex', justifyContent: 'space-between',
+          alignItems: 'center',
+          position: 'sticky', top: 0, zIndex: 50,
+        }}
+      >
         <div>
           <h1 style={{
             fontFamily: 'Baloo 2, cursive',
@@ -206,7 +208,7 @@ export default function ParentDashboard({ onBack, onOpenChildProfile }) {
           }}>
             {name}'s GMB Journey
           </h1>
-          <p style={{
+          <p className="pd-header-subtitle" style={{
             color: CV.softBrown,
             fontSize: '0.8rem', margin: 0, opacity: 0.75,
             fontFamily: 'Nunito, sans-serif',
@@ -215,13 +217,15 @@ export default function ParentDashboard({ onBack, onOpenChildProfile }) {
           </p>
         </div>
         <button
+          className="pd-close-btn"
           onClick={onBack}
           aria-label="Close"
           style={{
             background: CV.lavenderBg,
             border: 'none', borderRadius: '50%',
-            width: 36, height: 36, cursor: 'pointer',
+            cursor: 'pointer',
             color: CV.lavender, fontSize: '1.1rem',
+            position: 'relative',
           }}
         >
           ✕
@@ -229,20 +233,22 @@ export default function ParentDashboard({ onBack, onOpenChildProfile }) {
       </div>
 
       {/* ── Tab bar ─────────────────────────────────────────────── */}
-      <div style={{
-        display: 'flex',
-        background: CV.ivory,
-        borderBottom: `1.5px solid ${CV.lavenderBg}`,
-        padding: '0 0.4rem',
-        position: 'sticky', top: 66, zIndex: 40,
-      }}>
+      <div
+        className="pd-tabs"
+        style={{
+          display: 'flex',
+          background: CV.ivory,
+          borderBottom: `1.5px solid ${CV.lavenderBg}`,
+          position: 'sticky', zIndex: 40,
+        }}
+      >
         {tabs.map(t => (
           <button
             key={t.id}
+            className="pd-tab"
             onClick={() => setActiveTab(t.id)}
             style={{
               background: 'none', border: 'none',
-              padding: '0.75rem 1rem',
               fontFamily: 'Baloo 2, cursive',
               fontWeight: 700, fontSize: '0.88rem',
               cursor: 'pointer',
@@ -260,7 +266,7 @@ export default function ParentDashboard({ onBack, onOpenChildProfile }) {
 
         {/* ── FOR PARENTS TAB ─────────────────────────────────── */}
         {activeTab === 'forParents' && (
-          <div style={{ padding: '1.2rem', maxWidth: 560, margin: '0 auto' }}>
+          <div className="pd-panel">
 
             {!displayedLearning ? (
               <div style={{
@@ -359,7 +365,7 @@ export default function ParentDashboard({ onBack, onOpenChildProfile }) {
 
         {/* ── SETTINGS TAB ─────────────────────────────────────── */}
         {activeTab === 'settings' && (
-          <div style={{ padding: '1.2rem', maxWidth: 560, margin: '0 auto' }}>
+          <div className="pd-panel">
 
             <SettingsSectionLabel>Sound</SettingsSectionLabel>
             <div style={{
@@ -486,14 +492,16 @@ function GuidanceSection({ label, children, last }) {
 
 function SettingRow({ label, sublabel, action, actionLabel, danger }) {
   return (
-    <div style={{
-      background: CV.ivory,
-      border: `1.5px solid ${CV.lavenderBg}`,
-      borderRadius: 14, padding: '0.9rem',
-      marginBottom: '0.6rem',
-      display: 'flex', justifyContent: 'space-between',
-      alignItems: 'center',
-    }}>
+    <div
+      className="pd-setting-row"
+      style={{
+        background: CV.ivory,
+        border: `1.5px solid ${CV.lavenderBg}`,
+        borderRadius: 14,
+        display: 'flex', justifyContent: 'space-between',
+        alignItems: 'center',
+      }}
+    >
       <div>
         <p style={{
           fontFamily: 'Nunito, sans-serif',
@@ -510,7 +518,7 @@ function SettingRow({ label, sublabel, action, actionLabel, danger }) {
           {sublabel}
         </p>
       </div>
-      <button onClick={action} style={{
+      <button className="pd-setting-action" onClick={action} style={{
         background: danger ? '#FDECEA' : CV.lavenderBg,
         border: 'none',
         borderRadius: 999, padding: '0.4rem 0.9rem',
@@ -558,6 +566,7 @@ function SoundToggleRow({ label, sublabel, checked, onChange, last }) {
       </div>
       <button
         type="button"
+        className="pd-sound-toggle"
         role="switch"
         aria-checked={checked}
         aria-label={label}
@@ -644,6 +653,7 @@ function SimplePage({ title, subtitle, onBack, children }) {
       <div style={{ maxWidth: 560, margin: '0 auto', padding: '1.2rem' }}>
         <button
           type="button"
+          className="pd-simple-back"
           onClick={onBack}
           style={{
             background: CV.lavenderBg, border: 'none', borderRadius: 999,
@@ -674,30 +684,32 @@ function SimplePage({ title, subtitle, onBack, children }) {
   )
 }
 
-// DRAFT COPY — first pass per the Settings brief, not yet reviewed. Flagged
-// for Madhurima to edit/approve before this is considered final.
+// Copy finalized 2026-10-07 (Madhurima). The only open item is SUPPORT_EMAIL.
+// TODO(release): replace with the real support address before shipping.
+const SUPPORT_EMAIL = '[SUPPORT EMAIL]'
+
 const HELP_ITEMS = [
   {
     title: 'Audio not working',
-    body: "Check Settings → Sound — each category (Voice, Sound effects, Ambience) has its own on/off switch. Also check your device isn't muted or in silent mode.",
+    body: "Open Settings → Sound and make sure Voice, Sound effects, and Ambience are turned on. Also check that your device isn't muted or in silent mode.",
   },
   {
     title: 'Game not responding',
-    body: 'Close and reopen GMB. If a scene gets stuck mid-way, use the Home button inside the scene to return to the map and try again.',
+    body: 'Return to the zone and open the scene again. If it still does not respond, close and reopen GMB.',
   },
   {
     title: 'Installation trouble',
-    body: 'Go to Settings → App → Install GMB for steps specific to your device and browser.',
+    body: 'Open Settings → App → Install GMB for steps for this device and browser.',
   },
   {
-    title: 'Something else, or report a problem',
-    body: 'Contact us at support@example.com and tell us what happened — we read every message.',
+    title: 'Something else?',
+    body: `If the problem continues, contact us at ${SUPPORT_EMAIL} and tell us what happened.`,
   },
 ]
 
 function HelpScreen({ onBack }) {
   return (
-    <SimplePage title="Help" subtitle="Quick answers for common issues." onBack={onBack}>
+    <SimplePage title="Help" subtitle="Quick help when something isn't working." onBack={onBack}>
       {HELP_ITEMS.map((item) => (
         <div key={item.title} style={{
           background: CV.ivory, border: `1.5px solid ${CV.lavenderBg}`,
@@ -720,21 +732,23 @@ function HelpScreen({ onBack }) {
   )
 }
 
-// DRAFT COPY — first pass per the Settings brief, not yet reviewed. Flagged
-// for Madhurima to edit/approve before this is considered final.
 function AboutScreen({ onBack }) {
   return (
-    <SimplePage title="About GMB" onBack={onBack}>
+    <SimplePage
+      title="About GMB"
+      subtitle="Wisdom children can understand and use."
+      onBack={onBack}
+    >
       <p style={{ fontSize: '0.92rem', color: CV.brown, lineHeight: 1.7, margin: '0 0 1.1rem' }}>
-        Ganesha My Bestie turns Hindu culture and Sanskrit into wisdom children
-        can use — not just stories to hear, but ideas to carry into their day.
+        Ganesha My Bestie helps children experience the wisdom behind
+        Ganesha through stories, play and simple real-life moments.
       </p>
 
       {[
         ['Explore', "Discover Ganesha's symbols and the words of a shloka, one at a time."],
-        ['Play', 'Each scene turns a symbol or word into something to do, not just watch.'],
-        ['Practise', 'A small real-life dare connects what they learned to their actual day.'],
-        ['Take it with you', 'The meaning stays with them long after the screen is off.'],
+        ['Play', 'Experience the meaning through something to do — not just something to hear.'],
+        ['Remember', 'A simple affirmation helps bring the idea back when it matters.'],
+        ['Use it', 'Small real-life prompts help the wisdom travel beyond the screen.'],
       ].map(([step, body]) => (
         <div key={step} style={{ display: 'flex', gap: '0.7rem', marginBottom: '0.7rem' }}>
           <span style={{
@@ -749,12 +763,17 @@ function AboutScreen({ onBack }) {
         </div>
       ))}
 
+      <p style={{ fontSize: '0.88rem', color: CV.brown, lineHeight: 1.6, margin: '1.1rem 0 0' }}>
+        Let your child discover first. You can use the parent prompts later
+        to continue the conversation.
+      </p>
+
       <p style={{
         fontSize: '0.78rem', color: CV.softBrown, opacity: 0.6,
         margin: '1.2rem 0 0', lineHeight: 1.6,
       }}>
-        This is a local-only version — see Privacy for what's stored on this
-        device. Version 1.0 (beta).
+        Your child's profiles and progress are stored on this device. See
+        Privacy for details. Version 1.0 (beta).
       </p>
     </SimplePage>
   )

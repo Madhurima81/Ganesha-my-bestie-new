@@ -1,5 +1,14 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-10-07] — Parent PIN + Parent Dashboard: phone landscape tune, final Help/About copy
+**Touched:** src/lib/components/dashboard/PinScreen.jsx, src/lib/components/navigation/ParentDashboard.jsx + .css.
+**Changed:** (phone = landscape, max-height 500, max-width 1023; iPad/desktop layout untouched)
+- **PinScreen:** phone landscape is two-column (lock/title/subtitle/dots/error/"For parents only" left, 210px keypad right, 50px keys, no scroll). Info block wrapped in `.pin-screen__info`; error row reserves height so nothing jumps. PIN logic unchanged. Verified at 740x360: Create, Confirm, mismatch, Enter, wrong PIN.
+- **ParentDashboard (minor tune, not a reflow):** header/tab/panel/setting-row padding moved from inline to `ParentDashboard.css` classes (`pd-*`). Short landscape: header subtitle hidden, tighter header/tabs/panel, tabs stick at 48px. Parent-facing touch targets: Close, tabs, setting actions, switches (hit area only; switch stays 46x26) and Help/About Back are >=44px. Scrolling kept (reading/settings content).
+- **Help/About copy finalized:** new Help items (stale "Home button inside the scene" line removed), Help subtitle, About intro + Explore/Play/Remember/Use it, "let your child discover first" note, and a clearer on-device storage footer.
+- Verified at 740x360 and 1024x768 with sample progress; screenshots in screenshots/mobile-parent-flow/ (not committed).
+**Open:** `SUPPORT_EMAIL` in ParentDashboard.jsx is still the literal `[SUPPORT EMAIL]` — replace before release. Catalog title shows "Mahakaay" vs CLAUDE.md "Mahakaya" (content, not changed — needs Madhurima's call). Tabs `top: 48px` vs 49px header leaves a 1px overlap when scrolled. Parent Dashboard has no `.gmb-compact-cta`/button-audit changes (decided not to apply the 36px audit globally).
+
 ## [2026-10-07] — Phone-landscape modals: map profile popup + uniform modal size
 **Touched:** CleanGameWelcomeScreen.jsx + .css, ProgressPopup.css, ChantCardModal.css, SymbolCardModal.css.
 **Changed:** (phone = landscape, max-height 500, max-width 1023)

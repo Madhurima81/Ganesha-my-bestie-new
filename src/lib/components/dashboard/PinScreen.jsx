@@ -87,13 +87,16 @@ export default function PinScreen({ onSuccess }) {
   const digits       = [1, 2, 3, 4, 5, 6, 7, 8, 9, '', 0, '⌫']
 
   return (
-    <div style={{
-      minHeight: 'var(--app-height, 100vh)',
-      background: C.cream,
-      display: 'flex', flexDirection: 'column',
-      alignItems: 'center', justifyContent: 'center',
-      padding: '2rem', textAlign: 'center',
-    }}>
+    <div
+      className="pin-screen"
+      style={{
+        minHeight: 'var(--app-height, 100vh)',
+        background: C.cream,
+        display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center',
+        padding: '2rem', textAlign: 'center',
+      }}
+    >
       <style>{`
         @keyframes shake {
           0%,100%{ transform:translateX(0) }
@@ -102,70 +105,154 @@ export default function PinScreen({ onSuccess }) {
           60%    { transform:translateX(-6px) }
           80%    { transform:translateX(6px) }
         }
+        /* Parent PIN — short landscape phone only */
+        @media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
+          .pin-screen {
+            box-sizing: border-box;
+            min-height: 100dvh !important;
+            height: 100dvh;
+            display: grid !important;
+            grid-template-columns: minmax(220px, 260px) 210px;
+            align-items: center !important;
+            justify-content: center !important;
+            column-gap: 44px;
+            padding:
+              max(10px, env(safe-area-inset-top))
+              max(18px, env(safe-area-inset-right))
+              max(10px, env(safe-area-inset-bottom))
+              max(18px, env(safe-area-inset-left)) !important;
+            overflow: hidden;
+          }
+          .pin-screen__info {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+          }
+          .pin-screen__lock { font-size: 2.1rem !important; margin-bottom: 6px !important; }
+          .pin-screen__title { font-size: 1.25rem !important; line-height: 1.05; margin-bottom: 4px !important; }
+          .pin-screen__subtitle { font-size: 0.82rem !important; line-height: 1.2; margin-bottom: 14px !important; }
+          .pin-screen__dots { gap: 9px !important; margin-bottom: 8px !important; }
+          .pin-screen__error-space {
+            min-height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          .pin-screen__error { margin: 0 !important; font-size: 0.76rem !important; line-height: 1.15; }
+          .pin-screen__parents-only { margin-top: 8px !important; font-size: 0.68rem !important; }
+          .pin-screen__keypad {
+            width: 210px !important;
+            max-width: none !important;
+            grid-template-columns: repeat(3, 1fr) !important;
+            gap: 6px !important;
+          }
+          .pin-screen__key {
+            height: 50px !important;
+            min-height: 50px;
+            border-radius: 11px !important;
+            font-size: 1.08rem !important;
+          }
+        }
       `}</style>
 
-      {/* Lock icon */}
-      <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔒</div>
+      <div className="pin-screen__info">
+        {/* Lock icon */}
+        <div
+          className="pin-screen__lock"
+          style={{ fontSize: '3rem', marginBottom: '1rem' }}
+        >🔒</div>
 
-      <h2 style={{
-        fontFamily: 'Baloo 2, cursive',
-        fontSize: '1.4rem', color: C.brown,
-        margin: '0 0 0.4rem',
-      }}>
-        {step === 'create'  ? 'Create Parent PIN' :
-         step === 'confirm' ? 'Confirm PIN'        :
-                              'Parent Dashboard'}
-      </h2>
+        <h2
+          className="pin-screen__title"
+          style={{
+            fontFamily: 'Baloo 2, cursive',
+            fontSize: '1.4rem', color: C.brown,
+            margin: '0 0 0.4rem',
+          }}
+        >
+          {step === 'create'  ? 'Create Parent PIN' :
+           step === 'confirm' ? 'Confirm PIN'        :
+                                'Parent Dashboard'}
+        </h2>
 
-      <p style={{
-        fontFamily: 'Nunito, sans-serif',
-        color: C.softBrown, fontSize: '0.88rem',
-        marginBottom: '1.5rem', opacity: 0.7,
-      }}>
-        {step === 'create'  ? 'Choose a 4-digit PIN'           :
-         step === 'confirm' ? 'Enter it again to confirm'      :
-                              'Enter your PIN to continue'}
-      </p>
+        <p
+          className="pin-screen__subtitle"
+          style={{
+            fontFamily: 'Nunito, sans-serif',
+            color: C.softBrown, fontSize: '0.88rem',
+            marginBottom: '1.5rem', opacity: 0.7,
+          }}
+        >
+          {step === 'create'  ? 'Choose a 4-digit PIN'           :
+           step === 'confirm' ? 'Enter it again to confirm'      :
+                                'Enter your PIN to continue'}
+        </p>
 
-      {/* PIN dots */}
-      <div style={{
-        display: 'flex', gap: '0.8rem',
-        marginBottom: '1.5rem',
-        animation: shake ? 'shake 0.5s ease' : 'none',
-      }}>
-        {[0, 1, 2, 3].map(i => (
-          <div key={i} style={{
-            width: 16, height: 16,
-            borderRadius: '50%',
-            background: i < currentInput.length
-              ? C.deepOrange : 'transparent',
-            border: `2.5px solid ${
-              i < currentInput.length ? C.deepOrange : C.softBrown}`,
-            transition: 'all 0.15s',
-          }} />
-        ))}
+        {/* PIN dots */}
+        <div
+          className="pin-screen__dots"
+          style={{
+            display: 'flex', gap: '0.8rem',
+            marginBottom: '1.5rem',
+            animation: shake ? 'shake 0.5s ease' : 'none',
+          }}
+        >
+          {[0, 1, 2, 3].map(i => (
+            <div key={i} style={{
+              width: 16, height: 16,
+              borderRadius: '50%',
+              background: i < currentInput.length
+                ? C.deepOrange : 'transparent',
+              border: `2.5px solid ${
+                i < currentInput.length ? C.deepOrange : C.softBrown}`,
+              transition: 'all 0.15s',
+            }} />
+          ))}
+        </div>
+
+        {/* Error */}
+        <div className="pin-screen__error-space">
+          {error && (
+            <p
+              className="pin-screen__error"
+              style={{
+                fontFamily: 'Nunito, sans-serif',
+                color: C.red, fontSize: '0.85rem',
+                marginBottom: '1rem',
+              }}
+            >
+              {error}
+            </p>
+          )}
+        </div>
+
+        <p
+          className="pin-screen__parents-only"
+          style={{
+            fontFamily: 'Nunito, sans-serif',
+            fontSize: '0.72rem', color: C.softBrown,
+            opacity: 0.4, marginTop: '1.5rem',
+          }}
+        >
+          🔒 For parents only
+        </p>
       </div>
 
-      {/* Error */}
-      {error && (
-        <p style={{
-          fontFamily: 'Nunito, sans-serif',
-          color: C.red, fontSize: '0.85rem',
-          marginBottom: '1rem',
-        }}>
-          {error}
-        </p>
-      )}
-
       {/* Numpad */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(3, 1fr)',
-        gap: '0.7rem', maxWidth: 240,
-      }}>
+      <div
+        className="pin-screen__keypad"
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(3, 1fr)',
+          gap: '0.7rem', maxWidth: 240,
+        }}
+      >
         {digits.map((d, i) => (
           <button
             key={i}
+            className="pin-screen__key"
             onClick={() => {
               if (d === '⌫')    handleDelete()
               else if (d !== '') handleDigit(String(d))
@@ -189,14 +276,6 @@ export default function PinScreen({ onSuccess }) {
           </button>
         ))}
       </div>
-
-      <p style={{
-        fontFamily: 'Nunito, sans-serif',
-        fontSize: '0.72rem', color: C.softBrown,
-        opacity: 0.4, marginTop: '1.5rem',
-      }}>
-        🔒 For parents only
-      </p>
     </div>
   )
 }
