@@ -88,7 +88,7 @@ const isPointInsideExpandedOval = (event, rect, pad = { x: 0, top: 0, bottom: 0 
   return (dx * dx) + (dy * dy) <= 1;
 };
 
-export default function GarlandGame3({ isActive = true, isPaused = false, isAudioOn = true, onComplete, stopVoice }) {
+export default function GarlandGame3({ isActive = true, isPaused = false, isAudioOn = true, onComplete, stopVoice, onLineSpoken }) {
   usePreloadPoses(SCENE_IMAGES);
   const [phase, setPhase] = useState(PHASES.BUILD);
   const sceneRef = useRef(null);
@@ -112,6 +112,8 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
     if (isPaused) setGarlandPosition((prev) => (prev.active ? { x: 50, y: 55, active: false } : prev));
   }, [isPaused]);
 
+  const lineSpokenRef = useRef(onLineSpoken);
+  lineSpokenRef.current = onLineSpoken;
   const mutedRef = useRef(!isAudioOn);
   useEffect(() => { mutedRef.current = !isAudioOn; }, [isAudioOn]);
 
@@ -134,6 +136,8 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
   const pendingReplayRef = useRef(null);
 
   const startUtterance = useCallback((text, resolve, cue = null) => {
+    // Tell the scene which line is current so its Replay button repeats this game's line.
+    lineSpokenRef.current?.(text);
     if (typeof window === 'undefined' || !window.speechSynthesis) {
       resolve?.();
       return;
@@ -656,7 +660,6 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
         <div ref={workspaceRef} className="g3g-workspace" style={{ left: `${LAYOUT.workspace.l}%`, top: `${LAYOUT.workspace.t}%` }}>
           {isBuild && (
             <>
-              <p className="g3g-instruction">Tap a flower to thread it</p>
               <img src={garlandString} alt="" className="g3g-string" />
 
               {placedFlowers.map((flower, index) => (

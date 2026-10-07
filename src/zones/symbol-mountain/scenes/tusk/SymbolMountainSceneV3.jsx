@@ -398,10 +398,25 @@ const SymbolMountainSceneContent = ({
   useEffect(() => {
     if (!isAudioOn) muteSpokenVoice();
   }, [isAudioOn, muteSpokenVoice]);
+  // Eyes / Ears mini-games speak their own lines; they report the current one here so Replay
+  // repeats it (the scene prompt key is null while those games are running).
+  const gameLineRef = useRef(null);
+  const activeGameName = sceneState?.showEyesTelescopeGame ? 'eyes'
+    : sceneState?.showEarsRhythmGame ? 'ears' : null;
+  const reportEyesLine = useCallback((line) => { gameLineRef.current = { game: 'eyes', line }; }, []);
+  const reportEarsLine = useCallback((line) => { gameLineRef.current = { game: 'ears', line }; }, []);
+  const getGameReplayLine = useCallback(() => (
+    activeGameName && gameLineRef.current?.game === activeGameName ? gameLineRef.current.line : null
+  ), [activeGameName]);
   const replayCurrentVoice = useCallback(() => {
+    const gameLine = getGameReplayLine();
+    if (gameLine) {
+      playTracked('line', (done) => speak(gameLine, { age: 7, style: 'child', moment: 'encouragement', onEnd: done }));
+      return;
+    }
     const replayKey = getPromptKeyForPhase();
     if (replayKey) speakScenePrompt(replayKey);
-  }, [getPromptKeyForPhase, speakScenePrompt]);
+  }, [getGameReplayLine, getPromptKeyForPhase, speakScenePrompt, playTracked, speak]);
 
   // Reassigned every render so the tab-return handler always sees live state.
   onTabReturnImplRef.current = () => {
@@ -878,7 +893,7 @@ const SymbolMountainSceneContent = ({
             <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={toggleAudio} />
             <VOReplayButton variant="gameplay"
               onReplay={replayCurrentVoice}
-              disabled={!isAudioOn || !getPromptKeyForPhase()}
+              disabled={!isAudioOn || !(getPromptKeyForPhase() || getGameReplayLine())}
             />
             <div className={`mountain-background ${tuskZoomActive ? 'tusk-zoom' : ''} ${tuskFadeOut ? 'tusk-fade-out' : ''}`} style={{ backgroundImage: `url(${mountainBackground})` }}>
               {!isCompletionView && !isFinalFireworksView && (
@@ -898,6 +913,7 @@ const SymbolMountainSceneContent = ({
               {sceneState.showEyesTelescopeGame && !sceneState.discoveredSymbols?.eyes && (
                 <EyesPopUpGame
                   isActive={sceneState.showEyesTelescopeGame}
+                  onLineSpoken={reportEyesLine}
                   isAudioOn={isAudioOn}
                   isPaused={scenePaused}
                   stopVoice={stopVoice}
@@ -918,6 +934,7 @@ const SymbolMountainSceneContent = ({
               {sceneState.showEarsRhythmGame && sceneState.phase === PHASES.EARS_GAME && !sceneState.discoveredSymbols?.ears && (
                 <EarsSoundMatchGame
                   isActive={sceneState.showEarsRhythmGame}
+                  onLineSpoken={reportEarsLine}
                   isAudioOn={isAudioOn}
                   isPaused={scenePaused}
                   stopVoice={stopVoice}

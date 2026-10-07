@@ -215,8 +215,11 @@ const EarsSoundMatchGame = ({
   hideElements = false,
   className = '',
   stopVoice,
+  onLineSpoken,
   isPaused = false
 }) => {
+  const lineSpokenRef = useRef(onLineSpoken);
+  lineSpokenRef.current = onLineSpoken;
   usePreloadPoses(POSE_ASSETS);
   const [roundIndex, setRoundIndex] = useState(0);
   const [phase, setPhase] = useState(PHASE.LISTENING);
@@ -342,6 +345,8 @@ const EarsSoundMatchGame = ({
   }, []);
 
   const speak = useCallback((text, onEnd) => {
+    // Tell the scene which line is current so its Replay button repeats this game's line.
+    if (text) lineSpokenRef.current?.(text);
     if (!isAudioOn) {
       onEnd?.();
       return;

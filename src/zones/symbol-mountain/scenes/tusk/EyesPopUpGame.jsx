@@ -29,13 +29,19 @@ const DEBUG_UI_ENABLED =
   typeof window !== 'undefined' &&
   (window.location.pathname.includes('game-test') ||
     new URLSearchParams(window.location.search).has('debugEyes'));
+// Phone landscape only (same query the rest of the app uses): the mango tap area is 6% of the
+// stage width = ~51px at 852 and ~40px at 667, under the 60px touch minimum. Floor it in px.
+const PHONE_MQ = '(orientation: landscape) and (max-height: 500px) and (max-width: 1023px)';
+const IS_PHONE = typeof window !== 'undefined' && !!window.matchMedia?.(PHONE_MQ).matches;
+const PHONE_MIN_TARGET_PX = 62;
+
 const SHOW_HIT_ZONES =
   typeof window !== 'undefined' &&
   new URLSearchParams(window.location.search).has('hitzones');
 const LAYOUT_STORAGE_KEY = 'symbol_mountain_eyes_layout_v2';
-const LAYOUT_PRESET_VERSION = '2026-09-10-eyes-visual-flow-editor-layout-7';
+const LAYOUT_PRESET_VERSION = '2026-10-06-eyes-mobile-depth-layout-9';
 
-const DEFAULT_LAYOUT = {
+const BASE_LAYOUT = {
   prompt: { x: 50, y: 5.6, w: 52, z: 40 },
   feedback: { x: 50, y: 84, w: 40, z: 44 },
   tray: { x: 50, y: 93, w: 22, z: 42 },
@@ -48,8 +54,9 @@ const DEFAULT_LAYOUT = {
   // what made the bushes render too small the first time. Butterfly and
   // cream-flowers were dropped from the authored layout entirely, so they're
   // removed below rather than kept in their old spots.
-  monkeyCharacter: { x: 17.58, y: 38.74, w: 12, z: 15 },
-  peacockCharacter: { x: 67.78, y: 43.58, w: 20.16, z: 15 },
+  monkeyCharacter: { x: 17.2, y: 40, w: 10.5, z: 15 },
+  // Peacock sits higher/back (z 13: between the back bush z 12 and the front bush z 14), so the front greenery overlaps him
+  peacockCharacter: { x: 68.5, y: 39.5, w: 16.5, z: 13 },
   // The bushes are permanent scenery — they never disappear. Only the
   // feather/mango icon itself (rendered separately, invisible until tapped)
   // flies out to the peacock/monkey. targetFeather/targetMango below are
@@ -57,19 +64,34 @@ const DEFAULT_LAYOUT = {
   // Layering (back to front): bush1 (z12) -> the item itself (z13) -> the
   // front bush/flower (z14) that partially covers it. bush2/yellow-flowers
   // are pointer-events:none, so this doesn't block tapping the item.
-  targetFeatherBush1: { x: 62.08, y: 66.76, w: 24, z: 12 },
-  targetFeatherBush2: { x: 71.32, y: 66.9, w: 21.6, z: 14 },
-  targetMangoBush: { x: 45.48, y: 45.81, w: 24, z: 12 },
+  targetFeatherBush1: { x: 62.08, y: 66.76, w: 20.5, z: 12 },
+  targetFeatherBush2: { x: 71.32, y: 66.9, w: 18.5, z: 14 },
+  targetMangoBush: { x: 45.48, y: 45.81, w: 20.5, z: 12 },
   targetFeather: { x: 62.08, y: 66.76, w: 9.84, z: 13 },
   targetFeatherFound: { x: 62.08, y: 66.76, w: 9.84, z: 13 },
   targetMango: { x: 45.48, y: 45.81, w: 6, z: 13 },
   targetMangoFound: { x: 45.48, y: 45.81, w: 6, z: 13 },
-  distractorYellowFlowers: { x: 46.07, y: 48.95, w: 11.28, z: 15 },
+  distractorYellowFlowers: { x: 46.07, y: 48.95, w: 9.5, z: 15 },
   // Open path space between monkey and peacock — NOT the mango bush's own
   // spot, which is what it overlapped before. Tunable so it can be nudged
   // to wherever reads as clearly "empty" on the actual background art.
   travelCenter: { x: 50, y: 64, w: 0, z: 29 }
 };
+
+// Small phones (either orientation, so a phone that loads in portrait and is then rotated still gets it):
+// the peacock's feather bushes sit a little lower, and the hidden feather (and its found state) moves
+// with them so it stays inside the bush. iPad / desktop keep BASE_LAYOUT as it is.
+const IS_SMALL_PHONE = typeof window !== 'undefined'
+  && Math.min(window.innerWidth, window.innerHeight) <= 500
+  && Math.max(window.innerWidth, window.innerHeight) <= 1023;
+const PHONE_FEATHER_BUSH_DROP_Y = 4;
+const PHONE_DROPPED_KEYS = ['targetFeatherBush1', 'targetFeatherBush2', 'targetFeather', 'targetFeatherFound'];
+const DEFAULT_LAYOUT = IS_SMALL_PHONE
+  ? Object.fromEntries(Object.entries(BASE_LAYOUT).map(([key, item]) => [
+    key,
+    PHONE_DROPPED_KEYS.includes(key) ? { ...item, y: Math.round((item.y + PHONE_FEATHER_BUSH_DROP_Y) * 100) / 100 } : item
+  ]))
+  : BASE_LAYOUT;
 
 const DEBUG_KEYS = [
   { key: 'prompt', label: 'Prompt' },
@@ -196,8 +218,11 @@ const EyesPopUpGame = ({
   hideElements = false,
   className = '',
   stopVoice,
+  onLineSpoken,
   isPaused = false
 }) => {
+  const lineSpokenRef = useRef(onLineSpoken);
+  lineSpokenRef.current = onLineSpoken;
   usePreloadPoses(POSE_ASSETS);
   const [flow, setFlow] = useState(FLOW.SEARCH);
   // Self-managed fade so the parent scene's abrupt unmount (swapping to the
@@ -286,6 +311,8 @@ const EyesPopUpGame = ({
   }, [after]);
 
   const speak = useCallback((text, onEnd) => {
+    // Tell the scene which line is current so its Replay button repeats this game's line.
+    if (text) lineSpokenRef.current?.(text);
     if (!isAudioOn) {
       onEnd?.();
       return;
@@ -843,6 +870,7 @@ const EyesPopUpGame = ({
               left: `${pos.x}%`,
               top: `${pos.y}%`,
               width: `${sizeLayout.w}%`,
+              ...(IS_PHONE && !isFound ? { minWidth: `${PHONE_MIN_TARGET_PX}px` } : {}),
               zIndex: sizeLayout.z,
               aspectRatio: '1 / 1'
             }}

@@ -192,6 +192,7 @@ export default function FlowerJourneyGame2({
   onFlowersUpdate,
   onComplete,
   stopVoice,
+  onLineSpoken,
 }) {
   usePreloadPoses(SCENE_IMAGES);
   const [phase, setPhase] = useState(PHASES.FLOWER_BUSH);
@@ -288,6 +289,8 @@ export default function FlowerJourneyGame2({
   const phaseEmojiKeys = EMOJI_KEYS_BY_PHASE[phase] || [];
   const activeEmojiKey = phaseEmojiKeys.includes(selectedEmoji) ? selectedEmoji : phaseEmojiKeys[0];
 
+  const lineSpokenRef = useRef(onLineSpoken);
+  lineSpokenRef.current = onLineSpoken;
   const mutedRef = useRef(!isAudioOn);
   useEffect(() => { mutedRef.current = !isAudioOn; }, [isAudioOn]);
 
@@ -315,6 +318,8 @@ export default function FlowerJourneyGame2({
   const pendingReplayRef = useRef(null);
 
   const startUtterance = useCallback((text, resolve, cue = null) => {
+    // Tell the scene which line is current so its Replay button repeats this game's line.
+    lineSpokenRef.current?.(text);
     // A line requested while the sidebar is open must not speak behind it —
     // queue it as the interrupted line so it plays, from the start, on close.
     if (pausedRef.current) {

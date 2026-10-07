@@ -312,13 +312,28 @@ const getZoneCenter = (zone) => {
   return { top, left, widthPx, heightPx };
 };
 
-const ZONE_HINT_POSITIONS = BODY_PART_ZONES.reduce((acc, zone) => {
+// Phone landscape only (same query the rest of the app uses): the square Ganesha is taller than the
+// screen (~560px on 844x390, ~117px cropped at the bottom), so the tusk box was only ~48px tall and the
+// Mooshika target sat off-screen. Same shape of override the Hint Debug panel writes. iPad/desktop: none.
+const PHONE_MQ = '(orientation: landscape) and (max-height: 500px) and (max-width: 1023px)';
+const IS_PHONE_LAYOUT = typeof window !== 'undefined' && !!window.matchMedia?.(PHONE_MQ).matches;
+const PHONE_ZONE_OVERRIDES = IS_PHONE_LAYOUT ? {
+  // same centre as before, taller: >= 62px even at 740x360
+  tusk: { top: '45.35%', left: '39.5%', width: '18.5%', height: '12%' },
+  // Mooshika art is a separate layer; lifted 8% on phones (see .ganesha-zone-part-base in the CSS) so the target follows it
+  base: { bottom: '18%', left: '20%', transform: 'translateX(-50%)', width: '19.6%', height: '19.6%' },
+} : {};
+const ANCHOR_ZONES = BODY_PART_ZONES.map((zone) => (
+  PHONE_ZONE_OVERRIDES[zone.id] ? { ...zone, position: PHONE_ZONE_OVERRIDES[zone.id] } : zone
+));
+
+const ZONE_HINT_POSITIONS = ANCHOR_ZONES.reduce((acc, zone) => {
   const center = getZoneCenter(zone);
   acc[zone.id] = { top: center.top, left: center.left };
   return acc;
 }, {});
 
-const ZONE_SPARKLE_POSITIONS = BODY_PART_ZONES.reduce((acc, zone) => {
+const ZONE_SPARKLE_POSITIONS = ANCHOR_ZONES.reduce((acc, zone) => {
   const center = getZoneCenter(zone);
   acc[zone.id] = {
     top: center.top,
@@ -369,8 +384,8 @@ function SymbolFlipCard({ name, associationText, image, flipped, imageFallback }
   const wrapperStyle = {
     perspective: '1200px',
     WebkitPerspective: '1200px',
-    width: '230px',
-    height: '245px',
+    width: IS_PHONE_LAYOUT ? '190px' : '230px',
+    height: IS_PHONE_LAYOUT ? '200px' : '245px',
     transformStyle: 'preserve-3d',
     WebkitTransformStyle: 'preserve-3d'
   };
@@ -386,7 +401,7 @@ function SymbolFlipCard({ name, associationText, image, flipped, imageFallback }
   const faceStyle = {
     position: 'absolute',
     inset: 0,
-    borderRadius: '26px',
+    borderRadius: IS_PHONE_LAYOUT ? '20px' : '26px',
     backfaceVisibility: 'hidden',
     WebkitBackfaceVisibility: 'hidden',
     background: 'linear-gradient(180deg, #fff8ea 0%, #f7ecd4 100%)',
@@ -396,16 +411,16 @@ function SymbolFlipCard({ name, associationText, image, flipped, imageFallback }
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: '18px',
+    padding: IS_PHONE_LAYOUT ? '12px' : '18px',
     textAlign: 'center',
-    gap: '12px',
+    gap: IS_PHONE_LAYOUT ? '8px' : '12px',
     transformOrigin: 'center center',
     transition: 'transform 0.7s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.45s ease',
     willChange: 'transform, opacity'
   };
 
   const imageStyle = {
-    width: '130px',
+    width: IS_PHONE_LAYOUT ? '100px' : '130px',
     height: 'auto',
     objectFit: 'contain',
     display: 'block',
@@ -414,17 +429,17 @@ function SymbolFlipCard({ name, associationText, image, flipped, imageFallback }
 
   const titleStyle = {
     fontFamily: "'Baloo 2', cursive",
-    fontSize: '24px',
+    fontSize: IS_PHONE_LAYOUT ? '20px' : '24px',
     fontWeight: 700,
     color: '#5A3B1E'
   };
 
   const textStyle = {
     fontFamily: "'Nunito', sans-serif",
-    fontSize: '18px',
+    fontSize: IS_PHONE_LAYOUT ? '15px' : '18px',
     fontWeight: 700,
     color: '#6B4F2A',
-    lineHeight: 1.5
+    lineHeight: IS_PHONE_LAYOUT ? 1.35 : 1.5
   };
 
   return (
@@ -577,7 +592,7 @@ const SacredAssemblyContent = ({
   // spot in the Hint Debug panel instead of hand-editing ganeshaZones.js
   // and reloading. Keyed by zoneId -> a position override that fully
   // replaces that zone's `position` (see getZonePosition below).
-  const [zonePositionOverrides, setZonePositionOverrides] = useState({});
+  const [zonePositionOverrides, setZonePositionOverrides] = useState(PHONE_ZONE_OVERRIDES);
   const [layoutCopyStatus, setLayoutCopyStatus] = useState('');
   // All available tap markers pulse together only on the first round, then
   // later rounds keep the markers faint and still.
@@ -1826,7 +1841,16 @@ const SacredAssemblyContent = ({
           <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={toggleAudio} />
           <VOReplayButton variant="gameplay"
             onReplay={replayVoiceForCurrentPhase}
-            disabled={!isAudioOn}
+            // No VO exists yet while the card is arriving (appear/flipped/side) — grey the
+            // button out so it never looks tappable but does nothing.
+            disabled={!isAudioOn || (
+              !!sceneState?.welcomeShown
+              && !!sceneState?.currentAssociationSymbol
+              && !showSceneCompletion
+              && sceneState?.phase !== 'complete'
+              && !sceneState?.showingZoneCompletion
+              && (cardPhase === 'appear' || cardPhase === 'flipped' || cardPhase === 'side')
+            )}
           />
 
           <OpeningModal
@@ -1856,7 +1880,7 @@ const SacredAssemblyContent = ({
                 style={{
                   position: 'absolute',
                   top: '50%',
-                  left: isSideCard ? '13%' : '50%',
+                  left: isSideCard ? (IS_PHONE_LAYOUT ? '5%' : '13%') : '50%',
                   transform: isSideCard ? 'translate(0, -50%)' : 'translate(-50%, -50%) scale(1)',
                   zIndex: 150,
                   opacity: cardPhase !== 'hidden' ? 1 : 0,

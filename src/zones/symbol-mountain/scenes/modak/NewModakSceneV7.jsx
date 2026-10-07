@@ -1733,6 +1733,7 @@ const NewModakSceneMVPContent = ({
                       onFlowersUpdate={handleGame2FlowersUpdate}
                       onComplete={handleGame2Complete}
                       stopVoice={stopVoice}
+                      onLineSpoken={(line) => { lastVoRef.current = line; }}
                     />
                   )}
 
@@ -1745,6 +1746,7 @@ const NewModakSceneMVPContent = ({
                       isAudioOn={isAudioOn}
                       onComplete={handleGame3Complete}
                       stopVoice={stopVoice}
+                      onLineSpoken={(line) => { lastVoRef.current = line; }}
                     />
                   )}
 
