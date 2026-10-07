@@ -2197,3 +2197,45 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.08);
     padding: 8px 28px;
   }
 }
+
+/* ============================================================
+   PROFILE SELECTOR - PHONE LANDSCAPE
+   Softer + slightly lower Add Friend treatment
+   ============================================================ */
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
+  /* Move the empty-state content down without changing card geometry */
+  .clean-profile-card.empty .clean-add-icon,
+  .clean-profile-card.empty .clean-add-text {
+    position: relative;
+    top: 11px;
+  }
+
+  /* Empty slots should invite, but not compete with a real profile */
+  .clean-profile-card.empty .clean-add-icon {
+    background: linear-gradient(180deg, #CCBAF7 0%, #BFA8F0 100%);
+    color: rgba(255, 255, 255, 0.96);
+    box-shadow:
+      0 3px 0 #9B82D1,
+      0 6px 14px rgba(120, 80, 200, 0.16),
+      inset 0 2px 3px rgba(255, 255, 255, 0.34);
+  }
+
+  .clean-profile-card.empty .clean-add-text {
+    color: #8373A7;
+  }
+
+  .clean-profile-card.empty:hover .clean-add-icon {
+    transform: translateY(-2px);
+    box-shadow:
+      0 4px 0 #9B82D1,
+      0 8px 16px rgba(120, 80, 200, 0.18),
+      inset 0 2px 3px rgba(255, 255, 255, 0.38);
+  }
+}
+
+/* Phone landscape: sit the four profile slots well below the title */
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
+  .clean-profiles-grid {
+    margin-top: clamp(28px, 13dvh, 56px);
+  }
+}
