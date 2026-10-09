@@ -752,11 +752,9 @@ function MyIndianStoryGameContent({ sceneState, sceneActions, isReload, onComple
 
   // Voice lines
   const VOICE = {
-    opening:        `Let’s explore my India story, then yours.`,
     ganesha_home:   `Move the magnifying glass around the map to find my places.`,
     child_home_entry: `Now choose a place your family feels connected to.`,
     child_home_idle: `Which place feels connected to your family?`,
-    child_home_confirmed: `This is the place you chose.`,
     language_play_first: `Tap play and listen carefully.`,
     language_guess:   `Which language do you hear?`,
     language_guess_hint: `Think of the language many shlokas are in.`,

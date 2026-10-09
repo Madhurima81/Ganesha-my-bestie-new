@@ -603,12 +603,13 @@ AH = [
         ]),
         ("Places", [
             ("Ganesha’s places", "Move the magnifying glass around the map to find my places.", ""),
-            ("Idle hint", "Drag the magnifying glass to find me.", ""),
+            ("Idle hint, first (about 12 seconds)", "Move the magnifying glass around the map.", "Skipped if the child has already started dragging."),
+            ("Idle hint, second", "Drag the magnifying glass to find me.", ""),
             ("Phase 1 done", "You found some places connected to my story.", ""),
             ("Child’s place", "Now choose a place your family feels connected to.", ""),
             ("Idle hint", "Which place feels connected to your family?", ""),
             ("Reminder", "Choose the place connected with your family.", ""),
-            ("Place chosen", "This is the place you chose.", ""),
+            ("Place chosen", "This is the place you chose.", "The region name is read first, for example “South India. This is the place you chose.”"),
         ]),
         ("Languages", [
             ("First time", "Tap play and listen carefully.", ""),
@@ -630,6 +631,12 @@ AH = [
             ("Idle hint", "Which celebrations are part of your family?", ""),
             ("Reminder", "Tap the festivals you celebrate.", ""),
             ("Festivals chosen", "These are the festivals you chose.", ""),
+        ]),
+        ("Names read aloud when tapped", [
+            ("Ganesha’s places", "Varanasi / Mumbai / Tamil Nadu", "Each name is read when the child finds that place."),
+            ("Regions", "North India / West India / Central India / East India / Northeast India / South India / Mount Kailash / Outside India", "Read when the child picks a region."),
+            ("Languages", "Hindi / Tamil / Telugu / Marathi / Gujarati / Bengali / Kannada / Malayalam / Punjabi / Sanskrit / English / Other", "Read when the child taps a language."),
+            ("Festivals", "Pongal / Holi / Janmashtami / Ganesh Chaturthi / Durga Puja / Diwali / Navratri / Onam / Eid / Christmas / Dussehra / Raksha Bandhan", "Read when the child taps a festival."),
         ]),
         ("Ending", [
             ("Origin card", "Your places, languages, and celebrations can all be part of that connection.", ""),
