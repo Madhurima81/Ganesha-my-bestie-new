@@ -366,7 +366,7 @@
 .river-label {
   top: 16%;
   right: auto;
-  min-width: clamp(190px, 18vw, 330px);
+  min-width: 0;
   box-sizing: border-box;
   font-size: clamp(24px, 2.8vw, 52px);
 }
@@ -1271,4 +1271,35 @@
 @keyframes creatureAppear {
   from { transform: scale(0.4); opacity: 0; }
   to   { transform: scale(1);   opacity: 1; }
+}
+
+/* ==========================================================
+   MAP LABEL HIERARCHY
+   Current = destination, Next = preview, Completed = replay.
+   Distant locked zones have no permanent label.
+   ========================================================== */
+.label.map-label-current {
+  opacity: 1;
+  padding: clamp(7px, 0.75vw, 10px) clamp(18px, 1.8vw, 26px);
+  background: linear-gradient(180deg, #8A6FD6 0%, #6C4FB6 100%);
+  box-shadow: 0 5px 13px rgba(80, 50, 150, 0.30);
+  color: #fff;
+}
+
+.label.map-label-next {
+  opacity: 0.72;
+  padding: clamp(5px, 0.55vw, 7px) clamp(13px, 1.25vw, 18px);
+  font-size: clamp(17px, 1.85vw, 27px) !important;
+  background: rgba(105, 79, 182, 0.58);
+  box-shadow: 0 3px 8px rgba(80, 50, 150, 0.12);
+  text-shadow: none;
+}
+
+.label.map-label-completed {
+  opacity: 0.72;
+  padding: clamp(5px, 0.55vw, 7px) clamp(12px, 1.2vw, 18px);
+  font-size: clamp(16px, 1.65vw, 24px) !important;
+  background: rgba(117, 95, 174, 0.62);
+  box-shadow: 0 2px 6px rgba(80, 50, 150, 0.10);
+  text-shadow: none;
 }

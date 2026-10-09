@@ -102,6 +102,18 @@ const ZONE_IDS = {
   CAVE: 'cave-of-secrets',
 };
 
+// Child journey order for map hierarchy (current / next / distant). Cave, Festival, Treehouse are future content.
+const PRIMARY_MAP_JOURNEY = [ZONE_IDS.SYMBOL, ZONE_IDS.RIVER, ZONE_IDS.HUT];
+
+const ZONE_ART_TO_ZONE_ID = {
+  symbol: ZONE_IDS.SYMBOL,
+  river: ZONE_IDS.RIVER,
+  hut: ZONE_IDS.HUT,
+  festival: ZONE_IDS.FESTIVAL,
+  treehouse: ZONE_IDS.TREEHOUSE,
+  cave: ZONE_IDS.CAVE,
+};
+
 // Temporarily keep Wonder Caves out of the visible map without removing its data/config.
 const HIDDEN_MAP_ZONE_IDS = new Set([ZONE_IDS.CAVE]);
 
@@ -1061,6 +1073,18 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
     }
   }, [zoneArtItems]);
 
+  const currentMapZoneId =
+    PRIMARY_MAP_JOURNEY.find(
+      (zoneId) => isZoneUnlocked(zoneId, zoneProgress) && !isZoneDone(zoneProgress, zoneId)
+    ) ||
+    [...PRIMARY_MAP_JOURNEY].reverse().find((zoneId) => isZoneDone(zoneProgress, zoneId)) ||
+    ZONE_IDS.SYMBOL;
+  const currentJourneyIndex = PRIMARY_MAP_JOURNEY.indexOf(currentMapZoneId);
+  const nextMapZoneId =
+    currentJourneyIndex >= 0 && currentJourneyIndex < PRIMARY_MAP_JOURNEY.length - 1
+      ? PRIMARY_MAP_JOURNEY[currentJourneyIndex + 1]
+      : null;
+
   const getZoneArtStyle = (id, extra = {}) => {
     const baseArt = zoneArtItems[id];
     const phoneOverride = isPhoneLandscape ? PHONE_MAP_ZONE_ART[id] : null;
@@ -1072,13 +1096,44 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
     if (art?.rotateY) transforms.push(`rotateY(${art.rotateY}deg)`);
     if (art?.rotate) transforms.push(`rotate(${art.rotate}deg)`);
 
+    // Tablet / desktop map hierarchy (phone keeps its locked composition)
+    const hierarchyZoneId = ZONE_ART_TO_ZONE_ID[id];
+    let hierarchyScale = 1;
+    let hierarchyOpacity = art?.opacity ?? 1;
+    let hierarchyFilter = 'none';
+
+    if (!isPhoneLandscape && hierarchyZoneId) {
+      const hierarchyState = getZoneState(hierarchyZoneId, zoneProgress);
+      if (hierarchyZoneId === currentMapZoneId) {
+        hierarchyOpacity = 1;
+        hierarchyFilter = 'saturate(1) brightness(1)';
+      } else if (hierarchyZoneId === nextMapZoneId) {
+        // River artwork is intrinsically much larger, so suppress it harder while "next"
+        hierarchyScale = hierarchyZoneId === ZONE_IDS.RIVER ? 0.78 : 0.90;
+        hierarchyOpacity = 0.58;
+        hierarchyFilter = 'saturate(0.68) brightness(1.04)';
+      } else if (hierarchyState === 'completed') {
+        hierarchyScale = 0.92;
+        hierarchyOpacity = 0.80;
+        hierarchyFilter = 'saturate(0.82) brightness(1.02)';
+      } else {
+        hierarchyScale = 0.86;
+        hierarchyOpacity = 0.26;
+        hierarchyFilter = 'saturate(0.32) brightness(1.08)';
+      }
+    }
+
+    if (hierarchyScale !== 1) transforms.push(`scale(${hierarchyScale})`);
+
     return {
       left: `${art.left}%`,
       top: `${art.top}%`,
       width: `${art.w}%`,
       height: `${art.h}%`,
       transform: transforms.length ? transforms.join(' ') : 'none',
-      opacity: art.opacity ?? 1,
+      opacity: hierarchyOpacity,
+      filter: hierarchyFilter,
+      transition: 'opacity 320ms ease, filter 320ms ease, transform 320ms ease',
       ...extra
     };
   };
@@ -1641,6 +1696,11 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         const unlockClass = unlockIntensity === 'master' ? 'zone-unlock-master' : '';
         const labelState = state === 'unlocking' ? 'active' : state;
         const isSymbolMountainZone = zone.id === 'symbol-mountain';
+        const isCurrentMapZone = zone.id === currentMapZoneId;
+        const isNextMapZone = zone.id === nextMapZoneId;
+        const isCompletedMapZone = baseState === 'completed';
+        // Label only current, next and completed zones; distant zones stay as muted landmarks.
+        const shouldShowZoneLabel = isCurrentMapZone || isNextMapZone || isCompletedMapZone;
 
         return (
           <div key={zone.id} className={`zone-group ${state === 'completed' ? 'zone-complete' : ''}`}>
@@ -1652,25 +1712,36 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
             />
 
             {/* Label */}
-            <div
-              className={`${layout.labelClass} label-state-${labelState} ${isSymbolMountainZone ? 'zone-title' : ''} ${pulsingLabelZoneId === zone.id ? 'label-tap-pulse' : ''} ${state === 'coming-soon' ? 'label-coming-soon' : ''}`.trim()}
-              onClick={() => handleZoneClick(zone, state)}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  handleZoneClick(zone, state);
-                }
-              }}
-              aria-label={`Open ${zone.name.replace('\n', ' ')}`}
-              style={ZONE_LABEL_OVERLAY_IDS[zone.id] ? getOverlayStyle(ZONE_LABEL_OVERLAY_IDS[zone.id]) : undefined}
-            >
-              {state === 'completed' && (
-                <span className="zone-check-badge zone-check-badge--label" aria-hidden="true">✓</span>
-              )}
-              {zone.name.replace(/\n/g, ' ')}
-            </div>
+            {shouldShowZoneLabel && (
+              <div
+                className={[
+                  layout.labelClass,
+                  `label-state-${labelState}`,
+                  isSymbolMountainZone ? 'zone-title' : '',
+                  isCurrentMapZone ? 'map-label-current' : '',
+                  isNextMapZone ? 'map-label-next' : '',
+                  isCompletedMapZone && !isCurrentMapZone ? 'map-label-completed' : '',
+                  pulsingLabelZoneId === zone.id ? 'label-tap-pulse' : '',
+                  state === 'coming-soon' ? 'label-coming-soon' : '',
+                ].filter(Boolean).join(' ')}
+                onClick={() => handleZoneClick(zone, state)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleZoneClick(zone, state);
+                  }
+                }}
+                aria-label={`Open ${zone.name.replace('\n', ' ')}`}
+                style={ZONE_LABEL_OVERLAY_IDS[zone.id] ? getOverlayStyle(ZONE_LABEL_OVERLAY_IDS[zone.id]) : undefined}
+              >
+                {state === 'completed' && (
+                  <span className="zone-check-badge zone-check-badge--label" aria-hidden="true">✓</span>
+                )}
+                {zone.name.replace(/\n/g, ' ')}
+              </div>
+            )}
           </div>
         );
       })}
