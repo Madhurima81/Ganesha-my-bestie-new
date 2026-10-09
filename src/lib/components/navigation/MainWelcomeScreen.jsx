@@ -154,11 +154,13 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
         </div>
       </div>
 
+      {/* [welcome mute removed 2026-10-09] mute lives on Home map + Parent Dashboard; uncomment to restore.
       <AudioToggle
         isAudioOn={isAudioOn}
         onToggle={toggleAudio}
         position="top-right"
       />
+      */}
 
       <audio
         ref={ambientRef}
