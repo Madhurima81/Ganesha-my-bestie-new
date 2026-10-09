@@ -117,7 +117,7 @@ Every new scene must have:
 - [ ] Baloo 2 for all headings
 - [ ] Nunito for all body/instructions
 - [ ] Touch targets ≥ 60px (touch-first, no hover-only states)
-- [ ] Mute button if audio is present
+- [ ] No per-scene mute; scenes call playVoice() only. Mute lives on Home; granular volume lives in PIN-gated Settings (Parent Dashboard)
 - [ ] Visual + audio feedback on every interaction
 - [ ] Zone color scheme applied (see below)
 
