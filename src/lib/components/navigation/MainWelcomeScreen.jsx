@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ProfilePillBtn from '../shared/ProfilePillBtn';
 import { playUiTap } from '../../services/AudioService';
+import { isAmbientOn, subscribeSoundPrefs } from '../../utils/soundPrefs';
 import AudioToggle from '../ui/AudioToggle/AudioToggle';
 import useAudioPreference from '../../hooks/useAudioPreference';
 import DeviceChoiceModal from './DeviceChoiceModal';
@@ -13,6 +14,9 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
   const [showDeviceChoice, setShowDeviceChoice] = useState(false);
   const { isAudioOn, toggleAudio } = useAudioPreference();
   const ambientRef = useRef(null);
+  // Ambient follows Parent Settings > Ambience (the toggle here is the voice mute only).
+  const [ambientOn, setAmbientOn] = useState(isAmbientOn);
+  useEffect(() => subscribeSoundPrefs((kind, on) => { if (kind === 'ambience') setAmbientOn(on); }), []);
   const fadeRef = useRef(null);
   const startTimerRef = useRef(null);
 
@@ -49,7 +53,7 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
       }, 80);
     };
 
-    if (isAudioOn) {
+    if (ambientOn) {
       fadeIn();
     } else {
       clearInterval(fadeRef.current);
@@ -58,7 +62,7 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
     }
 
     const onFirstInteraction = () => {
-      if (isAudioOn && audio.paused) fadeIn();
+      if (ambientOn && audio.paused) fadeIn();
       document.removeEventListener('pointerdown', onFirstInteraction);
     };
     document.addEventListener('pointerdown', onFirstInteraction);
@@ -67,7 +71,7 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
       if (document.visibilityState === 'hidden') {
         clearInterval(fadeRef.current);
         audio.pause();
-      } else if (isAudioOn) {
+      } else if (ambientOn) {
         fadeIn();
       }
     };
@@ -79,7 +83,7 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
       document.removeEventListener('pointerdown', onFirstInteraction);
       document.removeEventListener('visibilitychange', onVisibility);
     };
-  }, [isAudioOn]);
+  }, [ambientOn]);
 
   useEffect(() => {
     return () => {

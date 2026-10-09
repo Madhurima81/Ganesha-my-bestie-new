@@ -14,6 +14,7 @@ import PrivacyPolicy from '../onboarding/PrivacyPolicy'
 import GameStateManager from '../../services/GameStateManager'
 import { getUnlockedLearnings, getLatestLearning, getLearningById } from '../../services/LearningProgress'
 import { clearPin } from '../../utils/dashboardData'
+import { setSoundPref, subscribeSoundPrefs } from '../../utils/soundPrefs'
 import { isVoiceMuted, setVoiceMuted, subscribeVoiceMute, migrateLegacyVoicePref } from '../../utils/voiceMute'
 import pwaInstallManager, { isStandalone, getInstallGuide } from '../../services/PwaInstallManager'
 
@@ -79,6 +80,10 @@ export default function ParentDashboard({ onBack, onOpenChildProfile }) {
   // Home mute button flips the same flag: keep the Voice switch in step.
   useEffect(() => subscribeVoiceMute((muted) => {
     setSoundSettings((prev) => ({ ...prev, voice: !muted }))
+  }), [])
+  useEffect(() => subscribeSoundPrefs((kind, on) => {
+    const key = kind === 'ambience' ? 'ambience' : kind
+    setSoundSettings((prev) => ({ ...prev, [key]: on }))
   }), [])
   const [appInstalled, setAppInstalled] = useState(isStandalone())
   const [showInstallSteps, setShowInstallSteps] = useState(false)
@@ -165,6 +170,7 @@ export default function ParentDashboard({ onBack, onOpenChildProfile }) {
     localStorage.setItem(SOUND_PREF_KEYS[key], nextValue ? '1' : '0')
     setSoundSettings((prev) => ({ ...prev, [key]: nextValue }))
     if (key === 'voice') setVoiceMuted(!nextValue)
+    else setSoundPref(key, nextValue)
   }
 
   // ── PIN gate ──────────────────────────────────────────────────

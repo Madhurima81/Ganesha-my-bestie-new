@@ -12,6 +12,8 @@ import {
   getWordPath
 } from '../config/content/voiceGuidance';
 
+import { isSfxOn, isAmbientOn, subscribeSoundPrefs } from '../utils/soundPrefs';
+
 // The audio toggle is a VOICE mute (see DECISIONS.md 2026-09-29, T55): when the
 // shared preference is off, ALL voice — guidance VO, hints, Sanskrit words and
 // syllables — is silent. SFX are NOT affected. Read live from storage so no scene has to thread it in.
@@ -428,6 +430,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
   // ========================================
 
   const playSfx = useCallback((key) => {
+    if (!isSfxOn()) return; // Parent Settings > Sound effects
     const path = getSfxPath(key);
     if (!path) {
       console.warn(`SFX not found: ${key}`);
@@ -474,7 +477,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
   // ========================================
 
   const startMusic = useCallback(() => {
-    if (!enableMusic) return;
+    if (!enableMusic || !isAmbientOn()) return; // Parent Settings > Ambience
 
     const path = getMusicPath('ambient');
     if (!path) return;
@@ -506,6 +509,14 @@ const useVoiceGuidance = (zoneId, sceneId, {
       musicRef.current.pause();
     }
   }, []);
+
+  // Ambience switched in Settings while a scene is mounted: pause now; on again, resume
+  // only music that was already started (a scene that never started it stays silent).
+  useEffect(() => subscribeSoundPrefs((kind, on) => {
+    if (kind !== 'ambience' || !musicRef.current) return;
+    if (!on) musicRef.current.pause();
+    else musicRef.current.play().catch(() => {});
+  }), []);
 
   const setMusicVolume = useCallback((volume) => {
     if (musicRef.current) {

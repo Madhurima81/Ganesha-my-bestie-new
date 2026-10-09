@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import './CleanMapZone.css';
 import GameStateManager from '../lib/services/GameStateManager';
 import { GANESHA_POSE_ASSETS } from '../lib/config/ganeshaUsageSystem';
+import { isSfxOn, isAmbientOn, subscribeSoundPrefs } from '../lib/utils/soundPrefs';
 import HoldMuteButton from '../lib/components/ui/HoldMuteButton/HoldMuteButton';
 // import ZonePreviewModal from './components/ZonePreviewModal'; // commented out — no preview modal
 import useAudioPreference from '../lib/hooks/useAudioPreference';
@@ -1014,6 +1015,9 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
   const editorTouchedRef = useRef(false);
   // Voice mute only (Home hold-to-mute / Settings > Voice). Ambient loop and SFX keep playing.
   const isMuted = !isAudioOn;
+  // Parent Settings > Ambience: follows the switch live (Settings can change while the map is open).
+  const [ambientOn, setAmbientOn] = useState(isAmbientOn);
+  useEffect(() => subscribeSoundPrefs((kind, on) => { if (kind === 'ambience') setAmbientOn(on); }), []);
 
   // Freemium extension point: Day-3-or-later return is the other paywall-trigger
   // moment (alongside Zone 1 completion in GameStateManager.unlockNextScene). No
@@ -1206,7 +1210,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
   // ── Ambient sound: fade in on mount, pause on tab-hide, resume on show ──────
   useEffect(() => {
     const audio = ambientRef.current;
-    if (!audio) return;
+    if (!audio || !ambientOn) return;
 
     const TARGET_VOL = 0.06;
 
@@ -1245,7 +1249,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
       document.removeEventListener('pointerdown', onFirstInteraction);
       document.removeEventListener('visibilitychange', onVisibility);
     };
-  }, []);
+  }, [ambientOn]);
 
   useEffect(() => {
     if (!isMuted) return;
@@ -1297,7 +1301,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
           [zoneId]: 'normal'
         }));
 
-        playUnlockChime('normal', false);
+        playUnlockChime('normal', !isSfxOn());
 
         const line = MAP_ZONE_UNLOCK_VO[zoneId];
 
@@ -1431,7 +1435,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
     labelPulseTimerRef.current = setTimeout(() => setPulsingLabelZoneId(null), 220);
 
     // Play zone click SFX (locked = buzz, active = bright tone)
-    playZoneClickSfx(state, false);
+    playZoneClickSfx(state, !isSfxOn());
 
     // Locked or future destinations: not tappable, no feedback.
     if (state === 'locked' || state === 'coming-soon') {

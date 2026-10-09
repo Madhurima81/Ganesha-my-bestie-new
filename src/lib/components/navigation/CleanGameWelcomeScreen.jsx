@@ -1,4 +1,6 @@
 ﻿// CleanGameWelcomeScreen.jsx - FINAL CLEAN VERSION
+import { setVoiceMuted } from '../../utils/voiceMute';
+import { isAmbientOn, subscribeSoundPrefs } from '../../utils/soundPrefs';
 import React, { useState, useEffect, useRef } from 'react';
 import GameStateManager from '../../services/GameStateManager';
 import CleanProfileSelector from './CleanProfileSelector';
@@ -37,6 +39,9 @@ const CleanGameWelcomeScreen = ({
   const [showPopup, setShowPopup] = useState(false);
   const [popupData, setPopupData] = useState(null);
   const ambientRef = useRef(null);
+  // Ambient follows Parent Settings > Ambience (the toggle here is the voice mute only).
+  const [ambientOn, setAmbientOn] = useState(isAmbientOn);
+  useEffect(() => subscribeSoundPrefs((kind, on) => { if (kind === 'ambience') setAmbientOn(on); }), []);
   const fadeRef = useRef(null);
   const [audioOn, setAudioOn] = useState(() => {
     const v = localStorage.getItem('ganesha_audio_enabled');
@@ -45,7 +50,7 @@ const CleanGameWelcomeScreen = ({
 
   const toggleAudio = () => {
     const next = !audioOn;
-    localStorage.setItem('ganesha_audio_enabled', String(next));
+    setVoiceMuted(!next);
     setAudioOn(next);
     if (next) playUiTap(0.22);
   };
@@ -63,7 +68,7 @@ const CleanGameWelcomeScreen = ({
     // hidden in modal mode, so a layered ambient track had no way to be muted
     // and would stack on top of the underlying scene/map audio.
     const isModalMode = displayMode === 'modal';
-    if (isModalMode || !audioOn) {
+    if (isModalMode || !ambientOn) {
       clearInterval(fadeRef.current);
       audio.pause();
       audio.currentTime = 0;
@@ -106,7 +111,7 @@ const CleanGameWelcomeScreen = ({
       document.removeEventListener('pointerdown', onFirstInteraction);
       document.removeEventListener('visibilitychange', onVisibility);
     };
-  }, [currentProfile, showProfileSelector, audioOn]);
+  }, [currentProfile, showProfileSelector, ambientOn, displayMode]);
   
   const initializeClean = () => {
     try {

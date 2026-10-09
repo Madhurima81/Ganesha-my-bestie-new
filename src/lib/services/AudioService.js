@@ -5,6 +5,7 @@
 //
 // Ambient & voice remain in SoundManager (Web Audio API synthesis — keep as-is)
 
+import { isSfxOn } from '../utils/soundPrefs';
 import { Howl, Howler } from 'howler';
 import {
   playUiTap        as synthUiTap,
@@ -66,6 +67,7 @@ export function initAudioService() {
 // ── Core play function ───────────────────────────────────────────────────────
 
 function playSfx(id, volumeOverride) {
+  if (!isSfxOn()) return; // Parent Settings > Sound effects
   const def = SFX[id];
   if (!def) return;
 
