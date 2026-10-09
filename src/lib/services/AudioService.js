@@ -1,20 +1,13 @@
-// AudioService.js — Unified audio abstraction layer
+// AudioService.js — compatibility layer over the shared SFX engine (src/lib/audio/sfx.js).
 //
-// Web (now):     Howler.js — zero-latency, overlapping SFX, auto format selection
-// Native (later): swap _backend to @capacitor-community/native-audio in one place
-//
-// Ambient & voice remain in SoundManager (Web Audio API synthesis — keep as-is)
+// SFX:     every playXxx below is just an alias for a ROLE in sfx.js (one sound per role,
+//          one volume table, one duck rule, one reward-at-a-time rule).
+// Ambient: still Web Audio in ../audio/SoundManager (no live callers found in the 2026-10-09 audit).
+// Native (later): swap the backend inside sfx.js in one place.
 
-import { isSfxOn } from '../utils/soundPrefs';
-import { Howl, Howler } from 'howler';
+import { Howler } from 'howler';
+import { sfx } from '../audio/sfx';
 import {
-  playUiTap        as synthUiTap,
-  playWrongTap     as synthWrongTap,
-  playMagicSparkle as synthSparkle,
-  playMagicBloom   as synthBloom,
-  playDivineGlow   as synthGlow,
-  playCelebrationTwinkle as synthTwinkle,
-  playCardRevealChime    as synthChime,
   playAmbient,
   stopAmbient,
   setAmbientVolume,
@@ -23,65 +16,8 @@ import {
   setGlobalVolume as setSoundManagerVolume,
 } from '../audio/SoundManager';
 
-// ── Sound definitions ────────────────────────────────────────────────────────
-// src: shared SFX bank in /public/audio/sfx
-// If a file is missing, Howl fails and we fall back to synthesized SFX.
-
-const SFX = {
-  uiTap:              { src: ['/audio/sfx/sfx-tap.mp3'],          volume: 0.32, fallback: synthUiTap },
-  wrongTap:           { src: ['/audio/sfx/sfx-oops.mp3'],         volume: 0.40, fallback: synthWrongTap },
-  magicSparkle:       { src: ['/audio/sfx/sfx-pop.mp3'],          volume: 0.50, fallback: synthSparkle },
-  magicBloom:         { src: ['/audio/sfx/sfx-success.mp3'],      volume: 0.50, fallback: synthBloom },
-  divineGlow:         { src: ['/audio/sfx/sfx-power-unlock.mp3'], volume: 0.45, fallback: synthGlow },
-  celebrationTwinkle: { src: ['/audio/sfx/sfx-celebration.wav'],  volume: 0.55, fallback: synthTwinkle },
-  cardRevealChime:    { src: ['/audio/sfx/sfx-chime.mp3'],        volume: 0.50, fallback: synthChime },
-};
-
-// ── Howl instances (lazy-created per sound) ──────────────────────────────────
-
-const _howls = {};
-const _loaded = {};   // true = MP3 loaded OK, false = failed (use synth)
-
-function getHowl(id) {
-  if (_howls[id]) return _howls[id];
-
-  const def = SFX[id];
-  const howl = new Howl({
-    src: def.src,
-    volume: def.volume,
-    preload: true,
-    onload:      () => { _loaded[id] = true; },
-    onloaderror: () => { _loaded[id] = false; },  // MP3 missing — fallback to synth
-  });
-
-  _howls[id] = howl;
-  return howl;
-}
-
-// ── Preload all SFX on service init ─────────────────────────────────────────
-
 export function initAudioService() {
-  Object.keys(SFX).forEach(id => getHowl(id));
-}
-
-// ── Core play function ───────────────────────────────────────────────────────
-
-function playSfx(id, volumeOverride) {
-  if (!isSfxOn()) return; // Parent Settings > Sound effects
-  const def = SFX[id];
-  if (!def) return;
-
-  const howl = getHowl(id);
-
-  // MP3 loaded and ready — use Howler (zero-latency, can overlap)
-  if (_loaded[id] === true) {
-    if (volumeOverride !== undefined) howl.volume(volumeOverride);
-    howl.play();
-    return;
-  }
-
-  // MP3 failed or still loading — use synthesized fallback
-  def.fallback(volumeOverride);
+  sfx.preload();
 }
 
 // ── Global volume ────────────────────────────────────────────────────────────
@@ -92,29 +28,15 @@ export function setGlobalVolume(v) {
   setSoundManagerVolume(clamped);  // SoundManager ambient/voice
 }
 
-// ── Named exports (same API as useGameSounds — drop-in replacement) ──────────
+// ── Named exports (same API as before; optional vol = base-level override) ───
 
-export const playUiTap              = (vol) => playSfx('uiTap', vol);
-export const playWrongTap           = (vol) => playSfx('wrongTap', vol);
-export const playMagicSparkle       = (vol) => playSfx('magicSparkle', vol);
-export const playMagicBloom         = (vol) => playSfx('magicBloom', vol);
-export const playDivineGlow         = (vol) => playSfx('divineGlow', vol);
-export const playCelebrationTwinkle = (vol) => playSfx('celebrationTwinkle', vol);
-export const playCardRevealChime    = (vol) => playSfx('cardRevealChime', vol);
+export const playUiTap              = (vol) => sfx.play('tap', vol);
+export const playWrongTap           = (vol) => sfx.play('softWrong', vol);
+export const playMagicSparkle       = (vol) => sfx.play('discovery', vol);
+export const playMagicBloom         = (vol) => sfx.play('bloom', vol);
+export const playDivineGlow         = (vol) => sfx.play('powerUnlock', vol);
+export const playCelebrationTwinkle = (vol) => sfx.play('celebration', vol);
+export const playCardRevealChime    = (vol) => sfx.play('correct', vol);
 
 // Ambient & voice pass through to SoundManager unchanged
 export { playAmbient, stopAmbient, setAmbientVolume, duckAmbient, unduckAmbient };
-
-/*
- * ── Capacitor swap (when you go native) ─────────────────────────────────────
- *
- * npm install @capacitor-community/native-audio
- *
- * Replace playSfx() with:
- *   import { NativeAudio } from '@capacitor-community/native-audio';
- *   NativeAudio.preload({ assetId: id, assetPath: def.src[0] });
- *   NativeAudio.play({ assetId: id });
- *
- * Everything else stays identical.
- * ────────────────────────────────────────────────────────────────────────────
- */

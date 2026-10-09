@@ -2217,128 +2217,101 @@ button[style*="position: fixed"][style*="background: purple"] {
 }
 /* ==========================================================
    ZONE WELCOME — TABLET / IPAD
-   FOCUS + JOURNEY MODEL
-
-   One large actionable scene.
-   Remaining scenes = quiet journey tiles.
-   Phone layout remains untouched.
+   ONE FOCUS CARD + SIMPLE JOURNEY STRIP
    ========================================================== */
 @media
   (orientation: landscape)
   and (min-height: 501px)
-  and (min-width: 769px)
-  and (max-width: 1440px) {
+  and (min-width: 769px) {
   .zone-welcome-container .cards-wrapper {
     width: min(92vw, 1080px);
-    height: min(78dvh, 570px);
+    height: min(78dvh, 580px);
     max-height: none;
+    margin: 0 auto;
     aspect-ratio: auto;
-    margin-inline: auto;
   }
 
   .zone-welcome-container .scenes-horizontal-container.tablet-feature-layout {
     position: relative;
-    box-sizing: border-box;
     width: 100%;
     height: 100%;
-    display: grid;
-    align-content: center;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
-    row-gap: 18px;
-    padding: 62px 24px 24px;
+    padding: 68px 24px 36px;
+    gap: 22px;
+    overflow: visible;
+    transform: translateY(32px);
   }
 
-  .zone-welcome-container .tablet-feature-layout.scene-count-4 {
-    grid-template-columns: repeat(3, 138px);
-    column-gap: 20px;
-  }
-
-  .zone-welcome-container .tablet-feature-layout.scene-count-5 {
-    grid-template-columns: repeat(4, 128px);
-    column-gap: 15px;
-  }
-
-  .zone-welcome-container .tablet-feature-layout .zone-scene-card {
+  .zone-welcome-container .tablet-featured-card {
     position: relative !important;
     top: auto !important;
     left: auto !important;
-    right: auto !important;
-    bottom: auto !important;
-    box-sizing: border-box;
-    margin: 0;
-    transform: none !important;
-    animation: none !important;
-    justify-self: center;
-    align-self: center;
-  }
-
-  .zone-welcome-container .tablet-feature-layout .zone-scene-card:hover,
-  .zone-welcome-container .tablet-feature-layout .zone-scene-card.available:hover,
-  .zone-welcome-container .tablet-feature-layout .zone-scene-card.in-progress:hover,
-  .zone-welcome-container .tablet-feature-layout .zone-scene-card.completed:hover {
-    transform: none !important;
-  }
-
-  .zone-welcome-container .tablet-feature-layout .is-featured-scene {
-    grid-row: 1;
-    grid-column: 1 / -1;
     width: 218px;
     min-width: 218px;
     max-width: 218px;
     min-height: 216px;
+    margin: 0;
+    transform: none !important;
+    animation: none !important;
+    cursor: default;
     z-index: 4;
-    cursor: default !important;
     filter: drop-shadow(0 7px 14px rgba(55, 32, 90, 0.12));
-    outline: 2px solid rgba(245, 190, 45, 0.30);
+    outline: 2px solid rgba(245, 190, 45, 0.28);
     outline-offset: 2px;
   }
 
-  .zone-welcome-container .tablet-feature-layout .is-featured-scene .zone-inner {
+  .zone-welcome-container .tablet-featured-card:hover {
+    transform: none !important;
+  }
+
+  .zone-welcome-container .tablet-featured-card .zone-inner {
     padding: 15px 15px 12px;
   }
 
-  .zone-welcome-container .tablet-feature-layout .is-featured-scene .scene-icon-img {
+  .zone-welcome-container .tablet-featured-card .scene-icon-img {
     width: 64px;
     height: 64px;
   }
 
-  .zone-welcome-container .tablet-feature-layout .is-featured-scene .scene-name-area {
+  .zone-welcome-container .tablet-featured-card .scene-name-area {
     min-height: 42px;
     margin-bottom: 4px;
   }
 
-  .zone-welcome-container .tablet-feature-layout .is-featured-scene .scene-name {
-    max-width: 180px;
+  .zone-welcome-container .tablet-featured-card .scene-name {
+    max-width: 185px;
     font-size: 14.5px;
     line-height: 1.15;
-    text-align: center;
   }
 
-  .zone-welcome-container .tablet-feature-layout .featured-action-area {
+  .zone-welcome-container .tablet-featured-card .featured-action-area {
     min-height: 58px;
-    margin-top: auto;
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-top: auto;
   }
 
-  .zone-welcome-container .tablet-feature-layout .featured-zone-cta {
+  .zone-welcome-container .tablet-featured-card .featured-zone-cta {
     position: relative;
     width: auto !important;
     min-width: 132px !important;
-    max-width: 148px !important;
+    max-width: 150px !important;
     height: 42px !important;
     min-height: 42px !important;
     padding: 0 20px !important;
     border-radius: 999px;
     font-size: 14px !important;
-    line-height: 1;
     box-shadow:
       0 2px 0 var(--profile-btn-shadow, rgba(103, 77, 10, 0.24)),
       0 4px 8px rgba(60, 40, 20, 0.06);
   }
 
-  .zone-welcome-container .tablet-feature-layout .featured-zone-cta::after {
+  .zone-welcome-container .tablet-featured-card .featured-zone-cta::after {
     content: "";
     position: absolute;
     left: -8px;
@@ -2348,7 +2321,7 @@ button[style*="position: fixed"][style*="background: purple"] {
     border-radius: 999px;
   }
 
-  .zone-welcome-container .tablet-feature-layout .is-featured-scene.completed .featured-zone-cta {
+  .zone-welcome-container .tablet-featured-card.completed .featured-zone-cta {
     background: rgba(255, 249, 230, 0.96);
     border: 1.5px solid rgba(225, 170, 20, 0.72);
     color: #8A6813;
@@ -2358,125 +2331,193 @@ button[style*="position: fixed"][style*="background: purple"] {
     text-shadow: none;
   }
 
-  .zone-welcome-container .tablet-feature-layout .is-journey-tile {
-    grid-row: 2;
-    width: 138px;
-    min-width: 138px;
-    max-width: 138px;
-    min-height: 146px;
-    padding: 3px;
-    cursor: pointer;
-    filter: drop-shadow(0 4px 8px rgba(55, 32, 90, 0.07));
+  .zone-welcome-container .zone-journey-strip {
+    width: auto;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 34px;
+    padding: 8px 20px 4px;
+    position: relative;
   }
 
-  .zone-welcome-container .tablet-feature-layout.scene-count-5 .is-journey-tile {
-    width: 128px;
-    min-width: 128px;
-    max-width: 128px;
+  .zone-welcome-container .zone-journey-strip::before {
+    content: "";
+    position: absolute;
+    left: 58px;
+    right: 58px;
+    top: 48px;
+    height: 3px;
+    border-radius: 999px;
+    background: rgba(255, 249, 224, 0.76);
+    z-index: 0;
   }
 
-  .zone-welcome-container .tablet-feature-layout .is-journey-tile .zone-inner {
-    padding: 9px 8px 7px;
-  }
-
-  .zone-welcome-container .tablet-feature-layout .is-journey-tile .scene-icon-area {
-    margin-bottom: 2px;
-  }
-
-  .zone-welcome-container .tablet-feature-layout .is-journey-tile .scene-icon-img {
-    width: 48px;
-    height: 48px;
-  }
-
-  .zone-welcome-container .tablet-feature-layout .is-journey-tile .scene-emoji {
-    font-size: 42px;
-  }
-
-  .zone-welcome-container .tablet-feature-layout .is-journey-tile .scene-order-indicator {
-    top: 7px;
-    left: 7px;
-    min-width: 28px;
-    height: 28px;
-    padding: 0 5px;
-    font-size: 15px;
-  }
-
-  .zone-welcome-container .tablet-feature-layout .is-journey-tile .scene-complete-badge {
-    top: 7px;
-    right: 7px;
-    width: 24px;
-    height: 24px;
-    font-size: 12px;
-  }
-
-  .zone-welcome-container .tablet-feature-layout .is-journey-tile .scene-name-area {
-    min-height: 30px;
-    margin-bottom: 1px;
-  }
-
-  .zone-welcome-container .tablet-feature-layout .is-journey-tile .scene-name {
-    font-size: 12px;
-    line-height: 1.08;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    overflow: hidden;
-  }
-
-  .zone-welcome-container .tablet-feature-layout .is-journey-tile.is-actual-current {
-    outline: 2px solid rgba(139, 111, 208, 0.48);
-    outline-offset: 2px;
-    filter: drop-shadow(0 5px 10px rgba(105, 79, 170, 0.12));
-  }
-
-  .zone-welcome-container .journey-tile-status {
-    min-height: 28px;
-    margin-top: auto;
+  .zone-welcome-container .zone-journey-node {
+    position: relative;
+    z-index: 1;
+    width: 92px;
+    min-height: 112px;
+    padding: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 4px;
+    border: 0;
+    background: transparent;
+    font-family: 'Nunito', sans-serif;
+    color: #725A9A;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
   }
 
-  .zone-welcome-container .journey-tile-progress {
+  .zone-welcome-container .zone-journey-node::before {
+    content: "";
+    position: absolute;
+    top: -6px;
+    left: 10px;
+    right: 10px;
+    height: 78px;
+    border-radius: 30px;
+  }
+
+  .zone-welcome-container .zone-journey-icon-wrap {
+    position: relative;
+    box-sizing: border-box;
+    width: 72px;
+    height: 72px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 4px;
+    border-radius: 50%;
+    background: rgba(255, 253, 247, 0.94);
+    border: 2px solid rgba(201, 180, 234, 0.34);
+    box-shadow: 0 5px 12px rgba(70, 48, 105, 0.08);
+    transition:
+      transform 140ms ease,
+      border-color 140ms ease,
+      box-shadow 140ms ease;
   }
 
-  .zone-welcome-container .journey-progress-segment {
-    width: 20px;
+  .zone-welcome-container .zone-journey-icon {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+  }
+
+  .zone-welcome-container .zone-journey-emoji {
+    font-size: 42px;
+    line-height: 1;
+  }
+
+  .zone-welcome-container .zone-journey-number {
+    margin-top: 5px;
+    font-family: 'Baloo 2', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1;
+    font-weight: 800;
+    color: rgba(91, 70, 130, 0.80);
+  }
+
+  .zone-welcome-container .zone-journey-check {
+    position: absolute;
+    top: -7px;
+    right: -7px;
+    width: 25px;
+    height: 25px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: #F6C83F;
+    border: 2px solid rgba(255, 253, 247, 0.96);
+    box-shadow: 0 3px 7px rgba(115, 84, 15, 0.16);
+    color: white;
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 900;
+  }
+
+  .zone-welcome-container .zone-journey-node.is-completed .zone-journey-icon-wrap {
+    opacity: 0.88;
+  }
+
+  .zone-welcome-container .zone-journey-node.is-current .zone-journey-icon-wrap {
+    border: 4px solid var(--zone-color, #9B7BE8);
+    box-shadow:
+      0 0 0 5px color-mix(in srgb, var(--zone-color, #9B7BE8) 18%, transparent),
+      0 7px 16px rgba(70, 48, 105, 0.13);
+  }
+
+  .zone-welcome-container .zone-journey-node.is-selected .zone-journey-icon-wrap {
+    transform: translateY(-2px);
+  }
+
+  .zone-welcome-container .zone-journey-node.is-selected:not(.is-current) .zone-journey-icon-wrap {
+    border-color: rgba(245, 190, 45, 0.72);
+    box-shadow:
+      0 0 0 3px rgba(245, 190, 45, 0.12),
+      0 5px 12px rgba(70, 48, 105, 0.08);
+  }
+
+  .zone-welcome-container .zone-journey-current {
+    margin-top: 5px;
+    min-height: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    font-size: 11.5px;
+    line-height: 1;
+    font-weight: 900;
+    color: rgba(74, 52, 133, 0.92);
+    white-space: nowrap;
+  }
+
+  .zone-welcome-container .zone-journey-progress {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+  }
+
+  .zone-welcome-container .zone-journey-progress span {
+    width: 15px;
     height: 4px;
     border-radius: 999px;
     background: rgba(122, 96, 180, 0.16);
   }
 
-  .zone-welcome-container .journey-progress-segment.filled {
+  .zone-welcome-container .zone-journey-progress span.filled {
     background: var(--zone-color, #9B7BE8);
   }
 
-  .zone-welcome-container .journey-tile-label {
-    font-family: 'Nunito', sans-serif;
+  .zone-welcome-container .zone-journey-up-next {
+    margin-top: 6px;
     font-size: 10.5px;
     line-height: 1;
     font-weight: 800;
-    color: rgba(93, 69, 150, 0.78);
+    color: rgba(93, 69, 150, 0.72);
     white-space: nowrap;
   }
 
-  .zone-welcome-container .journey-tile-label--next {
-    color: rgba(114, 84, 178, 0.76);
-  }
-
-  .zone-welcome-container .tablet-feature-layout .is-journey-tile.completed {
-    opacity: 0.88;
-  }
-
-  .zone-welcome-container .tablet-feature-layout .is-journey-tile.locked-scene {
+  .zone-welcome-container .zone-journey-node.is-locked {
     cursor: default;
-    opacity: 0.48;
+    opacity: 0.44;
+  }
+
+  .zone-welcome-container .zone-journey-lock {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(239, 232, 249, 0.50);
+  }
+
+  .zone-welcome-container .zone-journey-lock img {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
   }
 
   .zone-welcome-container .zone-card-ganesha-guide,
@@ -2485,6 +2526,7 @@ button[style*="position: fixed"][style*="background: purple"] {
   }
 
   .zone-welcome-container .stats-bottom-bar {
-    bottom: 14px;
+    bottom: 12px;
   }
 }
+

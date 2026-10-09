@@ -141,10 +141,10 @@ const ZoneWelcome = ({
   const isPhoneLandscape =
     typeof window !== 'undefined' &&
     window.matchMedia('(orientation: landscape) and (max-height: 500px) and (max-width: 1023px)').matches;
-  const isTabletLandscape =
+  const usesFocusJourneyLayout =
     typeof window !== 'undefined' &&
     window.matchMedia(
-      '(orientation: landscape) and (min-height: 501px) and (min-width: 769px) and (max-width: 1440px)'
+      '(orientation: landscape) and (min-height: 501px) and (min-width: 769px)'
     ).matches;
   const usesPhoneSceneCarousel =
     zoneData?.id === 'shloka-river' && (zoneData?.scenes?.length || 0) > 4;
@@ -1083,6 +1083,180 @@ const handleReplayIntroStory = () => {
             ].join(' ')}
             onScroll={usesPhoneSceneCarousel ? updateSceneCarouselState : undefined}
           >
+            {usesFocusJourneyLayout ? (
+              <>
+                {featuredScene && (() => {
+                  const scene = featuredScene;
+                  const status = sceneStatuses[scene.id];
+
+                  return (
+                    <div
+                      className={`zone-scene-card scene-card zone-card tablet-featured-card ${status.status}`}
+                      style={{
+                        '--zone-color': getCardAccentColor(),
+                      }}
+                    >
+                      <div className="scene-order-indicator">
+                        {scene.order}
+                      </div>
+
+                      {(status.status === 'completed' || sceneProgress[scene.id]?.completed === true) && (
+                        <div className="scene-complete-badge scene-complete-icon">
+                          ✓
+                        </div>
+                      )}
+
+                      <div className="zone-inner">
+                        <div className="scene-icon-area">
+                          <div className="icon-circle">
+                            {scene.iconImage ? (
+                              <img
+                                src={scene.iconImage}
+                                alt=""
+                                className="scene-icon-img"
+                              />
+                            ) : (
+                              <div className="scene-emoji">
+                                {scene.emoji}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="scene-name-area">
+                          <div className="scene-name">
+                            {scene.name}
+                          </div>
+                        </div>
+
+                        <div className="scene-action-integrated featured-action-area">
+                          {status.status !== 'locked' && (
+                            <ProfilePillBtn
+                              className={`zone-welcome-cta featured-zone-cta ${status.status}`}
+                              onClick={(e) => {
+                                e.stopPropagation();
+
+                                if (status.status === 'in-progress') {
+                                  handleSceneClick(scene, 'continue');
+                                  return;
+                                }
+
+                                if (status.status === 'completed') {
+                                  handleSceneClick(scene, 'replay');
+                                  return;
+                                }
+
+                                handleSceneClick(scene, 'start');
+                              }}
+                              label={
+                                status.status === 'in-progress'
+                                  ? 'Continue'
+                                  : status.status === 'completed'
+                                    ? 'Play Again'
+                                    : 'Start'
+                              }
+                              size="sm"
+                              fullWidth={true}
+                              style={getProfilePillBtnStyle(zoneData.id)}
+                            />
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
+
+                <div
+                  className={`zone-journey-strip zone-journey-strip--${zoneData.scenes.length}`}
+                  aria-label={`${zoneData.name} journey`}
+                >
+                  {zoneData.scenes.map((scene) => {
+                    const status = sceneStatuses[scene.id];
+                    const isActualCurrent = actualCurrentScene?.id === scene.id;
+                    const isSelected = featuredScene?.id === scene.id;
+                    const progressSegments = getJourneyProgressSegments(scene);
+                    const isCompleted =
+                      status.status === 'completed' ||
+                      sceneProgress[scene.id]?.completed === true;
+                    const isLocked = status.status === 'locked';
+
+                    return (
+                      <button
+                        key={scene.id}
+                        type="button"
+                        className={[
+                          'zone-journey-node',
+                          isCompleted ? 'is-completed' : '',
+                          isLocked ? 'is-locked' : '',
+                          isActualCurrent ? 'is-current' : '',
+                          isSelected ? 'is-selected' : '',
+                        ].join(' ')}
+                        aria-label={`${scene.order}. ${scene.name}`}
+                        disabled={isLocked}
+                        onClick={() => {
+                          if (isLocked) return;
+
+                          playUiTap(0.18);
+                          setSelectedFeaturedSceneId(scene.id);
+                        }}
+                      >
+                        <div className="zone-journey-icon-wrap">
+                          {scene.iconImage ? (
+                            <img
+                              src={scene.iconImage}
+                              alt=""
+                              className="zone-journey-icon"
+                            />
+                          ) : (
+                            <span className="zone-journey-emoji">
+                              {scene.emoji}
+                            </span>
+                          )}
+
+                          {isCompleted && (
+                            <span className="zone-journey-check" aria-hidden="true">
+                              ✓
+                            </span>
+                          )}
+
+                          {isLocked && (
+                            <span className="zone-journey-lock" aria-hidden="true">
+                              <img src="/images/map/lock.webp" alt="" />
+                            </span>
+                          )}
+                        </div>
+
+                        <span className="zone-journey-number">
+                          {scene.order}
+                        </span>
+
+                        {isActualCurrent && status.status === 'in-progress' && (
+                          <div className="zone-journey-current">
+                            <div className="zone-journey-progress" aria-hidden="true">
+                              {[0, 1, 2].map((segmentIndex) => (
+                                <span
+                                  key={segmentIndex}
+                                  className={segmentIndex < progressSegments ? 'filled' : ''}
+                                />
+                              ))}
+                            </div>
+
+                            <span>In progress</span>
+                          </div>
+                        )}
+
+                        {isActualCurrent && status.status === 'available' && (
+                          <span className="zone-journey-up-next">
+                            Up next
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </>
+            ) : (
+              <>
             {zoneData.scenes.map((scene, index) => {
             const status = sceneStatuses[scene.id];
             const isNextScene = recommendedScene && recommendedScene.id === scene.id;
@@ -1113,7 +1287,7 @@ const handleReplayIntroStory = () => {
                   '--zone-color': getCardAccentColor()
                 }}
                 onClick={() => {
-                  if (isTabletLandscape) {
+                  if (usesFocusJourneyLayout) {
                     if (status.status === 'locked') {
                       return;
                     }
@@ -1213,7 +1387,7 @@ const handleReplayIntroStory = () => {
                   </div>
 
                   {/* ✨ NEW: Integrated Action Area (Bottom) */}
-                  {isTabletLandscape ? (
+                  {usesFocusJourneyLayout ? (
                     isFeatured ? (
                       <div className="scene-action-integrated featured-action-area">
                         {status.status !== 'locked' && (
@@ -1378,6 +1552,8 @@ const handleReplayIntroStory = () => {
               </div>
             )}
             */}
+              </>
+            )}
           </div>
           {usesPhoneSceneCarousel && (
             <button
@@ -1393,7 +1569,9 @@ const handleReplayIntroStory = () => {
         </div>
       </div>
 
-{/* JOURNEY PANEL — progress pill at bottom */}
+{/* JOURNEY PANEL — progress pill at bottom.
+    Tablet uses the permanent journey strip instead, so this duplicate is hidden there. */}
+{!usesFocusJourneyLayout && (
 <div className="stats-bottom-bar">
   {Object.keys(sceneProgress).length > 0 ? (() => {
     const zoneStats = getZoneStats();
@@ -1431,6 +1609,7 @@ const handleReplayIntroStory = () => {
     <div className="stats-loading">🎒 Loading...</div>
   )}
 </div>
+)}
 
       {/* ✅ DISNEY: Add CSS for unlock animations */}
       {/* ✅ FIXED: Regular CSS styles instead of jsx */}

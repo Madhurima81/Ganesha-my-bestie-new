@@ -4,7 +4,6 @@ import { attachSpeechCue, startCueTimer } from '../utils/speechCue';
 import {
   getVoiceScript,
   getAudioPath,
-  getSfxPath,
   getMusicPath,
   getPhaseHint,
   getRandomEncouragement,
@@ -12,7 +11,8 @@ import {
   getWordPath
 } from '../config/content/voiceGuidance';
 
-import { isSfxOn, isAmbientOn, subscribeSoundPrefs } from '../utils/soundPrefs';
+import { isAmbientOn, subscribeSoundPrefs } from '../utils/soundPrefs';
+import { sfx } from '../audio/sfx';
 
 // The audio toggle is a VOICE mute (see DECISIONS.md 2026-09-29, T55): when the
 // shared preference is off, ALL voice — guidance VO, hints, Sanskrit words and
@@ -33,29 +33,7 @@ export const estimateSpeechMs = (text) => {
   return words ? Math.max(900, words * 380 + 300) : 1500;
 };
 
-// ========================================
-// MIX PROFILE (child-safe defaults)
-// ========================================
-// These are base levels; final level = base * sfxVolume * duckFactor(when VO active)
-const SFX_BASE_VOLUME = {
-  tap: 0.32,            // 28–36%
-  softWrong: 0.28,      // 24–32%
-  discovery: 0.37,      // 32–42%
-  revealBloom: 0.41,    // 36–46%
-  place: 0.33,          // 28–38%
-  transition: 0.29,     // 24–34%
-  emotionalGlow: 0.47,  // 42–52%
-  celebration: 0.43,    // 38–48%
-  idleHint: 0.22,       // 18–26%
-
-  // Legacy compatibility
-  error: 0.28,
-  success: 0.37,
-  powerUnlock: 0.47,
-  whoosh: 0.29,
-  pop: 0.33,
-  chime: 0.41
-};
+// SFX levels, files and legacy-name aliases now live in lib/audio/sfx.js (the shared engine).
 
 const VO_DUCK_FACTOR = 0.7; // ~30% reduction while VO is active
 
@@ -151,6 +129,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
 
   const applyVoDuck = useCallback(() => {
     voDuckActiveRef.current = true;
+    sfx.setVoiceActive(true);
     if (musicRef.current) {
       musicRef.current.volume = Math.min(1, Math.max(0, musicVolume * VO_DUCK_FACTOR));
     }
@@ -158,6 +137,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
 
   const clearVoDuck = useCallback(() => {
     voDuckActiveRef.current = false;
+    sfx.setVoiceActive(false);
     if (musicRef.current) {
       musicRef.current.volume = Math.min(1, Math.max(0, musicVolume));
     }
@@ -429,48 +409,13 @@ const useVoiceGuidance = (zoneId, sceneId, {
   // SFX PLAYBACK
   // ========================================
 
+  // Thin wrapper: the shared engine (lib/audio/sfx.js) owns files, levels, duck and Settings gating.
+  // `key` may be a role ('correct') or a legacy name ('success', 'chime').
   const playSfx = useCallback((key) => {
-    if (!isSfxOn()) return; // Parent Settings > Sound effects
-    const path = getSfxPath(key);
-    if (!path) {
-      console.warn(`SFX not found: ${key}`);
-      return;
-    }
-
-    // Allow multiple SFX to overlap
-    const audio = new Audio(path);
-    const base = SFX_BASE_VOLUME[key] ?? 0.35;
-    const duck = voDuckActiveRef.current ? VO_DUCK_FACTOR : 1;
-    audio.volume = Math.min(1, Math.max(0, base * sfxVolume * duck));
-
-    audio.onerror = (e) => {
-      // Fallback to legacy /audio/sfx folder if mapped pack file is missing.
-      const fallbackPath = path.replace('/audio/sfx-role-mapping-2/', '/audio/sfx/');
-      if (fallbackPath !== path) {
-        const fallbackAudio = new Audio(fallbackPath);
-        const baseFallback = SFX_BASE_VOLUME[key] ?? 0.35;
-        const duckFallback = voDuckActiveRef.current ? VO_DUCK_FACTOR : 1;
-        fallbackAudio.volume = Math.min(1, Math.max(0, baseFallback * sfxVolume * duckFallback));
-        fallbackAudio.onerror = (err) => {
-          console.error(`Error playing SFX ${key} (mapped + fallback failed):`, err);
-        };
-        fallbackAudio.play().catch(err => {
-          console.error('SFX fallback play failed:', err);
-        });
-        return;
-      }
-      console.error(`Error playing SFX ${key}:`, e);
-    };
-
-    audio.play().catch(err => {
-      if (!path.includes('/audio/sfx-role-mapping-2/')) {
-        console.error('SFX play failed:', err);
-      }
-    });
-
+    sfx.play(key);
     // Reset idle timer on interaction
     lastInteractionRef.current = Date.now();
-  }, [sfxVolume]);
+  }, []);
 
   // ========================================
   // BACKGROUND MUSIC
