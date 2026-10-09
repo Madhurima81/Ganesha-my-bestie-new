@@ -529,13 +529,11 @@ const CleanProfileSelector = ({
         {showCreateProfile && (
           <div className="clean-modal-overlay scroll-overlay">
             {/* [welcome mute removed 2026-10-09] mute lives on Home map + Parent Dashboard; uncomment to restore.
-            {/* [welcome mute removed 2026-10-09] mute lives on Home map + Parent Dashboard; uncomment to restore.
             <AudioToggle
               isAudioOn={isAudioOn}
               onToggle={toggleAudio}
               position="top-right"
             />
-            */}
             */}
             {/* SCROLL SKIN â€” bg image lives behind, scroll PNG frames the card */}
             <div className="scroll-card">

@@ -3,7 +3,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import './CleanMapZone.css';
 import GameStateManager from '../lib/services/GameStateManager';
 import { GANESHA_POSE_ASSETS } from '../lib/config/ganeshaUsageSystem';
-import { isSfxOn, isAmbientOn, subscribeSoundPrefs } from '../lib/utils/soundPrefs';
+import { isSfxOn } from '../lib/utils/soundPrefs';
+import { ambience } from '../lib/audio/ambience';
 import HoldMuteButton from '../lib/components/ui/HoldMuteButton/HoldMuteButton';
 // import ZonePreviewModal from './components/ZonePreviewModal'; // commented out — no preview modal
 import useAudioPreference from '../lib/hooks/useAudioPreference';
@@ -297,28 +298,28 @@ const PHONE_LANDSCAPE_QUERY =
   '(orientation: landscape) and (max-height: 500px) and (max-width: 1023px)';
 
 const PHONE_MAP_ZONE_ART = {
-  symbol:    { left: 11, top: 18, w: 21, h: 27 },
-  river:     { left: 50, top: 55, w: 96, h: 116, centered: true },
-  hut:       { left: 21, top: 50, w: 25, h: 30 },
-  festival:  { left: 73, top: 45, w: 23, h: 29 },
-  treehouse: { left: 66, top: 67, w: 18, h: 23 },
+  symbol:    { left: 18, top: 18, w: 24, h: 32 },
+  river:     { left: 66, top: 59, w: 70, h: 96, centered: true },
+  hut:       { left: 27, top: 56, w: 21, h: 26 },
+  festival:  { left: 79, top: 48, w: 15, h: 19 },
+  treehouse: { left: 72, top: 69, w: 13, h: 17 },
 };
 
 const PHONE_MAP_OVERLAYS = {
-  symbolLabel:      { left: 17, top: 13 },
-  riverLabel:       { left: 69, top: 13 },
-  hutLabel:         { left: 8,  top: 58 },
-  festivalLabel:    { left: 74, top: 43 },
-  treehouseLabel:   { left: 65, top: 69 },
-  ganeshaSymbol:    { left: 34, top: 49 },
-  ganeshaRiver:     { left: 64, top: 44 },
-  ganeshaHut:       { left: 30, top: 67 },
-  ganeshaFestival:  { left: 72, top: 59 },
-  ganeshaTreehouse: { left: 62, top: 66 },
+  symbolLabel:      { left: 21, top: 12 },
+  riverLabel:       { left: 70, top: 12 },
+  hutLabel:         { left: 14, top: 57 },
+  festivalLabel:    { left: 76, top: 45 },
+  treehouseLabel:   { left: 70, top: 70 },
+  ganeshaSymbol:    { left: 39, top: 49 },
+  ganeshaRiver:     { left: 70, top: 43 },
+  ganeshaHut:       { left: 32, top: 67 },
+  ganeshaFestival:  { left: 75, top: 58 },
+  ganeshaTreehouse: { left: 68, top: 68 },
   ganeshaAllDone:   { left: 50, top: 78 },
-  creatureSymbol:   { left: 31, top: 27 },
-  creatureRiver:    { left: 72, top: 21 },
-  creatureHut:      { left: 24, top: 56 },
+  creatureSymbol:   { left: 36, top: 29 },
+  creatureRiver:    { left: 76, top: 22 },
+  creatureHut:      { left: 28, top: 58 },
 };
 
 const PHONE_ZONE_MUSHIKA_POS = {
@@ -374,35 +375,22 @@ const ZONE_CREATURES = {
 // Permanent decorative props placed via the Map Prop Editor.
 // To adjust: open the editor (🌿 Edit Props button), tweak, Copy JSON, paste here.
 const MAP_PROPS = [
-  { id: 'tree2-6', type: 'tree2', src: '/images/map/tree2.webp', left: 57, top: 76.9, w: 4, flip: false },
+  { id: 'tree2-6', type: 'tree2', src: '/images/map/tree2.webp', left: 75.6, top: 77, w: 4, flip: false },
   { id: 'tree1-9', type: 'tree1', src: '/images/map/tree1.webp', left: 89.8, top: 65.3, w: 6, flip: false },
-  { id: 'flower1-25', type: 'flower1', src: '/images/map/flower1.webp', left: 9.1, top: 45.2, w: 3, flip: false },
-  { id: 'flower2-26', type: 'flower2', src: '/images/map/flower2.webp', left: 50.4, top: 47.8, w: 3, flip: false },
-  { id: 'flower2-31', type: 'flower2', src: '/images/map/flower2.webp', left: 72.8, top: 59.9, w: 3, flip: false },
-  { id: 'flower1-32', type: 'flower1', src: '/images/map/flower1.webp', left: 44.4, top: 69, w: 3, flip: true },
+  { id: 'flower1-25', type: 'flower1', src: '/images/map/flower1.webp', left: 34, top: 36.1, w: 3, flip: false },
+  { id: 'flower2-31', type: 'flower2', src: '/images/map/flower2.webp', left: 66.1, top: 56, w: 3, flip: false },
+  { id: 'flower1-32', type: 'flower1', src: '/images/map/flower1.webp', left: 67.6, top: 58.5, w: 3, flip: true },
   { id: 'flower1-34', type: 'flower1', src: '/images/map/flower1.webp', left: 81.8, top: 87.1, w: 3, flip: false },
-  { id: 'flower1-35', type: 'flower1', src: '/images/map/flower1.webp', left: 67.8, top: 90.4, w: 3, flip: false },
-  { id: 'flower1-36', type: 'flower1', src: '/images/map/flower1.webp', left: 45.1, top: 85.3, w: 4, flip: false },
+  { id: 'flower1-35', type: 'flower1', src: '/images/map/flower1.webp', left: 76.6, top: 72.7, w: 3, flip: false },
+  { id: 'flower1-36', type: 'flower1', src: '/images/map/flower1.webp', left: 72.3, top: 43.3, w: 4, flip: false },
   { id: 'grass-39', type: 'grass', src: '/images/map/grass.webp', left: 55, top: 40, w: 3, flip: true },
-  { id: 'grass-40', type: 'grass', src: '/images/map/grass.webp', left: 55.5, top: 85.2, w: 3, flip: false },
-  { id: 'grass-41', type: 'grass', src: '/images/map/grass.webp', left: 5.3, top: 41.5, w: 3, flip: false },
-  { id: 'grass-45', type: 'grass', src: '/images/map/grass.webp', left: 40.2, top: 80.3, w: 3, flip: false },
   { id: 'grass-46', type: 'grass', src: '/images/map/grass.webp', left: 93.8, top: 39.2, w: 3, flip: false },
   { id: 'grass-48', type: 'grass', src: '/images/map/grass.webp', left: 92.6, top: 40.8, w: 3, flip: false },
-  { id: 'grass-49', type: 'grass', src: '/images/map/grass.webp', left: 57, top: 84.3, w: 3, flip: false },
   { id: 'grass-51', type: 'grass', src: '/images/map/grass.webp', left: 93, top: 78.8, w: 3, flip: false },
   { id: 'grass-52', type: 'grass', src: '/images/map/grass.webp', left: 81.8, top: 81.1, w: 3, flip: false },
-  { id: 'tree1-54', type: 'tree1', src: '/images/map/tree1.webp', left: 1.9, top: 51.9, w: 6, flip: false },
-  { id: 'tree1-55', type: 'tree1', src: '/images/map/tree1.webp', left: 43.1, top: 47.3, w: 4, flip: false },
-  { id: 'tree2-56', type: 'tree2', src: '/images/map/tree2.webp', left: 41.1, top: 45.5, w: 3, flip: false },
-  { id: 'flower1-57', type: 'flower1', src: '/images/map/flower1.webp', left: 31.3, top: 45.3, w: 4, flip: false },
-  { id: 'grass-58', type: 'grass', src: '/images/map/grass.webp', left: 63.4, top: 48, w: 4, flip: false },
-  { id: 'grass-59', type: 'grass', src: '/images/map/grass.webp', left: 32.9, top: 36.3, w: 4, flip: false },
-  { id: 'bush1-62', type: 'bush1', src: '/images/map/bush1.webp', left: 14.4, top: 45.6, w: 5, flip: false },
-  { id: 'bush1-64', type: 'bush1', src: '/images/map/bush1.webp', left: 25.3, top: 45.7, w: 5, flip: false },
-  { id: 'bush2-65', type: 'bush2', src: '/images/map/bush2.webp', left: 23.4, top: 46.8, w: 4, flip: false },
+  { id: 'tree1-55', type: 'tree1', src: '/images/map/tree1.webp', left: 49.4, top: 39.9, w: 4, flip: false },
   { id: 'flower1-66', type: 'flower1', src: '/images/map/flower1.webp', left: 45, top: 48, w: 5, flip: false },
-  { id: 'flower2-67', type: 'flower2', src: '/images/map/flower2.webp', left: 45, top: 48, w: 5, flip: false },
+  { id: 'flower2-67', type: 'flower2', src: '/images/map/flower2.webp', left: 48.2, top: 52.6, w: 5, flip: false },
 ];
 
 const MAP_PROPS_STORAGE_KEY = 'gmb_map_props';
@@ -425,10 +413,10 @@ const MAP_OVERLAY_DEFAULTS = {
     label: 'Modak Title',
     kind: 'label',
     text: 'Modak Mountain',
-    left: 18,
-    top: 15,
-    w: 24,
-    h: 5,
+    left: 25.1,
+    top: 5.7,
+    w: 22,
+    h: 3,
   },
   riverLabel: {
     id: 'riverLabel',
@@ -728,10 +716,10 @@ const MAP_ZONE_ART_DEFAULTS = {
     id: 'symbol',
     label: 'Modak Mountain',
     src: '/images/map/modakmtn-shell.webp',
-    left: 9,
-    top: 22,
-    w: 21,
-    h: 22,
+    left: 13,
+    top: 16.3,
+    w: 24,
+    h: 25,
     centered: false,
     flip: false,
     rotate: 0,
@@ -740,11 +728,11 @@ const MAP_ZONE_ART_DEFAULTS = {
   river: {
     id: 'river',
     label: 'River',
-    src: '/images/map/shlokariver-falls.webp',
-    left: 57.8,
-    top: 57.2,
-    w: 86,
-    h: 96,
+    src: '/images/map/shlokariver-new.webp',
+    left: 59.4,
+    top: 58.4,
+    w: 74,
+    h: 104,
     centered: true,
     flip: false,
     rotate: 0,
@@ -782,8 +770,8 @@ const MAP_ZONE_ART_DEFAULTS = {
     id: 'cave',
     label: 'Wonder Caves',
     src: '/images/map/cavelight.webp',
-    left: 73,
-    top: 41,
+    left: 72.3,
+    top: 40.1,
     w: 28,
     h: 26,
     centered: false,
@@ -808,8 +796,8 @@ const MAP_ZONE_ART_DEFAULTS = {
     id: 'festival',
     label: 'Lotus Square',
     src: '/images/map/festivalsq1.webp',
-    left: 70.7,
-    top: 44.1,
+    left: 66.4,
+    top: 26.9,
     w: 30,
     h: 30,
     centered: false,
@@ -821,8 +809,8 @@ const MAP_ZONE_ART_DEFAULTS = {
     id: 'treehouse',
     label: 'Tusk Treehouse',
     src: '/images/map/treehouse1.webp',
-    left: 65,
-    top: 70,
+    left: 73.2,
+    top: 57.8,
     w: 22,
     h: 26,
     centered: false,
@@ -839,7 +827,8 @@ const loadSavedZoneArt = () => {
     const parsed = JSON.parse(raw);
     const merged = {};
     Object.entries(MAP_ZONE_ART_DEFAULTS).forEach(([key, value]) => {
-      merged[key] = { ...value, ...(parsed[key] || {}) };
+      // River art was replaced (2026-10-09): ignore any saved river layout so the new asset shows
+      merged[key] = key === 'river' ? value : { ...value, ...(parsed[key] || {}) };
     });
     return merged;
   } catch {
@@ -1017,8 +1006,6 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
   const voiceTimersRef = useRef([]);
   const mushikaTimerRef = useRef(null);
   const labelPulseTimerRef = useRef(null);
-  const ambientRef = useRef(null);
-  const fadingRef = useRef(null);
   const prevZoneStatesRef = useRef(null);
   const prevGaneshaPosRef = useRef(null);
   const walkTimerRef = useRef(null);
@@ -1028,8 +1015,6 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
   // Voice mute only (Home hold-to-mute / Settings > Voice). Ambient loop and SFX keep playing.
   const isMuted = !isAudioOn;
   // Parent Settings > Ambience: follows the switch live (Settings can change while the map is open).
-  const [ambientOn, setAmbientOn] = useState(isAmbientOn);
-  useEffect(() => subscribeSoundPrefs((kind, on) => { if (kind === 'ambience') setAmbientOn(on); }), []);
 
   // Freemium extension point: Day-3-or-later return is the other paywall-trigger
   // moment (alongside Zone 1 completion in GameStateManager.unlockNextScene). No
@@ -1096,38 +1081,48 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
     if (art?.rotateY) transforms.push(`rotateY(${art.rotateY}deg)`);
     if (art?.rotate) transforms.push(`rotate(${art.rotate}deg)`);
 
-    // Tablet / desktop map hierarchy (phone keeps its locked composition)
+    // Map hierarchy: current / next / later / WIP (all devices)
     const hierarchyZoneId = ZONE_ART_TO_ZONE_ID[id];
+    let artLeft = art.left;
+    let artTop = art.top;
     let hierarchyScale = 1;
     let hierarchyOpacity = art?.opacity ?? 1;
     let hierarchyFilter = 'none';
 
-    if (!isPhoneLandscape && hierarchyZoneId) {
+    if (hierarchyZoneId) {
       const hierarchyState = getZoneState(hierarchyZoneId, zoneProgress);
       if (hierarchyZoneId === currentMapZoneId) {
+        hierarchyScale = 1.10;
         hierarchyOpacity = 1;
-        hierarchyFilter = 'saturate(1) brightness(1)';
+        hierarchyFilter = 'saturate(1)';
       } else if (hierarchyZoneId === nextMapZoneId) {
-        // River artwork is intrinsically much larger, so suppress it harder while "next"
-        hierarchyScale = hierarchyZoneId === ZONE_IDS.RIVER ? 0.78 : 0.90;
-        hierarchyOpacity = 0.58;
-        hierarchyFilter = 'saturate(0.68) brightness(1.04)';
+        // River artwork is intrinsically much larger, so shrink it more while "next"
+        hierarchyScale = hierarchyZoneId === ZONE_IDS.RIVER ? 0.84 : 0.92;
+        hierarchyOpacity = 0.92;
+        hierarchyFilter = 'saturate(0.92)';
       } else if (hierarchyState === 'completed') {
+        hierarchyScale = 0.94;
+        hierarchyOpacity = 0.82;
+        hierarchyFilter = 'saturate(0.9) brightness(1)';
+      } else if (hierarchyZoneId === ZONE_IDS.HUT) {
+        // Zone 3 — a real destination, just not reached yet
         hierarchyScale = 0.92;
-        hierarchyOpacity = 0.80;
-        hierarchyFilter = 'saturate(0.82) brightness(1.02)';
+        hierarchyOpacity = 0.72;
+        hierarchyFilter = 'saturate(0.82)';
       } else {
-        hierarchyScale = 0.86;
-        hierarchyOpacity = 0.26;
-        hierarchyFilter = 'saturate(0.32) brightness(1.08)';
+        // Lotus Square / Tusk Treehouse — WIP, atmospheric landmarks only
+        hierarchyScale = 0.88;
+        hierarchyOpacity = 0.38;
+        hierarchyFilter = 'saturate(0.55)';
       }
+
     }
 
     if (hierarchyScale !== 1) transforms.push(`scale(${hierarchyScale})`);
 
     return {
-      left: `${art.left}%`,
-      top: `${art.top}%`,
+      left: `${artLeft}%`,
+      top: `${artTop}%`,
       width: `${art.w}%`,
       height: `${art.h}%`,
       transform: transforms.length ? transforms.join(' ') : 'none',
@@ -1262,49 +1257,8 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
     }
   };
 
-  // ── Ambient sound: fade in on mount, pause on tab-hide, resume on show ──────
-  useEffect(() => {
-    const audio = ambientRef.current;
-    if (!audio || !ambientOn) return;
-
-    const TARGET_VOL = 0.06;
-
-    const fadeIn = () => {
-      clearInterval(fadingRef.current);
-      audio.volume = 0;
-      audio.play().catch(() => {});
-      fadingRef.current = setInterval(() => {
-        const next = Math.min(audio.volume + 0.025, TARGET_VOL);
-        audio.volume = next;
-        if (next >= TARGET_VOL) clearInterval(fadingRef.current);
-      }, 80);
-    };
-
-    fadeIn();
-
-    const onFirstInteraction = () => {
-      if (audio.paused) fadeIn();
-      document.removeEventListener('pointerdown', onFirstInteraction);
-    };
-    document.addEventListener('pointerdown', onFirstInteraction);
-
-    const onVisibility = () => {
-      if (document.visibilityState === 'hidden') {
-        clearInterval(fadingRef.current);
-        audio.pause();
-      } else {
-        fadeIn();
-      }
-    };
-    document.addEventListener('visibilitychange', onVisibility);
-
-    return () => {
-      clearInterval(fadingRef.current);
-      audio.pause();
-      document.removeEventListener('pointerdown', onFirstInteraction);
-      document.removeEventListener('visibilitychange', onVisibility);
-    };
-  }, [ambientOn]);
+  // ── Ambient sound: shared player (fade, Settings, VO duck, tab-hide, autoplay unlock) ──
+  useEffect(() => ambience.play('map'), []);
 
   useEffect(() => {
     if (!isMuted) return;
@@ -1507,14 +1461,6 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
   return (
     <div className="map-container morning">
 
-      {/* Ambient sound — hidden, controlled via ambientRef */}
-      {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
-      <audio
-        ref={ambientRef}
-        src="/audio/ambient/map%20ambient%20sound.mp3"
-        loop
-        preload="metadata"
-      />
 
       <HoldMuteButton position="bottom-left" />
 
@@ -1538,10 +1484,10 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
             handleZoneClick(ZONES_DATA.find((zone) => zone.id === 'symbol-mountain'), getZoneState('symbol-mountain', zoneProgress));
           }
         }}
-        style={getZoneArtStyle('symbol', { cursor: 'pointer', pointerEvents: 'auto' })}
+        style={getZoneArtStyle('symbol', { pointerEvents: 'none' })}
       />
       <img
-        src="/images/map/shlokariver-falls.webp"
+        src={zoneArtItems.river?.src || '/images/map/shlokariver-new.webp'}
         alt=""
         className="map-zone-art map-zone-art-river"
         aria-hidden="true"
@@ -1580,7 +1526,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
             handleZoneClick(ZONES_DATA.find((zone) => zone.id === 'cave-of-secrets'), getZoneState('cave-of-secrets', zoneProgress));
           }
         }}
-        style={getZoneArtStyle('cave', { cursor: 'pointer', pointerEvents: 'auto' })}
+        style={getZoneArtStyle('cave', { pointerEvents: 'none' })}
       />
       */}
       <img
@@ -1597,7 +1543,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
             handleZoneClick(ZONES_DATA.find((zone) => zone.id === 'about-me-hut'), getZoneState('about-me-hut', zoneProgress));
           }
         }}
-        style={getZoneArtStyle('hut', { cursor: 'pointer', pointerEvents: 'auto' })}
+        style={getZoneArtStyle('hut', { pointerEvents: 'none' })}
       />
       <img
         src="/images/map/festivalsq1.webp"
@@ -1613,7 +1559,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
             handleZoneClick(ZONES_DATA.find((zone) => zone.id === 'festival-square'), getZoneState('festival-square', zoneProgress));
           }
         }}
-        style={getZoneArtStyle('festival', { cursor: 'pointer', pointerEvents: 'auto' })}
+        style={getZoneArtStyle('festival', { pointerEvents: 'none' })}
       />
       <img
         src="/images/map/treehouse1.webp"
@@ -1629,7 +1575,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
             handleZoneClick(ZONES_DATA.find((zone) => zone.id === 'story-treehouse'), getZoneState('story-treehouse', zoneProgress));
           }
         }}
-        style={getZoneArtStyle('treehouse', { cursor: 'pointer', pointerEvents: 'auto' })}
+        style={getZoneArtStyle('treehouse', { pointerEvents: 'none' })}
       />
 
       {/* Drifting clouds — CSS shapes, no image needed */}
@@ -1640,6 +1586,8 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
       {propItems.map(p => (
         <img
           key={p.id}
+          className="map-decor-prop"
+          data-prop-type={p.type}
           src={p.src}
           alt=""
           aria-hidden="true"
@@ -1699,8 +1647,22 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         const isCurrentMapZone = zone.id === currentMapZoneId;
         const isNextMapZone = zone.id === nextMapZoneId;
         const isCompletedMapZone = baseState === 'completed';
-        // Label only current, next and completed zones; distant zones stay as muted landmarks.
-        const shouldShowZoneLabel = isCurrentMapZone || isNextMapZone || isCompletedMapZone;
+        // Label current, next, completed and the later real zone (Lodge); WIP zones stay unlabelled landmarks.
+        const isLaterRealZone = zone.id === ZONE_IDS.HUT && !isCurrentMapZone && !isNextMapZone && !isCompletedMapZone;
+        const shouldShowZoneLabel = isCurrentMapZone || isNextMapZone || isCompletedMapZone || isLaterRealZone;
+
+        const lockArtId = isLaterRealZone && state === 'locked'
+          ? Object.keys(ZONE_ART_TO_ZONE_ID).find((k) => ZONE_ART_TO_ZONE_ID[k] === zone.id)
+          : null;
+        const lockArt = lockArtId
+          ? { ...zoneArtItems[lockArtId], ...(isPhoneLandscape ? PHONE_MAP_ZONE_ART[lockArtId] : {}) }
+          : null;
+        const lockBadgeStyle = lockArt
+          ? {
+              left: `${lockArt.centered ? lockArt.left : lockArt.left + lockArt.w / 2}%`,
+              top: `${lockArt.centered ? lockArt.top : lockArt.top + lockArt.h / 2}%`,
+            }
+          : null;
 
         return (
           <div key={zone.id} className={`zone-group ${state === 'completed' ? 'zone-complete' : ''}`}>
@@ -1711,6 +1673,11 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
               aria-disabled={isDisabled}
             />
 
+            {/* Lock badge on the later real zone only; WIP zones are "coming later", not locked */}
+            {lockBadgeStyle && (
+              <span className="zone-lock-badge" aria-hidden="true" style={lockBadgeStyle}>🔒</span>
+            )}
+
             {/* Label */}
             {shouldShowZoneLabel && (
               <div
@@ -1720,6 +1687,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
                   isSymbolMountainZone ? 'zone-title' : '',
                   isCurrentMapZone ? 'map-label-current' : '',
                   isNextMapZone ? 'map-label-next' : '',
+                  isLaterRealZone ? 'map-label-later' : '',
                   isCompletedMapZone && !isCurrentMapZone ? 'map-label-completed' : '',
                   pulsingLabelZoneId === zone.id ? 'label-tap-pulse' : '',
                   state === 'coming-soon' ? 'label-coming-soon' : '',
