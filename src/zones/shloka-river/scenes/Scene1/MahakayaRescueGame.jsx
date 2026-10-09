@@ -190,6 +190,10 @@ export default function MahakayaRescueGame({
   onMicroWin = () => {},
   onPhaseComplete = () => {},
   onGameComplete = () => {},
+  // Resume: logs already on the raft (0-3), read when the game activates.
+  initialLogs = 0,
+  // Fired with the completed-log count after each log except the last (checkpoint).
+  onBeatComplete = () => {},
   voiceGuidance = {},
   isPaused = false,
   // Sidebar actually open (isPaused also covers the short replay hold after it closes): drives the
@@ -228,6 +232,8 @@ export default function MahakayaRescueGame({
   const draggingRef = useRef(null);
   const logPosRef = useRef(null);
   const completedLogsRef = useRef(0);
+  const initialLogsRef = useRef(0);
+  initialLogsRef.current = Math.max(0, Math.min(TOTAL_LOGS - 1, Number(initialLogs) || 0));
   const completionStartedRef = useRef(false);
   const debugDragRef = useRef(null);
   const debugPanelDragRef = useRef(null);
@@ -315,10 +321,11 @@ export default function MahakayaRescueGame({
     clearTimers();
     setPhase('intro');
     phaseRef.current = 'intro';
-    setActiveLog(0);
-    setCompletedLogs(0);
-    completedLogsRef.current = 0;
-    setLitCount(0);
+    const seedLogs = initialLogsRef.current;
+    setActiveLog(seedLogs);
+    setCompletedLogs(seedLogs);
+    completedLogsRef.current = seedLogs;
+    setLitCount(seedLogs);
     setLogPos(null);
     logPosRef.current = null;
     setWrongDropPulse(false);
@@ -624,6 +631,7 @@ export default function MahakayaRescueGame({
       });
     }
 
+    onBeatComplete?.(nextCompleted);
     const nextLog = nextCompleted;
     setActiveLog(nextLog);
     setLogPos(null);

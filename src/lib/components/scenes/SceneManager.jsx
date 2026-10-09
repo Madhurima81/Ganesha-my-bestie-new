@@ -8,6 +8,9 @@ export const SceneManager = ({
   sceneId,
   initialState = {},
   forceRestart = false,
+  // Opt-in: state keys (e.g. 'gamePhase') whose update is a beat boundary. An update that
+  // touches one of them is written immediately instead of waiting for the 1s autosave.
+  flushKeys = null,
 }) => {
   const [sceneState, setSceneState] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -15,6 +18,7 @@ export const SceneManager = ({
   const [isReplay, setIsReplay] = useState(false);
   const saveTimeoutRef = useRef(null);
   const hasInitialized = useRef(false);
+  const latestStateRef = useRef(null);
   
   // 🎯 ROLE: SceneManager handles ALL scene playback (normal + replay)
   // GameStateManager handles ONLY permanent completion data
@@ -289,8 +293,34 @@ const loadSceneProgress = () => {
     };
   }, [sceneState, zoneId, sceneId, isLoading, isReplay]);
   
+  latestStateRef.current = sceneState;
+
+  // Checkpoint: merge updates AND write temp/replay session right now, so a beat
+  // finished <1s before the child leaves is not lost to the debounced autosave.
+  // Callers must not pass phase 'complete' (progress saves never store it).
+  const checkpoint = (updates) => {
+    const base = latestStateRef.current;
+    if (!base) return;
+    const next = { ...base, ...updates };
+    latestStateRef.current = next;
+    setSceneState(next);
+    saveSceneProgress({ ...next, completed: false }, isReplay);
+  };
+
   // Safe state update function
   const updateState = (updates) => {
+    const base = latestStateRef.current;
+    if (flushKeys && base && Object.keys(updates).some((k) => flushKeys.includes(k))) {
+      const next = { ...base, ...updates };
+      const stage = next.gamePhase ?? next.phase;
+      const isStart = ['intro', 'initial', 'opening'].includes(stage);
+      const isEnd = next.completed === true || stage === 'complete' || next.showingCompletionScreen === true;
+      if (!isStart && !isEnd) {
+        checkpoint(updates);
+        return;
+      }
+    }
+    if (latestStateRef.current) latestStateRef.current = { ...latestStateRef.current, ...updates };
     setSceneState(currentState => {
       if (!currentState) {
         console.warn('Trying to update null state, skipping');
@@ -308,6 +338,7 @@ const loadSceneProgress = () => {
     },
     
     updateState: updateState,
+    checkpoint,
     
     trackInteraction: (elementId, data = {}) => {
       updateState({

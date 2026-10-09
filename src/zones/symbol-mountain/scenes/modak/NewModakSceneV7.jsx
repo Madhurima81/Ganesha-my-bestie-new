@@ -4,9 +4,11 @@ import { usePreloadPoses } from '../../../../lib/components/animation/PoseImage'
 //
 // Interaction vocabulary (7 beats):
 //   1. HOLD        -> calm Mooshika (press & hold until he settles)
-//   2. GUIDE       -> drag Mooshika across the muddy stepping stones  -> 2 flowers
-//   3. SWIPE       -> swipe the leafy cluster apart (2 swipes)        -> 2 flowers
-//   4. PULL + HOLD -> pull the flowering branch down and hold         -> 2 flowers
+//   2. SWIPE       -> swipe the bush open (FlowerJourneyGame2 "bush")  -> 2 flowers
+//   3. PULL + HOLD -> pull the flowering branch down and hold ("branch") -> 2 flowers
+//   4. GUIDE       -> drag Mooshika across the muddy stepping stones ("marsh") -> 2 flowers
+//      (beats 2-4 run inside FlowerJourneyGame2; Continue resumes at the next
+//       unfinished beat from the saved `flowers` count, 2 per beat)
 //   5. TAP         -> tap any flower to auto-thread the garland
 //   6. GUIDE       -> carry the finished garland to Ganesha
 //   7. REVEAL      -> Modak appears (no mechanic) as the sweet reveal
@@ -256,16 +258,6 @@ const MODAK_VO = {
   calmMooshikaEarly: 'Keep holding.',
   mooshikaCalmed: 'Mooshika stayed with it and made a little progress.',
   guidePower: 'I can keep going, one small step at a time.',
-  mudIdle: 'Guide Mooshika to the next safe spot.',
-  leavesStart: 'Two flowers are hiding in the leaves. Swipe them apart.',
-  leavesIdle: 'Swipe the leaves apart again.',
-  branchStart: 'Two flowers are too high for Mooshika. Pull the branch down.',
-  branchIdle: 'Keep holding the branch.',
-  garlandStart: 'You found all six flowers. Tap them to make a garland for Ganesha.',
-  garlandIdle: 'Tap another flower.',
-  garlandDone: 'The garland is ready! Drag it to Ganesha.',
-  carryStart: 'You brought the garland to Ganesha — and look, a sweet Modak!',
-  carryIdle: 'Drag the garland to Ganesha.',
   bellyPower: 'I can have lots of feelings and keep going.',
   modakPower: 'I can learn, keep trying, and find joy.',
   sceneComplete: 'Small steps, big feelings, and lots of trying brought Mooshika to Ganesha.'
@@ -278,16 +270,6 @@ const MODAK_VO_MOMENT = {
   calmMooshikaEarly: 'default',
   mooshikaCalmed: 'celebration',
   guidePower: 'encouragement',
-  mudIdle: 'default',
-  leavesStart: 'default',
-  leavesIdle: 'default',
-  branchStart: 'default',
-  branchIdle: 'default',
-  garlandStart: 'default',
-  garlandIdle: 'default',
-  garlandDone: 'celebration',
-  carryStart: 'default',
-  carryIdle: 'default',
   bellyPower: 'encouragement',
   modakPower: 'encouragement',
   sceneComplete: 'celebration'
@@ -387,6 +369,7 @@ const NewModakSceneMVP = ({
           // beat 5
           placedGarlandFlowers: [],
           garlandComplete: false,
+          garlandBuilt: false,
 
           // beat 6
           carryComplete: false,
@@ -658,7 +641,6 @@ const NewModakSceneMVPContent = ({
   const endDebugDrag = () => { debugDragRef.current = null; };
 
   // final celebration sync
-  const [sceneCompleteVOFinished, setSceneCompleteVOFinished] = useState(false);
   const [fireworksFinished, setFireworksFinished] = useState(false);
 
   const [showIdleGestureHint, setShowIdleGestureHint] = useState(false);
@@ -900,7 +882,8 @@ const NewModakSceneMVPContent = ({
   // for persistence/progress and reacts to their onComplete hand-off.
   // ------------------------------------------------------------------
   const handleGame2FlowersUpdate = useCallback((count) => {
-    sceneActions.updateState({ flowers: count, progress: { percentage: Math.min(15 + count * 8, 55) } });
+    // checkpoint = saved immediately (the 1s autosave is lost if the child leaves right after a beat)
+    sceneActions.checkpoint({ flowers: count, progress: { percentage: Math.min(15 + count * 8, 55) } });
   }, [sceneActions]);
 
   const handleGame2Complete = useCallback(() => {
@@ -954,10 +937,8 @@ const NewModakSceneMVPContent = ({
   };
 
   const triggerFireworks = () => {
-    setSceneCompleteVOFinished(false);
     setFireworksFinished(false);
     playCelebrationSfx();
-    playVoice('sceneComplete', () => setSceneCompleteVOFinished(true));
     setShowSparkle('final-fireworks');
   };
 
@@ -1071,10 +1052,6 @@ const NewModakSceneMVPContent = ({
   };
 
   const resumePhaseAfterPause = () => {
-    if (sceneState.phase === PHASES.CELEBRATE && !sceneCompleteVOFinished && showSparkle === 'final-fireworks') {
-      playVoice('sceneComplete', () => setSceneCompleteVOFinished(true));
-      return;
-    }
     if (!sceneState?.welcomeShown || isCelebrationOrOverlayActive) return;
     const meta = PHASE_META[sceneState.phase];
     if (meta) {
@@ -1204,11 +1181,12 @@ const NewModakSceneMVPContent = ({
       return;
     }
 
-    // Game 2 / Game 3 manage their own in-progress state internally and
-    // remount fresh from their own beginning (Bush / garland-build) on
-    // reload - just make sure the persisted flower count matches that.
+    // Game 2 resumes at its last finished beat (2 flowers per beat), Game 3
+    // restarts from garland-build. Keep the checkpoint for Game 2, rounded
+    // down so a half-finished beat restarts fresh; never reset it to 0.
     if (phase === PHASES.MUD_CROSS) {
-      sceneActions.updateState({ flowers: 0, mooshikaVisible: true });
+      const savedFlowers = Math.max(0, Math.min(6, Number(sceneState.flowers) || 0));
+      sceneActions.updateState({ flowers: savedFlowers - (savedFlowers % 2), mooshikaVisible: true });
     } else if (phase === PHASES.GARLAND_MAKING) {
       sceneActions.updateState({ flowers: 6 });
     }
@@ -1340,16 +1318,10 @@ const NewModakSceneMVPContent = ({
 
   // Final celebration sync
   useEffect(() => {
-    if (fireworksFinished && sceneCompleteVOFinished && sceneState.phase === PHASES.CELEBRATE) {
+    if (fireworksFinished && sceneState.phase === PHASES.CELEBRATE) {
       setShowMandala(true);
     }
-  }, [fireworksFinished, sceneCompleteVOFinished, sceneState.phase]);
-
-  useEffect(() => {
-    if (!fireworksFinished || sceneCompleteVOFinished) return;
-    const t = setTimeout(() => setSceneCompleteVOFinished(true), 10000);
-    return () => clearTimeout(t);
-  }, [fireworksFinished, sceneCompleteVOFinished]);
+  }, [fireworksFinished, sceneState.phase]);
 
   useEffect(() => {
     if (sceneState?.showingCompletionScreen && !showSceneCompletion) {
@@ -1411,7 +1383,6 @@ const NewModakSceneMVPContent = ({
     setShowSceneCompletion(false);
     setShowMandala(false);
     setFireworksFinished(false);
-    setSceneCompleteVOFinished(false);
     setRevealConfig(null);
     setHintResetKey(k => k + 1);
 
@@ -1508,7 +1479,7 @@ const NewModakSceneMVPContent = ({
   return (
     <div data-zone="symbol-mountain">
       {!isFinalTransitionView && <ZoneBadgeButton variant="gameplay" zoneId="symbol-mountain" onBack={() => { stopVoice(); onNavigate?.('zone-welcome'); }} />}
-      {!isFinalTransitionView && <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={toggleAudio} />}
+      {/* [per-scene mute removed 2026-10-09] !isFinalTransitionView && <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={toggleAudio} /> */}
       {!isFinalTransitionView && (
         <VOReplayButton variant="gameplay"
           getLine={() => lastVoRef.current}
@@ -1734,6 +1705,7 @@ const NewModakSceneMVPContent = ({
                       onComplete={handleGame2Complete}
                       stopVoice={stopVoice}
                       onLineSpoken={(line) => { lastVoRef.current = line; }}
+                      initialFlowers={sceneState.flowers || 0}
                     />
                   )}
 
@@ -1745,6 +1717,8 @@ const NewModakSceneMVPContent = ({
                       isPaused={isSymbolPopupOpen}
                       isAudioOn={isAudioOn}
                       onComplete={handleGame3Complete}
+                      initialBuilt={Boolean(sceneState.garlandBuilt)}
+                      onBuildComplete={() => sceneActions.checkpoint({ garlandBuilt: true })}
                       stopVoice={stopVoice}
                       onLineSpoken={(line) => { lastVoRef.current = line; }}
                     />
@@ -1824,7 +1798,25 @@ const NewModakSceneMVPContent = ({
                   { id: 'belly', petalId: 2, ring: 'middle', image: symbolBellyColored },
                   { id: 'modak', petalId: 3, ring: 'middle', image: symbolModakColored }
                 ]}
-                autoCloseMs={3000 + (3 * 950) + 2600}
+                onEarnedPetalReveal={(earnedPetal) => {
+                  const symbolByPetal = {
+                    1: 'mooshika',
+                    2: 'belly',
+                    3: 'modak',
+                  };
+                  const lines = {
+                    mooshika: 'One small step at a time.',
+                    belly: 'You held lots of feelings and kept going.',
+                    modak: 'You kept trying and found joy.',
+                  };
+                  const symbol = symbolByPetal[earnedPetal?.id];
+                  if (lines[symbol]) {
+                    // Scene-complete line plays inside the Mandala, right after the last petal line.
+                    const afterLast = symbol === 'modak' ? () => playVoice('sceneComplete') : undefined;
+                    speak(lines[symbol], { age: 7, style: 'child', moment: 'celebration', onEnd: afterLast });
+                  }
+                }}
+                autoCloseMs={3000 + (3 * 950) + 2600 + 5500}
                 message="That power is growing inside you"
                 onClose={() => {
                   setShowMandala(false);

@@ -261,6 +261,20 @@ function readTempSceneData(profileId, zoneId, sceneId) {
   }
 }
 
+function clearTransientSceneSession(profileId, zoneId, sceneId) {
+  if (!profileId || !zoneId || !sceneId) {
+    return;
+  }
+
+  const tempKey = `temp_session_${profileId}_${zoneId}_${sceneId}`;
+  const replayKey = `replay_session_${profileId}_${zoneId}_${sceneId}`;
+
+  localStorage.removeItem(tempKey);
+  localStorage.removeItem(replayKey);
+  sessionStorage.removeItem(tempKey);
+  sessionStorage.removeItem(replayKey);
+}
+
 function loadStableSceneComponent(sceneCacheRef, zoneId, sceneId) {
   const normalizedSceneId = normalizeSceneId(zoneId, sceneId);
   const key = `${zoneId}/${normalizedSceneId}`;
@@ -1114,6 +1128,13 @@ const handleSceneSelect = (sceneId, options = {}) => {
   
   // ✅ ALWAYS: Save location for continue journey
   SimpleSceneManager.setCurrentScene(currentZone, normalizedSceneId);
+
+  // Start means a clean first entry from ZoneWelcome. Clear only transient
+  // SceneManager sessions so stale "welcomeShown" flags cannot skip the
+  // opening card; permanent completion data stays untouched.
+  if (mode === 'start') {
+    clearTransientSceneSession(profileId, currentZone, normalizedSceneId);
+  }
   
   // ✅ ONLY FOR REPLAY/RESTART: Clear storage
   if (mode === 'restart' || mode === 'replay') {

@@ -217,7 +217,7 @@ invisible-hitbox-priority bug. Not yet committed. See CHANGELOG 2026-09-22.
 - [ ]
 
 **Tab Switch** — Status: [ ] EXISTS  [ ] PARTIAL  [ ] MISSING / Notes:
-**Continue / Resume** — Status: [ ] EXISTS  [ ] PARTIAL  [ ] MISSING / Notes:
+**Continue / Resume** — Status: [x] EXISTS  [ ] PARTIAL  [ ] MISSING / Notes: Resume at beat boundaries: opening -> frog trace (whole game, restarts) -> card -> Mahakaya logs (`logsPlaced` 0-3 checkpointed per log, game takes `initialLogs`) -> final card (`finalCardCollected`, never shown twice). Replay clears temp_session. Verified 2026-10-08 at 740x360 with injected state (2 logs on raft).
 **Idle Hints** — Status: [ ] EXISTS  [ ] PARTIAL  [ ] MISSING / Notes:
 
 **Gaps to fix:**
@@ -231,7 +231,7 @@ invisible-hitbox-priority bug. Not yet committed. See CHANGELOG 2026-09-22.
 - [ ]
 
 **Tab Switch** — Status: [ ] EXISTS  [ ] PARTIAL  [ ] MISSING / Notes:
-**Continue / Resume** — Status: [ ] EXISTS  [ ] PARTIAL  [ ] MISSING / Notes:
+**Continue / Resume** — Status: [x] EXISTS  [ ] PARTIAL  [ ] MISSING / Notes: Both games (canvas rub, clue holds) are single beats and restart on Continue by design. Final card checkpoint `finalCardCollected` added; verified on a production build: Continue goes straight to the completion screen, no repeat card.
 **Idle Hints** — Status: [ ] EXISTS  [ ] PARTIAL  [ ] MISSING / Notes:
 
 **Gaps to fix:**
@@ -245,7 +245,7 @@ invisible-hitbox-priority bug. Not yet committed. See CHANGELOG 2026-09-22.
 - [ ]
 
 **Tab Switch** — Status: [ ] EXISTS  [ ] PARTIAL  [ ] MISSING / Notes:
-**Continue / Resume** — Status: [ ] EXISTS  [ ] PARTIAL  [ ] MISSING / Notes:
+**Continue / Resume** — Status: [x] EXISTS  [ ] PARTIAL  [ ] MISSING / Notes: `obstaclesCleared` 0-2 (Nirvighnam, game takes `initialCleared`, plays the next obstacle's intro) and `roundsDone` 0-2 (Kurumedeva, `initialRounds`) checkpointed immediately; scene skips the opening intro when resuming. Verified resume at branch and after round 1.
 **Idle Hints** — Status: [ ] EXISTS  [ ] PARTIAL  [ ] MISSING / Notes:
 
 **Gaps to fix:**
@@ -259,7 +259,7 @@ invisible-hitbox-priority bug. Not yet committed. See CHANGELOG 2026-09-22.
 - [ ]
 
 **Tab Switch** — Status: [ ] EXISTS  [ ] PARTIAL  [ ] MISSING / Notes:
-**Continue / Resume** — Status: [ ] EXISTS  [ ] PARTIAL  [ ] MISSING / Notes:
+**Continue / Resume** — Status: [x] EXISTS  [ ] PARTIAL  [ ] MISSING / Notes: `cardsDone` 0-3 (Sarvakaryeshu, `initialCards`) and `timesDone` 0-2 (Sarvada, `initialTimes`, skips scene intro) checkpointed immediately. Verified resume at card 3 and at the afternoon.
 **Idle Hints** — Status: [ ] EXISTS  [ ] PARTIAL  [ ] MISSING / Notes:
 
 **Gaps to fix:**
@@ -273,7 +273,7 @@ invisible-hitbox-priority bug. Not yet committed. See CHANGELOG 2026-09-22.
 - [ ]
 
 **Tab Switch** — Status: [ ] EXISTS  [ ] PARTIAL  [ ] MISSING / Notes:
-**Continue / Resume** — Status: [ ] EXISTS  [ ] PARTIAL  [ ] MISSING / Notes:
+**Continue / Resume** — Status: [x] EXISTS  [ ] PARTIAL  [ ] MISSING / Notes: `wordsPlaced` 0-7 checkpointed per correct boat; ARRANGE seeds slots/active slot, skips the whole-shloka intro and target-word audio. Verified resume with 3 boats placed.
 **Idle Hints** — Status: [ ] EXISTS  [ ] PARTIAL  [ ] MISSING / Notes:
 
 **Gaps to fix:**

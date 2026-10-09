@@ -127,18 +127,7 @@ const missionImages = {
 // ==================== V6 GAMEPLAY CONFIG ====================
 // Coordinates are % of the background container.
 const ROCK_HOLD_MS = 1600;
-const ROCK_HIT_ZONE = {
-  left: 0.16,
-  top: 0.18,
-  width: 0.66,
-  height: 0.68,
-};
-const REEDS_START_POINT = { x: 53, y: 64 };
 const REEDS_DRAG_DISTANCE = 90;
-// Measured against the live-rendered .pond-trunk-lotus box (top-left
-// anchored, no centering transform) at the default layout — the old (80, 68)
-// was off by 6-7% in both axes, well clear of the actual lotus artwork.
-const LOTUS_HOLD_POINT = { x: 73.9, y: 61 };
 
 // Lotus phase: press-and-hold to bloom. Same forgiving-release feel as before.
 const LOTUS_HOLD_MS = 1800;
@@ -317,24 +306,33 @@ const PondSceneContent = ({
   }, []);
   const DEFAULT_POND_LAYOUT = {
     rock: { x: 32, y: 46.7, size: 20.5 },
-    flowers: { x: 49.7, y: 56.4, size: 9 },
-    lotus: { x: 65, y: 48.5, size: 8.5 },
-    lotusHit: { x: 63.5, y: 45, size: 7 },
+    rockHit: { x: 35.3, y: 50.4, size: 13.6 },
+    flowers: { x: 50.6, y: 49.3, size: 9 },
+    lotus: { x: 64.3, y: 43.6, size: 8.5 },
+    lotusHit: { x: 63.8, y: 43.3, size: 7 },
     reflection: { x: 76, y: 66, size: 20 },
     water: { x: 0, y: 67.8, size: 78 },
     streamOverlay: { x: 0.1, y: 30, size: 81 },
     // Each flower and pebble is now a fully independent stage-positioned
     // element (own x/y/size) — NOT nested inside the reeds-swipe group, so
     // dragging one never drags the others as a group.
-    flower1: { x: 52, y: 58, size: 6 },
-    flower2: { x: 53.7, y: 60.6, size: 5 },
-    flower3: { x: 50, y: 59.9, size: 6 },
-    flower4: { x: 52.5, y: 61.4, size: 5 },
-    pebble1: { x: 52.2, y: 64.2, size: 7 },
-    pebble2: { x: 50.5, y: 61.2, size: 5.5 },
-    pebble3: { x: 50.9, y: 64.8, size: 6 },
-    pebble4: { x: 48.7, y: 63.4, size: 5.5 },
+    flower1: { x: 52.5, y: 49.5, size: 6 },
+    flower2: { x: 54.2, y: 52.1, size: 5 },
+    flower3: { x: 50.5, y: 51.4, size: 6 },
+    flower4: { x: 53, y: 52.9, size: 5 },
+    pebble1: { x: 52.7, y: 55.7, size: 7 },
+    pebble2: { x: 51, y: 52.7, size: 5.5 },
+    pebble3: { x: 51.4, y: 56.3, size: 6 },
+    pebble4: { x: 49.2, y: 54.9, size: 5.5 },
     turtle: { x: 53, y: 33.9, size: 6.5 },
+    // Hand cues are absolute CENTRE points (% of stage), unlike the element x/y above which are
+    // box corners. Measured from the checklist screenshots at 1024x670: the flower/pebble cluster
+    // is centred near (53, 59) and the lotus bud near (69.5, 52.5).
+    reedsCueFrom: { x: 50.5, y: 58.5, size: 0 },
+    reedsCueToIntro: { x: 62, y: 58.5, size: 0 },
+    reedsCueToL3: { x: 68, y: 58.5, size: 0 },
+    reedsCueToL2: { x: 63, y: 58.5, size: 0 },
+    lotusCue: { x: 69.5, y: 52.5, size: 0 },
   };
   const [pondLayout, setPondLayout] = useState(DEFAULT_POND_LAYOUT);
   const pondStageRef = useRef(null);
@@ -639,8 +637,10 @@ const PondSceneContent = ({
   const getPromptKeyForPhase = useCallback(() => {
     if (!sceneState?.welcomeShown) return 'opening';
     if (revealConfig || showSparkle === 'final-fireworks') return null;
-    if (sceneState?.phase === PHASES.COMPLETE) return 'complete';
-    if (sceneState?.phase === PHASES.LOTUS_ACTIVE || sceneState?.phase === PHASES.BLOOMED) return 'lotusRound';
+    // 'complete' is spoken inside the Mandala (after the Lotus petal line), not here.
+    // BLOOMED = the lotus already bloomed and its card is coming: never say the "hold" prompt
+    // again (on Continue it used to play, get cut by the card, then "say it with me").
+    if (sceneState?.phase === PHASES.LOTUS_ACTIVE) return 'lotusRound';
     if (sceneState?.phase === PHASES.INITIAL || sceneState?.phase === PHASES.ROCK_MOVING) return 'rockRound';
     if (sceneState?.phase === PHASES.REEDS_ACTIVE) return 'reedsRound';
     return null;
@@ -755,13 +755,11 @@ const PondSceneContent = ({
     if (!promptKey || revealConfig || showSceneCompletion || pondPaused) return;
     if (lastAnnouncedPromptRef.current === promptKey) return;
 
-    const promptDelay = promptKey === 'complete'
-      ? 250
-      : promptKey === 'rockRound'
-        ? 850
-        : promptKey === 'reedsRound'
-          ? WATER_TO_REEDS_MS
-          : 500;
+    const promptDelay = promptKey === 'rockRound'
+      ? 850
+      : promptKey === 'reedsRound'
+        ? WATER_TO_REEDS_MS
+        : 500;
 
     const timer = setTimeout(() => {
       speakPondPrompt(promptKey, resetIdleBaseline);
@@ -863,15 +861,22 @@ const PondSceneContent = ({
       setRockHoldProgress(1);
       setReedsProgress(1);
       setWaterStage(2);
+      // Left during the "The water reached the lotus" success line: play it again, then the
+      // card — same order as the normal flow in completeReeds, not a silent jump to the card.
       safeSetTimeout(() => {
-        playChime();
-        setRevealConfig({
-          symbolId: 'trunk',
-          symbolName: 'Trunk',
-          affirmation: 'I can be strong and gentle.',
-          symbolImage: symbolTrunkColored
+        speakPondPrompt('trunkSuccess', () => {
+          safeSetTimeout(() => {
+            sceneActions.updateState({ phase: PHASES.TRUNK_REVEAL });
+            playChime();
+            setRevealConfig({
+              symbolId: 'trunk',
+              symbolName: 'Trunk',
+              affirmation: 'I can be strong and gentle.',
+              symbolImage: symbolTrunkColored
+            });
+          }, 1200);
         });
-      }, 1200);
+      }, 600);
       return;
     }
 
@@ -1115,11 +1120,7 @@ const PondSceneContent = ({
     if (rect) {
       const x = (e.clientX - rect.left) / rect.width;
       const y = (e.clientY - rect.top) / rect.height;
-      const rockCx = ROCK_HIT_ZONE.left + ROCK_HIT_ZONE.width / 2;
-      const rockCy = ROCK_HIT_ZONE.top + ROCK_HIT_ZONE.height / 2;
-      const rockRx = ROCK_HIT_ZONE.width / 2;
-      const rockRy = ROCK_HIT_ZONE.height / 2;
-      const insideRock = (((x - rockCx) / rockRx) ** 2) + (((y - rockCy) / rockRy) ** 2) <= 1;
+      const insideRock = (((x - 0.5) / 0.5) ** 2) + (((y - 0.5) / 0.5) ** 2) <= 1;
       if (!insideRock) return;
     }
 
@@ -1515,6 +1516,9 @@ const PondSceneContent = ({
                 '--pond-rock-x': `${pondLayout.rock.x}%`,
                 '--pond-rock-y': `${pondLayout.rock.y}%`,
                 '--pond-rock-size': `${pondLayout.rock.size}vw`,
+                '--pond-rock-hit-x': `${pondLayout.rockHit.x}%`,
+                '--pond-rock-hit-y': `${pondLayout.rockHit.y}%`,
+                '--pond-rock-hit-size': `${pondLayout.rockHit.size}vw`,
                 '--pond-flowers-x': `${pondLayout.flowers.x}%`,
                 '--pond-flowers-y': `${pondLayout.flowers.y}%`,
                 '--pond-flowers-size': `${pondLayout.flowers.size}vw`,
@@ -1647,36 +1651,14 @@ const PondSceneContent = ({
               />
 
               <div
-                role="button"
-                aria-label="Press and hold the heavy rock"
                 className={`
                   pond-strength-rock-wrap
                   ${sceneState.rockMoved ? 'moved' : ''}
                 `}
-                onPointerDown={layoutOpen ? (e) => startMainDrag('rock', e) : handleRockHoldStart}
-                onPointerUp={layoutOpen ? undefined : handleRockHoldEnd}
-                onPointerLeave={layoutOpen ? undefined : handleRockHoldEnd}
-                onPointerCancel={layoutOpen ? undefined : handleRockHoldEnd}
+                onPointerDown={layoutOpen ? (e) => startMainDrag('rock', e) : undefined}
                 style={layoutOpen ? { cursor: 'move' } : undefined}
+                aria-hidden="true"
               >
-                {(SHOW_HIT_ZONES || layoutOpen) && !sceneState.rockMoved && (
-                  <div
-                    style={{
-                      position: 'absolute',
-                      left: `${ROCK_HIT_ZONE.left * 100}%`,
-                      top: `${ROCK_HIT_ZONE.top * 100}%`,
-                      width: `${ROCK_HIT_ZONE.width * 100}%`,
-                      height: `${ROCK_HIT_ZONE.height * 100}%`,
-                      borderRadius: '50%',
-                      border: '2px solid rgba(0, 170, 90, 0.9)',
-                      background: 'rgba(0, 170, 90, 0.08)',
-                      pointerEvents: 'none',
-                      zIndex: 9,
-                    }}
-                    aria-hidden="true"
-                    title="hold start zone: rock"
-                  />
-                )}
                 <img
                   src={pondBigRock}
                   alt=""
@@ -1718,6 +1700,23 @@ const PondSceneContent = ({
                 )}
               </div>
 
+              {!sceneState.rockMoved && (
+                <div
+                  role="button"
+                  aria-label="Press and hold zone for the heavy rock"
+                  className="pond-rock-hit-zone"
+                  onPointerDown={layoutOpen ? (e) => startMainDrag('rockHit', e) : handleRockHoldStart}
+                  onPointerUp={layoutOpen ? undefined : handleRockHoldEnd}
+                  onPointerLeave={layoutOpen ? undefined : handleRockHoldEnd}
+                  onPointerCancel={layoutOpen ? undefined : handleRockHoldEnd}
+                  style={layoutOpen ? { cursor: 'move' } : undefined}
+                >
+                  {(SHOW_HIT_ZONES || layoutOpen) && (
+                    <div className="pond-debug-hit-zone pond-debug-hit-zone--rock" title="hold start zone: rock" aria-hidden="true" />
+                  )}
+                </div>
+              )}
+
               <div
                 className="pond-layout-panel"
                 aria-label="Pond layout controls"
@@ -1745,6 +1744,7 @@ const PondSceneContent = ({
                       <select value={layoutKey} onChange={(e) => setLayoutKey(e.target.value)}>
                         <optgroup label="Main">
                           <option value="rock">Rock</option>
+                          <option value="rockHit">Rock hit-zone (invisible)</option>
                           <option value="flowers">Reeds hit-zone (invisible)</option>
                           <option value="lotus">Lotus</option>
                           <option value="lotusHit">Lotus hit-zone (invisible)</option>
@@ -1770,9 +1770,16 @@ const PondSceneContent = ({
                         <optgroup label="Other">
                           <option value="turtle">Sad turtle</option>
                         </optgroup>
+                        <optgroup label="Hand cues">
+                          <option value="reedsCueFrom">Reeds hand start</option>
+                          <option value="reedsCueToIntro">Reeds hand end (intro)</option>
+                          <option value="reedsCueToL3">Reeds hand end (strong hint)</option>
+                          <option value="reedsCueToL2">Reeds hand end (soft hint)</option>
+                          <option value="lotusCue">Lotus hand hold point</option>
+                        </optgroup>
                       </select>
                     </label>
-                    {['x', 'y', 'size'].map((field) => (
+                    {(layoutKey.endsWith('Cue') || layoutKey.startsWith('reedsCue') ? ['x', 'y'] : ['x', 'y', 'size']).map((field) => (
                       <label key={field}>{field.toUpperCase()}
                         <input type="range" min="0" max="100" step="0.5" value={activeLayout[field]} onChange={(e) => updatePondLayout(field, e.target.value)} />
                         <input type="number" min="0" max="100" step="0.5" value={activeLayout[field]} onChange={(e) => updatePondLayout(field, e.target.value)} />
@@ -1810,13 +1817,13 @@ const PondSceneContent = ({
               <GestureDemo
                 paused={isSymbolPopupOpen}
                 type="drag"
-                from={REEDS_START_POINT}
+                from={pondLayout.reedsCueFrom}
                 to={
                   pondIntroGesture
-                    ? { x: 63, y: 70 }
+                    ? pondLayout.reedsCueToIntro
                     : effectiveHintLevel >= 3
-                      ? { x: 69, y: 70 }
-                      : { x: 64, y: 70 }
+                      ? pondLayout.reedsCueToL3
+                      : pondLayout.reedsCueToL2
                 }
                 active={
                   (pondIntroGesture || (effectiveHintLevel >= 3 && !reedsDragLearnedRef.current)) &&
@@ -1847,18 +1854,7 @@ const PondSceneContent = ({
                   }}
                 >
                   {(SHOW_HIT_ZONES ? sceneState.phase === PHASES.REEDS_ACTIVE : layoutOpen) && (
-                    <div
-                      style={{
-                        position: 'absolute',
-                        inset: 0,
-                        borderRadius: '50%',
-                        border: '2px solid rgba(0, 120, 255, 0.88)',
-                        background: 'rgba(0, 120, 255, 0.08)',
-                        pointerEvents: 'none',
-                      }}
-                      aria-hidden="true"
-                      title="swipe start zone: flowers"
-                    />
+                    <div className="pond-debug-hit-zone pond-debug-hit-zone--reeds" aria-hidden="true" title="swipe start zone: flowers" />
                   )}
                 </div>
               )}
@@ -1938,7 +1934,7 @@ const PondSceneContent = ({
               <GestureDemo
                 paused={isSymbolPopupOpen}
                 type="hold-progress-l3"
-                from={LOTUS_HOLD_POINT}
+                from={pondLayout.lotusCue}
                 active={
                   pondIntroGesture &&
                   sceneState.phase === PHASES.LOTUS_ACTIVE &&
@@ -1985,20 +1981,8 @@ const PondSceneContent = ({
                 onPointerDown={layoutOpen ? (e) => startMainDrag('lotusHit', e) : undefined}
                 style={layoutOpen ? { cursor: 'move' } : undefined}
               >
-                {(SHOW_HIT_ZONES || (layoutOpen && layoutKey === 'lotusHit')) && !sceneState.lotusBloomed && (
-                  <div
-                    style={{
-                      position: 'absolute',
-                      inset: 0,
-                      borderRadius: '50%',
-                      border: '2px solid rgba(0, 170, 90, 0.9)',
-                      background: 'rgba(0, 170, 90, 0.08)',
-                      pointerEvents: 'none',
-                      zIndex: 8,
-                    }}
-                    aria-hidden="true"
-                    title="hold start zone: lotus"
-                  />
+                {(SHOW_HIT_ZONES || layoutOpen) && !sceneState.lotusBloomed && (
+                  <div className="pond-debug-hit-zone pond-debug-hit-zone--lotus" aria-hidden="true" title="hold start zone: lotus" />
                 )}
                 {/* Visual reminders after the intro hand: ring/glow only. */}
                 {sceneState.phase === PHASES.LOTUS_ACTIVE && !sceneState.lotusBloomed && holdProgress <= 0 && effectiveHintLevel >= 1 && (
@@ -2129,7 +2113,23 @@ const PondSceneContent = ({
                   { id: 'trunk', petalId: 4, ring: 'middle', image: symbolTrunkColored },
                   { id: 'lotus', petalId: 5, ring: 'middle', image: symbolLotusColored },
                 ]}
-                autoCloseMs={3000 + (2 * 950) + 2600}
+                onEarnedPetalReveal={(earnedPetal) => {
+                  const symbolByPetal = {
+                    4: 'trunk',
+                    5: 'lotus',
+                  };
+                  const lines = {
+                    trunk: 'You were strong and gentle.',
+                    lotus: 'You kept growing through something hard.',
+                  };
+                  const symbol = symbolByPetal[earnedPetal?.id];
+                  if (lines[symbol]) {
+                    // Scene-complete line plays inside the Mandala, right after the last petal line.
+                    const afterLast = symbol === 'lotus' ? () => speakPondPrompt('complete') : undefined;
+                    speak(lines[symbol], { age: 7, style: 'child', moment: 'celebration', onEnd: afterLast });
+                  }
+                }}
+                autoCloseMs={3000 + (2 * 950) + 2600 + 5500}
                 message="That power is growing inside you"
                 onClose={() => {
                   setShowMandala(false);
@@ -2258,7 +2258,7 @@ const PondSceneContent = ({
       </InteractionManager>
 
       <ZoneBadgeButton variant="gameplay" zoneId="symbol-mountain" onBack={() => { stopSpokenVoice(); onNavigate?.('zone-welcome'); }} />
-      <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={toggleAudio} />
+      {/* [per-scene mute removed 2026-10-09] <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={toggleAudio} /> */}
       <VOReplayButton variant="gameplay"
         onReplay={replayCurrentVoice}
         disabled={!isAudioOn || !getPromptKeyForPhase()}

@@ -815,6 +815,40 @@
   pointer-events: none;
 }
 
+.pond-rock-hit-zone {
+  position: absolute;
+  left: var(--pond-rock-hit-x, 35%);
+  top: var(--pond-rock-hit-y, 50%);
+  width: clamp(50px, var(--pond-rock-hit-size, 13vw), 360px);
+  aspect-ratio: 1 / 1;
+  z-index: 24;
+  border-radius: 50%;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.pond-debug-hit-zone {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 8;
+}
+
+.pond-debug-hit-zone--rock,
+.pond-debug-hit-zone--lotus {
+  border: 2px solid rgba(0, 170, 90, 0.9);
+  background: rgba(0, 170, 90, 0.1);
+  box-shadow: 0 0 0 3px rgba(0, 170, 90, 0.16);
+}
+
+.pond-debug-hit-zone--reeds {
+  border: 2px solid rgba(0, 120, 255, 0.88);
+  background: rgba(0, 120, 255, 0.1);
+  box-shadow: 0 0 0 3px rgba(0, 120, 255, 0.16);
+}
+
 .pond-trunk-rock {
   position: relative;
   left: auto;

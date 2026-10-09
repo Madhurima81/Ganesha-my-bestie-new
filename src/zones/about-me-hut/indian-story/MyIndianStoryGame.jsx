@@ -273,6 +273,7 @@ export default function MyIndianStoryGame({ onComplete, onBack, onNavigate, chil
   return (
     <ErrorBoundary>
       <SceneManager
+        flushKeys={['phase']}
         zoneId={zoneId}
         sceneId={sceneId}
         initialState={{
@@ -1839,7 +1840,7 @@ const handleComplete = () => {
         SimpleSceneManager.clearCurrentScene();
         onNavigate?.('zone-welcome');
       }} />
-      <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
+      {/* [per-scene mute removed 2026-10-09] <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={handleAudioToggle} /> */}
       <VOReplayButton variant="gameplay" onReplay={replayCurrentVoice} disabled={!isAudioOn} />
       {/* Sparkles */}
       {sparkleState.type && (

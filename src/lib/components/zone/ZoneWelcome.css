@@ -2215,3 +2215,248 @@ button[style*="position: fixed"][style*="background: purple"] {
   color: inherit;
   text-shadow: none;
 }
+/* ==========================================================
+   ZONE WELCOME — TABLET / IPAD FEATURED-SCENE LAYOUT
+   4 scenes: featured on top + 3 below. 5 scenes: featured + 4 below.
+   Phone rules are not changed by this block.
+   ========================================================== */
+@media (orientation: landscape) and (min-height: 501px) and (min-width: 769px) and (max-width: 1440px) {
+  .zone-welcome-container .cards-wrapper {
+    width: min(94vw, 1180px);
+    height: min(74dvh, 760px);
+    max-height: none;
+    aspect-ratio: auto;
+    margin-inline: auto;
+  }
+  .zone-welcome-container .scenes-horizontal-container.tablet-feature-layout {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    justify-content: center;
+    align-content: center;
+    row-gap: 26px;
+    padding: 76px 30px 32px; /* top room for the zone title */
+    box-sizing: border-box;
+  }
+  .zone-welcome-container .tablet-feature-layout .zone-scene-card {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    margin: 0;
+    animation: none;
+    justify-self: center;
+    align-self: center;
+    box-sizing: border-box;
+  }
+  .zone-welcome-container .tablet-feature-layout .zone-scene-card:hover,
+  .zone-welcome-container .tablet-feature-layout .zone-scene-card.available:hover,
+  .zone-welcome-container .tablet-feature-layout .zone-scene-card.in-progress:hover,
+  .zone-welcome-container .tablet-feature-layout .zone-scene-card.completed:hover {
+    transform: none !important;
+  }
+
+  /* FOUR-SCENE ZONES — 1 + 3 */
+  .zone-welcome-container .tablet-feature-layout.scene-count-4 {
+    grid-template-columns: repeat(3, 178px);
+    column-gap: 30px;
+  }
+  .zone-welcome-container .tablet-feature-layout.scene-count-4 .is-featured-scene {
+    grid-row: 1;
+    grid-column: 2;
+  }
+  .zone-welcome-container .tablet-feature-layout.scene-count-4 .zone-scene-card:not(.is-featured-scene) {
+    grid-row: 2;
+  }
+
+  /* FIVE-SCENE SHLOKA RIVER — 1 + 4 */
+  .zone-welcome-container .tablet-feature-layout.scene-count-5 {
+    grid-template-columns: repeat(4, 166px);
+    column-gap: 22px;
+  }
+  .zone-welcome-container .tablet-feature-layout.scene-count-5 .is-featured-scene {
+    grid-row: 1;
+    grid-column: 2 / span 2;
+    justify-self: center;
+  }
+  .zone-welcome-container .tablet-feature-layout.scene-count-5 .zone-scene-card:not(.is-featured-scene) {
+    grid-row: 2;
+  }
+
+  /* STANDARD LOWER CARDS */
+  .zone-welcome-container .tablet-feature-layout .zone-scene-card:not(.is-featured-scene) {
+    width: 178px;
+    min-width: 178px;
+    max-width: 178px;
+    min-height: 200px;
+  }
+  .zone-welcome-container .tablet-feature-layout.scene-count-5 .zone-scene-card:not(.is-featured-scene) {
+    width: 166px;
+    min-width: 166px;
+    max-width: 166px;
+  }
+
+  /* FEATURED / CURRENT CARD */
+  .zone-welcome-container .tablet-feature-layout .is-featured-scene {
+    width: 212px;
+    min-width: 212px;
+    max-width: 212px;
+    min-height: 216px;
+    z-index: 3;
+    filter: drop-shadow(0 7px 13px rgba(55, 32, 90, 0.12));
+  }
+  .zone-welcome-container .tablet-feature-layout .is-featured-scene .zone-inner {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  /* SCENE TITLES */
+  .zone-welcome-container .tablet-feature-layout .scene-name {
+    font-size: 14px;
+    line-height: 1.15;
+    max-width: 100%;
+    text-align: center;
+  }
+  .zone-welcome-container .tablet-feature-layout .is-featured-scene .scene-name {
+    font-size: 14.5px;
+  }
+
+  /* ACTION AREA — thinner buttons, shallower shadows */
+  .zone-welcome-container .tablet-feature-layout .scene-action-integrated {
+    min-height: 52px;
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .zone-welcome-container .tablet-feature-layout .scene-action-integrated > button {
+    position: relative;
+    width: auto;
+    min-width: 122px;
+    max-width: 138px;
+    height: 40px;
+    min-height: 40px;
+    padding: 0 18px;
+    border-radius: 999px;
+    font-size: 14px;
+    line-height: 1;
+    box-shadow: 0 2px 0 rgba(103, 77, 10, 0.25), 0 4px 8px rgba(60, 40, 20, 0.06);
+  }
+  /* enlarge hit region without making the pill tall */
+  .zone-welcome-container .tablet-feature-layout .scene-action-integrated > button::after {
+    content: "";
+    position: absolute;
+    left: -7px;
+    right: -7px;
+    top: -10px;
+    bottom: -10px;
+    border-radius: 999px;
+  }
+
+  /* CONTINUE + REPLAY ROW */
+  .zone-welcome-container .tablet-feature-layout .action-split-container {
+    width: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+  .zone-welcome-container .tablet-feature-layout .action-split-container > button:first-child {
+    width: 112px;
+    min-width: 112px;
+    max-width: 112px;
+    height: 40px;
+    min-height: 40px;
+    padding: 0 15px;
+    border-radius: 999px;
+    font-size: 13.5px;
+    line-height: 1;
+    box-shadow: 0 2px 0 rgba(103, 77, 10, 0.25), 0 4px 8px rgba(60, 40, 20, 0.06);
+  }
+  .zone-welcome-container .tablet-feature-layout .action-split-container > button:last-child {
+    position: relative;
+    width: 42px;
+    min-width: 42px;
+    height: 42px;
+    min-height: 42px;
+    padding: 0;
+    border-radius: 50%;
+    font-size: 18px;
+    line-height: 1;
+    box-shadow: 0 2px 0 rgba(103, 77, 10, 0.23), 0 4px 7px rgba(60, 40, 20, 0.05);
+  }
+  /* visually 42px, ~60px effective touch region */
+  .zone-welcome-container .tablet-feature-layout .action-split-container > button:last-child::after {
+    content: "";
+    position: absolute;
+    inset: -9px;
+    border-radius: 50%;
+  }
+
+  .zone-welcome-container .tablet-feature-layout button:active {
+    transform: translateY(1px);
+    box-shadow: 0 1px 0 rgba(103, 77, 10, 0.22);
+  }
+
+  /* Ganesha / butterfly intentionally NOT hidden on tablet. */
+
+  .zone-welcome-container .stats-bottom-bar {
+    bottom: 18px;
+  }
+}
+
+/* iPad Safari ~1024x670: avoid vertical cramping */
+@media (orientation: landscape) and (min-width: 769px) and (max-width: 1100px) and (min-height: 501px) and (max-height: 720px) {
+  .zone-welcome-container .cards-wrapper {
+    height: min(80dvh, 540px);
+  }
+  .zone-welcome-container .scenes-horizontal-container.tablet-feature-layout {
+    row-gap: 20px;
+    padding-top: 70px;
+    padding-bottom: 16px;
+  }
+  .zone-welcome-container .tablet-feature-layout .is-featured-scene {
+    min-height: 204px;
+  }
+  .zone-welcome-container .tablet-feature-layout .zone-scene-card:not(.is-featured-scene) {
+    min-height: 190px;
+  }
+}
+/* ==========================================================
+   ZONE WELCOME — IPAD FINAL CLEANUP
+   ========================================================== */
+@media (orientation: landscape) and (min-height: 501px) and (min-width: 769px) and (max-width: 1440px) {
+  /* Decorative guide art crowds the card icon: removed on tablet too */
+  .zone-welcome-container .zone-card-ganesha-guide,
+  .zone-welcome-container .zone-card-creature {
+    display: none !important;
+  }
+
+  /* Lower row slightly closer to the featured card */
+  .zone-welcome-container .scenes-horizontal-container.tablet-feature-layout {
+    row-gap: 14px;
+  }
+
+  /* Featured card: hierarchy from position, soft active outline */
+  .zone-welcome-container .tablet-feature-layout .is-featured-scene {
+    filter: drop-shadow(0 5px 10px rgba(55, 32, 90, 0.10));
+    outline: 2px solid rgba(245, 190, 45, 0.32);
+    outline-offset: 2px;
+  }
+
+  /* Replay is visually secondary */
+  .zone-welcome-container .tablet-feature-layout .completed .zone-welcome-cta {
+    min-width: 104px;
+    max-width: 116px;
+    height: 38px;
+    min-height: 38px;
+    padding: 0 14px;
+    background: rgba(255, 249, 230, 0.96);
+    border: 1.5px solid rgba(225, 170, 20, 0.72);
+    color: #8A6813;
+    box-shadow: 0 2px 0 rgba(145, 106, 12, 0.16), 0 3px 7px rgba(60, 40, 20, 0.04);
+  }
+}

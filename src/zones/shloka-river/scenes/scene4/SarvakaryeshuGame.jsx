@@ -149,15 +149,22 @@ export default function SarvakaryeshuGame({
   onGameComplete = () => {},
   isPaused = false,
   voiceGuidance = {},
+  // Resume: cards already finished (0-3). Applied only when the game mounts active (Continue).
+  initialCards = 0,
+  // Fired with the finished-card count each time the game moves on to the next card (checkpoint).
+  onBeatComplete = () => {},
 }) {
   usePreloadPoses(POSE_ASSETS);
   const { playVoice: playSceneLine, playSyllable, playWord, stopVoice: stopSceneVoice } = voiceGuidance;
-  const [cardIndex, setCardIndex] = useState(0);
+  const [seedCards] = useState(() => (
+    isActive ? Math.max(0, Math.min(SITUATIONS.length - 1, Number(initialCards) || 0)) : 0
+  ));
+  const [cardIndex, setCardIndex] = useState(seedCards);
   const [picked, setPicked] = useState(null);
   const [isCorrect, setIsCorrect] = useState(null);
   const [showAfter, setShowAfter] = useState(false);
   const [canPick, setCanPick] = useState(false);
-  const [litCount, setLitCount] = useState(0);
+  const [litCount, setLitCount] = useState(seedCards);
   const [phase, setPhase] = useState('play');
   const [guidanceMessage, setGuidanceMessage] = useState('');
   const [guidedPowerId, setGuidedPowerId] = useState(null);
@@ -417,6 +424,7 @@ export default function SarvakaryeshuGame({
         return;
       }
 
+      onBeatComplete?.(nextIndex);
       setCardIndex(nextIndex);
       setPicked(null);
       setIsCorrect(null);
@@ -455,7 +463,7 @@ export default function SarvakaryeshuGame({
       }
       safeAfter(9000, advance);
     });
-  }, [canPick, cardIndex, hintLevel, isPaused, markInteraction, markLevel2VoiceEnded, markWrongAttempt, onGameComplete, onMicroWin, onPhaseComplete, playSceneLine, playSyllable, playWord, safeAfter, pausableAfter, cancelPausable, stopSceneVoice]);
+  }, [canPick, cardIndex, hintLevel, isPaused, markInteraction, markLevel2VoiceEnded, markWrongAttempt, onBeatComplete, onGameComplete, onMicroWin, onPhaseComplete, playSceneLine, playSyllable, playWord, safeAfter, pausableAfter, cancelPausable, stopSceneVoice]);
 
   if (!isActive) return null;
 

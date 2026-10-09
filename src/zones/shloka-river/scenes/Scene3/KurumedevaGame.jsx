@@ -287,6 +287,10 @@ export default function KurumedevaGame({
   onMicroWin = () => {},
   onPhaseComplete = () => {},
   onGameComplete = () => {},
+  // Resume: ask-for-help rounds already finished (0-2). Applied only when the game mounts active (Continue).
+  initialRounds = 0,
+  // Fired with the finished-round count after round 1 and round 2 (checkpoint).
+  onBeatComplete = () => {},
   voiceGuidance = {},
   isPaused = false,
   // Sidebar actually open (isPaused also covers the short replay hold after it closes): drives the
@@ -296,14 +300,22 @@ export default function KurumedevaGame({
   const handPaused = isSidebarOpen ?? isPaused;
   usePreloadPoses(POSE_ASSETS);
   const { playVoice: playSceneLine, playSyllable, playWord, stopVoice: stopSceneVoice } = voiceGuidance;
-  const [friendStep, setFriendStep] = useState(0);
-  const [bridgeStep, setBridgeStep] = useState(0);
+  const [seedRounds] = useState(() => (
+    isActive ? Math.max(0, Math.min(TOTAL_ROUNDS - 1, Number(initialRounds) || 0)) : 0
+  ));
+  const [friendStep, setFriendStep] = useState(seedRounds);
+  const [bridgeStep, setBridgeStep] = useState(seedRounds);
   const [phase, setPhase] = useState('play');
   const [beaverPos, setBeaverPos] = useState(BEAVER_PATH[0]);
-  const [litCount, setLitCount] = useState(0);
+  const [litCount, setLitCount] = useState(seedRounds > 0 ? SYLLABLES_LIT_AFTER_STEP[seedRounds - 1] : 0);
   const [tappedId, setTappedId] = useState(null);
-  const [friendImgStates, setFriendImgStates] = useState(() => FRIENDS.map(() => 'carry'));
-  const [friendPositions, setFriendPositions] = useState(() => FRIENDS.map((friend) => ({ l: friend.l, t: friend.t })));
+  // Finished rounds: Elephant stays in his helping pose at the helper spot; Monkey waits to be asked.
+  const [friendImgStates, setFriendImgStates] = useState(() => FRIENDS.map((_, i) => (i === 0 && seedRounds >= 1 ? 'helping' : 'carry')));
+  const [friendPositions, setFriendPositions] = useState(() => FRIENDS.map((friend, i) => {
+    if (i === 0 && seedRounds >= 1) return { l: HELPER_SPOTS[0].l, t: HELPER_SPOTS[0].t };
+    if (i === 1 && seedRounds >= 2) return { l: WAIT_SPOTS[1].l, t: WAIT_SPOTS[1].t };
+    return { l: friend.l, t: friend.t };
+  }));
   const [helpTokenPos, setHelpTokenPos] = useState(HELP_TOKEN_HOME);
   const [isDraggingHelp, setIsDraggingHelp] = useState(false);
   const [helpDelivered, setHelpDelivered] = useState(false);
@@ -311,10 +323,10 @@ export default function KurumedevaGame({
   const [walkingIndex, setWalkingIndex] = useState(null);
   const [logsFlying, setLogsFlying] = useState(false);
   const [bridgeWobbling, setBridgeWobbling] = useState(false);
-  const [vineReady, setVineReady] = useState(false);
+  const [vineReady, setVineReady] = useState(seedRounds === 1);
 
   // Plank round — drag 3 planks onto the finished bridge.
-  const [placeActive, setPlaceActive] = useState(false);
+  const [placeActive, setPlaceActive] = useState(seedRounds >= 2);
   const [placedCount, setPlacedCount] = useState(0);
   const [pieceDragActive, setPieceDragActive] = useState(false);
   const [pieceDragPos, setPieceDragPos] = useState(null);
@@ -660,6 +672,7 @@ export default function KurumedevaGame({
           setHelpDelivered(false);
           setHelpTokenPos(HELP_TOKEN_HOME);
           setIsRoundSettling(false);
+          onBeatComplete?.(1);
         });
         return;
       }
@@ -695,9 +708,10 @@ export default function KurumedevaGame({
         setPlacedCount(0);
         setPlaceActive(true);
         setIsRoundSettling(false);
+        onBeatComplete?.(2);
       });
     });
-  }, [friendImgStates, friendPositions, friendStep, isPaused, isRoundSettling, markInteraction, onMicroWin, placeActive, playSceneLine, safeAfter, stopSceneVoice]);
+  }, [onBeatComplete, friendImgStates, friendPositions, friendStep, isPaused, isRoundSettling, markInteraction, onMicroWin, placeActive, playSceneLine, safeAfter, stopSceneVoice]);
 
   // --- Plank drag handlers: pull a plank from the pile into the gap --------
   const placeNextPiece = useCallback(() => {

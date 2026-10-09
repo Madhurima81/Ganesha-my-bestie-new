@@ -86,10 +86,12 @@ export default function InnerMandala({
   justEarnedPetal = null,
   justEarnedPetals = null,
   earnedSymbols = [],
+  onEarnedPetalReveal,
 }) {
   const [mounted, setMounted] = useState(false);
   const [earnedShownIds, setEarnedShownIds] = useState([]);
   const closedRef = useRef(false);
+  const onEarnedPetalRevealRef = useRef(onEarnedPetalReveal);
   const interactive = typeof onPetalClick === 'function';
   const earnedPetals = Array.isArray(justEarnedPetals)
     ? justEarnedPetals
@@ -158,6 +160,10 @@ export default function InnerMandala({
   }, []);
 
   useEffect(() => {
+    onEarnedPetalRevealRef.current = onEarnedPetalReveal;
+  }, [onEarnedPetalReveal]);
+
+  useEffect(() => {
     if (!earnedPetals.length) return undefined;
     setEarnedShownIds([]);
     const timers = [];
@@ -169,6 +175,9 @@ export default function InnerMandala({
           return prev.includes(key) ? prev : [...prev, key];
         });
         try { playCardRevealChime(index === 0 ? 0.42 : 0.34); } catch {}
+        setTimeout(() => {
+          onEarnedPetalRevealRef.current?.(earnedPetal, index);
+        }, 150);
       }, SYMBOL_CENTER_DELAY_MS + SYMBOL_TRAVEL_MS + (index * SYMBOL_STAGGER_MS));
       timers.push(t);
     });

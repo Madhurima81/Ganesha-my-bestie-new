@@ -374,41 +374,11 @@ export const VOICE_SCRIPTS = {
       sceneComplete: {
         text: "You did it! The whole Shloka is in place."
       },
-      recapStart: {
-        text: "Now listen to the whole shloka."
-      },
       finaleWholeShlokaIntro: {
         text: "Now, let's say it together."
       },
       finalCelebration: {
         text: "You remembered the whole Ganesha Shloka. Now you can carry it with you."
-      },
-      hintBoatL3: {
-        text: "Tap the glowing boat."
-      },
-      hintMeaningVakratunda: {
-        text: "Remember Ganesha's curved trunk."
-      },
-      hintMeaningMahakaya: {
-        text: "Think of Ganesha's great form."
-      },
-      hintMeaningSuryakoti: {
-        text: "Think of a light as bright as millions of suns."
-      },
-      hintMeaningSamaprabha: {
-        text: "Think of steady, equal brightness."
-      },
-      hintMeaningNirvighnam: {
-        text: "Remember the word about clearing obstacles."
-      },
-      hintMeaningKurumedeva: {
-        text: "Remember the words that ask for help."
-      },
-      hintMeaningSarvakaryeshu: {
-        text: "Think of the word for everything we do."
-      },
-      hintMeaningSarvada: {
-        text: "Remember the word that means always."
       },
       finaleVakratundaHintL2: {
         text: "Which symbol can help you try another way?"
@@ -623,117 +593,22 @@ export const VOICE_SCRIPTS = {
       // ========================================
       // GANESHA PHASE - DEITY NAMES (plays after deity is placed)
       // ========================================
-      shiva: {
-        text: "Shiva Ji",
-        file: '/audio/voicenew/familytree/ganesha_shiva_name.wav'
-      },
-      parvati: {
-        text: "Parvati Mata",
-        file: '/audio/voicenew/familytree/ganesha_parvati_name.wav'
-      },
-      kartikeya: {
-        text: "Kartikeya",
-        file: '/audio/voicenew/familytree/kartikeya.wav'
-      },
-      ganesha: {
-        text: "Ganesha",
-        file: '/audio/voicenew/familytree/ganesha_name.mp3'
-      },
-      vishnu: {
-        text: "Vishnu",
-        file: '/audio/voicenew/familytree/vishnu.wav'
-      },
-      lakshmi: {
-        text: "Lakshmi",
-        file: '/audio/voicenew/familytree/lakshmi.mp3'
-      },
-      hanuman: {
-        text: "Hanuman",
-        file: '/audio/voicenew/familytree/hanuman.mp3'
-      },
-      krishna: {
-        text: "Krishna",
-        file: '/audio/voicenew/familytree/krishna.mp3'
-      },
-      mushak: {
-        text: "Mooshak",
-        file: '/audio/voicenew/familytree/mushak.wav'
-      },
-      brahma: {
-        text: "Brahma",
-        file: '/audio/voicenew/familytree/brahma.wav'
-      },
-      saraswati: {
-        text: "Saraswati",
-        file: '/audio/voicenew/familytree/saraswati.wav'
-      },
 
       // ========================================
       // GANESHA PHASE - CORRECT PLACEMENT (relationship reveal)
       // ========================================
-      correctFather: {
-        text: "This is my father, Shiva."
-      },
-      correctMother: {
-        text: "This is my mother, Parvati."
-      },
-      correctBrother: {
-        text: "This is my brother, Kartikeya."
-      },
-      correctMyself: {
-        text: "And that's me, Ganesha!"
-      },
 
       // ========================================
       // GANESHA PHASE - FUN FACTS
       // ========================================
-      factFather: {
-        text: "My father is calm and strong."
-      },
-      factMother: {
-        text: "My mother is kind and caring."
-      },
-      factBrother: {
-        text: "My brother is brave and rides a peacock."
-      },
-      factMyself: {
-        text: "I love modaks and helping my friends."
-      },
 
       // ========================================
       // GANESHA PHASE - INFO (tap placed avatar)
       // ========================================
-      infoFather: {
-        text: "This is my father.",
-        file: 'family-tree-info-father.wav'
-      },
-      infoMother: {
-        text: "This is my mother.",
-        file: 'family-tree-info-mother.wav'
-      },
-      infoBrother: {
-        text: "This is my brother.",
-        file: 'family-tree-info-brother.wav'
-      },
-      infoMyself: {
-        text: "This is me!",
-        file: 'family-tree-info-myself.wav'
-      },
 
       // ========================================
       // GANESHA PHASE - PROGRESS
       // ========================================
-      progressFirst: {
-        text: "Great start!",
-        file: 'family-tree-progress-first-ganesha.wav'
-      },
-      progressNearFull: {
-        text: "Almost done with my family!",
-        file: 'family-tree-progress-near-full-ganesha.wav'
-      },
-      hintTap: {
-        text: "Who belongs in this spot?"
-      },
       allPlaced: {
         text: "You met everyone in my family."
       },
@@ -750,9 +625,6 @@ export const VOICE_SCRIPTS = {
       // ========================================
       childStart: {
         text: "Tap the people or pets you want to add."
-      },
-      childHint: {
-        text: "Who else belongs on your tree?"
       },
       childProgressStart: {
         text: "Your family tree is growing."
@@ -773,9 +645,6 @@ export const VOICE_SCRIPTS = {
       // ========================================
       // FINAL SCENE
       // ========================================
-      sceneComplete: {
-        text: "Our family trees are different, and each one tells a story."
-      }
     },
     'favorite-food': {
       opening: {

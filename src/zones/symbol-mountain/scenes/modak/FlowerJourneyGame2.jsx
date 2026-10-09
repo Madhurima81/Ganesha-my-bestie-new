@@ -43,6 +43,9 @@ const PHASES = {
   BELLY_RECOGNITION: 'belly_recognition',
 };
 const WORKING_PHASES = [PHASES.FLOWER_BUSH, PHASES.FLOWER_BRANCH, PHASES.FLOWER_MARSH];
+// Beat intros wait this long after the beat mounts before speaking. Speaking at t=0 was
+// silent on Continue (the scene is still restoring); the belly beat's 600ms wait is fine.
+const INTRO_START_DELAY_MS = 500;
 
 // Locked tuning from the dev-preview session (SESSION_NOTES.md "current tuned
 // layout") — percent-of-stage positions for every element.
@@ -193,17 +196,28 @@ export default function FlowerJourneyGame2({
   onComplete,
   stopVoice,
   onLineSpoken,
+  initialFlowers = 0,
 }) {
   usePreloadPoses(SCENE_IMAGES);
-  const [phase, setPhase] = useState(PHASES.FLOWER_BUSH);
-  const [flowerCount, setFlowerCount] = useState(0);
+  // Resume at a beat boundary (Continue): flowers are saved 2 per beat, so
+  // floor(flowers / 2) = beats already finished. A half-finished beat (odd
+  // count) restarts that beat fresh. Only read at mount.
+  const [startBeat] = useState(() => Math.max(0, Math.min(3, Math.floor((Number(initialFlowers) || 0) / 2))));
+  const [phase, setPhase] = useState(
+    [PHASES.FLOWER_BUSH, PHASES.FLOWER_BRANCH, PHASES.FLOWER_MARSH, PHASES.BELLY_RECOGNITION][startBeat]
+  );
+  const [flowerCount, setFlowerCount] = useState(startBeat * 2);
   const [emotion, setEmotion] = useState(null);
   // Small persistent "emotion trace" left near each challenge once it's
   // solved — a quiet visual recap (bush→pleased, branch→excited,
   // marsh→relieved), not a collectible/badge. Stays visible through the
   // rest of the game so the belly-reflection VO ("lots of feelings came
   // and went") has something to point back to.
-  const [emotionTraces, setEmotionTraces] = useState({ bush: null, branch: null, marsh: null });
+  const [emotionTraces, setEmotionTraces] = useState(() => ({
+    bush: startBeat >= 1 ? 'pleased' : null,
+    branch: startBeat >= 2 ? 'relieved' : null,
+    marsh: startBeat >= 3 ? 'excited' : null,
+  }));
 
   const [emojiLayout, setEmojiLayout] = useState(DEFAULT_EMOJI_LAYOUT);
   const [showEmojiTuner, setShowEmojiTuner] = useState(false);
@@ -331,6 +345,9 @@ export default function FlowerJourneyGame2({
     // isn't touched by window.speechSynthesis.cancel() below, so without this
     // a still-playing scene VO keeps going under this mini-game's line.
     stopVoice?.();
+    // Chrome drops a speak() issued in the same tick as a cancel() that interrupts a
+    // line still starting up (two mounts on Continue). Wait briefly in that case.
+    const wasBusy = window.speechSynthesis.speaking || window.speechSynthesis.pending;
     window.speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
     u.rate = 0.95;
@@ -344,7 +361,15 @@ export default function FlowerJourneyGame2({
     // The teaching hand (or other cue) fires exactly when the action word is spoken.
     entry.cancelCue = attachSpeechCue(u, text, cue);
     activeSpeechRef.current = entry;
-    window.speechSynthesis.speak(u);
+    if (wasBusy) {
+      setTimeout(() => {
+        // Skip if this line was superseded or interrupted (sidebar / tab hide) meanwhile.
+        if (activeSpeechRef.current !== entry) return;
+        try { window.speechSynthesis.speak(u); } catch { done(); }
+      }, 120);
+    } else {
+      window.speechSynthesis.speak(u);
+    }
   }, [stopVoice]);
 
   const speak = useCallback((text) => {
@@ -640,7 +665,7 @@ export default function FlowerJourneyGame2({
   // (aligned with "Swipe...") while bushIntroDone (which still gates real
   // interaction) only flips once the whole line has finished.
   const [bushTeachingReady, setBushTeachingReady] = useState(false);
-  const [bushOpenState, setBushOpenState] = useState(false);
+  const [bushOpenState, setBushOpenState] = useState(startBeat >= 1);
   const [bushSpringing, setBushSpringing] = useState(false);
   const bushSwipeStartRef = useRef(null);
   // Per-error-type tiered feedback counters — 1st occurrence of a given
@@ -656,8 +681,8 @@ export default function FlowerJourneyGame2({
   const [branchIntroReaction, setBranchIntroReaction] = useState(false);
   const [branchIntroDone, setBranchIntroDone] = useState(false);
   const [branchTeachingReady, setBranchTeachingReady] = useState(false);
-  const [branchComplete, setBranchComplete] = useState(false);
-  const [branchPull, setBranchPull] = useState(0);
+  const [branchComplete, setBranchComplete] = useState(startBeat >= 2);
+  const [branchPull, setBranchPull] = useState(startBeat >= 2 ? 1 : 0);
   const [branchHolding, setBranchHolding] = useState(false);
   const branchDragRef = useRef({ active: false, startY: 0 });
   const branchHoldTimerRef = useRef(null);
@@ -667,11 +692,11 @@ export default function FlowerJourneyGame2({
   const branchEarlyCountRef = useRef(0);
   const branchWrongDirectionRef = useRef(false);
   const branchMeaningfulPullRef = useRef(false);
-  const branchCompletedRef = useRef(false);
+  const branchCompletedRef = useRef(startBeat >= 2);
 
   // ---- MARSH ----
   const marshRef = useRef(null);
-  const [marshStep, setMarshStep] = useState(0);
+  const [marshStep, setMarshStep] = useState(startBeat >= 3 ? 4 : 0);
   const [marshIntroDone, setMarshIntroDone] = useState(false);
   const [marshTeachingReady, setMarshTeachingReady] = useState(false);
   const [marshExiting, setMarshExiting] = useState(false);
@@ -732,8 +757,10 @@ export default function FlowerJourneyGame2({
 
   useEffect(() => {
     if (phase !== PHASES.FLOWER_BUSH || !isActive || bushIntroStartedRef.current) return undefined;
-    bushIntroStartedRef.current = true;
     let cancelled = false;
+    const introTimer = setTimeout(() => {
+    if (bushIntroStartedRef.current) return;
+    bushIntroStartedRef.current = true;
     (async () => {
       // Action is live from the first frame — the child can swipe while the
       // intro VO is still speaking (grabbing cuts the VO, see silenceIntroVO).
@@ -766,7 +793,8 @@ export default function FlowerJourneyGame2({
       // Teaching already shown mid-VO above — just arm the 10/18/26 idle ladder.
       armIdleHints(false);
     })();
-    return () => { cancelled = true; };
+    }, INTRO_START_DELAY_MS);
+    return () => { cancelled = true; clearTimeout(introTimer); };
   }, [phase, isActive, wait, speakAsync, armIdleHints, pTimeout, cancelTimer]);
 
   const flyFlowerToBasket = useCallback(({ src, startX, startY, delay = 0 }) => {
@@ -905,8 +933,10 @@ export default function FlowerJourneyGame2({
 
   useEffect(() => {
     if (phase !== PHASES.FLOWER_BRANCH || !isActive || branchIntroStartedRef.current) return undefined;
-    branchIntroStartedRef.current = true;
     let cancelled = false;
+    const introTimer = setTimeout(() => {
+    if (branchIntroStartedRef.current) return;
+    branchIntroStartedRef.current = true;
     (async () => {
       // Action is live from the first frame (see Bush intro).
       setBranchIntroDone(true);
@@ -937,7 +967,8 @@ export default function FlowerJourneyGame2({
       setBranchIntroDone(true);
       armIdleHints(false);
     })();
-    return () => { cancelled = true; };
+    }, INTRO_START_DELAY_MS);
+    return () => { cancelled = true; clearTimeout(introTimer); };
   }, [phase, isActive, wait, speakAsync, armIdleHints, pTimeout, cancelTimer]);
 
   const clearBranchHold = useCallback(() => {
@@ -1060,8 +1091,10 @@ export default function FlowerJourneyGame2({
       marshIntroStartedRef.current
     ) return undefined;
 
-    marshIntroStartedRef.current = true;
     let cancelled = false;
+    const introTimer = setTimeout(() => {
+    if (marshIntroStartedRef.current) return;
+    marshIntroStartedRef.current = true;
     (async () => {
       // Action is live from the first frame (see Bush intro).
       setMarshIntroDone(true);
@@ -1082,7 +1115,8 @@ export default function FlowerJourneyGame2({
       setMarshIntroDone(true);
       armIdleHints(false);
     })();
-    return () => { cancelled = true; };
+    }, INTRO_START_DELAY_MS);
+    return () => { cancelled = true; clearTimeout(introTimer); };
   }, [phase, isActive, wait, speakAsync, armIdleHints, pTimeout, cancelTimer]);
 
   const marshPointerRef = useRef(null);

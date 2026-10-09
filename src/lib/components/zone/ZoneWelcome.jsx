@@ -320,7 +320,7 @@ const speakZoneLine = (text) => {
 
 useEffect(() => {
   const completedCount = (zoneData?.scenes || []).filter(
-    (scene) => sceneStatuses[scene.id].status === 'completed'
+    (scene) => sceneStatuses[scene.id].status === 'completed' || sceneStatuses[scene.id].completedBefore
   ).length;
   const isZoneComplete = completedCount >= (zoneData?.scenes?.length || 0) && (zoneData?.scenes?.length || 0) > 0;
 
@@ -666,12 +666,13 @@ if (tempData) {
   tempState.basketFull
 );
       
-      // A permanently completed scene is always "completed" (Replay) — a
-      // half-played replay session must never turn it back into "Continue".
-      // Tapping Replay still resumes that session via hasReplaySession.
+      // Mid-game is mid-game, first play or replay: show Continue + Replay.
+      // The scene still counts as completed (zone progress, ✓ badge) via
+      // completedBefore. The mid-game save can live in temp_session OR
+      // replay_session (SceneManager picks by mode), so accept either.
       if (hasPartialProgress && progress.completed === true) {
-        dlog(`🎯 COMPLETED + REPLAY SESSION: ${scene.id} stays completed (Replay)`);
-        return { status: 'completed', stars: progress.stars || tempState.stars || 0, hasReplaySession };
+        dlog(`🎯 COMPLETED + MID-GAME SESSION: ${scene.id} → Continue/Replay`);
+        return { status: 'in-progress', completedBefore: true, stars: progress.stars || tempState.stars || 0, hasReplaySession };
       }
 
       if (hasPartialProgress) {
@@ -766,7 +767,9 @@ const getPermanentCompletedCount = () => {
       status: sceneStatuses[scene.id].status
     }));
 
-    const completedCount = statusEntries.filter((entry) => entry.status === 'completed').length;
+    const completedCount = statusEntries.filter(
+      (entry) => entry.status === 'completed' || sceneStatuses[entry.scene.id].completedBefore
+    ).length;
     const allDone = completedCount === zoneData.scenes.length;
 
     if (allDone) {
@@ -778,7 +781,9 @@ const getPermanentCompletedCount = () => {
     }
 
     const nextActive = statusEntries.find(
-      (entry) => entry.status === 'available' || entry.status === 'in-progress'
+      (entry) =>
+        entry.status === 'available' ||
+        (entry.status === 'in-progress' && !sceneStatuses[entry.scene.id].completedBefore)
     );
 
     // Ganesha badge is a persistent visual guide — always points at the next scene.
@@ -898,7 +903,7 @@ const handleReplayIntroStory = () => {
     const timer = setTimeout(() => {
       // Calculate zone completion inside effect to avoid temporal dead zone
       const zoneCompletedCount = (zoneData?.scenes || []).filter(
-        (scene) => sceneStatuses[scene.id].status === 'completed'
+        (scene) => sceneStatuses[scene.id].status === 'completed' || sceneStatuses[scene.id].completedBefore
       ).length;
       const isZoneComplete = zoneCompletedCount >= (zoneData?.scenes?.length || 0) && (zoneData?.scenes?.length || 0) > 0;
 
@@ -933,10 +938,19 @@ const handleReplayIntroStory = () => {
   const zoneWelcomeGaneshaState = getZoneWelcomeGaneshaState();
   const zoneLifeConfig = ZONE_LIFE_CONFIG[zoneData.id] || null;
   const zoneCompletedCount = (zoneData?.scenes || []).filter(
-    (scene) => sceneStatuses[scene.id].status === 'completed'
+    (scene) => sceneStatuses[scene.id].status === 'completed' || sceneStatuses[scene.id].completedBefore
   ).length;
   const isZoneComplete = zoneCompletedCount >= (zoneData?.scenes?.length || 0) && (zoneData?.scenes?.length || 0) > 0;
   const recommendedScene = zoneData?.scenes?.find((scene) => sceneStatuses[scene.id].status === 'available') || null;
+
+  // TABLET FEATURED SCENE (layout only, no unlock/progression change):
+  // in-progress scene > next available scene > final scene when zone is complete.
+  const zoneScenes = zoneData?.scenes || [];
+  const featuredScene =
+    zoneScenes.find((scene) => sceneStatuses[scene.id].status === 'in-progress' && !sceneStatuses[scene.id].completedBefore) ||
+    zoneScenes.find((scene) => sceneStatuses[scene.id].status === 'available') ||
+    zoneScenes[zoneScenes.length - 1] ||
+    null;
 
   return (
     <div
@@ -1032,6 +1046,7 @@ const handleReplayIntroStory = () => {
             className={[
               'scenes-horizontal-container',
               `scene-count-${zoneData.scenes.length}`,
+              'tablet-feature-layout',
               usesPhoneSceneCarousel ? 'has-phone-carousel' : '',
             ].join(' ')}
             onScroll={usesPhoneSceneCarousel ? updateSceneCarouselState : undefined}
@@ -1055,7 +1070,7 @@ const handleReplayIntroStory = () => {
                   highlightedScene === scene.id ? 'highlighted' : ''
                 } ${status.status === 'locked' ? 'locked-scene' : 'unlocked-scene'} ${
                   isNextScene ? 'next-scene' : ''
-                }`}
+                } ${featuredScene && featuredScene.id === scene.id ? 'is-featured-scene' : ''}`}
                 style={{
                   cursor: status.status === 'locked' ? 'not-allowed' : 'pointer',
                   '--zone-color': getCardAccentColor()
@@ -1181,7 +1196,7 @@ const handleReplayIntroStory = () => {
                           // Replay always restarts the scene fresh
                           handleSceneClick(scene, status.status === 'completed' ? 'replay' : 'default');
                         }}
-                        label={status.status === 'available' ? 'Start' : status.status === 'completed' ? (isPhoneLandscape ? '↻ Replay' : '↻ Play Again') : 'Locked'}
+                        label={status.status === 'available' ? 'Start' : status.status === 'completed' ? '↻ Replay' : 'Locked'}
                         size="sm"
                         fullWidth={true}
                         style={getProfilePillBtnStyle(zoneData.id)}

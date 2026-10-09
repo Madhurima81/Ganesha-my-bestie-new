@@ -739,8 +739,13 @@ const CleanGameWelcomeScreen = ({
             </div>
           </>
         ) : (
-          <div className="welcome-wide-layout">
-            <div className="welcome-wide-left">
+          <div className="welcome-single-layout">
+            <ScreenHeader
+              title={welcomeMsg.title}
+              glowColor="purple"
+            />
+
+            <div className="welcome-single-mandala">
               <div className="profile-mandala-wrapper">
                 <div className="profile-mandala">
                   <InnerMandala
@@ -762,53 +767,51 @@ const CleanGameWelcomeScreen = ({
                   />
                 </div>
               </div>
+            </div>
 
-              {hasMandalaCollection && (
-                <p className="welcome-wide-hint">
-                  Tap a petal to explore what you've collected.
-                </p>
+            {hasMandalaCollection && (
+              <p className="welcome-single-hint">
+                Tap a petal to see your powers.
+              </p>
+            )}
+
+            <div className="welcome-single-primary">
+              {hasProgress ? (
+                <PrimaryBtn
+                  label={welcomeMsg.buttonText.main}
+                  onClick={handleContinue}
+                  size="md"
+                  fullWidth
+                  className="continue-journey-btn welcome-action-btn"
+                />
+              ) : (
+                <PrimaryBtn
+                  label="Start Adventure"
+                  onClick={handleStartAdventure}
+                  size="md"
+                  fullWidth
+                  className="continue-journey-btn welcome-action-btn"
+                />
               )}
             </div>
 
-            <div className="welcome-wide-right">
-              <ScreenHeader
-                title={welcomeMsg.title}
-                glowColor="purple"
-              />
-
-              <p className="welcome-wide-subtitle">
-                {hasProgress ? 'Your powers are growing.' : 'Your adventure is ready.'}
-              </p>
-
-              <div className="welcome-actions welcome-buttons-row profile-actions">
-                {hasProgress ? (
-                  <>
-                    <PrimaryBtn
-                      label={welcomeMsg.buttonText.main}
-                      onClick={handleContinue}
-                      size="md"
-                      fullWidth
-                      className="continue-journey-btn welcome-action-btn"
-                    />
-                    <button className="secondary-btn explore-map-btn welcome-action-btn" onClick={handleNewGame}>
-                      Explore Map
-                    </button>
-                  </>
-                ) : (
-                  <PrimaryBtn
-                    label="Start Adventure"
-                    onClick={handleStartAdventure}
-                    size="md"
-                    fullWidth
-                    className="continue-journey-btn welcome-action-btn"
-                  />
-                )}
-              </div>
-
-              <button className="bottom-switch-explorer switch-explorer-link" onClick={handleBackToProfiles}>
-                Switch Explorer
+            {hasProgress && (
+              <button
+                type="button"
+                className="welcome-explore-map"
+                onClick={handleNewGame}
+              >
+                Explore Map
               </button>
-            </div>
+            )}
+
+            <button
+              type="button"
+              className="welcome-switch-explorer"
+              onClick={handleBackToProfiles}
+            >
+              Switch Explorer
+            </button>
           </div>
         )}
       </div>

@@ -87,9 +87,6 @@ const RESUME_DELAY_MS = 3000;
 const VOICE_LINES = {
   opening: "The forest friends need your help. Let’s see what they need.",
   eyes: 'Some things are hiding. Look closely and tap each one you find.',
-  ears: 'Our friends need the right sounds. Listen, then tap where each sound came from.',
-  eyesSetup: 'You looked closely and found them all.',
-  earsSetup: 'You listened carefully and found every sound.',
   tuskSetup: '',
   tusk: '',
   idleEyes: "Look closely — there's still one hiding.",
@@ -144,7 +141,10 @@ const SymbolMountainSceneV3 = ({
           foundInstruments: [],
           discoveredInstruments: {},
           instrumentsFound: 0,
+          eyesDone: [],
 
+          earsRoundsDone: 0,
+          nestBeatsDone: 0,
           earsVisible: false,
           earsGameComplete: false,
           showEarsRhythmGame: false,
@@ -241,9 +241,8 @@ const SymbolMountainSceneContent = ({
   const getPromptKeyForPhase = useCallback(() => {
     if (!sceneState?.welcomeShown) return 'opening';
     if (sceneState.phase === PHASES.EYES_GAME && !sceneState.showEyesTelescopeGame && !sceneState.discoveredSymbols?.eyes) return 'eyes';
-    if (sceneState.phase === PHASES.EARS_GAME && sceneState.earsVisible && !sceneState.showEarsRhythmGame && !sceneState.discoveredSymbols?.ears) return 'ears';
     if (sceneState.phase === PHASES.TUSK_GAME && isTuskGameVisible && !sceneState.ganeshaComplete) return 'tusk';
-    if (sceneState.phase === PHASES.ALL_COMPLETE) return 'complete';
+    // 'complete' is spoken inside the Mandala (after the Tusk petal line), not over the fireworks.
     return null;
   }, [
     sceneState?.discoveredSymbols?.ears,
@@ -546,17 +545,8 @@ const SymbolMountainSceneContent = ({
     let promptKey = null;
     if (sceneState.phase === PHASES.EYES_GAME && !sceneState.showEyesTelescopeGame && !sceneState.discoveredSymbols?.eyes) {
       promptKey = 'eyes';
-    } else if (
-      sceneState.phase === PHASES.EARS_GAME &&
-      sceneState.earsVisible &&
-      !sceneState.showEarsRhythmGame &&
-      !sceneState.discoveredSymbols?.ears
-    ) {
-      promptKey = 'ears';
     } else if (sceneState.phase === PHASES.TUSK_GAME && isTuskGameVisible && !sceneState.ganeshaComplete) {
       promptKey = 'tusk';
-    } else if (sceneState.phase === PHASES.ALL_COMPLETE) {
-      promptKey = 'complete';
     }
 
     if (!promptKey || lastAnnouncedPromptRef.current === promptKey) return;
@@ -564,7 +554,7 @@ const SymbolMountainSceneContent = ({
 
     const timer = setTimeout(() => {
       speakScenePrompt(promptKey, { onEnd: resetIdleBaseline });
-    }, promptKey === 'complete' ? 250 : 500);
+    }, 500);
     return () => clearTimeout(timer);
   }, [
     sceneState?.welcomeShown,
@@ -892,7 +882,7 @@ const SymbolMountainSceneContent = ({
         <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
           <div className="symbol-mountain-scene-v2-container">
             <ZoneBadgeButton variant="gameplay" zoneId="symbol-mountain" onBack={() => { stopSpokenVoice(); onNavigate?.('zone-welcome'); }} />
-            <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={toggleAudio} />
+            {/* [per-scene mute removed 2026-10-09] <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={toggleAudio} /> */}
             <VOReplayButton variant="gameplay"
               onReplay={replayCurrentVoice}
               disabled={!isAudioOn || !(getPromptKeyForPhase() || getGameReplayLine())}
@@ -916,6 +906,8 @@ const SymbolMountainSceneContent = ({
                 <EyesPopUpGame
                   isActive={sceneState.showEyesTelescopeGame}
                   onLineSpoken={reportEyesLine}
+                  initialDone={sceneState.eyesDone || []}
+                  onProgress={(ids) => sceneActions.checkpoint({ eyesDone: ids })}
                   isAudioOn={isAudioOn}
                   isPaused={scenePaused}
                   stopVoice={stopVoice}
@@ -937,6 +929,8 @@ const SymbolMountainSceneContent = ({
                 <EarsSoundMatchGame
                   isActive={sceneState.showEarsRhythmGame}
                   onLineSpoken={reportEarsLine}
+                  initialRound={sceneState.earsRoundsDone || 0}
+                  onRoundComplete={(n) => sceneActions.checkpoint({ earsRoundsDone: n })}
                   isAudioOn={isAudioOn}
                   isPaused={scenePaused}
                   stopVoice={stopVoice}
@@ -986,6 +980,8 @@ const SymbolMountainSceneContent = ({
                   isAudioOn={isAudioOn}
                   isPaused={scenePaused}
                   onGameComplete={handleTuskGameComplete}
+                  initialBeat={sceneState.nestBeatsDone || 0}
+                  onBeatComplete={(n) => sceneActions.checkpoint({ nestBeatsDone: n })}
                 />
               )}
 
@@ -1129,7 +1125,25 @@ const SymbolMountainSceneContent = ({
                   { id: 'ears', petalId: 7, ring: 'middle', image: symbolEarColored },
                   { id: 'tusk', petalId: 8, ring: 'middle', image: symbolTuskColored },
                 ]}
-                autoCloseMs={3000 + (3 * 950) + 2600}
+                onEarnedPetalReveal={(earnedPetal) => {
+                  const symbolByPetal = {
+                    6: 'eyes',
+                    7: 'ears',
+                    8: 'tusk',
+                  };
+                  const lines = {
+                    eyes: 'You focused on what mattered.',
+                    ears: 'You listened for what helped.',
+                    tusk: 'You used what you had for something important.',
+                  };
+                  const symbol = symbolByPetal[earnedPetal?.id];
+                  if (lines[symbol]) {
+                    // Scene-complete line plays inside the Mandala, right after the last petal line.
+                    const afterLast = symbol === 'tusk' ? () => speakScenePrompt('complete') : undefined;
+                    speak(lines[symbol], { age: 7, style: 'child', moment: 'celebration', onEnd: afterLast });
+                  }
+                }}
+                autoCloseMs={3000 + (3 * 950) + 2600 + 5500}
                 message="That power is growing inside you"
                 onClose={() => {
                   setShowMandala(false);

@@ -1838,7 +1838,7 @@ const SacredAssemblyContent = ({
       >
         <div className="sacred-assembly-container">
           <ZoneBadgeButton variant="gameplay" zoneId="symbol-mountain" onBack={() => { stopGaneshaVoice(); onNavigate?.('zone-welcome'); }} />
-          <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={toggleAudio} />
+          {/* [per-scene mute removed 2026-10-09] <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={toggleAudio} /> */}
           <VOReplayButton variant="gameplay"
             onReplay={replayVoiceForCurrentPhase}
             // No VO exists yet while the card is arriving (appear/flipped/side) — grey the

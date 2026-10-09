@@ -133,6 +133,7 @@ const SuryakotiBankSimplified = ({
           samaprabha: false,
         },
         welcomeShown: false,
+        finalCardCollected: false,
         currentPopup: null,
         showingCompletionScreen: false,
         stars: 0,
@@ -333,32 +334,22 @@ const SuryakotiBankContent = ({
     stopWebSpeech();
     const webSpeechMap = {
       welcome: "The river is dark. Let’s bring back some light.",
-      scene11_intro: "The river is dark. Let’s bring back some light.",
       scene11_surya_intro: "Bunny can’t find home. Rub the glow to bring back the light.",
-      scene11_surya_rub: "Rub the glowing spot.",
       scene11_surya_hint: "Keep rubbing.",
       surya_hint_rub: "Rub the glowing spot.",
       surya_hint_keep: "Keep rubbing.",
       surya_hint_almost: "Almost there!",
       scene11_surya_success: 'Suryakoti! You brought back the light and helped Bunny home.',
-      scene11_surya_done: 'Suryakoti! You brought back the light and helped Bunny home.',
       scene11_sama_intro: 'Deer sees a strange shadow. Press and hold to look closely.',
       scene11_sama_hint: 'Press and hold on the shadow.',
-      scene11_sama_hint_move: 'Press and hold on the shadow.',
-      scene11_sama_hint_hold: 'Keep holding to look closely.',
       scene11_sama_find_another: 'Press and hold another part of the shadow.',
       scene11_sama_hint_find: 'Look for another part of the shadow.',
       scene11_sama_hint_keep: 'Keep holding.',
-      scene11_sama_hint_look: 'Look again — what is really there?',
       scene11_sama_reveal_branch: 'That part is just a branch.',
       scene11_sama_reveal_reeds: 'Those are just reeds and leaves.',
       scene11_sama_reveal_stump: 'That part is a tree stump.',
       scene11_sama_reveal_rocks: 'And those are just rocks and grass.',
       scene11_sama_done: 'Samaprabha! You looked closely and helped Deer feel safe.',
-      suryakotiSetup: "Bunny can’t find home. Rub the glow to bring back the light.",
-      suryakotiClaim: 'Suryakoti lights the way.',
-      samaprabhaSetup: "A shadow looks scary until we understand it.",
-      samaprabhaClaim: 'Samaprabha helps us see clearly.',
       sceneComplete: 'You brought back the light and saw what was really there.',
     };
     if (webSpeechMap[key]) {
@@ -515,6 +506,13 @@ const SuryakotiBankContent = ({
       }, 1200);
     };
 
+    // Final card already collected before leaving: never show it twice, go on to the celebration.
+    if (sceneState.finalCardCollected && [PHASES.SAMAPRABHA_COMPLETE, PHASES.SAMAPRABHA_POWER].includes(sceneState.phase)) {
+      sceneActions.updateState({ unlockedApps: { ...(sceneState.unlockedApps || {}), samaprabha: true } });
+      safeSetTimeout(() => handleAppDiscoveryCelebrate(), 600);
+      return;
+    }
+
     if ([PHASES.SURYAKOTI_COMPLETE, PHASES.SURYAKOTI_POWER].includes(sceneState.phase)) {
       restoreReveal('suryakoti');
       return;
@@ -541,6 +539,7 @@ const SuryakotiBankContent = ({
 
     if (symbolId === 'samaprabha') {
       const appsNow = sceneState.unlockedApps || {};
+      sceneActions.checkpoint({ finalCardCollected: true });
       safeSetTimeout(() => {
         sceneActions.updateState({
           unlockedApps: { ...appsNow, samaprabha: true },
@@ -721,8 +720,10 @@ const SuryakotiBankContent = ({
     <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
       <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
         <div className="suryakoti-simplified-container">
-          <ZoneBadgeButton variant="gameplay" zoneId="shloka-river" onBack={() => { stopAllVoice(); onNavigate?.('zone-welcome'); }} />
-          <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
+          {!(showSparkle === 'final-fireworks' || showMandala) && (
+            <ZoneBadgeButton variant="gameplay" zoneId="shloka-river" onBack={() => { stopAllVoice(); onNavigate?.('zone-welcome'); }} />
+          )}
+          {/* [per-scene mute removed 2026-10-09] <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={handleAudioToggle} /> */}
           <VOReplayButton variant="gameplay" onReplay={replayCurrentVoice} disabled={!isAudioOn} />
           <ResumeCountdown value={countdownValue} />
 
@@ -889,9 +890,25 @@ const SuryakotiBankContent = ({
                       { id: 'suryakoti', petalId: 3, ring: 'outer', image: symbolSuryakoti },
                       { id: 'samaprabha', petalId: 4, ring: 'outer', image: symbolSamaprabha },
                     ]}
+                    onEarnedPetalReveal={(earnedPetal) => {
+                      const symbolByPetal = {
+                        3: 'suryakoti',
+                        4: 'samaprabha',
+                      };
+                      const lines = {
+                        suryakoti: 'You found hope and brought back the light.',
+                        samaprabha: 'You looked closely and saw what was really there.',
+                      };
+                      const symbol = symbolByPetal[earnedPetal?.id];
+                      if (lines[symbol]) {
+                        // Scene-complete line plays inside the Mandala, right after the last petal line.
+                        const afterLast = symbol === 'samaprabha' ? () => playGuidanceVoice('sceneComplete') : undefined;
+                        speakWebSpeech(lines[symbol], afterLast);
+                      }
+                    }}
                     highlightPetals={sceneOuterPetalIds}
                     message="These meanings are growing inside you"
-                    autoCloseMs={3000 + (2 * 950) + 2600}
+                    autoCloseMs={3000 + (2 * 950) + 2600 + 5500}
                     onClose={() => {
                       setShowMandala(false);
                       setShowSceneCompletion(true);

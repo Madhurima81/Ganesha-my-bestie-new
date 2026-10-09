@@ -117,6 +117,7 @@ const DreamsWishesGame = ({ onComplete, onBack, onNavigate, zoneId = 'about-me-h
   return (
     <ErrorBoundary>
       <SceneManager
+        flushKeys={['gamePhase']}
         zoneId={zoneId}
         sceneId={sceneId}
         initialState={{
@@ -287,7 +288,6 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     // dreamIntro: (REMOVED — merged into allWishesComplete)
     dreamDrawing: "Draw something you hope for or dream about.",
     dreamClouded: "Your dream is hiding behind the clouds. Help me clear them — tap me.",
-    dreamClearing: "There are still clouds in the way.",
     dreamRevealed: "There it is — your dream!",
 
     // Comparison Card
@@ -295,12 +295,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     completionCelebration: "",
 
     // Ending
-    ending: "",
-
-    // Idle hints
-    wish1Hint: "Can you find another kind action?",
-    wish2Hint: "There's still an empty plate.",
-    wish3Hint: "There's still space for more to grow."
+    ending: ""
   };
 
   // Profile Display
@@ -729,25 +724,8 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       return;
     }
 
-    // Completion phases — roll back to the active phase and replay its VO
-    if (gamePhase === 'wish1-complete') {
-      phaseVoiceRef.current.wish1Active = true;
-      sceneActions.updateState({ gamePhase: 'wish1-active', wish1Taps: 0, wish1FinalMoment: false });
-      safeSetTimeout(() => { speakLine(VOICE_LINES.wish1Active, { moment: 'encouragement' }); }, 500);
-      return;
-    }
-    if (gamePhase === 'wish2-complete') {
-      phaseVoiceRef.current.wish2Active = true;
-      sceneActions.updateState({ gamePhase: 'wish2-active', wish2Taps: 0, bowlStates: [false, false, false], wish2PlateFoods: [null, null, null], wish2FoodPool: [...WISH2_FOOD_KEYS], wish2FinalMoment: false });
-      safeSetTimeout(() => { speakLine(VOICE_LINES.wish2Active, { moment: 'encouragement' }); }, 500);
-      return;
-    }
-    if (gamePhase === 'wish3-complete') {
-      phaseVoiceRef.current.wish3Active = true;
-      sceneActions.updateState({ gamePhase: 'wish3-active', wish3Taps: 0, parkStates: [false, false, false], wish3FinalMoment: false });
-      safeSetTimeout(() => { speakLine(VOICE_LINES.wish3Active, { moment: 'encouragement' }); }, 500);
-      return;
-    }
+    // Completion phases: that wish is finished, so resume at the NEXT beat (never redo it).
+    // wish1-complete -> wish2, wish2-complete -> wish3, wish3-complete -> all-wishes-complete.
 
     // Active phases — reset counters, replay entry VO
     if (gamePhase === 'wish1-active') {
@@ -775,13 +753,13 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       safeSetTimeout(() => { speakLine(VOICE_LINES.wish1Intro, { moment: 'story' }); }, 500);
       return;
     }
-    if (gamePhase === 'wish2-intro') {
+    if (gamePhase === 'wish2-intro' || gamePhase === 'wish1-complete') {
       phaseVoiceRef.current.wish2Active = true;
       sceneActions.updateState({ gamePhase: 'wish2-active', wish2Taps: 0, bowlStates: [false, false, false], wish2PlateFoods: [null, null, null], wish2FoodPool: [...WISH2_FOOD_KEYS], wish2FinalMoment: false });
       safeSetTimeout(() => { speakLine(VOICE_LINES.wish2Active, { moment: 'encouragement' }); }, 500);
       return;
     }
-    if (gamePhase === 'wish3-intro') {
+    if (gamePhase === 'wish3-intro' || gamePhase === 'wish2-complete') {
       phaseVoiceRef.current.wish3Active = true;
       sceneActions.updateState({ gamePhase: 'wish3-active', wish3Taps: 0, parkStates: [false, false, false], wish3FinalMoment: false });
       safeSetTimeout(() => { speakLine(VOICE_LINES.wish3Active, { moment: 'encouragement' }); }, 500);
@@ -789,8 +767,9 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
     }
 
     // All wishes complete
-    if (gamePhase === 'all-wishes-complete') {
+    if (gamePhase === 'all-wishes-complete' || gamePhase === 'wish3-complete') {
       phaseVoiceRef.current.allWishesComplete = true;
+      if (gamePhase === 'wish3-complete') sceneActions.updateState({ gamePhase: 'all-wishes-complete', wish3FinalMoment: false });
       safeSetTimeout(() => { speakLine(VOICE_LINES.allWishesComplete, { moment: 'celebration' }); }, 500);
       return;
     }
@@ -1693,7 +1672,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
         SimpleSceneManager.clearCurrentScene();
         onNavigate?.('zone-welcome');
       }} />
-      <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={toggleAudio} />
+      {/* [per-scene mute removed 2026-10-09] <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={toggleAudio} /> */}
       <VOReplayButton variant="gameplay" onReplay={replayCurrentVoice} disabled={!isAudioOn} />
 
       {/* Story Progress Header */}

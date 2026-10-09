@@ -88,20 +88,25 @@ const isPointInsideExpandedOval = (event, rect, pad = { x: 0, top: 0, bottom: 0 
   return (dx * dx) + (dy * dy) <= 1;
 };
 
-export default function GarlandGame3({ isActive = true, isPaused = false, isAudioOn = true, onComplete, stopVoice, onLineSpoken }) {
+export default function GarlandGame3({ isActive = true, isPaused = false, isAudioOn = true, onComplete, stopVoice, onLineSpoken, initialBuilt = false, onBuildComplete }) {
   usePreloadPoses(SCENE_IMAGES);
-  const [phase, setPhase] = useState(PHASES.BUILD);
+  // Continue after the garland was already built: resume at the carry step
+  // (READY), not the build. Only read at mount.
+  const [builtAtMount] = useState(Boolean(initialBuilt));
+  const [phase, setPhase] = useState(builtAtMount ? PHASES.READY : PHASES.BUILD);
+  const onBuildCompleteRef = useRef(onBuildComplete);
+  onBuildCompleteRef.current = onBuildComplete;
   const sceneRef = useRef(null);
   const workspaceRef = useRef(null);
   const ganeshaDropRef = useRef(null);
   const mooshikaRef = useRef(null);
 
-  const [placedFlowers, setPlacedFlowers] = useState([]);
+  const [placedFlowers, setPlacedFlowers] = useState(() => (builtAtMount ? FLOWERS.map((f, i) => ({ ...f, slot: GARLAND_SLOTS[i], slotIndex: i })) : []));
   const [threadingFlower, setThreadingFlower] = useState(null);
   const threadingLock = useRef(false);
   const [garlandPosition, setGarlandPosition] = useState({ x: 50, y: 55, active: false });
 
-  const [flowersArrived, setFlowersArrived] = useState(false);
+  const [flowersArrived, setFlowersArrived] = useState(builtAtMount);
   const [basketPct, setBasketPct] = useState(null);
   const [showModakGlow, setShowModakGlow] = useState(false);
 
@@ -430,7 +435,25 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
   const liveSlots = GARLAND_SLOTS;
   const placedIds = useMemo(() => new Set(placedFlowers.map((item) => item.id)), [placedFlowers]);
 
-  const buildIntroStartedRef = useRef(false);
+  const buildIntroStartedRef = useRef(builtAtMount);
+
+  // Resumed at the carry step: replay the carry instruction once and start the
+  // carry hint clock (the build -> ready transition below does this in a normal run).
+  const readyIntroStartedRef = useRef(false);
+  useEffect(() => {
+    if (!builtAtMount || !isActive || readyIntroStartedRef.current) return undefined;
+    readyIntroStartedRef.current = true;
+    (async () => {
+      await speakAsync(VO.ready, getLineCue('garland:ready', () => {
+        setCarryTeachingGesture(true);
+        after(3200, () => setCarryTeachingGesture(false));
+      }));
+      if (!isActiveRef.current) return;
+      startGarlandHintClock(true);
+    })();
+    return undefined;
+  }, [builtAtMount, isActive, speakAsync, after, startGarlandHintClock]);
+
   useEffect(() => {
     if (!isBuild || !isActive || buildIntroStartedRef.current) return undefined;
     buildIntroStartedRef.current = true;
@@ -492,6 +515,7 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
         if (cancelled) return;
         stopBuildHintClock();
         setPhase(PHASES.READY);
+        onBuildCompleteRef.current?.();
 
         // Drag is a new gesture after six tap interactions — teach it once
         // immediately, independent of (and overlapping) the ready VO.

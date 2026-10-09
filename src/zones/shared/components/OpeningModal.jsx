@@ -300,8 +300,12 @@ const OpeningModal = ({
   useEffect(() => {
     if (!visible || !hasContent || !content.voiceover || voiceoverPlayedRef.current) return;
 
-    voiceoverPlayedRef.current = true;
+    // Mark as played only when the timer actually fires. Setting it before the
+    // timer broke React StrictMode's mount/cleanup/mount: the cleanup cleared the
+    // timer and the second run saw the flag and never spoke.
     const timer = setTimeout(() => {
+      if (voiceoverPlayedRef.current) return;
+      voiceoverPlayedRef.current = true;
       if (!visibleRef.current || isOpeningVoActive()) return;
       speakOpeningVoiceover(content.voiceover);
     }, 300);

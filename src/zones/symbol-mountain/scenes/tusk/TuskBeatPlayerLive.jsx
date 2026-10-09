@@ -53,7 +53,9 @@ const ASSET_MAP = {
 // something it likes" flow (mango/water/grass/feather), which read as
 // generosity rather than the tusk's "broken things can still help" meaning.
 // See tuskNestFlow.json for the beat-by-beat story and VO.
-function TuskBeatPlayerLive({ isActive = true, isAudioOn = true, onGameComplete, className = '', isPaused: isSidebarPaused = false }) {
+function TuskBeatPlayerLive({ isActive = true, isAudioOn = true, onGameComplete, className = '', isPaused: isSidebarPaused = false, initialBeat = 0, onBeatComplete }) {
+  // Continue: beats already finished (0-4) in an earlier visit. Read once at mount.
+  const [startBeat] = useState(initialBeat);
   // Paused by the tab being hidden OR by the sidebar being open (a true pause either way).
   const [tabPaused, setTabPaused] = useState(false);
   useAppVisibility(
@@ -77,6 +79,8 @@ function TuskBeatPlayerLive({ isActive = true, isAudioOn = true, onGameComplete,
         movementMs={400}
         reactionPauseMs={550}
         onComplete={onGameComplete}
+        initialBeatPos={startBeat}
+        onBeatComplete={onBeatComplete}
       />
     </div>
   );

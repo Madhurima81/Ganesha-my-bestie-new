@@ -167,6 +167,10 @@ export default function NirvighnamGame({
   onMicroWin = () => {},
   onPhaseComplete = () => {},
   onGameComplete = () => {},
+  // Resume: obstacles already cleared (0-2). Applied only when the game mounts active (Continue).
+  initialCleared = 0,
+  // Fired with the cleared count after each obstacle except the last (checkpoint).
+  onBeatComplete = () => {},
   voiceGuidance = {},
   isPaused = false,
   // Sidebar actually open (isPaused also covers the short replay hold after it closes): drives the
@@ -183,9 +187,12 @@ export default function NirvighnamGame({
   const [selectedDebugKey, setSelectedDebugKey] = useState(debugOptions[0].key);
   const [debugPhase, setDebugPhase] = useState(0);
   const [debugPanelPosition, setDebugPanelPosition] = useState({ x: 16, y: 16 });
+  const [seedCount] = useState(() => (
+    isActive ? Math.max(0, Math.min(OBSTACLE_ORDER.length - 1, Number(initialCleared) || 0)) : 0
+  ));
   const [phase, setPhase] = useState('play');
-  const [cleared, setCleared] = useState([]);
-  const [litCount, setLitCount] = useState(0);
+  const [cleared, setCleared] = useState(() => OBSTACLE_ORDER.slice(0, seedCount));
+  const [litCount, setLitCount] = useState(seedCount);
   const [turtlePos, setTurtlePos] = useState(() => loadDebugLayout().turtleStart);
   const [isSwimming, setIsSwimming] = useState(false);
   const [dragging, setDragging] = useState(null);
@@ -312,9 +319,10 @@ export default function NirvighnamGame({
 
     setCleared((prev) => [...prev, id]);
     setLitCount((prev) => Math.min(SYLLABLES.length, prev + 1));
+    if (cleared.length + 1 < OBSTACLE_ORDER.length) onBeatComplete?.(cleared.length + 1);
     markInteraction();
     onMicroWin?.();
-  }, [cleared, markInteraction, onMicroWin]);
+  }, [cleared, markInteraction, onMicroWin, onBeatComplete]);
 
   const finishCurrentObstacleIntro = useCallback(() => {
     if (!nextObstacleId || nextObstacleId === 'stone') return;
@@ -382,6 +390,23 @@ export default function NirvighnamGame({
     if (OBSTACLE_INTRO_KEYS[nextObstacleId] && playSceneLine) return;
     finishCurrentObstacleIntro();
   }, [finishCurrentObstacleIntro, isActive, isPaused, nextObstacleId, obstacleIntroComplete, phase, playSceneLine]);
+
+  // Resume (Continue after finished obstacles): the scene skips the stone intro, so this plays the
+  // NEXT obstacle's own intro once, which also arms its teaching hand and hint clock.
+  const resumeIntroPlayedRef = useRef(false);
+  useEffect(() => {
+    if (!isActive || seedCount === 0 || resumeIntroPlayedRef.current) return;
+    resumeIntroPlayedRef.current = true;
+    const obstacle = OBSTACLE_ORDER[seedCount];
+    const introKey = OBSTACLE_INTRO_KEYS[obstacle];
+    const markStarted = () => setObstacleIntroVoStarted((current) => (current[obstacle] ? current : { ...current, [obstacle]: true }));
+    if (introKey && playSceneLine) {
+      playSceneLine(introKey, finishCurrentObstacleIntro, { cue: getLineCue(introKey, markStarted) });
+    } else {
+      markStarted();
+      finishCurrentObstacleIntro();
+    }
+  }, [isActive]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // L2 hint VO — "Press and hold..." if untouched, "Keep holding" (etc.) if
   // the child made real progress and then stalled. obstacleHasProgress

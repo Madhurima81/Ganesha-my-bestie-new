@@ -173,6 +173,7 @@ const ShlokaRiverFinale = ({
         completed: false,
         stars: 0,
         welcomeShown: false,
+        wordsPlaced: 0,
         currentPopup: null,
         showingCompletionScreen: false,
       }}
@@ -316,15 +317,22 @@ const ShlokaRiverFinaleContent = ({
   const { safeSetTimeout, clearAll: clearAllTimeouts } = usePauseAwareTimeout({});
   const { playUiTap, playSparkle, playChime } = useGameSounds();
 
+  // Resume: words already placed correctly (checkpointed per word). Only honoured when
+  // the saved phase is ARRANGE; a fresh game / replay has no wordsPlaced.
+  const [resumeWords] = useState(() => (
+    sceneState.phase === PHASES.ARRANGE
+      ? Math.max(0, Math.min(SHLOKA_WORDS.length - 1, Number(sceneState.wordsPlaced) || 0))
+      : 0
+  ));
   const [scrambledWords, setScrambledWords] = useState(() => shuffle(SHLOKA_WORDS));
-  const [slots, setSlots] = useState(Array(8).fill(null));
+  const [slots, setSlots] = useState(() => Array(8).fill(null).map((_, i) => (i < resumeWords ? SHLOKA_WORDS[i].id : null)));
   const [wrongWordId, setWrongWordId] = useState(null);
-  const [correctSlots, setCorrectSlots] = useState(new Set());
+  const [correctSlots, setCorrectSlots] = useState(() => new Set(Array.from({ length: resumeWords }, (_, i) => i)));
   const [draggingWord, setDraggingWord] = useState(null);
   const [dragPos, setDragPos] = useState(null);
   const [missDrop, setMissDrop] = useState(null);
   const [openingButtonVisible, setOpeningButtonVisible] = useState(false);
-  const [activeSlotIndex, setActiveSlotIndex] = useState(0);
+  const [activeSlotIndex, setActiveSlotIndex] = useState(resumeWords);
   const [rippleSlot, setRippleSlot] = useState(null);
   const [showOrbsCelebration, setShowOrbsCelebration] = useState(false);
   const [showSceneCompletion, setShowSceneCompletion] = useState(false);
@@ -684,6 +692,12 @@ const ShlokaRiverFinaleContent = ({
     if (armedOnMountRef.current) return;
     armedOnMountRef.current = true;
     if (phase !== PHASES.ARRANGE) return;
+    if (resumeWords > 0) {
+      // Resuming after finished words: no target-word audio (it would give the answer away).
+      setBuildReady(true);
+      setHintReadySlot(activeSlotIndex);
+      return;
+    }
     setBuildReady(false);
     playWordAudio?.(SHLOKA_WORDS[activeSlotIndex]?.id, () => {
       setBuildReady(true);
@@ -693,7 +707,7 @@ const ShlokaRiverFinaleContent = ({
   }, []);
 
   const handleStartGame = () => {
-    sceneActions.updateState({ phase: PHASES.ARRANGE, welcomeShown: true });
+    sceneActions.checkpoint({ phase: PHASES.ARRANGE, welcomeShown: true, wordsPlaced: 0 });
     setBuildReady(false);
     setHintReadySlot(null);
     setIntroTeaching(true);
@@ -729,7 +743,7 @@ const ShlokaRiverFinaleContent = ({
     successFlowStartedRef.current = true;
 
     setHintReadySlot(null);
-    sceneActions.updateState({ phase: PHASES.SUCCESS });
+    sceneActions.checkpoint({ phase: PHASES.SUCCESS, wordsPlaced: SHLOKA_WORDS.length });
 
     const startRecap = () => {
       if (chantRecapStartedRef.current) return;
@@ -825,6 +839,8 @@ const ShlokaRiverFinaleContent = ({
     setRippleSlot(slotIdx);
     safeSetTimeout(() => setRippleSlot(null), 650);
     setHintReadySlot(null);
+    // Stable beat: this word is placed. Write it now (not via the 1s autosave).
+    if (slotIdx < SHLOKA_WORDS.length - 1) sceneActions.checkpoint({ wordsPlaced: slotIdx + 1 });
 
     playSparkle();
 
@@ -863,7 +879,7 @@ const ShlokaRiverFinaleContent = ({
     } else {
       safeSetTimeout(advance, 250);
     }
-  }, [markInteraction, noteWrongAnswer, stopAllVoice, playChime, playSfx, playSparkle, playVoice, playWordAudio, safeSetTimeout, triggerSuccessFlow]);
+  }, [sceneActions, markInteraction, noteWrongAnswer, stopAllVoice, playChime, playSfx, playSparkle, playVoice, playWordAudio, safeSetTimeout, triggerSuccessFlow]);
 
   const handleTrayPointerDown = (e, wordData) => {
     if (phase !== PHASES.ARRANGE || usedWords.has(wordData.id)) return;
@@ -1124,7 +1140,7 @@ const ShlokaRiverFinaleContent = ({
           onContextMenu={(e) => e.preventDefault()}
         >
           <ZoneBadgeButton variant="gameplay" zoneId="shloka-river" onBack={() => { stopAllVoice(); onNavigate?.('zone-welcome'); }} />
-          <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
+          {/* [per-scene mute removed 2026-10-09] <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={handleAudioToggle} /> */}
           <VOReplayButton variant="gameplay" onReplay={replayCurrentVoice} disabled={!isAudioOn} />
 
           {phase === PHASES.INITIAL && (

@@ -126,6 +126,7 @@ const FavoriteFoodGame = ({ onComplete, onBack, onNavigate, zoneId = 'about-me-h
   return (
     <ErrorBoundary>
       <SceneManager
+        flushKeys={['gamePhase']}
         zoneId={zoneId}
         sceneId={sceneId}
         initialState={{
@@ -245,9 +246,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
   }, []);
 
   const VOICE_LINES = {
-    // Opening Screen
-    opening: "Let’s find my favorites, then yours.",
-
     // Ganesha Section - Food
     foodQuestion: "Can you guess my favorite food?",
     foodCorrect: "Yes — I love modak!",
@@ -265,7 +263,6 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     friendCorrect: "Yes — Mooshika!",
 
     // Transition to Child Section
-    transition: "Now I want to know your favorites.",
     childIntro: "Now I want to know your favorites.",
 
     // Child Section - Food
@@ -811,7 +808,13 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       }
 
       reloadHandledRef.current = true;
-      const { gamePhase, currentModal } = sceneState;
+      let { gamePhase } = sceneState;
+      const { currentModal } = sceneState;
+      // Friend answered correctly: resume at the child's intro, not the friend question again.
+      if (gamePhase === 'friend-correct' && !currentModal) {
+        gamePhase = 'child-intro';
+        sceneActions.updateState({ gamePhase: 'child-intro', wrongChoices: [], correctChoiceId: null });
+      }
       suppressPhaseVoUntilReloadSettlesRef.current = false;
       expectedReloadPhaseRef.current = null;
 
@@ -840,14 +843,15 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
       const ganeshaRestartPhaseMap = {
         'food-choice': 'food-choice',
-        'food-correct': 'food-choice',
+        // A '-correct' celebration means that answer is done: resume at the NEXT question.
+        'food-correct': 'color-choice',
         'color-choice': 'color-choice',
-        'color-correct': 'color-choice',
+        'color-correct': 'activity-choice',
         'activity-choice': 'activity-choice',
-        'activity-correct': 'activity-choice',
+        'activity-correct': 'friend-choice',
         'friend-intro': 'friend-choice',
         'friend-choice': 'friend-choice',
-        'friend-correct': 'friend-choice'
+        'friend-correct': 'friend-choice' // handled above: resumes at child-intro
       };
       const childPhases = ['child-food-choice', 'child-color-choice', 'child-activity-choice', 'child-friend-input'];
 
@@ -879,8 +883,8 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
         suppressPhaseVoUntilReloadSettlesRef.current = true;
         expectedReloadPhaseRef.current = restartPhase;
         // Reload rule: in any Ganesha phase (choice/hint/celebration), restart from phase entry.
-        const wasCelebrationPhase = ['food-correct', 'color-correct', 'activity-correct', 'friend-correct'].includes(gamePhase);
-        suppressCelebrationVoOnReloadRef.current = wasCelebrationPhase;
+        // Celebration phases now resume at the next question, so there is no celebration VO to suppress.
+        suppressCelebrationVoOnReloadRef.current = false;
         clearAllTimeouts();
         interruptCurrentVoice();
         phaseVoiceRef.current = {};
@@ -1717,7 +1721,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
         clearAllTimeouts();
         onNavigate?.('zone-welcome');
       }} />
-      <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={toggleAudio} />
+      {/* [per-scene mute removed 2026-10-09] <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={toggleAudio} /> */}
       <VOReplayButton variant="gameplay" onReplay={replayCurrentVoice} disabled={!isAudioOn} />
 
       {discoveryFly && !['food-correct', 'color-correct', 'activity-correct', 'friend-correct'].includes(sceneState.gamePhase) && (

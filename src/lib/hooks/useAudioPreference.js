@@ -1,4 +1,5 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
+import { subscribeVoiceMute, setVoiceMuted } from '../utils/voiceMute';
 
 const AUDIO_PREF_KEY = 'ganesha_audio_enabled';
 
@@ -23,17 +24,12 @@ const useAudioPreference = () => {
     }
   });
 
+  // Home / Parent Dashboard own the mute now; a mounted scene just follows the flag.
+  useEffect(() => subscribeVoiceMute((muted) => setIsAudioOn(!muted)), []);
+
   const toggleAudio = useCallback(() => {
-    setIsAudioOn(prev => {
-      const next = !prev;
-      try {
-        localStorage.setItem(AUDIO_PREF_KEY, String(next));
-      } catch {
-        // ignore storage errors
-      }
-      return next;
-    });
-  }, []);
+    setVoiceMuted(isAudioOn); // currently on -> mute; subscription updates state
+  }, [isAudioOn]);
 
   // Directly set audio enabled/disabled (used by onReplay to mute on scene reset)
   const setAudioEnabled = useCallback((enabled) => {

@@ -172,6 +172,11 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
   hideElements = false,
   className = '',
   onComplete,
+  // Continue: start at this beat position (0 = first beat) instead of always beat 0, and
+  // report the position of the NEXT beat each time a beat finishes (= beats completed).
+  // Read once at mount; a beat left half-played restarts from its own 'before' state.
+  initialBeatPos = 0,
+  onBeatComplete,
   onMissingAsset,
   // Layout Debug — same drag-to-reposition + numeric-field + "copy JSON"
   // pattern already used in the hand-coded live scenes (KurumedevaGame.jsx,
@@ -197,7 +202,11 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
   const holdProgressRef = useRef(0);
   const warnedPaths = useRef(new Set());
 
-  const [beatPos, setBeatPos] = useState(0);
+  const [beatPos, setBeatPos] = useState(() => (
+    Math.max(0, Math.min(beatKeys.length - 1, Number(initialBeatPos) || 0))
+  ));
+  const onBeatCompleteRef = useRef(onBeatComplete);
+  onBeatCompleteRef.current = onBeatComplete;
   const [stateName, setStateName] = useState('before');
 
   // Dev-only escape hatch: jump straight to any beat by its JSON key,
@@ -380,9 +389,10 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
       onComplete?.();
       return;
     }
+    onBeatCompleteRef.current?.(beatPos + 1);
     setBeatPos((p) => p + 1);
     goToState('before');
-  }, [isLastBeat, onComplete, goToState]);
+  }, [isLastBeat, onComplete, goToState, beatPos]);
 
   const needsInput = (name) => name === 'before' && interaction && interaction.type && interaction.type !== 'none';
 

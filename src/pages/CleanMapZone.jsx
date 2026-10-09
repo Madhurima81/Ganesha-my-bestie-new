@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import './CleanMapZone.css';
 import GameStateManager from '../lib/services/GameStateManager';
 import { GANESHA_POSE_ASSETS } from '../lib/config/ganeshaUsageSystem';
-import AudioToggle from '../lib/components/ui/AudioToggle/AudioToggle';
+import HoldMuteButton from '../lib/components/ui/HoldMuteButton/HoldMuteButton';
 // import ZonePreviewModal from './components/ZonePreviewModal'; // commented out — no preview modal
 import useAudioPreference from '../lib/hooks/useAudioPreference';
 
@@ -999,7 +999,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
     media.addEventListener?.('change', sync);
     return () => media.removeEventListener?.('change', sync);
   }, []);
-  const { isAudioOn, toggleAudio } = useAudioPreference();
+  const { isAudioOn } = useAudioPreference();
   const unlockTimersRef = useRef({});
   const voiceTimersRef = useRef([]);
   const mushikaTimerRef = useRef(null);
@@ -1012,6 +1012,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
   const parentHoldTimerRef = useRef(null);
   const parentHoldTriggeredRef = useRef(false);
   const editorTouchedRef = useRef(false);
+  // Voice mute only (Home hold-to-mute / Settings > Voice). Ambient loop and SFX keep playing.
   const isMuted = !isAudioOn;
 
   // Freemium extension point: Day-3-or-later return is the other paywall-trigger
@@ -1220,10 +1221,10 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
       }, 80);
     };
 
-    if (!isMuted) fadeIn();
+    fadeIn();
 
     const onFirstInteraction = () => {
-      if (audio.paused && !isMuted) fadeIn();
+      if (audio.paused) fadeIn();
       document.removeEventListener('pointerdown', onFirstInteraction);
     };
     document.addEventListener('pointerdown', onFirstInteraction);
@@ -1232,7 +1233,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
       if (document.visibilityState === 'hidden') {
         clearInterval(fadingRef.current);
         audio.pause();
-      } else if (!isMuted) {
+      } else {
         fadeIn();
       }
     };
@@ -1244,13 +1245,10 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
       document.removeEventListener('pointerdown', onFirstInteraction);
       document.removeEventListener('visibilitychange', onVisibility);
     };
-  }, [isMuted]);
+  }, []);
 
   useEffect(() => {
-    const audio = ambientRef.current;
-    if (!audio || !isMuted) return;
-    clearInterval(fadingRef.current);
-    audio.pause();
+    if (!isMuted) return;
     voiceTimersRef.current.forEach(clearTimeout);
     voiceTimersRef.current = [];
     if (typeof window !== 'undefined' && window.speechSynthesis) {
@@ -1299,7 +1297,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
           [zoneId]: 'normal'
         }));
 
-        playUnlockChime('normal', isMuted);
+        playUnlockChime('normal', false);
 
         const line = MAP_ZONE_UNLOCK_VO[zoneId];
 
@@ -1433,7 +1431,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
     labelPulseTimerRef.current = setTimeout(() => setPulsingLabelZoneId(null), 220);
 
     // Play zone click SFX (locked = buzz, active = bright tone)
-    playZoneClickSfx(state, isMuted);
+    playZoneClickSfx(state, false);
 
     // Locked or future destinations: not tappable, no feedback.
     if (state === 'locked' || state === 'coming-soon') {
@@ -1459,11 +1457,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         preload="metadata"
       />
 
-      <AudioToggle
-        isAudioOn={!isMuted}
-        onToggle={toggleAudio}
-        position="bottom-left"
-      />
+      <HoldMuteButton position="bottom-left" />
 
       {/* Background image */}
       <img

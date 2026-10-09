@@ -16,7 +16,7 @@ const GRID_TAP_VO = {
   belly: 'Belly... I have room for all my feelings.',
   lotus: 'Lotus... I can stay calm when things get messy.',
   trunk: 'Trunk... I find my way.',
-  eye: 'Eyes... I notice the good around me.',
+  eye: 'Eyes... I can focus on what matters.',
   ear: 'Ears... I listen with care.',
   tusk: 'Tusk... I stay focused on what is true.',
 };

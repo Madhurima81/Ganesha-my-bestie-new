@@ -14,6 +14,7 @@ import PrivacyPolicy from '../onboarding/PrivacyPolicy'
 import GameStateManager from '../../services/GameStateManager'
 import { getUnlockedLearnings, getLatestLearning, getLearningById } from '../../services/LearningProgress'
 import { clearPin } from '../../utils/dashboardData'
+import { isVoiceMuted, setVoiceMuted, subscribeVoiceMute, migrateLegacyVoicePref } from '../../utils/voiceMute'
 import pwaInstallManager, { isStandalone, getInstallGuide } from '../../services/PwaInstallManager'
 
 const SOUND_PREF_KEYS = {
@@ -42,6 +43,9 @@ const readSoundSettings = () => {
     const parsed = Number(raw)
     if (!Number.isNaN(parsed)) next[key] = parsed > 0
   })
+  // Voice is the shared mute flag (same one the Home hold-to-mute button uses).
+  migrateLegacyVoicePref()
+  next.voice = !isVoiceMuted()
   return next
 }
 
@@ -71,6 +75,11 @@ export default function ParentDashboard({ onBack, onOpenChildProfile }) {
   const [showHelp, setShowHelp] = useState(false)
   const [showAbout, setShowAbout] = useState(false)
   const [soundSettings, setSoundSettings] = useState(readSoundSettings)
+
+  // Home mute button flips the same flag: keep the Voice switch in step.
+  useEffect(() => subscribeVoiceMute((muted) => {
+    setSoundSettings((prev) => ({ ...prev, voice: !muted }))
+  }), [])
   const [appInstalled, setAppInstalled] = useState(isStandalone())
   const [showInstallSteps, setShowInstallSteps] = useState(false)
 
@@ -152,11 +161,10 @@ export default function ParentDashboard({ onBack, onOpenChildProfile }) {
   }
 
   const toggleSoundSetting = (key) => {
-    setSoundSettings((prev) => {
-      const nextValue = !prev[key]
-      localStorage.setItem(SOUND_PREF_KEYS[key], nextValue ? '1' : '0')
-      return { ...prev, [key]: nextValue }
-    })
+    const nextValue = !soundSettings[key]
+    localStorage.setItem(SOUND_PREF_KEYS[key], nextValue ? '1' : '0')
+    setSoundSettings((prev) => ({ ...prev, [key]: nextValue }))
+    if (key === 'voice') setVoiceMuted(!nextValue)
   }
 
   // ── PIN gate ──────────────────────────────────────────────────

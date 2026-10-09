@@ -131,7 +131,8 @@ const ROUNDS = [
   {
     id: 'elephant',
     label: 'Elephant',
-    prompt: 'Listen for the water.',
+    prompt: 'Elephant is thirsty. Listen for water.',
+    choosePrompt: 'Where did you hear the water?',
     // L2 — semantic clue, replays this sound alone, no location reveal.
     hintClue: 'Listen for the water drip.',
     targetZoneId: 'center',
@@ -146,7 +147,8 @@ const ROUNDS = [
   {
     id: 'cow',
     label: 'Cow',
-    prompt: 'Listen for the grass.',
+    prompt: 'Cow is hungry. Listen for the grass.',
+    choosePrompt: 'Where did you hear the grass?',
     hintClue: 'Listen for the grass rustle.',
     targetZoneId: 'right',
     sounds: {
@@ -160,11 +162,10 @@ const ROUNDS = [
 ];
 
 const VO_TEXTS = {
-  intro: 'Listen closely. Hear each place first. Then choose the sound that matters.',
-  choose: 'Now choose the sound.',
+  intro: 'Listen carefully.',
   // A wrong choice isn't "good listening" — minimal, non-punitive.
   neutral: 'Listen again.',
-  complete: 'You listened carefully and found what mattered.',
+  complete: 'You listened carefully and found the sounds.',
   elephant: 'Elephant found water.',
   cow: 'Cow found grass.'
 };
@@ -216,15 +217,22 @@ const EarsSoundMatchGame = ({
   className = '',
   stopVoice,
   onLineSpoken,
-  isPaused = false
+  isPaused = false,
+  initialRound = 0,
+  onRoundComplete
 }) => {
   const lineSpokenRef = useRef(onLineSpoken);
   lineSpokenRef.current = onLineSpoken;
+  // Continue: rounds already solved in an earlier visit (0 = none, 1 = Elephant done).
+  // A round left half-played restarts from its own beginning.
+  const startRoundRef = useRef(Math.max(0, Math.min(ROUNDS.length - 1, Number(initialRound) || 0)));
+  const onRoundCompleteRef = useRef(onRoundComplete);
+  onRoundCompleteRef.current = onRoundComplete;
   usePreloadPoses(POSE_ASSETS);
-  const [roundIndex, setRoundIndex] = useState(0);
+  const [roundIndex, setRoundIndex] = useState(startRoundRef.current);
   const [phase, setPhase] = useState(PHASE.LISTENING);
   const [activeZoneId, setActiveZoneId] = useState(null);
-  const [completedRounds, setCompletedRounds] = useState([]);
+  const [completedRounds, setCompletedRounds] = useState(() => ROUNDS.slice(0, startRoundRef.current).map((r) => r.id));
   const [wrongZoneId, setWrongZoneId] = useState(null);
   const [correctZoneId, setCorrectZoneId] = useState(null);
   const [feedback, setFeedback] = useState('');
@@ -612,8 +620,8 @@ const EarsSoundMatchGame = ({
         hintStageRef.current = 0;
         l2FinishedAtRef.current = null;
         wrongCountRef.current = 0;
-        // The 10s choosing clock must start only once "Now choose the
-        // sound." actually finishes, not while it's still speaking. Until
+        // The 10s choosing clock must start only once the round-specific
+        // choice prompt finishes, not while it's still speaking. Until
         // then it is null (the hint tick ignores it) — a stale timestamp from
         // the previous round/mount used to make the clue fire the instant this
         // line began, skipping the replay-all step.
@@ -622,7 +630,7 @@ const EarsSoundMatchGame = ({
           if (runId !== runIdRef.current || chooseStartedAtRef.current) return;
           chooseStartedAtRef.current = Date.now();
         };
-        speak(VO_TEXTS.choose, armChooseClock);
+        speak(targetRound.choosePrompt, armChooseClock);
         // Speech "ended" events are not always delivered — arm anyway.
         schedule(armChooseClock, 5000);
         afterSequence?.();
@@ -653,10 +661,10 @@ const EarsSoundMatchGame = ({
     clearTimers();
     stopAudio();
     completedRef.current = false;
-    setRoundIndex(0);
+    setRoundIndex(startRoundRef.current);
     setPhase(PHASE.LISTENING);
     setActiveZoneId(null);
-    setCompletedRounds([]);
+    setCompletedRounds(ROUNDS.slice(0, startRoundRef.current).map((r) => r.id));
     setWrongZoneId(null);
     setFeedback('');
     setRevealFrameByAnimal({});
@@ -677,6 +685,11 @@ const EarsSoundMatchGame = ({
     if (!isActive || introStartedRef.current) return;
     introStartedRef.current = true;
     resetGame();
+    if (startRoundRef.current > 0) {
+      // Continue after an earlier round was solved: skip the intro, start that round fresh.
+      schedule(() => playSequence(ROUNDS[startRoundRef.current]), INTRO_DELAY_MS);
+      return;
+    }
     speak(VO_TEXTS.intro, () => schedule(() => playSequence(ROUNDS[0]), INTRO_DELAY_MS));
   }, [isActive, playSequence, resetGame, schedule, speak]);
 
@@ -817,7 +830,7 @@ const EarsSoundMatchGame = ({
         };
         onAnimalPositionsChange?.(positions);
 
-        // Wait for "You listened carefully and found what mattered."
+        // Wait for the completion line to actually finish before handing off.
         // (~3.3s) to actually finish before handing off — the old fixed
         // COMPLETE_DELAY_MS (1900ms) was cutting it off mid-sentence.
         speak(VO_TEXTS.complete, () => {
@@ -834,6 +847,7 @@ const EarsSoundMatchGame = ({
         return;
       }
 
+      onRoundCompleteRef.current?.(nextIndex);
       setRoundIndex(nextIndex);
       playSequence(ROUNDS[nextIndex]);
     }, (animalRound.revealFrames.length * REVEAL_FRAME_MS) + NEXT_ROUND_DELAY_MS);

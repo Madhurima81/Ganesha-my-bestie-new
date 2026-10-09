@@ -7,7 +7,7 @@
 const eyesCard = {
   label: 'Eyes',
   icon: '/images/icons/symbol-eyes-new.png',
-  affirmation: 'I notice the good around me.',
+  affirmation: 'I can focus on what matters.',
   ganeshaLines: [
     'My eyes help me look carefully.',
     'They remind me to notice what is good, beautiful, and worth seeing.',

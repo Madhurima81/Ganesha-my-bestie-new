@@ -101,7 +101,7 @@ export const DISCOVERY_CONTENT = {
     'tusk': {
       eyes: {
         title: "Eyes",
-        affirmation: "I notice the good around me.",
+        affirmation: "I can focus on what matters.",
         icon: 'ganesha-eyes'
       },
 

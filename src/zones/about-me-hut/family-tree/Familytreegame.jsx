@@ -139,6 +139,7 @@ const FamilyTreeGame = ({
  <ErrorBoundary>
  <SceneManager
  zoneId={zoneId}
+ flushKeys={['gamePhase', 'placedGaneshaMembers', 'childFamily']}
  sceneId={sceneId}
  initialState={{
  // Game Phase Control
@@ -319,7 +320,7 @@ const FamilyTreeGameContent = ({
  }
  if (sceneState.gamePhase === 'transition') {
  const transitionScript = getVoiceScript('about-me-hut', 'family-tree', 'transition');
- speakHint(transitionScript?.text || 'Show me your family!', { age: 7, style: 'child', moment: 'encouragement' });
+ speakHint(transitionScript?.text || "Now let's make your family tree.", { age: 7, style: 'child', moment: 'encouragement' });
  return;
  }
  if (sceneState.gamePhase === 'childInput') {
@@ -1019,7 +1020,7 @@ sceneState.isSequencePlaying,
  if (isAudioOn) {
  const transitionScript = getVoiceScript('about-me-hut', 'family-tree', 'transition');
  speakHint(
- transitionScript?.text || 'Show me your family!',
+ transitionScript?.text || "Now let's make your family tree.",
  { age: 7, style: 'child', moment: 'encouragement' }
  );
  }
@@ -1259,7 +1260,7 @@ sceneActions.updateState({ gamePhase: 'transition' });
 
  const allPlacedScript = getVoiceScript('about-me-hut', 'family-tree', 'allPlaced');
  speakHint(
- allPlacedScript?.text || 'Great! You met my loving family!',
+ allPlacedScript?.text || 'You met everyone in my family.',
  {
  age: 7,
  style: 'child',
@@ -1395,7 +1396,7 @@ sceneActions.updateState({ gamePhase: 'transition' });
  SimpleSceneManager.clearCurrentScene();
  onNavigate?.('zone-welcome');
  }} />
- <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
+ {/* [per-scene mute removed 2026-10-09] <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={handleAudioToggle} /> */}
  <VOReplayButton variant="gameplay" onReplay={replayCurrentVoice} disabled={!isAudioOn} />
 
  {showVoiceOffPill && (

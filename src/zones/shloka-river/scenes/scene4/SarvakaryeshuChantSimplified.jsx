@@ -140,6 +140,9 @@ const SarvakaryeshuChantSimplified = ({
           kurumedeva: true,
         },
         welcomeShown: false,
+        finalCardCollected: false,
+        cardsDone: 0,
+        timesDone: 0,
         currentPopup: null,
         showingCompletionScreen: false,
         stars: 0,
@@ -345,7 +348,6 @@ const SarvakaryeshuChantContent = ({
       scene13_grandma: "The crayon is broken. Which symbol can help?",
       scene13_grandma_after: "The Tusk reminded her that something broken can still help.",
       welcome: "Let’s see where Ganesha is with you today.",
-      scene13_try_again: "Try another symbol.",
       scene13_success: "Sarvakaryeshu! You chose a Ganesha symbol for each task.",
       scene14_intro: "Morning, afternoon and night — let’s find Ganesha through your day.",
       scene14_morning: "Morning can be busy. What can help him listen?",
@@ -500,9 +502,11 @@ const SarvakaryeshuChantContent = ({
         sceneActions.updateState({
           unlockedApps: { ...appsNow, sarvakaryeshu: true },
           phase: PHASES.SARVADA_GAME,
+          timesDone: 0,
         });
       }, 950);
     } else {
+      sceneActions.checkpoint({ finalCardCollected: true });
       window.setTimeout(() => {
         sceneActions.updateState({ unlockedApps: { ...appsNow, sarvada: true } });
       }, 950);
@@ -586,6 +590,13 @@ const SarvakaryeshuChantContent = ({
       }, 1200);
     };
 
+    // Final card already collected before leaving: never show it twice, go on to the celebration.
+    if (sceneState.finalCardCollected && [PHASES.SARVADA_COMPLETE, PHASES.SARVADA_POWER].includes(sceneState.phase)) {
+      sceneActions.updateState({ unlockedApps: { ...(sceneState.unlockedApps || {}), sarvada: true } });
+      window.setTimeout(() => handleAppDiscoveryCelebrate(), 600);
+      return;
+    }
+
     if ([PHASES.SARVAKARYESHU_COMPLETE, PHASES.SARVAKARYESHU_POWER].includes(sceneState.phase)) {
       restoreReveal('sarvakaryeshu');
       return;
@@ -665,8 +676,10 @@ const SarvakaryeshuChantContent = ({
     <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
       <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
         <div className="sarva-scene-container">
-          <ZoneBadgeButton variant="gameplay" zoneId="shloka-river" onBack={() => { stopAllVoice(); onNavigate?.('zone-welcome'); }} />
-          <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
+          {!(showSparkle === 'final-fireworks' || showMandala) && (
+            <ZoneBadgeButton variant="gameplay" zoneId="shloka-river" onBack={() => { stopAllVoice(); onNavigate?.('zone-welcome'); }} />
+          )}
+          {/* [per-scene mute removed 2026-10-09] <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={handleAudioToggle} /> */}
           <VOReplayButton variant="gameplay" onReplay={replayCurrentVoice} disabled={!isAudioOn} />
           <ResumeCountdown value={countdownValue} />
 
@@ -684,6 +697,8 @@ const SarvakaryeshuChantContent = ({
                   isActive={sceneState.phase === PHASES.SARVAKARYESHU_GAME && sarvaIntroReady}
                   hideElements={!!revealConfig || showPowerOverlay}
                   onMicroWin={handleMicroWin}
+                  initialCards={sceneState.cardsDone || 0}
+                  onBeatComplete={(n) => sceneActions.checkpoint({ cardsDone: n })}
                   onPhaseComplete={() => window.setTimeout(() => handlePhaseComplete('sarvakaryeshu'), 0)}
                   onGameComplete={() => {}}
                   isPaused={isRecorderOpen || sidebarPause.isSidebarPaused}
@@ -701,6 +716,8 @@ const SarvakaryeshuChantContent = ({
                   isActive={sceneState.phase === PHASES.SARVADA_GAME}
                   hideElements={!!revealConfig || showPowerOverlay}
                   onMicroWin={handleMicroWin}
+                  initialTimes={sceneState.timesDone || 0}
+                  onBeatComplete={(n) => sceneActions.checkpoint({ timesDone: n })}
                   onPhaseComplete={() => window.setTimeout(() => handlePhaseComplete('sarvada'), 0)}
                   onGameComplete={() => {}}
                   onReplayKeyChange={handleSarvadaReplayKeyChange}
@@ -809,9 +826,25 @@ const SarvakaryeshuChantContent = ({
                       { id: 'sarvakaryeshu', petalId: 7, ring: 'outer', image: symbolSarvakaryeshu },
                       { id: 'sarvada', petalId: 8, ring: 'outer', image: symbolSarvada },
                     ]}
+                    onEarnedPetalReveal={(earnedPetal) => {
+                      const symbolByPetal = {
+                        7: 'sarvakaryeshu',
+                        8: 'sarvada',
+                      };
+                      const lines = {
+                        sarvakaryeshu: 'You remembered Ganesha in what you did.',
+                        sarvada: 'You found Ganesha with you through the whole day.',
+                      };
+                      const symbol = symbolByPetal[earnedPetal?.id];
+                      if (lines[symbol]) {
+                        // Scene-complete line plays inside the Mandala, right after the last petal line.
+                        const afterLast = symbol === 'sarvada' ? () => playGuidanceVoice('sceneComplete') : undefined;
+                        speakWebSpeech(lines[symbol], afterLast);
+                      }
+                    }}
                     highlightPetals={sceneOuterPetalIds}
                     message="These meanings are growing inside you"
-                    autoCloseMs={3000 + (2 * 950) + 2600}
+                    autoCloseMs={3000 + (2 * 950) + 2600 + 5500}
                     onClose={() => {
                       setShowMandala(false);
                       setShowSceneCompletion(true);
@@ -829,9 +862,10 @@ const SarvakaryeshuChantContent = ({
                 onStart={() => {
                   playUiTap();
                   stopAllVoice();
-                  sceneActions.updateState({
+                  sceneActions.checkpoint({
                     welcomeShown: true,
                     phase: PHASES.SARVAKARYESHU_GAME,
+                    cardsDone: 0,
                   });
                 }}
                 characterImg={ganeshaHeadphones}

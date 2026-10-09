@@ -88,12 +88,19 @@ export default function SarvadaGame({
   onReplayKeyChange = () => {},
   isPaused = false,
   voiceGuidance = {},
+  // Resume: times of day already found (0-2). Applied only when the game mounts active (Continue).
+  initialTimes = 0,
+  // Fired with the finished count when the game moves on to the next time of day (checkpoint).
+  onBeatComplete = () => {},
 }) {
   usePreloadPoses(POSE_ASSETS);
   const { playVoice: playSceneLine, stopVoice: stopSceneVoice, playWord, playSyllable, setBeat } = voiceGuidance;
-  const [phaseIndex, setPhaseIndex] = useState(0);
+  const [seedTimes] = useState(() => (
+    isActive ? Math.max(0, Math.min(PHASES_CONFIG.length - 1, Number(initialTimes) || 0)) : 0
+  ));
+  const [phaseIndex, setPhaseIndex] = useState(seedTimes);
   const [showMemory, setShowMemory] = useState(false);
-  const [litCount, setLitCount] = useState(0);
+  const [litCount, setLitCount] = useState(seedTimes);
   const [gamePhase, setGamePhase] = useState('intro');
   const [flash, setFlash] = useState(false);
   const [findMode, setFindMode] = useState(false);
@@ -263,6 +270,13 @@ export default function SarvadaGame({
     }
     if (runStartedRef.current) return;
     runStartedRef.current = true;
+    // Resumed after finished times of day: skip the scene intro and start straight at the next one.
+    if (seedTimes > 0) {
+      introPlayedRef.current = true;
+      setGamePhase('playing');
+      startPhase(seedTimes);
+      return clearTimers;
+    }
     setBeat?.('intro');
     safeAfter(700, () => {
       if (playSceneLine && !introPlayedRef.current) {
@@ -400,6 +414,7 @@ export default function SarvadaGame({
           });
         });
       } else {
+        onBeatComplete?.(nextIndex);
         safeAfter(600, () => {
           setPhaseIndex(nextIndex);
           setGamePhase('playing');
@@ -421,6 +436,7 @@ export default function SarvadaGame({
     safeAfter,
     setBeat,
     startPhase,
+    onBeatComplete,
   ]);
 
   const handleImageTap = useCallback(

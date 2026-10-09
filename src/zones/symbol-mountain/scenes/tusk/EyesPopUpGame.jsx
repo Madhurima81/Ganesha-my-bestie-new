@@ -219,21 +219,31 @@ const EyesPopUpGame = ({
   className = '',
   stopVoice,
   onLineSpoken,
-  isPaused = false
+  isPaused = false,
+  initialDone = [],
+  onProgress
 }) => {
   const lineSpokenRef = useRef(onLineSpoken);
   lineSpokenRef.current = onLineSpoken;
+  // Continue: targets whose whole journey already finished in an earlier visit. The latest
+  // value is kept so a re-run of the reset effect never drops progress made since mount.
+  // A target left mid-journey is not in this list, so that beat restarts fresh.
+  const doneIdsRef = useRef(
+    Array.isArray(initialDone) ? initialDone.filter((id) => SEARCH_TARGETS.some((t) => t.id === id)) : []
+  );
+  const onProgressRef = useRef(onProgress);
+  onProgressRef.current = onProgress;
   usePreloadPoses(POSE_ASSETS);
   const [flow, setFlow] = useState(FLOW.SEARCH);
   // Self-managed fade so the parent scene's abrupt unmount (swapping to the
   // symbol reveal) never reads as a sudden cut — by the time onGameComplete
   // actually fires, this scene has already faded to transparent on its own.
   const [isExiting, setIsExiting] = useState(false);
-  const [foundTargets, setFoundTargets] = useState([]);
-  const [centeredTargets, setCenteredTargets] = useState([]);
-  const [carriedTargets, setCarriedTargets] = useState([]);
-  const [deliveredTargets, setDeliveredTargets] = useState([]);
-  const [goneTargets, setGoneTargets] = useState([]);
+  const [foundTargets, setFoundTargets] = useState(() => doneIdsRef.current);
+  const [centeredTargets, setCenteredTargets] = useState(() => doneIdsRef.current);
+  const [carriedTargets, setCarriedTargets] = useState(() => doneIdsRef.current);
+  const [deliveredTargets, setDeliveredTargets] = useState(() => doneIdsRef.current);
+  const [goneTargets, setGoneTargets] = useState(() => doneIdsRef.current);
   const [feedback, setFeedback] = useState('');
   const [softPulse, setSoftPulse] = useState(null);
   // idleHintStage comes from the 10/18/26 clock; forcedHintStage escalates
@@ -244,7 +254,7 @@ const EyesPopUpGame = ({
   const hintStage = Math.max(idleHintStage, forcedHintStage);
   const lastSpokenHintKeyRef = useRef(null);
   // Synchronous mirror of which targets are found, for speech callbacks (state lags a render).
-  const foundIdsRef = useRef(new Set());
+  const foundIdsRef = useRef(new Set(doneIdsRef.current));
   const missCountRef = useRef(0);
   // Idle clock must not start while the intro or a success VO is still
   // speaking — armed only once that VO's onEnd fires.
@@ -544,13 +554,14 @@ const EyesPopUpGame = ({
     if (!isActive) return;
     stopTimers();
     completedRef.current = false;
+    const seeded = doneIdsRef.current;
     setFlow(FLOW.SEARCH);
-    setFoundTargets([]);
-    foundIdsRef.current = new Set();
-    setCenteredTargets([]);
-    setCarriedTargets([]);
-    setDeliveredTargets([]);
-    setGoneTargets([]);
+    setFoundTargets(seeded);
+    foundIdsRef.current = new Set(seeded);
+    setCenteredTargets(seeded);
+    setCarriedTargets(seeded);
+    setDeliveredTargets(seeded);
+    setGoneTargets(seeded);
     setFeedback('');
     setSoftPulse(null);
     setIdleHintStage(0);
@@ -561,7 +572,12 @@ const EyesPopUpGame = ({
     l2VoiceEndedAtRef.current = null;
     // The 10/18/26 clock starts only once the intro VO actually finishes —
     // never while the child is still being told what to look for.
-    speak(VO_TEXTS.intro, () => {
+    // Resuming after one target was finished: skip the long intro, say what is left.
+    const remainingAtStart = SEARCH_TARGETS.find((t) => !seeded.includes(t.id));
+    const startLine = seeded.length > 0 && remainingAtStart
+      ? (remainingAtStart.id === 'feather' ? VO_TEXTS.findFeather : VO_TEXTS.findMango)
+      : VO_TEXTS.intro;
+    speak(startLine, () => {
       idleClockArmedRef.current = true;
       lastTapTimeRef.current = Date.now();
     });
@@ -636,6 +652,13 @@ const EyesPopUpGame = ({
       window.speechSynthesis.cancel();
     }
   }, [stopTimers]);
+
+  // Report finished targets so the scene can save them as the Continue checkpoint.
+  useEffect(() => {
+    if (goneTargets.length === 0) return;
+    doneIdsRef.current = goneTargets;
+    onProgressRef.current?.(goneTargets);
+  }, [goneTargets]);
 
   useEffect(() => {
     // Wait for the LAST tapped target's own staged journey (hold -> glide to

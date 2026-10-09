@@ -33,6 +33,10 @@ export const SCENE_RESET_CONFIGS = {
       rockTransformed: false,
       rockFeedingComplete: false,
       
+      // Continue checkpoints (Flower Journey beats, Garland built)
+      flowers: 0,
+      garlandBuilt: false,
+
       // Message flags
       welcomeShown: false,
       mooshikaWisdomShown: false,
@@ -170,8 +174,11 @@ export const SCENE_RESET_CONFIGS = {
     foundInstruments: [],
     discoveredInstruments: {},
     instrumentsFound: 0,
+    eyesDone: [],
     
     // Ears game state
+    earsRoundsDone: 0,
+    nestBeatsDone: 0,
     earsVisible: false,
     showEarsRhythmGame: false,
     earsGameActive: false,
@@ -756,6 +763,8 @@ export const SCENE_RESET_CONFIGS = {
   memoryGameType: 'simplified', // Triggers memory game reset in useSceneReset
   keepSymbols: {},
   specificResets: {
+    finalCardCollected: false,
+    logsPlaced: 0,
     // Core learning progress - COMPLETE RESET
     learnedSyllables: {
       va: false, kra: false, tun: false, da: false,
@@ -816,6 +825,9 @@ export const SCENE_RESET_CONFIGS = {
   initialFocus: 'welcome',
   keepSymbols: {},
   specificResets: {
+    finalCardCollected: false,
+    obstaclesCleared: 0,
+    roundsDone: 0,
     phase: 'initial',
     learnedWords: {
       nirvighnam: false,
@@ -852,6 +864,9 @@ export const SCENE_RESET_CONFIGS = {
   initialFocus: 'welcome',
   keepSymbols: {},
   specificResets: {
+    finalCardCollected: false,
+    cardsDone: 0,
+    timesDone: 0,
     phase: 'initial',
     learnedWords: {
       sarvakaryeshu: false,
@@ -896,6 +911,7 @@ export const SCENE_RESET_CONFIGS = {
   specificResets: {
     phase: 'initial',
     slots: Array(8).fill(null),
+    wordsPlaced: 0,
     correctCount: 0,
     completed: false,
     stars: 0,
@@ -916,6 +932,7 @@ export const SCENE_RESET_CONFIGS = {
   memoryGameType: 'simplifiedCombined', // CHANGE FROM 'simplified' TO 'simplifiedCombined'
   keepSymbols: {},
   specificResets: {
+    finalCardCollected: false,
     // Core learning progress - COMPLETE RESET
     learnedSyllables: {
       sur: false, ya: false, ko: false, ti: false,

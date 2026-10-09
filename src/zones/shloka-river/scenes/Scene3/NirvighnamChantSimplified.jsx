@@ -157,6 +157,9 @@ const NirvighnamChantSimplified = ({
           samaprabha: true,
         },
         welcomeShown:    false,
+        finalCardCollected: false,
+        obstaclesCleared: 0,
+        roundsDone: 0,
         currentPopup:    null,
         showingCompletionScreen: false,
         stars:     0,
@@ -339,7 +342,6 @@ const NirvighnamChantContent = ({
       nirv_branch_intro:    "The branch is still blocking the way. Drag it onto the bank.",
       nirv_reed_intro:      "The reeds are blocking the way. Swipe them apart.",
       scene12_nir_drag:    "Something’s still blocking Turtle’s way.",
-      nirv_hint:           "Something’s still blocking Turtle’s way.",
       nirv_hint_stone:     "Hold the rock.",
       nirv_hint_branch:    "Drag the branch onto the bank.",
       nirv_hint_reed:      "Swipe the reeds apart.",
@@ -347,22 +349,12 @@ const NirvighnamChantContent = ({
       nirv_hint_keep_branch: "Drag the branch onto the bank.",
       nirv_hint_keep_reed:   "Swipe the reeds apart.",
       nirv_done:           "You cleared the way and helped Turtle through.",
-      nirvighnamSetup:     "Turtle’s way home is blocked. Press and hold the rock to move it.",
-      nirvighnamClaim:     'I can solve one thing at a time.',
       scene12_kuru_intro:  "Baby Beaver is across the river.",
       scene12_kuru_tap:    "The logs are too heavy. Drag the help bubble to someone who can help.",
-      kuru_hint:           "Drag the help bubble to someone who can help.",
-      kuru_hint_logs:      "Drag the help bubble to Elephant.",
-      kuru_hint_logs_drag: "Drag the help bubble to Elephant.",
       kuru_logs_after:     "Elephant helped put the logs in place.",
-      kuru_hint_rope:      "Drag the help bubble to Monkey.",
-      kuru_hint_rope_drag: "Drag the help bubble to Monkey.",
       kuru_rope_after:     "Monkey helped tie the rope.",
       kuru_plank_instruction: "Now drag the planks into place.",
       kuru_plank_continue: "Good. Continue dragging the planks.",
-      kuru_done:           "Kuru Me Deva! You asked for help and built the bridge.",
-      kurumedevaSetup:     "Baby Beaver is across the river.",
-      kurumedevaClaim:     'I can ask for help when I need it.',
       sceneComplete:       "You cleared the path and asked for help when things got hard.",
     };
     if (map[key]) { speakWebSpeech(stripLeadingSpeechText(map[key], options.stripLeadingText), onEnded, options.onStart, options.cue); return; }
@@ -474,10 +466,12 @@ const NirvighnamChantContent = ({
         sceneActions.updateState({
           unlockedApps: { ...appsNow, nirvighnam: true },
           phase: PHASES.KURUMEDEVA_GAME,
+          roundsDone: 0,
         });
       }, 950);
       revealTimeoutsRef.current.push(timer);
     } else if (symbolId === 'kurumedeva') {
+      sceneActions.checkpoint({ finalCardCollected: true });
       const unlockTimer = safeSetTimeout(() => {
         sceneActions.updateState({ unlockedApps: { ...appsNow, kurumedeva: true } });
       }, 950);
@@ -518,6 +512,14 @@ const NirvighnamChantContent = ({
   useEffect(() => {
     if (sceneState.phase === PHASES.NIRVIGHNAM_GAME && sceneState.welcomeShown) {
       setCurrentPhase('nirvighnamGame');
+      // Resumed after cleared obstacles: skip the stone intro; the game speaks the next obstacle's line.
+      if ((sceneState.obstaclesCleared || 0) > 0 && !nirvIntroPlayedRef.current) {
+        nirvIntroPlayedRef.current = true;
+        setNirvIntroComplete(true);
+        setNirvIntroVoStarted(true);
+        startIdleTimer();
+        return;
+      }
       if (isAudioOn && !nirvIntroPlayedRef.current) {
         nirvIntroPlayedRef.current = true;
         setNirvIntroComplete(true);
@@ -544,6 +546,13 @@ const NirvighnamChantContent = ({
   useEffect(() => {
     if (sceneState.phase === PHASES.KURUMEDEVA_GAME) {
       setCurrentPhase('kurumedevaGame');
+      // Resumed after finished rounds: skip the opening line; the game asks the next round's question.
+      if ((sceneState.roundsDone || 0) > 0 && !kuruIntroPlayedRef.current) {
+        kuruIntroPlayedRef.current = true;
+        setKuruIntroComplete(true);
+        startIdleTimer();
+        return;
+      }
       if (isAudioOn && !kuruIntroPlayedRef.current) {
         kuruIntroPlayedRef.current = true;
         setKuruIntroComplete(true);
@@ -599,6 +608,13 @@ const NirvighnamChantContent = ({
         });
       }, 1200);
     };
+
+    // Final card already collected before leaving: never show it twice, go on to the celebration.
+    if (sceneState.finalCardCollected && [PHASES.KURUMEDEVA_COMPLETE, PHASES.KURUMEDEVA_POWER].includes(sceneState.phase)) {
+      sceneActions.updateState({ unlockedApps: { ...(sceneState.unlockedApps || {}), kurumedeva: true } });
+      safeSetTimeout(() => handleAppDiscoveryCelebrate(), 600);
+      return;
+    }
 
     if ([PHASES.NIRVIGHNAM_COMPLETE, PHASES.NIRVIGHNAM_POWER].includes(sceneState.phase)) {
       restoreReveal('nirvighnam');
@@ -673,8 +689,10 @@ const NirvighnamChantContent = ({
     <InteractionManager sceneState={sceneState} sceneActions={sceneActions}>
       <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
         <div className="nirv-scene-container">
-          <ZoneBadgeButton variant="gameplay" zoneId="shloka-river" onBack={() => { stopAllVoice(); onNavigate?.('zone-welcome'); }} />
-          <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={handleAudioToggle} />
+          {!(showSparkle === 'final-fireworks' || showMandala) && (
+            <ZoneBadgeButton variant="gameplay" zoneId="shloka-river" onBack={() => { stopAllVoice(); onNavigate?.('zone-welcome'); }} />
+          )}
+          {/* [per-scene mute removed 2026-10-09] <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={handleAudioToggle} /> */}
           <VOReplayButton variant="gameplay" onReplay={replayCurrentVoice} disabled={!isAudioOn} />
           <ResumeCountdown value={countdownValue} />
 
@@ -688,6 +706,8 @@ const NirvighnamChantContent = ({
                 introVoStarted={nirvIntroVoStarted}
                 hideElements={showCenteredWord || showPowerOverlay || !!revealConfig}
                 onMicroWin={handleMicroWin}
+                initialCleared={sceneState.obstaclesCleared || 0}
+                onBeatComplete={(n) => sceneActions.checkpoint({ obstaclesCleared: n })}
                 onPhaseComplete={() => window.setTimeout(() => handlePhaseComplete('nirvighnam'), 0)}
                 onGameComplete={() => {}}
                 voiceGuidance={{
@@ -706,6 +726,8 @@ const NirvighnamChantContent = ({
               {/* ── KURUMEDEVA GAME — tap friends ── */}
               <KurumedevaGame
                 isActive={sceneState.phase === PHASES.KURUMEDEVA_GAME}
+                initialRounds={sceneState.roundsDone || 0}
+                onBeatComplete={(n) => sceneActions.checkpoint({ roundsDone: n })}
                 introComplete={kuruIntroComplete}
                 hideElements={showCenteredWord || showPowerOverlay || !!revealConfig}
                 onMicroWin={handleMicroWin}
@@ -815,9 +837,25 @@ const NirvighnamChantContent = ({
                     { id: 'nirvighnam', petalId: 5, ring: 'outer', image: symbolNirvighnam },
                     { id: 'kurumedeva', petalId: 6, ring: 'outer', image: symbolKurumedeva },
                   ]}
+                  onEarnedPetalReveal={(earnedPetal) => {
+                    const symbolByPetal = {
+                      5: 'nirvighnam',
+                      6: 'kurumedeva',
+                    };
+                    const lines = {
+                      nirvighnam: 'You solved one thing at a time.',
+                      kurumedeva: 'You asked for help when you needed it.',
+                    };
+                    const symbol = symbolByPetal[earnedPetal?.id];
+                    if (lines[symbol]) {
+                      // Scene-complete line plays inside the Mandala, right after the last petal line.
+                      const afterLast = symbol === 'kurumedeva' ? () => playGuidanceVoice('sceneComplete') : undefined;
+                      speakWebSpeech(lines[symbol], afterLast);
+                    }
+                  }}
                   highlightPetals={sceneOuterPetalIds}
                   message="These meanings are growing inside you"
-                  autoCloseMs={3000 + (2 * 950) + 2600}
+                  autoCloseMs={3000 + (2 * 950) + 2600 + 5500}
                   onClose={() => { setShowMandala(false); setShowSceneCompletion(true); }}
                 />
               )}
@@ -833,7 +871,7 @@ const NirvighnamChantContent = ({
                 onStart={() => {
                   playUiTap();
                   stopAllVoice();
-                  sceneActions.updateState({ welcomeShown: true, phase: PHASES.NIRVIGHNAM_GAME });
+                  sceneActions.checkpoint({ welcomeShown: true, phase: PHASES.NIRVIGHNAM_GAME, obstaclesCleared: 0 });
                 }}
                 characterImg={ganeshaHeadphones}
                 showButton={openingButtonVisible}

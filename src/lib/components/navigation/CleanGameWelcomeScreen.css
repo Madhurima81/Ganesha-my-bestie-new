@@ -1930,26 +1930,14 @@
 }
 
 /* ============================================================
-   WELCOME BACK - STRUCTURAL WRAPPERS
-   Default = transparent to existing layout.
-   Tablet landscape activates them below.
-   ============================================================ */
+   WELCOME BACK - FINAL TABLET LANDSCAPE
 
-.welcome-wide-layout,
-.welcome-wide-left,
-.welcome-wide-right {
-  display: contents;
-}
-
-.welcome-wide-hint,
-.welcome-wide-subtitle {
-  display: none;
-}
-
-/* ============================================================
-   WELCOME BACK - TABLET / IPAD LANDSCAPE
-   Wide, calm two-column welcome composition.
+   Fullscreen only.
+   Map popup remains untouched.
    Phone landscape remains untouched.
+
+   Hierarchy:
+   title -> mandala -> hint -> Continue -> Explore Map -> Switch
    ============================================================ */
 
 @media
@@ -1958,103 +1946,149 @@
   and (min-height: 600px)
   and (max-width: 1600px) {
 
+  /* ========================================================
+     BACKGROUND
+     ======================================================== */
+
   .clean-welcome-overlay--fullscreen {
-    background-image:
-      url('/images/welcome-back-bg.png'),
-      url('/images/profile-bg.webp');
+    background-image: url('/images/welcome-back-bg.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     padding:
-      max(24px, env(safe-area-inset-top))
-      max(28px, env(safe-area-inset-right))
-      max(24px, env(safe-area-inset-bottom))
-      max(28px, env(safe-area-inset-left));
+      max(18px, env(safe-area-inset-top))
+      max(24px, env(safe-area-inset-right))
+      max(18px, env(safe-area-inset-bottom))
+      max(24px, env(safe-area-inset-left));
   }
 
   .clean-welcome-overlay--fullscreen::before {
-    background: rgba(255, 255, 255, 0.035);
+    background: rgba(70, 48, 105, 0.04);
   }
 
-  .clean-welcome-overlay--fullscreen::before,
-  .clean-welcome-overlay--fullscreen .clean-welcome-content::before,
-  .clean-welcome-overlay--fullscreen .clean-welcome-content::after {
-    background: none !important;
-    box-shadow: none !important;
-  }
+  /* ========================================================
+     CARD
+
+     Same corner language as ZoneWelcome cards:
+     four radial-gradient corner scoops.
+     ======================================================== */
 
   .clean-welcome-overlay--fullscreen .clean-welcome-content {
-    width: min(790px, 70vw) !important;
-    max-width: 790px !important;
-    min-height: 420px;
+    position: relative;
+    box-sizing: border-box;
+    width: min(620px, 60vw) !important;
+    max-width: 620px !important;
+    min-height: 540px;
     height: auto;
     aspect-ratio: auto !important;
-    box-sizing: border-box;
-    padding: 42px 48px !important;
-    display: block;
+    padding: 26px 50px 24px !important;
+    display: block !important;
     background-image: none !important;
-    background: rgba(255, 253, 247, 0.96) !important;
-    border: 1px solid rgba(211, 198, 237, 0.48);
-    border-radius: 58px 72px 54px 68px / 66px 54px 70px 58px;
-    box-shadow: 0 16px 38px rgba(91, 67, 142, 0.11);
-    overflow: visible;
-    transform: translateY(-8px);
+    background:
+      linear-gradient(
+        145deg,
+        rgba(255, 253, 247, 0.985) 0%,
+        rgba(255, 248, 237, 0.985) 100%
+      ) !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    -webkit-mask:
+      radial-gradient(circle 18px at top left, #0000 98%, #000 100%),
+      radial-gradient(circle 18px at top right, #0000 98%, #000 100%),
+      radial-gradient(circle 18px at bottom left, #0000 98%, #000 100%),
+      radial-gradient(circle 18px at bottom right, #0000 98%, #000 100%);
+    -webkit-mask-size: 51% 51%;
+    -webkit-mask-position:
+      top left,
+      top right,
+      bottom left,
+      bottom right;
+    -webkit-mask-repeat: no-repeat;
+    mask:
+      radial-gradient(circle 18px at top left, #0000 98%, #000 100%),
+      radial-gradient(circle 18px at top right, #0000 98%, #000 100%),
+      radial-gradient(circle 18px at bottom left, #0000 98%, #000 100%),
+      radial-gradient(circle 18px at bottom right, #0000 98%, #000 100%);
+    mask-size: 51% 51%;
+    mask-position:
+      top left,
+      top right,
+      bottom left,
+      bottom right;
+    mask-repeat: no-repeat;
+    filter: drop-shadow(0 12px 20px rgba(91, 67, 142, 0.10));
+    overflow: visible !important;
+    transform: translateY(-4px);
   }
 
   .clean-welcome-overlay--fullscreen .welcome-card-lotus {
-    display: none;
+    display: none !important;
   }
 
-  .clean-welcome-overlay--fullscreen .welcome-wide-layout {
-    display: grid;
-    grid-template-columns: 310px minmax(0, 1fr);
-    gap: 42px;
+  /* ========================================================
+     SINGLE CHILD-READABLE FLOW
+     ======================================================== */
+
+  .clean-welcome-overlay--fullscreen .welcome-single-layout {
     width: 100%;
-    min-height: 336px;
-    align-items: center;
-  }
-
-  .clean-welcome-overlay--fullscreen .welcome-wide-left {
+    min-height: 500px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    text-align: center;
+    padding-top: 8px;
+    box-sizing: border-box;
+  }
+
+  /* ========================================================
+     TITLE
+     ======================================================== */
+
+  .clean-welcome-overlay--fullscreen .welcome-single-layout .screen-header {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+  }
+
+  .clean-welcome-overlay--fullscreen .welcome-single-layout .screen-header-title {
+    width: 100%;
+    margin: 0 0 18px !important;
+    font-size: clamp(32px, 3vw, 40px) !important;
+    line-height: 1.06;
+    color: #7B6D9E;
+    text-align: center !important;
+    white-space: normal;
+  }
+
+  /* ========================================================
+     MANDALA
+     ======================================================== */
+
+  .clean-welcome-overlay--fullscreen .welcome-single-mandala {
+    width: 100%;
+    display: flex;
+    align-items: center;
     justify-content: center;
-    min-width: 0;
+    margin: 0;
   }
 
   .clean-welcome-overlay--fullscreen .profile-mandala-wrapper {
     width: 100%;
-    margin: 0;
     display: flex;
     align-items: center;
     justify-content: center;
+    margin: 0 !important;
   }
 
   .clean-welcome-overlay--fullscreen .profile-mandala {
-    width: 270px !important;
-    height: 270px !important;
+    width: 265px !important;
+    height: 265px !important;
     margin: 0 auto !important;
   }
 
-  .clean-welcome-overlay--fullscreen .profile-mandala img {
-    width: 100%;
-    height: 100%;
-  }
-
-  .clean-welcome-overlay--fullscreen .welcome-wide-left .mandala-hint {
-    display: none;
-  }
-
-  .clean-welcome-overlay--fullscreen .welcome-wide-hint {
-    display: block;
-    width: 240px;
-    margin: 10px auto 0;
-    font-family: 'Nunito', sans-serif;
-    font-size: 13px;
-    line-height: 1.35;
-    font-weight: 600;
-    color: rgba(119, 88, 210, 0.72);
-    text-align: center;
+  .clean-welcome-overlay--fullscreen .profile-mandala svg {
+    width: 100% !important;
+    height: 100% !important;
   }
 
   .clean-welcome-overlay--fullscreen .profile-mandala .mandala-avatar-slot img {
@@ -2063,72 +2097,106 @@
     object-fit: contain;
   }
 
-  .clean-welcome-overlay--fullscreen .welcome-wide-right {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    min-width: 0;
+  .clean-welcome-overlay--fullscreen .mandala-hint,
+  .clean-welcome-overlay--fullscreen .mandala-helper-text {
+    display: none !important;
   }
 
-  .clean-welcome-overlay--fullscreen .welcome-wide-right .screen-header-title {
-    width: 100%;
-    margin: 0;
-    font-size: 36px;
-    line-height: 1.08;
-    text-align: left;
-    color: #7B6D9E;
-  }
+  /* ========================================================
+     HINT
+     ======================================================== */
 
-  .clean-welcome-overlay--fullscreen .welcome-wide-subtitle {
-    display: block;
-    margin: 8px 0 24px;
+  .clean-welcome-overlay--fullscreen .welcome-single-hint {
+    margin: 1px 0 13px;
     font-family: 'Nunito', sans-serif;
-    font-size: 16px;
-    line-height: 1.3;
-    font-weight: 700;
-    color: rgba(91, 70, 130, 0.68);
-    text-align: left;
+    font-size: 14px;
+    line-height: 1.25;
+    font-weight: 600;
+    color: rgba(119, 88, 210, 0.72);
+    text-align: center;
   }
 
-  .clean-welcome-overlay--fullscreen .profile-actions {
+  /* ========================================================
+     PRIMARY ACTION
+     ======================================================== */
+
+  .clean-welcome-overlay--fullscreen .welcome-single-primary {
     width: 300px;
     display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
+    align-items: center;
+    justify-content: center;
     margin: 0;
   }
 
-  .clean-welcome-overlay--fullscreen .profile-actions .primary-btn-unified,
-  .clean-welcome-overlay--fullscreen .explore-map-btn {
-    box-sizing: border-box;
+  .clean-welcome-overlay--fullscreen .welcome-single-primary .primary-btn-unified {
     width: 300px !important;
+    min-width: 300px !important;
+    max-width: 300px !important;
     height: 58px !important;
     min-height: 58px !important;
-    padding: 0 24px;
     margin: 0 !important;
-  }
-
-  .clean-welcome-overlay--fullscreen .explore-map-btn {
-    background: rgba(255, 253, 247, 0.72);
-    border: 2px solid rgba(180, 158, 232, 0.45);
     border-radius: 999px;
-    box-shadow: none;
-    color: #8971D7;
-    font-family: 'Baloo 2', cursive;
-    font-size: 17px;
-    font-weight: 700;
   }
 
-  .clean-welcome-overlay--fullscreen .switch-explorer-link {
+  /* ========================================================
+     EXPLORE MAP - QUIET SECONDARY
+     ======================================================== */
+
+  .clean-welcome-overlay--fullscreen .welcome-explore-map {
+    position: relative;
+    width: 180px;
+    height: 44px;
+    min-height: 44px;
+    margin: 10px 0 0;
+    padding: 0 20px;
+    background: rgba(255, 253, 247, 0.72);
+    border: 1.5px solid rgba(139, 111, 208, 0.30);
+    border-radius: 999px;
+    box-shadow: 0 2px 6px rgba(91, 67, 142, 0.05);
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    line-height: 1;
+    font-weight: 700;
+    color: #806DD0;
+    cursor: pointer;
+  }
+
+  .clean-welcome-overlay--fullscreen .welcome-explore-map::after {
+    content: "";
+    position: absolute;
+    left: -8px;
+    right: -8px;
+    top: -8px;
+    bottom: -8px;
+    border-radius: 999px;
+  }
+
+  /* ========================================================
+     SWITCH EXPLORER - TERTIARY
+     ======================================================== */
+
+  .clean-welcome-overlay--fullscreen .welcome-switch-explorer {
+    position: relative;
     min-height: 52px;
+    margin-top: auto;
+    padding: 0 10px;
     display: inline-flex;
     align-items: center;
-    margin: 10px 0 0 !important;
-    padding: 0 4px;
-    font-size: 14px !important;
+    justify-content: center;
+    border: 0;
+    background: transparent;
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    line-height: 1;
     font-weight: 700;
-    color: rgba(119, 88, 210, 0.72);
+    color: rgba(119, 88, 210, 0.66);
+    cursor: pointer;
+  }
+
+  .clean-welcome-overlay--fullscreen .welcome-switch-explorer::after {
+    content: "";
+    position: absolute;
+    inset: -4px -8px;
+    border-radius: 999px;
   }
 }
