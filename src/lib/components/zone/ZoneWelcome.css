@@ -2216,42 +2216,62 @@ button[style*="position: fixed"][style*="background: purple"] {
   text-shadow: none;
 }
 /* ==========================================================
-   ZONE WELCOME — TABLET / IPAD FEATURED-SCENE LAYOUT
-   4 scenes: featured on top + 3 below. 5 scenes: featured + 4 below.
-   Phone rules are not changed by this block.
+   ZONE WELCOME — TABLET / IPAD
+   FOCUS + JOURNEY MODEL
+
+   One large actionable scene.
+   Remaining scenes = quiet journey tiles.
+   Phone layout remains untouched.
    ========================================================== */
-@media (orientation: landscape) and (min-height: 501px) and (min-width: 769px) and (max-width: 1440px) {
+@media
+  (orientation: landscape)
+  and (min-height: 501px)
+  and (min-width: 769px)
+  and (max-width: 1440px) {
   .zone-welcome-container .cards-wrapper {
-    width: min(94vw, 1180px);
-    height: min(74dvh, 760px);
+    width: min(92vw, 1080px);
+    height: min(78dvh, 570px);
     max-height: none;
     aspect-ratio: auto;
     margin-inline: auto;
   }
+
   .zone-welcome-container .scenes-horizontal-container.tablet-feature-layout {
     position: relative;
+    box-sizing: border-box;
     width: 100%;
     height: 100%;
     display: grid;
-    justify-content: center;
     align-content: center;
-    row-gap: 26px;
-    padding: 76px 30px 32px; /* top room for the zone title */
-    box-sizing: border-box;
+    justify-content: center;
+    row-gap: 18px;
+    padding: 62px 24px 24px;
   }
+
+  .zone-welcome-container .tablet-feature-layout.scene-count-4 {
+    grid-template-columns: repeat(3, 138px);
+    column-gap: 20px;
+  }
+
+  .zone-welcome-container .tablet-feature-layout.scene-count-5 {
+    grid-template-columns: repeat(4, 128px);
+    column-gap: 15px;
+  }
+
   .zone-welcome-container .tablet-feature-layout .zone-scene-card {
     position: relative !important;
     top: auto !important;
     left: auto !important;
     right: auto !important;
     bottom: auto !important;
-    transform: none !important;
+    box-sizing: border-box;
     margin: 0;
-    animation: none;
+    transform: none !important;
+    animation: none !important;
     justify-self: center;
     align-self: center;
-    box-sizing: border-box;
   }
+
   .zone-welcome-container .tablet-feature-layout .zone-scene-card:hover,
   .zone-welcome-container .tablet-feature-layout .zone-scene-card.available:hover,
   .zone-welcome-container .tablet-feature-layout .zone-scene-card.in-progress:hover,
@@ -2259,204 +2279,212 @@ button[style*="position: fixed"][style*="background: purple"] {
     transform: none !important;
   }
 
-  /* FOUR-SCENE ZONES — 1 + 3 */
-  .zone-welcome-container .tablet-feature-layout.scene-count-4 {
-    grid-template-columns: repeat(3, 178px);
-    column-gap: 30px;
-  }
-  .zone-welcome-container .tablet-feature-layout.scene-count-4 .is-featured-scene {
-    grid-row: 1;
-    grid-column: 2;
-  }
-  .zone-welcome-container .tablet-feature-layout.scene-count-4 .zone-scene-card:not(.is-featured-scene) {
-    grid-row: 2;
-  }
-
-  /* FIVE-SCENE SHLOKA RIVER — 1 + 4 */
-  .zone-welcome-container .tablet-feature-layout.scene-count-5 {
-    grid-template-columns: repeat(4, 166px);
-    column-gap: 22px;
-  }
-  .zone-welcome-container .tablet-feature-layout.scene-count-5 .is-featured-scene {
-    grid-row: 1;
-    grid-column: 2 / span 2;
-    justify-self: center;
-  }
-  .zone-welcome-container .tablet-feature-layout.scene-count-5 .zone-scene-card:not(.is-featured-scene) {
-    grid-row: 2;
-  }
-
-  /* STANDARD LOWER CARDS */
-  .zone-welcome-container .tablet-feature-layout .zone-scene-card:not(.is-featured-scene) {
-    width: 178px;
-    min-width: 178px;
-    max-width: 178px;
-    min-height: 200px;
-  }
-  .zone-welcome-container .tablet-feature-layout.scene-count-5 .zone-scene-card:not(.is-featured-scene) {
-    width: 166px;
-    min-width: 166px;
-    max-width: 166px;
-  }
-
-  /* FEATURED / CURRENT CARD */
   .zone-welcome-container .tablet-feature-layout .is-featured-scene {
-    width: 212px;
-    min-width: 212px;
-    max-width: 212px;
+    grid-row: 1;
+    grid-column: 1 / -1;
+    width: 218px;
+    min-width: 218px;
+    max-width: 218px;
     min-height: 216px;
-    z-index: 3;
-    filter: drop-shadow(0 7px 13px rgba(55, 32, 90, 0.12));
-  }
-  .zone-welcome-container .tablet-feature-layout .is-featured-scene .zone-inner {
-    padding-left: 12px;
-    padding-right: 12px;
+    z-index: 4;
+    cursor: default !important;
+    filter: drop-shadow(0 7px 14px rgba(55, 32, 90, 0.12));
+    outline: 2px solid rgba(245, 190, 45, 0.30);
+    outline-offset: 2px;
   }
 
-  /* SCENE TITLES */
-  .zone-welcome-container .tablet-feature-layout .scene-name {
-    font-size: 14px;
+  .zone-welcome-container .tablet-feature-layout .is-featured-scene .zone-inner {
+    padding: 15px 15px 12px;
+  }
+
+  .zone-welcome-container .tablet-feature-layout .is-featured-scene .scene-icon-img {
+    width: 64px;
+    height: 64px;
+  }
+
+  .zone-welcome-container .tablet-feature-layout .is-featured-scene .scene-name-area {
+    min-height: 42px;
+    margin-bottom: 4px;
+  }
+
+  .zone-welcome-container .tablet-feature-layout .is-featured-scene .scene-name {
+    max-width: 180px;
+    font-size: 14.5px;
     line-height: 1.15;
-    max-width: 100%;
     text-align: center;
   }
-  .zone-welcome-container .tablet-feature-layout .is-featured-scene .scene-name {
-    font-size: 14.5px;
-  }
 
-  /* ACTION AREA — thinner buttons, shallower shadows */
-  .zone-welcome-container .tablet-feature-layout .scene-action-integrated {
-    min-height: 52px;
-    margin-top: 5px;
+  .zone-welcome-container .tablet-feature-layout .featured-action-area {
+    min-height: 58px;
+    margin-top: auto;
     display: flex;
     align-items: center;
     justify-content: center;
   }
-  .zone-welcome-container .tablet-feature-layout .scene-action-integrated > button {
+
+  .zone-welcome-container .tablet-feature-layout .featured-zone-cta {
     position: relative;
-    width: auto;
-    min-width: 122px;
+    width: auto !important;
+    min-width: 132px !important;
+    max-width: 148px !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    padding: 0 20px !important;
+    border-radius: 999px;
+    font-size: 14px !important;
+    line-height: 1;
+    box-shadow:
+      0 2px 0 var(--profile-btn-shadow, rgba(103, 77, 10, 0.24)),
+      0 4px 8px rgba(60, 40, 20, 0.06);
+  }
+
+  .zone-welcome-container .tablet-feature-layout .featured-zone-cta::after {
+    content: "";
+    position: absolute;
+    left: -8px;
+    right: -8px;
+    top: -9px;
+    bottom: -9px;
+    border-radius: 999px;
+  }
+
+  .zone-welcome-container .tablet-feature-layout .is-featured-scene.completed .featured-zone-cta {
+    background: rgba(255, 249, 230, 0.96);
+    border: 1.5px solid rgba(225, 170, 20, 0.72);
+    color: #8A6813;
+    box-shadow:
+      0 2px 0 rgba(145, 106, 12, 0.15),
+      0 3px 7px rgba(60, 40, 20, 0.04);
+    text-shadow: none;
+  }
+
+  .zone-welcome-container .tablet-feature-layout .is-journey-tile {
+    grid-row: 2;
+    width: 138px;
+    min-width: 138px;
     max-width: 138px;
-    height: 40px;
-    min-height: 40px;
-    padding: 0 18px;
-    border-radius: 999px;
-    font-size: 14px;
-    line-height: 1;
-    box-shadow: 0 2px 0 rgba(103, 77, 10, 0.25), 0 4px 8px rgba(60, 40, 20, 0.06);
-  }
-  /* enlarge hit region without making the pill tall */
-  .zone-welcome-container .tablet-feature-layout .scene-action-integrated > button::after {
-    content: "";
-    position: absolute;
-    left: -7px;
-    right: -7px;
-    top: -10px;
-    bottom: -10px;
-    border-radius: 999px;
+    min-height: 146px;
+    padding: 3px;
+    cursor: pointer;
+    filter: drop-shadow(0 4px 8px rgba(55, 32, 90, 0.07));
   }
 
-  /* CONTINUE + REPLAY ROW */
-  .zone-welcome-container .tablet-feature-layout .action-split-container {
-    width: auto;
+  .zone-welcome-container .tablet-feature-layout.scene-count-5 .is-journey-tile {
+    width: 128px;
+    min-width: 128px;
+    max-width: 128px;
+  }
+
+  .zone-welcome-container .tablet-feature-layout .is-journey-tile .zone-inner {
+    padding: 9px 8px 7px;
+  }
+
+  .zone-welcome-container .tablet-feature-layout .is-journey-tile .scene-icon-area {
+    margin-bottom: 2px;
+  }
+
+  .zone-welcome-container .tablet-feature-layout .is-journey-tile .scene-icon-img {
+    width: 48px;
+    height: 48px;
+  }
+
+  .zone-welcome-container .tablet-feature-layout .is-journey-tile .scene-emoji {
+    font-size: 42px;
+  }
+
+  .zone-welcome-container .tablet-feature-layout .is-journey-tile .scene-order-indicator {
+    top: 7px;
+    left: 7px;
+    min-width: 28px;
+    height: 28px;
+    padding: 0 5px;
+    font-size: 15px;
+  }
+
+  .zone-welcome-container .tablet-feature-layout .is-journey-tile .scene-complete-badge {
+    top: 7px;
+    right: 7px;
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+  }
+
+  .zone-welcome-container .tablet-feature-layout .is-journey-tile .scene-name-area {
+    min-height: 30px;
+    margin-bottom: 1px;
+  }
+
+  .zone-welcome-container .tablet-feature-layout .is-journey-tile .scene-name {
+    font-size: 12px;
+    line-height: 1.08;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+
+  .zone-welcome-container .tablet-feature-layout .is-journey-tile.is-actual-current {
+    outline: 2px solid rgba(139, 111, 208, 0.48);
+    outline-offset: 2px;
+    filter: drop-shadow(0 5px 10px rgba(105, 79, 170, 0.12));
+  }
+
+  .zone-welcome-container .journey-tile-status {
+    min-height: 28px;
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  .zone-welcome-container .journey-tile-progress {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
+    gap: 4px;
   }
-  .zone-welcome-container .tablet-feature-layout .action-split-container > button:first-child {
-    width: 112px;
-    min-width: 112px;
-    max-width: 112px;
-    height: 40px;
-    min-height: 40px;
-    padding: 0 15px;
+
+  .zone-welcome-container .journey-progress-segment {
+    width: 20px;
+    height: 4px;
     border-radius: 999px;
-    font-size: 13.5px;
+    background: rgba(122, 96, 180, 0.16);
+  }
+
+  .zone-welcome-container .journey-progress-segment.filled {
+    background: var(--zone-color, #9B7BE8);
+  }
+
+  .zone-welcome-container .journey-tile-label {
+    font-family: 'Nunito', sans-serif;
+    font-size: 10.5px;
     line-height: 1;
-    box-shadow: 0 2px 0 rgba(103, 77, 10, 0.25), 0 4px 8px rgba(60, 40, 20, 0.06);
-  }
-  .zone-welcome-container .tablet-feature-layout .action-split-container > button:last-child {
-    position: relative;
-    width: 42px;
-    min-width: 42px;
-    height: 42px;
-    min-height: 42px;
-    padding: 0;
-    border-radius: 50%;
-    font-size: 18px;
-    line-height: 1;
-    box-shadow: 0 2px 0 rgba(103, 77, 10, 0.23), 0 4px 7px rgba(60, 40, 20, 0.05);
-  }
-  /* visually 42px, ~60px effective touch region */
-  .zone-welcome-container .tablet-feature-layout .action-split-container > button:last-child::after {
-    content: "";
-    position: absolute;
-    inset: -9px;
-    border-radius: 50%;
+    font-weight: 800;
+    color: rgba(93, 69, 150, 0.78);
+    white-space: nowrap;
   }
 
-  .zone-welcome-container .tablet-feature-layout button:active {
-    transform: translateY(1px);
-    box-shadow: 0 1px 0 rgba(103, 77, 10, 0.22);
+  .zone-welcome-container .journey-tile-label--next {
+    color: rgba(114, 84, 178, 0.76);
   }
 
-  /* Ganesha / butterfly intentionally NOT hidden on tablet. */
+  .zone-welcome-container .tablet-feature-layout .is-journey-tile.completed {
+    opacity: 0.88;
+  }
 
-  .zone-welcome-container .stats-bottom-bar {
-    bottom: 18px;
+  .zone-welcome-container .tablet-feature-layout .is-journey-tile.locked-scene {
+    cursor: default;
+    opacity: 0.48;
   }
-}
 
-/* iPad Safari ~1024x670: avoid vertical cramping */
-@media (orientation: landscape) and (min-width: 769px) and (max-width: 1100px) and (min-height: 501px) and (max-height: 720px) {
-  .zone-welcome-container .cards-wrapper {
-    height: min(80dvh, 540px);
-  }
-  .zone-welcome-container .scenes-horizontal-container.tablet-feature-layout {
-    row-gap: 20px;
-    padding-top: 70px;
-    padding-bottom: 16px;
-  }
-  .zone-welcome-container .tablet-feature-layout .is-featured-scene {
-    min-height: 204px;
-  }
-  .zone-welcome-container .tablet-feature-layout .zone-scene-card:not(.is-featured-scene) {
-    min-height: 190px;
-  }
-}
-/* ==========================================================
-   ZONE WELCOME — IPAD FINAL CLEANUP
-   ========================================================== */
-@media (orientation: landscape) and (min-height: 501px) and (min-width: 769px) and (max-width: 1440px) {
-  /* Decorative guide art crowds the card icon: removed on tablet too */
   .zone-welcome-container .zone-card-ganesha-guide,
   .zone-welcome-container .zone-card-creature {
     display: none !important;
   }
 
-  /* Lower row slightly closer to the featured card */
-  .zone-welcome-container .scenes-horizontal-container.tablet-feature-layout {
-    row-gap: 14px;
-  }
-
-  /* Featured card: hierarchy from position, soft active outline */
-  .zone-welcome-container .tablet-feature-layout .is-featured-scene {
-    filter: drop-shadow(0 5px 10px rgba(55, 32, 90, 0.10));
-    outline: 2px solid rgba(245, 190, 45, 0.32);
-    outline-offset: 2px;
-  }
-
-  /* Replay is visually secondary */
-  .zone-welcome-container .tablet-feature-layout .completed .zone-welcome-cta {
-    min-width: 104px;
-    max-width: 116px;
-    height: 38px;
-    min-height: 38px;
-    padding: 0 14px;
-    background: rgba(255, 249, 230, 0.96);
-    border: 1.5px solid rgba(225, 170, 20, 0.72);
-    color: #8A6813;
-    box-shadow: 0 2px 0 rgba(145, 106, 12, 0.16), 0 3px 7px rgba(60, 40, 20, 0.04);
+  .zone-welcome-container .stats-bottom-bar {
+    bottom: 14px;
   }
 }
