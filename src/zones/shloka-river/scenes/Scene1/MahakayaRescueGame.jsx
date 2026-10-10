@@ -23,6 +23,7 @@ const SYLLABLES = ['Ma', 'ha', 'ka', 'ya'];
 const AUDIO = { syllables: ['ma', 'ha', 'ka', 'ya'] };
 const TOTAL_LOGS = 4;
 const TOTAL_SYLLABLES = 4;
+const SYLLABLE_WATCHDOG_MS = 3500; // longest clip ("ma") is ~1.75s; if its onEnded is lost (iOS) move on so the sequence can't hang
 const DROP_RX = 9.5;
 const DROP_RY = 7;
 const SHOW_HIT_ZONES = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('hitzones');
@@ -229,7 +230,7 @@ export default function MahakayaRescueGame({
   const timers = useRef([]);
   const isPausedRef = useRef(isPaused);
   // Freezes with the sidebar and resumes with the remaining time (see hook).
-  const { after, clear: clearPausable } = usePausableTimers(isPaused);
+  const { after, cancel: cancelPausable, clear: clearPausable } = usePausableTimers(isPaused);
   const phaseRef = useRef('intro');
   const draggingRef = useRef(null);
   const logPosRef = useRef(null);
@@ -237,6 +238,18 @@ export default function MahakayaRescueGame({
   const initialLogsRef = useRef(0);
   initialLogsRef.current = Math.max(0, Math.min(TOTAL_LOGS - 1, Number(initialLogs) || 0));
   const completionStartedRef = useRef(false);
+  // Bounded in-order syllable sequence (same principle as Vakratunda Rescue). Logs and highlights stay
+  // instant; the AUDIO of the (at most 4) lit syllables plays one at a time, each to its real end, so a fast
+  // child never clips one syllable with the next. The final word + raft crossing wait for the last syllable.
+  const syllableSeqRef = useRef({ queue: [], seen: new Set(), playing: false, lastEnded: false });
+  const finaleRef = useRef({ armed: false, started: false });
+  const heldCueRef = useRef(null);       // an English cue held until the syllables finish (or discarded)
+  const pumpRef = useRef(null);
+  const tryFinaleRef = useRef(null);
+  const syllablesBusy = () => {
+    const s = syllableSeqRef.current;
+    return s.playing || s.queue.length > 0;
+  };
   const debugDragRef = useRef(null);
   const debugPanelDragRef = useRef(null);
 
@@ -285,6 +298,7 @@ export default function MahakayaRescueGame({
   const grabbedAtLevelRef = useRef(0);
   useEffect(() => {
     if (phase !== 'play' || debugMode || isPaused) return;
+    if (syllablesBusy()) return; // a spoken hint must never cut Sanskrit: it is simply skipped (the visual hint stays)
     if (!isLearningLog) {
       // Logs 2-4: one spoken nudge at the first pulse; the later glow is visual only.
       if (hintLevel !== 1 || lastHintVoRef.current === hintStageKey) return;
@@ -342,6 +356,9 @@ export default function MahakayaRescueGame({
     setChildHasDragged(false);
     grabPointRef.current = null;
     lastHintVoRef.current = null;
+    syllableSeqRef.current = { queue: [], seen: new Set(), playing: false, lastEnded: false }; // new identity: stale callbacks ignore themselves
+    finaleRef.current = { armed: false, started: false };
+    heldCueRef.current = null;
   }, [clearTimers]);
 
   // Back from the sidebar with log 1 still unfinished: the teaching hand plays again with
@@ -571,6 +588,61 @@ export default function MahakayaRescueGame({
     t: crossTargetRaft.t - baseLayout.raft.t,
   };
 
+  // Play the lit syllables one at a time, in order, each to its real end (onEnded, not a timer).
+  const pumpSyllables = () => {
+    const seq = syllableSeqRef.current;
+    if (seq.playing || !seq.queue.length) return;
+    const { syllable, index } = seq.queue.shift();
+    seq.playing = true;
+    let finished = false;
+    let watchdog;
+    const finish = () => {
+      if (finished || syllableSeqRef.current !== seq) return;
+      finished = true;
+      cancelPausable(watchdog);
+      seq.playing = false;
+      if (index === TOTAL_SYLLABLES - 1) seq.lastEnded = true;
+      pumpRef.current?.();        // next lit syllable, if any
+      tryFinaleRef.current?.();   // the word + crossing, once the LAST syllable has ended
+      heldCueRef.current?.();     // a held English cue, if it still applies
+    };
+    watchdog = after(SYLLABLE_WATCHDOG_MS, finish);
+    playSyllable?.(syllable, finish);
+  };
+  pumpRef.current = pumpSyllables;
+
+  // Raft crossing + the full word + completion VO.
+  const startFinale = () => {
+    setCrossing(true);
+
+    const finishGame = () => {
+      if (completionStartedRef.current) return;
+      completionStartedRef.current = true;
+      onGameComplete?.();
+      onPhaseComplete();
+    };
+
+    // Browser TTS/audio onended can silently fail to fire (esp. iOS Safari) —
+    // don't let scene completion hang forever on a dropped VO callback.
+    // Pausable, so the sidebar can't let it complete the scene behind the panel.
+    after(8000, finishGame);
+
+    playWord?.('mahakaya', () => {
+      playSceneLine?.('scene10_maha_success', finishGame, { stripLeadingText: 'Mahakaay' });
+    });
+  };
+
+  // Starts only when the finale is armed (timed as before) AND every syllable, "ya" included, has fully
+  // played: the word and the crossing never interrupt a pending syllable.
+  const tryStartFinale = () => {
+    const f = finaleRef.current;
+    const seq = syllableSeqRef.current;
+    if (!f.armed || f.started || seq.playing || seq.queue.length || !seq.lastEnded) return;
+    f.started = true;
+    startFinale();
+  };
+  tryFinaleRef.current = tryStartFinale;
+
   const completeRound = () => {
     const nextCompleted = Math.min(TOTAL_LOGS, completedLogsRef.current + 1);
     completedLogsRef.current = nextCompleted;
@@ -597,26 +669,18 @@ export default function MahakayaRescueGame({
         phaseRef.current = 'complete';
       });
 
-      // Raft starts crossing only once "kaya" has fully sounded, then the
-      // "mahakaya" word plays during the glide, followed by the completion VO.
+      // The raft crosses and "mahakaya" plays during the glide, followed by the completion VO, only once
+      // "ya" has fully sounded (tryStartFinale). Armed at the original +2.0s, so it never starts EARLIER than
+      // before; if the sequence is still draining it waits for it. A long safety net starts it regardless.
       after(SYLLABLE_HOLD_MS + 700 + 700, () => {
-        setCrossing(true);
-
-        const finishGame = () => {
-          if (completionStartedRef.current) return;
-          completionStartedRef.current = true;
-          onGameComplete?.();
-          onPhaseComplete();
-        };
-
-        // Browser TTS/audio onended can silently fail to fire (esp. iOS Safari) —
-        // don't let scene completion hang forever on a dropped VO callback.
-        // Pausable, so the sidebar can't let it complete the scene behind the panel.
-        after(8000, finishGame);
-
-        playWord?.('mahakaya', () => {
-          playSceneLine?.('scene10_maha_success', finishGame, { stripLeadingText: 'Mahakaay' });
-        });
+        finaleRef.current.armed = true;
+        tryStartFinale();
+      });
+      after(SYLLABLE_HOLD_MS + 700 + 700 + (TOTAL_SYLLABLES * SYLLABLE_WATCHDOG_MS), () => {
+        const f = finaleRef.current;
+        if (f.started) return;
+        f.started = true;
+        startFinale();
       });
       return;
     }
@@ -629,7 +693,14 @@ export default function MahakayaRescueGame({
     // rely on the raft visibly growing + gesture hints, not a repeated line.
     if (nextCompleted === 1) {
       after(SYLLABLE_HOLD_MS + 500, () => {
-        playSceneLine?.('scene10_maha_keep_adding');
+        // English cue: never over Sanskrit. Held until the syllables finish, then spoken only if it still applies.
+        heldCueRef.current = () => {
+          if (syllablesBusy()) return;
+          heldCueRef.current = null;
+          if (phaseRef.current !== 'play' || completedLogsRef.current !== 1) return; // moved on: discard
+          playSceneLine?.('scene10_maha_keep_adding');
+        };
+        heldCueRef.current();
       });
     }
 
@@ -650,7 +721,8 @@ export default function MahakayaRescueGame({
     // Cut off any playing hint VO immediately — otherwise a lingering
     // speechSynthesis utterance can jank touch responsiveness until it ends
     // (matches the stopVoice-on-grab pattern other drag scenes already use).
-    stopVoice?.();
+    // Don't cut a syllable the child is still hearing: grabbing the next log only stops an English line.
+    if (!syllablesBusy()) stopVoice?.();
     grabbedAtLevelRef.current = hintLevel;
     // Grabbing the log is an attempt, not progress: a visible hint stays up; the idle clock only
     // restarts when no hint is showing. Finishing the stage changes hintStageKey, which resets it.
@@ -723,8 +795,11 @@ export default function MahakayaRescueGame({
       setWrongDropCount((c) => c + 1);
       // 2nd miss in a row: the child can drag but not where it goes - say where, once.
       // Otherwise the grab cut the learning-round L2 line off; the hint is still up, so repeat it.
-      if (wrongDropCount === 1) playSceneLine?.('scene10_maha_place_here');
-      else if (grabbedAtLevelRef.current === 2 && isLearningLog) playSceneLine?.('scene10_maha_drag_water');
+      // Spoken help never cuts Sanskrit: while syllables play or wait it is skipped (the visual bounce stays).
+      if (!syllablesBusy()) {
+        if (wrongDropCount === 1) playSceneLine?.('scene10_maha_place_here');
+        else if (grabbedAtLevelRef.current === 2 && isLearningLog) playSceneLine?.('scene10_maha_drag_water');
+      }
       after(220, () => {
         setLogPos(null);
         logPosRef.current = null;
@@ -829,9 +904,13 @@ export default function MahakayaRescueGame({
           syllables={SYLLABLES}
           litCount={litCount}
           audioSyllables={AUDIO.syllables}
-          onSyllableLit={(syllable) => {
-            stopVoice?.();
-            playSyllable?.(syllable);
+          onSyllableLit={(syllable, index) => {
+            // Queue, don't interrupt: each syllable plays to the end before the next starts (pumpSyllables).
+            const seq = syllableSeqRef.current;
+            if (seq.seen.has(index)) return;
+            seq.seen.add(index);
+            seq.queue.push({ syllable, index });
+            pumpSyllables();
           }}
         />
       )}
