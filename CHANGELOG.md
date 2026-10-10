@@ -1,5 +1,9 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-10-10] - Syllable sequence extended to Suryakoti, Samaprabha, Nirvighnam, Kurumedeva
+**Touched:** SuryakotiGame.jsx, SamaprabhaGame.jsx, NirvighnamGame.jsx, KurumedevaGame.jsx
+**Changed:** Fast-interaction tests confirmed Sanskrit cut-offs in these four (Suryakoti: "keep rubbing" line and quick rubs cut sur/ya/ko; Samaprabha: pressing the next clue cut the syllable; Nirvighnam: grabbing the branch cut "nir"; Kurumedeva: plank instruction clipped "me"). Each now plays syllables in order from the previous onEnded (3.5s watchdog), touches never stop a syllable, English cues are held until it ends, final word waits for the last syllable. Re-tested: all syllables full length. Sarvakaryeshu and Sarvada tested fine, unchanged.
+**Open:** tablet listening check; not committed.
 ## [2026-10-10] - Mahakaya Rescue: bounded in-order syllable sequence
 **Touched:** zones/shloka-river/scenes/Scene1/MahakayaRescueGame.jsx, DECISIONS.md.
 **Changed:** Mahakaya's syllables no longer clip each other. Placement/highlight stay instant; the 4 syllables' audio plays one at a time, each starting from the previous one's real end (3.5s watchdog); the raft crossing + full word + completion VO start only after "ya" ends (and not earlier than the original +2.0s); grabbing a log no longer stops a speaking syllable; English cues (first-log "keep adding", hint ladder, wrong-drop lines) are held or skipped while Sanskrit plays. Tested at relaxed / quick / very quick paces in the real-audio harness: all syllables heard in full and in order, no overlaps, word starts 1ms after "ya" ends (2.05s / 2.9s / 5.9s after the last log). Other Shloka games untouched.
