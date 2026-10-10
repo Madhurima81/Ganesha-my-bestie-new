@@ -179,7 +179,14 @@ export default function NirvighnamGame({
 }) {
   const handPaused = isSidebarOpen ?? isPaused;
   usePreloadPoses(POSE_ASSETS);
-  const { playVoice: playSceneLine, playSyllable, playWord, stopVoice: stopSceneVoice } = voiceGuidance;
+  const { playVoice: playSceneLine, playSyllable, playWord, stopVoice: rawStopVoice } = voiceGuidance;
+  // Bounded in-order syllable sequence (same principle as Vakratunda/Mahakaya): a syllable always
+  // finishes before the next starts, and touching the next obstacle never cuts one off.
+  const syllableSeqRef = useRef({ queue: [], busy: false });
+  const stopSceneVoice = useCallback(() => {
+    const seq = syllableSeqRef.current;
+    if (!seq.busy && !seq.queue.length) rawStopVoice?.();
+  }, [rawStopVoice]);
   const debugEnabled = getDebugEnabled();
   const defaultLayout = useMemo(createDebugLayout, []);
   const [debugLayout, setDebugLayout] = useState(loadDebugLayout);
@@ -462,6 +469,7 @@ export default function NirvighnamGame({
       swimDoneRef.current = false;
       completionScheduledRef.current = false;
       lastSyllableDoneRef.current = false;
+      syllableSeqRef.current = { queue: [], busy: false };
       completionVoStartedRef.current = false;
     }
   }, [activeLayout.turtleStart, clearTimers, isActive]);
@@ -828,10 +836,15 @@ export default function NirvighnamGame({
     // Don't start the word/ending line yet — wait for the final "nam" syllable
     // to finish (its playSyllable onEnded sets lastSyllableDoneRef). Guard with
     // a fallback in case that callback never fires (audio error / iOS).
-    sylEndFallbackRef.current = pausableAfter(1600, () => {
-      lastSyllableDoneRef.current = true;
-      startCompletionVo();
-    });
+    const armFallback = () => {
+      sylEndFallbackRef.current = pausableAfter(1600, () => {
+        const seq = syllableSeqRef.current;
+        if (seq.busy || seq.queue.length) { armFallback(); return; } // sequence still pending
+        lastSyllableDoneRef.current = true;
+        startCompletionVo();
+      });
+    };
+    armFallback();
     startCompletionVo();
 
     swimPath.forEach((waypoint, index) => {
@@ -1015,15 +1028,39 @@ export default function NirvighnamGame({
           syllables={SYLLABLES}
           litCount={effLitCount}
           audioSyllables={AUDIO.syllables}
-          onSyllableLit={(syllable, index) => {
-            stopSceneVoice?.();
+          onSyllableLit={(syllable, lit) => {
+            const seq = syllableSeqRef.current;
+            if (seq.queue.some((q) => q.index === lit)) return;
+            seq.queue.push({ syllable, index: lit });
+            const pump = () => {
+              if (seq.busy) return;
+              const next = seq.queue.shift();
+              if (!next) return;
+              seq.busy = true;
+              const index = next.index;
+              let done = false;
+              let watchdog = null;
+              const finishSyllable = () => {
+                if (done) return;
+                done = true;
+                if (watchdog) cancelPausable(watchdog);
+                seq.busy = false;
+                afterSyllable(index);
+                pump();
+              };
+              rawStopVoice?.(); // clears only English/TTS; nothing Sanskrit is playing here
+              watchdog = pausableAfter(3500, finishSyllable);
+              if (playSyllable) playSyllable(next.syllable, finishSyllable);
+              else finishSyllable();
+            };
+            const afterSyllable = (index) => {
             const isLast = index === SYLLABLES.length - 1;
             // Chain the NEXT obstacle's intro VO after THIS syllable finishes,
             // rather than triggering it off cleared.length in parallel — see
             // note above the obstacleIntroComplete fallback effect.
             const introObstacle = !isLast ? OBSTACLE_ORDER[index + 1] : null;
             const introKey = introObstacle ? OBSTACLE_INTRO_KEYS[introObstacle] : null;
-            playSyllable?.(syllable, () => {
+            {
               if (isLast) {
                 lastSyllableDoneRef.current = true;
                 startCompletionVo();
@@ -1044,7 +1081,9 @@ export default function NirvighnamGame({
                 }
                 finishCurrentObstacleIntro();
               }
-            });
+            }
+            };
+            pump();
           }}
         />
 
