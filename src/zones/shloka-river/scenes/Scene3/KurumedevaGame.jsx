@@ -299,7 +299,13 @@ export default function KurumedevaGame({
 }) {
   const handPaused = isSidebarOpen ?? isPaused;
   usePreloadPoses(POSE_ASSETS);
-  const { playVoice: playSceneLine, playSyllable, playWord, stopVoice: stopSceneVoice } = voiceGuidance;
+  const { playVoice: playSceneLine, playSyllable, playWord, stopVoice: rawStopVoice } = voiceGuidance;
+  // A syllable is never cut off: touches and the plank-round instruction wait for it to finish.
+  const syllableBusyRef = useRef(false);
+  const plankPendingRef = useRef(false);
+  const stopSceneVoice = useCallback(() => {
+    if (!syllableBusyRef.current) rawStopVoice?.();
+  }, [rawStopVoice]);
   const [seedRounds] = useState(() => (
     isActive ? Math.max(0, Math.min(TOTAL_ROUNDS - 1, Number(initialRounds) || 0)) : 0
   ));
@@ -462,6 +468,7 @@ export default function KurumedevaGame({
     if (!placeActive) { plankInstructionPlayedRef.current = false; return; }
     if (plankInstructionPlayedRef.current) return;
     plankInstructionPlayedRef.current = true;
+    if (syllableBusyRef.current) { plankPendingRef.current = true; return; } // plays when "me" finishes
     stopSceneVoice?.();
     playSceneLine?.('kuru_plank_instruction', undefined, { cue: getLineCue('kuru_plank_instruction', () => setIntroGestureVoStarted(true)) });
   }, [placeActive, playSceneLine, stopSceneVoice]);
@@ -1222,12 +1229,25 @@ export default function KurumedevaGame({
           litCount={litCount}
           audioSyllables={AUDIO.syllables}
           onSyllableLit={(syllable, index) => {
-            stopSceneVoice?.();
+            rawStopVoice?.();
             // Kuru (0) -> "Elephant helped..."; me (1) -> "Monkey helped...".
             // Chained after the syllable finishes, not played in parallel —
             // see the notes at the elephant/monkey help beats above.
             const afterKey = index === 0 ? 'kuru_logs_after' : index === 1 ? 'kuru_rope_after' : null;
-            playSyllable?.(syllable, afterKey ? () => playSceneLine?.(afterKey) : undefined);
+            syllableBusyRef.current = true;
+            let done = false;
+            const finish = () => {
+              if (done) return;
+              done = true;
+              syllableBusyRef.current = false;
+              if (plankPendingRef.current) {
+                plankPendingRef.current = false;
+                playSceneLine?.('kuru_plank_instruction', undefined, { cue: getLineCue('kuru_plank_instruction', () => setIntroGestureVoStarted(true)) });
+              } else if (afterKey) playSceneLine?.(afterKey);
+            };
+            safeAfter(3500, finish); // watchdog if the clip never reports its end
+            if (playSyllable) playSyllable(syllable, finish);
+            else finish();
           }}
         />
 
