@@ -79,7 +79,12 @@ export default function SuryakotiGame({
   const [spotHasProgress, setSpotHasProgress] = useState(false);
   const [remainingCueVersion, setRemainingCueVersion] = useState(0);
   const canvasRef = useRef(null);
-  const gridRef = useRef([]);            // flat list of cells: { px, py, cleared, zone }
+  // Bounded in-order syllable sequence (same principle as Vakratunda/Mahakaya): each syllable
+  // starts from the previous one's onEnded, so fast rubbing can't cut one off; the one-time
+  // "keep rubbing" English line is held until the sequence is idle.
+  const syllableSeqRef = useRef({ queue: [], busy: false, token: 0 });
+  const heldCueRef = useRef(false);
+  const gridRef = useRef([]);          // flat list of cells: { px, py, cleared, zone }
   const zoneTotalRef = useRef([0, 0, 0, 0]);
   const zoneDoneRef = useRef([0, 0, 0, 0]);
   const activeZoneRef = useRef(0);
@@ -292,6 +297,8 @@ export default function SuryakotiGame({
       hopDoneRef.current = false;
       completionScheduledRef.current = false;
       lastSyllableDoneRef.current = false;
+      syllableSeqRef.current = { queue: [], busy: false, token: 0 }; // fresh object: stale callbacks ignore it
+      heldCueRef.current = false;
       completionVoStartedRef.current = false;
       activeZoneRef.current = 0;
       setActiveZone(0);
@@ -396,7 +403,11 @@ export default function SuryakotiGame({
       // patches rely on the darkness visibly shrinking, not a repeated line.
       if (wasFirstZone && next === 1 && !continuationCuePlayedRef.current) {
         continuationCuePlayedRef.current = true;
-        pausableAfter(500, () => playSceneLine?.('scene11_surya_keep_rubbing'));
+        pausableAfter(500, () => {
+          const seq = syllableSeqRef.current;
+          if (seq.busy || seq.queue.length) heldCueRef.current = true; // never over a Sanskrit syllable
+          else playSceneLine?.('scene11_surya_keep_rubbing');
+        });
       }
     }
 
@@ -423,7 +434,8 @@ export default function SuryakotiGame({
 
   const onPointerDown = useCallback((e) => {
     if (isPaused) return;
-    stopVoice?.();
+    const seq = syllableSeqRef.current;
+    if (!seq.busy && !seq.queue.length) stopVoice?.(); // a touch never cuts a syllable
     if (!firstInteractionSentRef.current) {
       firstInteractionSentRef.current = true;
       onFirstInteraction?.();
@@ -518,10 +530,16 @@ export default function SuryakotiGame({
     // Hold the word/ending line until the final "ti" syllable clip has
     // finished (its onSyllableLit onEnded sets lastSyllableDoneRef). Fallback
     // covers a dropped callback (audio error / iOS / test mock).
-    sylEndFallbackRef.current = pausableAfter(1600, () => {
-      lastSyllableDoneRef.current = true;
-      startCompletionVo();
-    });
+    // Never fires while the in-order sequence still has syllables pending: re-arms instead.
+    const armFallback = () => {
+      sylEndFallbackRef.current = pausableAfter(1600, () => {
+        const seq = syllableSeqRef.current;
+        if (seq.busy || seq.queue.length) { armFallback(); return; }
+        lastSyllableDoneRef.current = true;
+        startCompletionVo();
+      });
+    };
+    armFallback();
     startCompletionVo();
 
     const hopAfter = (ms, fn) => {
@@ -620,12 +638,42 @@ export default function SuryakotiGame({
           litCount={litCount}
           audioSyllables={AUDIO.syllables}
           onSyllableLit={(syllable, index) => {
-            stopVoice?.();
-            const isLast = index === SYLLABLES.length - 1;
-            playSyllable?.(syllable, isLast ? () => {
-              lastSyllableDoneRef.current = true;
-              startCompletionVo();
-            } : undefined);
+            const seq = syllableSeqRef.current;
+            if (seq.queue.some((q) => q.index === index)) return;
+            seq.queue.push({ syllable, index });
+            const pump = () => {
+              if (seq.busy) return;
+              const next = seq.queue.shift();
+              if (!next) {
+                if (heldCueRef.current && !completedRef.current) {
+                  heldCueRef.current = false;
+                  playSceneLine?.('scene11_surya_keep_rubbing');
+                }
+                return;
+              }
+              seq.busy = true;
+              const isLast = next.index === SYLLABLES.length - 1;
+              let done = false;
+              let watchdog = null;
+              const finish = () => {
+                if (done) return;
+                done = true;
+                if (watchdog) cancelPausable(watchdog);
+                seq.busy = false;
+                if (isLast) {
+                  lastSyllableDoneRef.current = true;
+                  heldCueRef.current = false;
+                  startCompletionVo();
+                  return;
+                }
+                pump();
+              };
+              stopVoice?.(); // clears only English/TTS; nothing Sanskrit is playing here
+              watchdog = pausableAfter(3500, finish);
+              if (playSyllable) playSyllable(next.syllable, finish);
+              else finish();
+            };
+            pump();
           }}
         />
 
