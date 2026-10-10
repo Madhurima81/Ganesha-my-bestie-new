@@ -2,6 +2,7 @@ import PoseImage, { usePreloadPoses } from '../../../../lib/components/animation
 import { useState, useEffect, useRef, useCallback } from 'react';
 import SyllableHighlight from '../../shared/SyllableHighlight';
 import useRepeatedHintCycle from '../../../../lib/hooks/useRepeatedHintCycle';
+import useWarmSanskritAudio from '../../../../lib/hooks/useWarmSanskritAudio';
 import usePausableTimers from '../../../../lib/hooks/usePausableTimers';
 import { getLineCue } from '../../../../lib/config/content/voiceCues';
 import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
@@ -306,6 +307,7 @@ export default function KurumedevaGame({
   const stopSceneVoice = useCallback(() => {
     if (!syllableBusyRef.current) rawStopVoice?.();
   }, [rawStopVoice]);
+  useWarmSanskritAudio('kurumedeva', AUDIO.syllables); // first tap plays instantly
   const [seedRounds] = useState(() => (
     isActive ? Math.max(0, Math.min(TOTAL_ROUNDS - 1, Number(initialRounds) || 0)) : 0
   ));

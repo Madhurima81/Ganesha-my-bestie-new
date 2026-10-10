@@ -8,6 +8,7 @@ import { GANESHA_POSE_ASSETS } from '../../config/ganeshaUsageSystem';
 import { preparePose, usePreloadPoses } from '../animation/PoseImage';
 import ProfilePillBtn from '../shared/ProfilePillBtn';
 import { getProfilePillBtnStyle } from '../../config/ZoneThemes';
+import { sfx } from '../../audio/sfx';
 
 const SceneCompletionCelebration = ({
   show = false,
@@ -131,6 +132,11 @@ const SceneCompletionCelebration = ({
       symbolTimeoutsRef.current = [];
     };
   }, [show, trophySources]);
+
+  // One shared completion sound for every scene: plays once each time the modal appears.
+  useEffect(() => {
+    if (show) sfx.play('transition');
+  }, [show]);
 
   // Stamp temp session as completed when celebration shows.
   // This ensures "Continue Journey" navigates to zone-welcome (not back into the scene).

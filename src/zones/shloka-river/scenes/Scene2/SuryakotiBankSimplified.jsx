@@ -890,7 +890,8 @@ const SuryakotiBankContent = ({
                       { id: 'suryakoti', petalId: 3, ring: 'outer', image: symbolSuryakoti },
                       { id: 'samaprabha', petalId: 4, ring: 'outer', image: symbolSamaprabha },
                     ]}
-                    onEarnedPetalReveal={(earnedPetal) => {
+                    waitForVoice
+                    onEarnedPetalReveal={(earnedPetal, _index, done) => {
                       const symbolByPetal = {
                         3: 'suryakoti',
                         4: 'samaprabha',
@@ -900,10 +901,12 @@ const SuryakotiBankContent = ({
                         samaprabha: 'You looked closely and saw what was really there.',
                       };
                       const symbol = symbolByPetal[earnedPetal?.id];
+                      // The Mandala holds the next symbol until this line ends (done). The
+                      // scene-complete line plays on the completion screen, not here.
                       if (lines[symbol]) {
-                        // Scene-complete line plays inside the Mandala, right after the last petal line.
-                        const afterLast = symbol === 'samaprabha' ? () => playGuidanceVoice('sceneComplete') : undefined;
-                        speakWebSpeech(lines[symbol], afterLast);
+                        speakWebSpeech(lines[symbol], done);
+                      } else {
+                        done?.();
                       }
                     }}
                     highlightPetals={sceneOuterPetalIds}

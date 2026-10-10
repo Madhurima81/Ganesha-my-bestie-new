@@ -741,6 +741,8 @@ export default function FlowerJourneyGame2({
 
   // ---- belly beats ----
   const [bellyBeat, setBellyBeat] = useState(0);
+  // On Continue the previous beat's success line is replayed once before the resumed beat.
+  const resumeLineDoneRef = useRef(false);
 
   // Notify the parent scene of the flower count without re-firing this
   // effect just because the parent re-rendered and handed us a new
@@ -897,6 +899,7 @@ export default function FlowerJourneyGame2({
     // First correct swipe succeeds.
     setEmotion(null);
     setBushOpenState(true);
+    onFlowersUpdateRef.current?.(2); // saved the moment the bush is solved, not when the flowers land
     setEmotion('pleased');
     speak(VO.bushSuccess);
     safeTimeout(() => {
@@ -952,6 +955,11 @@ export default function FlowerJourneyGame2({
       // begins, so the teaching hand is synced there. The reaction emoji
       // has no word to sync to, so it just follows the wordless stretch
       // beat immediately.
+      // Continue after the bush was solved: replay its success line first.
+      if (startBeat === 1) {
+        await speakAsync(VO.bushSuccess);
+        if (cancelled) return;
+      }
       const emotionTimer = pTimeout(() => {
         if (cancelled) return;
         setEmotion('sad');
@@ -977,11 +985,13 @@ export default function FlowerJourneyGame2({
   }, []);
 
   const finishBranchChallenge = useCallback(() => {
+    if (branchCompletedRef.current) return;
     clearBranchHold();
     // First correct pull + hold succeeds.
     setBranchPull(1);
     setBranchComplete(true);
     branchCompletedRef.current = true;
+    onFlowersUpdateRef.current?.(4); // saved the moment the branch is solved
     setEmotion('relieved');
     speak(VO.branchSuccess);
     safeTimeout(() => {
@@ -1105,6 +1115,11 @@ export default function FlowerJourneyGame2({
       // Unlike Bush/Branch, no nervous emoji here at the start — Marsh
       // already has its own wobble/wrong-attempt moment mid-crossing where
       // that emotion actually reads as caused by something.
+      // Continue after the branch was solved: replay its success line first.
+      if (startBeat === 2) {
+        await speakAsync(VO.branchSuccess);
+        if (cancelled) return;
+      }
       // The teaching hand lands exactly when the action word ("Guide") is spoken.
       await speakAsync(VO.marshStart, getLineCue('fjg:marshStart', () => {
         if (cancelled) return;
@@ -1221,6 +1236,7 @@ export default function FlowerJourneyGame2({
       }
       if (nextStep === 4) {
         safeTimeout(async () => {
+          onFlowersUpdateRef.current?.(6); // saved the moment the marsh is solved
           flyOneFlowerToBasket(marshFlowerTwoRef.current, flowerCream, 6);
           setEmotion('excited');
           await wait(2000);
@@ -1268,6 +1284,13 @@ export default function FlowerJourneyGame2({
     (async () => {
       await wait(600);
       if (cancelled) return;
+
+      // Continue after the marsh was solved: replay its success line once before the belly beat.
+      if (startBeat === 3 && !resumeLineDoneRef.current) {
+        resumeLineDoneRef.current = true;
+        await speakAsync(VO.marshDone);
+        if (cancelled) return;
+      }
 
       // All 6 emojis pop in one by one while VO.bellyReflection names them,
       // ~320ms apart so all six are up by ~2s into the line.
@@ -1328,13 +1351,6 @@ export default function FlowerJourneyGame2({
 
   return (
     <div className={`fjg2 ${isPausedProp ? 'fjg2--paused' : ''} ${isBellyPhase ? 'fjg2--belly-focus' : ''}`} style={{ backgroundImage: `url(${forestBackground})` }}>
-      {!isBellyPhase && (
-        <div className="fjg2-hud" aria-label={`${flowerCount} of 6 flowers gathered`}>
-          {Array.from({ length: 6 }).map((_, i) => (
-            <span key={i} className={`fjg2-hud-dot ${i < flowerCount ? 'filled' : ''}`} />
-          ))}
-        </div>
-      )}
 
       {/* Small "memory" marker left near a challenge right after it's solved
           — but only for as long as that challenge's own phase is still on

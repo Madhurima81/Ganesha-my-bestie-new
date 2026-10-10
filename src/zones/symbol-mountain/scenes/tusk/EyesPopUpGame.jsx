@@ -225,14 +225,16 @@ const EyesPopUpGame = ({
 }) => {
   const lineSpokenRef = useRef(onLineSpoken);
   lineSpokenRef.current = onLineSpoken;
-  // Continue: targets whose whole journey already finished in an earlier visit. The latest
+  // Continue: targets already FOUND in an earlier visit (saved the moment they are tapped). The latest
   // value is kept so a re-run of the reset effect never drops progress made since mount.
-  // A target left mid-journey is not in this list, so that beat restarts fresh.
+  // On Continue they start in their finished state and their success line is replayed.
   const doneIdsRef = useRef(
     Array.isArray(initialDone) ? initialDone.filter((id) => SEARCH_TARGETS.some((t) => t.id === id)) : []
   );
   const onProgressRef = useRef(onProgress);
   onProgressRef.current = onProgress;
+  const onGameCompleteRef = useRef(onGameComplete);
+  onGameCompleteRef.current = onGameComplete;
   usePreloadPoses(POSE_ASSETS);
   const [flow, setFlow] = useState(FLOW.SEARCH);
   // Self-managed fade so the parent scene's abrupt unmount (swapping to the
@@ -354,6 +356,9 @@ const EyesPopUpGame = ({
     stopVoice?.();
     speakFallback(text, done);
   }, [isAudioOn, stopVoice]);
+
+  const speakRef = useRef(speak);
+  speakRef.current = speak;
 
   // Sidebar open = true pause: interrupt the current line WITHOUT firing its onEnd and
   // disarm the idle clock. On close: after a beat, replay the interrupted line from the
@@ -572,16 +577,22 @@ const EyesPopUpGame = ({
     l2VoiceEndedAtRef.current = null;
     // The 10/18/26 clock starts only once the intro VO actually finishes —
     // never while the child is still being told what to look for.
-    // Resuming after one target was finished: skip the long intro, say what is left.
-    const remainingAtStart = SEARCH_TARGETS.find((t) => !seeded.includes(t.id));
-    const startLine = seeded.length > 0 && remainingAtStart
-      ? (remainingAtStart.id === 'feather' ? VO_TEXTS.findFeather : VO_TEXTS.findMango)
-      : VO_TEXTS.intro;
-    speak(startLine, () => {
+    const armClock = () => {
       idleClockArmedRef.current = true;
       lastTapTimeRef.current = Date.now();
-    });
-  }, [isActive, speak, stopTimers]);
+    };
+    // Everything was already found (saved list is full): no intro, the completion effect finishes the game.
+    if (seeded.length >= SEARCH_TARGETS.length) return;
+    const remainingAtStart = SEARCH_TARGETS.find((t) => !seeded.includes(t.id));
+    if (seeded.length > 0 && remainingAtStart) {
+      // Resuming after one target was found: replay that target's success line, then say what is left.
+      const lastFound = seeded[seeded.length - 1];
+      const findLine = remainingAtStart.id === 'feather' ? VO_TEXTS.findFeather : VO_TEXTS.findMango;
+      speakRef.current(VO_TEXTS[lastFound] || '', () => speakRef.current(findLine, armClock));
+      return;
+    }
+    speakRef.current(VO_TEXTS.intro, armClock);
+  }, [isActive, stopTimers]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const nextHintTarget = useMemo(
     () => SEARCH_TARGETS.find((target) => !foundIds.has(target.id)) || null,
@@ -653,13 +664,6 @@ const EyesPopUpGame = ({
     }
   }, [stopTimers]);
 
-  // Report finished targets so the scene can save them as the Continue checkpoint.
-  useEffect(() => {
-    if (goneTargets.length === 0) return;
-    doneIdsRef.current = goneTargets;
-    onProgressRef.current?.(goneTargets);
-  }, [goneTargets]);
-
   useEffect(() => {
     // Wait for the LAST tapped target's own staged journey (hold -> glide to
     // center -> glide to its animal -> pose change, ~3.6s) to actually
@@ -685,7 +689,7 @@ const EyesPopUpGame = ({
               peacock: ANIMAL_POSITIONS.peacock
             };
 
-            onGameComplete?.({
+            onGameCompleteRef.current?.({
               discoveredClues: foundTargets,
               discoveredAnimals: foundTargets,
               totalDiscovered: foundTargets.length,
@@ -696,10 +700,10 @@ const EyesPopUpGame = ({
       });
     });
 
-    return () => {
-      if (completionTimerRef.current) cancelTimer(completionTimerRef.current);
-    };
-  }, [goneTargets, foundTargets, onGameComplete, speak, after, cancelTimer]);
+    // No cleanup here on purpose: completedRef stops this effect from re-running, so cancelling the
+    // pending timers on a dependency change (e.g. the scene re-rendering) killed the sequence for
+    // good. Unmount cleanup is handled by stopTimers in the effect above.
+  }, [goneTargets, foundTargets, speak, after, cancelTimer]);
 
   // An empty/background tap is exploration, not a mistake to punish — but a
   // child who keeps missing is exactly who needs help sooner, so misses
@@ -762,6 +766,10 @@ const EyesPopUpGame = ({
     const isFinalFind = !remainingTarget;
 
     foundIdsRef.current.add(target.id);
+    // Save the moment the target is found (not when its journey animation ends) so Continue never
+    // makes the child find it again.
+    doneIdsRef.current = [...foundIdsRef.current];
+    onProgressRef.current?.(doneIdsRef.current);
     setFoundTargets((prev) => [...prev, target.id]);
     speak(VO_TEXTS[target.id] || target.label, () => {
       if (!isFinalFind) {

@@ -2,6 +2,7 @@ import PoseImage, { usePreloadPoses } from '../../../../../lib/components/animat
 import { useState, useEffect, useRef, useCallback } from 'react';
 import SyllableHighlight from '../../../shared/SyllableHighlight';
 import useRepeatedHintCycle from '../../../../../lib/hooks/useRepeatedHintCycle';
+import useWarmSanskritAudio from '../../../../../lib/hooks/useWarmSanskritAudio';
 import GestureDemo from '../../../../../lib/components/feedback/GestureDemo';
 import usePausableTimers from '../../../../../lib/hooks/usePausableTimers';
 import './SuryakotiGame.css';
@@ -72,6 +73,7 @@ export default function SuryakotiGame({
   const handPaused = isSidebarOpen ?? isPaused;
   usePreloadPoses(POSE_ASSETS);
   const { playVoice: playSceneLine, playWord, playSyllable, stopVoice } = voiceGuidance;
+  useWarmSanskritAudio('suryakoti', AUDIO.syllables); // first tap plays instantly
   const [phase, setPhase] = useState('play');
   const [litCount, setLitCount] = useState(0);
   const [activeZone, setActiveZone] = useState(0);

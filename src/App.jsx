@@ -37,6 +37,13 @@ import { getPendingKindnessCheck, resolveKindnessCheck } from './lib/services/Ki
 import { Analytics } from './lib/services/analytics';
 import { sceneAnalytics } from './lib/services/sceneAnalytics';
 import { preloadImages, avatarImagePaths } from './lib/utils/preloadImages';
+import {
+  getActiveScene,
+  setActiveScene,
+  clearActiveScene,
+  setZoneReturnFocus,
+  clearZoneReturnFocus,
+} from './lib/utils/zoneNavigationState';
 import { isStandalone } from './lib/services/PwaInstallManager';
 
 const AVATAR_IDS = ['monkey', 'peacock', 'squirrel', 'tiger'];
@@ -425,6 +432,18 @@ const [showDareChip, setShowDareChip] = useState(false);
 const previousViewRef = useRef('loading');
 const dareOpenTimerRef = useRef(null);
 const sceneJustCompletedRef = useRef(false);
+
+// Active scene = the unfinished scene the child actually entered, by ANY route
+// (Zone Welcome buttons, Next Adventure, resume). Zone Welcome reads it to decide
+// what to feature. Completion / finished-session exits clear it elsewhere.
+useEffect(() => {
+  if (currentView !== 'scene' || !currentZone || !currentScene) return;
+
+  const existing = getActiveScene(currentZone);
+  if (existing?.sceneId === currentScene) return;
+
+  setActiveScene(currentZone, currentScene, 'continue');
+}, [currentView, currentZone, currentScene]);
 const [kindnessCheckEntry, setKindnessCheckEntry] = useState(null);
 const [showIntroStory, setShowIntroStory] = useState(false);
 const [introStoryReturnView, setIntroStoryReturnView] = useState('map');
@@ -1145,8 +1164,12 @@ const handleSceneSelect = (sceneId, options = {}) => {
     
     localStorage.removeItem(sceneStateKey);
     localStorage.removeItem(tempKey);
+    // replay_session_* is preferred over temp_session_* by Zone Welcome's status
+    // logic, so leaving it behind made Play Again reload the old progress.
+    localStorage.removeItem(`replay_session_${profileId}_${currentZone}_${normalizedSceneId}`);
     sessionStorage.removeItem(sceneStateKey);
     sessionStorage.removeItem(tempKey);
+    sessionStorage.removeItem(`replay_session_${profileId}_${currentZone}_${normalizedSceneId}`);
     
     if (import.meta.env.DEV) console.log('✅ Storage cleared for:', sceneId);
   }
@@ -1207,6 +1230,11 @@ const getNextScene = (zoneId, currentSceneId) => {
 
   // Handle navigation from scenes and zone welcome
   const handleNavigate = (destination) => {
+    // Return focus is only for completion modal → Zone Welcome. Any other
+    // destination (Home, Map, next scene…) must not leave it behind for a later visit.
+    if (destination !== 'zone-welcome' && currentZone) {
+      clearZoneReturnFocus(currentZone);
+    }
     if (import.meta.env.DEV) console.log('🎯 Navigate to:', destination);
     //restoreDefaultStyles(); // Always restore styles when navigating
 
@@ -1251,12 +1279,42 @@ const getNextScene = (zoneId, currentSceneId) => {
         setCurrentScene(null);
         setCurrentView('map');
         break;
-      case 'zone-welcome':
+      case 'zone-welcome': {
+        // Leaving via the zone badge from a scene's completion screen never goes
+        // through handleSceneComplete, so detect the finished session here and
+        // give Zone Welcome the same one-visit return focus.
+        const leavingProfileId = localStorage.getItem('activeProfileId');
+        if (leavingProfileId && currentZone && currentScene) {
+          const leavingSession = (() => {
+            try {
+              const raw =
+                localStorage.getItem(`replay_session_${leavingProfileId}_${currentZone}_${currentScene}`) ||
+                localStorage.getItem(`temp_session_${leavingProfileId}_${currentZone}_${currentScene}`);
+              return raw ? JSON.parse(raw) : null;
+            } catch {
+              return null;
+            }
+          })();
+
+          if (
+            leavingSession &&
+            (leavingSession.showingCompletionScreen === true ||
+              leavingSession.showingZoneCompletion === true ||
+              leavingSession.completed === true ||
+              leavingSession.phase === 'complete' ||
+              leavingSession.phase === 'zone-complete')
+          ) {
+            clearActiveScene(currentZone);
+            setZoneReturnFocus(currentZone, normalizeSceneId(currentZone, currentScene));
+          }
+        }
+
               SimpleSceneManager.clearCurrentScene(); // ✅ ADD THIS LINE
         // Go back to current zone's welcome page
         setCurrentScene(null);
         setCurrentView('zone-welcome');
         break;
+      }
       case 'profile':
         if (currentView === 'map' || currentView === 'zone-welcome') {
           openProfileWelcomeModal();
@@ -1409,6 +1467,13 @@ chants: result?.chants || result?.chantedVerses || {},
     }
     
     sceneJustCompletedRef.current = true;
+
+    // The scene is finished, so it is no longer Active. But the child is landing
+    // directly on Zone Welcome from its completion modal, so show it once
+    // (cleared by handleNavigate if they pick Home / Map / next scene instead).
+    clearActiveScene(currentZone);
+    setZoneReturnFocus(currentZone, normalizedSceneId);
+
     setCurrentScene(null);
     setCurrentView('zone-welcome');
 

@@ -1530,7 +1530,8 @@ const SacredAssemblyContent = ({
       playSceneVoice('sixSymbolsPlaced', null, { replayOnReturn: false });
     }
 
-    sceneActions.updateState({
+    // checkpoint = saved immediately, so leaving right after the drop never loses the placement
+    sceneActions.checkpoint({
       placedSymbols: newPlacedSymbols,
       showingAssociationCard: false,
       glowingZones: [],
@@ -1624,10 +1625,9 @@ const SacredAssemblyContent = ({
 
   // RESUME � runs once on mount, handles returning mid-game
   useEffect(() => {
-    if (resumeHandledRef.current) return;
-    resumeHandledRef.current = true;
+    if (resumeHandledRef.current) return undefined;
 
-    if (!sceneState?.welcomeShown) return; // first-time player, OpeningModal handles it
+    if (!sceneState?.welcomeShown) { resumeHandledRef.current = true; return undefined; } // first-time player, OpeningModal handles it
 
     const placed = Object.keys(sceneState.placedSymbols || {}).length;
     const celebrationInProgress =
@@ -1637,15 +1637,23 @@ const SacredAssemblyContent = ({
       showSparkle === 'final-fireworks' ||
       isOrbsRunning;
 
-    // Already finished � restore completion screen
+    // NOTE: the "handled" flag is set when a timer FIRES, not up front. The scene clears its timers on
+    // unmount and React StrictMode (dev) unmounts/remounts once: a timer scheduled up front was cancelled
+    // and the flag then stopped the second run from scheduling it again (no card after Continue).
+
+    // Already finished - restore completion screen
     if (placed === 8 || sceneState.phase === 'complete') {
       // Do not show completion modal while final celebration is still active.
-      if (celebrationInProgress) return;
-      safeSetTimeout(() => setShowSceneCompletion(true), 500);
-      return;
+      if (celebrationInProgress) { resumeHandledRef.current = true; return undefined; }
+      const completionTimer = setTimeout(() => {
+        if (resumeHandledRef.current) return;
+        resumeHandledRef.current = true;
+        setShowSceneCompletion(true);
+      }, 500);
+      return () => clearTimeout(completionTimer);
     }
 
-    // Was mid-round when they left � clear the stale card state first
+    // Was mid-round when they left - clear the stale card state first
     if (sceneState.currentAssociationSymbol) {
       sceneActions.updateState({
         currentAssociationSymbol: null,
@@ -1654,15 +1662,24 @@ const SacredAssemblyContent = ({
       });
     }
 
-    // Resume from the correct round (e.g. round 2 = 3rd card)
-    const resumeRound = sceneState.currentRound || 0;
+    // currentRound advances a few seconds AFTER a symbol is placed (sparkle + voice wait), so
+    // leaving in that gap saved a stale round whose card is the symbol already placed. The next
+    // card is always the one after the symbols already placed (round k = queue[k]).
+    const resumeRound = Math.max(sceneState.currentRound || 0, placed);
 
     // Round 0 with nothing placed = start-first-round useEffect handles it naturally.
     // Only explicitly jump to a round when we're genuinely mid-game.
     if (resumeRound > 0 || placed > 0) {
-      safeSetTimeout(() => startNextRound(resumeRound), 700);
+      const resumeTimer = setTimeout(() => {
+        if (resumeHandledRef.current) return;
+        resumeHandledRef.current = true;
+        startNextRound(resumeRound);
+      }, 700);
+      return () => clearTimeout(resumeTimer);
     }
 
+    resumeHandledRef.current = true;
+    return undefined;
   }, []); // run once on mount; avoids repeated card/audio re-triggers
 
   const getGaneshaOpacity = () => {

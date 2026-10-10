@@ -79,7 +79,8 @@ function TuskBeatPlayerLive({ isActive = true, isAudioOn = true, onGameComplete,
         movementMs={400}
         reactionPauseMs={550}
         onComplete={onGameComplete}
-        initialBeatPos={startBeat}
+        initialBeatPos={startBeat > 0 ? startBeat - 1 : 0}
+        initialStateName={startBeat > 0 ? 'after' : 'before'}
         onBeatComplete={onBeatComplete}
       />
     </div>

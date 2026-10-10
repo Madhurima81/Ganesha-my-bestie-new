@@ -11,7 +11,9 @@
 
 import { CONTINUE_CHECKLISTS, CONTINUE_GROUP_LABEL } from './continueChecklists';
 
-export const TEST_CHECKLISTS = { ...CONTINUE_CHECKLISTS };
+import { SOUND_CHECKLISTS, SOUND_GROUP_LABEL } from './soundChecklists';
+
+export const TEST_CHECKLISTS = { ...CONTINUE_CHECKLISTS, ...SOUND_CHECKLISTS };
 
 // Other harness keys that mount the same game share a checklist (none right now).
 export const CHECKLIST_ALIASES = {};
@@ -19,6 +21,7 @@ export const CHECKLIST_ALIASES = {};
 // Dropdown grouping. Any checklist not listed here still appears under "Other".
 export const TEST_CHECKLIST_GROUPS = {
   [CONTINUE_GROUP_LABEL]: Object.keys(CONTINUE_CHECKLISTS),
+  [SOUND_GROUP_LABEL]: Object.keys(SOUND_CHECKLISTS),
 };
 
 export const GENERIC_CHECKLIST = {

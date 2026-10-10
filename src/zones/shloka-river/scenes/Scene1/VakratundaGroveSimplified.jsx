@@ -1232,7 +1232,8 @@ const VakratundaGroveContent = ({
                   { id: 'vakratunda', petalId: 1, ring: 'outer', image: symbolVakratunda },
                   { id: 'mahakaya', petalId: 2, ring: 'outer', image: symbolMahakaya },
                 ]}
-                onEarnedPetalReveal={(earnedPetal) => {
+                waitForVoice
+                onEarnedPetalReveal={(earnedPetal, _index, done) => {
                   const symbolByPetal = {
                     1: 'vakratunda',
                     2: 'mahakaya',
@@ -1242,10 +1243,12 @@ const VakratundaGroveContent = ({
                     mahakaya: 'You made space for others.',
                   };
                   const symbol = symbolByPetal[earnedPetal?.id];
+                  // The Mandala holds the next symbol until this line ends (done). The
+                  // scene-complete line plays on the completion screen, not here.
                   if (lines[symbol]) {
-                    // Scene-complete line plays inside the Mandala, right after the last petal line.
-                    const afterLast = symbol === 'mahakaya' ? () => playGuidanceVoice('sceneComplete') : undefined;
-                    speakWebSpeech(lines[symbol], afterLast);
+                    speakWebSpeech(lines[symbol], done);
+                  } else {
+                    done?.();
                   }
                 }}
                 highlightPetals={sceneOuterPetalIds}

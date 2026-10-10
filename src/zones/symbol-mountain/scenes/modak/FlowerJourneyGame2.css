@@ -12,24 +12,6 @@
 }
 .fjg2--paused { filter: grayscale(0.4); }
 
-.fjg2-hud {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  z-index: 50;
-  display: flex;
-  gap: 6px;
-  background: rgba(0, 0, 0, 0.5);
-  padding: 6px 10px;
-  border-radius: 999px;
-}
-.fjg2-hud-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.35);
-}
-.fjg2-hud-dot.filled { background: #ffd700; }
 
 /* ---------------------------------------------------------
    PROGRESSIVE REVEAL

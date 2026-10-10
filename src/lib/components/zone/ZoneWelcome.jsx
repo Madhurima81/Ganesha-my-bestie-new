@@ -1,7 +1,7 @@
 // ZoneWelcome.jsx - Updated with Disney/PBS Unlock Detection System
 // Path: lib/components/zone/ZoneWelcome.jsx
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import './ZoneWelcome.css';
 import '../../styles/zone-themes.css';
 import { getZoneTheme, getProfilePillBtnStyle } from '../../config/ZoneThemes';
@@ -13,6 +13,13 @@ import ProfileChip from '../navigation/ProfileChip';
 import ProfilePillBtn from '../shared/ProfilePillBtn';
 import { GANESHA_POSE_ASSETS } from '../../config/ganeshaUsageSystem';
 import { playUiTap } from '../../services/AudioService';
+import {
+  setActiveScene,
+  getActiveScene,
+  clearActiveScene,
+  readZoneReturnFocus,
+  clearZoneReturnFocus,
+} from '../../utils/zoneNavigationState';
 
 
 //import ProgressManager from '../../services/ProgressManager';
@@ -124,7 +131,12 @@ const ZoneWelcome = ({
   const [isHomeExiting, setIsHomeExiting] = useState(false);
   const [profileChipPulse, setProfileChipPulse] = useState(false);
   const [confetti, setConfetti] = useState([]);
-  const [selectedFeaturedSceneId, setSelectedFeaturedSceneId] = useState(null);
+  // Return focus: set by App when the child goes straight from a completion modal
+  // to Zone Welcome. Seeds the TEMPORARY featured card only — never makes it Active.
+  const [selectedFeaturedSceneId, setSelectedFeaturedSceneId] = useState(
+    () => readZoneReturnFocus(zoneData?.id)?.sceneId ?? null
+  );
+  const initialZoneIdRef = React.useRef(zoneData?.id);
   // HIGH FIX: tracked in a ref so the confetti cleanup timer survives effect
   // re-runs. Previously the setTimeout lived only in the effect's own closure —
   // if sceneProgress kept updating within the 1500ms window, each re-run's
@@ -132,63 +144,72 @@ const ZoneWelcome = ({
   // so cleanup could be deferred indefinitely and confetti DOM nodes leaked.
   const confettiTimeoutRef = React.useRef(null);
 
-  // Phone landscape: Shloka River's 5 cards become a swipe carousel with arrows.
-  const sceneCarouselRef = useRef(null);
-  const [sceneCarouselState, setSceneCarouselState] = useState({
-    canScrollLeft: false,
-    canScrollRight: true,
-  });
   const isPhoneLandscape =
     typeof window !== 'undefined' &&
     window.matchMedia('(orientation: landscape) and (max-height: 500px) and (max-width: 1023px)').matches;
-  const usesFocusJourneyLayout =
+  const isTabletLandscape =
     typeof window !== 'undefined' &&
-    window.matchMedia(
-      '(orientation: landscape) and (min-height: 501px) and (min-width: 769px)'
-    ).matches;
-  const usesPhoneSceneCarousel =
-    zoneData?.id === 'shloka-river' && (zoneData?.scenes?.length || 0) > 4;
+    window.matchMedia('(orientation: landscape) and (min-height: 501px) and (min-width: 769px)').matches;
+  const usesFocusJourneyLayout = isTabletLandscape || isPhoneLandscape;
 
-  const updateSceneCarouselState = () => {
-    const track = sceneCarouselRef.current;
-    if (!track) return;
-    const maxScroll = Math.max(0, track.scrollWidth - track.clientWidth);
-    setSceneCarouselState({
-      canScrollLeft: track.scrollLeft > 4,
-      canScrollRight: track.scrollLeft < maxScroll - 4,
-    });
-  };
-
-  const scrollSceneCarousel = (direction) => {
-    const track = sceneCarouselRef.current;
-    if (!track) return;
-    const firstCard = track.querySelector('.zone-scene-card');
-    const cardWidth = firstCard?.getBoundingClientRect().width || 148;
-    const styles = window.getComputedStyle(track);
-    const parsedGap = parseFloat(styles.columnGap || styles.gap);
-    const gap = Number.isFinite(parsedGap) ? parsedGap : 10;
-    track.scrollBy({ left: direction * (cardWidth + gap), behavior: 'smooth' });
-  };
-
+  // Skip the first zone so the return-focus seed above survives (incl. StrictMode's
+  // double effect run); only a genuine zone change re-seeds.
   useEffect(() => {
-    if (!usesPhoneSceneCarousel) return undefined;
-    const raf = requestAnimationFrame(() => updateSceneCarouselState());
-    const handleResize = () => updateSceneCarouselState();
-    window.addEventListener('resize', handleResize);
-    return () => {
-      cancelAnimationFrame(raf);
-      window.removeEventListener('resize', handleResize);
-    };
-  }, [usesPhoneSceneCarousel, zoneData?.id]);
+    if (initialZoneIdRef.current === zoneData?.id) return;
 
+    initialZoneIdRef.current = zoneData?.id;
+    setSelectedFeaturedSceneId(readZoneReturnFocus(zoneData?.id)?.sceneId ?? null);
+  }, [zoneData?.id]);
+
+  // One visit only: next time Zone Welcome opens normally, real progression takes over.
   useEffect(() => {
-    setSelectedFeaturedSceneId(null);
+    if (zoneData?.id) clearZoneReturnFocus(zoneData.id);
   }, [zoneData?.id]);
 
   const dlog = import.meta.env.DEV ? console.log : () => {};
 
   // Add this near the top of ZoneWelcome component:
   const [highlightedScene, setHighlightedScene] = useState(null);
+
+  /* ==========================================================
+     ACTIVE SCENE
+     Persists the scene the child actually entered.
+
+     This is intentionally separate from:
+     - completion/progression
+     - featured/browsed journey node
+     ========================================================== */
+
+  // Storage helpers live in lib/utils/zoneNavigationState.js (shared with App.jsx).
+  const getSceneSessionState = (sceneId) => {
+    const profileId = localStorage.getItem('activeProfileId');
+    if (!profileId || !zoneData?.id || !sceneId) return null;
+
+    const replayKey = `replay_session_${profileId}_${zoneData.id}_${sceneId}`;
+    const tempKey = `temp_session_${profileId}_${zoneData.id}_${sceneId}`;
+    const raw = localStorage.getItem(replayKey) || localStorage.getItem(tempKey);
+    if (!raw) return null;
+
+    try {
+      return JSON.parse(raw);
+    } catch {
+      return null;
+    }
+  };
+
+  // all_complete is deliberately NOT treated as finished: some scenes reach it
+  // before the final completion screen.
+  const isStoredSessionFinished = (state) => {
+    if (!state) return false;
+
+    return (
+      state.completed === true ||
+      state.showingCompletionScreen === true ||
+      state.showingZoneCompletion === true ||
+      state.phase === 'complete' ||
+      state.phase === 'zone-complete'
+    );
+  };
 
 
 // ✅ ADD THIS: Track zone entry time for quick navigation detection
@@ -828,65 +849,34 @@ const getPermanentCompletedCount = () => {
   };
 
 const handleSceneClick = (scene, action = 'default') => {
-
   const status = sceneStatuses[scene.id];
-  
+
   if (status.status === 'locked') {
-    dlog('🔒 DISNEY: Scene locked, showing feedback:', scene.name);
+    dlog('🔒 Scene locked:', scene.name);
     return;
   }
-  
-  dlog('🎯 DISNEY: Scene clicked:', scene.id, 'Action:', action);
 
-  // Handle specific actions from buttons
-  switch (action) {
-    case 'continue':
-      dlog('↶ CONTINUE: Loading scene with progress');
-      if (onSceneSelect) {
-        onSceneSelect(scene.id, { mode: 'continue' });
-      }
-      break;
-      
-    case 'replay':
-      dlog('🎮 REPLAY: Loading scene fresh (clear progress)');
-      if (onSceneSelect) {
-        onSceneSelect(scene.id, { mode: 'replay' });
-      }
-      break;
-      
-    case 'start':
-      dlog('🚀 START: Loading scene for first time');
-      if (onSceneSelect) {
-        onSceneSelect(scene.id, { mode: 'start' });
-      }
-      break;
-      
-    default:
-      // Legacy fallback for scenes clicked without specific action
-      if (status.status === 'completed') {
-        if (status.hasReplaySession) {
-          dlog('↪ DEFAULT: Completed scene with replay session - continuing replay');
-          if (onSceneSelect) {
-            onSceneSelect(scene.id, { mode: 'continue' });
-          }
-          return;
-        }
-        dlog('🎮 DEFAULT: Completed scene - starting replay');
-        if (onSceneSelect) {
-          onSceneSelect(scene.id, { mode: 'replay' });
-        }
-      } else if (status.status === 'in-progress') {
-        dlog('↶ DEFAULT: In-progress scene - continuing');
-        if (onSceneSelect) {
-          onSceneSelect(scene.id, { mode: 'continue' });
-        }
-      } else {
-        dlog('🚀 DEFAULT: New scene - starting fresh');
-        if (onSceneSelect) {
-          onSceneSelect(scene.id, { mode: 'start' });
-        }
-      }
+  let mode = 'start';
+
+  if (action === 'continue') {
+    mode = 'continue';
+  } else if (action === 'replay') {
+    mode = 'replay';
+  } else if (action === 'start') {
+    mode = 'start';
+  } else if (status.status === 'in-progress') {
+    mode = 'continue';
+  } else if (status.status === 'completed') {
+    mode = status.hasReplaySession ? 'continue' : 'replay';
   }
+
+  // The scene becomes ACTIVE only when the child actually enters it.
+  // Tapping a journey icon never calls this, so browsing can't change it.
+  setActiveScene(zoneData.id, scene.id, mode);
+
+  dlog('🎯 Opening active scene:', scene.id, mode);
+
+  onSceneSelect?.(scene.id, { mode });
 };
 
 const handleReplayIntroStory = () => {
@@ -938,6 +928,50 @@ const handleReplayIntroStory = () => {
     };
   }, [zoneData?.id, isLoading, sceneProgress]);
 
+  const zoneScenes = zoneData?.scenes || [];
+
+  /* 1. PERSISTED ACTIVE SCENE */
+  const activeSceneRecord = getActiveScene(zoneData?.id);
+
+  const activeSceneCandidate = activeSceneRecord?.sceneId
+    ? zoneScenes.find((scene) => scene.id === activeSceneRecord.sceneId) || null
+    : null;
+
+  const activeCandidateStatus = activeSceneCandidate
+    ? sceneStatuses[activeSceneCandidate.id]
+    : null;
+
+  const activeSessionState = activeSceneCandidate
+    ? getSceneSessionState(activeSceneCandidate.id)
+    : null;
+
+  const activeSessionFinished = isStoredSessionFinished(activeSessionState);
+
+  // A completed scene can still be ACTIVE while the child is replaying it
+  // (Modak completed → Play Again → leaves halfway → must return as Active Modak).
+  const persistedActiveScene =
+    activeSceneCandidate &&
+    !(
+      activeCandidateStatus?.status === 'completed' &&
+      (!activeSessionState || activeSessionFinished)
+    )
+      ? activeSceneCandidate
+      : null;
+
+  // Persisted record belongs to a scene that is now genuinely finished —
+  // clear it so progression can move forward.
+  useEffect(() => {
+    if (!activeSceneCandidate || persistedActiveScene) return;
+
+    clearActiveScene(zoneData?.id);
+  }, [
+    zoneData?.id,
+    activeSceneCandidate?.id,
+    persistedActiveScene?.id,
+    activeCandidateStatus?.status,
+    activeSessionFinished,
+  ]);
+
   if (isLoading || !zoneData) {
     return (
       <div className="zone-welcome-loading">
@@ -956,19 +990,90 @@ const handleReplayIntroStory = () => {
 
   // Tablet focus + journey model. The actual current scene stays stable even
   // when a child browses an older completed scene.
-  const zoneScenes = zoneData?.scenes || [];
-  const actualCurrentScene =
+  // 2. Normal progression fallback — used only when there is no explicit active scene.
+  const progressionCurrentScene =
     zoneScenes.find((scene) => sceneStatuses[scene.id].status === 'in-progress' && !sceneStatuses[scene.id].completedBefore) ||
     zoneScenes.find((scene) => sceneStatuses[scene.id].status === 'available') ||
     null;
+
+  // The child's TRUE current place — drives the journey "In progress" marker.
+  const actualCurrentScene = persistedActiveScene || progressionCurrentScene;
+
+  // 3. Temporary browsing selection (journey-node taps).
   const selectedFeaturedScene =
     zoneScenes.find((scene) => scene.id === selectedFeaturedSceneId && sceneStatuses[scene.id].status !== 'locked') ||
     null;
+
+  // 4. What is shown large.
   const featuredScene =
     selectedFeaturedScene ||
-    actualCurrentScene ||
+    persistedActiveScene ||
+    progressionCurrentScene ||
     zoneScenes[zoneScenes.length - 1] ||
     null;
+
+  // Featured-card CTA: Continue + Replay together for the active/in-progress scene.
+  const renderFeaturedAction = (scene, status) => {
+    const isPersistedActiveScene = persistedActiveScene?.id === scene.id;
+    const shouldShowContinueReplay =
+      isPersistedActiveScene || status.status === 'in-progress';
+
+    return (
+      <div className="scene-action-integrated featured-action-area">
+        {status.status === 'locked' ? null : shouldShowContinueReplay ? (
+          <div className="action-split-container">
+            <ProfilePillBtn
+              className="zone-welcome-cta zone-welcome-continue-btn btn-continue"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleSceneClick(scene, 'continue');
+              }}
+              label="Continue"
+              size="sm"
+              fullWidth={true}
+              style={getProfilePillBtnStyle(zoneData.id)}
+            />
+            <ProfilePillBtn
+              className="zone-welcome-cta zone-welcome-replay-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleSceneClick(scene, 'replay');
+              }}
+              label="↻"
+              ariaLabel="Play Again"
+              size="sm"
+              fullWidth={false}
+              style={getProfilePillBtnStyle(zoneData.id)}
+            />
+          </div>
+        ) : status.status === 'completed' ? (
+          <ProfilePillBtn
+            className="zone-welcome-cta featured-zone-cta completed"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleSceneClick(scene, 'replay');
+            }}
+            label="Play Again"
+            size="sm"
+            fullWidth={true}
+            style={getProfilePillBtnStyle(zoneData.id)}
+          />
+        ) : status.status === 'available' ? (
+          <ProfilePillBtn
+            className="zone-welcome-cta featured-zone-cta available"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleSceneClick(scene, 'start');
+            }}
+            label="Start"
+            size="sm"
+            fullWidth={true}
+            style={getProfilePillBtnStyle(zoneData.id)}
+          />
+        ) : null}
+      </div>
+    );
+  };
   const getJourneyProgressSegments = (scene) => {
     const status = sceneStatuses[scene.id];
 
@@ -1062,26 +1167,14 @@ const handleReplayIntroStory = () => {
               ))}
             </div>
           )}
-          {usesPhoneSceneCarousel && (
-            <button
-              type="button"
-              className="zone-carousel-arrow zone-carousel-arrow--left"
-              aria-label="Previous scenes"
-              disabled={!sceneCarouselState.canScrollLeft}
-              onClick={() => scrollSceneCarousel(-1)}
-            >
-              <span aria-hidden="true">‹</span>
-            </button>
-          )}
-          <div
-            ref={sceneCarouselRef}
+<div
             className={[
               'scenes-horizontal-container',
               `scene-count-${zoneData.scenes.length}`,
-              'tablet-feature-layout',
-              usesPhoneSceneCarousel ? 'has-phone-carousel' : '',
-            ].join(' ')}
-            onScroll={usesPhoneSceneCarousel ? updateSceneCarouselState : undefined}
+              'focus-journey-layout',
+              isTabletLandscape ? 'focus-journey-layout--tablet' : '',
+              isPhoneLandscape ? 'focus-journey-layout--phone' : '',
+            ].filter(Boolean).join(' ')}
           >
             {usesFocusJourneyLayout ? (
               <>
@@ -1091,7 +1184,7 @@ const handleReplayIntroStory = () => {
 
                   return (
                     <div
-                      className={`zone-scene-card scene-card zone-card tablet-featured-card ${status.status}`}
+                      className={`zone-scene-card scene-card zone-card zone-featured-card ${status.status} ${isPhoneLandscape ? 'zone-featured-card--phone' : ''}`.trim()}
                       style={{
                         '--zone-color': getCardAccentColor(),
                       }}
@@ -1129,38 +1222,7 @@ const handleReplayIntroStory = () => {
                           </div>
                         </div>
 
-                        <div className="scene-action-integrated featured-action-area">
-                          {status.status !== 'locked' && (
-                            <ProfilePillBtn
-                              className={`zone-welcome-cta featured-zone-cta ${status.status}`}
-                              onClick={(e) => {
-                                e.stopPropagation();
-
-                                if (status.status === 'in-progress') {
-                                  handleSceneClick(scene, 'continue');
-                                  return;
-                                }
-
-                                if (status.status === 'completed') {
-                                  handleSceneClick(scene, 'replay');
-                                  return;
-                                }
-
-                                handleSceneClick(scene, 'start');
-                              }}
-                              label={
-                                status.status === 'in-progress'
-                                  ? 'Continue'
-                                  : status.status === 'completed'
-                                    ? 'Play Again'
-                                    : 'Start'
-                              }
-                              size="sm"
-                              fullWidth={true}
-                              style={getProfilePillBtnStyle(zoneData.id)}
-                            />
-                          )}
-                        </div>
+                        {renderFeaturedAction(scene, status)}
                       </div>
                     </div>
                   );
@@ -1389,38 +1451,7 @@ const handleReplayIntroStory = () => {
                   {/* ✨ NEW: Integrated Action Area (Bottom) */}
                   {usesFocusJourneyLayout ? (
                     isFeatured ? (
-                      <div className="scene-action-integrated featured-action-area">
-                        {status.status !== 'locked' && (
-                          <ProfilePillBtn
-                            className={`zone-welcome-cta featured-zone-cta ${status.status}`}
-                            onClick={(e) => {
-                              e.stopPropagation();
-
-                              if (status.status === 'in-progress') {
-                                handleSceneClick(scene, 'continue');
-                                return;
-                              }
-
-                              if (status.status === 'completed') {
-                                handleSceneClick(scene, 'replay');
-                                return;
-                              }
-
-                              handleSceneClick(scene, 'start');
-                            }}
-                            label={
-                              status.status === 'in-progress'
-                                ? 'Continue'
-                                : status.status === 'completed'
-                                  ? 'Play Again'
-                                  : 'Start'
-                            }
-                            size="sm"
-                            fullWidth={true}
-                            style={getProfilePillBtnStyle(zoneData.id)}
-                          />
-                        )}
-                      </div>
+                      renderFeaturedAction(scene, status)
                     ) : (
                       <div className="journey-tile-status">
                         {isActualCurrent && status.status === 'in-progress' && (
@@ -1555,22 +1586,11 @@ const handleReplayIntroStory = () => {
               </>
             )}
           </div>
-          {usesPhoneSceneCarousel && (
-            <button
-              type="button"
-              className="zone-carousel-arrow zone-carousel-arrow--right"
-              aria-label="Next scenes"
-              disabled={!sceneCarouselState.canScrollRight}
-              onClick={() => scrollSceneCarousel(1)}
-            >
-              <span aria-hidden="true">›</span>
-            </button>
-          )}
-        </div>
+</div>
       </div>
 
 {/* JOURNEY PANEL — progress pill at bottom.
-    Tablet uses the permanent journey strip instead, so this duplicate is hidden there. */}
+    Focus journey screens use the permanent strip instead, so this duplicate is hidden there. */}
 {!usesFocusJourneyLayout && (
 <div className="stats-bottom-bar">
   {Object.keys(sceneProgress).length > 0 ? (() => {
