@@ -37,6 +37,8 @@ export const playMagicBloom         = (vol) => sfx.play('bloom', vol);
 export const playDivineGlow         = (vol) => sfx.play('powerUnlock', vol);
 export const playCelebrationTwinkle = (vol) => sfx.play('celebration', vol);
 export const playCardRevealChime    = (vol) => sfx.play('correct', vol);
+export const playPlace              = (vol) => sfx.play('place', vol);
+export const playIdleHint           = (vol) => sfx.play('idleHint', vol);
 
 // Ambient & voice pass through to SoundManager unchanged
 export { playAmbient, stopAmbient, setAmbientVolume, duckAmbient, unduckAmbient };

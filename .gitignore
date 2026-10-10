@@ -76,3 +76,8 @@ src/dev/annotations/
 
 # Local Netlify folder
 .netlify
+
+# Sound Lab standalone export (npm run sound-lab:export)
+sound-lab-export/
+sound-lab-export.zip
+sound-source-bundle.zip

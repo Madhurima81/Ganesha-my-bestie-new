@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ProfilePillBtn from '../shared/ProfilePillBtn';
 import { playUiTap } from '../../services/AudioService';
-import { isAmbientOn, subscribeSoundPrefs } from '../../utils/soundPrefs';
+import { ambience } from '../../audio/ambience';
 import AudioToggle from '../ui/AudioToggle/AudioToggle';
 import useAudioPreference from '../../hooks/useAudioPreference';
 import DeviceChoiceModal from './DeviceChoiceModal';
@@ -13,11 +13,6 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
   const [isStarting, setIsStarting] = useState(false);
   const [showDeviceChoice, setShowDeviceChoice] = useState(false);
   const { isAudioOn, toggleAudio } = useAudioPreference();
-  const ambientRef = useRef(null);
-  // Ambient follows Parent Settings > Ambience (the toggle here is the voice mute only).
-  const [ambientOn, setAmbientOn] = useState(isAmbientOn);
-  useEffect(() => subscribeSoundPrefs((kind, on) => { if (kind === 'ambience') setAmbientOn(on); }), []);
-  const fadeRef = useRef(null);
   const startTimerRef = useRef(null);
 
   // Animate entrance
@@ -28,62 +23,8 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
     };
   }, []);
 
-  // Soft ambient bed on welcome screen (same track as map, lower volume)
-  useEffect(() => {
-    const audio = ambientRef.current;
-    if (!audio) return;
-
-    const TARGET_VOL = 0.22;
-    const canFadeVolume = !/iPhone/i.test(navigator.userAgent || '');
-
-    const fadeIn = () => {
-      clearInterval(fadeRef.current);
-      if (canFadeVolume) {
-        audio.volume = 0;
-      } else {
-        audio.volume = TARGET_VOL;
-      }
-      audio.play().catch(() => {});
-      if (!canFadeVolume) return;
-
-      fadeRef.current = setInterval(() => {
-        const next = Math.min(audio.volume + 0.02, TARGET_VOL);
-        audio.volume = next;
-        if (next >= TARGET_VOL) clearInterval(fadeRef.current);
-      }, 80);
-    };
-
-    if (ambientOn) {
-      fadeIn();
-    } else {
-      clearInterval(fadeRef.current);
-      audio.pause();
-      audio.currentTime = 0;
-    }
-
-    const onFirstInteraction = () => {
-      if (ambientOn && audio.paused) fadeIn();
-      document.removeEventListener('pointerdown', onFirstInteraction);
-    };
-    document.addEventListener('pointerdown', onFirstInteraction);
-
-    const onVisibility = () => {
-      if (document.visibilityState === 'hidden') {
-        clearInterval(fadeRef.current);
-        audio.pause();
-      } else if (ambientOn) {
-        fadeIn();
-      }
-    };
-    document.addEventListener('visibilitychange', onVisibility);
-
-    return () => {
-      clearInterval(fadeRef.current);
-      audio.pause();
-      document.removeEventListener('pointerdown', onFirstInteraction);
-      document.removeEventListener('visibilitychange', onVisibility);
-    };
-  }, [ambientOn]);
+  // Soft ambient bed on welcome screen. Shared player: follows Parent Settings > Ambience, ducks for VO.
+  useEffect(() => ambience.play('welcome'), []);
 
   useEffect(() => {
     return () => {
@@ -162,13 +103,6 @@ const MainWelcomeScreen = ({ onStartAdventure }) => {
       />
       */}
 
-      <audio
-        ref={ambientRef}
-        src="/audio/music/bg-ambient.mp3"
-        loop
-        preload="metadata"
-        style={{ display: 'none' }}
-      />
 
       <DeviceChoiceModal
         isOpen={showDeviceChoice}

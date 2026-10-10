@@ -61,3 +61,18 @@ Each item stores coords as 0..1 fractions of the stage box, plus — for pins an
 circles — a description of the DOM element underneath (tag, class, text, alt/src,
 ancestor path, rect). Tell Claude Code "check the annotations" and it reads
 `latest.json`. The folder is gitignored.
+
+---
+
+# sound-lab.html — hear the whole sound system
+
+```
+npm run dev
+# open: http://localhost:5173/sound-lab.html      (port may differ; Vite prints it)
+npm run sound-usage                               # refresh the "which scenes use which role" table
+```
+
+One page for `src/lib/audio/sfx.js` (SFX roles) and `src/lib/audio/ambience.js` (beds):
+Settings switches + "VO is speaking" duck, every role (MP3 and synth stand-in, loaded/missing status),
+one-click rule tests (one reward at a time, stronger replaces weaker, tap guard), every ambience bed with a
+live readout, a 24 s scripted mock scene, and a per-scene usage table. Not in the production rollup input.

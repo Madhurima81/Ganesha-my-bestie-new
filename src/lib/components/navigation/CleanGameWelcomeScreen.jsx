@@ -1,6 +1,6 @@
 ﻿// CleanGameWelcomeScreen.jsx - FINAL CLEAN VERSION
 import { setVoiceMuted } from '../../utils/voiceMute';
-import { isAmbientOn, subscribeSoundPrefs } from '../../utils/soundPrefs';
+import { ambience } from '../../audio/ambience';
 import React, { useState, useEffect, useRef } from 'react';
 import GameStateManager from '../../services/GameStateManager';
 import CleanProfileSelector from './CleanProfileSelector';
@@ -38,11 +38,6 @@ const CleanGameWelcomeScreen = ({
   const [showNewGameConfirm, setShowNewGameConfirm] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [popupData, setPopupData] = useState(null);
-  const ambientRef = useRef(null);
-  // Ambient follows Parent Settings > Ambience (the toggle here is the voice mute only).
-  const [ambientOn, setAmbientOn] = useState(isAmbientOn);
-  useEffect(() => subscribeSoundPrefs((kind, on) => { if (kind === 'ambience') setAmbientOn(on); }), []);
-  const fadeRef = useRef(null);
   const [audioOn, setAudioOn] = useState(() => {
     const v = localStorage.getItem('ganesha_audio_enabled');
     return v === null ? true : v === 'true';
@@ -60,58 +55,12 @@ const CleanGameWelcomeScreen = ({
     initializeClean();
   }, []);
 
+  // Never start ambient inside a modal: the sound toggle is hidden there, so a layered bed would stack
+  // on the scene/map audio underneath. Shared player handles Settings, VO ducking and tab-hide.
   useEffect(() => {
-    const audio = ambientRef.current;
-    if (!audio) return;
-
-    // BLOCKER FIX: never autoplay ambient inside a modal — the sound toggle is
-    // hidden in modal mode, so a layered ambient track had no way to be muted
-    // and would stack on top of the underlying scene/map audio.
-    const isModalMode = displayMode === 'modal';
-    if (isModalMode || !ambientOn) {
-      clearInterval(fadeRef.current);
-      audio.pause();
-      audio.currentTime = 0;
-      return;
-    }
-
-    const TARGET_VOL = 0.16;
-    const fadeIn = () => {
-      clearInterval(fadeRef.current);
-      audio.volume = 0;
-      audio.play().catch(() => {});
-      fadeRef.current = setInterval(() => {
-        const next = Math.min(audio.volume + 0.02, TARGET_VOL);
-        audio.volume = next;
-        if (next >= TARGET_VOL) clearInterval(fadeRef.current);
-      }, 80);
-    };
-
-    fadeIn();
-
-    const onFirstInteraction = () => {
-      if (audio.paused) fadeIn();
-      document.removeEventListener('pointerdown', onFirstInteraction);
-    };
-    document.addEventListener('pointerdown', onFirstInteraction);
-
-    const onVisibility = () => {
-      if (document.visibilityState === 'hidden') {
-        clearInterval(fadeRef.current);
-        audio.pause();
-      } else {
-        fadeIn();
-      }
-    };
-    document.addEventListener('visibilitychange', onVisibility);
-
-    return () => {
-      clearInterval(fadeRef.current);
-      audio.pause();
-      document.removeEventListener('pointerdown', onFirstInteraction);
-      document.removeEventListener('visibilitychange', onVisibility);
-    };
-  }, [currentProfile, showProfileSelector, ambientOn, displayMode]);
+    if (displayMode === 'modal') return undefined;
+    return ambience.play('home');
+  }, [displayMode]);
   
   const initializeClean = () => {
     try {
@@ -844,13 +793,6 @@ const CleanGameWelcomeScreen = ({
         completedItems={popupData?.completedItems || []}
         type={popupData?.type}
         directItemId={popupData?.directItemId}
-      />
-      <audio
-        ref={ambientRef}
-        src="/audio/ambient/map%20ambient%20sound.mp3"
-        loop
-        preload="metadata"
-        style={{ display: 'none' }}
       />
     </div>
   );

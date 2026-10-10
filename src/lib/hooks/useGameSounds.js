@@ -9,6 +9,8 @@ import {
   playDivineGlow,
   playCelebrationTwinkle,
   playCardRevealChime,
+  playPlace,
+  playIdleHint,
   playAmbient,
   stopAmbient,
   setAmbientVolume,
@@ -26,6 +28,8 @@ export function useGameSounds() {
     playGlow:     playDivineGlow,
     playTwinkle:  playCelebrationTwinkle,
     playChime:    playCardRevealChime,
+    playPlace,       // an item lands in its spot
+    playIdleHint,    // very soft "look here" nudge, just before a hint
     playAmbient,
     stopAmbient,
     setAmbientVolume,

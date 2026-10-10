@@ -11,8 +11,8 @@ import {
   getWordPath
 } from '../config/content/voiceGuidance';
 
-import { isAmbientOn, subscribeSoundPrefs } from '../utils/soundPrefs';
 import { sfx } from '../audio/sfx';
+import { ambience } from '../audio/ambience';
 
 // The audio toggle is a VOICE mute (see DECISIONS.md 2026-09-29, T55): when the
 // shared preference is off, ALL voice — guidance VO, hints, Sanskrit words and
@@ -35,7 +35,7 @@ export const estimateSpeechMs = (text) => {
 
 // SFX levels, files and legacy-name aliases now live in lib/audio/sfx.js (the shared engine).
 
-const VO_DUCK_FACTOR = 0.7; // ~30% reduction while VO is active
+// VO ducking (SFX 0.7, ambience 0.5) is owned by lib/audio/sfx.js and lib/audio/ambience.js.
 
 const stripLeadingSpeechText = (text, leadingText) => {
   if (!text || !leadingText) return text;
@@ -130,18 +130,14 @@ const useVoiceGuidance = (zoneId, sceneId, {
   const applyVoDuck = useCallback(() => {
     voDuckActiveRef.current = true;
     sfx.setVoiceActive(true);
-    if (musicRef.current) {
-      musicRef.current.volume = Math.min(1, Math.max(0, musicVolume * VO_DUCK_FACTOR));
-    }
-  }, [musicVolume]);
+    ambience.setVoiceActive(true);
+  }, []);
 
   const clearVoDuck = useCallback(() => {
     voDuckActiveRef.current = false;
     sfx.setVoiceActive(false);
-    if (musicRef.current) {
-      musicRef.current.volume = Math.min(1, Math.max(0, musicVolume));
-    }
-  }, [musicVolume]);
+    ambience.setVoiceActive(false);
+  }, []);
 
   useEffect(() => {
     currentPhaseRef.current = currentPhase;
@@ -421,53 +417,24 @@ const useVoiceGuidance = (zoneId, sceneId, {
   // BACKGROUND MUSIC
   // ========================================
 
+  // Scene music = the shared ambience player ('scene' bed). It owns Settings > Ambience, fades,
+  // VO ducking and tab-hide; musicRef just holds this scene's release() handle.
   const startMusic = useCallback(() => {
-    if (!enableMusic || !isAmbientOn()) return; // Parent Settings > Ambience
-
+    if (!enableMusic) return;
     const path = getMusicPath('ambient');
     if (!path) return;
-
-    if (musicRef.current) {
-      musicRef.current.volume = Math.min(
-        1,
-        Math.max(0, musicVolume * (voDuckActiveRef.current ? VO_DUCK_FACTOR : 1))
-      );
-      musicRef.current.play();
-      return;
-    }
-
-    const audio = new Audio(path);
-    audio.volume = Math.min(
-      1,
-      Math.max(0, musicVolume * (voDuckActiveRef.current ? VO_DUCK_FACTOR : 1))
-    );
-    audio.loop = true;
-
-    musicRef.current = audio;
-    audio.play().catch(err => {
-      console.error('Music play failed:', err);
-    });
+    musicRef.current = ambience.play('scene', { src: path, volume: musicVolume });
   }, [enableMusic, musicVolume]);
 
   const stopMusic = useCallback(() => {
     if (musicRef.current) {
-      musicRef.current.pause();
+      musicRef.current();   // release: only stops if this scene still owns the bed
+      musicRef.current = null;
     }
   }, []);
 
-  // Ambience switched in Settings while a scene is mounted: pause now; on again, resume
-  // only music that was already started (a scene that never started it stays silent).
-  useEffect(() => subscribeSoundPrefs((kind, on) => {
-    if (kind !== 'ambience' || !musicRef.current) return;
-    if (!on) musicRef.current.pause();
-    else musicRef.current.play().catch(() => {});
-  }), []);
-
   const setMusicVolume = useCallback((volume) => {
-    if (musicRef.current) {
-      const duck = voDuckActiveRef.current ? VO_DUCK_FACTOR : 1;
-      musicRef.current.volume = Math.min(1, Math.max(0, volume * duck));
-    }
+    if (musicRef.current) ambience.setVolume(volume);
   }, []);
 
   // ========================================
@@ -485,6 +452,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
       // Use refs to get current values (not stale closure values)
       if (timeSinceInteraction >= idleTimeout && !isPlayingRef.current && currentPhaseRef.current) {
         const hintKey = getPhaseHint(currentPhaseRef.current);
+        if (hintKey) sfx.play('idleHint'); // soft "look here" nudge just before the spoken hint
         playVoice(hintKey);
         // Reset interaction time after playing hint so it doesn't repeat immediately
         lastInteractionRef.current = Date.now();
@@ -576,6 +544,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
 
     const audio = new Audio(path);
     audio.volume = voiceVolumeRef.current; // follows the voice volume; the voice toggle mutes this too (voice mute)
+    sfx.guardAudio(audio); // no tap/place effect may land on top of a Sanskrit syllable/word
 
     // Guard: ensure onEnded is called exactly once
     let callbackFired = false;
@@ -614,8 +583,17 @@ const useVoiceGuidance = (zoneId, sceneId, {
     activeVoiceStripLeadingTextRef.current = null;
     setIsPlaying(true);
     audio.play().catch(err => {
-      if (err.name === 'AbortError') return;
-      console.error('Syllable play failed:', err);
+      if (err.name === 'AbortError') {
+        // stopVoice() clears voiceRef, and a hidden tab is paused on purpose: both are
+        // deliberate, so stay silent and let the chain stop. Anything else killed a clip
+        // that should have played, so log it and fall through to release the callback.
+        if (voiceRef.current !== audio || document.hidden) return;
+        console.warn('Syllable play aborted unexpectedly:', `${word}/${syllable}`);
+      } else if (err.name === 'NotAllowedError') {
+        console.warn('Syllable blocked by the browser (autoplay/permission):', `${word}/${syllable}`);
+      } else {
+        console.error('Syllable play failed:', err);
+      }
       setIsPlaying(false);
       voiceRef.current = null;
       activeVoiceKeyRef.current = null;
@@ -648,6 +626,7 @@ const useVoiceGuidance = (zoneId, sceneId, {
 
     const audio = new Audio(path);
     audio.volume = voiceVolumeRef.current; // follows the voice volume; the voice toggle mutes this too (voice mute)
+    sfx.guardAudio(audio); // no tap/place effect may land on top of a Sanskrit syllable/word
 
     // Guard: ensure onEnded is called exactly once
     let callbackFired = false;
@@ -686,8 +665,17 @@ const useVoiceGuidance = (zoneId, sceneId, {
     activeVoiceStripLeadingTextRef.current = null;
     setIsPlaying(true);
     audio.play().catch(err => {
-      if (err.name === 'AbortError') return;
-      console.error('Word play failed:', err);
+      if (err.name === 'AbortError') {
+        // stopVoice() clears voiceRef, and a hidden tab is paused on purpose: both are
+        // deliberate, so stay silent and let the chain stop. Anything else killed a clip
+        // that should have played, so log it and fall through to release the callback.
+        if (voiceRef.current !== audio || document.hidden) return;
+        console.warn('Word play aborted unexpectedly:', `${word}`);
+      } else if (err.name === 'NotAllowedError') {
+        console.warn('Word blocked by the browser (autoplay/permission):', `${word}`);
+      } else {
+        console.error('Word play failed:', err);
+      }
       setIsPlaying(false);
       voiceRef.current = null;
       activeVoiceKeyRef.current = null;
@@ -704,15 +692,12 @@ const useVoiceGuidance = (zoneId, sceneId, {
   // APP VISIBILITY (tab switch / phone call)
   // ========================================
 
-  const musicWasPlayingRef = useRef(false);
   // Stores the voice key+callback that was mid-play when app was hidden,
   // so we can replay from start on return (mid-sentence resume is jarring for kids).
   const interruptedVoiceRef = useRef(null);
 
   const handleHide = useCallback(() => {
     isHiddenRef.current = true;
-
-    musicWasPlayingRef.current = !!(musicRef.current && !musicRef.current.paused);
 
     // Store interrupted voice — include replayOnReturn so handleShow knows whether to replay.
     // Covers both the MP3 path (voiceRef set) and the TTS path (ttsUtteranceRef set).
@@ -735,7 +720,6 @@ const useVoiceGuidance = (zoneId, sceneId, {
       try { window.speechSynthesis?.cancel(); } catch { /* no-op */ }
     }
 
-    if (musicRef.current) musicRef.current.pause();
     if (voiceRef.current) {
       // Belt-and-suspenders listener already paused the audio element directly;
       // still clean up refs and handlers for correctness.
@@ -763,10 +747,6 @@ const useVoiceGuidance = (zoneId, sceneId, {
 
   const handleShow = useCallback(() => {
     isHiddenRef.current = false;
-
-    if (musicWasPlayingRef.current && musicRef.current) {
-      musicRef.current.play().catch(() => {});
-    }
 
     let voiceWillPlay = false;
 
