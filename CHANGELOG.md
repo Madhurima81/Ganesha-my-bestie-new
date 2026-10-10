@@ -1,5 +1,9 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-10-10] - Suryakoti: syllable thresholds 25/50/75/95%
+**Touched:** SuryakotiGame.jsx
+**Changed:** ZONE_CLEAR 0.42 per band replaced by SYLLABLE_AT [0.25,0.5,0.75,0.95] of the whole canvas; hint 'almost there' uses the same fraction. Measured lit at 26/48/72/95% cleared.
+**Open:** slow-pace listen on tablet.
 ## [2026-10-10] - Syllable sequence extended to Suryakoti, Samaprabha, Nirvighnam, Kurumedeva
 **Touched:** SuryakotiGame.jsx, SamaprabhaGame.jsx, NirvighnamGame.jsx, KurumedevaGame.jsx
 **Changed:** Fast-interaction tests confirmed Sanskrit cut-offs in these four (Suryakoti: "keep rubbing" line and quick rubs cut sur/ya/ko; Samaprabha: pressing the next clue cut the syllable; Nirvighnam: grabbing the branch cut "nir"; Kurumedeva: plank instruction clipped "me"). Each now plays syllables in order from the previous onEnded (3.5s watchdog), touches never stop a syllable, English cues are held until it ends, final word waits for the last syllable. Re-tested: all syllables full length. Sarvakaryeshu and Sarvada tested fine, unchanged.
