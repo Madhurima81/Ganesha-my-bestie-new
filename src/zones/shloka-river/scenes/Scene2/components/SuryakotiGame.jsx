@@ -41,7 +41,10 @@ const RUB_ZONES = [
 const SCRATCH_R = 0.06;     // visible rub brush, fraction of canvas width
 const ZONE_GRID_X = 10;
 const ZONE_GRID_Y = 16;
-const ZONE_CLEAR = 0.42;    // forgiving completion threshold
+// Each syllable is earned at a share of the WHOLE canvas cleared (any part of it counts), so the
+// sounds land at an even 25 / 50 / 75 / 95% of the rub. 95% (not 100) because the very edge cells
+// are hard to reach with a finger.
+const SYLLABLE_AT = [0.25, 0.5, 0.75, 0.95];
 
 const POSE_ASSETS = [
   sharedSceneBg,
@@ -87,6 +90,7 @@ export default function SuryakotiGame({
   const gridRef = useRef([]);          // flat list of cells: { px, py, cleared, zone }
   const zoneTotalRef = useRef([0, 0, 0, 0]);
   const zoneDoneRef = useRef([0, 0, 0, 0]);
+  const clearedCountRef = useRef(0);   // cells cleared anywhere on the canvas
   const activeZoneRef = useRef(0);
   const drawingRef = useRef(false);
   // State mirror of drawingRef. The hint clock's `enabled` flag is read at render time: with only the
@@ -193,9 +197,7 @@ export default function SuryakotiGame({
     if (hintLevel === 0) { lastReminderRef.current = false; return; }
     if (phase !== 'play' || !knowsHow || isPaused || lastReminderRef.current) return;
     lastReminderRef.current = true;
-    const total = Math.max(zoneTotalRef.current[activeZone] || 1, 1);
-    const patchFraction = Math.min(1, ((zoneDoneRef.current[activeZone] || 0) / total) / ZONE_CLEAR);
-    const overallFraction = (activeZone + patchFraction) / RUB_ZONES.length;
+    const overallFraction = clearedCountRef.current / Math.max(gridRef.current.length, 1);
     stopVoice?.();
     playSceneLine?.(overallFraction >= 0.75 ? 'surya_hint_almost' : 'surya_hint_keep');
   }, [activeZone, hintLevel, isPaused, knowsHow, phase, playSceneLine, stopVoice]);
@@ -288,6 +290,7 @@ export default function SuryakotiGame({
     gridRef.current = grid;
     zoneTotalRef.current = totals;
     zoneDoneRef.current = dones;
+    clearedCountRef.current = dones.reduce((a, b) => a + b, 0);
 
     if (!preserve) {
       completedRef.current = false;
@@ -310,7 +313,8 @@ export default function SuryakotiGame({
     } else {
       // Recover how far the player had gotten from the restored cleared cells.
       let lit = 0;
-      while (lit < RUB_ZONES.length && totals[lit] > 0 && dones[lit] / totals[lit] >= ZONE_CLEAR) lit += 1;
+      const frac = clearedCountRef.current / Math.max(grid.length, 1);
+      while (lit < SYLLABLE_AT.length && frac >= SYLLABLE_AT[lit]) lit += 1;
       activeZoneRef.current = lit;
       setActiveZone(lit);
       setLitCount(lit);
@@ -364,15 +368,15 @@ export default function SuryakotiGame({
     ctx.arc(x, y, radius, 0, Math.PI * 2);
     ctx.fill();
 
-    // Every rub clears darkness. Only cells in the current broad region count
-    // toward syllable progress, keeping Sur → ya → ko → ti in order.
-    const active = activeZoneRef.current;
+    // Every rub clears darkness, anywhere on the canvas. All cleared cells count toward one overall
+    // fraction; the syllables (Sur → ya → ko → ti) are earned at SYLLABLE_AT of that fraction.
     let newlyCleared = 0;
     for (const cell of gridRef.current) {
-      if (cell.cleared || cell.zone !== active) continue;
+      if (cell.cleared) continue;
       if (Math.hypot(cell.px - x, cell.py - y) < radius) {
         cell.cleared = true;
         zoneDoneRef.current[cell.zone] += 1;
+        clearedCountRef.current += 1;
         newlyCleared += 1;
       }
     }
@@ -384,11 +388,8 @@ export default function SuryakotiGame({
     }
 
     let next = activeZoneRef.current;
-    while (
-      next < RUB_ZONES.length
-      && zoneTotalRef.current[next] > 0
-      && zoneDoneRef.current[next] / zoneTotalRef.current[next] >= ZONE_CLEAR
-    ) {
+    const overall = clearedCountRef.current / Math.max(gridRef.current.length, 1);
+    while (next < SYLLABLE_AT.length && overall >= SYLLABLE_AT[next]) {
       next += 1;
       onMicroWin?.();
     }
