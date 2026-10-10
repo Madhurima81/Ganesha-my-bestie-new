@@ -491,7 +491,6 @@ const NewModakSceneMVPContent = ({
   const playUiTap = playTap;
   const playDiscovery = useCallback(() => playSfx('discovery'), [playSfx]);
   const playRevealBloom = useCallback(() => playSfx('revealBloom'), [playSfx]);
-  const playTransition = useCallback(() => playSfx('transition'), [playSfx]);
   const playCelebrationSfx = useCallback(() => playSfx('celebration'), [playSfx]);
 
   const { isAudioOn, toggleAudio } = useAudioPreference();
@@ -1325,11 +1324,10 @@ const NewModakSceneMVPContent = ({
 
   useEffect(() => {
     if (sceneState?.showingCompletionScreen && !showSceneCompletion) {
-      playTransition();
-      setShowSceneCompletion(true);
+      setShowSceneCompletion(true); // the modal itself plays the completion sound
       setShowSparkle(null);
     }
-  }, [sceneState?.showingCompletionScreen, showSceneCompletion, playTransition]);
+  }, [sceneState?.showingCompletionScreen, showSceneCompletion]);
 
   // ------------------------------------------------------------------
   // Reset / debug jump
@@ -1820,7 +1818,6 @@ const NewModakSceneMVPContent = ({
                 message="That power is growing inside you"
                 onClose={() => {
                   setShowMandala(false);
-                  playTransition();
                   setShowSceneCompletion(true);
                   sceneActions.updateState({ completed: true, showingCompletionScreen: true });
                 }}
