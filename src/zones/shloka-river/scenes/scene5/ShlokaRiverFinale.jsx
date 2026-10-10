@@ -315,7 +315,7 @@ const ShlokaRiverFinaleContent = ({
     { enableMusic: false, idleTimeout: 999999 }
   );
   const { safeSetTimeout, clearAll: clearAllTimeouts } = usePauseAwareTimeout({});
-  const { playUiTap, playSparkle, playChime } = useGameSounds();
+  const { playUiTap, playSparkle } = useGameSounds();
 
   // Resume: words already placed correctly (checkpointed per word). Only honoured when
   // the saved phase is ARRANGE; a fresh game / replay has no wordsPlaced.
@@ -842,7 +842,8 @@ const ShlokaRiverFinaleContent = ({
     // Stable beat: this word is placed. Write it now (not via the 1s autosave).
     if (slotIdx < SHLOKA_WORDS.length - 1) sceneActions.checkpoint({ wordsPlaced: slotIdx + 1 });
 
-    playSparkle();
+    // No sparkle here: the word's own pronunciation (playWordAudio below) is the reward for placing it.
+    // A sparkle fired in the same instant, on top of the Sanskrit.
 
     const isFinalSlot = slotIdx === SHLOKA_WORDS.length - 1;
     const advanceToNextStep = () => {
@@ -870,16 +871,13 @@ const ShlokaRiverFinaleContent = ({
       }
     };
 
-    if (isFinalSlot) {
-      playChime();
-    }
-
+    // (No chime on the final word either: the full-word audio plays alone, then the success flow runs.)
     if (playWordAudio) {
       playWordAudio(wordData.id, advance);
     } else {
       safeSetTimeout(advance, 250);
     }
-  }, [sceneActions, markInteraction, noteWrongAnswer, stopAllVoice, playChime, playSfx, playSparkle, playVoice, playWordAudio, safeSetTimeout, triggerSuccessFlow]);
+  }, [sceneActions, markInteraction, noteWrongAnswer, stopAllVoice, playSfx, playVoice, playWordAudio, safeSetTimeout, triggerSuccessFlow]);
 
   const handleTrayPointerDown = (e, wordData) => {
     if (phase !== PHASES.ARRANGE || usedWords.has(wordData.id)) return;

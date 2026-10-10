@@ -390,7 +390,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
       onReturnHint                     // ← Called when child returns
     }
   );
-  const { playUiTap, playWrongTap, playSparkle, playChime, playGlow, setGlobalVolume } = useGameSounds();
+  const { playUiTap, playPlace, playWrongTap, playSparkle, playChime, playGlow, setGlobalVolume } = useGameSounds();
   const { speak, stop: stopSpokenVoice, mute: muteSpokenVoice, isSpeaking } = useGaneshaVoice();
   const isSpeakingRef = useRef(false);
   const isAudioOnRef = useRef(isAudioOn);
@@ -1473,7 +1473,7 @@ const DreamsWishesGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
     markInteraction();
     interruptCurrentVoice();
-    playUiTap();
+    playPlace(); // food lands on the plate: soft "placed" sound, not a generic tap
     triggerMiniGesture('thumbsup', 'center', 1500);
 
     const newStates = [...sceneState.bowlStates];

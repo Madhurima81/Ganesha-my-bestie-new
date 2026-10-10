@@ -12,34 +12,46 @@ export default function SyllableHighlight({
 }) {
   const prevLitCountRef = useRef(litCount);
   const staggerTimersRef = useRef([]);
+  const nextSlotRef = useRef(0); // earliest time (ms) the next syllable may start
+  const onSyllableLitRef = useRef(onSyllableLit);
+  onSyllableLitRef.current = onSyllableLit; // timers always call the latest handler
+
+  const clearPending = () => {
+    staggerTimersRef.current.forEach(clearTimeout);
+    staggerTimersRef.current = [];
+    nextSlotRef.current = 0;
+  };
 
   useLayoutEffect(() => {
     const prevLitCount = prevLitCountRef.current;
 
-    if (litCount > prevLitCount && onSyllableLit) {
-      // A fast scratch/drag can cross more than one threshold before React
-      // commits, jumping litCount by 2+ in one go. Firing onSyllableLit for
-      // all of them in the same tick lets each new call's stopVoice() kill
-      // the previous one's audio before it's heard — so stagger playback
-      // instead of dispatching the whole range synchronously.
-      staggerTimersRef.current.forEach(clearTimeout);
-      staggerTimersRef.current = [];
+    if (litCount < prevLitCount) {
+      // Scene reset / replay: drop anything still queued for the old run.
+      clearPending();
+    } else if (litCount > prevLitCount && onSyllableLitRef.current) {
+      // A fast drag can cross several thresholds at once, or litCount can rise
+      // again before the previous syllable's timer has fired. Each syllable
+      // gets its own slot in a queue and pending timers are NEVER cancelled by
+      // a later increase (that used to silently drop syllables), and each new
+      // call's stopVoice() can't kill the previous one before it's heard.
+      const now = Date.now();
       for (let index = prevLitCount; index < litCount; index += 1) {
         const syllableAudio = audioSyllables[index] ?? syllables[index];
         if (!syllableAudio) continue;
-        const delay = (index - prevLitCount) * SYLLABLE_STAGGER_MS;
-        const timerId = setTimeout(() => onSyllableLit(syllableAudio, index), delay);
+        const startAt = Math.max(now, nextSlotRef.current);
+        nextSlotRef.current = startAt + SYLLABLE_STAGGER_MS;
+        const timerId = setTimeout(() => {
+          staggerTimersRef.current = staggerTimersRef.current.filter((t) => t !== timerId);
+          onSyllableLitRef.current?.(syllableAudio, index);
+        }, startAt - now);
         staggerTimersRef.current.push(timerId);
       }
     }
 
     prevLitCountRef.current = litCount;
-  }, [audioSyllables, litCount, onSyllableLit, syllables]);
+  }, [audioSyllables, litCount, syllables]);
 
-  useEffect(() => () => {
-    staggerTimersRef.current.forEach(clearTimeout);
-    staggerTimersRef.current = [];
-  }, []);
+  useEffect(() => clearPending, []);
 
   return (
     <div className="syl-row" role="status" aria-live="polite">

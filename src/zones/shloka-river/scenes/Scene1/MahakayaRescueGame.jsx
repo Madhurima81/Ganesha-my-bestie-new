@@ -7,6 +7,7 @@ import { usePreloadPoses } from '../../../../lib/components/animation/PoseImage'
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import SyllableHighlight from '../../shared/SyllableHighlight';
 import useRepeatedHintCycle from '../../../../lib/hooks/useRepeatedHintCycle';
+import useWarmSanskritAudio from '../../../../lib/hooks/useWarmSanskritAudio';
 import usePausableTimers from '../../../../lib/hooks/usePausableTimers';
 import { getLineCue } from '../../../../lib/config/content/voiceCues';
 import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
@@ -203,6 +204,7 @@ export default function MahakayaRescueGame({
   const handPaused = isSidebarOpen ?? isPaused;
   usePreloadPoses(POSE_ASSETS);
   const { playVoice: playSceneLine, playSfx, playSyllable, playWord, stopVoice } = voiceGuidance;
+  useWarmSanskritAudio('mahakaya', AUDIO.syllables); // first tap plays instantly
 
   const [phase, setPhase] = useState('intro');
   const [activeLog, setActiveLog] = useState(0);
@@ -574,7 +576,7 @@ export default function MahakayaRescueGame({
     completedLogsRef.current = nextCompleted;
     setCompletedLogs(nextCompleted);
     onMicroWin?.();
-    playSfx?.('chime');
+    playSfx?.('place'); // log lands: soft thud; the syllable (after the hold below) is the reward
     draggingRef.current = null;
     setDragging(null);
 

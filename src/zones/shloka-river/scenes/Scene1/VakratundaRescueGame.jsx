@@ -3,9 +3,9 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import SyllableHighlight from '../../shared/SyllableHighlight';
 import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
 import useRepeatedHintCycle from '../../../../lib/hooks/useRepeatedHintCycle';
+import useWarmSanskritAudio from '../../../../lib/hooks/useWarmSanskritAudio';
 import usePausableTimers from '../../../../lib/hooks/usePausableTimers';
 import { getLineCue } from '../../../../lib/config/content/voiceCues';
-import { getSyllablePath } from '../../../../lib/config/content/voiceGuidance';
 import './VakratundaRescueGame.css';
 
 import frogSwim from './assets/images/vakratunda/frog-baby.webp';
@@ -40,10 +40,14 @@ const REUNION_FROG_W = 5.4;
 const FAMILY = { x: 91.08, y: 52.71, w: 14 };
 
 const FAMILY_WIN_RADIUS = 12;   // how close counts as "reached the family"
+const PAD_PLACE_BEAT_MS = 450;  // lily-pad 'place' sound (~200ms) + a gap, then the syllable speaks alone
+const SYLLABLE_WATCHDOG_MS = 3500; // a syllable clip is ~1.7s; if its onEnded is lost (iOS), move on so the sequence can't hang
 const GRAB_RADIUS = 15;         // must press near the frog to pick it up
 const TRAIL_MIN_STEP = 1.0;     // ignore micro jitter when drawing the wake
 const TRAIL_LIMIT = 600;        // above this, thin the oldest points (never truncate the start)
-const BLOCK_SFX_COOLDOWN_MS = 500;   // throttle the soft "nope" bump SFX
+const BLOCK_SFX_COOLDOWN_MS = 500;   // throttle that decides when a held shove counts as another bump (stuck-hint count)
+const SOFT_TAP_ATTEMPT = 3;     // the gentle two-note sound plays ONCE, on this many distinct failed attempts (wobble-only before that)
+const REUNION_CUE_MS = 1160;    // frogReunion cue = maxMs 1100 in sfx.js (fade included) + 60ms margin; the full word starts only after it
 const EDGE = { minX: 3, maxX: 96, minY: 6, maxY: 93 };
 
 // Reactive "stuck" hint: only fires after repeated bumps with no forward
@@ -301,18 +305,8 @@ export default function VakratundaRescueGame({
   isPaused = false,
 }) {
   usePreloadPoses(POSE_ASSETS);
-  // Warm the syllable MP3s so the first 'va' plays the instant it lights —
-  // playSyllable builds a fresh Audio on demand, and an uncached fetch/decode
-  // was the lateness.
-  useEffect(() => {
-    SYLLABLES.forEach((syl) => {
-      const path = getSyllablePath('vakratunda', syl);
-      if (!path) return;
-      const warm = new Audio(path);
-      warm.preload = 'auto';
-      warm.load();
-    });
-  }, []);
+  // Warm the syllable + word MP3s so the first 'va' plays the instant it lights.
+  useWarmSanskritAudio('vakratunda', AUDIO.syllables);
   const { playVoice: playSceneLine, playSfx, playSyllable, playWord, stopVoice } = voiceGuidance;
 
   const [phase, setPhase] = useState('intro');
@@ -365,6 +359,12 @@ export default function VakratundaRescueGame({
   // push counts as one "bump" — otherwise 3 real attempts could be manufactured
   // out of one continuous shove in under a second.
   const blockedContactRef = useRef(false);
+  // Soft "not quite" sound: counts DISTINCT failed attempts (a new contact after the frog was back in open
+  // water), not the many collision events while pressed on one obstacle. Plays once, never repeats in the
+  // same obstacle sequence, and resets once the frog makes real progress past where it was stuck.
+  const failedAttemptsRef = useRef(0);
+  const softTapPlayedRef = useRef(false);
+  const attemptAnchorXRef = useRef(null);
 
   const frogPosRef = useRef(START_POS);
   const startPosRef = useRef(START_POS);   // authored frog start; kept in a ref so
@@ -373,6 +373,13 @@ export default function VakratundaRescueGame({
   const maxProgressXRef = useRef(START_POS.x);
   const lastBlockSfxRef = useRef(0);
   const reunionStartedRef = useRef(false);
+  // Bounded syllable sequence: at most one entry per syllable (4), played strictly in order, each to the end.
+  // `startAfter` holds the next start for the 'place' beat; `token` identity guards stale callbacks after a reset.
+  const syllableSeqRef = useRef({ queue: [], seen: new Set(), playing: false, waiting: false, startAfter: 0 });
+  // Stuck-help VO must never interrupt Sanskrit: it is held here until the syllable sequence is idle, then
+  // spoken only if the child is STILL stuck (otherwise discarded). speakStuckHintRef lets pumpSyllables call it.
+  const stuckHintPendingRef = useRef(false);
+  const speakStuckHintRef = useRef(null);
 
   const {
     hintLevel: startDragHintLevel,
@@ -502,13 +509,20 @@ export default function VakratundaRescueGame({
       blockPulseTimeoutRef.current = null;
     }, 450);
 
-    // Soft "nope" SFX only — no VO. Throttled so scrubbing along the bank or a
-    // rock doesn't machine-gun it.
+    // The wobble above is the feedback for every bump. Sound is rarer: the gentle two-note plays once, on the
+    // 3rd distinct failed attempt (a child exploring obstacles must not hear failure). Silent during Sanskrit
+    // (the engine drops it) and never repeated in the same obstacle sequence.
     const now = Date.now();
     const playedBlockSfx = now - lastBlockSfxRef.current > BLOCK_SFX_COOLDOWN_MS;
-    if (playedBlockSfx) {
-      lastBlockSfxRef.current = now;
-      playSfx?.('softWrong');
+    if (playedBlockSfx) lastBlockSfxRef.current = now;   // still paces the stuck-hint bump count below
+
+    if (!blockedContactRef.current) {                    // first collision of a NEW contact = one failed attempt
+      if (failedAttemptsRef.current === 0) attemptAnchorXRef.current = maxProgressXRef.current;
+      failedAttemptsRef.current += 1;
+      if (failedAttemptsRef.current >= SOFT_TAP_ATTEMPT && !softTapPlayedRef.current) {
+        softTapPlayedRef.current = true;
+        playSfx?.('softWrong'); // the approved single wooden tap
+      }
     }
 
     // Stuck detection: N bumps with no forward progress since the streak began.
@@ -542,6 +556,7 @@ export default function VakratundaRescueGame({
   const resetState = useCallback(() => {
     clearTimers();
     reunionStartedRef.current = false;
+    syllableSeqRef.current = { queue: [], seen: new Set(), playing: false, waiting: false, startAfter: 0 };
     setPhase('trace');
     onStageChange('trace');
     setLit(0);
@@ -556,8 +571,12 @@ export default function VakratundaRescueGame({
     // startPos / frogW / familyPoint / familyW are authoring values — keep
     // them across resets, like obstacles.
     hasPlayedStuckVoRef.current = false;
+    stuckHintPendingRef.current = false;
     maxProgressXRef.current = startPosRef.current.x;
     lastBlockSfxRef.current = 0;
+    failedAttemptsRef.current = 0;
+    softTapPlayedRef.current = false;
+    attemptAnchorXRef.current = null;
     bumpCountRef.current = 0;
     blockedContactRef.current = false;
     stuckAnchorXRef.current = startPosRef.current.x;
@@ -657,14 +676,53 @@ export default function VakratundaRescueGame({
     };
     // Browser audio onended can silently drop (esp. iOS Safari) — don't hang.
     // Pausable, so the sidebar can't let it complete the scene behind the panel.
-    voFallback = after(8000, finish);
+    voFallback = after(8000 + REUNION_CUE_MS, finish);
 
-    playWord?.('vakratunda', () => {
-      playSceneLine?.('scene10_vak_crossed', finish, { stripLeadingText: 'Vakratunda' });
+    // Frog reunites -> short reunion cue (capped + faded in sfx.js) -> the full word, so the chime never
+    // plays under "Vakratunda". The word starts as the cue finishes: no extra pause beyond the cue itself.
+    after(REUNION_CUE_MS, () => {
+      playWord?.('vakratunda', () => {
+        playSceneLine?.('scene10_vak_crossed', finish, { stripLeadingText: 'Vakratunda' });
+      });
     });
 
     after(4200, () => setFamilyBounce(false));
   }, [after, cancelPausable, familyPoint, onGameComplete, onPhaseComplete, onStageChange, playSceneLine, playSfx, playWord, setFrog]);
+
+  // Play the lit syllables one at a time, in order, each to the end. The frog never waits on this: dragging
+  // only lights syllables (they queue here); only the final scene transition waits for 'da' to finish.
+  const pumpSyllables = useCallback(() => {
+    const seq = syllableSeqRef.current;
+    if (seq.playing || seq.waiting || !seq.queue.length) return;
+    const wait = seq.startAfter - Date.now();
+    if (wait > 0) {
+      // A 'place' sound just fired: let it finish before the syllable starts.
+      seq.waiting = true;
+      after(wait, () => {
+        if (syllableSeqRef.current !== seq) return;
+        seq.waiting = false;
+        pumpSyllables();
+      });
+      return;
+    }
+    const { syllable, index } = seq.queue.shift();
+    seq.playing = true;
+    let finished = false;
+    let watchdog;
+    const finish = () => {
+      if (finished || syllableSeqRef.current !== seq) return;
+      finished = true;
+      cancelPausable(watchdog);
+      seq.playing = false;
+      if (index === SYLLABLES.length - 1) goToReunion(); // 'da' has fully played; the word sequence starts clean
+      else {
+        pumpSyllables();
+        speakStuckHintRef.current?.(); // a held stuck-help line may speak now, if the sequence is idle and it still applies
+      }
+    };
+    watchdog = after(SYLLABLE_WATCHDOG_MS, finish);
+    playSyllable?.(syllable, finish);
+  }, [after, cancelPausable, goToReunion, playSyllable]);
 
   // One drag step: try to move the frog to `raw`. Blocked by obstacles; drops
   // wake + stepping stones on valid water; lights syllables by forward reach.
@@ -703,6 +761,14 @@ export default function VakratundaRescueGame({
       const half = Math.floor(next.length / 2);
       return [...next.slice(0, half).filter((_, i) => i % 2 === 0), ...next.slice(half)];
     });
+
+    // Got properly past where it was stuck: a fresh obstacle sequence starts (counter + once-only sound reset).
+    if (failedAttemptsRef.current > 0 && attemptAnchorXRef.current !== null
+        && point.x > attemptAnchorXRef.current + STUCK_PROGRESS_EPS) {
+      failedAttemptsRef.current = 0;
+      softTapPlayedRef.current = false;
+      attemptAnchorXRef.current = null;
+    }
 
     // Forward progress is monotonic — backing up never un-lights a syllable.
     // A new furthest point also clears any bump streak / stuck shimmer.
@@ -746,18 +812,25 @@ export default function VakratundaRescueGame({
         })),
       ]);
       if (target < 4) {
+        // Pad lands: play 'place' only if no Sanskrit is playing or waiting. Otherwise DROP it (never deferred
+        // or replayed). When it does play, the next syllable waits PAD_PLACE_BEAT_MS so they never overlap.
+        const seq = syllableSeqRef.current;
+        if (!seq.playing && !seq.queue.length) {
+          playSfx?.('place');
+          seq.startAfter = Date.now() + PAD_PLACE_BEAT_MS;
+        }
         setFrogSnapping(true);
         after(260, () => setFrogSnapping(false));
       } else {
         onMicroWin?.();
-        // Reunion normally fires from the last syllable's audio onEnded
-        // (SyllableHighlight below); this is the safety net if that drops.
-        after(4000, goToReunion);
+        // Reunion fires when the last syllable has fully played (pumpSyllables). This is only the safety
+        // net if the sequence never ran: longer than 4 syllables' watchdogs, so it can't cut one short.
+        after(4 * SYLLABLE_WATCHDOG_MS + 1000, goToReunion);
       }
     }
   }, [
     after, bandsX, familyPoint, goToReunion, isDragging, resetStuck,
-    obstacles, onMicroWin, setFrog, setLit, triggerBlock,
+    obstacles, onMicroWin, playSfx, setFrog, setLit, triggerBlock,
   ]);
 
   const beginDrag = useCallback((event) => {
@@ -793,12 +866,28 @@ export default function VakratundaRescueGame({
   // Stuck level 2 = "Look for another way through" — spoken ONCE for the
   // whole game. The shimmer cue (rendered below) already carries the visual
   // escalation; no on-screen bubble is needed alongside it.
+  //
+  // It must never interrupt Sanskrit: if a syllable is playing, waiting or queued, the line is HELD and tried
+  // again when the sequence ends (pumpSyllables). At that moment it is only spoken if the child is still stuck
+  // and the scene is still in the trace; otherwise it is discarded (and may fire later, if stuck again).
+  const speakStuckHintIfRelevant = useCallback(() => {
+    if (!stuckHintPendingRef.current) return;
+    const seq = syllableSeqRef.current;
+    if (seq.playing || seq.waiting || seq.queue.length) return;   // Sanskrit first
+    stuckHintPendingRef.current = false;
+    if (hasPlayedStuckVoRef.current || reunionStartedRef.current || stuckLevelRef.current < 2) return; // no longer relevant
+    hasPlayedStuckVoRef.current = true;
+    playSceneLine?.('scene10_vak_hint_another_way');
+  }, [playSceneLine]);
+
+  useEffect(() => { speakStuckHintRef.current = speakStuckHintIfRelevant; }, [speakStuckHintIfRelevant]);
+
   useEffect(() => {
     if (!isActive || phase !== 'trace') return;
     if (stuckLevel < 2 || hasPlayedStuckVoRef.current) return;
-    hasPlayedStuckVoRef.current = true;
-    playSceneLine?.('scene10_vak_hint_another_way');
-  }, [stuckLevel, isActive, phase, playSceneLine]);
+    stuckHintPendingRef.current = true;
+    speakStuckHintIfRelevant();
+  }, [stuckLevel, isActive, phase, speakStuckHintIfRelevant]);
 
   if (!isActive) return null;
 
@@ -1034,12 +1123,12 @@ export default function VakratundaRescueGame({
           dimIndices={[]}
           audioSyllables={AUDIO.syllables}
           onSyllableLit={(syllable, index) => {
-            stopVoice?.();
-            if (index === SYLLABLES.length - 1) {
-              playSyllable?.(syllable, () => goToReunion());
-            } else {
-              playSyllable?.(syllable);
-            }
+            // Queue, don't interrupt: each syllable plays to the end before the next starts (pumpSyllables).
+            const seq = syllableSeqRef.current;
+            if (seq.seen.has(index)) return;
+            seq.seen.add(index);
+            seq.queue.push({ syllable, index });
+            pumpSyllables();
           }}
         />
       )}

@@ -1224,7 +1224,8 @@ const PondSceneContent = ({
       setShowSparkle('lotus-wake');
       sceneActions.updateState({ lotusUpright: true });
       triggerMiniGesture('victory', 'center', 1800);
-      playGlow();
+      // No second playGlow() here: this is the same achievement as the reeds parting (the Trunk symbol,
+      // one card), which already played its unlock when the drag completed 1.1s earlier. Visual burst + VO only.
 
       // The glow burst clears on its own short timer (visual only), but
       // the reveal card must wait for "The water reached the lotus."
