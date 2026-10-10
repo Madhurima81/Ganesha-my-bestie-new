@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-09T12:00:59.519Z",
+ "generatedAt": "2026-10-10T06:41:00.361Z",
  "scanned": 313,
  "roles": [
   "tap",
@@ -19,12 +19,6 @@
   "frogReunion"
  ],
  "rows": [
-  {
-   "file": "src/lib/components/celebration/InnerMandala.jsx",
-   "counts": {
-    "correct": 1
-   }
-  },
   {
    "file": "src/lib/components/navigation/CleanGameWelcomeScreen.jsx",
    "counts": {

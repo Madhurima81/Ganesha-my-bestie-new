@@ -190,7 +190,7 @@ export default function SoundLab() {
     },
     {
       name: 'Sanskrit guard: tap + place while a syllable speaks',
-      expect: 'The syllable ("tunda") plays alone. The tap at 0.3 s is dropped. The place at 0.5 s is held and plays just AFTER the syllable ends.',
+      expect: 'The syllable ("tunda") plays alone. The tap at 0.3 s and the place at 0.5 s are both DROPPED: nothing plays during the syllable and nothing plays late, after it.',
       run: () => {
         const a = new Audio('/audio/syllables/tunda-vakratunda.mp3');
         sfx.guardAudio(a);

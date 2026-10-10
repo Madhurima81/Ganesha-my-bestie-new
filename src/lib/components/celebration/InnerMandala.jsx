@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import './InnerMandala.css';
-import { playCardRevealChime } from '../../services/AudioService';
 
 // Geometry from mandala-latest-plain.svg (Inkscape export, viewBox 0 0 14.816666 14.816667)
 // Two rings only: OUTER = 8 shloka words, MIDDLE = 8 symbols. Inner daisy removed.
@@ -174,7 +173,7 @@ export default function InnerMandala({
           const key = `${earnedPetal.ring}-${earnedPetal.id}`;
           return prev.includes(key) ? prev : [...prev, key];
         });
-        try { playCardRevealChime(index === 0 ? 0.42 : 0.34); } catch {}
+        // No chime here (decision 2026-10-10): the symbol's glow and its spoken line are the moment.
         setTimeout(() => {
           onEarnedPetalRevealRef.current?.(earnedPetal, index);
         }, 150);

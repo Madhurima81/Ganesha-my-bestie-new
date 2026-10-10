@@ -55,17 +55,11 @@ const TAP_THROTTLE_MS = 60;
 const VO_DUCK_FACTOR = 0.7;
 
 // Sanskrit safety net: while a syllable/word is being spoken, small effects must not land on top of it.
-// Dropped = just skipped (a tap during the word is not worth replaying). Deferred = held and played
-// right after the word ends, if that is soon enough to still feel connected to the action.
-// softWrong is dropped, never deferred: an error cue arriving after the word ends would be confusing.
-const DROP_DURING_SANSKRIT = new Set(['tap', 'select', 'idleHint', 'softWrong']);
+// They are DROPPED, never held or replayed afterwards (a late "place" or error cue would be confusing).
+const DROP_DURING_SANSKRIT = new Set(['tap', 'select', 'idleHint', 'softWrong', 'place']);
 // Reward effects are skipped during Sanskrit so pronunciation stays clear.
 const REWARD_DURING_SANSKRIT = new Set(['correct', 'discovery', 'bloom', 'powerUnlock', 'emotionalGlow', 'celebration', 'zoneComplete', 'frogReunion']);
-const DEFER_DURING_SANSKRIT = new Set(['place']);
-const DEFER_MAX_MS = 1500;
-const DEFER_GAP_MS = 150;
 let _sanskritEl = null;       // the <audio> currently speaking a syllable/word
-let _deferred = null;         // { role, vol, at }
 
 const _howls = {};
 const _ready = {};            // true = MP3 loaded, false = failed -> synth
@@ -106,7 +100,6 @@ function play(name, volumeOverride) {
 
   if (_sanskritEl) {
     if (DROP_DURING_SANSKRIT.has(role) || REWARD_DURING_SANSKRIT.has(role)) return;
-    if (DEFER_DURING_SANSKRIT.has(role)) { _deferred = { role, vol: volumeOverride, at: now }; return; }
   }
 
   if (def.priority === 0) {
@@ -136,13 +129,6 @@ function play(name, volumeOverride) {
   if (def.priority > 0) _last = { priority: def.priority, at: now, howl: id !== null ? howl : null, id };
 }
 
-function flushDeferred() {
-  if (!_deferred) return;
-  const d = _deferred;
-  _deferred = null;
-  if (Date.now() - d.at <= DEFER_MAX_MS) setTimeout(() => play(d.role, d.vol), DEFER_GAP_MS);
-}
-
 // Register a syllable/word <audio>. Listens to the element's own events, so every way it can end
 // (finished, paused by stopVoice, errored, source cleared) releases the guard.
 function guardAudio(audio) {
@@ -151,7 +137,6 @@ function guardAudio(audio) {
   const end = () => {
     if (_sanskritEl !== audio) return;
     _sanskritEl = null;
-    flushDeferred();
   };
   ['ended', 'pause', 'error', 'abort', 'emptied'].forEach((ev) => audio.addEventListener(ev, end));
 }
