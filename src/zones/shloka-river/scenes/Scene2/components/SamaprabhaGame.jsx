@@ -261,6 +261,7 @@ export default function SamaprabhaGame({
   const [revealPulse, setRevealPulse] = useState(null);
   const [clueVoComplete, setClueVoComplete] = useState(true);
   const stageRef = useRef(null);
+  const syllableSeqRef = useRef({ queue: [], busy: false });
   const debugItemDragRef = useRef(null); // { mode: 'move' | 'resize' }
   const pointerIdRef = useRef(null);
   const holdRafRef = useRef(null);
@@ -583,7 +584,7 @@ export default function SamaprabhaGame({
     // playing VO (a hint line) or dismiss the first-time teaching hand.
     const clue = CLUES[litRef.current];
     const onClue = !!clue && pointInsideClue(point, clue);
-    if (onClue) stopVoice?.();
+    if (onClue && !syllableSeqRef.current.busy && !syllableSeqRef.current.queue.length) stopVoice?.(); // never cut a syllable
     startHoldAtPoint(point, event.pointerId);
 
     if (onClue && !firstInteractionSentRef.current) {
@@ -664,6 +665,7 @@ export default function SamaprabhaGame({
     doneCalledRef.current = false;
     doneAnnouncedRef.current = false;
     lastSyllableDoneRef.current = false;
+    syllableSeqRef.current = { queue: [], busy: false };
     completionVoStartedRef.current = false;
     completionFinishedRef.current = false;
     pendingRevealIndexRef.current = null;
@@ -945,16 +947,38 @@ export default function SamaprabhaGame({
           litCount={effLit}
           audioSyllables={AUDIO.syllables}
           onSyllableLit={(syllable, index) => {
-            stopVoice?.();
-            const isLast = index === SYLLABLES.length - 1;
-            playSyllable?.(syllable, () => {
-              if (isLast) {
-                lastSyllableDoneRef.current = true;
-                playRevealForIndex(index, startCompletionVo);
-                return;
-              }
-              playRevealForIndex(index);
-            });
+            // Bounded in-order sequence: a syllable always finishes before the next starts, and a
+            // touch on the next clue never cuts it (see handlePointerDown).
+            const seq = syllableSeqRef.current;
+            if (seq.queue.some((q) => q.index === index)) return;
+            seq.queue.push({ syllable, index });
+            const pump = () => {
+              if (seq.busy) return;
+              const next = seq.queue.shift();
+              if (!next) return;
+              seq.busy = true;
+              const isLast = next.index === SYLLABLES.length - 1;
+              let done = false;
+              let watchdog = null;
+              const finish = () => {
+                if (done) return;
+                done = true;
+                if (watchdog) cancelPausable(watchdog);
+                seq.busy = false;
+                if (isLast) {
+                  lastSyllableDoneRef.current = true;
+                  playRevealForIndex(next.index, startCompletionVo);
+                  return;
+                }
+                playRevealForIndex(next.index);
+                pump();
+              };
+              stopVoice?.(); // clears only English/TTS; nothing Sanskrit is playing here
+              watchdog = pausableAfter(3500, finish);
+              if (playSyllable) playSyllable(next.syllable, finish);
+              else finish();
+            };
+            pump();
           }}
         />
 
