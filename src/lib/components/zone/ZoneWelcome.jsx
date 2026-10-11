@@ -181,36 +181,6 @@ const ZoneWelcome = ({
      ========================================================== */
 
   // Storage helpers live in lib/utils/zoneNavigationState.js (shared with App.jsx).
-  const getSceneSessionState = (sceneId) => {
-    const profileId = localStorage.getItem('activeProfileId');
-    if (!profileId || !zoneData?.id || !sceneId) return null;
-
-    const replayKey = `replay_session_${profileId}_${zoneData.id}_${sceneId}`;
-    const tempKey = `temp_session_${profileId}_${zoneData.id}_${sceneId}`;
-    const raw = localStorage.getItem(replayKey) || localStorage.getItem(tempKey);
-    if (!raw) return null;
-
-    try {
-      return JSON.parse(raw);
-    } catch {
-      return null;
-    }
-  };
-
-  // all_complete is deliberately NOT treated as finished: some scenes reach it
-  // before the final completion screen.
-  const isStoredSessionFinished = (state) => {
-    if (!state) return false;
-
-    return (
-      state.completed === true ||
-      state.showingCompletionScreen === true ||
-      state.showingZoneCompletion === true ||
-      state.phase === 'complete' ||
-      state.phase === 'zone-complete'
-    );
-  };
-
 
 // ✅ ADD THIS: Track zone entry time for quick navigation detection
   useEffect(() => {
@@ -941,35 +911,27 @@ const handleReplayIntroStory = () => {
     ? sceneStatuses[activeSceneCandidate.id]
     : null;
 
-  const activeSessionState = activeSceneCandidate
-    ? getSceneSessionState(activeSceneCandidate.id)
-    : null;
-
-  const activeSessionFinished = isStoredSessionFinished(activeSessionState);
-
-  // A completed scene can still be ACTIVE while the child is replaying it
-  // (Modak completed → Play Again → leaves halfway → must return as Active Modak).
+  // Active means UNFINISHED. getSceneStatus already holds every scene's real
+  // completion rule (placedSymbols, gamePhase, flags…), and reports a mid-replay
+  // of a completed scene as 'in-progress', so 'completed' here means truly done.
   const persistedActiveScene =
-    activeSceneCandidate &&
-    !(
-      activeCandidateStatus?.status === 'completed' &&
-      (!activeSessionState || activeSessionFinished)
-    )
+    activeSceneCandidate && activeCandidateStatus?.status !== 'completed'
       ? activeSceneCandidate
       : null;
 
-  // Persisted record belongs to a scene that is now genuinely finished —
-  // clear it so progression can move forward.
+  // The active scene has finished (e.g. child left via the zone badge on its
+  // completion screen). Show it once with Play Again, then clear the record so
+  // normal progression takes over on the next visit.
   useEffect(() => {
     if (!activeSceneCandidate || persistedActiveScene) return;
 
+    setSelectedFeaturedSceneId((current) => current ?? activeSceneCandidate.id);
     clearActiveScene(zoneData?.id);
   }, [
     zoneData?.id,
     activeSceneCandidate?.id,
     persistedActiveScene?.id,
     activeCandidateStatus?.status,
-    activeSessionFinished,
   ]);
 
   if (isLoading || !zoneData) {
