@@ -192,9 +192,18 @@ const CleanGameWelcomeScreen = ({
             latestScene = scene;
             // Special-case: Symbol Mountain final-scene fireworks should RESUME,
             // not be treated as completed.
+            // A stale fireworks flag with all 8 symbols already placed is a finished
+            // zone (resuming it freezes on the popup), so it must not force a resume.
+            // Same 8-symbol rule ZoneWelcome's status uses for this scene.
+            const finalSceneAllSymbolsPlaced =
+              zone === 'symbol-mountain' &&
+              scene === 'final-scene' &&
+              Object.keys(data.placedSymbols || {}).length === 8;
+
             const finalSceneFireworksActive =
               zone === 'symbol-mountain' &&
               scene === 'final-scene' &&
+              !finalSceneAllSymbolsPlaced &&
               (
                 data.currentPopup === 'final_fireworks' ||
                 data.showSparkle === 'final-fireworks' ||
@@ -205,6 +214,7 @@ const CleanGameWelcomeScreen = ({
             // Treat as completed if completion signals are present,
             // except while final-scene fireworks are actively running.
             latestCompleted = !finalSceneFireworksActive && !!(
+              finalSceneAllSymbolsPlaced ||
               data.completed === true ||
               data.phase === 'complete' ||
               data.phase === 'all_complete' ||
