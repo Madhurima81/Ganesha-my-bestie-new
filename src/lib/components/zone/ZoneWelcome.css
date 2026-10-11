@@ -2243,6 +2243,9 @@ button[style*="position: fixed"][style*="background: purple"] {
     gap: 22px;
     overflow: visible;
     transform: translateY(32px);
+    /* Above .cards-wrapper::after (z-index 1, the big white halo) — the transform
+       alone left this at level 0, so the halo painted over the card and strip. */
+    z-index: 2;
   }
 
   .zone-welcome-container .zone-featured-card {
@@ -2561,6 +2564,7 @@ button[style*="position: fixed"][style*="background: purple"] {
     gap: 8px;
     padding: 0;
     overflow: visible;
+    z-index: 2; /* above the .cards-wrapper::after halo (z-index 1) */
   }
 
   .zone-welcome-container .zone-featured-card--phone {
