@@ -162,7 +162,6 @@ const ROUNDS = [
 ];
 
 const VO_TEXTS = {
-  intro: 'Listen carefully.',
   // A wrong choice isn't "good listening" — minimal, non-punitive.
   neutral: 'Listen again.',
   complete: 'You listened carefully and found the sounds.',
@@ -219,17 +218,23 @@ const EarsSoundMatchGame = ({
   onLineSpoken,
   isPaused = false,
   initialRound = 0,
-  onRoundComplete
+  onRoundComplete,
+  initialSuccessDone = 0,
+  onSuccessDone
 }) => {
   const lineSpokenRef = useRef(onLineSpoken);
   lineSpokenRef.current = onLineSpoken;
   // Continue: rounds already solved in an earlier visit (0 = none, 1 = Elephant done).
   // A round left half-played restarts from its own beginning.
-  const startRoundRef = useRef(Math.max(0, Math.min(ROUNDS.length - 1, Number(initialRound) || 0)));
+  const startRoundRef = useRef(Math.max(0, Math.min(ROUNDS.length, Number(initialRound) || 0)));
   const onRoundCompleteRef = useRef(onRoundComplete);
   onRoundCompleteRef.current = onRoundComplete;
+  // How many rounds' success lines had FINISHED before the child left: those are not replayed.
+  const startSuccessRef = useRef(Math.max(0, Math.min(ROUNDS.length, Number(initialSuccessDone) || 0)));
+  const onSuccessDoneRef = useRef(onSuccessDone);
+  onSuccessDoneRef.current = onSuccessDone;
   usePreloadPoses(POSE_ASSETS);
-  const [roundIndex, setRoundIndex] = useState(startRoundRef.current);
+  const [roundIndex, setRoundIndex] = useState(Math.min(startRoundRef.current, ROUNDS.length - 1));
   const [phase, setPhase] = useState(PHASE.LISTENING);
   const [activeZoneId, setActiveZoneId] = useState(null);
   const [completedRounds, setCompletedRounds] = useState(() => ROUNDS.slice(0, startRoundRef.current).map((r) => r.id));
@@ -449,8 +454,10 @@ const EarsSoundMatchGame = ({
         };
       })();
 
-      if (!isAudioOn || !src) {
-        if (fallbackText) trackUtterance(fallbackText, speakFallback(fallbackText));
+      // The game's own sounds (water drip, rustle, birds, decoys) ARE the question, so they play
+      // whether or not voice is muted. Only the spoken fallback line follows the voice mute.
+      if (!src) {
+        if (fallbackText && isAudioOn) trackUtterance(fallbackText, speakFallback(fallbackText));
         schedule(finish, 850);
         return;
       }
@@ -661,7 +668,7 @@ const EarsSoundMatchGame = ({
     clearTimers();
     stopAudio();
     completedRef.current = false;
-    setRoundIndex(startRoundRef.current);
+    setRoundIndex(Math.min(startRoundRef.current, ROUNDS.length - 1));
     setPhase(PHASE.LISTENING);
     setActiveZoneId(null);
     setCompletedRounds(ROUNDS.slice(0, startRoundRef.current).map((r) => r.id));
@@ -682,15 +689,39 @@ const EarsSoundMatchGame = ({
   // remount) plays the intro VO and round-1 zone sounds twice, overlapping.
   const introStartedRef = useRef(false);
   useEffect(() => {
-    if (!isActive || introStartedRef.current) return;
-    introStartedRef.current = true;
-    resetGame();
+    if (!isActive || introStartedRef.current) return undefined;
     if (startRoundRef.current > 0) {
       // Continue after an earlier round was solved: skip the intro, start that round fresh.
-      schedule(() => playSequence(ROUNDS[startRoundRef.current]), INTRO_DELAY_MS);
-      return;
+      // A plain timer, with the started-flag set when it FIRES: in dev, React StrictMode runs
+      // mount -> cleanup -> mount, and a game timer scheduled up front is cancelled by that
+      // cleanup while the flag stops the second run from scheduling again (frozen, silent game).
+      // The short wait also avoids speaking at the first instant after the scene restores.
+      const resumeTimer = setTimeout(() => {
+        if (introStartedRef.current) return;
+        introStartedRef.current = true;
+        resetGame();
+        const previousSuccessFinished = startSuccessRef.current >= startRoundRef.current;
+        if (startRoundRef.current >= ROUNDS.length) {
+          // Every round was already solved (left during the last reveal): run the normal ending,
+          // replaying the last success line only if it had not finished.
+          startReveal(ROUNDS[ROUNDS.length - 1], { skipSuccess: previousSuccessFinished });
+        } else if (previousSuccessFinished) {
+          // The previous round's success line had finished: go straight to this round.
+          playSequence(ROUNDS[startRoundRef.current]);
+        } else {
+          // Cut off during the success line: replay it, then start this round fresh.
+          speak(VO_TEXTS[ROUNDS[startRoundRef.current - 1].id], () => {
+            onSuccessDoneRef.current?.(startRoundRef.current);
+            schedule(() => playSequence(ROUNDS[startRoundRef.current]), 600);
+          });
+        }
+      }, 500);
+      return () => clearTimeout(resumeTimer);
     }
-    speak(VO_TEXTS.intro, () => schedule(() => playSequence(ROUNDS[0]), INTRO_DELAY_MS));
+    introStartedRef.current = true;
+    resetGame();
+    schedule(() => playSequence(ROUNDS[0]), INTRO_DELAY_MS);
+    return undefined;
   }, [isActive, playSequence, resetGame, schedule, speak]);
 
   // L1: replay all three sources once (memory aid, no VO, no reveal) — a
@@ -786,7 +817,7 @@ const EarsSoundMatchGame = ({
     stopAudio();
   }, [clearTimers, stopAudio]);
 
-  const startReveal = useCallback((animalRound) => {
+  const startReveal = useCallback((animalRound, options = {}) => {
     if (!animalRound) return;
     runIdRef.current += 1;
     clearTimers();
@@ -801,7 +832,12 @@ const EarsSoundMatchGame = ({
     setCorrectZoneId(animalRound.targetZoneId);
     schedule(() => setCorrectZoneId(null), 1400);
     setRevealFrameByAnimal((prev) => ({ ...prev, [animalRound.id]: 0 }));
-    speak(VO_TEXTS[animalRound.id]);
+    // Report when the success line has finished, so Continue only replays it if it was cut off.
+    if (!options.skipSuccess) {
+      speak(VO_TEXTS[animalRound.id], () => {
+        onSuccessDoneRef.current?.(ROUNDS.indexOf(animalRound) + 1);
+      });
+    }
 
     let frame = 0;
     const advanceFrame = () => {
@@ -847,7 +883,6 @@ const EarsSoundMatchGame = ({
         return;
       }
 
-      onRoundCompleteRef.current?.(nextIndex);
       setRoundIndex(nextIndex);
       playSequence(ROUNDS[nextIndex]);
     }, (animalRound.revealFrames.length * REVEAL_FRAME_MS) + NEXT_ROUND_DELAY_MS);
@@ -877,8 +912,11 @@ const EarsSoundMatchGame = ({
     }
 
     setCompletedRounds((prev) => [...prev, round.id]);
+    // Save the moment the child gets it right (not when the reveal finishes) so Continue never
+    // repeats a solved round; it replays this round's success line and moves on.
+    onRoundCompleteRef.current?.(roundIndex + 1);
     startReveal(round);
-  }, [debugMode, phase, playHintReplayAll, round, schedule, speak, startReveal, triggerHintL2, triggerHintL3]);
+  }, [debugMode, phase, playHintReplayAll, round, roundIndex, schedule, speak, startReveal, triggerHintL2, triggerHintL3]);
 
   const handleSourceTap = useCallback((zoneId, e) => {
     if (!isPointerInsideSourceOval(e)) {

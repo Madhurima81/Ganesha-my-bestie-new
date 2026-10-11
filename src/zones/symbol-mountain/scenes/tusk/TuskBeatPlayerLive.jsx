@@ -53,9 +53,13 @@ const ASSET_MAP = {
 // something it likes" flow (mango/water/grass/feather), which read as
 // generosity rather than the tusk's "broken things can still help" meaning.
 // See tuskNestFlow.json for the beat-by-beat story and VO.
-function TuskBeatPlayerLive({ isActive = true, isAudioOn = true, onGameComplete, className = '', isPaused: isSidebarPaused = false, initialBeat = 0, onBeatComplete }) {
+function TuskBeatPlayerLive({ isActive = true, isAudioOn = true, onGameComplete, className = '', isPaused: isSidebarPaused = false, initialBeat = 0, onBeatComplete, initialSuccessDone = 0, onBeatSuccessDone }) {
   // Continue: beats already finished (0-4) in an earlier visit. Read once at mount.
   const [startBeat] = useState(initialBeat);
+  // Beats whose reaction line had finished: if the last solved beat's line had finished, resume at the
+  // NEXT beat's start; otherwise replay that beat's reaction (its 'after' state) first.
+  const [startSuccess] = useState(initialSuccessDone);
+  const resumeAtNextBeat = startBeat > 0 && startSuccess >= startBeat;
   // Paused by the tab being hidden OR by the sidebar being open (a true pause either way).
   const [tabPaused, setTabPaused] = useState(false);
   useAppVisibility(
@@ -79,8 +83,10 @@ function TuskBeatPlayerLive({ isActive = true, isAudioOn = true, onGameComplete,
         movementMs={400}
         reactionPauseMs={550}
         onComplete={onGameComplete}
-        initialBeatPos={startBeat}
+        initialBeatPos={startBeat > 0 ? (resumeAtNextBeat ? startBeat : startBeat - 1) : 0}
+        initialStateName={startBeat > 0 && !resumeAtNextBeat ? 'after' : 'before'}
         onBeatComplete={onBeatComplete}
+        onBeatSuccessDone={onBeatSuccessDone}
       />
     </div>
   );

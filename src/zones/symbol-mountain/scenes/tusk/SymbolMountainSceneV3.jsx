@@ -37,6 +37,7 @@ import useSceneReset from '../../../../lib/hooks/useSceneReset';
 import useAudioPreference from '../../../../lib/hooks/useAudioPreference';
 import useVoiceGuidance from '../../../../lib/hooks/useVoiceGuidance';
 import { useGaneshaVoice } from '../../../../lib/hooks/useGaneshaVoice';
+import { speakWithRetry } from '../../../../lib/utils/speakWithRetry';
 import GaneshaGestureCue from '../../../../lib/components/gesture/GaneshaGestureCue';
 import { useMiniGesture } from '../../../../lib/hooks/useMiniGesture';
 // import BackToMapButton from '../../../../lib/components/navigation/BackToMapButton';  // commented out â€” nav removed
@@ -142,9 +143,12 @@ const SymbolMountainSceneV3 = ({
           discoveredInstruments: {},
           instrumentsFound: 0,
           eyesDone: [],
+          eyesSuccessDone: [],
 
           earsRoundsDone: 0,
+          earsSuccessDone: 0,
           nestBeatsDone: 0,
+          nestSuccessDone: 0,
           earsVisible: false,
           earsGameComplete: false,
           showEarsRhythmGame: false,
@@ -908,6 +912,8 @@ const SymbolMountainSceneContent = ({
                   onLineSpoken={reportEyesLine}
                   initialDone={sceneState.eyesDone || []}
                   onProgress={(ids) => sceneActions.checkpoint({ eyesDone: ids })}
+                  initialSuccessDone={sceneState.eyesSuccessDone || []}
+                  onSuccessDone={(ids) => sceneActions.checkpoint({ eyesSuccessDone: ids })}
                   isAudioOn={isAudioOn}
                   isPaused={scenePaused}
                   stopVoice={stopVoice}
@@ -931,6 +937,8 @@ const SymbolMountainSceneContent = ({
                   onLineSpoken={reportEarsLine}
                   initialRound={sceneState.earsRoundsDone || 0}
                   onRoundComplete={(n) => sceneActions.checkpoint({ earsRoundsDone: n })}
+                  initialSuccessDone={sceneState.earsSuccessDone || 0}
+                  onSuccessDone={(n) => sceneActions.checkpoint({ earsSuccessDone: n })}
                   isAudioOn={isAudioOn}
                   isPaused={scenePaused}
                   stopVoice={stopVoice}
@@ -982,6 +990,8 @@ const SymbolMountainSceneContent = ({
                   onGameComplete={handleTuskGameComplete}
                   initialBeat={sceneState.nestBeatsDone || 0}
                   onBeatComplete={(n) => sceneActions.checkpoint({ nestBeatsDone: n })}
+                  initialSuccessDone={sceneState.nestSuccessDone || 0}
+                  onBeatSuccessDone={(n) => sceneActions.checkpoint({ nestSuccessDone: n })}
                 />
               )}
 
@@ -1125,7 +1135,8 @@ const SymbolMountainSceneContent = ({
                   { id: 'ears', petalId: 7, ring: 'middle', image: symbolEarColored },
                   { id: 'tusk', petalId: 8, ring: 'middle', image: symbolTuskColored },
                 ]}
-                onEarnedPetalReveal={(earnedPetal) => {
+                waitForVoice
+                onEarnedPetalReveal={(earnedPetal, _index, done) => {
                   const symbolByPetal = {
                     6: 'eyes',
                     7: 'ears',
@@ -1137,10 +1148,12 @@ const SymbolMountainSceneContent = ({
                     tusk: 'You used what you had for something important.',
                   };
                   const symbol = symbolByPetal[earnedPetal?.id];
+                  // The Mandala holds the next symbol until this line ends (done). No extra
+                  // scene-complete line: it repeated the petal lines (2026-10-10).
                   if (lines[symbol]) {
-                    // Scene-complete line plays inside the Mandala, right after the last petal line.
-                    const afterLast = symbol === 'tusk' ? () => speakScenePrompt('complete') : undefined;
-                    speak(lines[symbol], { age: 7, style: 'child', moment: 'celebration', onEnd: afterLast });
+                    speakWithRetry((onEnd, onStart) => speak(lines[symbol], { age: 7, style: 'child', moment: 'celebration', onEnd, onStart }), done);
+                  } else {
+                    done?.();
                   }
                 }}
                 autoCloseMs={3000 + (3 * 950) + 2600 + 5500}

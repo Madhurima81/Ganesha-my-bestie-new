@@ -35,6 +35,7 @@ export const SCENE_RESET_CONFIGS = {
       
       // Continue checkpoints (Flower Journey beats, Garland built)
       flowers: 0,
+      flowersSuccessDone: 0,
       garlandBuilt: false,
 
       // Message flags
@@ -175,10 +176,13 @@ export const SCENE_RESET_CONFIGS = {
     discoveredInstruments: {},
     instrumentsFound: 0,
     eyesDone: [],
+    eyesSuccessDone: [],
     
     // Ears game state
     earsRoundsDone: 0,
+    earsSuccessDone: 0,
     nestBeatsDone: 0,
+    nestSuccessDone: 0,
     earsVisible: false,
     showEarsRhythmGame: false,
     earsGameActive: false,

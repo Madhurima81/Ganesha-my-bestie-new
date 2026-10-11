@@ -69,6 +69,7 @@ import FireworksCompletion from '../../../../lib/components/feedback/FireworksCo
 import SymbolSidebar from '../../shared/components/SymbolSidebar';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
 import InnerMandala from '../../../../lib/components/celebration/InnerMandala';
+import { speakWithRetry } from '../../../../lib/utils/speakWithRetry';
 import AudioToggle from '../../../../lib/components/ui/AudioToggle';
 import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
 import { getCollectionTarget } from '../../../../lib/utils/collectionTarget';
@@ -370,6 +371,7 @@ const NewModakSceneMVP = ({
           placedGarlandFlowers: [],
           garlandComplete: false,
           garlandBuilt: false,
+          flowersSuccessDone: 0,
 
           // beat 6
           carryComplete: false,
@@ -1704,6 +1706,8 @@ const NewModakSceneMVPContent = ({
                       stopVoice={stopVoice}
                       onLineSpoken={(line) => { lastVoRef.current = line; }}
                       initialFlowers={sceneState.flowers || 0}
+                      initialSuccessDone={sceneState.flowersSuccessDone || 0}
+                      onSuccessDone={(n) => sceneActions.checkpoint({ flowersSuccessDone: n })}
                     />
                   )}
 
@@ -1796,7 +1800,8 @@ const NewModakSceneMVPContent = ({
                   { id: 'belly', petalId: 2, ring: 'middle', image: symbolBellyColored },
                   { id: 'modak', petalId: 3, ring: 'middle', image: symbolModakColored }
                 ]}
-                onEarnedPetalReveal={(earnedPetal) => {
+                waitForVoice
+                onEarnedPetalReveal={(earnedPetal, _index, done) => {
                   const symbolByPetal = {
                     1: 'mooshika',
                     2: 'belly',
@@ -1808,10 +1813,12 @@ const NewModakSceneMVPContent = ({
                     modak: 'You kept trying and found joy.',
                   };
                   const symbol = symbolByPetal[earnedPetal?.id];
+                  // The Mandala holds the next symbol until this line ends (done). No extra
+                  // scene-complete line: it repeated the petal lines (2026-10-10).
                   if (lines[symbol]) {
-                    // Scene-complete line plays inside the Mandala, right after the last petal line.
-                    const afterLast = symbol === 'modak' ? () => playVoice('sceneComplete') : undefined;
-                    speak(lines[symbol], { age: 7, style: 'child', moment: 'celebration', onEnd: afterLast });
+                    speakWithRetry((onEnd, onStart) => speak(lines[symbol], { age: 7, style: 'child', moment: 'celebration', onEnd, onStart }), done);
+                  } else {
+                    done?.();
                   }
                 }}
                 autoCloseMs={3000 + (3 * 950) + 2600 + 5500}

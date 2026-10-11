@@ -2,6 +2,7 @@ import PoseImage, { usePreloadPoses } from '../../../../lib/components/animation
 import { useState, useEffect, useRef, useCallback } from 'react';
 import SyllableHighlight from '../../shared/SyllableHighlight';
 import useRepeatedHintCycle from '../../../../lib/hooks/useRepeatedHintCycle';
+import useWarmSanskritAudio from '../../../../lib/hooks/useWarmSanskritAudio';
 import './SarvadaGame.css';
 
 import morningBg from './assets/images/sarvada/morning.webp';
@@ -95,6 +96,7 @@ export default function SarvadaGame({
 }) {
   usePreloadPoses(POSE_ASSETS);
   const { playVoice: playSceneLine, stopVoice: stopSceneVoice, playWord, playSyllable, setBeat } = voiceGuidance;
+  useWarmSanskritAudio('sarvada', AUDIO); // first tap plays instantly
   const [seedTimes] = useState(() => (
     isActive ? Math.max(0, Math.min(PHASES_CONFIG.length - 1, Number(initialTimes) || 0)) : 0
   ));

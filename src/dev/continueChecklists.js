@@ -83,6 +83,7 @@ export const CONTINUE_CHECKLISTS = {
     { text: leave('Round 1 or 2: nothing or one symbol placed.'), expect: 'The right card for that round appears; nothing placed is lost.' },
     { text: leave('Mid-game: 3 to 5 symbols placed.'), expect: 'Placed symbols are still placed; the game resumes at the correct next round.' },
     { text: leave('A symbol card is showing, not yet placed.'), expect: 'No stale card is left; the round restarts cleanly.' },
+    { text: leave('A symbol was JUST placed (sparkle still showing, next card not up yet): leave within a second or two.'), expect: 'Continue shows the NEXT card, never the symbol you just placed, and that symbol stays placed on Ganesha.' },
     { text: leave('All 8 placed, during the final fireworks.'), expect: 'Final celebration, then the zone completion modal.' },
     { text: 'Check the Zone Welcome badge row after finishing.', expect: 'All 4 Symbol Mountain scenes show Replay.' },
   ]),

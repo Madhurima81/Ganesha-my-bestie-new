@@ -62,6 +62,9 @@ const MIDDLE_PETAL_TOKEN_POSITIONS = {
 const SYMBOL_STAGGER_MS = 850;
 const SYMBOL_CENTER_DELAY_MS = 260;
 const SYMBOL_TRAVEL_MS = 1500;
+const SYMBOL_AFTER_VOICE_GAP_MS = 500;
+const SYMBOL_VOICE_FALLBACK_MS = 14000;
+const SYMBOL_CLOSE_AFTER_DONE_MS = 2200;
 
 const isActive = (state) =>
   ['awakened', 'energized', 'bloomed', 'activated', 'glowing'].includes(state);
@@ -86,9 +89,12 @@ export default function InnerMandala({
   justEarnedPetals = null,
   earnedSymbols = [],
   onEarnedPetalReveal,
+  waitForVoice = false, // onEarnedPetalReveal(petal, index, done) must call done() when its line ends
 }) {
   const [mounted, setMounted] = useState(false);
   const [earnedShownIds, setEarnedShownIds] = useState([]);
+  const [startedCount, setStartedCount] = useState(0);
+  const [sequenceDone, setSequenceDone] = useState(false);
   const closedRef = useRef(false);
   const onEarnedPetalRevealRef = useRef(onEarnedPetalReveal);
   const interactive = typeof onPetalClick === 'function';
@@ -162,8 +168,50 @@ export default function InnerMandala({
     onEarnedPetalRevealRef.current = onEarnedPetalReveal;
   }, [onEarnedPetalReveal]);
 
+  // waitForVoice: one symbol at a time. Symbol i flies in, glows, and its spoken line runs;
+  // symbol i+1 starts only after the line reports done (or a safety net fires).
   useEffect(() => {
-    if (!earnedPetals.length) return undefined;
+    if (!waitForVoice || !earnedPetals.length) return undefined;
+    setEarnedShownIds([]);
+    setStartedCount(0);
+    setSequenceDone(false);
+    const timers = [];
+    let cancelled = false;
+
+    const playSymbol = (index) => {
+      if (cancelled) return;
+      if (index >= earnedPetals.length) {
+        setSequenceDone(true);
+        return;
+      }
+      setStartedCount(index + 1);
+      timers.push(setTimeout(() => {
+        if (cancelled) return;
+        const earnedPetal = earnedPetals[index];
+        setEarnedShownIds((prev) => {
+          const key = `${earnedPetal.ring}-${earnedPetal.id}`;
+          return prev.includes(key) ? prev : [...prev, key];
+        });
+        let advanced = false;
+        const done = () => {
+          if (advanced || cancelled) return;
+          advanced = true;
+          timers.push(setTimeout(() => playSymbol(index + 1), SYMBOL_AFTER_VOICE_GAP_MS));
+        };
+        timers.push(setTimeout(done, SYMBOL_VOICE_FALLBACK_MS));
+        onEarnedPetalRevealRef.current?.(earnedPetal, index, done);
+      }, SYMBOL_TRAVEL_MS));
+    };
+
+    timers.push(setTimeout(() => playSymbol(0), SYMBOL_CENTER_DELAY_MS));
+    return () => {
+      cancelled = true;
+      timers.forEach(clearTimeout);
+    };
+  }, [waitForVoice, earnedPetals.length, JSON.stringify(earnedPetals)]);
+
+  useEffect(() => {
+    if (waitForVoice || !earnedPetals.length) return undefined;
     setEarnedShownIds([]);
     const timers = [];
 
@@ -186,9 +234,11 @@ export default function InnerMandala({
 
   useEffect(() => {
     if (!showAsOverlay || !onClose || interactive) return undefined;
-    const timer = setTimeout(() => handleDismiss(), autoCloseMs);
+    // waitForVoice: the clock starts only after the last spoken line has finished.
+    if (waitForVoice && !sequenceDone) return undefined;
+    const timer = setTimeout(() => handleDismiss(), waitForVoice ? SYMBOL_CLOSE_AFTER_DONE_MS : autoCloseMs);
     return () => clearTimeout(timer);
-  }, [autoCloseMs, handleDismiss, interactive, onClose, showAsOverlay]);
+  }, [autoCloseMs, handleDismiss, interactive, onClose, showAsOverlay, waitForVoice, sequenceDone]);
 
   const currentZoneSet = new Set(highlightPetals);
   const earnedPetalKeySet = new Set(
@@ -274,6 +324,7 @@ export default function InnerMandala({
               ? MIDDLE_PETAL_TOKEN_POSITIONS[petalId]
               : OUTER_PETAL_TOKEN_POSITIONS[petalId];
             if (!symbol?.image || !position) return null;
+            if (waitForVoice && index >= startedCount) return null;
             return (
               <img
                 key={`${symbol.id || `symbol-${index}`}-${petalId}`}
@@ -283,7 +334,9 @@ export default function InnerMandala({
                 style={{
                   '--target-x': position.x,
                   '--target-y': position.y,
-                  animationDelay: `${(SYMBOL_CENTER_DELAY_MS + (index * SYMBOL_STAGGER_MS)) / 1000}s`,
+                  animationDelay: waitForVoice
+                    ? '0s'
+                    : `${(SYMBOL_CENTER_DELAY_MS + (index * SYMBOL_STAGGER_MS)) / 1000}s`,
                 }}
               />
             );

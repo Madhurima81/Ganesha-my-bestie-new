@@ -197,6 +197,8 @@ export default function FlowerJourneyGame2({
   stopVoice,
   onLineSpoken,
   initialFlowers = 0,
+  initialSuccessDone = 0,
+  onSuccessDone,
 }) {
   usePreloadPoses(SCENE_IMAGES);
   // Resume at a beat boundary (Continue): flowers are saved 2 per beat, so
@@ -207,6 +209,8 @@ export default function FlowerJourneyGame2({
     [PHASES.FLOWER_BUSH, PHASES.FLOWER_BRANCH, PHASES.FLOWER_MARSH, PHASES.BELLY_RECOGNITION][startBeat]
   );
   const [flowerCount, setFlowerCount] = useState(startBeat * 2);
+  // Flowers whose beat success line had FINISHED before the child left (2/4/6): not replayed on Continue.
+  const [successDoneAtMount] = useState(() => Number(initialSuccessDone) || 0);
   const [emotion, setEmotion] = useState(null);
   // Small persistent "emotion trace" left near each challenge once it's
   // solved — a quiet visual recap (bush→pleased, branch→excited,
@@ -741,6 +745,8 @@ export default function FlowerJourneyGame2({
 
   // ---- belly beats ----
   const [bellyBeat, setBellyBeat] = useState(0);
+  // On Continue the previous beat's success line is replayed once before the resumed beat.
+  const resumeLineDoneRef = useRef(false);
 
   // Notify the parent scene of the flower count without re-firing this
   // effect just because the parent re-rendered and handed us a new
@@ -751,6 +757,8 @@ export default function FlowerJourneyGame2({
   // Only `flowerCount` actually changing should trigger a notification.
   const onFlowersUpdateRef = useRef(onFlowersUpdate);
   useEffect(() => { onFlowersUpdateRef.current = onFlowersUpdate; }, [onFlowersUpdate]);
+  const onSuccessDoneRef = useRef(onSuccessDone);
+  useEffect(() => { onSuccessDoneRef.current = onSuccessDone; }, [onSuccessDone]);
   useEffect(() => { onFlowersUpdateRef.current?.(flowerCount); }, [flowerCount]);
 
   const bushIntroStartedRef = useRef(false);
@@ -897,15 +905,16 @@ export default function FlowerJourneyGame2({
     // First correct swipe succeeds.
     setEmotion(null);
     setBushOpenState(true);
+    onFlowersUpdateRef.current?.(2); // saved the moment the bush is solved, not when the flowers land
     setEmotion('pleased');
-    speak(VO.bushSuccess);
+    speakAsync(VO.bushSuccess).then(() => onSuccessDoneRef.current?.(2));
     safeTimeout(() => {
       setEmotion(null);
       setEmotionTraces((prev) => ({ ...prev, bush: 'pleased' }));
       collectChallengeFlowers({ firstEl: bushFlowerOneRef.current, secondEl: bushFlowerTwoRef.current, newFlowerCount: 2 });
       safeTimeout(() => setPhase(PHASES.FLOWER_BRANCH), 2200);
     }, 1350);
-  }, [phase, bushIntroDone, isPaused, resetIdleBaseline, registerFailedAttempt, safeTimeout, speak, collectChallengeFlowers]);
+  }, [phase, bushIntroDone, isPaused, resetIdleBaseline, registerFailedAttempt, safeTimeout, speak, speakAsync, collectChallengeFlowers]);
 
   const branchFlowerOneRef = useRef(null);
   const branchFlowerTwoRef = useRef(null);
@@ -952,6 +961,12 @@ export default function FlowerJourneyGame2({
       // begins, so the teaching hand is synced there. The reaction emoji
       // has no word to sync to, so it just follows the wordless stretch
       // beat immediately.
+      // Continue after the bush was solved: replay its success line first.
+      if (startBeat === 1 && successDoneAtMount < 2) {
+        await speakAsync(VO.bushSuccess);
+        onSuccessDoneRef.current?.(2);
+        if (cancelled) return;
+      }
       const emotionTimer = pTimeout(() => {
         if (cancelled) return;
         setEmotion('sad');
@@ -977,20 +992,22 @@ export default function FlowerJourneyGame2({
   }, []);
 
   const finishBranchChallenge = useCallback(() => {
+    if (branchCompletedRef.current) return;
     clearBranchHold();
     // First correct pull + hold succeeds.
     setBranchPull(1);
     setBranchComplete(true);
     branchCompletedRef.current = true;
+    onFlowersUpdateRef.current?.(4); // saved the moment the branch is solved
     setEmotion('relieved');
-    speak(VO.branchSuccess);
+    speakAsync(VO.branchSuccess).then(() => onSuccessDoneRef.current?.(4));
     safeTimeout(() => {
       setEmotion(null);
       setEmotionTraces((prev) => ({ ...prev, branch: 'relieved' }));
       collectChallengeFlowers({ firstEl: branchFlowerOneRef.current, secondEl: branchFlowerTwoRef.current, newFlowerCount: 4 });
       safeTimeout(() => setPhase(PHASES.FLOWER_MARSH), 2200);
     }, 1350);
-  }, [clearBranchHold, collectChallengeFlowers, safeTimeout, speak]);
+  }, [clearBranchHold, collectChallengeFlowers, safeTimeout, speak, speakAsync]);
 
   const handleBranchPointerDown = useCallback((e) => {
     if (phase !== PHASES.FLOWER_BRANCH || !branchIntroDone || branchComplete || isPaused) return;
@@ -1105,6 +1122,12 @@ export default function FlowerJourneyGame2({
       // Unlike Bush/Branch, no nervous emoji here at the start — Marsh
       // already has its own wobble/wrong-attempt moment mid-crossing where
       // that emotion actually reads as caused by something.
+      // Continue after the branch was solved: replay its success line first.
+      if (startBeat === 2 && successDoneAtMount < 4) {
+        await speakAsync(VO.branchSuccess);
+        onSuccessDoneRef.current?.(4);
+        if (cancelled) return;
+      }
       // The teaching hand lands exactly when the action word ("Guide") is spoken.
       await speakAsync(VO.marshStart, getLineCue('fjg:marshStart', () => {
         if (cancelled) return;
@@ -1221,6 +1244,7 @@ export default function FlowerJourneyGame2({
       }
       if (nextStep === 4) {
         safeTimeout(async () => {
+          onFlowersUpdateRef.current?.(6); // saved the moment the marsh is solved
           flyOneFlowerToBasket(marshFlowerTwoRef.current, flowerCream, 6);
           setEmotion('excited');
           await wait(2000);
@@ -1230,6 +1254,7 @@ export default function FlowerJourneyGame2({
           setMarshExiting(true);
           await wait(1400);
           await speakAsync(VO.marshDone);
+          onSuccessDoneRef.current?.(6);
           await wait(700);
           setPhase(PHASES.BELLY_RECOGNITION);
         }, 100);
@@ -1268,6 +1293,14 @@ export default function FlowerJourneyGame2({
     (async () => {
       await wait(600);
       if (cancelled) return;
+
+      // Continue after the marsh was solved: replay its success line once before the belly beat.
+      if (startBeat === 3 && successDoneAtMount < 6 && !resumeLineDoneRef.current) {
+        resumeLineDoneRef.current = true;
+        await speakAsync(VO.marshDone);
+        onSuccessDoneRef.current?.(6);
+        if (cancelled) return;
+      }
 
       // All 6 emojis pop in one by one while VO.bellyReflection names them,
       // ~320ms apart so all six are up by ~2s into the line.
@@ -1328,13 +1361,6 @@ export default function FlowerJourneyGame2({
 
   return (
     <div className={`fjg2 ${isPausedProp ? 'fjg2--paused' : ''} ${isBellyPhase ? 'fjg2--belly-focus' : ''}`} style={{ backgroundImage: `url(${forestBackground})` }}>
-      {!isBellyPhase && (
-        <div className="fjg2-hud" aria-label={`${flowerCount} of 6 flowers gathered`}>
-          {Array.from({ length: 6 }).map((_, i) => (
-            <span key={i} className={`fjg2-hud-dot ${i < flowerCount ? 'filled' : ''}`} />
-          ))}
-        </div>
-      )}
 
       {/* Small "memory" marker left near a challenge right after it's solved
           — but only for as long as that challenge's own phase is still on

@@ -837,7 +837,8 @@ const NirvighnamChantContent = ({
                     { id: 'nirvighnam', petalId: 5, ring: 'outer', image: symbolNirvighnam },
                     { id: 'kurumedeva', petalId: 6, ring: 'outer', image: symbolKurumedeva },
                   ]}
-                  onEarnedPetalReveal={(earnedPetal) => {
+                  waitForVoice
+                  onEarnedPetalReveal={(earnedPetal, _index, done) => {
                     const symbolByPetal = {
                       5: 'nirvighnam',
                       6: 'kurumedeva',
@@ -847,10 +848,12 @@ const NirvighnamChantContent = ({
                       kurumedeva: 'You asked for help when you needed it.',
                     };
                     const symbol = symbolByPetal[earnedPetal?.id];
+                    // The Mandala holds the next symbol until this line ends (done). The
+                    // scene-complete line plays on the completion screen, not here.
                     if (lines[symbol]) {
-                      // Scene-complete line plays inside the Mandala, right after the last petal line.
-                      const afterLast = symbol === 'kurumedeva' ? () => playGuidanceVoice('sceneComplete') : undefined;
-                      speakWebSpeech(lines[symbol], afterLast);
+                      speakWebSpeech(lines[symbol], done);
+                    } else {
+                      done?.();
                     }
                   }}
                   highlightPetals={sceneOuterPetalIds}

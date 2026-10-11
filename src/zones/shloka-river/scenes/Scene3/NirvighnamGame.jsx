@@ -2,6 +2,7 @@ import PoseImage, { usePreloadPoses } from '../../../../lib/components/animation
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import SyllableHighlight from '../../shared/SyllableHighlight';
 import useRepeatedHintCycle from '../../../../lib/hooks/useRepeatedHintCycle';
+import useWarmSanskritAudio from '../../../../lib/hooks/useWarmSanskritAudio';
 import usePausableTimers from '../../../../lib/hooks/usePausableTimers';
 import { getLineCue } from '../../../../lib/config/content/voiceCues';
 import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
@@ -187,6 +188,7 @@ export default function NirvighnamGame({
     const seq = syllableSeqRef.current;
     if (!seq.busy && !seq.queue.length) rawStopVoice?.();
   }, [rawStopVoice]);
+  useWarmSanskritAudio('nirvighnam', AUDIO.syllables); // first tap plays instantly
   const debugEnabled = getDebugEnabled();
   const defaultLayout = useMemo(createDebugLayout, []);
   const [debugLayout, setDebugLayout] = useState(loadDebugLayout);

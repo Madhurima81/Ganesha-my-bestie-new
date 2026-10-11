@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import SyllableHighlight from '../../../shared/SyllableHighlight';
 import GestureDemo from '../../../../../lib/components/feedback/GestureDemo';
 import useRepeatedHintCycle from '../../../../../lib/hooks/useRepeatedHintCycle';
+import useWarmSanskritAudio from '../../../../../lib/hooks/useWarmSanskritAudio';
 import usePausableTimers from '../../../../../lib/hooks/usePausableTimers';
 import './SamaprabhaGame.css';
 
@@ -239,6 +240,7 @@ export default function SamaprabhaGame({
   const handPaused = isSidebarOpen ?? isPaused;
   usePreloadPoses(POSE_ASSETS);
   const { playVoice: playSceneLine, playSyllable, playWord, stopVoice } = voiceGuidance;
+  useWarmSanskritAudio('samaprabha', AUDIO.syllables); // first tap plays instantly
 
   const debugEnabled = getDebugEnabled();
   const defaultLayout = useMemo(createDefaultLayout, []);

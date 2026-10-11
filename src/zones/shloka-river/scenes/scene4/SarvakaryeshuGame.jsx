@@ -2,6 +2,7 @@ import PoseImage, { usePreloadPoses } from '../../../../lib/components/animation
 import { useState, useEffect, useRef, useCallback } from 'react';
 import SyllableHighlight from '../../shared/SyllableHighlight';
 import useRepeatedHintCycle from '../../../../lib/hooks/useRepeatedHintCycle';
+import useWarmSanskritAudio from '../../../../lib/hooks/useWarmSanskritAudio';
 import usePausableTimers from '../../../../lib/hooks/usePausableTimers';
 import './SarvakaryeshuGame.css';
 
@@ -156,6 +157,7 @@ export default function SarvakaryeshuGame({
 }) {
   usePreloadPoses(POSE_ASSETS);
   const { playVoice: playSceneLine, playSyllable, playWord, stopVoice: stopSceneVoice } = voiceGuidance;
+  useWarmSanskritAudio('sarvakaryeshu', AUDIO); // first tap plays instantly
   const [seedCards] = useState(() => (
     isActive ? Math.max(0, Math.min(SITUATIONS.length - 1, Number(initialCards) || 0)) : 0
   ));

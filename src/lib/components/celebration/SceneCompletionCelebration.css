@@ -66,8 +66,7 @@
   padding: clamp(56px, 7%, 80px) clamp(46px, 6%, 72px) clamp(52px, 6%, 68px);
   border: none;
   outline: none;
-  box-shadow:
-    0 10px 24px rgba(40, 20, 80, 0.12);
+  filter: drop-shadow(0 10px 24px rgba(40, 20, 80, 0.12));
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1427,6 +1426,7 @@ transition:
     border: 2px solid rgba(214, 196, 240, 0.9);
     border-radius: 36px 44px 38px 42px / 42px 36px 44px 38px;
     box-shadow: 0 10px 24px rgba(40, 20, 80, 0.14);
+    filter: none; /* real rounded card here, so its box-shadow is correct */
   }
 
   .celebration-lotus-top {

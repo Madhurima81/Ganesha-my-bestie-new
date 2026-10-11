@@ -28,6 +28,9 @@ import forestBackground from './assets/images/modak-fj-bg.webp';
 import symbolModakColored from '../../shared/images/icons/symbol-modak-new.webp';
 
 const PHASES = { BUILD: 'GARLAND_BUILD', READY: 'GARLAND_READY', OFFERED: 'GARLAND_OFFERED' };
+// Beat intros wait this long after mounting before speaking. Speaking at t=0 was silent on
+// Continue (the scene is still restoring); same fix as FlowerJourneyGame2.
+const INTRO_START_DELAY_MS = 500;
 const SHOW_HIT_ZONES =
   typeof window !== 'undefined' &&
   new URLSearchParams(window.location.search).has('hitzones');
@@ -165,6 +168,9 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
     // isn't touched by window.speechSynthesis.cancel() below, so without this
     // a still-playing scene VO keeps going under this mini-game's line.
     stopVoice?.();
+    // Chrome drops a speak() issued in the same tick as a cancel() that interrupts a line
+    // still starting up. Wait briefly in that case.
+    const wasBusy = window.speechSynthesis.speaking || window.speechSynthesis.pending;
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.rate = 0.95;
@@ -178,7 +184,15 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
     // The carry hand (or other cue) fires exactly when the action word is spoken.
     entry.cancelCue = attachSpeechCue(utterance, text, cue);
     activeSpeechRef.current = entry;
-    window.speechSynthesis.speak(utterance);
+    if (wasBusy) {
+      setTimeout(() => {
+        // Skip if this line was superseded or interrupted (sidebar / tab hide) meanwhile.
+        if (activeSpeechRef.current !== entry) return;
+        try { window.speechSynthesis.speak(utterance); } catch { done(); }
+      }, 120);
+    } else {
+      window.speechSynthesis.speak(utterance);
+    }
   }, [stopVoice]);
 
   const speak = useCallback((text) => {
@@ -442,28 +456,36 @@ export default function GarlandGame3({ isActive = true, isPaused = false, isAudi
   const readyIntroStartedRef = useRef(false);
   useEffect(() => {
     if (!builtAtMount || !isActive || readyIntroStartedRef.current) return undefined;
-    readyIntroStartedRef.current = true;
-    (async () => {
-      await speakAsync(VO.ready, getLineCue('garland:ready', () => {
-        setCarryTeachingGesture(true);
-        after(3200, () => setCarryTeachingGesture(false));
-      }));
-      if (!isActiveRef.current) return;
-      startGarlandHintClock(true);
-    })();
-    return undefined;
+    // The flag is set when the timer fires, not before it: React StrictMode (dev) clears the
+    // first timer, and a flag set up front would stop the second run from ever speaking.
+    const introTimer = setTimeout(() => {
+      if (readyIntroStartedRef.current) return;
+      readyIntroStartedRef.current = true;
+      (async () => {
+        await speakAsync(VO.ready, getLineCue('garland:ready', () => {
+          setCarryTeachingGesture(true);
+          after(3200, () => setCarryTeachingGesture(false));
+        }));
+        if (!isActiveRef.current) return;
+        startGarlandHintClock(true);
+      })();
+    }, INTRO_START_DELAY_MS);
+    return () => clearTimeout(introTimer);
   }, [builtAtMount, isActive, speakAsync, after, startGarlandHintClock]);
 
   useEffect(() => {
     if (!isBuild || !isActive || buildIntroStartedRef.current) return undefined;
-    buildIntroStartedRef.current = true;
     let cancelled = false;
-    (async () => {
-      await speakAsync(VO.open);
-      if (cancelled) return;
-      startBuildHintClock();
-    })();
-    return () => { cancelled = true; };
+    const introTimer = setTimeout(() => {
+      if (buildIntroStartedRef.current) return;
+      buildIntroStartedRef.current = true;
+      (async () => {
+        await speakAsync(VO.open);
+        if (cancelled) return;
+        startBuildHintClock();
+      })();
+    }, INTRO_START_DELAY_MS);
+    return () => { cancelled = true; clearTimeout(introTimer); };
   }, [isBuild, isActive, speakAsync, startBuildHintClock]);
 
   // Measure the basket's position relative to the workspace once both are

@@ -53,6 +53,7 @@ import GestureDemo from '../../../../lib/components/feedback/GestureDemo';
 import SymbolSidebar from '../../shared/components/SymbolSidebar';
 import SceneCompletionCelebration from '../../../../lib/components/celebration/SceneCompletionCelebration';
 import InnerMandala from '../../../../lib/components/celebration/InnerMandala';
+import { speakWithRetry } from '../../../../lib/utils/speakWithRetry';
 import ZoneBadgeButton from '../../../../lib/components/navigation/ZoneBadgeButton';
 import { getCollectionTarget } from '../../../../lib/utils/collectionTarget';
 import SimpleDiscoveryOverlay from '../../../shared/components/SimpleDiscoveryOverlay';
@@ -195,6 +196,7 @@ const PondSceneSimplifiedV5 = ({
           streamSolved: false,
           lotusUpright: false,
           lotusBloomed: false,
+          lotusSuccessDone: false,
           phase: 'initial',
           currentFocus: 'trunk',
           discoveredSymbols: {
@@ -305,25 +307,25 @@ const PondSceneContent = ({
     }
   }, []);
   const DEFAULT_POND_LAYOUT = {
-    rock: { x: 32, y: 46.7, size: 20.5 },
-    rockHit: { x: 35.3, y: 50.4, size: 13.6 },
+    rock: { x: 32, y: 58, size: 20.5 },
+    rockHit: { x: 35.6, y: 48, size: 13.6 },
     flowers: { x: 50.6, y: 49.3, size: 9 },
-    lotus: { x: 64.3, y: 43.6, size: 8.5 },
+    lotus: { x: 62, y: 58.5, size: 8.5 },
     lotusHit: { x: 63.8, y: 43.3, size: 7 },
     reflection: { x: 76, y: 66, size: 20 },
     water: { x: 0, y: 67.8, size: 78 },
-    streamOverlay: { x: 0.1, y: 30, size: 81 },
+    streamOverlay: { x: 0.2, y: 44.1, size: 81 },
     // Each flower and pebble is now a fully independent stage-positioned
     // element (own x/y/size) — NOT nested inside the reeds-swipe group, so
     // dragging one never drags the others as a group.
-    flower1: { x: 52.5, y: 49.5, size: 6 },
-    flower2: { x: 54.2, y: 52.1, size: 5 },
-    flower3: { x: 50.5, y: 51.4, size: 6 },
-    flower4: { x: 53, y: 52.9, size: 5 },
-    pebble1: { x: 52.7, y: 55.7, size: 7 },
-    pebble2: { x: 51, y: 52.7, size: 5.5 },
-    pebble3: { x: 51.4, y: 56.3, size: 6 },
-    pebble4: { x: 49.2, y: 54.9, size: 5.5 },
+    flower1: { x: 51.5, y: 62.5, size: 6 },
+    flower2: { x: 53.2, y: 65.1, size: 5 },
+    flower3: { x: 49.5, y: 64.4, size: 6 },
+    flower4: { x: 52, y: 65.9, size: 5 },
+    pebble1: { x: 51.7, y: 68.7, size: 7 },
+    pebble2: { x: 50, y: 65.7, size: 5.5 },
+    pebble3: { x: 50.4, y: 69.3, size: 6 },
+    pebble4: { x: 48.2, y: 67.9, size: 5.5 },
     turtle: { x: 53, y: 33.9, size: 6.5 },
     // Hand cues are absolute CENTRE points (% of stage), unlike the element x/y above which are
     // box corners. Measured from the checklist screenshots at 1024x670: the flower/pebble cluster
@@ -911,15 +913,21 @@ const PondSceneContent = ({
       setRockHoldProgress(1);
       setReedsProgress(1);
       setWaterStage(2);
+      // Left during "The lotus bloomed..." success line: replay it, then the card. If that line had
+      // already finished, go straight to the card.
       safeSetTimeout(() => {
-        playChime();
-        setRevealConfig({
-          symbolId: 'lotus',
-          symbolName: 'Lotus',
-          affirmation: 'I can keep growing when things are hard.',
-          symbolImage: symbolLotusColored
-        });
-      }, 1200);
+        const showLotusCard = () => safeSetTimeout(() => {
+          playChime();
+          setRevealConfig({
+            symbolId: 'lotus',
+            symbolName: 'Lotus',
+            affirmation: 'I can keep growing when things are hard.',
+            symbolImage: symbolLotusColored
+          });
+        }, 1200);
+        if (sceneState.lotusSuccessDone) showLotusCard();
+        else speakPondPrompt('lotusBloomed', showLotusCard);
+      }, 600);
       return;
     }
     // Defensive repair: if a stale save marks completed during lotus reveal phase,
@@ -1326,6 +1334,8 @@ const PondSceneContent = ({
     // (~3.5-4s) before the reveal card covers the scene — a fixed 2400ms
     // timer was opening the card mid-sentence.
     speakPondPrompt('lotusBloomed', () => {
+      // The success line finished: a Continue from here goes straight to the card.
+      sceneActions.checkpoint({ lotusSuccessDone: true });
       safeSetTimeout(() => {
         setRevealConfig({
           symbolId: 'lotus',
@@ -2114,7 +2124,8 @@ const PondSceneContent = ({
                   { id: 'trunk', petalId: 4, ring: 'middle', image: symbolTrunkColored },
                   { id: 'lotus', petalId: 5, ring: 'middle', image: symbolLotusColored },
                 ]}
-                onEarnedPetalReveal={(earnedPetal) => {
+                waitForVoice
+                onEarnedPetalReveal={(earnedPetal, _index, done) => {
                   const symbolByPetal = {
                     4: 'trunk',
                     5: 'lotus',
@@ -2124,10 +2135,12 @@ const PondSceneContent = ({
                     lotus: 'You kept growing through something hard.',
                   };
                   const symbol = symbolByPetal[earnedPetal?.id];
+                  // The Mandala holds the next symbol until this line ends (done). No extra
+                  // scene-complete line: it repeated the petal lines (2026-10-10).
                   if (lines[symbol]) {
-                    // Scene-complete line plays inside the Mandala, right after the last petal line.
-                    const afterLast = symbol === 'lotus' ? () => speakPondPrompt('complete') : undefined;
-                    speak(lines[symbol], { age: 7, style: 'child', moment: 'celebration', onEnd: afterLast });
+                    speakWithRetry((onEnd, onStart) => speak(lines[symbol], { age: 7, style: 'child', moment: 'celebration', onEnd, onStart }), done);
+                  } else {
+                    done?.();
                   }
                 }}
                 autoCloseMs={3000 + (2 * 950) + 2600 + 5500}

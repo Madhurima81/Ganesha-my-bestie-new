@@ -176,7 +176,9 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
   // report the position of the NEXT beat each time a beat finishes (= beats completed).
   // Read once at mount; a beat left half-played restarts from its own 'before' state.
   initialBeatPos = 0,
+  initialStateName = 'before', // 'after' = resume by replaying that beat's reaction, then advance
   onBeatComplete,
+  onBeatSuccessDone, // called with (beats finished) when a beat's 'after' reaction line has finished
   onMissingAsset,
   // Layout Debug — same drag-to-reposition + numeric-field + "copy JSON"
   // pattern already used in the hand-coded live scenes (KurumedevaGame.jsx,
@@ -207,7 +209,9 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
   ));
   const onBeatCompleteRef = useRef(onBeatComplete);
   onBeatCompleteRef.current = onBeatComplete;
-  const [stateName, setStateName] = useState('before');
+  const onBeatSuccessDoneRef = useRef(onBeatSuccessDone);
+  onBeatSuccessDoneRef.current = onBeatSuccessDone;
+  const [stateName, setStateName] = useState(initialStateName === 'after' ? 'after' : 'before');
 
   // Dev-only escape hatch: jump straight to any beat by its JSON key,
   // instead of having to play/hold/drag through every prior beat to reach
@@ -389,10 +393,9 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
       onComplete?.();
       return;
     }
-    onBeatCompleteRef.current?.(beatPos + 1);
     setBeatPos((p) => p + 1);
     goToState('before');
-  }, [isLastBeat, onComplete, goToState, beatPos]);
+  }, [isLastBeat, onComplete, goToState]);
 
   const needsInput = (name) => name === 'before' && interaction && interaction.type && interaction.type !== 'none';
 
@@ -461,6 +464,7 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
 
         if (cancelled) return;
         voDoneKeyRef.current = stateKey;
+        if (stateName === 'after') onBeatSuccessDoneRef.current?.(beatPos + 1);
       }
 
       // Interactive "before" states now stay on screen after the story VO.
@@ -1023,8 +1027,11 @@ const BeatPlayerGame = forwardRef(function BeatPlayerGame({
   const completeInteraction = useCallback(() => {
     failedAttemptsRef.current = 0;
     clearTimers();
+    // The child solved this beat: report it now, not when its reaction finishes, so Continue
+    // never repeats it (the reaction line is replayed on resume instead).
+    onBeatCompleteRef.current?.(beatPos + 1);
     goToState('movement');
-  }, [clearTimers, goToState]);
+  }, [clearTimers, goToState, beatPos]);
 
   const rejectInteraction = useCallback(() => {
     setDrag(null);
