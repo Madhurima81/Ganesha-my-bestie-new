@@ -468,12 +468,15 @@ export default function KurumedevaGame({
   const plankInstructionPlayedRef = useRef(false);
   useEffect(() => {
     if (!placeActive) { plankInstructionPlayedRef.current = false; return; }
+    // Wait for the scene to be live (a Continue mounts with the plank round already active, while the
+    // intro / replay hold is still going) - otherwise the line is dropped and never retried.
+    if (!isActive || !introComplete || isPaused || phase !== 'play' || debugMode) return;
     if (plankInstructionPlayedRef.current) return;
     plankInstructionPlayedRef.current = true;
     if (syllableBusyRef.current) { plankPendingRef.current = true; return; } // plays when "me" finishes
     stopSceneVoice?.();
     playSceneLine?.('kuru_plank_instruction', undefined, { cue: getLineCue('kuru_plank_instruction', () => setIntroGestureVoStarted(true)) });
-  }, [placeActive, playSceneLine, stopSceneVoice]);
+  }, [placeActive, isActive, introComplete, isPaused, phase, debugMode, playSceneLine, stopSceneVoice]);
 
   // Idle hint VO — L1 is visual only. L2 is soft/partial guidance; L3 gives
   // the direct target/full action.
