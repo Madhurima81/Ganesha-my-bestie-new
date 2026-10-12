@@ -1195,6 +1195,10 @@ const SacredAssemblyContent = ({
       localStorage.removeItem(`${profileId}_symbol-mountain_final-scene_state`);
     }
 
+    // The final-celebration effect shows the completion modal whenever these are true and the modal
+    // is closed: left set, Play Again re-opened the completion modal at once.
+    setSceneCompleteVOFinished(false);
+    setFireworksFinished(false);
     setShowSparkle(null);
     setCardContent({});
     setShowSceneCompletion(false);
@@ -1602,13 +1606,11 @@ const SacredAssemblyContent = ({
     }
   }, [isReload]);
 
-  // FINAL CELEBRATION: first let the orbs/fireworks finish, then play the
-  // closing VO, then show the completion modal. This keeps the VO mapped to
-  // the symbol reveal/completion moment instead of hiding under fireworks.
+  // FINAL CELEBRATION: play the closing VO while the all-symbols orbs/fireworks
+  // are on screen, then move to the completion modal once both VO and animation
+  // have finished.
   useEffect(() => {
-    if (!fireworksFinished || showSceneCompletion) return;
-
-    if (!sceneCompleteVOFinished && !finalVoPlayedRef.current) {
+    if (showSparkle === 'final-fireworks' && !sceneCompleteVOFinished && !finalVoPlayedRef.current) {
       finalVoPlayedRef.current = true;
       playSceneVoice('finalYouFoundAll', () => {
         safeSetTimeout(() => {
@@ -1620,10 +1622,17 @@ const SacredAssemblyContent = ({
       return;
     }
 
-    if (sceneCompleteVOFinished) {
+    if (fireworksFinished && sceneCompleteVOFinished && !showSceneCompletion) {
       setShowSceneCompletion(true);
     }
-  }, [fireworksFinished, playSceneVoice, safeSetTimeout, sceneCompleteVOFinished, showSceneCompletion]);
+  }, [
+    fireworksFinished,
+    playSceneVoice,
+    safeSetTimeout,
+    sceneCompleteVOFinished,
+    showSceneCompletion,
+    showSparkle,
+  ]);
 
   // RESUME � runs once on mount, handles returning mid-game
   useEffect(() => {
