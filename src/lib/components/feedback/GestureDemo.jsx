@@ -202,6 +202,10 @@ export default function GestureDemo({
   iterations = 2,
   zIndex = 100,
   dismissOnAnyPointer = false,
+  // 'center' (default): the hand image's centre sits on the point. 'fingertip': the blue touch
+  // circle at the fingertip sits on the point, so a hold ring drawn at the point is centred on
+  // the touch (the image centre is ~20px below and right of the fingertip).
+  anchor = 'center',
 }) {
   const [visible, setVisible] = useState(false);
   const [styleId] = useState(() => `gd-anim-${++gestureStyleCounter}`);
@@ -260,7 +264,8 @@ export default function GestureDemo({
   useEffect(() => {
     if (!visible) return;
 
-    const keyframeCSS = config.keyframes({ x: fx, y: fy }, { x: tx, y: ty });
+    let keyframeCSS = config.keyframes({ x: fx, y: fy }, { x: tx, y: ty });
+    if (anchor === 'fingertip') keyframeCSS = keyframeCSS.split('translate(-50%,-50%)').join('translate(-38%,-18%)');
     const styleEl = document.createElement('style');
     styleEl.textContent = `@keyframes ${styleId} { ${keyframeCSS} }`;
     document.head.appendChild(styleEl);
@@ -272,7 +277,7 @@ export default function GestureDemo({
         styleRef.current = null;
       }
     };
-  }, [visible, styleId, config, fx, fy, tx, ty]);
+  }, [visible, styleId, config, fx, fy, tx, ty, anchor]);
 
   // Legacy opt-in: dismiss on any pointerdown (off by default).
   useEffect(() => {

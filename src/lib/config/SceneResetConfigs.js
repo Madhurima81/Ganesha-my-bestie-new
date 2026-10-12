@@ -97,6 +97,15 @@ export const SCENE_RESET_CONFIGS = {
     // Water and visual effects
     celebrationStars: 0,
     
+    // The flags the Pond scene actually draws from (rock moved, reeds parted, lotus up/bloomed).
+    // Without these Play Again showed the finished pond under the opening modal.
+    rockMoved: false,
+    reedsParted: false,
+    streamSolved: false,
+    lotusUpright: false,
+    lotusBloomed: false,
+    lotusSuccessDone: false,
+
     // Phase progression
     phase: 'initial',
     currentFocus: 'lotus',

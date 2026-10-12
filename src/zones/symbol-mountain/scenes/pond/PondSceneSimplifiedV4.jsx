@@ -330,11 +330,12 @@ const PondSceneContent = ({
     // Hand cues are absolute CENTRE points (% of stage), unlike the element x/y above which are
     // box corners. Measured from the checklist screenshots at 1024x670: the flower/pebble cluster
     // is centred near (53, 59) and the lotus bud near (69.5, 52.5).
-    reedsCueFrom: { x: 50.5, y: 58.5, size: 0 },
-    reedsCueToIntro: { x: 62, y: 58.5, size: 0 },
-    reedsCueToL3: { x: 68, y: 58.5, size: 0 },
-    reedsCueToL2: { x: 63, y: 58.5, size: 0 },
-    lotusCue: { x: 69.5, y: 52.5, size: 0 },
+    reedsCueFrom: { x: 51.1, y: 65.8, size: 0 },
+    reedsCueToIntro: { x: 60.5, y: 66.5, size: 0 },
+    reedsCueToL3: { x: 60.5, y: 66.6, size: 0 },
+    reedsCueToL2: { x: 60.5, y: 66.7, size: 0 },
+    lotusCue: { x: 64.9, y: 62.8, size: 0 },
+    rockCue: { x: 42.5, y: 68.9, size: 0 },
   };
   const [pondLayout, setPondLayout] = useState(DEFAULT_POND_LAYOUT);
   const pondStageRef = useRef(null);
@@ -571,6 +572,27 @@ const PondSceneContent = ({
     setPondIntroGesture(false);
     return undefined;
   }, [interactionBeat]);
+
+  // Play Again / Replay keeps this component mounted, so the local visuals (rock moved, water,
+  // reveal card, mandala) must be put back by hand: resetScene() only resets saved state.
+  const resetPondLocalState = () => {
+    stopSpokenVoice();
+    setRockHoldProgress(0);
+    setReedsProgress(0);
+    setWaterStage(0);
+    setRevealConfig(null);
+    setShowMandala(false);
+    setShowSparkle(null);
+    setShowSceneCompletion(false);
+    setPondIntroGesture(false);
+  };
+
+  // True once the scene is leaving/unmounted (a cancelled utterance still fires its onEnd).
+  const leftSceneRef = useRef(false);
+  useEffect(() => {
+    leftSceneRef.current = false;
+    return () => { leftSceneRef.current = true; };
+  }, []);
 
   const speakPondPromptRaw = useCallback((key, onEnd) => {
     if (!VOICE_LINES[key]) {
@@ -1333,7 +1355,11 @@ const PondSceneContent = ({
     // let "The lotus bloomed, even in the muddy pond." finish speaking
     // (~3.5-4s) before the reveal card covers the scene — a fixed 2400ms
     // timer was opening the card mid-sentence.
+    const lineStartedAt = Date.now();
     speakPondPrompt('lotusBloomed', () => {
+      // Leaving mid-line cancels the speech, which still fires this callback: only a line that
+      // really played out counts as done (else Continue skips the line and shows only the card).
+      if (leftSceneRef.current || Date.now() - lineStartedAt < 1500) return;
       // The success line finished: a Continue from here goes straight to the card.
       sceneActions.checkpoint({ lotusSuccessDone: true });
       safeSetTimeout(() => {
@@ -1511,7 +1537,7 @@ const PondSceneContent = ({
       helpConfig={pondHelpConfig}
       sceneState={sceneState}
       onHome={() => onNavigate?.('home')}
-      onReplay={() => { pondCompletionSavedRef.current = false; resetScene(); }}
+      onReplay={() => { pondCompletionSavedRef.current = false; resetPondLocalState(); resetScene(); }}
       isAudioOn={isAudioOn}
       onAudioToggle={toggleAudio}
       showMenu={false}
@@ -1643,7 +1669,8 @@ const PondSceneContent = ({
                 // Hold demos show the full progress ring, matching drag/swipe
                 // demos that teach the complete action path.
                 type="hold-progress-l3"
-                from={{ x: 40, y: 62 }}
+                from={pondLayout.rockCue}
+                anchor="fingertip"
                 active={
                   (pondIntroGesture || (effectiveHintLevel >= 3 && !rockHoldLearnedRef.current)) &&
                   (
@@ -1787,6 +1814,7 @@ const PondSceneContent = ({
                           <option value="reedsCueToL3">Reeds hand end (strong hint)</option>
                           <option value="reedsCueToL2">Reeds hand end (soft hint)</option>
                           <option value="lotusCue">Lotus hand hold point</option>
+                          <option value="rockCue">Rock hand hold point</option>
                         </optgroup>
                       </select>
                     </label>
@@ -1825,10 +1853,43 @@ const PondSceneContent = ({
                 )}
               </div>
 
+              {/* Layout debug only: the hand cue points have no element of their own, so show a
+                  draggable dot for each (the label says which one) to place the hand by eye. */}
+              {layoutOpen && [
+                ['reedsCueFrom', 'reeds start'],
+                ['reedsCueToIntro', 'reeds end (intro)'],
+                ['reedsCueToL3', 'reeds end (strong)'],
+                ['reedsCueToL2', 'reeds end (soft)'],
+                ['lotusCue', 'lotus hold'],
+                ['rockCue', 'rock hold'],
+              ].map(([key, label]) => (
+                <div
+                  key={key}
+                  onPointerDown={(e) => startMainDrag(key, e)}
+                  style={{
+                    position: 'absolute',
+                    left: `${pondLayout[key].x}%`,
+                    top: `${pondLayout[key].y}%`,
+                    transform: 'translate(-50%, -50%)',
+                    width: 22,
+                    height: 22,
+                    borderRadius: '50%',
+                    background: layoutKey === key ? 'rgba(229,57,53,0.85)' : 'rgba(255,152,0,0.8)',
+                    border: '2px solid #fff',
+                    cursor: 'move',
+                    zIndex: 60,
+                    touchAction: 'none',
+                  }}
+                >
+                  <span style={{ position: 'absolute', top: 24, left: '50%', transform: 'translateX(-50%)', whiteSpace: 'nowrap', fontSize: 10, fontWeight: 700, color: '#fff', background: 'rgba(0,0,0,0.65)', padding: '1px 5px', borderRadius: 4, pointerEvents: 'none' }}>{label}</span>
+                </div>
+              ))}
+
               <GestureDemo
                 paused={isSymbolPopupOpen}
                 type="drag"
                 from={pondLayout.reedsCueFrom}
+                anchor="fingertip"
                 to={
                   pondIntroGesture
                     ? pondLayout.reedsCueToIntro
@@ -1946,6 +2007,7 @@ const PondSceneContent = ({
                 paused={isSymbolPopupOpen}
                 type="hold-progress-l3"
                 from={pondLayout.lotusCue}
+                anchor="fingertip"
                 active={
                   pondIntroGesture &&
                   sceneState.phase === PHASES.LOTUS_ACTIVE &&
@@ -1965,11 +2027,6 @@ const PondSceneContent = ({
                 onPointerDown={layoutOpen ? (e) => startMainDrag('lotus', e) : undefined}
                 style={layoutOpen ? { cursor: 'move' } : undefined}
               >
-                {showSparkle === 'lotus-wake' && (
-                  <div className="pond-lotus-wake-glow" aria-hidden="true">
-                    <SparkleAnimation type="star" count={18} color="#FFD86B" size={10} duration={LOTUS_GLOW_MS} fadeOut={true} area="full" />
-                  </div>
-                )}
                 <PoseImage
                   imageStyle={{ height: '100%' }}
                   src={getLotusImage()}
@@ -1992,6 +2049,12 @@ const PondSceneContent = ({
                 onPointerDown={layoutOpen ? (e) => startMainDrag('lotusHit', e) : undefined}
                 style={layoutOpen ? { cursor: 'move' } : undefined}
               >
+                {/* The wake glow is centred on the hit zone (same centre as the hold ring and hand). */}
+                {showSparkle === 'lotus-wake' && (
+                  <div className="pond-lotus-wake-glow" aria-hidden="true">
+                    <SparkleAnimation type="star" count={18} color="#FFD86B" size={10} duration={LOTUS_GLOW_MS} fadeOut={true} area="full" />
+                  </div>
+                )}
                 {(SHOW_HIT_ZONES || layoutOpen) && !sceneState.lotusBloomed && (
                   <div className="pond-debug-hit-zone pond-debug-hit-zone--lotus" aria-hidden="true" title="hold start zone: lotus" />
                 )}
@@ -2207,6 +2270,7 @@ const PondSceneContent = ({
                 onReplay={() => {
                   setShowSceneCompletion(false);
                   pondCompletionSavedRef.current = false;
+                  resetPondLocalState();
                   resetScene();
                 }}
                 onContinue={() => {
