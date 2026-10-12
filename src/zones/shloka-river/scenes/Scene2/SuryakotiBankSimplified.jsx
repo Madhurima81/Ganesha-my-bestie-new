@@ -275,6 +275,24 @@ const SuryakotiBankContent = ({
     }
   }, []);
 
+  // LEAVING the scene (zone badge / back / unmount): stop the line AND detach its callbacks first.
+  // A cancelled utterance fires onerror, whose handler runs onEnded and carries the voice chain on to the
+  // next line - which then spoke over Zone Welcome. (stopWebSpeech above is still used before speaking a
+  // new line, where an interrupted line's callback firing is expected.)
+  const abortWebSpeech = useCallback(() => {
+    const w = webSpeechRef.current;
+    webSpeechRef.current = null;
+    if (w?.utterance) {
+      w.utterance.onend = null;
+      w.utterance.onerror = null;
+    }
+    try {
+      speechSynthRef.current?.cancel();
+    } catch {
+      // no-op
+    }
+  }, []);
+
   const speakWebSpeech = useCallback((text, onEnded, onStart, cue) => {
     if (!text) {
       onEnded?.();
@@ -400,6 +418,15 @@ const SuryakotiBankContent = ({
     stopWebSpeech();
   }, [clearActiveVoice, stopVoice, stopWebSpeech]);
 
+  // Leaving the scene (zone badge): also detach the in-flight line's callbacks so its chain cannot continue
+  // over Zone Welcome. NOT used for stopVoice handed to the games (a game taking over must still let the
+  // scene's interrupted line finish its step).
+  const abortAllVoice = useCallback(() => {
+    clearActiveVoice();
+    stopVoice();
+    abortWebSpeech();
+  }, [clearActiveVoice, stopVoice, abortWebSpeech]);
+
   // Beat = which game step we're on. Set during render (not in an effect) so a
   // clip started by a child effect this render is tagged with the current beat.
   sidebarPause.setBeat(String(sceneState?.phase));
@@ -421,7 +448,7 @@ const SuryakotiBankContent = ({
   const { countdownValue } = useResumeCountdown(RESUME_DELAY_MS / 1000);
 
   useEffect(() => () => clearAllTimeouts(), [clearAllTimeouts]);
-  useEffect(() => () => stopWebSpeech(), [stopWebSpeech]);
+  useEffect(() => () => abortWebSpeech(), [abortWebSpeech]);
 
   const getSidebarTarget = useCallback((symbolId) => {
     const el = getCollectionTarget(symbolId);
@@ -788,7 +815,7 @@ const SuryakotiBankContent = ({
       <MessageManager messages={[]} sceneState={sceneState} sceneActions={sceneActions}>
         <div className="suryakoti-simplified-container">
           {!(showSparkle === 'final-fireworks' || showMandala) && (
-            <ZoneBadgeButton variant="gameplay" zoneId="shloka-river" onBack={() => { stopAllVoice(); onNavigate?.('zone-welcome'); }} />
+            <ZoneBadgeButton variant="gameplay" zoneId="shloka-river" onBack={() => { abortAllVoice(); onNavigate?.('zone-welcome'); }} />
           )}
           {/* [per-scene mute removed 2026-10-09] <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={handleAudioToggle} /> */}
           <VOReplayButton variant="gameplay" onReplay={replayCurrentVoice} disabled={!isAudioOn} />

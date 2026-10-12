@@ -79,6 +79,12 @@ bug costs more than an hour. (Started 2026-10-12 from the Continue/resume work.)
 - Checkpoint commits that mix work from different sessions can't be split or bisected afterwards.
 - Prefer one commit per scene or per fix, made after the checklist passes.
 
+## 11b. Voice keeps going after leaving the scene (spills onto Zone Welcome)
+- **Symptom:** tap the zone badge during a line; the next line(s) of that scene speak over Zone Welcome.
+- **Cause:** `speechSynthesis.cancel()` makes the browser fire `onerror` on the cancelled utterance; if that handler runs `onEnded`, the scene's voice chain continues to its next line.
+- **Fix:** when LEAVING (badge / back / unmount), detach `onend/onerror` and clear the tracked utterance BEFORE cancelling (`abortWebSpeech`). Keep the plain cancel for "a new line takes over", where the interrupted line's callback is expected to fire.
+- **Seen in:** Suryakoti (Samaprabha) and Sarvakaryeshu wrappers (2026-10-12).
+
 ## 12. Tooling gotchas (Windows dev machine)
 - **Two builds at once** (two sessions running `vite build`) clobber `dist/` — you get
   `ENOENT … dist/images/…`. Run one build at a time.
