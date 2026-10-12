@@ -785,16 +785,24 @@ export default function SamaprabhaGame({
     const t = window.setTimeout(() => {
       const last = seedClues - 1;
       if (!initialClueVoDone) pendingRevealIndexRef.current = last;
+      // One generic resume line (not clue-specific); the hint ladder is held until it ends, then starts fresh.
+      const playResume = () => {
+        setClueVoComplete(false);
+        const done = () => setClueVoComplete(true);
+        playSceneLine?.('scene11_sama_resume', done, { replayOnReturn: false });
+        safeAfter(6000, done); // safety net: muted / no speech engine
+      };
       if (seedClues >= CLUE_META.length) {
         lastSyllableDoneRef.current = true;
         safeAfter(750, () => setAnimalState('walking'));
         safeAfter(2500, () => setPhase('done'));
         playRevealForIndex(last, startCompletionVo);
-      } else if (seedClues === 1 && initialClueVoDone) {
-        // Clue 1 line + "find another" already finished: the child still needs the next-step prompt.
-        playSceneLine?.('scene11_sama_find_another', undefined, { replayOnReturn: false });
+      } else if (!initialClueVoDone) {
+        // Cut off: replay the clue's line first (clue 1's includes "find another", which is the prompt itself),
+        // then the resume line for clue 2-3.
+        playRevealForIndex(last, seedClues >= 2 ? playResume : undefined);
       } else {
-        playRevealForIndex(last);
+        playResume();
       }
     }, 500);
     return () => window.clearTimeout(t);

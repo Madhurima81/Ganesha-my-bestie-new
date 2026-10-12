@@ -362,6 +362,7 @@ const SuryakotiBankContent = ({
       scene11_sama_intro: 'Deer sees a strange shadow. Press and hold to look closely.',
       scene11_sama_hint: 'Press and hold on the shadow.',
       scene11_sama_find_another: 'Press and hold another part of the shadow.',
+      scene11_sama_resume: 'Keep pressing and holding to look closely.',
       scene11_sama_hint_find: 'Look for another part of the shadow.',
       scene11_sama_hint_keep: 'Keep holding.',
       scene11_sama_reveal_branch: 'That part is just a branch.',

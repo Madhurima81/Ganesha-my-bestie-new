@@ -91,6 +91,10 @@ export const VOICE_SCRIPTS = {
       scene10_maha_next_log: {
         text: "Drag the next log."
       },
+      // Resume-only (Continue mid-raft): one generic line, then a fresh hint cycle. Not beat-specific.
+      scene10_maha_resume: {
+        text: "Keep placing the logs on the raft."
+      },
 
 
       // ── Shared instructions — uncomment to activate when VO is ready ───────
@@ -146,6 +150,10 @@ export const VOICE_SCRIPTS = {
       },
       scene11_sama_find_another: {
         text: "Press and hold another part of the shadow."
+      },
+      // Resume-only (Continue at clue 2-4): one generic line, then a fresh hint cycle.
+      scene11_sama_resume: {
+        text: "Keep pressing and holding to look closely."
       },
       scene11_sama_hint_find: {
         text: "Look for another part of the shadow."
@@ -364,6 +372,10 @@ export const VOICE_SCRIPTS = {
       },
       finaleChooseFirst: {
         text: "Now, choose the first symbol boat in the Shloka."
+      },
+      // Resume-only (Continue after 1-7 boats): one generic line, then a fresh hint cycle.
+      finaleResume: {
+        text: "Keep putting the word boats in the right order."
       },
       finaleChooseNext: {
         text: "Now, choose the next one."

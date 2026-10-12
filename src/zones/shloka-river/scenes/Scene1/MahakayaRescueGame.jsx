@@ -254,6 +254,8 @@ export default function MahakayaRescueGame({
   const debugPanelDragRef = useRef(null);
 
   const hintStageKey = `drag-${activeLog}`;
+  // True while the Continue resume line plays: the hint cycle is held, then starts fresh when it ends.
+  const [resumeVoPlaying, setResumeVoPlaying] = useState(false);
   // Only log 1 gets the immediate teaching gesture (one short drag demo, no
   // VO) — rounds 2-4 reuse the mechanic the child already learned. The hint
   // ladder itself restarts fresh for every log because it's keyed on
@@ -268,7 +270,7 @@ export default function MahakayaRescueGame({
   // next log.", then at ~25s the exact spot glows quietly and stays (level3Delay is out of reach).
   const isLearningLog = activeLog === 0;
   const { hintLevel, markAttempt, markLevel2VoiceStarted, markLevel2VoiceEnded } = useRepeatedHintCycle({
-    enabled: isActive && !isPaused && phase === 'play' && !debugMode && !dragging,
+    enabled: isActive && !isPaused && phase === 'play' && !debugMode && !dragging && !resumeVoPlaying,
     stageKey: hintStageKey,
     initialDelay: isLearningLog ? 10000 : 12000,
     pulseCountBeforeEscalation: isLearningLog ? 3 : 2,
@@ -399,9 +401,11 @@ export default function MahakayaRescueGame({
     // The hand is cued to the action word ("Drag") of the line, not to a guessed delay.
     const resumedLogs = initialLogsRef.current;
     if (resumedLogs > 0) {
-      // Continue mid-raft: never repeat the full intro. After 1 log, say the line that log would have
-      // triggered ("Keep adding logs to the raft."); after 2-3, "Drag the next log.".
-      playSceneLine?.(resumedLogs === 1 ? 'scene10_maha_keep_adding' : 'scene10_maha_next_log');
+      // Continue mid-raft: never repeat the full intro. One generic resume line (not log-specific); the hint
+      // ladder is held until it ends, then starts fresh.
+      setResumeVoPlaying(true);
+      playSceneLine?.('scene10_maha_resume', () => setResumeVoPlaying(false), { replayOnReturn: false });
+      after(6000, () => setResumeVoPlaying(false)); // safety net: muted / no speech engine
     } else {
       playSceneLine?.('scene10_maha_intro', undefined, { cue: getLineCue('scene10_maha_intro', () => setIntroVoStarted(true)) });
     }

@@ -692,11 +692,16 @@ const ShlokaRiverFinaleContent = ({
     if (armedOnMountRef.current) return undefined;
     if (phase !== PHASES.ARRANGE) { armedOnMountRef.current = true; return undefined; }
     if (resumeWords > 0) {
-      armedOnMountRef.current = true;
-      // Resuming after finished words: no target-word audio (it would give the answer away).
+      // Resuming after finished words: no target-word audio (it would give the answer away). One generic resume
+      // line (not boat-specific); the board is playable at once, and the hint ladder starts fresh after the line
+      // ends. ~500ms wait: speech at the very first instant after mount is silent on Continue.
       setBuildReady(true);
-      setHintReadySlot(activeSlotIndex);
-      return undefined;
+      const t = window.setTimeout(() => {
+        armedOnMountRef.current = true;
+        if (playVoice) playVoice('finaleResume', () => setHintReadySlot(activeSlotIndex), { replayOnReturn: false });
+        else setHintReadySlot(activeSlotIndex);
+      }, 500);
+      return () => window.clearTimeout(t);
     }
     if (sceneState.introDone !== true) {
       // Left during the opening show (arrangeStart line / symbols / "choose first"): that beat restarts cleanly.
