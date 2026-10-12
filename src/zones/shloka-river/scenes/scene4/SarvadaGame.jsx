@@ -98,9 +98,10 @@ export default function SarvadaGame({
   const { playVoice: playSceneLine, stopVoice: stopSceneVoice, playWord, playSyllable, setBeat } = voiceGuidance;
   useWarmSanskritAudio('sarvada', AUDIO); // first tap plays instantly
   const [seedTimes] = useState(() => (
-    isActive ? Math.max(0, Math.min(PHASES_CONFIG.length - 1, Number(initialTimes) || 0)) : 0
+    // PHASES_CONFIG.length = left after the last time of day: resume into the boat + word + success line.
+    isActive ? Math.max(0, Math.min(PHASES_CONFIG.length, Number(initialTimes) || 0)) : 0
   ));
-  const [phaseIndex, setPhaseIndex] = useState(seedTimes);
+  const [phaseIndex, setPhaseIndex] = useState(Math.min(seedTimes, PHASES_CONFIG.length - 1));
   const [showMemory, setShowMemory] = useState(false);
   const [litCount, setLitCount] = useState(seedTimes);
   const [gamePhase, setGamePhase] = useState('intro');
@@ -286,7 +287,8 @@ export default function SarvadaGame({
       setGamePhase('playing');
       run.safeAfter(500, () => {
         runStartedRef.current = true;
-        runApiRef.current.startPhase(seedTimes);
+        if (seedTimes >= PHASES_CONFIG.length) runApiRef.current.runFinal();
+        else runApiRef.current.startPhase(seedTimes);
       });
       return () => { clearTimers(); runStartedRef.current = false; };
     }
@@ -337,6 +339,62 @@ export default function SarvadaGame({
   }, [findMode, isActive, onReplayKeyChange, phaseIndex, showMemory]);
 
 
+  // Final beat (also when Continue resumes after the last time of day): Ganesha joins the boat, then the full
+  // word "sarvada" -> closing line -> hand off.
+  const runFinal = useCallback(() => {
+    setShowMemory(false);
+    // Final beat: reveal Ganesha on the boat, then hand off to the shared
+    // Sarvada completion reveal. The mini-game does not show its own word
+    // or all-three-symbol summary.
+    safeAfter(1000, () => {
+      setBeat?.('final');
+      setGamePhase('done');
+      safeAfter(1300, () => {
+        setBoatGaneshaVisible(true);
+        setBoatGaneshaJoining(true);
+      });
+      safeAfter(2300, () => {
+        setBoatGaneshaJoining(false);
+        setBoatGaneshaCelebrating(true);
+      });
+      safeAfter(3200, () => setBoatGaneshaCelebrating(false));
+      safeAfter(3100, () => {
+        if (doneCalledRef.current) return;
+        doneCalledRef.current = true;
+
+        const finish = () => {
+          if (completeCalledRef.current) return;
+          completeCalledRef.current = true;
+          onGameComplete?.();
+          onPhaseComplete?.();
+        };
+
+        // Full word "sarvada" → closing line (meaning is embedded in the
+        // line itself), then hand off. Fallback timer covers muted
+        // audio / missing callbacks.
+        const playFinalWord = () => {
+          playWord?.('sarvada', () => {
+            playSceneLine?.('scene14_success', finish);
+          });
+        };
+        if (lastSyllableDoneRef.current) playFinalWord();
+        else {
+          const waitForSyllable = () => {
+            if (lastSyllableDoneRef.current) {
+              playFinalWord();
+              return;
+            }
+            safeAfter(120, waitForSyllable);
+          };
+          waitForSyllable();
+        }
+        safeAfter(9000, finish);
+      });
+    });
+  }, [onGameComplete, onPhaseComplete, playSceneLine, playWord, safeAfter, setBeat]);
+
+  runApiRef.current.runFinal = runFinal;
+
   const triggerFound = useCallback((clientX, clientY) => {
     if (!findMode || symbolFound || isPaused) return;
 
@@ -363,6 +421,9 @@ export default function SarvadaGame({
     setPopOut(true);
     markInteraction();
     window.setTimeout(() => onMicroWin?.(), 0);
+    // Checkpoint at the find (not after the long reveal), so leaving mid-reveal resumes at the NEXT time of day;
+    // after the last one it resumes into the ending.
+    onBeatComplete?.(phaseIndex + 1);
 
     // The syllable lights (and its audio fires via SyllableHighlight's
     // onSyllableLit) the moment the flying symbol reaches the tile — see
@@ -379,57 +440,8 @@ export default function SarvadaGame({
       const nextIndex = phaseIndex + 1;
 
       if (nextIndex >= PHASES_CONFIG.length) {
-        setShowMemory(false);
-        // Final beat: reveal Ganesha on the boat, then hand off to the shared
-        // Sarvada completion reveal. The mini-game does not show its own word
-        // or all-three-symbol summary.
-        safeAfter(1000, () => {
-          setBeat?.('final');
-          setGamePhase('done');
-          safeAfter(1300, () => {
-            setBoatGaneshaVisible(true);
-            setBoatGaneshaJoining(true);
-          });
-          safeAfter(2300, () => {
-            setBoatGaneshaJoining(false);
-            setBoatGaneshaCelebrating(true);
-          });
-          safeAfter(3200, () => setBoatGaneshaCelebrating(false));
-          safeAfter(3100, () => {
-            if (doneCalledRef.current) return;
-            doneCalledRef.current = true;
-
-            const finish = () => {
-              if (completeCalledRef.current) return;
-              completeCalledRef.current = true;
-              onGameComplete?.();
-              onPhaseComplete?.();
-            };
-
-            // Full word "sarvada" → closing line (meaning is embedded in the
-            // line itself), then hand off. Fallback timer covers muted
-            // audio / missing callbacks.
-            const playFinalWord = () => {
-              playWord?.('sarvada', () => {
-                playSceneLine?.('scene14_success', finish);
-              });
-            };
-            if (lastSyllableDoneRef.current) playFinalWord();
-            else {
-              const waitForSyllable = () => {
-                if (lastSyllableDoneRef.current) {
-                  playFinalWord();
-                  return;
-                }
-                safeAfter(120, waitForSyllable);
-              };
-              waitForSyllable();
-            }
-            safeAfter(9000, finish);
-          });
-        });
+        runFinal();
       } else {
-        onBeatComplete?.(nextIndex);
         safeAfter(600, () => {
           setPhaseIndex(nextIndex);
           setGamePhase('playing');
@@ -452,6 +464,7 @@ export default function SarvadaGame({
     setBeat,
     startPhase,
     onBeatComplete,
+    runFinal,
   ]);
 
   const handleImageTap = useCallback(

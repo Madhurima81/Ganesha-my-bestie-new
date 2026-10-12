@@ -159,15 +159,16 @@ export default function SarvakaryeshuGame({
   const { playVoice: playSceneLine, playSyllable, playWord, stopVoice: stopSceneVoice } = voiceGuidance;
   useWarmSanskritAudio('sarvakaryeshu', AUDIO); // first tap plays instantly
   const [seedCards] = useState(() => (
-    isActive ? Math.max(0, Math.min(SITUATIONS.length - 1, Number(initialCards) || 0)) : 0
+    // SITUATIONS.length = left after the last card: resume straight into the word + success line.
+    isActive ? Math.max(0, Math.min(SITUATIONS.length, Number(initialCards) || 0)) : 0
   ));
-  const [cardIndex, setCardIndex] = useState(seedCards);
+  const [cardIndex, setCardIndex] = useState(Math.min(seedCards, SITUATIONS.length - 1));
   const [picked, setPicked] = useState(null);
   const [isCorrect, setIsCorrect] = useState(null);
-  const [showAfter, setShowAfter] = useState(false);
+  const [showAfter, setShowAfter] = useState(seedCards >= SITUATIONS.length);
   const [canPick, setCanPick] = useState(false);
   const [litCount, setLitCount] = useState(seedCards);
-  const [phase, setPhase] = useState('play');
+  const [phase, setPhase] = useState(seedCards >= SITUATIONS.length ? 'done' : 'play');
   const [guidanceMessage, setGuidanceMessage] = useState('');
   const [guidedPowerId, setGuidedPowerId] = useState(null);
   const [flyingPower, setFlyingPower] = useState(null);
@@ -307,6 +308,40 @@ export default function SarvakaryeshuGame({
 
   useEffect(() => () => clearTimers(), [clearTimers]);
 
+  // Ending: full word "sarvakaryeshu" -> the completion line -> hand off. Also used when Continue resumes after the last card.
+  const runEnding = useCallback(() => {
+    if (doneCalledRef.current) return;
+    doneCalledRef.current = true;
+    setPhase('done');
+    // Ending VO: full word "sarvakaryeshu" → the completion line.
+    // Previously the game just ended silently after the last card's VO.
+    stopSceneVoice?.();
+    let finished = false;
+    const finish = () => {
+      if (finished) return;
+      finished = true;
+      onGameComplete?.();
+      onPhaseComplete?.();
+    };
+    // Pausable, so the sidebar can't let it complete the game behind the panel.
+    const voFallback = pausableAfter(9000, finish);
+    safeAfter(500, () => {
+      playWord?.('sarvakaryeshu', () => {
+        playSceneLine?.('scene13_success', () => {
+          cancelPausable(voFallback);
+          finish();
+        }, { stripLeadingText: 'Sarvakaryeshu' });
+      });
+    });
+  }, [cancelPausable, onGameComplete, onPhaseComplete, pausableAfter, playSceneLine, playWord, safeAfter, stopSceneVoice]);
+
+  // Continue after the last card: say the word + success line, then complete.
+  useEffect(() => {
+    if (!isActive || seedCards < SITUATIONS.length) return undefined;
+    const t = window.setTimeout(runEnding, 500);
+    return () => window.clearTimeout(t);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   const handlePick = useCallback((powerId) => {
     if (isPaused || phaseRef.current !== 'play' || resolvingRef.current || !canPick) return;
 
@@ -392,6 +427,9 @@ export default function SarvakaryeshuGame({
     });
 
     const nextIndex = cardIndex + 1;
+    // Checkpoint at the correct answer (not after the long reveal/voice), so leaving mid-reveal resumes at the NEXT card;
+    // after the last card it resumes into the ending (word + success line).
+    onBeatComplete?.(nextIndex);
 
     let advanceCalled = false;
     const advance = () => {
@@ -400,33 +438,10 @@ export default function SarvakaryeshuGame({
 
       if (nextIndex >= SITUATIONS.length) {
         setLitCount(SITUATIONS.length);
-        if (doneCalledRef.current) return;
-        doneCalledRef.current = true;
-        setPhase('done');
-        // Ending VO: full word "sarvakaryeshu" → the completion line.
-        // Previously the game just ended silently after the last card's VO.
-        stopSceneVoice?.();
-        let finished = false;
-        const finish = () => {
-          if (finished) return;
-          finished = true;
-          onGameComplete?.();
-          onPhaseComplete?.();
-        };
-        // Pausable, so the sidebar can't let it complete the game behind the panel.
-        const voFallback = pausableAfter(9000, finish);
-        safeAfter(500, () => {
-          playWord?.('sarvakaryeshu', () => {
-            playSceneLine?.('scene13_success', () => {
-              cancelPausable(voFallback);
-              finish();
-            }, { stripLeadingText: 'Sarvakaryeshu' });
-          });
-        });
+        runEnding();
         return;
       }
 
-      onBeatComplete?.(nextIndex);
       setCardIndex(nextIndex);
       setPicked(null);
       setIsCorrect(null);
@@ -465,7 +480,7 @@ export default function SarvakaryeshuGame({
       }
       safeAfter(9000, advance);
     });
-  }, [canPick, cardIndex, hintLevel, isPaused, markInteraction, markLevel2VoiceEnded, markWrongAttempt, onBeatComplete, onGameComplete, onMicroWin, onPhaseComplete, playSceneLine, playSyllable, playWord, safeAfter, pausableAfter, cancelPausable, stopSceneVoice]);
+  }, [runEnding, canPick, cardIndex, hintLevel, isPaused, markInteraction, markLevel2VoiceEnded, markWrongAttempt, onBeatComplete, onGameComplete, onMicroWin, onPhaseComplete, playSceneLine, playSyllable, playWord, safeAfter, pausableAfter, cancelPausable, stopSceneVoice]);
 
   if (!isActive) return null;
 
@@ -552,9 +567,6 @@ export default function SarvakaryeshuGame({
               <p className="sarva-feedback is-visible is-gentle">{guidanceMessage}</p>
             )}
 
-            {isCorrect && (
-              <p className="sarva-feedback is-visible">{situation.feedback}</p>
-            )}
           </div>
         )}
 
