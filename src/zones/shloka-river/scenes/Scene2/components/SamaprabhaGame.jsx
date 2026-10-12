@@ -231,6 +231,13 @@ export default function SamaprabhaGame({
   onPhaseComplete = () => {},
   onGameComplete = () => {},
   onFirstInteraction = () => {},
+  // Resume (Continue): clues already revealed (0-4) and whether that clue's line (+ the follow-up on clue 1) finished.
+  // Applied only when the game mounts active. A half-filled hold is never saved: it restarts empty.
+  initialClues = 0,
+  initialClueVoDone = true,
+  // Fired with the revealed-clue count at each hold, and with that count again once the clue's line has finished.
+  onBeatComplete = () => {},
+  onClueVoDone = () => {},
   voiceGuidance = {},
   isPaused = false,
   // Sidebar actually open (isPaused also covers the short replay hold after it closes): drives the
@@ -250,16 +257,19 @@ export default function SamaprabhaGame({
   const [debugPhase, setDebugPhase] = useState(0);
   const [debugPanelPosition, setDebugPanelPosition] = useState({ x: 16, y: 16 });
 
-  const [lit, setLit] = useState(0);
-  const [phase, setPhase] = useState('play');
-  const [animalState, setAnimalState] = useState('worried');
+  const [seedClues] = useState(() => (
+    isActive ? Math.max(0, Math.min(CLUE_META.length, Number(initialClues) || 0)) : 0
+  ));
+  const [lit, setLit] = useState(seedClues);
+  const [phase, setPhase] = useState(seedClues >= CLUE_META.length ? 'resolved' : 'play');
+  const [animalState, setAnimalState] = useState(seedClues >= CLUE_META.length ? 'relieved' : seedClues > 0 ? 'curious' : 'worried');
   const [beamPos, setBeamPos] = useState(START_BEAM);
   const [isHoldingClue, setIsHoldingClue] = useState(false);
   const [holdProgress, setHoldProgress] = useState(0);
   // Index of the clue the child has started holding (-1 = none); drives the "keep holding" state.
   const [heldClue, setHeldClue] = useState(-1);
   // Set once the child has meaningfully held a shadow (clue 1) — from then on, never show the hand.
-  const hasLearnedHoldRef = useRef(false);
+  const hasLearnedHoldRef = useRef(seedClues > 0);
   const [revealPulse, setRevealPulse] = useState(null);
   const [clueVoComplete, setClueVoComplete] = useState(true);
   const stageRef = useRef(null);
@@ -272,13 +282,13 @@ export default function SamaprabhaGame({
   const holdStartedAtRef = useRef(null);
   const holdProgressRef = useRef(0);
   const holdingClueIndexRef = useRef(null);
-  const litRef = useRef(0);
+  const litRef = useRef(seedClues);
   const timersRef = useRef([]);
   const isPausedRef = useRef(isPaused);
   // Freezes with the sidebar and resumes with the remaining time (see hook).
   const { after: pausableAfter, cancel: cancelPausable, clear: clearPausable } = usePausableTimers(isPaused);
   const firstInteractionSentRef = useRef(false);
-  const doneCalledRef = useRef(false);
+  const doneCalledRef = useRef(seedClues >= CLUE_META.length);
   const doneAnnouncedRef = useRef(false);
   const lastSyllableDoneRef = useRef(false);
   const completionVoStartedRef = useRef(false);
@@ -492,6 +502,8 @@ export default function SamaprabhaGame({
 
     pendingRevealIndexRef.current = currentIndex;
     setClueVoComplete(false);
+    // Checkpoint at the hold (not after the syllable + line): leaving now resumes at the next clue and replays this clue's line.
+    onBeatComplete?.(next, false);
 
     if (next === CLUE_META.length && !doneCalledRef.current) {
       doneCalledRef.current = true;
@@ -502,7 +514,7 @@ export default function SamaprabhaGame({
       safeAfter(1250, () => setAnimalState('walking'));
       safeAfter(3000, () => setPhase('done'));
     }
-  }, [markInteraction, onMicroWin, phase, safeAfter]);
+  }, [markInteraction, onBeatComplete, onMicroWin, phase, safeAfter]);
 
   const startHoldAtPoint = useCallback((point, pointerId = null) => {
     if (phase !== 'play' || isPausedRef.current) {
@@ -694,14 +706,17 @@ export default function SamaprabhaGame({
       finished = true;
       setClueVoComplete(true);
       if (index === 0) {
-        safeAfter(300, () => playSceneLine('scene11_sama_find_another', undefined, { replayOnReturn: false }));
+        // Clue 1's "line" includes the follow-up: it counts as finished only once that has played.
+        safeAfter(300, () => playSceneLine('scene11_sama_find_another', () => onClueVoDone?.(1), { replayOnReturn: false }));
+      } else {
+        onClueVoDone?.(index + 1);
       }
       afterReveal?.();
     };
 
     playSceneLine(revealVo, finishRevealVo, { replayOnReturn: false });
     safeAfter(4000, finishRevealVo);
-  }, [playSceneLine, safeAfter]);
+  }, [onClueVoDone, playSceneLine, safeAfter]);
 
   const startCompletionVo = useCallback(() => {
     if (
@@ -760,6 +775,27 @@ export default function SamaprabhaGame({
 
     startCompletionVo();
   }, [pausableAfter, phase, startCompletionVo]);
+
+  // Continue after N clues: clues/syllables are already lit; replay the last clue's line ONLY if it was cut off
+  // (clue 1's line includes "find another"); after the last clue, run the normal resolution + word + success line.
+  useEffect(() => {
+    if (!isActive || seedClues === 0) return undefined;
+    // ~500ms wait: speech at the very first instant after mount is silent on Continue. Plain timer + cleanup so
+    // StrictMode's second run still schedules it.
+    const t = window.setTimeout(() => {
+      const last = seedClues - 1;
+      if (!initialClueVoDone) pendingRevealIndexRef.current = last;
+      if (seedClues >= CLUE_META.length) {
+        lastSyllableDoneRef.current = true;
+        safeAfter(750, () => setAnimalState('walking'));
+        safeAfter(2500, () => setPhase('done'));
+        playRevealForIndex(last, startCompletionVo);
+      } else {
+        playRevealForIndex(last);
+      }
+    }, 500);
+    return () => window.clearTimeout(t);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => () => {
     clearTimers();

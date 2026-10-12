@@ -170,6 +170,7 @@ const SuryakotiBankContent = ({
   const webSpeechRef = useRef(null); // in-flight scene-owned utterance, for mute-mid-line
   const audioEnabledRef = useRef(false);
   const suryaIntroPlayedRef = useRef(false);
+  const samaClueCountRef = useRef(0);
   const samaIntroPlayedRef = useRef(false);
   const suryaInteractionStartedRef = useRef(false);
   const samaInteractionStartedRef = useRef(false);
@@ -538,6 +539,8 @@ const SuryakotiBankContent = ({
         sceneActions.updateState({
           unlockedApps: { ...appsNow, suryakoti: true },
           phase: PHASES.SAMAPRABHA_GAME,
+          cluesRevealed: 0,
+          cluesVoDone: true,
         });
       }, 950);
       return;
@@ -623,6 +626,14 @@ const SuryakotiBankContent = ({
   useEffect(() => {
     if (sceneState?.phase === PHASES.SAMAPRABHA_GAME) {
       setCurrentPhase('samaprabhaGame');
+      // Resumed after revealed clues: skip the intro line; the game replays the last clue's line only if it was cut off.
+      if ((sceneState.cluesRevealed || 0) > 0 && !samaIntroPlayedRef.current) {
+        samaIntroPlayedRef.current = true;
+        setSamaIntroComplete(true);
+        setSamaIntroVoStarted(true);
+        startIdleTimer();
+        return undefined;
+      }
       if (isAudioOn && !samaIntroPlayedRef.current) {
         setSamaIntroComplete(true);
         setSamaIntroVoStarted(false);
@@ -818,6 +829,16 @@ const SuryakotiBankContent = ({
                   introVoStarted={samaIntroVoStarted}
                   hideElements={!!revealConfig}
                   onMicroWin={handleMicroWin}
+                  initialClues={sceneState.cluesRevealed || 0}
+                  initialClueVoDone={sceneState.cluesVoDone !== false}
+                  onBeatComplete={(n, voDone) => {
+                    samaClueCountRef.current = n;
+                    sceneActions.checkpoint({ cluesRevealed: n, cluesVoDone: voDone });
+                  }}
+                  onClueVoDone={(n) => {
+                    // Ignore a late line from an earlier clue once the child has already revealed the next one.
+                    if ((samaClueCountRef.current || sceneState.cluesRevealed || 0) === n) sceneActions.checkpoint({ cluesVoDone: true });
+                  }}
                   onPhaseComplete={() => handlePhaseComplete('samaprabha')}
                   onGameComplete={() => {}}
                   onFirstInteraction={() => {
@@ -988,6 +1009,8 @@ const SuryakotiBankContent = ({
                   sceneActions.updateState({
                     welcomeShown: true,
                     phase: PHASES.SURYAKOTI_GAME,
+                    cluesRevealed: 0,
+                    cluesVoDone: true,
                   });
                 }}
                 characterImg={ganeshaHeadphones}
