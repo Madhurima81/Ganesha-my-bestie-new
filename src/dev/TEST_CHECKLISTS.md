@@ -2,6 +2,11 @@
 
 A floating, step-by-step test runner for the dev harness. Dev-only, not part of the live app.
 
+> **Update 2026-10-12:** the panel has two groups: **"Still to test - other scenes"** (one short list per Symbol Mountain / Shloka River
+> scene with only the not-yet-tested changes, `src/dev/stillToTestChecklists.js`) and the 4 **About Me Hut** Continue checklists.
+> The finished checklists and the sound checks, with results and bugs found, are in **"Archive 2026-10-12"** at the bottom.
+> Open the panel with `http://localhost:5173/?unlockall=1`.
+>
 > **Update 2026-10-07:** the panel now lists only the 13 per-scene **"Continue after leaving to map"** checklists
 > (`src/dev/continueChecklists.js`). Run them in the **main app**, because Continue lives on Zone Welcome and the
 > game-test harness can't reach it: `npm run dev`, then open `http://localhost:5173/?checklist=1` (dev builds only;
@@ -657,3 +662,468 @@ Key: `sidebar-general`
    - Should happen: Hand finishes its pass.
 4. [ ] Sidebar open/close during a hand.
    - Should happen: Hides while paused; replays on return.
+
+---
+
+## Archive 2026-10-12 - finished Continue + Sound checklists
+
+Everything below was **removed from the live panel on 2026-10-12** because it is done. The panel now lists the "Still to test" lists and the 4 About Me Hut Continue checklists. The same data also exists as code in `src/dev/archive/` (restore a checklist by
+copying its entry back into `src/dev/continueChecklists.js`, or the sound ones into a new `soundChecklists.js` and
+importing it in `src/dev/testChecklists.js`). Git backup: branch `backup/checklists-before-archive-2026-10-12`.
+
+Honest note: Madhurima signed these off in chat. Only the Modak and Pond runs were exported with row-level results;
+for the rest only the sign-off and the bugs found are recorded. The shared "common" rows at the end of every checklist
+(tab switch, F5 refresh, voice off, slow first load) were never recorded as run in any scene.
+
+### Results
+
+| Scene | Checklist key | Status | Notes |
+|---|---|---|---|
+| Modak | `continue-modak` | PASS (signed off) | Exported run 2026-10-10: 14 pass, 2 fail (rows 9 and 12: Garland intro / carry voice silent on Continue). Fixed (500 ms intro wait + cancel-then-speak wait in GarlandGame3), retest PASSED. Later changes (save at solve, success-line rule, Flower Journey replay lines) tested and signed off by Madhurima 2026-10-12. |
+| Pond | `continue-pond` | PASS (signed off) | Exported run 2026-10-08: 7 pass, 0 fail, 4 not run, plus 3 notes (reeds success line skipped on Continue; "hold" line before the lotus card; hand cues misplaced). All three fixed. Signed off 2026-10-12. |
+| Eyes / Ears / Tusk (nest) | `continue-tusk` | PASS (signed off) | Eyes reveal never played after the last target and Continue showed a stuck complete state: fixed. Ears Cow-round Continue frozen: fixed. Nest game always restarted at item 1: now resumes. Signed off ("scene 3 done") 2026-10-11/12. |
+| Sacred Assembly | `continue-final` | PASS (signed off) | Placed symbol re-presented / no card after Continue / third card repeated the second: all fixed and retested OK 2026-10-11. |
+| Vakratunda (+ Mahakaya) | `continue-vakratunda` | Signed off | Signed off by Madhurima 2026-10-12. Row-level results were not captured in this repo. Bugs found: Mahakaya replayed the full intro on Continue. |
+| Suryakoti (+ Samaprabha) | `continue-suryakoti` | Signed off | Signed off 2026-10-12. Bugs found: scene froze after the success voice (hop timers cancelled); Samaprabha restarted at clue 1. |
+| Nirvighnam (+ Kurumedeva) | `continue-nirvighnam` | Signed off | Signed off 2026-10-12. Bugs found: friend glow broke (global CSS clash); resumed intro / plank line timing. |
+| Sarvakaryeshu (+ Sarvada) | `continue-sarvakaryeshu` | Signed off | Signed off 2026-10-12. Bugs found: voice spilled onto Zone Welcome after the badge; Sarvada mount effect cancelled by re-renders. |
+| Shloka River Finale | `continue-sr-finale` | Signed off | Signed off 2026-10-12. Row-level results not captured here. |
+| Sound check (13 checklists) | `sound-*` | Signed off | Tablet listening checks signed off by Madhurima 2026-10-12; row-level results not captured here. |
+
+### Bugs identified and fixed (Continue work, 2026-10-07 to 2026-10-12)
+
+General causes are explained in [`docs/KNOWN_PITFALLS.md`](../../docs/KNOWN_PITFALLS.md).
+
+**Symbol Mountain**
+- Modak: Flower Journey always restarted at the Bush on Continue; resume code reset the saved flower count to 0; Flower Journey intro silent on Continue (StrictMode flag + first-instant speech); Garland intro and carry voice silent; Garland carry step restarted the build.
+- Pond: reeds success line skipped on Continue; "hold" prompt played before the lotus card on Continue; gesture-demo hand misaligned after the layout change; layout lives only in React state (defaults in code must be updated by pasting the Layout JSON).
+- Eyes: reveal never played after the last target (completion timer cancelled by a checkpoint re-render); Continue with both targets found showed a stuck complete state and replayed the intro.
+- Ears: Cow-round Continue frozen and silent (StrictMode cancelled the scheduled round).
+- Nest game: Continue always restarted at the first item.
+- Sacred Assembly: just-placed symbol re-presented on Continue (stale `currentRound`); no next card after Continue (StrictMode); third card repeated the second (round counter not updated on resume).
+- Zone Welcome: a completed scene with a half-played session showed only Replay (now Continue + Replay).
+- OpeningModal (shared): opening voice silent on Play Again in dev (flag set before the timer).
+
+**Shloka River**
+- Suryakoti: scene froze after the success voice in normal play (hop timers cancelled by wrapper re-renders); duplicate reveal effect timer reset by every scene update.
+- Mahakaya: replayed the full intro on Continue with 1-3 logs placed.
+- Kurumedeva: friend glow broke (global CSS clash: Sarvakaryeshu's unused `stageHintGlow` keyframes hijacked Vakratunda's `.hint-glow`); plank instruction timing.
+- Samaprabha / Sarvakaryeshu: voice spilled onto Zone Welcome after tapping the zone badge (cancelled utterance fired its callback and continued the chain).
+- Samaprabha: restarted at clue 1 after 2 holds; Sarvada mount effect cancelled by re-renders; restored-card timers in the Vakratunda / Suryakoti / Nirvighnam / Sarvakaryeshu wrappers and the Finale were StrictMode-unsafe.
+
+**Rules decided along the way** (see DECISIONS.md): save a beat the moment it is solved; leave during the success line = replay it, after = skip to the next thing; a finished scene shows Play Again; fireworks/mandala are not leave points.
+
+### About Me Hut rows already verified earlier (still in the About Me checklists - skip them if you like)
+- 2026-10-08, headless Chrome at 740x360 with injected state: **Favourite Food** left right after a correct food answer resumes at the colour question with Modak collected; **Dreams** left at wish1-complete resumes at wish 2 with plates. Everything else in the About Me checklists is still to be tested.
+
+### Archived checklists - full steps
+
+#### Continue after leaving to map (9 scenes)
+
+#### `continue-modak` - Continue after leaving to map - Modak (Symbol Mountain 1)
+
+1. Game 1: while holding Mooshika, before the card. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Mooshika game restarts; the opening line replays; you can hold again.
+2. Mooshika card is showing. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: The Mooshika card comes back, then the Flower Journey starts at the Bush.
+3. Flower Journey, Bush: part-way through (before the bush opens). Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: The Bush beat restarts fresh: instruction line replays, 0 flowers in the basket.
+4. Bush done (2 flowers in the basket), Branch not finished. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Starts at the Branch beat: bush already open, 2 flowers in the basket, branch instruction plays. No Bush replay.
+5. Branch: mid-pull or mid-hold (2 flowers in the basket). Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Branch restarts fresh, not half-pulled: ring empty, no old hint, 2 flowers in the basket.
+6. Branch done (4 flowers in the basket), Marsh not finished. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Starts at the Marsh beat: branch already pulled, 4 flowers, marsh instruction plays. No Bush or Branch replay.
+7. Marsh: mid-crossing, Mooshika on a stepping stone (4 flowers in the basket). Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Marsh restarts from its first stone, not mid-drag; 4 flowers in the basket.
+8. Marsh done (6 flowers), belly beat playing, before the Belly card. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Starts at the belly beat (not Bush, Branch or Marsh); the Belly card then appears once only.
+9. Garland: after threading some flowers. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Garland restarts with all 6 flowers available and the instruction replays.
+10. Any Flower Journey Continue above: check for leftovers.
+   - Expect: No old voice line, no stale hint level, no half-filled hold ring, no leftover gesture hand, and no duplicate card.
+11. Belly card is showing. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: The Big Belly card comes back.
+12. Carrying the garland to Ganesha, mid-drag. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: The carry beat restarts cleanly.
+13. Modak card is showing. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: The Modak card comes back.
+14. Completion modal showing: leave with the zone badge, return to Zone Welcome.
+   - Expect: The Modak card says Play Again (Replay on phone), never Continue. Fireworks and mandala have no zone badge, so they are not a leave point.
+15. After the above, tap Play Again.
+   - Expect: Starts fresh at the opening modal and the first beat (Bush counts reset), not at a saved beat.
+16. Finish the scene, leave on the completion screen, return to Zone Welcome.
+   - Expect: The button says Replay (never Continue). Replay starts fresh with the opening modal.
+17. Mid-game, switch to another browser tab for about 10 seconds, then come back.
+   - Expect: 3-2-1 countdown, then the game picks up where it was. No double voice line, no restart from scratch.
+18. Mid-game, press the browser refresh (F5).
+   - Expect: Same result as Continue: the current beat restarts cleanly. Never a blank or frozen screen.
+19. Turn voice off, then repeat one Continue.
+   - Expect: Resumes silently and correctly. Replay is disabled while muted.
+20. Wait about 20 seconds on a Continue that looks blank (dev server first load only).
+   - Expect: The scene appears. If it is still blank after 30 seconds, mark Fail with a screenshot.
+
+#### `continue-pond` - Continue after leaving to map - Pond (Symbol Mountain 2)
+
+1. Rock: holding the rock part-way. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Rock is back in place; "Press and hold to move it" replays.
+2. Rock already moved; reeds not yet parted. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Rock stays moved; the reeds step is ready; its line replays.
+3. Trunk card is showing. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: The Trunk card comes back, then the lotus step.
+4. Lotus step: holding the lotus part-way. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Lotus is ready to hold again; water already reaches it.
+5. Lotus card is showing. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: The Lotus card comes back, then the completion modal.
+6. Check that the rock, reeds, lotus and turtle sit where they did before leaving.
+   - Expect: Same layout in both visits (no jump, no overlap).
+7. Finish the scene, leave on the completion screen, return to Zone Welcome.
+   - Expect: The button says Replay (never Continue). Replay starts fresh with the opening modal.
+8. Mid-game, switch to another browser tab for about 10 seconds, then come back.
+   - Expect: 3-2-1 countdown, then the game picks up where it was. No double voice line, no restart from scratch.
+9. Mid-game, press the browser refresh (F5).
+   - Expect: Same result as Continue: the current beat restarts cleanly. Never a blank or frozen screen.
+10. Turn voice off, then repeat one Continue.
+   - Expect: Resumes silently and correctly. Replay is disabled while muted.
+11. Wait about 20 seconds on a Continue that looks blank (dev server first load only).
+   - Expect: The scene appears. If it is still blank after 30 seconds, mark Fail with a screenshot.
+
+#### `continue-tusk` - Continue after leaving to map - Eyes, Ears and Tusk (Symbol Mountain 3)
+
+1. Eyes game: before finding anything, or mid-flight with a feather or mango just tapped. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Eyes game restarts with the full intro; nothing is marked found.
+2. Eyes game: one of the two (feather or mango) fully delivered, the other not found. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: The delivered one stays done (animal happy, object gone). The line says "Now find the ..." for the other; no long intro.
+3. Eyes card is showing. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: The Eyes card comes back, then the Ears game starts.
+4. Ears game: Elephant round part-way (before Elephant is solved). Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Ears restarts with the intro and the Elephant round from the beginning.
+5. Ears game: Elephant solved and revealed, Cow round not finished. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Starts at the Cow round: Elephant stays happy, no intro, Cow prompt plays, three sounds replay.
+6. Ears card is showing. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: The Ears card comes back, then the Tusk game.
+7. Tusk nest game: first item (twig) not dropped yet, or mid-drag. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Nest game restarts at the first beat (twig), with the instruction line.
+8. Tusk nest game: twig dropped (nest grown), grass not dropped yet. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Starts at the grass beat with the nest already at stage 1; no twig beat replay.
+9. Tusk nest game: three items dropped, feather beat mid-drag. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Starts at the feather beat fresh (not half-dragged), nest at stage 3.
+10. Tusk nest game: all four items dropped, baby bird settling. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Goes straight to the final settle beat; the bird is happy once, no item beats replay.
+11. Tusk card is showing. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: The Tusk card comes back.
+12. All three done, completion modal showing. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Completion modal comes back (not a blank scene). After finishing, Zone Welcome shows Replay.
+13. Finish the scene, leave on the completion screen, return to Zone Welcome.
+   - Expect: The button says Replay (never Continue). Replay starts fresh with the opening modal.
+14. Mid-game, switch to another browser tab for about 10 seconds, then come back.
+   - Expect: 3-2-1 countdown, then the game picks up where it was. No double voice line, no restart from scratch.
+15. Mid-game, press the browser refresh (F5).
+   - Expect: Same result as Continue: the current beat restarts cleanly. Never a blank or frozen screen.
+16. Turn voice off, then repeat one Continue.
+   - Expect: Resumes silently and correctly. Replay is disabled while muted.
+17. Wait about 20 seconds on a Continue that looks blank (dev server first load only).
+   - Expect: The scene appears. If it is still blank after 30 seconds, mark Fail with a screenshot.
+
+#### `continue-final` - Continue after leaving to map - Sacred Assembly (Symbol Mountain 4)
+
+1. Round 1 or 2: nothing or one symbol placed. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: The right card for that round appears; nothing placed is lost.
+2. Mid-game: 3 to 5 symbols placed. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Placed symbols are still placed; the game resumes at the correct next round.
+3. A symbol card is showing, not yet placed. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: No stale card is left; the round restarts cleanly.
+4. A symbol was JUST placed (sparkle still showing, next card not up yet): leave within a second or two. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Continue shows the NEXT card, never the symbol you just placed, and that symbol stays placed on Ganesha.
+5. All 8 placed, during the final fireworks. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Final celebration, then the zone completion modal.
+6. Check the Zone Welcome badge row after finishing.
+   - Expect: All 4 Symbol Mountain scenes show Replay.
+7. Finish the scene, leave on the completion screen, return to Zone Welcome.
+   - Expect: The button says Replay (never Continue). Replay starts fresh with the opening modal.
+8. Mid-game, switch to another browser tab for about 10 seconds, then come back.
+   - Expect: 3-2-1 countdown, then the game picks up where it was. No double voice line, no restart from scratch.
+9. Mid-game, press the browser refresh (F5).
+   - Expect: Same result as Continue: the current beat restarts cleanly. Never a blank or frozen screen.
+10. Turn voice off, then repeat one Continue.
+   - Expect: Resumes silently and correctly. Replay is disabled while muted.
+11. Wait about 20 seconds on a Continue that looks blank (dev server first load only).
+   - Expect: The scene appears. If it is still blank after 30 seconds, mark Fail with a screenshot.
+
+#### `continue-vakratunda` - Continue after leaving to map - Vakratunda Grove (Shloka River 1)
+
+1. Opening modal showing, Start not tapped. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Scene starts fresh with the opening modal and its line.
+2. Frog trace: part-way (frog mid-drag or on a lily pad). Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Whole trace restarts: frog at the bank, intro line replays, VA-KRA-TUN-DA unlit.
+3. Vakratunda card is showing. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: The Vakratunda card comes back once, then the Mahakaya logs.
+4. Mahakaya: 0 logs placed, a log held mid-drag. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Logs beat starts fresh: empty raft, no log held, instruction replays.
+5. Mahakaya: 1 log placed on the raft. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Raft shows 1 log, MA lit, next log waiting; starts at log 2. Not log 1 again. You hear "Keep placing the logs on the raft" (the one resume line), NOT the intro; the hint cycle starts only after it ends.
+6. Mahakaya: 2 logs placed, third log mid-drag. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Raft shows 2 logs, MA-HA lit; the third log restarts at its waiting spot, not mid-drag. You hear "Keep placing the logs on the raft", NOT the intro; the hint cycle starts only after it ends.
+7. Mahakaya: 3 logs placed. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Raft shows 3 logs, MA-HA-KA lit; only the last log is left. You hear "Keep placing the logs on the raft", NOT the intro; the hint cycle starts only after it ends.
+8. Mahakaya: place a log, then leave within 1 second and tap Continue.
+   - Expect: Continue still shows that log placed (never one log behind).
+9. Mahakaya card is showing. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: The Mahakaya card comes back once, then the celebration and completion modal.
+10. Collect the Mahakaya card, tap the zone badge within 2 seconds, then Continue.
+   - Expect: The Mahakaya card does NOT come back; you go on to fireworks, mandala and the completion modal. (Production build; the dev server cancels this timer.)
+11. Any Continue above: check for leftovers.
+   - Expect: No old voice line, no stale hint level, no half-filled hold, no mid-drag position, no leftover gesture hand, no duplicate card.
+12. With 2 logs saved, tap Replay on Zone Welcome (or Play Again on completion).
+   - Expect: Starts at beat 1: opening modal, empty raft. Continue afterwards does not bring back the 2 logs.
+13. Finish the scene, leave on the completion screen, return to Zone Welcome.
+   - Expect: The button says Replay (never Continue). Replay starts fresh with the opening modal.
+14. Mid-game, switch to another browser tab for about 10 seconds, then come back.
+   - Expect: 3-2-1 countdown, then the game picks up where it was. No double voice line, no restart from scratch.
+15. Mid-game, press the browser refresh (F5).
+   - Expect: Same result as Continue: the current beat restarts cleanly. Never a blank or frozen screen.
+16. Turn voice off, then repeat one Continue.
+   - Expect: Resumes silently and correctly. Replay is disabled while muted.
+17. Wait about 20 seconds on a Continue that looks blank (dev server first load only).
+   - Expect: The scene appears. If it is still blank after 30 seconds, mark Fail with a screenshot.
+
+#### `continue-suryakoti` - Continue after leaving to map - Suryakoti Bank (Shloka River 2)
+
+1. Suryakoti rub: part-way, some darkness cleared. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: The whole rub restarts: darkness back, nothing lit, instruction replays (by design; the canvas is not saved).
+2. Suryakoti card is showing. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: The Suryakoti card comes back once, then the Samaprabha game.
+3. Samaprabha: 0 clues revealed, mid-hold on clue 1 (ring part-way). Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Samaprabha restarts at clue 1: the intro line plays, empty hold ring.
+4. Samaprabha: 2 of 4 clues revealed (BR-EA lit), the clue 2 line finished. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Starts at clue 3: first 2 syllables lit, first 2 shadows faded, no intro line, no clue lines replayed, empty hold ring.
+5. Samaprabha: 3 clues revealed, mid-hold on clue 4 (ring part-way). Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Starts at clue 4 with an EMPTY hold ring (a half-filled hold is never saved); 3 syllables lit; no intro line.
+6. Samaprabha: hold clue 2 to the end, then leave within 1 second (while its syllable / line is playing) and tap Continue.
+   - Expect: Starts at clue 3 (never clue 2 again). Clue 2 syllable lit; clue 2 line replays ONCE because it was cut off, then "Keep pressing and holding to look closely" plays; hints start fresh after it.
+7. Samaprabha: hold clue 1 to the end, leave after its line AND "find another" have finished, then Continue.
+   - Expect: Starts at clue 2 with the clue 1 line NOT replayed (it finished); only the resume line "Keep pressing and holding to look closely" plays, then a fresh hint cycle.
+8. Samaprabha: hold clue 1 to the end, leave while the "find another" line is playing, then Continue.
+   - Expect: Starts at clue 2; clue 1 line + "find another" replay once (the clue 1 line includes the follow-up).
+9. Samaprabha: reveal clue 4, leave during the fawn relief / word / success line, then Continue.
+   - Expect: All 4 syllables lit; the clue 4 line only if cut off; then the word "samaprabha" and the success line, then the card.
+10. Samaprabha card is showing. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: The Samaprabha card comes back once.
+11. Collect the Samaprabha card, tap the zone badge within 2 seconds, then Continue.
+   - Expect: No card again; goes on to the completion modal. (Production build.)
+12. Any Continue above: check for leftovers.
+   - Expect: No old voice line, no stale hint level, no half-filled hold, no mid-drag position, no leftover gesture hand, no duplicate card.
+13. Tap Replay / Play Again after any of the above.
+   - Expect: Starts at the opening modal and the rub game, nothing resumed.
+14. Finish the scene, leave on the completion screen, return to Zone Welcome.
+   - Expect: The button says Replay (never Continue). Replay starts fresh with the opening modal.
+15. Mid-game, switch to another browser tab for about 10 seconds, then come back.
+   - Expect: 3-2-1 countdown, then the game picks up where it was. No double voice line, no restart from scratch.
+16. Mid-game, press the browser refresh (F5).
+   - Expect: Same result as Continue: the current beat restarts cleanly. Never a blank or frozen screen.
+17. Turn voice off, then repeat one Continue.
+   - Expect: Resumes silently and correctly. Replay is disabled while muted.
+18. Wait about 20 seconds on a Continue that looks blank (dev server first load only).
+   - Expect: The scene appears. If it is still blank after 30 seconds, mark Fail with a screenshot.
+
+#### `continue-nirvighnam` - Continue after leaving to map - Nirvighnam Chant (Shloka River 3)
+
+1. Nirvighnam: stone hold part-way (ring half full). Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Stone beat restarts: empty ring, stone instruction replays.
+2. Nirvighnam: stone cleared, branch not yet dragged. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Turtle at the first node, NIR lit, stone gone; the BRANCH instruction plays (not the stone one).
+3. Nirvighnam: branch mid-drag. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Branch is back in place, not mid-drag; NIR lit; branch instruction plays.
+4. Nirvighnam: stone and branch cleared, reeds not yet swiped. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: NIR-VIGH lit; the REEDS instruction plays; no stone or branch replay.
+5. Clear the branch, then leave within 1 second and tap Continue.
+   - Expect: Continue shows the branch cleared.
+6. Nirvighnam card is showing. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: The Nirvighnam card comes back once, then Kurumedeva.
+7. Kurumedeva: round 1 (ask Elephant) not finished. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Round 1 restarts: no bridge, Elephant waiting, "ask Elephant" line plays.
+8. Kurumedeva: round 1 done (logs bridge built, KURU lit). Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Log bridge built, Elephant helping, Monkey waiting; the "ask Monkey" line plays. No round 1 replay.
+9. Kurumedeva: round 2 done (rope), planks not placed. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: KURU-ME lit, rope bridge, plank round starts with the plank instruction; 0 planks placed.
+10. Kurumedeva: 1 or 2 planks placed. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Plank round restarts with 0 planks (by design; the plank round is one beat).
+11. Kurumedeva card is showing. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: The Kurumedeva card comes back once.
+12. Collect the Kurumedeva card, tap the zone badge within 2 seconds, then Continue.
+   - Expect: No card again; goes on to the completion modal. (Production build.)
+13. Any Continue above: check for leftovers.
+   - Expect: No old voice line, no stale hint level, no half-filled hold, no mid-drag position, no leftover gesture hand, no duplicate card.
+14. With obstacles or rounds saved, tap Replay / Play Again.
+   - Expect: Starts at the opening modal and the stone; Kurumedeva starts at round 1.
+15. Finish the scene, leave on the completion screen, return to Zone Welcome.
+   - Expect: The button says Replay (never Continue). Replay starts fresh with the opening modal.
+16. Mid-game, switch to another browser tab for about 10 seconds, then come back.
+   - Expect: 3-2-1 countdown, then the game picks up where it was. No double voice line, no restart from scratch.
+17. Mid-game, press the browser refresh (F5).
+   - Expect: Same result as Continue: the current beat restarts cleanly. Never a blank or frozen screen.
+18. Turn voice off, then repeat one Continue.
+   - Expect: Resumes silently and correctly. Replay is disabled while muted.
+19. Wait about 20 seconds on a Continue that looks blank (dev server first load only).
+   - Expect: The scene appears. If it is still blank after 30 seconds, mark Fail with a screenshot.
+
+#### `continue-sarvakaryeshu` - Continue after leaving to map - Sarvakaryeshu Chant (Shloka River 4)
+
+1. Sarvakaryeshu: card 1 showing, not answered. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Card 1 shows again with its line; scene visible (not blank).
+2. Sarvakaryeshu: card 1 answered, card 2 showing. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Starts at card 2: SAR lit, card 2 line plays. No card 1.
+3. Sarvakaryeshu: card 3 showing (2 answered). Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Starts at card 3: SAR-VA lit.
+4. Sarvakaryeshu: card 4 showing (3 answered). Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Starts at card 4: SAR-VA-KAR lit.
+5. Answer a card correctly, then leave within 1 second and tap Continue.
+   - Expect: Continue starts at the next card (never the one just answered).
+6. Sarvakaryeshu card is showing. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: The card comes back once, then the Sarvada game.
+7. Sarvada: morning, symbol not found yet. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Morning restarts: scene line, then "find the symbol".
+8. Sarvada: morning found, afternoon showing. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Starts at the afternoon: SAR lit; no scene intro; afternoon line plays.
+9. Sarvada: afternoon found, night showing. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Starts at night: SAR-VA lit.
+10. Find a symbol, then leave within 1 second and tap Continue.
+   - Expect: Continue starts at the next time of day.
+11. Sarvada card is showing. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: The card comes back once.
+12. Collect the Sarvada card, tap the zone badge within 2 seconds, then Continue.
+   - Expect: No card again; goes on to the completion modal. (Production build.)
+13. Any Continue above: check for leftovers.
+   - Expect: No old voice line, no stale hint level, no half-filled hold, no mid-drag position, no leftover gesture hand, no duplicate card.
+14. With cards or times saved, tap Replay / Play Again.
+   - Expect: Starts at the opening modal and card 1; Sarvada starts at morning.
+15. Finish the scene, leave on the completion screen, return to Zone Welcome.
+   - Expect: The button says Replay (never Continue). Replay starts fresh with the opening modal.
+16. Mid-game, switch to another browser tab for about 10 seconds, then come back.
+   - Expect: 3-2-1 countdown, then the game picks up where it was. No double voice line, no restart from scratch.
+17. Mid-game, press the browser refresh (F5).
+   - Expect: Same result as Continue: the current beat restarts cleanly. Never a blank or frozen screen.
+18. Turn voice off, then repeat one Continue.
+   - Expect: Resumes silently and correctly. Replay is disabled while muted.
+19. Wait about 20 seconds on a Continue that looks blank (dev server first load only).
+   - Expect: The scene appears. If it is still blank after 30 seconds, mark Fail with a screenshot.
+
+#### `continue-sr-finale` - Continue after leaving to map - Shloka River Finale (Shloka River 5)
+
+1. Opening modal showing, Start not tapped. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Fresh opening modal.
+2. Finale: opening show playing (the intro line / symbols with voice), 0 words placed. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: The opening show restarts from the start (line, symbols with voice, "choose first"), then the board becomes playable.
+3. Finale: opening show finished, board showing, 0 words placed. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: The empty board shows at once (tray and slots visible); "choose the first symbol boat" plays; you can place words; no opening show; the first word audio does NOT play.
+4. Arranging: 3 words placed. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: 3 boats stay placed in order; the 4th slot is next. No target-word audio giving the answer, no whole-shloka intro. You hear "Keep putting the word boats in the right order" (the one resume line); the hint cycle starts only after it ends.
+5. Arranging: 7 words placed. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: 7 boats placed; only the last slot is left. You hear "Keep putting the word boats in the right order"; hints start fresh after it.
+6. Place a word, then leave within 1 second and tap Continue.
+   - Expect: Continue shows that word placed (never one behind).
+7. Place a word wrongly, then leave and tap Continue.
+   - Expect: The wrong boat is not counted; Continue resumes at the same slot.
+8. Success: during the completed-shloka playback. Then leave with the back-to-map button (or zone badge) and tap this scene's Continue on Zone Welcome.
+   - Expect: Board shows filled; playback restarts cleanly, then the orbs celebration.
+9. Any Continue above: check for leftovers.
+   - Expect: No old voice line, no stale hint level, no half-filled hold, no mid-drag position, no leftover gesture hand, no duplicate card.
+10. With 3 words saved, tap Replay on Zone Welcome.
+   - Expect: Starts at the opening modal with an empty board. Continue afterwards does not bring back the 3 boats.
+11. Finish the finale. Check Zone Welcome.
+   - Expect: All 5 Shloka River scenes show Replay.
+12. Finish the scene, leave on the completion screen, return to Zone Welcome.
+   - Expect: The button says Replay (never Continue). Replay starts fresh with the opening modal.
+13. Mid-game, switch to another browser tab for about 10 seconds, then come back.
+   - Expect: 3-2-1 countdown, then the game picks up where it was. No double voice line, no restart from scratch.
+14. Mid-game, press the browser refresh (F5).
+   - Expect: Same result as Continue: the current beat restarts cleanly. Never a blank or frozen screen.
+15. Turn voice off, then repeat one Continue.
+   - Expect: Resumes silently and correctly. Replay is disabled while muted.
+16. Wait about 20 seconds on a Continue that looks blank (dev server first load only).
+   - Expect: The scene appears. If it is still blank after 30 seconds, mark Fail with a screenshot.
+
+#### Sound check (tablet listening)
+
+#### `sound-vakratunda` - Sound check - Vakratunda Rescue (Shloka River 1)
+
+1. Drag the frog across the pads at a calm pace. Repeat it as fast as a child would.
+   - Expect: Va-kra-tun-da heard in full, in order, nothing on top of it. Frog stays responsive; reunion plays only after "da".
+2. Bump the logs 3 times without getting past.
+   - Expect: One soft wooden tap on the third bump only. Never over Sanskrit.
+3. Leave the frog stuck for ~10s, then ~20s.
+   - Expect: Help voice never interrupts a Sanskrit syllable. No tick before a hint.
+
+#### `sound-mahakaya` - Sound check - Mahakaya Rescue (Shloka River 1)
+
+1. Place the logs one by one, calmly. Repeat it as fast as a child would.
+   - Expect: Ma-ha-ka-ya heard in full, in order, nothing on top of it. Place sound drops (never replays) while Sanskrit plays.
+2. Finish the last log and watch the word and the crossing.
+   - Expect: Full word and crossing wait until "ya" has finished.
+
+#### `sound-suryakoti` - Sound check - Suryakoti (Shloka River 2)
+
+1. Scrub the dark canvas left to right at a calm pace. Repeat it as fast as a child would.
+   - Expect: sur-ya-ko-ti heard in full, in order, nothing on top of it. "Keep rubbing" never cuts "sur"; it plays after it if still needed.
+2. Finish the last patch.
+   - Expect: Whole word "Suryakoti" starts only after "ti" ends, then the ending line.
+
+#### `sound-samaprabha` - Sound check - Samaprabha (Shloka River 2)
+
+1. Hold each clue until it reveals. Repeat it as fast as a child would. Press the next clue right after a syllable starts.
+   - Expect: sa-ma-pra-bha heard in full, in order, nothing on top of it. A touch on the next clue never cuts a syllable.
+2. Finish the last clue.
+   - Expect: Whole word waits for "bha", then the ending line.
+
+#### `sound-nirvighnam` - Sound check - Nirvighnam (Shloka River 3)
+
+1. Hold the stone, then grab the branch immediately. Then the reeds immediately.
+   - Expect: nir-vigh-nam heard in full, in order, nothing on top of it. Grabbing the next obstacle never cuts a syllable.
+2. Do it slowly instead.
+   - Expect: Each syllable is followed by that obstacle's instruction line.
+
+#### `sound-kurumedeva` - Sound check - Kurumedeva (Shloka River 3)
+
+1. Drag the help bubble to the elephant, then to the monkey, then place planks.
+   - Expect: Ku-ru / me / de-va heard in full, in order, nothing on top of it. "Now drag the planks" starts only after "me" ends.
+2. Grab a plank as soon as the plank round opens.
+   - Expect: The touch does not cut "me".
+
+#### `sound-sarvakaryeshu` - Sound check - Sarvakaryeshu (Shloka River 4)
+
+1. Answer all four cards (try a wrong power first, then the right one).
+   - Expect: Sar-va-kar-yeshu heard in full, in order, nothing on top of it. Wrong picks are gentle; English "after" line follows each syllable.
+
+#### `sound-sarvada` - Sound check - Sarvada (Shloka River 4)
+
+1. Find the hidden symbol in morning, afternoon and night.
+   - Expect: Sar-va-da heard in full, in order, nothing on top of it. Next scene line starts only after the syllable.
+
+#### `sound-finale` - Sound check - Shloka River Finale
+
+1. Place each word of the shloka.
+   - Expect: No chime or sparkle on any word, none on the final word. Only the Sanskrit.
+
+#### `sound-pond` - Sound check - Pond (Symbol Mountain 2)
+
+1. Wake the lotus.
+   - Expect: The power-up sound plays once, not twice. Sanskrit is clean.
+
+#### `sound-mandala` - Sound check - Final Mandala (symbol completion)
+
+1. Watch the symbols reveal one by one.
+   - Expect: No chime before each symbol voiceover. Glow and voiceover unchanged.
+
+#### `sound-everywhere` - Sound check - Everywhere (all scenes)
+
+1. Idle ~10s in any game.
+   - Expect: Hint is voice only. No tick before it.
+2. Open welcome, home and map screens.
+   - Expect: One background sound only, never doubled. Plays on first touch if the tablet blocked autoplay.
+3. Press the Home mute button.
+   - Expect: Everything goes silent (SFX, voice, ambience). Unmute restores it.
+4. Open and close the sidebar mid-line.
+   - Expect: Ambience dips while a line plays and returns after.
+
+### Symbol Mountain still-to-test lists - signed off 2026-10-12
+Madhurima tested and signed off Modak, Pond, Eyes/Ears/nest and Sacred Assembly (success-line replay checks "almost" all tested and accepted). Bugs found and fixed on the way: Pond lotus success replay skipped on Continue (cancelled line saved as done), Pond Play Again left the finished pond (reset config missed rockMoved/reedsParted/lotusBloomed...), Pond hand cues misaligned (fingertip anchor + draggable layout dots), Ears fresh-start intro frozen under StrictMode and voice spilling after leaving, Sacred Assembly Play Again re-opened the completion modal. The 4 never-run rows (tab switch, F5, voice off, slow first load) remain unrecorded.

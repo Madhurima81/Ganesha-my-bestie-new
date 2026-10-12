@@ -1,5 +1,5 @@
 // "Still to test" checklists - one per scene, ONLY the changes that have not been tested yet
-// (Symbol Mountain + Shloka River; About Me Hut has its own Continue checklists in continueChecklists.js).
+// (Shloka River only - Symbol Mountain is finished and signed off 2026-10-12; About Me Hut has its own Continue checklists in continueChecklists.js).
 // Created 2026-10-12. When a row passes, delete it; when a list is empty, delete the list. The finished
 // Continue/sound checklists are archived in TEST_CHECKLISTS.md ("Archive 2026-10-12").
 //
@@ -38,47 +38,6 @@ const ZONE_WELCOME_ROW = {
 const list = (title, items) => ({ title: `Still to test - ${title}`, items: [...items, ...NEVER_RUN] });
 
 export const STILL_TO_TEST_CHECKLISTS = {
-  'todo-modak': list('Modak (Symbol Mountain 1)', [
-    { text: 'Solve the Bush and leave within 1 second, before the flowers fly to the basket.', expect: 'Continue still starts at the Branch (saved at the solve, not when the flowers land).' },
-  ]),
-
-  'todo-pond': list('Pond (Symbol Mountain 2)', [
-    { text: `Reeds parted. ${DURING}`, expect: 'Continue replays "The water reached the lotus", then shows the Trunk card.' },
-    { text: 'Reeds parted. Wait until the Trunk card is about to show (the line has finished), then leave.', expect: 'Continue goes straight to the Trunk card; no success line.' },
-    { text: `Lotus bloomed. ${DURING}`, expect: 'Continue replays "The lotus bloomed...", then shows the Lotus card. The "hold" prompt does NOT play.' },
-    { text: 'Lotus bloomed. Wait until its success line has finished, then leave.', expect: 'Continue shows the Lotus card directly: no success line, no "hold" prompt.' },
-    { text: 'Lotus step (not yet bloomed): idle until the hand shows, and also after a Continue.', expect: 'The press-and-hold hand lands exactly on the lotus bud (not offset to the right or below).' },
-    { text: 'Reeds step: idle until the hand shows (intro, then the stronger hints).', expect: 'The swipe runs left to right across the flower and pebble cluster, lined up with the reeds.' },
-    { text: 'Tap and hold the rock, the lotus and the reeds at their edges (hit zones).', expect: 'Taps register on the object and not far outside it. (Re-check once the hit-zone values are set.)' },
-    { text: 'Reload the page and compare rock, reeds, lotus, flowers and turtle positions.', expect: 'Same layout every time (the saved defaults), no jumping between reloads.' },
-    OPENING_VO_ROW,
-    ZONE_WELCOME_ROW,
-    PLAY_AGAIN_ROW('lotus progress'),
-  ]),
-
-  'todo-tusk': list('Eyes, Ears and nest game (Symbol Mountain 3)', [
-    { text: `Ears: Elephant solved. ${DURING}`, expect: 'Continue replays "Elephant found water", then starts the Cow round (prompt, then the 3 sounds).' },
-    { text: 'Ears: Elephant solved. Wait until that line has finished, then leave.', expect: 'Continue goes straight to the Cow prompt; no replay of the Elephant line.' },
-    { text: 'Ears: Cow solved. Leave during its reveal.', expect: 'Continue runs the ending (animals happy), then the Ears card.' },
-    { text: `Eyes: feather found. ${DURING}`, expect: 'Continue: the feather is done, "Feather found..." replays, then "Now find the mango".' },
-    { text: 'Eyes: feather found. Wait until its line has finished, then leave.', expect: 'Continue says only "Now find the mango"; the feather stays done.' },
-    { text: 'Eyes: both found. Leave during the last success line.', expect: 'Continue finishes the game and shows the Eyes card (never a stuck "complete" screen).' },
-    { text: `Nest: twig dropped. ${DURING}`, expect: 'Continue replays the reaction line, then the grass beat with the nest at stage 1.' },
-    { text: 'Nest: twig dropped. Wait until the reaction line has finished, then leave.', expect: 'Continue starts the grass beat directly; no reaction replay.' },
-    { text: 'Nest: all four items dropped and finished. Leave.', expect: 'Continue goes to the baby-bird finale, then the Tusk card.' },
-    OPENING_VO_ROW,
-    ZONE_WELCOME_ROW,
-    PLAY_AGAIN_ROW('Eyes / Ears / nest progress'),
-  ]),
-
-  'todo-final': list('Sacred Assembly (Symbol Mountain 4)', [
-    { text: 'Sacred Assembly: place all 8 symbols and watch the zone-completion fireworks and orbs.', expect: 'The zone badge is hidden while the fireworks and orbs play. Also leave during the celebration and tap Continue: the badge stays hidden until it ends.' },
-    { text: 'Sacred Assembly: play normally before the final celebration.', expect: 'The zone badge is visible and works (tap it: back to Zone Welcome).' },
-    OPENING_VO_ROW,
-    ZONE_WELCOME_ROW,
-    PLAY_AGAIN_ROW('some placed symbols'),
-  ]),
-
   'todo-vakratunda': list('Vakratunda Grove + Mahakaya (Shloka River 1)', [
     { text: leave('Mahakaya: 1 log placed.'), expect: 'You hear "Keep adding logs to the raft" - NOT the intro.' },
     { text: leave('Mahakaya: 2 or 3 logs placed.'), expect: 'You hear "Drag the next log" - NOT the intro.' },
@@ -162,4 +121,4 @@ export const STILL_TO_TEST_CHECKLISTS = {
   ]),
 };
 
-export const STILL_TO_TEST_GROUP_LABEL = 'Still to test - other scenes (Symbol Mountain + Shloka River)';
+export const STILL_TO_TEST_GROUP_LABEL = 'Still to test - other scenes (Shloka River)';
