@@ -341,7 +341,7 @@ export default function FlowerJourneyGame2({
     // A line requested while the sidebar is open must not speak behind it —
     // queue it as the interrupted line so it plays, from the start, on close.
     if (pausedRef.current) {
-      interruptedSpeechRef.current?.resolve?.();
+      interruptedSpeechRef.current?.resolve?.(false);
       interruptedSpeechRef.current = { text, resolve, cue };
       return;
     }
@@ -356,12 +356,14 @@ export default function FlowerJourneyGame2({
     const u = new SpeechSynthesisUtterance(text);
     u.rate = 0.95;
     const entry = { text, resolve, utterance: u, cue };
-    const done = () => {
+    // resolve(true) = the line played to its end; resolve(false) = it was cancelled (the child
+    // left mid-line), so a "success line finished" checkpoint must NOT be saved for it.
+    const done = (finished) => {
       if (activeSpeechRef.current === entry) activeSpeechRef.current = null;
-      resolve?.();
+      resolve?.(finished);
     };
-    u.onend = done;
-    u.onerror = done;
+    u.onend = () => done(true);
+    u.onerror = () => done(false);
     // The teaching hand (or other cue) fires exactly when the action word is spoken.
     entry.cancelCue = attachSpeechCue(u, text, cue);
     activeSpeechRef.current = entry;
@@ -369,7 +371,7 @@ export default function FlowerJourneyGame2({
       setTimeout(() => {
         // Skip if this line was superseded or interrupted (sidebar / tab hide) meanwhile.
         if (activeSpeechRef.current !== entry) return;
-        try { window.speechSynthesis.speak(u); } catch { done(); }
+        try { window.speechSynthesis.speak(u); } catch { done(false); }
       }, 120);
     } else {
       window.speechSynthesis.speak(u);
@@ -758,7 +760,12 @@ export default function FlowerJourneyGame2({
   const onFlowersUpdateRef = useRef(onFlowersUpdate);
   useEffect(() => { onFlowersUpdateRef.current = onFlowersUpdate; }, [onFlowersUpdate]);
   const onSuccessDoneRef = useRef(onSuccessDone);
-  useEffect(() => { onSuccessDoneRef.current = onSuccessDone; }, [onSuccessDone]);
+  // Cleared on unmount: a success line still speaking after the child left must not be
+  // saved as "finished" (it would skip the replay on Continue).
+  useEffect(() => {
+    onSuccessDoneRef.current = onSuccessDone;
+    return () => { onSuccessDoneRef.current = null; };
+  }, [onSuccessDone]);
   useEffect(() => { onFlowersUpdateRef.current?.(flowerCount); }, [flowerCount]);
 
   const bushIntroStartedRef = useRef(false);
@@ -907,7 +914,7 @@ export default function FlowerJourneyGame2({
     setBushOpenState(true);
     onFlowersUpdateRef.current?.(2); // saved the moment the bush is solved, not when the flowers land
     setEmotion('pleased');
-    speakAsync(VO.bushSuccess).then(() => onSuccessDoneRef.current?.(2));
+    speakAsync(VO.bushSuccess).then((ok) => { if (ok !== false) onSuccessDoneRef.current?.(2); });
     safeTimeout(() => {
       setEmotion(null);
       setEmotionTraces((prev) => ({ ...prev, bush: 'pleased' }));
@@ -963,8 +970,8 @@ export default function FlowerJourneyGame2({
       // beat immediately.
       // Continue after the bush was solved: replay its success line first.
       if (startBeat === 1 && successDoneAtMount < 2) {
-        await speakAsync(VO.bushSuccess);
-        onSuccessDoneRef.current?.(2);
+        const ok = await speakAsync(VO.bushSuccess);
+        if (ok !== false) onSuccessDoneRef.current?.(2);
         if (cancelled) return;
       }
       const emotionTimer = pTimeout(() => {
@@ -1000,7 +1007,7 @@ export default function FlowerJourneyGame2({
     branchCompletedRef.current = true;
     onFlowersUpdateRef.current?.(4); // saved the moment the branch is solved
     setEmotion('relieved');
-    speakAsync(VO.branchSuccess).then(() => onSuccessDoneRef.current?.(4));
+    speakAsync(VO.branchSuccess).then((ok) => { if (ok !== false) onSuccessDoneRef.current?.(4); });
     safeTimeout(() => {
       setEmotion(null);
       setEmotionTraces((prev) => ({ ...prev, branch: 'relieved' }));
@@ -1124,8 +1131,8 @@ export default function FlowerJourneyGame2({
       // that emotion actually reads as caused by something.
       // Continue after the branch was solved: replay its success line first.
       if (startBeat === 2 && successDoneAtMount < 4) {
-        await speakAsync(VO.branchSuccess);
-        onSuccessDoneRef.current?.(4);
+        const ok = await speakAsync(VO.branchSuccess);
+        if (ok !== false) onSuccessDoneRef.current?.(4);
         if (cancelled) return;
       }
       // The teaching hand lands exactly when the action word ("Guide") is spoken.
@@ -1253,8 +1260,8 @@ export default function FlowerJourneyGame2({
           setMarshExitPos(computeMarshExitToBelly());
           setMarshExiting(true);
           await wait(1400);
-          await speakAsync(VO.marshDone);
-          onSuccessDoneRef.current?.(6);
+          const ok = await speakAsync(VO.marshDone);
+          if (ok !== false) onSuccessDoneRef.current?.(6);
           await wait(700);
           setPhase(PHASES.BELLY_RECOGNITION);
         }, 100);
@@ -1297,8 +1304,8 @@ export default function FlowerJourneyGame2({
       // Continue after the marsh was solved: replay its success line once before the belly beat.
       if (startBeat === 3 && successDoneAtMount < 6 && !resumeLineDoneRef.current) {
         resumeLineDoneRef.current = true;
-        await speakAsync(VO.marshDone);
-        onSuccessDoneRef.current?.(6);
+        const ok = await speakAsync(VO.marshDone);
+        if (ok !== false) onSuccessDoneRef.current?.(6);
         if (cancelled) return;
       }
 
