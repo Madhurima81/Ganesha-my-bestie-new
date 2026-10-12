@@ -155,7 +155,8 @@ export const CONTINUE_CHECKLISTS = {
 
   'continue-sr-finale': list('Shloka River Finale (Shloka River 5)', [
     { text: leave('Opening modal showing, Start not tapped.'), expect: 'Fresh opening modal.' },
-    { text: leave('Arranging: 0 words placed.'), expect: 'Empty board; the first word plays; you can place words.' },
+    { text: leave('Finale: opening show playing (the intro line / symbols with voice), 0 words placed.'), expect: 'The opening show restarts from the start (line, symbols with voice, "choose first"), then the board becomes playable.' },
+    { text: leave('Finale: opening show finished, board showing, 0 words placed.'), expect: 'The empty board shows at once (tray and slots visible); the first word plays; you can place words; no opening show.' },
     { text: leave('Arranging: 3 words placed.'), expect: '3 boats stay placed in order; the 4th slot is next. No target-word audio giving the answer, no whole-shloka intro.' },
     { text: leave('Arranging: 7 words placed.'), expect: '7 boats placed; only the last slot is left.' },
     { text: 'Place a word, then leave within 1 second and tap Continue.', expect: 'Continue shows that word placed (never one behind).' },

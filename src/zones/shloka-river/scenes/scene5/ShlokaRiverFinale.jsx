@@ -689,25 +689,35 @@ const ShlokaRiverFinaleContent = ({
   // as the normal flow — never on mount alone.
   const armedOnMountRef = useRef(false);
   useEffect(() => {
-    if (armedOnMountRef.current) return;
-    armedOnMountRef.current = true;
-    if (phase !== PHASES.ARRANGE) return;
+    if (armedOnMountRef.current) return undefined;
+    if (phase !== PHASES.ARRANGE) { armedOnMountRef.current = true; return undefined; }
     if (resumeWords > 0) {
+      armedOnMountRef.current = true;
       // Resuming after finished words: no target-word audio (it would give the answer away).
       setBuildReady(true);
       setHintReadySlot(activeSlotIndex);
-      return;
+      return undefined;
     }
-    setBuildReady(false);
+    if (sceneState.introDone !== true) {
+      // Left during the opening show (arrangeStart line / symbols / "choose first"): that beat restarts cleanly.
+      // ~500ms wait: speech at the very first instant after mount is silent on Continue. Flag set when the timer
+      // fires and cleared on cleanup, so StrictMode's second run still schedules it.
+      const t = window.setTimeout(() => { armedOnMountRef.current = true; handleStartGame(); }, 500);
+      return () => window.clearTimeout(t);
+    }
+    armedOnMountRef.current = true;
+    // Opening show finished, no word placed yet: the board is visible at once; the first word plays,
+    // and hints arm only after it ends.
+    setBuildReady(true);
     playWordAudio?.(SHLOKA_WORDS[activeSlotIndex]?.id, () => {
-      setBuildReady(true);
       setHintReadySlot(activeSlotIndex);
     });
+    return undefined;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleStartGame = () => {
-    sceneActions.checkpoint({ phase: PHASES.ARRANGE, welcomeShown: true, wordsPlaced: 0 });
+    sceneActions.checkpoint({ phase: PHASES.ARRANGE, welcomeShown: true, wordsPlaced: 0, introDone: false });
     setBuildReady(false);
     setHintReadySlot(null);
     setIntroTeaching(true);
@@ -718,6 +728,7 @@ const ShlokaRiverFinaleContent = ({
         onComplete: () => {
           setIntroSymbolIndex(null);
           const makePlayable = () => {
+            sceneActions.checkpoint({ introDone: true }); // the opening show finished: a leave after this resumes at the board
             setIntroTeaching(false);
             setBuildReady(true);
             setHintReadySlot(0);
