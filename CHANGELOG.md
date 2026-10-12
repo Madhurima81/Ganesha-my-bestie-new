@@ -1,5 +1,11 @@
 # CHANGELOG.md
 Append one entry per work session. Newest on top.
+## [2026-10-12] — Modak Flower Journey: Continue replays a cut-off success line
+**Touched:** src/zones/symbol-mountain/scenes/modak/FlowerJourneyGame2.jsx (commit 31e112a0), src/dev/stillToTestChecklists.js.
+**Changed:** `flowersSuccessDone` was saved even when the child left mid-line: (1) cancelled speech fired `onerror`, which `speakAsync` treated as "finished"; (2) the line kept speaking after the scene unmounted and its `onend` then saved the checkpoint. `speakAsync` now resolves `true` only on a natural end (`false` on error/cancel/superseded) and the bush/branch/marsh success checkpoints (2/4/6) save only on `true`; `onSuccessDoneRef` is cleared on unmount. Continue now replays a cut-off success line, and skips it when it had finished.
+**Verified:** Madhurima re-tested: rows 1 and 3 pass (plus rows 2, 5, 6, 7 passed earlier); rows removed from the Modak still-to-test list. esbuild syntax check OK.
+**Open:** Row 4 (leave within 1s of the bush solve) left FAIL; Madhurima said to leave it, interpretation unconfirmed. Rows 8-11 (tab switch, F5, voice off, blank Continue) NOT RUN. Not pushed.
+
 ## [2026-10-12] — Symbol card popup: single Done action
 **Touched:** src/zones/symbol-mountain/shared/components/SymbolCardModal.jsx, src/zones/symbol-mountain/shared/components/SymbolCardModal.css.
 **Changed:** Removed the top-right X and the "Tap anywhere to close" affordance from the Symbol Mountain symbol popup card. The card now uses one explicit bottom action labeled `Done`, matching the fact that this popup dismisses the reflection card rather than advancing the child to a new scene step. Backdrop tap no longer closes the popup, so the child's flow is read/hear takeaway -> Done.

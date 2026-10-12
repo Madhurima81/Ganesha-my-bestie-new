@@ -39,13 +39,7 @@ const list = (title, items) => ({ title: `Still to test - ${title}`, items: [...
 
 export const STILL_TO_TEST_CHECKLISTS = {
   'todo-modak': list('Modak (Symbol Mountain 1)', [
-    { text: `Flower Journey, Bush solved (swipe opens it). ${DURING}`, expect: 'Continue starts at the Branch beat with the bush open and 2 flowers. The bush success line replays first, then the branch intro.' },
-    { text: `Flower Journey, Bush solved. ${AFTER}`, expect: 'Continue starts at the Branch beat; NO success replay, straight to the branch intro.' },
-    { text: `Repeat the two rows above for the Branch (4 flowers) and the Marsh (6 flowers).`, expect: 'Branch done -> Continue at the Marsh. Marsh done -> Continue at the belly beat. The previous success line replays only when it was cut off.' },
     { text: 'Solve the Bush and leave within 1 second, before the flowers fly to the basket.', expect: 'Continue still starts at the Branch (saved at the solve, not when the flowers land).' },
-    OPENING_VO_ROW,
-    ZONE_WELCOME_ROW,
-    PLAY_AGAIN_ROW('Flower Journey progress (e.g. 4 flowers)'),
   ]),
 
   'todo-pond': list('Pond (Symbol Mountain 2)', [
