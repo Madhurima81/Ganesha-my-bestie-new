@@ -705,14 +705,17 @@ const ShlokaRiverFinaleContent = ({
       const t = window.setTimeout(() => { armedOnMountRef.current = true; handleStartGame(); }, 500);
       return () => window.clearTimeout(t);
     }
-    armedOnMountRef.current = true;
-    // Opening show finished, no word placed yet: the board is visible at once; the first word plays,
-    // and hints arm only after it ends.
+    // Opening show finished, no word placed yet: the board is visible at once and the placing instruction
+    // ("choose the first symbol boat") plays, as at the end of the show; hints arm only after it ends.
+    // Never the target word's own audio (it would give the answer away). ~500ms wait: speech at the very
+    // first instant after mount is silent on Continue.
     setBuildReady(true);
-    playWordAudio?.(SHLOKA_WORDS[activeSlotIndex]?.id, () => {
-      setHintReadySlot(activeSlotIndex);
-    });
-    return undefined;
+    const t = window.setTimeout(() => {
+      armedOnMountRef.current = true;
+      if (playVoice) playVoice('finaleChooseFirst', () => setHintReadySlot(activeSlotIndex), { replayOnReturn: false });
+      else setHintReadySlot(activeSlotIndex);
+    }, 500);
+    return () => window.clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -1156,7 +1159,8 @@ const ShlokaRiverFinaleContent = ({
           onPointerCancel={handlePointerUp}
           onContextMenu={(e) => e.preventDefault()}
         >
-          <ZoneBadgeButton variant="gameplay" zoneId="shloka-river" onBack={() => { stopAllVoice(); onNavigate?.('zone-welcome'); }} />
+          {/* Hidden while the zone-completion fireworks / orbs celebration plays. */}
+          {!showOrbsCelebration && <ZoneBadgeButton variant="gameplay" zoneId="shloka-river" onBack={() => { stopAllVoice(); onNavigate?.('zone-welcome'); }} />}
           {/* [per-scene mute removed 2026-10-09] <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={handleAudioToggle} /> */}
           <VOReplayButton variant="gameplay" onReplay={replayCurrentVoice} disabled={!isAudioOn} />
 

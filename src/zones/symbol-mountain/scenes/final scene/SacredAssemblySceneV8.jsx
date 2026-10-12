@@ -1857,7 +1857,8 @@ const SacredAssemblyContent = ({
         sceneActions={sceneActions}
       >
         <div className="sacred-assembly-container">
-          <ZoneBadgeButton variant="gameplay" zoneId="symbol-mountain" onBack={() => { stopGaneshaVoice(); onNavigate?.('zone-welcome'); }} />
+          {/* Hidden while the zone-completion fireworks / orbs celebration plays. */}
+          {!isCelebrationRunning && <ZoneBadgeButton variant="gameplay" zoneId="symbol-mountain" onBack={() => { stopGaneshaVoice(); onNavigate?.('zone-welcome'); }} />}
           {/* [per-scene mute removed 2026-10-09] <AudioToggle variant="gameplay" isAudioOn={isAudioOn} onToggle={toggleAudio} /> */}
           <VOReplayButton variant="gameplay"
             onReplay={replayVoiceForCurrentPhase}
