@@ -208,15 +208,30 @@
 }
 
 /* ============================================
-   FOOTER — de-emphasized
+   DONE ACTION
    ============================================ */
-.symbol-card__footer {
+.symbol-card__done {
+  min-width: clamp(140px, 13vw, 180px);
+  min-height: clamp(44px, 4vw, 56px);
   margin: clamp(24px, 2vw, 32px) 0 0;
+  padding: 0 clamp(28px, 3vw, 42px);
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #FFD970 0%, #F8C452 100%);
+  box-shadow: 0 5px 0 #DFA73A, 0 12px 24px rgba(164, 103, 22, 0.22);
+  color: #3D2817;
+  cursor: pointer;
   font-family: 'Nunito', sans-serif;
-  font-size: clamp(14px, 1.1vw, 17px);
-  font-weight: 400;
-  color: rgba(61, 40, 23, 0.5);            /* 50% opacity */
-  letter-spacing: 0.3px;
+  font-size: clamp(14px, 1.15vw, 17px);
+  font-weight: 800;
+  letter-spacing: 0;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.symbol-card__done:active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 #DFA73A, 0 8px 18px rgba(164, 103, 22, 0.2);
 }
 
 /* iPad landscape - short height */
@@ -236,7 +251,11 @@
   .symbol-card__invitation { padding: 14px 16px; }
   .symbol-card__invitation p { font-size: 15px; line-height: 1.45; }
   .symbol-card__gift { font-size: 14px; margin-top: 16px; }
-  .symbol-card__footer { font-size: 12px; margin-top: 16px; }
+  .symbol-card__done {
+    min-height: 42px;
+    margin-top: 16px;
+    font-size: 13px;
+  }
 }
 
 /* ============================================
@@ -308,7 +327,9 @@
     font-size: 15px;
   }
 
-  .symbol-card__footer {
+  .symbol-card__done {
+    min-height: 42px;
+    margin-top: 18px;
     font-size: 13px;
   }
 }
@@ -330,14 +351,9 @@
 
 /* ============================================
    PHONE LANDSCAPE — wide reading panel (Step 3D)
-   Canonical phone condition. Symbol on the left, copy on the right, visible X,
-   tap-outside still closes. Declared last so it beats the max-width 1024/640
+   Canonical phone condition. Symbol on the left, copy on the right. Declared last so it beats the max-width 1024/640
    rules above. clamp()/dvh sizing; tablet/desktop unchanged.
    ============================================ */
-.symbol-card__close {
-  display: none;
-}
-
 @media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
   .symbol-card-modal-backdrop {
     padding: calc(var(--gmb-safe-top, 0px) + 8px) calc(var(--gmb-safe-right, 0px) + 12px)
@@ -353,7 +369,7 @@
     max-width: none;
     max-height: calc(100dvh - var(--gmb-safe-top, 0px) - var(--gmb-safe-bottom, 0px) - 16px);
     box-sizing: border-box;
-    padding: clamp(12px, 4dvh, 22px) clamp(56px, 8vw, 72px) clamp(12px, 4dvh, 22px) clamp(18px, 3.2vw, 32px);
+    padding: clamp(12px, 4dvh, 22px) clamp(18px, 3.2vw, 32px);
     border-radius: 28px;
     display: grid;
     grid-template-columns: clamp(72px, 26dvh, 120px) minmax(0, 1fr);
@@ -420,41 +436,13 @@
     line-height: 1.35;
   }
 
-  /* The X replaces "Tap anywhere to close" on phones. */
-  .symbol-card__footer {
-    display: none;
-  }
-
-  /* 60px hit box, 36px visible X, in the corner. */
-  .symbol-card__close {
-    position: absolute;
-    top: 2px;
-    right: 2px;
-    z-index: 2;
-    width: 60px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    border: 0;
-    background: transparent;
-    cursor: pointer;
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  .symbol-card__close-x {
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background: rgba(61, 40, 23, 0.1);
-    color: #3D2817;
-    font-size: 16px;
-    font-weight: 800;
+  .symbol-card__done {
+    grid-column: 2;
+    justify-self: start;
+    min-width: 132px;
+    min-height: 40px;
+    margin: 0;
+    font-size: 13px;
   }
 }
 

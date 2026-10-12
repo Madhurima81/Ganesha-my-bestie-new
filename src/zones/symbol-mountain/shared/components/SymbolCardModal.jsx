@@ -37,20 +37,13 @@ export default function SymbolCardModal({ symbolId, onClose }) {
   return (
     <div
       className={`symbol-card-modal-backdrop ${isExiting ? 'exiting' : ''}`}
-      onClick={handleClose}
     >
       <div
         className={`symbol-card-modal ${isExiting ? 'exiting' : ''}`}
-        onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-labelledby="symbol-card-title"
         aria-modal="true"
       >
-        {/* Visible close X — shown on phone landscape only (hidden by CSS elsewhere). */}
-        <button type="button" className="symbol-card__close" aria-label="Close" onClick={handleClose}>
-          <span className="symbol-card__close-x" aria-hidden="true">✕</span>
-        </button>
-
         {/* TOP — Icon with soft radial glow */}
         <div className="symbol-card__icon-wrap">
           <div className="symbol-card__icon-glow" />
@@ -86,8 +79,9 @@ export default function SymbolCardModal({ symbolId, onClose }) {
         {/* GIFT LINE — soft whisper close */}
         <p className="symbol-card__gift">{content.gift}</p>
 
-        {/* FOOTER — de-emphasized */}
-        <p className="symbol-card__footer">Tap anywhere to close</p>
+        <button type="button" className="symbol-card__done" onClick={handleClose}>
+          Done
+        </button>
       </div>
     </div>
   );
