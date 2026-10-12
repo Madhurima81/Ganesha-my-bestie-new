@@ -899,6 +899,9 @@ const SymbolMountainSceneContent = ({
                   zoneId={zoneId}
                   sceneId={sceneId}
                   onStart={() => {
+                    // The modal's own stop only covers Web Speech and DOM <audio>; the scene's
+                    // opening line runs through the Ganesha voice engine and kept playing into the scene.
+                    stopSpokenVoice();
                     sceneActions.updateState({ welcomeShown: true });
                   }}
                   characterImg={ganeshaCharacter}

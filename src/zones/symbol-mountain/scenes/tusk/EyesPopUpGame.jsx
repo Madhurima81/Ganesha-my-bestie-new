@@ -199,8 +199,10 @@ const speakFallback = (text, onEnd) => {
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.rate = 0.92;
     utterance.pitch = 1;
-    utterance.onend = () => onEnd?.();
-    utterance.onerror = () => onEnd?.();
+    utterance.onend = () => onEnd?.(true);
+    // A line cut off by another line / cancel() is NOT finished: reporting it as finished made
+    // the game advance ("Now find the mango") and save the success line as heard.
+    utterance.onerror = (e) => onEnd?.(!(e?.error === 'canceled' || e?.error === 'interrupted'));
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(utterance);
   } catch {
@@ -344,8 +346,12 @@ const EyesPopUpGame = ({
       interruptedSpeechRef.current = entry;
       return;
     }
-    const done = () => {
+    const done = (finished = true) => {
       if (entry.dead) return;
+      // The child left the game: a line ending afterwards must not save progress or chain the next line.
+      if (!aliveRef.current) { entry.dead = true; return; }
+      // Cut off by something else (not paused): the line that cut it owns what comes next.
+      if (finished === false && !pausedRef.current) { entry.dead = true; return; }
       // A cancel-triggered end that arrives while paused is an interruption, not a
       // finish: remember the line instead of letting the game advance behind the sidebar.
       if (pausedRef.current) {
@@ -367,6 +373,13 @@ const EyesPopUpGame = ({
 
   const speakRef = useRef(speak);
   speakRef.current = speak;
+
+  // False once the game unmounts (StrictMode's mount/cleanup/mount sets it true again).
+  const aliveRef = useRef(true);
+  useEffect(() => {
+    aliveRef.current = true;
+    return () => { aliveRef.current = false; };
+  }, []);
 
   // Sidebar open = true pause: interrupt the current line WITHOUT firing its onEnd and
   // disarm the idle clock. On close: after a beat, replay the interrupted line from the
