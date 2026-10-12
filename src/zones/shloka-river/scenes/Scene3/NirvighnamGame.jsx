@@ -197,7 +197,8 @@ export default function NirvighnamGame({
   const [debugPhase, setDebugPhase] = useState(0);
   const [debugPanelPosition, setDebugPanelPosition] = useState({ x: 16, y: 16 });
   const [seedCount] = useState(() => (
-    isActive ? Math.max(0, Math.min(OBSTACLE_ORDER.length - 1, Number(initialCleared) || 0)) : 0
+    // 3 = left after the reeds: the game resumes in the swim, then says the word + success line, then completes.
+    isActive ? Math.max(0, Math.min(OBSTACLE_ORDER.length, Number(initialCleared) || 0)) : 0
   ));
   const [phase, setPhase] = useState('play');
   const [cleared, setCleared] = useState(() => OBSTACLE_ORDER.slice(0, seedCount));
@@ -328,7 +329,8 @@ export default function NirvighnamGame({
 
     setCleared((prev) => [...prev, id]);
     setLitCount((prev) => Math.min(SYLLABLES.length, prev + 1));
-    if (cleared.length + 1 < OBSTACLE_ORDER.length) onBeatComplete?.(cleared.length + 1);
+    // Also the LAST obstacle (3): the scene resumes straight into the completion, not the reeds again.
+    onBeatComplete?.(cleared.length + 1);
     markInteraction();
     onMicroWin?.();
   }, [cleared, markInteraction, onMicroWin, onBeatComplete]);
@@ -404,17 +406,23 @@ export default function NirvighnamGame({
   // NEXT obstacle's own intro once, which also arms its teaching hand and hint clock.
   const resumeIntroPlayedRef = useRef(false);
   useEffect(() => {
-    if (!isActive || seedCount === 0 || resumeIntroPlayedRef.current) return;
-    resumeIntroPlayedRef.current = true;
+    // initialCleared >= all obstacles: the scene hands off to the completion, no obstacle line to speak.
+    if (!isActive || seedCount === 0 || initialCleared >= OBSTACLE_ORDER.length || resumeIntroPlayedRef.current) return undefined;
     const obstacle = OBSTACLE_ORDER[seedCount];
     const introKey = OBSTACLE_INTRO_KEYS[obstacle];
     const markStarted = () => setObstacleIntroVoStarted((current) => (current[obstacle] ? current : { ...current, [obstacle]: true }));
-    if (introKey && playSceneLine) {
-      playSceneLine(introKey, finishCurrentObstacleIntro, { cue: getLineCue(introKey, markStarted) });
-    } else {
-      markStarted();
-      finishCurrentObstacleIntro();
-    }
+    // ~500ms wait: speech at the very first instant after mount is silent on Continue. The flag is set when
+    // the timer FIRES and the cleanup clears a plain timer, so StrictMode's second run still speaks.
+    const t = window.setTimeout(() => {
+      resumeIntroPlayedRef.current = true;
+      if (introKey && playSceneLine) {
+        playSceneLine(introKey, finishCurrentObstacleIntro, { cue: getLineCue(introKey, markStarted) });
+      } else {
+        markStarted();
+        finishCurrentObstacleIntro();
+      }
+    }, 500);
+    return () => window.clearTimeout(t);
   }, [isActive]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // L2 hint VO — "Press and hold..." if untouched, "Keep holding" (etc.) if

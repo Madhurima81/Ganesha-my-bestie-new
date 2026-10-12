@@ -521,15 +521,18 @@ const NirvighnamChantContent = ({
         return;
       }
       if (isAudioOn && !nirvIntroPlayedRef.current) {
-        nirvIntroPlayedRef.current = true;
         setNirvIntroComplete(true);
         setNirvIntroVoStarted(false);
-        playGuidanceVoice('scene12_nir_intro', () => {
-          setNirvIntroComplete(true);
-          setNirvIntroVoStarted(true);
-          startIdleTimer();
-        }, { cue: getLineCue('scene12_nir_intro', () => setNirvIntroVoStarted(true)) });
-        return;
+        // ~500ms wait (first-instant speech is silent on Continue); flag set when the timer fires (StrictMode).
+        const introTimer = window.setTimeout(() => {
+          nirvIntroPlayedRef.current = true;
+          playGuidanceVoice('scene12_nir_intro', () => {
+            setNirvIntroComplete(true);
+            setNirvIntroVoStarted(true);
+            startIdleTimer();
+          }, { cue: getLineCue('scene12_nir_intro', () => setNirvIntroVoStarted(true)) });
+        }, 500);
+        return () => window.clearTimeout(introTimer);
       }
       setNirvIntroComplete(true);
       setNirvIntroVoStarted(true);
@@ -554,13 +557,15 @@ const NirvighnamChantContent = ({
         return;
       }
       if (isAudioOn && !kuruIntroPlayedRef.current) {
-        kuruIntroPlayedRef.current = true;
-        setKuruIntroComplete(true);
-        playGuidanceVoice('scene12_kuru_intro', () => {
-          setKuruIntroComplete(true);
-          startIdleTimer();
-        });
-        return;
+        setKuruIntroComplete(false);
+        const introTimer = window.setTimeout(() => {
+          kuruIntroPlayedRef.current = true;
+          playGuidanceVoice('scene12_kuru_intro', () => {
+            setKuruIntroComplete(true);
+            startIdleTimer();
+          });
+        }, 500);
+        return () => window.clearTimeout(introTimer);
       }
       setKuruIntroComplete(true);
       startIdleTimer();
@@ -592,10 +597,14 @@ const NirvighnamChantContent = ({
   useEffect(() => {
     if (!sceneState || revealConfig) return;
     if (hasRestoredRevealRef.current) return;
-    hasRestoredRevealRef.current = true;
+    // Mark handled only when the timer FIRES: React StrictMode (dev) cleans up and re-runs this effect,
+    // and a flag set up front would stop the second run from ever scheduling the card.
+    let restoreTimer = null;
+    const cleanup = () => window.clearTimeout(restoreTimer);
 
     const restoreReveal = (word) => {
-      safeSetTimeout(() => {
+      restoreTimer = window.setTimeout(() => {
+        hasRestoredRevealRef.current = true;
         const discoveryData = getDiscoveryContent(zoneId, sceneId, word);
         playChime();
         setShowSparkle(null);
@@ -612,18 +621,20 @@ const NirvighnamChantContent = ({
     // Final card already collected before leaving: never show it twice, go on to the celebration.
     if (sceneState.finalCardCollected && [PHASES.KURUMEDEVA_COMPLETE, PHASES.KURUMEDEVA_POWER].includes(sceneState.phase)) {
       sceneActions.updateState({ unlockedApps: { ...(sceneState.unlockedApps || {}), kurumedeva: true } });
-      safeSetTimeout(() => handleAppDiscoveryCelebrate(), 600);
-      return;
+      restoreTimer = window.setTimeout(() => { hasRestoredRevealRef.current = true; handleAppDiscoveryCelebrate(); }, 600);
+      return cleanup;
     }
 
     if ([PHASES.NIRVIGHNAM_COMPLETE, PHASES.NIRVIGHNAM_POWER].includes(sceneState.phase)) {
       restoreReveal('nirvighnam');
-      return;
+      return cleanup;
     }
 
     if ([PHASES.KURUMEDEVA_COMPLETE, PHASES.KURUMEDEVA_POWER].includes(sceneState.phase)) {
       restoreReveal('kurumedeva');
+      return cleanup;
     }
+    hasRestoredRevealRef.current = true; // nothing to restore
   }, [sceneState?.phase]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Phase complete handler ─────────────────────────────────────────────────
