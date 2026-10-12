@@ -253,6 +253,14 @@ const EarsSoundMatchGame = ({
   const audioRef = useRef(null);
   const timersRef = useRef([]);
   const runIdRef = useRef(0);
+  // False once the game unmounts (StrictMode's mount/cleanup/mount sets it true again). A line
+  // cancelled by leaving the scene still fires its end callback; it must not advance the game
+  // or save a "success line finished" marker.
+  const aliveRef = useRef(true);
+  useEffect(() => {
+    aliveRef.current = true;
+    return () => { aliveRef.current = false; };
+  }, []);
   const chooseStartedAtRef = useRef(Date.now());
   const hintStageRef = useRef(0);
   // When the L2 clue + sound finished — L3's 8s gap counts from THIS, not
@@ -310,6 +318,7 @@ const EarsSoundMatchGame = ({
     }
     const done = () => {
       if (entry.dead) return;
+      if (!aliveRef.current) { entry.dead = true; return; }
       if (pausedRef.current) {
         entry.dead = true;
         interruptedAudioRef.current = entry;
@@ -353,7 +362,12 @@ const EarsSoundMatchGame = ({
       onEnd?.();
     };
     utterance.onend = done;
-    utterance.onerror = done;
+    // A line cut off by cancel() (a newer line, leaving the scene) is not finished: its end
+    // callback must not run the next step on top of whatever replaced it.
+    utterance.onerror = (e) => {
+      if (e?.error === 'canceled' || e?.error === 'interrupted') return;
+      done();
+    };
     speakingTextRef.current = text;
   }, []);
 
@@ -718,10 +732,16 @@ const EarsSoundMatchGame = ({
       }, 500);
       return () => clearTimeout(resumeTimer);
     }
-    introStartedRef.current = true;
-    resetGame();
-    schedule(() => playSequence(ROUNDS[0]), INTRO_DELAY_MS);
-    return undefined;
+    // Fresh start: same rule as the resume branch - set the flag when the timer FIRES, not up front.
+    // Setting it first meant StrictMode's mount -> cleanup -> mount cancelled the scheduled intro and
+    // the flag then stopped it being scheduled again (silent, frozen game).
+    const startTimer = setTimeout(() => {
+      if (introStartedRef.current) return;
+      introStartedRef.current = true;
+      resetGame();
+      schedule(() => playSequence(ROUNDS[0]), INTRO_DELAY_MS);
+    }, 0);
+    return () => clearTimeout(startTimer);
   }, [isActive, playSequence, resetGame, schedule, speak]);
 
   // L1: replay all three sources once (memory aid, no VO, no reveal) — a
