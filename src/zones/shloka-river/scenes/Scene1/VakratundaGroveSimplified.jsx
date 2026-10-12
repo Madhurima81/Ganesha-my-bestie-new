@@ -657,10 +657,14 @@ const VakratundaGroveContent = ({
   useEffect(() => {
     if (!sceneState || revealConfig) return;
     if (hasRestoredRevealRef.current) return;
-    hasRestoredRevealRef.current = true;
+    // Mark handled only when the timer FIRES: React StrictMode (dev) cleans up and re-runs this effect,
+    // and a flag set up front would stop the second run from ever scheduling the card.
+    let restoreTimer = null;
+    const cleanup = () => window.clearTimeout(restoreTimer);
 
     const restoreReveal = (word) => {
-      safeSetTimeout(() => {
+      restoreTimer = window.setTimeout(() => {
+        hasRestoredRevealRef.current = true;
         const discoveryData = getDiscoveryContent(zoneId, sceneId, word);
         playChime();
         setShowSparkle(null);
@@ -677,18 +681,20 @@ const VakratundaGroveContent = ({
     // Final card already collected before leaving: never show it twice, go on to the celebration.
     if (sceneState.finalCardCollected && [PHASES.MAHAKAYA_COMPLETE, PHASES.MAHAKAYA_POWER].includes(sceneState.phase)) {
       sceneActions.updateState({ unlockedApps: { ...(sceneState.unlockedApps || {}), mahakaya: true } });
-      safeSetTimeout(() => handleAppDiscoveryCelebrate(), 600);
-      return;
+      restoreTimer = window.setTimeout(() => { hasRestoredRevealRef.current = true; handleAppDiscoveryCelebrate(); }, 600);
+      return cleanup;
     }
 
     if ([PHASES.VAKRATUNDA_COMPLETE, PHASES.VAKRATUNDA_POWER].includes(sceneState.phase)) {
       restoreReveal('vakratunda');
-      return;
+      return cleanup;
     }
 
     if ([PHASES.MAHAKAYA_COMPLETE, PHASES.MAHAKAYA_POWER].includes(sceneState.phase)) {
       restoreReveal('mahakaya');
+      return cleanup;
     }
+    hasRestoredRevealRef.current = true; // nothing to restore
   }, [sceneState?.phase]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // -- Home button: stop everything ? go to main map ----------------------

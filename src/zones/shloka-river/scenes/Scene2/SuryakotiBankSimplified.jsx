@@ -489,10 +489,14 @@ const SuryakotiBankContent = ({
   useEffect(() => {
     if (!sceneState || revealConfig) return;
     if (hasRestoredRevealRef.current) return;
-    hasRestoredRevealRef.current = true;
+    // Mark handled only when the timer FIRES: React StrictMode (dev) cleans up and re-runs this effect,
+    // and a flag set up front would stop the second run from ever scheduling the card.
+    let restoreTimer = null;
+    const cleanup = () => window.clearTimeout(restoreTimer);
 
     const restoreReveal = (word) => {
-      safeSetTimeout(() => {
+      restoreTimer = window.setTimeout(() => {
+        hasRestoredRevealRef.current = true;
         const discoveryData = getDiscoveryContent(zoneId, sceneId, word);
         playChime();
         setShowSparkle(null);
@@ -509,18 +513,20 @@ const SuryakotiBankContent = ({
     // Final card already collected before leaving: never show it twice, go on to the celebration.
     if (sceneState.finalCardCollected && [PHASES.SAMAPRABHA_COMPLETE, PHASES.SAMAPRABHA_POWER].includes(sceneState.phase)) {
       sceneActions.updateState({ unlockedApps: { ...(sceneState.unlockedApps || {}), samaprabha: true } });
-      safeSetTimeout(() => handleAppDiscoveryCelebrate(), 600);
-      return;
+      restoreTimer = window.setTimeout(() => { hasRestoredRevealRef.current = true; handleAppDiscoveryCelebrate(); }, 600);
+      return cleanup;
     }
 
     if ([PHASES.SURYAKOTI_COMPLETE, PHASES.SURYAKOTI_POWER].includes(sceneState.phase)) {
       restoreReveal('suryakoti');
-      return;
+      return cleanup;
     }
 
     if ([PHASES.SAMAPRABHA_COMPLETE, PHASES.SAMAPRABHA_POWER].includes(sceneState.phase)) {
       restoreReveal('samaprabha');
+      return cleanup;
     }
+    hasRestoredRevealRef.current = true; // nothing to restore
   }, [sceneState?.phase]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleRevealComplete = useCallback((symbolId) => {
@@ -580,10 +586,12 @@ const SuryakotiBankContent = ({
     if (sceneState?.phase === PHASES.SURYAKOTI_GAME && sceneState?.welcomeShown) {
       setCurrentPhase('suryakotiGame');
       if (isAudioOn && !suryaIntroPlayedRef.current) {
-        suryaIntroPlayedRef.current = true;
         setSuryaIntroComplete(true);
         setSuryaIntroVoStarted(false);
+        // "Played" is marked when the timer FIRES, not before it is scheduled: StrictMode (dev) cleans up
+        // and re-runs this effect, and a flag set up front would stop the second run from ever speaking.
         const cancelIntro = safeSetTimeout(() => {
+          suryaIntroPlayedRef.current = true;
           if (suryaInteractionStartedRef.current) { setSuryaIntroComplete(true); setSuryaIntroVoStarted(true); return; }
           playGuidanceVoice('scene11_surya_intro', () => {
             setSuryaIntroComplete(true);
@@ -616,16 +624,20 @@ const SuryakotiBankContent = ({
     if (sceneState?.phase === PHASES.SAMAPRABHA_GAME) {
       setCurrentPhase('samaprabhaGame');
       if (isAudioOn && !samaIntroPlayedRef.current) {
-        samaIntroPlayedRef.current = true;
         setSamaIntroComplete(true);
         setSamaIntroVoStarted(false);
-        playGuidanceVoice('scene11_sama_intro', () => {
-          setSamaIntroComplete(true);
-          setSamaIntroVoStarted(true);
-          if (samaInteractionStartedRef.current) return;
-          startIdleTimer();
-        }, { cue: getLineCue('scene11_sama_intro', () => setSamaIntroVoStarted(true)) });
-        return undefined;
+        // ~500ms wait: speech at the very first instant after mount is silent on Continue. Flag set when
+        // the timer fires (StrictMode re-runs this effect).
+        const introTimer = window.setTimeout(() => {
+          samaIntroPlayedRef.current = true;
+          playGuidanceVoice('scene11_sama_intro', () => {
+            setSamaIntroComplete(true);
+            setSamaIntroVoStarted(true);
+            if (samaInteractionStartedRef.current) return;
+            startIdleTimer();
+          }, { cue: getLineCue('scene11_sama_intro', () => setSamaIntroVoStarted(true)) });
+        }, 500);
+        return () => window.clearTimeout(introTimer);
       }
       setSamaIntroComplete(true);
       setSamaIntroVoStarted(true);
@@ -695,6 +707,50 @@ const SuryakotiBankContent = ({
     setCurrentPhase,
     stopIdleTimer,
     triggerMiniGesture,
+    zoneId,
+  ]);
+
+  useEffect(() => {
+    if (!sceneState || revealConfig) return undefined;
+
+    const isSuryakotiPending =
+      [PHASES.SURYAKOTI_COMPLETE, PHASES.SURYAKOTI_POWER].includes(sceneState.phase) &&
+      !sceneState.unlockedApps?.suryakoti;
+    const isSamaprabhaPending =
+      [PHASES.SAMAPRABHA_COMPLETE, PHASES.SAMAPRABHA_POWER].includes(sceneState.phase) &&
+      !sceneState.unlockedApps?.samaprabha &&
+      !sceneState.finalCardCollected;
+    const word = isSuryakotiPending ? 'suryakoti' : isSamaprabhaPending ? 'samaprabha' : null;
+
+    if (!word) return undefined;
+
+    const timer = window.setTimeout(() => {
+      const discoveryData = getDiscoveryContent(zoneId, sceneId, word);
+      playChime();
+      setShowSparkle(null);
+      setRevealConfig({
+        symbolId: word,
+        symbolImage: powerConfig[word].image,
+        symbolName: discoveryData?.title || powerConfig[word].name,
+        affirmation: discoveryData?.affirmation || powerConfig[word].affirmation,
+        sidebarTarget: getSidebarTarget(word),
+      });
+
+      if (sceneState.phase === PHASES.SURYAKOTI_COMPLETE) {
+        sceneActions.updateState({ phase: PHASES.SURYAKOTI_POWER });
+      } else if (sceneState.phase === PHASES.SAMAPRABHA_COMPLETE) {
+        sceneActions.updateState({ phase: PHASES.SAMAPRABHA_POWER });
+      }
+    }, 1800);
+
+    return () => window.clearTimeout(timer);
+  }, [
+    getSidebarTarget,
+    playChime,
+    revealConfig,
+    sceneActions,
+    sceneId,
+    sceneState,
     zoneId,
   ]);
 

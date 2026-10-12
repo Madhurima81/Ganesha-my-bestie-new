@@ -29,7 +29,7 @@
   position: relative;
   width: 95%;
   max-width: 1700px;
-  min-height: min(80dvh, 820px);
+  min-height: min(74dvh, 820px);
   background: transparent !important;
   border-radius: 0 !important;
   box-shadow: none !important;
@@ -38,14 +38,14 @@
   justify-content: center;
   gap: 26px;
   padding: 0 60px;
-  transform: translateY(-30px);
+  transform: translateY(-42px);
 }
 
 /* Override any global .scene-completion-content styles from other scenes */
 .celebration-backdrop .scene-completion-content {
   width: 95% !important;
   max-width: 1700px !important;
-  min-height: min(80dvh, 820px) !important;
+  min-height: min(74dvh, 820px) !important;
   padding: 0 60px !important;
   background: transparent !important;
   border: none !important;
@@ -57,13 +57,13 @@
 
 .celebration-card {
   position: relative;
-  flex: 0 0 52%;
-  max-width: 660px;
-  min-height: clamp(400px, 56dvh, 620px);
+  flex: 0 0 45%;
+  max-width: 560px;
+  min-height: clamp(360px, 52dvh, 520px);
   background: url('../../../assets/cards/openingmodal.svg') no-repeat center / 100% 100%;
   color: var(--cs-card-text, #5D2E0F);
   border-radius: 0;
-  padding: clamp(56px, 7%, 80px) clamp(46px, 6%, 72px) clamp(52px, 6%, 68px);
+  padding: clamp(48px, 10%, 68px) clamp(40px, 8%, 60px);
   border: none;
   outline: none;
   filter: drop-shadow(0 10px 24px rgba(40, 20, 80, 0.12));
@@ -137,13 +137,13 @@
   align-items: center;
   justify-content: flex-end;
   z-index: 2;
-  margin-right: -68px;
-  margin-top: 20px;
+  margin-right: -84px;
+  margin-top: 0;
 }
 
 .completion-ganesha-left > * {
   width: 100%;
-  max-width: 600px;
+  max-width: 420px;
   height: auto;
   transform: scaleX(-1); /* Flips Ganesha to face inside */
   position: relative !important;
@@ -1222,8 +1222,8 @@ transition:
   }
 
   .celebration-card {
-    flex: 0 0 54%;
-    max-width: 620px;
+    flex: 0 0 52%;
+    max-width: 560px;
     min-height: auto;
     max-height: 88dvh;
     padding: clamp(42px, 5.4%, 58px) clamp(32px, 4.6%, 48px) clamp(34px, 4.6%, 44px);

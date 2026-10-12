@@ -248,6 +248,9 @@ export default function SarvadaGame({
     });
   }, [playSceneLine, safeAfter, setBeat]);
 
+  const runApiRef = useRef({});
+  runApiRef.current = { safeAfter, playSceneLine, setBeat, startPhase };
+
   useEffect(() => {
     if (!isActive) {
       clearTimers();
@@ -270,35 +273,45 @@ export default function SarvadaGame({
       runStartedRef.current = false;
       return;
     }
-    if (runStartedRef.current) return;
-    runStartedRef.current = true;
-    // Resumed after finished times of day: skip the scene intro and start straight at the next one.
+    if (runStartedRef.current) return undefined;
+    // Latest callbacks come from a ref: the parent passes inline props that change on every render
+    // (a checkpoint() re-renders it), and listing them as deps would cancel the pending timers below.
+    const run = runApiRef.current;
+    // The flag is set when a timer FIRES, never before one is scheduled: StrictMode (dev) mounts,
+    // cleans up and mounts again, and a flag set up front would stop the second run from scheduling.
+    // Resumed after finished times of day: skip the scene intro and start straight at the next one,
+    // after ~500ms (speech at the very first instant after mount is silent on Continue).
     if (seedTimes > 0) {
       introPlayedRef.current = true;
       setGamePhase('playing');
-      startPhase(seedTimes);
-      return clearTimers;
+      run.safeAfter(500, () => {
+        runStartedRef.current = true;
+        runApiRef.current.startPhase(seedTimes);
+      });
+      return () => { clearTimers(); runStartedRef.current = false; };
     }
-    setBeat?.('intro');
-    safeAfter(700, () => {
-      if (playSceneLine && !introPlayedRef.current) {
+    run.setBeat?.('intro');
+    run.safeAfter(700, () => {
+      runStartedRef.current = true;
+      const { playSceneLine: speak, safeAfter: after, startPhase: start } = runApiRef.current;
+      if (speak && !introPlayedRef.current) {
         introPlayedRef.current = true;
         let introDone = false;
         const finishIntro = () => {
           if (introDone) return;
           introDone = true;
-          startPhase(0);
+          start(0);
         };
-        playSceneLine('scene14_intro', finishIntro);
-        safeAfter(6000, finishIntro);
+        speak('scene14_intro', finishIntro);
+        after(6000, finishIntro);
       } else {
         introPlayedRef.current = true;
-        startPhase(0);
+        start(0);
       }
     });
     setGamePhase('playing');
-    return clearTimers;
-  }, [isActive, clearTimers, safeAfter, playSceneLine, setBeat, startPhase]);
+    return () => { clearTimers(); runStartedRef.current = false; };
+  }, [isActive, clearTimers]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => () => clearTimers(), [clearTimers]);
 

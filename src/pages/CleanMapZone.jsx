@@ -133,7 +133,9 @@ const MAP_ZONE_COMPLETION_VO = {
 
 // Temporary debug switches for QA checks.
 // Set both back to false after verification.
-const DEBUG_UNLOCK_ALL_ZONES = false;
+import { isDevUnlockAll } from '../lib/utils/devUnlock';
+// Dev builds only: ?unlockall=1 opens every zone (see lib/utils/devUnlock.js). Always false in production.
+const DEBUG_UNLOCK_ALL_ZONES = isDevUnlockAll();
 const DEBUG_ALWAYS_OPEN_ZONE_WELCOME = false;
 
 const getZoneDefinition = (zoneId) => ZONES_DATA.find((zone) => zone.id === zoneId);
@@ -728,7 +730,7 @@ const MAP_ZONE_ART_DEFAULTS = {
   river: {
     id: 'river',
     label: 'River',
-    src: '/images/map/shlokariver-new.webp',
+    src: '/images/map/shlokariver-new.png',
     left: 59.4,
     top: 58.4,
     w: 74,
@@ -1487,7 +1489,7 @@ const CleanMapZone = ({ onZoneSelect, onBackToWelcome, onGoToProfiles, onTWGOpen
         style={getZoneArtStyle('symbol', { pointerEvents: 'none' })}
       />
       <img
-        src={zoneArtItems.river?.src || '/images/map/shlokariver-new.webp'}
+        src={zoneArtItems.river?.src || '/images/map/shlokariver-new.png'}
         alt=""
         className="map-zone-art map-zone-art-river"
         aria-hidden="true"

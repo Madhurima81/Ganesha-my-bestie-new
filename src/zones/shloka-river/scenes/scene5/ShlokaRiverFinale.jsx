@@ -798,16 +798,24 @@ const ShlokaRiverFinaleContent = ({
   // board and continue into the completed-Shloka playback. Idempotent with
   // the live placeWord path via successFlowStartedRef, so this never
   // double-fires the completion VO for a child who just finished live.
+  const triggerSuccessFlowRef = useRef(null);
+  triggerSuccessFlowRef.current = triggerSuccessFlow;
+
   useEffect(() => {
     if (phase !== PHASES.SUCCESS) return undefined;
     fillCompletedBoard();
 
     if (resumeHandledRef.current) return undefined;
-    resumeHandledRef.current = true;
 
-    const resumeTimer = safeSetTimeout(() => triggerSuccessFlow(), 500);
-    return () => resumeTimer?.();
-  }, [phase, fillCompletedBoard, safeSetTimeout, triggerSuccessFlow]);
+    // Mark handled only when the timer FIRES (React StrictMode re-runs this effect; a flag set up
+    // front stops the second run from scheduling). Plain timer + ref so a parent re-render, which
+    // changes triggerSuccessFlow's identity, cannot cancel it.
+    const resumeTimer = window.setTimeout(() => {
+      resumeHandledRef.current = true;
+      triggerSuccessFlowRef.current?.();
+    }, 500);
+    return () => window.clearTimeout(resumeTimer);
+  }, [phase, fillCompletedBoard]);
 
   const placeWord = useCallback((wordData, slotIdx) => {
     const isCorrect = SHLOKA_WORDS[slotIdx].id === wordData.id;

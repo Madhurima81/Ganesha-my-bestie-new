@@ -397,7 +397,14 @@ export default function MahakayaRescueGame({
     // Fallback timer covers muted audio or no speechSynthesis support, where
     // onStart never fires.
     // The hand is cued to the action word ("Drag") of the line, not to a guessed delay.
-    playSceneLine?.('scene10_maha_intro', undefined, { cue: getLineCue('scene10_maha_intro', () => setIntroVoStarted(true)) });
+    const resumedLogs = initialLogsRef.current;
+    if (resumedLogs > 0) {
+      // Continue mid-raft: never repeat the full intro. After 1 log, say the line that log would have
+      // triggered ("Keep adding logs to the raft."); after 2-3, "Drag the next log.".
+      playSceneLine?.(resumedLogs === 1 ? 'scene10_maha_keep_adding' : 'scene10_maha_next_log');
+    } else {
+      playSceneLine?.('scene10_maha_intro', undefined, { cue: getLineCue('scene10_maha_intro', () => setIntroVoStarted(true)) });
+    }
     // Safety net only (e.g. no speech engine at all).
     after(6000, () => setIntroVoStarted(true));
     return clearTimers;

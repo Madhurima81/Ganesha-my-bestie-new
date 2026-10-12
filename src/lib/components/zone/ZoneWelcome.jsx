@@ -2,6 +2,7 @@
 // Path: lib/components/zone/ZoneWelcome.jsx
 
 import React, { useState, useEffect } from 'react';
+import { isDevUnlockAll } from '../../utils/devUnlock';
 import './ZoneWelcome.css';
 import '../../styles/zone-themes.css';
 import { getZoneTheme, getProfilePillBtnStyle } from '../../config/ZoneThemes';
@@ -267,6 +268,9 @@ const speakZoneLine = (text) => {
 
   function checkSceneUnlocked(scene) {
     if (!zoneData || !zoneData.scenes) return false;
+
+    // Dev builds only (?unlockall=1): every scene open for testing. Always false in production.
+    if (isDevUnlockAll()) return true;
 
     if (MVP_FIRST_SCENE_ONLY && scene.order !== 1) {
       dlog(`MVP: Scene ${scene.id} locked (only scene 1 available)`);

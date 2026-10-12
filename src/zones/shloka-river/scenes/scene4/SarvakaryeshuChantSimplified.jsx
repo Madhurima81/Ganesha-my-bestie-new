@@ -573,10 +573,14 @@ const SarvakaryeshuChantContent = ({
   useEffect(() => {
     if (!sceneState || revealConfig) return;
     if (hasRestoredRevealRef.current) return;
-    hasRestoredRevealRef.current = true;
+    // Mark handled only when the timer FIRES: React StrictMode (dev) cleans up and re-runs this effect,
+    // and a flag set up front would stop the second run from ever scheduling the card.
+    let restoreTimer = null;
+    const cleanup = () => window.clearTimeout(restoreTimer);
 
     const restoreReveal = (word) => {
-      window.setTimeout(() => {
+      restoreTimer = window.setTimeout(() => {
+        hasRestoredRevealRef.current = true;
         const discoveryData = getDiscoveryContent(zoneId, sceneId, word);
         playChime();
         setShowSparkle(null);
@@ -593,18 +597,20 @@ const SarvakaryeshuChantContent = ({
     // Final card already collected before leaving: never show it twice, go on to the celebration.
     if (sceneState.finalCardCollected && [PHASES.SARVADA_COMPLETE, PHASES.SARVADA_POWER].includes(sceneState.phase)) {
       sceneActions.updateState({ unlockedApps: { ...(sceneState.unlockedApps || {}), sarvada: true } });
-      window.setTimeout(() => handleAppDiscoveryCelebrate(), 600);
-      return;
+      restoreTimer = window.setTimeout(() => { hasRestoredRevealRef.current = true; handleAppDiscoveryCelebrate(); }, 600);
+      return cleanup;
     }
 
     if ([PHASES.SARVAKARYESHU_COMPLETE, PHASES.SARVAKARYESHU_POWER].includes(sceneState.phase)) {
       restoreReveal('sarvakaryeshu');
-      return;
+      return cleanup;
     }
 
     if ([PHASES.SARVADA_COMPLETE, PHASES.SARVADA_POWER].includes(sceneState.phase)) {
       restoreReveal('sarvada');
+      return cleanup;
     }
+    hasRestoredRevealRef.current = true; // nothing to restore
   }, [sceneState?.phase]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handlePhaseComplete = useCallback((word) => {

@@ -264,20 +264,20 @@
 }
 
 .pulse {
-  animation: stageHintPulse 1.15s ease-in-out infinite !important;
+  animation: vakStageHintPulse 1.15s ease-in-out infinite !important;
 }
 
 .hint-glow {
-  animation: stageHintGlow 1.45s ease-in-out infinite !important;
+  animation: vakStageHintGlow 1.45s ease-in-out infinite !important;
   filter: drop-shadow(0 0 14px rgba(255, 215, 0, 0.75)) !important;
 }
 
-@keyframes stageHintPulse {
+@keyframes vakStageHintPulse {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.05); }
 }
 
-@keyframes stageHintGlow {
+@keyframes vakStageHintGlow {
   0%, 100% {
     filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.5));
     transform: scale(1);

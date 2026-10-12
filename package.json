@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "sound-usage": "node scripts/sound-usage.mjs",
     "sound-lab:export": "node scripts/export-sound-lab.mjs",
+    "check:css": "node scripts/check-css-clashes.cjs",
     "preview": "vite preview",
     "test": "jest",
     "test:watch": "jest --watch"
