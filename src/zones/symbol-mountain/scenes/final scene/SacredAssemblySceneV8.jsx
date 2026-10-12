@@ -247,6 +247,7 @@ const VO_CHECK_INTERVAL_MS = 200;
 const VO_WAIT_MAX_MS = 4000;                   // was 3200 � allow longer VO
 const POST_VO_GRACE_MS = 600;                  // was 800
 const PLACEMENT_SETTLE_MS = 1200;              // NEW � "look at what you did" beat
+const FINAL_CELEBRATION_VISUAL_DURATION_MS = 12000;
 
 // Body part drop zone configurations � import from shared config
 const BODY_PART_ZONES = GANESHA_ZONES;
@@ -1607,28 +1608,35 @@ const SacredAssemblyContent = ({
   }, [isReload]);
 
   // FINAL CELEBRATION: play the closing VO while the all-symbols orbs/fireworks
-  // are on screen, then move to the completion modal once both VO and animation
-  // have finished.
+  // are on screen, keep that visual for one second after VO, then move directly
+  // to the completion modal.
   useEffect(() => {
     if (showSparkle === 'final-fireworks' && !sceneCompleteVOFinished && !finalVoPlayedRef.current) {
       finalVoPlayedRef.current = true;
       playSceneVoice('finalYouFoundAll', () => {
-        safeSetTimeout(() => {
-          playSceneVoice('finalAlwaysWithYou', () => {
+        playSceneVoice('finalAlwaysWithYou', () => {
+          safeSetTimeout(() => {
             setSceneCompleteVOFinished(true);
-          }, { replayOnReturn: false });
-        }, 700);
+          }, 1000);
+        }, { replayOnReturn: false });
       }, { replayOnReturn: false });
       return;
     }
 
-    if (fireworksFinished && sceneCompleteVOFinished && !showSceneCompletion) {
+    if (sceneCompleteVOFinished && !showSceneCompletion) {
+      setShowSparkle(null);
+      setIsOrbsRunning(false);
+      sceneActions.updateState({
+        showingCompletionScreen: false,
+        showingZoneCompletion: false,
+        celebrationActive: false
+      });
       setShowSceneCompletion(true);
     }
   }, [
-    fireworksFinished,
     playSceneVoice,
     safeSetTimeout,
+    sceneActions,
     sceneCompleteVOFinished,
     showSceneCompletion,
     showSparkle,
@@ -1888,6 +1896,9 @@ const SacredAssemblyContent = ({
             sceneId={sceneId}
             isOpen={!sceneState.welcomeShown && !isSceneCompletedState && !showSceneCompletion}
             onStart={() => {
+              // The modal's own stop only covers Web Speech and DOM <audio>; the scene's opening
+              // line runs through the Ganesha voice engine and kept playing into the scene.
+              stopGaneshaVoice();
               sceneActions.updateState({ welcomeShown: true });
             }}
             characterImg={ganeshaDivine}
@@ -2044,12 +2055,12 @@ const SacredAssemblyContent = ({
                   burstsPerWave={5}
                   particles={24}
                   radius={140}
-                  duration={2600}
+                  duration={FINAL_CELEBRATION_VISUAL_DURATION_MS}
                 />
                 <RotatingOrbsEffect
                   show={true}
-                  duration={7000}
-                  rotationDuration={7000}
+                  duration={FINAL_CELEBRATION_VISUAL_DURATION_MS}
+                  rotationDuration={FINAL_CELEBRATION_VISUAL_DURATION_MS}
                   symbolImages={{
                     mooshika: symbolMooshikaColored,
                     modak: symbolModakColored,
@@ -2065,18 +2076,6 @@ const SacredAssemblyContent = ({
                   showCentralGanesha={false}
                   showBuiltInFireworks={false}
                   onComplete={() => {
-                    setShowSparkle(null);
-                    setIsOrbsRunning(false);
-
-                    // Mark celebration finished
-                    sceneActions.updateState({
-                      showingCompletionScreen: false,
-                      showingZoneCompletion: false,
-                      celebrationActive: false
-                    });
-
-                    // Signal orbs finished; the completion modal opens once the
-                    // finale VO has also finished (gating effect below).
                     setFireworksFinished(true);
                   }}
                 />
