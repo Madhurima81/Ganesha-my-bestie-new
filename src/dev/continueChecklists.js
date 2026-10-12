@@ -110,7 +110,7 @@ export const CONTINUE_CHECKLISTS = {
     { text: leave('Samaprabha: 2 of 4 clues revealed (BR-EA lit), the clue 2 line finished.'), expect: 'Starts at clue 3: first 2 syllables lit, first 2 shadows faded, no intro line, no clue lines replayed, empty hold ring.' },
     { text: leave('Samaprabha: 3 clues revealed, mid-hold on clue 4 (ring part-way).'), expect: 'Starts at clue 4 with an EMPTY hold ring (a half-filled hold is never saved); 3 syllables lit; no intro line.' },
     { text: 'Samaprabha: hold clue 2 to the end, then leave within 1 second (while its syllable / line is playing) and tap Continue.', expect: 'Starts at clue 3 (never clue 2 again). Clue 2 syllable lit; clue 2 line replays ONCE because it was cut off.' },
-    { text: 'Samaprabha: hold clue 1 to the end, leave after its line AND "find another" have finished, then Continue.', expect: 'Starts at clue 2 with NO line replayed (the clue 1 line finished).' },
+    { text: 'Samaprabha: hold clue 1 to the end, leave after its line AND "find another" have finished, then Continue.', expect: 'Starts at clue 2 with the clue 1 line NOT replayed (it finished); only the "press and hold another part" prompt plays.' },
     { text: 'Samaprabha: hold clue 1 to the end, leave while the "find another" line is playing, then Continue.', expect: 'Starts at clue 2; clue 1 line + "find another" replay once (the clue 1 line includes the follow-up).' },
     { text: 'Samaprabha: reveal clue 4, leave during the fawn relief / word / success line, then Continue.', expect: 'All 4 syllables lit; the clue 4 line only if cut off; then the word "samaprabha" and the success line, then the card.' },
     { text: leave('Samaprabha card is showing.'), expect: 'The Samaprabha card comes back once.' },

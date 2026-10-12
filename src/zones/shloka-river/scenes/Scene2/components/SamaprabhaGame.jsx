@@ -790,6 +790,9 @@ export default function SamaprabhaGame({
         safeAfter(750, () => setAnimalState('walking'));
         safeAfter(2500, () => setPhase('done'));
         playRevealForIndex(last, startCompletionVo);
+      } else if (seedClues === 1 && initialClueVoDone) {
+        // Clue 1 line + "find another" already finished: the child still needs the next-step prompt.
+        playSceneLine?.('scene11_sama_find_another', undefined, { replayOnReturn: false });
       } else {
         playRevealForIndex(last);
       }
