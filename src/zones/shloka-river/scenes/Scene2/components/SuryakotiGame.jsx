@@ -525,28 +525,50 @@ export default function SuryakotiGame({
     });
   }, [cancelPausable, completeAfterSuccess, pausableAfter, playSceneLine, playWord]);
 
+  // Latest-callback refs: the hop effect below must NOT re-run when the wrapper re-renders and hands down
+  // new function identities (playSceneLine / playWord are inline props). Re-running cancelled the hop timers
+  // while doneAnnouncedRef blocked the retry, so the hop never finished and the scene froze after the
+  // success line (docs/KNOWN_PITFALLS.md #4).
+  const startCompletionVoRef = useRef(startCompletionVo);
+  startCompletionVoRef.current = startCompletionVo;
+  const completeAfterSuccessRef = useRef(completeAfterSuccess);
+  completeAfterSuccessRef.current = completeAfterSuccess;
+  const pausableAfterRef = useRef(pausableAfter);
+  pausableAfterRef.current = pausableAfter;
+  const cancelPausableRef = useRef(cancelPausable);
+  cancelPausableRef.current = cancelPausable;
   useEffect(() => {
     if (phase !== 'hop' || doneAnnouncedRef.current) return undefined;
     doneAnnouncedRef.current = true;
     const timers = [];
+    let failSafeTimer = null;
 
     // Hold the word/ending line until the final "ti" syllable clip has
     // finished (its onSyllableLit onEnded sets lastSyllableDoneRef). Fallback
     // covers a dropped callback (audio error / iOS / test mock).
     // Never fires while the in-order sequence still has syllables pending: re-arms instead.
     const armFallback = () => {
-      sylEndFallbackRef.current = pausableAfter(1600, () => {
+      sylEndFallbackRef.current = pausableAfterRef.current(1600, () => {
         const seq = syllableSeqRef.current;
         if (seq.busy || seq.queue.length) { armFallback(); return; }
         lastSyllableDoneRef.current = true;
-        startCompletionVo();
+        startCompletionVoRef.current();
       });
     };
     armFallback();
-    startCompletionVo();
+    startCompletionVoRef.current();
+
+    failSafeTimer = pausableAfterRef.current(7000, () => {
+      if (completionScheduledRef.current) return;
+      lastSyllableDoneRef.current = true;
+      successVoDoneRef.current = true;
+      hopDoneRef.current = true;
+      setPhase('done');
+      completeAfterSuccessRef.current();
+    });
 
     const hopAfter = (ms, fn) => {
-      timers.push(pausableAfter(ms, fn));
+      timers.push(pausableAfterRef.current(ms, fn));
     };
 
     HOP_PATH.forEach((waypoint, index) => {
@@ -558,16 +580,17 @@ export default function SuryakotiGame({
           if (index === HOP_PATH.length - 1) {
             hopDoneRef.current = true;
             setPhase('done');
-            completeAfterSuccess();
+            completeAfterSuccessRef.current();
           }
         });
       });
     });
 
     return () => {
-      timers.forEach(cancelPausable);
+      timers.forEach(cancelPausableRef.current);
+      if (failSafeTimer) cancelPausableRef.current(failSafeTimer);
     };
-  }, [cancelPausable, completeAfterSuccess, pausableAfter, phase, startCompletionVo]);
+  }, [phase]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => () => {
     if (voFallbackRef.current) {

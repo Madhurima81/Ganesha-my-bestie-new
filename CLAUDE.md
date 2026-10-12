@@ -165,6 +165,7 @@ Vakratunda · Mahakaya · Suryakoti · Samaprabha · Nirvighnam · Kurumedeva ·
 - ❌ Never skip `BackToMapButton` — every scene needs an escape
 - ❌ Never hardcode incorrect Sanskrit
 - ❌ Never add an unprefixed `@keyframes` name or a generic global class (`.hint-glow`, `.pulse`, `.glow`…) in a scene/component CSS file. Vite bundles all CSS into ONE global stylesheet, so a same-named rule in another scene silently wins (Kurumedeva's friend glow broke this way, 2026-10-12). Prefix every animation with the scene/component (`kuruHintGlow`, `vakStageHintPulse`) and scope classes under the scene's root class. Run `npm run check:css` before committing.
+- 📖 Before touching resume/Continue, voice, timers, shared components or CSS, read `docs/KNOWN_PITFALLS.md` (bugs that cost hours before) and add a new entry whenever one does.
 
 ---
 

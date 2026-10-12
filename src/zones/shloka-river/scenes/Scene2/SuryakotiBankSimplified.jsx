@@ -693,7 +693,7 @@ const SuryakotiBankContent = ({
 
       safeSetTimeout(() => {
         triggerReveal();
-      }, isAudioOn ? 400 : 1500);
+      }, isAudioOn ? 2000 : 1500);
     }, 0);
   }, [
     getSidebarTarget,
@@ -714,11 +714,9 @@ const SuryakotiBankContent = ({
     if (!sceneState || revealConfig) return undefined;
 
     const isSuryakotiPending =
-      [PHASES.SURYAKOTI_COMPLETE, PHASES.SURYAKOTI_POWER].includes(sceneState.phase) &&
-      !sceneState.unlockedApps?.suryakoti;
+      [PHASES.SURYAKOTI_COMPLETE, PHASES.SURYAKOTI_POWER].includes(sceneState.phase);
     const isSamaprabhaPending =
       [PHASES.SAMAPRABHA_COMPLETE, PHASES.SAMAPRABHA_POWER].includes(sceneState.phase) &&
-      !sceneState.unlockedApps?.samaprabha &&
       !sceneState.finalCardCollected;
     const word = isSuryakotiPending ? 'suryakoti' : isSamaprabhaPending ? 'samaprabha' : null;
 
@@ -744,13 +742,15 @@ const SuryakotiBankContent = ({
     }, 1800);
 
     return () => window.clearTimeout(timer);
+    // Depend on the two values the effect actually reads, NOT on the whole sceneState / sceneActions
+    // objects: those are new on every scene update, which kept cancelling this 1.8s timer so the card
+    // never showed (see docs/KNOWN_PITFALLS.md, "unstable effect dependencies").
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    getSidebarTarget,
-    playChime,
     revealConfig,
-    sceneActions,
+    sceneState?.phase,
+    sceneState?.finalCardCollected,
     sceneId,
-    sceneState,
     zoneId,
   ]);
 
