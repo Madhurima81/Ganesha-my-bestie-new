@@ -168,6 +168,18 @@ const FavoriteFoodGame = ({ onComplete, onBack, onNavigate, zoneId = 'about-me-h
           currentModal: null, // 'food-draw', 'food-type', 'activity-draw', 'activity-type'
           draftData: null,    // Stores incomplete drawing/text
 
+          // "Success line finished" markers, saved when each line really ends. Continue replays a
+          // solved beat's line only if the child left during it. Each one is also cleared in the
+          // Play Again handler (KNOWN_PITFALLS 11d).
+          foodSuccessDone: false,
+          colorSuccessDone: false,
+          activitySuccessDone: false,
+          friendSuccessDone: false,
+          childFoodDone: false,
+          childColorDone: false,
+          childActivityDone: false,
+          childFriendDone: false,
+
           // Completion
           stars: 2,
           completed: false,
@@ -406,6 +418,14 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       pauseCelebRef.current?.();
       // Clear phaseVoiceRef so VO can replay after resume delay
       phaseVoiceRef.current = {};
+      // The idle-hint timers are raw setTimeouts (not pause-aware): clear them so no hint voice or
+      // glow fires while the tab is hidden. onShow bumps resumeHintCycleKey, which re-arms the Ganesha
+      // ladder; the child repeat re-arms when the replayed question line ends (phaseVoiceDone).
+      if (ganeshaIdleTimerRef.current) { clearTimeout(ganeshaIdleTimerRef.current); ganeshaIdleTimerRef.current = null; }
+      if (childIdleTimerRef.current) { clearTimeout(childIdleTimerRef.current); childIdleTimerRef.current = null; }
+      setIdleHintLevel(0);
+      idleHintVoiceRef.current = false;
+      childEntryVoRepeatRef.current = false;
       setDiscoveryFly(null);
       setSparkleState(prev => ({ ...prev, active: false }));
       hideMiniGesture();
@@ -568,7 +588,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       options.onEnd?.();
       return;
     }
-    const { onEnd, moment = 'encouragement' } = options;
+    const { onEnd, moment = 'encouragement', ignoreCancel = false } = options;
     // Stop both engines first: useVoiceGuidance's own idle timer can fire its
     // hook-driven playVoice() independently of this scene's speakLine calls —
     // without this, a still-playing idle-hint MP3 keeps going under this line
@@ -576,9 +596,34 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     stopVoice();
     stopSpokenVoice();
     // A line that ends (or is cancelled) after the scene was left must not run its callback
-    // (KNOWN_PITFALLS 11b/11c).
-    speak(text, { age: 7, style: 'child', moment, onEnd: () => { if (aliveRef.current) onEnd?.(); } });
+    // (KNOWN_PITFALLS 11b/11c). `ignoreCancel` is for lines that save a "done" marker: a cancelled or
+    // interrupted line is not a finished line.
+    let cancelled = false;
+    speak(text, {
+      age: 7, style: 'child', moment,
+      onError: (e) => { if (e?.error === 'canceled' || e?.error === 'interrupted') cancelled = true; },
+      onEnd: () => {
+        if (!aliveRef.current) return;
+        if (ignoreCancel && cancelled) return;
+        onEnd?.();
+      },
+    });
   }, [isAudioOn, speak, stopVoice, stopSpokenVoice]);
+
+  // A success line that saves its own "done" marker the moment it really finishes. Continue replays an
+  // unfinished success line and skips a finished one (KNOWN_PITFALLS 7). The 300 ms floor only rejects
+  // an instant speech error; the shortest line ("Yummy!") takes longer.
+  const speakSuccessLine = (text, doneKey, moment = 'celebration') => {
+    const startedAt = Date.now();
+    speakLine(text, {
+      moment,
+      ignoreCancel: true,
+      onEnd: () => {
+        if (Date.now() - startedAt < 300) return;
+        sceneActions.checkpoint({ [doneKey]: true });
+      },
+    });
+  };
   const replayCurrentVoice = useCallback(() => {
     if (sceneState.showingCompletionScreen) {
       speakLine(VOICE_LINES.completionCelebration, { moment: 'celebration' });
@@ -814,6 +859,15 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     };
   }, [showChildActivityTools, sceneState.gamePhase]);
 
+  // The header strip of Ganesha's answers, rebuilt from how many beats are finished. Its own save used
+  // to lag the solve, so a Continue could show a header missing the answer the child just found.
+  const getGaneshaDiscoveries = (count) => [
+    { image: modakImg, name: 'Modak' },
+    { image: redImg, name: 'Red' },
+    { image: kidActSingImg, name: 'Dancing' },
+    { image: mouseImg, name: 'Mooshika' },
+  ].slice(0, count);
+
   // --- RELOAD DETECTION & RESTORATION LOGIC ---
   useEffect(() => {
     if (resumedOnMountRef.current && !reloadHandledRef.current) {
@@ -826,13 +880,8 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       }
 
       reloadHandledRef.current = true;
-      let { gamePhase } = sceneState;
+      const { gamePhase } = sceneState;
       const { currentModal } = sceneState;
-      // Friend answered correctly: resume at the child's intro, not the friend question again.
-      if (gamePhase === 'friend-correct' && !currentModal) {
-        gamePhase = 'child-intro';
-        sceneActions.updateState({ gamePhase: 'child-intro', wrongChoices: [], correctChoiceId: null });
-      }
       suppressPhaseVoUntilReloadSettlesRef.current = false;
       expectedReloadPhaseRef.current = null;
 
@@ -859,9 +908,93 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
         return; // Stop here if we restored a modal
       }
 
+      // --- 2. A SOLVED beat (saved at the solving tap) ---
+      // Show its finished state, replay the success line ONLY if the child left during it, then
+      // move on. Child content (picks, drawings, typed names) is never cleared here. (KNOWN_PITFALLS 7)
+      // The phase-entry effect stays silent (sentinel) until this branch releases it.
+      const ganeshaSolvedPhase = (gamePhase === 'food-choice' && sceneState.selectedFood) ? 'food-correct' : gamePhase;
+      const ganeshaSolved = {
+        'food-correct': { count: 1, doneKey: 'foodSuccessDone', voiceFlag: 'foodCorrect', line: VOICE_LINES.foodCorrect, next: 'color-choice' },
+        'color-correct': { count: 2, doneKey: 'colorSuccessDone', voiceFlag: 'colorCorrect', line: VOICE_LINES.colorCorrect, next: 'activity-choice' },
+        'activity-correct': { count: 3, doneKey: 'activitySuccessDone', voiceFlag: 'activityCorrect', line: VOICE_LINES.activityCorrect, next: 'friend-choice' },
+        'friend-correct': { count: 4, doneKey: 'friendSuccessDone', voiceFlag: 'friendCorrect', line: VOICE_LINES.friendCorrect, next: 'child-intro' },
+      }[ganeshaSolvedPhase];
+      if (ganeshaSolved && !currentModal) {
+        suppressPhaseVoUntilReloadSettlesRef.current = true;
+        expectedReloadPhaseRef.current = RESUME_SETTLE_SENTINEL;
+        clearAllTimeouts();
+        interruptCurrentVoice();
+        phaseVoiceRef.current = {};
+        resetIdleHints();
+        setShowShake(null);
+        // The header is rebuilt from the beats finished so far (its own save lagged the solve).
+        const solvedDiscoveries = getGaneshaDiscoveries(ganeshaSolved.count);
+        const releaseGuard = () => {
+          suppressPhaseVoUntilReloadSettlesRef.current = false;
+          expectedReloadPhaseRef.current = null;
+        };
+        const settled = { wrongChoices: [], correctChoiceId: null, storyDiscoveries: solvedDiscoveries };
+        if (sceneState[ganeshaSolved.doneKey]) {
+          // Finished before the child left: straight on to the next question after the 500 ms wait.
+          sceneActions.updateState({ ...settled, gamePhase: ganeshaSolvedPhase });
+          safeSetTimeout(() => {
+            releaseGuard();
+            sceneActions.updateState({ gamePhase: ganeshaSolved.next });
+          }, 500);
+        } else {
+          // Left during the success line: show the celebration state and replay the line. The
+          // auto-advance effect moves on to the next question afterwards.
+          sceneActions.updateState({ ...settled, gamePhase: ganeshaSolvedPhase });
+          safeSetTimeout(() => {
+            releaseGuard();
+            phaseVoiceRef.current[ganeshaSolved.voiceFlag] = true;
+            speakSuccessLine(ganeshaSolved.line, ganeshaSolved.doneKey);
+          }, 500);
+        }
+        return;
+      }
+
+      const childSolved = {
+        'child-food-choice': { solved: !!(sceneState.childFoodChoice || sceneState.childFoodDrawing || sceneState.childFoodText), doneKey: 'childFoodDone', voiceFlag: 'childFoodQuestion', line: VOICE_LINES.childFoodCorrect, next: 'child-color-choice' },
+        'child-color-choice': { solved: !!sceneState.childColor, doneKey: 'childColorDone', voiceFlag: 'childColorQuestion', line: VOICE_LINES.childColorCorrect, next: 'child-activity-choice' },
+        'child-activity-choice': { solved: !!(sceneState.childActivityChoice || sceneState.childActivityDrawing || sceneState.childActivityText), doneKey: 'childActivityDone', voiceFlag: 'childActivityQuestion', line: VOICE_LINES.childActivityCorrect, next: 'child-friend-intro' },
+        'child-friend-input': { solved: !!sceneState.childFriendName, doneKey: 'childFriendDone', voiceFlag: 'childFriendQuestion', line: VOICE_LINES.childFriendCorrect, next: 'comparison-card' },
+      }[gamePhase];
+      if (childSolved?.solved) {
+        suppressPhaseVoUntilReloadSettlesRef.current = true;
+        expectedReloadPhaseRef.current = RESUME_SETTLE_SENTINEL;
+        clearAllTimeouts();
+        interruptCurrentVoice();
+        phaseVoiceRef.current = {};
+        // The question was already answered: the phase-entry effect must not ask it again.
+        phaseVoiceRef.current[childSolved.voiceFlag] = true;
+        resetIdleHints();
+        const advance = () => {
+          suppressPhaseVoUntilReloadSettlesRef.current = false;
+          expectedReloadPhaseRef.current = null;
+          advanceToChildPhase(childSolved.next);
+        };
+        if (sceneState[childSolved.doneKey]) {
+          safeSetTimeout(advance, 500);
+        } else {
+          safeSetTimeout(() => {
+            const startedAt = Date.now();
+            speakLine(childSolved.line, {
+              moment: 'celebration',
+              ignoreCancel: true,
+              onEnd: () => {
+                if (Date.now() - startedAt >= 300) sceneActions.checkpoint({ [childSolved.doneKey]: true });
+                safeSetTimeout(advance, 800);
+              },
+            });
+          }, 500);
+        }
+        return;
+      }
+
       const ganeshaRestartPhaseMap = {
         'food-choice': 'food-choice',
-        // A '-correct' celebration means that answer is done: resume at the NEXT question.
+        // A '-correct' celebration is handled above (solved beat); these remain for old saves.
         'food-correct': 'color-choice',
         'color-choice': 'color-choice',
         'color-correct': 'activity-choice',
@@ -897,10 +1030,10 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       }
 
       const restartPhase = ganeshaRestartPhaseMap[gamePhase];
+      if (restartPhase) {
         // The phase-entry effect must stay silent until the resume line below plays: if it also
         // speaks, the first line is cut ~0.5 s in by the second ("Cho... Choose your color").
         // '__resume__' never matches a phase, so the effect keeps returning until the timer releases it.
-      if (restartPhase) {
         suppressPhaseVoUntilReloadSettlesRef.current = true;
         expectedReloadPhaseRef.current = RESUME_SETTLE_SENTINEL;
         // Reload rule: in any Ganesha phase (choice/hint/celebration), restart from phase entry.
@@ -922,7 +1055,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
           gamePhase: restartPhase,
           wrongChoices: [],
           correctChoiceId: null,
-          storyDiscoveries: (sceneState.storyDiscoveries || []).slice(0, maxDiscoveries)
+          storyDiscoveries: getGaneshaDiscoveries(maxDiscoveries)
         };
         if (restartPhase === 'food-choice') restartState.selectedFood = null;
         if (restartPhase === 'friend-choice') restartState.selectedFriend = null;
@@ -954,11 +1087,11 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             phaseVoiceRef.current[ganeshaVoiceKey] = true;
             speakLine(ganeshaEntryLine, { moment: 'thinking', onEnd: () => setPhaseVoiceDone(true) });
           }, 500);
+        }
         safeSetTimeout(() => {
           suppressPhaseVoUntilReloadSettlesRef.current = false;
           expectedReloadPhaseRef.current = null;
         }, 520);
-        }
         return;
       }
 
@@ -1249,19 +1382,19 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     // Ganesha's correct answers
     if (sceneState.gamePhase === 'food-correct' && !phaseVoiceRef.current.foodCorrect) {
       phaseVoiceRef.current.foodCorrect = true;
-      speakLine(VOICE_LINES.foodCorrect, { moment: 'celebration' });
+      speakSuccessLine(VOICE_LINES.foodCorrect, 'foodSuccessDone');
     }
     if (sceneState.gamePhase === 'color-correct' && !phaseVoiceRef.current.colorCorrect) {
       phaseVoiceRef.current.colorCorrect = true;
-      speakLine(VOICE_LINES.colorCorrect, { moment: 'celebration' });
+      speakSuccessLine(VOICE_LINES.colorCorrect, 'colorSuccessDone');
     }
     if (sceneState.gamePhase === 'activity-correct' && !phaseVoiceRef.current.activityCorrect) {
       phaseVoiceRef.current.activityCorrect = true;
-      speakLine(VOICE_LINES.activityCorrect, { moment: 'celebration' });
+      speakSuccessLine(VOICE_LINES.activityCorrect, 'activitySuccessDone');
     }
     if (sceneState.gamePhase === 'friend-correct' && !phaseVoiceRef.current.friendCorrect) {
       phaseVoiceRef.current.friendCorrect = true;
-      speakLine(VOICE_LINES.friendCorrect, { moment: 'celebration' });
+      speakSuccessLine(VOICE_LINES.friendCorrect, 'friendSuccessDone');
     }
 
     // Child intro
@@ -1305,8 +1438,8 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       // Flag is set when the timer FIRES: this effect's cleanup clears the timer (StrictMode remount
       // on Continue), and a flag set up front kept the second run from re-scheduling it, so the line
       // never played (KNOWN_PITFALLS 1).
-        phaseVoiceRef.current.friendCelebration = true;
       const comparisonVoTimer = setTimeout(() => {
+        phaseVoiceRef.current.friendCelebration = true;
         speakLine(VOICE_LINES.friendCelebration, { moment: 'celebration' });
       }, 1000);
       timers.push(comparisonVoTimer);
@@ -1358,10 +1491,14 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     // The final gap counts from when the clue FINISHES speaking, so the answer glow never
     // appears while Ganesha is still talking.
     ganeshaIdleTimerRef.current = setTimeout(() => {
+      if (document.hidden) return;
       setIdleHintLevel(1);
 
       const armFinalHint = () => {
+        // A line cancelled by tab-hide ends here too: do not arm the glow while hidden.
+        if (document.hidden) return;
         ganeshaIdleTimerRef.current = setTimeout(() => {
+          if (document.hidden) return;
           setIdleHintLevel(2);
         }, 10000);
       };
@@ -1403,6 +1540,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
 
     // @ 10s: Repeat entry VO (once)
     childIdleTimerRef.current = setTimeout(() => {
+      if (document.hidden) return;
       if (!childEntryVoRepeatRef.current) {
         const voMap = {
           'child-food-choice': VOICE_LINES.childFoodQuestion,
@@ -1451,7 +1589,8 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
       playSparkle();
       triggerMiniGesture('food', 1500);
       triggerSparkleFx('all', 1700);
-      sceneActions.updateState({ correctChoiceId: foodId });
+      // Saved at the solving tap (checkpoint): selectedFood marks the beat solved before the 1 s animation.
+      sceneActions.checkpoint({ correctChoiceId: foodId, selectedFood: foodId });
       safeSetTimeout(() => {
         triggerDiscoveryFly({ image: modakImg, name: 'Modak' }, { isModak: true, durationMs: GANESHA_FOOD_CORRECT_ADVANCE_DELAY_MS });
         sceneActions.updateState({
@@ -1577,7 +1716,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     const selected = kidFoods.find(f => f.id === foodId);
     const discoveryImage = selected?.id === 'drawing' ? pencilImg : selected?.image;
     speakOptionName(selected?.name);
-    sceneActions.updateState({
+    sceneActions.checkpoint({
       childFoodChoice: foodId,
       childDiscoveries: [{ image: discoveryImage, name: selected.name }]
     });
@@ -1587,7 +1726,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     triggerDiscoveryFly({ image: discoveryImage, name: selected.name }, { isChild: true, durationMs: CHILD_SELECTION_ADVANCE_DELAY_MS });
 
     safeSetTimeout(() => {
-      speakLine(VOICE_LINES.childFoodCorrect, { moment: 'celebration' });
+      speakSuccessLine(VOICE_LINES.childFoodCorrect, 'childFoodDone');
     }, DISCOVERY_CENTER_REACH_MS);
 
     safeSetTimeout(() => {
@@ -1603,7 +1742,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     setShowDrawingPad(false);
     setDrawingMode(null);
     triggerDiscoveryFly({ image: data.image, name: 'My Food' }, { isChild: true, durationMs: CHILD_SELECTION_ADVANCE_DELAY_MS });
-    sceneActions.updateState({
+    sceneActions.checkpoint({
       childFoodDrawing: data.image,
       childDiscoveries: [{ image: data.image, name: 'My Food' }],
       currentModal: null,
@@ -1613,7 +1752,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     triggerSparkleFx('single', 1500);
 
     safeSetTimeout(() => {
-      speakLine(VOICE_LINES.childFoodCorrect, { moment: 'celebration' });
+      speakSuccessLine(VOICE_LINES.childFoodCorrect, 'childFoodDone');
     }, DISCOVERY_CENTER_REACH_MS);
 
     safeSetTimeout(() => {
@@ -1630,7 +1769,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     const selectedColor = kidColors.find(c => c.id === colorId);
     const currentState = latestSceneStateRef.current || sceneState;
     speakOptionName(selectedColor?.name);
-    sceneActions.updateState({
+    sceneActions.checkpoint({
       childColor: selectedColor.image || selectedColor.color,
       childColorName: selectedColor.name,
       childDiscoveries: appendUniqueDiscovery(currentState.childDiscoveries, {
@@ -1648,7 +1787,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     }, { isChild: true, durationMs: CHILD_SELECTION_ADVANCE_DELAY_MS });
 
     safeSetTimeout(() => {
-      speakLine(VOICE_LINES.childColorCorrect, { moment: 'celebration' });
+      speakSuccessLine(VOICE_LINES.childColorCorrect, 'childColorDone');
     }, DISCOVERY_CENTER_REACH_MS);
 
     safeSetTimeout(() => {
@@ -1675,7 +1814,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     const discoveryImage = selected?.image;
     const currentState = latestSceneStateRef.current || sceneState;
     speakOptionName(selected?.name);
-    sceneActions.updateState({
+    sceneActions.checkpoint({
       childActivityChoice: activityId,
       childDiscoveries: appendUniqueDiscovery(currentState.childDiscoveries, { image: discoveryImage, name: selected.name })
     });
@@ -1684,7 +1823,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     triggerDiscoveryFly({ image: discoveryImage, name: selected.name }, { isChild: true, durationMs: CHILD_SELECTION_ADVANCE_DELAY_MS });
 
     safeSetTimeout(() => {
-      speakLine(VOICE_LINES.childActivityCorrect, { moment: 'celebration' });
+      speakSuccessLine(VOICE_LINES.childActivityCorrect, 'childActivityDone');
     }, DISCOVERY_CENTER_REACH_MS);
 
     safeSetTimeout(() => {
@@ -1701,7 +1840,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     setDrawingMode(null);
     const currentState = latestSceneStateRef.current || sceneState;
     triggerDiscoveryFly({ image: data.image, name: 'Drawing' }, { isChild: true, durationMs: CHILD_SELECTION_ADVANCE_DELAY_MS });
-    sceneActions.updateState({
+    sceneActions.checkpoint({
       childActivityDrawing: data.image,
       childDiscoveries: appendUniqueDiscovery(currentState.childDiscoveries, { image: data.image, name: 'Drawing' }),
       currentModal: null,
@@ -1711,7 +1850,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
     triggerSparkleFx('single', 1500);
 
     safeSetTimeout(() => {
-      speakLine(VOICE_LINES.childActivityCorrect, { moment: 'celebration' });
+      speakSuccessLine(VOICE_LINES.childActivityCorrect, 'childActivityDone');
     }, DISCOVERY_CENTER_REACH_MS);
 
     safeSetTimeout(() => {
@@ -2268,7 +2407,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
               setShowDrawingPad(false);
               setDrawingMode(null);
               const currentState = latestSceneStateRef.current || sceneState;
-              sceneActions.updateState({
+              sceneActions.checkpoint({
                 childFriendName: name,
                 childFriendLetters: name.split(''),
                 childDiscoveries: appendUniqueDiscovery(currentState.childDiscoveries, { image: friendsImg, name }),
@@ -2281,7 +2420,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
                 { isChild: true, showNameBelow: true, durationMs: CHILD_FRIEND_ADVANCE_DELAY_MS }
               );
               safeSetTimeout(() => {
-                speakLine(VOICE_LINES.childFriendCorrect, { moment: 'celebration' });
+                speakSuccessLine(VOICE_LINES.childFriendCorrect, 'childFriendDone');
               }, DISCOVERY_CENTER_REACH_MS);
               safeSetTimeout(() => {
                 sceneActions.updateState({
@@ -2338,7 +2477,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             setShowTextInput(false);
             setTextInputMode(null);
             triggerDiscoveryFly({ image: pencilImg, name: text }, { isChild: true, durationMs: CHILD_SELECTION_ADVANCE_DELAY_MS });
-            sceneActions.updateState({
+            sceneActions.checkpoint({
               childFoodText: text,
               childDiscoveries: [{ image: pencilImg, name: text }],
               currentModal: null, // Clear modal
@@ -2348,7 +2487,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             triggerSparkleFx('single', 1500);
 
             safeSetTimeout(() => {
-              speakLine(VOICE_LINES.childFoodCorrect, { moment: 'celebration' });
+              speakSuccessLine(VOICE_LINES.childFoodCorrect, 'childFoodDone');
             }, DISCOVERY_CENTER_REACH_MS);
 
             safeSetTimeout(() => {
@@ -2380,7 +2519,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             setTextInputMode(null);
             const currentState = latestSceneStateRef.current || sceneState;
             triggerDiscoveryFly({ image: pencilImg, name: text }, { isChild: true, durationMs: CHILD_SELECTION_ADVANCE_DELAY_MS });
-            sceneActions.updateState({
+            sceneActions.checkpoint({
               childActivityText: text,
               childDiscoveries: appendUniqueDiscovery(currentState.childDiscoveries.slice(0, 2), { image: pencilImg, name: text }),
               currentModal: null, // Clear modal
@@ -2390,7 +2529,7 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
             triggerSparkleFx('single', 1500);
 
             safeSetTimeout(() => {
-              speakLine(VOICE_LINES.childActivityCorrect, { moment: 'celebration' });
+              speakSuccessLine(VOICE_LINES.childActivityCorrect, 'childActivityDone');
             }, DISCOVERY_CENTER_REACH_MS);
 
             safeSetTimeout(() => {
@@ -2604,6 +2743,15 @@ const FavoriteFoodGameContent = ({ sceneState, sceneActions, isReload, onComplet
               childFriendName: '',
               childFriendLetters: [],
               friendNameDraft: '',
+              correctChoiceId: null,
+              foodSuccessDone: false,
+              colorSuccessDone: false,
+              activitySuccessDone: false,
+              friendSuccessDone: false,
+              childFoodDone: false,
+              childColorDone: false,
+              childActivityDone: false,
+              childFriendDone: false,
               showingCompletionScreen: false,
               stars: 2,
               completed: false,

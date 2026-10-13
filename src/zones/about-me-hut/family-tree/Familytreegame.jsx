@@ -147,6 +147,8 @@ const FamilyTreeGame = ({
 
  // Ganesha Tree State (Arrays for JSON compatibility)
  placedGaneshaMembers: [],
+ // Done tapped on the finished Ganesha tree; saved at the tap, cleared by Play Again (KNOWN_PITFALLS 11d)
+ ganeshaDoneTapped: false,
  tappedMembers: [],
 
  justPlacedId: null,
@@ -371,6 +373,7 @@ const FamilyTreeGameContent = ({
  // --- LOCAL REFS & STATE (Not persisted in SceneManager) ---
 
  // --- RELOAD DETECTION STATE ---
+ const reloadHandledRef = useRef(false);
  // False once the scene is left: a line that ends or is cancelled after unmount must not advance
  // or save (KNOWN_PITFALLS 11b/11c). Set true in the effect body so StrictMode's remount keeps it true.
  const aliveRef = useRef(true);
@@ -378,7 +381,6 @@ const FamilyTreeGameContent = ({
  aliveRef.current = true;
  return () => { aliveRef.current = false; };
  }, []);
- const reloadHandledRef = useRef(false);
  const resumePopupTimeoutRef = useRef(null);
  const [showResumePopup, setShowResumePopup] = useState(false);
  const [resumeMessage, setResumeMessage] = useState('');
@@ -412,6 +414,7 @@ const FamilyTreeGameContent = ({
  const childStartTimerRef = useRef(null);
  const [childStartVoComplete, setChildStartVoComplete] = useState(false);
  const childIdleHintTimerRef = useRef(null);
+ const [tabReturnNonce, setTabReturnNonce] = useState(0);
  const childIdleRepeatPlayedRef = useRef(false);
  const tapCircleTimerRef = useRef(null);
  const flipCloseHintTimerRef = useRef(null);
@@ -453,6 +456,12 @@ const FamilyTreeGameContent = ({
  clearTimeout(tapCircleTimerRef.current);
  tapCircleTimerRef.current = null;
  }
+ // Child-input hint is a raw setTimeout: clear it so its line cannot speak while the tab is hidden.
+ // onShow bumps tabReturnNonce, which re-arms it.
+ if (childIdleHintTimerRef.current) {
+ clearTimeout(childIdleHintTimerRef.current);
+ childIdleHintTimerRef.current = null;
+ }
  // Dismiss resume popup on tab hide it's temporary reload feedback
  setShowResumePopup(false);
  cancelTimer(resumePopupTimeoutRef);
@@ -460,6 +469,7 @@ const FamilyTreeGameContent = ({
  sceneActions.updateState({ flippedMember: null });
  },
  onShow: () => {
+ setTabReturnNonce(n => n + 1); // re-arm the child-input hint (cleared on hide)
  // IMPORTANT: Do NOT call onReturnHint here.
  // useVoiceGuidance already invokes onReturnHint after resumeDelay when
  // no VO is queued. Calling it here too can double-trigger return logic.
@@ -608,6 +618,14 @@ showTreeSparkles: false,
  return;
  }
 
+ // 2b. GANESHA TREE - Done was tapped, child left during "You met everyone in my family":
+ // replay that line, then go on to the transition. (The tap is saved as ganeshaDoneTapped.)
+ if (gamePhase === 'ganeshaTree' && sceneState.ganeshaDoneTapped && placedGaneshaMembers && placedGaneshaMembers.length === 4) {
+ ganeshaTreeDoneClickedRef.current = false;
+ handleGaneshaTreeDone(true);
+ return;
+ }
+
  // 3. GANESHA TREE - All placed
  if (gamePhase === 'ganeshaTree' && placedGaneshaMembers && placedGaneshaMembers.length === 4) {
  setResumeMessage(`Amazing! You completed Ganesha's family tree! Tap "Continue" to continue.`);
@@ -633,6 +651,8 @@ showTreeSparkles: false,
  useEffect(() => {
  return () => {
  reloadHandledRef.current = false;
+ // So StrictMode's remount can run the resumed Done line again (its timers were just cleared).
+ ganeshaTreeDoneClickedRef.current = false;
  cancelTimer(resumePopupTimeoutRef);
  };
  }, []);
@@ -842,17 +862,17 @@ showTreeSparkles: false,
  // Using 5000ms to safely account for all deity VOs + TTS variation
  const ALL_PLACED_SPARKLE_DELAY_MS = 5000;
  const ALL_PLACED_SPARKLE_MS = 2500;
-allPlacedSequenceStartedRef.current = true;
 
 allPlacedSequenceTimerRef.current = scheduleTimeout(() => {
+allPlacedSequenceStartedRef.current = true;
 if (import.meta.env.DEV) console.log(" allPlaced timeout FIRED, calling speakHint");
 sceneActions.updateState({ showTreeSparkles: true });
 allPlacedSparkleTimerRef.current = scheduleTimeout(() => {
 sceneActions.updateState({ showTreeSparkles: false });
 }, ALL_PLACED_SPARKLE_MS);
-return () => { cancelTimer(allPlacedSequenceTimerRef); };
 allPlacedSequenceTimerRef.current = null;
 }, ALL_PLACED_SPARKLE_DELAY_MS);
+return () => { cancelTimer(allPlacedSequenceTimerRef); };
 }, [
 sceneState.gamePhase,
 sceneState.placedGaneshaMembers.length,
@@ -1004,6 +1024,7 @@ sceneState.isSequencePlaying,
 
  childIdleHintTimerRef.current = setTimeout(() => {
  childIdleHintTimerRef.current = null;
+ if (document.hidden) return;
  childIdleRepeatPlayedRef.current = true;
 
  if (isAudioOn) {
@@ -1017,7 +1038,7 @@ sceneState.isSequencePlaying,
  childIdleHintTimerRef.current = null;
  }
  };
- }, [sceneState.gamePhase, sceneState.childFamily.length, sceneState.showNameModal, childStartVoComplete, isAudioOn]);
+ }, [sceneState.gamePhase, sceneState.childFamily.length, sceneState.showNameModal, childStartVoComplete, isAudioOn, tabReturnNonce]);
 
  // ========================================
  // TRANSITION PHASE: Play transition VO on phase entry
@@ -1160,9 +1181,9 @@ sceneState.isSequencePlaying,
  // isSequencePlaying gates the idle-hint ladder (GMB Hint Standard v1) â€”
  // it only clears once BOTH the placement animation and this member's
  // voice line have finished, not on a flat timer alone.
- let finished = false; // chime + clear once: the 4 s failsafe and onEnd both call finishSequence
  let voDone = false; // muted lines finish on the hook's silent timer, not instantly
  let animDone = false;
+ let finished = false; // chime + clear once: the 4 s failsafe and onEnd both call finishSequence
  const finishSequence = () => {
  if (!voDone || !animDone || finished) return;
  finished = true;
@@ -1210,9 +1231,9 @@ sceneState.isSequencePlaying,
 
  playSparkle();
 
- let finished = false; // chime + clear once: the 4 s failsafe and onEnd both call finishSequence
  let voDone = false; // muted lines finish on the hook's silent timer, not instantly
  let animDone = false;
+ let finished = false; // chime + clear once: the 4 s failsafe and onEnd both call finishSequence
  const finishSequence = () => {
  if (!voDone || !animDone || finished) return;
  finished = true;
@@ -1248,13 +1269,16 @@ sceneState.isSequencePlaying,
  isAudioOn
  ]);
 
- const handleGaneshaTreeDone = () => {
+ // `resumed`: Continue after the child tapped Done but left during "You met everyone in my family".
+ // The Done tap is saved the moment it happens (ganeshaDoneTapped); the line ending moves the phase
+ // to 'transition' (saved instantly), so "left after it finished" is already covered by the phase.
+ const handleGaneshaTreeDone = (resumed = false) => {
  if (ganeshaTreeDoneClickedRef.current) return;
  ganeshaTreeDoneClickedRef.current = true;
  stopVoice();
  stopSpokenVoice();
- playChime();
- sceneActions.updateState({ showTreeSparkles: false, showCelebration: null });
+ if (!resumed) playChime();
+ sceneActions.checkpoint({ showTreeSparkles: false, showCelebration: null, ganeshaDoneTapped: true });
 
 // Muted: speakHint completes on the hook's silent timer, so the transition
 // keeps the same pacing as with audio instead of jumping instantly.
@@ -1270,20 +1294,26 @@ sceneActions.updateState({ gamePhase: 'transition' });
  const cancelAdvanceFailsafe = () => {
  if (typeof advanceFailsafe === 'function') advanceFailsafe();
  else clearTimeout(advanceFailsafe);
- let lineCancelled = false;
  };
 
+ let lineCancelled = false;
  const allPlacedScript = getVoiceScript('about-me-hut', 'family-tree', 'allPlaced');
- speakHint(
+ // A resumed line waits 500 ms: speech at the very first instant after mount is dropped
+ // (KNOWN_PITFALLS 2). A fresh tap speaks at once.
+ const speakAllPlaced = (text, opts) => {
+ if (!resumed) { speakHint(text, opts); return; }
+ scheduleTimeout(() => speakHint(text, opts), 500);
+ };
+ speakAllPlaced(
  allPlacedScript?.text || 'You met everyone in my family.',
  {
  age: 7,
+ style: 'child',
+ moment: 'celebration',
  // A cancelled/interrupted line is not a finished line, and nothing runs after the scene is
  // left. The 6 s failsafe above still advances a child who stays.
- style: 'child',
- if (!aliveRef.current || lineCancelled) return;
- moment: 'celebration',
  onEnd: () => {
+ if (!aliveRef.current || lineCancelled) return;
  cancelAdvanceFailsafe();
  proceedToTransition();
  },
@@ -1983,6 +2013,7 @@ if (window.matchMedia(PHONE_LANDSCAPE_QUERY).matches) setFamilyTrayOpen(true);
  sceneActions.updateState({
  gamePhase: 'intro',
  placedGaneshaMembers: [],
+ ganeshaDoneTapped: false,
  tappedMembers: [],
  childFamily: [],
  showBottomTray: false,
